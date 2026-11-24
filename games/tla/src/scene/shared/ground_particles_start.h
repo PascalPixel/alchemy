@@ -3,9 +3,9 @@
 /// (GroundParticles_Draw); the overlay's copy of
 /// FieldEffect_InitializeSparkles.
 void GroundParticles_Start(void) {
-  struct GroundParticleWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct GroundParticleWork));
-  struct GroundParticle *p = work->particles;
+  struct GroundParticleState *state = HeapSlot_AllocEwram(
+      HEAP_SLOT_WEATHER, sizeof(struct GroundParticleState));
+  struct GroundParticle *p = state->particles;
   u8 *buf;
   u32 i;
   u32 size;
@@ -13,14 +13,14 @@ void GroundParticles_Start(void) {
 
   size = 0;
   zero = size;
-  Dma_Set((const void *)&zero, work,
-          DMA_FILL_WORDS(sizeof(struct GroundParticleWork) / 4), REG_DMA3);
+  Dma_Set((const void *)&zero, state,
+          DMA_FILL_WORDS(sizeof(struct GroundParticleState) / 4), REG_DMA3);
   buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gField_GroundTiles, buf);
-  work->entry = VramCache_FindFreeEntry();
-  work->tileBase = Vram_Load(work->entry, 768, buf);
+  state->entry = VramCache_FindFreeEntry();
+  state->tileBase = Vram_Load(state->entry, 768, buf);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
-  work->leader = (s32 *)size;
+  state->leader = (s32 *)size;
   i = 0;
   do {
     size = (u32)p;
@@ -35,6 +35,6 @@ void GroundParticles_Start(void) {
     p->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
     i++;
     p++;
-  } while (i < ARRAY_COUNT(work->particles));
+  } while (i < ARRAY_COUNT(state->particles));
   Task_AddFrame(GroundParticles_Draw, TASK_PASS_FRAME);
 }

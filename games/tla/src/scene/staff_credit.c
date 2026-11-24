@@ -38,7 +38,7 @@
 #include "system/io_reg.h"
 #include "system/io_write_queue.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/math_table.h"
 #include "system/ram_buffer.h"
 #include "system/system.h"
@@ -50,7 +50,7 @@ FIXED Party_GetPpRatio(void);
 
 #include "shared/tables.h"
 
-/// The beacon's work buffer: the glow's or the beams' tiles, then from
+/// The beacon's buffer: the glow's or the beams' tiles, then from
 /// BEACON_MAPS their maps.
 #define BEACON_BUFFER_SIZE 24576
 #define BEACON_MAPS 8192
@@ -248,7 +248,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
   gStaffCredit_BlendSteady = 0;
   wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
-  gFieldWork->transition = 0;
+  gFieldState->transition = 0;
   palette = stage;
   buffer = Heap_AllocEwram(BEACON_BUFFER_SIZE);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_BEACON), 0);
@@ -266,8 +266,8 @@ void StaffCredit_ShowBeacon(s32 stage) {
   Iwram_ClearWordsEntry((void *)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
                         PALETTE_COLORS * 2);
   wait(1);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
-  gFieldWork->transitionFrames = 64;
+  Actor_GetById(gMainRoutineState.leaderActorId)->spriteStorageKind = 0;
+  gFieldState->transitionFrames = 64;
   Event_StartScreenTransition();
   FieldCamera_MoveToFX(toFIXED(gStaffCredit_FlightEnds[stage][0]), CAMERA_KEEP,
                        toFIXED(gStaffCredit_FlightEnds[stage][1]), 1);
@@ -533,7 +533,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
     for (frame = 0; frame != 124;) {
       map->yaw -= FLIGHT_TURN_STEP;
       if (frame == 60) {
-        gFieldWork->transitionFrames = 64;
+        gFieldState->transitionFrames = 64;
         Event_FinishScreenTransition();
       }
       frame++;
@@ -575,17 +575,17 @@ enum { SUMMIT_GOLDEN_SUN_FORMS = 2, SUMMIT_ALEX_TAKES_THE_POWER = 3 };
 /// each beacon's entrance first shows its lighthouse's beacon, the last the
 /// beams meeting, and each but the last runs the next stretch of credits.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Event_SetFlag(FLAG_RETREAT_BLOCKED);
-  work = Ram_HeapSlots->fieldWork;
-  work->transition = 0;
-  work->transitionFrames = 16;
+  state = Ram_HeapSlots->fieldState;
+  state->transition = 0;
+  state->transitionFrames = 16;
   System_Wait(1);
   FieldCamera_SetSpeed(8);
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   WorldMap_StartPlacedActors();
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case STAFF_CREDIT_OPENING:
     Resource_ReservedNoOp(RESOURCE_CREDITS_FAR_CALLS);
     StaffCredit_RunCredits(CREDITS_FROM_PAGE(0));
@@ -710,9 +710,9 @@ UNUSED void StaffCredit_PlayLighthouseTransition(s32 mode) {
 
   System_Wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
-  gFieldWork->transition = 0;
-  Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
-  gFieldWork->transitionFrames = 16;
+  gFieldState->transition = 0;
+  Actor_Get(gMainRoutineState.leaderActorId)->spriteStorageKind = 0;
+  gFieldState->transitionFrames = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   if (mode == 2) {
@@ -854,7 +854,7 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
   struct Sprite *sprite;
-  struct LinkedEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct LinkedEffectState *state = Ram_HeapSlots->fieldEffectState;
   s32 i;
 
   for (i = 0; i < 2; i++) {
@@ -871,7 +871,7 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
         Sprite_StartAnimation(sprite, 0);
         sprite->flags = 0;
         VramCache_FreeEntry(sprite->slot);
-        sprite->slot = work->vramBlock;
+        sprite->slot = state->vramBlock;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
             gVramCacheEntries[sprite->slot].offset / TILE_SIZE_4BPP &

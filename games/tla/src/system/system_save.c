@@ -41,14 +41,14 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 /// counter tables: a place counts as taken when its signature and checksum are
 /// good, and of two copies of a part only the newer stays taken. Returns 1 when
 /// no flash chip answers, else 0.
-s32 Save_InitializeWork(void) {
-  struct SaveWorkspace *work;
+s32 Save_InitializeState(void) {
+  struct SaveWorkspace *state;
   struct SaveSectorHeader header;
   struct SaveSectorHeader *slot;
   u32 index;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_SAVE, sizeof(*work));
-  Dma_Fill32(0, work, sizeof(*work));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_SAVE, sizeof(*state));
+  Dma_Fill32(0, state, sizeof(*state));
   SetFlashTimerIntr(SAVE_FLASH_TIMER,
                     &gIrqHandlers[IRQ_TIMER0 + SAVE_FLASH_TIMER]);
 
@@ -65,18 +65,18 @@ s32 Save_InitializeWork(void) {
     u16 partId;
     u8 id;
 
-    work->occupied[index] = 0;
-    work->partId[index] = SAVE_PART_NONE;
-    work->counter[index] = 0;
+    state->occupied[index] = 0;
+    state->partId[index] = SAVE_PART_NONE;
+    state->counter[index] = 0;
     status = Save_ReadSector(index);
-    SAVE_START_DMA(work->slot, &header, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
+    SAVE_START_DMA(state->slot, &header, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
     WAIT_DMA();
     slot = &header;
 
     if (Save_CompareBytes(slot->signature, (u8 *)gSave_Signature,
                           sizeof(slot->signature)) != 0)
       continue;
-    work->counter[index] = slot->counter;
+    state->counter[index] = slot->counter;
     partId = slot->partId;
     id = partId;
     if (id >= SAVE_PART_NONE)
@@ -84,15 +84,15 @@ s32 Save_InitializeWork(void) {
     if (status != 0)
       continue;
 
-    work->occupied[index] = 1;
-    work->partId[index] = partId;
+    state->occupied[index] = 1;
+    state->partId[index] = partId;
     if (status < index) {
       for (; status < index; status++) {
-        if (work->partId[status] == (u8)partId) {
-          if (work->counter[status] < slot->counter)
-            work->occupied[status] = 0;
+        if (state->partId[status] == (u8)partId) {
+          if (state->counter[status] < slot->counter)
+            state->occupied[status] = 0;
           else
-            work->occupied[index] = 0;
+            state->occupied[index] = 0;
         }
       }
     }
@@ -111,7 +111,7 @@ u32 Save_SelectWriteSector(s32 partId) {
   u8 *occupied;
   u8 value;
 
-  occupied = ((struct SaveWorkspace *)Ram_HeapSlots->saveWork)->occupied;
+  occupied = ((struct SaveWorkspace *)Ram_HeapSlots->saveState)->occupied;
   count = 0;
   for (index = 0; index < SAVE_SECTOR_COUNT; index += SAVE_SECTORS_PER_PART) {
     value = *occupied;
@@ -139,24 +139,26 @@ u32 Save_SelectWriteSector(s32 partId) {
 /// chip, calling the progress routine before the first and after each. Returns
 /// 1 when a sector fails, else 0.
 u32 Save_WriteSector(s32 sector) {
-  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
-  void (*progress)(s32) = work->progress;
+  struct SaveWorkspace *state = Ram_HeapSlots->saveState;
+  void (*progress)(s32) = state->progress;
 
   if (progress != 0)
     progress(0);
-  if (gProgramFlashSector(sector, work->slot) != 0 ||
-      Flash_VerifySector(sector, (s32)work->slot) != 0)
+  if (gProgramFlashSector(sector, state->slot) != 0 ||
+      Flash_VerifySector(sector, (s32)state->slot) != 0)
     return 1;
   if (progress != 0)
     progress(1);
-  if (gProgramFlashSector(sector + 1, work->slot + SAVE_SECTOR_SIZE) != 0 ||
-      Flash_VerifySector(sector + 1, (s32)(work->slot + SAVE_SECTOR_SIZE)) != 0)
+  if (gProgramFlashSector(sector + 1, state->slot + SAVE_SECTOR_SIZE) != 0 ||
+      Flash_VerifySector(sector + 1, (s32)(state->slot + SAVE_SECTOR_SIZE)) !=
+          0)
     return 1;
   if (progress != 0)
     progress(1);
-  if (gProgramFlashSector(sector + 2, work->slot + 2 * SAVE_SECTOR_SIZE) != 0 ||
+  if (gProgramFlashSector(sector + 2, state->slot + 2 * SAVE_SECTOR_SIZE) !=
+          0 ||
       Flash_VerifySector(sector + 2,
-                         (s32)(work->slot + 2 * SAVE_SECTOR_SIZE)) != 0)
+                         (s32)(state->slot + 2 * SAVE_SECTOR_SIZE)) != 0)
     return 1;
   if (progress != 0)
     progress(1);
@@ -166,13 +168,13 @@ u32 Save_WriteSector(s32 sector) {
 /// Reads the three flash sectors from `index` on into the workspace's sector
 /// buffer. Returns 0 when their checksum matches the header's.
 s32 Save_ReadSector(s32 index) {
-  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
+  struct SaveWorkspace *state = Ram_HeapSlots->saveState;
   struct SaveSectorHeader header;
 
-  ReadFlash(index, 0, work->slot, SAVE_SECTOR_SIZE);
-  ReadFlash(index + 1, 0, work->slot + SAVE_SECTOR_SIZE, SAVE_SECTOR_SIZE);
-  ReadFlash(index + 2, 0, work->slot + 2 * SAVE_SECTOR_SIZE, SAVE_SECTOR_SIZE);
-  SAVE_START_DMA(work->slot, &header, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
+  ReadFlash(index, 0, state->slot, SAVE_SECTOR_SIZE);
+  ReadFlash(index + 1, 0, state->slot + SAVE_SECTOR_SIZE, SAVE_SECTOR_SIZE);
+  ReadFlash(index + 2, 0, state->slot + 2 * SAVE_SECTOR_SIZE, SAVE_SECTOR_SIZE);
+  SAVE_START_DMA(state->slot, &header, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
   WAIT_DMA();
   return (u16)Save_ChecksumSector() - header.checksum;
 }
@@ -185,21 +187,21 @@ s32 Save_ReadSector(s32 index) {
 /// with counter 1 over the old place, 4 that write and 5 invalidating the new
 /// copy.
 s32 Save_WritePart(s32 partId, void *source) {
-  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
+  struct SaveWorkspace *state = Ram_HeapSlots->saveState;
   struct SaveSectorHeader header;
   volatile u32 zero;
   u32 current;
   u32 sector;
 
   zero = 0;
-  SAVE_START_DMA(&zero, work->slot, DMA_FILL_WORDS(sizeof(work->slot) / 4));
+  SAVE_START_DMA(&zero, state->slot, DMA_FILL_WORDS(sizeof(state->slot) / 4));
   WAIT_DMA();
   current = Save_FindLatestSector(partId);
   sector = Save_SelectWriteSector(partId);
   if (sector >= SAVE_SECTOR_COUNT)
     return 1;
-  SAVE_START_DMA(source, work->slot + SAVE_HEADER_BYTES,
-                 DMA_COPY_WORDS((sizeof(work->slot) - SAVE_HEADER_BYTES) / 4));
+  SAVE_START_DMA(source, state->slot + SAVE_HEADER_BYTES,
+                 DMA_COPY_WORDS((sizeof(state->slot) - SAVE_HEADER_BYTES) / 4));
   WAIT_DMA();
   SAVE_START_DMA(gSave_HeaderTemplate, &header,
                  DMA_COPY_WORDS(sizeof(gSave_HeaderTemplate) / 4));
@@ -207,19 +209,19 @@ s32 Save_WritePart(s32 partId, void *source) {
   header.partId = partId;
   header.checksum = Save_ChecksumSector();
   header.counter = Save_GetLatestCounter(partId) + 1;
-  SAVE_START_DMA(&header, work->slot, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
+  SAVE_START_DMA(&header, state->slot, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
   WAIT_DMA();
-  work->sectorCount = 0;
-  work->sectorTotal = SAVE_SECTORS_PER_PART;
+  state->sectorCount = 0;
+  state->sectorTotal = SAVE_SECTORS_PER_PART;
   if (current < SAVE_SECTOR_COUNT)
-    work->sectorTotal = 2 * SAVE_SECTORS_PER_PART;
+    state->sectorTotal = 2 * SAVE_SECTORS_PER_PART;
   if (Save_WriteSector(sector) != 0)
     return 2;
   if (current < SAVE_SECTOR_COUNT && Save_InvalidateSector(current) != 0)
     return 3;
   if (header.counter > SAVE_COUNTER_LIMIT) {
     header.counter = 1;
-    SAVE_START_DMA(&header, work->slot, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
+    SAVE_START_DMA(&header, state->slot, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
     WAIT_DMA();
     if (Save_WriteSector(current) != 0)
       return 4;
@@ -227,39 +229,39 @@ s32 Save_WritePart(s32 partId, void *source) {
       return 5;
     sector = current;
   }
-  work->occupied[sector] = 1;
-  work->partId[sector] = partId;
-  work->counter[sector] = header.counter;
+  state->occupied[sector] = 1;
+  state->partId[sector] = partId;
+  state->counter[sector] = header.counter;
   return 0;
 }
 
 /// Loads the current copy of part `partId` (12,272 bytes) into `destination`.
 /// Returns 1 when there is none and 0 otherwise.
 u32 Save_ReadPart(s32 partId, void *destination) {
-  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
+  struct SaveWorkspace *state = Ram_HeapSlots->saveState;
   u32 index;
 
   index = Save_FindLatestSector(partId);
   if (index >= SAVE_SECTOR_COUNT)
     return 1;
   Save_ReadSector(index);
-  SAVE_START_DMA(work->slot + SAVE_HEADER_BYTES, destination,
-                 DMA_COPY_WORDS((sizeof(work->slot) - SAVE_HEADER_BYTES) / 4));
+  SAVE_START_DMA(state->slot + SAVE_HEADER_BYTES, destination,
+                 DMA_COPY_WORDS((sizeof(state->slot) - SAVE_HEADER_BYTES) / 4));
   WAIT_DMA();
   return 0;
 }
 
 /// Invalidates the current copy of part `partId`. Nothing calls it.
 u32 Save_DeletePart(s32 partId) {
-  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
+  struct SaveWorkspace *state = Ram_HeapSlots->saveState;
   s32 index;
   s32 result;
 
   index = Save_FindLatestSector(partId);
   if ((u32)index >= SAVE_SECTOR_COUNT)
     return 1;
-  work->sectorCount = 0;
-  work->sectorTotal = SAVE_SECTORS_PER_PART;
+  state->sectorCount = 0;
+  state->sectorTotal = SAVE_SECTORS_PER_PART;
   result = Save_InvalidateSector(index);
   return NONZERO(result);
 }
@@ -267,7 +269,7 @@ u32 Save_DeletePart(s32 partId) {
 /// Sums the 12,272 payload bytes of the workspace's three-sector buffer, the
 /// checksum its header keeps.
 s32 Save_ChecksumSector(void) {
-  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
+  struct SaveWorkspace *state = Ram_HeapSlots->saveState;
   u32 limit;
   u32 offset;
   s32 sum;
@@ -276,14 +278,14 @@ s32 Save_ChecksumSector(void) {
   offset = 0;
   limit = SAVE_CHECKSUM_BYTES - 1;
   for (; offset <= limit; offset += 8) {
-    sum += work->slot[SAVE_HEADER_BYTES + offset + 0];
-    sum += work->slot[SAVE_HEADER_BYTES + offset + 1];
-    sum += work->slot[SAVE_HEADER_BYTES + offset + 2];
-    sum += work->slot[SAVE_HEADER_BYTES + offset + 3];
-    sum += work->slot[SAVE_HEADER_BYTES + offset + 4];
-    sum += work->slot[SAVE_HEADER_BYTES + offset + 5];
-    sum += work->slot[SAVE_HEADER_BYTES + offset + 6];
-    sum += work->slot[SAVE_HEADER_BYTES + offset + 7];
+    sum += state->slot[SAVE_HEADER_BYTES + offset + 0];
+    sum += state->slot[SAVE_HEADER_BYTES + offset + 1];
+    sum += state->slot[SAVE_HEADER_BYTES + offset + 2];
+    sum += state->slot[SAVE_HEADER_BYTES + offset + 3];
+    sum += state->slot[SAVE_HEADER_BYTES + offset + 4];
+    sum += state->slot[SAVE_HEADER_BYTES + offset + 5];
+    sum += state->slot[SAVE_HEADER_BYTES + offset + 6];
+    sum += state->slot[SAVE_HEADER_BYTES + offset + 7];
   }
   return sum;
 }
@@ -291,7 +293,7 @@ s32 Save_ChecksumSector(void) {
 /// Returns the first sector of the newest copy of part `partId`, or
 /// SAVE_SECTOR_COUNT when it has none.
 u32 Save_FindLatestSector(s32 partId) {
-  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
+  struct SaveWorkspace *state = Ram_HeapSlots->saveState;
   u32 latestCounter;
   u32 latestSector;
   u32 i;
@@ -299,9 +301,9 @@ u32 Save_FindLatestSector(s32 partId) {
   latestCounter = 0;
   latestSector = SAVE_SECTOR_COUNT;
   for (i = 0; i < SAVE_SECTOR_COUNT; i += SAVE_SECTORS_PER_PART) {
-    if (work->occupied[i] != 0 && partId == work->partId[i]) {
-      if (latestCounter < work->counter[i]) {
-        latestCounter = work->counter[i];
+    if (state->occupied[i] != 0 && partId == state->partId[i]) {
+      if (latestCounter < state->counter[i]) {
+        latestCounter = state->counter[i];
         latestSector = i;
       }
     }
@@ -312,7 +314,7 @@ u32 Save_FindLatestSector(s32 partId) {
 /// Overwrites sector `index` with a header for no part (SAVE_PART_NONE) and
 /// clears its occupied entry. Returns 0 on success and 1 on failure.
 s32 Save_InvalidateSector(s32 index) {
-  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
+  struct SaveWorkspace *state = Ram_HeapSlots->saveState;
   struct SaveSectorHeader header;
   volatile u32 zero;
 
@@ -324,13 +326,13 @@ s32 Save_InvalidateSector(s32 index) {
   WAIT_DMA();
   header.partId = SAVE_PART_NONE;
   header.counter = 0;
-  SAVE_START_DMA(&header, work->slot, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
+  SAVE_START_DMA(&header, state->slot, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
   WAIT_DMA();
   if (Save_WriteSector(index) != 0)
     return 1;
-  work->occupied[index] = 0;
-  work->partId[index] = SAVE_PART_NONE;
-  work->counter[index] = 0;
+  state->occupied[index] = 0;
+  state->partId[index] = SAVE_PART_NONE;
+  state->counter[index] = 0;
   return 0;
 }
 
@@ -351,15 +353,15 @@ s32 Save_CompareBytes(u8 *left, u8 *right, s32 count) {
 
 /// Returns the highest counter among the copies of part `partId`.
 u32 Save_GetLatestCounter(s32 partId) {
-  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
+  struct SaveWorkspace *state = Ram_HeapSlots->saveState;
   u32 latestCounter;
   u32 i;
 
   latestCounter = 0;
   for (i = 0; i < SAVE_SECTOR_COUNT; i += SAVE_SECTORS_PER_PART) {
-    if (work->occupied[i] != 0 && partId == work->partId[i]) {
-      if (latestCounter < work->counter[i])
-        latestCounter = work->counter[i];
+    if (state->occupied[i] != 0 && partId == state->partId[i]) {
+      if (latestCounter < state->counter[i])
+        latestCounter = state->counter[i];
     }
   }
   return latestCounter;
@@ -369,12 +371,12 @@ u32 Save_GetLatestCounter(s32 partId) {
 /// with its second play time from its next sector, clearing it first; returns
 /// how many files have one.
 s32 Save_LoadFileSummaries(void) {
-  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
+  struct SaveWorkspace *state = Ram_HeapSlots->saveState;
   struct SaveSummary *summary;
   s32 count;
   u32 file;
 
-  summary = work->summary;
+  summary = state->summary;
   count = 0;
   for (file = 0; file < SAVE_FILE_COUNT; file++) {
     u32 sector;
@@ -393,16 +395,16 @@ s32 Save_LoadFileSummaries(void) {
   return count;
 }
 
-/// Unused: reads part SAVE_PART_EXTRA's summary into the save work's extra
-/// summary, with its second play time from its next sector; returns 1, or 0
-/// when the part has no copy.
+/// Unused: reads part SAVE_PART_EXTRA's summary into the extra summary of the
+/// save's state, with its second play time from its next sector; returns 1, or
+/// 0 when the part has no copy.
 s32 Save_LoadExtraSummary(void) {
-  struct SaveWorkspace *work;
+  struct SaveWorkspace *state;
   struct SaveSummary *summary;
   u32 index;
 
-  work = Ram_HeapSlots->saveWork;
-  summary = &work->extra;
+  state = Ram_HeapSlots->saveState;
+  summary = &state->extra;
   Dma_Fill32(0, summary, sizeof(*summary));
   index = Save_FindLatestSector(SAVE_PART_EXTRA);
   if (index < SAVE_SECTOR_COUNT) {
@@ -411,8 +413,8 @@ s32 Save_LoadExtraSummary(void) {
     // layout; nothing in this game calls this reader, and no code names a
     // writer of the part.
     ReadFlash(index + 1, SAVE_BROKEN_SEAL_SECOND_PLAY_TIME_OFFSET,
-              (u8 *)&work->extra.secondPartPlayTime,
-              sizeof(work->extra.secondPartPlayTime));
+              (u8 *)&state->extra.secondPartPlayTime,
+              sizeof(state->extra.secondPartPlayTime));
     return 1;
   }
   return 0;
@@ -420,7 +422,7 @@ s32 Save_LoadExtraSummary(void) {
 
 /// Removes the flash timer handler and frees the save workspace's heap slot,
 /// with every block allocated after it in the same pool.
-void Save_ReleaseWork(void) {
+void Save_ReleaseState(void) {
   Irq_SetHandler(IRQ_TIMER0 + SAVE_FLASH_TIMER, 0, NULL);
   HeapSlot_Release(HEAP_SLOT_SAVE);
 }

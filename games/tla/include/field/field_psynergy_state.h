@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_FIELD_PSYNERGY_WORK_H
-#define ALCHEMY_FIELD_PSYNERGY_WORK_H
+#ifndef ALCHEMY_FIELD_PSYNERGY_STATE_H
+#define ALCHEMY_FIELD_PSYNERGY_STATE_H
 
 /// @file
-/// The field Psynergy's work (FieldEffectWork) and its particle.
+/// The field Psynergy's state (FieldEffectState) and its particle.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -30,7 +30,7 @@ struct FieldPsynergyParticle {
   s32 timer;
 };
 
-/// The effect sprites a field Psynergy has (FieldEffectWork.particles).
+/// The effect sprites a field Psynergy has (FieldEffectState.particles).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 /// The frame of Scoop's dig at which the ground is dug, its stage 1
 /// (FieldPsynergy_Scoop).
@@ -41,10 +41,10 @@ struct FieldPsynergyParticle {
 /// The earth that rises as the ground is dug, 32 pixels square in 256 colours.
 #define SCOOP_PICTURE_SIZE 32
 
-/// Scoop's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the dust and sparkle
+/// Scoop's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the dust and sparkle
 /// tiles, the picture that ripples as the ground is dug, 64 particles, the
 /// sprite that digs and the one left where it dug, and the stage of the cast.
-struct ScoopWork {
+struct ScoopState {
   u8 tiles[1024];
   u8 picture[SCOOP_PICTURE_SIZE * SCOOP_PICTURE_SIZE];
   struct EffectSprite sprites[SCOOP_PARTICLE_COUNT];
@@ -61,10 +61,10 @@ struct ScoopWork {
   s16 mode;
 };
 
-/// The work of a field Psynergy (heap slot HEAP_SLOT_FIELD_EFFECT): its caster
+/// The state of a field Psynergy (heap slot HEAP_SLOT_FIELD_EFFECT): its caster
 /// and target, where it takes place, the map state it restores, its field
 /// effect sprites and the sprite and stage a lasting Psynergy keeps.
-struct FieldEffectWork {
+struct FieldEffectState {
   /// The caster's facing, rounded to four directions, 1/65536 turns.
   u16 angle;
   /// The caster's facing, rounded to eight directions, 1/65536 turns.
@@ -130,19 +130,19 @@ struct FieldEffectWork {
   s16 spriteActive;           ///< nonzero while sprite is drawn
 };
 
-STATIC_ASSERT(sizeof(struct FieldEffectWork) == 2036);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, mainActor) == 16);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, action) == 28);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, childOption) == 52);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, savedCallback) == 56);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, lit) == 65);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, savedShakeX) == 68);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, particles) == 80);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, messageMode) == 1810);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, savedPriorityFlags) == 1816);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, stage) == 1988);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, sprite) == 1992);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, spriteActive) == 2034);
+STATIC_ASSERT(sizeof(struct FieldEffectState) == 2036);
+STATIC_ASSERT(offsetof(struct FieldEffectState, mainActor) == 16);
+STATIC_ASSERT(offsetof(struct FieldEffectState, action) == 28);
+STATIC_ASSERT(offsetof(struct FieldEffectState, childOption) == 52);
+STATIC_ASSERT(offsetof(struct FieldEffectState, savedCallback) == 56);
+STATIC_ASSERT(offsetof(struct FieldEffectState, lit) == 65);
+STATIC_ASSERT(offsetof(struct FieldEffectState, savedShakeX) == 68);
+STATIC_ASSERT(offsetof(struct FieldEffectState, particles) == 80);
+STATIC_ASSERT(offsetof(struct FieldEffectState, messageMode) == 1810);
+STATIC_ASSERT(offsetof(struct FieldEffectState, savedPriorityFlags) == 1816);
+STATIC_ASSERT(offsetof(struct FieldEffectState, stage) == 1988);
+STATIC_ASSERT(offsetof(struct FieldEffectState, sprite) == 1992);
+STATIC_ASSERT(offsetof(struct FieldEffectState, spriteActive) == 2034);
 
 /// Returns the value step tenths of the way from `from` to `to`; the field
 /// Psynergy that uses it steps from 0 to 10, one a frame.

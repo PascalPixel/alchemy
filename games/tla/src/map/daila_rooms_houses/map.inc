@@ -4,15 +4,15 @@ Field_DailaRoomsHouses:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_DailaRoomsHouses, .LField_DailaRoomsHouses_CELL_PICTURES
+	map_block Field_DailaRoomsHouses, .LField_DailaRoomsHouses_CELL_TILES
 	map_block Field_DailaRoomsHouses, .LField_DailaRoomsHouses_SHAPES
 	map_block Field_DailaRoomsHouses, .LField_DailaRoomsHouses_GRID
 	map_block Field_DailaRoomsHouses, .LField_DailaRoomsHouses_SHAPE_GRID
 	map_block Field_DailaRoomsHouses, .LField_DailaRoomsHouses_ANIMATION
 	map_block Field_DailaRoomsHouses, .LField_DailaRoomsHouses_BLEND
 	map_block Field_DailaRoomsHouses, .LField_DailaRoomsHouses_SCENE
-.LField_DailaRoomsHouses_CELL_PICTURES:
-	.incbin "games/tla/src/map/daila_rooms_houses/cell_pictures.delta1.lz"
+.LField_DailaRoomsHouses_CELL_TILES:
+	.incbin "games/tla/src/map/daila_rooms_houses/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_DailaRoomsHouses_SHAPES:
 	.incbin "games/tla/src/map/daila_rooms_houses/shapes.table.lz"

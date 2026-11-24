@@ -20,12 +20,12 @@ enum InnMessageId {
 /// Returns the night's price: the inn's price per guest times the party
 /// members still standing.
 s32 Inn_RoomPrice(s32 innId) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
   s32 guestCount;
   s32 pricePerGuest;
   s32 memberIndex;
 
-  shop = Ram_HeapSlots->menuWork;
+  shop = Ram_HeapSlots->menuState;
   guestCount = 0;
   pricePerGuest = gInn_PricesPerGuest[innId];
   for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
@@ -35,16 +35,16 @@ s32 Inn_RoomPrice(s32 innId) {
   return pricePerGuest * guestCount;
 }
 
-/// Returns the night's price at inn `innId` with the shop's work opened for
+/// Returns the night's price at inn `innId` with the shop's state opened for
 /// it, for an event to quote before checking in.
 s32 Inn_QuoteRoomPrice(s32 innId) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
 
-  Shop_InitializeWork();
-  shop = Ram_HeapSlots->menuWork;
+  Shop_InitializeState();
+  shop = Ram_HeapSlots->menuState;
   shop->shopType = SHOP_TYPE_WEAPONS;
   innId = Inn_RoomPrice(innId);
-  Shop_ReleaseWork();
+  Shop_ReleaseState();
   return innId;
 }
 
@@ -52,14 +52,14 @@ s32 Inn_QuoteRoomPrice(s32 innId) {
 /// sleeps. `innId` is the row of gInn_PricesPerGuest and `actorId` the
 /// innkeeper, whose portrait the lines show.
 s32 Inn_CheckIn(s32 innId, s32 actorId) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
   struct Actor *innkeeper;
   struct Window *innkeeperWindow;
   s32 roomPrice;
   s32 messageBase;
 
-  Shop_InitializeWork();
-  shop = Ram_HeapSlots->menuWork;
+  Shop_InitializeState();
+  shop = Ram_HeapSlots->menuState;
   shop->shopType = SHOP_TYPE_WEAPONS;
 
   innkeeper = Actor_GetByIdFar(actorId);
@@ -78,7 +78,7 @@ s32 Inn_CheckIn(s32 innId, s32 actorId) {
   if (Shop_AskYesNo(0) != 0) {
     Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_COME_AGAIN);
     Window_CloseFar(shop->moneyWindow, 2);
-  } else if ((u32)roomPrice > gMainRoutineWork.coins) {
+  } else if ((u32)roomPrice > gMainRoutineState.coins) {
     Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_NOT_ENOUGH_COINS);
     Window_CloseFar(shop->moneyWindow, 2);
   } else {
@@ -95,7 +95,7 @@ s32 Inn_CheckIn(s32 innId, s32 actorId) {
   }
 
   Window_CloseFar(innkeeperWindow, 2);
-  Shop_ReleaseWork();
+  Shop_ReleaseState();
   return 0;
 }
 
@@ -106,7 +106,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   s32 memberCount;
   s32 memberIndex;
   struct Unit *unit;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   memberCount = Party_ListMembersFar(partyMemberIds);
   Party_AdjustCoinsFar(-roomPrice);
@@ -122,10 +122,10 @@ void Inn_PlaySleep(s32 roomPrice) {
 
   // The night's fades take 60 frames each, a window closing round the leader
   // as The Broken Seal's.
-  work = Ram_HeapSlots->fieldWork;
-  work->transition =
+  state = Ram_HeapSlots->fieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  work->transitionFrames = 60;
+  state->transitionFrames = 60;
   wait(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
@@ -135,5 +135,5 @@ void Inn_PlaySleep(s32 roomPrice) {
   Event_StartScreenTransitionFar();
   Event_WaitTransitionFramesFar();
   wait(30);
-  gFieldWork->transitionFrames = 16;
+  gFieldState->transitionFrames = 16;
 }

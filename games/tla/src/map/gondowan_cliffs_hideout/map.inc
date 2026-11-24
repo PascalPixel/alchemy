@@ -4,15 +4,15 @@ Field_GondowanCliffsHideout:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_GondowanCliffsHideout, .LField_GondowanCliffsHideout_CELL_PICTURES
+	map_block Field_GondowanCliffsHideout, .LField_GondowanCliffsHideout_CELL_TILES
 	map_block Field_GondowanCliffsHideout, .LField_GondowanCliffsHideout_SHAPES
 	map_block Field_GondowanCliffsHideout, .LField_GondowanCliffsHideout_GRID
 	map_block Field_GondowanCliffsHideout, .LField_GondowanCliffsHideout_SHAPE_GRID
 	map_block Field_GondowanCliffsHideout, .LField_GondowanCliffsHideout_ANIMATION
 	map_block Field_GondowanCliffsHideout, .LField_GondowanCliffsHideout_BLEND
 	map_block Field_GondowanCliffsHideout, .LField_GondowanCliffsHideout_SCENE
-.LField_GondowanCliffsHideout_CELL_PICTURES:
-	.incbin "games/tla/src/map/gondowan_cliffs_hideout/cell_pictures.delta0.lz"
+.LField_GondowanCliffsHideout_CELL_TILES:
+	.incbin "games/tla/src/map/gondowan_cliffs_hideout/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_GondowanCliffsHideout_SHAPES:
 	.incbin "games/tla/src/map/gondowan_cliffs_hideout/shapes.table.lz"

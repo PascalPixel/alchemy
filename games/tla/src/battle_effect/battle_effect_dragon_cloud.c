@@ -69,7 +69,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   struct ScreenPoint target;
   struct ScreenPoint position;
   DrawRectangle draw[2];
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   s32 drift;
@@ -83,7 +83,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   s32 j;
   s32 angle;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   drift = 0;
   x = 0;
@@ -92,40 +92,41 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-  Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_B, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_B, state->sheet, 1, 1);
   // Darker copies of the trail picture, for the trail's tail.
   for (i = 1; i != DRAGON_CLOUD_TRAIL_LENGTH; i++) {
     for (j = 0; j != DRAGON_CLOUD_TRAIL_PICTURE_BYTES; j++) {
-      s32 shade = work->sheet[DRAGON_CLOUD_TRAIL_PICTURE + j];
+      s32 shade = state->sheet[DRAGON_CLOUD_TRAIL_PICTURE + j];
 
       if (i > DRAGON_CLOUD_TRAIL_BRIGHT) {
         shade = shade - (i - DRAGON_CLOUD_TRAIL_BRIGHT) * 4;
         if (shade < 0)
           shade = 0;
-        work->sheet[DRAGON_CLOUD_TRAIL_PICTURE +
-                    (i - DRAGON_CLOUD_TRAIL_BRIGHT) *
-                        DRAGON_CLOUD_TRAIL_PICTURE_BYTES +
-                    j] = shade;
+        state->sheet[DRAGON_CLOUD_TRAIL_PICTURE +
+                     (i - DRAGON_CLOUD_TRAIL_BRIGHT) *
+                         DRAGON_CLOUD_TRAIL_PICTURE_BYTES +
+                     j] = shade;
       }
     }
   }
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET,
-                             &work->sheet[DRAGON_CLOUD_PUFF_PICTURES], 1, 1);
+                             &state->sheet[DRAGON_CLOUD_PUFF_PICTURES], 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, Ram_MapCellBuffer, 1,
                              0);
   if (args->variant == EFFECT_VARIANT_STRONGER) {
     LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   }
   BattleEffect_FetchRectangleBlitters(args->side, draw);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   // The embers and flashes thrown at the strike wait at the target: the first
   // gDragonCloud_SparkCounts[variant] are drawn as embers, the rest play the
   // flash pictures and rise more slowly.
   actor = (struct Actor *)BattleObject_GetFar(args->targets[0])->object;
   for (i = 0; i != DRAGON_CLOUD_EMBERS + DRAGON_CLOUD_FLASHES; i++) {
-    particle = &work->particles[DRAGON_CLOUD_FIRST_EMBER + i];
+    particle = &state->particles[DRAGON_CLOUD_FIRST_EMBER + i];
     SET_POSITION(particle, actor->x.fixed, 0, actor->z.fixed);
     if (i >= gDragonCloud_SparkCounts[args->variant]) {
       particle->velocityX = ((Random16() & 63) - 32) << 14;
@@ -154,7 +155,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   // The eight puffs, on an arc over the user, each two frames after the last.
   for (i = 0, angle = -DEGtoANG(90); i != DRAGON_CLOUD_PUFFS;
        angle += TRIG_TURN / 16, i++) {
-    particle = &work->particles[i];
+    particle = &state->particles[i];
     if (args->side == EFFECT_SIDE_PARTY)
       particle->x =
           FIXEDtoINT(Trig_Sin(angle) * DRAGON_CLOUD_PUFF_RADIUS_X) + 88;
@@ -168,7 +169,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   path = Resource_GetTableEntry(RESOURCE_DUAL_STREAM_PATH);
 
   for (frame = 0; frame != DRAGON_CLOUD_FRAMES; frame++) {
-    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraState;
 
     if (frame == DRAGON_CLOUD_STRIKE_FRAME) {
       if (args->variant == EFFECT_VARIANT_BASIC)
@@ -202,12 +203,12 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
        * BattleEffect_RunHaures and BattleEffect_RunUlysses read it to draw
        * with, and unused here; as no width at all. */
       width = gBattleEffect_PuffArcPictureWidths[picture];
-      draw[0](canvas, &work->sheet[offset + DRAGON_CLOUD_PUFF_PICTURES],
+      draw[0](canvas, &state->sheet[offset + DRAGON_CLOUD_PUFF_PICTURES],
               56 - gBattleEffect_PuffArcPictureWidths[picture] / 2,
               gBattleEffect_PuffArcPictureBiasY[picture] + 60,
               gBattleEffect_PuffArcPictureWidths[picture],
               gBattleEffect_PuffArcPictureHeights[picture]);
-      DRAGON_CLOUD_DRAW_PUFF(draw[1], canvas, work->sheet, picture,
+      DRAGON_CLOUD_DRAW_PUFF(draw[1], canvas, state->sheet, picture,
                              64 - gBattleEffect_PuffArcPictureWidths[picture] /
                                       2,
                              gBattleEffect_PuffArcPictureBiasY[picture] + 60);
@@ -278,13 +279,13 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
         trail[j].y = trail[j - 1].y;
         if (j > DRAGON_CLOUD_TRAIL_BRIGHT)
           draw[0](canvas,
-                  &work->sheet[DRAGON_CLOUD_TRAIL_PICTURE +
-                               (j - DRAGON_CLOUD_TRAIL_BRIGHT) *
-                                   DRAGON_CLOUD_TRAIL_PICTURE_BYTES],
+                  &state->sheet[DRAGON_CLOUD_TRAIL_PICTURE +
+                                (j - DRAGON_CLOUD_TRAIL_BRIGHT) *
+                                    DRAGON_CLOUD_TRAIL_PICTURE_BYTES],
                   trail[j].x - DRAGON_CLOUD_TRAIL_WIDTH / 2, trail[j].y,
                   DRAGON_CLOUD_TRAIL_WIDTH, DRAGON_CLOUD_TRAIL_HEIGHT);
         else
-          draw[0](canvas, &work->sheet[DRAGON_CLOUD_TRAIL_PICTURE],
+          draw[0](canvas, &state->sheet[DRAGON_CLOUD_TRAIL_PICTURE],
                   trail[j].x - DRAGON_CLOUD_TRAIL_WIDTH / 2, trail[j].y,
                   DRAGON_CLOUD_TRAIL_WIDTH, DRAGON_CLOUD_TRAIL_HEIGHT);
       }
@@ -316,7 +317,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       lift = drift / 4 + 2;
       trail[0].x = position.x;
       trail[0].y = position.y - 20;
-      draw[0](canvas, &work->sheet[lift * PICTURE_BYTES(DRAGON_CLOUD_FLAME)],
+      draw[0](canvas, &state->sheet[lift * PICTURE_BYTES(DRAGON_CLOUD_FLAME)],
               trail[0].x - DRAGON_CLOUD_FLAME_WIDTH / 2, trail[0].y - 2,
               DRAGON_CLOUD_FLAME_WIDTH, DRAGON_CLOUD_FLAME_HEIGHT);
 
@@ -343,7 +344,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     // flashes play the flash pictures.
     if (frame >= DRAGON_CLOUD_STRIKE_FRAME) {
       for (i = 0; i != DRAGON_CLOUD_EMBERS + DRAGON_CLOUD_FLASHES; i++) {
-        particle = &work->particles[DRAGON_CLOUD_FIRST_EMBER + i];
+        particle = &state->particles[DRAGON_CLOUD_FIRST_EMBER + i];
         if (particle->y >= 0) {
           s32 size;
 
@@ -421,24 +422,24 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     }
 
     if (frame == DRAGON_CLOUD_STRIKE_FRAME) {
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
       EFFECT_STRIKE_TARGET(args, 0, 8, KNOCKBACK_HOP);
     }
     if (frame == 50) {
-      work->shakeFrames = 12;
+      state->shakeFrames = 12;
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
     }
     // The puffs.
     if (frame > 49) {
       for (i = 0; i != DRAGON_CLOUD_PUFFS; i++) {
-        particle = &work->particles[i];
+        particle = &state->particles[i];
         if (particle->variant >= 0 &&
             particle->variant < 2 * DRAGON_CLOUD_ANIMATION_PICTURES) {
           s32 picture = particle->variant / 2;
 
           DRAGON_CLOUD_DRAW_PUFF(
-              draw[1], canvas, work->sheet, picture,
+              draw[1], canvas, state->sheet, picture,
               particle->x - gBattleEffect_PuffArcPictureWidths[picture] / 2,
               particle->y + gBattleEffect_PuffArcPictureBiasY[picture]);
         }
@@ -446,7 +447,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

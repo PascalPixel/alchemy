@@ -6,11 +6,11 @@
 
 #include "types.h"
 
-struct SelectionMenuWork;
+struct SelectionMenuState;
 struct SelectionNode;
 
 /// Returns the icon of the row the hand points at (cursorIndex).
 struct SelectionNode *
-SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen);
+SelectionMenu_GetCursorNode(struct SelectionMenuState *screen);
 
 #endif

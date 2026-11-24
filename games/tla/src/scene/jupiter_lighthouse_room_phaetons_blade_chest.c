@@ -27,7 +27,7 @@
 #include "types.h"
 #include "macros.h"
 #include "field/scene_tables.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
@@ -133,7 +133,7 @@ struct Actor *Whirlwind_Spawn();
 /// Hover hall's stairs down between the statues, cell (34, 17), are walled
 /// off, so that he cannot drift down them.
 void JupiterLighthouse_StartHovering(void) {
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_HOVER)
+  if (gMainRoutineState.movementMode == LEADER_MOVEMENT_HOVER)
     FieldMapGrid_SetCellBehavior(toFIXED(544), toFIXED(272),
                                  MAPGRID_LAYER_GROUND, CELL_BEHAVIOR_WALL);
 }
@@ -181,7 +181,7 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
   struct Actor *motion;
 
   if (gWhirlwindRiding == 0 &&
-      Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > 0) {
+      Actor_Get(gMainRoutineState.leaderActorId)->y.fixed > 0) {
     actor = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
     if (id == TRIGGER_UPPER_WHIRLWIND_SOUTHWEST) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 488, 280);
@@ -211,7 +211,7 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
 /// it gives way under him (a tile not yet cracked takes one step first) and
 /// the party falls to the cracked hall below.
 void JupiterLighthouse_StepOnLowerCrackedTile(s32 arg) {
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
+  if (Actor_Get(gMainRoutineState.leaderActorId)->y.fixed == 0 &&
       CrackedTile_Step(arg) != 0)
     FieldEvent_SetExitRequest(THROUGH_CRACKED_TILE);
 }
@@ -227,14 +227,14 @@ void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
   s32 x;
   s32 z;
 
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0) {
-    leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  if (Actor_Get(gMainRoutineState.leaderActorId)->y.fixed == 0) {
+    leader = Actor_Get(gMainRoutineState.leaderActorId);
     x = FIELD_CELL(leader->x.fixed);
     z = FIELD_CELL(leader->z.fixed);
     if (x == 18 && z == 34)
-      FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
+      FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 3);
     if (x == 8 && z == 39)
-      FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
+      FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 3);
     if (CrackedTile_Step(arg) != 0)
       FieldEvent_SetExitRequest(THROUGH_UPPER_CRACKED_TILE);
   }
@@ -250,7 +250,7 @@ void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
   s32 x;
   s32 z;
 
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   if (leader->y.fixed <= 0) {
     JupiterLighthouse_StepOnLowerCrackedTile(arg);
   } else {
@@ -281,23 +281,23 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// (`FieldActor_SetSpritePriority`), the cracked tiles, and the landing when
 /// the party fell through a crack from the hall above.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  work->transition =
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldActor_SetSpritePriority(FIELD_TREASURE_ACTOR, 3);
   gWhirlwindRiding = 0;
   Actor_Get(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
-  if ((u16)(gMainRoutineWork.entrance - ENTRANCE_HOVER_HALL_SOUTH) <=
+  if ((u16)(gMainRoutineState.entrance - ENTRANCE_HOVER_HALL_SOUTH) <=
       ENTRANCE_HOVER_HALL_NORTH - ENTRANCE_HOVER_HALL_SOUTH) {
     CrackedTile_Find(CELL_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80,
                      FLAG_AREA_TEMP_80, 48, 1);
     CrackedTile_PlaceLanding(
         0, 0,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
-  } else if (gMainRoutineWork.entrance == ENTRANCE_LOWER_HALL_NORTH ||
-             gMainRoutineWork.entrance == ENTRANCE_LOWER_HALL_SOUTH ||
-             gMainRoutineWork.entrance == THROUGH_CRACKED_TILE) {
+  } else if (gMainRoutineState.entrance == ENTRANCE_LOWER_HALL_NORTH ||
+             gMainRoutineState.entrance == ENTRANCE_LOWER_HALL_SOUTH ||
+             gMainRoutineState.entrance == THROUGH_CRACKED_TILE) {
     CrackedTile_Find(CELL_BEHAVIOR_UPPER_CRACKED_TILE, FLAG_SCENE_TEMP_80,
                      FLAG_AREA_TEMP_80, 49, 1);
     CrackedTile_PlaceLanding(

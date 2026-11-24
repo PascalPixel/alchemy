@@ -37,18 +37,18 @@
 /// height rather than its depth, reaching east or west as it goes and clinging
 /// while the pad is not held. Refuses a step into a wall, from or onto a cell
 /// that is not MAP_CELL_CLIMBABLE, or onto ground too high (up) or too low
-/// (down), and records the held keys in the field work. Returns 1.
+/// (down), and records the held keys in the field state. Returns 1.
 s32 Actor_MoveByKeys(struct Actor *actor) {
   struct FieldPosition position;
   struct MapCell *sourceCell;
   struct MapCell *destinationCell;
-  struct FieldWork *work;
+  struct FieldState *state;
   u16 angle;
   s32 animation;
   s32 collisionFlags;
   s32 deltaZ;
   FIXED terrainHeight;
-  struct MapWork *map;
+  struct MapState *map;
 
   actor->acceleration = toFIXED(1) / 4;
   animation = ANIM_LEADER_CLING;
@@ -102,13 +102,13 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
       }
     }
   }
-  work = Ram_HeapSlots->fieldWork;
-  if (work != NULL) {
+  state = Ram_HeapSlots->fieldState;
+  if (state != NULL) {
     if (collisionFlags & PLAYER_STEP_BLOCKED)
-      work->blockedSteps++;
+      state->blockedSteps++;
     else
-      work->blockedSteps = 0;
-    work->heldKeys = gInput.held;
+      state->blockedSteps = 0;
+    state->heldKeys = gInput.held;
   }
   Actor_SelectAnimation(actor, animation);
   if (collisionFlags != 0) {
@@ -132,7 +132,7 @@ s32 Actor_CrossRope(struct Actor *actor) {
   struct FieldPosition position;
   s32 collisionFlags;
   struct Sprite *sprite;
-  struct RopeWork *rope;
+  struct RopeState *rope;
   s32 bestDistance;
   s32 animationSpeed;
   s32 speed;
@@ -144,7 +144,7 @@ s32 Actor_CrossRope(struct Actor *actor) {
   s32 turn;
   struct Actor *first;
   struct Actor *second;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   sprite = actor->sprite;
   /* FAKEMATCH(dead): the rope slot read through its address. */
@@ -172,8 +172,8 @@ s32 Actor_CrossRope(struct Actor *actor) {
     bestDistance = ROPE_NODE_DISTANCE_NONE;
     if (rope == NULL) {
       collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
-      /* FAKEMATCH(dead): the event work slot copied onto itself. */
-      Ram_HeapSlots->fieldWork = Ram_HeapSlots->fieldWork;
+      /* FAKEMATCH(dead): the event state slot copied onto itself. */
+      Ram_HeapSlots->fieldState = Ram_HeapSlots->fieldState;
       goto done;
     }
     for (count = 0; count < ROPE_NODE_COUNT; count++, node++) {
@@ -222,13 +222,13 @@ s32 Actor_CrossRope(struct Actor *actor) {
     }
   }
 done:
-  work = Ram_HeapSlots->fieldWork;
-  if (work != NULL) {
+  state = Ram_HeapSlots->fieldState;
+  if (state != NULL) {
     if (collisionFlags & PLAYER_STEP_BLOCKED)
-      work->blockedSteps++;
+      state->blockedSteps++;
     else
-      work->blockedSteps = 0;
-    work->heldKeys = gInput.held;
+      state->blockedSteps = 0;
+    state->heldKeys = gInput.held;
   }
   Actor_SelectAnimation(actor, ANIM_LEADER_CROSS_ROPE);
   Actor_SetAnimationSpeed(actor, animationSpeed);
@@ -264,14 +264,14 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
   s32 collisionFlags;
   struct Sprite *sprite;
   s32 animation;
-  struct TightropeWork *tightrope;
+  struct TightropeState *tightrope;
   struct TightropeNode *best;
   struct TightropeNode *point;
   struct TightropeSlot *slot;
   s32 bestDistance;
   u16 angle;
   s32 count;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   sprite = actor->sprite;
   animation = ANIM_STAND;
@@ -294,8 +294,8 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
     bestDistance = ROPE_NODE_DISTANCE_NONE;
     if (tightrope == NULL) {
       collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
-      /* FAKEMATCH(dead): the event work slot copied onto itself. */
-      Ram_HeapSlots->fieldWork = Ram_HeapSlots->fieldWork;
+      /* FAKEMATCH(dead): the event state slot copied onto itself. */
+      Ram_HeapSlots->fieldState = Ram_HeapSlots->fieldState;
     } else {
       for (count = 0; count < ROPE_NODE_COUNT; count++, point++) {
         if (point->kind == 1) {
@@ -331,13 +331,13 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
       }
     }
   }
-  work = Ram_HeapSlots->fieldWork;
-  if (work != NULL) {
+  state = Ram_HeapSlots->fieldState;
+  if (state != NULL) {
     if (collisionFlags & PLAYER_STEP_BLOCKED)
-      work->blockedSteps++;
+      state->blockedSteps++;
     else
-      work->blockedSteps = 0;
-    work->heldKeys = gInput.held;
+      state->blockedSteps = 0;
+    state->heldKeys = gInput.held;
   }
   if (collisionFlags == 0)
     animation = ANIM_WALK;
@@ -386,22 +386,22 @@ void Sand_JitterGrain(struct Actor *actor) {
 /// and otherwise, while FLAG_SAND_CANNOT_END is clear, asks for Sand again
 /// (ABILITY_SAND, packed) and returns 1.
 s32 Sand_CheckEndKeys(struct Actor *actor) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 pressed = 0;
 
-  if (work == NULL)
+  if (state == NULL)
     return 0;
-  if (gInput.pressed & gMainRoutineWork.selectKeys)
+  if (gInput.pressed & gMainRoutineState.selectKeys)
     pressed = 1;
-  else if (gInput.pressed & gMainRoutineWork.aKeys)
+  else if (gInput.pressed & gMainRoutineState.aKeys)
     pressed = 1;
-  else if (gInput.pressed & gMainRoutineWork.startKeys)
+  else if (gInput.pressed & gMainRoutineState.startKeys)
     pressed = 1;
   if (pressed) {
     if (Actor_CheckBlockedFar(actor)) {
       Sound_PlayFar(SE_MENU_CANCEL);
     } else if (!GameFlag_Get(FLAG_SAND_CANNOT_END)) {
-      work->psynergy = ABILITY_SAND | ACT_PACKED;
+      state->psynergy = ABILITY_SAND | ACT_PACKED;
       return 1;
     }
   }
@@ -623,14 +623,14 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     }
   counted:
     {
-      struct FieldWork *work = Ram_HeapSlots->fieldWork;
+      struct FieldState *state = Ram_HeapSlots->fieldState;
 
-      if (work != NULL) {
+      if (state != NULL) {
         if (collision & PLAYER_STEP_BLOCKED)
-          work->blockedSteps++;
+          state->blockedSteps++;
         else
-          work->blockedSteps = 0;
-        work->heldKeys = gInput.held;
+          state->blockedSteps = 0;
+        state->heldKeys = gInput.held;
       }
     }
     Actor_SelectAnimation(actor, 1);
@@ -681,7 +681,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         effect->motionFlags = 0;
         Sound_PlayFar(SE_SAND_MOVE);
         if (sprite != NULL) {
-          struct FieldWork *work = Ram_HeapSlots->fieldWork;
+          struct FieldState *state = Ram_HeapSlots->fieldState;
 
           Sprite_StartAnimation(sprite, 1);
           sprite->flags = 0;
@@ -692,7 +692,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
           {
             u8 mask = 3;
 
-            sprite->priority = work->sandTrailPriority & mask;
+            sprite->priority = state->sandTrailPriority & mask;
           }
         }
         *wakeTimer = 5;
@@ -709,7 +709,7 @@ done:
 /// map (the Sand Psynergy). Moves him on the world map by the direction pad
 /// at a fixed pace (faster while L repeats), trying six turned headings when
 /// the way is blocked, as Actor_MoveOnWorldMap does; records the held keys in
-/// the event work and leaves a puff of sand (SPRITE_SAND_PUFF) behind it every
+/// the event state and leaves a puff of sand (SPRITE_SAND_PUFF) behind it every
 /// fifth frame it moves.
 s32 Actor_MoveAsSandOnWorldMap(struct Actor *actor) {
   struct FieldPosition position;
@@ -730,7 +730,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *actor) {
   struct PlayerSprite *playerSprite;
   struct Actor *ripple;
   struct PlayerSprite *rippleSprite;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   collision = 0;
   count = 0;
@@ -797,13 +797,13 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *actor) {
   }
 
 update_object:
-  work = Ram_HeapSlots->fieldWork;
-  if (work != NULL) {
+  state = Ram_HeapSlots->fieldState;
+  if (state != NULL) {
     if ((collision & PLAYER_STEP_BLOCKED) != 0)
-      work->blockedSteps++;
+      state->blockedSteps++;
     else
-      work->blockedSteps = 0;
-    work->heldKeys = gInput.held;
+      state->blockedSteps = 0;
+    state->heldKeys = gInput.held;
   }
   Actor_SelectAnimation(actor, 1);
 

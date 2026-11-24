@@ -22,15 +22,15 @@
 #define CYCLONE_ARC_PIXEL_STEP 368
 
 /// Clears the weeds the Cyclone blew away: for each cell it touched (the field
-/// work's list from FieldPsynergy_GatherNearbyCells) inside the width by
-/// height rectangle at (x, z) of the layer, copies the matching cell picture
+/// state's list from FieldPsynergy_GatherNearbyCells) inside the width by
+/// height rectangle at (x, z) of the layer, copies the matching cell tiles
 /// from the rectangle at (toX, toZ) over it, opens it on layer 2 and records
 /// the copy in gTouchCopies, up to 64. Gaia Rock calls it after a Cyclone.
 void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
                               s16 height, s32 toX, s32 toZ) {
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
-  struct MapLayer *layer = ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers;
+  struct MapLayer *layer = ((struct MapState *)Ram_HeapSlots->mapGrid)->layers;
   struct TouchCell *cell = (struct TouchCell *)field->psynergyCells;
   s32 lift;
   s32 scrollX = FIELD_CELL(layer->offsetX);
@@ -62,8 +62,8 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
       s32 dz = cellZ - top;
       s32 n;
 
-      MapGrid_CopyCellPictureCellsRectFar(toX + dx, toZ + dz, 1, 1, x + dx,
-                                          z + dz);
+      MapGrid_CopyCellTilesCellsRectFar(toX + dx, toZ + dz, 1, 1, x + dx,
+                                        z + dz);
       MapGrid_GetCellAt(FIELD_CELL_ORIGIN(cx), FIELD_CELL_ORIGIN(cz), 2)
           ->collisionCode = 0;
       n = gTouchCopies.count;
@@ -159,13 +159,13 @@ void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
 }
 
 /// Starts Cyclone's 96 leaves, scattered round the caster and spinning, to
-/// blow toward the first cell of FieldWork.psynergyCells (ParticleBurst_Update
+/// blow toward the first cell of FieldState.psynergyCells (ParticleBurst_Update
 /// moves them).
 void ParticleBurst_Start(void) {
-  struct ParticleBurstWork *work =
-      (struct ParticleBurstWork *)Ram_HeapSlots->battleEffect;
-  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct ParticleBurstState *state =
+      (struct ParticleBurstState *)Ram_HeapSlots->battleEffect;
+  struct FieldEffectState *effect = Ram_HeapSlots->fieldEffectState;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *owner = effect->mainActor;
   struct BurstCell *cell = (struct BurstCell *)field->psynergyCells;
   FIXED dx = FIELD_CELL_ORIGIN(cell->x) - owner->x.fixed + toFIXED(8);
@@ -177,17 +177,17 @@ void ParticleBurst_Start(void) {
   s32 vram;
   s32 i;
 
-  work->frame = 0;
-  work->active = 1;
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LEAVES), work);
+  state->frame = 0;
+  state->active = 1;
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LEAVES), state);
   resource = VramCache_FindFreeEntry();
-  vram = VramCache_Load(resource, 384, work);
-  work->cacheEntry = resource;
-  work->tile = vram;
+  vram = VramCache_Load(resource, 384, state);
+  state->cacheEntry = resource;
+  state->tile = vram;
 
-  for (i = 0, particle = work->particles; i < PARTICLE_BURST_COUNT;
+  for (i = 0, particle = state->particles; i < PARTICLE_BURST_COUNT;
        i++, particle++) {
-    sprite = &work->sprites[i];
+    sprite = &state->sprites[i];
     EffectSprite_Init(sprite, 4, 4, 0, vram);
     sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
     sprite->oam.priority = 0;

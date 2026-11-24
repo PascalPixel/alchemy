@@ -4,15 +4,15 @@ Field_GondowanSettlement:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 60, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_GondowanSettlement, .LField_GondowanSettlement_CELL_PICTURES
+	map_block Field_GondowanSettlement, .LField_GondowanSettlement_CELL_TILES
 	map_block Field_GondowanSettlement, .LField_GondowanSettlement_SHAPES
 	map_block Field_GondowanSettlement, .LField_GondowanSettlement_GRID
 	map_block Field_GondowanSettlement, .LField_GondowanSettlement_SHAPE_GRID
 	map_block Field_GondowanSettlement, .LField_GondowanSettlement_ANIMATION
 	map_block Field_GondowanSettlement, .LField_GondowanSettlement_BLEND
 	map_block Field_GondowanSettlement, .LField_GondowanSettlement_SCENE
-.LField_GondowanSettlement_CELL_PICTURES:
-	.incbin "games/tla/src/map/gondowan_settlement/cell_pictures.delta0.lz"
+.LField_GondowanSettlement_CELL_TILES:
+	.incbin "games/tla/src/map/gondowan_settlement/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_GondowanSettlement_SHAPES:
 	.incbin "games/tla/src/map/gondowan_settlement/shapes.table.lz"

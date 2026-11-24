@@ -4,15 +4,15 @@ Field_DehkanPlateauFullMetalVestChest:
 	map_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 72, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_DehkanPlateauFullMetalVestChest, .LField_DehkanPlateauFullMetalVestChest_CELL_PICTURES
+	map_block Field_DehkanPlateauFullMetalVestChest, .LField_DehkanPlateauFullMetalVestChest_CELL_TILES
 	map_block Field_DehkanPlateauFullMetalVestChest, .LField_DehkanPlateauFullMetalVestChest_SHAPES
 	map_block Field_DehkanPlateauFullMetalVestChest, .LField_DehkanPlateauFullMetalVestChest_GRID
 	map_block Field_DehkanPlateauFullMetalVestChest, .LField_DehkanPlateauFullMetalVestChest_SHAPE_GRID
 	map_block Field_DehkanPlateauFullMetalVestChest, .LField_DehkanPlateauFullMetalVestChest_ANIMATION
 	map_block Field_DehkanPlateauFullMetalVestChest, .LField_DehkanPlateauFullMetalVestChest_BLEND
 	map_block Field_DehkanPlateauFullMetalVestChest, .LField_DehkanPlateauFullMetalVestChest_SCENE
-.LField_DehkanPlateauFullMetalVestChest_CELL_PICTURES:
-	.incbin "games/tla/src/map/dehkan_plateau_full_metal_vest_chest/cell_pictures.delta0.lz"
+.LField_DehkanPlateauFullMetalVestChest_CELL_TILES:
+	.incbin "games/tla/src/map/dehkan_plateau_full_metal_vest_chest/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_DehkanPlateauFullMetalVestChest_SHAPES:
 	.incbin "games/tla/src/map/dehkan_plateau_full_metal_vest_chest/shapes.table.lz"

@@ -4,15 +4,15 @@ Field_YampiDesertSandPass:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 2, 2, 0xf, 0xf
-	map_block Field_YampiDesertSandPass, .LField_YampiDesertSandPass_CELL_PICTURES
+	map_block Field_YampiDesertSandPass, .LField_YampiDesertSandPass_CELL_TILES
 	map_block Field_YampiDesertSandPass, .LField_YampiDesertSandPass_SHAPES
 	map_block Field_YampiDesertSandPass, .LField_YampiDesertSandPass_GRID
 	map_block Field_YampiDesertSandPass, .LField_YampiDesertSandPass_SHAPE_GRID
 	map_block Field_YampiDesertSandPass, .LField_YampiDesertSandPass_ANIMATION
 	map_block Field_YampiDesertSandPass, .LField_YampiDesertSandPass_BLEND
 	map_block Field_YampiDesertSandPass, .LField_YampiDesertSandPass_SCENE
-.LField_YampiDesertSandPass_CELL_PICTURES:
-	.incbin "games/tla/src/map/yampi_desert_sand_pass/cell_pictures.delta2.lz"
+.LField_YampiDesertSandPass_CELL_TILES:
+	.incbin "games/tla/src/map/yampi_desert_sand_pass/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_YampiDesertSandPass_SHAPES:
 	.incbin "games/tla/src/map/shrine_of_the_sea_god_footprints/shapes.table.lz"

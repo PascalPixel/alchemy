@@ -439,10 +439,10 @@ void Matrix_SetLookAt(FIXED *eye, FIXED *target) {
 
 /// Multiplies the camera at `eye` looking at `target` into gCurrentMatrix.
 void Matrix_LookAt(FIXED *eye, FIXED *target) {
-  MATRIX work;
+  MATRIX state;
 
-  Matrix_BuildLookAt(eye, target, work);
-  Iwram_MultiplyMatrix(work);
+  Matrix_BuildLookAt(eye, target, state);
+  Iwram_MultiplyMatrix(state);
 }
 
 /// Sets the projection from a vertical field of view (1/65536 turns): the focal

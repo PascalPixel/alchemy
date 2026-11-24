@@ -65,7 +65,7 @@
 #include "field/scene_tables.h"
 #include "field/event_inline.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
 #include "field/call.h"
@@ -339,7 +339,7 @@ void Actor_PlaceOnActor(s32 actorId, s32 target);
 void FieldPsynergy_StopMindReadWave(void);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_WEST_INDRA_ISLET)
     return gIslets_WestIndraActorPlacements;
@@ -389,7 +389,7 @@ void Islets_PushLogIntoWater(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_WEST_INDRA_ISLET)
     return gIslets_WestIndraTriggers;
@@ -413,7 +413,7 @@ void Islets_TalkToPengus(void) {
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
     if (Event_GetFlag(FLAG_PENGUS_CHASING_PENGULINA)) {
-      Actor_FaceActor(ACTOR_PENGUS, gMainRoutineWork.leaderActorId, 0);
+      Actor_FaceActor(ACTOR_PENGUS, gMainRoutineState.leaderActorId, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPen);
     } else {
       FieldEvent_SetMessageId((s32)MsgPenPen);
@@ -422,7 +422,7 @@ void Islets_TalkToPengus(void) {
   } else {
     FieldActor_Stop(ACTOR_PENGUS);
     System_Wait(1);
-    Actor_FaceActor(ACTOR_PENGUS, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_PENGUS, gMainRoutineState.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgPenPenExclaimed);
     // "Pen pen!"
     Event_ShowMessage(ACTOR_PENGUS, 0);
@@ -460,7 +460,7 @@ void Islets_TalkToPengulina(void) {
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
     if (Event_GetFlag(FLAG_PENGUS_CHASING_PENGULINA)) {
-      Actor_FaceActor(ACTOR_PENGULINA, gMainRoutineWork.leaderActorId, 0);
+      Actor_FaceActor(ACTOR_PENGULINA, gMainRoutineState.leaderActorId, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPehnnnn);
     } else {
       FieldEvent_SetMessageId((s32)MsgPenPen);
@@ -539,7 +539,7 @@ void Islets_TalkToTreasureHunters(void) {
     FieldEvent_Wait(20);
     Event_SetFlag(FLAG_TREASURE_HUNTERS_LET_SLIP);
   }
-  Actor_FaceActor(ACTOR_TREASURE_HUNTER, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(ACTOR_TREASURE_HUNTER, gMainRoutineState.leaderActorId, 0);
   FieldEvent_SetMessageId((s32)MsgLookWeRe);
   // "Look, we're busy... We can't talk now... Catch us some other time..."
   Event_ShowMessage(ACTOR_TREASURE_HUNTER, 0);
@@ -567,7 +567,7 @@ void Islets_TalkToBird(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_BIRD_TRADED)) {
-    FieldActor_WatchAndSetScript(ACTOR_BIRD, gMainRoutineWork.leaderActorId);
+    FieldActor_WatchAndSetScript(ACTOR_BIRD, gMainRoutineState.leaderActorId);
   }
   FieldEvent_SetMessageId((s32)MsgChirpChirp);
   // "Chirp chirp!"
@@ -589,16 +589,16 @@ void Islets_TradeWithBird(void) {
   FieldEvent_ResolvePendingActions(0);
   if (FieldPartyInventory_FindMember(ITEM_PRETTY_STONE) == -1) {
     if (Event_GetFlag(FLAG_BIRD_TRADED)) {
-      FieldActor_WatchAndSetScript(ACTOR_BIRD, gMainRoutineWork.leaderActorId);
+      FieldActor_WatchAndSetScript(ACTOR_BIRD, gMainRoutineState.leaderActorId);
       FieldEvent_SetMessageId((s32)MsgWhatDoYou);
     } else {
       FieldEvent_SetMessageId((s32)MsgILoveFeeling);
     }
     Event_ShowMessage(ACTOR_BIRD, 0);
   } else {
-    leader = Actor_Get(gMainRoutineWork.leaderActorId);
+    leader = Actor_Get(gMainRoutineState.leaderActorId);
     actor = Actor_Get(ACTOR_BIRD);
-    Actor_FaceActor(ACTOR_BIRD, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_BIRD, gMainRoutineState.leaderActorId, 0);
     FieldActor_Jump(ACTOR_BIRD, 4, 10);
     FieldEvent_SetMessageId((s32)MsgOhMyThat);
     // "Oh my! That stone you have! It's divine! Simply divine! I must have..."
@@ -612,11 +612,11 @@ void Islets_TradeWithBird(void) {
                                          toFIXED(312));
     Actor_SetAnimation(ACTOR_BIRD, 5);
     System_Wait(10);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
+    Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_SOUTH);
     spawned = FieldActor_Create(SPRITE_UNSEEN_MARKER, leader->x.fixed,
                                 toFIXED(152), leader->z.fixed);
     if (spawned != 0) {
-      Actor_SetAnimation(gMainRoutineWork.leaderActorId,
+      Actor_SetAnimation(gMainRoutineState.leaderActorId,
                          ANIM_LEADER_ARMS_RAISED);
       FieldActor_SetItemIcon(spawned, ITEM_RED_CLOTH);
       Actor_SetSpriteFlags(spawned, 0);
@@ -631,7 +631,7 @@ void Islets_TradeWithBird(void) {
     FieldPsynergy_GreyMindReadPalette();
     if (spawned != 0) {
       Actor_Release(spawned);
-      Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
+      Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
     }
     Actor_FaceDirectionAndWait(ACTOR_BIRD, FACING_EAST);
     Event_SetFlag(FLAG_BIRD_TRADED);
@@ -659,7 +659,7 @@ void Islets_TradeWithBird(void) {
     given = FieldActor_Create(SPRITE_UNSEEN_MARKER, leader->x.fixed,           \
                               leader->y.fixed + toFIXED(24), leader->z.fixed); \
     if (given != 0) {                                                          \
-      Actor_SetAnimationById(gMainRoutineWork.leaderActorId,                   \
+      Actor_SetAnimationById(gMainRoutineState.leaderActorId,                  \
                              ANIM_LEADER_ARMS_RAISED);                         \
       given->motionFlags = off;                                                \
       Actor_SetItemIcon(given, ITEM_MILK);                                     \
@@ -671,7 +671,7 @@ void Islets_TradeWithBird(void) {
     PartyInventory_GiveItem(ITEM_MILK, 0);                                     \
     if (given != 0) {                                                          \
       Actor_Release(given);                                                    \
-      Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);      \
+      Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_STAND);     \
     }                                                                          \
     FieldPsynergy_GreyMindReadPalette();                                       \
     GameFlag_Set(FLAG_COW_TRADED);                                             \
@@ -694,21 +694,21 @@ void Islets_TradeWithCow(void) {
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       FieldCamera_SetSpeed(0.8);
       FieldCamera_MoveTo(140, CAMERA_KEEP, 190, 1);
-      Actor_FaceActorById(ACTOR_COW, gMainRoutineWork.leaderActorId, 0);
+      Actor_FaceActorById(ACTOR_COW, gMainRoutineState.leaderActorId, 0);
       asked = MsgAreYouGiving;
       Event_SetMessageId(asked);
       Event_ShowMessageAndWait(ACTOR_COW, 0);
       FieldCamera_WaitForArrival();
       FieldPsynergy_RestoreMindReadPalette();
-      if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
-          0) {
-        leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-        Actor_WatchAndSetScript(ACTOR_COW, gMainRoutineWork.leaderActorId);
-        Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
-        Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 98, 168);
-        Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
+      if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId,
+                                           0) == 0) {
+        leader = Actor_GetById(gMainRoutineState.leaderActorId);
+        Actor_WatchAndSetScript(ACTOR_COW, gMainRoutineState.leaderActorId);
+        Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
+        Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 98, 168);
+        Actor_FaceDirectionAndRefreshById(gMainRoutineState.leaderActorId,
                                           FACING_NORTH);
-        Actor_Jump(gMainRoutineWork.leaderActorId, 4, 10);
+        Actor_Jump(gMainRoutineState.leaderActorId, 4, 10);
         item = FieldActor_Create(SPRITE_UNSEEN_MARKER, toFIXED(104),
                                  toFIXED(24), toFIXED(160));
         // Nothing handed back yet: HAND_BACK sets it.
@@ -722,7 +722,8 @@ void Islets_TradeWithCow(void) {
         Event_Wait(10);
         FieldPsynergy_GreyMindReadPalette();
         Actor_Stop(ACTOR_COW);
-        Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+        Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_EAST,
+                                0);
         Actor_ShowEmoteById(ACTOR_COW, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
         Event_SetMessageId(asked + 1);
         Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_COW, 0);
@@ -741,11 +742,11 @@ void Islets_TradeWithCow(void) {
       FieldCamera_SetSpeed(0.8);
       FieldCamera_MoveTo(140, CAMERA_KEEP, 190, 1);
       Actor_FaceDirection(ACTOR_COW, FACING_SOUTH_SOUTHWEST, 0);
-      Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
-      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 120, 190);
-      Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
+      Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
+      Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 120, 190);
+      Actor_FaceDirectionAndRefreshById(gMainRoutineState.leaderActorId,
                                         FACING_EAST);
-      STEP(gMainRoutineWork.leaderActorId, 132, 190);
+      STEP(gMainRoutineState.leaderActorId, 132, 190);
       item = FieldActor_Create(SPRITE_UNSEEN_MARKER, toFIXED(140), 0,
                                toFIXED(190));
       if (item != 0) {
@@ -754,35 +755,35 @@ void Islets_TradeWithCow(void) {
         item->motionFlags = 0;
         item->retainSpriteCache = 1;
       }
-      STEP(gMainRoutineWork.leaderActorId, 120, 190);
+      STEP(gMainRoutineState.leaderActorId, 120, 190);
       Actor_FaceDirectionById(ACTOR_COW, FACING_SOUTH_SOUTHEAST, 0);
       Actor_Jump(ACTOR_COW, 4, 10);
       Event_ShowMessageAndWait(ACTOR_COW, 0);
-      Actor_WatchAndSetScript(ACTOR_COW, gMainRoutineWork.leaderActorId);
-      STEP(gMainRoutineWork.leaderActorId, 132, 190);
+      Actor_WatchAndSetScript(ACTOR_COW, gMainRoutineState.leaderActorId);
+      STEP(gMainRoutineState.leaderActorId, 132, 190);
       FieldActor_SetPositionAndResetMotion(item, toFIXED(195), 0, toFIXED(115));
-      STEP(gMainRoutineWork.leaderActorId, 120, 190);
+      STEP(gMainRoutineState.leaderActorId, 120, 190);
       Event_Wait(20);
-      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 98, 168);
-      Actor_Jump(gMainRoutineWork.leaderActorId, 4, 10);
+      Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 98, 168);
+      Actor_Jump(gMainRoutineState.leaderActorId, 4, 10);
       Actor_SetPositionAndResetMotion(item, toFIXED(104), toFIXED(24),
                                       toFIXED(160));
       Event_Wait(10);
       FieldPsynergy_RestoreMindReadPalette();
-      Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
+      Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_SOUTH);
       FieldMessage_Show(noticed + 2, 1);
-      (gFieldWork->message)++;
+      (gFieldState->message)++;
       FieldPsynergy_GreyMindReadPalette();
       Actor_Jump(ACTOR_COW, 6, 10);
       Event_SetMessageId(noticed + 3);
       Event_ShowMessageAndWait(ACTOR_COW, 0);
       Actor_Stop(ACTOR_COW);
-      Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
+      Actor_FaceDirectionAndRefreshById(gMainRoutineState.leaderActorId,
                                         FACING_EAST);
       FieldPsynergy_RestoreMindReadPalette();
-      if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+      if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId,
                                                 0) == 0) {
-        item = Actor_GetById(gMainRoutineWork.leaderActorId);
+        item = Actor_GetById(gMainRoutineState.leaderActorId);
         FieldPsynergy_GreyMindReadPalette();
         Actor_ShowEmoteById(ACTOR_COW, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
         Event_SetMessageId(noticed + 4);
@@ -793,12 +794,12 @@ void Islets_TradeWithCow(void) {
         Actor_ShowEmoteById(ACTOR_COW, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
         Event_SetMessageId(noticed + 7);
         Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_COW, 0);
-        Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
+        Actor_FaceDirectionAndRefreshById(gMainRoutineState.leaderActorId,
                                           FACING_NORTH);
-        Actor_Jump(gMainRoutineWork.leaderActorId, 4, 10);
+        Actor_Jump(gMainRoutineState.leaderActorId, 4, 10);
         if (item != 0)
           Actor_Release(item);
-        Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId,
+        Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId,
                                    FACING_SOUTH);
         Event_SetFlag(FLAG_RED_CLOTH_REFUSED);
       }
@@ -824,7 +825,8 @@ struct Actor *Islets_ShowItemAbove(struct Actor *actor, s32 value) {
   spawned = FieldActor_Create(SPRITE_UNSEEN_MARKER, actor->x.fixed,
                               actor->y.fixed + toFIXED(24), actor->z.fixed);
   if (spawned != 0) {
-    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId,
+                       ANIM_LEADER_ARMS_RAISED);
     spawned->motionFlags = 0;
     FieldActor_SetItemIcon(spawned, value);
     Actor_SetSpriteFlags(spawned, 0);
@@ -870,12 +872,12 @@ void Islets_TradeWithDog(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (FieldPartyInventory_FindMember(ITEM_MILK) != -1) {
-    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+    leader = Actor_GetById(gMainRoutineState.leaderActorId);
     trader = Actor_GetById(ACTOR_DOG);
     // No turtle held up yet, and the dog west of Felix until seen otherwise.
     gift = 0;
     right = 0;
-    Actor_FaceActor(ACTOR_DOG, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_DOG, gMainRoutineState.leaderActorId, 0);
     trader->update = Actor_EmitWadingSplashes;
     FieldActor_Jump(ACTOR_DOG, 4, 10);
     trader->update = 0;
@@ -884,20 +886,20 @@ void Islets_TradeWithDog(void) {
     Event_ShowMessage(ACTOR_DOG, 0);
     if (leader->x.fixed > trader->x.fixed)
       right = 1;
-    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+    Actor_SetSpeed(gMainRoutineState.leaderActorId, 1.6);
     Actor_SetSpeed(ACTOR_DOG, 1.6);
     if (right) {
       Actor_FaceDirection(ACTOR_DOG, FACING_EAST, 0);
-      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 296, 856);
-      Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
+      Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 296, 856);
+      Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_WEST);
       item = Islets_ShowItemAbove(leader, ITEM_MILK);
       trader->update = Actor_EmitWadingSplashes;
       Actor_RunScriptAndWait(ACTOR_DOG, gIslets_DogHopsFacingEastScript);
       trader->update = 0;
     } else {
       Actor_FaceDirection(ACTOR_DOG, FACING_WEST, 0);
-      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 264, 856);
-      Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
+      Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 264, 856);
+      Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_EAST);
       item = Islets_ShowItemAbove(leader, ITEM_MILK);
       trader->update = Actor_EmitWadingSplashes;
       Actor_RunScriptAndWait(ACTOR_DOG, gIslets_DogHopsFacingWestScript);
@@ -905,7 +907,7 @@ void Islets_TradeWithDog(void) {
     }
     // "Hah hah hah! Are you going to give me that milk? Are you? Huh? Huh!?..."
     Event_ShowMessage(ACTOR_DOG, 0);
-    FieldActor_WatchAndSetScript(ACTOR_DOG, gMainRoutineWork.leaderActorId);
+    FieldActor_WatchAndSetScript(ACTOR_DOG, gMainRoutineState.leaderActorId);
     if (item != 0) {
       void (*splash)(void);
       item->collisionFlags = ACTOR_NOT_TARGETED | ACTOR_SOLID;
@@ -913,31 +915,33 @@ void Islets_TradeWithDog(void) {
       splash = Actor_EmitWadingSplashes;
       if (right) {
         leader->update = splash;
-        Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 296, 840);
+        Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 296, 840);
         leader->update = 0;
-        Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
+        Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId,
+                                   FACING_WEST);
         leader->update = splash;
-        STEP(gMainRoutineWork.leaderActorId, 288, 840);
+        STEP(gMainRoutineState.leaderActorId, 288, 840);
         FieldActor_SetPositionAndResetMotion(item, toFIXED(280), 0,
                                              toFIXED(840));
-        STEP(gMainRoutineWork.leaderActorId, 296, 840);
+        STEP(gMainRoutineState.leaderActorId, 296, 840);
         leader->update = 0;
-        FieldActor_Stop(gMainRoutineWork.leaderActorId);
+        FieldActor_Stop(gMainRoutineState.leaderActorId);
         System_Wait(1);
         trader->update = splash;
         STEP(ACTOR_DOG, 292, 844);
       } else {
         leader->update = splash;
-        Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 264, 840);
+        Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 264, 840);
         leader->update = 0;
-        Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
+        Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId,
+                                   FACING_EAST);
         leader->update = splash;
-        STEP(gMainRoutineWork.leaderActorId, 272, 840);
+        STEP(gMainRoutineState.leaderActorId, 272, 840);
         FieldActor_SetPositionAndResetMotion(item, toFIXED(280), 0,
                                              toFIXED(840));
-        STEP(gMainRoutineWork.leaderActorId, 264, 840);
+        STEP(gMainRoutineState.leaderActorId, 264, 840);
         leader->update = 0;
-        FieldActor_Stop(gMainRoutineWork.leaderActorId);
+        FieldActor_Stop(gMainRoutineState.leaderActorId);
         System_Wait(1);
         trader->update = splash;
         STEP(ACTOR_DOG, 268, 844);
@@ -953,17 +957,17 @@ void Islets_TradeWithDog(void) {
     PartyInventory_Remove(ITEM_MILK);
     Party_GiveItem(giftItem, 0);
     FieldPsynergy_GreyMindReadPalette();
-    Actor_GetById(gMainRoutineWork.leaderActorId)->facing = FACING_SOUTH;
+    Actor_GetById(gMainRoutineState.leaderActorId)->facing = FACING_SOUTH;
     if (gift != 0) {
       Actor_Release(gift);
-      Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
+      Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
     }
     Actor_FaceDirectionAndWait(ACTOR_DOG, FACING_NORTH);
     Event_SetFlag(FLAG_DOG_TRADED);
     Event_SetFlag(FLAG_DOG_JUST_TRADED);
   } else {
     if (Event_GetFlag(FLAG_DOG_TRADED)) {
-      FieldActor_WatchAndSetScript(ACTOR_DOG, gMainRoutineWork.leaderActorId);
+      FieldActor_WatchAndSetScript(ACTOR_DOG, gMainRoutineState.leaderActorId);
       if (Event_GetFlag(FLAG_DOG_JUST_TRADED))
         Event_SetMessageId(MsgIDonTLike);
       else
@@ -1003,7 +1007,7 @@ extern struct ActionScript gIslets_SpinScript;
 /// spot, and swims off south with Felix on his back and the little turtle
 /// behind, to the secret spot.
 void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   struct Actor *guide = Actor_Get(ACTOR_LONESOME_GEORGE);
   struct ActionScript script = gIslets_SpinScript;
 
@@ -1035,18 +1039,18 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   PartyInventory_Remove(ITEM_LIL_TURTLE);
   // "Hop on my back!"
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
-  ((struct MindReadWork *)HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ,
-                                              sizeof(struct MindReadWork)))
+  ((struct MindReadState *)HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ,
+                                               sizeof(struct MindReadState)))
       ->counter = MIND_READ_QUIET;
-  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+  Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 1.6);
   leader->update = Actor_EmitWadingSplashes;
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 312, 446);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 312, 446);
   leader->update = 0;
-  FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
-  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 296, 452);
+  FieldActor_Jump(gMainRoutineState.leaderActorId, 6, 0);
+  Actor_MoveToAndWait(gMainRoutineState.leaderActorId, 296, 452);
   leader->update = Islets_RideOnLonesomeGeorge;
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineState.leaderActorId),
                             SPRITE_COLOR_HIDDEN);
   Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
   FieldEvent_Wait(20);
@@ -1064,7 +1068,7 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   Actor_SelectAnimation(gift, 2);
   FieldActor_SetMoveTarget(gift, 288, 0, 538);
   FieldEvent_Wait(20);
-  gFieldWork->transition = ISLETS_RIDE_TRANSITION;
+  gFieldState->transition = ISLETS_RIDE_TRANSITION;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(EXIT_TO_SECRET_SPOT);
@@ -1105,32 +1109,33 @@ void Islets_GiveTurtle(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (PartyInventory_FindMember(ITEM_LIL_TURTLE) != -1) {
-    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+    leader = Actor_GetById(gMainRoutineState.leaderActorId);
     if (GameFlag_Get(FLAG_TURTLE_REFUSED) != 0) {
-      Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+      Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
       /* FAKEMATCH(dead): a set to the splash update, never read: SPAWN sets
        * it before its use. */
       a = (struct Actor *)Actor_EmitWadingSplashes;
       leader->update = Actor_EmitWadingSplashes;
-      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 318, 424);
+      Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 318, 424);
       leader->update = 0;
-      Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+      Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
       Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_NORTH_NORTHEAST);
       message = MsgOhYouRe;
       Event_SetMessageId(message);
       Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
       FieldPsynergy_RestoreMindReadPalette();
       answer =
-          Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
+          Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0);
       if (answer == 0) {
-        Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
-        Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+        Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId,
+                                   FACING_WEST);
+        Actor_SetSpeed(gMainRoutineState.leaderActorId, 1.6);
         leader->update = Actor_EmitWadingSplashes;
-        STEP(gMainRoutineWork.leaderActorId, 302, 424);
+        STEP(gMainRoutineState.leaderActorId, 302, 424);
         SPAWN(a, b, 0)
-        STEP(gMainRoutineWork.leaderActorId, 318, 424);
+        STEP(gMainRoutineState.leaderActorId, 318, 424);
         leader->update = 0;
-        Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST,
+        Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTHWEST,
                             0);
         Islets_LonesomeGeorgeThanks(a);
       } else {
@@ -1144,22 +1149,22 @@ void Islets_GiveTurtle(void) {
       Event_SetMessageId(MsgIMSoVery);
       // "I'm so very sad and lonely. I wish I had a friend to call my own..."
       Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
-      Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
+      Actor_ShowEmoteById(gMainRoutineState.leaderActorId,
                           EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
-      Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+      Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
       leader->update = Actor_EmitWadingSplashes;
       // No little turtle yet: SPAWN creates it.
       a = 0;
-      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 318, 424);
+      Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 318, 424);
       leader->update = 0;
-      Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
-      Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+      Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_WEST);
+      Actor_SetSpeed(gMainRoutineState.leaderActorId, 1.6);
       leader->update = Actor_EmitWadingSplashes;
-      STEP(gMainRoutineWork.leaderActorId, 302, 424);
+      STEP(gMainRoutineState.leaderActorId, 302, 424);
       SPAWN(a, b, 0)
-      STEP(gMainRoutineWork.leaderActorId, 318, 424);
+      STEP(gMainRoutineState.leaderActorId, 318, 424);
       leader->update = 0;
-      Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+      Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
       Actor_ShowEmoteById(ACTOR_LONESOME_GEORGE,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
       Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_NORTH_NORTHWEST);
@@ -1173,8 +1178,8 @@ void Islets_GiveTurtle(void) {
       // "Why don't you set that li'l guy free with me?"
       Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
       FieldPsynergy_RestoreMindReadPalette();
-      if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
-          0) {
+      if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId,
+                                           0) == 0) {
         Islets_LonesomeGeorgeThanks(a);
       } else {
         FieldPsynergy_GreyMindReadPalette();
@@ -1183,9 +1188,10 @@ void Islets_GiveTurtle(void) {
         // "No? Oh... Then lonely I shall stay. But if you change your mind..."
         Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
         Actor_FaceDirection(ACTOR_LONESOME_GEORGE, FACING_SOUTH_SOUTHWEST, 0);
-        Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
+        Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId,
+                                   FACING_WEST);
         leader->update = Actor_EmitWadingSplashes;
-        Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 302, 424);
+        Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 302, 424);
         leader->update = 0;
         if (a != 0)
           Actor_Release(a);
@@ -1193,28 +1199,28 @@ void Islets_GiveTurtle(void) {
       }
     }
   } else if (GameFlag_Get(FLAG_GEORGE_HAS_THE_TURTLE)) {
-    Actor_FaceActor(ACTOR_LONESOME_GEORGE, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_LONESOME_GEORGE, gMainRoutineState.leaderActorId, 0);
     Event_SetMessageId(MsgWantToGo);
     // "Want to go to my secret spot again?"
     Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
     FieldPsynergy_RestoreMindReadPalette();
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0) ==
         0) {
-      struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+      struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
       FieldPsynergy_GreyMindReadPalette();
-      (gFieldWork->message)++;
+      (gFieldState->message)++;
       // "Then hop on my back!"
       Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
-      ((struct MindReadWork *)HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ,
-                                                  sizeof(struct MindReadWork)))
+      ((struct MindReadState *)HeapSlot_AllocEwram(
+           HEAP_SLOT_MIND_READ, sizeof(struct MindReadState)))
           ->counter = MIND_READ_QUIET;
-      FieldActor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+      FieldActor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
       Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_SOUTH_SOUTHWEST);
-      Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-      FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
-      Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 296, 452);
+      Actor_SetSpeed(gMainRoutineState.leaderActorId, 1.6);
+      FieldActor_Jump(gMainRoutineState.leaderActorId, 6, 0);
+      Actor_MoveToAndWait(gMainRoutineState.leaderActorId, 296, 452);
       leader->update = Islets_RideOnLonesomeGeorge;
-      FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+      FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineState.leaderActorId),
                                 SPRITE_COLOR_HIDDEN);
       Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
       FieldEvent_Wait(20);
@@ -1231,7 +1237,7 @@ void Islets_GiveTurtle(void) {
       Actor_GetById(ACTOR_LIL_TURTLE)->update = Actor_EmitWadingSplashes;
       Actor_WalkTo(ACTOR_LIL_TURTLE, 288, 538);
       FieldEvent_Wait(20);
-      gFieldWork->transition = ISLETS_RIDE_TRANSITION;
+      gFieldState->transition = ISLETS_RIDE_TRANSITION;
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
       FieldPsynergy_GreyMindReadPalette();
@@ -1256,7 +1262,7 @@ extern u32 gIslets_LilTurtleSwimsBackScript[];
 /// the island?" With a yes Felix hops on and George swims north with the Li'l
 /// Turtle, back to the Sea of Time Islet; with a no he says to take your time.
 void Islets_RideBackToIsland(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   struct Actor *actor = Actor_Get(ACTOR_LONESOME_GEORGE);
   void (*update)(void);
   s32 result;
@@ -1264,25 +1270,25 @@ void Islets_RideBackToIsland(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_FaceActor(ACTOR_LONESOME_GEORGE, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(ACTOR_LONESOME_GEORGE, gMainRoutineState.leaderActorId, 0);
   FieldEvent_Wait(10);
   FieldEvent_SetMessageId((s32)MsgYouAllSet);
   // "You all set to go back to the island?"
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
   FieldPsynergy_RestoreMindReadPalette();
   result =
-      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
+      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0);
   if (result == 0) {
     FieldPsynergy_GreyMindReadPalette();
     Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
-    ((struct MindReadWork *)HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ,
-                                                sizeof(struct MindReadWork)))
+    ((struct MindReadState *)HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ,
+                                                 sizeof(struct MindReadState)))
         ->counter = MIND_READ_QUIET;
-    FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
-    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-    Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 152, 768);
+    FieldActor_Jump(gMainRoutineState.leaderActorId, 6, 0);
+    Actor_SetSpeed(gMainRoutineState.leaderActorId, 1.6);
+    Actor_MoveToAndWait(gMainRoutineState.leaderActorId, 152, 768);
     leader->update = (ObjectUpdate)Islets_RideOnLonesomeGeorge;
-    FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
+    FieldActor_SetSpriteColor(Actor_Get(gMainRoutineState.leaderActorId),
                               SPRITE_COLOR_HIDDEN);
     Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
     FieldEvent_Wait(20);
@@ -1302,7 +1308,7 @@ void Islets_RideBackToIsland(void) {
     } while (*done == 0);
     PaletteCycle_Stop();
     System_Wait(1);
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
@@ -1323,7 +1329,7 @@ void Islets_RideBackToIsland(void) {
 void Islets_TalkToSailorsSon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_FaceActor(ACTOR_SAILORS_SON, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(ACTOR_SAILORS_SON, gMainRoutineState.leaderActorId, 0);
   FieldEvent_SetMessageId((s32)MsgMyPopS);
   // "My pop's the best sailor in all the Eastern Sea! That's why he can..."
   Event_ShowMessage(ACTOR_SAILORS_SON, 0);
@@ -1335,15 +1341,15 @@ void Islets_TalkToSailorsSon(void) {
 /// the edge of the hut's deck on the Sea of Time Islet: the menu opens, just as
 /// when he talks to nothing.
 void Islets_OpenFieldMenu(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  work->fieldMenu = 1;
+  state->fieldMenu = 1;
 }
 
 /// A task: while Felix is below the hut's deck (less than 40 pixels up), its
 /// two unseen blocks are passed over by talk and Psynergy.
 void Islets_SetDeckBlocksByHeight(void) {
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed < toFIXED(40)) {
+  if (Actor_Get(gMainRoutineState.leaderActorId)->y.fixed < toFIXED(40)) {
     Actor_Get(ACTOR_DECK_BLOCK_A)->collisionFlags |= ACTOR_NOT_TARGETED;
     Actor_Get(ACTOR_DECK_BLOCK_B)->collisionFlags |= ACTOR_NOT_TARGETED;
   } else {
@@ -1391,7 +1397,7 @@ void Islets_StartWaveDma(void) {
 /// way.
 void Islets_FillWaveLines(void) {
   struct MapLayer *layer =
-      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
+      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 *lines = gIslets_WaveLines[gIslets_WaveTableIndex ^ 1];
   FIXED v[2];
   s32 *count = &v[1];
@@ -1432,12 +1438,12 @@ void Islets_PengusGivesPrettyStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(ACTOR_PENGULINA, ANIM_STAND);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 216, 184);
-  FieldPsynergy_StartMindReadWave(gMainRoutineWork.leaderActorId, 9);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 216, 184);
+  FieldPsynergy_StartMindReadWave(gMainRoutineState.leaderActorId, 9);
   FieldEvent_SetMessageId((s32)MsgThankYouSo);
   FieldActor_Jump(ACTOR_PENGUS, 2, 10);
   FieldActor_Jump(ACTOR_PENGUS, 4, 10);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PENGUS, FACING_WEST, 10);
   // "Thank you so much for saving my sweet Pengulina. Allow me to give..."
   Event_ShowMessage(ACTOR_PENGUS, 0);
@@ -1449,9 +1455,9 @@ void Islets_PengusGivesPrettyStone(void) {
   Actor_WalkToAndWait(ACTOR_PENGUS, 232, 186);
   FieldEvent_Wait(1);
   Actor_GetById(ACTOR_PENGUS)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_SOUTH);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_ARMS_RAISED);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   item = Actor_GetById(ACTOR_PRETTY_STONE_ICON);
   item->motionFlags = 0;
   FieldActor_SetItemIcon(item, ITEM_PRETTY_STONE);
@@ -1462,7 +1468,7 @@ void Islets_PengusGivesPrettyStone(void) {
   Party_GiveItem(ITEM_PRETTY_STONE, 0);
   FieldPsynergy_GreyMindReadPalette();
   Actor_SetPosition(ACTOR_PRETTY_STONE_ICON, 0, 0);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
   FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(ACTOR_PENGUS, FACING_NORTH_NORTHWEST);
   Event_SetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE);
@@ -1502,7 +1508,7 @@ void Islets_BirdReturnsToNest(void) {
   Actor_SetAnimation(ACTOR_BIRD, 5);
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldActor_SetSpritePriority(ACTOR_BIRD, 2);
-  Actor_FaceActor(ACTOR_BIRD, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(ACTOR_BIRD, gMainRoutineState.leaderActorId, 0);
   FieldEvent_Wait(10);
   FieldActor_Jump(ACTOR_BIRD, 4, 0);
   Actor_MoveToAndWait(ACTOR_BIRD, 120, 312);
@@ -1519,7 +1525,7 @@ void Islets_BirdReturnsToNest(void) {
 void Islets_JumpDownLedge(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 1);
+  Actor_JumpDownLedge(gMainRoutineState.leaderActorId, 6, 1);
   Event_End();
 }
 
@@ -1532,7 +1538,7 @@ void Islets_JumpDownLedge(void) {
 /// water's edge, where he rises. The event only puts him on the map's upper
 /// layer, which holds the ways open to Sand.
 void Islets_SinkIntoSand(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
 
   leader->layer = 2;
 }
@@ -1540,7 +1546,7 @@ void Islets_SinkIntoSand(void) {
 /// When Sand ends on N Osenia Islet or the Sea of Time Islet, Felix rises out
 /// of the ground where he is and walks on the ground layer again.
 void Islets_RiseFromSand(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
 
   leader->layer = 0;
 }
@@ -1548,7 +1554,7 @@ void Islets_RiseFromSand(void) {
 /// Sets the behaviour of the map cell under a 16.16 position, on the layers
 /// given (ISLETS_GROUND_LAYER, ISLETS_UPPER_LAYER or both).
 void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapCell *lowerCells = map->layers[0].cells;
   struct MapCell *upperCells = map->layers[2].cells;
   s32 index = x / toFIXED(16) + (z / toFIXED(16)) * MAPGRID_SIZE;
@@ -1732,11 +1738,11 @@ void Islets_StepUpOntoShore(void) {
   struct Actor *actor;
 
   if (gInput.held & KEY_UP) {
-    actor = Actor_Get(gMainRoutineWork.leaderActorId);
+    actor = Actor_Get(gMainRoutineState.leaderActorId);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->motionFlags = 0;
-    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 72, 280);
+    Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 72, 280);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     Event_End();
   }
@@ -1752,12 +1758,12 @@ void Islets_StepDownOntoIceberg(void) {
 
   if (gInput.held & KEY_DOWN) {
     frame = gSceneState;
-    actor = Actor_Get(gMainRoutineWork.leaderActorId);
+    actor = Actor_Get(gMainRoutineState.leaderActorId);
     if ((u16)(*frame - 10) > 200) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       actor->motionFlags = 0;
-      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 72, 296);
+      Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 72, 296);
       actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Event_End();
     }
@@ -1824,8 +1830,8 @@ void Islets_ClearSixthPatch(void) {
 /// The door's cell behaviour is the exit he leaves by, and picks its opening
 /// from gIslets_Doors.
 void Islets_OpenDoorAndEnter(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct MainRoutineState *party = &gMainRoutineState;
   struct Actor *actor;
   s16 *exit;
   s32 index;
@@ -1844,7 +1850,7 @@ void Islets_OpenDoorAndEnter(void) {
       actor->y.fixed, actor->z.fixed);
   FieldActor_WaitForMove(actor);
   actor->facing = FACING_NORTH;
-  exit = &work->stepTrigger;
+  exit = &state->stepTrigger;
   index = *exit;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
@@ -1864,7 +1870,7 @@ void Islets_OpenDoorAndEnter(void) {
 /// inside. The cell's behaviour is the exit, and the surf stops moving as the
 /// screen goes.
 void Islets_LeaveByStep(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1872,14 +1878,14 @@ void Islets_LeaveByStep(void) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(work->stepTrigger);
+  FieldEvent_SetExitRequest(state->stepTrigger);
 }
 
 /// Walking north into the door of the thatched hut on stilts by West Indra
 /// Islet's piers (cell (13, 48)), Felix lines up with it and walks inside.
 void Islets_EnterDoor(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct MainRoutineState *party = &gMainRoutineState;
   struct Actor *actor;
 
   actor = Actor_Get(party->leaderActorId);
@@ -1901,7 +1907,7 @@ void Islets_EnterDoor(void) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(work->stepTrigger);
+  FieldEvent_SetExitRequest(state->stepTrigger);
 }
 
 /// Lonesome George swims the party back from his secret spot into the shallows
@@ -1909,21 +1915,21 @@ void Islets_EnterDoor(void) {
 /// are!" Felix hops off, and George says to let him know whenever they want to
 /// go again.
 void Islets_ArriveBackAtIsland(void) {
-  struct FieldWork *work;
-  struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct FieldState *state;
+  struct Actor *owner = Actor_Get(gMainRoutineState.leaderActorId);
   struct Actor *actor = Actor_Get(ACTOR_LONESOME_GEORGE);
 
-  Actor_PlaceOnActor(ACTOR_LONESOME_GEORGE, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_LONESOME_GEORGE, gMainRoutineState.leaderActorId);
   Actor_SetPosition(ACTOR_LIL_TURTLE, 273, 520);
   System_Wait(1);
   actor->facing = FACING_NORTH;
   owner->update = (ObjectUpdate)Islets_RideOnLonesomeGeorge;
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineState.leaderActorId),
                             SPRITE_COLOR_HIDDEN);
   Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
   System_Wait(1);
-  work = Ram_HeapSlots->fieldWork;
-  work->transition =
+  state = Ram_HeapSlots->fieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1937,23 +1943,23 @@ void Islets_ArriveBackAtIsland(void) {
   owner->update = 0;
   actor->update = 0;
   Actor_Get(ACTOR_LIL_TURTLE)->update = 0;
-  FieldPsynergy_StartMindReadWave(gMainRoutineWork.leaderActorId, 9);
+  FieldPsynergy_StartMindReadWave(gMainRoutineState.leaderActorId, 9);
   FieldEvent_SetMessageId((s32)MsgHereWeAre);
   // "Here we are!"
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
   Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_STAND);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 1.6);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineState.leaderActorId),
                             SPRITE_COLOR_NORMAL);
-  FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
-  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 312, 440);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST);
+  FieldActor_Jump(gMainRoutineState.leaderActorId, 6, 0);
+  Actor_MoveToAndWait(gMainRoutineState.leaderActorId, 312, 440);
+  Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_SOUTHWEST);
   // "If you want to go to my secret spot again, just let me know."
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_SOUTH);
-  work = Ram_HeapSlots->fieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state = Ram_HeapSlots->fieldState;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteCycle_Start();
 }
 
@@ -1965,21 +1971,21 @@ extern u32 gIslets_LilTurtleSwimsToSecretSpotScript[];
 /// hops ashore below the cave, and George says to let him know when they want
 /// to go back. The Japanese edition starts no screen transition here.
 void Islets_ArriveAtSecretSpot(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   struct Actor *guide = Actor_Get(ACTOR_LONESOME_GEORGE);
   u8 *done;
 
-  Actor_PlaceOnActor(ACTOR_LONESOME_GEORGE, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_LONESOME_GEORGE, gMainRoutineState.leaderActorId);
   Actor_SetPosition(ACTOR_LIL_TURTLE, 240, 540);
   System_Wait(1);
   guide->facing = FACING_SOUTH;
   leader->update = Islets_RideOnLonesomeGeorge;
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineState.leaderActorId),
                             SPRITE_COLOR_HIDDEN);
   Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
   System_Wait(1);
 #if TLA_PATCH_1 /* The Japanese release leaves the transition word. */
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 #endif
   Event_StartScreenTransition();
@@ -1999,35 +2005,35 @@ void Islets_ArriveAtSecretSpot(void) {
   guide->update = 0;
   Actor_Get(ACTOR_LIL_TURTLE)->update = 0;
   Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_NORTH);
-  FieldPsynergy_StartMindReadWave(gMainRoutineWork.leaderActorId, 9);
+  FieldPsynergy_StartMindReadWave(gMainRoutineState.leaderActorId, 9);
   FieldEvent_SetMessageId(MsgWellHereWe);
   // "Well, here we are."
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
   Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_STAND);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 1.6);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineState.leaderActorId),
                             SPRITE_COLOR_NORMAL);
-  FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
-  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 152, 742);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
+  FieldActor_Jump(gMainRoutineState.leaderActorId, 6, 0);
+  Actor_MoveToAndWait(gMainRoutineState.leaderActorId, 152, 742);
+  Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_SOUTH);
   // "When you want to go back to the island, just let me know."
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_SOUTH);
   PaletteCycle_Start();
 #if TLA_PATCH_1
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 #endif
 }
 
 /// Sets up the islet being entered: the fade in, and the islet's own setup.
 /// Returns 0.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s16 scene;
 
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  scene = gMainRoutineWork.next;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  scene = gMainRoutineState.next;
   if (scene == SCENE_WEST_INDRA_ISLET)
     Islets_InitializeWestIndra();
   else if (scene == SCENE_EAST_TUNDARIA_ISLET)
@@ -2044,7 +2050,7 @@ s32 Scene_Initialize(void) {
 /// A task: while Felix is down in the water among West Indra Islet's piers, the
 /// sailor's two sons up on the pier are passed over by talk and Psynergy.
 void Islets_SetSonsTargetedByHeight(void) {
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > toFIXED(8)) {
+  if (Actor_Get(gMainRoutineState.leaderActorId)->y.fixed > toFIXED(8)) {
     Actor_Get(ACTOR_SAILORS_SON)->collisionFlags &= ~ACTOR_NOT_TARGETED;
     Actor_Get(ACTOR_SAILORS_OTHER_SON)->collisionFlags &= ~ACTOR_NOT_TARGETED;
   } else {
@@ -2057,11 +2063,11 @@ void Islets_SetSonsTargetedByHeight(void) {
 /// other son pacing the pier, and, once the dog has traded, the Milk left in
 /// front of it.
 void Islets_InitializeWestIndra(void) {
-  struct MapWorkGroundEffects *map =
-      (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
+  struct MapStateGroundEffects *map =
+      (struct MapStateGroundEffects *)Ram_HeapSlots->mapGrid;
   struct Actor *spawned;
 
-  if (gMainRoutineWork.entrance == WEST_INDRA_ISLET_FROM_CHAMPA_ROOMS)
+  if (gMainRoutineState.entrance == WEST_INDRA_ISLET_FROM_CHAMPA_ROOMS)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   map->wading = MAP_WADING_UPPER_LEVEL;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_DOG), 0);
@@ -2114,24 +2120,24 @@ void Islets_MoveIceberg(s32 id, s32 column, s32 row) {
 /// TRIGGER_SINK_IN_SEA.
 void Islets_DriftIcebergs(void) {
   u16 *frame = &gSceneState[0];
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   u16 *owed = &gSceneState[1];
   s32 i;
   s32 count;
 
-  if (work->psynergy != 0 || GameFlag_Get(FLAG_REVEAL_SHOWN)) {
+  if (state->psynergy != 0 || GameFlag_Get(FLAG_REVEAL_SHOWN)) {
     for (i = ACTOR_FIRST_ICEBERG; i <= ACTOR_LAST_ICEBERG; i++)
       Actor_GetById(i)->paused = 1;
     return;
   }
   for (i = ACTOR_FIRST_ICEBERG; i <= ACTOR_LAST_ICEBERG; i++)
     Actor_GetById(i)->paused = 0;
-  if (Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed < -toFIXED(12)) {
-    work = Ram_HeapSlots->fieldWork;
+  if (Actor_GetById(gMainRoutineState.leaderActorId)->y.fixed < -toFIXED(12)) {
+    state = Ram_HeapSlots->fieldState;
     for (i = ACTOR_FIRST_ICEBERG; i <= ACTOR_LAST_ICEBERG; i++)
       Actor_GetById(i)->paused = 1;
     {
-      s16 *raised = &work->raisedTrigger;
+      s16 *raised = &state->raisedTrigger;
       s32 trigger = TRIGGER_SINK_IN_SEA;
 
       *raised = trigger;
@@ -2140,7 +2146,7 @@ void Islets_DriftIcebergs(void) {
   }
   count = *owed + 1;
   *owed = count;
-  if (work->pushCell != 0 || (u16)count == 0)
+  if (state->pushCell != 0 || (u16)count == 0)
     return;
   do {
     switch (*frame) {
@@ -2185,9 +2191,9 @@ void Islets_InitializeEastTundaria(void) {
   u16 *next;
   s32 i;
 
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       EAST_TUNDARIA_ISLET_FROM_MIKASALLA_ROOMS_HOUSES)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   i = ACTOR_FIRST_ICEBERG;
@@ -2241,7 +2247,7 @@ void Islets_InitializeEastTundaria(void) {
 void Islets_InitializeNorthOsenia(void) {
   struct Actor *spawned;
 
-  if (gMainRoutineWork.entrance == NORTH_OSENIA_ISLET_FROM_DAILA_ROOMS_HOUSES)
+  if (gMainRoutineState.entrance == NORTH_OSENIA_ISLET_FROM_DAILA_ROOMS_HOUSES)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_COW), 0);
   Actor_SetAnimation(ACTOR_COW, 4);
@@ -2264,14 +2270,14 @@ void Islets_InitializeNorthOsenia(void) {
 /// Sets up SE Angara Islet: the bird, the crates (stacked in one cell once both
 /// have been brought down there) and the puddle (an ice pillar once frozen).
 void Islets_InitializeSoutheastAngara(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_Get(ACTOR_BIRD);
   struct Actor *last;
   s32 set;
 
   map->layers[2].speedX = 0;
   map->layers[2].speedY = 0;
-  if (gMainRoutineWork.entrance == SOUTHEAST_ANGARA_ISLET_FROM_CHAMPA_ROOMS)
+  if (gMainRoutineState.entrance == SOUTHEAST_ANGARA_ISLET_FROM_CHAMPA_ROOMS)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     actor->motionFlags = 0;
@@ -2326,13 +2332,13 @@ enum {
 /// and the Li'l Turtle once given, and the ride's arrival or return by
 /// entrance.
 void Islets_InitializeSeaOfTime(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 done;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Map_SetUpperLevelWading(map);
-  if (gMainRoutineWork.entrance == SEA_OF_TIME_ISLET_FROM_APOJII_ISLANDS_SHOPS)
+  if (gMainRoutineState.entrance == SEA_OF_TIME_ISLET_FROM_APOJII_ISLANDS_SHOPS)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   PaletteCycle_Initialize();
   PaletteCycle_Add(SHALLOWS_SURF_PALETTE, SURF_FIRST_COLOR, SURF_CYCLE_DELAY,
@@ -2354,7 +2360,7 @@ void Islets_InitializeSeaOfTime(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_DECK_BLOCK_B), 0);
   FieldTask_AddFrame(Islets_SetDeckBlocksByHeight, TASK_PASS_FRAME);
   // At the secret spot, by the ride or from the Islet Cave.
-  if ((u16)(gMainRoutineWork.entrance - ENTRANCE_AT_SECRET_SPOT) <= 1) {
+  if ((u16)(gMainRoutineState.entrance - ENTRANCE_AT_SECRET_SPOT) <= 1) {
     Event_SetFlag(FLAG_AT_SECRET_SPOT);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       {
@@ -2366,7 +2372,7 @@ void Islets_InitializeSeaOfTime(void) {
     }
   }
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    s32 entrance = gMainRoutineWork.entrance;
+    s32 entrance = gMainRoutineState.entrance;
 
     if (entrance == ENTRANCE_BACK_FROM_SECRET_SPOT) {
       Islets_ArriveBackAtIsland();
@@ -2408,15 +2414,15 @@ void PaletteCycle_Stop(void) { FieldTask_Remove(PaletteCycle_Step); }
 /// The palette cycles' task: each queued cycle whose timer has run out rotates
 /// its run of colours one place further, unless Psynergy or a menu is open.
 void PaletteCycle_Step(void) {
-  if (gFieldWork->psynergy == 0 && gFieldWork->fieldMenu == 0 &&
-      gFieldWork->pauseMenu == 0) {
-    struct PaletteCycleWork *work = gPaletteWork;
+  if (gFieldState->psynergy == 0 && gFieldState->fieldMenu == 0 &&
+      gFieldState->pauseMenu == 0) {
+    struct PaletteCycleState *state = gPaletteState;
     u8 i;
-    u16 count = work->count & 3;
+    u16 count = state->count & 3;
     u16 buf[16];
 
     for (i = 0; i < count; i++) {
-      struct PaletteCycle *cycle = &work->entries[i];
+      struct PaletteCycle *cycle = &state->entries[i];
       if (cycle->timer == 0) {
         u16 start = cycle->position;
         u16 len = cycle->count;
@@ -2452,11 +2458,11 @@ void Islets_SinkInSea(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DROP_THROUGH_HOLE);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   Actor_SetSpriteFlags(leader, 0);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 18);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, 18);
   FieldEvent_Wait(40);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

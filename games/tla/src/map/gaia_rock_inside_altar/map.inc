@@ -4,15 +4,15 @@ Field_GaiaRockInsideAltar:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_GaiaRockInsideAltar, .LField_GaiaRockInsideAltar_CELL_PICTURES
+	map_block Field_GaiaRockInsideAltar, .LField_GaiaRockInsideAltar_CELL_TILES
 	map_block Field_GaiaRockInsideAltar, .LField_GaiaRockInsideAltar_SHAPES
 	map_block Field_GaiaRockInsideAltar, .LField_GaiaRockInsideAltar_GRID
 	map_block Field_GaiaRockInsideAltar, .LField_GaiaRockInsideAltar_SHAPE_GRID
 	map_block Field_GaiaRockInsideAltar, .LField_GaiaRockInsideAltar_ANIMATION
 	map_block Field_GaiaRockInsideAltar, .LField_GaiaRockInsideAltar_BLEND
 	map_block Field_GaiaRockInsideAltar, .LField_GaiaRockInsideAltar_SCENE
-.LField_GaiaRockInsideAltar_CELL_PICTURES:
-	.incbin "games/tla/src/map/gaia_rock_inside_altar/cell_pictures.delta2.lz"
+.LField_GaiaRockInsideAltar_CELL_TILES:
+	.incbin "games/tla/src/map/gaia_rock_inside_altar/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_GaiaRockInsideAltar_SHAPES:
 	.incbin "games/tla/src/map/gaia_rock_inside_altar/shapes.table.lz"

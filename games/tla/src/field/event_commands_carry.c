@@ -11,7 +11,7 @@
 #include "field/objdisp.h"
 #include "field/actor_view.h"
 #include "field/actor.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "system/ram_buffer.h"
 #include "battle/battle.h"
 #include "field/event_commands.h"
@@ -23,7 +23,7 @@
 /// the spot, close 24 pixels in and meet with a crash that scatters
 /// ITEM_BREAK_SHARD_MAX sparkles, then vanish.
 void FieldPsynergy_Carry(void) {
-  struct FieldEffectWork *work;
+  struct FieldEffectState *state;
   struct Actor *actor;
   struct Actor *pair[2];
   struct Vector3 pos;
@@ -31,9 +31,9 @@ void FieldPsynergy_Carry(void) {
   s32 n;
   FIXED distance;
 
-  work = Ram_HeapSlots->fieldEffectWork;
+  state = Ram_HeapSlots->fieldEffectState;
   FieldPsynergy_FadeToCastColor();
-  SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
+  SET_POSITION(&pos, state->x, state->y + toFIXED(16), state->z);
   pair[0] = FieldEffect_SpawnCarryHand(pos.x + toFIXED(32), pos.y, pos.z,
                                        FACING_WEST);
   pair[1] = FieldEffect_SpawnCarryHand(pos.x - toFIXED(32), pos.y, pos.z,
@@ -51,7 +51,7 @@ void FieldPsynergy_Carry(void) {
   Actor_WaitForMoveFar(pair[0]);
   Sound_PlayFar(SE_HEAVY_IMPACT);
   for (n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {
-    SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
+    SET_POSITION(&pos, state->x, state->y + toFIXED(16), state->z);
     actor = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (actor != 0) {
       Actor_StartScriptFar(actor, gFieldEffect_FragmentScript);

@@ -4,15 +4,15 @@ Field_EmptyMap:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_EmptyMap, .LField_EmptyMap_CELL_PICTURES
+	map_block Field_EmptyMap, .LField_EmptyMap_CELL_TILES
 	map_block Field_EmptyMap, .LField_EmptyMap_SHAPES
 	map_block Field_EmptyMap, .LField_EmptyMap_GRID
 	map_block Field_EmptyMap, .LField_EmptyMap_SHAPE_GRID
 	map_block Field_EmptyMap
 	map_block Field_EmptyMap
 	map_block Field_EmptyMap, .LField_EmptyMap_SCENE
-.LField_EmptyMap_CELL_PICTURES:
-	.incbin "games/tla/src/map/empty_map/cell_pictures.delta0.lz"
+.LField_EmptyMap_CELL_TILES:
+	.incbin "games/tla/src/map/empty_map/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_EmptyMap_SHAPES:
 	.incbin "games/tla/src/map/empty_map/shapes.table.lz"

@@ -96,7 +96,7 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
 
 /// Entering the hideout: the fire and its marker cast no shadow.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRE_MARKER), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRE), 0);

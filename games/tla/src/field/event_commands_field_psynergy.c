@@ -13,20 +13,20 @@
 /// If the scene's sprite is active, stops its update callback
 /// (BattleEffect_DrawSceneSprite) and frees its VRAM cache entry.
 void FieldPsynergy_ReleaseSceneSprite(void) {
-  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
 
-  if (effectWork->spriteActive != 0) {
-    effectWork->spriteActive = 0;
+  if (effectState->spriteActive != 0) {
+    effectState->spriteActive = 0;
     Task_Remove(BattleEffect_DrawSceneSprite);
-    VramCache_FreeEntry(effectWork->spriteVramSlot);
+    VramCache_FreeEntry(effectState->spriteVramSlot);
   }
 }
 
 /// Returns the map cell at position x, z in the given layer, read from the
-/// world map's blocks or the cell buffer by the event work's mode.
+/// world map's blocks or the cell buffer by the event state's mode.
 struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cells;
 
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -45,9 +45,9 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
 
 /// Whether the Scoop can dig at (x, z): on the world map, sand; elsewhere not
 /// on a Cyclone cell, water or raised ground, and then on sand, or on a
-/// MAP_CELL_SCOOP cell (any other, where FieldWork.sceneAttributeLow is set).
+/// MAP_CELL_SCOOP cell (any other, where FieldState.sceneAttributeLow is set).
 s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
 
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     return MapGrid_IsSandCell(x, z, layer);
@@ -79,9 +79,9 @@ s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer) {
 /// Whether the leader can move as sand on the cell at (x, z): the overhead
 /// layer's CELL_BEHAVIOR_SAND, or on the world map collision
 /// WORLD_MAP_COLLISION_WALKABLE_FIRST or shallow water;
-/// FieldWork.sceneAttributeHigh turns the answer round.
+/// FieldState.sceneAttributeHigh turns the answer round.
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
   s32 column = x;
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     s32 position[3];
@@ -113,7 +113,7 @@ u8 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer) {
 /// Whether the cell at (x, z) is water: MAP_CELL_WATER, or on the world map
 /// collision 2 to 4.
 s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
 
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     s32 position[3];
@@ -207,7 +207,7 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB) {
 /// Moves the actor from 16 pixels above the caster to (x, y, z), growing it
 /// from a quarter to full size.
 void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct Actor *mainActor = scene->mainActor;
   FIXED start[3];
   s32 i = 0;
@@ -231,7 +231,7 @@ void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
 /// 16 pixels above the caster, shrinking it from full size to a quarter.
 void FieldPsynergy_ShrinkToCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   struct Actor *mainActor =
-      ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
+      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->mainActor;
   FIXED start[3];
   s32 i;
 
@@ -315,7 +315,7 @@ void *Sprite_ShareVramCacheEntry(void *sourceSprite, void *sharedSprite) {
 /// Creates an actor for a field Psynergy, at the caster's ground height, with
 /// sprite priority 0 and animation 1.
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct Actor *actor;
 
   actor = Actor_CreateFar(kind, x, y, z);
@@ -343,7 +343,7 @@ void Actor_SetOthersPaused(struct Actor *excluded, s32 paused,
   s32 actorId;
 
   actorId = 0;
-  haltedId = &gMainRoutineWork.haltedActor;
+  haltedId = &gMainRoutineState.haltedActor;
   do {
     actor = Actor_Lookup(actorId);
     if (actorId != *haltedId && actor != NULL && actor != excluded) {
@@ -369,18 +369,18 @@ void PaletteFade_SetTarget(s32 value, s32 mode);
 /// for Field_StartPaletteTransition; FLAG_PSYNERGY_TINTED is set while it
 /// holds.
 void Field_StartColorTransition(s32 frames, s32 color) {
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  struct PaletteFade *work = Ram_HeapSlots->paletteFade;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
+  struct PaletteFade *state = Ram_HeapSlots->paletteFade;
 
   // The OBJ colours are kept always, the BG colours only while Reveal has not
   // greyed them.
-  Dma_Set(&work->target[BG_CHANNELS], &field->savedFadeTarget[BG_CHANNELS],
+  Dma_Set(&state->target[BG_CHANNELS], &field->savedFadeTarget[BG_CHANNELS],
           DMA_COPY_WORDS((PALETTE_FADE_CHANNELS - BG_CHANNELS) / 2), REG_DMA3);
   if (field->revealActive == 0)
-    Dma_Set(work->target, field->savedFadeTarget,
+    Dma_Set(state->target, field->savedFadeTarget,
             DMA_COPY_WORDS(BG_CHANNELS / 2), REG_DMA3);
-  Dma_Set(work->target, work->current, DMA_COPY_WORDS(sizeof work->current / 4),
-          REG_DMA3);
+  Dma_Set(state->target, state->current,
+          DMA_COPY_WORDS(sizeof state->current / 4), REG_DMA3);
   PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | color, PALETTES_BG);
   GameFlag_Set(FLAG_PSYNERGY_TINTED);
   PaletteFade_StartInterpolation(frames);
@@ -390,11 +390,11 @@ void Field_StartColorTransition(s32 frames, s32 color) {
 /// frames, the BG half to grey while Reveal is active; clears
 /// FLAG_PSYNERGY_TINTED.
 void Field_StartPaletteTransition(s32 frames) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 savedPalettes = (s32)work->savedFadeTarget;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  s32 savedPalettes = (s32)state->savedFadeTarget;
 
   PaletteFade_SetTarget(savedPalettes, PALETTES_OBJECTS);
-  if (work->revealActive != 0)
+  if (state->revealActive != 0)
     PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   else
     PaletteFade_SetTarget(savedPalettes, PALETTES_BG);
@@ -407,7 +407,7 @@ void Field_StartPaletteTransition(s32 frames) {
 /// animations, and forced by the tint flags; then fades towards it over eight
 /// frames. The palettes are copied by Field_StartColorTransition.
 void FieldPsynergy_FadeToCastColor(void) {
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   s32 tint;
   s32 animation;
 

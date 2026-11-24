@@ -14,7 +14,7 @@
 /// and the townsfolk change once the mast is cleared and again once Briggs
 /// has stolen the ship (FLAG_ALHAFRA_SHIP_GONE).
 
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -238,10 +238,10 @@ void Alhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step, s32 exit,
   Event_ResolvePendingActions(0);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(step->steps, step->x, step->y);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
+  Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = ACTOR_FALLS;
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_CenterAndWalk(gMainRoutineState.leaderActorId, 2, -8);
   Event_Wait(10);
   Import_EventSetExitRequest(exit);
   Event_FinishScreenTransition();
@@ -423,7 +423,7 @@ void Alhafra_GiveBreadToHungryBoy(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafraThanksMister);
   Event_Wait(10);
-  Actor_FaceActorById(ACTOR_HUNGRY_BOY, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActorById(ACTOR_HUNGRY_BOY, gMainRoutineState.leaderActorId, 0);
   Event_Wait(10);
   // "Thanks, mister."
   Event_ShowMessageThenWait(ACTOR_HUNGRY_BOY, 0, 10);
@@ -443,7 +443,7 @@ void Alhafra_GiveBreadToHungryBoy(void) {
 /// the caves under the mayor's manor if they like adventures.
 void Alhafra_TalkToHungryBoy(s32 id) {
   if (!GameFlag_Get(FLAG_HUNGRY_BOY_FED)) {
-    gFieldWork->fieldMenu = 1;
+    gFieldState->fieldMenu = 1;
     Event_SetMessageId(MsgAlhafraImSoHungryICant);
     // "I'm so hungry I can't even move..."
     Event_ShowMessageAndWait(id, 0);
@@ -466,10 +466,10 @@ void Alhafra_TalkToHungryBoy(s32 id) {
       Event_Wait(20);
       // "Then you totally have to go check out the caves under the mayor's..."
       Event_ShowMessageThenWait(id, 0, 10);
-      gFieldWork->message++;
+      gFieldState->message++;
     } else {
       Event_Wait(30);
-      gFieldWork->message++;
+      gFieldState->message++;
       // "Really? Wow... You're so boring. Well, if you change your mind..."
       Event_ShowMessageThenWait(id, 0, 10);
     }
@@ -495,9 +495,9 @@ void Alhafra_FindGoldCoins(void) {
   Actor_FaceDirection(ACTOR_LUCKY_MOTHERS_CHILD, FACING_SOUTHWEST, 0);
   Actor_SetAnimationById(ACTOR_LUCKY_MOTHER, 5);
   Sound_Play(MUS_LEVEL_UP);
-  gMainRoutineWork.leaderActorId = ACTOR_LUCKY_MOTHER;
+  gMainRoutineState.leaderActorId = ACTOR_LUCKY_MOTHER;
   ItemDisplay_ShowItem(0, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
-  gMainRoutineWork.leaderActorId = ACTOR_FELIX;
+  gMainRoutineState.leaderActorId = ACTOR_FELIX;
   Event_Wait(50);
   FieldActor_Jump(ACTOR_LUCKY_MOTHERS_HUSBAND, 6, 15);
   FieldActor_Jump(ACTOR_LUCKY_MOTHERS_HUSBAND, 6, 23);
@@ -539,7 +539,7 @@ void Alhafra_FindGoldCoins(void) {
   Actor_SetAnimation(ACTOR_LUCKY_MOTHERS_CHILD, 6);
   Actor_FaceDirection(ACTOR_LUCKY_MOTHER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_LUCKY_MOTHERS_HUSBAND, FACING_NORTH, 0);
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -570,12 +570,12 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
       Event_SetMessageId(message + 2);
       // Yes: "I'm only letting you pass because you did good by my son..."
       Event_ShowMessage(actor, 0);
-      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 72, 344);
-      Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+      Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 72, 344);
+      Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
       Event_Wait(10);
       Actor_SetSpeed(actor, 1);
       Actor_WalkToAndWait(actor, 56, 328);
-      Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
+      Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTHWEST, 0);
       Actor_FaceDirectionById(actor, FACING_SOUTHEAST, 0);
       Event_Wait(20);
       Actor_SetAnimationAndWait(actor, 3);
@@ -618,7 +618,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (!GameFlag_Get(FLAG_ALHAFRA_SHIP_GONE)) {
       Actor_GetById(ACTOR_OLD_WOMAN_ON_FISHING_BOATS)->update =
@@ -1060,7 +1060,7 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
                                  10);
   Actor_RunRepeatedMotion(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 2);
   Event_Wait(10);
-  gFieldWork->fastForward = 0;
+  gFieldState->fastForward = 0;
   // "Uh... The mayor?"
   FieldEvent_ShowMessageThenWait(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, ANIM_NOD);
@@ -1219,7 +1219,7 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
   Actor_SetPosition(ACTOR_WEARY_MADRAN, 0, 0);
   Actor_SetPosition(ACTOR_SILENT_MADRAN, 0, 0);
   Event_Wait(15);
-  FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  FieldCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -1233,8 +1233,8 @@ void Alhafra_PirateSeesMadrasMayor(s32 how) {
   FieldEvent_SetMessageId((s32)MsgAlhafraOooThisAintGood);
   if (how == PIRATE_READ_BY_MIND_READ) {
     FieldEvent_Wait(10);
-    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 168, 736);
-    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+    Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 168, 736);
+    Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_EAST, 0);
   }
   Actor_ShowEmote(ACTOR_PIRATE, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Ooo... This ain't good!"
@@ -1274,10 +1274,10 @@ void Alhafra_PirateSeesMadrasMayor(s32 how) {
       // Yes: "Ah, who cares what you think? I've got stuff to do, so scram,
       // kid!"
       Event_ShowMessageThenWait(ACTOR_PIRATE, 0, 10);
-      gFieldWork->message = (gFieldWork->message + 1);
+      gFieldState->message = (gFieldState->message + 1);
     } else {
       Event_Wait(30);
-      gFieldWork->message = (gFieldWork->message + 1);
+      gFieldState->message = (gFieldState->message + 1);
       // No: "So where do you get off invading my personal space, huh?"
       Event_ShowMessageThenWait(ACTOR_PIRATE, 0, 10);
     }

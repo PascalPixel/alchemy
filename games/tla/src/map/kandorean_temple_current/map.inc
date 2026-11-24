@@ -4,15 +4,15 @@ Field_KandoreanTempleCurrent:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 100, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_KandoreanTempleCurrent, .LField_KandoreanTempleCurrent_CELL_PICTURES
+	map_block Field_KandoreanTempleCurrent, .LField_KandoreanTempleCurrent_CELL_TILES
 	map_block Field_KandoreanTempleCurrent, .LField_KandoreanTempleCurrent_SHAPES
 	map_block Field_KandoreanTempleCurrent, .LField_KandoreanTempleCurrent_GRID
 	map_block Field_KandoreanTempleCurrent, .LField_KandoreanTempleCurrent_SHAPE_GRID
 	map_block Field_KandoreanTempleCurrent, .LField_KandoreanTempleCurrent_ANIMATION
 	map_block Field_KandoreanTempleCurrent, .LField_KandoreanTempleCurrent_BLEND
 	map_block Field_KandoreanTempleCurrent, .LField_KandoreanTempleCurrent_SCENE
-.LField_KandoreanTempleCurrent_CELL_PICTURES:
-	.incbin "games/tla/src/map/kandorean_temple_current/cell_pictures.delta2.lz"
+.LField_KandoreanTempleCurrent_CELL_TILES:
+	.incbin "games/tla/src/map/kandorean_temple_current/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_KandoreanTempleCurrent_SHAPES:
 	.incbin "games/tla/src/map/kandorean_temple_current/shapes.table.lz"

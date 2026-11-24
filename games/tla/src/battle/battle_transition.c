@@ -194,7 +194,7 @@ void BattleTransition_AdvanceTimer(void) {
 
   timer = (u32 *)Ram_HeapSlots->battleEntryTimer;
   frame = *timer;
-  camera = (struct BattleCamera *)Ram_HeapSlots->cameraWork;
+  camera = (struct BattleCamera *)Ram_HeapSlots->cameraState;
   // BG0's top band rolls down from frame 20 to frame 52.
   scroll = 52 - frame;
   if (scroll > TRANSITION_BG0_BAND)
@@ -251,12 +251,12 @@ void BattleTransition_ResetBg0Scroll(void) { Io_Write16(0, &REG_BG0VOFS); }
 /// second instead); for the Doom Dragon's the shattering opening over the
 /// Serpent's stars.
 void BattleTransition_Run(s32 enemyCount, s32 kind) {
-  struct BattlePresentationWork work;
+  struct BattlePresentationState state;
   u16 owners[UNIT_MAX];
   u16 shown[UNIT_MAX];
   s32 *timer;
-  struct BattleWork *battle;
-  struct BattleBackgroundWork *view;
+  struct BattleState *battle;
+  struct BattleBackgroundState *view;
   struct HeapSlots *heap;
   s32 ownerCount;
   s32 count;
@@ -338,7 +338,7 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
                    BattleTransition_ResetBg0Scroll);
     gBgScroll[0].y = y;
     wait(1);
-    PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
+    PartyStatus_CreateWindowFar(Ram_HeapSlots->battleState->partyStatus);
     wait(20);
     IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(2));
     IoWriteQueue_SetBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(0));
@@ -354,7 +354,7 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     gBgScroll[0].y = 0;
     Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   } else {
-    battle = heap->battleWork;
+    battle = heap->battleState;
     view->secondMode = BATTLE_BACKGROUND_FIXED;
     view->busy = 0;
     ownerCount = BattleParty_PrepareMembers(owners);
@@ -380,11 +380,11 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
 
       *slot = background;
       // The enemies alone take part in the shattering opening.
-      work.count =
-          BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, (u16 *)work.actors);
-      work.actors[work.count] = BATTLE_UNIT_LIST_END;
-      BattleActor_SpawnObjectsForList(work.actors, 0);
-      BattleEffect_RunShatteringOpeningFar(&work);
+      state.count =
+          BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, (u16 *)state.actors);
+      state.actors[state.count] = BATTLE_UNIT_LIST_END;
+      BattleActor_SpawnObjectsForList(state.actors, 0);
+      BattleEffect_RunShatteringOpeningFar(&state);
       BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
       *timer = start;
     }
@@ -392,7 +392,7 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
                    BattleTransition_ResetBg0Scroll);
     wait(1);
     wait(20);
-    PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
+    PartyStatus_CreateWindowFar(Ram_HeapSlots->battleState->partyStatus);
     IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(2));
     IoWriteQueue_SetBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(0));
     REG_BLDCNT = BLEND_SPRITES_OVER_ALL;

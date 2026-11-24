@@ -4,15 +4,15 @@ Field_KibomboMountainsDiskAxeChest:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_KibomboMountainsDiskAxeChest, .LField_KibomboMountainsDiskAxeChest_CELL_PICTURES
+	map_block Field_KibomboMountainsDiskAxeChest, .LField_KibomboMountainsDiskAxeChest_CELL_TILES
 	map_block Field_KibomboMountainsDiskAxeChest, .LField_KibomboMountainsDiskAxeChest_SHAPES
 	map_block Field_KibomboMountainsDiskAxeChest, .LField_KibomboMountainsDiskAxeChest_GRID
 	map_block Field_KibomboMountainsDiskAxeChest, .LField_KibomboMountainsDiskAxeChest_SHAPE_GRID
 	map_block Field_KibomboMountainsDiskAxeChest, .LField_KibomboMountainsDiskAxeChest_ANIMATION
 	map_block Field_KibomboMountainsDiskAxeChest, .LField_KibomboMountainsDiskAxeChest_BLEND
 	map_block Field_KibomboMountainsDiskAxeChest, .LField_KibomboMountainsDiskAxeChest_SCENE
-.LField_KibomboMountainsDiskAxeChest_CELL_PICTURES:
-	.incbin "games/tla/src/map/kibombo_mountains_disk_axe_chest/cell_pictures.delta0.lz"
+.LField_KibomboMountainsDiskAxeChest_CELL_TILES:
+	.incbin "games/tla/src/map/kibombo_mountains_disk_axe_chest/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_KibomboMountainsDiskAxeChest_SHAPES:
 	.incbin "games/tla/src/map/kibombo_mountains_disk_axe_chest/shapes.table.lz"

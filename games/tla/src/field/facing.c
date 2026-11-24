@@ -170,13 +170,13 @@ const s32 gSand_GrainScript[] = {
 };
 
 /// The World Map's graphics in four sets, by resource id: each a palette,
-/// its tile animation and cell picture attributes, and six tile sets;
+/// its tile animation and cell tiles attributes, and six tile sets;
 /// WorldMap_PreloadCurrentTileBlock chooses one by the region the party is in.
 const u32 gWorldMap_GraphicsResources[4][9] = {
     {
         RESOURCE_WORLD_MAP_PALETTE_A,
         RESOURCE_DEFAULT_MAP_ANIMATION,
-        RESOURCE_DEFAULT_CELL_PICTURE_ATTRIBUTES,
+        RESOURCE_DEFAULT_CELL_TILES_ATTRIBUTES,
         RESOURCE_WORLD_MAP_TILES_A1,
         RESOURCE_WORLD_MAP_TILES_A2,
         RESOURCE_WORLD_MAP_TILES_A3,
@@ -187,7 +187,7 @@ const u32 gWorldMap_GraphicsResources[4][9] = {
     {
         RESOURCE_WORLD_MAP_PALETTE_C,
         RESOURCE_WORLD_MAP_ANIMATION_C,
-        RESOURCE_WORLD_MAP_CELL_PICTURE_ATTRIBUTES_C,
+        RESOURCE_WORLD_MAP_CELL_TILES_ATTRIBUTES_C,
         RESOURCE_WORLD_MAP_TILES_C1,
         RESOURCE_WORLD_MAP_TILES_C2,
         RESOURCE_WORLD_MAP_TILES_C3,
@@ -198,7 +198,7 @@ const u32 gWorldMap_GraphicsResources[4][9] = {
     {
         RESOURCE_WORLD_MAP_PALETTE_B,
         RESOURCE_WORLD_MAP_ANIMATION_B,
-        RESOURCE_WORLD_MAP_CELL_PICTURE_ATTRIBUTES_B,
+        RESOURCE_WORLD_MAP_CELL_TILES_ATTRIBUTES_B,
         RESOURCE_WORLD_MAP_TILES_B1,
         RESOURCE_WORLD_MAP_TILES_B2,
         RESOURCE_WORLD_MAP_TILES_B3,
@@ -209,7 +209,7 @@ const u32 gWorldMap_GraphicsResources[4][9] = {
     {
         RESOURCE_WORLD_MAP_PALETTE_D,
         RESOURCE_WORLD_MAP_ANIMATION_D,
-        RESOURCE_WORLD_MAP_CELL_PICTURE_ATTRIBUTES_D,
+        RESOURCE_WORLD_MAP_CELL_TILES_ATTRIBUTES_D,
         RESOURCE_WORLD_MAP_TILES_D1,
         RESOURCE_WORLD_MAP_TILES_D2,
         RESOURCE_WORLD_MAP_TILES_D3,

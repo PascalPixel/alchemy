@@ -37,7 +37,7 @@
 #include "graphics/resource.h"
 #include "graphics/glyph.h"
 #include "system/input.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/frame.h"
 #include "version.h"
 #include "tla_edition.h"
@@ -59,7 +59,7 @@
 #include "field/flag_call.h"
 #include "graphics/vram_tab.h"
 #include "stddef.h"
-#include "battle/battle_work.h"
+#include "battle/battle_state.h"
 #include "system/irq_lock.h"
 #include "battle/battle_side.h"
 #include "system/save.h"
@@ -111,11 +111,11 @@
 #define SELECTION_MENU_ENTRY_LIMIT 16 ///< entries a selection row can list
 #define AREA_NAME_WINDOW_FRAMES 90    ///< how long the area's name shows
 
-/// WindowWork owns three messages, each with four line gaps.
+/// WindowState owns three messages, each with four line gaps.
 #define MESSAGE_COUNT 3
 #define MESSAGE_LINE_COUNT 4         ///< lines a page; spacing has one gap each
 #define TEXT_DEFAULT_LINE_SPACING 10 ///< a message's line spacing at start
-/// The glyph spacing text starts with (WindowWork.glyphSpacing): a glyph
+/// The glyph spacing text starts with (WindowState.glyphSpacing): a glyph
 /// sprite sits half of it right of its place in the line.
 #define TEXT_DEFAULT_GLYPH_SPACING 9
 /// The glyph tiles' size in sprite VRAM: the four tiles of a 16x16 glyph for
@@ -124,7 +124,7 @@
 /// The pixels a line of text takes in a window fitted to it.
 #define TEXT_LINE_HEIGHT 15
 
-/// The control codes of decoded message text (WindowWork.textBuffer). Codes
+/// The control codes of decoded message text (WindowState.textBuffer). Codes
 /// from TEXT_SPACE up are characters.
 enum {
   TEXT_END = 0,  ///< the text ends; the window stays open
@@ -168,8 +168,8 @@ enum {
   TEXT_INVERTED_QUESTION_MARK = 191 ///< ¿, outside Japanese
 };
 
-/// The window system's work, as ☀️'s WINDOW_WORK.
-#define WINDOW_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
+/// The window system's state, as ☀️'s WINDOW_STATE.
+#define WINDOW_STATE ((struct WindowState *)Ram_HeapSlots->windowState)
 
 /// Window_FitOnScreen's flags.
 enum WindowFitFlag {
@@ -248,7 +248,7 @@ enum SelectionIconGroup {
   SELECTION_ICON_CHOSEN = 1 ///< the five icons already chosen; any nonzero
 };
 
-/// The style of sprite text (WindowWork.outline, set by TEXT_OUTLINE): its
+/// The style of sprite text (WindowState.outline, set by TEXT_OUTLINE): its
 /// glyphs outlined, or a motion of the glyph sprites (Glyph_Draw).
 enum TextStyle {
   TEXT_STYLE_PLAIN = 0,
@@ -285,7 +285,7 @@ enum BattleTargetHint {
   TARGET_HINT_CURE_ALL = 6,
   TARGET_HINT_SET_DJINNI = 7, ///< setting a Djinni: "Set Djinni"
   /// Switch: starts on the party member the last command was aimed at
-  /// (BattleMenuWork.lastTarget).
+  /// (BattleMenuState.lastTarget).
   TARGET_HINT_LAST_TARGET = 8
 };
 

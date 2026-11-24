@@ -19,29 +19,29 @@ void BattleEffect_ConfigureEffectDisplay(void) {
 
 /// Scrolls BG1 a step every few VBlanks.
 void BattleEffect_AdvanceScrollOnInterval(void) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
 
-  if (++work->scrollTimer == work->scrollInterval) {
-    gBgScroll[1].x += work->scrollStepX;
-    gBgScroll[1].y += work->scrollStepY;
-    work->scrollTimer = 0;
+  if (++state->scrollTimer == state->scrollInterval) {
+    gBgScroll[1].x += state->scrollStepX;
+    gBgScroll[1].y += state->scrollStepY;
+    state->scrollTimer = 0;
   }
 }
 
 /// Slides the affine BG2 a step every few VBlanks.
 void BattleEffect_AdvanceBg2OnInterval(void) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
 
-  if (++work->scrollTimer == work->scrollInterval) {
-    REG_BG2X = work->bg2x;
-    REG_BG2Y = work->bg2y;
-    work->bg2x += work->scrollStepX;
-    work->bg2y += work->scrollStepY;
-    work->scrollTimer = 0;
+  if (++state->scrollTimer == state->scrollInterval) {
+    REG_BG2X = state->bg2x;
+    REG_BG2Y = state->bg2y;
+    state->bg2x += state->scrollStepX;
+    state->bg2y += state->scrollStepY;
+    state->scrollTimer = 0;
   }
 }
 

@@ -221,11 +221,11 @@ struct DiceParticle {
 };
 
 /// The dice game's four dice.
-struct DiceWork {
+struct DiceState {
   struct DiceParticle particles[4];
 };
 
-/// The dice game's work as its drawing reads it: 128 OAM entries and its
+/// The dice game's state as its drawing reads it: 128 OAM entries and its
 /// coins, bet and help windows.
 struct DiceSprites {
   u8 filler[196];
@@ -286,7 +286,7 @@ struct FieldUnit {
   s16 pp;
 };
 
-/// Lucky Dice's work as its drawing reads it: 128 OAM entries and its coins,
+/// Lucky Dice's state as its drawing reads it: 128 OAM entries and its coins,
 /// winnings and help windows.
 struct LuckyDiceSprites {
   u8 filler[196];
@@ -305,9 +305,9 @@ struct Reel {
   s8 stop;
 };
 
-/// Lucky Wheels' effect work: the title letters' particles, the BG and OBJ
+/// Lucky Wheels' effect state: the title letters' particles, the BG and OBJ
 /// shades, and its transfer to the screen.
-struct ReelEffectWork {
+struct ReelEffectState {
   struct Particle particles[LUCKY_WHEELS_TITLE_LETTERS];
   /// No code names it.
   u8 unusedAfterParticles[1792 -
@@ -323,8 +323,8 @@ struct ReelEffectWork {
   s32 transferPending;
 };
 
-/// The main routine work from gPartyDjinnRecovery on, as Lucky Wheels reads it:
-/// the prizes won, kept after the spring game's prize weights.
+/// The main routine's state from gPartyDjinnRecovery on, as Lucky Wheels reads
+/// it: the prizes won, kept after the spring game's prize weights.
 struct ReelSave {
   u8 unused[320]; ///< summons, coins, Djinn recovery, shops, prize weights
   s8 wonPrizes[16];
@@ -333,7 +333,7 @@ struct ReelSave {
 /// One 32-pixel cell of the World Map: its tile and its encounter region;
 /// Ram_MapBlocks holds 32 by 32 of them.
 struct WorldMapCell {
-  u32 tile : 24; ///< low halfword: the cell picture
+  u32 tile : 24; ///< low halfword: the cell tiles
   /// Passed to WorldMap_UpdateRegionTint; region / 10 picks the graphics set.
   u32 region : 6;
   u32 unused : 1; ///< no code names it
@@ -383,7 +383,7 @@ enum Collision {
   COLLISION_IMPASSABLE = 2 ///< the cell there is a wall (CELL_BEHAVIOR_WALL)
 };
 
-/// One node of a tightrope (Tightrope_Initialize's work): a point on the rope,
+/// One node of a tightrope (Tightrope_Initialize's state): a point on the rope,
 /// and the sprite Tightrope_Draw puts between it and the next node.
 struct TightropeNode {
   struct TightropeNode *next;
@@ -408,7 +408,7 @@ struct TightropeSlot {
   struct TightropeNode *head;
 };
 
-/// The ropes', tightropes' and hanging vines' works each keep eight slots,
+/// The ropes', tightropes' and hanging vines' states each keep eight slots,
 /// each a chain of nodes from one pool of 128.
 #define ROPE_SLOT_COUNT 8
 #define ROPE_NODE_COUNT 128
@@ -416,8 +416,8 @@ struct TightropeSlot {
 /// the nearest.
 #define ROPE_NODE_DISTANCE_NONE (1 << 28)
 
-/// The tightropes' work (HEAP_SLOT_TIGHTROPE).
-struct TightropeWork {
+/// The tightropes' state (HEAP_SLOT_TIGHTROPE).
+struct TightropeState {
   struct Actor
       *recoilFrom; ///< the posts Tightrope_Untie gives Tightrope_Recoil
   struct Actor *recoilTo;
@@ -426,21 +426,22 @@ struct TightropeWork {
   struct TightropeNode nodes[ROPE_NODE_COUNT];
 };
 
-#define TIGHTROPE_WORK ((struct TightropeWork *)Ram_HeapSlots->tightrope)
+#define TIGHTROPE_STATE ((struct TightropeState *)Ram_HeapSlots->tightrope)
 
-/// The point the map view follows (MapWork.origin), as the depth sort reads it.
+/// The point the map view follows (MapState.origin), as the depth sort reads
+/// it.
 struct DepthOrigin {
   FIXED x; ///< 16.16 fixed-point pixels
   FIXED y; ///< its height, 16.16 fixed-point pixels
 };
 
-/// The map view's place (MapWork.viewX and viewZ), read as a pair.
+/// The map view's place (MapState.viewX and viewZ), read as a pair.
 struct DepthScroll {
   FIXED x; ///< 16.16 fixed-point pixels
   FIXED z; ///< 16.16 fixed-point pixels
 };
 
-/// MapWork as BattleEffect_GetObjectDepth reads it: its followed point and its
+/// MapState as BattleEffect_GetObjectDepth reads it: its followed point and its
 /// view, through a pointer to the pair.
 struct DepthMap {
   struct DepthOrigin *origin;
@@ -482,7 +483,7 @@ struct RisingParticle {
 
 /// HEAP_SLOT_WEATHER while the rising particles run: their tiles' VRAM cache
 /// entry and first tile, and the particles.
-struct RisingParticleWork {
+struct RisingParticleState {
   s32 vramEntry;
   s32 tile;
   struct RisingParticle particles[64];
@@ -497,9 +498,9 @@ struct EffectOwner {
   struct Sprite *sprite;
 };
 
-/// The line scroll's work: two pages of BG1 to BG3 scroll offsets for each of
+/// The line scroll's state: two pages of BG1 to BG3 scroll offsets for each of
 /// the 160 scanlines, and the sine wave that bends them on each axis.
-struct LineScrollWork {
+struct LineScrollState {
   struct BgScroll rows[2][160][3]; ///< per page and scanline: BG3, BG2, BG1
   u8 page;      ///< the page the HBlank DMA shows; the other is built
   u8 mode;      ///< set at the start; not read by name
@@ -513,8 +514,8 @@ struct LineScrollWork {
   FIXED ampY;   ///< 16.16 scale on the sine entry, which is then divided by 256
 };
 
-/// One node of a rope Lash throws and ties (Rope_Initialize's work): a point on
-/// the rope, and the sprite Rope_Draw puts between it and the next node.
+/// One node of a rope Lash throws and ties (Rope_Initialize's state): a point
+/// on the rope, and the sprite Rope_Draw puts between it and the next node.
 struct RopeNode {
   struct RopeNode *next;
   s32 x;
@@ -541,8 +542,8 @@ struct RopeSlot {
   struct RopeNode *head;
 };
 
-/// The ropes' work (HEAP_SLOT_ROPE).
-struct RopeWork {
+/// The ropes' state (HEAP_SLOT_ROPE).
+struct RopeState {
   struct Actor *recoilFrom; ///< the posts Rope_Untie gives Rope_Recoil
   struct Actor *recoilTo;
   s32 vramEntry; ///< the nodes' picture
@@ -550,7 +551,7 @@ struct RopeWork {
   struct RopeNode nodes[ROPE_NODE_COUNT];
 };
 
-#define ROPE_WORK ((struct RopeWork *)Ram_HeapSlots->rope)
+#define ROPE_STATE ((struct RopeState *)Ram_HeapSlots->rope)
 
 extern const u8 gSuperLuckyDice_FaceTiles[];
 s32 SuperLuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
@@ -620,7 +621,7 @@ extern u8 Grid_DrawOutlineCodeSize[];
 
 extern const u8 gSpriteColorShadeTables[];
 
-void SpriteAnimation_Start(struct SpriteAnimation *work, s32 no);
+void SpriteAnimation_Start(struct SpriteAnimation *state, s32 no);
 
 u8 *Decompress_Lz(const u8 *source, u8 *destination);
 
@@ -690,7 +691,7 @@ void ColorBuffer_HalveNonzero(u8 *source, u8 *destination, s32 size);
 void ColorBuffer_ScaleNonzeroThreeQuarters(u8 *source, u8 *destination,
                                            s32 size);
 
-/// gMainRoutineWork from its summonMask on, under a label of its own: the
+/// gMainRoutineState from its summonMask on, under a label of its own: the
 /// party's DjinnRecoveryTable, which Djinn_GetRecoveryTable returns. Lucky
 /// Wheels reads its won prizes 320 bytes in (ReelSave).
 extern u8 gPartyDjinnRecovery[];
@@ -786,21 +787,21 @@ void ActorScript_SetOrCompareSteeringFlags(struct ScriptOperands *state,
                                            s32 operation, s32 value);
 void ActorScript_SetOrComparePaused(struct ScriptOperands *state, s32 operation,
                                     s32 value);
-void ActorScript_SetOrCompareRepeatCount(struct ScriptOperands *work,
+void ActorScript_SetOrCompareRepeatCount(struct ScriptOperands *state,
                                          s32 operation, s32 value);
-void ActorScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
+void ActorScript_SetOrCompareWait(struct ScriptOperands *state, s32 operation,
                                   s32 value);
-void ActorScript_SetOrCompareTimer(struct ScriptOperands *work, s32 operation,
+void ActorScript_SetOrCompareTimer(struct ScriptOperands *state, s32 operation,
                                    s32 value);
-void ActorScript_SetOrCompareUserValue(struct ScriptOperands *work,
+void ActorScript_SetOrCompareUserValue(struct ScriptOperands *state,
                                        s32 operation, s32 value);
-void ActorScript_SetOrCompareWatchedActor(struct ScriptOperands *work,
+void ActorScript_SetOrCompareWatchedActor(struct ScriptOperands *state,
                                           s32 operation, s32 value);
-void ActorScript_SetOrCompareUpdateAddress(struct ScriptOperands *work,
+void ActorScript_SetOrCompareUpdateAddress(struct ScriptOperands *state,
                                            s32 operation, s32 value);
-void ActorScript_SetOrCompareRiseCounter(struct ScriptOperands *work,
+void ActorScript_SetOrCompareRiseCounter(struct ScriptOperands *state,
                                          s32 operation, s32 value);
-void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *work,
+void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *state,
                                          s32 operation, s32 value);
 
 void Icon_DrawItemFar(s32 item);

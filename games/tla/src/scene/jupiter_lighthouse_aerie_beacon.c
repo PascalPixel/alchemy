@@ -33,7 +33,7 @@
 #include "field/map_grid.h"
 #include "system/ram_buffer.h"
 #include "field/call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "scene_ids.h"
 #include "system/frame.h"
 #include "field/field_sequence_event.h"
@@ -432,7 +432,7 @@ void JupiterLighthouse_SpawnBeaconParticle(void) {
 /// it is put away at the origin.
 void JupiterLighthouse_PulseBeacon(void) {
   struct Actor *actor = Actor_Get(ACTOR_BEACON_ORB);
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
 
   Random16();
 #if TLA_PATCH_1
@@ -547,7 +547,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         star->velocityY = toFIXED(8);
         FieldActor_SetMoveTarget(star, 512, 128, 294);
         FieldActor_SetMoveTargetFX(shadow, toFIXED(512), -1, toFIXED(294));
-        Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+        Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineState.leaderActorId);
         System_Wait(1);
         Actor_SetSpeed(ACTOR_PIERS, 0.8);
         Actor_WalkBy(ACTOR_PIERS, 12, 0);
@@ -603,8 +603,8 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       System_Wait(20);
       Actor_WalkBy(ACTOR_FELIX, 0, -16);
       Actor_WalkBy(ACTOR_PIERS, 0, -16);
-      FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-      Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
+      FieldActor_WaitForMoveById(gMainRoutineState.leaderActorId);
+      Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
       Actor_SetAnimation(ACTOR_PIERS, ANIM_STAND);
       FieldEvent_Wait(50);
       Event_PlaySound(SE_RUMBLE);
@@ -631,7 +631,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       FieldCamera_WaitForArrival();
       FieldActor_SetSpritePriority(ACTOR_BEAM_BOTTOM, 1);
       FieldActor_SetSpritePriority(ACTOR_BEAM_TOP, 1);
-      FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
+      FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
       FieldActor_SetSpritePriority(ACTOR_PIERS, 1);
       FieldEvent_Wait(20);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BEAM_BOTTOM), 0);
@@ -690,15 +690,15 @@ void Inventory_Equip(s32 id, s32 slot);
 /// Piers, give back the Mythril Bag, and the first battle with them begins.
 /// The party arrives by ENTRANCE_BEACON_LIT.
 void JupiterLighthouse_BeaconIsLit(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 slot;
   s32 facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  work = gFieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->transitionFrames = 120;
+  state = gFieldState;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state->transitionFrames = 120;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(512, 96, 240, 0);
@@ -775,9 +775,9 @@ void JupiterLighthouse_BeaconIsLit(void) {
   if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     // "I'd be happy to tell you. Mars Lighthouse is in Prox."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KARST, 0, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Figured it out, have you? Yes, Mars Lighthouse is in Prox."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KARST, 0, 0);
   }
@@ -800,7 +800,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   // "What are you doing!?"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 0);
   // "They stole the Mars Star!"
-  Message_ShowCentered(gFieldWork->message++, 5);
+  Message_ShowCentered(gFieldState->message++, 5);
   PartyInventory_Add(ITEM_MYTHRIL_BAG);
   for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
     if ((Unit_Get(FELIX)->inventory[slot] & INVENTORY_ITEM_ID_MASK) ==
@@ -832,7 +832,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   FieldEvent_Wait(10);
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+  Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
@@ -843,10 +843,10 @@ void JupiterLighthouse_BeaconIsLit(void) {
     Actor_AnimateThenWait(ACTOR_KARST, ANIM_NOD, 20);
     // "Exactly! That means it's time to die, Felix!"
     FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Actor_AnimateThenWait(ACTOR_KARST, ANIM_NOD, 20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "No? Well, how can I put this? It's time to die!"
     FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 0);
   }
@@ -988,7 +988,7 @@ void JupiterLighthouse_JennaJoinsTheFight(void) {
   Actor_Get(ACTOR_AGATIO)->velocityY = toFIXED(4);
   Actor_Get(ACTOR_KARST)->velocityY = toFIXED(4);
   FieldEvent_Wait(4);
-  if (gMainRoutineWork.sequenceResult == BATTLE_OUTCOME_LOST) {
+  if (gMainRoutineState.sequenceResult == BATTLE_OUTCOME_LOST) {
     FieldUnit_AddHp(FELIX, -DEFEAT_REVIVAL_HP_TAKEN);
   }
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
@@ -1103,7 +1103,7 @@ void JupiterLighthouse_ShebaJoinsTheFight(void) {
   Actor_Get(ACTOR_AGATIO)->velocityY = toFIXED(4);
   Actor_Get(ACTOR_KARST)->velocityY = toFIXED(4);
   FieldEvent_Wait(4);
-  if (gMainRoutineWork.sequenceResult == BATTLE_OUTCOME_LOST)
+  if (gMainRoutineState.sequenceResult == BATTLE_OUTCOME_LOST)
     FieldUnit_AddHp(FELIX, -DEFEAT_REVIVAL_HP_TAKEN);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
@@ -1143,7 +1143,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   s32 north;
   struct Actor *actor;
 
-  struct FieldWork *work;
+  struct FieldState *state;
 
   void JupiterLighthouse_HealParty(s32 clearStatus) {
     s32 count;
@@ -1153,7 +1153,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
 
     count = Party_CountMembers();
     for (n = 0; n < count; n++) {
-      struct MainRoutineWork *party = &gMainRoutineWork;
+      struct MainRoutineState *party = &gMainRoutineState;
 
       member = Unit_Get(party->party[n]);
       maxHp = member->hp = member->hpMax;
@@ -1495,7 +1495,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   } else {
     Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     Actor_AnimateThenWait(ACTOR_JENNA, ANIM_SHAKE_HEAD, 33);
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
     Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_WEST);
     // "He's right, Felix. It's time we explained ourselves to them. We..."
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
@@ -1631,10 +1631,10 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   JupiterLighthouse_LowerElevator(DESCENT_FELIX);
-  work = gFieldWork;
-  work->transition =
+  state = gFieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  work->transitionFrames = 24;
+  state->transitionFrames = 24;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   JupiterLighthouse_HealParty(0);
@@ -1653,7 +1653,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   s32 southeast;
   s32 north;
   struct Actor *leader;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1739,9 +1739,9 @@ void JupiterLighthouse_WeBeatThem(void) {
   if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     // "No, Felix! Don't!"
     FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 0);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
   } else {
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
     // "You've made the better choice, Felix."
     FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 0);
   }
@@ -1978,7 +1978,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   } else {
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     Actor_AnimateThenWait(ACTOR_JENNA, ANIM_SHAKE_HEAD, 33);
-    gFieldWork->message = (gFieldWork->message + 2);
+    gFieldState->message = (gFieldState->message + 2);
     Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_WEST);
     // "He's right, Felix. It's time we explained ourselves to them. We..."
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
@@ -2114,10 +2114,10 @@ void JupiterLighthouse_WeBeatThem(void) {
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   JupiterLighthouse_LowerElevator(DESCENT_FELIX);
-  work = gFieldWork;
-  work->transition =
+  state = gFieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  work->transitionFrames = 24;
+  state->transitionFrames = 24;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(
@@ -2132,12 +2132,12 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// The Broken Seal's MercuryLighthouseAerie_FindLiftRiders finds its lift's.
 UNUSED void JupiterLighthouse_FindElevatorRiders(s32 *out, s32 zArg) {
   s32 z = zArg;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   u32 slot;
 
   z = 64 - FIELD_CELL(z);
   for (slot = 0; slot < FIELD_TREASURE_ACTOR; slot++) {
-    struct Actor *actor = work->actors[slot];
+    struct Actor *actor = state->actors[slot];
 
     if (actor != NULL) {
       s32 column = FIELD_CELL(actor->x.fixed);
@@ -2178,7 +2178,7 @@ void JupiterLighthouse_LowerElevator(s32 mode) {
   u32 j;
   struct MapLayer *elevator;
 
-  elevator = &((struct MapWork *)Ram_HeapSlots->mapGrid)
+  elevator = &((struct MapState *)Ram_HeapSlots->mapGrid)
                   ->layers[MAPGRID_LAYER_OVERHEAD];
   speed = toFIXED(1) / 10;
   count = 0;
@@ -2268,7 +2268,7 @@ extern s32 gJupiterLighthouse_RisingElevatorRiders[];
 /// The elevator rises back to where it was before it sank, slowing as it nears
 /// it, or with ASCENT_AT_ONCE is only put back.
 void JupiterLighthouse_RaiseElevator(s32 mode) {
-  struct MapLayer *elevator = &((struct MapWork *)Ram_HeapSlots->mapGrid)
+  struct MapLayer *elevator = &((struct MapState *)Ram_HeapSlots->mapGrid)
                                    ->layers[MAPGRID_LAYER_OVERHEAD];
   s32 speed = toFIXED(3) / 2;
   u32 count = 0;
@@ -2320,11 +2320,11 @@ s32 Party_AddMember(s32 value);
 /// to ENTRANCE_LAST_BATTLE_LOST).
 s32 Scene_Initialize(void) {
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Call2(HangingVine_Place, ACTOR_WEST_CHAIN, 1);
   HangingVine_Place(ACTOR_EAST_CHAIN, 1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   Actor_Get(ACTOR_FLOATING_PLATFORM_A)->priorityFlags |=
       ACTOR_PRIORITY_PLATFORM;
@@ -2343,34 +2343,34 @@ s32 Scene_Initialize(void) {
   } else {
     Actor_Get(ACTOR_UNSEEN_LID)->scaleX = 0;
   }
-  if (gMainRoutineWork.entrance !=
+  if (gMainRoutineState.entrance !=
           JUPITER_LIGHTHOUSE_AERIE_BEACON_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_A &&
-      gMainRoutineWork.entrance !=
+      gMainRoutineState.entrance !=
           JUPITER_LIGHTHOUSE_AERIE_BEACON_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_B) {
     Actor_SetPosition(ACTOR_UNSEEN_LID, 0, 0);
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEACON_ORB), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEACON_ORB), 0);
   Task_AddFrame(JupiterLighthouse_PulseBeacon, TASK_PASS_FRAME);
-  if (gMainRoutineWork.entrance == ENTRANCE_BEACON_LIT) {
+  if (gMainRoutineState.entrance == ENTRANCE_BEACON_LIT) {
     JupiterLighthouse_BeaconIsLit();
 
-    gMainRoutineWork.retreatScene = SCENE_JUPITER_LIGHTHOUSE_ENTRANCE;
-    gMainRoutineWork.retreatEntrance =
+    gMainRoutineState.retreatScene = SCENE_JUPITER_LIGHTHOUSE_ENTRANCE;
+    gMainRoutineState.retreatEntrance =
         JUPITER_LIGHTHOUSE_ENTRANCE_FROM_WORLD_MAP;
   } else {
-    if (gMainRoutineWork.entrance == ENTRANCE_AFTER_FIRST_BATTLE) {
+    if (gMainRoutineState.entrance == ENTRANCE_AFTER_FIRST_BATTLE) {
       Party_AddMember(JENNA);
       JupiterLighthouse_JennaJoinsTheFight();
     } else {
-      if (gMainRoutineWork.entrance == ENTRANCE_AFTER_SECOND_BATTLE) {
+      if (gMainRoutineState.entrance == ENTRANCE_AFTER_SECOND_BATTLE) {
         Party_AddMember(SHEBA);
         JupiterLighthouse_ShebaJoinsTheFight();
       } else {
-        if (gMainRoutineWork.entrance == ENTRANCE_LAST_BATTLE_WON) {
+        if (gMainRoutineState.entrance == ENTRANCE_LAST_BATTLE_WON) {
           JupiterLighthouse_WeBeatThem();
         } else {
-          if (gMainRoutineWork.entrance == ENTRANCE_LAST_BATTLE_LOST) {
+          if (gMainRoutineState.entrance == ENTRANCE_LAST_BATTLE_LOST) {
             JupiterLighthouse_KarstAndAgatioRetreat();
           } else {
             if (Event_GetFlag(FLAG_JUPITER_BEACON_LIT)) {

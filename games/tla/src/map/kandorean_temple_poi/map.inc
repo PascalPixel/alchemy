@@ -4,15 +4,15 @@ Field_KandoreanTemplePoi:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_KandoreanTemplePoi, .LField_KandoreanTemplePoi_CELL_PICTURES
+	map_block Field_KandoreanTemplePoi, .LField_KandoreanTemplePoi_CELL_TILES
 	map_block Field_KandoreanTemplePoi, .LField_KandoreanTemplePoi_SHAPES
 	map_block Field_KandoreanTemplePoi, .LField_KandoreanTemplePoi_GRID
 	map_block Field_KandoreanTemplePoi, .LField_KandoreanTemplePoi_SHAPE_GRID
 	map_block Field_KandoreanTemplePoi, .LField_KandoreanTemplePoi_ANIMATION
 	map_block Field_KandoreanTemplePoi, .LField_KandoreanTemplePoi_BLEND
 	map_block Field_KandoreanTemplePoi, .LField_KandoreanTemplePoi_SCENE
-.LField_KandoreanTemplePoi_CELL_PICTURES:
-	.incbin "games/tla/src/map/kandorean_temple_poi/cell_pictures.delta1.lz"
+.LField_KandoreanTemplePoi_CELL_TILES:
+	.incbin "games/tla/src/map/kandorean_temple_poi/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_KandoreanTemplePoi_SHAPES:
 	.incbin "games/tla/src/map/kandorean_temple_poi/shapes.table.lz"

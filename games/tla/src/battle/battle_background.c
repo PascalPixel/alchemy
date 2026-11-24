@@ -6,7 +6,7 @@
 
 #include "battle_internal.h"
 #include "resource_ids.h"
-#include "battle/battle_effect_work.h"
+#include "battle/battle_effect_state.h"
 #include "fixed_math.h"
 #include "battle/presentation.h"
 #include "system/system.h"
@@ -44,7 +44,7 @@
 /// Darkens the battle background's palette by level steps of a sixtieth;
 /// level 0 restores its saved colours.
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   u16 *palette = battle->palette;
   volatile u32 ime;
 
@@ -67,7 +67,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 /// channel, and BATTLE_BACKGROUND_FADE_RESTORE puts it back undarkened; the
 /// background's id is not read.
 void BattleBackground_SetMode(s32 mode, s32 backgroundId, s32 fade) {
-  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundState *background = Ram_HeapSlots->battleBackground;
 
   if (background->mode == BATTLE_BACKGROUND_NONE)
     Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
@@ -84,20 +84,20 @@ void BattleBackground_SetMode(s32 mode, s32 backgroundId, s32 fade) {
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 
   if (fade == BATTLE_BACKGROUND_FADE_RESTORE) {
-    struct BattleWork *battle;
+    struct BattleState *battle;
     u16 *palette;
 
-    battle = Ram_HeapSlots->battleWork;
+    battle = Ram_HeapSlots->battleState;
     palette = battle->palette;
     Dma_Set(palette, (void *)BATTLE_BG_PALETTE,
             DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
   } else if (fade != 0) {
-    struct BattleWork *battle;
+    struct BattleState *battle;
     u16 *source;
     u16 *destination;
     s32 i;
 
-    battle = Ram_HeapSlots->battleWork;
+    battle = Ram_HeapSlots->battleState;
     source = battle->palette;
     destination = BATTLE_BG_PALETTE;
 
@@ -126,17 +126,17 @@ void BattleBackground_SetMode(s32 mode, s32 backgroundId, s32 fade) {
       (void *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK));
 }
 
-/// Allocates the zoomed background's scanline work.
+/// Allocates the zoomed background's scanline state.
 void BattleBackground_Init(void) {
   void *block = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES,
                                     sizeof(struct BattleAffineHdma));
-  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundState *background = Ram_HeapSlots->battleBackground;
 
   IWRAM_FILL_WORDS(block, sizeof(struct BattleAffineHdma), 0);
   background->mode = BATTLE_BACKGROUND_NONE;
 }
 
-/// Frees the zoomed background's scanline work.
+/// Frees the zoomed background's scanline state.
 void BattleBackground_Free(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SCANLINES);
 }
@@ -145,9 +145,9 @@ void BattleBackground_Free(void) {
 /// darkened by level steps of 1/60 (none when level is negative), its tile
 /// table and tilemap, and the HBlank scroll the first time.
 void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
-  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundState *background = Ram_HeapSlots->battleBackground;
   u8 *data = Resource_GetTableEntry(resource);
-  struct BattleWork *battle = (struct BattleWork *)Ram_HeapSlots->battleWork;
+  struct BattleState *battle = (struct BattleState *)Ram_HeapSlots->battleState;
   ModelDecoder decode;
   u16 *palette;
 
@@ -187,9 +187,9 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
 /// the plane lies flat, from 1 it wraps and turns with the camera.
 void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
                            s32 offsetY, FIXED scale) {
-  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundState *background = Ram_HeapSlots->battleBackground;
   struct BattleAffineHdma *scanlines = Ram_HeapSlots->battleScanlines;
-  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraState;
   s32 panX;
   u16 wrap;
   u16 *line;
@@ -266,7 +266,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #ifndef UBFIX
   s32 zoom;
 #endif
-  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraState;
   s32 *focus = camera->focus;
   FIXED scale = INTtoFIXED(zoom) / 100;
   s32 eyeOffset[3];
@@ -316,7 +316,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 /// the screen moves the plane as much, and the zoom scales the focal length
 /// and the far depth.
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
-  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraState;
   s32 *focus = camera->focus;
   FIXED scale = INTtoFIXED(zoom) / 100;
   FIXED eyeOffset[3];
@@ -447,14 +447,14 @@ UNUSED s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 #define DEBUG_VALUE_TENS 10
 #define DEBUG_VALUE_HUNDREDS 100
 
-/// Unused debug aid: with Start held, the d-pad and L/R step the battle work's
+/// Unused debug aid: with Start held, the d-pad and L/R step the battle state's
 /// debugValue by its ones, tens and hundreds until A takes it; Select held
 /// picks DEBUG_VALUE_SELECT and R held DEBUG_VALUE_R; otherwise value comes
 /// back unchanged.
 UNUSED s32 Battle_AdjustDebugValue(s32 value) {
   if (gInput.held & KEY_START) {
     while (1) {
-      struct BattleWork *battle = Ram_HeapSlots->battleWork;
+      struct BattleState *battle = Ram_HeapSlots->battleState;
 
       if (gInput.repeat & KEY_LEFT)
         battle->debugValue--;
@@ -552,7 +552,7 @@ extern s8 gBattleHighlight_BlendRamp[];
 /// the ramp, and HIGHLIGHT_SELECTED lightens them by it: the first sixteen
 /// steps once, then the second sixteen over and over.
 void BattleBackground_StepHighlightBlend(void) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
 
   if (battle != NULL) {
     if (battle->highlightMode == HIGHLIGHT_FADE_IN) {
@@ -599,7 +599,7 @@ void BattleBackground_StepHighlightBlend(void) {
 /// HIGHLIGHT_OFF stops the highlight.
 void BattleHighlight_SetModes(u16 *actors, s32 mode) {
   s16 activeActors[UNIT_MAX];
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   u32 count;
   u32 i;
 
@@ -642,7 +642,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
 }
 
 /// One of the star field's sparks, drawn inward to the centre. Sixteen live
-/// in SparkWork.sparks; a spent one starts again while the field is young.
+/// in StarFieldState.sparks; a spent one starts again while the field is young.
 struct Spark {
   s32 motion[6]; ///< x, y, z, then their velocities, in STAR_FIELD_PIXEL units
   s32 life;      ///< frames left
@@ -675,8 +675,8 @@ struct Ring {
 #define STAR_FIELD_PIXEL_SHIFT 10
 #define STAR_FIELD_PIXEL (1 << STAR_FIELD_PIXEL_SHIFT)
 
-/// The star field's work, for the 45 frames of a cast's glow.
-struct SparkWork {
+/// The star field's state, for the 45 frames of a cast's glow.
+struct StarFieldState {
   /// The blue ring sprite sheet's pictures, the sparks' and the rings'.
   u8 sheet[4544];
   struct Spark sparks[STAR_FIELD_SPARKS];
@@ -712,7 +712,7 @@ void ElementGlow_UpdateStarField(void) {
   s32 phase;
   void *dest;
   s32 i;
-  struct SparkWork *work;
+  struct StarFieldState *state;
   DrawFunc draw;
   struct Spark *spark;
   struct Ring *ring;
@@ -730,11 +730,11 @@ void ElementGlow_UpdateStarField(void) {
   s32 (*mul)(s32 a, s32 b);
 
   dest = Ram_HeapSlots->battleCanvas;
-  work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
-  work->ready = 0;
+  state = (struct StarFieldState *)Ram_HeapSlots->battleEffect;
+  state->ready = 0;
   draw = (DrawFunc)Ram_HeapSlots->ramCode;
   for (i = 0; i < STAR_FIELD_SPARKS; i++) {
-    spark = &work->sparks[i];
+    spark = &state->sparks[i];
     life = spark->life;
     if (life != 0) {
       dist = Math_SqrtFX((spark->motion[0] >> 8) * (spark->motion[0] >> 8) +
@@ -756,7 +756,7 @@ void ElementGlow_UpdateStarField(void) {
       }
       life = spark->life;
     }
-    if (life == 0 && work->frames < STAR_FIELD_SPAWN_FRAMES) {
+    if (life == 0 && state->frames < STAR_FIELD_SPAWN_FRAMES) {
       angle = Random16();
       radius = Random16() + FIXED_ONE;
       half = radius >> 1;
@@ -781,12 +781,12 @@ void ElementGlow_UpdateStarField(void) {
       else if (frame > 6)
         frame = 6;
       size = gElementGlow_StarSizes[frame];
-      draw(dest, (u8 *)work + gElementGlow_StarPictures[frame], x - (size >> 1),
-           y - (size >> 1), size, size);
+      draw(dest, (u8 *)state + gElementGlow_StarPictures[frame],
+           x - (size >> 1), y - (size >> 1), size, size);
     }
   }
   draw = (DrawFunc)Ram_HeapSlots->ramCodePaired;
-  for (ring = work->rings, j = STAR_FIELD_RINGS - 1; j >= 0; j--, ring++) {
+  for (ring = state->rings, j = STAR_FIELD_RINGS - 1; j >= 0; j--, ring++) {
     ring->x += ring->velocityX;
     ring->y += ring->velocityY;
     ringX = ring->x >> STAR_FIELD_PIXEL_SHIFT;
@@ -798,14 +798,14 @@ void ElementGlow_UpdateStarField(void) {
        * store alone. */
       do {
       } while (0);
-      draw(dest, (u8 *)work + gElementGlow_RingPictures[phase],
+      draw(dest, (u8 *)state + gElementGlow_RingPictures[phase],
            ringX + STAR_FIELD_CENTER - STAR_FIELD_RING_SIZE / 2,
            ringY + STAR_FIELD_CENTER - STAR_FIELD_RING_SIZE / 2,
            STAR_FIELD_RING_SIZE, STAR_FIELD_RING_SIZE);
     }
   }
-  work->frames++;
-  work->ready = 1;
+  state->frames++;
+  state->ready = 1;
 }
 
 s32 ColorBuffer_ScaleThreeQuarters(void *source, void *destination, s32 size);
@@ -814,11 +814,11 @@ s32 ColorBuffer_ScaleThreeQuarters(void *source, void *destination, s32 size);
 /// brightness.
 s32 ElementGlow_UploadStarField(void) {
   void *source = Ram_HeapSlots->battleCanvas;
-  struct SparkWork *work = Ram_HeapSlots->battleEffect;
+  struct StarFieldState *state = Ram_HeapSlots->battleEffect;
 
   if (source != 0) {
-    if (work->ready != 0) {
-      work->ready = 0;
+    if (state->ready != 0) {
+      state->ready = 0;
       return ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(1),
                                             BG_CHAR_SIZE);
     }
@@ -840,21 +840,21 @@ static __inline__ s32 PolarY(s32 angle, s32 radius) {
 /// rings 120 degrees apart, in the element's colours. Returns the upload task's
 /// index.
 s32 ElementGlow_InitializeStarField(s32 element) {
-  struct SparkWork *work;
+  struct StarFieldState *state;
   struct Spark *spark;
   struct Ring *ring;
   s32 i;
   u8 *data;
 
   Ram_HeapSlots->battleBackground->mode = BATTLE_BACKGROUND_FIXED;
-  work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
+  state = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *state);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   for (i = 0; i < STAR_FIELD_SPARKS; i++) {
     s32 angle = Random16();
     u32 radius = Random16() + FIXED_ONE;
     u32 half = radius >> 1;
 
-    spark = &work->sparks[i];
+    spark = &state->sparks[i];
     spark->motion[0] = Iwram_MulFX(Trig_Cos(angle), half);
     spark->motion[1] = Iwram_MulFX(Trig_Sin(angle), half);
     if (spark->motion[0] & 1)
@@ -871,7 +871,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
     s32 radius = 4 * STAR_FIELD_PIXEL;
     s32 angle;
 
-    ring = &work->rings[i];
+    ring = &state->rings[i];
     angle = i * (DEGtoANG(120));
     ring->x = PolarX(angle, radius);
     ring->y = PolarY(angle, radius);
@@ -879,15 +879,15 @@ s32 ElementGlow_InitializeStarField(s32 element) {
     ring->velocityY = PolarY(angle, STAR_FIELD_PIXEL / 2);
     ring->age = 0;
   }
-  work->frames = 0;
-  work->ready = 0;
-  work->originPending = 0;
+  state->frames = 0;
+  state->ready = 0;
+  state->originPending = 0;
   Iwram_ClearWordsEntry(Ram_HeapSlots->battleCanvas,
                         STAR_FIELD_SIZE * STAR_FIELD_SIZE);
   data = Resource_GetTableEntry(RESOURCE_BLUE_RING_SHEET);
   Iwram_CopyWordsEntry((void *)BG_PLTT, data, STAR_FIELD_COLORS * 2);
   data += STAR_FIELD_COLORS * 2;
-  Decompress_TaggedLz(data, work);
+  Decompress_TaggedLz(data, state);
   switch (element) {
   case ELEMENT_VENUS:
     data = Resource_GetTableEntry(RESOURCE_YELLOW_PALETTE_B);
@@ -948,12 +948,12 @@ UNUSED void ElementGlow_ReservedNoOp(void) {}
 void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   struct ScreenPoint starPosition;
   struct ScreenPoint streakPosition;
-  struct BattlePresentationWork pillarLaunch;
-  struct BattlePresentationWork burstLaunch;
+  struct BattlePresentationState pillarLaunch;
+  struct BattlePresentationState burstLaunch;
   s32 origin[2];
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   volatile u16 *ime;
-  struct SparkWork *work;
+  struct StarFieldState *state;
   s32 frame;
   s32 *brightness;
   struct ScreenPoint *pos;
@@ -981,18 +981,18 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     for (frame = 0, pos = &starPosition; frame < STAR_FIELD_FRAMES; frame++) {
       brightness = &battle->brightness;
       ime = &REG_IME;
-      work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
+      state = (struct StarFieldState *)Ram_HeapSlots->battleEffect;
       if (frame <= 24)
         ColorBuffer_Scale(battle->palette, BATTLE_BG_PALETTE,
                           *brightness =
                               FIXED_ONE - frame * BACKGROUND_LEVEL_STEP,
                           BATTLE_BACKGROUND_COLORS);
       BattleMotion_ProjectScaledPosition(unitId, (s32 *)pos);
-      work->originX = (STAR_FIELD_CENTER - pos->x) << 8;
-      work->originY = (STAR_FIELD_CENTER - pos->y) << 8;
-      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, (u32)&work->originX,
+      state->originX = (STAR_FIELD_CENTER - pos->x) << 8;
+      state->originY = (STAR_FIELD_CENTER - pos->y) << 8;
+      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, (u32)&state->originX,
                               DMA_COPY_WORDS(2));
-      work->originPending = 1;
+      state->originPending = 1;
       wait(1);
     }
     ElementGlow_End(element);

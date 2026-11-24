@@ -4,15 +4,15 @@ Field_Prox:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 90, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 72, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Prox, .LField_Prox_CELL_PICTURES
+	map_block Field_Prox, .LField_Prox_CELL_TILES
 	map_block Field_Prox, .LField_Prox_SHAPES
 	map_block Field_Prox, .LField_Prox_GRID
 	map_block Field_Prox, .LField_Prox_SHAPE_GRID
 	map_block Field_Prox, .LField_Prox_ANIMATION
 	map_block Field_Prox, .LField_Prox_BLEND
 	map_block Field_Prox, .LField_Prox_SCENE
-.LField_Prox_CELL_PICTURES:
-	.incbin "games/tla/src/map/prox/cell_pictures.delta2.lz"
+.LField_Prox_CELL_TILES:
+	.incbin "games/tla/src/map/prox/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_Prox_SHAPES:
 	.incbin "games/tla/src/map/prox/shapes.table.lz"

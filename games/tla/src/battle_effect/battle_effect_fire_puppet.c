@@ -16,7 +16,7 @@
 #define PUPPET_STRIP_VERTICES (Ram_MapCellBuffer + 4096)
 #define PUPPET_STRIP_MESH (Ram_MapCellBuffer + 8192)
 /// The last particle keeps a copy of the target's place and scale.
-#define PUPPET_TARGET_COPY (work->particles[ARRAY_COUNT(work->particles) - 1])
+#define PUPPET_TARGET_COPY (state->particles[ARRAY_COUNT(state->particles) - 1])
 
 /// The ghost rises at PUPPET_RISE_FRAME, its trail curling a further
 /// PUPPET_CURL_SPEED a segment each frame up to PUPPET_CURL_MAX; it strikes at
@@ -59,7 +59,7 @@
 /// Abilities: Fire Puppet.
 void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   u8 *mesh;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   u8 *motes;
@@ -73,9 +73,9 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   s32 i;
 
   mesh = PUPPET_STRIP_MESH;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   motes = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   if (args->side == EFFECT_SIDE_ENEMIES) {
@@ -85,7 +85,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
   // The skull's place, set at the trail's last segment.
   endX = 0;
@@ -96,11 +96,11 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   PUPPET_TARGET_COPY.z = target->z;
   PUPPET_TARGET_COPY.velocityX = target->scaleX;
   PUPPET_TARGET_COPY.velocityY = target->scaleY;
-  Resource_LoadAndDecompress(RESOURCE_STREAK_TEXTURE, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_STREAK_TEXTURE, state->sheet, 0, 0);
   // DEAD: Fire Puppet draws none of these motes; the ROM keeps the load.
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GHOST_SKULL_TEXTURE,
-                             work->sheet + FIRE_PUPPET_GHOST_SKULL, 0, 0);
+                             state->sheet + FIRE_PUPPET_GHOST_SKULL, 0, 0);
   // The ghost takes the Mercury Djinn's blues.
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SHEET),
@@ -126,7 +126,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Sound_PlayFar(SE_POWER_UP);
       EFFECT_SHOW_DAMAGE(SE_POWER_UP);
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
       for (i = 0; i != args->targetCount; i++) {
         BattleEffect_StartActorMotion(args->targets[i], 1, toFIXED(2),
                                       toFIXED(4), toFIXED(4), 150);
@@ -188,7 +188,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       shade = 0;
       texture.logWidth = 7;
       texture.logHeight = 5;
-      texture.pixels = work->sheet;
+      texture.pixels = state->sheet;
       model->kind = MODEL_SHADED_MAX;
       model->mesh = mesh;
       model->vertices = projected;
@@ -221,7 +221,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       model->vertices = projected;
       model->scrollU = 0;
       model->scrollV = 0;
-      texture.pixels = work->sheet + FIRE_PUPPET_GHOST_SKULL;
+      texture.pixels = state->sheet + FIRE_PUPPET_GHOST_SKULL;
       model->shade = 0;
       Matrix_Translate(INTtoFIXED(endX), INTtoFIXED(endY), 0);
       Matrix_RotateZ(PUPPET_SKULL_TURN - curl * (PUPPET_SEGMENTS - 1));
@@ -232,7 +232,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
     }
     BattleEffect_CountDownBattlerTints();
     BattleCamera_Shake(4, 4);
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -271,7 +271,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
 /// Abilities: Whiplash.
 void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
   struct HeapSlots *heap;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *canvas;
   struct ScreenPoint caster;
   s32 frame;
@@ -283,7 +283,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
   s32 i;
 
   heap = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)heap->battleEffect;
+  state = (struct BattleEffectState *)heap->battleEffect;
   canvas = heap->battleCanvas;
   motes = heap->battleSheet;
 
@@ -297,11 +297,11 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
     draw[0] = (DrawRectangle)heap->ramCode;
   }
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_SLASH_FLAME_SHEET, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_SLASH_FLAME_SHEET, state->sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_F),
                        SHEET_PALETTE_BYTES);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != WHIPLASH_FRAMES; frame++) {
     // The lash, its pictures placed by the caster.
@@ -309,46 +309,46 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
     if (args->side == EFFECT_SIDE_ENEMIES) {
       switch (frame / WHIPLASH_LASH_PICTURE_FRAMES) {
       case 0:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_A,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, WHIPLASH_LASH_A,
                             caster.x / 2 - 48, caster.y - 120);
         break;
       case 1:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_B,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, WHIPLASH_LASH_B,
                             caster.x / 2 - 38, caster.y - 120);
         break;
       case 2:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_C,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, WHIPLASH_LASH_C,
                             caster.x / 2 - 38, caster.y - 100);
         break;
       case 3:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_D,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, WHIPLASH_LASH_D,
                             caster.x / 2 - 64, caster.y - 88);
         break;
       case 4:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_E,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, WHIPLASH_LASH_E,
                             caster.x / 2 - 64, caster.y - 88);
         break;
       }
     } else {
       switch (frame / WHIPLASH_LASH_PICTURE_FRAMES) {
       case 0:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_A,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, WHIPLASH_LASH_A,
                             caster.x / 2, caster.y - 120);
         break;
       case 1:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_B,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, WHIPLASH_LASH_B,
                             caster.x / 2, caster.y - 120);
         break;
       case 2:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_C,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, WHIPLASH_LASH_C,
                             caster.x / 2, caster.y - 100);
         break;
       case 3:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_D,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, WHIPLASH_LASH_D,
                             caster.x / 2, caster.y - 88);
         break;
       case 4:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_E,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, WHIPLASH_LASH_E,
                             caster.x / 2, caster.y - 88);
         break;
       }
@@ -360,7 +360,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
       for (i = 0; i != WHIPLASH_MOTES; i++) {
         s32 angle;
         s32 speed;
@@ -399,7 +399,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
     }
 
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

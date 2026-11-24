@@ -1,12 +1,12 @@
 /// Unused: the leader spins round, sinking, with splashes at the place of
 /// Aqua Rock's Vial chest room's third puddle, and leaves by `entrance`.
 UNUSED void Leader_SpinAway(s32 entrance) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   s32 i;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
+  FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
   leader->motionFlags = 0;
   leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Event_PlaySound(SE_SPLASH_SMALL);

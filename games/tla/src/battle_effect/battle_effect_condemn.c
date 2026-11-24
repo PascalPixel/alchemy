@@ -30,7 +30,7 @@
 ///
 /// Abilities: Condemn.
 void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   s32 transferValue = 0; // what the canvas is cleared to after each copy
   BlitterPair draw;
@@ -50,7 +50,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   cells = gMapGridCellBuffer;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress(RESOURCE_COUNTER_REVEAL_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_COUNTER_REVEAL_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_A, cells, 1, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
@@ -60,7 +60,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
                       BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, transferValue);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, transferValue);
 
   // The reaper starts off to the side, above the field.
   drawReaper = 1;
@@ -117,7 +117,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
 
     // Each of the first two passes ripples harder as the reaper fades out
     // over its last eight frames.
-    scanline = work->bg2xLines;
+    scanline = state->bg2xLines;
     ripple = 0;
     if (frame <= 23) {
       if (frame > 15) {
@@ -161,17 +161,17 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
         side = EFFECT_SIDE_ENEMIES;
       }
       if (frame < CONDEMN_SWING_FRAME) {
-        draw[args->side](canvas, work->sheet,
+        draw[args->side](canvas, state->sheet,
                          CONDEMN_PICTURE_X(pictureColumn, 0),
                          CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
                          REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
       } else {
         if (frame <= CONDEMN_SWING_FRAME + 3)
           draw[args->side](
-              canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
+              canvas, state->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
               CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
               REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
-        EFFECT_DRAW_PICTURE(draw[args->side], canvas, work->sheet,
+        EFFECT_DRAW_PICTURE(draw[args->side], canvas, state->sheet,
                             REAPER_SHEET_SWUNG,
                             CONDEMN_PICTURE_X(pictureColumn, 1),
                             CONDEMN_PICTURE_Y(pictureRow, 1) + screenY);
@@ -180,7 +180,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
                                CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         if (frame >= CONDEMN_SWING_FRAME + 2 &&
             frame <= CONDEMN_SWING_FRAME + 3)
-          EFFECT_DRAW_PICTURE(draw[args->side], canvas, work->sheet,
+          EFFECT_DRAW_PICTURE(draw[args->side], canvas, state->sheet,
                               REAPER_SHEET_CRESCENT,
                               CONDEMN_PICTURE_X(pictureColumn, 2),
                               CONDEMN_PICTURE_Y(pictureRow, 2) + screenY);
@@ -217,17 +217,17 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_POWER_UP);
     if (frame == CONDEMN_SWING_FRAME) {
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
       EFFECT_SHOW_DAMAGE(SE_CLATTER);
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           Ram_HeapSlots->battleWork->background,
+                           Ram_HeapSlots->battleState->background,
                            BACKGROUND_DARKENED_LEVEL);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();

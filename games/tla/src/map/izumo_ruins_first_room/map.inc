@@ -4,15 +4,15 @@ Field_IzumoRuinsFirstRoom:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_IzumoRuinsFirstRoom, .LField_IzumoRuinsFirstRoom_CELL_PICTURES
+	map_block Field_IzumoRuinsFirstRoom, .LField_IzumoRuinsFirstRoom_CELL_TILES
 	map_block Field_IzumoRuinsFirstRoom, .LField_IzumoRuinsFirstRoom_SHAPES
 	map_block Field_IzumoRuinsFirstRoom, .LField_IzumoRuinsFirstRoom_GRID
 	map_block Field_IzumoRuinsFirstRoom, .LField_IzumoRuinsFirstRoom_SHAPE_GRID
 	map_block Field_IzumoRuinsFirstRoom, .LField_IzumoRuinsFirstRoom_ANIMATION
 	map_block Field_IzumoRuinsFirstRoom
 	map_block Field_IzumoRuinsFirstRoom, .LField_IzumoRuinsFirstRoom_SCENE
-.LField_IzumoRuinsFirstRoom_CELL_PICTURES:
-	.incbin "games/tla/src/map/izumo_ruins_first_room/cell_pictures.delta1.lz"
+.LField_IzumoRuinsFirstRoom_CELL_TILES:
+	.incbin "games/tla/src/map/izumo_ruins_first_room/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_IzumoRuinsFirstRoom_SHAPES:
 	.incbin "games/tla/src/map/izumo_ruins_first_room/shapes.table.lz"

@@ -4,15 +4,15 @@ Field_Madra:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 1, -1, 0x3f, 0x3f
-	map_block Field_Madra, .LField_Madra_CELL_PICTURES
+	map_block Field_Madra, .LField_Madra_CELL_TILES
 	map_block Field_Madra, .LField_Madra_SHAPES
 	map_block Field_Madra, .LField_Madra_GRID
 	map_block Field_Madra, .LField_Madra_SHAPE_GRID
 	map_block Field_Madra, .LField_Madra_ANIMATION
 	map_block Field_Madra, .LField_Madra_BLEND
 	map_block Field_Madra, .LField_Madra_SCENE
-.LField_Madra_CELL_PICTURES:
-	.incbin "games/tla/src/map/madra/cell_pictures.delta2.lz"
+.LField_Madra_CELL_TILES:
+	.incbin "games/tla/src/map/madra/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_Madra_SHAPES:
 	.incbin "games/tla/src/map/madra/shapes.table.lz"

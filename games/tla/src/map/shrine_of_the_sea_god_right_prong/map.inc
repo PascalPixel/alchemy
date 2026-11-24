@@ -4,15 +4,15 @@ Field_ShrineOfTheSeaGodRightProng:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 12, 12, 0, 0, 0xff, 0xff
-	map_block Field_ShrineOfTheSeaGodRightProng, .LField_ShrineOfTheSeaGodRightProng_CELL_PICTURES
+	map_block Field_ShrineOfTheSeaGodRightProng, .LField_ShrineOfTheSeaGodRightProng_CELL_TILES
 	map_block Field_ShrineOfTheSeaGodRightProng, .LField_ShrineOfTheSeaGodRightProng_SHAPES
 	map_block Field_ShrineOfTheSeaGodRightProng, .LField_ShrineOfTheSeaGodRightProng_GRID
 	map_block Field_ShrineOfTheSeaGodRightProng, .LField_ShrineOfTheSeaGodRightProng_SHAPE_GRID
 	map_block Field_ShrineOfTheSeaGodRightProng, .LField_ShrineOfTheSeaGodRightProng_ANIMATION
 	map_block Field_ShrineOfTheSeaGodRightProng
 	map_block Field_ShrineOfTheSeaGodRightProng, .LField_ShrineOfTheSeaGodRightProng_SCENE
-.LField_ShrineOfTheSeaGodRightProng_CELL_PICTURES:
-	.incbin "games/tla/src/map/shrine_of_the_sea_god_right_prong/cell_pictures.delta1.lz"
+.LField_ShrineOfTheSeaGodRightProng_CELL_TILES:
+	.incbin "games/tla/src/map/shrine_of_the_sea_god_right_prong/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_ShrineOfTheSeaGodRightProng_SHAPES:
 	.incbin "games/tla/src/map/shrine_of_the_sea_god_right_prong/shapes.table.lz"

@@ -180,7 +180,7 @@ s32 PartyInventory_Add(s32 itemId);
 extern const s32 gClass_SeriesByElements[4][4];
 s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId);
 struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains);
-void MainRoutineWork_InitializeDefaults(void);
+void MainRoutineState_InitializeDefaults(void);
 extern const u8 gNewGame_SceneStateTable[4][5];
 void Party_InitializeCharacters(void);
 s32 Party_AddMember(s32 owner);
@@ -209,7 +209,7 @@ void Party_SetLeaderFelix(void);
 extern u8 gInventorySnapshot[];
 /// Where gInventorySnapshot's spare space begins, past the party's equipment
 /// InventorySnapshot_Save keeps and the Trial Road's state: the scenes keep
-/// their own work there (scene/ride.h's RIDE_WORK).
+/// their own state there (scene/ride.h's RIDE_STATE).
 #define INVENTORY_SNAPSHOT_SPARE 392
 
 #endif

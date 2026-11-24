@@ -4,15 +4,15 @@ Field_GabombaStatueMouse:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_GabombaStatueMouse, .LField_GabombaStatueMouse_CELL_PICTURES
+	map_block Field_GabombaStatueMouse, .LField_GabombaStatueMouse_CELL_TILES
 	map_block Field_GabombaStatueMouse, .LField_GabombaStatueMouse_SHAPES
 	map_block Field_GabombaStatueMouse, .LField_GabombaStatueMouse_GRID
 	map_block Field_GabombaStatueMouse, .LField_GabombaStatueMouse_SHAPE_GRID
 	map_block Field_GabombaStatueMouse, .LField_GabombaStatueMouse_ANIMATION
 	map_block Field_GabombaStatueMouse, .LField_GabombaStatueMouse_BLEND
 	map_block Field_GabombaStatueMouse, .LField_GabombaStatueMouse_SCENE
-.LField_GabombaStatueMouse_CELL_PICTURES:
-	.incbin "games/tla/src/map/gabomba_statue_mouse/cell_pictures.delta2.lz"
+.LField_GabombaStatueMouse_CELL_TILES:
+	.incbin "games/tla/src/map/gabomba_statue_mouse/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_GabombaStatueMouse_SHAPES:
 	.incbin "games/tla/src/map/gabomba_statue_bone_armlet_chest/shapes.table.lz"

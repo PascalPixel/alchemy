@@ -52,8 +52,8 @@ void FieldPsynergy_RunHandler(s32 kind) {
 /// Runs the field Psynergy animation the scene names, with no target chosen
 /// yet: each kind runs its effect to the end.
 void FieldPsynergy_Run(void) {
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
   s32 animation = scene->fieldPsynergy;
   s32 targetId = scene->secondActorId;
   s32 objectId;
@@ -117,7 +117,7 @@ void FieldPsynergy_Run(void) {
   else if (animation == FIELD_PSYNERGY_HALT) {
     // Resume the actor stopped before, then stop the nearest one that has an
     // event to run; with none, the stopwatch is thrown at nothing.
-    struct MainRoutineWork *party = &gMainRoutineWork;
+    struct MainRoutineState *party = &gMainRoutineState;
     s32 paused;
 
     paused = party->haltedActor;
@@ -144,10 +144,10 @@ void FieldPsynergy_Run(void) {
 }
 
 /// Runs the field Psynergy animation the scene names on the target the player
-/// chose (FieldEffectWork.secondActorId).
+/// chose (FieldEffectState.secondActorId).
 void FieldPsynergy_Dispatch(void) {
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
   s32 animation = scene->fieldPsynergy;
   s32 targetId = scene->secondActorId;
 
@@ -209,17 +209,17 @@ void FieldPsynergy_Dispatch(void) {
   else if (animation == FIELD_PSYNERGY_MIND_READ) {
     // The wave and colour effect, stopping a running Reveal first; a target
     // other than the halted actor stands still while the wave runs.
-    struct MainRoutineWork *party;
+    struct MainRoutineState *party;
 
     if (event->revealActive != 0)
       FieldPsynergy_EndReveal();
-    party = &gMainRoutineWork;
+    party = &gMainRoutineState;
     if (party->haltedActor != scene->secondActorId)
       ((struct Actor *)scene->child)->paused = 1;
     FieldPsynergy_StartMindReadWave(scene->firstActorId, targetId);
   } else if (animation == FIELD_PSYNERGY_HALT) {
     // Resume the actor stopped before, then stop the target.
-    struct MainRoutineWork *party = &gMainRoutineWork;
+    struct MainRoutineState *party = &gMainRoutineState;
 
     if (party->haltedActor != -1) {
       FieldPsynergy_ResumeHaltedActor(party->haltedActor);
@@ -234,12 +234,12 @@ void FieldPsynergy_Dispatch(void) {
 /// Finishes the current field Psynergy when it is Mind Read: ends it and lets
 /// its target move again, unless the target is the actor kept stopped.
 void FieldPsynergy_FinishMindRead(void) {
-  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
 
-  if (effectWork->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
+  if (effectState->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     FieldPsynergy_StopMindReadWave();
-    if (gMainRoutineWork.haltedActor != effectWork->secondActorId) {
-      ((struct Actor *)effectWork->child)->paused = 0;
+    if (gMainRoutineState.haltedActor != effectState->secondActorId) {
+      ((struct Actor *)effectState->child)->paused = 0;
     }
   }
 }
@@ -247,7 +247,7 @@ void FieldPsynergy_FinishMindRead(void) {
 /// The extra handler of Reveal, Cloak, Avoid, Sand, Hover and the Ring: what
 /// each does when it ends.
 void FieldPsynergy_RunExtraHandler(void) {
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
 
   switch (scene->fieldPsynergy) {
   case FIELD_PSYNERGY_REVEAL:
@@ -329,7 +329,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
   s32 screen[3];
   s32 depth;
 
-  if (gFieldWork->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (gFieldState->mode == ACTOR_SYSTEM_WORLD_MAP) {
     point[0] = actor->x.fixed;
     point[1] = actor->y.fixed;
     point[2] = actor->z.fixed;
@@ -349,19 +349,19 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
   return depth;
 }
 
-/// Draws the Psynergy's canvas sprite (FieldEffectWork.sprite) each frame.
+/// Draws the Psynergy's canvas sprite (FieldEffectState.sprite) each frame.
 void BattleEffect_DrawSceneSprite(void) {
   EffectSprite_Draw(
-      &((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->sprite);
+      &((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->sprite);
 }
 
 /// When the caster faces away (FACING_NORTH), starts the Psynergy's canvas
-/// sprite (FieldEffectWork.sprite): a blank 32x32 sprite of its own VRAM cache
+/// sprite (FieldEffectState.sprite): a blank 32x32 sprite of its own VRAM cache
 /// entry, twice as tall, 28 pixels above the caster in front of everything,
 /// drawn each frame by BattleEffect_DrawSceneSprite until
 /// FieldPsynergy_ReleaseSceneSprite.
 void FieldPsynergy_StartSceneSprite(void) {
-  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
   struct Actor *mainActor;
   struct EffectSprite *sprite;
   FIXED position[3];
@@ -369,23 +369,23 @@ void FieldPsynergy_StartSceneSprite(void) {
   s32 slot;
   s32 tiles;
 
-  mainActor = effectWork->mainActor;
-  if (effectWork->angle == FACING_NORTH) {
-    effectWork->spriteActive = 1;
+  mainActor = effectState->mainActor;
+  if (effectState->angle == FACING_NORTH) {
+    effectState->spriteActive = 1;
     buffer = Heap_Alloc(512);
     IWRAM_FILL_WORDS(buffer, 512, 0);
     slot = VramCache_FindFreeEntry();
     tiles = VramCache_Load(slot, 512, buffer);
-    effectWork->spriteVramSlot = slot;
+    effectState->spriteVramSlot = slot;
     Heap_Release(buffer);
-    sprite = &effectWork->sprite;
+    sprite = &effectState->sprite;
     EffectSprite_Init(sprite, 16, 31, OBJ_SIZE_32X32, tiles);
     sprite->depth = 0;
     sprite->oam.priority = 0;
     sprite->oam.fullColor = 0;
     sprite->oam.palette = 0;
     sprite->scaleY = FIXED_ONE * 2;
-    position[0] = effectWork->x;
+    position[0] = effectState->x;
     position[1] = mainActor->y.fixed + toFIXED(28);
     position[2] = mainActor->z.fixed;
     Camera_WorldToScreen(position);

@@ -69,11 +69,11 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   s16 list[UNIT_MAX];
   DrawRectangle draw[2];
   struct ModelTexture texture;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   u8 *graphics;
   struct MotionObject *caster;
-  struct BattleBackgroundWork *transition;
+  struct BattleBackgroundState *transition;
   s32 savedScrollX;
   struct RenderModel *model;
   void *projected;
@@ -85,18 +85,18 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   s32 flatKind;
   u8 *pixels;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_GIANT_SWORD_SHEET, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_GIANT_SWORD_SHEET, state->sheet, 0, 0);
   // DEAD: DustBlobSheet, which Megiddo draws, is decoded and never drawn; the
   // ROM keeps the load.
   Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET,
-                             work->sheet + ODYSSEY_DUST_BLOB, 1, 0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+                             state->sheet + ODYSSEY_DUST_BLOB, 1, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The blitter faces the caster's side.
   if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -124,7 +124,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
                                  0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = EFFECT_BLEND_ADD;
-      EFFECT_FREE_PARTICLES(i, work->particles, ARRAY_COUNT(work->particles));
+      EFFECT_FREE_PARTICLES(i, state->particles, ARRAY_COUNT(state->particles));
     }
 
     // Frame 2: only the caster and the target, over the red haze turned blue:
@@ -167,8 +167,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     if (frame == 8) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      step = work->particles;
-      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
+      step = state->particles;
+      for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
         step->x = Random16() % 216 - 96;
         step->y = Random16() % 216;
         step++;
@@ -176,7 +176,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     }
     if (frame == 86)
       Resource_LoadAndDecompress(RESOURCE_GIANT_SWORD_BLADE_SHEET,
-                                 work->sheet + ODYSSEY_COLOSSAL_SWORD, 1, 1);
+                                 state->sheet + ODYSSEY_COLOSSAL_SWORD, 1, 1);
 
     // Frame 84: the caster charges at the target.
     if (frame == 84) {
@@ -196,7 +196,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_CLATTER);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
       shard = ODYSSEY_SHARDS;
       for (i = 0; i != ODYSSEY_SHARD_COUNT; i++) {
         s32 speed = (Random16() & 0x1ff) + 32;
@@ -229,7 +229,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         if (x > 0)
           x = 0;
       }
-      draw[0](canvas, work->sheet + ODYSSEY_COLOSSAL_SWORD, x, 8,
+      draw[0](canvas, state->sheet + ODYSSEY_COLOSSAL_SWORD, x, 8,
               ODYSSEY_COLOSSAL_SWORD_WIDTH, ODYSSEY_COLOSSAL_SWORD_HEIGHT);
       if (args->side == EFFECT_SIDE_ENEMIES)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -238,14 +238,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
       draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-      draw[1](canvas, work->sheet + ODYSSEY_COLOSSAL_SWORD, x, 64,
+      draw[1](canvas, state->sheet + ODYSSEY_COLOSSAL_SWORD, x, 64,
               ODYSSEY_COLOSSAL_SWORD_WIDTH, ODYSSEY_COLOSSAL_SWORD_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
 
     // Until frame 89: the sparks of the swords' hits, shrinking.
     if (frame <= 89) {
-      for (i = 0, step = work->particles; i != ARRAY_COUNT(work->particles);
+      for (i = 0, step = state->particles; i != ARRAY_COUNT(state->particles);
            i++) {
         if (step->variant >= 0) {
           s32 size = (step->variant >> 2) + 1;
@@ -282,9 +282,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
           } else {
             angle += DEGtoANG(180);
           }
-          spark = &work->particles[i * (ARRAY_COUNT(work->particles) /
-                                        ODYSSEY_SWORDS) +
-                                   k];
+          spark = &state->particles[i * (ARRAY_COUNT(state->particles) /
+                                         ODYSSEY_SWORDS) +
+                                    k];
           spark->x = INTtoFIXED(to.x / 2);
           spark->y = INTtoFIXED(to.y);
           spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
@@ -294,7 +294,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         Sound_PlayFar(SE_IMPACT);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 64);
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
       }
       // Each sword plunges 16 rows a frame, the first down to row 8 and the
       // second up to row 40, and stays there.
@@ -331,7 +331,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
                                 BLITTER_MAX);
           draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
         }
-        draw[i](canvas, work->sheet, x - ODYSSEY_SWORD_WIDTH / 2, y,
+        draw[i](canvas, state->sheet, x - ODYSSEY_SWORD_WIDTH / 2, y,
                 ODYSSEY_SWORD_WIDTH, ODYSSEY_SWORD_HEIGHT);
         if (i == 1)
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -439,7 +439,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       model->mesh = gBattleEffect_TriangleMesh;
       model->kind = flatKind;
       if (frame > 99) {
-        EFFECT_SET_TRANSFER(work, fillMode, CANVAS_FILL_WORD(2));
+        EFFECT_SET_TRANSFER(state, fillMode, CANVAS_FILL_WORD(2));
         Palette_BrightenBgEntries(2, 2, 2);
       }
       for (i = 0, step = ODYSSEY_SHARDS; i != ODYSSEY_SHARD_COUNT; i++) {
@@ -463,7 +463,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     Heap_Release(projected);
 
     Camera_ApplyVerticalShake(8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   // The battle's own scene again.
@@ -471,7 +471,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   transition->busy = 0;
   gBgScroll[1].x = savedScrollX;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           BATTLE_BACKGROUND_ID(Ram_HeapSlots->battleWork),
+                           BATTLE_BACKGROUND_ID(Ram_HeapSlots->battleState),
                            BACKGROUND_DARKEN_FRAMES);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
@@ -502,8 +502,8 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   BlitterPair sheetDraw;
   s32 savedScrollX;
   u8 *canvas;
-  struct BattleEffectWork *work;
-  struct BattleBackgroundWork *transition;
+  struct BattleEffectState *state;
+  struct BattleBackgroundState *transition;
   DrawRectangle draw;
   const u8 *palette;
   s32 frame;
@@ -514,7 +514,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   u8 *cells = Ram_MapCellBuffer;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   savedScrollX = gBgScroll[1].x;
   transition = Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(3));
@@ -525,7 +525,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7);
   REG_BG1CNT &= ~BGCNT_PRIORITY(3);
   REG_BG1CNT |= BGCNT_PRIORITY(0);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The cloud sprite sheet, moved to the battle background's palettes (which
   // take EmberStreakSheet's colours), drawn into the canvas.
@@ -534,14 +534,14 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   palette = Resource_GetTableEntry(RESOURCE_CLOUD_SWIRL_SHEET);
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, SHEET_PALETTE_BYTES);
   palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet);
+  Decompress_TaggedLz(palette, state->sheet);
   palette = Resource_GetTableEntry(RESOURCE_EMBER_STREAK_SHEET);
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, SHEET_PALETTE_BYTES);
   for (i = 0; i != CANVAS_BYTES; i++)
-    work->sheet[i] += SWIRL_FIRST_COLOR;
+    state->sheet[i] += SWIRL_FIRST_COLOR;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  sheetDraw[0](canvas, work->sheet, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
-  EFFECT_PRESENT_CANVAS(work);
+  sheetDraw[0](canvas, state->sheet, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+  EFFECT_PRESENT_CANVAS(state);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
@@ -566,7 +566,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   transition->busy = enabled;
   draw(cells, canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
   draw(cells, canvas, CANVAS_SIZE, 0, CANVAS_SIZE, CANVAS_SIZE);
-  work->transferPending = enabled;
+  state->transferPending = enabled;
   wait(1);
 
   for (frame = 0; frame != SWIRL_MAX_FRAMES; frame++) {
@@ -631,7 +631,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
 void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   s32 scrollX;
   u8 *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u16 ramp[CANVAS_LEVEL_BRIGHTEST];
   s32 half;
   s32 y;
@@ -639,10 +639,10 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
 
   scrollX = (side & 1) * WIPE_DISTANCE - 64;
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   // CANVAS_COPY does not read the share.
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
   REG_BG2PA = Q_8_8(0.28125); // about 3.6 times as wide
 
   // The band, column i: rising to the brightest level over the left edge,
@@ -682,7 +682,7 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   for (i = 0; i != y; i++) {
     scrollX += (s8)speed;
     REG_BG2X = scrollX << 8;
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
     if (i == half && midpoint != NULL)
       midpoint();
   }
@@ -799,18 +799,18 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
 /// again, reloads the sprites' basic colours and brings back the battle's own
 /// backdrop.
 void Iris_RestoreBattle(void) {
-  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
-  struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
+  struct BattleBackgroundState *transition = Ram_HeapSlots->battleBackground;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   s32 i;
 
-  for (i = 0; i != work->args->targetCount; i++) {
+  for (i = 0; i != state->args->targetCount; i++) {
     struct MotionObject *object =
-        BattleObject_GetFar(work->args->targets[i])->object;
+        BattleObject_GetFar(state->args->targets[i])->object;
 
     SET_POSITION(object, 0, toFIXED(120), 0);
     object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
-    BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HOP);
+    BattleMotion_ApplyKnockbackFar(state->args->targets[i], KNOCKBACK_HOP);
   }
   transition->busy = 0;
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;

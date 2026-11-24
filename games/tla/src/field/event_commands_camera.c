@@ -12,7 +12,7 @@
 void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
                                      FIXED requestedZ, s32 pan) {
   s32 panning;
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 minimumX;
   FIXED minimumZ;
   s32 maximumX;
@@ -21,15 +21,15 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
   FIXED positionX;
   FIXED positionZ;
   FIXED positionY;
-  struct MapWork *map;
+  struct MapState *map;
   struct Actor *actor;
 
   positionX = requestedX;
   positionY = requestedY;
   panning = pan;
   positionZ = requestedZ;
-  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  actor = work->camera;
+  state = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldState));
+  actor = state->camera;
   map = Ram_HeapSlots->mapGrid;
   // Keep the screen inside the map: the view centre stays 120 pixels from
   // either side, 96 from the top and 64 from the bottom, the z limits moved
@@ -65,7 +65,7 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
   if (panning == 0) {
     SET_ACTOR_POSITION(actor, positionX, positionY, positionZ);
     wait(1U);
-    if (work->mode != ACTOR_SYSTEM_WORLD_MAP) {
+    if (state->mode != ACTOR_SYSTEM_WORLD_MAP) {
       MapGrid_CenterOnFollowedPointFar();
     }
   } else {
@@ -94,8 +94,8 @@ void FieldCamera_MoveToActor(s32 actorId, s32 pan) {
 /// The event command "camera wait for move": waits (at most 600 frames) for
 /// the camera to arrive, then 2 frames more.
 void FieldCamera_WaitForArrival(void) {
-  Actor_WaitForMoveFar(((struct FieldWork *)HeapSlot_AllocEwram(
-                            HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
+  Actor_WaitForMoveFar(((struct FieldState *)HeapSlot_AllocEwram(
+                            HEAP_SLOT_FIELD, sizeof(struct FieldState)))
                            ->camera);
   Event_Wait(2);
 }
@@ -103,8 +103,8 @@ void FieldCamera_WaitForArrival(void) {
 /// The event command "get camera": returns the camera's own actor, which the
 /// view centres on.
 struct Actor *FieldCamera_GetActor(void) {
-  return ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
-                                                  sizeof(struct FieldWork)))
+  return ((struct FieldState *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                   sizeof(struct FieldState)))
       ->camera;
 }
 
@@ -113,8 +113,8 @@ struct Actor *FieldCamera_GetActor(void) {
 UNUSED void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition) {
   struct Actor *camera;
 
-  camera = ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
-                                                    sizeof(struct FieldWork)))
+  camera = ((struct FieldState *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                     sizeof(struct FieldState)))
                ->camera;
   if (target != NULL) {
     Actor_StartCameraFar(camera, 0);

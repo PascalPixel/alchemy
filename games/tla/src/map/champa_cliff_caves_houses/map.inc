@@ -4,15 +4,15 @@ Field_ChampaCliffCavesHouses:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_ChampaCliffCavesHouses, .LField_ChampaCliffCavesHouses_CELL_PICTURES
+	map_block Field_ChampaCliffCavesHouses, .LField_ChampaCliffCavesHouses_CELL_TILES
 	map_block Field_ChampaCliffCavesHouses, .LField_ChampaCliffCavesHouses_SHAPES
 	map_block Field_ChampaCliffCavesHouses, .LField_ChampaCliffCavesHouses_GRID
 	map_block Field_ChampaCliffCavesHouses, .LField_ChampaCliffCavesHouses_SHAPE_GRID
 	map_block Field_ChampaCliffCavesHouses, .LField_ChampaCliffCavesHouses_ANIMATION
 	map_block Field_ChampaCliffCavesHouses, .LField_ChampaCliffCavesHouses_BLEND
 	map_block Field_ChampaCliffCavesHouses, .LField_ChampaCliffCavesHouses_SCENE
-.LField_ChampaCliffCavesHouses_CELL_PICTURES:
-	.incbin "games/tla/src/map/champa_cliff_caves_houses/cell_pictures.delta1.lz"
+.LField_ChampaCliffCavesHouses_CELL_TILES:
+	.incbin "games/tla/src/map/champa_cliff_caves_houses/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_ChampaCliffCavesHouses_SHAPES:
 	.incbin "games/tla/src/map/champa_cliff_caves_houses/shapes.table.lz"

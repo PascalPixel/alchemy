@@ -11,8 +11,8 @@
 
 // Typed as an event that returns a value, though it returns none.
 s32 KNOCK_BACK(void) {
-  struct MainRoutineWork *main = &gMainRoutineWork;
-  struct FlameHitWork *work;
+  struct MainRoutineState *main = &gMainRoutineState;
+  struct FlameHitState *state;
   struct Vector3 position;
 
   if (main->movementMode == LEADER_MOVEMENT_WALK) {
@@ -26,7 +26,7 @@ s32 KNOCK_BACK(void) {
     ((s32 (*)())KNOCK_BACK_TAKE_DAMAGE)(-FALL_DAMAGE, 0);
 #endif
     actor = Actor_Get(main->leaderActorId);
-    work = RIDE_WORK;
+    state = RIDE_STATE;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->update = KNOCK_BACK_BLINK;
@@ -39,13 +39,13 @@ s32 KNOCK_BACK(void) {
 
         // Sliding: 2 pixels a frame for up to 10 frames, until the ground
         // 8 pixels ahead stops them.
-        actor->velocityX = (s16)work->direction.x * toFIXED(2);
-        actor->velocityZ = (s16)work->direction.z * toFIXED(2);
+        actor->velocityX = (s16)state->direction.x * toFIXED(2);
+        actor->velocityZ = (s16)state->direction.z * toFIXED(2);
         actor->acceleration = FIXED_ONE / 16;
         for (i = 0; i <= 9; i++) {
-          position.x = actor->x.fixed + (s16)work->direction.x * toFIXED(8);
+          position.x = actor->x.fixed + (s16)state->direction.x * toFIXED(8);
           position.y = actor->y.fixed;
-          position.z = actor->z.fixed + (s16)work->direction.z * toFIXED(8);
+          position.z = actor->z.fixed + (s16)state->direction.z * toFIXED(8);
           if (KNOCK_BACK_CHECK_COLLISION(actor, &position) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
@@ -67,15 +67,15 @@ s32 KNOCK_BACK(void) {
         s32 off;
 #endif
 
-        position.x = actor->x.fixed + (s16)work->direction.x * toFIXED(8);
+        position.x = actor->x.fixed + (s16)state->direction.x * toFIXED(8);
         position.y = actor->y.fixed;
-        position.z = actor->z.fixed + (s16)work->direction.z * toFIXED(8);
+        position.z = actor->z.fixed + (s16)state->direction.z * toFIXED(8);
         result = KNOCK_BACK_CHECK_COLLISION(actor, &position);
         if (result > 0)
           break;
         if (result < 0) {
           actor->facing = DEGtoANG(90);
-          Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, -1);
+          Actor_JumpDownLedge(gMainRoutineState.leaderActorId, 6, -1);
           break;
         }
 #if TLA_PATCH_1
@@ -95,8 +95,8 @@ s32 KNOCK_BACK(void) {
 #endif
         // A step of 2 pixels, kept within a pixel of the cell's middle
         // across it.
-        x = actor->x.fixed += (s16)work->direction.x * toFIXED(2);
-        z = actor->z.fixed + (s16)work->direction.z * toFIXED(2);
+        x = actor->x.fixed += (s16)state->direction.x * toFIXED(2);
+        z = actor->z.fixed + (s16)state->direction.z * toFIXED(2);
         actor->z.fixed = z;
         off = (x & ~FIELD_CELL_MASK) - toFIXED(8);
         if (off > FIXED_ONE)
@@ -110,7 +110,7 @@ s32 KNOCK_BACK(void) {
         if (off < -FIXED_ONE)
           off = -FIXED_ONE;
         actor->z.fixed = z - off;
-        work->active = 0;
+        state->active = 0;
         System_Wait(1);
       }
     }
@@ -120,10 +120,10 @@ s32 KNOCK_BACK(void) {
     actor->update = 0;
     Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
   }
-  // UB: work is set only when renderMode is 0; otherwise the store goes
+  // UB: state is set only when renderMode is 0; otherwise the store goes
   // through whatever its register holds.
 #ifdef UBFIX
   if (main->renderMode == 0)
 #endif
-    work->active = 0;
+    state->active = 0;
 }

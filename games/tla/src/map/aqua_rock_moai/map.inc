@@ -4,15 +4,15 @@ Field_AquaRockMoai:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_AquaRockMoai, .LField_AquaRockMoai_CELL_PICTURES
+	map_block Field_AquaRockMoai, .LField_AquaRockMoai_CELL_TILES
 	map_block Field_AquaRockMoai, .LField_AquaRockMoai_SHAPES
 	map_block Field_AquaRockMoai, .LField_AquaRockMoai_GRID
 	map_block Field_AquaRockMoai, .LField_AquaRockMoai_SHAPE_GRID
 	map_block Field_AquaRockMoai, .LField_AquaRockMoai_ANIMATION
 	map_block Field_AquaRockMoai, .LField_AquaRockMoai_BLEND
 	map_block Field_AquaRockMoai, .LField_AquaRockMoai_SCENE
-.LField_AquaRockMoai_CELL_PICTURES:
-	.incbin "games/tla/src/map/aqua_rock_moai/cell_pictures.delta0.lz"
+.LField_AquaRockMoai_CELL_TILES:
+	.incbin "games/tla/src/map/aqua_rock_moai/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_AquaRockMoai_SHAPES:
 	.incbin "games/tla/src/map/aqua_rock_moai/shapes.table.lz"

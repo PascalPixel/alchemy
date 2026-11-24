@@ -4,15 +4,15 @@ Field_ShrineOfTheSeaGodSeaGodsTear:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 100, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_ShrineOfTheSeaGodSeaGodsTear, .LField_ShrineOfTheSeaGodSeaGodsTear_CELL_PICTURES
+	map_block Field_ShrineOfTheSeaGodSeaGodsTear, .LField_ShrineOfTheSeaGodSeaGodsTear_CELL_TILES
 	map_block Field_ShrineOfTheSeaGodSeaGodsTear, .LField_ShrineOfTheSeaGodSeaGodsTear_SHAPES
 	map_block Field_ShrineOfTheSeaGodSeaGodsTear, .LField_ShrineOfTheSeaGodSeaGodsTear_GRID
 	map_block Field_ShrineOfTheSeaGodSeaGodsTear, .LField_ShrineOfTheSeaGodSeaGodsTear_SHAPE_GRID
 	map_block Field_ShrineOfTheSeaGodSeaGodsTear, .LField_ShrineOfTheSeaGodSeaGodsTear_ANIMATION
 	map_block Field_ShrineOfTheSeaGodSeaGodsTear, .LField_ShrineOfTheSeaGodSeaGodsTear_BLEND
 	map_block Field_ShrineOfTheSeaGodSeaGodsTear, .LField_ShrineOfTheSeaGodSeaGodsTear_SCENE
-.LField_ShrineOfTheSeaGodSeaGodsTear_CELL_PICTURES:
-	.incbin "games/tla/src/map/shrine_of_the_sea_god_sea_gods_tear/cell_pictures.delta2.lz"
+.LField_ShrineOfTheSeaGodSeaGodsTear_CELL_TILES:
+	.incbin "games/tla/src/map/shrine_of_the_sea_god_sea_gods_tear/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_ShrineOfTheSeaGodSeaGodsTear_SHAPES:
 	.incbin "games/tla/src/map/shrine_of_the_sea_god_sea_gods_tear/shapes.table.lz"

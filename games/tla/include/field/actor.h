@@ -20,7 +20,7 @@ enum ScreenTransitionStyle {
   TRANSITION_CENTRE_LINE = 4
 };
 
-/// A scene transition as FieldWork.transition holds it.
+/// A scene transition as FieldState.transition holds it.
 #define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
 /// The two bytes of a SCENE_TRANSITION: its enum ScreenTransitionStyle, and
 /// the variant that style reads.

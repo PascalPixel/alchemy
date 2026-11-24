@@ -26,16 +26,16 @@ struct LinkSignature {
 };
 
 /// A task while the party's commands are chosen (Battle_CollectPartyCommands):
-/// eases the battle view a third of the way to BattleMenuWork.targetViewOffset
-/// each frame (a pixel at least), draws the sprites of BattleMenuWork.icons
+/// eases the battle view a third of the way to BattleMenuState.targetViewOffset
+/// each frame (a pixel at least), draws the sprites of BattleMenuState.icons
 /// that are shown (the chosen command's and ability's icons, the party member's
 /// portrait) and slides the page arrows. In a link battle it also runs the
 /// timer: once the partner has chosen its commands, this side has 15 seconds,
 /// counted down in the "TIME" window, with a tone at each second.
 void BattleMenu_UpdateEachFrame(void) {
-  struct BattleMenuWork *state =
-      (struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork;
-  struct BattleWork *runtime;
+  struct BattleMenuState *state =
+      (struct BattleMenuState *)Ram_HeapSlots->battleMenuState;
+  struct BattleState *runtime;
   struct MenuSprite *entry;
   u8 *active;
   struct LinkSignature *signature;
@@ -80,7 +80,7 @@ void BattleMenu_UpdateEachFrame(void) {
     if (state->linkTimer == 0)
       return;
 
-    runtime = Ram_HeapSlots->battleWork;
+    runtime = Ram_HeapSlots->battleState;
     if (runtime->linkPaused == 0)
       goto load_timer;
     state->timer = 0;
@@ -138,7 +138,7 @@ void BattleMenu_UpdateEachFrame(void) {
 
 /// Tests whether the party may not run from this battle: a link battle, battle
 /// type 3, which no battle sets, or a party once challenged
-/// (BattleWork.challengeFlag). When it may not, shows "This is no time to be
+/// (BattleState.challengeFlag). When it may not, shows "This is no time to be
 /// running away!" until A or B is pressed or the link battle's time runs out,
 /// and returns 1; else returns 0. The Flee command asks it
 /// (Battle_CollectPartyCommands); in a BATTLE_TYPE_NO_ESCAPE battle the
@@ -147,12 +147,12 @@ s32 Battle_RefuseFlee(void) {
   s16 buffer[64];
   s32 window;
   s32 result;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 mode;
 
-  battle = Ram_HeapSlots->battleWork;
-  mode = gMainRoutineWork.battleType;
-  if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE ||
+  battle = Ram_HeapSlots->battleState;
+  mode = gMainRoutineState.battleType;
+  if (gMainRoutineState.battleType == BATTLE_TYPE_NO_ESCAPE ||
       mode <= BATTLE_TYPE_NO_ESCAPE || (result = 1, mode > BATTLE_TYPE_LINK)) {
     result = 0;
   }
@@ -172,7 +172,7 @@ s32 Battle_RefuseFlee(void) {
     do {
       wait(1);
     } while ((gInput.pressed & (KEY_A | KEY_B)) == 0 &&
-             BATTLE_MENU_WORK->timer != 0);
+             BATTLE_MENU_STATE->timer != 0);
     Window_Close(window, 1);
   }
   return result;

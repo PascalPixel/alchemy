@@ -19,7 +19,7 @@
 #include "field/scene_tables.h"
 #include "system/ram_buffer.h"
 #include "field/field_event.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/event_inline.h"
 #include "field/actor_script.h"
 #include "field/map.h"
@@ -44,9 +44,9 @@
 #include "macros.h"
 #include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "field/map_grid.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "ability_ids.h"
 
 /// Story flags: Osenia Cavern's passage dug open by Scoop, Atteka Cavern's
@@ -123,7 +123,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const s16 *Scene_GetExitRegions(void) {
   const s16 *result = NULL;
 
-  if (gMainRoutineWork.next == SCENE_CAVERNS_OSENIA)
+  if (gMainRoutineState.next == SCENE_CAVERNS_OSENIA)
     result = gCaverns_OseniaRegions;
   return result;
 }
@@ -131,7 +131,7 @@ const s16 *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_CAVERNS_INDRA)
     return gCaverns_IndraPlacements;
@@ -154,7 +154,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// climb onto a block and stand on it.
 void Caverns_PlaceAngaraBlocks(const s16 *data) {
   const u16 *ids = (const u16 *)data;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   struct Actor *actor;
   s32 height;
   s32 cell;
@@ -182,7 +182,7 @@ void Caverns_PlaceAngaraBlocks(const s16 *data) {
         Map_GetTerrainHeight(leader->layer, leader->x.fixed, leader->z.fixed);
     leader->velocityY = 0;
     leader->targetY = ACTOR_NO_TARGET;
-    FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
+    FieldCamera_FollowActor(gMainRoutineState.leaderActorId, 0);
   }
 }
 
@@ -213,7 +213,7 @@ static __inline__ s32 Actor_GetPixelZ(struct Actor *actor) {
 /// block is up on it, else the three cells of whichever of the two rows the
 /// block is not in.
 void Caverns_ShiftAngaraCellHeights(s32 offset) {
-  struct Actor *block = gFieldWork->movedBlock;
+  struct Actor *block = gFieldState->movedBlock;
   s32 height;
 
   offset <<= 3;
@@ -249,21 +249,21 @@ void Caverns_ShiftAngaraCellHeights(s32 offset) {
 /// ground under it back to the floor, so that the block can leave its cell.
 void Caverns_StartMovingAngaraBlock(void) {
   FIXED position[3];
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct FieldEffectWork *current = Ram_HeapSlots->fieldEffectWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct FieldEffectState *current = Ram_HeapSlots->fieldEffectState;
   const u16 *ids = (const u16 *)gCaverns_AngaraBlocks;
   struct Actor *actor = NULL;
   struct Actor *leader;
   s32 height;
   s32 angle;
 
-  work->movedBlock = NULL;
-  if (current != NULL && work->psynergy != 0) {
-    actor = work->movedBlock = current->child;
+  state->movedBlock = NULL;
+  if (current != NULL && state->psynergy != 0) {
+    actor = state->movedBlock = current->child;
     if (current->action != ABILITY_CARRY)
       Caverns_ShiftAngaraCellHeights(1);
   } else {
-    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+    leader = Actor_GetById(gMainRoutineState.leaderActorId);
     angle = FACING_QUARTER(leader->facing + DEGtoANG(45));
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed;
@@ -280,7 +280,7 @@ void Caverns_StartMovingAngaraBlock(void) {
     }
     if (actor == NULL)
       return;
-    work->movedBlock = actor;
+    state->movedBlock = actor;
     Caverns_ShiftAngaraCellHeights(1);
   }
   height = CELL_HEIGHT_STEPS(
@@ -314,7 +314,7 @@ void Caverns_DriftDust(union FieldObject *object) {
 /// The block stacked on top of the other, each frame: Felix is drawn in front
 /// of it while he stands south of it, and behind it otherwise.
 void Caverns_LayerLeaderByTopBlock(struct Actor *actor) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   FIXED leaderZ = leader->z.fixed;
   FIXED z = actor->z.fixed;
   u8 *flags = &leader->priorityFlags;
@@ -336,8 +336,8 @@ void Caverns_LayerLeaderByTopBlock(struct Actor *actor) {
 void Caverns_FinishMovingAngaraBlock(void) {
   FIXED velocity[3];
   struct EffectOptions options;
-  struct FieldWork *work;
-  struct FieldEffectWork *current;
+  struct FieldState *state;
+  struct FieldEffectState *current;
   struct Actor *actor;
   struct Actor *other;
   s32 kind;
@@ -348,10 +348,10 @@ void Caverns_FinishMovingAngaraBlock(void) {
   struct Actor *spawned;
   s32 sum;
 
-  work = Ram_HeapSlots->fieldWork;
-  current = Ram_HeapSlots->fieldEffectWork;
-  actor = work->movedBlock;
-  if (current != NULL && work->psynergy != 0) {
+  state = Ram_HeapSlots->fieldState;
+  current = Ram_HeapSlots->fieldEffectState;
+  actor = state->movedBlock;
+  if (current != NULL && state->psynergy != 0) {
     if (current->action != ABILITY_CARRY)
       Caverns_ShiftAngaraCellHeights(-1);
   } else {
@@ -436,7 +436,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_CAVERNS_INDRA)
     return gCaverns_IndraTriggers;
@@ -448,17 +448,17 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == SCENE_CAVERNS_INDRA)
+  if (gMainRoutineState.next == SCENE_CAVERNS_INDRA)
     Caverns_InitializeIndra();
-  if (gMainRoutineWork.next == SCENE_CAVERNS_ANGARA)
+  if (gMainRoutineState.next == SCENE_CAVERNS_ANGARA)
     Caverns_InitializeAngara();
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_CAVERNS_OSENIA)
     Caverns_PrepareOsenia();
@@ -533,7 +533,7 @@ s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position) {
     actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
     {
-      struct MainRoutineWork *party = &gMainRoutineWork;
+      struct MainRoutineState *party = &gMainRoutineState;
       s32 x = position[0].part[0].integer;
       s32 z = position[2].part[0].integer;
       s32 owner = party->leaderActorId;
@@ -553,7 +553,7 @@ s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position) {
 /// makes Felix spring and leap two cells east over the gap, when nothing blocks
 /// where he would land.
 void Caverns_JumpEastAcrossGap(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 position[3];
   FIXED x;
 
@@ -587,9 +587,9 @@ void Caverns_PrepareOsenia(void) {
 /// it, copied with their behaviours from a spare one beside the cave, over the
 /// sand in the pocket of rocks (cells (18, 12) to (20, 14)).
 void Caverns_OpenOseniaPassage(void) {
-  MapGrid_CopyCellPictureIndicesRect(35, 12, 18, 12, 3, 3);
+  MapGrid_CopyCellTilesIndicesRect(35, 12, 18, 12, 3, 3);
   MapGrid_CopyCellAttributes(35, 12, 3, 3, 18, 12);
-  MapGrid_CopyCellPictureIndicesRect(84, 13, 83, 13, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(84, 13, 83, 13, 1, 1);
   return;
 }
 
@@ -597,7 +597,7 @@ void Caverns_OpenOseniaPassage(void) {
 /// into it, and the screen leaves for the tunnel below: from the west hole to
 /// its west end, from the hole Scoop dug to its east end.
 void Caverns_WalkIntoPassage(void) {
-  s32 value = ((struct FieldWork *)Ram_HeapSlots->fieldWork)->stepTrigger;
+  s32 value = ((struct FieldState *)Ram_HeapSlots->fieldState)->stepTrigger;
 
   if (value == CELL_BEHAVIOR_WEST_HOLE)
     Actor_SetPosition(ACTOR_PASSAGE_MARKER, 144, 224);
@@ -692,7 +692,7 @@ void Caverns_ParchAttekaWater(void) {
 /// staircases at cells (28, 5) and (36, 5) lead on by the exits of cells
 /// (28, 0) and (36, 0) instead of their own.
 void Caverns_PrepareAngara(void) {
-  if ((u16)(gMainRoutineWork.entrance - 5) <= 1) {
+  if ((u16)(gMainRoutineState.entrance - 5) <= 1) {
     MapGrid_CopyCellAttributes(28, 0, 1, 1, 28, 5);
     Map_CopyCellAttributeRect(36, 0, 1, 1, 36, 5);
   }

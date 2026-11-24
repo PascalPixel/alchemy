@@ -17,12 +17,12 @@
 /// gFieldEffect_GroundParticleFrames on a random spot near the leader, held
 /// while FLAG_WEATHER_HELD is set.
 void GroundParticles_Update(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct WeatherWork *work = Ram_HeapSlots->weather;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  struct WeatherState *state = Ram_HeapSlots->weather;
   s32 *origin = &map->viewX;
   s32 originX = origin[0];
   s32 originZ = origin[1];
-  struct GroundParticle *particle = work->particles;
+  struct GroundParticle *particle = state->particles;
   u32 i;
 
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++) {
@@ -41,7 +41,7 @@ void GroundParticles_Update(void) {
       particle->priority = 1;
       particle->x = x;
       particle->y = y;
-      particle->tile = work->tileBase + *(u16 *)frame;
+      particle->tile = state->tileBase + *(u16 *)frame;
       frame++;
       particle->shape = *(u8 *)frame;
       particle->size = *(u8 *)(frame + 1);
@@ -67,11 +67,11 @@ void GroundParticles_Update(void) {
 /// a random spot (x within -64 to +192, z within -128 to +128 pixels of the
 /// map's focus). FLAG_WEATHER_HELD holds them where they are.
 void Weather_UpdateRain(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct WeatherWork *work = Ram_HeapSlots->weather;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  struct WeatherState *state = Ram_HeapSlots->weather;
   s32 *origin = &map->viewX;
   s32 originX = origin[0];
-  struct GroundParticle *particle = work->particles;
+  struct GroundParticle *particle = state->particles;
   s32 originZ = origin[1];
   u32 i;
 
@@ -95,7 +95,7 @@ void Weather_UpdateRain(void) {
       particle->priority = 1;
       particle->x = x;
       particle->y = y;
-      particle->tile = work->tileBase;
+      particle->tile = state->tileBase;
       particle->shape = 1;
       particle->size = 2;
       Oam_AddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
@@ -117,18 +117,18 @@ void Weather_UpdateRain(void) {
 /// apart, with thunder; while lightning is on, the next burst comes 51 to 549
 /// frames later. While FLAG_WEATHER_HELD is set no burst comes.
 void Weather_UpdateLightning(void) {
-  struct FieldBlendWork *work = Ram_HeapSlots->fieldBlend;
+  struct FieldBlendState *state = Ram_HeapSlots->fieldBlend;
   struct PaletteFade *target = Ram_HeapSlots->paletteFade;
-  if (work->timer < 0)
+  if (state->timer < 0)
     return;
   if (GameFlag_Get(FLAG_WEATHER_HELD))
-    work->timer = 128;
-  switch (work->timer--) {
+    state->timer = 128;
+  switch (state->timer--) {
   case 0:
     // The burst ends: arm the next, 150 frames plus up to 399 less up to 99.
-    if (work->enabled != 0) {
-      work->timer = Random_Below(400) - Random_Below(100) + 150;
-      if (work->loud != 0)
+    if (state->enabled != 0) {
+      state->timer = Random_Below(400) - Random_Below(100) + 150;
+      if (state->loud != 0)
         Sound_PlayFar(SE_THUNDER_LOUD);
       else
         Sound_PlayFar(SE_THUNDER);
@@ -137,8 +137,8 @@ void Weather_UpdateLightning(void) {
   case 5:
   case 10:
     // A frame after each flash: fade back to the dark colours over 12 frames.
-    PaletteFade_SetTarget((s32)work, 1);
-    Dma_Set(work->delta, target->delta,
+    PaletteFade_SetTarget((s32)state, 1);
+    Dma_Set(state->delta, target->delta,
             DMA_COPY_WORDS(sizeof target->delta / 4), REG_DMA3);
     target->duration = 12;
     target->step = 0;
@@ -147,7 +147,7 @@ void Weather_UpdateLightning(void) {
   case 6:
   case 11:
     // The flash: the lit colours, in one frame.
-    PaletteFade_SetTarget((s32)work->to, 1);
+    PaletteFade_SetTarget((s32)state->to, 1);
     target->duration = 1;
     target->step = 0;
     break;

@@ -7,7 +7,7 @@
 
 /// Draws a glow sprite over each listed actor.
 void LightSprites_Draw(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX, viewZ, tile, viewY;
   struct LightOam *oam;

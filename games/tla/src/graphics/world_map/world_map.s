@@ -28,9 +28,9 @@ WorldMap_PaletteB:
 	.global WorldMap_AnimationB
 WorldMap_AnimationB:
 	.incbin "games/tla/src/graphics/world_map/anim_b.script.lz"
-@ World map B attributes; Field_DefaultCellPictureAttributes format.
-	.global WorldMap_CellPictureAttributesB
-WorldMap_CellPictureAttributesB:
+@ World map B attributes; Field_DefaultCellTilesAttributes format.
+	.global WorldMap_CellTilesAttributesB
+WorldMap_CellTilesAttributesB:
 	.incbin "games/tla/src/graphics/world_map/attr_b.table.lz"
 	.byte 0x11, 0xf9, 0xdc	@ PACKER: left in the buffer by WorldMap_TilesA6+0x3bd
 	.global WorldMap_TilesB1
@@ -58,9 +58,9 @@ WorldMap_TilesB6:
 WorldMap_PaletteC:
 	.incbin "games/tla/src/graphics/world_map/palette_c.gbapal.plz"
 	.section .rodata.a
-@ World map C cell picture attributes.
-	.global WorldMap_CellPictureAttributesC
-WorldMap_CellPictureAttributesC:
+@ World map C cell tiles attributes.
+	.global WorldMap_CellTilesAttributesC
+WorldMap_CellTilesAttributesC:
 	.incbin "games/tla/src/graphics/world_map/attr_c.table.lz"
 	.byte 0xef, 0x01, 0x7d	@ PACKER: left in the buffer by WorldMap_TilesB6+0x45d
 	.global WorldMap_TilesC1
@@ -96,9 +96,9 @@ WorldMap_PaletteD:
 WorldMap_AnimationD:
 	.incbin "games/tla/src/graphics/world_map/anim_d.script.lz"
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-@ World map D cell picture attributes.
-	.global WorldMap_CellPictureAttributesD
-WorldMap_CellPictureAttributesD:
+@ World map D cell tiles attributes.
+	.global WorldMap_CellTilesAttributesD
+WorldMap_CellTilesAttributesD:
 	.incbin "games/tla/src/graphics/world_map/attr_d.table.lz"
 	.global WorldMap_TilesD1
 WorldMap_TilesD1:

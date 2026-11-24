@@ -7,13 +7,13 @@
 /// entries cleared. Nothing in the main image calls it; the Islets call their
 /// own copy.
 void PaletteCycle_Initialize(void) {
-  struct PaletteCycleWork *paletteCycles;
+  struct PaletteCycleState *paletteCycles;
   struct PaletteCycle *cycle;
   u16 cycleIndex;
   u16 colorIndex;
 
   paletteCycles = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
-                                      sizeof(struct PaletteCycleWork));
+                                      sizeof(struct PaletteCycleState));
   cycle = paletteCycles->entries;
   for (cycleIndex = 0; cycleIndex != ARRAY_COUNT(paletteCycles->entries);
        cycleIndex++) {

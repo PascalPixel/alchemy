@@ -4,15 +4,15 @@ Field_KibomboMountainsCavern:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_KibomboMountainsCavern, .LField_KibomboMountainsCavern_CELL_PICTURES
+	map_block Field_KibomboMountainsCavern, .LField_KibomboMountainsCavern_CELL_TILES
 	map_block Field_KibomboMountainsCavern, .LField_KibomboMountainsCavern_SHAPES
 	map_block Field_KibomboMountainsCavern, .LField_KibomboMountainsCavern_GRID
 	map_block Field_KibomboMountainsCavern, .LField_KibomboMountainsCavern_SHAPE_GRID
 	map_block Field_KibomboMountainsCavern, .LField_KibomboMountainsCavern_ANIMATION
 	map_block Field_KibomboMountainsCavern, .LField_KibomboMountainsCavern_BLEND
 	map_block Field_KibomboMountainsCavern, .LField_KibomboMountainsCavern_SCENE
-.LField_KibomboMountainsCavern_CELL_PICTURES:
-	.incbin "games/tla/src/map/kibombo_mountains_cavern/cell_pictures.delta0.lz"
+.LField_KibomboMountainsCavern_CELL_TILES:
+	.incbin "games/tla/src/map/kibombo_mountains_cavern/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_KibomboMountainsCavern_SHAPES:
 	.incbin "games/tla/src/map/kibombo_mountains_cavern/shapes.table.lz"

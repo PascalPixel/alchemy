@@ -36,7 +36,7 @@ void BattleParty_SwapInReserves(void) {
   s32 actorCount;
   s32 reserveCount;
   s32 count;
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   s32 i;
 
   if (BattleUnit_ListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, 0) == 0)
@@ -59,12 +59,12 @@ void BattleParty_SwapInReserves(void) {
     to->anchorZ = from->anchorZ;
     Actor_SetPositionAndResetMotionFar((void *)object, place->x, place->y,
                                        place->z);
-    gMainRoutineWork.party[i] = id;
+    gMainRoutineState.party[i] = id;
     battle->partyUnits[i] = id;
   }
   for (i = 0; i < count; i++)
-    gMainRoutineWork.party[actorCount + i] = actors[i];
-  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
+    gMainRoutineState.party[actorCount + i] = actors[i];
+  PartyStatus_DrawFar(Ram_HeapSlots->battleState->partyStatus);
   BattleObject_Put();
   BattleHighlight_SetModes(reserves, HIGHLIGHT_FADE_IN);
   wait(32);
@@ -93,7 +93,7 @@ void BattleCamera_Create(void) {
 /// ENEMY_DOOM_DRAGON_E after FORMATION_DOOM_DRAGON_A, else ENEMY_DOOM_DRAGON_H.
 /// The form change's battle effect calls it through its far call.
 void Battle_ChangeEnemyForm(s32 id) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   s32 unit;
   struct BattleObject *battleObject;
 
@@ -118,7 +118,7 @@ void Battle_ChangeEnemyForm(s32 id) {
 /// Plays the Doom Dragon's form change effect for its formation value
 /// (FORMATION_DOOM_DRAGON_A to _C) on the first enemy.
 void Battle_PlayFormChange(s32 value) {
-  struct BattlePresentationWork request;
+  struct BattlePresentationState request;
 
   request.initialValue = 0;
   request.actor = FIRST_ENEMY_UNIT;
@@ -128,7 +128,7 @@ void Battle_PlayFormChange(s32 value) {
   request.side = 0;
   request.kind = 0;
   request.variant = 0;
-  BattleEffect_RunFormChangeFar((struct BattlePresentationWork *)&request,
+  BattleEffect_RunFormChangeFar((struct BattlePresentationState *)&request,
                                 value);
 }
 
@@ -149,8 +149,8 @@ void Sound_LoadReverbCode(s32 preset);
 /// link broke, BATTLE_OUTCOME_FLED or BATTLE_OUTCOME_LOST.
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
-  struct BattleWork *battle;
-  struct BattleBackgroundWork *background;
+  struct BattleState *battle;
+  struct BattleBackgroundState *background;
   s32 enemyCount;
   u8 *enemyUnitDestination;
   s32 turn;
@@ -164,10 +164,10 @@ s32 Battle_Run(s32 enemyGroup) {
   s16 cue;
 
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-  battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
+  battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleState));
   HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
   background = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND,
-                                   sizeof(struct BattleBackgroundWork));
+                                   sizeof(struct BattleBackgroundState));
   HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_UNUSED, 640);
   result = 0;
   Iwram_ClearWordsEntry(Ram_HeapSlots->enemyUnits, ENEMY_UNITS_SIZE);
@@ -186,13 +186,13 @@ s32 Battle_Run(s32 enemyGroup) {
   Matrix_Initialize();
 
   IWRAM_FILL_WORDS(camera, sizeof(struct BattleCamera), 0);
-  Iwram_FillWordsEntry(battle, sizeof(struct BattleWork), 0);
+  Iwram_FillWordsEntry(battle, sizeof(struct BattleState), 0);
   battle->arrowTiles = -1;
   battle->formation = enemyGroup;
   HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MESSAGE,
-                      sizeof(struct BattleMessageWork));
+                      sizeof(struct BattleMessageState));
   IWRAM_FILL_WORDS(Ram_HeapSlots->battleMessage,
-                   sizeof(struct BattleMessageWork), 0);
+                   sizeof(struct BattleMessageState), 0);
   battle->background = BattleBackground_GetSelectedFar();
   HeapSlot_AllocEwram(HEAP_SLOT_SPRITES, 3584);
   HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 1536);
@@ -231,7 +231,7 @@ s32 Battle_Run(s32 enemyGroup) {
   }
   Task_Add(BattleCamera_Update, TASK_PASS_FRAME - 1);
 
-  cue = gMainRoutineWork.battleMusic;
+  cue = gMainRoutineState.battleMusic;
   if (cue != 0) {
     Sound_PlayFar(cue);
     if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
@@ -268,12 +268,12 @@ s32 Battle_Run(s32 enemyGroup) {
   battle->firstStrike = FIRST_STRIKE_NONE;
   if (GameFlag_Get(FLAG_DJINN_LESSON) != 0) {
     battle->firstStrike = FIRST_STRIKE_PARTY;
-  } else if (gMainRoutineWork.battleType == BATTLE_TYPE_NORMAL) {
+  } else if (gMainRoutineState.battleType == BATTLE_TYPE_NORMAL) {
     if ((Battle_RandomFar() & 15) == 0)
       battle->firstStrike = FIRST_STRIKE_PARTY;
     else if ((Battle_RandomFar() & 31) == 0)
       battle->firstStrike = FIRST_STRIKE_ENEMIES;
-  } else if (gMainRoutineWork.battleType == BATTLE_TYPE_LOST) {
+  } else if (gMainRoutineState.battleType == BATTLE_TYPE_LOST) {
     battle->firstStrike = FIRST_STRIKE_ENEMIES;
   }
   BattleTransition_Run(enemyCount, enemyGroup);
@@ -496,7 +496,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
   s32 index;
 
   limit = PARTY_BATTLE_SIZE;
-  if (Ram_HeapSlots->battleWork->isLink != 0)
+  if (Ram_HeapSlots->battleState->isLink != 0)
     limit = LINK_PARTY_SIZE;
 
   count = Party_CountMembersFar();
@@ -504,7 +504,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
     count = limit;
 
   for (index = 0; index < count; index++) {
-    s32 owner = gMainRoutineWork.party[index];
+    s32 owner = gMainRoutineState.party[index];
 
     if (owners != 0)
       *owners++ = owner;
@@ -528,11 +528,11 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
     count -= PARTY_BATTLE_SIZE;
   else
     count = 0;
-  if (Ram_HeapSlots->battleWork->isLink != 0)
+  if (Ram_HeapSlots->battleState->isLink != 0)
     count = 0;
 
   for (index = 0; index < count; index++) {
-    s32 owner = gMainRoutineWork.party[index + PARTY_BATTLE_SIZE];
+    s32 owner = gMainRoutineState.party[index + PARTY_BATTLE_SIZE];
 
     if (owners != 0)
       *owners++ = owner;
@@ -704,11 +704,11 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
 /// Lists the units in the battle on the sides in sideMask, standing or not, and
 /// returns how many.
 s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 count;
   s32 i;
 
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   count = 0;
   if (sideMask & BATTLE_SIDE_MASK_PARTY) {
     for (i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
@@ -735,11 +735,11 @@ s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds) {
 
 /// As BattleUnit_ListIds, listing only the units whose HP is not 0.
 s32 BattleUnit_ListLivingIds(s32 sideMask, u16 *unitIds) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 count;
   s32 i;
 
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   count = 0;
   if (sideMask & BATTLE_SIDE_MASK_PARTY) {
     for (i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {

@@ -33,7 +33,7 @@
 #include "scene/event_layer.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/event_inline.h"
 #include "version.h"
 #include "system/task.h"
@@ -156,7 +156,7 @@ s32 gAlhafranCave_ClearedWord BSS_DATA;
 
 /// The current scene's actors: the cave's or the jail's.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_ALHAFRAN_CAVE)
     return gAlhafranCave_CaveActorPlacements;
@@ -242,14 +242,14 @@ void AlhafranCave_LowerBridgeCells(void) {
 /// floor as a mound of sand. The game draws the mound's sand trail at
 /// priority 2 here rather than the usual 3.
 void AlhafranCave_CastSand(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  work->sandTrailPriority = 2;
+  state->sandTrailPriority = 2;
 }
 
 /// The current scene's triggers: the cave's or the jail's.
 const struct Trigger *Scene_GetTriggers(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_ALHAFRAN_CAVE)
     return gAlhafranCave_CaveTriggers;
@@ -261,12 +261,12 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Nothing visible: each frame the game notes whether Felix stands on the
 /// cave's upper level, for wading.
 void AlhafranCave_CheckUpperLevel(void) {
-  FIXED y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
+  FIXED y = Actor_Get(gMainRoutineState.leaderActorId)->y.fixed;
 
   if (y < toFIXED(8))
-    gMainRoutineWork.onUpperLevel = 0;
+    gMainRoutineState.onUpperLevel = 0;
   else
-    gMainRoutineWork.onUpperLevel = 1;
+    gMainRoutineState.onUpperLevel = 1;
 }
 
 /// The jail's task: draws the crate's top where the crate stands.
@@ -281,27 +281,27 @@ s32 AlhafranCave_DrawCrateSprite(void) {
 /// Sets up the cave or the jail.
 s32 Scene_Initialize(void) {
 #if !TLA_PATCH_1 /* The Japanese edition does not check the entrance. */
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  if (gMainRoutineWork.next == SCENE_ALHAFRAN_CAVE)
+  if (gMainRoutineState.next == SCENE_ALHAFRAN_CAVE)
     AlhafranCave_SetUpCave();
-  else if (gMainRoutineWork.next == SCENE_ALHAFRA_JAIL)
+  else if (gMainRoutineState.next == SCENE_ALHAFRA_JAIL)
     AlhafranCave_SetUpJail();
   return 0;
 #else
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_ALHAFRAN_CAVE) {
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
     AlhafranCave_SetUpCave();
   } else if (scene == SCENE_ALHAFRA_JAIL) {
-    if (gMainRoutineWork.entrance == ALHAFRA_JAIL_FROM_ALHAFRA ||
-        gMainRoutineWork.entrance == ENTRANCE_UNDER_CRATE)
-      gFieldWork->transition =
+    if (gMainRoutineState.entrance == ALHAFRA_JAIL_FROM_ALHAFRA ||
+        gMainRoutineState.entrance == ENTRANCE_UNDER_CRATE)
+      gFieldState->transition =
           SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     else
-      gFieldWork->transition =
+      gFieldState->transition =
           SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
     AlhafranCave_SetUpJail();
   }
@@ -314,11 +314,11 @@ void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 /// Sets up the cave: its bridges, the broken bridge, the pillars, the puddle,
 /// and the cells under the bridges if the leader was on the ledges.
 void AlhafranCave_SetUpCave(void) {
-  struct MapWorkGroundEffects *map =
-      (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
+  struct MapStateGroundEffects *map =
+      (struct MapStateGroundEffects *)Ram_HeapSlots->mapGrid;
   struct Actor *actor;
 
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   map->wading = MAP_WADING_UPPER_LEVEL;
   Task_AddFrame(AlhafranCave_CheckUpperLevel, TASK_PASS_FRAME);
@@ -400,9 +400,9 @@ void EffectSprite_InitWithFadeOverlay(struct EffectSprite *sprite, s32 pivotX,
 /// the crate pushed aside as the party climbs up through the hole under it.
 void AlhafranCave_SetUpJail(void) {
   struct EffectSprite *crate;
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   Actor_Get(ACTOR_CRATE)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   FieldEffect_StartBlankOverlay(0);
@@ -411,11 +411,11 @@ void AlhafranCave_SetUpJail(void) {
   Call4((void (*)())EffectSprite_InitWithFadeOverlay, (s32)crate, 8, 15,
         OBJ_SIZE_16X16);
   FieldTask_AddFrame(AlhafranCave_DrawCrateSprite, TASK_PASS_FRAME);
-  if (gMainRoutineWork.entrance == ALHAFRA_JAIL_FROM_ALHAFRA ||
-      gMainRoutineWork.entrance == ENTRANCE_UNDER_CRATE) {
-    work = Ram_HeapSlots->fieldWork;
+  if (gMainRoutineState.entrance == ALHAFRA_JAIL_FROM_ALHAFRA ||
+      gMainRoutineState.entrance == ENTRANCE_UNDER_CRATE) {
+    state = Ram_HeapSlots->fieldState;
 
-    work->psynergyDrawFlags = 3;
+    state->psynergyDrawFlags = 3;
   }
   Rope_Initialize();
   Rope_Place(0, FLAG_JAIL_ROPE_TIED, ACTOR_JAIL_ROPE_LOW_POST,
@@ -481,7 +481,7 @@ void AlhafranCave_SetUpJail(void) {
     Actor_SetPosition(ACTOR_GUARD, 0, 0);
     Actor_Get(ACTOR_BORED_GUARD)->update = AlhafranCave_TakeLeadersLayer;
   }
-  if (gMainRoutineWork.entrance == ENTRANCE_UNDER_CRATE &&
+  if (gMainRoutineState.entrance == ENTRANCE_UNDER_CRATE &&
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -495,7 +495,7 @@ void AlhafranCave_SetUpJail(void) {
 /// tunnel from under the crate comes out (entrance 10) is drawn into the
 /// rope's cave.
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_ALHAFRA_JAIL &&
+  if (gMainRoutineState.next == SCENE_ALHAFRA_JAIL &&
       Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     MapGrid_CopyCellsLayered(23, 46, 4, 5, 21, 14);
     MapGrid_CopyCellsLayered(86, 44, 5, 6, 84, 12);
@@ -843,7 +843,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_SetPosition(ACTOR_EOLEO, 0, 0);
   Actor_SetMovementType(Actor_Get(ACTOR_GUARD),
                         MOVEMENT_TYPE_TAKE_LEADER_LAYER);
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   Event_End();
 }
 

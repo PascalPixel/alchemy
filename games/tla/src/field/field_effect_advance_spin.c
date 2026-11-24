@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "fixed_math.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/field_effect.h"
 #include "field/event.h"
 
@@ -17,7 +17,7 @@ UNUSED void FieldEffect_AdvanceMotionAndSpin(union FieldObject *object) {
   s32 scaleRateX;
 
   // DEAD: the leader looked up and not used; the ROM keeps the call.
-  Actor_GetById(gMainRoutineWork.leaderActorId);
+  Actor_GetById(gMainRoutineState.leaderActorId);
   velocityX = effect->velocity.x;
   effect->x += velocityX;
   effect->y += effect->velocity.y;

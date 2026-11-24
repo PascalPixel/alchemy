@@ -50,7 +50,7 @@ enum BattleCommand {
   COMMAND_TOTAL_DEFENSE = 7, ///< an enemy's Total Defense (effect 47)
   COMMAND_NONE = 8,          ///< nothing this turn
   /// The Djinn Counter (ability 299) a unit strikes back with, outside the
-  /// turn order (Battle_Run queues it for BattleWork.pendingUnit).
+  /// turn order (Battle_Run queues it for BattleState.pendingUnit).
   COMMAND_DJINN_COUNTER = 9,
   /// Daedalus's strike again at a turn's end, queued by Battle_Run while
   /// summons of Daedalus are owed (BattleStaging_PlanDaedalus).

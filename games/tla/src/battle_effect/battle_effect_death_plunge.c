@@ -37,7 +37,7 @@
 ///
 /// Abilities: Death Plunge, Death Leap.
 void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   /* LEFTOVER(frame): draw[1], the idle half of the pair. */
@@ -61,27 +61,28 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   s32 i;
   u8 *pixels;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
   // Set up the canvas, the flash sprite sheet, the rings' texture and a clipped
   // blitter keeping the brighter; Death Leap takes violet colours.
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 1);
   pixels = Ram_MapCellBuffer;
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, pixels, 0, 0);
   if (args->variant == EFFECT_VARIANT_STRONGER) {
     Iwram_CopyWordsEntry((void *)BG_PLTT,
                          Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_F),
                          SHEET_PALETTE_BYTES);
-    work->transferValue = CANVAS_FADE_HALF;
+    state->transferValue = CANVAS_FADE_HALF;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     REG_BLDALPHA = EFFECT_BLEND_ADD;
   } else {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   }
-  work->transferMode = CANVAS_COPY_AND_FADE;
+  state->transferMode = CANVAS_COPY_AND_FADE;
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
@@ -106,7 +107,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   wait(20);
 
   for (frame = 0; frame != DEATH_PLUNGE_FRAMES; frame++) {
-    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraState;
 
     // Both leap at 15 pixels a frame, and soon turn upside down.
     if (frame == 0) {
@@ -146,7 +147,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       screen.x >>= 1;
       if (frame == DEATH_PLUNGE_STRIKE_FRAME ||
           frame == DEATH_PLUNGE_STRIKE_FRAME + 1)
-        draw[0](canvas, work->sheet, screen.x - FLASH_BURST_WIDTH / 2,
+        draw[0](canvas, state->sheet, screen.x - FLASH_BURST_WIDTH / 2,
                 screen.y - 16, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       if (frame >= 56 && frame <= 67) {
         for (i = 0; i != DEATH_PLUNGE_RING_FLASHES; i++) {
@@ -156,7 +157,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
               (FIXEDtoINT(Trig_Cos(angle) * (frame - 46) * 2)) - frame + 100;
 
           draw[0](canvas,
-                  work->sheet + (frame - 56) / 2 * PICTURE_BYTES(FLASH_BURST),
+                  state->sheet + (frame - 56) / 2 * PICTURE_BYTES(FLASH_BURST),
                   rx - FLASH_BURST_WIDTH / 2, ry, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
         }
@@ -164,7 +165,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     } else if (frame > 55) {
       // The bursts fly from the target.
       if (frame == 56) {
-        burst = work->particles;
+        burst = state->particles;
         for (i = 0; i != DEATH_LEAP_BURST_SLOTS; i++) {
           s32 angle;
           s32 force;
@@ -181,10 +182,11 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       }
 
       for (i = 0; i != DEATH_LEAP_BURSTS; i++) {
-        burst = &work->particles[i];
+        burst = &state->particles[i];
         if (burst->variant >= 0 && burst->variant < DEATH_LEAP_BURST_FRAMES) {
           draw[0](canvas,
-                  work->sheet + burst->variant / 4 * PICTURE_BYTES(FLASH_BURST),
+                  state->sheet +
+                      burst->variant / 4 * PICTURE_BYTES(FLASH_BURST),
                   FIXED_INTEGER_PART(burst->x) - FLASH_BURST_WIDTH / 2,
                   FIXED_INTEGER_PART(burst->y) - FLASH_BURST_HEIGHT / 2,
                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
@@ -251,11 +253,11 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     if (frame == 0)
       Sound_PlayFar(SE_WHOOSH);
     if (frame == 0)
-      work->shakeFrames = 6;
+      state->shakeFrames = 6;
     if (frame == 53)
-      work->shakeFrames = 6;
+      state->shakeFrames = 6;
     BattleCamera_Shake(16, 16);
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

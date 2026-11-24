@@ -42,13 +42,13 @@ s32 FlagEntries_GetValue(s32 flag) {
 }
 
 /// Chooses the current scene's encounter zones, one for each kind of ground the
-/// party can stand on (gFieldWork->encounterZones, read by
+/// party can stand on (gFieldState->encounterZones, read by
 /// Encounter_RollMapStep), from the first rule matching the scene and entrance.
 void Encounter_SelectMapZones(s32 useRules) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 sceneId = gMainRoutineWork.next;
-  s32 entrance = gMainRoutineWork.entrance;
-  u8 *groundZones = work->encounterZones;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  s32 sceneId = gMainRoutineState.next;
+  s32 entrance = gMainRoutineState.entrance;
+  u8 *groundZones = state->encounterZones;
   u32 first = 0;
   u32 second = 0;
   const struct SceneEncounterRule *rule = gScene_EncounterRules;
@@ -69,12 +69,12 @@ void Encounter_SelectMapZones(s32 useRules) {
   }
   *groundZones++ = first;
   *groundZones++ = second;
-  for (i = 0; i < ARRAY_COUNT(work->encounterZones) - 2; i++)
+  for (i = 0; i < ARRAY_COUNT(state->encounterZones) - 2; i++)
     *groundZones++ = 0;
-  work->encounterBias = 0;
+  state->encounterBias = 0;
   // Encounter_CountStepsAndSelectFormation starts a battle once
-  // gMainRoutineWork.encounterSteps reaches it.
-  work->encounterThreshold = toFIXED(16);
+  // gMainRoutineState.encounterSteps reaches it.
+  state->encounterThreshold = toFIXED(16);
   BattleBackground_SelectForMap();
 }
 
@@ -86,7 +86,7 @@ void Encounter_SelectMapZones(s32 useRules) {
 
 /// Returns the World Map encounter zone for the ground at position (0 for
 /// none), and chooses the battle background for its battle environment
-/// (gMainRoutineWork.battleBackground). Flying, there are none; aboard the
+/// (gMainRoutineState.battleBackground). Flying, there are none; aboard the
 /// ship, the zones are gWorldMap_ShipEncounterRules'; a rule's flag must be set
 /// for it to apply.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
@@ -94,7 +94,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
   s32 environment;
   u32 region;
   s32 zone;
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct MainRoutineState *party = &gMainRoutineState;
 
   if (party->movementMode == LEADER_MOVEMENT_FLYING_SHIP)
     return 0;
@@ -121,7 +121,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
 /// or 0 for no battle. steps (16.16) scales how far the counter moves; a
 /// battle starts once it reaches encounterThreshold.
 s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct EncounterZone *entry;
   s32 rate;
   s32 level;
@@ -133,7 +133,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
   s32 formation;
   s32 i;
 
-  work = Ram_HeapSlots->fieldWork;
+  state = Ram_HeapSlots->fieldState;
   // UB: FLAG_IGNORE_ENCOUNTER_CHECKS reaches the draw without setting entry.
 #ifdef UBFIX
   entry = gEncounterZones + zone;
@@ -144,7 +144,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
       return 0;
     if (zone == 0)
       return 0;
-    if (gMainRoutineWork.cloaked != 0)
+    if (gMainRoutineState.cloaked != 0)
       return 0;
     entry = gEncounterZones + zone;
     rate = entry->rate;
@@ -155,20 +155,20 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
     // the rate by 5; with Avoid active such a zone has no encounters at all.
     level = Party_GetAverageLevelFar() - entry->level;
     CLAMP(level, 0, 5);
-    if (level > 0 && gMainRoutineWork.avoidDistance != 0)
+    if (level > 0 && gMainRoutineState.avoidDistance != 0)
       return 0;
     rate += level * 5;
 
     // A random bias varies the distance between battles: two differences of
     // random numbers, halved, so from -65535 to 65535 and most often near 0.
-    bias = work->encounterBias;
+    bias = state->encounterBias;
     if (bias == 0) {
       s32 a = Random16();
       s32 b = Random16();
       s32 c = Random16();
 
       bias = (a - b + c - (s32)Random16()) / 2;
-      work->encounterBias = bias;
+      state->encounterBias = bias;
     }
     // The rate and the bias divide the step, so a higher rate (a party above
     // the zone's level) means smaller steps and fewer battles: a step is
@@ -176,13 +176,13 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
     // 1 / (rate + (rate - 1) * bias) with bias a 16.16 fraction from -1 to 1.
     step = Iwram_RatioMulQ14(rate * toFIXED(16) + (rate - 1) * 16 * bias,
                              toFIXED(16));
-    total = gMainRoutineWork.encounterSteps += Iwram_MulFX(step, steps);
-    if (total < work->encounterThreshold)
+    total = gMainRoutineState.encounterSteps += Iwram_MulFX(step, steps);
+    if (total < state->encounterThreshold)
       return 0;
   }
 
   // Draw one of the zone's formations by weight.
-  work->encounterBias = 0;
+  state->encounterBias = 0;
   sum = 0;
   for (i = 0; i < (s32)ARRAY_COUNT(entry->weights); i++)
     sum += entry->weights[i];
@@ -200,11 +200,11 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
 }
 
 /// Rolls a random battle on the encounter zone of the ground underfoot.
-/// terrain: the ground, an index into work->encounterZones: 0 for ordinary
-/// ground, 1 for a MAP_CELL_SECOND_ZONE cell. steps: the step weight, passed on
-/// to Encounter_CountStepsAndSelectFormation.
+/// terrain: the ground, an index into the field state's encounterZones: 0 for
+/// ordinary ground, 1 for a MAP_CELL_SECOND_ZONE cell. steps: the step weight,
+/// passed on to Encounter_CountStepsAndSelectFormation.
 s32 Encounter_RollMapStep(u32 terrain, FIXED steps) {
-  u8 *zone = gFieldWork->encounterZones;
+  u8 *zone = gFieldState->encounterZones;
 
   return Encounter_CountStepsAndSelectFormation(zone[terrain], steps);
 }
@@ -235,14 +235,14 @@ u16 Encounter_GetDjinnFormation(s32 djinni) {
 #endif
 }
 
-/// Chooses the current scene's field music (gMainRoutineWork.cue) from the
+/// Chooses the current scene's field music (gMainRoutineState.cue) from the
 /// first rule matching the scene or its area and the entrance; SOUND_KEEP_BGM
 /// when none does.
 void Scene_ChooseMusic(void) {
   s16 music = SOUND_KEEP_BGM;
-  s16 sceneId = gMainRoutineWork.next;
-  s16 entrance = gMainRoutineWork.entrance;
-  s16 group = gMainRoutineWork.area;
+  s16 sceneId = gMainRoutineState.next;
+  s16 entrance = gMainRoutineState.entrance;
+  s16 group = gMainRoutineState.area;
   const struct MapMusicRule *rule = gScene_MusicRules;
 
   for (; rule->id != -1; rule++) {
@@ -267,7 +267,7 @@ void Scene_ChooseMusic(void) {
     }
   }
 
-  gMainRoutineWork.sceneMusic = music;
+  gMainRoutineState.sceneMusic = music;
 }
 
 /// Returns the area name of sceneId and entrance, from the first rule matching
@@ -298,13 +298,13 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
 }
 
 /// Sets the scene the party returns to after a defeat
-/// (gMainRoutineWork.restartScene and restartEntrance), from the first rule of
+/// (gMainRoutineState.restartScene and restartEntrance), from the first rule of
 /// gParty_PairResolveRules that matches the current scene and entrance: rows
 /// of eight halfwords that open {scene, entrance (-1 for any), return scene,
 /// return entrance}, ended by scene -1. Without a match the restart point stays
 /// as it was.
 void Scene_SetRestartPoint(void) {
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct MainRoutineState *party = &gMainRoutineState;
   s16 sceneId;
   s16 entrance;
   const s16 *rule;
@@ -326,7 +326,7 @@ void Scene_SetRestartPoint(void) {
 /// party has the ship, whose mooring the map screen marks), finds the
 /// first rule of gParty_PairResolveRules for scene and entrance (-1 on either
 /// side matches any entrance) and copies its position, x and z in 16.16 and the
-/// third value as is, to gMainRoutineWork.shipX, shipZ and shipFacing.
+/// third value as is, to gMainRoutineState.shipX, shipZ and shipFacing.
 void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
   const s16 *rule = gParty_PairResolveRules;
 
@@ -335,9 +335,9 @@ void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
   for (; rule[0] != -1; rule += 8) {
     if (rule[0] == scene &&
         (rule[1] == -1 || entrance == -1 || rule[1] == entrance)) {
-      gMainRoutineWork.shipX = toFIXED(rule[4]);
-      gMainRoutineWork.shipZ = toFIXED(rule[5]);
-      gMainRoutineWork.shipFacing = rule[6];
+      gMainRoutineState.shipX = toFIXED(rule[4]);
+      gMainRoutineState.shipZ = toFIXED(rule[5]);
+      gMainRoutineState.shipFacing = rule[6];
       return;
     }
   }
@@ -351,13 +351,13 @@ void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance) {
 
   if (GameFlag_Get(FLAG_SHIP_CAN_SAIL) == 0)
     return;
-  gMainRoutineWork.ownerOverride = 0;
+  gMainRoutineState.ownerOverride = 0;
   for (; rule[0] != -1; rule += 8) {
     if (rule[2] == scene &&
         (rule[3] == -1 || entrance == -1 || rule[3] == entrance)) {
-      gMainRoutineWork.shipX = toFIXED(rule[4]);
-      gMainRoutineWork.shipZ = toFIXED(rule[5]);
-      gMainRoutineWork.shipFacing = rule[6];
+      gMainRoutineState.shipX = toFIXED(rule[4]);
+      gMainRoutineState.shipZ = toFIXED(rule[5]);
+      gMainRoutineState.shipFacing = rule[6];
       return;
     }
   }
@@ -365,7 +365,7 @@ void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance) {
 
 /// Returns the battle background chosen for the current scene.
 s16 BattleBackground_GetSelected(void) {
-  return gMainRoutineWork.battleBackground;
+  return gMainRoutineState.battleBackground;
 }
 
 /// A battle background rule's word (scene_rules.c's BATTLE_BACKGROUND): bit 31
@@ -381,7 +381,7 @@ s16 BattleBackground_GetSelected(void) {
 /// the Mars Lighthouse has thawed, the second dragon hall backdrop becomes the
 /// first.
 void BattleBackground_SelectForMap(void) {
-  s32 target = gMainRoutineWork.next;
+  s32 target = gMainRoutineState.next;
   const s32 *table = gScene_BattleBackgroundRules;
   s32 entry = *table++;
   // The first scene_rules.c word names a battle background.
@@ -398,12 +398,12 @@ void BattleBackground_SelectForMap(void) {
   if (backdrop == RESOURCE_DRAGON_HALL_B_BACKDROP &&
       GameFlag_Get(FLAG_MARS_LIGHTHOUSE_THAWED))
     backdrop = RESOURCE_DRAGON_HALL_A_BACKDROP;
-  gMainRoutineWork.battleBackground = backdrop;
+  gMainRoutineState.battleBackground = backdrop;
 }
 
 /// Chooses the battle background for a World Map battle environment (enum
 /// BattleEnvironment; any other gives the ship deck's) and sets
-/// gMainRoutineWork.battleBackground.
+/// gMainRoutineState.battleBackground.
 void BattleBackground_SelectForEnvironment(s32 environment) {
   u16 backdrop;
 
@@ -433,7 +433,7 @@ void BattleBackground_SelectForEnvironment(s32 environment) {
     backdrop = RESOURCE_SHIP_DECK_BACKDROP;
     break;
   }
-  gMainRoutineWork.battleBackground = backdrop;
+  gMainRoutineState.battleBackground = backdrop;
 }
 
 /// Whether the character is one of the first PARTY_BATTLE_SIZE party members,
@@ -445,13 +445,13 @@ s32 Party_IsInFrontRow(s32 owner) {
   if (count > PARTY_BATTLE_SIZE)
     count = PARTY_BATTLE_SIZE;
   for (i = 0; i < count; i++) {
-    if (gMainRoutineWork.party[i] == owner)
+    if (gMainRoutineState.party[i] == owner)
       return 1;
   }
   return 0;
 }
 
-/// Chooses the battle music for slot of zone (gMainRoutineWork.battleMusic): a
+/// Chooses the battle music for slot of zone (gMainRoutineState.battleMusic): a
 /// key takes the song listed last before it in gEncounter_BattleMusic, and a
 /// link battle (FLAG_LINK_BATTLE) keeps the music playing. With no song found,
 /// it is MUS_BATTLE_ON_THE_SEA on the ship before it flies, else by the front
@@ -477,7 +477,7 @@ void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
     }
   }
   if (music == 0) {
-    if (gMainRoutineWork.ownerOverride != 0 && !GameFlag_Get(FLAG_SHIP_FLIES))
+    if (gMainRoutineState.ownerOverride != 0 && !GameFlag_Get(FLAG_SHIP_FLIES))
       music = MUS_BATTLE_ON_THE_SEA;
     else if (Party_IsInFrontRow(FELIX))
       music = MUS_BATTLE_THE_LOST_AGE;
@@ -488,7 +488,7 @@ void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
     else
       music = MUS_BATTLE_THE_LOST_AGE;
   }
-  gMainRoutineWork.battleMusic = music;
+  gMainRoutineState.battleMusic = music;
 }
 
 #undef WORLD_MAP_ENCOUNTER_REGIONS

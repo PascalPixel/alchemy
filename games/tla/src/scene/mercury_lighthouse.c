@@ -6,7 +6,7 @@
 #include "types.h"
 #include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/event_inline.h"
 #include "field/actor.h"
 #include "field/scene_tables.h"
@@ -128,7 +128,7 @@ void MercuryLighthouse_SpawnGlints(void) {
 
   Actor_SetSpritePriority(ACTOR_BOY, 3);
   Actor_SetSpritePriority(ACTOR_GIRL, 3);
-  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId), 0);
   if ((gFrameCount & 15) == 0) {
     actor = Import_ActorCreate(SPRITE_GLINT, 0, 0, 0);
     if (actor != NULL) {
@@ -160,14 +160,14 @@ void MercuryLighthouse_HearVoices(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineState.leaderActorId),
                             SPRITE_COLOR_HIDDEN);
   wait(1);
   gMercuryLighthouse_GlintFrames = 0;
   Task_Add(MercuryLighthouse_SpawnGlints, TASK_PASS_FRAME);
   Actor_SetSpritePriority(ACTOR_BOY, 2);
   Actor_SetSpritePriority(ACTOR_GIRL, 2);
-  gFieldWork->transitionFrames = 40;
+  gFieldState->transitionFrames = 40;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -265,8 +265,8 @@ void MercuryLighthouse_HearVoices(void) {
   // The backdrop, black.
   BG_PLTT_COLOR(0, 0) = RGB(0, 0, 0);
   wait(1);
-  gFieldWork->transitionFrames = 16;
-  gFieldWork->transition =
+  gFieldState->transitionFrames = 16;
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -275,7 +275,7 @@ void MercuryLighthouse_HearVoices(void) {
 }
 
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.entrance == ENTRANCE_UNUSED_WHITE_FADE) {
+  if (gMainRoutineState.entrance == ENTRANCE_UNUSED_WHITE_FADE) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();

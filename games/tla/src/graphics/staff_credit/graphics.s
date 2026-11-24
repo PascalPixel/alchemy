@@ -1,6 +1,6 @@
 @ Three raw palettes and the two packed streams of one animated screen: four
 @ beams of light that meet, and a light that falls from where they meet.
-@ StaffCredit_ShowBeacon, called with 4, unpacks both streams into a work buffer. It
+@ StaffCredit_ShowBeacon, called with 4, unpacks both streams into a buffer. It
 @ copies the second stream's 8,192 bytes to video memory 0x06000000, 256 tiles
 @ of 16 colours, and the first stream's eleven tilemaps of 32 x 20 cells to
 @ 0x06002000 one at a time: the first seven for four frames each, the last four

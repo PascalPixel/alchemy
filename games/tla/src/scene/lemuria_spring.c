@@ -30,7 +30,7 @@
 #include "window/window.h"
 #include "graphics/text_render.h"
 #include "graphics/uiflow.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "version.h"
 #include "edition.h"
 #include "system/input.h"
@@ -226,7 +226,7 @@ extern u16 gLemuriaSpring_AlphaSteps[];
 /// four frames, then fades away in eight steps to show the target at the
 /// bottom of the spring, as Tolbi's does.
 void LemuriaSpring_DrainSpring(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer;
   s32 i;
 
@@ -249,7 +249,7 @@ void LemuriaSpring_DrainSpring(void) {
 /// coin or a Lucky Medal into it. The first time each visit, the
 /// spring's water first fades to show the target of rings at its bottom.
 void LemuriaSpring_TossCoinOrMedal(void) {
-  s32 actor = gMainRoutineWork.leaderActorId;
+  s32 actor = gMainRoutineState.leaderActorId;
 
   if (!Event_GetFlag(FLAG_LEMURIA_SPRING_TARGET_SHOWN)) {
     Event_SetFlag(FLAG_LEMURIA_SPRING_TARGET_SHOWN);
@@ -274,8 +274,8 @@ s32 Scene_Initialize(void) {
   struct Actor *leader;
   s32 blend;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   leader->priorityFlags = ACTOR_PRIORITY_IGNORES_RISES | leader->priorityFlags;
   blend = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDCNT = blend;
@@ -287,7 +287,7 @@ s32 Scene_Initialize(void) {
   Actor_Get(ACTOR_LEMURIA_SPRING_WEST_SIGN_SLAB)->priorityFlags =
       ACTOR_PRIORITY_UNDERFOOT;
   Event_StartScreenTransition();
-  if (gMainRoutineWork.entrance == LEMURIA_SPRING_FROM_LEMURIA) {
+  if (gMainRoutineState.entrance == LEMURIA_SPRING_FROM_LEMURIA) {
     LemuriaSpring_InitializeTossSimulation();
     if (Event_GetFlag(FLAG_LEMURIA_SPRING_TARGET_SHOWN)) {
       Io_Write16(blend, &REG_BLDCNT);
@@ -329,7 +329,7 @@ s32 Menu_SelectCoinsOrMedals();
 #endif
 
 /// The weight of prize i in the draw of what a toss wins.
-#define WEIGHT(i) ((s8)gMainRoutineWork.prizeWeights[i])
+#define WEIGHT(i) ((s8)gMainRoutineState.prizeWeights[i])
 
 /// The toss: the party picks a coin or a Lucky Medal, throws it, and what
 /// lands in the spring's rings wins its prize, as in Tolbi's spring game.
@@ -353,7 +353,7 @@ s32 LemuriaSpring_RunSpringGame(void) {
   choice = 0;
   Event_ResolvePendingActions(0);
   for (;;) {
-    coins = gMainRoutineWork.coins;
+    coins = gMainRoutineState.coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
     message = (s32)MsgLemuriaSpringWhatWillYouThrow;
     Event_SetMessageId(message);
@@ -427,7 +427,7 @@ s32 LemuriaSpring_RunSpringGame(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   for (;;) {
-    coins = gMainRoutineWork.coins;
+    coins = gMainRoutineState.coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
     message = (s32)MsgLemuriaSpringWhatWillYouThrow;
     Event_SetMessageId(message);
@@ -540,7 +540,7 @@ s32 LemuriaSpring_RunSpringGame(void) {
           prize = MEDAL_PRIZE_COUNT - 1;
         LemuriaSpring_GivePrize(gLemuriaSpring_MedalPrizes[prize]);
         if (WEIGHT(prize) > 1)
-          gMainRoutineWork.prizeWeights[prize] = WEIGHT(prize) / 2;
+          gMainRoutineState.prizeWeights[prize] = WEIGHT(prize) / 2;
       }
     }
   }
@@ -601,16 +601,16 @@ void LemuriaSpring_GivePrize(s32 item) {
   if (item == PRIZE_ECLIPSE) {
     prize = Actor_Get(ACTOR_LEMURIA_SPRING_SUMMON_TABLET);
     Actor_PlaceOnActor(ACTOR_LEMURIA_SPRING_SUMMON_TABLET,
-                       gMainRoutineWork.leaderActorId);
+                       gMainRoutineState.leaderActorId);
     prize->motionFlags = 0;
     prize->y.fixed = toFIXED(32);
-    FieldActor_SetAnimation(gMainRoutineWork.leaderActorId,
+    FieldActor_SetAnimation(gMainRoutineState.leaderActorId,
                             ANIM_LEADER_ARMS_RAISED);
     SummonTablet_PlayRunes(ACTOR_LEMURIA_SPRING_SUMMON_TABLET);
     Summon_ShowLearnedMessage(SUMMON_ECLIPSE);
     Summon_Learn(SUMMON_ECLIPSE);
     Actor_SetPosition(ACTOR_LEMURIA_SPRING_SUMMON_TABLET, 0, 0);
-    FieldActor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
+    FieldActor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
   } else {
     Call2(ItemDisplay_ShowItem, item,
           ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
@@ -1166,7 +1166,7 @@ s32 LemuriaSpring_RunToss(s32 tossKind) {
     if (gLemuriaSpring_TossFrame == 50)
       Event_PlaySound(SE_TOLBI_SPRING_TOSS);
     if (gLemuriaSpring_TossFrame == 16) {
-      Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_TOSS);
+      Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_TOSS);
       toss->launchFrame = 0;
       toss->velocity.x = toFIXED(13) / 10;
       toss->velocity.y = toFIXED(4);
@@ -1289,7 +1289,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The items a medal can win, drawn by the weights in gMainRoutineWork: the
+/// The items a medal can win, drawn by the weights in gMainRoutineState: the
 /// middle ring draws from the first three, each ring further out from three
 /// more.
 u32 gLemuriaSpring_MedalPrizes[MEDAL_PRIZE_COUNT] = {

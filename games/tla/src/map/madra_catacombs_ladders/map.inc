@@ -4,15 +4,15 @@ Field_MadraCatacombsLadders:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_MadraCatacombsLadders, .LField_MadraCatacombsLadders_CELL_PICTURES
+	map_block Field_MadraCatacombsLadders, .LField_MadraCatacombsLadders_CELL_TILES
 	map_block Field_MadraCatacombsLadders, .LField_MadraCatacombsLadders_SHAPES
 	map_block Field_MadraCatacombsLadders, .LField_MadraCatacombsLadders_GRID
 	map_block Field_MadraCatacombsLadders, .LField_MadraCatacombsLadders_SHAPE_GRID
 	map_block Field_MadraCatacombsLadders, .LField_MadraCatacombsLadders_ANIMATION
 	map_block Field_MadraCatacombsLadders, .LField_MadraCatacombsLadders_BLEND
 	map_block Field_MadraCatacombsLadders, .LField_MadraCatacombsLadders_SCENE
-.LField_MadraCatacombsLadders_CELL_PICTURES:
-	.incbin "games/tla/src/map/madra_catacombs_ladders/cell_pictures.delta2.lz"
+.LField_MadraCatacombsLadders_CELL_TILES:
+	.incbin "games/tla/src/map/madra_catacombs_ladders/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_MadraCatacombsLadders_SHAPES:
 	.incbin "games/tla/src/map/madra_catacombs_ladders/shapes.table.lz"

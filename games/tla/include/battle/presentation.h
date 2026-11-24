@@ -48,7 +48,7 @@ s32 BattleAI_ChooseRandomTarget(s32 party);
 
 s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts);
 
-struct BattlePresentationWork;
+struct BattlePresentationState;
 
 /// The bit decoder BattleBackground_Load copies to RAM and runs. It returns
 /// the source after the last halfword it read.
@@ -119,7 +119,8 @@ extern const u8 gBattleTransition_CurtainVariants[];
 /// The battle transition's curtain tiles, 32 bytes (one 4-bit tile) each.
 extern u8 gBattleTransition_CurtainTiles[];
 
-void BattleEffect_RunShatteringOpeningFar(struct BattlePresentationWork *work);
+void BattleEffect_RunShatteringOpeningFar(
+    struct BattlePresentationState *state);
 
 /// The party, then the enemies: the order the sides take their turn-end
 /// effects in.

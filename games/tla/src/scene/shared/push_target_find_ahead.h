@@ -3,15 +3,15 @@
 /// facing in sixteenths of a turn. A log, pipe or fallen column is pushed only
 /// from its side.
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   struct Actor *actor;
   u32 i, k;
   s32 x, z, left, top, right, bottom;
 
   *direction = FACING_INDEX(leader->facing);
   for (i = ACTOR_FIRST_PLACED; i <= FIELD_TREASURE_ACTOR - 1; i++) {
-    actor = work->actors[i];
+    actor = state->actors[i];
     for (k = 0; k <= PUSH_KINDS - 1; k++) {
       if (((struct Sprite *)actor->sprite)->entries[0]->animationId ==
           gPushKinds[k]) {

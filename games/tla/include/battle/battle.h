@@ -118,7 +118,7 @@ struct Sprite;
 struct PaletteFade;
 struct PendingEvent;
 struct MapMusicRule;
-struct WorldMapWork;
+struct WorldMapState;
 
 /// The 32x16 spark the swelling arcs over a caster are drawn with
 /// (field_effects.s).
@@ -130,7 +130,7 @@ extern const u8 gColorBuffer_DarkenOneLevelMap[32];
 extern const u8 gColorBuffer_DarkenTwoLevelsMap[32];
 extern const u8 gColorBuffer_DarkenFourLevelsMap[32];
 /// The map screen's state while it is open.
-extern struct WorldMapWork gWorldMapWork;
+extern struct WorldMapState gWorldMapState;
 struct ActionDescriptor;
 struct ActionDescriptor *Scene_FindActorPlacement(s32 id);
 s32 BattleObject_RemoveFromLists(s32 id);
@@ -218,7 +218,7 @@ enum BattlePose {
   POSE_ENEMY_DOWN = 5  ///< a downed enemy stays in its damage pose
 };
 
-struct BattlePresentationWork;
+struct BattlePresentationState;
 
 s32 AutoBattle_ShowDefend(s16 *);
 s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action);
@@ -252,7 +252,7 @@ void BattleCamera_SetViewAtPairMidpoint(s32 first, s32 second, s32 scale);
 void BattleUnit_ListAllAndSubmit(void);
 s32 BattlePlayback_WaitForReady(void);
 void BattleStaging_BuildTargetList(struct BattlePlan *plan,
-                                   struct BattlePresentationWork *effect);
+                                   struct BattlePresentationState *effect);
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 earned);
 void BattleObject_UpdatePose(s32 id);
 u32 BattlePlayback_Reset(void);

@@ -2,7 +2,7 @@
 #define ALCHEMY_RIDE_H
 
 /// @file
-/// The work of the Mars Lighthouse rooms' flame throwers and of the fireballs
+/// The state of the Mars Lighthouse rooms' flame throwers and of the fireballs
 /// that knock the leader back, or carry him along on a ride, when they hit him;
 /// it is kept in the inventory snapshot's spare space.
 
@@ -27,7 +27,7 @@ enum FlameThrowerFlags {
 #define FLAME_THROWER_REACH_BITS 0xf
 #define FLAME_THROWER_FLAG_BITS 0xf0
 
-/// One of the work's four flame throwers.
+/// One of the state's four flame throwers.
 struct RideEntry {
   s16 active;
   s16 timer; ///< frames to the next puff, 8 after each
@@ -46,15 +46,15 @@ struct RideDirection {
 };
 
 /// An actor the flames check against as they move: a flame stops beside it
-/// unless it is marked blocked, which sets the work's own blocked flag.
+/// unless it is marked blocked, which sets the state's own blocked flag.
 struct RideSlot {
   u16 id; ///< the actor's id; 0 ends the list
   u16 blocked;
 };
 
-/// The flame throwers' work: the hit counter, what a flame met, the flame
+/// The flame throwers' state: the hit counter, what a flame met, the flame
 /// throwers and the actors they stop at, and the fireball carrying the leader.
-struct FlameHitWork {
+struct FlameHitState {
   s32 counter; ///< Ride_AdvanceCounter's count
   s16 active;  ///< set once a flame or fireball has hit the leader
   /// Set when a flame met a blocked slot's actor, and called back once for.
@@ -81,9 +81,9 @@ enum {
   STEP_TRIGGER_FIREBALL_HIT = STEP_TRIGGER_FLAME_HIT + 2
 };
 
-/// The flame-hit work, in the inventory snapshot's spare space.
-#define RIDE_WORK                                                              \
-  ((struct FlameHitWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
+/// The flame-hit state, in the inventory snapshot's spare space.
+#define RIDE_STATE                                                             \
+  ((struct FlameHitState *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
 /// The knock-back (shared/leader_knock_back.c) as the four Mars Lighthouse
 /// rooms that keep a copy name it, and what it calls: the fall damage the

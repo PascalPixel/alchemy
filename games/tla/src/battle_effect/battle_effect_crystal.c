@@ -35,7 +35,7 @@
 ///
 /// Abilities: Crystal.
 void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
    * frame reserves and never touches; as one DrawRectangle. */
@@ -51,9 +51,9 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   s32 offset;
   u8 *cells;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  discOffsets = (u16 *)(work->sheet + CRYSTAL_DISC_OFFSETS);
+  discOffsets = (u16 *)(state->sheet + CRYSTAL_DISC_OFFSETS);
   cells = gMapGridCellBuffer;
   Iwram_ClearWords(cells, 32768);
   for (offset = 0, i = 0, size = 2; i != CRYSTAL_DISCS; size += 2, i++) {
@@ -63,8 +63,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
     discOffsets[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }
-  Resource_LoadAndDecompress(RESOURCE_COG_TEXTURE, work->sheet, 0, 0);
-  Picture_MirrorIntoQuadrants(work->sheet,
+  Resource_LoadAndDecompress(RESOURCE_COG_TEXTURE, state->sheet, 0, 0);
+  Picture_MirrorIntoQuadrants(state->sheet,
                               Ram_MapCellBuffer + CRYSTAL_COG_PICTURE, 64, 64);
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
@@ -72,7 +72,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
       DJINNI_ENTRANCE(ELEMENT_VENUS, args->side ^ 1, DJINNI_ANCHOR_TARGET_X),
       center, other);
   Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET,
-                             work->sheet + CRYSTAL_VENUS_DJINN_SMALL_PICTURES,
+                             state->sheet + CRYSTAL_VENUS_DJINN_SMALL_PICTURES,
                              1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_BLAST_SHEET),
@@ -91,9 +91,10 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
     struct BattleCamera *camera;
     struct MotionObject *target;
 
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
     Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-    camera = Ram_HeapSlots->cameraWork;
+    camera = Ram_HeapSlots->cameraState;
     target = BattleObject_GetFar(args->targets[0])->object;
 
     for (frame = 0; frame != CRYSTAL_FRAMES; frame++) {
@@ -102,7 +103,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
       // size.
       if (frame == 0) {
         struct Particle *orb;
-        for (i = 0, orb = work->particles; i != CRYSTAL_ORBS; i++, orb++) {
+        for (i = 0, orb = state->particles; i != CRYSTAL_ORBS; i++, orb++) {
           s32 angle = Random16();
           s32 radius = (Random16() & 63) + 80;
 
@@ -130,10 +131,10 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
 
         y += frame * 3;
 
-        draw[0](canvas, work->sheet + CRYSTAL_VENUS_DJINN_SMALL_PICTURES, x, y,
+        draw[0](canvas, state->sheet + CRYSTAL_VENUS_DJINN_SMALL_PICTURES, x, y,
                 SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         if (frame <= 3) {
-          draw[0](canvas, work->sheet + CRYSTAL_VENUS_DJINN_SMALL_PICTURES, x,
+          draw[0](canvas, state->sheet + CRYSTAL_VENUS_DJINN_SMALL_PICTURES, x,
                   y, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         }
       }
@@ -142,7 +143,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
       // pulsing.
       if (frame > 47) {
         struct Particle *orb;
-        for (i = 0, orb = work->particles; i != CRYSTAL_ORBS; i++, orb++) {
+        for (i = 0, orb = state->particles; i != CRYSTAL_ORBS; i++, orb++) {
           if (frame >= i * 2 + 48) {
             s32 width;
 
@@ -214,7 +215,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
       }
       gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
       gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
     }
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

@@ -2,7 +2,7 @@
 #define ALCHEMY_SHOP_INTERNAL_H
 
 /// @file
-/// What every part of the shop object shares: its includes, its work, the
+/// What every part of the shop object shares: its includes, its state, the
 /// counters and services it runs, the stock table's columns and the tables
 /// shop_tables.c holds. shop.c includes it before the parts, and each part
 /// includes it too, so that a part read on its own still resolves. It places
@@ -19,7 +19,7 @@
 #include "system/task.h"
 #include "edition.h"
 #include "graphics/render_input.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "battle/battle.h"
 #include "window/window.h"
 #include "debug/debug.h"
@@ -149,12 +149,12 @@ enum SanctumSparkleState {
   SANCTUM_SPARKLE_LAST_FLIGHT = 2
 };
 
-/// The sanctum's particle slots (ShopWork.effects), and the sparkles a burst
+/// The sanctum's particle slots (ShopState.effects), and the sparkles a burst
 /// sends of them.
 #define SANCTUM_PARTICLE_COUNT 24
 #define SANCTUM_BURST_SPARKLES 18
 
-/// What the item picker chooses an item for (ShopWork.itemMode).
+/// What the item picker chooses an item for (ShopState.itemMode).
 enum ItemPickerMode {
   ITEM_PICKER_DROP = 0, ///< an item to drop, by Inventory_CheckDiscard
   ITEM_PICKER_SHOW = 1  ///< an item to show, by Inventory_CheckUnequip
@@ -177,12 +177,12 @@ struct ForgeRecipe {
   s16 weights[8]; ///< each result's chance, in percent
 };
 
-/// The shop's work (heap slot 220, the menus' work), as The Broken Seal's
-/// struct ShopWork, its lists longer here: the windows, the party row, the
+/// The shop's state (heap slot 220, the menus' state), as The Broken Seal's
+/// struct ShopState, its lists longer here: the windows, the party row, the
 /// stock, the hand cursor and its icons, what the player chose, the
 /// sanctum service's particles and the item icon grid.
-struct ShopWork {
-  u8 unused[8];       ///< no view of the menu work names it
+struct ShopState {
+  u8 unused[8];       ///< no view of the menu state names it
   s32 selectedMember; ///< the menu screens' chosen party member; not named here
   void *moneyWindow;  ///< the coins window
   /// The menu screens' first window and their two sides; not named here.
@@ -200,7 +200,7 @@ struct ShopWork {
   s16 stockItemIds[301];    ///< the items on sale, ended by 0
   s16 partyMemberIds[9];    ///< the party in order
   struct MenuCursor cursor; ///< the hand cursor
-  /// VRAM cache slots of the six cursor icons, loaded when the work is set up
+  /// VRAM cache slots of the six cursor icons, loaded when the state is set up
   /// and freed with it.
   ///@{
   u16 cursorIcon; ///< the hand
@@ -210,10 +210,10 @@ struct ShopWork {
   u16 statUpIcon;
   u16 statDownIcon;
   ///@}
-  u8 unusedBeforeKeeper[2]; ///< no view of the menu work names it
+  u8 unusedBeforeKeeper[2]; ///< no view of the menu state names it
   u16 keeperGraphics;       ///< the shopkeeper's animation; picks the portrait
   u16 selectedItem;         ///< the item being bought, sold or repaired
-  u8 unusedAfterSelection[4]; ///< no view of the menu work names it
+  u8 unusedAfterSelection[4]; ///< no view of the menu state names it
   s16 stockCount;
   s8 partyMemberCount;
   u8 cursorFrames; ///< the frames the hand cursor takes to its next place
@@ -222,15 +222,15 @@ struct ShopWork {
                    ///< enum SanctumService)
   s8 burstMember;  ///< the sanctum's party member whose pose is randomized; -1
                    ///< none
-  /// ItemMenuWork's: nonzero while Menu_UpdateEntryObjectTransforms places
+  /// ItemMenuState's: nonzero while Menu_UpdateEntryObjectTransforms places
   /// the party figures; cleared while a details window covers them.
   u8 memberSpritesShown;
-  u8 figuresShown; ///< ItemMenuWork's; not named here
+  u8 figuresShown; ///< ItemMenuState's; not named here
   /// The item picker's check: 0 for an item to drop, 1 for one to remove.
   s8 itemMode;
   /// The sanctum service's particles.
   struct FieldParticle effects[SANCTUM_PARTICLE_COUNT];
-  u8 menuIcons[72]; ///< ItemMenuWork's five menu icons; not named here
+  u8 menuIcons[72]; ///< ItemMenuState's five menu icons; not named here
   /// The item icon grid (ItemIconGrid_ShowInventory): a sprite and a VRAM
   /// cache slot (ICON_NONE when empty) for each inventory slot.
   struct IconSprite iconSprites[INVENTORY_SLOTS];
@@ -239,20 +239,20 @@ struct ShopWork {
   void *listWindow; ///< the party row's window at the sell and forge counters
 };
 
-STATIC_ASSERT(offsetof(struct ShopWork, itemWindow) == 36);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIcons) == 248);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberScale) == 312);
-STATIC_ASSERT(offsetof(struct ShopWork, stockItemIds) == 624);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIds) == 1226);
-STATIC_ASSERT(offsetof(struct ShopWork, cursor) == 1244);
-STATIC_ASSERT(offsetof(struct ShopWork, keeperGraphics) == 1274);
-STATIC_ASSERT(offsetof(struct ShopWork, stockCount) == 1282);
-STATIC_ASSERT(offsetof(struct ShopWork, action) == 1287);
-STATIC_ASSERT(offsetof(struct ShopWork, effects) == 1292);
-STATIC_ASSERT(offsetof(struct ShopWork, iconSprites) == 3092);
-STATIC_ASSERT(offsetof(struct ShopWork, iconsVisible) == 3302);
-STATIC_ASSERT(offsetof(struct ShopWork, listWindow) == 3304);
-STATIC_ASSERT(sizeof(struct ShopWork) == 3308);
+STATIC_ASSERT(offsetof(struct ShopState, itemWindow) == 36);
+STATIC_ASSERT(offsetof(struct ShopState, partyMemberIcons) == 248);
+STATIC_ASSERT(offsetof(struct ShopState, partyMemberScale) == 312);
+STATIC_ASSERT(offsetof(struct ShopState, stockItemIds) == 624);
+STATIC_ASSERT(offsetof(struct ShopState, partyMemberIds) == 1226);
+STATIC_ASSERT(offsetof(struct ShopState, cursor) == 1244);
+STATIC_ASSERT(offsetof(struct ShopState, keeperGraphics) == 1274);
+STATIC_ASSERT(offsetof(struct ShopState, stockCount) == 1282);
+STATIC_ASSERT(offsetof(struct ShopState, action) == 1287);
+STATIC_ASSERT(offsetof(struct ShopState, effects) == 1292);
+STATIC_ASSERT(offsetof(struct ShopState, iconSprites) == 3092);
+STATIC_ASSERT(offsetof(struct ShopState, iconsVisible) == 3302);
+STATIC_ASSERT(offsetof(struct ShopState, listWindow) == 3304);
+STATIC_ASSERT(sizeof(struct ShopState) == 3308);
 
 /// The quantity cursor's x, in pixels: buy.c and sell.c both place it, further
 /// left in the longer languages.

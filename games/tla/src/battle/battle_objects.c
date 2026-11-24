@@ -358,7 +358,7 @@ void ResetMotionRecordGroup(void *recordGroup) {
 /// Returns a unit's battle object, through its place, or null for a unit with
 /// no place.
 static inline struct BattleObject *BattleObject_GetInline(s32 unitId) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   struct BattleObject *battleObject = battle->slots;
   s32 placementIndex;
 
@@ -374,7 +374,7 @@ static inline struct BattleObject *BattleObject_GetInline(s32 unitId) {
 /// shadow's priority by whether it is airborne, draws the nearer side in front
 /// and draws a unit under Haze (DEFEND_VANISHED) as an outline.
 void BattleObject_UpdateSpritePriorities(void) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   u16 unitIds[UNIT_MAX];
   struct MotionObject *objects[UNIT_MAX];
   s32 partyCount;
@@ -430,7 +430,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   if (battle->keepObjectPriorities != 0)
     return;
 
-  if ((s16)((struct BattleCamera *)Ram_HeapSlots->cameraWork)->yaw >= 0) {
+  if ((s16)((struct BattleCamera *)Ram_HeapSlots->cameraState)->yaw >= 0) {
     partyPriority = 1;
     enemyPriority = 2;
   } else {
@@ -524,10 +524,10 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
   }
 }
 
-/// Returns a unit's battle object, through its place in BattleWork.placement,
+/// Returns a unit's battle object, through its place in BattleState.placement,
 /// or null for a unit with no place.
 static __inline__ struct BattleObject *BattleObject_FindSlot(s32 id) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   struct BattleObject *slots = battle->slots;
 
   if (id > ALLY_MAX)
@@ -570,8 +570,8 @@ void BattleMotion_DestroyAllSlotObjects(void) {
 
 /// Unused: writes the anchor of the battle object in place `slot` to out, at
 /// height 0.
-s32 Battle_GetWorkEntryPair(s32 slot, struct Point *out) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+s32 Battle_GetStateEntryPair(s32 slot, struct Point *out) {
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   s32 result;
 
   out->x = battle->slots[slot].anchorX;
@@ -584,7 +584,7 @@ s32 Battle_GetWorkEntryPair(s32 slot, struct Point *out) {
 /// Sets up the camera's view for projecting points, tilted further while
 /// commands are chosen.
 UNREAD_RESULT BattleCamera_ApplyTransform(void) {
-  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraState;
 
   Matrix_Initialize();
   if (GameFlag_Get(FLAG_CHOOSING_COMMANDS) != 0) {
@@ -636,7 +636,7 @@ void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
 
 /// Puts the battle camera at its default view of the battlefield's centre.
 void BattleCamera_SetDefaultView(void) {
-  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraState;
   struct Point eyeOffset;
 
   // A pitch of -1/128 of a turn, 510 pixels away.
@@ -659,7 +659,7 @@ void BattleCamera_SetDefaultView(void) {
 /// Returns a unit's battle object, through its place, or null for a unit with
 /// no place.
 struct BattleObject *BattleObject_Get(s32 objectId) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   struct BattleObject *slots = battle->slots;
   s32 index;
 

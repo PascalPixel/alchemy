@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "system/field_effect.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/event.h"
 #include "field/sprite.h"
 
@@ -13,7 +13,7 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX = effect->velocity.x;
   s32 velocityZ;
-  struct MainRoutineWork *party;
+  struct MainRoutineState *party;
   struct FieldSprite *sprite;
   struct Actor *leader;
   struct PlacedSprite *to;
@@ -30,7 +30,7 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   effect->scaleY += effect->scaleRateY;
   sprite->rotation += effect->spin;
 
-  party = &gMainRoutineWork;
+  party = &gMainRoutineState;
 
   leader = Actor_GetById(party->leaderActorId);
   to = (struct PlacedSprite *)effect->sprite;

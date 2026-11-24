@@ -4,15 +4,15 @@ Field_JupiterLighthouseRoomBlueKey:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_JupiterLighthouseRoomBlueKey, .LField_JupiterLighthouseRoomBlueKey_CELL_PICTURES
+	map_block Field_JupiterLighthouseRoomBlueKey, .LField_JupiterLighthouseRoomBlueKey_CELL_TILES
 	map_block Field_JupiterLighthouseRoomBlueKey, .LField_JupiterLighthouseRoomBlueKey_SHAPES
 	map_block Field_JupiterLighthouseRoomBlueKey, .LField_JupiterLighthouseRoomBlueKey_GRID
 	map_block Field_JupiterLighthouseRoomBlueKey, .LField_JupiterLighthouseRoomBlueKey_SHAPE_GRID
 	map_block Field_JupiterLighthouseRoomBlueKey, .LField_JupiterLighthouseRoomBlueKey_ANIMATION
 	map_block Field_JupiterLighthouseRoomBlueKey
 	map_block Field_JupiterLighthouseRoomBlueKey, .LField_JupiterLighthouseRoomBlueKey_SCENE
-.LField_JupiterLighthouseRoomBlueKey_CELL_PICTURES:
-	.incbin "games/tla/src/map/jupiter_lighthouse_room_blue_key/cell_pictures.delta1.lz"
+.LField_JupiterLighthouseRoomBlueKey_CELL_TILES:
+	.incbin "games/tla/src/map/jupiter_lighthouse_room_blue_key/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_JupiterLighthouseRoomBlueKey_SHAPES:
 	.incbin "games/tla/src/map/jupiter_lighthouse_room_blue_key/shapes.table.lz"

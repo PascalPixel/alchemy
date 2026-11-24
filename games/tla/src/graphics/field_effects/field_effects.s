@@ -9,7 +9,7 @@ gFieldEffect_ArcSparkTiles:
 	.incbin "games/tla/src/graphics/field_effects/arc_spark.4bpp32x16"
 	.section .rodata.a
 @ A 64x64 disc of 256 colours, shaded in colours 224 to 255: the 4,096
-@ bytes of the shared effect scene's sprite canvas (battle_fx_work[1]),
+@ bytes of the shared effect scene's sprite canvas (battle_fx_state[1]),
 @ which BattleEffect_StartCanvasSprite copies to OBJ video memory. FieldPsynergy_Burst, 080e5d5c,
 @ 080e7844 and overlay 685 unpack it there. In FieldPsynergy_Burst the callback
 @ FieldPsynergy_UpdateBurst writes 32 colours it computes from the sine table to OBJ
@@ -98,7 +98,7 @@ FieldEffect_BowDraw:
 FieldEffect_Explosion:
 	.incbin "games/tla/src/graphics/field_effects/explosion.4bpp16x16.lz"
 @ A bitmap of 32 x 32 pixels, one byte a pixel in rows of 32, not tiles.
-@ FieldPsynergy_Scoop unpacks its 1,024 bytes into its work buffer and makes one
+@ FieldPsynergy_Scoop unpacks its 1,024 bytes into its state and makes one
 @ 32x32 sprite of 256 colours over an empty block of OBJ video memory. Each
 @ frame its callback has Picture_ShiftColumnsByWave clear a second 32 x 32 bitmap and plot
 @ the first into it column by column, the rows four pixels apart and moved by

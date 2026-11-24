@@ -83,7 +83,7 @@ struct Actor;
 
 /// The party status window's layout (struct PartyStatusWindow), the block of
 /// heap slot HEAP_SLOT_PARTY_STATUS.
-extern u8 gPartyStatusWork[];
+extern u8 gPartyStatusState[];
 /// Two 16-entry colour maps for 4bpp pixels: the first draws colour 1 as
 /// colour 10, the second leaves every colour as it is.
 extern u16 gGraphics_ExpandNibbleTable[];
@@ -154,7 +154,7 @@ enum {
 /// passed (System_Initialize, Game_RestartQuest); the others are its debug
 /// starts.
 enum GameStart {
-  GAME_START_TITLE = 0,                  ///< the Title, with the work cleared
+  GAME_START_TITLE = 0,                  ///< the Title, with the state cleared
   GAME_START_DEBUG_VENUS_LIGHTHOUSE = 1, ///< SCENE_VENUS_LIGHTHOUSE_ENTRANCE
   GAME_START_DEBUG_CLEAR = 2,            ///< SCENE_CLEAR, as from the title
   GAME_START_DEBUG_MT_ALEPH = 3,         ///< SCENE_MT_ALEPH_SUMMIT
@@ -236,13 +236,13 @@ extern const u8 Decompress_HalfwordLz[];
 /// Decompress_Halfwords.
 extern u8 Decompress_HalfwordsCodeSize[];
 
-// XXX: why the frame wait reads the sound driver's work as bytes rather than
+// XXX: why the frame wait reads the sound driver's state as bytes rather than
 // through struct SoundInfo, whose transferCountdown is volatile; whether the
 // driver's own struct should make that member volatile would settle the type.
-/// Where the sound driver finds its work (SOUND_INFO_PTR): a pointer to
+/// Where the sound driver finds its state (SOUND_INFO_PTR): a pointer to
 /// gSoundInfo, whose bytes the frame wait reads.
 extern u8 *gSoundInfoPointer;
-/// The byte `member` of the sound driver's work `info` (struct SoundInfo),
+/// The byte `member` of the sound driver's state `info` (struct SoundInfo),
 /// read through gSoundInfoPointer's bytes without the struct's volatile.
 #define SOUND_INFO_BYTE(info, member)                                          \
   ((info)[offsetof(struct SoundInfo, member)])
@@ -304,9 +304,9 @@ s32 System_GetLanguage(void);
 void Save_SetProgressCallback(void (*progress)(s32 step));
 
 s32 Save_WritePart(s32 partId, void *source);
-s32 Save_InitializeWork(void);
+s32 Save_InitializeState(void);
 s32 Save_LoadFileSummaries(void);
-void Save_ReleaseWork(void);
+void Save_ReleaseState(void);
 
 void Serial_Initialize(void);
 
@@ -317,7 +317,7 @@ extern u8 gDebugTextEnabled;
 extern s16 gSaveSlot;
 /// 1 when a save file on the cartridge holds a cleared game, as the save screen
 /// finds on loading the summaries; a new game keeps it in
-/// gMainRoutineWork.clearedFileAtStart.
+/// gMainRoutineState.clearedFileAtStart.
 extern s16 gAnyFileCleared;
 /// The buffer a save file is built in and written from, in two halves; its
 /// summary's 16-byte header lies just before it.

@@ -85,7 +85,7 @@ s32 LinkBattle_ReceiveParty(void) {
 /// id the opponent knows it by.
 s32 LinkBattle_SendParty(void) {
   u8 *buffer;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 j;
   struct DjinnRecoveryList *list;
   s32 size;
@@ -98,7 +98,7 @@ s32 LinkBattle_SendParty(void) {
   {
     s32 noSlot = OPPONENT_SLOT_NONE;
 
-    battle = Ram_HeapSlots->battleWork;
+    battle = Ram_HeapSlots->battleState;
     for (i = ARRAY_COUNT(battle->opponentSlots) - 1; i >= 0; i--)
       battle->opponentSlots[i] = noSlot;
 
@@ -174,7 +174,7 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unusedA, u32 unusedB, u16 *source) {
 /// In a link battle, shows the "EXEC" signature and waits up to 30 frames for
 /// the other console to show it too. Returns -1 when the link fails, else 0.
 s32 LinkBattle_WaitSync(void) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
@@ -217,7 +217,7 @@ s32 LinkBattle_WaitSync(void) {
 /// "RN". Returns -1 when the link fails, the steps disagree or no link is heard
 /// for more than LINK_MAX_MISSED_FRAMES, else 0.
 s32 LinkBattle_SyncTurn(void) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
@@ -328,7 +328,7 @@ s32 LinkBattle_SyncTurn(void) {
 /// Records the unit id the link opponent knows each party member by.
 s32 BattleParty_AssignOpponentSlots(void) {
   u16 activeMembers[8];
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   s32 partySize = BattleParty_PrepareMembers(activeMembers);
   s32 memberSlot;
   s32 unitId;

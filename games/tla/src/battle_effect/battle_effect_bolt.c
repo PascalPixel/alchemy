@@ -39,7 +39,7 @@ enum {
 ///
 /// Abilities: Bolt, Flash Bolt, Blue Bolt.
 void BattleEffect_RunBolt(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 i;
   s32 frame;
@@ -50,21 +50,22 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   s32 j;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   // The tornado sprite sheet only for its glints.
-  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
-                             work->sheet + BOLT_PICTURES, 1, 1);
+                             state->sheet + BOLT_PICTURES, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   for (j = 0; j != PARTICLE_POOL_COUNT; j++)
     PARTICLES[j].variant = 0;
-  EFFECT_FREE_PARTICLES(j, work->particles, 64);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_FREE_PARTICLES(j, state->particles, 64);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_ITEM_BREAK);
 
   for (frame = 0; frame != args->targetCount * BOLT_INTERVAL + 40; frame++) {
@@ -84,7 +85,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
       EffectPosition_ProjectBattler(args->targets[i], &screen);
       screen.x /= 2;
       if (frame == start + 1)
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
       if (frame == start + 4) {
         EFFECT_STRIKE_TARGET(args, i, 6, KNOCKBACK_BOUNCE);
       }
@@ -97,7 +98,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
           height = BOLT_GROUND_Y;
         for (j = 0; j != BOLT_COUNT(args->variant, BOLT_STRIKES); j++) {
           draw[0](canvas,
-                  work->sheet +
+                  state->sheet +
                       (((i + frame + j) / 2) & 3) *
                           LIGHTNING_BOLT_PICTURE_BYTES +
                       BOLT_PICTURES,
@@ -142,8 +143,8 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
                               gBolt_GlintFlips[flip & 3] | EFFECT_CLIP_BOUNDS,
                               gBolt_GlintModes[args->variant]);
           BOLT_GLINT_BLITTER(canvas,
-                             work->sheet + gBattleEffect_GlintPictures[kind], x,
-                             y, gBattleEffect_GlintPictureWidths[kind],
+                             state->sheet + gBattleEffect_GlintPictures[kind],
+                             x, y, gBattleEffect_GlintPictureWidths[kind],
                              gBattleEffect_GlintPictureHeights[kind]);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
@@ -171,7 +172,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(2, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

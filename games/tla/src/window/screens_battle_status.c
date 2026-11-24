@@ -176,7 +176,7 @@ s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
 /// item under the cursor. With `listCount` nonzero, L and R step through the
 /// party members of `list` (BATTLE_UNIT_LIST_END ends it, BATTLE_UNIT_REMOVED
 /// is an empty place). The link timer's window is closed while it is open
-/// (BattleMenuWork.timerHidden), and the party status window is redrawn on the
+/// (BattleMenuState.timerHidden), and the party status window is redrawn on the
 /// way out. Returns 0. Battle_CollectPartyCommands opens it from the Status
 /// command and from L or R in a party member's command row.
 s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
@@ -193,7 +193,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   u16 spawnList[2];
   u16 itemText[64];
   u16 psynergyText[64];
-  struct WindowWork *work;
+  struct WindowState *state;
   struct Window *statusWindow;
   s32 redraw;
   struct Window *helpWindow;
@@ -214,13 +214,13 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   struct Unit *unit;
   s32 i;
   s32 j;
-  struct BattleMenuWork *navigation;
+  struct BattleMenuState *navigation;
   s32 rowBase;
   s32 row;
   s32 groupPosition;
   struct SummaryOam *sprite;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  state = (struct WindowState *)Ram_HeapSlots->windowState;
   redraw = 1;
   memberIndex = -1;
   statusCount = 0;
@@ -233,7 +233,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   figureList[1] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(figureList, 1);
   portraitSlot = VramCache_AllocEntry(512);
-  navigation = BATTLE_MENU_WORK;
+  navigation = BATTLE_MENU_STATE;
   navigation->timerHidden = redraw;
   if (navigation->timerWindow != NULL) {
     Window_Close(navigation->timerWindow, 1);
@@ -615,7 +615,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
       if (page == STATUS_PAGE_ITEMS) {
         // Items: those the member can use in battle first.
-        u16 *entries = BATTLE_MENU_WORK->listAbilities;
+        u16 *entries = BATTLE_MENU_STATE->listAbilities;
         s32 count;
         s32 index;
         s32 item;
@@ -690,7 +690,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       } else if (page == STATUS_PAGE_PSYNERGY) {
         // Battle Psynergy: grey when it cannot be used in battle, red when the
         // PP are short, another colour while Psynergy is sealed.
-        u16 *entries = BATTLE_MENU_WORK->listAbilities;
+        u16 *entries = BATTLE_MENU_STATE->listAbilities;
         s32 count;
         s32 shownRow;
         s32 index;
@@ -714,7 +714,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         rowBase = cursor.groupPositions[3] / 4 * 4;
         row = (s8)(cursor.groupPositions[3] % 4);
         if (rowBase != j || row != shownRow) {
-          work->holdTilemapUpload = 1;
+          state->holdTilemapUpload = 1;
           Text_FillCanvasBackground();
           if (count != 0)
             BATTLE_MENU_MESSAGE_COPY(
@@ -748,13 +748,13 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               else if (unit->psySeal != 0)
                 Text_SetColor(TEXT_COLOR_PINK);
               tileFlags = 0;
-              work->textPalette = 5;
+              state->textPalette = 5;
               Text_DrawMessageAsTiles(id + (s32)MsgAbilityName, statusWindow,
                                       16, 64 + j * 16);
               Text_DrawNumberAtOffset(ability->ppCost, 2, statusWindow, 104,
                                       64 + j * 16);
               Text_SetColor(TEXT_COLOR_WHITE);
-              work->textPalette = WINDOW_PALETTE;
+              state->textPalette = WINDOW_PALETTE;
               if (ability->element != ELEMENT_NONE)
                 Window_SetTilemapEntry(statusWindow,
                                        ELEMENT_ICON_TILE + ability->element, 15,
@@ -775,8 +775,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           }
           if (count > 4)
             SUMMARY_DRAW_PAGE_MARKS(statusWindow, count, rowBase);
-          work->dirty = 1;
-          work->holdTilemapUpload = 0;
+          state->dirty = 1;
+          state->holdTilemapUpload = 0;
         }
       } else if (page == STATUS_PAGE_DJINN) {
         // Djinn: each element's set ones, then those on standby or recovering
@@ -827,7 +827,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         if (cursor.groupPositions[STATUS_CURSOR_DJINN] >= djinnCount)
           cursor.groupPositions[STATUS_CURSOR_DJINN] = djinnCount - 1;
         entry = djinnList[cursor.groupPositions[STATUS_CURSOR_DJINN]];
-        work->holdTilemapUpload = 1;
+        state->holdTilemapUpload = 1;
         if (djinnCount != 0) {
           MessageArgument_ClearAll();
           if (entry & BATTLE_DJINN_UNSET) {
@@ -850,7 +850,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           BATTLE_MENU_MESSAGE_COPY((s32)MsgNoDjinn, psynergyText,
                                    SUMMARY_HELP_CAPACITY);
         }
-        work->holdTilemapUpload = released;
+        state->holdTilemapUpload = released;
         Text_FillCanvasBackground();
         Text_DrawWideStringAtOffset(psynergyText, helpWindow, 0, 20);
         if (rowBase != shownBase) {
@@ -890,8 +890,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
          * SUMMARY_DRAW_PAGE_MARKS; this page's count stays 0; as no arm. */
         if (released > 4)
           SUMMARY_DRAW_PAGE_MARKS(statusWindow, released, rowBase);
-        work->dirty = 1;
-        work->holdTilemapUpload = 0;
+        state->dirty = 1;
+        state->holdTilemapUpload = 0;
       }
 
       if (redraw != 0) {
@@ -1196,7 +1196,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         Heap_Release(helpText);
       }
       redraw = 0;
-      work->dirty = 1;
+      state->dirty = 1;
     }
 
     {
@@ -1239,7 +1239,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         }
       }
     }
-    if (BATTLE_MENU_WORK->timer == 0 || (gInput.pressed & KEY_B))
+    if (BATTLE_MENU_STATE->timer == 0 || (gInput.pressed & KEY_B))
       break;
     if (listCount != 0) {
       if (keys & KEY_R) {
@@ -1278,8 +1278,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 #endif
   Window_Close(statusWindow, 1);
   Window_Close(helpWindow, 1);
-  PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
-  BATTLE_MENU_WORK->timerHidden = 0;
+  PartyStatus_Draw(Ram_HeapSlots->battleState->partyStatus);
+  BATTLE_MENU_STATE->timerHidden = 0;
   ReleaseBattleObjectRecordsFar(shownMember);
   BattleObject_PutFar();
   wait(1);

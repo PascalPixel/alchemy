@@ -1,6 +1,6 @@
 /// Whether flame thrower `index` is active.
 UNUSED s32 Ride_GetEntryValue(s32 index) {
-  struct FlameHitWork *work = RIDE_WORK;
+  struct FlameHitState *state = RIDE_STATE;
 
-  return (work->entries + index)->active;
+  return (state->entries + index)->active;
 }

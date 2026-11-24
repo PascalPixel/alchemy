@@ -20,6 +20,6 @@ s32 MapGrid_IsClimbableCellFar(s32 x, s32 z, s32 kind);
 s32 Actor_GetCellIndexFar(struct Actor *actor);
 s32 FlagBlock_PlaceAllMarkingEdgesFar(struct Actor *actor);
 s32 Actor_CheckBlockedFar(s32 arg);
-void SpriteAnimation_Reset(struct SpriteAnimation *work);
+void SpriteAnimation_Reset(struct SpriteAnimation *state);
 
 #endif

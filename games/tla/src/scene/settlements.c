@@ -25,7 +25,7 @@
 #include "macros.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/scene_tables.h"
 #include "system/iwram_call.h"
 #include "scene_ids.h"
@@ -413,7 +413,7 @@ s32 Settlements_ClearSpriteFlags(struct Actor *actor) {
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
   struct SceneRegion *placements;
 
   if (scene == SCENE_HESPERIA_SETTLEMENT_HOUSES)
@@ -437,7 +437,7 @@ extern struct ActorPlacement gSettlements_KaltIslandPlacements[];
 extern struct ActorPlacement gSettlements_KaltIslandHousesPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_GONDOWAN_SETTLEMENT)
     return gSettlements_GondowanSettlementPlacements;
@@ -505,13 +505,13 @@ void Settlements_CutBushes(void) {
 /// (5, 17)), and blowing it away uncovers a hole with a ladder down to a cave.
 /// Had he been standing on the bush, he hops off it to the south first.
 void Settlements_CutLadderBush(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
 
   if (x == 5 && z == 17) {
-    FieldActor_Jump(gMainRoutineWork.leaderActorId, 2, 0);
-    Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 88, 296);
+    FieldActor_Jump(gMainRoutineState.leaderActorId, 2, 0);
+    Actor_MoveToAndWait(gMainRoutineState.leaderActorId, 88, 296);
   }
   TileCopies_CopyTouchedCells(5, 70, 9, 7, 5, 43, 1);
   MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
@@ -522,7 +522,7 @@ void Settlements_CutLadderBush(void) {
 /// Felix steps onto the ladder's top, faces north and climbs down it, and the
 /// scene changes to the place below.
 void Settlements_ClimbDownLadder(void) {
-  s32 next = gFieldWork->stepTrigger;
+  s32 next = gFieldState->stepTrigger;
 
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
@@ -593,7 +593,7 @@ extern struct Trigger gSettlements_AttekaIsletTriggers[];
 extern struct Trigger gSettlements_AttekaIsletHousesTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_GONDOWAN_SETTLEMENT)
     return gSettlements_GondowanSettlementTriggers;
@@ -696,10 +696,10 @@ extern s16 gSettlements_WallCrate[];
 void Settlements_StartWaterfall(void);
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gMainRoutineWork.next == SCENE_KALT_ISLAND)
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  if (gMainRoutineState.next == SCENE_KALT_ISLAND)
     Settlements_SetUpKaltIsland();
-  if (gMainRoutineWork.next == SCENE_SW_ATTEKA_ISLET) {
+  if (gMainRoutineState.next == SCENE_SW_ATTEKA_ISLET) {
     FieldEffect_StartBlankOverlay(0);
     Actor_PlaceBlocks(gSettlements_FallsObjects);
     if (Event_GetFlag(FLAG_FALLS_CRATE_LOST))
@@ -720,7 +720,7 @@ s32 Scene_Initialize(void) {
     }
 #endif
   }
-  if (gMainRoutineWork.next == SCENE_HESPERIA_SETTLEMENT) {
+  if (gMainRoutineState.next == SCENE_HESPERIA_SETTLEMENT) {
     if (Event_GetFlag(FLAG_VINE_GROWN)) {
       MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
       Actor_SetAnimation(ACTOR_SPROUT, 4);
@@ -732,15 +732,15 @@ s32 Scene_Initialize(void) {
     }
     Actor_PlaceBlocks(gSettlements_WallCrate);
   }
-  if (gMainRoutineWork.next == SCENE_GONDOWAN_SETTLEMENT_CAVE)
+  if (gMainRoutineState.next == SCENE_GONDOWAN_SETTLEMENT_CAVE)
     FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == SCENE_HESPERIA_SETTLEMENT_CAVE)
+  if (gMainRoutineState.next == SCENE_HESPERIA_SETTLEMENT_CAVE)
     FieldEffect_StartBlankOverlay(0);
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_SW_ATTEKA_ISLET) {
+  if (gMainRoutineState.next == SCENE_SW_ATTEKA_ISLET) {
     if (Event_GetFlag(FLAG_FALLS_CRATE_AT_REST)) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
@@ -758,7 +758,7 @@ s32 Scene_PrepareMap(void) {
     }
 #endif
   }
-  if (gMainRoutineWork.next == SCENE_GONDOWAN_SETTLEMENT) {
+  if (gMainRoutineState.next == SCENE_GONDOWAN_SETTLEMENT) {
     if (Event_GetFlag(FLAG_LADDER_BUSH_CUT)) {
       MapGrid_CopyCellsTo(5, 46, 5, 47, 1, 1);
       MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
@@ -801,14 +801,14 @@ void Settlements_EnterHouse(void) {
     if (actor != 0)
       actor->motionFlags = 0;
   }
-  if (gMainRoutineWork.next == SCENE_HESPERIA_SETTLEMENT)
+  if (gMainRoutineState.next == SCENE_HESPERIA_SETTLEMENT)
     MapGrid_CopyCellsTo(33, 30, 23, 14, 1, 2);
   else
     MapGrid_CopyCellsTo(27, 29, 40, 16, 1, 2);
   Event_PlaySound(SE_DOOR_OPEN);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -4);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_CenterAndWalk(gMainRoutineState.leaderActorId, 2, -4);
   FieldEvent_Wait(6);
   // Both houses' doors are their scene's exit 2.
   FieldEvent_SetExitRequest(HESPERIA_HOUSE_DOOR);
@@ -829,11 +829,11 @@ extern s32 gSettlements_WaterColorFrame;
 /// A task on SW Atteka Islet: the falls' water runs, its four colours moving
 /// along by one every 8 frames.
 void Settlements_CycleWaterColors(void) {
-  struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
+  struct FieldState *state = (struct FieldState *)Ram_HeapSlots->fieldState;
   s32 *frame;
   s32 phase, i;
 
-  if (work->psynergy != 0 || work->revealActive != 0)
+  if (state->psynergy != 0 || state->revealActive != 0)
     return;
   frame = &gSettlements_WaterColorFrame;
   if (*frame == -1) {
@@ -874,7 +874,7 @@ void Settlements_CycleWaterColors(void) {
 /// Starts SW Atteka Islet's falls: the running colours of the water, the sound
 /// of water, and the split of the screen that Scroll_HBlank draws.
 void Settlements_StartWaterfall(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldTask_AddFrame(Settlements_CycleWaterColors, TASK_PASS_FRAME);
   Scene_QueueMusic(SE_AMBIENT_WATER);
@@ -899,7 +899,7 @@ void Scroll_HBlank(void) {
 /// layer's scroll, and how far BG1 is scrolled above and below it.
 void Layer_TrackScroll(void) {
   struct MapLayer *layer =
-      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
+      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 y = FIXEDtoINT(layer->y);
 
   gSettlements_WaterfallLine = 1448 - y;
@@ -920,7 +920,7 @@ void Settlements_UnblockFallsObjects(void) {
 /// or crate; the game frees the cell it stands on and keeps Felix drawn in
 /// front of it.
 void Settlements_StartPushingFallsObject(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_UNDERFOOT;
   Actor_LiftTargetBlock(gSettlements_FallsObjects);
 }
@@ -984,7 +984,7 @@ void Settlements_SlideCrateDownFalls(void) {
     Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 8);
     FieldActor_WaitForMoveById(ACTOR_FALLS_CRATE);
     FieldEvent_Wait(10);
-    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+    Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
     Actor_SetSpeed(ACTOR_FALLS_CRATE, 2.4);
     Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 80);
     FieldActor_WaitForMoveById(ACTOR_FALLS_CRATE);
@@ -1042,7 +1042,7 @@ void Settlements_MoveCrate(void) {
 /// goes down them.
 void Settlements_PushIntoFalls(void) {
   Actor_PlaceMovedBlock();
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags -=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags -=
       ACTOR_PRIORITY_UNDERFOOT;
   Settlements_SinkPillar();
   Settlements_SlideCrateDownFalls();

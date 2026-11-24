@@ -22,7 +22,7 @@ FarCall_GameTable:
 	export Ability_Get, Ability_GetDirect
 	export Unit_LearnPsynergyFar, Unit_LearnPsynergy
 	export Unit_KnowsPsynergyFar, Unit_KnowsPsynergy
-	export MainRoutineWork_InitializeDefaultsFar, MainRoutineWork_InitializeDefaults
+	export MainRoutineState_InitializeDefaultsFar, MainRoutineState_InitializeDefaults
 	export Unit_CheckLevelUpFar, Unit_CheckLevelUp
 	export Party_InitializeCharactersFar, Party_InitializeCharacters
 	export Unit_LevelNoOpFar, Unit_LevelNoOp

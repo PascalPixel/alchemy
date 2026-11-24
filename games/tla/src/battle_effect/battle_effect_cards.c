@@ -67,7 +67,7 @@
 /// crescent, or a dagger glints, strikes and breaks into shards. The screen
 /// fades in the last eight frames.
 void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   u8 *graphics;
   DrawRectangle draw[2];
@@ -88,7 +88,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   s32 first;
   s32 slot;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
@@ -126,43 +126,43 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   if (mode == CARD_SLEEP) {
     Resource_LoadAndDecompress(RESOURCE_SHEEP_CARD_SHEET, CARD, 1, 1);
-    Resource_LoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET, work->sheet, 0,
+    Resource_LoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET, state->sheet, 0,
                                0);
     totalFrames = 96;
   } else if (mode == CARD_BAFFLE) {
     Resource_LoadAndDecompress(RESOURCE_BUTTERFLY_CARD_SHEET, CARD, 1, 1);
-    Resource_LoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET, work->sheet, 0,
+    Resource_LoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET, state->sheet, 0,
                                0);
     totalFrames = 80;
   } else if (mode == CARD_SWORD) {
     Resource_LoadAndDecompress(RESOURCE_SWORD_CARD_SHEET, CARD, 1, 1);
-    Resource_LoadAndDecompress(RESOURCE_DAGGER_SHEET, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_DAGGER_SHEET, state->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_PALETTE_RAMP_IMAGE,
-                               work->sheet + STAT_REDUCTION_SHARD_PICTURES, 0,
+                               state->sheet + STAT_REDUCTION_SHARD_PICTURES, 0,
                                0);
     for (i = 1; i != DIMMED_COPIES; i++) {
       for (j = 0; j != STAT_REDUCTION_SHARD_BYTES; j++) {
-        s32 shade = work->sheet[STAT_REDUCTION_SHARD_PICTURES + j];
+        s32 shade = state->sheet[STAT_REDUCTION_SHARD_PICTURES + j];
 
         if (shade > 0) {
           shade -= i * SWORD_CARD_SHARD_DIMMING;
           if (shade <= 0)
             shade = 1;
         }
-        work->sheet[STAT_REDUCTION_SHARD_PICTURES +
-                    i * STAT_REDUCTION_SHARD_BYTES + j] = shade;
+        state->sheet[STAT_REDUCTION_SHARD_PICTURES +
+                     i * STAT_REDUCTION_SHARD_BYTES + j] = shade;
       }
     }
     totalFrames = 116;
   } else {
     Resource_LoadAndDecompress(RESOURCE_SKELETON_CARD_SHEET, CARD, 1, 1);
-    Resource_LoadAndDecompress(RESOURCE_COUNTER_REVEAL_SHEET, work->sheet, 1,
+    Resource_LoadAndDecompress(RESOURCE_COUNTER_REVEAL_SHEET, state->sheet, 1,
                                0);
     Resource_LoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_A, Ram_MapCellBuffer,
                                1, 0);
     totalFrames = 88;
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   if (mode == CARD_BAFFLE)
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   REG_BG2PA = Q_8_8(1);
@@ -183,7 +183,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       REG_BG2X = (56 - card.x) << 8;
       scroll = 56 - card.x;
       scale = 0;
-      EFFECT_FREE_PARTICLES(i, work->particles, 64);
+      EFFECT_FREE_PARTICLES(i, state->particles, 64);
     }
 
     // The last eight frames: the screen fades.
@@ -226,7 +226,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     if (mode != CARD_SLEEP) {
       if (mode == CARD_BAFFLE) {
         // The screen waves, line by line.
-        s32 *line = work->bg2xLines;
+        s32 *line = state->bg2xLines;
 
         for (i = 0; i != DISPLAY_HEIGHT; i++)
           *line++ =
@@ -317,7 +317,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       // the ground and spreads along it.
       if (frame == CARD_FLIGHT_FRAMES) {
         EFFECT_SHOW_DAMAGE(SE_WHOOSH);
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         REG_BLDALPHA = EFFECT_BLEND_ADD;
       }
       if (frame >= CARD_FLIGHT_FRAMES && frame < CARD_FLIGHT_FRAMES + 32) {
@@ -325,7 +325,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
         slot = time * 2;
         for (i = 0; i != 2; i++) {
-          step = &work->particles[slot + i];
+          step = &state->particles[slot + i];
           step->x = toFIXED(64);
           step->y = toFIXED(48);
           step->velocityX = ((Random16() & 127) - 64) << 11;
@@ -333,11 +333,11 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           step->variant = 0;
         }
       }
-      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-        step = &work->particles[i];
+      for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+        step = &state->particles[i];
         if (step->variant >= 0 && step->variant < BAFFLE_PUFF_FRAMES) {
           draw[0](canvas,
-                  work->sheet + step->variant / 4 * PICTURE_BYTES(CLOUD_PUFF),
+                  state->sheet + step->variant / 4 * PICTURE_BYTES(CLOUD_PUFF),
                   overflow + FIXED_INTEGER_PART(step->x) - CLOUD_PUFF_WIDTH / 2,
                   FIXED_INTEGER_PART(step->y) - CLOUD_PUFF_HEIGHT / 2,
                   CLOUD_PUFF_WIDTH, CLOUD_PUFF_HEIGHT);
@@ -363,15 +363,15 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         u32 mask = 127;
 
         slot = frame - CARD_FLIGHT_FRAMES;
-        sheep = &work->particles[slot];
+        sheep = &state->particles[slot];
         sheep->x = toFIXED(64);
         sheep->y = toFIXED(48);
         sheep->velocityX = ((Random16() & mask) - 64) << 11;
         sheep->velocityY = ((Random16() & mask) - 64) << 11;
         sheep->variant = mode;
       }
-      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-        step = &work->particles[i];
+      for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+        step = &state->particles[i];
         if (step->variant >= 0 && step->variant < SHEEP_FRAMES) {
           draw[0](canvas,
                   CARD_SHEEP + (step->variant / 4 & 3) * PICTURE_BYTES(SHEEP),
@@ -389,14 +389,14 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
       // The dagger glints.
       if (time < SWORD_CARD_DAGGER_FRAMES)
-        draw[0](canvas, work->sheet + time / 4 % 6 * PICTURE_BYTES(DAGGER),
+        draw[0](canvas, state->sheet + time / 4 % 6 * PICTURE_BYTES(DAGGER),
                 overflow + 52, 44, DAGGER_WIDTH, DAGGER_HEIGHT);
 
       // It strikes: the screen flashes and the shards burst.
       if (time == SWORD_CARD_DAGGER_FRAMES) {
         Sound_PlayFar(SE_POWER_UP);
         EFFECT_SHOW_DAMAGE(-1);
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                              CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
@@ -408,7 +408,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           // A random force below 128.
           force &= Random16();
 
-          step = &work->particles[i];
+          step = &state->particles[i];
           step->x = toFIXED(64);
           step->y = INTtoFIXED(i + SWORD_CARD_SHARD_TOP);
           step->velocityX =
@@ -417,7 +417,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
               (Trig_Sin(angle) * (force + SWORD_CARD_SHARD_SPEED)) >> 6;
           step->variant = Random16() & 255;
         }
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         REG_BLDALPHA = EFFECT_BLEND_ADD;
       }
 
@@ -434,10 +434,10 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != SWORD_CARD_SHARDS; i++) {
           s32 picture;
 
-          step = &work->particles[i];
+          step = &state->particles[i];
           picture = i % 4 * 3 + (step->variant + time) / 8 % 3;
           draw[0](canvas,
-                  work->sheet + STAT_REDUCTION_SHARD_PICTURES +
+                  state->sheet + STAT_REDUCTION_SHARD_PICTURES +
                       (fade * STAT_REDUCTION_SHARD_BYTES +
                        gStatChange_ShardPictures[picture]),
                   overflow + FIXED_INTEGER_PART(step->x) -
@@ -463,21 +463,21 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
                                       toFIXED(8), toFIXED(2), 110);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
       }
       if (frame >= REAPER_RISE_FRAME) {
         if (frame < REAPER_SWING_FRAME) {
-          draw[0](canvas, work->sheet,
+          draw[0](canvas, state->sheet,
                   overflow + gCastingImpact_PictureX[args->side * 7],
                   gCastingImpact_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
                   REAPER_SHEET_RAISED_HEIGHT);
         } else {
           if (frame <= REAPER_SWING_FRAME + 3)
-            draw[0](canvas, work->sheet,
+            draw[0](canvas, state->sheet,
                     overflow + gCastingImpact_PictureX[args->side * 7],
                     gCastingImpact_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
                     REAPER_SHEET_RAISED_HEIGHT);
-          EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, REAPER_SHEET_SWUNG,
+          EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, REAPER_SHEET_SWUNG,
                               overflow +
                                   gCastingImpact_PictureX[args->side * 7 + 1],
                               gCastingImpact_PictureY[1]);
@@ -487,7 +487,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           if (frame >= REAPER_SWING_FRAME + 2 &&
               frame <= REAPER_SWING_FRAME + 3)
             EFFECT_DRAW_PICTURE(
-                draw[0], canvas, work->sheet, REAPER_SHEET_CRESCENT,
+                draw[0], canvas, state->sheet, REAPER_SHEET_CRESCENT,
                 overflow + gCastingImpact_PictureX[args->side * 7 + 2],
                 gCastingImpact_PictureY[2]);
           if (frame >= REAPER_SWING_FRAME + 4 &&
@@ -518,7 +518,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       }
     }
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   if (mode == CARD_BAFFLE)

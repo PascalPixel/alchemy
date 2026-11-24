@@ -18,7 +18,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "field/scene_tables.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "version.h"
 #include "field/field_sequence.h"
@@ -58,9 +58,9 @@ enum ChampaRoomsActorId {
 /// Whether the party is in the tent on SoutheastAngaraIslet or the hut on
 /// WestIndraIslet's pier, which this overlay also holds.
 #define IN_ISLET_ROOMS()                                                       \
-  (gMainRoutineWork.next == SCENE_CHAMPA_ROOMS &&                              \
-   (gMainRoutineWork.entrance == CHAMPA_ROOMS_FROM_SOUTHEAST_ANGARA_ISLET ||   \
-    gMainRoutineWork.entrance == CHAMPA_ROOMS_FROM_WEST_INDRA_ISLET))
+  (gMainRoutineState.next == SCENE_CHAMPA_ROOMS &&                             \
+   (gMainRoutineState.entrance == CHAMPA_ROOMS_FROM_SOUTHEAST_ANGARA_ISLET ||  \
+    gMainRoutineState.entrance == CHAMPA_ROOMS_FROM_WEST_INDRA_ISLET))
 
 /// The islet rooms' one actor, in the hut on WestIndraIslet's pier.
 enum ChampaIsletActorId { ACTOR_INDRA_NEIGHBOR = ACTOR_FIRST_PLACED };
@@ -104,7 +104,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 s32 Scene_Initialize(void) {
-  s32 *effect = &gFieldWork->transition;
+  s32 *effect = &gFieldState->transition;
 #if !TLA_PATCH_1
   s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 #else

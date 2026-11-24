@@ -27,7 +27,7 @@
 #include "field/event_inline.h"
 #include "field/field_event.h"
 #include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "debug/debug.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
@@ -174,12 +174,12 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// Sets up the floor: Felix arriving by the teleporter comes up in its ring of
 /// light, and the gates stand open while the pillar or Felix holds the button.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-      gMainRoutineWork.entrance ==
+      gMainRoutineState.entrance ==
           JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_FROM_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS)
-    Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
+    Actor_ArriveInRing(gMainRoutineState.leaderActorId);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_GATES_PILLAR, 280, 536);
     JupiterLighthouse_OpenGates(GATES_STAND_OPEN);

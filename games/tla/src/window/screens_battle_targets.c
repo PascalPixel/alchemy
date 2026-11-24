@@ -92,7 +92,7 @@ s32 System_GetLanguage(void);
 #define TARGET_NAME_INTERIOR_WIDTH ((DISPLAY_TILE_WIDTH - 2) * 8)
 
 /// Where the battle view slides while a target is chosen
-/// (BattleMenuWork.targetViewOffset): 16 pixels down when aiming at the
+/// (BattleMenuState.targetViewOffset): 16 pixels down when aiming at the
 /// enemies, 2 up when aiming at the party or the user.
 #define TARGET_VIEW_OFFSET_ENEMIES 16
 #define TARGET_VIEW_OFFSET_PARTY (-2)
@@ -145,7 +145,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct TargetPoint markerPosition;
   struct AffineTransform effect;
   struct Unit *unit;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   struct Window *window;
   struct Window *conditionWindow;
   s32 targetIndex;
@@ -174,7 +174,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct SelectionSprite *firstSprite;
   struct Unit *target;
 
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   targetCount = 0;
   redraw = TARGET_REDRAW_ALL;
   cursorSlot = VramCache_AllocEntry(256);
@@ -182,9 +182,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (spread == 0)
     spread = 1;
   if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
-    BATTLE_MENU_WORK->targetViewOffset = TARGET_VIEW_OFFSET_PARTY;
+    BATTLE_MENU_STATE->targetViewOffset = TARGET_VIEW_OFFSET_PARTY;
   else
-    BATTLE_MENU_WORK->targetViewOffset = TARGET_VIEW_OFFSET_ENEMIES;
+    BATTLE_MENU_STATE->targetViewOffset = TARGET_VIEW_OFFSET_ENEMIES;
   for (i = 0; i < 6; i++)
     cursorTracks[i].flags = 0;
   // The candidates: the party, the acting unit alone, or the enemies.
@@ -243,7 +243,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             found = 1;
           break;
         case TARGET_HINT_LAST_TARGET:
-          if (BATTLE_MENU_WORK->lastTarget == candidateIds[j])
+          if (BATTLE_MENU_STATE->lastTarget == candidateIds[j])
             found = 1;
           break;
         }
@@ -376,7 +376,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       // A party member: the window of what the action does, placed by the
       // party member's tile column and kept on screen. The aimed unit is
       // remembered for TARGET_HINT_LAST_TARGET.
-      if ((u32)(BATTLE_MENU_WORK->lastTarget = candidateIds[targetIndex]) <=
+      if ((u32)(BATTLE_MENU_STATE->lastTarget = candidateIds[targetIndex]) <=
           ALLY_MAX) {
         if (spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
           unit = Unit_Get(candidateIds[targetIndex]);
@@ -694,15 +694,15 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
     pressed = gInput.pressed;
     repeated = gInput.repeat;
-    if (BATTLE_MENU_WORK->tutorialStep != 0) {
+    if (BATTLE_MENU_STATE->tutorialStep != 0) {
       repeated = 0;
       pressed = 0;
-      if (BATTLE_MENU_WORK->tutorialDelay == 0) {
-        BATTLE_MENU_WORK->tutorialDelay = 60;
+      if (BATTLE_MENU_STATE->tutorialDelay == 0) {
+        BATTLE_MENU_STATE->tutorialDelay = 60;
         repeated = KEY_A;
         pressed = KEY_A;
       } else {
-        BATTLE_MENU_WORK->tutorialDelay--;
+        BATTLE_MENU_STATE->tutorialDelay--;
       }
     }
     // A: the aimed unit's side and place; the loop ends after this frame.
@@ -747,7 +747,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         redraw |= TARGET_REDRAW_SPREAD;
       }
     }
-    if (BATTLE_MENU_WORK->timer == 0 || (pressed & KEY_B)) {
+    if (BATTLE_MENU_STATE->timer == 0 || (pressed & KEY_B)) {
       Sound_PlayFar(SE_MENU_CANCEL);
       targetIndex = -1;
       break;
@@ -765,7 +765,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     Window_Close(conditionWindow, 1);
   Window_Close(window, 1);
   BattleHighlight_SetModesFar(candidateIds, HIGHLIGHT_OFF);
-  BATTLE_MENU_WORK->targetViewOffset = 0;
+  BATTLE_MENU_STATE->targetViewOffset = 0;
   wait(1);
   return targetIndex;
 }

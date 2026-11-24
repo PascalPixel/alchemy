@@ -11,7 +11,7 @@
 #include "system/ram_buffer.h"
 #include "system/frame.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "scene_ids.h"
 #include "field/field_sequence_event.h"
 #include "graphics/resource.h"
@@ -26,8 +26,8 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 dstX, s32 dstY,
-                                        s32 width, s32 height);
+void MapGrid_CopyCellTilesIndicesRect(s32 srcX, s32 srcY, s32 dstX, s32 dstY,
+                                      s32 width, s32 height);
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dstX, s32 dstY);
 /// Stops the leader where it stands (Leader_StopMoving, through the overlay's

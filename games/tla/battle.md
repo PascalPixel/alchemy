@@ -12,9 +12,9 @@ A battle can start two ways: a random encounter, or an
 [event](glossary.md#event) that calls for one, such as Obaba's monster in
 Champa or a Djinni that fights before it joins. Both do the same thing.
 They write a [formation](glossary.md#formation) number, the group of
-enemies to send, into the main routine's work and let the field end.
+enemies to send, into the main routine's state and let the field end.
 
-The battle reads everything it needs from that work and the party. When it
+The battle reads everything it needs from that state and the party. When it
 is over it writes back one answer: how it ended. That is the whole
 interface, and it is why Avimander above Champa and a walk across the
 Gondowan Cliffs lead to exactly the same kind of fight.

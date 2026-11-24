@@ -28,7 +28,7 @@
 #include "system/input.h"
 #include "system/io_reg.h"
 #include "system/io_write_queue.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/math_table.h"
 #include "system/ram_buffer.h"
 #include "system/system.h"
@@ -80,8 +80,8 @@ void Title_ShowCamelotLogo(s32 unused);
 s32 Scene_Initialize(void) {
   s32 waitFrames;
 
-  if (gMainRoutineWork.entrance == TITLE_TO_BE_CONTINUED) {
-    Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+  if (gMainRoutineState.entrance == TITLE_TO_BE_CONTINUED) {
+    Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = 0;
     Event_PlaySound(MUS_TITLE_AFTER_PROLOGUE);
     Title_RevealScreen(0);
     // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
@@ -95,7 +95,7 @@ s32 Scene_Initialize(void) {
     Event_SetDestination(SCENE_TITLE, TITLE_PROLOGUE);
     return 0;
   }
-  if (gMainRoutineWork.entrance == TITLE_STORY_CRAWL) {
+  if (gMainRoutineState.entrance == TITLE_STORY_CRAWL) {
     Event_PlaySound(MUS_THE_BROKEN_SEAL);
     // "Ages ago, or so the stories / tell, the power of Alchemy..."
     Credits_Run(1);
@@ -108,7 +108,7 @@ s32 Scene_Initialize(void) {
     return 0;
   }
   Resource_ReservedNoOp(RESOURCE_TITLE_FAR_CALLS);
-  if (gMainRoutineWork.entrance == TITLE_START) {
+  if (gMainRoutineState.entrance == TITLE_START) {
     for (;;) {
       Event_PlaySound(MUS_SILENCE);
       Title_ShowNintendoLogo(0);
@@ -134,19 +134,19 @@ s32 Scene_Initialize(void) {
     }
     Event_SetDestination(SCENE_CLEAR, CLEAR_FROM_TITLE);
   } else {
-    if (gMainRoutineWork.entrance == TITLE_PROLOGUE) {
+    if (gMainRoutineState.entrance == TITLE_PROLOGUE) {
       Event_PlaySound(MUS_MAIN_THEME_TITLE);
       TitleIntro_Run(0);
-      FieldWindowColor_Apply(gMainRoutineWork.windowHue,
-                             gMainRoutineWork.windowBrightness);
+      FieldWindowColor_Apply(gMainRoutineState.windowHue,
+                             gMainRoutineState.windowBrightness);
       Party_SetLeaderJenna();
       Event_SetDestination(SCENE_VENUS_LIGHTHOUSE, VENUS_LIGHTHOUSE_FROM_TITLE);
     }
-    if (gMainRoutineWork.entrance == TITLE_FROM_IDEJIMA) {
+    if (gMainRoutineState.entrance == TITLE_FROM_IDEJIMA) {
       Event_PlaySound(MUS_TITLE_AFTER_PROLOGUE);
       Title_ShowIntro(0);
-      FieldWindowColor_Apply(gMainRoutineWork.windowHue,
-                             gMainRoutineWork.windowBrightness);
+      FieldWindowColor_Apply(gMainRoutineState.windowHue,
+                             gMainRoutineState.windowBrightness);
       Party_SetLeaderFelix();
       Event_SetDestination(SCENE_IDEJIMA, IDEJIMA_RIDE_THE_TIDAL_WAVE);
     }
@@ -261,11 +261,11 @@ static void Title_RevealScreen(s32 unused) {
                         IO_WRITE_HALFWORD);
     wait(3);
   }
-  gFieldWork->transition = 0;
-  gFieldWork->transitionFrames = 1;
+  gFieldState->transition = 0;
+  gFieldState->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  gFieldWork->transitionFrames = 60;
+  gFieldState->transitionFrames = 60;
 }
 
 /// The title logo: its palette, its tiles decoded and copied to VRAM, a 30 by
@@ -308,7 +308,7 @@ static void Title_LoadBackground(void) {
     bgScroll++;
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-  ((struct MapWork *)Ram_HeapSlots->mapGrid)->dispcnt =
+  ((struct MapState *)Ram_HeapSlots->mapGrid)->dispcnt =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }
 

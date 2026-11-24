@@ -204,12 +204,12 @@ void ColorBuffer_DarkenFourLevels(u8 *buffer, s32 count) {
 /// the effect left for it, copying the canvas into the sprite's tiles (or to
 /// the start of BG VRAM), and clearing or fading it after the copy.
 void BattleEffect_UploadCanvas(void) {
-  struct CanvasSpriteWork *work = Ram_HeapSlots->canvasSprite;
+  struct CanvasSpriteState *state = Ram_HeapSlots->canvasSprite;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
-  u8 *tiles = OBJ_VRAM + work->tile * TILE_SIZE;
+  u8 *tiles = OBJ_VRAM + state->tile * TILE_SIZE;
 
-  work->frame++;
-  switch (work->command) {
+  state->frame++;
+  switch (state->command) {
   case CANVAS_UPLOAD:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
     break;
@@ -234,89 +234,89 @@ void BattleEffect_UploadCanvas(void) {
             REG_DMA3);
     break;
   }
-  work->command = 0;
+  state->command = 0;
 }
 
-/// The canvas sprite's frame callback: places the sprite at the work's
+/// The canvas sprite's frame callback: places the sprite at the state's
 /// position (whole pixels), scale and angle, and draws it. A sprite scaled to
 /// nothing is not drawn.
 void BattleEffect_DrawCanvasSprite(void) {
-  struct CanvasSpriteWork *work = Ram_HeapSlots->canvasSprite;
-  s32 x = toFIXED(work->x);
-  s32 y = toFIXED(work->y);
-  s32 scaleX = work->scaleX;
-  s32 scaleY = work->scaleY;
+  struct CanvasSpriteState *state = Ram_HeapSlots->canvasSprite;
+  s32 x = toFIXED(state->x);
+  s32 y = toFIXED(state->y);
+  s32 scaleX = state->scaleX;
+  s32 scaleY = state->scaleY;
 
   if (scaleX != 0 && scaleY != 0) {
-    if (work->mode == CANVAS_SPRITE_16_COLORS) {
-      EffectSprite_Init(&work->sprite, 32, 32, OBJ_SIZE_64X64, work->tile);
-      work->sprite.oam.fullColor = 0;
-      work->sprite.oam.palette = CANVAS_PALETTE;
-      work->sprite.oam.priority = work->priority;
-      work->sprite.depth = work->depth;
-      work->sprite.x = x;
-      work->sprite.y = y;
-      work->sprite.scaleX = scaleX;
-      work->sprite.scaleY = scaleY;
-      work->sprite.angle = work->angle;
-      EffectSprite_Draw(&work->sprite);
+    if (state->mode == CANVAS_SPRITE_16_COLORS) {
+      EffectSprite_Init(&state->sprite, 32, 32, OBJ_SIZE_64X64, state->tile);
+      state->sprite.oam.fullColor = 0;
+      state->sprite.oam.palette = CANVAS_PALETTE;
+      state->sprite.oam.priority = state->priority;
+      state->sprite.depth = state->depth;
+      state->sprite.x = x;
+      state->sprite.y = y;
+      state->sprite.scaleX = scaleX;
+      state->sprite.scaleY = scaleY;
+      state->sprite.angle = state->angle;
+      EffectSprite_Draw(&state->sprite);
     }
-    if (work->mode == CANVAS_SPRITE_256_COLORS) {
-      EffectSprite_Init(&work->sprite, 32, 32, OBJ_SIZE_64X64, work->tile);
-      work->sprite.oam.fullColor = 1;
-      work->sprite.oam.palette = 0;
-      work->sprite.oam.priority = work->priority;
-      work->sprite.depth = work->depth;
-      work->sprite.x = x;
-      work->sprite.y = y;
-      work->sprite.scaleX = scaleX;
-      work->sprite.scaleY = scaleY;
-      work->sprite.angle = work->angle;
-      EffectSprite_Draw(&work->sprite);
+    if (state->mode == CANVAS_SPRITE_256_COLORS) {
+      EffectSprite_Init(&state->sprite, 32, 32, OBJ_SIZE_64X64, state->tile);
+      state->sprite.oam.fullColor = 1;
+      state->sprite.oam.palette = 0;
+      state->sprite.oam.priority = state->priority;
+      state->sprite.depth = state->depth;
+      state->sprite.x = x;
+      state->sprite.y = y;
+      state->sprite.scaleX = scaleX;
+      state->sprite.scaleY = scaleY;
+      state->sprite.angle = state->angle;
+      EffectSprite_Draw(&state->sprite);
     }
-    if (work->mode == CANVAS_SPRITE_KEPT) {
-      work->sprite.oam.priority = work->priority;
-      work->sprite.depth = work->depth;
-      work->sprite.x = x;
-      work->sprite.y = y;
-      work->sprite.scaleX = scaleX;
-      work->sprite.scaleY = scaleY;
-      work->sprite.angle = work->angle;
-      EffectSprite_Draw(&work->sprite);
+    if (state->mode == CANVAS_SPRITE_KEPT) {
+      state->sprite.oam.priority = state->priority;
+      state->sprite.depth = state->depth;
+      state->sprite.x = x;
+      state->sprite.y = y;
+      state->sprite.scaleX = scaleX;
+      state->sprite.scaleY = scaleY;
+      state->sprite.angle = state->angle;
+      EffectSprite_Draw(&state->sprite);
     }
   }
-  work->drawnFrames++;
+  state->drawnFrames++;
 }
 
 // The canvas sprite of the field Psynergy scenes.
 
-/// Starts the canvas sprite of the field Psynergy scenes: its work, a cleared
+/// Starts the canvas sprite of the field Psynergy scenes: its state, a cleared
 /// 64x64 canvas copied into the sprite's tiles, and a map from each canvas
 /// pixel (row by row) to its place in the tiles. BattleEffect_DrawCanvasSprite
 /// draws the sprite and BattleEffect_UploadCanvas uploads the canvas each
 /// frame; BattleEffect_EndCanvasSprite ends it.
 void BattleEffect_StartCanvasSprite(void) {
-  struct WindowWork *windowWork =
-      (struct WindowWork *)Ram_HeapSlots->windowWork;
-  struct CanvasSpriteWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_CANVAS_SPRITE, sizeof(*work));
+  struct WindowState *windowState =
+      (struct WindowState *)Ram_HeapSlots->windowState;
+  struct CanvasSpriteState *state =
+      HeapSlot_Alloc(HEAP_SLOT_CANVAS_SPRITE, sizeof(*state));
   u8 *canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_SPRITE_BYTES);
   u16 *map;
   s32 y;
   s32 x;
 
-  IWRAM_FILL_WORDS(work, sizeof(*work), 0);
-  work->tile = windowWork->glyphTiles;
-  work->mode = CANVAS_SPRITE_16_COLORS;
-  work->command = 0;
-  work->x = 16;
-  work->y = 0;
-  work->scaleX = FIXED_ONE;
-  work->scaleY = FIXED_ONE;
-  work->priority = 1;
-  work->depth = CANVAS_SPRITE_DEPTH;
+  IWRAM_FILL_WORDS(state, sizeof(*state), 0);
+  state->tile = windowState->glyphTiles;
+  state->mode = CANVAS_SPRITE_16_COLORS;
+  state->command = 0;
+  state->x = 16;
+  state->y = 0;
+  state->scaleX = FIXED_ONE;
+  state->scaleY = FIXED_ONE;
+  state->priority = 1;
+  state->depth = CANVAS_SPRITE_DEPTH;
   Iwram_FillWordsEntry(canvas, CANVAS_SPRITE_BYTES, 0);
-  Dma_Set(canvas, OBJ_VRAM + work->tile * TILE_SIZE,
+  Dma_Set(canvas, OBJ_VRAM + state->tile * TILE_SIZE,
           DMA_COPY_WORDS(CANVAS_SPRITE_BYTES / 4), REG_DMA3);
 
   // Where each pixel of the canvas sits in its 8x8 tiles.
@@ -335,7 +335,7 @@ void BattleEffect_StartCanvasSprite(void) {
 }
 
 /// Ends the canvas sprite: stops its draw and upload callbacks, waits a
-/// frame and frees its sprite work, canvas and pixel map.
+/// frame and frees its sprite state, canvas and pixel map.
 void BattleEffect_EndCanvasSprite(void) {
   Task_Remove(BattleEffect_DrawCanvasSprite);
   Task_Remove(BattleEffect_UploadCanvas);
@@ -348,9 +348,9 @@ void BattleEffect_EndCanvasSprite(void) {
 /// The sparks that circle an actor as it appears.
 #define APPEAR_SPARK_COUNT 64
 
-/// Actor_VanishInSparks's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the spark
+/// Actor_VanishInSparks's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the spark
 /// picture, and the sparks that circle the actor and their sprites.
-struct AppearSparksWork {
+struct AppearSparksState {
   u8 picture[1024];
   struct WhirlSpark sparks[APPEAR_SPARK_COUNT];
   struct EffectSprite sprites[APPEAR_SPARK_COUNT];
@@ -371,8 +371,8 @@ struct AppearSparksWork {
 /// and widens from nothing to full width over APPEAR_WIDEN_FRAMES, when its
 /// shadow shows again, and the sparks stop coming APPEAR_SPAWN_FRAMES later.
 void Actor_VanishInSparks(s32 actorId) {
-  struct AppearSparksWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct AppearSparksWork));
+  struct AppearSparksState *state =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct AppearSparksState));
   s32 phase;
   s32 entry;
   s32 tiles;
@@ -387,14 +387,14 @@ void Actor_VanishInSparks(s32 actorId) {
   s32 frame;
   s32 position[3];
 
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SPARKLE_FADE), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SPARKLE_FADE), state);
   entry = VramCache_FindFreeEntry();
-  tiles = VramCache_Load(entry, sizeof(work->picture), work);
+  tiles = VramCache_Load(entry, sizeof(state->picture), state);
 
   i = 0;
-  spark = work->sparks;
+  spark = state->sparks;
   for (; i < APPEAR_SPARK_COUNT; i++, spark++) {
-    sprite = &work->sprites[i];
+    sprite = &state->sprites[i];
     // Set up as Teleport's sparks are; each draw picks its sparkle again.
     EffectSprite_Init(sprite, 4, 4, 0,
                       tiles +
@@ -418,7 +418,7 @@ void Actor_VanishInSparks(s32 actorId) {
         s32 sparkAngle = Random16();
         s32 radius = Random16() * 6 + toFIXED(12);
 
-        spark = &work->sparks[next];
+        spark = &state->sparks[next];
 
         spark->age = 0;
         spark->x = actor->x.fixed;
@@ -431,10 +431,10 @@ void Actor_VanishInSparks(s32 actorId) {
         next %= APPEAR_SPARK_COUNT;
       }
     }
-    spark = work->sparks;
+    spark = state->sparks;
     for (i = 0; i < APPEAR_SPARK_COUNT; i++, spark++) {
       if (spark->age >= 0) {
-        sprite = &work->sprites[i];
+        sprite = &state->sprites[i];
         if ((u32)spark->age < SPARK_LIFE) {
           s32 sparkAngle = spark->angle;
           FIXED radius = spark->radius;

@@ -1,15 +1,15 @@
-#ifndef ALCHEMY_MAIN_ROUTINE_WORK_H
-#define ALCHEMY_MAIN_ROUTINE_WORK_H
+#ifndef ALCHEMY_MAIN_ROUTINE_STATE_H
+#define ALCHEMY_MAIN_ROUTINE_STATE_H
 
 /// @file
-/// gMainRoutineWork, the game's state a save file keeps, and the values its
+/// gMainRoutineState, the game's state a save file keeps, and the values its
 /// fields hold.
 
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 
-/// A scene's type (Scene.sceneType, copied to MainRoutineWork.sceneType).
+/// A scene's type (Scene.sceneType, copied to MainRoutineState.sceneType).
 enum SceneType {
   SCENE_TYPE_OTHER = 1, ///< every other scene: dungeons, the world map
   /// Towns and their rooms, and the prologue's Venus Lighthouse scenes:
@@ -17,7 +17,7 @@ enum SceneType {
   SCENE_TYPE_TOWN = 2
 };
 
-/// gMainRoutineWork.battleType: how the next battle starts; it is set back to
+/// gMainRoutineState.battleType: how the next battle starts; it is set back to
 /// BATTLE_TYPE_NORMAL as the battle ends.
 enum BattleType {
   BATTLE_TYPE_NORMAL = 0,
@@ -31,7 +31,7 @@ enum BattleType {
   BATTLE_TYPE_LOST = 6
 };
 
-/// Battle_Run's results in gMainRoutineWork.sequenceResult besides the number
+/// Battle_Run's results in gMainRoutineState.sequenceResult besides the number
 /// of enemies defeated.
 #define BATTLE_OUTCOME_LOST -1
 #define BATTLE_OUTCOME_FLED 999
@@ -39,7 +39,7 @@ enum BattleType {
 /// The most coins the party carries, and the most shop credit.
 #define COIN_MAX 999999
 
-/// gMainRoutineWork.hazardMode: what advances the hazard count
+/// gMainRoutineState.hazardMode: what advances the hazard count
 /// (Field_UpdateWalking).
 enum HazardMode {
   /// The distance the leader walks on MAP_CELL_HAZARD ground.
@@ -48,11 +48,11 @@ enum HazardMode {
   HAZARD_COUNT_FRAMES = 1
 };
 
-/// gMainRoutineWork.hazardDamage's bit 8: its low byte is a percentage of
+/// gMainRoutineState.hazardDamage's bit 8: its low byte is a percentage of
 /// maximum HP rather than HP.
 #define HAZARD_DAMAGE_PERCENT 0x100
 
-/// The most Game Tickets counted in MainRoutineWork.shopGifts, the last of
+/// The most Game Tickets counted in MainRoutineState.shopGifts, the last of
 /// gShop_GameTicketCreditCosts' prices that is used.
 #define SHOP_GIFTS_MAX 28
 
@@ -60,7 +60,7 @@ enum HazardMode {
 /// Djinni's number (Field_RequestDjinnBattle).
 #define DJINNI_BATTLE_EVENT_FIRST 300
 
-/// gMainRoutineWork.difficulty: the level chosen on starting again from a
+/// gMainRoutineState.difficulty: the level chosen on starting again from a
 /// cleared game.
 enum Difficulty {
   DIFFICULTY_NORMAL = 0, ///< "Play on Normal level? (Default difficulty)"
@@ -69,9 +69,9 @@ enum Difficulty {
   DIFFICULTY_HARD = 2 ///< "Play on HARD level? (Monsters are stronger)"
 };
 
-/// gMainRoutineWork, the state a save file keeps: play time, coins, the scene
+/// gMainRoutineState, the state a save file keeps: play time, coins, the scene
 /// and the leader's position, the active party and the options.
-struct MainRoutineWork {
+struct MainRoutineState {
   /// BuildStamp_GetTime's value when the game was last saved; 0 on a new
   /// game.
   u32 buildStamp;
@@ -212,7 +212,7 @@ struct MainRoutineWork {
   s32 shipFacing; ///< the ship's facing on the world map
   u8 unusedAfterShipFacing[2]; ///< no code names it
   /// gAnyFileCleared as the new game began
-  /// (MainRoutineWork_InitializeDefaults): 1 when a file on the cartridge had
+  /// (MainRoutineState_InitializeDefaults): 1 when a file on the cartridge had
   /// been cleared. Nothing reads it back.
   u8 clearedFileAtStart;
   u8 difficulty; ///< the level chosen from a cleared game (Difficulty)
@@ -242,21 +242,21 @@ struct MainRoutineWork {
   u8 unusedAfterStartStamp[4];
 };
 
-STATIC_ASSERT(offsetof(struct MainRoutineWork, coins) == 16);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, next) == 480);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, leaderActorId) == 532);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, battleType) == 587);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, ownerOverride) == 630);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, linkTallies) == 708);
-STATIC_ASSERT(sizeof(struct MainRoutineWork) == 736);
+STATIC_ASSERT(offsetof(struct MainRoutineState, coins) == 16);
+STATIC_ASSERT(offsetof(struct MainRoutineState, next) == 480);
+STATIC_ASSERT(offsetof(struct MainRoutineState, leaderActorId) == 532);
+STATIC_ASSERT(offsetof(struct MainRoutineState, battleType) == 587);
+STATIC_ASSERT(offsetof(struct MainRoutineState, ownerOverride) == 630);
+STATIC_ASSERT(offsetof(struct MainRoutineState, linkTallies) == 708);
+STATIC_ASSERT(sizeof(struct MainRoutineState) == 736);
 
 /// The game's state (system/ewram.s).
-extern struct MainRoutineWork gMainRoutineWork;
+extern struct MainRoutineState gMainRoutineState;
 
 /// Sets how the next battle starts (an enum BattleType).
 #define Battle_SetType(mode)                                                   \
   do {                                                                         \
-    gMainRoutineWork.battleType = (mode);                                      \
+    gMainRoutineState.battleType = (mode);                                     \
   } while (0)
 
 s32 Party_CountMembers(void);

@@ -11,7 +11,7 @@
 #include "system/io_reg.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/map_grid.h"
 #include "graphics/vram_tab.h"
 #include "field/cell_target.h"
@@ -36,7 +36,7 @@ void CrackedTile_Update(void) {
   struct CellTarget *table = &gCrackedTiles;
   struct CellTargetEntry *entry;
   struct Actor *leader;
-  struct MapWork *map;
+  struct MapState *map;
   s32 *view;
   s32 viewX, viewZ, viewY, tile;
   s32 screenX, height, z, screenY, depth;
@@ -44,7 +44,7 @@ void CrackedTile_Update(void) {
   if (table->current == -1)
     return;
   entry = &table->entries[table->current];
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if ((FIELD_CELL(leader->x.fixed)) != entry->x ||
       (FIELD_CELL(leader->z.fixed)) != entry->z)
     table->current = -1;

@@ -31,21 +31,22 @@
 void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *graphics;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   graphics = Ram_HeapSlots->battleSheet;
 
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A,
-                             work->sheet + NEREID_COLUMN_PICTURE, 1, 0);
+                             state->sheet + NEREID_COLUMN_PICTURE, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   {
     struct Point2D focus;
     struct Point2D velocity;
@@ -62,11 +63,11 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     focus.y = toFIXED(88);
     velocity.x = -toFIXED(16);
     velocity.y = -toFIXED(4);
-    EFFECT_FREE_PARTICLES(k, work->particles, 64);
+    EFFECT_FREE_PARTICLES(k, state->particles, 64);
     // DEAD: particles NEREID_UNREAD_FIRST on get a place and delay nothing
     // reads; the ROM keeps the stores.
     for (k = 0; k != NEREID_UNREAD_COUNT; k++) {
-      point = &work->particles[NEREID_UNREAD_FIRST + k];
+      point = &state->particles[NEREID_UNREAD_FIRST + k];
       point->x = Random16() & 127;
       point->y = (Random16() & 7) + 56;
       point->variant = -(Random16() & 15);
@@ -74,7 +75,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
 
     EFFECT_FREE_PARTICLES(k, PARTICLES, NEREID_DROPS);
     drops = PARTICLES;
-    BattleEffect_SelectLivingTargets(work->args);
+    BattleEffect_SelectLivingTargets(state->args);
     wait(1);
     BattleEffect_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
@@ -148,11 +149,11 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
         for (k = 0; k != NEREID_COLUMNS; k++) {
           s32 span = (frame * 16 - 256 + k * 25) % FIRE_PILLAR_HEIGHT;
 
-          draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
+          draw[0](canvas, state->sheet + NEREID_COLUMN_PICTURE,
                   gNereid_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
                   gNereid_Columns[k * 2 + 1] - span - FIRE_PILLAR_HEIGHT,
                   FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
-          draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
+          draw[0](canvas, state->sheet + NEREID_COLUMN_PICTURE,
                   gNereid_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
                   gNereid_Columns[k * 2 + 1] - span, FIRE_PILLAR_WIDTH, span);
         }
@@ -161,7 +162,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       // The waves along the bottom.
       if (frame <= 95) {
         for (k = 0; k != 5; k++)
-          draw[0](canvas, work->sheet,
+          draw[0](canvas, state->sheet,
                   k * WATER_WAVE_WIDTH + ((frame / 4) & 31) - WATER_WAVE_WIDTH,
                   120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
       }
@@ -225,7 +226,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           }
         }
       }
-      EFFECT_PRESENT_CANVAS(work);
+      EFFECT_PRESENT_CANVAS(state);
     }
 
     // She bursts away.
@@ -233,7 +234,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
     for (k = 0; k != NEREID_OBJECTS; k++)
-      Sprite_DestroyFar(work->sprites[k]);
+      Sprite_DestroyFar(state->sprites[k]);
   }
   BattleEffect_EndCanvasLayer();
 }

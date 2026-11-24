@@ -48,7 +48,7 @@ enum {
 #include "system/system.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/scene_tables.h"
 
 /// The village by the Aqua Stone (gApojiiIslands_VillagePlacements).
@@ -348,7 +348,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_APOJII_ISLANDS)
     return gApojiiIslands_VillagePlacements;
@@ -362,12 +362,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Sand takes the leader into the sand (and ApojiiIslands_RiseFromSand back
 /// up).
 void ApojiiIslands_SinkIntoSand(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_OVERHEAD;
+  Actor_Get(gMainRoutineState.leaderActorId)->layer = MAPGRID_LAYER_OVERHEAD;
 }
 
 /// Sand ends: the leader is back on the ground layer.
 void ApojiiIslands_RiseFromSand(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
+  Actor_Get(gMainRoutineState.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
 }
 
 extern s32 gApojiiIslands_FallsCycleFrame;
@@ -375,13 +375,13 @@ extern s32 gApojiiIslands_FallsCycleFrame;
 /// The islet's falls and their spray cycle their last colours, held while
 /// Psynergy or Reveal runs.
 void ApojiiIslands_CycleFallsColors(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 phase, k, offset;
   u16 *firstCopy, *secondCopy;
 
-  if (work->psynergy != 0)
+  if (state->psynergy != 0)
     return;
-  if (work->revealActive != 0)
+  if (state->revealActive != 0)
     return;
   if (gApojiiIslands_FallsCycleFrame == -1) {
     Iwram_CopyWords(gApojiiIslands_FallsColors,
@@ -419,12 +419,12 @@ extern s32 gApojiiIslands_SeaCycleFrame;
 /// The village's sea and shore cycle their last colours, held while Psynergy
 /// or Reveal runs.
 void ApojiiIslands_CycleSeaColors(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 busy, phase, k, j;
 
-  if (work->psynergy != 0)
+  if (state->psynergy != 0)
     return;
-  busy = work->revealActive;
+  busy = state->revealActive;
   if (busy != 0)
     return;
   if (gApojiiIslands_SeaCycleFrame == -1) {
@@ -562,7 +562,7 @@ void ApojiiIslands_FatherSeesTheStone(void) {
   Actor_Get(ACTOR_AQUA_STONE)->update =
       (ObjectUpdate)ApojiiIslands_StopFlashing;
   FieldEvent_SetMessageId((s32)&MsgWhatWhatJust);
-  Actor_FaceActor(gMainRoutineWork.leaderActorId, ACTOR_FATHER, 0);
+  Actor_FaceActor(gMainRoutineState.leaderActorId, ACTOR_FATHER, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_FaceDirection(ACTOR_FATHER, FACING_EAST, 0);
@@ -601,7 +601,7 @@ void ApojiiIslands_ScatterWeeds(void) { SCATTER_WEEDS(68, 4, 39, 24); }
 #define DEFINE_SCATTER_WEEDS_OVER_TREASURE(name, column, row, width, height,   \
                                            flag, treasure, spotX, spotZ)       \
   void name(void) {                                                            \
-    struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);          \
+    struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);         \
                                                                                \
     SCATTER_WEEDS(column, row, width, height);                                 \
     if (Event_GetFlag(flag) == 0) {                                            \
@@ -610,12 +610,12 @@ void ApojiiIslands_ScatterWeeds(void) { SCATTER_WEEDS(68, 4, 39, 24); }
           FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(spotZ))) {         \
         Event_Start();                                                         \
         FieldEvent_ResolvePendingActions(0);                                   \
-        Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,                \
+        Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,               \
                                 ATTACHED_EFFECT_IN_FRONT |                     \
                                     ATTACHED_EFFECT_ONCE);                     \
-        Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 16, 0);     \
+        Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 16, 0);    \
         leader->velocityY = toFIXED(6);                                        \
-        FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);            \
+        FieldActor_WaitForMoveById(gMainRoutineState.leaderActorId);           \
         Event_End();                                                           \
       }                                                                        \
     }                                                                          \
@@ -651,18 +651,18 @@ DEFINE_SCATTER_WEEDS_OVER_TREASURE(ApojiiIslands_ScatterWeedsOverBrambleSeed,
 /// Each door's cell behaviour is the number of the exit it leaves by, which
 /// the field keeps as `stepTrigger`.
 void ApojiiIslands_EnterDoor(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
-  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 2);
+  Actor_Get(gMainRoutineState.leaderActorId)->motionFlags = 0;
   Event_PlaySound(SE_MAP_EXIT);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -6);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_CenterAndWalk(gMainRoutineState.leaderActorId, 2, -6);
   FieldEvent_Wait(10);
-  FieldEvent_SetExitRequest(work->stepTrigger);
+  FieldEvent_SetExitRequest(state->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -674,11 +674,11 @@ s32 ApojiiIslands_TalkToSon(void) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
-      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+      Actor_Get(gMainRoutineState.leaderActorId)->facing);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (facing != FACING_EAST) {
-    Actor_FaceActor(ACTOR_SON, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_SON, gMainRoutineState.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)&MsgWhyDoesMy);
     // "Why does my father keep staring at that rock every day?"
     Event_ShowMessage(ACTOR_SON, 0);
@@ -694,7 +694,7 @@ s32 ApojiiIslands_MindReadSon(void) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
-      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+      Actor_Get(gMainRoutineState.leaderActorId)->facing);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (facing != FACING_EAST) {
@@ -708,11 +708,11 @@ s32 ApojiiIslands_MindReadSon(void) {
 
 /// Walking south off Haze's ledge jumps the leader down.
 void ApojiiIslands_JumpDownLedge(void) {
-  Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, ANIM_STAND, 5);
+  Actor_JumpDownLedge(gMainRoutineState.leaderActorId, ANIM_STAND, 5);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_APOJII_ISLANDS)
     return gApojiiIslands_VillageTriggers;
@@ -733,7 +733,7 @@ enum { APOJII_INN = 8 };
 /// the fancy boat.
 void ApojiiIslands_TalkToInnkeeper(s32 actor) {
   if (FACING_NEAREST_CARDINAL(
-          Actor_Get(gMainRoutineWork.leaderActorId)->facing) == FACING_NORTH) {
+          Actor_Get(gMainRoutineState.leaderActorId)->facing) == FACING_NORTH) {
     Inn_CheckIn(APOJII_INN, actor);
     return;
   }
@@ -775,7 +775,7 @@ void ApojiiIslands_AskAboutWarriors(s32 actor) {
 /// wish for imported goods.
 void ApojiiIslands_TalkToGeneralStorekeeper(s32 actor) {
   if (FACING_NEAREST_CARDINAL(
-          Actor_Get(gMainRoutineWork.leaderActorId)->facing) == FACING_NORTH) {
+          Actor_Get(gMainRoutineState.leaderActorId)->facing) == FACING_NORTH) {
     Shop_Run(SHOP_APOJII, actor);
     return;
   }
@@ -807,7 +807,7 @@ void Scroll_HBlank(void) {
 /// Each frame, follows the overhead layer's scroll for the split, the water
 /// below it drifting west a pixel every fourth frame.
 void Layer_TrackScroll(void) {
-  struct MapLayer *layer = &((struct MapWork *)Ram_HeapSlots->mapGrid)
+  struct MapLayer *layer = &((struct MapState *)Ram_HeapSlots->mapGrid)
                                 ->layers[MAPGRID_LAYER_OVERHEAD];
   s16 y = FIXEDtoINT(layer->y);
 
@@ -824,12 +824,12 @@ void Layer_TrackScroll(void) {
 /// Aqua Stone.
 s32 Scene_Initialize(void) {
   s16 scene;
-  struct MainRoutineWork *party;
+  struct MainRoutineState *party;
 
   Map_SetUpperLevelWading(Ram_HeapSlots->mapGrid);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-  party = &gMainRoutineWork;
+  party = &gMainRoutineState;
   scene = party->next;
   if (scene == SCENE_APOJII_ISLANDS_HAZE) {
     ApojiiIslands_InitializeHaze();
@@ -838,7 +838,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_FATHER_SEES_THE_STONE))
       ApojiiIslands_FatherSeesTheStone();
   } else if (scene == SCENE_APOJII_ISLANDS_SHOPS) {
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (party->entrance == APOJII_ISLANDS_SHOPS_FROM_SEA_OF_TIME_ISLET)
       ApojiiIslands_EnterSeaOfTimeIsletHouse();
   }
@@ -857,13 +857,13 @@ void ApojiiIslands_InitializeHaze(void) {
              ACTOR_CLIFF_ROPE_POST);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Scroll_StartHBlank();
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       APOJII_ISLANDS_HAZE_FROM_APOJII_ISLANDS_CAVE_SOUTHWEST)
     Leader_RiseFromWater();
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       APOJII_ISLANDS_HAZE_FROM_APOJII_ISLANDS_CAVE_SOUTHEAST)
     Leader_RiseFromWater();
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       APOJII_ISLANDS_HAZE_FROM_APOJII_ISLANDS_CAVE_NORTH)
     Leader_RiseFromWater();
 }
@@ -872,7 +872,7 @@ void ApojiiIslands_InitializeHaze(void) {
 /// islet: the window opens round the leader and the Apojii Islands' name is not
 /// shown.
 void ApojiiIslands_EnterSeaOfTimeIsletHouse(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
 }
@@ -894,14 +894,14 @@ void ApojiiIslands_JumpForward(void) { Field_TryJumpForward(); }
 /// Unused here: Aqua Rock's stream carries the leader south, splashing, and
 /// off a ledge he drops with the water (AquaRock_FlowWithStream).
 UNUSED void ApojiiIslands_FlowWithStream(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 owner = gMainRoutineWork.leaderActorId;
-  struct Actor *anchor = work->camera;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  s32 owner = gMainRoutineState.leaderActorId;
+  struct Actor *anchor = state->camera;
   struct Actor *leader = Actor_Get(owner);
   FIXED position[3];
   s32 result;
 
-  if (gMainRoutineWork.next != SCENE_AQUA_ROCK_MOAI ||
+  if (gMainRoutineState.next != SCENE_AQUA_ROCK_MOAI ||
       leader->groundHeight != 0) {
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed;
@@ -986,7 +986,7 @@ enum { ACTOR_VIAL_CHEST_PUDDLE_C = ACTOR_FIRST_PLACED + 7 };
 /// semi-transparent in the woken Aqua Stone's turning colours, at the lowest
 /// priority while it rests.
 void ApojiiIslands_DrawCellMarkers(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   /* FAKEMATCH(temporary): view, a pointer standing in for map->viewX's
    * address; as map->viewX and map->viewZ by name. */
   s32 *view = &map->viewX;
@@ -1070,7 +1070,7 @@ void ApojiiIslands_StartCellMarkers(void) {
 /// in steps of 8 pixels, and gives those cells MAP_SHAPE_MARKED, its entry set
 /// to `level`.
 void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   /* FAKEMATCH(dead): layer 1's cells read through its taken address; as
    * map->layers[1].cells. */
   struct MapCell *cells = (&map->layers[1])->cells;

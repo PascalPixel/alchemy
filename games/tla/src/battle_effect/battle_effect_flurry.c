@@ -148,7 +148,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint pos;
   struct ScreenPoint spot;
   void *draw[2];
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   u8 *sheet;
@@ -161,10 +161,10 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 j;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->prelude == 1)
@@ -178,7 +178,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   // The orb's pictures, packed to half width: the canvas is shown twice as
   // wide.
-  Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, state->sheet, 1, 0);
   /* FAKEMATCH(temporary): the flash pictures reached from a local holding the
    * wave pictures' address; as FLURRY_FLASH_PICTURES[dst]. */
   waves = FLURRY_WAVE_PICTURES;
@@ -188,17 +188,17 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
       s32 src = row * YELLOW_ORB_WIDTH + col;
 
       (waves + dst)[FLURRY_FLASH_PICTURES - FLURRY_WAVE_PICTURES] =
-          work->sheet[src];
+          state->sheet[src];
     }
   }
   // The glints' sprite sheet takes the orb's place.
-  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
   if (gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS_AND_WAVES)
     Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_A,
-                               work->sheet + FLURRY_BLUE_ARC_PICTURES, 1, 1);
+                               state->sheet + FLURRY_BLUE_ARC_PICTURES, 1, 1);
   else
     Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B,
-                               work->sheet + FLURRY_BLUE_ARC_PICTURES, 1, 1);
+                               state->sheet + FLURRY_BLUE_ARC_PICTURES, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_WAVE_SHEET, FLURRY_WAVE_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, FLURRY_SMOKE_PICTURES, 1, 0);
   switch (gFlurry_Styles[mode][FLURRY_PALETTE]) {
@@ -229,7 +229,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
   EffectPosition_ProjectScaledBattler(args->targets[0], &targetPos);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   if (gFlurry_Styles[mode][FLURRY_EXTRA] == FLURRY_EXTRA_RIPPLE)
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
 
@@ -248,8 +249,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     mote->variant = -1;
   }
   // The smoke puffs start at the target's feet, one a frame.
-  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-    struct Particle *puff = &work->particles[i];
+  for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+    struct Particle *puff = &state->particles[i];
 
     SET_POSITION(puff, INTtoFIXED(targetPos.x / 2), toFIXED(88), 0);
     puff->velocityX = ((Random16() & 255) - 128) << 9;
@@ -264,7 +265,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
     // The ripple's line table: each line of BG2 swings up to six pixels on a
     // sine wave.
-    lines = work->bg2xLines;
+    lines = state->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
       *lines++ = CANVAS_WAVE_BG2X(toFIXED(6) -
                                   Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6);
@@ -298,14 +299,14 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
           // The arc's six pictures.
           if (args->side == EFFECT_SIDE_ENEMIES)
             ((DrawRectangle)draw[i & 1])(canvas,
-                                         work->sheet +
+                                         state->sheet +
                                              FLURRY_BLUE_ARC_PICTURES +
                                              step * PICTURE_BYTES(BLUE_ARC),
                                          targetPos.x / 2 - 16, targetPos.y - 40,
                                          BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
           else
             ((DrawRectangle)draw[i & 1])(canvas,
-                                         work->sheet +
+                                         state->sheet +
                                              FLURRY_BLUE_ARC_PICTURES +
                                              step * PICTURE_BYTES(BLUE_ARC),
                                          targetPos.x / 2 - 32, targetPos.y - 40,
@@ -331,12 +332,12 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                                  POSE_DAMAGE, 0, 4);
         if (i == strikes - 1) {
           BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
-          work->shakeFrames = 8;
+          state->shakeFrames = 8;
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         } else {
           if (i & 1)
             BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_JOLT);
-          work->shakeFrames = 4;
+          state->shakeFrames = 4;
           Sound_PlayFar(SE_HEAVY_IMPACT);
         }
         for (j = 0; j != gFlurry_Styles[mode][FLURRY_MOTES]; j++)
@@ -402,7 +403,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                                   COMPOSITE_CLIP_Y,
                               BLITTER_ADDITIVE);
           ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-              canvas, work->sheet + gBattleEffect_GlintPictures[cel], x, y,
+              canvas, state->sheet + gBattleEffect_GlintPictures[cel], x, y,
               gBattleEffect_GlintPictureWidths[cel],
               gBattleEffect_GlintPictureHeights[cel]);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -414,7 +415,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                             BLITTER_ADDITIVE);
         draw[0] = Ram_HeapSlots->ramCode;
         for (i = 0; i != FLURRY_SMOKE_PUFFS; i++) {
-          struct Particle *puff = &work->particles[i];
+          struct Particle *puff = &state->particles[i];
 
           if (puff->variant >= 0 && puff->variant < FLURRY_SMOKE_FRAMES) {
             ((DrawRectangle)draw[0])(
@@ -433,7 +434,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
       }
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   if (gFlurry_Styles[mode][FLURRY_EXTRA] == FLURRY_EXTRA_RIPPLE)

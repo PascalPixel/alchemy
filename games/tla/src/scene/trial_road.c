@@ -31,7 +31,7 @@
 #include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "field/map_grid.h"
 #include "field/object.h"
 #include "field/scene_tables.h"
@@ -51,7 +51,7 @@
 #include "system/heap_slots.h"
 #include "system/io_reg.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/math_table.h"
 #include "system/ram_buffer.h"
 #include "system/serial.h"
@@ -383,13 +383,13 @@ s32 TrialRoad_SettleOnGround(struct Actor *actor) {
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 pattern = gTrialRoadState->pattern;
 
-  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_STAGES)
+  if (gMainRoutineState.next == SCENE_TRIAL_ROAD_STAGES)
     return gTrialRoad_StagesPlacements[pattern & 7];
-  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_CAVE_ROCK)
+  if (gMainRoutineState.next == SCENE_TRIAL_ROAD_CAVE_ROCK)
     return gTrialRoad_CaveRockPlacements;
-  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_GASP)
+  if (gMainRoutineState.next == SCENE_TRIAL_ROAD_GASP)
     return gTrialRoad_GaspPlacements;
-  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_SUMMIT)
+  if (gMainRoutineState.next == SCENE_TRIAL_ROAD_SUMMIT)
     return gTrialRoad_SummitPlacements;
   return gTrialRoad_Placements;
 }
@@ -431,7 +431,7 @@ void TrialRoad_TakeStairs(s32 direction) {
         // 0.
         if (((s32 (*)(s32))TrialRoad_OfferToGiveUp)(0) == 0)
 #endif
-          Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, -16);
+          Actor_WalkByAndWait(gMainRoutineState.leaderActorId, 0, -16);
         return;
       }
       // Out to the trial grounds: the stairs' exits to them are numbered
@@ -525,7 +525,7 @@ enum TrialRoadRaceMapTile {
 
 /// The heap slot TrialRoad_ShowRaceMap takes for the race map of both parties
 /// and the rival's recorded path.
-struct TrialRoadLinkWork {
+struct TrialRoadLinkState {
   struct TrialRoadSprite sprites[18]; ///< the display's queued sprites
   s16 vramEntry;
   s16 fade; ///< 0 hidden to 2 shown, a step a frame
@@ -732,12 +732,12 @@ void TrialRoad_UpdateFountains(void);
   void name(s32 side, s32 phase) {                                             \
     if (side == 0) {                                                           \
       if (phase == 3)                                                          \
-        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, leftX, phase);          \
+        MapGrid_CopyCellTilesCellsRect(0, 120, 1, 2, leftX, phase);            \
       MapGrid_CopyCellsLayered(127, 3, 1, 2, upperLeftX, 3);                   \
       MapGrid_CopyCellAttributes(groundLeftX, 127, 1, 1, leftX, 8);            \
     } else {                                                                   \
       if (phase == 3)                                                          \
-        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, rightX, phase);         \
+        MapGrid_CopyCellTilesCellsRect(0, 120, 1, 2, rightX, phase);           \
       MapGrid_CopyCellsLayered(127, 3, 1, 2, upperRightX, 3);                  \
       MapGrid_CopyCellAttributes(groundRightX, 127, 1, 1, rightX, 8);          \
     }                                                                          \
@@ -757,31 +757,32 @@ DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenRivalDoor, 28, 62, 1, 4, 38, 0)
 /// Yes, he leans back with a drop of sweat, gets the party's equipment back
 /// and is sent down to the Shaman Village's trial grounds.
 s32 TrialRoad_OfferToGiveUp(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 message;
 
   if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId,
+    Actor_WalkToAndWait(gMainRoutineState.leaderActorId,
                         ((FIELD_CELL(leader->x.fixed)) << 4) + 8,
                         ((FIELD_CELL(leader->z.fixed)) << 4) + 8);
     Event_PlaySound(SE_SPLASH);
-    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+    Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
     message = (s32)&MsgTrialRoadGiveUpPrompt;
     // "Do you want to give up?"
     FieldMessage_Show(message, QUESTION_MESSAGE);
-    work->choiceMessage = message + 1;
-    work->choiceWidth = 4;
-    work->choiceSelection = 1;
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 1) ==
+    state->choiceMessage = message + 1;
+    state->choiceWidth = 4;
+    state->choiceSelection = 1;
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 1) ==
         0) {
-      Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+      Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
       Event_Wait(10);
-      Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_LEAN_BACK);
+      Actor_SetAnimation(gMainRoutineState.leaderActorId,
+                         ANIM_LEADER_LEAN_BACK);
       Event_Wait(10);
-      FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
+      FieldActor_ShowEmote(gMainRoutineState.leaderActorId,
                            EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
       Event_Wait(30);
       InventorySnapshot_Restore();
@@ -803,13 +804,13 @@ void TrialRoad_ClearGiveUpAsked(void) { GameFlag_Clear(FLAG_GIVE_UP_ASKED); }
 /// beside the door, and the second chest too when Moapa got there
 /// first ("it will take twice the weight to open the doors").
 void TrialRoad_OpenChests(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   struct TrialRoadState *state = gTrialRoadState;
   s32 found;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId,
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId,
                       ((FIELD_CELL(leader->x.fixed)) << 4) + 8,
                       ((FIELD_CELL(leader->z.fixed)) << 4) + 8);
   TrialRoad_Idle();
@@ -885,9 +886,9 @@ void TrialRoad_ExamineChest(s32 id) {
   } else {
     // "Place this item in the chest?"
     FieldMessage_Show((s32)MsgTrialRoadPlaceItemPrompt, QUESTION_MESSAGE);
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 1) ==
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 1) ==
         0)
-      gFieldWork->fieldMenu = 1;
+      gFieldState->fieldMenu = 1;
   }
 }
 
@@ -897,7 +898,7 @@ void TrialRoad_StepOffSwitch(void) {}
 /// Lets Felix jump onto the top of the pillar standing at the actor's cell
 /// (MAP_CELL_JUMP).
 void TrialRoad_SetJumpCellUnder(s32 id) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
 
   if (actor != NULL) {
@@ -914,7 +915,7 @@ void TrialRoad_SetJumpCellUnder(s32 id) {
 
 /// Stops Felix jumping onto the cell the actor is leaving.
 void TrialRoad_ClearJumpCellUnder(s32 id) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
 
   if (actor != NULL) {
@@ -977,7 +978,7 @@ void TrialRoad_SetPillarTopLift(s32 id, s32 value) {
 /// calls onFoot with the pushed actor.
 #define DEFINE_TRIAL_ROAD_ON_FOOT(name, onFoot)                                \
   void name(s32 unused, s32 id) {                                              \
-    struct MainRoutineWork *party = &gMainRoutineWork;                         \
+    struct MainRoutineState *party = &gMainRoutineState;                       \
     u8 mode;                                                                   \
                                                                                \
     mode = party->movementMode;                                                \
@@ -1020,7 +1021,7 @@ void TrialRoad_OpenVentCell(s32 id) {
 /// Keeps note, each frame, of whether Felix is up on the pillar stage's upper
 /// ledge or a pillar's top, 32 pixels up (FLAG_LEADER_ON_PILLARS).
 void TrialRoad_CheckLeaderOnPillars(void) {
-  FIXED y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
+  FIXED y = Actor_GetById(gMainRoutineState.leaderActorId)->y.fixed;
 
   if (y == toFIXED(32))
     Event_SetFlag(FLAG_LEADER_ON_PILLARS);
@@ -1035,7 +1036,7 @@ void TrialRoad_JumpAcrossGap(void) {
   if (FIELD_CELL(Actor_GetById(ACTOR_PILLAR_B)->z.fixed) == 23)
     Field_TryJumpForward();
   else
-    Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, ANIM_LEADER_SPRING, 0);
+    Actor_JumpDownLedge(gMainRoutineState.leaderActorId, ANIM_LEADER_SPRING, 0);
 }
 
 /// As one of the torch stage's two stone pillars starts to slide, Felix can no
@@ -1085,8 +1086,9 @@ void TrialRoad_MeltIceBesideTorch(s32 unused, s32 id) {
 /// Walking north or south into a melted puddle in the torch stage jumps Felix
 /// across it; a frozen one stops him.
 void TrialRoad_JumpMeltedPuddle(void) {
-  if (Event_GetFlag(Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId) +
-                    FLAG_PUDDLE_MELTED_BASE))
+  if (Event_GetFlag(
+          Field_FindNearbyTalkTarget(gMainRoutineState.leaderActorId) +
+          FLAG_PUDDLE_MELTED_BASE))
     Field_TryJumpForward();
 }
 
@@ -1175,7 +1177,7 @@ void TrialRoad_PoundStake(s32 id, s32 phase, s32 frame) {
   s32 other = gTrialRoad_PoundPartners[(id - ACTOR_WEST_STAKE) & 3];
   struct Actor *actor = Actor_GetById(id);
   struct Actor *partner = Actor_GetById(other);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
 
   if (frame <= 10)
     actor->scaleY = FIXED_ONE - frame * (FIXED_ONE / 16);
@@ -1299,7 +1301,7 @@ void TrialRoad_StepOntoEastStake(void) {
 /// Walking into a pillar or stake in the Pound stage: from a raised top Felix
 /// jumps onto it, and from the ground he pushes it, if it can be pushed.
 void TrialRoad_LandOnPillar(void) {
-  FIXED y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
+  FIXED y = Actor_GetById(gMainRoutineState.leaderActorId)->y.fixed;
 
   if (y >= toFIXED(16)) {
     Field_TryJumpForward();
@@ -1334,7 +1336,7 @@ void TrialRoad_CrumbleEastPillar(s32 phase) {
 /// its length, north and south of it in mode 0, east and west otherwise
 /// (CELL_BEHAVIOR_WALL on the ground and the upper level).
 void TrialRoad_BlockLogCells(s32 id, s32 mode) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
   s32 index;
   struct MapCell *low;
@@ -1380,7 +1382,7 @@ void TrialRoad_BlockLogs(void) {
 /// wall.
 s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
   struct Actor *actor = Actor_GetById(ACTOR_PILLAR_A);
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *cells;
   u8 *cell;
   s32 value;
@@ -1399,7 +1401,7 @@ s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
 /// can jump across it.
 void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Actor *actor = Actor_GetById(id);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 fromX = FIELD_CELL(actor->x.fixed);
   s32 fromZ = FIELD_CELL(actor->z.fixed);
   s32 toX = fromX;
@@ -1413,7 +1415,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Vector3 unused;
 
   if ((dx != 0 && toX != x + dx) || (dz != 0 && toZ != z + dz)) {
-    gFieldWork->blockedSteps = FIELD_PUSH_FRAMES + 1;
+    gFieldState->blockedSteps = FIELD_PUSH_FRAMES + 1;
     return;
   }
   for (n = 0; n <= 5; n++) {
@@ -1441,7 +1443,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 8);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, 8);
   Event_Wait(6);
   actor->speedLimit = toFIXED(1) / 2;
   actor->acceleration = toFIXED(1) / 5;
@@ -1451,12 +1453,12 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   Actor_SelectAnimation(actor, mode);
   Actor_SetMoveTarget(actor, FIELD_CELL_CENTER(toX), 0, FIELD_CELL_CENTER(toZ));
   Event_Wait(6);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.2);
-  Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, dx << 3,
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_SetSpeedAndAcceleration(gMainRoutineState.leaderActorId, 0.3, 0.2);
+  Actor_SetDestinationOffsetById(gMainRoutineState.leaderActorId, dx << 3,
                                  dz << 3);
   Event_Wait(24);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_STAND);
   Actor_WaitForMove(actor);
   if (toX <= 17) {
     Actor_SelectAnimation(actor, 1);
@@ -1515,7 +1517,7 @@ void TrialRoad_PushEastLogSouth(void) {
 /// Pressing south at the north end of the east log's track: if Felix is
 /// climbing there he climbs down, and on foot he rolls the east log south.
 void TrialRoad_PushEastLogSouthOrClimbDown(void) {
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct MainRoutineState *party = &gMainRoutineState;
 
   if (party->movementMode == LEADER_MOVEMENT_KEYS)
     Field_ClimbDown();
@@ -1560,7 +1562,7 @@ void TrialRoad_UncoverEastVent(s32 phase, s32 frame) {
 /// Stepping onto the fountain stage's block from above leaves Felix standing
 /// on its top, 32 pixels up, rather than inside it.
 void TrialRoad_StandOnBlock(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   struct Actor *block = Actor_GetById(ACTOR_PILLAR_A);
 
   if (FIELD_CELL(block->x.fixed) == FIELD_CELL(leader->x.fixed) &&
@@ -1576,13 +1578,14 @@ void TrialRoad_StandOnBlock(void) {
 /// that would otherwise carry him back. The game moves him onto the map's
 /// upper level for as long as he stays sunk.
 void TrialRoad_StartSand(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_OVERHEAD;
+  Actor_GetById(gMainRoutineState.leaderActorId)->layer =
+      MAPGRID_LAYER_OVERHEAD;
 }
 
 /// When Felix rises out of the sand at the sand stage, he walks on the ground
 /// level again.
 void TrialRoad_EndSand(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
+  Actor_GetById(gMainRoutineState.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
 }
 
 /// Whirlwind on the weeds on the sand stage's cliff blows it away and uncovers
@@ -1612,11 +1615,11 @@ extern const s32 *gFieldEffect_DurationScripts[];
 /// Walking in the sand stage's stream carries Felix south a pixel a frame,
 /// throwing up spray, unless he is crossing the tightrope above it.
 void TrialRoad_DriftWithStream(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   struct EffectOptions options;
   s32 velocity[3];
 
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_TIGHTROPE)
+  if (gMainRoutineState.movementMode == LEADER_MOVEMENT_TIGHTROPE)
     return;
   leader->z.fixed += toFIXED(1);
   if ((gFrameCount & 7) != 0)
@@ -1652,7 +1655,7 @@ void TrialRoad_ScatterWeedsHidingMadPlant(void) {
   FieldCyclone_CopyTouchedCells(68, 6, MAPGRID_LAYER_MIDDLE, 21, 13, 64, 64);
   if (!Event_GetFlag(FLAG_MAD_PLANT(MAD_PLANT_TRIAL_ROAD))) {
     Import_MadPlantLeapAtLeader(SPRITE_MAD_PLANT, 72, 152);
-    gMainRoutineWork.pendingDjinni =
+    gMainRoutineState.pendingDjinni =
         IF_FLAG_SET(FLAG_MAD_PLANT(MAD_PLANT_TRIAL_ROAD));
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS,
@@ -1752,13 +1755,13 @@ extern s32 gTrialRoad_StagesTriggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   s32 pattern = gTrialRoadState->pattern;
 
-  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_STAGES)
+  if (gMainRoutineState.next == SCENE_TRIAL_ROAD_STAGES)
     return gTrialRoad_StagesTriggers[pattern & 7];
-  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_CAVE_ROCK)
+  if (gMainRoutineState.next == SCENE_TRIAL_ROAD_CAVE_ROCK)
     return gTrialRoad_CaveRockTriggers;
-  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_GASP)
+  if (gMainRoutineState.next == SCENE_TRIAL_ROAD_GASP)
     return gTrialRoad_GaspTriggers;
-  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_SUMMIT)
+  if (gMainRoutineState.next == SCENE_TRIAL_ROAD_SUMMIT)
     return gTrialRoad_SummitTriggers;
   return gTrialRoad_Triggers;
 }
@@ -1923,7 +1926,7 @@ struct TrialRoadFountain {
   struct Actor *top;    ///< an unseen platform on the water the leader rides
 };
 
-/// The fountains the fountain stage's work has room for.
+/// The fountains the fountain stage's state has room for.
 #define FOUNTAIN_COUNT 16
 /// The sprites the fountains' columns may queue in a frame.
 #define FOUNTAIN_SPRITE_COUNT 80
@@ -1932,7 +1935,7 @@ struct TrialRoadFountain {
 /// 62), so the leader riding a fountain is drawn in front of its water.
 #define FOUNTAIN_DEPTH_OFFSET 58
 
-/// The fountain stage's work, kept in the inventory snapshot's spare room.
+/// The fountain stage's state, kept in the inventory snapshot's spare room.
 struct TrialRoadFountains {
   s16 vramEntry;
   s16 shape; ///< the first of the shape grid's values for the fountains
@@ -2022,7 +2025,7 @@ void TrialRoad_SetUpCave(void) {}
 /// to.
 void TrialRoad_GaspFlees(void) {
   struct Actor *gasp = Actor_GetById(ACTOR_GASP);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 dx;
   s32 dz;
   s32 gaspDistanceSquared;
@@ -2104,14 +2107,14 @@ void TrialRoad_StepPaletteCycle(void) {
   u16 *p;
 
   if (gTrialRoad_PaletteCycleRunning != 0) {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
-    s16 *state = &work->psynergy;
+    struct FieldState *fieldState = Ram_HeapSlots->fieldState;
+    s16 *state = &fieldState->psynergy;
 
     if (*state != 0 && ABILITY_ID(*state) != ABILITY_HOVER)
       return;
-    if (work->revealActive != 0)
+    if (fieldState->revealActive != 0)
       return;
-    if (work->pauseMenu != 0)
+    if (fieldState->pauseMenu != 0)
       return;
   }
   i = 0;
@@ -2154,7 +2157,7 @@ void TrialRoad_LeaveMoapaWaiting(void);
 /// during the race, Moapa and his knights waiting at the top if they got there
 /// first, or nobody yet.
 void TrialRoad_SetUpPeak(void) {
-  s32 entrance = gMainRoutineWork.entrance;
+  s32 entrance = gMainRoutineState.entrance;
 
   if (entrance == TRIAL_ROAD_SUMMIT_AFTER_WIN) {
     InventorySnapshot_Restore();
@@ -2172,7 +2175,7 @@ void TrialRoad_SetUpPeak(void) {
     else
       TrialRoad_PlaceMoapaAtPeak();
   }
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_GetById(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   TrialRoad_StartPaletteCycle(1);
   TrialRoad_AddPillarTop(ACTOR_PEAK_PILLAR);
@@ -2184,16 +2187,16 @@ void TrialRoad_SetUpPeak(void) {
 extern void (*gTrialRoad_StageSetUps[])(void);
 
 s32 Scene_Initialize(void) {
-  s32 scene = gMainRoutineWork.next;
-  s32 entrance = gMainRoutineWork.entrance;
+  s32 scene = gMainRoutineState.next;
+  s32 entrance = gMainRoutineState.entrance;
   s32 pattern = gTrialRoadState->pattern;
 
-  if (gFieldWork->exit != 0)
+  if (gFieldState->exit != 0)
     return 0;
   if (scene == SCENE_TRIAL_ROAD_STAGES) {
     if (entrance <= 7) {
       Event_SetFlag(FLAG_RETREAT_BLOCKED);
-      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      Actor_GetById(gMainRoutineState.leaderActorId)->priorityFlags |=
           ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
       Value0((s32 (*)())gTrialRoad_StageSetUps[pattern & 7]);
     } else if (entrance == TRIAL_ROAD_RULES_COURSE) {
@@ -2349,11 +2352,11 @@ void TrialRoad_StartRival(s32 mirrored);
   words[1] = Iwram_MulFX(*viewZ, words[5]) + words[3]
 
 s32 Scene_PrepareMap(void) {
-  s32 scene = gMainRoutineWork.next;
-  s32 entrance = gMainRoutineWork.entrance;
+  s32 scene = gMainRoutineState.next;
+  s32 entrance = gMainRoutineState.entrance;
 
   if (scene == SCENE_TRIAL_ROAD_STAGES) {
-    struct MapWork *map = Ram_HeapSlots->mapGrid;
+    struct MapState *map = Ram_HeapSlots->mapGrid;
     struct TrialRoadState *state = gTrialRoadState;
     struct Actor *leader;
     u8 *unit;
@@ -2364,7 +2367,7 @@ s32 Scene_PrepareMap(void) {
 
     if ((u32)(entrance - TRIAL_ROAD_FROM_VILLAGE_LEFT) <= 1) {
       if (!GameFlag_Get(FLAG_STAGE_ORDER_DEALT)) {
-        unit = Unit_Get(gMainRoutineWork.leaderActorId);
+        unit = Unit_Get(gMainRoutineState.leaderActorId);
         Iwram_ClearWordsEntry(state, sizeof(*state));
         value = 0;
         for (n = 0; n < UNIT_NAME_SIZE - 1; n++)
@@ -2385,7 +2388,7 @@ s32 Scene_PrepareMap(void) {
       Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, n);
     } else if ((u32)(entrance - TRIAL_ROAD_FROM_SUMMIT_LEFT) <= 1) {
       if (!GameFlag_Get(FLAG_STAGE_ORDER_DEALT)) {
-        unit = Unit_Get(gMainRoutineWork.leaderActorId);
+        unit = Unit_Get(gMainRoutineState.leaderActorId);
         Iwram_ClearWordsEntry(state, sizeof(*state));
         value = 0;
         for (n = 0; n < UNIT_NAME_SIZE - 1; n++)
@@ -2414,7 +2417,7 @@ s32 Scene_PrepareMap(void) {
       n = entrance % 10;
       Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, n);
     } else if (entrance == TRIAL_ROAD_RULES) {
-      unit = Unit_Get(gMainRoutineWork.leaderActorId);
+      unit = Unit_Get(gMainRoutineState.leaderActorId);
       Iwram_ClearWordsEntry(state, sizeof(*state));
       value = 0;
       for (n = 0; n < UNIT_NAME_SIZE - 1; n++)
@@ -2516,7 +2519,7 @@ s32 Scene_PrepareMap(void) {
             Actor_SetPosition(i + FIELD_TREASURE_ACTOR, 0, 0);
         }
         MapGrid_CenterOnFollowedPoint();
-        leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+        leader = Actor_GetById(gMainRoutineState.leaderActorId);
         if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
           leader->y.fixed = leader->groundHeight =
               Map_GetTerrainHeight(0, leader->x.fixed, leader->z.fixed);
@@ -2533,7 +2536,7 @@ s32 Scene_PrepareMap(void) {
           }
           if (road->stage[0] < road->rivalBest)
             TrialRoad_OpenRivalDoor(road->mirrored, road->stage[0]);
-          TrialRoad_ShowRaceMap(gMainRoutineWork.leaderActorId, ACTOR_MOAPA);
+          TrialRoad_ShowRaceMap(gMainRoutineState.leaderActorId, ACTOR_MOAPA);
           TrialRoad_StartRival((s16)(state->mirrored ^ 1));
           Task_Add(TrialRoad_UpdateRival, TASK_PASS_FRAME);
         } else {
@@ -2978,7 +2981,7 @@ void TrialRoad_ShowTraps(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 1016);
+  Actor_SetPosition(gMainRoutineState.leaderActorId, 0, 1016);
   Actor_SetPosition(ACTOR_MOAPA, 1016, 1016);
   for (i = ACTOR_MOAPA + 1; i < FIELD_ACTOR_COUNT; i++) {
     struct Actor *actor = Actor_GetById(i);
@@ -3126,10 +3129,10 @@ void TrialRoad_ShowTraps(void) {
 /// wade in, and while it also stands still a gap to jump onto; its top bobs on
 /// the water.
 void TrialRoad_UpdateFountains(void) {
-  struct TrialRoadFountains *work = TRIAL_ROAD_FOUNTAINS;
-  struct TrialRoadFountain *fountain = work->fountains;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  s32 shape = work->shape;
+  struct TrialRoadFountains *state = TRIAL_ROAD_FOUNTAINS;
+  struct TrialRoadFountain *fountain = state->fountains;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  s32 shape = state->shape;
   u8 *shapes = map->layers[0].terrainIds;
   u8 *cells = (u8 *)map->layers[0].cells;
   s32 *collision;
@@ -3173,7 +3176,7 @@ void TrialRoad_UpdateFountains(void) {
         fountain->phase = 0;
     }
     cell = (FIELD_CELL(actor->x.fixed)) + ((FIELD_CELL(actor->z.fixed)) << 7);
-    shapes[cell] = (u8)work->shape + i;
+    shapes[cell] = (u8)state->shape + i;
     *collision = ((actor->y.part[0].integer + fountain->height) / 8) << 8;
     attributes = cells + cell * 4;
     if (fountain->speed != 0)
@@ -3219,7 +3222,7 @@ void TrialRoad_DrawFountains(void) {
   s32 viewZ;
   s32 viewY;
   FIXED rise;
-  struct MapWork *map;
+  struct MapState *map;
   s32 *view;
   struct Actor *actor;
   u32 *entry;
@@ -3299,21 +3302,21 @@ void TrialRoad_DrawFountains(void) {
 /// Allocates the fountains' working buffer.
 static __inline__ void *Pool_Alloc(s32 size) { return Heap_AllocEwram(size); }
 
-/// Starts the fountains' work and their task.
+/// Starts the fountains' state and their task.
 void TrialRoad_StartFountains(s32 unused, s32 shape) {
-  struct TrialRoadFountains *work = TRIAL_ROAD_FOUNTAINS;
+  struct TrialRoadFountains *state = TRIAL_ROAD_FOUNTAINS;
   void *buffer;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-    Iwram_ClearWords(work, sizeof(*work));
+    Iwram_ClearWords(state, sizeof(*state));
   buffer = Pool_Alloc(2048);
   Decompress_TaggedLz(gField_GeyserTiles, buffer);
-  work->vramEntry = VramCache_FindFreeEntry();
-  VramCache_Load(work->vramEntry, 2048, buffer);
+  state->vramEntry = VramCache_FindFreeEntry();
+  VramCache_Load(state->vramEntry, 2048, buffer);
   Heap_Release(buffer);
-  work->sprites =
+  state->sprites =
       Heap_AllocEwram(FOUNTAIN_SPRITE_COUNT * sizeof(struct TrialRoadSprite));
-  work->shape = shape;
+  state->shape = shape;
   Task_Add(TrialRoad_UpdateFountains, TASK_PASS_FRAME + 13);
   Task_Add(TrialRoad_DrawFountains, TASK_PASS_FRAME);
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
@@ -3323,8 +3326,8 @@ void TrialRoad_StartFountains(s32 unused, s32 shape) {
 /// Sets up one fountain on its vent, with its timer and height.
 struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
                                                 s32 low, s32 high) {
-  struct TrialRoadFountains *work = TRIAL_ROAD_FOUNTAINS;
-  struct TrialRoadFountain *fountain = &work->fountains[slot];
+  struct TrialRoadFountains *state = TRIAL_ROAD_FOUNTAINS;
+  struct TrialRoadFountain *fountain = &state->fountains[slot];
   struct Actor *actor = Actor_GetById(id);
   struct Actor *top;
 
@@ -3430,7 +3433,7 @@ UNUSED void TrialRoad_StepOnTrap(const u16 *table) {
 
   if (Field_TryJumpForward() != 0)
     return;
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   partner = Actor_GetById(ACTOR_MOAPA);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
@@ -3505,7 +3508,7 @@ void TrialRoad_DriftDust(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX = effect->velocity.x;
   s32 velocityZ;
-  struct MainRoutineWork *party;
+  struct MainRoutineState *party;
   struct FieldSprite *sprite;
   union FieldObject *leader;
   struct EffectSpriteAttributes *to;
@@ -3526,7 +3529,7 @@ void TrialRoad_DriftDust(union FieldObject *object) {
   effect->scaleY += effect->scaleRateY;
   sprite->rotation += effect->spin;
 
-  party = &gMainRoutineWork;
+  party = &gMainRoutineState;
 
   leader = Actor_GetById(party->leaderActorId);
   to = (struct EffectSpriteAttributes *)effect->sprite;
@@ -3542,7 +3545,7 @@ extern u32 gDust_ScatterScript[];
 /// Eight clouds of dust puff up in a row across the leader's feet; with spread
 /// set they fly out all round.
 void Dust_Scatter(s32 spread) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   struct FieldEffect *effect;
   u32 frame = 0;
   u32 i;
@@ -3589,7 +3592,7 @@ extern u32 gDust_BurstScript[];
 /// Clouds of dust burst out in a ring round the leader as something lands with
 /// a thump.
 void MagmaRockInside_SpawnDustRing(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   struct FieldEffect *effect;
   u32 frame;
   u32 i;
@@ -3672,11 +3675,11 @@ void TrialRoad_WaitForRival(void) {
 /// partner from the linked player's record; RIVAL_REPLAY replays the recorded
 /// path; RIVAL_RECORD records the actor's position.
 void TrialRoad_MoveRival(void) {
-  struct TrialRoadLinkWork *work =
-      (struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink;
+  struct TrialRoadLinkState *trialRoadLinkState =
+      (struct TrialRoadLinkState *)Ram_HeapSlots->trialRoadLink;
   struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
   struct Actor *rival = Actor_GetById(state->id);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 x, z, turn;
   FIXED dx, dz;
   u16 heading;
@@ -3688,7 +3691,7 @@ void TrialRoad_MoveRival(void) {
     z = leader->z.fixed;
     if ((u32)(z - toFIXED(256)) > toFIXED(304))
       x = toFIXED(528) - (x & FIELD_PIXEL_MASK);
-    if (gMainRoutineWork.entrance & 1)
+    if (gMainRoutineState.entrance & 1)
       x += toFIXED(304);
     else
       x -= toFIXED(304);
@@ -3728,16 +3731,16 @@ void TrialRoad_MoveRival(void) {
     if (GameFlag_Get(dz = FLAG_SCENE_TEMP_11) && link != 0) {
       state->mode = RIVAL_WAITING;
       Actor_SelectAnimation(rival, 1);
-      if (work->originX < rival->x.fixed)
-        x = work->originX + toFIXED(12);
+      if (trialRoadLinkState->originX < rival->x.fixed)
+        x = trialRoadLinkState->originX + toFIXED(12);
       else
-        x = work->originX - toFIXED(12);
+        x = trialRoadLinkState->originX - toFIXED(12);
       if (!GameFlag_Get(FLAG_SCENE_TEMP_12)) {
-        z = work->originZ + toFIXED(16);
-        rival->timer = work->rivalTimers[1];
+        z = trialRoadLinkState->originZ + toFIXED(16);
+        rival->timer = trialRoadLinkState->rivalTimers[1];
       } else {
-        z = work->originZ - toFIXED(16);
-        rival->timer = work->rivalTimers[0];
+        z = trialRoadLinkState->originZ - toFIXED(16);
+        rival->timer = trialRoadLinkState->rivalTimers[0];
       }
       rival->acceleration = toFIXED(1) / 4;
       rival->speedLimit = toFIXED(1);
@@ -3766,12 +3769,13 @@ void TrialRoad_MoveRival(void) {
     rival->z.fixed = toFIXED(z);
     Actor_SelectAnimation(rival, animation);
   } else if (state->mode == RIVAL_REPLAY) {
-    if (state->resource != work->resource) {
-      Decompress_TaggedLz(Resource_GetTableEntry(state->resource), work->path);
-      work->resource = state->resource;
+    if (state->resource != trialRoadLinkState->resource) {
+      Decompress_TaggedLz(Resource_GetTableEntry(state->resource),
+                          trialRoadLinkState->path);
+      trialRoadLinkState->resource = state->resource;
     }
-    x = work->path[state->point];
-    z = work->path[state->point + 1];
+    x = trialRoadLinkState->path[state->point];
+    z = trialRoadLinkState->path[state->point + 1];
     if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS))
       state->point += 2;
     if (x == 0 && z == 0) {
@@ -3782,7 +3786,7 @@ void TrialRoad_MoveRival(void) {
     z <<= 16;
     if (state->mirrored != 0 && (u32)(z - toFIXED(256)) > toFIXED(304))
       x = toFIXED(528) - x;
-    if (gMainRoutineWork.entrance & 1)
+    if (gMainRoutineState.entrance & 1)
       x += toFIXED(304);
     else
       x -= toFIXED(304);
@@ -3809,16 +3813,16 @@ void TrialRoad_MoveRival(void) {
   } else if (state->mode == RIVAL_RECORD) {
     x = FIXEDtoINT(rival->x.fixed);
     z = FIXEDtoINT(rival->z.fixed);
-    work->path[state->point] = x;
-    work->path[state->point + 1] = z;
+    trialRoadLinkState->path[state->point] = x;
+    trialRoadLinkState->path[state->point + 1] = z;
     if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS))
       state->point += 2;
     if (state->point == RIVAL_PATH_LENGTH - 2) {
       u16 next = state->point + 1;
 
-      work->path[state->point] = 0;
-      work->path[(s16)next] = 0;
-      state->id = work->rivalId;
+      trialRoadLinkState->path[state->point] = 0;
+      trialRoadLinkState->path[(s16)next] = 0;
+      state->id = trialRoadLinkState->rivalId;
       state->point = 0;
       state->mode = RIVAL_REPLAY;
     }
@@ -3839,16 +3843,16 @@ static inline void *TrialRoadLink_AllocPicture(void) {
 #define MARKER(left, right, which, tileAdd)                                    \
   do {                                                                         \
     s32 lift;                                                                  \
-    s32 side = gMainRoutineWork.entrance & 1;                                  \
+    s32 side = gMainRoutineState.entrance & 1;                                 \
     if (side) {                                                                \
-      x = (actor->x.fixed - work->originX) / toFIXED(16) left;                 \
+      x = (actor->x.fixed - state->originX) / toFIXED(16) left;                \
       lift = TrialRoad_GetStage(which);                                        \
-      y = (actor->z.fixed - work->originZ) / toFIXED(16) + work->scrollY -     \
+      y = (actor->z.fixed - state->originZ) / toFIXED(16) + state->scrollY -   \
           lift * RACE_MAP_STAGE_SPACING + 4;                                   \
     } else {                                                                   \
-      x = (actor->x.fixed - work->originX) / toFIXED(16) right;                \
+      x = (actor->x.fixed - state->originX) / toFIXED(16) right;               \
       lift = TrialRoad_GetStage(which);                                        \
-      y = (actor->z.fixed - work->originZ) / toFIXED(16) + work->scrollY -     \
+      y = (actor->z.fixed - state->originZ) / toFIXED(16) + state->scrollY -   \
           lift * RACE_MAP_STAGE_SPACING + 4;                                   \
     }                                                                          \
     x &= 511;                                                                  \
@@ -3868,26 +3872,26 @@ static inline void *TrialRoadLink_AllocPicture(void) {
 /// other, and on eleven frames of sixteen a marker shows where each party is:
 /// "1P" for the leader's, "2P" for Moapa's.
 void TrialRoad_DrawRaceMap(void) {
-  struct TrialRoadLinkWork *work = Ram_HeapSlots->trialRoadLink;
-  u32 *cursor = (u32 *)work;
-  struct TrialRoadSprite *entry = (struct TrialRoadSprite *)work;
-  s16 *vramEntry = &work->vramEntry;
+  struct TrialRoadLinkState *state = Ram_HeapSlots->trialRoadLink;
+  u32 *cursor = (u32 *)state;
+  struct TrialRoadSprite *entry = (struct TrialRoadSprite *)state;
+  s16 *vramEntry = &state->vramEntry;
   u32 row, i;
   s32 tile = gVramCacheEntries[*vramEntry].offset >> 5;
   u32 flip, word;
   s32 x;
   s32 y;
   u32 markerSize = OBJ_SIZE_16X16;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
   struct Actor *actor;
 
-  if (work->holdFade != 0) {
-    work->fade = 2;
+  if (state->holdFade != 0) {
+    state->fade = 2;
   } else if (GameFlag_Get(FLAG_MENU_OPEN) || event->psynergy != 0) {
-    if (work->fade > 0)
-      work->fade--;
-  } else if (work->fade <= 1) {
-    if (++work->fade == 1) {
+    if (state->fade > 0)
+      state->fade--;
+  } else if (state->fade <= 1) {
+    if (++state->fade == 1) {
       void *buffer;
       Dma_Set(gTrialRoad_RaceMapPalette,
               (void *)&OBJ_PLTT_COLOR(RACE_MAP_PALETTE, 0),
@@ -3898,18 +3902,18 @@ void TrialRoad_DrawRaceMap(void) {
       Heap_Release(buffer);
     }
   }
-  if (work->fade == 0) {
-    VramCache_ReleaseVram(work->vramEntry);
+  if (state->fade == 0) {
+    VramCache_ReleaseVram(state->vramEntry);
     return;
   }
   for (row = 0; row < 2; row++) {
-    y = (work->scrollY + 8) & OBJ_Y_MASK;
+    y = (state->scrollY + 8) & OBJ_Y_MASK;
     if (row == 0) {
-      x = work->fade * 6 + work->scrollX - 12;
+      x = state->fade * 6 + state->scrollX - 12;
       x &= OBJ_X_MASK;
       flip = 0;
     } else {
-      x = 236 - work->fade * 6 - work->scrollX;
+      x = 236 - state->fade * 6 - state->scrollX;
       x &= OBJ_X_MASK;
       flip = OBJ_HFLIP;
     }
@@ -3930,12 +3934,12 @@ void TrialRoad_DrawRaceMap(void) {
   }
   if ((gFrameCount & 15) < 5)
     return;
-  actor = Actor_Lookup(work->leaderId);
+  actor = Actor_Lookup(state->leaderId);
   if (actor != NULL) {
-    MARKER(+work->fade * 6 + work->scrollX - 19,
-           -work->fade * 6 - work->scrollX + 232, 0, RACE_MAP_TILE_1P);
+    MARKER(+state->fade * 6 + state->scrollX - 19,
+           -state->fade * 6 - state->scrollX + 232, 0, RACE_MAP_TILE_1P);
   }
-  actor = Actor_Lookup(work->rivalId);
+  actor = Actor_Lookup(state->rivalId);
   if (actor == NULL || actor->x.fixed == 0)
     return;
   {
@@ -3944,45 +3948,45 @@ void TrialRoad_DrawRaceMap(void) {
     // entrance 31 with FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT set) both columns stand
     // at the screen's edges with "1P" and "2P" at their feet: it is 0, so the
     // two agree.
-    MARKER(+work->fade * 6 + work->scrollX + 189,
-           -work->fade * 6 + work->scrollX + 23, 1, RACE_MAP_TILE_2P);
+    MARKER(+state->fade * 6 + state->scrollX + 189,
+           -state->fade * 6 + state->scrollX + 23, 1, RACE_MAP_TILE_2P);
   }
 }
 
 /// Shows the race map for both sides.
 void TrialRoad_ShowRaceMap(s32 leaderId, s32 rivalId) {
-  struct TrialRoadLinkWork *work = HeapSlot_AllocEwram(
-      HEAP_SLOT_TRIAL_ROAD_LINK, sizeof(struct TrialRoadLinkWork));
+  struct TrialRoadLinkState *state = HeapSlot_AllocEwram(
+      HEAP_SLOT_TRIAL_ROAD_LINK, sizeof(struct TrialRoadLinkState));
   void *buffer = Heap_AllocEwram(RACE_MAP_PICTURE_BYTES);
 
-  work->leaderId = leaderId;
-  work->rivalId = rivalId;
-  if (leaderId == gMainRoutineWork.leaderActorId) {
-    work->originX = toFIXED(160);
-    work->originZ = toFIXED(-1632);
+  state->leaderId = leaderId;
+  state->rivalId = rivalId;
+  if (leaderId == gMainRoutineState.leaderActorId) {
+    state->originX = toFIXED(160);
+    state->originZ = toFIXED(-1632);
   } else {
-    work->originX = toFIXED(112);
-    work->originZ = toFIXED(-1632);
+    state->originX = toFIXED(112);
+    state->originZ = toFIXED(-1632);
   }
   Actor_GetById(leaderId);
   Actor_GetById(rivalId);
-  work->fade = 0;
-  work->holdFade = 0;
+  state->fade = 0;
+  state->holdFade = 0;
   Decompress_TaggedLz(gTrialRoad_RaceMapPicture, buffer);
-  work->vramEntry = VramCache_FindFreeEntry();
-  VramCache_Load(work->vramEntry, RACE_MAP_PICTURE_BYTES, buffer);
+  state->vramEntry = VramCache_FindFreeEntry();
+  VramCache_Load(state->vramEntry, RACE_MAP_PICTURE_BYTES, buffer);
   Task_Add(TrialRoad_DrawRaceMap, TASK_PASS_FRAME - 10);
   Heap_Release(buffer);
 }
 
 /// Starts Moapa's party on its recording, mirrored when the leader went right.
 void TrialRoad_StartRival(s32 mirrored) {
-  struct TrialRoadLinkWork *work = Ram_HeapSlots->trialRoadLink;
+  struct TrialRoadLinkState *trialRoadLinkState = Ram_HeapSlots->trialRoadLink;
   struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
     state->mirrored = mirrored;
-    state->id = work->rivalId;
+    state->id = trialRoadLinkState->rivalId;
     state->still = 0;
   }
   Task_Add(TrialRoad_MoveRival, TASK_PASS_FRAME + 5);
@@ -3993,7 +3997,7 @@ void TrialRoad_PlayRivalRecording(s32 resource) {
   struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
 
   state->resource = resource;
-  ((struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink)->resource = 0;
+  ((struct TrialRoadLinkState *)Ram_HeapSlots->trialRoadLink)->resource = 0;
   state->point = 0;
   state->mode = RIVAL_REPLAY;
   TrialRoad_MoveRival();

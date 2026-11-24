@@ -22,7 +22,7 @@
 #include "system/iwram_call.h"
 #include "field/actor.h"
 #include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/event_inline.h"
 #include "field/scene_tables.h"
 #include "scene_ids.h"
@@ -46,7 +46,7 @@
 #include "scene/event_layer.h"
 #include "text/msg_ids.h"
 #include "field/sprite.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/field_sequence.h"
 #include "scene_exits.h"
 #include "ability_ids.h"
@@ -180,25 +180,25 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 /// while Mind Read shows its thoughts, or while it faces the other child or the
 /// leader close by, and walks on otherwise or once the leader is right by it.
 s32 Lemuria_NoticeLeader(struct Actor *self) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
   u8 *state;
   u32 mode;
   struct Actor *other;
 
   Actor_SetSpritePriorityDirect(self, BattleEffect_GetObjectPriority(Actor_Get(
-                                          gMainRoutineWork.leaderActorId)));
+                                          gMainRoutineState.leaderActorId)));
   mode = ABILITY_ID(event->psynergy);
   state = &self->paused;
   if (mode != ABILITY_MIND_READ ||
-      (s8)((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)
+      (s8)((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)
               ->messageShown == 0) {
     if (self->timer != 1) {
-      other = Actor_Get(gMainRoutineWork.leaderActorId);
+      other = Actor_Get(gMainRoutineState.leaderActorId);
       if (Position_Distance(&self->x.fixed, &other->x.fixed) <=
               CHILD_WALKS_ON_RANGE ||
           (Actor_IsFacingNear(self, self->watchedActor,
                               CHILD_SEES_CHILD_RANGE) == 0 &&
-           Actor_IsFacingNear(self, Actor_Get(gMainRoutineWork.leaderActorId),
+           Actor_IsFacingNear(self, Actor_Get(gMainRoutineState.leaderActorId),
                               CHILD_SEES_LEADER_RANGE) == 0)) {
         *state = 0;
         Actor_SelectAnimation(self, ANIM_WALK);
@@ -251,10 +251,10 @@ void Lemuria_OpenDoorAndEnter(const struct MapGridCellAnimation *door, s32 exit,
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(door->steps, door->x, door->y);
-  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  id = gMainRoutineWork.leaderActorId;
+  Actor_Get(gMainRoutineState.leaderActorId)->motionFlags = ACTOR_FALLS;
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
+  id = gMainRoutineState.leaderActorId;
   if (mode == 0)
     Actor_CenterAndWalk(id, 2, -8);
   else
@@ -322,16 +322,17 @@ void Lemuria_EnterDoor(s32 exit) {
 /// "Everyone spoils me so much... I don't ever want to grow up!" Afterwards
 /// the child faces the way it was walking again.
 void Lemuria_TalkToSpoiledChild(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor = Actor_Get(ACTOR_SPOILED_CHILD);
   s16 angle = actor->facing;
 
   actor->timer = 1;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (work->psynergy == 0) {
+  if (state->psynergy == 0) {
     FieldEvent_SetMessageId((s32)&MsgLemuriaItHasBeenManyMany);
-    Actor_FaceEachOther(ACTOR_SPOILED_CHILD, gMainRoutineWork.leaderActorId, 2);
+    Actor_FaceEachOther(ACTOR_SPOILED_CHILD, gMainRoutineState.leaderActorId,
+                        2);
   } else {
     FieldEvent_SetMessageId((s32)&MsgLemuriaEveryoneSpoilsMeSoMuch);
   }
@@ -350,16 +351,16 @@ void Lemuria_TalkToSpoiledChild(void) {
 /// there were other children to play with." Mind Read hears the child wonder,
 /// "Are there other children in the lands beyond the Sea of Time?"
 void Lemuria_TalkToLonelyChild(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor = Actor_Get(ACTOR_LONELY_CHILD);
   s16 angle = actor->facing;
 
   actor->timer = 1;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (work->psynergy == 0) {
+  if (state->psynergy == 0) {
     FieldEvent_SetMessageId((s32)&MsgLemuriaWeAreOnlyChildren);
-    Actor_FaceEachOther(ACTOR_LONELY_CHILD, gMainRoutineWork.leaderActorId, 2);
+    Actor_FaceEachOther(ACTOR_LONELY_CHILD, gMainRoutineState.leaderActorId, 2);
   } else {
     FieldEvent_SetMessageId((s32)&MsgLemuriaAreThereOtherChildren);
   }
@@ -409,7 +410,7 @@ enum { HARD_NUT_X = 808, HARD_NUT_Z = 1176 };
 /// were until it is picked up. If Felix stands on that very spot he hops a step
 /// east off it.
 void Lemuria_CycloneHardNutWeeds(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(59, 64, 4, 3, 49, 71, 2);
   if (Event_GetFlag(FLAG_LEMURIA_HARD_NUT) == 0) {
@@ -418,11 +419,11 @@ void Lemuria_CycloneHardNutWeeds(void) {
         FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(HARD_NUT_Z))) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+      Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 16, 0);
+      Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 16, 0);
       leader->velocityY = toFIXED(6);
-      FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+      FieldActor_WaitForMoveById(gMainRoutineState.leaderActorId);
       Event_End();
     }
   }
@@ -433,11 +434,11 @@ void Teleport_PlaySparksAndFade(void);
 /// Unused: teleports the party, with sparks and a fade, to the door of the
 /// girl's house. No trigger or call of the scene reaches it.
 void Lemuria_TeleportToGirlsHouse(void) {
-  struct MainRoutineWork *party;
+  struct MainRoutineState *party;
 
   Teleport_PlaySparksAndFade();
   Event_SetDestination(SCENE_LEMURIA, LEMURIA_FROM_LEMURIA_ROOMS_WEST_B);
-  party = &gMainRoutineWork;
+  party = &gMainRoutineState;
 
   party->teleportState = 2;
 }
@@ -525,9 +526,9 @@ void Rope_Coil();
 void Lemuria_TryStuckDoor(void) {
   struct Actor *actor;
 
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > toFIXED(96) ||
+  if (Actor_Get(gMainRoutineState.leaderActorId)->y.fixed > toFIXED(96) ||
       Event_GetFlag(FLAG_MET_LUNPA)) {
-    gFieldWork->fieldMenu = 1;
+    gFieldState->fieldMenu = 1;
     return;
   }
   if (!Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE) ||
@@ -615,7 +616,7 @@ void Party_RestoreHpPp(s32 value);
 /// "Felix and the others drank of the spring. Their HP and PP were fully
 /// replenished!" From up on the spring's rim nothing happens.
 void Lemuria_DrinkFromSpring(void) {
-  FIXED y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
+  FIXED y = Actor_Get(gMainRoutineState.leaderActorId)->y.fixed;
 
   if (y < toFIXED(90)) {
     // "Felix and the others drank of the spring. Their HP and PP were..."
@@ -623,7 +624,7 @@ void Lemuria_DrinkFromSpring(void) {
     Event_PlaySound(SE_RECOVERY);
     Party_RestoreHpPp(1);
   } else {
-    gFieldWork->fieldMenu = 1;
+    gFieldState->fieldMenu = 1;
   }
 }
 
@@ -633,7 +634,8 @@ void Lemuria_DrinkFromSpring(void) {
 /// he only wishes the party good luck.
 void Lemuria_OfferSpringLuck(void) {
   if (Event_GetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED)) {
-    Actor_FaceActor(ACTOR_MAN_AT_THE_SPRING, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_MAN_AT_THE_SPRING, gMainRoutineState.leaderActorId,
+                    0);
     FieldActor_WaitForScriptEndById(ACTOR_MAN_AT_THE_SPRING);
     FieldEvent_SetMessageId((s32)MsgLemuriaYouLookLikeYoure);
     // "You look like you're in for a spell of good luck. After all, your..."
@@ -646,7 +648,7 @@ void Lemuria_OfferSpringLuck(void) {
   FieldEvent_SetMessageId((s32)MsgLemuriaDoYouWishToTest);
   Actor_ShowEmote(ACTOR_MAN_AT_THE_SPRING, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   30);
-  Actor_FaceActor(ACTOR_MAN_AT_THE_SPRING, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(ACTOR_MAN_AT_THE_SPRING, gMainRoutineState.leaderActorId, 0);
   FieldActor_WaitForScriptEndById(ACTOR_MAN_AT_THE_SPRING);
   FieldEvent_Wait(5);
   // "Do you wish to test your luck at the Spring of Lemuria?"
@@ -658,11 +660,11 @@ void Lemuria_OfferSpringLuck(void) {
   } else {
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_MAN_AT_THE_SPRING, 3);
-    (gFieldWork->message)++;
+    (gFieldState->message)++;
     // "Go ahead. Test your luck!"
     FieldEvent_ShowMessageThenWait(ACTOR_MAN_AT_THE_SPRING, 0, 5);
-    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 464, 1040);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
+    Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 464, 1040);
+    Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_NORTH);
     FieldEvent_Wait(5);
     Actor_SetSpeed(ACTOR_MAN_AT_THE_SPRING, 1.2);
     Actor_WalkToAndWait(ACTOR_MAN_AT_THE_SPRING, 440, 1048);
@@ -728,7 +730,7 @@ enum { RIPPLE_SWAY_SHIFT = 15 };
 /// sine of the line and the frame, and swaps the buffers.
 void Lemuria_FillRippleLines(void) {
   struct MapLayer *layer =
-      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
+      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[1];
   s16 *lines = gLemuria_RippleLines[gLemuria_RippleBuffer ^ 1];
   FIXED v[2];
   s32 *count = &v[1];
@@ -764,7 +766,7 @@ void Actor_SetWideSprite();
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldTask_AddFrame((s32)Lemuria_CycleWaterColors, TASK_PASS_VBLANK);
   FieldEffect_StartBlankOverlay(0);
@@ -913,7 +915,7 @@ void Lemuria_AdmirePalace(s32 id) {
   FieldEvent_Wait(10);
   Actor_SetSpeed(ACTOR_KRADEN_STAND_IN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 2);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(ACTOR_KRADEN_STAND_IN, leader->x.part[0].integer,
                          leader->z.part[0].integer);
@@ -948,7 +950,7 @@ void Lemuria_KeepLookingAround(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 5);
   Actor_SetSpeed(ACTOR_KRADEN_STAND_IN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 2);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(ACTOR_KRADEN_STAND_IN, leader->x.part[0].integer,
                          leader->z.part[0].integer);
@@ -1153,12 +1155,12 @@ void Lemuria_MarvelAtCity(void) {
     Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
     // "Any newcomer to our town would doubtless feel the same at first."
     FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     FieldEvent_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
     FieldEvent_Wait(10);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Ah! Yes, you marvel not at its present condition, but at the greater..."
     FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   }
@@ -1270,7 +1272,7 @@ void Lemuria_MarvelAtCity(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(ACTOR_PIERS, leader->x.part[0].integer,
                          leader->z.part[0].integer);
@@ -1278,7 +1280,7 @@ void Lemuria_MarvelAtCity(void) {
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN_STAND_IN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 2);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(ACTOR_KRADEN_STAND_IN, leader->x.part[0].integer,
                          leader->z.part[0].integer);

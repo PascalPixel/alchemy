@@ -53,8 +53,8 @@ aside. It is built again from scratch.
 So a sequence can pass something on in only four ways, the four things
 the main routine leaves alone:
 
-- the [main routine's work](glossary.md#main-routines-work), one C struct
-  in a global, `gMainRoutineWork`, which holds who is in the party, their
+- the [main routine's state](glossary.md#main-routines-state), one C struct
+  in a global, `gMainRoutineState`, which holds who is in the party, their
   coins, what runs next and how the last sequence ended;
 - the [game flags](glossary.md#game-flag), one bit for each thing the game
   remembers, such as a chest being open;
@@ -71,7 +71,7 @@ how a puzzle resets
 
 Take Obaba in the caverns above Champa. She gives the party one chance to
 back out, and if they stay, she sends a monster out of the forging well. The
-event that ends in that fight writes two destinations into the work, one
+event that ends in that fight writes two destinations into the state, one
 for a win and one for a loss, asks for a battle, and lets the field
 sequence end. The battle knows nothing about Champa. It runs, and writes
 its result. The main routine reads the result, picks the matching
@@ -152,7 +152,7 @@ Four things about tasks are easy to get wrong:
   them each frame.
 - The list keeps a function, a rank and one flag, and nothing else. What a
   task needs to remember lives with whatever put it on the list: the
-  field's work, a window's.
+  field's state, a window's.
 
 Anything may put a task on the list and take it off again. The field and
 the windows keep theirs there as long as they run, a scene adds its own for
@@ -243,7 +243,7 @@ again, and that would upset the pass that is running.
 | a command that takes time, such as `Event_ShowMessage` or one ending `AndWait` | an event | starts something, then calls `wait(1)` until it is over: a window has closed, an actor has arrived |
 | `SC_WAIT(n)` | an actor script | sets a count in the actor, which the actors' task takes one off each frame |
 | `SC_SYNC` | an actor script | holds the script on this order until the actor has arrived |
-| a count in its owner's work | a task | the task looks at it each frame and returns: a pause in the middle of a line, the time a hit flashes in a battle |
+| a count in its owner's state | a task | the task looks at it each frame and returns: a pause in the middle of a line, the time a hit flashes in a battle |
 
 Only the first three hold any code up, and they are all `wait()`. The rest
 are numbers that a task looks at once a frame. `Actor_WalkToAndWait` gives
@@ -258,7 +258,7 @@ This is who runs what.
    and over. It is the only code waiting.
 2. Inside one `wait(1)` the actors' task comes to Felix. His script is on
    the order that reads the D-pad and the buttons, `SC_PLAYER`. It sees the
-   A Button and sets a request in the field's work. The task goes on to the
+   A Button and sets a request in the field's state. The task goes on to the
    man and carries his script on by a frame as well.
 3. `wait(1)` returns. The field's routine finds a request and leaves its
    walking loop. It puts Felix on the idle script, finds that the nearest
@@ -325,14 +325,14 @@ shows both directions.
 ## Saving
 
 A save is the four things that outlive a sequence: the game flags, the
-main routine's work, the characters' units and the actor snapshot, taken
+main routine's state, the characters' units and the actor snapshot, taken
 again as the save begins so that it holds where the people in the current
 scene stand. Nothing else needs saving, because everything else is rebuilt
 from those.
 
 That gives a simple rule for new state: if the game should remember it, it
-has to live in a flag or in the work. A yes-or-no fact is a flag. Anything
-larger goes in the work.
+has to live in a flag or in the state. A yes-or-no fact is a flag. Anything
+larger goes in the state.
 
 The save lives in a [flash chip](glossary.md#flash-chip) on the cartridge.
 Each of the three files is one part of 12 KB, three sectors of the chip,

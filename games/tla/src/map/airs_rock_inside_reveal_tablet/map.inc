@@ -4,15 +4,15 @@ Field_AirsRockInsideRevealTablet:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 5, 5, 0x1f, 0x1f
-	map_block Field_AirsRockInsideRevealTablet, .LField_AirsRockInsideRevealTablet_CELL_PICTURES
+	map_block Field_AirsRockInsideRevealTablet, .LField_AirsRockInsideRevealTablet_CELL_TILES
 	map_block Field_AirsRockInsideRevealTablet, .LField_AirsRockInsideRevealTablet_SHAPES
 	map_block Field_AirsRockInsideRevealTablet, .LField_AirsRockInsideRevealTablet_GRID
 	map_block Field_AirsRockInsideRevealTablet, .LField_AirsRockInsideRevealTablet_SHAPE_GRID
 	map_block Field_AirsRockInsideRevealTablet, .LField_AirsRockInsideRevealTablet_ANIMATION
 	map_block Field_AirsRockInsideRevealTablet, .LField_AirsRockInsideRevealTablet_BLEND
 	map_block Field_AirsRockInsideRevealTablet, .LField_AirsRockInsideRevealTablet_SCENE
-.LField_AirsRockInsideRevealTablet_CELL_PICTURES:
-	.incbin "games/tla/src/map/airs_rock_inside_reveal_tablet/cell_pictures.delta1.lz"
+.LField_AirsRockInsideRevealTablet_CELL_TILES:
+	.incbin "games/tla/src/map/airs_rock_inside_reveal_tablet/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_AirsRockInsideRevealTablet_SHAPES:
 	.incbin "games/tla/src/map/airs_rock_inside_reveal_tablet/shapes.table.lz"

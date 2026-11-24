@@ -220,8 +220,8 @@ void wait(s32 frames) {
     Input_UpdateKeyRepeatAndDirection();
     if (gSerialExchangeActive) {
       Serial_PollStatus();
-      if (gSerialWork.mode)
-        gSerialWork.transferEnabled = 1;
+      if (gSerialState.mode)
+        gSerialState.transferEnabled = 1;
     }
     // Sleep: after a white screen and the keys' release, Stop the CPU until L,
     // R and Select wake it, then restore the screen once they are released. A

@@ -5,7 +5,7 @@
 /// What the field sequence's parts share with the files that define their
 /// tables: the speakers' voices and Halted lines, the field effects' scripts
 /// and colour curves, the screen transitions' shapes and window values, and
-/// the views of an actor and of the map work that the ground mask reads.
+/// the views of an actor and of the map state that the ground mask reads.
 
 #include "types.h"
 #include "resource_ids.h"
@@ -36,10 +36,10 @@ struct FadeActor {
   u8 terrainId;
 };
 
-/// The map work (struct MapWork) as the ground mask reads its view position:
+/// The map state (struct MapState) as the ground mask reads its view position:
 /// viewX and viewZ as halfwords, the second of each its whole pixels.
 struct FadeView {
-  u8 unused[228]; ///< MapWork up to viewX
+  u8 unused[228]; ///< MapState up to viewX
   s16 camera[4];
 };
 

@@ -10,7 +10,7 @@
 /// Shows the battle background, as dark as the canvas's fade left it, behind a
 /// cleared canvas, and fades out the action's sound effects.
 void BattleEffect_SetupBlendedDisplay(void) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
 
   REG_DISPCNT = DISPCNT_MODE_1;
@@ -34,22 +34,22 @@ void BattleEffect_SetupBlendedDisplay(void) {
 /// palette: a SpriteColorMode, SPRITE_COLOR_NORMAL for the unit's own palette,
 ///          or TINT_KEEP.
 /// animation: the pose to start, or TINT_KEEP.
-/// timerSlot: the work->actorTimers entry to set to timerFrames, or TINT_KEEP.
+/// timerSlot: the state->actorTimers entry to set to timerFrames, or TINT_KEEP.
 void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
                               s32 timerSlot, s32 timerFrames) {
   struct BattleObject *slot;
   struct Sprite *group;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   s32 groupIndex;
 
   slot = BattleObject_GetFar(unitId);
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
 
   for (groupIndex = 0;
        (group = GetMotionRecordFar(slot->object, groupIndex)) != NULL;
        groupIndex++) {
     if (timerSlot != TINT_KEEP)
-      work->actorTimers[timerSlot] = timerFrames;
+      state->actorTimers[timerSlot] = timerFrames;
     if (slot->fading == 0) {
       if (palette != TINT_KEEP) {
         s32 partIndex;

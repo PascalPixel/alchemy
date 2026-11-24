@@ -2,9 +2,9 @@
 #define ALCHEMY_BATTLE_CAMERA_H
 
 /// @file
-/// The battle camera, the battle background's modes and scanline work, and the
-/// presentation work an action's staging hands its battle effect.
-// The Broken Seal's presentation work holds eight targets; this one nine.
+/// The battle camera, the battle background's modes and scanline state, and the
+/// presentation state an action's staging hands its battle effect.
+// The Broken Seal's presentation state holds eight targets; this one nine.
 
 #include "battle/battle_action.h"
 
@@ -40,7 +40,7 @@ STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 54);
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the yaw the battle camera eases
 /// toward and the frames left to ease it, and how the battle background is
 /// shown.
-struct BattleBackgroundWork {
+struct BattleBackgroundState {
   s32 targetYaw; ///< 1/65536 turns
   s32 frames;    ///< frames left to ease the yaw, a sixteenth a frame
   s32 mode;      ///< enum BattleBackgroundMode
@@ -55,7 +55,7 @@ struct BattleBackgroundWork {
 
 /// A presentation's effect command, laid out as BattleEffectParams with a
 /// ninth actor, and the animation state it keeps.
-struct BattlePresentationWork {
+struct BattlePresentationState {
   s32 kind;         ///< the effect's index in the handler table
   s32 side;         ///< 1 when the targets are the party, 0 for enemies
   s32 actor;        ///< the user's unit id
@@ -69,14 +69,14 @@ struct BattlePresentationWork {
   u8 params[8][4];  ///< each target's animation entries' param, kept
 };
 
-STATIC_ASSERT(sizeof(struct BattleBackgroundWork) == 32);
-STATIC_ASSERT(offsetof(struct BattleBackgroundWork, mode) == 8);
-STATIC_ASSERT(offsetof(struct BattleBackgroundWork, busy) == 16);
-STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 88);
-STATIC_ASSERT(offsetof(struct BattlePresentationWork, actors) == 36);
-STATIC_ASSERT(offsetof(struct BattlePresentationWork, params) == 54);
+STATIC_ASSERT(sizeof(struct BattleBackgroundState) == 32);
+STATIC_ASSERT(offsetof(struct BattleBackgroundState, mode) == 8);
+STATIC_ASSERT(offsetof(struct BattleBackgroundState, busy) == 16);
+STATIC_ASSERT(sizeof(struct BattlePresentationState) == 88);
+STATIC_ASSERT(offsetof(struct BattlePresentationState, actors) == 36);
+STATIC_ASSERT(offsetof(struct BattlePresentationState, params) == 54);
 
-/// BattleBackgroundWork.mode and secondMode: how the battle background is
+/// BattleBackgroundState.mode and secondMode: how the battle background is
 /// shown.
 enum BattleBackgroundMode {
   /// Not loaded yet.
@@ -100,7 +100,7 @@ struct BattleAffine {
   s32 x, y;
 };
 
-/// The battle background's scanline work: two pages of per-line values,
+/// The battle background's scanline state: two pages of per-line values,
 /// swapped each frame, and the affine parameters.
 struct BattleAffineHdma {
   u32 page;      ///< the page of lines shown
@@ -118,7 +118,7 @@ UNREAD_RESULT BattleStaging_RunActorEntries(struct BattlePlan *plan,
                                             s32 unused);
 
 void BattleStaging_BuildTargetList(struct BattlePlan *plan,
-                                   struct BattlePresentationWork *work);
+                                   struct BattlePresentationState *state);
 
 void BattleCamera_SetRange(FIXED cx, FIXED cy, s32 ox, s32 oy, FIXED scale);
 

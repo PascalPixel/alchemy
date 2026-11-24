@@ -4,15 +4,15 @@ Field_AirsRockStormBrandChest:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_AirsRockStormBrandChest, .LField_AirsRockStormBrandChest_CELL_PICTURES
+	map_block Field_AirsRockStormBrandChest, .LField_AirsRockStormBrandChest_CELL_TILES
 	map_block Field_AirsRockStormBrandChest, .LField_AirsRockStormBrandChest_SHAPES
 	map_block Field_AirsRockStormBrandChest, .LField_AirsRockStormBrandChest_GRID
 	map_block Field_AirsRockStormBrandChest, .LField_AirsRockStormBrandChest_SHAPE_GRID
 	map_block Field_AirsRockStormBrandChest, .LField_AirsRockStormBrandChest_ANIMATION
 	map_block Field_AirsRockStormBrandChest, .LField_AirsRockStormBrandChest_BLEND
 	map_block Field_AirsRockStormBrandChest, .LField_AirsRockStormBrandChest_SCENE
-.LField_AirsRockStormBrandChest_CELL_PICTURES:
-	.incbin "games/tla/src/map/airs_rock_storm_brand_chest/cell_pictures.delta0.lz"
+.LField_AirsRockStormBrandChest_CELL_TILES:
+	.incbin "games/tla/src/map/airs_rock_storm_brand_chest/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_AirsRockStormBrandChest_SHAPES:
 	.incbin "games/tla/src/map/airs_rock_storm_brand_chest/shapes.table.lz"

@@ -93,7 +93,7 @@ void Sprite_SkipToStop(struct Sprite *sprite) {
 s32 Sprite_ComposePicture(struct Sprite *sprite, u32 dir) {
   s32 mirrored;
   u32 size;
-  struct ActorSystemWork *system;
+  struct ActorSystemState *system;
   DrawFn decodePicture;
   s32 decoderWasLoaded;
   struct SpriteAnimation *layer;
@@ -717,7 +717,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
       return;
     }
   }
-  if (Ram_HeapSlots->battleWork == NULL && !sprite->retainCacheEntry) {
+  if (Ram_HeapSlots->battleState == NULL && !sprite->retainCacheEntry) {
     VramCache_ReleaseVram(sprite->slot);
     sprite->dirty = 1;
   }

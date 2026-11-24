@@ -2,13 +2,13 @@
 /// 8 to 16 pixels out at a random angle and flies up at 5 pixels a frame and
 /// out along that angle at 2 to 4.
 void Rock_Spawn(s32 x, s32 y, s32 z, s32 count) {
-  struct RockWork *work;
+  struct RockState *state;
   s32 i;
 
-  work = Ram_HeapSlots->menuWork;
+  state = Ram_HeapSlots->menuState;
   for (i = 0; i < count; i++) {
     s32 angle = Random16();
-    struct Rock *rock = &work->rocks[work->next];
+    struct Rock *rock = &state->rocks[state->next];
 
     rock->timer = 0;
     rock->position[0] = x;
@@ -21,7 +21,7 @@ void Rock_Spawn(s32 x, s32 y, s32 z, s32 count) {
     rock->velocity[2] = 0;
     FieldVector_AddPolarOffsetFX((Random16() << 1) + toFIXED(2), angle,
                                  rock->velocity);
-    work->next++;
-    work->next &= ARRAY_COUNT(work->rocks) - 1;
+    state->next++;
+    state->next &= ARRAY_COUNT(state->rocks) - 1;
   }
 }

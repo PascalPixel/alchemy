@@ -7,7 +7,7 @@
 
 #define HEALING_SPARKS 512 ///< sparks in PARTICLES
 
-/// Where the Djinni's picture is decoded in the work sprite sheet, in bytes.
+/// Where the Djinni's picture is decoded in the state's sprite sheet, in bytes.
 #define HEALING_DJINNI_PICTURE 4096
 /// How far the Djinni sways to either side, in screen pixels.
 #define HEALING_DJINNI_SWAY 20
@@ -174,7 +174,7 @@ void BattleEffect_RunReverseStar(struct BattleEffectParams *args) {
 /// after another, eight frames apart; a healing chime sounds as they gather and
 /// the target glows.
 void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frameCount;
   s32 member;
@@ -193,13 +193,13 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   FIXED point[3];
   DrawRectangle blit[2];
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   canvasShiftX = 0;
   BattleEffect_StartCanvasLayer(0);
   if (mode == HEALING_MODE_REVERSE_STAR)
-    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
+    state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
 
   // The prelude: the Djinni appears; origin receives where.
   if (args->prelude == 1) {
@@ -241,11 +241,12 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
   // The pictures, Eddy's bubble narrowed, and the colours.
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, state->sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET,
-                             work->sheet + HEALING_BUBBLE_SHEET, 1, 0);
+                             state->sheet + HEALING_BUBBLE_SHEET, 1, 0);
   for (i = 0; i != PICTURE_BYTES(HEALING_BUBBLE); i++)
-    work->sheet[HEALING_BUBBLE + i] = work->sheet[HEALING_BUBBLE_SHEET + i * 2];
+    state->sheet[HEALING_BUBBLE + i] =
+        state->sheet[HEALING_BUBBLE_SHEET + i * 2];
   if (mode <= HEALING_MODE_WISH || mode == HEALING_MODE_CURE_POISON ||
       mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC ||
       mode == HEALING_MODE_SPRING || mode == HEALING_MODE_EDDY) {
@@ -286,7 +287,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       resource = Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SMALL_SHEET);
   }
   resource += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(resource, work->sheet + HEALING_DJINNI_PICTURE);
+  Decompress_TaggedLz(resource, state->sheet + HEALING_DJINNI_PICTURE);
   // blit[0] keeps the brighter pixel and blit[1] adds; draw points at them.
   BattleEffect_FetchRectangleBlitters(args->side, draw = blit);
 
@@ -404,10 +405,11 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     motesPerTarget = HEALING_MOTES * 2;
   if (mode == HEALING_MODE_EDDY)
     motesPerTarget = HEALING_MOTES / 4;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != frameCount; frame++) {
-    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraState;
 
     if (frame == 40)
       EFFECT_SHOW_DAMAGE(0);
@@ -426,10 +428,10 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
         if (frame > 32)
           y = y - frame * 2 + 64;
-        blit[0](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
+        blit[0](canvas, state->sheet + HEALING_DJINNI_PICTURE, x, y,
                 DJINNI_WIDTH, DJINNI_HEIGHT);
         if (frame <= 3)
-          draw[1](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
+          draw[1](canvas, state->sheet + HEALING_DJINNI_PICTURE, x, y,
                   DJINNI_WIDTH, DJINNI_HEIGHT);
       } else {
         s32 x = FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) *
@@ -440,10 +442,10 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
         if (frame > 32)
           y = y - frame * 2 + 64;
-        blit[0](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
+        blit[0](canvas, state->sheet + HEALING_DJINNI_PICTURE, x, y,
                 SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         if (frame <= 3)
-          draw[1](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
+          draw[1](canvas, state->sheet + HEALING_DJINNI_PICTURE, x, y,
                   SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       }
     }
@@ -553,14 +555,14 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                   mode == HEALING_MODE_SALT || mode == HEALING_MODE_SPRING ||
                   mode == HEALING_MODE_BREATH || mode == HEALING_MODE_AURA ||
                   mode == HEALING_MODE_REVERSE_STAR) {
-                u8 *cell = work->sheet + gBattleEffect_SparklePictures[size];
+                u8 *cell = state->sheet + gBattleEffect_SparklePictures[size];
                 u32 edge = gBattleEffect_SparkleSizes[size];
                 u32 half = edge >> 1;
 
                 draw[1](canvas, cell, screen.x - half, screen.y - half, edge,
                         edge);
               } else if (mode == HEALING_MODE_EDDY) {
-                blit[0](canvas, work->sheet + HEALING_BUBBLE,
+                blit[0](canvas, state->sheet + HEALING_BUBBLE,
                         screen.x - HEALING_BUBBLE_WIDTH / 2,
                         screen.y - HEALING_BUBBLE_HEIGHT / 2,
                         HEALING_BUBBLE_WIDTH, HEALING_BUBBLE_HEIGHT);
@@ -592,7 +594,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
         }
       }
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

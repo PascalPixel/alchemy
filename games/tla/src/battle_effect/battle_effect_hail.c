@@ -24,7 +24,7 @@
 ///
 /// Abilities: Hail.
 void BattleEffect_RunHail(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 screen[3];
   s32 world[3];
@@ -35,7 +35,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   s32 frame;
   s32 rise;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
@@ -43,8 +43,9 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       DJINNI_ENTRANCE(ELEMENT_MERCURY, args->side, DJINNI_ANCHOR_OVER_USER),
       screen, world);
   BattleEffect_FetchRectangleBlitters(args->side, draw);
-  Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, work->sheet, 1, 1);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, state->sheet, 1, 1);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   // The chips burst up from just above the first target.
   EffectPosition_ProjectBattler(args->targets[0], &origin);
@@ -70,9 +71,9 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     // whatever the sprite sheet holds.
     if (frame == 1) {
       Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET,
-                                 work->sheet + HAIL_CHIP_PICTURES, 1, 1);
+                                 state->sheet + HAIL_CHIP_PICTURES, 1, 1);
       Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET,
-                                 work->sheet + HAIL_DJINNI_PICTURE, 1, 0);
+                                 state->sheet + HAIL_DJINNI_PICTURE, 1, 0);
     }
 
     // The small Djinni circles.
@@ -89,10 +90,10 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       // keeps the compare and the rise.
       if (frame > 69)
         y = (y - frame * 2) + 138;
-      draw[1](canvas, work->sheet + HAIL_DJINNI_PICTURE, x, y,
+      draw[1](canvas, state->sheet + HAIL_DJINNI_PICTURE, x, y,
               SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + HAIL_DJINNI_PICTURE, x, y,
+        draw[1](canvas, state->sheet + HAIL_DJINNI_PICTURE, x, y,
                 SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
     }
 
@@ -109,12 +110,12 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
         width = gHail_PictureWidths[picture];
         height = gHail_PictureHeights[picture];
         draw[i & 1](canvas,
-                    work->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[picture],
+                    state->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[picture],
                     FIXED_INTEGER_PART(chip->x) - width / 2,
                     FIXED_INTEGER_PART(chip->y) - height / 2, width, height);
 #else
         draw[i & 1](canvas,
-                    work->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[picture],
+                    state->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[picture],
                     FIXED_INTEGER_PART(chip->x) -
                         (width = gHail_PictureWidths[picture]) / 2,
                     FIXED_INTEGER_PART(chip->y) -
@@ -126,7 +127,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     }
 
     if (frame == 8) {
-      work->shakeFrames = frame;
+      state->shakeFrames = frame;
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       EFFECT_STRIKE_TARGET(args, 0, 16, KNOCKBACK_LAUNCH);
     }
@@ -137,17 +138,17 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       rise = WATER_WAVE_HEIGHT;
     if (args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != 5; i++)
-        draw[0](canvas, work->sheet, (i << 5) - (frame / 4 & 31), 120 - rise,
+        draw[0](canvas, state->sheet, (i << 5) - (frame / 4 & 31), 120 - rise,
                 WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
     } else {
       for (i = 0; i != 5; i++)
-        draw[0](canvas, work->sheet,
+        draw[0](canvas, state->sheet,
                 ((i << 5) + (frame / 4 & 31)) - WATER_WAVE_WIDTH, 120 - rise,
                 WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
     }
 
     BattleCamera_Shake(4, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -155,7 +156,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 
 /// The small Venus Djinni in the portal sprite sheet.
 #define GROUND_DJINNI_PICTURE 26048
-/// The crackles round the portals, four a portal, in work->particles from
+/// The crackles round the portals, four a portal, in state->particles from
 /// GROUND_FIRST_CRACKLE.
 #define GROUND_FIRST_CRACKLE 32
 #define GROUND_CRACKLES 32
@@ -167,7 +168,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 ///
 /// Abilities: Ground.
 void BattleEffect_RunGround(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 i;
   s32 frame;
@@ -179,9 +180,9 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   struct ScreenPoint position;
   s32 j;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
       args, DJINNI_ENTRANCE(ELEMENT_VENUS, args->side, DJINNI_ANCHOR_OVER_USER),
@@ -193,10 +194,11 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress(RESOURCE_PORTAL_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PORTAL_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET,
-                             work->sheet + GROUND_DJINNI_PICTURE, 1, 1);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+                             state->sheet + GROUND_DJINNI_PICTURE, 1, 1);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   user = BattleObject_GetFar(args->user)->object;
   {
     struct MotionObject *target = BattleObject_GetFar(args->targets[0])->object;
@@ -204,7 +206,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
     // The portals fan out from above the user: eight set out, of which the
     // first GROUND_PORTALS fly.
     for (i = 0; i != 8; i++) {
-      struct Particle *portal = &work->particles[i];
+      struct Particle *portal = &state->particles[i];
 
       SET_POSITION(portal, user->x, toFIXED(66), user->z);
       portal->velocityX = (i * toFIXED(80)) >> 5;
@@ -238,16 +240,17 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                               BLITTER_ADDITIVE);
         if (frame <= 3)
           ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-              canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y,
+              canvas, state->sheet + GROUND_DJINNI_PICTURE, x, y,
               SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-        draw[0](canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y,
+        draw[0](canvas, state->sheet + GROUND_DJINNI_PICTURE, x, y,
                 SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       }
       // Crackles flicker round each portal.
       if ((frame & 1) == 0) {
         for (i = 0; i != GROUND_CRACKLES; i++) {
-          struct Particle *crackle = &work->particles[GROUND_FIRST_CRACKLE + i];
+          struct Particle *crackle =
+              &state->particles[GROUND_FIRST_CRACKLE + i];
 
           crackle->velocityX = Random16() % 6 + 3;
           crackle->velocityY = gHail_CrackleFlips[Random16() & 3];
@@ -255,7 +258,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       }
       EFFECT_VIEW_FROM_CAMERA(camera);
       for (i = 0; i != GROUND_PORTALS; i++) {
-        struct Particle *portal = &work->particles[i];
+        struct Particle *portal = &state->particles[i];
 
         if (portal->variant == 1) {
           if (frame > i * 2) {
@@ -266,20 +269,20 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
             position.x >>= 1;
             x = position.x - PORTAL_WIDTH / 2;
             y = position.y - PORTAL_HEIGHT / 2;
-            draw[0](canvas, work->sheet, x, y, PORTAL_WIDTH, PORTAL_HEIGHT);
+            draw[0](canvas, state->sheet, x, y, PORTAL_WIDTH, PORTAL_HEIGHT);
             // Its glow flickers between the sheet's next two pictures.
             if ((frame & 3) <= 1)
-              draw[0](canvas, work->sheet + gHail_PortalPictures[1],
+              draw[0](canvas, state->sheet + gHail_PortalPictures[1],
                       x + gHail_PortalX[1], y + gHail_PortalY[1],
                       gHail_PortalWidths[1], gHail_PortalHeights[1]);
             else
-              draw[0](canvas, work->sheet + gHail_PortalPictures[2],
+              draw[0](canvas, state->sheet + gHail_PortalPictures[2],
                       x + gHail_PortalX[2], y + gHail_PortalY[2],
                       gHail_PortalWidths[2], gHail_PortalHeights[2]);
             for (j = 0; j != GROUND_CRACKLES_PER_PORTAL; j++) {
               struct Particle *crackle =
-                  &work->particles[GROUND_FIRST_CRACKLE +
-                                   i * GROUND_CRACKLES_PER_PORTAL + j];
+                  &state->particles[GROUND_FIRST_CRACKLE +
+                                    i * GROUND_CRACKLES_PER_PORTAL + j];
               s32 crackleX;
               s32 crackleY;
 
@@ -297,7 +300,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
               else
                 crackleY = y + gHail_PortalY[crackle->velocityX];
               draw[1](canvas,
-                      work->sheet + gHail_PortalPictures[crackle->velocityX],
+                      state->sheet + gHail_PortalPictures[crackle->velocityX],
                       crackleX, crackleY,
                       gHail_PortalWidths[crackle->velocityX],
                       gHail_PortalHeights[crackle->velocityX]);
@@ -318,7 +321,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
               portal->velocityZ = portal->velocityZ * 60 / DAMPING_SCALE;
             }
             if (portal->y < toFIXED(20)) {
-              work->shakeFrames = 8;
+              state->shakeFrames = 8;
               portal->variant = 0;
               Sound_PlayFar(SE_HEAVY_IMPACT);
               EFFECT_STRIKE_TARGET(args, 0, 4, KNOCKBACK_HURL);
@@ -327,7 +330,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
         }
       }
       BattleCamera_Shake(16, 16);
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
     }
   }
 
@@ -342,9 +345,9 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 ///                 on half of rangeY, so with rangeX the smaller the view only
 ///                 shakes to the left.
 void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
-  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
 
-  if (work->shakeFrames > 0) {
+  if (state->shakeFrames > 0) {
     s32 randomX = (rangeX - 1) & Random16();
     s32 halfRange = (s32)rangeY / 2;
     s32 offsetY = ((rangeY - 1) & Random16()) - halfRange;
@@ -354,11 +357,11 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
     gBgScroll[1].y = offsetY + BATTLE_BACKGROUND_SCROLL_Y;
     gProjection.centerX = BATTLE_PROJECTION_CENTER_X - offsetX;
     gProjection.centerY = BATTLE_PROJECTION_CENTER_Y - offsetY;
-    work->shakeFrames--;
+    state->shakeFrames--;
     return;
   }
-  gBgScroll[1].x = work->savedBg1X;
-  gBgScroll[1].y = work->savedBg1Y;
+  gBgScroll[1].x = state->savedBg1X;
+  gBgScroll[1].y = state->savedBg1Y;
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 }
@@ -366,16 +369,16 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
 /// Shakes the battle view up and down only, by a random offset within range,
 /// while the effect's shake lasts.
 void Camera_ApplyVerticalShake(s32 range) {
-  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
 
-  if (work->shakeFrames > 0) {
+  if (state->shakeFrames > 0) {
     s32 offsetY = ((range - 1) & Random16()) - range / 2;
 
     gBgScroll[1].y = offsetY + BATTLE_BACKGROUND_SCROLL_Y;
     gProjection.centerY = BATTLE_PROJECTION_CENTER_Y - offsetY;
-    work->shakeFrames--;
+    state->shakeFrames--;
   } else {
-    gBgScroll[1].y = work->savedBg1Y;
+    gBgScroll[1].y = state->savedBg1Y;
     gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   }
 }

@@ -32,7 +32,7 @@
 #include "field/event_inline.h"
 #include "edition.h"
 #include "system/bg_scroll.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/input.h"
 #include "system/ram_buffer.h"
 #include "system/io_write.h"
@@ -258,23 +258,23 @@ void WindowSystem_InitField(void);
 /// Runs the whole epilogue, image after image, then sets out for the file
 /// screen, which offers to save the cleared game. Returns 0.
 s32 Scene_Initialize(void) {
-  struct MainRoutineWork *work;
+  struct MainRoutineState *state;
   s32 savedSpeed;
   s32 count;
   struct Actor *leader;
-  struct WindowWork *windowWork;
+  struct WindowState *windowState;
   struct BgScroll *scroll;
 
-  work = &gMainRoutineWork;
-  savedSpeed = work->messageSpeed;
-  leader = Actor_Get(work->leaderActorId);
+  state = &gMainRoutineState;
+  savedSpeed = state->messageSpeed;
+  leader = Actor_Get(state->leaderActorId);
   leader->motionFlags = 0;
-  work->messageSpeed = MESSAGE_SPEED_NORMAL;
+  state->messageSpeed = MESSAGE_SPEED_NORMAL;
   EndingImage_Start();
   WindowSystem_InitField();
-  windowWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  windowWork->holdTilemapUpload = 1;
-  windowWork->textMode = 1;
+  windowState = (struct WindowState *)Ram_HeapSlots->windowState;
+  windowState->holdTilemapUpload = 1;
+  windowState->textMode = 1;
   gEpilogueMessage = (s32)MsgFinallyWeVe;
   Epilogue_LoadPortraitFrame();
   FieldEvent_Wait(30);
@@ -409,7 +409,7 @@ s32 Scene_Initialize(void) {
   EndingImage_Show(RESOURCE_ENDING_THE_END_PICTURE, Ram_MapCellBuffer, 0);
   FieldEvent_Wait(180);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  gMainRoutineWork.messageSpeed = savedSpeed;
+  gMainRoutineState.messageSpeed = savedSpeed;
   FieldEvent_Wait(300);
   // The End stays until a button is pressed, or for three minutes.
   count = 0;

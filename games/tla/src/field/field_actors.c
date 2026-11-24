@@ -19,7 +19,7 @@
 #include "battle/battle_system.h"
 #include "system/matrix.h"
 #include "macros.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_sprite.h"
 #include "graphics/render_input.h"
 #include "fixed_math.h"
@@ -156,7 +156,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
 /// returns -1.
 s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
                                       s32 *screenPosition) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX;
   s32 viewZ;
@@ -185,12 +185,12 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
 #define OUTLINE_EDGE_COLOR 15
 
 /// Sets up the actor system: allocates and zeroes the 64 actors and the
-/// system's work, sets the outline's colours and registers the per-frame
+/// system's state, sets the outline's colours and registers the per-frame
 /// updates (mode is an enum ActorSystemMode). A battle moves its actors with
 /// Actor_UpdateAllMotion; the World Map and a battle place their sprites with
 /// the fixed camera.
 void ActorSystem_Initialize(s32 mode) {
-  struct ActorSystemWork *system;
+  struct ActorSystemState *system;
   struct Actor *pool;
   // The fill word Dma_Fill32Cell reads its zero from, one for both fills.
   volatile u32 zero;
@@ -463,11 +463,11 @@ void Actor_StartApproachWatched(struct Actor *actor, s32 watchedActorHandle) {
 }
 
 /// Starts the leader's control script for the way the party moves now
-/// (gMainRoutineWork.movementMode), waiting a frame first for Sand on the World
-/// Map.
+/// (gMainRoutineState.movementMode), waiting a frame first for Sand on the
+/// World Map.
 void Actor_StartRenderModeScript(struct Actor *actor) {
   const s32 *script;
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct MainRoutineState *party = &gMainRoutineState;
 
   switch (party->movementMode) {
   case LEADER_MOVEMENT_WALK:
@@ -683,11 +683,11 @@ void ActorSystem_PlaceSprites(void) {
   struct SpritePlacement point;
   struct SpriteScale scale;
   s32 objectIndex;
-  struct MapWork *map;
+  struct MapState *map;
   s32 *view;
   s32 viewX;
   s32 viewZ;
-  struct ActorSystemWork *system;
+  struct ActorSystemState *system;
   struct Actor *actor;
   u32 kind;
   FIXED dx;
@@ -943,8 +943,8 @@ void Actor_PlaceSprites(struct Actor *actor, s32 angle) {
 /// 64th down. While battle commands are chosen (FLAG_CHOOSING_COMMANDS) it uses
 /// the fixed view matrix and turns the objects by an eighth of a turn less.
 void ActorSystem_ProjectSprites(void) {
-  struct ActorCameraFixed *camera = Ram_HeapSlots->cameraWork;
-  struct ActorSystemWork *system = Ram_HeapSlots->actorSystem;
+  struct ActorCameraFixed *camera = Ram_HeapSlots->cameraState;
+  struct ActorSystemState *system = Ram_HeapSlots->actorSystem;
   struct ActorCameraPoint *eye;
   struct ActorCameraPoint *target;
   struct Actor *actor;

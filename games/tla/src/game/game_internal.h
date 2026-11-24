@@ -27,7 +27,7 @@
 #include "fixed_math.h"
 #include "graphics/resource.h"
 #include "system/scene.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "game/game_flags.h"
 #include "game/owner_state.h"
 #include "game/owner_value.h"
@@ -77,7 +77,7 @@ enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
 
 /// Scratch for Unit_LevelUp, which takes it from EWRAM first
 /// (Heap_AllocEwram) and frees it before returning.
-struct LevelUpWork {
+struct LevelUpState {
   s32 classIndex; ///< the unit's class, written and not read again
   s32 level;      ///< the level before this one
   const struct CharacterDefinition *growth; ///< the character's growth curves
@@ -85,7 +85,7 @@ struct LevelUpWork {
 };
 
 /// The running totals Unit_Calculate builds a unit's stats in.
-struct StatWork {
+struct StatState {
   s32 hp;          ///< maximum HP
   s32 pp;          ///< maximum PP
   s32 atk;         ///< Attack, 0 to UNIT_STAT_MAX once clamped

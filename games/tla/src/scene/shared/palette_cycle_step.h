@@ -8,14 +8,14 @@ void PaletteCycle_Step(void) {
   s32 i;
 
   if (gPaletteCyclePausesInEvents != 0) {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
-    s16 *state = &work->psynergy;
+    struct FieldState *fieldState = Ram_HeapSlots->fieldState;
+    s16 *state = &fieldState->psynergy;
 
     if (*state != 0 && ABILITY_ID(*state) != ABILITY_HOVER)
       return;
-    if (work->revealActive != 0)
+    if (fieldState->revealActive != 0)
       return;
-    if (work->pauseMenu != 0)
+    if (fieldState->pauseMenu != 0)
       return;
   }
   for (i = 0; i <= CYCLE_PLACES - 1; i++)

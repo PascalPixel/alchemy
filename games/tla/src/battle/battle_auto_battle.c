@@ -81,8 +81,8 @@ s32 AutoBattle_BuildActions(struct BattleActionRecord *entries) {
 /// Unused: turns the battle camera while L or R is held, a 128th of a turn
 /// each frame, and redraws the zoomed background unless a background holds it.
 UNUSED void BattleCamera_AdjustByShoulderKeys(void) {
-  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
-  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraState;
+  struct BattleBackgroundState *background = Ram_HeapSlots->battleBackground;
 
   if ((gInput.held & KEY_L) != 0) {
     camera->yaw += TRIG_TURN / 128;
@@ -98,7 +98,7 @@ UNUSED void BattleCamera_AdjustByShoulderKeys(void) {
 /// Auto battle: plays one action, a defeated target replaced by a living unit
 /// of its side. Returns 1 when the party got away, -1 when the unit is down.
 s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
-  struct BattleBackgroundWork *background;
+  struct BattleBackgroundState *background;
   s32 unitId;
   s32 yaw;
   struct Unit *actor;
@@ -136,7 +136,7 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
     break;
   case COMMAND_ATTACK:
   default: {
-    struct BattleBackgroundWork *view = Ram_HeapSlots->battleBackground;
+    struct BattleBackgroundState *view = Ram_HeapSlots->battleBackground;
     view->flag = 0;
     AutoBattle_RunAttackOrItem(action);
     view->flag = 0;
@@ -211,7 +211,7 @@ s32 AutoBattle_ShowDefend(s16 *action) {
 /// plays on the target side. Returns -1 for an invalid unit or target.
 s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   u16 visibleUnits[UNIT_MAX];
-  struct BattlePresentationWork context;
+  struct BattlePresentationState context;
   s32 actorId;
   s32 targetId;
   u32 sideStart;
@@ -229,7 +229,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
     return -1;
 
   {
-    struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
+    struct BattleBackgroundState *background = Ram_HeapSlots->battleBackground;
     // An enemy caster turns the camera to YAW_BEHIND_ENEMIES, not
     // YAW_ENEMY_ACTION.
     background->targetYaw =
@@ -318,7 +318,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
 /// target, the blow, and both return. Returns -1 when either id is not a
 /// battle object.
 UNUSED s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *action) {
-  struct BattlePresentationWork work;
+  struct BattlePresentationState state;
 
   // A short wait when the camera already faces the party's side.
   if (Ram_HeapSlots->battleBackground->targetYaw == YAW_PARTY_ACTION) {
@@ -329,37 +329,37 @@ UNUSED s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *action) {
     wait(30);
   }
 
-  work.actor = action->unitId;
-  if (BattleObject_IsValidId(work.actor) < 0)
+  state.actor = action->unitId;
+  if (BattleObject_IsValidId(state.actor) < 0)
     return -1;
 
-  work.actors[0] = action->target;
-  if (BattleObject_IsValidId(work.actors[0]) < 0)
+  state.actors[0] = action->target;
+  if (BattleObject_IsValidId(state.actors[0]) < 0)
     return -1;
 
   // DEAD: Unit_Get's results are not used; the ROM keeps the calls. The roll
   // only advances the random number generator.
-  Unit_Get(work.actor);
-  Unit_Get(work.actors[0]);
+  Unit_Get(state.actor);
+  Unit_Get(state.actors[0]);
   Random16();
-  MessageArgument_PushFar(work.actor, MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_PushFar(state.actor, MESSAGE_ARGUMENT_ACTOR);
   BattleMessage_ShowAndWaitFar((s32)MsgActorAttacks);
-  BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
+  BattleMotion_ApproachTarget(state.actor, state.actors[0], 13, 0);
   Actor_SetAnimationSpeedFar(
-      (struct Actor *)BattleObject_Get(work.actor)->object, ANIM_STEP_NORMAL);
-  BattleObject_Get(work.actors[0]);
+      (struct Actor *)BattleObject_Get(state.actor)->object, ANIM_STEP_NORMAL);
+  BattleObject_Get(state.actors[0]);
 
-  work.count = 1;
-  if ((u16)work.actors[0] <= ALLY_MAX)
-    work.side = EFFECT_SIDE_PARTY;
+  state.count = 1;
+  if ((u16)state.actors[0] <= ALLY_MAX)
+    state.side = EFFECT_SIDE_PARTY;
   else
-    work.side = EFFECT_SIDE_ENEMIES;
-  work.flags = 0;
+    state.side = EFFECT_SIDE_ENEMIES;
+  state.flags = 0;
 
   wait(4);
-  BattleEffect_RunByIdRangeFar(&work);
-  BattleMotion_ReturnToSpot(work.actors[0]);
-  BattleMotion_ReturnToSpot(work.actor);
+  BattleEffect_RunByIdRangeFar(&state);
+  BattleMotion_ReturnToSpot(state.actors[0]);
+  BattleMotion_ReturnToSpot(state.actor);
   return 0;
 }
 
@@ -367,8 +367,8 @@ UNUSED s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *action) {
 /// target's side as each element's pillar in turn. Returns -1 for an invalid
 /// unit.
 s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
-  struct BattlePresentationWork work;
-  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
+  struct BattlePresentationState state;
+  struct BattleBackgroundState *background = Ram_HeapSlots->battleBackground;
   struct MotionObject *object;
   s32 targetYaw;
   s32 i;
@@ -385,66 +385,66 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
     background->frames = 40;
     wait(40);
   }
-  work.kind = action->parameter;
-  work.initialValue = action->range;
-  work.actor = action->unitId;
-  work.firstTarget = action->target;
-  if (BattleObject_IsValidId(work.actor) < 0)
+  state.kind = action->parameter;
+  state.initialValue = action->range;
+  state.actor = action->unitId;
+  state.firstTarget = action->target;
+  if (BattleObject_IsValidId(state.actor) < 0)
     return -1;
-  if (work.firstTarget >= FIRST_ENEMY_UNIT)
-    work.count =
-        BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, (u16 *)work.actors);
+  if (state.firstTarget >= FIRST_ENEMY_UNIT)
+    state.count =
+        BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, (u16 *)state.actors);
   else
-    work.count =
-        BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)work.actors);
+    state.count =
+        BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)state.actors);
   // The status window without its PP row (see PARTY_STATUS_SUMMONS).
-  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus &
+  PartyStatus_DrawFar(Ram_HeapSlots->battleState->partyStatus &
                       ~PARTY_STATUS_SHOW_PP);
   // The unit raises its hand (POSE_CAST); then only the first living unit of
   // the target's side takes the effect.
-  object = BattleObject_Get(work.actor)->object;
+  object = BattleObject_Get(state.actor)->object;
   Actor_SelectAnimationFar((struct Actor *)object, POSE_CAST);
   Actor_SetAnimationSpeedFar((struct Actor *)object, ANIM_STEP_NORMAL);
   if ((u16)action->target <= ALLY_MAX) {
-    work.side = EFFECT_SIDE_PARTY;
-    BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)work.actors);
-    work.count = 1;
+    state.side = EFFECT_SIDE_PARTY;
+    BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)state.actors);
+    state.count = 1;
   } else {
-    work.side = EFFECT_SIDE_ENEMIES;
-    BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, (u16 *)work.actors);
-    work.count = 1;
+    state.side = EFFECT_SIDE_ENEMIES;
+    BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, (u16 *)state.actors);
+    state.count = 1;
   }
   // Keep each target's sprite entries' parameters for the effect.
-  for (i = 0; i != work.count; i++) {
+  for (i = 0; i != state.count; i++) {
     struct Sprite *animation =
-        (struct Sprite *)BattleObject_Get(work.actors[i])->object->records;
+        (struct Sprite *)BattleObject_Get(state.actors[i])->object->records;
     s32 j;
 
     for (j = 0; j != animation->count - 1; j++)
-      work.params[i][j] = animation->entries[j]->colorMode;
+      state.params[i][j] = animation->entries[j]->colorMode;
   }
-  work.kind = ELEMENT_VENUS;
-  work.variant = 0;
-  BattleEffect_RunElementPillarFar(&work);
-  work.kind = ELEMENT_MERCURY;
-  BattleEffect_RunElementPillarFar(&work);
-  work.kind = ELEMENT_MARS;
-  BattleEffect_RunElementPillarFar(&work);
-  work.kind = ELEMENT_JUPITER;
-  BattleEffect_RunElementPillarFar(&work);
-  work.kind = 0;
+  state.kind = ELEMENT_VENUS;
+  state.variant = 0;
+  BattleEffect_RunElementPillarFar(&state);
+  state.kind = ELEMENT_MERCURY;
+  BattleEffect_RunElementPillarFar(&state);
+  state.kind = ELEMENT_MARS;
+  BattleEffect_RunElementPillarFar(&state);
+  state.kind = ELEMENT_JUPITER;
+  BattleEffect_RunElementPillarFar(&state);
+  state.kind = 0;
   /* LEFTOVER(template): the choice of runner BattleStaging_RunAttack, RunItem
    * and RunPsynergyCast make under their test of the kind, which is 0 here, as
-   * The Broken Seal's twin keeps it; as BattleEffect_RunFromTableFar(&work)
+   * The Broken Seal's twin keeps it; as BattleEffect_RunFromTableFar(&state)
    * alone. */
-  if (work.kind)
-    BattleEffect_RunByIdRangeFar(&work);
+  if (state.kind)
+    BattleEffect_RunByIdRangeFar(&state);
   else
-    BattleEffect_RunFromTableFar(&work);
+    BattleEffect_RunFromTableFar(&state);
   Actor_SelectAnimationFar((struct Actor *)object, POSE_STANDING);
-  for (i = 0; i != work.count; i++)
-    BattleMotion_ReturnToSpot(work.actors[i]);
-  BattleMotion_ReturnToSpot(work.actor);
+  for (i = 0; i != state.count; i++)
+    BattleMotion_ReturnToSpot(state.actors[i]);
+  BattleMotion_ReturnToSpot(state.actor);
   return 0;
 }
 

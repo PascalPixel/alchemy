@@ -4,7 +4,7 @@
 s32 CrackedTile_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTarget *table = &gCrackedTiles;
   struct CellTargetEntry *entry = table->entries;
-  struct MapWork *map;
+  struct MapState *map;
   struct MapLayer *layer;
   struct MapCell *cells;
   struct MapCell *cell;
@@ -58,7 +58,7 @@ s32 CrackedTile_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     }
   }
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+    struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
     s32 leaderX = FIELD_CELL(leader->x.fixed);
     s32 leaderZ = FIELD_CELL(leader->z.fixed);
 

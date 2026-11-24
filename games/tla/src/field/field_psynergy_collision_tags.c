@@ -9,7 +9,7 @@
 /// does, and marks the open cells on each puddle's four sides a gap to jump
 /// across (MapGrid_MarkJumpIfOpen), so the leader jumps onto a frozen one.
 void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct ActorFlag *first = list;
   struct Actor *leader;
 
@@ -52,10 +52,10 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
 /// and flag over: with the flag set and the ice pillar not showing, the cell
 /// is lowered 32 pixels to a wall and the flag cleared; with the flag clear
 /// and the puddle not showing (Frost freezing it), the cell is raised 32
-/// pixels, open and a gap to jump across, and the flag set. The field work
+/// pixels, open and a gap to jump across, and the flag set. The field state
 /// remembers the block.
 void FlagBlock_ApplyFlags(struct ActorFlag *list) {
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   u8 *grid = gMapShapeGrid;
 
   field->movedBlock = NULL;
@@ -73,7 +73,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
         change = 1;
     }
     if (change) {
-      struct MapCell *cells = ((struct MapWork *)Ram_HeapSlots->mapGrid)
+      struct MapCell *cells = ((struct MapState *)Ram_HeapSlots->mapGrid)
                                   ->layers[actor->layer]
                                   .cells;
       u8 *shapes;

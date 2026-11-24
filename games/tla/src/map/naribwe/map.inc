@@ -4,18 +4,18 @@ Field_Naribwe:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 60, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Naribwe, .LField_Naribwe_CELL_PICTURES
+	map_block Field_Naribwe, .LField_Naribwe_CELL_TILES
 	map_block Field_Naribwe, .LField_Naribwe_SHAPES
 	map_block Field_Naribwe, .LField_Naribwe_GRID
 	map_block Field_Naribwe, .LField_Naribwe_SHAPE_GRID
 	map_block Field_Naribwe, .LField_Naribwe_ANIMATION
 	map_block Field_Naribwe, .LField_Naribwe_BLEND
 	map_block Field_Naribwe, .LField_Naribwe_SCENE
-.LField_Naribwe_CELL_PICTURES:
+.LField_Naribwe_CELL_TILES:
 	.ifeq EDITION_INTERNATIONAL
-	.incbin "games/tla/src/map/naribwe/cell_pictures_ja.delta0.lz"
+	.incbin "games/tla/src/map/naribwe/cell_tiles_ja.delta0.lz"
 	.else
-	.incbin "games/tla/src/map/naribwe/cell_pictures.delta0.lz"
+	.incbin "games/tla/src/map/naribwe/cell_tiles.delta0.lz"
 	.endif
 	.balign 4, 0
 .LField_Naribwe_SHAPES:

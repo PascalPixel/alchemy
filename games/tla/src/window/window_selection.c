@@ -5,7 +5,7 @@
 
 #include "window_internal.h"
 #include "resource_ids.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "field/map_grid.h"
 #include "flags.h"
 #include "sounds.h"
@@ -21,16 +21,16 @@
 #define SELECTION_ROW_ICONS 7
 #define SELECTION_CHOSEN_ICONS 5
 
-/// The arrows at the row's ends: their records in SelectionMenuWork.records,
+/// The arrows at the row's ends: their records in SelectionMenuState.records,
 /// and the side SelectionMenu_SetupArrow and SelectionMenu_DrawArrow take.
 enum SelectionArrow { SELECTION_ARROW_LEFT = 0, SELECTION_ARROW_RIGHT = 1 };
 
-/// SelectionMenuWork.verticalScroll as the screen is made: the row's icons
+/// SelectionMenuState.verticalScroll as the screen is made: the row's icons
 /// drawn 32 pixels lower, below the bottom of the screen, and the cursor held
 /// still, until SelectionMenu_Clear readies the list.
 #define SELECTION_ROW_HIDDEN 32
 
-/// SelectionMenuWork.locked as the screen is made and once a yes or no window
+/// SelectionMenuState.locked as the screen is made and once a yes or no window
 /// has opened: nonzero keeps a yes or no row and its window at the bottom of
 /// the screen, as Menu_RunSelectionForValue's 1 does.
 #define SELECTION_YES_NO_AT_BOTTOM 999
@@ -44,16 +44,17 @@ enum SelectionArrow { SELECTION_ARROW_LEFT = 0, SELECTION_ARROW_RIGHT = 1 };
 s32 SelectionMenu_FindFreeIcon(s32 kind);
 void SelectionMenu_LoadLargeIcon(void);
 void SelectionMenu_Draw(void);
-void SelectionMenu_DrawArrow(struct SelectionMenuWork *state, s32 side);
-void SelectionMenu_SetupArrow(struct SelectionMenuWork *state, s32 index);
-void SelectionMenu_StepRight(struct SelectionMenuWork *state);
-void SelectionMenu_StepLeft(struct SelectionMenuWork *state);
-void SelectionMenu_RedrawIcon(struct SelectionMenuWork *state, u32 rowIndex);
-void SelectionMenu_HighlightIcon(struct SelectionMenuWork *state, u32 rowIndex);
-void SelectionMenu_Scroll(struct SelectionMenuWork *screen, s32 forward);
+void SelectionMenu_DrawArrow(struct SelectionMenuState *state, s32 side);
+void SelectionMenu_SetupArrow(struct SelectionMenuState *state, s32 index);
+void SelectionMenu_StepRight(struct SelectionMenuState *state);
+void SelectionMenu_StepLeft(struct SelectionMenuState *state);
+void SelectionMenu_RedrawIcon(struct SelectionMenuState *state, u32 rowIndex);
+void SelectionMenu_HighlightIcon(struct SelectionMenuState *state,
+                                 u32 rowIndex);
+void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward);
 void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                              s32 reuse);
-u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen);
+u32 Menu_ConfirmSelection(struct SelectionMenuState *screen);
 void PartyStatus_OpenAndWait(void);
 
 extern const u8 gMenu_AnimatedCursorTiles[];
@@ -62,14 +63,14 @@ extern const u8 gMenu_AnimatedCursorTiles[];
 /// from, with arrows at each end and a pointing hand over the chosen target,
 /// whose picture takes a VRAM cache entry.
 void SelectionMenu_Create(void) {
-  struct SelectionMenuWork *screen;
+  struct SelectionMenuState *screen;
   struct SelectionSprite *visual;
   const u8 *table;
   s32 i;
   u16 clear = 0;
 
   screen = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_MENU,
-                               sizeof(struct SelectionMenuWork));
+                               sizeof(struct SelectionMenuState));
   screen->head = (struct SelectionNode *)(u32)clear;
   screen->path = (struct SelectionNode *)(u32)clear;
   screen->window = (struct Window *)(u32)clear;
@@ -114,7 +115,7 @@ void SelectionMenu_Create(void) {
 /// Empties the selection screen's list of entries; after an entry was chosen
 /// (SELECTION_CURSOR_RESET) the next list starts again from its first entry.
 void SelectionMenu_Clear(void) {
-  struct SelectionMenuWork *screen;
+  struct SelectionMenuState *screen;
 
   screen = Ram_HeapSlots->selectionMenu;
   screen->head = NULL;
@@ -132,7 +133,7 @@ void SelectionMenu_Clear(void) {
 /// IconKind) are ICON_KIND_COMMAND, ICON_KIND_YES_NO, ICON_KIND_ITEM and
 /// ICON_KIND_ABILITY; base is the command's, item's or ability's number.
 void SelectionMenu_AddEntry(u32 kind, u32 base) {
-  struct SelectionMenuWork *state = Ram_HeapSlots->selectionMenu;
+  struct SelectionMenuState *state = Ram_HeapSlots->selectionMenu;
   u16 count = state->count;
 
   if (count != SELECTION_MENU_ENTRY_LIMIT) {
@@ -146,7 +147,7 @@ void SelectionMenu_AddEntry(u32 kind, u32 base) {
 /// in a row along the bottom of the screen, and loads the large icon of the
 /// one under the cursor.
 void SelectionMenu_BuildEntries(u32 unused) {
-  struct SelectionMenuWork *screen = Ram_HeapSlots->selectionMenu;
+  struct SelectionMenuState *screen = Ram_HeapSlots->selectionMenu;
   u32 count = screen->count;
   u32 index;
   struct SelectionNode *previous = 0;
@@ -208,8 +209,8 @@ void SelectionMenu_ReservedNoOp(void) {}
 /// Returns a free selection icon record of `kind` (enum SelectionIconGroup),
 /// or NULL.
 s32 SelectionMenu_FindFreeIcon(s32 kind) {
-  struct SelectionMenuWork *state =
-      (struct SelectionMenuWork *)Ram_HeapSlots->selectionMenu;
+  struct SelectionMenuState *state =
+      (struct SelectionMenuState *)Ram_HeapSlots->selectionMenu;
   s32 i;
 
   if (kind != SELECTION_ICON_ROW) {
@@ -242,7 +243,7 @@ extern const s8 gMenu_CursorBobOffsets[];
 /// the large icon over the chosen one, the end arrows, the icons already chosen
 /// and the pointing hand.
 void SelectionMenu_Draw(void) {
-  struct SelectionMenuWork *state = Ram_HeapSlots->selectionMenu;
+  struct SelectionMenuState *state = Ram_HeapSlots->selectionMenu;
   struct SelectionSprite *cursorEntry =
       &state->records[SELECTION_RECORD_HAND].sprite;
   struct SelectionNode *cursor = &state->records[SELECTION_RECORD_HAND];
@@ -428,7 +429,7 @@ extern u8 gMenu_CursorActorTiles[], gMenu_CursorLeftActorTiles[];
 /// Draws the selection screen's left or right arrow (enum SelectionArrow),
 /// nudged outwards while it flashes after a scroll: the record's base holds the
 /// frames left of the nudge (8 after each scroll) and is the nudge in pixels.
-void SelectionMenu_DrawArrow(struct SelectionMenuWork *state, s32 side) {
+void SelectionMenu_DrawArrow(struct SelectionMenuState *state, s32 side) {
   u32 animationStep = (gVBlankCount >> 2) & 7;
   struct SelectionSprite *arrow;
   const u8 *arrowTiles;
@@ -471,7 +472,7 @@ void WindowSprite_PrepareForRedraw(struct Window *);
 /// inside the frame; 0 keeps the open window as it is. The window stays open
 /// until SelectionMenu_Close closes it.
 void SelectionMenu_OpenNameWindow(s32 mode, u32 count) {
-  struct SelectionMenuWork *screen;
+  struct SelectionMenuState *screen;
   struct SelectionNode *node;
   struct Window **slot;
   struct Window *window;
@@ -514,11 +515,11 @@ void SelectionMenu_OpenNameWindow(s32 mode, u32 count) {
   }
 }
 
-/// Closes the selection screen and frees its icons, tiles and work block. The
+/// Closes the selection screen and frees its icons, tiles and state. The
 /// chosen icons go too, so the choices are only in the indexes the loops
 /// returned.
 void SelectionMenu_Close(void) {
-  struct SelectionMenuWork *state = Ram_HeapSlots->selectionMenu;
+  struct SelectionMenuState *state = Ram_HeapSlots->selectionMenu;
   struct SelectionNode *node;
 
   SelectionMenu_StopDrawing();
@@ -554,7 +555,7 @@ void SelectionMenu_Close(void) {
 
 /// Moves the row of icons to start at pixel (x, y), 16 pixels apart.
 void SelectionMenu_SetPosition(u32 x, u32 y) {
-  struct SelectionMenuWork *state;
+  struct SelectionMenuState *state;
   struct SelectionNode *node;
 
   state = Ram_HeapSlots->selectionMenu;
@@ -583,7 +584,7 @@ void Menu_SetupSelectionBothSides(void) {
 /// shown when there are entries beyond that end. The first call takes the
 /// arrow's VRAM cache entry; later calls only move it and decide whether it
 /// shows.
-void SelectionMenu_SetupArrow(struct SelectionMenuWork *state, s32 side) {
+void SelectionMenu_SetupArrow(struct SelectionMenuState *state, s32 side) {
   struct SelectionSprite *arrow = &state->records[side].sprite;
   const u8 *arrowTiles = 0;
   u32 count;
@@ -628,7 +629,7 @@ void SelectionMenu_SetupArrow(struct SelectionMenuWork *state, s32 side) {
 
 /// Returns the icon under the cursor: the row's icon at place cursorIndex.
 struct SelectionNode *
-SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen) {
+SelectionMenu_GetCursorNode(struct SelectionMenuState *screen) {
   struct SelectionNode *node = screen->head;
   s32 i;
 
@@ -652,7 +653,7 @@ SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen) {
 /// moving or choosing; any mode but 0 allows cancelling. Reached only through
 /// a bare entry of the window far-call table.
 s32 SelectionMenu_Run(s32 mode) {
-  struct SelectionMenuWork *screen = Ram_HeapSlots->selectionMenu;
+  struct SelectionMenuState *screen = Ram_HeapSlots->selectionMenu;
 
   SelectionMenu_HighlightIcon(screen, 0);
   for (;;) {
@@ -677,7 +678,7 @@ s32 SelectionMenu_Run(s32 mode) {
 
 /// As SelectionMenu_Run, with the menu sounds.
 u32 SelectionMenu_RunWithSounds(u32 mode) {
-  struct SelectionMenuWork *screen = Ram_HeapSlots->selectionMenu;
+  struct SelectionMenuState *screen = Ram_HeapSlots->selectionMenu;
   u32 result;
 
   for (;;) {
@@ -718,7 +719,7 @@ u32 SelectionMenu_RunWithSounds(u32 mode) {
 
 /// Unused: moves the cursor one entry right, scrolling the row at its last
 /// place; it stops at the end, where SelectionMenu_StepRight wraps around.
-UNUSED void Menu_MoveSelectionForward(struct SelectionMenuWork *screen) {
+UNUSED void Menu_MoveSelectionForward(struct SelectionMenuState *screen) {
   u32 nextEntry = screen->top + screen->cursorIndex + 1;
 
   if (nextEntry == screen->count) {
@@ -748,7 +749,7 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionMenuWork *screen) {
 
 /// Moves the cursor one entry left, scrolling the row at its second place; it
 /// stops at the beginning, where SelectionMenu_StepLeft wraps around.
-void Menu_MoveSelectionBackward(struct SelectionMenuWork *screen) {
+void Menu_MoveSelectionBackward(struct SelectionMenuState *screen) {
   if (screen->top == 0 && screen->cursorIndex == 0) {
     return;
   }
@@ -775,7 +776,7 @@ void Menu_MoveSelectionBackward(struct SelectionMenuWork *screen) {
 
 /// Moves the cursor one entry right, scrolling the row at its edge and
 /// wrapping from the last entry to the first.
-void SelectionMenu_StepRight(struct SelectionMenuWork *state) {
+void SelectionMenu_StepRight(struct SelectionMenuState *state) {
   struct SelectionNode *node;
   u32 entryIndex;
   s32 y;
@@ -845,7 +846,7 @@ void SelectionMenu_StepRight(struct SelectionMenuWork *state) {
 
 /// Moves the cursor one entry left, scrolling the row at its edge and
 /// wrapping from the first entry to the last.
-void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
+void SelectionMenu_StepLeft(struct SelectionMenuState *state) {
   struct SelectionNode *node;
   s32 i;
   s32 kind;
@@ -915,7 +916,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
 
 /// Redraws the command icon at row place rowIndex in its plain state, in its
 /// own VRAM cache entry. Other kinds of icon are left alone.
-void SelectionMenu_RedrawIcon(struct SelectionMenuWork *state, u32 rowIndex) {
+void SelectionMenu_RedrawIcon(struct SelectionMenuState *state, u32 rowIndex) {
   struct SelectionNode *node = state->head;
   u32 output;
   u32 value;
@@ -935,7 +936,7 @@ void SelectionMenu_RedrawIcon(struct SelectionMenuWork *state, u32 rowIndex) {
 /// Redraws the command icon at row place rowIndex and loads its large icon.
 /// The small icon is drawn the same as SelectionMenu_RedrawIcon draws it;
 /// the highlight is the large icon.
-void SelectionMenu_HighlightIcon(struct SelectionMenuWork *state,
+void SelectionMenu_HighlightIcon(struct SelectionMenuState *state,
                                  u32 rowIndex) {
   struct SelectionNode *node = state->head;
   u32 res;
@@ -958,7 +959,7 @@ void SelectionMenu_HighlightIcon(struct SelectionMenuWork *state,
 /// with mode 0); Menu_ConfirmSelection calls it as an entry is chosen. It
 /// passes a unit list with one place an icon, of which only the end marker
 /// (BATTLE_UNIT_LIST_END) is written; mode 0 never reads the list.
-void Menu_ClearBattleHighlight(struct SelectionMenuWork *screen) {
+void Menu_ClearBattleHighlight(struct SelectionMenuState *screen) {
   u16 data[6];
   struct SelectionNode *node = screen->head;
   s32 count = 0;
@@ -975,7 +976,7 @@ void Menu_ClearBattleHighlight(struct SelectionMenuWork *screen) {
 /// leftmost shrinks away, and back the reverse; waits until it has moved.
 /// The icons move 2 pixels a frame, and the arriving and leaving icons zoom by
 /// an eighth a frame, so a scroll takes 8 frames.
-void SelectionMenu_Scroll(struct SelectionMenuWork *screen, s32 forward) {
+void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward) {
   struct SelectionNode *p;
   struct SelectionNode *last;
   struct SelectionNode *first;
@@ -1188,7 +1189,7 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
 
 /// Chooses the entry under the cursor: the other icons gather into it and
 /// vanish, and it joins the chosen icons at the top left.
-u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
+u32 Menu_ConfirmSelection(struct SelectionMenuState *screen) {
   struct SelectionNode *node;
   struct SelectionNode *other = NULL;
   u32 place = 0;
@@ -1342,7 +1343,7 @@ void MenuArrow_Release(s32 slot) { VramCache_FreeEntry(slot); }
 /// LARGE_ICON_ZOOM_STEP a frame. Other kinds of entry show none. The icon keeps
 /// its VRAM cache entry until Resource_ResetPendingTransfer.
 void SelectionMenu_LoadLargeIcon(void) {
-  struct SelectionMenuWork *state = Ram_HeapSlots->selectionMenu;
+  struct SelectionMenuState *state = Ram_HeapSlots->selectionMenu;
   struct SelectionNode *node = SelectionMenu_GetCursorNode(state);
   struct SelectionNode *largeIcon;
   GlyphTransfer *buffer;
@@ -1380,7 +1381,7 @@ void SelectionMenu_LoadLargeIcon(void) {
 /// empty.
 void Resource_ResetPendingTransfer(void) {
   struct SelectionNode *largeIcon =
-      &((struct SelectionMenuWork *)Ram_HeapSlots->selectionMenu)
+      &((struct SelectionMenuState *)Ram_HeapSlots->selectionMenu)
            ->records[SELECTION_RECORD_LARGE_ICON];
 
   if (largeIcon->kind != ICON_KIND_NONE) {
@@ -1396,14 +1397,14 @@ s32 FieldMenu_SelectCommand(s32);
 /// returns the chosen screen's result. Cancelling the menu returns an
 /// undefined value, the missing result of PartyStatus_CloseWithMenu (0 under
 /// UBFIX); its one caller, FieldSequence_Run, ignores the result. Its case for
-/// command 0, which stores the trigger tile ahead in the field work's
+/// command 0, which stores the trigger tile ahead in the field state's
 /// examineCell, is unreachable.
 s32 FieldMenu_Run(void) {
   s32 ret;
   s32 selection;
-  struct FieldWork *state;
+  struct FieldState *state;
 
-  state = Ram_HeapSlots->fieldWork;
+  state = Ram_HeapSlots->fieldState;
   selection = 0;
 
   for (;;) {
@@ -1479,7 +1480,7 @@ void SelectionMenu_BuildEntries(u32);
 /// Runs a selection row with the cursor on entry initialIndex, cancellable, and
 /// returns the entry chosen or -1.
 u32 Menu_RunSelectionForValue(u32 initialIndex) {
-  struct SelectionMenuWork *state = Ram_HeapSlots->selectionMenu;
+  struct SelectionMenuState *state = Ram_HeapSlots->selectionMenu;
   u32 result;
 
   state->cursorIndex = initialIndex;

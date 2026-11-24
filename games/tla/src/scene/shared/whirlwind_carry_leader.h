@@ -3,8 +3,8 @@
 /// ground beside where it stopped with a thud, and the camera follows him
 /// again.
 void Whirlwind_CarryLeader(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
   struct Actor *linked = actor->watchedActor;
   struct Actor *shadow;
   u8 *p;
@@ -15,7 +15,7 @@ void Whirlwind_CarryLeader(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   rise = 0;
-  work->glowHeld = rise;
+  state->glowHeld = rise;
 
   actor->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(actor, 0);
@@ -32,8 +32,8 @@ void Whirlwind_CarryLeader(void) {
     *p ^= ACTOR_PRIORITY_UNDERFOOT << (gFrameCount & 1);
     wait(1);
   }
-  work->glow = 1;
-  work->glowHeld = 1;
+  state->glow = 1;
+  state->glowHeld = 1;
   angle = linked->facing;
   actor->x.fixed = FIELD_HALF_CELL_ORIGIN(
       (FIELD_HALF_CELL(linked->x.fixed) & ~1) + FACING_EIGHTH_INDEX(angle) - 1);
@@ -72,10 +72,10 @@ void Whirlwind_CarryLeader(void) {
     } while (actor->velocityY != 0);
   }
   FieldActor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_AUTOMATIC;
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
-  work->glowHeld = 1;
-  work->stepTrigger = 0;
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
+  state->glowHeld = 1;
+  state->stepTrigger = 0;
   Event_End();
 }

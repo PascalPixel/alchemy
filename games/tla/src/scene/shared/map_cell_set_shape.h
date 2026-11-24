@@ -1,6 +1,6 @@
 /// Sets the shape of a cell to the height given.
 s32 MagmaRockInside_SetCellShape(s32 layer, s32 x, s32 z, s32 height) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 shape = MapGrid_GetTerrainKind(layer, x, z);
   u8 *out = Ram_MapShapeGrid +
             (map->layers[layer].cells - (struct MapCell *)Ram_MapCellBuffer);

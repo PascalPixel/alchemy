@@ -4,15 +4,15 @@ Field_Idejima:
 	map_layer 0, 0, 16, 16, -1, -2, 0x1, 0x1
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Idejima, .LField_Idejima_CELL_PICTURES
+	map_block Field_Idejima, .LField_Idejima_CELL_TILES
 	map_block Field_Idejima, .LField_Idejima_SHAPES
 	map_block Field_Idejima, .LField_Idejima_GRID
 	map_block Field_Idejima, .LField_Idejima_SHAPE_GRID
 	map_block Field_Idejima, .LField_Idejima_ANIMATION
 	map_block Field_Idejima, .LField_Idejima_BLEND
 	map_block Field_Idejima, .LField_Idejima_SCENE
-.LField_Idejima_CELL_PICTURES:
-	.incbin "games/tla/src/map/idejima/cell_pictures.delta2.lz"
+.LField_Idejima_CELL_TILES:
+	.incbin "games/tla/src/map/idejima/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_Idejima_SHAPES:
 	.incbin "games/tla/src/map/idejima/shapes.table.lz"

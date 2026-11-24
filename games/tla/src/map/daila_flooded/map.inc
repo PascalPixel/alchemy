@@ -4,15 +4,15 @@ Field_DailaFlooded:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_DailaFlooded, .LField_DailaFlooded_CELL_PICTURES
+	map_block Field_DailaFlooded, .LField_DailaFlooded_CELL_TILES
 	map_block Field_DailaFlooded, .LField_DailaFlooded_SHAPES
 	map_block Field_DailaFlooded, .LField_DailaFlooded_GRID
 	map_block Field_DailaFlooded, .LField_DailaFlooded_SHAPE_GRID
 	map_block Field_DailaFlooded, .LField_DailaFlooded_ANIMATION
 	map_block Field_DailaFlooded
 	map_block Field_DailaFlooded, .LField_DailaFlooded_SCENE
-.LField_DailaFlooded_CELL_PICTURES:
-	.incbin "games/tla/src/map/daila_flooded/cell_pictures.delta1.lz"
+.LField_DailaFlooded_CELL_TILES:
+	.incbin "games/tla/src/map/daila_flooded/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_DailaFlooded_SHAPES:
 	.incbin "games/tla/src/map/daila_flooded/shapes.table.lz"

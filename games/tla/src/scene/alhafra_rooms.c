@@ -11,7 +11,7 @@
 /// people's tables change at those two points (FLAG_BRIGGS_CAUGHT and
 /// FLAG_ALHAFRA_MAST_CLEARED).
 
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "battle/battle.h"
@@ -181,7 +181,7 @@ void AlhafraRooms_MeetAlex(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ALEX, 0, 10);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -195,7 +195,7 @@ enum { ALHAFRA_INN = 2 };
 /// Felix talks to the item merchant: across his counter, the shop opens;
 /// from anywhere else he asks Felix not to mention the tidal wave.
 void AlhafraRooms_TalkToItemMerchant(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_ALHAFRA_ITEMS, actor);
@@ -209,7 +209,7 @@ void AlhafraRooms_TalkToItemMerchant(s32 actor) {
 /// Felix talks to the innkeeper: across his counter, the inn; from anywhere
 /// else he tells of the townsfolk who lost their homes.
 void AlhafraRooms_TalkToInnkeeper(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(ALHAFRA_INN, actor);
@@ -223,7 +223,7 @@ void AlhafraRooms_TalkToInnkeeper(s32 actor) {
 /// Felix talks to the priest: across his counter, the Sanctum; from anywhere
 /// else he tells of a terrible village in the middle of Osenia.
 void AlhafraRooms_TalkToPriest(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
@@ -250,8 +250,8 @@ void AlhafraRooms_GuestsAskForTea(void) {
   Event_SetFlag(FLAG_GUESTS_ASKED_FOR_TEA);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 152, 328);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 152, 328);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsArentYouThirstyMyDear);
   Actor_FaceDirection(ACTOR_DEMANDING_GUEST, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -302,7 +302,7 @@ void AlhafraRooms_GuestsAskForTea(void) {
 /// Felix talks to the old houseguest, who grumbles that the lady of the
 /// house is no lady at all.
 void AlhafraRooms_TalkToDemandingGuest(s32 actor) {
-  Actor_FaceEachOther(actor, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceEachOther(actor, gMainRoutineState.leaderActorId, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsWellISayItSeems);
   // "Well! I say! It seems the lady of the house is no lady at all!"
   Event_ShowMessage(actor, 0);
@@ -311,7 +311,7 @@ void AlhafraRooms_TalkToDemandingGuest(s32 actor) {
 
 /// Felix casts Mind Read on Alex, who turns to him and asks him to stop.
 void AlhafraRooms_ReadAlexsMind(s32 unused, s32 actor) {
-  Actor_FaceEachOther(actor, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceEachOther(actor, gMainRoutineState.leaderActorId, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsReallyIDoWishYou);
   // "Really, I do wish you would quit using your Mind Read on me... Trust..."
   Event_ShowMessage(actor, 0);
@@ -393,7 +393,7 @@ void FadeOverlay_FillTiles(s32 mode);
 /// Sets up the houses: the old couple's second sprites, and once the mast is
 /// cleared the two sailors in Alex's room.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
@@ -411,7 +411,7 @@ s32 Scene_Initialize(void) {
   Actor_Get(ACTOR_DEMANDING_GUESTS_WIFE)->update =
       AlhafraRooms_DrawSecondGuestSprite;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    if (Actor_Get(gMainRoutineWork.leaderActorId)->x.fixed >= toFIXED(512))
+    if (Actor_Get(gMainRoutineState.leaderActorId)->x.fixed >= toFIXED(512))
       Event_SetFlag(FLAG_ENTERED_IN_THE_EAST);
     else
       Event_ClearFlag(FLAG_ENTERED_IN_THE_EAST);
@@ -440,7 +440,7 @@ void FadeOverlay_FillTiles(s32 mode);
 
 /// Sets up the houses and the old couple's second sprites.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_PSYNERGY;

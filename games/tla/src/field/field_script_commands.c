@@ -587,7 +587,7 @@ s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *actor) {
 s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   struct Actor *camera = interpreter;
   struct Actor *leader;
-  struct MapWork *bounds;
+  struct MapState *bounds;
   FIXED minX;
   FIXED minZ;
   FIXED maxX;
@@ -705,7 +705,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
 /// camera boxes.
 s32 FieldCamera_FollowWatchedInBounds(struct Actor *camera) {
   struct Actor *leader;
-  struct MapWork *bounds;
+  struct MapState *bounds;
   FIXED minX;
   FIXED minZ;
   FIXED maxX;
@@ -1136,17 +1136,17 @@ SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRepeatCount, repeatCount,
                              u8)
 
 /// Work value SW_WAIT: sets, adds to or compares the wait counter.
-void ActorScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
+void ActorScript_SetOrCompareWait(struct ScriptOperands *state, s32 operation,
                                   s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
-    work->wait = value;
+    state->wait = value;
     return;
   }
   if (operation == SCRIPT_OPERAND_ADD) {
-    work->wait += value;
+    state->wait += value;
     return;
   }
-  work->conditionResult = (s16)work->wait == (s16)value;
+  state->conditionResult = (s16)state->wait == (s16)value;
 }
 
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareTimer, timer, s16)
@@ -1224,7 +1224,7 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
   collision = 0;
   actor->motionFlags = ACTOR_FLOATS;
   // Hovering, the dash button changes only the animation, not the speed.
-  if (gInput.held & gMainRoutineWork.dashKeys) {
+  if (gInput.held & gMainRoutineState.dashKeys) {
     actor->speedLimit = toFIXED(1) / 2;
     actor->acceleration = toFIXED(1) / 8;
     movementAnimation = ANIM_LEADER_RUN;
@@ -1335,19 +1335,19 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
     }
   }
 
-  if (Ram_HeapSlots->fieldWork != NULL) {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  if (Ram_HeapSlots->fieldState != NULL) {
+    struct FieldState *state = Ram_HeapSlots->fieldState;
 
     if (collision & PLAYER_STEP_BLOCKED)
-      work->blockedSteps++;
+      state->blockedSteps++;
     else
-      work->blockedSteps = 0;
+      state->blockedSteps = 0;
   }
   if (collision != 0) {
     s32 action;
 
     action = ANIM_LEADER_LOOK_AROUND;
-    if (Unit_Get(gMainRoutineWork.leaderActorId)->hp == 0)
+    if (Unit_Get(gMainRoutineState.leaderActorId)->hp == 0)
       action = ANIM_LEADER_LEAN_BACK;
     Actor_SelectAnimation(actor, action);
   } else {
@@ -1378,13 +1378,13 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
   }
 
   pressed = 0;
-  if (Ram_HeapSlots->fieldWork == NULL)
+  if (Ram_HeapSlots->fieldState == NULL)
     return 0;
-  if ((gInput.pressed & gMainRoutineWork.selectKeys) ||
-      (gInput.pressed & gMainRoutineWork.aKeys) ||
-      (gInput.pressed & gMainRoutineWork.startKeys) ||
-      (gInput.pressed & gMainRoutineWork.firstShortcutKeys) ||
-      (gInput.pressed & gMainRoutineWork.secondShortcutKeys))
+  if ((gInput.pressed & gMainRoutineState.selectKeys) ||
+      (gInput.pressed & gMainRoutineState.aKeys) ||
+      (gInput.pressed & gMainRoutineState.startKeys) ||
+      (gInput.pressed & gMainRoutineState.firstShortcutKeys) ||
+      (gInput.pressed & gMainRoutineState.secondShortcutKeys))
     pressed = 1;
   // While hovering the menus and shortcuts are refused with a buzz.
   if (pressed) {

@@ -2,7 +2,7 @@
 #define ALCHEMY_PERSPECTIVE_H
 
 /// @file
-/// The world map's perspective view work.
+/// The world map's perspective view state.
 
 #include "fixed_math.h"
 #include "static_assert.h"
@@ -13,13 +13,13 @@
 /// grid of tile ids and zoom, then the still image's state and the region
 /// tint.
 struct WorldMapView {
-  s32 *origin;                    ///< the followed point, as in MapWork
-  s32 shakeX, shakeY, shakeDecay; ///< the screen shake, as in MapWork
+  s32 *origin;                    ///< the followed point, as in MapState
+  s32 shakeX, shakeY, shakeDecay; ///< the screen shake, as in MapState
   u8 *script;                     ///< NULL at load
-  u16 fade; ///< MapWork's flags: REG_DISPCNT bits, BG0 to BG3 and the sprites
+  u16 fade; ///< MapState's flags: REG_DISPCNT bits, BG0 to BG3 and the sprites
             ///< at load
-  u8 fadeStep; ///< MapWork's wideTiles, 0x80 at load
-  /// As MapWork: footprints, tileset animations and blend script.
+  u8 fadeStep; ///< MapState's wideTiles, 0x80 at load
+  /// As MapState: footprints, tileset animations and blend script.
   u8 animationsAndBlend[205];
   FIXED viewX;             ///< the view's left, 16.16 fixed-point pixels
   FIXED viewY;             ///< the view's top, 16.16 fixed-point pixels

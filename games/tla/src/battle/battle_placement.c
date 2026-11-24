@@ -462,7 +462,7 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
   *y = gBattlePlacement_StepPairs[partyPlace + 1];
 }
 
-/// BattleWork.enemyIds of an enemy that left the battle, and of a place
+/// BattleState.enemyIds of an enemy that left the battle, and of a place
 /// held for one: unit ids 254 and 255 in the list.
 #define IS_PLACEHOLDER_ID(id) ((u16)((id) - BATTLE_UNIT_REMOVED) <= 1)
 
@@ -545,7 +545,7 @@ s32 Enemy_GetFreeUnitId(void) {
 /// new place, skipping the removed places before the first enemy and laying
 /// out up to the last one still there.
 void BattlePlacement_RelayoutEnemies(void) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   u16 unitIds[UNIT_MAX];
   s32 x[ENEMY_BATTLE_SIZE];
   s32 z[ENEMY_BATTLE_SIZE];
@@ -593,11 +593,11 @@ void BattleUnit_RefreshPlacement(void) {
   s32 n;
   s32 value;
   u8 *p;
-  struct BattleWork *battle;
+  struct BattleState *battle;
 
   place = 0;
   stand = 0;
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   count = BattleParty_PrepareMembers(ids);
   count += BattleParty_PrepareReserveOwners(ids + count);
   // placement[0..7] is each party unit id's place and placement[8..13] the

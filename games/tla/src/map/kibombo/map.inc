@@ -4,15 +4,15 @@ Field_Kibombo:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Kibombo, .LField_Kibombo_CELL_PICTURES
+	map_block Field_Kibombo, .LField_Kibombo_CELL_TILES
 	map_block Field_Kibombo, .LField_Kibombo_SHAPES
 	map_block Field_Kibombo, .LField_Kibombo_GRID
 	map_block Field_Kibombo, .LField_Kibombo_SHAPE_GRID
 	map_block Field_Kibombo, .LField_Kibombo_ANIMATION
 	map_block Field_Kibombo, .LField_Kibombo_BLEND
 	map_block Field_Kibombo, .LField_Kibombo_SCENE
-.LField_Kibombo_CELL_PICTURES:
-	.incbin "games/tla/src/map/kibombo/cell_pictures.delta0.lz"
+.LField_Kibombo_CELL_TILES:
+	.incbin "games/tla/src/map/kibombo/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_Kibombo_SHAPES:
 	.incbin "games/tla/src/map/kibombo/shapes.table.lz"

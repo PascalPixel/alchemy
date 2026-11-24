@@ -24,7 +24,7 @@
 ///
 /// Abilities: Fire, Fireball, Inferno.
 void BattleEffect_RunFire(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   struct BattleCamera *camera;
@@ -35,15 +35,15 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   struct MotionObject *user;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   sheet = Ram_HeapSlots->battleSheet;
   if (args->side == EFFECT_SIDE_PARTY)
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   else
     BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -69,17 +69,18 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
     ember->variant = FIRE_EMBER_IN_FLIGHT;
   }
 
-  work->cameraDelta = 0;
-  work->cameraPhase = CAMERA_PHASE_IDLE;
+  state->cameraDelta = 0;
+  state->cameraPhase = CAMERA_PHASE_IDLE;
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != (gFire_Counts[args->variant] >> 1) + 132; frame++) {
     // The camera turns while the embers fly.
     if (frame > 16 && frame < 80)
-      work->cameraDelta = TRIG_TURN / 256;
+      state->cameraDelta = TRIG_TURN / 256;
     else
-      work->cameraDelta = 0;
+      state->cameraDelta = 0;
     if (frame == (gFire_Counts[args->variant] >> 1) + 108)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
@@ -136,7 +137,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
           BattleEffect_TintBattler(args->targets[i % args->targetCount],
                                    SPRITE_COLOR_RED_TINT, POSE_DAMAGE,
                                    i % args->targetCount, 4);
-          work->shakeFrames = 2;
+          state->shakeFrames = 2;
         }
       }
     }
@@ -153,12 +154,12 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
         width = gFire_FlareWidths[picture];
-        draw[1](canvas, work->sheet + gFire_FlarePictures[picture],
+        draw[1](canvas, state->sheet + gFire_FlarePictures[picture],
                 ember->x - (width >> 1),
                 ember->y + gFire_FlareBiasY[picture] - 56, width,
                 gFire_FlareHeights[picture]);
 #else
-        draw[1](canvas, work->sheet + gFire_FlarePictures[picture],
+        draw[1](canvas, state->sheet + gFire_FlarePictures[picture],
                 ember->x - ((width = gFire_FlareWidths[picture]) >> 1),
                 ember->y + gFire_FlareBiasY[picture] - 56, width,
                 gFire_FlareHeights[picture]);
@@ -167,10 +168,10 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
       }
     }
 
-    if (work->cameraPhase == CAMERA_PHASE_IDLE)
-      work->cameraPhase = CAMERA_PHASE_FRAME_DONE;
+    if (state->cameraPhase == CAMERA_PHASE_IDLE)
+      state->cameraPhase = CAMERA_PHASE_FRAME_DONE;
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

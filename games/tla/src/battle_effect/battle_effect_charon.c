@@ -6,15 +6,15 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// The attack's particles in the effect work: the drops, each target's curse
+/// The attack's particles in the effect state: the drops, each target's curse
 /// (where on the screen it caught the target, and the frames since, -1
 /// before) and its home, then the four columns of light; the last particle's
 /// variant holds the shockwave's radius.
-#define DROPS (work->particles)
-#define CURSES (work->particles + 16)
-#define HOMES (work->particles + 32)
-#define COLUMNS (work->particles + 48)
-#define WAVE_RADIUS (work->particles[63].variant)
+#define DROPS (state->particles)
+#define CURSES (state->particles + 16)
+#define HOMES (state->particles + 32)
+#define COLUMNS (state->particles + 48)
+#define WAVE_RADIUS (state->particles[63].variant)
 /// The drops' particles, how many of them fall, and their size: shaded
 /// circles of this radius, in the act's pictures.
 #define CHARON_DROP_SLOTS 16
@@ -25,9 +25,9 @@
 #define CHARON_COLUMNS 4
 #define CHARON_COLUMN_HEIGHT 30
 #define CHARON_COLUMN_END 56
-/// The summon's sprites in the effect work: the red dome's until frame 132,
+/// The summon's sprites in the effect state: the red dome's until frame 132,
 /// then Charon's.
-#define OBJECTS ((struct Sprite **)work->sprites)
+#define OBJECTS ((struct Sprite **)state->sprites)
 /// Charon (CrimsonBeastTiles) as a grid of sprites four across and three down,
 /// its wisp (WhiteWispsTiles, in a sprite palette of its own) and the 64x64
 /// sprite the red orb is revealed in.
@@ -204,13 +204,13 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   struct ModelTexture swirlTexture;
   struct ModelTexture glowRingTexture;
   u8 *canvas;
-  struct BattleEffectWork *work;
-  struct BattleBackgroundWork *backgroundView;
+  struct BattleEffectState *state;
+  struct BattleBackgroundState *backgroundView;
   s32 j;
   s32 frame;
   u32 savedScrollX;
   u8 *motePictures;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   DrawRectangleFn *blit;
   FIXED beastX;
   FIXED beastZ;
@@ -236,18 +236,18 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   s32 width;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   backgroundView = Ram_HeapSlots->battleBackground;
   savedScrollX = gBgScroll[1].x;
   motePictures = Ram_HeapSlots->battleSheet;
   sprites = (struct Sprite **)gMapGridCellBuffer;
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
-  work->transferMode = CANVAS_COPY;
+  state->transferMode = CANVAS_COPY;
   {
     s32 order = TASK_PASS_VBLANK;
 
@@ -279,10 +279,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   source = (u8 *)Resource_GetTableEntry(RESOURCE_RED_DOME_TILES);
   Iwram_CopyWords((u16 *)&OBJ_PLTT_COLOR(2, 0), source, CHARON_DOME_COLORS * 2);
   source += CHARON_DOME_COLORS * 2;
-  Decompress_TaggedLz(source, work->sheet);
+  Decompress_TaggedLz(source, state->sheet);
   for (i = 0; i != OBJ_64X64_8BPP_BYTES; i++) {
-    if (work->sheet[i] != 0) {
-      work->sheet[i] += CHARON_DOME_FIRST_COLOR;
+    if (state->sheet[i] != 0) {
+      state->sheet[i] += CHARON_DOME_FIRST_COLOR;
     }
   }
   {
@@ -292,7 +292,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     OBJECTS[0] = object;
     object->image.priority = 3;
     slots = gVramCacheEntries;
-    Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset, work->sheet,
+    Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset, state->sheet,
                     OBJ_64X64_8BPP_BYTES);
   }
   OBJECTS[0]->image.objectMode = 0;
@@ -302,14 +302,14 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   Iwram_CopyWords((u16 *)&OBJ_PLTT_COLOR(CHARON_SHARD_PALETTE, 0), source,
                   PALETTE_BANK_BYTES);
   source += PALETTE_BANK_BYTES;
-  Decompress_TaggedLz(source, work->sheet);
+  Decompress_TaggedLz(source, state->sheet);
   for (i = 0; i != CHARON_SHARD_FRAMES; i++) {
     struct Sprite *object = EffectSprite_CreateWithTiles(
         16, 16, 0, OBJ_PALETTE(CHARON_SHARD_PALETTE));
     SPRITES[i] = object;
     object->image.priority = 1;
     Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset,
-                    work->sheet + i * TILE_SIZE_4BPP, TILE_SIZE_4BPP);
+                    state->sheet + i * TILE_SIZE_4BPP, TILE_SIZE_4BPP);
     tiles[i] = SPRITES[i]->image.tile;
   }
   for (i = 0; i != CHARON_SHARDS - CHARON_SHARD_FRAMES; i++) {
@@ -319,11 +319,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     Iwram_CopyWords(object, sprites[0], offsetof(struct Sprite, lastNo));
   }
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motePictures, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, state->sheet, 0, 0);
   for (j = 0; j != CHARON_RING_SHADES; j++) {
     moteSize = CHARON_RING_MOTE;
     for (i = 0; i != moteSize * moteSize * 2; i++) {
-      s32 value = work->sheet[gBattleEffect_MotePictures[moteSize - 1] + i];
+      s32 value = state->sheet[gBattleEffect_MotePictures[moteSize - 1] + i];
 
       if (value != 0) {
         value -= j * 7;
@@ -334,9 +334,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       motePictures[moteSize * moteSize * j * 2 + i] = value;
     }
   }
-  Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE, state->sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_CHARM_RING_SHEET,
-                             work->sheet + CHARON_ACT_PICTURES, 1, 1);
+                             state->sheet + CHARON_ACT_PICTURES, 1, 1);
   source = (u8 *)Resource_GetTableEntry(RESOURCE_BOLT_SHEET);
   Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -390,7 +390,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       Sound_PlayFar(SE_LAUNCH);
     }
     if (frame == 0) {
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
                           CANVAS_FADE_THREE_QUARTERS);
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       // A list of sprites off the screen's corner, each showing the shard
@@ -650,7 +650,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(0, 0), CHARON_BEAST_COLORS * 2,
                         COLOR_PAIR(RGB_WHITE));
         source += CHARON_BEAST_COLORS * 2;
-        Decompress_TaggedLz(source, work->sheet + CHARON_BEAST_PICTURES);
+        Decompress_TaggedLz(source, state->sheet + CHARON_BEAST_PICTURES);
         for (i = 0, objectSlots = gVramCacheEntries; i != CHARON_BEAST_SPRITES;
              i++) {
           struct Sprite *object = EffectSprite_CreateWithTiles(
@@ -660,7 +660,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           object->image.priority = 3;
           OBJECTS[i] = object;
           Iwram_CopyWords(OBJ_VRAM + objectSlots[object->slot].offset,
-                          work->sheet + CHARON_BEAST_PICTURES +
+                          state->sheet + CHARON_BEAST_PICTURES +
                               i * OBJ_32X32_8BPP_BYTES,
                           OBJ_32X32_8BPP_BYTES);
         }
@@ -670,7 +670,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(CHARON_WISP_PALETTE, 0),
                         PALETTE_BANK_BYTES, COLOR_PAIR(RGB_WHITE));
         source += PALETTE_BANK_BYTES;
-        Decompress_TaggedLz(source, work->sheet + CHARON_BEAST_PICTURES);
+        Decompress_TaggedLz(source, state->sheet + CHARON_BEAST_PICTURES);
         {
           struct Sprite *object = EffectSprite_CreateWithTiles(
               64, 64, OBJ_SIZE_64X64, OBJ_PALETTE(CHARON_WISP_PALETTE));
@@ -683,7 +683,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             u8 *vram = OBJ_VRAM;
 
             vram += tileSlots[object->slot].offset;
-            Iwram_CopyWords(vram, work->sheet + CHARON_BEAST_PICTURES,
+            Iwram_CopyWords(vram, state->sheet + CHARON_BEAST_PICTURES,
                             OBJ_64X64_4BPP_BYTES);
           }
           object = EffectSprite_CreateWithTiles(
@@ -697,11 +697,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         source = (u8 *)Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_E);
         Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
         Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
-                                   work->sheet + CHARON_BEAST_PICTURES, 0, 0);
-        Iwram_CopyWords(motePictures, work->sheet + CHARON_BEAST_PICTURES,
+                                   state->sheet + CHARON_BEAST_PICTURES, 0, 0);
+        Iwram_CopyWords(motePictures, state->sheet + CHARON_BEAST_PICTURES,
                         MOTE_SET_BYTES);
         Resource_LoadAndDecompress(RESOURCE_CURSE_SEAL_SHEET,
-                                   work->sheet + CHARON_ACT_PICTURES, 1, 1);
+                                   state->sheet + CHARON_ACT_PICTURES, 1, 1);
         beastX = toFIXED(72);
         beastZ = toFIXED(56);
       }
@@ -808,11 +808,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           shade = 0;
         }
         model->shade = shade;
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
                             CANVAS_FADE_THREE_QUARTERS);
         sealTexture.logWidth = 7;
         sealTexture.logHeight = 7;
-        sealTexture.pixels = work->sheet + CHARON_ACT_PICTURES;
+        sealTexture.pixels = state->sheet + CHARON_ACT_PICTURES;
         model->kind = MODEL_SHADED_ADDITIVE;
         model->texture = &sealTexture;
         model->mesh = gBattleEffect_LargeSquareMesh;
@@ -841,7 +841,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           sealTexture.logWidth = 6;
           sealTexture.logHeight = 6;
           model->shade = shade;
-          sealTexture.pixels = work->sheet;
+          sealTexture.pixels = state->sheet;
           model->texture = &sealTexture;
           model->mesh = gBattleEffect_SquareMesh;
           model->kind = MODEL_SHADED_ADDITIVE;
@@ -941,7 +941,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           source = (u8 *)Resource_GetTableEntry(RESOURCE_BOLT_SHEET);
           Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
           Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
-                                     work->sheet + CHARON_ACT_PICTURES, 0, 0);
+                                     state->sheet + CHARON_ACT_PICTURES, 0, 0);
           Graphics_LoadGreyRamp();
         }
         if (frame > 303) {
@@ -987,7 +987,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
           fireRingTexture.logWidth = 7;
           fireRingTexture.logHeight = 7;
-          fireRingTexture.pixels = work->sheet + CHARON_ACT_PICTURES;
+          fireRingTexture.pixels = state->sheet + CHARON_ACT_PICTURES;
           model->kind = MODEL_SHADED_ADDITIVE;
           model->texture = &fireRingTexture;
           model->mesh = gBattleEffect_LargeSquareMesh;
@@ -1053,7 +1053,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       // rimmed in magenta swells, and from CHARON_DISC_SWAY_FRAME sways across;
       // the backdrop flashes white at frames 357 and 376.
       if (frame == 347) {
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
         REG_BLDCNT = 0;
         {
           u16 *entry = (u16 *)&BG_PLTT_COLOR(0, 1);
@@ -1082,16 +1082,16 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                     CHARON_DISC_X;
         }
         if (frame == 360) {
-          work->transferMode = CANVAS_COPY;
+          state->transferMode = CANVAS_COPY;
         }
         if (frame <= 371) {
-          BattleEffect_DrawShadedCircles(work->sheet + CHARON_ACT_PICTURES,
+          BattleEffect_DrawShadedCircles(state->sheet + CHARON_ACT_PICTURES,
                                          radius, FIXED_ONE);
         } else {
           radius = 104;
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-        Canvas_BlitAtFoot(work->sheet + CHARON_ACT_PICTURES, centerX, 58,
+        Canvas_BlitAtFoot(state->sheet + CHARON_ACT_PICTURES, centerX, 58,
                           radius);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
@@ -1212,10 +1212,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         s32 x;
         s32 y;
 
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
         source = (u8 *)Resource_GetTableEntry(RESOURCE_RUNE_SEAL_SHEET);
         source += PALETTE_BANK_BYTES;
-        Decompress_TaggedLz(source, work->sheet + CHARON_RUNE_SEAL);
+        Decompress_TaggedLz(source, state->sheet + CHARON_RUNE_SEAL);
         for (y = 0; y != RUNE_SEAL_HEIGHT; y++) {
           for (x = 0; x != RUNE_SEAL_WIDTH; x += 2) {
             u16 *dst =
@@ -1224,13 +1224,14 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             u8 hi = *dst >> 8;
             u8 lo = *dst;
 
-            if (work->sheet[CHARON_RUNE_SEAL + y * RUNE_SEAL_WIDTH + x + 1] !=
+            if (state->sheet[CHARON_RUNE_SEAL + y * RUNE_SEAL_WIDTH + x + 1] !=
                 0) {
-              hi = work->sheet[CHARON_RUNE_SEAL + y * RUNE_SEAL_WIDTH + x + 1] +
-                   CHARON_SEAL_COLOR;
+              hi =
+                  state->sheet[CHARON_RUNE_SEAL + y * RUNE_SEAL_WIDTH + x + 1] +
+                  CHARON_SEAL_COLOR;
             }
-            if (work->sheet[CHARON_RUNE_SEAL + y * RUNE_SEAL_WIDTH + x] != 0) {
-              lo = work->sheet[CHARON_RUNE_SEAL + y * RUNE_SEAL_WIDTH + x] +
+            if (state->sheet[CHARON_RUNE_SEAL + y * RUNE_SEAL_WIDTH + x] != 0) {
+              lo = state->sheet[CHARON_RUNE_SEAL + y * RUNE_SEAL_WIDTH + x] +
                    CHARON_SEAL_COLOR;
             }
             *dst = (hi << 8) | lo;
@@ -1284,7 +1285,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       void *texture = Heap_AllocEwram(32);
       struct RenderModel *model = Render_AllocateModelList(1);
 
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       twice = frame * 2;
       quarter = frame * (CHARON_SCALE_STEP / 4);
       shade = twice + MODEL_SHADE_INVISIBLE;
@@ -1302,7 +1303,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       swirlTexture.logWidth = 6;
       swirlTexture.logHeight = 6;
-      swirlTexture.pixels = work->sheet;
+      swirlTexture.pixels = state->sheet;
       model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &swirlTexture;
       model->mesh = gBattleEffect_SquareMesh;
@@ -1337,7 +1338,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       if (frame >= CHARON_SEAL_FRAME) {
         s32 ringShade = frame * 2 - 208;
 
-        swirlTexture.pixels = work->sheet + CHARON_ACT_PICTURES;
+        swirlTexture.pixels = state->sheet + CHARON_ACT_PICTURES;
         if (ringShade >= MODEL_SHADE_INVISIBLE / 2) {
           ringShade = MODEL_SHADE_INVISIBLE / 2;
         }
@@ -1371,10 +1372,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       Heap_Release(texture);
       // DEAD: each test reads the count twice and drops the first read; the ROM
       // keeps both loads.
-      while (work->vblanksSinceTransfer, work->vblanksSinceTransfer <= 1) {
+      while (state->vblanksSinceTransfer, state->vblanksSinceTransfer <= 1) {
       }
     }
-    work->transferPending = 1;
+    state->transferPending = 1;
     wait(1);
   }
 
@@ -1399,12 +1400,12 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   shake = 0;
   savedYaw = camera->yaw;
   camera->yaw = shake;
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 4);
   REG_BG2X = 0;
   REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -1429,13 +1430,13 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   }
   arg->targets[arg->targetCount] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(arg->targets, 0);
-  BattleEffect_DrawShadedCircles(work->sheet, CHARON_COLUMN_END, FIXED_ONE);
-  BattleEffect_DrawShadedCircles(work->sheet + CHARON_ACT_PICTURES,
+  BattleEffect_DrawShadedCircles(state->sheet, CHARON_COLUMN_END, FIXED_ONE);
+  BattleEffect_DrawShadedCircles(state->sheet + CHARON_ACT_PICTURES,
                                  CHARON_DROP_RADIUS, FIXED_ONE);
-  Iwram_FillWords(work->sheet + CHARON_BRIGHT_BLOCK, CHARON_TEXTURE_BYTES,
+  Iwram_FillWords(state->sheet + CHARON_BRIGHT_BLOCK, CHARON_TEXTURE_BYTES,
                   CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   Resource_LoadAndDecompress(RESOURCE_GLOW_RING_TEXTURE,
-                             work->sheet + CHARON_GLOW_RING, 0, 0);
+                             state->sheet + CHARON_GLOW_RING, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motePictures, 0, 0);
   // DEAD: i counts to MOTE_SET_BYTES by 35, and nothing reads it; the ROM
   // keeps the add and the test.
@@ -1451,8 +1452,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     }
   }
   for (i = 0; i != CHARON_TEXTURE_BYTES; i++) {
-    if (work->sheet[CHARON_GLOW_RING + i] != 0) {
-      work->sheet[CHARON_GLOW_RING + i] = CANVAS_LEVEL_BRIGHTEST;
+    if (state->sheet[CHARON_GLOW_RING + i] != 0) {
+      state->sheet[CHARON_GLOW_RING + i] = CANVAS_LEVEL_BRIGHTEST;
     }
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
@@ -1495,7 +1496,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
     }
     if (frame == 120) {
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
       // The battle's own background comes back as dark as a canvas effect's
       // fade leaves it.
       ColorBuffer_ScaleFar(battle->palette, (u16 *)&BG_PLTT_COLOR(6, 0),
@@ -1543,7 +1544,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                         CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         REG_BG2CNT =
             BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         for (i = 0; i != arg->targetCount; i++) {
           struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
 
@@ -1559,7 +1560,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           BattleEffect_TintBattler(arg->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 32);
         }
-        work->shakeFrames = 3;
+        state->shakeFrames = 3;
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
@@ -1612,7 +1613,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         if (frame >= gCharon_FlashFrames[i] + 1 &&
             frame < gCharon_FlashFrames[i] + 16) {
-          u16 *target = Ram_HeapSlots->battleWork->palette;
+          u16 *target = Ram_HeapSlots->battleState->palette;
           u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
 
           for (j = 0; j != BATTLE_BACKGROUND_COLORS; j++) {
@@ -1658,8 +1659,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
         WAVE_RADIUS = wave - step;
         if (wave > 0) {
-          BattleEffect_DrawShadedCircles(work->sheet, wave, FIXED_ONE);
-          Canvas_BlitAtFoot(work->sheet, 60, 60, wave);
+          BattleEffect_DrawShadedCircles(state->sheet, wave, FIXED_ONE);
+          Canvas_BlitAtFoot(state->sheet, 60, 60, wave);
         }
       }
     } else {
@@ -1750,7 +1751,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                                   BLITTER_MAX);
             }
             ((DrawRectangle)Ram_HeapSlots->ramCode)(
-                canvas, work->sheet, column->x - halfWidth, column->y,
+                canvas, state->sheet, column->x - halfWidth, column->y,
                 halfWidth, width);
           }
         }
@@ -1768,7 +1769,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             drop->velocityY = -toFIXED(1);
           }
           if (drop->variant >= 0) {
-            Canvas_BlitAtFoot(work->sheet + CHARON_ACT_PICTURES,
+            Canvas_BlitAtFoot(state->sheet + CHARON_ACT_PICTURES,
                               FIXEDtoINT(drop->x), FIXEDtoINT(drop->y),
                               CHARON_DROP_RADIUS);
             drop->x += drop->velocityX;
@@ -1782,8 +1783,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           s32 width = 120 - COLUMNS[i].x;
 
           if (width > 0) {
-            blitters[0](canvas, work->sheet + CHARON_BRIGHT_BLOCK, COLUMNS[i].x,
-                        i * CHARON_COLUMN_HEIGHT, width, CHARON_COLUMN_HEIGHT);
+            blitters[0](canvas, state->sheet + CHARON_BRIGHT_BLOCK,
+                        COLUMNS[i].x, i * CHARON_COLUMN_HEIGHT, width,
+                        CHARON_COLUMN_HEIGHT);
           }
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -1813,7 +1815,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
         glowRingTexture.logWidth = 6;
         glowRingTexture.logHeight = 6;
-        glowRingTexture.pixels = work->sheet + CHARON_GLOW_RING;
+        glowRingTexture.pixels = state->sheet + CHARON_GLOW_RING;
         model->kind = MODEL_SHADED;
         model->mesh = gBattleEffect_SquareMesh;
         model->texture = &glowRingTexture;
@@ -1847,7 +1849,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     }
     Camera_ApplyVerticalShake(8);
     BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
+    state->transferPending = 1;
     wait(1);
     frame++;
   } while (frame != CHARON_ATTACK_FRAMES);

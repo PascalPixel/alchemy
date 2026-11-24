@@ -1,17 +1,17 @@
 /// @file
 /// The crumbs a fireball throws off as it crumbles away
 /// (Actor_RollAndCrumble), which three Mars Lighthouse rooms keep a copy of,
-/// over the flames' FlameHitWork (scene/ride.h).
+/// over the flames' FlameHitState (scene/ride.h).
 
 /// A fireball crumbling away throws off a crumb, a small flame drawn with the
 /// kept flame's tiles, that bounces off in a random direction and flickers out
 /// (the includer's gCrumbs_Script): as the Mars tower's fireball crashes on the
 /// centre wall, it shrinks away in a spray of little flames.
 void Actor_ScatterCrumbs(struct Actor *actor) {
-  struct FlameHitWork *work = RIDE_WORK;
+  struct FlameHitState *state = RIDE_STATE;
   s32 i;
 
-  if (work->handle == NULL)
+  if (state->handle == NULL)
     return;
   // DEAD: a loop of one pass, as the ice chips' loop of six; the ROM keeps its
   // decrement and test.
@@ -51,10 +51,10 @@ void Actor_ScatterCrumbs(struct Actor *actor) {
       object->acceleration = 0;
       object->bounce = FIXED_ONE / 2;
       sprite = object->sprite;
-      source = ((struct Actor *)work->handle)->sprite;
+      source = ((struct Actor *)state->handle)->sprite;
       VramCache_FreeEntry(sprite->slot);
       sprite->retainCacheEntry = 1;
-      sprite->slot = work->flameVramBlock;
+      sprite->slot = state->flameVramBlock;
       SpriteAnimation_Clear(sprite->entries[0]);
       sprite->entries[0] = NULL;
       sprite->count = 0;

@@ -351,11 +351,11 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 /// returns the entry's first tile.
 s32 MiscIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
-  GlyphTransfer *work;
+  GlyphTransfer *state;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*state));
   Icon_DrawMisc(resource);
-  result = VramCache_Reload(index, (s32)work->tiles);
+  result = VramCache_Reload(index, (s32)state->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
@@ -365,12 +365,12 @@ s32 MiscIcon_LoadIntoSlot(s32 resource, s32 index) {
 /// cache entry `index` with it and returns the entry's first tile.
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
-  GlyphTransfer *work;
+  GlyphTransfer *state;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*state));
   ItemIcon_Compose(resource,
                    ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN);
-  result = VramCache_Reload(index, (s32)work->tiles);
+  result = VramCache_Reload(index, (s32)state->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
@@ -382,12 +382,12 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   s32 tile;
   s32 slot;
   s32 result;
-  GlyphTransfer *work;
+  GlyphTransfer *state;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*state));
   slot = index;
   Ability_LoadGlyph(resource, 0, &slot, &tile, 1);
-  result = VramCache_Reload(index, (s32)work->tiles);
+  result = VramCache_Reload(index, (s32)state->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
@@ -419,11 +419,11 @@ s32 WindowSprite_GetPointerTiles(s32 no) {
 
 /// Copies the 4bpp decoder into RAM, calls it with the transfer's encoded
 /// source and byte buffer, then releases the copied code.
-UNUSED void Icon_Decompress(GlyphTransfer *work) {
+UNUSED void Icon_Decompress(GlyphTransfer *state) {
   void (*routine)(void *, void *);
 
   RamCode_Load(routine, Tile_Decompress4bppCode, Tile_Decompress4bppCodeSize);
-  routine(work->encoded, work->input);
+  routine(state->encoded, state->input);
   Heap_Release(routine);
 }
 
@@ -508,16 +508,16 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
 /// from tile index * COMMAND_ICON_BG_TILES (BattleCommandRow_LoadIconTiles),
 /// and into the row's shared VRAM cache entry for its 32x32 sprite, which
 /// BattleCommandRow_Run shows only for the selected icon.
-void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
+void BattleCommandRow_LoadIcon(struct BattleCommandRowState *state, s32 index,
                                u32 icon) {
-  struct BattleCommandRowIcon *entry = &work->entries[index];
+  struct BattleCommandRowIcon *entry = &state->entries[index];
 
-  BattleCommandRow_LoadIconTiles(&work->palette, icon,
+  BattleCommandRow_LoadIconTiles(&state->palette, icon,
                                  index * COMMAND_ICON_BG_TILES);
-  work->entries[index].kind = icon;
+  state->entries[index].kind = icon;
   MenuSprite_Initialize(entry->sprite, OBJ_SIZE_32X32 | OBJ_256_COLORS);
   entry->sprite.oam.f.tile =
-      CommandIcon_ReloadSlot(work->entries[index].resource, icon);
+      CommandIcon_ReloadSlot(state->entries[index].resource, icon);
 }
 
 /// Puts BG1 behind the other layers (priority 3). The command row runs it as

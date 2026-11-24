@@ -4,15 +4,15 @@ Field_MadraDrawbridge:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_MadraDrawbridge, .LField_MadraDrawbridge_CELL_PICTURES
+	map_block Field_MadraDrawbridge, .LField_MadraDrawbridge_CELL_TILES
 	map_block Field_MadraDrawbridge, .LField_MadraDrawbridge_SHAPES
 	map_block Field_MadraDrawbridge, .LField_MadraDrawbridge_GRID
 	map_block Field_MadraDrawbridge, .LField_MadraDrawbridge_SHAPE_GRID
 	map_block Field_MadraDrawbridge, .LField_MadraDrawbridge_ANIMATION
 	map_block Field_MadraDrawbridge
 	map_block Field_MadraDrawbridge, .LField_MadraDrawbridge_SCENE
-.LField_MadraDrawbridge_CELL_PICTURES:
-	.incbin "games/tla/src/map/madra_drawbridge/cell_pictures.delta1.lz"
+.LField_MadraDrawbridge_CELL_TILES:
+	.incbin "games/tla/src/map/madra_drawbridge/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_MadraDrawbridge_SHAPES:
 	.incbin "games/tla/src/map/madra_drawbridge/shapes.table.lz"

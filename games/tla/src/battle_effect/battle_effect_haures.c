@@ -157,13 +157,13 @@ extern const u16 gHaures_BodyPiecePoints[][2];
 ///
 /// Abilities: Haures.
 void BattleEffect_RunHaures(struct BattleEffectParams *args) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   u8 *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   DrawRectangle draw[2];
   s32 frame;
   u8 *sprites;
-  struct BattleBackgroundWork *background;
+  struct BattleBackgroundState *background;
   struct Point2D position;
   struct Point2D velocity;
   s32 morph;
@@ -187,25 +187,25 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
 
   buffer = gMapGridCellBuffer;
   shades = gHaures_WingShades;
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   background = Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
-  work->transferMode = CANVAS_COPY;
+  state->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = Q_8_8(4);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  BattleEffect_SelectLivingTargets(work->args);
+  BattleEffect_SelectLivingTargets(state->args);
   background->busy = 1;
   gBgScroll[1].x = 0;
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   Task_Add(BattleEffect_ProcessPendingStampTransfer, TASK_PASS_VBLANK);
   morph = 0;
   morphStep = 0;
@@ -213,12 +213,12 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   BattleEffect_SpawnObjects(HAURES_CLAW_PIECES, SPRITE_HAURES, 2);
   for (i = 0; i != HAURES_FLAME_COUNT; i++) {
     sprite = Sprite_CreateFar(SPRITE_HAURES_FLAME);
-    work->sprites[HAURES_FIRST_FLAME + i] = sprite;
+    state->sprites[HAURES_FIRST_FLAME + i] = sprite;
     if (sprite != NULL) {
       sprite->flags = 0;
       Sprite_StartAnimationFar(sprite, 0);
       {
-        struct FieldSprite *added = work->sprites[HAURES_FIRST_FLAME + i];
+        struct FieldSprite *added = state->sprites[HAURES_FIRST_FLAME + i];
 
         added->priority = 1;
         added->blendMode = OBJ_MODE_SEMI_TRANSPARENT;
@@ -227,12 +227,13 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   }
   for (i = 0; i != HAURES_DROP_SPRITE_COUNT; i++) {
     sprite = Sprite_CreateFar(SPRITE_HAURES_DOT);
-    work->sprites[HAURES_FIRST_DROP_SPRITE + i] = sprite;
+    state->sprites[HAURES_FIRST_DROP_SPRITE + i] = sprite;
     if (sprite != NULL) {
       sprite->flags = 0;
       Sprite_StartAnimationFar(sprite, 0);
       {
-        struct FieldSprite *added = work->sprites[HAURES_FIRST_DROP_SPRITE + i];
+        struct FieldSprite *added =
+            state->sprites[HAURES_FIRST_DROP_SPRITE + i];
 
         added->priority = 1;
       }
@@ -240,11 +241,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   }
   sprite =
       EffectSprite_CreateWithTiles(64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
-  ((struct FieldSprite **)work->sprites)[HAURES_STAMP] = sprite;
+  ((struct FieldSprite **)state->sprites)[HAURES_STAMP] = sprite;
   sprite->blendMode = OBJ_MODE_SEMI_TRANSPARENT;
-  STAMP_TILES(work) = gVramCacheEntries[sprite->slot].offset + OBJ_VRAM0;
+  STAMP_TILES(state) = gVramCacheEntries[sprite->slot].offset + OBJ_VRAM0;
   {
-    u8 *c = work->sheet;
+    u8 *c = state->sheet;
 
     Resource_LoadAndDecompress(RESOURCE_CHAIN_TEXTURE, c, 0, 0);
     Picture_MirrorIntoQuadrants(c, SCRATCH, HAURES_CHAIN_WIDTH,
@@ -263,7 +264,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     u32 mask;
 
     Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
-                               w = (u32 *)(work->sheet + HAURES_SWIRL_TEXTURE),
+                               w = (u32 *)(state->sheet + HAURES_SWIRL_TEXTURE),
                                0, 0);
     // Halves the swirl's levels four pixels at a time.
     mask = PIXELS_8BPP(0x7f);
@@ -341,7 +342,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       s32 cut = frame - 267;
 
       if (frame == 0) {
-        work->transferValue = frame;
+        state->transferValue = frame;
         position.x = toFIXED(108);
         position.y = toFIXED(120);
         velocity.x = 0;
@@ -358,7 +359,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         }
         particleX = gHaures_ParticleX;
         {
-          struct Particle *p = work->particles;
+          struct Particle *p = state->particles;
 
           for (i = 0; i != HAURES_DROPS; i++, p++, particleX++) {
             p->x = INTtoFIXED(*particleX);
@@ -370,7 +371,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         }
         {
           for (i = 0; i != HAURES_PUFFS; i++) {
-            struct Particle *p = &work->particles[i + HAURES_DROPS];
+            struct Particle *p = &state->particles[i + HAURES_DROPS];
             p->x = (Random16() & 15) + 24;
             p->y = Random16() & 7;
             p->variant = i * 3;
@@ -382,7 +383,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         // its stores.
         {
           struct Particle *p =
-              &work->particles[ARRAY_COUNT(work->particles) - 1];
+              &state->particles[ARRAY_COUNT(state->particles) - 1];
 
           p->x = toFIXED(60);
           p->y = toFIXED(112);
@@ -447,7 +448,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           dropPlace[1] = 0;
           dropPlace[3] = 0;
           {
-            struct Particle *p = work->particles;
+            struct Particle *p = state->particles;
 
             for (i = 0; i != HAURES_DROPS; i++, p++) {
               if (frame > i * 26) {
@@ -455,7 +456,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                   dropPlace[0] = p->x;
                   dropPlace[2] = p->y;
                   Render_ApplyProjectedPlacementFar(
-                      work->sprites[HAURES_FIRST_DROP_SPRITE + (i & 1)],
+                      state->sprites[HAURES_FIRST_DROP_SPRITE + (i & 1)],
                       dropPlace, gHaures_UnitScale, 0);
                   Particle_AdvanceWithGravity2D(p, 63, toFIXED(1) / 8);
                   if (FIXED_INTEGER_PART(p->y) >= HAURES_DROP_LAND_Y) {
@@ -465,10 +466,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                   dropPlace[0] = p->x;
                   dropPlace[2] = p->y;
                   Sprite_StartAnimationFar(
-                      work->sprites[HAURES_FIRST_FLAME + (i & 1)],
+                      state->sprites[HAURES_FIRST_FLAME + (i & 1)],
                       (p->variant / 6) & 3);
                   Render_ApplyProjectedPlacementFar(
-                      work->sprites[HAURES_FIRST_FLAME + (i & 1)], dropPlace,
+                      state->sprites[HAURES_FIRST_FLAME + (i & 1)], dropPlace,
                       gHaures_UnitScale, 0);
                   p->variant++;
                 }
@@ -491,7 +492,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           texture.logWidth = 6;
           t = frame - 47;
           texture.logHeight = 6;
-          texture.pixels = work->sheet + HAURES_SWIRL_TEXTURE;
+          texture.pixels = state->sheet + HAURES_SWIRL_TEXTURE;
           sh = frame - 111;
           if (sh > 0) {
             sh = 0;
@@ -517,7 +518,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           // settings replacing it before the draw; the ROM keeps its stores.
           texture.logWidth = 5;
           texture.logHeight = 5;
-          texture.pixels = work->sheet + PICTURE_BYTES(HAURES_CHAIN);
+          texture.pixels = state->sheet + PICTURE_BYTES(HAURES_CHAIN);
           model->kind = MODEL_SHADED;
           model->texture = &texture;
           model->mesh = gBattleEffect_SmallSquareMeshReversed;
@@ -604,7 +605,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             bodyPlace[0] = position.x;
             bodyPlace[1] = toFIXED(272) - (position.y + i * toFIXED(32));
             bodyPlace[2] = toFIXED(256);
-            Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
+            Render_ApplyProjectedPlacementFar(state->sprites[i], bodyPlace,
                                               (s32 *)&riseScale, 0);
           }
           if ((u32)(frame - 150) <= 116) {
@@ -613,13 +614,13 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             draw[1] = Ram_HeapSlots->ramCodePaired;
             {
               for (i = 0; i != HAURES_PUFFS; i++) {
-                struct Particle *p = &work->particles[i + HAURES_DROPS];
+                struct Particle *p = &state->particles[i + HAURES_DROPS];
                 s32 n = (p->variant / HAURES_PUFF_PICTURE_FRAMES) %
                         HAURES_PUFF_PICTURE_COUNT;
-                u8 *src = work->sheet + gBattleEffect_PuffArcPictures[n];
+                u8 *src = state->sheet + gBattleEffect_PuffArcPictures[n];
                 u32 w = gBattleEffect_PuffArcPictureWidths[n];
 
-                draw[1](STAMP_CANVAS(work), src, p->x - (w >> 1),
+                draw[1](STAMP_CANVAS(state), src, p->x - (w >> 1),
                         p->y + gBattleEffect_PuffArcPictureBiasY[n], w,
                         gBattleEffect_PuffArcPictureHeights[n]);
                 if (++p->variant == HAURES_PUFF_FRAMES) {
@@ -642,7 +643,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           bodyPlace[0] = position.x;
           bodyPlace[1] = toFIXED(120) - position.y;
           bodyPlace[2] = toFIXED(128);
-          Render_ApplyProjectedPlacementFar(work->sprites[HAURES_STAMP],
+          Render_ApplyProjectedPlacementFar(state->sprites[HAURES_STAMP],
                                             bodyPlace, (s32 *)&riseScale, 0);
         }
       }
@@ -675,13 +676,14 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             }
             *dst++ = v;
           }
-          Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, work->sheet, 1,
+          Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, state->sheet, 1,
                                      0);
           Iwram_CopyWordsEntry(
               (void *)BG_PLTT,
               Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
               SHEET_PALETTE_BYTES);
-          EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(1));
+          EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
+                              CANVAS_FILL_WORD(1));
         }
         verts = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
@@ -711,8 +713,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
 
             for (m = 0; m != BLUE_ARC_WIDTH; m++) {
               buffer[j * HAURES_ARC_TEXTURE_WIDTH + m] =
-                  work->sheet[cut * PICTURE_BYTES(BLUE_ARC) +
-                              j * BLUE_ARC_WIDTH + m];
+                  state->sheet[cut * PICTURE_BYTES(BLUE_ARC) +
+                               j * BLUE_ARC_WIDTH + m];
             }
           }
           if ((u32)(frame - 267) <= 5) {
@@ -741,21 +743,21 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         if (frame == 277) {
           const u8 *q;
 
-          EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+          EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
           dived = 1;
-          Sprite_DestroyFar(work->sprites[0]);
-          Sprite_DestroyFar(work->sprites[1]);
+          Sprite_DestroyFar(state->sprites[0]);
+          Sprite_DestroyFar(state->sprites[1]);
           for (i = 0; i != HAURES_FLAME_COUNT; i++) {
-            Sprite_DestroyFar(work->sprites[HAURES_FIRST_FLAME + i]);
+            Sprite_DestroyFar(state->sprites[HAURES_FIRST_FLAME + i]);
           }
           for (i = 0; i != HAURES_DROP_SPRITE_COUNT; i++) {
-            Sprite_DestroyFar(work->sprites[HAURES_FIRST_DROP_SPRITE + i]);
+            Sprite_DestroyFar(state->sprites[HAURES_FIRST_DROP_SPRITE + i]);
           }
-          Sprite_DestroyFar(work->sprites[HAURES_STAMP]);
+          Sprite_DestroyFar(state->sprites[HAURES_STAMP]);
           BattleEffect_SpawnObjects(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
           q = gHaures_PartPoints;
           {
-            struct Particle *p = work->particles;
+            struct Particle *p = state->particles;
 
             for (i = 0; i != HAURES_SHARDS; i++, q += HAURES_SHARD_ROW, p++) {
               s32 x = q[0] >> 1;
@@ -803,13 +805,13 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               toFIXED(272) -
               (INTtoFIXED(gHaures_BodyPiecePoints[i][1]) + position.y);
           bodyPlace[2] = toFIXED(256);
-          Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
+          Render_ApplyProjectedPlacementFar(state->sprites[i], bodyPlace,
                                             (s32 *)&orbitScale, 0);
         }
         verts = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
-        cells = work->sheet;
-        mesh = work->sheet + HAURES_SHARD_MESHES;
+        cells = state->sheet;
+        mesh = state->sheet + HAURES_SHARD_MESHES;
         if (frame == 277) {
           s32 j;
 
@@ -857,7 +859,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         }
         {
           for (i = 0; i != HAURES_SHARDS; i++) {
-            struct Particle *p = &work->particles[i];
+            struct Particle *p = &state->particles[i];
             model->mesh = mesh + i * HAURES_SHARD_MESH_BYTES;
             if ((u32)(FIXED_INTEGER_PART(p->x) + HAURES_SHARD_REACH) <=
                     DISPLAY_WIDTH / 2 + 2 * HAURES_SHARD_REACH &&
@@ -896,9 +898,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         Heap_Release(verts);
       }
       BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
+      state->transferPending = 1;
       if (frame <= 266) {
-        work->stampPending = 1;
+        state->stampPending = 1;
       }
       wait(1);
       frame++;
@@ -906,18 +908,18 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
              !(gInput.repeat & (KEY_A | KEY_B)));
   }
   if (dived == 0) {
-    Sprite_DestroyFar(work->sprites[0]);
-    Sprite_DestroyFar(work->sprites[1]);
+    Sprite_DestroyFar(state->sprites[0]);
+    Sprite_DestroyFar(state->sprites[1]);
     for (i = 0; i != HAURES_FLAME_COUNT; i++) {
-      Sprite_DestroyFar(work->sprites[HAURES_FIRST_FLAME + i]);
+      Sprite_DestroyFar(state->sprites[HAURES_FIRST_FLAME + i]);
     }
     for (i = 0; i != HAURES_DROP_SPRITE_COUNT; i++) {
-      Sprite_DestroyFar(work->sprites[HAURES_FIRST_DROP_SPRITE + i]);
+      Sprite_DestroyFar(state->sprites[HAURES_FIRST_DROP_SPRITE + i]);
     }
-    Sprite_DestroyFar(work->sprites[HAURES_STAMP]);
+    Sprite_DestroyFar(state->sprites[HAURES_STAMP]);
   } else {
     for (i = 0; i != HAURES_BODY_PIECES; i++) {
-      Sprite_DestroyFar(work->sprites[i]);
+      Sprite_DestroyFar(state->sprites[i]);
     }
   }
   background->busy = 0;
@@ -930,7 +932,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                        SHEET_PALETTE_BYTES);
   // DEAD: the claw's six slashes are laid out as textures the charge never
   // draws; the ROM keeps the loading and the copy.
-  Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, state->sheet, 1, 0);
   {
     Iwram_ClearWords(buffer, HAURES_ARCS * HAURES_ARC_TEXTURE_BYTES);
     for (i = 0; i != HAURES_ARCS; i++) {
@@ -942,14 +944,15 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         for (m = 0; m != BLUE_ARC_WIDTH; m++) {
           buffer[(i * HAURES_ARC_TEXTURE_BYTES) + j * HAURES_ARC_TEXTURE_WIDTH +
                  m] =
-              work->sheet[i * PICTURE_BYTES(BLUE_ARC) + j * BLUE_ARC_WIDTH + m];
+              state
+                  ->sheet[i * PICTURE_BYTES(BLUE_ARC) + j * BLUE_ARC_WIDTH + m];
         }
       }
     }
   }
-  Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = Ram_HeapSlots->ramCode;
@@ -1033,7 +1036,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               toFIXED(272) -
               (INTtoFIXED(gHaures_BodyPiecePoints[i][1]) + position.y);
           bodyPlace[2] = toFIXED(256);
-          Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
+          Render_ApplyProjectedPlacementFar(state->sprites[i], bodyPlace,
                                             (s32 *)&chargeScale, 0);
         }
       } else {
@@ -1043,7 +1046,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               toFIXED(272) -
               (INTtoFIXED(gHaures_BodyPiecePoints[i][1]) + position.y);
           bodyPlace[2] = toFIXED(256);
-          Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
+          Render_ApplyProjectedPlacementFar(state->sprites[i], bodyPlace,
                                             (s32 *)&chargeScale, 0);
         }
       }
@@ -1070,7 +1073,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                                       toFIXED(8), toFIXED(4), 150);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
-        work->shakeFrames = 8;
+        state->shakeFrames = 8;
       }
     }
     if (frame == 30) {
@@ -1083,7 +1086,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                                       toFIXED(8), toFIXED(4), 50);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
-        work->shakeFrames = 8;
+        state->shakeFrames = 8;
       }
     }
     if (frame == 58) {
@@ -1093,7 +1096,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                                       toFIXED(8), toFIXED(4), 200);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
-        work->shakeFrames = 8;
+        state->shakeFrames = 8;
       }
     }
     // Three streaks of fire across each of the first two passes, then from
@@ -1107,7 +1110,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     bandTexture.logHeight = 5;
     model->mesh = gHaures_BandMesh;
     model->vertices = verts;
-    bandTexture.pixels = work->sheet;
+    bandTexture.pixels = state->sheet;
     model->scrollU = (frame * 8) & TEXTURE_SCROLL_MASK;
     for (i = 0; i != 2; i++) {
       s32 start = gHaures_BandStarts[i];
@@ -1152,7 +1155,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       }
       model->shade = sh;
       model->scrollU = (frame * 8) & TEXTURE_SCROLL_MASK;
-      bandTexture.pixels = work->sheet;
+      bandTexture.pixels = state->sheet;
       if (frame <= 71) {
         v = FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 64) - DEGtoANG(315)) *
                        HAURES_BAND_REACH);
@@ -1177,10 +1180,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     Heap_Release(model);
     Heap_Release(verts);
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   for (i = 0; i != HAURES_BODY_PIECES; i++) {
-    Sprite_DestroyFar(work->sprites[i]);
+    Sprite_DestroyFar(state->sprites[i]);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

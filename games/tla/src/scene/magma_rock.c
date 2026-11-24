@@ -35,7 +35,7 @@
 #include "field/actor.h"
 #include "field/event_inline.h"
 #include "scene/scene.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_coordinate.h"
 #include "system/scene.h"
 #include "field/map_grid.h"
@@ -67,7 +67,7 @@
 #include "graphics/resource.h"
 #include "system/heap_release.h"
 #include "field/field_effect.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/particle.h"
 #include "system/task.h"
 #include "field/actor_script.h"
@@ -213,8 +213,8 @@ enum MagmaRockCellBehavior {
 };
 
 /// The trigger a fireball raises as it runs into the leader
-/// (FieldWork.raisedTrigger), which the high east level answers by knocking him
-/// off the wall.
+/// (FieldState.raisedTrigger), which the high east level answers by knocking
+/// him off the wall.
 enum { TRIGGER_FIREBALL_HITS_LEADER = 200 };
 
 /// A burning statue's flame column (MagmaRock_BurnStatue): from frame 35 of its
@@ -395,7 +395,7 @@ void MagmaRock_SettleBlocks(u16 *ids) {
     s32 height =
         Map_GetTerrainHeight(*terrainId, actor->x.fixed, actor->z.fixed);
     u8 *blocked;
-    struct MapWork *map;
+    struct MapState *map;
     struct MapCell **cells;
     struct MapCell *cell;
     s32 x, z;
@@ -439,9 +439,9 @@ extern struct SceneRegion gMagmaRock_SalamanderTailRegions[];
 extern struct SceneRegion gMagmaRock_StatueRegions[];
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST)
+  if (gMainRoutineState.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST)
     return gMagmaRock_SalamanderTailRegions;
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_STATUE)
+  if (gMainRoutineState.next == SCENE_MAGMA_ROCK_STATUE)
     return gMagmaRock_StatueRegions;
   return gMagmaRock_Regions;
 }
@@ -456,16 +456,16 @@ extern struct ActorPlacement gMagmaRock_SalamanderTailLowEastPlacements[];
 extern struct ActorPlacement gMagmaRock_StatuePlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
-    if (gMainRoutineWork.entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE)
+  if (gMainRoutineState.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
+    if (gMainRoutineState.entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE)
       return gMagmaRock_SalamanderTailHighWestPlacements;
-    if (gMainRoutineWork.entrance <= SALAMANDER_TAIL_HIGH_EAST_LAST_ENTRANCE)
+    if (gMainRoutineState.entrance <= SALAMANDER_TAIL_HIGH_EAST_LAST_ENTRANCE)
       return gMagmaRock_SalamanderTailHighEastPlacements;
-    if (gMainRoutineWork.entrance <= SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE)
+    if (gMainRoutineState.entrance <= SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE)
       return gMagmaRock_SalamanderTailLowWestPlacements;
     return gMagmaRock_SalamanderTailLowEastPlacements;
   }
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_STATUE)
+  if (gMainRoutineState.next == SCENE_MAGMA_ROCK_STATUE)
     return gMagmaRock_StatuePlacements;
   return gMagmaRock_Placements;
 }
@@ -489,28 +489,28 @@ void MagmaRock_StartPushingPillar(void) {
   // wall's face below him: standing on cell (15, 27) Felix holds Down and
   // stays at the ledge's edge, while from cell (16, 27) he climbs down the
   // pegs to the cave mouth above the four cracked pillars.
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
+  struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
 
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {
+  if (gMainRoutineState.next == SCENE_MAGMA_ROCK_SLIDE) {
     MapGrid_CopyCellAttributes(98, 18, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 24, 4, 3, 78, 24);
     Actor_LiftTargetBlock(gMagmaRock_SlidePillars);
-  } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
-    if (gMainRoutineWork.entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE) {
+  } else if (gMainRoutineState.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
+    if (gMainRoutineState.entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE) {
       Actor_LiftTargetBlock(gMagmaRock_SalamanderTailHighWestPillars);
       // Unlike the rest of the scene, these tests give the high east level's
       // last entrance to the low west level's pillars, and the low west
       // level's last to the low east level's.
-    } else if (gMainRoutineWork.entrance <
+    } else if (gMainRoutineState.entrance <
                SALAMANDER_TAIL_HIGH_EAST_LAST_ENTRANCE) {
       Actor_LiftTargetBlock(gMagmaRock_SalamanderTailHighEastPillars);
-    } else if (gMainRoutineWork.entrance <
+    } else if (gMainRoutineState.entrance <
                SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE) {
       MapGrid_CopyCellAttributes(79, 46, 2, 1, 79, 36);
       Actor_LiftTargetBlock(gMagmaRock_SalamanderTailLowWestPillars);
     } else {
-      if (work->child->z.part[0].integer == 600)
+      if (state->child->z.part[0].integer == 600)
         MapGrid_CopyCellAttributes(104, 38, 1, 1, 103, 38);
       else
         MapGrid_CopyCellAttributes(94, 44, 5, 1, 99, 38);
@@ -536,23 +536,23 @@ s32 MagmaRock_EndEvent();
 /// pillar in the map again, puts back the upper layer's walls
 /// MagmaRock_StartPushingPillar cleared, and sets the pillar's flag.
 s32 MagmaRock_FinishPushingPillar(void) {
-  struct Actor *pillar = gFieldWork->movedBlock;
+  struct Actor *pillar = gFieldState->movedBlock;
   s32 x, z;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_PlaceMovedBlock();
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {
+  if (gMainRoutineState.next == SCENE_MAGMA_ROCK_SLIDE) {
     MapGrid_CopyCellAttributes(98, 21, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 27, 4, 3, 78, 24);
     Blocks_MarkCells(gMagmaRock_SlidePillars);
-  } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
-    if (gMainRoutineWork.entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE) {
+  } else if (gMainRoutineState.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
+    if (gMainRoutineState.entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE) {
       Blocks_MarkCells(gMagmaRock_SalamanderTailHighWestPillars);
-    } else if (gMainRoutineWork.entrance <=
+    } else if (gMainRoutineState.entrance <=
                SALAMANDER_TAIL_HIGH_EAST_LAST_ENTRANCE) {
       Blocks_MarkCells(gMagmaRock_SalamanderTailHighEastPillars);
-    } else if (gMainRoutineWork.entrance <=
+    } else if (gMainRoutineState.entrance <=
                SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE) {
       MapGrid_CopyCellAttributes(79, 37, 2, 1, 79, 36);
       Blocks_MarkCells(gMagmaRock_SalamanderTailLowWestPillars);
@@ -564,20 +564,20 @@ s32 MagmaRock_FinishPushingPillar(void) {
   }
   x = FIELD_CELL(pillar->x.fixed);
   z = FIELD_CELL(pillar->z.fixed);
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {
+  if (gMainRoutineState.next == SCENE_MAGMA_ROCK_SLIDE) {
     if (x == 15 && z == 25)
       Event_SetFlag(FLAG_SLIDE_PILLAR_B_PUSHED);
     else if (x == 16 && z == 22)
       Event_SetFlag(FLAG_SLIDE_PILLAR_A_PUSHED);
-  } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
-    if (gMainRoutineWork.entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE) {
+  } else if (gMainRoutineState.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
+    if (gMainRoutineState.entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE) {
       if (x == 27 && z == 33)
         Event_SetFlag(FLAG_HIGH_WEST_PILLAR_B_PUSHED);
-    } else if (gMainRoutineWork.entrance <=
+    } else if (gMainRoutineState.entrance <=
                SALAMANDER_TAIL_HIGH_EAST_LAST_ENTRANCE) {
       if (x == 55 && z == 35)
         Event_SetFlag(FLAG_HIGH_EAST_PILLAR_PUSHED);
-    } else if (gMainRoutineWork.entrance <=
+    } else if (gMainRoutineState.entrance <=
                SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE) {
       if (x == 16 && z == 36)
         Event_SetFlag(FLAG_LOW_WEST_PILLAR_PUSHED);
@@ -597,10 +597,10 @@ void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
 /// Plays Burst from the leader at an actor, outside the trigger table: the
 /// explosion a statue's fireball makes where it lands.
 void MagmaRock_PlayBurst(u16 value) {
-  struct MainRoutineWork *party;
+  struct MainRoutineState *party;
 
   FieldPsynergy_LoadResources(ABILITY_BURST, 1);
-  party = &gMainRoutineWork;
+  party = &gMainRoutineState;
   Import_FieldPsynergySetupActorPair(party->leaderActorId, value);
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
@@ -707,7 +707,7 @@ void MagmaRock_MoveFireball(struct Actor *actor) {
 
   step = Trig_Cos(actor->facing);
   partner = Actor_Get(actor->userValue + actor->rollSide);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   actor->x.fixed += step * 2;
   MagmaRock_LeaveEmbers(actor);
   if (leader->x.fixed - toFIXED(8) < actor->x.fixed + toFIXED(6) &&
@@ -716,7 +716,7 @@ void MagmaRock_MoveFireball(struct Actor *actor) {
       actor->z.fixed - toFIXED(6) < leader->z.fixed + toFIXED(8) &&
       leader->y.fixed < actor->y.fixed + toFIXED(8) &&
       actor->y.fixed - toFIXED(8) < leader->y.fixed + toFIXED(15)) {
-    gFieldWork->raisedTrigger = TRIGGER_FIREBALL_HITS_LEADER;
+    gFieldState->raisedTrigger = TRIGGER_FIREBALL_HITS_LEADER;
     actor->update = NULL;
     actor->x.fixed = 0;
     actor->y.fixed = 0;
@@ -793,7 +793,7 @@ void MagmaRock_PlaceFireball(u16 id, s16 first, s16 side) {
 /// menu, Psynergy or item is in use: it blinks red quickly, then slowly from
 /// 528, and from 400 it burns (MagmaRock_BurnStatue).
 void MagmaRock_WarnStatue(struct Actor *actor) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   if (actor->timer > 528) {
     if (actor->timer & 2)
@@ -809,8 +809,8 @@ void MagmaRock_WarnStatue(struct Actor *actor) {
     actor->update = MagmaRock_BurnStatue;
     actor->timer = 1;
   }
-  if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 &&
-      work->item == 0 && work->transitionActive != 0)
+  if (state->psynergy == 0 && state->fieldMenu == 0 && state->pauseMenu == 0 &&
+      state->item == 0 && state->transitionActive != 0)
     actor->timer--;
 }
 
@@ -845,9 +845,9 @@ s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
 /// The statue then fires (MagmaRock_FireStatue) or lights
 /// (MagmaRock_IgniteStatue).
 void MagmaRock_TargetStatue(s32 stage) {
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
   s16 *table = gMagmaRock_SlideStatues;
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct MainRoutineState *party = &gMainRoutineState;
 
   if (party->next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (party->entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE)
@@ -865,7 +865,7 @@ void MagmaRock_TargetStatue(s32 stage) {
     struct Actor *target;
 
     Statue_FindUnderBurst(table);
-    target = work->child;
+    target = state->child;
     target->flashMask = 4;
     target->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
@@ -873,7 +873,7 @@ void MagmaRock_TargetStatue(s32 stage) {
     struct Actor *target;
 
     Statue_FindUnderBurst(table);
-    target = work->child;
+    target = state->child;
     target->flashMask = 2;
     target->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
@@ -936,7 +936,7 @@ s32 MagmaRock_FireFromStatue(struct Actor *source) {
         attributes == CELL_BEHAVIOR_MAGMA_ROCK_LAVA_FALL)
       goto stop;
     for (i = ACTOR_FIRST_PLACED; i != FIELD_TREASURE_ACTOR; i++) {
-      other = gFieldWork->actors[i];
+      other = gFieldState->actors[i];
       if (other->script == NULL)
         continue;
       if (FIELD_CELL(source->x.fixed) == FIELD_CELL(other->x.fixed) &&
@@ -987,7 +987,7 @@ stop:
     System_Wait(1);
   }
   System_Wait(24);
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
   return MagmaRock_EndEvent();
@@ -1005,7 +1005,7 @@ hit:
   Event_SetFlag(FLAG_FIRE_BURST_PLAYING);
   MagmaRock_PlayBurst(i);
   Event_ClearFlag(FLAG_FIRE_BURST_PLAYING);
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
   return MagmaRock_EndEvent();
@@ -1021,19 +1021,19 @@ hit:
 /// (760, 648) on the same level (the placement table's seventh actor), and
 /// explodes on it as Burst does.
 void MagmaRock_FireStatue(void) {
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
   struct Actor *actor;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(10);
-  actor = work->child;
+  actor = state->child;
   actor->update = NULL;
   FieldActor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   FieldEvent_Wait(3);
-  FieldActor_SetSpriteColor(work->child, SPRITE_COLOR_NORMAL);
+  FieldActor_SetSpriteColor(state->child, SPRITE_COLOR_NORMAL);
   FieldEvent_Wait(1);
-  MagmaRock_FireFromStatue(work->child);
+  MagmaRock_FireFromStatue(state->child);
   MagmaRock_EndEvent();
 }
 
@@ -1043,12 +1043,12 @@ void MagmaRock_FireStatue(void) {
 /// above if he is standing on it, before it sinks again. The game only starts
 /// the statue's countdown (MagmaRock_WarnStatue, then MagmaRock_BurnStatue).
 void MagmaRock_IgniteStatue(void) {
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
   struct Actor *actor;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  actor = work->child;
+  actor = state->child;
   actor->timer = 1024;
   actor->update = MagmaRock_WarnStatue;
   MagmaRock_EndEvent();
@@ -1069,29 +1069,29 @@ void MagmaRock_IgniteStatue(void) {
 /// (BURST_STAGE_GREAT_BLAST), which moves the target out of the scene; the
 /// stump is the pillar's animation from PILLAR_CRUMBLE_FRAME.
 void MagmaRock_BurstStatue(s32 stage, s32 frame) {
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
 
   if (frame == 0)
     MagmaRock_StartFallingRocks();
   if (stage == BURST_STAGE_SMALL_BLAST) {
-    struct Actor *actor = work->child;
+    struct Actor *actor = state->child;
 
     MagmaRock_DropRocks(actor->x.fixed, actor->y.fixed + toFIXED(15),
                         actor->z.fixed, 1);
   }
   if (stage == BURST_STAGE_GREAT_BLAST) {
-    struct Actor *actor = work->child;
+    struct Actor *actor = state->child;
     struct Actor *target;
 
     MagmaRock_DropRocks(actor->x.fixed, actor->y.fixed + toFIXED(15),
                         actor->z.fixed, 8);
-    target = work->child;
+    target = state->child;
     SET_ACTOR_POSITION(target, 0, 0, 0);
   }
   if (frame == PSYNERGY_EVENT_LAST_FRAME)
     Rock_EndFalling();
   if (frame == PILLAR_CRUMBLE_FRAME)
-    Actor_SelectAnimation(work->child, 3);
+    Actor_SelectAnimation(state->child, 3);
 }
 
 void Actor_Release(struct Actor *part);
@@ -1182,7 +1182,7 @@ void Actor_PlaySoundInView(struct Actor *actor, s32 a);
 /// column of four parts rises, and the cap on its top with it
 /// (MagmaRock_RaiseFlameTop).
 void MagmaRock_BurnStatue(struct Actor *actor) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 type = SPRITE_STEAM_VENT;
 
   if ((gFrameCount & 15) == 0)
@@ -1262,12 +1262,12 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
       }
     }
     id = 0;
-    if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {
+    if (gMainRoutineState.next == SCENE_MAGMA_ROCK_SLIDE) {
       id = MagmaRock_LookUpCellStatue(actor->x.fixed, actor->z.fixed,
                                       gMagmaRock_SlideStatues);
-    } else if (gMainRoutineWork.next ==
+    } else if (gMainRoutineState.next ==
                SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
-      s16 entrance = gMainRoutineWork.entrance;
+      s16 entrance = gMainRoutineState.entrance;
       FIXED x = actor->x.fixed;
       FIXED z = actor->z.fixed;
 
@@ -1293,8 +1293,8 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
     actor->update = NULL;
   }
-  if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 &&
-      work->item == 0 && (u16)work->transitionActive != 0)
+  if (state->psynergy == 0 && state->fieldMenu == 0 && state->pauseMenu == 0 &&
+      state->item == 0 && (u16)state->transitionActive != 0)
     actor->timer++;
 }
 
@@ -1303,16 +1303,16 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
 #define DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(name, slidePillar, cliffPillar,     \
                                            flag)                               \
   void name(s32 stage, s32 frame) {                                            \
-    struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;             \
-    struct MainRoutineWork *party = &gMainRoutineWork;                         \
+    struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;          \
+    struct MainRoutineState *party = &gMainRoutineState;                       \
                                                                                \
     {                                                                          \
       s32 scene = party->next;                                                 \
                                                                                \
       if (scene == SCENE_MAGMA_ROCK_SLIDE)                                     \
-        work->child = Actor_Get(slidePillar);                                  \
+        state->child = Actor_Get(slidePillar);                                 \
       else if (scene == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST)                \
-        work->child = Actor_Get(cliffPillar);                                  \
+        state->child = Actor_Get(cliffPillar);                                 \
       MagmaRock_BurstStatue(stage, frame);                                     \
     }                                                                          \
     Event_SetFlag(flag);                                                       \
@@ -1341,9 +1341,9 @@ DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRock_BurstCrackedPillarB,
 /// (MagmaRock_BurstStatue) and sets its flag.
 #define DEFINE_BURST_CRACKED_PILLAR(name, pillar, flag)                        \
   void name(s32 stage, s32 frame) {                                            \
-    struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;             \
+    struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;          \
                                                                                \
-    work->child = Actor_Get(pillar);                                           \
+    state->child = Actor_Get(pillar);                                          \
     MagmaRock_BurstStatue(stage, frame);                                       \
     Event_SetFlag(flag);                                                       \
   }
@@ -1373,7 +1373,7 @@ DEFINE_BURST_CRACKED_PILLAR(MagmaRock_BurstCrackedPillarE,
 /// he is not sent straight back in; this step clears it, so that walking north
 /// into the cave takes him back inside from then on.
 void MagmaRock_ResetCaveDoor(void) {
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct MainRoutineState *party = &gMainRoutineState;
 
   if (party->movementMode != LEADER_MOVEMENT_KEYS)
     Event_ClearFlag(FLAG_CAVE_DOOR_USED);
@@ -1385,7 +1385,7 @@ void MagmaRock_ResetCaveDoor(void) {
 /// leaves; when the game rather than the player moved him onto the cell, it
 /// only sets `FLAG_CAVE_DOOR_USED`.
 void MagmaRock_EnterCave(void) {
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct MainRoutineState *party = &gMainRoutineState;
 
   if (party->movementMode != LEADER_MOVEMENT_KEYS) {
     Event_Start();
@@ -1443,7 +1443,7 @@ void FieldCamera_WaitForArrival(void);
 /// wall hits Felix as he climbs: he turns grey among dark puffs, falls to the
 /// foot of the wall with a thump that shakes the ground, and shakes his head.
 void MagmaRock_KnockLeaderOffWall(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   struct EffectOptions options;
   s32 position[3];
   s32 i;
@@ -1453,10 +1453,10 @@ void MagmaRock_KnockLeaderOffWall(void) {
   Event_ResolvePendingActions(0);
   Event_SetFlag(FLAG_LEADER_KNOCKED_DOWN);
   Event_PlaySound(SE_IMPACT);
-  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineState.leaderActorId),
                             SPRITE_COLOR_GREY);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_CLIMB);
-  Actor_SetAnimationSpeedById(gMainRoutineWork.leaderActorId,
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_CLIMB);
+  Actor_SetAnimationSpeedById(gMainRoutineState.leaderActorId,
                               ANIM_STEP_NORMAL * 2);
   options.priority = 1;
   options.palette = SPRITE_COLOR_BLACK;
@@ -1473,7 +1473,7 @@ void MagmaRock_KnockLeaderOffWall(void) {
     wait(5);
   }
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+  gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader->gravity = toFIXED(4) / 5;
   leader->bounce = 0;
@@ -1500,16 +1500,16 @@ void MagmaRock_KnockLeaderOffWall(void) {
   } while (i != 0);
   Event_PlaySound(SE_THUMP);
   Actor_SetSpriteFlags(leader, 1);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_LEAN_BACK);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_LEAN_BACK);
   MapGrid_SetShake(5, 8, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
-  FieldCamera_MoveToActor(gMainRoutineWork.leaderActorId, 1);
+  FieldCamera_MoveToActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_SHAKE_HEAD);
-  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_SHAKE_HEAD);
+  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineState.leaderActorId),
                             SPRITE_COLOR_NORMAL);
-  Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
+  Actor_WaitForAnimationChange(gMainRoutineState.leaderActorId);
   Event_ClearFlag(FLAG_LEADER_KNOCKED_DOWN);
   leader->gravity = toFIXED(1);
   leader->bounce = FIXED_ONE / 4;
@@ -1526,7 +1526,7 @@ void MagmaRockInside_PushBlockOnto(void);
 /// (MagmaRockInside_PushBlockOnto), puts them back and stands it in the map
 /// again.
 void MagmaRock_PushPillarEast(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   s32 position[3];
   struct Actor *actor;
   u8 *terrainId;
@@ -1565,7 +1565,7 @@ void MagmaRock_PushPillarEast(void) {
 /// party comes back. The game moves the pillar as MagmaRock_PushPillarEast
 /// does.
 void MagmaRock_PushPillarWest(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   s32 position[3];
   struct Actor *actor;
   u8 *terrainId;
@@ -1666,34 +1666,34 @@ void MagmaRock_FlashTarget(struct Actor *actor) {
 /// (42, 17) to (46, 24)). The game copies the open ground and its pictures over
 /// those cells from spare ones below the room.
 void MagmaRock_BlastWayIn(s32 stage, s32 frame) {
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
 
   if (frame == 0) {
     struct Actor *actor;
 
     MagmaRock_StartFallingRocks();
-    actor = work->child;
+    actor = state->child;
     actor->flashMask = 4;
     actor->update = (void *)MagmaRock_FlashTarget;
   }
   if (stage == BURST_STAGE_SMALL_BLAST) {
-    MagmaRock_ScatterEmbers(work->child->x.fixed, work->child->z.fixed);
-    MagmaRock_DropRocks(work->child->x.fixed,
-                        work->child->y.fixed + toFIXED(15),
-                        work->child->z.fixed, 1);
+    MagmaRock_ScatterEmbers(state->child->x.fixed, state->child->z.fixed);
+    MagmaRock_DropRocks(state->child->x.fixed,
+                        state->child->y.fixed + toFIXED(15),
+                        state->child->z.fixed, 1);
   }
   if (stage == BURST_STAGE_GREAT_BLAST) {
     struct Actor *target;
     s32 last = 8;
 
-    MagmaRock_ScatterEmbers(work->child->x.fixed, work->child->z.fixed);
-    MagmaRock_ScatterEmbers(work->child->x.fixed, work->child->z.fixed);
-    MagmaRock_ScatterEmbers(work->child->x.fixed,
-                            work->child->z.fixed - toFIXED(32));
-    MagmaRock_DropRocks(work->child->x.fixed,
-                        work->child->y.fixed + toFIXED(15),
-                        work->child->z.fixed, 16);
-    target = work->child;
+    MagmaRock_ScatterEmbers(state->child->x.fixed, state->child->z.fixed);
+    MagmaRock_ScatterEmbers(state->child->x.fixed, state->child->z.fixed);
+    MagmaRock_ScatterEmbers(state->child->x.fixed,
+                            state->child->z.fixed - toFIXED(32));
+    MagmaRock_DropRocks(state->child->x.fixed,
+                        state->child->y.fixed + toFIXED(15),
+                        state->child->z.fixed, 16);
+    target = state->child;
     SET_ACTOR_POSITION(target, 0, 0, 0);
     MapGrid_CopyCellAttributes(0, 32, 5, 8, 42, 17);
     MapGrid_CopyCellAttributes(0, 96, 5, 8, 42, 81);
@@ -1712,16 +1712,16 @@ extern struct Trigger gMagmaRock_SalamanderTailLowEastTriggers[];
 extern struct Trigger gMagmaRock_StatueTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
-    if (gMainRoutineWork.entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE)
+  if (gMainRoutineState.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
+    if (gMainRoutineState.entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE)
       return gMagmaRock_SalamanderTailHighWestTriggers;
-    if (gMainRoutineWork.entrance <= SALAMANDER_TAIL_HIGH_EAST_LAST_ENTRANCE)
+    if (gMainRoutineState.entrance <= SALAMANDER_TAIL_HIGH_EAST_LAST_ENTRANCE)
       return gMagmaRock_SalamanderTailHighEastTriggers;
-    if (gMainRoutineWork.entrance <= SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE)
+    if (gMainRoutineState.entrance <= SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE)
       return gMagmaRock_SalamanderTailLowWestTriggers;
     return gMagmaRock_SalamanderTailLowEastTriggers;
   }
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_STATUE)
+  if (gMainRoutineState.next == SCENE_MAGMA_ROCK_STATUE)
     return gMagmaRock_StatueTriggers;
   return gMagmaRock_Triggers;
 }
@@ -1742,7 +1742,7 @@ void MapGrid_CenterOnFollowedPoint(void);
 /// (MAGMA_ROCK_SALAMANDER_TAIL_CHEST_FROM_MAGMA_ROCK_STATUE_EAST_A): he falls
 /// in from 130 pixels up, lands with a thump in a ring of dust and leans back.
 void MagmaRock_LaunchLeader(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   struct EffectOptions options;
   u32 i;
   s32 angle;
@@ -1757,7 +1757,7 @@ void MagmaRock_LaunchLeader(void) {
   leader->gravity = toFIXED(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -1782,17 +1782,17 @@ void MagmaRock_LaunchLeader(void) {
                       &options);
   }
   Event_PlaySound(SE_THUMP);
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+  Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_LEAN_BACK);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_LEAN_BACK);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+  Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = toFIXED(1);
   leader->bounce = FIXED_ONE / 4;
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   MagmaRock_EndEvent();
 }
@@ -1804,7 +1804,7 @@ s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 /// Arriving with the party's place kept: sets the leader on the ground under
 /// it.
 void MagmaRock_LandLeader(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 height;
@@ -1815,7 +1815,7 @@ void MagmaRock_LandLeader(void) {
     actor->groundHeight = height;
     actor->y.fixed = height;
     actor->targetY = ACTOR_NO_TARGET;
-    EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
+    EventCamera_FollowActor(gMainRoutineState.leaderActorId, 0);
   }
 }
 
@@ -1877,7 +1877,7 @@ void MagmaRock_SettleBlocks();
 void MagmaRock_PlaceRope();
 
 s32 Scene_Initialize(void) {
-  struct MainRoutineWork *work;
+  struct MainRoutineState *state;
   s32 scene;
   s32 *owner, *leader;
   s16 *entrance;
@@ -1887,15 +1887,15 @@ s32 Scene_Initialize(void) {
   FIXED offset;
   s32 priorityBit, destinationX, destinationColumn, width;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  work = &gMainRoutineWork;
-  work->retreatScene = SCENE_MAGMA_ROCK_SLIDE;
-  work->retreatEntrance = MAGMA_ROCK_SLIDE_FROM_WORLD_MAP;
-  scene = work->next;
+  state = &gMainRoutineState;
+  state->retreatScene = SCENE_MAGMA_ROCK_SLIDE;
+  state->retreatEntrance = MAGMA_ROCK_SLIDE_FROM_WORLD_MAP;
+  scene = state->next;
   if (scene == SCENE_MAGMA_ROCK_SLIDE) {
     priorityBit = ACTOR_PRIORITY_IGNORES_RISES;
-    Actor_GetById(work->leaderActorId)->priorityFlags |= priorityBit;
+    Actor_GetById(state->leaderActorId)->priorityFlags |= priorityBit;
     Actor_GetById(ACTOR_SLIDE_PILLAR_A)->priorityFlags |= priorityBit;
     Actor_GetById(ACTOR_SLIDE_PILLAR_B)->priorityFlags |= priorityBit;
     MagmaRockInside_RaiseActorCells(gMagmaRock_SlideStatues);
@@ -1921,7 +1921,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteFlags(actor, 0);
     }
     MagmaRock_RebuildFlameParts(ACTOR_SLIDE_STATUE_CAP);
-    switch (work->entrance) {
+    switch (state->entrance) {
     case MAGMA_ROCK_SLIDE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_WEST:
     case MAGMA_ROCK_SLIDE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_EAST:
       offset = toFIXED(16);
@@ -1929,10 +1929,10 @@ s32 Scene_Initialize(void) {
     }
     goto settle;
   } else if (scene == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
-    owner = &work->leaderActorId;
+    owner = &state->leaderActorId;
     Actor_GetById(*owner)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-    entrance = &work->entrance;
-    if (work->entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE) {
+    entrance = &state->entrance;
+    if (state->entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE) {
       s32 id;
 
       MagmaRock_RestoreCrumblingPillars(gMagmaRock_CrumblingPillars);
@@ -2093,7 +2093,7 @@ s32 Scene_Initialize(void) {
             *entrance ==
                 MAGMA_ROCK_SALAMANDER_TAIL_CHEST_FROM_MAGMA_ROCK_SLIDE_EAST) {
           if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-            actor = Actor_GetById(work->leaderActorId);
+            actor = Actor_GetById(state->leaderActorId);
             actor->z.fixed += toFIXED(16);
           }
           offset = -toFIXED(32);
@@ -2115,10 +2115,10 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsTo(0, 32, 42, 17, width, other);
       MapGrid_CopyCellsTo(0, 96, 42, 81, width, other);
     }
-    leader = &work->leaderActorId;
+    leader = &state->leaderActorId;
     Actor_GetById(*leader)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
     MagmaRockInside_RaiseActorCells(gMagmaRock_StatueStatues);
-    if (work->entrance <=
+    if (state->entrance <=
         MAGMA_ROCK_STATUE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_EAST_B) {
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
         actor = Actor_GetById(*leader);
@@ -2139,7 +2139,7 @@ s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 /// On entry: sets each listed pillar from its two flags (cracked, then fallen),
 /// then lifts the leader onto the ground under it.
 void MagmaRock_RestoreCrumblingPillars(const u16 *table) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor;
   s32 id;
   s32 flag;
@@ -2180,7 +2180,7 @@ void MagmaRock_RestoreCrumblingPillars(const u16 *table) {
         Actor_SelectAnimation(actor, 0);
     }
   }
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   ground =
       Map_GetTerrainHeight(leader->layer, leader->x.fixed, leader->z.fixed);
   if (leader->y.fixed < ground) {
@@ -2201,7 +2201,7 @@ void MagmaRock_StepOnCrumblingPillar(u16 *list) {
 
   if (Field_TryJumpForward() != 0)
     return;
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
@@ -2319,7 +2319,7 @@ UNUSED void MagmaRock_StepOnTrap(u16 *list) {
 
   if (Field_TryJumpForward() != 0)
     return;
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   firstPlaced = Actor_GetById(ACTOR_FIRST_PLACED);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
@@ -2410,7 +2410,7 @@ void MagmaRock_SpawnDustRing(void) {
   u32 i;
   s32 angle;
 
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   if (leader == NULL)
     return;
   state = 0;
@@ -2455,17 +2455,17 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
 
 /// Drops count rocks from (x, y, z), each flung out at a random angle.
 void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
-  struct RockWork *work;
+  struct RockState *state;
   s32 i;
 
-  work = Ram_HeapSlots->menuWork;
+  state = Ram_HeapSlots->menuState;
   if (count > 0) {
     i = count;
     do {
       struct Rock *rock;
       s32 angle = Random16();
 
-      rock = &work->rocks[work->next];
+      rock = &state->rocks[state->next];
       rock->timer = 0;
       rock->position[0] = x;
       rock->position[1] = y;
@@ -2480,7 +2480,7 @@ void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
       {
         s32 mask = ROCK_COUNT - 1;
 
-        work->next = (work->next + 1) & mask;
+        state->next = (state->next + 1) & mask;
       }
       i--;
     } while (i != 0);
@@ -2493,8 +2493,8 @@ void Import_DecompressTaggedLz(void *entry, void *destination);
 /// Starts the falling rocks: loads their picture, prepares a small sprite for
 /// each rock and adds the task that draws them.
 void MagmaRock_StartFallingRocks(void) {
-  struct RockWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
+  struct RockState *state =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockState));
   s32 entry;
   s32 tile;
   s32 i;
@@ -2502,14 +2502,14 @@ void MagmaRock_StartFallingRocks(void) {
   struct EffectSprite *sprite;
 
   Import_DecompressTaggedLz(Resource_GetTableEntry(RESOURCE_FALLING_ROCK),
-                            work);
+                            state);
   entry = VramCache_FindFreeEntry();
-  tile = Vram_Load(entry, sizeof(work->tiles), work);
-  work->tileBase = tile;
-  work->resource = entry;
-  rock = work->rocks;
+  tile = Vram_Load(entry, sizeof(state->tiles), state);
+  state->tileBase = tile;
+  state->resource = entry;
+  rock = state->rocks;
   for (i = 0; i < ROCK_COUNT; i++) {
-    sprite = &work->sprites[i];
+    sprite = &state->sprites[i];
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = SPRITE_COLOR_NORMAL;
@@ -2518,7 +2518,7 @@ void MagmaRock_StartFallingRocks(void) {
     rock->timer = -1;
     rock++;
   }
-  work->next = 0;
+  state->next = 0;
   Task_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 

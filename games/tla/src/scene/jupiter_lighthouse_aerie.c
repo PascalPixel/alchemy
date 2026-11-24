@@ -23,7 +23,7 @@
 #include "field/scene_tables.h"
 #include "field/event_inline.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
@@ -174,9 +174,9 @@ void JupiterLighthouse_PlaceRaisedActors(void);
 
 void Leader_CenterInCell(void);
 
-void CrackedTile_Crack(struct CellTarget *work, struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *state, struct CellTargetEntry *entry);
 
-void CrackedTile_Fall(struct CellTarget *work, struct CellTargetEntry *entry);
+void CrackedTile_Fall(struct CellTarget *state, struct CellTargetEntry *entry);
 
 void CrackedTile_DropIn(void);
 
@@ -258,8 +258,8 @@ void JupiterLighthouse_ShootAtLeftAngel(void) {
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_EAST, 0);
   JupiterLighthouse_StartBeam(ACTOR_LEFT_ARCHER, ACTOR_LEFT_ANGEL, BEAM_LEFT);
   FieldEvent_Wait(40);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT) == 0) {
@@ -268,7 +268,7 @@ void JupiterLighthouse_ShootAtLeftAngel(void) {
   } else {
     JupiterLighthouse_RaiseAngels(RISE_LEFT_ANGEL_AND_LID);
   }
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldEvent_Wait(40);
   JupiterLighthouse_StopBeamFlicker(Actor_Get(ACTOR_LEFT_ANGEL));
   JupiterLighthouse_StopBeamFlicker(Actor_Get(ACTOR_RIGHT_ANGEL));
@@ -284,8 +284,8 @@ void JupiterLighthouse_ShootAtRightAngel(void) {
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_WEST, 0);
   JupiterLighthouse_StartBeam(ACTOR_RIGHT_ARCHER, ACTOR_RIGHT_ANGEL,
                               BEAM_RIGHT);
   FieldEvent_Wait(40);
@@ -295,7 +295,7 @@ void JupiterLighthouse_ShootAtRightAngel(void) {
   } else {
     JupiterLighthouse_RaiseAngels(RISE_RIGHT_ANGEL_AND_LID);
   }
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldEvent_Wait(40);
   JupiterLighthouse_StopBeamFlicker(Actor_Get(ACTOR_LEFT_ANGEL));
   JupiterLighthouse_StopBeamFlicker(Actor_Get(ACTOR_RIGHT_ANGEL));
@@ -340,7 +340,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
         } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
       }
       actor->motionFlags = 0;
-      FieldActor_Stop(gMainRoutineWork.leaderActorId);
+      FieldActor_Stop(gMainRoutineState.leaderActorId);
       Actor_SetPosition(id, 0, 0);
       Event_PlaySound(SE_HEAVY_IMPACT);
       JupiterLighthouse_FillLeftGap();
@@ -370,7 +370,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
         } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
       }
       actor->motionFlags = 0;
-      FieldActor_Stop(gMainRoutineWork.leaderActorId);
+      FieldActor_Stop(gMainRoutineState.leaderActorId);
       Actor_SetPosition(id, 0, 0);
       Event_PlaySound(SE_HEAVY_IMPACT);
       JupiterLighthouse_FillRightGap();
@@ -395,18 +395,18 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// chains, the floating platforms the leader may step onto, and the angels and
 /// the lid as far as they have risen. Returns 0.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
           JUPITER_LIGHTHOUSE_AERIE_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_WEST ||
-      gMainRoutineWork.entrance ==
+      gMainRoutineState.entrance ==
           JUPITER_LIGHTHOUSE_AERIE_FROM_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST)
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+    Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
   JupiterLighthouse_LoadPalettes(0);
   Import_HangingVinePlace(ACTOR_WEST_CHAIN, 1);
   Import_HangingVinePlace(ACTOR_EAST_CHAIN, 1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   Actor_Get(ACTOR_FLOATING_PLATFORM_A)->priorityFlags |=
       ACTOR_PRIORITY_PLATFORM;
@@ -532,7 +532,7 @@ void JupiterLighthouse_StopBeamFlicker(struct Actor *actor) {
 /// An archer's beam (JupiterLighthouse_StartBeam), in the menu's heap slot: the
 /// sparks' and the trident's pictures and sprites, the beam's path, and where
 /// its steps have reached.
-struct BeamWork {
+struct BeamState {
   u8 tiles[TRIDENT_BYTES];
   struct EffectSprite sprites[32];
   struct BeamSpark sparks[32];
@@ -558,7 +558,7 @@ struct BeamWork {
 /// The value t of n steps of the way from from to to.
 #define LERP(from, to, t, n) ((from) + ((to) - (from)) * (t) / (n))
 
-/// The steps of an archer's beam (BeamWork.step).
+/// The steps of an archer's beam (BeamState.step).
 enum BeamStep {
   BEAM_GATHER, ///< the sparks close in on the archer
   BEAM_GROW,   ///< the trident grows there
@@ -578,9 +578,9 @@ enum BeamStep {
 /// the golden trident grows and is carried to the angel, and shrinks there
 /// as the angel starts to flicker.
 void JupiterLighthouse_UpdateBeam(void) {
-  struct BeamWork *work = Ram_HeapSlots->menuWork;
-  struct Actor *carrier = gFieldWork->camera;
-  s32 t = work->frame;
+  struct BeamState *state = Ram_HeapSlots->menuState;
+  struct Actor *carrier = gFieldState->camera;
+  s32 t = state->frame;
   s32 position[3];
   FIXED a[3];
   FIXED b[3];
@@ -592,131 +592,133 @@ void JupiterLighthouse_UpdateBeam(void) {
   struct EffectSprite *large;
   s32 i;
 
-  switch (work->step) {
+  switch (state->step) {
   case BEAM_GATHER:
-    work->duration = 30;
-    aside = work->side == BEAM_LEFT ? toFIXED(10) : -toFIXED(10);
-    a[0] = work->from[0] - aside;
-    a[1] = work->from[1] + toFIXED(24);
-    a[2] = work->from[2];
-    b[0] = work->from[0];
-    b[1] = work->from[1];
-    b[2] = work->from[2];
-    work->pointA[0] = LERP(a[0], b[0], t, work->duration);
-    work->pointA[1] = LERP(a[1], b[1], t, work->duration);
-    work->pointA[2] = LERP(a[2], b[2], t, work->duration);
-    a[1] = work->from[1] - toFIXED(24);
-    work->pointB[0] = LERP(a[0], b[0], t, work->duration);
-    work->pointB[1] = LERP(a[1], b[1], t, work->duration);
-    work->pointB[2] = LERP(a[2], b[2], t, work->duration);
-    if (work->frame == work->duration) {
-      work->step++;
-      work->frame = -1;
+    state->duration = 30;
+    aside = state->side == BEAM_LEFT ? toFIXED(10) : -toFIXED(10);
+    a[0] = state->from[0] - aside;
+    a[1] = state->from[1] + toFIXED(24);
+    a[2] = state->from[2];
+    b[0] = state->from[0];
+    b[1] = state->from[1];
+    b[2] = state->from[2];
+    state->pointA[0] = LERP(a[0], b[0], t, state->duration);
+    state->pointA[1] = LERP(a[1], b[1], t, state->duration);
+    state->pointA[2] = LERP(a[2], b[2], t, state->duration);
+    a[1] = state->from[1] - toFIXED(24);
+    state->pointB[0] = LERP(a[0], b[0], t, state->duration);
+    state->pointB[1] = LERP(a[1], b[1], t, state->duration);
+    state->pointB[2] = LERP(a[2], b[2], t, state->duration);
+    if (state->frame == state->duration) {
+      state->step++;
+      state->frame = -1;
     }
     break;
   case BEAM_GROW:
-    work->duration = 60;
-    aside = work->side == BEAM_LEFT ? toFIXED(30) : -toFIXED(30);
-    a[0] = work->from[0];
-    a[1] = work->from[1];
-    a[2] = work->from[2];
-    b[0] = work->from[0] - aside;
-    b[1] = work->from[1];
-    b[2] = work->from[2];
-    work->pointA[0] = LERP(a[0], b[0], t, work->duration);
-    work->pointA[1] = LERP(a[1], b[1], t, work->duration);
-    work->pointA[2] = LERP(a[2], b[2], t, work->duration);
-    work->pointB[0] = work->pointA[0];
-    work->pointB[1] = work->pointA[1];
-    work->pointB[2] = work->pointA[2];
-    large = &work->large;
-    large->scaleY = large->scaleX = FIXED_ONE * work->frame / 60;
-    if (work->frame == work->duration) {
-      work->step++;
-      work->frame = -1;
+    state->duration = 60;
+    aside = state->side == BEAM_LEFT ? toFIXED(30) : -toFIXED(30);
+    a[0] = state->from[0];
+    a[1] = state->from[1];
+    a[2] = state->from[2];
+    b[0] = state->from[0] - aside;
+    b[1] = state->from[1];
+    b[2] = state->from[2];
+    state->pointA[0] = LERP(a[0], b[0], t, state->duration);
+    state->pointA[1] = LERP(a[1], b[1], t, state->duration);
+    state->pointA[2] = LERP(a[2], b[2], t, state->duration);
+    state->pointB[0] = state->pointA[0];
+    state->pointB[1] = state->pointA[1];
+    state->pointB[2] = state->pointA[2];
+    large = &state->large;
+    large->scaleY = large->scaleX = FIXED_ONE * state->frame / 60;
+    if (state->frame == state->duration) {
+      state->step++;
+      state->frame = -1;
     }
     break;
   case BEAM_SPREAD:
-    if (work->frame == 0)
-      work->still = 1;
-    aside = work->side == BEAM_LEFT ? toFIXED(1) / 2 : -toFIXED(1) / 2;
-    work->pointA[0] += aside;
-    work->pointB[0] += aside;
-    if (work->frame == 14) {
-      work->step++;
-      work->frame = -1;
+    if (state->frame == 0)
+      state->still = 1;
+    aside = state->side == BEAM_LEFT ? toFIXED(1) / 2 : -toFIXED(1) / 2;
+    state->pointA[0] += aside;
+    state->pointB[0] += aside;
+    if (state->frame == 14) {
+      state->step++;
+      state->frame = -1;
     }
     break;
   case BEAM_CARRY:
     if (t == 0)
       Sound_Play(SE_PSYNERGY_SPARKLE);
-    work->carried[0] =
-        ((work->from[0] >> 2) +
-         ((work->to[0] >> 2) - (work->from[0] >> 2)) * t / BEAM_CARRY_FRAMES)
+    state->carried[0] =
+        ((state->from[0] >> 2) +
+         ((state->to[0] >> 2) - (state->from[0] >> 2)) * t / BEAM_CARRY_FRAMES)
         << 2;
-    work->carried[1] = LERP(work->from[1], work->to[1], t, BEAM_CARRY_FRAMES);
-    work->carried[2] = LERP(work->from[2], work->to[2], t, BEAM_CARRY_FRAMES);
-    Actor_SetPositionAndResetMotion(carrier, work->carried[0], work->carried[1],
-                                    work->carried[2]);
-    aside = work->side == BEAM_LEFT ? toFIXED(16) : -toFIXED(16);
-    work->pointA[0] = work->carried[0] - aside;
-    work->pointA[1] = work->carried[1];
-    work->pointA[2] = work->carried[2];
-    work->pointB[0] = work->pointA[0];
-    work->pointB[1] = work->pointA[1];
-    work->pointB[2] = work->pointA[2];
-    if (work->frame == BEAM_CARRY_FRAMES) {
-      work->step++;
-      work->frame = -1;
+    state->carried[1] =
+        LERP(state->from[1], state->to[1], t, BEAM_CARRY_FRAMES);
+    state->carried[2] =
+        LERP(state->from[2], state->to[2], t, BEAM_CARRY_FRAMES);
+    Actor_SetPositionAndResetMotion(carrier, state->carried[0],
+                                    state->carried[1], state->carried[2]);
+    aside = state->side == BEAM_LEFT ? toFIXED(16) : -toFIXED(16);
+    state->pointA[0] = state->carried[0] - aside;
+    state->pointA[1] = state->carried[1];
+    state->pointA[2] = state->carried[2];
+    state->pointB[0] = state->pointA[0];
+    state->pointB[1] = state->pointA[1];
+    state->pointB[2] = state->pointA[2];
+    if (state->frame == BEAM_CARRY_FRAMES) {
+      state->step++;
+      state->frame = -1;
     }
     break;
   case BEAM_SHRINK:
-    if (work->frame == 0) {
+    if (state->frame == 0) {
       Sound_Play(SE_SHIMMER);
-      JupiterLighthouse_StartBeamFlicker(work->angel);
+      JupiterLighthouse_StartBeamFlicker(state->angel);
     }
-    large = &work->large;
+    large = &state->large;
     large->scaleY = large->scaleX = large->scaleX - toFIXED(1) / 32;
     if (large->scaleX < toFIXED(1) / 5) {
       large->scaleX = 0;
-      work->step++;
-      work->frame = -1;
+      state->step++;
+      state->frame = -1;
     }
     break;
   case BEAM_FADE:
-    if (work->frame == 0)
-      work->loop = 0;
-    if (work->frame == BEAM_SPARK_FRAMES)
-      work->step = BEAM_DONE;
+    if (state->frame == 0)
+      state->loop = 0;
+    if (state->frame == BEAM_SPARK_FRAMES)
+      state->step = BEAM_DONE;
     break;
   }
-  large = &work->large;
+  large = &state->large;
   scale = large->scaleX;
   pos = position;
-  if (work->side == BEAM_LEFT)
+  if (state->side == BEAM_LEFT)
     large->scaleX = scale < 0 ? -scale : scale;
   else
     large->scaleX = -(scale < 0 ? -scale : scale);
-  pos[0] = work->carried[0];
-  pos[1] = work->carried[1];
-  pos[2] = work->carried[2];
+  pos[0] = state->carried[0];
+  pos[1] = state->carried[1];
+  pos[2] = state->carried[2];
   Camera_WorldToScreen(pos);
   large->x = pos[0];
   large->y = pos[2];
   Import_EffectSpriteDraw(large);
-  for (i = 0, spark = work->sparks, sprite = work->sprites; i <= 7;
+  for (i = 0, spark = state->sparks, sprite = state->sprites; i <= 7;
        i++, sprite++, spark++) {
     if (spark->age == 0) {
       if (i & 1) {
-        spark->position[0] = work->pointA[0];
-        spark->position[1] = work->pointA[1];
-        spark->position[2] = work->pointA[2];
+        spark->position[0] = state->pointA[0];
+        spark->position[1] = state->pointA[1];
+        spark->position[2] = state->pointA[2];
       } else {
-        spark->position[0] = work->pointB[0];
-        spark->position[1] = work->pointB[1];
-        spark->position[2] = work->pointB[2];
+        spark->position[0] = state->pointB[0];
+        spark->position[1] = state->pointB[1];
+        spark->position[2] = state->pointB[2];
       }
-      if (work->still == 0) {
+      if (state->still == 0) {
         spark->position[1] += Trig_Sin(Random16()) << 3;
         spark->drift = toFIXED(3) / 10;
       } else {
@@ -726,15 +728,15 @@ void JupiterLighthouse_UpdateBeam(void) {
       }
     }
     if (spark->age < BEAM_SPARK_FRAMES) {
-      sprite->oam.index = work->smallTile + (spark->age & 3) * 2;
+      sprite->oam.index = state->smallTile + (spark->age & 3) * 2;
       EffectSprite_DrawAtWorldPosition(sprite, spark);
       spark->position[1] -= spark->drift;
     }
     spark->age++;
-    if (work->loop != 0 && spark->age == BEAM_SPARK_FRAMES)
+    if (state->loop != 0 && spark->age == BEAM_SPARK_FRAMES)
       spark->age = 0;
   }
-  work->frame++;
+  state->frame++;
 }
 #undef LERP
 
@@ -743,9 +745,9 @@ void Actor_StartIdle(struct Actor *actor);
 /// An archer shoots its beam at an angel: loads the sparks and the trident
 /// into VRAM and holds the event until the beam's task has finished.
 void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
-  struct BeamWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct BeamWork));
-  struct Actor *carrier = gFieldWork->camera;
+  struct BeamState *state =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct BeamState));
+  struct Actor *carrier = gFieldState->camera;
   struct EffectSprite *sprite;
   struct EffectSprite *large;
   struct BeamSpark *spark;
@@ -757,16 +759,17 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
   s32 age;
   s32 size;
 
-  work->archer = Actor_Get(archerId);
-  work->angel = Actor_Get(angelId);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_STAR_SPARKLE_FADE), work);
+  state->archer = Actor_Get(archerId);
+  state->angel = Actor_Get(angelId);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_STAR_SPARKLE_FADE),
+                      state);
   smallEntry = VramCache_FindFreeEntry();
-  smallTile = Vram_Load(smallEntry, SPARKLE_BYTES, work);
-  work->smallTile = smallTile;
-  spark = work->sparks;
+  smallTile = Vram_Load(smallEntry, SPARKLE_BYTES, state);
+  state->smallTile = smallTile;
+  spark = state->sparks;
   age = 0;
-  sprite = work->sprites;
-  i = ARRAY_COUNT(work->sparks) - 1;
+  sprite = state->sprites;
+  i = ARRAY_COUNT(state->sparks) - 1;
   for (; i >= 0; age -= 2, i--, sprite++, spark++) {
     EffectSprite_Init(sprite, 4, 4, OBJ_SIZE_8X8, smallTile);
     sprite->oam.fullColor = 1;
@@ -775,14 +778,14 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
     sprite->depth = OAM_DEPTH_WINDOW;
     spark->age = age;
   }
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GOLDEN_TRIDENT), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GOLDEN_TRIDENT), state);
   /* FAKEMATCH(temporary): size, the trident's size held in a local before
    * its entry is found; as TRIDENT_BYTES at the load. */
   size = TRIDENT_BYTES;
   largeEntry = VramCache_FindFreeEntry();
-  largeTile = Vram_Load(largeEntry, size, work);
-  work->largeTile = largeTile;
-  large = &work->large;
+  largeTile = Vram_Load(largeEntry, size, state);
+  state->largeTile = largeTile;
+  large = &state->large;
   FieldEffectSprite_Init(large, 30, 7, OBJ_SIZE_32X16, largeTile);
   large->depth = OAM_DEPTH_WINDOW;
   large->oam.priority = 1;
@@ -791,38 +794,38 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
   large->scaleX = 0;
   large->scaleY = 0;
   if (side == BEAM_LEFT) {
-    work->from[0] = toFIXED(152);
-    work->from[1] = toFIXED(32);
-    work->from[2] = toFIXED(164);
-    work->to[0] = toFIXED(470);
-    work->to[1] = toFIXED(32);
-    work->to[2] = toFIXED(164);
+    state->from[0] = toFIXED(152);
+    state->from[1] = toFIXED(32);
+    state->from[2] = toFIXED(164);
+    state->to[0] = toFIXED(470);
+    state->to[1] = toFIXED(32);
+    state->to[2] = toFIXED(164);
   } else {
-    work->from[0] = toFIXED(872);
-    work->from[1] = toFIXED(32);
-    work->from[2] = toFIXED(164);
-    work->to[0] = toFIXED(550);
-    work->to[1] = toFIXED(32);
-    work->to[2] = toFIXED(164);
+    state->from[0] = toFIXED(872);
+    state->from[1] = toFIXED(32);
+    state->from[2] = toFIXED(164);
+    state->to[0] = toFIXED(550);
+    state->to[1] = toFIXED(32);
+    state->to[2] = toFIXED(164);
   }
-  work->carried[0] = work->from[0];
-  work->carried[1] = work->from[1];
-  work->carried[2] = work->from[2];
+  state->carried[0] = state->from[0];
+  state->carried[1] = state->from[1];
+  state->carried[2] = state->from[2];
   carrier->speedLimit = toFIXED(1) / 2;
   carrier->acceleration = toFIXED(1) / 2;
   Actor_StartIdle(carrier);
-  FieldActor_SetMoveTargetFX(carrier, work->carried[0], work->carried[1],
-                             work->carried[2]);
+  FieldActor_SetMoveTargetFX(carrier, state->carried[0], state->carried[1],
+                             state->carried[2]);
   Event_PlaySound(SE_SWIRL);
-  JupiterLighthouse_StartBeamFlicker(work->archer);
+  JupiterLighthouse_StartBeamFlicker(state->archer);
   FieldEvent_Wait(40);
-  work->side = side;
-  work->step = BEAM_GATHER;
-  work->frame = 0;
-  work->loop = 1;
-  work->still = 0;
+  state->side = side;
+  state->step = BEAM_GATHER;
+  state->frame = 0;
+  state->loop = 1;
+  state->still = 0;
   Task_AddFrame(JupiterLighthouse_UpdateBeam, TASK_PASS_FRAME);
-  while (work->step != BEAM_DONE)
+  while (state->step != BEAM_DONE)
     System_Wait(1);
   FieldTask_Remove(JupiterLighthouse_UpdateBeam);
   VramCache_FreeEntry(largeEntry);
@@ -881,17 +884,17 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 /// as the rooms with cracked floors do (CrackedTile_PlaceLanding); the aerie
 /// has none to fall through.
 UNUSED void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 transition) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  struct CellTarget *work = &gCrackedTiles;
-  s32 x = FieldGameFlag_GetByte(work->flagByte);
-  s32 z = FieldGameFlag_GetByte(work->flagByte + 8);
+  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
+  struct FieldState *field = Ram_HeapSlots->fieldState;
+  struct CellTarget *state = &gCrackedTiles;
+  s32 x = FieldGameFlag_GetByte(state->flagByte);
+  s32 z = FieldGameFlag_GetByte(state->flagByte + 8);
 
   if (x != 0 || z != 0) {
     struct Actor *camera;
 
-    GameFlag_SetByte(work->flagByte, 0);
-    GameFlag_SetByte(work->flagByte + 8, 0);
+    GameFlag_SetByte(state->flagByte, 0);
+    GameFlag_SetByte(state->flagByte + 8, 0);
     actor->x.fixed = FIELD_CELL_CENTER(x + dx);
     actor->z.fixed = FIELD_CELL_CENTER(z + dz);
     camera = field->camera;
@@ -899,7 +902,7 @@ UNUSED void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 transition) {
     camera->z.fixed = actor->z.fixed;
     MapGrid_CenterOnFollowedPoint();
     CrackedTile_DropIn();
-    gFieldWork->transition = transition;
+    gFieldState->transition = transition;
   }
 }
 

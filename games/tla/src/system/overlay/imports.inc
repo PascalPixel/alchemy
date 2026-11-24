@@ -87,7 +87,7 @@
 	export Actor_SetMoveTarget, Actor_SetMoveTargetFar
 	export Actor_WaitForMove, Actor_WaitForMoveFar
 	export MapGrid_PlayMapEdit, MapGrid_PlayMapEditFar
-	export MapGrid_CopyCellPictureIndicesRect, MapGrid_CopyCellPictureIndicesRectFar
+	export MapGrid_CopyCellTilesIndicesRect, MapGrid_CopyCellTilesIndicesRectFar
 	export WorldMap_SetWindowCellTile, WorldMap_SetWindowCellTileFar
 	export TilesetAnim_Resume, TilesetAnim_ResumeFar
 	export TilesetAnim_Pause, TilesetAnim_PauseFar
@@ -100,7 +100,7 @@
 	export MapGrid_GetCellAttributeLowNibbleOrBump, MapGrid_GetCellAttributeLowNibbleOrBumpFar
 	export Map_CopyCellsRect, Map_CopyCellsRectFar
 	export Map_CopyCellAttributeRect, Map_CopyCellAttributeRectFar
-	export MapGrid_CopyCellPictureCellsRect, MapGrid_CopyCellPictureCellsRectFar
+	export MapGrid_CopyCellTilesCellsRect, MapGrid_CopyCellTilesCellsRectFar
 	export MapGrid_CheckCollision, MapGrid_CheckCollisionFar
 	export Map_CopyRawCellsRect, Map_CopyRawCellsRectFar
 	export Actor_SetSpriteFlags, Actor_SetSpriteFlagsFar
@@ -190,7 +190,7 @@
 	export Inventory_AddItem, Inventory_AddItemFar
 	export PartyInventory_Add, PartyInventory_AddFar
 	export PartyInventory_Remove, PartyInventory_RemoveFar
-	export MainRoutineWork_InitializeDefaults, MainRoutineWork_InitializeDefaultsFar
+	export MainRoutineState_InitializeDefaults, MainRoutineState_InitializeDefaultsFar
 	export Inventory_Equip, Inventory_EquipFar
 	export Inventory_Discard, Inventory_DiscardFar
 	export Inventory_Break, Inventory_BreakFar

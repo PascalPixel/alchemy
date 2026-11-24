@@ -4,15 +4,15 @@ Field_AlhafraJail:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_AlhafraJail, .LField_AlhafraJail_CELL_PICTURES
+	map_block Field_AlhafraJail, .LField_AlhafraJail_CELL_TILES
 	map_block Field_AlhafraJail, .LField_AlhafraJail_SHAPES
 	map_block Field_AlhafraJail, .LField_AlhafraJail_GRID
 	map_block Field_AlhafraJail, .LField_AlhafraJail_SHAPE_GRID
 	map_block Field_AlhafraJail, .LField_AlhafraJail_ANIMATION
 	map_block Field_AlhafraJail
 	map_block Field_AlhafraJail, .LField_AlhafraJail_SCENE
-.LField_AlhafraJail_CELL_PICTURES:
-	.incbin "games/tla/src/map/alhafra_jail/cell_pictures.delta2.lz"
+.LField_AlhafraJail_CELL_TILES:
+	.incbin "games/tla/src/map/alhafra_jail/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_AlhafraJail_SHAPES:
 	.incbin "games/tla/src/map/alhafra_jail/shapes.table.lz"

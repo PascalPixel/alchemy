@@ -41,7 +41,7 @@
 #include "system/frame.h"
 #include "field/actor.h"
 #include "field/event_inline.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/iwram_call.h"
 #include "system/io_write_queue.h"
 #include "system/io_reg.h"
@@ -303,7 +303,7 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME)
     return gMarsLighthouseRoomM_FlamePlacements;
@@ -317,15 +317,15 @@ extern s32 gMarsLighthouseRoomM_LedgeCycleFrame;
 /// Each frame on the beacon ledge: once its flame is lit, the inscription on
 /// the wall behind it glows in its element's colours, turning round.
 void MarsLighthouseRoomM_CycleLedgeInscription(void) {
-  s32 entrance = gMainRoutineWork.entrance;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s32 entrance = gMainRoutineState.entrance;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 base;
   s32 i;
   s8 busy;
 
-  if (work->psynergy != 0)
+  if (state->psynergy != 0)
     return;
-  busy = work->revealActive;
+  busy = state->revealActive;
   if (busy != 0)
     return;
   if (gMarsLighthouseRoomM_LedgeCycleFrame == -1) {
@@ -391,14 +391,14 @@ void MarsLighthouseRoomM_CycleLedgeInscription(void) {
 /// (cell (31, 17)) takes Felix back into the tower he came up through.
 void MarsLighthouseRoomM_LeaveLedge(void) {
   Event_PlaySound(SE_MAP_EXIT);
-  FieldEvent_SetExitRequest(gMainRoutineWork.entrance);
+  FieldEvent_SetExitRequest(gMainRoutineState.entrance);
 }
 
 /// Nothing visible happens yet when Felix casts Blaze at the torch on the
 /// beacon ledge; the game only marks this cast's jet of flame as the long one,
 /// so that it carries past the torch up to the beacon flame.
 void MarsLighthouseRoomM_StartBlazeOnTorch(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
 
   event->blazeLongSpray = 1;
 }
@@ -413,7 +413,7 @@ void MarsLighthouseRoomM_WatchBlazeReachFlame(void) {
 /// Blaze reaches the beacon above the ledge's torch: the screen flashes white
 /// with a chime, and the beacon of the tower Felix came up through is lit.
 void MarsLighthouseRoomM_LightFlame(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -421,7 +421,7 @@ void MarsLighthouseRoomM_LightFlame(void) {
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_WARP);
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_VENUS_TOWER:
     Event_SetFlag(FLAG_VENUS_FLAME_LIT);
     break;
@@ -435,8 +435,8 @@ void MarsLighthouseRoomM_LightFlame(void) {
     Event_SetFlag(FLAG_JUPITER_FLAME_LIT);
     break;
   }
-  work = Ram_HeapSlots->fieldWork;
-  work->psynergy = 0;
+  state = Ram_HeapSlots->fieldState;
+  state->psynergy = 0;
   FieldEvent_Wait(30);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(30);
@@ -450,14 +450,14 @@ extern s32 gMarsLighthouseRoomM_HallCycleFrame;
 /// Each frame in the hall: the inscription of each element whose flame is lit
 /// glows in its colours, turning round, and the others show unlit.
 void MarsLighthouseRoomM_CycleHallInscriptions(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 base;
   s32 i;
   s8 busy;
 
-  if (work->psynergy != 0)
+  if (state->psynergy != 0)
     return;
-  busy = work->revealActive;
+  busy = state->revealActive;
   if (busy != 0)
     return;
   if (gMarsLighthouseRoomM_HallCycleFrame == -1) {
@@ -679,7 +679,7 @@ void MarsLighthouseRoomM_StartDoorways(s32 entrance) {
 void MarsLighthouseRoomM_TeleportToAerie(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
-  gMainRoutineWork.teleportState = 2;
+  gMainRoutineState.teleportState = 2;
   FieldEvent_SetExitRequest(
       MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS_TO_MARS_LIGHTHOUSE_AERIE);
   FieldEvent_Wait(40);
@@ -688,7 +688,7 @@ void MarsLighthouseRoomM_TeleportToAerie(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME)
     return gMarsLighthouseRoomM_FlameTriggers;
@@ -713,10 +713,10 @@ s32 Scene_Initialize(void) {
   s32 entrance;
   s32 scene;
 
-  scene = gMainRoutineWork.next;
-  entrance = gMainRoutineWork.entrance;
+  scene = gMainRoutineState.next;
+  entrance = gMainRoutineState.entrance;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
   Palette_SetColorsFade(
       (s32)gTeleportCircle_PaletteSlots, (s32)gTeleportCircle_Colors,
@@ -724,7 +724,7 @@ s32 Scene_Initialize(void) {
   if (scene != SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME &&
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     if (entrance ==
             MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS_FROM_MARS_LIGHTHOUSE_AERIE ||
@@ -818,8 +818,8 @@ static __inline__ void MarsLighthouseRoomM_StartRainWave(s32 mode, FIXED freqX,
 }
 
 s32 Scene_PrepareMap(void) {
-  s16 scene = gMainRoutineWork.next;
-  s32 entrance = gMainRoutineWork.entrance;
+  s16 scene = gMainRoutineState.next;
+  s32 entrance = gMainRoutineState.entrance;
   struct Actor *actor;
 
   if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME ||
@@ -906,7 +906,7 @@ s32 Scene_PrepareMap(void) {
         "SceneId_MarsLighthouseJupiterLedge");
 
     Map_CopyPalette(
-        gMainRoutineWork.mapId +
+        gMainRoutineState.mapId +
             ((s32)&SceneId_MarsLighthouseJupiterLedgeSecond - SCENE_PROX),
         (s32)BG_PLTT);
   }
@@ -1258,7 +1258,7 @@ void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 #include "shared/ride_release_handle.h"
 
 /// Sets whether the flame throwers keep puffing while Psynergy is used.
-void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
+void Ride_SetMode(s16 value) { RIDE_STATE->runsDuringPsynergy = value; }
 
 #include "shared/beam_start.h"
 
@@ -1267,7 +1267,7 @@ void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 #include "shared/ride_set_entry_value.c"
 
 /// The flame throwers' counter, which Ride_AdvanceCounter steps.
-s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
+s32 Ride_GetCounter(void) { return RIDE_STATE->counter; }
 
 #include "shared/ride_advance_counter.h"
 
@@ -1291,7 +1291,7 @@ s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseRoomM_KnockBackIfHit(void) {
-  if (RIDE_WORK->active)
+  if (RIDE_STATE->active)
     Leader_KnockBack();
 }
 
@@ -1301,8 +1301,8 @@ void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 /// Hit by a rolling fireball: the leader is hurt, blinks, and is carried along
 /// with it until it stops.
 s32 Fireball_CarryLeader(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct FlameHitWork *ride;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
+  struct FlameHitState *ride;
   struct Actor *leader;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
@@ -1326,8 +1326,8 @@ s32 Fireball_CarryLeader(void) {
   ((s32 (*)())Party_TakeFallDamage)(-FALL_DAMAGE, 0);
 #endif
   FieldCamera_SetSpeed(7);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  ride = RIDE_WORK;
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
+  ride = RIDE_STATE;
   Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1369,7 +1369,7 @@ void Teleport_PlaySparks(void);
 #include "shared/ride_if_active.h"
 
 /// Whether a flame or fireball has hit the leader.
-s32 Ride_IsActive(void) { return RIDE_WORK->active; }
+s32 Ride_IsActive(void) { return RIDE_STATE->active; }
 
 #include "shared/actor_scatter_crumbs.c"
 

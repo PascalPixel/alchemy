@@ -1,5 +1,5 @@
 	.include "enums/area_ids.inc"
-	.include "enums/system/main_routine_work.inc"
+	.include "enums/system/main_routine_state.inc"
 
 @ Every scene (struct Scene, by SceneId_): the overlay resource it loads, its
 @ area (enum AreaId), its type (enum SceneType), its map (a row of gMaps) and

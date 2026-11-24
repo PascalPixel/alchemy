@@ -9,7 +9,7 @@
 #include "gamepak/far_call/battle.h"
 
 #define LIQUIFIER_FRAMES 111
-/// The work's particles: the sparks, then the beams.
+/// The state's particles: the sparks, then the beams.
 #define LIQUIFIER_SPARKS 32
 #define LIQUIFIER_FIRST_BEAM LIQUIFIER_SPARKS
 #define LIQUIFIER_BEAMS 16
@@ -40,13 +40,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct ModelTexture texture;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   s32 frame;
   u8 *graphics;
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -55,13 +55,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   // below, replaces; the ROM keeps the call.
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              LIQUIFIER_FLASH_BURST_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_FLAME_WALL_TEXTURE, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_WALL_TEXTURE, state->sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
-                             work->sheet + LIQUIFIER_GLOW_BAND, 0, 0);
+                             state->sheet + LIQUIFIER_GLOW_BAND, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, gEffectScratch, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->user, &from);
   EffectPosition_ProjectBattler(args->targets[0], &to);
 
@@ -74,20 +74,20 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT / 2);
 
       // The beams stand about the target, each at its own slant, its z.
-      for (i = 0, beam = &work->particles[LIQUIFIER_FIRST_BEAM];
+      for (i = 0, beam = &state->particles[LIQUIFIER_FIRST_BEAM];
            i != LIQUIFIER_BEAMS; i++, beam++) {
         SET_POSITION(beam, INTtoFIXED(to.x + (Random16() & 127) - 64),
                      INTtoFIXED(to.y), (Random16() & 8191) + toFIXED(7) / 16);
       }
     }
     if (frame == 0) {
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 12) {
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
     }
     if (frame == LIQUIFIER_STRIKE_FRAME) {
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 0)
       Sound_PlayFar(SE_DJINNI_SET);
@@ -97,7 +97,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
     if (frame > 15) {
       // The burst: sparks fly out of the user, upward and forward.
       if (frame == 16) {
-        struct Particle *step = work->particles;
+        struct Particle *step = state->particles;
 
         for (i = 0; i != LIQUIFIER_SPARKS; i++) {
           u32 angle = Random16() % (DEGtoANG(135) - 1) + TRIG_TURN * 5 / 16;
@@ -116,7 +116,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       for (i = 0; i != LIQUIFIER_SPARKS; i++) {
         /* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its uses. */
         s32 one = 1;
-        struct Particle *step = &work->particles[i];
+        struct Particle *step = &state->particles[i];
 
         if (step->variant >= 0 && frame >= i / 4) {
           s32 odd = i & one;
@@ -147,7 +147,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
       // The gathering: sparks start 64 steps out and fall into the user.
       if (frame == 0) {
-        struct Particle *step = work->particles;
+        struct Particle *step = state->particles;
 
         for (i = 0; i != LIQUIFIER_SPARKS; i++) {
           s32 angle = (Random16() & (DEGtoANG(180) - 1)) - DEGtoANG(90);
@@ -167,7 +167,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
         }
       }
       // Four steps a frame.
-      for (i = 0, step = work->particles; i != LIQUIFIER_SPARKS; i++, step++) {
+      for (i = 0, step = state->particles; i != LIQUIFIER_SPARKS; i++, step++) {
         /* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its uses. */
         s32 one = 1;
         if (step->variant >= 0) {
@@ -208,7 +208,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       model->vertices = projected;
       texture.logWidth = 6;
       texture.logHeight = 6;
-      texture.pixels = work->sheet;
+      texture.pixels = state->sheet;
       model->mesh = gBattleEffect_TallMesh;
       for (i = 0; i != 8; i++) {
         s32 start = gLiquifier_SplashStarts[i];
@@ -236,12 +236,12 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       // 16 frames.
       texture.logWidth = 5;
       texture.logHeight = 2;
-      texture.pixels = work->sheet + LIQUIFIER_GLOW_BAND;
+      texture.pixels = state->sheet + LIQUIFIER_GLOW_BAND;
       model->mesh = gBattleEffect_SmallSquareMesh;
       model->kind = MODEL_SHADED_ADDITIVE;
       for (i = 0; i != LIQUIFIER_BEAMS; i++) {
         s32 shade = 0;
-        struct Particle *step = &work->particles[LIQUIFIER_FIRST_BEAM + i];
+        struct Particle *step = &state->particles[LIQUIFIER_FIRST_BEAM + i];
         s32 start = i * 2 + LIQUIFIER_STRIKE_FRAME;
 
         if (frame >= start && frame < start + 16) {
@@ -267,7 +267,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->kind = MODEL_SHADED_ADDITIVE;
       for (i = 0; i != LIQUIFIER_BEAMS; i++) {
-        struct Particle *step = &work->particles[i + LIQUIFIER_FIRST_BEAM];
+        struct Particle *step = &state->particles[i + LIQUIFIER_FIRST_BEAM];
         s32 age = frame - LIQUIFIER_STRIKE_FRAME - i * 2;
 
         if (frame >= i * 2 + LIQUIFIER_STRIKE_FRAME &&
@@ -324,7 +324,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, 0, 100);
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 5);
-          work->shakeFrames = 4;
+          state->shakeFrames = 4;
         }
       }
       Heap_Release(model);
@@ -332,7 +332,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
     }
 
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -377,8 +377,8 @@ void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
   Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);
 }
 
-/// The ball: the work's last particle.
-#define CANVAS_BURST_BALL (&work->particles[ARRAY_COUNT(work->particles) - 1])
+/// The ball: the state's last particle.
+#define CANVAS_BURST_BALL (&state->particles[ARRAY_COUNT(state->particles) - 1])
 
 /// Draws a disc of the given size from the discs in the map cell buffer as its
 /// four quarters about (x, y), the same quarter mirrored each way.
@@ -410,7 +410,7 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define CANVAS_BURST_FLASH_BURST_PICTURES 2048
-/// The work's particles: Shred's rays, then at the hit the flames, and the
+/// The state's particles: Shred's rays, then at the hit the flames, and the
 /// sparks after them.
 #define CANVAS_BURST_RAYS 16
 #define CANVAS_BURST_FLAMES 16
@@ -445,7 +445,7 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
 void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   struct ScreenPoint from;
   struct ScreenPoint to;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
@@ -460,7 +460,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   s32 j;
   s32 cells = (s32)Ram_MapCellBuffer;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   if (mode <= CANVAS_BURST_SMALL_BALL)
@@ -470,14 +470,14 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  discs = (s16 *)work->sheet;
+  discs = (s16 *)state->sheet;
   if (mode == CANVAS_BURST_SHRED)
     frames = 78;
   else if (mode == CANVAS_BURST_MINE_BALL)
     frames = 58;
   else
     frames = 66;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
 
   // Discs of sizes 2 to 64 one after another in the map cell buffer, with
@@ -500,8 +500,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
                     Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                     SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                             work->sheet + CANVAS_BURST_FLASH_BURST_PICTURES, 1,
-                             0);
+                             state->sheet + CANVAS_BURST_FLASH_BURST_PICTURES,
+                             1, 0);
 
   for (frame = 0; frame != frames; frame++) {
     EffectPosition_ProjectBattler(args->user, &from);
@@ -518,7 +518,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
 
         // The rays: one every 1/16 turn, each starting after its own delay.
         for (i = 0; i != CANVAS_BURST_RAYS; i++) {
-          step = &work->particles[i];
+          step = &state->particles[i];
           step->z = i * (TRIG_TURN / CANVAS_BURST_RAYS);
           step->variant = (Random16() & 31) + 16;
         }
@@ -572,7 +572,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
     // Shred, frames 0-53: sixteen rays of motes close on the target, each
     // from its own delay.
     if (mode == CANVAS_BURST_SHRED && frame <= 53) {
-      struct Particle *step = work->particles;
+      struct Particle *step = state->particles;
 
       for (i = 0; i != CANVAS_BURST_RAYS; i++) {
         step->variant--;
@@ -627,14 +627,14 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
         for (i = 0; i != args->targetCount; i++)
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 8);
-        work->shakeFrames = 8;
+        state->shakeFrames = 8;
 
         // Sixteen flames, faster one by one.
         for (i = 0; i != CANVAS_BURST_FLAMES; i++) {
           s32 angle = Random16() & TRIG_ANGLE_MASK;
           s32 speed;
 
-          newFlame = &work->particles[i];
+          newFlame = &state->particles[i];
           speed = i * 4 + 4;
           newFlame->x = INTtoFIXED(to.x / 2);
           newFlame->y = INTtoFIXED(to.y - 32);
@@ -648,7 +648,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
           s32 speed = (Random16() & 255) + 128;
           s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-          newSpark = &work->particles[CANVAS_BURST_FIRST_SPARK + i];
+          newSpark = &state->particles[CANVAS_BURST_FIRST_SPARK + i];
 
           newSpark->x = INTtoFIXED(to.x / 2);
           newSpark->y = INTtoFIXED(to.y - 32);
@@ -665,7 +665,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
       // The flames: FlashBurstSheet's six pictures, three frames each.
       if (mode == CANVAS_BURST_SHRED || mode == CANVAS_BURST_LARGE_BALL ||
           mode == CANVAS_BURST_MINE_BALL) {
-        flame = work->particles;
+        flame = state->particles;
         for (i = 0; i != CANVAS_BURST_FLAMES; i++) {
           s32 x = FIXED_INTEGER_PART(flame->x);
           s32 y = FIXED_INTEGER_PART(flame->y);
@@ -673,7 +673,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
           Particle_AdvanceWithGravity2D(flame, 60, 0);
           if ((u32)flame->variant <= CANVAS_BURST_LIFE)
             draw[0](canvas,
-                    work->sheet + CANVAS_BURST_FLASH_BURST_PICTURES +
+                    state->sheet + CANVAS_BURST_FLASH_BURST_PICTURES +
                         gCanvasBurst_FlamePictures[flame->variant / 3] *
                             PICTURE_BYTES(FLASH_BURST),
                     x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT / 2,
@@ -688,7 +688,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
 
       // The sparks shrink as they fly.
       for (i = 0; i != CANVAS_BURST_SPARKS; i++) {
-        spark = &work->particles[CANVAS_BURST_FIRST_SPARK + i];
+        spark = &state->particles[CANVAS_BURST_FIRST_SPARK + i];
         if (spark->variant >= 0) {
           s32 size = (spark->variant >> 2) + 1;
 
@@ -702,7 +702,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
     }
 
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -717,11 +717,11 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   } else {
     // Back to the battle display: BG1's scroll, BG2 as before, the palette
     // fade off and the backgrounds on again.
-    struct BattleWork *battle = Ram_HeapSlots->battleWork;
+    struct BattleState *battle = Ram_HeapSlots->battleState;
 
     Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
-    gBgScroll[1].x = work->savedBg1X;
-    gBgScroll[1].y = work->savedBg1Y;
+    gBgScroll[1].x = state->savedBg1X;
+    gBgScroll[1].y = state->savedBg1Y;
     REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);

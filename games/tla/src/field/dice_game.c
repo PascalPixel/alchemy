@@ -23,7 +23,7 @@
 #include "fixed_math.h"
 #include "system/dma.h"
 #include "system/input.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/bg_scroll.h"
 #include "version.h"
 #include "field/actor.h"
@@ -152,7 +152,7 @@ s32 SuperLuckyDice_Start(void) {
 /// Puts the 3D camera at its view of the dome: at the origin, unturned,
 /// pitched to 147/256 of a turn and 510 pixels away, following nothing.
 void SuperLuckyDice_ResetViewDefaults(void) {
-  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraState;
   s32 offset[3];
   u32 nearPlane;
 
@@ -534,7 +534,7 @@ void SuperLuckyDice_Run(void) {
   s32 drawOrder[SUPER_LUCKY_DICE_COUNT];
   u16 *spritePalette;
   u8 *cellBuffer;
-  struct DiceWork *dice;
+  struct DiceState *dice;
   struct DiceSprites *sprites;
   struct DiceCamera *camera;
   u8 *resourceAddress;
@@ -734,7 +734,7 @@ void SuperLuckyDice_Run(void) {
   window = Window_CreateFar(COIN_WINDOW_X, 0, COIN_WINDOW_WIDTH, 3, 6);
   sprites->coinsWindow = window;
   Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins, window, COIN_TEXT_X, 0);
-  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
+  Text_DrawNumberInWindowFar(gMainRoutineState.coins, DICE_COIN_DIGITS,
                              (s32)sprites->coinsWindow, 0, 0);
   window = Window_CreateFar(BET_WINDOW_X, 3, BET_WINDOW_WIDTH, 3, 6);
   sprites->betWindow = window;
@@ -749,8 +749,8 @@ void SuperLuckyDice_Run(void) {
                              8);
   bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
 #if !TLA_PATCH_2
-  if ((u32)bet > (u32)gMainRoutineWork.coins)
-    bet = gMainRoutineWork.coins;
+  if ((u32)bet > (u32)gMainRoutineState.coins)
+    bet = gMainRoutineState.coins;
 #endif
   Text_DrawNumberInWindowFar(bet, DICE_COIN_DIGITS, (s32)sprites->betWindow,
                              BET_TEXT_X, 5);
@@ -772,7 +772,7 @@ void SuperLuckyDice_Run(void) {
 
     if (state == SUPER_LUCKY_DICE_THROW) {
       if (frame > 17) {
-        if ((u32)gMainRoutineWork.coins <
+        if ((u32)gMainRoutineState.coins <
             (u32)(Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL)) {
           Window_CloseFar(sprites->helpWindow, 1);
           break;
@@ -788,12 +788,12 @@ void SuperLuckyDice_Run(void) {
           Sound_PlayFar(SE_LUCKY_DICE_THROW);
           DICE_GAME_THROW(dice, spinRate);
           bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
-          if ((u32)bet > (u32)gMainRoutineWork.coins)
-            bet = gMainRoutineWork.coins;
+          if ((u32)bet > (u32)gMainRoutineState.coins)
+            bet = gMainRoutineState.coins;
           Text_DrawNumberInWindowFar(bet, DICE_COIN_DIGITS,
                                      (s32)sprites->betWindow, BET_TEXT_X, 5);
           Party_AdjustCoinsFar(-bet);
-          Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
+          Text_DrawNumberInWindowFar(gMainRoutineState.coins, DICE_COIN_DIGITS,
                                      (s32)sprites->coinsWindow, 0, 0);
           state = SUPER_LUCKY_DICE_ROLL;
           timer = 0;
@@ -845,12 +845,12 @@ void SuperLuckyDice_Run(void) {
         // first hi-lo game comes only after a win.
         if (hiLoGame == 0) {
           bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
-          if ((u32)bet > (u32)gMainRoutineWork.coins)
-            bet = gMainRoutineWork.coins;
+          if ((u32)bet > (u32)gMainRoutineState.coins)
+            bet = gMainRoutineState.coins;
           Text_DrawNumberInWindowFar(bet, DICE_COIN_DIGITS,
                                      (s32)sprites->betWindow, BET_TEXT_X, 5);
           Party_AdjustCoinsFar(-bet);
-          Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
+          Text_DrawNumberInWindowFar(gMainRoutineState.coins, DICE_COIN_DIGITS,
                                      (s32)sprites->coinsWindow, 0, 0);
         }
       } else {
@@ -1181,14 +1181,15 @@ void SuperLuckyDice_Run(void) {
           if (winnings > 0) {
             Sound_PlayFar(SE_COIN_PAYOUT);
             Party_AdjustCoinsFar(winnings);
-            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
+            Text_DrawNumberInWindowFar(gMainRoutineState.coins,
+                                       DICE_COIN_DIGITS,
                                        (s32)sprites->coinsWindow, 0, 0);
           }
         } else if (winnings > 0) {
           if (--winnings == 0)
             Sound_PlayFar(SE_COIN_PAYOUT);
           Party_AdjustCoinsFar(1);
-          Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
+          Text_DrawNumberInWindowFar(gMainRoutineState.coins, DICE_COIN_DIGITS,
                                      (s32)sprites->coinsWindow, 0, 0);
           bet--;
           Text_DrawNumberInWindowFar(bet, DICE_COIN_DIGITS,
@@ -1759,7 +1760,7 @@ void SuperLuckyDice_Run(void) {
     frame++;
   }
 
-  // Fade out and free the work blocks.
+  // Fade out and free the game's state.
   for (index = 0; index != DICE_FADE_FRAMES + 1; index++) {
     SuperLuckyDice_ScaleRgb555Buffer(
         spritePalette, (u16 *)OBJ_PLTT,

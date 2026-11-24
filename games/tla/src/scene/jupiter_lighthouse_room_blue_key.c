@@ -32,7 +32,7 @@
 #include "field/event_inline.h"
 #include "field/actor.h"
 #include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_event.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
@@ -191,7 +191,7 @@ s32 PushTarget_FillRectangle(s32 id);
 /// from the room above it, or into that room from the cracked floor room.
 /// Returns 0.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = FIXED_ONE * 3 / 4;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = FIXED_ONE * 3 / 4;
@@ -209,12 +209,12 @@ s32 Scene_Initialize(void) {
   PushTarget_FillRectangle(ACTOR_FIRST_COLUMN + 4);
   CrackedTile_Find(CELL_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80,
                    FLAG_AREA_TEMP_80, 0, 1);
-  if (gMainRoutineWork.entrance == THROUGH_CRACKED_TILE)
+  if (gMainRoutineState.entrance == THROUGH_CRACKED_TILE)
     CrackedTile_PlaceLanding(
         19, 0,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
   else if (
-      gMainRoutineWork.entrance ==
+      gMainRoutineState.entrance ==
       JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_NORTH)
     CrackedTile_PlaceLanding(
         -20, -22,

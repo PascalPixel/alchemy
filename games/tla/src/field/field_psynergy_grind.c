@@ -19,9 +19,9 @@
 /// How far in front of or behind the target the spray is drawn.
 #define GRIND_SPRAY_DEPTH 15
 
-/// Grind's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the splash picture and the
-/// splash particles.
-struct GrindWork {
+/// Grind's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the splash picture and
+/// the splash particles.
+struct GrindState {
   u8 unused[32]; ///< no code names it
   u8 picture[GRIND_PICTURE_SIZE];
   struct FieldPsynergyParticle particles[GRIND_SPLASH_COUNT];
@@ -40,9 +40,9 @@ enum GrindMode {
 /// caster. A sea rock (SPRITE_SEA_ROCK) is ground down row by row; otherwise
 /// the place's Grind event runs while the shaking is at its height.
 void FieldPsynergy_GrindOnTarget(void) {
-  struct GrindWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GrindWork));
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct GrindState *state =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GrindState));
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct Actor *caster = scene->mainActor;
   struct Actor *child = scene->child;
   struct Sprite *animation = child->sprite;
@@ -104,13 +104,13 @@ void FieldPsynergy_GrindOnTarget(void) {
 
   FieldPsynergy_FadeToCastColor();
   source = Resource_GetTableEntry(RESOURCE_WATER_SPLASH);
-  picture = work->picture;
+  picture = state->picture;
   Decompress_TaggedLz(source, picture);
   entry = VramCache_FindFreeEntry();
   tile = VramCache_Load(entry, 1024, picture);
-  particle = work->particles;
+  particle = state->particles;
   for (i = 0; i < GRIND_SPLASH_COUNT; i++) {
-    sprite = &work->sprites[i];
+    sprite = &state->sprites[i];
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
@@ -144,8 +144,8 @@ void FieldPsynergy_GrindOnTarget(void) {
       angle = Random16();
       if (mode == GRIND_ON_NOTHING)
         angle = ((Random16() * 10) >> 4) - TRIG_TURN / 16;
-      sprite = &work->sprites[next];
-      particle = &work->particles[next];
+      sprite = &state->sprites[next];
+      particle = &state->particles[next];
       if (child != NULL) {
         sprite->oam.priority = BattleEffect_GetObjectPriority(child);
         if (angle < TRIG_TURN / 2)
@@ -164,9 +164,9 @@ void FieldPsynergy_GrindOnTarget(void) {
       next++;
       next %= GRIND_SPLASH_COUNT;
     }
-    particle = work->particles;
+    particle = state->particles;
     for (i = 0; i < GRIND_SPLASH_COUNT; i++, particle++) {
-      sprite = &work->sprites[i];
+      sprite = &state->sprites[i];
       if ((u32)particle->timer <= 23) {
         if (particle->timer == 0)
           sprite->oam.index = tile;
@@ -252,15 +252,15 @@ end:
 /// SWAY_PEAK, holds for SWAY_HOLD_FRAMES, shrinks back and stops; then the
 /// map's view bounds come back.
 void FieldPsynergy_Grind(void) {
-  struct FieldEffectWork *scene;
+  struct FieldEffectState *scene;
   s32 phase;
   s32 amplitude;
   s32 state;
   s32 frames;
 
-  // Grind's work's size, though the sway holds only the view move.
-  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GrindWork));
-  scene = Ram_HeapSlots->fieldEffectWork;
+  // Grind's state's size, though the sway holds only the view move.
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GrindState));
+  scene = Ram_HeapSlots->fieldEffectState;
   FieldPsynergy_FadeToCastColor();
   BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
   ViewMove_Start(VIEW_MOVE_Z);

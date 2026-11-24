@@ -4,15 +4,15 @@ Field_KibomboHouses:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_KibomboHouses, .LField_KibomboHouses_CELL_PICTURES
+	map_block Field_KibomboHouses, .LField_KibomboHouses_CELL_TILES
 	map_block Field_KibomboHouses, .LField_KibomboHouses_SHAPES
 	map_block Field_KibomboHouses, .LField_KibomboHouses_GRID
 	map_block Field_KibomboHouses, .LField_KibomboHouses_SHAPE_GRID
 	map_block Field_KibomboHouses, .LField_KibomboHouses_ANIMATION
 	map_block Field_KibomboHouses, .LField_KibomboHouses_BLEND
 	map_block Field_KibomboHouses, .LField_KibomboHouses_SCENE
-.LField_KibomboHouses_CELL_PICTURES:
-	.incbin "games/tla/src/map/kibombo_houses/cell_pictures.delta2.lz"
+.LField_KibomboHouses_CELL_TILES:
+	.incbin "games/tla/src/map/kibombo_houses/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_KibomboHouses_SHAPES:
 	.incbin "games/tla/src/map/kibombo_houses/shapes.table.lz"

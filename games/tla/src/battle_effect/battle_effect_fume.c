@@ -62,7 +62,7 @@ struct Corner {
 ///
 /// Abilities: Fume, Serpent Fume, Dragon Fume.
 void BattleEffect_RunFume(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
    * frame reserves and never touches; as one DrawRectangle. */
@@ -86,23 +86,23 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   u8 *mesh;
   struct Corner *corners;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The head's place, set at the plume's last segment.
   endX = 0;
   endY = 0;
   EffectPosition_ProjectBattler(args->user, &caster);
   EffectPosition_ProjectBattler(args->targets[0], &target);
-  Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                             work->sheet + FUME_FLASH_BURST_PICTURES, 1, 0);
+                             state->sheet + FUME_FLASH_BURST_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
-                             work->sheet + FUME_DRAGON_HEAD_PICTURES, 1, 0);
+                             state->sheet + FUME_DRAGON_HEAD_PICTURES, 1, 0);
   REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(FUME_STRIP_MESH, 4, 32, FUME_QUADS);
 
@@ -111,21 +111,21 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
       arc.head = 0;
       arc.tail = 0;
       // No fireball shows until the hit.
-      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-        work->particles[i].variant = FUME_BURST_FRAMES;
+      for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+        state->particles[i].variant = FUME_BURST_FRAMES;
       }
     }
     if (frame == FUME_HIT_FRAME) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_SHOW_DAMAGE(SE_CLATTER);
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
       BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(2), toFIXED(4),
                                     toFIXED(2), 120);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 20);
       for (i = 0; i != FUME_BURSTS_MAX; i++) {
-        burst = &work->particles[i];
+        burst = &state->particles[i];
         burst->variant = -i / 4 + 2;
         burst->x = INTtoFIXED(target.x / 2);
         burst->y = INTtoFIXED(target.y + (Random16() & 15) - 32);
@@ -137,11 +137,11 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
       }
     }
     for (i = 0; i != gFume_Levels[args->variant][FUME_SPARKS]; i++) {
-      particle = &work->particles[i];
+      particle = &state->particles[i];
       if ((u32)particle->variant < FUME_BURST_FRAMES) {
         if (particle->variant > 1) {
           blit[0](canvas,
-                  work->sheet + FUME_FLASH_BURST_PICTURES +
+                  state->sheet + FUME_FLASH_BURST_PICTURES +
                       particle->variant / FUME_BURST_PICTURE_FRAMES *
                           PICTURE_BYTES(FLASH_BURST),
                   FIXED_INTEGER_PART(particle->x) - FLASH_BURST_WIDTH / 2,
@@ -237,7 +237,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
           // The plume, its flames running along it 8 texels a frame.
           texture.logWidth = 6;
           texture.logHeight = 5;
-          texture.pixels = work->sheet;
+          texture.pixels = state->sheet;
           model->mesh = mesh;
           model->scrollU = TEXTURE_SCROLL_MASK & ~(frame << 3);
           Matrix_Initialize();
@@ -257,7 +257,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
             texture.logWidth = 6;
             texture.logHeight = 6;
             model->scrollU = 0;
-            texture.pixels = work->sheet + FUME_DRAGON_HEAD_PICTURES;
+            texture.pixels = state->sheet + FUME_DRAGON_HEAD_PICTURES;
             Matrix_Translate(INTtoFIXED(endX), INTtoFIXED(endY), 0);
             Matrix_RotateZ(DEGtoANG(90) - arc.head * (FUME_SEGMENTS - 1));
             Matrix_ScaleUniform(FUME_HEAD_SCALE(width));
@@ -270,7 +270,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
     }
     BattleEffect_CountDownBattlerTints();
     BattleCamera_Shake(args->variant * 2 + 2, args->variant * 2 + 2);
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

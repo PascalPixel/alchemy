@@ -267,7 +267,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
   u16 orderPositions[6];
   s32 unitIds[6];
   s32 targetPositions[6];
-  struct BattleWork *turnOrder;
+  struct BattleState *turnOrder;
   struct Unit *unit;
   struct Unit *nextUnit;
   struct Unit *thisUnit;
@@ -287,7 +287,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
   s16 *slot;
 
   candidateCount = 0;
-  turnOrder = Ram_HeapSlots->battleWork;
+  turnOrder = Ram_HeapSlots->battleState;
   targetCount = 0;
 
   // The candidates: every unit on the side the ability may target.
@@ -482,8 +482,10 @@ void BattleMessage_WaitForAdvance(void) {
   for (frame = 0;; frame++) {
     // Cycle the eight pictures, one every four frames.
     pictureTiles = ((gFrameCount >> 2) & 7) * 128 + sheet;
-    window = ((struct BattleMessageWork *)Ram_HeapSlots->battleMessage)->window;
-    offset = ((struct BattleMessageWork *)Ram_HeapSlots->battleMessage)->offset;
+    window =
+        ((struct BattleMessageState *)Ram_HeapSlots->battleMessage)->window;
+    offset =
+        ((struct BattleMessageState *)Ram_HeapSlots->battleMessage)->offset;
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
     Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
@@ -545,11 +547,11 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
 }
 
 /// Waits until the battle message has typed out, then marks the next message
-/// (BattleMessageWork.marked).
+/// (BattleMessageState.marked).
 void BattleMessage_WaitForTyping(void) {
   while (!Message_AllTypedFar())
     wait(1);
-  ((struct BattleMessageWork *)Ram_HeapSlots->battleMessage)->marked = 1;
+  ((struct BattleMessageState *)Ram_HeapSlots->battleMessage)->marked = 1;
 }
 
 /// Takes an enemy out of the battle at once, one that leaves rather than falls.
@@ -571,19 +573,19 @@ s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
 }
 
 /// Grants the Djinn bonus for the rest of the action.
-void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackWork *runtime,
+void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackState *runtime,
                                     u32 operand) {
   runtime->flags |= 1;
 }
 
 /// Runs the queued battle events in order, then resets the queue.
 u32 BattlePlayback_RunAll(void) {
-  struct BattleWork *battle;
-  struct BattlePlaybackWork *runtime;
+  struct BattleState *battle;
+  struct BattlePlaybackState *runtime;
   struct BattlePlaybackQueue *queue;
   s32 i;
 
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   runtime = &battle->events;
   queue = &runtime->queue;
 
@@ -612,7 +614,7 @@ u32 BattlePlayback_RunAll(void) {
                                 MESSAGE_ARGUMENT_ABILITY);
         break;
       case PLAYBACK_MARK:
-        ((struct BattleMessageWork *)Ram_HeapSlots->battleMessage)->marked = 1;
+        ((struct BattleMessageState *)Ram_HeapSlots->battleMessage)->marked = 1;
         break;
       case PLAYBACK_CLEAR_ARGUMENTS:
         MessageArgument_ClearAllFar();
@@ -639,7 +641,7 @@ u32 BattlePlayback_RunAll(void) {
         BattleMotion_ShowDowned(queue->operands[i]);
         break;
       case PLAYBACK_DRAW_STATUS:
-        PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
+        PartyStatus_DrawFar(Ram_HeapSlots->battleState->partyStatus);
         break;
       case PLAYBACK_REFRESH_UNIT:
         BattleUnit_BuildStatusFlags(queue->operands[i],
@@ -657,7 +659,7 @@ u32 BattlePlayback_RunAll(void) {
 /// Queues one playback command with its operand. Nothing checks the queue's
 /// capacity.
 void BattlePlayback_Push(u32 opcode, u32 operand) {
-  struct BattlePlaybackQueue *queue = &Ram_HeapSlots->battleWork->events.queue;
+  struct BattlePlaybackQueue *queue = &Ram_HeapSlots->battleState->events.queue;
   u32 index = queue->count;
 
   queue->opcodes[index] = opcode;
@@ -798,7 +800,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   s32 unitId;
   s32 element;
   s32 elementBonus; // elemental power less resistance
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 distance;    // steps from the aimed position, 0 to 5
   s32 defenseCut;  // DEFENSE_HALVED or DEFENSE_IGNORED, else 0
   s32 multiplier;  // 0 on a miss, 2 or 3 for a double or triple blow
@@ -833,7 +835,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
 
   // 1. The target as it was, its distance and the element.
   elementBonus = 0;
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   defenseCut = 0;
   damageDealt = 0;
   leaveOneHp = 0;
@@ -1427,7 +1429,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
         }
         amount += Battle_RandomFar() & 3;
         REDUCE_BY_GUARD(amount, target);
-        if ((gMainRoutineWork.battleType == BATTLE_TYPE_LOST ||
+        if ((gMainRoutineState.battleType == BATTLE_TYPE_LOST ||
              (GameFlag_Get(FLAG_DJINN_LESSON) != 0 &&
               plan->command == COMMAND_SUMMON)) &&
             newHp > amount) {
@@ -1451,7 +1453,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
 
       if (newHp <= 0 && BattleUnit_KeepsOneHp(targetId) != 0)
         newHp = 1;
-      if (gMainRoutineWork.battleType == BATTLE_TYPE_LOST)
+      if (gMainRoutineState.battleType == BATTLE_TYPE_LOST)
         newHp = 0;
       if (newHp <= 0) {
         BattlePlayback_Push(PLAYBACK_DEFEAT, targetId);
@@ -2291,7 +2293,7 @@ done:
   }
   Heap_Release(savedTarget);
   Unit_CalculateFar(targetId);
-  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
+  PartyStatus_DrawFar(Ram_HeapSlots->battleState->partyStatus);
   if (target->hp != 0)
     BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, targetId);
   // A haunted unit pays, one time in four, a quarter of what it took, at the
@@ -2317,7 +2319,7 @@ u32 Ability_IsPsynergy(s32 abilityId) {
   return pp != 0;
 }
 
-#define AI_BATTLE ((struct BattleWork *)Ram_HeapSlots->battleWork)
+#define AI_BATTLE ((struct BattleState *)Ram_HeapSlots->battleState)
 
 /// The choices an enemy may fail to carry out before it defends instead.
 #define AI_MAX_FAILED_CHOICES 16
@@ -2342,7 +2344,7 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   s32 opponentTarget;
   s32 allyIsParty;
   s32 opponentIsParty;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   struct ItemDefinition *item;
   s32 useItem;
   s8 strategyKind;
@@ -2389,7 +2391,7 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   selectionMemory = &unit->aiState;
   enemy = Enemy_GetDefinitionFar(unit->enemyId);
   if (unit->enemyId == ENEMY_POSEIDON) {
-    selectionMemory = &((struct BattleWork *)Ram_HeapSlots->battleWork)
+    selectionMemory = &((struct BattleState *)Ram_HeapSlots->battleState)
                            ->aiStates[request->turnAction];
     if (request->turnAction == 1)
       enemy = Enemy_GetDefinitionFar(ENEMY_POSEIDON_SECOND_ACTION);
@@ -2631,7 +2633,7 @@ select_again:
                                    ? ENEMY_REFRESH_BALL
                                    : ENEMY_SEA_FIGHTER))
         break;
-      battle = (struct BattleWork *)Ram_HeapSlots->battleWork;
+      battle = (struct BattleState *)Ram_HeapSlots->battleState;
       if (ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
         if (battle->spoils.queueCount == 0)
           break;

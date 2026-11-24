@@ -64,10 +64,10 @@ UNUSED s32 NameEntry_AcceptsAnyLetter(void) { return 1; }
 #endif
 
 /// Decompresses a tilemap, such as the name entry's keyboard, and copies it
-/// over the window's rectangle, into the BG map in VRAM and the window work's
+/// over the window's rectangle, into the BG map in VRAM and the window state's
 /// copy of it.
 void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
   u16 *buffer = Heap_AllocEwram(768);
   s32 offset;
   u16 *map;
@@ -79,7 +79,7 @@ void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
   source = buffer;
   Decompress_TaggedLz(resource, buffer);
   offset = (((s16)window->y << 5) + (s16)window->x) * 2;
-  map = (u16 *)((u8 *)work->tilemap + offset);
+  map = (u16 *)((u8 *)state->tilemap + offset);
   vram = (u16 *)(offset + WINDOW_TILEMAP_VRAM);
   for (row = 0; row < window->height; row++) {
     for (col = 0; col < window->width;) {
@@ -123,18 +123,18 @@ void Resource_CopyFixedBlockA(s32 slot) {
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 /// Returns the width of the string `str` in pixels, measured as decoded text
-/// (it is copied into the window work's text buffer).
+/// (it is copied into the window state's text buffer).
 s32 Text_MeasureString(const u8 *str) {
-  struct WindowWork *work;
+  struct WindowState *state;
   u16 *dst;
   s32 count;
   u32 width;
   u32 height;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  state = (struct WindowState *)Ram_HeapSlots->windowState;
   count = 0;
   if (*str != 0) {
-    dst = work->textBuffer;
+    dst = state->textBuffer;
     do {
       *dst = *str;
       str++;
@@ -142,7 +142,7 @@ s32 Text_MeasureString(const u8 *str) {
       count++;
     } while (*str != 0);
   }
-  work->textBuffer[count] = 0;
+  state->textBuffer[count] = 0;
   Text_MeasureDecoded(0, &width, &height, 0);
   return width;
 }
@@ -267,7 +267,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   u8 text[NAME_MAX_BYTES + 2];
   u8 *editedName = text + 1;
   u8 *originalName = Unit_Get(member);
-  struct WindowWork *render = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *render = (struct WindowState *)Ram_HeapSlots->windowState;
   s32 textDirty = 1;
   s32 cursorDirty = 1;
   struct Window *keyboardWindow;
@@ -281,8 +281,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   u16 *palette;
 
   Window_LoadGraphics();
-  WindowColor_Apply(gMainRoutineWork.windowHue,
-                    gMainRoutineWork.windowBrightness);
+  WindowColor_Apply(gMainRoutineState.windowHue,
+                    gMainRoutineState.windowBrightness);
   keyboardWindow =
       Window_Create(3, 6, 24, NAME_KEYBOARD_HEIGHT, WINDOW_FLAG_INSTANT);
   nameWindow = Window_Create(8, 3, 8, 3, WINDOW_FLAG_INSTANT);
@@ -561,7 +561,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   u8 text[NAME_MAX_BYTES + 2];
   u8 *editedName = text + 1;
   u8 *originalName = Unit_Get(member);
-  struct WindowWork *render = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *render = (struct WindowState *)Ram_HeapSlots->windowState;
   s32 textDirty = 1;
   s32 cursorDirty = 1;
   struct Window *keyboardWindow;
@@ -574,8 +574,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   u16 *palette;
 
   Window_LoadGraphics();
-  WindowColor_Apply(gMainRoutineWork.windowHue,
-                    gMainRoutineWork.windowBrightness);
+  WindowColor_Apply(gMainRoutineState.windowHue,
+                    gMainRoutineState.windowBrightness);
   keyboardWindow =
       Window_Create(3, 6, 24, NAME_KEYBOARD_HEIGHT, WINDOW_FLAG_INSTANT);
   nameWindow = Window_Create(8, 3, NAME_LABEL_WIDTH, 3, WINDOW_FLAG_INSTANT);

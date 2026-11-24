@@ -77,10 +77,10 @@ struct OverlayActor {
   s32 update;
 };
 
-/// The heap slots read as plain words, the field work's among them.
+/// The heap slots read as plain words, the field state's among them.
 struct HeapWords {
-  u32 beforeFieldWork[27];
-  s32 fieldWork;
+  u32 beforeFieldState[27];
+  s32 fieldState;
 };
 
 void MarsLighthouseAerie_TalkToKyle(void);

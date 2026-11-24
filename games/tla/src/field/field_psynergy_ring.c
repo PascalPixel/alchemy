@@ -9,7 +9,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "battle/battle_unit.h"
 #include "window/window.h"
 #include "system/bg_scroll.h"
@@ -37,10 +37,10 @@
 /// round (gParch_PictureTiles).
 #define RING_ARC_STEP (TRIG_TURN / 64)
 
-/// The Ring's work (heap slot battleEffect): the sparkle picture, the 64
+/// The Ring's state (heap slot battleEffect): the sparkle picture, the 64
 /// sparkles that rise round the caster as the ring is drawn and burst when it
 /// ends, the motes that circle it after, and what the per-frame task shows.
-struct RingWork {
+struct RingState {
   u8 tiles[4096]; ///< the sparkle picture, then the motes', then the burst's
   struct EffectSprite sparkSprites[RING_SPARK_COUNT];
   struct FieldPsynergyParticle sparks[RING_SPARK_COUNT];
@@ -58,9 +58,9 @@ struct RingWork {
 
 /// Task of the Ring: its motes and colours each frame.
 void FieldPsynergy_UpdateRing(void) {
-  struct RingWork *work = Ram_HeapSlots->battleEffect;
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct RingState *state = Ram_HeapSlots->battleEffect;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
+  struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 position[3];
   struct FieldPsynergyParticle *entry;
   struct EffectSprite *sprite;
@@ -78,7 +78,7 @@ void FieldPsynergy_UpdateRing(void) {
   position[0] = actor->x.fixed;
   position[1] = actor->y.fixed + toFIXED(16);
   position[2] = actor->z.fixed;
-  if (work->orbiting != 0)
+  if (state->orbiting != 0)
     Vector_AddPolarOffset(toFIXED(2), -(field->ringFrames * (TRIG_TURN / 32)),
                           position);
   Camera_WorldToScreen(position);
@@ -88,9 +88,9 @@ void FieldPsynergy_UpdateRing(void) {
   gBgScroll[0].y = 64 - y;
   BgMap_DrawClipped16x16(x - 64, y - 64);
 
-  if (work->cycling != 0) {
+  if (state->cycling != 0) {
     i = 0;
-    phase = &work->phase;
+    phase = &state->phase;
     red = GLOW_RED;
   cycle:
     sine = Trig_Sin(((*phase >> 1) + i) * (TRIG_TURN / 32));
@@ -106,13 +106,13 @@ void FieldPsynergy_UpdateRing(void) {
         ((u16 *)&BG_PLTT_COLOR(RING_PALETTE, 0))[i];
     if (++i < PALETTE_COLORS)
       goto cycle;
-    work->phase++;
+    state->phase++;
   }
 
-  if (work->sparkling != 0) {
-    entry = work->motes;
-    sprite = work->sprites;
-    tile = &work->tile;
+  if (state->sparkling != 0) {
+    entry = state->motes;
+    sprite = state->sprites;
+    tile = &state->tile;
     for (i = 0; i < RING_CIRCLING_MOTES; i++, sprite++, entry++) {
       timer = entry->timer;
       if (timer == 0) {
@@ -151,12 +151,12 @@ void FieldPsynergy_UpdateRing(void) {
 /// it (FieldPsynergy_EndRing). Cast again while it lasts, it only starts its
 /// frames again.
 void FieldPsynergy_Ring(void) {
-  struct RingWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct RingWork));
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct RingState *state =
+      HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct RingState));
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *caster = scene->mainActor;
-  struct CanvasSpriteWork *canvas;
+  struct CanvasSpriteState *canvas;
   s32 entry;
   s32 tile;
   s32 arcStart;
@@ -207,11 +207,11 @@ void FieldPsynergy_Ring(void) {
     Dma_Set(picture, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
     Io_Write16(BGCNT_SCREEN_BASE(4) | BGCNT_256_COLORS, &REG_BG0CNT);
     Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_STAR_SPARKLE_FADE),
-                        work);
+                        state);
     entry = VramCache_FindFreeEntry();
-    tile = VramCache_Load(entry, 256, work);
-    for (i = 0, mote = work->sparks; i < RING_SPARK_COUNT; i++, mote++) {
-      sprite = &work->sparkSprites[i];
+    tile = VramCache_Load(entry, 256, state);
+    for (i = 0, mote = state->sparks; i < RING_SPARK_COUNT; i++, mote++) {
+      sprite = &state->sparkSprites[i];
       EffectSprite_Init(sprite, 4, 4, 0, tile);
       sprite->oam.fullColor = 1;
       sprite->oam.palette = 0;
@@ -219,16 +219,16 @@ void FieldPsynergy_Ring(void) {
       sprite->depth = OAM_DEPTH_WINDOW;
       mote->timer = -i / 4;
     }
-    work->sparkling = 0;
-    work->orbiting = 0;
-    work->cycling = 1;
-    work->phase = 0;
+    state->sparkling = 0;
+    state->orbiting = 0;
+    state->cycling = 1;
+    state->phase = 0;
     field->ringActive = 1;
     field->ringTimerRunning = 1;
     field->ringFrames = 999;
     Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_FRAME);
     wait(1);
-    work->cycling = 0;
+    state->cycling = 0;
     phase = 0;
     timer = 0;
     do {
@@ -247,8 +247,8 @@ void FieldPsynergy_Ring(void) {
         }
         canvas->command = CANVAS_UPLOAD_TO_BG;
       }
-      for (i = 0, mote = work->sparks; i < RING_SPARK_COUNT; i++, mote++) {
-        sprite = &work->sparkSprites[i];
+      for (i = 0, mote = state->sparks; i < RING_SPARK_COUNT; i++, mote++) {
+        sprite = &state->sparkSprites[i];
         if (mote->timer == 0) {
           s32 heading = angle + (i & 1) * DEGtoANG(180);
 
@@ -294,19 +294,19 @@ void FieldPsynergy_Ring(void) {
 
     Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RING_ARCS), picture);
     Dma_Set(picture, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
-    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RING_WAVES), work);
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RING_WAVES), state);
     {
       s32 heading;
       s32 moteEntry = VramCache_FindFreeEntry();
-      s32 moteTile = VramCache_Load(moteEntry, 512, work);
+      s32 moteTile = VramCache_Load(moteEntry, 512, state);
 
-      work->entry = moteEntry;
-      work->tile = moteTile;
-      work->sparkling = 1;
-      work->orbiting = 1;
-      for (i = 0, mote = work->motes; i < RING_MOTE_COUNT; i++) {
+      state->entry = moteEntry;
+      state->tile = moteTile;
+      state->sparkling = 1;
+      state->orbiting = 1;
+      for (i = 0, mote = state->motes; i < RING_MOTE_COUNT; i++) {
         heading = Random16();
-        sprite = &work->sprites[i];
+        sprite = &state->sprites[i];
         EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, moteTile);
         sprite->depth = OAM_DEPTH_WINDOW;
         sprite->oam.priority = 0;
@@ -327,7 +327,7 @@ void FieldPsynergy_Ring(void) {
     VramCache_FreeEntry(entry);
     FieldPsynergy_FadeFromCastColor();
   }
-  work->cycling = 1;
+  state->cycling = 1;
   field->ringActive = 1;
   field->ringTimerRunning = 1;
   field->ringFrames = RING_FRAMES;
@@ -338,9 +338,9 @@ void FieldPsynergy_Ring(void) {
 /// from round the leader, four more setting off each frame, that fly out and
 /// fall for 40 frames, and the window graphics come back to BG0.
 void FieldPsynergy_EndRing(void) {
-  struct RingWork *work = Ram_HeapSlots->battleEffect;
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct RingState *state = Ram_HeapSlots->battleEffect;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
+  struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
   struct FieldPsynergyParticle *mote;
   struct EffectSprite *sprite;
   s32 slot;
@@ -365,13 +365,13 @@ void FieldPsynergy_EndRing(void) {
   gBgScroll[0].y = 0;
   gCpuLoadDisplayEnabled = 1;
   wait(1);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SPARKLE_FADE), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SPARKLE_FADE), state);
   slot = VramCache_FindFreeEntry();
-  tile = VramCache_Load(slot, 256, work);
+  tile = VramCache_Load(slot, 256, state);
 
   i = 0;
-  mote = work->sparks;
-  sprite = work->sparkSprites;
+  mote = state->sparks;
+  sprite = state->sparkSprites;
   for (; i < RING_SPARK_COUNT; i++, sprite++, mote++) {
     angle = Random16();
     SET_POSITION(mote, actor->x.fixed, actor->y.fixed + toFIXED(16),
@@ -393,8 +393,8 @@ void FieldPsynergy_EndRing(void) {
 
   for (frame = 0; frame < 40; frame++) {
     struct EffectSprite *spark;
-    mote = work->sparks;
-    spark = work->sparkSprites;
+    mote = state->sparks;
+    spark = state->sparkSprites;
     for (i = 0; i < RING_SPARK_COUNT; i++, spark++, mote++) {
       if (mote->timer >= 0) {
         // angle carries the spark's age here, as it carried each spark's
@@ -409,7 +409,7 @@ void FieldPsynergy_EndRing(void) {
     wait(1);
   }
   VramCache_FreeEntry(slot);
-  VramCache_FreeEntry(work->entry);
+  VramCache_FreeEntry(state->entry);
   BattleEffect_EndCanvasSprite();
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
@@ -435,12 +435,12 @@ void Map_GetHeaderSizeFar(s32 map, struct MapBounds *bounds);
 /// view keeps to its camera boxes), it shakes the screen along the asked
 /// direction instead.
 void ViewMove_Start(s32 direction) {
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *center = field->camera;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 viewX = FIXEDtoINT(map->viewX);
   s32 viewZ = FIXEDtoINT(map->viewZ);
-  struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
+  struct ViewMoveState *state = Ram_HeapSlots->battleEffect;
   struct MapBounds bounds;
   s32 minX;
   s32 maxX;
@@ -475,7 +475,7 @@ void ViewMove_Start(s32 direction) {
     }
   }
 
-  Map_GetHeaderSizeFar(gMainRoutineWork.mapId, &bounds);
+  Map_GetHeaderSizeFar(gMainRoutineState.mapId, &bounds);
   minX = bounds.minX;
   left = minX * 8;
   maxX = bounds.maxX;
@@ -484,23 +484,23 @@ void ViewMove_Start(s32 direction) {
   top = minZ * 8;
   maxZ = bounds.maxZ;
   bottom = maxZ * 8;
-  SET_POSITION(work, center->x.fixed, center->y.fixed, center->z.fixed);
+  SET_POSITION(state, center->x.fixed, center->y.fixed, center->z.fixed);
 
-  work->edgeX = 0;
+  state->edgeX = 0;
   if (viewX < left + VIEW_EDGE_MARGIN)
-    work->edgeX = -1;
+    state->edgeX = -1;
   if (viewX + DISPLAY_WIDTH >= right - VIEW_EDGE_MARGIN)
-    work->edgeX = 1;
-  work->edgeZ = 0;
+    state->edgeX = 1;
+  state->edgeZ = 0;
   if (viewZ < top + VIEW_EDGE_MARGIN)
-    work->edgeZ = -1;
+    state->edgeZ = -1;
   if (viewZ + DISPLAY_HEIGHT >= bottom - VIEW_EDGE_MARGIN)
-    work->edgeZ = 1;
+    state->edgeZ = 1;
 
-  work->savedMinX = map->minX;
-  work->savedMaxX = map->maxX;
-  work->savedMinZ = map->minZ;
-  work->savedMaxZ = map->maxZ;
+  state->savedMinX = map->minX;
+  state->savedMaxX = map->maxX;
+  state->savedMinZ = map->minZ;
+  state->savedMaxZ = map->maxZ;
   map->minX = toFIXED(minX * 8);
   map->maxX = toFIXED(maxX * 8);
   map->minZ = toFIXED(minZ * 8);
@@ -518,8 +518,8 @@ void ViewMove_Start(s32 direction) {
 /// beside neither. Where ViewMove_Start shook the screen instead, nothing
 /// moves.
 void ViewMove_Swing(s32 direction, s32 phase, FIXED amplitude) {
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
+  struct ViewMoveState *state = Ram_HeapSlots->battleEffect;
   struct Actor *center = field->camera;
   FIXED x;
   FIXED z;
@@ -527,53 +527,53 @@ void ViewMove_Swing(s32 direction, s32 phase, FIXED amplitude) {
 
   // Japanese does not check the map's rectangle list here.
 #if TLA_PATCH_1
-  if (((struct MapWork *)Ram_HeapSlots->mapGrid)->cameraBoxes != NULL)
+  if (((struct MapState *)Ram_HeapSlots->mapGrid)->cameraBoxes != NULL)
     return;
 #endif
   if (field->mode == ACTOR_SYSTEM_WORLD_MAP)
     return;
 
   if (direction & VIEW_MOVE_X) {
-    edge = work->edgeX;
+    edge = state->edgeX;
     if (edge == -1)
-      x = work->x +
+      x = state->x +
           Iwram_MulFX(SWING_SINE(phase * (TRIG_TURN / 16)), amplitude);
     else if (edge == 1)
-      x = work->x +
+      x = state->x +
           Iwram_MulFX(-SWING_SINE(phase * (TRIG_TURN / 16)), amplitude);
     else
-      x = work->x +
+      x = state->x +
           Iwram_MulFX(SWING_SINE(phase * (TRIG_TURN / 16)), amplitude);
   } else {
-    x = work->x;
+    x = state->x;
   }
 
   if (direction & VIEW_MOVE_Z) {
-    edge = work->edgeZ;
+    edge = state->edgeZ;
     if (edge == -1)
-      z = work->z +
+      z = state->z +
           Iwram_MulFX(SWING_SINE(phase * (TRIG_TURN / 16)), amplitude);
     else if (edge == 1)
-      z = work->z +
+      z = state->z +
           Iwram_MulFX(-SWING_SINE(phase * (TRIG_TURN / 16)), amplitude);
     else
-      z = work->z +
+      z = state->z +
           Iwram_MulFX(SWING_SINE(phase * (TRIG_TURN / 16)), amplitude);
   } else {
-    z = work->z;
+    z = state->z;
   }
 
-  SET_ACTOR_POSITION(center, x, work->y, z);
+  SET_ACTOR_POSITION(center, x, state->y, z);
 }
 
 /// Ends a view move: gives the map back the view bounds ViewMove_Start kept
 /// and lets the view follow the caster again. Where ViewMove_Start shook the
 /// screen instead, it only stops the shake.
 void ViewMove_End(void) {
-  struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct ViewMoveState *state = Ram_HeapSlots->battleEffect;
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
 
 #if TLA_PATCH_1
   if (map->cameraBoxes != NULL || field->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -582,10 +582,10 @@ void ViewMove_End(void) {
 #endif
     MapGrid_SetScreenShakeFar(0, 0, 0);
   } else {
-    map->minX = work->savedMinX;
-    map->maxX = work->savedMaxX;
-    map->minZ = work->savedMinZ;
-    map->maxZ = work->savedMaxZ;
+    map->minX = state->savedMinX;
+    map->maxX = state->savedMaxX;
+    map->minZ = state->savedMinZ;
+    map->maxZ = state->savedMaxZ;
     FieldCamera_FollowActor(scene->firstActorId, 1);
   }
 }
@@ -594,15 +594,15 @@ void ViewMove_End(void) {
 /// (Field_MeasurePsynergyReach), with each one's sprite rotation, for Tremor's
 /// sway to rock.
 void ViewMove_SaveNearbySprites(void) {
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct ViewMoveWork *group = Ram_HeapSlots->battleEffect;
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct ViewMoveState *group = Ram_HeapSlots->battleEffect;
   struct Actor **actors;
   struct Actor *actor;
   s32 i;
 
   group->count = 0;
-  actors = work->actors;
+  actors = state->actors;
   for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
     actor = *actors++;
     if (actor == NULL || actor->script == NULL || actor == scene->mainActor)
@@ -621,7 +621,7 @@ void ViewMove_SaveNearbySprites(void) {
 
 /// Gives each gathered actor's sprite its saved rotation back.
 void ViewMove_RestoreNearbySprites(void) {
-  struct ViewMoveWork *group = Ram_HeapSlots->battleEffect;
+  struct ViewMoveState *group = Ram_HeapSlots->battleEffect;
   s32 i;
 
   for (i = 0; i < group->count; i++)

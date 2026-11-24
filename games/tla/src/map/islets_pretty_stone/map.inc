@@ -4,15 +4,15 @@ Field_IsletsPrettyStone:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_IsletsPrettyStone, .LField_IsletsPrettyStone_CELL_PICTURES
+	map_block Field_IsletsPrettyStone, .LField_IsletsPrettyStone_CELL_TILES
 	map_block Field_IsletsPrettyStone, .LField_IsletsPrettyStone_SHAPES
 	map_block Field_IsletsPrettyStone, .LField_IsletsPrettyStone_GRID
 	map_block Field_IsletsPrettyStone, .LField_IsletsPrettyStone_SHAPE_GRID
 	map_block Field_IsletsPrettyStone, .LField_IsletsPrettyStone_ANIMATION
 	map_block Field_IsletsPrettyStone
 	map_block Field_IsletsPrettyStone, .LField_IsletsPrettyStone_SCENE
-.LField_IsletsPrettyStone_CELL_PICTURES:
-	.incbin "games/tla/src/map/islets_pretty_stone/cell_pictures.delta1.lz"
+.LField_IsletsPrettyStone_CELL_TILES:
+	.incbin "games/tla/src/map/islets_pretty_stone/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_IsletsPrettyStone_SHAPES:
 	.incbin "games/tla/src/map/islets_pretty_stone/shapes.table.lz"

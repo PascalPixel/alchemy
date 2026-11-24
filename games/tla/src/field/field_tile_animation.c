@@ -198,7 +198,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   case 1:
     Decompress_TaggedLz(
         Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_6]),
-        &gWorldMapWork);
+        &gWorldMapState);
     break;
   }
   perspective->reloadSteps--;
@@ -227,7 +227,7 @@ void WorldMap_PresentStillImage(void) {
 /// tiles, draws the current affine frame into pixels and hands the window and
 /// VBlank to it.
 void WorldMap_StartStillImage(void) {
-  struct WorldMapAffineWork *affineWork = Ram_HeapSlots->worldMapAffine;
+  struct WorldMapAffineState *affineState = Ram_HeapSlots->worldMapAffine;
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   const u32 *resources;
@@ -246,7 +246,7 @@ void WorldMap_StartStillImage(void) {
   Dma_Set((void *)BG_CHAR_BLOCK(1), gDecodeBuffer,
           DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
   wait(1);
-  TileMap_DrawRowsFromRam(affineWork->pages[gFrameCount & 1],
+  TileMap_DrawRowsFromRam(affineState->pages[gFrameCount & 1],
                           Ram_MapCellBuffer);
   perspective->windowTop = STILL_IMAGE_WINDOW_TOP;
   perspective->windowBottom = STILL_IMAGE_WINDOW_BOTTOM;
@@ -295,7 +295,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_5]),
                       gMapGridAnimTiles);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_6]),
-                      &gWorldMapWork);
+                      &gWorldMapState);
   // The VBlank copies the tiles back and the next frame shows the ground;
   // only then is the still image's buffer refilled with the cells.
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
@@ -332,7 +332,7 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
 
 /// Each frame: runs the 16 tileset animations.
 void TilesetAnim_Update(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   u32 channelIndex;
 
   for (channelIndex = 0; channelIndex < ARRAY_COUNT(map->anim);
@@ -410,7 +410,7 @@ void TilesetAnim_Update(void) {
 
 /// Resumes tileset animation channelIndex.
 void TilesetAnim_Resume(u32 channelIndex) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapAnimation *channel = &map->anim[channelIndex];
 
   channel->paused = 0;
@@ -418,7 +418,7 @@ void TilesetAnim_Resume(u32 channelIndex) {
 
 /// Pauses tileset animation channelIndex.
 void TilesetAnim_Pause(u32 channelIndex) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapAnimation *channel = &map->anim[channelIndex];
 
   channel->paused = 1;
@@ -428,7 +428,7 @@ void TilesetAnim_Pause(u32 channelIndex) {
 /// TILESET_ANIM_MARKER starts the tileset animation its low four bits name
 /// there (paused with TILESET_ANIM_MARKER_PAUSED).
 void TilesetAnim_StartAll(const u16 *script) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 channelsStarted;
   u32 marker;
 
@@ -465,20 +465,20 @@ void TilesetAnim_StartAll(const u16 *script) {
 /// Suspends the tileset animations, unless the world map's still image is
 /// shown.
 void TilesetAnim_SuspendAll(void) {
-  if (((struct MapWork *)Ram_HeapSlots->mapGrid)->animationActive == 0)
+  if (((struct MapState *)Ram_HeapSlots->mapGrid)->animationActive == 0)
     Task_SuspendAll(TilesetAnim_Update);
 }
 
 /// Resumes the tileset animations, unless the world map's still image is
 /// shown.
 void TilesetAnim_ResumeAll(void) {
-  if (((struct MapWork *)Ram_HeapSlots->mapGrid)->animationActive == 0)
+  if (((struct MapState *)Ram_HeapSlots->mapGrid)->animationActive == 0)
     Task_ResumeAll(TilesetAnim_Update);
 }
 
 /// Each frame: runs the map's blend script.
 void BlendScript_Run(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct BlendScriptState *blend;
   u16 *commands;
   u32 instruction;
@@ -536,7 +536,7 @@ again:
   blend->delay = delayOrJumpIndex - 1;
 }
 
-/// Starts a map's blend script, unless it is empty. Clears the map work's
+/// Starts a map's blend script, unless it is empty. Clears the map state's
 /// three-word blend state first, then adds BlendScript_Run as a task.
 void BlendScript_Start(u16 *script) {
   struct BlendScriptState *blend;
@@ -547,7 +547,7 @@ void BlendScript_Start(u16 *script) {
   // paused; a script that is only its end marker leaves the blend unset.
   hasScript = 0;
   zero = 0;
-  blend = &((struct MapWork *)Ram_HeapSlots->mapGrid)->blend;
+  blend = &((struct MapState *)Ram_HeapSlots->mapGrid)->blend;
   Dma_Set((const void *)&zero, blend, DMA_FILL_WORDS(sizeof(*blend) / 4),
           REG_DMA3);
   if (*script != BLEND_SCRIPT_LOOP) {
@@ -586,7 +586,7 @@ UNUSED void PaletteCycle_Start(void) {
 /// Each frame: advances each palette cycle whose timer has run out by one
 /// colour, writing the rotated colours back to the palette.
 void PaletteCycle_Step(void) {
-  struct PaletteCycleWork *paletteQueue = Ram_HeapSlots->paletteCycles;
+  struct PaletteCycleState *paletteQueue = Ram_HeapSlots->paletteCycles;
   u8 cycleIndex;
   // BUG: four queued cycles become zero here, so none advance.
   u16 activeCycles = paletteQueue->count & 3;
@@ -950,7 +950,7 @@ extern TerrainHeightFn gMapGrid_TerrainHeightFunctions[16];
 /// Broken Seal's: the height function of the cell's terrain kind applied to
 /// its samples.
 FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED z) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
   u8 *code;
 
@@ -969,7 +969,7 @@ FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED z) {
 /// Returns the terrain kind of a layer's cell at (x, z) in 16.16 pixels, as
 /// The Broken Seal's.
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED z) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
 
   x >>= 16;
@@ -987,7 +987,7 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED z) {
 /// As MapGrid_GetCellAttributeLowNibble, but a rounded square whose two
 /// samples differ reads as TERRAIN_BUMP.
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
   u8 *code;
   s32 kind;
@@ -1033,7 +1033,7 @@ FIXED MapGrid_GetHighestTerrainHeightAround(s32 layer, FIXED x, FIXED z,
 /// Gives the cell at (x, z) of layer the ground height `height`, in 8-pixel
 /// steps, by tagging its shape with terrain kind 0 at that height.
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *shape;
 
   shape = gMapShapeGrid +
@@ -1049,7 +1049,7 @@ s32 MapGrid_GetCellHeight(FIXED x, FIXED z, s32 layer) {
 
 /// As MapGrid_GetCellAttributeLowNibble, a second copy.
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
 
   x >>= 16;
@@ -1066,7 +1066,7 @@ s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z) {
 
 /// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels.
 u8 MapGrid_GetCellBehaviorAt(s32 layer, FIXED x, FIXED y) {
-  struct MapWork *state;
+  struct MapState *state;
   struct MapCell *cells;
 
   state = Ram_HeapSlots->mapGrid;
@@ -1083,7 +1083,7 @@ u8 MapGrid_GetCellBehaviorAt(s32 layer, FIXED x, FIXED y) {
 /// Sets the cell behavior of a layer's cell at (x, y) in 16.16 pixels. Writes
 /// the cell in the map's grid; does nothing before the map is set up.
 void MapGrid_SetCellBehaviorAt(u32 layer, FIXED x, FIXED y, u32 collisionCode) {
-  struct MapWork *state = Ram_HeapSlots->mapGrid;
+  struct MapState *state = Ram_HeapSlots->mapGrid;
 
   x = FIELD_CELL(x);
   y = FIELD_CELL(y);
@@ -1101,14 +1101,14 @@ void MapGrid_SetCellBehaviorAt(u32 layer, FIXED x, FIXED y, u32 collisionCode) {
 FIXED MapGrid_GetTerrainHeightAbove(FIXED px, FIXED pz, s32 layer, FIXED base) {
   s32 x = FIXEDtoINT(px);
   s32 z = FIXEDtoINT(pz);
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   u8 *shapes;
   u8 *code;
 
   if (map == NULL)
     return 0;
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
   if (layer <= 2)
     shapes = map->layers[layer].terrainIds;
@@ -1127,8 +1127,8 @@ FIXED MapGrid_GetTerrainHeightAbove(FIXED px, FIXED pz, s32 layer, FIXED base) {
 s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height) {
   s32 x = FIXEDtoINT(px);
   s32 z = FIXEDtoINT(pz);
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   u8 *cells;
   u8 *shapes;
   u8 *code;
@@ -1137,7 +1137,7 @@ s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height) {
 
   if (map == NULL)
     return 0;
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
   if (layer <= 2) {
     cells = (u8 *)map->layers[layer].cells;
@@ -1166,8 +1166,8 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
                            struct FieldPosition *position) {
   s32 x = ((struct FieldCoordinate *)&position->x)->part[0].integer;
   s32 z = ((struct FieldCoordinate *)&position->z)->part[0].integer;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   u8 *cells;
   u8 *shapes;
   u8 *code;
@@ -1176,7 +1176,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 
   if (map == NULL)
     return 0;
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
   if (actor->layer <= 2) {
     cells = (u8 *)map->layers[actor->layer].cells;
@@ -1205,8 +1205,8 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
                                 struct FieldPosition *position) {
   s32 x = ((struct FieldCoordinate *)&position->x)->part[0].integer;
   s32 z = ((struct FieldCoordinate *)&position->z)->part[0].integer;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   u8 *cells;
   u8 *shapes;
   u8 *code;
@@ -1214,7 +1214,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
 
   if (map == NULL)
     return 0;
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
   if (actor->layer <= 2) {
     cells = (u8 *)map->layers[actor->layer].cells;
@@ -1235,11 +1235,11 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
 }
 
 /// Returns -1 when the cell under position (its x, and z less its height) in
-/// the overhead layer is a wall, else 0; also 0 before the map work exists.
+/// the overhead layer is a wall, else 0; also 0 before the map state exists.
 s32 MapGrid_IsWallAt(s32 *position) {
   s32 x = position[0] / FIXED_ONE;
   s32 z = (u32)((position[2] & FIELD_CELL_MASK) - position[1]) / FIXED_ONE;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
 
   if (map == NULL)
@@ -1265,7 +1265,7 @@ s32 WorldMap_GetBlockCellBehavior(struct WorldPosition *position) {
   if (z < 0)
     z += toFIXED(32) - 1;
   z = WORLD_MAP_BLOCK(z) & 31;
-  return ((struct WorldMapBlocks *)gCellPictures)->blocks[x + z * 32].place;
+  return ((struct WorldMapBlocks *)gCellTiles)->blocks[x + z * 32].place;
 }
 
 /// Returns the world map's collision value (1-15) at position: from the upper
@@ -1336,11 +1336,11 @@ s32 WorldMap_IsWalkable(void *mover, struct WorldPosition *position) {
 s32 WorldMap_IsSailable(void *mover, struct WorldPosition *position) {
   if (WorldMap_GetBlockCellBehavior(position) != CELL_BEHAVIOR_WALL) {
     s32 collision = WorldMap_GetCollision(position);
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
+    struct FieldState *state = Ram_HeapSlots->fieldState;
     s32 mode;
 
     // Each of the three kinds of ground last flown over sails the same water.
-    mode = work->terrainKind;
+    mode = state->terrainKind;
     if (mode == 0) {
       if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) <=
               WORLD_MAP_COLLISION_SEA_LAST - WORLD_MAP_COLLISION_SEA_FIRST ||
@@ -1366,7 +1366,7 @@ s32 WorldMap_IsSailable(void *mover, struct WorldPosition *position) {
 s32 WorldMap_IsFlyable(struct Actor *mover, struct WorldPosition *position) {
   if (WorldMap_GetBlockCellBehavior(position) != CELL_BEHAVIOR_WALL) {
     s32 collision = WorldMap_GetCollision(position);
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
+    struct FieldState *state = Ram_HeapSlots->fieldState;
 
     s32 height = mover->y.fixed;
 
@@ -1377,7 +1377,7 @@ s32 WorldMap_IsFlyable(struct Actor *mover, struct WorldPosition *position) {
         return -1;
       return 0;
     } else {
-      s32 mode = work->terrainKind;
+      s32 mode = state->terrainKind;
 
       if (mode == 0) {
         if ((u32)(collision - 1) <= 5)

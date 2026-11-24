@@ -2,7 +2,7 @@
 #define ALCHEMY_DJINN_MENU_H
 
 /// @file
-/// The Djinn menu: its lists, backdrop and work, the fields of a Djinni's list
+/// The Djinn menu: its lists, backdrop and state, the fields of a Djinni's list
 /// entry, and the Djinn tutorial's lines.
 
 #include "static_assert.h"
@@ -83,67 +83,67 @@ struct DjinnPreviewWindow {
   s16 y;
 };
 
-/// DjinnMenuWork.pending's bits: what the chosen pair still waits for.
+/// DjinnMenuState.pending's bits: what the chosen pair still waits for.
 enum DjinnPending {
   DJINN_PENDING_SECOND = 1, ///< Unused: a second Djinni is to be chosen
   DJINN_PENDING_CONFIRM = 2 ///< a give or trade awaits its confirmation
 };
 
-/// The Djinn menu's work, in the HEAP_SLOT_MENU heap slot from the menu's
-/// opening to its closing, laid out as ItemMenuWork is: it names only what the
+/// The Djinn menu's state, in the HEAP_SLOT_MENU heap slot from the menu's
+/// opening to its closing, laid out as ItemMenuState is: it names only what the
 /// Djinn screen reads, and says whose the rest is.
-struct DjinnMenuWork {
-  u8 unused[8];    ///< no view of the menu work names it
+struct DjinnMenuState {
+  u8 unused[8];    ///< no view of the menu state names it
   s32 member;      ///< the party member whose Djinn are shown
-  s32 moneyWindow; ///< ShopWork's; not named here
+  s32 moneyWindow; ///< ShopState's; not named here
   s32 statusWindow;
   struct WindowSprite *cursor;
-  /// The second of ItemMenuWork's sideIcons; not named here.
+  /// The second of ItemMenuState's sideIcons; not named here.
   struct WindowSprite *secondSideIcon;
   s8 selectedColumn[2];   ///< each side's party member, an index into members
-  s8 sideCount[2];        ///< ItemMenuWork's; not named here
-  u8 unusedAfterSides[4]; ///< no view of the menu work names it
-  s32 itemWindow;         ///< ItemMenuWork's and ShopWork's; not named here
+  s8 sideCount[2];        ///< ItemMenuState's; not named here
+  u8 unusedAfterSides[4]; ///< no view of the menu state names it
+  s32 itemWindow;         ///< ItemMenuState's and ShopState's; not named here
   s32 window;
   s32 unopenedWindow;
-  s32 infoWindow; ///< ItemMenuWork's; not named here
+  s32 infoWindow; ///< ItemMenuState's; not named here
   s32 listWindow;
   struct DjinnPreviewWindow *secondWindow;
-  /// ItemMenuWork's last windows and its icons; not named here.
+  /// ItemMenuState's last windows and its icons; not named here.
   ///@{
   u8 itemWindows[16];
   struct WindowSprite *entryIcons[32];
   ///@}
-  u8 unusedAfterIcons[36]; ///< no view of the menu work names it
+  u8 unusedAfterIcons[36]; ///< no view of the menu state names it
   s32 helpWindow;
-  u8 cursorGrid[4];       ///< ItemMenuWork's cursor grid; not named here
+  u8 cursorGrid[4];       ///< ItemMenuState's cursor grid; not named here
   void *memberSprites[8]; ///< the party members' figures
   s16 memberX[8];         ///< screen pixels
   s16 memberY[8];         ///< screen pixels
-  FIXED memberScale[8];   ///< ItemMenuWork's; not named here
-  s16 memberSpriteIds[8]; ///< ItemMenuWork's; not named here
+  FIXED memberScale[8];   ///< ItemMenuState's; not named here
+  s16 memberSpriteIds[8]; ///< ItemMenuState's; not named here
   u16 selection[2];       ///< each side's cursor (DJINN_CURSOR_ROW_STRIDE)
   u16 pairEntries[2];     ///< each side's chosen list entry
   struct WindowSprite *secondCursor;
-  u8 unusedBeforeArrows[4]; ///< no view of the menu work names it
+  u8 unusedBeforeArrows[4]; ///< no view of the menu state names it
   /// The up and down arrows beside the party row (MenuCursor_Create).
   struct WindowSprite *pageArrows[2];
   struct DjinnMenuBackdrop *backdrop;
-  u8 unusedAfterBackdrop[64];      ///< no view of the menu work names it
-  u16 entries[32];                 ///< ItemMenuWork's items; not named here
+  u8 unusedAfterBackdrop[64];      ///< no view of the menu state names it
+  u16 entries[32];                 ///< ItemMenuState's items; not named here
   u16 members[DJINN_LIST_MEMBERS]; ///< the party in order
   u8 pairCount;                    ///< not read by name here
   u8 memberCount;
   u8 shownMember[2]; ///< the party member giving and the one receiving
-  /// ItemMenuWork's selectedItemIcon; not named here.
+  /// ItemMenuState's selectedItemIcon; not named here.
   struct WindowSprite *selectedIcon;
   u16 pending;        ///< DjinnPending bits
-  s16 completionFlag; ///< ItemMenuWork's; not named here
-  void *figures[4];   ///< ItemMenuWork's; not named here
+  s16 completionFlag; ///< ItemMenuState's; not named here
+  void *figures[4];   ///< ItemMenuState's; not named here
   u16 slotX[4];
   u16 slotY[4];
-  s32 figurePhases[4];  ///< ItemMenuWork's figureScales; not named here
-  u16 figureFacings[4]; ///< ItemMenuWork's; not named here
+  s32 figurePhases[4];  ///< ItemMenuState's figureScales; not named here
+  u16 figureFacings[4]; ///< ItemMenuState's; not named here
   /// The Djinn chosen on each side: index in their element, element, party
   /// member.
   ///@{
@@ -151,17 +151,17 @@ struct DjinnMenuWork {
   u8 pairElement[2];
   u8 pairMember[2];
   ///@}
-  s16 messageOffset; ///< ItemMenuWork's; not named here
+  s16 messageOffset; ///< ItemMenuState's; not named here
 };
 
 STATIC_ASSERT(offsetof(struct DjinnMenuBackdrop, tiles) == 168);
 STATIC_ASSERT(offsetof(struct DjinnMenuBackdrop, tutorialTimer) == 8488);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, window) == 40);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, helpWindow) == 240);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, memberY) == 296);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, backdrop) == 384);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, members) == 516);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, shownMember) == 534);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, pairMember) == 604);
+STATIC_ASSERT(offsetof(struct DjinnMenuState, window) == 40);
+STATIC_ASSERT(offsetof(struct DjinnMenuState, helpWindow) == 240);
+STATIC_ASSERT(offsetof(struct DjinnMenuState, memberY) == 296);
+STATIC_ASSERT(offsetof(struct DjinnMenuState, backdrop) == 384);
+STATIC_ASSERT(offsetof(struct DjinnMenuState, members) == 516);
+STATIC_ASSERT(offsetof(struct DjinnMenuState, shownMember) == 534);
+STATIC_ASSERT(offsetof(struct DjinnMenuState, pairMember) == 604);
 
 #endif

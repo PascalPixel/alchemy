@@ -22,7 +22,7 @@
 ///
 /// Abilities: Nirvana.
 void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle blit;
   struct BattleCamera *view;
@@ -33,16 +33,16 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  view = Ram_HeapSlots->cameraWork;
+  view = Ram_HeapSlots->cameraState;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_PINK_BURST_SHEET);
   object = BattleObject_GetFar(args->targets[0])->object;
   half = BattleUnit_GetEffectHeightFar(args->targets[0]) / 2;
-  orb = work->particles;
+  orb = state->particles;
   SET_POSITION(orb, object->x, object->y + half, object->z);
   orb->velocityX = 0;
   orb->velocityY = 0;
@@ -50,7 +50,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   orb->variant = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != NIRVANA_FRAMES; frame++) {
@@ -117,7 +117,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
           orb->variant = -1;
       }
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
@@ -138,7 +138,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
 ///
 /// Abilities: Stone Justice.
 void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle blit;
   FIXED scroll;
@@ -153,15 +153,15 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
   s32 hit;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   blit = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   scroll = 0;
   scrollSpeed = 0;
   cueTimer = 0;
@@ -181,7 +181,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
     // speeds.
     if (frame == 0) {
       for (i = 0; i != STONE_JUSTICE_ROCKS; i++) {
-        rock = &work->particles[i];
+        rock = &state->particles[i];
         if (args->side == EFFECT_SIDE_ENEMIES)
           rock->x = INTtoFIXED(Random16() % 40 + 8);
         else
@@ -220,13 +220,13 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
       s32 left;
       s32 top;
 
-      rock = &work->particles[i];
+      rock = &state->particles[i];
       cell = (i % 5) * 3 + rock->velocityZ / STONE_JUSTICE_SPIN_STEP % 3;
       width = gSpire_ShardWidths[cell];
       left = FIXED_INTEGER_PART(rock->x) - width / 2 + scrollX;
       top = FIXED_INTEGER_PART(rock->y) - gSpire_ShardHeights[cell] / 2;
       blit(canvas,
-           work->sheet + gSpire_ShardPictures[cell] + BOULDER_SHARD_PICTURES,
+           state->sheet + gSpire_ShardPictures[cell] + BOULDER_SHARD_PICTURES,
            left, top, width, gSpire_ShardHeights[cell]);
       if (rock->variant == 0) {
         if (args->side == EFFECT_SIDE_ENEMIES) {
@@ -268,11 +268,11 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
                                     toFIXED(2), 150);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 4);
-      work->shakeFrames = 2;
+      state->shakeFrames = 2;
     }
 
     BattleCamera_Shake(2, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL);
@@ -300,7 +300,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
 ///
 /// Abilities: Soul Shatter.
 void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   u8 *sheet;
   struct MotionObject *target;
@@ -310,21 +310,22 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 12);
-  Resource_LoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET,
-                             work->sheet + SOUL_SHATTER_SPARK_PICTURES, 1, 0);
+                             state->sheet + SOUL_SHATTER_SPARK_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   target = BattleObject_GetFar(args->targets[0])->object;
   EffectPosition_ProjectBattler(args->targets[0], &position);
   position.x /= 2;
-  work->shakeFrames = 8;
+  state->shakeFrames = 8;
 
   for (frame = 0; frame != SOUL_SHATTER_FRAMES; frame++) {
     // Frame 0: sparks leave the column's foot upward, and the motes start
@@ -334,7 +335,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
       {
         struct Particle *spark;
 
-        for (i = 0, spark = work->particles; i != SOUL_SHATTER_SPARKS;
+        for (i = 0, spark = state->particles; i != SOUL_SHATTER_SPARKS;
              i++, spark++) {
           s32 speed = (Random16() & 0xff) + 256;
           s32 angle = (Random16() & 0x7fff) + DEGtoANG(90);
@@ -349,7 +350,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
       {
         struct Particle *mote;
 
-        for (i = 0, mote = &work->particles[SOUL_SHATTER_SPARKS * 2];
+        for (i = 0, mote = &state->particles[SOUL_SHATTER_SPARKS * 2];
              i != SOUL_SHATTER_MOTES; i++, mote++) {
           s32 speed = (Random16() & 127) + 128;
           s32 angle = Random16() & 0x7fff;
@@ -368,7 +369,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
     if (frame == 4)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 10) {
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
       Sound_PlayFar(SE_CLATTER);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 80);
@@ -417,7 +418,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
           draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-          draw[0](canvas, work->sheet, x, 104 - height,
+          draw[0](canvas, state->sheet, x, 104 - height,
                   SOUL_SHATTER_COLUMN_WIDTH, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
@@ -431,7 +432,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
     {
       struct Particle *spark;
 
-      for (i = 0, spark = work->particles; i != SOUL_SHATTER_SPARKS;
+      for (i = 0, spark = state->particles; i != SOUL_SHATTER_SPARKS;
            i++, spark++) {
         if (frame >= i / 2 + 8 && spark->variant < SOUL_SHATTER_SPARK_FRAMES) {
           s32 cell = spark->variant / 3;
@@ -440,13 +441,13 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
 
           if (cell > 6)
             cell = 6;
-          draw[(i & 3) ? 0 : 1](canvas,
-                                work->sheet + gSoulShatter_SparkPictures[cell] +
-                                    SOUL_SHATTER_SPARK_PICTURES,
-                                x - gSoulShatter_SparkSizes[cell] / 2,
-                                y - gSoulShatter_SparkSizes[cell] / 2,
-                                gSoulShatter_SparkSizes[cell],
-                                gSoulShatter_SparkSizes[cell]);
+          draw[(i & 3) ? 0 : 1](
+              canvas,
+              state->sheet + gSoulShatter_SparkPictures[cell] +
+                  SOUL_SHATTER_SPARK_PICTURES,
+              x - gSoulShatter_SparkSizes[cell] / 2,
+              y - gSoulShatter_SparkSizes[cell] / 2,
+              gSoulShatter_SparkSizes[cell], gSoulShatter_SparkSizes[cell]);
           spark->variant++;
           Particle_AdvanceWithGravity2D(spark, 62, -toFIXED(1) / 8);
         }
@@ -462,11 +463,11 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
 
       user = BattleObject_GetFar(args->user)->object;
       userHalfHeight = BattleUnit_GetEffectHeightFar(args->user) / 2;
-      camera = Ram_HeapSlots->cameraWork;
+      camera = Ram_HeapSlots->cameraState;
       Matrix_Initialize();
       Matrix_SetLookAt(camera->eye, camera->focus);
       for (i = 0; i != SOUL_SHATTER_MOTES; i++) {
-        struct Particle *mote = &work->particles[SOUL_SHATTER_SPARKS * 2 + i];
+        struct Particle *mote = &state->particles[SOUL_SHATTER_SPARKS * 2 + i];
         if (mote->variant >= 0) {
           s32 size = (i & 1) + 9;
           s32 userX;
@@ -511,7 +512,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
       BattleCamera_Shake(4, 4);
     else
       BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -574,7 +575,7 @@ struct ProjectedPoint {
 /// Abilities: Serac.
 void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   s32 frame;
   DrawRectangle blitters[2];
   s32 screenB[3];
@@ -582,7 +583,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   u8 *mistSheet;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   BattleEffect_ConfigureEffectDisplay();
   if (args->side == EFFECT_SIDE_ENEMIES) {
     BattleEffect_StartTiledCanvasFilled(BGCNT_WRAP);
@@ -599,14 +600,14 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2PA = Q_8_8(1);
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   mistSheet = Ram_MapCellBuffer + SERAC_MIST;
   Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, mistSheet, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET,
-                             work->sheet + SERAC_CLOUD_PUFFS, 0, 0);
+                             state->sheet + SERAC_CLOUD_PUFFS, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SHEET,
-                             work->sheet + SERAC_MERCURY_DJINN_PICTURES, 1, 0);
+                             state->sheet + SERAC_MERCURY_DJINN_PICTURES, 1, 0);
   LOAD_BG_PALETTE(RESOURCE_BLUE_FLAME_SHEET);
   {
     struct BattleCamera *camera;
@@ -626,7 +627,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
     s32 column;
     s32 i;
 
-    camera = (struct BattleCamera *)Ram_HeapSlots->cameraWork;
+    camera = (struct BattleCamera *)Ram_HeapSlots->cameraState;
     savedYaw = camera->yaw;
     target = BattleObject_GetFar(args->targets[0])->object;
     REG_BG2PA = Q_8_8(1);
@@ -744,7 +745,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
       if ((u32)frame <= 63) {
         if (frame == 0) {
           for (i = 0; i != SERAC_DUST_PUFFS; i++) {
-            struct Particle *p = &work->particles[i];
+            struct Particle *p = &state->particles[i];
             s32 speed = (Random16() & 1023) + 1024;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
 
@@ -756,7 +757,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           }
         }
         for (i = 0; i != SERAC_DUST_PUFFS; i++) {
-          struct Particle *p = &work->particles[i];
+          struct Particle *p = &state->particles[i];
           s32 picture;
           s32 x;
           s32 y;
@@ -770,7 +771,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           x = point.x - CLOUD_PUFF_WIDTH / 2;
           y = point.y - CLOUD_PUFF_HEIGHT / 2;
           blitters[0](canvas,
-                      work->sheet + SERAC_CLOUD_PUFFS +
+                      state->sheet + SERAC_CLOUD_PUFFS +
                           picture * PICTURE_BYTES(CLOUD_PUFF),
                       x, y, CLOUD_PUFF_WIDTH, CLOUD_PUFF_HEIGHT);
         }
@@ -781,7 +782,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         point.y = toFIXED(60) - frame * toFIXED(2);
         point.depth = target->z + (Trig_Sin(frame * (TRIG_TURN / 128)) << 5);
         Matrix_ProjectPoint(&point, &dropScreen);
-        blitters[1](canvas, work->sheet + SERAC_MERCURY_DJINN_PICTURES,
+        blitters[1](canvas, state->sheet + SERAC_MERCURY_DJINN_PICTURES,
                     dropScreen.x - 20, dropScreen.y - 30, DJINNI_WIDTH,
                     DJINNI_HEIGHT);
       }
@@ -803,10 +804,10 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
                                  POSE_DAMAGE, TINT_KEEP, 0);
       }
       if (frame == 26) {
-        work->shakeFrames = 8;
+        state->shakeFrames = 8;
       }
       if (frame == 64) {
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 4);
       }
@@ -849,8 +850,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         if (frame == 64) {
           Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                                CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-          for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-            struct Particle *p = &work->particles[i];
+          for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+            struct Particle *p = &state->particles[i];
             s32 angle = (i & 7) * (TRIG_TURN / 8);
             s32 ring;
 
@@ -872,8 +873,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           model->flags = 0;
           model->mesh = gBattleEffect_TriangleMesh;
           model->vertices = vertices;
-          for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-            struct Particle *p = &work->particles[i];
+          for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+            struct Particle *p = &state->particles[i];
             s32 angle = (frame + i) * (TRIG_TURN / 64);
 
             if (p->variant < 0) {
@@ -906,7 +907,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           // The spire, then the mist inside it.
           texture.logWidth = 5;
           texture.logHeight = 5;
-          texture.pixels = (const u8 *)work->sheet;
+          texture.pixels = (const u8 *)state->sheet;
           model->kind = MODEL_SHADED_MAX;
           model->flags = 3;
           model->vertices = vertices;
@@ -981,7 +982,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
       gProjection.centerX = savedCenterX;
       gProjection.centerY = savedCenterY;
       BattleCamera_Shake(8, 8);
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
     }
   }
   EFFECT_FINISH_CANVAS();

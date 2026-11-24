@@ -27,7 +27,7 @@
 #include "flags.h"
 #include "field/scene_tables.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
@@ -140,17 +140,17 @@ void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
 /// falls to the floor, where he can pick it up.
 void EasternAlhafraShip_KnockDownTheBread(void) {
   GameFlag_Set(FLAG_BREAD_KNOCKED_DOWN);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->velocityY = toFIXED(6);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
-  Actor_WalkTo(gMainRoutineWork.leaderActorId, 136, 488);
+  Actor_GetById(gMainRoutineState.leaderActorId)->velocityY = toFIXED(6);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 2);
+  Actor_WalkTo(gMainRoutineState.leaderActorId, 136, 488);
   Event_Wait(10);
   Actor_SetDestination(ACTOR_LARGE_BREAD, 120, 472);
   Actor_MoveToAndWaitById(ACTOR_STACKED_CRATES, 136, 475);
   Actor_GetById(ACTOR_LARGE_BREAD)->velocityY = toFIXED(6);
   Sound_Play(SE_POUND);
-  Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_STAND);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
   Event_Wait(20);
   Actor_WaitForMoveById(ACTOR_LARGE_BREAD);
   Sound_Play(SE_DOOR_CLOSE);
@@ -222,13 +222,13 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BRIGGS_BATTLE) {
+  if (gMainRoutineState.entrance == ENTRANCE_AFTER_BRIGGS_BATTLE) {
     GameFlag_Set(FLAG_MAYOR_ARRIVED_AT_THE_SHIP);
     GameFlag_Set(FLAG_BRIGGS_CAUGHT);
-    gMainRoutineWork.returnEntrance = ENTRANCE_FOOT_OF_STAIRS;
-    gMainRoutineWork.entrance = ENTRANCE_FOOT_OF_STAIRS;
+    gMainRoutineState.returnEntrance = ENTRANCE_FOOT_OF_STAIRS;
+    gMainRoutineState.entrance = ENTRANCE_FOOT_OF_STAIRS;
     EasternAlhafraShip_BriggsIsCaught();
   }
   if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
@@ -286,7 +286,7 @@ extern u32 gEasternAlhafraShip_LeaveUpTheStairsScript[];
 /// come to Alhafra after them. Jenna's outburst gives the party away, and
 /// Briggs and a Sea Fighter of his crew fight it.
 void EasternAlhafraShip_MayorArrives(void) {
-  struct MapWork *map;
+  struct MapState *map;
   s32 result;
 
   Event_Start();
@@ -508,13 +508,13 @@ void EasternAlhafraShip_MayorArrives(void) {
     Event_Wait(20);
     // Yes: "Good for you! Let's teach these guys a lesson!"
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     EasternAlhafraShip_CountAnswer();
     Event_Wait(20);
     Actor_FaceDirectionById(ACTOR_JENNA, FACING_WEST, 0);
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // No: "After what they've done? Come on, we need to make them fess up!"
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   }
@@ -533,7 +533,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Event_SetAfterBattleDestination(SCENE_EASTERN_ALHAFRA_SHIP,
                                   ENTRANCE_AFTER_BRIGGS_BATTLE);
 
-  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+  gMainRoutineState.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA, 1);
   Event_End();
@@ -639,12 +639,12 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
     Event_Wait(10);
     // Yes: "That's right. You tell the Madrans that, and they can release..."
     Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
     Event_Wait(10);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // No: "Saying Piers is innocent won't clear you of your own crimes..."
     Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   }
@@ -1519,7 +1519,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
     Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, ANIM_SHAKE_HEAD);
     // Yes: "Ha! Your honesty is refreshing, Felix!"
     Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
     Event_Wait(40);
     EasternAlhafraShip_CountAnswer();
@@ -1527,7 +1527,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, ANIM_NOD);
     Event_Wait(20);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // No: "That's as may be, but I still feel quite indebted to you."
     Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
   }
@@ -1654,11 +1654,11 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
     Event_Wait(20);
     // Yes: "All right! Let's go see what we can do to get this thing..."
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
     Event_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // No: "You're opposed to it? Well, since you seem to have your own..."
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   }
@@ -1668,7 +1668,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(30);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader != 0) {
     Actor_SetDestinationById(ACTOR_JENNA, leader->x.part[0].integer,
                              leader->z.part[0].integer);
@@ -1677,7 +1677,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader != 0) {
     Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].integer,
                              leader->z.part[0].integer);
@@ -1686,14 +1686,14 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader != 0) {
     Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].integer,
                              leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  FieldCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   Event_End();
   return;
 }

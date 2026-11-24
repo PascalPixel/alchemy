@@ -21,7 +21,7 @@
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct Vector3 position;
   struct Actor *djinni;
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct FieldParticle *effect;
   FIXED scale;
   s32 remainingParticles;
@@ -30,7 +30,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   if (djinni == NULL)
     return;
   FieldEffect_InitializeSlots();
-  effectWork = Ram_HeapSlots->fieldEffectWork;
+  effectState = Ram_HeapSlots->fieldEffectState;
   // Tint the screen yellow.
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(12, 12, 4));
   Sound_PlayFar(SE_NOTE_LOW);
@@ -48,7 +48,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 12, 22);
 
-  // A light particle in every slot the effect work has, from where the
+  // A light particle in every slot the effect state has, from where the
   // Djinni is on screen.
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;
@@ -56,8 +56,8 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
   Actor_ReleaseFar(djinni);
   Sound_PlayFar(SE_SCATTER);
-  effect = effectWork->particles;
-  remainingParticles = ARRAY_COUNT(effectWork->particles) - 1;
+  effect = effectState->particles;
+  remainingParticles = ARRAY_COUNT(effectState->particles) - 1;
   // One a frame, each in a random colour mode from SPRITE_COLOR_NORMAL to
   // SPRITE_COLOR_GREY.
   do {
@@ -75,9 +75,9 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   } while (remainingParticles >= 0);
 
   wait(60);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineState.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
   wait(40);
   Sound_PlayFar(SE_SCATTER);
@@ -140,7 +140,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   struct Vector3 position;
   s32 state;
 
-  owner = Actor_GetById(gMainRoutineWork.leaderActorId);
+  owner = Actor_GetById(gMainRoutineState.leaderActorId);
   state = effect->state;
 
   if (state == MARS_SPARK_AIM) {

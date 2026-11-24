@@ -4,18 +4,18 @@ Field_KibomboStatueGroundsCeremony:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_KibomboStatueGroundsCeremony, .LField_KibomboStatueGroundsCeremony_CELL_PICTURES
+	map_block Field_KibomboStatueGroundsCeremony, .LField_KibomboStatueGroundsCeremony_CELL_TILES
 	map_block Field_KibomboStatueGroundsCeremony, .LField_KibomboStatueGroundsCeremony_SHAPES
 	map_block Field_KibomboStatueGroundsCeremony, .LField_KibomboStatueGroundsCeremony_GRID
 	map_block Field_KibomboStatueGroundsCeremony, .LField_KibomboStatueGroundsCeremony_SHAPE_GRID
 	map_block Field_KibomboStatueGroundsCeremony, .LField_KibomboStatueGroundsCeremony_ANIMATION
 	map_block Field_KibomboStatueGroundsCeremony, .LField_KibomboStatueGroundsCeremony_BLEND
 	map_block Field_KibomboStatueGroundsCeremony, .LField_KibomboStatueGroundsCeremony_SCENE
-.LField_KibomboStatueGroundsCeremony_CELL_PICTURES:
+.LField_KibomboStatueGroundsCeremony_CELL_TILES:
 	.ifeq EDITION_INTERNATIONAL
-	.incbin "games/tla/src/map/kibombo_statue_grounds_ceremony/cell_pictures_ja.delta1.lz"
+	.incbin "games/tla/src/map/kibombo_statue_grounds_ceremony/cell_tiles_ja.delta1.lz"
 	.else
-	.incbin "games/tla/src/map/kibombo_statue_grounds_ceremony/cell_pictures.delta1.lz"
+	.incbin "games/tla/src/map/kibombo_statue_grounds_ceremony/cell_tiles.delta1.lz"
 	.endif
 	.balign 4, 0
 .LField_KibomboStatueGroundsCeremony_SHAPES:

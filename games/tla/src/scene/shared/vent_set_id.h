@@ -1,7 +1,7 @@
 /// Sets a vent's actor.
 void Vent_SetId(s32 i, s32 id) {
-  struct VentWork *work = VENT_WORK;
+  struct VentState *state = VENT_STATE;
 
   if ((u32)i <= 3)
-    work->ids[i] = id;
+    state->ids[i] = id;
 }

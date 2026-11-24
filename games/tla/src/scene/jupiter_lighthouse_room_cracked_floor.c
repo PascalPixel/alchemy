@@ -26,7 +26,7 @@
 #include "field/scene_tables.h"
 #include "system/iwram_call.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/event_inline.h"
 #include "scene/scene.h"
 #include "field/call.h"
@@ -119,7 +119,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 /// A cracked tile of the room under a grounded leader: as it gives way the
 /// party falls to the hall below.
 void JupiterLighthouse_StepOnCrackedTile(s32 value) {
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
+  if (Actor_Get(gMainRoutineState.leaderActorId)->y.fixed == 0 &&
       CrackedTile_Step(value))
     FieldEvent_SetExitRequest(THROUGH_CRACKED_TILE);
 }
@@ -127,7 +127,7 @@ void JupiterLighthouse_StepOnCrackedTile(s32 value) {
 /// The single cracked tile of the hall below under a grounded leader: as it
 /// gives way the party falls into the room of the blue key.
 void JupiterLighthouse_StepOnSingleCrackedTile(s32 value) {
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
+  if (Actor_Get(gMainRoutineState.leaderActorId)->y.fixed == 0 &&
       CrackedTile_Step(value))
     FieldEvent_SetExitRequest(
         JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_TO_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_NORTH);
@@ -200,9 +200,9 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 /// the room of cracked tiles by its stairs, or else the hall below, with the
 /// landing of a fall from above. Returns 0.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  work->transition =
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_SHORTCUT_PILLAR, 72, 600);
@@ -210,7 +210,7 @@ s32 Scene_Initialize(void) {
   }
   if (Event_GetFlag(FLAG_DOOR_BUTTON_HELD))
     JupiterLighthouse_OpenDoor(DOOR_OPEN_AT_ONCE);
-  if ((u16)(gMainRoutineWork.entrance - ENTRANCE_CRACKED_TILES_FROM_BELOW) <=
+  if ((u16)(gMainRoutineState.entrance - ENTRANCE_CRACKED_TILES_FROM_BELOW) <=
       ENTRANCE_CRACKED_TILES_FROM_ABOVE - ENTRANCE_CRACKED_TILES_FROM_BELOW) {
     CrackedTile_Find(CELL_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80,
                      FLAG_AREA_TEMP_80, 20, 31);
@@ -414,7 +414,7 @@ struct CellTargetEntry;
 
 #include "shared/cracked_tile_drop_in.h"
 
-void CrackedTile_Crack(struct CellTarget *work, struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *state, struct CellTargetEntry *entry);
 
 #include "shared/cracked_tile_step.h"
 

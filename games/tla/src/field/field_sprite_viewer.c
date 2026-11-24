@@ -506,15 +506,15 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
   s32 offset;
   struct AnimationMetadata *metadata;
   struct SpriteAnimation *entry;
-  u8 *work;
+  u8 *state;
 
-  work = Ram_HeapSlots->sprites;
+  state = Ram_HeapSlots->sprites;
   count = 0;
   offset = (3 & slot) * sizeof(struct SpriteAnimation *) +
            offsetof(struct Sprite, entries);
   zero = 0;
   do {
-    entry = *(struct SpriteAnimation **)(work + offset);
+    entry = *(struct SpriteAnimation **)(state + offset);
     if (entry->scripts != 0) {
       metadata = Resource_GetMetadataRecordFar(entry->animationId);
       if (value < metadata->animationCount) {
@@ -526,11 +526,11 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
         entry->pictureBase = zero;
         entry->picture = SPRITE_PICTURE_NONE;
       }
-      ((struct Sprite *)work)->offsetY = metadata->adjustY;
-      ((struct Sprite *)work)->rotation = zero;
+      ((struct Sprite *)state)->offsetY = metadata->adjustY;
+      ((struct Sprite *)state)->rotation = zero;
     }
     count += 1;
-    work += sizeof(struct Sprite);
+    state += sizeof(struct Sprite);
   } while (count <= 9);
 }
 
@@ -571,7 +571,7 @@ void SpriteViewer_PlaceRing(void) {
   u32 i;
 
   scale = gSpriteViewer_Scale;
-  table = (u8 *)Ram_HeapSlots->battleWork;
+  table = (u8 *)Ram_HeapSlots->battleState;
 
   switch (kind) {
   case ANIM_FACING_THREE_PICTURES:

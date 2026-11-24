@@ -1,14 +1,14 @@
 /// Draws each geyser's column as sprites, a piece every 16 pixels of its height
 /// and a bobbing top, at most GEYSER_SPRITES of them.
 void Geyser_Draw(void) {
-  struct GeyserWork *work = GEYSER_WORK;
-  struct Geyser *entry = work->entries;
+  struct GeyserState *state = GEYSER_STATE;
+  struct Geyser *entry = state->entries;
   s32 i;
-  u32 tile = gVramCacheEntries[work->entry].offset >> 5;
+  u32 tile = gVramCacheEntries[state->entry].offset >> 5;
   s32 frame;
-  u32 *oam = work->block;
+  u32 *oam = state->block;
   s32 count = 0;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX, viewZ, originY;
   struct Actor *actor;

@@ -4,15 +4,15 @@ Field_MercuryLighthouse:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_MercuryLighthouse, .LField_MercuryLighthouse_CELL_PICTURES
+	map_block Field_MercuryLighthouse, .LField_MercuryLighthouse_CELL_TILES
 	map_block Field_MercuryLighthouse, .LField_MercuryLighthouse_SHAPES
 	map_block Field_MercuryLighthouse, .LField_MercuryLighthouse_GRID
 	map_block Field_MercuryLighthouse, .LField_MercuryLighthouse_SHAPE_GRID
 	map_block Field_MercuryLighthouse, .LField_MercuryLighthouse_ANIMATION
 	map_block Field_MercuryLighthouse, .LField_MercuryLighthouse_BLEND
 	map_block Field_MercuryLighthouse, .LField_MercuryLighthouse_SCENE
-.LField_MercuryLighthouse_CELL_PICTURES:
-	.incbin "games/tla/src/map/mercury_lighthouse/cell_pictures.delta2.lz"
+.LField_MercuryLighthouse_CELL_TILES:
+	.incbin "games/tla/src/map/mercury_lighthouse/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_MercuryLighthouse_SHAPES:
 	.incbin "games/tla/src/map/mercury_lighthouse/shapes.table.lz"

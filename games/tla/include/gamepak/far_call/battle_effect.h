@@ -7,23 +7,23 @@
 
 #include "types.h"
 
-struct BattlePresentationWork;
+struct BattlePresentationState;
 /// Runs a battle effect from the second range of kinds: the casting impacts,
 /// the plain attacks' beams and their critical hits.
-void BattleEffect_RunByIdRangeFar(struct BattlePresentationWork *work);
+void BattleEffect_RunByIdRangeFar(struct BattlePresentationState *state);
 /// Runs an ordinary battle effect from gBattleEffect_Handlers, with the sprite
-/// sheet, work and canvas it lends.
-void BattleEffect_RunFromTableFar(struct BattlePresentationWork *work);
+/// sheet, state and canvas it lends.
+void BattleEffect_RunFromTableFar(struct BattlePresentationState *state);
 /// A pillar of light in an element's colours stands at a unit's feet while
 /// motes spiral up around it.
-void BattleEffect_RunElementPillarFar(struct BattlePresentationWork *work);
+void BattleEffect_RunElementPillarFar(struct BattlePresentationState *state);
 /// The Doom Dragon's change of form once a form is beaten; formation says which
 /// (FORMATION_DOOM_DRAGON_A to C).
-void BattleEffect_RunFormChangeFar(struct BattlePresentationWork *work,
+void BattleEffect_RunFormChangeFar(struct BattlePresentationState *state,
                                    s32 formation);
 /// Sparks in an element's colours flare at four corners around a unit and
 /// motes spiral in, then a burst of light plays over it.
-void BattleEffect_RunElementBurstFar(struct BattlePresentationWork *work);
+void BattleEffect_RunElementBurstFar(struct BattlePresentationState *state);
 /// Starts the element streaks, which then draw by themselves while the battle
 /// runs on.
 void BattleEffect_StartElementStreaksFar(s32 element);

@@ -123,10 +123,10 @@ enum FileAction {
 
 s32 FileList_SelectAction(void);
 
-/// The bytes of the menu work, heap block HEAP_SLOT_MENU: ShopWork's size, the
-/// largest of the screens' views of it. Each screen's run function takes the
-/// block as it opens and releases it as it closes.
-#define MENU_WORK_SIZE 3308
+/// The bytes of the menu state, heap block HEAP_SLOT_MENU: ShopState's size,
+/// the largest of the screens' views of it. Each screen's run function takes
+/// the block as it opens and releases it as it closes.
+#define MENU_STATE_SIZE 3308
 
 /// The OAM entry of a window sprite, as the Djinn preview places its stat
 /// arrows (DjinnMenu_DrawStatArrow): from the output's byte 16 on.

@@ -10,7 +10,7 @@
 // Flora's summon.
 
 /// Flora is twelve 32x32 sprites in 256 colours, three across and four down,
-/// the first sprites of the effect work; then come her thirty-two 16x16
+/// the first sprites of the effect state; then come her thirty-two 16x16
 /// petals, the first fifteen each holding one of the tumbling petal's pictures
 /// (PinkPetalsTiles).
 #define FLORA_FIGURE_PIECES 12
@@ -45,7 +45,7 @@
 /// Flora's petals in gEffectScratch: the tile number of each of the petal's
 /// pictures, each petal's phase, position and velocity, and the object
 /// palette as it fades.
-struct FloraWork {
+struct FloraState {
   u16 tiles[FLORA_PETAL_PICTURE_COUNT];
   u16 phase[FLORA_PETAL_COUNT];
   u16 padding;
@@ -56,9 +56,9 @@ struct FloraWork {
   u16 palette[FLORA_COLORS];
 };
 
-/// The petals' work, kept in the particles' memory.
-#define FLORA_WORK ((struct FloraWork *)petals)
-/// Petal i's phase, read at gFlora_PetalTiles, FloraWork's tile numbers from
+/// The petals' state, kept in the particles' memory.
+#define FLORA_STATE ((struct FloraState *)petals)
+/// Petal i's phase, read at gFlora_PetalTiles, FloraState's tile numbers from
 /// the second on.
 #define FLORA_PETAL_PHASE(i)                                                   \
   gFlora_PetalTiles[FLORA_PETAL_PICTURE_COUNT - 1 + (i)]
@@ -116,8 +116,8 @@ struct FloraWork {
 #define FLORA_WHEEL_FRAME 186
 #define FLORA_WHEEL_FRAMES 80
 
-/// The effect work's sprite sheet.
-static inline u8 *SheetOf(struct BattleEffectWork *owner) {
+/// The effect state's sprite sheet.
+static inline u8 *SheetOf(struct BattleEffectState *owner) {
   /* FAKEMATCH(wrapper): the sprite sheet's address through this inline. */
   return owner->sheet;
 }
@@ -132,11 +132,11 @@ static inline u8 *SheetOf(struct BattleEffectWork *owner) {
 /// Abilities: Flora.
 void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   u8 *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   DrawRectangle draw[2];
   s32 frame;
   s32 savedScroll;
-  struct BattleBackgroundWork *backdrop;
+  struct BattleBackgroundState *backdrop;
   u8 *motes;
   s32 bgX;
   FIXED posX;
@@ -145,7 +145,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   s32 spin;
   s32 spread;
   s32 twist;
-  s32 petals; // gEffectScratch, as FLORA_WORK reads it
+  s32 petals; // gEffectScratch, as FLORA_STATE reads it
   s32 i;
   s32 j;
   s32 order;
@@ -172,7 +172,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   struct ScreenPoint fadeRingPoint;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
   backdrop = Ram_HeapSlots->battleBackground;
   petals = (s32)gEffectScratch;
@@ -181,20 +181,20 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   RagingHeat_FillGradientCanvas();
-  work->transferMode = CANVAS_COPY;
+  state->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // The battle flashes away; then the sky, the petals and Flora load.
   bgX = -80;
   for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
     if (frame == SUMMON_OPENING_LOAD_FRAME) {
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-      BattleEffect_SelectLivingTargets(work->args);
+      BattleEffect_SelectLivingTargets(state->args);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                RESOURCE_VIOLET_SKY_BACKDROP, 0);
-      work->scrollTimer = 0;
-      work->scrollInterval = 1;
-      work->scrollStepX = -3;
-      work->scrollStepY = 0;
+      state->scrollTimer = 0;
+      state->scrollInterval = 1;
+      state->scrollStepX = -3;
+      state->scrollStepY = 0;
       Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
       backdrop->busy = 1;
       resource = Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
@@ -206,21 +206,21 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       for (i = 0; i != FLORA_PETAL_PICTURE_COUNT; i++) {
         struct Sprite *obj = EffectSprite_CreateWithTiles(
             16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(FLORA_PETAL_PALETTE));
-        work->sprites[FLORA_PETAL_SPRITES + i] = obj;
+        state->sprites[FLORA_PETAL_SPRITES + i] = obj;
         obj->image.priority = 2;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj),
                              cells + i * OBJ_16X16_4BPP_BYTES,
                              OBJ_16X16_4BPP_BYTES);
-        FLORA_WORK->tiles[i] =
-            ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])
+        FLORA_STATE->tiles[i] =
+            ((struct Sprite *)state->sprites[FLORA_PETAL_SPRITES + i])
                 ->image.tile;
       }
       for (i = 0; i != FLORA_PETAL_COUNT - FLORA_PETAL_PICTURE_COUNT; i++) {
         struct Sprite *obj = EffectSprite_Acquire(
             16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(FLORA_PETAL_PALETTE));
-        work->sprites[FLORA_PETAL_SPRITES + FLORA_PETAL_PICTURE_COUNT + i] =
+        state->sprites[FLORA_PETAL_SPRITES + FLORA_PETAL_PICTURE_COUNT + i] =
             obj;
-        Iwram_CopyWordsEntry(obj, work->sprites[FLORA_PETAL_SPRITES],
+        Iwram_CopyWordsEntry(obj, state->sprites[FLORA_PETAL_SPRITES],
                              offsetof(struct Sprite, lastNo));
       }
       // Each petal starts at a picture of its own.
@@ -228,8 +228,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       phase = &FLORA_PETAL_PHASE(0);
       for (; i != FLORA_PETAL_COUNT; i++, phase++) {
         *phase = (Random16() % FLORA_PETAL_PICTURE_COUNT) << 8;
-        ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])->image.tile =
-            FLORA_WORK->tiles[*phase / FLORA_PHASE_ONE];
+        ((struct Sprite *)state->sprites[FLORA_PETAL_SPRITES + i])->image.tile =
+            FLORA_STATE->tiles[*phase / FLORA_PHASE_ONE];
       }
       resource = Resource_GetTableEntry(RESOURCE_GREEN_HAIRED_MAIDEN_TILES);
       resource += FLORA_COLORS * 2;
@@ -239,16 +239,17 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         struct Sprite *obj = EffectSprite_CreateWithTiles(
             32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         obj->image.priority = 2;
-        work->sprites[i] = obj;
+        state->sprites[i] = obj;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj),
                              cells + i * OBJ_32X32_8BPP_BYTES,
                              OBJ_32X32_8BPP_BYTES);
       }
-      Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, work->sheet, 0, 0);
+      Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, state->sheet, 0,
+                                 0);
     }
     bgX += 4;
     REG_BG2X = bgX << 8;
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, source, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
@@ -291,10 +292,10 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
 
     columnX = (i - row * 8) << 5;
     rowY = row * 22;
-    FLORA_WORK->x[i] = columnX + leftX;
-    FLORA_WORK->y[i] = rowY + 128;
+    FLORA_STATE->x[i] = columnX + leftX;
+    FLORA_STATE->y[i] = rowY + 128;
   }
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = Ram_HeapSlots->ramCode;
   for (frame = 0; frame != FLORA_FRAMES &&
@@ -304,7 +305,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       Iwram_ClearWordsEntry(canvas, CANVAS_BYTES);
       for (i = 0; i != FLORA_COLORS; i++) {
-        FLORA_WORK->palette[i] = RGB_WHITE;
+        FLORA_STATE->palette[i] = RGB_WHITE;
       }
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, gFlora_SpritePalettes,
                            FLORA_COLORS * 2);
@@ -352,7 +353,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           Resource_GetTableEntry(RESOURCE_GREEN_HAIRED_MAIDEN_TILES);
 
       for (i = 0; i != FLORA_COLORS; i++, resource++) {
-        s32 c = FLORA_WORK->palette[i];
+        s32 c = FLORA_STATE->palette[i];
         s32 b = RGB_BLUE((u16)c);
         s32 g = RGB_GREEN((u16)c);
         s32 r = RGB_RED(c);
@@ -370,7 +371,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         if (r > tr) {
           r--;
         }
-        FLORA_WORK->palette[i] = RGB(r, g, b);
+        FLORA_STATE->palette[i] = RGB(r, g, b);
       }
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, gFlora_SpritePalettes,
                            FLORA_COLORS * 2);
@@ -447,7 +448,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       for (i = 0; i != FLORA_FIGURE_PIECES; i++) {
         place.x = posX + INTtoFIXED(i % FLORA_FIGURE_COLUMNS * 32 + dx);
         place.y = posY + INTtoFIXED(i / FLORA_FIGURE_COLUMNS * 32 + dy);
-        Render_ApplyProjectedPlacementFar(work->sprites[i],
+        Render_ApplyProjectedPlacementFar(state->sprites[i],
                                           SpritePlacement_Values(&place),
                                           (s32 *)&floraScale, 0);
       }
@@ -459,130 +460,131 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
 
       if (i == 0) {
         if (frame == 0) {
-          FLORA_WORK->x[i] = toFIXED(240);
-          FLORA_WORK->y[i] = toFIXED(48);
+          FLORA_STATE->x[i] = toFIXED(240);
+          FLORA_STATE->y[i] = toFIXED(48);
         } else if (frame <= 47) {
-          FLORA_WORK->x[i] += -toFIXED(3);
-          FLORA_WORK->y[i] += toFIXED(3) / 2;
+          FLORA_STATE->x[i] += -toFIXED(3);
+          FLORA_STATE->y[i] += toFIXED(3) / 2;
         } else if (frame <= 79) {
-          FLORA_WORK->x[i] += -toFIXED(1);
-          FLORA_WORK->y[i] += -toFIXED(1);
+          FLORA_STATE->x[i] += -toFIXED(1);
+          FLORA_STATE->y[i] += -toFIXED(1);
         } else if (frame < FLORA_APPEAR_FRAME) {
-          FLORA_WORK->x[i] += toFIXED(3);
+          FLORA_STATE->x[i] += toFIXED(3);
           // DEAD: y moves by 0; the ROM keeps its load and store.
-          FLORA_WORK->y[i] += 0;
+          FLORA_STATE->y[i] += 0;
         }
         if (frame == FLORA_APPEAR_FRAME) {
-          FLORA_WORK->x[i] = toFIXED(256);
+          FLORA_STATE->x[i] = toFIXED(256);
         }
       } else if (i == 1) {
         if (frame <= 27) {
-          FLORA_WORK->x[i] = toFIXED(256);
-          FLORA_WORK->y[i] = toFIXED(48);
+          FLORA_STATE->x[i] = toFIXED(256);
+          FLORA_STATE->y[i] = toFIXED(48);
         } else if (frame == 28) {
-          FLORA_WORK->x[i] = toFIXED(16);
-          FLORA_WORK->y[i] = toFIXED(32);
+          FLORA_STATE->x[i] = toFIXED(16);
+          FLORA_STATE->y[i] = toFIXED(32);
         } else if (frame <= 62) {
-          FLORA_WORK->x[i] += toFIXED(1.83924);
-          FLORA_WORK->y[i] += toFIXED(1.99183);
+          FLORA_STATE->x[i] += toFIXED(1.83924);
+          FLORA_STATE->y[i] += toFIXED(1.99183);
         } else if (frame <= 79) {
-          FLORA_WORK->x[i] += toFIXED(1.61036);
-          FLORA_WORK->y[i] += toFIXED(0.4026);
+          FLORA_STATE->x[i] += toFIXED(1.61036);
+          FLORA_STATE->y[i] += toFIXED(0.4026);
         } else if (frame <= 141) {
-          FLORA_WORK->x[i] += toFIXED(3);
+          FLORA_STATE->x[i] += toFIXED(3);
           // DEAD: y moves by 0; the ROM keeps its load and store.
-          FLORA_WORK->y[i] += 0;
+          FLORA_STATE->y[i] += 0;
         }
         if (frame == FLORA_APPEAR_FRAME) {
-          FLORA_WORK->x[i] = toFIXED(256);
+          FLORA_STATE->x[i] = toFIXED(256);
         }
       } else if (i == 2) {
         if (frame <= 49) {
-          FLORA_WORK->x[i] = toFIXED(256);
-          FLORA_WORK->y[i] = toFIXED(48);
+          FLORA_STATE->x[i] = toFIXED(256);
+          FLORA_STATE->y[i] = toFIXED(48);
         } else if (frame == 50) {
-          FLORA_WORK->x[i] = 0;
-          FLORA_WORK->y[i] = toFIXED(124);
+          FLORA_STATE->x[i] = 0;
+          FLORA_STATE->y[i] = toFIXED(124);
         } else if (frame <= 62) {
-          FLORA_WORK->x[i] += toFIXED(4);
-          FLORA_WORK->y[i] += -toFIXED(5) / 4;
+          FLORA_STATE->x[i] += toFIXED(4);
+          FLORA_STATE->y[i] += -toFIXED(5) / 4;
         } else if (frame <= 93) {
-          FLORA_WORK->x[i] += toFIXED(3);
-          FLORA_WORK->y[i] += toFIXED(3) / 4;
+          FLORA_STATE->x[i] += toFIXED(3);
+          FLORA_STATE->y[i] += toFIXED(3) / 4;
         } else if (frame <= 125) {
-          FLORA_WORK->x[i] += toFIXED(3);
-          FLORA_WORK->y[i] += -toFIXED(1);
+          FLORA_STATE->x[i] += toFIXED(3);
+          FLORA_STATE->y[i] += -toFIXED(1);
         }
         if (frame == FLORA_APPEAR_FRAME) {
-          FLORA_WORK->x[i] = toFIXED(256);
+          FLORA_STATE->x[i] = toFIXED(256);
         }
       } else if (i == 3) {
         if (frame <= 49) {
-          FLORA_WORK->x[i] = toFIXED(256);
-          FLORA_WORK->y[i] = toFIXED(48);
+          FLORA_STATE->x[i] = toFIXED(256);
+          FLORA_STATE->y[i] = toFIXED(48);
         } else if (frame == 50) {
-          FLORA_WORK->x[i] = 0;
-          FLORA_WORK->y[i] = toFIXED(108);
+          FLORA_STATE->x[i] = 0;
+          FLORA_STATE->y[i] = toFIXED(108);
         } else if (frame <= 103) {
-          FLORA_WORK->x[i] += toFIXED(3);
-          FLORA_WORK->y[i] += -toFIXED(5) / 4;
+          FLORA_STATE->x[i] += toFIXED(3);
+          FLORA_STATE->y[i] += -toFIXED(5) / 4;
         } else if (frame <= 135) {
-          FLORA_WORK->x[i] += toFIXED(1);
-          FLORA_WORK->y[i] += toFIXED(1);
+          FLORA_STATE->x[i] += toFIXED(1);
+          FLORA_STATE->y[i] += toFIXED(1);
         }
         if (frame == FLORA_APPEAR_FRAME) {
-          FLORA_WORK->x[i] = toFIXED(256);
+          FLORA_STATE->x[i] = toFIXED(256);
         }
       } else if (i == 4) {
         if (frame <= 59) {
-          FLORA_WORK->x[i] = toFIXED(256);
-          FLORA_WORK->y[i] = toFIXED(48);
+          FLORA_STATE->x[i] = toFIXED(256);
+          FLORA_STATE->y[i] = toFIXED(48);
         } else if (frame == 60) {
-          FLORA_WORK->x[i] = toFIXED(16);
-          FLORA_WORK->y[i] = toFIXED(32);
+          FLORA_STATE->x[i] = toFIXED(16);
+          FLORA_STATE->y[i] = toFIXED(32);
         } else if (frame <= 82) {
-          FLORA_WORK->x[i] += toFIXED(4);
-          FLORA_WORK->y[i] += toFIXED(3);
+          FLORA_STATE->x[i] += toFIXED(4);
+          FLORA_STATE->y[i] += toFIXED(3);
         } else if (frame <= 135) {
-          FLORA_WORK->x[i] += toFIXED(4);
+          FLORA_STATE->x[i] += toFIXED(4);
         }
         if (frame == FLORA_APPEAR_FRAME) {
-          FLORA_WORK->x[i] = toFIXED(256);
+          FLORA_STATE->x[i] = toFIXED(256);
         }
       } else if (i == 5) {
         if (frame <= 85) {
-          FLORA_WORK->x[i] = toFIXED(256);
-          FLORA_WORK->y[i] = toFIXED(48);
+          FLORA_STATE->x[i] = toFIXED(256);
+          FLORA_STATE->y[i] = toFIXED(48);
         } else if (frame == 86) {
-          FLORA_WORK->x[i] = toFIXED(144);
-          FLORA_WORK->y[i] = toFIXED(32);
+          FLORA_STATE->x[i] = toFIXED(144);
+          FLORA_STATE->y[i] = toFIXED(32);
         } else if (frame <= 135) {
-          FLORA_WORK->x[i] += toFIXED(1);
-          FLORA_WORK->y[i] += toFIXED(3);
+          FLORA_STATE->x[i] += toFIXED(1);
+          FLORA_STATE->y[i] += toFIXED(3);
         }
         if (frame == FLORA_APPEAR_FRAME) {
-          FLORA_WORK->x[i] = toFIXED(256);
+          FLORA_STATE->x[i] = toFIXED(256);
         }
       } else if (i < FLORA_BURST_PETAL) {
         // Petals 6 to 15 wait off the screen; then each streams down and to
         // the left from Flora's hand, and starts again from there each time
         // it leaves the screen, until she leaves.
         if (frame == 0) {
-          FLORA_WORK->x[i] = toFIXED(248);
-          FLORA_WORK->y[i] = frame;
+          FLORA_STATE->x[i] = toFIXED(248);
+          FLORA_STATE->y[i] = frame;
         } else if (frame == launchFrame) {
-          FLORA_WORK->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
-          FLORA_WORK->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
-          FLORA_WORK->vx[i] = (Random16() & TRIG_ANGLE_MASK) * 12 - toFIXED(12);
-          FLORA_WORK->vy[i] = toFIXED(4);
+          FLORA_STATE->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
+          FLORA_STATE->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
+          FLORA_STATE->vx[i] =
+              (Random16() & TRIG_ANGLE_MASK) * 12 - toFIXED(12);
+          FLORA_STATE->vy[i] = toFIXED(4);
         } else if (frame >= launchFrame) {
-          if (FLORA_WORK->x[i] >= -toFIXED(16) &&
-              FLORA_WORK->y[i] <= toFIXED(168)) {
-            FLORA_WORK->x[i] += FLORA_WORK->vx[i];
-            FLORA_WORK->y[i] += FLORA_WORK->vy[i];
+          if (FLORA_STATE->x[i] >= -toFIXED(16) &&
+              FLORA_STATE->y[i] <= toFIXED(168)) {
+            FLORA_STATE->x[i] += FLORA_STATE->vx[i];
+            FLORA_STATE->y[i] += FLORA_STATE->vy[i];
           } else if (frame < FLORA_LEAVE_FRAME) {
-            FLORA_WORK->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
-            FLORA_WORK->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
+            FLORA_STATE->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
+            FLORA_STATE->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
           }
         }
       } else if (i < FLORA_PETAL_COUNT) {
@@ -590,33 +592,35 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         // again from her hand as she leaves, at 1 to 3 pixels a frame (in 8.8),
         // slowing until they are put away off the screen.
         if (frame == 0) {
-          FLORA_WORK->x[i] = toFIXED(248);
-          FLORA_WORK->y[i] = frame;
+          FLORA_STATE->x[i] = toFIXED(248);
+          FLORA_STATE->y[i] = frame;
         } else if (frame == FLORA_APPEAR_FRAME) {
           u32 a = Random16() & TRIG_ANGLE_MASK;
           s32 speed = ((Random16() & 255) << 1) + Q_8_8(1);
 
-          FLORA_WORK->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(168);
-          FLORA_WORK->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
-          FLORA_WORK->vx[i] = Trig_Sin(a) * speed / Q_8_8(1);
-          FLORA_WORK->vy[i] = Trig_Cos(a) * speed / Q_8_8(1);
+          FLORA_STATE->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(168);
+          FLORA_STATE->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
+          FLORA_STATE->vx[i] = Trig_Sin(a) * speed / Q_8_8(1);
+          FLORA_STATE->vy[i] = Trig_Cos(a) * speed / Q_8_8(1);
         } else if (frame == FLORA_LEAVE_FRAME) {
           u32 a = Random16() & TRIG_ANGLE_MASK;
           s32 speed = ((Random16() & 255) << 1) + Q_8_8(1);
 
-          FLORA_WORK->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
-          FLORA_WORK->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
-          FLORA_WORK->vx[i] = Trig_Sin(a) * speed / Q_8_8(1);
-          FLORA_WORK->vy[i] = Trig_Cos(a) * speed / Q_8_8(1);
+          FLORA_STATE->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
+          FLORA_STATE->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
+          FLORA_STATE->vx[i] = Trig_Sin(a) * speed / Q_8_8(1);
+          FLORA_STATE->vy[i] = Trig_Cos(a) * speed / Q_8_8(1);
         } else if (frame >= FLORA_APPEAR_FRAME) {
-          FLORA_WORK->x[i] += FLORA_WORK->vx[i];
-          FLORA_WORK->y[i] += FLORA_WORK->vy[i];
-          FLORA_WORK->vx[i] = FLORA_WORK->vx[i] * 63 / DAMPING_SCALE;
-          FLORA_WORK->vy[i] = FLORA_WORK->vy[i] * 63 / DAMPING_SCALE;
-          if ((u32)(FLORA_WORK->vx[i] + FIXED_ONE - 1) <= 2 * (FIXED_ONE - 1) &&
-              (u32)(FLORA_WORK->vy[i] + FIXED_ONE - 1) <= 2 * (FIXED_ONE - 1)) {
-            FLORA_WORK->x[i] = toFIXED(256);
-            FLORA_WORK->y[i] = 0;
+          FLORA_STATE->x[i] += FLORA_STATE->vx[i];
+          FLORA_STATE->y[i] += FLORA_STATE->vy[i];
+          FLORA_STATE->vx[i] = FLORA_STATE->vx[i] * 63 / DAMPING_SCALE;
+          FLORA_STATE->vy[i] = FLORA_STATE->vy[i] * 63 / DAMPING_SCALE;
+          if ((u32)(FLORA_STATE->vx[i] + FIXED_ONE - 1) <=
+                  2 * (FIXED_ONE - 1) &&
+              (u32)(FLORA_STATE->vy[i] + FIXED_ONE - 1) <=
+                  2 * (FIXED_ONE - 1)) {
+            FLORA_STATE->x[i] = toFIXED(256);
+            FLORA_STATE->y[i] = 0;
           }
         }
       }
@@ -629,13 +633,13 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         FLORA_PETAL_PHASE(i) = (FLORA_PETAL_PHASE(i) + FLORA_PHASE_ONE / 2) %
                                (FLORA_PETAL_PICTURE_COUNT << 8);
       }
-      ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])->image.tile =
-          FLORA_WORK->tiles[FLORA_PETAL_PHASE(i) >> 8];
+      ((struct Sprite *)state->sprites[FLORA_PETAL_SPRITES + i])->image.tile =
+          FLORA_STATE->tiles[FLORA_PETAL_PHASE(i) >> 8];
     }
     for (i = 0; i != FLORA_PETAL_COUNT; i++) {
-      place.x = FLORA_WORK->x[i] - toFIXED(FLORA_PETAL_SIZE / 2);
-      place.y = FLORA_WORK->y[i] - toFIXED(FLORA_PETAL_SIZE / 2);
-      Render_ApplyProjectedPlacementFar(work->sprites[FLORA_PETAL_SPRITES + i],
+      place.x = FLORA_STATE->x[i] - toFIXED(FLORA_PETAL_SIZE / 2);
+      place.y = FLORA_STATE->y[i] - toFIXED(FLORA_PETAL_SIZE / 2);
+      Render_ApplyProjectedPlacementFar(state->sprites[FLORA_PETAL_SPRITES + i],
                                         SpritePlacement_Values(&place),
                                         (s32 *)&floraScale, 0);
     }
@@ -646,7 +650,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     model = Render_AllocateModelList(1);
     texture.logWidth = 7;
     texture.logHeight = 7;
-    texture.pixels = work->sheet;
+    texture.pixels = state->sheet;
     model->kind = MODEL_SHADED_ADDITIVE;
     model->texture = &texture;
     model->mesh = gBattleEffect_LargeSquareMesh;
@@ -842,7 +846,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   // The battle comes back for the storm.
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
@@ -850,7 +854,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   backdrop->busy = 0;
   BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != FLORA_PETAL_SPRITES + FLORA_PETAL_COUNT; i++) {
-    Sprite_DestroyFar(work->sprites[i]);
+    Sprite_DestroyFar(state->sprites[i]);
   }
   Palette_LoadBasicSpriteColors();
   Dma_Set((const void *)OBJ_PLTT,
@@ -858,8 +862,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   REG_BG2X = 0;
   REG_BLDCNT = 0;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -878,8 +882,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     resource = Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
     Iwram_CopyWordsEntry((void *)BG_PLTT, resource, PALETTE_BANK_BYTES);
     resource += PALETTE_BANK_BYTES;
-    Decompress_TaggedLz(resource, SheetOf(work));
-    sheet = work->sheet + FLORA_STORM_PICTURES;
+    Decompress_TaggedLz(resource, SheetOf(state));
+    sheet = state->sheet + FLORA_STORM_PICTURES;
     // Each 8x8 tile of the petal's pictures, two pixels a byte, is unpacked
     // to a byte a pixel at its place in its 16x16 picture.
     i = 0;
@@ -898,8 +902,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
             u8 *d = (u8 *)(offset + (s32)sheet);
 
             for (m = 0; m != 4; m++) {
-              hi = work->sheet[i] >> 4 & 0xf;
-              d[0] = work->sheet[i] & 0xf;
+              hi = state->sheet[i] >> 4 & 0xf;
+              d[0] = state->sheet[i] & 0xf;
               d[1] = hi;
               i++;
               d += 2;
@@ -920,7 +924,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         p->variant = Random16() & 31;
       }
       for (i = 0; i != args->targetCount; i++) {
-        work->particles[i].variant = (Random16() & 15) + 1;
+        state->particles[i].variant = (Random16() & 15) + 1;
       }
     }
     // Each petal tumbles a picture every four frames as it falls.
@@ -928,7 +932,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     for (i = 0; i != FLORA_STORM_DRAWN; i++, p++) {
       if (frame > i) {
         draw[0](canvas,
-                work->sheet + FLORA_STORM_PICTURES +
+                state->sheet + FLORA_STORM_PICTURES +
                     (p->variant / 4 % FLORA_PETAL_PICTURE_COUNT << 8),
                 FIXED_INTEGER_PART(p->x) - 4, FIXED_INTEGER_PART(p->y),
                 FLORA_PETAL_SIZE, FLORA_PETAL_SIZE);
@@ -942,11 +946,11 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 57) <= 50) {
       for (i = 0; i != args->targetCount; i++) {
-        struct Particle *s = &work->particles[i];
+        struct Particle *s = &state->particles[i];
 
         if (--s->variant == 0) {
           s->variant = FLORA_HIT_INTERVAL;
-          work->shakeFrames = 4;
+          state->shakeFrames = 4;
           Sound_PlayFar(SE_IMPACT);
           BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_NUDGE);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
@@ -955,7 +959,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(2, 2);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
@@ -1010,7 +1014,7 @@ UNUSED void BattleEffect_StartActorMotionOutward(s32 id) {
 ///
 /// Abilities: Sabre Dance.
 void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   struct ModelTexture texture;
   struct ScreenPoint target;
   struct Particle *blade;
@@ -1021,8 +1025,9 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
   s32 strikeFrame;
 
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress(RESOURCE_CROSSED_DAGGERS_SHEET, work->sheet, 1, 1);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  Resource_LoadAndDecompress(RESOURCE_CROSSED_DAGGERS_SHEET, state->sheet, 1,
+                             1);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   REG_BLDCNT = 0;
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
@@ -1039,7 +1044,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
       FIXED y;
       s32 zero;
 
-      for (i = 0, zero = 0, y = toFIXED(128), blade = work->particles;
+      for (i = 0, zero = 0, y = toFIXED(128), blade = state->particles;
            i != SABRE_DANCE_PARTICLES; i++, blade++) {
         SET_POSITION(blade, INTtoFIXED((Random16() & 63) + 32), y, Random16());
         blade->velocityX = zero;
@@ -1056,7 +1061,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
 
     for (i = 0, strikeFrame = 20; i != 8; i++, strikeFrame += 6) {
       if (frame == strikeFrame) {
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
         Sound_PlayFar(SE_IMPACT);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 6);
@@ -1065,7 +1070,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
       }
     }
     if (frame == SABRE_DANCE_LAST_HIT) {
-      work->shakeFrames = 4;
+      state->shakeFrames = 4;
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 10);
@@ -1079,11 +1084,11 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
     texture.logWidth = 5;
     texture.logHeight = 5;
     quad->texture = &texture;
-    texture.pixels = work->sheet;
+    texture.pixels = state->sheet;
     quad->kind = MODEL_SHADED;
     quad->mesh = gSabreDance_DaggerMesh;
     quad->vertices = vertices;
-    for (i = 0, blade = work->particles; i != SABRE_DANCE_BLADES;
+    for (i = 0, blade = state->particles; i != SABRE_DANCE_BLADES;
          i++, blade++) {
       // The fall: from 48 pixels above the canvas, fanned out by angle and
       // closing on the middle.
@@ -1119,7 +1124,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
     gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
@@ -1160,7 +1165,7 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
 ///
 /// Abilities: Backstab.
 void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *canvas;
   struct ScreenPoint caster;
   struct ScreenPoint target;
@@ -1170,24 +1175,24 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct MotionObject *targetObject;
   struct MotionObject *casterObject;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   struct Particle *particle;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress(RESOURCE_PINK_STAR_SHEET, work->sheet + STAR_CELS,
+  Resource_LoadAndDecompress(RESOURCE_PINK_STAR_SHEET, state->sheet + STAR_CELS,
                              1, 0);
-  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   targetObject = BattleObject_GetFar(args->targets[0])->object;
   casterObject = BattleObject_GetFar(args->user)->object;
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   battle->keepObjectPriorities = 1;
 
   for (frame = 0; frame != BACKSTAB_FRAMES; frame++) {
@@ -1200,7 +1205,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
         s32 angle;
         s32 speed;
 
-        particle = &work->particles[i];
+        particle = &state->particles[i];
         particle->variant = 0;
         particle->x = INTtoFIXED(caster.x / 2);
         particle->y = INTtoFIXED(caster.y - 8);
@@ -1218,10 +1223,11 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
     if (frame >= 0) {
       struct Particle *puff;
 
-      for (i = 0, puff = work->particles; i != SMOKE_DRAWN; i++, puff++) {
+      for (i = 0, puff = state->particles; i != SMOKE_DRAWN; i++, puff++) {
         if (frame >= i / 8 && puff->variant < SMOKE_PUFF_FRAMES) {
           draw[0](canvas,
-                  work->sheet + (puff->variant / 4) * PICTURE_BYTES(SMOKE_PUFF),
+                  state->sheet +
+                      (puff->variant / 4) * PICTURE_BYTES(SMOKE_PUFF),
                   FIXED_INTEGER_PART(puff->x) - 12,
                   FIXED_INTEGER_PART(puff->y) - 24, SMOKE_PUFF_WIDTH,
                   SMOKE_PUFF_HEIGHT);
@@ -1252,7 +1258,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
       targetObject->x = targetObject->x * 80 / 100;
       casterObject->angle = targetObject->angle;
       EffectPosition_ProjectScaledBattler(args->targets[0], &target);
-      for (i = 0, particle = &work->particles[SMOKE_COUNT]; i != STAR_COUNT;
+      for (i = 0, particle = &state->particles[SMOKE_COUNT]; i != STAR_COUNT;
            i++, particle++) {
         s32 angle;
         s32 speed;
@@ -1265,7 +1271,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
         particle->velocityX = (Trig_Sin(angle) * speed) >> 7;
         particle->velocityY = (Trig_Cos(angle) * speed) >> 5;
       }
-      work->shakeFrames = 4;
+      state->shakeFrames = 4;
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
@@ -1277,11 +1283,11 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
     if (frame >= BACKSTAB_STRIKE_FRAME && frame < BACKSTAB_STRIKE_FRAME + 24) {
       struct Particle *star;
 
-      for (i = 0, star = &work->particles[SMOKE_COUNT]; i != STAR_COUNT;
+      for (i = 0, star = &state->particles[SMOKE_COUNT]; i != STAR_COUNT;
            i++, star++) {
         if (star->variant >= 0) {
           draw[0](canvas,
-                  work->sheet + STAR_CELS + (((frame + i) / 4) % 6) * 256,
+                  state->sheet + STAR_CELS + (((frame + i) / 4) % 6) * 256,
                   FIXED_INTEGER_PART(star->x) - 8,
                   FIXED_INTEGER_PART(star->y) - 8, 16, 16);
           Particle_AdvanceWithGravity2D(star, 56, 0);
@@ -1291,7 +1297,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
     }
 
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   battle->keepObjectPriorities = 0;
@@ -1299,7 +1305,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
-#undef FLORA_WORK
+#undef FLORA_STATE
 #undef FLORA_FIGURE_PIECES
 #undef FLORA_FIGURE_COLUMNS
 #undef FLORA_PETAL_SPRITES

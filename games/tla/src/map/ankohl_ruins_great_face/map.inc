@@ -4,15 +4,15 @@ Field_AnkohlRuinsGreatFace:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_AnkohlRuinsGreatFace, .LField_AnkohlRuinsGreatFace_CELL_PICTURES
+	map_block Field_AnkohlRuinsGreatFace, .LField_AnkohlRuinsGreatFace_CELL_TILES
 	map_block Field_AnkohlRuinsGreatFace, .LField_AnkohlRuinsGreatFace_SHAPES
 	map_block Field_AnkohlRuinsGreatFace, .LField_AnkohlRuinsGreatFace_GRID
 	map_block Field_AnkohlRuinsGreatFace, .LField_AnkohlRuinsGreatFace_SHAPE_GRID
 	map_block Field_AnkohlRuinsGreatFace, .LField_AnkohlRuinsGreatFace_ANIMATION
 	map_block Field_AnkohlRuinsGreatFace, .LField_AnkohlRuinsGreatFace_BLEND
 	map_block Field_AnkohlRuinsGreatFace, .LField_AnkohlRuinsGreatFace_SCENE
-.LField_AnkohlRuinsGreatFace_CELL_PICTURES:
-	.incbin "games/tla/src/map/ankohl_ruins_great_face/cell_pictures.delta1.lz"
+.LField_AnkohlRuinsGreatFace_CELL_TILES:
+	.incbin "games/tla/src/map/ankohl_ruins_great_face/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_AnkohlRuinsGreatFace_SHAPES:
 	.incbin "games/tla/src/map/ankohl_ruins_great_face/shapes.table.lz"

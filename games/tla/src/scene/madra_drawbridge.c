@@ -18,7 +18,7 @@
 #include "types.h"
 #include "field/scene_tables.h"
 #include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/event_inline.h"
 #include "field/actor.h"
 #include "field/field_sequence_event.h"
@@ -66,13 +66,13 @@ void MadraDrawbridge_AskGoingToOsenia(void) {
   // "You goin' to Osenia?" Yes: "You'll have to head back to town and get..."
   // No: "Then get lost, pal. These parts can be dangerous..."
   Event_OpenMessage(ACTOR_EAST_GUARD, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0) ==
       0) {
     Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
     // "You'll have to head back to town and get a permit! Just go to the..."
     Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 2);
   } else {
-    (gFieldWork->message)++;
+    (gFieldState->message)++;
     // "Then get lost, pal. These parts can be dangerous..."
     Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 2);
   }
@@ -90,7 +90,7 @@ void MadraDrawbridge_BlockBridge(void) {
     if (Event_GetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION) == 0) {
       FieldCamera_SetSpeed(1.5);
       FieldCamera_MoveTo(164, CAMERA_KEEP, 260, 1);
-      Actor_WalkTo(gMainRoutineWork.leaderActorId, 158, 316);
+      Actor_WalkTo(gMainRoutineState.leaderActorId, 158, 316);
     }
     Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -101,8 +101,8 @@ void MadraDrawbridge_BlockBridge(void) {
     Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
-    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+    Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
+    Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
     Event_SetFlag(FLAG_GUARDS_BLOCKED_BRIDGE);
     FieldCamera_WaitForArrival();
     // The guards now stand across the bridge: no one walks past them.
@@ -140,7 +140,7 @@ void MadraDrawbridge_LetPermittedPartyThrough(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   return 0;
 }
 

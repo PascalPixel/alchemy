@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-/// BattleWork.firstStrike: who strikes first as a battle opens.
+/// BattleState.firstStrike: who strikes first as a battle opens.
 enum BattleFirstStrike {
   FIRST_STRIKE_NONE = 0,
   /// No enemy acts in the first turn, and running away cannot fail.

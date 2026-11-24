@@ -51,7 +51,7 @@
 ///
 /// Abilities: Legend.
 void BattleEffect_RunLegend(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   DrawRectangle draw[2];
@@ -64,7 +64,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   s32 j;
   u8 *cells = Ram_MapCellBuffer;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
@@ -82,14 +82,14 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
                         BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_CORNER_RUNE_A_SHEET, cells, 1, 1);
-  Picture_MirrorIntoQuadrants(cells, work->sheet, 64, 64);
+  Picture_MirrorIntoQuadrants(cells, state->sheet, 64, 64);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BLADE_SHEET,
-                             work->sheet + LEGEND_BLADE_PICTURES, 1, 1);
+                             state->sheet + LEGEND_BLADE_PICTURES, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLAME_GRADIENT_TEXTURE,
-                             work->sheet + LEGEND_FLAME_GRADIENT, 0, 0);
+                             state->sheet + LEGEND_FLAME_GRADIENT, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cells, 0, 0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0;
        frame != args->variant * LEGEND_SWORD_INTERVAL + LEGEND_FRAMES;
@@ -104,7 +104,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         start.x = target.x - LEGEND_SWORD_START_DISTANCE;
       start.y = target.y - LEGEND_SWORD_START_DISTANCE;
       for (i = 0; i != 3; i++) {
-        step = &work->particles[i];
+        step = &state->particles[i];
         step->x = start.x * (toFIXED(1) / 2);
         step->y = INTtoFIXED(start.y);
         step->velocityX = (target.x - start.x) * (toFIXED(1) / 32);
@@ -116,7 +116,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
 
     // The swords, one each LEGEND_SWORD_INTERVAL frames.
     for (i = 0; i != args->variant + 1; i++) {
-      step = &work->particles[i];
+      step = &state->particles[i];
       if (frame == i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_SOUND_FRAME)
         Sound_PlayFar(SE_POWER_UP);
 
@@ -130,7 +130,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, 0, 100);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
         for (j = 0; j != LEGEND_SWORD_SPARKS; j++) {
           struct Particle *spark =
               &EXTRA_PARTICLES[i * LEGEND_SWORD_SPARKS + j];
@@ -155,7 +155,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
 
         if (y > SPARK_GROUND_Y - LEGEND_SWORD_HEIGHT)
           height = SPARK_GROUND_Y - y;
-        draw[0](canvas, work->sheet + LEGEND_BLADE_PICTURES, x, y,
+        draw[0](canvas, state->sheet + LEGEND_BLADE_PICTURES, x, y,
                 LEGEND_SWORD_WIDTH, height);
         if (step->variant <= LEGEND_SWORD_FALL_FRAMES) {
           step->x += step->velocityX;
@@ -194,7 +194,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = work->sheet;
+      texture.pixels = state->sheet;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &texture;
@@ -263,7 +263,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
       if (frame < LEGEND_SWORD_FALL_FRAME) {
         texture.logWidth = 5;
         texture.logHeight = 6;
-        texture.pixels = work->sheet + LEGEND_FLAME_GRADIENT;
+        texture.pixels = state->sheet + LEGEND_FLAME_GRADIENT;
         model->mesh = gBattleEffect_TallMesh;
         for (i = 0; i != LEGEND_FAN_FLAMES; i++) {
           model->shade = 0;
@@ -287,7 +287,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
       Heap_Release(vertices);
     }
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
@@ -322,7 +322,7 @@ void BattleEffect_RunThunderCard(struct BattleEffectParams *args) {
 /// after the card: CrystalSheet, FlashBurstSheet, SmokeSheet or
 /// JaggedStreakSheet.
 #define ELEMENT_CARDS_PICTURES PICTURE_BYTES(CARD)
-/// The work's particles: the shards, smoke or pictures the card throws, then
+/// The state's particles: the shards, smoke or pictures the card throws, then
 /// one strike countdown for each target. Each target has its own run of the
 /// sparks, and a strike throws up the next free 16 of them. The sparks are
 /// Legend's, LEGEND_SPARK_COUNT of EXTRA_PARTICLES.
@@ -365,7 +365,7 @@ void BattleEffect_RunThunderCard(struct BattleEffectParams *args) {
 /// a while, reeling, flashing and throwing up sparks, before the card shrinks
 /// away.
 void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   DrawRectangle draw[2];
@@ -381,7 +381,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   s32 firstHit;
   s32 lastHit;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
@@ -394,41 +394,41 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   scale = 0;
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   if (mode == CARD_BRAMBLE) {
-    Resource_LoadAndDecompress(RESOURCE_VINE_CARD_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_VINE_CARD_SHEET, state->sheet, 1, 1);
   } else if (mode == CARD_FROST) {
-    Resource_LoadAndDecompress(RESOURCE_DRAGON_CARD_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_DRAGON_CARD_SHEET, state->sheet, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET,
-                               work->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
+                               state->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
   } else if (mode == CARD_FLAME) {
-    Resource_LoadAndDecompress(RESOURCE_SUN_CARD_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_SUN_CARD_SHEET, state->sheet, 1, 1);
     // DEAD: SmokeSheet is decoded over FlashBurstSheet straight after; the ROM
     // keeps both loads.
     Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                               work->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
+                               state->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
-                               work->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
+                               state->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
   } else {
-    Resource_LoadAndDecompress(RESOURCE_BOLT_CARD_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_BOLT_CARD_SHEET, state->sheet, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_JAGGED_STREAK_SHEET,
-                               work->sheet + ELEMENT_CARDS_PICTURES, 0, 0);
+                               state->sheet + ELEMENT_CARDS_PICTURES, 0, 0);
   }
   REG_BLDCNT = 0;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 
   for (frame = 0; frame != gElementCards_Frames[mode]; frame++) {
     // Frame 0: clear the particles, give each member a strike countdown, and
     // find the user and every target.
     if (frame == 0) {
       Sound_PlayFar(SE_WARP);
-      EFFECT_FREE_PARTICLES(i, work->particles, CARD_PIECES);
+      EFFECT_FREE_PARTICLES(i, state->particles, CARD_PIECES);
       for (i = 0; i != args->targetCount; i++)
-        work->particles[CARD_STRIKE_TIMERS + i].variant = (Random16() & 3) + 2;
+        state->particles[CARD_STRIKE_TIMERS + i].variant = (Random16() & 3) + 2;
       EFFECT_FREE_PARTICLES(i, EXTRA_PARTICLES, LEGEND_SPARK_COUNT);
       EffectPosition_ProjectSprite(args->user, &card);
       for (i = 0; i != args->targetCount; i++)
         EffectPosition_ProjectScaledBattler(args->targets[i], &targets[i]);
       REG_BLDCNT = 0;
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
       scale = FIXED_ONE / 4;
     }
 
@@ -455,7 +455,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       if (mode == CARD_THUNDER)
         Sound_PlayFar(SE_RISE_WITH_SPARKS);
       if (mode != CARD_BRAMBLE) {
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       }
     }
@@ -482,7 +482,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         else if (mode == CARD_FLAME)
           aim.y = targets[member].y + (Random16() & 63) + 32;
         if (frame < CARD_SHRINK_FRAME) {
-          struct Particle *step = &work->particles[frame % CARD_PIECES];
+          struct Particle *step = &state->particles[frame % CARD_PIECES];
 
           step->x = card.x * (toFIXED(1) / 2);
           step->y = INTtoFIXED(card.y);
@@ -496,7 +496,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       if (mode == CARD_FROST) {
         // The shards tumble through their three cells, bounce and slow.
         for (i = 0; i != CARD_PIECES; i++) {
-          struct Particle *step = &work->particles[i];
+          struct Particle *step = &state->particles[i];
 
           if (step->variant >= 0 && step->variant < CARD_SHARD_TUMBLE_END) {
             s32 cell = i % 5 * 3 + step->variant / SHARD_TURN % 3;
@@ -509,7 +509,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
 #endif
               draw[0](
                   canvas,
-                  work->sheet + gPrism_ShardPictures[cell] +
+                  state->sheet + gPrism_ShardPictures[cell] +
                       ELEMENT_CARDS_PICTURES + CRYSTAL_SHARD_PICTURES,
                   FIXED_INTEGER_PART(step->x) - gPrism_ShardWidths[cell] / 2,
                   FIXED_INTEGER_PART(step->y) - gPrism_ShardHeights[cell] / 2,
@@ -525,12 +525,12 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       } else if (mode == CARD_FLAME) {
         // The smoke flies to the ground and plays its six cells.
         for (i = 0; i != CARD_PIECES; i++) {
-          struct Particle *step = &work->particles[i];
+          struct Particle *step = &state->particles[i];
 
           if (step->variant >= 0) {
             if (step->variant > 1)
               draw[0](canvas,
-                      work->sheet + ELEMENT_CARDS_PICTURES +
+                      state->sheet + ELEMENT_CARDS_PICTURES +
                           step->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
                       FIXED_INTEGER_PART(step->x) - 12,
                       FIXED_INTEGER_PART(step->y) - 24, SMOKE_PUFF_WIDTH,
@@ -565,14 +565,14 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       s32 speed = (frame - CARD_STRIKES_FROM) * 3;
 
       for (i = 0; i != args->targetCount; i++) {
-        struct Particle *step = &work->particles[CARD_STRIKE_TIMERS + i];
+        struct Particle *step = &state->particles[CARD_STRIKE_TIMERS + i];
 
         if (--step->variant == 0) {
           s32 burst;
           s32 j;
 
           step->variant = 5;
-          work->shakeFrames = 4;
+          state->shakeFrames = 4;
           if (mode == CARD_FROST)
             Sound_PlayFar(SE_HEAVY_IMPACT);
           else if (mode == CARD_THUNDER)
@@ -619,7 +619,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
     model = Render_AllocateModelList(1);
     texture.logWidth = 5;
     texture.logHeight = 6;
-    texture.pixels = work->sheet;
+    texture.pixels = state->sheet;
     model->kind = MODEL_TEXTURED;
     model->texture = &texture;
     model->mesh = gBattleEffect_TallMesh;
@@ -671,7 +671,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           s32 first = Random16();
 
           for (i = 0; i != 4; i++) {
-            struct Particle *step = &work->particles[i];
+            struct Particle *step = &state->particles[i];
 
             step->velocityY = i * (TRIG_TURN / 8);
             step->z = (first + i) % 3 * PICTURE_BYTES(CARD_STREAK) +
@@ -679,7 +679,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           }
         }
         for (i = 0; i != 4; i++) {
-          struct Particle *step = &work->particles[i];
+          struct Particle *step = &state->particles[i];
 
           step->velocityZ =
               Trig_Sin(step->velocityY + frame * (TRIG_TURN / 64)) /
@@ -693,7 +693,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           s32 first = Random16();
 
           for (i = 0; i != 4; i++) {
-            struct Particle *step = &work->particles[i];
+            struct Particle *step = &state->particles[i];
 
             step->velocityZ = (Random16() & 8191) + 8096;
             step->z = (first + i) % 3 * PICTURE_BYTES(CARD_STREAK) +
@@ -702,13 +702,13 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         }
       }
       for (i = 0; i != 4; i++) {
-        work->particles[i].x = ((s16 *)vertices)[(i & 3) * 4];
-        work->particles[i].y = ((s16 *)vertices)[(i & 3) * 4 + 1];
+        state->particles[i].x = ((s16 *)vertices)[(i & 3) * 4];
+        state->particles[i].y = ((s16 *)vertices)[(i & 3) * 4 + 1];
       }
       for (i = 0; i != 4; i++) {
-        struct Particle *step = &work->particles[i];
+        struct Particle *step = &state->particles[i];
 
-        texture.pixels = work->sheet + step->z;
+        texture.pixels = state->sheet + step->z;
         Matrix_Initialize();
         // Each vine or bolt stands 4 pixels across from its corner.
         Matrix_Translate(INTtoFIXED(step->x + 4 - CANVAS_SIZE / 2),
@@ -763,7 +763,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       }
     }
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

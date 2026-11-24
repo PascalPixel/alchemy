@@ -12,14 +12,14 @@
 /// A consumed item leaves the bag and Hermes' Water leaves its Empty Bottle;
 /// returns -1 when it did nothing, keeping the item.
 s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   s32 useResult;
   s32 itemId;
   struct Unit *unit;
   struct ItemDefinition *item;
 
   unit = Unit_Get(memberId);
-  menu = Ram_HeapSlots->menuWork;
+  menu = Ram_HeapSlots->menuState;
   itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
   item = Item_GetDirectFar(itemId);
   useResult = Ability_ApplyToTargets(PSYNERGY_ABILITY_MASK & item->abilityId,
@@ -46,12 +46,12 @@ s32 Battle_CalculateRecoveryFar(s32 value, s32 selector, s32 multiplier);
 /// abilityId, used by party member userId, to targetId, or to the whole party
 /// when its range is ABILITY_RANGE_ALL. HP healing is scaled by the user's
 /// power in the ability's element unless plainPower is set, as it is for an
-/// item. Leaves the result's message in the menu's work; returns 0, or -1 when
+/// item. Leaves the result's message in the menu's state; returns 0, or -1 when
 /// nothing changed.
 s32 Ability_ApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
                            s32 plainPower) {
   struct AbilityDefinition *ability;
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   struct Unit *target;
   struct Unit *caster;
   s32 partyMessageChosen;
@@ -63,14 +63,14 @@ s32 Ability_ApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
   s32 amount;
   s32 result;
 
-  menu = Ram_HeapSlots->menuWork;
+  menu = Ram_HeapSlots->menuState;
   ability = Ability_Get(abilityId);
   changed = 0;
   result = 0;
   partyMessageChosen = 0;
 
   if (targetId == MENU_TARGET_WHOLE_PARTY)
-    target = Unit_Get(gMainRoutineWork.leaderActorId);
+    target = Unit_Get(gMainRoutineState.leaderActorId);
   else
     target = Unit_Get(targetId);
 

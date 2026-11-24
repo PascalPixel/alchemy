@@ -10,7 +10,7 @@
 #include "flags.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/actor.h"
 #include "field/flag_call.h"
 #include "field/event_inline.h"
@@ -35,10 +35,10 @@ static inline void Map_CopyCellAttributeRect_(s32 srcX, s32 srcY, s32 width,
   Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
 }
 
-static inline void MapGrid_CopyCellPictureCellsRect_(s32 srcX, s32 srcY,
-                                                     s32 width, s32 height,
-                                                     s32 dstX, s32 dstY) {
-  MapGrid_CopyCellPictureCellsRect(srcX, srcY, width, height, dstX, dstY);
+static inline void MapGrid_CopyCellTilesCellsRect_(s32 srcX, s32 srcY,
+                                                   s32 width, s32 height,
+                                                   s32 dstX, s32 dstY) {
+  MapGrid_CopyCellTilesCellsRect(srcX, srcY, width, height, dstX, dstY);
 }
 
 static inline void Actor_SetHorizontalPositionWithTerrain_(s32 id, FIXED x,

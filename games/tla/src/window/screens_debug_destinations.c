@@ -47,8 +47,8 @@ s16 DebugSceneSelect_Run(void) {
 
   window = 0;
   field = 0;
-  scene = gMainRoutineWork.returnScene;
-  entrance = gMainRoutineWork.returnEntrance;
+  scene = gMainRoutineState.returnScene;
+  entrance = gMainRoutineState.returnEntrance;
   window = Window_Create(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
   DebugSceneSelect_DrawRow(window, scene, &entrance);
   MenuArrow_Create(&arrow, &arrowSlot);

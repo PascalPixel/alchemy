@@ -20,7 +20,7 @@ void Leader_SlideOnIce(void) {
   FIXED dx;
   FIXED dz;
 
-  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  actor = Actor_Lookup(gMainRoutineState.leaderActorId);
 
 top:
   Leader_StopIfPending();

@@ -36,7 +36,7 @@
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
 #include "field/event_inline.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/actor.h"
 #include "version.h"
 #include "field/call.h"
@@ -174,7 +174,7 @@ enum { NARIBWE_INN = 5 };
 /// across the mat, he can buy; from elsewhere the merchant advises taking a
 /// weapon to the fortune-teller.
 void NaribweRooms_TalkToWeaponMerchant(s32 speaker) {
-  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_Get(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_NARIBWE_WEAPONS, speaker);
@@ -192,7 +192,7 @@ void NaribweRooms_TalkToWeaponMerchant(s32 speaker) {
 /// Gabomba's message: across the mat, he can buy; from elsewhere the merchant
 /// sends out-of-town customers to the fortune-teller.
 void NaribweRooms_TalkToWeaponMerchantOnReturn(s32 speaker) {
-  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_Get(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_NARIBWE_WEAPONS, speaker);
@@ -210,7 +210,7 @@ void NaribweRooms_TalkToWeaponMerchantOnReturn(s32 speaker) {
 /// shop: across the mat, he can buy; from elsewhere the merchant advises
 /// visiting the fortune-teller while in the village.
 void NaribweRooms_TalkToArmorMerchant(s32 speaker) {
-  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_Get(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_NARIBWE_ARMOR, speaker);
@@ -229,7 +229,7 @@ void NaribweRooms_TalkToArmorMerchant(s32 speaker) {
 /// Gabomba's message: across the mat, he can buy; from elsewhere the merchant
 /// sends the party to the fortune-teller for anything it wishes to know.
 void NaribweRooms_TalkToArmorMerchantOnReturn(s32 speaker) {
-  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_Get(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_NARIBWE_ARMOR, speaker);
@@ -246,7 +246,7 @@ void NaribweRooms_TalkToArmorMerchantOnReturn(s32 speaker) {
 /// Felix talks to the woman behind the counter of Naribwe's inn: across it, he
 /// can stay the night; from elsewhere she talks of the village's cooking.
 void NaribweRooms_TalkToInnkeeper(s32 speaker) {
-  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_Get(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(NARIBWE_INN, speaker);
@@ -264,7 +264,7 @@ void NaribweRooms_TalkToInnkeeper(s32 speaker) {
 /// across the counter, he can stay the night; from elsewhere she sees too many
 /// travelers to remember Piers.
 void NaribweRooms_TalkToInnkeeperOnReturn(s32 speaker) {
-  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_Get(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(NARIBWE_INN, speaker);
@@ -297,7 +297,7 @@ void NaribweRooms_TalkToFortuneTeller(void) {
     Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
-      if ((u32)gMainRoutineWork.coins > FORTUNE_PRICE - 1) {
+      if ((u32)gMainRoutineState.coins > FORTUNE_PRICE - 1) {
         NaribweRooms_ReadFortune();
         Event_End();
       } else {
@@ -348,12 +348,12 @@ void NaribweRooms_ReadFortune(void) {
   FieldEvent_Wait(30);
   for (;;) {
 #if !TLA_PATCH_1
-    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+    Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
     // Before patch 1 the item variable first holds the choice's result.
     item = ItemPicker_RunToShow(&unit, &slot);
     if (item == -1) {
 #else
-    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+    Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
     if (ItemPicker_RunToShow(&unit, &slot) == -1) {
 #endif
       refuse = MsgNaribweInteriorsShallIGiveYouAnother;
@@ -438,7 +438,7 @@ void NaribweRooms_ReadFortune(void) {
   FieldEvent_Wait(15);
   Actor_SetPosition(ACTOR_RISING_SMOKE, 0, 0);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(gMainRoutineWork.leaderActorId, EMOTE_IN_FRONT | EMOTE_WINCE,
+  Actor_ShowEmote(gMainRoutineState.leaderActorId, EMOTE_IN_FRONT | EMOTE_WINCE,
                   0);
   FieldEvent_Wait(60);
   Event_PlaySound(MUS_KIBOMBO);
@@ -1001,9 +1001,9 @@ void Actor_DisableById(s32 id);
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   Actor_DisableById(ACTOR_FORTUNE_TABLE);
   Actor_DisableById(ACTOR_PLACED_ITEM);

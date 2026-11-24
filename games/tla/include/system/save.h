@@ -2,7 +2,7 @@
 #define ALCHEMY_SAVE_H
 
 /// @file
-/// The save in flash: its sectors, parts and summaries, and the save work.
+/// The save in flash: its sectors, parts and summaries, and the save's state.
 
 #include "types.h"
 #include "static_assert.h"
@@ -17,7 +17,8 @@ enum {
   SAVE_SECTOR_SIZE = 4096,
   SAVE_PART_NONE = 16, ///< the part id of a free or invalidated sector
   SAVE_FILE_COUNT = 3, ///< the save files, parts 0 to 2
-  /// The part after the files, whose summary is the save work's extra one.
+  /// The part after the files, whose summary is the extra one in the save's
+  /// state.
   SAVE_PART_EXTRA = 3,
   /// The highest counter a write keeps; a copy written past it is
   /// rewritten as 1.
@@ -39,11 +40,11 @@ struct SaveSummary {
   u32 coins;
   u8 djinn[4];         ///< the party's Djinn of each element
   s8 party[5];         ///< up to four party members, ended by -1
-  s8 sendFlag;         ///< gMainRoutineWork.sendFlag: the file is cleared
+  s8 sendFlag;         ///< gMainRoutineState.sendFlag: the file is cleared
   s8 flagCount;        ///< the Djinn found: their flags from FLAG_DJINN_FIRST
   s8 reunited;         ///< FLAG_REUNION is set
-  u8 windowHue;        ///< gMainRoutineWork.windowHue
-  u8 windowBrightness; ///< gMainRoutineWork.windowBrightness
+  u8 windowHue;        ///< gMainRoutineState.windowHue
+  u8 windowBrightness; ///< gMainRoutineState.windowBrightness
   u16 frames;          ///< low half of the build stamp saved with the game
   /// The play time saved at the start of the file's next sector (offset 0x10,
   /// or 0x110 for the extra summary), filled on reading; a file whose
@@ -52,7 +53,7 @@ struct SaveSummary {
   u32 checksum; ///< the sum of the 968 words from gGameFlagBytes
 };
 
-/// The save work: which of the SAVE_SECTOR_COUNT flash sectors hold a part,
+/// The save's state: which of the SAVE_SECTOR_COUNT flash sectors hold a part,
 /// their part ids and counters, one part's three sectors and the summaries.
 struct SaveWorkspace {
   u8 occupied[SAVE_SECTOR_COUNT]; ///< 1 for a sector holding the current copy
@@ -83,15 +84,15 @@ struct SaveSectorHeader {
 };
 
 /// Where a save image, EWRAM from gSaveBuffer as a part holds it, keeps the
-/// game flags, gMainRoutineWork and gCharacterUnits. The Clear Data and the
+/// game flags, gMainRoutineState and gCharacterUnits. The Clear Data and the
 /// data transferred from The Broken Seal come in this layout.
 #define SAVE_IMAGE_GAME_FLAGS 64
-#define SAVE_IMAGE_MAIN_ROUTINE_WORK 576
+#define SAVE_IMAGE_MAIN_ROUTINE_STATE 576
 #define SAVE_IMAGE_UNITS 1312
 /// Where The Broken Seal's save image keeps its units (gCharacterUnits), 32
 /// bytes before this game's SAVE_IMAGE_UNITS: the Clear scene copies an image
-/// it receives by link from the main routine work on that much further on, its
-/// units landing on this game's.
+/// it receives by link from the main routine's state on that much further on,
+/// its units landing on this game's.
 #define BROKEN_SEAL_SAVE_IMAGE_UNITS 1280
 
 STATIC_ASSERT(sizeof(struct SaveSummary) == 64);

@@ -39,7 +39,7 @@
 #include "menu/menu.h"
 #include "scene/scene.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/math_table.h"
 #include "system/ram_buffer.h"
 #include "system/system.h"
@@ -269,7 +269,7 @@ void ShamanVillageCave_FreezePuddle(void) {
 /// steps west, jumps, backs away and winces, cornered.
 void ShamanVillageCave_EddyFlees(void) {
   struct Actor *actor = Actor_GetById(ACTOR_EDDY);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 leaderX = FIELD_TILE(leader->x.fixed);
   s32 leaderZ = FIELD_TILE(leader->z.fixed);
   s32 eddyX = FIELD_TILE(actor->x.fixed);
@@ -596,10 +596,10 @@ void ShamanVillageCave_LoseToGladiators(void) {
     Message_CloseFinishedWindows();
     // Yes: "I knew it!"
     FieldEvent_ShowMessageThenWait(ACTOR_AZART, 0, 5);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Message_CloseFinishedWindows();
-    gFieldWork->message++;
+    gFieldState->message++;
     // No: "It takes a lot to reach the finals at Colosso... A lot more..."
     FieldEvent_ShowMessageThenWait(ACTOR_AZART, 0, 5);
   }
@@ -615,13 +615,13 @@ void ShamanVillageCave_LoseToGladiators(void) {
   FieldEvent_Wait(100);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 1);
   FieldEvent_Wait(20);
-  Event_SetDestination((s16)gMainRoutineWork.restartScene,
-                       (s16)gMainRoutineWork.restartEntrance);
+  Event_SetDestination((s16)gMainRoutineState.restartScene,
+                       (s16)gMainRoutineState.restartEntrance);
 #if TLA_PATCH_1
-  WorldMap_SetReturnLeavingScene(gMainRoutineWork.next,
-                                 gMainRoutineWork.entrance);
+  WorldMap_SetReturnLeavingScene(gMainRoutineState.next,
+                                 gMainRoutineState.entrance);
 #endif
-  gFieldWork->transition = 0;
+  gFieldState->transition = 0;
 }
 
 /// Back in the cave after winning the rematch, the gladiators marvel: "These
@@ -670,9 +670,9 @@ void ShamanVillageCave_BeatGladiators(void) {
     Actor_ShowEmote(ACTOR_SATRAGE, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     // No: "Don't be that way! We've learned our lesson! Forgive us!"
     Event_OpenMessage(ACTOR_AZART, 0);
-    gFieldWork->message--;
+    gFieldState->message--;
   }
-  gFieldWork->message++;
+  gFieldState->message++;
   // Yes: "You're not such a bad kid after all!"
   FieldEvent_ShowMessageThenWait(ACTOR_AZART, 0, 5);
   Actor_SetAnimation(ACTOR_AZART, ANIM_STAND);
@@ -752,7 +752,7 @@ void ShamanVillageCave_BeatGladiators(void) {
 /// ledge at cell (33, 18), leads back to the back room's east end. Everyone on
 /// stage stops as he goes.
 void ShamanVillageCave_EnterPassage(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor;
   u32 id;
 
@@ -763,12 +763,12 @@ void ShamanVillageCave_EnterPassage(void) {
     if (actor)
       actor->motionFlags = 0;
   }
-  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
+  Actor_Get(gMainRoutineState.leaderActorId)->motionFlags = 0;
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_CenterAndWalk(gMainRoutineState.leaderActorId, 2, -8);
   FieldEvent_Wait(5);
   Event_PlaySound(SE_MAP_EXIT);
-  FieldEvent_SetExitRequest(work->stepTrigger);
+  FieldEvent_SetExitRequest(state->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -780,7 +780,7 @@ void ShamanVillageCave_EnterPassage(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_FIRST_WEEDS_SCATTERED))
     Actor_SetPosition(ACTOR_FIRST_WEEDS, 0, 0);
@@ -816,15 +816,15 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_AZART), SPRITE_COLOR_NORMAL);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_NAVAMPA), SPRITE_COLOR_RBG);
   if ((!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-       (gMainRoutineWork.entrance == ENTRANCE_AFTER_BEATING_GLADIATORS ||
-        gMainRoutineWork.entrance == ENTRANCE_AFTER_LOSING_TO_GLADIATORS)) ||
+       (gMainRoutineState.entrance == ENTRANCE_AFTER_BEATING_GLADIATORS ||
+        gMainRoutineState.entrance == ENTRANCE_AFTER_LOSING_TO_GLADIATORS)) ||
       Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_LOST_TO_GLADIATORS)) {
     ShamanVillageCave_PlaceGladiators();
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-        gMainRoutineWork.entrance == ENTRANCE_AFTER_BEATING_GLADIATORS) {
+        gMainRoutineState.entrance == ENTRANCE_AFTER_BEATING_GLADIATORS) {
       ShamanVillageCave_BeatGladiators();
     } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-               gMainRoutineWork.entrance ==
+               gMainRoutineState.entrance ==
                    ENTRANCE_AFTER_LOSING_TO_GLADIATORS) {
       Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_LOST_TO_GLADIATORS);
       ShamanVillageCave_LoseToGladiators();

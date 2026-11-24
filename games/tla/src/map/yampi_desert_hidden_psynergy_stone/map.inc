@@ -4,15 +4,15 @@ Field_YampiDesertHiddenPsynergyStone:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 2, 2, 0xf, 0xf
-	map_block Field_YampiDesertHiddenPsynergyStone, .LField_YampiDesertHiddenPsynergyStone_CELL_PICTURES
+	map_block Field_YampiDesertHiddenPsynergyStone, .LField_YampiDesertHiddenPsynergyStone_CELL_TILES
 	map_block Field_YampiDesertHiddenPsynergyStone, .LField_YampiDesertHiddenPsynergyStone_SHAPES
 	map_block Field_YampiDesertHiddenPsynergyStone, .LField_YampiDesertHiddenPsynergyStone_GRID
 	map_block Field_YampiDesertHiddenPsynergyStone, .LField_YampiDesertHiddenPsynergyStone_SHAPE_GRID
 	map_block Field_YampiDesertHiddenPsynergyStone, .LField_YampiDesertHiddenPsynergyStone_ANIMATION
 	map_block Field_YampiDesertHiddenPsynergyStone, .LField_YampiDesertHiddenPsynergyStone_BLEND
 	map_block Field_YampiDesertHiddenPsynergyStone, .LField_YampiDesertHiddenPsynergyStone_SCENE
-.LField_YampiDesertHiddenPsynergyStone_CELL_PICTURES:
-	.incbin "games/tla/src/map/yampi_desert_hidden_psynergy_stone/cell_pictures.delta2.lz"
+.LField_YampiDesertHiddenPsynergyStone_CELL_TILES:
+	.incbin "games/tla/src/map/yampi_desert_hidden_psynergy_stone/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_YampiDesertHiddenPsynergyStone_SHAPES:
 	.incbin "games/tla/src/map/gondowan_cliffs_hideout/shapes.table.lz"

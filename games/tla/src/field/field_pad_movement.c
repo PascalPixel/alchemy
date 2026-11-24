@@ -39,12 +39,12 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
   struct PlayerSprite *playerSprite;
   struct Actor *ripple;
   struct PlayerSprite *rippleSprite;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   movementAnimation = ANIM_WALK;
   collision = 0;
   count = 0;
-  if (gInput.held & gMainRoutineWork.dashKeys) {
+  if (gInput.held & gMainRoutineState.dashKeys) {
     actor->speedLimit = WORLD_MAP_RUN_SPEED;
     actor->acceleration = WORLD_MAP_RUN_ACCELERATION;
     movementAnimation = ANIM_LEADER_RUN;
@@ -106,12 +106,12 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
   }
 
 update_object:
-  work = Ram_HeapSlots->fieldWork;
-  if (work != NULL) {
+  state = Ram_HeapSlots->fieldState;
+  if (state != NULL) {
     if ((collision & PLAYER_STEP_BLOCKED) != 0)
-      work->blockedSteps++;
+      state->blockedSteps++;
     else
-      work->blockedSteps = 0;
+      state->blockedSteps = 0;
   }
   if (collision != 0)
     Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
@@ -189,8 +189,8 @@ update_object:
     }
   }
   Field_CheckConfiguredKeys();
-  if (gInput.pressed & gMainRoutineWork.aKeys)
-    gFieldWork->raisedTrigger = WORLD_MAP_RAISED_BOARD_SHIP;
+  if (gInput.pressed & gMainRoutineState.aKeys)
+    gFieldState->raisedTrigger = WORLD_MAP_RAISED_BOARD_SHIP;
   actor->scriptCursor++;
   return 1;
 }
@@ -209,8 +209,8 @@ s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
 #define SHIP_TURN_STEP (TRIG_TURN / 64)
 
 /// SC_SAIL (LEADER_MOVEMENT_SHIP_ON_MAP): the ship moved by the direction pad
-/// on a field map, as the party's actor (gMainRoutineWork.ownerOverride), as at
-/// Lemuria's entrance; A leaves the ship.
+/// on a field map, as the party's actor (gMainRoutineState.ownerOverride), as
+/// at Lemuria's entrance; A leaves the ship.
 s32 Actor_SailOnMap(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
 
@@ -228,7 +228,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   s32 onPlatform;
   s32 difference;
   struct Actor *other;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   collision = 0;
   pushed = 0;
@@ -436,21 +436,21 @@ push_objects:
   }
 
 counted:
-  work = Ram_HeapSlots->fieldWork;
-  if (work != NULL) {
+  state = Ram_HeapSlots->fieldState;
+  if (state != NULL) {
     if (collision & PLAYER_STEP_BLOCKED)
-      work->blockedSteps++;
+      state->blockedSteps++;
     else
-      work->blockedSteps = 0;
-    work->heldKeys = gInput.held;
+      state->blockedSteps = 0;
+    state->heldKeys = gInput.held;
   }
   if (pushed != 0 || collision != 0)
     Actor_SelectAnimation(actor, ANIM_STAND);
   else
     Actor_SelectAnimation(actor, ANIM_WALK);
 
-  if (gInput.pressed & gMainRoutineWork.aKeys) {
-    gFieldWork->raisedTrigger = WORLD_MAP_RAISED_LEAVE_SHIP;
+  if (gInput.pressed & gMainRoutineState.aKeys) {
+    gFieldState->raisedTrigger = WORLD_MAP_RAISED_LEAVE_SHIP;
     collision |= PLAYER_STEP_STOPPED;
   }
 
@@ -498,9 +498,9 @@ counted:
 }
 
 /// SC_WORLD_SAIL (LEADER_MOVEMENT_SHIP): the ship sailing the world map. It
-/// keeps the kind of water under the ship in FieldWork.terrainKind, sails at a
+/// keeps the kind of water under the ship in FieldState.terrainKind, sails at a
 /// run and turns a little at a time, leaving ripples; A goes ashore, and a dash
-/// key takes off once the ship has its wings (FieldWork.hoverReady).
+/// key takes off once the ship has its wings (FieldState.hoverReady).
 s32 Actor_SailOnWorldMap(struct Actor *actor) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -518,27 +518,27 @@ s32 Actor_SailOnWorldMap(struct Actor *actor) {
   s32 yawStep;
   struct Actor *ripple;
   struct PlayerSprite *rippleSprite;
-  struct FieldWork *work;
-  struct FieldWork *worldWork;
+  struct FieldState *state;
+  struct FieldState *worldState;
   u32 kind;
 
   count = 0;
   terrain = WorldMap_GetCollision((struct WorldPosition *)&actor->x.fixed);
-  worldWork = Ram_HeapSlots->fieldWork;
-  // FieldWork.terrainKind, which WorldMap_IsFlyable reads: 0 over the sea but
+  worldState = Ram_HeapSlots->fieldState;
+  // FieldState.terrainKind, which WorldMap_IsFlyable reads: 0 over the sea but
   // its last kind, 1 over walkable ground up to shallow water, 2 over the sea's
   // last kind, 3 over the rest of the walkable ground.
   if (terrain >= WORLD_MAP_COLLISION_SEA_FIRST &&
       terrain < WORLD_MAP_COLLISION_SEA_LAST)
-    worldWork->terrainKind = 0;
+    worldState->terrainKind = 0;
   if (terrain >= WORLD_MAP_COLLISION_WALKABLE_FIRST &&
       terrain <= WORLD_MAP_COLLISION_SHALLOW_WATER)
-    worldWork->terrainKind = 1;
+    worldState->terrainKind = 1;
   if (terrain == WORLD_MAP_COLLISION_SEA_LAST)
-    worldWork->terrainKind = 2;
+    worldState->terrainKind = 2;
   if (terrain >= WORLD_MAP_COLLISION_DEFAULT &&
       terrain <= WORLD_MAP_COLLISION_WALKABLE_LAST)
-    worldWork->terrainKind = 3;
+    worldState->terrainKind = 3;
 
   collision = 0;
   actor->speedLimit = toFIXED(5) / 4;
@@ -621,28 +621,29 @@ s32 Actor_SailOnWorldMap(struct Actor *actor) {
   }
 
 update_object:
-  work = Ram_HeapSlots->fieldWork;
-  if (work != NULL) {
+  state = Ram_HeapSlots->fieldState;
+  if (state != NULL) {
     if ((collision & PLAYER_STEP_BLOCKED) != 0)
-      work->blockedSteps++;
+      state->blockedSteps++;
     else
-      work->blockedSteps = 0;
-    work->heldKeys = gInput.held;
+      state->blockedSteps = 0;
+    state->heldKeys = gInput.held;
   }
   if (collision != 0)
     Actor_SelectAnimation(actor, ANIM_STAND);
   else
     Actor_SelectAnimation(actor, ANIM_WALK);
 
-  if (gInput.pressed & gMainRoutineWork.aKeys) {
-    gFieldWork->raisedTrigger = WORLD_MAP_RAISED_LEAVE_SHIP;
+  if (gInput.pressed & gMainRoutineState.aKeys) {
+    gFieldState->raisedTrigger = WORLD_MAP_RAISED_LEAVE_SHIP;
     collision |= PLAYER_STEP_STOPPED;
   }
-  if (gInput.pressed & gMainRoutineWork.dashKeys) {
-    struct FieldWork *keyWork = Ram_HeapSlots->fieldWork;
-    if (keyWork->hoverReady != 0) {
+  if (gInput.pressed & gMainRoutineState.dashKeys) {
+    struct FieldState *fieldState = Ram_HeapSlots->fieldState;
+    if (fieldState->hoverReady != 0) {
       GameFlag_Clear(FLAG_SHIP_HOVERING);
-      ((struct FieldWork *)keyWork)->raisedTrigger = WORLD_MAP_RAISED_TAKE_OFF;
+      ((struct FieldState *)fieldState)->raisedTrigger =
+          WORLD_MAP_RAISED_TAKE_OFF;
     }
   }
 
@@ -742,26 +743,26 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
   s32 yawStep;
   struct Actor *ripple;
   struct PlayerSprite *rippleSprite;
-  struct FieldWork *work;
-  struct FieldWork *worldWork;
+  struct FieldState *state;
+  struct FieldState *worldState;
   struct Actor *other;
   u32 kind;
-  struct FieldWork *flightWork;
+  struct FieldState *flightState;
 
   count = 0;
   terrain = WorldMap_GetCollision((struct WorldPosition *)&actor->x.fixed);
-  worldWork = Ram_HeapSlots->fieldWork;
+  worldState = Ram_HeapSlots->fieldState;
   if (terrain >= WORLD_MAP_COLLISION_SEA_FIRST &&
       terrain < WORLD_MAP_COLLISION_SEA_LAST)
-    worldWork->terrainKind = 0;
+    worldState->terrainKind = 0;
   if (terrain >= WORLD_MAP_COLLISION_WALKABLE_FIRST &&
       terrain <= WORLD_MAP_COLLISION_SHALLOW_WATER)
-    worldWork->terrainKind = 1;
+    worldState->terrainKind = 1;
   if (terrain == WORLD_MAP_COLLISION_SEA_LAST)
-    worldWork->terrainKind = 2;
+    worldState->terrainKind = 2;
   if (terrain >= WORLD_MAP_COLLISION_DEFAULT &&
       terrain <= WORLD_MAP_COLLISION_WALKABLE_LAST)
-    worldWork->terrainKind = 3;
+    worldState->terrainKind = 3;
 
   actor->motionFlags = 0;
   collision = 0;
@@ -853,13 +854,13 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
       }
     }
   }
-  work = Ram_HeapSlots->fieldWork;
-  if (work != NULL) {
+  state = Ram_HeapSlots->fieldState;
+  if (state != NULL) {
     if ((collision & PLAYER_STEP_BLOCKED) != 0)
-      work->blockedSteps++;
+      state->blockedSteps++;
     else
-      work->blockedSteps = 0;
-    work->heldKeys = gInput.held;
+      state->blockedSteps = 0;
+    state->heldKeys = gInput.held;
   }
   if (actor->y.fixed >= toFIXED(4))
     Actor_SelectAnimation(actor, 6);
@@ -942,17 +943,17 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
     }
   }
 
-  flightWork = Ram_HeapSlots->fieldWork;
-  if (gInput.held & (gMainRoutineWork.aKeys | gMainRoutineWork.bKeys)) {
-    flightWork->climbing = 1;
+  flightState = Ram_HeapSlots->fieldState;
+  if (gInput.held & (gMainRoutineState.aKeys | gMainRoutineState.bKeys)) {
+    flightState->climbing = 1;
     actor->y.fixed += toFIXED(1) / 8;
   } else {
     actor->y.fixed -= toFIXED(1) / 4;
   }
   if (Party_GetPpRatioFar() == 0)
     actor->y.fixed -= toFIXED(1) / 4;
-  if (actor->y.fixed <= 0 && flightWork->climbing != 0)
-    ((struct FieldWork *)flightWork)->raisedTrigger = WORLD_MAP_RAISED_LAND;
+  if (actor->y.fixed <= 0 && flightState->climbing != 0)
+    ((struct FieldState *)flightState)->raisedTrigger = WORLD_MAP_RAISED_LAND;
   if (actor->y.fixed >= toFIXED(12))
     actor->y.fixed = toFIXED(12);
   if (actor->y.fixed <= 0)

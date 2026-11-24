@@ -28,7 +28,7 @@ enum DrainMotesMode {
 ///
 /// Abilities: Break.
 void BattleEffect_RunBreak(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle draw;
   s32 member;
@@ -39,10 +39,10 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -92,7 +92,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
     }
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0;
        frame != args->targetCount * DRAIN_TARGET_FRAMES + BREAK_FALL_FRAMES;
@@ -130,7 +130,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
@@ -178,7 +178,7 @@ void BattleEffect_RunTrueCollide(struct BattleEffectParams *args) {
 /// Motes burst out of each target in turn and are pulled into the centre of
 /// the user's body, which glows white as they arrive (enum DrainMotesMode).
 void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   DrawRectangle draw;
@@ -189,10 +189,10 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   s32 palette;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (mode == DRAIN_MOTES_TRUE_COLLIDE)
     BattleEffect_DrawShadedCirclesMirrored(sheet, 10, FIXED_ONE);
@@ -247,10 +247,10 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
       *color++ = RGB(red, 0, TRUE_COLLIDE_VIOLET - i / 3);
     }
     REG_BLDALPHA = BLEND_ALPHA(16, 6);
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     // Each transfer lowers every level by 4, leaving a trail.
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_SWIRL);
@@ -318,7 +318,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
         }
       }
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

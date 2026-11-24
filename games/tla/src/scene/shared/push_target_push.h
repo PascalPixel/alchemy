@@ -1,8 +1,8 @@
 /// The leader pushes the object to its resting place: the cells it leaves are
 /// floor again and the cells it comes to are walls.
 void PushTarget_Push(struct PushTarget target) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   struct Actor *actor = Actor_Get(target.id);
   s32 cell[3];
   FIXED from[3];
@@ -39,17 +39,17 @@ void PushTarget_Push(struct PushTarget target) {
            4;
   PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_GROUND, cell[0], cell[2],
                                          width, height, CELL_BEHAVIOR_NORMAL);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_PUSH);
+  Actor_SetSpeedAndAcceleration(gMainRoutineState.leaderActorId, 0.5, 0.1);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_PUSH);
   System_Wait(15);
   // The leader follows the object half its way.
   {
     s32 deltaX = FIXEDtoINT(target.x - from[0]) >> 1;
     s32 deltaZ = FIXEDtoINT(target.z - from[2]) >> 1;
 
-    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, deltaX, deltaZ);
+    Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, deltaX, deltaZ);
   }
-  Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
+  Actor_Get(gMainRoutineState.leaderActorId)->update = Actor_StopAtPushTarget;
   System_Wait(4);
   if (direction >= FACING_INDEX(FACING_SOUTHWEST) &&
       direction <= FACING_INDEX(FACING_NORTH_NORTHEAST))
@@ -59,9 +59,9 @@ void PushTarget_Push(struct PushTarget target) {
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
   FieldActor_SetMoveTargetFX(actor, target.x, target.y, target.z);
-  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
+  FieldActor_WaitForMoveById(gMainRoutineState.leaderActorId);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_SetSpeedAndAcceleration(gMainRoutineState.leaderActorId, 0.3, 0.1);
   // BUG: the leader's step after the push reads both halves from the step's
   // z: x is its sign and z its half (half of PUSH_STEP_X and PUSH_STEP_Z was
   // meant). With direction 0 both are 0.
@@ -69,18 +69,18 @@ void PushTarget_Push(struct PushTarget target) {
     s32 step = gPushLeaderSteps[direction];
 
 #ifdef BUGFIX
-    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+    Actor_SetDestinationOffset(gMainRoutineState.leaderActorId,
                                PUSH_STEP_X(step) / 2, PUSH_STEP_Z(step) / 2);
 #else
-    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+    Actor_SetDestinationOffset(gMainRoutineState.leaderActorId,
                                toFIXED(step) >> 31,
                                FIXEDtoINT(toFIXED(step)) >> 1);
 #endif
   }
   if (target.callback != 0)
     ((void (*)(void))target.callback)();
-  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
+  FieldActor_WaitForMoveById(gMainRoutineState.leaderActorId);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
   leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;

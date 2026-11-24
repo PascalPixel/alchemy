@@ -174,7 +174,7 @@ void Actor_WatchActor(struct Actor *actor, struct Actor *target) {
 /// Gives an actor the leader's sprite priority, so it is drawn in front of
 /// and behind what he is, and keeps it there.
 s32 Actor_TakeLeaderLayer(struct Actor *actor) {
-  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gMainRoutineState.leaderActorId);
   s32 layer = ((struct PlacedSprite *)leader->sprite)->priority;
 
   if ((actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
@@ -219,7 +219,7 @@ void Actor_SetMovementType(struct Actor *actor, s32 kind) {
     kind = (s32)gMovementType_FollowWatchedScript;
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
-    actor->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
+    actor->watchedActor = Actor_GetById(gMainRoutineState.leaderActorId);
     kind = (s32)gMovementType_FaceLeaderScript;
     break;
   case MOVEMENT_TYPE_CLEAR_COLLISION:
@@ -307,8 +307,8 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
 /// Whether the ground at position stops a jump: terrain kind above 2 on a
 /// layered map; never on the world map or with no map.
 s32 MapGrid_BlocksJump(struct Actor *actor, s32 *position) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
 
   if (map == 0 || event->mode == ACTOR_SYSTEM_WORLD_MAP ||
       MapGrid_GetTerrainKindFar(actor->layer, position[0], position[2]) <= 2)
@@ -331,12 +331,12 @@ extern struct MapCell gMapGridCellBuffer[];
 /// leader keeps jumping while it lands on CELL_BEHAVIOR_JUMP_FORWARD. Returns
 /// 0 after a jump, -1 when the leader cannot jump.
 s32 Field_TryJumpForward(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 result = -1;
   s32 angle = leader->facing;
   u8 *flags = &leader->motionFlags;
   u8 saved = *flags;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s16 spriteFlags = SPRITE_FLAG_SHADOW;
   FIXED position[3];
   s32 *positionWords;
@@ -345,9 +345,9 @@ s32 Field_TryJumpForward(void) {
   s32 canJump;
   s32 i;
 
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS)
+  if (gMainRoutineState.movementMode == LEADER_MOVEMENT_KEYS)
     return result;
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_ROPE)
+  if (gMainRoutineState.movementMode == LEADER_MOVEMENT_ROPE)
     return result;
   if ((angle + FACING_STEP) & DEGtoANG(45)) // not facing a quarter turn
     return result;
@@ -427,7 +427,7 @@ again:
   }
 
   if (canJump) {
-    struct MapWork *map;
+    struct MapState *map;
     u8 attr;
 
     // Crouch, then jump there.
@@ -443,7 +443,7 @@ again:
     leader->velocityY = toFIXED(4);
     *flags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & (u8)~SPRITE_FLAG_SHADOW);
-    Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId,
+    Actor_MoveToAndWaitById(gMainRoutineState.leaderActorId,
                             ((s16 *)positionWords)[1],
                             ((s16 *)positionWords)[5]);
     Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
@@ -488,9 +488,9 @@ again:
     }
     *flags = saved;
     Event_End();
-    if (work != NULL)
-      work->walkingDistance +=
-          Iwram_MulFX(work->walkingDistanceScale, toFIXED(32));
+    if (state != NULL)
+      state->walkingDistance +=
+          Iwram_MulFX(state->walkingDistanceScale, toFIXED(32));
     if (MapGrid_GetCellBehaviorAtFar(leader->layer, position[0], position[2]) ==
         CELL_BEHAVIOR_JUMP_FORWARD) {
       Actor_SelectAnimationFar(leader, ANIM_STAND);
@@ -509,8 +509,8 @@ void Actor_WaitForMoveById(s32 id);
 /// Climbs down onto the wall below the leader, as The Broken Seal's
 /// Field_ClimbDown does, or lets go and falls when it cannot.
 s32 Field_ClimbDown(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 gridX;
   s16 spriteFlags;
   struct MapCell *ground;
@@ -525,7 +525,7 @@ s32 Field_ClimbDown(void) {
   Event_Start();
   if (leader->spriteStorageKind == ACTOR_SPRITE_ONE)
     spriteFlags = ((struct Sprite *)leader->sprite)->flags;
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
+  if (gMainRoutineState.movementMode == LEADER_MOVEMENT_WALK) {
     struct Actor *entry;
     struct MapCell *cell;
     struct MapCell *south;
@@ -570,10 +570,10 @@ s32 Field_ClimbDown(void) {
     }
 
     // Step to the middle of the tile, face north and climb down a tile.
-    Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, gridX, gridZ);
+    Actor_MoveToAndWaitById(gMainRoutineState.leaderActorId, gridX, gridZ);
     leader->speedLimit = toFIXED(1);
-    Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
-    Actor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
+    Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
+    Actor_WaitForScriptEndById(gMainRoutineState.leaderActorId);
     leader->steeringFlags = ACTOR_FACES_MOTION;
     leader->motionFlags = 0;
     spriteFlags &= (u8)~SPRITE_FLAG_SHADOW;
@@ -582,8 +582,8 @@ s32 Field_ClimbDown(void) {
     Actor_SetMoveTargetFar(leader, INTtoFIXED(gridX),
                            leader->y.fixed - toFIXED(16),
                            INTtoFIXED(gridZ) + toFIXED(16));
-    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-    gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
+    Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
+    gMainRoutineState.movementMode = LEADER_MOVEMENT_KEYS;
     leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   } else {
     // Let go of the wall and fall.
@@ -594,7 +594,7 @@ s32 Field_ClimbDown(void) {
     spriteFlags |= SPRITE_FLAG_SHADOW;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Event_Wait(6);
-    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+    gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
     leader->steeringFlags = ACTOR_FACES_MOTION;
     leader->facing = TRIG_TURN * 3 / 4;
     leader->timer = 0;
@@ -611,8 +611,8 @@ failure:
 /// Climbs up the wall in front of the leader, as The Broken Seal's
 /// Field_ClimbUp does.
 s32 Field_ClimbUp(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s16 spriteFlags = SPRITE_FLAG_SHADOW;
   struct MapCell *ground;
   s32 gridX = CELL_MIDDLE(FIXEDtoINT(leader->x.fixed));
@@ -625,7 +625,7 @@ s32 Field_ClimbUp(void) {
   Event_Start();
   if (leader->spriteStorageKind == ACTOR_SPRITE_ONE)
     spriteFlags = ((struct Sprite *)leader->sprite)->flags;
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
+  if (gMainRoutineState.movementMode == LEADER_MOVEMENT_WALK) {
     struct MapCell *cell;
     struct MapCell *north;
     s32 cellX = gridX >> 4;
@@ -657,7 +657,7 @@ s32 Field_ClimbUp(void) {
 
     // Step to the middle of the tile, crouch, jump and grab the wall.
     leader->steeringFlags = result;
-    Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, gridX, gridZ);
+    Actor_MoveToAndWaitById(gMainRoutineState.leaderActorId, gridX, gridZ);
     Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
     wait(4);
     Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAP);
@@ -670,7 +670,7 @@ s32 Field_ClimbUp(void) {
     leader->velocityY = result;
     Actor_SelectAnimationFar(leader, ANIM_LEADER_CLING);
     wait(4);
-    gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
+    gMainRoutineState.movementMode = LEADER_MOVEMENT_KEYS;
     leader->steeringFlags = ACTOR_FACES_MOTION;
     wait(8);
     leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
@@ -698,13 +698,13 @@ s32 Field_ClimbUp(void) {
     Actor_SetMoveTargetFar(leader, INTtoFIXED(gridX),
                            leader->y.fixed + toFIXED(8),
                            INTtoFIXED(gridZ) - toFIXED(16));
-    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+    Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
     leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     leader->groundHeight = leader->y.fixed;
     spriteFlags |= SPRITE_FLAG_SHADOW;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Event_Wait(4);
-    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+    gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
     leader->steeringFlags = ACTOR_FACES_MOTION;
     leader->timer = 0;
     leader->userValue = 0;
@@ -725,17 +725,17 @@ failure:
 struct RopeNode *Rope_FindNodeNear(s32 *position) {
   struct RopeNode *found;
   struct RopeNode *result;
-  struct RopeWork *work;
+  struct RopeState *state;
   struct RopeNode *node;
   s32 best;
   s32 i;
 
   found = NULL;
-  work = ROPE_WORK;
-  if (work == NULL) {
+  state = ROPE_STATE;
+  if (state == NULL) {
     result = NULL;
   } else {
-    node = work->nodes;
+    node = state->nodes;
     best = ROPE_NODE_DISTANCE_NONE;
     for (i = 0; i < ROPE_NODE_COUNT; i++, node++) {
       if (node->kind == 1) {
@@ -760,12 +760,12 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
 /// Hops the leader onto the nearest crossable rope node, to cross the rope
 /// (LEADER_MOVEMENT_ROPE); returns 0 when none is in reach.
 s32 Leader_StepOntoRope(void) {
-  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gMainRoutineState.leaderActorId);
   struct Sprite *sprite = leader->sprite;
   struct RopeNode *node = Rope_FindNodeNear(&leader->x.fixed);
   u8 *flags;
 
-  gFieldWork->blockedSteps = 0;
+  gFieldState->blockedSteps = 0;
   if (node == NULL)
     return 0;
   Sound_PlayFar(SE_JUMP);
@@ -783,19 +783,19 @@ s32 Leader_StepOntoRope(void) {
   leader->priorityFlags = *flags & ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->flags = 0;
   sprite->image.priority = 1;
-  gMainRoutineWork.movementMode = LEADER_MOVEMENT_ROPE;
+  gMainRoutineState.movementMode = LEADER_MOVEMENT_ROPE;
   return 1;
 }
 
 /// Hops the leader off a tied rope a cell in the direction the pad holds,
 /// when that cell is open; returns 0 otherwise.
 s32 Leader_StepOffRope(void) {
-  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gMainRoutineState.leaderActorId);
   struct Sprite *sprite = leader->sprite;
   FIXED position[3];
   u32 angle;
 
-  gFieldWork->blockedSteps = 0;
+  gFieldState->blockedSteps = 0;
   angle = gRope_KeyHeadings[DPAD_INDEX(gInput.held)];
   if (angle == DPAD_ANGLE_NONE)
     return 0;
@@ -824,7 +824,7 @@ s32 Leader_StepOffRope(void) {
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
   sprite->image.priority = leader->savedSpritePriority;
-  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+  gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
   return 1;
 }
 
@@ -833,17 +833,17 @@ s32 Leader_StepOffRope(void) {
 struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
   struct TightropeNode *found;
   struct TightropeNode *result;
-  struct TightropeWork *work;
+  struct TightropeState *state;
   struct TightropeNode *node;
   s32 best;
   s32 i;
 
   found = NULL;
-  work = TIGHTROPE_WORK;
-  if (work == NULL) {
+  state = TIGHTROPE_STATE;
+  if (state == NULL) {
     result = NULL;
   } else {
-    node = work->nodes;
+    node = state->nodes;
     best = ROPE_NODE_DISTANCE_NONE;
     for (i = 0; i < ROPE_NODE_COUNT; i++, node++) {
       if (node->kind == 1) {
@@ -868,13 +868,13 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
 /// Hops the leader onto the nearest crossable tightrope node
 /// (LEADER_MOVEMENT_TIGHTROPE); returns 0 when none is in reach.
 s32 Leader_StepOntoTightrope(void) {
-  struct MainRoutineWork *work = &gMainRoutineWork;
-  struct Actor *leader = Actor_Lookup(work->leaderActorId);
+  struct MainRoutineState *state = &gMainRoutineState;
+  struct Actor *leader = Actor_Lookup(state->leaderActorId);
   struct Sprite *sprite = leader->sprite;
   struct TightropeNode *node = Tightrope_FindNodeNear(&leader->x.fixed);
   u8 *flags;
 
-  gFieldWork->blockedSteps = 0;
+  gFieldState->blockedSteps = 0;
   if (node == NULL)
     return 0;
   Sound_PlayFar(SE_JUMP);
@@ -892,19 +892,19 @@ s32 Leader_StepOntoTightrope(void) {
   leader->priorityFlags = *flags & ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->flags = 0;
   sprite->image.priority = 1;
-  work->movementMode = LEADER_MOVEMENT_TIGHTROPE;
+  state->movementMode = LEADER_MOVEMENT_TIGHTROPE;
   return 1;
 }
 
 /// Hops the leader off a tightrope a cell in the direction the pad holds, when
 /// that cell is open; returns 0 otherwise.
 s32 Leader_StepOffTightrope(void) {
-  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gMainRoutineState.leaderActorId);
   struct Sprite *sprite = leader->sprite;
   FIXED position[3];
   u32 angle;
 
-  gFieldWork->blockedSteps = 0;
+  gFieldState->blockedSteps = 0;
   angle = gRope_KeyHeadings[DPAD_INDEX(gInput.held)];
   if (angle == DPAD_ANGLE_NONE)
     return 0;
@@ -932,6 +932,6 @@ s32 Leader_StepOffTightrope(void) {
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
   sprite->image.priority = leader->savedSpritePriority;
-  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+  gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
   return 1;
 }

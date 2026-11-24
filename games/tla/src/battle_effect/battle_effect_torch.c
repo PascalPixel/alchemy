@@ -25,7 +25,7 @@
 ///
 /// Abilities: Torch.
 void BattleEffect_RunTorch(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 screen[3];
   s32 world[3];
@@ -48,7 +48,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   s32 angle;
   s32 *line;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(BGCNT_WRAP);
   BattleEffect_RunDjinniEntrance(
@@ -61,7 +61,8 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
   REG_BG2PA = Q_8_8(1.0 / 1.5);
   BattleEffect_FetchRectangleBlitters(args->side, draw);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   // The disc: each pixel's level is half its distance from the middle, its
   // rows drawn a little taller; one quarter is worked out and mirrored into
@@ -77,10 +78,10 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
         distance = 1;
       if (distance > CANVAS_LEVEL_BRIGHTEST)
         distance = CANVAS_LEVEL_BRIGHTEST;
-      work->sheet[y * CANVAS_SIZE + x] = distance;
-      work->sheet[y * CANVAS_SIZE + CANVAS_SIZE - 1 - x] = distance;
-      work->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + x] = distance;
-      work->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + CANVAS_SIZE - 1 - x] =
+      state->sheet[y * CANVAS_SIZE + x] = distance;
+      state->sheet[y * CANVAS_SIZE + CANVAS_SIZE - 1 - x] = distance;
+      state->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + x] = distance;
+      state->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + CANVAS_SIZE - 1 - x] =
           distance;
     }
   }
@@ -115,8 +116,8 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     ramp[i] = ((u16 *)BG_PLTT)[i] = RGB(red, green, blue);
   }
 
-  draw[0](canvas, work->sheet, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
-  work->transferPending = 1;
+  draw[0](canvas, state->sheet, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+  state->transferPending = 1;
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
 
   // Fade the disc in, ripple the display, then fade it out.
@@ -133,13 +134,13 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
 
     if (frame == TORCH_STRIKE_FRAME) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
     }
 
     // Each line starts one canvas pixel further along than the one above,
     // swayed either way by up to TORCH_SWAY.
-    line = work->bg2xLines;
+    line = state->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {
       *line++ = CANVAS_WAVE_BG2X(i * toFIXED(4) - Trig_Sin(angle) * TORCH_SWAY +
                                  toFIXED(4));
@@ -150,7 +151,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     // DEAD: never true, as frame stays below TORCH_FRAMES; the ROM keeps the
     // compare and the store.
     if (frame > 127) {
-      work->transferPending = 1;
+      state->transferPending = 1;
     } else {
       ramp[1] = ramp[CANVAS_LEVEL_BRIGHTEST];
       Dma_Set(ramp + CANVAS_LEVEL_BRIGHTEST - 1, ramp + CANVAS_LEVEL_BRIGHTEST,

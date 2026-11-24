@@ -40,8 +40,8 @@ enum {
 /// itself.
 enum { DAILA_INN = 0 };
 
-void Shop_InitializeWork(void);
-void Shop_ReleaseWork(void);
+void Shop_InitializeState(void);
+void Shop_ReleaseState(void);
 s32 Shop_SelectBuy(void);
 void Shop_DrawStock(struct Window *window, s32 selected);
 void Shop_DrawItemPrice(struct Window *window, s32 itemId, s32 price,

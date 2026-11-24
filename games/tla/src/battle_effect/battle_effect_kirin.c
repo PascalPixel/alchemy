@@ -30,7 +30,7 @@ extern const struct SpriteScale gKirin_ChargeScale;
 /// an ellipse six times as tall as it is wide.
 #define KIRIN_HOOP_HALF_WIDTH(size) ((size) * 2)
 #define KIRIN_HOOP_HALF_HEIGHT(size) ((size) * 12)
-/// The fire trail: the first of work->particles.
+/// The fire trail: the first of state->particles.
 #define KIRIN_TRAIL_MOTES 48
 /// How far the column of fire blobs slides in, in pixels.
 #define KIRIN_BLOB_SLIDE_MAX 40
@@ -54,33 +54,33 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   u8 hitRow[14];
   struct SpritePlacement chargePlace;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   DrawRectangle blit;
   u8 *sheet;
   s32 baseX;
   s32 grow;
   s32 savedX;
-  struct BattleBackgroundWork *view;
+  struct BattleBackgroundState *view;
   s32 shift;
   s32 wave;
   s32 frame;
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = RGB(24, 0, 0);
-  work->transferMode = CANVAS_COPY;
+  state->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Setup: wipe the battle away in dark red, swap in the forest and wipe back.
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleEffect_SpawnObjects(KIRIN_SPRITES, SPRITE_KIRIN, 1);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  BattleEffect_SelectLivingTargets(work->args);
+  BattleEffect_SelectLivingTargets(state->args);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 202);
@@ -89,7 +89,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
                            0);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_FIRE_BLOB_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_BLOB_SHEET, state->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(CANVAS_BLEND_LEVEL);
 
   baseX = 0;
@@ -97,11 +97,11 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   savedX = gBgScroll[1].x;
   view = Ram_HeapSlots->battleBackground;
   shift = 0;
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   view->busy = 1;
 
-  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-    struct Particle *fire = &work->particles[i];
+  for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+    struct Particle *fire = &state->particles[i];
 
     fire->x = (Random16() & 31) + 16;
     fire->y = INTtoFIXED((Random16() & 31) + 48);
@@ -165,14 +165,14 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
           angle -= DEGtoANG(180);
         wave = FIXEDtoINT(Trig_Sin(angle) * height);
         if ((frame & 31) == 8)
-          work->shakeFrames = 4;
+          state->shakeFrames = 4;
       }
       place.groundHeight = 0;
       place.height = toFIXED(255);
       for (i = 0; i != KIRIN_SPRITES; i++) {
         place.x = INTtoFIXED(baseX + gKirin_Columns[i] - lift) + toFIXED(224);
         place.y = INTtoFIXED(gKirin_Rows[i] - wave) + toFIXED(72);
-        Render_ApplyProjectedPlacementFar(work->sprites[i], &place.x, &pair.x,
+        Render_ApplyProjectedPlacementFar(state->sprites[i], &place.x, &pair.x,
                                           0);
       }
     }
@@ -199,7 +199,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     }
 
     if (frame == 24) {
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 28)
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -207,7 +207,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     // Fire trails Kirin.
     if (frame > 17) {
       for (i = 0; i != KIRIN_TRAIL_MOTES; i++) {
-        struct Particle *fire = &work->particles[i];
+        struct Particle *fire = &state->particles[i];
 
         if (fire->variant == 0) {
           s32 size = i % 3 + 1;
@@ -235,17 +235,17 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       if (slide > KIRIN_BLOB_SLIDE_MAX)
         slide = KIRIN_BLOB_SLIDE_MAX;
       for (i = 0; i != 6; i++)
-        blit(canvas, work->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
+        blit(canvas, state->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
              120 - slide, i * 18, FIRE_BLOB_WIDTH, FIRE_BLOB_HEIGHT);
     }
 
-    if (work->shakeFrames > 0) {
-      work->shakeFrames--;
+    if (state->shakeFrames > 0) {
+      state->shakeFrames--;
       gBgScroll[1].y = (Random16() & 7) + BATTLE_BACKGROUND_SCROLL_Y - 4;
     } else {
       gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   // The charge: Kirin runs across the targets behind the battle background.
@@ -255,7 +255,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
 
   for (i = 0; i != KIRIN_SPRITES; i++) {
-    struct Sprite *sprite = work->sprites[i];
+    struct Sprite *sprite = state->sprites[i];
 
     sprite->image.priority = 3;
   }
@@ -271,7 +271,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     for (i = 0; i != KIRIN_BURSTS_FREED * KIRIN_BURST_MOTES; i++)
       PARTICLES[i].variant = 0;
 
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
     REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     REG_BLDALPHA = EFFECT_BLEND_ADD;
 
@@ -299,13 +300,13 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         for (i = 0; i != KIRIN_SPRITES; i++) {
           chargePlace.x = INTtoFIXED(rowX + gKirin_Columns[i]);
           chargePlace.y = INTtoFIXED(gKirin_Rows[i] - rise) + toFIXED(72);
-          Render_ApplyProjectedPlacementFar(work->sprites[i], &chargePlace.x,
+          Render_ApplyProjectedPlacementFar(state->sprites[i], &chargePlace.x,
                                             &chargeScale.x, 0);
         }
       }
 
       if (frame == 8) {
-        work->shakeFrames = 8;
+        state->shakeFrames = 8;
         Sound_PlayFar(SE_CRASH);
       }
       if (frame == 11)
@@ -361,14 +362,14 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       if (frame > 40) {
         s32 slide = (frame - 40) * 12;
 
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
         for (i = 0; i != ARRAY_COUNT(jitterRow); i++)
-          blit(canvas, work->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
+          blit(canvas, state->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
                jitterRow[i] - slide + 120, i * 8 - 8, FIRE_BLOB_WIDTH,
                FIRE_BLOB_HEIGHT);
       }
       if (frame > 64)
-        work->transferMode = CANVAS_COPY_AND_FADE;
+        state->transferMode = CANVAS_COPY_AND_FADE;
       // Every target, burnt by the wall of fire, turns black.
       if (frame == 58) {
         EFFECT_FOR_EACH_TARGET(i, args)
@@ -377,13 +378,13 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       }
 
       BattleCamera_Shake(8, 8);
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
     }
   }
 
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   for (i = 0; i != KIRIN_SPRITES; i++)
-    Sprite_DestroyFar(work->sprites[i]);
+    Sprite_DestroyFar(state->sprites[i]);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 

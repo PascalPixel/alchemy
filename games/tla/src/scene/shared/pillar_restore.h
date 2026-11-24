@@ -6,7 +6,7 @@
 /// leader, the cracked one showing its cracks, then puts them out of sight; a
 /// cracked pillar takes the cracked picture.
 UNUSED void MagmaRockInside_RestorePillars(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor;
   s32 id;
   s32 flag;
@@ -17,10 +17,11 @@ UNUSED void MagmaRockInside_RestorePillars(u16 *list) {
   s32 index;
   u8 *grid = gMapShapeGrid;
 
-  Actor_PlaceOnActor(ACTOR_PILLAR_STAND_IN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PILLAR_STAND_IN, gMainRoutineState.leaderActorId);
   Actor_PlaceOnActor(ACTOR_CRACKED_PILLAR_SPRITE,
-                     gMainRoutineWork.leaderActorId);
-  Actor_PlaceOnActor(ACTOR_WHOLE_PILLAR_SPRITE, gMainRoutineWork.leaderActorId);
+                     gMainRoutineState.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_WHOLE_PILLAR_SPRITE,
+                     gMainRoutineState.leaderActorId);
   System_Wait(1);
   Pillar_TakeOutOfPlay(ACTOR_PILLAR_STAND_IN);
   Pillar_TakeOutOfPlay(ACTOR_CRACKED_PILLAR_SPRITE);

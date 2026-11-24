@@ -30,7 +30,7 @@
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
 /// end at once and L restores normal waits.
 void Event_UpdateDebugSkip(void) {
-  struct FieldWork *field = gFieldWork;
+  struct FieldState *field = gFieldState;
 
   if (gDebugMode != 0) {
     if (gInput.pressed & KEY_L) {
@@ -45,7 +45,7 @@ void Event_UpdateDebugSkip(void) {
 /// Waits the requested frames through wait(), unless debug fast-forward
 /// (Event_UpdateDebugSkip) is on: the wait events use.
 void Event_Wait(s32 frames) {
-  if (gFieldWork->fastForward == 0 && frames != 0) {
+  if (gFieldState->fastForward == 0 && frames != 0) {
     wait(frames);
   }
 }
@@ -61,7 +61,7 @@ void Leader_StopMoving(void) {
   actor->targetZ = ACTOR_NO_TARGET;
   actor->velocityX = 0;
   actor->velocityZ = 0;
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS)
+  if (gMainRoutineState.movementMode == LEADER_MOVEMENT_KEYS)
     Actor_SelectAnimationFar(actor, ANIM_LEADER_CLING);
   else
     Actor_SelectAnimationFar(actor, ANIM_STAND);
@@ -72,7 +72,7 @@ void Leader_StopMoving(void) {
 /// state, and starts the debug fast-forward task with the leader as the
 /// message speaker.
 void Event_Start(void) {
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   AreaNameWindow_HideFar();
   Leader_StopMoving();
   if (field->busy != 0)
@@ -91,7 +91,7 @@ void Event_Start(void) {
   // flags sets or reads it.
   GameFlag_Clear(0x132);
   {
-    struct MainRoutineWork *party = &gMainRoutineWork;
+    struct MainRoutineState *party = &gMainRoutineState;
     field->speaker = party->leaderActorId;
     field->messageWindow = 0;
   }
@@ -99,12 +99,12 @@ void Event_Start(void) {
 
 /// Ends an event: stops the debug fast-forward task, gives the camera back to
 /// the leader (or to the first placed actor, the ship, while
-/// gMainRoutineWork.ownerOverride is set) and refreshes the Lure Cap's flag
+/// gMainRoutineState.ownerOverride is set) and refreshes the Lure Cap's flag
 /// (GameFlag_RefreshLureCap).
 void Event_End(void) {
   Task_Remove((u32)Event_UpdateDebugSkip);
   {
-    struct MainRoutineWork *party = &gMainRoutineWork;
+    struct MainRoutineState *party = &gMainRoutineState;
     if (party->ownerOverride == 0)
       FieldCamera_FollowActor(party->leaderActorId, 1);
     else
@@ -136,7 +136,7 @@ void Event_CallWithLastActiveObjectId(s32 table) {
 }
 
 /// Replaces the scene's trigger table with events.
-void Event_SetSceneEvents(s32 events) { gFieldWork->triggers = events; }
+void Event_SetSceneEvents(s32 events) { gFieldState->triggers = events; }
 
 /// Adds unit to the party. With announce nonzero it also shows `<name> joined
 /// your party.` (Party_ShowJoinedMessage, which receives announce too).
@@ -181,12 +181,12 @@ s32 Party_CheckShortcut(u32 shortcut) {
 }
 
 /// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
-/// gMainRoutineWork.firstShortcut or secondShortcut.
+/// gMainRoutineState.firstShortcut or secondShortcut.
 void Party_ClearUnusableShortcuts(void) {
-  if (Party_CheckShortcut(gMainRoutineWork.firstShortcut) != SHORTCUT_USABLE)
-    gMainRoutineWork.firstShortcut = 0;
-  if (Party_CheckShortcut(gMainRoutineWork.secondShortcut) != SHORTCUT_USABLE)
-    gMainRoutineWork.secondShortcut = 0;
+  if (Party_CheckShortcut(gMainRoutineState.firstShortcut) != SHORTCUT_USABLE)
+    gMainRoutineState.firstShortcut = 0;
+  if (Party_CheckShortcut(gMainRoutineState.secondShortcut) != SHORTCUT_USABLE)
+    gMainRoutineState.secondShortcut = 0;
 }
 
 /// Takes unit out of the party, fully restoring its HP and PP and curing its
@@ -208,12 +208,12 @@ void Party_RemoveMemberRestored(s32 unit) {
   survivingMembers = 0;
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    vitals = Unit_Get(gMainRoutineWork.party[partyIndex]);
+    vitals = Unit_Get(gMainRoutineState.party[partyIndex]);
     if (vitals->hp != 0)
       survivingMembers++;
   }
   if (survivingMembers == 0) {
-    vitals = Unit_Get(gMainRoutineWork.leaderActorId);
+    vitals = Unit_Get(gMainRoutineState.leaderActorId);
     vitals->hp = 1;
     Unit_UpdateGauges(vitals);
   }
@@ -239,8 +239,8 @@ s32 Party_CheckItemLimit(s32 item) {
 /// The event command "give item": gives item to the first party member with
 /// room for it and says so; with no room, the player chooses what to drop.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s16 saved = work->message;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  s16 saved = state->message;
   s32 owner;
   s32 result;
   s32 count;
@@ -298,7 +298,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       Unit_CalculateFar(member);
       owner = PartyInventory_AddFar(item);
       Sound_PlayFar(MUS_TREASURE_FOUND);
-      if (owner == gMainRoutineWork.leaderActorId) {
+      if (owner == gMainRoutineState.leaderActorId) {
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar((s32)&MsgItemReceived,
                              FIELD_MESSAGE_ZOOM |
@@ -312,7 +312,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       }
     }
   done:
-    work->message = saved;
+    state->message = saved;
     return owner;
   }
   // There was room: "Felix got <item>.", and "Felix gave <item> to
@@ -321,12 +321,12 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
   FieldMessage_ShowFar((s32)&MsgItemReceived,
                        FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
-  if (owner != gMainRoutineWork.leaderActorId) {
+  if (owner != gMainRoutineState.leaderActorId) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
     MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
     FieldMessage_ShowFar((s32)&MsgItemReceived + 1, FIELD_MESSAGE_ZOOM);
   }
-  work->message = saved;
+  state->message = saved;
   return owner;
 }
 
@@ -371,17 +371,17 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
 /// (ANIM_NOD) at yes and shakes its head (ANIM_SHAKE_HEAD) at no; at the
 /// fastest message speed neither is waited for.
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 sprite = *(s16 *)Scene_FindActorPlacement(work->speaker);
-  struct Window *window = work->messageWindow;
-  struct Window *side = work->sideWindow;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  s32 sprite = *(s16 *)Scene_FindActorPlacement(state->speaker);
+  struct Window *window = state->messageWindow;
+  struct Window *side = state->sideWindow;
   s32 useBottom = 1;
   s32 answer;
 
   while (Message_AllTypedFar() == 0)
     wait(1);
 
-  wait((MESSAGE_SPEED_FAST - gMainRoutineWork.messageSpeed) * 3);
+  wait((MESSAGE_SPEED_FAST - gMainRoutineState.messageSpeed) * 3);
 
   if (forceBottom == 0) {
     s32 bottom = (s16)window->y + window->height;
@@ -396,19 +396,19 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
       useBottom = 0;
   }
 
-  answer = YesNoMenu_RunFar(useBottom, work->choiceMessage, work->choiceWidth,
-                            work->choiceSelection);
+  answer = YesNoMenu_RunFar(useBottom, state->choiceMessage, state->choiceWidth,
+                            state->choiceSelection);
   if (answer != 0) {
     Actor_SetAnimationById(actor, ANIM_SHAKE_HEAD);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
-    if (gMainRoutineWork.messageSpeed != MESSAGE_SPEED_FAST)
+    if (gMainRoutineState.messageSpeed != MESSAGE_SPEED_FAST)
       Actor_WaitForAnimationEnd(actor, ANIM_SHAKE_HEAD);
   } else {
     Actor_SetAnimationById(actor, ANIM_NOD);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
-    if (gMainRoutineWork.messageSpeed != MESSAGE_SPEED_FAST)
+    if (gMainRoutineState.messageSpeed != MESSAGE_SPEED_FAST)
       Actor_WaitForAnimationEnd(actor, ANIM_NOD);
   }
 
@@ -432,7 +432,7 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
     // "But Felix's party can't carry any more, so they left it behind."
     FieldMessage_ShowFar((s32)&MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
     Actor_GetById(actor)->scaleX = FIXED_ONE;
-    Actor_FaceActorById(gMainRoutineWork.leaderActorId, actor, 0);
+    Actor_FaceActorById(gMainRoutineState.leaderActorId, actor, 0);
     Event_Wait(20);
     return -1;
   }
@@ -459,7 +459,7 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 /// The event command "open screen": starts the event's screen transition and
 /// sets transitionActive.
 void Event_StartScreenTransition(void) {
-  struct FieldWork *field = gFieldWork;
+  struct FieldState *field = gFieldState;
 
   ScreenTransition_Start(field->transition, field->transitionFrames);
   field->transitionActive = 1;
@@ -468,7 +468,7 @@ void Event_StartScreenTransition(void) {
 /// The event command "close screen": finishes the event's screen transition
 /// and clears transitionActive.
 void Event_FinishScreenTransition(void) {
-  struct FieldWork *field = gFieldWork;
+  struct FieldState *field = gFieldState;
 
   ScreenTransition_Finish(field->transition, field->transitionFrames);
   field->transitionActive = 0;
@@ -476,33 +476,33 @@ void Event_FinishScreenTransition(void) {
 
 /// The event command "wait for screen": waits as long as the transition runs
 /// (transitionFrames).
-void Event_WaitTransitionFrames(void) { wait(gFieldWork->transitionFrames); }
+void Event_WaitTransitionFrames(void) { wait(gFieldState->transitionFrames); }
 
 /// Makes the event leave for the given entrance of the given scene: raises the
-/// exit request EXIT_KEEP_DESTINATION and writes gMainRoutineWork.next and
+/// exit request EXIT_KEEP_DESTINATION and writes gMainRoutineState.next and
 /// entrance.
 void Event_SetDestination(s32 sceneId, s32 entrance) {
-  gFieldWork->exit = EXIT_KEEP_DESTINATION;
-  gMainRoutineWork.next = sceneId;
-  gMainRoutineWork.entrance = entrance;
+  gFieldState->exit = EXIT_KEEP_DESTINATION;
+  gMainRoutineState.next = sceneId;
+  gMainRoutineState.entrance = entrance;
 }
 
 /// Makes the event leave and records sceneId and entrance as the restart
 /// point.
 void Event_SetRestartPoint(s32 sceneId, s32 entrance) {
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  struct MainRoutineWork *party;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
+  struct MainRoutineState *party;
 
   field->exit = EXIT_KEEP_DESTINATION;
-  party = &gMainRoutineWork;
+  party = &gMainRoutineState;
   party->restartScene = sceneId;
   party->restartEntrance = entrance;
 }
 
 /// The event command "request exit": sets the field's exit request
-/// (EXIT_KEEP_DESTINATION leaves for gMainRoutineWork's next and entrance).
+/// (EXIT_KEEP_DESTINATION leaves for gMainRoutineState's next and entrance).
 void Event_SetExitRequest(u16 request) {
-  struct FieldWork *field = gFieldWork;
+  struct FieldState *field = gFieldState;
   field->exit = request;
 }
 

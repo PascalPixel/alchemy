@@ -43,7 +43,7 @@ enum {
 ///
 /// Abilities: Raging Heat.
 void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   BlitterPair draw;
@@ -59,7 +59,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   s32 i;
 
   buffer = Ram_MapCellBuffer;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
@@ -76,20 +76,20 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
       targets[0].x + (targets[args->targetCount - 1].x - targets[0].x) / 2;
   baseY = targets[0].y - 48;
   Resource_LoadAndDecompress(RESOURCE_CORNER_RUNE_B_SHEET, buffer, 1, 1);
-  Picture_MirrorIntoQuadrants(buffer, work->sheet, 64, 64);
+  Picture_MirrorIntoQuadrants(buffer, state->sheet, 64, 64);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                             work->sheet + RAGING_HEAT_FLASH_BURST_PICTURES, 1,
+                             state->sheet + RAGING_HEAT_FLASH_BURST_PICTURES, 1,
                              0);
   Resource_LoadAndDecompress(RESOURCE_PINK_BURST_SHEET, buffer, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, FIRE_RING_PIXELS, 0,
                              0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != RAGING_HEAT_FRAMES; frame++) {
     if (frame == 0) {
-      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-        work->particles[i].variant = RAGING_HEAT_BURST_FRAMES;
+      for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+        state->particles[i].variant = RAGING_HEAT_BURST_FRAMES;
       }
       EFFECT_FREE_PARTICLES(i, EMBERS, RAGING_HEAT_EMBER_COUNT);
       Sound_PlayFar(SE_SPIN);
@@ -107,7 +107,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
       s32 y = baseY + frame * 8 - 480;
 
       if ((u32)(y - 52) <= 7) {
-        for (i = 0, burst = work->particles; i != RAGING_HEAT_BURSTS_SET_OUT;
+        for (i = 0, burst = state->particles; i != RAGING_HEAT_BURSTS_SET_OUT;
              i++, burst++) {
           u32 random;
           u32 spread;
@@ -139,7 +139,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 16);
         }
-        work->shakeFrames = 16;
+        state->shakeFrames = 16;
       }
       if (y <= 52) {
         draw[0](canvas, buffer, centerX / 2 - 24, y, 24, 64);
@@ -148,13 +148,13 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
       i = 0;
       /* FAKEMATCH(dead): the test repeats the loop's own. */
       if (i != gRagingHeat_Styles[args->variant][RAGING_HEAT_BURSTS]) {
-        for (particle = work->particles;
+        for (particle = state->particles;
              i != gRagingHeat_Styles[args->variant][RAGING_HEAT_BURSTS];
              i++, particle++) {
           if ((u32)particle->variant < RAGING_HEAT_BURST_FRAMES) {
             if (particle->variant > 1) {
               draw[0](canvas,
-                      work->sheet + RAGING_HEAT_FLASH_BURST_PICTURES +
+                      state->sheet + RAGING_HEAT_FLASH_BURST_PICTURES +
                           (particle->variant / 4) * PICTURE_BYTES(FLASH_BURST),
                       FIXED_INTEGER_PART(particle->x) - FLASH_BURST_WIDTH / 2,
                       FIXED_INTEGER_PART(particle->y) - FLASH_BURST_HEIGHT / 2,
@@ -226,7 +226,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
           if (frame > 60) {
             scale = largest - step * (frame * 2 - 120);
           }
-          texture.pixels = work->sheet;
+          texture.pixels = state->sheet;
           Matrix_RotateY(-frame * 3 << 8);
         } else {
           scale = (frame - RAGING_HEAT_PILLAR_FRAME) * 4 * step;
@@ -249,7 +249,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
       Heap_Release(vertices);
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_FINISH_CANVAS();
 }
@@ -301,11 +301,11 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   s32 vector[3];
   struct ScreenPoint target;
   DrawRectangle draw[2];
-  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   s32 frame;
   u8 *sparkCels = Ram_HeapSlots->battleSheet;
-  struct Particle *ring = work->particles;
+  struct Particle *ring = state->particles;
   DrawRectangle *blitters;
   s32 lift;
   s32 j;
@@ -313,14 +313,14 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
 
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress(RESOURCE_SMALL_FLAME_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SMALL_FLAME_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
   if (args->variant == EFFECT_VARIANT_STRONGEST) {
     LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   }
   blitters = draw;
   BattleEffect_FetchRectangleBlitters(0, blitters);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   lift = 0;
   {
@@ -397,7 +397,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       y = FIXED_INTEGER_PART(place[1]);
       place[1] = y + 64;
       blitters[gJuggle_Styles[args->variant][JUGGLE_RING_BLITTER]](
-          canvas, work->sheet + cel * PICTURE_BYTES(JUGGLE_FLAME),
+          canvas, state->sheet + cel * PICTURE_BYTES(JUGGLE_FLAME),
           x + CANVAS_SIZE / 2 - JUGGLE_FLAME_WIDTH / 2, y + 16,
           JUGGLE_FLAME_WIDTH, JUGGLE_FLAME_HEIGHT);
     }
@@ -427,7 +427,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
           spark->variant = (Random16() & 15) + 24;
         }
       }
-      work->shakeFrames = gJuggle_Styles[args->variant][JUGGLE_RING_SHAKE];
+      state->shakeFrames = gJuggle_Styles[args->variant][JUGGLE_RING_SHAKE];
     }
 
     // The sparks fly and burn down, drawn by turns with the two blitters.
@@ -447,7 +447,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
     }
 
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_RELEASE_BLITTERS();

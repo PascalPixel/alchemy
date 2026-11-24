@@ -41,14 +41,14 @@ s32 Text_DrawGlyphPair(s32 character, u32 *tiles);
 /// sprite carried by the window. GLYPH_DRAW_PAGE_ARROW shows the next-page
 /// arrow instead.
 /// A sprite glyph takes a window sprite and its four tiles from the glyph
-/// sheet (WindowWork.glyphTiles, four for each sprite); with no sprite free
+/// sheet (WindowState.glyphTiles, four for each sprite); with no sprite free
 /// nothing is drawn and it returns 0. The sprite stays until its window is
 /// cleared or closed.
 s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   s32 width;
-  u32 spacingX = work->glyphSpacing;
-  u32 spacingY = work->lineSpacing;
+  u32 spacingX = state->glyphSpacing;
+  u32 spacingY = state->lineSpacing;
 
   if (mode != GLYPH_DRAW_PAGE_ARROW &&
       (window->flags & WINDOW_FLAG_TEXT_CANVAS) != 0) {
@@ -112,14 +112,14 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     output = WindowSprite_AcquireFree();
     if (output == NULL)
       return 0;
-    index = (output - work->sprites) * 4;
+    index = (output - state->sprites) * 4;
     output->motion = WINDOW_SPRITE_MOTION_STILL;
     output->kind = WINDOW_SPRITE_GLYPH;
     if (mode == GLYPH_DRAW_PAGE_ARROW) {
       width = 1;
       output->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
     } else {
-      switch (work->outline) {
+      switch (state->outline) {
       case TEXT_STYLE_SHAKE:
         output->motion = WINDOW_SPRITE_MOTION_SHAKE;
         break;
@@ -150,25 +150,26 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
 
     if ((u8)output->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
       sprite = &output->sprite;
-      if (work->glyphResource == NO_GLYPH_RESOURCE)
-        work->glyphResource = VramCache_FindFreeEntry();
+      if (state->glyphResource == NO_GLYPH_RESOURCE)
+        state->glyphResource = VramCache_FindFreeEntry();
       sprite->oam.x = (window->x << 3) + ((window->width - 2) << 3) + ARROW_X;
       sprite->oam.y = (window->y << 3) + ((window->height - 2) << 3) + ARROW_Y;
     } else {
       u16 *attr;
 
-      Dma_Set(tiles,
-              (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * TILE_SIZE_4BPP),
-              DMA_COPY_WORDS(32), REG_DMA3);
+      Dma_Set(
+          tiles,
+          (void *)(OBJ_VRAM0 + (state->glyphTiles + index) * TILE_SIZE_4BPP),
+          DMA_COPY_WORDS(32), REG_DMA3);
       attr = (u16 *)&output->sprite.oam;
-      if (work->battleMode & WINDOW_GLYPHS_BLENDED)
+      if (state->battleMode & WINDOW_GLYPHS_BLENDED)
         *attr++ = (y + (spacingY >> 1) + window->y * 8 + GLYPH_Y) |
                   OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       else
         *attr++ = y + (spacingY >> 1) + window->y * 8 + GLYPH_Y;
       *attr =
           (x + (spacingX >> 1) + window->x * 8 + GLYPH_X) | GLYPH_SPRITE_SIZE;
-      attr[1] = work->glyphTiles + index;
+      attr[1] = state->glyphTiles + index;
       sprite = &output->sprite;
     }
     output->depth = OAM_DEPTH_FRONT - 2;
@@ -209,10 +210,10 @@ s32 Text_DrawGlyphPair(s32 code, u32 *tiles);
 /// Draws character as a glyph sprite on the window at x, y and returns its
 /// width, or 0 when no window sprite is free.
 s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
-  struct WindowWork *work = Ram_HeapSlots->windowWork;
+  struct WindowState *state = Ram_HeapSlots->windowState;
   u32 tiles[32];
-  u32 spacingX = work->glyphSpacing;
-  u32 spacingY = work->lineSpacing;
+  u32 spacingX = state->glyphSpacing;
+  u32 spacingY = state->lineSpacing;
   struct WindowSprite *output;
   struct GlyphSprite *sprite;
   s32 index;
@@ -221,19 +222,19 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
   output = WindowSprite_AcquireFree();
   if (output == NULL)
     return 0;
-  index = (output - work->sprites) * 4;
+  index = (output - state->sprites) * 4;
   output->motion = WINDOW_SPRITE_MOTION_STILL;
   output->kind = WINDOW_SPRITE_GLYPH;
   width = Text_DrawGlyphPair(character, tiles);
   Dma_Set(tiles,
-          (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * TILE_SIZE_4BPP),
+          (void *)(OBJ_VRAM0 + (state->glyphTiles + index) * TILE_SIZE_4BPP),
           DMA_COPY_WORDS(32), REG_DMA3);
   ((u16 *)&output->sprite.oam)[0] =
       y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_OFFSET_Y;
   ((u16 *)&output->sprite.oam)[1] =
       (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) |
       GLYPH_SPRITE_SIZE;
-  ((u16 *)&output->sprite.oam)[2] = work->glyphTiles + index;
+  ((u16 *)&output->sprite.oam)[2] = state->glyphTiles + index;
   sprite = (struct GlyphSprite *)&output->sprite;
   output->depth = OAM_DEPTH_FRONT - 2;
   output->x = sprite->x;
@@ -257,12 +258,12 @@ void Glyph_DrawToTiles(const void *source, void *destination) {
 /// draws nothing, and returns the VRAM address of its tiles for the caller to
 /// fill, or NULL when no window sprite is free.
 void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
-  struct WindowWork *work = Ram_HeapSlots->windowWork;
+  struct WindowState *state = Ram_HeapSlots->windowState;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   u32 tiles[32];
-  u32 spacingX = work->glyphSpacing;
-  u32 spacingY = work->lineSpacing;
+  u32 spacingX = state->glyphSpacing;
+  u32 spacingY = state->lineSpacing;
   struct WindowSprite *output;
   struct QueuedSprite *sprite;
   s32 index;
@@ -271,16 +272,16 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
   output = WindowSprite_AcquireFree();
   if (output == NULL)
     return NULL;
-  index = (output - work->sprites) * 4;
+  index = (output - state->sprites) * 4;
   output->motion = WINDOW_SPRITE_MOTION_STILL;
   output->kind = WINDOW_SPRITE_GLYPH;
-  vram = (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * TILE_SIZE_4BPP);
+  vram = (void *)(OBJ_VRAM0 + (state->glyphTiles + index) * TILE_SIZE_4BPP);
   ((u16 *)&output->sprite.oam)[0] =
       y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_OFFSET_Y;
   ((u16 *)&output->sprite.oam)[1] =
       (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) |
       GLYPH_SPRITE_SIZE;
-  ((u16 *)&output->sprite.oam)[2] = work->glyphTiles + index;
+  ((u16 *)&output->sprite.oam)[2] = state->glyphTiles + index;
   /* FAKEMATCH(temporary): sprite holds &output->sprite for the two reads of
    * its position; as output->sprite.oam.x and .y. */
   sprite = &output->sprite;
@@ -319,7 +320,7 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
 /// the interior's last tile. In Japanese, a kana mark goes in the tile above
 /// the character before it.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
-  struct WindowWork *base = WINDOW_WORK;
+  struct WindowState *base = WINDOW_STATE;
   u16 *tilemap = base->tilemap[0];
   struct WindowSprite *out;
   s32 idx;
@@ -411,7 +412,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 /// the tilemap, is ignored.
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode) {
-  u16 *map = WINDOW_WORK->tilemap[0];
+  u16 *map = WINDOW_STATE->tilemap[0];
   s32 palette;
   s32 index;
 
@@ -589,8 +590,8 @@ extern const s8 gWindowSprite_BounceOffsets[];
 /// by its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at
 /// its depth (WindowSprite.depth).
 void WindowSprite_UpdateAll(void) {
-  struct WindowWork *work = WINDOW_WORK;
-  struct Window *window = work->windows;
+  struct WindowState *state = WINDOW_STATE;
+  struct Window *window = state->windows;
   s32 no;
   union {
     struct AffineTransform plain;
@@ -609,11 +610,11 @@ void WindowSprite_UpdateAll(void) {
 
       switch (output->motion) {
       case WINDOW_SPRITE_MOTION_PAGE_ARROW:
-        if (work->glyphResource != VRAM_CACHE_ENTRY_COUNT) {
+        if (state->glyphResource != VRAM_CACHE_ENTRY_COUNT) {
           const u8 *tiles =
               &gWindowSprite_PageArrowTiles[phase * PAGE_ARROW_FRAME_BYTES];
 
-          sprite->tile = VramCache_Load(work->glyphResource,
+          sprite->tile = VramCache_Load(state->glyphResource,
                                         PAGE_ARROW_FRAME_BYTES, tiles);
           output->index = sprite->tile;
           sprite->mode = OBJ_MODE_NORMAL;
@@ -723,7 +724,7 @@ void WindowSprite_UpdateAll(void) {
         break;
       }
       if (output->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
-        if (work->glyphResource != VRAM_CACHE_ENTRY_COUNT)
+        if (state->glyphResource != VRAM_CACHE_ENTRY_COUNT)
           Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_FRONT);
       } else if (output->motion == WINDOW_SPRITE_MOTION_ON_SCREEN) {
         s32 x = (s16)output->x;

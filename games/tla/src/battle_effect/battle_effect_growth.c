@@ -44,7 +44,7 @@ void BattleEffect_RunPunji(struct BattleEffectParams *args) {
 /// Vines or green pillars grow one after another, alternately mirrored, each
 /// flaring at its root.
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   BlitterPair rectangle;
   s32 frame;
@@ -66,14 +66,14 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   s32 picture;
   s32 duration;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
   if (mode == GROWING_COLUMNS_PILLARS) {
-    Resource_LoadAndDecompress(RESOURCE_GREEN_PILLAR_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_GREEN_PILLAR_SHEET, state->sheet, 1, 1);
   } else {
-    Resource_LoadAndDecompress(RESOURCE_VINE_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_VINE_SHEET, state->sheet, 1, 1);
   }
   if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
@@ -91,7 +91,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
 
   for (i = 0; i != GROWING_COLUMNS; i++) {
-    setup = &((struct DualColumn *)work->particles)[i];
+    setup = &((struct DualColumn *)state->particles)[i];
     x = (gGrowth_ColumnX[i] + (7 & Random16())) - 4;
     setup->y = i / 2 + 108;
     setup->x = x;
@@ -105,7 +105,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
     setup->start = limit;
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 
   for (frame = 0; frame != duration; frame++) {
     s32 damageFrame = duration - 64;
@@ -122,10 +122,10 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
     }
     if (frame < fadeEnd) {
       for (i = 0; i != gGrowth_ColumnCounts[args->variant]; i++) {
-        column = &((struct DualColumn *)work->particles)[i];
+        column = &((struct DualColumn *)state->particles)[i];
         start = i * COLUMN_INTERVAL + 8;
         if (frame == i * COLUMN_INTERVAL + 9) {
-          work->shakeFrames = 2;
+          state->shakeFrames = 2;
         }
 
         // A column grows from its root.
@@ -146,7 +146,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
              * i, here and for the pillars; as side = 1 & i. */
             side = 1;
             side &= i;
-            source = work->sheet + gGrowth_VinePictures[shape];
+            source = state->sheet + gGrowth_VinePictures[shape];
             width = gGrowth_VineWidths[shape];
             rectangle[side](canvas, source, column->x - (width >> 1),
                             column->y - length, width, length);
@@ -160,7 +160,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
             }
             side = 1;
             side &= i;
-            source = work->sheet + gGrowth_PillarPictures[shape];
+            source = state->sheet + gGrowth_PillarPictures[shape];
             width = gGrowth_PillarWidths[shape];
             rectangle[side](canvas, source, column->x - (width >> 1),
                             column->y - length, width, length);
@@ -211,13 +211,13 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
         }
         rectangle[0](
             canvas,
-            work->sheet + (gGrowth_PuffPictures[picture] + flarePictures),
+            state->sheet + (gGrowth_PuffPictures[picture] + flarePictures),
             flare->x - gGrowth_PuffWidths[picture],
             flare->y - (s8)gGrowth_PuffHeights[picture] / 2,
             gGrowth_PuffWidths[picture], (s8)gGrowth_PuffHeights[picture]);
         rectangle[1](
             canvas,
-            work->sheet + (gGrowth_PuffPictures[picture] + flarePictures),
+            state->sheet + (gGrowth_PuffPictures[picture] + flarePictures),
             flare->x, flare->y - (s8)gGrowth_PuffHeights[picture] / 2,
             gGrowth_PuffWidths[picture], (s8)gGrowth_PuffHeights[picture]);
         flare->variant++;
@@ -228,7 +228,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
     }
 
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_FINISH_CANVAS();
 }
@@ -248,7 +248,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 /// Abilities: Vine.
 void BattleEffect_RunVine(struct BattleEffectParams *args) {
   struct HeapSlots *heap;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   BlitterPair draw;
   s32 origin[3];
@@ -264,7 +264,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   struct Particle *column;
 
   heap = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)heap->battleEffect;
+  state = (struct BattleEffectState *)heap->battleEffect;
   canvas = heap->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
@@ -276,7 +276,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7);
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress(RESOURCE_GREEN_VINE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_GREEN_VINE_SHEET, state->sheet, 1, 1);
 
   // Centre the vines between the first and last targets.
   EffectPosition_ProjectScaledBattler(args->targets[0], &first);
@@ -293,11 +293,11 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)heap->ramCodePaired;
-  column = work->particles;
+  column = state->particles;
   for (i = 0; i != VINE_COLUMNS; i++) {
     column[i].x = gGrowth_ColumnOffsets[i] + CANVAS_SIZE / 2;
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   for (frame = 0; frame != VINE_FRAMES; frame++) {
     if (frame == VINE_REACH_FRAME) {
       Sound_PlayFar(SE_CRACK);
@@ -305,9 +305,9 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
     }
-    for (i = 0, column = work->particles; i != VINE_COLUMNS; i++, column++) {
+    for (i = 0, column = state->particles; i != VINE_COLUMNS; i++, column++) {
       if (frame == i * 4 + 5)
-        work->shakeFrames = 2;
+        state->shakeFrames = 2;
 
       // Each vine grows, then shrinks back.
       offset = i * 2;
@@ -321,13 +321,14 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
           height = 160 - (frame - offset) * 4;
         }
         if (height > 0)
-          draw[i & 1](canvas, work->sheet + picture * PICTURE_BYTES(GREEN_VINE),
+          draw[i & 1](canvas,
+                      state->sheet + picture * PICTURE_BYTES(GREEN_VINE),
                       column->x - GREEN_VINE_WIDTH / 2, (i & 7) - height + 104,
                       GREEN_VINE_WIDTH, height);
       }
     }
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_FINISH_CANVAS();
 }
@@ -354,7 +355,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   DrawRectangle draw;
   s32 frameCount;
   struct HeapSlots *heap;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   s32 i;
   s32 j;
   s32 age;
@@ -363,12 +364,12 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   /* FAKEMATCH(dead): heap set through its own address; as heap =
    * Ram_HeapSlots. */
   *&heap = Ram_HeapSlots;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress(RESOURCE_THORN_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_THORN_SHEET, state->sheet, 1, 1);
   if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
   }
@@ -379,7 +380,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
   drawFlip = (DrawRectangle)heap->ramCodePaired;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   frameCount = gGrowth_Counts[args->variant] * THORN_INTERVAL + 56;
 
   EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
@@ -412,10 +413,10 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
             lean = THORN_BIG_LEAN;
           }
           if (gGrowth_Kinds[i] & THORN_MIRRORED) {
-            drawFlip(canvas, work->sheet, gGrowth_X[i] - lean, 108 - height,
+            drawFlip(canvas, state->sheet, gGrowth_X[i] - lean, 108 - height,
                      THORN_BIG_WIDTH, height);
           } else {
-            draw(canvas, work->sheet, gGrowth_X[i] + lean, 108 - height,
+            draw(canvas, state->sheet, gGrowth_X[i] + lean, 108 - height,
                  THORN_BIG_WIDTH, height);
           }
         } else {
@@ -428,16 +429,17 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
             lean = THORN_SMALL_LEAN;
           }
           if (gGrowth_Kinds[i] & THORN_MIRRORED) {
-            drawFlip(canvas, work->sheet + THORN_SMALL_PICTURE,
+            drawFlip(canvas, state->sheet + THORN_SMALL_PICTURE,
                      gGrowth_X[i] - lean, 108 - height,
                      THORN_SMALL_PICTURE_WIDTH, height);
           } else {
-            draw(canvas, work->sheet + THORN_SMALL_PICTURE, gGrowth_X[i] + lean,
-                 108 - height, THORN_SMALL_PICTURE_WIDTH, height);
+            draw(canvas, state->sheet + THORN_SMALL_PICTURE,
+                 gGrowth_X[i] + lean, 108 - height, THORN_SMALL_PICTURE_WIDTH,
+                 height);
           }
         }
         if (frame == start + 1) {
-          work->shakeFrames = 3;
+          state->shakeFrames = 3;
         }
 
         // Impact flares beside the thorn.
@@ -475,12 +477,12 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
       if (PARTICLES[i].variant >= 0) {
         s32 picture = PARTICLES[i].variant / 2;
 
-        draw(canvas, work->sheet + gGrowth_ThornPuffPictures[picture],
+        draw(canvas, state->sheet + gGrowth_ThornPuffPictures[picture],
              PARTICLES[i].x - gGrowth_ThornPuffWidths[picture],
              PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[picture] / 2,
              gGrowth_ThornPuffWidths[picture],
              (s8)gGrowth_ThornPuffHeights[picture]);
-        drawFlip(canvas, work->sheet + gGrowth_ThornPuffPictures[picture],
+        drawFlip(canvas, state->sheet + gGrowth_ThornPuffPictures[picture],
                  PARTICLES[i].x,
                  PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[picture] / 2,
                  gGrowth_ThornPuffWidths[picture],
@@ -491,7 +493,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

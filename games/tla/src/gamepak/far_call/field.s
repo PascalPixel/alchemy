@@ -51,7 +51,7 @@ FarCall_FieldTable:
 	export WorldMap_UpdateViewFar, WorldMap_UpdateView
 	export WorldMap_LoadDefaultCellsAndUpdateBlockFar, WorldMap_LoadDefaultCellsAndUpdateBlock
 	export MapGrid_PlayMapEditFar, MapGrid_PlayMapEdit
-	export MapGrid_CopyCellPictureIndicesRectFar, MapGrid_CopyCellPictureIndicesRect
+	export MapGrid_CopyCellTilesIndicesRectFar, MapGrid_CopyCellTilesIndicesRect
 	export Map_ApplySetFlagEditsFar, Map_ApplySetFlagEdits
 	export Map_SetFlagAndApplyEditsFar, Map_SetFlagAndApplyEdits
 	export Map_SetFlagAndApplyAttributeEditsFar, Map_SetFlagAndApplyAttributeEdits
@@ -66,7 +66,7 @@ FarCall_FieldTable:
 	export MapGrid_GetCellAttributeLowNibbleOrBumpFar, MapGrid_GetCellAttributeLowNibbleOrBump
 	export Map_CopyCellsRectFar, Map_CopyCellsRect
 	export Map_CopyCellAttributeRectFar, Map_CopyCellAttributeRect
-	export MapGrid_CopyCellPictureCellsRectFar, MapGrid_CopyCellPictureCellsRect
+	export MapGrid_CopyCellTilesCellsRectFar, MapGrid_CopyCellTilesCellsRect
 	export Map_CopyRawCellsRectFar, Map_CopyRawCellsRect
 	export WorldMap_SetWindowCellTileFar, WorldMap_SetWindowCellTile
 	export WorldMap_SetWindowCellTileAndDrawFar, WorldMap_SetWindowCellTileAndDraw

@@ -58,7 +58,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   u8 *projected;
   u8 *cells;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
    * frame reserves and never touches; as one DrawRectangle. */
   BlitterPair blit;
@@ -77,9 +77,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   mesh = DJINNI_CHARGE_FIREBALL_MESH;
   projected = DJINNI_CHARGE_FIREBALL_PROJECTED;
   cells = gMapGridCellBuffer;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   motes = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
@@ -104,30 +104,30 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
     }
     blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
     REG_BLDALPHA = EFFECT_BLEND_ADD;
-    EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     target = BattleObject_GetFar(args->targets[0])->object;
     savedYaw = (s16)camera->yaw;
     caster = BattleObject_GetFar(args->user)->object;
 
     // The last two particles keep the Djinni's start and its step.
-    work->particles[DJINNI_CHARGE_START].x = focus[0];
-    work->particles[DJINNI_CHARGE_START].y = focus[1];
-    work->particles[DJINNI_CHARGE_START].z = focus[2];
+    state->particles[DJINNI_CHARGE_START].x = focus[0];
+    state->particles[DJINNI_CHARGE_START].y = focus[1];
+    state->particles[DJINNI_CHARGE_START].z = focus[2];
     Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
     Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET,
-                               work->sheet + DJINNI_CHARGE_DJINNI_PICTURE, 1,
+                               state->sheet + DJINNI_CHARGE_DJINNI_PICTURE, 1,
                                1);
     if (mode == DJINNI_CHARGE_CORE) {
-      Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET, work->sheet, 1, 1);
+      Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET, state->sheet, 1, 1);
       Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,
-                                 work->sheet + DJINNI_CHARGE_BURST_PICTURES, 1,
+                                 state->sheet + DJINNI_CHARGE_BURST_PICTURES, 1,
                                  1);
       LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
       frames = 102;
     } else {
       Resource_LoadAndDecompress(RESOURCE_PETAL_SHEET, cells, 1, 0);
       Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                                 work->sheet + DJINNI_CHARGE_BURST_PICTURES, 1,
+                                 state->sheet + DJINNI_CHARGE_BURST_PICTURES, 1,
                                  0);
       frames = 50;
     }
@@ -137,24 +137,24 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
     for (frame = 0; frame != frames; frame++) {
       if (frame == 0) {
         camera->yaw = savedYaw;
-        focus[0] = work->particles[DJINNI_CHARGE_START].x;
-        focus[1] = work->particles[DJINNI_CHARGE_START].y;
-        focus[2] = work->particles[DJINNI_CHARGE_START].z;
-        work->particles[DJINNI_CHARGE_STEP].x = 0;
-        work->particles[DJINNI_CHARGE_STEP].y = 0;
-        work->particles[DJINNI_CHARGE_STEP].z = 0;
-        work->particles[DJINNI_CHARGE_STEP].velocityX = target->x - focus[0];
+        focus[0] = state->particles[DJINNI_CHARGE_START].x;
+        focus[1] = state->particles[DJINNI_CHARGE_START].y;
+        focus[2] = state->particles[DJINNI_CHARGE_START].z;
+        state->particles[DJINNI_CHARGE_STEP].x = 0;
+        state->particles[DJINNI_CHARGE_STEP].y = 0;
+        state->particles[DJINNI_CHARGE_STEP].z = 0;
+        state->particles[DJINNI_CHARGE_STEP].velocityX = target->x - focus[0];
         // DEAD: both arms alike; the ROM keeps the test.
         if (mode == DJINNI_CHARGE_CORE) {
-          work->particles[DJINNI_CHARGE_STEP].velocityY =
+          state->particles[DJINNI_CHARGE_STEP].velocityY =
               target->y - focus[1] + toFIXED(30);
         } else {
-          work->particles[DJINNI_CHARGE_STEP].velocityY =
+          state->particles[DJINNI_CHARGE_STEP].velocityY =
               target->y - focus[1] + toFIXED(30);
         }
-        work->particles[DJINNI_CHARGE_STEP].velocityZ = target->z - focus[2];
+        state->particles[DJINNI_CHARGE_STEP].velocityZ = target->z - focus[2];
         for (i = 0; i != DJINNI_CHARGE_START; i++) {
-          work->particles[i].variant = -1;
+          state->particles[i].variant = -1;
         }
         if (mode == DJINNI_CHARGE_CANNON) {
           Sound_PlayFar(SE_CRASH);
@@ -183,60 +183,60 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         }
         if (frame <= 31) {
           // Pull back...
-          focus[0] -= work->particles[DJINNI_CHARGE_STEP].x;
-          focus[1] -= work->particles[DJINNI_CHARGE_STEP].y;
-          focus[2] -= work->particles[DJINNI_CHARGE_STEP].z;
+          focus[0] -= state->particles[DJINNI_CHARGE_STEP].x;
+          focus[1] -= state->particles[DJINNI_CHARGE_STEP].y;
+          focus[2] -= state->particles[DJINNI_CHARGE_STEP].z;
           if (frame <= 15) {
-            work->particles[DJINNI_CHARGE_STEP].x +=
-                work->particles[DJINNI_CHARGE_STEP].velocityX >>
+            state->particles[DJINNI_CHARGE_STEP].x +=
+                state->particles[DJINNI_CHARGE_STEP].velocityX >>
                 DJINNI_CHARGE_PULL_BACK_SHIFT;
-            work->particles[DJINNI_CHARGE_STEP].y +=
-                work->particles[DJINNI_CHARGE_STEP].velocityY >>
+            state->particles[DJINNI_CHARGE_STEP].y +=
+                state->particles[DJINNI_CHARGE_STEP].velocityY >>
                 DJINNI_CHARGE_PULL_BACK_SHIFT;
-            work->particles[DJINNI_CHARGE_STEP].z +=
-                work->particles[DJINNI_CHARGE_STEP].velocityZ >>
+            state->particles[DJINNI_CHARGE_STEP].z +=
+                state->particles[DJINNI_CHARGE_STEP].velocityZ >>
                 DJINNI_CHARGE_PULL_BACK_SHIFT;
           }
-          work->particles[DJINNI_CHARGE_STEP].x =
-              work->particles[DJINNI_CHARGE_STEP].x * 56 / DAMPING_SCALE;
-          work->particles[DJINNI_CHARGE_STEP].y =
-              work->particles[DJINNI_CHARGE_STEP].y * 56 / DAMPING_SCALE;
-          work->particles[DJINNI_CHARGE_STEP].z =
-              work->particles[DJINNI_CHARGE_STEP].z * 56 / DAMPING_SCALE;
+          state->particles[DJINNI_CHARGE_STEP].x =
+              state->particles[DJINNI_CHARGE_STEP].x * 56 / DAMPING_SCALE;
+          state->particles[DJINNI_CHARGE_STEP].y =
+              state->particles[DJINNI_CHARGE_STEP].y * 56 / DAMPING_SCALE;
+          state->particles[DJINNI_CHARGE_STEP].z =
+              state->particles[DJINNI_CHARGE_STEP].z * 56 / DAMPING_SCALE;
           if (frame == 31) {
             Sound_PlayFar(SE_ITEM_BREAK);
           }
         } else if (frame <= 45) {
           // ...drive in...
-          focus[0] += work->particles[DJINNI_CHARGE_STEP].x;
-          focus[1] += work->particles[DJINNI_CHARGE_STEP].y;
-          focus[2] += work->particles[DJINNI_CHARGE_STEP].z;
-          work->particles[DJINNI_CHARGE_STEP].x +=
-              work->particles[DJINNI_CHARGE_STEP].velocityX >>
+          focus[0] += state->particles[DJINNI_CHARGE_STEP].x;
+          focus[1] += state->particles[DJINNI_CHARGE_STEP].y;
+          focus[2] += state->particles[DJINNI_CHARGE_STEP].z;
+          state->particles[DJINNI_CHARGE_STEP].x +=
+              state->particles[DJINNI_CHARGE_STEP].velocityX >>
               DJINNI_CHARGE_DRIVE_SHIFT;
-          work->particles[DJINNI_CHARGE_STEP].y +=
-              work->particles[DJINNI_CHARGE_STEP].velocityY >>
+          state->particles[DJINNI_CHARGE_STEP].y +=
+              state->particles[DJINNI_CHARGE_STEP].velocityY >>
               DJINNI_CHARGE_DRIVE_SHIFT;
-          work->particles[DJINNI_CHARGE_STEP].z +=
-              work->particles[DJINNI_CHARGE_STEP].velocityZ >>
+          state->particles[DJINNI_CHARGE_STEP].z +=
+              state->particles[DJINNI_CHARGE_STEP].velocityZ >>
               DJINNI_CHARGE_DRIVE_SHIFT;
         } else if (frame <= 72 && !(frame & 3)) {
           s32 thrown = 0;
 
           // ...and strike, every fourth frame.
-          focus[0] += work->particles[DJINNI_CHARGE_STEP].x / 2;
-          focus[1] += work->particles[DJINNI_CHARGE_STEP].y / 2;
-          focus[2] += work->particles[DJINNI_CHARGE_STEP].z / 2;
+          focus[0] += state->particles[DJINNI_CHARGE_STEP].x / 2;
+          focus[1] += state->particles[DJINNI_CHARGE_STEP].y / 2;
+          focus[2] += state->particles[DJINNI_CHARGE_STEP].z / 2;
           if (frame == 72) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-            work->shakeFrames = 8;
+            state->shakeFrames = 8;
           } else {
             Sound_PlayFar(SE_ITEM_BREAK);
-            work->shakeFrames = 2;
+            state->shakeFrames = 2;
           }
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 6);
-          for (i = 0, p = work->particles; i != DJINNI_CHARGE_STEP; i++, p++) {
+          for (i = 0, p = state->particles; i != DJINNI_CHARGE_STEP; i++, p++) {
             if (p->variant != -1) {
               continue;
             }
@@ -255,28 +255,28 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         }
       } else {
         if ((u32)frame <= 22) {
-          focus[0] += work->particles[DJINNI_CHARGE_STEP].x;
-          focus[1] += work->particles[DJINNI_CHARGE_STEP].y;
-          focus[2] += work->particles[DJINNI_CHARGE_STEP].z;
-          work->particles[DJINNI_CHARGE_STEP].x +=
-              work->particles[DJINNI_CHARGE_STEP].velocityX >>
+          focus[0] += state->particles[DJINNI_CHARGE_STEP].x;
+          focus[1] += state->particles[DJINNI_CHARGE_STEP].y;
+          focus[2] += state->particles[DJINNI_CHARGE_STEP].z;
+          state->particles[DJINNI_CHARGE_STEP].x +=
+              state->particles[DJINNI_CHARGE_STEP].velocityX >>
               DJINNI_CHARGE_DRIVE_SHIFT;
-          work->particles[DJINNI_CHARGE_STEP].y +=
-              work->particles[DJINNI_CHARGE_STEP].velocityY >>
+          state->particles[DJINNI_CHARGE_STEP].y +=
+              state->particles[DJINNI_CHARGE_STEP].velocityY >>
               DJINNI_CHARGE_DRIVE_SHIFT;
-          work->particles[DJINNI_CHARGE_STEP].z +=
-              work->particles[DJINNI_CHARGE_STEP].velocityZ >>
+          state->particles[DJINNI_CHARGE_STEP].z +=
+              state->particles[DJINNI_CHARGE_STEP].velocityZ >>
               DJINNI_CHARGE_DRIVE_SHIFT;
         }
         if (frame == 15) {
-          work->shakeFrames = 6;
+          state->shakeFrames = 6;
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           EFFECT_STRIKE_TARGET(args, 0, 6, KNOCKBACK_NUDGE);
           for (i = 0; i != DJINNI_CHARGE_STEP; i++) {
             s32 angle;
             s32 speed;
 
-            p = &work->particles[i];
+            p = &state->particles[i];
             SET_POSITION(p, target->x, target->y + toFIXED(10), target->z);
             angle = (Random16() & 0x7fff) - DEGtoANG(90);
             // DEAD: both arms alike; the ROM keeps the test and both calls.
@@ -297,20 +297,20 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       EffectPosition_ProjectPoint(focus, &screen);
       if (mode == DJINNI_CHARGE_CORE) {
         if (frame <= 73) {
-          blit[0](canvas, work->sheet + DJINNI_CHARGE_DJINNI_PICTURE,
+          blit[0](canvas, state->sheet + DJINNI_CHARGE_DJINNI_PICTURE,
                   screen.x / 2 - SMALL_DJINNI_WIDTH / 2,
                   screen.y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
                   SMALL_DJINNI_HEIGHT);
         } else if (frame <= 93) {
           blit[0](canvas,
-                  work->sheet + DJINNI_CHARGE_BURST_PICTURES +
+                  state->sheet + DJINNI_CHARGE_BURST_PICTURES +
                       ((frame - 74) / 4) * PICTURE_BYTES(GLOW_ORB),
                   screen.x / 2 - GLOW_ORB_WIDTH / 2,
                   screen.y - GLOW_ORB_HEIGHT / 2, GLOW_ORB_WIDTH,
                   GLOW_ORB_HEIGHT);
         }
       } else if (frame <= 22) {
-        blit[0](canvas, work->sheet + DJINNI_CHARGE_DJINNI_PICTURE,
+        blit[0](canvas, state->sheet + DJINNI_CHARGE_DJINNI_PICTURE,
                 screen.x / 2 - SMALL_DJINNI_WIDTH / 2,
                 screen.y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
                 SMALL_DJINNI_HEIGHT);
@@ -337,28 +337,28 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         count = DJINNI_CHARGE_FIRST_BURST;
       }
       for (i = 0; i != count; i++) {
-        s32 size = work->particles[i].variant;
+        s32 size = state->particles[i].variant;
 
         if (size < 0) {
           continue;
         }
-        EffectPosition_ProjectPoint(&work->particles[i], &debris);
+        EffectPosition_ProjectPoint(&state->particles[i], &debris);
         size >>= 3;
         size += 2;
         blit[0](canvas, motes + gBattleEffect_MotePictures[size - 1],
                 debris.x / 2 - size / 2, debris.y - size, size, size * 2);
-        Particle_AdvanceWithGravity3D(&work->particles[i], 62,
+        Particle_AdvanceWithGravity3D(&state->particles[i], 62,
                                       gDjinniCharge_DebrisGravity[i & 3]);
-        if (work->particles[i].y < 0) {
-          work->particles[i].velocityY = -work->particles[i].velocityY / 2;
+        if (state->particles[i].y < 0) {
+          state->particles[i].velocityY = -state->particles[i].velocityY / 2;
         }
-        work->particles[i].variant--;
+        state->particles[i].variant--;
       }
       if (mode == DJINNI_CHARGE_CANNON) {
         for (i = 0; i != DJINNI_CHARGE_START - DJINNI_CHARGE_FIRST_BURST; i++) {
           s32 picture;
 
-          p = &work->particles[DJINNI_CHARGE_FIRST_BURST + i];
+          p = &state->particles[DJINNI_CHARGE_FIRST_BURST + i];
 
           if (p->variant < 0) {
             continue;
@@ -366,7 +366,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           picture = 5 - p->variant / 6;
           EffectPosition_ProjectPoint(p, &debris);
           blit[0](canvas,
-                  work->sheet + DJINNI_CHARGE_BURST_PICTURES +
+                  state->sheet + DJINNI_CHARGE_BURST_PICTURES +
                       picture * PICTURE_BYTES(FLASH_BURST),
                   debris.x / 2 - FLASH_BURST_WIDTH / 2,
                   debris.y - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
@@ -417,7 +417,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         }
         texture.logWidth = 5;
         texture.logHeight = 5;
-        texture.pixels = work->sheet;
+        texture.pixels = state->sheet;
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         gProjection.centerX = BATTLE_PROJECTION_CENTER_X / 2;
         Matrix_TranslateVector(focus);
@@ -457,7 +457,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         Heap_Release(model);
       }
       BattleCamera_Shake(8, 8);
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
     }
     Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);

@@ -4,7 +4,7 @@
 /// @file
 /// The field sequence's event routines (field_sequence/event.c and items.c).
 
-#include "field/field_work.h"
+#include "field/field_state.h"
 
 /// A row of the scene's trigger table as the Psynergy and item triggers read
 /// it: its key (kind and detail), flags, condition, and its action (a message

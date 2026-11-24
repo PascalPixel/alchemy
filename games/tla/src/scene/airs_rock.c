@@ -17,14 +17,14 @@
 
 #include "system/task.h"
 #include "field/field_sequence.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "types.h"
 #include "field/actor.h"
 #include "field/event_inline.h"
 #include "scene/airs_rock.h"
 #include "system/ram_buffer.h"
 #include "flags.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field.h"
 #include "field/field_sequence_event.h"
 #include "system/frame.h"
@@ -238,7 +238,7 @@ void Actor_PlaceMovedBlock(void);
 /// Frees the cells ahead of and behind a block that Blocks_MarkCells blocked,
 /// and clears its mark.
 void Blocks_UnmarkCells(struct Actor *block) {
-  struct MapWork *map;
+  struct MapState *map;
 
   if (block->riseEnabled != 0) {
     map = Ram_HeapSlots->mapGrid;
@@ -263,7 +263,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 extern struct SceneRegion gAirsRock_FujinShieldChestRegions[];
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
     return gAirsRock_StormBrandChestRegions;
@@ -275,7 +275,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
     return gAirsRock_StormBrandChestPlacements;
@@ -307,12 +307,12 @@ void AirsRock_EnterTheRock(void) {
   MapGrid_CopyCellsTo(64, 64, 83, 35, 1, 2);
   TilesetAnim_Resume(0);
   FieldEvent_Wait(45);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_WalkTo(gMainRoutineWork.leaderActorId, 312, 680);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_WalkTo(gMainRoutineState.leaderActorId, 312, 680);
   FieldEvent_Wait(5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  FieldActor_WaitForMoveById(gMainRoutineState.leaderActorId);
   Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(AIRS_ROCK_ENTRANCE_TO_AIRS_ROCK_INSIDE_HALL);
   Event_End();
@@ -368,7 +368,7 @@ void AirsRock_MoveSecondPillar(void) {
     MapCell_SetAttributes(4, 70, 67, value);
     MapCell_SetAttributes(2, 33, 54, value);
   }
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   if (CELL_HEIGHT_STEPS(leader->y.fixed) == 26)
     MapGrid_CopyCellAttributes(70, 67, 1, 1, 33, 54);
   Event_End();
@@ -394,7 +394,7 @@ void AirsRock_MoveThirdPillar(void) {
 /// lowers himself a little way down the rock face, lets go and drops to the
 /// ledge below.
 void AirsRock_DropOffLedge(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   FIXED z = leader->z.fixed;
   u32 i;
 
@@ -409,7 +409,7 @@ void AirsRock_DropOffLedge(void) {
                              z + toFIXED(12));
   System_Wait(6);
   Event_PlaySound(SE_FLOOR_SWITCH);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH_SOUTHWEST,
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH_SOUTHWEST,
                       0);
   leader->motionFlags = 0;
   for (i = 0; i < 14; i++) {
@@ -428,7 +428,7 @@ void AirsRock_DropOffLedge(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
     return gAirsRock_StormBrandChestTriggers;
@@ -448,7 +448,7 @@ void AirsRock_StartWhirlwind(void) { Event_ResolvePendingActions(0); }
 /// little whirlwind, so that what follows is the stone's or the rock's own
 /// (AirsRock_BlowGust and the rest).
 void AirsRock_TakeOverWhirlwind(void) {
-  ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->childOption = 1;
+  ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->childOption = 1;
 }
 
 /// The turn a gust's spark makes each frame: a lap every 32 frames.
@@ -518,8 +518,8 @@ extern s16 gAirsRock_GustTargets[][4];
 /// it blows three cells on, and sets the flag counted from
 /// FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN by the cell beyond it.
 void AirsRock_BlowGust(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
+  struct FieldEffectState *effect = Ram_HeapSlots->fieldEffectState;
   struct Actor *gust, *spark;
   struct Vector3 velocity;
   struct EffectOptions glints, dust;
@@ -690,7 +690,7 @@ void AirsRock_BlowGust(void) {
   }
   Actor_Release(gust);
   Event_Wait(30);
-  FieldCamera_MoveToActorById(gMainRoutineWork.leaderActorId, 1);
+  FieldCamera_MoveToActorById(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -741,7 +741,7 @@ void AirsRock_SwirlDust(struct Actor *actor) {
 /// mud, and a great whirlwind rises and blows the mud away, baring the
 /// holds that climb it. The rock turns grey, spent.
 void AirsRock_WhirlwindClearsWall(void) {
-  struct MainRoutineWork *work;
+  struct MainRoutineState *state;
   u16 *buffer = Heap_Alloc(2 * WHIRLWIND_TILE_ROW_SIZE);
   u16 *cell;
   struct Actor *spark;
@@ -758,7 +758,7 @@ void AirsRock_WhirlwindClearsWall(void) {
           BG_CHAR_BLOCK(3) + WHIRLWIND_BOTTOM_TILE * TILE_SIZE_4BPP,
           DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4), REG_DMA3);
   Heap_Release(buffer);
-  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
+  FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
   FieldActor_SetSpritePriority(ACTOR_TWISTER_ROCK_BY_THE_WALL, 1);
   Io_Write16(BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4),
              &REG_BG0CNT);
@@ -810,7 +810,7 @@ void AirsRock_WhirlwindClearsWall(void) {
     }
     FieldEvent_Wait(1);
   }
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(330, CAMERA_KEEP, 73, 1);
@@ -883,12 +883,12 @@ void AirsRock_WhirlwindClearsWall(void) {
   REG_BLDCNT = 0;
   Window_LoadGraphics();
   DebugText_Clear();
-  work = &gMainRoutineWork;
-  WindowColor_Apply(work->windowHue, work->windowBrightness);
+  state = &gMainRoutineState;
+  WindowColor_Apply(state->windowHue, state->windowBrightness);
   REG_BG1CNT &= ~BGCNT_PRIORITY(3);
   REG_BG1CNT |= BGCNT_PRIORITY(1);
   {
-    s32 *ownerId = &work->leaderActorId;
+    s32 *ownerId = &state->leaderActorId;
 
     Actor_Get(*ownerId)->priorityFlags &= ~ACTOR_PRIORITY_IGNORES_RISES;
     Actor_Get(*ownerId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -911,7 +911,7 @@ void AirsRock_WhirlwindClearsWall(void) {
 /// moment to hold Up, Left or Right and choose which way to leap onto the
 /// ledge at its top; otherwise he drops off where it ends.
 void AirsRock_RideWhirlwind(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   struct Actor *ride = leader->watchedActor;
   struct Actor *statue, *camera;
   s32 rise;
@@ -1040,12 +1040,12 @@ void AirsRock_RideWhirlwind(void) {
     OverlayObject_WaitUntilIdle(leader);
     FieldActor_WaitForMove(camera);
   }
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_GetById(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_AUTOMATIC;
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_GetById(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   Event_ClearFlag(FLAG_RIDING_WHIRLWIND);
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   wait(10);
   Event_End();
@@ -1065,8 +1065,8 @@ extern u32 gAirsRock_WhirlwindFadesScript[];
 /// A statue's whirlwind's update: it travels its way, picks up a leader it
 /// touches and fades on a wall or another statue.
 void AirsRock_MoveWhirlwind(struct Actor *shot) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   FIXED speed = toFIXED(3) / 2;
   s32 cue = SE_SAND_EMERGE;
   struct Actor *other, *launcher;
@@ -1075,9 +1075,9 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
   s32 *shotPosition;
   struct Actor **actors;
 
-  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
-      work->item != 0 ||
-      gMainRoutineWork.movementMode == LEADER_MOVEMENT_SAND) {
+  if (state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 ||
+      state->item != 0 ||
+      gMainRoutineState.movementMode == LEADER_MOVEMENT_SAND) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
@@ -1102,7 +1102,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
     i = 0;
     leaderPosition = &leader->x.fixed;
     shotPosition = &shot->x.fixed;
-    if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS) {
+    if (gMainRoutineState.movementMode == LEADER_MOVEMENT_KEYS) {
       if (Position_DistanceAbove(leaderPosition, shotPosition) <=
               WHIRLWIND_REACH_ON_WALL &&
           FIELD_CELL(leader->z.fixed) == FIELD_CELL(shot->z.fixed))
@@ -1119,13 +1119,13 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
       leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
-      work->raisedTrigger = RAISED_RIDE_WHIRLWIND;
-      gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+      state->raisedTrigger = RAISED_RIDE_WHIRLWIND;
+      gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
       shot->riseCounter = 1;
       shot->riseEnabled = 1;
     }
   }
-  actors = &work->actors[ACTOR_FIRST_PLACED];
+  actors = &state->actors[ACTOR_FIRST_PLACED];
   for (i = ACTOR_FIRST_PLACED; i != FIELD_TREASURE_ACTOR; i++) {
     other = *actors++;
     if (other->script != 0) {
@@ -1154,13 +1154,13 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
 /// (AirsRock_MoveWhirlwind) 8 pixels ahead of it with a puff of dust, with a
 /// gust's sound unless the leader is riding one.
 void AirsRock_StatueBreathesWhirlwind(struct Actor *actor) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *shot;
   struct Vector3 position;
   struct EffectOptions options;
 
-  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
-      work->item != 0)
+  if (state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 ||
+      state->item != 0)
     return;
   if (actor->timer == WHIRLWIND_BREATH_FRAMES) {
     if (!Event_GetFlag(FLAG_RIDING_WHIRLWIND))
@@ -1198,17 +1198,17 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *actor) {
 /// pillars, or casts Move on one; the game takes it off the cells it was
 /// closing so that it can slide.
 void AirsRock_LiftPillar(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Actor_LiftTargetBlock(gAirsRock_EntrancePillars);
-  Blocks_UnmarkCells(work->movedBlock);
+  Blocks_UnmarkCells(state->movedBlock);
 }
 
 /// Once Felix has pushed or moved one of the cliff's pillars: if it now
 /// stands over a gap it drops into it with a thump, closing the gap so the
 /// party can walk over it, and it stays there for good.
 void AirsRock_PlacePillar(void) {
-  struct Actor *actor = gFieldWork->movedBlock;
+  struct Actor *actor = gFieldState->movedBlock;
   s32 x, z;
 
   Event_Start();
@@ -1379,7 +1379,7 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
   PaletteFade_Interpolate(60);
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(536, CAMERA_KEEP, 216, 1);
@@ -1396,7 +1396,7 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   PaletteFade_ApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
   PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_Interpolate(1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->facing = FACING_SOUTH;
+  Actor_Get(gMainRoutineState.leaderActorId)->facing = FACING_SOUTH;
   System_Wait(1);
   PaletteFade_ApplySource(RGB_WHITE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
@@ -1450,8 +1450,8 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   System_Wait(70);
   Window_LoadGraphics();
   DebugText_Clear();
-  FieldWindowColor_Apply(gMainRoutineWork.windowHue,
-                         gMainRoutineWork.windowBrightness);
+  FieldWindowColor_Apply(gMainRoutineState.windowHue,
+                         gMainRoutineState.windowBrightness);
   REG_BLDCNT = 0;
   REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;
@@ -1469,7 +1469,7 @@ void AirsRock_WhirlwindOpensTheTop(void) {
 /// and half that while its lines ripple.
 void AirsRock_DriftFog(void) {
   struct MapLayer *layer =
-      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
+      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 *line = gAirsRock_WaveLines;
   s32 i;
   volatile u16 *channel;
@@ -1502,7 +1502,7 @@ void AirsRock_DriftFog(void) {
 /// thins as in AirsRock_DriftFog.
 void AirsRock_LiftFog(void) {
   struct MapLayer *layer =
-      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
+      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 *line = gAirsRock_WaveLines;
   s32 i;
   FIXED wave;
@@ -1556,7 +1556,8 @@ void AirsRock_LiftFog(void) {
 /// spent.
 void AirsRock_WhirlwindClearsFog(void) {
   u16 *buffer = Heap_Alloc(2 * WHIRLWIND_TILE_ROW_SIZE);
-  struct MapLayer *fog = &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
+  struct MapLayer *fog =
+      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
   u16 *cell;
   struct Actor *spark;
   s32 i;
@@ -1622,7 +1623,7 @@ void AirsRock_WhirlwindClearsFog(void) {
     }
     FieldEvent_Wait(1);
   }
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(152, CAMERA_KEEP, 144, 1);
@@ -1681,17 +1682,17 @@ void AirsRock_WhirlwindClearsFog(void) {
   REG_BLDCNT = 0;
   Window_LoadGraphics();
   DebugText_Clear();
-  FieldWindowColor_Apply(gMainRoutineWork.windowHue,
-                         gMainRoutineWork.windowBrightness);
+  FieldWindowColor_Apply(gMainRoutineState.windowHue,
+                         gMainRoutineState.windowBrightness);
   REG_BG1CNT &= ~BGCNT_PRIORITY(3);
   REG_BG1CNT |= BGCNT_PRIORITY(1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags &=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags &=
       ~ACTOR_PRIORITY_IGNORES_RISES;
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->priorityFlags |=
       ACTOR_PRIORITY_AUTOMATIC;
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_SetFlag(FLAG_AIRS_ROCK_FOG_CLEARED);
   Event_End();
@@ -1735,7 +1736,7 @@ void AirsRock_SetLedgeCellsByLevel(void) {
 #include "shared/leader_lift.h"
 
 /// The leader's actor.
-#define LEADER() Actor_GetById(gMainRoutineWork.leaderActorId)
+#define LEADER() Actor_GetById(gMainRoutineState.leaderActorId)
 
 /// The fog's picture repeats every FOG_WRAP map cells (64 pixels) across and
 /// down.
@@ -1757,13 +1758,14 @@ s32 Scene_Initialize(void) {
   struct Actor *leader;
   volatile struct DmaRegisters *dma;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gMainRoutineWork.retreatScene = SCENE_AIRS_ROCK_STORM_BRAND_CHEST;
-  gMainRoutineWork.retreatEntrance = AIRS_ROCK_STORM_BRAND_CHEST_FROM_WORLD_MAP;
+  gMainRoutineState.retreatScene = SCENE_AIRS_ROCK_STORM_BRAND_CHEST;
+  gMainRoutineState.retreatEntrance =
+      AIRS_ROCK_STORM_BRAND_CHEST_FROM_WORLD_MAP;
   LEADER()->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_STORM_BRAND_CHEST) {
-    switch (gMainRoutineWork.entrance) {
+  if (gMainRoutineState.next == SCENE_AIRS_ROCK_STORM_BRAND_CHEST) {
+    switch (gMainRoutineState.entrance) {
     case AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_WEST:
     case AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_EAST_A:
     case AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_EAST_B:
@@ -1818,8 +1820,8 @@ s32 Scene_Initialize(void) {
                            SPRITE_COLOR_GREY);
     }
   }
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_ENTRANCE) {
-    switch (gMainRoutineWork.entrance) {
+  if (gMainRoutineState.next == SCENE_AIRS_ROCK_ENTRANCE) {
+    switch (gMainRoutineState.entrance) {
     case AIRS_ROCK_ENTRANCE_FROM_AIRS_ROCK_STORM_BRAND_CHEST_EAST_B:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         LEADER()->z.fixed += toFIXED(16);
@@ -1887,8 +1889,8 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_FUJIN_SHIELD_CHEST) {
-    switch (gMainRoutineWork.entrance) {
+  if (gMainRoutineState.next == SCENE_AIRS_ROCK_FUJIN_SHIELD_CHEST) {
+    switch (gMainRoutineState.entrance) {
     case AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_ENTRANCE:
     case ENTRANCE_LEDGES_FROM_LOWER_PATH:
     case ENTRANCE_LEDGES_FROM_UPPER_PATH:
@@ -1926,13 +1928,13 @@ s32 Scene_Initialize(void) {
       AirsRock_MoveSecondPillar();
       /* FAKEMATCH(dead): the third layer's offsets and scales stored through
        * its taken address; as ...->layers[2].offsetX and the rest. */
-      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->offsetX =
+      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->offsetX =
           toFIXED(1408);
-      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->offsetY =
+      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->offsetY =
           toFIXED(576);
-      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->scaleX =
+      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->scaleX =
           FIXED_ONE / 4;
-      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->scaleY =
+      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->scaleY =
           FIXED_ONE / 4;
       MapGrid_CenterOnFollowedPoint();
       System_Wait(1);
@@ -1944,7 +1946,7 @@ s32 Scene_Initialize(void) {
       Leader_Lift(toFIXED(72));
     case ENTRANCE_LOWER_PATH:
     case ENTRANCE_UPPER_PATH:
-      Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
+      Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
       break;
     case ENTRANCE_INTO_THE_FOG_WEST:
     case ENTRANCE_INTO_THE_FOG_EAST:
@@ -1970,7 +1972,7 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED))
         Actor_SetPosition(ACTOR_THIRD_PILLAR, 184, 280);
       if (!GameFlag_Get(FLAG_AIRS_ROCK_FOG_CLEARED)) {
-        gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+        gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         REG_BLDALPHA = BLEND_ALPHA(FOG_WEIGHT, BLEND_WEIGHT_MAX);
         REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         dma = (volatile struct DmaRegisters *)REG_DMA0;
@@ -1979,13 +1981,13 @@ s32 Scene_Initialize(void) {
         Task_AddFrame(AirsRock_DriftFog, TASK_PASS_VBLANK);
         /* FAKEMATCH(dead): the third layer's speeds and masks stored through
          * its taken address; as ...->layers[2].speedX and the rest. */
-        (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->speedX =
+        (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->speedX =
             toFIXED(0.25);
-        (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->speedY =
+        (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->speedY =
             -toFIXED(0.5);
-        (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->maskX =
+        (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->maskX =
             FOG_WRAP - 1;
-        (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->maskY =
+        (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->maskY =
             (FOG_WRAP - 1) * MAPGRID_SIZE;
       } else {
         REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
@@ -2005,13 +2007,13 @@ s32 Scene_Initialize(void) {
     case AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_INSIDE_VIAL_CHEST:
       /* FAKEMATCH(dead): the third layer's offsets and scales stored through
        * its taken address; as ...->layers[2].offsetX and the rest. */
-      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->offsetX =
+      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->offsetX =
           toFIXED(1152);
-      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->offsetY =
+      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->offsetY =
           toFIXED(800);
-      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->scaleX =
+      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->scaleX =
           FIXED_ONE * 13 / 16;
-      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->scaleY =
+      (&((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2])->scaleY =
           FIXED_ONE * 13 / 16;
       if (!GameFlag_Get(FLAG_AIRS_ROCK_TOP_OPENED)) {
         MapGrid_CopyCellsTo(29, 9, 62, 2, 9, 9);
@@ -2032,7 +2034,7 @@ s32 Scene_Initialize(void) {
         leader->layer = 0;
         leader->y.fixed = leader->groundHeight = Map_GetTerrainHeight(
             0, leader->x.fixed, leader->z.fixed - leader->y.fixed);
-        EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
+        EventCamera_FollowActor(gMainRoutineState.leaderActorId, 0);
       }
       break;
     case ENTRANCE_OPEN_THE_TOP:
@@ -2052,7 +2054,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_FUJIN_SHIELD_CHEST) {
+  if (gMainRoutineState.next == SCENE_AIRS_ROCK_FUJIN_SHIELD_CHEST) {
     AirsRock_SetLedgeCellsByLevel();
   }
   return 0;

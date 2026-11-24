@@ -4,15 +4,15 @@ Field_TaopoSwampEntrance:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_TaopoSwampEntrance, .LField_TaopoSwampEntrance_CELL_PICTURES
+	map_block Field_TaopoSwampEntrance, .LField_TaopoSwampEntrance_CELL_TILES
 	map_block Field_TaopoSwampEntrance, .LField_TaopoSwampEntrance_SHAPES
 	map_block Field_TaopoSwampEntrance, .LField_TaopoSwampEntrance_GRID
 	map_block Field_TaopoSwampEntrance, .LField_TaopoSwampEntrance_SHAPE_GRID
 	map_block Field_TaopoSwampEntrance, .LField_TaopoSwampEntrance_ANIMATION
 	map_block Field_TaopoSwampEntrance, .LField_TaopoSwampEntrance_BLEND
 	map_block Field_TaopoSwampEntrance, .LField_TaopoSwampEntrance_SCENE
-.LField_TaopoSwampEntrance_CELL_PICTURES:
-	.incbin "games/tla/src/map/taopo_swamp_entrance/cell_pictures.delta2.lz"
+.LField_TaopoSwampEntrance_CELL_TILES:
+	.incbin "games/tla/src/map/taopo_swamp_entrance/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_TaopoSwampEntrance_SHAPES:
 	.incbin "games/tla/src/map/taopo_swamp_entrance/shapes.table.lz"

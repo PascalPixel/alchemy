@@ -142,7 +142,7 @@ lists the orders.
 ## The ground
 
 The ground is a [map](glossary.md#map): a grid of 16-pixel
-[cells](glossary.md#cell). A cell says which picture is drawn there, how
+[cells](glossary.md#cell). A cell says which cell tiles are drawn there, how
 high the ground is, a few flags, and a number for what standing there
 does, its [cell behavior](glossary.md#cell-behavior).
 

@@ -38,38 +38,38 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
 /// one step toward its target, packs it into RGB555 and queues it for the BG
 /// and OBJ palettes.
 void PaletteFade_Update(void) {
-  struct PaletteFade *work = Ram_HeapSlots->paletteFade;
-  u16 *channelDelta = work->delta;
+  struct PaletteFade *state = Ram_HeapSlots->paletteFade;
+  u16 *channelDelta = state->delta;
   s32 i;
 
   if (GameFlag_Get(FLAG_PALETTE_BLEND_HELD) != 0) {
     return;
   }
-  if (work->duration == 0) {
+  if (state->duration == 0) {
     return;
   }
   // On the last frame the target itself is copied, so rounding in the steps
   // never leaves the colours short.
-  if (++work->step < work->duration) {
-    u16 *currentChannel = work->current;
+  if (++state->step < state->duration) {
+    u16 *currentChannel = state->current;
     for (i = 0; i < FADE_CHANNELS; i++) {
       *currentChannel++ += *channelDelta++;
     }
   } else {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy(work->current, work->target, sizeof(work->current));
-    work->duration = 0;
+    copy(state->current, state->target, sizeof(state->current));
+    state->duration = 0;
   }
 
   // Packs the channels into the page not shown, then shows it.
   {
-    u16 *packed = work->packed[1 ^ work->page];
+    u16 *packed = state->packed[1 ^ state->page];
     s32 blueMask = BLUE_BITS;
     u16 *current;
 
     i = FADE_COLORS;
-    current = work->current;
+    current = state->current;
     for (; i != 0; i--) {
       *packed++ = (current[0] & blueMask) |
                   (((s16)current[1] >> (RGB_BLUE_SHIFT - RGB_GREEN_SHIFT)) &
@@ -79,9 +79,9 @@ void PaletteFade_Update(void) {
     }
   }
 
-  work->page ^= 1;
+  state->page ^= 1;
   {
-    u16 *packed = work->packed[work->page];
+    u16 *packed = state->packed[state->page];
 
     IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)packed,
                         DMA_COPY_WORDS(FADE_HALF_COLORS / 2));
@@ -412,15 +412,15 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
 /// Sets up the palette fade (HEAP_SLOT_PALETTE_FADE) from the BG and OBJ
 /// palettes and starts updating the palettes from it each frame.
 void PaletteFade_Initialize(void) {
-  struct PaletteFade *work;
+  struct PaletteFade *state;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*work));
-  Dma_Fill32(0, work, sizeof(*work));
-  Dma_Set((void *)BG_PLTT, &work->palette[0],
+  state = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*state));
+  Dma_Fill32(0, state, sizeof(*state));
+  Dma_Set((void *)BG_PLTT, &state->palette[0],
           DMA_COPY_WORDS(FADE_HALF_COLORS / 2), REG_DMA3);
-  Dma_Set((void *)OBJ_PLTT, &work->palette[FADE_HALF_COLORS],
+  Dma_Set((void *)OBJ_PLTT, &state->palette[FADE_HALF_COLORS],
           DMA_COPY_WORDS(FADE_HALF_COLORS / 2), REG_DMA3);
-  PaletteFade_Build(PALETTE_TINT_NONE, work->palette, work->target,
+  PaletteFade_Build(PALETTE_TINT_NONE, state->palette, state->target,
                     PALETTES_ALL);
   Task_Add(PaletteFade_Update, TASK_PASS_FRAME + 15);
 }
@@ -434,43 +434,43 @@ void PaletteFade_Release(void) {
 /// Sets the colours the palette fade moves toward (see PaletteFade_Build);
 /// does nothing without a palette fade.
 void PaletteFade_SetTarget(s32 mode, s32 half) {
-  struct PaletteFade *work = Ram_HeapSlots->paletteFade;
+  struct PaletteFade *state = Ram_HeapSlots->paletteFade;
 
-  if (work != NULL) {
-    PaletteFade_Build(mode, work->palette, work->target, half);
+  if (state != NULL) {
+    PaletteFade_Build(mode, state->palette, state->target, half);
   }
 }
 
 /// Sets the colours the palette fade shows now (see PaletteFade_Build).
 void PaletteFade_SetSource(s32 mode, s32 half) {
-  struct PaletteFade *work = Ram_HeapSlots->paletteFade;
+  struct PaletteFade *state = Ram_HeapSlots->paletteFade;
 
-  if (work != NULL) {
-    PaletteFade_Build(mode, work->palette, work->current, half);
+  if (state != NULL) {
+    PaletteFade_Build(mode, state->palette, state->current, half);
   }
 }
 
 /// Sets the backdrop colour (BG colour 0) of the palette fade's copy of the
 /// palettes, from which it builds its colours.
 void PaletteFade_SetBackdrop(u32 color) {
-  struct PaletteFade *work = Ram_HeapSlots->paletteFade;
+  struct PaletteFade *state = Ram_HeapSlots->paletteFade;
 
-  if (work != NULL) {
-    work->palette[0] = color;
+  if (state != NULL) {
+    state->palette[0] = color;
   }
 }
 
 /// Packs the target colours, three channels each, back into the palette copy as
 /// RGB555.
 void PaletteFade_PackTarget(void) {
-  struct PaletteFade *work = Ram_HeapSlots->paletteFade;
-  u16 *packed = work->palette;
+  struct PaletteFade *state = Ram_HeapSlots->paletteFade;
+  u16 *packed = state->palette;
   s32 blueMask = BLUE_BITS;
   u16 *current;
   s32 i;
 
   i = FADE_COLORS;
-  current = work->target;
+  current = state->target;
   for (; i != 0; i--) {
     *packed++ =
         (current[0] & blueMask) |
@@ -478,19 +478,19 @@ void PaletteFade_PackTarget(void) {
         ((current[2] >> RGB_BLUE_SHIFT) & RED_BITS);
     current += 3;
   }
-  // FAKEMATCH(dead): a decrement of work, which nothing reads after it.
-  work--;
+  // FAKEMATCH(dead): a decrement of state, which nothing reads after it.
+  state--;
 }
 
 /// Starts the fade from the shown colours to the target colours, over frames
 /// frames.
 void PaletteFade_StartInterpolation(s32 frames) {
-  struct PaletteFade *work = Ram_HeapSlots->paletteFade;
+  struct PaletteFade *state = Ram_HeapSlots->paletteFade;
 
-  if (work != NULL) {
-    work->duration = frames;
-    work->step = 0;
-    PaletteFade_CalculateSteps(work->current, work->target, work->delta,
+  if (state != NULL) {
+    state->duration = frames;
+    state->step = 0;
+    PaletteFade_CalculateSteps(state->current, state->target, state->delta,
                                frames);
   }
 }
@@ -498,14 +498,14 @@ void PaletteFade_StartInterpolation(s32 frames) {
 /// Takes colors as the BG colours of the palette copy and makes them,
 /// unchanged, the BG colours' target.
 void PaletteFade_LoadPalette(const u16 *colors) {
-  struct PaletteFade *work = Ram_HeapSlots->paletteFade;
+  struct PaletteFade *state = Ram_HeapSlots->paletteFade;
 
-  if (work != NULL) {
+  if (state != NULL) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    copy(work->palette, colors, FADE_HALF_COLORS * sizeof(u16));
-    PaletteFade_Build(PALETTE_TINT_NONE, work->palette, work->target,
+    copy(state->palette, colors, FADE_HALF_COLORS * sizeof(u16));
+    PaletteFade_Build(PALETTE_TINT_NONE, state->palette, state->target,
                       PALETTES_BG);
   }
 }

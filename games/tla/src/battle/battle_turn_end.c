@@ -456,7 +456,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
 /// gives each unit its regeneration and counts down its stat changes and
 /// statuses, showing each that ends.
 void Battle_ProcessTurnEnd(void) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 side;
   s32 sideCount;
   s32 count;
@@ -465,7 +465,7 @@ void Battle_ProcessTurnEnd(void) {
   struct DjinnRecoveryEntry *timedEntry;
   struct DjinnRecoveryEntry *expiredEntry;
 
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   sideCount = (battle->isLink != 0) + 1;
   for (side = 0; side < sideCount; side++) {
     list = &Djinn_GetRecoveryTableFar(side)->list;
@@ -526,7 +526,7 @@ void Battle_ProcessTurnEnd(void) {
     }
   }
   BattleBackground_SetMode(BATTLE_BACKGROUND_ZOOMED,
-                           Ram_HeapSlots->battleWork->background, 0);
+                           Ram_HeapSlots->battleState->background, 0);
   {
     s32 *groupList;
     struct BattleSideOrder order = gBattleParty_TurnEndSideOrder;
@@ -766,7 +766,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
   battleContinues = 0;
   unit = Unit_Get(unitId);
   if (unitId <= ALLY_MAX ||
-      ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink != 0) {
+      ((struct BattleState *)Ram_HeapSlots->battleState)->isLink != 0) {
     list = &Djinn_GetRecoveryTableFar(unitId > ALLY_MAX)->list;
     for (entryIndex = 0; entryIndex < list->count; entryIndex++) {
       if (list->entries[entryIndex].unitId == unitId &&
@@ -788,7 +788,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     pending =
         &Djinn_GetRecoveryTableFar(
              unitId > ALLY_MAX &&
-             ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink != 0)
+             ((struct BattleState *)Ram_HeapSlots->battleState)->isLink != 0)
              ->list;
     for (i = 0; i < ELEMENT_COUNT; i++) {
       counts[i] = 0;
@@ -893,7 +893,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     poison = &unit->poison;
     if (*poison != 0) {
       s32 damage = unit->hpMax * *poison / 10;
-      struct BattleWork *battle = Ram_HeapSlots->battleWork;
+      struct BattleState *battle = Ram_HeapSlots->battleState;
 
       BattlePlayback_Push(PLAYBACK_HIT, unitId);
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);

@@ -5,8 +5,8 @@ gSaveBuffer:
 	.global gGameFlagBytes
 gGameFlagBytes:
 	.space 0x00000200
-	.global gMainRoutineWork
-gMainRoutineWork:
+	.global gMainRoutineState
+gMainRoutineState:
 	.space 0x0000000c
 	.global gPartyDjinnRecovery
 gPartyDjinnRecovery:
@@ -93,8 +93,8 @@ gSerialTransfer:
 	.global gMixerPcmBuffer
 gMixerPcmBuffer:
 	.space 0x00000ce8
-	.global gModelTransformWork
-gModelTransformWork:
+	.global gModelTransformState
+gModelTransformState:
 	.space 0x00000bd8
 	.global gTitleUpdateOptionEnabled
 gTitleUpdateOptionEnabled:
@@ -102,8 +102,8 @@ gTitleUpdateOptionEnabled:
 	.global gSerialReceivedSize
 gSerialReceivedSize:
 	.space 0x0000000c
-	.global gSerialWork
-gSerialWork:
+	.global gSerialState
+gSerialState:
 	.space 0x00000004
 	.space 0x0000015c
 	.global gLinkExchangeState
@@ -474,8 +474,8 @@ gTitleIntro_LighthouseTilesTail:
 	.global gDecodeBuffer
 gDecodeBuffer:
 	.space 0x00004000
-	.global gCellPictures
-gCellPictures:
+	.global gCellTiles
+gCellTiles:
 	.space 0x00000004
 	.space 0x000001fe
 	.space 0x00003dfe
@@ -488,8 +488,8 @@ gTitleIntro_LogoTileBuffer:
 	.global gMapGridAnimTiles
 gMapGridAnimTiles:
 	.space 0x00002000
-	.global gWorldMapWork
-gWorldMapWork:
+	.global gWorldMapState
+gWorldMapState:
 	.space 0x00000004
 	.space 0x0000061c
 	.global gMapScreen_CursorMarker

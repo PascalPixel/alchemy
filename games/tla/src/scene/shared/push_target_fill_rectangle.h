@@ -3,7 +3,7 @@
 /// behaviors are kept in the map's spare area for when it moves. Returns 1, or
 /// 0 for a sprite that cannot be pushed.
 s32 PushTarget_FillRectangle(s32 id) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_Get(id);
   s16 shape = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   s16 i = 0;

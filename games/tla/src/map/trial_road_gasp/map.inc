@@ -4,15 +4,15 @@ Field_TrialRoadGasp:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_TrialRoadGasp, .LField_TrialRoadGasp_CELL_PICTURES
+	map_block Field_TrialRoadGasp, .LField_TrialRoadGasp_CELL_TILES
 	map_block Field_TrialRoadGasp, .LField_TrialRoadGasp_SHAPES
 	map_block Field_TrialRoadGasp, .LField_TrialRoadGasp_GRID
 	map_block Field_TrialRoadGasp, .LField_TrialRoadGasp_SHAPE_GRID
 	map_block Field_TrialRoadGasp, .LField_TrialRoadGasp_ANIMATION
 	map_block Field_TrialRoadGasp, .LField_TrialRoadGasp_BLEND
 	map_block Field_TrialRoadGasp, .LField_TrialRoadGasp_SCENE
-.LField_TrialRoadGasp_CELL_PICTURES:
-	.incbin "games/tla/src/map/trial_road_gasp/cell_pictures.delta0.lz"
+.LField_TrialRoadGasp_CELL_TILES:
+	.incbin "games/tla/src/map/trial_road_gasp/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_TrialRoadGasp_SHAPES:
 	.incbin "games/tla/src/map/trial_road_gasp/shapes.table.lz"

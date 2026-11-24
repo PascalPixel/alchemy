@@ -20,7 +20,7 @@
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/scene_tables.h"
 #include "scene_ids.h"
 #include "graphics/palette_buffers.h"
@@ -155,7 +155,7 @@ extern LATE_DATA struct ActorPlacement
 extern struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance)
+  if (gMainRoutineState.next == (s32)&SceneId_AnemosInnerSanctumEntrance)
     return gAnemosInnerSanctumEntrance_Placements;
   return gAnemosInnerSanctumEntrance_EmptyPlacements;
 }
@@ -175,7 +175,7 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
   // "I am the shadow, the keeper of light. If you want the sun's power, show
   // me your own."
   FieldMessage_ShowCentered((s32)&MsgIAmTheShadow, 0, 6);
-  gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_DULLAHAN_BEATEN);
+  gMainRoutineState.pendingDjinni = IF_FLAG_SET(FLAG_DULLAHAN_BEATEN);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_HIDDEN_BOSSES,
                                         HIDDEN_BOSS_ANEMOS);
@@ -276,10 +276,10 @@ void AnemosInnerSanctumEntrance_MoveBlock(s32 unused, s32 block) {
 /// as platforms, or on the step at cell (12, 25) and the landing at cell
 /// (12, 9) north of the gap, each 16 pixels down.
 void AnemosInnerSanctumEntrance_StepWhilePushing(s32 behavior) {
-  struct MainRoutineWork *party;
+  struct MainRoutineState *party;
   s32 held = Leader_CanPushObjectAhead();
 
-  party = &gMainRoutineWork;
+  party = &gMainRoutineState;
   if (held) {
     if (Field_FindNearbyTalkTarget(party->leaderActorId) != -1) {
       Leader_PushObjectAhead();
@@ -298,7 +298,7 @@ void AnemosInnerSanctumEntrance_StepWhilePushing(s32 behavior) {
 /// (AnemosInnerSanctumEntrance_ShadowChallenges). Cast again on the far side,
 /// it floats them back south.
 void AnemosInnerSanctumEntrance_OpenTheWay(void) {
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 shift = toFIXED(304);
   s32 i;
 
@@ -310,14 +310,14 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
   if (MapGrid_GetCellBehaviorAt(actor->layer, actor->x.fixed, actor->z.fixed) !=
       CELL_BEHAVIOR_ANEMOS_INNER_SANCTUM_ENTRANCE_HOVER)
     return;
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_STAND);
 #if TLA_PATCH_1
   FieldActor_SetMoveTargetFX(
       actor, (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8), actor->y.fixed,
       (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
 #endif
   {
-    s32 id = gMainRoutineWork.leaderActorId;
+    s32 id = gMainRoutineState.leaderActorId;
 
     if (shift > 0)
       Actor_FaceDirectionById(id, FACING_NORTH, 0);
@@ -376,7 +376,7 @@ extern struct Trigger gAnemosInnerSanctumEntrance_EmptyTriggers[];
 extern struct Trigger gAnemosInnerSanctumEntrance_Triggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance)
+  if (gMainRoutineState.next == (s32)&SceneId_AnemosInnerSanctumEntrance)
     return gAnemosInnerSanctumEntrance_Triggers;
   return gAnemosInnerSanctumEntrance_EmptyTriggers;
 }
@@ -389,9 +389,9 @@ static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 /// placed this visit leaves them placed and flickering. Back from the
 /// Dullahan's battle, the light rises.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance) {
+  if (gMainRoutineState.next == (s32)&SceneId_AnemosInnerSanctumEntrance) {
     AnemosInnerSanctumEntrance_StartLightSprites();
     AnemosInnerSanctumEntrance_SetLightPriority(2);
     // LightSprites_Add, defined below, is called with no prototype in scope.
@@ -401,7 +401,7 @@ s32 Scene_Initialize(void) {
     LightSprites_Add(ACTOR_SYMBOL_BLOCK_D, 3);
     LightSprites_Add(ACTOR_SYMBOL_BLOCK_E, LIGHT_SPRITE_MIRRORED | 0);
     LightSprites_Add(ACTOR_SYMBOL_BLOCK_F, LIGHT_SPRITE_MIRRORED | 1);
-    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+    Actor_GetById(gMainRoutineState.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     Actor_GetById(ACTOR_SYMBOL_BLOCK_A)->priorityFlags |=
         ACTOR_PRIORITY_WALKS_ON_PLATFORMS | ACTOR_PRIORITY_PLATFORM;
@@ -434,7 +434,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Draws each listed actor's glow: a small 16-pixel glow on its frame, or, in
 /// the large mode, a 32 by 64 one.
 void LightSprites_Draw(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX, viewZ, picture, tile, viewY;
   struct LightOam *oam;

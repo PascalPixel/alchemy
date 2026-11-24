@@ -233,15 +233,15 @@ void Actor_ShowItemIconById(s32 id, s32 item) {
 }
 
 /// The event command "set message": the number of the event's next message,
-/// written to work->message.
-void Event_SetMessageId(s32 message) { gFieldWork->message = message; }
+/// written to the field state's message.
+void Event_SetMessageId(s32 message) { gFieldState->message = message; }
 
 /// Returns the sprite (the first animation's id) of the actor whose id is
 /// key's under SPEAKER_ACTOR_MASK, or -1 if there is no such animated actor.
 s32 Actor_GetSpriteById(s32 key) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 result = -1;
-  struct Actor *actor = work->actors[key & SPEAKER_ACTOR_MASK];
+  struct Actor *actor = state->actors[key & SPEAKER_ACTOR_MASK];
 
   if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE)
     result = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
@@ -251,13 +251,13 @@ s32 Actor_GetSpriteById(s32 key) {
 /// Returns the first of the scene's placed actors (from ACTOR_FIRST_PLACED)
 /// showing spriteId, or -1.
 s32 Actor_FindBySprite(s32 spriteId) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 result = -1;
   s32 index;
   struct Actor *actor;
 
   for (index = ACTOR_FIRST_PLACED; index < FIELD_ACTOR_COUNT; index++) {
-    actor = work->actors[index];
+    actor = state->actors[index];
     if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
         ((struct Sprite *)actor->sprite)->entries[0]->animationId == spriteId) {
       result = index;

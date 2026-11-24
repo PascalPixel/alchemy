@@ -70,7 +70,7 @@ void Garoh_ScatterDustRing(s32 id);
 #include "sound/sound.h"
 #include "system/system.h"
 #include "field/scene_tables.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "shared/tables.h"
 #include "system/field_effect.h"
 #include "field/actor.h"
@@ -227,7 +227,7 @@ enum GarohCellBehavior {
 /// By day the path up to the village's second layer takes the first's scale and
 /// wrap.
 void Garoh_MatchSecondLayer(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *to = &map->layers[1];
   struct MapLayer *from = &map->layers[0];
 
@@ -245,10 +245,10 @@ void Garoh_WavePathLayer(void) {
   // jumps to.
   s32 (*sine)(s32) = *(s32 (**)(s32))(((u32)Trig_Sin & ~3) + 4);
   struct MapLayer *layer =
-      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
+      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[1];
   u16 *line = gGaroh_WaveLines;
 
-  if (gFieldWork->revealActive == 0) {
+  if (gFieldState->revealActive == 0) {
     u32 frame;
     s32 z;
     s32 i;
@@ -343,7 +343,7 @@ extern struct MapGridCellAnimation gGaroh_Doors[];
 /// The people of the scene being entered: in the village, the hooded
 /// villagers by night or their faces once Maha has shared the secret.
 const void *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_GAROH) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
@@ -370,7 +370,7 @@ const void *Scene_GetActorPlacements(void) {
 /// The door's cell behaviour is the exit it leaves by, which also picks its
 /// opening frames from `gGaroh_Doors`.
 void Garoh_OpenDoorAndEnter(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 index;
   s32 i;
 
@@ -384,15 +384,15 @@ void Garoh_OpenDoorAndEnter(void) {
         actor->motionFlags = 0;
     }
   }
-  index = work->stepTrigger;
+  index = state->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
   MapGrid_AnimateCells(gGaroh_Doors[index].steps, gGaroh_Doors[index].x,
                        gGaroh_Doors[index].y);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
   {
-    s32 owner = gMainRoutineWork.leaderActorId;
+    s32 owner = gMainRoutineState.leaderActorId;
 
     // The sanctum's tall door is entered straight on, the others from the
     // centre of their cell.
@@ -402,7 +402,7 @@ void Garoh_OpenDoorAndEnter(void) {
       Actor_CenterAndWalk(owner, 2, -4);
   }
   FieldEvent_Wait(6);
-  FieldEvent_SetExitRequest(work->stepTrigger);
+  FieldEvent_SetExitRequest(state->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -624,10 +624,10 @@ extern s32 gGaroh_HowlFrames;
 /// (22, 11), leads down into the werewolves' cave, and the passage behind the
 /// round grey rock in the cave leads on.
 void Garoh_EnterOpening(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
 
   Event_PlaySound(SE_MAP_EXIT);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Flag_Set(FLAG_ARRIVAL_STAIRS_DOWN);
   FieldEvent_SetExitRequest(event->stepTrigger);
@@ -649,7 +649,7 @@ void Garoh_MeetInTheCave(void) {
 /// The triggers of the scene being entered: in the village, the night's until
 /// Maha has shared the secret and the day's after.
 const void *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_GAROH) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
@@ -686,40 +686,40 @@ void Garoh_InitializePath(void);
 /// or the way up, which also makes the sanctum the place a defeat returns the
 /// party to once they have reached the village.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  if (gMainRoutineWork.next == SCENE_GAROH_TUNNELS) {
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  } else if (gMainRoutineWork.next == SCENE_GAROH_WEREWOLF_CAVE) {
+  if (gMainRoutineState.next == SCENE_GAROH_TUNNELS) {
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  } else if (gMainRoutineState.next == SCENE_GAROH_WEREWOLF_CAVE) {
     FieldActor_SetSpritePriority(ACTOR_FIRE_A, 1);
     FieldActor_SetSpritePriority(ACTOR_FIRE_B, 1);
     if (Event_GetFlag(FLAG_GAROH_HEARD_MAHA)) {
       Actor_SetPositionAndFacing(ACTOR_MAHA, toFIXED(328), toFIXED(162),
                                  FACING_SOUTH);
     }
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     FieldEffect_StartBlankOverlay(0);
-    if (gMainRoutineWork.entrance == 6) {
-      work = Ram_HeapSlots->fieldWork;
-      work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    if (gMainRoutineState.entrance == 6) {
+      state = Ram_HeapSlots->fieldState;
+      state->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
       Event_ClearFlag(FLAG_ARRIVAL_STAIRS_UP);
       Event_ClearFlag(FLAG_ARRIVAL_STAIRS_DOWN);
-      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+      gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
     }
   } else {
-    gFieldWork->transition = 0;
-    if (gMainRoutineWork.next == SCENE_GAROH) {
+    gFieldState->transition = 0;
+    if (gMainRoutineState.next == SCENE_GAROH) {
       Event_SetFlag(FLAG_GAROH_REACHED_VILLAGE);
       Garoh_InitializeVillage();
-    } else if (gMainRoutineWork.next == SCENE_GAROH_PATH) {
+    } else if (gMainRoutineState.next == SCENE_GAROH_PATH) {
       Garoh_InitializePath();
-    } else if (gMainRoutineWork.next == SCENE_GAROH_WAY_UP) {
+    } else if (gMainRoutineState.next == SCENE_GAROH_WAY_UP) {
       Garoh_InitializeWayUp();
       if (Event_GetFlag(FLAG_GAROH_REACHED_VILLAGE)) {
-        gMainRoutineWork.restartScene = SCENE_GAROH_ROOMS_SANCTUM;
-        gMainRoutineWork.restartEntrance = GAROH_ROOMS_SANCTUM_FROM_GAROH;
+        gMainRoutineState.restartScene = SCENE_GAROH_ROOMS_SANCTUM;
+        gMainRoutineState.restartEntrance = GAROH_ROOMS_SANCTUM_FROM_GAROH;
       }
     }
   }
@@ -733,7 +733,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// open.
 void Garoh_InitializeVillage(void) {
   FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_FRAME);
-  gFieldWork->transition = 0;
+  gFieldState->transition = 0;
   if (Event_GetFlag(FLAG_GAROH_SECRET_SHARED) == 0 ||
       Event_GetFlag(FLAG_GAROH_NIGHT) != 0) {
     Event_SetFlag(FLAG_GAROH_NIGHT);
@@ -759,15 +759,15 @@ void Garoh_InitializeVillage(void) {
     MapGrid_CopyCellsTo(76, 32, 89, 22, 1, 1);
     MapGrid_CopyCellsTo(75, 33, 72, 22, 1, 1);
   }
-  if (gMainRoutineWork.entrance == GAROH_FROM_GAROH_WEREWOLF_CAVE) {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  if (gMainRoutineState.entrance == GAROH_FROM_GAROH_WEREWOLF_CAVE) {
+    struct FieldState *state = Ram_HeapSlots->fieldState;
 
-    work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    state->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Event_ClearFlag(FLAG_ARRIVAL_STAIRS_UP);
     Event_ClearFlag(FLAG_ARRIVAL_STAIRS_DOWN);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    gFieldWork->transition = 0;
+    gFieldState->transition = 0;
   }
 }
 
@@ -778,7 +778,7 @@ void Garoh_InitializePath(void) {
   Tightrope_Initialize();
   Tightrope_Place(0, ACTOR_PATH_TIGHTROPE_POST_A, ACTOR_PATH_TIGHTROPE_POST_B);
   if (Event_GetFlag(FLAG_GAROH_NIGHT)) {
-    if (gMainRoutineWork.entrance == ENTRANCE_PATH_PURPLE_NIGHT) {
+    if (gMainRoutineState.entrance == ENTRANCE_PATH_PURPLE_NIGHT) {
       PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(9, 6, 18), 1);
     } else {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM_DARK, 1);
@@ -1008,11 +1008,11 @@ void Garoh_HideCavePassage(void) {
 /// daylight to a golden evening; coming down from the path, the same step
 /// brings the daylight back. Once a visit.
 void Garoh_CrossLowerTwilightLine(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     Flag_Set(FLAG_CROSSED_LOWER_TWILIGHT_LINE);
-    if (gMainRoutineWork.entrance == GAROH_WAY_UP_FROM_WORLD_MAP) {
+    if (gMainRoutineState.entrance == GAROH_WAY_UP_FROM_WORLD_MAP) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Set(FLAG_EVENING);
@@ -1021,8 +1021,8 @@ void Garoh_CrossLowerTwilightLine(void) {
       Flag_Clear(FLAG_GAROH_NIGHT);
       Flag_Clear(FLAG_EVENING);
     }
-    work = Ram_HeapSlots->fieldWork;
-    if (work->revealActive == 0)
+    state = Ram_HeapSlots->fieldState;
+    if (state->revealActive == 0)
       PaletteFade_Interpolate(120);
   }
 }
@@ -1032,11 +1032,11 @@ void Garoh_CrossLowerTwilightLine(void) {
 /// turns the night to evening. Once a visit, before the werewolves' secret is
 /// shared.
 void Garoh_CrossUpperTwilightLine(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     Flag_Set(FLAG_CROSSED_UPPER_TWILIGHT_LINE);
-    if (gMainRoutineWork.entrance == GAROH_WAY_UP_FROM_GAROH_PATH) {
+    if (gMainRoutineState.entrance == GAROH_WAY_UP_FROM_GAROH_PATH) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Set(FLAG_EVENING);
@@ -1045,8 +1045,8 @@ void Garoh_CrossUpperTwilightLine(void) {
       Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Clear(FLAG_EVENING);
     }
-    work = Ram_HeapSlots->fieldWork;
-    if (work->revealActive == 0)
+    state = Ram_HeapSlots->fieldState;
+    if (state->revealActive == 0)
       PaletteFade_Interpolate(120);
   }
 }
@@ -1165,7 +1165,7 @@ DEFINE_GAROH_PLAY_EFFECT(Garoh_CloseCavePassage, 3, 39)
 
 /// Sends an actor walking to where the leader stands, if there is a leader.
 static inline void Scene_WalkTowardLeader(s32 actorId) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
 
   if (leader != NULL) {
     Actor_SetDestination(actorId, leader->x.part[0].integer,
@@ -1179,7 +1179,7 @@ static inline void Scene_WalkIntoLeader(s32 actorId) {
   struct Actor *leader;
 
   Actor_SetAnimation(actorId, ANIM_WALK);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   if (leader != NULL) {
     Actor_SetDestination(actorId, leader->x.part[0].integer,
                          leader->z.part[0].integer);
@@ -1283,7 +1283,7 @@ void Garoh_WerewolfRunsPast(void) {
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_WEREWOLF, 2);
   Actor_SetScript(ACTOR_WEREWOLF, gGaroh_WerewolfLookAroundScript);
-  gFieldWork->message--;
+  gFieldState->message--;
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   FieldActor_Stop(ACTOR_WEREWOLF);
   FieldEvent_Wait(20);
@@ -1436,7 +1436,7 @@ void Garoh_WerewolfRunsPast(void) {
     if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
       Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     FieldEvent_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -1445,7 +1445,7 @@ void Garoh_WerewolfRunsPast(void) {
     FieldEvent_Wait(20);
     if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
       Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
   }
   FieldActor_Jump(ACTOR_KRADEN, 6, 15);
@@ -1560,7 +1560,7 @@ void Garoh_WerewolfRunsPast(void) {
     Actor_SetSpeed(ACTOR_PIERS, 1.2);
     Scene_WalkIntoLeader(ACTOR_PIERS);
   }
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   Event_End();
 }
 
@@ -1643,7 +1643,7 @@ void Garoh_FollowWerewolfIntoCave(void) {
   Actor_WalkToAndWait(ACTOR_WEREWOLF, 144, 712);
   Actor_SetPosition(ACTOR_WEREWOLF, 0, 0);
   FieldEvent_Wait(30);
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -1712,11 +1712,11 @@ void Garoh_WerewolvesRevealThemselves(void) {
     FieldEvent_Wait(20);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
   } else {
     FieldEvent_Wait(30);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   }
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
@@ -1843,12 +1843,12 @@ void Garoh_WerewolvesRevealThemselves(void) {
     FieldEvent_Wait(40);
     Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
     FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
   } else {
     FieldEvent_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
     FieldEvent_Wait(10);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
     FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   }
   Actor_RunRepeatedMotion(ACTOR_WEREWOLF, 2);
@@ -1895,12 +1895,12 @@ void Garoh_WerewolvesRevealThemselves(void) {
     Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
     FieldEvent_Wait(20);
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
   } else {
     FieldEvent_Wait(30);
     Actor_AnimateThenWait(ACTOR_JENNA, ANIM_NOD, 20);
     FieldEvent_Wait(20);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   }
   Actor_FaceDirection(ACTOR_MAHA, FACING_NORTHEAST, 0);
@@ -2151,7 +2151,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
     FieldActor_WaitForMoveById(ACTOR_PIERS);
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
   }
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   Garoh_MetWerewolves();
   FieldEvent_SetExitRequest(GAROH_WEREWOLF_CAVE_TO_GAROH_ROOMS_HOUSES);
   Event_End();
@@ -2481,10 +2481,10 @@ void Garoh_MahaTellsTheLegend(void) {
   if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     FieldEvent_Wait(25);
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
   } else {
     FieldEvent_Wait(40);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   }
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2605,7 +2605,7 @@ void Garoh_MahaTellsTheLegend(void) {
     FieldEvent_Wait(20);
     FieldEvent_Wait(10);
   } else {
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
   }
   Actor_WalkByAndWait(ACTOR_KRADEN, -42, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
@@ -2717,10 +2717,10 @@ void Garoh_MahaTellsTheLegend(void) {
   if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     FieldEvent_Wait(30);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
   } else {
     FieldEvent_Wait(40);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   }
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
@@ -2757,7 +2757,7 @@ void Garoh_MahaTellsTheLegend(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  gFieldWork->message = (gFieldWork->message + 1);
+  gFieldState->message = (gFieldState->message + 1);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
@@ -2819,7 +2819,7 @@ void Garoh_MahaTellsTheLegend(void) {
     Actor_SetSpeed(ACTOR_PIERS, 1.2);
     Scene_WalkIntoLeader(ACTOR_PIERS);
   }
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   Event_End();
 }
 

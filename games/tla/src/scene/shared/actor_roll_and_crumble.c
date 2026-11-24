@@ -12,7 +12,7 @@ enum { CELL_BEHAVIOR_BREAKABLE_ICE = 77 };
 /// in watchedActor, then shrinks away in crumbs.
 void Actor_RollAndCrumble(struct Actor *actor) {
   struct Vector3 position;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   s32 state = actor->timer;
 
   if (state == 0) {
@@ -34,14 +34,14 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     s32 overheadX;
     s32 middleZ;
     s32 paused;
-    struct MapWork *map;
+    struct MapState *map;
     struct MapCell *cell;
-    struct FieldWork *fieldWork;
-    struct FlameHitWork *hit;
+    struct FieldState *fieldState;
+    struct FlameHitState *hit;
     struct Actor *leader;
 
     paused = Event_GetFlag(FLAG_MENU_OPEN);
-    if (work->psynergy != 0)
+    if (field->psynergy != 0)
       paused |= 1;
     actor->paused = paused;
 
@@ -109,9 +109,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
     FieldActor_SetMoveTargetFX(actor, position.x, position.y, position.z);
 
-    fieldWork = Ram_HeapSlots->fieldWork;
-    hit = RIDE_WORK;
-    leader = Actor_Get(gMainRoutineWork.leaderActorId);
+    fieldState = Ram_HeapSlots->fieldState;
+    hit = RIDE_STATE;
+    leader = Actor_Get(gMainRoutineState.leaderActorId);
     if (ABS(actor->x.fixed - leader->x.fixed) < toFIXED(20) &&
         (u32)(actor->y.fixed - leader->y.fixed + (toFIXED(8) - 1)) <=
             (toFIXED(32) - 2) &&
@@ -119,8 +119,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       // A fireball's hit (a flame's is 1) raises STEP_TRIGGER_FIREBALL_HIT.
       hit->active = 2;
       hit->car = actor;
-      fieldWork->stepTrigger = hit->hitTrigger + (STEP_TRIGGER_FIREBALL_HIT -
-                                                  STEP_TRIGGER_FLAME_HIT);
+      fieldState->stepTrigger = hit->hitTrigger + (STEP_TRIGGER_FIREBALL_HIT -
+                                                   STEP_TRIGGER_FLAME_HIT);
     }
   } else if (state == 1) {
     actor->paused = 0;

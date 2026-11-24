@@ -98,7 +98,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   s32 ground[3];
   s32 point[3];
   DrawRectangle draw[2];
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   s32 offsetX;
@@ -106,7 +106,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   s32 k;
   struct HeapSlots *heap = Ram_HeapSlots;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
   BattleEffect_StartCanvasLayer(0);
@@ -116,18 +116,18 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
                                                    args->side ^ args->prelude,
                                                    DJINNI_ANCHOR_OVER_TARGET),
                                    djinn, djinnSize);
-  Resource_LoadAndDecompress(RESOURCE_EARTH_WALL_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_EARTH_WALL_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_CRESCENT_MOON_SHEET,
-                             work->sheet + DJINN_BEAMS_MOTE_PICTURES, 1, 1);
+                             state->sheet + DJINN_BEAMS_MOTE_PICTURES, 1, 1);
   if (element == ELEMENT_VENUS)
     Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SHEET,
-                               work->sheet + DJINN_BEAMS_DJINNI_PICTURE, 1, 1);
+                               state->sheet + DJINN_BEAMS_DJINNI_PICTURE, 1, 1);
   else if (element == ELEMENT_MERCURY)
     Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SHEET,
-                               work->sheet + DJINN_BEAMS_DJINNI_PICTURE, 1, 1);
+                               state->sheet + DJINN_BEAMS_DJINNI_PICTURE, 1, 1);
   else
     Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SHEET,
-                               work->sheet + DJINN_BEAMS_DJINNI_PICTURE, 1, 1);
+                               state->sheet + DJINN_BEAMS_DJINNI_PICTURE, 1, 1);
 
   // The motes start 80 pixels up, each at its own phase of the sway.
   for (i = 0; i != DJINN_BEAMS_MOTES; i++) {
@@ -147,11 +147,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
       offsetX = 0;
   }
   REG_BG2X = offsetX << 8;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != args->targetCount * DJINN_BEAMS_TARGET_FRAMES + 116;
        frame++) {
-    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraState;
     s32 prelude;
 
     if (frame == 64)
@@ -171,11 +171,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
       BattleEffect_FetchRectangleBlitters(args->side ^ prelude, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
+      draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
               DJINNI_WIDTH, DJINNI_HEIGHT);
       // Added twice in the first frames, it flashes as it appears.
       if (frame <= 3)
-        draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
+        draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
                 DJINNI_WIDTH, DJINNI_HEIGHT);
       EFFECT_RELEASE_BLITTERS();
     }
@@ -211,7 +211,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
             else
               screenPosition.x += sway;
             draw[i & 1](canvas,
-                        work->sheet +
+                        state->sheet +
                             gDjinnBeams_MotePictures[mote->variant / 8 & 7] *
                                 PICTURE_BYTES(DJINN_BEAMS_MOTE) +
                             DJINN_BEAMS_MOTE_PICTURES,
@@ -254,11 +254,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
           if (pic > 2)
             pic = (pic & 1) + 1;
           if (frame < start + 100) {
-            draw[0](canvas, work->sheet + gMirroredWall_Pictures[pic],
+            draw[0](canvas, state->sheet + gMirroredWall_Pictures[pic],
                     screenPosition.x - gDjinnBeams_HeadWidths[pic],
                     screenPosition.y - gDjinnBeams_HeadHeights[pic] + 8,
                     gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
-            draw[1](canvas, work->sheet + gMirroredWall_Pictures[pic],
+            draw[1](canvas, state->sheet + gMirroredWall_Pictures[pic],
                     screenPosition.x,
                     screenPosition.y - gDjinnBeams_HeadHeights[pic] + 8,
                     gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
@@ -266,15 +266,15 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
           // Every row of the column, from the top down to the feet, is the
           // same strip of the column's first picture.
           for (k = 0; k != screenPosition.y; k++) {
-            draw[0](canvas, work->sheet + 5, screenPosition.x - width, k, width,
-                    1);
-            draw[1](canvas, work->sheet + 5, screenPosition.x, k, width, 1);
+            draw[0](canvas, state->sheet + 5, screenPosition.x - width, k,
+                    width, 1);
+            draw[1](canvas, state->sheet + 5, screenPosition.x, k, width, 1);
           }
         }
       }
     }
     EFFECT_RELEASE_BLITTERS();
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -407,7 +407,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   s32 preludeSize[3];
   s32 preludeOrigin[3];
   DrawRectangle draw[2];
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   s32 i;
@@ -418,9 +418,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   u8 *palette;
   FIXED height;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
 
   if (mode == LOBBED_SHELLS_MUD) {
     BattleEffect_StartCanvasLayer(0);
@@ -435,9 +435,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
     REG_BLDALPHA = EFFECT_BLEND_ADD;
   }
-  Resource_LoadAndDecompress(RESOURCE_GOLD_SHELL_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_GOLD_SHELL_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
-                             work->sheet + LOBBED_SHELLS_SMOKE_PICTURES, 1, 1);
+                             state->sheet + LOBBED_SHELLS_SMOKE_PICTURES, 1, 1);
   if (mode == LOBBED_SHELLS_BONE_CHILLER)
     palette = Resource_GetTableEntry(RESOURCE_BLUE_PALETTE);
   else if (mode == LOBBED_SHELLS_STICKY_GOO)
@@ -487,10 +487,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   if (mode == LOBBED_SHELLS_MAD_SPATTER || mode == LOBBED_SHELLS_MUD) {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
     REG_BLDCNT = 0;
   } else {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   total = LOBBED_SHELLS_FRAMES(mode) + args->targetCount * 8;
@@ -526,13 +527,13 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
             position.y -= 8;
             if (step > 4)
               draw[LOBBED_SHELLS_SHELL_BLITTER(mode)](
-                  canvas, work->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
+                  canvas, state->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
                   position.x - LOBBED_SHELL_HEIGHT / 2,
                   position.y - LOBBED_SHELL_WIDTH / 2, LOBBED_SHELL_HEIGHT,
                   LOBBED_SHELL_WIDTH);
             else
               draw[LOBBED_SHELLS_SHELL_BLITTER(mode)](
-                  canvas, work->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
+                  canvas, state->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
                   position.x - LOBBED_SHELL_WIDTH / 2,
                   position.y - LOBBED_SHELL_HEIGHT / 2, LOBBED_SHELL_WIDTH,
                   LOBBED_SHELL_HEIGHT);
@@ -579,7 +580,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
         position.x >>= 1;
         if (LOBBED_SHELLS_SHATTER(mode) == 0) {
           draw[1](canvas,
-                  work->sheet + burst->variant / 8 * PICTURE_BYTES(SMOKE_PUFF) +
+                  state->sheet +
+                      burst->variant / 8 * PICTURE_BYTES(SMOKE_PUFF) +
                       LOBBED_SHELLS_SMOKE_PICTURES,
                   position.x - SMOKE_PUFF_WIDTH / 2,
                   position.y - SMOKE_PUFF_HEIGHT / 2, SMOKE_PUFF_WIDTH,
@@ -593,7 +595,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
           flip = args->side;
           draw[burst->velocityX > 0 ? flip ^ 1 : flip](
               canvas,
-              work->sheet + gLobbedShells_ShardPictures[picture] +
+              state->sheet + gLobbedShells_ShardPictures[picture] +
                   LOBBED_SHELLS_SHARD_PICTURES,
               position.x - gLobbedShells_ShardWidths[picture] / 2,
               position.y - gLobbedShells_ShardHeights[picture] / 2,
@@ -608,7 +610,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
       }
     }
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

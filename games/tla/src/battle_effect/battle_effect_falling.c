@@ -60,7 +60,7 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 ///
 /// Abilities: Ice, Ice Horn, Ice Missile.
 void BattleEffect_RunIce(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   u8 *sparkles;
@@ -71,11 +71,11 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   s32 i;
   s32 k;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sparkles = Ram_HeapSlots->battleSheet;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_ICE_SHARD_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_ICE_SHARD_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, sparkles, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -92,7 +92,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
          y -= 64, i++, slant -= 8) {
       s32 x;
 
-      shard = &work->particles[i];
+      shard = &state->particles[i];
       x = (Random16() & 63) + (Random16() & 7) + 24;
       if (args->side == EFFECT_SIDE_PARTY)
         x = x + slant + 24;
@@ -104,7 +104,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     }
   }
   for (i = 0; i != FALLING_SHARD_PUFF_COUNT; i++)
-    work->particles[FALLING_SHARD_COUNT + i].variant = -1; // puff slot free
+    state->particles[FALLING_SHARD_COUNT + i].variant = -1; // puff slot free
 
   // Falling shards draw at their maximum; the puffs add their light. Both
   // mirror for the other side.
@@ -132,11 +132,11 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   }
 
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_VBLANK);
-  work->transferMode = CANVAS_COPY_AND_FADE;
+  state->transferMode = CANVAS_COPY_AND_FADE;
   if (args->variant == EFFECT_VARIANT_STRONGER)
-    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
+    state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
-    work->transferValue = CANVAS_FADE_HALF;
+    state->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != ICE_FRAMES(args->variant); frame++) {
@@ -146,14 +146,14 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     // Shards fall down the slant, 8 pixels down and 8 across a frame, and on
     // landing shatter, kicking up puffs.
     for (i = 0; i != ICE_SHARDS(args->variant); i++) {
-      shard = &work->particles[i];
+      shard = &state->particles[i];
       if (shard->variant == -1) {
         s32 x = shard->x / 8;
         s32 y = shard->y / 8;
 
         ((DrawRectangle)
              draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
-            canvas, work->sheet, x, y, ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
+            canvas, state->sheet, x, y, ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
         if (shard->y <= FALLING_LAND_Y) {
           if (args->side == EFFECT_SIDE_ENEMIES)
             shard->x -= 64;
@@ -164,7 +164,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
           // Every target flashes blue as the shards land.
           if ((i & 3) == 0)
             Sound_PlayFar(SE_ICE);
-          work->shakeFrames = 2;
+          state->shakeFrames = 2;
           shard->variant = 0;
           EFFECT_FOR_EACH_TARGET(k, args)
             BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_BLUE_TINT,
@@ -180,7 +180,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
           ((DrawRectangle)
                draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
               canvas,
-              work->sheet + PICTURE_BYTES(ICE_SHARD) +
+              state->sheet + PICTURE_BYTES(ICE_SHARD) +
                   shard->variant / ICE_SHATTER_PICTURE_FRAMES *
                       PICTURE_BYTES(ICE_SHARD),
               x, y, ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
@@ -188,7 +188,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
         if (shard->variant >= ICE_PUFF_FIRST_FRAME &&
             shard->variant <= ICE_PUFF_LAST_FRAME) {
           for (k = 0; k != FALLING_SHARD_PUFF_COUNT; k++) {
-            puff = &work->particles[FALLING_SHARD_COUNT + k];
+            puff = &state->particles[FALLING_SHARD_COUNT + k];
             if (puff->variant == -1) {
               puff->variant = ICE_PUFF_FRAMES;
               puff->x = (((Random16() & 31) + shard->x / 8) << 3) + 8;
@@ -204,7 +204,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
     // Puffs twinkle out.
     for (i = 0; i != FALLING_SHARD_PUFF_COUNT; i++) {
-      puff = &work->particles[FALLING_SHARD_COUNT + i];
+      puff = &state->particles[FALLING_SHARD_COUNT + i];
       if (puff->variant != -1) {
         if (puff->variant < ICE_PUFF_FRAMES) {
           s32 picture = puff->variant / 2;
@@ -224,7 +224,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
     BattleEffect_CountDownBattlerTints();
     BattleCamera_Shake(4, 4);
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -260,7 +260,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 ///
 /// Abilities: Douse, Drench, Deluge.
 void BattleEffect_RunDouse(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   DrawRectangle draw[2];
@@ -270,13 +270,13 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   s32 i;
   s32 k;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET,
-                             work->sheet + DOUSE_FALLING_PICTURE, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, work->sheet, 0, 0);
+                             state->sheet + DOUSE_FALLING_PICTURE, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, state->sheet, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
@@ -294,11 +294,11 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
   // Line the drops up above the screen along the slant, each the variant's
   // spacing higher than the one before.
-  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
+  for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
     s32 x;
     s32 y;
 
-    drop = &work->particles[i];
+    drop = &state->particles[i];
     x = Random16() & 63;
     y = -(i * DOUSE_DROP_SPACING(args->variant) + 16);
     if (args->side == EFFECT_SIDE_PARTY)
@@ -323,11 +323,12 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   // Douse copies the canvas plainly; Drench and Deluge blend it in.
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_VBLANK);
   if (args->variant == EFFECT_VARIANT_BASIC) {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   } else if (args->variant == EFFECT_VARIANT_STRONGER) {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
@@ -340,11 +341,11 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       s32 x;
       s32 y;
 
-      drop = &work->particles[i];
+      drop = &state->particles[i];
       x = drop->x / 8;
       y = drop->y / 8;
       if (drop->variant == -1) {
-        draw[0](canvas, work->sheet + DOUSE_FALLING_PICTURE, x, y,
+        draw[0](canvas, state->sheet + DOUSE_FALLING_PICTURE, x, y,
                 BLUE_BUBBLE_WIDTH, BLUE_BUBBLE_HEIGHT);
         if (drop->y <= FALLING_LAND_Y) {
           if (args->side == EFFECT_SIDE_ENEMIES)
@@ -378,10 +379,10 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       } else {
         // Four frames of the small splash, four of the large one.
         if (drop->variant >= 0 && drop->variant <= 3)
-          draw[0](canvas, work->sheet + DOUSE_SMALL_SPLASH_PICTURE, x, y,
+          draw[0](canvas, state->sheet + DOUSE_SMALL_SPLASH_PICTURE, x, y,
                   BLUE_BUBBLE_WIDTH, BLUE_BUBBLE_HEIGHT);
         else if (drop->variant <= 7)
-          draw[0](canvas, work->sheet + DOUSE_LARGE_SPLASH_PICTURE,
+          draw[0](canvas, state->sheet + DOUSE_LARGE_SPLASH_PICTURE,
                   x - (BLUE_LARGE_SPLASH_WIDTH - BLUE_BUBBLE_WIDTH) / 2,
                   y - (BLUE_LARGE_SPLASH_HEIGHT - BLUE_BUBBLE_HEIGHT) / 2,
                   BLUE_LARGE_SPLASH_WIDTH, BLUE_LARGE_SPLASH_HEIGHT);
@@ -398,7 +399,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
         if (size > 6)
           size = 6;
-        EFFECT_DRAW_FLARE(draw[1], canvas, work->sheet,
+        EFFECT_DRAW_FLARE(draw[1], canvas, state->sheet,
                           FIXED_INTEGER_PART(droplet->x),
                           FIXED_INTEGER_PART(droplet->y), size);
         Particle_AdvanceWithGravity2D(droplet, 60, toFIXED(1) / 8);
@@ -406,7 +407,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       }
     }
 
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ArmWin0HBlankDma);

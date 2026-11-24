@@ -29,24 +29,24 @@ void Event_RunMessage(s32 actor, s32 message) {
 void Event_ResolveAllPendingActions(void) { Event_ResolvePendingActions(0); }
 
 /// Ends the lasting Psynergy and runs their end events: Reveal, the ring of
-/// light and Sand (while the party is sand, gMainRoutineWork.sandActive), each
+/// light and Sand (while the party is sand, gMainRoutineState.sandActive), each
 /// unless skip holds its bit (PsynergyEndSkip).
 void Event_ResolvePendingActions(s32 skip) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  work->busy = 0;
-  if (work->revealActive != 0 && !(skip & END_SKIP_REVEAL))
+  state->busy = 0;
+  if (state->revealActive != 0 && !(skip & END_SKIP_REVEAL))
     Field_RunPsynergyEndEvents(ABILITY_REVEAL | ACT_PACKED);
-  if (work->ringActive != 0 && !(skip & END_SKIP_RING))
+  if (state->ringActive != 0 && !(skip & END_SKIP_RING))
     Field_RunPsynergyEndEvents(ABILITY_MAGNET | ACT_PACKED);
-  if (gMainRoutineWork.sandActive != 0 && !(skip & END_SKIP_SAND))
+  if (gMainRoutineState.sandActive != 0 && !(skip & END_SKIP_SAND))
     Field_RunPsynergyEndEvents(ABILITY_SAND | ACT_PACKED);
 }
 
 /// Returns the leader's actor id, or ACTOR_FIRST_PLACED while
-/// gMainRoutineWork.ownerOverride is set.
+/// gMainRoutineState.ownerOverride is set.
 s32 Party_GetLeaderActor(void) {
-  struct MainRoutineWork *state = &gMainRoutineWork;
+  struct MainRoutineState *state = &gMainRoutineState;
   s32 actor;
 
   // While the party sails, the first placed actor, the ship, stands for it.
@@ -75,8 +75,8 @@ s32 Item_MatchesFilter(s32 filter, s32 itemId) {
 /// takes item (Item_MatchesFilter), and its target is the actor the leader can
 /// talk to (TRIGGER_ITEM_ON_ACTOR) or the cell ahead.
 const struct Trigger *Field_FindItemTrigger(s32 item) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  const struct Trigger *trigger = work->triggers;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  const struct Trigger *trigger = state->triggers;
   s32 facing = Actor_Lookup(Party_GetLeaderActor())->facing;
   s32 actorAhead = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
   s32 tileAhead;
@@ -129,7 +129,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 mostMatchingSlots;
   s32 matchingSlots;
   s32 partyCount;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   result = -1;
   itemId = ACT_ITEM_ID(packedItem);
@@ -143,7 +143,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     if (actorId == UNIT_NONE) {
       actorId = 0;
       for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-        unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
+        unit = Unit_Get(gMainRoutineState.party[partyIndex]);
         matchingSlots = 0;
         for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS;
              inventorySlot++) {
@@ -154,7 +154,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
         if (mostMatchingSlots < matchingSlots) {
           mostMatchingSlots = matchingSlots;
-          actorId = gMainRoutineWork.party[partyIndex];
+          actorId = gMainRoutineState.party[partyIndex];
         }
       }
     } else {
@@ -202,7 +202,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     GameFlag_Clear(FLAG_ITEM_USED_UP);
     GameFlag_Set(FLAG_NOTHING_HAPPENS);
     abilityId = Item_GetDirectFar(itemId)->abilityId;
-    work = Ram_HeapSlots->fieldWork;
+    state = Ram_HeapSlots->fieldState;
 
     if (abilityId != 0) {
       GameFlag_Set(FLAG_ITEM_USE);
@@ -219,18 +219,18 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         if (partyIndex != 0)
           return 0;
 
-        gMainRoutineWork.next = gMainRoutineWork.retreatScene;
-        gMainRoutineWork.entrance = gMainRoutineWork.retreatEntrance;
-        work->exit = EXIT_KEEP_DESTINATION;
+        gMainRoutineState.next = gMainRoutineState.retreatScene;
+        gMainRoutineState.entrance = gMainRoutineState.retreatEntrance;
+        state->exit = EXIT_KEEP_DESTINATION;
       }
 
       MessageArgument_PushFar(actorId, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar((s32)&MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
       FieldPsynergy_LoadResources(abilityId, 0);
-      work->psynergyActing = 1;
+      state->psynergyActing = 1;
       FieldPsynergy_Run();
-      work->psynergyActing = 0;
+      state->psynergyActing = 0;
       FieldPsynergy_End();
 
       // ITEM_USE_TEACHES has ITEM_USE_CONSUMED's bit too: both are used up.
@@ -254,8 +254,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// nearest target in reach (with PSYNERGY_TARGET_ACTOR); else
 /// PSYNERGY_TARGET_ANYWHERE for a trigger that applies anywhere, or -1.
 s32 Scene_SelectPsynergyTarget(s32 kind) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct TriggerEvent *event = work->triggers;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct TriggerEvent *event = state->triggers;
   u32 facing = Actor_Lookup(Party_GetLeaderActor())->facing;
   s32 tileAhead = Field_GetCollisionAheadOfLeader();
   s32 tileUnder = Field_GetCollisionUnderLeader();
@@ -319,8 +319,8 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
 /// an actor, or anything); NULL when there is none.
 struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
                                                s32 selector) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct TriggerEvent *event = work->triggers;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct TriggerEvent *event = state->triggers;
   u32 facing = Actor_Lookup(Party_GetLeaderActor())->facing;
 
   if (selector == -1)

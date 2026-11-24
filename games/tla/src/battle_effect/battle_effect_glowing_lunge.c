@@ -37,10 +37,10 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint target;
   struct ScreenPoint caster;
   struct ScreenPoint screen;
-  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   s32 frame;
-  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraState;
   u8 *motePictures = Ram_HeapSlots->battleSheet;
   struct MotionObject *targetObject;
   struct RenderModel *quad;
@@ -61,17 +61,17 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
                              0);
 
   // The burst: the plume, then the same plume upside down below it.
-  Resource_LoadAndDecompress(RESOURCE_FLAME_PLUME_SHEET, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_PLUME_SHEET, state->sheet, 0, 0);
   for (row = 0; row != RUSHING_STRIKE_PLUME_SIZE; row++)
     for (column = 0; column != RUSHING_STRIKE_PLUME_SIZE; column++)
-      work->sheet[RUSHING_STRIKE_PLUME_SIZE * RUSHING_STRIKE_PLUME_SIZE +
-                  (RUSHING_STRIKE_PLUME_SIZE - 1 - row) *
-                      RUSHING_STRIKE_PLUME_SIZE +
-                  column] =
-          work->sheet[row * RUSHING_STRIKE_PLUME_SIZE + column];
+      state->sheet[RUSHING_STRIKE_PLUME_SIZE * RUSHING_STRIKE_PLUME_SIZE +
+                   (RUSHING_STRIKE_PLUME_SIZE - 1 - row) *
+                       RUSHING_STRIKE_PLUME_SIZE +
+                   column] =
+          state->sheet[row * RUSHING_STRIKE_PLUME_SIZE + column];
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                             work->sheet + RUSHING_STRIKE_EXPLOSION_PICTURES, 1,
-                             0);
+                             state->sheet + RUSHING_STRIKE_EXPLOSION_PICTURES,
+                             1, 0);
   switch (mode) {
   case RUSHING_STRIKE_UNUSED:
     resource = RESOURCE_FIRE_PILLAR_SHEET_B;
@@ -92,7 +92,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
                        SHEET_PALETTE_BYTES);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // The user rushes at the target.
@@ -124,7 +124,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
         spark->variant = i / 2 + RUSHING_STRIKE_SPARK_LIFE;
       }
       for (i = 0; i != RUSHING_STRIKE_EXPLOSION_SLOTS; i++) {
-        struct Particle *explosion = &work->particles[i];
+        struct Particle *explosion = &state->particles[i];
         explosion->x = targetObject->x;
         if (explosion->x < 0)
           explosion->x += -toFIXED(8);
@@ -148,7 +148,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     texture.logWidth = 5;
     brightness = 0;
     texture.logHeight = 6;
-    texture.pixels = work->sheet;
+    texture.pixels = state->sheet;
     quad->texture = &texture;
     quad->mesh = gBattleEffect_TallMesh;
     quad->kind = MODEL_SHADED_MAX;
@@ -207,7 +207,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
         EFFECT_SHOW_DAMAGE(SE_CRASH);
       else
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
     }
 
     // From the hit on, the sparks fly and burn down, drawn by turns with
@@ -240,7 +240,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       // Living Armor's explosions rise, flashing and burning out.
       if (mode == RUSHING_STRIKE_LIVING_ARMOR) {
         for (i = 0; i != RUSHING_STRIKE_EXPLOSIONS; i++) {
-          struct Particle *explosion = &work->particles[i];
+          struct Particle *explosion = &state->particles[i];
           s32 life = explosion->variant;
 
           if (life >= 0 && life < RUSHING_STRIKE_EXPLOSION_FRAMES) {
@@ -249,7 +249,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
             EffectPosition_ProjectPoint(&explosion->x, &screen);
             screen.x >>= 1;
             draw[0](canvas,
-                    work->sheet + RUSHING_STRIKE_EXPLOSION_PICTURES +
+                    state->sheet + RUSHING_STRIKE_EXPLOSION_PICTURES +
                         picture * PICTURE_BYTES(FLASH_BURST),
                     screen.x - FLASH_BURST_WIDTH / 2,
                     screen.y - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
@@ -262,7 +262,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     }
 
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);

@@ -4,15 +4,15 @@ Field_DehkanPlateauCannon:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_DehkanPlateauCannon, .LField_DehkanPlateauCannon_CELL_PICTURES
+	map_block Field_DehkanPlateauCannon, .LField_DehkanPlateauCannon_CELL_TILES
 	map_block Field_DehkanPlateauCannon, .LField_DehkanPlateauCannon_SHAPES
 	map_block Field_DehkanPlateauCannon, .LField_DehkanPlateauCannon_GRID
 	map_block Field_DehkanPlateauCannon, .LField_DehkanPlateauCannon_SHAPE_GRID
 	map_block Field_DehkanPlateauCannon, .LField_DehkanPlateauCannon_ANIMATION
 	map_block Field_DehkanPlateauCannon, .LField_DehkanPlateauCannon_BLEND
 	map_block Field_DehkanPlateauCannon, .LField_DehkanPlateauCannon_SCENE
-.LField_DehkanPlateauCannon_CELL_PICTURES:
-	.incbin "games/tla/src/map/dehkan_plateau_cannon/cell_pictures.delta0.lz"
+.LField_DehkanPlateauCannon_CELL_TILES:
+	.incbin "games/tla/src/map/dehkan_plateau_cannon/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_DehkanPlateauCannon_SHAPES:
 	.incbin "games/tla/src/map/dehkan_plateau_cannon/shapes.table.lz"

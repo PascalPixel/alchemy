@@ -2,8 +2,8 @@
 #define ALCHEMY_FALLING_ROCKS_H
 
 /// @file
-/// Falling rocks and particles: the work Prox, Magma Rock, Eastern Alhafra and
-/// Tundaria Tower each keep a copy of the code for.
+/// Falling rocks and particles: the effects Prox, Magma Rock, Eastern Alhafra
+/// and Tundaria Tower each keep a copy of the code for.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -11,7 +11,7 @@
 #include "field/effect_sprite.h"
 #include "field/particle.h"
 
-/// The falling rocks in flight at once, the ring a scene's rock work keeps.
+/// The falling rocks in flight at once, the ring a scene's rock state keeps.
 #define ROCK_COUNT 64
 /// The falling rock's pictures, decompressed, in bytes.
 #define ROCK_SHEET_BYTES 1280
@@ -23,10 +23,10 @@ struct Rock {
   s32 timer;
 };
 
-/// The falling rocks' work, in the menu work's heap slot: their tiles, the
+/// The falling rocks' state, in the menu state's heap slot: their tiles, the
 /// rocks and their sprites, in a ring that next walks round, the first sprite
 /// tile their tiles were loaded to and the VRAM cache entry holding them.
-struct RockWork {
+struct RockState {
   u8 tiles[ROCK_SHEET_BYTES];
   struct Rock rocks[ROCK_COUNT];
   struct EffectSprite sprites[ROCK_COUNT];
@@ -35,7 +35,7 @@ struct RockWork {
   s16 resource;
 };
 
-STATIC_ASSERT(offsetof(struct RockWork, resource) == 5636);
+STATIC_ASSERT(offsetof(struct RockState, resource) == 5636);
 
 /// A falling particle's sprite: struct EffectSprite with OAM attribute 2 read
 /// whole, as the particles change its tile.
@@ -57,10 +57,10 @@ struct ParticleSprite {
   s16 pivotY;
 };
 
-/// The falling particles' work, in the menu work's heap slot: their tiles, 64
+/// The falling particles' state, in the menu state's heap slot: their tiles, 64
 /// particles and their sprites, the next particle to start and the first
 /// sprite tile their tiles were loaded to.
-struct ParticleWork {
+struct ParticleState {
   u8 tiles[ROCK_SHEET_BYTES];
   struct Particle particles[64];
   struct ParticleSprite sprites[64];

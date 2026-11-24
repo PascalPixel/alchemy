@@ -14,11 +14,11 @@
 #include "game/owner_state.h"
 #include "system/input.h"
 #include "system/heap_slots.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/point.h"
 #include "system/iwram_call.h"
 #include "battle/battle_camera.h"
-#include "battle/battle_work.h"
+#include "battle/battle_state.h"
 #include "system/ram_buffer.h"
 #include "system/serial.h"
 #include "text/msg_ids.h"
@@ -123,11 +123,11 @@
 #define TARGET_PICK_SIDE_EMPTY -2
 #define TARGET_PICK_NONE -1
 
-/// BattleWork.placement of a unit with no place on the battlefield:
+/// BattleState.placement of a unit with no place on the battlefield:
 /// BattleUnit_RefreshPlacement fills the list with it.
 #define BATTLE_OBJECT_NONE 255
 
-/// BattleWork.defeatState: whether the last enemy fell alone, or with others
+/// BattleState.defeatState: whether the last enemy fell alone, or with others
 /// before it, or a party member's action ended the battle with a single
 /// defeat. The messages are "has been downed!" and "'s party goes down!",
 /// MsgDowned plus the state; DEFEAT_BY_PARTY_MEMBER shows neither.
@@ -342,7 +342,7 @@ u32 BattleSprite_GetEffectHeight(u32 index);
 s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 
 /// The battle background's colours: BG palettes 6 to 13, filled from
-/// BattleWork.palette, darkened or not.
+/// BattleState.palette, darkened or not.
 #define BATTLE_BG_PALETTE ((u16 *)&BG_PLTT_COLOR(6, 0))
 
 /// BG1 during a battle: 256 colours, priority 3, its map in screen block

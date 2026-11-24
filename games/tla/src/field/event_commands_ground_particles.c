@@ -20,7 +20,7 @@
 /// at the leader's position on the terrain, their tiles decoded into VRAM, the
 /// blend set, and GroundParticles_Update scheduled to move them.
 void GroundParticles_Start(void) {
-  struct WeatherWork *work;
+  struct WeatherState *state;
   s32 *leader;
   struct GroundParticle *particle;
   // words is the decode buffer, then each particle's attribute cursor.
@@ -28,15 +28,15 @@ void GroundParticles_Start(void) {
   u32 i;
   u32 fill = 0;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
-  leader = ((struct MapWork *)Ram_HeapSlots->mapGrid)->origin;
+  state = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherState));
+  leader = ((struct MapState *)Ram_HeapSlots->mapGrid)->origin;
   Scene_QueueMusic(SE_AMBIENT_WATER);
-  particle = work->particles;
-  Dma_Fill32(fill, work, sizeof(struct WeatherWork));
+  particle = state->particles;
+  Dma_Fill32(fill, state, sizeof(struct WeatherState));
   words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_GroundParticleTiles, words);
-  work->entry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 768, words);
+  state->entry = VramCache_FindFreeEntry();
+  state->tileBase = VramCache_Load(state->entry, 768, words);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++) {
     s32 x;
@@ -66,14 +66,14 @@ void GroundParticles_Start(void) {
 /// its tile stepping back by 8 at 90 and 60 frames left and flickering between
 /// two tiles every 8 frames.
 void RisingParticles_Update(void) {
-  struct RisingParticleWork *work = Ram_HeapSlots->weather;
-  struct RisingParticle *particle = work->particles;
+  struct RisingParticleState *state = Ram_HeapSlots->weather;
+  struct RisingParticle *particle = state->particles;
   struct FieldCoordinate screen[3];
   u32 i;
   s32 x;
   s32 y;
 
-  for (i = 0; i < ARRAY_COUNT(work->particles); i++, particle++) {
+  for (i = 0; i < ARRAY_COUNT(state->particles); i++, particle++) {
     if (particle->timer == 0) {
       x = Random16() * 200 + FIXED_ONE * 288;
       y = FIXED_ONE * 80 - Random16() * 20;
@@ -93,13 +93,13 @@ void RisingParticles_Update(void) {
     if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
       if (particle->timer < 60)
         particle->sprite.attributes.tile =
-            work->tile + MOTE_SMALL * MOTE_PICTURE_TILES;
+            state->tile + MOTE_SMALL * MOTE_PICTURE_TILES;
       else if (particle->timer < 90)
         particle->sprite.attributes.tile =
-            work->tile + MOTE_MEDIUM * MOTE_PICTURE_TILES;
+            state->tile + MOTE_MEDIUM * MOTE_PICTURE_TILES;
       else
         particle->sprite.attributes.tile =
-            work->tile + MOTE_LARGE * MOTE_PICTURE_TILES;
+            state->tile + MOTE_LARGE * MOTE_PICTURE_TILES;
       particle->sprite.attributes.tile =
           ((gFrameCount >> 3) & 1) * MOTE_PICTURE_TILES +
           particle->sprite.attributes.tile;
@@ -122,9 +122,9 @@ void RisingParticles_Update(void) {
 /// strip (x 288 to 488 pixels, z 60 to 80), staggering their timers by 2
 /// frames, and schedules the update.
 void RisingParticles_Start(void) {
-  struct RisingParticleWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
-  struct RisingParticle *particle = work->particles;
+  struct RisingParticleState *state =
+      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherState));
+  struct RisingParticle *particle = state->particles;
   volatile u32 fill;
   s32 priority;
   u8 *tiles;
@@ -134,13 +134,13 @@ void RisingParticles_Start(void) {
   // z carries the fill's zero before it is a particle's z, as
   // FieldEffect_InitializeSparkles's size does.
   z = 0;
-  Dma_Fill32Cell(fill, z, work, sizeof(struct WeatherWork));
+  Dma_Fill32Cell(fill, z, state, sizeof(struct WeatherState));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_MoteTiles, tiles);
-  work->vramEntry = VramCache_FindFreeEntry();
-  work->tile = VramCache_Load(work->vramEntry, 768, tiles);
+  state->vramEntry = VramCache_FindFreeEntry();
+  state->tile = VramCache_Load(state->vramEntry, 768, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
-  for (i = 0; i < ARRAY_COUNT(work->particles); i++, particle++) {
+  for (i = 0; i < ARRAY_COUNT(state->particles); i++, particle++) {
     u32 *sprite = particle->sprite.words;
     s32 x;
 
@@ -164,13 +164,14 @@ void RisingParticles_Start(void) {
 /// and live 120 frames, rising, shrinking at 90 and 60 frames left and
 /// flickering every 8 frames; FLAG_WEATHER_HELD holds them where they are.
 void FieldMotes_Update(void) {
-  struct WeatherWork *work = Ram_HeapSlots->weather;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct WeatherState *state = Ram_HeapSlots->weather;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   u32 spawned = 0;
   u32 i;
   struct GroundParticle *mote;
 
-  for (i = 0, mote = work->particles; i < WEATHER_PARTICLE_COUNT; i++, mote++) {
+  for (i = 0, mote = state->particles; i < WEATHER_PARTICLE_COUNT;
+       i++, mote++) {
     s32 x;
     s32 y;
 
@@ -196,13 +197,13 @@ void FieldMotes_Update(void) {
       y = FIXEDtoINT(mote->posZ - mote->posY - cameraZ) - (u16)age;
       if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
         if (mote->timer < 60) {
-          mote->tile = work->tileBase + MOTE_SMALL * MOTE_PICTURE_TILES;
+          mote->tile = state->tileBase + MOTE_SMALL * MOTE_PICTURE_TILES;
           mote->delay += 3;
         } else if (mote->timer < 90) {
-          mote->tile = work->tileBase + MOTE_MEDIUM * MOTE_PICTURE_TILES;
+          mote->tile = state->tileBase + MOTE_MEDIUM * MOTE_PICTURE_TILES;
           mote->delay++;
         } else {
-          mote->tile = work->tileBase + MOTE_LARGE * MOTE_PICTURE_TILES;
+          mote->tile = state->tileBase + MOTE_LARGE * MOTE_PICTURE_TILES;
         }
         if ((gFrameCount >> 3) & 1)
           mote->tile += MOTE_PICTURE_TILES;

@@ -37,7 +37,7 @@
 #include "field/actor.h"
 #include "field/field_sprite.h"
 #include "macros.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
 #include "field/call.h"
@@ -245,7 +245,7 @@ void JupiterLighthouse_UseBlueKey(s32 item) {
 /// Felix checks the red or the blue door before it is open: "The door's
 /// locked."
 void JupiterLighthouse_TryLockedDoor(void) {
-  gFieldWork->fieldMenu = 1;
+  gFieldState->fieldMenu = 1;
   // "The door's locked."
   Message_ShowCentered(MsgFieldDoorLocked, 1);
 }
@@ -310,7 +310,7 @@ s32 Scene_Initialize(void) {
   s32 flag;
   s32 i;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   JupiterLighthouse_HideThePassage();
   if (Event_GetFlag(FLAG_RED_DOOR_OPENED))
@@ -320,14 +320,14 @@ s32 Scene_Initialize(void) {
   JupiterLighthouse_SendUpBeamLights();
   flag = Event_GetFlag(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0 &&
-      gMainRoutineWork.entrance ==
+      gMainRoutineState.entrance ==
           JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_BEAM) {
-    leader = Actor_Get(gMainRoutineWork.leaderActorId);
+    leader = Actor_Get(gMainRoutineState.leaderActorId);
     leader->priorityFlags &= ~ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
-    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+    FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
     Actor_SetAnimationSpeed(leader, ANIM_STEP_NORMAL * 4);
     leader->motionFlags = flag;
     leader->y.fixed = leader->groundHeight = -toFIXED(BEAM_DEPTH);
@@ -343,18 +343,18 @@ s32 Scene_Initialize(void) {
     leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     leader->velocityY = toFIXED(3);
     leader->gravity = toFIXED(1) / 2;
-    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
     FieldEvent_Wait(40);
     leader->gravity = toFIXED(1);
     leader->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+    Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_AUTOMATIC;
     Event_End();
   }
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-      gMainRoutineWork.entrance ==
+      gMainRoutineState.entrance ==
           JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST)
-    Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
+    Actor_ArriveInRing(gMainRoutineState.leaderActorId);
   return 0;
 }
 
@@ -366,7 +366,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(0);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_FIRST_BLOCK);
@@ -578,7 +578,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 /// cracks it, a second step after leaving it drops the party through, saving
 /// the cell in the flag bytes for the floor below. Returns 1 on a fall.
 s32 CrackedTile_Step(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
   struct CellTarget *puzzle = &gCrackedTiles;
@@ -608,17 +608,17 @@ s32 CrackedTile_Step(void) {
 /// On landing below a cracked tile, puts the leader on the cell the flag bytes
 /// saved, offset by (dx, dz), and starts the screen transition.
 void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 transition) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct CellTarget *work = &gCrackedTiles;
-  s32 x = ((s32)FieldGameFlag_GetByte(work->flagByte));
-  s32 z = ((s32)FieldGameFlag_GetByte(work->flagByte + 8));
+  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
+  struct FieldState *event = Ram_HeapSlots->fieldState;
+  struct CellTarget *state = &gCrackedTiles;
+  s32 x = ((s32)FieldGameFlag_GetByte(state->flagByte));
+  s32 z = ((s32)FieldGameFlag_GetByte(state->flagByte + 8));
 
   if (x != 0 || z != 0) {
     struct Actor *camera;
 
-    GameFlag_SetByte(work->flagByte, 0);
-    GameFlag_SetByte(work->flagByte + 8, 0);
+    GameFlag_SetByte(state->flagByte, 0);
+    GameFlag_SetByte(state->flagByte + 8, 0);
     actor->x.fixed = FIELD_CELL_CENTER(x + dx);
     actor->z.fixed = FIELD_CELL_CENTER(z + dz);
     camera = event->camera;
@@ -626,6 +626,6 @@ void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 transition) {
     camera->z.fixed = actor->z.fixed;
     MapGrid_CenterOnFollowedPoint();
     CrackedTile_DropIn();
-    gFieldWork->transition = transition;
+    gFieldState->transition = transition;
   }
 }

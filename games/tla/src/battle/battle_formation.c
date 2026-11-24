@@ -209,12 +209,12 @@ void BattleUnit_Strengthen(s32 unitId) {
 /// its kind: digits abroad and the alphabet in Japanese. Returns -1 when five
 /// classes are already listed.
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 classCount;
   s32 classIndex;
   s32 attempt;
 
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   classCount = battle->enemyKindCount;
   for (classIndex = 0; classIndex < classCount; classIndex++) {
     if (battle->enemyKinds[classIndex] == classId)
@@ -253,7 +253,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
 
 /// Frees a departing enemy's name suffix for the next of its class.
 UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   struct Unit *unit;
   s32 count = battle->enemyKindCount;
   s32 index;
@@ -374,7 +374,7 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
 /// slots hold them, laid out as the formation says.
 s32 BattleFormation_BuildEnemyList(s32 recordId) {
   u16 *enemyClasses;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   struct Formation *record;
   s32 freeSpriteSlots;
   s32 enemyCount;
@@ -393,7 +393,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   u32 i;
   s32 memberIndex;
 
-  battle = (struct BattleWork *)Ram_HeapSlots->battleWork;
+  battle = (struct BattleState *)Ram_HeapSlots->battleState;
   levelAdjustment = 0;
   battle->enemyKindCount = 0;
   enemyClasses = listBuffer;

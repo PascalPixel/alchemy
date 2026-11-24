@@ -107,17 +107,17 @@ struct TabletPiece {
 #define TABLET_RUNE_PICTURES 16
 #define RUNE_LIT (TABLET_RUNE_PICTURES * 2)
 
-/// What the runes do (SummonTabletWork.state).
+/// What the runes do (SummonTabletState.state).
 enum RuneMotion {
   RUNES_LINE_UP = 0, ///< each flies from the tablet to its place in the rows
   RUNES_CIRCLE = 2,  ///< each chases the one before round the circle
   RUNES_GATHER = 3   ///< each flies to the leader and is drawn till it lands
 };
 
-/// The summon tablet's work (heap slot battleEffect): the decoded pictures, the
-/// pebbles and runes that fly between the tablet and the leader, and the
+/// The summon tablet's state (heap slot battleEffect): the decoded pictures,
+/// the pebbles and runes that fly between the tablet and the leader, and the
 /// circle the runes gather on.
-struct SummonTabletWork {
+struct SummonTabletState {
   /// The runes' pictures, and then the pebbles', decoded to be loaded into
   /// VRAM.
   u8 pictures[2048];
@@ -139,21 +139,21 @@ struct SummonTabletWork {
 
 /// Task of SummonTablet_PlayRunes: moves and draws the runes and pebbles.
 void SummonTablet_UpdateRunes(void) {
-  struct SummonTabletWork *work = Ram_HeapSlots->battleEffect;
+  struct SummonTabletState *state = Ram_HeapSlots->battleEffect;
   s32 position[3];
   struct TabletPiece *piece;
   struct EffectSprite *sprite;
   s32 i;
   u16 *tile;
 
-  if (work->moving != 0) {
-    position[0] = work->originX;
-    position[2] = work->originZ;
-    Vector_AddPolarOffset(work->radius, work->angle, position);
-    piece = work->runes;
+  if (state->moving != 0) {
+    position[0] = state->originX;
+    position[2] = state->originZ;
+    Vector_AddPolarOffset(state->radius, state->angle, position);
+    piece = state->runes;
     piece->rune.targetX = position[0];
     piece->rune.targetZ = position[2];
-    work->angle += TRIG_TURN * 3 / 128;
+    state->angle += TRIG_TURN * 3 / 128;
     for (i = 0; i < TABLET_RUNE_COUNT; i++, piece++) {
       if (piece->timer >= 0) {
         if (i != 0) {
@@ -162,16 +162,16 @@ void SummonTablet_UpdateRunes(void) {
         }
         position[0] = piece->rune.x;
         position[2] = piece->rune.z;
-        Vector_AddPolarOffset(work->spacing, 0, position);
+        Vector_AddPolarOffset(state->spacing, 0, position);
       }
       piece->timer++;
     }
   }
 
-  piece = work->runes;
-  sprite = work->runeSprites;
+  piece = state->runes;
+  sprite = state->runeSprites;
   for (i = 0; i < TABLET_RUNE_COUNT; i++, sprite++, piece++) {
-    if (work->state == RUNES_LINE_UP) {
+    if (state->state == RUNES_LINE_UP) {
       if (piece->timer >= 0) {
         Motion_StepTowardTarget(&piece->rune, toFIXED(4));
         sprite->x = piece->rune.x;
@@ -179,13 +179,13 @@ void SummonTablet_UpdateRunes(void) {
         EffectSprite_Draw(sprite);
       }
       piece->timer++;
-    } else if (work->state == RUNES_CIRCLE) {
+    } else if (state->state == RUNES_CIRCLE) {
       Motion_StepTowardTarget(&piece->rune, toFIXED(6));
       sprite->x = piece->rune.x;
       sprite->y = piece->rune.z;
       EffectSprite_Draw(sprite);
-    } else if (work->state == RUNES_GATHER) {
-      if (piece->rune.x != work->targetX || piece->rune.z != work->targetZ) {
+    } else if (state->state == RUNES_GATHER) {
+      if (piece->rune.x != state->targetX || piece->rune.z != state->targetZ) {
         Motion_StepTowardTarget(&piece->rune, toFIXED(6));
         sprite->x = piece->rune.x;
         sprite->y = piece->rune.z;
@@ -194,9 +194,9 @@ void SummonTablet_UpdateRunes(void) {
     }
   }
 
-  piece = work->pebbles;
-  tile = &work->pebbleTile;
-  sprite = work->pebbleSprites;
+  piece = state->pebbles;
+  tile = &state->pebbleTile;
+  sprite = state->pebbleSprites;
   for (i = 0; i < TABLET_PEBBLE_COUNT; i++, sprite++, piece++) {
     if ((u32)piece->timer < PEBBLE_PICTURES * PEBBLE_PICTURE_FRAMES) {
       sprite->oam.index = *tile + (piece->timer / PEBBLE_PICTURE_FRAMES & 7) *
@@ -230,8 +230,8 @@ extern const u8 gMovementType_SquashScript[];
 /// and its runes light up and fly round the leader, with their sounds, before
 /// Summon_ShowLearnedMessage.
 void SummonTablet_PlayRunes(s32 targetId) {
-  struct SummonTabletWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct SummonTabletWork));
+  struct SummonTabletState *summonTabletState =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct SummonTabletState));
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = Actor_Lookup(ownerId);
   struct Actor *target = Actor_Lookup(targetId);
@@ -264,20 +264,22 @@ void SummonTablet_PlayRunes(s32 targetId) {
   Camera_WorldToScreen(pos);
   ownerX = pos[0];
   ownerZ = pos[2];
-  work->targetX = ownerX;
-  work->targetZ = ownerZ;
+  summonTabletState->targetX = ownerX;
+  summonTabletState->targetZ = ownerZ;
   pos[0] = target->x.fixed;
   pos[1] = target->y.fixed;
   pos[2] = target->z.fixed;
   Camera_WorldToScreen(pos);
   targetX = pos[0];
   targetZ = pos[2];
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RUNES), work->pictures);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RUNES),
+                      summonTabletState->pictures);
   runeEntry = VramCache_FindFreeEntry();
-  runeTile = VramCache_Load(runeEntry, sizeof(work->pictures), work->pictures);
-  piece = work->runes;
+  runeTile = VramCache_Load(runeEntry, sizeof(summonTabletState->pictures),
+                            summonTabletState->pictures);
+  piece = summonTabletState->runes;
   i = 0;
-  sprite = work->runeSprites;
+  sprite = summonTabletState->runeSprites;
   for (; i < TABLET_RUNE_COUNT; i++) {
     EffectSprite_Init(sprite, 4, 4, 0,
                       runeTile + (Random16() * TABLET_RUNE_PICTURES >> 16) * 2);
@@ -295,13 +297,14 @@ void SummonTablet_PlayRunes(s32 targetId) {
     sprite++;
     piece++;
   }
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PEBBLES), work->pictures);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PEBBLES),
+                      summonTabletState->pictures);
   pebbleEntry = VramCache_FindFreeEntry();
-  pebbleTile =
-      VramCache_Load(pebbleEntry, sizeof(work->pictures), work->pictures);
-  work->pebbleTile = pebbleTile;
-  piece = work->pebbles;
-  sprite = work->pebbleSprites;
+  pebbleTile = VramCache_Load(pebbleEntry, sizeof(summonTabletState->pictures),
+                              summonTabletState->pictures);
+  summonTabletState->pebbleTile = pebbleTile;
+  piece = summonTabletState->pebbles;
+  sprite = summonTabletState->pebbleSprites;
   for (i = 0; i < TABLET_PEBBLE_COUNT; i++) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, pebbleTile);
     sprite->oam.fullColor = 1;
@@ -321,14 +324,14 @@ void SummonTablet_PlayRunes(s32 targetId) {
   Sound_PlayFar(SE_SWIRL);
   Event_Wait(80);
   Actor_StartScriptFar(target, gSummonTablet_SquashScript);
-  work->moving = 0;
+  summonTabletState->moving = 0;
   Task_Add(SummonTablet_UpdateRunes, TASK_PASS_FRAME);
   state = TABLET_STRUCK;
   timer = 0;
   do {
     switch (state) {
     case TABLET_STRUCK:
-      work->state = RUNES_LINE_UP;
+      summonTabletState->state = RUNES_LINE_UP;
       if (timer <= 39) {
         if ((timer & 7) == 0)
           Sound_PlayFar(SE_IMPACT);
@@ -352,7 +355,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
         struct EffectSprite *rune;
         runeFrame = i % TABLET_RUNE_ROW + i / TABLET_RUNE_ROW;
         runeFrame = timer - runeFrame;
-        rune = &work->runeSprites[i];
+        rune = &summonTabletState->runeSprites[i];
         if (runeFrame == 0)
           rune->oam.index += RUNE_LIT;
         if (runeFrame == 3)
@@ -397,20 +400,20 @@ void SummonTablet_PlayRunes(s32 targetId) {
       break;
     case TABLET_RUNES_CIRCLE:
       if (timer == 0) {
-        piece = work->runes;
+        piece = summonTabletState->runes;
         delay = 0;
         for (i = 0; i < TABLET_RUNE_COUNT; i++) {
           piece->timer = delay;
           delay -= 3;
           piece++;
         }
-        work->radius = toFIXED(60);
-        work->angle = TRIG_TURN * 3 / 4;
-        work->originX = startX;
-        work->originZ = startZ;
-        work->moving = 1;
-        work->spacing = toFIXED(4);
-        work->state = RUNES_CIRCLE;
+        summonTabletState->radius = toFIXED(60);
+        summonTabletState->angle = TRIG_TURN * 3 / 4;
+        summonTabletState->originX = startX;
+        summonTabletState->originZ = startZ;
+        summonTabletState->moving = 1;
+        summonTabletState->spacing = toFIXED(4);
+        summonTabletState->state = RUNES_CIRCLE;
       }
       if (timer == 0)
         Sound_PlayFar(SE_FALLING_LIGHT);
@@ -424,8 +427,8 @@ void SummonTablet_PlayRunes(s32 targetId) {
       }
       break;
     case TABLET_RUNES_TO_LEADER:
-      work->originX = timer * (ownerX - startX) / 30 + startX;
-      work->originZ = timer * (ownerZ - startZ) / 30 + startZ;
+      summonTabletState->originX = timer * (ownerX - startX) / 30 + startX;
+      summonTabletState->originZ = timer * (ownerZ - startZ) / 30 + startZ;
       if (timer == 30) {
         state++;
         timer = -1;
@@ -433,10 +436,10 @@ void SummonTablet_PlayRunes(s32 targetId) {
       break;
     case TABLET_RUNES_CLOSE_IN:
       if (timer == 0)
-        work->spacing = 0;
-      work->radius += -toFIXED(2);
-      if (work->radius < 0) {
-        work->radius = 0;
+        summonTabletState->spacing = 0;
+      summonTabletState->radius += -toFIXED(2);
+      if (summonTabletState->radius < 0) {
+        summonTabletState->radius = 0;
         state++;
         timer = -1;
       }
@@ -446,14 +449,14 @@ void SummonTablet_PlayRunes(s32 targetId) {
         Actor_StartScriptFar(owner, gMovementType_SquashScript);
       if ((timer & 3) == 0)
         Sound_PlayFar(SE_MAP_TRANSITION);
-      work->state = RUNES_GATHER;
+      summonTabletState->state = RUNES_GATHER;
       if (timer == 60)
         state = FIELD_PSYNERGY_FINISHED;
       break;
     }
     for (i = 0; i < newPebbles; i++) {
       angle = Random16();
-      piece = &work->pebbles[nextPebble];
+      piece = &summonTabletState->pebbles[nextPebble];
       piece->timer = 0;
       piece->pebble.position[0] = target->x.fixed;
       piece->pebble.position[1] = target->y.fixed + toFIXED(12);
@@ -463,8 +466,9 @@ void SummonTablet_PlayRunes(s32 targetId) {
       piece->pebble.velocity[0] = 0;
       piece->pebble.velocity[1] = toFIXED(9) / 2;
       piece->pebble.velocity[2] = 0;
-      Vector_AddPolarOffset(Random16() * 2 + toFIXED(2), angle,
-                            work->pebbles[nextPebble].pebble.velocity);
+      Vector_AddPolarOffset(
+          Random16() * 2 + toFIXED(2), angle,
+          summonTabletState->pebbles[nextPebble].pebble.velocity);
       nextPebble = (nextPebble + 1) & (TABLET_PEBBLE_COUNT - 1);
     }
     newPebbles = 0;
@@ -499,7 +503,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list);
 /// ground if it now lies below it. A scene with such puddles calls it as it
 /// starts.
 void FlagBlock_PlaceAll(struct ActorFlag *actors) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct ActorFlag *list = actors;
   struct Actor *leader;
   s32 height;
@@ -522,7 +526,7 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
     }
   }
   FlagBlock_ApplyFlags(list);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   height = MapGrid_GetTerrainHeightFar(leader->layer, leader->x.fixed,
                                        leader->z.fixed);
   if (leader->y.fixed < height)

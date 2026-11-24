@@ -30,7 +30,7 @@
 #include "field/actor_view.h"
 #include "battle/battle.h"
 #include "field/field.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
@@ -75,7 +75,7 @@ struct ActorCameraPoint {
   FIXED z; ///< 16.16 fixed-point pixels
 };
 
-/// The start of the 3D camera's work (heap slot cameraWork), as the fixed
+/// The start of the 3D camera's state (heap slot cameraState), as the fixed
 /// camera reads it: the eye and target it looks from and at, or the points
 /// that stand in for them.
 struct ActorCameraFixed {
@@ -129,7 +129,7 @@ struct MapHeaderLayer {
 
 /// A layout's header: the camera's bounds, the layers' priorities, tile
 /// bases and setup, and the offsets, from the header's start, of its packed
-/// cell pictures, collision, cells, shapes, tileset animation, blend script
+/// cell tiles, collision, cells, shapes, tileset animation, blend script
 /// and script.
 struct MapHeader {
   /// The camera's bounds in 8-pixel tiles: left, top, right and bottom.
@@ -139,22 +139,22 @@ struct MapHeader {
   u8 charBase[3]; ///< each layer's BG char block
   u16 reserved;   ///< nothing reads it
   struct MapHeaderLayer layers[3];
-  s32 cellPictures; ///< staged and unpacked into the cell picture buffer
-  s32 collision;    ///< into Ram_MapCollision
-  s32 cells;        ///< into Ram_MapCellBuffer
-  s32 shapes;       ///< into gMapShapeGrid
-  s32 animation;    ///< the tileset animation script, or 0 for none
-  s32 blend;        ///< the blend script, or 0 for none
+  s32 cellTiles; ///< staged and unpacked into the cell tiles buffer
+  s32 collision; ///< into Ram_MapCollision
+  s32 cells;     ///< into Ram_MapCellBuffer
+  s32 shapes;    ///< into gMapShapeGrid
+  s32 animation; ///< the tileset animation script, or 0 for none
+  s32 blend;     ///< the blend script, or 0 for none
   /// Into Ram_MapCollision after its MAPGRID_SHAPE_TABLE_BYTES.
   s32 script;
 };
 
-/// FieldWork as the sand trail reads its priority
-/// (FieldWork.sandTrailPriority).
-struct SandTrailWork {
+/// FieldState as the sand trail reads its priority
+/// (FieldState.sandTrailPriority).
+struct SandTrailState {
   u8 unused[3402]; ///< no code names it
   u16 trailPriority
-      : 8;            ///< read as the low byte of FieldWork.sandTrailPriority
+      : 8;            ///< read as the low byte of FieldState.sandTrailPriority
   u16 unusedHigh : 8; ///< no code names it
 };
 
@@ -237,7 +237,7 @@ enum AnimationFacingKind {
 
 /// The field's pool sizes, and a sprite animation's timer step at normal speed.
 enum {
-  SPRITE_PICTURE_CACHE_COUNT = 8, ///< ActorSystemWork.pictureCaches
+  SPRITE_PICTURE_CACHE_COUNT = 8, ///< ActorSystemState.pictureCaches
   ANIM_LAYER_COUNT = 4,           ///< Sprite.entries
   RUNNING_LIST_SLOTS = 14,        ///< the actor slots Actor_ListRunning reads
   /// Sixteenths of a frame taken off a sprite animation's timer each frame: one
@@ -267,14 +267,14 @@ enum {
   FIELD_VIEW_HEIGHT = toFIXED(160)   ///< the screen's height
 };
 
-/// How a layout's cell picture data is packed: the method byte
+/// How a layout's cell tiles data is packed: the method byte
 /// TileMap_DecodeStagedBuffer reads before the halfwords.
-enum CellPicturePacking {
-  CELL_PICTURE_PACKING_RAW = 0, ///< copied as it is
+enum CellTilesPacking {
+  CELL_TILES_PACKING_RAW = 0, ///< copied as it is
   /// All the high bytes, then all the low bytes; each value is XORed with
   /// the one before.
-  CELL_PICTURE_PACKING_SPLIT_DELTA = 1,
-  CELL_PICTURE_PACKING_DELTA = 2 ///< each value is XORed with the one before
+  CELL_TILES_PACKING_SPLIT_DELTA = 1,
+  CELL_TILES_PACKING_DELTA = 2 ///< each value is XORed with the one before
 };
 
 /// A row of gSpritePictureCache_Sources: the packed resource that holds an

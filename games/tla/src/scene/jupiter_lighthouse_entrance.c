@@ -38,7 +38,7 @@
 #include "fixed_math.h"
 #include "field/call.h"
 #include "field/event_inline.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "scene_ids.h"
 #include "debug/debug.h"
@@ -142,7 +142,7 @@ void JupiterLighthouse_ScatterEastWeeds(void) {
 /// a Mint under Felix's feet: he jumps a cell west off it, and its green leaf
 /// lies in the cleared sand.
 void JupiterLighthouse_ScatterWeedsOverMint(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(56, 0, 3, 3, 79, 25, 1);
   if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_MINT)) {
@@ -151,11 +151,11 @@ void JupiterLighthouse_ScatterWeedsOverMint(void) {
         FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(MINT_SPOT_Z))) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+      Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, -16, 0);
+      Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, -16, 0);
       leader->velocityY = toFIXED(6);
-      FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+      FieldActor_WaitForMoveById(gMainRoutineState.leaderActorId);
       Event_End();
     }
   }
@@ -177,15 +177,15 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 s32 Scene_Initialize(void) {
   s32 keepPosition;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   keepPosition = Event_GetFlag(FLAG_KEEP_PARTY_POSITION);
   if (keepPosition == 0) {
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         JUPITER_LIGHTHOUSE_ENTRANCE_FROM_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS)
-      Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
+      Actor_ArriveInRing(gMainRoutineState.leaderActorId);
   }
-  gMainRoutineWork.restartScene = SCENE_CONTIGO_SHOPS;
-  gMainRoutineWork.restartEntrance = CONTIGO_SHOPS_FROM_CONTIGO_NORTHEAST_A;
+  gMainRoutineState.restartScene = SCENE_CONTIGO_SHOPS;
+  gMainRoutineState.restartEntrance = CONTIGO_SHOPS_FROM_CONTIGO_NORTHEAST_A;
   return 0;
 }
 

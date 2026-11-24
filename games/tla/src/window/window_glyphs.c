@@ -24,10 +24,10 @@
 
 /// Draws a character, and a second one when the code carries it in bits 8 to
 /// 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
-/// over a shadow, or with an outline when WindowWork.outline is 1.
+/// over a shadow, or with an outline when WindowState.outline is 1.
 s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   u8 pixels[GLYPH_PIXELS_SIZE];
-  struct WindowWork *work;
+  struct WindowState *state;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
   const u16 *mark = NULL;
   const u16 *glyph;
@@ -48,7 +48,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   s32 pixelsLeft;
   u32 tileLine;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
   // The voicing mark the code carries above TEXT_MARK_SHIFT, drawn over the
   // glyph one pixel wider.
@@ -80,16 +80,16 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   Iwram_ClearWordsEntry(pixels, GLYPH_PIXELS_SIZE);
   glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
 #endif
-  // While WindowWork.mindRead is set, the text is colour 8 with no shadow.
-  if (work->mindRead != 0) {
+  // While WindowState.mindRead is set, the text is colour 8 with no shadow.
+  if (state->mindRead != 0) {
     shadowColour = 0;
     colour = 8;
   } else {
     shadowColour = 1;
-    colour = work->colour;
+    colour = state->colour;
   }
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-  if (work->outline == TEXT_STYLE_OUTLINED) {
+  if (state->outline == TEXT_STYLE_OUTLINED) {
     Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(1, 3), shadowColour);
     Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(2, 3), shadowColour);
     if (mark != NULL) {
@@ -117,7 +117,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
     }
   }
 #else
-  if (work->outline == TEXT_STYLE_OUTLINED) {
+  if (state->outline == TEXT_STYLE_OUTLINED) {
     Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(1, 3), shadowColour);
     Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(2, 3), shadowColour);
     Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(0, 2), colour);
@@ -131,7 +131,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
     glyph = (const u8 *)&gFont_Glyphs[-TEXT_SPACE] + ((u16)secondIndex << 5);
     secondWidth = *(const u16 *)glyph;
     glyph += 2;
-    if (work->outline == TEXT_STYLE_OUTLINED) {
+    if (state->outline == TEXT_STYLE_OUTLINED) {
       u8 *dst = pixels + width;
       Iwram_ExpandBitRuns(glyph, dst + GLYPH_PIXEL(1, 3), shadowColour);
       Iwram_ExpandBitRuns(glyph, dst + GLYPH_PIXEL(2, 3), shadowColour);
@@ -234,18 +234,18 @@ s32 Text_GetWideStringWidth(u16 *text) {
 /// line codes; other control codes are skipped with their arguments.
 void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                  s32 y) {
-  struct WindowWork *work;
+  struct WindowState *state;
   u32 c;
   u32 next;
   s16 start;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   c = 0;
   start = x;
   if (text == NULL) {
-    text = work->textBuffer;
-    work->textBuffer[work->textBufferEnd] = c;
-    work->textBufferEnd = (work->textBufferEnd + 1) & TEXT_BUFFER_MASK;
+    text = state->textBuffer;
+    state->textBuffer[state->textBufferEnd] = c;
+    state->textBufferEnd = (state->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
   for (;;) {
     c = *text++;
@@ -266,15 +266,15 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 #endif
       switch (c) {
       case TEXT_COLOR:
-        work->colour = *text;
+        state->colour = *text;
         text++;
         break;
       case TEXT_OUTLINE:
-        work->outline = *text;
+        state->outline = *text;
         text++;
         break;
       case TEXT_LINE_SPACING:
-        work->lineSpacing = *text;
+        state->lineSpacing = *text;
         text++;
         break;
       case TEXT_COLORS_RESET:
@@ -321,7 +321,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                           gFont_Glyphs[next - TEXT_SPACE].width;
 
           // Outlined text joins only pairs one pixel narrower.
-          if (work->outline == TEXT_STYLE_OUTLINED) {
+          if (state->outline == TEXT_STYLE_OUTLINED) {
             if ((u16)pairWidth <= 14) {
               c |= next << 8;
               text++;
@@ -348,12 +348,12 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 
 /// Unused: draws a string of 16-bit character codes straight into the UI
 /// tilemap, as tiles, inside a window at tile (offsetX, offsetY) of its
-/// interior, writing both the work block's copy and VRAM. A NULL buffer draws
-/// the decoded text in WindowWork.textBuffer.
-UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
-                                           const struct Window *window,
-                                           s32 offsetX, s32 offsetY) {
-  struct WindowWork *canvas = WINDOW_WORK;
+/// interior, writing both the window state's copy and VRAM. A NULL buffer draws
+/// the decoded text in WindowState.textBuffer.
+UNUSED void Text_DrawGlyphTileAtStateOffset(u16 *buffer,
+                                            const struct Window *window,
+                                            s32 offsetX, s32 offsetY) {
+  struct WindowState *canvas = WINDOW_STATE;
   u32 cell;
 
   if (buffer == NULL) {
@@ -377,19 +377,19 @@ UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
 
 /// Draws a string of wide (16-bit) codes into the window, one glyph per cell,
 /// skipping the control codes and their arguments; TEXT_NEWLINE starts a new
-/// line. With no text, the decoded text in WindowWork.textBuffer is drawn.
+/// line. With no text, the decoded text in WindowState.textBuffer is drawn.
 void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
                                  s32 y) {
-  struct WindowWork *work;
+  struct WindowState *state;
   u16 c;
   s16 start;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   start = x;
   if (text == NULL) {
-    text = work->textBuffer;
-    work->textBuffer[work->textBufferEnd] = 0;
-    work->textBufferEnd = (work->textBufferEnd + 1) & TEXT_BUFFER_MASK;
+    text = state->textBuffer;
+    state->textBuffer[state->textBufferEnd] = 0;
+    state->textBufferEnd = (state->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
   c = *text++;
   if (c != 0)
@@ -435,7 +435,7 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
       }
       c = *text++;
     } while (c != 0);
-  work->dirty = 1;
+  state->dirty = 1;
 }
 
 /// The digits String_FormatNumber writes, in buffer[1] to [12].

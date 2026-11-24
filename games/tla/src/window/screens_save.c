@@ -63,7 +63,7 @@
 /// The progress bar's serial callback: advances the stored progress by step
 /// and draws row min(progress, 6) of gWindow_ProgressBarRows.
 void SaveProgress_Advance(s32 step) {
-  struct SaveWorkspace *save = Ram_HeapSlots->saveWork;
+  struct SaveWorkspace *save = Ram_HeapSlots->saveState;
   u32 row;
   const u8 *src;
   u16 *dst;
@@ -304,11 +304,11 @@ void *String_FormatPlayTime(s32 frames, u8 *out) {
 /// Returns the first save file whose summary shows it empty (level 0), or
 /// SAVE_NO_FREE_FILE when all three are in use. The summaries must be loaded.
 u32 Save_FindFreeFile(void) {
-  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
+  struct SaveWorkspace *state = Ram_HeapSlots->saveState;
   struct SaveSummary *summary;
   u32 i;
 
-  summary = work->summary;
+  summary = state->summary;
   for (i = 0; i < SAVE_FILE_COUNT; i++, summary++) {
     if (summary->level == 0)
       return i;
@@ -324,22 +324,22 @@ s32 Save_CountFilesExcludingSent(s32 excludeSent) {
   s32 i;
   s32 count;
   struct SaveSummary *summary;
-  struct SaveWorkspace *work;
+  struct SaveWorkspace *state;
 
-  if (Save_InitializeWork() != 0) {
+  if (Save_InitializeState() != 0) {
     count = SAVE_ERROR_NO_MEMORY;
   } else {
     count = Save_LoadFileSummaries();
     if (excludeSent != 0) {
-      work = Ram_HeapSlots->saveWork;
-      summary = work->summary;
+      state = Ram_HeapSlots->saveState;
+      summary = state->summary;
       for (i = 0; i < SAVE_FILE_COUNT; i++) {
         if (summary[i].sendFlag != 0)
           count--;
       }
     }
   }
-  Save_ReleaseWork();
+  Save_ReleaseState();
   return count;
 }
 
@@ -353,36 +353,36 @@ s32 Save_ScanFileSummaries(void) {
   s32 sentCount;
   s32 fileCount;
 
-  error = Save_InitializeWork();
+  error = Save_InitializeState();
   sentCount = 0;
   fileCount = SAVE_ERROR_NO_MEMORY;
   if (error == 0) {
     s32 i;
-    struct SaveWorkspace *work;
+    struct SaveWorkspace *state;
 
     fileCount = Save_LoadFileSummaries();
-    work = Ram_HeapSlots->saveWork;
+    state = Ram_HeapSlots->saveState;
     gAnyFileCleared = 0;
     gTitleBattleOptionEnabled = 0;
     gTitleUpdateOptionEnabled = 0;
     for (i = 0; i < SAVE_FILE_COUNT; i++) {
-      if (work->summary[i].sendFlag != 0) {
+      if (state->summary[i].sendFlag != 0) {
         gAnyFileCleared = 1;
         sentCount++;
       }
-      if (work->summary[i].flagCount != 0)
+      if (state->summary[i].flagCount != 0)
         gTitleBattleOptionEnabled = 1;
-      if (work->summary[i].level != 0 && work->summary[i].reunited == 0)
+      if (state->summary[i].level != 0 && state->summary[i].reunited == 0)
         gTitleUpdateOptionEnabled = 1;
     }
   }
-  Save_ReleaseWork();
+  Save_ReleaseState();
   if (fileCount != 0 && sentCount == fileCount)
     return fileCount + SAVE_SCAN_ALL_CLEARED;
   return fileCount;
 }
 
-/// Prepares the save buffer for writing: stamps the main routine's work with
+/// Prepares the save buffer for writing: stamps the main routine's state with
 /// the time and options, then fills the file summary shown on the file menus
 /// (the leader's name, level and class, the play time, area, coins, Djinn of
 /// each element, the party, the send flag and how many Djinn it has found) and
@@ -400,22 +400,22 @@ s32 Save_BuildFileSummary(void) {
   // The summary's header comes before the save buffer.
   summary =
       (struct SaveSummary *)(gSaveBuffer - offsetof(struct SaveSummary, name));
-  gMainRoutineWork.buildStamp = BuildStamp_GetTimeFar(0);
-  gMainRoutineWork.playTime = gPlayTimeFrames;
+  gMainRoutineState.buildStamp = BuildStamp_GetTimeFar(0);
+  gMainRoutineState.playTime = gPlayTimeFrames;
   // A second copy of the play time, at the start of gSceneLocalState.
   *(u32 *)gSceneLocalState = gPlayTimeFrames;
-  gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
-  leader = Unit_Get(gMainRoutineWork.leaderActorId);
+  gMainRoutineState.idleSleepEnabled = gIdleSleepEnabled;
+  leader = Unit_Get(gMainRoutineState.leaderActorId);
   destination = summary->name;
   source = leader->name;
   for (i = 0; i < (s32)sizeof(summary->name); i++)
     *destination++ = *source++;
   summary->level = leader->level;
-  summary->playTime = gMainRoutineWork.playTime;
+  summary->playTime = gMainRoutineState.playTime;
   summary->area =
-      Area_GetNameIndexFar(gMainRoutineWork.next, gMainRoutineWork.entrance);
+      Area_GetNameIndexFar(gMainRoutineState.next, gMainRoutineState.entrance);
   summary->classId = leader->classId;
-  summary->coins = gMainRoutineWork.coins;
+  summary->coins = gMainRoutineState.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
   summary->djinn[1] = Party_SumDjinnCountsFar(1);
   summary->djinn[2] = Party_SumDjinnCountsFar(2);
@@ -425,9 +425,9 @@ s32 Save_BuildFileSummary(void) {
   for (i = 0; i <= 3 && members[i] != BATTLE_UNIT_LIST_END; i++)
     summary->party[i] = members[i];
   summary->party[i] = -1;
-  summary->windowHue = gMainRoutineWork.windowHue;
-  summary->windowBrightness = gMainRoutineWork.windowBrightness;
-  summary->sendFlag = gMainRoutineWork.sendFlag;
+  summary->windowHue = gMainRoutineState.windowHue;
+  summary->windowBrightness = gMainRoutineState.windowBrightness;
+  summary->sendFlag = gMainRoutineState.sendFlag;
   summary->flagCount = 0;
   for (i = FLAG_DJINN_FIRST; i <= FLAG_DJINNI(DJINNI_WIND19); i++) {
     if (GameFlag_Get(i))
@@ -438,7 +438,7 @@ s32 Save_BuildFileSummary(void) {
     s32 n;
     u32 frames;
 
-    frames = gMainRoutineWork.buildStamp;
+    frames = gMainRoutineState.buildStamp;
     word = (u32 *)gGameFlagBytes;
     // The checksum's words, counted in fours and multiplied back below.
     n = SAVE_CHECKSUM_WORDS / 4;
@@ -463,18 +463,18 @@ s32 Save_ReadPart(s32 partId, void *buffer);
 s32 Save_WriteFile(s32 file) {
   s32 result = 0;
 
-  if (Save_InitializeWork() != 0) {
+  if (Save_InitializeState() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else if (Save_WritePartMasked(file, gSaveBuffer) != 0) {
     FieldMessage_Show((s32)&MsgSaveFailed, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_WRITE;
   }
-  Save_ReleaseWork();
+  Save_ReleaseState();
   return result;
 }
 
-/// Writes the link lobby's tallies (gMainRoutineWork.linkTallies) into the
+/// Writes the link lobby's tallies (gMainRoutineState.linkTallies) into the
 /// current file's first part (gSaveSlot), under the saving screen, leaving the
 /// rest of the part as it was saved. Returns -1 when no file is current.
 s32 Save_ProcessSelectedFile(void) {
@@ -488,7 +488,7 @@ s32 Save_ProcessSelectedFile(void) {
   part = Heap_AllocEwram(SAVE_SECTORS_PER_PART * SAVE_SECTOR_SIZE);
   value = gSaveSlot;
   if (value != -1) {
-    error = Save_InitializeWork();
+    error = Save_InitializeState();
     if (error != 0) {
       FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
       result = SAVE_ERROR_NO_MEMORY;
@@ -503,10 +503,10 @@ s32 Save_ProcessSelectedFile(void) {
         result = SAVE_ERROR_READ;
       }
       // The tallies' place in the part is their place in the save buffer.
-      tallies = (u8 *)part + (s32)gMainRoutineWork.linkTallies;
+      tallies = (u8 *)part + (s32)gMainRoutineState.linkTallies;
       tallies -= (s32)gSaveBuffer;
-      Iwram_CopyWordsEntry(tallies, gMainRoutineWork.linkTallies,
-                           sizeof(gMainRoutineWork.linkTallies));
+      Iwram_CopyWordsEntry(tallies, gMainRoutineState.linkTallies,
+                           sizeof(gMainRoutineState.linkTallies));
       progress = (s32)SaveProgress_Open(SAVE_PROGRESS_SAVING);
       error = Save_WritePartMasked(gSaveSlot, part);
       SaveProgress_Close((struct Window *)progress);
@@ -515,7 +515,7 @@ s32 Save_ProcessSelectedFile(void) {
         result = SAVE_ERROR_WRITE;
       }
     }
-    Save_ReleaseWork();
+    Save_ReleaseState();
     Heap_Release(part);
     value = result;
   }
@@ -529,7 +529,7 @@ s32 Save_ToFile(u32 slot) {
 
   if (slot > 2)
     slot = 2;
-  if (Save_InitializeWork() != 0) {
+  if (Save_InitializeState() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else {
@@ -553,7 +553,7 @@ s32 Save_ToFile(u32 slot) {
                         FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
     }
   }
-  Save_ReleaseWork();
+  Save_ReleaseState();
   return result;
 }
 
@@ -564,9 +564,9 @@ s32 Save_ToChosenFile(void) {
   s32 slot;
   s32 error;
   s32 progress;
-  struct SaveWorkspace *work;
+  struct SaveWorkspace *state;
 
-  if (Save_InitializeWork() != 0) {
+  if (Save_InitializeState() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else {
@@ -575,8 +575,8 @@ s32 Save_ToChosenFile(void) {
     if (slot == -1) {
       result = slot;
     } else {
-      work = Ram_HeapSlots->saveWork;
-      if (work->summary[slot].level != 0) {
+      state = Ram_HeapSlots->saveState;
+      if (state->summary[slot].level != 0) {
         FieldMessage_Show((s32)&MsgOverwriteConfirm,
                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN |
                               FIELD_MESSAGE_LOWER);
@@ -605,7 +605,7 @@ s32 Save_ToChosenFile(void) {
     }
   }
 done:
-  Save_ReleaseWork();
+  Save_ReleaseState();
   return result;
 }
 
@@ -614,7 +614,7 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
   s32 result = 0;
   s32 file;
 
-  if (Save_InitializeWork() != 0) {
+  if (Save_InitializeState() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else {
@@ -626,13 +626,13 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
       FieldMessage_Show((s32)&MsgLoadFailed, FIELD_MESSAGE_ZOOM);
       result = SAVE_ERROR_READ;
     } else {
-      gPlayTimeFrames = gMainRoutineWork.playTime;
-      gIdleSleepEnabled = gMainRoutineWork.idleSleepEnabled;
+      gPlayTimeFrames = gMainRoutineState.playTime;
+      gIdleSleepEnabled = gMainRoutineState.idleSleepEnabled;
       gIdleFrames = 0;
       gSaveSlot = file;
     }
   }
-  Save_ReleaseWork();
+  Save_ReleaseState();
   return result;
 }
 
@@ -643,7 +643,7 @@ s32 Save_CopyFile(void) {
   s32 value;
   s32 progress;
 
-  if (Save_InitializeWork() != 0) {
+  if (Save_InitializeState() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else {
@@ -677,7 +677,7 @@ s32 Save_CopyFile(void) {
       }
     }
   }
-  Save_ReleaseWork();
+  Save_ReleaseState();
   return result;
 }
 
@@ -694,7 +694,7 @@ s32 Save_EraseSelectedFile(void) {
   s32 progress;
   s32 error;
 
-  if (Save_InitializeWork() != 0) {
+  if (Save_InitializeState() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else {
@@ -722,7 +722,7 @@ s32 Save_EraseSelectedFile(void) {
       }
     }
   }
-  Save_ReleaseWork();
+  Save_ReleaseState();
   return result;
 }
 
@@ -781,7 +781,7 @@ void FileList_StopPulse(void) { Task_Remove((u32)((s32)FileList_UpdatePulse)); }
 /// file.
 void FileList_FillHighlight(struct Window *window, s32 x, s32 y, s32 width,
                             s32 height) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
   s32 sum;
 
   sum = x + (s16)window->x;
@@ -801,7 +801,7 @@ void FileList_FillHighlight(struct Window *window, s32 x, s32 y, s32 width,
     y = 0;
   }
   // BUG: the bottom is tested against the screen's width, so a rectangle
-  // ending below row DISPLAY_TILE_HEIGHT writes past WindowWork.tilemap; the
+  // ending below row DISPLAY_TILE_HEIGHT writes past WindowState.tilemap; the
   // one caller, the file list's highlight, never does.
 #ifdef BUGFIX
   if (y + height > DISPLAY_TILE_HEIGHT - 1)
@@ -814,10 +814,10 @@ void FileList_FillHighlight(struct Window *window, s32 x, s32 y, s32 width,
     // Byte offsets: BG_SCREEN_WIDTH entries of 2 bytes a row.
     s32 yOffset = y * (BG_SCREEN_WIDTH * 2);
     s32 xOffset = x << 1;
-    s32 offset = yOffset + ((s32)work + xOffset);
+    s32 offset = yOffset + ((s32)state + xOffset);
     do {
       s32 remaining = width;
-      u16 *cell = (u16 *)(offset + offsetof(struct WindowWork, tilemap));
+      u16 *cell = (u16 *)(offset + offsetof(struct WindowState, tilemap));
       if (remaining != 0) {
         do {
           remaining--;
@@ -828,7 +828,7 @@ void FileList_FillHighlight(struct Window *window, s32 x, s32 y, s32 width,
       height--;
       offset += BG_SCREEN_WIDTH * 2;
     } while (height != 0);
-    work->dirty = 1;
+    state->dirty = 1;
   }
 }
 
@@ -837,7 +837,7 @@ void FileList_FillHighlight(struct Window *window, s32 x, s32 y, s32 width,
 /// frame (FileList_PlacePartySprites).
 void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
                                struct SaveSummary *summary) {
-  struct FileListWork *menu = Ram_HeapSlots->menuWork;
+  struct FileListState *menu = Ram_HeapSlots->menuState;
   s32 i;
 
   for (i = 0; i < 4 && summary->party[i] != -1; i++) {
@@ -862,7 +862,7 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
 
 /// Stops placing the party sprites of the file list and releases them.
 void FileList_HidePartySprites(void) {
-  struct FileListWork *menu = Ram_HeapSlots->menuWork;
+  struct FileListState *menu = Ram_HeapSlots->menuState;
   s32 i;
 
   Task_Remove((s32)FileList_PlacePartySprites);
@@ -877,7 +877,8 @@ void FileList_HidePartySprites(void) {
 /// A task: draws each party sprite of the file list at its place and scale for
 /// this frame.
 void FileList_PlacePartySprites(void) {
-  struct FileListWork *state = (struct FileListWork *)Ram_HeapSlots->menuWork;
+  struct FileListState *state =
+      (struct FileListState *)Ram_HeapSlots->menuState;
   s32 scale[2];
   FIXED position[4];
   s32 index = 0;
@@ -1002,13 +1003,13 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   void *modePicture;
   s32 summaryDirty;
   u32 buildStamp;
-  void *spriteWork;
+  void *spriteState;
   s32 result;
   s32 i;
   s32 y;
 
-  spriteWork = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
-  save = Ram_HeapSlots->saveWork;
+  spriteState = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_STATE_SIZE);
+  save = Ram_HeapSlots->saveState;
   summaryWindow = NULL;
   partyWindow = NULL;
   djinnWindow = NULL;
@@ -1081,7 +1082,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     }
   }
 
-  Dma_Fill32(0, spriteWork, MENU_WORK_SIZE);
+  Dma_Fill32(0, spriteState, MENU_STATE_SIZE);
   FileList_StartPulse();
   fileList = Window_Create(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
   for (i = 0, summary = save->summary; i < SAVE_FILE_COUNT; i++, summary++) {
@@ -1143,8 +1144,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
           djinnWindow = NULL;
         }
       } else {
-        WindowColor_Apply(gMainRoutineWork.windowHue,
-                          gMainRoutineWork.windowBrightness);
+        WindowColor_Apply(gMainRoutineState.windowHue,
+                          gMainRoutineState.windowBrightness);
         DjinnFigures_SetShownFar(0);
         FileList_HidePartySprites();
         Window_Close(djinnWindow, 2);
@@ -1211,8 +1212,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   Window_Close(fileList, 2);
   FileList_StopPulse();
   HeapSlot_Release(HEAP_SLOT_MENU);
-  WindowColor_Apply(gMainRoutineWork.windowHue,
-                    gMainRoutineWork.windowBrightness);
+  WindowColor_Apply(gMainRoutineState.windowHue,
+                    gMainRoutineState.windowBrightness);
   wait(1);
 done:
   return result;

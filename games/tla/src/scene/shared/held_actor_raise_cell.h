@@ -1,7 +1,7 @@
 /// Raises the cell under the pillar a push or Move has just set down
-/// (FieldWork.movedBlock), as Pillar_Raise does.
+/// (FieldState.movedBlock), as Pillar_Raise does.
 void HeldActor_RaiseCell() {
-  struct Actor *held = gFieldWork->movedBlock;
+  struct Actor *held = gFieldState->movedBlock;
   u8 *cells;
   struct ShapeCell *shapes;
   s32 shape;
@@ -11,7 +11,7 @@ void HeldActor_RaiseCell() {
 
   if (held == NULL)
     return;
-  cells = (u8 *)((struct MapWork *)Ram_HeapSlots->mapGrid)
+  cells = (u8 *)((struct MapState *)Ram_HeapSlots->mapGrid)
               ->layers[held->layer]
               .cells;
   shapes = (struct ShapeCell *)Ram_MapShapeGrid +

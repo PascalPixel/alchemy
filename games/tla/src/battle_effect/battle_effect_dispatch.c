@@ -14,17 +14,17 @@ void BattleEffect_CallDoNothing(s32 count) {
 }
 
 /// Runs one of the large battle effects, the summons and the scenes of a few
-/// abilities: takes the effect's sprite sheet, work and canvas, runs the effect
-/// of args->kind (enum SummonEffectId) and frees them again.
+/// abilities: takes the effect's sprite sheet, state and canvas, runs the
+/// effect of args->kind (enum SummonEffectId) and frees them again.
 void BattleEffect_RunSummon(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
 
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  work = Ram_HeapSlots->battleEffect;
-  work->args = args;
-  work->vblanksSinceTransfer = 1;
+  state = Ram_HeapSlots->battleEffect;
+  state->args = args;
+  state->vblanksSinceTransfer = 1;
   if (args->kind == SUMMON_EFFECT_NONE) {
     BattleEffect_RunMeteor(args);
   } else {
@@ -124,16 +124,16 @@ void BattleEffect_RunSummon(struct BattleEffectParams *args) {
 }
 
 /// Runs an ordinary battle effect from gBattleEffect_Handlers, with the sprite
-/// sheet, work and canvas it lends.
+/// sheet, state and canvas it lends.
 void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
 
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  work = Ram_HeapSlots->battleEffect;
-  work->args = args;
-  work->vblanksSinceTransfer = 1;
+  state = Ram_HeapSlots->battleEffect;
+  state->args = args;
+  state->vblanksSinceTransfer = 1;
   gBattleEffect_Handlers[args->kind - 1](args);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);

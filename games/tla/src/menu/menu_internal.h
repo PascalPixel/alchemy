@@ -36,7 +36,7 @@
 #define MENU_SAVED_TILE_BYTES 8192
 
 /// The Djinn change DjinnMenu_DrawStatPreview previews, with the Djinn in the
-/// work's sides removePairSlot and addPairSlot.
+/// state's sides removePairSlot and addPairSlot.
 enum DjinnPreviewMode {
   DJINN_PREVIEW_ADD_AND_SET = 0, ///< the other's Djinni is added and set
   DJINN_PREVIEW_UNSET = 1,       ///< the chosen Djinni is unset
@@ -165,7 +165,7 @@ enum DjinnCompareOperation {
 #include "graphics/resource.h"
 #include "system/task.h"
 #include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_event.h"
 #include "game/item.h"
 #include "battle/battle_unit.h"
@@ -200,17 +200,17 @@ void ItemMenu_PlaceIcon(struct WindowSprite **icons, s32 index, s32 x, s32 y,
 void Window_SetBounds(struct Window *window, s32 x, s32 y, s32 width,
                       s32 height);
 
-/// The item menu's work, Ram_HeapSlots->menuWork (HEAP_SLOT_MENU): its
+/// The item menu's state, Ram_HeapSlots->menuState (HEAP_SLOT_MENU): its
 /// windows, the party figures, the items listed and the two choices a command
-/// makes. The Broken Seal's ItemMenuWork, whose names its members take: from
+/// makes. The Broken Seal's ItemMenuState, whose names its members take: from
 /// itemWindow to the entry icons it lies 4 bytes further on than The Broken
 /// Seal's, and from questionWindow on 28 bytes closer, with the figures' ids
 /// after their scales. The status, Psynergy and Djinn screens read the
 /// members they share with it through it too.
-struct ItemMenuWork {
-  u8 unused[8];               ///< no view of the menu work names it
+struct ItemMenuState {
+  u8 unused[8];               ///< no view of the menu state names it
   s32 selectedMember;         ///< the party member chosen
-  struct Window *moneyWindow; ///< ShopWork's; not named here
+  struct Window *moneyWindow; ///< ShopState's; not named here
   struct Window *mainWindow;
   /// The two sides: the party member whose items are shown, and the one an item
   /// is given to.
@@ -219,7 +219,7 @@ struct ItemMenuWork {
   s8 sideIndex[2]; ///< the party member chosen, in memberIds
   s8 sideCount[2]; ///< party members to choose from
   ///@}
-  u8 unusedAfterSides[4]; ///< no view of the menu work names it
+  u8 unusedAfterSides[4]; ///< no view of the menu state names it
   struct Window *itemWindow;
   struct Window *statusWindow;
   struct Window *buttonHelpWindow;
@@ -231,7 +231,7 @@ struct ItemMenuWork {
   struct Window *secondUnopenedWindow; ///< never given a window; only closed
   struct WindowSprite *gridCursor;
   struct WindowSprite *entryIcons[MENU_ENTRY_ICONS];
-  u8 unusedAfterIcons[36]; ///< no view of the menu work names it
+  u8 unusedAfterIcons[36]; ///< no view of the menu state names it
   struct Window *questionWindow;
   /// The cursor grid: its place and its size.
   ///@{
@@ -250,10 +250,10 @@ struct ItemMenuWork {
   u16 selectedSlots[2]; ///< each side's inventory slot chosen
   u16 selectedItems[2]; ///< each side's inventory entry chosen
   struct WindowSprite *cursor;
-  u8 unusedBeforeArrows[4]; ///< no view of the menu work names it
+  u8 unusedBeforeArrows[4]; ///< no view of the menu state names it
   /// The up and down arrows beside the party row (MenuCursor_Create).
   struct WindowSprite *pageArrows[2];
-  /// DjinnMenuWork's backdrop pointer at offset 384; no view names the rest.
+  /// DjinnMenuState's backdrop pointer at offset 384; no view names the rest.
   u8 aroundBackdrop[68];
   u16 items[32];    ///< the inventory entries listed
   u16 memberIds[8]; ///< the party in order (Party_ListMembersFar)
@@ -276,24 +276,24 @@ struct ItemMenuWork {
   FIXED figureScales[4];
   u16 figureFacings[4];
   ///@}
-  u8 unusedAfterFigures[6]; ///< DjinnMenuWork's pair; not named here
+  u8 unusedAfterFigures[6]; ///< DjinnMenuState's pair; not named here
   s16 messageOffset;        ///< the item use's result, after MsgItemUseResult
   s8 equipPreview; ///< 1 while the stats preview a removal, not an equip
   s8 listMode;     ///< the command chosen last; -1 for none
-  u8 unusedAfterListMode[2];   ///< no view of the menu work names it
+  u8 unusedAfterListMode[2];   ///< no view of the menu state names it
   s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
-  u8 mode;                     ///< PsynergyMenuWork's; not named here
-  u8 unusedAfterMode[3];       ///< no view of the menu work names it
-  u8 shopStock[638];           ///< ShopWork's stock and party; not named here
+  u8 mode;                     ///< PsynergyMenuState's; not named here
+  u8 unusedAfterMode[3];       ///< no view of the menu state names it
+  u8 shopStock[638];           ///< ShopState's stock and party; not named here
   u16 resourceSlots[2];        ///< VRAM cache slots of two arrow pictures
-  u8 shopKeeper[23];           ///< ShopWork's cursor and keeper; not named here
+  u8 shopKeeper[23]; ///< ShopState's cursor and keeper; not named here
   /// Nonzero while Menu_UpdateEntryObjectTransforms places the party figures
   /// (memberSprites); the shops clear it while a details window covers them.
   s8 memberSpritesShown;
   /// Nonzero while the row of four figures is drawn
   /// (DjinnFigures_SetShown).
   s8 figuresShown;
-  u8 shopEffects[1729]; ///< ShopWork's particles; not named here
+  u8 shopEffects[1729]; ///< ShopState's particles; not named here
   /// The five menu icons (MenuIcon_LoadSlots): a sprite and a VRAM cache
   /// slot each, queued while menuIconsShown is nonzero.
   ///@{
@@ -303,49 +303,49 @@ struct ItemMenuWork {
   ///@}
 };
 
-STATIC_ASSERT(offsetof(struct ItemMenuWork, itemWindow) == 36);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, gridCursor) == 72);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, entryIcons) == 76);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, questionWindow) == 240);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSprites) == 248);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberY) == 296);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSpriteIds) == 344);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedSlots) == 360);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, pageArrows) == 376);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, items) == 452);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, sideMember) == 534);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, flags) == 540);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, completionFlag) == 542);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, messageOffset) == 606);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, listMode) == 609);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedIndexByMember) == 612);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, figures) == 544);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, figureFacings) == 592);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, resourceSlots) == 1262);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSpritesShown) == 1289);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIcons) == 3020);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIconsShown) == 3090);
+STATIC_ASSERT(offsetof(struct ItemMenuState, itemWindow) == 36);
+STATIC_ASSERT(offsetof(struct ItemMenuState, gridCursor) == 72);
+STATIC_ASSERT(offsetof(struct ItemMenuState, entryIcons) == 76);
+STATIC_ASSERT(offsetof(struct ItemMenuState, questionWindow) == 240);
+STATIC_ASSERT(offsetof(struct ItemMenuState, memberSprites) == 248);
+STATIC_ASSERT(offsetof(struct ItemMenuState, memberY) == 296);
+STATIC_ASSERT(offsetof(struct ItemMenuState, memberSpriteIds) == 344);
+STATIC_ASSERT(offsetof(struct ItemMenuState, selectedSlots) == 360);
+STATIC_ASSERT(offsetof(struct ItemMenuState, pageArrows) == 376);
+STATIC_ASSERT(offsetof(struct ItemMenuState, items) == 452);
+STATIC_ASSERT(offsetof(struct ItemMenuState, sideMember) == 534);
+STATIC_ASSERT(offsetof(struct ItemMenuState, flags) == 540);
+STATIC_ASSERT(offsetof(struct ItemMenuState, completionFlag) == 542);
+STATIC_ASSERT(offsetof(struct ItemMenuState, messageOffset) == 606);
+STATIC_ASSERT(offsetof(struct ItemMenuState, listMode) == 609);
+STATIC_ASSERT(offsetof(struct ItemMenuState, selectedIndexByMember) == 612);
+STATIC_ASSERT(offsetof(struct ItemMenuState, figures) == 544);
+STATIC_ASSERT(offsetof(struct ItemMenuState, figureFacings) == 592);
+STATIC_ASSERT(offsetof(struct ItemMenuState, resourceSlots) == 1262);
+STATIC_ASSERT(offsetof(struct ItemMenuState, memberSpritesShown) == 1289);
+STATIC_ASSERT(offsetof(struct ItemMenuState, menuIcons) == 3020);
+STATIC_ASSERT(offsetof(struct ItemMenuState, menuIconsShown) == 3090);
 
-/// The work of the party member chooser and the Status menu (HEAP_SLOT_MENU),
+/// The state of the party member chooser and the Status menu (HEAP_SLOT_MENU),
 /// which each takes as it opens and frees before it returns. The Broken Seal's
-/// StatusScreenWork, laid out as ItemMenuWork is here.
-struct StatusScreenWork {
-  u8 unused[8];               ///< no view of the menu work names it
+/// StatusScreenState, laid out as ItemMenuState is here.
+struct StatusScreenState {
+  u8 unused[8];               ///< no view of the menu state names it
   s32 selectedMember;         ///< the party member chosen
-  struct Window *moneyWindow; ///< ShopWork's; not named here
+  struct Window *moneyWindow; ///< ShopState's; not named here
   struct Window *memberWindow;
   struct WindowSprite *memberCursors[2];
   s8 memberIndex[2];      ///< each side's party member, in memberIds
   s8 memberCount[2];      ///< party members each side chooses from
-  u8 unusedAfterSides[4]; ///< no view of the menu work names it
+  u8 unusedAfterSides[4]; ///< no view of the menu state names it
   struct Window *actionWindow;
   struct Window *statusWindow;
   struct Window *unopenedWindow; ///< never given a window; only cleared
   struct Window *helpWindow;
-  /// ItemMenuWork's equipWindow to gridCursor; not named here.
+  /// ItemMenuState's equipWindow to gridCursor; not named here.
   u8 itemWindows[24];
   struct WindowSprite *entryIcons[MENU_ENTRY_ICONS];
-  u8 unusedAfterIcons[36]; ///< no view of the menu work names it
+  u8 unusedAfterIcons[36]; ///< no view of the menu state names it
   struct Window *selectorWindow;
   u8 selectedColumn;
   u8 selectedRow;
@@ -355,14 +355,14 @@ struct StatusScreenWork {
   s16 memberX[8];         ///< screen pixels
   s16 memberY[8];         ///< screen pixels
   FIXED memberScale[8];   ///< 16.16 fixed point, FIXED_ONE full size
-  s16 memberSpriteIds[8]; ///< ItemMenuWork's; not named here
+  s16 memberSpriteIds[8]; ///< ItemMenuState's; not named here
   u16 selectedSlots[2];
   u16 selectedActions[2];
   struct WindowSprite *statusCursor;
-  u8 unusedBeforeArrows[4]; ///< no view of the menu work names it
+  u8 unusedBeforeArrows[4]; ///< no view of the menu state names it
   /// The up and down arrows beside the party row (MenuCursor_Create).
   struct WindowSprite *pageArrows[2];
-  /// DjinnMenuWork's backdrop pointer at offset 384; no view names the rest.
+  /// DjinnMenuState's backdrop pointer at offset 384; no view names the rest.
   u8 aroundBackdrop[68];
   u16 entries[32];
   u16 memberIds[8]; ///< the party in order (Party_ListMembersFar)
@@ -371,69 +371,69 @@ struct StatusScreenWork {
   u8 selectedIds[2]; ///< each side's party member
   struct WindowSprite *selectedIcon;
   u16 page;           ///< 3 for the party member chooser, 0 for the Status menu
-  s16 completionFlag; ///< ItemMenuWork's; not named here
+  s16 completionFlag; ///< ItemMenuState's; not named here
   void *rowSprites[4];
   s16 rowX[4]; ///< screen pixels
   s16 rowY[4]; ///< screen pixels
 };
 
-STATIC_ASSERT(offsetof(struct StatusScreenWork, memberWindow) == 16);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, actionWindow) == 36);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, entryIcons) == 76);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, selectorWindow) == 240);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedColumn) == 244);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, memberY) == 296);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedSlots) == 360);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, statusCursor) == 368);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, pageArrows) == 376);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, memberIds) == 516);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedIds) == 534);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, page) == 540);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, rowSprites) == 544);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, rowX) == 560);
-STATIC_ASSERT(sizeof(struct StatusScreenWork) == 576);
+STATIC_ASSERT(offsetof(struct StatusScreenState, memberWindow) == 16);
+STATIC_ASSERT(offsetof(struct StatusScreenState, actionWindow) == 36);
+STATIC_ASSERT(offsetof(struct StatusScreenState, entryIcons) == 76);
+STATIC_ASSERT(offsetof(struct StatusScreenState, selectorWindow) == 240);
+STATIC_ASSERT(offsetof(struct StatusScreenState, selectedColumn) == 244);
+STATIC_ASSERT(offsetof(struct StatusScreenState, memberY) == 296);
+STATIC_ASSERT(offsetof(struct StatusScreenState, selectedSlots) == 360);
+STATIC_ASSERT(offsetof(struct StatusScreenState, statusCursor) == 368);
+STATIC_ASSERT(offsetof(struct StatusScreenState, pageArrows) == 376);
+STATIC_ASSERT(offsetof(struct StatusScreenState, memberIds) == 516);
+STATIC_ASSERT(offsetof(struct StatusScreenState, selectedIds) == 534);
+STATIC_ASSERT(offsetof(struct StatusScreenState, page) == 540);
+STATIC_ASSERT(offsetof(struct StatusScreenState, rowSprites) == 544);
+STATIC_ASSERT(offsetof(struct StatusScreenState, rowX) == 560);
+STATIC_ASSERT(sizeof(struct StatusScreenState) == 576);
 
-/// The Psynergy menu's work (HEAP_SLOT_MENU): its windows, icons and cursors,
+/// The Psynergy menu's state (HEAP_SLOT_MENU): its windows, icons and cursors,
 /// the party members' tabs and the Psynergy listed for the chosen party
-/// member. The Broken Seal's PsynergyMenuWork, laid out as ItemMenuWork is
+/// member. The Broken Seal's PsynergyMenuState, laid out as ItemMenuState is
 /// here. The menu's shared routines (MenuCursor_Create, MenuCursor_Slide,
 /// Menu_PlacePartyFigures) read their cursor and figures through it, as The
 /// Broken Seal's do.
-struct PsynergyMenuWork {
-  u8 unused[8];               ///< no view of the menu work names it
+struct PsynergyMenuState {
+  u8 unused[8];               ///< no view of the menu state names it
   s32 selectedMember;         ///< the party member chosen
-  struct Window *moneyWindow; ///< ShopWork's; not named here
+  struct Window *moneyWindow; ///< ShopState's; not named here
   struct Window *auxiliaryWindow;
   struct WindowSprite *sideIcon[2]; ///< each side's cursor
   s8 tabIndex[2];         ///< each side's party member, in memberTable
   s8 tabCounts[2];        ///< party members each side chooses from
-  u8 unusedAfterSides[4]; ///< no view of the menu work names it
+  u8 unusedAfterSides[4]; ///< no view of the menu state names it
   struct Window *psynergyWindow;
   struct Window *statusWindow;
   struct Window *shortcutWindow;
   struct Window *infoWindow;
-  struct Window *equipWindow; ///< ItemMenuWork's; not named here
+  struct Window *equipWindow; ///< ItemMenuState's; not named here
   struct Window *listWindow;
-  /// ItemMenuWork's modal window and the words around it; not named here.
+  /// ItemMenuState's modal window and the words around it; not named here.
   u8 modalWindows[12];
   struct WindowSprite *entryGridCursor;
   struct WindowSprite *entryIcons[MENU_ENTRY_ICONS];
-  u8 unusedAfterIcons[36]; ///< no view of the menu work names it
+  u8 unusedAfterIcons[36]; ///< no view of the menu state names it
   struct Window *messageWindow;
-  u8 cursorGrid[4];       ///< ItemMenuWork's cursor grid; not named here
+  u8 cursorGrid[4];       ///< ItemMenuState's cursor grid; not named here
   void *tabSprites[8];    ///< the party members' figures
   s16 tabX[8];            ///< screen pixels
   s16 rowPositions[8];    ///< screen pixels
   FIXED memberScale[8];   ///< 16.16 fixed point, FIXED_ONE full size
-  s16 memberSpriteIds[8]; ///< ItemMenuWork's; not named here
+  s16 memberSpriteIds[8]; ///< ItemMenuState's; not named here
   u16 sideRow[2];         ///< each side's Psynergy row chosen
   u16 sideAction[2]; ///< each side's Psynergy chosen, as a party member action
                      ///< entry
-  /// ItemMenuWork's cursor and the word after it; not named here.
+  /// ItemMenuState's cursor and the word after it; not named here.
   u8 itemCursor[8];
   /// The up and down arrows beside the party row (MenuCursor_Create).
   struct WindowSprite *pageArrows[2];
-  /// DjinnMenuWork's backdrop pointer at offset 384; no view names the rest.
+  /// DjinnMenuState's backdrop pointer at offset 384; no view names the rest.
   u8 aroundBackdrop[68];
   u16 psynergies[32]; ///< the chosen party member's Psynergy listed
   u16 memberTable[8]; ///< the party in order (Party_ListMembersFar)
@@ -446,30 +446,30 @@ struct PsynergyMenuWork {
   /// bits: 0 set after a use or a cancelled target
   u16 flags;
   u16 skipSlide; ///< 1 skips the cursor's next slide once
-  /// ItemMenuWork's row of figures and the pair after it; not named here.
+  /// ItemMenuState's row of figures and the pair after it; not named here.
   u8 figureRow[62];
   s16 useResult; ///< the use's result message, after MsgItemUseResult
-  /// ItemMenuWork's equipPreview and listMode; not named here.
+  /// ItemMenuState's equipPreview and listMode; not named here.
   u8 listState[4];
   s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
   u8 mode; ///< 0 to use Psynergy; 1 or 2 to set the L or R shortcut
-  u8 unusedAfterMode[3]; ///< no view of the menu work names it
+  u8 unusedAfterMode[3]; ///< no view of the menu state names it
 };
 
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, auxiliaryWindow) == 16);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergyWindow) == 36);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, entryGridCursor) == 72);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, messageWindow) == 240);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, tabSprites) == 248);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberScale) == 312);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, sideAction) == 364);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, pageArrows) == 376);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergies) == 452);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberIds) == 534);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, skipSlide) == 542);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, useResult) == 606);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedIndexByMember) == 612);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, mode) == 620);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, auxiliaryWindow) == 16);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, psynergyWindow) == 36);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, entryGridCursor) == 72);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, messageWindow) == 240);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, tabSprites) == 248);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, memberScale) == 312);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, sideAction) == 364);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, pageArrows) == 376);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, psynergies) == 452);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, memberIds) == 534);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, skipSlide) == 542);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, useResult) == 606);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, selectedIndexByMember) == 612);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, mode) == 620);
 
 // The menu object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.
@@ -562,7 +562,7 @@ enum ItemUseResult {
   ITEM_USE_RESULT_DEFENSE_UP = 21  ///< "Your Defense increased!"
 };
 
-/// StatusScreenWork.page: which screen the party member row belongs to.
+/// StatusScreenState.page: which screen the party member row belongs to.
 enum StatusScreenPage {
   STATUS_SCREEN_PAGE_STATUS = 0, ///< the Status menu (StatusScreen_Run)
   /// The party member chooser (PartyMemberChooser_Open).

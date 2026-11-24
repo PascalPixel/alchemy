@@ -13,7 +13,7 @@
 #include "sprite_ids.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/event_inline.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -102,12 +102,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// city. Clearing FLAG_LEMURIA_OTHER_WAY_IN makes the dock's ways lead back
 /// here and on towards the city.
 void LemuriaEntrance_LandAtHarbor(s32 exit) {
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct MainRoutineState *party = &gMainRoutineState;
   party->ownerOverride = 0;
   Event_ClearFlag(FLAG_LEMURIA_OTHER_WAY_IN);
   Event_PlaySound(SE_MAP_EXIT);
   party->leaderActorId = ACTOR_SHIP;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->leaderActorId = ACTOR_FELIX;
@@ -119,12 +119,12 @@ void LemuriaEntrance_LandAtHarbor(s32 exit) {
 /// Lemuria's dock. Setting FLAG_LEMURIA_OTHER_WAY_IN makes the dock's ways
 /// lead back to this quay and on to the other part of the ruins.
 void LemuriaEntrance_LandAtSouthQuay(s32 exit) {
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct MainRoutineState *party = &gMainRoutineState;
   party->ownerOverride = 0;
   Event_SetFlag(FLAG_LEMURIA_OTHER_WAY_IN);
   Event_PlaySound(SE_MAP_EXIT);
   party->leaderActorId = ACTOR_SHIP;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->leaderActorId = ACTOR_FELIX;
@@ -149,7 +149,7 @@ UNUSED void LemuriaEntrance_BoardShip(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     {
-      struct MainRoutineWork *state = &gMainRoutineWork;
+      struct MainRoutineState *state = &gMainRoutineState;
 
       state->movementMode = LEADER_MOVEMENT_SHIP_ON_MAP;
       state->ownerOverride = 1;
@@ -157,7 +157,7 @@ UNUSED void LemuriaEntrance_BoardShip(void) {
     Actor_SetAnimation(ACTOR_SHIP, 7);
     Event_End();
   } else {
-    struct MainRoutineWork *party = &gMainRoutineWork;
+    struct MainRoutineState *party = &gMainRoutineState;
 
     party->leaderActorId = ACTOR_FELIX;
     party->movementMode = LEADER_MOVEMENT_WALK;
@@ -168,11 +168,11 @@ UNUSED void LemuriaEntrance_BoardShip(void) {
 /// The scene's setup: places its actors, then plays what the entrance it was
 /// reached by calls for.
 s32 Scene_Initialize(void) {
-  s32 *screen = &gFieldWork->transition;
+  s32 *screen = &gFieldState->transition;
   s32 effect = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 
   *screen = effect;
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ROCK), 0);
   Event_SetFlag(FLAG_LEMURIA_REACHED);
@@ -189,20 +189,20 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_SHIP_D), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_SHIP_E), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_SHIP_F), 0);
-  if (gMainRoutineWork.entrance == ENTRANCE_ABOARD_SHIP) {
-    gMainRoutineWork.ownerOverride = 1;
+  if (gMainRoutineState.entrance == ENTRANCE_ABOARD_SHIP) {
+    gMainRoutineState.ownerOverride = 1;
     Event_SetDestination(SCENE_LEMURIA_ENTRANCE, 1);
   }
-  if (gMainRoutineWork.entrance == LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_NORTH ||
-      gMainRoutineWork.entrance == LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_SOUTH) {
-    gMainRoutineWork.leaderActorId = ACTOR_SHIP;
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  if (gMainRoutineState.entrance == LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_NORTH ||
+      gMainRoutineState.entrance == LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_SOUTH) {
+    gMainRoutineState.leaderActorId = ACTOR_SHIP;
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    gMainRoutineWork.leaderActorId = ACTOR_FELIX;
-    gFieldWork->transition = effect;
+    gMainRoutineState.leaderActorId = ACTOR_FELIX;
+    gFieldState->transition = effect;
   }
-  if (gMainRoutineWork.entrance == LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_NORTH &&
+  if (gMainRoutineState.entrance == LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_NORTH &&
       Event_GetFlag(FLAG_SHEBA_TO_ASK_PIERS_AGE)) {
     Event_ClearFlag(FLAG_SHEBA_TO_ASK_PIERS_AGE);
     LemuriaEntrance_ShebaAsksPiersAge();
@@ -217,7 +217,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// closes it. Piers's lines stand further right with his portrait at their
 /// right-hand end; everyone else's portrait is at the left.
 void LemuriaEntrance_ShowLineWithPortrait(s32 speaker, s32 frames) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 height;
   s32 width;
   s32 top;
@@ -235,14 +235,14 @@ void LemuriaEntrance_ShowLineWithPortrait(s32 speaker, s32 frames) {
   if (speaker == ACTOR_PIERS) {
     left = 10;
     top = 10;
-    Text_GetMessageSize(work->message, &left, &top, &width, &height);
+    Text_GetMessageSize(state->message, &left, &top, &width, &height);
     portrait = left + width - 5;
   } else {
     left = 5;
     top = 10;
     portrait = 5;
   }
-  Call4((void (*)())Message_OpenWindow, work->message++, left, top,
+  Call4((void (*)())Message_OpenWindow, state->message++, left, top,
         MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_UNREAD);
   portrait = Portrait_OpenWindow(character, 0, portrait, 5);
   while (Message_AllTyped() == 0)
@@ -257,11 +257,11 @@ void LemuriaEntrance_ShowLineWithPortrait(s32 speaker, s32 frames) {
 /// really is, "Umm... Piers?", and Piers will not say. Then the ship is out on
 /// the sea.
 void LemuriaEntrance_ShebaAsksPiersAge(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   u8 saved;
 
-  saved = gMainRoutineWork.messageSpeed;
-  gMainRoutineWork.messageSpeed = 2;
+  saved = gMainRoutineState.messageSpeed;
+  gMainRoutineState.messageSpeed = 2;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(ACTOR_SHIP, 0.27);
@@ -291,13 +291,13 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   LemuriaEntrance_ShowLineWithPortrait(ACTOR_PIERS, 250);
   FieldActor_WaitForScriptEndById(ACTOR_SHIP);
   FieldEvent_Wait(10);
-  work = Ram_HeapSlots->fieldWork;
-  work->transitionFrames = 30;
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  state = Ram_HeapSlots->fieldState;
+  state->transitionFrames = 30;
+  state->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(LEMURIA_ENTRANCE_TO_WORLD_MAP);
-  gMainRoutineWork.messageSpeed = saved;
+  gMainRoutineState.messageSpeed = saved;
   Event_End();
 }
 

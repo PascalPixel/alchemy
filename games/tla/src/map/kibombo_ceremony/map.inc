@@ -4,15 +4,15 @@ Field_KibomboCeremony:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_KibomboCeremony, .LField_KibomboCeremony_CELL_PICTURES
+	map_block Field_KibomboCeremony, .LField_KibomboCeremony_CELL_TILES
 	map_block Field_KibomboCeremony, .LField_KibomboCeremony_SHAPES
 	map_block Field_KibomboCeremony, .LField_KibomboCeremony_GRID
 	map_block Field_KibomboCeremony, .LField_KibomboCeremony_SHAPE_GRID
 	map_block Field_KibomboCeremony, .LField_KibomboCeremony_ANIMATION
 	map_block Field_KibomboCeremony, .LField_KibomboCeremony_BLEND
 	map_block Field_KibomboCeremony, .LField_KibomboCeremony_SCENE
-.LField_KibomboCeremony_CELL_PICTURES:
-	.incbin "games/tla/src/map/kibombo_ceremony/cell_pictures.delta0.lz"
+.LField_KibomboCeremony_CELL_TILES:
+	.incbin "games/tla/src/map/kibombo_ceremony/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_KibomboCeremony_SHAPES:
 	.incbin "games/tla/src/map/kibombo_ceremony/shapes.table.lz"

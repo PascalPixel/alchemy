@@ -3,7 +3,7 @@
 /// face, climbable; then puts the leader back on the ground if it rose over
 /// him.
 void Pillar_Raise(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct Actor *leader;
   s32 height;
 
@@ -37,7 +37,7 @@ void Pillar_Raise(u16 *list) {
     cells += MAPGRID_SIZE * sizeof(struct MapCell);
     ((struct MapCell *)cells)->attributeB |= MAP_CELL_CLIMBABLE;
   }
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   height =
       Map_GetTerrainHeight(leader->layer, leader->x.fixed, leader->z.fixed);
   if (leader->y.fixed < height) {

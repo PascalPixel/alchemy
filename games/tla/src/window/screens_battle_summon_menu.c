@@ -34,7 +34,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   s32 glyph;
   s32 count;
   struct Window *window;
-  struct WindowWork *work;
+  struct WindowState *state;
   s32 drawnRow;
   s32 drawnFirstEntry;
   s32 selectedRow;
@@ -48,7 +48,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
     s32 x, y;
   } cursorPosition;
   const struct SummonDefinition *summon;
-  struct BattleMenuWork *navigation;
+  struct BattleMenuState *navigation;
   struct MenuSprite *sprite;
   struct QueuedSprite *cur;
   s32 orderedCount;
@@ -60,7 +60,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   s32 result;
   s32 index;
 
-  work = Ram_HeapSlots->windowWork;
+  state = Ram_HeapSlots->windowState;
   drawnRow = -1;
   drawnFirstEntry = -1;
   cursorHandle = (s16)VramCache_AllocEntry(128);
@@ -137,7 +137,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
     cur = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
-      work->holdTilemapUpload = 1;
+      state->holdTilemapUpload = 1;
       {
         s32 x = (s16)window->x + 1;
         Window_HighlightRect(x, (s16)window->y + drawnRow * 2 + 1,
@@ -236,8 +236,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
       Window_HighlightRect((s16)window->x + 1,
                            (s16)window->y + selectedRow * 2 + 1,
                            window->width - 2, 1, HIGHLIGHT_PALETTE);
-      work->dirty = 1;
-      work->holdTilemapUpload = 0;
+      state->dirty = 1;
+      state->holdTilemapUpload = 0;
     }
 
     for (index = 0; index <= 3; index++) {
@@ -279,11 +279,11 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
                              window->width - (count + 3) / 4 - 3, -1, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              -1, 0);
-      WINDOW_MARK_TILEMAP_ROW(work, (u32)((s16)window->y - 1));
+      WINDOW_MARK_TILEMAP_ROW(state, (u32)((s16)window->y - 1));
     }
 
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
-    navigation = BATTLE_MENU_WORK;
+    navigation = BATTLE_MENU_STATE;
     pressed = gInput.pressed;
     repeated = gInput.repeat;
     if (navigation->tutorialStep != 0) {
@@ -301,7 +301,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
       result = orderedSummons[firstEntry + selectedRow];
       break;
     }
-    if (BATTLE_MENU_WORK->timer == 0 || (pressed & KEY_B)) {
+    if (BATTLE_MENU_STATE->timer == 0 || (pressed & KEY_B)) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;

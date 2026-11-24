@@ -74,18 +74,18 @@ void MapScreen_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
   s32 wraps;
   s32 flag;
   u32 state;
-  struct WorldMapWork *work = Ram_WorldMapWork;
+  struct WorldMapState *worldMapState = Ram_WorldMapState;
 
   // DEAD: the leader looked up and never used; the ROM keeps the call.
   Party_GetLeaderActor();
   places = FlagEntries_GetTable();
   bestDistance = 8192 * 8192;
   best = -1;
-  cursorX = FIXEDtoINT(work->x);
-  cursorY = FIXEDtoINT(work->z);
-  if (work->searchX != 0) {
-    cursorX = FIXEDtoINT(work->searchX);
-    cursorY = FIXEDtoINT(work->searchZ);
+  cursorX = FIXEDtoINT(worldMapState->x);
+  cursorY = FIXEDtoINT(worldMapState->z);
+  if (worldMapState->searchX != 0) {
+    cursorX = FIXEDtoINT(worldMapState->searchX);
+    cursorY = FIXEDtoINT(worldMapState->searchZ);
   }
   for (count = 0; count < MAP_SCREEN_PLACE_COUNT; count++) {
     place = &places[count];
@@ -184,7 +184,7 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 /// d-pad released draws the cursor onto the nearest marker in reach, and shows
 /// that marker's name beside it.
 void MapScreen_UpdateMarkers(void) {
-  struct WorldMapWork *work;
+  struct WorldMapState *state;
   struct WorldMapMarker *marker;
   s32 tileBase;
   s32 blend;
@@ -221,35 +221,35 @@ void MapScreen_UpdateMarkers(void) {
 
   // DEAD: the leader looked up and never used; the ROM keeps the call.
   Party_GetLeaderActor();
-  work = Ram_WorldMapWork;
-  marker = work->markers;
-  tileBase = gVramCacheEntries[work->vramBlock].offset >> 5;
+  state = Ram_WorldMapState;
+  marker = state->markers;
+  tileBase = gVramCacheEntries[state->vramBlock].offset >> 5;
   nearest = -1;
   nearestDistance = WORLD_MAP_NAME_REACH * WORLD_MAP_NAME_REACH;
   nearestX = 0;
   nearestY = 0;
   places = FlagEntries_GetTable();
-  scrollX = work->scrollX & FIELD_PIXEL_MASK;
-  scrollY = work->scrollZ & FIELD_PIXEL_MASK;
+  scrollX = state->scrollX & FIELD_PIXEL_MASK;
+  scrollY = state->scrollZ & FIELD_PIXEL_MASK;
   blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) &
                                      (WORLD_MAP_MARKER_BLEND_STEPS - 1)];
 
   if (gMapScreen_GlideTargetX != 0) {
     x = gMapScreen_GlideTargetX;
     y = gMapScreen_GlideTargetY;
-    dx = (x - work->x) / FIXED_ONE;
-    dz = (y - work->z) / FIXED_ONE;
+    dx = (x - state->x) / FIXED_ONE;
+    dz = (y - state->z) / FIXED_ONE;
     distance = toFIXED(Iwram_Sqrt(dx * dx + dz * dz));
-    dx = x - work->x;
-    dz = y - work->z;
+    dx = x - state->x;
+    dz = y - state->z;
     if (distance < toFIXED(64))
       distance = Math_SqrtFX(Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz));
     step = distance / 4;
     if (step > toFIXED(8))
       step = toFIXED(8);
     if (distance < toFIXED(1) / 2) {
-      work->x = x;
-      work->z = y;
+      state->x = x;
+      state->z = y;
       gMapScreen_GlideTargetX = 0;
       gMapScreen_GlideTargetY = 0;
     } else {
@@ -257,16 +257,16 @@ void MapScreen_UpdateMarkers(void) {
         dx = Iwram_MulFX(Iwram_RatioMulQ14(distance, dx), step);
         dz = Iwram_MulFX(Iwram_RatioMulQ14(distance, dz), step);
       }
-      work->x += dx;
-      work->z += dz;
+      state->x += dx;
+      state->z += dz;
     }
   } else {
     angle = gWorldMap_CursorDirectionAngles[DPAD_INDEX(gInput.held)];
     if (angle != WORLD_MAP_KEY_HEADING_NONE) {
-      pos[0] = work->x;
+      pos[0] = state->x;
       pos[1] = 0;
-      pos[2] = work->z;
-      Vector_AddPolarOffset(work->speed, angle, pos);
+      pos[2] = state->z;
+      Vector_AddPolarOffset(state->speed, angle, pos);
       if (pos[0] < toFIXED(WORLD_MAP_CURSOR_MIN_X))
         pos[0] = toFIXED(WORLD_MAP_CURSOR_MIN_X);
       if (pos[0] > toFIXED(WORLD_MAP_CURSOR_MAX_X))
@@ -275,17 +275,17 @@ void MapScreen_UpdateMarkers(void) {
         pos[2] = 0;
       if (pos[2] > toFIXED(WORLD_MAP_CURSOR_MAX_Y))
         pos[2] = toFIXED(WORLD_MAP_CURSOR_MAX_Y);
-      work->x = pos[0];
-      work->z = pos[2];
+      state->x = pos[0];
+      state->z = pos[2];
       Ram_WorldMapCursorStart[0] = pos[0];
       Ram_WorldMapCursorStart[1] = pos[2];
-      if (work->speed < WORLD_MAP_CURSOR_MAX_SPEED)
-        work->speed += WORLD_MAP_CURSOR_ACCELERATION;
+      if (state->speed < WORLD_MAP_CURSOR_MAX_SPEED)
+        state->speed += WORLD_MAP_CURSOR_ACCELERATION;
     }
   }
 
-  cursorX = WORLD_MAP_HIGH(work->x);
-  cursorY = WORLD_MAP_HIGH(work->z);
+  cursorX = WORLD_MAP_HIGH(state->x);
+  cursorY = WORLD_MAP_HIGH(state->z);
   place = places;
   i = 0;
   do {
@@ -308,13 +308,13 @@ void MapScreen_UpdateMarkers(void) {
       if (tile == WORLD_MAP_MARKER_SHIP) {
         if (!GameFlag_Get(FLAG_SHIP_CAN_SAIL))
           continue;
-        if (gMainRoutineWork.ownerOverride != 0)
+        if (gMainRoutineState.ownerOverride != 0)
           continue;
         name = MARKER_NAME_SHIP;
         tile = WORLD_MARKER_TILE_SHIP;
         always = 0;
-        placeX = MAP_SCREEN_X(FIXEDtoINT(gMainRoutineWork.shipX));
-        placeY = MAP_SCREEN_Y(FIXEDtoINT(gMainRoutineWork.shipZ));
+        placeX = MAP_SCREEN_X(FIXEDtoINT(gMainRoutineState.shipX));
+        placeY = MAP_SCREEN_Y(FIXEDtoINT(gMainRoutineState.shipZ));
       } else {
         if (!GameFlag_Get(flag))
           continue;
@@ -357,22 +357,22 @@ void MapScreen_UpdateMarkers(void) {
   if (gInput.held == 0) {
     if (nearest != -1) {
       if (nearestDistance <= 2) {
-        work->x = toFIXED(nearestX);
-        work->z = toFIXED(nearestY);
-        work->speed = WORLD_MAP_CURSOR_MIN_SPEED;
+        state->x = toFIXED(nearestX);
+        state->z = toFIXED(nearestY);
+        state->speed = WORLD_MAP_CURSOR_MIN_SPEED;
       } else {
         angle = Trig_Atan(nearestY - cursorY, nearestX - cursorX);
-        pos[0] = work->x;
+        pos[0] = state->x;
         pos[1] = 0;
-        pos[2] = work->z;
-        Vector_AddPolarOffset(work->speed, (u16)angle, pos);
-        work->x = pos[0];
-        work->z = pos[2];
+        pos[2] = state->z;
+        Vector_AddPolarOffset(state->speed, (u16)angle, pos);
+        state->x = pos[0];
+        state->z = pos[2];
       }
-      cursorX = WORLD_MAP_HIGH(work->x);
-      cursorY = WORLD_MAP_HIGH(work->z);
+      cursorX = WORLD_MAP_HIGH(state->x);
+      cursorY = WORLD_MAP_HIGH(state->z);
     } else {
-      work->speed = WORLD_MAP_CURSOR_MIN_SPEED;
+      state->speed = WORLD_MAP_CURSOR_MIN_SPEED;
     }
   }
 
@@ -400,21 +400,21 @@ void MapScreen_UpdateMarkers(void) {
   }
   Oam_AddSpriteAtDepthClamped(marker, MAP_SCREEN_MARKER_DEPTH);
 
-  if (work->shown != nearest) {
+  if (state->shown != nearest) {
     // The Japanese release prepares the window and draws the new name in the
     // same frame; the later ones draw it 6 frames after preparing the window.
 #if TLA_PATCH_1
     if (gMapScreen_NameRedrawPending[0] == 0) {
-      WindowSprite_PrepareForRedrawFar(work->window);
+      WindowSprite_PrepareForRedrawFar(state->window);
       gMapScreen_NameRedrawPending[0] = 1;
       gMapScreen_NameRedrawDelay[0] = 6;
     } else if (--gMapScreen_NameRedrawDelay[0] <= 0) {
       gMapScreen_NameRedrawPending[0] = 0;
-      work->shown = nearest;
+      state->shown = nearest;
 #else
     {
-      work->shown = nearest;
-      WindowSprite_PrepareForRedrawFar(work->window);
+      state->shown = nearest;
+      WindowSprite_PrepareForRedrawFar(state->window);
 #endif
       if (nearest != -1) {
         if (nearestName == MARKER_NAME_PARTY)
@@ -440,16 +440,16 @@ void MapScreen_UpdateMarkers(void) {
         }
         if (cursorY < 0)
           cursorY = 0;
-        Text_DrawMessageFar(nearestName, work->window, cursorX, cursorY);
-        work->nameBox.width = width;
-        work->nameBox.height = height;
-        work->nameBox.x = cursorX;
-        work->nameBox.y = cursorY;
+        Text_DrawMessageFar(nearestName, state->window, cursorX, cursorY);
+        state->nameBox.width = width;
+        state->nameBox.height = height;
+        state->nameBox.x = cursorX;
+        state->nameBox.y = cursorY;
       }
     }
   } else if (nearest != -1) {
-    width = work->nameBox.width;
-    height = work->nameBox.height;
+    width = state->nameBox.width;
+    height = state->nameBox.height;
     if (gMapScreen_Zoomed == 0) {
       cursorX = nearestX - WORLD_MAP_NAME_LEFT;
       cursorY = nearestY - 11;
@@ -465,11 +465,11 @@ void MapScreen_UpdateMarkers(void) {
     }
     if (cursorY < 0)
       cursorY = 0;
-    width = cursorX - work->nameBox.x;
-    height = cursorY - work->nameBox.y;
-    WindowSpriteList_Move(work->window, width, height);
-    work->nameBox.x = cursorX;
-    work->nameBox.y = cursorY;
+    width = cursorX - state->nameBox.x;
+    height = cursorY - state->nameBox.y;
+    WindowSpriteList_Move(state->window, width, height);
+    state->nameBox.x = cursorX;
+    state->nameBox.y = cursorY;
   }
 
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_HALFWORD);
@@ -486,12 +486,12 @@ void MapScreen_UpdateMarkers(void) {
 
 /// Draws the map screen on BG1 with the cursor in the middle of the screen
 /// (or the whole world, RESOURCE_WORLD_MAP_PICTURE, at the origin while
-/// gWorldMapWork.centered is set): the palette, then 21 rows of 31 tiles.
+/// gWorldMapState.centered is set): the palette, then 21 rows of 31 tiles.
 void MapScreen_Draw(void) {
-  struct WorldMapWork *work = &gWorldMapWork;
+  struct WorldMapState *state = &gWorldMapState;
   u8 *buffer;
   s32 resource = RESOURCE_WORLD_MAP_PICTURE_LARGE;
-  s32 *cursor = work->cursor;
+  s32 *cursor = state->cursor;
   s32 x = *cursor++ - toFIXED(DISPLAY_WIDTH / 2);
   s32 z = *cursor - toFIXED(DISPLAY_HEIGHT / 2);
   u32 *graphics;
@@ -506,7 +506,7 @@ void MapScreen_Draw(void) {
   s32 tile;
   s32 cell;
 
-  if (work->centered != 0) {
+  if (state->centered != 0) {
     resource = RESOURCE_WORLD_MAP_PICTURE;
     x = 0;
     z = 0;
@@ -742,17 +742,17 @@ enum MapScreenMode {
 /// scrolling image.
 s32 MapScreen_Show(s32 mode) {
   s32 savedDelay;
-  u8 savedFlags[ARRAY_COUNT(((struct MapWork *)NULL)->anim)];
+  u8 savedFlags[ARRAY_COUNT(((struct MapState *)NULL)->anim)];
   s32 screenX;
   s32 screenY;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  struct ActorSystemWork *actorSystem = Ram_HeapSlots->actorSystem;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
+  struct ActorSystemState *actorSystem = Ram_HeapSlots->actorSystem;
   s16 blend;
   s32 messageShown = 0;
   s32 zoomed = 0;
   s32 gliding = 0;
-  struct WorldMapWork *work = &gWorldMapWork;
+  struct WorldMapState *state = &gWorldMapState;
   struct MapAnimation *layer;
   const struct FlagEntry *place;
   u32 *tiles;
@@ -770,9 +770,9 @@ s32 MapScreen_Show(s32 mode) {
   s32 *scrollZ;
   s32 value;
   struct WorldMapChoice *choice = &gMapScreenChoice;
-  struct MainRoutineWork *routine = &gMainRoutineWork;
+  struct MainRoutineState *routine = &gMainRoutineState;
 
-  work->mode = mode;
+  state->mode = mode;
   if (mode != MAP_SCREEN_LOOK || field->mode != ACTOR_SYSTEM_WORLD_MAP)
     ObjectTable_Snapshot();
   if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -903,8 +903,8 @@ s32 MapScreen_Show(s32 mode) {
         *wayZ = *cursorZ;
       }
       if (input->repeat & KEY_SELECT) {
-        work->shown = -1;
-        WindowSprite_PrepareForRedrawFar(work->window);
+        state->shown = -1;
+        WindowSprite_PrepareForRedrawFar(state->window);
         Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
         zoomed ^= 1;
         if (*cursorX != 0) {
@@ -912,12 +912,12 @@ s32 MapScreen_Show(s32 mode) {
           s32 limitX = toFIXED(272);
           s32 limitZ = toFIXED(224);
 
-          work->x = *cursorX;
-          work->z = *cursorZ;
+          state->x = *cursorX;
+          state->z = *cursorZ;
           scrollX = &gMapScreen_ScrollX;
-          *scrollX = work->x - toFIXED(120);
+          *scrollX = state->x - toFIXED(120);
           scrollZ = &gMapScreen_ScrollY;
-          *scrollZ = work->z - toFIXED(80);
+          *scrollZ = state->z - toFIXED(80);
           value = *scrollX;
           if (value < minimum) {
             *scrollX = minimum;
@@ -938,10 +938,10 @@ s32 MapScreen_Show(s32 mode) {
       if (input->repeat & KEY_A) {
         if (mode == MAP_SCREEN_LOOK)
           goto done;
-        if (work->shown == -1)
+        if (state->shown == -1)
           continue;
         place = FlagEntries_GetTable();
-        place += work->shown;
+        place += state->shown;
         routine->teleportScene = SCENE_WORLD_MAP;
         choice->flag = place->flag;
         WorldMap_SetReturnForScene(place->scene, place->entrance);
@@ -994,14 +994,14 @@ extern const struct FlagEntry gFlagEntries[];
 /// On the world map, zooms the view out to eight thirteenths while L is held,
 /// then back, six frames each way (FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM).
 void WorldMap_ZoomOutWhileLHeld(void) {
-  struct MainRoutineWork *party;
+  struct MainRoutineState *party;
 
-  if (gFieldWork->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (gFieldState->mode == ACTOR_SYSTEM_WORLD_MAP) {
     Leader_StopMoving();
     WorldMap_StartZoom(FIXED_ONE * 8 / 13, 6);
     while (gInput.held & KEY_L)
       wait(1);
-    party = &gMainRoutineWork;
+    party = &gMainRoutineState;
 
     // DEAD: both arms alike; the ROM keeps the test and both calls.
     if (party->ownerOverride != 0)

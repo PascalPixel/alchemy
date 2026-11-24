@@ -28,7 +28,7 @@
 #include "macros.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "scene_ids.h"
 #include "field/event_inline.h"
 #include "system/frame.h"
@@ -153,7 +153,7 @@ void JupiterLighthouse_UncoverMadPlant(void) {
   FieldTileCopies_CopyTouchedCells(64, 0, 4, 3, 89, 28, 1);
   if (!Event_GetFlag(FLAG_MAD_PLANT(3))) {
     FieldMadPlant_LeapAtLeader(SPRITE_MAD_PLANT, 424, 488);
-    gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(3));
+    gMainRoutineState.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(3));
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 3);
   }
@@ -181,7 +181,7 @@ void JupiterLighthouse_TeleportToGroundFloor(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next ==
+  if (gMainRoutineState.next ==
       (s32)&SceneId_JupiterLighthouseBasementPsynergyStone)
     return gJupiterLighthouseBasement_PsynergyStoneTriggers;
   return gJupiterLighthouseBasement_TeleportersTriggers;
@@ -217,10 +217,10 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 /// while Psynergy or a menu is up; otherwise it waits out its starting delay,
 /// then rises, swaying east and west, until its life starts again.
 void JupiterLighthouse_UpdateSpark(struct Actor *actor) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
-      work->item != 0) {
+  if (state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 ||
+      state->item != 0) {
     Actor_SetAnimationSpeed(actor, 0);
     TilesetAnim_SuspendAll();
     return;
@@ -275,21 +275,21 @@ void JupiterLighthouse_SpawnSparks(void) {
 /// whether or not the lighthouse is lit, and the ring the party arrives in by
 /// teleporter, or the Psynergy Stone room's blended sparks. Returns 0.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next ==
+  if (gMainRoutineState.next ==
       (s32)&SceneId_JupiterLighthouseBasementTeleporters) {
     JupiterLighthouse_LoadPalettes(1);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-        gMainRoutineWork.entrance ==
+        gMainRoutineState.entrance ==
             JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_FROM_JUPITER_LIGHTHOUSE_ENTRANCE)
-      Actor_DepartInRing(gMainRoutineWork.leaderActorId);
+      Actor_DepartInRing(gMainRoutineState.leaderActorId);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-        gMainRoutineWork.entrance ==
+        gMainRoutineState.entrance ==
             JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_FROM_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON)
-      Actor_DepartInRing(gMainRoutineWork.leaderActorId);
+      Actor_DepartInRing(gMainRoutineState.leaderActorId);
   }
-  if (gMainRoutineWork.next ==
+  if (gMainRoutineState.next ==
       (s32)&SceneId_JupiterLighthouseBasementPsynergyStone) {
     REG_BLDALPHA = BLEND_ALPHA(8, 16);
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;

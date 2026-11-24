@@ -15,7 +15,7 @@
 #include "system/ram_buffer.h"
 #include "macros.h"
 
-/// MainRoutineWork.hazardDamage's amount, below HAZARD_DAMAGE_PERCENT.
+/// MainRoutineState.hazardDamage's amount, below HAZARD_DAMAGE_PERCENT.
 #define HAZARD_DAMAGE_AMOUNT 0xff
 /// A loss of more HP than this plays SE_HEAVY_IMPACT rather than SE_IMPACT.
 #define HEAVY_DAMAGE 10
@@ -27,28 +27,28 @@
 /// Unused: returns 0.
 UNUSED s32 FieldSequence_ReturnZero(void) { return 0; }
 
-/// Clears the field's twelve pending requests (see struct FieldWork).
+/// Clears the field's twelve pending requests (see struct FieldState).
 void Field_ClearRequests(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
-  work->stepTrigger = 0;
-  work->pushCell = 0;
-  work->exit = 0;
-  work->fieldMenu = 0;
-  work->aButton = 0;
-  work->pauseMenu = 0;
-  work->talk = 0;
-  work->examineCell = 0;
-  work->encounter = 0;
-  work->psynergy = 0;
-  work->item = 0;
-  work->raisedTrigger = 0;
+  state->stepTrigger = 0;
+  state->pushCell = 0;
+  state->exit = 0;
+  state->fieldMenu = 0;
+  state->aButton = 0;
+  state->pauseMenu = 0;
+  state->talk = 0;
+  state->examineCell = 0;
+  state->encounter = 0;
+  state->psynergy = 0;
+  state->item = 0;
+  state->raisedTrigger = 0;
 }
 
 /// Returns the sum of the field's twelve pending requests: non-zero while any
 /// request is pending.
 s32 Field_CountRequests(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
   // BUG: a sum can be 0 with requests pending. Field_UpdateWalking raises
   // FIELD_RAISED_TRIGGER_PARTY_FELL (-1) on the frame a party member falls to
@@ -56,35 +56,37 @@ s32 Field_CountRequests(void) {
   // step trigger 1's cells; together they sum to 0, and both wait until
   // another request breaks the tie. BUGFIX tests each request instead.
 #ifdef BUGFIX
-  return work->stepTrigger | work->pushCell | work->exit | work->fieldMenu |
-         work->aButton | work->pauseMenu | (s16)work->talk | work->examineCell |
-         work->encounter | work->psynergy | work->item | work->raisedTrigger;
+  return state->stepTrigger | state->pushCell | state->exit | state->fieldMenu |
+         state->aButton | state->pauseMenu | (s16)state->talk |
+         state->examineCell | state->encounter | state->psynergy | state->item |
+         state->raisedTrigger;
 #else
-  return work->stepTrigger + work->pushCell + work->exit + work->fieldMenu +
-         work->aButton + work->pauseMenu + work->talk + work->examineCell +
-         work->encounter + work->psynergy + work->item + work->raisedTrigger;
+  return state->stepTrigger + state->pushCell + state->exit + state->fieldMenu +
+         state->aButton + state->pauseMenu + state->talk + state->examineCell +
+         state->encounter + state->psynergy + state->item +
+         state->raisedTrigger;
 #endif
 }
 
-/// Sets the field work's hoverReady when the ship flies (FLAG_SHIP_FLIES) and a
-/// party member knows Hover; clears it otherwise. The world map's pad movement
-/// reads it.
+/// Sets the field state's hoverReady when the ship flies (FLAG_SHIP_FLIES) and
+/// a party member knows Hover; clears it otherwise. The world map's pad
+/// movement reads it.
 void Field_UpdateHoverReady(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   if (GameFlag_Get(FLAG_SHIP_FLIES) &&
       Party_FindOwnerWithActionFar(ABILITY_HOVER) != -1)
-    work->hoverReady = 1;
+    state->hoverReady = 1;
   else
-    work->hoverReady = 0;
+    state->hoverReady = 0;
 }
 
 /// Returns the cell behavior of the map cell 16 pixels ahead of the party
 /// leader (on the World Map, of its 32-pixel cell), or 0 without a leader.
 s32 Field_GetCollisionAheadOfLeader(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor = Field_GetPartyActor();
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   FIXED position[3];
   u8 *cell;
 
@@ -94,7 +96,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   position[1] = actor->y.fixed;
   position[2] = actor->z.fixed;
   Vector_AddPolarOffset(toFIXED(16), actor->facing, position);
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     s32 x, z;
 
     x = position[0];
@@ -117,16 +119,16 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 /// The collision code of the cell under the leader (on the world map, of its
 /// block), or 0 with no leader. Teleport's triggers match it.
 s32 Field_GetCollisionUnderLeader(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor = Field_GetPartyActor();
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct Vector3 position;
   struct MapCell *cell;
 
   if (actor == NULL)
     return 0;
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     cell = (struct MapCell *)Ram_MapBlocks +
            (((position.x / toFIXED(32)) & 31) +
             ((position.z / toFIXED(32)) & 31) * 32);
@@ -144,7 +146,7 @@ s32 Field_GetCollisionUnderLeader(void) {
 /// leaving the scene.
 void Field_CheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ) {
   s32 selectedValue;
-  struct FieldWork *work;
+  struct FieldState *state;
   FIXED z;
   FIXED y;
   FIXED x;
@@ -162,7 +164,7 @@ void Field_CheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ) {
   z = positionZ;
   region = (struct MapRegion *)SCENE_ENTRIES->regions();
   if (region != 0 &&
-      (work = Ram_HeapSlots->fieldWork, minX = region->minX, minX != -1)) {
+      (state = Ram_HeapSlots->fieldState, minX = region->minX, minX != -1)) {
   loop:
     minY = region->minY;
     minZ = region->minZ;
@@ -174,12 +176,12 @@ void Field_CheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ) {
     if (GameFlag_IsConditionActive(condition) != 0 && y >= INTtoFIXED(minY) &&
         y < INTtoFIXED(maxY) && x >= INTtoFIXED(minX) && x < INTtoFIXED(maxX) &&
         z >= INTtoFIXED(minZ) && z < INTtoFIXED(maxZ)) {
-      work->exit = (u16)selectedValue;
+      state->exit = (u16)selectedValue;
       Sound_PlayFar(SE_MAP_EXIT);
       Leader_StopMoving();
       return;
     }
-    work = Ram_HeapSlots->fieldWork;
+    state = Ram_HeapSlots->fieldState;
     region++;
     minX = region->minX;
     if (minX != -1)
@@ -197,8 +199,8 @@ void FieldEffect_SetAttached(s32 owner, s32 mode);
 /// while walking advances the encounter counter, regenerates PP, hurts the
 /// party with poison and hazardous ground, and wears Avoid off.
 void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
-  struct FieldWork *work = gFieldWork;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct FieldState *state = gFieldState;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 leaderId = Party_GetLeaderActor();
   struct Actor *leader = Field_GetPartyActor();
   s16 previousHp[8];
@@ -216,14 +218,14 @@ void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
   s32 zone;
 
   partyHurt = 0;
-  if (work == NULL)
+  if (state == NULL)
     return;
 
   partyCount = Party_CountMembersFar();
   for (i = 0; i < partyCount; i++)
-    previousHp[i] = Unit_Get(gMainRoutineWork.party[i])->hp;
+    previousHp[i] = Unit_Get(gMainRoutineState.party[i])->hp;
 
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     tile = &((struct MapCell *)Ram_MapBlocks)[((x / toFIXED(32)) & 31) +
                                               (((z / toFIXED(32)) & 31) << 5)];
     event = tile->collisionCode;
@@ -238,44 +240,44 @@ void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
     event = tile->collisionCode;
     attributes = tile->attributeB;
   }
-  work->previousCell = work->currentCell;
-  work->currentCell = tile;
+  state->previousCell = state->currentCell;
+  state->currentCell = tile;
   if (attributes != 0)
     Field_CheckExitRegions(x, y, z);
   if (event - CELL_BEHAVIOR_EVENT_FIRST <=
       CELL_BEHAVIOR_EVENT_LAST - CELL_BEHAVIOR_EVENT_FIRST)
-    work->stepTrigger = event;
+    state->stepTrigger = event;
   if (attributes &
       (MAP_CELL_PUSH | MAP_CELL_LEDGE | MAP_CELL_CLIMBABLE | MAP_CELL_JUMP))
-    work->pushCell = attributes;
+    state->pushCell = attributes;
 
-  if ((gMainRoutineWork.movementMode <= LEADER_MOVEMENT_WORLD_MAP ||
-       gMainRoutineWork.movementMode == LEADER_MOVEMENT_SHIP_ON_MAP ||
-       gMainRoutineWork.movementMode == LEADER_MOVEMENT_SHIP) &&
+  if ((gMainRoutineState.movementMode <= LEADER_MOVEMENT_WORLD_MAP ||
+       gMainRoutineState.movementMode == LEADER_MOVEMENT_SHIP_ON_MAP ||
+       gMainRoutineState.movementMode == LEADER_MOVEMENT_SHIP) &&
       leader != NULL && leader->targetX != ACTOR_NO_TARGET) {
     zone = 0;
     speed = leader->speedLimit;
     if (GameFlag_Get(FLAG_LURE_CAP))
       speed <<= 1;
-    if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-      work->encounter = Encounter_RollWorldMap((s32)&leader->x.fixed, speed);
+    if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
+      state->encounter = Encounter_RollWorldMap((s32)&leader->x.fixed, speed);
     } else {
       if (attributes & MAP_CELL_SECOND_ZONE)
         zone = 1;
-      work->encounter = Encounter_RollMapStep(zone, speed);
+      state->encounter = Encounter_RollMapStep(zone, speed);
     }
 
     // Every FIXED_ONE of distance walked (counted at half speed on ground whose
     // encounter zone is 0), the party regains PP, Djinn recover, and poison
     // hurts.
-    step = Iwram_MulFX(work->walkingDistanceScale, leader->speedLimit);
+    step = Iwram_MulFX(state->walkingDistanceScale, leader->speedLimit);
     if (!zone)
       step /= 2;
-    distance = work->walkingDistance + step;
-    work->walkingDistance = distance;
+    distance = state->walkingDistance + step;
+    state->walkingDistance = distance;
     if (distance >= FIXED_ONE) {
       amount = distance / FIXED_ONE;
-      work->walkingDistance = distance & (FIXED_ONE - 1);
+      state->walkingDistance = distance & (FIXED_ONE - 1);
       Party_AddPp(amount, 0);
       if (DjinnRecovery_CountDownFar())
         Sound_PlayFar(SE_DJINNI_SET);
@@ -283,56 +285,56 @@ void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
       partyHurt = Party_ApplyPoisonDamage();
     }
 
-    if (gMainRoutineWork.hazardMode == HAZARD_COUNT_ON_CELLS &&
+    if (gMainRoutineState.hazardMode == HAZARD_COUNT_ON_CELLS &&
         (attributes & MAP_CELL_HAZARD)) {
-      if (work->previousCell->attributeB & MAP_CELL_HAZARD)
-        gMainRoutineWork.hazardSteps += leader->speedLimit / FIXED_ONE;
+      if (state->previousCell->attributeB & MAP_CELL_HAZARD)
+        gMainRoutineState.hazardSteps += leader->speedLimit / FIXED_ONE;
       else
-        gMainRoutineWork.hazardSteps = gMainRoutineWork.hazardLimit / 2;
+        gMainRoutineState.hazardSteps = gMainRoutineState.hazardLimit / 2;
     }
 
-    if (gMainRoutineWork.avoidDistance != 0 &&
-        gMainRoutineWork.sceneType != SCENE_TYPE_TOWN) {
-      gMainRoutineWork.avoidDistance -= leader->speedLimit;
-      if (gMainRoutineWork.avoidDistance <= 0) {
-        gMainRoutineWork.avoidDistance = 1;
-        if (work->psynergy == 0)
-          work->psynergy = ACT_PACKED | ABILITY_AVOID;
+    if (gMainRoutineState.avoidDistance != 0 &&
+        gMainRoutineState.sceneType != SCENE_TYPE_TOWN) {
+      gMainRoutineState.avoidDistance -= leader->speedLimit;
+      if (gMainRoutineState.avoidDistance <= 0) {
+        gMainRoutineState.avoidDistance = 1;
+        if (state->psynergy == 0)
+          state->psynergy = ACT_PACKED | ABILITY_AVOID;
       }
     }
   }
 
   // With HAZARD_COUNT_FRAMES, which nothing in the game sets, the count rises
   // by one each call, that is each frame the field sequence runs.
-  if (gMainRoutineWork.hazardMode == HAZARD_COUNT_FRAMES) {
-    gMainRoutineWork.hazardSteps++;
-    if ((s16)gMainRoutineWork.hazardSteps == gMainRoutineWork.hazardLimit / 2)
+  if (gMainRoutineState.hazardMode == HAZARD_COUNT_FRAMES) {
+    gMainRoutineState.hazardSteps++;
+    if ((s16)gMainRoutineState.hazardSteps == gMainRoutineState.hazardLimit / 2)
       FieldEffect_SetAttached(leaderId, ATTACHED_EFFECT_IN_FRONT |
                                             ATTACHED_EFFECT_ATTACH);
-    if ((s16)gMainRoutineWork.hazardSteps == gMainRoutineWork.hazardLimit)
+    if ((s16)gMainRoutineState.hazardSteps == gMainRoutineState.hazardLimit)
       FieldEffect_SetAttached(leaderId, ATTACHED_EFFECT_IN_FRONT |
                                             ATTACHED_EFFECT_REMOVE);
   }
-  if ((s16)gMainRoutineWork.hazardSteps >= gMainRoutineWork.hazardLimit) {
-    amount = gMainRoutineWork.hazardDamage;
-    gMainRoutineWork.hazardSteps = 0;
+  if ((s16)gMainRoutineState.hazardSteps >= gMainRoutineState.hazardLimit) {
+    amount = gMainRoutineState.hazardDamage;
+    gMainRoutineState.hazardSteps = 0;
     Party_AddHp(-(amount & HAZARD_DAMAGE_AMOUNT),
                 amount & HAZARD_DAMAGE_PERCENT);
     partyHurt++;
   }
 
   if (partyHurt) {
-    work->fallenCount = 0;
-    work->survivorCount = 0;
+    state->fallenCount = 0;
+    state->survivorCount = 0;
     FieldEffect_SetAttached(leaderId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {
-      unit = Unit_Get(gMainRoutineWork.party[i]);
+      unit = Unit_Get(gMainRoutineState.party[i]);
       if (unit->hp > 0) {
-        work->survivorCount++;
+        state->survivorCount++;
       } else if (previousHp[i] != 0) {
-        work->fallenOwners[work->fallenCount++] = gMainRoutineWork.party[i];
-        work->raisedTrigger = FIELD_RAISED_TRIGGER_PARTY_FELL;
+        state->fallenOwners[state->fallenCount++] = gMainRoutineState.party[i];
+        state->raisedTrigger = FIELD_RAISED_TRIGGER_PARTY_FELL;
         unit->poison = 0;
       }
     }
@@ -346,7 +348,7 @@ void Party_AddPp(s32 amount, s32 unused) {
   s32 partyIndex;
 
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
-    Unit_AddPpFar(gMainRoutineWork.party[partyIndex], amount);
+    Unit_AddPpFar(gMainRoutineState.party[partyIndex], amount);
 }
 
 /// Changes each party member's HP by amount, or by that percentage of maximum
@@ -368,7 +370,7 @@ void Party_AddHp(s32 amount, s32 scaled) {
   }
   count = Party_CountMembersFar();
   for (i = 0; i < count; i++) {
-    unit = Unit_Get(gMainRoutineWork.party[i]);
+    unit = Unit_Get(gMainRoutineState.party[i]);
     if (!scaled) {
       value = amount;
     } else {
@@ -382,7 +384,7 @@ void Party_AddHp(s32 amount, s32 scaled) {
           value = -value;
       }
     }
-    Unit_AddHpFar(gMainRoutineWork.party[i], value);
+    Unit_AddHpFar(gMainRoutineState.party[i], value);
   }
 }
 
@@ -394,8 +396,8 @@ s32 Party_ApplyPoisonDamage(void) {
   s32 count = Party_CountMembersFar();
 
   if (result < count) {
-    struct MainRoutineWork *work = &gMainRoutineWork;
-    u8 *entry = work->party;
+    struct MainRoutineState *state = &gMainRoutineState;
+    u8 *entry = state->party;
     s32 remaining = count;
 
     do {
@@ -444,15 +446,16 @@ s32 Party_ApplyPoisonDamage(void) {
 /// running, ends it at once and waits 2 frames; then shows the still image
 /// (WorldMap_StartStillImageFar).
 void WorldMap_Freeze(void) {
-  struct FieldWork *work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
+  struct FieldState *fieldState =
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*fieldState));
 
   // The mode and areaGraphicsPending read as one halfword.
-  if (*(u16 *)&work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (*(u16 *)&fieldState->mode == ACTOR_SYSTEM_WORLD_MAP) {
     struct ScreenTransitionState *state;
 
-    work->areaGraphicsPending = 1;
+    fieldState->areaGraphicsPending = 1;
 
-    work->camera->paused = 1;
+    fieldState->camera->paused = 1;
     state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
     if (state != NULL && state->step != 0) {
       state->start = DISPLAY_HEIGHT / 2;
@@ -468,27 +471,29 @@ void WorldMap_Freeze(void) {
 /// On the World Map, loads the area graphics WorldMap_Freeze left pending and
 /// lets the camera's actor move again.
 void WorldMap_ReloadPendingAreaGraphics(void) {
-  struct FieldWork *work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
+  struct FieldState *state =
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*state));
 
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP && work->areaGraphicsPending != 0) {
-    work->areaGraphicsPending = 0;
-    work->camera->paused = 0;
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP &&
+      state->areaGraphicsPending != 0) {
+    state->areaGraphicsPending = 0;
+    state->camera->paused = 0;
     WorldMap_LoadAreaGraphicsFar();
   }
 }
 
 /// Returns the actor that stands for the party: the leader's, or the first
-/// placed actor while gMainRoutineWork.ownerOverride gives the party's control
+/// placed actor while gMainRoutineState.ownerOverride gives the party's control
 /// to it (the ship, when the party sails it).
 struct Actor *Field_GetPartyActor(void) {
-  struct MainRoutineWork *party = &gMainRoutineWork;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct MainRoutineState *party = &gMainRoutineState;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *leader;
 
   if (party->ownerOverride == 0)
-    leader = work->actors[party->leaderActorId];
+    leader = state->actors[party->leaderActorId];
   else
-    leader = work->actors[ACTOR_FIRST_PLACED];
+    leader = state->actors[ACTOR_FIRST_PLACED];
   return leader;
 }
 

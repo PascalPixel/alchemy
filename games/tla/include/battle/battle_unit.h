@@ -199,7 +199,7 @@ enum AbilityEffect {
   ABILITY_EFFECT_VANISH = 79, ///< Haze: DEFEND_VANISHED
   /// Gasp: Curse, rolled three times (Battle_RollEffectSuccess).
   ABILITY_EFFECT_CURSE_THREE_ROLLS = 80,
-  /// Lull: "Everybody is resting!" (BattleWork.ceaseFire).
+  /// Lull: "Everybody is resting!" (BattleState.ceaseFire).
   ABILITY_EFFECT_CEASE_FIRE = 81,
   /// Gale: an enemy blown out of the battle, as one that flees.
   ABILITY_EFFECT_BLOW_AWAY = 82,
@@ -211,7 +211,7 @@ enum AbilityEffect {
   /// Clarion Cry, Mystic Call: a Sea Fighter called in, or a Star Magician's
   /// ball.
   ABILITY_EFFECT_CALL_REINFORCEMENT = 86,
-  /// Regen Dance: the next enemy of BattleWork.queuedSummons called in.
+  /// Regen Dance: the next enemy of BattleState.queuedSummons called in.
   ABILITY_EFFECT_CALL_QUEUED = 87,
   ABILITY_EFFECT_GUARD_AURA = 88, ///< Guard Aura: as Total Defense
   ABILITY_EFFECT_VENGEANCE = 89,  ///< Vengeance

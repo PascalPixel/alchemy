@@ -33,14 +33,15 @@ struct HangingVineSlot {
   void *root; ///< the first link HangingVine_Hang hangs; NULL if free
 };
 
-/// The hanging vine's work (Ram_HeapSlots->hangingVine): the links' picture,
+/// The hanging vine's state (Ram_HeapSlots->hangingVine): the links' picture,
 /// eight vine slots and up to 128 links.
-struct HangingVineWork {
+struct HangingVineState {
   s32 vramEntry; ///< the links' picture
   struct HangingVineSlot slots[ROPE_SLOT_COUNT];
   struct HangingVineLink links[ROPE_NODE_COUNT];
 };
 
-#define HANGING_VINE_WORK ((struct HangingVineWork *)Ram_HeapSlots->hangingVine)
+#define HANGING_VINE_STATE                                                     \
+  ((struct HangingVineState *)Ram_HeapSlots->hangingVine)
 
 #endif

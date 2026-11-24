@@ -24,7 +24,7 @@
 #include "system/task.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/scene_tables.h"
 #include "system/iwram_call.h"
 #include "system/io_reg.h"
@@ -51,7 +51,7 @@ struct Bubble {
   u32 oam[3];
 };
 
-/// The bubbles' work: the actor they come from, their VRAM entry, the next
+/// The bubbles' state: the actor they come from, their VRAM entry, the next
 /// free bubble, which way they go (up the stream when positive) and the
 /// bubbles.
 struct AquaRockBubbles {
@@ -223,7 +223,7 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "system/iwram_call.h"
 #include "system/vector3.h"
 #include "field/event_inline.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "system/frame.h"
 #include "field/map_grid.h"
@@ -319,7 +319,7 @@ struct AquaRockBubbles gAquaRock_Bubbles BSS_DATA;
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_AQUA_ROCK_MOAI)
     return gAquaRock_SlopesRegions;
@@ -403,7 +403,7 @@ s32 AquaRock_StartFish(struct Actor *actor) {
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_AQUA_ROCK_MOAI)
     return gAquaRock_SlopesPlacements;
@@ -745,15 +745,15 @@ void AquaRock_RideStreamUp(void) {
   struct Actor *leader, *carried;
   struct Vector3 ahead;
   s32 owner;
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 result, i;
 
   if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
-    work = Ram_HeapSlots->fieldWork;
-    owner = gMainRoutineWork.leaderActorId;
-    carried = work->camera;
+    state = Ram_HeapSlots->fieldState;
+    owner = gMainRoutineState.leaderActorId;
+    carried = state->camera;
     leader = Actor_GetById(owner);
-    if (gMainRoutineWork.next == SCENE_AQUA_ROCK_MOAI &&
+    if (gMainRoutineState.next == SCENE_AQUA_ROCK_MOAI &&
         leader->groundHeight == 0)
       return;
     ahead.x = leader->x.fixed;
@@ -782,13 +782,13 @@ void AquaRock_RideStreamUp(void) {
     ahead.z = leader->z.fixed - toFIXED(8);
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0) {
-      if (gMainRoutineWork.next != SCENE_AQUA_ROCK_MOAI)
+      if (gMainRoutineState.next != SCENE_AQUA_ROCK_MOAI)
         return;
       Event_Start();
       Event_ResolvePendingActions(0);
       leader->motionFlags = 0;
       Actor_SetSpriteFlags(leader, 0);
-      gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
+      gMainRoutineState.movementMode = LEADER_MOVEMENT_KEYS;
       Actor_SpawnWadingSplash(leader);
       Event_Wait(5);
       for (i = 0; i < 60; i++) {
@@ -798,7 +798,7 @@ void AquaRock_RideStreamUp(void) {
           Actor_SpawnWadingSplash(leader);
         wait(1);
       }
-      gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+      gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
       Event_End();
       Import_EventSetExitRequest(
           AQUA_ROCK_MOAI_TO_AQUA_ROCK_MIST_SABRE_CHEST_C);
@@ -835,17 +835,17 @@ static inline u8 CellAttribute(struct MapCell *cells, s32 row, s32 col) {
 /// It runs every frame he stands on the stream's cells while it flows; the
 /// top two moai's streams take him only while the pillar does not stop them.
 void AquaRock_StepIntoCurrent(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 col;
   s32 row;
 
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS) {
+  if (gMainRoutineState.movementMode == LEADER_MOVEMENT_KEYS) {
     col = FIELD_CELL(actor->x.fixed);
     row = FIELD_CELL(actor->z.fixed - actor->y.fixed - toFIXED(12));
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
-      work->raisedTrigger = TRIGGER_DROP_DOWN_FALLS;
+      state->raisedTrigger = TRIGGER_DROP_DOWN_FALLS;
   } else {
     col = FIELD_CELL(actor->x.fixed);
     row = FIELD_CELL(actor->z.fixed - actor->y.fixed);
@@ -858,8 +858,8 @@ void AquaRock_StepIntoCurrent(void) {
 /// the slopes starts to flow.
 void AquaRock_DouseDryMoai(void) {
   MapGrid_CopyCellAttributes(62, 41, 1, 2, 33, 41);
-  MapGrid_CopyCellPictureCellsRect(125, 32, 3, 13, 96, 32);
-  MapGrid_CopyCellPictureCellsRect(61, 96, 3, 13, 32, 96);
+  MapGrid_CopyCellTilesCellsRect(125, 32, 3, 13, 96, 32);
+  MapGrid_CopyCellTilesCellsRect(61, 96, 3, 13, 32, 96);
   Actor_SetSpriteColor(Actor_GetById(ACTOR_DRY_MOAI), SPRITE_COLOR_BRG);
   AquaRock_AddMoaiWater(ACTOR_DRY_MOAI);
   GameFlag_Set(FLAG_AQUA_ROCK_DRY_MOAI_FILLED);
@@ -868,14 +868,14 @@ void AquaRock_DouseDryMoai(void) {
 /// The leader drops down the falls, flailing, and lands, for at most three
 /// seconds.
 void AquaRock_DropDownFalls(void) {
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 saved = actor->gravity;
   s32 i;
-  struct MainRoutineWork *state;
+  struct MainRoutineState *state;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
+  FieldEffect_SetAttached(gMainRoutineState.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SelectAnimation(actor, ANIM_LEADER_FLAIL);
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -884,7 +884,7 @@ void AquaRock_DropDownFalls(void) {
     if (actor->y.fixed <= actor->groundHeight)
       break;
   }
-  state = &gMainRoutineWork;
+  state = &gMainRoutineState;
   actor->gravity = saved;
   FieldEffect_SetAttached(state->leaderActorId, ATTACHED_EFFECT_REMOVE);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
@@ -971,7 +971,7 @@ void AquaRock_DouseMistSabreChestWaterStone(s32 unused, s32 id) {
   Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
   actor->update = (ObjectUpdate)AquaRock_StopFlashing;
   AquaRock_SetBubbleAnchor(ACTOR_MIST_SABRE_WATER_STONE);
-  MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
+  MapGrid_CopyCellTilesCellsRect(64, 68, 5, 13, 14, 94);
   Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
   Event_Wait(30);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -995,7 +995,7 @@ void AquaRock_DouseMistSabreChestWaterStone(s32 unused, s32 id) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_AQUA_ROCK_MOAI)
     return gAquaRock_SlopesTriggers;
@@ -1017,7 +1017,7 @@ void AquaRock_KeepLeaderPriority(void) {
     s32 priority;
 
     sprite = actor->sprite;
-    priority = gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS ? 2 : 1;
+    priority = gMainRoutineState.movementMode == LEADER_MOVEMENT_KEYS ? 2 : 1;
     sprite->priority = priority;
     sprite->partPriority = priority;
     actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -1027,12 +1027,12 @@ void AquaRock_KeepLeaderPriority(void) {
 /// Arriving from inside, the Vial chest's room below: the leader spins up out
 /// of the pool and lands, going on north or south by the key held.
 void AquaRock_ArriveFromInside(void) {
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 saved = actor->motionFlags;
   s32 i;
   s32 angle;
   s32 up;
-  struct MainRoutineWork *state;
+  struct MainRoutineState *state;
 
   Sound_Play(SE_SPIN_AWAY);
   Event_Start();
@@ -1041,7 +1041,7 @@ void AquaRock_ArriveFromInside(void) {
   Actor_SetSpriteFlags(actor, 0);
   actor->motionFlags = 0;
   actor->y.fixed = -toFIXED(16);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 2);
   for (i = 0; i < 16; i++) {
     actor->y.fixed += toFIXED(1);
     angle = actor->facing;
@@ -1054,7 +1054,7 @@ void AquaRock_ArriveFromInside(void) {
   actor->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   up = gInput.held & KEY_UP;
-  state = &gMainRoutineWork;
+  state = &gMainRoutineState;
   if (up)
     Actor_MoveToAndWaitById(state->leaderActorId, 264, 760);
   else
@@ -1065,7 +1065,7 @@ void AquaRock_ArriveFromInside(void) {
 /// Arriving by the slopes' stream turned back: it throws the leader spinning
 /// up out of the water, and he walks out onto the bank.
 void AquaRock_ArriveUpStream(void) {
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 saved = actor->motionFlags;
   s32 i;
   s32 angle;
@@ -1076,7 +1076,7 @@ void AquaRock_ArriveUpStream(void) {
   Actor_SetSpriteFlags(actor, 0);
   actor->motionFlags = 0;
   actor->y.fixed = -toFIXED(64);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 2);
   for (i = 0; i < 24; i++) {
     actor->y.fixed += toFIXED(2);
     angle = actor->facing;
@@ -1088,7 +1088,7 @@ void AquaRock_ArriveUpStream(void) {
   actor->motionFlags = saved;
   actor->velocityY = toFIXED(12);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, 680, 912);
+  Actor_MoveToAndWaitById(gMainRoutineState.leaderActorId, 680, 912);
   Event_End();
 }
 
@@ -1148,7 +1148,7 @@ void AquaRock_MoaiStepAside(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
+  Actor_SetPosition(gMainRoutineState.leaderActorId, 0, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_POP_UP);
@@ -1200,16 +1200,16 @@ void AquaRock_MoaiStepAside(void) {
 /// bubbles and the way inside it opens, and the party's arrival up the stream
 /// or from inside.
 s32 Scene_Initialize(void) {
-  s32 scene = gMainRoutineWork.next;
-  struct MapWorkGroundEffects *map =
-      (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
+  s32 scene = gMainRoutineState.next;
+  struct MapStateGroundEffects *map =
+      (struct MapStateGroundEffects *)Ram_HeapSlots->mapGrid;
   s32 id, x, z;
   s16 *entrance;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gMainRoutineWork.retreatScene = SCENE_AQUA_ROCK_MOAI;
-  gMainRoutineWork.retreatEntrance = AQUA_ROCK_MOAI_FROM_WORLD_MAP_SOUTH;
+  gMainRoutineState.retreatScene = SCENE_AQUA_ROCK_MOAI;
+  gMainRoutineState.retreatEntrance = AQUA_ROCK_MOAI_FROM_WORLD_MAP_SOUTH;
   map->wading = MAP_WADING_UPPER_LEVEL;
   Scene_QueueMusic(SE_AMBIENT_WATER);
   if (scene == SCENE_AQUA_ROCK_MOAI) {
@@ -1263,7 +1263,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_WATER_STONE)->update = AquaRock_StopFlashing;
     }
     Actor_SetSpritePriority(ACTOR_WATER_STONE, 1);
-    if (gMainRoutineWork.entrance == AQUA_ROCK_MOAI_FROM_WORLD_MAP_NORTH)
+    if (gMainRoutineState.entrance == AQUA_ROCK_MOAI_FROM_WORLD_MAP_NORTH)
       AquaRock_MoaiStepAside();
     if (GameFlag_Get(FLAG_AQUA_ROCK_MOAI_STEPPED_ASIDE)) {
       Actor_SetPosition(ACTOR_FIRST_GUARDIAN_MOAI, 392, 824);
@@ -1277,12 +1277,12 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(FLAG_AQUA_ROCK_DRY_MOAI_FILLED)) {
       MapGrid_CopyCellAttributes(62, 41, 1, 2, 33, 41);
-      MapGrid_CopyCellPictureCellsRect(116, 95, 3, 13, 96, 32);
+      MapGrid_CopyCellTilesCellsRect(116, 95, 3, 13, 96, 32);
       MapGrid_CopyCellsLayered(122, 95, 3, 13, 32, 96);
       AquaRock_AddMoaiWater(ACTOR_DRY_MOAI);
     }
     AquaRock_SetUpStreams();
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         AQUA_ROCK_MOAI_FROM_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST)
       AquaRock_ArriveFromPassage();
   } else if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST) {
@@ -1303,7 +1303,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_SECOND_ROCK, 856, 936);
       MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 58);
     }
-    if (gMainRoutineWork.entrance == 5 || gMainRoutineWork.entrance == 7) {
+    if (gMainRoutineState.entrance == 5 || gMainRoutineState.entrance == 7) {
       AquaRock_StartBubbles();
       GroundParticles_Start();
       if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
@@ -1332,15 +1332,15 @@ s32 Scene_Initialize(void) {
         Actor_GetById(ACTOR_WAY_INSIDE)->update = Actor_EmitWaterDrop;
         Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
         Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
-        MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
+        MapGrid_CopyCellTilesCellsRect(64, 68, 5, 13, 14, 94);
         Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
       }
     }
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      if (gMainRoutineWork.entrance ==
+      if (gMainRoutineState.entrance ==
           AQUA_ROCK_MIST_SABRE_CHEST_FROM_AQUA_ROCK_INSIDE_VIAL_CHEST)
         AquaRock_ArriveFromInside();
-      entrance = &gMainRoutineWork.entrance;
+      entrance = &gMainRoutineState.entrance;
       if (*entrance == AQUA_ROCK_MIST_SABRE_CHEST_FROM_AQUA_ROCK_MOAI_C)
         AquaRock_ArriveUpStream();
     }
@@ -1377,13 +1377,13 @@ void AquaRock_AddMoaiWater(s32 id) {
 /// tumbles and spins down into the pool and leaves by `exit`, to the Vial
 /// chest's room inside.
 void AquaRock_SinkInside(s32 exit) {
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 i;
   s32 angle;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
+  Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
   actor->motionFlags = 0;
   actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Sound_Play(SE_SPLASH_SMALL);
@@ -1409,8 +1409,8 @@ void AquaRock_SinkInside(s32 exit) {
 /// The leader walks into the sparkling passage in a mist and leaves by
 /// `entrance`.
 void AquaRock_EnterSparklingPassage(s32 entrance) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 *owner = &gMainRoutineWork.leaderActorId;
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
+  s32 *owner = &gMainRoutineState.leaderActorId;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1433,9 +1433,9 @@ void AquaRock_EnterSparklingPassage(s32 entrance) {
 /// Arriving from the sparkling passage, unless the party's place is kept: the
 /// leader walks out of the mist.
 void AquaRock_ArriveFromPassage(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 flag = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
-  s32 *owner = &gMainRoutineWork.leaderActorId;
+  s32 *owner = &gMainRoutineState.leaderActorId;
 
   if (flag == 0) {
     Event_Start();
@@ -1468,7 +1468,7 @@ void AquaRock_ArriveFromPassage(void) {
 /// they come from, and each rises up the stream, north, until it reaches the
 /// top; those in view are drawn.
 void AquaRock_DrawRisingBubbles(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
 #ifndef UBFIX
   s32 *view = &map->viewX;
 #endif
@@ -1482,22 +1482,22 @@ void AquaRock_DrawRisingBubbles(void) {
   s32 viewZ = view[1] & FIELD_PIXEL_MASK;
 #endif
   s32 lift = map->origin[1];
-  struct AquaRockBubbles *work = &gAquaRock_Bubbles;
-  u32 tile = gVramCacheEntries[work->vramEntry].offset >> 5;
+  struct AquaRockBubbles *state = &gAquaRock_Bubbles;
+  u32 tile = gVramCacheEntries[state->vramEntry].offset >> 5;
   struct Actor *source;
   struct Bubble *entry;
   s32 i, x, y, z, screenX, screenY;
 
-  if (Random16() < 4096 && (source = work->anchor) != 0) {
-    entry = &work->bubbles[work->next];
+  if (Random16() < 4096 && (source = state->anchor) != 0) {
+    entry = &state->bubbles[state->next];
     entry->x = source->x.fixed + Random16() * 3 * 16 - toFIXED(24);
     entry->y = source->y.fixed;
     entry->z = source->z.fixed;
     entry->age = 0;
-    if (++work->next > STREAM_BUBBLE_COUNT - 1)
-      work->next = 0;
+    if (++state->next > STREAM_BUBBLE_COUNT - 1)
+      state->next = 0;
   }
-  entry = work->bubbles;
+  entry = state->bubbles;
   for (i = 0; i < STREAM_BUBBLE_COUNT; i++, entry++) {
     if (entry->x != 0) {
       // screenX holds the ground's height here, before its own value.
@@ -1544,27 +1544,27 @@ void AquaRock_DrawRisingBubbles(void) {
 /// they come from, and each falls down the stream, south, until it reaches the
 /// bottom; those in view are drawn.
 void AquaRock_DrawFallingBubbles(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & FIELD_PIXEL_MASK;
   s32 viewZ = view[1] & FIELD_PIXEL_MASK;
   s32 lift = map->origin[1];
-  struct AquaRockBubbles *work = &gAquaRock_Bubbles;
-  u32 tile = gVramCacheEntries[work->vramEntry].offset >> 5;
+  struct AquaRockBubbles *state = &gAquaRock_Bubbles;
+  u32 tile = gVramCacheEntries[state->vramEntry].offset >> 5;
   struct Actor *source;
   struct Bubble *bubble;
   s32 i, x, y, depth, screenX, screenY, z, row;
 
-  if (Random16() < 4096 && (source = work->anchor) != 0) {
-    bubble = &work->bubbles[work->next];
+  if (Random16() < 4096 && (source = state->anchor) != 0) {
+    bubble = &state->bubbles[state->next];
     bubble->x = source->x.fixed + Random16() * 3 * 8 - toFIXED(12);
     bubble->y = source->y.fixed;
     bubble->z = source->z.fixed;
     bubble->age = 0;
-    if (++work->next > STREAM_BUBBLE_COUNT - 1)
-      work->next = 0;
+    if (++state->next > STREAM_BUBBLE_COUNT - 1)
+      state->next = 0;
   }
-  bubble = work->bubbles;
+  bubble = state->bubbles;
   for (i = 0; i < STREAM_BUBBLE_COUNT; i++, bubble++) {
     if (bubble->x != 0) {
       if (Map_GetTerrainHeight(0, bubble->x, bubble->z) < bubble->y)
@@ -1610,14 +1610,14 @@ void AquaRock_DrawBubbles(void) {
 
 /// Clears the bubbles, loads their tiles into VRAM and starts their drawing.
 void AquaRock_StartBubbles(void) {
-  struct AquaRockBubbles *work = &gAquaRock_Bubbles;
+  struct AquaRockBubbles *state = &gAquaRock_Bubbles;
   void *buffer;
 
-  Iwram_ClearWordsEntry(work, sizeof(struct AquaRockBubbles));
+  Iwram_ClearWordsEntry(state, sizeof(struct AquaRockBubbles));
   buffer = MemAlloc_(256);
   Decompress_TaggedLz(gAquaRock_MarkerTiles, buffer);
-  work->vramEntry = VramCache_FindFreeEntry();
-  VramCache_Load(work->vramEntry, 256, buffer);
+  state->vramEntry = VramCache_FindFreeEntry();
+  VramCache_Load(state->vramEntry, 256, buffer);
   Heap_Release(buffer);
   ((s32 (*)(void *, s32))Task_Add)(AquaRock_DrawBubbles, TASK_PASS_FRAME);
 }
@@ -1625,16 +1625,16 @@ void AquaRock_StartBubbles(void) {
 /// Sets the actor the bubbles come from, or with 0 none: they fall from the
 /// Mist Sabre chest's room's Water Stone and rise from any other.
 void AquaRock_SetBubbleAnchor(s32 id) {
-  struct AquaRockBubbles *work = &gAquaRock_Bubbles;
+  struct AquaRockBubbles *state = &gAquaRock_Bubbles;
 
   if (id == 0) {
-    work->anchor = 0;
+    state->anchor = 0;
   } else {
-    work->anchor = Actor_GetById(id);
+    state->anchor = Actor_GetById(id);
     if (id == ACTOR_MIST_SABRE_WATER_STONE)
-      work->direction = -1;
+      state->direction = -1;
     else
-      work->direction = 1;
+      state->direction = 1;
   }
 }
 

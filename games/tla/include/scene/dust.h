@@ -9,9 +9,9 @@
 #include "field/ground_mask.h"
 
 /// The heap slot weather while the scenes' sparkles run (GroundParticles_Draw):
-/// The Broken Seal's WeatherWork, grown to 64 particles, with the place the
+/// The Broken Seal's WeatherState, grown to 64 particles, with the place the
 /// particles gather around.
-struct GroundParticleWork {
+struct GroundParticleState {
   s32 entry;    ///< the VRAM cache entry holding the particles' tiles
   s32 tileBase; ///< their first tile in VRAM
   struct GroundParticle particles[64];
@@ -19,7 +19,7 @@ struct GroundParticleWork {
   /// keeps them where they fall.
   FIXED *leader;
   u8 unused[4]; ///< no code reads it
-  s32 stopped;  ///< nonzero stops new sparkle bursts, as in WeatherWork
+  s32 stopped;  ///< nonzero stops new sparkle bursts, as in WeatherState
 };
 
 #endif

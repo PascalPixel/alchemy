@@ -38,7 +38,7 @@
 /// tired...").
 #define FLAG_SUSA_RESTED 0xa61
 #include "field/scene_tables.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "scene_ids.h"
 #include "field/actor.h"
 #include "version.h"
@@ -133,7 +133,7 @@ enum GaiaRockPassage {
 /// Whether the party arrives on the next cliffs' great wall side: by its
 /// passage, or down from the mesa (the entrance after it).
 #define ARRIVES_AT_GREAT_WALL()                                                \
-  ((u16)(gMainRoutineWork.entrance -                                           \
+  ((u16)(gMainRoutineState.entrance -                                          \
          GAIA_ROCK_STATUE_SPOTS_WALL_FROM_VINES) <= 1)
 
 /// The whirlwind's circling leaves.
@@ -170,9 +170,9 @@ extern u32 gGaiaRock_PillarScript[];
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA)
+  if (gMainRoutineState.next == SCENE_GAIA_ROCK_SUSA)
     return gGaiaRock_SusaExitRegions;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
+  if (gMainRoutineState.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
     return gGaiaRock_StatueSpotsExitRegions;
   return 0;
 }
@@ -180,11 +180,11 @@ const struct SceneRegion *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA)
+  if (gMainRoutineState.next == SCENE_GAIA_ROCK_SUSA)
     return gGaiaRock_SusaActorPlacements;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
+  if (gMainRoutineState.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
     return gGaiaRock_StatueSpotsActorPlacements;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_DANCING_IDOL)
+  if (gMainRoutineState.next == SCENE_GAIA_ROCK_DANCING_IDOL)
     return gGaiaRock_DancingIdolActorPlacements;
   return gGaiaRock_Placements;
 }
@@ -337,10 +337,10 @@ void GaiaRock_CheckAltar(void) {
   if (actor != NULL && actor->x.fixed != 0) {
     Scene_TalkToActor(FIELD_TALK_SILENT | FIELD_TREASURE_ACTOR);
   } else if (Event_GetFlag(FLAG_DANCING_IDOL_TAKEN) == 0) {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
+    struct FieldState *state = Ram_HeapSlots->fieldState;
 
     Message_ShowCentered(MsgIMSensing, 1);
-    work->fieldMenu = 1;
+    state->fieldMenu = 1;
   } else {
     Message_ShowCentered(MsgICanT, 1);
   }
@@ -394,9 +394,9 @@ void GaiaRock_MindReadSusa(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA)
+  if (gMainRoutineState.next == SCENE_GAIA_ROCK_SUSA)
     return gGaiaRock_SusaTriggers;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
+  if (gMainRoutineState.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
     return gGaiaRock_StatueSpotsTriggers;
   return gGaiaRock_Triggers;
 }
@@ -491,13 +491,13 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
 /// The hanging vine of actor id, or NULL: this overlay's copy of
 /// HangingVine_FindSlot.
 static inline struct HangingVineSlot *FindSlot(s32 id) {
-  struct HangingVineWork *work = HANGING_VINE_WORK;
+  struct HangingVineState *state = HANGING_VINE_STATE;
   struct HangingVineSlot *found = NULL;
   s32 i = 0;
 
   for (i = 0; i < ROPE_SLOT_COUNT; i++) {
-    if (work->slots[i].id == id) {
-      found = &work->slots[i];
+    if (state->slots[i].id == id) {
+      found = &state->slots[i];
       break;
     }
   }
@@ -561,14 +561,14 @@ s32 HangingVine_Place();
 
 s32 Scene_Initialize(void) {
   struct Actor *actor;
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  gFieldWork->transition = SCREEN_EFFECT;
-  gMainRoutineWork.retreatScene = SCENE_GAIA_ROCK_SUSA;
-  gMainRoutineWork.retreatEntrance = GAIA_ROCK_SUSA_FROM_WORLD_MAP;
+  gFieldState->transition = SCREEN_EFFECT;
+  gMainRoutineState.retreatScene = SCENE_GAIA_ROCK_SUSA;
+  gMainRoutineState.retreatEntrance = GAIA_ROCK_SUSA_FROM_WORLD_MAP;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA) {
+  if (gMainRoutineState.next == SCENE_GAIA_ROCK_SUSA) {
     Task_Add((s32)GaiaRock_StatueBlowsWind, TASK_PASS_FRAME);
     Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE, 1);
     Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 1, 1);
@@ -626,7 +626,7 @@ s32 Scene_Initialize(void) {
         Event_End();
       }
     }
-  } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS) {
+  } else if (gMainRoutineState.next == SCENE_GAIA_ROCK_STATUE_SPOTS) {
     Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE, 1);
     Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 1, 1);
     Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 2, 1);
@@ -649,14 +649,14 @@ s32 Scene_Initialize(void) {
       StoneHead_Place(ACTOR_THIRD_RISING_STATUE, toFIXED(778), -toFIXED(119),
                       toFIXED(424));
     }
-  } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_DANCING_IDOL) {
+  } else if (gMainRoutineState.next == SCENE_GAIA_ROCK_DANCING_IDOL) {
     actor = Actor_GetById(FIELD_TREASURE_ACTOR);
     if (actor != 0) {
       Actor_SetPosition(FIELD_TREASURE_ACTOR, 0, 0);
     }
-    work = Ram_HeapSlots->fieldWork;
-    actor = work->actors[ACTOR_DANCING_IDOL];
-    work->actors[FIELD_TREASURE_ACTOR] = actor;
+    state = Ram_HeapSlots->fieldState;
+    actor = state->actors[ACTOR_DANCING_IDOL];
+    state->actors[FIELD_TREASURE_ACTOR] = actor;
     actor = Actor_GetById(ACTOR_PUSHED_PILLAR);
     actor->motionFlags = 0;
     MapGrid_CopyCellAttributes(11, 14, 1, 1, 13, FIELD_CELL(actor->z.fixed));
@@ -665,10 +665,10 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS &&
+  if (gMainRoutineState.next == SCENE_GAIA_ROCK_STATUE_SPOTS &&
       ARRIVES_AT_GREAT_WALL()) {
     struct MapLayer *layer =
-        &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
+        &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[1];
 
     layer->offsetX = -toFIXED(128);
     layer->offsetY = toFIXED(1096);

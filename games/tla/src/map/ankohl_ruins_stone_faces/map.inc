@@ -4,15 +4,15 @@ Field_AnkohlRuinsStoneFaces:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_AnkohlRuinsStoneFaces, .LField_AnkohlRuinsStoneFaces_CELL_PICTURES
+	map_block Field_AnkohlRuinsStoneFaces, .LField_AnkohlRuinsStoneFaces_CELL_TILES
 	map_block Field_AnkohlRuinsStoneFaces, .LField_AnkohlRuinsStoneFaces_SHAPES
 	map_block Field_AnkohlRuinsStoneFaces, .LField_AnkohlRuinsStoneFaces_GRID
 	map_block Field_AnkohlRuinsStoneFaces, .LField_AnkohlRuinsStoneFaces_SHAPE_GRID
 	map_block Field_AnkohlRuinsStoneFaces, .LField_AnkohlRuinsStoneFaces_ANIMATION
 	map_block Field_AnkohlRuinsStoneFaces, .LField_AnkohlRuinsStoneFaces_BLEND
 	map_block Field_AnkohlRuinsStoneFaces, .LField_AnkohlRuinsStoneFaces_SCENE
-.LField_AnkohlRuinsStoneFaces_CELL_PICTURES:
-	.incbin "games/tla/src/map/ankohl_ruins_stone_faces/cell_pictures.delta1.lz"
+.LField_AnkohlRuinsStoneFaces_CELL_TILES:
+	.incbin "games/tla/src/map/ankohl_ruins_stone_faces/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_AnkohlRuinsStoneFaces_SHAPES:
 	.incbin "games/tla/src/map/ankohl_ruins_stone_faces/shapes.table.lz"

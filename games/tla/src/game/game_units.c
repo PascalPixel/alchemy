@@ -16,10 +16,10 @@
 
 extern s16 gSaveSlot;
 
-/// Starts a new game: clears the main routine's work and restarts at the
+/// Starts a new game: clears the main routine's state and restarts at the
 /// opening.
 void Game_RestartQuest(void) {
-  MainRoutineWork_InitializeDefaults();
+  MainRoutineState_InitializeDefaults();
   MainRoutine_RunFar(0);
 }
 
@@ -28,7 +28,7 @@ void Game_RestartQuest(void) {
 struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0)
     return (struct DjinnRecoveryTable *)Unit_Get(FIRST_ENEMY_UNIT + 3);
-  return (struct DjinnRecoveryTable *)&gMainRoutineWork.summonMask;
+  return (struct DjinnRecoveryTable *)&gMainRoutineState.summonMask;
 }
 
 /// Returns the average level of the party members, rounded down (0 with no
@@ -41,7 +41,7 @@ u32 Party_GetAverageLevel(void) {
   if (partySize == 0)
     return 0;
   for (i = 0; i < partySize; i++)
-    totalLevels += Unit_Get(gMainRoutineWork.party[i])->level;
+    totalLevels += Unit_Get(gMainRoutineState.party[i])->level;
   totalLevels /= partySize;
   return totalLevels;
 }
@@ -88,7 +88,7 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// Works out a unit's stats from its base stats, equipment, set Djinn, class
 /// and battle stat levels; its HP and PP keep their share of a new maximum.
 void Unit_Calculate(s32 unitId) {
-  struct StatWork *stats;
+  struct StatState *stats;
   struct Unit *unit;
   s32 index, effectIndex, elementIndex;
   s32 value;
@@ -100,7 +100,7 @@ void Unit_Calculate(s32 unitId) {
   s16 previousMaximum;
 
   // Start with the unit's base stats and elemental power/resistance.
-  stats = Heap_AllocEwram(sizeof(struct StatWork));
+  stats = Heap_AllocEwram(sizeof(struct StatState));
   unit = Unit_Get(unitId);
   stats->hp = unit->baseHp;
   stats->pp = unit->basePp;
@@ -400,7 +400,7 @@ void GameFlag_RefreshLureCap(void) {
   GameFlag_Clear(FLAG_LURE_CAP);
   partySize = Party_CountMembers();
   for (member = 0; member < partySize; member++) {
-    struct Unit *unit = Unit_Get(gMainRoutineWork.party[member]);
+    struct Unit *unit = Unit_Get(gMainRoutineState.party[member]);
     s32 slot;
 
     for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
@@ -437,7 +437,7 @@ FIXED Party_GetPpRatio(void) {
   if (count == 0)
     return 0;
   for (i = 0; i < count; i++) {
-    struct Unit *unit = Unit_Get(gMainRoutineWork.party[i]);
+    struct Unit *unit = Unit_Get(gMainRoutineState.party[i]);
 
     pp += unit->pp;
     max += unit->ppMax;
@@ -457,11 +457,11 @@ s32 Party_DrainPpFromFullest(void) {
   if (count == 0)
     return 0;
   for (i = 0; i < count; i++) {
-    FIXED ratio = Owner_GetPpRatio(gMainRoutineWork.party[i]);
+    FIXED ratio = Owner_GetPpRatio(gMainRoutineState.party[i]);
 
     if (ratio > best) {
       best = ratio;
-      bestOwner = gMainRoutineWork.party[i];
+      bestOwner = gMainRoutineState.party[i];
     }
   }
   if (bestOwner == -1)
@@ -544,19 +544,19 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   (SCENE_STATE_RANDOM_ROWS +                                                   \
    SCENE_STATE_RANDOM_ROW_COUNT * SCENE_STATE_RANDOM_ROW_BYTES)
 
-/// Starts a new game's state: clears gMainRoutineWork, the scene state and
+/// Starts a new game's state: clears gMainRoutineState, the scene state and
 /// the snapshots, the flags and the characters by DMA, builds the characters,
 /// sets the defaults (the button layout, Felix and Jenna in the party, their
 /// first Psynergy, NEW_GAME_COINS, the message settings and the play time
 /// clock) and fills the two tables after the rare item stock.
-void MainRoutineWork_InitializeDefaults(void) {
+void MainRoutineState_InitializeDefaults(void) {
   volatile s32 zero;
   s32 i;
   s32 j;
 
   // Clear the state up to the characters, the scene state with its snapshots,
   // and the flags.
-  Dma_Fill32Cell(zero, 0, &gMainRoutineWork, sizeof(gMainRoutineWork));
+  Dma_Fill32Cell(zero, 0, &gMainRoutineState, sizeof(gMainRoutineState));
   Dma_Fill32Cell(zero, 0, gSceneLocalState, SCENE_STATE_WORDS * 4);
 #if TLA_PATCH_1
   WaitDma(DMA3);
@@ -576,16 +576,16 @@ void MainRoutineWork_InitializeDefaults(void) {
   gSceneLocalState[SCENE_STATE_SNAPSHOT_SLOTS] = ACTOR_SNAPSHOT_EMPTY;
   Dma_Fill32Cell(zero, 0, gCharacterUnits, (PIERS + 1) * sizeof(struct Unit));
   Party_InitializeCharacters();
-  gMainRoutineWork.aKeys = KEY_A;
-  gMainRoutineWork.bKeys = KEY_B;
-  gMainRoutineWork.selectKeys = KEY_SELECT;
-  gMainRoutineWork.startKeys = KEY_START;
-  gMainRoutineWork.firstShortcutKeys = KEY_L;
-  gMainRoutineWork.secondShortcutKeys = KEY_R;
-  gMainRoutineWork.dashKeys = KEY_B;
-  gMainRoutineWork.firstShortcut = 0;
-  gMainRoutineWork.secondShortcut = 0;
-  gMainRoutineWork.leaderActorId = FELIX;
+  gMainRoutineState.aKeys = KEY_A;
+  gMainRoutineState.bKeys = KEY_B;
+  gMainRoutineState.selectKeys = KEY_SELECT;
+  gMainRoutineState.startKeys = KEY_START;
+  gMainRoutineState.firstShortcutKeys = KEY_L;
+  gMainRoutineState.secondShortcutKeys = KEY_R;
+  gMainRoutineState.dashKeys = KEY_B;
+  gMainRoutineState.firstShortcut = 0;
+  gMainRoutineState.secondShortcut = 0;
+  gMainRoutineState.leaderActorId = FELIX;
   Party_AddMember(FELIX);
   Party_AddMember(JENNA);
   Unit_LearnPsynergy(FELIX, ABILITY_RETREAT);
@@ -597,41 +597,41 @@ void MainRoutineWork_InitializeDefaults(void) {
   Unit_LearnPsynergy(GARET, ABILITY_MOVE);
   Unit_LearnPsynergy(IVAN, ABILITY_MIND_READ);
   Unit_LearnPsynergy(IVAN, ABILITY_REVEAL);
-  gMainRoutineWork.coins = NEW_GAME_COINS;
-  gMainRoutineWork.transferredCoins = 0;
-  gMainRoutineWork.forgeItem = 0;
-  gMainRoutineWork.weirdAnswers = 0;
-  gMainRoutineWork.messageSpeed = 1;
-  gMainRoutineWork.speech = 1;
-  gMainRoutineWork.unusedAfterSpeech = 1;
-  gMainRoutineWork.windowHue = 0;
-  gMainRoutineWork.windowBrightness = 8;
-  gMainRoutineWork.buildStamp = 0;
-  gMainRoutineWork.startStamp = BuildStamp_GetTime();
+  gMainRoutineState.coins = NEW_GAME_COINS;
+  gMainRoutineState.transferredCoins = 0;
+  gMainRoutineState.forgeItem = 0;
+  gMainRoutineState.weirdAnswers = 0;
+  gMainRoutineState.messageSpeed = 1;
+  gMainRoutineState.speech = 1;
+  gMainRoutineState.unusedAfterSpeech = 1;
+  gMainRoutineState.windowHue = 0;
+  gMainRoutineState.windowBrightness = 8;
+  gMainRoutineState.buildStamp = 0;
+  gMainRoutineState.startStamp = BuildStamp_GetTime();
   gPlayTimeFrames = 0;
   gIdleSleepEnabled = 0;
-  gMainRoutineWork.playTime = 0;
-  gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
+  gMainRoutineState.playTime = 0;
+  gMainRoutineState.idleSleepEnabled = gIdleSleepEnabled;
   gIdleFrames = 0;
   gSaveSlot = -1;
-  gMainRoutineWork.clearedFileAtStart = gAnyFileCleared;
+  gMainRoutineState.clearedFileAtStart = gAnyFileCleared;
   // Lemuria's spring's medal prizes (gLemuriaSpring_MedalPrizes): three share
   // each weight, and each three weigh twice the last.
-  gMainRoutineWork.prizeWeights[0] = 4;
-  gMainRoutineWork.prizeWeights[1] = 4;
-  gMainRoutineWork.prizeWeights[2] = 4;
-  gMainRoutineWork.prizeWeights[3] = 8;
-  gMainRoutineWork.prizeWeights[4] = 8;
-  gMainRoutineWork.prizeWeights[5] = 8;
-  gMainRoutineWork.prizeWeights[6] = 16;
-  gMainRoutineWork.prizeWeights[7] = 16;
-  gMainRoutineWork.prizeWeights[8] = 16;
-  gMainRoutineWork.prizeWeights[9] = 32;
-  gMainRoutineWork.prizeWeights[10] = 32;
-  gMainRoutineWork.prizeWeights[11] = 32;
-  gMainRoutineWork.prizeWeights[12] = 64;
-  gMainRoutineWork.prizeWeights[13] = 64;
-  gMainRoutineWork.prizeWeights[14] = 64;
+  gMainRoutineState.prizeWeights[0] = 4;
+  gMainRoutineState.prizeWeights[1] = 4;
+  gMainRoutineState.prizeWeights[2] = 4;
+  gMainRoutineState.prizeWeights[3] = 8;
+  gMainRoutineState.prizeWeights[4] = 8;
+  gMainRoutineState.prizeWeights[5] = 8;
+  gMainRoutineState.prizeWeights[6] = 16;
+  gMainRoutineState.prizeWeights[7] = 16;
+  gMainRoutineState.prizeWeights[8] = 16;
+  gMainRoutineState.prizeWeights[9] = 32;
+  gMainRoutineState.prizeWeights[10] = 32;
+  gMainRoutineState.prizeWeights[11] = 32;
+  gMainRoutineState.prizeWeights[12] = 64;
+  gMainRoutineState.prizeWeights[13] = 64;
+  gMainRoutineState.prizeWeights[14] = 64;
 
   // XXX (no evidence): what reads the two tables; no object of the main
   // image or of any overlay holds their addresses, reads gSceneLocalState or
@@ -650,11 +650,11 @@ void MainRoutineWork_InitializeDefaults(void) {
 }
 
 /// Makes Jenna the leader.
-void Party_SetLeaderJenna(void) { gMainRoutineWork.leaderActorId = JENNA; }
+void Party_SetLeaderJenna(void) { gMainRoutineState.leaderActorId = JENNA; }
 
 /// Makes Felix the leader, with Jenna and Sheba out of the party.
 void Party_SetLeaderFelix(void) {
-  gMainRoutineWork.leaderActorId = FELIX;
+  gMainRoutineState.leaderActorId = FELIX;
   Party_AddMember(FELIX);
   Party_RemoveMember(JENNA);
   Party_RemoveMember(SHEBA);
@@ -679,7 +679,7 @@ void Party_GivePiersDjinn(void) {
   ((void (*)(s32))Party_BalanceDjinn)(0);
   count = Party_CountMembers();
   for (i = 0; i < count; i++)
-    Unit_Calculate(gMainRoutineWork.party[i]);
+    Unit_Calculate(gMainRoutineState.party[i]);
 }
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
@@ -691,7 +691,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
+    unit = Unit_Get(gMainRoutineState.party[partyIndex]);
 
     unit->hp = unit->hpMax;
     unit->pp = unit->ppMax;
@@ -717,7 +717,7 @@ void Party_RestorePpOfLitElements(void) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unitId = gMainRoutineWork.party[partyIndex];
+    unitId = gMainRoutineState.party[partyIndex];
     elementGroup = gCharacter_ElementGroupTable[unitId];
     restorePp = 0;
     if (elementGroup == ELEMENT_GROUP_VENUS_MARS) {
@@ -786,7 +786,7 @@ void Party_BalanceDjinn(void) {
     s32 index;
 
     for (i = 0; i < count; i++) {
-      s32 owner = gMainRoutineWork.party[i];
+      s32 owner = gMainRoutineState.party[i];
       struct Unit *unit = Unit_Get(owner);
       u8 *counts;
       s32 j;
@@ -832,10 +832,10 @@ s32 FlagBits_Test(u8 *bytes, s32 flag) {
 /// password) and its four units into this game's state.
 void DataTransfer_Apply(u8 *save, s32 byPassword) {
   u8 *flags = save + SAVE_IMAGE_GAME_FLAGS;
-  struct MainRoutineWork *party =
-      (struct MainRoutineWork *)(save + SAVE_IMAGE_MAIN_ROUTINE_WORK);
+  struct MainRoutineState *party =
+      (struct MainRoutineState *)(save + SAVE_IMAGE_MAIN_ROUTINE_STATE);
   struct Unit *units = (struct Unit *)(save + SAVE_IMAGE_UNITS);
-  struct MainRoutineWork *state;
+  struct MainRoutineState *state;
   u8 name[16];
   s32 i;
   s32 k;
@@ -869,7 +869,7 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
   else
     GameFlag_Set(FLAG_TRANSFERRED_ISAAC_SAVED_ULMUCH);
 
-  state = &gMainRoutineWork;
+  state = &gMainRoutineState;
   state->transferredCoins = party->coins;
   if (byPassword == 0) {
     state->windowHue = party->windowHue;
@@ -906,26 +906,26 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
   Party_RestoreHpPp(1);
   GameFlag_Set((byPassword & 1) + FLAG_TRANSFERRED_BY_LINK);
   GameFlag_Set(FLAG_DATA_TRANSFERRED);
-  gPlayTimeFrames = gMainRoutineWork.playTime;
+  gPlayTimeFrames = gMainRoutineState.playTime;
 }
 
 /// Carries Clear Data over to a new quest: the options, coins and each unit's
 /// base stats, level and experience.
 void ClearData_Apply(u8 *save) {
-  struct MainRoutineWork *party =
-      (struct MainRoutineWork *)(save + SAVE_IMAGE_MAIN_ROUTINE_WORK);
+  struct MainRoutineState *party =
+      (struct MainRoutineState *)(save + SAVE_IMAGE_MAIN_ROUTINE_STATE);
   struct Unit *units = (struct Unit *)(save + SAVE_IMAGE_UNITS);
   u8 unused[16]; // Unused: gives the stack frame its 16 bytes.
   s32 i;
   s32 count;
 
-  gMainRoutineWork.windowHue = party->windowHue;
-  gMainRoutineWork.windowBrightness = party->windowBrightness;
-  gMainRoutineWork.messageSpeed = party->messageSpeed;
-  gMainRoutineWork.speech = party->speech;
-  gMainRoutineWork.idleSleepEnabled = party->idleSleepEnabled;
-  WindowColor_ApplyFar(gMainRoutineWork.windowHue,
-                       gMainRoutineWork.windowBrightness);
+  gMainRoutineState.windowHue = party->windowHue;
+  gMainRoutineState.windowBrightness = party->windowBrightness;
+  gMainRoutineState.messageSpeed = party->messageSpeed;
+  gMainRoutineState.speech = party->speech;
+  gMainRoutineState.idleSleepEnabled = party->idleSleepEnabled;
+  WindowColor_ApplyFar(gMainRoutineState.windowHue,
+                       gMainRoutineState.windowBrightness);
   count = PIERS + 1;
   for (i = 0; i < count; i++) {
     struct Unit *unit = Unit_Get(i);
@@ -943,7 +943,7 @@ void ClearData_Apply(u8 *save) {
     unit->experience = saved->experience;
     Unit_Calculate(i);
   }
-  gMainRoutineWork.coins = party->coins;
+  gMainRoutineState.coins = party->coins;
 }
 
 /// Gives owner item unless a party member already has it.
@@ -1006,10 +1006,10 @@ void Party_AddIsaacsParty(void) {
   Party_GiveItemIfMissing(ITEM_LIFTING_GEM, GARET);
   Party_GiveItemIfMissing(ITEM_CARRY_STONE, ISAAC);
   Party_GiveItemIfMissing(ITEM_CATCH_BEADS, IVAN);
-  gMainRoutineWork.coins += gMainRoutineWork.transferredCoins;
+  gMainRoutineState.coins += gMainRoutineState.transferredCoins;
 #if TLA_PATCH_4
-  if ((u32)gMainRoutineWork.coins > COIN_MAX)
-    gMainRoutineWork.coins = COIN_MAX;
+  if ((u32)gMainRoutineState.coins > COIN_MAX)
+    gMainRoutineState.coins = COIN_MAX;
 #endif
 }
 
@@ -1054,7 +1054,7 @@ void DataTransfer_GiveDefaultDjinn(void) {
 
   count = Party_CountMembers();
   for (i = 0; i < count; i++)
-    saved[i] = gMainRoutineWork.party[i];
+    saved[i] = gMainRoutineState.party[i];
   for (i = 0; i < count; i++)
     Party_RemoveMember(saved[i]);
   for (i = ISAAC; i <= MIA; i++)

@@ -31,8 +31,8 @@
 /// copy the rest into WIN0H and WIN1H one word each HBlank, so that every line
 /// of the screen gets its own window edges.
 void FieldEffect_StartWindowHBlankDma(void) {
-  struct ScreenTransitionState *work = Ram_HeapSlots->screenTransition;
-  u16 *scanlineData = work->pages[work->page];
+  struct ScreenTransitionState *state = Ram_HeapSlots->screenTransition;
+  u16 *scanlineData = state->pages[state->page];
   volatile u16 *dma0 = REG_DMA0;
 
   // Stop the previous transfer before priming the first line's registers;
@@ -57,7 +57,7 @@ void FieldEffect_StartWindowHBlankDma(void) {
 /// next page of window edges, WININ and WINOUT first and then a (left << 8 |
 /// right) pair for each of the 160 lines.
 void ScreenTransition_UpdateScanlineTable(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct ScreenTransitionState *state = Ram_HeapSlots->screenTransition;
   struct TransitionSpan *span;
   struct TransitionShape *shape;
@@ -476,11 +476,11 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
 /// a dissolve, or opening from the centre line, which a non-zero low byte makes
 /// flicker).
 void ScreenTransition_Start(s32 mode, s32 frames) {
-  struct MapViewWork *display;
+  struct MapViewState *display;
   s32 variant;
   s32 style;
 
-  display = (struct MapViewWork *)Ram_HeapSlots->mapGrid;
+  display = (struct MapViewState *)Ram_HeapSlots->mapGrid;
   style = SCENE_TRANSITION_STYLE(mode);
   variant = SCENE_TRANSITION_VARIANT(mode);
   switch (style) {
@@ -647,7 +647,7 @@ s32 ScreenTransition_IsScanlineActive(void) {
 /// is set.
 void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
                                       s32 clearBg1) {
-  struct MapWork *state;
+  struct MapState *state;
 
   state = Ram_HeapSlots->mapGrid;
   if (state != NULL) {
@@ -668,13 +668,13 @@ void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
 /// the end the map draws its usual three extra tiles again.
 void ScreenTransition_Update(void) {
   struct ScreenTransitionState *state;
-  struct MapViewWork *window;
+  struct MapViewState *window;
   s8 *duration;
   u32 edgeDistance;
 
   state = Ram_HeapSlots->screenTransition;
   duration = &state->duration;
-  window = (struct MapViewWork *)Ram_HeapSlots->mapGrid;
+  window = (struct MapViewState *)Ram_HeapSlots->mapGrid;
   if (*duration != 0) {
     s8 *step = &state->step;
 
@@ -708,13 +708,13 @@ void ScreenTransition_Update(void) {
 /// As ScreenTransition_Update, but the lines flicker every other frame.
 void ScreenTransition_UpdateFromCenter(void) {
   struct ScreenTransitionState *state;
-  struct MapViewWork *window;
+  struct MapViewState *window;
   s8 *duration;
   u16 edgeDistance;
 
   state = Ram_HeapSlots->screenTransition;
   duration = &state->duration;
-  window = (struct MapViewWork *)Ram_HeapSlots->mapGrid;
+  window = (struct MapViewState *)Ram_HeapSlots->mapGrid;
   if (*duration != 0) {
     s8 *step = &state->step;
 
@@ -763,7 +763,7 @@ enum ScreenTransitionIrqPhase {
 /// at the second.
 void ScreenTransition_UpdateScanline(void) {
   u32 scanline = REG_VCOUNT;
-  struct MapViewWork *state;
+  struct MapViewState *state;
   state = Ram_HeapSlots->mapGrid;
 
   // Keep the same VCount sample across phase changes.
@@ -859,7 +859,7 @@ void ScreenTransition_UpdateDissolve(void) {
 /// Fills background screen block 4 with tile 0 in WINDOW_PALETTE and, unless
 /// color is -1, makes tile 0 solid color.
 void ScreenTransition_FillTilemapAndColorTile(s32 color) {
-  struct ScreenTransitionState *work = Ram_HeapSlots->screenTransition;
+  struct ScreenTransitionState *state = Ram_HeapSlots->screenTransition;
   Dma_Fill32(WINDOW_TILE_PAIR(BG_TILE_PALETTE(WINDOW_PALETTE)),
              BG_SCREEN_BLOCK(4),
              DISPLAY_TILE_HEIGHT * BG_SCREEN_WIDTH * sizeof(u16));
@@ -870,10 +870,10 @@ void ScreenTransition_FillTilemapAndColorTile(s32 color) {
     u32 *tile;
     for (i = 0; i < 8; i++)
       pattern = (pattern << 4) | color;
-    tile = work->solidTile;
+    tile = state->solidTile;
     for (i = 0; i < 8; i++)
       *tile++ = pattern;
-    Dma_Set(work->solidTile, BG_CHAR_BLOCK(0),
+    Dma_Set(state->solidTile, BG_CHAR_BLOCK(0),
             DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);
   }
 }

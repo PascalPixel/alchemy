@@ -12,9 +12,9 @@
 /// Starts playback of the action's targets when the effect's blow lands, with
 /// cue as the hit's sound (0 keeps the one set); later calls change nothing.
 void BattlePlayback_Start(s32 cue) {
-  struct BattlePlaybackWork *playback;
+  struct BattlePlaybackState *playback;
 
-  playback = &Ram_HeapSlots->battleWork->events;
+  playback = &Ram_HeapSlots->battleState->events;
   if (playback->phase == BATTLE_PLAYBACK_PHASE_IDLE) {
     playback->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
     if (cue != 0) {
@@ -27,10 +27,10 @@ void BattlePlayback_Start(s32 cue) {
 /// Empties the playback queue and plays the commands queued next, after frames
 /// frames, with no targets to resolve.
 s32 BattlePlayback_SchedulePhase(s32 frames) {
-  struct BattleWork *battle;
-  struct BattlePlaybackWork *playback;
+  struct BattleState *battle;
+  struct BattlePlaybackState *playback;
 
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   playback = &battle->events;
   playback->queue.count = 0;
   playback->eventIndex = 0;
@@ -40,7 +40,7 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
   return Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
 }
 
-// BattlePlayback_Run's waits, in BattlePlaybackWork.phase beside the phases
+// BattlePlayback_Run's waits, in BattlePlaybackState.phase beside the phases
 // BATTLE_PLAYBACK_PHASE_ names.
 #define PLAY_MESSAGE 3      ///< waits for the message, then for the player
 #define PLAY_ADVANCE 5      ///< shows the arrow and waits for the player
@@ -71,8 +71,8 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 void BattlePlayback_Run(void) {
   u16 selection[2];
   struct Sprite *records[4];
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
-  struct BattlePlaybackWork *events = &battle->events;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
+  struct BattlePlaybackState *events = &battle->events;
 
   /// Clears a sprite's tiles in OBJ VRAM, at its VRAM cache entry's offset;
   /// the last step of a fallen enemy's dissolve.
@@ -136,8 +136,8 @@ void BattlePlayback_Run(void) {
                                     MESSAGE_ARGUMENT_ABILITY);
             break;
           case PLAYBACK_MARK:
-            ((struct BattleMessageWork *)Ram_HeapSlots->battleMessage)->marked =
-                1;
+            ((struct BattleMessageState *)Ram_HeapSlots->battleMessage)
+                ->marked = 1;
             break;
           case PLAYBACK_MESSAGE:
             if ((s32)events->queue.operands[eventIndex] >= 0)
@@ -191,7 +191,7 @@ void BattlePlayback_Run(void) {
             break;
           }
           case PLAYBACK_DRAW_STATUS:
-            PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
+            PartyStatus_DrawFar(Ram_HeapSlots->battleState->partyStatus);
             break;
           case PLAYBACK_REFRESH_UNIT: {
             struct BattleObject *slot;
@@ -233,8 +233,8 @@ void BattlePlayback_Run(void) {
       struct AdvanceArrowSprite *prompt = &events->arrow;
       u8 *arrowTiles = gBattleMessage_AdvanceArrowTiles;
       s32 pictureTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
-      struct BattleMessageWork *display =
-          (struct BattleMessageWork *)Ram_HeapSlots->battleMessage;
+      struct BattleMessageState *display =
+          (struct BattleMessageState *)Ram_HeapSlots->battleMessage;
       struct Window *window = display->window;
       struct BattleMessageOffset *offset = display->offset;
       s32 x = 0;
@@ -393,10 +393,10 @@ void BattlePlayback_Run(void) {
 
 /// Stops playback and empties the playback queue.
 u32 BattlePlayback_Reset(void) {
-  struct BattlePlaybackWork *events;
-  struct BattleWork *battle;
+  struct BattlePlaybackState *events;
+  struct BattleState *battle;
 
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   events = &battle->events;
   events->phase = BATTLE_PLAYBACK_PHASE_IDLE;
   events->queue.count = 0;
@@ -412,9 +412,9 @@ u32 BattlePlayback_Reset(void) {
 /// never showed the damage.
 s32 BattlePlayback_WaitForReady(void) {
   s32 state;
-  struct BattlePlaybackWork *events;
+  struct BattlePlaybackState *events;
 
-  events = &Ram_HeapSlots->battleWork->events;
+  events = &Ram_HeapSlots->battleState->events;
   state = events->phase;
   if (state == BATTLE_PLAYBACK_PHASE_IDLE) {
     events->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;

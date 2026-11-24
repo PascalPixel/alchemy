@@ -16,9 +16,9 @@
 #define Ram_MapCollision FIXED_ADDRESS((u8 *), 0x0202c000, gMapGridShapes)
 #define Ram_MapScenePoints FIXED_ADDRESS((u8 *), 0x0202e008, gMapScenePoints)
 #define Ram_BgTileBuffer FIXED_ADDRESS((u8 *), 0x02038000, gBgTileBuffer)
-/// The cell picture table (gCellPictures), as MapGrid_RenderCellPictureRow
+/// The cell tiles table (gCellTiles), as MapGrid_RenderCellTilesRow
 /// reads it.
-#define Ram_MapBlocks FIXED_ADDRESS((u8 *), 0x02020000, gCellPictures)
+#define Ram_MapBlocks FIXED_ADDRESS((u8 *), 0x02020000, gCellTiles)
 #define Ram_MapShapeGrid FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid)
 
 /// The sound driver's mixer, SoundMainRAM, 932 bytes. m4aSoundInit copies
@@ -40,12 +40,12 @@
 #define Ram_WorldMapScroll                                                     \
   FIXED_ADDRESS((s32 *), 0x0202a630, gMapScreen_ScrollX)
 
-/// The map screen's work, as its setup (MapScreen_Initialize) reaches
+/// The map screen's state, as its setup (MapScreen_Initialize) reaches
 /// it.
-#define Ram_WorldMapWork                                                       \
-  FIXED_ADDRESS((struct WorldMapWork *), 0x0202a000, gWorldMapWork)
+#define Ram_WorldMapState                                                      \
+  FIXED_ADDRESS((struct WorldMapState *), 0x0202a000, gWorldMapState)
 /// Where MapScreen_UpdateScroll reads the cursor from (x, then y, 16.16
-/// pixels): the setup points it at the work's cursor.
+/// pixels): the setup points it at the state's cursor.
 #define Ram_WorldMapCursor                                                     \
   FIXED_ADDRESS((s32 **), 0x0202a62c, gMapScreen_Cursor)
 /// The cursor's place when the screen opens (x, then y, 16.16 pixels).
@@ -56,10 +56,10 @@
 /// the map header's shapes and the field's actor cells read.
 extern u8 gMapShapeGrid[];
 
-/// The layout's cell pictures, 32 KB of EWRAM at 0x02020000: each cell picture
+/// The layout's cell tiles, 32 KB of EWRAM at 0x02020000: each cell's tiles
 /// 8 bytes, its top two tile entries, then its bottom two. MapGrid_LoadMap
 /// decodes them in.
-extern u32 gCellPictures[];
+extern u32 gCellTiles[];
 
 /// Called once by the next VBlank, which clears it first; the world map sets it
 /// to show its next picture.

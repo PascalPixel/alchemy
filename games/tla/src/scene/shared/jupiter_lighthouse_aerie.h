@@ -8,7 +8,7 @@
 #include "types.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/actor.h"
 #include "system/frame.h"
 #include "field/cell_target.h"

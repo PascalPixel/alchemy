@@ -29,7 +29,7 @@
 #include "system/task.h"
 #include "system/ram_buffer.h"
 #include "field/field_event.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/scene_tables.h"
 #include "field/call.h"
 #include "field/flag_call.h"
@@ -153,8 +153,7 @@ void Actor_WalkToById(s32 id, s32 x, s32 z);
 void Actor_FaceActorById(s32 id, s32 target, s32 frames);
 void Actor_FaceDirectionById(s32 id, s32 angle, s32 flags);
 void Actor_SetSpeedParameters(s32 id, FIXED speed, FIXED acceleration);
-void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                        s32 f);
+void MapGrid_CopyCellTilesIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z);
 s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
@@ -196,7 +195,7 @@ void Izumo_FinishMovingStone(void) {
   Sound_Play(SE_WATER);
   if (x == STONE_IN_PLACE_CELL_X && z == STONE_CELL_Z) {
     if (Flag_IsSet(FLAG_REVEALING)) {
-      MapGrid_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
+      MapGrid_CopyCellTilesIndicesRect(36, 12, 22, 8, 3, 3);
       Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
     }
     if (!Flag_IsSet(FLAG_GUARD_SAW_STONE_MOVED)) {
@@ -229,7 +228,7 @@ void Izumo_FinishMovingStone(void) {
   } else if (x == STONE_MISALIGNED_CELL_X && z == STONE_CELL_Z) {
     Flag_Clear(FLAG_STONE_IN_PLACE);
     if (Flag_IsSet(FLAG_REVEALING)) {
-      MapGrid_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
+      MapGrid_CopyCellTilesIndicesRect(36, 8, 22, 8, 3, 3);
       Call6((void (*)())Map_CopyCellAttributeRect, 36, 8, 3, 3, 22, 8);
     }
   }
@@ -258,7 +257,7 @@ void Izumo_ScatterSoutheastWeeds(void) {
 /// them and, until it is found, uncovers an Antidote under Felix's feet: he
 /// jumps a cell west off it, and it lies in the cleared grass.
 void Izumo_ScatterWeedsOverFirstAntidote(void) {
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(FLAG_IZUMO_FIRST_ANTIDOTE)) {
@@ -271,11 +270,11 @@ void Izumo_ScatterWeedsOverFirstAntidote(void) {
             FIELD_CELL(toFIXED(FIRST_ANTIDOTE_SPOT_Z))) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
+      FieldEffect_SetAttached(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, -16, 0);
+      Actor_SetDestinationOffsetById(gMainRoutineState.leaderActorId, -16, 0);
       actor->velocityY = toFIXED(6);
-      Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+      Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
       Event_End();
     }
   }
@@ -285,7 +284,7 @@ void Izumo_ScatterWeedsOverFirstAntidote(void) {
 /// them and, until it is found, uncovers the second Antidote under Felix's
 /// feet: he jumps a cell north off it, and it lies in the cleared grass.
 void Izumo_ScatterWeedsOverSecondAntidote(void) {
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(FLAG_IZUMO_SECOND_ANTIDOTE)) {
@@ -298,12 +297,12 @@ void Izumo_ScatterWeedsOverSecondAntidote(void) {
             FIELD_CELL(toFIXED(SECOND_ANTIDOTE_SPOT_Z))) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
+      FieldEffect_SetAttached(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Call3((void (*)())Actor_SetDestinationOffsetById,
-            gMainRoutineWork.leaderActorId, 0, -16);
+            gMainRoutineState.leaderActorId, 0, -16);
       actor->velocityY = toFIXED(6);
-      Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+      Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
       Event_End();
     }
   }
@@ -336,7 +335,7 @@ void Izumo_ScatterLedgeWeeds(void) {
 /// Medal under Felix's feet: he jumps a cell east off it, and it lies in the
 /// cleared grass.
 void Izumo_ScatterWeedsOverLuckyMedal(void) {
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
   if (!GameFlag_Get(FLAG_IZUMO_LUCKY_MEDAL)) {
@@ -347,11 +346,11 @@ void Izumo_ScatterWeedsOverLuckyMedal(void) {
         FIELD_CELL(actor->z.fixed) == FIELD_CELL(toFIXED(LUCKY_MEDAL_SPOT_Z))) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
+      FieldEffect_SetAttached(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
+      Actor_SetDestinationOffsetById(gMainRoutineState.leaderActorId, 16, 0);
       actor->velocityY = toFIXED(6);
-      Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+      Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
       Event_End();
     }
   }
@@ -375,16 +374,16 @@ void Izumo_ScatterStoneCircleWeeds(void) {
 /// house or one of the two houses in the east. The door's cell names the
 /// exit, and so the room.
 void Izumo_EnterDoor(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, toFIXED(1) / 2,
+  Actor_SetSpeedParameters(gMainRoutineState.leaderActorId, toFIXED(1) / 2,
                            toFIXED(1) / 4);
-  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+  Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
+  Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = 0;
   Sound_Play(SE_MAP_EXIT);
-  Izumo_SetExitRequest(work->stepTrigger);
+  Izumo_SetExitRequest(state->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -512,12 +511,12 @@ void Izumo_StopThePartyToThankThem(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgFelixWait);
-  Actor_WalkToById(gMainRoutineWork.leaderActorId, 200, 264);
-  Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_WalkToById(gMainRoutineState.leaderActorId, 200, 264);
+  Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
   // "Felix, wait!"
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   FieldEvent_Wait(15);
-  Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
+  Actor_ShowEmoteById(gMainRoutineState.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, ACTOR_SUSA,
         toFIXED(200), toFIXED(216));
@@ -526,13 +525,13 @@ void Izumo_StopThePartyToThankThem(void) {
   FieldEvent_Wait(30);
   // "It troubled me to let you leave like this..."
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-  Actor_FaceActorById(gMainRoutineWork.leaderActorId, ACTOR_SUSA, 0);
+  Actor_FaceActorById(gMainRoutineState.leaderActorId, ACTOR_SUSA, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationById(ACTOR_SUSA, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(30);
   // "I owe you much for your help, but I didn't have any way to thank you..."
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-  Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
+  Actor_ShowEmoteById(gMainRoutineState.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   // "And then I thought of something."
@@ -541,7 +540,7 @@ void Izumo_StopThePartyToThankThem(void) {
   FieldEvent_Wait(15);
   // "You're a warrior, and warriors need weapons. Wouldn't you agree?"
   FieldMessage_ShowAtActor(ACTOR_SUSA, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0) ==
       1) {
     FieldEvent_Wait(90);
     Call3((void (*)())Actor_SetSpeedParameters, ACTOR_SUSA, toFIXED(2) / 5,
@@ -575,7 +574,7 @@ void Izumo_TellTheCloudBrandLegend(void) {
   FieldEvent_Wait(30);
   // "Long ago, the Great Serpent of Mikage would sleep with its body..."
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-  Actor_FaceActorById(ACTOR_SUSA, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActorById(ACTOR_SUSA, gMainRoutineState.leaderActorId, 0);
   Actor_SetAnimationById(ACTOR_SUSA, ANIM_NOD);
   FieldEvent_Wait(30);
   // "Where its tail fell, the Cloud Brand lay hidden. That's the legend..."
@@ -588,18 +587,18 @@ void Izumo_TellTheCloudBrandLegend(void) {
   FieldEvent_Wait(30);
   // "Anyway, maybe you want to go check out the dragon again... I left..."
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(15);
   Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "Well, I've said what I came to say. I'm going back to Kushinada."
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-  Actor_FaceActorById(ACTOR_SUSA, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActorById(ACTOR_SUSA, gMainRoutineState.leaderActorId, 0);
   FieldEvent_Wait(15);
   // "I hope you are successful in your quest."
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   Actor_SetAnimationById(ACTOR_SUSA, ANIM_NOD);
   FieldEvent_Wait(15);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_SetSpeedParameters(ACTOR_SUSA, toFIXED(1) / 5, toFIXED(1) / 10);
   Actor_GetById(ACTOR_SUSA)->motionFlags = 0;
@@ -625,7 +624,7 @@ void Izumo_OfferATokenOfGratitude(void) {
     message = MsgWouldYouBe;
     Event_SetMessageId(message);
     FieldMessage_ShowAtActor(ACTOR_SUSA, 0);
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0) ==
         0) {
       Izumo_TellTheCloudBrandLegend();
     } else {
@@ -646,7 +645,7 @@ void Izumo_OfferATokenOfGratitude(void) {
 /// doorway while his thanks are refused.
 s32 Scene_Initialize(void) {
   GameFlag_Clear(FLAG_SUSA_WAITS);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_Add(Izumo_RotateWaterColors, TASK_PASS_VBLANK);
   Actor_PlaceBlocks(gIzumo_StonesToMove);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
@@ -658,7 +657,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimationById(ACTOR_DANCER_E, 6);
     Actor_SetAnimationById(ACTOR_DANCER_F, 6);
     Actor_SetAnimationById(ACTOR_DANCER_G, 5);
-    if (gMainRoutineWork.entrance == IZUMO_FROM_IZUMO_ROOMS_NORTH &&
+    if (gMainRoutineState.entrance == IZUMO_FROM_IZUMO_ROOMS_NORTH &&
         GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
         !GameFlag_Get(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
         !GameFlag_Get(FLAG_TOKEN_OFFERED)) {
@@ -686,19 +685,19 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// (23, 9). It can be climbed down only while the out-of-line stone is back in
 /// place; a leader standing on the centre then is set on the cell north of it.
 void Izumo_RevealTheStoneCircle(void) {
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
 
   GameFlag_Set(FLAG_REVEALING);
   if (GameFlag_Get(FLAG_STONE_IN_PLACE)) {
-    MapGrid_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
+    MapGrid_CopyCellTilesIndicesRect(36, 12, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
     if (x == CIRCLE_CENTER_CELL_X && z == CIRCLE_CENTER_CELL_Z)
-      Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,
+      Actor_SetHorizontalPositionWithTerrain(gMainRoutineState.leaderActorId,
                                              toFIXED(376), toFIXED(136));
   } else {
-    MapGrid_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
+    MapGrid_CopyCellTilesIndicesRect(36, 8, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 8, 3, 3, 22, 8);
   }
 }
@@ -706,14 +705,14 @@ void Izumo_RevealTheStoneCircle(void) {
 /// As Reveal fades the way down in the ring's centre is hidden again.
 void Izumo_HideTheStoneCircle(void) {
   GameFlag_Clear(FLAG_REVEALING);
-  MapGrid_CopyCellPictureIndicesRect(40, 8, 22, 8, 3, 3);
+  MapGrid_CopyCellTilesIndicesRect(40, 8, 22, 8, 3, 3);
   Call6((void (*)())Map_CopyCellAttributeRect, 40, 8, 3, 3, 22, 8);
 }
 
 /// Felix, facing north, backs into the opening in the ring's centre and climbs
 /// down it as down a ladder, and the scene leaves for the Izumo Ruins.
 void Izumo_DescendIntoTheRuins(void) {
-  s32 value = gFieldWork->stepTrigger;
+  s32 value = gFieldState->stepTrigger;
 
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);

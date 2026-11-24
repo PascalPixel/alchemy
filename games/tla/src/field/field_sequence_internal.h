@@ -14,7 +14,7 @@
 #include "window/window.h"
 #include "field/world_map.h"
 #include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/iwram_call.h"
 #include "battle/battle.h"
 #include "debug/debug.h"
@@ -152,7 +152,7 @@ struct ContainerRow {
   /// Stone's number; a tablet's summon.
   s16 contents;
 };
-/// ContainerRow.contents and FieldWork.scoopedItem: coins rather than an item,
+/// ContainerRow.contents and FieldState.scoopedItem: coins rather than an item,
 /// their count in the bits under it.
 #define CONTAINER_COINS (1 << 15)
 /// The most treasure spots a scene places, each an actor from

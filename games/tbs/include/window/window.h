@@ -580,8 +580,8 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
                                s32 fullWidth);
 s32 Message_AllTyped(void);
 s32 Window_IsClosed(struct Window *window);
-/// Declared without a prototype: Window_Create passes it an argument it never
-/// reads (a FAKEMATCH there).
+/// Declared without a prototype, so that Window_Create can pass it an argument
+/// it never reads.
 void Text_ResetStyle();
 void WindowSystem_StartFieldUpdate(void);
 void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles);

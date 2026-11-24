@@ -13,6 +13,9 @@
 #endif
 /// The letters a kind's mask holds, one bit each.
 #define NAME_LETTER_MASK_BITS 32
+/// The formation a battle falls back on when its own is out of range or has no
+/// sure member: a lone Vermin.
+#define FORMATION_FALLBACK 1
 /// The random swaps that shuffle a FORMATION_LAYOUT_SHUFFLED formation.
 #define FORMATION_SHUFFLE_SWAPS 10
 
@@ -181,7 +184,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     *outMargin = targetLevel - chosen->score;
   } else {
     *outMargin = 0;
-    result = 1;
+    result = FORMATION_FALLBACK;
   }
 
   Heap_Release(pool);
@@ -353,7 +356,7 @@ s32 BattleFormation_GetRandomMember(s32 formationId) {
   s32 member;
 
   if (formationId < 0 || formationId >= FORMATION_COUNT)
-    formationId = 1;
+    formationId = FORMATION_FALLBACK;
   formation = &gFormations[formationId];
   for (member = 0; member < FORMATION_MEMBERS; member++) {
     if (formation->maximumCounts[member] != 0)
@@ -395,18 +398,18 @@ s32 BattleFormation_BuildEnemyList(s32 formationId) {
   if (GameFlag_GetFar(FLAG_MONSTER_BATTLE))
     formationId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
   if (formationId < 0 || formationId >= FORMATION_COUNT)
-    formationId = 1;
+    formationId = FORMATION_FALLBACK;
   formation = &gFormations[formationId];
   for (memberIndex = 0; memberIndex < FORMATION_MEMBERS &&
                         formation->minimumCounts[memberIndex] == 0;
        memberIndex++)
     ;
   if (memberIndex == FORMATION_MEMBERS)
-    formation = &gFormations[1];
+    formation = &gFormations[FORMATION_FALLBACK];
 
-  // The six sprite slots left once every member's minimum is placed; a
+  // The enemy sprite slots left once every member's minimum is placed; a
   // large enemy takes two.
-  freeSpriteSlots = 6;
+  freeSpriteSlots = ARRAY_COUNT(battle->spriteSlots);
   enemyCount = 0;
   for (i = 0; i < FORMATION_MEMBERS; i++) {
     if (formation->minimumCounts[i] != 0) {
@@ -527,7 +530,7 @@ s32 BattleFormation_BuildEnemyList(s32 formationId) {
       if (levelAdjustment != 0)
         BattleEnemy_AdjustLevel(i + FIRST_ENEMY_UNIT, levelAdjustment);
       i++;
-      if (i > 5 || enemyKinds[i] == 0)
+      if (i >= ENEMY_BATTLE_SIZE || enemyKinds[i] == 0)
         break;
     }
   }
@@ -535,6 +538,7 @@ s32 BattleFormation_BuildEnemyList(s32 formationId) {
 }
 
 #undef NAME_LETTER_MASK_BITS
+#undef FORMATION_FALLBACK
 #undef FORMATION_SHUFFLE_SWAPS
 #undef ELEMENT_POWER_GAIN
 #undef FORMATION_SCORE_ABOVE_ALL

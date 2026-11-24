@@ -111,8 +111,6 @@ extern u32 gJupiterLighthouse_JennaStepsUpScript[];
 extern u32 gJupiterLighthouse_WalkToAerieScript[];
 extern u32 gJupiterLighthouse_LeaveForAerieScript[];
 
-void JupiterLighthouse_LoadPalettes(s32 mode);
-
 void JupiterLighthouse_RideUpperWhirlwind(void);
 
 void JupiterLighthouse_RideWhirlwind(void);
@@ -154,6 +152,7 @@ void MapGrid_SetCellAttributesAt();
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 #include "text/msg_ids.h"
+#include "scene/lighthouse_palettes.h"
 
 /// An action script's call: clears the actor's sprite flags.
 s32 JupiterLighthouse_ClearScriptedActorSpriteFlags(s32 object) {
@@ -1854,7 +1853,7 @@ s32 Scene_PrepareMap(void) {
   struct Actor *actor;
 
   Scene_SetArrivalFlags(0);
-  JupiterLighthouse_LoadPalettes(1);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_LIT);
   LightSprites_InitC();
   LightSprites_Add(ACTOR_ENERGY_BLOCK, 0);
   actor = Actor_Get(ACTOR_ENERGY_BLOCK);

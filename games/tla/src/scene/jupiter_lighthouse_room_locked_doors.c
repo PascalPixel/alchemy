@@ -56,6 +56,7 @@
 #include "system/io_write.h"
 #include "field/field_effect.h"
 #include "text/msg_ids.h"
+#include "scene/lighthouse_palettes.h"
 
 /// Set as each locked door opens to its key.
 #define FLAG_RED_DOOR_OPENED 0xa07
@@ -358,14 +359,12 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void JupiterLighthouse_LoadPalettes(s32 mode);
-
 /// Sets the scene's arrival flags and loads the lighthouse's palettes; lets
 /// Felix walk onto the blocks, raises them once the lighthouse is activated,
 /// and puts the bridge block back in line. Returns 0.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  JupiterLighthouse_LoadPalettes(0);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
   Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {

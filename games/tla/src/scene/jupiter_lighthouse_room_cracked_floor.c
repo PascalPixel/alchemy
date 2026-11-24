@@ -49,6 +49,7 @@
 #include "system/heap_release.h"
 #include "system/io_write.h"
 #include "field/field_effect.h"
+#include "scene/lighthouse_palettes.h"
 
 /// Set while the leader stands on the button by the door, which holds it open.
 #define FLAG_DOOR_BUTTON_HELD FLAG_SCENE_TEMP_00
@@ -114,7 +115,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 extern s32 gPaletteCyclePausesInEvents;
 void JupiterLighthouse_CloseDoor(void);
-void JupiterLighthouse_LoadPalettes(s32 mode);
 
 /// A cracked tile of the room under a grounded leader: as it gives way the
 /// party falls to the hall below.
@@ -228,7 +228,7 @@ s32 Scene_Initialize(void) {
 /// pillar goes back unless the party stays in place. Returns 0.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  JupiterLighthouse_LoadPalettes(0);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Event_ClearFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED);
   return 0;

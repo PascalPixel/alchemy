@@ -51,6 +51,7 @@
 #include "shared/tables.h"
 #include "field/field_effect.h"
 #include "field/actor_script.h"
+#include "scene/lighthouse_palettes.h"
 #include "fixed_math.h"
 
 /// The placed actors between the archers and the lid (ACTOR_RIGHT_ARCHER and
@@ -167,8 +168,6 @@ extern u32 gFieldEffect_LongScript[];
 
 struct CellTarget;
 struct CellTargetEntry;
-
-void JupiterLighthouse_LoadPalettes(s32 mode);
 
 void JupiterLighthouse_PlaceRaisedActors(void);
 
@@ -403,7 +402,7 @@ s32 Scene_Initialize(void) {
           JUPITER_LIGHTHOUSE_AERIE_FROM_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST)
     Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
-  JupiterLighthouse_LoadPalettes(0);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
   Import_HangingVinePlace(ACTOR_WEST_CHAIN, 1);
   Import_HangingVinePlace(ACTOR_EAST_CHAIN, 1);
   Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=

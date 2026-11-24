@@ -96,6 +96,7 @@ enum JupiterLighthouseRoomRedKeyActorId {
 /// The sparks of the activation's ring, from the leader to the beam.
 #define ACTIVATION_SPARKS 96
 #include "text/msg_ids.h"
+#include "scene/lighthouse_palettes.h"
 
 struct Actor;
 struct CellTarget;
@@ -104,8 +105,6 @@ struct CellTargetEntry;
 extern u32 gOrb_RisingScript[];
 
 void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to);
-
-void JupiterLighthouse_LoadPalettes(s32 value);
 
 void JupiterLighthouse_UpdateSparkRing(void);
 
@@ -381,7 +380,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   System_Wait(30);
   MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
   MapGrid_CopyCellsLayered(123, 32, 1, 5, 106, 32);
-  JupiterLighthouse_LoadPalettes(2);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_KEEP_COPIES);
   Event_PlaySound(SE_CLATTER);
   System_Wait(30);
   leader->timer = 3;
@@ -657,7 +656,7 @@ s32 Scene_Initialize(void) {
 /// once it is in its gap.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  JupiterLighthouse_LoadPalettes(0);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
   Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED))

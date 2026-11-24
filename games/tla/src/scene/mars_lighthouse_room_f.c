@@ -75,6 +75,7 @@
 #include "field/actor_script.h"
 #include "system/io_write.h"
 #include "scene/airs_rock.h"
+#include "scene/lighthouse_palettes.h"
 
 /// Move set the white dragon statue under the dragon head.
 #define FLAG_JUPITER_STATUE_BLOCKS_FLAMES 0xa37
@@ -1175,7 +1176,6 @@ void MarsLighthouseRoomF_StopSlideWhileHit(void) {
     Leader_SetSlideStopped(1);
 }
 
-void JupiterLighthouse_LoadPalettes(s32 mode);
 extern u16 gMarsLighthouseRoomF_MarsButtonFlameThrowers[];
 extern u16 gMarsLighthouseRoomF_MarsButtonFlameStops[];
 extern u16 gMarsLighthouseRoomF_MarsPipeFlameThrowers[];
@@ -1299,7 +1299,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_MARS_LIGHTHOUSE_JUPITER_TOWER) {
     FieldEffect_StartBlankOverlay(0);
     ((struct FieldState *)heap->fieldState)->transition = value;
-    JupiterLighthouse_LoadPalettes(1);
+    JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_LIT);
     LightSprites_InitB();
     LightSprites_SetPriority(2);
     LightSprites_Add(ACTOR_DROPPING_BLOCK, 6);

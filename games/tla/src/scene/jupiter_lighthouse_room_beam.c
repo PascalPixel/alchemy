@@ -57,6 +57,7 @@
 #include "shared/tables.h"
 #include "field/field_effect.h"
 #include "field/actor_script.h"
+#include "scene/lighthouse_palettes.h"
 #include "fixed_math.h"
 
 /// The energy block lies in its gap, lighting the path.
@@ -114,8 +115,6 @@ void LightSprites_InitB(void);
 void LightSprites_Add(s32 id, s32 value);
 
 void FadeOverlay_FillTiles(s32 a);
-
-void JupiterLighthouse_LoadPalettes(s32 mode);
 
 struct EffectSprite gJupiterLighthouse_GlowSprite BSS_DATA ALIGNED(16);
 /// Where the glow over the Cyclone pad in use stands.
@@ -631,7 +630,7 @@ s32 Scene_Initialize(void) {
 /// the map is built. Returns 0.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  JupiterLighthouse_LoadPalettes(0);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
   return 0;
 }
 

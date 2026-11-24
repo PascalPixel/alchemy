@@ -60,6 +60,7 @@ void Leader_CenterInCell(void);
 #include "macros.h"
 #include "shared/tables.h"
 #include "field/actor_script.h"
+#include "scene/lighthouse_palettes.h"
 
 /// Where the first two path blocks lie, each block in each of the east hall's
 /// three gaps: the block's flag after FLAG_PATH_BLOCK_PLACED(0), and what
@@ -782,7 +783,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void JupiterLighthouse_LoadPalettes(s32 mode);
 s32 MapGrid_GetCellHeight(FIXED x, FIXED z, s32 layer);
 
 /// Lays out the blocks as the map is drawn: the first two stay in their gaps
@@ -794,7 +794,7 @@ s32 Scene_PrepareMap(void) {
   s32 height;
 
   Scene_SetArrivalFlags(0);
-  JupiterLighthouse_LoadPalettes(1);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_LIT);
   // Arriving from the bridge's floor, the grey blocks stand afresh on six of
   // the west hall's path cells.
   if (gMainRoutineState.entrance == ENTRANCE_FROM_BRIDGE_FLOOR) {

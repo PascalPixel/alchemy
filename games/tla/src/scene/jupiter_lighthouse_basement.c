@@ -57,6 +57,7 @@
 #include "shared/tables.h"
 #include "field/field_effect.h"
 #include "field/actor_script.h"
+#include "scene/lighthouse_palettes.h"
 #include "fixed_math.h"
 
 /// The side room's sparks, which take turns at the particle sprite sheet's two
@@ -211,7 +212,6 @@ void JupiterLighthouse_RestartSpark(struct Actor *actor) {
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
-void JupiterLighthouse_LoadPalettes(s32 mode);
 
 /// A spark's update: it stands still, and the room's tile animations with it,
 /// while Psynergy or a menu is up; otherwise it waits out its starting delay,
@@ -279,7 +279,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineState.next ==
       (s32)&SceneId_JupiterLighthouseBasementTeleporters) {
-    JupiterLighthouse_LoadPalettes(1);
+    JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_LIT);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
         gMainRoutineState.entrance ==
             JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_FROM_JUPITER_LIGHTHOUSE_ENTRANCE)

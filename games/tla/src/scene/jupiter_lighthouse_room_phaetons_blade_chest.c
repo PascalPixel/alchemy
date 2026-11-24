@@ -52,6 +52,7 @@
 #include "system/heap_release.h"
 #include "system/io_write.h"
 #include "field/field_effect.h"
+#include "scene/lighthouse_palettes.h"
 
 /// Where a stone face's whirlwind starts: an unseen actor moved to the face
 /// that blows, which the whirlwind takes its place and heading from.
@@ -95,7 +96,6 @@ enum { EXIT_HOVER_HALL_STAIRS = 6 };
 struct Actor;
 struct LightOam;
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
-void JupiterLighthouse_LoadPalettes(s32 mode);
 s32 gWhirlwindRiding BSS_DATA;
 u16 gPaletteCycleColors[16] BSS_DATA;
 /// Palette 13's first two colours; it is copied whole, with the unlit colours
@@ -317,7 +317,7 @@ s32 Scene_Initialize(void) {
 /// the map is built. Returns 0.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  JupiterLighthouse_LoadPalettes(0);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
   return 0;
 }
 

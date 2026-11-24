@@ -225,6 +225,23 @@ enum {
   ACTOR_PRETTY_STONE_ICON, ///< shows the Pretty Stone over the leader
   ACTOR_HEALER
 };
+/// The islets' own animals' and objects' animations, by their sheets: the log
+/// rolls off the ledge, splashes down and floats; the orange bird flies, wings
+/// beating, and perches; the cow grazes now and then; the dog hops, and sits
+/// looking about and up; the icebergs glint now and then at rest and shimmer
+/// as they drift.
+enum {
+  LOG_ANIM_ROLL = 3,
+  LOG_ANIM_FLOAT = 4,
+  LOG_ANIM_SPLASH_DOWN = 8,
+  BIRD_ANIM_FLY = 4,
+  BIRD_ANIM_PERCH = 5,
+  COW_ANIM_GRAZE = 4,
+  DOG_ANIM_HOP = 3,
+  DOG_ANIM_SIT_AND_LOOK_UP = 5,
+  ICEBERG_ANIM_REST = 1,
+  ICEBERG_ANIM_DRIFT = 2
+};
 /// N Osenia Islet: the young man who dreams of crossing the Sea of Time and
 /// his father, the cow, and a blue orb drawn hidden.
 enum {
@@ -371,11 +388,11 @@ void Islets_PushLogIntoWater(void) {
     PushTarget_Push(target);
     System_Wait(5);
     actor->gravity = toFIXED(1) / 2;
-    Actor_SetAnimation(ACTOR_LOG, 3);
+    Actor_SetAnimation(ACTOR_LOG, LOG_ANIM_ROLL);
     Actor_SetDestinationOffset(ACTOR_LOG, 0, 8);
     FieldEvent_Wait(22);
     Event_PlaySound(SE_LOG_FALL);
-    Actor_SetAnimation(ACTOR_LOG, 8);
+    Actor_SetAnimation(ACTOR_LOG, LOG_ANIM_SPLASH_DOWN);
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->motionFlags = 0;
     actor->velocityY = 0;
@@ -603,14 +620,14 @@ void Islets_TradeWithBird(void) {
     FieldEvent_SetMessageId((s32)MsgOhMyThat);
     // "Oh my! That stone you have! It's divine! Simply divine! I must have..."
     Event_ShowMessage(ACTOR_BIRD, 0);
-    Actor_SetAnimation(ACTOR_BIRD, 4);
+    Actor_SetAnimation(ACTOR_BIRD, BIRD_ANIM_FLY);
     FieldActor_SetPositionAndResetMotion(
         actor, (leader->x.fixed + actor->x.fixed) / 2, leader->y.fixed,
         (leader->z.fixed + actor->z.fixed) / 2);
     System_Wait(20);
     FieldActor_SetPositionAndResetMotion(actor, toFIXED(120), toFIXED(128),
                                          toFIXED(312));
-    Actor_SetAnimation(ACTOR_BIRD, 5);
+    Actor_SetAnimation(ACTOR_BIRD, BIRD_ANIM_PERCH);
     System_Wait(10);
     Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_SOUTH);
     spawned = FieldActor_Create(SPRITE_UNSEEN_MARKER, leader->x.fixed,
@@ -812,7 +829,7 @@ void Islets_TradeWithCow(void) {
     // "I've been feeling so low lately... I long to feel the utter joy..."
     Event_ShowMessageAndWait(ACTOR_COW, 0);
   }
-  Actor_SetAnimationById(ACTOR_COW, 4);
+  Actor_SetAnimationById(ACTOR_COW, COW_ANIM_GRAZE);
   Event_End();
 }
 #undef STEP
@@ -1505,14 +1522,14 @@ void Islets_BirdReturnsToNest(void) {
   FieldActor_SetMoveTarget(actor, 132, 128, 320);
   FieldActor_WaitForMove(actor);
   FieldTask_Remove(Islets_PlayFootsteps);
-  Actor_SetAnimation(ACTOR_BIRD, 5);
+  Actor_SetAnimation(ACTOR_BIRD, BIRD_ANIM_PERCH);
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldActor_SetSpritePriority(ACTOR_BIRD, 2);
   Actor_FaceActor(ACTOR_BIRD, gMainRoutineState.leaderActorId, 0);
   FieldEvent_Wait(10);
   FieldActor_Jump(ACTOR_BIRD, 4, 0);
   Actor_MoveToAndWait(ACTOR_BIRD, 120, 312);
-  Actor_SetAnimation(ACTOR_BIRD, 5);
+  Actor_SetAnimation(ACTOR_BIRD, BIRD_ANIM_PERCH);
   actor->motionFlags = 0;
   Actor_FaceDirectionAndWait(ACTOR_BIRD, FACING_EAST);
   Event_SetFlag(FLAG_BIRD_ON_NEST);
@@ -1939,7 +1956,7 @@ void Islets_ArriveBackAtIsland(void) {
   actor->update = (ObjectUpdate)Actor_EmitWadingSplashes;
   Actor_WalkTo(ACTOR_LIL_TURTLE, 280, 468);
   Actor_MoveToAndWait(ACTOR_LONESOME_GEORGE, 296, 452);
-  Actor_SetAnimation(ACTOR_LIL_TURTLE, 1);
+  Actor_SetAnimation(ACTOR_LIL_TURTLE, ANIM_STAND);
   owner->update = 0;
   actor->update = 0;
   Actor_Get(ACTOR_LIL_TURTLE)->update = 0;
@@ -2085,7 +2102,7 @@ void Islets_InitializeWestIndra(void) {
     }
     Actor_Get(ACTOR_DOG)->facing = FACING_NORTH_NORTHEAST;
   } else {
-    Actor_SetAnimation(ACTOR_DOG, 5);
+    Actor_SetAnimation(ACTOR_DOG, DOG_ANIM_SIT_AND_LOOK_UP);
   }
   Task_AddFrame(Islets_SetSonsTargetedByHeight, TASK_PASS_FRAME);
 }
@@ -2152,7 +2169,7 @@ void Islets_DriftIcebergs(void) {
     switch (*frame) {
     case 0:
       for (i = ACTOR_FIRST_ICEBERG; i <= ACTOR_LAST_ICEBERG; i++)
-        Actor_SetAnimation(i, 2);
+        Actor_SetAnimation(i, ICEBERG_ANIM_DRIFT);
       Islets_MoveIceberg(ACTOR_FIRST_ICEBERG, 0, 1);
       Islets_MoveIceberg(ACTOR_FIRST_ICEBERG + 1, 0, -1);
       Islets_MoveIceberg(ACTOR_FIRST_ICEBERG + 2, 0, 1);
@@ -2165,11 +2182,11 @@ void Islets_DriftIcebergs(void) {
     case 100:
     case 220:
       for (i = ACTOR_FIRST_ICEBERG; i <= ACTOR_LAST_ICEBERG; i++)
-        Actor_SetAnimation(i, 1);
+        Actor_SetAnimation(i, ICEBERG_ANIM_REST);
       break;
     case 130:
       for (i = ACTOR_FIRST_ICEBERG; i <= ACTOR_LAST_ICEBERG; i++) {
-        Actor_SetAnimation(i, 2);
+        Actor_SetAnimation(i, ICEBERG_ANIM_DRIFT);
         Islets_MoveIceberg(i, 0, 0);
       }
       break;
@@ -2210,7 +2227,7 @@ void Islets_InitializeEastTundaria(void) {
   if (Event_GetFlag(FLAG_LOG_PUSHED_INTO_WATER)) {
     actor = Actor_Get(ACTOR_LOG);
     Actor_SetPosition(ACTOR_LOG, 176, 168);
-    Actor_SetAnimation(ACTOR_LOG, 4);
+    Actor_SetAnimation(ACTOR_LOG, LOG_ANIM_FLOAT);
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->motionFlags = 0;
     actor->y.fixed = toFIXED(-8);
@@ -2250,7 +2267,7 @@ void Islets_InitializeNorthOsenia(void) {
   if (gMainRoutineState.entrance == NORTH_OSENIA_ISLET_FROM_DAILA_ROOMS_HOUSES)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_COW), 0);
-  Actor_SetAnimation(ACTOR_COW, 4);
+  Actor_SetAnimation(ACTOR_COW, COW_ANIM_GRAZE);
   if (Event_GetFlag(FLAG_COW_TRADED)) {
     spawned = FieldActor_Create(SPRITE_UNSEEN_MARKER, toFIXED(104), toFIXED(24),
                                 toFIXED(160));
@@ -2460,7 +2477,8 @@ void Islets_SinkInSea(void) {
   Event_PlaySound(SE_DROP_THROUGH_HOLE);
   leader = Actor_Get(gMainRoutineState.leaderActorId);
   Actor_SetSpriteFlags(leader, 0);
-  Actor_SetAnimation(gMainRoutineState.leaderActorId, 18);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId,
+                     ANIM_LEADER_TUMBLE_IN_WATER);
   FieldEvent_Wait(40);
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -2550,7 +2568,7 @@ u32 gIslets_EastTundariaWalkScript[] = {
 };
 
 u32 gIslets_BirdCirclesScript[] = {
-    SC_ANIMATION(4),
+    SC_ANIMATION(BIRD_ANIM_FLY),
     SC_SPEED(0.8),
     SC_ACCELERATION(0.2),
     SC_SET(SW_Y, toFIXED(64)),
@@ -2577,14 +2595,24 @@ u32 gIslets_BirdCirclesScript[] = {
 /// A loop round the snow that Pengus and Pengulina both waddle, Pengus the
 /// faster, so that he chases her.
 u32 gIslets_PengusChasesPengulinaScript[] = {
-    SC_ANIMATION(2), SC_MOVE(234, 0, 240),        SC_SYNC, SC_MOVE(276, 0, 222),
-    SC_SYNC,         SC_MOVE(308, 0, 256),        SC_SYNC, SC_MOVE(252, 0, 256),
-    SC_SYNC,         SC_MOVE(264, 0, 208),        SC_SYNC, SC_MOVE(232, 0, 184),
-    SC_SYNC,         SC_LOOP(SC_FOREVER, SC_TOP),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(234, 0, 240),
+    SC_SYNC,
+    SC_MOVE(276, 0, 222),
+    SC_SYNC,
+    SC_MOVE(308, 0, 256),
+    SC_SYNC,
+    SC_MOVE(252, 0, 256),
+    SC_SYNC,
+    SC_MOVE(264, 0, 208),
+    SC_SYNC,
+    SC_MOVE(232, 0, 184),
+    SC_SYNC,
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 s32 gIslets_DogHopsFacingWestScript[] = {
-    SC_ANIMATION(3),
+    SC_ANIMATION(DOG_ANIM_HOP),
     SC_SE(SE_JUMP),
     SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE_BY(0, 0, -16),
@@ -2605,7 +2633,7 @@ s32 gIslets_DogHopsFacingWestScript[] = {
     SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE(280, 0, 856),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(1),
@@ -2613,7 +2641,7 @@ s32 gIslets_DogHopsFacingWestScript[] = {
 };
 
 s32 gIslets_DogHopsFacingEastScript[] = {
-    SC_ANIMATION(3),
+    SC_ANIMATION(DOG_ANIM_HOP),
     SC_SE(SE_JUMP),
     SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE_BY(0, 0, 16),
@@ -2634,7 +2662,7 @@ s32 gIslets_DogHopsFacingEastScript[] = {
     SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE(280, 0, 856),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(1),
@@ -2654,8 +2682,14 @@ u32 gIslets_GeorgeSwimsToSecretSpotScript[] = {
 };
 
 u32 gIslets_LilTurtleSwimsToSecretSpotScript[] = {
-    SC_ANIMATION(2), SC_MOVE(248, 0, 686), SC_SYNC, SC_MOVE(248, 0, 768),
-    SC_SYNC,         SC_MOVE(176, 0, 777), SC_SYNC, SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(248, 0, 686),
+    SC_SYNC,
+    SC_MOVE(248, 0, 768),
+    SC_SYNC,
+    SC_MOVE(176, 0, 777),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -2665,8 +2699,14 @@ u32 gIslets_GeorgeSwimsBackScript[] = {
 };
 
 u32 gIslets_LilTurtleSwimsBackScript[] = {
-    SC_ANIMATION(2), SC_MOVE(248, 0, 768), SC_SYNC, SC_MOVE(248, 0, 686),
-    SC_SYNC,         SC_MOVE(240, 0, 600), SC_SYNC, SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(248, 0, 768),
+    SC_SYNC,
+    SC_MOVE(248, 0, 686),
+    SC_SYNC,
+    SC_MOVE(240, 0, 600),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 

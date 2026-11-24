@@ -1430,8 +1430,8 @@ Resource_DirectoryTable:
 	resource , Field_JupiterLighthouseWhorl
 	resource , Field_JupiterLighthouseRoomBlueKey
 	resource , Field_JupiterLighthouseRoomPhaetonsBladeChest
-	resource , Field_JupiterLighthouseRoomM
-	resource , Tileset_PaletteJupiterLighthouseRoomM
+	resource , Field_JupiterLighthouseTerraces
+	resource , Tileset_PaletteJupiterLighthouseTerraces
 	resource , Field_JupiterLighthouseAerie
 	resource , Tileset_PaletteJupiterLighthouseAerie
 	resource , Field_Loho
@@ -1477,12 +1477,12 @@ Resource_DirectoryTable:
 	resource , Tileset_MarsLighthouseAeriePalette
 	resource , Tileset_MarsLighthouseAerieTilesA
 	resource , Tileset_MarsLighthouseAerieTilesB
-	resource , Field_MarsLighthouseRoomMFlame
-	resource , Tileset_MarsLighthouseRoomMFlameTilesD
-	resource , Field_MarsLighthouseRoomMInscriptions
-	resource , Tileset_MarsLighthouseRoomMInscriptionsPalette
-	resource , Tileset_MarsLighthouseRoomMInscriptionsTilesA
-	resource , Tileset_MarsLighthouseRoomMInscriptionsTilesB
+	resource , Field_MarsLighthouseBeaconLedge
+	resource , Tileset_MarsLighthouseBeaconLedgeTilesD
+	resource , Field_MarsLighthouseHall
+	resource , Tileset_MarsLighthouseHallPalette
+	resource , Tileset_MarsLighthouseHallTilesA
+	resource , Tileset_MarsLighthouseHallTilesB
 	resource , Field_MarsLighthouseEntranceFugue
 	resource , Field_MarsLighthouseEntranceTeleportLapis
 	resource , Field_MarsLighthouseEntranceBalm
@@ -1493,13 +1493,13 @@ Resource_DirectoryTable:
 	resource , Field_MarsLighthouseMercuryLedge
 	resource , Tileset_MarsLighthouseMercuryLedgeTilesD
 	resource , Field_MarsLighthouseJupiterLedge
-	resource , Field_MarsLighthouseRoomMAlastorsHoodChest
+	resource , Field_MarsLighthouseMarsLedge
 	resource , Field_MarsLighthouseVenusLedge
 	resource , Tileset_PaletteMarsLighthouseOutsideThawed
 	resource , Tileset_PaletteMarsLighthouseMarsTowerThawed
 	resource , Tileset_PaletteMarsLighthouseAerieThawed
-	resource , Tileset_PaletteMarsLighthouseRoomMFlameThawed
-	resource , Tileset_PaletteMarsLighthouseRoomMInscriptionsThawed
+	resource , Tileset_PaletteMarsLighthouseBeaconLedgeThawed
+	resource , Tileset_PaletteMarsLighthouseHallThawed
 	resource , Field_MercuryLighthouse
 	resource , Tileset_MercuryLighthousePalette
 	resource , Tileset_MercuryLighthouseTilesA

@@ -602,17 +602,17 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_m.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_terraces.o"(.text)
         "*/imports.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_m.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_terraces.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_m.o"(.data.late)
+        "*/games/tla/src/scene/jupiter_lighthouse_terraces.o"(.data.late)
     }
     .bss :
     {
-        "*/games/tla/src/scene/jupiter_lighthouse_room_m.o"(.bss COMMON)
+        "*/games/tla/src/scene/jupiter_lighthouse_terraces.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a4
@@ -685,7 +685,7 @@ SCENE(mars_lighthouse_entrance)
 #elif OVERLAY == 0x6ab
 SCENE(mars_lighthouse_star_room)
 #elif OVERLAY == 0x6ac
-SCENE(mars_lighthouse_room_m)
+SCENE(mars_lighthouse_hall)
 #elif OVERLAY == 0x6ad
 SECTIONS
 {

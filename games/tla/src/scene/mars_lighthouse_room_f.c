@@ -1212,7 +1212,7 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
     ((struct FieldState *)heap->fieldState)->transition = value;
     if (entrance ==
-            MARS_LIGHTHOUSE_MARS_TOWER_FROM_MARS_LIGHTHOUSE_ROOM_M_ALASTORS_HOOD_CHEST ||
+            MARS_LIGHTHOUSE_MARS_TOWER_FROM_MARS_LIGHTHOUSE_MARS_LEDGE ||
         entrance == 2) {
       FlameThrowers_Start(gMarsLighthouseRoomF_MarsButtonFlameThrowers,
                           gMarsLighthouseRoomF_MarsButtonFlameStops,
@@ -1313,7 +1313,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_JUPITER_STATUE, 120, 296);
     if (entrance == JUPITER_TOWER_CARVED_DRAGON_CIRCLE ||
         entrance ==
-            MARS_LIGHTHOUSE_JUPITER_TOWER_FROM_MARS_LIGHTHOUSE_ROOM_M_FLAME) {
+            MARS_LIGHTHOUSE_JUPITER_TOWER_FROM_MARS_LIGHTHOUSE_BEACON_LEDGE) {
       FlameThrowers_Start(gMarsLighthouseRoomF_JupiterUpperFlameThrowers,
                           gMarsLighthouseRoomF_JupiterUpperFlameStops,
                           MarsLighthouseRoomF_DropFireball,
@@ -1355,7 +1355,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(ACTOR_TIGHTROPE_NEAR_POST)->riseCounter = 1;
     Actor_GetById(ACTOR_TIGHTROPE_FAR_POST)->riseCounter = 1;
     if (entrance ==
-            MARS_LIGHTHOUSE_VENUS_TOWER_FROM_MARS_LIGHTHOUSE_ROOM_M_FLAME ||
+            MARS_LIGHTHOUSE_VENUS_TOWER_FROM_MARS_LIGHTHOUSE_BEACON_LEDGE ||
         entrance == VENUS_TOWER_HALL_WEST_DOORWAY ||
         entrance == VENUS_TOWER_HALL_EAST_DOORWAY) {
       FlameThrowers_Start(gMarsLighthouseRoomF_VenusFlameThrowers,
@@ -2077,15 +2077,14 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(MarsLighthouseMarsTower),
-    SCENE_EXIT(
-        MARS_LIGHTHOUSE_MARS_TOWER_TO_MARS_LIGHTHOUSE_ROOM_M_ALASTORS_HOOD_CHEST,
-        MarsLighthouseRoomMAlastorsHoodChest,
-        MARS_LIGHTHOUSE_ROOM_M_ALASTORS_HOOD_CHEST_FROM_MARS_LIGHTHOUSE_MARS_TOWER),
+    SCENE_EXIT(MARS_LIGHTHOUSE_MARS_TOWER_TO_MARS_LIGHTHOUSE_MARS_LEDGE,
+               MarsLighthouseMarsLedge,
+               MARS_LIGHTHOUSE_MARS_LEDGE_FROM_MARS_LIGHTHOUSE_MARS_TOWER),
     SCENE_EXIT(2, MarsLighthouseMarsTower, 3),
     SCENE_EXIT(3, MarsLighthouseMarsTower, 2),
-    SCENE_EXIT(MARS_LIGHTHOUSE_MARS_TOWER_TO_MARS_LIGHTHOUSE_ROOM_M_FLAME,
-               MarsLighthouseRoomMFlame,
-               MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_MARS_TOWER),
+    SCENE_EXIT(MARS_LIGHTHOUSE_MARS_TOWER_TO_MARS_LIGHTHOUSE_BEACON_LEDGE,
+               MarsLighthouseBeaconLedge,
+               MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_MARS_TOWER),
     SCENE_EXITS(MarsLighthouseMercuryTower),
     SCENE_EXIT(
         MARS_LIGHTHOUSE_MERCURY_TOWER_TO_MARS_LIGHTHOUSE_MERCURY_LEDGE,
@@ -2097,9 +2096,9 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(5, MarsLighthouseMercuryTower, 4),
     SCENE_EXIT(6, MarsLighthouseMercuryTower, 7),
     SCENE_EXIT(7, MarsLighthouseMercuryTower, 6),
-    SCENE_EXIT(MARS_LIGHTHOUSE_MERCURY_TOWER_TO_MARS_LIGHTHOUSE_ROOM_M_FLAME,
-               MarsLighthouseRoomMFlame,
-               MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_MERCURY_TOWER),
+    SCENE_EXIT(MARS_LIGHTHOUSE_MERCURY_TOWER_TO_MARS_LIGHTHOUSE_BEACON_LEDGE,
+               MarsLighthouseBeaconLedge,
+               MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_MERCURY_TOWER),
     SCENE_EXIT(MERCURY_TOWER_PIPELINE_MENDED, MarsLighthouseMercuryTower,
                MERCURY_TOWER_PIPELINE_MENDED),
     SCENE_EXITS(MarsLighthouseJupiterTower),
@@ -2131,9 +2130,9 @@ LATE_DATA u32 gSceneExits[] = {
                JUPITER_TOWER_CARVED_DRAGON_CIRCLE),
     SCENE_EXIT(14, MarsLighthouseJupiterTower,
                JUPITER_TOWER_BIG_ROOM_WEST_CIRCLE),
-    SCENE_EXIT(MARS_LIGHTHOUSE_JUPITER_TOWER_TO_MARS_LIGHTHOUSE_ROOM_M_FLAME,
-               MarsLighthouseRoomMFlame,
-               MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER),
+    SCENE_EXIT(MARS_LIGHTHOUSE_JUPITER_TOWER_TO_MARS_LIGHTHOUSE_BEACON_LEDGE,
+               MarsLighthouseBeaconLedge,
+               MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER),
     SCENE_EXIT(JUPITER_TOWER_THROUGH_HOLE, MarsLighthouseJupiterTower,
                JUPITER_TOWER_THROUGH_HOLE),
     SCENE_EXITS(MarsLighthouseVenusTower),
@@ -2152,9 +2151,9 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(14, MarsLighthouseVenusTower, VENUS_TOWER_LOWER_DOORWAY),
     SCENE_EXIT(15, MarsLighthouseVenusTower,
                VENUS_TOWER_STATUE_HALL_SOUTH_PASSAGE),
-    SCENE_EXIT(MARS_LIGHTHOUSE_VENUS_TOWER_TO_MARS_LIGHTHOUSE_ROOM_M_FLAME,
-               MarsLighthouseRoomMFlame,
-               MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_VENUS_TOWER),
+    SCENE_EXIT(MARS_LIGHTHOUSE_VENUS_TOWER_TO_MARS_LIGHTHOUSE_BEACON_LEDGE,
+               MarsLighthouseBeaconLedge,
+               MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_VENUS_TOWER),
     SCENE_EXITS_END,
 };
 

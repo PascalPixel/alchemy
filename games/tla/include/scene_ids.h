@@ -515,18 +515,16 @@ extern char SceneId_MarsLighthouseEntranceSolBladeChest;
 /// Mars Lighthouse's room of the Mars Star.
 extern char SceneId_MarsLighthouseStarRoom;
 #define SCENE_MARS_LIGHTHOUSE_STAR_ROOM ((s32)&SceneId_MarsLighthouseStarRoom)
-extern char SceneId_MarsLighthouseRoomMInscriptions;
-#define SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS                              \
-  ((s32)&SceneId_MarsLighthouseRoomMInscriptions)
+extern char SceneId_MarsLighthouseHall;
+#define SCENE_MARS_LIGHTHOUSE_HALL ((s32)&SceneId_MarsLighthouseHall)
 extern char SceneId_MarsLighthouseMercuryLedge;
 #define SCENE_MARS_LIGHTHOUSE_MERCURY_LEDGE                                    \
   ((s32)&SceneId_MarsLighthouseMercuryLedge)
 extern char SceneId_MarsLighthouseJupiterLedge;
 #define SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE                                    \
   ((s32)&SceneId_MarsLighthouseJupiterLedge)
-extern char SceneId_MarsLighthouseRoomMAlastorsHoodChest;
-#define SCENE_MARS_LIGHTHOUSE_ROOM_M_ALASTORS_HOOD_CHEST                       \
-  ((s32)&SceneId_MarsLighthouseRoomMAlastorsHoodChest)
+extern char SceneId_MarsLighthouseMarsLedge;
+#define SCENE_MARS_LIGHTHOUSE_MARS_LEDGE ((s32)&SceneId_MarsLighthouseMarsLedge)
 extern char SceneId_MarsLighthouseVenusLedge;
 #define SCENE_MARS_LIGHTHOUSE_VENUS_LEDGE                                      \
   ((s32)&SceneId_MarsLighthouseVenusLedge)
@@ -541,9 +539,9 @@ extern char SceneId_MarsLighthouseJupiterTower;
 extern char SceneId_MarsLighthouseVenusTower;
 #define SCENE_MARS_LIGHTHOUSE_VENUS_TOWER                                      \
   ((s32)&SceneId_MarsLighthouseVenusTower)
-extern char SceneId_MarsLighthouseRoomMFlame;
-#define SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME                                     \
-  ((s32)&SceneId_MarsLighthouseRoomMFlame)
+extern char SceneId_MarsLighthouseBeaconLedge;
+#define SCENE_MARS_LIGHTHOUSE_BEACON_LEDGE                                     \
+  ((s32)&SceneId_MarsLighthouseBeaconLedge)
 /// Mars Lighthouse's aerie, where the Doom Dragon is faced.
 extern char SceneId_MarsLighthouseAerie;
 #define SCENE_MARS_LIGHTHOUSE_AERIE ((s32)&SceneId_MarsLighthouseAerie)
@@ -778,8 +776,9 @@ extern char SceneId_LemuriaPalace;
 #define SCENE_LEMURIA_PALACE ((s32)&SceneId_LemuriaPalace)
 extern char SceneId_LemuriaSpring;
 #define SCENE_LEMURIA_SPRING ((s32)&SceneId_LemuriaSpring)
-extern char SceneId_JupiterLighthouseRoomM;
-#define SCENE_JUPITER_LIGHTHOUSE_ROOM_M ((s32)&SceneId_JupiterLighthouseRoomM)
+extern char SceneId_JupiterLighthouseTerraces;
+#define SCENE_JUPITER_LIGHTHOUSE_TERRACES                                      \
+  ((s32)&SceneId_JupiterLighthouseTerraces)
 extern char SceneId_GabombaCatacombsStream;
 #define SCENE_GABOMBA_CATACOMBS_STREAM ((s32)&SceneId_GabombaCatacombsStream)
 extern char SceneId_WestIndraIslet;

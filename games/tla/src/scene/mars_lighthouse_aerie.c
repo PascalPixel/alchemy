@@ -292,8 +292,7 @@ void Scene_LeaveByExit(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineState.teleportState = 2;
-  FieldEvent_SetExitRequest(
-      MARS_LIGHTHOUSE_AERIE_TO_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS);
+  FieldEvent_SetExitRequest(MARS_LIGHTHOUSE_AERIE_TO_MARS_LIGHTHOUSE_HALL);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();
 }
@@ -399,7 +398,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineState.entrance ==
-          MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS &&
+          MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_HALL &&
       Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0)
     Weather_StartRain(1);
   Map_CopyPalette(gMainRoutineState.mapId +
@@ -3415,7 +3414,7 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(MarsLighthouseAerie),
-    SCENE_EXIT(MARS_LIGHTHOUSE_AERIE_TO_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS, MarsLighthouseRoomMInscriptions, MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS_FROM_MARS_LIGHTHOUSE_AERIE),
+    SCENE_EXIT(MARS_LIGHTHOUSE_AERIE_TO_MARS_LIGHTHOUSE_HALL, MarsLighthouseHall, MARS_LIGHTHOUSE_HALL_FROM_MARS_LIGHTHOUSE_AERIE),
     SCENE_EXIT(EXIT_TO_THE_BEACON, MarsLighthouseAerie, MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_AERIE),
     SCENE_EXIT(MARS_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EAST_A, MercuryLighthouse, MERCURY_LIGHTHOUSE_FROM_MARS_LIGHTHOUSE_AERIE_EAST_A),
     SCENE_EXIT(MARS_LIGHTHOUSE_AERIE_TO_PROX_HOUSES, ProxHouses, PROX_HOUSES_FROM_MARS_LIGHTHOUSE_AERIE),

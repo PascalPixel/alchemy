@@ -566,7 +566,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {481, 482, 483, 484, 485, 486, 487, 488},
         .weights = {20, 20, 10, 10, 5},
     },
-    // Jupiter Lighthouse: SceneId_JupiterLighthouseRoomErinyesTunicChest entrances 3, 4, 8 and 9, SceneId_JupiterLighthouseRoomLockedDoors entrances 5 and 7, SceneId_JupiterLighthouseRoomRedKey, SceneId_JupiterLighthouseRoomCrackedFloor, SceneId_JupiterLighthouseRoomBlueKey, SceneId_JupiterLighthouseRoomM
+    // Jupiter Lighthouse: SceneId_JupiterLighthouseRoomErinyesTunicChest entrances 3, 4, 8 and 9, SceneId_JupiterLighthouseRoomLockedDoors entrances 5 and 7, SceneId_JupiterLighthouseRoomRedKey, SceneId_JupiterLighthouseRoomCrackedFloor, SceneId_JupiterLighthouseRoomBlueKey, SceneId_JupiterLighthouseTerraces
     {
         .rate = 55,
         .level = 30,
@@ -636,14 +636,14 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {501, 502, 503, 504, 505, 506, 507, 508},
         .weights = {20, 5, 20, 5, 5, 5},
     },
-    // Mars Lighthouse: SceneId_MarsLighthouseEntranceValkyrieMailChest, SceneId_MarsLighthouseEntranceSolBladeChest, SceneId_MarsLighthouseStarRoom, SceneId_MarsLighthouseRoomMInscriptions
+    // Mars Lighthouse: SceneId_MarsLighthouseEntranceValkyrieMailChest, SceneId_MarsLighthouseEntranceSolBladeChest, SceneId_MarsLighthouseStarRoom, SceneId_MarsLighthouseHall
     {
         .rate = 50,
         .level = 33,
         .formations = {501, 502, 503, 504, 505, 506, 507, 508},
         .weights = {10, 5, 15, 20, 5, 10, 5, 5},
     },
-    // Mars Lighthouse: SceneId_MarsLighthouseMercuryLedge, SceneId_MarsLighthouseJupiterLedge, SceneId_MarsLighthouseRoomMAlastorsHoodChest, SceneId_MarsLighthouseVenusLedge, SceneId_MarsLighthouseMarsTower, SceneId_MarsLighthouseMercuryTower, SceneId_MarsLighthouseJupiterTower, SceneId_MarsLighthouseVenusTower
+    // Mars Lighthouse: SceneId_MarsLighthouseMercuryLedge, SceneId_MarsLighthouseJupiterLedge, SceneId_MarsLighthouseMarsLedge, SceneId_MarsLighthouseVenusLedge, SceneId_MarsLighthouseMarsTower, SceneId_MarsLighthouseMercuryTower, SceneId_MarsLighthouseJupiterTower, SceneId_MarsLighthouseVenusTower
     {
         .rate = 50,
         .level = 33,

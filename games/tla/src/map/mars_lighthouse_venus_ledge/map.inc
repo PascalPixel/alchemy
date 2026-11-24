@@ -40,11 +40,11 @@ Tileset_PaletteMarsLighthouseMarsTowerThawed:
 Tileset_PaletteMarsLighthouseAerieThawed:
 	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_aerie_thawed.gbapal.lz"
 	.byte 0x00, 0x81	@ PACKER: left in the buffer by Tileset_PaletteMarsLighthouseMarsTowerThawed+0x176
-	.global Tileset_PaletteMarsLighthouseRoomMFlameThawed
-Tileset_PaletteMarsLighthouseRoomMFlameThawed:
-	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_room_m_flame_thawed.gbapal.lz"
+	.global Tileset_PaletteMarsLighthouseBeaconLedgeThawed
+Tileset_PaletteMarsLighthouseBeaconLedgeThawed:
+	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_beacon_ledge_thawed.gbapal.lz"
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.global Tileset_PaletteMarsLighthouseRoomMInscriptionsThawed
-Tileset_PaletteMarsLighthouseRoomMInscriptionsThawed:
-	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_room_m_inscriptions_thawed.gbapal.lz"
-	.byte 0x17	@ PACKER: left in the buffer by Tileset_PaletteMarsLighthouseRoomMFlameThawed+0x18f
+	.global Tileset_PaletteMarsLighthouseHallThawed
+Tileset_PaletteMarsLighthouseHallThawed:
+	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_hall_thawed.gbapal.lz"
+	.byte 0x17	@ PACKER: left in the buffer by Tileset_PaletteMarsLighthouseBeaconLedgeThawed+0x18f

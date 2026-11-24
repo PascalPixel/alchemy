@@ -337,9 +337,8 @@ void DebugWarp_KaoruSpecial3(void) {
 
 /// Preset 7, "Kaoru Special2": to the Mars Lighthouse aerie.
 void DebugWarp_KaoruSpecial2(void) {
-  Event_SetDestinationFar(
-      SCENE_MARS_LIGHTHOUSE_AERIE,
-      MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS);
+  Event_SetDestinationFar(SCENE_MARS_LIGHTHOUSE_AERIE,
+                          MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_HALL);
 }
 
 /// Preset 8, "Kaoru Special1": to the Mars Lighthouse's star room, where the

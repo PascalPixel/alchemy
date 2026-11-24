@@ -14,4 +14,8 @@ void Shop_SaveAndTintFieldPaletteFar(s32 tint);
 /// frames.
 void Shop_RestoreFieldPaletteFar(void);
 
+/// Decompresses resource `resourceId` and loads its first `size` bytes into
+/// VRAM cache entry `entryId`.
+void VramBlock_LoadResourceFar(s32 entryId, s32 size, s32 resourceId);
+
 #endif

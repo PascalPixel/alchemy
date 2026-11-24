@@ -39,7 +39,6 @@
 #include "game/item.h"
 #include "graphics/window_sprite_list.h"
 #include "graphics/glyph.h"
-#include "graphics/graphics.h"
 #include "graphics/resource.h"
 #include "graphics/vram_tab.h"
 #include "menu/menu.h"

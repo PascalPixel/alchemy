@@ -32,7 +32,6 @@
 #include "field/field_sequence_event.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/scene.h"
 #include "sound/sound.h"

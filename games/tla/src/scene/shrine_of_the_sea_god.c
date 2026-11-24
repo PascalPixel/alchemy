@@ -36,7 +36,6 @@
 #include "field/scene_tables.h"
 #include "field/speaker.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/ground_effects.h"
 #include "scene/scene.h"

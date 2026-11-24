@@ -203,6 +203,12 @@ extern u8 gDebugTextEnabled;
 extern u16 *gDebugTextCursor;
 void DebugText_Print(const u8 *src);
 void DebugText_Clear(void);
+/// The digits String_FormatHex and String_FormatDecimal write, right-aligned
+/// up to gNumberTextHexEnd and gNumberTextDecimalEnd.
+extern u8 gNumberTextBuffer[];
+/// Writes a value to gNumberTextBuffer right-aligned: spaces, a sign and its
+/// decimal digits.
+void String_FormatDecimal(s32);
 void String_FormatHex(u32);
 /// The hexadecimal digits 0 to F, which String_FormatHex writes from.
 extern const u8 gString_HexDigits[];

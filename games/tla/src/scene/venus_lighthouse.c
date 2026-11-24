@@ -26,7 +26,6 @@
 #include "field/scene_tables.h"
 #include "game/character_ids.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/scene.h"
 #include "sound/sound.h"

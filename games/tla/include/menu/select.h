@@ -137,4 +137,12 @@ void IconMenu_LayoutIcons(s32 x, s32 y, s32 w, s32 h);
 s32 IconMenu_Run(s32 initial);
 void SelectionMenu_StopDrawing(void);
 
+/// Empties the selection screen's list of entries.
+void SelectionMenu_Clear(void);
+/// Loads the icon of a selection entry of kind mode (enum IconKind) into a free
+/// sprite tile slot and returns the slot, or -1.
+s32 SelectionIcon_Load(u32 mode, s32 value);
+/// Frees an arrow sprite's tile slot.
+void MenuArrow_Release(s32 slot);
+
 #endif

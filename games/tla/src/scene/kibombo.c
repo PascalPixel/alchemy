@@ -34,7 +34,6 @@
 #include "field/field_psynergy_state.h"
 #include "game/game.h"
 #include "graphics/glyph.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"

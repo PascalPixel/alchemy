@@ -31,7 +31,6 @@
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "gamepak/far_call/system.h"
-#include "graphics/graphics.h"
 #include "graphics/resource.h"
 #include "menu/menu.h"
 #include "scene/scene.h"

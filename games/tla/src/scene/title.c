@@ -14,7 +14,6 @@
 #include "field/field_sequence_event.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "graphics/resource.h"
 #include "graphics/vram_tab.h"
 #include "menu/menu.h"

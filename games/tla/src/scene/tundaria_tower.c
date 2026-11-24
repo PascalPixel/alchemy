@@ -44,7 +44,6 @@
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "gamepak/far_call/system.h"
-#include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/falling_rocks.h"
 #include "scene/magma_rock.h"

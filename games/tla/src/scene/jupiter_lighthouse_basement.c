@@ -18,7 +18,6 @@
 #include "field/field.h"
 #include "scene/event_layer.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"

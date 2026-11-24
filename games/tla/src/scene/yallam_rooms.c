@@ -27,7 +27,6 @@
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "game/inventory.h"
-#include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/scene.h"
 #include "sound/sound.h"

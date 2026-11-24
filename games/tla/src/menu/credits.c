@@ -12,7 +12,6 @@
 #include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -58,6 +57,18 @@ extern s16 gCredits_PendingSlides;
 /// sprites, then the text's.
 extern struct DisplayScrollObject *gDisplayScroll_Objects;
 extern const u32 gDisplayScroll_SlideResources[];
+/// 0 while the credits text scrolls; once a line stops it, the line's stop
+/// (1 at a page mark, which A or B releases), then counted up each frame after
+/// the end (CREDITS_FRAMES_AFTER_END).
+extern s16 gDisplayScroll_Busy;
+/// gDisplayScroll_Position when the credits last drew a line.
+extern s16 gDisplayScroll_LastPosition;
+/// How far the credits text has scrolled, in pixels: one every four VBlanks,
+/// faster while B is held.
+extern u16 gDisplayScroll_Position;
+/// Draws one line of the credits' scrolling text into object tiles from slot
+/// on.
+s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align);
 extern const void *gDisplayScroll_LineTable[];
 
 /// The scrolling image's state. EndingImage_Scroll, a VBlank task, moves

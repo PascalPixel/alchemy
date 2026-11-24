@@ -33,7 +33,6 @@
 #include "field/field_sequence.h"
 #include "battle/battle_effect_state.h"
 #include "resource_ids.h"
-#include "graphics/graphics.h"
 #include "item_ids.h"
 
 void LuckyWheels_Run(void);

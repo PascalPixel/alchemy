@@ -44,7 +44,6 @@
 #include "field/field_sequence_event.h"
 #include "game/game.h"
 #include "graphics/glyph.h"
-#include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "field/event_commands.h"
 #include "field/field_effect.h"

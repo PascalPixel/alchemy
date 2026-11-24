@@ -41,7 +41,6 @@
 #include "game/game.h"
 #include "game/class_djinn.h"
 #include "graphics/palette_buffers.h"
-#include "graphics/graphics.h"
 #include "graphics/resource.h"
 #include "graphics/vram_tab.h"
 #include "menu/menu.h"

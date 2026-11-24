@@ -34,6 +34,10 @@
 #include "resource_ids.h"
 #include "scene/title.h"
 
+/// The Title's "Press Start" prompt, byte-LZ compressed, in each
+/// language.
+extern const u8 gTitle_PromptTiles[];
+
 /// The screen blocks of the intro's maps: the near clouds on BG2 and the far
 /// ones on BG1, which the lighthouse later takes; the cards' text on BG3 and
 /// the line blended in over it on BG0.

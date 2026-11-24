@@ -13,7 +13,6 @@
 #include "graphics/glyph.h"
 #include "graphics/text_font.h"
 #include "edition.h"
-#include "graphics/graphics.h"
 #include "system/io_reg.h"
 #include "window/window.h"
 

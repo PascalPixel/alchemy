@@ -115,4 +115,29 @@ s32 Text_DrawMessageToCanvasFar(s32 message, u8 *canvas, s32 unused);
 struct Window *Portrait_OpenWindowFar(s32 speaker, s32 portraitOption, s32 x,
                                       s32 y);
 
+/// Draws a byte string as tiles in a window at pixel (offsetX, offsetY) of its
+/// interior.
+void Text_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 offsetX,
+                                s32 offsetY);
+/// Draws a byte string into a window's tilemap at pixel (x, y) of its
+/// interior, rounded down to tiles.
+void Text_DrawStringInWindowFar(u8 *text, s32 window, u32 x, u32 y);
+/// Draws a number, width digits as String_FormatNumber takes it, as tiles in a
+/// window at pixel (x, y) of its interior.
+void Text_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x, s32 y);
+/// As Text_DrawNumberAtOffsetFar, into the window's tilemap.
+void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x, s32 y);
+/// Sets the text colour (0 to 15) of drawn text.
+s32 Text_SetColorFar(s32 color);
+/// Ability_BuildIconTiles, for an overlay.
+void Ability_BuildIconTilesFar(s32 action, s32 withBase, s32 *slot, s32 *tile,
+                               s32 reuse);
+/// Draws a divider from (x1, y1) to (x2, y2), one of which must agree, joining
+/// it to the frame and divider tiles already on the tilemap.
+void Window_DrawDividerLineFar(s32 window, s32 x1, s32 y1, s32 x2, s32 y2);
+/// Reloads the portrait picture for the key into a portrait slot with that
+/// slot's palette (PORTRAIT_PALETTE + slot), reusing the slot's VRAM cache
+/// entry.
+void Portrait_ReloadFar(s32 slot, s32 key, s32 unused);
+
 #endif

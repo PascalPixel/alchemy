@@ -64,7 +64,6 @@ void Garoh_ScatterDustRing(s32 id);
 #include "system/frame.h"
 #include "battle/battle.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"

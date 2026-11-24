@@ -2226,7 +2226,7 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/leader_flow_with_stream.h"
 
-#include "shared/actor_show_parts.h"
+#include "shared/moai_add_water.h"
 
 #include "shared/leader_spin_away.h"
 

@@ -934,7 +934,7 @@ UNUSED void ApojiiIslands_FlowWithStream(void) {
   }
 }
 
-#include "shared/actor_show_parts.h"
+#include "shared/moai_add_water.h"
 
 /// The Aqua Rock room's actor the copy below splashes at, as
 /// aqua_rock_inside.c names it.

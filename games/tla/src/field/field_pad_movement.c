@@ -10,6 +10,7 @@
 #include "field/object.h"
 #include "macros.h"
 #include "field/resource_slot.h"
+#include "gamepak/far_call/game.h"
 
 /// FieldState.terrainKind: the ground the ship was last over, which sets where
 /// WorldMap_IsFlyable lets it fly.

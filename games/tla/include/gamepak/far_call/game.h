@@ -108,5 +108,7 @@ s32 Inventory_CheckUnequipFar(s32 unitId, s32 slot);
 void Unit_SetPpFar(struct Unit *unit, s32 pp);
 /// Lets the party call summon summonId from now on.
 void Summon_LearnFar(s32 summonId);
+/// Returns the party's PP over its maximum PP, in 16.16; 0 with no members.
+s32 Party_GetPpRatioFar(void);
 
 #endif

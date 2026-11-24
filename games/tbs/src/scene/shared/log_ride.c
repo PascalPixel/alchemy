@@ -5,7 +5,7 @@
 /// to the centres of their cells, at a pixel a frame. The leader is drawn in
 /// ANIM_LEADER_WALK_BACKWARDS and the log in its sheet's animation 4 going
 /// north or west, 3 going south or east.
-static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
+static void Actor_FloatLogWithLeader(s32 id, s32 dx, s32 dz) {
   struct Actor *leader;
   struct Actor *raft;
   FIXED x;

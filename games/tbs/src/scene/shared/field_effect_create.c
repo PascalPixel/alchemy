@@ -5,7 +5,8 @@
 
 /// Sets the actor's sprite priority (0 in front of the backgrounds, 3
 /// behind).
-UNUSED static void SetEffectRecordMode(struct Actor *actor, s32 priority) {
+UNUSED static void Scene_SetActorSpritePriority(struct Actor *actor,
+                                                s32 priority) {
   actor->sprite->image.priority = priority;
 }
 

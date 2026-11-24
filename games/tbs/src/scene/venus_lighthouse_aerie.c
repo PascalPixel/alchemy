@@ -73,7 +73,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/actor_nearest.h"
+#include "scene/floating_platform.h"
 #include "scene/event_psynergy.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
@@ -313,7 +313,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 #include "shared/actor_distance.c"
-#include "shared/actor_nearest.c"
+#include "shared/floating_platform.c"
 
 /// Saturos and Menardi slide together as they fuse.
 #define FLAG_VENUS_AERIE_FUSION_SLIDING FLAG_SCENE_TEMP_34

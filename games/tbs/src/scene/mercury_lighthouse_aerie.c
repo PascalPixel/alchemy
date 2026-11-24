@@ -80,7 +80,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/actor_nearest.h"
+#include "scene/floating_platform.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "scene/sparkle_warp.h"
@@ -389,7 +389,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
 }
 
 #include "shared/actor_distance.c"
-#include "shared/actor_nearest.c"
+#include "shared/floating_platform.c"
 
 /// Walking on from a platform, or from the tower edge beside one, makes Isaac
 /// crouch and leap two cells to the next platform or tower top, if there is

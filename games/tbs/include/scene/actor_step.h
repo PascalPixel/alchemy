@@ -4,7 +4,7 @@
 /// @file
 /// One step from an actor, for the scenes whose statues and pillars are pushed
 /// (Bilibin, its cave, Kalay, Sol Sanctum's entrance, the Vault's cave, Venus
-/// Lighthouse) and those of staged_actor.c.
+/// Lighthouse) and those of pushed_actor.c.
 
 #include "macros.h"
 #include "field/pushed_actor.h"

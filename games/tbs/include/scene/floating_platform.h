@@ -1,9 +1,9 @@
-#ifndef ALCHEMY_ACTOR_NEAREST_H
-#define ALCHEMY_ACTOR_NEAREST_H
+#ifndef ALCHEMY_FLOATING_PLATFORM_H
+#define ALCHEMY_FLOATING_PLATFORM_H
 
 /// @file
 /// The floating platforms of Mercury and Venus Lighthouses' aeries
-/// (shared/actor_nearest.c).
+/// (shared/floating_platform.c).
 
 #include "types.h"
 

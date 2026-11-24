@@ -1215,7 +1215,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
     struct Actor *effectActor = pair[0];
     struct Sprite *effectSprite = effectActor->sprite;
 
-    effectActor->update = FieldEffect_AnimateVerticalNegative;
+    effectActor->update = FieldEffect_RiseRingFrontHalf;
     effectSprite->image.priority = 2;
   }
   {
@@ -1223,7 +1223,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
     struct Sprite *effectSprite = effectActor->sprite;
 
     effectSprite->image.priority = 2;
-    effectActor->update = FieldEffect_AnimateVerticalPositive;
+    effectActor->update = FieldEffect_RiseRingBackHalf;
     effectActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
 }

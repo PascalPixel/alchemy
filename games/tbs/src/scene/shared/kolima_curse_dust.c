@@ -9,13 +9,13 @@
 /// Where the dust falls, east of the point the map view follows: the band's
 /// west edge, 16.16 pixels from that point, and its width, in 256ths of a
 /// pixel; the event closes the band in (enum KolimaCurseDustState).
-s32 gFallingEffectOffset BSS_DATA;
-s32 gFallingEffectWidth BSS_DATA;
-u32 gFallingEffectState BSS_DATA;
+s32 gKolima_CurseDustOffset BSS_DATA;
+s32 gKolima_CurseDustWidth BSS_DATA;
+u32 gKolima_CurseDustState BSS_DATA;
 
-/// A task: every eighth frame a speck (its script gFallingEffectScript) starts
-/// 160 pixels up at a random point of the band, or anywhere within 128 pixels
-/// of the point the map view follows once the dust is centred, with
+/// A task: every eighth frame a speck (its script gKolima_CurseDustScript)
+/// starts 160 pixels up at a random point of the band, or anywhere within 128
+/// pixels of the point the map view follows once the dust is centred, with
 /// SE_GLITTER every 64 frames.
 void Kolima_UpdateCurseDust(void) {
   struct Actor *actor = NULL;
@@ -24,25 +24,25 @@ void Kolima_UpdateCurseDust(void) {
   s32 x;
   FIXED z;
 
-  switch (gFallingEffectState) {
+  switch (gKolima_CurseDustState) {
   case KOLIMA_DUST_CLOSING:
-    if (gFallingEffectWidth < 15000)
-      gFallingEffectWidth += 50;
-    if (gFallingEffectOffset > toFIXED(60))
-      gFallingEffectOffset -= toFIXED(1) / 4;
+    if (gKolima_CurseDustWidth < 15000)
+      gKolima_CurseDustWidth += 50;
+    if (gKolima_CurseDustOffset > toFIXED(60))
+      gKolima_CurseDustOffset -= toFIXED(1) / 4;
     break;
   case KOLIMA_DUST_CLOSING_WIDE:
-    if (gFallingEffectWidth < 30000)
-      gFallingEffectWidth += 50;
-    if (gFallingEffectOffset > toFIXED(24))
-      gFallingEffectOffset -= toFIXED(1) / 4;
+    if (gKolima_CurseDustWidth < 30000)
+      gKolima_CurseDustWidth += 50;
+    if (gKolima_CurseDustOffset > toFIXED(24))
+      gKolima_CurseDustOffset -= toFIXED(1) / 4;
     break;
   case KOLIMA_DUST_DRIFTING:
-    if (gFallingEffectOffset < -toFIXED(128)) {
-      gFallingEffectState = KOLIMA_DUST_CENTRED;
+    if (gKolima_CurseDustOffset < -toFIXED(128)) {
+      gKolima_CurseDustState = KOLIMA_DUST_CENTRED;
     } else {
-      gFallingEffectWidth += 50;
-      gFallingEffectOffset -= toFIXED(1) / 4;
+      gKolima_CurseDustWidth += 50;
+      gKolima_CurseDustOffset -= toFIXED(1) / 4;
     }
     break;
   }
@@ -51,9 +51,9 @@ void Kolima_UpdateCurseDust(void) {
     origin = ((struct MapGridScrollState *)gMapGridState[0])->origin;
     if ((gFrameCount & 63) == 0)
       Sound_Play(SE_GLITTER);
-    if (gFallingEffectState != KOLIMA_DUST_CENTRED)
-      x = origin[0] + ((Random_Below(gFallingEffectWidth)) << 8) +
-          gFallingEffectOffset;
+    if (gKolima_CurseDustState != KOLIMA_DUST_CENTRED)
+      x = origin[0] + ((Random_Below(gKolima_CurseDustWidth)) << 8) +
+          gKolima_CurseDustOffset;
     else
       x = origin[0] + (Random_Next() << 8) - toFIXED(128);
     z = origin[2] + (Random_Next() << 8) - toFIXED(128);
@@ -68,6 +68,6 @@ void Kolima_UpdateCurseDust(void) {
     actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     sprite->image.priority = 1;
     Actor_SelectAnimation(actor, 1);
-    Actor_StartScript(actor, gFallingEffectScript);
+    Actor_StartScript(actor, gKolima_CurseDustScript);
   }
 }

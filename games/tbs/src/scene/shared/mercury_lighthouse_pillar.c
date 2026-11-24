@@ -14,7 +14,7 @@
 
 /// An actor script call for a charging spark: it rises with the leader,
 /// swelling and shrinking, and is released after SPARK_RISE_FRAMES.
-static s32 MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Actor *effect) {
+static s32 MercuryLighthouse_RiseSpark(struct Actor *effect) {
   struct Actor *anchor = effect->watchedActor;
   s16 step = ++effect->timer;
   FIXED scale;
@@ -48,7 +48,7 @@ static s32 MercuryLighthouse_GrowLight(struct Actor *actor) {
 
 /// An actor script call for a light that goes out: it swells to half as large
 /// again over 16 frames before its script releases it.
-static s32 Actor_AdvanceScaleCounter(struct Actor *actor) {
+static s32 MercuryLighthouse_SwellLightOut(struct Actor *actor) {
   s16 frame;
 
   frame = ++actor->timer;
@@ -230,7 +230,7 @@ void MercuryLighthouse_LoseLights(void) {
   target = state->pillar;
   if (target != NULL) {
     target->timer = 0;
-    Actor_StartScript(target, gMercuryLighthouse_ScaleCounterScript);
+    Actor_StartScript(target, gMercuryLighthouse_LightOutScript);
     Actor_SelectAnimation(target, 7);
     state->pillar = NULL;
   }
@@ -291,7 +291,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   obj = state->stepEffect;
   if (obj != NULL) {
     obj->timer = 0;
-    Actor_StartScript(obj, gMercuryLighthouse_ScaleCounterScript);
+    Actor_StartScript(obj, gMercuryLighthouse_LightOutScript);
     Actor_SelectAnimation(obj, 7);
     state->stepEffect = NULL;
   }

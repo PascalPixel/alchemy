@@ -84,7 +84,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/actor_orbit.h"
+#include "scene/floating_nut.h"
 #include "scene/catch_nut.h"
 #include "scene/field_effect_spawn.h"
 #include "sound/sound.h"
@@ -273,7 +273,7 @@ enum { FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_14 };
   FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT
 #endif
 
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
@@ -460,7 +460,7 @@ static void MogallForest_FirstArea_PushLog(void) {
 
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
-    Actor_MoveAndRedraw(probe);
+    PushedActor_Roll(probe);
     if (probe.actorSlot == ACTOR_FIRST_AREA_RIVER_LOG &&
         FIELD_CELL(probe.position.z) == FIRST_AREA_RIVER_BANK_ROW) {
       GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED);
@@ -687,7 +687,7 @@ static void MogallForest_SecondArea_PushLog(void) {
   Event_Start();
 
   if (PushedActor_FindClearPosition(&probe) != 0) {
-    Actor_MoveAndRedraw(probe);
+    PushedActor_Roll(probe);
 
     if (probe.actorSlot == ACTOR_SECOND_AREA_LOG &&
         (FIELD_CELL(probe.position.z)) == SECOND_AREA_LOG_OPENS_WAY_ROW) {
@@ -912,7 +912,7 @@ static void MogallForest_ThirdArea_PushLog(void) {
   Event_Start();
   landed = 0;
   if (PushedActor_FindClearPosition(&probe) != 0) {
-    Actor_MoveAndRedraw(probe);
+    PushedActor_Roll(probe);
     if (probe.actorSlot == ACTOR_THIRD_AREA_NORTH_RIVER_LOG ||
         probe.actorSlot == ACTOR_THIRD_AREA_SOUTH_RIVER_LOG) {
       if (probe.actorSlot == ACTOR_THIRD_AREA_NORTH_RIVER_LOG) {
@@ -1422,9 +1422,9 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteColorById(ACTOR_FIRST_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_AREA_ATTACKING_APE), 0);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_AREA_EAST_APE), 0);
-      Scene_RedrawActorRectangle(ACTOR_FIRST_AREA_LOG);
+      PushedActor_BlockFootprint(ACTOR_FIRST_AREA_LOG);
       if (GameFlag_Get(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED) == 0) {
-        Scene_RedrawActorRectangle(ACTOR_FIRST_AREA_RIVER_LOG);
+        PushedActor_BlockFootprint(ACTOR_FIRST_AREA_RIVER_LOG);
         break;
       }
       wait(1);
@@ -1459,7 +1459,7 @@ s32 Scene_Initialize(void) {
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_KILLER_APE:
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH:
       if (GameFlag_Get(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED) == 0) {
-        Scene_RedrawActorRectangle(ACTOR_SECOND_AREA_RIVER_LOG);
+        PushedActor_BlockFootprint(ACTOR_SECOND_AREA_RIVER_LOG);
       } else {
         wait(1);
         Actor_SetPosition(ACTOR_SECOND_AREA_RIVER_LOG, 552, 510);
@@ -1472,8 +1472,8 @@ s32 Scene_Initialize(void) {
         PushedActor_FillGridAttributeRectangle(0, 35, 29, 1, 4, 0);
 #endif
       }
-      Scene_RedrawActorRectangle(ACTOR_SECOND_AREA_LOG);
-      Scene_RedrawActorRectangle(ACTOR_SECOND_AREA_SOUTH_LOG);
+      PushedActor_BlockFootprint(ACTOR_SECOND_AREA_LOG);
+      PushedActor_BlockFootprint(ACTOR_SECOND_AREA_SOUTH_LOG);
       PushedActor_FillGridAttributeRectangle(
           2, FIELD_CELL(Actor_Get(ACTOR_SECOND_AREA_ROCK)->x.fixed),
           FIELD_CELL(Actor_Get(ACTOR_SECOND_AREA_ROCK)->z.fixed), 1, 1,
@@ -1531,7 +1531,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteColorById(ACTOR_THIRD_AREA_NORTH_ROCK, SPRITE_COLOR_GREY);
       wait(1);
       Actor_Get(ACTOR_THIRD_AREA_LOG)->collisionFlags |= ACTOR_NOT_TARGETED;
-      Scene_RedrawActorRectangle(ACTOR_THIRD_AREA_LOG);
+      PushedActor_BlockFootprint(ACTOR_THIRD_AREA_LOG);
       break;
 
     case MOGALL_FOREST_KILLER_APE_RIVER_FROM_STUMPS:
@@ -1542,10 +1542,10 @@ s32 Scene_Initialize(void) {
       // solid and never a target, so the player neither sees nor meets them.
       Actor_CreateConfigured(734, 0, 370, SPRITE_CRATE);
       Actor_CreateConfigured(754, 0, 370, SPRITE_CRATE);
-      Scene_RedrawActorRectangle(ACTOR_THIRD_AREA_WEST_LOG);
-      Scene_RedrawActorRectangle(ACTOR_THIRD_AREA_SOUTHWEST_LOG);
+      PushedActor_BlockFootprint(ACTOR_THIRD_AREA_WEST_LOG);
+      PushedActor_BlockFootprint(ACTOR_THIRD_AREA_SOUTHWEST_LOG);
       if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED) == 0) {
-        Scene_RedrawActorRectangle(ACTOR_THIRD_AREA_NORTH_RIVER_LOG);
+        PushedActor_BlockFootprint(ACTOR_THIRD_AREA_NORTH_RIVER_LOG);
       } else {
         wait(1);
         Actor_SetAnimation(ACTOR_THIRD_AREA_NORTH_RIVER_LOG,
@@ -1559,7 +1559,7 @@ s32 Scene_Initialize(void) {
         Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK), 0);
       }
       if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED) == 0) {
-        Scene_RedrawActorRectangle(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG);
+        PushedActor_BlockFootprint(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG);
       } else {
         wait(1);
         Actor_SetAnimation(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
@@ -1613,7 +1613,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/actor_orbit.c"
+#include "shared/floating_nut.c"
 
 #include "shared/pushed_actor_tables.c"
 // clang-format off

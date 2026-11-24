@@ -94,7 +94,7 @@ enum WorldMapLighthouse {
 extern u16 gColosso_GaugePalette[];
 /// Frames in a row the chase has found a suspect cornered; at
 /// LOG_ROOMS_A_CORNERED_FRAMES the chase raises its event.
-extern u16 gLogRoomsA_StopTimer;
+extern u16 gLogRoomsA_CorneredFrames;
 /// The size of Actor_UpdateAll's code, an address equal to the size
 /// (ld_script.ld).
 extern u8 Actor_UpdateAllCodeSize[];

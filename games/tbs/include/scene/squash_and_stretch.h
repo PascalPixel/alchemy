@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_ACTOR_PULSE_H
-#define ALCHEMY_ACTOR_PULSE_H
+#ifndef ALCHEMY_SQUASH_AND_STRETCH_H
+#define ALCHEMY_SQUASH_AND_STRETCH_H
 
 /// @file
 /// The squash and stretch that people standing about play now and then

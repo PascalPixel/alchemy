@@ -1870,7 +1870,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
     struct Actor *effect = pair[0];
     struct Sprite *effectSprite = effect->sprite;
 
-    effect->update = FieldEffect_AnimateVerticalNegative;
+    effect->update = FieldEffect_RiseRingFrontHalf;
     effectSprite->image.priority = 2;
   }
   {
@@ -1878,7 +1878,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
     struct Sprite *effectSprite = effect->sprite;
 
     effectSprite->image.priority = 2;
-    effect->update = FieldEffect_AnimateVerticalPositive;
+    effect->update = FieldEffect_RiseRingBackHalf;
     effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
 }

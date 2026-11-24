@@ -11,7 +11,7 @@
 
 /// The ring's back half: it rises a pixel a frame on the watched actor, up to
 /// 13 pixels south of it while small.
-static void FieldEffect_AnimateVerticalPositive(struct Actor *actor) {
+static void FieldEffect_RiseRingBackHalf(struct Actor *actor) {
   struct Actor *anchor;
   s32 frame;
   FIXED amplitude;
@@ -34,7 +34,7 @@ static void FieldEffect_AnimateVerticalPositive(struct Actor *actor) {
 }
 
 /// The ring's front half, the back half's arc upside down, rising with it.
-static void FieldEffect_AnimateVerticalNegative(struct Actor *actor) {
+static void FieldEffect_RiseRingFrontHalf(struct Actor *actor) {
   struct Actor *anchor;
   s32 frame;
   FIXED amplitude;

@@ -114,7 +114,7 @@
 #include "scene/import.h"
 #include "scene/tolbi_ship.h"
 #include "scene/walk_into_leader.h"
-#include "scene/world_map_attached_effects.h"
+#include "scene/golden_ring.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/heap.h"
@@ -685,8 +685,8 @@ static void WorldMap_EnterBilibinBarricade(void) {
 /// the north, or at its south end from the south.
 static void WorldMap_EnterKolimaBridge(void) {
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_KOLIMA_BRIDGE),
-                         WORLD_MAP_TO_KOLIMA_BRIDGE_WEST,
-                         WORLD_MAP_TO_KOLIMA_BRIDGE_EAST);
+                         WORLD_MAP_TO_KOLIMA_BRIDGE_NORTH,
+                         WORLD_MAP_TO_KOLIMA_BRIDGE_SOUTH);
 }
 
 /// Walking onto Kalay Docks on the World Map enters them by their north side
@@ -694,15 +694,15 @@ static void WorldMap_EnterKolimaBridge(void) {
 static void WorldMap_EnterKalayDocks(void) {
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_KALAY_DOCKS),
                          WORLD_MAP_TO_KALAY_DOCKS_NORTH,
-                         WORLD_MAP_TO_KALAY_DOCKS_EAST);
+                         WORLD_MAP_TO_KALAY_DOCKS_SOUTH);
 }
 
 /// Walking onto Gondowan Passage on the World Map enters it at its north end
 /// from the north, or at its south end from the south.
 static void WorldMap_EnterGondowanPassage(void) {
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_GONDOWAN_PASSAGE),
-                         WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST,
-                         WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST);
+                         WORLD_MAP_TO_GONDOWAN_PASSAGE_NORTH,
+                         WORLD_MAP_TO_GONDOWAN_PASSAGE_SOUTH);
 }
 
 /// Walking onto Lalivero on the World Map enters the town by its west side from
@@ -1586,7 +1586,7 @@ static void WorldMap_MeetFlint(void) {
       else
         Actor_SetColorMode(djinni, SPRITE_COLOR_NORMAL);
       if ((gFrameCount & 15) == 0)
-        WorldMap_CreateAttachedEffects(djinni);
+        Scene_SpawnGoldenRing(djinni);
       wait(1);
     }
     FieldPsynergy_End();
@@ -2802,7 +2802,7 @@ UNUSED static void WorldMap_UpdateFlashingLinkedEffects(struct Actor *actor) {
     Actor_SetColorMode(actor, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
-    WorldMap_CreateAttachedEffects(actor);
+    Scene_SpawnGoldenRing(actor);
   }
 }
 
@@ -2813,14 +2813,14 @@ UNUSED static void WorldMap_UpdateCyclingLinkedEffects(struct Actor *actor) {
     Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);
   }
   if ((gFrameCount & 15) == 0) {
-    WorldMap_CreateAttachedEffects(actor);
+    Scene_SpawnGoldenRing(actor);
   }
 }
 
 #include "shared/color_mode_cycle.c"
 
 #include "shared/field_effect_vertical.c"
-#include "shared/world_map_attached_effects.c"
+#include "shared/golden_ring.c"
 
 /// Hammet's caravan outside Vault (WorldMap_ShowHammetsCaravan): each of
 /// the four wagons, at one and a half times its size, rolls up to the party
@@ -3169,7 +3169,7 @@ struct SceneEntrance gWorldSceneEntrances[] = {
      -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST, CONDITION_ALWAYS, 6024, 0,
      200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_KOLIMA_BRIDGE_EAST, CONDITION_ALWAYS, 7568, 0, 1416,
+    {WORLD_MAP_FROM_KOLIMA_BRIDGE_SOUTH, CONDITION_ALWAYS, 7568, 0, 1416,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_FUCHIN_TEMPLE_GROUNDS, CONDITION_ALWAYS, 7880, 0, 1592,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -3189,7 +3189,7 @@ struct SceneEntrance gWorldSceneEntrances[] = {
      -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_KALAY_EAST, CONDITION_ALWAYS, 5592, 0, 2168, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_KALAY_DOCKS_EAST, CONDITION_ALWAYS, 5424, 0, 2264,
+    {WORLD_MAP_FROM_KALAY_DOCKS_SOUTH, CONDITION_ALWAYS, 5424, 0, 2264,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_TOLBI_DOCKS, CONDITION_ALWAYS, 5004, 0, 2328, FACING_WEST,
      0, -1, -1, -1, -1, 0},
@@ -3197,7 +3197,7 @@ struct SceneEntrance gWorldSceneEntrances[] = {
      -1, -1, -1, 0},
     {WORLD_MAP_FROM_ALTMILLER_CAVE_ENTRANCE, CONDITION_ALWAYS, 4840, 0, 1992,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_GONDOWAN_PASSAGE_EAST, CONDITION_ALWAYS, 4940, 0, 2648,
+    {WORLD_MAP_FROM_GONDOWAN_PASSAGE_NORTH, CONDITION_ALWAYS, 4940, 0, 2648,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_GONDOWAN_CAVE_NORTH, CONDITION_ALWAYS, 5656, 0, 2424,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -3235,7 +3235,7 @@ struct SceneEntrance gWorldSceneEntrances[] = {
      0, -1, -1, -1, -1, 0},
     // Unused: no exit leads to entrance 45, 97 or 98.
     {45, CONDITION_ALWAYS, 6248, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_KOLIMA_BRIDGE_WEST, CONDITION_ALWAYS, 7568, 0, 1352,
+    {WORLD_MAP_FROM_KOLIMA_BRIDGE_NORTH, CONDITION_ALWAYS, 7568, 0, 1352,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_BILIBIN_BARRICADE_WEST, CONDITION_ALWAYS, 6976, 0, 1360,
      FACING_EAST, 0, -1, -1, -1, -1, 0},
@@ -3251,7 +3251,7 @@ struct SceneEntrance gWorldSceneEntrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_LAMAKAN_DESERT_CAVE, CONDITION_ALWAYS, 6090, 0, 2232,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_GONDOWAN_PASSAGE_WEST, CONDITION_ALWAYS, 4940, 0, 2728,
+    {WORLD_MAP_FROM_GONDOWAN_PASSAGE_SOUTH, CONDITION_ALWAYS, 4940, 0, 2728,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_SUHALLA_DESERT_SOUTH, CONDITION_ALWAYS, 5416, 0, 3272,
      FACING_EAST, 0, -1, -1, -1, -1, 0},
@@ -3259,7 +3259,7 @@ struct SceneEntrance gWorldSceneEntrances[] = {
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_SUHALLA_EAST, CONDITION_ALWAYS, 5444, 0, 2840, FACING_EAST,
      0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_KALAY_DOCKS_WEST, CONDITION_ALWAYS, 5424, 0, 2200,
+    {WORLD_MAP_FROM_KALAY_DOCKS_NORTH, CONDITION_ALWAYS, 5424, 0, 2200,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_LALIVERO_WEST, CONDITION_ALWAYS, 5996, 0, 2856,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -3330,7 +3330,7 @@ u32 gWorldMapExits[] = {
     SCENE_EXIT(WORLD_MAP_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST,
                MercuryLighthouseExterior,
                MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP),
-    SCENE_EXIT(WORLD_MAP_TO_KOLIMA_BRIDGE_EAST, KolimaBridge,
+    SCENE_EXIT(WORLD_MAP_TO_KOLIMA_BRIDGE_SOUTH, KolimaBridge,
                KOLIMA_BRIDGE_FROM_WORLD_MAP_SOUTH),
     SCENE_EXIT(WORLD_MAP_TO_FUCHIN_TEMPLE_GROUNDS, FuchinTempleGrounds,
                FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP),
@@ -3347,14 +3347,14 @@ u32 gWorldMapExits[] = {
     SCENE_EXIT(WORLD_MAP_TO_WORLD_MAP_FROM_KALAY_WEST, WorldMap,
                WORLD_MAP_FROM_KALAY_WEST),
     SCENE_EXIT(WORLD_MAP_TO_KALAY_EAST, Kalay, KALAY_FROM_WORLD_MAP),
-    SCENE_EXIT(WORLD_MAP_TO_KALAY_DOCKS_EAST, KalayDocks,
+    SCENE_EXIT(WORLD_MAP_TO_KALAY_DOCKS_SOUTH, KalayDocks,
                KALAY_DOCKS_FROM_WORLD_MAP_SOUTH),
     SCENE_EXIT(WORLD_MAP_TO_TOLBI_DOCKS, TolbiDocks,
                TOLBI_DOCKS_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_TOLBI, Tolbi, TOLBI_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_ALTMILLER_CAVE_ENTRANCE, AltmillerCaveEntrance,
                ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP),
-    SCENE_EXIT(WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST, GondowanPassage,
+    SCENE_EXIT(WORLD_MAP_TO_GONDOWAN_PASSAGE_NORTH, GondowanPassage,
                GONDOWAN_PASSAGE_FROM_WORLD_MAP_NORTH),
     SCENE_EXIT(WORLD_MAP_TO_GONDOWAN_CAVE_NORTH, GondowanCave,
                GONDOWAN_CAVE_FROM_WORLD_MAP_EAST),
@@ -3386,7 +3386,7 @@ u32 gWorldMapExits[] = {
     SCENE_EXIT(WORLD_MAP_TO_VAULT_NORTH, Vault, VAULT_FROM_WORLD_MAP_NORTH),
     SCENE_EXIT(WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE_NORTHEAST,
                BilibinCaveEntrance, BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP),
-    SCENE_EXIT(WORLD_MAP_TO_KOLIMA_BRIDGE_WEST, KolimaBridge,
+    SCENE_EXIT(WORLD_MAP_TO_KOLIMA_BRIDGE_NORTH, KolimaBridge,
                KOLIMA_BRIDGE_FROM_WORLD_MAP_NORTH),
     SCENE_EXIT(WORLD_MAP_TO_BILIBIN_BARRICADE_EAST, BilibinBarricade,
                BILIBIN_BARRICADE_FROM_WORLD_MAP_EAST),
@@ -3402,7 +3402,7 @@ u32 gWorldMapExits[] = {
                ALTIN_PEAK_WEST_EXIT_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_LAMAKAN_DESERT_CAVE, LamakanDesertCave,
                LAMAKAN_DESERT_CAVE_FROM_WORLD_MAP),
-    SCENE_EXIT(WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST, GondowanPassage,
+    SCENE_EXIT(WORLD_MAP_TO_GONDOWAN_PASSAGE_SOUTH, GondowanPassage,
                GONDOWAN_PASSAGE_FROM_WORLD_MAP_SOUTH),
     SCENE_EXIT(WORLD_MAP_TO_SUHALLA_DESERT_SOUTH, SuhallaDesertSouth,
                SUHALLA_DESERT_SOUTH_FROM_WORLD_MAP),

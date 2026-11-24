@@ -92,11 +92,11 @@ extern u32 gSolSanctumEruption_Exits[];
 extern struct ActorPlacement gSolSanctumEruption_ActorPlacements[];
 extern struct Trigger gSolSanctumEruption_Triggers[];
 extern s32 gEruption_EmberScript[];
-extern u8 gSolSanctum_RingDrift[][3];
-extern u8 gSolSanctum_RingSwing[][3];
-extern s8 gSolSanctum_RingDirection[][3];
-extern FIXED gSolSanctum_RingMaxScales[];
-extern FIXED gSolSanctum_RingScaleSteps[];
+extern u8 gSolSanctum_LightDrift[][3];
+extern u8 gSolSanctum_LightSwing[][3];
+extern s8 gSolSanctum_LightDirection[][3];
+extern FIXED gSolSanctum_LightMaxScales[];
+extern FIXED gSolSanctum_LightScaleSteps[];
 
 /// The eruption's actors, numbered in the order of
 /// gSolSanctumEruption_ActorPlacements.
@@ -1840,7 +1840,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
       }
     }
   }
-  pair[0]->update = FieldEffect_AnimateVerticalNegative;
+  pair[0]->update = FieldEffect_RiseRingFrontHalf;
   pair[0]->sprite->image.priority =
       Actor_Get(ACTOR_WISE_ONE)->sprite->image.priority;
   {
@@ -1848,7 +1848,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
     struct Actor *risingEffect = pair[1];
 
     risingEffect->sprite->image.priority = wiseOne->sprite->image.priority;
-    risingEffect->update = FieldEffect_AnimateVerticalPositive;
+    risingEffect->update = FieldEffect_RiseRingBackHalf;
     risingEffect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
 }

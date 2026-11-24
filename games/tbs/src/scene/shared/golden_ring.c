@@ -6,7 +6,7 @@
 
 /// Sets off a golden ring around the actor: its two halves
 /// (field_effect_vertical.c), drawn from the Psynergy's cached tiles.
-void WorldMap_CreateAttachedEffects(struct Actor *parent) {
+void Scene_SpawnGoldenRing(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
   struct Sprite *sprite;
@@ -42,7 +42,7 @@ void WorldMap_CreateAttachedEffects(struct Actor *parent) {
     struct Actor *effect = pair[0];
     struct Sprite *effectSprite = effect->sprite;
 
-    effect->update = FieldEffect_AnimateVerticalNegative;
+    effect->update = FieldEffect_RiseRingFrontHalf;
     effectSprite->image.priority = 1;
   }
   {
@@ -50,7 +50,7 @@ void WorldMap_CreateAttachedEffects(struct Actor *parent) {
     struct Sprite *effectSprite = effect->sprite;
 
     effectSprite->image.priority = 1;
-    effect->update = FieldEffect_AnimateVerticalPositive;
+    effect->update = FieldEffect_RiseRingBackHalf;
     effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
 }

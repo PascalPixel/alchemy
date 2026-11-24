@@ -341,7 +341,7 @@ enum {
 struct LightWheel gAltmillerCave_LightWheelState
     __attribute__((nocommon)) ALIGNED(4);
 
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 /// Talking to Squall, the Jupiter Djinni in the north-west corner of the hall
 /// of fallen columns, starts a battle with it.
@@ -2128,9 +2128,9 @@ static void AltmillerCave_MatchLeaderPriority(struct Actor *actor) {
 
 /// Walls off the cells the three fallen columns stand on.
 static inline void AltmillerCave_BlockFallenColumnCells(void) {
-  Scene_RedrawActorRectangle(ACTOR_FIRST_FALLEN_COLUMN);
-  Scene_RedrawActorRectangle(ACTOR_FIRST_FALLEN_COLUMN + 1);
-  Scene_RedrawActorRectangle(ACTOR_FIRST_FALLEN_COLUMN + 2);
+  PushedActor_BlockFootprint(ACTOR_FIRST_FALLEN_COLUMN);
+  PushedActor_BlockFootprint(ACTOR_FIRST_FALLEN_COLUMN + 1);
+  PushedActor_BlockFootprint(ACTOR_FIRST_FALLEN_COLUMN + 2);
 }
 
 /// Sets up the room being entered: darkness, the ice pillar in Squall's hall

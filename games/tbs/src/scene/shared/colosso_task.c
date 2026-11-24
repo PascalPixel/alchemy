@@ -72,8 +72,8 @@ static inline void Dma_Wait(volatile u32 *dma) {
 /// target and frames, its layout mode and parameter, its position (8.8 pixels)
 /// and the script itself.
 extern s16 gColosso_LetteringTimer;
-extern s16 gColosso_ModeMoveTarget;
-extern s16 gColosso_ModeMoveDuration;
+extern s16 gColosso_LetteringMoveTarget;
+extern s16 gColosso_LetteringMoveDuration;
 extern s16 gColosso_LetteringMode;
 extern s16 gColosso_LetteringParameter;
 extern s32 gColosso_LetteringPosition;
@@ -121,26 +121,26 @@ commands:
       switch (*gColosso_LetteringScript++) {
       case COLOSSO_LETTERING_PLACE:
         gColosso_LetteringPosition = *gColosso_LetteringScript++ << 8;
-        gColosso_ModeMoveTarget = *gColosso_LetteringScript++;
-        gColosso_ModeMoveDuration = 0;
+        gColosso_LetteringMoveTarget = *gColosso_LetteringScript++;
+        gColosso_LetteringMoveDuration = 0;
         break;
       case COLOSSO_LETTERING_ACCELERATE:
-        gColosso_ModeMoveStart = gColosso_ModeMoveTarget;
-        gColosso_ModeMoveTarget = *gColosso_LetteringScript++;
-        gColosso_ModeMoveDuration = *gColosso_LetteringScript++;
-        gColosso_ModeMoveStep = 0;
+        gColosso_LetteringMoveStart = gColosso_LetteringMoveTarget;
+        gColosso_LetteringMoveTarget = *gColosso_LetteringScript++;
+        gColosso_LetteringMoveDuration = *gColosso_LetteringScript++;
+        gColosso_LetteringMoveStep = 0;
         break;
       case COLOSSO_LETTERING_SCALE:
-        gColosso_ModeScaleStart = gColosso_ModeScaleTarget;
-        gColosso_ModeScaleTarget = *gColosso_LetteringScript++;
-        gColosso_ModeScaleDuration = *gColosso_LetteringScript++;
-        gColosso_ModeScaleStep = 0;
+        gColosso_LetteringScaleStart = gColosso_LetteringScaleTarget;
+        gColosso_LetteringScaleTarget = *gColosso_LetteringScript++;
+        gColosso_LetteringScaleDuration = *gColosso_LetteringScript++;
+        gColosso_LetteringScaleStep = 0;
         break;
       case COLOSSO_LETTERING_FADE:
-        gColosso_ModeBlendStart = gColosso_ModeBlendTarget;
-        gColosso_ModeBlendTarget = *gColosso_LetteringScript++;
-        gColosso_ModeBlendDuration = *gColosso_LetteringScript++;
-        gColosso_ModeBlendStep = 0;
+        gColosso_LetteringFadeStart = gColosso_LetteringFadeTarget;
+        gColosso_LetteringFadeTarget = *gColosso_LetteringScript++;
+        gColosso_LetteringFadeDuration = *gColosso_LetteringScript++;
+        gColosso_LetteringFadeStep = 0;
         break;
       case COLOSSO_LETTERING_WAIT:
         gColosso_LetteringTimer = *gColosso_LetteringScript++;
@@ -154,41 +154,41 @@ commands:
     goto commands;
   }
   gColosso_LetteringTimer--;
-  if (gColosso_ModeScaleDuration == 0) {
-    scale = gColosso_ModeScaleTarget;
+  if (gColosso_LetteringScaleDuration == 0) {
+    scale = gColosso_LetteringScaleTarget;
   } else {
     s32 duration, start, progress, target;
-    duration = gColosso_ModeScaleDuration;
-    start = gColosso_ModeScaleStart;
-    target = gColosso_ModeScaleTarget;
-    progress = ++gColosso_ModeScaleStep;
+    duration = gColosso_LetteringScaleDuration;
+    start = gColosso_LetteringScaleStart;
+    target = gColosso_LetteringScaleTarget;
+    progress = ++gColosso_LetteringScaleStep;
     scale = start + (target - start) * progress / duration;
     if (progress >= duration)
-      gColosso_ModeScaleDuration = 0;
+      gColosso_LetteringScaleDuration = 0;
   }
-  if (gColosso_ModeBlendDuration == 0) {
-    blend = gColosso_ModeBlendTarget;
+  if (gColosso_LetteringFadeDuration == 0) {
+    blend = gColosso_LetteringFadeTarget;
   } else {
     s32 duration, start, progress, target;
-    duration = gColosso_ModeBlendDuration;
-    start = gColosso_ModeBlendStart;
-    target = gColosso_ModeBlendTarget;
-    progress = ++gColosso_ModeBlendStep;
+    duration = gColosso_LetteringFadeDuration;
+    start = gColosso_LetteringFadeStart;
+    target = gColosso_LetteringFadeTarget;
+    progress = ++gColosso_LetteringFadeStep;
     blend = start + (target - start) * progress / duration;
     if (progress >= duration)
-      gColosso_ModeBlendDuration = 0;
+      gColosso_LetteringFadeDuration = 0;
   }
-  if (gColosso_ModeMoveDuration == 0) {
-    speed = gColosso_ModeMoveTarget;
+  if (gColosso_LetteringMoveDuration == 0) {
+    speed = gColosso_LetteringMoveTarget;
   } else {
     s32 duration, start, progress, target;
-    duration = gColosso_ModeMoveDuration;
-    start = gColosso_ModeMoveStart;
-    target = gColosso_ModeMoveTarget;
-    progress = ++gColosso_ModeMoveStep;
+    duration = gColosso_LetteringMoveDuration;
+    start = gColosso_LetteringMoveStart;
+    target = gColosso_LetteringMoveTarget;
+    progress = ++gColosso_LetteringMoveStep;
     speed = start + (target - start) * progress / duration;
     if (progress >= duration)
-      gColosso_ModeMoveDuration = 0;
+      gColosso_LetteringMoveDuration = 0;
   }
   work.angle = 0;
   work.scaleX = scale;

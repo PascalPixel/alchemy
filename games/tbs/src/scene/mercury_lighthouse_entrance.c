@@ -150,7 +150,7 @@ extern struct Trigger gMercuryLighthouseEntrance_Triggers[];
 extern s32 gGlint_TwinkleScript[];
 extern s32 gMercuryLighthouse_SparkScript[];
 extern s32 gMercuryLighthouse_GrowLightScript[];
-extern s32 gMercuryLighthouse_ScaleCounterScript[];
+extern s32 gMercuryLighthouse_LightOutScript[];
 extern s32 gMercuryLighthouse_PillarScript[];
 extern u16 gMercuryLighthouse_MoveAngles[];
 extern s32 gPaletteCycleRed;
@@ -186,7 +186,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 #include "shared/mercury_lighthouse_sparks.c"
 
 /// The sound of the Lizard Man's sidestep, played by all three step scripts
@@ -780,7 +780,7 @@ s32 gMercuryLighthouseEntrance_RippleScript[] = {
 };
 
 s32 gMercuryLighthouse_SparkScript[] = {
-    SC_CALL(MercuryLighthouse_AdvanceAnchoredRiseFrame),
+    SC_CALL(MercuryLighthouse_RiseSpark),
     SC_RELEASE,
 };
 
@@ -789,8 +789,8 @@ s32 gMercuryLighthouse_GrowLightScript[] = {
     SC_END,
 };
 
-s32 gMercuryLighthouse_ScaleCounterScript[] = {
-    SC_CALL(Actor_AdvanceScaleCounter),
+s32 gMercuryLighthouse_LightOutScript[] = {
+    SC_CALL(MercuryLighthouse_SwellLightOut),
     SC_RELEASE,
 };
 

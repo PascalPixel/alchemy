@@ -160,8 +160,8 @@ static UNREAD_RESULT PushedActor_StopBlockedMotion(struct Actor *actor) {
 /// Returns the large thing whose rectangle covers the cell ahead of the leader
 /// (the leader not standing in line with its first column or row), with the
 /// leader's direction, its actor id and its rectangle; or NULL.
-static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
-                                           s32 *rectangle) {
+static struct Actor *PushedActor_FindLargeThingAhead(s32 *direction, s32 *slot,
+                                                     s32 *rectangle) {
   struct FieldState *state = gFieldState;
   struct Actor *player = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Actor **list;
@@ -234,8 +234,8 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
   s32 offset;
 
   probe->callback = 0;
-  actor = Scene_FindActorRegion(&direction, &probe->actorSlot,
-                                &probe->rectangleIndex);
+  actor = PushedActor_FindLargeThingAhead(&direction, &probe->actorSlot,
+                                          &probe->rectangleIndex);
   if (actor == NULL) {
     return 0;
   }
@@ -318,7 +318,7 @@ found:
 /// SE_STOP_ACTION_SE and SE_HEAVY_STOP. Its cells are blocked
 /// (CELL_BEHAVIOR_WALL) at its new place, through the map grid's layer 1
 /// offset, and its old place is given back what was under it.
-UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
+UNUSED static void PushedActor_Roll(struct PushedActorProbe probe) {
   struct MapGridScrollState *state;
   struct Actor *actor;
   struct FieldPosition originalPosition;
@@ -472,7 +472,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 /// Blocks large thing id's cells (CELL_BEHAVIOR_WALL) where it stands,
 /// through the map grid's layer 1 offset; returns 0 when its sprite is no large
 /// thing.
-UNUSED static s32 Scene_RedrawActorRectangle(s32 id) {
+UNUSED static s32 PushedActor_BlockFootprint(s32 id) {
   struct MapGridScrollState *grid = gMapGridState[0];
   struct Actor *actor = Actor_GetById(id);
   struct PushedActorProbe probe;

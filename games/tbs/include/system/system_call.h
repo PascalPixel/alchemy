@@ -9,7 +9,7 @@
 /// An overlay writes `Task_AddFrame(func, TASK_PASS_FRAME)`, and the inline
 /// calls Task_Add through the overlay's import stub. Main-image code calls the
 /// routines by their own names, except in
-/// scene/shared/scroll_initialize_hblank_dma.c, which
+/// scene/shared/lemurian_ship_ripple.c, which
 /// field/event_commands_line_scroll.c includes as lemurian_ship.c does.
 /// event_inline.h includes this layer; a room without the event commands
 /// includes it itself.

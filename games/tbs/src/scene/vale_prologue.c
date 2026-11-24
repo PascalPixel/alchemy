@@ -70,7 +70,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/actor_pulse.h"
+#include "scene/squash_and_stretch.h"
 #include "scene/event_psynergy.h"
 #include "scene/import.h"
 #include "scene/vale.h"
@@ -362,7 +362,7 @@ static s32 ValePrologue_LookAround(struct Actor *actor) {
   return 1;
 }
 
-#include "shared/actor_pulse.c"
+#include "shared/squash_and_stretch.c"
 
 /// The door of Isaac's house, from which Dora and Isaac came out into the
 /// storm, stands open.

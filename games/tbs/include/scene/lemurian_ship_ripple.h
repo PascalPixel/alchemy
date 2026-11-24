@@ -1,9 +1,9 @@
-#ifndef ALCHEMY_SCROLL_INITIALIZE_HBLANK_DMA_H
-#define ALCHEMY_SCROLL_INITIALIZE_HBLANK_DMA_H
+#ifndef ALCHEMY_LEMURIAN_SHIP_RIPPLE_H
+#define ALCHEMY_LEMURIAN_SHIP_RIPPLE_H
 
 /// @file
 /// The ripple of the water under the Lemurian ship, a wave in the background's
-/// scrolling changed line by line (shared/scroll_initialize_hblank_dma.c).
+/// scrolling changed line by line (shared/lemurian_ship_ripple.c).
 
 #include "fixed_math.h"
 #include "types.h"

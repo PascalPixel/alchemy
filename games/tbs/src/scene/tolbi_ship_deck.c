@@ -87,7 +87,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/actor_pulse.h"
+#include "scene/squash_and_stretch.h"
 #include "scene/tolbi_ship.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
@@ -351,7 +351,7 @@ enum TolbiShipDeckCellBehavior {
   CELL_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_CABIN_DOOR = 12
 };
 
-#include "shared/actor_pulse.c"
+#include "shared/squash_and_stretch.c"
 
 /// The door to the passengers' hold has been drawn open this visit.
 #define FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN FLAG_SCENE_TEMP_71

@@ -104,14 +104,14 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/actor_orbit.h"
+#include "scene/floating_nut.h"
 #include "scene/actor_polar_target.h"
 #include "scene/catch_nut.h"
 #include "scene/event_psynergy.h"
 #include "scene/import.h"
 #include "scene/vale.h"
 #include "scene/walk_into_leader.h"
-#include "scene/world_map_attached_effects.h"
+#include "scene/golden_ring.h"
 #include "sound/sound.h"
 #include "system/heap_release.h"
 #include "system/heap_slots.h"
@@ -402,7 +402,7 @@ enum ValeAnimation {
   ANIM_GARET_STARTLED = 13
 };
 
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 /// The roof of Isaac's house has just been mended. For the rest of the visit
 /// Dora frets about the hole Garet left.
@@ -3123,7 +3123,7 @@ static void Vale_CycleThirdBoardPalette(void) {
 /// The distance in whole pixels between two positions of 16.16 fixed-point x,
 /// y and z.
 // The same routine as Position_Distance, which this scene also holds through
-// shared/staged_actor.c, under another name.
+// shared/pushed_actor.c, under another name.
 static s32 Vale_DistanceInPixels(FIXED *first, FIXED *second) {
   s32 dx = FIXEDtoINT(*first++ - *second++);
   s32 dy = FIXEDtoINT(*first++ - *second++);
@@ -3384,7 +3384,7 @@ static void Vale_SetPillarPriorityByLeaderHeight(void) {
   }
 }
 
-#include "shared/actor_orbit.c"
+#include "shared/floating_nut.c"
 
 /// Someone calling up Psynergy. They are drawn SPRITE_COLOR_WHITE for two
 /// frames in four, with the World Map's attached sparks every 16 frames.
@@ -3394,7 +3394,7 @@ static void Vale_FlashActorAndSpawnEffects(struct Actor *actor) {
   else
     Actor_SetColorMode(actor, SPRITE_COLOR_NORMAL);
   if ((gFrameCount & 0xf) == 0)
-    WorldMap_CreateAttachedEffects(actor);
+    Scene_SpawnGoldenRing(actor);
 }
 
 /// Someone using Psynergy.
@@ -3402,7 +3402,7 @@ static void Vale_CycleActorPaletteAndSpawnEffects(struct Actor *actor) {
   if ((gFrameCount & 1) != 0)
     Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);
   if ((gFrameCount & 0xf) == 0)
-    WorldMap_CreateAttachedEffects(actor);
+    Scene_SpawnGoldenRing(actor);
 }
 
 /// What Psynergy moves. It goes through colour modes SPRITE_COLOR_NORMAL to
@@ -3413,7 +3413,7 @@ static void Vale_CycleActorPalette(struct Actor *actor) {
 }
 
 #include "shared/field_effect_vertical.c"
-#include "shared/world_map_attached_effects.c"
+#include "shared/golden_ring.c"
 
 #include "shared/pushed_actor_tables.c"
 

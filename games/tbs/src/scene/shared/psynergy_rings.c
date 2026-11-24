@@ -40,10 +40,10 @@ static void Scene_SpawnPsynergyRings(struct Actor *parent) {
       }
     }
   }
-  pair[0]->update = FieldEffect_AnimateVerticalNegative;
+  pair[0]->update = FieldEffect_RiseRingFrontHalf;
   pair[0]->sprite->image.priority = parent->sprite->image.priority;
   pair[1]->sprite->image.priority = parent->sprite->image.priority;
-  pair[1]->update = FieldEffect_AnimateVerticalPositive;
+  pair[1]->update = FieldEffect_RiseRingBackHalf;
   pair[1]->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 

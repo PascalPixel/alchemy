@@ -222,7 +222,7 @@ void Colosso_AskDoneCheering(s32 id) {
 /// whether Isaac has seen enough and, on yes, walks him back out to the
 /// Colosseum; while friends are still with Isaac, he tells him to choose where
 /// they cheer from first.
-static void Colosso_AskReadyToRace(s32 actorId) {
+static void Colosso_AskDoneLookingAround(s32 actorId) {
   struct Actor *actor;
   s32 x;
   s32 z;

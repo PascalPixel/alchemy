@@ -33,7 +33,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/actor_orbit.h"
+#include "scene/floating_nut.h"
 #include "scene/catch_nut.h"
 #include "scene/import.h"
 #include "scene/kolima_palette.h"
@@ -60,7 +60,7 @@ enum KolimaForestGladeActorId {
 /// 1 / GLADE_CURSE_DIVISOR of themselves (KolimaPalette_Curse).
 #define GLADE_CURSE_DIVISOR 11
 
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 /// Where the party enters, from SceneId_KolimaForestEntrance and
 /// SceneId_KolimaForestCliff.
@@ -85,7 +85,7 @@ static void KolimaForestGlade_PushLog(void) {
   struct PushedActorProbe result;
   Event_Start();
   if (PushedActor_FindClearPosition(&result))
-    Actor_MoveAndRedraw(result);
+    PushedActor_Roll(result);
   Event_End();
 }
 
@@ -107,9 +107,9 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
     Scene_FloatNut(ACTOR_NUT);
   }
-  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG);
-  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 1);
-  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 2);
+  PushedActor_BlockFootprint(ACTOR_FIRST_LOG);
+  PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 1);
+  PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 2);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(GLADE_CURSE_DIVISOR);
   }
@@ -117,7 +117,7 @@ s32 Scene_Initialize(void) {
 }
 
 #include "shared/kolima_palette.c"
-#include "shared/actor_orbit.c"
+#include "shared/floating_nut.c"
 
 #include "shared/pushed_actor_tables.c"
 // clang-format off

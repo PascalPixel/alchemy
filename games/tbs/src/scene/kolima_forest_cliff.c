@@ -51,7 +51,7 @@ enum {
   ACTOR_RIVER_LOG = ACTOR_FIRST_LOG + 2
 };
 
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.
@@ -83,7 +83,7 @@ static void KolimaForestCliff_PushLog(void) {
 
   Event_Start();
   if (PushedActor_FindClearPosition(&result)) {
-    Actor_MoveAndRedraw(result);
+    PushedActor_Roll(result);
     if (result.actorSlot == ACTOR_RIVER_LOG &&
         (FIELD_CELL(result.position.x)) == CLIFF_RIVER_EDGE_COLUMN) {
       Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
@@ -117,7 +117,7 @@ s32 Scene_Initialize(void) {
 
   state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  Scene_RedrawActorRectangle(ACTOR_RIVER_LOG);
+  PushedActor_BlockFootprint(ACTOR_RIVER_LOG);
 
   // The log the party tipped in still floats in the river, as ground to cross
   // on.
@@ -129,8 +129,8 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_RIVER_LOG), 0);
   }
 
-  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG);
-  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 1);
+  PushedActor_BlockFootprint(ACTOR_FIRST_LOG);
+  PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 1);
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(CLIFF_CURSE_DIVISOR);

@@ -214,7 +214,7 @@ static void ValeCave_ApplyEntryState(void);
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 /// In the room of logs, the west log has been rolled into the pool.
 #define FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE FLAG_SCENE_TEMP_02
@@ -570,7 +570,7 @@ static void ValeCave_PushLogOverEdge(void) {
 
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
-    Actor_MoveAndRedraw(probe);
+    PushedActor_Roll(probe);
     // At the ledge's edge the log slides west and drops.
     if (FIELD_CELL(probe.position.x) == LEDGE_EDGE_COLUMN) {
       Actor_SetAnimation(probe.actorSlot, LOG_ANIMATION_ROLL_WEST);
@@ -649,7 +649,7 @@ static void ValeCave_PushLogNorth(void) {
 
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
-    Actor_MoveAndRedraw(probe);
+    PushedActor_Roll(probe);
     Actor_SetAnimation(ACTOR_SOUTH_LOG, LOG_WEST_EAST_ANIMATION_ROLL);
     Actor_SetSpeedAndAcceleration(ACTOR_SOUTH_LOG, 0.25, 0.5);
     Actor_SetDestinationOffset(ACTOR_SOUTH_LOG, 0, -16);
@@ -732,15 +732,15 @@ static void ValeCave_UpdateRidingLogPassage(void) {
   }
 }
 
-#include "shared/actor_pair_move.c"
+#include "shared/log_ride.c"
 
 /// Walking east onto the riding log at the west end of its pool (cell (23,
 /// 35)) has it float east along the north wall with Isaac on it, to the pool's
 /// east side, where a post leads to the passage into the room of logs.
 static void ValeCave_RideLogEast(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, 112, 0);
-  Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, 80, 0);
+  Actor_FloatLogWithLeader(ACTOR_RIDING_LOG, 112, 0);
+  Actor_FloatLogWithLeader(ACTOR_RIDING_LOG, 80, 0);
   GameFlag_Set(FLAG_VALE_CAVE_RIDING_LOG_EAST);
   wait(2);
   ValeCave_UpdateRidingLogPassage();
@@ -751,8 +751,8 @@ static void ValeCave_RideLogEast(void) {
 /// 35)) has it float back west along the north wall with Isaac on it.
 static void ValeCave_RideLogWest(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, -112, 0);
-  Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, -80, 0);
+  Actor_FloatLogWithLeader(ACTOR_RIDING_LOG, -112, 0);
+  Actor_FloatLogWithLeader(ACTOR_RIDING_LOG, -80, 0);
   GameFlag_Clear(FLAG_VALE_CAVE_RIDING_LOG_EAST);
   wait(2);
   ValeCave_UpdateRidingLogPassage();
@@ -846,7 +846,7 @@ static void ValeCave_ApplyEntryState(void) {
         PushedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4,
                                                CELL_BEHAVIOR_NORMAL);
       } else {
-        Scene_RedrawActorRectangle(ACTOR_WEST_LOG);
+        PushedActor_BlockFootprint(ACTOR_WEST_LOG);
       }
       if (GameFlag_Get(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE) != 0) {
         PushedActor_FillGridAttributeRectangle(2, 16, 16, 1, 4,
@@ -854,7 +854,7 @@ static void ValeCave_ApplyEntryState(void) {
         PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, 4,
                                                CELL_BEHAVIOR_NORMAL);
       } else {
-        Scene_RedrawActorRectangle(ACTOR_EAST_LOG);
+        PushedActor_BlockFootprint(ACTOR_EAST_LOG);
       }
       southLogOnSouthernRow =
           GameFlag_Get(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
@@ -867,7 +867,7 @@ static void ValeCave_ApplyEntryState(void) {
         MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
         MapGrid_CopyCellAttributes(14, 13, 1, 1, 14, 15);
       } else {
-        Scene_RedrawActorRectangle(ACTOR_SOUTH_LOG);
+        PushedActor_BlockFootprint(ACTOR_SOUTH_LOG);
         Actor_SetSpritePriority(ACTOR_SOUTH_LOG, 3);
       }
       break;

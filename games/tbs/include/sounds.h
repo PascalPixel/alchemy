@@ -610,7 +610,7 @@ enum SoundId {
   SE_POWER_UP,
   /// A pushed log or pillar coming to rest, after SE_STOP_ACTION_SE cuts
   /// SE_HEAVY_MOVE: the Colosso matches, Kolima Forest's floodgate, Vale Cave,
-  /// and the scenes' pushed actors (Actor_MoveAndRedraw).
+  /// and the scenes' pushed actors (PushedActor_Roll).
   SE_HEAVY_STOP,
   /// The elemental arcs rising in the eruption, and the Tolbi-bound ship
   /// casting off. It sounds like bright chimes rising in three steps over high

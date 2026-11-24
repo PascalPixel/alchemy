@@ -120,7 +120,7 @@ enum { CELL_BEHAVIOR_GOMA_CAVE_JUMP_TO_PILLAR = 20 };
 /// (GomaCavePillar_WatchForgeJoin).
 enum GomaCavePillarRaisedTrigger { RAISED_FORGE_JOINED = 99 };
 
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 /// Isaac talks to Forge, the Mars Djinni on the ledge in the east: the man
 /// beside it jumps in surprise, and the battle with the Djinni begins.

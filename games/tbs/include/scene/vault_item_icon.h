@@ -9,6 +9,6 @@
 #include "types.h"
 
 /// Places the item's icon at the 16.16 position.
-void Vault_PlaceItemIcon(s32 item, FIXED fixed_x, FIXED fixed_y, FIXED fixed_z);
+void Vault_PlaceItemIcon(s32 item, FIXED x, FIXED y, FIXED z);
 
 #endif

@@ -1,9 +1,9 @@
-#ifndef ALCHEMY_COLOSSO_MARKER_H
-#define ALCHEMY_COLOSSO_MARKER_H
+#ifndef ALCHEMY_COLOSSO_GUIDE_H
+#define ALCHEMY_COLOSSO_GUIDE_H
 
 /// @file
 /// What a stage's guide in the three Colosso finals matches shows
-/// (shared/colosso_marker.c): Isaac fading in on the stage to show the way
+/// (shared/colosso_guide.c): Isaac fading in on the stage to show the way
 /// across, and the blinking pointer that glides over the screen.
 
 #include "types.h"
@@ -29,7 +29,7 @@ void Colosso_HidePointer(void);
 void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z);
 
 /// The pointer's glide start on one axis, read signed or unsigned.
-union MarkerCoordinate {
+union PointerCoordinate {
   s16 signedValue; ///< screen pixels
   u16 value;       ///< screen pixels
 };

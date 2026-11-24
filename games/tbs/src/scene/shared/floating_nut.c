@@ -33,26 +33,26 @@ void Scene_FloatNut(s32 id) {
   sprite->fullColor = 0;
   sprite->paletteNumber = 0;
 
-  sprite->state = 0;
+  sprite->count = 0;
   Actor_SetSpriteFlags((struct Actor *)actor, 0);
-  actor->active = 0;
-  actor->mode = 0;
+  actor->retainSpriteCache = 0;
+  actor->motionFlags = 0;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     actor->y += toFIXED(32);
 
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  actor->visible = 1;
+  actor->frozen = 1;
 
   glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   Icon_DrawItem(ITEM_NUT);
-  VramCache_Load(sprite->palette, ICON_TILE_BYTES, glyph->tiles);
+  VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
 
   actor->orbitCenterX = actor->x;
   actor->orbitAngle = 0;
   actor->orbitCenterY = actor->y;
-  actor->active = 1;
+  actor->retainSpriteCache = 1;
   actor->callback = (u32)Scene_UpdateFloatingNut;
-  actor->state = 0;
+  actor->arrivalAxis = 0;
 }

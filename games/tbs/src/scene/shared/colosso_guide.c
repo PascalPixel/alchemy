@@ -127,24 +127,24 @@ void Actor_ResetMotionFields(s32 actorId) {
 
 /// Loads the pointer's picture into a free VRAM block, once.
 static void Colosso_LoadPointer(void) {
-  if (gColosso_MarkerSlot == -1) {
-    gColosso_MarkerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
+  if (gColosso_PointerSlot == -1) {
+    gColosso_PointerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
   }
 }
 
 /// The pointer's glide: its steps and the step it is on, where it is now, where
 /// the glide started and where it ends (screen pixels), its blink counter and
 /// its flip.
-extern s16 gColosso_MarkerSteps;
-extern s16 gColosso_MarkerStep;
-extern s16 gColosso_MarkerX;
-extern union MarkerCoordinate gColosso_MarkerStartX;
-extern s16 gColosso_MarkerEndX;
-extern s16 gColosso_MarkerY;
-extern union MarkerCoordinate gColosso_MarkerStartY;
-extern s16 gColosso_MarkerEndY;
-extern s16 gColosso_MarkerBlink;
-extern s16 gColosso_MarkerFlip;
+extern s16 gColosso_PointerSteps;
+extern s16 gColosso_PointerStep;
+extern s16 gColosso_PointerX;
+extern union PointerCoordinate gColosso_PointerStartX;
+extern s16 gColosso_PointerEndX;
+extern s16 gColosso_PointerY;
+extern union PointerCoordinate gColosso_PointerStartY;
+extern s16 gColosso_PointerEndY;
+extern s16 gColosso_PointerBlink;
+extern s16 gColosso_PointerFlip;
 
 /// The pointer's task: glide one step, then draw it while it blinks
 /// on (a glide keeps it on).
@@ -158,34 +158,34 @@ static void Colosso_UpdatePointer(void) {
   s32 y;
 
   oam = gColosso_PointerOam;
-  tile = gVramCacheEntries[gColosso_MarkerSlot].offset >> 5;
-  total = gColosso_MarkerSteps;
+  tile = gVramCacheEntries[gColosso_PointerSlot].offset >> 5;
+  total = gColosso_PointerSteps;
   if (total != 0) {
-    step = ++gColosso_MarkerStep;
-    gColosso_MarkerX =
-        gColosso_MarkerStartX.value +
-        (gColosso_MarkerEndX - gColosso_MarkerStartX.signedValue) * (s16)step /
-            total;
-    gColosso_MarkerY =
-        gColosso_MarkerStartY.value +
-        (gColosso_MarkerEndY - gColosso_MarkerStartY.signedValue) * (s16)step /
-            total;
+    step = ++gColosso_PointerStep;
+    gColosso_PointerX =
+        gColosso_PointerStartX.value +
+        (gColosso_PointerEndX - gColosso_PointerStartX.signedValue) *
+            (s16)step / total;
+    gColosso_PointerY =
+        gColosso_PointerStartY.value +
+        (gColosso_PointerEndY - gColosso_PointerStartY.signedValue) *
+            (s16)step / total;
     if ((s16)step >= total)
-      gColosso_MarkerSteps = 0;
-    gColosso_MarkerBlink = 0;
+      gColosso_PointerSteps = 0;
+    gColosso_PointerBlink = 0;
   }
-  if (++gColosso_MarkerBlink <= POINTER_SHOWN_FRAMES) {
+  if (++gColosso_PointerBlink <= POINTER_SHOWN_FRAMES) {
     s32 size = OBJ_SIZE_16X16;
 
-    x = gColosso_MarkerX;
-    y = gColosso_MarkerY;
+    x = gColosso_PointerX;
+    y = gColosso_PointerY;
     dst = oam;
     *dst++ = 0;
-    *dst++ = (y - 8) | OBJ_X(x - 8) | size | gColosso_MarkerFlip * OBJ_HFLIP;
+    *dst++ = (y - 8) | OBJ_X(x - 8) | size | gColosso_PointerFlip * OBJ_HFLIP;
     *dst = tile | OBJ_PRIORITY(1);
     Oam_AddSpriteAtDepth(oam, OAM_DEPTH_FRONT);
-  } else if (gColosso_MarkerBlink >= POINTER_BLINK_FRAMES) {
-    gColosso_MarkerBlink = 0;
+  } else if (gColosso_PointerBlink >= POINTER_BLINK_FRAMES) {
+    gColosso_PointerBlink = 0;
   }
 }
 
@@ -194,23 +194,23 @@ static void Colosso_UpdatePointer(void) {
 void Colosso_ShowPointer(u32 x, u32 y, u32 style) {
   Colosso_LoadPointer();
 
-  gColosso_MarkerX = x;
-  gColosso_MarkerY = y;
-  gColosso_MarkerFlip = (style & 3);
-  gColosso_MarkerBlink = 0;
-  gColosso_MarkerSteps = 0;
+  gColosso_PointerX = x;
+  gColosso_PointerY = y;
+  gColosso_PointerFlip = (style & 3);
+  gColosso_PointerBlink = 0;
+  gColosso_PointerSteps = 0;
 
   Task_AddFrame(Colosso_UpdatePointer, TASK_PASS_FRAME);
 }
 
 /// Glides the pointer to screen pixel (x, y) over duration frames.
 void Colosso_MovePointer(u32 x, u32 y, u32 duration) {
-  gColosso_MarkerEndX = x;
-  gColosso_MarkerEndY = y;
-  *(u16 *)&gColosso_MarkerStartX = gColosso_MarkerX;
-  *(u16 *)&gColosso_MarkerStartY = gColosso_MarkerY;
-  gColosso_MarkerSteps = duration;
-  gColosso_MarkerStep = 0;
+  gColosso_PointerEndX = x;
+  gColosso_PointerEndY = y;
+  *(u16 *)&gColosso_PointerStartX = gColosso_PointerX;
+  *(u16 *)&gColosso_PointerStartY = gColosso_PointerY;
+  gColosso_PointerSteps = duration;
+  gColosso_PointerStep = 0;
 
   Task_AddFrame(Colosso_UpdatePointer, TASK_PASS_FRAME);
 }
@@ -218,8 +218,8 @@ void Colosso_MovePointer(u32 x, u32 y, u32 duration) {
 /// Hides the pointer and frees its VRAM block.
 void Colosso_HidePointer(void) {
   Task_Remove(Colosso_UpdatePointer);
-  VramCache_FreeEntry(gColosso_MarkerSlot);
-  gColosso_MarkerSlot = -1;
+  VramCache_FreeEntry(gColosso_PointerSlot);
+  gColosso_PointerSlot = -1;
 }
 
 /// Runs the actor at 2 pixels a frame towards pixel (x, z) and returns

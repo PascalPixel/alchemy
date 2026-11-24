@@ -3,7 +3,7 @@
 /// and is set back to its own size as each collapses.
 
 /// Each party member squashes and wobbles until another script takes over.
-s32 gKolima_PartySquashActions[] = {
+s32 gKolima_PartySquashScript[] = {
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(2),
@@ -20,7 +20,7 @@ s32 gKolima_PartySquashActions[] = {
 };
 
 /// Back to full size as the party member collapses.
-s32 gKolima_PartyRestoreScaleActions[] = {
+s32 gKolima_PartyRestoreScaleScript[] = {
     SC_SET(SW_SCALE_X, FIXED_ONE),
     SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_WAIT(1),

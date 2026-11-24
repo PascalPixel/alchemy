@@ -81,11 +81,11 @@ extern u32 gSolSanctumElementalStarRoom_Exits[];
 extern struct ActorPlacement gSolSanctumElementalStarRoom_ActorPlacements[];
 extern struct Trigger gSolSanctumElementalStarRoom_Triggers[];
 extern u16 gSolSanctum_StarCells[];
-extern u8 gSolSanctum_RingDrift[][3];
-extern u8 gSolSanctum_RingSwing[][3];
-extern s8 gSolSanctum_RingDirection[][3];
-extern FIXED gSolSanctum_RingMaxScales[];
-extern FIXED gSolSanctum_RingScaleSteps[];
+extern u8 gSolSanctum_LightDrift[][3];
+extern u8 gSolSanctum_LightSwing[][3];
+extern s8 gSolSanctum_LightDirection[][3];
+extern FIXED gSolSanctum_LightMaxScales[];
+extern FIXED gSolSanctum_LightScaleSteps[];
 
 static void SolSanctumElementalStarRoom_BagJupiterStar(void);
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void);

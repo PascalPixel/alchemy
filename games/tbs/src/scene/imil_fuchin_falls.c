@@ -58,7 +58,7 @@
 /// say. It also rewrites the cells of every log's run, copied from spare cells
 /// that each room's map keeps beside it: the cells under a log get the step
 /// trigger that moves it, and the empty ends of its run become walls of water.
-/// The logs' moves are Actor_PlacePairAtOffset, which carries the log and the
+/// The logs' moves are Actor_FloatLogWithLeader, which carries the log and the
 /// leader together. The darkness of the dragon statue's room is a palette
 /// tint, and the hidden path is a run of cells copied over the spikes when the
 /// eye is set (FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET).
@@ -393,7 +393,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gImilFuchinFalls_NoActorPlacements;
 }
 
-#include "shared/actor_pair_move.c"
+#include "shared/log_ride.c"
 
 /// The first room's upright log lies at the pool's east bank.
 #define FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST FLAG_AREA_TEMP_01
@@ -462,8 +462,8 @@ static inline void FuchinFallsCave_FinishLogMove(void (*rebuildLogs)(void)) {
 /// the east bank, by the doorway to Zephyr's room.
 static void FuchinFallsCave_Entrance_MoveFirstLogEast(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, 112, 0);
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, 112, 0);
+  Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, 112, 0);
+  Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, 112, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST);
   wait(2);
@@ -475,8 +475,8 @@ static void FuchinFallsCave_Entrance_MoveFirstLogEast(void) {
 /// bank, by the doorway from the Arctic Blade's room.
 static void FuchinFallsCave_Entrance_MoveFirstLogWest(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, -112, 0);
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, -112, 0);
+  Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, -112, 0);
+  Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, -112, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST);
   wait(2);
@@ -488,7 +488,7 @@ static void FuchinFallsCave_Entrance_MoveFirstLogWest(void) {
 /// shore, west of the tablet.
 static void FuchinFallsCave_Entrance_MoveSecondLogSouth(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, 0, 64);
+  Actor_FloatLogWithLeader(ACTOR_SECOND_LOG, 0, 64);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_ENTRANCE_SECOND_LOG_NORTH);
   wait(2);
@@ -500,7 +500,7 @@ static void FuchinFallsCave_Entrance_MoveSecondLogSouth(void) {
 /// the north side, where a passage leads up to the room's north half.
 static void FuchinFallsCave_Entrance_MoveSecondLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, 0, -64);
+  Actor_FloatLogWithLeader(ACTOR_SECOND_LOG, 0, -64);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_ENTRANCE_SECOND_LOG_NORTH);
   wait(2);
@@ -512,7 +512,7 @@ static void FuchinFallsCave_Entrance_MoveSecondLogNorth(void) {
 /// shore, east of the tablet.
 static void FuchinFallsCave_Entrance_MoveThirdLogSouth(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 64);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, 64);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_ENTRANCE_THIRD_LOG_NORTH);
   wait(2);
@@ -524,7 +524,7 @@ static void FuchinFallsCave_Entrance_MoveThirdLogSouth(void) {
 /// with the chest, which holds a Mimic.
 static void FuchinFallsCave_Entrance_MoveThirdLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -64);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, -64);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_ENTRANCE_THIRD_LOG_NORTH);
   wait(2);
@@ -539,7 +539,7 @@ static void FuchinFallsCave_Entrance_MoveThirdLogNorth(void) {
 /// would lie across the way.
 static void FuchinFallsCave_ZephyrRoom_MoveFirstLogToEastEnd(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, 144, 0);
+  Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, 144, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END);
   wait(2);
@@ -551,7 +551,7 @@ static void FuchinFallsCave_ZephyrRoom_MoveFirstLogToEastEnd(void) {
 /// below the stump.
 static void FuchinFallsCave_ZephyrRoom_MoveFirstLogToWestEnd(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, -144, 0);
+  Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, -144, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END);
   GameFlag_Set(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END);
@@ -567,7 +567,7 @@ static void FuchinFallsCave_ZephyrRoom_MoveFirstLogToWestEnd(void) {
 /// crosswise log at the south shore lands on the upright log.
 static void FuchinFallsCave_ZephyrRoom_NudgeFirstLogWest(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, -14, 0);
+  Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, -14, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END);
   wait(2);
@@ -584,10 +584,10 @@ static void FuchinFallsCave_ZephyrRoom_MoveFirstLogEast(void) {
   Sound_Play(SE_WATER_MOVE);
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH) != 0) {
-    Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, 16, 0);
+    Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, 16, 0);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END);
   } else {
-    Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, 144, 0);
+    Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, 144, 0);
 
     GameFlag_Set(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END);
   }
@@ -600,7 +600,7 @@ static void FuchinFallsCave_ZephyrRoom_MoveFirstLogEast(void) {
 /// and it floats him across the pool to the south shore.
 static void FuchinFallsCave_ZephyrRoom_MoveSecondLogSouth(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, 0, 64);
+  Actor_FloatLogWithLeader(ACTOR_SECOND_LOG, 0, 64);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH);
   wait(2);
@@ -612,7 +612,7 @@ static void FuchinFallsCave_ZephyrRoom_MoveSecondLogSouth(void) {
 /// path down from the spiked floor.
 static void FuchinFallsCave_ZephyrRoom_MoveSecondLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, 0, -64);
+  Actor_FloatLogWithLeader(ACTOR_SECOND_LOG, 0, -64);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH);
   wait(2);
@@ -625,8 +625,8 @@ static void FuchinFallsCave_ZephyrRoom_MoveSecondLogNorth(void) {
 /// to its south end.
 static void FuchinFallsCave_ZephyrRoom_MoveThirdLogSouth(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 144);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 128);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, 144);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, 128);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH);
   wait(2);
@@ -638,9 +638,9 @@ static void FuchinFallsCave_ZephyrRoom_MoveThirdLogSouth(void) {
 /// channel, past Zephyr's ledge, to the spiked floor below the north doorway.
 static void FuchinFallsCave_ZephyrRoom_MoveThirdLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -96);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -96);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -80);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, -96);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, -96);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, -80);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH);
   wait(2);
@@ -660,11 +660,11 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogWest(void) {
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP) !=
           0 ||
       GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE) != 0) {
-    Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, -48, 0);
+    Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, -48, 0);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END);
     GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE);
   } else {
-    Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, -96, 0);
+    Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, -96, 0);
     GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE);
   }
@@ -679,7 +679,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogEastFromMiddle(void) {
   Sound_Play(SE_WATER_MOVE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE);
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, 48, 0);
+  Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, 48, 0);
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
 
@@ -703,7 +703,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogWestIfClear(void) {
   GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE);
 
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, -48, 0);
+  Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, -48, 0);
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
 
@@ -714,7 +714,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogEastFromWestEnd(void) {
   Sound_Play(SE_WATER_MOVE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE);
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, 96, 0);
+  Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, 96, 0);
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
 
@@ -723,7 +723,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogEastFromWestEnd(void) {
 /// him across to the pool's west side, by the doorway to the first room.
 static void FuchinFallsCave_DragonsEyeRoom_MoveSecondLogWest(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, -32, 0);
+  Actor_FloatLogWithLeader(ACTOR_SECOND_LOG, -32, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_SECOND_LOG_WEST);
   wait(2);
@@ -735,7 +735,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveSecondLogWest(void) {
 /// across to the pool's east side.
 static void FuchinFallsCave_DragonsEyeRoom_MoveSecondLogEast(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, 32, 0);
+  Actor_FloatLogWithLeader(ACTOR_SECOND_LOG, 32, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_SECOND_LOG_WEST);
   wait(2);
@@ -756,13 +756,13 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromSouthEnd(void) {
   Sound_Play(SE_WATER_MOVE);
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END) !=
       0) {
-    Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -64);
+    Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, -64);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
     GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_LOWER_STOP);
   } else {
-    Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -128);
+    Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, -128);
     GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
@@ -783,7 +783,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromNorthEnd(void) {
 
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END) !=
       0) {
-    Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 16);
+    Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, 16);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
     GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
@@ -791,20 +791,20 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromNorthEnd(void) {
   } else if (GameFlag_Get(
                  FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP) !=
              0) {
-    Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 16);
+    Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, 16);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
     GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_LOWER_STOP);
   } else if (GameFlag_Get(
                  FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE) != 0) {
-    Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 64);
+    Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, 64);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
     GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_LOWER_STOP);
   } else {
-    Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 128);
+    Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, 128);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
@@ -818,7 +818,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromNorthEnd(void) {
 /// up to the head of the channel.
 static void FuchinFallsCave_DragonsEyeRoom_NudgeThirdLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -16);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, -16);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
@@ -840,7 +840,7 @@ static void
 FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromUpperStop(void) {
   Sound_Play(SE_WATER_MOVE);
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE) != 0) {
-    Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 48);
+    Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, 48);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
 
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
@@ -849,13 +849,13 @@ FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromUpperStop(void) {
   } else if (GameFlag_Get(
                  FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP) !=
              0) {
-    Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 32);
+    Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, 32);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
     GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_LOWER_STOP);
   } else {
-    Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 112);
+    Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, 112);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
@@ -869,7 +869,7 @@ FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromUpperStop(void) {
 /// head of the channel.
 static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromMiddle(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -64);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, -64);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
@@ -883,7 +883,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromMiddle(void) {
 /// cell from the channel's head.
 static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromMiddle(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 64);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, 64);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
@@ -903,7 +903,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromMiddle(void) {
 static void
 FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromLowerStop(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -80);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, -80);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
@@ -924,7 +924,7 @@ FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromLowerStop(void) {
 static void
 FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromLowerStop(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 64);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 0, 64);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
@@ -949,7 +949,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFourthLogNorth(void) {
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END) !=
           0 ||
       GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE) != 0) {
-    Actor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, -64);
+    Actor_FloatLogWithLeader(ACTOR_FOURTH_LOG, 0, -64);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_NORTH_END);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP);
     GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE);
@@ -957,13 +957,13 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFourthLogNorth(void) {
   } else if (GameFlag_Get(
                  FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP) !=
              0) {
-    Actor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, -112);
+    Actor_FloatLogWithLeader(ACTOR_FOURTH_LOG, 0, -112);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_NORTH_END);
     GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_LOWER_STOP);
   } else {
-    Actor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, -128);
+    Actor_FloatLogWithLeader(ACTOR_FOURTH_LOG, 0, -128);
     GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_NORTH_END);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP);
     GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE);
@@ -988,7 +988,7 @@ static void FuchinFallsCave_ClearFourthLogStops(void) {
 static void
 FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromNorthEnd(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, 128);
+  Actor_FloatLogWithLeader(ACTOR_FOURTH_LOG, 0, 128);
   FuchinFallsCave_ClearFourthLogStops();
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
@@ -998,7 +998,7 @@ FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromNorthEnd(void) {
 /// one cell further up.
 static void FuchinFallsCave_DragonsEyeRoom_NudgeFourthLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, -16);
+  Actor_FloatLogWithLeader(ACTOR_FOURTH_LOG, 0, -16);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_NORTH_END);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP);
@@ -1014,7 +1014,7 @@ static void FuchinFallsCave_DragonsEyeRoom_NudgeFourthLogNorth(void) {
 static void
 FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromUpperStop(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, 112);
+  Actor_FloatLogWithLeader(ACTOR_FOURTH_LOG, 0, 112);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   FuchinFallsCave_ClearFourthLogStops();
   wait(2);
@@ -1026,7 +1026,7 @@ FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromUpperStop(void) {
 /// floats him back to the foot of the channel.
 static void FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromMiddle(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, 64);
+  Actor_FloatLogWithLeader(ACTOR_FOURTH_LOG, 0, 64);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   FuchinFallsCave_ClearFourthLogStops();
   wait(2);
@@ -1048,7 +1048,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromMiddle(void) {
 static void
 FuchinFallsCave_DragonsEyeRoom_UnusedMoveFourthLogSouthFromLowerStop(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, 80);
+  Actor_FloatLogWithLeader(ACTOR_FOURTH_LOG, 0, 80);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   FuchinFallsCave_ClearFourthLogStops();
   wait(2);
@@ -1062,7 +1062,7 @@ FuchinFallsCave_DragonsEyeRoom_UnusedMoveFourthLogSouthFromLowerStop(void) {
 static void
 FuchinFallsCave_DragonsEyeRoom_UnusedMoveFourthLogSouthFromLastStop(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, 48);
+  Actor_FloatLogWithLeader(ACTOR_FOURTH_LOG, 0, 48);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   FuchinFallsCave_ClearFourthLogStops();
   wait(2);
@@ -1075,7 +1075,7 @@ FuchinFallsCave_DragonsEyeRoom_UnusedMoveFourthLogSouthFromLastStop(void) {
 /// the room's south half.
 static void FuchinFallsCave_ArcticBladeRoom_MoveFirstLogSouth(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, 0, 112);
+  Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, 0, 112);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH);
   wait(2);
@@ -1087,7 +1087,7 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveFirstLogSouth(void) {
 /// north shore, below the stairs.
 static void FuchinFallsCave_ArcticBladeRoom_MoveFirstLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, 0, -112);
+  Actor_FloatLogWithLeader(ACTOR_FIRST_LOG, 0, -112);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH);
   wait(2);
@@ -1102,7 +1102,7 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveFirstLogNorth(void) {
 /// shore it lies across the way.
 static void FuchinFallsCave_ArcticBladeRoom_MoveSecondLogWest(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, -128, 0);
+  Actor_FloatLogWithLeader(ACTOR_SECOND_LOG, -128, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_SECOND_LOG_WEST);
   wait(2);
@@ -1114,7 +1114,7 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveSecondLogWest(void) {
 /// east shore.
 static void FuchinFallsCave_ArcticBladeRoom_MoveSecondLogEast(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, 128, 0);
+  Actor_FloatLogWithLeader(ACTOR_SECOND_LOG, 128, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_SECOND_LOG_WEST);
   wait(2);
@@ -1127,7 +1127,7 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveSecondLogEast(void) {
 /// room's west bank.
 static void FuchinFallsCave_ArcticBladeRoom_MoveThirdLogEast(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 160, 0);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, 160, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST);
   wait(2);
@@ -1139,7 +1139,7 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveThirdLogEast(void) {
 /// across to the west end.
 static void FuchinFallsCave_ArcticBladeRoom_MoveThirdLogWest(void) {
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, -160, 0);
+  Actor_FloatLogWithLeader(ACTOR_THIRD_LOG, -160, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST);
   wait(2);

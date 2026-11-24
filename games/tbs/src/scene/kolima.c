@@ -84,7 +84,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/kolima.h"
-#include "scene/kolima_forest_bridge_falling_effect.h"
+#include "scene/kolima_curse_dust.h"
 #include "scene/party_nod.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
@@ -98,8 +98,8 @@
 extern s32 gKolima_GaretWalksIn[];
 extern s32 gKolima_IvanWalksIn[];
 extern s32 gKolima_MiaWalksIn[];
-extern s32 gKolima_PartySquashActions[];
-extern s32 gKolima_PartyRestoreScaleActions[];
+extern s32 gKolima_PartySquashScript[];
+extern s32 gKolima_PartyRestoreScaleScript[];
 extern s32 gKolima_PsynergyFieldGrowActions[];
 extern s32 gKolima_PsynergyFieldShrinkActions[];
 extern s32 gKolima_GroundSparkleActions[];
@@ -119,7 +119,7 @@ extern struct Trigger gKolimaTriggers[];
 extern struct Trigger gKolimaBridgeTriggers[];
 extern s32 gKolima_GoldenRingsScript[];
 extern s32 gKolima_SparkleBurstScript[];
-extern s32 gFallingEffectScript[];
+extern s32 gKolima_CurseDustScript[];
 
 /// The pieces the drawbridge throws out where it lands (SPRITE_DUST_PUFF).
 enum { BRIDGE_DUST_PUFFS = 10 };
@@ -187,10 +187,10 @@ enum KolimaBridgeActorId {
 
 /// The end of a Psynergy field's growing: if a speck of the curse has burst on
 /// the fields meanwhile, this one takes its next pose.
-static s32 Kolima_ApplyPendingPose(struct Actor *actor) {
-  if (gKolima_PendingPose != 0) {
+static s32 Kolima_FlashHitPsynergyFields(struct Actor *actor) {
+  if (gKolima_PsynergyFieldHit != 0) {
     Actor_SelectAnimation(actor, 2);
-    gKolima_PendingPose = 0;
+    gKolima_PsynergyFieldHit = 0;
   }
   return 1;
 }
@@ -768,14 +768,14 @@ static void Kolima_WitnessForestCurse(void) {
   PaletteFade_StartInterpolation(1);
   wait(1);
   // The falling sparkles threaten to turn the party into trees as well.
-  gKolima_EffectActive = 1;
+  gKolima_SparkleSoundOn = 1;
   Task_AddFrame(Kolima_SpawnCurseSparkle, TASK_PASS_FRAME);
   wait(20);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(16, 16, 20), PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(120);
   wait(60);
-  squashActions = gKolima_PartySquashActions;
+  squashActions = gKolima_PartySquashScript;
   Actor_SetScript(ACTOR_PARTY_LEADER, squashActions);
   Actor_SetScript(ACTOR_GARET, squashActions);
   Actor_SetScript(ACTOR_IVAN, squashActions);
@@ -801,7 +801,7 @@ static void Kolima_WitnessForestCurse(void) {
     Event_Wait(10);
     Actor_SetSpeedFX(ACTOR_MIA, toFIXED(2), toFIXED(2));
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
-    Actor_SetScript(ACTOR_MIA, gKolima_PartyRestoreScaleActions);
+    Actor_SetScript(ACTOR_MIA, gKolima_PartyRestoreScaleScript);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), 0);
     Actor_SetAnimation(ACTOR_MIA, ANIM_COLLAPSE);
     Event_Wait(10);
@@ -809,7 +809,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = toFIXED(2);
   Event_Wait(10);
   Actor_SetSpeedFX(ACTOR_PARTY_LEADER, toFIXED(2), toFIXED(2));
-  restoreScaleActions = gKolima_PartyRestoreScaleActions;
+  restoreScaleActions = gKolima_PartyRestoreScaleScript;
   Actor_SetScript(ACTOR_PARTY_LEADER, restoreScaleActions);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
@@ -826,16 +826,16 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetScript(ACTOR_IVAN, restoreScaleActions);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_COLLAPSE);
-  gKolima_EffectActive = 0;
+  gKolima_SparkleSoundOn = 0;
   Event_Wait(160);
   Task_Remove(Kolima_SpawnCurseSparkle);
   Event_Wait(120);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   wait(60);
-  gFallingEffectWidth = 0;
-  gFallingEffectOffset = toFIXED(128);
-  gFallingEffectState = KOLIMA_DUST_CLOSING;
+  gKolima_CurseDustWidth = 0;
+  gKolima_CurseDustOffset = toFIXED(128);
+  gKolima_CurseDustState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(180);
   Sound_Play(MUS_FOREST_THEME);
@@ -854,7 +854,7 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(60);
   // "We've got to get out of here!"
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
-  gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
+  gKolima_CurseDustState = KOLIMA_DUST_CLOSING_WIDE;
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -881,7 +881,7 @@ static void Kolima_WitnessForestCurse(void) {
   } else {
     gFieldState->message++;
   }
-  gFallingEffectState = KOLIMA_DUST_DRIFTING;
+  gKolima_CurseDustState = KOLIMA_DUST_DRIFTING;
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_GARET)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_IVAN)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -890,7 +890,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_GARET, 3);
   Actor_SetSpritePriority(ACTOR_IVAN, 3);
   Actor_SetSpritePriority(ACTOR_MIA, 3);
-  gKolima_PendingPose = 0;
+  gKolima_PsynergyFieldHit = 0;
   Task_AddFrame(Kolima_FlickerPsynergyFields, TASK_PASS_FRAME);
   Sound_Play(SE_SHIMMER);
   Actor_Get(ACTOR_LEADER_PSYNERGY_FIELD)->priorityFlags &=
@@ -916,7 +916,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_GARET_PSYNERGY_FIELD, 2);
   Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 94, 225);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldActions);
-  while (gFallingEffectState != KOLIMA_DUST_CENTRED) {
+  while (gKolima_CurseDustState != KOLIMA_DUST_CENTRED) {
     wait(1);
   }
   Event_Wait(300);
@@ -1156,9 +1156,9 @@ static void Kolima_WitnessForestCurse(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   wait(60);
-  gFallingEffectWidth = 0;
-  gFallingEffectOffset = toFIXED(128);
-  gFallingEffectState = KOLIMA_DUST_CLOSING;
+  gKolima_CurseDustWidth = 0;
+  gKolima_CurseDustOffset = toFIXED(128);
+  gKolima_CurseDustState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(80);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1184,7 +1184,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_GARET, 3);
   Actor_SetSpritePriority(ACTOR_IVAN, 3);
   Actor_SetSpritePriority(ACTOR_MIA, 3);
-  gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
+  gKolima_CurseDustState = KOLIMA_DUST_CLOSING_WIDE;
   Sound_Play(SE_SHIMMER);
   Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, 120, 248);
   growFieldActions = gKolima_PsynergyFieldGrowActions;
@@ -1198,10 +1198,10 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 94, 225);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldActions);
   Event_Wait(120);
-  gFallingEffectState = KOLIMA_DUST_DRIFTING;
+  gKolima_CurseDustState = KOLIMA_DUST_DRIFTING;
   do {
     wait(1);
-  } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
+  } while (gKolima_CurseDustState != KOLIMA_DUST_CENTRED);
   // Tret and Laurel, unseen, wonder at the party's immunity to the glamour.
   // "Hroom! Why? Why don't they turn into trees...?"
   Kolima_ShowMessageAndWait(ACTOR_TRET, 80);
@@ -1549,7 +1549,7 @@ static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames) {
 #include "shared/kolima_grow.c"
 
 /// Every eighth frame, a golden ring of the curse falls from the sky over the
-/// party, with its sound while gKolima_EffectActive is set.
+/// party, with its sound while gKolima_SparkleSoundOn is set.
 static void Kolima_SpawnCurseSparkle(void) {
   struct Actor *sparkle;
   struct Sprite *sprite;
@@ -1559,7 +1559,7 @@ static void Kolima_SpawnCurseSparkle(void) {
   if (framePhase != 0) {
     return;
   }
-  if (gKolima_EffectActive != 0) {
+  if (gKolima_SparkleSoundOn != 0) {
     Sound_Play(SE_SPARKLE_FALL);
   }
   sparkle =
@@ -1584,7 +1584,8 @@ static void Kolima_SpawnCurseSparkle(void) {
 
 /// A speck of the curse that lands inside the party's Psynergy fields (two
 /// boxes with Mia in the party, three without her) bursts there with a drip,
-/// and the fields take their next pose once grown (Kolima_ApplyPendingPose).
+/// and the fields take their next pose once grown
+/// (Kolima_FlashHitPsynergyFields).
 static s32 Kolima_BurstOnPsynergyField(struct Actor *actor) {
   if (gKolima_MiaInParty != 0) {
     if ((actor->x.fixed > toFIXED(59) && actor->x.fixed < toFIXED(141) &&
@@ -1593,7 +1594,7 @@ static s32 Kolima_BurstOnPsynergyField(struct Actor *actor) {
          actor->z.fixed > toFIXED(194) && actor->z.fixed < toFIXED(277))) {
       Sound_Play(SE_DRIP);
       Actor_StartScript(actor, gKolima_SparkleBurstScript);
-      gKolima_PendingPose = 1;
+      gKolima_PsynergyFieldHit = 1;
     }
   } else {
     if ((actor->x.fixed > toFIXED(59) && actor->x.fixed < toFIXED(111) &&
@@ -1604,16 +1605,16 @@ static s32 Kolima_BurstOnPsynergyField(struct Actor *actor) {
          actor->z.fixed > toFIXED(241) && actor->z.fixed < toFIXED(277))) {
       Sound_Play(SE_DRIP);
       Actor_StartScript(actor, gKolima_SparkleBurstScript);
-      gKolima_PendingPose = 1;
+      gKolima_PsynergyFieldHit = 1;
     }
   }
   return 0;
 }
 
-#include "shared/kolima_forest_bridge_falling_effect.c"
-s32 gKolima_PendingPose BSS_DATA;
+#include "shared/kolima_curse_dust.c"
+s32 gKolima_PsynergyFieldHit BSS_DATA;
 s32 gKolima_MiaInParty BSS_DATA;
-s32 gKolima_EffectActive BSS_DATA;
+s32 gKolima_SparkleSoundOn BSS_DATA;
 
 /// Sets up Kolima Bridge.
 static void Kolima_RestoreBridgeState(void) {
@@ -1664,7 +1665,7 @@ s32 gKolima_PsynergyFieldGrowActions[] = {
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 50),
     SC_WAIT(1),
     SC_LOOP(70, SC_TO(1)),
-    SC_CALL(Kolima_ApplyPendingPose),
+    SC_CALL(Kolima_FlashHitPsynergyFields),
     SC_END,
 };
 
@@ -1769,8 +1770,8 @@ u32 gKolimaExits[] = {
     SCENE_EXIT(KOLIMA_TO_HOUSE_NORTH, LogRoomsC, LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH),
     SCENE_EXIT(KOLIMA_TO_KOLIMA_TUNNEL, KolimaTunnel, KOLIMA_TUNNEL_FROM_KOLIMA),
     SCENE_EXITS(KolimaBridge),
-    SCENE_EXIT(KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_KOLIMA_BRIDGE_EAST),
-    SCENE_EXIT(KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_KOLIMA_BRIDGE_WEST),
+    SCENE_EXIT(KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_KOLIMA_BRIDGE_SOUTH),
+    SCENE_EXIT(KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_KOLIMA_BRIDGE_NORTH),
     SCENE_EXITS(KolimaTunnel),
     SCENE_EXIT(KOLIMA_TUNNEL_TO_LOG_ROOMS_C, LogRoomsC, LOG_ROOMS_C_FROM_KOLIMA_TUNNEL),
     SCENE_EXIT(KOLIMA_TUNNEL_TO_KOLIMA, Kolima, KOLIMA_FROM_KOLIMA_TUNNEL),
@@ -1931,7 +1932,7 @@ s32 gKolima_GoldenRingsScript[] = {
 
 #include "shared/kolima_sparkle_burst_script.c"
 
-s32 gFallingEffectScript[] = {
+s32 gKolima_CurseDustScript[] = {
     SC_ADD(SW_Y, -toFIXED(2)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),

@@ -2684,13 +2684,13 @@ s32 Scene_Initialize(void) {
       wait(2);
       actor = Actor_Get(ACTOR_FIRST_CAPPED_PILLAR);
       actor->motionFlags = 0;
-      actor->update = Actor_SetFlagBitByRelativeDepth;
+      actor->update = Actor_UpdateBlockDrawOrder;
       actor = Actor_Get(ACTOR_FIRST_CAPPED_PILLAR + 1);
       actor->motionFlags = 0;
-      actor->update = Actor_SetFlagBitByRelativeDepth;
+      actor->update = Actor_UpdateBlockDrawOrder;
       actor = Actor_Get(ACTOR_FIRST_CAPPED_PILLAR + 2);
       actor->motionFlags = 0;
-      actor->update = Actor_SetFlagBitByRelativeDepth;
+      actor->update = Actor_UpdateBlockDrawOrder;
       VenusLighthouse_MoveCappedPillar();
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_GAP:

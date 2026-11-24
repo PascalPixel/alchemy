@@ -48,7 +48,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/actor_orbit.h"
+#include "scene/floating_nut.h"
 #include "scene/catch_nut.h"
 #include "sound/sound.h"
 #include "system/main_routine_state.h"
@@ -476,7 +476,7 @@ static void McCoyPalaceGrounds_OpenDoor(void) {
   GameFlag_Set(FLAG_DOOR_OPEN);
 }
 
-#include "shared/actor_orbit.c"
+#include "shared/floating_nut.c"
 
 // clang-format off
 /// The door's opening, drawn in three steps of 5 frames each from the spare

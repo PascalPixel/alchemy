@@ -209,7 +209,7 @@ enum { PIT_MASK = SPRITE_CRATE };
 static void BabiLighthouse_CloseTruthDoor(void);
 static void BabiLighthouse_RedrawPillarCells(void);
 
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"

@@ -285,7 +285,7 @@ static void TunnelRuins_UpdateSecondPillarCells(void);
 static void TunnelRuins_UpdateSmallPillarCells(void);
 static void TunnelRuins_UpdateGreyPillarCells(void);
 
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
@@ -542,10 +542,10 @@ static void TunnelRuins_HopDownStep(void) {
 /// The update functions the stones take, cast to the update slot's type
 /// where they return a value.
 #ifdef UBFIX
-#define UPDATE_BY_RELATIVE_DEPTH Actor_SetFlagBitByRelativeDepth
+#define UPDATE_BY_RELATIVE_DEPTH Actor_UpdateBlockDrawOrder
 #else
 #define UPDATE_BY_RELATIVE_DEPTH                                               \
-  ((void (*)(struct Actor *))Actor_SetFlagBitByRelativeDepth)
+  ((void (*)(struct Actor *))Actor_UpdateBlockDrawOrder)
 #endif
 #ifdef UBFIX
 #define UPDATE_RIDE_STONE_BELOW TunnelRuins_RideStoneBelow

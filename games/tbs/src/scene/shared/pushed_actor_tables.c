@@ -1,5 +1,5 @@
 /// @file
-/// The tables of staged_actor.c, which every scene with pushed things holds:
+/// The tables of pushed_actor.c, which every scene with pushed things holds:
 /// the cell ahead for each of sixteen headings, and the six rectangles.
 
 #include "pushed_actor_direction_steps.c"

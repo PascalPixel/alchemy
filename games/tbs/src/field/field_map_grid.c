@@ -820,6 +820,9 @@ void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
 /// Copies only the cell tiles numbers of a rectangle of cells, from (sourceX,
 /// sourceY) to (dstX, dstY), width by height cells, keeping each destination
 /// cell's attributes; cells in a visible area update the BG maps too.
+///
+/// The same copy as MapGrid_CopyCellTilesIndicesRect with the size before the
+/// destination and signed cells: the game has both, and events call each.
 void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   s32 y;

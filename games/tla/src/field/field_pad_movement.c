@@ -171,7 +171,7 @@ update_object:
       playerSprite->secondLayer->priority = 1;
       playerSprite->flags = 0;
     } else {
-      playerSprite->secondLayer->priority = 9;
+      playerSprite->secondLayer->priority = SPRITE_LAYER_NOT_DRAWN;
       playerSprite->flags = SPRITE_FLAG_SHADOW;
     }
     if (terrainCollision == WORLD_MAP_COLLISION_SHALLOW_WATER &&

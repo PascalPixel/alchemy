@@ -2153,7 +2153,7 @@ void TaopoSwamp_StepOnFirmGround(void) {
   if (state->footing != FOOTING_FIRM_GROUND) {
     sprite = Actor_Get(FieldParty_GetLeaderActor())->sprite;
     if (sprite->entries[1])
-      sprite->entries[1]->priority = 9;
+      sprite->entries[1]->priority = SPRITE_LAYER_NOT_DRAWN;
     sprite->flags = (sprite->flags & ~SPRITE_FLAG_SUNK) | SPRITE_FLAG_SHADOW;
     sprite->sunkRows = 0;
     sprite->dirty = 1;

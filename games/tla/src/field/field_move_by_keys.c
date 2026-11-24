@@ -863,7 +863,7 @@ update_object:
     if (terrainCollision == WORLD_MAP_COLLISION_FOREST)
       playerSprite->secondLayer->priority = 1;
     else
-      playerSprite->secondLayer->priority = 9;
+      playerSprite->secondLayer->priority = SPRITE_LAYER_NOT_DRAWN;
   }
   if (actor->wakeTimer == 0 && collision == 0) {
     ripple = Actor_Create(SPRITE_SAND_PUFF, actor->x.fixed, actor->y.fixed,

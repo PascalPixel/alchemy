@@ -51,6 +51,10 @@ enum SpriteColorMode {
 #define SPRITE_ANIMATION_KEEP_PLACE 0x80
 #define SPRITE_ANIMATION_INDEX_MASK 0x7f
 
+/// A sprite layer's priority past the four drawn ones (SpriteAnimation's
+/// priority above 3): the layer is kept but not drawn.
+#define SPRITE_LAYER_NOT_DRAWN 9
+
 /// One animation layer of a sprite: its animation id, pictures, running script
 /// and timer.
 struct SpriteAnimation {

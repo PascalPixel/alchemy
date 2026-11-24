@@ -28,9 +28,6 @@ enum {
 #define PLACEMENT_SPRITE_MAX 9989
 /// A placement's character after the party: the ship.
 #define PLACEMENT_SHIP 8
-/// A sprite layer's priority past the four drawn ones (SpriteAnimation's
-/// priority above 3): the layer is kept but not drawn.
-#define SPRITE_LAYER_NOT_DRAWN 9
 
 /// The ids Actor_Lookup answers: more than the FIELD_ACTOR_COUNT slots.
 #define LOOKUP_ID_COUNT 192

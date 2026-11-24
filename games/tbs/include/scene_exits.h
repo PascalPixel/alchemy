@@ -195,8 +195,16 @@ enum {
   WORLD_MAP_TO_ROCK_ROOMS = 112,
 };
 
-/// SceneId_ValePrologue's entrances.
+/// SceneId_ValePrologue's entrances. VALE_PROLOGUE_DEBUG_BY_STONE_BUILDING,
+/// VALE_PROLOGUE_DEBUG_BY_HILLSIDE_STEPS and
+/// VALE_PROLOGUE_DEBUG_BY_WEST_COTTAGE are arrivals no exit leads to, which
+/// only the debug scene selector reaches (it exits to any entrance from 0 to
+/// 99).
 enum {
+  /// Before the stone building on the village's north side.
+  VALE_PROLOGUE_DEBUG_BY_STONE_BUILDING = 1,
+  /// At the foot of the stone steps up the hillside to the north-west.
+  VALE_PROLOGUE_DEBUG_BY_HILLSIDE_STEPS = 2,
   VALE_PROLOGUE_FROM_VALE_KRADENS_COTTAGE_NORTH = 3,
   VALE_PROLOGUE_FROM_VALE_KRADENS_COTTAGE_SOUTH = 4,
   VALE_PROLOGUE_FROM_VALE_PLAZA = 5,
@@ -205,6 +213,9 @@ enum {
   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE = 8,
   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_NORTH = 9,
   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_WEST = 10,
+  /// By the door of the thatched cottage on the west side, where
+  /// VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST also arrives.
+  VALE_PROLOGUE_DEBUG_BY_WEST_COTTAGE = 11,
   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST = 12,
   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST = 13,
   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA = 15,
@@ -465,6 +476,10 @@ enum {
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED = 4,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN = 5,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED = 6,
+  /// Where the Luna and Sol rooms' event exits arrive, at (576, 136) facing
+  /// south, once more. No exit leads to it: only the debug scene selector,
+  /// which exits to any entrance from 0 to 99, reaches it.
+  SOL_SANCTUM_STATUE_DEBUG_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 99,
 };
 /// SceneId_SolSanctumStatue's exits.
 enum {
@@ -2890,6 +2905,10 @@ enum {
   TOLBI_FROM_COLOSSEUM_ENTRANCE = 12,
   TOLBI_FROM_LUCKY_DICE = 13,
   TOLBI_FROM_TOLBI_SPRING = 20,
+  /// Beside the sprout on the town's east side, facing north. No exit leads to
+  /// it: only the debug scene selector, which exits to any entrance from 0 to
+  /// 99, reaches it.
+  TOLBI_DEBUG_BY_SPROUT = 30,
 };
 /// SceneId_Tolbi's exits.
 enum {

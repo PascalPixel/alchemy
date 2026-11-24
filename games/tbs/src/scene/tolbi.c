@@ -95,11 +95,6 @@ extern struct MapGridCellAnimation gTolbiDoors[];
 /// Frost has frozen the puddle north of the sprout into an ice pillar.
 #define FLAG_TOLBI_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
 
-/// Beside the sprout on the town's east side, facing north. No exit leads to
-/// it: only the debug scene selector, which exits to any entrance from 0 to
-/// 99, reaches it.
-enum { TOLBI_DEBUG_BY_SPROUT = 30 };
-
 /// Actors, numbered in the order of the actor placements from
 /// ACTOR_FIRST_PLACED. The townspeople the text gives no name are named by
 /// what their sprites show and what they say or, under Mind Read, think

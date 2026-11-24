@@ -84,17 +84,6 @@
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
 
-/// Arrivals no exit leads to, which only the debug scene selector reaches (it
-/// exits to any entrance from 0 to 99): before the stone building on the
-/// village's north side, at the foot of the stone steps up the hillside to
-/// the north-west, and by the door of the thatched cottage on the west side
-/// that VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST also arrives at.
-enum {
-  VALE_PROLOGUE_DEBUG_BY_STONE_BUILDING = 1,
-  VALE_PROLOGUE_DEBUG_BY_HILLSIDE_STEPS = 2,
-  VALE_PROLOGUE_DEBUG_BY_WEST_COTTAGE = 11
-};
-
 extern u8 gValePrologue_FlashColorModes[];
 extern s32 gValePrologue_ShovingManScript[];
 extern s32 gValePrologue_UnusedGaretRunsUpScript[];

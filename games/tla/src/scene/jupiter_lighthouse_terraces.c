@@ -1945,7 +1945,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/field_effect_move.c"
 
-#undef WORD_AT
 #undef PLACE
 extern const s32 *gFieldEffect_DurationScripts[];
 

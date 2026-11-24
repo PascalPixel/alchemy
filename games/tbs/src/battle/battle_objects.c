@@ -5,8 +5,16 @@
 
 #include "battle_internal.h"
 
-/// Runs each frame of a battle: advances the status icons and draws whichever
-/// side is nearer the camera in front, an airborne unit's shadow behind.
+/// The order a battle unit's sprite animations are drawn into its picture
+/// (SpriteAnimation.priority), the lowest first: the shadow under the body and
+/// its weapon, the status icon over them. Any order above 3 is not drawn.
+#define ANIMATION_PRIORITY_SHADOW 0
+#define ANIMATION_PRIORITY_BODY 1
+#define ANIMATION_PRIORITY_STATUS_ICON 3
+#define ANIMATION_PRIORITY_HIDDEN 9
+
+/// Runs each frame of a battle: advances the status icons, hides an airborne
+/// unit's shadow, and draws whichever side is nearer the camera in front.
 void BattleObject_UpdateSpritePriorities(void) {
   u16 unitIds[UNIT_MAX];
   // The party's, then the enemies': sprite priority 1 for the side in front,
@@ -35,11 +43,11 @@ void BattleObject_UpdateSpritePriorities(void) {
 
           if (sprite != 0) {
             struct SpriteAnimation *shadow;
-            s32 shadowPriority = 0;
+            s32 shadowPriority = ANIMATION_PRIORITY_SHADOW;
 
-            // Off the ground.
+            // Off the ground the shadow would rise with the picture.
             if (actor->y.fixed != 0)
-              shadowPriority = 9;
+              shadowPriority = ANIMATION_PRIORITY_HIDDEN;
             shadow = slot->shadowEntry;
             if (shadow->priority != shadowPriority) {
               shadow->priority = shadowPriority;
@@ -249,7 +257,7 @@ UNREAD_RESULT BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
           battleObject->animationEntry = 0;
         icon = battleObject->animationEntry;
         if (icon != 0) {
-          icon->priority = 3;
+          icon->priority = ANIMATION_PRIORITY_STATUS_ICON;
           SpriteAnimation_StartFar(icon, 0);
         }
       }
@@ -386,19 +394,19 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         actor->sprite = sprite;
         sprite->scale = Iwram_MulFX(sprite->scale, battleObject->scale);
         entry = sprite->entries[0];
-        entry->priority = 1;
+        entry->priority = ANIMATION_PRIORITY_BODY;
         entry->colorMode = battleObject->palette;
         if ((spriteId = battleObject->overlay) != 0) {
           entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(sprite,
                                                                    spriteId);
-          entry->priority = 1;
+          entry->priority = ANIMATION_PRIORITY_BODY;
         }
         if ((spriteId = battleObject->animation) != 0) {
           entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(sprite,
                                                                    spriteId);
           battleObject->animationEntry = entry;
           SpriteAnimation_StartFar(entry, 0);
-          entry->priority = 3;
+          entry->priority = ANIMATION_PRIORITY_STATUS_ICON;
         }
         if ((spriteId = battleObject->shadow) != 0) {
           if (sprite->width == 32)
@@ -406,7 +414,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
           entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(sprite,
                                                                    spriteId);
           battleObject->shadowEntry = entry;
-          entry->priority = 0;
+          entry->priority = ANIMATION_PRIORITY_SHADOW;
           sprite->flags = 0;
         }
       }

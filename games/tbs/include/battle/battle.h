@@ -41,6 +41,8 @@ struct Ring {
   s32 velocityY; ///< 1/1024 canvas pixels per frame
   s32 age;       ///< frames
 };
+/// Mind Read's caster's palette cycle, two frames a step
+/// (field_sequence_tables.c).
 extern const u8 gMindRead_CasterPaletteCycle[];
 /// The weights an enemy picks among its eight actions by, one table for each
 /// weighted action strategy (enum EnemyActionStrategy, battle_internal.h):
@@ -92,7 +94,8 @@ extern const FIXED gBattleCamera_CommandMatrix[];
 /// Where SparkState.sheet holds the spark's square picture for each frame of
 /// life left, 0 to 6: byte offsets, a byte a pixel.
 extern s32 gElementGlow_SparkPictures[];
-/// The spark's width and height in pixels by life left: 1 to 4, 4 from three.
+/// The spark's width and height in pixels by frames of life left: 2 to 4, 4
+/// from three; a spark with no life left is not drawn.
 extern u8 gElementGlow_SparkSizes[];
 /// Where SparkState.sheet holds the ring's four 32 by 32 frames: byte offsets,
 /// 1,024 apart.
@@ -143,14 +146,14 @@ extern const u32 gBlitterTemplate[];
 /// (Message_SetVoiceFromActor). The same values as
 /// gMessageSpeed_VoiceGaps, which the message reads, in a copy of its own.
 extern const u8 gMessageSpeed_VoiceRates[];
+/// The World Map cursor's angle for each +Control Pad direction, and its
+/// markers' blend cycle (field_sequence_tables.c).
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];
 /// The World Map's area markers, {tile << 16 | flag, area} for
 /// each area's actor id from 11, ended by -1; a zero row reserves an
 /// actor id with no marker.
 extern const s32 gMapScreen_AreaMarkers[];
-u32 __udivsi3(u32 numerator, u32 denominator);
-void _call_via_r0(u32 routine);
 /// The ARM decoder for a battle background's image, which
 /// BattleBackground_Load copies to RAM and runs as a BitDecoder.
 void BitDecoder_DecodeImage(void);
@@ -386,7 +389,7 @@ UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 void BattlePlayback_MarkMessage(void);
 UNREAD_RESULT BattleUnit_RemoveEnemy(s32 unitId);
 void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackState *runtime,
-                                    u32 operand);
+                                    u32 unused);
 #ifdef UBFIX
 void BattlePlayback_RunAll(void);
 #else
@@ -471,7 +474,7 @@ void ElementGlow_UploadStarField(void);
 #else
 u32 ElementGlow_UploadStarField(void);
 #endif
-s32 ElementGlow_InitializeStarField(s32 mode);
+s32 ElementGlow_InitializeStarField(s32 element);
 s32 ElementGlow_End(s32 unused);
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, FIXED scale,
                                 s32 count);

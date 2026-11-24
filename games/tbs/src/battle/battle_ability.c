@@ -20,11 +20,8 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 }
 
 // The target's checks, effect and messages
-/// A stat stage changes the stat by an eighth of it (Unit_Calculate), from half
-/// at the lowest to one and a half at the highest.
-#define STAT_STAGE_MIN -4
-#define STAT_STAGE_MAX 4
-/// Zephyr's Agility stage, beyond the usual highest: twice the Agility.
+/// Zephyr's Agility stage, beyond the usual highest (STAT_STAGE_MAX,
+/// battle_targeting.c): twice the Agility.
 #define AGILITY_STAGE_DOUBLED 8
 
 /// The turns a stat change or a status lasts; a status or a lowered stat may
@@ -191,6 +188,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
     chance += DJINN_BONUS_CHANCE;
     // Percent to a fraction of the 16-bit random range.
     chance *= FIXED_ONE / 100;
+    // The bonus is all or nothing: nothing reads the event's operand.
     if (chance > (Battle_RandomFar() & 0xffff))
       BattlePlayback_Push(PLAYBACK_DJINN_BONUS, 5);
   }
@@ -1156,8 +1154,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       PUSH_MESSAGE(MsgBuffsReset);
       break;
 
-    // The target now pays for the HP and PP it takes: see the evil spirit's
-    // share at the end of this function.
+    // "An evil spirit grips" the target: from now on its own blows may hurt
+    // it (the share at the end of this function).
     case ABILITY_EFFECT_HAUNT:
       PUSH_MESSAGE(MsgEvilSpirit);
       target->haunt = 1;
@@ -1243,8 +1241,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
   PartyStatus_DrawFar(gBattleState->partyStatus);
   if (target->hp != 0)
     BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, targetId);
-  // A haunted unit pays, one time in four, a quarter of what it took, at the
-  // end of its action.
+  // A haunted user takes, one time in four, a quarter of the HP or PP it took
+  // from the target (at least 1), at the end of its action.
   if (actor->haunt != 0 && (Battle_RandomFar() & 3) == 0 && damageDealt > 0) {
     s32 share;
 

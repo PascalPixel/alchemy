@@ -97,7 +97,7 @@ UNUSED void BattleEffect_ReadKeysForEnemyTarget(void) {
 void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   s32 kind;
 
-  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SHEET, 1550);
+  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SHEET, GLOW_SHEET_ROOM);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectState));
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   kind = args->kind;

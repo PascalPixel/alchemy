@@ -140,7 +140,11 @@ enum ImilFuchinFallsActorId {
   ACTOR_FEVER = ACTOR_FIRST_PLACED,
   /// The floating logs: three in the first room, Zephyr's room and the Arctic
   /// Blade's room, four in the Dragon's Eye room. The cell behaviours below say
-  /// which log is which in each room.
+  /// which log is which in each room. They are numbered by their placement
+  /// rows, not named for each room, because one routine serves the same row in
+  /// every room: the step triggers of all four run
+  /// FuchinFallsCave_SettleFirstLog
+  /// for their first log.
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_LOG,
   ACTOR_THIRD_LOG,
@@ -152,11 +156,6 @@ enum ImilFuchinFallsActorId {
   /// it at floor height and draws it hidden, as
   /// FuchinFallsCave_CreateHiddenActor draws the two in the Dragon's Eye room.
   ACTOR_INVISIBLE_DRAGON_ROOM_CRATE = ACTOR_FIRST_PLACED
-};
-
-enum {
-  /// Three times normal animation speed.
-  IMIL_SLIDE_ANIMATION_STEP = ANIM_STEP_NORMAL * 3
 };
 
 /// The cells the rooms' step and search triggers answer, by the cell behaviour
@@ -295,7 +294,7 @@ static void ImilFuchinFalls_PrepareRoom(void);
 static void ImilFuchinFalls_RebuildLogRoom(void);
 static void Scene_HopLeaderBy(s32 dx, s32 dz);
 static void ImilFuchinFalls_PlaceDragonsEye(void);
-static void Imil_SlideActorAcrossIce(void);
+static void Leader_SlideOnIce(void);
 
 /// Set while the floor's fade overlay follows the leader
 /// (FuchinFallsCave_FadeOverlayFollowsLeader).
@@ -1241,7 +1240,7 @@ static void Imil_LeaveFallsCave(void) {
 /// Falls Cave (cells (16, 14) to (16, 18)) and slides along it the way the pad
 /// points, until a wall stops him or he slides off the ice. Sliding south takes
 /// him right out of the doorway.
-static void Imil_MoveAcrossIce(void) { Imil_SlideActorAcrossIce(); }
+static void Imil_MoveAcrossIce(void) { Leader_SlideOnIce(); }
 
 /// Puts a log at a map cell, drawn under the leader's feet.
 static void FuchinFallsCave_PlaceLogAtCell(s32 id, s32 column, s32 row) {
@@ -1914,126 +1913,8 @@ static void FuchinFallsCave_EndRevealLighting(void) {
   }
 }
 
-/// While Isaac slides on Imil Falls Cave's ice, turns him a step at a time
-/// toward the way the pad points, and has him look around when it points
-/// nowhere.
-static void Imil_TurnOnIceTowardHeldDirection(struct Actor *actor) {
-  s32 timer;
-  s32 direction;
-  u16 facing;
-
-  timer = actor->timer;
-  if (timer != 0) {
-    actor->timer--;
-    return;
-  }
-  actor->steeringFlags = 0;
-  direction = gIce_KeyHeadings[DPAD_INDEX(gKeysHeld)];
-  if (direction == KEY_HEADING_NONE) {
-    Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
-    return;
-  }
-  facing = actor->facing;
-  direction = (s16)(direction - facing);
-  if (direction > FACING_STEP)
-    direction = FACING_STEP;
-  if (direction < -FACING_STEP)
-    direction = -FACING_STEP;
-  actor->facing = facing + direction;
-  Actor_SelectAnimation(actor, ANIM_WALK);
-  Actor_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
-}
-
-/// Slides Isaac along Imil Falls Cave's ice, a cell at a time the way the pad
-/// points, until a wall or higher ground stops him or he slides off the ice.
-static void Imil_SlideActorAcrossIce(void) {
-  struct Actor *actor;
-  struct FieldPosition probe;
-  s32 heading;
-  s32 startBehavior;
-  s32 nextBehavior;
-  FIXED z;
-  FIXED x;
-
-  actor = Actor_Lookup(gMainRoutineState.leaderActorId);
-
-  for (;;) {
-    heading = gImilFuchinFalls_SlideHeadings[DPAD_INDEX(gKeysHeld)];
-    if ((u16)heading == (u16)KEY_HEADING_NONE) {
-      return;
-    }
-
-    Event_Start();
-
-    probe.x = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-    probe.y = actor->y.fixed;
-    probe.z = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-    z = probe.z;
-    x = probe.x;
-    startBehavior = MapGrid_GetCellBehaviorAt(actor->layer, x, z);
-    FieldVector_AddPolarOffset(16, heading, &probe);
-
-    nextBehavior = MapGrid_GetCellBehaviorAt(actor->layer, probe.x, probe.z);
-    if (nextBehavior == CELL_BEHAVIOR_WALL ||
-        MapGrid_GetTerrainHeight(actor->layer, probe.x, probe.z) -
-                actor->y.fixed >
-            toFIXED(8)) {
-      actor->facing = heading;
-      goto tail;
-    }
-
-    probe.x = x;
-    probe.z = z;
-    actor->speedLimit = toFIXED(2);
-    actor->acceleration = toFIXED(1) / 10;
-    actor->timer = 0;
-    FieldActor_SetMoveTargetFX(actor, x, actor->y.fixed, z);
-
-    Actor_SelectAnimation(actor, ANIM_WALK);
-    Actor_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
-    Actor_WaitForMove(actor);
-    actor->update = Imil_TurnOnIceTowardHeldDirection;
-
-    for (;;) {
-      FieldVector_AddPolarOffset(16, heading, &probe);
-      nextBehavior = MapGrid_GetCellBehaviorAt(actor->layer, probe.x, probe.z);
-      if (nextBehavior == CELL_BEHAVIOR_WALL) {
-        break;
-      }
-      if (MapGrid_GetTerrainHeight(actor->layer, probe.x, probe.z) -
-              actor->y.fixed >
-          toFIXED(8)) {
-        break;
-      }
-      x = probe.x;
-      z = probe.z;
-      actor->speedLimit = toFIXED(2);
-      actor->acceleration = toFIXED(1) / 10;
-      FieldActor_SetMoveTargetFX(actor, probe.x, probe.y, probe.z);
-      Actor_WaitForMove(actor);
-      if (nextBehavior != startBehavior) {
-        goto blocked;
-      }
-    }
-
-    actor->speedLimit = toFIXED(2);
-    actor->acceleration = toFIXED(1);
-    FieldActor_SetMoveTargetFX(actor, x, actor->y.fixed, z);
-    Actor_WaitForMove(actor);
-    wait(2);
-  }
-
-blocked:
-  // Sliding off the ice ends the slide and gives back normal steering.
-  actor->update = NULL;
-  actor->steeringFlags |= ACTOR_FACES_MOTION;
-
-  actor->acceleration = toFIXED(1) / 4;
-
-tail:
-  wait(10);
-  Event_End();
-}
+#define ICE_SLIDE_HEADINGS gImilFuchinFalls_SlideHeadings
+#include "shared/leader_slide_on_ice.c"
 
 // clang-format off
 #include "shared/ice_key_headings.c"

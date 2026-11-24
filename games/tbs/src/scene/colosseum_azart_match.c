@@ -97,6 +97,23 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
+/// The match held here, as the lettering `The 1st Match` reads; the friends'
+/// turns open with `Lend a Hand!` instead (Colosso_ShowOpeningLettering).
+enum { LETTERING_LEND_A_HAND = 0, FINALS_MATCH = 1 };
+
+/// The stages, as their attendants number them: "This is stage 1 of the first
+/// finals".
+enum ColosseumAzartMatchStage {
+  STAGE_ROCK_CHALLENGE = 1,
+  STAGE_PIPEWORKS = 2,
+  STAGE_BROKEN_BRIDGE = 3,
+  STAGE_LUMBER_WATER_CROSSING = 4
+};
+
+// The shared Colosso code's state, in the order the scene's memory lays it
+// out; the shared files that use it say what each holds: the guide's pointer
+// (colosso_guide.c), the lettering (colosso_task.c) and where Isaac stood
+// before he was shown on a stage (colosso_guide.c).
 s16 gColosso_PointerStep BSS_DATA;
 s16 gColosso_LetteringScaleDuration BSS_DATA ALIGNED(4);
 s16 gColosso_PointerFlip BSS_DATA ALIGNED(4);
@@ -268,6 +285,46 @@ enum ColosseumAzartMatchCellBehavior {
   CELL_BEHAVIOR_SECOND_NUT_CHEST = 103
 };
 
+/// Cells kept off the course whose attributes (behaviour and height) the
+/// stages' changes copy.
+enum ColosseumAzartMatchSpareCell {
+  /// A square to hop to (CELL_BEHAVIOR_JUMP_FORWARD), stamped on a pillar's
+  /// top.
+  HOP_SQUARE_COLUMN = 14,
+  HOP_SQUARE_ROW = 13,
+  /// Three cells of low ground with no behaviour, laid over the Rock
+  /// Challenge's (23..25, 12) before the pillars' tops are stamped again.
+  LOW_GROUND_COLUMN = 27,
+  LOW_GROUND_ROW = 13,
+  /// The grown vine's cell, climbed (CELL_BEHAVIOR_CLIMB).
+  VINE_COLUMN = 47,
+  VINE_ROW = 24,
+  /// The Broken Bridge's row of six, (50..55, 12), with the bridge lying down
+  /// and standing up.
+  BRIDGE_DOWN_ROW = 25,
+  BRIDGE_UP_ROW = 24,
+  /// Three cells to ride the north-south log (CELL_BEHAVIOR_LOG_NORTH_SOUTH),
+  /// across, and three to ride the east-west one, down.
+  LOG_NORTH_SOUTH_COLUMN = 64,
+  LOG_NORTH_SOUTH_ROW = 24,
+  LOG_EAST_WEST_COLUMN = 63,
+  LOG_EAST_WEST_ROW = 25
+};
+
+/// Pictures kept on layer 1 (map rows 28 and down) at columns 92 to 100: the
+/// Broken Bridge's spans standing up, swinging and lying down, two cells
+/// square, drawn at the spans' places (50, 38) and (54, 38); and the five
+/// steps of water pouring into the Pipeworks' channel, one cell by three each,
+/// drawn at (34, 38).
+enum ColosseumAzartMatchPictureCell {
+  BRIDGE_PICTURE_COLUMN = 92,
+  BRIDGE_UP_PICTURE_ROW = 29,
+  BRIDGE_SWINGING_PICTURE_ROW = 31,
+  BRIDGE_DOWN_PICTURE_ROW = 33,
+  WATER_PICTURE_COLUMN = 96,
+  WATER_PICTURE_ROW = 29
+};
+
 /// The Broken Bridge's cycle, in frames, counted down: the bridge lies down,
 /// walkable, for the last 60 of each.
 #define BRIDGE_CYCLE_FRAMES 120
@@ -322,32 +379,40 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 static void ColosseumAzartMatch_UpdateBrokenBridge(void) {
   switch (gColosseumAzartMatch_BridgeTimer) {
   case 66:
-    MapGrid_CopyCellsLayered(92, 31, 2, 2, 50, 38);
-    MapGrid_CopyCellsLayered(92, 31, 2, 2, 54, 38);
+    MapGrid_CopyCellsLayered(BRIDGE_PICTURE_COLUMN, BRIDGE_SWINGING_PICTURE_ROW,
+                             2, 2, 50, 38);
+    MapGrid_CopyCellsLayered(BRIDGE_PICTURE_COLUMN, BRIDGE_SWINGING_PICTURE_ROW,
+                             2, 2, 54, 38);
     Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR,
                        BRIDGE_OPERATOR_ANIMATION_SWINGING);
     break;
   case 60:
     // The bridge lies down, and its cells can be walked on.
-    MapGrid_CopyCellsLayered(92, 33, 2, 2, 50, 38);
-    MapGrid_CopyCellsLayered(92, 33, 2, 2, 54, 38);
-    MapGrid_CopyCellAttributes(50, 25, 6, 1, 50, 12);
+    MapGrid_CopyCellsLayered(BRIDGE_PICTURE_COLUMN, BRIDGE_DOWN_PICTURE_ROW, 2,
+                             2, 50, 38);
+    MapGrid_CopyCellsLayered(BRIDGE_PICTURE_COLUMN, BRIDGE_DOWN_PICTURE_ROW, 2,
+                             2, 54, 38);
+    MapGrid_CopyCellAttributes(50, BRIDGE_DOWN_ROW, 6, 1, 50, 12);
     Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR,
                        BRIDGE_OPERATOR_ANIMATION_BRIDGE_DOWN);
     break;
   case 6:
-    MapGrid_CopyCellsLayered(92, 31, 2, 2, 50, 38);
-    MapGrid_CopyCellsLayered(92, 31, 2, 2, 54, 38);
+    MapGrid_CopyCellsLayered(BRIDGE_PICTURE_COLUMN, BRIDGE_SWINGING_PICTURE_ROW,
+                             2, 2, 50, 38);
+    MapGrid_CopyCellsLayered(BRIDGE_PICTURE_COLUMN, BRIDGE_SWINGING_PICTURE_ROW,
+                             2, 2, 54, 38);
     Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR,
                        BRIDGE_OPERATOR_ANIMATION_SWINGING);
     break;
   case 0:
     // The bridge stands up again, and its cells are a gap once more.
-    MapGrid_CopyCellsLayered(92, 29, 2, 2, 50, 38);
-    MapGrid_CopyCellsLayered(92, 29, 2, 2, 54, 38);
+    MapGrid_CopyCellsLayered(BRIDGE_PICTURE_COLUMN, BRIDGE_UP_PICTURE_ROW, 2, 2,
+                             50, 38);
+    MapGrid_CopyCellsLayered(BRIDGE_PICTURE_COLUMN, BRIDGE_UP_PICTURE_ROW, 2, 2,
+                             54, 38);
     Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR,
                        BRIDGE_OPERATOR_ANIMATION_BRIDGE_UP);
-    MapGrid_CopyCellAttributes(50, 24, 6, 1, 50, 12);
+    MapGrid_CopyCellAttributes(50, BRIDGE_UP_ROW, 6, 1, 50, 12);
     gColosseumAzartMatch_BridgeTimer = BRIDGE_CYCLE_FRAMES;
     break;
   }
@@ -392,7 +457,7 @@ static void ColosseumAzartMatch_UpdateRockCells(void) {
   struct Actor *actor;
   FIXED blocked;
 
-  MapGrid_CopyCellAttributes(27, 13, 3, 1, 23, 12);
+  MapGrid_CopyCellAttributes(LOW_GROUND_COLUMN, LOW_GROUND_ROW, 3, 1, 23, 12);
   actor = Actor_Get(ACTOR_ROCK_A);
   blocked = MapGrid_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
   if (actor->y.fixed == 0 && blocked == 0) {
@@ -402,7 +467,7 @@ static void ColosseumAzartMatch_UpdateRockCells(void) {
       s32 x = FIELD_CELL(actor->x.fixed);
       s32 y = FIELD_CELL(actor->z.fixed);
 
-      MapGrid_CopyCellAttributes(14, 13, 1, 1, x, y);
+      MapGrid_CopyCellAttributes(HOP_SQUARE_COLUMN, HOP_SQUARE_ROW, 1, 1, x, y);
     }
   }
   actor = Actor_Get(ACTOR_ROCK_B);
@@ -415,7 +480,7 @@ static void ColosseumAzartMatch_UpdateRockCells(void) {
     s32 x = FIELD_CELL(actor->x.fixed);
     s32 y = FIELD_CELL(actor->z.fixed);
 
-    MapGrid_CopyCellAttributes(14, 13, 1, 1, x, y);
+    MapGrid_CopyCellAttributes(HOP_SQUARE_COLUMN, HOP_SQUARE_ROW, 1, 1, x, y);
   }
 }
 
@@ -430,7 +495,7 @@ static void ColosseumAzartMatch_PushRock(void) {
 /// into a vine up the wall beside the bridge's scaffold (cell (47, 12)), a
 /// shortcut up to the bridge.
 static void ColosseumAzartMatch_GrowPlant(void) {
-  MapGrid_CopyCellAttributes(47, 24, 1, 1, 47, 12);
+  MapGrid_CopyCellAttributes(VINE_COLUMN, VINE_ROW, 1, 1, 47, 12);
   GameFlag_Set(FLAG_PLANT_GROWN);
 }
 
@@ -460,6 +525,7 @@ static void ColosseumAzartMatch_DousePipe(void) {
                              actor->z.fixed);
   Actor_WaitForMove(actor);
   Event_Wait(45);
+  // The way on, (41, 12), becomes a square to hop to, as (43, 12) is.
   MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
   Event_End();
 }
@@ -517,11 +583,14 @@ static void ColosseumAzartMatch_RollLogNorthSouth(void) {
   if (row <= LOG_NORTH_ROW) {
     offset = LOG_NORTH_SOUTH_FLOAT;
   }
+  // Its row goes back to water, three cells of the pool beside the log's
+  // north line, and its new row is the log's.
   MapGrid_CopyCellAttributes(67, 8, 3, 1, 64, row);
   ColosseumAzartMatch_MoveActorPairByOffset(ACTOR_LOG_NORTH_SOUTH, 0, offset);
   actor = Actor_Get(ACTOR_LOG_NORTH_SOUTH);
   row = FIELD_CELL(actor->z.fixed);
-  MapGrid_CopyCellAttributes(64, 24, 3, 1, 64, row);
+  MapGrid_CopyCellAttributes(LOG_NORTH_SOUTH_COLUMN, LOG_NORTH_SOUTH_ROW, 3, 1,
+                             64, row);
 }
 
 /// The east-west log carries the leader the way the pad is held.
@@ -556,23 +625,26 @@ static void ColosseumAzartMatch_RollLogEastWest(void) {
     }
     offset = -offset;
   }
+  // Its column goes back to water, three cells of the pool, and its new
+  // column is the log's.
   MapGrid_CopyCellAttributes(72, 9, 1, 3, column, 9);
   ColosseumAzartMatch_MoveActorPairByOffset(ACTOR_LOG_EAST_WEST, offset, 0);
   column = FIELD_CELL(Actor_Get(ACTOR_LOG_EAST_WEST)->x.fixed);
-  MapGrid_CopyCellAttributes(63, 25, 1, 3, column, 9);
+  MapGrid_CopyCellAttributes(LOG_EAST_WEST_COLUMN, LOG_EAST_WEST_ROW, 1, 3,
+                             column, 9);
 }
 
 /// Runs the five frames that show water entering the Pipeworks channel.
 static inline void ColosseumAzartMatch_AnimatePipeworksWater(void) {
-  MapGrid_CopyCells(96, 29, 1, 3, 34, 38);
+  MapGrid_CopyCells(WATER_PICTURE_COLUMN, WATER_PICTURE_ROW, 1, 3, 34, 38);
   Event_Wait(3);
-  MapGrid_CopyCells(97, 29, 1, 3, 34, 38);
+  MapGrid_CopyCells(WATER_PICTURE_COLUMN + 1, WATER_PICTURE_ROW, 1, 3, 34, 38);
   Event_Wait(3);
-  MapGrid_CopyCells(98, 29, 1, 3, 34, 38);
+  MapGrid_CopyCells(WATER_PICTURE_COLUMN + 2, WATER_PICTURE_ROW, 1, 3, 34, 38);
   Event_Wait(3);
-  MapGrid_CopyCells(99, 29, 1, 3, 34, 38);
+  MapGrid_CopyCells(WATER_PICTURE_COLUMN + 3, WATER_PICTURE_ROW, 1, 3, 34, 38);
   Event_Wait(3);
-  MapGrid_CopyCells(100, 29, 1, 3, 34, 38);
+  MapGrid_CopyCells(WATER_PICTURE_COLUMN + 4, WATER_PICTURE_ROW, 1, 3, 34, 38);
 }
 
 /// Walking west into the loose length of pipe in the Pipeworks pushes it three
@@ -616,6 +688,8 @@ static void ColosseumAzartMatch_PushPipeworksPipe(void) {
   Sound_Play(SE_HEAVY_STOP);
   Event_Wait(15);
   Event_End();
+  // The pipe's column of wall, (37, 7..10), moves to where it now lies, and
+  // the floor beside it, column 36, takes its place.
   MapGrid_CopyCellAttributes(37, 7, 1, 4, 34, 7);
   MapGrid_CopyCellAttributes(36, 7, 1, 4, 37, 7);
   none = Event_GetFlag(FLAG_PIPES_MOVED);
@@ -779,7 +853,8 @@ s32 Scene_Initialize(void) {
   if (actor->y.fixed == 0 && hit == 0) {
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     actor->motionFlags = hit;
-    MapGrid_CopyCellAttributes(14, 13, 1, 1, FIELD_CELL(actor->x.fixed),
+    MapGrid_CopyCellAttributes(HOP_SQUARE_COLUMN, HOP_SQUARE_ROW, 1, 1,
+                               FIELD_CELL(actor->x.fixed),
                                FIELD_CELL(actor->z.fixed));
   }
   x = FieldGameFlag_GetByte(FLAG_SECOND_ROCK_COLUMN);
@@ -790,7 +865,7 @@ s32 Scene_Initialize(void) {
   actor->x.fixed = FIELD_CELL_CENTER(x);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  MapGrid_CopyCellAttributes(14, 13, 1, 1, x, 12);
+  MapGrid_CopyCellAttributes(HOP_SQUARE_COLUMN, HOP_SQUARE_ROW, 1, 1, x, 12);
   Task_AddFrame(ColosseumAzartMatch_UpdateBrokenBridge, TASK_PASS_FRAME);
   actor = Actor_Get(ACTOR_GROWTH_PLANT);
   actor->layer = 1;
@@ -799,24 +874,27 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(actor, 0);
     actor->collisionFlags = 0;
     actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
-    MapGrid_CopyCellAttributes(47, 24, 1, 1, 47, 12);
+    MapGrid_CopyCellAttributes(VINE_COLUMN, VINE_ROW, 1, 1, 47, 12);
   }
   actor = Actor_Get(ACTOR_LOG_NORTH_SOUTH);
   col = FIELD_CELL(actor->z.fixed);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  MapGrid_CopyCellAttributes(64, 24, 3, 1, 64, col);
+  MapGrid_CopyCellAttributes(LOG_NORTH_SOUTH_COLUMN, LOG_NORTH_SOUTH_ROW, 3, 1,
+                             64, col);
   actor = Actor_Get(ACTOR_LOG_EAST_WEST);
   col = FIELD_CELL(actor->x.fixed);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  MapGrid_CopyCellAttributes(63, 25, 1, 3, col, 9);
+  MapGrid_CopyCellAttributes(LOG_EAST_WEST_COLUMN, LOG_EAST_WEST_ROW, 1, 3, col,
+                             9);
   // With the Pipeworks' loose pipe pushed under the spout, water pours down
   // into the channel.
   if (GameFlag_Get(FLAG_PIPEWORKS_PIPE_PUSHED)) {
     MapGrid_CopyCellAttributes(37, 7, 1, 4, 34, 7);
     MapGrid_CopyCellAttributes(36, 7, 1, 4, 37, 7);
-    MapGrid_CopyCells(100, 29, 1, 3, 34, 38);
+    MapGrid_CopyCells(WATER_PICTURE_COLUMN + 4, WATER_PICTURE_ROW, 1, 3, 34,
+                      38); // the water's last step
   }
   actor = Actor_Get(ACTOR_PIPE_WEST);
   if (GameFlag_Get(FLAG_PIPES_MOVED)) {
@@ -836,6 +914,8 @@ s32 Scene_Initialize(void) {
   case COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 4, toFIXED(1304),
                            toFIXED(192), ACTOR_PRIZE_A, ACTOR_PRIZE_B);
+    // The doorway Isaac sets out from, (19, 2..3), takes the two cells kept at
+    // (127, 0..1) for the race.
     MapGrid_CopyCellsLayered(127, 0, 1, 2, 19, 2);
     Actor_ReleaseById(ACTOR_GUIDE);
     Actor_ReleaseById(ACTOR_ROCK_ATTENDANT);
@@ -849,7 +929,7 @@ s32 Scene_Initialize(void) {
       ColosseumAzartMatch_SetLayerOnVineCell(ACTOR_GARET);
       ColosseumAzartMatch_SetLayerOnVineCell(ACTOR_IVAN);
       ColosseumAzartMatch_SetLayerOnVineCell(ACTOR_MIA);
-      Colosso_ShowOpeningLettering(1);
+      Colosso_ShowOpeningLettering(FINALS_MATCH);
     }
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
@@ -863,7 +943,7 @@ s32 Scene_Initialize(void) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Colosso_PlaceFriendsAtCheeringSpots();
       Colosso_ControlCharacterAlone(GARET);
-      Colosso_ShowOpeningLettering(0);
+      Colosso_ShowOpeningLettering(LETTERING_LEND_A_HAND);
     }
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM:
@@ -1054,7 +1134,7 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
     Colosso_AskDoneCheering(actorId);
   } else {
     Event_Start();
-    path = Colosso_GreetAtStage(actorId, 1);
+    path = Colosso_GreetAtStage(actorId, STAGE_ROCK_CHALLENGE);
     if (path == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoCallRockChallenge);
       FieldCamera_SetSpeed(3);
@@ -1098,13 +1178,13 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Actor_SetPosition(ACTOR_ROCK_A, 312, 168);
-      Colosso_RepeatStageNumber(actorId, 1);
+      Colosso_RepeatStageNumber(actorId, STAGE_ROCK_CHALLENGE);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoObjectiveStageClear);
       // "The objective in this stage is to clear a path as quickly as..."
       Event_ShowMessage(actorId, 0);
     }
-    Colosso_OfferCheeringSpot(path, actorId, 1);
+    Colosso_OfferCheeringSpot(path, actorId, STAGE_ROCK_CHALLENGE);
     Event_End();
   }
 }
@@ -1128,7 +1208,7 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
     Colosso_AskDoneCheering(attendant);
   } else {
     Event_Start();
-    path = Colosso_GreetAtStage(attendant, 2);
+    path = Colosso_GreetAtStage(attendant, STAGE_PIPEWORKS);
     if (path == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoAreaCalledPipeworks);
       FieldCamera_SetSpeed(3);
@@ -1172,13 +1252,13 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
       Colosso_HidePointer();
       wait(2);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
-      Colosso_RepeatStageNumber(attendant, 2);
+      Colosso_RepeatStageNumber(attendant, STAGE_PIPEWORKS);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoObjectiveMakeGood);
       // "The objective here is to make good use of the scales."
       Event_ShowMessage(attendant, 0);
     }
-    Colosso_OfferCheeringSpot(path, attendant, 2);
+    Colosso_OfferCheeringSpot(path, attendant, STAGE_PIPEWORKS);
     Event_End();
   }
 }
@@ -1191,7 +1271,7 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
     Colosso_AskDoneCheering(actorId);
   } else {
     Event_Start();
-    path = Colosso_GreetAtStage(actorId, 3);
+    path = Colosso_GreetAtStage(actorId, STAGE_BROKEN_BRIDGE);
     if (path == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoTheyCallBrokenBridge);
       ColosseumAzartMatch_ResetBrokenBridge();
@@ -1215,13 +1295,13 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
       Event_ShowMessage(actorId, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
-      Colosso_RepeatStageNumber(actorId, 3);
+      Colosso_RepeatStageNumber(actorId, STAGE_BROKEN_BRIDGE);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoOperatorBridgeWillAlsoCheer);
       // "The operator of the bridge will also cheer for you in this..."
       Event_ShowMessage(actorId, 0);
     }
-    Colosso_OfferCheeringSpot(path, actorId, 3);
+    Colosso_OfferCheeringSpot(path, actorId, STAGE_BROKEN_BRIDGE);
     Event_End();
   }
 }
@@ -1236,7 +1316,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     return;
   }
   Event_Start();
-  path = Colosso_GreetAtStage(actorId, 4);
+  path = Colosso_GreetAtStage(actorId, STAGE_LUMBER_WATER_CROSSING);
   if (path == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoPlaceNormallyCalledLumberWater);
     FieldCamera_SetSpeed(3);
@@ -1275,13 +1355,13 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
     Actor_SetPosition(ACTOR_LOG_EAST_WEST, 1016, 168);
-    Colosso_RepeatStageNumber(actorId, 4);
+    Colosso_RepeatStageNumber(actorId, STAGE_LUMBER_WATER_CROSSING);
   } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
     Event_SetMessageId(MsgColossoLogsKeyClearingStage);
     // "The logs are the key to clearing this stage."
     Event_ShowMessage(actorId, 0);
   }
-  Colosso_OfferCheeringSpot(path, actorId, 4);
+  Colosso_OfferCheeringSpot(path, actorId, STAGE_LUMBER_WATER_CROSSING);
   Event_End();
 }
 

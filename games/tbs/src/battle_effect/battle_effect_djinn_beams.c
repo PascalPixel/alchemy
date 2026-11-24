@@ -21,6 +21,13 @@
 #define DJINN_BEAMS_MOTE_HEIGHT 24
 #define DJINN_BEAMS_DJINNI_PICTURE 26048
 
+/// The column of light is drawn a row at a time from EarthWallSheet's second
+/// picture, one row of six pixels brightening from the edge inward (the first,
+/// before it, is five), and mirrored for its right half. As the column narrows
+/// it takes fewer of them, so it dims too.
+#define DJINN_BEAMS_COLUMN_RAMP 5
+#define DJINN_BEAMS_COLUMN_HALF_WIDTH 6
+
 /// Motes drift down over each target and a column of light falls on it, in the
 /// Venus Djinni's colours; with a prelude, a Venus Djinni appears first.
 ///
@@ -108,6 +115,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
       EFFECT_SHOW_DAMAGE(0);
 
     // The Djinni sways, then rises away.
+    /* FAKEMATCH(temporary): k, the target and row counter below, holding
+     * state->args->prelude; as state->args->prelude at its two uses. */
     k = state->args->prelude;
     if (k == 1) {
       s32 angle = frame * (TRIG_TURN / 32);
@@ -193,10 +202,10 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
         screenPosition.x += offsetX;
         if (frame < start + 104) {
           s32 pic = frame / 4;
-          s32 width = 6;
+          s32 width = DJINN_BEAMS_COLUMN_HALF_WIDTH;
 
           if (frame > start + 88)
-            width = 6 - (frame - start - 88) / 3;
+            width = DJINN_BEAMS_COLUMN_HALF_WIDTH - (frame - start - 88) / 3;
           if (pic > 2)
             pic = (pic & 1) + 1;
           if (frame < start + 100) {
@@ -210,9 +219,10 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
                     gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
           }
           for (k = 0; k != screenPosition.y; k++) {
-            draw[0](canvas, state->sheet + 5, screenPosition.x - width, k,
-                    width, 1);
-            draw[1](canvas, state->sheet + 5, screenPosition.x, k, width, 1);
+            draw[0](canvas, state->sheet + DJINN_BEAMS_COLUMN_RAMP,
+                    screenPosition.x - width, k, width, 1);
+            draw[1](canvas, state->sheet + DJINN_BEAMS_COLUMN_RAMP,
+                    screenPosition.x, k, width, 1);
           }
         }
       }
@@ -235,3 +245,5 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
 #undef DJINN_BEAMS_MOTE_SWAY
 #undef DJINN_BEAMS_DJINNI_SWAY_X
 #undef DJINN_BEAMS_DJINNI_SWAY_Y
+#undef DJINN_BEAMS_COLUMN_RAMP
+#undef DJINN_BEAMS_COLUMN_HALF_WIDTH

@@ -110,8 +110,9 @@ enum {
   /// The invisible actor on Laurel's spot that answers for her when she is
   /// talked to or her mind is read.
   ACTOR_LAUREL_STAND_IN,
-  /// Tret's wrathful side, which speaks with a portrait, drawn in SPRITE_TRET
-  /// with child value 15 over his face.
+  /// Tret's wrathful side, the voice that speaks in a portrait window on the
+  /// right: SPRITE_TRET on Tret's spot, 28 pixels up, kept hidden and never
+  /// targeted (Scene_Initialize).
   ACTOR_TRETS_WRATHFUL_SIDE
 };
 
@@ -251,11 +252,9 @@ static void KolimaForestTree_TalkToTret(void) {
       Event_ShowMessage(ACTOR_TRET, 0);
       KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_CLOSE_EYES);
       waterHolder = PartyInventory_FindMember(ITEM_HERMES_WATER);
+      // Someone carries Hermes' Water: the field menu opens, for it.
       if (waterHolder != -1) {
-        u16 *menuRequest = &gFieldState->fieldMenu;
-        u16 open = 1;
-
-        *menuRequest = open;
+        gFieldState->fieldMenu = 1;
       }
     } else {
       Event_SetMessageId(MsgKolimaSilence);

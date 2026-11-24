@@ -78,6 +78,15 @@ extern struct ActorPlacement gHammetPalaceActorPlacements[];
 extern struct Trigger gHammetPalaceTriggersOther[];
 extern struct Trigger gHammetPalaceTriggers[];
 
+/// The tileset animations that swing the palace's doors open as the leader
+/// walks through one (HammetPalace_LeaveThroughDoor runs both, whichever door
+/// it is): the doors two cells across, as Layana's room's, and the arched doors
+/// one cell across, as the west wing's.
+enum HammetPalaceDoorAnimation {
+  HAMMET_PALACE_WIDE_DOORS_ANIMATION = 1,
+  HAMMET_PALACE_NARROW_DOORS_ANIMATION = 2
+};
+
 /// The palace's actors, numbered in the order of
 /// gHammetPalaceActorPlacements from ACTOR_FIRST_PLACED.
 ///
@@ -237,8 +246,8 @@ static void HammetPalace_LeaveThroughDoor(void) {
   } else {
     Sound_Play(SE_DOOR_OPEN);
   }
-  TilesetAnim_Resume(1);
-  TilesetAnim_Resume(2);
+  TilesetAnim_Resume(HAMMET_PALACE_WIDE_DOORS_ANIMATION);
+  TilesetAnim_Resume(HAMMET_PALACE_NARROW_DOORS_ANIMATION);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -249,8 +258,8 @@ static void HammetPalace_LeaveThroughDoor(void) {
   }
   Event_Wait(16);
   Import_EventSetExitRequest(state->stepTrigger);
-  TilesetAnim_Pause(1);
-  TilesetAnim_Pause(2);
+  TilesetAnim_Pause(HAMMET_PALACE_WIDE_DOORS_ANIMATION);
+  TilesetAnim_Pause(HAMMET_PALACE_NARROW_DOORS_ANIMATION);
   Event_End();
 }
 
@@ -271,8 +280,8 @@ static void HammetPalace_SetUpEntrance(void) {
   struct Actor *actor;
   s32 facing;
 
-  TilesetAnim_Pause(1);
-  TilesetAnim_Pause(2);
+  TilesetAnim_Pause(HAMMET_PALACE_WIDE_DOORS_ANIMATION);
+  TilesetAnim_Pause(HAMMET_PALACE_NARROW_DOORS_ANIMATION);
 
   switch (gMainRoutineState.entrance) {
   case HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM:

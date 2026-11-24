@@ -10,17 +10,17 @@
 /// drawn twice, the second mirrored beside it.
 #define LIME_COLUMN_WIDTH 14
 #define LIME_COLUMN_HEIGHT 80
-/// The blade's foot: the canvas row it stands on, which the clouds billow from.
+/// The blade's foot: the canvas row it stands on, which the puffs billow from.
 #define UNDEAD_SWORD_FOOT_Y 112
-/// The clouds' pictures, after the half blade.
+/// The puffs' pictures, after the half blade.
 #define UNDEAD_SWORD_PUFF_SHEET PICTURE_BYTES(LIME_COLUMN)
 #define UNDEAD_SWORD_PUFFS 16
-/// A cloud's seven pictures, three frames each, the last held until it goes.
+/// A puff's seven pictures, three frames each, the last held until it goes.
 #define UNDEAD_SWORD_PUFF_PICTURES 7
 #define UNDEAD_SWORD_PUFF_FRAMES 29
 
 /// A blade of lime light thrusts up out of the ground under the first target
-/// and sinks again, amid clouds of lime smoke that billow up round it.
+/// and sinks again, amid puffs of lime smoke that billow up round it.
 ///
 /// Abilities: Undead Sword.
 void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
@@ -64,7 +64,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   Projection_Unit(state->args->targets[0], &screenPosition);
   REG_BG2X = (CANVAS_SIZE / 2 - screenPosition.x) << 8;
 
-  // The clouds burst out from the blade's foot and drift upward.
+  // The puffs burst out from the blade's foot and drift upward.
   for (i = 0, puff = state->particles; i != UNDEAD_SWORD_PUFFS; i++) {
     speed = (Random16() & 0x1ff) + 128;
     angle = Random16() & TRIG_ANGLE_MASK;
@@ -120,7 +120,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
       }
     }
 
-    // The clouds billow out two a frame from frame 8.
+    // The puffs billow out two a frame from frame 8.
     BattleEffect_BuildCanvasBlitters(state->args->side, draw);
     for (i = 0, particle = state->particles; i != UNDEAD_SWORD_PUFFS; i++) {
       if (frame >= i / 2 + 8 && particle->variant < UNDEAD_SWORD_PUFF_FRAMES) {

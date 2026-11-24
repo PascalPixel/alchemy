@@ -50,9 +50,6 @@ extern s16 gFileScreen_CodeProgress;
 extern s16 gFileScreen_ExtraCodeProgress;
 extern s16 gFileScreen_CodeHeld;
 extern s32 gFileScreen_ExtraCodeHeld;
-extern u32 gFileScreen_PasswordMembers[];
-extern u16 gFileScreen_PasswordFlags[];
-extern u16 gFileScreen_PasswordKeyItems[];
 extern u16 gFileScreen_PasswordStackItems[];
 
 /// The password buffer: a Gold password is 260 symbols
@@ -163,6 +160,16 @@ extern u16 gFileScreen_PasswordStackItems[];
 #define PASSWORD_QUANTITIES_BYTE 107
 #define PASSWORD_COINS_BYTE 165
 #define PASSWORD_STACK_ITEMS 23
+/// The party members a password packs (gFileScreen_PasswordMembers), its
+/// story flags (gFileScreen_PasswordFlags) and Psynergy items
+/// (gFileScreen_PasswordKeyItems).
+#define PASSWORD_MEMBERS 4
+#define PASSWORD_FLAGS 6
+#define PASSWORD_KEY_ITEMS 8
+
+extern u32 gFileScreen_PasswordMembers[PASSWORD_MEMBERS];
+extern u16 gFileScreen_PasswordFlags[PASSWORD_FLAGS];
+extern u16 gFileScreen_PasswordKeyItems[PASSWORD_KEY_ITEMS];
 
 /// A party member's base stats in the password, two words of fields: HP (11
 /// bits), PP (11) and Attack (10); then Defense (10), Agility (10) and Luck (8)
@@ -447,6 +454,8 @@ s32 Scene_Initialize(void) {
   struct Window *linkWindow;
   s32 passwordColumn;
   s32 tileValue;
+  // index, limit and result serve each step in turn: the yes/no answer, the
+  // name being entered, the link's greeting, the page to redraw.
   s32 limit;
   s32 index;
   s32 result;
@@ -1043,7 +1052,8 @@ struct PasswordMember {
   u8 regenToActions[184];         ///< Unit's baseHpRegen to psynergy
   u16 inventory[INVENTORY_SLOTS]; ///< an enum InventoryEncoding each
   u8 padding[2];                  ///< Unit's paddingBeforeDjinn
-  u32 djinnHeld[4]; ///< the Djinn held, a bit per Djinni, by element
+  u32 djinnHeld[ELEMENT_COUNT];   ///< the Djinn held, a bit per Djinni, by
+                                  ///< element
 };
 
 /// Packs the four heroes' data for a password of level mode (enum
@@ -1056,7 +1066,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   u32 djinnBits;
   u8 keyItemBits;
   u8 flagBits;
-  u32 packedStats[8];
+  u32 packedStats[PASSWORD_MEMBERS * 2];
   s32 i;
   s32 outputIndex;
   s32 bitOffset;
@@ -1084,17 +1094,17 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   djinnBits = 0;
   keyItemBits = 0;
   flagBits = 0;
-  for (i = 0; i != 8; i++) {
+  for (i = 0; i != PASSWORD_MEMBERS * 2; i++) {
     packedStats[i] = 0;
   }
 
-  for (i = 0; i != 6; i++) {
+  for (i = 0; i != PASSWORD_FLAGS; i++) {
     if (GameFlag_Get(gFileScreen_PasswordFlags[i])) {
       flagBits |= 1 << i;
     }
   }
 
-  for (i = 0; i != 4; i++) {
+  for (i = 0; i != PASSWORD_MEMBERS; i++) {
     struct PasswordMember *member =
         (struct PasswordMember *)Unit_Get(gFileScreen_PasswordMembers[i]);
     struct PasswordStats *stats = &member->stats;
@@ -1137,7 +1147,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
       member->level = 1;
     }
     levelBits |= member->level << (i * 7);
-    for (j = 0; j != 4; j++) {
+    for (j = 0; j != ELEMENT_COUNT; j++) {
       djinnBits += member->djinnHeld[j] << (j * 7);
     }
     // Which of the eight Psynergy items (gFileScreen_PasswordKeyItems) any
@@ -1145,7 +1155,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     for (j = 0; j != INVENTORY_SLOTS; j++) {
       u16 item = member->inventory[j] & INVENTORY_ITEM_ID_MASK;
 
-      for (k = 0; k != 8; k++) {
+      for (k = 0; k != PASSWORD_KEY_ITEMS; k++) {
         if (item == gFileScreen_PasswordKeyItems[k]) {
           keyItemBits |= 1 << k;
         }
@@ -1157,7 +1167,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   if (mode == PASSWORD_LEVEL_GOLD) {
     outputIndex = PASSWORD_ITEMS_BYTE;
     bitOffset = 0;
-    for (i = 0; i != 4; i++) {
+    for (i = 0; i != PASSWORD_MEMBERS; i++) {
       struct PasswordMember *member =
           (struct PasswordMember *)Unit_Get(gFileScreen_PasswordMembers[i]);
 
@@ -1180,7 +1190,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 
     outputIndex = PASSWORD_QUANTITIES_BYTE;
     bitOffset = -1;
-    for (i = 0; i != 4; i++) {
+    for (i = 0; i != PASSWORD_MEMBERS; i++) {
       struct PasswordMember *member =
           (struct PasswordMember *)Unit_Get(gFileScreen_PasswordMembers[i]);
       s32 m;
@@ -1222,7 +1232,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   if (mode != PASSWORD_LEVEL_BRONZE) {
     s32 statsOffset = PASSWORD_KEY_ITEMS_BYTE + (mode != PASSWORD_LEVEL_GOLD);
 
-    for (i = 0; i != 2; i++) {
+    for (i = 0; i != PASSWORD_MEMBERS / 2; i++) {
       out[statsOffset] = packedStats[i * 4] >> 24;
       out[statsOffset + 1] = packedStats[i * 4] >> 16;
       out[statsOffset + 2] = packedStats[i * 4] >> 8;
@@ -1372,12 +1382,12 @@ s32 gFileScreen_ExtraCodeHeld = 0;
 
 // clang-format off
 /// The party members the password packs: Isaac, Garet, Ivan and Mia.
-u32 gFileScreen_PasswordMembers[] = {
+u32 gFileScreen_PasswordMembers[PASSWORD_MEMBERS] = {
     ISAAC, GARET, IVAN, MIA,
 };
 
 /// The six story flags of the password's PASSWORD_FLAGS_BYTE, bits 0 to 5.
-ALIGNED(4) u16 gFileScreen_PasswordFlags[] = {
+ALIGNED(4) u16 gFileScreen_PasswordFlags[PASSWORD_FLAGS] = {
     FLAG_DODONPA_LOCKED_UP, FLAG_WON_COLOSSO,
     FLAG_HSU_RESCUED_WITHOUT_PARTY, FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
     FLAG_VISITED_SICK_DORA, FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES,
@@ -1385,7 +1395,7 @@ ALIGNED(4) u16 gFileScreen_PasswordFlags[] = {
 
 /// The eight Psynergy items, ITEM_ORB_OF_FORCE to ITEM_CATCH_BEADS, which
 /// Silver and Bronze record in PASSWORD_KEY_ITEMS_BYTE.
-ALIGNED(4) u16 gFileScreen_PasswordKeyItems[] = {
+ALIGNED(4) u16 gFileScreen_PasswordKeyItems[PASSWORD_KEY_ITEMS] = {
     ITEM_ORB_OF_FORCE, ITEM_DOUSE_DROP,
     ITEM_FROST_JEWEL, ITEM_LIFTING_GEM,
     ITEM_HALT_GEM, ITEM_CLOAK_BALL,

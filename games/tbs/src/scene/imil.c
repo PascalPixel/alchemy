@@ -392,8 +392,10 @@ const struct Trigger *Scene_GetTriggers(void) {
 static void Imil_TalkToFreezingYoungMan(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
+    // "Even if Mia heals us, this epidemic will just come back next year."
     Event_SetMessageId(MSGNO(MsgImilEvenIfMiaHealsUs));
   } else {
+    // "Brrrrr... Ah-choo!!! I'm freezing! Is Mia here yet?"
     Event_SetMessageId(MSGNO(MsgImilBrrrrrChooImFreezingMia));
   }
   Event_ShowMessage(ACTOR_FREEZING_YOUNG_MAN, 0);
@@ -406,8 +408,10 @@ static void Imil_TalkToFreezingYoungMan(void) {
 static void Imil_ReadFreezingYoungMansMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
+    // "I can't understand why any one would exercise in this cold..."
     Event_SetMessageId(MSGNO(MsgImilCantUnderstandWhyAnyOne));
   } else {
+    // "Mia should be here by now! Where is she?"
     Event_SetMessageId(MSGNO(MsgImilMiaShouldHereByNow));
   }
   Event_ShowMessage(ACTOR_FREEZING_YOUNG_MAN, 0);
@@ -420,6 +424,9 @@ static void Imil_ReadFreezingYoungMansMind(void) {
 static void Imil_GreetVisitor(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_GREETING_BOY, ACTOR_PARTY_LEADER, 10);
+  // "Hi! Are you new in Imil?"
+  // Yes: "I should warn you, there's a bad cold going around..."
+  // No: "You don't look familiar. Are you sure you're not...fibbing?"
   Event_SetMessageId(MSGNO(MsgImilHiNewInImil));
   Event_AskYesNo(ACTOR_GREETING_BOY, 0);
   Event_End();
@@ -435,6 +442,10 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
   Event_Start();
 
   if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+    // "One, two, three, four...", then "I was training hard so that I
+    // could withstand any disease... And now the lighthouse fountain is back?"
+    // Yes: "What did I train so hard for all this time?"
+    // No: "No, it can't be! Everyone is in perfect health!"
     Event_SetMessageId(MSGNO(MsgImilCountingAfterDeparture));
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_SetAttachedEffect(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
@@ -449,6 +460,8 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Actor_SetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                        STRONGMAN_ANIMATION_SQUATS);
   } else {
+    // "One, two, three, four!", then "I tend to stay indoors a lot when the
+    // weather turns cold..."
     Event_SetMessageId(MSGNO(MsgImilOneTwoThreeFour));
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_SetAttachedEffect(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
@@ -537,6 +550,9 @@ static void Imil_TalkToOldMan(void) {
 /// disease and tells them to begone.
 static void Imil_AskAboutWeapons(void) {
   Event_Start();
+  // "Do you want weapons?"
+  // Yes: "I can't sell weapons until I am cured..."
+  // No: "It's the travelers from down south who brought disease to our..."
   Event_SetMessageId(MSGNO(MsgImilDoWantWeapons));
   Event_AskYesNo(ACTOR_WEAPON_MERCHANT, 0);
   Event_End();
@@ -546,6 +562,9 @@ static void Imil_AskAboutWeapons(void) {
 /// is beaten: he asks whether the party wants to see the menu.
 static void Imil_AskAboutRestaurantMenu(void) {
   Event_Start();
+  // "Do you want to see the restaurant menu?"
+  // Yes: "Here you go. We're a small town, mind you, so the selection..."
+  // No: "Tonight's dinner is stew and rye bread..."
   Event_SetMessageId(MSGNO(MsgImilDoWantSeeRestaurantMenu));
   Event_AskYesNo(ACTOR_RESTAURANT_OWNER, 0);
   Event_End();
@@ -558,6 +577,7 @@ static void Imil_AskAboutRestaurantMenu(void) {
 static void Imil_TalkToMegan(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
+    // "Everyone counts on Mia. That's why she is always so busy."
     Event_SetMessageId(MSGNO(MsgImilEveryoneCountsOnMiaThats));
     Event_ShowMessage(ACTOR_MEGAN, 0);
   } else {
@@ -578,8 +598,10 @@ static void Imil_TalkToMegan(void) {
 static void Imil_ReadMegansMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
+    // "We have to do whatever we can to help Mia. She's way too busy."
     Event_SetMessageId(MSGNO(MsgImilWeHaveDoWhateverWe));
   } else {
+    // "Mia was saying she has a bad feeling about something..."
     Event_SetMessageId(MSGNO(MsgImilMiaWasSayingSheHas));
   }
   Event_ShowMessage(ACTOR_MEGAN, 0);
@@ -591,6 +613,7 @@ static void Imil_ReadMegansMind(void) {
 /// northeast.
 static void Imil_TalkToOldWoman(void) {
   Event_Start();
+  // "What happened in the lighthouse to the northeast?"
   Event_SetMessageId(MSGNO(MsgImilHappenedInLighthouseNortheast));
   Event_ShowMessage(ACTOR_OLD_WOMAN, 0);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTH_SOUTHEAST, 10);
@@ -603,10 +626,13 @@ static void Imil_TalkToOldWoman(void) {
 static void Imil_ReadOldWomanMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_IMIL_MET_MIA) != 0) {
+    // "Mia's clan once lived here and guarded the lighthouse to the east..."
     Event_SetMessageId(MSGNO(MsgImilMiaClanOnceLivedHere));
   } else if (GameFlag_Get(FLAG_IMIL_MIA_SENT_FOR) != 0) {
+    // "He's always exaggerating things, but I don't think he's..."
     Event_SetMessageId(MSGNO(MsgImilHesAlwaysExaggeratingThingsBut));
   } else {
+    // "Mia is running around town, caring for the sick..."
     Event_SetMessageId(MSGNO(MsgImilMiaRunningAroundTownCaring));
   }
   Event_ShowMessage(ACTOR_OLD_WOMAN, 0);
@@ -621,6 +647,7 @@ static void Imil_TalkToOldManInBed(void) { Imil_TalkToOldMan(); }
 /// old man thinks Mia is a good girl.
 static void Imil_ReadOldManInBedMind(void) {
   Event_Start();
+  // "Mia is a good girl. I wish I had a daughter like her..."
   Event_SetMessageId(MSGNO(MsgImilMiaIsAGoodGirlI));
   Event_ShowMessage(ACTOR_OLD_MANS_BED, 0);
   Event_End();
@@ -632,8 +659,10 @@ static void Imil_ReadOldManInBedMind(void) {
 static void Imil_ReadJustinsMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
+    // "I feel like a grown-up when I am serving as a healer..."
     Event_SetMessageId(MSGNO(MsgImilFeelLikeGrownUpWhen));
   } else {
+    // "These folk are okay! They don't seem like bad people."
     Event_SetMessageId(MSGNO(MsgImilTheseFolkOkayTheyDont));
   }
   Event_ShowMessage(ACTOR_JUSTIN, 0);
@@ -819,9 +848,13 @@ static void Imil_TalkToInnkeeper(void) {
     Event_Start();
     Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+      // "It's almost time for you to leave, isn't it?"
+      // Yes: "Just like the legend said, the fountain began flowing when..."
+      // No: "Oh! I'll cook a feast for you tonight!"
       Event_SetMessageId(MSGNO(MsgImilItsAlmostTimeForLeave));
       Event_AskYesNo(ACTOR_INNKEEPER, 0);
     } else {
+      // "Why have two groups of travelers come through such heavy snows..."
       Event_SetMessageId(MSGNO(MsgImilWhyHaveTwoGroupsTravelers));
       Event_ShowMessage(ACTOR_INNKEEPER, 0);
     }
@@ -841,6 +874,7 @@ static void Imil_TalkToJustin(void) {
   if (IMIL_FACES_COUNTER_HALFWORD(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Event_Start();
     if (Event_GetFlag(FLAG_IMIL_JUSTIN_OFFERED_HEALING) == 0) {
+      // "I may only be a student, but I can act as your healer."
       Event_SetMessageId(MSGNO(MsgImilMayOnlyStudentButCan));
       Event_ShowMessage(ACTOR_JUSTIN, 0);
       Import_GameFlagSet(FLAG_IMIL_JUSTIN_OFFERED_HEALING);
@@ -850,12 +884,17 @@ static void Imil_TalkToJustin(void) {
   } else {
     Event_Start();
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+      // "Mia's going on a journey with you, right?..."
       Event_SetMessageId(MSGNO(MsgImilMiaGoingOnJourneyWith));
       Event_ShowMessage(ACTOR_JUSTIN, 0);
     } else if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
+      // "I am the healer while Mia is out, so tell me if you need..."
       Event_SetMessageId(MSGNO(MsgImilAmHealerWhileMiaOut));
       Event_ShowMessage(ACTOR_JUSTIN, 0);
     } else {
+      // "Are you looking for Mia?"
+      // Yes: "Mia just left. An epidemic is sweeping the village..."
+      // No: "Mia is a very kind healer. I am just her apprentice..."
       Event_SetMessageId(MSGNO(MsgImilLookingForMia));
       (void)Event_AskYesNo(ACTOR_JUSTIN, 0);
       Actor_FaceDirection(ACTOR_JUSTIN, FACING_SOUTH_SOUTHEAST, 10);
@@ -1582,119 +1621,8 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Event_End();
 }
 
-/// While sliding on Imil's ice, the leader turns toward the held direction.
-static void Actor_SteerByPad(struct Actor *actor) {
-  s32 heading;
-  u16 facing;
-  s32 turn;
-
-  if (actor->timer != 0) {
-    actor->timer--;
-    return;
-  }
-  actor->steeringFlags = 0;
-  heading = gIce_KeyHeadings[DPAD_INDEX(gKeysHeld)];
-  if (heading == -1) {
-    Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
-    return;
-  }
-  facing = actor->facing;
-  turn = (s16)(heading - facing);
-  if (turn > FACING_STEP)
-    turn = FACING_STEP;
-  if (turn < -FACING_STEP)
-    turn = -FACING_STEP;
-  actor->facing = facing + turn;
-  Actor_SelectAnimation(actor, ANIM_WALK);
-  Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL * 3);
-}
-
-static void Leader_SlideOnIce(void) {
-  struct Actor *subject;
-  struct FieldPosition probe;
-  s32 heading;
-  s32 startBehavior;
-  s32 nextBehavior;
-  FIXED z;
-  FIXED x;
-
-  subject = Actor_Lookup(gMainRoutineState.leaderActorId);
-
-  for (;;) {
-    heading = gImil_SlideHeadings[DPAD_INDEX(gKeysHeld)];
-    if ((u16)heading == (u16)KEY_HEADING_NONE) {
-      return;
-    }
-
-    Event_Start();
-
-    probe.x = (subject->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-    probe.y = subject->y.fixed;
-    probe.z = (subject->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-    z = probe.z;
-    x = probe.x;
-    startBehavior = MapGrid_GetCellBehaviorAt(subject->layer, x, z);
-    Vector_AddPolarOffset(toFIXED(16), heading, &probe);
-
-    nextBehavior = MapGrid_GetCellBehaviorAt(subject->layer, probe.x, probe.z);
-    if (nextBehavior == CELL_BEHAVIOR_WALL ||
-        MapGrid_GetTerrainHeight(subject->layer, probe.x, probe.z) -
-                subject->y.fixed >
-            toFIXED(8)) {
-      subject->facing = heading;
-      goto tail;
-    }
-
-    probe.x = x;
-    probe.z = z;
-    subject->speedLimit = toFIXED(2);
-    subject->acceleration = toFIXED(1) / 10;
-    subject->timer = 0;
-    FieldActor_SetMoveTargetFX(subject, x, subject->y.fixed, z);
-    Actor_SelectAnimation(subject, ANIM_WALK);
-    Actor_SetAnimationSpeed(subject, ANIM_STEP_NORMAL * 3);
-    Actor_WaitForMove(subject);
-    subject->update = Actor_SteerByPad;
-
-    for (;;) {
-      FieldVector_AddPolarOffset(16, heading, &probe);
-      if ((nextBehavior = MapGrid_GetCellBehaviorAt(
-               subject->layer, probe.x, probe.z)) == CELL_BEHAVIOR_WALL) {
-        break;
-      }
-      if (MapGrid_GetTerrainHeight(subject->layer, probe.x, probe.z) -
-              subject->y.fixed >
-          toFIXED(8)) {
-        break;
-      }
-      x = probe.x;
-      z = probe.z;
-      subject->speedLimit = toFIXED(2);
-      subject->acceleration = toFIXED(1) / 10;
-      FieldActor_SetMoveTargetFX(subject, probe.x, probe.y, probe.z);
-      Actor_WaitForMove(subject);
-      if (nextBehavior != startBehavior) {
-        goto blocked;
-      }
-    }
-
-    subject->speedLimit = toFIXED(2);
-    subject->acceleration = toFIXED(1);
-    FieldActor_SetMoveTargetFX(subject, x, subject->y.fixed, z);
-    Actor_WaitForMove(subject);
-    wait(2);
-  }
-
-blocked:
-  subject->update = NULL;
-  subject->steeringFlags |= ACTOR_FACES_MOTION;
-
-  subject->acceleration = toFIXED(1) / 4;
-
-tail:
-  wait(10);
-  Event_End();
-}
+#define ICE_SLIDE_HEADINGS gImil_SlideHeadings
+#include "shared/leader_slide_on_ice.c"
 
 // clang-format off
 #include "shared/ice_key_headings.c"

@@ -741,6 +741,7 @@ static void Altin_BeastHop(struct Actor *actor) {
       if (((struct FieldEffect *)actor)->countdown != 0) {
         Sound_Play(SE_SPLASH);
         ((struct FieldEffect *)actor)->countdown = 0;
+        // shakeFrames, set through the field itself: four frames of shake.
         beast->userValue = 4;
         MapGrid_SetShake(0, 1, 1);
       }
@@ -865,9 +866,13 @@ static void Altin_ApplyWaterLevel(void) {
   if (gMainRoutineState.entrance == ALTIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
-  // XXX: what copying these four by three cells into the flooded village's
-  // stored picture, after the stage is already drawn, changes for the player;
-  // a probe of the cells at (20, 41) with and without the copy would settle it.
+  // Map rows 32 to 63 are layer 2, the flood's stage, whose attributes the
+  // ground took above. This lays layer 2's plain raised block at (0..3, 1..3)
+  // over its (20..23, 9..11), around the passage behind the statue; the
+  // ground's cells there keep the passage and its walls (render probe Altin
+  // --cells 20,9,23,11), so the party walks as before.
+  // XXX: what reads layer 2's attributes there afterwards; a probe of the
+  // statue shoved by Move, or of any actor put on layer 2, would settle it.
   MapGrid_CopyCellAttributes(0, 33, 4, 3, 20, 41);
   if (GameFlag_Get(FLAG_ALTIN_STATUE_MOVED) != 0) {
     Actor_SetPosition(ACTOR_STONE_STATUE, 360, 168);
@@ -1477,7 +1482,11 @@ u16 gAltin_SouthHouseDoorCells[] = {
 };
 
 /// Each door's opening pictures and the cell they are drawn at, in the order of
-/// the doors' cell behaviors from the inn's.
+/// the doors' cell behaviors from the inn's. The doors are drawn on map layer
+/// 1, whose cells begin at the map's column 32: the inn's
+/// (41, 5) is that layer's (9, 5), on the inn's door just above the ground
+/// cell (10, 13) Isaac walks into (render probe Altin --entrance 2
+/// --mark-cells 9,5,10,6,1).
 struct MapGridCellAnimation gAltin_Doors[] = {
     {gAltin_InnDoorCells, 41, 5},
     {gAltin_SanctumDoorCells, 51, 6},

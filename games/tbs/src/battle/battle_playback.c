@@ -4,6 +4,8 @@
 
 #include "battle_internal.h"
 
+void _call_via_r0(u32 routine);
+
 /// Unused: stops DMA3, then calls a routine that is not one.
 void Dma_StopDma3(void) {
   // XXX (no evidence): what the call was meant to run; it calls the word of the
@@ -50,6 +52,10 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 #define PLAY_HIT 10         ///< flashes the unit that was hit
 #define PLAY_FELLED 11      ///< greys a fallen enemy and dissolves it
 #define PLAY_MESSAGE_ADD 13 ///< waits for the message, then goes straight on
+
+/// PLAY_HIT's frames: the unit white on frames 1 and 5, its own colours again
+/// on 3 and 7.
+#define HIT_FLASH_FRAMES 8
 
 /// PLAY_FELLED's timer from here counts the Djinn bonus's colour cycle, kept
 /// apart from the counts of the fall itself (0 to 36).
@@ -248,6 +254,8 @@ void BattlePlayback_Run(void) {
       MessageArgument_ClearAllFar();
       IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
       IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
+      // OAM attributes 0 and 1 set as one word, an 8 by 16 arrow of 256
+      // colours, and attributes 2 and 3 as the next, cleared (x is 0 still).
       ((u32 *)prompt)[1] = OBJ_SIZE_8X16 | OBJ_256_COLORS;
       ((u32 *)prompt)[2] = x;
       prompt->tile = VramCache_Reload(events->arrowResource, pictureTiles);
@@ -283,7 +291,7 @@ void BattlePlayback_Run(void) {
         PartyStatus_HighlightMembersFar(selection);
       }
       events->timer++;
-      if (events->timer <= 8)
+      if (events->timer <= HIT_FLASH_FRAMES)
         return;
       events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
       events->timer = 0;
@@ -422,6 +430,7 @@ UNREAD_RESULT BattlePlayback_WaitForReady(void) {
   BattlePlayback_Reset();
 }
 
+#undef HIT_FLASH_FRAMES
 #undef FELLED_FLASH_FRAMES
 #undef FELLED_DISSOLVE_FIRST_FRAME
 #undef FELLED_DISSOLVE_STEPS

@@ -610,7 +610,7 @@ recoveryTest:
   }
   goto done;
 recovery:
-  // Then the recovery table, into the enemy side's (unit 131's record).
+  // Then the opponent's Djinn recovery table, as the enemy side's.
   Heap_Release(buffer);
   size = BATTLE_ARENA_RECOVERY_RECORD_BYTES;
   buffer = Heap_AllocEwram(size);
@@ -1268,7 +1268,7 @@ static s32 BattleArena_PartyContains(s32 memberId) {
 }
 
 /// UNUSED: an empty routine the Battle Arena's code keeps.
-UNUSED static void State_NoOp(void) {}
+UNUSED static void BattleArena_Empty(void) {}
 
 /// Talking to Garet, Ivan, Mia or Jenna in the room up the east stairs gets a
 /// line about the coming battle that depends on who will fight it. Those in the
@@ -1443,7 +1443,9 @@ static s32 BattleArena_SaveBattleResults(void) {
 
 /// Saves the file after a series of monster battles that set a new record,
 /// between "Saving Monster Battle results." and "Monster Battle results were
-/// saved.".
+/// saved.". It is BattleArena_SaveBattleResults with the Monster Battle's two
+/// lines; the game keeps each save as a routine of its own, with no parameter
+/// for its messages.
 static s32 BattleArena_SaveMonsterBattleResults(void) {
   struct Window *window;
 

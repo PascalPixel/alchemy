@@ -62,6 +62,10 @@ void BattleEffect_RunOnslaught(struct BattleEffectParams *args) {
 void BattleEffect_RunHeadbutt(struct BattleEffectParams *args) {
   BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_HEADBUTT);
 }
+/// BlueBurstSheet's one picture, the top half of a burst: drawn as it is and
+/// mirrored top to bottom beneath, a 40x64 burst that follows the user in.
+#define BLUE_BURST_WIDTH 40
+#define BLUE_BURST_HEIGHT 32
 #define RUSHING_STRIKE_FRAMES 60
 #define RUSHING_STRIKE_BURST_FRAMES 15 ///< the burst follows the user in
 #define RUSHING_STRIKE_RING_FRAME 8    ///< the ring flares at the target
@@ -159,8 +163,11 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     // The burst at the user as it rushes in.
     if (frame < RUSHING_STRIKE_BURST_FRAMES) {
       Projection_Unit(state->args->user, &screen);
-      draw[0](canvas, state->sheet, screen.x / 2 - 16, screen.y - 48, 40, 32);
-      draw[1](canvas, state->sheet, screen.x / 2 - 16, screen.y - 16, 40, 32);
+      draw[0](canvas, state->sheet, screen.x / 2 - 16,
+              screen.y - 16 - BLUE_BURST_HEIGHT, BLUE_BURST_WIDTH,
+              BLUE_BURST_HEIGHT);
+      draw[1](canvas, state->sheet, screen.x / 2 - 16, screen.y - 16,
+              BLUE_BURST_WIDTH, BLUE_BURST_HEIGHT);
     }
     if (frame == RUSHING_STRIKE_FRAME) {
       BattleEffect_TintBattler(state->args->targets[0], SPRITE_COLOR_WHITE,
@@ -209,3 +216,5 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 #undef RUSHING_STRIKE_RING_BYTES
 #undef RUSHING_STRIKE_FRAMES
 #undef RUSHING_STRIKE_FRAME
+#undef BLUE_BURST_WIDTH
+#undef BLUE_BURST_HEIGHT

@@ -79,6 +79,7 @@
 #include "field/event.h"
 #include "field/field.h"
 #include "field/ground_mask.h"
+#include "field/map_grid.h"
 #include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
@@ -1981,7 +1982,7 @@ static void Kalay_PushTunnelStatue(void) {
       (leaderX + DIRECTION_STEP_X(probeStep)) >> 4,
       (leader->z.part[0].integer + DIRECTION_STEP_Z(probeStep)) >> 4);
   if (statue != NULL) {
-    statue->layer = 2;
+    statue->layer = MAPGRID_LAYER_OVERHEAD;
     Actor_StepFrom(&destination, statue,
                    gPushedActor_DirectionSteps[direction]);
     if (FieldActor_CheckMovementCollision(statue, &destination) <= 0) {
@@ -2042,6 +2043,14 @@ static void Kalay_UpdateTunnelPassages(void) {
       FIELD_HALF_CELL(firstStatue->x.fixed) <= FIRST_STATUE_OPENING_HALF_CELL) {
     puddle = Actor_Get(ACTOR_PUDDLE);
     Event_Start();
+    // Cell (0, 1), outside every camera box of the map, takes the cell
+    // behavior of the Spirit Gloves chest's cell (7, 44): render probe scene
+    // KalayTunnelTreasureRoom --cells 0,0,1,1 reads 100 there once the pool
+    // has drained, 0 before. Nothing on screen changes, and no routine
+    // reads a cell by that number.
+    // XXX: whether anything answers it there; a probe that searches cell
+    // (0, 1) after the draining, which the recorder cannot stage outside
+    // every camera box, would settle it.
     MapGrid_CopyCellAttributes(7, 44, 1, 1, 0, 1);
     for (i = WATERFALL_FIRST_FRAME_COLUMN; i <= WATERFALL_LAST_FRAME_COLUMN;
          i++) {
@@ -2051,6 +2060,9 @@ static void Kalay_UpdateTunnelPassages(void) {
         GameFlag_Set(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
       }
     }
+    // The middle layer's cells (13, 45) to (15, 46), at the waterfall's foot
+    // (the map's row 109 is the layer's row 45), take the plain cells beside
+    // them at (16, 45).
     MapGrid_CopyCellsTo(16, 109, 13, 109, 3, 2);
     Event_Wait(40);
     // The pool drains in three stages, 40 frames apart, and the puddle grows
@@ -2176,6 +2188,14 @@ static void Kalay_UpdateTunnelParticle(struct Actor *particle) {
 #endif
 }
 
+/// Where the first statue stands once pushed a cell east of where it starts,
+/// below the barred gate, in pixels: there it is drawn at the leader's
+/// priority, and the gate hides its top as it would his (render event --scene
+/// KalayTunnelTreasureRoom --at-px 360,826 --face east --hold right:90).
+#define FIRST_STATUE_BY_GATE_WEST_X 381
+#define FIRST_STATUE_BY_GATE_EAST_X 393
+#define FIRST_STATUE_BY_GATE_NORTH_Z 777
+
 /// The x at or west of which each hall's statue, near its waterfall, sparkles
 /// while its pool is still full.
 #define FIRST_STATUE_SPARKLE_X 245
@@ -2191,8 +2211,9 @@ static void Kalay_UpdateTunnelStatues(void) {
 
   firstStatue = Actor_Get(ACTOR_FIRST_STATUE);
   secondStatue = Actor_Get(ACTOR_SECOND_STATUE);
-  if ((u32)(firstStatue->x.part[0].integer - 381) <= 12 &&
-      firstStatue->z.part[0].integer > 777) {
+  if ((u32)(firstStatue->x.part[0].integer - FIRST_STATUE_BY_GATE_WEST_X) <=
+          FIRST_STATUE_BY_GATE_EAST_X - FIRST_STATUE_BY_GATE_WEST_X &&
+      firstStatue->z.part[0].integer > FIRST_STATUE_BY_GATE_NORTH_Z) {
     firstStatue->sprite->image.priority =
         Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority;
   } else if (!GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) &&

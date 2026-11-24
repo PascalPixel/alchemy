@@ -272,7 +272,9 @@ static inline void GomaCavePillar_DropStumpFragment(void) {
   fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed;
   fixedZ += toFIXED(6);
   speedBand = Random_Below(5);
-  // These shifts produce speedBand * 6553: a tenth-pixel falling step.
+  // speedBand tenths of a pixel a frame.
+  /* FAKEMATCH(temporary): bandScaled, speedBand * 13, a step of
+     speedBand * toFIXED(0.1) worked out by shifts. */
   bandScaled = (((speedBand << 1) + speedBand) << 2) + speedBand;
   fallingSpeed = (bandScaled << 6) - bandScaled;
   fallingSpeed <<= 3;
@@ -349,7 +351,9 @@ static void GomaCavePillar_PushStumpOver(void) {
     heightSource = Actor_Get(ACTOR_STUMP);
     fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed + toFIXED(6);
     speedBand = Random_Below(5);
-    // A last piece of dust, with the same tenth-pixel speed bands.
+    // A last piece of dust, falling speedBand tenths of a pixel a frame.
+    /* FAKEMATCH(temporary): bandScaled, speedBand * 13, a step of
+       speedBand * toFIXED(0.1) worked out by shifts. */
     bandScaled = (((speedBand << 1) + speedBand) << 2) + speedBand;
     fallingSpeed = (bandScaled << 6) - bandScaled;
     fallingSpeed <<= 3;
@@ -562,6 +566,12 @@ s32 Scene_Initialize(void) {
             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
         gMainRoutineState.entrance ==
             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
+      // On layer 2, and a 65,536th of a pixel below the ground of its socket,
+      // where it stays (render probe scene GomaCavePillar --entrance 2: y
+      // -0.0000153), too little to see.
+      // XXX: what the drop changes, if anything; a probe of this arrival
+      // without this one line would settle it, and the recorder can skip
+      // only a whole function.
       Actor_Get(ACTOR_EAST_PILLAR)->layer = 2;
       Actor_Get(ACTOR_EAST_PILLAR)->y.fixed--;
       Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;

@@ -1,118 +1,30 @@
 /// @file
 /// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three scenes that
-/// share one overlay: SceneId_Bilibin, SceneId_BilibinTreasury and
-/// SceneId_BilibinBarricade. The getters pick each scene's tables by
-/// gMainRoutineState.next, and Scene_Initialize sets up the scene being
-/// entered. Bilibin_PushStatueOrCrates serves all three.
+/// share one overlay; the getters pick each scene's tables by
+/// gMainRoutineState.next.
 ///
-/// Bilibin (SceneId_Bilibin) is the town past Goma Cave, whose chief, Lord
-/// McCoy, has closed the road to Kolima. Almost everything here turns on
-/// FLAG_KOLIMA_CURSE_LIFTED, which the party sets in Kolima Forest when it
-/// heals Tret.
+/// Bilibin is the town past Goma Cave, whose chief, Lord McCoy, has closed the
+/// road to Kolima. Almost everything here turns on FLAG_KOLIMA_CURSE_LIFTED,
+/// set in Kolima Forest when the party heals Tret: until then a man turned
+/// into a tree stands at the entrance (Mind Read hears `Help me...
+/// Somebody...`), and each villager has a line and a thought for either time.
+/// Seven doors open as the party walks into them: the inn, three houses, the
+/// item shop, the weapon and armor shop, and the Sanctum's double door.
 ///
-/// Until then a man turned into a tree (ACTOR_TREE_MAN) stands at the entrance.
-/// A first look says it almost looks like a man, a second that it looks like a
-/// living person. FLAG_BILIBIN_TREE_EXAMINED remembers the first look until the
-/// party leaves Bilibin. Mind Read hears `Help me... Somebody...`.
+/// Two ways lead into the Treasury, `McCoy's Hidden Warehouse` by its sign,
+/// where Gust waits: the cave mouth at the town's west edge, behind ivy that
+/// Whirlwind blows away, and a hole under the golden statue in front of the
+/// weapon and armor shop, which Move or a push slides aside. Inside, a second
+/// golden statue slides along a walkway between two pools.
 ///
-/// Once the curse is lifted, Bilibin_RestoreVillageActors puts the man himself
-/// (ACTOR_FORMER_TREE_MAN) beside the empty spot and turns
-/// ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST and ACTOR_OLD_WOMAN_ROAD_BLOCKED about.
-///
-/// Each of the ten villagers (ACTOR_YOUNG_MAN_WELCOME to
-/// ACTOR_VILLAGER_STRANGE_CREATURES) has two lines and two thoughts in
-/// gBilibinTriggers. The row that needs the flag clear comes first, so the
-/// first row that matches picks the time. A few ask a yes-or-no question (the
-/// Bilibin_AskAbout functions).
-///
-/// Walking up to a door in Bilibin opens it before the party walks in
-/// (Bilibin_OpenDoorAndLeave). Six lead into Bilibin's buildings
-/// (SceneId_CottageRoomsC): the inn in the south-east (cell (23, 22)), the
-/// houses east (12, 20), west (6, 21) and north (10, 13), the item shop
-/// (4, 13) and the weapon and armor shop (18, 11). The seventh is the Sanctum's
-/// double door at the top right (24..25, 10). Each door's cell has the number
-/// of the exit it takes as its behaviour. Coming out of the Sanctum
-/// (BILIBIN_FROM_SANCTUM) the area name is not shown again.
-///
-/// The other exits lead to the World Map, to the garden of McCoy's Palace and,
-/// two ways, into the Treasury, the cave where Gust hides.
-///
-/// One way is the cave mouth at the west edge, behind a bush of ivy
-/// (ACTOR_IVY). Isaac reaches it from the Sanctum over the pillar tops and
-/// blows the ivy away with Whirlwind. The ivy's Whirlwind row runs no
-/// event of its own, so nothing remembers that, and the ivy is back on the next
-/// visit unless the party has just come out of that cave
-/// (BILIBIN_FROM_BILIBIN_TREASURY_WEST).
-///
-/// The other way is a hole under the golden statue (ACTOR_VILLAGE_STATUE) in
-/// front of the weapon and armor shop, at cell (16, 13). Pushed or moved off
-/// it, the statue uncovers the hole, which drops into the Treasury's upper
-/// room. Coming back out that way (BILIBIN_FROM_BILIBIN_TREASURY_EAST) the
-/// party finds the statue one cell west of the hole.
-///
-/// FLAG_BILIBIN_KEEPING_MCCOY_WAITING is set while McCoy's gate guards have let
-/// the party in (FLAG_MCCOY_PALACE_ADMITTED) but it has not yet entered the
-/// palace (FLAG_MCCOY_PALACE_VISITED). It is there for the garden's east guard
-/// to scold the party for keeping McCoy waiting.
-///
-/// The garden is another area (scenes.s gives Bilibin 8 and the garden 9), so
-/// Scene_Arrive clears the flag on the way in and the guard never sees it set.
-///
-/// The Bilibin Treasury (SceneId_BilibinTreasury) is what its sign calls
-/// `McCoy's Hidden Warehouse`. Gust, a Jupiter Djinni, is placed there until he
-/// joins the party when spoken to (Bilibin_GustJoins).
-///
-/// In its upper room a second golden statue (ACTOR_TREASURY_STATUE) stands
-/// in an alcove at the top of a narrow walkway between two pools, and Gust
-/// waits on a ledge to the east. The statue slides up and down the walkway
-/// under Move or a push. Where it is not, its alcove lets Isaac hop east or
-/// west across the pools, and the foot of the walkway lets him hop south off it
-/// (Bilibin_UpdateTreasuryStatueCells).
-///
-/// Arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
-/// BILIBIN_TREASURY_FROM_BILIBIN_NORTH the leader starts 16 pixels above the
-/// floor. Two exit regions (Scene_GetExitRegions) lead down its west ladder to
-/// the lower room and back to Bilibin by the statue.
-///
-/// The Bilibin Barricade (SceneId_BilibinBarricade) is the road east to Kolima
-/// where McCoy's barricade stands, reached from the World Map at either end.
-/// Its sign reads `This area is off-limits to all those without a permit.
-/// —Lord McCoy`, and the door in the barricade stays locked until the curse is
-/// lifted, when it stands open.
-///
-/// The barricade is a wall of wooden crates. The stack of two crates at its
-/// left end (ACTOR_BARRICADE_CRATES) slides out under Move or a push, which
-/// opens the way through to Kolima (Bilibin_UpdateCratesCells).
-///
-/// By the river stand three trees, one on another's shoulders. They are
-/// ACTOR_BOTTOM_TREE, ACTOR_MIDDLE_TREE and ACTOR_JILL_TREE at one spot, 0, 32
-/// and 48 pixels up. They are the Gang of Three, children of the town turned
-/// into trees by the curse.
-///
-/// Once Saturos is beaten at Mercury Lighthouse
-/// (FLAG_SATUROS_BEATEN_AT_MERCURY), while the curse holds, the travelers from
-/// Imil have crossed the river by pushing the trees down.
-/// Bilibin_RestoreRiverActors lays the middle tree on its side, with an
-/// invisible actor (ACTOR_FALLEN_TREE_STAND_IN) that answers for it, and puts
-/// Jill's tree in the water.
-///
-/// Standing in the shallows below the fallen tree, Isaac can use Move on her
-/// (Bilibin_PullJillFromRiver). Once Move has brought her one cell east (cell
-/// column 6), he pulls her ashore in three tugs, and
-/// FLAG_BILIBIN_JILL_RESCUED keeps her there.
-///
-/// While whoever the player controls wades in the river,
-/// Bilibin_UpdateRiverRipples spreads a ripple from their feet every 30
-/// frames.
-///
-/// Once the curse is lifted the trees are gone, and the Gang of Three are
-/// children again on the bank (ACTOR_GANG_MEMBER_EAST, ACTOR_GANG_MEMBER_WEST
-/// and ACTOR_JILL). If Jill was never pulled out she is missing.
-///
-/// If she was, walking up beside the three (cells (13, 10..12) to their west
-/// and (18, 10..12) to their east) plays Bilibin_JillGivesHardNut: Jill thanks
-/// Isaac and gives him a Hard Nut
-/// (FLAG_BILIBIN_JILL_GIFT_RECEIVED). From then on the three turn to watch him.
+/// The Bilibin Barricade is the road east to Kolima, shut by McCoy's wall of
+/// crates; the stack at its left end slides out and opens the way. By the
+/// river stand three trees, one on another's shoulders: the Gang of Three,
+/// children turned into trees by the curse. Once Saturos is beaten at Mercury
+/// Lighthouse the travelers from Imil have pushed them over to cross, and
+/// Jill's tree drifts in the river until Isaac pulls her ashore with Move.
+/// With the curse lifted they are children again, and Jill, if she was saved,
+/// gives Isaac a Hard Nut.
 
 #include "ability_ids.h"
 #include "djinn_ids.h"
@@ -763,6 +675,8 @@ static void Bilibin_RestoreVillageActors(void) {
     Actor_SetPosition(ACTOR_FORMER_TREE_MAN, 0, 0);
   }
   Actor_Get(ACTOR_IVY)->scaleY = 3 * FIXED_ONE / 2;
+  // Whirlwind's row runs no event, so nothing remembers the ivy blown away:
+  // it is back unless the party has just come out of the cave behind it.
   entrance = gMainRoutineState.entrance;
   if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_WEST) {
     Actor_SetPosition(ACTOR_IVY, 0, 0);
@@ -1376,11 +1290,10 @@ u16 *gBilibin_DoorSteps[] = {
 };
 
 /// Where each door's opening is drawn on the map grid, in the order of
-/// gBilibin_DoorSteps. These are not the doors' own cells (the inn's is
-/// (23, 22)) but 31 columns east of them and two rows up, four for the
-/// Sanctum's.
-// XXX: why the openings are drawn off to the east; the map grid's layers
-// around (54, 20) would settle it.
+/// gBilibin_DoorSteps. The doors are drawn on map layer 1, whose cells begin
+/// at the map's column 32: the inn's (54, 20) is that layer's (22, 20), the
+/// door just above the ground cell (23, 22) Isaac walks into (render probe
+/// Bilibin --entrance 3 --mark-cells 22,20,23,21,1).
 s16 gBilibin_DoorCells[][2] = {
     {54, 20}, {43, 18}, {37, 19}, {41, 11}, {35, 11}, {49, 9}, {55, 6},
 };

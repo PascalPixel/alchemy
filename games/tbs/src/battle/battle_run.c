@@ -124,12 +124,11 @@ s32 Battle_Run(s32 enemyGroup) {
   }
   Task_Add(BattleCamera_Update, TASK_PASS_FRAME - 1);
 
-  // The battle music: the music an event or encounter set for this battle,
-  // and in a link battle Test Your Skills after it; with none set, two other
-  // pieces in turn.
-  // XXX: which piece is heard when two are started one after the other; a
-  // recording of a link battle and of a battle with no music of its own would
-  // settle it.
+  // The battle music: the music an event or encounter set for this battle.
+  // Every battle piece plays on the music's one player (MUSIC_PLAYER_BGM),
+  // where the piece started last replaces the one before within the frame:
+  // a link battle hears Test Your Skills, and a battle with none set hears
+  // Colosseum Finals, never Sworn Enemies Stand in Your Way.
   cue = gMainRoutineState.battleMusic;
   if (cue != 0) {
     Sound_PlayFar(cue);

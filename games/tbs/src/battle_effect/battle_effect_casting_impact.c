@@ -101,10 +101,13 @@ enum CastingImpact {
 
 /// The impact orb's pictures, packed at half width, after the streak's.
 #define CASTING_IMPACT_ORB_PICTURES (6 * PICTURE_BYTES(FIRE_STREAK))
-/// The Djinni's picture, in Ram_MapGridCellBuffer after the impact's own.
+/// The Djinni's picture, in Ram_MapGridCellBuffer after the impact's own: past
+/// room for the six glints and six flash bursts, more than any impact loads
+/// (Squall's glints and lightning bolts are the most).
 #define CASTING_IMPACT_DJINNI_WIDTH 20
 #define CASTING_IMPACT_DJINNI_HEIGHT 40
-#define CASTING_IMPACT_DJINNI_PICTURE 15446
+#define CASTING_IMPACT_DJINNI_PICTURE                                          \
+  (GLINT_SET_BYTES + 6 * PICTURE_BYTES(FLASH_BURST))
 #define CASTING_IMPACT_GATHER_FRAMES 32 ///< frames the sparks gather
 #define CASTING_IMPACT_SPARKS 64        ///< sparks in state->particles
 /// How far either side of the caster the gathering sparks' depth is clamped.
@@ -136,6 +139,15 @@ enum CastingImpact {
 #define ASURA_SHEET_CRESCENT_WIDTH 128
 #define ASURA_SHEET_CRESCENT_HEIGHT 91
 #define ASURA_SHEET_SWUNG PICTURE_BYTES(ASURA_SHEET_LOW)
+/// How tall the swordsman with his sword low is drawn.
+// BUG: as tall as the swung picture, 8 rows more than the low one, so the
+// draw reads on into the swung picture's top rows: the tip of the raised
+// sword, a few pixels at the right edge, under the low swordsman's feet.
+#ifdef BUGFIX
+#define ASURA_LOW_DRAW_HEIGHT ASURA_SHEET_LOW_HEIGHT
+#else
+#define ASURA_LOW_DRAW_HEIGHT ASURA_SHEET_SWUNG_HEIGHT
+#endif
 #define ASURA_SHEET_CRESCENT                                                   \
   (ASURA_SHEET_SWUNG + PICTURE_BYTES(ASURA_SHEET_SWUNG))
 
@@ -1016,19 +1028,19 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         if (frame <= 3) {
           if (state->args->side == EFFECT_SIDE_PARTY) {
             blitters[0](canvas, state->imageStorage, 0, 24,
-                        ASURA_SHEET_LOW_WIDTH, 104);
+                        ASURA_SHEET_LOW_WIDTH, ASURA_LOW_DRAW_HEIGHT);
           } else {
             blitters[0](canvas, state->imageStorage, 48, 24,
-                        ASURA_SHEET_LOW_WIDTH, 104);
+                        ASURA_SHEET_LOW_WIDTH, ASURA_LOW_DRAW_HEIGHT);
           }
         } else {
           if (frame <= 7) {
             if (state->args->side == EFFECT_SIDE_PARTY) {
               blitters[0](canvas, state->imageStorage, 0, 24,
-                          ASURA_SHEET_LOW_WIDTH, 104);
+                          ASURA_SHEET_LOW_WIDTH, ASURA_LOW_DRAW_HEIGHT);
             } else {
               blitters[0](canvas, state->imageStorage, 48, 24,
-                          ASURA_SHEET_LOW_WIDTH, 104);
+                          ASURA_SHEET_LOW_WIDTH, ASURA_LOW_DRAW_HEIGHT);
             }
           }
           if (state->args->side == EFFECT_SIDE_PARTY) {

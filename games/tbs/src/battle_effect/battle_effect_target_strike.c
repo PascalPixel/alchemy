@@ -25,6 +25,10 @@
 /// the target's motes; of these, the first TARGET_STRIKE_DRAIN_MOTES are drawn.
 #define TARGET_STRIKE_PUFFS_PER_HIT 8
 #define TARGET_STRIKE_HIT_BLOCK 16
+/// The hit a frame belongs to: hits are counted six pictures apart, each with
+/// its block of sparks, puffs and motes.
+#define TARGET_STRIKE_HIT(mode, frame)                                         \
+  ((frame) / (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) * 6))
 #define TARGET_STRIKE_DRAIN_MOTES 64
 /// The frames a drained mote flies out before the user pulls it in.
 #define TARGET_STRIKE_MOTE_FLIGHT_FRAMES 10
@@ -310,11 +314,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
             for (i = 0; i != TARGET_STRIKE_SPARKS_PER_SLASH; i++) {
               struct Particle *spark =
-                  &TARGET_STRIKE_SPARKS[frame /
-                                            (TARGET_STRIKE_VALUE(
-                                                 mode,
-                                                 TARGET_STRIKE_PICTURE_FRAMES) *
-                                             6) *
+                  &TARGET_STRIKE_SPARKS[TARGET_STRIKE_HIT(mode, frame) *
                                             TARGET_STRIKE_SPARKS_PER_SLASH +
                                         i];
 
@@ -323,10 +323,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           }
           for (i = 0; i != TARGET_STRIKE_PUFFS_PER_HIT; i++) {
             struct Particle *puff =
-                &state->particles[frame /
-                                      (TARGET_STRIKE_VALUE(
-                                           mode, TARGET_STRIKE_PICTURE_FRAMES) *
-                                       6) *
+                &state->particles[TARGET_STRIKE_HIT(mode, frame) *
                                       TARGET_STRIKE_HIT_BLOCK +
                                   i];
 
@@ -387,11 +384,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           Sound_PlayFar(SE_IMPACT);
         for (i = 0; i != TARGET_STRIKE_SPARKS_PER_BITE; i++) {
           struct Particle *spark =
-              &TARGET_STRIKE_SPARKS[frame /
-                                        (TARGET_STRIKE_VALUE(
-                                             mode,
-                                             TARGET_STRIKE_PICTURE_FRAMES) *
-                                         6) *
+              &TARGET_STRIKE_SPARKS[TARGET_STRIKE_HIT(mode, frame) *
                                         TARGET_STRIKE_SPARKS_PER_BITE +
                                     i];
 
@@ -399,21 +392,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         }
         for (i = 0; i != TARGET_STRIKE_PUFFS_PER_HIT; i++) {
           struct Particle *puff =
-              &state->particles[frame /
-                                    (TARGET_STRIKE_VALUE(
-                                         mode, TARGET_STRIKE_PICTURE_FRAMES) *
-                                     6) *
+              &state->particles[TARGET_STRIKE_HIT(mode, frame) *
                                     TARGET_STRIKE_HIT_BLOCK +
                                 i];
 
           puff->variant = 0;
         }
         for (i = 0; i != TARGET_STRIKE_HIT_BLOCK; i++)
-          PARTICLES[frame /
-                        (TARGET_STRIKE_VALUE(mode,
-                                             TARGET_STRIKE_PICTURE_FRAMES) *
-                         6) *
-                        TARGET_STRIKE_HIT_BLOCK +
+          PARTICLES[TARGET_STRIKE_HIT(mode, frame) * TARGET_STRIKE_HIT_BLOCK +
                     i]
               .variant = 0;
       }
@@ -555,6 +541,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 #undef TARGET_STRIKE_SPARKS_SHOWN
 #undef TARGET_STRIKE_PUFFS_PER_HIT
 #undef TARGET_STRIKE_HIT_BLOCK
+#undef TARGET_STRIKE_HIT
 #undef TARGET_STRIKE_DRAIN_MOTES
 #undef TARGET_STRIKE_MOTE_FLIGHT_FRAMES
 #undef TARGET_STRIKE_BITE_Y

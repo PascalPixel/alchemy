@@ -1,13 +1,13 @@
 /// Flame_UpdateForward for a flame flying east or west: it goes along x, and a
 /// leader it reaches is knocked back along x.
-void Flame_UpdateLanding(struct Actor *actor) {
-  struct FlameHitState *state = RIDE_STATE;
+void Flame_UpdateSideways(struct Actor *actor) {
+  struct FlameHitState *state = FLAME_THROWERS_STATE;
   struct Actor *other = Actor_Get(gMainRoutineState.leaderActorId);
   struct FieldState *event = Ram_HeapSlots->fieldState;
   FIXED dx = actor->bounce;
   FIXED dz;
   s32 i;
-  struct RideDirection *direction;
+  struct KnockBackDirection *direction;
 
   actor->z.fixed += dx;
   actor->y.fixed += actor->gravity;

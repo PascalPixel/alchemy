@@ -22,7 +22,7 @@
 #include "sprite_ids.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "scene/ride.h"
+#include "scene/flame_throwers.h"
 #include "battle/battle.h"
 #include "field/field_sequence.h"
 #include "field/field.h"
@@ -187,7 +187,7 @@ void MarsLighthouseHall_CycleHallInscriptions(void);
 
 void MarsLighthouseHall_StartDoorways(s32 entrance);
 
-void Ride_Create(void);
+void FlameThrowers_Create(void);
 
 void MarsLighthouseHall_FlashDoorways(void);
 
@@ -273,7 +273,7 @@ void Actor_StartScript(struct Actor *actor, const void *script);
 void Flame_UpdateForward(struct Actor *actor);
 void Actor_ResetScripted(struct Actor *actor);
 void Actor_SetupScriptedPart(struct Actor *actor, s32 layer);
-void Flame_UpdateLanding(struct Actor *actor);
+void Flame_UpdateSideways(struct Actor *actor);
 
 extern s32 gScriptedPart_Script[];
 extern struct ActorPlacement gMarsLighthouseHall_Placements[];
@@ -292,7 +292,7 @@ void PaletteCycle_Fade(void);
 void Teleport_StopShimmer(void);
 void Teleport_StartFastShimmer(void);
 s32 Actor_IsAbove(struct Actor *a, struct Actor *b);
-void Ride_UpdateDrift(struct Actor *actor);
+void FlameThrower_UpdateSpark(struct Actor *actor);
 void Actor_SetupScripted(struct Actor *actor);
 void MarsLighthouseHall_SpawnFlamePuff(s32 x, s32 z, s32 kind);
 void Actor_HoldDuringEvent(struct Actor *actor);
@@ -867,7 +867,7 @@ s32 Scene_PrepareMap(void) {
         entrance == ENTRANCE_THROUGH_MERCURY_DOORWAY ||
         entrance == ENTRANCE_THROUGH_MARS_DOORWAY ||
         entrance == ENTRANCE_THROUGH_JUPITER_DOORWAY) {
-      Ride_Create();
+      FlameThrowers_Create();
       if (Event_GetFlag(FLAG_WAY_TO_AERIE_OPEN)) {
         MapGrid_CopyCellAttributes(30, 12, 4, 3, 12, 12);
         MapGrid_CopyCellsLayered(64, 64, 4, 3, 76, 12);
@@ -1126,7 +1126,7 @@ void MarsLighthouseHall_FadeDoorway(void);
 s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
 s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
 
-#include "shared/ride_update_carried.h"
+#include "shared/flame_update_forward.h"
 
 void Actor_SetSpriteFlags(struct Actor *actor, u32 flags);
 
@@ -1134,7 +1134,7 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 flags);
 
 /// A flame thrower's flame sent forward from `position` at speed `value`;
 /// `flag` keeps its sprite when off screen.
-void Ride_SpawnForward(struct Vector3 *position, s32 value, s32 flag) {
+void FlameThrower_SendForward(struct Vector3 *position, s32 value, s32 flag) {
   struct Actor *actor = FieldActor_Create(SPRITE_BLAZE_FLAME, position->x,
                                           position->y, position->z);
 
@@ -1153,14 +1153,14 @@ void Ride_SpawnForward(struct Vector3 *position, s32 value, s32 flag) {
 s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
 s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
 
-#include "shared/ride_update_landing.h"
+#include "shared/flame_update_sideways.h"
 
 void Actor_SetSpriteFlags(struct Actor *actor, u32 flags);
 
 #include "shared/actor_setup_scripted_part.h"
 
 /// A flame thrower's flame sent backward from `position` at speed `value`.
-void Ride_SpawnBackward(struct Vector3 *position, s32 value, s32 flag) {
+void FlameThrower_SendBackward(struct Vector3 *position, s32 value, s32 flag) {
   struct Actor *actor = FieldActor_Create(SPRITE_BLAZE_FLAME, position->x,
                                           position->y, position->z);
 
@@ -1177,7 +1177,7 @@ void Ride_SpawnBackward(struct Vector3 *position, s32 value, s32 flag) {
 }
 
 /// A flame thrower's flame that lands as it goes forward from `position`.
-void Ride_SpawnLandingForward(struct Vector3 *position, s32 value, s32 flag) {
+void FlameThrower_SendEast(struct Vector3 *position, s32 value, s32 flag) {
   struct Actor *actor = FieldActor_Create(SPRITE_BLAZE_FLAME, position->x,
                                           position->y, position->z);
 
@@ -1186,7 +1186,7 @@ void Ride_SpawnLandingForward(struct Vector3 *position, s32 value, s32 flag) {
     actor->gravity = 0;
     actor->sceneWord = value;
     Actor_SetupScriptedPart(actor, 3);
-    actor->update = Flame_UpdateLanding;
+    actor->update = Flame_UpdateSideways;
     if (flag != 0)
       actor->retainSpriteCache = 2;
     Actor_SelectAnimation(actor, 2);
@@ -1194,7 +1194,7 @@ void Ride_SpawnLandingForward(struct Vector3 *position, s32 value, s32 flag) {
 }
 
 /// A flame thrower's flame that lands as it goes backward from `position`.
-void Ride_SpawnLandingBackward(struct Vector3 *position, s32 value, s32 flag) {
+void FlameThrower_SendWest(struct Vector3 *position, s32 value, s32 flag) {
   struct Actor *actor = FieldActor_Create(SPRITE_BLAZE_FLAME, position->x,
                                           position->y, position->z);
 
@@ -1203,7 +1203,7 @@ void Ride_SpawnLandingBackward(struct Vector3 *position, s32 value, s32 flag) {
     actor->gravity = 0;
     actor->sceneWord = -value;
     Actor_SetupScriptedPart(actor, 3);
-    actor->update = Flame_UpdateLanding;
+    actor->update = Flame_UpdateSideways;
     if (flag != 0)
       actor->retainSpriteCache = 2;
     Actor_SelectAnimation(actor, 2);
@@ -1212,12 +1212,12 @@ void Ride_SpawnLandingBackward(struct Vector3 *position, s32 value, s32 flag) {
 
 #include "shared/actor_is_above.h"
 
-#include "shared/ride_update_drift.h"
+#include "shared/flame_thrower_update_spark.h"
 
 #include "shared/actor_setup_scripted.h"
 
 /// A spark puffed from a flame thrower, drifting off in a random direction.
-void Ride_SpawnSpark(struct Vector3 *position, s32 value, s32 mode) {
+void FlameThrower_SendSpark(struct Vector3 *position, s32 value, s32 mode) {
   struct Actor *actor = FieldActor_Create(
       SPRITE_DUST_CLOUD, position->x, position->y, position->z - toFIXED(2));
   s32 spin;
@@ -1230,7 +1230,7 @@ void Ride_SpawnSpark(struct Vector3 *position, s32 value, s32 mode) {
     spin = (u16)Random16() - DEGtoANG(180);
     actor->timer = spin;
     ((void (*)())Actor_SetupScripted)(actor, 2);
-    actor->update = Ride_UpdateDrift;
+    actor->update = FlameThrower_UpdateSpark;
     Actor_SetBlendMode(actor, 1);
   }
 }
@@ -1242,33 +1242,35 @@ typedef struct Actor Actor;
 void Actor_Release(void *handle);
 s32 MapGrid_CheckCollision(struct Actor *actor, s32 *position);
 
-#include "shared/ride_create.c"
+#include "shared/flame_throwers_create.c"
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
-#include "shared/ride_release_handle.h"
+#include "shared/flame_throwers_release_flame.h"
 
 /// Sets whether the flame throwers keep puffing while Psynergy is used.
-void Ride_SetMode(s16 value) { RIDE_STATE->runsDuringPsynergy = value; }
+void FlameThrowers_SetMode(s16 value) {
+  FLAME_THROWERS_STATE->runsDuringPsynergy = value;
+}
 
 #include "shared/beam_start.h"
 
-#include "shared/ride_get_entry_value.c"
+#include "shared/flame_thrower_is_active.c"
 
-#include "shared/ride_set_entry_value.c"
+#include "shared/flame_thrower_set_active.c"
 
-/// The flame throwers' counter, which Ride_AdvanceCounter steps.
-s32 Ride_GetCounter(void) { return RIDE_STATE->counter; }
+/// The flame throwers' counter, which FlameThrowers_AdvanceCounter steps.
+s32 FlameThrowers_GetCounter(void) { return FLAME_THROWERS_STATE->counter; }
 
-#include "shared/ride_advance_counter.h"
+#include "shared/flame_throwers_advance_counter.h"
 
-#include "shared/ride_set_entry.h"
+#include "shared/flame_thrower_set.h"
 
-#include "shared/ride_set_entry_count.c"
+#include "shared/flame_thrower_set_puffs_off_screen.c"
 
-#include "shared/ride_get_entry_flags.c"
+#include "shared/flame_thrower_get_flags.c"
 
-#include "shared/ride_set_slot_actor.h"
+#include "shared/flame_throwers_set_stop.h"
 
 #include "shared/party_take_fall_damage.h"
 
@@ -1282,7 +1284,7 @@ s32 MapGrid_GetTerrainKindOrBumpAt(s32 terrain, s32 x, s32 z);
 
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseHall_KnockBackIfHit(void) {
-  if (RIDE_STATE->active)
+  if (FLAME_THROWERS_STATE->active)
     Leader_KnockBack();
 }
 
@@ -1318,7 +1320,7 @@ s32 Fireball_CarryLeader(void) {
 #endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineState.leaderActorId);
-  ride = RIDE_STATE;
+  ride = FLAME_THROWERS_STATE;
   Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
@@ -1357,10 +1359,10 @@ void FieldCamera_MoveToActorById(s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
 void Teleport_PlaySparks(void);
 
-#include "shared/ride_if_active.h"
+#include "shared/fireball_carry_leader_if_hit.h"
 
 /// Whether a flame or fireball has hit the leader.
-s32 Ride_IsActive(void) { return RIDE_STATE->active; }
+s32 FlameThrowers_HasHitLeader(void) { return FLAME_THROWERS_STATE->active; }
 
 #include "shared/actor_scatter_crumbs.c"
 

@@ -1,8 +1,8 @@
 /// A flame thrower's spark (FLAME_SPARK): a red dust cloud thrown from
 /// `position`, a little east or west, up by chance and south at `speed` and
-/// more, spinning, blended over the room (Ride_UpdateDrift). Unlike the
+/// more, spinning, blended over the room (FlameThrower_UpdateSpark). Unlike the
 /// flames it never keeps its picture out of sight.
-void Ride_SpawnSpark(s32 *position, s32 speed, s32 offScreen) {
+void FlameThrower_SendSpark(s32 *position, s32 speed, s32 offScreen) {
   struct Actor *actor = Import_ActorCreate_(
       SPRITE_DUST_CLOUD, position[0], position[1], position[2] - toFIXED(2));
   s32 spin;
@@ -14,7 +14,7 @@ void Ride_SpawnSpark(s32 *position, s32 speed, s32 offScreen) {
     spin = (u16)Random16() + 0xffff8000;
     actor->timer = spin;
     Actor_SetupScriptedFor(actor, 2);
-    actor->update = (ObjectUpdate)Ride_UpdateDrift;
+    actor->update = (ObjectUpdate)FlameThrower_UpdateSpark;
     Actor_SetBlendMode(actor, 1);
   }
 }

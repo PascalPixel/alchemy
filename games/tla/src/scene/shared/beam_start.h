@@ -5,8 +5,8 @@
 /// starts their puffs.
 void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onBlocked,
                          s32 hitTrigger) {
-  struct FlameHitState *state = RIDE_STATE;
-  struct RideEntry *entry = state->entries;
+  struct FlameHitState *state = FLAME_THROWERS_STATE;
+  struct FlameThrower *entry = state->entries;
   s32 id;
   s32 i;
   s32 value;

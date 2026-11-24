@@ -26,7 +26,7 @@
 #include "flags.h"
 #include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
-#include "scene/ride.h"
+#include "scene/flame_throwers.h"
 #include "field/field_sequence.h"
 #include "field/event_inline.h"
 #include "field/field.h"
@@ -279,7 +279,7 @@ extern struct ActorPlacement gMarsLighthouseEntrance_SolBladePlacements[];
 /// The waking dragon face in the Valkyrie Mail rooms' long hall has crawled
 /// to its west end and stops breathing fire.
 s32 MarsLighthouseEntrance_DryDragonFace(void) {
-  Ride_SetEntry(0, FLAME_THROWER_DRY | 1);
+  FlameThrower_Set(0, FLAME_THROWER_DRY | 1);
   return 0;
 }
 
@@ -1034,7 +1034,7 @@ void MarsLighthouseEntrance_WakeDragonFace(void) {
   Flag_Set(FLAG_NO_PLACE_TO_SAVE);
   Actor_SetScript(ACTOR_DRAGON_FACE,
                   gMarsLighthouseEntrance_DragonFaceGoesLeft);
-  Ride_SetEntry(0, FLAME_FORWARD | 3);
+  FlameThrower_Set(0, FLAME_FORWARD | 3);
   Flag_Set(FLAG_DRAGON_FACE_AWAKE);
 }
 
@@ -1161,12 +1161,12 @@ void MarsLighthouseEntrance_PulseDragonFire(void) {
 
   if (gMarsLighthouseEntrance_DragonFireTimer < 60) {
     if (*state == 0) {
-      Ride_SetEntry(0, FLAME_FORWARD | 3);
+      FlameThrower_Set(0, FLAME_FORWARD | 3);
       *state = 1;
     }
   } else {
     if (((struct HalfwordField *)state)->value == 1) {
-      Ride_SetEntry(0, FLAME_THROWER_DRY | 3);
+      FlameThrower_Set(0, FLAME_THROWER_DRY | 3);
       *state = 0;
     }
   }
@@ -1223,13 +1223,13 @@ void MarsLighthouseEntrance_WaitForDragonFace(struct Actor *actor) {
 /// the game holds his own slide on the ice stopped, so that only the fireball
 /// moves him.
 void MarsLighthouseEntrance_StopSlideWhileRiding(void) {
-  if (Ride_IsActive())
+  if (FlameThrowers_HasHitLeader())
     Leader_SetSlideStopped(1);
 }
 
 void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onStopped,
                          s32 hitTrigger);
-void Ride_SetEntryCount(s32 index, s16 value);
+void FlameThrower_SetPuffsOffScreen(s32 index, s16 value);
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
 void MarsLighthouseEntrance_ShootValkyrieUpperFireball(void);
 extern s32 gMarsLighthouseEntrance_DragonFaceAtLeft[];
@@ -1260,7 +1260,7 @@ s32 Scene_Initialize(void) {
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
-  Ride_Create();
+  FlameThrowers_Create();
   if (scene == SCENE_MARS_LIGHTHOUSE_OUTSIDE) {
     Weather_StartRain(1);
   } else if (scene == SCENE_MARS_LIGHTHOUSE_ENTRANCE_FUGUE) {
@@ -1350,7 +1350,7 @@ s32 Scene_Initialize(void) {
                           (s32)gMarsLighthouseEntrance_BalmBeamStops,
                           (s32)MarsLighthouseEntrance_ShootBalmFireball,
                           STEP_TRIGGER_FLAME_HIT);
-      Ride_SetEntryCount(0, 1);
+      FlameThrower_SetPuffsOffScreen(0, 1);
     }
     MarsLighthouseEntrance_PlaceIceCones(
         (s32)gMarsLighthouseEntrance_BalmIceCones);
@@ -1381,7 +1381,7 @@ s32 Scene_Initialize(void) {
           (s32)gMarsLighthouseEntrance_ValkyrieUpperBeamStops,
           (s32)MarsLighthouseEntrance_ShootValkyrieUpperFireball,
           STEP_TRIGGER_FLAME_HIT);
-      Ride_SetEntryCount(0, 1);
+      FlameThrower_SetPuffsOffScreen(0, 1);
     }
     if (entrance ==
             MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_FROM_MARS_LIGHTHOUSE_ENTRANCE_BALM ||
@@ -1395,11 +1395,11 @@ s32 Scene_Initialize(void) {
           (s32)gMarsLighthouseEntrance_ValkyrieLowerBeamStops,
           (s32)MarsLighthouseEntrance_ShootValkyrieLowerFireball,
           STEP_TRIGGER_FLAME_HIT);
-      Ride_SetEntryCount(0, 1);
+      FlameThrower_SetPuffsOffScreen(0, 1);
       if (entrance == VALKYRIE_NORTH_FROM_MIDDLE_WEST) {
         Actor_SetScript(ACTOR_DRAGON_FACE,
                         gMarsLighthouseEntrance_DragonFaceAtLeft);
-        Ride_SetEntry(0, FLAME_FORWARD | 3);
+        FlameThrower_Set(0, FLAME_FORWARD | 3);
         Task_AddFrame(MarsLighthouseEntrance_PulseDragonFire, TASK_PASS_FRAME);
         Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
       }
@@ -1407,7 +1407,7 @@ s32 Scene_Initialize(void) {
                     TASK_PASS_FRAME);
       Actor_Get(ACTOR_DRAGON_FACE)->update =
           (ObjectUpdate)MarsLighthouseEntrance_FlickerDragonFace;
-      Ride_SetMode(1);
+      FlameThrowers_SetMode(1);
       MarsLighthouseEntrance_PlaceIceCones(
           (s32)gMarsLighthouseEntrance_ValkyrieIceCones);
       target = Actor_Get(ACTOR_VALKYRIE_FIREBALL);
@@ -1506,86 +1506,90 @@ void MarsLighthouseEntrance_ShootFireballAtLapisIceSheet(void) {
                FACING_EAST, gMarsLighthouseEntrance_FireballToLapisIceSheet);
 }
 
-void Ride_UpdateDrift(struct Actor *actor);
+void FlameThrower_UpdateSpark(struct Actor *actor);
 
 #include "shared/actor_is_touching.h"
 
 #include "shared/actor_is_beside.h"
 
-#include "shared/ride_update_carried.h"
+#include "shared/flame_update_forward.h"
 
 extern s32 gScriptedPart_Script[];
 
-void Ride_UpdateDrift(struct Actor *actor);
+void FlameThrower_UpdateSpark(struct Actor *actor);
 
 #include "shared/actor_reset_scripted_for.h"
 
-#include "shared/ride_spawn_forward.c"
+#include "shared/flame_thrower_send_forward.c"
 
-#include "shared/ride_update_landing.h"
+#include "shared/flame_update_sideways.h"
 
 extern s32 gScriptedPart_Script[];
 
-void Ride_UpdateDrift(struct Actor *actor);
+void FlameThrower_UpdateSpark(struct Actor *actor);
 
 #include "shared/actor_setup_scripted_part.h"
 
-#include "shared/ride_spawn_backward.c"
+#include "shared/flame_thrower_send_backward.c"
 
-#include "shared/ride_spawn_landing_forward.c"
+#include "shared/flame_thrower_send_east.c"
 
-#include "shared/ride_spawn_landing_backward.c"
+#include "shared/flame_thrower_send_west.c"
 
 #include "shared/actor_is_above.h"
 
-#include "shared/ride_update_drift.h"
+#include "shared/flame_thrower_update_spark.h"
 
 #include "shared/actor_setup_scripted_for.h"
 
-#include "shared/ride_spawn_spark.c"
+#include "shared/flame_thrower_send_spark.c"
 
 typedef struct Actor Actor;
 
 #include "shared/flame_throwers_puff.c"
 
-#include "shared/ride_create.c"
+#include "shared/flame_throwers_create.c"
 
 /// Releases the kept flame.
-UNUSED void Ride_Release(void) {
-  struct FlameHitState *state = RIDE_STATE;
+UNUSED void FlameThrowers_Release(void) {
+  struct FlameHitState *state = FLAME_THROWERS_STATE;
 
   Actor_Release(state->handle);
   state->handle = NULL;
 }
 
 /// Sets whether the flame throwers keep puffing while Psynergy is used.
-void Ride_SetMode(s16 value) { RIDE_STATE->runsDuringPsynergy = value; }
+void FlameThrowers_SetMode(s16 value) {
+  FLAME_THROWERS_STATE->runsDuringPsynergy = value;
+}
 
 void FlameThrowers_Puff(void);
 
 #include "shared/beam_start.h"
 
-#include "shared/ride_get_entry_value.c"
+#include "shared/flame_thrower_is_active.c"
 
-#include "shared/ride_set_entry_value.c"
+#include "shared/flame_thrower_set_active.c"
 
-/// The flame throwers' counter, which Ride_AdvanceCounter steps.
-UNUSED s32 Ride_GetCounter(void) { return RIDE_STATE->counter; }
+/// The flame throwers' counter, which FlameThrowers_AdvanceCounter steps.
+UNUSED s32 FlameThrowers_GetCounter(void) {
+  return FLAME_THROWERS_STATE->counter;
+}
 
-#include "shared/ride_advance_counter.h"
+#include "shared/flame_throwers_advance_counter.h"
 
-#include "shared/ride_set_entry.h"
+#include "shared/flame_thrower_set.h"
 
-#include "shared/ride_set_entry_count.c"
+#include "shared/flame_thrower_set_puffs_off_screen.c"
 
 /// Flame thrower `index`'s flags: which flame it sends and how far.
-UNUSED s32 Ride_GetEntryFlags(s32 index) {
-  struct FlameHitState *state = RIDE_STATE;
+UNUSED s32 FlameThrower_GetFlags(s32 index) {
+  struct FlameHitState *state = FLAME_THROWERS_STATE;
 
   return (state->entries + index)->flags;
 }
 
-#include "shared/ride_set_slot_actor.h"
+#include "shared/flame_throwers_set_stop.h"
 
 #include "shared/party_take_fall_damage.h"
 
@@ -1601,7 +1605,7 @@ extern u8 gInventorySnapshot[];
 
 /// Hit by the flames, Felix is knocked back.
 void MarsLighthouseEntrance_KnockBackIfHit(void) {
-  if (RIDE_STATE->active)
+  if (FLAME_THROWERS_STATE->active)
     Leader_KnockBack();
 }
 
@@ -1636,7 +1640,7 @@ int MarsLighthouseEntrance_RideFireball(void) {
 #endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineState.leaderActorId);
-  ride = RIDE_STATE;
+  ride = FLAME_THROWERS_STATE;
   Flag_Set(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
@@ -1672,7 +1676,7 @@ int MarsLighthouseEntrance_RideFireball(void) {
 /// (MarsLighthouseEntrance_RideFireball); otherwise nothing happens. The
 /// slide from the ice's edge asks the same, ignoring the answer.
 s32 MarsLighthouseEntrance_RideFireballIfHit(void) {
-  if (RIDE_STATE->active) {
+  if (FLAME_THROWERS_STATE->active) {
     MarsLighthouseEntrance_RideFireball();
     return 1;
   }
@@ -1680,7 +1684,7 @@ s32 MarsLighthouseEntrance_RideFireballIfHit(void) {
 }
 
 /// Whether a flame or fireball has hit Felix.
-s32 Ride_IsActive(void) { return RIDE_STATE->active; }
+s32 FlameThrowers_HasHitLeader(void) { return FLAME_THROWERS_STATE->active; }
 
 extern u32 gCrumbs_Script[];
 

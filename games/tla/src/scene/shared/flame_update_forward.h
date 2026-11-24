@@ -4,7 +4,7 @@
 /// reaching a slot's actor it rises away the same, unless the slot is blocked,
 /// which marks the state blocked.
 void Flame_UpdateForward(struct Actor *flame) {
-  struct FlameHitState *state = RIDE_STATE;
+  struct FlameHitState *state = FLAME_THROWERS_STATE;
   struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
   struct FieldState *event = Ram_HeapSlots->fieldState;
   FIXED dx = flame->bounce;

@@ -19,7 +19,7 @@ struct Position;
 /// (shared/leader_knock_back.c).
 s32 Leader_KnockBack(void);
 
-void Ride_SpawnForward();
+void FlameThrower_SendForward();
 
 void MarsLighthouseEntrance_DrawLapisCrackedSheet(void);
 
@@ -47,7 +47,7 @@ void Leader_SlideOnIceAhead(void);
 
 void MarsLighthouseEntrance_DrawHoleMask(void);
 
-s32 Ride_IsActive(void);
+s32 FlameThrowers_HasHitLeader(void);
 
 void Leader_SetSlideStopped(s32 value);
 
@@ -59,9 +59,9 @@ void MarsLighthouseEntrance_ShootBalmFireball(void);
 s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
 
 s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
-void Ride_SpawnBackward();
-void Ride_SpawnLandingForward();
-void Ride_SpawnLandingBackward();
+void FlameThrower_SendBackward();
+void FlameThrower_SendEast();
+void FlameThrower_SendWest();
 
 void Actor_RollAndCrumble(struct Actor *actor);
 

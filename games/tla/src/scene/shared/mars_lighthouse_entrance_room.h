@@ -25,7 +25,7 @@
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
-s32 Ride_GetEntryFlags(s32 index);
+s32 FlameThrower_GetFlags(s32 index);
 void Actor_StartScript(struct Actor *actor, const void *script);
 void ActorTable_Snapshot(void);
 FIXED Trig_Cos(s32 angle);

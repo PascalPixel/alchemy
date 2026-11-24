@@ -26,7 +26,7 @@ s32 KNOCK_BACK(void) {
     ((s32 (*)())KNOCK_BACK_TAKE_DAMAGE)(-FALL_DAMAGE, 0);
 #endif
     actor = Actor_Get(main->leaderActorId);
-    state = RIDE_STATE;
+    state = FLAME_THROWERS_STATE;
     Event_Start();
     FieldEvent_EndLastingPsynergy(0);
     actor->update = KNOCK_BACK_BLINK;

@@ -110,7 +110,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     FieldActor_SetMoveTargetFX(actor, position.x, position.y, position.z);
 
     fieldState = Ram_HeapSlots->fieldState;
-    hit = RIDE_STATE;
+    hit = FLAME_THROWERS_STATE;
     leader = Actor_Get(gMainRoutineState.leaderActorId);
     if (ABS(actor->x.fixed - leader->x.fixed) < toFIXED(20) &&
         (u32)(actor->y.fixed - leader->y.fixed + (toFIXED(8) - 1)) <=

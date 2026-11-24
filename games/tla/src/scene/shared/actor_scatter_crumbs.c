@@ -1,14 +1,14 @@
 /// @file
 /// The crumbs a fireball throws off as it crumbles away
 /// (Actor_RollAndCrumble), which three Mars Lighthouse rooms keep a copy of,
-/// over the flames' FlameHitState (scene/ride.h).
+/// over the flames' FlameHitState (scene/flame_throwers.h).
 
 /// A fireball crumbling away throws off a crumb, a small flame drawn with the
 /// kept flame's tiles, that bounces off in a random direction and flickers out
 /// (the includer's gCrumbs_Script): as the Mars tower's fireball crashes on the
 /// centre wall, it shrinks away in a spray of little flames.
 void Actor_ScatterCrumbs(struct Actor *actor) {
-  struct FlameHitState *state = RIDE_STATE;
+  struct FlameHitState *state = FLAME_THROWERS_STATE;
   s32 i;
 
   if (state->handle == NULL)

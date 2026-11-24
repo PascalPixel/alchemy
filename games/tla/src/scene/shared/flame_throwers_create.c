@@ -1,7 +1,7 @@
 /// Clears the flame throwers' state (unless the party keeps its place) and
 /// makes the flame whose sprite the crumbs share, keeping its VRAM entry.
-void Ride_Create(void) {
-  struct FlameHitState *state = RIDE_STATE;
+void FlameThrowers_Create(void) {
+  struct FlameHitState *state = FLAME_THROWERS_STATE;
   struct Actor *actor;
   struct Sprite *animation;
 

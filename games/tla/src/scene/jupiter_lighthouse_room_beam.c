@@ -87,6 +87,10 @@ enum JupiterLighthouseRoomBeamActorId {
 /// fills.
 #define BEAM_ROOM_GAP_CELL_X 20
 #define BEAM_ROOM_GAP_CELL_Z 39
+
+/// The energy block's glow, a picture of LightSprites_InitB's set: the lit
+/// channel of a straight north-south path piece.
+enum { GLOW_PATH_NORTH_SOUTH = 0 };
 /// The empty socket at the east end of the grey blocks' row.
 #define BEAM_ROOM_EMPTY_SOCKET_CELL_X 18
 #define BEAM_ROOM_EMPTY_SOCKET_CELL_Z 6
@@ -603,7 +607,7 @@ s32 Scene_Initialize(void) {
                                  MAPGRID_LAYER_OVERHEAD, CELL_BEHAVIOR_HOVER);
   } else {
     LightSprites_InitB();
-    LightSprites_Add(ACTOR_ENERGY_BLOCK, 0);
+    LightSprites_Add(ACTOR_ENERGY_BLOCK, GLOW_PATH_NORTH_SOUTH);
   }
   // Arriving in the north half, the leader may walk onto the hovering blocks.
   if (gMainRoutineState.entrance == ENTRANCE_NORTH_HALF_WEST ||

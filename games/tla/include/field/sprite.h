@@ -308,6 +308,18 @@ enum ActorAnimation {
   /// Seen from behind, arms flung up and waving: the leader carried over a
   /// waterfall.
   ANIM_LEADER_FLAIL = 40,
+  /// Lying on his back, seen from his feet: the leader washed up or put to
+  /// bed.
+  ANIM_LEADER_LIE_ON_BACK = 41,
+  ANIM_LEADER_SIT_UP = 42, ///< sitting up, legs out in front of him
+  /// Swinging each arm and kicking out each leg, as Felix checks himself for
+  /// injuries on Idejima's beach.
+  ///@{
+  ANIM_LEADER_SWING_RIGHT_ARM = 45,
+  ANIM_LEADER_SWING_LEFT_ARM = 46,
+  ANIM_LEADER_KICK_RIGHT_LEG = 47,
+  ANIM_LEADER_KICK_LEFT_LEG = 48,
+  ///@}
   /// Sitting on the floor, legs out, arms flung up and then lowered: the leader
   /// knocked down.
   ANIM_LEADER_SIT = 49

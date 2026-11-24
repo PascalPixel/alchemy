@@ -194,10 +194,6 @@ enum ShamanVillageCell {
   CLOSED_TENT_CELL = 22
 };
 
-/// The leader lying on his back (pictures 51 and 52 of his sprite sheet):
-/// eyes shut, then open.
-enum { ANIM_LEADER_LIE_ASLEEP = 41, ANIM_LEADER_LIE_AWAKE };
-
 #include "../field/field_effect_move.c"
 
 struct ItemDefinition;
@@ -2999,7 +2995,8 @@ void ShamanVillage_SetUpHouses(void) {
     Party_RestoreHpPp(TRUE); // poison and haunting cured too
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_LIE_ASLEEP);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId,
+                       ANIM_LEADER_LIE_ON_BACK);
     Actor_SetSpriteFlags(
         ((struct Actor *)Actor_GetById(gMainRoutineState.leaderActorId)), 0);
     wait(1);
@@ -3011,7 +3008,7 @@ void ShamanVillage_SetUpHouses(void) {
       if (gInput.held != 0)
         break;
     }
-    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_LIE_AWAKE);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_SIT_UP);
     Event_Wait(10);
     for (i = 0; i < 30; i++) {
       wait(1);

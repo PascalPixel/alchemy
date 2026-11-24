@@ -1233,7 +1233,8 @@ void ChampaCliffCaves_AskIfBriggsLearned(void) {
   Actor_SetPosition(ACTOR_BRIGGS, 584, 264);
   Actor_FaceDirection(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST, 0);
-  Actor_SetAnimationById(gMainRoutineState.leaderActorId, 41);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId,
+                         ANIM_LEADER_LIE_ON_BACK);
   FieldCamera_FollowActor(gMainRoutineState.leaderActorId, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

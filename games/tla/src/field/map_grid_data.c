@@ -11,6 +11,7 @@
 #include "field/script_operands.h"
 #include "field/actor_script.h"
 #include "field/map_grid.h"
+#include "sprite_ids.h"
 
 //--------------------------------------------------------------------------
 // Map terrain: the height function of each cell kind, the world map's
@@ -103,10 +104,20 @@ const u16 gSpriteViewer_BackdropColors[8] = {
 };
 
 /// The sprite ids the sprite viewer's fast step (Start held with L or R)
-/// stops at: a skip forward goes to the next stop above the sprite shown,
-/// back to the last stop below it. (u16)-1 ends the list.
+/// stops at, the first of each group of sprites: a skip forward goes to the
+/// next stop above the sprite shown, back to the last stop below it. (u16)-1
+/// ends the list.
 const u16 gSpriteViewer_SkipStops[10] = {
-    0, 16, 243, 247, 250, 490, 526, 642, 671, (u16)-1,
+    SPRITE_ISAAC,              // the party
+    SPRITE_BRIGGS,             // the people
+    SPRITE_VENUS_DJINNI,       // the Djinn
+    SPRITE_PUNCH_ANT,          // monsters on the field
+    SPRITE_VINE_PILLAR,        // things on the field
+    SPRITE_BATTLE_ISAAC,       // the party in battle, and their weapons
+    SPRITE_BATTLE_BLUE_DRAGON, // monsters in battle
+    SPRITE_THOR,               // the summons
+    SPRITE_STAR_BURST,         // effects
+    (u16)-1,
 };
 // clang-format on
 

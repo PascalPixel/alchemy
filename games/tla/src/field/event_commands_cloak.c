@@ -92,7 +92,7 @@ void FieldPsynergy_StartCloak(void) {
 
 /// A Douse drop's per-frame update: once it reaches its ground it starts the
 /// shared particle script and stops updating.
-void BattleEffect_LandFallingObject(struct Actor *actor) {
+void FieldEffect_LandDouseDrop(struct Actor *actor) {
   if (actor->y.fixed <= actor->groundHeight) {
     actor->wait = 2;
     Actor_StartScriptFar(actor, (u32)gFieldEffect_ReleaseScript);
@@ -195,7 +195,7 @@ void FieldPsynergy_Douse(void) {
         } else {
           particle->groundHeight = pos.y - toFIXED(32);
         }
-        particle->update = (ObjectUpdate)BattleEffect_LandFallingObject;
+        particle->update = (ObjectUpdate)FieldEffect_LandDouseDrop;
         particle->motionFlags = ACTOR_FALLS;
         particle->priorityFlags =
             ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_OVERHEAD;
@@ -406,7 +406,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       Actor_SelectAnimationFar(anchors[0], 4);
       Actor_SelectAnimationFar(anchors[1], 4);
       wait(15);
-      target->paused = i;
+      target->paused = 0;
       target->speedLimit = toFIXED(1) / 5;
       target->acceleration = toFIXED(1) / 5;
       Actor_SetMoveTargetFar(target, position.x, position.y, position.z);
@@ -422,8 +422,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       Actor_WaitForMoveFar(target);
       target->x.fixed = x;
       target->z.fixed = z;
-      target->velocityX = i;
-      target->velocityZ = i;
+      target->velocityX = 0;
+      target->velocityZ = 0;
       wait(10);
       break;
     }

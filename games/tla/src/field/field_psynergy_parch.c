@@ -44,6 +44,22 @@ enum ParchResult {
   PARCH_DRIES = 2
 };
 
+/// The stages of Parch's disc, which differ by what it finds (ParchResult).
+/// Every result starts with PARCH_SWELLS.
+enum ParchPhase {
+  PARCH_SWELLS =
+      0, ///< the disc grows, to three quarters (a quarter on nothing)
+  /// On nothing: the disc holds for 30 frames, then shrinks away.
+  PARCH_HOLDS = 1,
+  PARCH_EMPTY_SHRINKS = 2,
+  /// On water: steam rises two puffs a frame, then one, and the disc shrinks
+  /// away. Water that dries flashes white 40 frames into the steam, and the
+  /// cast ends with the thinner steam.
+  PARCH_STEAMS = 1,
+  PARCH_STEAM_THINS = 2,
+  PARCH_STEAM_SHRINKS = 3
+};
+
 /// Parch's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the glow disc over the
 /// target and the 64 puffs of steam that rise as it dries.
 struct ParchState {
@@ -178,7 +194,7 @@ loaded:
   wait(1);
   next = 0;
   spawn = 0;
-  phase = 0;
+  phase = PARCH_SWELLS;
   timer = 0;
   frame = 0;
   do {
@@ -269,23 +285,23 @@ loaded:
 
     if (result == PARCH_NOTHING) {
       switch (phase) {
-      case 0:
+      case PARCH_SWELLS:
         if (timer == 10)
           Sound_PlayFar(SE_PARCH);
         state->discScaleX += FIXED_ONE * 3 / 256;
         state->discScaleY = state->discScaleX;
         if (state->discScaleX > toFIXED(0.25) - 1) {
-          phase = 1;
+          phase = PARCH_HOLDS;
           timer = -1;
         }
         break;
-      case 1:
+      case PARCH_HOLDS:
         if (timer == 30) {
-          phase = 2;
+          phase = PARCH_EMPTY_SHRINKS;
           timer = -1;
         }
         break;
-      case 2:
+      case PARCH_EMPTY_SHRINKS:
         spawn = 0;
         state->discScaleX += -(FIXED_ONE * 3 / 256);
         state->discScaleY = state->discScaleX;
@@ -296,31 +312,31 @@ loaded:
     }
     if (result == PARCH_WATER) {
       switch (phase) {
-      case 0:
+      case PARCH_SWELLS:
         if (timer == 30)
           Sound_PlayFar(SE_SPIN);
         state->discScaleX += FIXED_ONE * 3 / 256;
         state->discScaleY = state->discScaleX;
         if (state->discScaleX > toFIXED(0.75) - 1) {
-          phase = 1;
+          phase = PARCH_STEAMS;
           timer = -1;
         }
         break;
-      case 1:
+      case PARCH_STEAMS:
         spawn = 2;
         if (timer == 40) {
-          phase = 2;
+          phase = PARCH_STEAM_THINS;
           timer = -1;
         }
         break;
-      case 2:
+      case PARCH_STEAM_THINS:
         spawn = 1;
         if (timer == 40) {
-          phase = 3;
+          phase = PARCH_STEAM_SHRINKS;
           timer = -1;
         }
         break;
-      case 3:
+      case PARCH_STEAM_SHRINKS:
         spawn = 0;
         state->discScaleX += -(FIXED_ONE / 64);
         state->discScaleY = state->discScaleX;
@@ -331,17 +347,17 @@ loaded:
     }
     if (result == PARCH_DRIES) {
       switch (phase) {
-      case 0:
+      case PARCH_SWELLS:
         if (timer == 40)
           Sound_PlayFar(SE_SPIN);
         state->discScaleX += FIXED_ONE * 3 / 256;
         state->discScaleY = state->discScaleX;
         if (state->discScaleX > toFIXED(0.75) - 1) {
-          phase = 1;
+          phase = PARCH_STEAMS;
           timer = -1;
         }
         break;
-      case 1:
+      case PARCH_STEAMS:
         if (timer == 40) {
           fade = 0;
           PaletteFade_SetTarget(RGB_WHITE, 0);
@@ -349,11 +365,11 @@ loaded:
         }
         spawn = 2;
         if (timer == 100) {
-          phase = 2;
+          phase = PARCH_STEAM_THINS;
           timer = -1;
         }
         break;
-      case 2:
+      case PARCH_STEAM_THINS:
         spawn = 1;
         if (timer == 80)
           phase = FIELD_PSYNERGY_FINISHED;

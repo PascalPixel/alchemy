@@ -10,9 +10,10 @@ const s32 gActor_IdleScript[] = {
     SC_END,
 };
 
-/// The two rows the field copies into its state as it starts, before
-/// Actor_ResetForLeader places the leader: one idle actor at (300, 0, 300) and
-/// the end of the table.
+/// The leader's placement and the end of its table, which the field copies
+/// into its state as it starts. Only the idle script survives the copy:
+/// Actor_ResetForLeader writes the leader's own sprite, condition, spot and
+/// heading over the rest of the first row.
 const struct ActorPlacement gField_DefaultPlacements[] = {
     ACTOR_PLACEMENT(0, CONDITION_ALWAYS, (s32)gActor_IdleScript, 300, 0, 300,
                     23472, 0, 0),

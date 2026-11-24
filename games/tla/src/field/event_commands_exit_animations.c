@@ -10,6 +10,10 @@
 #include "fixed_math.h"
 #include "flags.h"
 
+/// TRANSITION_CENTRE_LINE's variant whose lines flicker every other frame as
+/// they close (ScreenTransition_UpdateFromCenter); variant 0 closes steadily.
+#define CENTRE_LINE_FLICKERING 1
+
 /// Writes the actor's position on screen, in pixels, to position[0] and
 /// position[1]; an actor with a sprite is raised by its frame box. Returns -1
 /// when the actor does not exist.
@@ -69,12 +73,13 @@ void Field_StartEncounterTransition(s32 unused) {
   Sound_PlayFar(SE_BEAST_CRY);
   if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     // On the World Map the flash colours the window palette's black instead,
-    // and the screen closes toward the centre line from its middle; a field
-    // scene closes with WINDOW_TRANSITION_LEADER_INVERSE.
+    // and the screen closes to the centre line in flickers; a field scene
+    // closes with WINDOW_TRANSITION_LEADER_INVERSE.
     Io_Write16(RGB_WHITE,
                (u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_BLACK));
-    ScreenTransition_Finish(SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 1),
-                            ENCOUNTER_CLOSE_FRAMES);
+    ScreenTransition_Finish(
+        SCENE_TRANSITION(TRANSITION_CENTRE_LINE, CENTRE_LINE_FLICKERING),
+        ENCOUNTER_CLOSE_FRAMES);
     state->transitionActive = 0;
     wait(ENCOUNTER_CLOSE_FRAMES);
     for (i = 0; i < ENCOUNTER_FADE_FRAMES; i++) {

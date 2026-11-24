@@ -245,7 +245,7 @@ s32 Sanctum_RunPartyService(void) {
 
   listWindow = Window_CreateFar(1, 12, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-  shop->cursorFrames = redraw;
+  shop->cursorFrames = 1;
   Menu_ShowPartyFiguresFar(listWindow, 2, 0);
 #if SANCTUM_HAS_DONATION_WINDOW
   donationWindow =

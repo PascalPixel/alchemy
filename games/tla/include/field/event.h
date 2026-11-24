@@ -46,13 +46,13 @@ void Event_SetExitRequest(u16 exit);
 void Event_SetMessageId(s32 message);
 s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
-struct Actor *Actor_GetById(u32 objectId);
+struct Actor *Actor_GetById(u32 actorId);
 void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z);
 void Actor_SetSpeedParameters(s32 actorId, FIXED speed, FIXED acceleration);
-void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
+void Actor_SetDestinationById(u32 actorId, s32 x, s32 z);
 void Actor_SetDestinationOffsetById(s32 actorId, s32 dx, s32 dz);
 void Actor_WalkToById(s32 actorId, s32 x, s32 z);
-void Actor_WalkByById(u32 objectId, s32 x_offset, s32 z_offset);
+void Actor_WalkByById(u32 actorId, s32 xOffset, s32 zOffset);
 void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames);
 void Actor_FaceActorById(s32 actorId, s32 target, s32 frames);
 struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
@@ -76,10 +76,10 @@ void Actor_SetMoveTarget(struct Actor *actor, FIXED x, FIXED y, FIXED z);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void MapGrid_PlayMapEdit(const void *steps, s32 x, s32 y);
 void TreasureSpot_SetActorPosition(u32 actorId, FIXED x, FIXED z);
-void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
-void Actor_WalkByAndWaitById(u32 objectId, s32 x_offset, s32 z_offset);
+void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset);
+void Actor_WalkByAndWaitById(u32 actorId, s32 xOffset, s32 zOffset);
 void Event_ShowMessageThenWait(s32 speaker, s32 flags, s32 frames);
-void Actor_ConfigureSpriteColor(s32 actorId, s32 value);
+void Actor_ConfigureSpriteColor(s32 actorId, s32 colorMode);
 void MapGrid_CopyCellTilesIndicesRect(s32 sourceX, s32 sourceY,
                                       s32 destinationX, s32 destinationY,
                                       s32 width, s32 height);
@@ -88,11 +88,13 @@ void MapGrid_CopyCellTilesCellsRect(s32 sourceX, s32 sourceY, s32 width,
                                     s32 destinationY);
 void PaletteFade_SetSource(s32 value, s32 mode);
 void PaletteFade_SetTarget(s32 value, s32 mode);
-void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
+void Actor_MoveToAndWaitById(u32 actorId, s32 x, s32 z);
 void Actor_WalkToAndWaitById(s32 actorId, s32 x, s32 z);
-void Event_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
-                                  s32 otherSpeaker, s32 otherX, s32 otherY,
-                                  s32 otherArg, s32 otherExtra, s32 flags);
+void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
+                                  s32 firstPortraitX, s32 firstPortraitY,
+                                  s32 second, s32 secondX, s32 secondY,
+                                  s32 secondPortraitX, s32 secondPortraitY,
+                                  s32 delay);
 void Actor_SetMovementTypeById(s32 actorId, const void *script);
 void Actor_SetMovementTypeAndWaitById(s32 actorId, const void *script);
 void Actor_TurnToFaceEachOther(s32 actorId, s32 other, s32 frames);
@@ -121,20 +123,20 @@ void Actor_SetAnimationAndWait(s32 actorId, s32 animation);
 void Actor_Jump(s32 actorId, s32 speed, s32 frames);
 void Actor_RunRepeatedMotion(u32 actorId, s32 count);
 void Actor_SetSpritePriority(u32 actorId, s32 priority);
-void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
+void Actor_StartRepeatedMotion(u32 actorId, s32 count);
 void Actor_WatchAndSetScript(s32 actorId, s32 watchedActorId);
 void Actor_WaitForMoveById(s32 actorId);
-void FieldCamera_FollowActor(s32 id, s32 flag);
+void FieldCamera_FollowActor(s32 actorId, s32 keepPosition);
 void Actor_SetPositionAndResetMotion(struct Actor *actor, FIXED x, FIXED y,
                                      FIXED z);
 void Actor_WaitForScriptEndById(u32 actorId);
-void Actor_SetSpriteColor(struct Actor *actor, s32 attribute);
+void Actor_SetSpriteColor(struct Actor *actor, s32 colorMode);
 void Actor_Stop(s32 actorId);
 /// Sets the field's exit request (Event_SetExitRequest, through the overlay's
 /// own import row).
 void Import_EventSetExitRequest(s32 exit);
 void Actor_WaitForMove(struct Actor *actor);
-s32 PartyInventory_FindMember(s32 item_id);
+s32 PartyInventory_FindMember(s32 itemId);
 void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset);
 s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 flags);
 void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance);
@@ -371,9 +373,9 @@ static inline void FieldActor_SetMoveTargetFX(struct Actor *actor, FIXED x,
 
 /// Creates an actor in an empty slot of gActors, outside the actor ids, or
 /// returns NULL when every slot is taken.
-static inline struct Actor *FieldActor_Create(s32 type, s32 fixed_x,
-                                              s32 fixed_y, s32 fixed_z) {
-  return (struct Actor *)Import_ActorCreate(type, fixed_x, fixed_y, fixed_z);
+static inline struct Actor *FieldActor_Create(s32 type, FIXED x, FIXED y,
+                                              FIXED z) {
+  return (struct Actor *)Import_ActorCreate(type, x, y, z);
 }
 
 /// Plays a cell animation, such as a door opening, and holds the event until
@@ -384,13 +386,12 @@ static inline void MapGrid_AnimateCells(const u16 *steps, s32 destinationX,
 }
 
 /// Moves a treasure spot's actor to a point on the ground.
-static inline void TreasureSpot_SetPosition(s32 object, FIXED fixed_x,
-                                            FIXED fixed_z) {
-  TreasureSpot_SetActorPosition(object, fixed_x, fixed_z);
+static inline void TreasureSpot_SetPosition(s32 actorId, FIXED x, FIXED z) {
+  TreasureSpot_SetActorPosition(actorId, x, z);
 }
 
-/// Lines an actor up with the middle of its column, then walks it
-/// straight along z.
+/// Lines an actor up with the middle of its column, sets its sprite priority,
+/// then walks it straight along z.
 static inline void Actor_CenterAndWalk(s32 actorId, s32 priority, s32 dz) {
   Actor_CenterOnColumn(actorId, priority, dz);
 }

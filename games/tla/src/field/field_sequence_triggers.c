@@ -21,6 +21,10 @@
 /// The PP a Psynergy Stone gives each party member, enough to fill it: "The
 /// party's PP is fully restored!"
 #define PSYNERGY_STONE_PP 1999
+/// The Psynergy Stone sprite's animation once it is used: it breaks into
+/// pieces that scatter as sparkles, then is gone (psynergy_stone.png's
+/// pictures 7 to 10).
+#define ANIM_PSYNERGY_STONE_SHATTER 2
 
 /// The encounter zone whose slots hold the Mimics' formations; Mimics past its
 /// ENCOUNTER_ZONE_SLOTS go on in the next zone.
@@ -290,7 +294,7 @@ s32 Scene_TalkToActor(s32 id) {
                                FIELD_MESSAGE_ZOOM);
         PartyStatus_CloseFar();
         stone->update = NULL;
-        Actor_SelectAnimationFar(stone, 2);
+        Actor_SelectAnimationFar(stone, ANIM_PSYNERGY_STONE_SHATTER);
         Sound_PlayFar(SE_GLITTER);
         Event_Wait(30);
         FieldMessage_ShowFar((s32)&MsgPsynergyStoneDisappeared,
@@ -426,8 +430,10 @@ s32 Scene_TalkToActor(s32 id) {
     paused = 1;
     talk = Scene_FindTrigger(TRIGGER_TALK_HALTED, id);
     if (talk == NULL) {
+      // With no halted line of its own, a halted actor's plain talk comes out
+      // as halting speech, broken off after its first word.
       talk = Scene_FindTrigger(TRIGGER_TALK, id);
-      decodeFlags = 1;
+      decodeFlags = MESSAGE_DECODE_HALTING_SPEECH;
       if (talk == NULL)
         return result;
       // A function talk trigger is not run for a stopped actor: it says one

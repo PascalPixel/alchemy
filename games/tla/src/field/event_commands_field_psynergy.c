@@ -10,6 +10,14 @@
 #include "field/object.h"
 #include "macros.h"
 
+/// The World Map's cells in view, Ram_MapBlocks: 32 by 32 cells of 32 pixels,
+/// found by a position's cell modulo 32 each way.
+#define WORLD_MAP_VIEW_CELLS 32
+#define WORLD_MAP_CELL_PIXELS 32
+/// The first World Map collision that is water to Scoop and Parch: the sea from
+/// here to WORLD_MAP_COLLISION_SEA_LAST, all but WORLD_MAP_COLLISION_SEA_FIRST.
+#define WORLD_MAP_COLLISION_WATER_FIRST 2
+
 /// If the scene's sprite is active, stops its update callback
 /// (FieldPsynergy_DrawCanvasSprite) and frees its VRAM cache entry.
 void FieldPsynergy_ReleaseSceneSprite(void) {
@@ -30,8 +38,12 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
   struct MapCell *cells;
 
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    cells = &((struct MapCell *)Ram_MapBlocks)[((x / toFIXED(32)) & 31) +
-                                               (((z / toFIXED(32)) & 31) << 5)];
+    cells = &(
+        (struct MapCell *)Ram_MapBlocks)[((x / toFIXED(WORLD_MAP_CELL_PIXELS)) &
+                                          (WORLD_MAP_VIEW_CELLS - 1)) +
+                                         ((z / toFIXED(WORLD_MAP_CELL_PIXELS)) &
+                                          (WORLD_MAP_VIEW_CELLS - 1)) *
+                                             WORLD_MAP_VIEW_CELLS];
   } else {
     if (layer <= MAPGRID_LAYER_OVERHEAD)
       cells = map->layers[layer].cells;
@@ -104,14 +116,14 @@ s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
   return column;
 }
 
-/// Whether the cell at (x, z) can be climbed (MAP_CELL_CLIMBABLE), as the
-/// climbing control (mode 2) and the Sand's climb test read it.
+/// Whether the cell at (x, z) can be climbed (MAP_CELL_CLIMBABLE): Sand starts
+/// up a wall face only there (Actor_MoveAsSand) and ends its climb off one.
 u8 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer) {
   return MapGrid_GetCellAt(x, z, layer)->attributeB & MAP_CELL_CLIMBABLE;
 }
 
 /// Whether the cell at (x, z) is water: MAP_CELL_WATER, or on the world map
-/// collision 2 to 4.
+/// collision WORLD_MAP_COLLISION_WATER_FIRST to WORLD_MAP_COLLISION_SEA_LAST.
 s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer) {
   struct FieldState *event = Ram_HeapSlots->fieldState;
 
@@ -123,7 +135,8 @@ s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer) {
     position[0] = x;
     position[2] = z;
     collision = WorldMap_GetCollisionFar(position);
-    return (u32)(collision - 2) <= 2;
+    return (u32)(collision - WORLD_MAP_COLLISION_WATER_FIRST) <=
+           WORLD_MAP_COLLISION_SEA_LAST - WORLD_MAP_COLLISION_WATER_FIRST;
   }
   return (u8)(MapGrid_GetCellAt(x, z, layer)->attributeB & MAP_CELL_WATER);
 }

@@ -289,6 +289,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       if (Inventory_CountItemFar(member, item) >= INVENTORY_STACK_MAX) {
         MessageArgument_PushFar(member, MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+        // "Empty": the line every edition's text has here, the word for an
+        // empty inventory slot, though the member and item pushed suit a
+        // sentence such as MsgPartyCannotCarry's.
         FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 7, FIELD_MESSAGE_ZOOM);
         goto retry;
       }

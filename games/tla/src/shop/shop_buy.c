@@ -115,6 +115,8 @@ next_page:
 #endif
 
 #if TLA_PATCH_1
+      /* FAKEMATCH(temporary): the item shown is kept in stockCount, which the
+       * loop's top reloads. */
       stockCount = stockIds[selectionIndex];
       held = PartyInventory_CountItemFar(stockCount);
       heldDefinition = Item_GetDirectFar(stockCount);
@@ -277,8 +279,6 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
   s32 stockIndex;
   s32 pageSlot;
   s32 priceX;
-  s32 zero;
-  s32 highlightFrame;
   s16 itemId;
   struct ItemDefinition *item;
   struct WindowSprite *icon;
@@ -292,21 +292,21 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
     if (stockIndex != 0) {
       icon = WindowSprite_CreateFar(shop->previousPageIcon,
                                     WINDOW_SPRITE_SIZE_16X16, window, 216, -16);
-      zero = 0;
-      icon->kind = zero;
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
-      icon->animationStep = zero;
+      icon->animationStep = 0;
     }
     if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
       icon = WindowSprite_CreateFar(shop->nextPageIcon,
                                     WINDOW_SPRITE_SIZE_16X16, window, 216, 24);
-      zero = 0;
-      icon->kind = zero;
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
-      icon->animationStep = zero;
+      icon->animationStep = 0;
     }
     pageSlot = 0;
     if (stockIndex < (u32)itemCount) {
+      /* FAKEMATCH(signature): the page's first stock item found as a number,
+       * the list's address plus two bytes an item. */
       stockCursor = (s16 *)((stockIndex * 2) + (u32)itemIds);
       priceX = 16;
       for (;
@@ -319,8 +319,7 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
         icon->depth = OAM_DEPTH_FRONT - 3;
         if (stockIndex == selected) {
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
-          highlightFrame = 10;
-          icon->animationStep = highlightFrame;
+          icon->animationStep = 10;
           icon->depth = OAM_DEPTH_FRONT - 2;
         }
         icon = Shop_CreatePriceSprite((u16)item->price, window, priceX, 0);
@@ -785,6 +784,8 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   lastAddedSlot = 0;
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
   Sound_PlayFar(SE_SHOP_PURCHASE);
+  /* FAKEMATCH(temporary): lastAddedSlot, still 0, stands for 0 in the first
+   * test. */
   if (lastAddedSlot < remainingQuantity) {
     do {
       lastAddedSlot = Inventory_AddItemFar(unitId, itemId);

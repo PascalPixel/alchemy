@@ -55,6 +55,11 @@
 #define WORLD_MAP_COLLISION_TILE_BYTES 8
 #define WORLD_MAP_COLLISION_TILES 256
 
+/// The last collision the flying ship crosses once it is up
+/// (WorldMap_IsFlyable): past it, the forest and the ground after it stop it,
+/// all but 10.
+#define WORLD_MAP_COLLISION_FLYABLE_LAST 8
+
 /// The frames a world map graphics set takes to reload, one step a frame,
 /// counted down from this: its palette, animations and shapes, then each tile
 /// set decoded and copied to VRAM.
@@ -77,7 +82,6 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   s32 tile;
   struct WorldMapCell *block;
   const u32 *resources;
-  s32 graphicsSet;
   s32 value;
   u8 *buffer;
 
@@ -106,21 +110,8 @@ void WorldMap_PreloadCurrentTileBlock(void) {
           (((x / toFIXED(32)) & 31) + (((y / toFIXED(32)) & 31) << 5));
   WorldMap_UpdateRegionTint(block->region, 1);
   value = block->region;
-  switch (value / WORLD_MAP_REGION_GROUP) {
-  case 3:
-    graphicsSet = 3;
-    break;
-  case 2:
-    graphicsSet = 2;
-    break;
-  case 4:
-    graphicsSet = 1;
-    break;
-  default:
-    graphicsSet = 0;
-    break;
-  }
-  resources = gWorldMap_GraphicsResources[graphicsSet];
+  resources = gWorldMap_GraphicsResources[WorldMap_GetRegionGroupGraphics(
+      value / WORLD_MAP_REGION_GROUP)];
   if (resources != perspective->resources) {
     perspective->resources = resources;
     perspective->reloadSteps = WORLD_MAP_RELOAD_STEPS;
@@ -269,7 +260,7 @@ void WorldMap_EndStillImage(void) {
 
 /// Reloads the world map area's palette and tiles after the still image, puts
 /// the default cells back and returns to the perspective view.
-s32 WorldMap_LoadAreaGraphics(void) {
+void WorldMap_LoadAreaGraphics(void) {
   struct WorldMapView *perspective;
   const u32 *resources;
   u8 *buffer;
@@ -1047,7 +1038,8 @@ s32 MapGrid_GetCellHeight(FIXED x, FIXED z, s32 layer) {
   return MapGrid_GetTerrainHeight(layer, x, z) >> CURVE_VALUE_SHIFT;
 }
 
-/// As MapGrid_GetTerrainKindAt, a second copy.
+/// As MapGrid_GetTerrainKindAt: the ROM keeps two routines with this body,
+/// each with callers of its own (the scenes' overlays import only this one).
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
@@ -1339,19 +1331,20 @@ s32 WorldMap_IsSailable(void *mover, struct WorldPosition *position) {
     struct FieldState *state = Ram_HeapSlots->fieldState;
     s32 mode;
 
-    // Each of the three kinds of ground last flown over sails the same water.
+    // Whichever water the ship was last over, it sails the same water; last
+    // over ground (SHIP_TERRAIN_GROUND), it sails nowhere.
     mode = state->terrainKind;
-    if (mode == 0) {
+    if (mode == SHIP_TERRAIN_SEA) {
       if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) <=
               WORLD_MAP_COLLISION_SEA_LAST - WORLD_MAP_COLLISION_SEA_FIRST ||
           collision == WORLD_MAP_COLLISION_SHALLOW_WATER)
         return 0;
-    } else if (mode == 1) {
+    } else if (mode == SHIP_TERRAIN_SHALLOWS) {
       if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) <=
               WORLD_MAP_COLLISION_SEA_LAST - WORLD_MAP_COLLISION_SEA_FIRST ||
           collision == WORLD_MAP_COLLISION_SHALLOW_WATER)
         return 0;
-    } else if (mode == 2) {
+    } else if (mode == SHIP_TERRAIN_SEA_LAST) {
       if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) <=
               WORLD_MAP_COLLISION_SEA_LAST - WORLD_MAP_COLLISION_SEA_FIRST ||
           collision == WORLD_MAP_COLLISION_SHALLOW_WATER)
@@ -1379,18 +1372,22 @@ s32 WorldMap_IsFlyable(struct Actor *mover, struct WorldPosition *position) {
     } else {
       s32 mode = state->terrainKind;
 
-      if (mode == 0) {
-        if ((u32)(collision - 1) <= 5)
+      if (mode == SHIP_TERRAIN_SEA) {
+        if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) <=
+            WORLD_MAP_COLLISION_SHALLOW_WATER - WORLD_MAP_COLLISION_SEA_FIRST)
           return 0;
-      } else if (mode == 1) {
-        if ((u32)(collision - 1) <= 7)
+      } else if (mode == SHIP_TERRAIN_SHALLOWS) {
+        if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) <=
+            WORLD_MAP_COLLISION_FLYABLE_LAST - WORLD_MAP_COLLISION_SEA_FIRST)
           return 0;
       } else {
-        if (mode == 2) {
-          if ((u32)(collision - 1) <= 7)
+        if (mode == SHIP_TERRAIN_SEA_LAST) {
+          if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) <=
+              WORLD_MAP_COLLISION_FLYABLE_LAST - WORLD_MAP_COLLISION_SEA_FIRST)
             return 0;
         } else {
-          if ((u32)(collision - 4) <= 4)
+          if ((u32)(collision - WORLD_MAP_COLLISION_SEA_LAST) <=
+              WORLD_MAP_COLLISION_FLYABLE_LAST - WORLD_MAP_COLLISION_SEA_LAST)
             return 0;
         }
         // XXX (no evidence): what ground collision 10 is, which a battle

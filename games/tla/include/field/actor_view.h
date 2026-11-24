@@ -14,17 +14,22 @@ struct SpriteAnimation;
 
 struct FieldSprite;
 
-s32 Sprite_StartAnimation(struct Sprite *, s32);
-void Sprite_SetAnimationSpeed(struct Sprite *, s32);
-s32 Sprite_ResetAnimations(struct Sprite *);
-s32 Sprite_AddAnimation(struct Sprite *, s32);
-void Actor_StartScript(struct Actor *, const s32 *);
+/// Starting, timing, resetting and adding a sprite's animations and setting
+/// their colour modes; a timer step of 16 is normal speed.
+s32 Sprite_StartAnimation(struct Sprite *sprite, s32 animation);
+void Sprite_SetAnimationSpeed(struct Sprite *sprite, s32 step);
+s32 Sprite_ResetAnimations(struct Sprite *sprite);
+s32 Sprite_AddAnimation(struct Sprite *sprite, s32 id);
+void Sprite_SetAnimationColorModes(struct Sprite *sprite, u32 colorMode);
+void Sprite_SetAnimationColorModesFar(struct Sprite *sprite, u32 colorMode);
+
+/// Starting an actor's script and setting its sprite's flags, colour mode and
+/// priority.
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 void Actor_SetSpriteFlagsFar(struct Actor *actor, u32 flags);
-void Sprite_SetAnimationColorModes(struct Sprite *, u32);
-void Sprite_SetAnimationColorModesFar(struct Sprite *, u32);
-void Actor_SetSpriteColorMode(struct Actor *, u32);
-void Actor_SetSpriteColorModeFar(struct Actor *, u32);
-void Actor_SetSpritePriorityDirect(struct Actor *, s32);
+void Actor_SetSpriteColorMode(struct Actor *actor, u32 colorMode);
+void Actor_SetSpriteColorModeFar(struct Actor *actor, u32 colorMode);
+void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 priority);
 
 extern const s32 gActor_CameraScript[];
 extern const s32 gActorScript_EndScript[];

@@ -494,6 +494,8 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite, s32 *pos, s32 *scale,
 
 /// Render_ApplyProjectedPlacement into the given draw slot: the sprite and its
 /// shadow both go to depth, and mode chooses the picture as facing does there.
+/// It also moves a double-size sprite's shadow by twice its half size, and its
+/// frame and locals differ, so the two stay separate routines.
 void Render_ApplyProjectedPlacementAtDepth(struct Sprite *sprite, s32 *pos,
                                            s32 *scale, s32 mode, s32 depth) {
   s32 matrix;

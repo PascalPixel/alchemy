@@ -1,15 +1,16 @@
 /// @file
-/// The ground mask: the marks drawn over the ground in front of the actor,
-/// in fade and blank forms, and the effect sprites that draw them.
+/// The ground mask: 16-pixel sprites kept beside an actor where the ground
+/// before it rises, in a fade form nothing starts and a blank form Aqua Rock
+/// starts, which draws no visible pixel; and the effect sprites that borrow
+/// their tiles.
 // Part of field_sequence.c.
 
 /// A screen row's map cell, in pixels, in an OAM entry's 8-bit y, as
 /// MAPGRID_CELL_PIXEL_MASK is for a whole pixel coordinate.
 #define CELL_GRID_ROW_MASK 0xf0
-// XXX: what the player sees of this bit; a render of a map whose third layer
-// sets it, with FieldEffect_StartBlankOverlay running, would settle it.
 /// MapCell.attributeB's lowest bit, on the map's third layer: a cell the blank
-/// overlay marks.
+/// overlay marks. The marks' tiles are colour 0, transparent (GBATEK "Color
+/// Palette RAM", Transparent Colors), so the player sees nothing of them.
 #define CELL_BLANK_OVERLAY 0x01
 
 /// Each frame of the fade overlay: on each of the two cells beside the actor
@@ -92,7 +93,8 @@ void FadeOverlay_DrawMarks(void) {
 }
 
 /// Starts the fade overlay on an actor (the party leader when NULL): loads its
-/// solid tiles, sets the blending and draws it each frame.
+/// solid tiles, sets the blending and draws it each frame. Unused: nothing
+/// calls it or its far call, FieldEffect_StartFadeOverlayFar.
 void FieldEffect_StartFadeOverlay(void *actor) {
   struct FadeOverlayState *state;
   u8 *tiles;
@@ -181,7 +183,8 @@ void BlankOverlay_DrawMarks(void) {
 
 /// Like FieldEffect_StartFadeOverlay with blank tiles and no blending:
 /// loads 512 bytes of blank tiles into VRAM_CACHE_ENTRY_FADE_OVERLAY and starts
-/// BlankOverlay_DrawMarks on an actor (the party leader when 0).
+/// BlankOverlay_DrawMarks on an actor (the party leader when 0). Aqua Rock's
+/// rooms start it; its marks are all colour 0, so nothing shows.
 void FieldEffect_StartBlankOverlay(s32 actor) {
   struct FadeOverlayState *state =
       HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*state));

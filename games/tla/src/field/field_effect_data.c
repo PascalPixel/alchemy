@@ -31,8 +31,8 @@ const u32 gFieldPsynergy_CastColors[8] = {
 };
 // clang-format on
 
-/// A script that releases its actor at once: a Mind Read sign's end, once it
-/// has come to rest.
+/// A script that releases its actor at once: a Mind Read crescent's end, once
+/// it reaches the caster (MindRead_UpdateCrescent).
 const s32 gMindRead_CrescentEndScript[] = {
     SC_RELEASE,
 };

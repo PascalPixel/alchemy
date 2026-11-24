@@ -73,7 +73,7 @@ void MapScreen_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
   s32 count;
   s32 wraps;
   s32 flag;
-  u32 state;
+  u32 marker;
   struct WorldMapState *worldMapState = Ram_WorldMapState;
 
   // DEAD: the leader looked up and never used; the ROM keeps the call.
@@ -92,9 +92,9 @@ void MapScreen_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
     if (place->flag == 0)
       break;
     flag = FLAG_PLACE_VISITED(place->flag);
-    state = WorldMapPlace_GetMarker(place);
+    marker = WorldMapPlace_GetMarker(place);
 
-    if (state != WORLD_MAP_MARKER_NONE && state != WORLD_MAP_MARKER_SHIP &&
+    if (marker != WORLD_MAP_MARKER_NONE && marker != WORLD_MAP_MARKER_SHIP &&
         GameFlag_Get(flag)) {
       s32 sx = MAP_SCREEN_X(place->x);
       s32 sy = MAP_SCREEN_Y(place->z);
@@ -127,10 +127,10 @@ void MapScreen_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
           wraps++;
         } else {
           flag = FLAG_PLACE_VISITED(next->flag);
-          state = WorldMapPlace_GetMarker(next);
+          marker = WorldMapPlace_GetMarker(next);
 
-          if (state != WORLD_MAP_MARKER_NONE &&
-              state != WORLD_MAP_MARKER_SHIP && GameFlag_Get(flag)) {
+          if (marker != WORLD_MAP_MARKER_NONE &&
+              marker != WORLD_MAP_MARKER_SHIP && GameFlag_Get(flag)) {
             place = next;
             break;
           }
@@ -160,6 +160,17 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
     sprite->oam.y += dy;
   }
 }
+
+/// Where the name of the place nearest the cursor is drawn: its top this many
+/// pixels above the place, and its left edge WORLD_MAP_NAME_LEFT pixels left
+/// of it (1 when zoomed). A name that would run off the screen's right edge
+/// ends WORLD_MAP_NAME_RIGHT_MARGIN pixels short of it instead, and is raised
+/// WORLD_MAP_NAME_RAISE more.
+#define WORLD_MAP_NAME_ABOVE 11
+#define WORLD_MAP_NAME_RIGHT_MARGIN 8
+#define WORLD_MAP_NAME_RAISE 10
+/// The cursor sprite's left edge, this many pixels left of the cursor's point.
+#define MAP_SCREEN_CURSOR_LEFT 17
 
 /// The scrolled name's left edge, in pixels left of its place.
 #if LANGUAGE == LANGUAGE_GERMAN
@@ -392,10 +403,10 @@ void MapScreen_UpdateMarkers(void) {
   marker = &gMapScreen_CursorMarker;
   if (gMapScreen_Zoomed == 0) {
     marker->affineIndex = 0;
-    marker->x = cursorX - FIXEDtoINT(scrollX) - 17;
+    marker->x = cursorX - FIXEDtoINT(scrollX) - MAP_SCREEN_CURSOR_LEFT;
     marker->y = cursorY - FIXEDtoINT(scrollY) + 1;
   } else {
-    marker->x = WORLD_MAP_SCALE(cursorX) - 17;
+    marker->x = WORLD_MAP_SCALE(cursorX) - MAP_SCREEN_CURSOR_LEFT;
     marker->y = WORLD_MAP_SCALE(cursorY) + 1;
   }
   Oam_AddSpriteAtDepthClamped(marker, MAP_SCREEN_MARKER_DEPTH);
@@ -427,16 +438,16 @@ void MapScreen_UpdateMarkers(void) {
         Text_MeasureMessageFar(nearestName, &width, &height);
         if (gMapScreen_Zoomed == 0) {
           cursorX = nearestX - WORLD_MAP_NAME_LEFT;
-          cursorY = nearestY - 11;
+          cursorY = nearestY - WORLD_MAP_NAME_ABOVE;
           cursorX -= FIXEDtoINT(scrollX);
           cursorY -= FIXEDtoINT(scrollY);
         } else {
           cursorX = WORLD_MAP_SCALE(nearestX) - 1;
-          cursorY = WORLD_MAP_SCALE(nearestY) - 11;
+          cursorY = WORLD_MAP_SCALE(nearestY) - WORLD_MAP_NAME_ABOVE;
         }
-        if (cursorX + width > 239) {
-          cursorX = 232 - width;
-          cursorY += -10;
+        if (cursorX + width > DISPLAY_WIDTH - 1) {
+          cursorX = DISPLAY_WIDTH - WORLD_MAP_NAME_RIGHT_MARGIN - width;
+          cursorY += -WORLD_MAP_NAME_RAISE;
         }
         if (cursorY < 0)
           cursorY = 0;
@@ -452,16 +463,16 @@ void MapScreen_UpdateMarkers(void) {
     height = state->nameBox.height;
     if (gMapScreen_Zoomed == 0) {
       cursorX = nearestX - WORLD_MAP_NAME_LEFT;
-      cursorY = nearestY - 11;
+      cursorY = nearestY - WORLD_MAP_NAME_ABOVE;
       cursorX -= FIXEDtoINT(scrollX);
       cursorY -= FIXEDtoINT(scrollY);
     } else {
       cursorX = WORLD_MAP_SCALE(nearestX) - 1;
-      cursorY = WORLD_MAP_SCALE(nearestY) - 11;
+      cursorY = WORLD_MAP_SCALE(nearestY) - WORLD_MAP_NAME_ABOVE;
     }
-    if (cursorX + width > 239) {
-      cursorX = 232 - width;
-      cursorY += -10;
+    if (cursorX + width > DISPLAY_WIDTH - 1) {
+      cursorX = DISPLAY_WIDTH - WORLD_MAP_NAME_RIGHT_MARGIN - width;
+      cursorY += -WORLD_MAP_NAME_RAISE;
     }
     if (cursorY < 0)
       cursorY = 0;

@@ -2,11 +2,8 @@
 #define ALCHEMY_MATH_TABLE_H
 
 /// @file
-/// The arctangent table, the fixed-point square root and the basic colour
-/// palette, which The Broken Seal declares in its system headers.
-// XXX: the basic colour palette and the square root are not math tables; which
-// of The Lost Age's system headers declares each, as The Broken Seal's do,
-// would settle where they go.
+/// The arctangent table, and beside it the fixed-point square root and the
+/// basic sprite palettes, which The Broken Seal declares in system/system.h.
 
 #include "fixed_math.h"
 #include "types.h"

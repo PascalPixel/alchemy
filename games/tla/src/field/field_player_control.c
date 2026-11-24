@@ -32,6 +32,23 @@ enum FieldShortcutKind {
 /// How far ahead of the leader the world map tests the ground, 16.16 pixels.
 #define WORLD_MAP_PROBE_RADIUS toFIXED(8)
 
+/// Sets position radius out from actor along heading and tests it with check
+/// (MapGrid_CheckCollision, WorldMap_IsSailable and the like, 0 where the way
+/// is open); true when it is open.
+#define PROBE_CLEAR(check, actor, radius, heading, position)                   \
+  (SET_POSITION(position, (actor)->x.fixed, (actor)->y.fixed,                  \
+                (actor)->z.fixed),                                             \
+   Vector_AddPolarOffset(radius, heading, position),                           \
+   check(actor, position) == 0)
+/// The four probes beside heading, FIELD_PROBE_ANGLE and 45 degrees to each
+/// side, made in probe: true when all four are open, so the actor moving along
+/// heading grazes nothing it passes.
+#define SIDE_PROBES_CLEAR(check, actor, radius, heading, probe)                \
+  (PROBE_CLEAR(check, actor, radius, (heading) + FIELD_PROBE_ANGLE, probe) &&  \
+   PROBE_CLEAR(check, actor, radius, (heading) - FIELD_PROBE_ANGLE, probe) &&  \
+   PROBE_CLEAR(check, actor, radius, (heading) + DEGtoANG(45), probe) &&       \
+   PROBE_CLEAR(check, actor, radius, (heading) - DEGtoANG(45), probe))
+
 /// The leader's speeds and accelerations, in pixels a frame as 16.16 fixed
 /// point, as The Broken Seal's; on the world map this game runs with twice the
 /// walk's acceleration.
@@ -48,17 +65,15 @@ enum FieldShortcutKind {
 /// The world map camera turns toward the pad's yaw by at most about 2.8
 /// degrees a frame.
 #define WORLD_MAP_YAW_STEP_MAX (TRIG_TURN / 128)
-/// The footprints the leader leaves in snow and sand, and the leader's
-/// userValue that asks for the pair next.
-enum FootprintAnimation {
-  FOOTPRINT_ONE_FOOT = 1, ///< one print, fading
-  /// Two prints side by side, fading: laid first after a stop.
-  FOOTPRINT_BOTH_FEET = 2
-};
+/// The map's kind of wading (GROUND_EFFECTS_WADING) in Taopo Swamp, where the
+/// leader sinks into the mud.
+enum { MAP_WADING_MUD = 2 };
 
 /// SC_WALK (LEADER_MOVEMENT_WALKING): the leader's control at one pace, a
 /// pixel a frame whatever the keys. Unused: nothing sets
-/// LEADER_MOVEMENT_WALKING.
+/// LEADER_MOVEMENT_WALKING. It is SC_PLAYER (Actor_UpdatePlayerControl) without
+/// the run, the wading, the footprints or the steered velocity, a script
+/// command of its own, so both stay.
 s32 Actor_UpdateWalkingControl(struct Actor *actor) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -131,30 +146,11 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
     collision = 0;
     goto counted;
   }
-  if (!MapGrid_CheckCollision(actor, &position)) {
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), angle + FIELD_PROBE_ANGLE, &testPosition);
-    if (!MapGrid_CheckCollision(actor, &testPosition)) {
-      SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                   actor->z.fixed);
-      Vector_AddPolarOffset(toFIXED(8), angle - FIELD_PROBE_ANGLE,
-                            &testPosition);
-      if (!MapGrid_CheckCollision(actor, &testPosition)) {
-        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-        Vector_AddPolarOffset(toFIXED(8), angle + DEGtoANG(45), &testPosition);
-        if (!MapGrid_CheckCollision(actor, &testPosition)) {
-          SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                       actor->z.fixed);
-          Vector_AddPolarOffset(toFIXED(8), angle - DEGtoANG(45),
-                                &testPosition);
-          if (!MapGrid_CheckCollision(actor, &testPosition)) {
-            heading = angle;
-            goto push_objects;
-          }
-        }
-      }
-    }
+  if (!MapGrid_CheckCollision(actor, &position) &&
+      SIDE_PROBES_CLEAR(MapGrid_CheckCollision, actor, toFIXED(8), angle,
+                        &testPosition)) {
+    heading = angle;
+    goto push_objects;
   }
   angleOffsets[headingCount++] = angle + FIELD_PROBE_ANGLE;
   angleOffsets[headingCount++] = angle - FIELD_PROBE_ANGLE;
@@ -164,29 +160,10 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
   angleOffsets[headingCount++] = angle - FIELD_PROBE_ANGLE * 3;
   for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
     heading = angleOffsets[angleIndex];
-    SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading, &position);
-    if (MapGrid_CheckCollision(actor, &position))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading + FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (MapGrid_CheckCollision(actor, &testPosition))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading - FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (MapGrid_CheckCollision(actor, &testPosition))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading + DEGtoANG(45),
-                          &testPosition);
-    if (MapGrid_CheckCollision(actor, &testPosition))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading - DEGtoANG(45),
-                          &testPosition);
-    if (!MapGrid_CheckCollision(actor, &testPosition))
+    if (PROBE_CLEAR(MapGrid_CheckCollision, actor, toFIXED(8), (u16)heading,
+                    &position) &&
+        SIDE_PROBES_CLEAR(MapGrid_CheckCollision, actor, toFIXED(8),
+                          (u16)heading, &testPosition))
       goto push_objects;
   }
 
@@ -405,7 +382,8 @@ s32 Field_CheckSpheresOverlap(FIXED *firstPosition, s32 radiusA,
 
 /// A splash at the feet of an actor wading through water (MAP_CELL_WATER):
 /// SPRITE_WADING_SPLASH started on its splash script, its sound every other
-/// step; mode is the map's kind of wading, and kind 2 takes another picture.
+/// step; mode is the map's kind of wading (GROUND_EFFECTS_WADING). In Taopo
+/// Swamp's mud the splash is drawn in the mud's colour, at half speed.
 void Actor_SpawnWaterSplash(struct Actor *actor, s32 mode) {
   struct Actor *created;
   struct SpriteLayerView *sprite;
@@ -425,10 +403,10 @@ void Actor_SpawnWaterSplash(struct Actor *actor, s32 mode) {
       Sprite_StartAnimation((struct Sprite *)child, 1);
       child->flags = 0;
       child->layer = sprite->layer;
-      if (mode == 2) {
+      if (mode == MAP_WADING_MUD) {
         Sprite_SetAnimationColorModes((struct Sprite *)child,
                                       SPRITE_COLOR_FILL);
-        Sprite_SetAnimationSpeed((struct Sprite *)child, 8);
+        Sprite_SetAnimationSpeed((struct Sprite *)child, ANIM_STEP_NORMAL / 2);
       }
     }
   }
@@ -535,32 +513,11 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
     heading = angle;
     goto counted;
   }
-  if (!MapGrid_CheckCollision(actor, &position)) {
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)angle + FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (!MapGrid_CheckCollision(actor, &testPosition)) {
-      SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                   actor->z.fixed);
-      Vector_AddPolarOffset(toFIXED(8), (u16)angle - FIELD_PROBE_ANGLE,
-                            &testPosition);
-      if (!MapGrid_CheckCollision(actor, &testPosition)) {
-        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-        Vector_AddPolarOffset(toFIXED(8), (u16)angle + DEGtoANG(45),
-                              &testPosition);
-        if (!MapGrid_CheckCollision(actor, &testPosition)) {
-          SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                       actor->z.fixed);
-          Vector_AddPolarOffset(toFIXED(8), (u16)angle - DEGtoANG(45),
-                                &testPosition);
-          if (!MapGrid_CheckCollision(actor, &testPosition)) {
-            heading = angle;
-            goto push_objects;
-          }
-        }
-      }
-    }
+  if (!MapGrid_CheckCollision(actor, &position) &&
+      SIDE_PROBES_CLEAR(MapGrid_CheckCollision, actor, toFIXED(8), (u16)angle,
+                        &testPosition)) {
+    heading = angle;
+    goto push_objects;
   }
   direction = angle;
   headingCount = 0;
@@ -572,29 +529,10 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
   angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE * 3;
   for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
     heading = angleOffsets[angleIndex];
-    SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading, &position);
-    if (MapGrid_CheckCollision(actor, &position))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading + FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (MapGrid_CheckCollision(actor, &testPosition))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading - FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (MapGrid_CheckCollision(actor, &testPosition))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading + DEGtoANG(45),
-                          &testPosition);
-    if (MapGrid_CheckCollision(actor, &testPosition))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading - DEGtoANG(45),
-                          &testPosition);
-    if (!MapGrid_CheckCollision(actor, &testPosition))
+    if (PROBE_CLEAR(MapGrid_CheckCollision, actor, toFIXED(8), (u16)heading,
+                    &position) &&
+        SIDE_PROBES_CLEAR(MapGrid_CheckCollision, actor, toFIXED(8),
+                          (u16)heading, &testPosition))
       goto push_objects;
   }
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);

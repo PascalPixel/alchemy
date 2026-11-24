@@ -34,9 +34,40 @@
 /// animations copy 64-byte tiles of 256 colours, into char block 2.
 #define WORLD_MAP_WIDE_TILES 128
 
-/// The world map's encounter regions come in groups of ten, each group drawn
-/// with one row of gWorldMap_GraphicsResources.
+/// The world map's four graphics sets, the rows of gWorldMap_GraphicsResources.
+enum WorldMapGraphics {
+  WORLD_MAP_GRAPHICS_DEFAULT, ///< the green lands, deserts and mountains
+  /// Snow and ice: Kalt Island, the Northern Reaches, Tundaria.
+  WORLD_MAP_GRAPHICS_SNOWFIELD,
+  /// Palm-covered islands in the seas at the world's edges, the Apojii
+  /// Islands among them.
+  WORLD_MAP_GRAPHICS_TROPICAL,
+  /// Prox and Mars Lighthouse, snow falling.
+  WORLD_MAP_GRAPHICS_BLIZZARD
+};
+
+/// The world map's encounter regions come in groups of ten; three of the groups
+/// are drawn with a graphics set of their own, the rest with the default one.
 #define WORLD_MAP_REGION_GROUP 10
+enum WorldMapRegionGroup {
+  WORLD_MAP_REGIONS_TROPICAL = 2,
+  WORLD_MAP_REGIONS_BLIZZARD = 3,
+  WORLD_MAP_REGIONS_SNOWFIELD = 4
+};
+
+/// The graphics set a group of world map regions is drawn with.
+static inline s32 WorldMap_GetRegionGroupGraphics(s32 group) {
+  switch (group) {
+  case WORLD_MAP_REGIONS_BLIZZARD:
+    return WORLD_MAP_GRAPHICS_BLIZZARD;
+  case WORLD_MAP_REGIONS_TROPICAL:
+    return WORLD_MAP_GRAPHICS_TROPICAL;
+  case WORLD_MAP_REGIONS_SNOWFIELD:
+    return WORLD_MAP_GRAPHICS_SNOWFIELD;
+  default:
+    return WORLD_MAP_GRAPHICS_DEFAULT;
+  }
+}
 
 /// A world map graphics set, a row of gWorldMap_GraphicsResources: its
 /// palette, tileset animation script, cell tiles attributes and six tile
@@ -273,7 +304,6 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   struct WorldMapView *perspective;
   struct WorldMapCell *block;
   const u32 *resources;
-  s32 graphicsSet;
   s32 region;
   s16 backdropColor;
   u32 *screenTiles;
@@ -287,24 +317,10 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
       &((struct WorldMapCell *)Ram_MapBlocks)[((x / toFIXED(32)) & 31) +
                                               (((z / toFIXED(32)) & 31) << 5)];
   WorldMap_UpdateRegionTint(block->region, 0);
-  // region holds the region, then its group of ten.
   region = block->region;
   region /= WORLD_MAP_REGION_GROUP;
-  switch (region) {
-  case 3:
-    graphicsSet = 3;
-    break;
-  case 2:
-    graphicsSet = 2;
-    break;
-  case 4:
-    graphicsSet = 1;
-    break;
-  default:
-    graphicsSet = 0;
-    break;
-  }
-  resources = gWorldMap_GraphicsResources[graphicsSet];
+  resources =
+      gWorldMap_GraphicsResources[WorldMap_GetRegionGroupGraphics(region)];
   perspective->resources = resources;
   backdropColor = WORLD_MAP_BG_PALETTE[0];
   Decompress_ByteLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_PALETTE]),

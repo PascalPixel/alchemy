@@ -88,13 +88,28 @@ static inline void Actor_InitializeSparkle(struct Actor *actor) {
   }
 }
 
+/// Spawns a sparkle within 16 pixels of source, in a random direction: the
+/// sparkling a found item's picture and a Reveal marker share.
+#define SPAWN_SPARKLE_NEAR(source)                                             \
+  {                                                                            \
+    union PolarOffsetPosition position;                                        \
+    struct Actor *sparkle;                                                     \
+    u32 randomRadius;                                                          \
+                                                                               \
+    position.vector.x = (source)->x.fixed;                                     \
+    position.vector.y = (source)->y.fixed;                                     \
+    position.vector.z = (source)->z.fixed;                                     \
+    randomRadius = Random16();                                                 \
+    Vector_AddPolarOffset(randomRadius << 4, Random16(),                       \
+                          position.coordinates);                               \
+    sparkle = Actor_Spawn(SPRITE_SPARKLE, position.vector.x,                   \
+                          position.vector.y, position.vector.z);               \
+    Actor_InitializeSparkle(sparkle);                                          \
+  }
+
 /// Each frame of a found item's picture: one time in ten, a sparkle appears
 /// within 16 pixels of it.
 void ItemDisplay_EmitSparkles(struct Actor *emitter) {
-  union PolarOffsetPosition position;
-  struct Actor *sparkle;
-  u32 randomRadius;
-
   // Once the picture's rise has all but stopped (under 1/256 pixel a frame),
   // clearing its motion flags (ACTOR_FALLS and ACTOR_FOLLOWS_TERRAIN)
   // ends gravity, so it hangs at the top of its rise.
@@ -106,14 +121,7 @@ void ItemDisplay_EmitSparkles(struct Actor *emitter) {
   if ((100 * Random16() >> 16) > 9)
     return;
 
-  position.vector.x = emitter->x.fixed;
-  position.vector.y = emitter->y.fixed;
-  position.vector.z = emitter->z.fixed;
-  randomRadius = Random16();
-  Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
-  sparkle = Actor_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
-                        position.vector.z);
-  Actor_InitializeSparkle(sparkle);
+  SPAWN_SPARKLE_NEAR(emitter);
 }
 
 /// Returns 1 while Reveal is active, else 0.
@@ -216,8 +224,9 @@ void Actor_ReleaseIfPresent(struct Actor *actor) {
     Actor_ReleaseFar(actor);
 }
 
-/// Does nothing; nothing calls it.
-UNUSED void ItemDisplay_ReservedNoOp(void) {}
+/// Unused: an empty routine between the item display's own, which nothing
+/// calls; The Broken Seal has none here.
+UNUSED void ItemDisplay_Unused(void) {}
 
 /// Raises a found item's picture to 36 pixels above the party leader, who holds
 /// it up (ANIM_LEADER_ARMS_RAISED) facing the screen.
@@ -305,25 +314,12 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 }
 
 /// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
-/// pixels of it, as around a found item's picture (ItemDisplay_EmitSparkles,
-/// whose sparkling it repeats line for line).
+/// pixels of it, as around a found item's picture (SPAWN_SPARKLE_NEAR).
 void Reveal_EmitSparkles(struct Actor *actor) {
-  const struct Actor *source = (const struct Actor *)actor;
-  union PolarOffsetPosition position;
-  struct Actor *sparkle;
-  u32 randomRadius;
-
   if ((100 * Random16() >> 16) > 9)
     return;
 
-  position.vector.x = source->x.fixed;
-  position.vector.y = source->y.fixed;
-  position.vector.z = source->z.fixed;
-  randomRadius = Random16();
-  Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
-  sparkle = Actor_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
-                        position.vector.z);
-  Actor_InitializeSparkle(sparkle);
+  SPAWN_SPARKLE_NEAR(actor);
 }
 
 /// Places Reveal's markers from the scene's item rows (a type, an event id, a

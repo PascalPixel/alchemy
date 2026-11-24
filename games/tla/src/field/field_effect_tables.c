@@ -12,6 +12,7 @@
 #include "field/field.h"
 #include "field/field_psynergy.h"
 #include "field/scene_tables.h"
+#include "field/sprite.h"
 #include "battle/battle.h"
 #include "system/io_reg.h"
 
@@ -28,8 +29,10 @@ const u16 gInput_DpadAnglesEightWay[16] = {
 };
 
 /// Move's hand animation by the quarter turns from its side of the target to
-/// the push (event_commands_mind_read.c): 3 toward its side, 2 away from it, 1
-/// either way across; The Broken Seal's gFieldEffect_QuadrantModes.
+/// the push (FieldPsynergy_SteerPushedTarget): pulling the target toward its
+/// side, it grips (MOVE_HAND_ANIMATION_GRIP, 3); pushing it away (2) or across
+/// (MOVE_HAND_ANIMATION_OPEN, 1), it is open, both animations holding the open
+/// hand's picture; The Broken Seal's gFieldEffect_QuadrantModes.
 const u8 gMoveHand_PushPoses[4] = {3, 1, 2, 1};
 
 /// Waits 60 frames and releases the actor; The Broken Seal's
@@ -43,8 +46,8 @@ const s32 gGrowth_LeafScript[] = {
 /// Seal; nothing reads them.
 const u8 gFieldEffect_UnusedQuadrantModes[4] = {3, 1, 2, 1};
 
-/// Waits to arrive, sets off FieldEffect_SpawnHeavyImpact (event_commands_mind_read.c)
-/// and releases the actor.
+/// Force's fist: waits to arrive, sets off FieldEffect_SpawnHeavyImpact and
+/// releases the actor.
 const s32 gForce_FistScript[] = {
     SC_SYNC,
     SC_CALL(FieldEffect_SpawnHeavyImpact),
@@ -67,9 +70,14 @@ const s32 gFieldEffect_LongEffectScript[] = {
     SC_RELEASE,
 };
 
-/// The sprite params a paused actor flickers through at random
-/// (FieldPsynergy_UpdateHaltedActor): 0 twice as often as each of 1 to 6.
-const s8 gHalt_FlickerColorModes[8] = {0, 0, 1, 2, 3, 4, 5, 6};
+/// The colour modes a halted actor flickers through at random
+/// (FieldPsynergy_UpdateHaltedActor): its own colours twice as often as each
+/// of the others.
+const s8 gHalt_FlickerColorModes[8] = {
+    SPRITE_COLOR_NORMAL, SPRITE_COLOR_NORMAL, SPRITE_COLOR_GRB,
+    SPRITE_COLOR_RBG,    SPRITE_COLOR_BGR,    SPRITE_COLOR_GBR,
+    SPRITE_COLOR_BRG,    SPRITE_COLOR_GREY,
+};
 
 /// The arrow's wobble once it has struck, a step a frame over eight frames
 /// (FieldPsynergy_UpdateArrow): turns from its heading, scaled by

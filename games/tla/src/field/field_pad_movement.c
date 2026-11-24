@@ -12,6 +12,25 @@
 #include "macros.h"
 #include "field/resource_slot.h"
 
+/// FieldState.terrainKind: the ground the ship was last over, which sets where
+/// WorldMap_IsFlyable lets it fly.
+enum ShipTerrainKind {
+  /// The sea from WORLD_MAP_COLLISION_SEA_FIRST, short of
+  /// WORLD_MAP_COLLISION_SEA_LAST.
+  SHIP_TERRAIN_SEA = 0,
+  /// WORLD_MAP_COLLISION_WALKABLE_FIRST and shallow water.
+  SHIP_TERRAIN_SHALLOWS = 1,
+  SHIP_TERRAIN_SEA_LAST = 2, ///< WORLD_MAP_COLLISION_SEA_LAST
+  /// WORLD_MAP_COLLISION_DEFAULT to WORLD_MAP_COLLISION_WALKABLE_LAST, the
+  /// rest of the ground the party walks on.
+  SHIP_TERRAIN_GROUND = 3
+};
+
+/// The flying ship's animation once it is 4 pixels up: its picture moved 10
+/// pixels (ANIMCMD_OFFSET_Y) and its wings beating, the seventh of
+/// winged_ship_flying_small.tsv.
+#define ANIM_SHIP_FLY_HIGH 6
+
 /// A world map camera turn of less than this either way is made at once.
 #define WORLD_MAP_YAW_SNAP 16
 /// The flying ship's camera turns toward the pad's yaw by at most this a frame.
@@ -311,32 +330,11 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
     heading = angle;
     goto counted;
   }
-  if (!MapGrid_CheckCollision(actor, &position)) {
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(19), (u16)angle + FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (!MapGrid_CheckCollision(actor, &testPosition)) {
-      SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                   actor->z.fixed);
-      Vector_AddPolarOffset(toFIXED(19), (u16)angle - FIELD_PROBE_ANGLE,
-                            &testPosition);
-      if (!MapGrid_CheckCollision(actor, &testPosition)) {
-        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-        Vector_AddPolarOffset(toFIXED(19), (u16)angle + DEGtoANG(45),
-                              &testPosition);
-        if (!MapGrid_CheckCollision(actor, &testPosition)) {
-          SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                       actor->z.fixed);
-          Vector_AddPolarOffset(toFIXED(19), (u16)angle - DEGtoANG(45),
-                                &testPosition);
-          if (!MapGrid_CheckCollision(actor, &testPosition)) {
-            heading = angle;
-            goto push_objects;
-          }
-        }
-      }
-    }
+  if (!MapGrid_CheckCollision(actor, &position) &&
+      SIDE_PROBES_CLEAR(MapGrid_CheckCollision, actor, toFIXED(19), (u16)angle,
+                        &testPosition)) {
+    heading = angle;
+    goto push_objects;
   }
   direction = angle;
   angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE;
@@ -347,29 +345,10 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE * 3;
   for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
     heading = angleOffsets[angleIndex];
-    SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(19), (u16)heading, &position);
-    if (MapGrid_CheckCollision(actor, &position))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(19), (u16)heading + FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (MapGrid_CheckCollision(actor, &testPosition))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(19), (u16)heading - FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (MapGrid_CheckCollision(actor, &testPosition))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(19), (u16)heading + DEGtoANG(45),
-                          &testPosition);
-    if (MapGrid_CheckCollision(actor, &testPosition))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(19), (u16)heading - DEGtoANG(45),
-                          &testPosition);
-    if (!MapGrid_CheckCollision(actor, &testPosition))
+    if (PROBE_CLEAR(MapGrid_CheckCollision, actor, toFIXED(19), (u16)heading,
+                    &position) &&
+        SIDE_PROBES_CLEAR(MapGrid_CheckCollision, actor, toFIXED(19),
+                          (u16)heading, &testPosition))
       goto push_objects;
   }
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
@@ -525,20 +504,17 @@ s32 Actor_SailOnWorldMap(struct Actor *actor) {
   count = 0;
   terrain = WorldMap_GetCollision((struct WorldPosition *)&actor->x.fixed);
   worldState = Ram_HeapSlots->fieldState;
-  // FieldState.terrainKind, which WorldMap_IsFlyable reads: 0 over the sea but
-  // its last kind, 1 over walkable ground up to shallow water, 2 over the sea's
-  // last kind, 3 over the rest of the walkable ground.
   if (terrain >= WORLD_MAP_COLLISION_SEA_FIRST &&
       terrain < WORLD_MAP_COLLISION_SEA_LAST)
-    worldState->terrainKind = 0;
+    worldState->terrainKind = SHIP_TERRAIN_SEA;
   if (terrain >= WORLD_MAP_COLLISION_WALKABLE_FIRST &&
       terrain <= WORLD_MAP_COLLISION_SHALLOW_WATER)
-    worldState->terrainKind = 1;
+    worldState->terrainKind = SHIP_TERRAIN_SHALLOWS;
   if (terrain == WORLD_MAP_COLLISION_SEA_LAST)
-    worldState->terrainKind = 2;
+    worldState->terrainKind = SHIP_TERRAIN_SEA_LAST;
   if (terrain >= WORLD_MAP_COLLISION_DEFAULT &&
       terrain <= WORLD_MAP_COLLISION_WALKABLE_LAST)
-    worldState->terrainKind = 3;
+    worldState->terrainKind = SHIP_TERRAIN_GROUND;
 
   collision = 0;
   actor->speedLimit = toFIXED(5) / 4;
@@ -551,32 +527,10 @@ s32 Actor_SailOnWorldMap(struct Actor *actor) {
     SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
     if (gDebugMode == 0 || (gInput.held & KEY_L) == 0) {
-      if (WorldMap_IsSailable(actor, &position) == 0) {
-        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                              direction + FIELD_PROBE_ANGLE, &testPosition);
-        if (WorldMap_IsSailable(actor, &testPosition) == 0) {
-          SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                       actor->z.fixed);
-          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                                direction - FIELD_PROBE_ANGLE, &testPosition);
-          if (WorldMap_IsSailable(actor, &testPosition) == 0) {
-            SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                         actor->z.fixed);
-            Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                                  direction + DEGtoANG(45), &testPosition);
-            if (WorldMap_IsSailable(actor, &testPosition) == 0) {
-              SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                           actor->z.fixed);
-              Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                                    direction - DEGtoANG(45), &testPosition);
-              if (WorldMap_IsSailable(actor, &testPosition) == 0)
-                goto update_object;
-            }
-          }
-        }
-      }
+      if (WorldMap_IsSailable(actor, &position) == 0 &&
+          SIDE_PROBES_CLEAR(WorldMap_IsSailable, actor, WORLD_MAP_PROBE_RADIUS,
+                            direction, &testPosition))
+        goto update_object;
       angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
       angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
       angleOffsets[count++] = direction + DEGtoANG(45);
@@ -585,36 +539,14 @@ s32 Actor_SailOnWorldMap(struct Actor *actor) {
       angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
       for (angleIndex = 0; angleIndex < count; angleIndex++) {
         direction = angleOffsets[angleIndex];
-        SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
-        if (WorldMap_IsSailable(actor, &position) != 0)
-          continue;
-        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                              direction + FIELD_PROBE_ANGLE, &testPosition);
-        if (WorldMap_IsSailable(actor, &testPosition) != 0)
-          continue;
-        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                              direction - FIELD_PROBE_ANGLE, &testPosition);
-        if (WorldMap_IsSailable(actor, &testPosition) != 0)
-          continue;
-        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + DEGtoANG(45),
-                              &testPosition);
-        if (WorldMap_IsSailable(actor, &testPosition) != 0)
-          continue;
-        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - DEGtoANG(45),
-                              &testPosition);
-        if (WorldMap_IsSailable(actor, &testPosition) != 0)
-          continue;
-        angle = (s16)direction;
-        goto update_object;
+        if (PROBE_CLEAR(WorldMap_IsSailable, actor, WORLD_MAP_PROBE_RADIUS,
+                        direction, &position) &&
+            SIDE_PROBES_CLEAR(WorldMap_IsSailable, actor,
+                              WORLD_MAP_PROBE_RADIUS, direction,
+                              &testPosition)) {
+          angle = (s16)direction;
+          goto update_object;
+        }
       }
       collision |= PLAYER_STEP_BLOCKED_BY_MAP;
     }
@@ -754,15 +686,15 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
   worldState = Ram_HeapSlots->fieldState;
   if (terrain >= WORLD_MAP_COLLISION_SEA_FIRST &&
       terrain < WORLD_MAP_COLLISION_SEA_LAST)
-    worldState->terrainKind = 0;
+    worldState->terrainKind = SHIP_TERRAIN_SEA;
   if (terrain >= WORLD_MAP_COLLISION_WALKABLE_FIRST &&
       terrain <= WORLD_MAP_COLLISION_SHALLOW_WATER)
-    worldState->terrainKind = 1;
+    worldState->terrainKind = SHIP_TERRAIN_SHALLOWS;
   if (terrain == WORLD_MAP_COLLISION_SEA_LAST)
-    worldState->terrainKind = 2;
+    worldState->terrainKind = SHIP_TERRAIN_SEA_LAST;
   if (terrain >= WORLD_MAP_COLLISION_DEFAULT &&
       terrain <= WORLD_MAP_COLLISION_WALKABLE_LAST)
-    worldState->terrainKind = 3;
+    worldState->terrainKind = SHIP_TERRAIN_GROUND;
 
   actor->motionFlags = 0;
   collision = 0;
@@ -776,32 +708,10 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
     SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
     if (gDebugMode == 0 || (gInput.held & KEY_L) == 0) {
-      if (WorldMap_IsFlyable(actor, &position) == 0) {
-        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                              direction + FIELD_PROBE_ANGLE, &testPosition);
-        if (WorldMap_IsFlyable(actor, &testPosition) == 0) {
-          SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                       actor->z.fixed);
-          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                                direction - FIELD_PROBE_ANGLE, &testPosition);
-          if (WorldMap_IsFlyable(actor, &testPosition) == 0) {
-            SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                         actor->z.fixed);
-            Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                                  direction + DEGtoANG(45), &testPosition);
-            if (WorldMap_IsFlyable(actor, &testPosition) == 0) {
-              SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                           actor->z.fixed);
-              Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                                    direction - DEGtoANG(45), &testPosition);
-              if (WorldMap_IsFlyable(actor, &testPosition) == 0)
-                goto check_actors;
-            }
-          }
-        }
-      }
+      if (WorldMap_IsFlyable(actor, &position) == 0 &&
+          SIDE_PROBES_CLEAR(WorldMap_IsFlyable, actor, WORLD_MAP_PROBE_RADIUS,
+                            direction, &testPosition))
+        goto check_actors;
       angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
       angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
       angleOffsets[count++] = direction + DEGtoANG(45);
@@ -810,36 +720,13 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
       angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
       for (angleIndex = 0; angleIndex < count; angleIndex++) {
         direction = angleOffsets[angleIndex];
-        SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
-        if (WorldMap_IsFlyable(actor, &position) != 0)
-          continue;
-        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                              direction + FIELD_PROBE_ANGLE, &testPosition);
-        if (WorldMap_IsFlyable(actor, &testPosition) != 0)
-          continue;
-        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                              direction - FIELD_PROBE_ANGLE, &testPosition);
-        if (WorldMap_IsFlyable(actor, &testPosition) != 0)
-          continue;
-        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + DEGtoANG(45),
-                              &testPosition);
-        if (WorldMap_IsFlyable(actor, &testPosition) != 0)
-          continue;
-        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - DEGtoANG(45),
-                              &testPosition);
-        if (WorldMap_IsFlyable(actor, &testPosition) != 0)
-          continue;
-        angle = (s16)direction;
-        goto check_actors;
+        if (PROBE_CLEAR(WorldMap_IsFlyable, actor, WORLD_MAP_PROBE_RADIUS,
+                        direction, &position) &&
+            SIDE_PROBES_CLEAR(WorldMap_IsFlyable, actor, WORLD_MAP_PROBE_RADIUS,
+                              direction, &testPosition)) {
+          angle = (s16)direction;
+          goto check_actors;
+        }
       }
       collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
@@ -863,7 +750,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
     state->heldKeys = gInput.held;
   }
   if (actor->y.fixed >= toFIXED(4))
-    Actor_SelectAnimation(actor, 6);
+    Actor_SelectAnimation(actor, ANIM_SHIP_FLY_HIGH);
   else if (collision != 0)
     Actor_SelectAnimation(actor, ANIM_STAND);
   else

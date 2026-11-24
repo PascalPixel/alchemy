@@ -83,7 +83,8 @@ const s16 gSpeakerDefinitions[][2] ALIGNED(4) = {
 #undef SPEAKER
 #undef SPEAKER_SILENT
 
-/// One bounce of the squash: wider and shorter, then back over three steps.
+/// One bounce of the squash: wider and shorter, then back in three steps,
+/// 10 frames in all.
 #define VARIANT_BOUNCE                                                         \
   SC_ADD(SW_SCALE_X, -FIXED_ONE / 4), SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),       \
       SC_WAIT(2), SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                           \
@@ -92,7 +93,7 @@ const s16 gSpeakerDefinitions[][2] ALIGNED(4) = {
       SC_WAIT(2), SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                          \
       SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32), SC_WAIT(4)
 /// Three bounces for Actor_StartRepeatedMotion, each squashing the actor
-/// (wider, then shorter) and stretching it back over 12 frames; it starts
+/// (wider, then shorter) and stretching it back over 10 frames; it starts
 /// count bounces from the end.
 const s32 gActor_VariantScripts[] = {
     VARIANT_BOUNCE,

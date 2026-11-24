@@ -984,11 +984,12 @@ void FieldPsynergy_Retreat(void) {
   wait(10);
 }
 
-/// Per-frame update of a falling arc: grows toward full size (3/64 a frame)
-/// as it falls 2 pixels a frame on the actor it follows, 9 pixels in front
-/// of it and up to 5 pixels further while small; released 10 pixels above
-/// the ground (4 on the World Map).
-void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
+/// The back half of one of Avoid's falling rings, a golden arc
+/// (gFieldEffect_ArcSparkTiles) behind the caster: it grows to full size by
+/// 3/64 a frame as it falls 2 pixels a frame around the caster, 9 pixels south
+/// of them and up to 5 more while small, and is gone 10 pixels above the ground
+/// (4 on the World Map).
+void Avoid_UpdateRingBackHalf(struct Actor *particle) {
   struct Actor *source;
   FIXED y;
   FIXED limit;
@@ -1015,9 +1016,9 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   particle->z.fixed = source->z.fixed + ((FIXED_ONE - scale) * 5) + toFIXED(9);
 }
 
-/// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
-/// down, 16 pixels in front of the actor and up to 5 pixels nearer.
-void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
+/// The ring's front half: the same arc drawn upside down in front of the
+/// caster, 16 pixels south and up to 5 nearer while small.
+void Avoid_UpdateRingFrontHalf(struct Actor *particle) {
   struct Actor *source;
   FIXED y;
   FIXED limit;
@@ -1044,9 +1045,10 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   particle->z.fixed = source->z.fixed - ((FIXED_ONE - scale) * 5) + toFIXED(16);
 }
 
-/// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above it,
-/// at 0.4 of full size, drawn with the tiles in effectState->arcTileSlot.
-void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
+/// Drops one of Avoid's rings onto source: its two halves start 64 pixels
+/// above it at 0.4 of full size, drawn with the arc's tiles
+/// (FieldEffectState.arcTileSlot), the front half over every sprite.
+void Avoid_DropRing(struct Actor *source) {
   struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
   struct Actor *leader = effectState->caster;
   struct Actor *actors[2];
@@ -1081,17 +1083,15 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
     sprite->firstEntry->picture = 0;
   }
   // BUG: failed allocations above leave a missing arc or sprite here.
-  actors[0]->update =
-      (ObjectUpdate)FieldEffect_UpdateDescendingParticleNegativeArc;
+  actors[0]->update = (ObjectUpdate)Avoid_UpdateRingFrontHalf;
   ((struct DescendingArcSprite *)actors[0]->sprite)->attr.byte.priority = 0;
-  actors[1]->update =
-      (ObjectUpdate)FieldEffect_UpdateDescendingParticlePositiveArc;
+  actors[1]->update = (ObjectUpdate)Avoid_UpdateRingBackHalf;
   ((struct DescendingArcSprite *)actors[1]->sprite)->attr.byte.priority =
       ((struct DescendingArcSprite *)leader->sprite)->attr.byte.priority;
 }
 
-/// The caster during Avoid (FieldPsynergy_Avoid): sheds a pair of falling
-/// arcs every 5 frames (7 in scene Clear), and spins in phase 1, 3/64 turn a
+/// The caster during Avoid (FieldPsynergy_Avoid): drops a ring onto itself
+/// every 5 frames (7 on the World Map), and spins in phase 1, 3/64 turn a
 /// frame.
 void FieldEffect_UpdateAvoidCaster(struct Actor *caster) {
   s16 phase;
@@ -1102,9 +1102,9 @@ void FieldEffect_UpdateAvoidCaster(struct Actor *caster) {
 
   if (gMainRoutineState.mapId == SCENE_CLEAR) {
     if (elapsedFrames % 7 == 0)
-      FieldEffect_SpawnDescendingArcParticles(caster);
+      Avoid_DropRing(caster);
   } else if (elapsedFrames % 5 == 0) {
-    FieldEffect_SpawnDescendingArcParticles(caster);
+    Avoid_DropRing(caster);
   }
 
   if (phase == 1)

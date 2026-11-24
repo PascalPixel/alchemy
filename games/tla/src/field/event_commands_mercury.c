@@ -131,7 +131,9 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
     FieldParticle_Initialize(effect, SPRITE_DROPLET, position.x, position.z);
     FieldParticle_SetCallback(effect,
                               (void *)FieldEffect_UpdateRandomTargetParticle);
-    FieldParticle_SetAnimation(effect, 7);
+    // SPRITE_DROPLET has two animations and no twinkle, so the droplet keeps
+    // its first (Sprite_StartAnimation passes over a number past the sheet's).
+    FieldParticle_SetAnimation(effect, ANIM_PARTICLE_TWINKLE);
     Sprite_SetAnimationColorModesFar(effect->sprite, SPRITE_COLOR_BLUE_TINT);
     i--;
     wait(1);

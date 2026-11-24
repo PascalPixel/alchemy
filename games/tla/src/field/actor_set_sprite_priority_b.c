@@ -1,7 +1,9 @@
 /// @file
-/// Setting an actor's sprite priority by hand: a second copy of
-/// actor_set_sprite_priority.c under another name, which Anemos Inner Sanctum
-/// and the Mars Lighthouse entrance keep beside the first.
+/// Setting an effect's sprite priority by hand: the copy of
+/// actor_set_sprite_priority.c that comes with a late field-effect spawner.
+/// Anemos Inner Sanctum and the Mars Lighthouse entrance link the first copy
+/// early, and near their end a field-effect spawner with this copy just before
+/// it; only that spawner calls this one.
 
 #include "types.h"
 #include "field/field_event.h"

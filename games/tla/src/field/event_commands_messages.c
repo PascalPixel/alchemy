@@ -320,9 +320,10 @@ void Event_ShowSpeakerMessage(s32 speaker) {
 }
 
 /// Unused: nothing calls it; forwards its arguments to
-/// Event_ShowMessageAtPosition.
-void Event_ShowCounter(s32 a, s32 b, s32 c, s32 d) {
-  Event_ShowMessageAtPosition(a, b, c, d);
+/// Event_ShowMessageAtPosition, as The Broken Seal's
+/// Event_ForwardShowMessageAtPosition does.
+void Event_ShowCounter(s32 unusedA, s32 unusedB, s32 x, s32 y) {
+  Event_ShowMessageAtPosition(unusedA, unusedB, x, y);
 }
 
 /// Unused: nothing calls it. It would open the event's message at (x, y), wait

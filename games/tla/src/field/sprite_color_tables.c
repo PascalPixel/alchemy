@@ -124,9 +124,10 @@ const u8 gSpriteColorGreyTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-/// Three tints, each raising one channel to full, then a negative. The bottom
-/// rows of a wading sprite (SPRITE_FLAG_SHADED) are drawn through the first,
-/// the blue.
+/// The three tints, SPRITE_COLOR_BLUE_TINT to SPRITE_COLOR_GREEN_TINT, each
+/// raising one channel to full, then the negative SPRITE_COLOR_DARK draws
+/// through, which turns light footprints dark. The bottom rows of a wading
+/// sprite (SPRITE_FLAG_SHADED) are drawn through the first, the blue.
 const u8 gSpriteColorTintTables[4][256] = {
     { // Blue raised to full
         0, 8, 186, 198, 15, 7, 194, 7, 8, 197, 204, 196, 183, 188, 166, 15,

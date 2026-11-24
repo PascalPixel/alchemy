@@ -10,6 +10,16 @@
 #include "field/map.h"
 #include "system/system.h"
 
+/// The chest sprite's animations, for this part and
+/// field_sequence_treasure_spots.c after it.
+enum {
+  TREASURE_SPOT_CHEST_OPEN = 2,    ///< standing open
+  TREASURE_SPOT_CHEST_OPENING = 4, ///< its lid lifting
+  TREASURE_SPOT_CHEST_CLOSING = 5, ///< closing again on what nobody could carry
+  TREASURE_SPOT_CHEST_OPENING_EMPTY = 6, ///< its lid lifting on nothing inside
+  TREASURE_SPOT_CHEST_MIMIC = 7          ///< jumping up as a mimic
+};
+
 /// Picks the actor nearest actor id, under 32 pixels away and 48 pixels in
 /// height. Distances to treasure spots count double and to actors with
 /// ACTOR_NEAR_TALK ten thirteenths; beyond 11 pixels the actor must also lie
@@ -196,7 +206,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 self, s32 kind) {
 }
 
 /// Unused: only the far-call table refers to it. Opens a chest: if actor target
-/// exists, plays SE_CHEST_OPEN, gives it its animation 4 and, 12 frames later,
+/// exists, plays SE_CHEST_OPEN, opens its lid and, 12 frames later,
 /// shows itemId in front of actor actorId with sparkles.
 s32 Chest_OpenAndShowItem(s32 actorId, s32 target, s32 itemId) {
   void *targetActor;
@@ -206,7 +216,7 @@ s32 Chest_OpenAndShowItem(s32 actorId, s32 target, s32 itemId) {
   emitter = 0;
   if (targetActor != 0) {
     Sound_PlayFar(SE_CHEST_OPEN);
-    Actor_SelectAnimationFar(targetActor, 4);
+    Actor_SelectAnimationFar(targetActor, TREASURE_SPOT_CHEST_OPENING);
     wait(12);
     emitter = (s32)ItemDisplay_ShowItemInFront(actorId, itemId);
   }
@@ -243,9 +253,9 @@ s32 Leader_CanPushObjectAhead(void) {
   if (target->sceneCounter != 0)
     return 0;
 #if TLA_PATCH_1
-  // XXX: the test passes over actor 1 where -1, no halted actor, looks
-  // meant; what Actor_GetById(-1) returns with nothing halted would settle
-  // whether it is a bug.
+  // With nothing halted the id is -1, for which Actor_GetById returns NULL,
+  // so the test against 1 (where -1 looks meant) changes the result only
+  // when actor 1 is the halted one, which it then lets be pushed.
   id = gMainRoutineState.haltedActor;
   if (id != 1 && target == Actor_GetById(id))
     return 0;
@@ -263,8 +273,9 @@ s32 Leader_CanPushObjectAhead(void) {
   hit = Actor_FindAtCell(above, TRUE);
   if (hit != 0 && (hit->collisionFlags & ACTOR_SOLID))
     return 0;
+  // The cell beyond is tested on the map's overhead layer.
   terrain = target->layer;
-  target->layer = 2;
+  target->layer = MAPGRID_LAYER_OVERHEAD;
   result = MapGrid_CheckCollisionFar(target, position);
   target->layer = terrain;
   if (result > 0)
@@ -294,8 +305,9 @@ void Leader_PushObjectAhead(void) {
   position[1] = target->y.fixed;
   position[2] = target->z.fixed;
   Vector_AddPolarOffset(toFIXED(16), angle, position);
+  // The cell beyond is tested on the map's overhead layer.
   terrain = target->layer;
-  target->layer = 2;
+  target->layer = MAPGRID_LAYER_OVERHEAD;
   result = MapGrid_CheckCollisionFar(target, position);
   target->layer = terrain;
   if (result <= 0) {

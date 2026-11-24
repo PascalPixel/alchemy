@@ -45,6 +45,8 @@ void WorldMap_StepZoom(void) {
   delta = map->zoomTo - *from;
   step = &map->zoomStep;
   (*step)++;
+  /* FAKEMATCH(wrapper): the division called by its library name, __divsi3;
+   * as delta * *step / *duration. */
   offset = *from + __divsi3(delta * *step, *duration);
   map->zoom = Iwram_MulFX(map->farPlane, offset);
   gScanlinePitch = ((struct WorldMapView *)map)->pitch + 1;
@@ -54,7 +56,8 @@ void WorldMap_StepZoom(void) {
   }
 }
 
-/// Starts a zoom to zoom (16.16) over frames frames, on the World Map only.
+/// Starts a zoom to zoom (16.16) over frames frames, on the World Map only:
+/// WorldMap_StepZoom takes the view's MapState.zoom to farPlane / zoom.
 void WorldMap_StartZoom(FIXED zoom, s32 frames) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 result;
@@ -63,10 +66,7 @@ void WorldMap_StartZoom(FIXED zoom, s32 frames) {
                                                 sizeof(struct FieldState)))
           ->mode != ACTOR_SYSTEM_WORLD_MAP)
     return;
-  {
-    s32 (*ratio)(s32, s32) = Iwram_DivFXEntry;
-    result = ratio(zoom, FIXED_ONE);
-  }
+  result = Iwram_DivFX(zoom, FIXED_ONE);
   map->zoomFrom = map->zoomTo;
   map->zoomTo = result;
   map->zoomFrames = frames;

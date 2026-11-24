@@ -1,6 +1,6 @@
 /// @file
 /// The particle scripts of the field commands after the rope and vine
-/// pictures, Mind Read's palette cycle and the pad's headings, in the order of
+/// pictures, Mind Read's colour cycle and the pad's headings, in the order of
 /// The Broken Seal's field_sequence_tables.c.
 
 #include "fixed_math.h"
@@ -9,6 +9,7 @@
 #include "field/event_commands.h"
 #include "field/field.h"
 #include "field/scene_tables.h"
+#include "field/sprite.h"
 
 /// Unused: one word, 17, which no code names.
 const s32 gFieldEffect_UnusedWord[1] = {17};
@@ -35,10 +36,14 @@ const s32 gFieldEffect_FragmentScript[] = {
     SC_SYNC, SC_SPEED(0.0625), SC_ANIMATION(0), SC_WAIT(10), SC_RELEASE,
 };
 
-/// The sprite palettes Actor_SetLayersColorMode cycles through for value 0
-/// ((gFrameCount >> 1) & 7): 1 to 4 and back to 0, two frames each; The Broken
-/// Seal's gMindRead_CasterPaletteCycle.
-const u8 gAnim_ChildPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
+/// The colour modes Mind Read's caster cycles through, two frames each
+/// (Actor_SetLayersColorMode): its colour channels swapped one way after
+/// another and back to its own; The Broken Seal's
+/// gMindRead_CasterPaletteCycle.
+const u8 gAnim_ChildPaletteCycle[8] = {
+    SPRITE_COLOR_GRB, SPRITE_COLOR_RBG, SPRITE_COLOR_BGR, SPRITE_COLOR_GBR,
+    SPRITE_COLOR_BGR, SPRITE_COLOR_RBG, SPRITE_COLOR_GRB, SPRITE_COLOR_NORMAL,
+};
 
 // clang-format off
 

@@ -11,10 +11,10 @@
 
 #include "field/actor.h"
 
-/// struct Actor as the two scene routines that keep a flag number at byte 100
-/// read it: as Actor.timer, the s16, their store of that number compiles
-/// differently (Tundaria Tower's and the Mars Lighthouse entrance's
-/// placement tables).
+/// struct Actor with its timer unsigned, as the two scene routines that keep a
+/// flag number in it store it: Tundaria Tower's and the Mars Lighthouse
+/// entrance's placing of their actors from a table. Through Actor.timer, an
+/// s16, the store compiles differently.
 struct FieldActor {
   u8 unused[85]; ///< no code names it
   u8 motionFlags;
@@ -25,7 +25,6 @@ struct FieldActor {
 };
 
 struct Actor *Actor_Create(s32 type, FIXED x, FIXED y, FIXED z);
-void Sound_PlayFar(s32 cue);
 
 void Import_EventSetExitRequest(s32 exit);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);

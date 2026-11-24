@@ -112,16 +112,32 @@ enum {
   WORLD_MAP_FROM_NORTHERN_REACHES_NORTH = 61,
   WORLD_MAP_FROM_PROX_SOUTH_GATE = 62,
   WORLD_MAP_FROM_PROX_MOLD = 63,
+  /// From Idejima at the prologue's end: Venus Lighthouse is lit and falls,
+  /// and the earthquake breaks Idejima away with Jenna, Kraden and Alex on it.
   WORLD_MAP_VENUS_COLLAPSE = 64,
+  /// Idejima drifts north, and a tidal wave rises behind it and carries it
+  /// away.
   WORLD_MAP_DRIFT_NORTH = 65,
   /// The view of Air's Rock from Alhafra's manor, where the man gazing at it
   /// sends the party.
   WORLD_MAP_ALHAFRA_MANOR_VIEW = 67,
+  /// From the Lemurian Ship's main deck: the party takes the tiller and learns
+  /// to sail.
   WORLD_MAP_FIRST_VOYAGE = 68,
+  /// Once the Black Crystal is set in the Lemurian Ship's engine
+  /// (LemurianShip_SetBlackCrystal): the ship sails to its berth and the party
+  /// goes down to the deck.
   WORLD_MAP_SAIL_TO_DECK = 69,
   WORLD_MAP_FROM_LEMURIAN_SHIP_TILLER_B = 71,
+  /// From Jupiter Lighthouse's beacon once it is lit: the World Map shows the
+  /// lighthouse shining, Piers marvels at it, and the party goes back up to
+  /// the beacon.
   WORLD_MAP_JUPITER_BEACON = 72,
+  /// After the collapse (WORLD_MAP_VENUS_COLLAPSE): the camera follows Idejima
+  /// as it drifts away north.
   WORLD_MAP_IDEJIMA_DRIFTING = 77,
+  /// From the Apojii Islands: the party, hidden in a trail of sparkles, is
+  /// carried across the sea to Aqua Rock.
   WORLD_MAP_CARRIED_TO_AQUA_ROCK = 78,
   WORLD_MAP_FROM_NORTH_OSENIA_ISLET_B = 80,
   WORLD_MAP_FROM_NORTH_OSENIA_ISLET_C = 81,

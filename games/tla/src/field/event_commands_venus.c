@@ -49,7 +49,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   Sound_PlayFar(SE_SPIN);
   MapGrid_SetScreenShakeFar(toFIXED(13) / 10, toFIXED(13) / 10, FIXED_ONE);
   djinni->update = (ObjectUpdate)FieldEffect_ShrinkActorAndDestroyFast;
-  Actor_SelectAnimationFar(djinni, 3);
+  Actor_SelectAnimationFar(djinni, DJINNI_ANIMATION_EXCITED);
   // The leader turns to face the camera (FACING_SOUTH).
   wait(90);
   Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
@@ -70,7 +70,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   do {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialSpread);
-    FieldParticle_SetAnimation(effect, 7);
+    FieldParticle_SetAnimation(effect, ANIM_PARTICLE_TWINKLE);
     Sprite_SetAnimationColorModesFar(effect->sprite, SPRITE_COLOR_GREEN_TINT);
     effect->scaleX = FIXED_ONE / 2;
     effect->scaleY = Random16() + FIXED_ONE * 3 / 2;
@@ -103,7 +103,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
       djinni->orbitAngle = remaining * TRIG_TURN / VENUS_JOIN_MOTES;
       djinni->update = (ObjectUpdate)FieldEffect_UpdateDescendingOrbitActor;
       djinni->motionFlags = 0;
-      Actor_SelectAnimationFar(djinni, 7);
+      Actor_SelectAnimationFar(djinni, ANIM_PARTICLE_TWINKLE);
       Actor_SetSpriteColorModeFar(djinni, SPRITE_COLOR_GREEN_TINT);
     }
   }

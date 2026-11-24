@@ -173,7 +173,8 @@ void Map_CopyPalette(s32 map, void *destination) {
 /// the three background layers' origins, parallax and wrap from the layout
 /// header; loads the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS
 /// says they are loaded; and starts the layer scrolling
-/// (MapGrid_UpdateLayerScroll).
+/// (MapGrid_UpdateLayerScroll). Returns 2, as The Broken Seal's does; no
+/// caller reads it.
 s32 MapGrid_LoadMap(s32 index) {
   struct MapResources *sceneResources;
   struct MapState *map;
@@ -869,9 +870,11 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-/// Copies the pictures of a rectangle of cells from (srcX, srcY) to (dstX,
-/// dstY), width by height cells, keeping each destination's bits above the
-/// drawn picture, and redraws the copied cells that are on screen.
+/// Copies the drawn cell tiles numbers (MAPGRID_DRAWN_PICTURE_MASK) of a
+/// rectangle of cells from (srcX, srcY) to (dstX, dstY), width by height
+/// cells, keeping each destination's bits above them, and redraws the copied
+/// cells that are on screen. MapGrid_CopyCellTilesIndicesRect's loop with the
+/// narrower mask and the size before the destination: the ROM keeps both.
 void MapGrid_CopyCellTilesCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                     s32 dstX, s32 dstY) {
   s32 y;
@@ -902,8 +905,8 @@ void MapGrid_CopyCellTilesCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
         u32 merged;
 
         cellTilesId = cell & MAPGRID_CELL_TILES_ID_MASK;
-        // The cell takes the source's cell tiles and keeps its own bits
-        // above.
+        // The cell takes the source's drawn cell tiles number and keeps its
+        // own bits above.
         merged = cell & MAPGRID_DRAWN_PICTURE_MASK;
         merged |= *dst & ~MAPGRID_DRAWN_PICTURE_MASK;
         *dst = merged;

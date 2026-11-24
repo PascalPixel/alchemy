@@ -132,6 +132,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
   partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->listWindow = partyWindow;
   cursorWindow = Window_CreateFar(30, 0, 1, 1, WINDOW_FLAG_INSTANT);
+  /* FAKEMATCH(temporary): result stands for 0, the cursor's y and kind. */
   result = 0;
   cursorAnchor = WindowSprite_CreateFar(
       shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, cursorWindow, 0, result);

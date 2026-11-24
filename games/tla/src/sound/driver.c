@@ -12,6 +12,7 @@
 /// Detaches a note through the jump table entry installed by the driver
 /// (RealClearChain).
 void ClearChain(struct SoundChannel *note) {
+  /* FAKEMATCH(dead): the entry read through its address. */
   MPLAY_FUNC_CAST(void (*)(struct SoundChannel *),
                   *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_CHAIN]))(note);
 }
@@ -19,6 +20,7 @@ void ClearChain(struct SoundChannel *note) {
 /// Clears a 64-byte music player or track prefix through the driver's jump
 /// table (SoundMainBTM). Called by MPlayOpen and m4aMPlayImmInit.
 void Clear64byte(void *block) {
+  /* FAKEMATCH(dead): the entry read through its address. */
   MPLAY_FUNC_CAST(void (*)(void *),
                   *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_64BYTE]))(block);
 }
@@ -576,6 +578,8 @@ void CgbSound(void) {
   volatile u8 *frequencyOrNoiseRegister;
   volatile u8 *triggerRegister;
   s32 envelopeControl;
+  /* FAKEMATCH(temporary): byteMask, 0xff, cuts each byte field it is anded
+   * with to the byte it already is. */
   u32 byteMask = 0xff;
 
   if (work->c15)
@@ -1082,6 +1086,7 @@ void ply_memacc(struct MusicPlayerInfo *player,
   }
 
 jump:
+  /* FAKEMATCH(dead): the entry read through its address. */
   (*(&gMPlayJumpTable[MPLAY_JUMP_GOTO]))(player, track);
   return;
 skip:
@@ -1111,7 +1116,7 @@ union WordBytes {
 /// Finishes a track through the jump table's ply_fine entry. Extended
 /// commands 0 and 3: they end the track as the finish command (0xB1) does.
 void ply_xxx(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
-  MPlayFunc finishSequence = *(&gMPlayJumpTable[MPLAY_JUMP_FINE]);
+  MPlayFunc finishSequence = gMPlayJumpTable[MPLAY_JUMP_FINE];
 
   finishSequence(player, track);
 }

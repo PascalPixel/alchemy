@@ -35,6 +35,13 @@
 #include "system/task.h"
 #include "system/matrix.h"
 
+/// A whole turn of an OAM entry's 9-bit x and 8-bit y. OBJ_POSITION keeps only
+/// those bits, so a place plus a turn is the same place; the dice game writes
+/// its sprites' places so, which keeps the sums positive where a sprite sits
+/// left of or above the screen.
+#define OBJ_X_TURN (OBJ_X_MASK + 1)
+#define OBJ_Y_TURN (OBJ_Y_MASK + 1)
+
 // Where SuperLuckyDice_Run puts each picture in OBJ VRAM, as 16-colour tiles
 // (the dice, 256-colour, then their shadow at DICE_SHADOW_TILE, fill the first
 // DICE_SHADOW_TILE + 8).
@@ -267,7 +274,8 @@ s32 SuperLuckyDice_DrawNumber(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
     else if (!started && i != digits - 1)
       continue;
     sprites->oam[sprite].attr01 =
-        OBJ_POSITION(x + i * 10 + 522, y + 256) | OBJ_SIZE_16X16;
+        OBJ_POSITION(x + i * 10 + 10 + OBJ_X_TURN, y + OBJ_Y_TURN) |
+        OBJ_SIZE_16X16;
     sprites->oam[sprite].attr2 =
         (digit * SPRITE_TILES(16, 16) + PINK_DIGIT_TILES) |
         OBJ_PALETTE(palette);
@@ -299,7 +307,7 @@ s32 SuperLuckyDice_DrawLargeNumber(s32 sprite, s32 x, s32 y, s32 value,
     else if (!started)
       continue;
     sprites->oam[sprite].attr01 =
-        OBJ_POSITION(x + i * 22 + 512, y + 256) | OBJ_SIZE_32X32;
+        OBJ_POSITION(x + i * 22 + OBJ_X_TURN, y + OBJ_Y_TURN) | OBJ_SIZE_32X32;
     sprites->oam[sprite].attr2 =
         (digit * SPRITE_TILES(32, 32) + GREEN_DIGIT_TILES) |
         OBJ_PALETTE(palette);
@@ -370,7 +378,7 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define WINNINGS_TEXT_X 40
 #define RESULT_WINDOW_X 4
 #define RESULT_WINDOW_WIDTH 20
-#define GAME_BANNER_X 608
+#define GAME_BANNER_X (OBJ_X_TURN + 96)
 #define MULTIPLIER_ZERO_X 80
 #elif LANGUAGE == LANGUAGE_ENGLISH
 #define COIN_WINDOW_X 18
@@ -385,7 +393,7 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define WINNINGS_TEXT_X 48
 #define RESULT_WINDOW_X 4
 #define RESULT_WINDOW_WIDTH 21
-#define GAME_BANNER_X 608
+#define GAME_BANNER_X (OBJ_X_TURN + 96)
 #define MULTIPLIER_ZERO_X 80
 #elif LANGUAGE == LANGUAGE_GERMAN
 #define COIN_WINDOW_X 17
@@ -400,7 +408,7 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define WINNINGS_TEXT_X 48
 #define RESULT_WINDOW_X 4
 #define RESULT_WINDOW_WIDTH 21
-#define GAME_BANNER_X 576
+#define GAME_BANNER_X (OBJ_X_TURN + 64)
 #define MULTIPLIER_ZERO_X 92
 #elif LANGUAGE == LANGUAGE_SPANISH
 #define COIN_WINDOW_X 18
@@ -415,7 +423,7 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define WINNINGS_TEXT_X 48
 #define RESULT_WINDOW_X 4
 #define RESULT_WINDOW_WIDTH 21
-#define GAME_BANNER_X 608
+#define GAME_BANNER_X (OBJ_X_TURN + 96)
 #define MULTIPLIER_ZERO_X 80
 #elif LANGUAGE == LANGUAGE_FRENCH
 #define COIN_WINDOW_X 16
@@ -430,7 +438,7 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define WINNINGS_TEXT_X 48
 #define RESULT_WINDOW_X 4
 #define RESULT_WINDOW_WIDTH 21
-#define GAME_BANNER_X 576
+#define GAME_BANNER_X (OBJ_X_TURN + 64)
 #define MULTIPLIER_ZERO_X 86
 #elif LANGUAGE == LANGUAGE_ITALIAN
 #define COIN_WINDOW_X 18
@@ -445,7 +453,7 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define WINNINGS_TEXT_X 48
 #define RESULT_WINDOW_X 3
 #define RESULT_WINDOW_WIDTH 23
-#define GAME_BANNER_X 600
+#define GAME_BANNER_X (OBJ_X_TURN + 88)
 #define MULTIPLIER_ZERO_X 80
 #endif
 
@@ -1404,7 +1412,7 @@ void SuperLuckyDice_Run(void) {
 
       for (index = 0; index != 4; index++) {
         sprites->oam[spriteCount].attr01 =
-            OBJ_POSITION(512 + index * 16, 2) | OBJ_SIZE_16X16;
+            OBJ_POSITION(OBJ_X_TURN + index * 16, 2) | OBJ_SIZE_16X16;
         sprites->oam[spriteCount].attr2 =
             (SMALL_DOUBLE_UP_TILES + index * SPRITE_TILES(16, 16)) |
             OBJ_PALETTE(DICE_PALETTE_SMALL_DOUBLE_UP);
@@ -1413,7 +1421,7 @@ void SuperLuckyDice_Run(void) {
       if (hiLoGame == DICE_FINAL_GAME) {
         for (index = 0; index != 5; index++) {
           sprites->oam[spriteCount].attr01 =
-              OBJ_POSITION(584 + index * 16, 2) | OBJ_SIZE_16X16;
+              OBJ_POSITION(OBJ_X_TURN + 72 + index * 16, 2) | OBJ_SIZE_16X16;
           sprites->oam[spriteCount].attr2 =
               (FINAL_GAME_TILES + index * SPRITE_TILES(16, 16)) |
               OBJ_PALETTE(DICE_PALETTE_FINAL_GAME);
@@ -1448,7 +1456,7 @@ void SuperLuckyDice_Run(void) {
       }
       for (index = 0; index != 2; index++) {
         sprites->oam[spriteCount].attr01 =
-            OBJ_POSITION(576 + index * 16, 24) | OBJ_SIZE_16X16;
+            OBJ_POSITION(OBJ_X_TURN + 64 + index * 16, 24) | OBJ_SIZE_16X16;
         sprites->oam[spriteCount].attr2 =
             (OR_TILES + index * SPRITE_TILES(16, 16)) |
             OBJ_PALETTE(DICE_PALETTE_TIMES_SIGN);
@@ -1465,7 +1473,8 @@ void SuperLuckyDice_Run(void) {
       else
         multiplierDigits = 5;
       sprites->oam[spriteCount].attr01 =
-          OBJ_POSITION(560 - multiplierDigits * 10, 24) | OBJ_SIZE_16X16;
+          OBJ_POSITION(OBJ_X_TURN + 48 - multiplierDigits * 10, 24) |
+          OBJ_SIZE_16X16;
       sprites->oam[spriteCount].attr2 =
           TIMES_SIGN_TILES | OBJ_PALETTE(DICE_PALETTE_TIMES_SIGN);
       spriteCount++;
@@ -1514,7 +1523,7 @@ void SuperLuckyDice_Run(void) {
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
-            OBJ_POSITION(column + index * 32 + 512, 52) | OBJ_SIZE_32X32;
+            OBJ_POSITION(column + index * 32 + OBJ_X_TURN, 52) | OBJ_SIZE_32X32;
         sprites->oam[spriteCount].attr2 =
             OBJ_PALETTE(DICE_PALETTE_RELOADED_A) |
             (HIGHER_TILES + index * SPRITE_TILES(32, 32));
@@ -1525,7 +1534,7 @@ void SuperLuckyDice_Run(void) {
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
-            OBJ_POSITION(column + index * 32 + 512, 92) | OBJ_SIZE_32X32;
+            OBJ_POSITION(column + index * 32 + OBJ_X_TURN, 92) | OBJ_SIZE_32X32;
         sprites->oam[spriteCount].attr2 =
             (LOWER_TILES + index * SPRITE_TILES(32, 32)) |
             OBJ_PALETTE(DICE_PALETTE_RELOADED_B);
@@ -1544,7 +1553,7 @@ void SuperLuckyDice_Run(void) {
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
-            OBJ_POSITION(column + index * 32 + 512, 52) | OBJ_SIZE_32X32;
+            OBJ_POSITION(column + index * 32 + OBJ_X_TURN, 52) | OBJ_SIZE_32X32;
         sprites->oam[spriteCount].attr2 =
             (DOUBLE_UP_TILES + index * SPRITE_TILES(32, 32)) |
             OBJ_PALETTE(DICE_PALETTE_RELOADED_C);
@@ -1555,7 +1564,7 @@ void SuperLuckyDice_Run(void) {
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
-            OBJ_POSITION(column + index * 32 + 512, 84) | OBJ_SIZE_32X32;
+            OBJ_POSITION(column + index * 32 + OBJ_X_TURN, 84) | OBJ_SIZE_32X32;
         sprites->oam[spriteCount].attr2 =
             (CASH_OUT_TILES + index * SPRITE_TILES(32, 32)) |
             OBJ_PALETTE(DICE_PALETTE_RELOADED_D);
@@ -1631,12 +1640,14 @@ void SuperLuckyDice_Run(void) {
           bannerY = doubled - 344;
         }
         sprites->oam[spriteCount].attr01 =
-            OBJ_POSITION(bannerX + 512, bannerY + 256) | OBJ_SIZE_64X64;
+            OBJ_POSITION(bannerX + OBJ_X_TURN, bannerY + OBJ_Y_TURN) |
+            OBJ_SIZE_64X64;
         sprites->oam[spriteCount].attr2 =
             RESULT_BANNER_TILES | OBJ_PALETTE(DICE_PALETTE_RELOADED_B);
         spriteCount++;
         sprites->oam[spriteCount].attr01 =
-            OBJ_POSITION(bannerX + 576, bannerY + 256) | OBJ_SIZE_64X64;
+            OBJ_POSITION(bannerX + 64 + OBJ_X_TURN, bannerY + OBJ_Y_TURN) |
+            OBJ_SIZE_64X64;
         sprites->oam[spriteCount].attr2 =
             (RESULT_BANNER_TILES + SPRITE_TILES(64, 64)) |
             OBJ_PALETTE(DICE_PALETTE_RELOADED_B);
@@ -1718,9 +1729,9 @@ void SuperLuckyDice_Run(void) {
         if (y + 92 > -16) {
           sprites->oam[spriteCount].attr01 =
               (OBJ_AFFINE_MATRIX(SUPER_LUCKY_DICE_COUNT + index) |
-               OBJ_X((x + 632) & OBJ_X_MASK)) |
-              ((y + 348) & 255) | OBJ_SIZE_16X16 | OBJ_256_COLORS |
-              OBJ_DOUBLE_SIZE | OBJ_AFFINE;
+               OBJ_X((x + DISPLAY_WIDTH / 2 + OBJ_X_TURN) & OBJ_X_MASK)) |
+              ((y + 92 + OBJ_Y_TURN) & OBJ_Y_MASK) | OBJ_SIZE_16X16 |
+              OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
           sprites->oam[spriteCount].attr2 = DICE_SHADOW_TILE | OBJ_PRIORITY(2);
           spriteCount++;
         }

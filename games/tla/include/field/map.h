@@ -52,19 +52,19 @@ extern u8 gMapGridShapes[];
 #define MAP_SHAPE(shape, height0, height1, height2)                            \
   ((shape) | (height0) << 8 | (height1) << 16 | (height2) << 24)
 
-void WorldMap_UpdateRegionTint(s32 region, s32 gradual);
-
-s32 ScreenTransition_IsScanlineActiveFar(void);
-
 /// 16 KB of EWRAM that pictures and tiles are decoded into before they are
 /// copied on.
 extern u8 gDecodeBuffer[];
 
+/// The map's animation each frame: its tiles, its blend scripts and the World
+/// Map's tints and tile blocks.
 void TilesetAnim_Update(void);
-
-s32 MapCollision_FindOrAddTagFar(s32 layer, s32 unused, s32 value);
-
-s32 Actor_LiftTargetBlockFar(s32 layer, s32 unused, s32 value);
+void BlendScript_Start(u16 *script);
+void BlendScript_Resume(void);
+void BlendScript_Suspend(void);
+void WorldMap_UpdateRegionTint(s32 region, s32 gradual);
+void WorldMap_PreloadCurrentTileBlock(void);
+s32 ScreenTransition_IsScanlineActiveFar(void);
 
 /// The world map's row drawer, its Thumb entry and ARM code (draw_map.s),
 /// copied to RAM to run.
@@ -72,13 +72,13 @@ extern const u8 Render_DrawMapCode[];
 /// The size of Render_DrawMapCode (draw_map.s).
 extern u8 Render_DrawMapCodeSize[];
 
+/// The map's collisions and the tags its cells carry.
+s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height);
+s32 MapCollision_FindOrAddTagFar(s32 layer, s32 unused, s32 value);
+s32 Actor_LiftTargetBlockFar(s32 layer, s32 unused, s32 value);
+
+/// The debug sprite viewer's next sprite id in a direction, and its ring.
 s32 SpriteViewer_StepSpriteId(s32 spriteId, s32 direction);
 void SpriteViewer_PlaceRing(void);
-
-void BlendScript_Start(u16 *script);
-s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height);
-void WorldMap_PreloadCurrentTileBlock(void);
-void BlendScript_Resume(void);
-void BlendScript_Suspend(void);
 
 #endif

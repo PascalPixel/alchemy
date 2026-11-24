@@ -34,7 +34,8 @@ void FieldMotes_Start(void) {
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_MoteTiles, tiles);
   state->entry = VramCache_FindFreeEntry();
-  state->tileBase = VramCache_Load(state->entry, 768, tiles);
+  state->tileBase =
+      VramCache_Load(state->entry, 6 * WEATHER_PICTURE_BYTES, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   heap = Ram_HeapSlots;
@@ -52,7 +53,7 @@ void FieldMotes_Start(void) {
     pos = view->origin;
     *(s32 *)p = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     p += sizeof(s32);
-    *(s32 *)p = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
+    *(s32 *)p = OBJ_PRIORITY(1) | OBJ_PALETTE(WEATHER_PALETTE);
     p = pos[0];
     z = pos[2];
     mote->posX = (s32)p;
@@ -90,7 +91,9 @@ void Weather_StartRain(s32 withCue) {
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_StreakTiles, tiles);
   state->entry = VramCache_FindFreeEntry();
-  state->tileBase = VramCache_Load(state->entry, 768, tiles);
+  // As many bytes as the motes' six pictures, though streak.png has two.
+  state->tileBase =
+      VramCache_Load(state->entry, 6 * WEATHER_PICTURE_BYTES, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   heap = Ram_HeapSlots;
@@ -108,7 +111,7 @@ void Weather_StartRain(s32 withCue) {
     focus = view->origin;
     *(s32 *)p = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     p += sizeof(s32);
-    *(s32 *)p = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
+    *(s32 *)p = OBJ_PRIORITY(1) | OBJ_PALETTE(WEATHER_PALETTE);
     p = focus[0];
     z = focus[2];
     particle->posX = (s32)p;
@@ -183,8 +186,8 @@ void FieldEffect_UpdateSparkles(void) {
           screenY < DISPLAY_HEIGHT) {
         sparkle->tile = state->tileBase + *frame;
         sparkle->x = screenX;
-        sparkle->shape = 0;
-        sparkle->size = 1;
+        sparkle->shape = OAM_SHAPE_SQUARE;
+        sparkle->size = OAM_SIZE_16X16;
 #ifdef UBFIX
         frames = gFrameCount;
 #else
@@ -258,7 +261,8 @@ void FieldEffect_InitializeSparkles(void) {
   buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_SparkleTiles, buf);
   state->entry = VramCache_FindFreeEntry();
-  state->tileBase = VramCache_Load(state->entry, 512, buf);
+  state->tileBase =
+      VramCache_Load(state->entry, 4 * WEATHER_PICTURE_BYTES, buf);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
 
   i = 0;
@@ -277,7 +281,7 @@ void FieldEffect_InitializeSparkles(void) {
     leader = view->origin;
     *(u32 *)attr = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     attr += sizeof(u32);
-    *(u32 *)attr = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
+    *(u32 *)attr = OBJ_PRIORITY(1) | OBJ_PALETTE(WEATHER_PALETTE);
     attr = leader[0];
     z = leader[2];
     p->posX = clear;

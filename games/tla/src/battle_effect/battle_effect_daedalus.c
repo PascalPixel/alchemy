@@ -194,10 +194,10 @@ struct SpriteAttributes {
 };
 
 typedef void (*CopyFunc)(void *, const void *, s32);
-typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 
-/// Iwram_CopyWords called at its offset from IwramIrqMain, as the trade's
-/// snapshot copies call it.
+/// Iwram_CopyWords reached through the linked IWRAM code's symbol,
+/// IwramIrqMain, at its offset rather than at its fixed address: the same
+/// routine, called as the trade's snapshot copies and the item menu call it.
 #define IWRAM_COPY_WORDS_LINKED                                                \
   ((CopyFunc)(IwramIrqMain + Iwram_CopyWordsOffset))
 
@@ -422,7 +422,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   struct SpritePlacement place;
   struct SpritePlacement missilePlace;
   struct Scale canopyScale;
-  void *blit[2];
+  DrawRectangle blit[2];
   struct Scale pieceScale;
   struct ModelTexture fireRingTexture;
   struct Scale missileScale;
@@ -620,6 +620,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     // The canopy scrolls by half a pixel a frame; each time it has moved a
     // whole picture, every sprite takes the picture before its own.
     if (frame > SUMMON_OPENING_LOAD_FRAME) {
+      /* FAKEMATCH(temporary): canopyPlaceRef, a pointer standing for
+       * canopyPlace. */
       struct SpritePlacement *canopyPlaceRef;
       s32 row;
 
@@ -682,7 +684,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   }
 
   {
-    void **blits;
+    DrawRectangle *blits;
     u16 *pal;
     s32 swayX;
     s32 swayY;
@@ -699,7 +701,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     REG_BG2PA = Q_8_8(0.5);
     REG_BG2X = 0;
     blits = blit;
-    BattleEffect_BuildCanvasBlitters(0, blits);
+    BattleEffect_BuildCanvasBlitters(0, (void **)blits);
     state->scrollTimer = 0;
     state->scrollInterval = 5;
     state->scrollStepX = -1;
@@ -862,13 +864,12 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
         p = &EXTRA_PARTICLES[DAEDALUS_BIRDS + i];
         if (frame >= gDaedalus_BirdFrames[i]) {
-          ((BlitFunc)blit[0])(
-              canvas,
-              &state->sheet[gDaedalus_WingBeatPictures[(p->variant / 4) %
-                                                       BIRD_WING_BEAT] *
-                                PICTURE_BYTES(BIRD) +
-                            DAEDALUS_BIRD_FLOCK],
-              FIXEDtoINT(p->x), FIXEDtoINT(p->y), BIRD_WIDTH, BIRD_HEIGHT);
+          blit[0](canvas,
+                  &state->sheet[gDaedalus_WingBeatPictures[(p->variant / 4) %
+                                                           BIRD_WING_BEAT] *
+                                    PICTURE_BYTES(BIRD) +
+                                DAEDALUS_BIRD_FLOCK],
+                  FIXEDtoINT(p->x), FIXEDtoINT(p->y), BIRD_WIDTH, BIRD_HEIGHT);
           p->x += p->velocityX;
           p->y += p->velocityY;
           p->variant++;
@@ -1162,12 +1163,11 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
             q = &EXTRA_PARTICLES[DAEDALUS_EXHAUST + i];
             if ((u32)q->variant < ROCKET_FLAME_COUNT) {
-              ((BlitFunc)blits[1])(
-                  canvas,
-                  &state->sheet[q->variant * PICTURE_BYTES(ROCKET_FLAME)],
-                  (FIXEDtoINT(q->x)) - 2,
-                  (FIXEDtoINT(q->y)) - ROCKET_FLAME_HEIGHT / 2,
-                  ROCKET_FLAME_WIDTH, ROCKET_FLAME_HEIGHT);
+              blits[1](canvas,
+                       &state->sheet[q->variant * PICTURE_BYTES(ROCKET_FLAME)],
+                       (FIXEDtoINT(q->x)) - 2,
+                       (FIXEDtoINT(q->y)) - ROCKET_FLAME_HEIGHT / 2,
+                       ROCKET_FLAME_WIDTH, ROCKET_FLAME_HEIGHT);
               Particle_AdvanceWithGravity2D(q, PARTICLE_DAMPING_NONE, 0);
               q->variant++;
             }
@@ -1177,7 +1177,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
             q = &EXTRA_PARTICLES[DAEDALUS_BURSTS + i];
             if ((u32)q->variant < FLASH_BURST_PICTURE_COUNT * 4) {
-              ((BlitFunc)blits[1])(
+              blits[1](
                   canvas,
                   &state->sheet[q->variant / 4 * PICTURE_BYTES(FLASH_BURST) +
                                 DAEDALUS_FLASH_BURST_PICTURES],
@@ -1266,12 +1266,11 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
               v = (FIXEDtoINT(Trig_Sin(i * FLAME_RING_STEP) * radius / 2)) +
                   gDaedalus_RingX[j];
-              ((BlitFunc)blit[0])(
-                  canvas, &state->sheet[n * PICTURE_BYTES(ROCKET_FLAME)],
-                  v - ROCKET_FLAME_WIDTH / 2,
-                  (FIXEDtoINT(Trig_Cos(i * FLAME_RING_STEP) * radius * 2)) +
-                      FLAME_RING_Y,
-                  ROCKET_FLAME_WIDTH, ROCKET_FLAME_HEIGHT);
+              blit[0](canvas, &state->sheet[n * PICTURE_BYTES(ROCKET_FLAME)],
+                      v - ROCKET_FLAME_WIDTH / 2,
+                      (FIXEDtoINT(Trig_Cos(i * FLAME_RING_STEP) * radius * 2)) +
+                          FLAME_RING_Y,
+                      ROCKET_FLAME_WIDTH, ROCKET_FLAME_HEIGHT);
             }
           }
         }
@@ -1426,10 +1425,9 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             n = (frame - (i * 2 + DAEDALUS_SPLASH_START)) / 2;
             y = gDaedalus_SplashPoints[j][i][1] + (FIXEDtoINT(swayY)) -
                 gDaedalus_ShakeOffsets[state->shakeFrames];
-            ((BlitFunc)blit[0])(
-                canvas, &state->sheet[n * PICTURE_BYTES(ROCKET_FLAME)],
-                x - ROCKET_FLAME_WIDTH / 2, y - ROCKET_FLAME_HEIGHT / 2,
-                ROCKET_FLAME_WIDTH, ROCKET_FLAME_HEIGHT);
+            blit[0](canvas, &state->sheet[n * PICTURE_BYTES(ROCKET_FLAME)],
+                    x - ROCKET_FLAME_WIDTH / 2, y - ROCKET_FLAME_HEIGHT / 2,
+                    ROCKET_FLAME_WIDTH, ROCKET_FLAME_HEIGHT);
           }
         }
       }
@@ -1443,11 +1441,11 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
           q = &EXTRA_PARTICLES[i * DAEDALUS_TRAIL_LENGTH + j];
           if ((u32)q->variant < ROCKET_FLAME_COUNT) {
-            ((BlitFunc)blit[0])(
-                canvas, &state->sheet[q->variant * PICTURE_BYTES(ROCKET_FLAME)],
-                (FIXEDtoINT(q->x)) - 2,
-                (FIXEDtoINT(q->y)) - ROCKET_FLAME_HEIGHT / 2,
-                ROCKET_FLAME_WIDTH, ROCKET_FLAME_HEIGHT);
+            blit[0](canvas,
+                    &state->sheet[q->variant * PICTURE_BYTES(ROCKET_FLAME)],
+                    (FIXEDtoINT(q->x)) - 2,
+                    (FIXEDtoINT(q->y)) - ROCKET_FLAME_HEIGHT / 2,
+                    ROCKET_FLAME_WIDTH, ROCKET_FLAME_HEIGHT);
             q->x += q->velocityX;
             q->y += q->velocityY;
             q->velocityY -= toFIXED(1) / 4;
@@ -1616,12 +1614,12 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
           v = q->variant - 2;
           if (v >= 0)
-            ((BlitFunc)blits[1])(canvas,
-                                 &state->sheet[v * PICTURE_BYTES(ROCKET_FLAME) +
-                                               DAEDALUS_ROCKET_FLAMES],
-                                 (FIXEDtoINT(q->x)) - ROCKET_FLAME_WIDTH / 2,
-                                 (FIXEDtoINT(q->y)) - ROCKET_FLAME_HEIGHT / 2,
-                                 ROCKET_FLAME_WIDTH, ROCKET_FLAME_HEIGHT);
+            blits[1](canvas,
+                     &state->sheet[v * PICTURE_BYTES(ROCKET_FLAME) +
+                                   DAEDALUS_ROCKET_FLAMES],
+                     (FIXEDtoINT(q->x)) - ROCKET_FLAME_WIDTH / 2,
+                     (FIXEDtoINT(q->y)) - ROCKET_FLAME_HEIGHT / 2,
+                     ROCKET_FLAME_WIDTH, ROCKET_FLAME_HEIGHT);
           q->variant++;
         }
       }
@@ -1634,11 +1632,10 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           s32 v;
 
           v = q->variant / 3;
-          ((BlitFunc)blits[i & 1])(
-              canvas, &state->sheet[v * PICTURE_BYTES(FLASH_BURST)],
-              (FIXEDtoINT(q->x)) - FLASH_BURST_WIDTH / 2,
-              (FIXEDtoINT(q->y)) - FLASH_BURST_HEIGHT * 3 / 4,
-              FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+          blits[i & 1](canvas, &state->sheet[v * PICTURE_BYTES(FLASH_BURST)],
+                       (FIXEDtoINT(q->x)) - FLASH_BURST_WIDTH / 2,
+                       (FIXEDtoINT(q->y)) - FLASH_BURST_HEIGHT * 3 / 4,
+                       FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           Particle_AdvanceWithGravity2D(q, 56, -toFIXED(1) / 8);
           q->variant++;
         }

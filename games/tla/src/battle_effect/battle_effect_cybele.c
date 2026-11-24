@@ -34,6 +34,10 @@ UNUSED void BattleEffect_InitializeTilemapAndFlushQueue(void) {
 #define CYBELE_FIRST_CHIP 16  ///< the first chip in state->particles
 #define CYBELE_DUST_PICTURE 6 ///< the dust cloud in gCybele_BlastPictures
 #define CYBELE_SPRITES 8
+/// The left and right sprites of Cybele's middle row, her mouth, which take
+/// the poses of gCybele_ObjectPoses as it opens and shuts.
+#define CYBELE_MOUTH_LEFT 3
+#define CYBELE_MOUTH_RIGHT 4
 /// How far right of the screen's left edge the canvas shows until the chips
 /// fly, in pixels.
 #define CYBELE_CANVAS_X 32
@@ -204,9 +208,9 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
 
-      Sprite_StartAnimationFar(state->sprites[3],
+      Sprite_StartAnimationFar(state->sprites[CYBELE_MOUTH_LEFT],
                                gCybele_ObjectPoses[pose * 2]);
-      Sprite_StartAnimationFar(state->sprites[4],
+      Sprite_StartAnimationFar(state->sprites[CYBELE_MOUTH_RIGHT],
                                gCybele_ObjectPoses[pose * 2 + 1]);
     }
 
@@ -569,6 +573,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 #undef CYBELE_FIRST_CHIP
 #undef CYBELE_DUST_PICTURE
 #undef CYBELE_SPRITES
+#undef CYBELE_MOUTH_LEFT
+#undef CYBELE_MOUTH_RIGHT
 #undef CYBELE_CANVAS_X
 #undef CYBELE_DISSOLVE_RUNS
 #undef CYBELE_DISSOLVE_BAND

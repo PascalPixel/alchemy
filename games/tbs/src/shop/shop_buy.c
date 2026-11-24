@@ -276,14 +276,17 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
     }
     pageSlot = 0;
     if (stockIndex < (u32)itemCount) {
-      stockCursor = (s16 *)((stockIndex * 2) + (u32)itemIds);
+      /* FAKEMATCH(temporary): stockCursor, the byte address of
+         itemIds[stockIndex] walked down the page; the plain form reads
+         itemIds[stockIndex] at its use. */
+      stockCursor = (s16 *)(stockIndex * sizeof(s16) + (u32)itemIds);
       priceX = 16;
       for (; pageSlot < SHOP_STOCK_PAGE_ITEMS && stockIndex < (u32)itemCount;
            priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
         itemId = *stockCursor;
         item = Item_GetDirectFar(itemId);
-        icon = (u8 *)WindowSprite_CreateLoadedFar(itemId, ICON_BASE, window,
-                                                  pageSlot * 32, 0);
+        icon = WindowSprite_CreateLoadedFar(itemId, ICON_BASE, window,
+                                            pageSlot * 32, 0);
         icon->depth = OAM_DEPTH_FRONT - 3;
         if (stockIndex == selected) {
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
@@ -477,7 +480,7 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
   s32 y;
   s32 itemIndex;
   s32 slot;
-  u8 *icon;
+  struct WindowSprite *icon;
 
   unit = Unit_GetFar(unitId);
   x = 8;
@@ -496,11 +499,13 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
     itemIndex = 0;
     if (unit->inventory[itemIndex] != 0) {
       for (;;) {
-        icon = (u8 *)WindowSprite_CreateLoadedFar(
-            unit->inventory[itemIndex],
-            ICON_BASE | ICON_COUNT_ABOVE_ONE | ICON_BROKEN | ICON_EQUIPPED,
-            window, x, y);
-        icon[offsetof(struct WindowSprite, depth)] = OAM_DEPTH_FRONT - 3;
+        icon = WindowSprite_CreateLoadedFar(unit->inventory[itemIndex],
+                                            ICON_BASE | ICON_COUNT_ABOVE_ONE |
+                                                ICON_BROKEN | ICON_EQUIPPED,
+                                            window, x, y);
+        /* FAKEMATCH(dead): depth written through its taken address; the plain
+           form is icon->depth. */
+        *(u8 *)&icon->depth = OAM_DEPTH_FRONT - 3;
         x += 16;
         if (itemIndex == SHOP_INVENTORY_COLUMNS - 1) {
           x = 8;
@@ -520,6 +525,10 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
   }
 }
 
+/// The smaller of `a` and `b`. It reads `b` again when that is the smaller, so
+/// a call passed as `b` is made a second time.
+#define SHOP_MIN(a, b) ((a) > (b) ? (b) : (a))
+
 /// Asks how many to buy when the item stacks, limited by what the coins buy,
 /// the artifact's stock and a full stack less what the party member carries.
 /// Returns the count (1 for other items), or -1 when cancelled.
@@ -530,7 +539,6 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   s32 carriedQuantity;
   s32 quantityLimit;
   s32 slot;
-  s32 artifactLimit;
   s32 selectedQuantity;
 
   shop = gMenuState;
@@ -552,12 +560,8 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
       quantityLimit = (u32)gMainRoutineState.holdings.coins / item->price;
 
     if (shop->action == SHOP_ACTION_ARTIFACTS) {
-      artifactLimit = Item_AdjustRareItemStockFar(itemId, 0);
-      if (quantityLimit > artifactLimit)
-        artifactLimit = Item_AdjustRareItemStockFar(itemId, 0);
-      else
-        artifactLimit = quantityLimit;
-      quantityLimit = artifactLimit;
+      quantityLimit =
+          SHOP_MIN(quantityLimit, Item_AdjustRareItemStockFar(itemId, 0));
     }
 
     quantityLimit += carriedQuantity;

@@ -1009,6 +1009,7 @@ static void SolSanctumElementalStarRoom_FelixRemovesMask(void) {
       Actor_WalkToAndWait(ACTOR_GARET, 252, 486);
       Actor_RunRepeatedMotion(ACTOR_GARET, 2);
       Event_Wait(10);
+      // "Isaac handed over the Elemental Stars."
       FieldMessage_ShowCentered((messageA + 1), 1, 0);
     } else {
       Event_SetMessageId(MsgSolSanctumRightTake);
@@ -1033,6 +1034,7 @@ static void SolSanctumElementalStarRoom_FelixRemovesMask(void) {
       Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
       Actor_SetDestination(ACTOR_PARTY_LEADER, 218, 471);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
+      // "Garet took the Elemental Stars."
       FieldMessage_ShowCentered((messageB + 1), 1, 0);
       Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 30);
@@ -1118,6 +1120,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 60);
   // "Oh, great. After we did all that work..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 20);
+  // "Garet gave him the Elemental Stars."
   FieldMessage_ShowCentered(MsgSolSanctumPermitRelieveElemental + 4, 1, 10);
   Actor_SetSpeed(ACTOR_GARET, 0.5);
   actor = Actor_Get(ACTOR_GARET);
@@ -1818,7 +1821,10 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   FieldCamera_WaitForMove();
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 10);
-  // "Stones, wood, even us..."
+  // "Stones, wood, even us... All things are made from those four elements.
+  // Did I get it right, Isaac?"
+  // Yes: Kraden, "Exactly..."
+  // No: Kraden, "No, Isaac... Garet is quite correct."
   Event_OpenMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
@@ -1860,6 +1866,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   FieldCamera_SetSpeed(8);
   // Kraden tours the four Elemental Stars, the view returning to the party
   // after each.
+  // "The Venus Star... The elemental stone of earth!"
   SolSanctumElementalStarRoom_ShowElementalStar(
       711, 464, 589, 353, SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN);
   Event_Wait(10);
@@ -1869,6 +1876,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 20);
+  // "Mercury Star, possessing the power of water's many forms!"
   SolSanctumElementalStarRoom_ShowElementalStar(
       711, 147, 596, 238, SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN);
   Event_Wait(10);
@@ -1882,6 +1890,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
+  // "There is the Mars Star, glowing red with the fire contained within!"
   SolSanctumElementalStarRoom_ShowElementalStar(
       231, 147, 308, 250, SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN);
   Event_Wait(10);
@@ -1895,6 +1904,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
+  // "And Jupiter Star, bound with the wind's fury!!!"
   SolSanctumElementalStarRoom_ShowElementalStar(
       231, 464, 306, 362, SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN);
   Event_Wait(30);
@@ -1904,13 +1914,16 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
+  // "Kraden... Why are you getting so excited?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_JENNA, 20);
   Actor_Jump(ACTOR_KRADEN, 4, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
+  // "How can you be so calm in the face of such wonders!?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 10);
   Actor_StartRepeatedMotion(ACTOR_KRADEN, 3);
+  // "You're looking at the very source of all Alchemy!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1918,6 +1931,10 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "...Haven't I told you all this before?"
+  // Yes: Garet, "What? I must have fallen asleep, then, because I don't have a
+  // clue what he's talking about!"
+  // No: Garet, "Then this must be a lot for you to take in."
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldState->message++;
@@ -1947,6 +1964,9 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 20);
   // "You understand now, don't you?"
+  // Yes: "The study of Alchemy began with the search for this very stone."
+  // No: "You still do not understand? Alchemy exists because of the Elemental
+  // Stars."
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldState->message++;

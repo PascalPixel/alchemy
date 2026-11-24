@@ -9,6 +9,8 @@
 #include "system/ram_buffer.h"
 #include "system/task.h"
 #include "graphics/vram_tab.h"
+#include "graphics/resource.h"
+#include "game/class_djinn.h"
 
 /// An icon slot that holds no VRAM cache entry.
 #define ICON_NONE VRAM_CACHE_ENTRY_COUNT
@@ -30,10 +32,7 @@ struct IconSprite {
   struct IconAttr attr;
 };
 
-s32 VramCache_FreeEntry(u32 entry);
-s32 VramCache_FindFreeEntry(void);
 void ItemIcon_LoadLayersIntoSlotFar(s32 item, s32 mode, s32 resource);
-struct Unit *Unit_Get(u32 unitId);
 
 void ItemIconGrid_Draw(void);
 void ItemIconGrid_SetPosition(s32 index, s32 x, s32 y);

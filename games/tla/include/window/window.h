@@ -371,13 +371,12 @@ enum {
   WINDOW_SPRITE_MOTION_ON_SCREEN = 19,
 };
 
-/// Text colours (Text_SetColor), named as both the window palette and the basic
-/// sprite palette show them.
+/// Text colours (Text_SetColor), named as the basic sprite palette
+/// (BASIC_COLORS_PALETTE) shows them.
 enum TextColor {
   TEXT_COLOR_RED = 2,
   TEXT_COLOR_YELLOW = 4,
-  TEXT_COLOR_PINK =
-      9, ///< in the basic colours' palette; the window palette's white
+  TEXT_COLOR_PINK = 9, ///< a sealed party member's Psynergy
   TEXT_COLOR_GREY = 14,
   TEXT_COLOR_WHITE = 15, ///< a message's colour at start
 };
@@ -402,40 +401,64 @@ enum {
   WINDOW_FLAG_FIXED_X = 0x100,
 };
 
+/// Opens a window at tile (x, y), width by height tiles, in the first free
+/// slot, with the WINDOW_FLAG_ flags in style; NULL when every slot is taken.
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
+/// Redraws a window empty, its border and fill, at its current rectangle.
 void WindowSprite_RedrawSavedRect(struct Window *window);
 
+/// Empties the table of message arguments.
 void MessageArgument_ClearAll(void);
 
 /// The spinning hand of the selection screen and the battle target cursor,
 /// 16 by 16 pixels in 256 colours, 256 bytes a frame (sprite_cursors.s).
 extern const u8 gMenu_AnimatedCursorTiles[];
 
+/// The labels of the battle Status screen and target window: "HP" ("PS" in
+/// Italian), the slash between a value and its maximum, and "PP".
 extern const u8 gOwnerStatus_HpString[];
 extern const u8 gOwnerStatus_SlashString[];
 extern const u8 gOwnerStatus_PpString[];
 
+/// Sets the colour (enum TextColor) the next text is drawn in.
 void Text_SetColor(s32 color);
 
+/// Decodes message into text, at most capacity codes and a terminator,
+/// keeping style codes with their operands.
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 
+/// The width in pixels of a string of 16-bit character codes.
 s32 Text_GetWideStringWidth(u16 *text);
 
+/// Runs the Pause menu from entry initial and returns the chosen entry (enum
+/// PauseMenuEntry), or -1 when B or START cancels.
 s32 PauseMenu_Choose(s32 initial);
 
+/// Lets the player choose a file and saves the game to it, asking before it
+/// writes over a file in use.
 s32 Save_ToChosenFile(void);
 
+/// Runs the settings menu: 0 when A or START keeps the settings, -1 when B
+/// drops them.
 s32 SettingsMenu_Run(void);
 
+/// Loads a 32x32 icon into sprite tile slot *slot (a free one unless reuse is
+/// set) and its colours into sprite palette `palette`; its tile goes to *tile.
 void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                           s32 palette, s32 reuse);
 
+/// Lets the player choose the reserve member who takes party slot `slot` in
+/// battle.
 s32 BattleParty_ChooseReserve(s32 slot);
 
+/// Counts the standby Djinn on unitId's side, and each element's into counts
+/// when it is not NULL (BattleDjinn_CountStandby).
 s32 BattleDjinn_CountStandbyFar(u32 unitId, u8 *counts);
 
+/// Marks the text tiles the tilemap shows, and frees those it no longer shows.
 void Window_MarkVisibleTextTiles(void);
 
+/// The Djinn tutorial's message on giving a Djinni.
 s32 Djinn_GetGiveTutorialMessage(void);
 
 /// Nonzero offers Battle on the File Screen, when a file has any game flag
@@ -445,35 +468,62 @@ extern s16 gTitleBattleOptionEnabled;
 /// summary is not marked reunited (Save_ScanFileSummaries).
 extern s16 gTitleUpdateOptionEnabled;
 
+/// Loads the save files' summaries for the File Screen, sets the title's Battle
+/// and Update options from them, and returns how many files there are.
 s32 Save_ScanFileSummaries(void);
 
+/// Frees the second range of text tiles, and with allowAlternateTiles set lets
+/// text take them too.
 void Text_UseExtraTiles(s32 allowAlternateTiles);
 
+/// Decodes key into destination, at most capacity halfwords with the
+/// terminator, and returns its length.
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
+/// Decodes message and empties the argument table; returns where its text
+/// starts.
 s32 Message_DecodeAndClearArguments(s32 message);
+/// Decodes message after the text decoded last.
 void Message_DecodeAppend(s32 message);
 
+/// Moves a menu cursor a frame along its straight line toward its target
+/// (MenuCursor_Advance).
 void MenuCursor_AdvanceFar(struct MenuCursor *cursor);
+/// Moves a menu cursor a quarter of the way to its target, at least a pixel
+/// (MenuCursor_MoveTowardTarget).
 void MenuCursor_MoveTowardTargetFar(struct MenuCursor *cursor);
 
+/// Closes at once the portrait window showing speaker `id`'s portrait.
 void Portrait_CloseWindow(s32 id);
 
+/// Writes input as decimal text into buffer and returns where it starts: with
+/// width 0 unpadded and signed, else right-aligned in width characters.
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 
+/// Draws a divider line from tile (x1, y1) to (x2, y2), joining the frame and
+/// the dividers already drawn.
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
+/// Draws a byte string into a window's tilemap at pixel (x, y) of its
+/// interior, rounded down to tiles.
 void Text_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y);
+/// Draws a number (width as String_FormatNumber takes it) into a window's
+/// tilemap at pixel (x, y) of its interior.
 void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
 
+/// Adds a message argument of kind (MESSAGE_ARGUMENT_) with value, dropped when
+/// all eight places are in use.
 void MessageArgument_Push(u32 value, u32 kind);
 
+/// A task: draws each party sprite of the file list at its place and scale.
 void FileList_PlacePartySprites(void);
 
 /// The pointing hand cursor, a 16x16 sprite, shared by the battle menus, the
 /// name entry screen and the talk choices.
 extern const u8 gPointingHandTiles[];
 
+/// Fills the text canvas with the window background colour.
 s32 Text_FillCanvasBackground(void);
 
+/// Opens the party status window of the field menu and waits a frame.
 void PartyStatus_OpenAndWait(void);
 
 // The layers ItemIcon_Compose draws over an item's icon.

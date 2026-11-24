@@ -1770,8 +1770,8 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
 /// `/` between the current and the maximum HP and PP in the Djinn preview.
 extern const char gDjinnMenu_TextSlash[];
 
-s32 Icon_CreatePsynergyIcon(struct Window *window, s32 x, s32 y,
-                            s32 resourceId);
+void Icon_CreatePsynergyIcon(struct Window *window, s32 x, s32 y,
+                             s32 resourceId);
 s32 Icon_CreateDjinnArrow(struct Window *window, s32 x, s32 y, s32 variant);
 
 /// Previews a djinni change on a member's status: the unit is saved, the change

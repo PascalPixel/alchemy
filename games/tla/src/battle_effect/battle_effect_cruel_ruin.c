@@ -404,7 +404,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
   state = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, BATTLE_SHEET_BYTES);
   state->vblanksSinceTransfer = 1;
   state->args = args;
   BattleEffect_StartCanvasLayer(0);

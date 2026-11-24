@@ -610,7 +610,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   key = Actor_Get(ACTOR_JAIL_KEY);
   Event_StartColorTransition(8, RGB(16, 16, 4));
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO),
+                                   CASTER_LOOK_CYCLING_COLORS);
   Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(40);
   effect = FieldEffect_SpawnMoveHand(eoleo);
@@ -664,7 +665,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   key->update = 0;
   Actor_SetSpriteColorMode(key, 0);
   FieldEffect_BurstHand(effect);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
@@ -703,12 +704,13 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(20);
   Field_StartColorTransition(8, RGB(16, 16, 4));
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO),
+                                   CASTER_LOOK_CYCLING_COLORS);
   Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(40);
   // "Eoleo!"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);

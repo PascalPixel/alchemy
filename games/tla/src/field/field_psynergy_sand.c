@@ -488,7 +488,7 @@ void FieldPsynergy_Sand(void) {
       particle++;
     }
     FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-    BattleEffect_SetObjectUpdateMode(effect->caster, 0);
+    BattleEffect_SetObjectUpdateMode(effect->caster, CASTER_LOOK_NORMAL);
     Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
                                        owner->z.fixed);
     *motionFlags = 0;

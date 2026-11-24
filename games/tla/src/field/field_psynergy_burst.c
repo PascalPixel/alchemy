@@ -348,7 +348,7 @@ void FieldPsynergy_UpdateBurst(void) {
     case BURST_PHASE_BLASTS:
       // Cast at nothing, the one blast is all: the caster lets go, and it ends.
       if (state->timer == 5)
-        BattleEffect_SetObjectUpdateMode(scene->caster, 0);
+        BattleEffect_SetObjectUpdateMode(scene->caster, CASTER_LOOK_NORMAL);
       if (state->timer == 20) {
         state->phase = FIELD_PSYNERGY_FINISHED;
         state->timer = -1;

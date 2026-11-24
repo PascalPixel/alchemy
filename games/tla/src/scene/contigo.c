@@ -712,7 +712,8 @@ void Contigo_BabyThinks(void) {
   PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(4, 4, 16), PALETTES_BG);
   PaletteFade_StartInterpolation(16);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_BABY), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_BABY),
+                                   CASTER_LOOK_CYCLING_COLORS);
   effect = Import_ActorCreate(SPRITE_WHIRLWIND, x, 0, z);
   if (effect != 0) {
     Actor_SetSpriteFlags(effect, 0);
@@ -738,7 +739,8 @@ void Contigo_BabyThinks(void) {
     }
     Actor_Release(effect);
   }
-  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_BABY), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_BABY),
+                                   CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);

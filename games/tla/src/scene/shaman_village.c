@@ -198,10 +198,6 @@ enum ShamanVillageCell {
 /// eyes shut, then open.
 enum { ANIM_LEADER_LIE_ASLEEP = 41, ANIM_LEADER_LIE_AWAKE };
 
-/// The looks BattleEffect_SetObjectUpdateMode gives a caster: none, and the
-/// cycling colours Sheba takes as she gathers power.
-enum { CASTER_LOOK_NONE = 0, CASTER_LOOK_CYCLING_COLORS = 2 };
-
 #include "../field/field_effect_move.c"
 
 struct ItemDefinition;
@@ -2580,7 +2576,7 @@ void ShamanVillage_CastWhirlwindOnSand(void) {
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_SHEBA),
                                    CASTER_LOOK_CYCLING_COLORS);
   Event_Wait(40);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_SHEBA), CASTER_LOOK_NONE);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_SHEBA), CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   ShamanVillage_BlowAwaySand();

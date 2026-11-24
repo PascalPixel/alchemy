@@ -224,7 +224,7 @@ void FieldPsynergy_Cyclone(void) {
 
   FieldPsynergy_FadeToCastColor();
   FieldPsynergy_GatherNearbyCells();
-  BattleEffect_SetObjectUpdateMode(effect->caster, 0);
+  BattleEffect_SetObjectUpdateMode(effect->caster, CASTER_LOOK_NORMAL);
   owner->update = Actor_UpdateSpin;
   owner->timer = owner->facing;
   // The whirl's colours: blue full, red and green rising from half to full.

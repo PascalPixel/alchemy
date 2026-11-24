@@ -509,7 +509,8 @@ void JupiterLighthouse_HealTarget(s32 actorId, s32 target) {
   s32 frame;
 
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_Get(actorId), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(actorId),
+                                   CASTER_LOOK_CYCLING_COLORS);
   Event_PlaySound(SE_ASCEND);
   System_Wait(50);
   Event_PlaySound(MUS_RECOVERING_AFTER_COMBAT);
@@ -527,7 +528,7 @@ void JupiterLighthouse_HealTarget(s32 actorId, s32 target) {
   }
   Actor_Get(target)->facing = FACING_NORTH;
   FieldActor_SetSpriteColor(Actor_Get(target), SPRITE_COLOR_NORMAL);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(actorId), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(actorId), CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Actor_SetAnimation(target, ANIM_STAND);

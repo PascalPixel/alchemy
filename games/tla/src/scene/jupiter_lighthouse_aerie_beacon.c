@@ -1136,10 +1136,11 @@ void JupiterLighthouse_ShebaJoinsTheFight(void) {
 /// healing Felix's party, or Alex healing Agatio and Karst.
 void JupiterLighthouse_HealActor(s32 casterId, s32 targetId) {
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_Get(casterId), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(casterId),
+                                   CASTER_LOOK_CYCLING_COLORS);
   Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(60);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(casterId), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(casterId), CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Actor_SetAnimation(targetId, ANIM_STAND);

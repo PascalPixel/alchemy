@@ -1303,7 +1303,8 @@ void IzumoRooms_GiveUzumeTheDoll(void) {
   // "I think I may have something that might please you."
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_UZUME), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_UZUME),
+                                   CASTER_LOOK_CYCLING_COLORS);
   Sound_Play(SE_ASCEND);
   Event_Wait(60);
   Actor_SetPosition(ACTOR_COAL, 144, 520);
@@ -1312,7 +1313,8 @@ void IzumoRooms_GiveUzumeTheDoll(void) {
   Actor_WaitForMoveById(ACTOR_COAL);
   Actor_FaceDirectionById(ACTOR_COAL, FACING_SOUTH, 0);
   Event_Wait(60);
-  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_UZUME), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_UZUME),
+                                   CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Event_Wait(30);

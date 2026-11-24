@@ -83,10 +83,6 @@ enum VenusLighthouseEntranceEntrance {
   ENTRANCE_AFTER_RUFFIAN_BATTLE = 99
 };
 
-/// The looks BattleEffect_SetObjectUpdateMode gives a caster: none, and the
-/// cycling colours Jenna and Alex take as they gather power.
-enum { CASTER_LOOK_NONE = 0, CASTER_LOOK_CYCLING_COLORS = 2 };
-
 /// The map cells the step triggers answer, by the behaviour the map gives
 /// them: the row before the lighthouse door, either side of it (cells (17, 7)
 /// to (29, 7)), where the birds take off; the path below the door, cells
@@ -199,7 +195,7 @@ void VenusLighthouseEntrance_BlastActorWithPsynergy(void *soldierId) {
                                    CASTER_LOOK_CYCLING_COLORS);
   FieldEvent_Wait(20);
   VenusLighthouseEntrance_BlastActorSkyward(soldierId);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_JENNA), CASTER_LOOK_NONE);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_JENNA), CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
@@ -728,7 +724,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   VenusLighthouseEntrance_BlastActorSkyward(ACTOR_SURPRISED_SOLDIER);
   FieldEvent_Wait(30);
   actor = Actor_GetById(ACTOR_ALEX);
-  BattleEffect_SetObjectUpdateMode(actor, CASTER_LOOK_NONE);
+  BattleEffect_SetObjectUpdateMode(actor, CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(16);

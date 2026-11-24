@@ -160,7 +160,7 @@ void FieldPsynergy_Blaze(void) {
   } else {
 
     Sound_PlayFar(SE_RUSH);
-    BattleEffect_SetObjectUpdateMode(scene->caster, 0);
+    BattleEffect_SetObjectUpdateMode(scene->caster, CASTER_LOOK_NORMAL);
     state->angle = scene->angle8;
     state->targetAngle = scene->angle8;
     switch (look) {

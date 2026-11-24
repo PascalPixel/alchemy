@@ -80,10 +80,6 @@ enum { STAFF_CREDIT_OPENING = 0, STAFF_CREDIT_TO_BEACONS = 1 };
 /// (shared/scene_entrances_mapless.c): the number is the summit's alone.
 enum { EPILOGUE_FROM_MT_ALEPH_SUMMIT = 1 };
 
-/// The looks BattleEffect_SetObjectUpdateMode gives a caster: none, and the
-/// cycling colours Alex and the Wise One take as they gather power.
-enum { CASTER_LOOK_NONE = 0, CASTER_LOOK_CYCLING_COLORS = 2 };
-
 #include "../field/field_effect_move.c"
 
 /// The palette fade's three channels of one 16-colour palette.
@@ -633,7 +629,7 @@ s32 Scene_Initialize(void) {
     // "Look at me! My body is brimming with power!"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
     FieldEvent_Wait(10);
-    BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_ALEX), CASTER_LOOK_NONE);
+    BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_ALEX), CASTER_LOOK_NORMAL);
     BattleEffect_WaitForArcGroups();
     BattleEffect_EndArcEffect();
     Actor_SetAnimation(ACTOR_WISE_ONE, 6);
@@ -696,7 +692,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(10);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_WISE_ONE),
-                                     CASTER_LOOK_NONE);
+                                     CASTER_LOOK_NORMAL);
     BattleEffect_WaitForArcGroups();
     BattleEffect_EndArcEffect();
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);

@@ -213,6 +213,14 @@ void Retreat_UpdateSpark(struct FieldParticle *slot);
 void Teleport_PlaySparksAndFade(void);
 void Teleport_PlayWhirl(void);
 void TileCopies_Restore(void);
+/// The caster's look while it casts, BattleEffect_SetObjectUpdateMode's mode.
+enum CasterLook {
+  CASTER_LOOK_NORMAL = 0, ///< its own colours
+  /// Flashing white, with swelling arcs (FieldEffect_FlickerActorAndSpawnArcs).
+  CASTER_LOOK_FLASHING_WHITE = 1,
+  /// Cycling colours, with swelling arcs (FieldEffect_CycleActorAndSpawnArcs).
+  CASTER_LOOK_CYCLING_COLORS = 2
+};
 void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode);
 void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
                                   s32 height);

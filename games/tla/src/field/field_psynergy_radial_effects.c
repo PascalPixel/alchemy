@@ -275,7 +275,7 @@ void FieldPsynergy_Whirlwind(void) {
         }
       }
     }
-    BattleEffect_SetObjectUpdateMode(scene->caster, 0);
+    BattleEffect_SetObjectUpdateMode(scene->caster, CASTER_LOOK_NORMAL);
     FieldPsynergy_FadeFromCastColor();
     orb->timer = 0;
     orb->update = (ObjectUpdate)Whirlwind_UpdateSpentOrb;
@@ -1251,14 +1251,12 @@ void FieldEffect_CycleActorAndSpawnArcs(struct Actor *actor) {
     BattleEffect_SpawnScaledArcObjects(actor);
 }
 
-/// Gives the caster its look while it casts: 0 none (normal colours), 1
-/// flashing white with swelling arcs (FieldEffect_FlickerActorAndSpawnArcs), 2
-/// cycling colours with them (FieldEffect_CycleActorAndSpawnArcs).
+/// Gives the caster its look while it casts (enum CasterLook).
 void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode) {
-  if (mode == 0) {
+  if (mode == CASTER_LOOK_NORMAL) {
     actor->update = 0;
     Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
-  } else if (mode == 1) {
+  } else if (mode == CASTER_LOOK_FLASHING_WHITE) {
     actor->update = (ObjectUpdate)FieldEffect_FlickerActorAndSpawnArcs;
   } else {
     actor->update = (ObjectUpdate)FieldEffect_CycleActorAndSpawnArcs;

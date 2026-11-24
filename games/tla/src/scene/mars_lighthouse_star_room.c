@@ -619,7 +619,7 @@ void MarsLighthouseStarRoom_DrawStarWithLeader(struct Actor *actor) {
 /// The Mars Star as an actor on the floor by Agatio, rising first when asked.
 void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   struct Actor **slot = &gMarsLighthouseStarRoom_MarsStar;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   struct Actor *actor;
   struct FieldSprite *sprite;
   s32 size;
@@ -637,13 +637,13 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   actor->retainSpriteCache = 1;
   actor->update = MarsLighthouseStarRoom_DrawStarWithLeader;
-  size = sizeof(GlyphTransfer);
+  size = sizeof(IconTransfer);
   sprite->flags = clear;
   sprite->countAndShadow[0] = clear;
-  glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, size);
+  glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, size);
   Item_LoadIcon(ITEM_MARS_STAR);
   Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   if (rise) {
     System_Wait(1);
     (*slot)->velocityY = toFIXED(5) / 2;
@@ -797,7 +797,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   struct Actor **slot;
   struct Actor *actor;
   struct FieldSprite *sprite;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   u16 *palette;
 
   palette = (u16 *)Ram_HeapSlots->paletteFade;
@@ -822,10 +822,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     actor->retainSpriteCache = 1;
     sprite->countAndShadow[0] = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Item_LoadIcon(ITEM_MARS_STAR);
     Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
@@ -928,7 +928,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   struct Actor **slot, **placedStarSlot;
   struct Actor *actor, *placedStar;
   struct FieldSprite *sprite, *placedStarSprite;
-  GlyphTransfer *glyph, *placedStarGlyph;
+  IconTransfer *glyph, *placedStarGlyph;
   u16 *palette;
 
   flag = Event_GetFlag(FLAG_MARS_STAR_SET);
@@ -955,10 +955,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       actor->retainSpriteCache = 1;
       sprite->countAndShadow[0] = 0;
       actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-      glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+      glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
       Item_LoadIcon(ITEM_MARS_STAR);
       Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-      HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+      HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     }
     FieldEvent_Wait(20);
     Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
@@ -1021,10 +1021,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     placedStar->retainSpriteCache = 1;
     placedStar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     placedStarGlyph =
-        HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+        HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Item_LoadIcon(ITEM_MARS_STAR);
     Vram_Load(placedStarSprite->slot, ICON_TILE_BYTES, placedStarGlyph->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
@@ -1230,7 +1230,7 @@ void Ride_SpawnForward(s32 *position, s32 speed, s32 flag) {
   if (actor != NULL) {
     actor->bounce = 0;
     actor->gravity = 0;
-    actor->riseBaseY = speed;
+    actor->sceneWord = speed;
     ((void (*)())Actor_ResetScripted)(actor, 2);
     actor->update = Flame_UpdateForward;
     if (flag != 0)
@@ -1256,7 +1256,7 @@ s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
     if (actor != NULL) {                                                       \
       actor->bounce = 0;                                                       \
       actor->gravity = 0;                                                      \
-      actor->riseBaseY = -speed;                                               \
+      actor->sceneWord = -speed;                                               \
       Actor_SetupScriptedPart(actor, 3);                                       \
       actor->update = updateRoutine;                                           \
       if (flag != 0)                                                           \
@@ -1275,7 +1275,7 @@ void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 flag) {
   if (actor != NULL) {
     actor->bounce = 0;
     actor->gravity = 0;
-    actor->riseBaseY = speed;
+    actor->sceneWord = speed;
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateLanding;
     if (flag != 0)
@@ -1304,7 +1304,7 @@ void Ride_SpawnSpark(s32 *position, s32 base, s32 mode) {
     actor->bounce =
         Trig_Cos((Random_Below(TRIG_TURN * 3 / 16)) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
-    actor->riseBaseY = (u16)(Random16() << 1) + base;
+    actor->sceneWord = (u16)(Random16() << 1) + base;
     spin = (u16)Random16() - DEGtoANG(180);
     actor->timer = spin;
     Actor_SetupScriptedFor(actor, 2);

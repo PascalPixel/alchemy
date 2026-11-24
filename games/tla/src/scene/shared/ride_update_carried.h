@@ -14,27 +14,27 @@ void Flame_UpdateForward(struct Actor *flame) {
 
   flame->x.fixed += dx;
   flame->y.fixed += flame->gravity;
-  dz = flame->riseBaseY;
+  dz = flame->sceneWord;
   flame->z.fixed += dz;
   flame->bounce = dx - dx / 18;
-  flame->riseBaseY = dz - dz / 16;
+  flame->sceneWord = dz - dz / 16;
   flame->scaleX += flame->speedLimit;
   flame->scaleY += flame->acceleration;
   ((struct FieldSprite *)flame->sprite)->rotation += flame->timer;
   if (actor->y.fixed == actor->groundHeight && Actor_IsTouching(flame, actor) &&
       gMainRoutineState.movementMode == LEADER_MOVEMENT_WALK) {
-    if (flame->riseBaseY != 0) {
+    if (flame->sceneWord != 0) {
       state->direction.x = 0;
-      if (flame->riseBaseY > 0)
+      if (flame->sceneWord > 0)
         state->direction.z = 1;
       else
         state->direction.z = -1;
     }
     flame->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     {
-      s32 speed = flame->riseBaseY;
+      s32 speed = flame->sceneWord;
 
-      flame->riseBaseY = 0;
+      flame->sceneWord = 0;
       flame->z.fixed -= speed;
       flame->gravity += speed >> 2;
     }
@@ -49,8 +49,8 @@ void Flame_UpdateForward(struct Actor *flame) {
         FIXED speed;
 
         flame->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-        speed = flame->riseBaseY;
-        flame->riseBaseY = 0;
+        speed = flame->sceneWord;
+        flame->sceneWord = 0;
         flame->z.fixed -= speed;
         flame->gravity += speed >> 2;
       } else {

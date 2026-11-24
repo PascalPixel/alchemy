@@ -240,7 +240,7 @@ s32 Leader_CanPushObjectAhead(void) {
   target = Actor_FindAtCell(position, TRUE);
   if (target == 0)
     return 0;
-  if (target->riseCounter != 0)
+  if (target->sceneCounter != 0)
     return 0;
 #if TLA_PATCH_1
   // XXX: the test passes over actor 1 where -1, no halted actor, looks

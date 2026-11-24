@@ -60,7 +60,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
       BGCNT_WRAP | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
   REG_BG2PA = Q_8_8(1.0 / 1.5);
-  BattleEffect_FetchRectangleBlitters(args->side, draw);
+  BattleEffect_BuildCanvasBlitters(args->side, draw);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
 

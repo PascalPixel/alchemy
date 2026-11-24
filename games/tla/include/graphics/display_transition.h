@@ -21,10 +21,10 @@ struct ScreenTransitionDissolveState {
   u16 value;
   /// As ScreenTransitionState's; the dissolve leaves them.
   ///@{
-  s32 centreX;
-  s32 centreY;
-  s16 winIn;
-  s16 winOut;
+  s32 centerX;
+  s32 centerY;
+  s16 insideLayers;
+  s16 outsideLayers;
   u8 unused;
   ///@}
   /// ScreenTransitionState's page: the dissolve flips it each frame, though
@@ -49,13 +49,13 @@ struct ScreenTransitionState {
   u16 value;
   /// 16.16 fixed-point pixels: the centre of the ellipse around a point, set
   /// by the Reveal effect.
-  FIXED centreX;
-  FIXED centreY; ///< as centreX: the target's z less its y
+  FIXED centerX;
+  FIXED centerY; ///< as centerX: the target's z less its y
   /// WININ for the inside of the shape: both windows show every layer.
-  s16 winIn;
+  s16 insideLayers;
   /// WINOUT for the outside: BG0 alone, with the sprite window's layers kept.
   /// A mode that inverts its shape writes the two the other way round.
-  s16 winOut;
+  s16 outsideLayers;
   u8 unused;
   u8 page;     ///< the pages entry the HBlank DMA copies from
   s8 start;    ///< the value's first step
@@ -76,8 +76,8 @@ STATIC_ASSERT(offsetof(struct ScreenTransitionState, pages) == 0);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, solidTile) == 1288);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, page) == 1337);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, mode) == 1320);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, centreX) == 1324);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, winIn) == 1332);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, centerX) == 1324);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, insideLayers) == 1332);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, nextMode) == 1342);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, duration) == 1340);
 STATIC_ASSERT(sizeof(struct ScreenTransitionState) == 1344);

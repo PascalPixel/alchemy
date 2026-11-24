@@ -1770,10 +1770,9 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
 /// `/` between the current and the maximum HP and PP in the Djinn preview.
 extern const char gDjinnMenu_TextSlash[];
 
-s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
-                                  s32 resourceId);
-s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
-                                   s32 variant);
+s32 Icon_CreatePsynergyIcon(struct Window *window, s32 x, s32 y,
+                            s32 resourceId);
+s32 Icon_CreateDjinnArrow(struct Window *window, s32 x, s32 y, s32 variant);
 
 /// Previews a djinni change on a member's status: the unit is saved, the change
 /// applied and the unit recalculated; page 0 draws the stats with an arrow
@@ -1943,77 +1942,65 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
                                    DJINN_PREVIEW_VALUE_X(x),
                                    DJINN_PREVIEW_STAT_Y(y, 0));
         if (unit->hp > originalUnit->hp)
-          Icon_DrawVariantWithTileOffset(
-              window, x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
-              DJINN_PREVIEW_STAT_Y(y, 0), STAT_ARROW_UP);
+          Icon_CreateDjinnArrow(window, x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
+                                DJINN_PREVIEW_STAT_Y(y, 0), STAT_ARROW_UP);
         else
-          Icon_DrawVariantWithTileOffset(
-              window, x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
-              DJINN_PREVIEW_STAT_Y(y, 0), STAT_ARROW_DOWN);
+          Icon_CreateDjinnArrow(window, x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
+                                DJINN_PREVIEW_STAT_Y(y, 0), STAT_ARROW_DOWN);
       }
       if (unit->pp != originalUnit->pp) {
         Text_DrawNumberInWindowFar(unit->pp, 4, window,
                                    DJINN_PREVIEW_VALUE_X(x),
                                    DJINN_PREVIEW_STAT_Y(y, 1));
         if (unit->pp > originalUnit->pp)
-          Icon_DrawVariantWithTileOffset(
-              window, x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
-              DJINN_PREVIEW_STAT_Y(y, 1), STAT_ARROW_UP);
+          Icon_CreateDjinnArrow(window, x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
+                                DJINN_PREVIEW_STAT_Y(y, 1), STAT_ARROW_UP);
         else
-          Icon_DrawVariantWithTileOffset(
-              window, x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
-              DJINN_PREVIEW_STAT_Y(y, 1), STAT_ARROW_DOWN);
+          Icon_CreateDjinnArrow(window, x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
+                                DJINN_PREVIEW_STAT_Y(y, 1), STAT_ARROW_DOWN);
       }
       if (unit->attack != originalUnit->attack) {
         Text_DrawNumberInWindowFar(unit->attack, 4, window,
                                    DJINN_PREVIEW_VALUE_X(x),
                                    DJINN_PREVIEW_STAT_Y(y, 2));
         if (unit->attack > originalUnit->attack)
-          Icon_DrawVariantWithTileOffset(
-              window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-              DJINN_PREVIEW_STAT_Y(y, 2), STAT_ARROW_UP);
+          Icon_CreateDjinnArrow(window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                DJINN_PREVIEW_STAT_Y(y, 2), STAT_ARROW_UP);
         else
-          Icon_DrawVariantWithTileOffset(
-              window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-              DJINN_PREVIEW_STAT_Y(y, 2), STAT_ARROW_DOWN);
+          Icon_CreateDjinnArrow(window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                DJINN_PREVIEW_STAT_Y(y, 2), STAT_ARROW_DOWN);
       }
       if (unit->defense != originalUnit->defense) {
         Text_DrawNumberInWindowFar(unit->defense, 4, window,
                                    DJINN_PREVIEW_VALUE_X(x),
                                    DJINN_PREVIEW_STAT_Y(y, 3));
         if (unit->defense > originalUnit->defense)
-          Icon_DrawVariantWithTileOffset(
-              window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-              DJINN_PREVIEW_STAT_Y(y, 3), STAT_ARROW_UP);
+          Icon_CreateDjinnArrow(window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                DJINN_PREVIEW_STAT_Y(y, 3), STAT_ARROW_UP);
         else
-          Icon_DrawVariantWithTileOffset(
-              window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-              DJINN_PREVIEW_STAT_Y(y, 3), STAT_ARROW_DOWN);
+          Icon_CreateDjinnArrow(window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                DJINN_PREVIEW_STAT_Y(y, 3), STAT_ARROW_DOWN);
       }
       if (unit->agility != originalUnit->agility) {
         Text_DrawNumberInWindowFar(unit->agility, 4, window,
                                    DJINN_PREVIEW_VALUE_X(x),
                                    DJINN_PREVIEW_STAT_Y(y, 4));
         if (unit->agility > originalUnit->agility)
-          Icon_DrawVariantWithTileOffset(
-              window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-              DJINN_PREVIEW_STAT_Y(y, 4), STAT_ARROW_UP);
+          Icon_CreateDjinnArrow(window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                DJINN_PREVIEW_STAT_Y(y, 4), STAT_ARROW_UP);
         else
-          Icon_DrawVariantWithTileOffset(
-              window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-              DJINN_PREVIEW_STAT_Y(y, 4), STAT_ARROW_DOWN);
+          Icon_CreateDjinnArrow(window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                DJINN_PREVIEW_STAT_Y(y, 4), STAT_ARROW_DOWN);
       }
       if (unit->luck != originalUnit->luck) {
         Text_DrawNumberInWindowFar(unit->luck, 2, window, x * 8 + 88,
                                    DJINN_PREVIEW_STAT_Y(y, 5));
         if (unit->luck > originalUnit->luck)
-          Icon_DrawVariantWithTileOffset(
-              window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-              DJINN_PREVIEW_STAT_Y(y, 5), STAT_ARROW_UP);
+          Icon_CreateDjinnArrow(window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                DJINN_PREVIEW_STAT_Y(y, 5), STAT_ARROW_UP);
         else
-          Icon_DrawVariantWithTileOffset(
-              window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
-              DJINN_PREVIEW_STAT_Y(y, 5), STAT_ARROW_DOWN);
+          Icon_CreateDjinnArrow(window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
+                                DJINN_PREVIEW_STAT_Y(y, 5), STAT_ARROW_DOWN);
       }
     }
   }
@@ -2031,8 +2018,8 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
                               &gained, &lost);
     line = 0;
     for (row = 0; first < count && row < rows; row++, first++) {
-      Icon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,
-                                    actions[first] & PSYNERGY_ABILITY_MASK);
+      Icon_CreatePsynergyIcon(window, x * 8, (y + line * 2) * 8 + 4,
+                              actions[first] & PSYNERGY_ABILITY_MASK);
       if (actions[first] & DJINN_PREVIEW_GAINED)
         Text_SetColorFar(TEXT_COLOR_YELLOW);
       else if (actions[first] & DJINN_PREVIEW_LOST)

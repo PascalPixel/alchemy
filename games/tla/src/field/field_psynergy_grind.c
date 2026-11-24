@@ -43,8 +43,8 @@ void FieldPsynergy_GrindOnTarget(void) {
   struct GrindState *state =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GrindState));
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
-  struct Actor *caster = scene->mainActor;
-  struct Actor *child = scene->child;
+  struct Actor *caster = scene->caster;
+  struct Actor *child = scene->target;
   struct Sprite *animation = child->sprite;
   struct EffectSprite *sprite;
   struct FieldPsynergyParticle *particle;
@@ -260,7 +260,7 @@ void FieldPsynergy_Grind(void) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GrindState));
   scene = Ram_HeapSlots->fieldEffectState;
   FieldPsynergy_FadeToCastColor();
-  BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
+  BattleEffect_SetObjectUpdateMode(scene->caster, 0);
   ViewMove_Start(VIEW_MOVE_Z);
   wait(10);
 

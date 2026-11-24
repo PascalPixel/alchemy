@@ -195,20 +195,20 @@ void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
   FIXED position[3];
 
   EffectSprite_Init(sprite, 16, 30, OBJ_SIZE_32X32, tiles);
-  sprite->depth = Actor_GetSpriteDepth(scene->mainActor);
-  sprite->oam.priority = Actor_GetSpritePriority(scene->mainActor);
+  sprite->depth = Actor_GetSpriteDepth(scene->caster);
+  sprite->oam.priority = Actor_GetSpritePriority(scene->caster);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
   if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
     sprite->scaleX = FIXED_ONE * 3 / 4;
     sprite->scaleY = FIXED_ONE * 3 / 4;
   } else {
-    sprite->scaleX = scene->mainActor->scaleX;
-    sprite->scaleY = scene->mainActor->scaleY;
+    sprite->scaleX = scene->caster->scaleX;
+    sprite->scaleY = scene->caster->scaleY;
   }
-  position[0] = scene->mainActor->x.fixed;
-  position[1] = scene->mainActor->y.fixed;
-  position[2] = scene->mainActor->z.fixed;
+  position[0] = scene->caster->x.fixed;
+  position[1] = scene->caster->y.fixed;
+  position[2] = scene->caster->z.fixed;
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = position[2];
@@ -224,7 +224,7 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
                      struct FieldPsynergyParticle *particle, s32 unused,
                      s32 tiles, s32 high) {
   struct Actor *mainActor =
-      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->mainActor;
+      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->caster;
   FIXED position[3];
   FIXED y;
 
@@ -305,7 +305,7 @@ void FieldPsynergy_EndSand(void) {
   struct FieldEffectState *effect = Ram_HeapSlots->fieldEffectState;
   struct FieldState *field = Ram_HeapSlots->fieldState;
   s32 pictureEntry;
-  struct Actor *owner = effect->mainActor;
+  struct Actor *owner = effect->caster;
   s32 particleEntry;
   s32 particleTiles;
   u8 *motionFlags;
@@ -398,9 +398,9 @@ void FieldPsynergy_EndSand(void) {
     if (frame == 66) {
       Actor_SelectAnimationFar(owner, 1);
       Sprite_SetFirstAnimationColorModeFar(owner->sprite, SPRITE_COLOR_NORMAL);
-      Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstActorId),
+      Actor_SetSpriteFlagsFar(Actor_GetById(effect->casterId),
                               SPRITE_FLAG_SHADOW);
-      FieldCamera_FollowActor(effect->firstActorId, 1);
+      FieldCamera_FollowActor(effect->casterId, 1);
       Sound_PlayFar(SE_SAND_EMERGE);
       if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
         gMainRoutineState.movementMode = LEADER_MOVEMENT_WORLD_MAP;
@@ -414,7 +414,7 @@ void FieldPsynergy_EndSand(void) {
             Scene_FindPsynergyTrigger(
                 PSYNERGY_TRIGGER(PSYNERGY_PHASE_FADES), effect->fieldPsynergy,
                 Scene_SelectPsynergyTarget(effect->fieldPsynergy)),
-            effect->firstActorId, -1);
+            effect->casterId, -1);
     }
     i = 0;
     particle = state->grains;
@@ -460,7 +460,7 @@ void FieldPsynergy_Sand(void) {
   s32 delay;
   s32 i;
 
-  owner = effect->mainActor;
+  owner = effect->caster;
   savedY = owner->y.fixed;
   motionFlags = &owner->motionFlags;
   savedFlags = *motionFlags;
@@ -488,7 +488,7 @@ void FieldPsynergy_Sand(void) {
       particle++;
     }
     FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-    BattleEffect_SetObjectUpdateMode(effect->mainActor, 0);
+    BattleEffect_SetObjectUpdateMode(effect->caster, 0);
     Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
                                        owner->z.fixed);
     *motionFlags = 0;
@@ -535,8 +535,8 @@ void FieldPsynergy_Sand(void) {
         ((struct FieldSprite *)owner->sprite)->shape = 0;
         ((struct FieldSprite *)owner->sprite)->size = 1;
         Actor_SelectAnimationFar(owner, 1);
-        Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstActorId), 0);
-        FieldCamera_FollowActor(effect->firstActorId, 1);
+        Actor_SetSpriteFlagsFar(Actor_GetById(effect->casterId), 0);
+        FieldCamera_FollowActor(effect->casterId, 1);
         owner->y.fixed = savedY;
         *motionFlags = savedFlags;
       }

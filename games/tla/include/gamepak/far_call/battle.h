@@ -21,8 +21,7 @@ void BattleBackground_SetPaletteLevelFar(s32 unused, s32 level);
 void *Actor_GetSpriteFar(void *object, s32 recordIndex);
 /// Projects the point above a unit, where the target cursor points, onto the
 /// screen.
-s32 BattleMotion_ProjectConditionalPositionFar(s32 unitId,
-                                               struct TargetPoint *screen);
+s32 BattleMotion_ProjectCursorPointFar(s32 unitId, struct TargetPoint *screen);
 /// Readies the sprites of the listed units and destroys every other unit's.
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 refresh);
 /// Destroys a unit's sprites, its status icon and shadow with them.

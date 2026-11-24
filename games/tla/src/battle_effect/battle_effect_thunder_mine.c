@@ -114,7 +114,7 @@ void BattleEffect_RunBallLightning(struct BattleEffectParams *args, s32 mode) {
   } else {
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   if (mode == BALL_LIGHTNING_THUNDER_MINE) {
     frames = 24;
     /* FAKEMATCH(dead): the row Thunder Mine's sparks bounce at, stored again in
@@ -409,7 +409,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   rects = blitters;
-  BattleEffect_FetchRectangleBlitters(0, (void **)rects);
+  BattleEffect_BuildCanvasBlitters(0, (void **)rects);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              state->sheet + MEGAERA_FLASH_BURST_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, state->sheet, 1, 1);
@@ -479,7 +479,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
       position.y += velocity.y;
       velocity.x = velocity.x * 59 / DAMPING_SCALE;
       velocity.y = velocity.y * 59 / DAMPING_SCALE;
-      BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_MEGAERA, position.x,
+      BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_MEGAERA, position.x,
                                          position.y);
       if (frame == MEGAERA_SWOOP_FRAME) {
         for (i = 0; i != MEGAERA_SPARK_COUNT; i++) {
@@ -748,7 +748,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_RunImpactBurst(SUMMON_FORMATION_MEGAERA, position.x, position.y);
   for (i = 0; i != MEGAERA_OBJECTS; i++) {
@@ -1037,7 +1037,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Task_Remove(BattleCamera_ApplyPhasedDelta);
   BattleEffect_EndCanvasLayer();
 }

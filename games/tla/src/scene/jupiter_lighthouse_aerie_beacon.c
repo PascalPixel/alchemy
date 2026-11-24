@@ -157,14 +157,14 @@ void JupiterLighthouse_CircleBeacon(struct Actor *self) {
 }
 
 /// Turns a spark round the beacon's rising light (ACTOR_BEACON_ORB), wider
-/// across than deep, its radius from its speed and its riseCounter.
+/// across than deep, its radius from its speed and its sceneCounter.
 void JupiterLighthouse_CircleBeaconWide(struct Actor *self) {
   struct Actor *centre = Actor_Get(ACTOR_BEACON_ORB);
   u16 angle = self->timer;
   FIXED cosine = Trig_Cos(angle);
-  s32 radius = self->speedLimit + self->riseCounter;
+  s32 radius = self->speedLimit + self->sceneCounter;
   self->x.fixed = centre->x.fixed + cosine * (radius + 6);
-  self->z.fixed = centre->z.fixed + Math_Sin(angle) * (self->riseCounter + 4);
+  self->z.fixed = centre->z.fixed + Math_Sin(angle) * (self->sceneCounter + 4);
   self->targetX = self->x.fixed;
   self->targetZ = self->z.fixed;
   self->timer -= DEGtoANG(45) / 4;
@@ -341,7 +341,7 @@ UNUSED void JupiterLighthouse_RaiseBeaconLight(void) {
       {
         u32 counter = Random16() >> 13;
 
-        effect->riseCounter = counter;
+        effect->sceneCounter = counter;
       }
       effect->update = JupiterLighthouse_CircleBeaconWide;
       effect->speedLimit = Math_Sin((u32)(Random16() * 65535) >> 20) * 24;
@@ -479,7 +479,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
   s32 answer, state;
   struct Actor *felix, *star, *shadow, *bottom, *top;
   struct FieldSprite *sprite;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   u8 *flags;
 
   if (GameFlag_Get(FLAG_ISAAC_AND_IVAN_FELL) != 0) {
@@ -522,10 +522,10 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         star->retainSpriteCache = 1;
         star->speedLimit = toFIXED(2) / 5;
         star->acceleration = toFIXED(1) / 20;
-        glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+        glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
         Item_LoadIcon(ITEM_JUPITER_STAR);
         Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-        HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+        HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
       }
       FieldActor_SetSpritePriority(ACTOR_STAR_SHADOW, 1);
       shadow = Actor_GetById(ACTOR_STAR_SHADOW);

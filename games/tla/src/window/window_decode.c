@@ -56,7 +56,8 @@ enum {
   /// German: a counted noun; Italian: a gender ending; Spanish and French: the
   /// plural suffix
   MESSAGE_LOCALIZED_WORD = 13,
-  /// Kept with its operand as TEXT_WINDOW_STATE: the window animation to run.
+  /// Kept with its operand as TEXT_WINDOW_ANIMATION: the window animation to
+  /// run.
   MESSAGE_WINDOW_EFFECT = 15,
   /// The name of the unit gMainRoutineState.leaderActorId names.
   MESSAGE_PROTAGONIST_NAME = 16,

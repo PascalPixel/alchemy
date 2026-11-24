@@ -10,7 +10,7 @@ void Ride_SpawnSpark(s32 *position, s32 speed, s32 offScreen) {
   if (actor != NULL) {
     actor->bounce = Trig_Cos((u16)(Random16() * 3 >> 4) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
-    actor->riseBaseY = (u16)(Random16() << 1) + speed;
+    actor->sceneWord = (u16)(Random16() << 1) + speed;
     spin = (u16)Random16() + 0xffff8000;
     actor->timer = spin;
     Actor_SetupScriptedFor(actor, 2);

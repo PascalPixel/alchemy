@@ -176,18 +176,18 @@ s32 Field_UsePsynergy(u32 code) {
   fieldState->psynergyActing = 1;
   if (before != NULL && (before->flags & TRIGGER_SUBJECT_QUIET)) {
     effect = Ram_HeapSlots->fieldEffectState;
-    effect->visible = 0;
-    effect->active = 0;
+    effect->flashCaster = 0;
+    effect->announceName = 0;
   }
   if (after != NULL && (after->flags & TRIGGER_SUBJECT_QUIET)) {
     effect = Ram_HeapSlots->fieldEffectState;
-    effect->visible = 0;
-    effect->active = 0;
+    effect->flashCaster = 0;
+    effect->announceName = 0;
   }
   if (during != NULL && (during->flags & TRIGGER_SUBJECT_QUIET)) {
     effect = Ram_HeapSlots->fieldEffectState;
-    effect->visible = 0;
-    effect->active = 0;
+    effect->flashCaster = 0;
+    effect->announceName = 0;
   }
   FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);
   FieldPsynergy_StartCast();

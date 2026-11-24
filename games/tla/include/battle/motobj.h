@@ -45,7 +45,7 @@ struct MotionObject {
   /// Gravity: taken from velocityY each frame above the ground with
   /// motionFlags bit 1, in 16.16 fixed-point pixels per frame.
   FIXED verticalMotionStrength;
-  s32 riseBaseY;
+  s32 sceneWord;
   void *records; ///< one sprite, or a table of them (recordStorageKind)
   /// bits: 3..0 how records holds the sprites
   u8 recordStorageKind;

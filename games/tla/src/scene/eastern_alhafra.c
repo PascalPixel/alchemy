@@ -905,7 +905,7 @@ s32 Scene_Initialize(void) {
   actor = Actor_Get(ACTOR_EAST_POLE_ROCK);
   Actor_SetSpriteFlags(actor, 0);
   FieldActor_SetSpritePriority(ACTOR_DOCK_CRATE, 2);
-  Actor_Get(ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP)->riseCounter = 1;
+  Actor_Get(ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP)->sceneCounter = 1;
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0 &&
       Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0) {
     Actor_SetPosition(ACTOR_BRIGGS, 0, 0);

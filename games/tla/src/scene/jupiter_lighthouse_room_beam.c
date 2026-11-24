@@ -367,7 +367,7 @@ void JupiterLighthouse_CycloneUpOnWestPad(void) {
   struct FieldEffectState *effect = Ram_HeapSlots->fieldEffectState;
 
   event->raisedTrigger = TRIGGER_CYCLONE_UP_WEST;
-  effect->childOption = 1;
+  effect->sceneVariant = 1;
 }
 
 /// Felix casts Cyclone on the east pad below the ledge, cell (16, 35). Nothing
@@ -377,7 +377,7 @@ void JupiterLighthouse_CycloneUpOnEastPad(void) {
   struct FieldEffectState *effect = Ram_HeapSlots->fieldEffectState;
 
   event->raisedTrigger = TRIGGER_CYCLONE_UP_EAST;
-  effect->childOption = 1;
+  effect->sceneVariant = 1;
 }
 
 /// Felix casts Cyclone on the west pad up on the ledge. Nothing is seen yet;

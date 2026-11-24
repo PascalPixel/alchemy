@@ -285,7 +285,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         y += TEXT_LINE_HEIGHT;
         break;
       case 14:
-      case TEXT_WINDOW_STATE:
+      case TEXT_WINDOW_ANIMATION:
       case TEXT_ACTOR_NAME_START:
         text++;
         // Skip the second operand too.
@@ -350,9 +350,8 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 /// tilemap, as tiles, inside a window at tile (offsetX, offsetY) of its
 /// interior, writing both the window state's copy and VRAM. A NULL buffer draws
 /// the decoded text in WindowState.textBuffer.
-UNUSED void Text_DrawGlyphTileAtStateOffset(u16 *buffer,
-                                            const struct Window *window,
-                                            s32 offsetX, s32 offsetY) {
+UNUSED void Text_DrawWideStringAsTiles(u16 *buffer, const struct Window *window,
+                                       s32 offsetX, s32 offsetY) {
   struct WindowState *canvas = WINDOW_STATE;
   u32 cell;
 
@@ -405,7 +404,7 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
           y++;
           break;
         case 14:
-        case TEXT_WINDOW_STATE:
+        case TEXT_WINDOW_ANIMATION:
         case TEXT_ACTOR_NAME_START:
           text++;
           // Skip the second operand too.

@@ -295,7 +295,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   draw[1] = (DrawRectangle)heap->ramCodePaired;
   column = state->particles;
   for (i = 0; i != VINE_COLUMNS; i++) {
-    column[i].x = gGrowth_ColumnOffsets[i] + CANVAS_SIZE / 2;
+    column[i].x = gVine_ColumnOffsets[i] + CANVAS_SIZE / 2;
   }
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   for (frame = 0; frame != VINE_FRAMES; frame++) {
@@ -381,7 +381,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
                       BLITTER_TRANSPARENT);
   drawFlip = (DrawRectangle)heap->ramCodePaired;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-  frameCount = gGrowth_Counts[args->variant] * THORN_INTERVAL + 56;
+  frameCount = gThorn_Counts[args->variant] * THORN_INTERVAL + 56;
 
   EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
 
@@ -395,7 +395,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(frameCount - frame - 1);
     }
 
-    for (i = 0; i != gGrowth_Counts[args->variant]; i++) {
+    for (i = 0; i != gThorn_Counts[args->variant]; i++) {
       start = i * THORN_INTERVAL + 8;
       age = frame - start;
       if (frame > start) {
@@ -403,7 +403,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
         s32 lean;
 
         // A thorn leans sideways as it grows.
-        if (gGrowth_Kinds[i] < THORN_SMALL) {
+        if (gThorn_Kinds[i] < THORN_SMALL) {
           height = age * 16;
           lean = (age * 2 + age) * 2;
           if (height > THORN_BIG_HEIGHT) {
@@ -412,11 +412,11 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
           if (lean > THORN_BIG_LEAN) {
             lean = THORN_BIG_LEAN;
           }
-          if (gGrowth_Kinds[i] & THORN_MIRRORED) {
-            drawFlip(canvas, state->sheet, gGrowth_X[i] - lean, 108 - height,
+          if (gThorn_Kinds[i] & THORN_MIRRORED) {
+            drawFlip(canvas, state->sheet, gThorn_X[i] - lean, 108 - height,
                      THORN_BIG_WIDTH, height);
           } else {
-            draw(canvas, state->sheet, gGrowth_X[i] + lean, 108 - height,
+            draw(canvas, state->sheet, gThorn_X[i] + lean, 108 - height,
                  THORN_BIG_WIDTH, height);
           }
         } else {
@@ -428,14 +428,13 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
           if (age > THORN_SMALL_LEAN) {
             lean = THORN_SMALL_LEAN;
           }
-          if (gGrowth_Kinds[i] & THORN_MIRRORED) {
+          if (gThorn_Kinds[i] & THORN_MIRRORED) {
             drawFlip(canvas, state->sheet + THORN_SMALL_PICTURE,
-                     gGrowth_X[i] - lean, 108 - height,
+                     gThorn_X[i] - lean, 108 - height,
                      THORN_SMALL_PICTURE_WIDTH, height);
           } else {
-            draw(canvas, state->sheet + THORN_SMALL_PICTURE,
-                 gGrowth_X[i] + lean, 108 - height, THORN_SMALL_PICTURE_WIDTH,
-                 height);
+            draw(canvas, state->sheet + THORN_SMALL_PICTURE, gThorn_X[i] + lean,
+                 108 - height, THORN_SMALL_PICTURE_WIDTH, height);
           }
         }
         if (frame == start + 1) {
@@ -450,7 +449,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
           for (j = 0; j != THORN_FLARES; j++) {
             flare = &PARTICLES[j];
             if (flare->variant == -1) {
-              flare->x = gGrowth_X[i] + (Random16() & 31) + 32;
+              flare->x = gThorn_X[i] + (Random16() & 31) + 32;
               if (flare->x > 96) {
                 flare->x = 96;
               }
@@ -477,16 +476,14 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
       if (PARTICLES[i].variant >= 0) {
         s32 picture = PARTICLES[i].variant / 2;
 
-        draw(canvas, state->sheet + gGrowth_ThornPuffPictures[picture],
-             PARTICLES[i].x - gGrowth_ThornPuffWidths[picture],
-             PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[picture] / 2,
-             gGrowth_ThornPuffWidths[picture],
-             (s8)gGrowth_ThornPuffHeights[picture]);
-        drawFlip(canvas, state->sheet + gGrowth_ThornPuffPictures[picture],
+        draw(canvas, state->sheet + gThorn_PuffPictures[picture],
+             PARTICLES[i].x - gThorn_PuffWidths[picture],
+             PARTICLES[i].y - (s8)gThorn_PuffHeights[picture] / 2,
+             gThorn_PuffWidths[picture], (s8)gThorn_PuffHeights[picture]);
+        drawFlip(canvas, state->sheet + gThorn_PuffPictures[picture],
                  PARTICLES[i].x,
-                 PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[picture] / 2,
-                 gGrowth_ThornPuffWidths[picture],
-                 (s8)gGrowth_ThornPuffHeights[picture]);
+                 PARTICLES[i].y - (s8)gThorn_PuffHeights[picture] / 2,
+                 gThorn_PuffWidths[picture], (s8)gThorn_PuffHeights[picture]);
         if (++PARTICLES[i].variant == GROWTH_FLARE_FRAMES) {
           PARTICLES[i].variant = -1;
         }

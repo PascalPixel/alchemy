@@ -440,8 +440,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         Unit_Get(command);
         for (removedCount = 0; removedCount < result + 1; removedCount++) {
           Inventory_RemoveFar(command, menu->selectedSlots[0]);
-          Item_AdjustCounterFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK,
-                                1);
+          Item_AdjustRareItemStockFar(
+              menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK, 1);
         }
         Unit_RefreshPsynergyFar(command);
         Unit_CalculateFar(command);
@@ -998,7 +998,7 @@ extern const u8 gItemMenu_ArrangeKeysString[];
 extern const u8 gItemMenu_EquipmentKeyString[];
 #endif
 
-void ItemMenu_OpenCategory(s32 ownerId);
+void ItemMenu_ShowEquipment(s32 ownerId);
 
 void ItemMenu_RefreshMember(s32 owner, s32 mode);
 
@@ -1060,7 +1060,7 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
       if (showEquipment) {
         menu->itemCount = ItemMenu_CollectItems(Unit_Get(ownerIds[selection]),
                                                 menu->items, 0);
-        ItemMenu_OpenCategory(ownerIds[selection]);
+        ItemMenu_ShowEquipment(ownerIds[selection]);
         StatusPanel_Draw(window, ownerIds[selection], 0, STATUS_PANEL_STATS);
       } else {
         ItemMenu_RefreshMember(ownerIds[selection], 0);
@@ -1115,12 +1115,12 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
 
 /// Shows the equipment view of party member ownerId's items in the item
 /// window.
-void ItemMenu_OpenCategory(s32 ownerId) {
+void ItemMenu_ShowEquipment(s32 ownerId) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
 
   Menu_HideEntryIcons();
   WindowSprite_RedrawSavedRectFar(menu->itemWindow);
-  ItemMenu_DrawCategory(menu->itemWindow, ownerId, 0);
+  ItemMenu_DrawEquipment(menu->itemWindow, ownerId, 0);
 }
 
 /// The Japanese release writes the item's description into the info window as
@@ -2850,11 +2850,11 @@ s32 ItemMenu_ShowSelectedRow(s32 listWindow, void *unused,
 
   for (row = 0; row <= LIST_PAGE_SIZE - 1; row++) {
     if (row == state->row) {
-      Render_SetTilemapFlagRect(menu->itemWindow, 1, row * 2 + 1, 14, 1,
-                                HIGHLIGHT_PALETTE);
+      Window_SetHighlightRect(menu->itemWindow, 1, row * 2 + 1, 14, 1,
+                              HIGHLIGHT_PALETTE);
     } else {
-      Render_SetTilemapFlagRect(menu->itemWindow, 1, row * 2 + 1, 14, 1,
-                                WINDOW_PALETTE);
+      Window_SetHighlightRect(menu->itemWindow, 1, row * 2 + 1, 14, 1,
+                              WINDOW_PALETTE);
     }
   }
 
@@ -2872,7 +2872,7 @@ s32 ItemMenu_ShowSelectedRow(s32 listWindow, void *unused,
 #endif
 /// Draws one page of the item list into window: a divider, the page's icons and
 /// page numbers, and up to five item names.
-s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
+s32 ItemMenu_DrawListPage(s32 window, s32 unused,
                           const struct PagedList *state) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   u32 page;
@@ -2966,7 +2966,7 @@ s32 ItemMenu_RunList(s32 pane) {
         }
         if (redraw != 0) {
           wait(1);
-          ItemMenu_DrawNamePage(window, 0, &state);
+          ItemMenu_DrawListPage(window, 0, &state);
           if (pane == 0)
             Text_DrawMessageAsTilesFar((s32)MsgChangeCharacterHelp, window,
                                        CHANGE_HELP_X, 88);

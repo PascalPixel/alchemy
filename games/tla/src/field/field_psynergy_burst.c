@@ -118,7 +118,7 @@ void FieldPsynergy_UpdateBurst(void) {
   canvas->x = (s16)FIXEDtoINT(pos[0]);
   canvas->y = (s16)FIXEDtoINT(pos[2]);
 
-  if (scene->enabled == 0) {
+  if (scene->aimAhead == 0) {
     particle = state->sparks;
     for (i = 0; i < BURST_SPARK_COUNT; i++) {
       if ((u32)particle->timer <= 29) {
@@ -348,7 +348,7 @@ void FieldPsynergy_UpdateBurst(void) {
     case BURST_PHASE_BLASTS:
       // Cast at nothing, the one blast is all: the caster lets go, and it ends.
       if (state->timer == 5)
-        BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
+        BattleEffect_SetObjectUpdateMode(scene->caster, 0);
       if (state->timer == 20) {
         state->phase = FIELD_PSYNERGY_FINISHED;
         state->timer = -1;
@@ -372,7 +372,7 @@ s32 FieldPsynergy_GetCanvasPriority(struct Actor *actor, s32 facing);
 /// Burst: a glow disc swells in front of the caster as sparks fly into it, then
 /// explosions burst round the target, shaking the screen, the last and largest
 /// at 12 pixels; the target's event runs each frame with the stage (shake).
-/// Cast at nothing (FieldEffectState.enabled still set), it is shorter: 12
+/// Cast at nothing (FieldEffectState.aimAhead still set), it is shorter: 12
 /// sparks and one small explosion.
 void FieldPsynergy_Burst(void) {
   struct BurstState *state =
@@ -406,8 +406,8 @@ void FieldPsynergy_Burst(void) {
   canvas->x = (s16)FIXEDtoINT(pos[0]);
   canvas->y = (s16)FIXEDtoINT(pos[2]);
   canvas->priority =
-      FieldPsynergy_GetCanvasPriority(scene->mainActor, scene->angle);
-  canvas->depth = Actor_GetSpriteDepth(scene->mainActor) + 2;
+      FieldPsynergy_GetCanvasPriority(scene->caster, scene->angle);
+  canvas->depth = Actor_GetSpriteDepth(scene->caster) + 2;
   canvas->mode = CANVAS_SPRITE_256_COLORS;
   canvas->scaleX = 0;
   canvas->scaleY = 0;

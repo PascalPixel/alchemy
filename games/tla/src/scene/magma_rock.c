@@ -400,7 +400,7 @@ void MagmaRock_SettleBlocks(u16 *ids) {
     struct MapCell *cell;
     s32 x, z;
 
-    actor->riseBaseY =
+    actor->sceneWord =
         CELL_ATTRIBUTE_BITS & MapCell_GetAttributes(MAPGRID_LAYER_GROUND,
                                                     FIELD_CELL(actor->x.fixed),
                                                     FIELD_CELL(actor->z.fixed));
@@ -410,7 +410,7 @@ void MagmaRock_SettleBlocks(u16 *ids) {
     MagmaRockInside_SetCellShape(*terrainId, FIELD_CELL(actor->x.fixed),
                                  FIELD_CELL(actor->z.fixed),
                                  CELL_HEIGHT_STEPS(height) + 4);
-    blocked = &actor->riseEnabled;
+    blocked = &actor->sceneByte;
     *blocked = 0;
     if (MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(actor->x.fixed),
                               FIELD_CELL(actor->z.fixed)) &
@@ -510,7 +510,7 @@ void MagmaRock_StartPushingPillar(void) {
       MapGrid_CopyCellAttributes(79, 46, 2, 1, 79, 36);
       Actor_LiftTargetBlock(gMagmaRock_SalamanderTailLowWestPillars);
     } else {
-      if (state->child->z.part[0].integer == 600)
+      if (state->target->z.part[0].integer == 600)
         MapGrid_CopyCellAttributes(104, 38, 1, 1, 103, 38);
       else
         MapGrid_CopyCellAttributes(94, 44, 5, 1, 99, 38);
@@ -865,7 +865,7 @@ void MagmaRock_TargetStatue(s32 stage) {
     struct Actor *target;
 
     Statue_FindUnderBurst(table);
-    target = state->child;
+    target = state->target;
     target->flashMask = 4;
     target->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
@@ -873,21 +873,21 @@ void MagmaRock_TargetStatue(s32 stage) {
     struct Actor *target;
 
     Statue_FindUnderBurst(table);
-    target = state->child;
+    target = state->target;
     target->flashMask = 2;
     target->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
 }
 
 /// An ember's update: it moves by its velocity, kept in bounce, gravity and
-/// riseBaseY, and slows by an eighth.
+/// sceneWord, and slows by an eighth.
 void MagmaRock_DriftAndSlow(struct Actor *actor) {
   actor->x.fixed += actor->bounce;
   actor->y.fixed += actor->gravity;
-  actor->z.fixed += actor->riseBaseY;
+  actor->z.fixed += actor->sceneWord;
   actor->bounce -= actor->bounce >> 3;
   actor->gravity -= actor->gravity >> 3;
-  actor->riseBaseY -= actor->riseBaseY >> 3;
+  actor->sceneWord -= actor->sceneWord >> 3;
 }
 
 s32 Position_FlatDistance(FIXED *a, FIXED *b);
@@ -1027,13 +1027,13 @@ void MagmaRock_FireStatue(void) {
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
   FieldEvent_Wait(10);
-  actor = state->child;
+  actor = state->target;
   actor->update = NULL;
   FieldActor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   FieldEvent_Wait(3);
-  FieldActor_SetSpriteColor(state->child, SPRITE_COLOR_NORMAL);
+  FieldActor_SetSpriteColor(state->target, SPRITE_COLOR_NORMAL);
   FieldEvent_Wait(1);
-  MagmaRock_FireFromStatue(state->child);
+  MagmaRock_FireFromStatue(state->target);
   MagmaRock_EndEvent();
 }
 
@@ -1048,7 +1048,7 @@ void MagmaRock_IgniteStatue(void) {
 
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
-  actor = state->child;
+  actor = state->target;
   actor->timer = 1024;
   actor->update = MagmaRock_WarnStatue;
   MagmaRock_EndEvent();
@@ -1074,24 +1074,24 @@ void MagmaRock_BurstCrackedPillar(s32 stage, s32 frame) {
   if (frame == 0)
     MagmaRock_StartFallingRocks();
   if (stage == BURST_STAGE_SMALL_BLAST) {
-    struct Actor *actor = state->child;
+    struct Actor *actor = state->target;
 
     MagmaRock_DropRocks(actor->x.fixed, actor->y.fixed + toFIXED(15),
                         actor->z.fixed, 1);
   }
   if (stage == BURST_STAGE_GREAT_BLAST) {
-    struct Actor *actor = state->child;
+    struct Actor *actor = state->target;
     struct Actor *target;
 
     MagmaRock_DropRocks(actor->x.fixed, actor->y.fixed + toFIXED(15),
                         actor->z.fixed, 8);
-    target = state->child;
+    target = state->target;
     SET_ACTOR_POSITION(target, 0, 0, 0);
   }
   if (frame == PSYNERGY_EVENT_LAST_FRAME)
     Rock_EndFalling();
   if (frame == PILLAR_CRUMBLE_FRAME)
-    Actor_SelectAnimation(state->child, 3);
+    Actor_SelectAnimation(state->target, 3);
 }
 
 void Actor_Release(struct Actor *part);
@@ -1139,17 +1139,17 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
   } else {
     if (watched->timer >= 9 && watched->timer < FLAME_SINK_FRAME) {
       object->effect.y = watched->y.fixed +
-                         object->effect.riseCounter * FLAME_LEVEL_HEIGHT +
+                         object->effect.sceneCounter * FLAME_LEVEL_HEIGHT +
                          toFIXED(24);
     } else if (watched->timer > FLAME_SINK_FRAME &&
                watched->timer <
-                   object->effect.riseCounter * 2 + FLAME_SINK_FRAME + 1) {
+                   object->effect.sceneCounter * 2 + FLAME_SINK_FRAME + 1) {
       object->effect.y = watched->y.fixed +
-                         object->effect.riseCounter * FLAME_LEVEL_HEIGHT +
+                         object->effect.sceneCounter * FLAME_LEVEL_HEIGHT +
                          toFIXED(24);
       object->effect.y -=
           watched->timer * FLAME_SPEED - FLAME_SINK_FRAME * FLAME_SPEED;
-    } else if (object->effect.riseCounter * 2 + FLAME_SINK_FRAME + 1 <
+    } else if (object->effect.sceneCounter * 2 + FLAME_SINK_FRAME + 1 <
                watched->timer) {
       object->effect.y = object->actor.groundHeight;
       object->effect.update = 0;
@@ -1311,9 +1311,9 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
       s32 scene = party->next;                                                 \
                                                                                \
       if (scene == SCENE_MAGMA_ROCK_SLIDE)                                     \
-        state->child = Actor_Get(slidePillar);                                 \
+        state->target = Actor_Get(slidePillar);                                \
       else if (scene == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST)                \
-        state->child = Actor_Get(cliffPillar);                                 \
+        state->target = Actor_Get(cliffPillar);                                \
       MagmaRock_BurstCrackedPillar(stage, frame);                              \
     }                                                                          \
     Event_SetFlag(flag);                                                       \
@@ -1344,7 +1344,7 @@ DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRock_BurstCrackedPillarB,
   void name(s32 stage, s32 frame) {                                            \
     struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;          \
                                                                                \
-    state->child = Actor_Get(pillar);                                          \
+    state->target = Actor_Get(pillar);                                         \
     MagmaRock_BurstCrackedPillar(stage, frame);                                \
     Event_SetFlag(flag);                                                       \
   }
@@ -1673,28 +1673,28 @@ void MagmaRock_BlastWayIn(s32 stage, s32 frame) {
     struct Actor *actor;
 
     MagmaRock_StartFallingRocks();
-    actor = state->child;
+    actor = state->target;
     actor->flashMask = 4;
     actor->update = (void *)MagmaRock_FlashTarget;
   }
   if (stage == BURST_STAGE_SMALL_BLAST) {
-    MagmaRock_ScatterEmbers(state->child->x.fixed, state->child->z.fixed);
-    MagmaRock_DropRocks(state->child->x.fixed,
-                        state->child->y.fixed + toFIXED(15),
-                        state->child->z.fixed, 1);
+    MagmaRock_ScatterEmbers(state->target->x.fixed, state->target->z.fixed);
+    MagmaRock_DropRocks(state->target->x.fixed,
+                        state->target->y.fixed + toFIXED(15),
+                        state->target->z.fixed, 1);
   }
   if (stage == BURST_STAGE_GREAT_BLAST) {
     struct Actor *target;
     s32 last = 8;
 
-    MagmaRock_ScatterEmbers(state->child->x.fixed, state->child->z.fixed);
-    MagmaRock_ScatterEmbers(state->child->x.fixed, state->child->z.fixed);
-    MagmaRock_ScatterEmbers(state->child->x.fixed,
-                            state->child->z.fixed - toFIXED(32));
-    MagmaRock_DropRocks(state->child->x.fixed,
-                        state->child->y.fixed + toFIXED(15),
-                        state->child->z.fixed, 16);
-    target = state->child;
+    MagmaRock_ScatterEmbers(state->target->x.fixed, state->target->z.fixed);
+    MagmaRock_ScatterEmbers(state->target->x.fixed, state->target->z.fixed);
+    MagmaRock_ScatterEmbers(state->target->x.fixed,
+                            state->target->z.fixed - toFIXED(32));
+    MagmaRock_DropRocks(state->target->x.fixed,
+                        state->target->y.fixed + toFIXED(15),
+                        state->target->z.fixed, 16);
+    target = state->target;
     SET_ACTOR_POSITION(target, 0, 0, 0);
     MapGrid_CopyCellAttributes(0, 32, 5, 8, 42, 17);
     MapGrid_CopyCellAttributes(0, 96, 5, 8, 42, 81);

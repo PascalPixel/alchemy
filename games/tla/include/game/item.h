@@ -217,6 +217,6 @@ s32 Item_IsCompatibleWithUnit(s32 owner, s32 item);
 s32 Item_GetEquipmentGroup(s32 item);
 u8 Item_GetTargetMode(s32 item);
 s32 RareItemStock_Adjust(s32 counter, s32 delta);
-s32 Item_AdjustCounter(s32 item, s32 delta);
+s32 Item_AdjustRareItemStock(s32 item, s32 delta);
 
 #endif

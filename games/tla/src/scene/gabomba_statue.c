@@ -311,8 +311,8 @@ s32 GabombaStatue_FlashCog(struct Actor *actor) {
 /// flashing cog has two.
 enum { FIRST_ROPE, SECOND_ROPE };
 
-/// The steps of a cog tooth's turn: its phase, kept in the tooth's riseCounter,
-/// counts them, two degrees each.
+/// The steps of a cog tooth's turn: its phase, kept in the tooth's
+/// sceneCounter, counts them, two degrees each.
 enum { COG_TOOTH_STEPS = 180 };
 
 /// The arrows room's channel: a grid of blocks, eleven columns by eight rows,
@@ -421,7 +421,7 @@ extern s32 gGabombaStatue_CogDirection;
 /// a rope tied to it follows the turning cog.
 void GabombaStatue_GetToothPosition(struct Actor *actor, FIXED *x, FIXED *z) {
   FIXED position[3];
-  s32 angle = actor->riseCounter * TRIG_TURN / COG_TOOTH_STEPS;
+  s32 angle = actor->sceneCounter * TRIG_TURN / COG_TOOTH_STEPS;
   s32 turn;
 
   SET_VECTOR(position, INTtoFIXED(actor->homeX + 16), toFIXED(16),
@@ -435,7 +435,7 @@ void GabombaStatue_GetToothPosition(struct Actor *actor, FIXED *x, FIXED *z) {
 /// A cog tooth's update: it turns about the cog's centre by the cogs'
 /// direction.
 s32 GabombaStatue_TurnTooth(struct Actor *actor) {
-  u8 *phase = &actor->riseCounter;
+  u8 *phase = &actor->sceneCounter;
   s32 angle = *phase * TRIG_TURN / COG_TOOTH_STEPS;
   s32 next;
 
@@ -497,7 +497,7 @@ s32 GabombaStatue_CircleOwner(struct Actor *actor) {
   struct Actor *owner = actor->watchedActor;
 
   if (owner != NULL) {
-    u8 *phase = &actor->riseCounter;
+    u8 *phase = &actor->sceneCounter;
 
     actor->x.fixed = owner->x.fixed;
     actor->y.fixed = owner->y.fixed + toFIXED(16);
@@ -563,7 +563,7 @@ void GabombaStatue_LashRope(void) {
     Event_SetFlag(FLAG_COGS_STOPPED);
     gFieldState->psynergy = 0;
     for (i = 0; i < ROPE_STOP_FRAMES; i++) {
-      actor->riseCounter += gGabombaStatue_RopeStopSteps[i] * direction;
+      actor->sceneCounter += gGabombaStatue_RopeStopSteps[i] * direction;
       System_Wait(1);
     }
   }
@@ -1814,10 +1814,10 @@ void GabombaStatue_SendCharge(s32 id, s32 colorMode, s32 statueId, s32 angle) {
   Actor_SetSpriteFlags(charge, 0);
   charge->motionFlags = 0;
   charge->watchedActor = target;
-  // riseCounter is its place on the circle, in 256ths of a turn, and
-  // riseEnabled its own actor id until the run sets chargeState there.
-  charge->riseCounter = angle / (TRIG_TURN / 256);
-  charge->riseEnabled = id;
+  // sceneCounter is its place on the circle, in 256ths of a turn, and
+  // sceneByte its own actor id until the run sets chargeState there.
+  charge->sceneCounter = angle / (TRIG_TURN / 256);
+  charge->sceneByte = id;
   Actor_SetSpriteColorMode(charge, colorMode);
 }
 #undef DIFF_WITHIN
@@ -3098,8 +3098,8 @@ void GabombaStatue_PoundBlock(s32 mode) {
   if (mode != 1)
     return;
   state = &gSceneState;
-  actor = Actor_Get(((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)
-                        ->secondActorId);
+  actor = Actor_Get(
+      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->targetId);
   x = FIELD_CELL(actor->x.fixed) - state->originX;
   z = FIELD_CELL(actor->z.fixed) - state->originZ;
   {
@@ -3478,8 +3478,8 @@ void GabombaStatue_MoveCharge(struct Actor *charge, s32 step, s32 id) {
     charge->x.fixed = x;
     charge->z.fixed = z;
     charge->facing = angle;
-    // riseBaseY counts the frames the charge has run.
-    charge->riseBaseY++;
+    // sceneWord counts the frames the charge has run.
+    charge->sceneWord++;
   }
 }
 
@@ -3497,7 +3497,7 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   actor->chargeRow = CHANNEL_STATUES_ROW;
   actor->chargeHeading = HEADING_WEST;
   actor->chargeState = CHARGE_RUNNING;
-  actor->riseBaseY = 0;
+  actor->sceneWord = 0;
 #ifdef UBFIX
   Actor_StartIdle(actor);
 #else
@@ -3512,7 +3512,7 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   actor->chargeRow = CHANNEL_STATUES_ROW;
   actor->chargeHeading = HEADING_EAST;
   actor->chargeState = CHARGE_RUNNING;
-  actor->riseBaseY = 0;
+  actor->sceneWord = 0;
   Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
   actor = Actor_Get(id++);
@@ -3520,7 +3520,7 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   actor->chargeRow = CHANNEL_STATUES_ROW;
   actor->chargeHeading = HEADING_WEST;
   actor->chargeState = CHARGE_RUNNING;
-  actor->riseBaseY = 0;
+  actor->sceneWord = 0;
   Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
   actor = Actor_Get(id);
@@ -3528,7 +3528,7 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   actor->chargeRow = CHANNEL_STATUES_ROW;
   actor->chargeHeading = HEADING_EAST;
   actor->chargeState = CHARGE_RUNNING;
-  actor->riseBaseY = 0;
+  actor->sceneWord = 0;
   Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
   for (tries = 0; tries < CHARGE_CELLS_MAX; tries++) {
@@ -3549,19 +3549,19 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   System_Wait(20);
   result = CHARGE_ARRIVAL_NONE;
   if (check) {
-    // A charge still on the map has arrived; riseBaseY is its running frames,
+    // A charge still on the map has arrived; sceneWord is its running frames,
     // the sooner of each orb's two.
     u32 blue = 0;
     u32 red = 0;
     {
       struct Actor *r = Actor_Get(first);
       if (r->x.fixed != 0)
-        blue = r->riseBaseY;
+        blue = r->sceneWord;
     }
     {
       struct Actor *r = Actor_Get(second);
       if (r->x.fixed != 0) {
-        u32 value = r->riseBaseY;
+        u32 value = r->sceneWord;
         if (blue == 0 || blue > value)
           blue = value;
       }
@@ -3569,12 +3569,12 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
     {
       struct Actor *r = Actor_Get(first + 2);
       if (r->x.fixed != 0)
-        red = r->riseBaseY;
+        red = r->sceneWord;
     }
     {
       struct Actor *r = Actor_Get(first + 3);
       if (r->x.fixed != 0) {
-        u32 value = r->riseBaseY;
+        u32 value = r->sceneWord;
         if (red == 0 || red > value)
           red = value;
       }
@@ -4004,14 +4004,14 @@ LATE_DATA u32 gGabombaStatue_LookAtChannelScript[] = {
 LATE_DATA s32 gGabombaStatue_LookNorthAndEastScript[] = {
     SC_SET(SW_TIMER, FACING_NORTH),
     SC_SET(SW_USER_VALUE, FACING_NORTHEAST),
-    SC_SET(SW_RISE_ENABLED, 0),
+    SC_SET(SW_SCENE_BYTE, 0),
     SC_CALL(GabombaStatue_LookAround),
 };
 
 LATE_DATA s32 gGabombaStatue_LookNorthAndWestScript[] = {
     SC_SET(SW_TIMER, FACING_NORTH),
     SC_SET(SW_USER_VALUE, FACING_NORTHWEST),
-    SC_SET(SW_RISE_ENABLED, 0),
+    SC_SET(SW_SCENE_BYTE, 0),
     SC_CALL(GabombaStatue_LookAround),
 };
 
@@ -4430,7 +4430,7 @@ LATE_DATA u32 gGabombaStatue_ChargeBurstScript[] = {
     SC_POSITION(0, 0, 0),
     SC_SET(SW_SCALE_X, FIXED_ONE),
     SC_SET(SW_SCALE_Y, FIXED_ONE),
-    SC_SET(SW_RISE_ENABLED, 0),
+    SC_SET(SW_SCENE_BYTE, 0),
     SC_WAIT(1),
     SC_END,
 };
@@ -4447,7 +4447,7 @@ LATE_DATA s32 gGabombaStatue_ChargeShrinkScript[] = {
     SC_POSITION(0, 0, 0),
     SC_SET(SW_SCALE_X, FIXED_ONE),
     SC_SET(SW_SCALE_Y, FIXED_ONE),
-    SC_SET(SW_RISE_ENABLED, 0),
+    SC_SET(SW_SCENE_BYTE, 0),
     SC_WAIT(1),
     SC_END,
 };

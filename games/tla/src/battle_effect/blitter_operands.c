@@ -15,7 +15,7 @@
 /// The operand for 1 << n, by n from 0 to 15: the blitter builder adds the one
 /// for the canvas width, as a power of two, to words 8 and 11 of its horizontal
 /// clip template, counting from 0.
-const u16 gBattleEffect_BitOperands[] = {
+const u16 gBlitter_ImmediatePowers[] = {
     ARM_IMMEDIATE_BIT(0),  ARM_IMMEDIATE_BIT(1),  ARM_IMMEDIATE_BIT(2),
     ARM_IMMEDIATE_BIT(3),  ARM_IMMEDIATE_BIT(4),  ARM_IMMEDIATE_BIT(5),
     ARM_IMMEDIATE_BIT(6),  ARM_IMMEDIATE_BIT(7),  ARM_IMMEDIATE_BIT(8),

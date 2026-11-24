@@ -160,7 +160,7 @@ extern const s16 gElement_PowerResistCurve[5][2];
 extern const struct EnemyElementPreset gEnemy_ElementPresetTable[];
 extern const struct CharacterDefinition gCharacter_DefinitionTable[];
 const struct CharacterDefinition *Character_GetDefinition(s32 character);
-extern const s32 gCharacter_StartingEquipUnitIds[];
+extern const s32 gCharacter_NewGameIds[];
 extern const u16 gItem_RareItemCounters[512];
 
 extern const u8 gCharacter_ElementGroupTable[];

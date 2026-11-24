@@ -269,7 +269,7 @@ void IzumoRuins_PoundStake(s32 mode, s32 frame) {
   else
     Pound_SinkTarget(gIzumoRuins_SecondRoomStakes, mode, frame);
   if (mode == 1)
-    IzumoRuins_ShowStakeState(Actor_Get(state->secondActorId));
+    IzumoRuins_ShowStakeState(Actor_Get(state->targetId));
 }
 
 /// Frost on one of the two puddles either side of the stakes where the ladder

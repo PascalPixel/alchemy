@@ -98,7 +98,7 @@ struct Spark {
   s16 wait;
   u8 refused, frozen;
   u8 palette; ///< the palette of its sparks
-  u8 riseEnabled;
+  u8 sceneByte;
   s16 angle;
   s16 spin;
 };
@@ -439,9 +439,9 @@ s32 AnemosInnerSanctum_CircleOrb(struct Actor *actor) {
   actor->timer += actor->userValue;
   SET_ACTOR_POSITION(actor, actor->bounce, actor->gravity,
                      toFIXED(TORCH_ROW_Z));
-  FieldVector_AddPolarOffsetFX(actor->riseBaseY, actor->timer, &actor->x.fixed);
-  radius = actor->riseBaseY - toFIXED(1);
-  actor->riseBaseY = radius;
+  FieldVector_AddPolarOffsetFX(actor->sceneWord, actor->timer, &actor->x.fixed);
+  radius = actor->sceneWord - toFIXED(1);
+  actor->sceneWord = radius;
   if (radius)
     return 1;
   return 0;
@@ -455,7 +455,7 @@ void AnemosInnerSanctum_LeaveSpark(struct Actor *source) {
                                            source->y.fixed, source->z.fixed));
 
   actor->motionFlags = 0;
-  FieldActor_SetSpriteColor(actor, source->riseCounter);
+  FieldActor_SetSpriteColor(actor, source->sceneCounter);
   Scene_SetActorSpritePriority(actor, 2);
   Actor_SelectAnimation(actor, 1);
   Actor_SetSpriteFlags(actor, 0);
@@ -494,7 +494,7 @@ s32 AnemosInnerSanctum_LightPlate(struct Actor *actor) {
   s32 y;
 
   options.priority = 2;
-  options.palette = actor->riseCounter;
+  options.palette = actor->sceneCounter;
   FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
                     toFIXED(1), 0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                     &options);
@@ -571,7 +571,7 @@ s16 palette;
 
 /// Rings a torch at x, y (16.16) with eight orbs of the given palette that
 /// circle in on it at the given speed. Each orb keeps its circle in its actor's
-/// fields: its centre in bounce (x) and gravity (y), its radius in riseBaseY,
+/// fields: its centre in bounce (x) and gravity (y), its radius in sceneWord,
 /// its angle in timer and its speed in userValue.
 void AnemosInnerSanctum_SparkRing(x, y, palette, speed) s32 x;
 s32 y;
@@ -588,10 +588,10 @@ s16 speed;
     FieldVector_AddPolarOffset(32, angle, &orb->x.fixed);
     orb->timer = angle;
     orb->userValue = speed;
-    orb->riseCounter = i;
-    orb->riseEnabled = palette;
+    orb->sceneCounter = i;
+    orb->sceneByte = palette;
     orb->bounce = x;
-    orb->riseBaseY = toFIXED(32);
+    orb->sceneWord = toFIXED(32);
     orb->gravity = y;
     orb->motionFlags = 0;
     Actor_SetBlendMode(orb, 1);
@@ -1195,7 +1195,7 @@ extern s32 gAnemosInnerSanctum_DustScript[];
 /// east for west, scraping up dust, unless a wall stands in its way; on its
 /// button or over a hole it stops and raises that trigger. Once the leader
 /// goes back south of its row, it settles on its cell and may be started
-/// again. riseBaseY and acceleration hold the leader's last x and z.
+/// again. sceneWord and acceleration hold the leader's last x and z.
 void AnemosInnerSanctum_MimicLeader(struct Actor *self) {
   struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   FIXED next[2];
@@ -1211,22 +1211,22 @@ void AnemosInnerSanctum_MimicLeader(struct Actor *self) {
     self->z.fixed = (self->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
     return;
   }
-  ahead[0] = next[0] = self->x.fixed - (leader->x.fixed - self->riseBaseY);
+  ahead[0] = next[0] = self->x.fixed - (leader->x.fixed - self->sceneWord);
   ahead[1] = leader->y.fixed;
   ahead[2] = next[1] = self->z.fixed + (leader->z.fixed - self->acceleration);
-  if (self->riseBaseY != leader->x.fixed ||
+  if (self->sceneWord != leader->x.fixed ||
       self->acceleration != leader->z.fixed) {
     dust = (FieldActor_Create(SPRITE_PARTICLE, self->x.fixed, self->y.fixed,
                               self->z.fixed));
     dust->x.fixed += INTtoFIXED((Random16() & 15) - 8);
     dust->y.fixed += INTtoFIXED((Random16() & 31) - 4);
     dust->motionFlags = 0;
-    FieldActor_SetSpriteColor(dust, self->riseCounter);
+    FieldActor_SetSpriteColor(dust, self->sceneCounter);
     Scene_SetActorSpritePriority(dust, 2);
     Actor_SelectAnimation(dust, 1);
     Actor_SetSpriteFlags(dust, 0);
     Actor_StartScript(dust, gAnemosInnerSanctum_DustScript);
-    self->riseBaseY = leader->x.fixed;
+    self->sceneWord = leader->x.fixed;
     self->acceleration = leader->z.fixed;
     if ((gFrameCount & 3) == 0)
       Event_PlaySound(SE_DRIP);
@@ -1274,7 +1274,7 @@ void AnemosInnerSanctum_StartMimicStone(void) {
       MIMIC_STONE_LINE_Z) {
     actor->motionFlags = 0;
     actor->update = AnemosInnerSanctum_MimicLeader;
-    actor->riseBaseY = Actor_Get(gMainRoutineState.leaderActorId)->x.fixed;
+    actor->sceneWord = Actor_Get(gMainRoutineState.leaderActorId)->x.fixed;
     actor->acceleration = Actor_Get(gMainRoutineState.leaderActorId)->z.fixed;
     Event_SetFlag(FLAG_MIMIC_STONE_STARTED);
   }
@@ -1604,7 +1604,7 @@ s32 Scene_Initialize(void) {
     marker->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
     Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-    Actor_Get(ACTOR_SWITCHES_BOULDER)->riseCounter = 1;
+    Actor_Get(ACTOR_SWITCHES_BOULDER)->sceneCounter = 1;
     if (Event_GetFlag(FLAG_ANEMOS_SWITCHES_FIRST_PILLAR_PLACED))
       Actor_SetPosition(ACTOR_SWITCHES_FIRST_PILLAR, 56, 424);
     if (Event_GetFlag(FLAG_ANEMOS_SWITCHES_SECOND_PILLAR_PLACED)) {

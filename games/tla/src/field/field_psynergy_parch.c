@@ -103,7 +103,7 @@ void FieldPsynergy_Parch(void) {
   s32 i;
   u8 *dst;
 
-  caster = scene->mainActor;
+  caster = scene->caster;
   found = -1;
   fade = -1;
   pending = NULL;
@@ -259,7 +259,7 @@ loaded:
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority =
-        FieldPsynergy_GetCanvasPriority(scene->mainActor, scene->angle);
+        FieldPsynergy_GetCanvasPriority(scene->caster, scene->angle);
     sprite->depth = 1;
     sprite->x = x;
     sprite->y = y;
@@ -371,7 +371,7 @@ loaded:
     Actor_SetHorizontalPositionWithTerrain(found, 0, 0);
   }
   if (pending != NULL)
-    Field_RunPsynergyEvent(pending, scene->firstActorId, scene->secondActorId);
+    Field_RunPsynergyEvent(pending, scene->casterId, scene->targetId);
   VramCache_FreeEntry(entry);
   if (result == PARCH_DRIES)
     BattleEffect_FadeToSavedPalettes(100);

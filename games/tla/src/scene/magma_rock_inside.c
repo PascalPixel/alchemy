@@ -742,7 +742,7 @@ void MagmaRockInside_TargetStatue(s32 stage) {
     struct Actor *actor;
 
     Statue_FindUnderBurst(table);
-    actor = watch->child;
+    actor = watch->target;
     actor->flashMask = 4;
     actor->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
@@ -750,26 +750,26 @@ void MagmaRockInside_TargetStatue(s32 stage) {
     struct Actor *actor;
 
     Statue_FindUnderBurst(table);
-    actor = watch->child;
+    actor = watch->target;
     actor->flashMask = 2;
     actor->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
 }
 
 /// An ember's update as a statue's fireball bursts: moves it by its velocity,
-/// kept in bounce, gravity and riseBaseY, and slows it by an eighth.
+/// kept in bounce, gravity and sceneWord, and slows it by an eighth.
 void MagmaRockInside_DriftAndSlow(struct Actor *actor) {
   s32 dx, dy, dz;
 
   actor->x.fixed += dx = actor->bounce;
   actor->y.fixed += dy = actor->gravity;
-  actor->z.fixed += dz = actor->riseBaseY;
+  actor->z.fixed += dz = actor->sceneWord;
   dx -= dx >> 3;
   dy -= dy >> 3;
   dz -= dz >> 3;
   actor->bounce = dx;
   actor->gravity = dy;
-  actor->riseBaseY = dz;
+  actor->sceneWord = dz;
 }
 
 /// The frames a statue's fireball bursts where it lands, throwing out an ember
@@ -898,13 +898,13 @@ void MagmaRockInside_FireStatue(void) {
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
   FieldEvent_Wait(10);
-  actor = state->child;
+  actor = state->target;
   actor->update = NULL;
   FieldActor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   FieldEvent_Wait(3);
-  FieldActor_SetSpriteColor(state->child, SPRITE_COLOR_NORMAL);
+  FieldActor_SetSpriteColor(state->target, SPRITE_COLOR_NORMAL);
   FieldEvent_Wait(1);
-  MagmaRockInside_FireFromStatue(state->child);
+  MagmaRockInside_FireFromStatue(state->target);
   Event_End();
 }
 
@@ -927,24 +927,24 @@ void MagmaRockInside_BurstCrackedPillar(s32 stage, s32 cue) {
   if (cue == 0)
     MagmaRockInside_StartFallingRocks();
   if (stage == BURST_STAGE_SMALL_BLAST) {
-    struct Actor *actor = state->child;
+    struct Actor *actor = state->target;
 
     MagmaRockInside_DropRocks(actor->x.fixed, actor->y.fixed + toFIXED(15),
                               actor->z.fixed, 1);
   }
   if (stage == BURST_STAGE_GREAT_BLAST) {
-    struct Actor *actor = state->child;
+    struct Actor *actor = state->target;
     struct Actor *target;
 
     MagmaRockInside_DropRocks(actor->x.fixed, actor->y.fixed + toFIXED(15),
                               actor->z.fixed, 8);
-    target = state->child;
+    target = state->target;
     SET_ACTOR_POSITION(target, 0, 0, 0);
   }
   if (cue == PSYNERGY_EVENT_LAST_FRAME)
     Rock_EndFalling();
   if (cue == CRACKED_PILLAR_CRUMBLE_FRAME)
-    Actor_SelectAnimation(state->child, CRACKED_PILLAR_ANIMATION_CRUMBLE);
+    Actor_SelectAnimation(state->target, CRACKED_PILLAR_ANIMATION_CRUMBLE);
 }
 
 /// Felix walks to the lava's edge where something stands in the lava two cells
@@ -1329,7 +1329,7 @@ void MagmaRockInside_DrainLava(void) {
   void name(s32 stage, s32 cue) {                                              \
     struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;          \
                                                                                \
-    state->child = Actor_Get(pillar);                                          \
+    state->target = Actor_Get(pillar);                                         \
     MagmaRockInside_BurstCrackedPillar(stage, cue);                            \
     Event_SetFlag(flag);                                                       \
   }
@@ -2059,7 +2059,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
     spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
     noMotion = 0;
     spark->motionFlags = noMotion;
-    spark->riseBaseY = toFIXED(122);
+    spark->sceneWord = toFIXED(122);
     spark->watchedActor = learner;
     spark->stepsLeft =
         (LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
@@ -2068,7 +2068,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
-    FieldVector_AddPolarOffsetFX(spark->riseBaseY, spark->timer,
+    FieldVector_AddPolarOffsetFX(spark->sceneWord, spark->timer,
                                  &spark->x.fixed);
     Actor_StartScript(spark, gMagmaRockInside_CirclingSparkScript);
     if (i == 3) {
@@ -2092,7 +2092,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
     ((struct Orbit *)riser)->phase = i;
     ((struct Orbit *)riser)->growth = 1;
     riser->bounce = riser->x.fixed;
-    riser->riseBaseY = 0;
+    riser->sceneWord = 0;
     riser->gravity = riser->z.fixed;
     riser->watchedActor = learner;
     riser->motionFlags = (u16)0;

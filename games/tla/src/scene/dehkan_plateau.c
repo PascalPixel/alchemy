@@ -2107,7 +2107,7 @@ void DehkanPlateau_CreatePoundCube(void) {
   *slot = actor;
   if (actor != 0) {
     struct FieldSprite *sprite = actor->sprite;
-    GlyphTransfer *glyph;
+    IconTransfer *glyph;
 
     sprite->fullColor = 0;
     sprite->palette = 0;
@@ -2115,10 +2115,10 @@ void DehkanPlateau_CreatePoundCube(void) {
     actor->retainSpriteCache = 1;
     sprite->flags = clear;
     sprite->countAndShadow[0] = clear;
-    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_POUND_CUBE);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
 }
 

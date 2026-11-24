@@ -321,7 +321,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
   // mirrored for the far side.
   if (args->prelude == 1) {
     if (args->side == EFFECT_SIDE_ENEMIES) {
-      BattleEffect_FetchRectangleBlitters(0, pair);
+      BattleEffect_BuildCanvasBlitters(0, pair);
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
@@ -351,7 +351,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
 
     pair[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   } else {
-    BattleEffect_FetchRectangleBlitters(args->side, pair);
+    BattleEffect_BuildCanvasBlitters(args->side, pair);
   }
 
   // The pictures and the colors.
@@ -532,7 +532,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   EFFECT_FREE_PARTICLES(i, state->particles, 64);
   {
     s32 showerFrames;
@@ -892,7 +892,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                   gBattleEffect_GlintPictureWidths[cel],
                   gBattleEffect_GlintPictureHeights[cel]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-              BattleEffect_FetchRectangleBlitters(args->side, pair);
+              BattleEffect_BuildCanvasBlitters(args->side, pair);
             }
           }
         }
@@ -992,7 +992,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       EFFECT_PRESENT_CANVAS(state);
     }
 
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferCanvas);
     EFFECT_RELEASE_BLITTERS();
     if (mode == BURST_SHOWER_MODE_FIRE_DANCE ||
         mode == BURST_SHOWER_MODE_DESERT_GASP ||
@@ -1001,7 +1001,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
       Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
       args->prelude = 0;
-      Task_Remove(Palette_StepFadeTransfer);
+      Task_Remove(BattleEffect_DarkenBackgroundStep);
       if (mode == BURST_SHOWER_MODE_DESERT_GASP)
         BattleEffect_RunImpair(args);
       else

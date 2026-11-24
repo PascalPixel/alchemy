@@ -23,7 +23,7 @@ enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 #define STATUS_PAGE_NO_CLEAR (1 << 8)
 #define STATUS_PAGE_MODE_MASK (STATUS_PAGE_NO_CLEAR - 1)
 
-/// The worn items' rows in ItemMenu_DrawCategory's window, 16 pixels apart:
+/// The worn items' rows in ItemMenu_DrawEquipment's window, 16 pixels apart:
 /// weapon, helm, shield and armor from the top. A slot's label stands on its
 /// row, its item's name a line below, and its icon at EQUIPPED_ICON_X on
 /// screen.
@@ -40,7 +40,7 @@ enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 #define STATUS_FIGURE_FULL_PAGE_ROW_Y 104
 #define STATUS_FIGURE_HIDDEN_Y -16
 
-/// The Djinn list (DjinnMenu_ShowCurrentList): a column for each element, its
+/// The Djinn list (StatusScreen_ShowDjinnList): a column for each element, its
 /// Djinni figure standing over it.
 #define DJINN_LIST_COLUMN_WIDTH 56
 #define DJINN_LIST_FIGURE_X(element) (32 + (element) * DJINN_LIST_COLUMN_WIDTH)
@@ -138,9 +138,9 @@ s32 StatusScreen_Run(void) {
   heap->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  saved = (u16)transition->winOut;
+  saved = (u16)transition->outsideLayers;
   // Window 0 shows only the windows' layer and the sprites.
-  transition->winOut = WININ_WIN0_BG0 | WININ_WIN0_OBJ;
+  transition->outsideLayers = WININ_WIN0_BG0 | WININ_WIN0_OBJ;
   Menu_SuspendFieldTasks();
   Menu_InitializeState(0);
   page = &state->page;
@@ -188,7 +188,7 @@ s32 StatusScreen_Run(void) {
   Window_DrawBorderFar(0, 0, 30, 20);
   HeapSlot_Release(HEAP_SLOT_MENU);
   heap->actorSystem->suspended = 0;
-  transition->winOut = saved;
+  transition->outsideLayers = saved;
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
   ((struct WindowState *)heap->windowState)->holdTilemapUpload = 0;
@@ -295,7 +295,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
 /// The Djinn list Select opens from the party row: every Djinni the party has
 /// found, a column for each element, nine a page over two pages, The Lost Age's
 /// own first and The Broken Seal's after them, until A, B or Select.
-void DjinnMenu_ShowCurrentList(void) {
+void StatusScreen_ShowDjinnList(void) {
   struct DjinnMenuState *menu = Ram_HeapSlots->menuState;
   s32 page;
   s32 redraw;
@@ -379,7 +379,7 @@ void DjinnMenu_ShowCurrentList(void) {
 
 void StatusScreen_ShowMemberStatus(s32 resource, s32 frame);
 
-s32 PartyMemberChooser_MoveEntry(s32 selection, s32 direction);
+s32 StatusScreen_MovePartyMember(s32 selection, s32 direction);
 
 /// The Status menu's party row: Left and Right choose a party member, showing
 /// their status; L and R move the party member one place along the party order;
@@ -453,7 +453,7 @@ s32 StatusScreen_RunPartyRow(void) {
       break;
     }
     if (gInput.repeat & KEY_R) {
-      if (PartyMemberChooser_MoveEntry(ownerIndex, 1)) {
+      if (StatusScreen_MovePartyMember(ownerIndex, 1)) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         ownerIndex++;
         Menu_CreatePartyFigures(ownerIndex / 4 * 4);
@@ -463,7 +463,7 @@ s32 StatusScreen_RunPartyRow(void) {
       }
       wait(1);
     } else if (gInput.repeat & KEY_L) {
-      if (PartyMemberChooser_MoveEntry(ownerIndex, 0)) {
+      if (StatusScreen_MovePartyMember(ownerIndex, 0)) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         ownerIndex--;
         Menu_CreatePartyFigures(ownerIndex / 4 * 4);
@@ -474,7 +474,7 @@ s32 StatusScreen_RunPartyRow(void) {
       wait(1);
     } else if ((gInput.pressed & KEY_SELECT) &&
                GameFlag_Get(FLAG_DJINNI(DJINNI_ECHO))) {
-      DjinnMenu_ShowCurrentList();
+      StatusScreen_ShowDjinnList();
       redraw = 1;
     } else {
       redraw = Menu_MoveGridCursor(&ownerIndex, ownerCount, 4);
@@ -550,7 +550,7 @@ s32 PartyMemberChooser_ChooseMember(void) {
 
 /// Moves the party member at selectedIndex one place later (direction 1) or
 /// earlier (0) in the party order. Returns 1, or 0 when it cannot move.
-s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
+s32 StatusScreen_MovePartyMember(s32 selectedIndex, s32 direction) {
   struct StatusScreenState *menu = Ram_HeapSlots->menuState;
   u32 reordered[14];
   s32 index;
@@ -696,7 +696,7 @@ s32 StatusScreen_RunStatusPage(void) {
     // DEAD: Unit_Get's result is not used; the ROM keeps the call.
     Unit_Get(menu->selectedIds[0]);
     StatusScreen_DrawStatusPage(window, menu->selectedIds[0], STATUS_PAGE_FULL);
-    count = StatusScreen_BuildAvailability(entries, 1, menu->selectedIds[0]);
+    count = StatusScreen_ListStatuses(entries, 1, menu->selectedIds[0]);
     hasAilments = 0;
     if (count == 0)
       count = 1;
@@ -842,7 +842,7 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
 
   // HIGHLIGHT_PALETTE when invert is 0, WINDOW_PALETTE when it is 1.
   palette = WINDOW_PALETTE - NONZERO(invert ^ 1);
-  Render_SetTilemapFlagRect(menu->statusWindow, x, y, width, 1, palette);
+  Window_SetHighlightRect(menu->statusWindow, x, y, width, 1, palette);
 }
 
 /// Writes the advice for the selected status (two lines, for example how to
@@ -972,7 +972,7 @@ void StatusScreen_DrawStatusPage(s32 window, s32 ownerId, s32 mode) {
     djinnRow = 10;
   menu->statusCursor->motion = ICON_SHOWN;
   StatusScreen_DrawTopRows(window, ownerId, mode);
-  StatusScreen_BuildAvailability(ailments, 1, ownerId);
+  StatusScreen_ListStatuses(ailments, 1, ownerId);
   keepDrawn = mode & STATUS_PAGE_NO_CLEAR;
   if (keepDrawn == 0)
     Window_ClearInteriorTilesFar(window, 0, 40, 96, 96);
@@ -1103,14 +1103,14 @@ void StatusScreen_DrawTopRows(s32 window, s32 owner, s32 flags) {
 // The rows one page of the list shows: Japanese fits six, the other editions
 // five.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define PAGE_ROWS 6
+#define STATUS_LIST_PAGE_ROWS 6
 #else
-#define PAGE_ROWS 5
+#define STATUS_LIST_PAGE_ROWS 5
 #endif
 
 /// Fills result with the item list of the party member in side index for the
 /// equipment pages: their unit, the menu's item count, and the page and row of
-/// the item chosen last for them, PAGE_ROWS items to a page.
+/// the item chosen last for them, STATUS_LIST_PAGE_ROWS items to a page.
 /// Returns 1.
 s32 PagedList_Build(struct PagedList *result, s32 index) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
@@ -1129,10 +1129,10 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
     value = count - 1;
   if (count == 0)
     value = 0;
-  page = value / PAGE_ROWS;
-  row = value % PAGE_ROWS;
-  pages = count / PAGE_ROWS;
-  if (count % PAGE_ROWS != 0)
+  page = value / STATUS_LIST_PAGE_ROWS;
+  row = value % STATUS_LIST_PAGE_ROWS;
+  pages = count / STATUS_LIST_PAGE_ROWS;
+  if (count % STATUS_LIST_PAGE_ROWS != 0)
     pages++;
   result->memberState = (s32)owner;
   result->page = page;
@@ -1143,7 +1143,7 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
   return 1;
 }
 
-#undef PAGE_ROWS
+#undef STATUS_LIST_PAGE_ROWS
 
 /// Pairs of 4-bit rows of dots in colour 5, each reaching further right than
 /// the last, that Menu_BuildPatternTiles XORs into its tile pairs
@@ -1154,7 +1154,7 @@ extern const u32 gMenu_PatternRowMasks[][2];
 #define RANGE_PATTERN_PAIR_WORDS 16
 /// The first of the Status menu's range icon BG tiles, which
 /// PsynergyMenu_DrawRange draws as tilemap entries; the battle menu builds its
-/// own elsewhere (Menu_BuildLocalizedPatternTiles).
+/// own elsewhere (RangeIcon_BuildTiles).
 #define STATUS_RANGE_ICON_FIRST_TILE 768
 
 /// Builds the twelve range icons PsynergyMenu_DrawRange draws, as the 24 BG
@@ -1218,7 +1218,7 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
 /// the tile row of the page's first ability; USABLE_TOP, USABLE_RIGHT and
 /// USABLE_BOTTOM bound that text in pixels inside the window.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define PAGE_ROWS 6
+#define STATUS_LIST_PAGE_ROWS 6
 #define FIRST_TILE_ROW 1
 #define USABLE_TOP 72
 #define USABLE_RIGHT 64
@@ -1230,7 +1230,7 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
 /// でつかえます ("can be used"), the message before MsgDjinnListHelp.
 #define CAN_BE_USED_MESSAGE ((s32)MsgDjinnListHelp - 1)
 #else
-#define PAGE_ROWS 5
+#define STATUS_LIST_PAGE_ROWS 5
 #define FIRST_TILE_ROW 2
 #define USABLE_TOP 96
 #define USABLE_RIGHT 224
@@ -1248,7 +1248,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
   s32 base;
 
   menu = (struct PsynergyMenuState *)Ram_HeapSlots->menuState;
-  state->selectedIndex = state->page * PAGE_ROWS + state->row;
+  state->selectedIndex = state->page * STATUS_LIST_PAGE_ROWS + state->row;
   // The Japanese release clears the info window; from patch 1 it redraws the
   // window's saved rectangle.
 #if TLA_PATCH_1
@@ -1310,33 +1310,33 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #endif
   }
 
-  base = state->page * PAGE_ROWS;
-  for (row = 0; row <= PAGE_ROWS - 1; row++) {
+  base = state->page * STATUS_LIST_PAGE_ROWS;
+  for (row = 0; row <= STATUS_LIST_PAGE_ROWS - 1; row++) {
     if (row == state->row) {
       ability = Ability_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
       if (ability->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
                                   row * 2 + FIRST_TILE_ROW, 0);
-        Render_SetTilemapFlagRect(window, 9, row * 2 + FIRST_TILE_ROW, 15, 1,
-                                  HIGHLIGHT_PALETTE);
-        Render_SetTilemapFlagRect(window, 25, row * 2 + FIRST_TILE_ROW, 3, 1,
-                                  HIGHLIGHT_PALETTE);
+        Window_SetHighlightRect(window, 9, row * 2 + FIRST_TILE_ROW, 15, 1,
+                                HIGHLIGHT_PALETTE);
+        Window_SetHighlightRect(window, 25, row * 2 + FIRST_TILE_ROW, 3, 1,
+                                HIGHLIGHT_PALETTE);
       } else {
-        Render_SetTilemapFlagRect(window, 9, row * 2 + FIRST_TILE_ROW, 19, 1,
-                                  HIGHLIGHT_PALETTE);
+        Window_SetHighlightRect(window, 9, row * 2 + FIRST_TILE_ROW, 19, 1,
+                                HIGHLIGHT_PALETTE);
       }
     } else {
       ability = Ability_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
       if (ability->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
                                   row * 2 + FIRST_TILE_ROW, TILEMAP_ENTRY_ICON);
-        Render_SetTilemapFlagRect(window, 9, row * 2 + FIRST_TILE_ROW, 15, 1,
-                                  WINDOW_PALETTE);
-        Render_SetTilemapFlagRect(window, 25, row * 2 + FIRST_TILE_ROW, 3, 1,
-                                  WINDOW_PALETTE);
+        Window_SetHighlightRect(window, 9, row * 2 + FIRST_TILE_ROW, 15, 1,
+                                WINDOW_PALETTE);
+        Window_SetHighlightRect(window, 25, row * 2 + FIRST_TILE_ROW, 3, 1,
+                                WINDOW_PALETTE);
       } else {
-        Render_SetTilemapFlagRect(window, 9, row * 2 + FIRST_TILE_ROW, 19, 1,
-                                  WINDOW_PALETTE);
+        Window_SetHighlightRect(window, 9, row * 2 + FIRST_TILE_ROW, 19, 1,
+                                WINDOW_PALETTE);
       }
     }
   }
@@ -1344,7 +1344,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
   return 1;
 }
 
-#undef PAGE_ROWS
+#undef STATUS_LIST_PAGE_ROWS
 #undef USABLE_RIGHT
 #undef USABLE_BOTTOM
 
@@ -1352,7 +1352,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 /// lays its heading, names, costs, page icons and "no Psynergy" message out on
 /// its own columns.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define PAGE_ROWS 6
+#define STATUS_LIST_PAGE_ROWS 6
 #define PAGE_ICONS_X 86
 #define PAGE_ICONS_Y 53
 #define STATUS_PSYNERGY_PP_HEADING_X 144
@@ -1362,7 +1362,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #define FIRST_RANGE_ROW 1
 #define EMPTY_MESSAGE_Y 8
 #else
-#define PAGE_ROWS 5
+#define STATUS_LIST_PAGE_ROWS 5
 #define PAGE_ICONS_X 80
 #define PAGE_ICONS_Y 58
 #define STATUS_PSYNERGY_PP_HEADING_X 176
@@ -1390,14 +1390,16 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 
   WindowSprite_RedrawSavedRectFar(window);
 
-  firstEntry = res->page * PAGE_ROWS;
+  firstEntry = res->page * STATUS_LIST_PAGE_ROWS;
   rows = (u8)(res->entryCount - firstEntry);
-  if (rows > PAGE_ROWS) {
-    rows = PAGE_ROWS;
+  if (rows > STATUS_LIST_PAGE_ROWS) {
+    rows = STATUS_LIST_PAGE_ROWS;
   }
 
-  Menu_SetPageIcons(PAGE_ROWS, firstEntry, window, PAGE_ICONS_X, PAGE_ICONS_Y);
-  PagedList_DrawPageNumbers(window, res->entryCount, PAGE_ROWS, res->page, 28);
+  Menu_SetPageIcons(STATUS_LIST_PAGE_ROWS, firstEntry, window, PAGE_ICONS_X,
+                    PAGE_ICONS_Y);
+  PagedList_DrawPageNumbers(window, res->entryCount, STATUS_LIST_PAGE_ROWS,
+                            res->page, 28);
 
   // "PP"
   Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,
@@ -1455,7 +1457,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
   return 1;
 }
 
-#undef PAGE_ROWS
+#undef STATUS_LIST_PAGE_ROWS
 #undef PAGE_ICONS_X
 #undef STATUS_PSYNERGY_PP_HEADING_X
 #undef STATUS_PSYNERGY_NAME_X
@@ -1466,18 +1468,18 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 /// The rows of a page of the list and where the cursor points at its first row:
 /// the Japanese page lists six abilities, a row higher.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define PAGE_ROWS 6
+#define STATUS_LIST_PAGE_ROWS 6
 #define STATUS_PSYNERGY_CURSOR_X 58
 #define CURSOR_Y 52
 #else
-#define PAGE_ROWS 5
+#define STATUS_LIST_PAGE_ROWS 5
 #define STATUS_PSYNERGY_CURSOR_X 55
 #define CURSOR_Y 60
 #endif
 
-/// The Status menu's Psynergy page: the party member's Psynergy, PAGE_ROWS to a
-/// page, each with its PP cost and range icon; the cursor's Psynergy is
-/// described in the info window with where it can be used.
+/// The Status menu's Psynergy page: the party member's Psynergy,
+/// STATUS_LIST_PAGE_ROWS to a page, each with its PP cost and range icon; the
+/// cursor's Psynergy is described in the info window with where it can be used.
 s32 StatusScreen_RunPsynergyPage(void) {
   struct PsynergyMenuState *menu;
   s32 result;
@@ -1524,8 +1526,8 @@ s32 StatusScreen_RunPsynergyPage(void) {
       refresh = 0;
     }
     wait(1);
-    navigation = PagedList_HandleInput(0, state.entryCount, PAGE_ROWS,
-                                       &state.row, &state.page);
+    navigation = PagedList_HandleInput(
+        0, state.entryCount, STATUS_LIST_PAGE_ROWS, &state.row, &state.page);
     MenuCursor_Position(STATUS_PSYNERGY_CURSOR_X, state.row * 16 + CURSOR_Y);
     if (navigation == 1) {
       refresh = 1;
@@ -1568,16 +1570,16 @@ s32 StatusScreen_RunPsynergyPage(void) {
   return result;
 }
 
-#undef PAGE_ROWS
+#undef STATUS_LIST_PAGE_ROWS
 #undef STATUS_PSYNERGY_CURSOR_X
 #undef CURSOR_Y
 
 // The rows one page of the item list shows: Japanese fits six, the other
 // editions five.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define PAGE_ROWS 6
+#define STATUS_LIST_PAGE_ROWS 6
 #else
-#define PAGE_ROWS 5
+#define STATUS_LIST_PAGE_ROWS 5
 #endif
 
 /// The tile column the equipment slots' highlight starts at.
@@ -1601,7 +1603,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct PagedList *state) {
   u32 mask;
 
   menu = Ram_HeapSlots->menuState;
-  base = state->page * PAGE_ROWS;
+  base = state->page * STATUS_LIST_PAGE_ROWS;
   state->selectedIndex = base + state->row;
   // The Japanese release clears the name's window; from patch 1 it redraws the
   // window's saved rectangle.
@@ -1626,7 +1628,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct PagedList *state) {
 #endif
   }
 
-  for (row = 0; row < PAGE_ROWS; row++) {
+  for (row = 0; row < STATUS_LIST_PAGE_ROWS; row++) {
     if (row == state->row) {
       entry = menu->items[state->selectedIndex];
       mask = INVENTORY_ITEM_ID_MASK;
@@ -1635,11 +1637,11 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct PagedList *state) {
       if (item->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1,
                                   0);
-        Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1,
-                                  HIGHLIGHT_PALETTE);
+        Window_SetHighlightRect(window, 14, row * 2 + 1, 13, 1,
+                                HIGHLIGHT_PALETTE);
       } else {
-        Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 14, 1,
-                                  HIGHLIGHT_PALETTE);
+        Window_SetHighlightRect(window, 14, row * 2 + 1, 14, 1,
+                                HIGHLIGHT_PALETTE);
       }
     } else {
       entry = menu->items[base + row];
@@ -1649,38 +1651,36 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct PagedList *state) {
       if (item->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1,
                                   TILEMAP_ENTRY_ICON);
-        Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1,
-                                  WINDOW_PALETTE);
+        Window_SetHighlightRect(window, 14, row * 2 + 1, 13, 1, WINDOW_PALETTE);
       } else {
-        Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 14, 1,
-                                  WINDOW_PALETTE);
+        Window_SetHighlightRect(window, 14, row * 2 + 1, 14, 1, WINDOW_PALETTE);
       }
     }
   }
 
   for (row = 0; row <= 3; row++)
-    Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, row * 2 + 1,
-                              EQUIP_SLOT_WIDTH, 1, WINDOW_PALETTE);
+    Window_SetHighlightRect(menu->equipWindow, EQUIP_SLOT_X, row * 2 + 1,
+                            EQUIP_SLOT_WIDTH, 1, WINDOW_PALETTE);
 
   if (menu->items[state->selectedIndex] & INVENTORY_EQUIPPED) {
     item = Item_GetDirectFar(menu->items[state->selectedIndex] &
                              INVENTORY_ITEM_ID_MASK);
     switch (item->type) {
     case ITEM_TYPE_WEAPON:
-      Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 1,
-                                EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
+      Window_SetHighlightRect(menu->equipWindow, EQUIP_SLOT_X, 1,
+                              EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
       break;
     case ITEM_TYPE_HELM:
-      Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 3,
-                                EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
+      Window_SetHighlightRect(menu->equipWindow, EQUIP_SLOT_X, 3,
+                              EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
       break;
     case ITEM_TYPE_SHIELD:
-      Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 5,
-                                EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
+      Window_SetHighlightRect(menu->equipWindow, EQUIP_SLOT_X, 5,
+                              EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
       break;
     case ITEM_TYPE_ARMOR:
-      Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 7,
-                                EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
+      Window_SetHighlightRect(menu->equipWindow, EQUIP_SLOT_X, 7,
+                              EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
       break;
     }
   }
@@ -1688,14 +1688,14 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct PagedList *state) {
   return 1;
 }
 
-#undef PAGE_ROWS
+#undef STATUS_LIST_PAGE_ROWS
 #undef EQUIP_SLOT_WIDTH
 
 /// The rows of a page of the item list: six in Japanese.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define PAGE_ROWS 6
+#define STATUS_LIST_PAGE_ROWS 6
 #else
-#define PAGE_ROWS 5
+#define STATUS_LIST_PAGE_ROWS 5
 #endif
 
 /// The page icons, the item names, the "no items" message and the Attack and
@@ -1718,8 +1718,8 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct PagedList *state) {
 #define STAT_X 72
 #endif
 
-/// Draws one page of the member's items into window: PAGE_ROWS names, or
-/// "no items", then the member's name, Attack and Defense.
+/// Draws one page of the member's items into window: STATUS_LIST_PAGE_ROWS
+/// names, or "no items", then the member's name, Attack and Defense.
 s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   struct Unit *unit;
@@ -1731,13 +1731,14 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
 
   unit = Unit_Get(menu->sideMember[0]);
   Window_ClearInteriorTilesFar(window, 128, 8, 224, 96);
-  firstEntry = state->page * PAGE_ROWS;
+  firstEntry = state->page * STATUS_LIST_PAGE_ROWS;
   rowCount = (u8)(state->entryCount - firstEntry);
-  if (rowCount > PAGE_ROWS)
-    rowCount = PAGE_ROWS;
-  Menu_SetPageIcons(PAGE_ROWS, firstEntry, window, PAGE_ICONS_X, 52);
-  PagedList_DrawPageNumbers(window, state->entryCount, PAGE_ROWS, state->page,
-                            28);
+  if (rowCount > STATUS_LIST_PAGE_ROWS)
+    rowCount = STATUS_LIST_PAGE_ROWS;
+  Menu_SetPageIcons(STATUS_LIST_PAGE_ROWS, firstEntry, window, PAGE_ICONS_X,
+                    52);
+  PagedList_DrawPageNumbers(window, state->entryCount, STATUS_LIST_PAGE_ROWS,
+                            state->page, 28);
   if (menu->itemCount == 0) {
     Text_DrawMessageAsTilesFar(MsgItemMenuEmpty, window, EMPTY_MESSAGE_X, 8);
   } else {
@@ -1762,7 +1763,7 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
   return 1;
 }
 
-#undef PAGE_ROWS
+#undef STATUS_LIST_PAGE_ROWS
 #undef EMPTY_MESSAGE_X
 #undef STAT_X
 
@@ -1776,9 +1777,9 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
 // The rows one page of the item list shows: Japanese fits six, the other
 // editions five.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define PAGE_ROWS 6
+#define STATUS_LIST_PAGE_ROWS 6
 #else
-#define PAGE_ROWS 5
+#define STATUS_LIST_PAGE_ROWS 5
 #endif
 
 /// The French list puts its cursor 4 pixels further right.
@@ -1788,8 +1789,9 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
 #define STATUS_EQUIPMENT_CURSOR_X 96
 #endif
 
-/// The Status menu's equipment page: the party member's items, PAGE_ROWS to a
-/// page, beside the equipment window of what they wear.
+/// The Status menu's equipment page: the party member's items,
+/// STATUS_LIST_PAGE_ROWS to a page, beside the equipment window of what they
+/// wear.
 s32 StatusScreen_RunEquipmentPage(void) {
   struct ItemMenuState *menu;
   struct Unit *owner;
@@ -1827,7 +1829,7 @@ s32 StatusScreen_RunEquipmentPage(void) {
         PagedList_Build(&state, 0);
         ItemMenu_DrawIcons(menu->items, 0);
         WindowSprite_RedrawSavedRectFar(menu->equipWindow);
-        ItemMenu_DrawCategory(menu->equipWindow, menu->sideMember[0], 1);
+        ItemMenu_DrawEquipment(menu->equipWindow, menu->sideMember[0], 1);
         listNeedsRedraw = 1;
         wait(1);
       }
@@ -1843,8 +1845,8 @@ s32 StatusScreen_RunEquipmentPage(void) {
       refresh = 0;
     }
     wait(1);
-    navigation = PagedList_HandleInput(0, state.entryCount, PAGE_ROWS,
-                                       &state.row, &state.page);
+    navigation = PagedList_HandleInput(
+        0, state.entryCount, STATUS_LIST_PAGE_ROWS, &state.row, &state.page);
     MenuCursor_Position(STATUS_EQUIPMENT_CURSOR_X, state.row * 16 + 52);
     if (navigation == 1) {
       refresh = 1;
@@ -1889,13 +1891,13 @@ s32 StatusScreen_RunEquipmentPage(void) {
   return result;
 }
 
-#undef PAGE_ROWS
+#undef STATUS_LIST_PAGE_ROWS
 #undef STATUS_EQUIPMENT_CURSOR_X
 
 /// Writes the four equipment slot labels (Weapon, Head, Shield and Chest, one a
 /// 16-pixel row) and the names of the items worn in them into window; mode 0
 /// also shows their icons at the right.
-void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode) {
+void ItemMenu_DrawEquipment(s32 window, s32 ownerId, s32 mode) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   u8 *items;
 
@@ -1977,7 +1979,7 @@ void Menu_PlaceEntryIconInGrid(struct WindowSprite *icon, s32 index,
 }
 
 /// Places the icon of each worn weapon, armor, shield and helm at x 216, on its
-/// slot's row of ItemMenu_DrawCategory's window; the others stay off screen.
+/// slot's row of ItemMenu_DrawEquipment's window; the others stay off screen.
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
   struct ItemMenuState *menu;
   struct WindowSprite *icon;

@@ -182,7 +182,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_FillWhiteBand();
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   // The battle flashes away; then the sky, the petals and Flora load.
   bgX = -80;
   for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
@@ -1029,7 +1029,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
                              1);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   REG_BLDCNT = 0;
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add((s32)BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   // Centre the canvas's x 64 on the target.
   BattleObject_GetFar(args->targets[0]);
@@ -1127,7 +1127,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -1189,7 +1189,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add((s32)BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   targetObject = BattleObject_GetFar(args->targets[0])->object;
   casterObject = BattleObject_GetFar(args->user)->object;
   battle = Ram_HeapSlots->battleState;
@@ -1301,7 +1301,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   }
 
   battle->keepObjectPriorities = 0;
-  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_TransferCanvas);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

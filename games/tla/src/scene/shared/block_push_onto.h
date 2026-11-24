@@ -45,7 +45,7 @@ void MagmaRockInside_PushBlockOnto(void) {
   if (MapGrid_CheckCollision(next, &dst) > 0)
     return;
 
-  if (next->riseCounter != 0)
+  if (next->sceneCounter != 0)
     return;
 
   Actor_SelectAnimation(lead, ANIM_PUSH);

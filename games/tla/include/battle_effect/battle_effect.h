@@ -22,7 +22,7 @@ struct MeshVertex;
 struct PoolEntry;
 struct StripQuad;
 
-/// The summons' sprite formations (BattleEffect_PlaceFormationObjects and
+/// The summons' sprite formations (BattleEffect_PlaceFormationSprites and
 /// BattleEffect_RunImpactBurst), each named for the summon that keeps it.
 enum SummonFormation {
   SUMMON_FORMATION_THOR,    ///< nine in a 3x3 grid at 32-pixel spacing
@@ -124,7 +124,7 @@ void BattleEffect_CreateSprites(s32 count, s32 spriteId, u32 priority);
 void BattleEffect_ShowLivingTargets(struct BattleEffectParams *args);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_BuildCanvasBlitters(s32 flip, void **out);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 /// Moves a particle one frame on the screen: its velocity scaled by `damping`
 /// sixty-fourths, then `gravity` added to its y speed.
@@ -152,7 +152,7 @@ void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
                     s32 cellWidth, s32 cellHeight);
 void Palette_BrightenBgEntries(s32 blueDelta, s32 greenDelta, s32 redDelta);
 void BattleEffect_ConfigureEffectDisplay(void);
-void BattleEffect_ClearActorTimers(void);
+void BattleEffect_ClearTintTimers(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
 /// Sets the registers that show the canvas on BG2.
@@ -195,7 +195,7 @@ void BattleEffect_ArmBg1HBlankDma(void);
 void Palette_MirrorBgColors(void);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleEffect_RunDragonFire(struct BattleEffectParams *effect, s32 mode);
-void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 y);
+void BattleEffect_PlaceFormationSprites(s32 formation, s32 x, s32 y);
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y);
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *effect, s32 mode);

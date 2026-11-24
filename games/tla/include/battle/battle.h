@@ -46,7 +46,7 @@ struct FieldParticle;
 struct AreaNameRule;
 
 extern const s8 gHalt_FlickerColorModes[];
-extern const s8 gBattlePlacement_StepPairs[];
+extern const s8 gBattlePlacement_Spots[];
 extern u8 gEncounter_DjinnBattles[];
 extern u16 gBattleUnit_WeaponKinds[];
 s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot);

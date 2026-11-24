@@ -7,11 +7,11 @@
 #include "enemy_ids.h"
 #include "sounds.h"
 
-/// The particle streams' modes (BattleEffect_RunParticleStreams).
+/// The particle streams' modes (BattleEffect_RunStarfieldFall).
 enum ParticleStreamsMode {
-  PARTICLE_STREAMS_METEOR,     ///< one spawned sprite falls
-  PARTICLE_STREAMS_OUTER_SPACE ///< the user leaps, and two animated sprites
-                               ///< fall in the lightning bolt's colours
+  STARFIELD_FALL_METEOR,     ///< one spawned sprite falls
+  STARFIELD_FALL_OUTER_SPACE ///< the user leaps, and two animated sprites
+                             ///< fall in the lightning bolt's colours
 };
 
 /// Unused: nothing calls it. Knocks a unit back: unless it is the Fusion
@@ -58,7 +58,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
   cells = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_BuildCanvasBlitters(0, draw);
 
   // The spray's colours and pictures, the column of water and the motes.
   palette = Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET);
@@ -129,7 +129,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
         if (focus.x < toFIXED(120))
           velocity.x += toFIXED(1) / 2;
       }
-      BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
+      BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_NEREID, focus.x,
                                          focus.y);
 
       // Drops burst up among the targets.
@@ -261,7 +261,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
     }
 
     // She bursts away.
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferCanvas);
     EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
     for (k = 0; k != NEREID_OBJECTS; k++)
@@ -278,7 +278,7 @@ extern const struct Scale gSummonFormation_LargeScale;
 
 /// Arranges state->sprites in a formation (enum SummonFormation); x and z are
 /// its origin in 16.16 pixels.
-void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
+void BattleEffect_PlaceFormationSprites(s32 formation, s32 x, s32 z) {
   struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   struct Scale normal = gSummonFormation_Scale;
   struct Scale big = gSummonFormation_LargeScale;
@@ -511,11 +511,11 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
     }
 
     if (frame <= 35)
-      BattleEffect_PlaceFormationObjects(formation, orgX, y);
+      BattleEffect_PlaceFormationSprites(formation, orgX, y);
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
   EFFECT_RELEASE_BLITTERS();
 }
@@ -630,7 +630,7 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
 ///
 /// Abilities: Meteor.
 void BattleEffect_RunMeteor(struct BattleEffectParams *args) {
-  BattleEffect_RunParticleStreams(args, PARTICLE_STREAMS_METEOR);
+  BattleEffect_RunStarfieldFall(args, STARFIELD_FALL_METEOR);
 }
 
 /// The Fusion Dragon leaps out of sight and falls back through a starfield in
@@ -639,12 +639,12 @@ void BattleEffect_RunMeteor(struct BattleEffectParams *args) {
 ///
 /// Abilities: Outer Space, the Fusion Dragon's.
 void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
-  BattleEffect_RunParticleStreams(args, PARTICLE_STREAMS_OUTER_SPACE);
+  BattleEffect_RunStarfieldFall(args, STARFIELD_FALL_OUTER_SPACE);
 }
 
 /// The fall and the burst, in frames.
-#define PARTICLE_STREAMS_FALL_FRAMES 192
-#define PARTICLE_STREAMS_BURST_FRAMES 54
+#define STARFIELD_FALL_FALL_FRAMES 192
+#define STARFIELD_FALL_BURST_FRAMES 54
 /// The burst's frame the damage is told from.
 #define PARTICLE_STREAMS_DAMAGE_FRAME 48
 
@@ -652,48 +652,48 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 /// where the one before ends: six flames, then three large and three small
 /// glows, each glow brighter at its centre than the one before. The fall draws
 /// only the six and the brightest glow of each size.
-#define PARTICLE_STREAMS_FLAME_SIZE 32
-#define PARTICLE_STREAMS_LARGE_GLOW_SIZE 24
-#define PARTICLE_STREAMS_SMALL_GLOW_SIZE 8
+#define STARFIELD_FALL_FLAME_SIZE 32
+#define STARFIELD_FALL_LARGE_GLOW_SIZE 24
+#define STARFIELD_FALL_SMALL_GLOW_SIZE 8
 /// Where each picture starts in FlameSheetB, in bytes.
 enum ParticleStreamsSheetPicture {
   /// The six 32x32 flames, in a row
-  PARTICLE_STREAMS_FLAMES = 0,
+  STARFIELD_FALL_FLAMES = 0,
   /// The brightest 24x24 glow
-  PARTICLE_STREAMS_LARGE_GLOW = PARTICLE_STREAMS_FLAMES +
-      6 * PARTICLE_STREAMS_FLAME_SIZE * PARTICLE_STREAMS_FLAME_SIZE +
-      2 * PARTICLE_STREAMS_LARGE_GLOW_SIZE * PARTICLE_STREAMS_LARGE_GLOW_SIZE,
+  STARFIELD_FALL_LARGE_GLOW = STARFIELD_FALL_FLAMES +
+      6 * STARFIELD_FALL_FLAME_SIZE * STARFIELD_FALL_FLAME_SIZE +
+      2 * STARFIELD_FALL_LARGE_GLOW_SIZE * STARFIELD_FALL_LARGE_GLOW_SIZE,
   /// The brightest 8x8 glow
-  PARTICLE_STREAMS_SMALL_GLOW = PARTICLE_STREAMS_LARGE_GLOW +
-      PARTICLE_STREAMS_LARGE_GLOW_SIZE * PARTICLE_STREAMS_LARGE_GLOW_SIZE +
-      2 * PARTICLE_STREAMS_SMALL_GLOW_SIZE * PARTICLE_STREAMS_SMALL_GLOW_SIZE
+  STARFIELD_FALL_SMALL_GLOW = STARFIELD_FALL_LARGE_GLOW +
+      STARFIELD_FALL_LARGE_GLOW_SIZE * STARFIELD_FALL_LARGE_GLOW_SIZE +
+      2 * STARFIELD_FALL_SMALL_GLOW_SIZE * STARFIELD_FALL_SMALL_GLOW_SIZE
 };
 
 /// The burst's flashes in PARTICLES, then its embers, and how many of each it
 /// draws.
-#define PARTICLE_STREAMS_FLASHES 128
-#define PARTICLE_STREAMS_EMBER_COUNT 512
-#define PARTICLE_STREAMS_EMBERS (&PARTICLES[PARTICLE_STREAMS_FLASHES])
-#define PARTICLE_STREAMS_FLASHES_DRAWN 64
-#define PARTICLE_STREAMS_EMBERS_DRAWN 64
+#define STARFIELD_FALL_FLASHES 128
+#define STARFIELD_FALL_EMBER_COUNT 512
+#define STARFIELD_FALL_EMBERS (&PARTICLES[STARFIELD_FALL_FLASHES])
+#define STARFIELD_FALL_FLASHES_DRAWN 64
+#define STARFIELD_FALL_EMBERS_DRAWN 64
 /// The fall's flames, from state->particles[0], and its landings after them.
-#define PARTICLE_STREAMS_FLAME_COUNT 32
-#define PARTICLE_STREAMS_LANDINGS 16
+#define STARFIELD_FALL_FLAME_COUNT 32
+#define STARFIELD_FALL_LANDINGS 16
 /// The starfield's stars.
-#define PARTICLE_STREAMS_STARS 256
+#define STARFIELD_FALL_STARS 256
 /// How far down each column's ragged edge starts: the dissolve sweeps the
 /// picture's rows and this many more.
-#define PARTICLE_STREAMS_RAGGED_EDGE 64
+#define STARFIELD_FALL_RAGGED_EDGE 64
 /// The backdrop's glow turns blue, and later green, once its level passes
 /// these.
-#define PARTICLE_STREAMS_GLOW_BLUE_LEVEL 32
-#define PARTICLE_STREAMS_GLOW_GREEN_LEVEL 80
+#define STARFIELD_FALL_GLOW_BLUE_LEVEL 32
+#define STARFIELD_FALL_GLOW_GREEN_LEVEL 80
 /// The burst's flashes rise from this frame on, three more a frame, and the
-/// background brightens from PARTICLE_STREAMS_BRIGHTEN_DELAY frames after it.
-#define PARTICLE_STREAMS_FLASH_FRAME 16
-#define PARTICLE_STREAMS_BRIGHTEN_DELAY 20
+/// background brightens from STARFIELD_FALL_BRIGHTEN_DELAY frames after it.
+#define STARFIELD_FALL_FLASH_FRAME 16
+#define STARFIELD_FALL_BRIGHTEN_DELAY 20
 /// The blast sprite sheet's flash pictures, each shown two frames.
-#define PARTICLE_STREAMS_FLASH_PICTURES 7
+#define STARFIELD_FALL_FLASH_PICTURES 7
 /// An ember's depth is held between these: the nearest are drawn as mote 9,
 /// each PARTICLE_STREAMS_EMBER_SIZE_DEPTH deeper a size smaller.
 #define PARTICLE_STREAMS_EMBER_NEAR 160
@@ -702,11 +702,10 @@ enum ParticleStreamsSheetPicture {
 
 /// The mote pictures in the blast sprite sheet, after its seven blast pictures
 /// (BLAST_PICTURE_SIZES): two sets, MOTE_SET_BYTES apart.
-#define PARTICLE_STREAMS_MOTE_PICTURES (16 * 16 + 32 * 32 + 5 * 48 * 48)
+#define STARFIELD_FALL_MOTE_PICTURES (16 * 16 + 32 * 32 + 5 * 48 * 48)
 
 /// Meteor and Outer Space: the fall through the starfield, then the burst.
-void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
-                                     s32 mode) {
+void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
   u8 offsets[128];
   void *canvas;
   DrawRectangle draw;
@@ -717,9 +716,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   void ParticleStreams_SpawnLanding(s32 x, s32 y, s32 velocityX) {
     s32 i;
 
-    for (i = 0; i != PARTICLE_STREAMS_LANDINGS; i++) {
+    for (i = 0; i != STARFIELD_FALL_LANDINGS; i++) {
       struct Particle *landing =
-          &state->particles[PARTICLE_STREAMS_FLAME_COUNT + i];
+          &state->particles[STARFIELD_FALL_FLAME_COUNT + i];
 
       if (landing->variant == -1) {
         landing->variant = 0;
@@ -735,7 +734,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   UNUSED void ParticleStreams_SpawnFlame(s32 x, s32 y) {
     s32 i;
 
-    for (i = 0; i != PARTICLE_STREAMS_FLAME_COUNT; i++) {
+    for (i = 0; i != STARFIELD_FALL_FLAME_COUNT; i++) {
       struct Particle *flame = &state->particles[i];
 
       if (flame->variant == -1) {
@@ -763,7 +762,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   // In Outer Space the Fusion Dragon leaps out of sight. The stream then runs
   // rightward (direction 1) when the party casts, else leftward (-1).
   direction = mode;
-  if (direction == PARTICLE_STREAMS_OUTER_SPACE) {
+  if (direction == STARFIELD_FALL_OUTER_SPACE) {
     struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 
     user->velocityY = toFIXED(10);
@@ -780,12 +779,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
 
   // The Fusion Dragon's two halves, or the meteor.
-  if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
+  if (mode == STARFIELD_FALL_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
       struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_FUSION_DRAGON +
                                                i * SPRITE_SECOND_PART);
@@ -802,7 +801,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   }
   // The starfield.
   Resource_LoadAndDecompress(RESOURCE_FLAME_SHEET_B, state->sheet, 1, 1);
-  if (mode == PARTICLE_STREAMS_OUTER_SPACE)
+  if (mode == STARFIELD_FALL_OUTER_SPACE)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
                     SHEET_PALETTE_BYTES);
@@ -828,7 +827,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   }
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
 
-  for (i = 0; i != PARTICLE_STREAMS_STARS; i++) {
+  for (i = 0; i != STARFIELD_FALL_STARS; i++) {
     s32 x = Random16() & (CANVAS_SIZE - 1);
     s32 y = Random16() & (CANVAS_SIZE - 1);
     s32 shade = (Random16() & 63) + 64;
@@ -848,12 +847,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   state->scrollStepX = direction << 7;
   state->scrollStepY = 1 << 8;
   Task_Add(BattleEffect_AdvanceBg2OnInterval, TASK_PASS_VBLANK + 127);
-  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferFullScreenImage, TASK_PASS_VBLANK);
 
   // Each column starts at its own random row, and the rows go faster and
   // faster.
   for (i = 0; i != ARRAY_COUNT(offsets); i++)
-    offsets[i] = Random16() & (PARTICLE_STREAMS_RAGGED_EDGE - 1);
+    offsets[i] = Random16() & (STARFIELD_FALL_RAGGED_EDGE - 1);
   {
     s32 limit = 0;
     s32 step = 1;
@@ -875,7 +874,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         }
       }
       EFFECT_PRESENT_CANVAS(state);
-    } while (limit < CANVAS_SIZE + PARTICLE_STREAMS_RAGGED_EDGE);
+    } while (limit < CANVAS_SIZE + STARFIELD_FALL_RAGGED_EDGE);
   }
   // The fall.
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -923,7 +922,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       asm("" : "=r"(hold) : "r"(count) : "r1", "r3", "r6");
       line = state->backdropLines;
 
-      if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
+      if (mode == STARFIELD_FALL_OUTER_SPACE) {
         if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 16)
           break;
       } else {
@@ -954,8 +953,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           quarter++;
           quarter--;
         }
-        blue = level - PARTICLE_STREAMS_GLOW_BLUE_LEVEL;
-        green = level - PARTICLE_STREAMS_GLOW_GREEN_LEVEL;
+        blue = level - STARFIELD_FALL_GLOW_BLUE_LEVEL;
+        green = level - STARFIELD_FALL_GLOW_GREEN_LEVEL;
 
         CLAMP(blue, 0, RGB_LEVEL_MAX);
         CLAMP(green, 0, RGB_LEVEL_MAX);
@@ -972,7 +971,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       y = 96 - frame;
       position[3] = 0;
       position[1] = toFIXED(255);
-      if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
+      if (mode == STARFIELD_FALL_OUTER_SPACE) {
         spriteScale = growth + FIXED_ONE * 5 / 8;
         scale.x = spriteScale;
         scale.y = spriteScale;
@@ -993,7 +992,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       }
 
       // A new flame below the falling sprite.
-      for (i = 0, y = 32 - y; i != PARTICLE_STREAMS_FLAME_COUNT; i++) {
+      for (i = 0, y = 32 - y; i != STARFIELD_FALL_FLAME_COUNT; i++) {
         struct Particle *flame = &state->particles[i];
 
         if (flame->variant == -1) {
@@ -1017,17 +1016,16 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       Matrix_RotateZ(TRIG_TURN / 32);
       Matrix_RotateY(frame << 8);
       for (i = 0; i != 7; i++) {
-        vector[0] = INTtoFIXED(gParticleStreams_OrbitPoints[i][0] / 2);
-        vector[1] = INTtoFIXED(gParticleStreams_OrbitPoints[i][1] + frame);
-        vector[2] = INTtoFIXED(gParticleStreams_OrbitPoints[i][2] / 2);
+        vector[0] = INTtoFIXED(gStarfieldFall_OrbitPoints[i][0] / 2);
+        vector[1] = INTtoFIXED(gStarfieldFall_OrbitPoints[i][1] + frame);
+        vector[2] = INTtoFIXED(gStarfieldFall_OrbitPoints[i][2] / 2);
         EffectPosition_ProjectPoint(vector, pos = &spot);
         pos->x = FIXED_INTEGER_PART(pos->x) + 128;
         pos->y = FIXED_INTEGER_PART(pos->y) + 60;
-        draw(Ram_MapCellBuffer, state->sheet + PARTICLE_STREAMS_SMALL_GLOW,
-             pos->x - PARTICLE_STREAMS_SMALL_GLOW_SIZE / 2,
-             pos->y - PARTICLE_STREAMS_SMALL_GLOW_SIZE / 2,
-             PARTICLE_STREAMS_SMALL_GLOW_SIZE,
-             PARTICLE_STREAMS_SMALL_GLOW_SIZE);
+        draw(Ram_MapCellBuffer, state->sheet + STARFIELD_FALL_SMALL_GLOW,
+             pos->x - STARFIELD_FALL_SMALL_GLOW_SIZE / 2,
+             pos->y - STARFIELD_FALL_SMALL_GLOW_SIZE / 2,
+             STARFIELD_FALL_SMALL_GLOW_SIZE, STARFIELD_FALL_SMALL_GLOW_SIZE);
       }
 
       // Seven fireballs fall; one that reaches the ground becomes a landing.
@@ -1037,33 +1035,32 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         x = 16 - frame / 4;
       y = frame - 96;
       for (i = 0; i != 7; i++) {
-        s32 fireballY = gParticleStreams_FireballPoints[i][1] + y;
+        s32 fireballY = gStarfieldFall_FireballPoints[i][1] + y;
 
         if (fireballY <= 93)
-          draw(Ram_MapCellBuffer, state->sheet + PARTICLE_STREAMS_LARGE_GLOW,
-               gParticleStreams_FireballPoints[i][0] + x -
-                   PARTICLE_STREAMS_LARGE_GLOW_SIZE / 2,
-               fireballY - PARTICLE_STREAMS_LARGE_GLOW_SIZE / 2,
-               PARTICLE_STREAMS_LARGE_GLOW_SIZE,
-               PARTICLE_STREAMS_LARGE_GLOW_SIZE);
+          draw(Ram_MapCellBuffer, state->sheet + STARFIELD_FALL_LARGE_GLOW,
+               gStarfieldFall_FireballPoints[i][0] + x -
+                   STARFIELD_FALL_LARGE_GLOW_SIZE / 2,
+               fireballY - STARFIELD_FALL_LARGE_GLOW_SIZE / 2,
+               STARFIELD_FALL_LARGE_GLOW_SIZE, STARFIELD_FALL_LARGE_GLOW_SIZE);
         else if (fireballY <= 95)
           ParticleStreams_SpawnLanding(
-              INTtoFIXED(gParticleStreams_FireballPoints[i][0] + x),
+              INTtoFIXED(gStarfieldFall_FireballPoints[i][0] + x),
               INTtoFIXED(fireballY), 1);
       }
 
-      for (i = 0; i != PARTICLE_STREAMS_FLAME_COUNT; i++) {
+      for (i = 0; i != STARFIELD_FALL_FLAME_COUNT; i++) {
         struct Particle *flame = &state->particles[i];
 
         // A flame rises against the stream through its six pictures.
         if (flame->variant >= 0) {
           draw(Ram_MapCellBuffer,
-               state->sheet + PARTICLE_STREAMS_FLAMES +
-                   flame->variant * (PARTICLE_STREAMS_FLAME_SIZE *
-                                     PARTICLE_STREAMS_FLAME_SIZE),
-               FIXED_INTEGER_PART(flame->x) - PARTICLE_STREAMS_FLAME_SIZE / 2,
-               FIXED_INTEGER_PART(flame->y) - PARTICLE_STREAMS_FLAME_SIZE / 2,
-               PARTICLE_STREAMS_FLAME_SIZE, PARTICLE_STREAMS_FLAME_SIZE);
+               state->sheet + STARFIELD_FALL_FLAMES +
+                   flame->variant *
+                       (STARFIELD_FALL_FLAME_SIZE * STARFIELD_FALL_FLAME_SIZE),
+               FIXED_INTEGER_PART(flame->x) - STARFIELD_FALL_FLAME_SIZE / 2,
+               FIXED_INTEGER_PART(flame->y) - STARFIELD_FALL_FLAME_SIZE / 2,
+               STARFIELD_FALL_FLAME_SIZE, STARFIELD_FALL_FLAME_SIZE);
           flame->x -= direction * (toFIXED(5) / 4);
           flame->y -= toFIXED(5);
           flame->variant++;
@@ -1074,12 +1071,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       EFFECT_PRESENT_CANVAS(state);
       frame++;
       state->frame++;
-    } while (frame != PARTICLE_STREAMS_FALL_FRAMES);
+    } while (frame != STARFIELD_FALL_FALL_FRAMES);
     wait(1);
     transition->busy = 0;
     Task_Remove(BattleEffect_AdvanceBg2OnInterval);
     Task_Remove(BattleEffect_ArmPaletteHBlankDma);
-    Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferFullScreenImage);
     gBgScroll[1].x = savedX;
     gBgScroll[1].y = savedY;
   }
@@ -1096,13 +1093,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, state->sheet, 1, 0);
-  for (i = 0; i != PARTICLE_STREAMS_FLAME_COUNT; i++) {
+  for (i = 0; i != STARFIELD_FALL_FLAME_COUNT; i++) {
     struct Particle *mote = &state->particles[i];
 
     mote->x = Random16() & 127;
     mote->y = (Random16() & 127) + 127;
   }
-  for (i = 0; i != PARTICLE_STREAMS_FLASHES; i++) {
+  for (i = 0; i != STARFIELD_FALL_FLASHES; i++) {
     struct Particle *flash = &PARTICLES[i];
 
     SET_POSITION(flash, 0, 0, 0);
@@ -1110,8 +1107,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                  (Random16() & 255) << 11, ((Random16() & 255) - 127) << 12);
     flash->variant = 0;
   }
-  for (i = 0; i != PARTICLE_STREAMS_EMBER_COUNT; i++) {
-    struct Particle *ember = &PARTICLE_STREAMS_EMBERS[i];
+  for (i = 0; i != STARFIELD_FALL_EMBER_COUNT; i++) {
+    struct Particle *ember = &STARFIELD_FALL_EMBERS[i];
 
     SET_POSITION(ember, 0, 0, 0);
     SET_VELOCITY(ember, ((Random16() & 255) - 128) << 13,
@@ -1120,23 +1117,23 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   }
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
-  for (frame = 0; frame != PARTICLE_STREAMS_BURST_FRAMES; frame++) {
+  for (frame = 0; frame != STARFIELD_FALL_BURST_FRAMES; frame++) {
     s32 dragonScale = (frame + 464) << 8;
     struct BattleCamera *camera = Ram_HeapSlots->cameraState;
-    s32 elapsed = frame - PARTICLE_STREAMS_FLASH_FRAME;
+    s32 elapsed = frame - STARFIELD_FALL_FLASH_FRAME;
     struct Scale scale;
     s32 x;
     s32 y;
     s32 grow;
 
-    if (elapsed >= PARTICLE_STREAMS_BRIGHTEN_DELAY)
+    if (elapsed >= STARFIELD_FALL_BRIGHTEN_DELAY)
       Palette_BrightenBgEntries(2, 2, 2);
     if (frame == 0)
       Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == 40)
       Sound_PlayFar(SE_CRASH);
     if (frame == PARTICLE_STREAMS_DAMAGE_FRAME) {
-      if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
+      if (mode == STARFIELD_FALL_OUTER_SPACE) {
         Sprite_DestroyFar(state->sprites[0]);
         Sprite_DestroyFar(state->sprites[1]);
         BattleObject_PutFar();
@@ -1145,9 +1142,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     }
 
     EFFECT_VIEW_FROM_CAMERA(camera);
-    for (i = 0; i != PARTICLE_STREAMS_EMBERS_DRAWN; i++) {
+    for (i = 0; i != STARFIELD_FALL_EMBERS_DRAWN; i++) {
       // Embers fall and bounce back up from the ground.
-      struct Particle *ember = &PARTICLE_STREAMS_EMBERS[i];
+      struct Particle *ember = &STARFIELD_FALL_EMBERS[i];
 
       if (ember->y >= 0) {
         s32 size;
@@ -1171,7 +1168,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
              state->sheet +
                  (gBattleEffect_MotePictures[size - 1] +
                   (i & 1) * MOTE_SET_BYTES) +
-                 PARTICLE_STREAMS_MOTE_PICTURES,
+                 STARFIELD_FALL_MOTE_PICTURES,
              screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(ember, PARTICLE_DAMPING_NONE,
                                       -toFIXED(1) / 8);
@@ -1195,31 +1192,31 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
            state->sheet +
                (gBattleEffect_MotePictures[size - 1] +
                 (i & 1) * MOTE_SET_BYTES) +
-               PARTICLE_STREAMS_MOTE_PICTURES,
+               STARFIELD_FALL_MOTE_PICTURES,
            mote->x - size / 2, mote->y - size, size, size * 2);
       mote->y = mote->y - rise - 8;
       if (mote->y < -10)
         mote->y = 128;
     }
 
-    for (i = 0; i != PARTICLE_STREAMS_FLASHES_DRAWN; i++) {
+    for (i = 0; i != STARFIELD_FALL_FLASHES_DRAWN; i++) {
       // Flashes grow and rise, three more each frame.
       struct Particle *flash = &PARTICLES[i];
 
       if (i / 3 < elapsed && flash->y >= 0) {
         EffectPosition_ProjectPoint(&flash->x, &screen);
         screen.x >>= 1;
-        if ((u32)flash->variant < 2 * PARTICLE_STREAMS_FLASH_PICTURES) {
+        if ((u32)flash->variant < 2 * STARFIELD_FALL_FLASH_PICTURES) {
           s32 picture = flash->variant / 2;
 
-          draw(canvas, state->sheet + gParticleStreams_FlashPictures[picture],
-               screen.x - gParticleStreams_FlashSizes[picture] / 2,
-               screen.y - gParticleStreams_FlashSizes[picture] / 2,
-               gParticleStreams_FlashSizes[picture],
-               gParticleStreams_FlashSizes[picture]);
+          draw(canvas, state->sheet + gStarfieldFall_FlashPictures[picture],
+               screen.x - gStarfieldFall_FlashSizes[picture] / 2,
+               screen.y - gStarfieldFall_FlashSizes[picture] / 2,
+               gStarfieldFall_FlashSizes[picture],
+               gStarfieldFall_FlashSizes[picture]);
         }
         flash->variant++;
-        if (flash->variant == 2 * PARTICLE_STREAMS_FLASH_PICTURES) {
+        if (flash->variant == 2 * STARFIELD_FALL_FLASH_PICTURES) {
           flash->y = toFIXED(20);
           flash->x = 0;
           flash->z = INTtoFIXED((Random16() & 255) - 127);
@@ -1240,7 +1237,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     grow = (frame << 8) + FIXED_ONE * 2;
     position[3] = 0;
     position[1] = toFIXED(255);
-    if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
+    if (mode == STARFIELD_FALL_OUTER_SPACE) {
       scale.x = dragonScale;
       scale.y = dragonScale;
       position[0] = INTtoFIXED(x) + toFIXED(96);
@@ -1259,35 +1256,35 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  if (mode == PARTICLE_STREAMS_METEOR)
+  if (mode == STARFIELD_FALL_METEOR)
     Sprite_DestroyFar(state->sprites[0]);
   BattleEffect_EndCanvasLayer();
 }
 
 #undef FORMATION_SPACING
-#undef PARTICLE_STREAMS_FALL_FRAMES
-#undef PARTICLE_STREAMS_BURST_FRAMES
+#undef STARFIELD_FALL_FALL_FRAMES
+#undef STARFIELD_FALL_BURST_FRAMES
 #undef PARTICLE_STREAMS_DAMAGE_FRAME
-#undef PARTICLE_STREAMS_FLAME_SIZE
-#undef PARTICLE_STREAMS_LARGE_GLOW_SIZE
-#undef PARTICLE_STREAMS_SMALL_GLOW_SIZE
-#undef PARTICLE_STREAMS_FLASHES
-#undef PARTICLE_STREAMS_EMBER_COUNT
-#undef PARTICLE_STREAMS_EMBERS
-#undef PARTICLE_STREAMS_FLASHES_DRAWN
-#undef PARTICLE_STREAMS_EMBERS_DRAWN
-#undef PARTICLE_STREAMS_FLAME_COUNT
-#undef PARTICLE_STREAMS_LANDINGS
-#undef PARTICLE_STREAMS_STARS
-#undef PARTICLE_STREAMS_RAGGED_EDGE
-#undef PARTICLE_STREAMS_GLOW_BLUE_LEVEL
-#undef PARTICLE_STREAMS_GLOW_GREEN_LEVEL
-#undef PARTICLE_STREAMS_FLASH_FRAME
-#undef PARTICLE_STREAMS_BRIGHTEN_DELAY
-#undef PARTICLE_STREAMS_FLASH_PICTURES
+#undef STARFIELD_FALL_FLAME_SIZE
+#undef STARFIELD_FALL_LARGE_GLOW_SIZE
+#undef STARFIELD_FALL_SMALL_GLOW_SIZE
+#undef STARFIELD_FALL_FLASHES
+#undef STARFIELD_FALL_EMBER_COUNT
+#undef STARFIELD_FALL_EMBERS
+#undef STARFIELD_FALL_FLASHES_DRAWN
+#undef STARFIELD_FALL_EMBERS_DRAWN
+#undef STARFIELD_FALL_FLAME_COUNT
+#undef STARFIELD_FALL_LANDINGS
+#undef STARFIELD_FALL_STARS
+#undef STARFIELD_FALL_RAGGED_EDGE
+#undef STARFIELD_FALL_GLOW_BLUE_LEVEL
+#undef STARFIELD_FALL_GLOW_GREEN_LEVEL
+#undef STARFIELD_FALL_FLASH_FRAME
+#undef STARFIELD_FALL_BRIGHTEN_DELAY
+#undef STARFIELD_FALL_FLASH_PICTURES
 #undef PARTICLE_STREAMS_EMBER_NEAR
 #undef PARTICLE_STREAMS_EMBER_FAR
 #undef PARTICLE_STREAMS_EMBER_SIZE_DEPTH
-#undef PARTICLE_STREAMS_MOTE_PICTURES
+#undef STARFIELD_FALL_MOTE_PICTURES

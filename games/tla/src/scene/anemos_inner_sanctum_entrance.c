@@ -217,7 +217,7 @@ void AnemosInnerSanctumEntrance_PlaceBlocks(void) {
   for (i = ACTOR_SYMBOL_BLOCK_A; i <= ACTOR_SYMBOL_BLOCK_F; i++) {
     struct Actor *actor = Actor_GetById(i);
 
-    actor->riseCounter = 1;
+    actor->sceneCounter = 1;
     actor->update = 0;
   }
 }

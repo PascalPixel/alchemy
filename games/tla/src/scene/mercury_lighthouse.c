@@ -60,7 +60,7 @@ s32 MercuryLighthouse_FlickerGlint(struct Actor *actor) {
 /// An Imil villager's update while the voices talk: every 40 to 120 frames
 /// it turns between two headings, as if looking around for them.
 void MercuryLighthouse_LookAround(struct Actor *actor) {
-  u8 *timer = &actor->riseCounter;
+  u8 *timer = &actor->sceneCounter;
   u8 *state;
 
   if (*timer != 0) {
@@ -68,7 +68,7 @@ void MercuryLighthouse_LookAround(struct Actor *actor) {
     return;
   }
   *timer = (Random_Below(80)) + 40;
-  state = &actor->riseEnabled;
+  state = &actor->sceneByte;
   switch (*state) {
   case 0:
     actor->facing = FACING_WEST;
@@ -202,13 +202,13 @@ void MercuryLighthouse_HearVoices(void) {
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_OLD_MAN, 0);
   actor = Actor_GetById(ACTOR_OLD_MAN);
   delay = (Random_Below(80)) + 40;
-  actor->riseCounter = delay;
-  actor->riseEnabled = 0;
+  actor->sceneCounter = delay;
+  actor->sceneByte = 0;
   actor->update = (ObjectUpdate)MercuryLighthouse_LookAround;
   actor = Actor_GetById(ACTOR_OLD_WOMAN);
   delay = (Random_Below(80)) + 40;
-  actor->riseCounter = delay;
-  actor->riseEnabled = 2;
+  actor->sceneCounter = delay;
+  actor->sceneByte = 2;
   actor->update = (ObjectUpdate)MercuryLighthouse_LookAround;
   FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
   // "How is it that we can hear you?"

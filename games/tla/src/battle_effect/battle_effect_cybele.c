@@ -199,7 +199,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     height += speed;
     if (height > toFIXED(64))
       height = toFIXED(64);
-    BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_CYBELE, cybeleX,
+    BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_CYBELE, cybeleX,
                                        height);
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
@@ -548,7 +548,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleEffect_RunImpactBurst(SUMMON_FORMATION_CYBELE, cybeleX, height);

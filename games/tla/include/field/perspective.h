@@ -16,9 +16,9 @@ struct WorldMapView {
   s32 *origin;                    ///< the followed point, as in MapState
   s32 shakeX, shakeY, shakeDecay; ///< the screen shake, as in MapState
   u8 *script;                     ///< NULL at load
-  u16 fade; ///< MapState's flags: REG_DISPCNT bits, BG0 to BG3 and the sprites
-            ///< at load
-  u8 fadeStep; ///< MapState's wideTiles, 0x80 at load
+  u16 shownLayers; ///< MapState's flags: REG_DISPCNT bits, BG0 to BG3 and the
+                   ///< sprites at load
+  u8 wideTiles;    ///< MapState's wideTiles, 0x80 at load
   /// As MapState: footprints, tileset animations and blend script.
   u8 animationsAndBlend[205];
   FIXED viewX;             ///< the view's left, 16.16 fixed-point pixels

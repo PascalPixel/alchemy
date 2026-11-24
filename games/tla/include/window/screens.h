@@ -34,20 +34,20 @@ struct BattleSummaryCursor {
 };
 
 /// A row of gMenu_BarPatternRows: the two words a menu bar's tile pair is
-/// XORed with (Menu_BuildLocalizedPatternTiles).
+/// XORed with (RangeIcon_BuildTiles).
 struct BarPatternRow {
   u32 firstTile;
   u32 secondTile;
 };
 
 /// One word of a tile XORed with a row's mask: the marks
-/// Menu_BuildPatternTiles and Menu_BuildLocalizedPatternTiles make on a range
+/// Menu_BuildPatternTiles and RangeIcon_BuildTiles make on a range
 /// icon's two tiles.
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
 /// The twelve Psynergy range icons, built in two sets of six
 /// (Menu_BuildPatternTiles for the Status menu,
-/// Menu_BuildLocalizedPatternTiles for the battle menu): range n takes icon
+/// RangeIcon_BuildTiles for the battle menu): range n takes icon
 /// n - 1, and ABILITY_RANGE_ALL the last, RANGE_ICON_ALL.
 #define RANGE_PATTERN_SET_COUNT 2
 #define RANGE_PATTERN_COUNT 6
@@ -66,7 +66,7 @@ s32 Battle_RefuseFlee(void);
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count);
 s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby);
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count);
-s32 Item_ClassifyUseAbility(s32 member, s32 item);
+s32 Item_CheckBattleUse(s32 member, s32 item);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 void IconMenu_DrawIcons(void);
 void PageArrows_Draw(s32 destination);

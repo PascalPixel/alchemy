@@ -126,7 +126,7 @@ s32 ItemPicker_RunToDropFar(s32 *member, s32 *slot);
 
 void MindRead_AdvanceTint(void);
 void MindRead_UpdateCrescent(struct Actor *actor);
-void Actor_SetSpritePalette(void *actor, s32 value);
+void Actor_SetLayersColorMode(void *actor, s32 value);
 
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z);
@@ -202,7 +202,7 @@ extern s16 gMapScreen_FirstListOnly;
 
 void FieldPsynergy_Lash(void);
 
-void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor);
+void Whirlwind_UpdateTarget(struct Actor *actor);
 
 void Camera_WorldToScreen(struct Vector3 *position);
 
@@ -214,7 +214,7 @@ void FieldPsynergy_Arrow(void);
 void FieldPsynergy_Halt(void);
 
 void FieldPsynergy_Catch(void);
-void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot);
+void Retreat_UpdateSpark(struct FieldParticle *slot);
 
 void FieldPsynergy_Whirlwind(void);
 

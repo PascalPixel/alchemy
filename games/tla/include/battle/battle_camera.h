@@ -130,10 +130,10 @@ void BattleObject_Put(void);
 /// abilities.
 void BattleEffect_RunSummonFar(s32 *context);
 /// Copies the canvas to VRAM when a transfer is pending.
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_TransferCanvas(void);
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 /// Steps the background palette fade.
-void Palette_StepFadeTransfer(void);
+void BattleEffect_DarkenBackgroundStep(void);
 struct BattleEffectParams;
 
 /// The battle camera's distance from its focus in its default view, and the

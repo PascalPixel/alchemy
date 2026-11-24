@@ -1091,7 +1091,7 @@ s32 SelectionIcon_Load(u32 mode, s32 value) {
         value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN, result);
     break;
   case ICON_KIND_ABILITY:
-    Ability_LoadGlyph(value, 1, &result, &output, 0);
+    Ability_BuildIconTiles(value, 1, &result, &output, 0);
     break;
   }
   return result;
@@ -1115,17 +1115,16 @@ s32 SelectionIcon_LoadIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
     Icon_BuildCommandIconTiles(value, option, &result, &output, 1);
     break;
   case ICON_KIND_ITEM:
-    ItemIcon_LoadLayersIntoSlot(value,
-                                ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED |
-                                    ICON_BROKEN | ICON_ARTIFACT,
-                                result);
+    ItemIcon_LoadLayersIntoSlot(
+        value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN | ICON_CURSED,
+        result);
     break;
   case ICON_KIND_EQUIPMENT_ITEM:
     ItemIcon_LoadLayersIntoSlot(
-        value, ICON_COUNT_ABOVE_ONE | ICON_BROKEN | ICON_ARTIFACT, result);
+        value, ICON_COUNT_ABOVE_ONE | ICON_BROKEN | ICON_CURSED, result);
     break;
   case ICON_KIND_ABILITY:
-    Ability_LoadGlyph(value, option, &result, &output, 1);
+    Ability_BuildIconTiles(value, option, &result, &output, 1);
     break;
   case ICON_KIND_PATTERN:
     Icon_BuildMiscIconTiles(value, 0, result);
@@ -1163,7 +1162,7 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
   case ICON_KIND_ABILITY:
     if (reuse != 0)
       cacheSlot = node->slot;
-    Ability_LoadGlyph(base, 1, &cacheSlot, &tile, reuse);
+    Ability_BuildIconTiles(base, 1, &cacheSlot, &tile, reuse);
     node->message = base + MsgAbilityName;
     break;
   }
@@ -1346,7 +1345,7 @@ void SelectionMenu_LoadLargeIcon(void) {
   struct SelectionMenuState *state = Ram_HeapSlots->selectionMenu;
   struct SelectionNode *node = SelectionMenu_GetCursorNode(state);
   struct SelectionNode *largeIcon;
-  GlyphTransfer *buffer;
+  IconTransfer *buffer;
   u8 *table;
   void *resource;
   s32 command;
@@ -1354,8 +1353,8 @@ void SelectionMenu_LoadLargeIcon(void) {
   if (node->kind != ICON_KIND_COMMAND && node->kind != ICON_KIND_YES_NO)
     return;
 
-  buffer = (GlyphTransfer *)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER,
-                                           sizeof(GlyphTransfer));
+  buffer = (IconTransfer *)HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER,
+                                          sizeof(IconTransfer));
   largeIcon = &state->records[SELECTION_RECORD_LARGE_ICON];
   command = node->base;
   table = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
@@ -1374,7 +1373,7 @@ void SelectionMenu_LoadLargeIcon(void) {
   largeIcon->scale = LARGE_ICON_ZOOM_STEP;
   largeIcon->scaleStep = LARGE_ICON_ZOOM_STEP;
   largeIcon->scaleEnd = 6 * LARGE_ICON_ZOOM_STEP;
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
 }
 
 /// Frees the large icon's VRAM cache entry, if it holds one, and marks it

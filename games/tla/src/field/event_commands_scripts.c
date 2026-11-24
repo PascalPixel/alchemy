@@ -35,7 +35,7 @@ const s32 gFieldEffect_FragmentScript[] = {
     SC_SYNC, SC_SPEED(0.0625), SC_ANIMATION(0), SC_WAIT(10), SC_RELEASE,
 };
 
-/// The sprite palettes Actor_SetSpritePalette cycles through for value 0
+/// The sprite palettes Actor_SetLayersColorMode cycles through for value 0
 /// ((gFrameCount >> 1) & 7): 1 to 4 and back to 0, two frames each; The Broken
 /// Seal's gMindRead_CasterPaletteCycle.
 const u8 gAnim_ChildPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};

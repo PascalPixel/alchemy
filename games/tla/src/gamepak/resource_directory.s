@@ -33,7 +33,7 @@ Resource_DirectoryTable:
 	resource SmallFont, Text_SmallFont
 	resource ClockDigits, Field_ClockDigits
 	resource TitleScreenPicture, Title_ScreenPicture
-	resource , Title_IntroGraphicsC
+	resource , Title_IntroPeak
 	resource IntroClouds, Title_IntroClouds
 	resource IntroLighthousePicture, Title_IntroLighthousePicture
 	resource IntroGullSprites, Title_IntroGullSprites
@@ -64,11 +64,11 @@ Resource_DirectoryTable:
 	resource LamakanDesertBackdrop, Battle_LamakanDesertBackdrop
 	resource MogallForestBackdrop, Battle_MogallForestBackdrop
 	resource MercuryLighthouseAerieBackdrop, Battle_MercuryLighthouseAerieBackdrop
-	resource TolbiShipInteriorsBackdrop, Battle_TolbiShipInteriorsBackdrop
+	resource TolbiShipRoomsBackdrop, Battle_TolbiShipRoomsBackdrop
 	resource ImilFuchinFallsBackdrop, Battle_ImilFuchinFallsBackdrop
 	resource KolimaForestBackdrop, Battle_KolimaForestBackdrop
-	resource TretTreeInteriorsBackdrop, Battle_TretTreeInteriorsBackdrop
-	resource InteriorBackdrop, Battle_InteriorBackdrop
+	resource TretTreeRoomsBackdrop, Battle_TretTreeRoomsBackdrop
+	resource RoomsBackdrop, Battle_RoomsBackdrop
 	resource AltinPeakBackdrop, Battle_AltinPeakBackdrop
 	resource TolbiShipDeckBackdrop, Battle_TolbiShipDeckBackdrop
 	resource MercuryLighthouseBackdrop, Battle_MercuryLighthouseBackdrop
@@ -272,19 +272,19 @@ Resource_DirectoryTable:
 	resource FireStripesTexture, BattleEffect_FireStripesTexture
 	resource PinkBarSheet, BattleEffect_PinkBarSheet
 	resource CloudPuffSheet, BattleEffect_CloudPuffSheet
-	resource TileAnimationMask, BattleEffect_TileAnimationMask
+	resource ShatteringOpeningSheet, BattleEffect_ShatteringOpeningSheet
 	resource CyanSparkSheet, BattleEffect_CyanSparkSheet
 	resource VioletPaletteA, BattleEffect_VioletPaletteA
 	resource RedPaletteA, BattleEffect_RedPaletteA
 	resource YellowPaletteA, BattleEffect_YellowPaletteA
 	resource GreyCrescentSheet, BattleEffect_GreyCrescentSheet
 	resource StarCrescentSheet, BattleEffect_StarCrescentSheet
-	resource RevealMaskA, BattleEffect_RevealMaskA
-	resource RevealMaskB, BattleEffect_RevealMaskB
-	resource RevealMaskC, BattleEffect_RevealMaskC
-	resource RevealMaskD, BattleEffect_RevealMaskD
-	resource RevealMaskE, BattleEffect_RevealMaskE
-	resource RevealMaskF, BattleEffect_RevealMaskF
+	resource VorpalSlashImageA, BattleEffect_VorpalSlashImageA
+	resource VorpalSlashImageB, BattleEffect_VorpalSlashImageB
+	resource QuickStrikeImageA, BattleEffect_QuickStrikeImageA
+	resource QuickStrikeImageB, BattleEffect_QuickStrikeImageB
+	resource UnusedFlashingStrikeImageA, BattleEffect_UnusedFlashingStrikeImageA
+	resource UnusedFlashingStrikeImageB, BattleEffect_UnusedFlashingStrikeImageB
 	resource LimeColumnSheet, BattleEffect_LimeColumnSheet
 	resource , BattleEffect_RainSheet
 	resource FlameSheetA, BattleEffect_FlameSheetA

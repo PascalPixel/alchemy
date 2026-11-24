@@ -171,18 +171,18 @@ void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
 
     // The line's ray slope: its offset from the projection's centre line over
     // the focal length; later the vertical term.
-    slope = Iwram_RatioMulQ14(focus, (gProjection.centerY - line) * FIXED_ONE);
+    slope = Iwram_DivFX(focus, (gProjection.centerY - line) * FIXED_ONE);
     difference = slope - pitchSlope;
     if (difference == 0)
       difference = 1;
-    scale = Iwram_RatioMulQ14(difference, horizon);
+    scale = Iwram_DivFX(difference, horizon);
     // A negative scale is a line below the horizon, whose ray meets the
     // ground; the lines above it are sky and get zeros.
     if (scale < 0) {
       // The width scale is half the line's scale over the focal length, and
       // the depth is stored halved.
-      scanline->scale = Iwram_RatioMulQ14(gProjection.focal,
-                                          Iwram_MulFX(-scale, FIXED_ONE / 2));
+      scanline->scale =
+          Iwram_DivFX(gProjection.focal, Iwram_MulFX(-scale, FIXED_ONE / 2));
       slope = Iwram_MulFX(scale, slope);
       horizontal = (cameraPoint[2] - scale) >> 4;
       slope -= cameraPoint[1];

@@ -21,7 +21,7 @@ const u8 gNewGame_SceneStateTable[4][5] = {
 
 // clang-format off
 /// Each item's rare item counter number plus one, 0 for an ordinary item; the
-/// shops' stock of a rare item is counted by it (Item_AdjustCounter).
+/// shops' stock of a rare item is counted by it (Item_AdjustRareItemStock).
 const u16 gItem_RareItemCounters[512] = {
     0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 0, 0, 0, 0,
     0, 0, 0, 0, 8, 9, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0,
@@ -60,5 +60,5 @@ const u16 gItem_RareItemCounters[512] = {
 
 /// The characters Party_InitializeCharacters gives their starting equipment,
 /// ended by -1.
-const s32 gCharacter_StartingEquipUnitIds[] = {ISAAC, GARET, IVAN,  MIA, FELIX,
-                                               JENNA, SHEBA, PIERS, -1};
+const s32 gCharacter_NewGameIds[] = {ISAAC, GARET, IVAN,  MIA, FELIX,
+                                     JENNA, SHEBA, PIERS, -1};

@@ -172,7 +172,7 @@ void Caverns_PlaceAngaraBlocks(const s16 *data) {
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 2, height);
     cell = MapCell_GetAttributes(0, FIELD_CELL(actor->x.fixed),
                                  FIELD_CELL(actor->z.fixed));
-    actor->riseBaseY = cell;
+    actor->sceneWord = cell;
     MapCell_SetAttributes(0, FIELD_CELL(actor->x.fixed),
                           FIELD_CELL(actor->z.fixed), cell | MAP_CELL_JUMP);
   }
@@ -259,8 +259,8 @@ void Caverns_StartMovingAngaraBlock(void) {
 
   state->movedBlock = NULL;
   if (current != NULL && state->psynergy != 0) {
-    actor = state->movedBlock = current->child;
-    if (current->action != ABILITY_CARRY)
+    actor = state->movedBlock = current->target;
+    if (current->ability != ABILITY_CARRY)
       Caverns_ShiftAngaraCellHeights(1);
   } else {
     leader = Actor_GetById(gMainRoutineState.leaderActorId);
@@ -289,7 +289,7 @@ void Caverns_StartMovingAngaraBlock(void) {
   MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, height);
   MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 2, height);
   MapCell_SetAttributes(0, FIELD_CELL(actor->x.fixed),
-                        FIELD_CELL(actor->z.fixed), actor->riseBaseY);
+                        FIELD_CELL(actor->z.fixed), actor->sceneWord);
 }
 
 /// A dust puff loses a DUST_DRAG_X-th of its speed east or west each frame, and
@@ -352,7 +352,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
   current = Ram_HeapSlots->fieldEffectState;
   actor = state->movedBlock;
   if (current != NULL && state->psynergy != 0) {
-    if (current->action != ABILITY_CARRY)
+    if (current->ability != ABILITY_CARRY)
       Caverns_ShiftAngaraCellHeights(-1);
   } else {
     Caverns_ShiftAngaraCellHeights(-1);
@@ -418,8 +418,8 @@ void Caverns_FinishMovingAngaraBlock(void) {
     other = Actor_FindAtCell(velocity, 1);
     if (other != NULL) {
       actor->update = (ObjectUpdate)Caverns_LayerLeaderByTopBlock;
-      actor->riseCounter = 1;
-      other->riseCounter = 1;
+      actor->sceneCounter = 1;
+      other->sceneCounter = 1;
       GameFlag_Set(FLAG_ANGARA_BLOCK_ON_TOP);
     }
   }
@@ -430,7 +430,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
   MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 2, height);
   value = MapCell_GetAttributes(0, FIELD_CELL(actor->x.fixed),
                                 FIELD_CELL(actor->z.fixed));
-  actor->riseBaseY = value;
+  actor->sceneWord = value;
   MapCell_SetAttributes(0, FIELD_CELL(actor->x.fixed),
                         FIELD_CELL(actor->z.fixed), value | MAP_CELL_JUMP);
 }

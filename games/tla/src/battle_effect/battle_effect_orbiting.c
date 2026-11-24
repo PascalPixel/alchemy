@@ -35,7 +35,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_STAR_DOT_SHEET, state->sheet, 1, 1);
-  BattleEffect_FetchRectangleBlitters(args->side ^ 1, draw);
+  BattleEffect_BuildCanvasBlitters(args->side ^ 1, draw);
   for (i = 0; i != SWIRLING_STARS_PLACED; i++) {
     star = &PARTICLES[i];
     SET_POSITION(star, INTtoFIXED((Random16() & 0xff) - 127),

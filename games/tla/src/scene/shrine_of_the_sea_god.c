@@ -237,7 +237,7 @@ enum ShrineOfTheSeaGodIslandActorId {
   ACTOR_ISLAND_THIRD_LOG
 };
 
-/// Where Breath stands on the ledge, kept in its Actor.riseCounter: at a
+/// Where Breath stands on the ledge, kept in its Actor.sceneCounter: at a
 /// corner, or stopped beside the torch on the north side, facing it.
 enum ShrineOfTheSeaGodBreathPlace {
   BREATH_AT_SOUTHEAST_CORNER,
@@ -301,7 +301,7 @@ enum ShrineOfTheSeaGodCell {
 /// starts its battle.
 void ShrineOfTheSeaGod_FightBreath(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
-  u8 *place = &Actor_GetById(ACTOR_BREATH)->riseCounter;
+  u8 *place = &Actor_GetById(ACTOR_BREATH)->sceneCounter;
   FIXED y;
 
   if ((u8)(*place - BREATH_STOPPED_EAST_OF_TORCH) >
@@ -1728,7 +1728,7 @@ void ShrineOfTheSeaGod_DjinniHopsOntoLedge(void) {
     Actor_WalkToAndWait(ACTOR_BREATH, 345, 296);
     Actor_WalkToAndWait(ACTOR_BREATH, 392, 296);
     Actor_WatchAndSetScript(ACTOR_BREATH, gMainRoutineState.leaderActorId);
-    Actor_GetById(ACTOR_BREATH)->riseCounter = off;
+    Actor_GetById(ACTOR_BREATH)->sceneCounter = off;
     wait(10);
     GameFlag_Set(FLAG_DJINNI_ON_LEDGE);
     Event_End();
@@ -1760,7 +1760,7 @@ void ShrineOfTheSeaGod_EndDjinniDash(void) {
     FieldCamera_MoveWithinMapBounds(toFIXED(toX), toFIXED(16), toFIXED(toZ),   \
                                     1);                                        \
     Actor_WalkToAndWaitById(ACTOR_BREATH, toX, toZ);                           \
-    Actor_GetById(ACTOR_BREATH)->riseCounter = place;                          \
+    Actor_GetById(ACTOR_BREATH)->sceneCounter = place;                         \
     ShrineOfTheSeaGod_EndDjinniDash();                                         \
   }
 
@@ -1784,7 +1784,7 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthEastToNorthEast, 392, 216,
     FieldCamera_MoveToFX(toFIXED(stopX), toFIXED(16), toFIXED(216), 1);        \
     Actor_WalkToAndWait(ACTOR_BREATH, stopX, 216);                             \
     flag = GameFlag_Get(FLAG_TORCH_AT_NORTH_WALL);                             \
-    place = &djinni->riseCounter;                                              \
+    place = &djinni->sceneCounter;                                             \
     if (flag) {                                                                \
       djinni->facing = turnTo;                                                 \
       Actor_SetAttachedEffect(ACTOR_BREATH, ATTACHED_EFFECT_IN_FRONT |         \
@@ -1827,7 +1827,7 @@ DEFINE_DJINNI_WALK_AND_JUMP(ShrineOfTheSeaGod_DjinniNorthEastJumpsWest, 360,
     Actor_WalkToAndWait(ACTOR_BREATH, fromX, 248);                             \
     Actor_WalkToAndWait(ACTOR_BREATH, toX, 248);                               \
     Actor_WalkToAndWaitById(ACTOR_BREATH, toX, toZ);                           \
-    Actor_GetById(ACTOR_BREATH)->riseCounter = place;                          \
+    Actor_GetById(ACTOR_BREATH)->sceneCounter = place;                         \
     ShrineOfTheSeaGod_EndDjinniDash();                                         \
   }
 
@@ -1873,7 +1873,7 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniNorthEastToSouthEast, 392, 296,
                                                                                \
     ShrineOfTheSeaGod_StartDjinniDash();                                       \
     flag = GameFlag_Get(FLAG_TORCH_AT_NORTH_WALL);                             \
-    place = &djinni->riseCounter;                                              \
+    place = &djinni->sceneCounter;                                             \
     if (flag) {                                                                \
       djinni->facing = turnTo;                                                 \
       Actor_SetAttachedEffect(ACTOR_BREATH, ATTACHED_EFFECT_IN_FRONT |         \
@@ -1935,16 +1935,16 @@ void ShrineOfTheSeaGod_ChaseDjinni(void) {
   actor = Actor_GetById(ACTOR_BREATH);
   switch (state->stepTrigger) {
   case STEP_LEDGE_SOUTHEAST_WAY_UP:
-    if (actor->riseCounter == BREATH_AT_SOUTHEAST_CORNER)
+    if (actor->sceneCounter == BREATH_AT_SOUTHEAST_CORNER)
       ShrineOfTheSeaGod_DjinniSouthEastToNorthEast();
     GameFlag_Clear(FLAG_DJINNI_TRAPPED);
     break;
   case STEP_LEDGE_EAST_SIDE_SOUTH:
-    if (actor->riseCounter == BREATH_AT_SOUTHEAST_CORNER)
+    if (actor->sceneCounter == BREATH_AT_SOUTHEAST_CORNER)
       ShrineOfTheSeaGod_DjinniSouthEastToSouthWest();
     break;
   case STEP_LEDGE_EAST_SIDE_NORTH: {
-    u8 current = actor->riseCounter;
+    u8 current = actor->sceneCounter;
 
     if (current == BREATH_AT_NORTHEAST_CORNER)
       ShrineOfTheSeaGod_DjinniNorthEastJumpsWest();
@@ -1953,7 +1953,7 @@ void ShrineOfTheSeaGod_ChaseDjinni(void) {
       ShrineOfTheSeaGod_TrappedDjinniJumpsWest();
   } break;
   case STEP_LEDGE_NORTH_SIDE_EAST: {
-    u8 current = actor->riseCounter;
+    u8 current = actor->sceneCounter;
 
     if (current == BREATH_AT_NORTHEAST_CORNER)
       ShrineOfTheSeaGod_DjinniNorthEastToSouthEast();
@@ -1961,7 +1961,7 @@ void ShrineOfTheSeaGod_ChaseDjinni(void) {
       ShrineOfTheSeaGod_TrappedDjinniToNorthWest();
   } break;
   case STEP_LEDGE_NORTH_SIDE_WEST: {
-    u8 current = actor->riseCounter;
+    u8 current = actor->sceneCounter;
 
     if (current == BREATH_AT_NORTHWEST_CORNER)
       ShrineOfTheSeaGod_DjinniNorthWestToSouthWest();
@@ -1969,7 +1969,7 @@ void ShrineOfTheSeaGod_ChaseDjinni(void) {
       ShrineOfTheSeaGod_TrappedDjinniToNorthEast();
   } break;
   case STEP_LEDGE_WEST_SIDE_NORTH: {
-    u8 current = actor->riseCounter;
+    u8 current = actor->sceneCounter;
 
     if (current == BREATH_AT_NORTHWEST_CORNER)
       ShrineOfTheSeaGod_DjinniNorthWestJumpsEast();
@@ -1978,11 +1978,11 @@ void ShrineOfTheSeaGod_ChaseDjinni(void) {
       ShrineOfTheSeaGod_TrappedDjinniJumpsEast();
   } break;
   case STEP_LEDGE_WEST_SIDE_SOUTH:
-    if (actor->riseCounter == BREATH_AT_SOUTHWEST_CORNER)
+    if (actor->sceneCounter == BREATH_AT_SOUTHWEST_CORNER)
       ShrineOfTheSeaGod_DjinniSouthWestToSouthEast();
     break;
   case STEP_LEDGE_SOUTHWEST_WAY_UP:
-    if (actor->riseCounter == BREATH_AT_SOUTHWEST_CORNER)
+    if (actor->sceneCounter == BREATH_AT_SOUTHWEST_CORNER)
       ShrineOfTheSeaGod_DjinniSouthWestToNorthWest();
     GameFlag_Clear(FLAG_DJINNI_TRAPPED);
     break;
@@ -2269,7 +2269,7 @@ void ShrineOfTheSeaGod_InitializeBreath(void) {
 
     // A fresh arrival finds Breath back at the south-east corner.
     if (moved == 0) {
-      djinni->riseCounter = moved;
+      djinni->sceneCounter = moved;
       Actor_SetPosition(ACTOR_BREATH, 392, 296);
     }
     Actor_WatchAndSetScript(ACTOR_BREATH, gMainRoutineState.leaderActorId);

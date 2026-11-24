@@ -319,9 +319,9 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
     LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   }
   blitters = draw;
-  BattleEffect_FetchRectangleBlitters(0, blitters);
+  BattleEffect_BuildCanvasBlitters(0, blitters);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add((s32)BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   lift = 0;
   {
     s32 *life = &((struct Particle *)Ram_MapCellBuffer)->variant;
@@ -451,7 +451,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

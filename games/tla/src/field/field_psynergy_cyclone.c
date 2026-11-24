@@ -91,7 +91,7 @@ void ParticleBurst_End(void) {
 void Cyclone_CarryLeader(void) {
   struct FieldEffectState *effect = Ram_HeapSlots->fieldEffectState;
   struct CycloneState *state = Ram_HeapSlots->battleEffect;
-  struct Actor *owner = effect->mainActor;
+  struct Actor *owner = effect->caster;
   s32 timer = state->timer;
   s32 position[3];
 
@@ -130,7 +130,7 @@ void Cyclone_CarryLeader(void) {
 void Cyclone_LiftLeader(void) {
   struct FieldEffectState *effect = Ram_HeapSlots->fieldEffectState;
   struct CycloneState *state = Ram_HeapSlots->battleEffect;
-  struct Actor *owner = effect->mainActor;
+  struct Actor *owner = effect->caster;
   s32 timer = state->timer;
   s32 position[3];
 
@@ -154,7 +154,7 @@ void Cyclone_LiftLeader(void) {
     break;
   case 1:
     owner->y.fixed -= toFIXED(2) / 5;
-    if (effect->childOption == 1) {
+    if (effect->sceneVariant == 1) {
       if (timer == 40)
         state->state = FIELD_PSYNERGY_FINISHED;
     } else if (timer == 40) {
@@ -206,7 +206,7 @@ void FieldPsynergy_Cyclone(void) {
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct CycloneState));
   struct FieldState *field = Ram_HeapSlots->fieldState;
   struct FieldEffectState *effect = Ram_HeapSlots->fieldEffectState;
-  struct Actor *owner = effect->mainActor;
+  struct Actor *owner = effect->caster;
   s16 *points = &field->psynergyCells[0];
   FIXED spread = toFIXED(4);
   s32 step = toFIXED(7) / 8;
@@ -224,7 +224,7 @@ void FieldPsynergy_Cyclone(void) {
 
   FieldPsynergy_FadeToCastColor();
   FieldPsynergy_GatherNearbyCells();
-  BattleEffect_SetObjectUpdateMode(effect->mainActor, 0);
+  BattleEffect_SetObjectUpdateMode(effect->caster, 0);
   owner->update = Actor_UpdateSpin;
   owner->timer = owner->facing;
   // The whirl's colours: blue full, red and green rising from half to full.
@@ -237,9 +237,9 @@ void FieldPsynergy_Cyclone(void) {
   }
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->canvasSprite;
-  pos[0] = effect->mainActor->x.fixed;
-  pos[1] = effect->mainActor->y.fixed;
-  pos[2] = effect->mainActor->z.fixed;
+  pos[0] = effect->caster->x.fixed;
+  pos[1] = effect->caster->y.fixed;
+  pos[2] = effect->caster->z.fixed;
   Camera_WorldToScreen(pos);
   canvas->x = (s16)FIXEDtoINT(pos[0]);
   canvas->y = (s16)FIXEDtoINT(pos[2]);
@@ -310,7 +310,7 @@ void FieldPsynergy_Cyclone(void) {
     Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
                                        owner->z.fixed);
     Actor_SetSpriteFlagsFar(owner, 0);
-    Actor_SetSpritePriority(effect->firstActorId, 1);
+    Actor_SetSpritePriority(effect->casterId, 1);
     owner->motionFlags = 0;
     frame = 0;
     wait(1);
@@ -325,7 +325,7 @@ void FieldPsynergy_Cyclone(void) {
       wait(1);
     }
     Task_Remove(Cyclone_LiftLeader);
-    if (effect->childOption == 0)
+    if (effect->sceneVariant == 0)
       owner->scaleX = 0;
     whirlwind->scaleX = 0;
     if (state->kind)
@@ -574,10 +574,10 @@ void Blaze_UpdateSpray(void) {
     for (i = 0; i < BLAZE_DROPS; i++, particle++) {
       if (particle->timer == -1) {
         sprite = &state->drops[i];
-        if (scene->child != NULL)
-          sprite->depth = Actor_GetSpriteDepth(scene->child);
+        if (scene->target != NULL)
+          sprite->depth = Actor_GetSpriteDepth(scene->target);
         else
-          sprite->depth = Actor_GetSpriteDepth(scene->mainActor);
+          sprite->depth = Actor_GetSpriteDepth(scene->caster);
         if (state->mode == BLAZE_LONG_SPRAY) {
           state->speed = toFIXED(12) / 5;
           state->lifetime = BLAZE_LONG_DROP_FRAMES;
@@ -619,8 +619,8 @@ void Blaze_UpdateSpray(void) {
     for (j = 0; j < FIELD_ACTOR_COUNT; j++) {
       struct Actor *other = field->actors[j];
       if (other != NULL && other->script != NULL &&
-          (other->collisionFlags & ACTOR_SOLID) && other != scene->mainActor &&
-          other != scene->child &&
+          (other->collisionFlags & ACTOR_SOLID) && other != scene->caster &&
+          other != scene->target &&
           FieldPsynergy_CheckOverlap(&particle->x, 2, &other->x.fixed,
                                      other->radius - 2) >= 0) {
         state->hit = 1;
@@ -634,7 +634,7 @@ void Blaze_UpdateSpray(void) {
       pos[0] = particle->x;
       pos[1] = particle->y;
       pos[2] = particle->z;
-      if (MapGrid_CheckCollisionFar(scene->mainActor, pos) > 0)
+      if (MapGrid_CheckCollisionFar(scene->caster, pos) > 0)
         particle->timer = -1;
     }
     if (particle->timer == -1 && (i & 1)) {

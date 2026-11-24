@@ -45,11 +45,11 @@ s32 LinkBattle_ReceiveParty(void) {
     }
     wait(2);
 
-    // Measure the label (at most LOBBY_PREFIX_LIMIT + 1 characters), shift
-    // the name right to make room for it, then write it in; the name's end is
-    // cut.
+    // Measure the label (at most BATTLE_ARENA_PREFIX_LAST + 1 characters),
+    // shift the name right to make room for it, then write it in; the name's
+    // end is cut.
     Message_DecodeRawUnboundedFar((s32)MsgEnemyLabel, label);
-    for (i = 0; i <= LOBBY_PREFIX_LIMIT; i++) {
+    for (i = 0; i <= BATTLE_ARENA_PREFIX_LAST; i++) {
       if (label[i] == 0)
         break;
     }
@@ -142,7 +142,7 @@ s32 LinkBattle_SendParty(void) {
 
 /// Copies a name's first four characters, an underscore for each zero, and
 /// returns a pointer to the end. UB: the copy is on the stack; UBFIX keeps it.
-u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unusedA, u32 unusedB, u16 *source) {
+u8 *Text_CopyFourCharsUnderscored(u32 unusedA, u32 unusedB, u16 *source) {
 #ifdef UBFIX
   static u8 sBuffer[5];
   u8 *base = sBuffer;

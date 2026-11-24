@@ -136,7 +136,7 @@ void BattleTransition_BuildAffineTilemap(void *tilemap) {
 /// blank entries, two of BG1_EDGE_TILE, the picture's tiles in order on rows 6
 /// to 20, then BG1_EDGE_TILE down to the last row, which BattleBackground_Load
 /// clears.
-void BattleTransition_BuildTilemap(s32 *destination) {
+void BattleTransition_BuildFlatTilemap(s32 *destination) {
   s32 entry;
   u32 index;
 
@@ -185,7 +185,7 @@ void BattleTransition_UploadTileVariant(void) {
 
 /// Advances the curtain opening by a frame: BG0 slides into place as the camera
 /// turns round to the party and zooms out.
-void BattleTransition_AdvanceTimer(void) {
+void BattleTransition_AdvanceOpening(void) {
   s32 scroll;
   struct BattleCamera *camera;
   u32 *timer;
@@ -332,7 +332,7 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
                              DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
     BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL + TRANSITION_OPEN_FRAMES);
     *timer = 0;
-    Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_FRAME);
+    Task_Add(BattleTransition_AdvanceOpening, TASK_PASS_FRAME);
     Task_Add(BattleTransition_DrawRows, TASK_PASS_VBLANK);
     Irq_SetHandler(IRQ_VCOUNT, TRANSITION_BG0_BAND,
                    BattleTransition_ResetBg0Scroll);
@@ -349,7 +349,7 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
       wait(60);
     else
       BattleIntro_AnnounceEncounter(enemyCount);
-    Task_Remove(BattleTransition_AdvanceTimer);
+    Task_Remove(BattleTransition_AdvanceOpening);
     Task_Remove(BattleTransition_DrawRows);
     gBgScroll[0].y = 0;
     Irq_SetHandler(IRQ_VCOUNT, 0, 0);

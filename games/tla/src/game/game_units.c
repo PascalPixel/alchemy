@@ -709,7 +709,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 /// Restores the PP of each party member whose element group's lighthouse
 /// the party is inside: Venus or Mars for Isaac, Garet, Felix and Jenna,
 /// Mercury or Jupiter for the others. Nothing calls it or its far-call export.
-void Party_RestorePpOfLitElements(void) {
+void Party_RestorePpInLighthouse(void) {
   s32 partySize;
   s32 partyIndex;
   u8 unitId;

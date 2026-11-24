@@ -165,7 +165,7 @@ void Field_PlaceTreasureSpots(void) {
   } while (!(type & SCENE_ITEMS_HEADER));
 }
 
-/// Mode 0 moves the actor to x and z 0 and marks it with riseBaseY
+/// Mode 0 moves the actor to x and z 0 and marks it with sceneWord
 /// TREASURE_SPOT_ON_CELL; any other mode draws its sprite wide (shape 1), 4
 /// pixels lower.
 void Actor_SetWideSprite(u32 actorId, s32 mode) {
@@ -178,7 +178,7 @@ void Actor_SetWideSprite(u32 actorId, s32 mode) {
   if (mode == 0) {
     actor->x.fixed = 0;
     actor->z.fixed = 0;
-    actor->riseBaseY = TREASURE_SPOT_ON_CELL;
+    actor->sceneWord = TREASURE_SPOT_ON_CELL;
     return;
   }
   sprite = actor->sprite;

@@ -18,8 +18,8 @@ struct AnimationMetadata {
   u8 animationCount;
   s8 adjustX;
   s8 adjustY;
-  u8 boxX;
-  u8 boxY;
+  u8 spriteTop;
+  u8 footprint;
   u8 pictureCodec;
   void **pictures;
   u8 **animation;
@@ -28,8 +28,8 @@ struct AnimationMetadata {
 STATIC_ASSERT(sizeof(struct AnimationMetadata) == 20);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, scale) == 2);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animationCount) == 5);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, boxX) == 8);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, boxY) == 9);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, spriteTop) == 8);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, footprint) == 9);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, pictureCodec) == 10);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, pictures) == 12);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animation) == 16);

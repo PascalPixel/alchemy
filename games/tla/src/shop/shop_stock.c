@@ -109,7 +109,7 @@ void ShopStock_AddArtifacts(s32 stockRow) {
           gShop_StockTable[stockRow][SHOP_STOCK_ARTIFACTS + artifactIndex];
 
       if (itemId != 0)
-        Item_AdjustCounterFar(itemId, 1);
+        Item_AdjustRareItemStockFar(itemId, 1);
     }
 #else
     for (artifactIndex = 0; artifactIndex < SHOP_STOCK_ARTIFACT_COUNT;
@@ -119,7 +119,7 @@ void ShopStock_AddArtifacts(s32 stockRow) {
 
       if (itemId == 0)
         break;
-      Item_AdjustCounterFar(itemId, 1);
+      Item_AdjustRareItemStockFar(itemId, 1);
     }
 #endif
   }

@@ -807,11 +807,11 @@ void GabombaStatueChamber_ShowDragonsEye(void) {
     item->update = GabombaStatueChamber_KeepItemWithIdol;
     sprite->flags = clear;
     sprite->count = clear;
-    icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    icon = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_DRAGONS_EYE);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES,
-                   ((GlyphTransfer *)icon)->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+                   ((IconTransfer *)icon)->tiles);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
 }
 
@@ -838,11 +838,11 @@ void GabombaStatueChamber_ShowBlackCrystal(void) {
     item->update = GabombaStatueChamber_KeepItemWithIdol;
     sprite->flags = clear;
     sprite->count = clear;
-    icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    icon = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES,
-                   ((GlyphTransfer *)icon)->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+                   ((IconTransfer *)icon)->tiles);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
 }
 
@@ -918,12 +918,11 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
     sprite->palette = 0;
     sprite->priority = 1;
     crystal->retainSpriteCache = 1;
-    block =
-        (u8 *)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    block = (u8 *)HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES,
-                   (s32)((GlyphTransfer *)block)->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+                   (s32)((IconTransfer *)block)->tiles);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
   GabombaStatueChamber_UnrollTongue();
   gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

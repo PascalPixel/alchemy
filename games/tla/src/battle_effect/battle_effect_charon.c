@@ -251,7 +251,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   {
     s32 order = TASK_PASS_VBLANK;
 
-    Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, order);
+    Task_Add(BattleEffect_TransferCanvas, order);
   }
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
@@ -274,7 +274,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   blit = blitters;
-  BattleEffect_FetchRectangleBlitters(0, blit);
+  BattleEffect_BuildCanvasBlitters(0, blit);
 
   source = (u8 *)Resource_GetTableEntry(RESOURCE_RED_DOME_TILES);
   Iwram_CopyWords((u16 *)&OBJ_PLTT_COLOR(2, 0), source, CHARON_DOME_COLORS * 2);
@@ -1857,7 +1857,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   for (i = 0; i != arg->targetCount; i++) {
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

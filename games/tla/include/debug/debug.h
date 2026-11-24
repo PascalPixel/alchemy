@@ -32,9 +32,9 @@ extern const s16 gDebugShortcut_Abilities[4][9];
 
 /// The debug rooms' item choosers (IncreaseItemAndLevel_SelectItem,
 /// ShopTest_SelectItem): Right and Left move ten numbers.
-#define BROWSER_ROW_STEP 10
+#define DEBUG_BROWSER_ROW_STEP 10
 /// The same choosers' R and L move thirty.
-#define BROWSER_PAGE_STEP 30
+#define DEBUG_BROWSER_PAGE_STEP 30
 /// The step the debug menus take on L and R: ten scenes, entrances, flag
 /// pages, portraits or sound numbers (window.c's choosers); the battle test
 /// chooser (battle_debug.c) takes it on Up and Down, ten encounters.

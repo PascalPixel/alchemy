@@ -334,10 +334,10 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 /// A piece Felix cannot push: a pillar weeds hold down, a frozen puddle, a
 /// stake, or a log (logs roll by their own events).
 /// Leader_CanPushObjectAhead refuses a target with this byte set.
-#define PUSH_BLOCKED(object) *(u8 *)&object->riseCounter
+#define PUSH_BLOCKED(object) *(u8 *)&object->sceneCounter
 /// The height in pixels of a pillar's top (TrialRoad_AddPillarTop) above the
 /// pillar: PILLAR_HEIGHT standing, -PILLAR_HEIGHT lowered.
-#define PILLAR_TOP_HEIGHT(top) *(u8 *)&top->riseEnabled
+#define PILLAR_TOP_HEIGHT(top) *(u8 *)&top->sceneByte
 
 /// A fountain rises and falls once each FOUNTAIN_PERIOD frames, rising at
 /// FOUNTAIN_RISE_AT and falling at FOUNTAIN_FALL_AT.
@@ -1897,9 +1897,9 @@ void TrialRoad_SetUpCrumblingStage(void) {
 void TrialRoad_SetUpLogStage(void) {
   MapGrid_CopyCellAttributes(11, 22, 11, 8, 11, 64);
   MapGrid_CopyCellAttributes(79, 22, 11, 8, 79, 64);
-  Actor_GetById(ACTOR_UPPER_LOG)->riseCounter = 1;
-  Actor_GetById(ACTOR_LOWER_LOG)->riseCounter = 1;
-  Actor_GetById(ACTOR_EAST_LOG)->riseCounter = 1;
+  Actor_GetById(ACTOR_UPPER_LOG)->sceneCounter = 1;
+  Actor_GetById(ACTOR_LOWER_LOG)->sceneCounter = 1;
+  Actor_GetById(ACTOR_EAST_LOG)->sceneCounter = 1;
   Actor_GetById(ACTOR_UPPER_LOG)->collisionFlags = 0;
   Actor_GetById(ACTOR_LOWER_LOG)->collisionFlags = 0;
   Actor_GetById(ACTOR_EAST_LOG)->collisionFlags = 0;

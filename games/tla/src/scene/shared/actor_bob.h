@@ -8,7 +8,7 @@
 /// BOB_CYCLE_FRAMES frames, at the cycle's start, at frame 16 and at frame 24,
 /// while its sprite rocks from side to side, once every 16 frames.
 s32 Actor_Bob(struct Actor *actor) {
-  s32 frame = actor->riseCounter & (BOB_CYCLE_FRAMES - 1);
+  s32 frame = actor->sceneCounter & (BOB_CYCLE_FRAMES - 1);
   struct FieldSprite *sprite = actor->sprite;
 
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -19,7 +19,7 @@ s32 Actor_Bob(struct Actor *actor) {
   if (frame == 24)
     actor->velocityY = toFIXED(3);
   sprite->rotation = Trig_Cos(frame * (TRIG_TURN / 16)) / BOB_ROCK_DIVISOR;
-  actor->riseCounter++;
+  actor->sceneCounter++;
   return -1;
 }
 

@@ -488,13 +488,13 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   if (mode == MOTE_FOUNTAIN_SLAVER) {
     // Clear the canvas and run Impair's effect on the targets.
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
     Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
-    Task_Remove(Palette_StepFadeTransfer);
+    Task_Remove(BattleEffect_DarkenBackgroundStep);
     BattleEffect_RunImpair(args);
   } else {
     BattleEffect_EndCanvasLayer();

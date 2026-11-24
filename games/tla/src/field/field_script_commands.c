@@ -2,7 +2,7 @@
 /// Actor script commands: waits, jumps, flags, moves and work values.
 ///
 /// Each `SC_` handler here is reached through gActorScript_CommandTable
-/// (map_grid_data.c), which Actor_UpdateAllThumb calls for each live actor;
+/// (map_grid_data.c), which Actor_UpdateAllOnField calls for each live actor;
 /// each returns 1 to run on and 0 to end the actor's frame (the protocol is
 /// in this folder's README).
 // Part of field.c.
@@ -98,14 +98,14 @@ void Actor_UpdateAllMotion(void) {
           x = actor->targetX;
           z = actor->targetZ;
         } else {
-          ratio = Iwram_RatioMulQ14(distance, actor->acceleration);
+          ratio = Iwram_DivFX(distance, actor->acceleration);
           actor->velocityX += Iwram_MulFX(dx, ratio);
           actor->velocityZ += Iwram_MulFX(dz, ratio);
           dx = actor->velocityX;
           dz = actor->velocityZ;
           distance = Iwram_Sqrt(Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz)) << 8;
           if (distance > actor->speedLimit) {
-            ratio = Iwram_RatioMulQ14(distance, actor->speedLimit);
+            ratio = Iwram_DivFX(distance, actor->speedLimit);
             actor->velocityX = Iwram_MulFX(dx, ratio);
             actor->velocityZ = Iwram_MulFX(dz, ratio);
           }
@@ -120,8 +120,7 @@ void Actor_UpdateAllMotion(void) {
               actor->velocityX = 0;
               actor->velocityZ = 0;
             } else {
-              ratio =
-                  Iwram_RatioMulQ14(distance, distance - actor->acceleration);
+              ratio = Iwram_DivFX(distance, distance - actor->acceleration);
               actor->velocityX = Iwram_MulFX(dx, ratio);
               actor->velocityZ = Iwram_MulFX(dz, ratio);
             }
@@ -212,7 +211,7 @@ s32 ActorScript_Wait(struct Actor *interpreter) {
 
 /// SC_SYNC: waits until the actor arrives at its target, or until a solid actor
 /// has blocked it for SCRIPT_BLOCKED_MOVE_FRAMES frames (refused is the
-/// blocked count, which Actor_UpdateAllThumb raises), when its target is
+/// blocked count, which Actor_UpdateAllOnField raises), when its target is
 /// cleared.
 s32 ActorScript_WaitForArrival(struct Actor *interpreter) {
   struct WaitingActor *actor = (struct WaitingActor *)interpreter;
@@ -684,10 +683,10 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
         camera->z.fixed = z;
       } else {
         if (distance > moveStep) {
-          FIXED ratio = Iwram_RatioMulQ14(distance, dx);
+          FIXED ratio = Iwram_DivFX(distance, dx);
           s32 (*mulFX)(s32, s32) = IwramMulFX;
           dx = mulFX(ratio, moveStep);
-          dz = mulFX(Iwram_RatioMulQ14(distance, dz), moveStep);
+          dz = mulFX(Iwram_DivFX(distance, dz), moveStep);
         }
         camera->x.fixed += dx;
         camera->z.fixed += dz;
@@ -765,8 +764,8 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *camera) {
         camera->z.fixed = z;
       } else {
         if (distance > moveStep) {
-          dx = Iwram_MulFX(Iwram_RatioMulQ14(distance, dx), moveStep);
-          dz = Iwram_MulFX(Iwram_RatioMulQ14(distance, dz), moveStep);
+          dx = Iwram_MulFX(Iwram_DivFX(distance, dx), moveStep);
+          dz = Iwram_MulFX(Iwram_DivFX(distance, dz), moveStep);
         }
         camera->x.fixed += dx;
         camera->z.fixed += dz;
@@ -1115,7 +1114,7 @@ SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetZ, targetZ)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareBounce, bounce)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareGravity, gravity)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTerrainHeight, groundHeight)
-SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareRiseBaseY, riseBaseY)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareSceneWord, sceneWord)
 SCRIPT_DEFINE_OPERAND_ADDRESS(ActorScript_SetOrCompareSprite, sprite)
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSpriteStorageKind,
                              spriteStorageKind, u8)
@@ -1153,10 +1152,9 @@ SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareTimer, timer, s16)
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareUserValue, userValue, s16)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareWatchedActor, watchedActor)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareUpdateAddress, update)
-SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRiseCounter, riseCounter,
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSceneCounter, sceneCounter,
                              u8)
-SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRiseEnabled, riseEnabled,
-                             u8)
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSceneByte, sceneByte, u8)
 
 /// Reads the two words after the command (a work value number and a value) and
 /// passes operation to that value's handler.

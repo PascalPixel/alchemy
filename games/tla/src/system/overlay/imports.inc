@@ -209,7 +209,7 @@
 	export DataTransfer_Apply, DataTransfer_ApplyFar
 	export Unit_LevelUpTo, Unit_LevelUpToFar
 	export Party_AdjustCoins, Party_AdjustCoinsFar
-	export Item_AdjustCounter, Item_AdjustCounterFar
+	export Item_AdjustRareItemStock, Item_AdjustRareItemStockFar
 	export Party_RestoreHpPp, Party_RestoreHpPpFar
 	export Party_FindOwnerWithAction, Party_FindOwnerWithActionFar
 	export PartyInventory_HasSpace, PartyInventory_HasSpaceFar

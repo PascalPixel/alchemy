@@ -122,7 +122,7 @@ FarCall_WindowTable:
 	export PointingHand_LoadIntoFreeSlotFar, PointingHand_LoadIntoFreeSlot
 	export Text_MeasureMessageFar, Text_MeasureMessage
 	export Window_HighlightRectFar, Window_HighlightRect
-	export Ability_LoadGlyphFar, Ability_LoadGlyph
+	export Ability_BuildIconTilesFar, Ability_BuildIconTiles
 	export Graphics_ExpandVramTilesByColorTableFar, Graphics_ExpandVramTilesByColorTable
 	export Text_UseExtraTilesFar, Text_UseExtraTiles
 	export Menu_AnimateSelectionToEntryFar, Menu_AnimateSelectionToEntry

@@ -1415,7 +1415,7 @@ void YampiDesert_TravelersLookUp(s32 p0) {
 struct Actor *YampiDesert_CreateScoopGem(void) {
   struct Actor *actor = Import_ActorCreate(SPRITE_UNSEEN_MARKER, toFIXED(232),
                                            toFIXED(32), toFIXED(200));
-  GlyphTransfer *icon = NULL;
+  IconTransfer *icon = NULL;
   struct YampiDesertVisual *visual;
   s32 mask;
 
@@ -1437,10 +1437,10 @@ struct Actor *YampiDesert_CreateScoopGem(void) {
     actor->retainSpriteCache = 1;
     visual->flags = 0;
     visual->layerCount = 0;
-    icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    icon = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_SCOOP_GEM);
     VramCache_Load(visual->vramBlock, ICON_TILE_BYTES, icon->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
   return actor;
 }
@@ -1516,14 +1516,14 @@ void YampiDesert_CarryLeader(struct Actor *actor, FIXED dx, FIXED dz) {
         sprite->image.priority = 1;
         if (gInput.held != 0) {
           dust->bounce = Trig_Cos(((Random16() << 3) >> 16) << 14) + dx;
-          dust->riseBaseY = Trig_Sin(((Random16() << 3) >> 16) << 14) + dz;
+          dust->sceneWord = Trig_Sin(((Random16() << 3) >> 16) << 14) + dz;
           if (gInput.held & KEY_B) {
             dust->bounce += dx;
-            dust->riseBaseY += dz;
+            dust->sceneWord += dz;
           }
         } else {
           dust->bounce = (Trig_Cos(((Random16() << 3) >> 16) << 14) >> 1) + dx;
-          dust->riseBaseY =
+          dust->sceneWord =
               (Trig_Sin(((Random16() << 3) >> 16) << 14) >> 1) + dz;
         }
         dust->gravity = 0;
@@ -1731,7 +1731,7 @@ s32 YampiDesert_HasArrived(struct Actor *actor) {
   return 0;
 }
 
-/// A step of the buried King Scorpion's rounds, kept in its riseCounter: sends
+/// A step of the buried King Scorpion's rounds, kept in its sceneCounter: sends
 /// it toward a point, in pixels, and goes on to the next step, which waits for
 /// it there.
 #define WALK(state_, x, z)                                                     \
@@ -1772,7 +1772,7 @@ s32 YampiDesert_HasArrived(struct Actor *actor) {
 /// one after waits for it there. Once Pound has sunk stake 3, it stops at the
 /// stake's south side and raises RAISED_STIR_SCORPION.
 void YampiDesert_ScorpionRoamsPsynergyStone(struct Actor *actor) {
-  u8 *state = &actor->riseCounter;
+  u8 *state = &actor->sceneCounter;
 
   switch (*state) {
     WALK(0, 280, 200)
@@ -1823,7 +1823,7 @@ void YampiDesert_SetUpPsynergyStoneScorpion(void) {
   Actor_GetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    scorpion->riseCounter = 0;
+    scorpion->sceneCounter = 0;
     scorpion->update = YampiDesert_ScorpionRoamsPsynergyStone;
   }
   YampiDesert_ClearRaisedEvent();
@@ -1835,7 +1835,7 @@ void YampiDesert_SetUpPsynergyStoneScorpion(void) {
 /// RAISED_STIR_SCORPION_AGAIN, or, past that point, keeps from step 32 to a
 /// small loop south of it.
 void YampiDesert_ScorpionRoamsKingScorpion(struct Actor *actor) {
-  u8 *state = &actor->riseCounter;
+  u8 *state = &actor->sceneCounter;
 
   switch (*state) {
     WALK(0, 312, 664)
@@ -1912,7 +1912,7 @@ void YampiDesert_SetUpKingScorpionScorpion(void) {
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
                                      toFIXED(232), toFIXED(664), 0);
-    scorpion->riseCounter = 0;
+    scorpion->sceneCounter = 0;
     scorpion->update = YampiDesert_ScorpionRoamsKingScorpion;
   }
   YampiDesert_ClearRaisedEvent();
@@ -1926,7 +1926,7 @@ void YampiDesert_SetUpKingScorpionScorpion(void) {
 /// stake 2 from step 34; reaching stake 2's north side once that is sunk, it is
 /// cornered and raises RAISED_CORNER_SCORPION.
 void YampiDesert_ScorpionRoamsToTrap(struct Actor *actor) {
-  u8 *state = &actor->riseCounter;
+  u8 *state = &actor->sceneCounter;
 
   switch (*state) {
     WALK(0, 312, 264)
@@ -2016,7 +2016,7 @@ void YampiDesert_SetUpTrappedScorpion(void) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
                                        toFIXED(200), toFIXED(264), 0);
-      scorpion->riseCounter = 0;
+      scorpion->sceneCounter = 0;
       scorpion->update = YampiDesert_ScorpionRoamsToTrap;
     }
   }

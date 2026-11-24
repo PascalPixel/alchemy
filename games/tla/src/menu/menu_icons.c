@@ -11,7 +11,7 @@
 
 /// Loads the Djinn menu's up and down arrows (djinn_arrow_up and
 /// djinn_arrow_down) into free VRAM cache slots, the state's resourceSlots,
-/// for Icon_DrawVariantWithTileOffset.
+/// for Icon_CreateDjinnArrow.
 void Menu_LoadDjinnArrows(void) {
   s32 firstSlot;
   s32 secondSlot;
@@ -42,28 +42,28 @@ void Menu_FreeArrows(void) {
 }
 
 /// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
-/// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in a
-/// GlyphTransfer in HEAP_SLOT_GLYPH_TRANSFER, which is released again.
+/// Psynergy icon of ability resourceId (Ability_BuildIconTilesFar), built in a
+/// IconTransfer in HEAP_SLOT_ICON_TRANSFER, which is released again.
 s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 resourceInfo;
   s32 selectedSlot;
   s32 buffer;
-  GlyphTransfer *allocation;
+  IconTransfer *allocation;
 
   allocation =
-      HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+      HeapSlot_AllocEwram(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   selectedSlot = slot;
-  Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &resourceInfo, 1);
+  Ability_BuildIconTilesFar(resourceId, 0, &selectedSlot, &resourceInfo, 1);
   buffer = VramCache_Reload(slot, (s32)allocation->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   return buffer;
 }
 
 /// Loads an icon into a free cache slot and creates its sprite when possible:
 /// ability resourceId's Psynergy icon at (x, y) of window, for the Djinn
 /// preview's Psynergy lists. Returns no value; callers ignore it.
-s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
-                                  s32 resourceId) {
+s32 Icon_CreatePsynergyIcon(struct Window *window, s32 x, s32 y,
+                            s32 resourceId) {
   s32 slot;
 
   slot = VramCache_FindFreeEntry();
@@ -102,8 +102,7 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
 
 /// As Icon_CreateStatChangeArrow, with the arrow raised 3 pixels for variant
 /// 0 and 4 for any other. Returns 1, or -1 when no window sprite is free.
-s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
-                                   s32 variant) {
+s32 Icon_CreateDjinnArrow(struct Window *window, s32 x, s32 y, s32 variant) {
   struct WindowSprite *object;
   u32 resource;
   struct ItemMenuState *data = Ram_HeapSlots->menuState;
@@ -611,7 +610,7 @@ void MenuPanel_DrawEntryList(struct Window *panel, s32 x, s32 y,
 
 /// Fills ailments (enum UnitStatus) with party member memberId's statuses,
 /// down only when requested is 1, and returns how many they have.
-s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
+s32 StatusScreen_ListStatuses(u8 *ailments, s32 requested, s32 memberId) {
   struct Unit *unit;
   s32 ailmentIndex;
   s32 count;

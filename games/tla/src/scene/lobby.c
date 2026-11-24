@@ -458,9 +458,9 @@ recordTest:
     result++;
   wait(2);
   FieldMessage_DecodeRawUnbounded((s32)MsgEnemyLabel, namePrefix);
-  for (i = 0; i <= LOBBY_PREFIX_LIMIT && namePrefix[i] != 0; i++)
+  for (i = 0; i <= BATTLE_ARENA_PREFIX_LAST && namePrefix[i] != 0; i++)
     ;
-#if LOBBY_PREFIX_LIMIT == 7
+#if BATTLE_ARENA_PREFIX_LAST == 7
   namePrefix[i] = ' ';
   length = i + 1;
 #else

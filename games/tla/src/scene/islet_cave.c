@@ -170,7 +170,7 @@ s32 IsletCave_ClearScriptedActorSpriteFlags(struct Actor *actor) {
 /// The winged statue's script while Serac hides in it: it hops, rocking its
 /// sprite through the first half of each hop.
 s32 IsletCave_HopWingedStatue(struct Actor *actor) {
-  s32 step = actor->riseCounter & (STATUE_HOP_FRAMES - 1);
+  s32 step = actor->sceneCounter & (STATUE_HOP_FRAMES - 1);
   struct FieldSprite *sprite = actor->sprite;
 
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -180,7 +180,7 @@ s32 IsletCave_HopWingedStatue(struct Actor *actor) {
     sprite->rotation =
         Trig_Cos(step * (TRIG_TURN / STATUE_ROCK_FRAMES)) / STATUE_ROCK_SHRINK;
   }
-  actor->riseCounter++;
+  actor->sceneCounter++;
   return -1;
 }
 

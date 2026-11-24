@@ -7,7 +7,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
 
   for (; *list != ACTOR_LIST_END; list += 3) {
     u32 entry = *list;
-    s32 id = state->secondActorId;
+    s32 id = state->targetId;
 
     if (id == entry) {
       struct Actor *actor = Actor_GetById(id);

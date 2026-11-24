@@ -16932,7 +16932,7 @@ msgctxt "message"
 msgid "04167"
 msgstr "もってるかず"
 
-msgctxt "MsgPanelStatLabel"
+msgctxt "MsgPanelAttackLabel"
 msgid "04168"
 msgstr "こうげき"
 

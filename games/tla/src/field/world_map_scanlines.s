@@ -104,7 +104,7 @@ WorldMap_BuildScanlineTableInArm:
 	b	.L_08021448
 	.4byte gProjection
 	.4byte Data_030011f0
-	.4byte IwramRatioMulQ14
+	.4byte IwramDivFX
 .L_08021430:
 	ldr	pc, [pc, #-4]
 	.4byte IwramSqrt

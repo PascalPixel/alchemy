@@ -28,7 +28,7 @@ s32 Djinn_IsSetFar(s32 unitId, s32 element, s32 djinnIndex);
 /// Puts a unit's Djinni at the end of its side's list on standby.
 u32 *DjinnRecovery_AddStandbyFar(u32 unitId, u32 element, u32 djinnIndex);
 /// Returns the element the unit attacks with (ELEMENT_NONE for none).
-s32 Item_GetEquippedElementFar(s32 unitId);
+s32 Unit_GetAttackElementFar(s32 unitId);
 /// Returns the unleash chance, in percent, that a unit's equipment adds
 /// (EQUIP_EFFECT_ADD_UNLEASH_CHANCE).
 s32 Equipment_GetUnleashRateBonusFar(struct Unit *unit);
@@ -47,7 +47,7 @@ void Djinn_PutOnStandbyFar(s32 unitId, s32 element, s32 djinnIndex);
 s32 Party_GetAverageLevelFar(void);
 /// Adds delta to how many of a rare item the shops may sell, and returns the
 /// new count.
-s32 Item_AdjustCounterFar(s32 itemId, s32 delta);
+s32 Item_AdjustRareItemStockFar(s32 itemId, s32 delta);
 /// Counts matching nonstackable items, or the quantity in the first matching
 /// stack.
 s32 Inventory_CountItemFar(s32 unitId, s32 itemId);

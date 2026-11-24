@@ -533,7 +533,7 @@ void TundariaTower_RefluxAppears(void) {
 void TundariaTower_ShrinkIceColumn(s32 phase, s32 step) {
   struct EffectOptions options;
   struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
-  struct Actor *actor = Actor_GetById(effectState->secondActorId);
+  struct Actor *actor = Actor_GetById(effectState->targetId);
   s32 velocityX;
 
   if (step < 8) {
@@ -556,7 +556,7 @@ void TundariaTower_ShrinkIceColumn(s32 phase, s32 step) {
   if (phase == 1) {
     actor->scaleY = FIXED_ONE;
     GameFlag_Set(actor->timer);
-    TundariaTower_SetColumnCell(Actor_GetById(effectState->secondActorId));
+    TundariaTower_SetColumnCell(Actor_GetById(effectState->targetId));
     MapGrid_CopyCellTilesIndicesRect(67, 23, (FIELD_CELL(actor->x.fixed)) + 64,
                                      FIELD_CELL(actor->z.fixed), 1, 1);
     actor->z.fixed = 0;
@@ -816,7 +816,7 @@ void TundariaTower_ReflectLeader(struct Actor *actor) {
   struct Sprite *leaderSprite = leader->sprite;
   struct Sprite *reflection = actor->sprite;
 
-  if (leader->z.fixed <= actor->riseBaseY) {
+  if (leader->z.fixed <= actor->sceneWord) {
     actor->z.fixed = 0;
     actor->x.fixed = 0;
     REG_BG2CNT &= (u16)~BGCNT_PRIORITY(3);
@@ -833,7 +833,7 @@ void TundariaTower_ReflectLeader(struct Actor *actor) {
 
       actor->x.fixed = leader->x.fixed;
       actor->y.fixed = leader->y.fixed;
-      actor->z.fixed = actor->riseBaseY - (leader->z.fixed - actor->riseBaseY);
+      actor->z.fixed = actor->sceneWord - (leader->z.fixed - actor->sceneWord);
       actor->facing = ~leader->facing;
       source = leaderSprite->entries[0];
       animation->script = source->script;
@@ -1081,7 +1081,7 @@ s32 Scene_Initialize(void) {
         struct Actor *effect =
             ((struct Actor *)Import_ActorCreate(SPRITE_FELIX, 0, 0, 0));
 
-        effect->riseBaseY = toFIXED(576);
+        effect->sceneWord = toFIXED(576);
         effect->update = TundariaTower_ReflectLeader;
         *slot = (union FieldObject *)effect;
         effect->motionFlags = 0;
@@ -1094,7 +1094,7 @@ s32 Scene_Initialize(void) {
       struct Actor *effect =
           ((struct Actor *)Import_ActorCreate(SPRITE_FELIX, 0, 0, 0));
 
-      effect->riseBaseY = toFIXED(624);
+      effect->sceneWord = toFIXED(624);
       effect->update = TundariaTower_ReflectLeader;
       *slot = (union FieldObject *)effect;
       effect->motionFlags = 0;

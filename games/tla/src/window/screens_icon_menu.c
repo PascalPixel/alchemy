@@ -133,7 +133,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   Graphics_ExpandVramTilesByColorTable(
       (u16 *)(BG_CHAR_BLOCK(0) + PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
   PageArrows_Draw(LIST_PAGE_ARROW_VRAM);
-  Menu_BuildLocalizedPatternTiles();
+  RangeIcon_BuildTiles();
   state->swappedUnit = -1;
   state->lastTarget = -1;
   {
@@ -673,7 +673,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
              k != INVENTORY_SLOTS && (entryValue = unit->inventory[k]) != 0;
              k++) {
           Item_GetDirectFar(entryValue);
-          if (Item_ClassifyUseAbility(actorId, entryValue) == 0) {
+          if (Item_CheckBattleUse(actorId, entryValue) == 0) {
             list[count] = entryValue;
             pick[count++] = k;
           }
@@ -682,7 +682,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
              k != INVENTORY_SLOTS && (entryValue = unit->inventory[k]) != 0;
              k++) {
           Item_GetDirectFar(entryValue);
-          if (Item_ClassifyUseAbility(actorId, entryValue) != 0) {
+          if (Item_CheckBattleUse(actorId, entryValue) != 0) {
             list[count] = entryValue;
             pick[count++] = k;
           }
@@ -1261,7 +1261,7 @@ s32 FieldMenu_SelectCommand(s32 selection) {
   }
   IconMenu_AddIcon(COMMAND_ICON_ITEM);
   IconMenu_AddIcon(COMMAND_ICON_STATUS);
-  IconMenu_Center(ICON_MENU_BOTTOM_ROW, SELECT_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, FIELD_MENU_ICON_ROW_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
 
@@ -1287,7 +1287,7 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   IconMenu_AddIcon(COMMAND_ICON_STATUS);
   // Only Japanese centres the entries before selecting.
 #if LANGUAGE == LANGUAGE_JAPANESE
-  IconMenu_Center(ICON_MENU_BOTTOM_ROW, SELECT_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, FIELD_MENU_ICON_ROW_WIDTH, 0);
 #endif
   command = IconMenu_AnimateTo(start, command - 1);
   IconMenu_Close();
@@ -1336,7 +1336,7 @@ s32 FileList_SelectAction(void) {
     IconMenu_AddIcon(COMMAND_ICON_BATTLE);
   if (gTitleUpdateOptionEnabled != 0)
     IconMenu_AddIcon(COMMAND_ICON_UPDATE);
-  IconMenu_Center(ICON_MENU_BOTTOM_ROW, TYPE_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, FILE_SCREEN_ICON_ROW_WIDTH, 0);
   result = IconMenu_Run(initial);
   IconMenu_Close();
   // The icon position's action, from the group's row of six.

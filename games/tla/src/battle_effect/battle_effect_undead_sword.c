@@ -123,7 +123,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
 
     // The sparks: a new blast picture every third frame, seven in all; the
     // pairs leave one frame apart from frame 8.
-    BattleEffect_FetchRectangleBlitters(args->side, draw);
+    BattleEffect_BuildCanvasBlitters(args->side, draw);
     for (i = 0, particle = state->particles; i != UNDEAD_SWORD_SPARK_COUNT;
          i++) {
       if (frame >= i / 2 + UNDEAD_SWORD_RISE_FRAME &&
@@ -136,9 +136,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
         drawY = FIXED_INTEGER_PART(particle->y);
         if (picture > 6)
           picture = 6;
-        src = state->sheet + gUndeadSword_SparkPictures[picture] +
+        src = state->sheet + gUndeadSword_PuffPictures[picture] +
               UNDEAD_SWORD_SPARK_SHEET;
-        size = gUndeadSword_SparkSizes[picture];
+        size = gUndeadSword_PuffSizes[picture];
         draw[0](canvas, src, drawX - size / 2, drawY - size / 2, size, size);
         particle->variant++;
         Particle_AdvanceWithGravity2D(particle, 62, -toFIXED(1) / 8);
@@ -154,7 +154,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -204,7 +204,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_BuildCanvasBlitters(0, draw);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
   geyserY = 0;
@@ -333,7 +333,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -789,7 +789,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     EFFECT_END_FRAME(state);
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -893,7 +893,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  transfer = BattleEffect_ProcessPendingGraphicsTransfer;
+  transfer = BattleEffect_TransferCanvas;
   Task_Add(transfer, TASK_PASS_VBLANK);
   yaw = 0; // Default: set again at frame 0 before it is read.
   frames = 36;

@@ -54,7 +54,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   // over it; Prism draws only the crystal's pictures.
   Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, state->sheet, 1, 1);
-  BattleEffect_FetchRectangleBlitters(args->side, draw);
+  BattleEffect_BuildCanvasBlitters(args->side, draw);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The crystals wait above the screen, each eight frames behind the last,

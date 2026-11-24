@@ -52,7 +52,7 @@ enum RopeSlotState {
 /// post (FieldState.blockedSteps) for more than this many frames.
 #define ROPE_PUSH_STEPS 12
 
-/// A post whose riseEnabled byte holds this keeps in watchedActor a hook giving
+/// A post whose sceneByte byte holds this keeps in watchedActor a hook giving
 /// the point Lash throws the rope to (Rope_Lash); no scene marks a post so.
 #define ROPE_POST_HOOKED 99
 
@@ -444,7 +444,7 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
     s32 xx, yy, length, segments, count;
     s32 (*mul)(s32, s32);
 
-    if (to->riseEnabled == ROPE_POST_HOOKED)
+    if (to->sceneByte == ROPE_POST_HOOKED)
       ((TargetHook)to->watchedActor)(to, &toX, &toZ);
     x = (toX - from->x.fixed) >> 8;
     y = (toY - from->y.fixed) >> 8;

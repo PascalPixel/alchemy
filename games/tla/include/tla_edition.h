@@ -20,11 +20,11 @@
 /// Djinn, Item, Status) and the File Screen's (New Game, Continue, Copy, Erase,
 /// and Battle and Update when they are offered).
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define SELECT_MENU_WIDTH 7
-#define TYPE_MENU_WIDTH 7
+#define FIELD_MENU_ICON_ROW_WIDTH 7
+#define FILE_SCREEN_ICON_ROW_WIDTH 7
 #else
-#define SELECT_MENU_WIDTH 5
-#define TYPE_MENU_WIDTH 4
+#define FIELD_MENU_ICON_ROW_WIDTH 5
+#define FILE_SCREEN_ICON_ROW_WIDTH 4
 #endif
 
 /// The debug scene selector's colons, where its arrow points, and the y of its
@@ -40,17 +40,17 @@
 /// in the European editions, instead of 5.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-#define LOBBY_PREFIX_LIMIT 7
+#define BATTLE_ARENA_PREFIX_LAST 7
 #else
-#define LOBBY_PREFIX_LIMIT 4
+#define BATTLE_ARENA_PREFIX_LAST 4
 #endif
 
 /// The first of the letters that tell enemies of one kind apart in battle: the
 /// alphabet from 'A' in Japanese, the digits from '1' in the others.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define ENEMY_NAME_SUFFIX_FIRST 'A'
+#define ENEMY_NAME_LETTER_FIRST 'A'
 #else
-#define ENEMY_NAME_SUFFIX_FIRST '1'
+#define ENEMY_NAME_LETTER_FIRST '1'
 #endif
 
 /// The letters of Lucky Wheels' title.

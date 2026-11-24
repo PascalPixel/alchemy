@@ -735,10 +735,10 @@ void KandoreanTemple_UpdateVentSteam(struct Actor *actor) {
 
   actor->x.fixed += vx;
   actor->y.fixed += actor->gravity;
-  vz = actor->riseBaseY;
+  vz = actor->sceneWord;
   actor->z.fixed += vz;
   actor->bounce = vx - vx / FIELD_EFFECT_DRAG_X;
-  actor->riseBaseY = vz - vz / FIELD_EFFECT_DRAG_Z;
+  actor->sceneWord = vz - vz / FIELD_EFFECT_DRAG_Z;
   rate = actor->speedLimit;
   scale = actor->scaleX;
   sprite = actor->sprite;
@@ -747,14 +747,14 @@ void KandoreanTemple_UpdateVentSteam(struct Actor *actor) {
   sprite->rotation += actor->timer;
   if (leader->y.fixed == 0) {
     if (KandoreanTemple_IsOverActor(actor, leader)) {
-      actor->z.fixed -= actor->riseBaseY;
-      actor->gravity += actor->riseBaseY >> 2;
-      actor->riseBaseY = 0;
+      actor->z.fixed -= actor->sceneWord;
+      actor->gravity += actor->sceneWord >> 2;
+      actor->sceneWord = 0;
     }
     if (leader->y.fixed == 0 && KandoreanTemple_IsOverActor(actor, other)) {
-      actor->z.fixed -= actor->riseBaseY;
-      actor->gravity += actor->riseBaseY >> 2;
-      actor->riseBaseY = 0;
+      actor->z.fixed -= actor->sceneWord;
+      actor->gravity += actor->sceneWord >> 2;
+      actor->sceneWord = 0;
     }
   }
 }
@@ -789,7 +789,7 @@ void KandoreanTemple_BlowSteam(s32 *position, s32 value) {
     actor->bounce =
         Trig_Cos((Random_Below(TRIG_TURN * 3 / 16)) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
-    actor->riseBaseY = (u16)(Random16() * 2) + value;
+    actor->sceneWord = (u16)(Random16() * 2) + value;
     timer = (u16)Random16() - 32768;
     actor->timer = timer;
     KandoreanTemple_InitializeSteam(actor, 3);
@@ -811,10 +811,10 @@ void KandoreanTemple_UpdateStreamSteam(struct Actor *actor) {
 
   actor->x.fixed += vx;
   actor->y.fixed += actor->gravity;
-  vz = actor->riseBaseY;
+  vz = actor->sceneWord;
   actor->z.fixed += vz;
   actor->bounce = vx - vx / FIELD_EFFECT_DRAG_X;
-  actor->riseBaseY = vz - vz / FIELD_EFFECT_DRAG_Z;
+  actor->sceneWord = vz - vz / FIELD_EFFECT_DRAG_Z;
   rate = actor->speedLimit;
   scale = actor->scaleX;
   sprite = actor->sprite;
@@ -823,15 +823,15 @@ void KandoreanTemple_UpdateStreamSteam(struct Actor *actor) {
   sprite->rotation += actor->timer;
   if (KandoreanTemple_IsOverActor(actor, leader)) {
     ((struct FieldSprite *)actor->sprite)->priority = 3;
-    actor->z.fixed -= actor->riseBaseY;
-    actor->gravity += actor->riseBaseY >> 2;
-    actor->riseBaseY = 0;
+    actor->z.fixed -= actor->sceneWord;
+    actor->gravity += actor->sceneWord >> 2;
+    actor->sceneWord = 0;
   }
   if (KandoreanTemple_IsOverActor(actor, other)) {
     ((struct FieldSprite *)actor->sprite)->priority = 3;
-    actor->z.fixed -= actor->riseBaseY;
-    actor->gravity += actor->riseBaseY >> 3;
-    actor->riseBaseY = 0;
+    actor->z.fixed -= actor->sceneWord;
+    actor->gravity += actor->sceneWord >> 3;
+    actor->sceneWord = 0;
   }
 }
 
@@ -846,7 +846,7 @@ void KandoreanTemple_BlowStreamSteam(void) {
     actor->bounce =
         Trig_Cos((Random_Below(TRIG_TURN * 3 / 16)) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
-    actor->riseBaseY = (u16)(Random16() * 2) + toFIXED(11) / 2;
+    actor->sceneWord = (u16)(Random16() * 2) + toFIXED(11) / 2;
     timer = (u16)Random16() - 32768;
     actor->timer = timer;
     KandoreanTemple_InitializeSteam(actor, 1);
@@ -866,7 +866,7 @@ void KandoreanTemple_ShowLeader(void) {
 void KandoreanTemple_PrepareLift(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
-  actor->riseCounter = 1;
+  actor->sceneCounter = 1;
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetAnimationById(id, 1);
   Actor_SetSpritePriority(id, 3);
@@ -875,7 +875,7 @@ void KandoreanTemple_PrepareLift(s32 id) {
 
 /// Sets a lift's column or a piece of one at rest, disabled.
 void KandoreanTemple_PrepareColumn(s32 id) {
-  Actor_GetById(id)->riseCounter = 1;
+  Actor_GetById(id)->sceneCounter = 1;
   Actor_SetSpritePriority(id, 2);
   Actor_DisableById(id);
 }
@@ -3504,7 +3504,7 @@ void KandoreanTemple_CreateLashPebble(void) {
   *slot = actor;
   if (actor) {
     struct FieldSprite *sprite = actor->sprite;
-    GlyphTransfer *glyph;
+    IconTransfer *glyph;
 
     sprite->fullColor = 0;
     sprite->palette = 0;
@@ -3512,10 +3512,10 @@ void KandoreanTemple_CreateLashPebble(void) {
     actor->retainSpriteCache = 1;
     sprite->flags = clear;
     sprite->countAndShadow[0] = clear;
-    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_LASH_PEBBLE);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
 }
 

@@ -65,7 +65,7 @@ void FieldPsynergy_TremorOnTarget(void) {
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*tremorState));
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct FieldState *field = Ram_HeapSlots->fieldState;
-  struct Actor *target = scene->child;
+  struct Actor *target = scene->target;
   struct Sprite *targetSprite = target->sprite;
   s32 tiles;
   s32 shown;
@@ -98,7 +98,7 @@ void FieldPsynergy_TremorOnTarget(void) {
       sprite->depth = OAM_DEPTH_WINDOW;
       particle->timer = -1;
     }
-    BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
+    BattleEffect_SetObjectUpdateMode(scene->caster, 0);
     if (target != NULL && targetSprite != NULL) {
       Sprite_SetAnimationSpeedFar(targetSprite, 0);
       FieldPsynergy_DecodePicture(
@@ -226,7 +226,7 @@ void FieldPsynergy_Tremor(void) {
   s32 frames;
 
   FieldPsynergy_FadeToCastColor();
-  BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
+  BattleEffect_SetObjectUpdateMode(scene->caster, 0);
   ViewMove_Start(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
   wait(10);

@@ -140,7 +140,7 @@ enum {
   /// The next entry is the line spacing; a glyph sprite sits half of it below
   /// its line's top.
   TEXT_LINE_SPACING = 10,
-  TEXT_WINDOW_STATE = 15, ///< the next entry is the window animation to run
+  TEXT_WINDOW_ANIMATION = 15, ///< the next entry is the window animation to run
   /// MESSAGE_ACTOR_NAME as Message_DecodeRaw keeps it, unexpanded: the next
   /// entry names the unit, and drawing and measuring skip both.
   TEXT_ACTOR_NAME = 17,

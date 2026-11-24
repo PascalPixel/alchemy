@@ -68,7 +68,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   user = BattleObject_GetFar(args->user)->object;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_FetchRectangleBlitters(args->side, draw);
+  BattleEffect_BuildCanvasBlitters(args->side, draw);
   Actor_SelectAnimationFar(user, POSE_LEAP);
   Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL * 3);
   EffectPosition_ProjectBattler(args->targets[0], &target);

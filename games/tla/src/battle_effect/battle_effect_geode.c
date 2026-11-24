@@ -108,7 +108,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = 0;
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK + 15);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK + 15);
   Task_Add(Display_ApplyBg2Affine, TASK_PASS_VBLANK + 127);
   projected = state->sheet;
   vertices = (struct ModelVertex *)(state->sheet + GEODE_CLOD_CORNERS);
@@ -191,7 +191,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       BattleEffect_BuildCanvasTilemap();
     }
     if (frame == 34) {
-      Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+      Task_Remove(BattleEffect_TransferCanvas);
       Task_Add(BattleEffect_ProcessPendingBlock2Transfer,
                TASK_PASS_VBLANK + 15);
       IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -209,8 +209,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     if (frame == 35) {
       Task_Remove(Display_ApplyBg2Affine);
       Task_Remove(BattleEffect_ProcessPendingBlock2Transfer);
-      Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
-               TASK_PASS_VBLANK + 15);
+      Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK + 15);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y, -(BATTLE_VIEW_TOP << 8),
                           IO_WRITE_WORD);
@@ -430,6 +429,6 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   }
   Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }

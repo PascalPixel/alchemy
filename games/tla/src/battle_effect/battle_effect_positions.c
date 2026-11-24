@@ -321,7 +321,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleEffect_HideBg1AndRestoreBackdrop();
@@ -436,7 +436,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     gBgScroll[1].y = BEAM_CANVAS_SCROLL_Y;
     state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     state->fadeStep = 0;
-    Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
+    Task_Add(BattleEffect_DarkenBackgroundStep, TASK_PASS_FRAME);
     Sound_PlayFar(SE_POWER_UP);
     for (frame = 0; frame != BEAM_FRAMES; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget,
@@ -468,7 +468,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
       }
       EFFECT_PRESENT_CANVAS(state);
     }
-    Task_Remove(Palette_StepFadeTransfer);
+    Task_Remove(BattleEffect_DarkenBackgroundStep);
     Actor_SetAnimationSpeedFar(object, ANIM_STEP_NORMAL);
     object->velocityX = velocityX;
     object->velocityY = velocityY;
@@ -554,7 +554,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   }
 
   // The background's palette steps back over seven frames.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   for (frame = 0, background = &Ram_HeapSlots->battleState->background;

@@ -206,7 +206,7 @@ STATIC_ASSERT(offsetof(struct Snapshot, vitals) == 148);
 
 /// The packet the two consoles exchange each turn of a link battle: how many
 /// actions follow, a random check, and the random seed both sides then use.
-struct BattleLinkedActionState {
+struct BattleLinkHeader {
   s32 count;
   s32 check;
   s32 seed;

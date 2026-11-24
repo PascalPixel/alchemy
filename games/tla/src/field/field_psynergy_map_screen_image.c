@@ -254,8 +254,8 @@ void MapScreen_UpdateMarkers(void) {
       gMapScreen_GlideTargetY = 0;
     } else {
       if (distance > step) {
-        dx = Iwram_MulFX(Iwram_RatioMulQ14(distance, dx), step);
-        dz = Iwram_MulFX(Iwram_RatioMulQ14(distance, dz), step);
+        dx = Iwram_MulFX(Iwram_DivFX(distance, dx), step);
+        dz = Iwram_MulFX(Iwram_DivFX(distance, dz), step);
       }
       state->x += dx;
       state->z += dz;
@@ -679,8 +679,8 @@ void MapScreen_UpdateScroll(void) {
       step = toFIXED(8);
     if (distance >= toFIXED(1) / 4) {
       if (distance > step) {
-        dx = Iwram_MulFX(Iwram_RatioMulQ14(distance, dx), step);
-        dy = Iwram_MulFX(Iwram_RatioMulQ14(distance, dy), step);
+        dx = Iwram_MulFX(Iwram_DivFX(distance, dx), step);
+        dy = Iwram_MulFX(Iwram_DivFX(distance, dy), step);
       }
       x = SCROLL_X + dx;
       y = SCROLL_Y + dy;

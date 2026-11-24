@@ -415,7 +415,7 @@ s32 Prox_ChaseTarget(struct Actor *actor, struct Actor *target, s32 range,
   s32 *objectPos;
 
   // A child being talked to holds still.
-  if (actor->riseEnabled != 0) {
+  if (actor->sceneByte != 0) {
     actor->paused = 1;
     return 1;
   }
@@ -685,7 +685,7 @@ void Prox_TalkToPlayingChild(void) {
 
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
-  actor->riseEnabled = 1;
+  actor->sceneByte = 1;
   if (state->psynergy == 0) {
     Actor_FaceActor(ACTOR_PLAYING_CHILD, gMainRoutineState.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxWeeeeWhatFunNow);
@@ -696,7 +696,7 @@ void Prox_TalkToPlayingChild(void) {
   Event_ShowMessage(ACTOR_PLAYING_CHILD, 0);
   if (state->psynergy == 0)
     actor->facing = angle;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   Prox_EndEvent();
 }
 
@@ -710,7 +710,7 @@ void Prox_TalkToChildWhoMissesRunning(void) {
 
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
-  actor->riseEnabled = 1;
+  actor->sceneByte = 1;
   if (state->psynergy == 0) {
     Actor_FaceActor(ACTOR_CHILD_WHO_MISSES_RUNNING,
                     gMainRoutineState.leaderActorId, 0);
@@ -722,7 +722,7 @@ void Prox_TalkToChildWhoMissesRunning(void) {
   Event_ShowMessage(ACTOR_CHILD_WHO_MISSES_RUNNING, 0);
   if (state->psynergy == 0)
     actor->facing = angle;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   Prox_EndEvent();
 }
 
@@ -737,7 +737,7 @@ void Prox_TalkToTrainingChild(void) {
 
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
-  actor->riseEnabled = 1;
+  actor->sceneByte = 1;
   if (state->psynergy == 0) {
     Actor_FaceActor(ACTOR_TRAINING_CHILD, gMainRoutineState.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIfImGoing);
@@ -748,7 +748,7 @@ void Prox_TalkToTrainingChild(void) {
   Event_ShowMessage(ACTOR_TRAINING_CHILD, 0);
   if (state->psynergy == 0)
     actor->facing = angle;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   Prox_EndEvent();
 }
 
@@ -1872,7 +1872,7 @@ void Prox_StartPlayingChase(s32 actorId, s32 x, s32 z, s32 quarry) {
   struct Actor *child = Actor_Get(actorId);
 
   child->timer = quarry;
-  child->riseEnabled = 0;
+  child->sceneByte = 0;
   child->update = (ObjectUpdate)Prox_PlayChase;
   Actor_SetPosition(actorId, x, z);
 }

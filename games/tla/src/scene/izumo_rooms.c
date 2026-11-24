@@ -1264,7 +1264,7 @@ void IzumoRooms_ShowMove(void) {
   FieldPsynergy_SetupActorPair(ACTOR_UZUME, -1);
   ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->finishCallback =
       (void (*)(void))IzumoRooms_FindNoMoveTarget;
-  ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->enabled = 1;
+  ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->aimAhead = 1;
   FieldPsynergy_StartCast();
   Event_Wait(10);
   FieldPsynergy_RunHandler(0);

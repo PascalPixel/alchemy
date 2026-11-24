@@ -76,7 +76,7 @@ struct Orbiter {
   FIXED targetZ;
   FIXED bounce;
   FIXED gravity;
-  FIXED orbitRadius; ///< 16.16 fixed-point pixels, in riseBaseY
+  FIXED orbitRadius; ///< 16.16 fixed-point pixels, in sceneWord
   void *sprite;
   u8 spriteStorageKind;
   u8 motionFlags;
@@ -92,7 +92,7 @@ struct Orbiter {
   u8 refused;
   u8 frozen;
   u8 countdown; ///< frames left of the spiral
-  u8 riseEnabled;
+  u8 sceneByte;
   s16 angle;            ///< its place on the circle, 1/65536 turns
   u16 speed;            ///< twice its turn a frame, 1/65536 turns
   struct Actor *anchor; ///< the actor it circles, in watchedActor
@@ -123,7 +123,7 @@ struct Orbit {
   FIXED targetZ;
   FIXED centreX;     ///< 16.16 fixed-point pixels, in bounce
   FIXED centreZ;     ///< 16.16 fixed-point pixels, in gravity
-  FIXED orbitRadius; ///< 16.16 fixed-point pixels, in riseBaseY
+  FIXED orbitRadius; ///< 16.16 fixed-point pixels, in sceneWord
   void *sprite;
   u8 spriteStorageKind;
   u8 motionFlags;
@@ -434,7 +434,7 @@ struct BobbingMarker {
   FIXED targetZ;
   FIXED bounce;
   FIXED gravity;
-  s32 riseBaseY;
+  s32 sceneWord;
   void *sprite;
   u8 spriteStorageKind;
   u8 motionFlags;
@@ -449,8 +449,8 @@ struct BobbingMarker {
   s16 wait;
   u8 refused;
   u8 frozen;
-  u8 riseCounter;
-  u8 riseEnabled;
+  u8 sceneCounter;
+  u8 sceneByte;
   s16 angle;   ///< its place on the circle, 1/65536 turns, in timer
   s16 stopped; ///< nonzero holds it still, in userValue
 };

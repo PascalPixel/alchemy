@@ -569,7 +569,7 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
         y += TEXT_LINE_HEIGHT;
         break;
       case 14:
-      case TEXT_WINDOW_STATE:
+      case TEXT_WINDOW_ANIMATION:
       case TEXT_ACTOR_NAME_START:
         text++;
         goto skip;

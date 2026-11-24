@@ -23,7 +23,7 @@
 /// teaches Psynergy while equipped, one with no action, or equipment the party
 /// member cannot equip); 2 not in battle, "Cannot be used during battle." (its
 /// action lacks ABILITY_USABLE_IN_BATTLE).
-s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
+s32 Item_CheckBattleUse(s32 unit, s32 itemId) {
   struct ItemDefinition *item;
 
   if (itemId == 0) {
@@ -65,7 +65,7 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 
 /// The battle item list for unit `member`: `count` inventory entries (ended by
 /// 0), five to a page, each with its icon and name: plain when usable,
-/// TEXT_COLOR_YELLOW when Item_ClassifyUseAbility refuses it, TEXT_COLOR_RED
+/// TEXT_COLOR_YELLOW when Item_CheckBattleUse refuses it, TEXT_COLOR_RED
 /// when broken; the window above names the one under the cursor
 /// (MsgItemDescription), or says it cannot be used in battle.
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
@@ -152,8 +152,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
                            1, WINDOW_PALETTE);
       Text_FillCanvasBackground();
       if (count != 0) {
-        if (Item_ClassifyUseAbility(member,
-                                    entries[firstEntry + selectedRow]) == 2)
+        if (Item_CheckBattleUse(member, entries[firstEntry + selectedRow]) == 2)
           BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleItemUnavailable, messageText,
                                    BATTLE_MENU_MESSAGE_CAPACITY);
         else
@@ -176,7 +175,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
             break;
           Item_GetDirectFar(item);
           Text_SetColor(TEXT_COLOR_WHITE);
-          if (Item_ClassifyUseAbility(member, item) != 0)
+          if (Item_CheckBattleUse(member, item) != 0)
             Text_SetColor(TEXT_COLOR_YELLOW);
           else if (item & INVENTORY_BROKEN)
             Text_SetColor(TEXT_COLOR_RED);
@@ -253,7 +252,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
         Item_GetDirectFar(entries[result]);
         unusableReason = 0;
         if ((entries[result] & INVENTORY_BROKEN) == 0) {
-          unusableReason = Item_ClassifyUseAbility(member, entries[result]);
+          unusableReason = Item_CheckBattleUse(member, entries[result]);
           if (unusableReason == 0)
             break;
         }

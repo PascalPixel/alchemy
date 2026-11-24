@@ -245,7 +245,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   }
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -332,7 +332,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_FillWhiteBand();
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   // The battle flashes away as the summons' openings do, stopping while the
   // white covers the screen.
@@ -377,7 +377,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
   blit = blitters;
-  BattleEffect_FetchRectangleBlitters(0, (void **)blit);
+  BattleEffect_BuildCanvasBlitters(0, (void **)blit);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   skip = 0;
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -679,7 +679,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       EFFECT_PRESENT_CANVAS(state);
     }
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   backdrop->busy = 0;
   for (i = 0; i != ZAGAN_PARTS; i++) {

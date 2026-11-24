@@ -29,7 +29,7 @@ void Whirlwind_Update(struct Actor *self) {
     Camera_WorldToScreen(position);
     if (position[0] <= toFIXED(DISPLAY_WIDTH + 32)) {
       if (position[0] >= -toFIXED(32)) {
-        if (self->riseCounter == 0) {
+        if (self->sceneCounter == 0) {
           distance = leader->y.fixed - self->y.fixed;
           if (distance < 0)
             distance = self->y.fixed - leader->y.fixed;
@@ -44,8 +44,8 @@ void Whirlwind_Update(struct Actor *self) {
             leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
             state->raisedTrigger = RAISED_RIDE_WHIRLWIND;
             gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
-            self->riseCounter = 1;
-            self->riseEnabled = 1;
+            self->sceneCounter = 1;
+            self->sceneByte = 1;
           }
         }
         {
@@ -64,7 +64,7 @@ void Whirlwind_Update(struct Actor *self) {
       }
     }
   }
-  self->riseEnabled = 0;
+  self->sceneByte = 0;
   self->update = NULL;
   Actor_StartScript(self, gWhirlwindEndScript);
   Event_PlaySound(SE_SPARKLING_PASSAGE);

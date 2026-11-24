@@ -33,7 +33,7 @@ s32 Shop_ListAvailableArtifacts(void) {
           continue;
       }
     }
-    if (Item_AdjustCounterFar(itemId, 0) != 0)
+    if (Item_AdjustRareItemStockFar(itemId, 0) != 0)
       shop->stockItemIds[count++] = itemId;
   }
   shop->stockItemIds[count] = 0;

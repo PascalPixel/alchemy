@@ -67,6 +67,6 @@ extern struct Formation gFormations[];
 
 /// The 87 enemies whose defeated flags (0x600 + id) a monster battle clears
 /// before it picks a formation (BattleFormation_SelectLevelMatchedCandidate).
-extern u16 gBattleFormation_LevelMatchedEnemies[87];
+extern u16 gBattleFormation_ExcludedEnemies[87];
 
 #endif

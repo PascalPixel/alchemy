@@ -852,7 +852,7 @@ void TaopoSwamp_BlowAwayPuddle(s32 id) {
 /// the spot it rains on it and leaves the puddle, and Frost cast on that
 /// puddle then only scatters its snowflakes, the puddle staying as it was.
 /// Douse runs this with the caster's actor (FieldPsynergy_Douse passes
-/// FieldEffectState.firstActorId) and a drop with 0, and of the casters only
+/// FieldEffectState.casterId) and a drop with 0, and of the casters only
 /// Jenna's actor counts.
 void TaopoSwamp_FillDripSpot(s32 caster, s32 id) {
   FieldActor_SetSpritePriority(id, 3);
@@ -2187,7 +2187,7 @@ void Vent_Puff(s32 *position, s32 base) {
     actor->bounce =
         Trig_Cos((Random_Below(TRIG_TURN * 3 / 16)) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
-    actor->riseBaseY = (u16)(Random16() << 1) + base;
+    actor->sceneWord = (u16)(Random16() << 1) + base;
     // A spin of up to half a turn a frame, either way.
     actor->timer = Random_Below(TRIG_TURN) - DEGtoANG(180);
     Actor_StartScripted(actor, 3);

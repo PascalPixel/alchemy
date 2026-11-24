@@ -183,7 +183,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   Matrix_Initialize();
   Matrix_SetLookAt(camera->eye, camera->focus);
   {
-    s32 ratio = Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, FIXED_ONE * 3 / 4);
+    s32 ratio = Iwram_DivFX(BATTLE_CAMERA_DISTANCE, FIXED_ONE * 3 / 4);
 
     Projection_Set(BATTLE_CAMERA_DISTANCE, ratio, BATTLE_FAR_DEPTH);
   }

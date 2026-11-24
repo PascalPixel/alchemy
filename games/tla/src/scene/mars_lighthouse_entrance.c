@@ -417,7 +417,7 @@ void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
 /// (MarsLighthouseEntrance_SetIceConeCells), so Felix can walk over the spot.
 void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
   struct FieldEffectState *holder = Ram_HeapSlots->fieldEffectState;
-  struct Actor *actor = Actor_Get(holder->secondActorId);
+  struct Actor *actor = Actor_Get(holder->targetId);
 
   if (index <= 7) {
     struct EffectOptions options;
@@ -438,7 +438,7 @@ void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
   if (mode == 1) {
     actor->scaleY = FIXED_ONE;
     Event_SetFlag(actor->timer);
-    MarsLighthouseEntrance_SetIceConeCells(Actor_Get(holder->secondActorId));
+    MarsLighthouseEntrance_SetIceConeCells(Actor_Get(holder->targetId));
     actor->x.fixed = actor->y.fixed = actor->z.fixed = 0;
   }
 }
@@ -689,7 +689,7 @@ void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
     if (FIELD_CELL(actor->x.fixed) == LAPIS_STATUE_BLOCKING_COLUMN) {
       FieldEvent_Wait(5);
       actor->z.fixed += toFIXED(1);
-      *(u8 *)&actor->riseCounter = 1;
+      *(u8 *)&actor->sceneCounter = 1;
       Flag_Set(FLAG_LAPIS_STATUE_BLOCKS_FLAMES);
     }
   }
@@ -1310,7 +1310,7 @@ s32 Scene_Initialize(void) {
     }
     if (Event_GetFlag(FLAG_LAPIS_STATUE_BLOCKS_FLAMES)) {
       Actor_SetPosition(ACTOR_PUSHED_STATUE, 328, 120);
-      Actor_Get(ACTOR_PUSHED_STATUE)->riseCounter = 1;
+      Actor_Get(ACTOR_PUSHED_STATUE)->sceneCounter = 1;
     }
     if (Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED))
       Actor_SetPosition(ACTOR_UNLIT_TORCH, 0, 0);

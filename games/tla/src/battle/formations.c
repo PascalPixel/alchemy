@@ -2923,7 +2923,7 @@ struct Formation gFormations[] = {
 
 /// The 87 enemies whose defeated flags a monster battle clears before it
 /// picks a formation (BattleFormation_SelectLevelMatchedCandidate).
-u16 gBattleFormation_LevelMatchedEnemies[] = {
+u16 gBattleFormation_ExcludedEnemies[] = {
     ENEMY_VENUS_DJINNI_UNUSED_QUARTZ,
     ENEMY_VENUS_DJINNI_UNUSED_VINE,
     ENEMY_VENUS_DJINNI_UNUSED_BANE,

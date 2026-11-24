@@ -126,7 +126,7 @@ enum StatusPanelKind {
 // The status panel's messages, as its routines pass them.
 #define MESSAGE_CLASS_NAME ((s32)&MsgClassName)
 #define MESSAGE_EXP_LABEL ((s32)&MsgExpLabel)
-#define MESSAGE_PANEL_STAT_LABEL ((s32)&MsgPanelStatLabel)
+#define MESSAGE_PANEL_STAT_LABEL ((s32)&MsgPanelAttackLabel)
 #define MESSAGE_ABILITY_NAME ((s32)&MsgAbilityName)
 #define MESSAGE_POISON_LABEL ((s32)&MsgPoisonLabel)
 #define MESSAGE_VENOM_LABEL ((s32)&MsgVenomLabel)
@@ -190,7 +190,7 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
       Window_ClearInteriorTilesFar(state->statusWindow, 0, 0, 88, 32);
     }
     Text_DrawStringAtOffsetFar(unit->name, (s32)window, STATUS_PANEL_NAME_X, 0);
-    StatusScreen_BuildAvailability(ailments, 1, owner);
+    StatusScreen_ListStatuses(ailments, 1, owner);
     ailmentRows = 0;
     if (ailments[CHARACTER_POISON]) {
       Text_DrawMessageAsTilesFar(MESSAGE_POISON_LABEL, window,
@@ -446,8 +446,8 @@ enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
 /// or down arrow: the equipment preview.
 void Text_DrawStatComparison(const struct Unit *after,
                              const struct Unit *before, s32 window) {
-  Text_DrawMessageAsTilesFar((s32)MsgPanelStatLabel, (struct Window *)window, 0,
-                             32);
+  Text_DrawMessageAsTilesFar((s32)MsgPanelAttackLabel, (struct Window *)window,
+                             0, 32);
   Text_DrawNumberAtOffsetFar(before->attack, 3, window, 16, 40);
   if (after->attack != before->attack) {
     Text_DrawNumberAtOffsetFar(after->attack, 3, window, 64, 40);
@@ -1064,8 +1064,8 @@ void PagedList_DrawPageNumbers(s32 window, s32 itemCount, s32 pageSize,
 /// Switches a rectangle of a window's text between WINDOW_PALETTE (normal) and
 /// HIGHLIGHT_PALETTE (the highlight made by Palette_LightenHighlight): palette
 /// is the new palette number.
-void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
-                               s32 width, s32 height, u32 palette) {
+void Window_SetHighlightRect(const struct Window *window, s32 x, s32 y,
+                             s32 width, s32 height, u32 palette) {
   struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
 
   x += (s16)window->x + 1;

@@ -252,7 +252,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
     // Each transfer lowers every level by 4, leaving a trail.
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0;

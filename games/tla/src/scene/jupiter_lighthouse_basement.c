@@ -227,9 +227,9 @@ void JupiterLighthouse_UpdateSpark(struct Actor *actor) {
   }
   Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL);
   TilesetAnim_ResumeAll();
-  if (actor->riseEnabled != 0) {
+  if (actor->sceneByte != 0) {
     if ((gFrameCount & 7) == 0)
-      actor->riseEnabled--;
+      actor->sceneByte--;
     return;
   }
   if (actor->userValue == 0)
@@ -256,7 +256,7 @@ void JupiterLighthouse_SpawnSparks(void) {
     actor->speedLimit = i * (toFIXED(1) / 16) + toFIXED(1) / 2;
     actor->acceleration = i * (toFIXED(1) / 16) + toFIXED(1) / 2;
     actor->update = (ObjectUpdate)JupiterLighthouse_UpdateSpark;
-    actor->riseEnabled = i << 3;
+    actor->sceneByte = i << 3;
     Actor_SetSpriteFlags(actor, 0);
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RBG);
     ((struct FieldSprite *)actor->sprite)->priority = 1;

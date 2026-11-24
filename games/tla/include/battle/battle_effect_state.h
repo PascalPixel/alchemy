@@ -65,7 +65,8 @@ struct BattleEffectState {
   /// The effect sets 1 after a frame; BattleCamera_ApplyPhasedDelta then turns
   /// the whole cameraDelta and sets 0, else turns half and toggles 0 and 2.
   s32 cameraPhase;
-  s32 fadeFrames; ///< backdrop fade frames left (Palette_StepFadeTransfer)
+  s32 fadeFrames; ///< backdrop fade frames left
+                  ///< (BattleEffect_DarkenBackgroundStep)
   s32 fadeStep;   ///< steps the backdrop has darkened so far
   /// Window, display and blend registers, which
   /// BattleEffect_ApplyWindowBlendRegisters writes all at once.
@@ -82,8 +83,8 @@ struct BattleEffectState {
   ///@}
   u16 padding; ///< aligns bg2x
   /// BG2's reference point, written to BG2X and BG2Y by
-  /// Display_ApplyBg2Reference and Display_ApplyBg2Affine. Volatile, as the
-  /// scale below.
+  /// BattleEffect_ApplyBg2Reference and Display_ApplyBg2Affine. Volatile, as
+  /// the scale below.
   ///@{
   volatile s32 bg2x;
   volatile s32 bg2y;

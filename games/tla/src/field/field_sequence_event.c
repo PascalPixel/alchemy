@@ -275,7 +275,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         Message_CloseFinishedWindowsFar();
         if (result != 0)
           goto retry;
-        Item_AdjustCounterFar(item, 1);
+        Item_AdjustRareItemStockFar(item, 1);
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
         // "Felix drops the <item>."
         FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 2, FIELD_MESSAGE_ZOOM);

@@ -117,7 +117,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_STRONGER) {
     LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   }
-  BattleEffect_FetchRectangleBlitters(args->side, draw);
+  BattleEffect_BuildCanvasBlitters(args->side, draw);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
 

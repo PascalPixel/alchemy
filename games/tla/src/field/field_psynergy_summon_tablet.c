@@ -221,7 +221,7 @@ enum TabletStage {
   TABLET_LEADER_SQUASHED = 7
 };
 
-extern const s32 gFieldEffect_TargetColors[];
+extern const s32 gFieldPsynergy_CastColors[];
 extern const s32 gSummonTablet_SquashScript[];
 extern const u8 gMovementType_SquashScript[];
 
@@ -257,7 +257,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   FIXED startX = toFIXED(130);
   FIXED startZ = toFIXED(30);
 
-  Field_StartColorTransition(8, gFieldEffect_TargetColors[gFrameCount & 7]);
+  Field_StartColorTransition(8, gFieldPsynergy_CastColors[gFrameCount & 7]);
   pos[0] = owner->x.fixed;
   pos[1] = owner->y.fixed + toFIXED(24);
   pos[2] = owner->z.fixed;

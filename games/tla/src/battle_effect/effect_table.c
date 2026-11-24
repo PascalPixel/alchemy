@@ -94,12 +94,12 @@ const u8 gReaper_PictureX[] = {10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0};
 const u8 gReaper_PictureY[] = {0, 20, 2, 2, 34, 64, 68};
 
 /// Ice's shards and frames, a pair for each variant (ICE_SHARDS, ICE_FRAMES).
-const u8 gFalling_IceCounts[] = {16, 46, 20, 52, 32, 80};
+const u8 gIce_Counts[] = {16, 46, 20, 52, 32, 80};
 
 /// Douse's drops, four bytes for each variant: the drops that fall, the
 /// droplets each splashes into, their spacing in pixels and the frames
 /// (battle_effect_falling.c's DOUSE_ macros).
-const u8 gFalling_Counts[] = {6, 8, 32, 80, 8, 16, 24, 80, 32, 4, 8, 80};
+const u8 gDouse_Counts[] = {6, 8, 32, 80, 8, 16, 24, 80, 32, 4, 8, 80};
 
 /// The streak styles, four flags for each (STREAK_ANIMATE, STREAK_HIT,
 /// STREAK_MOTION, STREAK_SHAKE).
@@ -140,37 +140,37 @@ const u8 gTargetStrike_GlintDrawFlags[] = {0, 4, 8, 12};
 
 /// The 33 pieces of the shattered screen: each one's width; the tables after
 /// it give their heights, places in the sprite sheet and starting points.
-const u8 gDeathPlunge_PieceWidths[] = {
+const u8 gShatteringOpening_PieceWidths[] = {
     21, 20, 24, 30, 35, 69, 19, 23, 9, 22, 33, 10, 18, 9, 7,  9, 17,
     55, 30, 25, 40, 29, 10, 28, 14, 5, 32, 23, 19, 32, 8, 43, 15};
 
 /// Each piece picture's height, in pixels.
-const u8 gDeathPlunge_PieceHeights[] = {
+const u8 gShatteringOpening_PieceHeights[] = {
     23, 47, 25, 40, 20, 53, 28, 29, 23, 14, 35, 17, 18, 14, 15, 12, 13,
     37, 38, 41, 60, 41, 15, 45, 59, 41, 26, 50, 21, 35, 12, 57, 11, 0};
 
 /// Each piece picture's byte offset in Death Plunge's sprite sheet.
-const u16 gDeathPlunge_PiecePictures[] = {
+const u16 gShatteringOpening_PiecePictures[] = {
     0,     483,   1423,  2023,  3223,  3923,  7580,  8112,  8779,
     8986,  9294,  10449, 10619, 10943, 11069, 11174, 11282, 11503,
     13538, 14678, 15703, 18103, 19292, 19442, 20702, 21528, 21733,
     22565, 23715, 24114, 25234, 25330, 27781, 27946};
 
 /// Each piece's starting x.
-const u8 gDeathPlunge_PieceStartX[] = {
+const u8 gShatteringOpening_PieceStartX[] = {
     0,  21, 28, 46, 70, 51, 0,  13, 37, 77, 87, 19, 25, 35, 44, 45, 48,
     65, 0,  0,  0,  5,  33, 15, 36, 46, 47, 50, 53, 65, 72, 77, 105};
 
 /// Each piece's starting y.
-const u8 gDeathPlunge_PieceStartY[] = {
+const u8 gShatteringOpening_PieceStartY[] = {
     0,  0,  0,  0,  0,  0,  19, 17, 23, 28, 8,  36, 43, 43,  40, 47, 48,
     37, 42, 67, 60, 79, 62, 75, 61, 62, 60, 70, 74, 85, 108, 63, 74};
 
 /// The four corner sparks: their x about the target.
-const s8 gDeathPlunge_X[] = {0, 32, 0, 32};
+const s8 gElementBurst_SparkX[] = {0, 32, 0, 32};
 
 /// The four corner sparks: their y about the target.
-const s8 gDeathPlunge_Y[] = {0, 0, 32, 32};
+const s8 gElementBurst_SparkY[] = {0, 0, 32, 32};
 
 /// The four corner sparks' flips.
 const u8 gElementBurst_GlintFlips[] = {0, 4, 8, 12};
@@ -1006,28 +1006,27 @@ const u8 gGrowth_PuffHeights[] = {10, 14, 21, 32, 45, 50, 32};
 const u16 gGrowth_PuffPictures[] = {0, 50, 148, 379, 891, 1926, 3276};
 
 /// Each vine's x about the middle of the targets.
-const s8 gGrowth_ColumnOffsets[] = {0,   14, -32, 8,   32, -48, 4,   12,
-                                    -24, 24, -12, -40, -4, -16, -32, 12};
+const s8 gVine_ColumnOffsets[] = {0,   14, -32, 8,   32, -48, 4,   12,
+                                  -24, 24, -12, -40, -4, -16, -32, 12};
 
 /// Each thorn's kind: 0 and 1 large, 2 and 3 small; the odd ones grow to the
 /// left.
-const u8 gGrowth_Kinds[] = {0, 3, 2, 1, 2, 3, 2, 1};
+const u8 gThorn_Kinds[] = {0, 3, 2, 1, 2, 3, 2, 1};
 
 /// Each thorn's root, its x.
-const s8 gGrowth_X[] = {24, 80, 24, 48, 88, 40, 8, 96};
+const s8 gThorn_X[] = {24, 80, 24, 48, 88, 40, 8, 96};
 
 /// The thorns, by strength.
-const u8 gGrowth_Counts[] = {3, 5, 8};
+const u8 gThorn_Counts[] = {3, 5, 8};
 
 /// Each thorn puff picture's width, in pixels.
-const s8 gGrowth_ThornPuffWidths[] = {5, 7, 11, 17, 32, 32, 19};
+const s8 gThorn_PuffWidths[] = {5, 7, 11, 17, 32, 32, 19};
 
 /// Each dust puff picture's height, in pixels, as a thorn bursts out.
-const u8 gGrowth_ThornPuffHeights[] = {10, 14, 21, 34, 59, 60, 38};
+const u8 gThorn_PuffHeights[] = {10, 14, 21, 34, 59, 60, 38};
 
 /// Each thorn puff picture's byte offset in Growth's sprite sheet.
-const u16 gGrowth_ThornPuffPictures[] = {5888, 5938, 6036, 6267,
-                                         6845, 8733, 10653};
+const u16 gThorn_PuffPictures[] = {5888, 5938, 6036, 6267, 6845, 8733, 10653};
 
 /// Four bytes for each strength: the sparks, the glints, the glints' spread and
 /// the bolts.
@@ -1089,23 +1088,23 @@ const u16 gHail_Pictures[] = {2308, 2372, 2436, 2500};
 
 /// The chips' flips, a blitter's flags; the tables after it give, by shape,
 /// their pictures, places and sizes.
-const u8 gHail_CrackleFlips[] = {3, 7, 11, 15};
+const u8 gGround_CrackleFlips[] = {3, 7, 11, 15};
 
 /// Each portal picture's width, in pixels.
-const u8 gHail_PortalWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
+const u8 gGround_PortalWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
 
 /// Each portal picture's height, in pixels.
-const u8 gHail_PortalHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
+const u8 gGround_PortalHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
 
 /// Each portal picture's byte offset in Hail's sprite sheet.
-const u16 gHail_PortalPictures[] = {0,    1152, 1243, 1341, 1533,
-                                    1677, 1898, 2098, 2252};
+const u16 gGround_PortalPictures[] = {0,    1152, 1243, 1341, 1533,
+                                      1677, 1898, 2098, 2252};
 
 /// Each portal's x, in pixels.
-const u8 gHail_PortalX[] = {0, 9, 9, 11, 10, 0, 3, 13, 7};
+const u8 gGround_PortalX[] = {0, 9, 9, 11, 10, 0, 3, 13, 7};
 
 /// Each portal's y, in pixels.
-const u8 gHail_PortalY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
+const u8 gGround_PortalY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
 
 /// The palettes a struck target flashes in, one picked at random.
 const u8 gThor_TargetPalettes[] = {7, 14, 10, 4};
@@ -1402,20 +1401,20 @@ const u16 gImpactBurst_Pictures[] = {0,     4608,  9216,  13356,
                                      16020, 18684, 20668, 22020};
 
 /// Each orbit's point, x, y and z, in pixels; x and z are halved.
-const s16 gParticleStreams_OrbitPoints[][3] = {
+const s16 gStarfieldFall_OrbitPoints[][3] = {
     {-64, -96, 24}, {-48, -120, 32}, {-32, -80, -48}, {-16, -72, -24},
     {16, -80, 16},  {32, -112, -32}, {48, -96, 56}};
 
 /// Each fireball's point, x and y.
-const s16 gParticleStreams_FireballPoints[][2] = {
+const s16 gStarfieldFall_FireballPoints[][2] = {
     {32, 32}, {48, 96}, {80, 80}, {112, 100}, {176, 80}, {196, 64}, {204, 96}};
 
 /// Each flash picture's byte offset in Particle Streams's sprite sheet.
-const u16 gParticleStreams_FlashPictures[] = {0,    256,  1280, 3584,
-                                              5888, 8192, 10496};
+const u16 gStarfieldFall_FlashPictures[] = {0,    256,  1280, 3584,
+                                            5888, 8192, 10496};
 
 /// Each flash's size, in pixels.
-const u16 gParticleStreams_FlashSizes[] = {16, 32, 48, 48, 48, 48, 48};
+const u16 gStarfieldFall_FlashSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
 /// Each of the statue's sprites: its x in the statue.
 const u8 gRamses_StatueColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
@@ -1466,13 +1465,12 @@ const s32 gNeptune_Gravity[] = {toFIXED(0.5), toFIXED(0.25), toFIXED(0.25),
                                 toFIXED(0.125)};
 
 /// Each spark picture's byte offset in Undead Sword's sprite sheet.
-const u16 gUndeadSword_SparkPictures[] = {0,    256,  1280, 3584,
-                                          5888, 8192, 10496};
+const u16 gUndeadSword_PuffPictures[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 
 /// Each spark picture's size, in pixels; the six words after the seventh are
 /// never read.
-const u16 gUndeadSword_SparkSizes[] = {16,   32,   48,   48,  48,   48,  48,
-                                       1536, 2312, 2053, 775, 8224, 8224};
+const u16 gUndeadSword_PuffSizes[] = {16,   32,   48,   48,  48,   48,  48,
+                                      1536, 2312, 2053, 775, 8224, 8224};
 
 /// The funnels, by mode.
 const u8 gWindFunnel_Counts[] = {3, 3};

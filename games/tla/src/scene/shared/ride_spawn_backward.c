@@ -8,7 +8,7 @@ void Ride_SpawnBackward(s32 *position, s32 speed, s32 offScreen) {
   if (actor != NULL) {
     actor->bounce = 0;
     actor->gravity = 0;
-    actor->riseBaseY = -speed;
+    actor->sceneWord = -speed;
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateForward;
     if (offScreen)

@@ -208,7 +208,7 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB) {
 /// from a quarter to full size.
 void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
-  struct Actor *mainActor = scene->mainActor;
+  struct Actor *mainActor = scene->caster;
   FIXED start[3];
   s32 i = 0;
 
@@ -231,7 +231,7 @@ void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
 /// 16 pixels above the caster, shrinking it from full size to a quarter.
 void FieldPsynergy_ShrinkToCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   struct Actor *mainActor =
-      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->mainActor;
+      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->caster;
   FIXED start[3];
   s32 i;
 
@@ -324,7 +324,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
       Actor_ReleaseFar(actor);
       return NULL;
     }
-    actor->groundHeight = scene->mainActor->groundHeight;
+    actor->groundHeight = scene->caster->groundHeight;
     actor->motionFlags = ACTOR_FLOATS;
     actor->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
     ((struct Sprite *)actor->sprite)->image.priority = 0;
@@ -452,7 +452,7 @@ void FieldPsynergy_FadeToCastColor(void) {
     tint = PSYNERGY_TINT_DARK_GREY;
   if (GameFlag_Get(FLAG_PSYNERGY_TINT(PSYNERGY_TINT_GREY)))
     tint = PSYNERGY_TINT_GREY;
-  Field_StartColorTransition(8, gFieldEffect_TargetColors[tint]);
+  Field_StartColorTransition(8, gFieldPsynergy_CastColors[tint]);
 }
 #undef Actor_SetAnimationSpeedFar
 #undef BG_CHANNELS

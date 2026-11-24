@@ -487,10 +487,10 @@ void Kibombo_FlashSprite(struct Actor *actor) {
 
 /// An actor's update: every ten to twenty frames, faces a random way.
 s32 Kibombo_FaceRandomWay(struct Actor *actor) {
-  if (actor->riseCounter != 0) {
-    actor->riseCounter--;
+  if (actor->sceneCounter != 0) {
+    actor->sceneCounter--;
   } else {
-    actor->riseCounter = (Random_Below(10)) + 10;
+    actor->sceneCounter = (Random_Below(10)) + 10;
     actor->facing = Random16();
   }
   return 1;
@@ -2144,7 +2144,7 @@ void Kibombo_CreateBlackCrystal(void) {
   *slot = actor;
   if (actor != 0) {
     struct FieldSprite *sprite = actor->sprite;
-    GlyphTransfer *glyph;
+    IconTransfer *glyph;
 
     sprite->fullColor = 0;
     sprite->palette = 0;
@@ -2153,10 +2153,10 @@ void Kibombo_CreateBlackCrystal(void) {
     actor->retainSpriteCache = 1;
     sprite->flags = clear;
     sprite->countAndShadow[0] = clear;
-    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
 }
 
@@ -2207,7 +2207,7 @@ void Kibombo_RaiseEmbers(void) {
     if (actor != 0) {
       actor->bounce = Trig_Cos(((Random16() << 13) >> 16) + TRIG_TURN * 3 / 16);
       actor->gravity = toFIXED(1);
-      actor->riseBaseY = toFIXED(4) - (u16)Random16();
+      actor->sceneWord = toFIXED(4) - (u16)Random16();
       value = (u16)Random16() + 0xffff8000;
       actor->timer = value;
       actor->motionFlags = 0;
@@ -2378,7 +2378,7 @@ s32 VramCache_FreeEntry(u32 slot);
 /// at its radius, wobbling in and out, and rises.
 void Kibombo_SpinSpark(union FieldObject *object) {
   FIXED wobble = 0;
-  u8 *timer = &object->actor.riseEnabled;
+  u8 *timer = &object->actor.sceneByte;
   s16 *action;
   u8 *stage;
   struct Vector3 center;
@@ -2394,7 +2394,7 @@ void Kibombo_SpinSpark(union FieldObject *object) {
   center.x = object->actor.targetX;
   center.y = object->actor.targetY;
   center.z = object->actor.targetZ;
-  radius = object->actor.riseBaseY;
+  radius = object->actor.sceneWord;
   spin = (s16)object->actor.userValue;
   turn = *action;
   Vector_AddPolarOffset(toFIXED(radius) + wobble,
@@ -2402,11 +2402,11 @@ void Kibombo_SpinSpark(union FieldObject *object) {
   object->actor.x.fixed = center.x;
   object->actor.y.fixed = center.y;
   object->actor.z.fixed = center.z;
-  stage = &object->actor.riseCounter;
+  stage = &object->actor.sceneCounter;
   switch (*stage) {
   case 0:
     *action += 4;
-    object->actor.riseBaseY = 1;
+    object->actor.sceneWord = 1;
     ((struct FieldSprite *)object->actor.sprite)->rotation += TRIG_TURN / 16;
     object->actor.scaleX += toFIXED(0.025);
     object->actor.scaleY += toFIXED(0.025);
@@ -2433,9 +2433,9 @@ void Kibombo_SpinSpark(union FieldObject *object) {
     break;
   case 3:
     *action += 1;
-    object->actor.riseBaseY += 2;
+    object->actor.sceneWord += 2;
     *timer = 10;
-    if (object->actor.riseBaseY > 40)
+    if (object->actor.sceneWord > 40)
       *stage = 4;
     break;
   case 4:
@@ -2445,11 +2445,11 @@ void Kibombo_SpinSpark(union FieldObject *object) {
     break;
   case 5:
     *action += 1;
-    object->actor.riseBaseY -= 2;
+    object->actor.sceneWord -= 2;
     if (object->actor.targetY < toFIXED(136))
       object->actor.targetY += toFIXED(2);
-    if (object->actor.riseBaseY <= 1) {
-      object->actor.riseBaseY = 0;
+    if (object->actor.sceneWord <= 1) {
+      object->actor.sceneWord = 0;
       *stage = 6;
     }
     break;
@@ -2508,9 +2508,9 @@ void Kibombo_AkafubuChants(void) {
       Actor_SetSpriteFlags(spark, 0);
       Actor_SelectAnimation(spark, 1);
       spark->timer = 0;
-      spark->riseBaseY = 0;
+      spark->sceneWord = 0;
       spark->userValue = angle / 360;
-      spark->riseCounter = 0;
+      spark->sceneCounter = 0;
       spark->targetX = center->x.fixed;
       spark->targetY = center->y.fixed + toFIXED(24);
       spark->targetZ = center->z.fixed;
@@ -4092,7 +4092,7 @@ s32 gKibombo_EyesPopScript[] = {
 };
 
 s32 gKibombo_CrowdDanceScript[] = {
-    SC_SET(SW_RISE_COUNTER, 0),
+    SC_SET(SW_SCENE_COUNTER, 0),
     SC_CALL(Kibombo_FaceRandomWay),
     SC_SPEED(0.4),
     SC_ACCELERATION(0.4),

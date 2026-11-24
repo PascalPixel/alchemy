@@ -210,7 +210,7 @@ void Weather_StartRain(s32 withCue);
 /// Each frame while waiting in the storm: now and then the actor looks
 /// another way.
 void MarsLighthouseAerie_LookAround(struct Actor *actor) {
-  u8 *timer = &actor->riseCounter;
+  u8 *timer = &actor->sceneCounter;
 
   if (*timer != 0) {
     (*timer)--;
@@ -237,7 +237,7 @@ void MarsLighthouseAerie_Throb(struct Actor *actor) {
     actor->scaleX = scale - FIXED_ONE / 32;
     actor->scaleY -= FIXED_ONE / 64;
   }
-  timer = &actor->riseCounter;
+  timer = &actor->sceneCounter;
   if (*timer != 0) {
     (*timer)--;
   } else {
@@ -259,7 +259,7 @@ void MarsLighthouseAerie_OrbitBeaconFire(struct Actor *actor) {
   u8 *counter;
 
   cosine = Trig_Cos(angle);
-  counter = &actor->riseCounter;
+  counter = &actor->sceneCounter;
   along = anchor->x.fixed + cosine * (actor->speedLimit + *counter + 6);
   actor->x.fixed = along;
   sine = Math_Sin(angle);
@@ -478,7 +478,7 @@ void MarsLighthouseAerie_StartLookingAround(s32 id) {
   struct Actor *actor = Actor_Get(id);
 
   FieldActor_Stop(id);
-  actor->riseCounter = (Random_Below(40)) + 20;
+  actor->sceneCounter = (Random_Below(40)) + 20;
   actor->update = (ObjectUpdate)MarsLighthouseAerie_LookAround;
 }
 
@@ -561,7 +561,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   // "The wind's too strong! I can't see anything!"
   Event_ShowMessage(ACTOR_MIA, 0);
   FieldActor_Stop(gMainRoutineState.leaderActorId);
-  actor->riseCounter = (Random_Below(20)) + 20;
+  actor->sceneCounter = (Random_Below(20)) + 20;
   actor->update = (ObjectUpdate)MarsLighthouseAerie_LookAround;
   MarsLighthouseAerie_StartLookingAround(ACTOR_GARET);
   MarsLighthouseAerie_StartLookingAround(ACTOR_MIA);
@@ -1400,9 +1400,9 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
                             SPRITE_COLOR_NORMAL);
   FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_KYLE)), SPRITE_COLOR_NORMAL);
   FieldEvent_Wait(20);
-  mother->riseCounter = (Random_Below(80)) + 40;
-  father->riseCounter = (Random_Below(80)) + 40;
-  kyle->riseCounter = (Random_Below(80)) + 40;
+  mother->sceneCounter = (Random_Below(80)) + 40;
+  father->sceneCounter = (Random_Below(80)) + 40;
+  kyle->sceneCounter = (Random_Below(80)) + 40;
   mother->update = (ObjectUpdate)MarsLighthouseAerie_Throb;
   father->update = (ObjectUpdate)MarsLighthouseAerie_Throb;
   kyle->update = (ObjectUpdate)MarsLighthouseAerie_Throb;
@@ -1461,8 +1461,8 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_JENNA_STAND_IN, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldActor_SetSpritePriority(ACTOR_SHEBA_STAND_IN, 2);
-  Actor_Get(ACTOR_JENNA_STAND_IN)->riseCounter = 0;
-  Actor_Get(ACTOR_SHEBA_STAND_IN)->riseCounter = 0;
+  Actor_Get(ACTOR_JENNA_STAND_IN)->sceneCounter = 0;
+  Actor_Get(ACTOR_SHEBA_STAND_IN)->sceneCounter = 0;
   Actor_SetSpeed(ACTOR_SHEBA_STAND_IN, 0.8);
   Actor_SetSpeed(ACTOR_JENNA_STAND_IN, 0.8);
   Actor_SetScript(ACTOR_SHEBA_STAND_IN,
@@ -1477,7 +1477,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   actor = Actor_Get(ACTOR_SHEBA_STAND_IN);
   do {
     System_Wait(1);
-  } while (actor->riseCounter == 0);
+  } while (actor->sceneCounter == 0);
   Actor_FaceDirection(ACTOR_JENNA_STAND_IN, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA_STAND_IN, FACING_SOUTHEAST);
   // "What are you talking about, Kraden? They can't hurt us anymore..."
@@ -2027,7 +2027,7 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
       actor->timer = angle;
       actor->userValue = 0;
       phase = Random16() >> 13;
-      actor->riseCounter = phase;
+      actor->sceneCounter = phase;
       actor->update = MarsLighthouseAerie_OrbitBeaconFire;
       actor->speedLimit = Math_Sin(Random16() * 0xffff >> 20) * 24;
       actor->speedLimit = FIXEDtoINT(anchor->speedLimit);
@@ -2076,7 +2076,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   struct OverlaySprite *sprite;
   struct Actor *star;
   struct Actor *anchor;
-  GlyphTransfer *icon;
+  IconTransfer *icon;
   struct Actor *bottomBeam, *lowerBeam, *middleBeam;
   struct Actor *upperBeam, *topBeam;
   struct Actor *actor;
@@ -2126,10 +2126,10 @@ void MarsLighthouseAerie_LightBeacon(void) {
     star->speedLimit = toFIXED(2) / 5;
     star->acceleration = toFIXED(1) / 20;
     star->gravity = toFIXED(1) / 2;
-    icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    icon = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Item_LoadIcon(ITEM_MARS_STAR);
     Vram_Load(sprite->vramBlock, ICON_TILE_BYTES, icon->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     star->motionFlags = 0;
     FieldActor_SetMoveTarget(star, 512, 128, 280);
     FieldActor_WaitForMove(star);
@@ -2962,7 +2962,7 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *actor) {
   FIXED sine;
   s32 i, j;
   struct SparkleState *state = (struct SparkleState *)actor->watchedActor;
-  u8 *count = &actor->riseEnabled;
+  u8 *count = &actor->sceneByte;
   struct EffectSprite *sprite;
 
   // Every other frame, the next of the normal colours and the five swaps.
@@ -2970,13 +2970,13 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *actor) {
     Actor_SetSpriteColorMode(actor,
                              (u8)((u32)((struct CounterBits *)count)->rest %
                                   (SPRITE_COLOR_BRG + 1)));
-  if (actor->riseCounter == 0) {
+  if (actor->sceneCounter == 0) {
     if ((*count & (RING_INTERVAL - 1)) == 0) {
       Event_PlaySound(SE_RISING_RINGS);
       state->heights[state->nextPair] = 0;
       state->nextPair ^= 1;
     }
-  } else if (actor->riseCounter == 1) {
+  } else if (actor->sceneCounter == 1) {
     if (state->heights[0] >= RING_CLIMB && state->heights[1] >= RING_CLIMB) {
       Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
       VramCache_FreeEntry(state->vramEntry);
@@ -3036,8 +3036,8 @@ void MarsLighthouseAerie_StartRisingRings(struct Actor *actor,
   state->heights[0] = RING_NOT_STARTED;
   state->heights[1] = RING_NOT_STARTED;
   state->actor = actor;
-  actor->riseCounter = 0;
-  actor->riseEnabled = 0;
+  actor->sceneCounter = 0;
+  actor->sceneByte = 0;
   actor->update = MarsLighthouseAerie_UpdateRisingRings;
   tile = gVramCacheEntries[state->vramEntry].offset / TILE_SIZE_4BPP;
   actor->watchedActor = (struct Actor *)state;
@@ -3057,7 +3057,7 @@ void MarsLighthouseAerie_StartRisingRings(struct Actor *actor,
 
 /// Lets an actor's rings climb out.
 void MarsLighthouseAerie_EndRisingRings(struct Actor *actor) {
-  actor->riseCounter = 1;
+  actor->sceneCounter = 1;
 }
 
 // clang-format off
@@ -3282,7 +3282,7 @@ s32 gMarsLighthouseAerie_ShebaToThosePeopleScript[] = {
     SC_MOVE(472, 0, 304),
     SC_SYNC,
     SC_ANIMATION(ANIM_STAND),
-    SC_SET(SW_RISE_COUNTER, 1),
+    SC_SET(SW_SCENE_COUNTER, 1),
     SC_END,
 };
 
@@ -3293,7 +3293,7 @@ s32 gMarsLighthouseAerie_JennaToThosePeopleScript[] = {
     SC_MOVE(472, 0, 320),
     SC_SYNC,
     SC_ANIMATION(ANIM_STAND),
-    SC_SET(SW_RISE_COUNTER, 1),
+    SC_SET(SW_SCENE_COUNTER, 1),
     SC_END,
 };
 

@@ -25,7 +25,7 @@ enum LobbedShellsMode {
 
 /// Builds the two usual canvas blitters, clipped and mirrored when flip is
 /// nonzero: out[0] keeps the brighter level, out[1] adds the levels.
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
+void BattleEffect_BuildCanvasBlitters(s32 flip, void **out) {
   if (flip == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     out[0] = Ram_HeapSlots->ramCode;
@@ -168,7 +168,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
       s32 y = FIXEDtoINT(Trig_Cos(angle) * DJINN_BEAMS_DJINNI_SWAY_Y) +
               djinn[1] - 24;
 
-      BattleEffect_FetchRectangleBlitters(args->side ^ prelude, draw);
+      BattleEffect_BuildCanvasBlitters(args->side ^ prelude, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
@@ -277,7 +277,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -485,7 +485,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_FREE_PARTICLES(i, LOBBED_SHELLS_BURSTS, LOBBED_SHELLS_BURST_SLOTS);
 
-  BattleEffect_FetchRectangleBlitters(args->side, draw);
+  BattleEffect_BuildCanvasBlitters(args->side, draw);
   if (mode == LOBBED_SHELLS_MAD_SPATTER || mode == LOBBED_SHELLS_MUD) {
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
     REG_BLDCNT = 0;
@@ -493,7 +493,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   total = LOBBED_SHELLS_FRAMES(mode) + args->targetCount * 8;
   Sound_PlayFar(SE_CURSE);
 
@@ -613,13 +613,13 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
 
   if (mode == LOBBED_SHELLS_ROTTEN_BLOOD || mode == LOBBED_SHELLS_DECOMPOSE) {
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
     Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
-    Task_Remove(Palette_StepFadeTransfer);
+    Task_Remove(BattleEffect_DarkenBackgroundStep);
     if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
       BattleEffect_RunImpair(args);
     else

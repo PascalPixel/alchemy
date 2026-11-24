@@ -627,14 +627,14 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
              index != INVENTORY_SLOTS && (item = unit->inventory[index]) != 0;
              index++) {
           Item_GetDirectFar(item);
-          if (Item_ClassifyUseAbility(member, item) == 0)
+          if (Item_CheckBattleUse(member, item) == 0)
             entries[count++] = item;
         }
         for (index = 0;
              index != INVENTORY_SLOTS && (item = unit->inventory[index]) != 0;
              index++) {
           Item_GetDirectFar(item);
-          if (Item_ClassifyUseAbility(member, item) != 0)
+          if (Item_CheckBattleUse(member, item) != 0)
             entries[count++] = item;
         }
         entries[count] = 0;
@@ -646,7 +646,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         if (count != 0) {
           u16 *entry = entries + rowBase + row;
 
-          if (Item_ClassifyUseAbility(member, *entry) == 2)
+          if (Item_CheckBattleUse(member, *entry) == 2)
             BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleItemUnavailable, itemText,
                                      SUMMARY_HELP_CAPACITY);
           else
@@ -667,7 +667,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           for (j = 0; j <= 3 && (item = entries[rowBase + j]) != 0; j++) {
             Item_GetDirectFar(item);
             Text_SetColor(TEXT_COLOR_WHITE);
-            if (Item_ClassifyUseAbility(member, item) != 0)
+            if (Item_CheckBattleUse(member, item) != 0)
               Text_SetColor(TEXT_COLOR_YELLOW);
             else if (item & INVENTORY_BROKEN)
               Text_SetColor(TEXT_COLOR_RED);
@@ -764,7 +764,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                 range = RANGE_ICON_ALL;
               else
                 range--;
-              Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
+              RangeIcon_Draw(statusWindow, 16, j * 2 + 8, range, 0);
             }
             /* FAKEMATCH(dead): a store nothing reads, which keeps the list
              * loop's exit on the fill loop's test. */

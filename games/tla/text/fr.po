@@ -18818,7 +18818,7 @@ msgctxt "message"
 msgid "04631"
 msgstr "Nombre total disponible"
 
-msgctxt "MsgPanelStatLabel"
+msgctxt "MsgPanelAttackLabel"
 msgid "04632"
 msgstr "Attaque"
 

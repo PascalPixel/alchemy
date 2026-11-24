@@ -616,7 +616,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     struct Unit *target = Unit_Get(plan->targetIds[0]);
 
     plan->abilityId = ABILITY_ATTACK;
-    plan->element = Item_GetEquippedElementFar(request->unitId);
+    plan->element = Unit_GetAttackElementFar(request->unitId);
     plan->staging = STAGING_ATTACK;
     // An enemy's attack effect comes from its class; a party member's from who
     // it is.

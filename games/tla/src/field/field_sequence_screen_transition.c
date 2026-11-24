@@ -258,8 +258,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 16;
     // This mode writes the two masks and folds the progress the other way
     // round from WINDOW_TRANSITION_LEADER.
-    *scanlineData++ = state->winOut;
-    *scanlineData++ = state->winIn;
+    *scanlineData++ = state->outsideLayers;
+    *scanlineData++ = state->insideLayers;
     value = state->value;
     if ((value & TRANSITION_OPEN) == 0)
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
@@ -299,14 +299,14 @@ void ScreenTransition_UpdateScanlineTable(void) {
     cameraX = view[0] & FIELD_PIXEL_MASK;
     cameraY8 = view[1] & FIELD_PIXEL_MASK;
   }
-    // Centred on state->centreX and centreY; each line's edges move out by
+    // Centred on state->centerX and centerY; each line's edges move out by
     // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
     // frame, so the outline ripples.
-    centerX = (state->centreX - cameraX) / FIXED_ONE;
-    centerY = (state->centreY - cameraY8) / FIXED_ONE - 16;
+    centerX = (state->centerX - cameraX) / FIXED_ONE;
+    centerY = (state->centerY - cameraY8) / FIXED_ONE - 16;
     k = -centerY * 2 + gFrameCount;
-    *scanlineData++ = state->winIn;
-    *scanlineData++ = state->winOut;
+    *scanlineData++ = state->insideLayers;
+    *scanlineData++ = state->outsideLayers;
     value = state->value;
     if (value & TRANSITION_OPEN)
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
@@ -360,8 +360,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     actor = Actor_Lookup(Party_GetLeaderActor());
     centerX = (actor->x.fixed - ax) / FIXED_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 16;
-    *scanlineData++ = state->winIn;
-    *scanlineData++ = state->winOut;
+    *scanlineData++ = state->insideLayers;
+    *scanlineData++ = state->outsideLayers;
     value = state->value;
     if (value & TRANSITION_OPEN)
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
@@ -402,8 +402,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // Centred 8 pixels above the leader's feet, not 16 as in
     // WINDOW_TRANSITION_LEADER.
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 8;
-    *scanlineData++ = state->winIn;
-    *scanlineData++ = state->winOut;
+    *scanlineData++ = state->insideLayers;
+    *scanlineData++ = state->outsideLayers;
     value = state->value;
     if (value & TRANSITION_OPEN)
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
@@ -447,8 +447,8 @@ void ScreenTransition_StartWindowHeld(s32 mode) {
   Dma_Fill32(0, state, sizeof(*state));
   state->mode = mode;
   state->value = 0;
-  state->winIn = WININ_WIN0_ALL | WININ_WIN1_ALL;
-  state->winOut = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
+  state->insideLayers = WININ_WIN0_ALL | WININ_WIN1_ALL;
+  state->outsideLayers = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
   Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
   Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK - 10);
 }
@@ -502,8 +502,8 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
         ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = 0;
-    state->winIn = WININ_WIN0_ALL;
-    state->winOut = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
+    state->insideLayers = WININ_WIN0_ALL;
+    state->outsideLayers = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
     Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK - 10);
     wait(1);
@@ -583,8 +583,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
         ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = TRANSITION_OPEN;
-    state->winIn = WININ_WIN0_ALL;
-    state->winOut = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
+    state->insideLayers = WININ_WIN0_ALL;
+    state->outsideLayers = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
     Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK - 10);
     wait(1);

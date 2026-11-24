@@ -64,7 +64,7 @@ void WorldMap_StartZoom(FIXED zoom, s32 frames) {
           ->mode != ACTOR_SYSTEM_WORLD_MAP)
     return;
   {
-    s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14Entry;
+    s32 (*ratio)(s32, s32) = Iwram_DivFXEntry;
     result = ratio(zoom, FIXED_ONE);
   }
   map->zoomFrom = map->zoomTo;
@@ -107,7 +107,7 @@ s32 FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
                     ((struct ActorPlacement *)Scene_FindActorPlacement(
                          (s16)actor->userValue))
                         ->sprite)
-                    ->boxX) +
+                    ->spriteTop) +
         toFIXED(8);
     actor->groundHeight = host->groundHeight;
     actor->z.fixed = host->z.fixed;

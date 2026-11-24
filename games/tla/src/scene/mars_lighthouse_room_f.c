@@ -1352,8 +1352,8 @@ s32 Scene_Initialize(void) {
     ((struct FieldState *)heap->fieldState)->transition = value;
     Tightrope_Initialize();
     Tightrope_Place(0, ACTOR_TIGHTROPE_NEAR_POST, ACTOR_TIGHTROPE_FAR_POST);
-    Actor_GetById(ACTOR_TIGHTROPE_NEAR_POST)->riseCounter = 1;
-    Actor_GetById(ACTOR_TIGHTROPE_FAR_POST)->riseCounter = 1;
+    Actor_GetById(ACTOR_TIGHTROPE_NEAR_POST)->sceneCounter = 1;
+    Actor_GetById(ACTOR_TIGHTROPE_FAR_POST)->sceneCounter = 1;
     if (entrance ==
             MARS_LIGHTHOUSE_VENUS_TOWER_FROM_MARS_LIGHTHOUSE_BEACON_LEDGE ||
         entrance == VENUS_TOWER_HALL_WEST_DOORWAY ||

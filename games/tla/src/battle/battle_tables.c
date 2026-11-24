@@ -105,7 +105,7 @@ const u16 gBattleUnit_WeaponAnimationsPiers[] = {
 /// Where the party's places stand, x and y pixel pairs from the battlefield's
 /// centre, a 0, 0 pair after each layout; only the unused
 /// BattlePlacement_GetStepPair reads it.
-const s8 gBattlePlacement_StepPairs[] = {
+const s8 gBattlePlacement_Spots[] = {
     80, 48,
     80, 16,
     80, -16,

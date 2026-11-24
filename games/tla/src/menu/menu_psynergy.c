@@ -877,8 +877,8 @@ s32 PsynergyMenu_BuildPagedList(struct PagedList *result, s32 index) {
 /// Updates the Psynergy list for the row under the cursor: puts the Psynergy's
 /// description in the info window, unless a kept message is there, and
 /// highlights its row of the five. window and scratch are not used.
-s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *scratch,
-                                struct PagedList *state) {
+s32 PsynergyMenu_ShowSelectedRow(s32 window, s32 *scratch,
+                                 struct PagedList *state) {
   struct PsynergyMenuState *menu;
   s32 combined;
   s32 row;
@@ -927,11 +927,11 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *scratch,
 
   for (row = 0; row < LIST_PAGE_SIZE; row++) {
     if (row == state->row) {
-      Render_SetTilemapFlagRect(menu->psynergyWindow, 1, row * 2 + 1, 14, 1,
-                                HIGHLIGHT_PALETTE);
+      Window_SetHighlightRect(menu->psynergyWindow, 1, row * 2 + 1, 14, 1,
+                              HIGHLIGHT_PALETTE);
     } else {
-      Render_SetTilemapFlagRect(menu->psynergyWindow, 1, row * 2 + 1, 14, 1,
-                                WINDOW_PALETTE);
+      Window_SetHighlightRect(menu->psynergyWindow, 1, row * 2 + 1, 14, 1,
+                              WINDOW_PALETTE);
     }
   }
 
@@ -953,8 +953,8 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *scratch,
 
 /// Draws one page of the Psynergy list: each name and PP cost, red when the PP
 /// is short and yellow when it cannot be used from the menu.
-s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
-                                const struct PagedList *state) {
+s32 PsynergyMenu_DrawPage(s32 window, s32 unused,
+                          const struct PagedList *state) {
   u32 firstEntry;
   u32 visibleCount;
   u8 row;
@@ -1093,9 +1093,9 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         if (redraw != 0) {
           redraw = 0;
           wait(1);
-          PsynergyMenu_DrawActionPage(window, 0, &state);
+          PsynergyMenu_DrawPage(window, 0, &state);
         }
-        PsynergyMenu_DrawDetailPage(window, scratch, &state);
+        PsynergyMenu_ShowSelectedRow(window, scratch, &state);
         menu->sideAction[paneIndex] = menu->psynergies[state.selectedIndex];
         menu->cursorIcon->motion = ICON_HIDDEN;
         if (menu->psynergies[state.selectedIndex] != 0) {

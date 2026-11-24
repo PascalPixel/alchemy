@@ -7,10 +7,10 @@ s32 Actor_AimAtWatched(struct Actor *actor) {
   struct Actor *target = actor->watchedActor;
 
   actor->bounce = (target->x.fixed - actor->x.fixed) / AIM_STEPS;
-  actor->riseBaseY =
+  actor->sceneWord =
       (target->y.fixed - actor->y.fixed + toFIXED(16)) / AIM_STEPS;
   actor->gravity = (target->z.fixed - actor->z.fixed) / AIM_STEPS;
-  actor->riseCounter = AIM_STEPS;
+  actor->sceneCounter = AIM_STEPS;
   return 0;
 }
 

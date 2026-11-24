@@ -297,7 +297,7 @@ s32 Message_Type(struct Message *message) {
         Message_ApplyStyle(message);
         break;
 
-      case TEXT_WINDOW_STATE:
+      case TEXT_WINDOW_ANIMATION:
         message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
         message->window->animation = state->textBuffer[message->textIndex];
         message->countdown = 11;

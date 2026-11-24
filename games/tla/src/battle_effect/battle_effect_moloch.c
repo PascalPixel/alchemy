@@ -66,7 +66,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_BuildCanvasBlitters(0, draw);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE,
                              state->sheet + MOLOCH_RING_TEXTURE, 0, 0);
@@ -302,7 +302,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
       }
 
       if (frame > 139)
-        BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_MOLOCH, focus.x,
+        BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_MOLOCH, focus.x,
                                            focus.y);
 
       // Frames 212-268, every eight: the targets flash and are thrown back.
@@ -350,7 +350,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
       EFFECT_PRESENT_CANVAS(state);
     } while (frame != MOLOCH_FRAMES);
 
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferCanvas);
     EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_MOLOCH, focus.x, focus.y);
     for (i = 0; i != MOLOCH_SPRITES; i++)
@@ -2282,7 +2282,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   gBgScroll[1].x = savedScroll;
   for (i = 0; i != IRIS_PETALS; i++)
     Sprite_DestroyFar(objects[i]);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -2395,9 +2395,9 @@ UNUSED void Render_FillMesh(s32 vertexCount, s32 faceCount) {
       middle = FIXEDtoINT(ax[4]);
       bottom = FIXED_INTEGER_PART(ax[7]);
       if (top != middle)
-        slopeA = Iwram_RatioMulQ14(ax[4] - ax[1], ax[3] - ax[0]);
+        slopeA = Iwram_DivFX(ax[4] - ax[1], ax[3] - ax[0]);
       if (top != bottom)
-        slopeB = Iwram_RatioMulQ14(ax[7] - ax[1], ax[6] - ax[0]);
+        slopeB = Iwram_DivFX(ax[7] - ax[1], ax[6] - ax[0]);
 
       // The upper half, between the short edge and the long one.
       edgeB = ax[0];
@@ -2410,7 +2410,7 @@ UNUSED void Render_FillMesh(s32 vertexCount, s32 faceCount) {
 
       // The lower half, from the middle corner.
       if (middle != bottom)
-        slopeA = Iwram_RatioMulQ14(ax[7] - ax[4], ax[6] - ax[3]);
+        slopeA = Iwram_DivFX(ax[7] - ax[4], ax[6] - ax[3]);
       edgeA = ax[3];
       for (row = middle; row != bottom; row++) {
         FILL_SPAN(row, edgeA, edgeB);
@@ -2463,20 +2463,20 @@ struct MeshFace {
 #define STEP_RIGHTWARD()                                                       \
   {                                                                            \
     width = DIFF_ABS(ax[3] - ax[0] - Iwram_MulFX(dxB, ax[4] - ax[1]));         \
-    dudx = Iwram_RatioMulQ14(width, uv[1][0] - uv[0][0] -                      \
-                                        Iwram_MulFX(duB, ax[4] - ax[1]));      \
-    dvdx = Iwram_RatioMulQ14(width, uv[1][1] - uv[0][1] -                      \
-                                        Iwram_MulFX(dvB, ax[4] - ax[1]));      \
+    dudx = Iwram_DivFX(width,                                                  \
+                       uv[1][0] - uv[0][0] - Iwram_MulFX(duB, ax[4] - ax[1])); \
+    dvdx = Iwram_DivFX(width,                                                  \
+                       uv[1][1] - uv[0][1] - Iwram_MulFX(dvB, ax[4] - ax[1])); \
     XOR_SWAP(duA, duB);                                                        \
     XOR_SWAP(dvA, dvB);                                                        \
   }
 #define STEP_LEFTWARD()                                                        \
   {                                                                            \
     width = DIFF_ABS(Iwram_MulFX(dxB, ax[4] - ax[1]) - (ax[3] - ax[0]));       \
-    dudx = Iwram_RatioMulQ14(width, Iwram_MulFX(duB, ax[4] - ax[1]) -          \
-                                        (uv[1][0] - uv[0][0]));                \
-    dvdx = Iwram_RatioMulQ14(width, Iwram_MulFX(dvB, ax[4] - ax[1]) -          \
-                                        (uv[1][1] - uv[0][1]));                \
+    dudx = Iwram_DivFX(width, Iwram_MulFX(duB, ax[4] - ax[1]) -                \
+                                  (uv[1][0] - uv[0][0]));                      \
+    dvdx = Iwram_DivFX(width, Iwram_MulFX(dvB, ax[4] - ax[1]) -                \
+                                  (uv[1][1] - uv[0][1]));                      \
   }
 
 /// Unused: nothing calls it. Transforms vertexCount vertices (16.16 x, y, z in
@@ -2564,16 +2564,16 @@ UNUSED void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount,
       if (top != middle) {
         s32 height = ax[4] - ax[1];
 
-        dxA = Iwram_RatioMulQ14(height, ax[3] - ax[0]);
-        duA = Iwram_RatioMulQ14(height, uv[1][0] - uv[0][0]);
-        dvA = Iwram_RatioMulQ14(height, uv[1][1] - uv[0][1]);
+        dxA = Iwram_DivFX(height, ax[3] - ax[0]);
+        duA = Iwram_DivFX(height, uv[1][0] - uv[0][0]);
+        dvA = Iwram_DivFX(height, uv[1][1] - uv[0][1]);
       }
       if (top != bottom) {
         s32 height = ax[7] - ax[1];
 
-        dxB = Iwram_RatioMulQ14(height, ax[6] - ax[0]);
-        duB = Iwram_RatioMulQ14(height, uv[2][0] - uv[0][0]);
-        dvB = Iwram_RatioMulQ14(height, uv[2][1] - uv[0][1]);
+        dxB = Iwram_DivFX(height, ax[6] - ax[0]);
+        duB = Iwram_DivFX(height, uv[2][0] - uv[0][0]);
+        dvB = Iwram_DivFX(height, uv[2][1] - uv[0][1]);
       }
       xB = xA = ax[0];
       uA = uB = uv[0][0];
@@ -2599,15 +2599,15 @@ UNUSED void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount,
       if (middle != bottom) {
         s32 height = ax[7] - ax[4];
 
-        dxA = Iwram_RatioMulQ14(height, ax[6] - ax[3]);
+        dxA = Iwram_DivFX(height, ax[6] - ax[3]);
         if (ax[3] >= ax[6]) {
           duB = duA;
           dvB = dvA;
           uB = uA;
           vB = vA;
         }
-        duA = Iwram_RatioMulQ14(height, uv[2][0] - uv[1][0]);
-        dvA = Iwram_RatioMulQ14(height, uv[2][1] - uv[1][1]);
+        duA = Iwram_DivFX(height, uv[2][0] - uv[1][0]);
+        dvA = Iwram_DivFX(height, uv[2][1] - uv[1][1]);
         xA = ax[3];
         uA = uv[1][0];
         vA = uv[1][1];
@@ -2885,13 +2885,13 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     }
     PUT(src[6]);
     PUT(src[7]);
-    PUT(src[8] + gBattleEffect_BitOperands[widthShift]);
+    PUT(src[8] + gBlitter_ImmediatePowers[widthShift]);
     if ((flags & COMPOSITE_FLIP_X) != 0) {
       PUT(src[9]);
     } else {
       PUT(src[10]);
     }
-    PUT(src[11] + gBattleEffect_BitOperands[widthShift]);
+    PUT(src[11] + gBlitter_ImmediatePowers[widthShift]);
   }
   src += 12;
 
@@ -3069,7 +3069,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   COPY(2);
   /* FAKEMATCH(dead): a block that only declares end at the comparison. */
   {
-    const u32 *end = (const u32 *)gBattleEffect_BitOperands;
+    const u32 *end = (const u32 *)gBlitter_ImmediatePowers;
 
     return src == end;
   }

@@ -74,8 +74,8 @@ extern u8 *gIcon_MiscIconPointers[];
 extern u8 *gPsynergyIcons[];
 /// The end of gPsynergyIcons, for Icon_CountPsynergyIcons.
 extern u8 *gPsynergyIconsEnd[];
-void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
-                       s32 reuse);
+void Ability_BuildIconTiles(s32 action, s32 withBase, s32 *slot, s32 *tile,
+                            s32 reuse);
 #ifndef OWN_BattleLayout_HighlightPartyPanels
 s32 PartyStatus_HighlightMembers(u16 *ids);
 #endif
@@ -137,8 +137,8 @@ extern const u8 Resource_DecodeByteLzCode[];
 extern const u8 Text_LookupSymbolCode[];
 /// The size of Text_LookupSymbolCode.
 extern u8 Text_LookupSymbolCodeSize[];
-void Ability_LoadGlyphFar(s32 action, s32 withBase, s32 *slot, s32 *tile,
-                          s32 reuse);
+void Ability_BuildIconTilesFar(s32 action, s32 withBase, s32 *slot, s32 *tile,
+                               s32 reuse);
 s32 BattleParty_PrepareMembersFar(u16 *owners);
 s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align);
 void SelectionMenu_Clear(void);

@@ -49,7 +49,7 @@ extern char gIncreaseItemAndLevel_ItemPrompt[];
 extern char gIncreaseItemAndLevel_ItemHelp[];
 extern char gIncreaseItemAndLevel_ItemFull[];
 void IncreaseItemAndLevel_RunMotionTest(void);
-void IncreaseItemAndLevel_EnableEffectChildMode(void);
+void IncreaseItemAndLevel_KeepPortraitBrowserInPlace(void);
 void IncreaseItemAndLevel_OpenIconBrowser(void);
 void IncreaseItemAndLevel_OpenPortraitBrowser(void);
 
@@ -150,20 +150,20 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Raises one party member `amount` levels and works out their new stats.
-void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
+void IncreaseItemAndLevel_RaiseMemberLevel(s32 ownerId, s32 amount) {
   Unit_LevelUpTo(ownerId, Unit_Get(ownerId)->level + amount);
   Unit_Calculate(ownerId);
 }
 
 /// Raises every party member `amount` levels.
-void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
+void IncreaseItemAndLevel_RaisePartyLevels(s32 amount) {
   u16 ownerIds[16];
   s32 ownerCount;
   s32 i;
 
   ownerCount = FieldParty_ListMembers(ownerIds);
   for (i = 0; i < ownerCount; i++)
-    IncreaseItemAndLevel_AdjustOwnerLevel(ownerIds[i], amount);
+    IncreaseItemAndLevel_RaiseMemberLevel(ownerIds[i], amount);
 }
 
 /// Displays the leader's level and changes the whole party's, as The Broken
@@ -198,13 +198,13 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
 
     if ((gInput.pressed & KEY_START) != 0 ||
         (gInput.pressed & KEY_SELECT) != 0) {
-      IncreaseItemAndLevel_AdjustPartyLevels(5);
+      IncreaseItemAndLevel_RaisePartyLevels(5);
       Sound_Play(MUS_SUPER_LUCKY);
       redraw = 1;
     }
 
     if ((gInput.pressed & KEY_A) != 0) {
-      IncreaseItemAndLevel_AdjustPartyLevels(1);
+      IncreaseItemAndLevel_RaisePartyLevels(1);
       Sound_Play(MUS_LUCKY);
       redraw = 1;
     }
@@ -311,25 +311,25 @@ void IncreaseItemAndLevel_SelectItem(void) {
     }
     if (gInput.repeat & KEY_RIGHT) {
       seekDirection = 1;
-      selectedItemId += BROWSER_ROW_STEP;
+      selectedItemId += DEBUG_BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_LEFT) {
       seekDirection = -1;
-      selectedItemId -= BROWSER_ROW_STEP;
+      selectedItemId -= DEBUG_BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_R) {
       seekDirection = 1;
-      selectedItemId += BROWSER_PAGE_STEP;
+      selectedItemId += DEBUG_BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_L) {
       seekDirection = -1;
-      selectedItemId -= BROWSER_PAGE_STEP;
+      selectedItemId -= DEBUG_BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
@@ -579,7 +579,7 @@ struct Trigger gIncreaseItemAndLevel_Triggers[] = {
      EVENT(IncreaseItemAndLevel_RunMotionTest)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
-     EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
+     EVENT(IncreaseItemAndLevel_KeepPortraitBrowserInPlace)},
     {TRIGGER_TABLE_END},
 };
 
@@ -655,7 +655,7 @@ struct Trigger gIncreaseItemAndLevel_NameTriggers[] = {
      EVENT(IncreaseItemAndLevel_RunMotionTest)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
-     EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
+     EVENT(IncreaseItemAndLevel_KeepPortraitBrowserInPlace)},
     {TRIGGER_TABLE_END},
 };
 
@@ -702,7 +702,7 @@ void IncreaseItemAndLevel_RunMotionTest(void) {
 /// Keeps Force from moving ACTOR_PORTRAIT_BROWSER: run just before Force is
 /// cast at it, this sets the effect's childMode, and Force's shot then leaves
 /// its target where it is.
-void IncreaseItemAndLevel_EnableEffectChildMode(void) {
+void IncreaseItemAndLevel_KeepPortraitBrowserInPlace(void) {
   struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
 
   state->childMode = 1;

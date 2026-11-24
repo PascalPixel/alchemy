@@ -67,7 +67,7 @@ struct CommandRowAffine {
 struct BattleCommandRowState {
   /// BG palette slots for the icons' 256-colour pixels, filled as each icon
   /// is loaded (BattleCommandRow_LoadIconTiles).
-  struct GlyphPalette palette;
+  struct IconPalette palette;
   struct BattleCommandRowIcon entries[6];
   void *window;
   s32 iconCount;
@@ -178,7 +178,7 @@ extern const u16 gSummon_Abilities[];
 /// VBlanks.
 extern const u8 gMenuTitle_BobOffsets[];
 
-/// The rows the range icons are marked with (Menu_BuildLocalizedPatternTiles).
+/// The rows the range icons are marked with (RangeIcon_BuildTiles).
 extern const struct BarPatternRow gMenu_BarPatternRows[];
 
 /// The standby Djinn counts 10 to 18, one tile each, from BG tile

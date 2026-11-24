@@ -8,7 +8,7 @@ void GroundParticles_Draw(void) {
   struct MapState *view = Ram_HeapSlots->mapGrid;
   struct GroundParticleState *state = Ram_HeapSlots->weather;
   s32 *camera = &view->viewX;
-  struct GroundParticle *particle = state->particles;
+  struct WeatherParticle *particle = state->particles;
   s32 cameraX = camera[0];
   s32 cameraZ = camera[1];
   u32 i;

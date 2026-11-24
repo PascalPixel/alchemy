@@ -450,7 +450,7 @@ void ShamanVillage_FlickerRock(struct Actor *actor) {
 }
 
 /// A spark of the gathering Whirlwind: it circles the centre it keeps in bounce
-/// and riseBaseY (x, z), twice as wide as it is deep, its radius growing as it
+/// and sceneWord (x, z), twice as wide as it is deep, its radius growing as it
 /// rises by gravity a frame, a lap every 32 frames counted in speedLimit; it
 /// blinks blue every other two frames.
 void ShamanVillage_SpiralSpark(struct Actor *actor) {
@@ -463,7 +463,7 @@ void ShamanVillage_SpiralSpark(struct Actor *actor) {
       actor->bounce +
       Iwram_MulFX(Trig_Cos((step & 0xff) * (TRIG_TURN / 32)), radius) * 2;
   actor->z.fixed =
-      actor->riseBaseY +
+      actor->sceneWord +
       Iwram_MulFX(Trig_Sin((actor->speedLimit & 0xff) * (TRIG_TURN / 32)),
                   radius);
   actor->y.fixed += actor->gravity;
@@ -481,7 +481,7 @@ void ShamanVillage_SpiralSpark(struct Actor *actor) {
 void ShamanVillage_SwirlSandGrain(struct Actor *actor) {
   actor->x.fixed += actor->bounce;
   actor->y.fixed += actor->gravity;
-  actor->z.fixed += actor->riseBaseY;
+  actor->z.fixed += actor->sceneWord;
   if (FIXEDtoINT(actor->x.fixed) < TWISTER_ROCK_X) {
     actor->bounce += FIXED_ONE * 3 / 2;
     actor->scaleY = actor->scaleX += FIXED_ONE * 5 / 100;
@@ -563,7 +563,7 @@ void ShamanVillage_BlowAwaySand(void) {
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
       spark->gravity = toFIXED(3) / 2;
-      spark->riseBaseY = spark->z.fixed;
+      spark->sceneWord = spark->z.fixed;
       spark->speedLimit = Random16() & 0xffff;
       Import_ActorSelectAnimation((struct Actor *)spark, 7);
       Import_ActorStartScript((struct Actor *)spark, gFieldEffect_MediumScript);
@@ -1322,14 +1322,14 @@ void ShamanVillage_TakeLeftPath(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(224, CAMERA_KEEP, 200, 1);
-  owner->riseEnabled = 0;
-  shaman->riseEnabled = 0;
+  owner->sceneByte = 0;
+  shaman->sceneByte = 0;
   Actor_SetScript(gMainRoutineState.leaderActorId,
                   gShamanVillage_WalkToLeftStartScript);
   Actor_SetScript(ACTOR_MOAPA, gShamanVillage_WalkToRightStartScript);
   do {
     wait(1);
-  } while (owner->riseEnabled == 0 || shaman->riseEnabled == 0);
+  } while (owner->sceneByte == 0 || shaman->sceneByte == 0);
   ShamanVillage_CountDownToStart();
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(224, CAMERA_KEEP, 168, 1);
@@ -1395,14 +1395,14 @@ void ShamanVillage_TakeRightPath(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(224, CAMERA_KEEP, 200, 1);
-  owner->riseEnabled = 0;
-  shaman->riseEnabled = 0;
+  owner->sceneByte = 0;
+  shaman->sceneByte = 0;
   Actor_SetScript(ACTOR_MOAPA, gShamanVillage_WalkToLeftStartScript);
   Actor_SetScript(gMainRoutineState.leaderActorId,
                   gShamanVillage_WalkToRightStartScript);
   do {
     wait(1);
-  } while (owner->riseEnabled == 0 || shaman->riseEnabled == 0);
+  } while (owner->sceneByte == 0 || shaman->sceneByte == 0);
   ShamanVillage_CountDownToStart();
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(224, CAMERA_KEEP, 168, 1);
@@ -1537,7 +1537,7 @@ void ShamanVillage_MeetMoapa(void) {
 struct Actor *ShamanVillage_CreateRodIcon(void) {
   struct Actor *actor = ((struct Actor *)Import_ActorCreate(
       SPRITE_UNSEEN_MARKER, toFIXED(120), toFIXED(64), toFIXED(264)));
-  GlyphTransfer *transfer = NULL;
+  IconTransfer *transfer = NULL;
 
   if (actor == NULL)
     return NULL;
@@ -1551,10 +1551,10 @@ struct Actor *ShamanVillage_CreateRodIcon(void) {
     actor->retainSpriteCache = 1;
     sprite->flags = 0;
     sprite->countAndShadow[0] = 0;
-    transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    transfer = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_SHAMANS_ROD);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
   return actor;
 }
@@ -1731,7 +1731,7 @@ void ShamanVillage_ShowShamansRod(void) {
     FieldCamera_MoveToFX(toFIXED(180), toFIXED(32), z, 1);
   }
   actor = ((struct Actor *)Actor_GetById(ACTOR_WEST_KNIGHT));
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   Actor_WatchAndSetScript(gMainRoutineState.leaderActorId, ACTOR_MOAPA);
   Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_MOAPA);
   Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_MOAPA);
@@ -1749,7 +1749,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   do {
     wait(1);
-  } while (actor->riseEnabled == 0);
+  } while (actor->sceneByte == 0);
   Actor_Stop(gMainRoutineState.leaderActorId);
   Actor_Stop(ACTOR_KRADEN);
   Actor_Stop(ACTOR_PIERS);
@@ -2236,8 +2236,8 @@ void ShamanVillage_ShebaClearsSand(void) {
   s32 angle;
   u8 *done;
 
-  effect->visible = 0;
-  effect->active = 0;
+  effect->flashCaster = 0;
+  effect->announceName = 0;
   Event_Start();
   Event_EndLastingPsynergy(0);
   Event_PlaySound(MUS_SILENCE);
@@ -2484,7 +2484,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
   result = Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0);
-  done = &actor->riseEnabled;
+  done = &actor->sceneByte;
   owner = gMainRoutineState.leaderActorId;
   if (result == 0) {
     Actor_WaitForAnimationChange(owner);
@@ -3123,7 +3123,7 @@ u32 gShamanVillage_WalkToLeftStartScript[] = {
     SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTH),
-    SC_SET(SW_RISE_ENABLED, 1),
+    SC_SET(SW_SCENE_BYTE, 1),
     SC_WAIT(10),
     SC_END,
 };
@@ -3135,7 +3135,7 @@ u32 gShamanVillage_WalkToRightStartScript[] = {
     SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTH),
-    SC_SET(SW_RISE_ENABLED, 1),
+    SC_SET(SW_SCENE_BYTE, 1),
     SC_WAIT(10),
     SC_END,
 };
@@ -3217,7 +3217,7 @@ u32 gShamanVillage_WestKnightLeavesHouseScript[] = {
     SC_MOVE(252, 0, 120),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_RISE_ENABLED, 1),
+    SC_SET(SW_SCENE_BYTE, 1),
     SC_END,
 };
 
@@ -3286,7 +3286,7 @@ u32 gShamanVillage_HeadForTrialRoadScript[] = {
     SC_MOVE(168, 0, 380),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_RISE_ENABLED, 1),
+    SC_SET(SW_SCENE_BYTE, 1),
     SC_END,
 };
 

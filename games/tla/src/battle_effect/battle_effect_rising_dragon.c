@@ -322,7 +322,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
     }
     Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferCanvas);
   }
   BattleEffect_EndCanvasLayer();
 }
@@ -533,7 +533,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            Ram_HeapSlots->battleState->background,
                            BACKGROUND_DARKEN_FRAMES);

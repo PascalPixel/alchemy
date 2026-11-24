@@ -54,7 +54,7 @@ struct OverlayActor {
   u8 priorityFlags;
   FIXED velocityX, velocityY, velocityZ, speedLimit, acceleration;
   FIXED targetX, targetY, targetZ, bounce, gravity;
-  s32 riseBaseY;
+  s32 sceneWord;
   void *sprite;
   u8 spriteStorageKind;
   u8 motionFlags;
@@ -69,8 +69,8 @@ struct OverlayActor {
   s16 wait;
   u8 refused;
   u8 frozen;
-  u8 riseCounter;
-  u8 riseEnabled;
+  u8 sceneCounter;
+  u8 sceneByte;
   s16 timer;
   s16 userValue;
   struct Actor *watchedActor;

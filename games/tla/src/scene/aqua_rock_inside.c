@@ -1373,16 +1373,16 @@ void AquaRockInside_PiersLearnsParch(s32 tabletId, s32 adeptId) {
     spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
     noMotion = 0;
     spark->motionFlags = noMotion;
-    spark->riseBaseY = toFIXED(122);
+    spark->sceneWord = toFIXED(122);
     spark->watchedActor = adept;
-    spark->riseCounter =
+    spark->sceneCounter =
         (LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
     Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
-    FieldVector_AddPolarOffsetFX(spark->riseBaseY, spark->timer,
+    FieldVector_AddPolarOffsetFX(spark->sceneWord, spark->timer,
                                  &spark->x.fixed);
     Actor_StartScript(spark, gAquaRockInside_SpiralSparkScript);
     if (i == 3) {
@@ -1402,10 +1402,10 @@ void AquaRockInside_PiersLearnsParch(s32 tabletId, s32 adeptId) {
                               adept->z.fixed);
     swirl->timer = Random16();
     swirl->userValue = TRIG_TURN / 32;
-    swirl->riseCounter = i;
-    swirl->riseEnabled = 1;
+    swirl->sceneCounter = i;
+    swirl->sceneByte = 1;
     swirl->bounce = swirl->x.fixed;
-    swirl->riseBaseY = 0;
+    swirl->sceneWord = 0;
     swirl->gravity = swirl->z.fixed;
     swirl->watchedActor = adept;
     swirl->motionFlags = (u16)0;
@@ -1777,8 +1777,8 @@ s32 Scene_Initialize(void) {
                                   SPRITE_COLOR_GREY);
       }
     }
-    Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_B)->riseCounter = 1;
-    Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C)->riseCounter = 1;
+    Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_B)->sceneCounter = 1;
+    Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C)->sceneCounter = 1;
     actor = Actor_GetById(ACTOR_RUSTY_SWORD_CHEST);
     if (actor != 0) {
       actor->motionFlags = 0;
@@ -1824,12 +1824,12 @@ s32 Scene_Initialize(void) {
       FieldActor_SetSpriteColor(Actor_GetById(ACTOR_TEAR_STONE_MOAI),
                                 SPRITE_COLOR_GREY);
     }
-    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_A)->riseCounter = 1;
-    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_B)->riseCounter = 1;
-    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_E)->riseCounter = 1;
-    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_G)->riseCounter = 1;
-    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_H)->riseCounter = 1;
-    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_I)->riseCounter = 1;
+    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_A)->sceneCounter = 1;
+    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_B)->sceneCounter = 1;
+    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_E)->sceneCounter = 1;
+    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_G)->sceneCounter = 1;
+    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_H)->sceneCounter = 1;
+    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_I)->sceneCounter = 1;
   }
   return 0;
 }
@@ -2550,7 +2550,7 @@ void Vent_Puff(s32 *position, s32 base) {
     actor->bounce = Trig_Cos(((u32)(Random16() * (FIXED_ONE * 3 / 16)) >> 16) +
                              (FIXED_ONE * 3 / 16));
     actor->gravity = (u16)Random16();
-    actor->riseBaseY = (u16)(Random16() << 1) + base;
+    actor->sceneWord = (u16)(Random16() << 1) + base;
     angle = (u16)Random16() - DEGtoANG(180);
     actor->timer = angle;
     Actor_StartScripted(actor, 3);

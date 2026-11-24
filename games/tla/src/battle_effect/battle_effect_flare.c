@@ -68,7 +68,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
     state->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_WHOOSH);
   for (frame = 0; frame != FLARE_FRAMES; frame++) {
     if (frame == 24)
@@ -138,7 +138,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

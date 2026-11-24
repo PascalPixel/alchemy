@@ -486,7 +486,7 @@ void PartyStatus_OpenAndWait(void);
 #define ICON_EQUIPPED 16
 /// Mark 2 on a cursed item that cannot be unequipped (ITEM_CURSED and
 /// ITEM_CANNOT_UNEQUIP) when its code has INVENTORY_EQUIPPED.
-#define ICON_ARTIFACT 32
+#define ICON_CURSED 32
 
 /// An action's id in its encoded list entry, below its flags.
 #define ACTION_ID_MASK 0x3fff

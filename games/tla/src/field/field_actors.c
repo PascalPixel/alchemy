@@ -203,7 +203,7 @@ void ActorSystem_Initialize(s32 mode) {
   if (mode == ACTOR_SYSTEM_BATTLE) {
     Task_Add(Actor_UpdateAllMotion, TASK_PASS_FRAME + 10);
   } else {
-    Task_Add(Actor_UpdateAllThumb, TASK_PASS_FRAME + 11);
+    Task_Add(Actor_UpdateAllOnField, TASK_PASS_FRAME + 11);
     Task_Add(Actor_MoveWithCarriers, TASK_PASS_FRAME + 10);
   }
   if (mode == ACTOR_SYSTEM_WORLD_MAP || mode == ACTOR_SYSTEM_BATTLE)
@@ -285,7 +285,8 @@ struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
       if (sprite != NULL) {
         actor->spriteStorageKind = ACTOR_SPRITE_ONE;
         actor->sprite = sprite;
-        actor->radius = Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
+        actor->radius =
+            Resource_GetMetadataRecordFar(encodedSprite)->footprint >> 1;
       } else {
         actor->spriteStorageKind = ACTOR_SPRITE_NONE;
       }
@@ -300,7 +301,8 @@ struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
       Dma_Set(&zero, spriteSlots, DMA_FILL_WORDS(4), REG_DMA3);
       sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
-        actor->radius = Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
+        actor->radius =
+            Resource_GetMetadataRecordFar(encodedSprite)->footprint >> 1;
         *spriteSlots = sprite;
         spriteSlots++;
       }
@@ -324,7 +326,7 @@ struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
     actor->collisionFlags = 0;
     actor->steeringFlags = ACTOR_FACES_MOTION;
     actor->facing = DEGtoANG(90);
-    actor->riseBaseY = 0;
+    actor->sceneWord = 0;
     actor->homeX = x / toFIXED(1);
     actor->homeZ = z / toFIXED(1);
     actor->carrier = NULL;
@@ -599,7 +601,7 @@ void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 priority) {
 /// 1.0 in 16-colour palette 0.
 void Actor_SetItemIcon(struct Actor *owner, s32 id) {
   struct Sprite *sprite;
-  GlyphTransfer *transfer;
+  IconTransfer *transfer;
   s32 tile;
 
   if (owner == 0)
@@ -609,10 +611,10 @@ void Actor_SetItemIcon(struct Actor *owner, s32 id) {
   sprite = owner->sprite;
   if (sprite == 0)
     return;
-  transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  transfer = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   Icon_DrawItemFar(id);
   tile = VramCache_Load(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   sprite->count = 0;
   sprite->dirty = 0;
   sprite->width = 16;
@@ -870,7 +872,7 @@ void ActorSystem_PlaceSprites(void) {
         }
         if (*priorityFlags & ACTOR_PRIORITY_OWN_DEPTH)
           Render_ApplyProjectedPlacementAtDepth(
-              sprite, &point, scale.values, actor->facing, actor->riseEnabled);
+              sprite, &point, scale.values, actor->facing, actor->sceneByte);
         else
           Render_ApplyProjectedPlacement(sprite, SpritePlacement_Values(&point),
                                          scale.values, actor->facing);

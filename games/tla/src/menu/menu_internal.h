@@ -508,8 +508,8 @@ s32 Sprite_StartAnimationFar(void *object, s32 argument);
 void PageArrows_DrawFar(s32 offset);
 void Menu_UpdatePartyFigures(void);
 void Input_ResetKeyRepeat(void);
-s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 owner);
-void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode);
+s32 StatusScreen_ListStatuses(u8 *ailments, s32 requested, s32 owner);
+void ItemMenu_DrawEquipment(s32 window, s32 ownerId, s32 mode);
 s32 Ability_ApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
                            s32 plainPower);
 s32 Ability_PlayUseSound(s32 action);
@@ -609,7 +609,7 @@ enum ItemUseMode {
 #define CHANGE_HELP_X 0
 #endif
 
-/// The statuses the Status screens show, as StatusScreen_BuildAvailability
+/// The statuses the Status screens show, as StatusScreen_ListStatuses
 /// fills them: one byte each, nonzero while the party member has it.
 enum UnitStatus {
   CHARACTER_DOWN,   ///< HP 0; listed only when the caller asks for it

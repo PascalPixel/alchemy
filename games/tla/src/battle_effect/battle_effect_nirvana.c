@@ -428,7 +428,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
     // The sparks: from frame 8, two more each frame, through seven
     // pictures three frames apiece, the last held; one in four is drawn
     // mirrored.
-    BattleEffect_FetchRectangleBlitters(args->side, draw);
+    BattleEffect_BuildCanvasBlitters(args->side, draw);
     {
       struct Particle *spark;
 
@@ -515,7 +515,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -599,7 +599,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   Iwram_ClearWordsEntry(canvas, CANVAS_VIEW_BYTES);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2PA = Q_8_8(1);
-  BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
+  BattleEffect_BuildCanvasBlitters(0, (void **)blitters);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   mistSheet = Ram_MapCellBuffer + SERAC_MIST;
   Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, mistSheet, 0, 0);

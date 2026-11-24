@@ -82,7 +82,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   REG_BG2X = (CANVAS_SIZE / 2 - target.x) << 8;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add((s32)BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   if (mode == MIRRORED_WALL_RECOVERY) {
     state->shakeFrames = 0;
     Sound_PlayFar(SE_POWER_UP);
@@ -141,7 +141,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_TransferCanvas);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
@@ -149,7 +149,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
 /// Packs YellowOrbSheet's six pictures to half width, keeping every second
 /// byte, the odd column's. stride: the source's bytes a row; the packed rows
 /// are half as long.
-void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride) {
+void BattleEffect_PackYellowOrbs(u8 *src, u8 *dst, s32 stride) {
   s32 row = 0;
   s32 rows = YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT;
   s32 offset = 0;
@@ -460,7 +460,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit[0] = Ram_HeapSlots->ramCode;
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   camera = 0;
   canopyScroll = 0;
   climb = -toFIXED(DAEDALUS_CLIMB);
@@ -699,7 +699,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     REG_BG2PA = Q_8_8(0.5);
     REG_BG2X = 0;
     blits = blit;
-    BattleEffect_FetchRectangleBlitters(0, blits);
+    BattleEffect_BuildCanvasBlitters(0, blits);
     state->scrollTimer = 0;
     state->scrollInterval = 5;
     state->scrollStepX = -1;
@@ -1933,7 +1933,7 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
     burst += SPARKS_PER_BURST;
     frame++;
   } while (frame != DAEDALUS_STRIKE_FRAMES);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Sprite_DestroyFar(state->sprites[0]);
   BattleEffect_EndCanvasLayer();

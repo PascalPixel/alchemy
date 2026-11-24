@@ -75,7 +75,7 @@ struct WhirlSpark {
 /// frame % 6, which cycles its colours.
 void Actor_CycleSpriteColors(struct Actor *actor);
 
-/// The states of a Retreat particle (FieldEffect_UpdateRadialLaunch).
+/// The states of a Retreat particle (Retreat_UpdateSpark).
 enum RetreatParticleState {
   RETREAT_PARTICLE_AIM = 0,    ///< placed on the main actor and aimed
   RETREAT_PARTICLE_FLYING = 1, ///< back to RETREAT_PARTICLE_AIM on arrival

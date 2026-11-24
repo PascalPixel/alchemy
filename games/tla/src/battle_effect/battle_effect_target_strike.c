@@ -350,7 +350,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     state->transferValue = CANVAS_FADE_HALF;
   else
     state->transferValue = CANVAS_FADE_THREE_QUARTERS;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   // Aim at the middle of the first target.
   EffectPosition_ProjectScaledBattler(args->targets[0], &targetPosition);
@@ -791,7 +791,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -839,7 +839,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   state->transferMode =
       CANVAS_COPY_AND_CLEAR; // each transfer clears the canvas
   state->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   // Centre BG2 on the first target.
   EffectPosition_ProjectScaledBattler(args->targets[0], &screenPosition);
@@ -1088,7 +1088,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   }
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
@@ -1116,7 +1116,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   BattleEffect_RunCloudSwirl(args);
 
   // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
-  BattleEffect_ClearActorTimers();
+  BattleEffect_ClearTintTimers();
   view->secondMode = BATTLE_BACKGROUND_FIXED;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
@@ -1179,7 +1179,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
 
   // Put the background and the display back.
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_TintBattler(args->targets[0], TINT_KEEP, POSE_STANDING,
                            TINT_KEEP, 0);
   gBgScroll[1].x = state->savedBg1X;

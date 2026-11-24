@@ -289,7 +289,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   resource += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(resource, state->sheet + HEALING_DJINNI_PICTURE);
   // blit[0] keeps the brighter pixel and blit[1] adds; draw points at them.
-  BattleEffect_FetchRectangleBlitters(args->side, draw = blit);
+  BattleEffect_BuildCanvasBlitters(args->side, draw = blit);
 
   // Scatter the motes; the mode decides how, and how long the effect is.
   if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL ||

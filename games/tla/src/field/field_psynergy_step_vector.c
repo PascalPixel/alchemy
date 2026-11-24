@@ -519,7 +519,7 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   FIXED scale[2];
   s32 position[4];
 
-  sprite = object->actor;
+  sprite = object->sprite;
   offset = 0;
   if (object->flags & FIELD_PARTICLE_LIFTED_BY_Z)
     offset = toFIXED(508) - object->z;
@@ -607,7 +607,7 @@ void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
 
 /// Sets the animation of a field effect sprite.
 void FieldParticle_SetAnimation(struct FieldParticle *effect, s32 mode) {
-  Sprite_StartAnimationFar(effect->actor, mode);
+  Sprite_StartAnimationFar(effect->sprite, mode);
 }
 
 /// Gives a field effect sprite its per-frame callback, starting at state 0.
@@ -628,7 +628,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
 
   Dma_Fill32(0, effect, sizeof *effect);
   animation = Sprite_CreateFar(kind);
-  effect->actor = animation;
+  effect->sprite = animation;
   if (animation != NULL)
     animation->image.priority = 0;
   FieldParticle_SetPosition(effect, x, z);
@@ -642,7 +642,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   // setup below still require a sprite. Callers also immediately use it, so
   // guarding this store alone would not establish allocation-failure recovery.
   {
-    struct Sprite *sprite = effect->actor;
+    struct Sprite *sprite = effect->sprite;
     sprite->flags = 0;
   }
   effect->stopAtTarget = 1;
@@ -657,7 +657,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
 
 /// Frees a field effect sprite and its sprite, clearing it to zero (inactive).
 void FieldEffect_ClearOwnedSlot(struct FieldParticle *effect) {
-  if (effect->actor)
-    Sprite_DestroyFar(effect->actor);
+  if (effect->sprite)
+    Sprite_DestroyFar(effect->sprite);
   Dma_Fill32(0, effect, sizeof *effect);
 }

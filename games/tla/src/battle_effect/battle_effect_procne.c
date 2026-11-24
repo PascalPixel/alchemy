@@ -129,7 +129,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   graphics = Ram_HeapSlots->battleSheet;
 
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_BuildCanvasBlitters(0, draw);
   {
     struct Point2D wave;
     struct Point2D drift;
@@ -689,7 +689,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_BuildCanvasBlitters(0, draw);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET,
                              state->sheet + DRAGON_FIRE_FLAME_PICTURES, 1, 0);
@@ -990,10 +990,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                                    TIAMAT_THROAT);
         }
         if (twoPartTarget == 1)
-          BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT_ALTERNATE,
+          BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_TIAMAT_ALTERNATE,
                                              focus.x, focus.y);
         else
-          BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, focus.x,
+          BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_TIAMAT, focus.x,
                                              focus.y);
       }
       if (frame == 138) {
@@ -1045,7 +1045,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       EFFECT_END_FRAME(state);
     }
 
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferCanvas);
     EFFECT_RELEASE_BLITTERS();
     if (mode == DRAGON_FIRE_TIAMAT) {
       if (twoPartTarget == 1)

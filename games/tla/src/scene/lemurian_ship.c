@@ -1135,7 +1135,7 @@ void LemurianShip_StartParch(void) {
         ACTOR_PRIORITY_IGNORES_RISES;                                          \
     Actor_SetSpritePriority(id, priority);                                     \
     actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;                         \
-    actor->riseCounter = 1;                                                    \
+    actor->sceneCounter = 1;                                                   \
   }
 
 /// Keeps a frozen puddle flat on the floor, drawn at sprite priority 1.

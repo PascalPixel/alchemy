@@ -23,7 +23,7 @@ struct FadeOverlayState {
 
 /// A ground particle: an OAM entry linked by depth, its place (16.16 pixels),
 /// its delay and its frame count.
-struct GroundParticle {
+struct WeatherParticle {
   u8 unused[4]; ///< no code names it
   u16 y : 8;
   u16 affine : 2;
@@ -46,13 +46,13 @@ struct GroundParticle {
   u8 unusedAfterTimer[2]; ///< no code names it
 };
 
-/// GroundParticle.timer after the decrement that counts a live particle down,
+/// WeatherParticle.timer after the decrement that counts a live particle down,
 /// when it was already free (0): the u16 wraps.
 #define GROUND_PARTICLE_FREED 65535
-/// The frames of a ground particle's splash (gFieldEffect_GroundParticleFrames,
+/// The frames of a ground particle's splash (gWeather_RainSplashFrames,
 /// or a scene's own gGroundParticleFrames, five halfwords each), played from
 /// the last down to the first.
-#define GROUND_PARTICLE_FRAMES 16
+#define RAIN_SPLASH_FRAMES 16
 
 /// WeatherState.particles.
 #define WEATHER_PARTICLE_COUNT 64
@@ -64,7 +64,7 @@ struct GroundParticle {
 struct WeatherState {
   s32 entry;     ///< the VRAM cache entry holding the particles' tiles
   long tileBase; ///< their first tile in VRAM
-  struct GroundParticle particles[WEATHER_PARTICLE_COUNT];
+  struct WeatherParticle particles[WEATHER_PARTICLE_COUNT];
   u8 unused[8]; ///< no code reads them
   s32 stopped;  ///< nonzero stops new sparkle bursts
 };

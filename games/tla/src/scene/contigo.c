@@ -482,13 +482,13 @@ s32 Contigo_PauseWhenFaced(struct Actor *self) {
     if ((s8)effect->messageShown != 0)
       goto stand;
   }
-  if (self->riseEnabled == 1)
+  if (self->sceneByte == 1)
     goto stand;
   other = Actor_GetById(gMainRoutineState.leaderActorId);
   if (Position_Distance(&self->x.fixed, &other->x.fixed) <=
       CHILD_WALKS_ON_RANGE)
     goto walk;
-  if (self->riseCounter == 1)
+  if (self->sceneCounter == 1)
     other = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
   else
     other = Actor_GetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
@@ -1044,7 +1044,7 @@ void Contigo_TalkToDoubtingBoy(void) {
 
   Event_Start();
   Event_EndLastingPsynergy(0);
-  actor->riseEnabled = 1;
+  actor->sceneByte = 1;
   if (state->psynergy == 0) {
     Actor_FaceActorById(ACTOR_BOY_DOUBTING_THE_LEGENDS,
                         gMainRoutineState.leaderActorId, 0);
@@ -1071,7 +1071,7 @@ void Contigo_TalkToDoubtingBoy(void) {
   Event_ShowMessageAndWait(ACTOR_BOY_DOUBTING_THE_LEGENDS, 0);
   if (state->psynergy == 0)
     actor->facing = angle;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   Event_End();
 }
 
@@ -1086,7 +1086,7 @@ void Contigo_TalkAboutTheShip(void) {
 
   Event_Start();
   Event_EndLastingPsynergy(0);
-  actor->riseEnabled = 1;
+  actor->sceneByte = 1;
   if (event->psynergy == 0) {
     Actor_FaceActorById(ACTOR_GIRL_ON_THE_SHIP, gMainRoutineState.leaderActorId,
                         0);
@@ -1107,7 +1107,7 @@ void Contigo_TalkAboutTheShip(void) {
   Event_ShowMessageAndWait(ACTOR_GIRL_ON_THE_SHIP, 0);
   if (event->psynergy == 0)
     actor->facing = angle;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   Event_End();
 }
 
@@ -2551,8 +2551,8 @@ void Contigo_InitializeVillage(void) {
   struct Actor *actor = Actor_GetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
 
   Task_Add(Contigo_KeepPriorityWithLeader, TASK_PASS_FRAME);
-  actor->riseCounter = 1;
-  actor->riseEnabled = 0;
+  actor->sceneCounter = 1;
+  actor->sceneByte = 0;
   actor->update = Contigo_PauseWhenFaced;
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
       GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) == 0) {
@@ -2562,8 +2562,8 @@ void Contigo_InitializeVillage(void) {
     Contigo_LockDoors();
   } else {
     actor = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
-    actor->riseCounter = 0;
-    actor->riseEnabled = 0;
+    actor->sceneCounter = 0;
+    actor->sceneByte = 0;
     actor->update = Contigo_PauseWhenFaced;
   }
   if (GameFlag_Get(FLAG_SHINE_FREED) != 0 &&
@@ -2806,20 +2806,20 @@ void Contigo_RaiseSparkle(struct Actor *actor) {
   FIXED sine;
   s32 i, j;
   struct SparkleState *state = (struct SparkleState *)actor->watchedActor;
-  u8 *count = &actor->riseEnabled;
+  u8 *count = &actor->sceneByte;
   struct EffectSprite *sprite;
 
   if (*count & 1)
     Actor_SetSpriteColorMode(actor,
                              (u8)((u32)((struct CounterBits *)count)->rest %
                                   (SPRITE_COLOR_BRG + 1)));
-  if (actor->riseCounter == 0) {
+  if (actor->sceneCounter == 0) {
     if ((*count & (RING_INTERVAL - 1)) == 0) {
       Sound_Play(SE_RISING_RINGS);
       state->heights[state->nextPair] = 0;
       state->nextPair ^= 1;
     }
-  } else if (actor->riseCounter == 1) {
+  } else if (actor->sceneCounter == 1) {
     if (state->heights[0] >= RING_CLIMB && state->heights[1] >= RING_CLIMB) {
       Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
       VramCache_FreeEntry(state->vramEntry);
@@ -2875,8 +2875,8 @@ void Contigo_StartSparkle(struct Actor *actor, struct SparkleState *state) {
   state->heights[0] = RING_NOT_STARTED;
   state->heights[1] = RING_NOT_STARTED;
   state->actor = actor;
-  actor->riseCounter = 0;
-  actor->riseEnabled = 0;
+  actor->sceneCounter = 0;
+  actor->sceneByte = 0;
   actor->update = Contigo_RaiseSparkle;
   tile = gVramCacheEntries[state->vramEntry].offset >> 5;
   actor->watchedActor = (struct Actor *)state;
@@ -2892,7 +2892,7 @@ void Contigo_StartSparkle(struct Actor *actor, struct SparkleState *state) {
 }
 
 /// Ends the sparkle: its update finishes once both pairs have risen.
-void Contigo_StopSparkle(struct Actor *actor) { actor->riseCounter = 1; }
+void Contigo_StopSparkle(struct Actor *actor) { actor->sceneCounter = 1; }
 
 // clang-format off
 #include "shared/light_ring_tiles.c"

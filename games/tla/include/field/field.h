@@ -31,7 +31,7 @@ s32 Party_CheckShortcut(u32 packed_id);
 void SpriteDissolve_Step(u8 *object, u32 position);
 void FieldCamera_FollowActor(s32 id, s32 flag);
 void Actor_UpdateAllMotion(void);
-void Actor_UpdateAllThumb(void);
+void Actor_UpdateAllOnField(void);
 void Actor_SetSpriteFlags(struct Actor *actor, u32 flags);
 void ActorSystem_ProjectSprites(void);
 s32 Actor_FindLastActiveId(void);
@@ -776,7 +776,7 @@ void ActorScript_SetOrCompareGravity(struct ScriptOperands *state,
                                      s32 operation, s32 value);
 void ActorScript_SetOrCompareTerrainHeight(struct ScriptOperands *state,
                                            s32 operation, s32 value);
-void ActorScript_SetOrCompareRiseBaseY(struct ScriptOperands *state,
+void ActorScript_SetOrCompareSceneWord(struct ScriptOperands *state,
                                        s32 operation, s32 value);
 void ActorScript_SetOrCompareSprite(struct ScriptOperands *state, s32 operation,
                                     s32 value);
@@ -808,10 +808,10 @@ void ActorScript_SetOrCompareWatchedActor(struct ScriptOperands *state,
                                           s32 operation, s32 value);
 void ActorScript_SetOrCompareUpdateAddress(struct ScriptOperands *state,
                                            s32 operation, s32 value);
-void ActorScript_SetOrCompareRiseCounter(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
-void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareSceneCounter(struct ScriptOperands *state,
+                                          s32 operation, s32 value);
+void ActorScript_SetOrCompareSceneByte(struct ScriptOperands *state,
+                                       s32 operation, s32 value);
 
 void Icon_DrawItemFar(s32 item);
 
@@ -833,7 +833,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 self, s32 kind);
 s32 MapGrid_GetTerrainKindAtFar(s32 layer, s32 x, s32 z);
 
 /// The ground particles' tiles, byte LZ (field_effect_particles.s).
-extern const u8 gFieldEffect_GroundParticleTiles[];
+extern const u8 gWeather_ParticleTiles[];
 /// The motes' tiles, byte LZ (field_effect_particles.s).
 extern const u8 gFieldEffect_MoteTiles[];
 
@@ -841,7 +841,7 @@ extern const u32 gBattleEffect_PulseScales[];
 
 extern const s16 gLineScroll_WaveSine[];
 
-extern const s16 gFieldEffect_GroundParticleFrames[];
+extern const s16 gWeather_RainSplashFrames[];
 
 /// The streaks' tiles, byte LZ (field_effect_particles.s).
 extern const u8 gFieldEffect_StreakTiles[];

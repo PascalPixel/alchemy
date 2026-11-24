@@ -98,9 +98,9 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   REG_BLDY = 0;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_MAP_CELLS),
                       gMapGridCellBuffer);
-  perspective->fade = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
-                      DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
-  perspective->fadeStep = WORLD_MAP_WIDE_TILES;
+  perspective->shownLayers = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
+                             DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
+  perspective->wideTiles = WORLD_MAP_WIDE_TILES;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_MAP_ENTRANCES),
                       gMapScene);
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
@@ -156,9 +156,9 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     Matrix_SetLookAt(camera->eye, cameraPosition);
     RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, WorldMap_UpdateAffineLinesCode,
                      WorldMap_UpdateAffineLinesCodeSize);
-    WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(perspective->pitch),
-                                                  Trig_Sin(perspective->pitch)),
-                                cameraPosition, affineState->scanlines);
+    WorldMap_BuildScanlineTable(
+        Iwram_DivFX(Trig_Cos(perspective->pitch), Trig_Sin(perspective->pitch)),
+        cameraPosition, affineState->scanlines);
     gScanlineAngle = 0;
     gScanlinePitch = perspective->pitch;
     ((void (*)(void *, s32 *, void *, void *))Ram_HeapSlots->ramCode)(
@@ -593,7 +593,7 @@ void WorldMap_UpdateView(void) {
     FIXED cosine = Trig_Cos(perspective->pitch);
     FIXED sine = Trig_Sin(perspective->pitch);
 
-    WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(cosine, sine), cameraPosition,
+    WorldMap_BuildScanlineTable(Iwram_DivFX(cosine, sine), cameraPosition,
                                 affineState->scanlines);
     gScanlineAngle = 0;
     gScanlinePitch = perspective->pitch;

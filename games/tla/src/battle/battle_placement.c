@@ -458,8 +458,8 @@ void BattleObject_Make(struct BattleObject *battleObject, s32 unitId, s32 x,
 /// Unused: reads the battlefield position of a party place.
 void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
   partyPlace *= 2;
-  *x = gBattlePlacement_StepPairs[partyPlace];
-  *y = gBattlePlacement_StepPairs[partyPlace + 1];
+  *x = gBattlePlacement_Spots[partyPlace];
+  *y = gBattlePlacement_Spots[partyPlace + 1];
 }
 
 /// BattleState.enemyIds of an enemy that left the battle, and of a place
@@ -610,14 +610,14 @@ void BattleUnit_RefreshPlacement(void) {
        n >= 0; n--, value--)
     *p-- = value;
 
-  // The party, at its fixed spots in pixels (gBattlePlacement_StepPairs).
+  // The party, at its fixed spots in pixels (gBattlePlacement_Spots).
   for (i = 0; i < count; place++, i++) {
     s32 id = ids[i];
 
     battle->placement[id] = place;
     BattleObject_Make(BattleObject_Get(id), id,
-                      gBattlePlacement_StepPairs[place * 2],
-                      gBattlePlacement_StepPairs[place * 2 + 1]);
+                      gBattlePlacement_Spots[place * 2],
+                      gBattlePlacement_Spots[place * 2 + 1]);
   }
   // The enemies, laid out by size.
   for (i = 0;

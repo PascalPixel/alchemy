@@ -255,7 +255,7 @@ void WorldMap_StartStillImage(void) {
 }
 
 /// VBlank: shows BG1 and copies the area's tiles back into VRAM.
-void WorldMap_ShowBg1FromBuffer(void) {
+void WorldMap_EndStillImage(void) {
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
                  BGCNT_WRAP | BGCNT_SIZE(2),
              &REG_BG3CNT);
@@ -298,7 +298,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
                       &gWorldMapState);
   // The VBlank copies the tiles back and the next frame shows the ground;
   // only then is the still image's buffer refilled with the cells.
-  gVBlankCallback = WorldMap_ShowBg1FromBuffer;
+  gVBlankCallback = WorldMap_EndStillImage;
   perspective->windowTop = 0;
   perspective->windowBottom = DISPLAY_HEIGHT - 1;
   wait(1);
@@ -319,7 +319,7 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
 
-  gVBlankCallback = WorldMap_ShowBg1FromBuffer;
+  gVBlankCallback = WorldMap_EndStillImage;
   perspective->windowTop = 0;
   perspective->windowBottom = DISPLAY_HEIGHT - 1;
   wait(1);

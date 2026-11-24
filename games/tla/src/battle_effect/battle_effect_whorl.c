@@ -674,7 +674,7 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
     target->scaleY = state->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY;
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

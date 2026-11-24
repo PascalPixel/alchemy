@@ -21,11 +21,13 @@
 /// The flashing strike's modes (BattleEffect_RunFlashingStrike), each named for
 /// the ability that plays it: which pictures it shows and how the user moves.
 enum FlashingStrikeMode {
-  FLASHING_STRIKE_UNUSED,       ///< RevealMaskE and F; nothing passes it
-  FLASHING_STRIKE_QUICK_STRIKE, ///< RevealMaskC and D, with a hop
-  FLASHING_STRIKE_VORPAL_SLASH, ///< RevealMaskA and B
-  FLASHING_STRIKE_LUNAR_SLASH,  ///< RevealMaskC and D, then Weaken
-  FLASHING_STRIKE_BOOST_HACK,   ///< RevealMaskA and B in other colours, a pose
+  FLASHING_STRIKE_UNUSED, ///< UnusedFlashingStrikeImageA and F; nothing passes
+                          ///< it
+  FLASHING_STRIKE_QUICK_STRIKE, ///< QuickStrikeImageA and D, with a hop
+  FLASHING_STRIKE_VORPAL_SLASH, ///< VorpalSlashImageA and B
+  FLASHING_STRIKE_LUNAR_SLASH,  ///< QuickStrikeImageA and D, then Weaken
+  FLASHING_STRIKE_BOOST_HACK,   ///< VorpalSlashImageA and B in other colours, a
+                                ///< pose
   FLASHING_STRIKE_TWIN_SHEAR    ///< the arc fragments, each with its reflection
 };
 
@@ -126,16 +128,22 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   // The pictures: 1 and 2 in the sprite sheet, 3 and 4 in the map cell
   // buffer (Twin Shear's four half pictures all there).
   if (mode == FLASHING_STRIKE_UNUSED) {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_E, state->sheet, 1, 0);
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_F, Ram_MapCellBuffer, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_A,
+                               state->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_B,
+                               Ram_MapCellBuffer, 1, 1);
   } else if (mode == FLASHING_STRIKE_QUICK_STRIKE) {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, state->sheet, 1, 0);
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_D, Ram_MapCellBuffer, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_QUICK_STRIKE_IMAGE_A, state->sheet, 1,
+                               0);
+    Resource_LoadAndDecompress(RESOURCE_QUICK_STRIKE_IMAGE_B, Ram_MapCellBuffer,
+                               1, 1);
   } else if (mode == FLASHING_STRIKE_BOOST_HACK) {
     s32 i;
 
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, state->sheet, 1, 0);
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_B, Ram_MapCellBuffer, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_VORPAL_SLASH_IMAGE_A, state->sheet, 1,
+                               0);
+    Resource_LoadAndDecompress(RESOURCE_VORPAL_SLASH_IMAGE_B, Ram_MapCellBuffer,
+                               1, 1);
     // Turn the canvas's colours: red to blue, blue to green, green to red.
     for (i = 0; i != SHEET_PALETTE_COLORS; i++) {
       s32 blue = RGB_BLUE(((u16 *)BG_PLTT)[i]);
@@ -145,14 +153,18 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
       ((u16 *)BG_PLTT)[i] = RGB(green, blue, red);
     }
   } else if (mode == FLASHING_STRIKE_LUNAR_SLASH) {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, state->sheet, 1, 0);
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_D, Ram_MapCellBuffer, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_QUICK_STRIKE_IMAGE_A, state->sheet, 1,
+                               0);
+    Resource_LoadAndDecompress(RESOURCE_QUICK_STRIKE_IMAGE_B, Ram_MapCellBuffer,
+                               1, 1);
   } else if (mode == FLASHING_STRIKE_TWIN_SHEAR) {
     Resource_LoadAndDecompress(RESOURCE_ARC_FRAGMENTS_SHEET, Ram_MapCellBuffer,
                                1, 1);
   } else {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, state->sheet, 1, 0);
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_B, Ram_MapCellBuffer, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_VORPAL_SLASH_IMAGE_A, state->sheet, 1,
+                               0);
+    Resource_LoadAndDecompress(RESOURCE_VORPAL_SLASH_IMAGE_B, Ram_MapCellBuffer,
+                               1, 1);
   }
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 
@@ -255,12 +267,12 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   if (mode == FLASHING_STRIKE_LUNAR_SLASH) {
     // Clear the canvas and its tiles and hand the layer to the next scene.
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
     Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
-    Task_Remove(Palette_StepFadeTransfer);
+    Task_Remove(BattleEffect_DarkenBackgroundStep);
     BattleEffect_RunWeaken(args);
   } else {
     if (mode == FLASHING_STRIKE_BOOST_HACK)

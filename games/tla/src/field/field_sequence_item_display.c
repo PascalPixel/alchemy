@@ -140,7 +140,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   struct Actor *actor;
   struct Sprite *sprite;
   FIXED position[3];
-  GlyphTransfer *transfer;
+  IconTransfer *transfer;
   s32 tile;
   s32 i;
 
@@ -187,11 +187,11 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   picture->groundHeight = position[1];
   picture->velocityY = toFIXED(2);
   picture->gravity = toFIXED(1) / 4;
-  transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  transfer = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   Icon_DrawItemFar(item);
   tile = VramCache_Load(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
   sprite->image.tile = tile;
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   picture->update = ItemDisplay_EmitSparkles;
   if (state->revealActive != 0) {
     struct Actor *marker = Ram_HeapSlots->actors;
@@ -274,8 +274,8 @@ void ItemDisplay_ShowPicture(struct Actor *actor, s32 flags) {
 /// as flags choose (ItemDisplayFlag).
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *leader = Actor_Lookup(Party_GetLeaderActor());
-  GlyphTransfer *transfer =
-      HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  IconTransfer *transfer =
+      HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   struct Actor *actor =
       Actor_CreateFar(SPRITE_UNSEEN_MARKER, leader->x.fixed,
                       leader->y.fixed + toFIXED(36), leader->z.fixed);
@@ -291,7 +291,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 
     Icon_DrawItemFar(item);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
 
     if (flags & ITEM_DISPLAY_SPARKLES)
       actor->update = ItemDisplay_EmitSparkles;
@@ -372,7 +372,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
     if (actor == NULL)
       continue;
     // A tile event's actor holds its map cell, marked by this value.
-    if (actor->riseBaseY == TREASURE_SPOT_ON_CELL) {
+    if (actor->sceneWord == TREASURE_SPOT_ON_CELL) {
       x = toFIXED(actor->timer);
       z = toFIXED((s16)actor->userValue);
       y = MapGrid_GetTerrainHeightFar(0, x, z);

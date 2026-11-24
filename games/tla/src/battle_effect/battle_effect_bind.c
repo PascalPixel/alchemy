@@ -194,7 +194,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       x = FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) * BIND_DJINNI_SWAY) +
           origin[0] + shift - DJINNI_WIDTH / 2;
       y = FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * 4) + origin[1] - 24;
-      BattleEffect_FetchRectangleBlitters(args->side, draw);
+      BattleEffect_BuildCanvasBlitters(args->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, state->sheet + BIND_DJINNI_PICTURE, x, y, DJINNI_WIDTH,
@@ -283,7 +283,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -421,7 +421,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

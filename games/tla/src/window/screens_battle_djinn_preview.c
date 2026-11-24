@@ -307,7 +307,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
         rangePattern = RANGE_ICON_ALL;
       else
         rangePattern--;
-      Window_DrawThreeTileColumn(window, 16, visibleRow * 2, rangePattern, 0);
+      RangeIcon_Draw(window, 16, visibleRow * 2, rangePattern, 0);
       WindowSprite_CreateAbilityIcon((struct Window *)window, 0,
                                      visibleRow * 16 - 4,
                                      changedAbilities[i] & ACTION_ID_MASK);

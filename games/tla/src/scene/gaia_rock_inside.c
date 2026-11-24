@@ -556,7 +556,7 @@ s32 GaiaRockInside_CaskPours(void) {
   sprite = actor->sprite;
   sprite->priority = 1;
   actor->bounce = 0;
-  actor->riseBaseY = 0;
+  actor->sceneWord = 0;
   actor->update = (ObjectUpdate)GaiaRockInside_FlickerPour;
   return 0;
 }
@@ -630,7 +630,7 @@ s32 GaiaRockInside_CaskBursts(void) {
         Actor_StartScript(dust, gGaiaRockInside_BurstScript);
         ((struct FieldSprite *)dust->sprite)->priority = 1;
         dust->bounce = Trig_Cos(((Random16() << 3) >> 16) << 14) >> 1;
-        dust->riseBaseY = Math_Sin(((Random16() << 3) >> 16) << 14) >> 1;
+        dust->sceneWord = Math_Sin(((Random16() << 3) >> 16) << 14) >> 1;
         dust->gravity = 0;
         dust->timer = ((Random16() << 9) >> 16) - 256;
         dust->speedLimit = 0;
@@ -1221,16 +1221,16 @@ void GaiaRockInside_FelixLearnsSand(s32 tabletId, s32 adeptId) {
     *angle = (Random16() & 0x7fff) + DEGtoANG(180);
     spark->userValue = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
     spark->motionFlags = 0;
-    spark->riseBaseY = toFIXED(122);
+    spark->sceneWord = toFIXED(122);
     spark->watchedActor = adept;
-    spark->riseCounter =
+    spark->sceneCounter =
         (LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
-    FieldVector_AddPolarOffsetFX(spark->riseBaseY, *angle, &spark->x.fixed);
+    FieldVector_AddPolarOffsetFX(spark->sceneWord, *angle, &spark->x.fixed);
     Actor_StartScript(spark, gGaiaRockInside_CirclingSparkScript);
     if (i == 3) {
       Actor_SetSpriteColorById(adeptId, SPRITE_COLOR_BLINK);
@@ -1249,10 +1249,10 @@ void GaiaRockInside_FelixLearnsSand(s32 tabletId, s32 adeptId) {
         adept->y.fixed + toFIXED(i) - toFIXED(8), adept->z.fixed);
     spark->timer = Random16();
     spark->userValue = TRIG_TURN / 32;
-    spark->riseCounter = i;
-    spark->riseEnabled = 1;
+    spark->sceneCounter = i;
+    spark->sceneByte = 1;
     spark->bounce = spark->x.fixed;
-    spark->riseBaseY = 0;
+    spark->sceneWord = 0;
     spark->gravity = spark->z.fixed;
     spark->watchedActor = adept;
     spark->motionFlags = 0;

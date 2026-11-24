@@ -49,7 +49,7 @@ void Actor_PlaceBlocks(u16 *actors) {
                                     level + BLOCK_HEIGHT_STEPS);
     cell = &cells[slot];
     flags = cell->attributeB;
-    actor->riseBaseY = flags;
+    actor->sceneWord = flags;
     cell->attributeB = flags | MAP_CELL_JUMP;
     *shapes = tag;
     cell = &blocks[slot];
@@ -74,7 +74,7 @@ void Actor_LiftTargetBlock(u16 *actors) {
   struct Actor *target;
 
   if (state != NULL && event->psynergy != 0)
-    target = state->child;
+    target = state->target;
   else
     target = Leader_FindActorAhead();
   event->movedBlock = NULL;
@@ -99,7 +99,7 @@ void Actor_LiftTargetBlock(u16 *actors) {
       cells += slot;
       blocks += slot;
       ((struct ShapeCell *)shapes)->shape = tag;
-      cells->attributeB = target->riseBaseY;
+      cells->attributeB = target->sceneWord;
       blocks->collisionCode = 0;
       event->movedBlock = target;
     }
@@ -129,7 +129,7 @@ void Actor_PlaceMovedBlock(void) {
                                     HEIGHT_STEPS(level) + BLOCK_HEIGHT_STEPS);
     ((struct ShapeCell *)shapes)->shape = tag;
     cells += slot;
-    target->riseBaseY = cells->attributeB;
+    target->sceneWord = cells->attributeB;
     cells->attributeB |= MAP_CELL_JUMP;
     blocks += slot;
     blocks->collisionCode = CELL_BEHAVIOR_WALL;

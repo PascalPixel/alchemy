@@ -55,7 +55,7 @@ void FieldPsynergy_Run(void) {
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct FieldState *event = Ram_HeapSlots->fieldState;
   s32 animation = scene->fieldPsynergy;
-  s32 targetId = scene->secondActorId;
+  s32 targetId = scene->targetId;
   s32 objectId;
 
   if (animation == FIELD_PSYNERGY_MOVE)
@@ -125,10 +125,10 @@ void FieldPsynergy_Run(void) {
       FieldPsynergy_ResumeHaltedActor(paused);
       party->haltedActor = -1;
     }
-    objectId = Field_FindNearbyPsynergyTarget(scene->firstActorId, animation);
+    objectId = Field_FindNearbyPsynergyTarget(scene->casterId, animation);
     objectId = FieldPsynergy_FilterHaltTarget(objectId);
     if (Scene_FindActorTalkTrigger(objectId) != 0) {
-      FieldPsynergy_SetupActorPair(scene->firstActorId, objectId);
+      FieldPsynergy_SetupActorPair(scene->casterId, objectId);
       FieldPsynergy_HaltOnTarget(objectId);
       FieldPsynergy_HaltActor(objectId);
       party->haltedActor = objectId;
@@ -139,19 +139,19 @@ void FieldPsynergy_Run(void) {
     // The wave and colour effect, stopping a running Reveal first.
     if (event->revealActive != 0)
       FieldPsynergy_EndReveal();
-    FieldPsynergy_StartMindReadWave(scene->firstActorId, targetId);
+    FieldPsynergy_StartMindReadWave(scene->casterId, targetId);
   }
 }
 
 /// Runs the field Psynergy animation the scene names on the target the player
-/// chose (FieldEffectState.secondActorId).
+/// chose (FieldEffectState.targetId).
 void FieldPsynergy_Dispatch(void) {
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct FieldState *event = Ram_HeapSlots->fieldState;
   s32 animation = scene->fieldPsynergy;
-  s32 targetId = scene->secondActorId;
+  s32 targetId = scene->targetId;
 
-  scene->enabled = 0;
+  scene->aimAhead = 0;
   if (animation == FIELD_PSYNERGY_MOVE)
     FieldPsynergy_SteerPushedTarget(targetId);
   else if (animation == FIELD_PSYNERGY_LIFT)
@@ -214,9 +214,9 @@ void FieldPsynergy_Dispatch(void) {
     if (event->revealActive != 0)
       FieldPsynergy_EndReveal();
     party = &gMainRoutineState;
-    if (party->haltedActor != scene->secondActorId)
-      ((struct Actor *)scene->child)->paused = 1;
-    FieldPsynergy_StartMindReadWave(scene->firstActorId, targetId);
+    if (party->haltedActor != scene->targetId)
+      ((struct Actor *)scene->target)->paused = 1;
+    FieldPsynergy_StartMindReadWave(scene->casterId, targetId);
   } else if (animation == FIELD_PSYNERGY_HALT) {
     // Resume the actor stopped before, then stop the target.
     struct MainRoutineState *party = &gMainRoutineState;
@@ -238,8 +238,8 @@ void FieldPsynergy_FinishMindRead(void) {
 
   if (effectState->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     FieldPsynergy_StopMindReadWave();
-    if (gMainRoutineState.haltedActor != effectState->secondActorId) {
-      ((struct Actor *)effectState->child)->paused = 0;
+    if (gMainRoutineState.haltedActor != effectState->targetId) {
+      ((struct Actor *)effectState->target)->paused = 0;
     }
   }
 }
@@ -369,7 +369,7 @@ void FieldPsynergy_StartSceneSprite(void) {
   s32 slot;
   s32 tiles;
 
-  mainActor = effectState->mainActor;
+  mainActor = effectState->caster;
   if (effectState->angle == FACING_NORTH) {
     effectState->spriteActive = 1;
     buffer = Heap_Alloc(512);

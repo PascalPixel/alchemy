@@ -56,8 +56,9 @@ extern char ResourceId_RedCrescentSheetA;
 #define RESOURCE_RED_CRESCENT_SHEET_A ((s32)&ResourceId_RedCrescentSheetA)
 
 /// Drawn by Cruel Ruin.
-extern char ResourceId_TileAnimationMask;
-#define RESOURCE_TILE_ANIMATION_MASK ((s32)&ResourceId_TileAnimationMask)
+extern char ResourceId_ShatteringOpeningSheet;
+#define RESOURCE_SHATTERING_OPENING_SHEET                                      \
+  ((s32)&ResourceId_ShatteringOpeningSheet)
 /// Drawn by Cruel Ruin.
 extern char ResourceId_CyanSparkSheet;
 #define RESOURCE_CYAN_SPARK_SHEET ((s32)&ResourceId_CyanSparkSheet)
@@ -386,9 +387,9 @@ extern char ResourceId_MercuryLighthouseAerieBackdrop;
   ((s32)&ResourceId_MercuryLighthouseAerieBackdrop)
 /// A battle backdrop no battle in this game is fought on: the credits'
 /// slideshow shows it (gDisplayScroll_SlideResources).
-extern char ResourceId_TolbiShipInteriorsBackdrop;
-#define RESOURCE_TOLBI_SHIP_INTERIORS_BACKDROP                                 \
-  ((s32)&ResourceId_TolbiShipInteriorsBackdrop)
+extern char ResourceId_TolbiShipRoomsBackdrop;
+#define RESOURCE_TOLBI_SHIP_ROOMS_BACKDROP                                     \
+  ((s32)&ResourceId_TolbiShipRoomsBackdrop)
 /// A battle backdrop no battle in this game is fought on: the credits'
 /// slideshow shows it (gDisplayScroll_SlideResources).
 extern char ResourceId_ImilFuchinFallsBackdrop;
@@ -400,13 +401,13 @@ extern char ResourceId_KolimaForestBackdrop;
 #define RESOURCE_KOLIMA_FOREST_BACKDROP ((s32)&ResourceId_KolimaForestBackdrop)
 /// A battle backdrop no battle in this game is fought on: only the unused
 /// slideshow list names it (gDisplayScroll_UnusedSlideResources).
-extern char ResourceId_TretTreeInteriorsBackdrop;
-#define RESOURCE_TRET_TREE_INTERIORS_BACKDROP                                  \
-  ((s32)&ResourceId_TretTreeInteriorsBackdrop)
+extern char ResourceId_TretTreeRoomsBackdrop;
+#define RESOURCE_TRET_TREE_ROOMS_BACKDROP                                      \
+  ((s32)&ResourceId_TretTreeRoomsBackdrop)
 /// A battle backdrop no battle in this game is fought on: the credits'
 /// slideshow shows it (gDisplayScroll_SlideResources).
-extern char ResourceId_InteriorBackdrop;
-#define RESOURCE_INTERIOR_BACKDROP ((s32)&ResourceId_InteriorBackdrop)
+extern char ResourceId_RoomsBackdrop;
+#define RESOURCE_ROOMS_BACKDROP ((s32)&ResourceId_RoomsBackdrop)
 /// A battle backdrop no battle in this game is fought on: the credits'
 /// slideshow shows it (gDisplayScroll_SlideResources).
 extern char ResourceId_AltinPeakBackdrop;
@@ -1045,23 +1046,25 @@ extern char ResourceId_SeaSerpentTiles;
 extern char ResourceId_ArcFragmentsSheet;
 #define RESOURCE_ARC_FRAGMENTS_SHEET ((s32)&ResourceId_ArcFragmentsSheet)
 /// Drawn by the flashing strikes.
-extern char ResourceId_RevealMaskA;
-#define RESOURCE_REVEAL_MASK_A ((s32)&ResourceId_RevealMaskA)
+extern char ResourceId_VorpalSlashImageA;
+#define RESOURCE_VORPAL_SLASH_IMAGE_A ((s32)&ResourceId_VorpalSlashImageA)
 /// Drawn by the flashing strikes.
-extern char ResourceId_RevealMaskB;
-#define RESOURCE_REVEAL_MASK_B ((s32)&ResourceId_RevealMaskB)
+extern char ResourceId_VorpalSlashImageB;
+#define RESOURCE_VORPAL_SLASH_IMAGE_B ((s32)&ResourceId_VorpalSlashImageB)
 /// Drawn by the flashing strikes.
-extern char ResourceId_RevealMaskC;
-#define RESOURCE_REVEAL_MASK_C ((s32)&ResourceId_RevealMaskC)
+extern char ResourceId_QuickStrikeImageA;
+#define RESOURCE_QUICK_STRIKE_IMAGE_A ((s32)&ResourceId_QuickStrikeImageA)
 /// Drawn by the flashing strikes.
-extern char ResourceId_RevealMaskD;
-#define RESOURCE_REVEAL_MASK_D ((s32)&ResourceId_RevealMaskD)
+extern char ResourceId_QuickStrikeImageB;
+#define RESOURCE_QUICK_STRIKE_IMAGE_B ((s32)&ResourceId_QuickStrikeImageB)
 /// Drawn by the flashing strikes.
-extern char ResourceId_RevealMaskE;
-#define RESOURCE_REVEAL_MASK_E ((s32)&ResourceId_RevealMaskE)
+extern char ResourceId_UnusedFlashingStrikeImageA;
+#define RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_A                                \
+  ((s32)&ResourceId_UnusedFlashingStrikeImageA)
 /// Drawn by the flashing strikes.
-extern char ResourceId_RevealMaskF;
-#define RESOURCE_REVEAL_MASK_F ((s32)&ResourceId_RevealMaskF)
+extern char ResourceId_UnusedFlashingStrikeImageB;
+#define RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_B                                \
+  ((s32)&ResourceId_UnusedFlashingStrikeImageB)
 /// Drawn by Soul Shatter and Undead Sword.
 extern char ResourceId_LimeColumnSheet;
 #define RESOURCE_LIME_COLUMN_SHEET ((s32)&ResourceId_LimeColumnSheet)

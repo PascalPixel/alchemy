@@ -75,7 +75,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
         RGB(state->red, state->green, state->blue) | PALETTE_TINT_CUSTOM, 1);
     PaletteFade_StartInterpolation(1);
   }
-  Actor_SetSpritePalette(Actor_GetById(state->sourceId), 0);
+  Actor_SetLayersColorMode(Actor_GetById(state->sourceId), 0);
 
   if (state->counter == 0 || state->counter == MIND_READ_PARTICLE_GAP ||
       state->counter == 2 * MIND_READ_PARTICLE_GAP) {
@@ -87,7 +87,8 @@ void FieldPsynergy_UpdateMindReadWave(void) {
       spriteId = descriptor->sprite;
       from.x = source->x.fixed;
       metadata = Resource_GetMetadataRecordFarFar(spriteId);
-      from.y = source->y.fixed + INTtoFIXED((s8)metadata->boxX) - toFIXED(2);
+      from.y =
+          source->y.fixed + INTtoFIXED((s8)metadata->spriteTop) - toFIXED(2);
       from.z = source->z.fixed;
       sprite = target->sprite;
       descriptor =
@@ -96,7 +97,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
       to.x = target->x.fixed;
       metadata = Resource_GetMetadataRecordFarFar(spriteId);
       {
-        s32 box = (s8)metadata->boxX;
+        s32 box = (s8)metadata->spriteTop;
         FIXED y = target->y.fixed;
 
         y += INTtoFIXED(box);
@@ -205,7 +206,7 @@ void MindRead_UpdateCrescent(struct Actor *target) {
 
 /// Gives every part of an actor's sprite (but those at palette 15) palette - 1,
 /// or for palette 0 the next palette of a cycle that changes every 2 frames.
-void Actor_SetSpritePalette(void *object, s32 value) {
+void Actor_SetLayersColorMode(void *object, s32 value) {
   s32 child = value - 1;
 
   if (value == 0)
@@ -276,8 +277,8 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
   struct Vector3 position;
   struct Vector3 beyond;
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
-  struct Actor *user = scene->mainActor;
-  struct Actor *target = scene->child;
+  struct Actor *user = scene->caster;
+  struct Actor *target = scene->target;
   struct Actor *pusher;
   struct Actor *hit;
   FIXED x;
@@ -412,7 +413,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
     Actor_SetMoveTargetFar(pusher, position.x, position.y + toFIXED(16),
                            position.z);
     if (moved == 1) {
-      Actor_GetById(scene->firstActorId)->steeringFlags &= ~ACTOR_FACES_MOTION;
+      Actor_GetById(scene->casterId)->steeringFlags &= ~ACTOR_FACES_MOTION;
       user->speedLimit = toFIXED(1) / 5;
       user->acceleration = toFIXED(1) / 5;
       Actor_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
@@ -436,11 +437,11 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
     Actor_SelectAnimationFar(pusher, 4);
     Actor_SetPositionAndResetMotionFar(pusher, pusher->x.fixed, pusher->y.fixed,
                                        pusher->z.fixed);
-    Field_RunPsynergyEvent(event, scene->firstActorId, scene->secondActorId);
+    Field_RunPsynergyEvent(event, scene->casterId, scene->targetId);
   }
   BattleEffect_StopMainActor();
   if (moved == 1) {
-    Actor_GetById(scene->firstActorId)->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_GetById(scene->casterId)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   FieldPsynergy_FadeFromCastColor();
   FieldEffect_BurstHand(pusher);
@@ -502,7 +503,7 @@ void FieldPsynergy_Move(void) {
   void *object;
 
   scene = Ram_HeapSlots->fieldEffectState;
-  object = scene->mainActor;
+  object = scene->caster;
 
   FieldPsynergy_FadeToCastColor();
   object = FieldEffect_SpawnMoveHand(object);
@@ -706,9 +707,9 @@ void FieldPsynergy_Reveal(void) {
   event = Ram_HeapSlots->fieldState;
   ScreenTransition_StartWindowHeld(FIELD_PSYNERGY_REVEAL);
   state = Ram_HeapSlots->screenTransition;
-  caster = scene->mainActor;
-  state->centreX = caster->x.fixed;
-  state->centreY = caster->z.fixed - caster->y.fixed;
+  caster = scene->caster;
+  state->centerX = caster->x.fixed;
+  state->centerY = caster->z.fixed - caster->y.fixed;
   PaletteFade_SetSource(FIXED_ONE, 0);
   PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   PaletteFade_StartInterpolation(1);
@@ -719,11 +720,11 @@ void FieldPsynergy_Reveal(void) {
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_REVEAL,
       Scene_SelectPsynergyTarget(FIELD_PSYNERGY_REVEAL));
   if (pending != 0)
-    Field_RunPsynergyEvent(pending, scene->firstActorId, scene->secondActorId);
+    Field_RunPsynergyEvent(pending, scene->casterId, scene->targetId);
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Io_Write8(1, &event->revealActive);
-  event->revealCenterX = state->centreX / FIXED_ONE;
-  event->revealCenterY = state->centreY / FIXED_ONE;
+  event->revealCenterX = state->centerX / FIXED_ONE;
+  event->revealCenterY = state->centerY / FIXED_ONE;
   event->revealFrames = REVEAL_FRAMES;
   event->effectTimerRunning = 1;
   FieldEffect_SpawnRevealMarkers();
@@ -759,9 +760,8 @@ void FieldPsynergy_EndReveal(void) {
         PSYNERGY_TRIGGER(PSYNERGY_PHASE_FADES), FIELD_PSYNERGY_REVEAL,
         Scene_SelectPsynergyTarget(FIELD_PSYNERGY_REVEAL));
     if (pending != NULL)
-      Field_RunPsynergyEvent(pending, scene->firstActorId,
-                             scene->secondActorId);
-    if (scene->childOption == 0) {
+      Field_RunPsynergyEvent(pending, scene->casterId, scene->targetId);
+    if (scene->sceneVariant == 0) {
       state->nextMode = 0;
       state->duration = 1;
       state->step = 1;
@@ -785,7 +785,7 @@ enum GrowthTargetKind {
 /// an arrow (GaiaRockInside_PlantPointsTheWay).
 void FieldPsynergy_GrowthOnTarget(s32 unused) {
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
-  struct Actor *target = scene->child;
+  struct Actor *target = scene->target;
   s32 kind = GROWTH_ON_PLANT;
 
   if (target == 0)
@@ -826,7 +826,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
       }
       wait((Random_Below(2)) + 2);
     }
-    HangingVine_Hang(scene->secondActorId, 1);
+    HangingVine_Hang(scene->targetId, 1);
   } else {
     wait(10);
     Sound_PlayFar(SE_RECOVERY);
@@ -877,7 +877,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
   s32 *p;
 
   state = Ram_HeapSlots->fieldEffectState;
-  user = state->mainActor;
+  user = state->caster;
   FieldPsynergy_FadeToCastColor();
 
   p = pos;
@@ -953,8 +953,8 @@ void FieldPsynergy_LiftOnTarget(void) {
   s32 startY;
 
   effectState = Ram_HeapSlots->fieldEffectState;
-  child = effectState->child;
-  caster = effectState->mainActor;
+  child = effectState->target;
+  caster = effectState->caster;
   if (child == 0)
     return;
 
@@ -1115,7 +1115,7 @@ again:
   if (state == OUT_AND_BACK_AIM_BACK) {
     // 8 pixels toward effectState->angle from 16 pixels above the main actor,
     // on screen, give or take 4 pixels.
-    struct Actor *caster = effectState->mainActor;
+    struct Actor *caster = effectState->caster;
 
     pos.x = caster->x.fixed;
     pos.y = caster->y.fixed + toFIXED(16);
@@ -1200,27 +1200,27 @@ void FieldPsynergy_Force(void) {
   u8 marker;
 
   scene = Ram_HeapSlots->fieldEffectState;
-  target = scene->child;
+  target = scene->target;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_PSYNERGY_START);
   slot = scene->particles;
 
   for (i = 0; i < FORCE_RING_PARTICLES; i++) {
-    source = scene->mainActor;
+    source = scene->caster;
     SET_POSITION(&pos, source->x.fixed, source->y.fixed + toFIXED(16),
                  source->z.fixed);
     Camera_WorldToScreen(&pos);
     FieldParticle_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(slot, FieldEffect_UpdateRadialBurst);
     FieldParticle_SetAnimation(slot, 7);
-    Sprite_SetAnimationColorModesFar(slot->actor, SPRITE_COLOR_BLUE_TINT);
+    Sprite_SetAnimationColorModesFar(slot->sprite, SPRITE_COLOR_BLUE_TINT);
     slot->scaleY = FIXED_ONE * 7 / 10;
     slot->scaleX = FIXED_ONE * 7 / 10;
     wait(2);
     slot++;
   }
 
-  source = scene->mainActor;
+  source = scene->caster;
   SET_POSITION(&pos, source->x.fixed, source->y.fixed + toFIXED(16),
                source->z.fixed);
   Vector_AddPolarOffset(toFIXED(8), scene->angle, &pos);
@@ -1267,8 +1267,8 @@ void FieldPsynergy_Force(void) {
   }
   marker = resource->slot;
 
-  if (scene->enabled != 0) {
-    source = scene->mainActor;
+  if (scene->aimAhead != 0) {
+    source = scene->caster;
     SET_POSITION(&pos, source->x.fixed, source->y.fixed + toFIXED(16),
                  source->z.fixed);
     Vector_AddPolarOffset(toFIXED(56), scene->angle, &pos);
@@ -1290,7 +1290,7 @@ void FieldPsynergy_Force(void) {
     wait(1);
 
   if (target != NULL && scene->childMode == 0) {
-    if (scene->childOption != 0)
+    if (scene->sceneVariant != 0)
       target->velocityY = toFIXED(8);
     SET_POSITION(&pos, target->x.fixed, target->y.fixed, target->z.fixed);
     Vector_AddPolarOffset(toFIXED(16), scene->angle, &pos);
@@ -1306,7 +1306,7 @@ void FieldPsynergy_Force(void) {
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_FORCE,
       Scene_SelectPsynergyTarget(FIELD_PSYNERGY_FORCE));
   if (event != NULL)
-    Field_RunPsynergyEvent(event, scene->firstActorId, scene->secondActorId);
+    Field_RunPsynergyEvent(event, scene->casterId, scene->targetId);
   wait(10);
   FieldPsynergy_FadeFromCastColor();
   wait(20);
@@ -1393,11 +1393,11 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
 /// and its flash and freezing are left to the scene.
 void FieldPsynergy_FrostOnTarget(s32 unused) {
   struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
-  struct Actor *target = effectState->child;
+  struct Actor *target = effectState->target;
 
   if (target != 0) {
     if (effectState->childMode != 0) {
-      effectState->enabled = 1;
+      effectState->aimAhead = 1;
     }
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     FieldPsynergy_Frost();
@@ -1419,7 +1419,7 @@ void FieldPsynergy_Frost(void) {
   s32 cnt;
 
   scene = Ram_HeapSlots->fieldEffectState;
-  target = scene->child;
+  target = scene->target;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ICE);
   for (cnt = 0; cnt < FROST_SNOWFLAKES; cnt++) {
@@ -1458,7 +1458,7 @@ void FieldPsynergy_Frost(void) {
   Sound_PlayFar(SE_ICE);
   wait(50);
 
-  if (target != NULL && scene->enabled == 0) {
+  if (target != NULL && scene->aimAhead == 0) {
     Sound_PlayFar(SE_POWER_UP);
 
     for (cnt = 0; cnt < 8; cnt++) {
@@ -1468,7 +1468,7 @@ void FieldPsynergy_Frost(void) {
       wait(4);
     }
 
-    if (scene->childOption == 0) {
+    if (scene->sceneVariant == 0) {
       Sound_PlayFar(SE_SHIMMER);
       Actor_SelectAnimationFar(target, 2);
     }
@@ -1478,7 +1478,7 @@ void FieldPsynergy_Frost(void) {
         PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_FROST,
         Scene_SelectPsynergyTarget(FIELD_PSYNERGY_FROST));
     if (ev != NULL)
-      Field_RunPsynergyEvent(ev, scene->firstActorId, scene->secondActorId);
+      Field_RunPsynergyEvent(ev, scene->casterId, scene->targetId);
     wait(20);
   }
 
@@ -1582,7 +1582,7 @@ void FieldPsynergy_PlyOnTarget(void) {
 /// off.
 void FieldPsynergy_Ply(void) {
   struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
-  struct Actor *target = effectState->mainActor;
+  struct Actor *target = effectState->caster;
   struct Actor *actor;
   struct Sprite *last;
   u8 resourceSlot;
@@ -1654,7 +1654,7 @@ void FieldPsynergy_Ply(void) {
     target->timer = 0;
     // Cast on a target (enabled cleared by FieldPsynergy_Dispatch),
     // the sparks fall for 192 frames instead of 128.
-    if (effectState->enabled != 0)
+    if (effectState->aimAhead != 0)
       wait(128);
     else
       wait(192);
@@ -1695,7 +1695,7 @@ void FieldEffect_CheckCloakTile(void) {
 /// (FieldPsynergy_RunExtraHandler).
 void FieldPsynergy_EndCloak(void) {
   struct Actor *caster =
-      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->mainActor;
+      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->caster;
   struct Sprite *sprite = caster->sprite;
   struct SpriteAnimation *entry = sprite->entries[0];
   u32 i;

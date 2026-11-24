@@ -123,7 +123,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   blit[0] = draw;
   /* FAKEMATCH(temporary): the orange palette's id in a local. */
   orangeBase = RESOURCE_ORANGE_PALETTE_B - 4;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   circles = (s16 *)(state->sheet + TRIDENT_DISC_TABLE);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
   /* FAKEMATCH(dead): offset set to the cell buffer's address, which the disc
@@ -500,7 +500,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   for (i = 0; i != TRIDENT_SPRITES; i++) {
     Sprite_DestroyFar(state->sprites[i]);
@@ -639,7 +639,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
     state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
     state->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   for (i = 0; i != LEAPING_STRIKE_SPARK_COUNT; i++)
     LEAPING_STRIKE_SPARKS[i].variant = 0;
 

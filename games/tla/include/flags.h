@@ -110,7 +110,7 @@
 /// Field_StartColorTransition until Field_StartPaletteTransition.
 #define FLAG_PSYNERGY_TINTED 0x108
 /// Set, the highest of these picks the tint a field Psynergy fades
-/// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
+/// toward, gFieldPsynergy_CastColors[n], in place of the frame counter's pick
 /// (FieldPsynergy_FadeToCastColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
 /// Set while the field sequence handles its requests, and cleared while the

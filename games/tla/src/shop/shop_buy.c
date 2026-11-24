@@ -247,7 +247,7 @@ next_page:
   wait(1);
   if (purchaseResult == 0 && shop->action == SHOP_ACTION_ARTIFACTS) {
     for (removedCount = 0; removedCount < quantity; removedCount++)
-      Item_AdjustCounterFar(shop->selectedItem, -1);
+      Item_AdjustRareItemStockFar(shop->selectedItem, -1);
     if (Shop_ListAvailableArtifacts() == 0)
       goto close;
     if (selected > shop->stockCount - 1)
@@ -617,9 +617,9 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
       quantityLimit = (u32)gMainRoutineState.coins / (u16)item->price;
 
     if (shop->action == SHOP_ACTION_ARTIFACTS) {
-      artifactsInStock = Item_AdjustCounterFar(itemId, 0);
+      artifactsInStock = Item_AdjustRareItemStockFar(itemId, 0);
       if (quantityLimit > artifactsInStock)
-        artifactsInStock = Item_AdjustCounterFar(itemId, 0);
+        artifactsInStock = Item_AdjustRareItemStockFar(itemId, 0);
       else
         artifactsInStock = quantityLimit;
       quantityLimit = artifactsInStock;

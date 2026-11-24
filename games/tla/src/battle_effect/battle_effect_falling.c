@@ -31,8 +31,8 @@
 
 /// Each Ice variant's shards that fall, and its frames; the damage shows 16
 /// frames before the end.
-#define ICE_SHARDS(variant) gFalling_IceCounts[(variant) * 2]
-#define ICE_FRAMES(variant) gFalling_IceCounts[(variant) * 2 + 1]
+#define ICE_SHARDS(variant) gIce_Counts[(variant) * 2]
+#define ICE_FRAMES(variant) gIce_Counts[(variant) * 2 + 1]
 
 /// The shards or drops that can fall at once, and their puffs as they land.
 enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
@@ -137,7 +137,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
     state->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != ICE_FRAMES(args->variant); frame++) {
     if (frame == ICE_FRAMES(args->variant) - 16)
@@ -227,7 +227,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Task_Remove(BattleEffect_ArmWin0HBlankDma);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
@@ -241,10 +241,10 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 /// Each Douse variant: the drops that fall, of the 64 set out, the droplets
 /// each throws up, the pixels between drops along the slant, and its frames;
 /// the damage shows 64 frames before the end.
-#define DOUSE_FALLING_DROPS(variant) gFalling_Counts[(variant) * 4]
-#define DOUSE_DROPLETS_PER_DROP(variant) gFalling_Counts[(variant) * 4 + 1]
-#define DOUSE_DROP_SPACING(variant) gFalling_Counts[(variant) * 4 + 2]
-#define DOUSE_FRAMES(variant) gFalling_Counts[(variant) * 4 + 3]
+#define DOUSE_FALLING_DROPS(variant) gDouse_Counts[(variant) * 4]
+#define DOUSE_DROPLETS_PER_DROP(variant) gDouse_Counts[(variant) * 4 + 1]
+#define DOUSE_DROP_SPACING(variant) gDouse_Counts[(variant) * 4 + 2]
+#define DOUSE_FRAMES(variant) gDouse_Counts[(variant) * 4 + 3]
 
 /// BlueBeamSheet, after BlueGlowSheet's ten flare pictures: the falling
 /// drop, a blue bubble; the small splash it lands in; then the large splash.
@@ -330,7 +330,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != DOUSE_FRAMES(args->variant); frame++) {
     if (frame == DOUSE_FRAMES(args->variant) - 64)

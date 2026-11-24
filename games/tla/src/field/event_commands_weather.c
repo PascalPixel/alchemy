@@ -13,8 +13,8 @@
 
 /// The Broken Seal's rain each frame (GroundParticles_Start, which nothing
 /// calls), kept whole: each drop falls from up to the right, splashes and
-/// plays its GROUND_PARTICLE_FRAMES frames of
-/// gFieldEffect_GroundParticleFrames on a random spot near the leader, held
+/// plays its RAIN_SPLASH_FRAMES frames of
+/// gWeather_RainSplashFrames on a random spot near the leader, held
 /// while FLAG_WEATHER_HELD is set.
 void GroundParticles_Update(void) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
@@ -22,7 +22,7 @@ void GroundParticles_Update(void) {
   s32 *origin = &map->viewX;
   s32 originX = origin[0];
   s32 originZ = origin[1];
-  struct GroundParticle *particle = state->particles;
+  struct WeatherParticle *particle = state->particles;
   u32 i;
 
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++) {
@@ -34,7 +34,7 @@ void GroundParticles_Update(void) {
       continue;
     if (GameFlag_Get(FLAG_WEATHER_HELD))
       particle->timer++;
-    frame = &gFieldEffect_GroundParticleFrames[particle->timer * 5];
+    frame = &gWeather_RainSplashFrames[particle->timer * 5];
     x = (particle->posX - originX) / FIXED_ONE + *frame++;
     y = (particle->posZ - particle->posY - originZ) / FIXED_ONE + *frame++;
     if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
@@ -55,7 +55,7 @@ void GroundParticles_Update(void) {
       particle->posX = x;
       particle->posZ = y;
       particle->posY = MapGrid_GetTerrainHeightFar(0, x, y);
-      particle->timer = GROUND_PARTICLE_FRAMES;
+      particle->timer = RAIN_SPLASH_FRAMES;
     }
   }
 }
@@ -71,7 +71,7 @@ void Weather_UpdateRain(void) {
   struct WeatherState *state = Ram_HeapSlots->weather;
   s32 *origin = &map->viewX;
   s32 originX = origin[0];
-  struct GroundParticle *particle = state->particles;
+  struct WeatherParticle *particle = state->particles;
   s32 originZ = origin[1];
   u32 i;
 

@@ -365,7 +365,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, pictures, 1, 0);
-  BattleEffect_PackTileRows(
+  BattleEffect_PackYellowOrbs(
       pictures, state->sheet + CASTING_IMPACT_ORB_PICTURES, YELLOW_ORB_WIDTH,
       YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT);
 
@@ -655,10 +655,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
     state->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   EffectPosition_ProjectScaledBattler(action->targets[0], &targetPos);
   EffectPosition_ProjectScaledBattler(action->user, &casterPos);
-  BattleEffect_FetchRectangleBlitters(action->side, blitters);
+  BattleEffect_BuildCanvasBlitters(action->side, blitters);
   {
     struct MotionObject *caster;
     s32 savedVelocityX;
@@ -839,8 +839,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
       Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
       action->prelude = 0;
-      Task_Remove(Palette_StepFadeTransfer);
-      Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+      Task_Remove(BattleEffect_DarkenBackgroundStep);
+      Task_Remove(BattleEffect_TransferCanvas);
       EFFECT_RELEASE_BLITTERS();
       Actor_SelectAnimationFar(caster, POSE_CAST);
       if (kind == CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS)
@@ -865,8 +865,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
       Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
       action->prelude = 0;
-      Task_Remove(Palette_StepFadeTransfer);
-      Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+      Task_Remove(BattleEffect_DarkenBackgroundStep);
+      Task_Remove(BattleEffect_TransferCanvas);
       EFFECT_RELEASE_BLITTERS();
       action->variant = SPARK_GROUPS_SEVERE_BLOW;
       BattleEffect_RunSparkGroups(action, SPARK_GROUPS_RISING);
@@ -1470,7 +1470,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                         y + 56, gBattleEffect_GlintPictureWidths[m],
                         gBattleEffect_GlintPictureHeights[m]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-            BattleEffect_FetchRectangleBlitters(action->side, blitters);
+            BattleEffect_BuildCanvasBlitters(action->side, blitters);
           }
         }
       } else if (kind == CASTING_IMPACT_IMPACT_STUN_CLOUD) {
@@ -1498,7 +1498,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                         y + 80, gBattleEffect_GlintPictureWidths[m],
                         gBattleEffect_GlintPictureHeights[m]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-            BattleEffect_FetchRectangleBlitters(action->side, blitters);
+            BattleEffect_BuildCanvasBlitters(action->side, blitters);
           }
         }
         p = impactParticles;
@@ -1570,7 +1570,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             }
           }
         }
-        BattleEffect_FetchRectangleBlitters(action->side, blitters);
+        BattleEffect_BuildCanvasBlitters(action->side, blitters);
       } else if (kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
         // The rune's two halves, the second mirrored.
         s32 x;
@@ -1590,7 +1590,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           ALT_BLITTER(canvas, pictures, x, h, RUNE_HALF_WIDTH, h);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
-        BattleEffect_FetchRectangleBlitters(action->side, blitters);
+        BattleEffect_BuildCanvasBlitters(action->side, blitters);
       } else if (kind == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
         // A tornado stands over the target.
         s32 m;
@@ -1772,7 +1772,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           }
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-        BattleEffect_FetchRectangleBlitters(action->side, blitters);
+        BattleEffect_BuildCanvasBlitters(action->side, blitters);
       } else if (kind == CASTING_IMPACT_IMPACT_WILD_WOLF ||
                  kind == CASTING_IMPACT_IMPACT_DINOX ||
                  kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE) {
@@ -1804,7 +1804,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               targetPos.x / 2, TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
               TARGET_STRIKE_BITE_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-          BattleEffect_FetchRectangleBlitters(action->side, blitters);
+          BattleEffect_BuildCanvasBlitters(action->side, blitters);
         }
         if ((kind == CASTING_IMPACT_IMPACT_DINOX ||
              kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE) &&
@@ -1886,7 +1886,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                         gCastingImpact_RaidensWrathHeights[m]);
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-        BattleEffect_FetchRectangleBlitters(action->side, blitters);
+        BattleEffect_BuildCanvasBlitters(action->side, blitters);
       } else if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
         // The woman slides in, a picture every three frames, and three bursts
         // flash.
@@ -1965,7 +1965,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           }
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-        BattleEffect_FetchRectangleBlitters(action->side, blitters);
+        BattleEffect_BuildCanvasBlitters(action->side, blitters);
       } else if (kind == CASTING_IMPACT_IMPACT_ASURA) {
         // The swordsman slides in and swings, and his red crescent fades.
         s32 t;
@@ -2323,7 +2323,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                         y + 80, gBattleEffect_GlintPictureWidths[m],
                         gBattleEffect_GlintPictureHeights[m]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-            BattleEffect_FetchRectangleBlitters(action->side, blitters);
+            BattleEffect_BuildCanvasBlitters(action->side, blitters);
           }
         }
         if (frame > 3) {
@@ -3014,8 +3014,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
       Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
       action->prelude = 0;
-      Task_Remove(Palette_StepFadeTransfer);
-      Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+      Task_Remove(BattleEffect_DarkenBackgroundStep);
+      Task_Remove(BattleEffect_TransferCanvas);
       EFFECT_RELEASE_BLITTERS();
       if (kind == CASTING_IMPACT_IMPACT_MELTDOWN ||
           kind == CASTING_IMPACT_IMPACT_CHILL ||

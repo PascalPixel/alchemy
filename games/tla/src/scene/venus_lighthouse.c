@@ -111,7 +111,7 @@ enum { VENUS_COLOR_MARK_TAG = 0x212 }; ///< the tag that marks the timer
 
 /// The scene's name for the byte Actor keeps for scene code. A statue with
 /// SW_VENUS_IMMOVABLE set cannot be pushed.
-enum { SW_VENUS_IMMOVABLE = SW_RISE_COUNTER };
+enum { SW_VENUS_IMMOVABLE = SW_SCENE_COUNTER };
 
 #define Actor_SetSpriteFlags                                                   \
   ((void (*)(struct Actor *, s32))Actor_SetSpriteFlags)
@@ -301,7 +301,7 @@ UNUSED void PushedActor_AdvancePair(void) {
   if (MapGrid_CheckCollision(pillar, &targetPosition) > 0)
     return;
 
-  transitionBusy = pillar->riseCounter;
+  transitionBusy = pillar->sceneCounter;
   if (transitionBusy != 0)
     return;
 
@@ -341,7 +341,7 @@ UNUSED void VenusLighthouse_Nothing(void) {}
 
 /// Flashes the leader white every fourth frame, with the sound of a breaking
 /// item every eighth.
-s32 VenusLighthouse_PulseChildEffect(void *actor) {
+s32 VenusLighthouse_FlashStruckLeader(void *actor) {
   if ((gFrameCount & 3) == 0)
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   else
@@ -1287,10 +1287,10 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 /// The leader's actor script as the statue throws him back
 /// (VenusLighthouse_RepelLeader). He swells and shrinks ten times, flashing
-/// (VenusLighthouse_PulseChildEffect).
+/// (VenusLighthouse_FlashStruckLeader).
 s32 gVenusLeaderDazedScript[] = {
     SC_ANIMATION(12),
-    SC_SET(SW_HOOK, (s32)VenusLighthouse_PulseChildEffect),
+    SC_SET(SW_HOOK, (s32)VenusLighthouse_FlashStruckLeader),
     SC_LABEL(1),
     SC_SET(SW_SCALE_X, 11 * FIXED_ONE / 10),
     SC_SET(SW_SCALE_Y, 11 * FIXED_ONE / 10),

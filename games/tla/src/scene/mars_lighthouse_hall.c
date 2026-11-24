@@ -1141,7 +1141,7 @@ void Ride_SpawnForward(struct Vector3 *position, s32 value, s32 flag) {
   if (actor != 0) {
     actor->bounce = 0;
     actor->gravity = 0;
-    actor->riseBaseY = value;
+    actor->sceneWord = value;
     ((void (*)())Actor_ResetScripted)(actor, 2);
     actor->update = Flame_UpdateForward;
     if (flag != 0)
@@ -1167,7 +1167,7 @@ void Ride_SpawnBackward(struct Vector3 *position, s32 value, s32 flag) {
   if (actor != 0) {
     actor->bounce = 0;
     actor->gravity = 0;
-    actor->riseBaseY = -value;
+    actor->sceneWord = -value;
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateForward;
     if (flag != 0)
@@ -1184,7 +1184,7 @@ void Ride_SpawnLandingForward(struct Vector3 *position, s32 value, s32 flag) {
   if (actor != 0) {
     actor->bounce = 0;
     actor->gravity = 0;
-    actor->riseBaseY = value;
+    actor->sceneWord = value;
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateLanding;
     if (flag != 0)
@@ -1201,7 +1201,7 @@ void Ride_SpawnLandingBackward(struct Vector3 *position, s32 value, s32 flag) {
   if (actor != 0) {
     actor->bounce = 0;
     actor->gravity = 0;
-    actor->riseBaseY = -value;
+    actor->sceneWord = -value;
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateLanding;
     if (flag != 0)
@@ -1226,7 +1226,7 @@ void Ride_SpawnSpark(struct Vector3 *position, s32 value, s32 mode) {
     actor->bounce =
         Trig_Cos(((u32)(Random16() * 3 << 12) >> 16) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
-    actor->riseBaseY = ((u32)(Random16() << 17) >> 16) + value;
+    actor->sceneWord = ((u32)(Random16() << 17) >> 16) + value;
     spin = (u16)Random16() - DEGtoANG(180);
     actor->timer = spin;
     ((void (*)())Actor_SetupScripted)(actor, 2);

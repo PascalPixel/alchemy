@@ -20,7 +20,7 @@
 /// staggered timers, drawn semi-transparent.
 void FieldMotes_Start(void) {
   struct WeatherState *state;
-  struct GroundParticle *mote;
+  struct WeatherParticle *mote;
   u8 *tiles;
   u32 i;
   u32 size;
@@ -76,7 +76,7 @@ void FieldMotes_Start(void) {
 /// schedules the update and, when asked, plays SE_KIRIN (Scene_QueueMusic).
 void Weather_StartRain(s32 withCue) {
   struct WeatherState *state;
-  struct GroundParticle *particle;
+  struct WeatherParticle *particle;
   u8 *tiles;
   u32 i;
   u32 size;
@@ -141,7 +141,7 @@ void FieldEffect_UpdateSparkles(void) {
   s32 *camera;
   s32 spawnX;
   s32 spawnZ;
-  struct GroundParticle *sparkle;
+  struct WeatherParticle *sparkle;
   const u16 *frame;
   s32 *leader;
   s32 cameraX;
@@ -246,7 +246,7 @@ void FieldEffect_UpdateSparkles(void) {
 void FieldEffect_InitializeSparkles(void) {
   u32 size = sizeof(struct WeatherState);
   struct WeatherState *state = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
-  struct GroundParticle *p = state->particles;
+  struct WeatherParticle *p = state->particles;
   u8 *buf;
   u32 i;
   s32 clear;

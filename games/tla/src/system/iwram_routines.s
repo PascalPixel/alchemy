@@ -66,8 +66,8 @@ AlchemyUncreditedEnd_080007d6:
 	.balign 4
 .syntax unified
 	.thumb
-	.global IwramRatioMulQ14
-IwramRatioMulQ14:
+	.global IwramDivFX
+IwramDivFX:
 	bx	pc
 AlchemyUncredited_080007ea:
 	.2byte	0x0200

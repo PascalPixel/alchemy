@@ -49,7 +49,7 @@ pillar hides what is behind it.
 
 A handler never draws on the screen. It draws on its own copy of the
 canvas, marks it ready, and waits a frame. A task, the transfer, copies it
-to the screen at VBlank (`BattleEffect_ProcessPendingGraphicsTransfer`).
+to the screen at VBlank (`BattleEffect_TransferCanvas`).
 
 Straight after the copy, the transfer does one thing to the handler's
 copy, and which thing is the effect's choice:

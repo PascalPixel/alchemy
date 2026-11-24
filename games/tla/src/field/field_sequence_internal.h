@@ -158,7 +158,7 @@ struct ContainerRow {
 /// The most treasure spots a scene places, each an actor from
 /// FIELD_TREASURE_ACTOR on.
 #define TREASURE_SPOT_MAX 16
-/// Actor.riseBaseY of a treasure spot that stands for a map cell rather than an
+/// Actor.sceneWord of a treasure spot that stands for a map cell rather than an
 /// actor: its cell is in timer and userValue, and it stands at x and z 0.
 #define TREASURE_SPOT_ON_CELL 0x31415927
 /// gSceneItems: bit 14 marks a scene's header (SCENE_ITEMS), its scene number

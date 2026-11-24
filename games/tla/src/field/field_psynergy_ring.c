@@ -155,7 +155,7 @@ void FieldPsynergy_Ring(void) {
       HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct RingState));
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct FieldState *field = Ram_HeapSlots->fieldState;
-  struct Actor *caster = scene->mainActor;
+  struct Actor *caster = scene->caster;
   struct CanvasSpriteState *canvas;
   s32 entry;
   s32 tile;
@@ -184,9 +184,9 @@ void FieldPsynergy_Ring(void) {
     canvas = Ram_HeapSlots->canvasSprite;
     canvas->mode = 0;
     pos = position;
-    pos[0] = scene->mainActor->x.fixed;
-    pos[1] = scene->mainActor->y.fixed + toFIXED(16);
-    pos[2] = scene->mainActor->z.fixed;
+    pos[0] = scene->caster->x.fixed;
+    pos[1] = scene->caster->y.fixed + toFIXED(16);
+    pos[2] = scene->caster->z.fixed;
     Camera_WorldToScreen(pos);
     // The whole pixels of the caster's place on screen.
     {
@@ -313,9 +313,9 @@ void FieldPsynergy_Ring(void) {
         sprite->oam.fullColor = 0;
         sprite->oam.palette = RING_PALETTE;
         sprite->angle = heading + DEGtoANG(90);
-        position[0] = scene->mainActor->x.fixed;
-        position[1] = scene->mainActor->y.fixed + toFIXED(16);
-        position[2] = scene->mainActor->z.fixed;
+        position[0] = scene->caster->x.fixed;
+        position[1] = scene->caster->y.fixed + toFIXED(16);
+        position[2] = scene->caster->z.fixed;
         Camera_WorldToScreen(position);
         Vector_AddPolarOffset(toFIXED(64), heading, position);
         mote->x = position[0];
@@ -586,7 +586,7 @@ void ViewMove_End(void) {
     map->maxX = state->savedMaxX;
     map->minZ = state->savedMinZ;
     map->maxZ = state->savedMaxZ;
-    FieldCamera_FollowActor(scene->firstActorId, 1);
+    FieldCamera_FollowActor(scene->casterId, 1);
   }
 }
 
@@ -605,11 +605,11 @@ void ViewMove_SaveNearbySprites(void) {
   actors = state->actors;
   for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
     actor = *actors++;
-    if (actor == NULL || actor->script == NULL || actor == scene->mainActor)
+    if (actor == NULL || actor->script == NULL || actor == scene->caster)
       continue;
     if (Field_MeasurePsynergyReach(
-            (s16)(scene->fieldPsynergy | REACH_SHAKEN_OBJECTS),
-            scene->firstActorId, i) == -1)
+            (s16)(scene->fieldPsynergy | REACH_SHAKEN_OBJECTS), scene->casterId,
+            i) == -1)
       continue;
     group->objects[group->count] = actor;
     group->spriteRotations[group->count] =

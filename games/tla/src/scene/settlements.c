@@ -650,7 +650,7 @@ void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 void Settlements_SetUpKaltIsland(void) {
   struct OrbitObject *actor;
   struct OrbitSprite *sprite;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
 
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
@@ -679,10 +679,10 @@ void Settlements_SetUpKaltIsland(void) {
     actor->y += toFIXED(16);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->visible = 1;
-  glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   Item_LoadIcon(ITEM_APPLE);
   Vram_Load(sprite->vramBlock, ICON_TILE_BYTES, glyph->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   actor->orbitCenterX = actor->x;
   actor->orbitAngle = 0;
   actor->orbitCenterY = actor->y;

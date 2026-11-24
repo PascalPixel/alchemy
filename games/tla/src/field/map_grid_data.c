@@ -371,7 +371,7 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareBounce,            // 0x14 SW_BOUNCE
     ActorScript_SetOrCompareGravity,           // 0x15 SW_GRAVITY
     ActorScript_SetOrCompareTerrainHeight,     // 0x16 SW_GROUND
-    ActorScript_SetOrCompareRiseBaseY,         // 0x17
+    ActorScript_SetOrCompareSceneWord,         // 0x17
     ActorScript_SetOrCompareSprite,            // 0x18
     ActorScript_SetOrCompareSpriteStorageKind, // 0x19
     ActorScript_SetOrCompareMotionFlags,       // 0x1a SW_MOTION
@@ -387,8 +387,8 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareUserValue,         // 0x24 SW_USER_VALUE
     ActorScript_SetOrCompareWatchedActor,      // 0x25
     ActorScript_SetOrCompareUpdateAddress,     // 0x26 SW_HOOK
-    ActorScript_SetOrCompareRiseCounter,       // 0x27 SW_RISE_COUNTER
-    ActorScript_SetOrCompareRiseEnabled,       // 0x28 SW_RISE_ENABLED
+    ActorScript_SetOrCompareSceneCounter,      // 0x27 SW_SCENE_COUNTER
+    ActorScript_SetOrCompareSceneByte,         // 0x28 SW_SCENE_BYTE
 };
 
 // Each layout's resources, as offsets from ResourceId_EmptyMap, by map number;

@@ -1296,7 +1296,7 @@ void Islets_RideBackToIsland(void) {
     Actor_SetSpeed(ACTOR_LONESOME_GEORGE, 1.6);
     Actor_SetSpeed(ACTOR_LIL_TURTLE, 1.6);
     update = (void (*)(void))Actor_EmitWadingSplashes;
-    done = &actor->riseEnabled;
+    done = &actor->sceneByte;
     *done = 0;
     actor->update = update;
     Actor_SetScript(ACTOR_LONESOME_GEORGE, gIslets_GeorgeSwimsBackScript);
@@ -1662,8 +1662,8 @@ void Islets_FinishPushingCrate(void) {
                               ISLETS_BOTH_LAYERS, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 12, 26);
       Event_SetFlag(FLAG_CRATES_IN_ONE_CELL);
-      first->riseCounter = 1;
-      second->riseCounter = 1;
+      first->sceneCounter = 1;
+      second->sceneCounter = 1;
     }
     Event_End();
   }
@@ -1688,8 +1688,8 @@ void Islets_FinishPushingCrate(void) {
                               ISLETS_BOTH_LAYERS, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, 29);
       Event_SetFlag(FLAG_CRATES_IN_ONE_CELL);
-      first->riseCounter = 1;
-      second->riseCounter = 1;
+      first->sceneCounter = 1;
+      second->sceneCounter = 1;
     }
     Event_End();
   }
@@ -1713,7 +1713,7 @@ void Islets_PushCrateOffLedge(void) {
       FIELD_CELL(gIslets_FirstCrateZ) == 29 &&
       FIELD_CELL(gIslets_SecondCrateX) == 7 &&
       FIELD_CELL(gIslets_SecondCrateZ) == 28) {
-    first->riseCounter = 0;
+    first->sceneCounter = 0;
     // XXX: no behaviour is passed, so the upper cell takes whatever the fourth
     // argument's register holds; the call's disassembly would settle which.
     ((void (*)())Islets_SetCellCollision)(
@@ -1994,7 +1994,7 @@ void Islets_ArriveAtSecretSpot(void) {
   Actor_SetSpeed(ACTOR_LIL_TURTLE, 0.8);
   Actor_Get(ACTOR_LIL_TURTLE)->update = Actor_EmitWadingSplashes;
   guide->update = Actor_EmitWadingSplashes;
-  done = &guide->riseEnabled;
+  done = &guide->sceneByte;
   *done = 0;
   Actor_StartScript(guide, gIslets_GeorgeSwimsToSecretSpotScript);
   Actor_SetScript(ACTOR_LIL_TURTLE, gIslets_LilTurtleSwimsToSecretSpotScript);
@@ -2293,8 +2293,8 @@ void Islets_InitializeSoutheastAngara(void) {
 
     first->motionFlags = 0;
     second->motionFlags = 0;
-    first->riseCounter = 1;
-    second->riseCounter = 1;
+    first->sceneCounter = 1;
+    second->sceneCounter = 1;
     MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, 29);
   } else {
     struct Actor *first = Actor_Get(ACTOR_CRATE_A);
@@ -2309,7 +2309,7 @@ void Islets_InitializeSoutheastAngara(void) {
   }
   Actor_DisableById(ACTOR_PUDDLE);
   last = Actor_Get(ACTOR_PUDDLE);
-  last->riseCounter = 1;
+  last->sceneCounter = 1;
   last->motionFlags = 0;
   Islets_SetCellCollision(last->x.fixed, last->z.fixed, ISLETS_GROUND_LAYER,
                           CELL_BEHAVIOR_WALL);
@@ -2649,8 +2649,8 @@ u32 gIslets_WadingSplashScript[] = {
 };
 
 u32 gIslets_GeorgeSwimsToSecretSpotScript[] = {
-    SC_MOVE(248, 0, 686), SC_SYNC, SC_MOVE(248, 0, 768),       SC_SYNC,
-    SC_MOVE(152, 0, 768), SC_SYNC, SC_SET(SW_RISE_ENABLED, 1), SC_END,
+    SC_MOVE(248, 0, 686), SC_SYNC, SC_MOVE(248, 0, 768),     SC_SYNC,
+    SC_MOVE(152, 0, 768), SC_SYNC, SC_SET(SW_SCENE_BYTE, 1), SC_END,
 };
 
 u32 gIslets_LilTurtleSwimsToSecretSpotScript[] = {
@@ -2660,8 +2660,8 @@ u32 gIslets_LilTurtleSwimsToSecretSpotScript[] = {
 };
 
 u32 gIslets_GeorgeSwimsBackScript[] = {
-    SC_MOVE(248, 0, 768), SC_SYNC, SC_MOVE(248, 0, 686),       SC_SYNC,
-    SC_MOVE(248, 0, 584), SC_SYNC, SC_SET(SW_RISE_ENABLED, 1), SC_END,
+    SC_MOVE(248, 0, 768), SC_SYNC, SC_MOVE(248, 0, 686),     SC_SYNC,
+    SC_MOVE(248, 0, 584), SC_SYNC, SC_SET(SW_SCENE_BYTE, 1), SC_END,
 };
 
 u32 gIslets_LilTurtleSwimsBackScript[] = {

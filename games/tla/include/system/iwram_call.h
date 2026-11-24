@@ -24,8 +24,8 @@
 static inline FIXED Math_MulFX(FIXED a, FIXED b) { return Iwram_MulFX(a, b); }
 /// value / divisor as a 16.16 number: value times 2^30 / divisor, shifted
 /// down 14.
-#define Iwram_RatioMulQ14Entry                                                 \
-  FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x03000230, IwramRatioMulQ14)
+#define Iwram_DivFXEntry                                                       \
+  FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x03000230, IwramDivFX)
 /// The square root of value, rounded down; 0 for a negative value.
 #define Iwram_SqrtEntry                                                        \
   FIXED_ADDRESS((s32 (*)(s32 value)), 0x030002d4, IwramSqrt)
@@ -58,8 +58,8 @@ static inline FIXED Math_MulFX(FIXED a, FIXED b) { return Iwram_MulFX(a, b); }
                 0x03000730, IwramCopyWords)
 
 /// value * FIXED_ONE / divisor: the 16.16 ratio of two 16.16 numbers.
-static inline FIXED Iwram_RatioMulQ14(FIXED divisor, FIXED value) {
-  return Iwram_RatioMulQ14Entry(divisor, value);
+static inline FIXED Iwram_DivFX(FIXED divisor, FIXED value) {
+  return Iwram_DivFXEntry(divisor, value);
 }
 
 /// The integer square root, rounded down, of a value from 0; 0 for a

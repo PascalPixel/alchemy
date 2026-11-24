@@ -457,8 +457,8 @@ s32 Scene_PrepareMap(void) {
   actor->motionFlags = 0;
   MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0,
                         PATH_BLOCK_TOP_HEIGHT);
-  Actor_Get(ACTOR_LEFT_ARCHER)->riseCounter = 1;
-  Actor_Get(ACTOR_RIGHT_ARCHER)->riseCounter = 1;
+  Actor_Get(ACTOR_LEFT_ARCHER)->sceneCounter = 1;
+  Actor_Get(ACTOR_RIGHT_ARCHER)->sceneCounter = 1;
   return 0;
 }
 
@@ -493,7 +493,7 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 /// colours, a step a frame.
 void JupiterLighthouse_FlickerBeam(struct Actor *actor) {
   u8 *fill = &gDecodeFillByte;
-  u8 *step = &actor->riseEnabled;
+  u8 *step = &actor->sceneByte;
   s32 phase = *step & 3;
 
   *fill = 2;
@@ -514,7 +514,7 @@ void JupiterLighthouse_FlickerBeam(struct Actor *actor) {
 
 /// Starts an actor's flicker (JupiterLighthouse_FlickerBeam).
 void JupiterLighthouse_StartBeamFlicker(struct Actor *actor) {
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   actor->update = (ObjectUpdate)JupiterLighthouse_FlickerBeam;
 }
 

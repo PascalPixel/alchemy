@@ -60,7 +60,7 @@
 #define WORLD_MAP_TILE_CELLS 16
 
 /// The world map's two tile maps, of 64 by 64 one-byte tiles: BG3's, the lower
-/// layer, and BG2's, the upper, right after it (WorldMap_ShowBg1FromBuffer).
+/// layer, and BG2's, the upper, right after it (WorldMap_EndStillImage).
 #define WORLD_MAP_LOWER_TILE_MAP BG_SCREEN_BLOCK(8)
 #define WORLD_MAP_UPPER_TILE_MAP BG_SCREEN_BLOCK(10)
 #define WORLD_MAP_TILE_MAP_WIDTH 64

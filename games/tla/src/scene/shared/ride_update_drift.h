@@ -10,10 +10,10 @@ void Ride_UpdateDrift(struct Actor *actor) {
 
   actor->x.fixed += dx;
   actor->y.fixed += actor->gravity;
-  dz = actor->riseBaseY;
+  dz = actor->sceneWord;
   actor->z.fixed += dz;
   actor->bounce = dx - dx / 18;
-  actor->riseBaseY = dz - dz / 16;
+  actor->sceneWord = dz - dz / 16;
   rate = actor->speedLimit;
   scale = actor->scaleX;
   sprite = actor->sprite;
@@ -21,8 +21,8 @@ void Ride_UpdateDrift(struct Actor *actor) {
   actor->scaleY += actor->acceleration;
   sprite->rotation += actor->timer;
   if (leader->y.fixed == leader->groundHeight && Actor_IsAbove(actor, leader)) {
-    actor->z.fixed -= actor->riseBaseY;
-    actor->gravity += actor->riseBaseY >> 2;
-    actor->riseBaseY = 0;
+    actor->z.fixed -= actor->sceneWord;
+    actor->gravity += actor->sceneWord >> 2;
+    actor->sceneWord = 0;
   }
 }

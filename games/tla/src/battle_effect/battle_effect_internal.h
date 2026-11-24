@@ -274,7 +274,7 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define SUMMON_PROJECTION_CENTER_Y 240
 
 /// The frames the battle background darkens behind an effect's canvas
-/// (state->fadeFrames, Palette_StepFadeTransfer).
+/// (state->fadeFrames, BattleEffect_DarkenBackgroundStep).
 #define BACKGROUND_DARKEN_FRAMES 24
 /// The level BattleBackground_LoadFar darkens the battle's own background to
 /// as it comes back after an effect: as dark as the canvas's fade left it.
@@ -439,7 +439,7 @@ enum RedCrescentPicture {
 #define BLUE_ARC_HEIGHT 72
 #define YELLOW_ORB_WIDTH 40
 #define YELLOW_ORB_HEIGHT 48
-/// The yellow orb as BattleEffect_PackTileRows packs it, every second byte.
+/// The yellow orb as BattleEffect_PackYellowOrbs packs it, every second byte.
 #define YELLOW_ORB_PACKED_WIDTH (YELLOW_ORB_WIDTH / 2)
 #define YELLOW_ORB_PACKED_HEIGHT YELLOW_ORB_HEIGHT
 #define YELLOW_ORB_PICTURES 6
@@ -693,7 +693,7 @@ enum TargetStrikeStyle {
 /// Sets the transfer, then starts copying the canvas to VRAM once a frame.
 #define EFFECT_START_TRANSFER(state, mode, value)                              \
   (EFFECT_SET_TRANSFER(state, mode, value),                                    \
-   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK))
+   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK))
 
 /// Presents the canvas and waits for the next frame.
 #define EFFECT_PRESENT_CANVAS(state) ((state)->transferPending = 1, wait(1))
@@ -717,12 +717,12 @@ enum TargetStrikeStyle {
 /// The usual end of a canvas effect: the transfer, the blitters, then the
 /// canvas layer.
 #define EFFECT_FINISH_CANVAS()                                                 \
-  (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
-   EFFECT_RELEASE_BLITTERS(), BattleEffect_EndCanvasLayer())
+  (Task_Remove(BattleEffect_TransferCanvas), EFFECT_RELEASE_BLITTERS(),        \
+   BattleEffect_EndCanvasLayer())
 
 /// The same for an effect that drew through one blitter.
 #define EFFECT_FINISH_CANVAS_ONE_BLITTER()                                     \
-  (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
+  (Task_Remove(BattleEffect_TransferCanvas),                                   \
    HeapSlot_Release(HEAP_SLOT_RAM_CODE), BattleEffect_EndCanvasLayer())
 
 /// The largest of the ten mote pictures.
@@ -947,7 +947,7 @@ void Display_ApplyBg2Affine(void);
 void BattleEffect_SetupCanvasTileMap(void);
 /// Marks the transition done and shows the battle view again.
 void BattleEffect_HideBg1AndRestoreBackdrop(void);
-void BattleEffect_FlushPendingGraphicsTransfer(void);
+void BattleEffect_TransferFullScreenImage(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
 void BattleEffect_BuildCanvasTilemap(void);
@@ -964,7 +964,7 @@ void BattleEffect_ProcessPendingStampTransfer(void);
 
 // mirrored_wall.c
 /// Fetches the max and additive blitters, flipped or not.
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_BuildCanvasBlitters(s32 flip, void **out);
 
 // prism.c
 void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
@@ -1059,7 +1059,7 @@ void BattleEffect_StepPaletteToResource(s32 resource);
 void BattleEffect_WipeCanvas(s32 direction, s32 fill);
 
 // particle_streams.c
-void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z);
+void BattleEffect_PlaceFormationSprites(s32 formation, s32 x, s32 z);
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y);
 void BattleEffect_ArmPaletteHBlankDma(void);
 void Render_ApplyProjectedPlacementFar(struct Sprite *sprite, s32 *position,
@@ -1220,8 +1220,8 @@ extern u8 gStatChange_ShardWidths[];
 extern u8 gStatChange_ShardHeights[];
 extern u8 gReaper_PictureX[];
 extern u8 gReaper_PictureY[];
-extern u8 gFalling_IceCounts[];
-extern u8 gFalling_Counts[];
+extern u8 gIce_Counts[];
+extern u8 gDouse_Counts[];
 extern s8 gStreak_Styles[];
 extern s8 gStreak_Tremble[];
 extern u8 gTargetStrike_Styles[][7];
@@ -1231,13 +1231,13 @@ extern u16 gTargetStrike_Pictures[];
 extern u8 gTargetStrike_Reach[];
 extern u8 gTargetStrike_BiteStages[];
 extern u8 gTargetStrike_GlintDrawFlags[];
-extern u8 gDeathPlunge_PieceWidths[];
-extern u8 gDeathPlunge_PieceHeights[];
-extern u16 gDeathPlunge_PiecePictures[];
-extern u8 gDeathPlunge_PieceStartX[];
-extern u8 gDeathPlunge_PieceStartY[];
-extern s8 gDeathPlunge_X[];
-extern s8 gDeathPlunge_Y[];
+extern u8 gShatteringOpening_PieceWidths[];
+extern u8 gShatteringOpening_PieceHeights[];
+extern u16 gShatteringOpening_PiecePictures[];
+extern u8 gShatteringOpening_PieceStartX[];
+extern u8 gShatteringOpening_PieceStartY[];
+extern s8 gElementBurst_SparkX[];
+extern s8 gElementBurst_SparkY[];
 extern u8 gElementBurst_GlintFlips[];
 extern const struct ModelVertex gCruelRuin_StreakCorners[];
 extern const u16 gCruelRuin_DiscPitches[];
@@ -1384,16 +1384,16 @@ extern s8 gGrowth_PillarHeights[];
 extern s8 gGrowth_PuffWidths[];
 extern u8 gGrowth_PuffHeights[];
 extern u16 gGrowth_PuffPictures[];
-extern const s8 gGrowth_ColumnOffsets[];
-extern u8 gGrowth_Kinds[];
-// A thorn's kind in gGrowth_Kinds.
+extern const s8 gVine_ColumnOffsets[];
+extern u8 gThorn_Kinds[];
+// A thorn's kind in gThorn_Kinds.
 #define THORN_MIRRORED 1 ///< drawn mirrored across
 #define THORN_SMALL 2    ///< 32 pixels wide, not 48
-extern s8 gGrowth_X[];
-extern u8 gGrowth_Counts[];
-extern s8 gGrowth_ThornPuffWidths[];
-extern u8 gGrowth_ThornPuffHeights[];
-extern u16 gGrowth_ThornPuffPictures[];
+extern s8 gThorn_X[];
+extern u8 gThorn_Counts[];
+extern s8 gThorn_PuffWidths[];
+extern u8 gThorn_PuffHeights[];
+extern u16 gThorn_PuffPictures[];
 extern u8 gBolt_Counts[];
 extern u8 gBolt_GlintFlips[];
 extern u8 gBolt_GlintModes[];
@@ -1410,12 +1410,12 @@ extern const u8 gDjinnAttacks_LaunchFrames[];
 extern u8 gHail_PictureWidths[];
 extern u8 gHail_PictureHeights[];
 extern u16 gHail_Pictures[];
-extern const u8 gHail_CrackleFlips[];
-extern const u8 gHail_PortalWidths[];
-extern const u8 gHail_PortalHeights[];
-extern const u16 gHail_PortalPictures[];
-extern const u8 gHail_PortalX[];
-extern const u8 gHail_PortalY[];
+extern const u8 gGround_CrackleFlips[];
+extern const u8 gGround_PortalWidths[];
+extern const u8 gGround_PortalHeights[];
+extern const u16 gGround_PortalPictures[];
+extern const u8 gGround_PortalX[];
+extern const u8 gGround_PortalY[];
 extern const u8 gThor_TargetPalettes[];
 extern const u8 gThor_CrackleFlips[];
 extern u8 gSpire_ShardOffsets[];
@@ -1493,10 +1493,10 @@ extern const u8 gSummonFormation_MegaeraZ[];
 extern u8 gImpactBurst_PictureWidths[];
 extern u8 gImpactBurst_PictureHeights[];
 extern u16 gImpactBurst_Pictures[];
-extern s16 gParticleStreams_OrbitPoints[][3];
-extern s16 gParticleStreams_FireballPoints[][2];
-extern u16 gParticleStreams_FlashPictures[];
-extern u16 gParticleStreams_FlashSizes[];
+extern s16 gStarfieldFall_OrbitPoints[][3];
+extern s16 gStarfieldFall_FireballPoints[][2];
+extern u16 gStarfieldFall_FlashPictures[];
+extern u16 gStarfieldFall_FlashSizes[];
 extern u8 gRamses_StatueColumns[];
 extern u8 gRamses_StatueRows[];
 extern u16 gRamses_PuffPictures[];
@@ -1512,8 +1512,8 @@ extern const u8 gJudgment_ShardHeights[];
 extern u8 gKirin_Columns[];
 extern u8 gKirin_Rows[];
 extern s32 gNeptune_Gravity[];
-extern const u16 gUndeadSword_SparkPictures[];
-extern const u16 gUndeadSword_SparkSizes[];
+extern const u16 gUndeadSword_PuffPictures[];
+extern const u16 gUndeadSword_PuffSizes[];
 extern const u8 gWindFunnel_Counts[];
 extern const u8 gDiamondBerg_RingStarts[4];
 extern const u8 gDiamondBerg_RingGrowth[4];
@@ -1861,7 +1861,7 @@ extern const u32 gBlitterTemplate[];
 /// brightest canvas level.
 extern const u32 BattleEffect_Mask[];
 /// The ARM immediate operand for 1 << n, n from 0 to 15 (blitter_operands.c).
-extern const u16 gBattleEffect_BitOperands[];
+extern const u16 gBlitter_ImmediatePowers[];
 /// Copy, one pixel, right to left.
 extern const u32 BattleEffect_CopyReverse[];
 /// Copy, one pixel, left to right.

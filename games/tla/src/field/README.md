@@ -30,7 +30,7 @@ the frame.
 | Rank | Task | Each frame it |
 | --- | --- | --- |
 | 15 | `PaletteFade_Update` | moves the colours a step toward their target |
-| 11 | `Actor_UpdateAllThumb` | carries every actor's script on and moves the actor |
+| 11 | `Actor_UpdateAllOnField` | carries every actor's script on and moves the actor |
 | 10 | `Actor_MoveWithCarriers` | moves each actor that rides another along with it |
 | 5 | `MapGrid_UpdateLayerScroll` | centres the map on the point it follows and scrolls the three layers |
 | 0 | `ActorSystem_PlaceSprites` | places every actor's sprite on the screen |
@@ -45,7 +45,7 @@ whatever only it has. One more runs from the VBlank handler,
 The Broken Seal has no task for riders: `Actor_MoveWithCarriers` is The
 Lost Age's own, and its actors' task ranks one higher to run before it.
 
-None of these is a villager or a door. `Actor_UpdateAllThumb` is the one
+None of these is a villager or a door. `Actor_UpdateAllOnField` is the one
 task for all 64 actors.
 
 ### The twelve requests
@@ -117,7 +117,7 @@ An [actor script](../../glossary.md#actor-script) is a list of orders
 written with `SC_` macros (script command): set an animation, set a speed,
 move to a spot, wait, loop. It is a table of numbers, not code, and the
 routines that carry the orders out are the `Script_` and `ActorScript_`
-ones. One [task](../../glossary.md#task), `Actor_UpdateAllThumb`, visits
+ones. One [task](../../glossary.md#task), `Actor_UpdateAllOnField`, visits
 every actor each frame and reads its script on from where it stopped. In a
 battle the task is `Actor_UpdateAllMotion`. An order that takes no time
 runs at once, and one that takes time holds the script there until it is

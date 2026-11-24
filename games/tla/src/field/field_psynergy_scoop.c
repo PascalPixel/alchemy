@@ -215,7 +215,7 @@ void FieldPsynergy_Scoop(void) {
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*state));
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct FieldState *field = Ram_HeapSlots->fieldState;
-  struct Actor *caster = scene->mainActor;
+  struct Actor *caster = scene->caster;
   struct Actor *boulder = NULL;
   struct Actor *hand;
   struct Actor *target;
@@ -290,7 +290,7 @@ void FieldPsynergy_Scoop(void) {
         if (target != NULL && target->script != NULL &&
             (Actor_GetSpriteIdFar(target) == SPRITE_STAKE ||
              (target->collisionFlags & ACTOR_SOLID)) &&
-            target != scene->mainActor &&
+            target != scene->caster &&
             ((struct Sprite *)target->sprite)->count != 0 &&
             FieldPsynergy_CheckOverlap(&scene->x, 4, &target->x.fixed,
                                        target->radius - 2) >= 0) {
@@ -315,7 +315,7 @@ void FieldPsynergy_Scoop(void) {
         wait(1);
       } else {
 
-        if (scene->enabled != 0) {
+        if (scene->aimAhead != 0) {
           if (Random16() < SCOOP_FIND_CHANCE)
             state->mode = SCOOP_FINDS;
           else if (*lit == 0)
@@ -409,8 +409,8 @@ void FieldPsynergy_Scoop(void) {
           state->pictureTile = pictureTile;
           sprite = &state->pictureSprite;
           EffectSprite_Init(sprite, 16, 0, OBJ_SIZE_32X32, pictureTile);
-          sprite->depth = Actor_GetSpriteDepth(scene->mainActor);
-          sprite->oam.priority = Actor_GetSpritePriority(scene->mainActor);
+          sprite->depth = Actor_GetSpriteDepth(scene->caster);
+          sprite->oam.priority = Actor_GetSpritePriority(scene->caster);
           sprite->oam.fullColor = 1;
           sprite->oam.palette = 0;
           pos[0] = hand->x.fixed;

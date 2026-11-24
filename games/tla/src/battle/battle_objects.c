@@ -215,7 +215,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
   struct Sprite **records;
   s32 spriteId;
   s32 releasedUnitId;
-  u8 boxY;
+  u8 footprint;
 
   if (releaseOthers) {
     for (unitIndex = 0; unitIndex < UNIT_MAX; unitIndex++) {
@@ -270,8 +270,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
       record = (struct Sprite *)Sprite_CreateFar(spriteId);
       if (record != 0) {
         record->scale = Iwram_MulFX(record->scale, battleObject->scale);
-        boxY = Resource_GetMetadataRecordFarFar(spriteId)->boxY;
-        object->height = boxY >> 1;
+        footprint = Resource_GetMetadataRecordFarFar(spriteId)->footprint;
+        object->height = footprint >> 1;
         *records = record;
         records++;
       }

@@ -1511,7 +1511,6 @@ extern u16 gTaopoSwampPillarGapVents[];
 extern u16 gTaopoSwampDripsVents[];
 extern u16 gTaopoSwamp_RockRoomVents[];
 void TaopoSwamp_ResetMud(void);
-void Actor_SetWideSprite(s32 id, s32 wide);
 void Vents_Start(u16 *points, u16 *ids, void (*cycle)(void));
 
 #if !TLA_PATCH_1
@@ -1551,9 +1550,9 @@ s32 Scene_Initialize(void) {
     gDecodeFillByte = MUD_COLOR;
   } else if (scene == SCENE_TAOPO_SWAMP_TEAR_STONES) {
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0)))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1)))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, TREASURE_SPOT_WIDE);
   } else if (scene == SCENE_TAOPO_SWAMP_FLOWER) {
     FieldEffect_StartBlankOverlay(0);
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
@@ -1702,7 +1701,7 @@ s32 Scene_Initialize(void) {
     else
       Actor_SetAnimation(ACTOR_LAST_ROCK, 0);
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_PUT_AWAY);
     entrance = gMainRoutineState.entrance;
     if (entrance == TAOPO_SWAMP_STAR_DUST_FROM_TAOPO_SWAMP_TREMOR ||
         entrance == STAR_DUST_FIRST_TO_MIDDLE_ROOM) {
@@ -1762,9 +1761,9 @@ s32 Scene_Initialize(void) {
     *effect =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0)))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1)))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, TREASURE_SPOT_WIDE);
   } else if (scene == SCENE_TAOPO_SWAMP_FLOWER) {
     *effect =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1930,7 +1929,7 @@ s32 Scene_Initialize(void) {
     else
       Actor_SetAnimation(ACTOR_LAST_ROCK, 0);
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_PUT_AWAY);
     entrance = gMainRoutineState.entrance;
     if (entrance == TAOPO_SWAMP_STAR_DUST_FROM_TAOPO_SWAMP_TREMOR ||
         entrance == STAR_DUST_FIRST_TO_MIDDLE_ROOM) {

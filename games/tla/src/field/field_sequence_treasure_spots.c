@@ -6,6 +6,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "field/field_sequence.h"
+#include "field/event.h"
 
 #include "sprite_ids.h"
 
@@ -162,20 +163,6 @@ void Field_PlaceTreasureSpots(void) {
 enum {
   OAM_SIZE_16X8 = 0, ///< with OBJ_SHAPE_HORIZONTAL
   OAM_SIZE_16X16 = 1 ///< with OBJ_SHAPE_SQUARE
-};
-
-/// What the scenes ask of a treasure spot's actor (Actor_SetWideSprite).
-enum TreasureSpotSpriteMode {
-  /// Off the map at x and z 0, marked TREASURE_SPOT_ON_CELL.
-  TREASURE_SPOT_PUT_AWAY = 0,
-  TREASURE_SPOT_WIDE = 1 ///< (or any other) drawn 16 by 8, 4 pixels lower
-};
-
-/// What Actor_ReturnHome does with a buried treasure's actor.
-enum ReturnHomeMode {
-  RETURN_HOME_CLEAR_Z = 1, ///< its z set to 0
-  /// Scoop has dug it up: its flag set, back at its home, dropped from hand.
-  RETURN_HOME_DUG_UP = 2
 };
 
 /// TREASURE_SPOT_PUT_AWAY moves the actor to x and z 0 and marks it with

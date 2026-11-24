@@ -174,8 +174,6 @@ enum YampiDesertCell {
   CELL_FLOW_CORNER_OUTSIDE = 8
 };
 
-void Actor_SetWideSprite(s32 actor, s32 value);
-
 void YampiDesert_StepOntoStakeTops(void);
 void YampiDesert_OpenLadderPit(void);
 void YampiDesert_SetBlocksShown(s32 show);
@@ -219,8 +217,8 @@ static inline void YampiDesert_PlaceRope(s32 index, s32 flag, s32 post,
   Rope_Place(index, flag, post, otherPost);
 }
 
-/// Scoop digs up a buried treasure: with `mode` 2, the hidden item comes up at
-/// its home and its flag is set (Actor_ReturnHome).
+/// Scoop digs up a buried treasure: with `mode` RETURN_HOME_DUG_UP, the hidden
+/// item comes up at its home and its flag is set (Actor_ReturnHome).
 static inline void YampiDesert_DigUpTreasure(s32 mode, s32 actorId, s32 flag) {
   Actor_ReturnHome(mode, actorId, flag);
 }
@@ -2403,7 +2401,7 @@ void YampiDesert_SetUpKingScorpion(void) {
 void YampiDesert_SetUpCoinsPuddle(void) {
   FieldEffect_StartBlankOverlay(0);
   if (GameFlag_Get(FLAG_YAMPI_DESERT_COINS_PUDDLE_DUG_UP) == 0)
-    Actor_SetWideSprite(ACTOR_HIDDEN_TREASURE, 0);
+    Actor_SetWideSprite(ACTOR_HIDDEN_TREASURE, TREASURE_SPOT_PUT_AWAY);
 }
 
 /// Sets up the Trainer's Whip chest's room: its rope, sign and flowing

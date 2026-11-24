@@ -774,7 +774,6 @@ void Lemuria_StartRipple(void) {
 
 void FieldEffect_StartBlankOverlay();
 void HangingVine_Place();
-void Actor_SetWideSprite();
 
 /// Sets up the town: the water's colours cycling, the two children walking
 /// together, the palace guards, the spring's man, Piers by his mother's grave,
@@ -839,19 +838,18 @@ s32 Scene_Initialize(void) {
     Lemuria_GrowVine();
   }
   // Each treasure still buried has its actor taken off to the map's corner
-  // and marked as standing for a map cell instead (Actor_SetWideSprite's mode
-  // 0).
+  // and marked as standing for a map cell instead.
   if (!Event_GetFlag(FLAG_LUCKY_MEDAL_DUG_UP)) {
-    Actor_SetWideSprite(ACTOR_BURIED_LUCKY_MEDAL, 0);
+    Actor_SetWideSprite(ACTOR_BURIED_LUCKY_MEDAL, TREASURE_SPOT_PUT_AWAY);
   }
   if (!Event_GetFlag(FLAG_RUSTY_SWORD_DUG_UP)) {
-    Actor_SetWideSprite(ACTOR_BURIED_RUSTY_SWORD, 0);
+    Actor_SetWideSprite(ACTOR_BURIED_RUSTY_SWORD, TREASURE_SPOT_PUT_AWAY);
   }
   if (!Event_GetFlag(FLAG_BONE_DUG_UP)) {
-    Actor_SetWideSprite(ACTOR_BURIED_BONE, 0);
+    Actor_SetWideSprite(ACTOR_BURIED_BONE, TREASURE_SPOT_PUT_AWAY);
   }
   if (!Event_GetFlag(FLAG_STAR_DUST_DUG_UP)) {
-    Actor_SetWideSprite(ACTOR_BURIED_STAR_DUST, 0);
+    Actor_SetWideSprite(ACTOR_BURIED_STAR_DUST, TREASURE_SPOT_PUT_AWAY);
   }
   // Lunpa has opened the window above his door.
   if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE)) {

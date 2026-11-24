@@ -860,8 +860,6 @@ extern u16 gTeleportCircle_PaletteSlots[];
 extern u16 gTeleportCircle_Colors[];
 extern u16 gTeleportCircle_ShimmerColors[];
 
-void Actor_SetWideSprite(s32 id, s32 wide);
-
 /// Sets up Yampi Desert Cave's three rooms as each one loads: the first room's
 /// palette cycle and Retreat destination, the third room's background
 /// priorities, and in each room the objects its flags place.
@@ -912,7 +910,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 12);
     }
     if (!Event_GetFlag(FLAG_YAMPI_DESERT_CAVE_MYTHRIL_SILVER_DUG_UP))
-      Actor_SetWideSprite(ACTOR_MYTHRIL_SILVER, 1);
+      Actor_SetWideSprite(ACTOR_MYTHRIL_SILVER, TREASURE_SPOT_WIDE);
   }
   if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
     // In the room of fallen columns, by any of its three ways in, the walls'

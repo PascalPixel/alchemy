@@ -1752,7 +1752,6 @@ void Prox_GiveThanksForBeacon(void) {
   Prox_EndEvent();
 }
 
-void Actor_SetWideSprite(s32 id, s32 wide);
 void TilesetAnim_Resume(s32 layer);
 void TilesetAnim_Pause(u32 layer);
 void FieldEffect_StartBlankOverlay(s32 actor);
@@ -1801,7 +1800,7 @@ s32 Scene_Initialize(void) {
     scene = gMainRoutineState.next;
     if (scene == SCENE_PROX) {
       if (!Event_GetFlag(FLAG_DIG_SPOT_SCOOPED))
-        Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 1);
+        Actor_SetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
       Prox_InitializeTown();
     } else if (scene == SCENE_PROX_MOLD) {
       Prox_InitializeMold();

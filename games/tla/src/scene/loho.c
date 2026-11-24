@@ -921,8 +921,6 @@ void Loho_SetUpRooms(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_INN_COUNTER), 0);
 }
 
-void Actor_SetWideSprite(s32 id, s32 wide);
-
 /// Places an actor facing an angle, the angle taken as the u16 an actor's
 /// facing is, as Madra and its houses also place them.
 static __inline__ void Loho_PlaceFacing(s32 id, s32 x, s32 z, u16 facing) {
@@ -932,11 +930,11 @@ static __inline__ void Loho_PlaceFacing(s32 id, s32 x, s32 z, u16 facing) {
 s32 Scene_Initialize(void) {
   if (gMainRoutineState.next == SCENE_LOHO) {
     if (!Event_GetFlag(FLAG_LOHO_MYTHRIL_SILVER_DUG))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_PUT_AWAY);
     if (!Event_GetFlag(FLAG_LOHO_WALL_GOLEM_CORE_DUG))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, TREASURE_SPOT_WIDE);
     if (!Event_GetFlag(FLAG_LOHO_BOULDER_GOLEM_CORE_DUG))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 2, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 2, TREASURE_SPOT_WIDE);
     Loho_SetUpTown();
   } else {
     Loho_SetUpRooms();

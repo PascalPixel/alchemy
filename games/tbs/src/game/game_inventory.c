@@ -389,12 +389,15 @@ u8 Item_GetTargetMode(s32 itemId) {
 /// RARE_ITEM_STOCK_MAX, and returns the new count (0 for an index from
 /// RARE_ITEM_STOCK_COUNT on).
 s32 RareItemStock_Adjust(s32 index, s32 delta) {
-  s32 counterSlot = index;
-  u8 *data = gRareItemStock;
+  /* FAKEMATCH(temporary): stockIndex stands for index, which then holds the
+     count returned; the plain form reads index throughout and keeps the count
+     in a local of its own. */
+  s32 stockIndex = index;
+  u8 *stock = gRareItemStock;
 
   index = 0;
-  if (counterSlot < RARE_ITEM_STOCK_COUNT) {
-    s32 value = data[counterSlot];
+  if (stockIndex < RARE_ITEM_STOCK_COUNT) {
+    s32 value = stock[stockIndex];
 
     value += delta;
 
@@ -406,7 +409,7 @@ s32 RareItemStock_Adjust(s32 index, s32 delta) {
     } else {
       index = value;
     }
-    data[counterSlot] = value;
+    stock[stockIndex] = value;
   }
   return index;
 }

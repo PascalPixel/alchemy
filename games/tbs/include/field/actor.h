@@ -21,6 +21,14 @@ enum ScreenTransitionStyle {
   TRANSITION_CENTER_LINE = 4
 };
 
+/// TRANSITION_CENTER_LINE's variants.
+enum CenterLineTransition {
+  CENTER_LINE_STEADY = 0, ///< the lines open or close steadily
+  /// The lines show only every other frame, as the World Map closes into a
+  /// battle.
+  CENTER_LINE_FLICKER = 1
+};
+
 /// A scene transition as FieldState.transition holds it.
 #define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
 /// The two bytes of a SCENE_TRANSITION: its enum ScreenTransitionStyle, and

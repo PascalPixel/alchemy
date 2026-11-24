@@ -2679,8 +2679,8 @@ s32 Scene_Initialize(void) {
         s32 y = 24 - i * 2;
 
         MapGrid_CopyCellsTo(65, 1, 80, y, 1, 2);
-        Call4((void (*)())MapCell_SetAttributes, MAPGRID_LAYER_GROUND, 16, y,
-              CELL_BEHAVIOR_WALL << 8);
+        MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 16, y,
+                              CELL_BEHAVIOR_WALL << 8);
       }
     }
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOURCE_FLAME), 0);

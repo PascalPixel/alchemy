@@ -2819,7 +2819,7 @@ s32 Scene_Initialize(void) {
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Event_Wait(30);
-      Value2((s32 (*)())Actor_StartRepeatedMotion, ACTOR_SUSA, 2);
+      Actor_StartRepeatedMotion(ACTOR_SUSA, 2);
       Event_Wait(30);
       Event_SetMessageId((s32)MsgFieldLikeISaidTheSerpent);
       // "Like I said, the serpent can't be defeated by just weakening it..."

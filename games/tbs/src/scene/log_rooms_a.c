@@ -204,6 +204,30 @@ extern s32 *gLogRoomsA_ThiefRuns[];
 #define MAYOR_AFTER_THIEVES_Z 464
 #endif
 
+/// The spots the suspected leader runs between in the guests' room, kept in his
+/// timer: the three beds' heads, west to east, then their feet, east to west
+/// (gLogRoomsA_LeaderRunsOn runs him from each to the next, and on round).
+enum LogRoomsALeaderSpot {
+  LEADER_SPOT_WEST_BED_HEAD,
+  LEADER_SPOT_MIDDLE_BED_HEAD,
+  LEADER_SPOT_EAST_BED_HEAD,
+  LEADER_SPOT_EAST_BED_FOOT,
+  LEADER_SPOT_MIDDLE_BED_FOOT,
+  LEADER_SPOT_WEST_BED_FOOT
+};
+
+/// The spots the suspected thief runs between, kept in his timer: west and east
+/// of the beds and the south corners, which gLogRoomsA_ThiefRuns runs him
+/// between, and a spot on the south wall, (120, 696), from which he runs to
+/// either corner.
+enum LogRoomsAThiefSpot {
+  THIEF_SPOT_WEST_OF_BEDS,
+  THIEF_SPOT_EAST_OF_BEDS,
+  THIEF_SPOT_SOUTH_EAST_CORNER,
+  THIEF_SPOT_SOUTH_WEST_CORNER,
+  THIEF_SPOT_SOUTH_WALL
+};
+
 /// A cornering lasts half a second before the chase raises an event.
 #define LOG_ROOMS_A_CORNERED_FRAMES 30
 
@@ -405,6 +429,14 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
 
 /// In the inn's attic, walking north or south at the dark hole in the floor
 /// (cells (41, 25) and (41, 27), either side of it), Isaac jumps across.
+///
+/// The overhead layer's cell over the hole's north edge, (42, 25) (the map's
+/// row 85, the layer beginning at row 60), then takes the attributes of the
+/// one west of it, floor 32 pixels up, as he lands north, or of the one east
+/// of it, none, as he lands south (render probe scene LogRoomsA --entrance 13
+/// --cells 40,84,44,87).
+// XXX: what the overhead cell's floor changes for the leader there; a probe of
+// cell (42, 85) and of his height after each jump would settle it.
 static void LogRoomsA_JumpAcrossHoleInAtticFloor(void) {
   s32 x;
   s32 z;
@@ -704,7 +736,7 @@ static void LogRoomsA_SuspectedLeaderDodges(void) {
   // Pushed from the north he runs on along his route, from the south back.
   facing = FACING_SIXTEENTH(suspect->facing);
   if (facing >= FACING_SOUTH_SOUTHWEST && facing <= FACING_NORTH_NORTHWEST) {
-    if (suspect->timer <= 2) {
+    if (suspect->timer <= LEADER_SPOT_EAST_BED_HEAD) {
       Actor_SetScript(ACTOR_SUSPECTED_LEADER,
                       gLogRoomsA_LeaderRunsOn[suspect->timer]);
       suspect->timer++;
@@ -714,7 +746,7 @@ static void LogRoomsA_SuspectedLeaderDodges(void) {
       suspect->timer--;
     }
   } else {
-    if (suspect->timer > 2) {
+    if (suspect->timer > LEADER_SPOT_EAST_BED_HEAD) {
       Actor_SetScript(ACTOR_SUSPECTED_LEADER,
                       gLogRoomsA_LeaderRunsOn[suspect->timer]);
       suspect->timer++;
@@ -724,11 +756,11 @@ static void LogRoomsA_SuspectedLeaderDodges(void) {
       suspect->timer--;
     }
   }
-  if (suspect->timer > 5) {
-    suspect->timer = 0;
+  if (suspect->timer > LEADER_SPOT_WEST_BED_FOOT) {
+    suspect->timer = LEADER_SPOT_WEST_BED_HEAD;
   }
-  if (suspect->timer < 0) {
-    suspect->timer = 5;
+  if (suspect->timer < LEADER_SPOT_WEST_BED_HEAD) {
+    suspect->timer = LEADER_SPOT_WEST_BED_FOOT;
   }
   Actor_WaitForScriptEndById(ACTOR_SUSPECTED_LEADER);
   Event_End();
@@ -761,27 +793,27 @@ static void LogRoomsA_SuspectedThiefDodges(void) {
   Event_ShowMessage(ACTOR_SUSPECTED_THIEF, 0);
   Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, 3.5);
   switch (actor->timer) {
-  case 4:
+  case THIEF_SPOT_SOUTH_WALL:
     if (facing > FACING_SOUTHEAST && facing < FACING_NORTHWEST) {
       Actor_SetScript(ACTOR_SUSPECTED_THIEF,
                       gLogRoomsA_SuspectAlongToSouthEastCorner);
-      actor->timer = 2;
+      actor->timer = THIEF_SPOT_SOUTH_EAST_CORNER;
     } else {
       Actor_SetScript(ACTOR_SUSPECTED_THIEF,
                       gLogRoomsA_SuspectAlongToSouthWestCorner);
-      actor->timer = 3;
+      actor->timer = THIEF_SPOT_SOUTH_WEST_CORNER;
     }
     break;
-  case 0:
-  case 2:
+  case THIEF_SPOT_WEST_OF_BEDS:
+  case THIEF_SPOT_SOUTH_EAST_CORNER:
     if (facing > FACING_SOUTHEAST && facing < FACING_NORTHWEST) {
       LogRoomsA_StartThiefRun(actor, routePair, routePair, 1);
     } else {
       LogRoomsA_StartThiefRun(actor, routePair ^ 1, routePair, -1);
     }
     break;
-  case 1:
-  case 3:
+  case THIEF_SPOT_EAST_OF_BEDS:
+  case THIEF_SPOT_SOUTH_WEST_CORNER:
     if (facing > FACING_SOUTHWEST && facing < FACING_NORTHEAST) {
       LogRoomsA_StartThiefRun(actor, routePair, routePair, 1);
     } else {
@@ -1555,8 +1587,10 @@ static void LogRoomsA_ApproachSuspects(void) {
   GameFlag_Set(FLAG_VAULT_SUSPECTS_APPROACHED);
   GameFlag_Set(FLAG_SUSPECTS_FLEEING);
   Task_AddFrame(LogRoomsA_FaceSuspectsTowardLeader, TASK_PASS_FRAME);
-  suspectedLeader->timer = 1;
-  suspectedThief->timer = 3;
+  // The leader stands at the west bed's head but takes up his route as from
+  // the middle one's: his first run on goes straight to the east bed's head.
+  suspectedLeader->timer = LEADER_SPOT_MIDDLE_BED_HEAD;
+  suspectedThief->timer = THIEF_SPOT_SOUTH_WEST_CORNER;
   Event_End();
 }
 
@@ -1684,18 +1718,9 @@ static void LogRoomsA_ResetSuspectRoutes(void) {
   Actor_SetScript(ACTOR_SUSPECTED_THIEF, gLogRoomsA_SuspectToSouthWestCorner);
   Actor_SetScript(ACTOR_SUSPECTED_LEADER, gLogRoomsA_SuspectRoundToWestBedHead);
   Actor_WaitForScriptEndById(ACTOR_SUSPECTED_LEADER);
-  {
-    struct Actor *suspect = Actor_Get(ACTOR_SUSPECTED_LEADER);
-    u16 routeIndex = 1;
-
-    suspect->timer = routeIndex;
-  }
-  {
-    struct Actor *suspect = Actor_Get(ACTOR_SUSPECTED_THIEF);
-    u16 routeIndex = 3;
-
-    suspect->timer = routeIndex;
-  }
+  // As LogRoomsA_ApproachSuspects leaves them.
+  Actor_Get(ACTOR_SUSPECTED_LEADER)->timer = LEADER_SPOT_MIDDLE_BED_HEAD;
+  Actor_Get(ACTOR_SUSPECTED_THIEF)->timer = THIEF_SPOT_SOUTH_WEST_CORNER;
   MapGrid_CopyCellAttributes(14, 48, 4, 1, 14, 44);
 }
 
@@ -1803,18 +1828,8 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
   // The suspects stay at their table, turned toward the leader from now on.
   MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
   GameFlag_Set(FLAG_VAULT_SUSPECTS_MIND_READ);
-  {
-    struct Actor *suspect = Actor_Get(ACTOR_SUSPECTED_LEADER);
-    s32 routeIndex = 5;
-
-    suspect->timer = routeIndex;
-  }
-  {
-    struct Actor *suspect = Actor_Get(ACTOR_SUSPECTED_THIEF);
-    s32 routeIndex = 4;
-
-    suspect->timer = routeIndex;
-  }
+  Actor_Get(ACTOR_SUSPECTED_LEADER)->timer = LEADER_SPOT_WEST_BED_FOOT;
+  Actor_Get(ACTOR_SUSPECTED_THIEF)->timer = THIEF_SPOT_SOUTH_WALL;
   Task_AddFrame(LogRoomsA_FaceSuspectsTowardLeader, TASK_PASS_FRAME);
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -2092,15 +2107,20 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(14, 50, 3, 1, 14, 44);
         break;
       }
-      Actor_Get(ACTOR_SUSPECTED_LEADER)->timer = 5;
-      Actor_Get(ACTOR_SUSPECTED_THIEF)->timer = 4;
+      Actor_Get(ACTOR_SUSPECTED_LEADER)->timer = LEADER_SPOT_WEST_BED_FOOT;
+      Actor_Get(ACTOR_SUSPECTED_THIEF)->timer = THIEF_SPOT_SOUTH_WALL;
       Task_AddFrame(LogRoomsA_FaceSuspectsTowardLeader, TASK_PASS_FRAME);
     }
     break;
   case LOG_ROOMS_A_FROM_VAULT_WEST:
   case LOG_ROOMS_A_CRATE_ROOM_FROM_LOFT:
     // The room with the crate: the crate keeps its place once moved, and the
-    // passage behind it stays open.
+    // passage behind it stays open. Cell (54, 2)'s blank picture covers what
+    // its camera box takes in of the rooms beside it, (35, 20) to (36, 29) on
+    // the west and (46, 21) to (49, 28) on the east, the loft's side, on the
+    // layers that draw them (the middle one from column 60, the overhead one
+    // from row 60): they show black (render probe scene LogRoomsA --entrance
+    // 13 --map).
     Event_Wait(2);
     MapGrid_CopyCellsTo(54, 2, 35, 20, 2, 10);
     MapGrid_CopyCellsTo(54, 2, 95, 20, 2, 10);
@@ -2117,6 +2137,8 @@ s32 Scene_Initialize(void) {
     }
     break;
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
+    // The loft's camera box takes in the crate room's east side, (44, 21) to
+    // (45, 28): the blank cell covers it on the ground and overhead layers.
     Event_Wait(2);
     MapGrid_CopyCellsTo(54, 2, 44, 21, 2, 8);
     MapGrid_CopyCellsTo(54, 2, 44, 81, 2, 8);
@@ -2146,7 +2168,8 @@ s32 Scene_Initialize(void) {
     Event_End();
     break;
   case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
-    // Lost to the thieves: they gloat, and the party wakes up elsewhere.
+    // Lost to the thieves: they gloat, and the party wakes up elsewhere. The
+    // crate room's east side is covered as on the way in.
     MapGrid_CopyCells(54, 2, 2, 8, 44, 21);
     MapGrid_CopyCells(54, 2, 2, 8, 44, 81);
     Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, 824, 456);
@@ -2154,7 +2177,8 @@ s32 Scene_Initialize(void) {
     Import_EventSetExitRequest(LOG_ROOMS_A_TO_SANCTUM);
     break;
   case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
-    // Won: the thieves are caught and the stolen goods handed back.
+    // Won: the thieves are caught and the stolen goods handed back. The crate
+    // room's east side is covered as on the way in.
     MapGrid_CopyCells(54, 2, 2, 8, 44, 21);
     MapGrid_CopyCells(54, 2, 2, 8, 44, 81);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {

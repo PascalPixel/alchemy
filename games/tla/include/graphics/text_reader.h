@@ -11,9 +11,7 @@
 /// A place in a Huffman-coded message.
 struct TextReader {
   u32 previousCode; ///< the symbol decoded last, which picks the next's tree
-  /// The message's next byte of bits, though typed as words: the decoder reads
-  /// a byte at a time.
-  const u32 *bytes;
+  const u8 *bytes;  ///< the message's next byte of bits
   /// The bits of the byte read last not yet used, lowest first, ended by a
   /// stop bit (BIT_STREAM_STOP).
   u32 bits;

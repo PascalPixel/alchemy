@@ -7,6 +7,40 @@
 
 #include "types.h"
 
+/// The projectile volley's modes (BattleEffect_RunProjectileVolley), each named
+/// for the effect that fires it; the casting impacts fire some of them.
+enum ProjectileVolleyMode {
+  PROJECTILE_VOLLEY_SLASH,         ///< comets, picked by the variant
+  PROJECTILE_VOLLEY_SHURIKEN,      ///< spinning shurikens
+  PROJECTILE_VOLLEY_CRAZY_VOICE,   ///< bouncing musical notes
+  PROJECTILE_VOLLEY_WING_FLUTTER,  ///< yellow sparks
+  PROJECTILE_VOLLEY_WING_BEAT,     ///< small yellow sparks
+  PROJECTILE_VOLLEY_CUTTING_EDGE,  ///< one large comet in ice colours
+  PROJECTILE_VOLLEY_HEAT_WAVE,     ///< fireballs trailing embers
+  PROJECTILE_VOLLEY_SLEET,         ///< ice chips falling from high above
+  PROJECTILE_VOLLEY_IMPACT_COMETS, ///< comets, after a casting impact
+  PROJECTILE_VOLLEY_BLIZZARD,      ///< scattered ice chips
+  PROJECTILE_VOLLEY_ICE_BLESSING,  ///< ice chips streaming one a frame
+  PROJECTILE_VOLLEY_WING_STROKE,   ///< large yellow sparks, spread up and down
+  PROJECTILE_VOLLEY_BLAZE_RUSH,
+  PROJECTILE_VOLLEY_HYDRO_SLASH,
+  PROJECTILE_VOLLEY_DIAMOND_DUST,
+  PROJECTILE_VOLLEY_BEAST_NEEDLE,
+  PROJECTILE_VOLLEY_POISON_STING,
+  PROJECTILE_VOLLEY_STUN_STING,
+  PROJECTILE_VOLLEY_CHILL_BREATH
+};
+
+/// The bytes of a gProjectileVolley_Modes row.
+enum VolleyField {
+  PROJECTILE_VOLLEY_SHOTS,   ///< shots at each target
+  PROJECTILE_VOLLEY_STEPS,   ///< frames a shot takes to reach its target
+  PROJECTILE_VOLLEY_STAGGER, ///< frames between shots
+  PROJECTILE_VOLLEY_DELAY,   ///< frames between targets
+  PROJECTILE_VOLLEY_SPARKS,  ///< sparks thrown on each hit
+  PROJECTILE_VOLLEY_COLUMNS
+};
+
 /// How each element card's sparks move (gElementCards_SparkMotions).
 struct SparkMotion {
   s32 gravity; ///< added to the y speed each step, 16.16 pixels

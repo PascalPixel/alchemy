@@ -34,7 +34,6 @@
 #include "field/field_psynergy_state.h"
 #include "game/game.h"
 #include "graphics/glyph.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -58,6 +57,7 @@
 #include "field/event.h"
 #include "system/frame.h"
 #include "system/system_call.h"
+#include "shop/shop.h"
 
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
@@ -74,9 +74,6 @@ void Event_ShowMessageAndWait(s32 speaker, s32 flags);
 void Actor_FaceDirectionAndRefreshById(s32 actor, s32 angle);
 void Actor_DisableById(s32 actor);
 void FlagBlock_ApplyFlags(const void *script);
-void Shop_Run(s32 shop, s32 keeper);
-void Sanctum_Run(s32 keeper);
-void Inn_CheckIn(s32 shop, s32 keeper);
 void Sound_Play(s32 cue);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Actor_Release(struct Actor *actor);
@@ -791,10 +788,6 @@ void Kibombo_HideBlocks(void) {
 /// Felix casts Frost on the puddle: it freezes into a pillar of ice to jump
 /// onto.
 void Kibombo_FreezePuddle(void) { FlagBlock_ApplyFlags(gKibombo_FrozenPuddle); }
-
-/// Scoop runs its event every frame of the dig, passing this stage on the
-/// frame the ground opens.
-enum { SCOOP_STAGE_DUG = 1 };
 
 /// Shows the vent by the statue uncovered, cell (23, 18), and lets the party
 /// climb down into it.
@@ -2166,9 +2159,9 @@ void Kibombo_CreateBlackCrystal(void) {
     sprite->palette = 0;
     sprite->priority = 1;
     actor->motionFlags = clear;
-    actor->retainSpriteCache = 1;
+    actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     sprite->flags = clear;
-    sprite->countAndShadow[0] = clear;
+    sprite->count = clear;
     glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
@@ -2248,7 +2241,7 @@ void Kibombo_RaiseSmoke(void) {
                                              toFIXED(16), toFIXED(314));
 
     if (actor != 0) {
-      actor->retainSpriteCache = 2;
+      actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
       actor->motionFlags = 0;
       actor->timer = 0;
       actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;

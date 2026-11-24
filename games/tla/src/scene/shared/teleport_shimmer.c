@@ -5,14 +5,6 @@
 /// it, a palette cycle, as Teleport is cast and as the party arrives on a
 /// circle.
 
-/// Teleport's steps (gMainRoutineState.teleportState), as the field sequence
-/// names them: a place was chosen, then the party arrives in its scene.
-enum TeleportState {
-  TELEPORT_NONE,
-  TELEPORT_CHOSEN,
-  TELEPORT_ARRIVING,
-};
-
 /// Writes each listed background colour from its red, green and blue, keeps
 /// the lists for the shimmer, and saves the palettes as the fade's
 /// source; arriving by Teleport, the party then arrives on the circle.

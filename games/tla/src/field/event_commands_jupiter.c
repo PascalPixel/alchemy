@@ -14,10 +14,6 @@
 #include "battle/object_effect_scripts.h"
 #include "macros.h"
 
-/// SPRITE_PARTICLE's twinkle: its full glow and the next size down in turn, 3
-/// frames each.
-#define ANIM_PARTICLE_TWINKLE 7
-
 /// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
 /// of sight and bursts into PSYNERGY_EFFECT_SLOT_COUNT lights, which circle
 /// and close in on the leader, who turns to the camera and raises its arms
@@ -91,9 +87,9 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 }
 
 /// Per-frame update: makes an actor pulse, switching its scale between the two
-/// values of gBattleEffect_PulseScales every 4 frames.
+/// values of gFieldEffect_PulseScales every 4 frames.
 void FieldEffect_PulseActorScale(struct Actor *actor) {
-  const u32 *table = gBattleEffect_PulseScales;
+  const u32 *table = gFieldEffect_PulseScales;
   u32 index = ((u32)gVBlankCount >> 2) & 1;
   u32 scale = table[index];
 

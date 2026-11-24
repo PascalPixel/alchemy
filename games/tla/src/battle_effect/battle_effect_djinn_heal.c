@@ -138,7 +138,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     // The heal shows, and every target flashes.
     if (frame == TUMBLING_QUADS_FLASH_FRAME) {
       Sound_PlayFar(SE_POWER_UP);
-      EFFECT_SHOW_DAMAGE(-1);
+      EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
       for (i = 0; i != args->targetCount; i++)
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, i, 8);

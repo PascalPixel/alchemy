@@ -92,15 +92,6 @@ enum BattleKnockback {
   KNOCKBACK_HURL_FAR
 };
 
-/// A battle background's id, as BATTLE_BACKGROUND_ID reads it in the summons.
-/// Nothing reads the word or the bytes: read as BattleState.background's plain
-/// u16, the summons compile the same in all six editions.
-union BattleBackgroundId {
-  u16 id;
-  s32 word;
-  u8 bytes[6];
-};
-
 /// Rebuilds the background palette's first ramp as a grey whose channels sway
 /// with the frame, each at its own phase, so the effect shimmers through
 /// colours.
@@ -289,14 +280,15 @@ void BattleCamera_ApplyPhasedDelta(void);
 /// The window BattleEffect_BuildCenteredIndexList builds a list of indices
 /// around: its value, radius and limit, and the values it lists. Nothing
 /// calls it, so nothing says what the first and last three words hold.
-typedef struct BattleEffectIndexWindow {
+struct BattleEffectIndexWindow {
   s32 unusedBefore[3];
   s32 currentValue;
   s32 indexRadius;
   s32 entryLimit;
   s32 unusedAfter[3];
   s16 values[1];
-} BattleEffectIndexWindow;
+};
+
 /// What BattleEffect_RunDjinniEntrance takes added to its element; the element
 /// alone plays the 55-frame entrance.
 enum DjinniEntranceLength {

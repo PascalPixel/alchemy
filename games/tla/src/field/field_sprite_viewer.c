@@ -8,6 +8,17 @@
 #include "system/input.h"
 #include "graphics/render_placement.h"
 
+extern const u16 gSpriteViewer_BackdropColors[8];
+
+void SpriteViewer_SetLayerPriority(s32 slot, s32 value);
+void SpriteViewer_SetLayerColorMode(s32 slot, s32 value);
+void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value);
+void SpriteViewer_SetLayerSprite(s32 slot, s32 value);
+void SpriteViewer_LayOutRing(s32 x, s32 z, struct SpritePlacement *out);
+
+s32 SpriteViewer_StepSpriteId(s32 value, s32 delta);
+void SpriteViewer_PlaceRing(void);
+
 enum {
   /// The sprite copies and their ring positions; a facing kind places 4, 6, 8
   /// or 10 of them.
@@ -54,7 +65,7 @@ struct UiSpriteViewerLayer {
 /// The debug sprite viewer, in The Broken Seal's form with this game's
 /// changes; it never returns.
 void SpriteViewer_Run(void) {
-  struct UiSpriteViewerLayer layers[ANIM_LAYER_COUNT];
+  struct UiSpriteViewerLayer layers[SPRITE_ANIMATION_COUNT];
   volatile u32 zero;
   s32 x;
   s32 y;
@@ -78,7 +89,7 @@ void SpriteViewer_Run(void) {
   Dma_Fill32Cell(zero, 0, ring, 4);
   Dma_Fill32Cell(zero, 0, layers, sizeof(layers));
   spriteId = SpriteViewer_StepSpriteId(-1, 1);
-  for (i = 0; i < ANIM_LAYER_COUNT; i++) {
+  for (i = 0; i < SPRITE_ANIMATION_COUNT; i++) {
     layers[i].animationIndex = 1;
     layers[i].priority = 1;
     layers[i].spriteId = spriteId;
@@ -114,7 +125,7 @@ restart:
     Sprite_AddAnimation(sprite, layers[3].spriteId);
     sprite->flags = shadowsEnabled;
   }
-  for (i = 0; i < ANIM_LAYER_COUNT; i++) {
+  for (i = 0; i < SPRITE_ANIMATION_COUNT; i++) {
     if (layers[i].enabled != 0)
       SpriteViewer_SetLayerPriority(i, layers[i].priority);
     else
@@ -151,9 +162,9 @@ next:
       // DEAD: a read of the repeated keys nothing uses; the ROM keeps the load.
       (void)gInput.repeat;
       if (gInput.repeat & KEY_UP)
-        selectedLayer = (selectedLayer - 1) & (ANIM_LAYER_COUNT - 1);
+        selectedLayer = (selectedLayer - 1) & (SPRITE_ANIMATION_COUNT - 1);
       if (gInput.repeat & KEY_DOWN)
-        selectedLayer = (selectedLayer + 1) & (ANIM_LAYER_COUNT - 1);
+        selectedLayer = (selectedLayer + 1) & (SPRITE_ANIMATION_COUNT - 1);
       if (gInput.repeat & KEY_LEFT)
         editMode = (editMode - 1) & (UI_SPRITE_VIEWER_EDIT_COUNT - 1);
       if (gInput.repeat & KEY_RIGHT)

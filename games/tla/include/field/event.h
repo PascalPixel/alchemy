@@ -99,7 +99,23 @@ void Actor_SetMovementTypeById(s32 actorId, const void *script);
 void Actor_SetMovementTypeAndWaitById(s32 actorId, const void *script);
 void Actor_TurnToFaceEachOther(s32 actorId, s32 other, s32 frames);
 void Actor_SetAnimationById(u32 actorId, s32 animation);
+
+/// What the scenes ask of a treasure spot's actor (Actor_SetWideSprite).
+enum TreasureSpotSpriteMode {
+  /// Off the map at x and z 0, marked TREASURE_SPOT_ON_CELL.
+  TREASURE_SPOT_PUT_AWAY = 0,
+  TREASURE_SPOT_WIDE = 1 ///< (or any other) drawn 16 by 8, 4 pixels lower
+};
+
+/// What Actor_ReturnHome does with a buried treasure's actor.
+enum ReturnHomeMode {
+  RETURN_HOME_CLEAR_Z = 1, ///< its z set to 0
+  /// Scoop has dug it up: its flag set, back at its home, dropped from hand.
+  RETURN_HOME_DUG_UP = 2
+};
+
 void Actor_ReturnHome(s32 mode, u32 actorId, s32 flag);
+void Actor_SetWideSprite(u32 actorId, s32 mode);
 void PaletteFade_StartInterpolation(s32 frames);
 void Icon_DrawItem(s32 item);
 FIXED Trig_Sin(s32 angle);

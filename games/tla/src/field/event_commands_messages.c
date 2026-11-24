@@ -8,7 +8,7 @@
 #include "field/field.h"
 #include "field/field_sequence.h"
 #include "field/object.h"
-#include "field/scene_call.h"
+#include "field/event.h"
 #include "field/speaker.h"
 #include "macros.h"
 
@@ -320,9 +320,9 @@ void Event_ShowSpeakerMessage(s32 speaker) {
 }
 
 /// Unused: nothing calls it; forwards its arguments to
-/// Event_ShowMessageAtPosition, as The Broken Seal's
-/// Event_ForwardShowMessageAtPosition does.
-void Event_ShowCounter(s32 unusedA, s32 unusedB, s32 x, s32 y) {
+/// Event_ShowMessageAtPosition.
+void Event_ForwardShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x,
+                                        s32 y) {
   Event_ShowMessageAtPosition(unusedA, unusedB, x, y);
 }
 

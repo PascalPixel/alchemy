@@ -28,6 +28,9 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 #define TEXT_TILES 128
 #define TEXT_EXTRA_TILE_FIRST 512
 
+/// The window renderer's windows.
+#define WINDOW_COUNT 12
+
 /// The window system's state: its text tile and upload state, the windows'
 /// tilemap, the windows, the three text messages, the 64 window sprites, and
 /// the decoded message and its arguments.
@@ -752,5 +755,67 @@ enum SpritePortrait {
   /// A row of the icon bank with no picture.
   SPRITE_PORTRAIT_MISSING = 76
 };
+
+void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Window_SetTilemapEntryFar(s32 window, s32 value, s32 x, s32 y, u32 mode);
+struct WindowSprite *WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
+                                                        struct Window *window,
+                                                        s32 x, s32 y);
+void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
+
+struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
+                                   s32 y);
+struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
+
+/// Each main font glyph's width in pixels, from the space (32) on.
+extern const u8 gFont_GlyphWidths[];
+/// Clears the text canvas to transparent.
+s32 Text_ClearCanvas(void);
+/// Draws a byte string into a text canvas window at pixel (x, y).
+void Text_DrawString(u8 *text, s32 window, s32 x, s32 y);
+
+/// The window sprites' fixed tile blocks (window/fixed_tile_blocks.c).
+extern s32 gWindow_FixedTileBlocks[];
+/// Starts the field's per-frame window update, after reserving the glyph
+/// sprites' tiles and resetting the text style.
+void WindowSystem_StartFieldUpdate(void);
+/// Starts the per-frame window update: the field's when loadGlyphTiles is set,
+/// else the battle's.
+void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles);
+/// Steps each window's open or close animation.
+void Window_UpdateZooms(void);
+/// Types more of each message whose window is open, and closes or marks its
+/// window at the text's end.
+void Message_UpdateAll(void);
+/// Copies each band of the window tilemap marked dirty to VRAM, a VBlank task.
+void WindowSystem_UploadTilemap(void);
+/// Erases a rectangle of the window tilemap, in tiles, and frees the text
+/// tiles it showed.
+void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
+/// Frees the text tiles under a rectangle of the window tilemap, in tiles.
+void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
+/// Writes value into a window's tilemap at tile (x, y) of its interior, in the
+/// palette mode given (TILEMAP_ENTRY_).
+void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
+                            u32 mode);
+/// Moves each sprite an open window carries and queues it for drawing.
+void WindowSprite_UpdateAll(void);
+/// Releases every window sprite in a list, or in a window's list, and empties
+/// it.
+void WindowSprite_ClearList(void *sprites);
+/// Frees a window sprite and the VRAM cache entry it showed.
+void WindowSprite_Release(struct WindowSprite *node);
+/// Marks both portrait slots free.
+void Portrait_ClearSlots(void);
+
+/// The party status window's column lines, ended by -1: the Djinn column's
+/// first, then one between members.
+extern const s8 gWindow_PartyColumnOffsets[];
+/// Draws the party status window with `flags` (PARTY_STATUS_): each member's
+/// name, HP and PP, and in battle the standby Djinn.
+void PartyStatus_Draw(s32 flags);
+/// Highlights the party status columns of the units in `ids`, ended by
+/// BATTLE_UNIT_LIST_END.
+s32 PartyStatus_HighlightMembers(u16 *ids);
 
 #endif

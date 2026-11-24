@@ -1410,4 +1410,111 @@ extern char ResourceId_SpriteMetadata;
 extern char ResourceId_EmptyMap;
 #define RESOURCE_EMPTY_MAP ((s32)&ResourceId_EmptyMap)
 
+/// The battle backdrops that gScene_BattleBackgroundRules chooses, named by
+/// their pictures.
+///@{
+extern char ResourceId_CanyonMeadowBackdrop;
+#define RESOURCE_CANYON_MEADOW_BACKDROP ((s32)&ResourceId_CanyonMeadowBackdrop)
+extern char ResourceId_FireCavePoolBackdrop;
+#define RESOURCE_FIRE_CAVE_POOL_BACKDROP ((s32)&ResourceId_FireCavePoolBackdrop)
+extern char ResourceId_BlueCaveBackdrop;
+#define RESOURCE_BLUE_CAVE_BACKDROP ((s32)&ResourceId_BlueCaveBackdrop)
+extern char ResourceId_RedMesaBackdrop;
+#define RESOURCE_RED_MESA_BACKDROP ((s32)&ResourceId_RedMesaBackdrop)
+extern char ResourceId_PinkRocksBackdrop;
+#define RESOURCE_PINK_ROCKS_BACKDROP ((s32)&ResourceId_PinkRocksBackdrop)
+extern char ResourceId_PinkTotemBackdrop;
+#define RESOURCE_PINK_TOTEM_BACKDROP ((s32)&ResourceId_PinkTotemBackdrop)
+extern char ResourceId_StoneTownBackdrop;
+#define RESOURCE_STONE_TOWN_BACKDROP ((s32)&ResourceId_StoneTownBackdrop)
+extern char ResourceId_PalmCliffBackdrop;
+#define RESOURCE_PALM_CLIFF_BACKDROP ((s32)&ResourceId_PalmCliffBackdrop)
+extern char ResourceId_ToyRoomBackdrop;
+#define RESOURCE_TOY_ROOM_BACKDROP ((s32)&ResourceId_ToyRoomBackdrop)
+extern char ResourceId_ShipCabinBackdrop;
+#define RESOURCE_SHIP_CABIN_BACKDROP ((s32)&ResourceId_ShipCabinBackdrop)
+extern char ResourceId_GoldRocksBackdrop;
+#define RESOURCE_GOLD_ROCKS_BACKDROP ((s32)&ResourceId_GoldRocksBackdrop)
+extern char ResourceId_StoneCorridorBackdrop;
+#define RESOURCE_STONE_CORRIDOR_BACKDROP                                       \
+  ((s32)&ResourceId_StoneCorridorBackdrop)
+extern char ResourceId_FaceTempleBackdrop;
+#define RESOURCE_FACE_TEMPLE_BACKDROP ((s32)&ResourceId_FaceTempleBackdrop)
+extern char ResourceId_MistyHillsBackdrop;
+#define RESOURCE_MISTY_HILLS_BACKDROP ((s32)&ResourceId_MistyHillsBackdrop)
+extern char ResourceId_WaterfallGorgeBackdrop;
+#define RESOURCE_WATERFALL_GORGE_BACKDROP                                      \
+  ((s32)&ResourceId_WaterfallGorgeBackdrop)
+extern char ResourceId_BlueRuinsBackdrop;
+#define RESOURCE_BLUE_RUINS_BACKDROP ((s32)&ResourceId_BlueRuinsBackdrop)
+extern char ResourceId_GreenRuinsBackdrop;
+#define RESOURCE_GREEN_RUINS_BACKDROP ((s32)&ResourceId_GreenRuinsBackdrop)
+extern char ResourceId_StatueCliffBackdrop;
+#define RESOURCE_STATUE_CLIFF_BACKDROP ((s32)&ResourceId_StatueCliffBackdrop)
+extern char ResourceId_LavaTempleBackdrop;
+#define RESOURCE_LAVA_TEMPLE_BACKDROP ((s32)&ResourceId_LavaTempleBackdrop)
+extern char ResourceId_ArrowBeachBackdrop;
+#define RESOURCE_ARROW_BEACH_BACKDROP ((s32)&ResourceId_ArrowBeachBackdrop)
+extern char ResourceId_StormySeaBackdrop;
+#define RESOURCE_STORMY_SEA_BACKDROP ((s32)&ResourceId_StormySeaBackdrop)
+extern char ResourceId_AngelHallBackdrop;
+#define RESOURCE_ANGEL_HALL_BACKDROP ((s32)&ResourceId_AngelHallBackdrop)
+extern char ResourceId_PurpleLighthouseBackdrop;
+#define RESOURCE_PURPLE_LIGHTHOUSE_BACKDROP                                    \
+  ((s32)&ResourceId_PurpleLighthouseBackdrop)
+extern char ResourceId_StormyLighthouseBackdrop;
+#define RESOURCE_STORMY_LIGHTHOUSE_BACKDROP                                    \
+  ((s32)&ResourceId_StormyLighthouseBackdrop)
+extern char ResourceId_IceHallBackdrop;
+#define RESOURCE_ICE_HALL_BACKDROP ((s32)&ResourceId_IceHallBackdrop)
+extern char ResourceId_OrbAltarBackdrop;
+#define RESOURCE_ORB_ALTAR_BACKDROP ((s32)&ResourceId_OrbAltarBackdrop)
+extern char ResourceId_PurpleCaveBackdrop;
+#define RESOURCE_PURPLE_CAVE_BACKDROP ((s32)&ResourceId_PurpleCaveBackdrop)
+extern char ResourceId_GorgePoolBackdrop;
+#define RESOURCE_GORGE_POOL_BACKDROP ((s32)&ResourceId_GorgePoolBackdrop)
+extern char ResourceId_SpikeHallBackdrop;
+#define RESOURCE_SPIKE_HALL_BACKDROP ((s32)&ResourceId_SpikeHallBackdrop)
+///@}
+
+/// Moapa's recorded runs through the Trial Road's stages, in
+/// gTrialRoad_RivalRecordings' order, which TrialRoad_PlayRivalRecording
+/// plays.
+///@{
+extern char ResourceId_TrialRoadPillarRecording; ///< the pillar stage
+#define RESOURCE_TRIAL_ROAD_PILLAR_RECORDING                                   \
+  ((s32)&ResourceId_TrialRoadPillarRecording)
+extern char ResourceId_TrialRoadTorchRecording; ///< the torch stage
+#define RESOURCE_TRIAL_ROAD_TORCH_RECORDING                                    \
+  ((s32)&ResourceId_TrialRoadTorchRecording)
+extern char ResourceId_TrialRoadWeedsRecording; ///< the weeds stage
+#define RESOURCE_TRIAL_ROAD_WEEDS_RECORDING                                    \
+  ((s32)&ResourceId_TrialRoadWeedsRecording)
+extern char ResourceId_TrialRoadPoundRecording; ///< the Pound stage
+#define RESOURCE_TRIAL_ROAD_POUND_RECORDING                                    \
+  ((s32)&ResourceId_TrialRoadPoundRecording)
+extern char ResourceId_TrialRoadCrumblingRecording; ///< the crumbling stage
+#define RESOURCE_TRIAL_ROAD_CRUMBLING_RECORDING                                \
+  ((s32)&ResourceId_TrialRoadCrumblingRecording)
+extern char ResourceId_TrialRoadLogRecording; ///< the log stage
+#define RESOURCE_TRIAL_ROAD_LOG_RECORDING                                      \
+  ((s32)&ResourceId_TrialRoadLogRecording)
+extern char ResourceId_TrialRoadFountainRecording; ///< the fountain stage
+#define RESOURCE_TRIAL_ROAD_FOUNTAIN_RECORDING                                 \
+  ((s32)&ResourceId_TrialRoadFountainRecording)
+extern char ResourceId_TrialRoadSandRecording; ///< the sand stage
+#define RESOURCE_TRIAL_ROAD_SAND_RECORDING                                     \
+  ((s32)&ResourceId_TrialRoadSandRecording)
+extern char
+    ResourceId_TrialRoadChestsMoapaFirstRecording; ///< the chests, Moapa at the
+                                                   ///< switch first
+#define RESOURCE_TRIAL_ROAD_CHESTS_MOAPA_FIRST_RECORDING                       \
+  ((s32)&ResourceId_TrialRoadChestsMoapaFirstRecording)
+extern char
+    ResourceId_TrialRoadChestsFelixFirstRecording; ///< the chests, Felix at the
+                                                   ///< switch first
+#define RESOURCE_TRIAL_ROAD_CHESTS_FELIX_FIRST_RECORDING                       \
+  ((s32)&ResourceId_TrialRoadChestsFelixFirstRecording)
+///@}
+
 #endif

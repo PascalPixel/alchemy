@@ -17,7 +17,6 @@
 #include "field/event.h"
 #include "field/field.h"
 #include "field/perspective.h"
-#include "field/flag_call.h"
 #include "gamepak/far_call/window.h"
 #include "system/heap_release.h"
 #include "field/event_commands.h"
@@ -35,15 +34,6 @@
 #include "field/actor_view.h"
 #include "field/field_sprite.h"
 #include "system/dma.h"
-
-/// The caster's look while it casts, BattleEffect_SetObjectUpdateMode's mode.
-enum CasterLook {
-  CASTER_LOOK_NORMAL = 0, ///< its own colours
-  /// Flashing white, with swelling arcs (FieldEffect_FlickerActorAndSpawnArcs).
-  CASTER_LOOK_FLASHING = 1,
-  /// Cycling colours, with swelling arcs (FieldEffect_CycleActorAndSpawnArcs).
-  CASTER_LOOK_CYCLING = 2
-};
 
 /// How long FieldPsynergy_End waits at most for the World Map's palette fade.
 #define END_FADE_WAIT_FRAMES 90
@@ -225,7 +215,7 @@ void FieldPsynergy_StartCast(void) {
   actor->velocityZ = 0;
   if (state->flashCaster != 0) {
     Sound_PlayFar(SE_POWER_UP);
-    BattleEffect_SetObjectUpdateMode(actor, CASTER_LOOK_FLASHING);
+    BattleEffect_SetObjectUpdateMode(actor, CASTER_LOOK_FLASHING_WHITE);
   }
   if (state->announceName != 0) {
     state->messageShown = 1;
@@ -237,7 +227,7 @@ void FieldPsynergy_StartCast(void) {
   }
   if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST)) {
     if (state->flashCaster != 0)
-      BattleEffect_SetObjectUpdateMode(actor, CASTER_LOOK_CYCLING);
+      BattleEffect_SetObjectUpdateMode(actor, CASTER_LOOK_CYCLING_COLORS);
     Actor_SelectAnimationFar(actor, ANIM_CAST_PSYNERGY_END);
   } else {
     BattleEffect_StopMainActor();

@@ -198,7 +198,7 @@ void FieldPsynergy_Hover(void) {
   sprite->oam.palette = 0;
   Actor_SetPositionAndResetMotionFar(player, player->x.fixed, player->y.fixed,
                                      player->z.fixed);
-  BattleEffect_SetObjectUpdateMode(player, 0);
+  BattleEffect_SetObjectUpdateMode(player, CASTER_LOOK_NORMAL);
   Actor_SelectAnimationFar(player, ANIM_LEADER_RUN);
   Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);

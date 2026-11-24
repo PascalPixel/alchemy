@@ -23,7 +23,6 @@
 #include "field/field.h"
 #include "field/field_sequence.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -61,8 +60,6 @@ extern struct ActorPlacement gIzumoRooms_ActorPlacementsOnceTheSerpentIsSlain[];
 extern struct Trigger gIzumoRooms_Triggers[];
 extern struct Trigger gIzumoRooms_SusasHouseTriggers[];
 extern struct Trigger gIzumoRooms_TriggersOnceTheSerpentIsSlain[];
-
-void Inn_CheckIn(s32 slot, s32 actor);
 
 /// The side of the hall of Susa's house Felix came up for the heroes' welcome.
 enum { HEROES_FROM_THE_EAST, HEROES_FROM_THE_WEST };
@@ -104,9 +101,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-void Shop_Run(s32 slot, s32 actor);
-void Sanctum_Run(s32 actor);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_SERPENT_SLAIN))
@@ -1303,7 +1297,8 @@ void IzumoRooms_GiveUzumeTheDoll(void) {
   // "I think I may have something that might please you."
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_UZUME), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_UZUME),
+                                   CASTER_LOOK_CYCLING_COLORS);
   Sound_Play(SE_ASCEND);
   Event_Wait(60);
   Actor_SetPosition(ACTOR_COAL, 144, 520);
@@ -1312,7 +1307,8 @@ void IzumoRooms_GiveUzumeTheDoll(void) {
   Actor_WaitForMoveById(ACTOR_COAL);
   Actor_FaceDirectionById(ACTOR_COAL, FACING_SOUTH, 0);
   Event_Wait(60);
-  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_UZUME), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_UZUME),
+                                   CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Event_Wait(30);

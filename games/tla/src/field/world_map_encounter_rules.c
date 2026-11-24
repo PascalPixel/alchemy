@@ -8,20 +8,7 @@
 #include "flags.h"
 #include "field/map_grid.h"
 #include "field/event_commands.h"
-
-/// The Djinn's encounter zones (rows of gEncounterZones), two to an element:
-/// the first holds the battles of its first fifteen Djinn, who share its eight
-/// slots, and the second those of its last three and its two spares.
-enum DjinnEncounterZone {
-  ENCOUNTER_ZONE_VENUS_DJINN = 1,
-  ENCOUNTER_ZONE_VENUS_DJINN_LAST,
-  ENCOUNTER_ZONE_MERCURY_DJINN,
-  ENCOUNTER_ZONE_MERCURY_DJINN_LAST,
-  ENCOUNTER_ZONE_MARS_DJINN,
-  ENCOUNTER_ZONE_MARS_DJINN_LAST,
-  ENCOUNTER_ZONE_JUPITER_DJINN,
-  ENCOUNTER_ZONE_JUPITER_DJINN_LAST
-};
+#include "field/world_map_encounter_rules.h"
 
 /// The World Map's encounter regions, a block's region number modulo 20
 /// (WORLD_MAP_ENCOUNTER_REGIONS), named by where they lie.
@@ -79,7 +66,7 @@ enum WorldMapEncounterZone {
 /// environment, flag (-1 for always), zone (a row of gEncounterZones)}, ended
 /// by region -1.
 // clang-format off
-const s16 gWorldMap_EncounterRules[][4] = {
+const struct WorldMapEncounterRule gWorldMap_EncounterRules[] = {
     {WORLD_MAP_REGION_DAILA, BATTLE_ENVIRONMENT_BEACH, -1, ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND},
     {WORLD_MAP_REGION_DAILA, BATTLE_ENVIRONMENT_SHALLOWS, -1, ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND},
     {WORLD_MAP_REGION_DAILA, BATTLE_ENVIRONMENT_GRASSLAND, -1, ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND},
@@ -130,7 +117,7 @@ const s16 gWorldMap_EncounterRules[][4] = {
 };
 
 /// The same aboard the ship (LEADER_MOVEMENT_SHIP).
-const s16 gWorldMap_ShipEncounterRules[][4] = {
+const struct WorldMapEncounterRule gWorldMap_ShipEncounterRules[] = {
     {WORLD_MAP_REGION_EASTERN_SEA, BATTLE_ENVIRONMENT_SEA, -1, ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA},
     {WORLD_MAP_REGION_WESTERN_SEA, BATTLE_ENVIRONMENT_SEA, -1, ENCOUNTER_ZONE_WORLD_MAP_WESTERN_SEA},
     {WORLD_MAP_REGION_SEA_OF_TIME, BATTLE_ENVIRONMENT_SEA, -1, ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA},

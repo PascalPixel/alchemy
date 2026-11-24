@@ -19,7 +19,6 @@
 #include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -35,6 +34,7 @@
 #include "text/msg_ids.h"
 #include "scene/scene.h"
 #include "sprite_ids.h"
+#include "shop/shop.h"
 
 /// The morning after a night at the inn (GarohRooms_WakeAtInn).
 enum { ENTRANCE_WAKE_AT_INN = 99 };
@@ -111,9 +111,6 @@ void MapGrid_CenterOnFollowedPoint(void);
 void ActorSystem_SuspendProjectionAndShowSprites(void);
 void ActorSystem_ResumeProjectionAndHideLayers(void);
 void Event_End(void);
-void Shop_Run(s32 slot, s32 actor);
-void Sanctum_Run(s32 id);
-void Inn_CheckIn(s32 slot, s32 actor);
 
 void GarohRooms_WakeAtInn(void);
 

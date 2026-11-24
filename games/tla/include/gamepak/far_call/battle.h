@@ -55,4 +55,11 @@ void BattleSummon_UpdateAvailabilityFar(void);
 /// verticalOffset pixels.
 void BattleCamera_SetCommandViewFar(s32 verticalOffset);
 
+/// Lists the units on the sides in sideMask into unitIds, or only counts them
+/// when it is NULL, and returns how many.
+s32 BattleUnit_ListIdsFar(s32 sideMask, u16 *unitIds);
+/// Lists the party members who fight into owners when it is not NULL, and
+/// returns how many.
+s32 BattleParty_PrepareMembersFar(u16 *owners);
+
 #endif

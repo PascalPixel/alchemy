@@ -35,7 +35,6 @@
 #include "field/field_sprite.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/scene.h"
 #include "sound/sound.h"
@@ -270,9 +269,9 @@ void ShamanVillageCave_FreezePuddle(void) {
 void ShamanVillageCave_EddyFlees(void) {
   struct Actor *actor = Actor_GetById(ACTOR_EDDY);
   struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
-  s32 leaderX = FIELD_TILE(leader->x.fixed);
-  s32 leaderZ = FIELD_TILE(leader->z.fixed);
-  s32 eddyX = FIELD_TILE(actor->x.fixed);
+  s32 leaderX = FIELD_HALF_CELL(leader->x.fixed);
+  s32 leaderZ = FIELD_HALF_CELL(leader->z.fixed);
+  s32 eddyX = FIELD_HALF_CELL(actor->x.fixed);
   s32 dx;
   s32 dz;
 
@@ -799,7 +798,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(40, 19, 1, 1, 38, 19);
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PUDDLE), 0);
-  Actor_SetAnimation(ACTOR_PUDDLE, 1);
+  Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_PUDDLE_FROZEN)) {
     actor = Actor_Get(ACTOR_PUDDLE);
     Actor_SetAnimation(ACTOR_PUDDLE, 5);

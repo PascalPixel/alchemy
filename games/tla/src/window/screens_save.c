@@ -8,6 +8,7 @@
 #include "system/io_write.h"
 #include "gamepak/far_call/game.h"
 #include "system/system.h"
+#include "system/save.h"
 #include "window/screens.h"
 
 /// What Save_FindFreeFile returns when all SAVE_FILE_COUNT files are in use.

@@ -10,7 +10,6 @@
 #include "sounds.h"
 #include "menu/djinn_menu.h"
 #include "system/affine.h"
-#include "field/flag_call.h"
 #include "gamepak/far_call/game.h"
 #include "window/item_icon.h"
 #include "window/menu_list.h"

@@ -32,7 +32,7 @@
 #include "field_psynergy_grind.c"
 #include "field_psynergy_hover.c"
 #include "field_psynergy_summon_tablet.c"
-#include "field_psynergy_collision_tags.c"
+#include "field_psynergy_shape_entries.c"
 
 #undef EffectSprite_DrawAtWorldPosition
 #undef Resource_GetMetadataRecordFarFar

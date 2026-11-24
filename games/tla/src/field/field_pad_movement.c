@@ -6,25 +6,11 @@
 #include "field_internal.h"
 #include "flags.h"
 #include "fixed_math.h"
-#include "field/flag_call.h"
 #include "field/field.h"
 #include "field/object.h"
 #include "macros.h"
 #include "field/resource_slot.h"
-
-/// FieldState.terrainKind: the ground the ship was last over, which sets where
-/// WorldMap_IsFlyable lets it fly.
-enum ShipTerrainKind {
-  /// The sea from WORLD_MAP_COLLISION_SEA_FIRST, short of
-  /// WORLD_MAP_COLLISION_SEA_LAST.
-  SHIP_TERRAIN_SEA = 0,
-  /// WORLD_MAP_COLLISION_WALKABLE_FIRST and shallow water.
-  SHIP_TERRAIN_SHALLOWS = 1,
-  SHIP_TERRAIN_SEA_LAST = 2, ///< WORLD_MAP_COLLISION_SEA_LAST
-  /// WORLD_MAP_COLLISION_DEFAULT to WORLD_MAP_COLLISION_WALKABLE_LAST, the
-  /// rest of the ground the party walks on.
-  SHIP_TERRAIN_GROUND = 3
-};
+#include "gamepak/far_call/game.h"
 
 /// The flying ship's animation once it is 4 pixels up: its picture moved 10
 /// pixels (ANIMCMD_OFFSET_Y) and its wings beating, the seventh of
@@ -39,9 +25,9 @@ enum ShipTerrainKind {
 /// SC_WORLD: moves the player on the world map by the direction pad, as
 /// SC_PLAYER does on the field, and turns the world map camera with the pad.
 s32 Actor_MoveOnWorldMap(struct Actor *actor) {
-  struct FieldPosition position;
-  struct FieldPosition leftPosition;
-  struct FieldPosition rightPosition;
+  struct Point position;
+  struct Point leftPosition;
+  struct Point rightPosition;
   s16 angleOffsets[22];
   s32 collision;
   s32 angle;
@@ -160,8 +146,7 @@ update_object:
                         Iwram_MulFX(actor->velocityZ, actor->velocityZ));
     actor->velocityX = collision;
     actor->velocityZ = collision;
-    Vector_AddPolarOffset(speed, (u16)angle,
-                          (struct FieldPosition *)&actor->velocityX);
+    Vector_AddPolarOffset(speed, (u16)angle, (struct Point *)&actor->velocityX);
     if (actor->timer != 0)
       actor->timer--;
   }
@@ -185,7 +170,7 @@ update_object:
       playerSprite->secondLayer->priority = 1;
       playerSprite->flags = 0;
     } else {
-      playerSprite->secondLayer->priority = 9;
+      playerSprite->secondLayer->priority = SPRITE_LAYER_NOT_DRAWN;
       playerSprite->flags = SPRITE_FLAG_SHADOW;
     }
     if (terrainCollision == WORLD_MAP_COLLISION_SHALLOW_WATER &&
@@ -233,9 +218,9 @@ s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
 s32 Actor_SailOnMap(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
 
-  struct FieldPosition position;
-  struct FieldPosition testPosition;
-  struct FieldPosition contact;
+  struct Point position;
+  struct Point testPosition;
+  struct Point contact;
   s16 angleOffsets[22];
   s32 collision;
   s32 pushed;
@@ -396,7 +381,7 @@ push_objects:
                                   &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(toFIXED(1) / 4, direction,
-                                    (struct FieldPosition *)&other->x.fixed);
+                                    (struct Point *)&other->x.fixed);
               other->targetX = ACTOR_NO_TARGET;
               other->targetY = ACTOR_NO_TARGET;
               other->targetZ = ACTOR_NO_TARGET;
@@ -458,7 +443,7 @@ counted:
     actor->velocityX = collision;
     actor->velocityZ = collision;
     Vector_AddPolarOffset(speed, (u16)heading,
-                          (struct FieldPosition *)&actor->velocityX);
+                          (struct Point *)&actor->velocityX);
     if (actor->timer != 0)
       actor->timer--;
     actor->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -481,8 +466,8 @@ counted:
 /// run and turns a little at a time, leaving ripples; A goes ashore, and a dash
 /// key takes off once the ship has its wings (FieldState.hoverReady).
 s32 Actor_SailOnWorldMap(struct Actor *actor) {
-  struct FieldPosition position;
-  struct FieldPosition testPosition;
+  struct Point position;
+  struct Point testPosition;
   s16 angleOffsets[28];
   s32 collision;
   s32 angle;
@@ -603,8 +588,7 @@ update_object:
     actor->velocityX = collision;
     actor->velocityZ = collision;
     direction = angle;
-    Vector_AddPolarOffset(speed, direction,
-                          (struct FieldPosition *)&actor->velocityX);
+    Vector_AddPolarOffset(speed, direction, (struct Point *)&actor->velocityX);
     if (actor->timer != 0)
       actor->timer--;
     actor->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -659,8 +643,8 @@ update_object:
 /// otherwise, faster once the party's PP is spent; coming down after a climb
 /// lands it.
 s32 Actor_FlyOnWorldMap(struct Actor *actor) {
-  struct FieldPosition position;
-  struct FieldPosition testPosition;
+  struct Point position;
+  struct Point testPosition;
   s16 angleOffsets[28];
   s32 collision;
   s32 angle;
@@ -780,8 +764,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
     actor->velocityX = collision;
     actor->velocityZ = collision;
     direction = angle;
-    Vector_AddPolarOffset(speed, direction,
-                          (struct FieldPosition *)&actor->velocityX);
+    Vector_AddPolarOffset(speed, direction, (struct Point *)&actor->velocityX);
     if (actor->timer != 0)
       actor->timer--;
     actor->steeringFlags &= ~ACTOR_FACES_MOTION;

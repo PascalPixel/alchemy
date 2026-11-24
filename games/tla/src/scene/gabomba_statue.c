@@ -206,7 +206,6 @@ enum {
 #include "system/system.h"
 #include "battle/battle.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -225,6 +224,7 @@ enum {
 #include "field/field_effect.h"
 #include "graphics/resource.h"
 #include "system/affine.h"
+#include "field/object.h"
 #include "graphics/vram_tab.h"
 #include "field/call.h"
 #include "field/map_grid.h"
@@ -568,7 +568,7 @@ void GabombaStatue_LashRope(void) {
   s32 direction;
   s32 i;
 
-  if (Rope_GetState(FIRST_ROPE) == 1) { // tied from post to post
+  if (Rope_GetState(FIRST_ROPE) == ROPE_THROWN) {
     direction = gGabombaStatue_CogDirection;
     GabombaStatue_TurnCogs(0);
     Event_SetFlag(FLAG_COGS_STOPPED);
@@ -1473,7 +1473,7 @@ void Actor_SetAnimationSpeed(struct Actor *actor, s32 value);
 /// fist lands is left to whatever that argument holds.
 void GabombaStatue_PoundArrowsStake(s32 landed) {
   GabombaStatue_RaiseBlocks(landed);
-  if (landed == 1)
+  if (landed == POUND_STAGE_LANDED)
     gFieldState->raisedTrigger = RAISED_STAKE_STANDS_UP;
 }
 
@@ -1753,7 +1753,7 @@ void GabombaStatue_SetCogTurn(s32 id, s32 direction, s32 value) {
 
   Actor_SelectAnimation(actor,
                         gGabombaStatue_CogAnimations[(direction + 1) & 3]);
-  actor->retainSpriteCache = 2;
+  actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
   Sprite_SetAnimationTimers(animation, value);
 }
 
@@ -3096,7 +3096,7 @@ void GabombaStatue_RaiseBlocks(s32 landed, s32 frame) {
 
   if (frame < POUND_LAND_FRAME)
     actor->scaleY += -FIXED_ONE * 31 / 256;
-  if (landed == 1) {
+  if (landed == POUND_STAGE_LANDED) {
     GabombaStatue_SetBlocksRaised(gSceneState.firstBlock, 1);
     Actor_SelectAnimation(actor, 6);
     actor->scaleY = FIXED_ONE;
@@ -3113,7 +3113,7 @@ void GabombaStatue_PoundBlock(s32 landed) {
   u32 row, col;
   s32 found;
 
-  if (landed != 1)
+  if (landed != POUND_STAGE_LANDED)
     return;
   state = &gSceneState;
   actor = Actor_Get(
@@ -3325,7 +3325,7 @@ s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 seed, s32 id) {
     GabombaStatue_SetBlocksRaised(id, 0);
     Task_AddFrame(GabombaStatue_DrawRaisedBlocks, TASK_PASS_FRAME);
   }
-  Actor_Get(id)->retainSpriteCache = 2;
+  Actor_Get(id)->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
   return laidSeed;
 }
 

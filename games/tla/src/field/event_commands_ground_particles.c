@@ -6,7 +6,7 @@
 #include "field/event_commands.h"
 #include "field/field.h"
 #include "field/object.h"
-#include "field/ground_mask.h"
+#include "field/weather.h"
 
 /// mote.png's six pictures, four tiles each: two of each size, the motes
 /// shrinking as they rise and flickering between the two.
@@ -105,10 +105,10 @@ void RisingParticles_Update(void) {
           ((gFrameCount >> 3) & 1) * MOTE_PICTURE_TILES +
           particle->sprite.attributes.tile;
       particle->sprite.attributes.x = x;
-      particle->sprite.attributes.shape = OAM_SHAPE_SQUARE;
+      particle->sprite.attributes.shape = OBJ_SHAPE_SQUARE;
       particle->sprite.attributes.size = OAM_SIZE_16X16;
       particle->sprite.attributes.priority = 3;
-      particle->sprite.attributes.blendMode = OBJ_MODE_SEMI_TRANSPARENT;
+      particle->sprite.attributes.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
       particle->sprite.attributes.y = y;
       Oam_AddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
     }
@@ -211,7 +211,7 @@ void FieldMotes_Update(void) {
           mote->tile += MOTE_PICTURE_TILES;
         mote->x = x;
         mote->y = y - (mote->delay >> 2);
-        mote->shape = OAM_SHAPE_SQUARE;
+        mote->shape = OBJ_SHAPE_SQUARE;
         mote->size = OAM_SIZE_16X16;
         Oam_AddSpriteAtDepthClamped(mote, OAM_DEPTH_WINDOW);
       } else {

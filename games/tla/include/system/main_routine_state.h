@@ -69,6 +69,32 @@ enum Difficulty {
   DIFFICULTY_HARD = 2 ///< "Play on HARD level? (Monsters are stronger)"
 };
 
+/// What MainRoutineState.wheelsPrizes holds in place of a first prize, as
+/// Lucky Wheels and its attendant leave it: no icon matched (also the list's
+/// end), or none to hand out, the player having quit while betting or the
+/// prizes having been given.
+enum LuckyWheelsPrizesMark {
+  WHEELS_PRIZES_END = -1,
+  WHEELS_PRIZES_NONE_TO_HAND_OUT = -2
+};
+
+/// Teleport's steps (MainRoutineState.teleportState): a place was chosen and
+/// the scene it lands in is loading, then the party arrives in it.
+enum TeleportState { TELEPORT_NONE, TELEPORT_CHOSEN, TELEPORT_ARRIVING };
+
+/// MainRoutineState.linkTallies, as the Link Lobby keeps them.
+enum LinkTally {
+  LINK_TALLY_MONSTER_WINS = 0,
+  LINK_TALLY_MONSTER_LOSSES = 1,
+  LINK_TALLY_MONSTER_BEST_STREAK = 2, ///< the most won in a row
+  LINK_TALLY_MONSTER_STREAK = 3,      ///< those won in the current series
+  LINK_TALLY_LINKED_WINS = 4,
+  LINK_TALLY_LINKED_LOSSES = 5,
+  /// The most linked battles won in a row, on the wall board.
+  LINK_TALLY_LINKED_BEST_STREAK = 6,
+  LINK_TALLY_LINKED_STREAK = 7 ///< those won in a row now
+};
+
 /// gMainRoutineState, the state a save file keeps: play time, coins, the scene
 /// and the leader's position, the active party and the options.
 struct MainRoutineState {
@@ -91,9 +117,8 @@ struct MainRoutineState {
   /// each of 4, 8, 16, 32 and 64 on a new game; Lemuria's spring halves a
   /// prize's weight each time it is won.
   u8 prizeWeights[15];
-  /// The icons matched on the Lucky Wheels, a prize each, ended by -1, for
-  /// Contigo's attendant to hand out (-1 first: no prize, -2: handed out
-  /// already).
+  /// The icons matched on the Lucky Wheels, a prize each, ended by
+  /// WHEELS_PRIZES_END, for Contigo's attendant to hand out.
   s8 wheelsPrizes[8];
   /// For each icon, which of its three prizes it gave last
   /// (Contigo_SelectLuckyWheelsPrize).
@@ -234,13 +259,13 @@ struct MainRoutineState {
   /// The chosen place's flag, which the world map takes as its entrance; -1
   /// after cancelling.
   s16 teleportEntrance;
-  /// 1 once a place is chosen and 2 as the party arrives, when the scene it
-  /// lands in plays the arrival and clears it.
+  /// An enum TeleportState: the scene the party lands in plays the arrival
+  /// and clears it.
   s8 teleportState;
   /// Set while the leader stands on the upper level of the Alhafran Cave,
   /// where Sand ends; cleared on entering a scene.
   s8 onUpperLevel;
-  /// The Link Lobby's records (lobby.c's enum LinkTally): the wins, losses,
+  /// The Link Lobby's records (enum LinkTally): the wins, losses,
   /// best streak and current streak of its monster battles, then the same four
   /// of its battles against another player.
   u16 linkTallies[8];

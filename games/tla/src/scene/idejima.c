@@ -29,7 +29,6 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/palette_buffers.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -116,18 +115,6 @@ enum IdejimaActorId {
 
 /// Kraden's sprite lying asleep on his side.
 enum { KRADEN_ANIMATION_ASLEEP = 5 };
-
-/// The leader's sheet as Felix wakes on the beach: lying on his back, sitting
-/// up, then, checking himself for injuries, swinging each arm and kicking out
-/// each leg.
-enum {
-  ANIM_LEADER_LIE_ON_BACK = 41,
-  ANIM_LEADER_SIT_UP = 42,
-  ANIM_LEADER_SWING_RIGHT_ARM = 45,
-  ANIM_LEADER_SWING_LEFT_ARM = 46,
-  ANIM_LEADER_KICK_RIGHT_LEG = 47,
-  ANIM_LEADER_KICK_LEFT_LEG = 48
-};
 
 /// Animation 18 of Sheba's sheet sits her up on the ground; of Jenna's, it
 /// lays her on her side.

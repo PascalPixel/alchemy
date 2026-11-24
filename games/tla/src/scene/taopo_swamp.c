@@ -40,6 +40,7 @@
 #include "graphics/graphics.h"
 #include "scene/lemurian_ship.h"
 #include "scene/scene.h"
+#include "scene/ground_effects.h"
 #include "system/frame.h"
 #include "system/io_write.h"
 #include "system/iwram_call.h"
@@ -87,6 +88,10 @@ enum {
   /// north room, and back.
   PILLAR_GAP_SOUTH_TO_NORTH_ROOM = 4,
   PILLAR_GAP_NORTH_TO_SOUTH_ROOM = 5,
+  /// The drips room's passage: the doorway in the north wall of the round
+  /// spot's part, and the south end of the rope posts' part.
+  DRIPS_ROUND_SPOT_TO_ROPE_POSTS = 4,
+  DRIPS_ROPE_POSTS_TO_ROUND_SPOT = 5,
   /// The Star Dust's three dark rooms: the first, below the Tremor room, the
   /// middle one, and the last chamber.
   STAR_DUST_FIRST_TO_MIDDLE_ROOM = 3,
@@ -285,18 +290,6 @@ struct SceneState {
 };
 
 extern struct SceneState gSceneState;
-
-/// MapState as far as groundEffects, read through its bits, the footprints and
-/// the kind of wading, as Shrine of the Sea God reads it.
-struct MapStateGroundEffects {
-  u8 before[offsetof(struct MapState, groundEffects)];
-  u8 footprints : 2;
-  u8 wading : 2;
-  u8 unused : 4;
-};
-
-/// The swamp's kind of wading: the leader sinks into the mud.
-enum { MAP_WADING_MUD = 2 };
 
 /// The colour of the sprite palette the mud's splashes are drawn in
 /// (SPRITE_COLOR_FILL reads it from gDecodeFillByte).
@@ -1518,7 +1511,6 @@ extern u16 gTaopoSwampPillarGapVents[];
 extern u16 gTaopoSwampDripsVents[];
 extern u16 gTaopoSwamp_RockRoomVents[];
 void TaopoSwamp_ResetMud(void);
-void Actor_SetWideSprite(s32 id, s32 wide);
 void Vents_Start(u16 *points, u16 *ids, void (*cycle)(void));
 
 #if !TLA_PATCH_1
@@ -1558,9 +1550,9 @@ s32 Scene_Initialize(void) {
     gDecodeFillByte = MUD_COLOR;
   } else if (scene == SCENE_TAOPO_SWAMP_TEAR_STONES) {
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0)))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1)))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, TREASURE_SPOT_WIDE);
   } else if (scene == SCENE_TAOPO_SWAMP_FLOWER) {
     FieldEffect_StartBlankOverlay(0);
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
@@ -1605,11 +1597,12 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
     }
   } else if (scene == SCENE_TAOPO_SWAMP_DRIPS) {
-    // Arriving by entrance 1, 3 or 5 the party is by the rope posts; by 2, 4
-    // or 9, by the round spot with its vents and drips.
+    // Arriving from the Tremor room, the pillar gap's northwest door or the
+    // round spot, the party is by the rope posts; otherwise, by the round spot
+    // with its vents and drips.
     if (gMainRoutineState.entrance !=
             TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_SOUTH &&
-        gMainRoutineState.entrance != 4 &&
+        gMainRoutineState.entrance != DRIPS_ROUND_SPOT_TO_ROPE_POSTS &&
         gMainRoutineState.entrance !=
             TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_EAST) {
       Rope_Initialize();
@@ -1708,7 +1701,7 @@ s32 Scene_Initialize(void) {
     else
       Actor_SetAnimation(ACTOR_LAST_ROCK, 0);
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_PUT_AWAY);
     entrance = gMainRoutineState.entrance;
     if (entrance == TAOPO_SWAMP_STAR_DUST_FROM_TAOPO_SWAMP_TREMOR ||
         entrance == STAR_DUST_FIRST_TO_MIDDLE_ROOM) {
@@ -1768,9 +1761,9 @@ s32 Scene_Initialize(void) {
     *effect =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0)))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1)))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, TREASURE_SPOT_WIDE);
   } else if (scene == SCENE_TAOPO_SWAMP_FLOWER) {
     *effect =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1826,11 +1819,12 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_TAOPO_SWAMP_DRIPS) {
     *effect =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-    // Arriving by entrance 1, 3 or 5 the party is by the rope posts; by 2, 4
-    // or 9, by the round spot with its vents and drips.
+    // Arriving from the Tremor room, the pillar gap's northwest door or the
+    // round spot, the party is by the rope posts; otherwise, by the round spot
+    // with its vents and drips.
     if (gMainRoutineState.entrance !=
             TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_SOUTH &&
-        gMainRoutineState.entrance != 4 &&
+        gMainRoutineState.entrance != DRIPS_ROUND_SPOT_TO_ROPE_POSTS &&
         gMainRoutineState.entrance !=
             TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_EAST) {
       Rope_Initialize();
@@ -1935,7 +1929,7 @@ s32 Scene_Initialize(void) {
     else
       Actor_SetAnimation(ACTOR_LAST_ROCK, 0);
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP))
-      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_PUT_AWAY);
     entrance = gMainRoutineState.entrance;
     if (entrance == TAOPO_SWAMP_STAR_DUST_FROM_TAOPO_SWAMP_TREMOR ||
         entrance == STAR_DUST_FIRST_TO_MIDDLE_ROOM) {
@@ -2000,11 +1994,11 @@ extern u8 gMapGridCellBuffer[];
 void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer;
-  s32 index, fx = FIELD_TILE_ORIGIN(x);
+  s32 index, fx = FIELD_HALF_CELL_ORIGIN(x);
 
   layer = &map->layers[2];
   layer->offsetX = fx;
-  layer->offsetY = FIELD_TILE_ORIGIN(z);
+  layer->offsetY = FIELD_HALF_CELL_ORIGIN(z);
   layer->maskX = MAPGRID_SIZE - 1;
   layer->maskY = MAPGRID_ROW_MASK;
   layer->originY = z << 7;
@@ -2158,7 +2152,7 @@ void TaopoSwamp_StepOnFirmGround(void) {
   if (state->footing != FOOTING_FIRM_GROUND) {
     sprite = Actor_Get(FieldParty_GetLeaderActor())->sprite;
     if (sprite->entries[1])
-      sprite->entries[1]->priority = 9;
+      sprite->entries[1]->priority = SPRITE_LAYER_NOT_DRAWN;
     sprite->flags = (sprite->flags & ~SPRITE_FLAG_SUNK) | SPRITE_FLAG_SHADOW;
     sprite->sunkRows = 0;
     sprite->dirty = 1;
@@ -2369,11 +2363,8 @@ u32 gSceneExits[] = {
     SCENE_EXIT(TAOPO_SWAMP_DRIPS_TO_TAOPO_SWAMP_TREMOR, TaopoSwampTremor, TAOPO_SWAMP_TREMOR_FROM_TAOPO_SWAMP_DRIPS),
     SCENE_EXIT(TAOPO_SWAMP_DRIPS_TO_TAOPO_SWAMP_PILLAR_GAP_SOUTH, TaopoSwampPillarGap, TAOPO_SWAMP_PILLAR_GAP_FROM_TAOPO_SWAMP_DRIPS_SOUTH),
     SCENE_EXIT(TAOPO_SWAMP_DRIPS_TO_TAOPO_SWAMP_PILLAR_GAP_NORTHWEST, TaopoSwampPillarGap, TAOPO_SWAMP_PILLAR_GAP_FROM_TAOPO_SWAMP_DRIPS_NORTHWEST),
-    // The passage inside the drips room: the doorway in the north wall of the
-    // round spot's part (exit and entrance 4) and the south end of the rope
-    // posts' part (5).
-    SCENE_EXIT(4, TaopoSwampDrips, 5),
-    SCENE_EXIT(5, TaopoSwampDrips, 4),
+    SCENE_EXIT(DRIPS_ROUND_SPOT_TO_ROPE_POSTS, TaopoSwampDrips, DRIPS_ROPE_POSTS_TO_ROUND_SPOT),
+    SCENE_EXIT(DRIPS_ROPE_POSTS_TO_ROUND_SPOT, TaopoSwampDrips, DRIPS_ROUND_SPOT_TO_ROPE_POSTS),
     SCENE_EXITS(TaopoSwampTremor),
     SCENE_EXIT(TAOPO_SWAMP_TREMOR_TO_TAOPO_SWAMP_DRIPS, TaopoSwampDrips, TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_TREMOR),
     SCENE_EXIT(TAOPO_SWAMP_TREMOR_TO_TAOPO_SWAMP_STAR_DUST, TaopoSwampStarDust, TAOPO_SWAMP_STAR_DUST_FROM_TAOPO_SWAMP_TREMOR),

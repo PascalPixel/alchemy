@@ -134,4 +134,23 @@ extern u16 (*gProgramFlashSector)(u16 sector, u8 *source);
 /// Bytes left of the sector being programmed.
 extern u16 gFlashNumRemainingBytes;
 
+// The flash library.
+struct FlashType;
+struct FlashSetupInfo;
+/// The Atmel chip's setup, one of the flash library's chips (gFlash_Chips).
+extern const struct FlashSetupInfo gFlash_ChipAtmel;
+/// The setup IdentifyFlash gives a chip whose id it does not know, the last of
+/// gFlash_Chips.
+extern const struct FlashSetupInfo gFlash_ChipDefault;
+extern const struct FlashType *gFlash;
+extern u16 gFlashSavedIme;
+extern u8 gFlashTimeoutFlag;
+/// The hardware timer the flash library times its waits with
+/// (SAVE_FLASH_TIMER).
+extern u8 gFlashTimerNum;
+s32 CountRemainingErasedFlashBytes(u8 *ptr);
+void StartFlashTimer(u8 index);
+/// The sector writer of the chip IdentifyFlash found.
+extern u16 (*gProgramFlashSector)(u16 sector, u8 *source);
+
 #endif

@@ -44,7 +44,6 @@
 #include "field/field_sequence_event.h"
 #include "game/game.h"
 #include "graphics/glyph.h"
-#include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "field/event_commands.h"
 #include "field/field_effect.h"
@@ -654,7 +653,7 @@ void KandoreanTemple_SpawnSplashRing(struct Actor *actor) {
     ring->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     if (sprite) {
       Sprite_StartAnimation(sprite, 2);
-      sprite->blendMode = 1;
+      sprite->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
       sprite->flags = 0;
       sprite->priority = 3;
     }
@@ -1867,7 +1866,7 @@ void KandoreanTemple_FightChestbeaters(void) {
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Event_SetAfterBattleDestination(SCENE_KANDOREAN_TEMPLE_CHESTBEATERS,
                                   ENTRANCE_AFTER_CHESTBEATER_BATTLE);
-  Field_RequestBattleFromEncounterTable(9, 4);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 4);
   Event_End();
 }
 
@@ -3269,9 +3268,9 @@ void KandoreanTemple_CreateLashPebble(void) {
     sprite->fullColor = 0;
     sprite->palette = 0;
     actor->motionFlags = clear;
-    actor->retainSpriteCache = 1;
+    actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     sprite->flags = clear;
-    sprite->countAndShadow[0] = clear;
+    sprite->count = clear;
     glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_LASH_PEBBLE);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);

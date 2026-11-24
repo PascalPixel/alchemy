@@ -4,7 +4,6 @@
 // Part of screens.c.
 
 #include "window_internal.h"
-#include "field/flag_call.h"
 
 /// The debug destination menu's range: its scene runs 0 to DEBUG_SCENE_MAX,
 /// its entrance 0 to DEBUG_ENTRANCE_MAX.

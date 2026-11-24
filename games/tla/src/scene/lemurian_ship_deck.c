@@ -22,7 +22,6 @@
 #include "field/field_sequence.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "graphics/glyph.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
@@ -66,9 +65,6 @@ enum {
       ACTOR_FIRST_PLACED, ///< SPRITE_PUDDLE, on the path west of the ship
   ACTOR_KRADEN
 };
-
-/// The puddle sprite sheet's animation of the water lying unfrozen, glinting.
-enum { PUDDLE_GLINTING = 1 };
 
 /// The shore's cells, as map.txt has them; the cabin door's step cells are the
 /// exit to the cabins and leave by it.
@@ -598,7 +594,7 @@ s32 Scene_Initialize(void) {
     gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
-    Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_GLINTING);
+    Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
     FlagBlock_PlaceAll(gLemurianShipDeck_Puddles);
     FieldTask_AddFrame(LemurianShipDeck_RotateSurfColors, TASK_PASS_FRAME);
     if (gMainRoutineState.entrance == MAIN_DECK_ARRIVAL_ENTRANCE)
@@ -845,9 +841,9 @@ struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   sprite->palette = 0;
   sprite->priority = 1;
   actor->motionFlags = 0;
-  actor->retainSpriteCache = 1;
+  actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
   sprite->flags = 0;
-  sprite->countAndShadow[0] = 0;
+  sprite->count = 0;
   buffer = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   Icon_DrawItem(ITEM_BLACK_CRYSTAL);
   VramCache_Load(sprite->slot, 128, ((IconTransfer *)buffer)->tiles);

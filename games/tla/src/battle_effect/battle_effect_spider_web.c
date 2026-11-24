@@ -478,12 +478,12 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         if ((u32)p->variant < ULYSSES_BURST_FLAME_FRAMES) {
           s32 k = p->variant / 3;
           s32 side = i & 1;
-          u8 *source = state->sheet + gBattleEffect_PuffArcPictures[k];
-          u8 w = gBattleEffect_PuffArcPictureWidths[k];
+          u8 *source = state->sheet + gBattleEffect_EmberStreakPictures[k];
+          u8 w = gBattleEffect_EmberStreakPictureWidths[k];
 
           blit[side](canvas, source, p->x - (w >> 1),
-                     p->y + gBattleEffect_PuffArcPictureBiasY[k] - 32, w,
-                     gBattleEffect_PuffArcPictureHeights[k]);
+                     p->y + gBattleEffect_EmberStreakPictureBiasY[k] - 32, w,
+                     gBattleEffect_EmberStreakPictureHeights[k]);
         }
         p->variant++;
       }
@@ -654,13 +654,13 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         // Violet flames at the mage's hand.
         if ((u32)t < ULYSSES_STRIKE_FLAME_FRAMES) {
           s32 k = (t / 6) % 6;
-          u8 *source = state->sheet + gBattleEffect_PuffArcPictures[k];
-          u8 w = gBattleEffect_PuffArcPictureWidths[k];
+          u8 *source = state->sheet + gBattleEffect_EmberStreakPictures[k];
+          u8 w = gBattleEffect_EmberStreakPictureWidths[k];
 
           blits[0](canvas, source, FIXEDtoINT(particle->x) - (w >> 1),
                    FIXEDtoINT(particle->y) +
-                       gBattleEffect_PuffArcPictureBiasY[k] - 36,
-                   w, gBattleEffect_PuffArcPictureHeights[k]);
+                       gBattleEffect_EmberStreakPictureBiasY[k] - 36,
+                   w, gBattleEffect_EmberStreakPictureHeights[k]);
           t = particle->variant;
         }
         // A flake flies out.
@@ -885,12 +885,12 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
            i++, particle++) {
         if ((u32)particle->variant < ULYSSES_FLARE_FLAME_FRAMES && draw) {
           s32 k = (particle->variant / 4) % 6;
-          u8 *source = state->sheet + gBattleEffect_PuffArcPictures[k];
-          u8 w = gBattleEffect_PuffArcPictureWidths[k];
+          u8 *source = state->sheet + gBattleEffect_EmberStreakPictures[k];
+          u8 w = gBattleEffect_EmberStreakPictureWidths[k];
 
           blits[0](canvas, source, particle->x - (w >> 1),
-                   particle->y + gBattleEffect_PuffArcPictureBiasY[k] - 48, w,
-                   gBattleEffect_PuffArcPictureHeights[k]);
+                   particle->y + gBattleEffect_EmberStreakPictureBiasY[k] - 48,
+                   w, gBattleEffect_EmberStreakPictureHeights[k]);
         }
         particle->variant++;
       }

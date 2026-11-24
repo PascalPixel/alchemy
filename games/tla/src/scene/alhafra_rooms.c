@@ -17,7 +17,6 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -38,6 +37,7 @@
 #include "version.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "shop/shop.h"
 
 /// Talks each person gives once, the first time spoken to.
 #define FLAG_GUESTS_ASKED_FOR_TEA 0x8b1
@@ -58,10 +58,6 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "text/msg_ids.h"
-
-void Shop_Run(s32 shop, s32 keeper);
-void Sanctum_Run(s32 keeper);
-void Inn_CheckIn(s32 shop, s32 keeper);
 
 /// Alhafra's houses' people, numbering the rows of all three placement tables:
 /// the same row is the same person in each, put out of sight (-56, -56) while

@@ -13,7 +13,7 @@
 #include "field/field.h"
 #include "field/object.h"
 #include "system/system.h"
-#include "field/scene_call.h"
+#include "field/event.h"
 #include "macros.h"
 
 #define DJINNI_AFTERIMAGES 8 ///< afterimages of the leaping Djinni

@@ -34,7 +34,6 @@
 #include "game/game.h"
 #include "graphics/palette_buffers.h"
 #include "graphics/glyph.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -802,7 +801,7 @@ void GabombaStatueChamber_ShowDragonsEye(void) {
     sprite->image.palette = 0;
     sprite->image.priority = 2;
     item->motionFlags = clear;
-    item->retainSpriteCache = 1;
+    item->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     item->update = GabombaStatueChamber_KeepItemWithIdol;
     sprite->flags = clear;
     sprite->count = clear;
@@ -833,7 +832,7 @@ void GabombaStatueChamber_ShowBlackCrystal(void) {
     sprite->image.palette = 0;
     sprite->image.priority = 2;
     item->motionFlags = clear;
-    item->retainSpriteCache = 1;
+    item->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     item->update = GabombaStatueChamber_KeepItemWithIdol;
     sprite->flags = clear;
     sprite->count = clear;
@@ -911,11 +910,11 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   if (crystal != 0) {
     sprite = crystal->sprite;
     sprite->flags = 0;
-    sprite->countAndShadow[0] = 0;
+    sprite->count = 0;
     sprite->fullColor = 0;
     sprite->palette = 0;
     sprite->priority = 1;
-    crystal->retainSpriteCache = 1;
+    crystal->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     block = (u8 *)HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES,

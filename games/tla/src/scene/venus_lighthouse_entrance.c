@@ -31,7 +31,6 @@
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "gamepak/far_call/system.h"
-#include "graphics/graphics.h"
 #include "graphics/resource.h"
 #include "menu/menu.h"
 #include "scene/scene.h"
@@ -82,10 +81,6 @@ enum VenusLighthouseEntranceEntrance {
   /// Back from the battle with the Ruffian who waited for backup.
   ENTRANCE_AFTER_RUFFIAN_BATTLE = 99
 };
-
-/// The looks BattleEffect_SetObjectUpdateMode gives a caster: none, and the
-/// cycling colours Jenna and Alex take as they gather power.
-enum { CASTER_LOOK_NONE = 0, CASTER_LOOK_CYCLING_COLORS = 2 };
 
 /// The map cells the step triggers answer, by the behaviour the map gives
 /// them: the row before the lighthouse door, either side of it (cells (17, 7)
@@ -199,7 +194,7 @@ void VenusLighthouseEntrance_BlastActorWithPsynergy(void *soldierId) {
                                    CASTER_LOOK_CYCLING_COLORS);
   FieldEvent_Wait(20);
   VenusLighthouseEntrance_BlastActorSkyward(soldierId);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_JENNA), CASTER_LOOK_NONE);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_JENNA), CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
@@ -728,7 +723,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   VenusLighthouseEntrance_BlastActorSkyward(ACTOR_SURPRISED_SOLDIER);
   FieldEvent_Wait(30);
   actor = Actor_GetById(ACTOR_ALEX);
-  BattleEffect_SetObjectUpdateMode(actor, CASTER_LOOK_NONE);
+  BattleEffect_SetObjectUpdateMode(actor, CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(16);
@@ -1115,7 +1110,7 @@ void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                              VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  Field_RequestBattleFromEncounterTable(9, 0);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 0);
   Event_End();
 }
 

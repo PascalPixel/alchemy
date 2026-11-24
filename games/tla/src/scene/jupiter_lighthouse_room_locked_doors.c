@@ -23,7 +23,6 @@
 #include "field/field_sequence.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -102,9 +101,6 @@ enum { BEAM_X = 232, BEAM_Z = 520, BEAM_DEPTH = 120 };
 /// The most steps the beam lifts the party, 3 pixels each; the floor stops it
 /// first.
 #define BEAM_RISE_MAX_STEPS 90
-/// SPRITE_PARTICLE's animations a beam light takes: its full glow twinkling,
-/// and the glow shrinking to a speck and gone.
-enum { ANIM_PARTICLE_FADE = 2, ANIM_PARTICLE_TWINKLE = 7 };
 /// The step at which a beam light starts to fade, 6 pixels below the floor.
 #define BEAM_LIGHT_FADE_STEP 38
 
@@ -558,7 +554,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #include "../field/field_effect_spawn.c"
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
-#include "../field/map_cell_sprite.c"
+#include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
 

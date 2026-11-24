@@ -13,6 +13,7 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "scene/dust.h"
+#include "shop/shop.h"
 
 /// Set once Douse has woken the Aqua Stone.
 #define FLAG_APOJII_AQUA_STONE_DOUSED 0x95f
@@ -46,6 +47,7 @@ enum {
 #include "graphics/window_sprite_list.h"
 #include "system/io_write.h"
 #include "system/system.h"
+#include "system/irq.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "system/main_routine_state.h"
@@ -136,14 +138,11 @@ enum ApojiiIslandsHazeActorId {
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 void Sprite_StartAnimation(void *animation, s32 value);
 u8 *Sprite_AddAnimation(void *animation, s32 id);
-void Irq_SetHandler(s32 irq, s32 vcount, void *callback);
 void Actor_StartScript(struct Actor *actor, const void *data);
 s32 MapGrid_CheckCollision(struct Actor *actor, s32 *position);
 void Field_TryJumpForward(void);
 void Rope_Initialize(void);
 void Rope_Place(s32 index, s32 flag, s32 firstId, s32 secondId);
-void Shop_Run(s32 stockRow, s32 keeper);
-void Inn_CheckIn(s32 innId, s32 keeper);
 
 void ApojiiIslands_CycleFallsColors(void);
 void ApojiiIslands_CycleSeaColors(void);
@@ -221,19 +220,7 @@ u16 gApojiiIslands_LowerScrollX BSS_DATA;
 /// The markers drawn over the spring once the Aqua Stone is woken.
 struct CellMarkers gApojiiIslands_CellMarkers BSS_DATA;
 extern u32 gWadingSplash_Script[];
-extern u32 gWaterDropScript[];
-
-/// FieldActor_Create, by the name shared/actor_emit_water_drop.h calls it.
-static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
-                                                    s32 z) {
-  return Import_ActorCreate(kind, x, y, z);
-}
-
-/// FieldCamera_MoveToFX, by the name shared/leader_rise_from_water.h calls it.
-static __inline__ void Camera_MoveWithinMapBounds_(FIXED x, FIXED a, FIXED z,
-                                                   s32 b) {
-  FieldCamera_MoveWithinMapBounds(x, a, z, b);
-}
+extern u32 gRippleScript[];
 
 #include "shared/tables.h"
 #include "scene_ids.h"
@@ -243,8 +230,7 @@ static __inline__ void Camera_MoveWithinMapBounds_(FIXED x, FIXED a, FIXED z,
 #include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "field/field_event.h"
-#include "field/flag_call.h"
-#include "field/ground_mask.h"
+#include "field/weather.h"
 #include "scene/scene.h"
 #include "scene/ground_effects.h"
 #include "scene/event_layer.h"
@@ -888,7 +874,7 @@ void ApojiiIslands_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "shared/actor_spawn_wading_splash.h"
 
-#include "shared/actor_emit_water_drop.h"
+#include "shared/actor_emit_ripples.h"
 
 /// Unused here: Aqua Rock's stream carries the leader south, splashing, and
 /// off a ledge he drops with the water (AquaRock_FlowWithStream).
@@ -947,7 +933,7 @@ UNUSED void ApojiiIslands_FlowWithStream(void) {
   }
 }
 
-#include "shared/actor_show_parts.h"
+#include "shared/moai_add_water.h"
 
 /// The Aqua Rock room's actor the copy below splashes at, as
 /// aqua_rock_inside.c names it.
@@ -1145,7 +1131,7 @@ u32 gWadingSplash_Script[] = {
     SC_RELEASE,
 };
 
-#include "shared/water_drop_script.c"
+#include "shared/ripple_script.c"
 
 #include "shared/ground_particle_frames.c"
 

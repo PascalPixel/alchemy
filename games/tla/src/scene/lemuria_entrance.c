@@ -18,7 +18,6 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -78,8 +77,6 @@ extern s32 gLemuriaEntrance_ShipAtRest[];
 enum { CHANNEL_NORTH_END = 2, CHANNEL_SOUTH_END = 4 };
 
 void Text_GetMessageSize(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
-void Message_OpenWindow(s32 message, s32 x, s32 y, u32 options);
-s32 Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x, s32 y);
 
 /// Starts an actor's animation from its first frame.
 s32 LemuriaEntrance_ResetAnimationFrame(struct Actor *actor) {

@@ -21,7 +21,7 @@ void HeldActor_RaiseCell() {
   index = Actor_GetCellIndex(held);
   level = CELL_HEIGHT_STEPS(level);
   level += 4;
-  newShape = MapCollision_FindOrAddTag(held->layer, shape, level);
+  newShape = MapShape_FindOrAdd(held->layer, shape, level);
   shapes += index;
   index <<= 2;
   shapes->shape = newShape;

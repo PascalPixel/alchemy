@@ -21,7 +21,6 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -627,8 +626,6 @@ DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFifthPuddle, 30, 17, 31,
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchSixthPuddle, 16, 23, 17,
                           SIXTH_PUDDLE_HIDDEN, FLAG_DAILA_SIXTH_PUDDLE_PARCHED)
 
-void Actor_SetWideSprite(s32 actor, s32 flag);
-
 #include "shared/scene_freeze_puddle_into_pillar.h"
 
 s32 Scene_Initialize(void) {
@@ -640,7 +637,7 @@ s32 Scene_Initialize(void) {
   Actor_SetSpritePriority(ACTOR_ITEM_SHOPKEEPER, 1);
   if (gMainRoutineState.next == SCENE_DAILA &&
       GameFlag_Get(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)
-    Actor_SetWideSprite(ACTOR_PSY_CRYSTAL, 0);
+    Actor_SetWideSprite(ACTOR_PSY_CRYSTAL, TREASURE_SPOT_PUT_AWAY);
   return 0;
 }
 

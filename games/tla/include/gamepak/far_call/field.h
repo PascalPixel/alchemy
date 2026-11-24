@@ -42,9 +42,8 @@ void WorldMap_UpdateCurrentTileBlockFar(void);
 /// Plays every edit of the map whose flag is set.
 void Map_ApplySetFlagEditsFar(void);
 /// Gives the leader the control script of the party's movement mode
-/// (gMainRoutineState.movementMode). Declared without the actor the routine
-/// starts the script on: its callers call it just after finding the leader.
-void Actor_StartMovementModeScriptFar(void);
+/// (gMainRoutineState.movementMode).
+void Actor_StartMovementModeScriptFar(struct Actor *actor);
 /// Freezes the world map's perspective view as a still image on BG1.
 void WorldMap_StartStillImageFar(void);
 /// Reloads the world map area's palette and tiles after the still image, puts

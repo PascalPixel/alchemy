@@ -2,9 +2,11 @@
 #define ALCHEMY_FLAG_CALL_H
 
 /// @file
-/// The flag tests and changes some scenes make through small inlines of their
-/// own, where the rest call event.h's Event_GetFlag, Event_SetFlag and
-/// Event_ClearFlag.
+/// The flag tests and changes Izumo and the World Map's placed actors make
+/// through small inlines of their own, where the rest call event.h's
+/// Event_GetFlag, Event_SetFlag and Event_ClearFlag: written through those,
+/// Izumo's stone and its guards and WorldMap_UpdatePlacedActors compile
+/// otherwise.
 
 #include "types.h"
 

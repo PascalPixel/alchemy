@@ -97,6 +97,20 @@ enum ActorSystemMode {
 /// wall before it runs, jumps or climbs (FieldState.blockedSteps).
 #define FIELD_PUSH_FRAMES 12
 
+/// FieldState.terrainKind: the ground the ship was last over, which sets where
+/// WorldMap_IsFlyable lets it fly.
+enum ShipTerrainKind {
+  /// The sea from WORLD_MAP_COLLISION_SEA_FIRST, short of
+  /// WORLD_MAP_COLLISION_SEA_LAST.
+  SHIP_TERRAIN_SEA = 0,
+  /// WORLD_MAP_COLLISION_WALKABLE_FIRST and shallow water.
+  SHIP_TERRAIN_SHALLOWS = 1,
+  SHIP_TERRAIN_SEA_LAST = 2, ///< WORLD_MAP_COLLISION_SEA_LAST
+  /// WORLD_MAP_COLLISION_DEFAULT to WORLD_MAP_COLLISION_WALKABLE_LAST, the
+  /// rest of the ground the party walks on.
+  SHIP_TERRAIN_GROUND = 3
+};
+
 /// A field scene's state: FieldSequence_Run allocates it in HEAP_SLOT_FIELD,
 /// zeroes it and frees it on the way out, and the field sequence, the event
 /// commands and the scene overlays all reach it through
@@ -217,8 +231,8 @@ struct FieldState {
   s8 sceneAttributeLow;
   s8 sceneAttributeHigh;
   s8 blazeLongSpray;
-  s8 hoverReady; ///< a party member knows Hover and the ship flies
-  s8 terrainKind;
+  s8 hoverReady;  ///< a party member knows Hover and the ship flies
+  s8 terrainKind; ///< an enum ShipTerrainKind
   s8 climbing;
   /// The centre of the Cyclone teleporter cell (kind 2) beside the caster,
   /// in pixels, that the Cyclone carries the leader to; -1 for none.
@@ -235,6 +249,12 @@ struct FieldState {
   u16 psynergyDrawFlags;
   u8 padding[2];
 };
+
+/// FieldState.psynergyDrawFlags, which a scene sets for Pound and Scoop to
+/// draw in its room.
+#define PSYNERGY_DRAW_NO_SCENE_SPRITE 0x1 ///< nor Pound's glow on the ground
+/// The fist or hand at priority 1, not sorted by depth.
+#define PSYNERGY_DRAW_FIXED_PRIORITY 0x2
 
 STATIC_ASSERT(sizeof(struct FieldState) == 3408);
 STATIC_ASSERT(offsetof(struct FieldState, triggers) == 16);

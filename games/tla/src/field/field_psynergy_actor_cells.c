@@ -6,7 +6,7 @@
 #include "field_psynergy_internal.h"
 #include "stddef.h"
 
-/// A 16.16 height in the 8-pixel steps a collision tag's height counts.
+/// A 16.16 height in the 8-pixel steps a shape entry's height counts.
 #define HEIGHT_STEPS(height) (FIXEDtoINT(height) >> 3)
 /// A block's height, 32 pixels, in those steps.
 #define BLOCK_HEIGHT_STEPS 4
@@ -45,8 +45,7 @@ void Actor_PlaceBlocks(u16 *actors) {
     actor->collisionFlags = 0;
     Actor_SetSpriteFlagsFar(actor, 0);
     shapes += slot;
-    tag = MapCollision_FindOrAddTag(actor->layer, key,
-                                    level + BLOCK_HEIGHT_STEPS);
+    tag = MapShape_FindOrAdd(actor->layer, key, level + BLOCK_HEIGHT_STEPS);
     cell = &cells[slot];
     flags = cell->attributeB;
     actor->sceneWord = flags;
@@ -94,8 +93,8 @@ void Actor_LiftTargetBlock(u16 *actors) {
       s32 tag;
 
       shapes += slot;
-      tag = MapCollision_FindOrAddTag(target->layer, key,
-                                      HEIGHT_STEPS(level) - BLOCK_HEIGHT_STEPS);
+      tag = MapShape_FindOrAdd(target->layer, key,
+                               HEIGHT_STEPS(level) - BLOCK_HEIGHT_STEPS);
       cells += slot;
       blocks += slot;
       ((struct ShapeCell *)shapes)->shape = tag;
@@ -125,8 +124,8 @@ void Actor_PlaceMovedBlock(void) {
     s32 tag;
 
     shapes += slot;
-    tag = MapCollision_FindOrAddTag(target->layer, key,
-                                    HEIGHT_STEPS(level) + BLOCK_HEIGHT_STEPS);
+    tag = MapShape_FindOrAdd(target->layer, key,
+                             HEIGHT_STEPS(level) + BLOCK_HEIGHT_STEPS);
     ((struct ShapeCell *)shapes)->shape = tag;
     cells += slot;
     target->sceneWord = cells->attributeB;
@@ -226,13 +225,6 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 
 #include "system/affine.h"
 
-/// An OAM entry's affine mode (attribute 0's two bits).
-enum OamAffineMode {
-  OAM_AFFINE_OFF = 0,    ///< drawn as it is
-  OAM_AFFINE_NORMAL = 1, ///< through its matrix
-  OAM_AFFINE_DOUBLE = 3  ///< through its matrix, in a box twice the size
-};
-
 /// Draws a field effect's sprite. An unscaled, unrotated sprite needs no
 /// affine matrix; any other takes one, and one scaled past 1 is drawn in a
 /// double-size box. The picture's pivot is turned and scaled with it, so the
@@ -266,7 +258,7 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
     transform.scaleX = scaleX >> 8;
     transform.scaleY = scaleY >> 8;
     matrix = OamMatrix_AllocFromTransform(&transform);
-    affineMode = OAM_AFFINE_NORMAL;
+    affineMode = OAM_AFFINE_ON;
   }
 
   // Grown past its own size, it needs the double-size box.
@@ -275,7 +267,7 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
     magnitude = -magnitude;
   if (magnitude > FIXED_ONE ||
       (magnitude = scaleY < 0 ? -scaleY : scaleY, magnitude > FIXED_ONE)) {
-    affineMode = OAM_AFFINE_DOUBLE;
+    affineMode = OAM_AFFINE_DOUBLE_SIZE;
     width *= 2;
     height *= 2;
   }

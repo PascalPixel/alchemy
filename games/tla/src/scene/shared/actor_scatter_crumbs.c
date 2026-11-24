@@ -11,7 +11,7 @@ void Actor_ScatterCrumbs(struct Actor *actor) {
   struct FlameHitState *state = FLAME_THROWERS_STATE;
   s32 i;
 
-  if (state->handle == NULL)
+  if (state->sharedFlame == NULL)
     return;
   // DEAD: a loop of one pass, as the ice chips' loop of six; the ROM keeps its
   // decrement and test.
@@ -51,7 +51,7 @@ void Actor_ScatterCrumbs(struct Actor *actor) {
       object->acceleration = 0;
       object->bounce = FIXED_ONE / 2;
       sprite = object->sprite;
-      source = ((struct Actor *)state->handle)->sprite;
+      source = ((struct Actor *)state->sharedFlame)->sprite;
       VramCache_FreeEntry(sprite->slot);
       sprite->retainCacheEntry = 1;
       sprite->slot = state->flameVramBlock;

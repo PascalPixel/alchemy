@@ -31,7 +31,6 @@
 #include "system/frame.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
-#include "field/scene_call.h"
 #include "scene/airs_rock.h"
 #include "scene/dehkan_plateau.h"
 #include "scene/gabomba_statue.h"
@@ -333,12 +332,10 @@ s32 gAirsRockInside_StampedZ BSS_DATA;
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/task.h"
-#include "field/flag_call.h"
 #include "field/event_commands.h"
 #include "field/object.h"
 #include "graphics/resource.h"
@@ -598,10 +595,10 @@ enum { STAKE_ROW_TILES = 4, STAKE_DRAWN_TILES = 3, STAKE_TOP_ROWS = 3 };
 /// One step of Pound on a stake: the target sinks and its partner, the other
 /// of its pair, rises. On step 0 the partner's picture is cleared and the top
 /// of the target's drawn over it, 28 pixels up; on steps 1 to 5 a row more of
-/// it is drawn as it comes down; through step 7 the target flattens. In mode 1
-/// both settle, the target's flag is set and the partner's cleared, they take
-/// their next poses and their cells are set again
-/// (AirsRockInside_SetStakeCells).
+/// it is drawn as it comes down; through step 7 the target flattens. Once the
+/// fist has landed (POUND_STAGE_LANDED) both settle, the target's flag is set
+/// and the partner's cleared, they take their next poses and their cells are
+/// set again (AirsRockInside_SetStakeCells).
 void AirsRockInside_PoundStake(s32 mode, s32 step) {
   s16 *pair =
       &((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->targetId;
@@ -638,7 +635,7 @@ void AirsRockInside_PoundStake(s32 mode, s32 step) {
   }
   if (step <= 7)
     first->scaleY += -(FIXED_ONE * 31 / 256);
-  if (mode == 1) {
+  if (mode == POUND_STAGE_LANDED) {
     first->scaleY = FIXED_ONE;
     second->y.fixed = second->groundHeight;
     GameFlag_Set(first->timer);
@@ -2418,7 +2415,7 @@ void AirsRockInside_VanishStone(s32 x, s32 y) {
   Scene_SetActorSpritePriority(marker, 0);
   Actor_SetSpriteFlags(marker, 0);
   sprite = marker->sprite;
-  sprite->blendMode = OBJ_MODE_WINDOW;
+  sprite->objectMode = OBJ_MODE_WINDOW;
   Event_Start();
   Event_EndLastingPsynergy(0);
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |

@@ -106,6 +106,7 @@ struct RuinObject {
       u16 palette : 4;
     } bits;
     u16 all;
+    u8 bytes[2];
   } attr;
 };
 
@@ -167,12 +168,6 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define WINDOW_EDGE_INSETS (Ram_MapCellBuffer + 2)
 #define WINDOW_EDGE_INSET_LINES 128
 #define WINDOW_EDGE_LINES (WINDOW_EDGE_INSETS + WINDOW_EDGE_INSET_LINES)
-
-/// The battle background's id in the battle state, read through
-/// union BattleBackgroundId, so the stores around it to the background's view
-/// stay in source order.
-#define BATTLE_BACKGROUND_ID(battle)                                           \
-  (((union BattleBackgroundId *)&(battle)->background)->id)
 
 /// The particles an effect keeps in the map cell buffer, from its start.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
@@ -873,10 +868,11 @@ enum RushingStrikeMode {
 /// The mirrored wall's modes (BattleEffect_RunMirroredWall), each named for the
 /// effect that plays it.
 enum MirroredWallMode {
-  MIRRORED_WALL_SPASM,    ///< actual size, a gentle shake for 32 frames
-  MIRRORED_WALL_BERSERK,  ///< 1.25 times as wide, a hard shake for 8 frames
-  MIRRORED_WALL_RECOVERY, ///< 1.25 times as wide, no shake, in the Fireball
-                          ///< colours
+  MIRRORED_WALL_SPASM, ///< actual size, a gentle shake for 32 frames
+  /// A ninth wider than Spasm's, a hard shake for 8 frames.
+  MIRRORED_WALL_BERSERK,
+  /// A ninth wider than Spasm's, no shake, in the Fireball colours.
+  MIRRORED_WALL_RECOVERY,
   MIRRORED_WALL_SACK
 };
 
@@ -886,30 +882,6 @@ enum SparkGroupsMode {
   SPARK_GROUPS_DYNAMITE, ///< Dynamite's, orange
   SPARK_GROUPS_RISING    ///< below the user, in the LightningBolt colours, the
                          ///< sparks rising
-};
-
-/// The projectile volley's modes (BattleEffect_RunProjectileVolley), each named
-/// for the effect that fires it; the casting impacts fire some of them.
-enum ProjectileVolleyMode {
-  PROJECTILE_VOLLEY_SLASH,         ///< comets, picked by the variant
-  PROJECTILE_VOLLEY_SHURIKEN,      ///< spinning shurikens
-  PROJECTILE_VOLLEY_CRAZY_VOICE,   ///< bouncing musical notes
-  PROJECTILE_VOLLEY_WING_FLUTTER,  ///< yellow sparks
-  PROJECTILE_VOLLEY_WING_BEAT,     ///< small yellow sparks
-  PROJECTILE_VOLLEY_CUTTING_EDGE,  ///< one large comet in ice colours
-  PROJECTILE_VOLLEY_HEAT_WAVE,     ///< fireballs trailing embers
-  PROJECTILE_VOLLEY_SLEET,         ///< ice chips falling from high above
-  PROJECTILE_VOLLEY_IMPACT_COMETS, ///< comets, after a casting impact
-  PROJECTILE_VOLLEY_BLIZZARD,      ///< scattered ice chips
-  PROJECTILE_VOLLEY_ICE_BLESSING,  ///< ice chips streaming one a frame
-  PROJECTILE_VOLLEY_WING_STROKE,   ///< large yellow sparks, spread up and down
-  PROJECTILE_VOLLEY_BLAZE_RUSH,
-  PROJECTILE_VOLLEY_HYDRO_SLASH,
-  PROJECTILE_VOLLEY_DIAMOND_DUST,
-  PROJECTILE_VOLLEY_BEAST_NEEDLE,
-  PROJECTILE_VOLLEY_POISON_STING,
-  PROJECTILE_VOLLEY_STUN_STING,
-  PROJECTILE_VOLLEY_CHILL_BREATH
 };
 
 // The declarations the parts share.
@@ -970,7 +942,7 @@ void BattleEffect_BuildCanvasTilemap(void);
    OBJ_64X64_8BPP_BYTES)
 void BattleEffect_ProcessPendingStampTransfer(void);
 
-// mirrored_wall.c
+// djinn_beams.c
 /// Fetches the max and additive blitters, flipped or not.
 void BattleEffect_BuildCanvasBlitters(s32 flip, void **out);
 
@@ -1214,10 +1186,10 @@ extern const u16 gCruelRuin_CirclePictures[];
 /// in six pictures, and the six glints, with their sizes and offsets.
 extern u16 gBattleEffect_SparklePictures[];
 extern u8 gBattleEffect_SparkleSizes[];
-extern u8 gBattleEffect_PuffArcPictureWidths[];
-extern u8 gBattleEffect_PuffArcPictureHeights[];
-extern u8 gBattleEffect_PuffArcPictureBiasY[];
-extern u16 gBattleEffect_PuffArcPictures[];
+extern u8 gBattleEffect_EmberStreakPictureWidths[];
+extern u8 gBattleEffect_EmberStreakPictureHeights[];
+extern u8 gBattleEffect_EmberStreakPictureBiasY[];
+extern u16 gBattleEffect_EmberStreakPictures[];
 extern u16 gBattleEffect_GlintPictures[];
 extern u8 gBattleEffect_GlintPictureWidths[];
 extern u8 gBattleEffect_GlintPictureHeights[];
@@ -1335,10 +1307,10 @@ extern u16 gProcne_Pictures[];
 extern u8 gTiamat_EmberSpeeds[];
 extern u8 gTiamat_SparkPixels[];
 extern u8 gTiamat_EmberSizes[];
-extern u8 gTiamat_FlameWidths[];
-extern u8 gTiamat_FlameHeights[];
-extern u8 gTiamat_FlameDrops[];
-extern u16 gTiamat_FlamePictures[];
+extern u8 gTiamat_EmberStreakWidths[];
+extern u8 gTiamat_EmberStreakHeights[];
+extern u8 gTiamat_EmberStreakBiasY[];
+extern u16 gTiamat_EmberStreakPictures[];
 /// Nereid: the three water columns' feet and the falling sparks' gravity.
 extern u8 gNereid_Columns[];
 extern s32 gNereid_Gravity[];
@@ -1413,10 +1385,10 @@ extern u8 gDrainMotes_Sizes[];
 extern u8 gQuake_Timings[][3];
 /// Fire's counts by variant, and its flare pictures.
 extern u8 gFire_Counts[];
-extern u8 gFire_FlareWidths[];
-extern u8 gFire_FlareHeights[];
-extern u8 gFire_FlareBiasY[];
-extern u16 gFire_FlarePictures[];
+extern u8 gFire_EmberStreakWidths[];
+extern u8 gFire_EmberStreakHeights[];
+extern u8 gFire_EmberStreakBiasY[];
+extern u16 gFire_EmberStreakPictures[];
 /// Frost: where the mounds rise, its timings by variant, and the pictures of
 /// its motes, mounds and ice chips.
 extern u8 gFrost_MoundSpots[];
@@ -1475,7 +1447,7 @@ extern u8 gBolt_GlintModes[];
 /// VolleyField), the hit flash's pictures and spread, the pellets' pictures and
 /// the glints' flips.
 extern u8 gProjectileVolley_CometHeights[];
-extern u8 gProjectileVolley_Modes[][5];
+extern u8 gProjectileVolley_Modes[][PROJECTILE_VOLLEY_COLUMNS];
 extern u8 gProjectileVolley_FlashWidths[];
 extern u8 gProjectileVolley_FlashHeights[];
 extern u8 gProjectileVolley_FlashSteps[];

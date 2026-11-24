@@ -11,7 +11,7 @@
 
 #include "pillar_stand_in.h"
 
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
+s32 MapShape_FindOrAdd(s32 layer, s32 shape, s32 height);
 
 /// Places each crumbling pillar of an (actor, flag) list: one that has given
 /// way is moved out of sight; the others stand as their cell's ground, 32
@@ -48,8 +48,8 @@ void CrumblingPillar_Place(u16 *list) {
 
       Actor_DisableById(id);
       cell->attributeB = MAP_CELL_JUMP;
-      *slot = MapCollision_FindOrAddTag(actor->layer, shape,
-                                        CELL_HEIGHT_STEPS(ground) + 4);
+      *slot = MapShape_FindOrAdd(actor->layer, shape,
+                                 CELL_HEIGHT_STEPS(ground) + 4);
       if (Event_GetFlag(flag))
         Actor_SelectAnimation(actor, 0);
     }
@@ -177,7 +177,8 @@ void CrumblingPillar_Collapse(const void *data, s32 id) {
 /// Keeps an actor's sprite picture loaded even out of sight, and stops it
 /// moving, colliding and showing (Actor_DisableById).
 void CrumblingPillar_Prepare(s32 id) {
-  Actor_Get(id)->retainSpriteCache = 3;
+  Actor_Get(id)->retainSpriteCache =
+      ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
   Actor_DisableById(id);
 }
 
@@ -215,7 +216,8 @@ void CrumblingPillar_PlaceWithStandIn(u16 *list) {
     struct MapCell *cells = map->layers[actor->layer].cells;
     u8 *shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
-    actor->retainSpriteCache = 3;
+    actor->retainSpriteCache =
+        ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
     if (Event_GetFlag(next)) {
       Actor_SetPosition(id, 0, 0);
     } else {
@@ -231,8 +233,8 @@ void CrumblingPillar_PlaceWithStandIn(u16 *list) {
 
       Actor_DisableById(id);
       cell->attributeB = MAP_CELL_JUMP;
-      *shape = MapCollision_FindOrAddTag(actor->layer, kind,
-                                         CELL_HEIGHT_STEPS(ground) + 4);
+      *shape =
+          MapShape_FindOrAdd(actor->layer, kind, CELL_HEIGHT_STEPS(ground) + 4);
       if (Event_GetFlag(flag))
         Actor_CopyGraphics(id, ACTOR_CRACKED_PILLAR_SPRITE);
     }

@@ -18,7 +18,6 @@
 #include "field/field.h"
 #include "scene/event_layer.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -384,7 +383,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #include "../field/field_effect_spawn.c"
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
-#include "../field/map_cell_sprite.c"
+#include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
 

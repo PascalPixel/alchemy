@@ -17,7 +17,6 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -772,9 +771,6 @@ void Champa_JennaAndShebaLookPuzzled(s32 firstId, s32 secondId) {
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }
-
-struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
-void Portrait_OpenWindow(s32 object, s32 a, s32 b, s32 c);
 
 /// Event_ShowTwoMessagesAndWait's first half, kept in the scene: two actors
 /// speak at once, the second message waiting for the first when delay is

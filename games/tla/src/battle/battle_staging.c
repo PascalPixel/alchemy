@@ -343,7 +343,7 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
   u8 *inputTarget;
 
   livingTargets = 0;
-  effect->flags = 0;
+  effect->prelude = 0;
   flags = plan->battleEffect;
   effect->kind = flags & EFFECT_ID_MASK;
   effect->variant = (flags & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
@@ -369,7 +369,7 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
   }
   effect->firstTarget = plan->targetIds[0];
   effect->count = livingTargets;
-  effect->initialValue = 1;
+  effect->range = 1;
 }
 
 /// Plays a unit's attempt to run: the party runs off one by one unless the roll

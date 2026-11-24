@@ -1,6 +1,6 @@
 /// Pushes the block ahead onto another, if nothing blocks the way.
 void MagmaRockInside_PushBlockOnto(void) {
-  struct FieldPosition dst;
+  struct Point dst;
   struct Actor *lead;
   struct Actor *next;
   struct Actor *blocker;

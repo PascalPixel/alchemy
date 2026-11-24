@@ -18,7 +18,6 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -32,13 +31,12 @@
 #include "field/event.h"
 #include "field/field_sequence_event.h"
 #include "field/field_event.h"
-#include "field/flag_call.h"
 #include "scene/scene.h"
-#include "field/scene_call.h"
 #include "window/window.h"
 #include "field/field_sprite.h"
 #include "field/field_sequence.h"
 #include "text/msg_ids.h"
+#include "shop/shop.h"
 
 /// Set once the worker has popped up out of the Champa's hole on this visit.
 #define FLAG_MADRA_WORKER_SEEN_AT_HOLE FLAG_SCENE_TEMP_80
@@ -136,8 +134,6 @@ enum MadraOnReturnActorId {
 
 extern struct ActorPlacement gMadra_Placements[];
 extern struct ActorPlacement gMadra_PlacementsOnReturn[];
-
-void Shop_Run(s32 a, s32 b);
 
 void Madra_GrantPassageToOsenia(void);
 

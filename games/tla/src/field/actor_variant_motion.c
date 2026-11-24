@@ -10,7 +10,7 @@
 
 /// Each sprite's voice as it speaks and the lines it says while Halted, as
 /// halfword pairs of a sprite id and a struct SpeakerDefinition's two bytes
-/// (screen_transition.h): Speaker_FindDefinition searches the first 243 rows
+/// (field/speaker.h): Speaker_FindDefinition searches the first 243 rows
 /// by sprite id and gives the last, the default, for any other sprite.
 #define SPEAKER(sprite, voice) {sprite, voice}
 /// A sprite with no voice that Halt never stops (SPEAKER_VOICE_NONE and

@@ -17,7 +17,6 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -416,7 +415,8 @@ void AlhafranCave_SetUpJail(void) {
       gMainRoutineState.entrance == ENTRANCE_UNDER_CRATE) {
     state = Ram_HeapSlots->fieldState;
 
-    state->psynergyDrawFlags = 3;
+    state->psynergyDrawFlags =
+        PSYNERGY_DRAW_NO_SCENE_SPRITE | PSYNERGY_DRAW_FIXED_PRIORITY;
   }
   Rope_Initialize();
   Rope_Place(0, FLAG_JAIL_ROPE_TIED, ACTOR_JAIL_ROPE_LOW_POST,
@@ -609,7 +609,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   key = Actor_Get(ACTOR_JAIL_KEY);
   Event_StartColorTransition(8, RGB(16, 16, 4));
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO),
+                                   CASTER_LOOK_CYCLING_COLORS);
   Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(40);
   effect = FieldEffect_SpawnMoveHand(eoleo);
@@ -663,7 +664,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   key->update = 0;
   Actor_SetSpriteColorMode(key, 0);
   FieldEffect_BurstHand(effect);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
@@ -702,12 +703,13 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(20);
   Field_StartColorTransition(8, RGB(16, 16, 4));
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO),
+                                   CASTER_LOOK_CYCLING_COLORS);
   Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(40);
   // "Eoleo!"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);

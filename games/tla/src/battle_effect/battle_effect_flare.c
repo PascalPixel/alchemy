@@ -83,46 +83,53 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
         picture = flame->variant / FLARE_PICTURE_FRAMES;
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-        width = gBattleEffect_PuffArcPictureWidths[picture];
-        draw(canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
+        width = gBattleEffect_EmberStreakPictureWidths[picture];
+        draw(canvas, state->sheet + gBattleEffect_EmberStreakPictures[picture],
              flame->x - (width >> 1),
-             flame->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
-             gBattleEffect_PuffArcPictureHeights[picture]);
+             flame->y + gBattleEffect_EmberStreakPictureBiasY[picture], width,
+             gBattleEffect_EmberStreakPictureHeights[picture]);
 #else
-        draw(canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
+        draw(canvas, state->sheet + gBattleEffect_EmberStreakPictures[picture],
              flame->x -
-                 ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
-             flame->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
-             gBattleEffect_PuffArcPictureHeights[picture]);
+                 ((width = gBattleEffect_EmberStreakPictureWidths[picture]) >>
+                  1),
+             flame->y + gBattleEffect_EmberStreakPictureBiasY[picture], width,
+             gBattleEffect_EmberStreakPictureHeights[picture]);
 #endif
         if (args->variant != EFFECT_VARIANT_BASIC) {
 #ifdef UBFIX
-          width = gBattleEffect_PuffArcPictureWidths[picture];
-          draw(canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
+          width = gBattleEffect_EmberStreakPictureWidths[picture];
+          draw(canvas,
+               state->sheet + gBattleEffect_EmberStreakPictures[picture],
                flame->x - (width >> 1),
-               (flame->y + gBattleEffect_PuffArcPictureBiasY[picture]) - 16,
-               width, gBattleEffect_PuffArcPictureHeights[picture]);
+               (flame->y + gBattleEffect_EmberStreakPictureBiasY[picture]) - 16,
+               width, gBattleEffect_EmberStreakPictureHeights[picture]);
 #else
-          draw(canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
+          draw(canvas,
+               state->sheet + gBattleEffect_EmberStreakPictures[picture],
                flame->x -
-                   ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
-               (flame->y + gBattleEffect_PuffArcPictureBiasY[picture]) - 16,
-               width, gBattleEffect_PuffArcPictureHeights[picture]);
+                   ((width = gBattleEffect_EmberStreakPictureWidths[picture]) >>
+                    1),
+               (flame->y + gBattleEffect_EmberStreakPictureBiasY[picture]) - 16,
+               width, gBattleEffect_EmberStreakPictureHeights[picture]);
 #endif
         }
         if (args->variant == EFFECT_VARIANT_STRONGEST) {
 #ifdef UBFIX
-          width = gBattleEffect_PuffArcPictureWidths[picture];
-          draw(canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
+          width = gBattleEffect_EmberStreakPictureWidths[picture];
+          draw(canvas,
+               state->sheet + gBattleEffect_EmberStreakPictures[picture],
                flame->x - (width >> 1),
-               (flame->y + gBattleEffect_PuffArcPictureBiasY[picture]) - 32,
-               width, gBattleEffect_PuffArcPictureHeights[picture]);
+               (flame->y + gBattleEffect_EmberStreakPictureBiasY[picture]) - 32,
+               width, gBattleEffect_EmberStreakPictureHeights[picture]);
 #else
-          draw(canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
+          draw(canvas,
+               state->sheet + gBattleEffect_EmberStreakPictures[picture],
                flame->x -
-                   ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
-               (flame->y + gBattleEffect_PuffArcPictureBiasY[picture]) - 32,
-               width, gBattleEffect_PuffArcPictureHeights[picture]);
+                   ((width = gBattleEffect_EmberStreakPictureWidths[picture]) >>
+                    1),
+               (flame->y + gBattleEffect_EmberStreakPictureBiasY[picture]) - 32,
+               width, gBattleEffect_EmberStreakPictureHeights[picture]);
 #endif
         }
       }
@@ -144,8 +151,9 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
 
 /// Lists the indices within indexRadius of where currentValue sits in values,
 /// up to entryLimit, and returns how many.
-UNUSED s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
-                                               s16 *output) {
+UNUSED s32
+BattleEffect_BuildCenteredIndexList(struct BattleEffectIndexWindow *window,
+                                    s16 *output) {
   s32 windowLength = window->indexRadius * 2 + 1;
   s32 outputCount = 0;
   s32 centerIndex = 0;

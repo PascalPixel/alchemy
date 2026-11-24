@@ -45,9 +45,9 @@
 #include "scene/mars_lighthouse_aerie.h"
 #include "scene/scene.h"
 #include "system/scene.h"
+#include "system/point.h"
 #include "battle/battle.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -418,7 +418,7 @@ void MagmaRockInside_MeetDjinni(void) {
 #include "shared/position_flat_distance.h"
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
+s32 MapShape_FindOrAdd(s32 layer, s32 shape, s32 height);
 
 #include "shared/map_cell_set_shape.h"
 
@@ -1742,7 +1742,7 @@ void MagmaRockInside_FadeStoneAway(s32 x, s32 z) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Scene_SetActorSpritePriority(actor, 0);
   Actor_SetSpriteFlags(actor, 0);
-  ((struct FieldSprite *)actor->sprite)->blendMode = OBJ_MODE_WINDOW;
+  ((struct FieldSprite *)actor->sprite)->objectMode = OBJ_MODE_WINDOW;
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
@@ -2536,16 +2536,24 @@ s32 Scene_Initialize(void) {
       Actor_PlaceBlocks(gMagmaRockInside_CrackedPillarsPillars);
       Lower(ACTOR_LOWER_COLUMN, 0);
       // The platforms ride in and out of view: each keeps its sprite's tiles
-      // in VRAM (bit 0) and its picture drawn (bit 1) while off screen, so it
-      // shows at once as it comes back (ActorSystem_PlaceSprites).
-      Actor_GetById(ACTOR_LAVA_PLATFORM_A)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_B)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_C)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_D)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_E)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_F)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_G)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_H)->retainSpriteCache = 3;
+      // in VRAM and its picture composed while off screen, so it shows at
+      // once as it comes back.
+      Actor_GetById(ACTOR_LAVA_PLATFORM_A)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_B)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_C)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_D)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_E)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_F)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_G)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_H)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
       MagmaRockInside_StartLavaPlatform(
           ACTOR_LAVA_PLATFORM_A, gMagmaRockInside_CrackedPillarsFirstPairPath,
           FLAG_LOWER_ROOMS_FLOODED);
@@ -2671,8 +2679,8 @@ s32 Scene_Initialize(void) {
         s32 y = 24 - i * 2;
 
         MapGrid_CopyCellsTo(65, 1, 80, y, 1, 2);
-        Call4((void (*)())MapCell_SetAttributes, MAPGRID_LAYER_GROUND, 16, y,
-              CELL_BEHAVIOR_WALL << 8);
+        MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 16, y,
+                              CELL_BEHAVIOR_WALL << 8);
       }
     }
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOURCE_FLAME), 0);
@@ -2710,7 +2718,7 @@ s32 Scene_PrepareMap(void) {
 }
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
+s32 MapShape_FindOrAdd(s32 unused, s32 key, s32 value);
 
 // On entering, sets each listed pillar from its two flags, then lifts the
 // leader onto the ground under it.
@@ -2896,7 +2904,7 @@ void MagmaRockInside_SpawnDustRing(void) {
 }
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
+s32 MapShape_FindOrAdd(s32 layer, s32 shape, s32 height);
 
 #include "shared/actor_set_cell_shape.h"
 

@@ -467,7 +467,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   transition->busy = 0;
   gBgScroll[1].x = savedScrollX;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           BATTLE_BACKGROUND_ID(Ram_HeapSlots->battleState),
+                           Ram_HeapSlots->battleState->background,
                            BACKGROUND_DARKEN_FRAMES);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

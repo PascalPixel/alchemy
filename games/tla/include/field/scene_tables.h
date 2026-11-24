@@ -219,6 +219,10 @@ struct Trigger {
 /// event shows its own message in place of the "uses" message
 /// (MsgActorUsesItem); an examine trigger shows no checking message.
 #define TRIGGER_SUBJECT_OWN_EFFECT 0x400
+/// The examine code the search finds aboard the ship facing open sea (World
+/// Map collision 3), for the World Map's examine trigger on it
+/// (WorldMap_GazeIntoPond).
+#define SHIP_SEA_EXAMINE_CODE 99
 /// Trigger.subject bit 9 on a Psynergy trigger: the cast neither flashes the
 /// caster nor announces the ability (FieldEffectState.flashCaster and
 /// .announceName).
@@ -397,6 +401,14 @@ enum PsynergyPhase {
 /// the cast waits for; its acting events get it as their stage the last time
 /// they run.
 #define FIELD_PSYNERGY_FINISHED 999
+/// The stage Pound's acting events get: 0 until the fist lands, then
+/// POUND_STAGE_LANDED.
+#define POUND_STAGE_LANDED 1
+/// The stages Scoop's acting events get on a frame of the dig, 0 on the rest:
+/// SCOOP_STAGE_DUG on the frame the ground is dug (SCOOP_DUG_FRAME), and
+/// SCOOP_STAGE_DUG_UP on frame 50, as what was buried comes up.
+#define SCOOP_STAGE_DUG 1
+#define SCOOP_STAGE_DUG_UP 2
 
 /// A Psynergy trigger's phase bits, 31..28.
 #define PSYNERGY_PHASE_SHIFT 28

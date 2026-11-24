@@ -212,7 +212,7 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   if (scanlines == NULL)
     return;
   if ((background->mode == BATTLE_BACKGROUND_FIXED ||
-       background->secondMode == BATTLE_BACKGROUND_FIXED) &&
+       background->bg1ScrollMode == BATTLE_BACKGROUND_FIXED) &&
       background->busy == 0)
     gBgScroll[1].x = panX >> 8;
   if (background->mode != BATTLE_BACKGROUND_ZOOMED)
@@ -1017,24 +1017,24 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   } else if (mode == GLOW_PILLAR) {
     // The pillar and the burst run a battle effect with the unit as its user
     // and only target.
-    pillarLaunch.flags = 0;
+    pillarLaunch.prelude = 0;
     pillarLaunch.kind = element;
     pillarLaunch.variant = variant;
     pillarLaunch.actor = unitId;
     pillarLaunch.actors[0] = unitId;
     pillarLaunch.firstTarget = unitId;
     pillarLaunch.count = 1;
-    pillarLaunch.initialValue = 1;
+    pillarLaunch.range = 1;
     BattleEffect_RunElementPillarFar(&pillarLaunch);
   } else {
-    burstLaunch.flags = 0;
+    burstLaunch.prelude = 0;
     burstLaunch.kind = element;
     burstLaunch.variant = 0;
     burstLaunch.actor = unitId;
     burstLaunch.firstTarget = unitId;
     burstLaunch.actors[0] = unitId;
     burstLaunch.count = 1;
-    burstLaunch.initialValue = 1;
+    burstLaunch.range = 1;
     BattleEffect_RunElementBurstFar(&burstLaunch);
   }
 }

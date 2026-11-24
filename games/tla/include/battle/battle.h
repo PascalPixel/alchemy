@@ -27,7 +27,7 @@ struct MotionObject;
 struct PaletteFade;
 struct PendingEvent;
 struct Sprite;
-struct TriggerEvent;
+struct Trigger;
 struct Unit;
 struct WorldMapState;
 
@@ -62,7 +62,9 @@ enum BattleHighlight {
 /// The battle sprites' animations (AnimationObject_SelectAnimation numbers)
 /// that the battle code picks by name.
 enum BattlePose {
-  POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held
+  /// The battler held still: an enemy asleep, stunned or held, or a party
+  /// member standing again between turns.
+  POSE_STILL = 0,
   POSE_STANDING = 1,
   POSE_LEAP = 2,       ///< running up to a target and leaping
   POSE_CAST = 3,       ///< a hand raised to cast or use an item
@@ -240,15 +242,14 @@ s32 Scene_GetArea(s32 sceneId);
 struct ActionDescriptor *Scene_FindActorPlacement(s32 id);
 s32 Scene_HasPsynergyTrigger(s32 effectId);
 s32 Scene_SelectPsynergyTarget(s32 kind);
-struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
-                                               s32 selector);
+struct Trigger *Scene_FindPsynergyTrigger(s32 filter, s32 kind, s32 selector);
 s32 Field_MeasurePsynergyReach(s32 kind, s32 selfId, s32 otherId);
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position);
 
 // The game's rules: units, Djinn, flags and elements.
 s32 Battle_GetElementMultiplier(s32 selector, s32 mode);
-s32 Enemy_GetAttackElement(void *state);
+s32 Enemy_GetAttackElement(struct Unit *unit);
 #ifndef OWN_Unit_CalculateFar
 /// Works a unit's stats out again from its base stats, equipment, set Djinn,
 /// class and battle stat levels, keeping its HP and PP at the same fraction.

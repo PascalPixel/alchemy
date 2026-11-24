@@ -29,7 +29,6 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "graphics/glyph.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
@@ -291,7 +290,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void Scene_LeaveByExit(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
-  gMainRoutineState.teleportState = 2;
+  gMainRoutineState.teleportState = TELEPORT_ARRIVING;
   FieldEvent_SetExitRequest(MARS_LIGHTHOUSE_AERIE_TO_MARS_LIGHTHOUSE_HALL);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();
@@ -2119,7 +2118,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
     sprite->priority = 2;
     star->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     star->motionFlags = 0;
-    star->retainSpriteCache = 1;
+    star->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     star->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpriteFlags(star, 0);
     star->speedLimit = toFIXED(2) / 5;

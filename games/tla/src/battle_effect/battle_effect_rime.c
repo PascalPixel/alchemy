@@ -113,7 +113,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
       }
     }
     if (frame == 38)
-      EFFECT_SHOW_DAMAGE(-1);
+      EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
     if (mode == DJINNI_SIGN_RIME) {
       if (frame == 32)
         Sound_PlayFar(SE_POWER_UP);

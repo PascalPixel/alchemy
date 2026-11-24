@@ -1094,13 +1094,12 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
 
   // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
   BattleEffect_ClearTintTimers();
-  view->secondMode = BATTLE_BACKGROUND_FIXED;
+  view->bg1ScrollMode = BATTLE_BACKGROUND_FIXED;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
-                              BATTLE_BACKGROUND_ID(battle), 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-  view->secondMode = BATTLE_BACKGROUND_NONE;
+  view->bg1ScrollMode = BATTLE_BACKGROUND_NONE;
   REG_BG2X = 0;
   REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
   REG_BG2PA = Q_8_8(0.5);
@@ -1135,8 +1134,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
                   CANVAS_FILL_WORD(1));
   state->savedBg1X = gBgScroll[1].x;
   state->savedBg1Y = gBgScroll[1].y;
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           BATTLE_BACKGROUND_ID(battle), -1);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, -1);
   Palette_BrightenSavedBattleBg(-RGB_LEVEL_MAX, -RGB_LEVEL_MAX, -RGB_LEVEL_MAX);
   BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE, POSE_CAST, 0,
                            30);
@@ -1161,8 +1159,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
                            TINT_KEEP, 0);
   gBgScroll[1].x = state->savedBg1X;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED,
-                              BATTLE_BACKGROUND_ID(battle), 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |

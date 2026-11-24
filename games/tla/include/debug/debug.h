@@ -52,4 +52,7 @@ void DebugWarp_KaoruSpecial3(void);
 void DebugWarp_KaoruSpecial2(void);
 void DebugWarp_KaoruSpecial1(void);
 
+void DebugFlagEditor_DrawTable(s32 window, s32 startFlag);
+s32 DebugFlagEditor_HandleInput(s32 window, s32 *page, s32 *cursor);
+
 #endif

@@ -29,10 +29,10 @@
 #include "gamepak/far_call/window.h"
 #include "field/lucky_wheels_title.h"
 #include "field/field.h"
+#include "field/dice_game.h"
 #include "field/field_sequence.h"
 #include "battle/battle_effect_state.h"
 #include "resource_ids.h"
-#include "graphics/graphics.h"
 #include "item_ids.h"
 
 void LuckyWheels_Run(void);
@@ -663,8 +663,8 @@ void LuckyWheels_Update(void) {
         struct ReelSave *save = (struct ReelSave *)gPartyDjinnRecovery;
 
         state->state = LUCKY_WHEELS_DONE;
-        // -2: the player quit while betting.
-        save->wonPrizes[0] = -2;
+        // The player quit while betting.
+        save->wonPrizes[0] = WHEELS_PRIZES_NONE_TO_HAND_OUT;
         Window_CloseFar(state->window, 1);
       } else {
         if (state->pressed & KEY_UP) {
@@ -939,7 +939,7 @@ void LuckyWheels_Update(void) {
         }
         state->timer = 0;
         if (hits != 0) {
-          save->wonPrizes[hits] = -1;
+          save->wonPrizes[hits] = WHEELS_PRIZES_END;
           state->state = LUCKY_WHEELS_WON;
           Sound_PlayFar(SE_THUNDER);
           fx->transferMode = CANVAS_COPY_AND_CLEAR;
@@ -1393,7 +1393,7 @@ void LuckyWheels_Run(void) {
   tiles = Ram_MapCellBuffer;
   save = (struct ReelSave *)gPartyDjinnRecovery;
   Resource_ReservedNoOp(RESOURCE_BATTLE_EFFECT_FAR_CALLS);
-  save->wonPrizes[0] = -1;
+  save->wonPrizes[0] = WHEELS_PRIZES_END;
   state->repeat = 0;
   state->bet = 1;
   Task_ResetAll();

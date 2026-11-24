@@ -55,7 +55,6 @@
 #include "field/field.h"
 #include "field/field_sequence.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -734,7 +733,7 @@ void Islets_TradeWithCow(void) {
           Actor_SetItemIcon(item, ITEM_RED_CLOTH);
           Actor_SetSpriteFlags(item, 0);
           item->motionFlags = 0;
-          item->retainSpriteCache = 1;
+          item->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
         }
         Event_Wait(10);
         FieldPsynergy_GreyMindReadPalette();
@@ -770,7 +769,7 @@ void Islets_TradeWithCow(void) {
         Actor_SetItemIcon(item, ITEM_RED_CLOTH);
         Actor_SetSpriteFlags(item, 0);
         item->motionFlags = 0;
-        item->retainSpriteCache = 1;
+        item->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
       }
       STEP(gMainRoutineState.leaderActorId, 120, 190);
       Actor_FaceDirectionById(ACTOR_COW, FACING_SOUTH_SOUTHEAST, 0);
@@ -847,7 +846,7 @@ struct Actor *Islets_ShowItemAbove(struct Actor *actor, s32 value) {
     spawned->motionFlags = 0;
     FieldActor_SetItemIcon(spawned, value);
     Actor_SetSpriteFlags(spawned, 0);
-    spawned->retainSpriteCache = 1;
+    spawned->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
   }
   return spawned;
 }
@@ -2098,7 +2097,7 @@ void Islets_InitializeWestIndra(void) {
       FieldActor_SetItemIcon(spawned, ITEM_MILK);
       Actor_SetSpriteFlags(spawned, 0);
       spawned->collisionFlags = ACTOR_NOT_TARGETED | ACTOR_SOLID;
-      spawned->retainSpriteCache = 1;
+      spawned->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     }
     Actor_Get(ACTOR_DOG)->facing = FACING_NORTH_NORTHEAST;
   } else {
@@ -2112,7 +2111,7 @@ void Islets_StartIceberg(s32 id) {
   struct Actor *actor = Actor_Get(id);
 
   Actor_SetSpriteFlags(actor, 0);
-  actor->retainSpriteCache = 3;
+  actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
   actor->motionFlags = 0;
   actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   actor->acceleration = toFIXED(3) / 20;
@@ -2275,7 +2274,7 @@ void Islets_InitializeNorthOsenia(void) {
       spawned->motionFlags = 0;
       FieldActor_SetItemIcon(spawned, ITEM_RED_CLOTH);
       Actor_SetSpriteFlags(spawned, 0);
-      spawned->retainSpriteCache = 1;
+      spawned->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     }
     Actor_SetPosition(ACTOR_COW, 104, 204);
   }

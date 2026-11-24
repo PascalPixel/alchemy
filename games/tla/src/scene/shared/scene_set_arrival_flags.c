@@ -3,7 +3,7 @@
 /// calls it and inside Mars Lighthouse room F, at its place in each overlay.
 #include "types.h"
 #include "flags.h"
-#include "field/flag_call.h"
+#include "field/event.h"
 
 /// Marks the party as inside Jupiter Lighthouse; once Alex has healed the party
 /// there, also ends the area's random encounters and blocks Retreat.

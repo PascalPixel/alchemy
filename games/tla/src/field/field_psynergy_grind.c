@@ -64,7 +64,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   s32 mode;
   FIXED radius;
   s32 selector;
-  struct TriggerEvent *pending;
+  struct Trigger *pending;
   u8 *picture;
   s32 counter;
   FIXED amplitude;
@@ -260,7 +260,7 @@ void FieldPsynergy_Grind(void) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GrindState));
   scene = Ram_HeapSlots->fieldEffectState;
   FieldPsynergy_FadeToCastColor();
-  BattleEffect_SetObjectUpdateMode(scene->caster, 0);
+  BattleEffect_SetObjectUpdateMode(scene->caster, CASTER_LOOK_NORMAL);
   ViewMove_Start(VIEW_MOVE_Z);
   wait(10);
 

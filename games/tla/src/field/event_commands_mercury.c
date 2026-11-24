@@ -11,7 +11,7 @@
 #include "field/field_sequence.h"
 #include "field/object.h"
 #include "system/system.h"
-#include "field/scene_call.h"
+#include "field/event.h"
 #include "macros.h"
 
 #define MERCURY_AFTERIMAGE_MAX 8 ///< afterimages of the rising Djinni

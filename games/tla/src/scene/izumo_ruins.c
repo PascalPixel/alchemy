@@ -41,7 +41,6 @@
 #include "shared/tables.h"
 #include "battle/battle.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -92,7 +91,7 @@ void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 #include "shared/dust.h"
 
-s32 MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
+s32 MapShape_FindOrAdd(s32 terrainId, s32 value, s32 height);
 
 #include "shared/actor_set_cell_shape.h"
 
@@ -268,7 +267,7 @@ void IzumoRuins_PoundStake(s32 mode, s32 frame) {
     Pound_SinkTarget(gIzumoRuins_FirstRoomStakes, mode, frame);
   else
     Pound_SinkTarget(gIzumoRuins_SecondRoomStakes, mode, frame);
-  if (mode == 1)
+  if (mode == POUND_STAGE_LANDED)
     IzumoRuins_ShowStakeState(Actor_Get(state->targetId));
 }
 

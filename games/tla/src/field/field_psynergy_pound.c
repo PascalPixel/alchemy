@@ -99,7 +99,7 @@ void FieldPsynergy_UpdatePound(void) {
       MapGrid_SetScreenShakeFar(toFIXED(13) / 10, toFIXED(13) / 10, FIXED_ONE);
       Sound_PlayFar(SE_POUND);
       state->sparkles = 1;
-      state->landed = 1;
+      state->landed = POUND_STAGE_LANDED;
     }
     if (state->timer == 8) {
       state->state++;

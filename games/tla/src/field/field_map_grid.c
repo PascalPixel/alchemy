@@ -14,7 +14,6 @@
 #include "system/ram_buffer.h"
 #include "macros.h"
 #include "system/io_write.h"
-#include "field/flag_call.h"
 #include "system/system.h"
 #include "system/bg_scroll.h"
 #include "field/mapcopy.h"
@@ -64,9 +63,9 @@
 #define WORLD_MAP_LOWER_TILE_MAP BG_SCREEN_BLOCK(8)
 #define WORLD_MAP_UPPER_TILE_MAP BG_SCREEN_BLOCK(10)
 #define WORLD_MAP_TILE_MAP_WIDTH 64
-/// The world map cells in view (Ram_MapBlocks): 32 by 32 for the lower layer,
-/// then as many for the upper, each cell 2 by 2 tiles of its tile map.
-#define WORLD_MAP_VIEW_CELLS 32
+/// The world map cells in view (Ram_MapBlocks): WORLD_MAP_VIEW_CELLS square
+/// for the lower layer, then as many for the upper, each cell 2 by 2 tiles of
+/// its tile map.
 #define WORLD_MAP_VIEW_LAYER_BYTES                                             \
   (WORLD_MAP_VIEW_CELLS * WORLD_MAP_VIEW_CELLS * sizeof(struct WorldMapCell))
 

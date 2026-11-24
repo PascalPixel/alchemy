@@ -13,7 +13,7 @@
 #include "field/field_sequence.h"
 #include "field/object.h"
 #include "system/system.h"
-#include "field/scene_call.h"
+#include "field/event.h"
 #include "macros.h"
 #include "window/item_icon.h"
 
@@ -41,12 +41,6 @@ enum PostAnimation {
 // is full within a few frames of setting off. Rope_Update and Rope_LayBowed bow
 // the middle of the rope that far either way of its line, in a cycle of 16
 // frames, the swing losing a twentieth a frame.
-
-/// RopeSlot.state.
-enum RopeSlotState {
-  ROPE_COILED, ///< at its first post, or pulled back there
-  ROPE_THROWN  ///< thrown or laid tied from post to post
-};
 
 /// The leader steps onto a rope or tightrope once it has pushed against its
 /// post (FieldState.blockedSteps) for more than this many frames.

@@ -49,14 +49,13 @@
 #define SAME_CELL(a, b) ((((a) - (b) + toFIXED(8)) >> 20) == 0)
 
 struct Actor;
-struct FieldPosition;
+struct Point;
 
 /// The collision at an actor's probe point (tile_animation.c): 2 for a cell
 /// with no tile, 1 a rise of more than 8 pixels, -1 a drop of more than 12,
 /// else 0.
-s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
-s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
-                                struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Point *position);
+s32 MapGrid_CheckCollisionAbove(struct Actor *actor, struct Point *position);
 
 /// The map converter copied to RAM (Render_ConvertMapCode), which joins a
 /// decoded map's planes into its cell words.
@@ -230,7 +229,7 @@ enum AnimationFacingKind {
 /// The field's pool sizes, and a sprite animation's timer step at normal speed.
 enum {
   SPRITE_PICTURE_CACHE_COUNT = 8, ///< ActorSystemState.pictureCaches
-  ANIM_LAYER_COUNT = 4,           ///< Sprite.entries
+  SPRITE_ANIMATION_COUNT = 4,     ///< Sprite.entries
   RUNNING_LIST_SLOTS = 14,        ///< the actor slots Actor_ListRunning reads
   /// Sixteenths of a frame taken off a sprite animation's timer each frame: one
   /// frame.
@@ -326,5 +325,14 @@ void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
                              u8 *pixels);
 void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
                                  struct WorldMapScanline *scanline);
+
+/// The footprints the leader leaves in snow and sand, and the leader's
+/// userValue that asks for the pair next. Every routine that moves the leader
+/// by the pad sets it on a stop.
+enum FootprintAnimation {
+  FOOTPRINT_ONE_FOOT = 1, ///< one print, fading
+  /// Two prints side by side, fading: laid first after a stop.
+  FOOTPRINT_BOTH_FEET = 2
+};
 
 #endif // ALCHEMY_FIELD_INTERNAL_H

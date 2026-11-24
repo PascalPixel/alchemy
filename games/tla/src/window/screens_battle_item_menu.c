@@ -11,7 +11,6 @@
 #include "types.h"
 #include "system/scene.h"
 #include "edition.h"
-#include "graphics/graphics.h"
 #include "graphics/uiwindow.h"
 #include "battle_effect/battle_effect.h"
 #include "field/object.h"

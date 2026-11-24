@@ -7,13 +7,13 @@
 #include "flags.h"
 #include "fixed_math.h"
 #include "sounds.h"
-#include "field/flag_call.h"
 #include "system/frame.h"
 #include "field/field.h"
 #include "field/object.h"
 #include "field/resource_slot.h"
 #include "macros.h"
 #include "version.h"
+#include "scene/ground_effects.h"
 
 /// What a shortcut key's assignment requests, bits 15..14
 /// (Field_RequestShortcut), as The Broken Seal's.
@@ -65,9 +65,6 @@ enum FieldShortcutKind {
 /// The world map camera turns toward the pad's yaw by at most about 2.8
 /// degrees a frame.
 #define WORLD_MAP_YAW_STEP_MAX (TRIG_TURN / 128)
-/// The map's kind of wading (GROUND_EFFECTS_WADING) in Taopo Swamp, where the
-/// leader sinks into the mud.
-enum { MAP_WADING_MUD = 2 };
 
 /// SC_WALK (LEADER_MOVEMENT_WALKING): the leader's control at one pace, a
 /// pixel a frame whatever the keys. Unused: nothing sets
@@ -75,9 +72,9 @@ enum { MAP_WADING_MUD = 2 };
 /// the run, the wading, the footprints or the steered velocity, a script
 /// command of its own, so both stay.
 s32 Actor_UpdateWalkingControl(struct Actor *actor) {
-  struct FieldPosition position;
-  struct FieldPosition testPosition;
-  struct FieldPosition contact;
+  struct Point position;
+  struct Point testPosition;
+  struct Point contact;
   s16 angleOffsets[22];
   s32 collision;
   s32 pushed;
@@ -221,7 +218,7 @@ push_objects:
                                   &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(toFIXED(1) / 4, direction,
-                                    (struct FieldPosition *)&other->x.fixed);
+                                    (struct Point *)&other->x.fixed);
               other->targetX = ACTOR_NO_TARGET;
               other->targetY = ACTOR_NO_TARGET;
               other->targetZ = ACTOR_NO_TARGET;
@@ -360,10 +357,8 @@ s32 Field_CheckConfiguredKeys(void) {
 /// (16.16 pixels) with radii radiusA and radiusB (pixels); -1 otherwise.
 s32 Field_CheckSpheresOverlap(FIXED *firstPosition, s32 radiusA,
                               FIXED *secondPosition, s32 radiusB) {
-  const struct FieldPosition *firstPoint =
-      (const struct FieldPosition *)firstPosition;
-  const struct FieldPosition *secondPoint =
-      (const struct FieldPosition *)secondPosition;
+  const struct Point *firstPoint = (const struct Point *)firstPosition;
+  const struct Point *secondPoint = (const struct Point *)secondPosition;
   const s32 *firstCoordinate = &firstPoint->x;
   const s32 *secondCoordinate = &secondPoint->x;
   s32 dx = FIXEDtoINT(*firstCoordinate++ - *secondCoordinate++);
@@ -418,9 +413,9 @@ extern struct MapCell gMapGridCellBuffer[];
 /// running, sliding around walls, pushing movable actors, turning, playing the
 /// matching animation and leaving footprints.
 s32 Actor_UpdatePlayerControl(struct Actor *actor) {
-  struct FieldPosition position;
-  struct FieldPosition testPosition;
-  struct FieldPosition contact;
+  struct Point position;
+  struct Point testPosition;
+  struct Point contact;
   s16 angleOffsets[22];
   s32 collision;
   s32 pushed;
@@ -587,7 +582,7 @@ push_objects:
                                   &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(toFIXED(1) / 4, direction,
-                                    (struct FieldPosition *)&other->x.fixed);
+                                    (struct Point *)&other->x.fixed);
               other->targetX = ACTOR_NO_TARGET;
               other->targetY = ACTOR_NO_TARGET;
               other->targetZ = ACTOR_NO_TARGET;
@@ -653,7 +648,7 @@ counted:
     actor->velocityX = collision;
     actor->velocityZ = collision;
     Vector_AddPolarOffset(speed, (u16)heading,
-                          (struct FieldPosition *)&actor->velocityX);
+                          (struct Point *)&actor->velocityX);
     if (actor->timer != 0)
       actor->timer--;
   }

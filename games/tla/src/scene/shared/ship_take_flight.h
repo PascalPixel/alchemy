@@ -5,7 +5,7 @@ void Ship_TakeFlight(void) {
   s32 i;
 
   Event_PlaySound(SE_POWER_UP);
-  Actor_SetFlightMode(ship, 1);
+  Actor_SetFlightMode(ship, SHIP_POWERING_UP);
   for (i = 0; i < 20; i++) {
     s32 behavior = WorldMap_GetBlockCellBehavior(&ship->x.fixed);
 
@@ -14,5 +14,5 @@ void Ship_TakeFlight(void) {
       break;
     System_Wait(1);
   }
-  Actor_SetFlightMode(ship, 2);
+  Actor_SetFlightMode(ship, SHIP_IN_FLIGHT);
 }

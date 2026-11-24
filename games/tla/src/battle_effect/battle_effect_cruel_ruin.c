@@ -63,13 +63,12 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
   // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
   BattleEffect_ClearTintTimers();
-  view->secondMode = BATTLE_BACKGROUND_FIXED;
+  view->bg1ScrollMode = BATTLE_BACKGROUND_FIXED;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
-                              BATTLE_BACKGROUND_ID(battle), 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-  view->secondMode = BATTLE_BACKGROUND_NONE;
+  view->bg1ScrollMode = BATTLE_BACKGROUND_NONE;
   REG_BG2X = 0;
   REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
   REG_BG2PA = Q_8_8(0.5);
@@ -161,8 +160,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_CRASH);
     if (frame == 5) {
       gBgScroll[1].x = state->savedBg1X;
-      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               BATTLE_BACKGROUND_ID(battle), -1);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, -1);
     }
 
     // From frame 8, step each colour of BG palettes 6 to 13 one shade towards
@@ -367,8 +365,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                            TINT_KEEP, 0);
   gBgScroll[1].x = state->savedBg1X;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED,
-                              BATTLE_BACKGROUND_ID(battle), 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
@@ -407,7 +404,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
   state = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, BATTLE_SHEET_BYTES);
   state->vblanksSinceTransfer = 1;
   state->args = args;
   BattleEffect_StartCanvasLayer(0);
@@ -654,7 +651,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
 
   // Turn BG2 into a 128x128 canvas, one step a frame.
   BattleEffect_ConfigureEffectDisplay();
-  view->secondMode = BATTLE_BACKGROUND_FIXED;
+  view->bg1ScrollMode = BATTLE_BACKGROUND_FIXED;
   wait(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -677,7 +674,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
                           DISPCNT_WIN1_ON,
                       IO_WRITE_HALFWORD);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-  view->secondMode = BATTLE_BACKGROUND_NONE;
+  view->bg1ScrollMode = BATTLE_BACKGROUND_NONE;
   wait(1);
   BattleEffect_SetupCanvasWindows();
   REG_BG2PA = Q_8_8(1);
@@ -1374,10 +1371,10 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           // The sprite takes priority 1, in bits 2 and 3 of the high byte of
           // its OAM attribute 2.
           {
-            s32 b = ((u8 *)obj)[9];
+            s32 b = obj->attr.bytes[1];
             u8 x = b & -13;
             x |= 4;
-            ((u8 *)obj)[9] = x;
+            obj->attr.bytes[1] = x;
           }
           Iwram_CopyWords((void *)OBJ_TILES(obj), src, OBJ_32X32_4BPP_BYTES);
           src += OBJ_32X32_4BPP_BYTES;

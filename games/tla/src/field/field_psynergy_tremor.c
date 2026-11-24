@@ -98,7 +98,7 @@ void FieldPsynergy_TremorOnTarget(void) {
       sprite->depth = OAM_DEPTH_WINDOW;
       particle->timer = -1;
     }
-    BattleEffect_SetObjectUpdateMode(scene->caster, 0);
+    BattleEffect_SetObjectUpdateMode(scene->caster, CASTER_LOOK_NORMAL);
     if (target != NULL && targetSprite != NULL) {
       Sprite_SetAnimationSpeedFar(targetSprite, 0);
       FieldPsynergy_DecodePicture(
@@ -226,7 +226,7 @@ void FieldPsynergy_Tremor(void) {
   s32 frames;
 
   FieldPsynergy_FadeToCastColor();
-  BattleEffect_SetObjectUpdateMode(scene->caster, 0);
+  BattleEffect_SetObjectUpdateMode(scene->caster, CASTER_LOOK_NORMAL);
   ViewMove_Start(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
   wait(10);

@@ -20,7 +20,6 @@
 #include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -50,7 +49,6 @@
 #include "edition.h"
 #include "field/objdisp.h"
 #include "system/heap_release.h"
-#include "field/flag_call.h"
 #include "graphics/display_transition.h"
 #include "system/task.h"
 #include "system/io_write_queue.h"
@@ -111,14 +109,6 @@ struct SceneEncounterRule {
   s16 flag;      ///< -1 for none; the rule applies while the flag is clear
   u8 groundZone; ///< ordinary ground
   u8 secondZone; ///< MAP_CELL_SECOND_ZONE cells
-};
-
-/// A world map encounter rule, ended by kind -1.
-struct TerrainRule {
-  s16 kind;     ///< the terrain kind of the map block, 0 to 19
-  s16 behavior; ///< the terrain's behavior, or -1 for any
-  s16 flag;     ///< -1, or a flag the rule needs set
-  s16 zone;
 };
 
 /// A point that Vector_AddPolarOffset moves as three coordinates and the item
@@ -182,10 +172,6 @@ struct MapRegion {
 /// (encounter_rules.s).
 extern const struct SceneEncounterRule gScene_EncounterRules[];
 
-extern struct TerrainRule gWorldMap_EncounterRules[];
-
-extern struct TerrainRule gWorldMap_ShipEncounterRules[];
-
 extern const struct EncounterZone gEncounterZones[];
 
 /// Each scene's music by scene or group, entrance and flag (cue_rules.s).
@@ -208,5 +194,14 @@ extern u8 gMapSceneBoundsOffset[];
 extern s16 gSceneItems[];
 
 extern const u8 gField_ExamineTriggerMessageOffsets[];
+
+/// The chest sprite's animations, for the targets and treasure spot parts.
+enum {
+  TREASURE_SPOT_CHEST_OPEN = 2,    ///< standing open
+  TREASURE_SPOT_CHEST_OPENING = 4, ///< its lid lifting
+  TREASURE_SPOT_CHEST_CLOSING = 5, ///< closing again on what nobody could carry
+  TREASURE_SPOT_CHEST_OPENING_EMPTY = 6, ///< its lid lifting on nothing inside
+  TREASURE_SPOT_CHEST_MIMIC = 7          ///< jumping up as a mimic
+};
 
 #endif

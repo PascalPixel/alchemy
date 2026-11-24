@@ -533,19 +533,20 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
 
           // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-          width = gBattleEffect_PuffArcPictureWidths[picture];
-          blitters[0](canvas,
-                      state->sheet + gBattleEffect_PuffArcPictures[picture],
-                      particle->x - (width >> 1),
-                      particle->y + gBattleEffect_PuffArcPictureBiasY[picture],
-                      width, gBattleEffect_PuffArcPictureHeights[picture]);
+          width = gBattleEffect_EmberStreakPictureWidths[picture];
+          blitters[0](
+              canvas, state->sheet + gBattleEffect_EmberStreakPictures[picture],
+              particle->x - (width >> 1),
+              particle->y + gBattleEffect_EmberStreakPictureBiasY[picture],
+              width, gBattleEffect_EmberStreakPictureHeights[picture]);
 #else
           blitters[0](
-              canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
+              canvas, state->sheet + gBattleEffect_EmberStreakPictures[picture],
               particle->x -
-                  ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
-              particle->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
-              gBattleEffect_PuffArcPictureHeights[picture]);
+                  ((width = gBattleEffect_EmberStreakPictureWidths[picture]) >>
+                   1),
+              particle->y + gBattleEffect_EmberStreakPictureBiasY[picture],
+              width, gBattleEffect_EmberStreakPictureHeights[picture]);
 #endif
         }
         particle->variant++;

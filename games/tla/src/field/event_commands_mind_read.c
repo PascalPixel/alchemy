@@ -10,7 +10,6 @@
 #include "graphics/palette_buffers.h"
 #include "system/io_reg.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -32,19 +31,6 @@
 #include "field/event_commands.h"
 #include "field/object.h"
 #include "window/item_icon.h"
-
-/// Actor_SetLayersColorMode's value that cycles the actor's colours.
-#define LAYERS_COLOR_CYCLING 0
-
-/// SPRITE_MOVE_HAND's animations, The Broken Seal's sheet and numbers.
-enum MoveHandAnimation {
-  MOVE_HAND_ANIMATION_OPEN = 1, ///< open, its fingers spread
-  MOVE_HAND_ANIMATION_GRIP = 3, ///< its fingers bent as if gripping
-  /// MOVE_HAND_ANIMATION_OPEN and MOVE_HAND_ANIMATION_GRIP in turn, as it
-  /// strains against what it pushes.
-  MOVE_HAND_ANIMATION_FLEX = 4,
-  MOVE_HAND_ANIMATION_FIST = 5
-};
 
 /// A line's offset in Mind Read's wave at a phase: a sine 4 pixels either way,
 /// a turn every 160 phase steps.
@@ -219,13 +205,13 @@ void MindRead_UpdateCrescent(struct Actor *target) {
 }
 
 /// Gives an actor's sprite colour mode value - 1 (enum SpriteColorMode), or for
-/// LAYERS_COLOR_CYCLING the next of gAnim_ChildPaletteCycle's swapped colours,
-/// a step every 2 frames, as Mind Read's wave does to its caster.
+/// LAYERS_COLOR_CYCLING the next of gMindRead_CasterColorCycle's swapped
+/// colours, a step every 2 frames, as Mind Read's wave does to its caster.
 void Actor_SetLayersColorMode(void *object, s32 value) {
   s32 child = value - 1;
 
-  if (value == 0)
-    child = gAnim_ChildPaletteCycle[(gFrameCount >> 1) & 7];
+  if (value == LAYERS_COLOR_CYCLING)
+    child = gMindRead_CasterColorCycle[(gFrameCount >> 1) & 7];
   Actor_SetSpriteColorModeFar(object, child);
 }
 

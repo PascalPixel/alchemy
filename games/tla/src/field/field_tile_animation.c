@@ -17,7 +17,6 @@
 #include "graphics/palette_cycles.h"
 #include "graphics/palette_buffers.h"
 #include "system/io_write_queue.h"
-#include "field/flag_call.h"
 #include "field/curve.h"
 #include "edition.h"
 
@@ -106,8 +105,11 @@ void WorldMap_PreloadCurrentTileBlock(void) {
       }
     }
   }
-  block = (struct WorldMapCell *)Ram_MapBlocks +
-          (((x / toFIXED(32)) & 31) + (((y / toFIXED(32)) & 31) << 5));
+  block =
+      (struct WorldMapCell *)Ram_MapBlocks +
+      (((x / toFIXED(WORLD_MAP_CELL_PIXELS)) & (WORLD_MAP_VIEW_CELLS - 1)) +
+       (((y / toFIXED(WORLD_MAP_CELL_PIXELS)) & (WORLD_MAP_VIEW_CELLS - 1)) *
+        WORLD_MAP_VIEW_CELLS));
   WorldMap_UpdateRegionTint(block->region, 1);
   value = block->region;
   resources = gWorldMap_GraphicsResources[WorldMap_GetRegionGroupGraphics(
@@ -1030,7 +1032,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height) {
   shape = gMapShapeGrid +
           (map->layers[layer & 3].cells - (struct MapCell *)Ram_MapCellBuffer);
   shape += (FIELD_CELL(x)) + FIELD_CELL(z) * MAPGRID_SIZE;
-  *shape = MapCollision_FindOrAddTagFar(layer, 0, height);
+  *shape = MapShape_FindOrAddFar(layer, 0, height);
 }
 
 /// The ground height at (x, z) of layer, in 8-pixel steps.
@@ -1154,8 +1156,7 @@ s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height) {
 
 /// As MapGrid_CheckCollisionAt for the point position (16.16 pixels, read as
 /// its whole-pixel halves) on the actor's layer, against its ground height.
-s32 MapGrid_CheckCollision(struct Actor *actor,
-                           struct FieldPosition *position) {
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Point *position) {
   s32 x = ((struct FieldCoordinate *)&position->x)->part[0].integer;
   s32 z = ((struct FieldCoordinate *)&position->z)->part[0].integer;
   struct MapState *map = Ram_HeapSlots->mapGrid;
@@ -1193,8 +1194,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 
 /// As MapGrid_CheckCollision, against the actor's height and with no -1: 2 on
 /// a wall, 1 when the ground rises more than 8 pixels above it, else 0.
-s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
-                                struct FieldPosition *position) {
+s32 MapGrid_CheckCollisionAbove(struct Actor *actor, struct Point *position) {
   s32 x = ((struct FieldCoordinate *)&position->x)->part[0].integer;
   s32 z = ((struct FieldCoordinate *)&position->z)->part[0].integer;
   struct MapState *map = Ram_HeapSlots->mapGrid;
@@ -1252,12 +1252,14 @@ s32 WorldMap_GetBlockCellBehavior(struct WorldPosition *position) {
 
   // Rounded towards zero, as a division would.
   if (x < 0)
-    x += toFIXED(32) - 1;
-  x = WORLD_MAP_BLOCK(x) & 31;
+    x += toFIXED(WORLD_MAP_CELL_PIXELS) - 1;
+  x = WORLD_MAP_BLOCK(x) & (WORLD_MAP_VIEW_CELLS - 1);
   if (z < 0)
-    z += toFIXED(32) - 1;
-  z = WORLD_MAP_BLOCK(z) & 31;
-  return ((struct WorldMapBlocks *)gCellTiles)->blocks[x + z * 32].place;
+    z += toFIXED(WORLD_MAP_CELL_PIXELS) - 1;
+  z = WORLD_MAP_BLOCK(z) & (WORLD_MAP_VIEW_CELLS - 1);
+  return ((struct WorldMapBlocks *)gCellTiles)
+      ->blocks[x + z * WORLD_MAP_VIEW_CELLS]
+      .place;
 }
 
 /// Returns the world map's collision value (1-15) at position: from the upper

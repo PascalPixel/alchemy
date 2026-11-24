@@ -40,7 +40,7 @@ const s32 gFieldEffect_FragmentScript[] = {
 /// (Actor_SetLayersColorMode): its colour channels swapped one way after
 /// another and back to its own; The Broken Seal's
 /// gMindRead_CasterPaletteCycle.
-const u8 gAnim_ChildPaletteCycle[8] = {
+const u8 gMindRead_CasterColorCycle[8] = {
     SPRITE_COLOR_GRB, SPRITE_COLOR_RBG, SPRITE_COLOR_BGR, SPRITE_COLOR_GBR,
     SPRITE_COLOR_BGR, SPRITE_COLOR_RBG, SPRITE_COLOR_GRB, SPRITE_COLOR_NORMAL,
 };

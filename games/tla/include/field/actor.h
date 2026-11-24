@@ -20,6 +20,10 @@ enum ScreenTransitionStyle {
   TRANSITION_CENTRE_LINE = 4
 };
 
+/// TRANSITION_CENTRE_LINE's variants: the lines open or close steadily, or
+/// flicker every other frame as they close (ScreenTransition_UpdateFromCenter).
+enum CentreLineVariant { CENTRE_LINE_STEADY = 0, CENTRE_LINE_FLICKERING = 1 };
+
 /// A scene transition as FieldState.transition holds it.
 #define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
 /// The two bytes of a SCENE_TRANSITION: its enum ScreenTransitionStyle, and
@@ -117,6 +121,15 @@ union FieldObject;
 /// An actor's per-frame hook, called with the actor (Actor_UpdateAllOnField).
 typedef void (*ObjectUpdate)(union FieldObject *object);
 
+/// Actor.retainSpriteCache's bits, read by ActorSystem_PlaceSprites.
+enum ActorSpriteCacheFlag {
+  /// Keeps the sprite's VRAM cache entry while the field is suspended or the
+  /// actor is off screen (Actor_SetItemIcon sets it).
+  ACTOR_KEEP_SPRITE_VRAM = 0x1,
+  /// Keeps composing its picture while it is off screen.
+  ACTOR_COMPOSE_OFF_SCREEN = 0x2
+};
+
 /// An actor on the field: its script, position, motion toward a target,
 /// sprites and update hook.
 struct Actor {
@@ -169,7 +182,8 @@ struct Actor {
   u8 collisionFlags;  ///< ActorCollisionFlag bits
   u8 steeringFlags;   ///< ActorSteeringFlag bits
   u8 paused;
-  /// Keeps its sprite's VRAM cache entry (Actor_SetItemIcon sets it).
+  /// ActorSpriteCacheFlag bits: what its sprite keeps while the field is
+  /// suspended or the actor is off screen (ActorSystem_PlaceSprites).
   u8 retainSpriteCache;
   u8 repeatCount; ///< the actor script's loop count
   s16 wait;       ///< the actor script's wait, in frames

@@ -11,7 +11,6 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -27,6 +26,7 @@
 #include "field/event_inline.h"
 #include "flags.h"
 #include "scene/scene.h"
+#include "shop/shop.h"
 
 extern struct ActorPlacement gChampaRooms_ActorPlacements[];
 extern struct ActorPlacement gChampaRooms_IsletActorPlacements[];
@@ -70,8 +70,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-void Shop_Run(s32 shop, s32 actorId);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (IN_ISLET_ROOMS())

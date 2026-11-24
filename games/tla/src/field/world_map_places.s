@@ -57,7 +57,7 @@ gWorldMapPlaces:
 	place 45, 0x21, SPRITE_UNSEEN_MARKER, 12461, 7142, 90, -1, SceneId_LemuriaEntrance, -1, SceneId_LemuriaEntrance, -1
 	place 45, 0x00, SPRITE_WORLD_MAP_LEMURIA, 13088, 1058, 90, -1, SceneId_LemuriaEntrance, -1, SceneId_LemuriaEntrance, -1
 	place 46, 0x02, SPRITE_WORLD_MAP_TUNDARIA_TOWER, 9490, 10930, 90, -1, SceneId_TundariaTowerEntrance, -1, 0, -1
-	place 47, 0x01, SPRITE_WORLD_MAP_HOUSE, 5810, 10134, 90, -1, SceneId_SwAttekaIslet, -1, 0, -1
+	place 47, 0x01, SPRITE_WORLD_MAP_HOUSE, 5810, 10134, 90, -1, SceneId_SouthwestAttekaIslet, -1, 0, -1
 	place 48, 0x01, SPRITE_WORLD_MAP_HOUSE, 8582, 7380, 90, -1, SceneId_GondowanSettlement, -1, 0, -1
 	place 49, 0x01, SPRITE_WORLD_MAP_HOUSE, 6307, 6200, 90, -1, SceneId_HesperiaSettlement, -1, 0, -1
 	place 50, 0x01, SPRITE_WORLD_MAP_SNOWY_HOUSE, 8848, 4600, 90, -1, SceneId_KaltIsland, -1, 0, -1

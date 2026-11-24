@@ -25,7 +25,6 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/palette_buffers.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -1945,7 +1944,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/field_effect_move.c"
 
-#undef WORD_AT
 #undef PLACE
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -1956,7 +1954,7 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 #include "../field/field_effect_spawn.c"
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
-#include "../field/map_cell_sprite.c"
+#include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
 

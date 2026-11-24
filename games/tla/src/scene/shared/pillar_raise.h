@@ -28,7 +28,7 @@ void Pillar_Raise(u16 *list) {
     actor->collisionFlags = 0;
     Actor_SetSpriteFlags(actor, 0);
     level += CELL_HEIGHT_STEPS(toFIXED(32));
-    newShape = MapCollision_FindOrAddTag(*layer, shape, level);
+    newShape = MapShape_FindOrAdd(*layer, shape, level);
     shapes += index;
     index <<= 2;
     ((struct ShapeCell *)shapes)->shape = newShape;

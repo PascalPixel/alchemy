@@ -56,18 +56,9 @@ extern u8 gMenu_PlusSignString;
 extern s8 gMenu_TopEntryCommandByPosition[];
 extern s8 gMenu_TopEntryPositionByCommand[];
 ///@}
-/// The price digits 0 to 9, 32 bytes each (digits.4bpp), copied into a price
-/// sprite's tiles (Shop_DrawPriceDigit).
-extern u8 gShop_GlyphBytes[];
 /// `L`, before a level in the file list (screens_save.c).
 extern const u8 gStatusMenu_LevelLetterString[];
-void *IconMenu_Open(void);
 void Menu_HideEntryIcons(void);
-void IconMenu_AddIcon(s32 icon);
-void IconMenu_Close(void);
-void SelectionMenu_FreeLargeIcon(void);
-s32 Sanctum_NeedsService(s32 entry_id, s32 kind);
-void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 
 struct Window;
 struct WindowSprite;
@@ -81,21 +72,11 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 first);
 void Event_FinishScreenTransitionFar(void);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items);
-void DebugFlagEditor_DrawTable(s32 window, s32 startFlag);
-s32 DebugFlagEditor_HandleInput(s32 window, s32 *page, s32 *cursor);
-void IconMenu_LayoutIcons(s32 x, s32 y, s32 w, s32 h);
-s32 IconMenu_Run(s32 initial);
 void Party_AdjustCoinsFar(s32 amount);
 s32 Party_ListMembersFar(s16 *unitIds);
 s32 Party_SumDjinnCountsFar(s32 element);
-struct WindowSprite *WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
-                                                        struct Window *window,
-                                                        s32 x, s32 y);
-void SelectionMenu_StopDrawing(void);
 void *String_FormatPlayTime(s32 frames, u8 *out);
-void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Icon_Show(struct WindowSprite *icon);
-void Window_SetTilemapEntryFar(s32 window, s32 value, s32 x, s32 y, u32 mode);
 
 /// `:` and the sixteen hex digits, for the debug rooms' flag and destination
 /// lists.

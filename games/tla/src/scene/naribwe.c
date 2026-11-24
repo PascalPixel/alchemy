@@ -25,6 +25,7 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "field/map_grid.h"
+#include "shop/shop.h"
 
 /// The villager has asked where the party comes from.
 #define FLAG_ASKED_WHERE_FROM 0x85e
@@ -102,8 +103,6 @@ void Event_End(void);
 void Actor_DisableById(s32 id);
 void Rope_Initialize(void);
 void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
-void Shop_Run(s32 stockRow, s32 keeper);
-void Sanctum_Run(s32 keeper);
 
 extern struct ActorPlacement gNaribwe_Placements[];
 extern struct ActorPlacement gNaribwe_FireLitPlacements[];

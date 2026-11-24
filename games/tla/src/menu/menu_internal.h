@@ -24,9 +24,9 @@
 #include "game/game.h"
 #include "game/inventory.h"
 #include "game/item.h"
+#include "gamepak/far_call/shop.h"
 #include "graphics/display_transition.h"
 #include "graphics/glyph.h"
-#include "graphics/graphics.h"
 #include "graphics/render_input.h"
 #include "graphics/render_placement.h"
 #include "graphics/resource.h"
@@ -485,6 +485,16 @@ struct DjinnMenuBackdrop;
 s32 GameFlag_Get(s32);
 void GameFlag_Clear(s32 flag);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
+void Text_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 offsetX,
+                                s32 offsetY);
+void Text_DrawStringInWindowFar(u8 *text, s32 window, u32 x, u32 y);
+void Text_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x, s32 y);
+void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x, s32 y);
+s32 Text_SetColorFar(s32 color);
+void Ability_BuildIconTilesFar(s32 action, s32 withBase, s32 *slot, s32 *tile,
+                               s32 reuse);
+void Window_DrawDividerLineFar(s32 window, s32 x1, s32 y1, s32 x2, s32 y2);
+void Portrait_ReloadFar(s32 slot, s32 key, s32 unused);
 /// Draws an empty window at tile (x, y), width by height tiles, and frees the
 /// text tiles the rectangle showed.
 void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
@@ -634,5 +644,23 @@ enum DjinnComparePage {
   DJINN_COMPARE_PAGE_RECEIVER = 1, ///< the receiver's stats and Psynergy
   DJINN_COMPARE_PAGE_BOTH = 2      ///< both party members' stats, shown first
 };
+
+/// The Japanese status panel's PP row, "EP    /": label and slash in one
+/// string, drawn by the unit summary.
+extern const u8 gStatusPanel_PpRowString[];
+/// The Japanese status panel's HP row, "HP    /", the slash already in its
+/// cell at 48.
+extern const u8 gStatusPanel_HpRowString[];
+/// The HP label outside Japan, in each language's form ("KP" in German, "PV"
+/// in Spanish and French, "PS" in Italian).
+extern const u8 gStatusPanel_HpString[];
+/// The PP label outside Japan, which every language writes "PP".
+extern const u8 gStatusPanel_PpString[];
+/// The slash between a current and maximum figure on the status panel,
+/// outside Japan.
+extern const u8 gStatusPanel_SlashString[];
+/// Draws a number right-aligned in a field ending at pixel x of a window: the
+/// HP and PP figures outside Japan.
+void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
 
 #endif

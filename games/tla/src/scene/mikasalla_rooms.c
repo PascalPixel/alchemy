@@ -14,7 +14,6 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -31,6 +30,7 @@
 #include "field/actor_script.h"
 #include "field/field_sequence.h"
 #include "text/msg_ids.h"
+#include "shop/shop.h"
 
 /// Set once Galahad has met the party and warned it of Isaac's enemies.
 #define FLAG_MIKASALLA_GALAHAD_MET 0xa39
@@ -91,8 +91,6 @@ extern struct ActorPlacement gMikasallaRooms_SanctumPlacements[];
 extern struct Trigger gMikasallaRooms_HousesTriggers[];
 extern struct Trigger gMikasallaRooms_SanctumTriggers[];
 
-void Shop_Run();
-
 void Scene_FadeInAndClearFlag(void);
 
 extern s32 gMikasallaRooms_DaughterInLawPaces[];
@@ -142,8 +140,6 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gMikasallaRooms_SanctumTriggers;
   return gMikasallaRooms_HousesTriggers;
 }
-
-void Sanctum_Run();
 
 /// The boy in a blue shirt in the explorer's family's house, behind the
 /// village's southwest door, asks Felix: "Hey, mister! Are you an explorer?"

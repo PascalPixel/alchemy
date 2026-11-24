@@ -21,8 +21,8 @@ u32 gCrumbs_Script[] = {
     SC_RELEASE,
 };
 
-/// An ember (Embers_Spawn) does the same.
-u32 gEmbers_Script[] = {
+/// An ice chip (IceChips_Spawn) does the same.
+u32 gIceChips_Script[] = {
     SC_WAIT(20),
     SC_LABEL(1),
     SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),

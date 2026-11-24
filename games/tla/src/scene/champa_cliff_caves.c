@@ -182,7 +182,6 @@ enum ChampaCliffCavesHomesActorId {
 #include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "field/field_event.h"
-#include "field/scene_call.h"
 #include "field/event.h"
 #include "field/field_sequence_event.h"
 #include "field/field.h"
@@ -195,7 +194,6 @@ enum ChampaCliffCavesHomesActorId {
 #include "system/system.h"
 #include "battle/battle.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -204,7 +202,6 @@ enum ChampaCliffCavesHomesActorId {
 
 #include "field/call.h"
 #include "field/actor.h"
-#include "field/flag_call.h"
 #include "system/dma.h"
 #include "system/task.h"
 #include "macros.h"
@@ -1018,12 +1015,12 @@ void ChampaCliffCaves_FightAvimander(void) {
   const u16 *color;
   struct Actor *actor = Actor_GetById(ACTOR_AVIMANDER);
 
-  if (Flag_IsSet(FLAG_CHAMPA_AVIMANDER_BEATEN))
+  if (Event_GetFlag(FLAG_CHAMPA_AVIMANDER_BEATEN))
     return;
   Event_Start();
   Event_EndLastingPsynergy(0);
   Actor_WalkToAndWaitById(gMainRoutineState.leaderActorId, 584, 248);
-  if (Flag_IsSet(FLAG_CHAMPA_BRIGGS_STOPPED_PARTY)) {
+  if (Event_GetFlag(FLAG_CHAMPA_BRIGGS_STOPPED_PARTY)) {
     Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_EAST);
     Event_SetMessageId((s32)MsgBackForMore);
     // "Back for more?"
@@ -1039,7 +1036,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     // "I'm sorry. You look like quite a nice boy, but I just can't allow..."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
   } else {
-    Flag_Set(FLAG_CHAMPA_BRIGGS_STOPPED_PARTY);
+    Event_SetFlag(FLAG_CHAMPA_BRIGGS_STOPPED_PARTY);
     Event_SetMessageId((s32)MsgHoldItRight);
     // "Hold it right there!"
     FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
@@ -1235,7 +1232,8 @@ void ChampaCliffCaves_AskIfBriggsLearned(void) {
   Actor_SetPosition(ACTOR_BRIGGS, 584, 264);
   Actor_FaceDirection(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST, 0);
-  Actor_SetAnimationById(gMainRoutineState.leaderActorId, 41);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId,
+                         ANIM_LEADER_LIE_ON_BACK);
   FieldCamera_FollowActor(gMainRoutineState.leaderActorId, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

@@ -51,6 +51,10 @@ enum SpriteColorMode {
 #define SPRITE_ANIMATION_KEEP_PLACE 0x80
 #define SPRITE_ANIMATION_INDEX_MASK 0x7f
 
+/// A sprite layer's priority past the four drawn ones (SpriteAnimation's
+/// priority above 3): the layer is kept but not drawn.
+#define SPRITE_LAYER_NOT_DRAWN 9
+
 /// One animation layer of a sprite: its animation id, pictures, running script
 /// and timer.
 struct SpriteAnimation {
@@ -308,9 +312,40 @@ enum ActorAnimation {
   /// Seen from behind, arms flung up and waving: the leader carried over a
   /// waterfall.
   ANIM_LEADER_FLAIL = 40,
+  /// Lying on his back, seen from his feet: the leader washed up or put to
+  /// bed.
+  ANIM_LEADER_LIE_ON_BACK = 41,
+  ANIM_LEADER_SIT_UP = 42, ///< sitting up, legs out in front of him
+  /// Swinging each arm and kicking out each leg, as Felix checks himself for
+  /// injuries on Idejima's beach.
+  ///@{
+  ANIM_LEADER_SWING_RIGHT_ARM = 45,
+  ANIM_LEADER_SWING_LEFT_ARM = 46,
+  ANIM_LEADER_KICK_RIGHT_LEG = 47,
+  ANIM_LEADER_KICK_LEFT_LEG = 48,
+  ///@}
   /// Sitting on the floor, legs out, arms flung up and then lowered: the leader
   /// knocked down.
   ANIM_LEADER_SIT = 49
+};
+
+/// A Djinni's lively animation on the four Djinn sprite sheets, facing the
+/// player: Venus bounces, Mars, Jupiter and Mercury wave their arms. It plays
+/// as the Djinni shrinks away on joining.
+#define DJINNI_ANIMATION_EXCITED 3
+
+/// SPRITE_PARTICLE's animations.
+enum ParticleAnimation {
+  ANIM_PARTICLE_FADE = 2, ///< its glow shrinking to a speck and gone
+  /// Its full glow and the next size down in turn, 3 frames each.
+  ANIM_PARTICLE_TWINKLE = 7,
+  /// Its swells, from a speck to its full glow, held 32 frames, and back:
+  /// slowly, 12 frames a step, or quickly, 6. Jupiter Lighthouse's sparks and
+  /// the motes of light inside Air's Rock take turns at them.
+  ///@{
+  ANIM_PARTICLE_SLOW_SWELL = 9,
+  ANIM_PARTICLE_QUICK_SWELL = 10
+  ///@}
 };
 
 #endif

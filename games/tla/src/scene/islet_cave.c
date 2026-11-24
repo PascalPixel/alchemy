@@ -38,7 +38,6 @@
 #include "field/scene_tables.h"
 #include "battle/battle.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -234,7 +233,7 @@ void IsletCave_FinishTeleport(void) {
   PaletteFade_StartInterpolation(16);
   wait(16);
 
-  gMainRoutineState.teleportState = 0;
+  gMainRoutineState.teleportState = TELEPORT_NONE;
   Actor_ConfigureSpriteColor(gMainRoutineState.leaderActorId, 0);
   state->transition = effect;
 }
@@ -246,7 +245,7 @@ void IsletCave_FinishTeleport(void) {
     Teleport_StartShimmer();                                                   \
     Teleport_PlaySparks();                                                     \
                                                                                \
-    gMainRoutineState.teleportState = 1;                                       \
+    gMainRoutineState.teleportState = TELEPORT_CHOSEN;                         \
     Event_Wait(40);                                                            \
     Actor_SetHorizontalPositionWithTerrain(gMainRoutineState.leaderActorId,    \
                                            toFIXED(x), toFIXED(z));            \

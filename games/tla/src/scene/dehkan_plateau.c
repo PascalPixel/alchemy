@@ -46,15 +46,12 @@
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/glyph.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "field/scene_tables.h"
 #include "scene_ids.h"
 #include "field/event.h"
-#include "field/flag_call.h"
-#include "field/scene_call.h"
 #include "fixed_math.h"
 #include "field/actor_script.h"
 #include "gamepak/far_call/system.h"
@@ -2118,9 +2115,9 @@ void DehkanPlateau_CreatePoundCube(void) {
     sprite->fullColor = 0;
     sprite->palette = 0;
     actor->motionFlags = clear;
-    actor->retainSpriteCache = 1;
+    actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     sprite->flags = clear;
-    sprite->countAndShadow[0] = clear;
+    sprite->count = clear;
     glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_POUND_CUBE);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);

@@ -37,7 +37,6 @@
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "graphics/window_sprite_list.h"
-#include "graphics/graphics.h"
 #include "graphics/resource.h"
 #include "graphics/vram_tab.h"
 #include "menu/menu.h"
@@ -304,12 +303,13 @@ enum TrialRoadFountainStageActorId {
 /// stairs down at a stage's foot lead in at the top of the stage below, and
 /// the door at its top in at the foot of the next. The Shaman Village enters
 /// the first stage by its left or right path, at
-/// TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_E or _F, and the summit
-/// returns to the last stage the same way, at
-/// TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST_B or _EAST_B; each goes on to
-/// the stage entrance of its last digit. While Moapa explains the trial's
-/// rules (ShamanVillage_ExplainTrialRules), the village's entrance _G deals a
-/// course and TRIAL_ROAD_RULES_COURSE shows it. The summit is entered again
+/// TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_WEST or _EAST, and the
+/// summit returns to the last stage the same way, at
+/// TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST or _EAST; each goes on to the
+/// stage entrance of its last digit. While Moapa explains the trial's rules
+/// (ShamanVillage_ExplainTrialRules), the village sends the party in at
+/// TRIAL_ROAD_STAGES_FOR_TRIAL_RULES, which deals a course for
+/// TRIAL_ROAD_RULES_COURSE to show. The summit is entered again
 /// after the battle with Moapa, won or lost.
 enum TrialRoadEntrance {
   TRIAL_ROAD_STAGE_FOOT_LEFT = 1,
@@ -1192,7 +1192,7 @@ void TrialRoad_PoundStake(s32 id, s32 phase, s32 frame) {
     actor->scaleY = FIXED_ONE - frame * (FIXED_ONE / 16);
   else
     actor->scaleY = FIXED_ONE;
-  if (phase == 1) {
+  if (phase == POUND_STAGE_LANDED) {
     TrialRoad_LowerStake(id);
     TrialRoad_RaiseStake(other);
     switch (id) {
@@ -2375,7 +2375,7 @@ s32 Scene_PrepareMap(void) {
     u32 i;
 
     if ((u32)(entrance -
-              TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_E) <= 1) {
+              TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_WEST) <= 1) {
       if (!GameFlag_Get(FLAG_STAGE_ORDER_DEALT)) {
         unit = Unit_Get(gMainRoutineState.leaderActorId);
         Iwram_ClearWordsEntry(state, sizeof(*state));
@@ -2397,7 +2397,7 @@ s32 Scene_PrepareMap(void) {
       n = entrance % 10;
       Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, n);
     } else if ((u32)(entrance -
-                     TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST_B) <= 1) {
+                     TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST) <= 1) {
       if (!GameFlag_Get(FLAG_STAGE_ORDER_DEALT)) {
         unit = Unit_Get(gMainRoutineState.leaderActorId);
         Iwram_ClearWordsEntry(state, sizeof(*state));
@@ -2427,8 +2427,7 @@ s32 Scene_PrepareMap(void) {
       // From the summit, in at the top of the left or right path.
       n = entrance % 10;
       Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, n);
-    } else if (entrance ==
-               TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_G) {
+    } else if (entrance == TRIAL_ROAD_STAGES_FOR_TRIAL_RULES) {
       unit = Unit_Get(gMainRoutineState.leaderActorId);
       Iwram_ClearWordsEntry(state, sizeof(*state));
       value = 0;
@@ -4072,16 +4071,16 @@ void (*gTrialRoad_StageSetUps[])(void) = {
 /// pattern, in gTrialRoad_StageSetUps' order, then his run at the blue chests
 /// when he reached the stage's switch first and when Felix did.
 u32 gTrialRoad_RivalRecordings[] = {
-    450, // the pillar stage
-    451, // the torch stage
-    452, // the weeds stage
-    453, // the Pound stage
-    454, // the crumbling stage
-    455, // the log stage
-    456, // the fountain stage
-    457, // the sand stage
-    458, // the chests, Moapa at the switch first
-    459, // the chests, Felix at the switch first
+    RESOURCE_TRIAL_ROAD_PILLAR_RECORDING,
+    RESOURCE_TRIAL_ROAD_TORCH_RECORDING,
+    RESOURCE_TRIAL_ROAD_WEEDS_RECORDING,
+    RESOURCE_TRIAL_ROAD_POUND_RECORDING,
+    RESOURCE_TRIAL_ROAD_CRUMBLING_RECORDING,
+    RESOURCE_TRIAL_ROAD_LOG_RECORDING,
+    RESOURCE_TRIAL_ROAD_FOUNTAIN_RECORDING,
+    RESOURCE_TRIAL_ROAD_SAND_RECORDING,
+    RESOURCE_TRIAL_ROAD_CHESTS_MOAPA_FIRST_RECORDING,
+    RESOURCE_TRIAL_ROAD_CHESTS_FELIX_FIRST_RECORDING,
 };
 
 /// Each stage's place in the map, in cells.
@@ -4277,8 +4276,8 @@ LAST_DATA u32 gSceneExits[] = {
     SCENE_EXITS(TrialRoadGasp),
     SCENE_EXIT(TRIAL_ROAD_GASP_TO_TRIAL_ROAD_CAVE_ROCK, TrialRoadCaveRock, TRIAL_ROAD_CAVE_ROCK_FROM_TRIAL_ROAD_GASP),
     SCENE_EXITS(TrialRoadSummit),
-    SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_STAGES_WEST, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST_B),
-    SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_STAGES_EAST, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_EAST_B),
+    SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_STAGES_WEST, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST),
+    SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_STAGES_EAST, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_EAST),
     SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_CAVE_ROCK, TrialRoadCaveRock, TRIAL_ROAD_CAVE_ROCK_FROM_TRIAL_ROAD_SUMMIT),
     SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_SHAMAN_VILLAGE_HOUSES_EAST_A, ShamanVillageHouses, SHAMAN_VILLAGE_HOUSES_FROM_TRIAL_ROAD_SUMMIT_EAST_A),
     SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_SHAMAN_VILLAGE_HOUSES_EAST_B, ShamanVillageHouses, SHAMAN_VILLAGE_HOUSES_FROM_TRIAL_ROAD_SUMMIT_EAST_B),

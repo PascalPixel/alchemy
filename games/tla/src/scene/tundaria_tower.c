@@ -37,7 +37,6 @@
 #include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
-#include "field/flag_call.h"
 #include "field/map.h"
 #include "field/map_grid.h"
 #include "field/object.h"
@@ -45,7 +44,6 @@
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "gamepak/far_call/system.h"
-#include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/falling_rocks.h"
 #include "scene/magma_rock.h"
@@ -1254,8 +1252,8 @@ UNUSED void TundariaTower_RestoreCrumblingPillars(const u16 *table) {
             Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
         Actor_DisableById(id);
         cell->attributeB = MAP_CELL_JUMP;
-        *slot = MapCollision_FindOrAddTag(actor->layer, shape,
-                                          FIELD_HALF_CELL(height) + 4);
+        *slot = MapShape_FindOrAdd(actor->layer, shape,
+                                   FIELD_HALF_CELL(height) + 4);
         if (GameFlag_Get(flag))
           Actor_SelectAnimation(actor, 0);
       }
@@ -1383,7 +1381,8 @@ UNUSED void TundariaTower_CrumblePillar(u16 *row, s32 id) {
 
 /// Keeps the pillar's sprite cached and stops it.
 void TundariaTower_FreezePillar(s32 id) {
-  Actor_GetById(id)->retainSpriteCache = 3;
+  Actor_GetById(id)->retainSpriteCache =
+      ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
   Actor_DisableById(id);
 }
 
@@ -1424,7 +1423,8 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
       nextFlag = flag + 1;
       cells = map->layers[actor->layer].cells;
       shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-      actor->retainSpriteCache = 3;
+      actor->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
       if (GameFlag_Get(nextFlag)) {
         Actor_SetPosition(id, 0, 0);
       } else {
@@ -1441,8 +1441,8 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
             Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
         Actor_DisableById(id);
         cell->attributeB = MAP_CELL_JUMP;
-        *slot = MapCollision_FindOrAddTag(actor->layer, shape,
-                                          FIELD_HALF_CELL(height) + 4);
+        *slot = MapShape_FindOrAdd(actor->layer, shape,
+                                   FIELD_HALF_CELL(height) + 4);
         if (GameFlag_Get(flag))
           Actor_CopyGraphics(id, ACTOR_FIRST_PLACED + 1);
       }

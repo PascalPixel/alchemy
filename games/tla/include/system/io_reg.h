@@ -502,6 +502,28 @@ enum ObjMode {
   OBJ_MODE_WINDOW = 2            ///< drawn into the OBJ window, not shown
 };
 
+/// A sprite's affine mode, OAM attribute 0's bits 9..8: a plain sprite, one
+/// scaled or turned through its matrix, or one drawn so in a box twice its size
+/// so that a scale above 1 is not cut off.
+enum OamAffineMode {
+  OAM_AFFINE_OFF = 0,
+  OAM_AFFINE_ON = 1,
+  OAM_AFFINE_DOUBLE_SIZE = 3
+};
+
+/// A sprite's colours, OAM attribute 0's bit 13: 16 colours from one of the
+/// 16 palettes, or 256.
+enum ObjColors { OBJ_COLORS_16 = 0, OBJ_COLORS_256 = 1 };
+
+/// A sprite's shape, OAM attribute 0's bits 15..14; its size, attribute 1's
+/// bits 15..14, gives its dimensions with it (GBATEK, "LCD OBJ - OAM
+/// Attributes").
+enum ObjShape {
+  OBJ_SHAPE_SQUARE = 0,
+  OBJ_SHAPE_HORIZONTAL = 1, ///< wider than tall
+  OBJ_SHAPE_VERTICAL = 2    ///< taller than wide
+};
+
 /// A sprite's attributes 0 and 1 as one word, attr0 | attr1 << 16, the way
 /// routines that build their own sprite lists write them; x, 0 to 511, is
 /// shifted into the high half and y, 0 to 255, is the low byte.

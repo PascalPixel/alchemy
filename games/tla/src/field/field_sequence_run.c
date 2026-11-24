@@ -44,19 +44,8 @@ s32 Leader_StepOffTightrope(void);
 /// The sprite VRAM blocks the Pause menu needs free, or the field's sprites
 /// stop drawing while it runs.
 #define PAUSE_MENU_VRAM_BLOCKS 136
-/// The search code aboard the ship facing sea of world map collision 3: the
-/// World Map has no examine trigger for it, so the search finds nothing there.
-#define SHIP_SEA_EXAMINE_CODE 99
 /// A map entrance stream's row: the entrance, its x and z, and its flags byte.
 #define MAP_ENTRANCE_ROW_BYTES 6
-
-/// Teleport's steps (gMainRoutineState.teleportState): a place was chosen and
-/// the scene it lands in is loading, then the party arrives in it.
-enum TeleportState {
-  TELEPORT_NONE,
-  TELEPORT_CHOSEN,
-  TELEPORT_ARRIVING,
-};
 
 /// The field sequence: runs the current scene, which the party entered by
 /// entrance, until it leaves; returns the exit kind it left by, for
@@ -322,14 +311,14 @@ s32 FieldSequence_Run(void) {
           WorldMap_ReloadPendingAreaGraphics();
         } else if (state->raisedTrigger == FIELD_RAISED_TRIGGER_TELEPORT) {
           Leader_StopMoving();
-          MapScreen_Show(1); // MAP_SCREEN_TELEPORT
+          MapScreen_Show(MAP_SCREEN_TELEPORT);
           if (gMainRoutineState.teleportScene != -1)
             gMainRoutineState.teleportState = TELEPORT_CHOSEN;
         } else if (state->raisedTrigger == FIELD_RAISED_TRIGGER_MAP_SCREEN) {
           Leader_StopMoving();
-          // Shown once, to look (MAP_SCREEN_LOOK): MapScreen_Show always
-          // returns 0, so the mode is never flipped to Teleport's.
-          value = 0;
+          // Shown once, to look: MapScreen_Show always returns 0, so the mode
+          // is never flipped to Teleport's.
+          value = MAP_SCREEN_LOOK;
           while (MapScreen_Show(value))
             value ^= 1;
         } else if (state->raisedTrigger ==
@@ -521,8 +510,8 @@ s32 FieldSequence_Run(void) {
     // Hand the leader back to the player, with the control order for how the
     // party moves, and run the walking update until the next request.
     GameFlag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
-    if (Field_GetPartyActor() != NULL)
-      Actor_StartMovementModeScriptFar();
+    if ((leader = Field_GetPartyActor()) != NULL)
+      Actor_StartMovementModeScriptFar(leader);
     pending = &gMainRoutineState.sandActive;
     do {
       wait(1);
@@ -583,9 +572,12 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 
       x = probePosition.vector.x;
       z = probePosition.vector.z;
-      cell =
-          &((struct MapCell *)Ram_MapBlocks)[((x / toFIXED(32)) & 31) +
-                                             (((z / toFIXED(32)) & 31) << 5)];
+      cell = &((struct MapCell *)
+                   Ram_MapBlocks)[((x / toFIXED(WORLD_MAP_CELL_PIXELS)) &
+                                   (WORLD_MAP_VIEW_CELLS - 1)) +
+                                  (((z / toFIXED(WORLD_MAP_CELL_PIXELS)) &
+                                    (WORLD_MAP_VIEW_CELLS - 1)) *
+                                   WORLD_MAP_VIEW_CELLS)];
     } else {
       s32 x, z;
 
@@ -800,7 +792,6 @@ void Field_ApplyEntrance(void) {
 #undef PLACE_MARKER_ON_FOOT
 #undef PLACE_MARKER_ABOARD
 #undef PAUSE_MENU_VRAM_BLOCKS
-#undef SHIP_SEA_EXAMINE_CODE
 #undef MAP_ENTRANCE_FACING_MASK
 #undef MAP_ENTRANCE_RAISED
 #undef MAP_ENTRANCE_KEEP_BOUNDS

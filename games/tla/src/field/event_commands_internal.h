@@ -44,7 +44,6 @@
 #include "system/io_reg.h"
 #include "system/io_write.h"
 #include "system/bg_scroll.h"
-#include "field/flag_call.h"
 #include "graphics/palette_buffers.h"
 #include "field/field_blend.h"
 #include "field/field_coordinate.h"

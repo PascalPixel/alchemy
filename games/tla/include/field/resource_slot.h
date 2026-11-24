@@ -11,7 +11,6 @@
 struct Actor;
 struct SpriteAnimation;
 
-s32 Party_GetPpRatioFar(void);
 s32 MapGrid_IsClimbableCellFar(s32 x, s32 z, s32 kind);
 s32 Actor_GetCellIndexFar(struct Actor *actor);
 s32 FlagBlock_PlaceAllMarkingEdgesFar(struct Actor *actor);

@@ -22358,7 +22358,7 @@ msgctxt "message"
 msgid "05396"
 msgstr "No lo necesitas, ¿no?{page_break}"
 
-msgctxt "MsgTestName"
+msgctxt "MsgNamesMasterPoi"
 msgid "05397"
 msgstr "Maestro Poi{end_wait}"
 
@@ -22414,7 +22414,7 @@ msgctxt "message"
 msgid "05410"
 msgstr "Obaba{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNamesSusa"
 msgid "05411"
 msgstr "Isuza{end_wait}"
 
@@ -22502,7 +22502,7 @@ msgctxt "MsgNamesPiers"
 msgid "05432"
 msgstr "Piers{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNamesAlex"
 msgid "05433"
 msgstr "Álex{end_wait}"
 
@@ -22530,7 +22530,7 @@ msgctxt "message"
 msgid "05439"
 msgstr "Sra. Jerra{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNamesWeaponsShop"
 msgid "05440"
 msgstr "Armería{end_wait}"
 

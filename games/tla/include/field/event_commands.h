@@ -213,6 +213,14 @@ void Retreat_UpdateSpark(struct FieldParticle *slot);
 void Teleport_PlaySparksAndFade(void);
 void Teleport_PlayWhirl(void);
 void TileCopies_Restore(void);
+/// The caster's look while it casts, BattleEffect_SetObjectUpdateMode's mode.
+enum CasterLook {
+  CASTER_LOOK_NORMAL = 0, ///< its own colours
+  /// Flashing white, with swelling arcs (FieldEffect_FlickerActorAndSpawnArcs).
+  CASTER_LOOK_FLASHING_WHITE = 1,
+  /// Cycling colours, with swelling arcs (FieldEffect_CycleActorAndSpawnArcs).
+  CASTER_LOOK_CYCLING_COLORS = 2
+};
 void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode);
 void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
                                   s32 height);
@@ -223,7 +231,7 @@ extern const s32 gDustPuff_LongScript[];
 extern const s32 gDustPuff_ShortScript[];
 extern const s32 gFieldEffect_SourceHoldScript[];
 extern const s32 gForce_FistScript[];
-extern const u8 gAnim_ChildPaletteCycle[];
+extern const u8 gMindRead_CasterColorCycle[];
 extern const u8 gMoveHand_PushPoses[];
 
 /// Three coordinates of a burst piece's place, x, y and z, filled in turn as
@@ -330,6 +338,26 @@ void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 /// FLAG_MAD_PLANT's order.
 #define ENCOUNTER_ZONE_MAD_PLANTS 106
 
+/// The Djinn's encounter zones (rows of gEncounterZones), two to an element:
+/// the first holds the battles of its first fifteen Djinn, who share its eight
+/// slots, and the second those of its last three and its two spares.
+enum DjinnEncounterZone {
+  ENCOUNTER_ZONE_VENUS_DJINN = 1,
+  ENCOUNTER_ZONE_VENUS_DJINN_LAST,
+  ENCOUNTER_ZONE_MERCURY_DJINN,
+  ENCOUNTER_ZONE_MERCURY_DJINN_LAST,
+  ENCOUNTER_ZONE_MARS_DJINN,
+  ENCOUNTER_ZONE_MARS_DJINN_LAST,
+  ENCOUNTER_ZONE_JUPITER_DJINN,
+  ENCOUNTER_ZONE_JUPITER_DJINN_LAST
+};
+
+/// The encounter zone of the early story battles: the Ruffian waiting for
+/// backup on Venus Lighthouse's plaza (slot 0), the Ruffian on the Suhalla road
+/// (1), the three Ruffians at the crevice (2) and the Punch Ant (3) at Suhalla
+/// Gate, the Chestbeaters in the Kandorean Temple (4) and Echo's lesson battle
+/// on the World Map (5).
+#define ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY 9
 /// The encounter zone of two story battles: the King Scorpion's in the Yampi
 /// Desert (slot 0), then Briggs and his crew's on his ship at Alhafra (slot
 /// 1).
@@ -374,11 +402,14 @@ enum HiddenBoss {
 /// party.
 s32 Actor_GetCellIndex(struct Actor *actor);
 s32 Actor_GetScreenPosition(s32 objectId, s32 *position);
+/// Actor_SetLayersColorMode's value that cycles the actor's colours
+/// (gMindRead_CasterColorCycle); any other is a colour mode plus one.
+#define LAYERS_COLOR_CYCLING 0
 void Actor_SetLayersColorMode(void *actor, s32 value);
 void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);
 void Camera_WorldToScreen(struct Vector3 *position);
-s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
+s32 MapShape_FindOrAdd(s32 unused, s32 key, s32 value);
 void *Sprite_ShareVramCacheEntry(void *sprite, void *last);
 void Scene_QueueMusic(s32 soundId);
 void Weather_UpdateLightning(void);

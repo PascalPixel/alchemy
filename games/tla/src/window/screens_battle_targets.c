@@ -5,7 +5,6 @@
 #include "window_internal.h"
 #include "flags.h"
 #include "sounds.h"
-#include "field/flag_call.h"
 #include "gamepak/far_call/battle.h"
 #include "window/item_icon.h"
 #include "window/window.h"

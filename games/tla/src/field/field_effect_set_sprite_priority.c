@@ -11,7 +11,7 @@
 
 /// Fixes the priority of the actor's sprite and its shadow, which then no
 /// longer follows the map cell under it (clears ACTOR_PRIORITY_AUTOMATIC).
-void Actor_SetSpritePriorityB(struct Actor *actor, s32 priority) {
+void FieldEffect_SetSpritePriority(struct Actor *actor, s32 priority) {
   struct Sprite *sprite;
 
   if (actor == NULL ||

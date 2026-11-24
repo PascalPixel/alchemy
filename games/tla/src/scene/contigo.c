@@ -35,6 +35,7 @@
 #include "scene/sparkle.h"
 #include "graphics/palette_buffers.h"
 #include "version.h"
+#include "shop/shop.h"
 
 /// Force has freed Shine from the tree stump it was stuck in.
 #define FLAG_SHINE_FREED 0x9e7
@@ -49,15 +50,6 @@
 /// village gate as far as the weed patch, rather than stopping at the gate
 /// (Contigo_WidenCameraBounds).
 #define FLAG_WHOLE_VILLAGE_IN_VIEW FLAG_SCENE_TEMP_00
-
-/// What gMainRoutineState.wheelsPrizes holds in place of a first prize, as
-/// Lucky Wheels and its attendant leave it: no icon matched (also the list's
-/// end), or none to hand out, the player having quit while betting or the
-/// prizes having been given.
-enum LuckyWheelsPrizesMark {
-  WHEELS_PRIZES_END = -1,
-  WHEELS_PRIZES_NONE_TO_HAND_OUT = -2
-};
 
 /// The map cells the village's, the geoglyph's and the houses' trigger rows
 /// answer. A door's cell takes the number of the exit it leaves by, so those
@@ -356,7 +348,6 @@ void Contigo_OpenSanctumDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY);
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -712,7 +703,8 @@ void Contigo_BabyThinks(void) {
   PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(4, 4, 16), PALETTES_BG);
   PaletteFade_StartInterpolation(16);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_BABY), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_BABY),
+                                   CASTER_LOOK_CYCLING_COLORS);
   effect = Import_ActorCreate(SPRITE_WHIRLWIND, x, 0, z);
   if (effect != 0) {
     Actor_SetSpriteFlags(effect, 0);
@@ -738,7 +730,8 @@ void Contigo_BabyThinks(void) {
     }
     Actor_Release(effect);
   }
-  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_BABY), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_BABY),
+                                   CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
@@ -769,10 +762,6 @@ void Contigo_BabyThinks(void) {
                              FACING_SOUTH_SOUTHEAST);
   Event_End();
 }
-
-void Shop_Run(s32 stockRow, s32 keeperId);
-void Sanctum_Run(s32 unitId);
-void Inn_CheckIn(s32 innId, s32 actorId);
 
 #include "shared/leader_is_facing_north.h"
 

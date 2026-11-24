@@ -2072,7 +2072,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             s32 x;
 
             m = (frame - i - 6) / 2;
-            x = targetPos.x / 2 - gBattleEffect_PuffArcPictureWidths[m] / 2;
+            x = targetPos.x / 2 - gBattleEffect_EmberStreakPictureWidths[m] / 2;
             if (i & 1)
               x += (i + 1) / 2 * 3;
             else
@@ -2083,11 +2083,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               mirrored = 1;
               if (i != 0)
                 mirrored = ((i - 1) & 3) > 1;
-              blitters[mirrored](canvas,
-                                 pictures + gBattleEffect_PuffArcPictures[m], x,
-                                 gBattleEffect_PuffArcPictureBiasY[m] + 48,
-                                 gBattleEffect_PuffArcPictureWidths[m],
-                                 gBattleEffect_PuffArcPictureHeights[m]);
+              blitters[mirrored](
+                  canvas, pictures + gBattleEffect_EmberStreakPictures[m], x,
+                  gBattleEffect_EmberStreakPictureBiasY[m] + 48,
+                  gBattleEffect_EmberStreakPictureWidths[m],
+                  gBattleEffect_EmberStreakPictureHeights[m]);
             }
           }
         }
@@ -3025,7 +3025,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       }
       // The cues.
       if (kind != CASTING_IMPACT_IMPACT_ECHO && frame == 3)
-        EFFECT_SHOW_DAMAGE(-1);
+        EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
       if (frame == 4) {
         if (kind == CASTING_IMPACT_IMPACT_STUN_JIP)
           Sound_PlayFar(SE_CRASH);

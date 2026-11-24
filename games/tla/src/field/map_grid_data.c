@@ -616,7 +616,7 @@ const struct MapResources gMaps[] = {
     {656, 657, {103, 104, 658}, 106}, // tundaria_tower_entrance
     {659, 660, {103, 104, 658}, 106}, // tundaria_tower_burst_brooch
     {661, 662, {663, 664, 665}, 666}, // gondowan_settlement_cave
-    {667, 668, {669, 670, 671}, 672}, // sw_atteka_islet
+    {667, 668, {669, 670, 671}, 672}, // southwest_atteka_islet
     {673, 674, {324, 325, 326}, 327}, // gondowan_settlement
     {675, 676, {677, 678, 679}, 680}, // hesperia_settlement
     {681, 682, {683, 684, 685}, 686}, // kalt_island

@@ -22,7 +22,7 @@
 #include "battle_effect_cruel_ruin.c"
 #include "battle_effect_canvas.c"
 #include "battle_effect_planet_diver.c"
-#include "battle_effect_mirrored_wall.c"
+#include "battle_effect_djinn_beams.c"
 #include "battle_effect_condemn.c"
 #include "battle_effect_bind.c"
 #include "battle_effect_stars.c"
@@ -121,3 +121,4 @@
 #include "battle_effect_megiddo.c"
 #include "battle_effect_odyssey.c"
 #include "battle_effect_moloch.c"
+#include "battle_effect_render.c"

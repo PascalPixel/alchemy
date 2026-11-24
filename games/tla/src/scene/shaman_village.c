@@ -39,7 +39,6 @@
 #include "game/item.h"
 #include "graphics/window_sprite_list.h"
 #include "graphics/glyph.h"
-#include "graphics/graphics.h"
 #include "graphics/resource.h"
 #include "graphics/vram_tab.h"
 #include "menu/menu.h"
@@ -65,6 +64,7 @@
 #include "text/msg_ids.h"
 
 #include "../field/actor_set_sprite_priority.c"
+#include "shop/shop.h"
 
 /// The people and things at the foot of Trial Road, numbering the rows of
 /// gShamanVillage_TrialGroundsPlacements; Moapa, his Knights and Kraden
@@ -193,14 +193,6 @@ enum ShamanVillageCell {
   /// (13, 24) and (17, 28) in the village, (37, 14) in the north-east.
   CLOSED_TENT_CELL = 22
 };
-
-/// The leader lying on his back (pictures 51 and 52 of his sprite sheet):
-/// eyes shut, then open.
-enum { ANIM_LEADER_LIE_ASLEEP = 41, ANIM_LEADER_LIE_AWAKE };
-
-/// The looks BattleEffect_SetObjectUpdateMode gives a caster: none, and the
-/// cycling colours Sheba takes as she gathers power.
-enum { CASTER_LOOK_NONE = 0, CASTER_LOOK_CYCLING_COLORS = 2 };
 
 #include "../field/field_effect_move.c"
 
@@ -346,9 +338,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 
-void Shop_Run(s32 shop, s32 keeper);
-void Sanctum_Run(s32 keeper);
-void Inn_CheckIn(s32 inn, s32 keeper);
 void Actor_Release(struct Actor *actor);
 void Rope_Initialize(void);
 void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
@@ -1556,9 +1545,9 @@ struct Actor *ShamanVillage_CreateRodIcon(void) {
     sprite->palette = 0;
     sprite->priority = 1;
     actor->motionFlags = 0;
-    actor->retainSpriteCache = 1;
+    actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     sprite->flags = 0;
-    sprite->countAndShadow[0] = 0;
+    sprite->count = 0;
     transfer = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_SHAMANS_ROD);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
@@ -2580,7 +2569,7 @@ void ShamanVillage_CastWhirlwindOnSand(void) {
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_SHEBA),
                                    CASTER_LOOK_CYCLING_COLORS);
   Event_Wait(40);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_SHEBA), CASTER_LOOK_NONE);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_SHEBA), CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   ShamanVillage_BlowAwaySand();
@@ -2896,7 +2885,7 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
       ((struct Actor *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
 
   if (actor != NULL) {
-    actor->retainSpriteCache = 2; // its picture stays composed off screen
+    actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     actor->motionFlags = 0;
     actor->timer = 0;
     actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -3003,7 +2992,8 @@ void ShamanVillage_SetUpHouses(void) {
     Party_RestoreHpPp(TRUE); // poison and haunting cured too
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_LIE_ASLEEP);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId,
+                       ANIM_LEADER_LIE_ON_BACK);
     Actor_SetSpriteFlags(
         ((struct Actor *)Actor_GetById(gMainRoutineState.leaderActorId)), 0);
     wait(1);
@@ -3015,7 +3005,7 @@ void ShamanVillage_SetUpHouses(void) {
       if (gInput.held != 0)
         break;
     }
-    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_LIE_AWAKE);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_SIT_UP);
     Event_Wait(10);
     for (i = 0; i < 30; i++) {
       wait(1);
@@ -3444,12 +3434,12 @@ struct SceneEntrance gShamanVillage_SanctumEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(ShamanVillageTrialGrounds),
-    SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_A, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_E),
-    SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_B, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_F),
+    SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_A, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_WEST),
+    SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_B, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_EAST),
     SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_SHAMAN_VILLAGE_NORTH_END, ShamanVillageNorthEnd, SHAMAN_VILLAGE_NORTH_END_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS),
-    SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_D, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_G),
-    SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_E, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_E),
-    SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_F, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_F),
+    SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_D, TrialRoadStages, TRIAL_ROAD_STAGES_FOR_TRIAL_RULES),
+    SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_E, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_WEST),
+    SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_F, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_EAST),
     SCENE_EXITS(ShamanVillageNorthEnd),
     SCENE_EXIT(SHAMAN_VILLAGE_NORTH_END_TO_SHAMAN_VILLAGE_TRIAL_GROUNDS, ShamanVillageTrialGrounds, SHAMAN_VILLAGE_TRIAL_GROUNDS_FROM_SHAMAN_VILLAGE_NORTH_END),
     SCENE_EXIT(SHAMAN_VILLAGE_NORTH_END_TO_SHAMAN_VILLAGE_SOUTH, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_NORTH_END_SOUTH),

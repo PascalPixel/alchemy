@@ -18,7 +18,6 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -40,6 +39,7 @@
 #include "fixed_math.h"
 
 #include "text/msg_ids.h"
+#include "shop/shop.h"
 
 /// How the pirate's scene starts: the leader stepping past him, or reading his
 /// mind, which lets the party question him before he runs.
@@ -261,8 +261,6 @@ void Alhafra_EnterDoor(s32 index) {
 
   Alhafra_OpenDoorAndEnter(&table[index], index, 0);
 }
-
-s32 Shop_Run();
 
 /// Alhafra's shops, as Shop_Run numbers them.
 enum { SHOP_ALHAFRA_WEAPONS = 7, SHOP_ALHAFRA_ARMOR = 8 };

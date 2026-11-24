@@ -28,9 +28,6 @@ enum {
 #define PLACEMENT_SPRITE_MAX 9989
 /// A placement's character after the party: the ship.
 #define PLACEMENT_SHIP 8
-/// A sprite layer's priority past the four drawn ones (SpriteAnimation's
-/// priority above 3): the layer is kept but not drawn.
-#define SPRITE_LAYER_NOT_DRAWN 9
 
 /// The ids Actor_Lookup answers: more than the FIELD_ACTOR_COUNT slots.
 #define LOOKUP_ID_COUNT 192
@@ -315,8 +312,8 @@ void Actor_ResetForLeader(s32 table) {
   // Actor_MoveOnWorldMap draws it in a forest.
   if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     struct SpriteAnimation *secondLayer =
-        (struct SpriteAnimation *)Sprite_AddAnimationFar(actor->sprite,
-                                                         SPRITE_BLANK_32);
+        (struct SpriteAnimation *)Sprite_AddAnimationFar(
+            actor->sprite, SPRITE_WORLD_MAP_FOREST_COVER);
 
     secondLayer->colorMode = SPRITE_COLOR_HIDDEN;
     secondLayer->priority = SPRITE_LAYER_NOT_DRAWN;

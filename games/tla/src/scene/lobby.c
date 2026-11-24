@@ -22,11 +22,11 @@
 #include "field/field.h"
 #include "field/field_sequence.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
+#include "system/save.h"
 #include "types.h"
 #include "macros.h"
 #include "field/scene_tables.h"
@@ -44,6 +44,7 @@
 #include "system/input.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
+#include "shop/shop.h"
 
 /// A gMainRoutineState.party byte with no member in it, all ones.
 #define PARTY_SLOT_EMPTY 255
@@ -52,10 +53,10 @@
 /// eight frames as the party walks to it from the diamond mark.
 enum { BATTLE_ARENA_GATE_ANIMATION = 5 };
 
-/// The formation a linked battle is requested with: encounter zone 1, the
-/// first Venus Djinn's battles, at slot 1, Granite's; the battle takes its
-/// enemies from the opponent's units exchanged before it.
-enum { LINK_BATTLE_ENCOUNTER_ZONE = 1, LINK_BATTLE_ENCOUNTER_SLOT = 1 };
+/// The slot a linked battle is requested with, in ENCOUNTER_ZONE_VENUS_DJINN:
+/// Granite's; the battle takes its enemies from the opponent's units exchanged
+/// before it.
+enum { LINK_BATTLE_ENCOUNTER_SLOT = 1 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -65,7 +66,6 @@ void Serial_RemoveIrqHandlers(void);
 void Serial_Initialize(void);
 void Event_Start(void);
 void Event_End(void);
-void Sanctum_Run(s32 value);
 void GameFlag_SetByte(s32 flag, s32 value);
 
 /// Stores a byte in the eight game flags from `flag`.
@@ -405,19 +405,6 @@ s32 LinkLobby_ReportLinkDisconnected(void) {
 /// Frames, about fifteen seconds, for all four records received.
 #define LOBBY_RECEIVE_TIMEOUT_FRAMES 900
 
-/// gMainRoutineState.linkTallies, as the lobby keeps them.
-enum LinkTally {
-  LINK_TALLY_MONSTER_WINS = 0,
-  LINK_TALLY_MONSTER_LOSSES = 1,
-  LINK_TALLY_MONSTER_BEST_STREAK = 2, ///< the most won in a row
-  LINK_TALLY_MONSTER_STREAK = 3,      ///< those won in the current series
-  LINK_TALLY_LINKED_WINS = 4,
-  LINK_TALLY_LINKED_LOSSES = 5,
-  /// The most linked battles won in a row, on the wall board.
-  LINK_TALLY_LINKED_BEST_STREAK = 6,
-  LINK_TALLY_LINKED_STREAK = 7 ///< those won in a row now
-};
-
 /// The Broken Seal's BattleArena_ReceivePartyRecords: takes the other player's
 /// party records over the link.
 s32 LinkLobby_ReceivePartyRecords(void) {
@@ -735,7 +722,6 @@ check:
 void TilesetAnim_Resume(s32 channel);
 void TilesetAnim_Pause(s32 channel);
 void Field_RequestBattleFromEncounterTable(s32 table, s32 slot);
-struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y, s32 flags);
 
 /// Felix steps onto the diamond mark before the arched door to the arena, cell
 /// (13, 11), once he has applied: "Awaiting your opponent..." shows until the
@@ -770,7 +756,7 @@ s32 LinkLobby_EnterBattle(void) {
     LinkLobby_WriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
     if (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
       // "Awaiting your opponent..."
-      window = Message_OpenWindow(MsgLobbyAwaitingYourOpponent, 5, 4,
+      window = Message_OpenWindow((s32)MsgLobbyAwaitingYourOpponent, 5, 4,
                                   MESSAGE_WINDOW_ZOOM);
     while (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE)) {
       wait(1);
@@ -859,7 +845,7 @@ s32 LinkLobby_EnterBattle(void) {
       Event_SetDefeatDestination(SCENE_LOBBY, LOBBY_AFTER_LINK_LOSS);
     }
     gMainRoutineState.battleType = BATTLE_TYPE_LINK;
-    Field_RequestBattleFromEncounterTable(LINK_BATTLE_ENCOUNTER_ZONE,
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_VENUS_DJINN,
                                           LINK_BATTLE_ENCOUNTER_SLOT);
     // EXEC fills the payload's first four halfwords, where the link battle's
     // command entry looks for it in the partner's.

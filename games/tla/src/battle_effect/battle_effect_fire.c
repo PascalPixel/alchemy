@@ -153,16 +153,16 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
         picture = ember->variant / 2;
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-        width = gFire_FlareWidths[picture];
-        draw[1](canvas, state->sheet + gFire_FlarePictures[picture],
+        width = gFire_EmberStreakWidths[picture];
+        draw[1](canvas, state->sheet + gFire_EmberStreakPictures[picture],
                 ember->x - (width >> 1),
-                ember->y + gFire_FlareBiasY[picture] - 56, width,
-                gFire_FlareHeights[picture]);
+                ember->y + gFire_EmberStreakBiasY[picture] - 56, width,
+                gFire_EmberStreakHeights[picture]);
 #else
-        draw[1](canvas, state->sheet + gFire_FlarePictures[picture],
-                ember->x - ((width = gFire_FlareWidths[picture]) >> 1),
-                ember->y + gFire_FlareBiasY[picture] - 56, width,
-                gFire_FlareHeights[picture]);
+        draw[1](canvas, state->sheet + gFire_EmberStreakPictures[picture],
+                ember->x - ((width = gFire_EmberStreakWidths[picture]) >> 1),
+                ember->y + gFire_EmberStreakBiasY[picture] - 56, width,
+                gFire_EmberStreakHeights[picture]);
 #endif
         ember->variant++;
       }

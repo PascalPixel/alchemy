@@ -280,9 +280,9 @@ enum SpriteId {
   SPRITE_TREE_TRUNK,
   SPRITE_FLAME_AND_SMOKE,
   SPRITE_EXPLOSION,
-  SPRITE_ATTACHED_EFFECT,
+  SPRITE_RAY_ARC,
   SPRITE_PSYNERGY_STONE,
-  SPRITE_BLANK_32,
+  SPRITE_WORLD_MAP_FOREST_COVER,
   SPRITE_DOORWAY,
   /// The band an EXIT_STYLE_HIDDEN_LAYER exit adds over the top of the leader's
   /// sprite (Exit_AddHiddenLeaderLayer).
@@ -465,6 +465,8 @@ enum SpriteId {
   SPRITE_METAL_FEATHER,
   SPRITE_SEA_ROCK,
   SPRITE_STONE_BASIN,
+  /// A white quarter disc, 32 pixels across, held (white_quarter_disc.png).
+  SPRITE_WHITE_QUARTER_DISC,
   SPRITE_STONE_BLOCK = 428,
   SPRITE_COILED_DRAGON_STATUE,
   /// A grey stone block, concentric squares on its face, that carries a
@@ -806,5 +808,24 @@ enum FloatingLogAnimation {
 #define ENERGY_CHARGE_ANIMATION_BURST 3
 /// SPRITE_ARROW_PANEL's animation with its arrow pointing up: a lift ready.
 #define ARROW_PANEL_ANIMATION_UP 2
+
+/// SPRITE_PUDDLE's animations (puddle.tsv) that a flag block shows: the ice
+/// pillar, held, and the puddle, the unfrozen water glinting.
+#define PUDDLE_ANIMATION_FROZEN 0
+#define PUDDLE_ANIMATION_PUDDLE 1
+
+/// SPRITE_MOVE_HAND's animations (move_hand.tsv), The Broken Seal's sheet and
+/// numbers.
+enum MoveHandAnimation {
+  MOVE_HAND_ANIMATION_OPEN = 1, ///< open, its fingers spread, tilted
+  MOVE_HAND_ANIMATION_PALM = 2, ///< open, its palm flat toward the viewer
+  MOVE_HAND_ANIMATION_GRIP = 3, ///< its fingers bent as if gripping
+  /// MOVE_HAND_ANIMATION_OPEN and MOVE_HAND_ANIMATION_GRIP in turn, as it
+  /// strains against what it pushes.
+  MOVE_HAND_ANIMATION_FLEX = 4,
+  MOVE_HAND_ANIMATION_FIST = 5,
+  /// Open, gripping, then a fist held, in turn: the hand clenching.
+  MOVE_HAND_ANIMATION_CLENCH = 6
+};
 
 #endif

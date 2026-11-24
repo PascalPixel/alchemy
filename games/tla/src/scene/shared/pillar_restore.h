@@ -39,7 +39,8 @@ UNUSED void MagmaRockInside_RestorePillars(u16 *list) {
     nextFlag = flag + 1;
     cells = map->layers[actor->layer].cells;
     shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-    actor->retainSpriteCache = 3;
+    actor->retainSpriteCache =
+        ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
     if (Event_GetFlag(nextFlag)) {
       Actor_SetPosition(id, 0, 0);
     } else {
@@ -56,8 +57,8 @@ UNUSED void MagmaRockInside_RestorePillars(u16 *list) {
           Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
       Actor_DisableById(id);
       cell->attributeB = MAP_CELL_JUMP;
-      *slot = MapCollision_FindOrAddTag(actor->layer, shape,
-                                        CELL_HEIGHT_STEPS(height) + 4);
+      *slot = MapShape_FindOrAdd(actor->layer, shape,
+                                 CELL_HEIGHT_STEPS(height) + 4);
       if (Event_GetFlag(flag))
         Actor_CopyGraphics(id, ACTOR_CRACKED_PILLAR_SPRITE);
     }

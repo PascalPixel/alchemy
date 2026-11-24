@@ -53,9 +53,6 @@ struct FarCallSystemTable {
 
 /// The far-call table of system routines, read here for its arctangent.
 extern const struct FarCallSystemTable FarCall_RuntimeTable;
-/// The camera's yaw the scanline terms were built for, declared here as in
-/// field.h, whose anonymous unions this file's ARM compiler cannot read.
-extern u32 gScanlineAngle;
 
 /// Calls the Thumb routine whose address is in ip with (x, y) from this ARM
 /// code and returns its result: here the far-call table's arctangent, for the

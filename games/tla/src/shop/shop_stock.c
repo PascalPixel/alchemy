@@ -8,7 +8,6 @@
 #include "gamepak/far_call/game.h"
 #include "shop/shop.h"
 #include "gamepak/far_call/menu.h"
-#include "field/flag_call.h"
 
 /// Gives a Game Ticket once the party's spending in shops reaches the next
 /// ticket's cost, and lets the player choose who takes it.

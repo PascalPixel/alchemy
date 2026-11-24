@@ -20,7 +20,7 @@
 /// A face of no corners ends a textured mesh.
 #define MESH_END 0, 0, 0, 0, 0, 0
 
-/// A row of gLobbedShells_Styles, the four bytes battle_effect_mirrored_wall.c
+/// A row of gLobbedShells_Styles, the four bytes battle_effect_djinn_beams.c
 /// reads through its LOBBED_SHELLS_ macros: whether the shells burst into
 /// shards rather than smoke; the blitter they are drawn with, 0 keeping the
 /// brighter level and 1 adding; the shells lobbed at each target; and the
@@ -51,17 +51,18 @@ const u8 gBattleEffect_SparkleSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
 
 /// EmberStreakSheet's six pictures, a puff of flame drawing out into a trail of
 /// embers as it rises: each one's width, in pixels.
-const u8 gBattleEffect_PuffArcPictureWidths[] = {24, 29, 30, 27, 24, 16};
+const u8 gBattleEffect_EmberStreakPictureWidths[] = {24, 29, 30, 27, 24, 16};
 
 /// Each ember streak picture's height, in pixels.
-const u8 gBattleEffect_PuffArcPictureHeights[] = {23, 32, 37, 49, 53, 52};
+const u8 gBattleEffect_EmberStreakPictureHeights[] = {23, 32, 37, 49, 53, 52};
 
 /// How far below its anchor each ember streak picture's top goes, in pixels:
 /// the bottoms stay within ten pixels of 64 below.
-const u8 gBattleEffect_PuffArcPictureBiasY[] = {41, 32, 26, 11, 4, 2};
+const u8 gBattleEffect_EmberStreakPictureBiasY[] = {41, 32, 26, 11, 4, 2};
 
 /// Each ember streak picture's byte offset in the sheet.
-const u16 gBattleEffect_PuffArcPictures[] = {0, 552, 1480, 2590, 3913, 5185};
+const u16 gBattleEffect_EmberStreakPictures[] = {0,    552,  1480,
+                                                 2590, 3913, 5185};
 
 /// Each glint picture's byte offset in the sprite sheet.
 const u16 gBattleEffect_GlintPictures[] = {0, 589, 1302, 2015, 2414, 2750};
@@ -367,10 +368,10 @@ const s32 gStar_Points[] = {0, toFIXED(48), 0, 0, toFIXED(28), 0};
 /// The ring radii, alternating, in pixels.
 const u8 gStar_Radii[] = {32, 16};
 
-/// The nine comets' grid: each comet's x, in pixels.
+/// The grid Procne's nine sprites sit on: each one's x, in pixels.
 const u8 gProcne_GridX[] = {0, 32, 64, 0, 32, 64, 0, 32, 64};
 
-/// The nine comets' grid: each comet's depth, in pixels.
+/// The grid Procne's nine sprites sit on: each one's depth, in pixels.
 const u8 gProcne_GridY[] = {0, 0, 0, 32, 32, 32, 64, 64, 64};
 
 /// The frames of the four comet strikes.
@@ -400,18 +401,19 @@ const u8 gTiamat_SparkPixels[] = {32, 32};
 const u8 gTiamat_EmberSizes[] = {1, 1, 2, 3};
 
 /// The ember streak's pictures again, as Tiamat's fireballs read them: the same
-/// as gBattleEffect_PuffArcPictureWidths and the three tables after it, Tiamat
-/// keeping its own copy among its tables. Each picture's width, in pixels.
-const u8 gTiamat_FlameWidths[] = {24, 29, 30, 27, 24, 16};
+/// as gBattleEffect_EmberStreakPictureWidths and the three tables after it,
+/// Tiamat keeping its own copy among its tables. Each picture's width, in
+/// pixels.
+const u8 gTiamat_EmberStreakWidths[] = {24, 29, 30, 27, 24, 16};
 
 /// Each ember streak picture's height, in pixels.
-const u8 gTiamat_FlameHeights[] = {23, 32, 37, 49, 53, 52};
+const u8 gTiamat_EmberStreakHeights[] = {23, 32, 37, 49, 53, 52};
 
 /// How far below its anchor each ember streak picture's top goes, in pixels.
-const u8 gTiamat_FlameDrops[] = {41, 32, 26, 11, 4, 2};
+const u8 gTiamat_EmberStreakBiasY[] = {41, 32, 26, 11, 4, 2};
 
 /// Each ember streak picture's byte offset in the sheet.
-const u16 gTiamat_FlamePictures[] = {0, 552, 1480, 2590, 3913, 5185};
+const u16 gTiamat_EmberStreakPictures[] = {0, 552, 1480, 2590, 3913, 5185};
 
 /// The water columns' feet, x and y, in pixels; NEREID_COLUMNS of the four
 /// pairs are read.
@@ -951,18 +953,18 @@ const u8 gQuake_Timings[][3] = {{80, 32, 2}, {112, 64, 4}, {144, 96, 8}};
 const u8 gFire_Counts[] = {16, 32, 64};
 
 /// The ember streak's pictures again, as Fire's embers read them: the same as
-/// gBattleEffect_PuffArcPictureWidths and the three tables after it, Fire
+/// gBattleEffect_EmberStreakPictureWidths and the three tables after it, Fire
 /// keeping its own copy among its tables. Each picture's width, in pixels.
-const u8 gFire_FlareWidths[] = {24, 29, 30, 27, 24, 16};
+const u8 gFire_EmberStreakWidths[] = {24, 29, 30, 27, 24, 16};
 
 /// Each ember streak picture's height, in pixels.
-const u8 gFire_FlareHeights[] = {23, 32, 37, 49, 53, 52};
+const u8 gFire_EmberStreakHeights[] = {23, 32, 37, 49, 53, 52};
 
 /// How far below its anchor each ember streak picture's top goes, in pixels.
-const u8 gFire_FlareBiasY[] = {41, 32, 26, 11, 4, 2};
+const u8 gFire_EmberStreakBiasY[] = {41, 32, 26, 11, 4, 2};
 
 /// Each ember streak picture's byte offset in the sheet.
-const u16 gFire_FlarePictures[] = {0, 552, 1480, 2590, 3913, 5185};
+const u16 gFire_EmberStreakPictures[] = {0, 552, 1480, 2590, 3913, 5185};
 
 /// Where each frost mound rises, x and its foot's y, in pixels.
 const u8 gFrost_MoundSpots[] = {53, 108, 73, 110, 29, 110, 73, 108, 33, 104,
@@ -1091,30 +1093,120 @@ const u8 gBolt_GlintModes[] = {1, 1, 0};
 const u8 gProjectileVolley_CometHeights[] = {24, 36, 48};
 
 /// The projectile volley's modes, one row a mode (enum ProjectileVolleyMode),
-/// one byte a column (enum VolleyField in battle_effect_projectiles.c): the
-/// shots at each target, the frames a shot takes to reach it, the frames
-/// between shots and between targets, and the sparks each hit throws.
-const u8 gProjectileVolley_Modes[][5] = {
-    // shots, flight, between shots, between targets, sparks
-    {6, 10, 3, 32, 4},   // Slash
-    {4, 10, 5, 32, 8},   // Shuriken
-    {10, 32, 3, 32, 4},  // Crazy Voice
-    {5, 10, 5, 32, 4},   // Wing Flutter
-    {10, 10, 1, 32, 4},  // Wing Beat
-    {1, 5, 0, 32, 80},   // Cutting Edge
-    {7, 8, 2, 32, 40},   // Heat Wave
-    {30, 24, 1, 32, 4},  // Sleet
-    {6, 2, 3, 32, 4},    // a casting impact's comets
-    {60, 10, 1, 32, 4},  // Blizzard
-    {60, 12, 1, 32, 4},  // Ice Blessing
-    {10, 10, 1, 32, 4},  // Wing Stroke
-    {7, 8, 2, 32, 40},   // Blaze Rush
-    {20, 12, 1, 32, 40}, // Hydro Slash
-    {30, 24, 2, 32, 8},  // Diamond Dust
-    {30, 16, 1, 32, 8},  // Beast Needle
-    {30, 16, 1, 32, 8},  // Poison Sting
-    {30, 16, 1, 32, 8},  // Stun Sting
-    {60, 12, 1, 32, 4},  // Chill Breath
+/// one byte a column (enum VolleyField): the shots at each target, the frames
+/// a shot takes to reach it, the frames between shots and between targets, and
+/// the sparks each hit throws.
+const u8 gProjectileVolley_Modes[][PROJECTILE_VOLLEY_COLUMNS] = {
+    [PROJECTILE_VOLLEY_SLASH] = {[PROJECTILE_VOLLEY_SHOTS] = 6,
+                                 [PROJECTILE_VOLLEY_STEPS] = 10,
+                                 [PROJECTILE_VOLLEY_STAGGER] = 3,
+                                 [PROJECTILE_VOLLEY_DELAY] = 32,
+                                 [PROJECTILE_VOLLEY_SPARKS] = 4}, // Slash
+    [PROJECTILE_VOLLEY_SHURIKEN] = {[PROJECTILE_VOLLEY_SHOTS] = 4,
+                                    [PROJECTILE_VOLLEY_STEPS] = 10,
+                                    [PROJECTILE_VOLLEY_STAGGER] = 5,
+                                    [PROJECTILE_VOLLEY_DELAY] = 32,
+                                    [PROJECTILE_VOLLEY_SPARKS] = 8}, // Shuriken
+    [PROJECTILE_VOLLEY_CRAZY_VOICE] = {[PROJECTILE_VOLLEY_SHOTS] = 10,
+                                       [PROJECTILE_VOLLEY_STEPS] = 32,
+                                       [PROJECTILE_VOLLEY_STAGGER] = 3,
+                                       [PROJECTILE_VOLLEY_DELAY] = 32,
+                                       [PROJECTILE_VOLLEY_SPARKS] =
+                                           4}, // Crazy Voice
+    [PROJECTILE_VOLLEY_WING_FLUTTER] = {[PROJECTILE_VOLLEY_SHOTS] = 5,
+                                        [PROJECTILE_VOLLEY_STEPS] = 10,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 5,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            4}, // Wing Flutter
+    [PROJECTILE_VOLLEY_WING_BEAT] = {[PROJECTILE_VOLLEY_SHOTS] = 10,
+                                     [PROJECTILE_VOLLEY_STEPS] = 10,
+                                     [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                     [PROJECTILE_VOLLEY_DELAY] = 32,
+                                     [PROJECTILE_VOLLEY_SPARKS] =
+                                         4}, // Wing Beat
+    [PROJECTILE_VOLLEY_CUTTING_EDGE] = {[PROJECTILE_VOLLEY_SHOTS] = 1,
+                                        [PROJECTILE_VOLLEY_STEPS] = 5,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 0,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            80}, // Cutting Edge
+    [PROJECTILE_VOLLEY_HEAT_WAVE] = {[PROJECTILE_VOLLEY_SHOTS] = 7,
+                                     [PROJECTILE_VOLLEY_STEPS] = 8,
+                                     [PROJECTILE_VOLLEY_STAGGER] = 2,
+                                     [PROJECTILE_VOLLEY_DELAY] = 32,
+                                     [PROJECTILE_VOLLEY_SPARKS] =
+                                         40}, // Heat Wave
+    [PROJECTILE_VOLLEY_SLEET] = {[PROJECTILE_VOLLEY_SHOTS] = 30,
+                                 [PROJECTILE_VOLLEY_STEPS] = 24,
+                                 [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                 [PROJECTILE_VOLLEY_DELAY] = 32,
+                                 [PROJECTILE_VOLLEY_SPARKS] = 4}, // Sleet
+    [PROJECTILE_VOLLEY_IMPACT_COMETS] = {[PROJECTILE_VOLLEY_SHOTS] = 6,
+                                         [PROJECTILE_VOLLEY_STEPS] = 2,
+                                         [PROJECTILE_VOLLEY_STAGGER] = 3,
+                                         [PROJECTILE_VOLLEY_DELAY] = 32,
+                                         [PROJECTILE_VOLLEY_SPARKS] =
+                                             4}, // a casting impact's comets
+    [PROJECTILE_VOLLEY_BLIZZARD] = {[PROJECTILE_VOLLEY_SHOTS] = 60,
+                                    [PROJECTILE_VOLLEY_STEPS] = 10,
+                                    [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                    [PROJECTILE_VOLLEY_DELAY] = 32,
+                                    [PROJECTILE_VOLLEY_SPARKS] = 4}, // Blizzard
+    [PROJECTILE_VOLLEY_ICE_BLESSING] = {[PROJECTILE_VOLLEY_SHOTS] = 60,
+                                        [PROJECTILE_VOLLEY_STEPS] = 12,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            4}, // Ice Blessing
+    [PROJECTILE_VOLLEY_WING_STROKE] = {[PROJECTILE_VOLLEY_SHOTS] = 10,
+                                       [PROJECTILE_VOLLEY_STEPS] = 10,
+                                       [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                       [PROJECTILE_VOLLEY_DELAY] = 32,
+                                       [PROJECTILE_VOLLEY_SPARKS] =
+                                           4}, // Wing Stroke
+    [PROJECTILE_VOLLEY_BLAZE_RUSH] = {[PROJECTILE_VOLLEY_SHOTS] = 7,
+                                      [PROJECTILE_VOLLEY_STEPS] = 8,
+                                      [PROJECTILE_VOLLEY_STAGGER] = 2,
+                                      [PROJECTILE_VOLLEY_DELAY] = 32,
+                                      [PROJECTILE_VOLLEY_SPARKS] =
+                                          40}, // Blaze Rush
+    [PROJECTILE_VOLLEY_HYDRO_SLASH] = {[PROJECTILE_VOLLEY_SHOTS] = 20,
+                                       [PROJECTILE_VOLLEY_STEPS] = 12,
+                                       [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                       [PROJECTILE_VOLLEY_DELAY] = 32,
+                                       [PROJECTILE_VOLLEY_SPARKS] =
+                                           40}, // Hydro Slash
+    [PROJECTILE_VOLLEY_DIAMOND_DUST] = {[PROJECTILE_VOLLEY_SHOTS] = 30,
+                                        [PROJECTILE_VOLLEY_STEPS] = 24,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 2,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            8}, // Diamond Dust
+    [PROJECTILE_VOLLEY_BEAST_NEEDLE] = {[PROJECTILE_VOLLEY_SHOTS] = 30,
+                                        [PROJECTILE_VOLLEY_STEPS] = 16,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            8}, // Beast Needle
+    [PROJECTILE_VOLLEY_POISON_STING] = {[PROJECTILE_VOLLEY_SHOTS] = 30,
+                                        [PROJECTILE_VOLLEY_STEPS] = 16,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            8}, // Poison Sting
+    [PROJECTILE_VOLLEY_STUN_STING] = {[PROJECTILE_VOLLEY_SHOTS] = 30,
+                                      [PROJECTILE_VOLLEY_STEPS] = 16,
+                                      [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                      [PROJECTILE_VOLLEY_DELAY] = 32,
+                                      [PROJECTILE_VOLLEY_SPARKS] =
+                                          8}, // Stun Sting
+    [PROJECTILE_VOLLEY_CHILL_BREATH] = {[PROJECTILE_VOLLEY_SHOTS] = 60,
+                                        [PROJECTILE_VOLLEY_STEPS] = 12,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            4}, // Chill Breath
 };
 
 /// Each flash picture's width, in pixels.
@@ -1260,10 +1352,10 @@ const s8 gUlysses_ParticleStarts[][5] = {
     {100, 60, 64, -6, -6}, {112, 44, -64, -6, 4}, {96, 28, 64, -6, -5},
     {112, 80, -64, -6, 4}, {104, 32, 64, -6, 5},  {102, 68, -64, -6, 4}};
 
-/// Each Spider Web picture's width, in pixels.
+/// Each Swirl Swipe picture's width, in pixels.
 const u8 gSwirlSwipe_PictureWidths[] = {40, 112, 112, 112, 88, 64};
 
-/// Each Spider Web picture's height, in pixels.
+/// Each Swirl Swipe picture's height, in pixels.
 const u8 gSwirlSwipe_PictureHeights[] = {56, 80, 64, 64, 80, 88};
 
 /// The swirl's six pictures: their byte offsets; the tables after it give their
@@ -1654,13 +1746,13 @@ const u8 gMegaera_GlintFlips[] = {0, 4, 8, 12};
 /// How the glints are blended, by variant.
 const u8 gMegaera_GlintModes[] = {1, 1, 0, 0};
 
-/// Each pillar's full scale, in 65536ths, which its growth multiplies.
+/// Each ring's full scale, in 65536ths, which its growth multiplies.
 const s32 gLightSurge_RingSizes[4] = {18000, 12000, 30000, 40000};
 
-/// Each pillar's shade, before it dims.
+/// Each ring's shade, before it dims.
 const s8 gLightSurge_RingShades[4] = {-2, -8, -4, 0};
 
-/// How far each pillar sways, in pixels at the sway's widest.
+/// How far each ring sways, in pixels at the sway's widest.
 const s8 gLightSurge_RingSways[4] = {-24, -8, 24, 48};
 
 /// Each mode's flags for the Djinni's entrance.
@@ -1839,7 +1931,7 @@ const struct ModelVertex gBattleEffect_SquareCorners[] = {
 const struct ModelVertex gBattleEffect_StandingSquareCorners[] = {
     {-32, -64, 0}, {32, -64, 0}, {-32, 0, 0}, {32, 0, 0}};
 
-/// The wing's corners, as signed x, y and z.
+/// The fan flame's corners, as signed x, y and z.
 const struct ModelVertex gLegend_FanFlameCorners[] = {
     {-16, 64, -64}, {16, 64, -64}, {-16, 56, 0}, {16, 56, 0}};
 
@@ -1903,23 +1995,23 @@ const u16 gHaures_BurstMesh[] = {MESH_FACE(1, 3, 2, 47, 0, 47, 71, 0, 71),
                                  MESH_FACE(0, 1, 2, 16, 16, 47, 16, 16, 47),
                                  MESH_END};
 
-/// The swing's pictures: their widths; the tables after it give their heights
-/// and offsets, and the fist's heights, y offsets and offsets.
+/// The spark burst's pictures: their widths; the tables after it give their
+/// heights and offsets, and the heart burn's heights, y offsets and offsets.
 const u8 gHeartbreak_SparkBurstWidths[] = {32, 39, 42, 71};
 
-/// Each swing picture's height, in pixels.
+/// Each spark burst picture's height, in pixels.
 const u8 gHeartbreak_SparkBurstHeights[] = {29, 32, 48, 57};
 
-/// Each swing picture's byte offset in Heartbreak's sprite sheet.
+/// Each spark burst picture's byte offset in Heartbreak's sprite sheet.
 const u16 gHeartbreak_SparkBurstPictures[] = {0, 928, 2176, 4192};
 
-/// Each fist picture's height, in pixels.
+/// Each heart burn picture's height, in pixels.
 const u8 gHeartbreak_HeartBurnHeights[] = {29, 37, 48, 47, 52, 32, 22, 17};
 
-/// Each fist's y, in pixels.
+/// Each heart burn picture's y, in pixels.
 const u8 gHeartbreak_HeartBurnY[] = {34, 26, 15, 14, 7, 11, 8, 6};
 
-/// Each fist picture's byte offset in Heartbreak's sprite sheet.
+/// Each heart burn picture's byte offset in Heartbreak's sprite sheet.
 const u16 gHeartbreak_HeartBurnPictures[] = {0,    928,  2112, 3648,
                                              5152, 6816, 7840, 8544};
 
@@ -2047,12 +2139,12 @@ const u8 gDaedalusStrike_HitFrames[] = {80, 84, 86, 88, 90, 92, 94};
 const u8 gVengeance_ArrowStrikes[][7] = {
     {0, 0, 1, 0, 0, 0, 1}, {1, 0, 1, 1, 0, 0, 1}, {1, 1, 1, 1, 1, 1, 1}};
 
-/// The blade's mesh.
+/// The pale blade's mesh.
 const u16 gLifeShear_PaleBladeMesh[] = {
     MESH_FACE(1, 3, 2, 127, 14, 127, 53, 0, 53),
     MESH_FACE(0, 1, 2, 0, 14, 127, 14, 0, 53), MESH_END};
 
-/// The handle's mesh.
+/// The orange blade's mesh.
 const u16 gLifeShear_OrangeBladeMesh[] = {
     MESH_FACE(1, 3, 2, 127, 0, 127, 31, 0, 31),
     MESH_FACE(0, 1, 2, 0, 0, 127, 0, 0, 31), MESH_END};

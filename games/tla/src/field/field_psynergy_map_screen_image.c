@@ -23,7 +23,6 @@
 #include "field/actor.h"
 #include "field/map_grid.h"
 #include "field/sprite.h"
-#include "field/flag_call.h"
 
 /// The map screen's image on BG1, in 256 colours. The large image
 /// (RESOURCE_WORLD_MAP_PICTURE_LARGE) is 64 by 48 tiles, each row of tiles
@@ -736,15 +735,6 @@ extern s32 gMapScreen_ScrollX;
 extern s32 gMapScreen_ScrollY; ///< as gMapScreen_ScrollX
 
 void WorldMap_SetReturnForScene(s32 scene, s32 entrance);
-
-/// What the map screen is shown for (MapScreen_Show).
-enum MapScreenMode {
-  /// The player looks (FIELD_RAISED_TRIGGER_MAP_SCREEN).
-  MAP_SCREEN_LOOK = 0,
-  /// Teleport (FIELD_RAISED_TRIGGER_TELEPORT): A chooses the place whose
-  /// name shows and B cancels.
-  MAP_SCREEN_TELEPORT = 1
-};
 
 /// The map screen, over the map-cell buffer, until A or B closes it, to
 /// look or to choose where to Teleport (enum MapScreenMode). While Start is

@@ -6,6 +6,7 @@
 /// Status screen's cursor stops, the file list and File Screen choices, the
 /// battle menus, the menu headings and the Yes/No menu.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "window/cursor.h"
 
@@ -195,5 +196,52 @@ enum SendOptionMenu {
 
 /// What YesNoMenu_Run and YesNoMenu_RunAt return.
 enum YesNo { YES = 0, NO = 1 };
+
+/// A status the Status screen shows as an icon, which picks both the icon
+/// and its help (MsgNormalStatus + condition).
+enum BattleSummaryStatus {
+  OWNER_CONDITION_EMPTY = -1, ///< a place with no icon
+  OWNER_CONDITION_NORMAL = 0, ///< no status: "Normal status."
+  OWNER_CONDITION_POISON = 1,
+  OWNER_CONDITION_DEADLY_POISON = 2,
+  OWNER_CONDITION_STUN = 3,
+  OWNER_CONDITION_PSYNERGY_SEALED = 4,
+  OWNER_CONDITION_SLEEP = 5,
+  OWNER_CONDITION_DELUSION = 6,
+  OWNER_CONDITION_HAUNT = 7,
+  OWNER_CONDITION_GRIM_REAPER = 8, ///< downed when its turns run out
+  OWNER_CONDITION_ATTACK_UP = 9,
+  OWNER_CONDITION_ATTACK_DOWN = 10,
+  OWNER_CONDITION_DEFENSE_UP = 11,
+  OWNER_CONDITION_DEFENSE_DOWN = 12,
+  OWNER_CONDITION_RESISTANCE_UP = 13,
+  OWNER_CONDITION_RESISTANCE_DOWN = 14,
+  OWNER_CONDITION_CURSED_ITEM = 15,
+  OWNER_CONDITION_DOWNED = 16,
+  OWNER_CONDITION_AGILITY_UP = 17,
+  OWNER_CONDITION_AGILITY_DOWN = 18
+};
+
+/// The two tiles of the link screen's page arrows, which PageArrows_Draw
+/// shifts and merges into the window border each frame.
+extern u8 gPageArrowTiles[];
+/// Merges two 4bpp tiles row by row into `output`: `second` moved `shift`
+/// pixels, drawn over `first`.
+void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
+                                   s32 shift);
+/// The file menu's 64x16 headings by number, each drawn as two 32x16 sprites
+/// (MenuTitle_Load; graphics/ui/menu_titles.s).
+extern s32 gMenuTitlePictures[];
+/// The task that makes the file list's highlight glow.
+void FileList_UpdatePulse(void);
+/// The eight scales WindowSprite_Pulse pulses the settings menu's selected icon
+/// through.
+extern const FIXED gWindowSprite_PulseScales[];
+/// Eight offsets, 0 to 3 and back, that make the name entry screen's caret
+/// circle: the x offset leads the y offset by five steps.
+extern const s8 gNameEntry_CaretWave[];
+/// The name entry screen keyboard's compressed tilemap, the Spanish edition's
+/// with its own letters.
+extern const u8 gNameEntry_KeyboardTilemap[];
 
 #endif

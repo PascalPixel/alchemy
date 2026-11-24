@@ -25,7 +25,6 @@
 #include "field/field.h"
 #include "battle/battle.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -43,6 +42,7 @@
 #include "system/ram_buffer.h"
 #include "item_ids.h"
 #include "text/msg_ids.h"
+#include "shop/shop.h"
 
 /// The placed actors, numbering the rows of `gActorPlacements`.
 enum NaribweRoomsActorId {
@@ -83,8 +83,6 @@ extern struct Trigger gNaribweRooms_Triggers[];
 extern struct Trigger gNaribweRooms_TriggersOnReturn[];
 
 void NaribweRooms_ReadFortune(void);
-
-s32 ItemPicker_RunToShow(s32 *unit, s32 *slot);
 
 void NaribweRooms_ReadProng(void);
 

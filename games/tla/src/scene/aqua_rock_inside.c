@@ -148,24 +148,12 @@ struct BeamState gAquaRockInside_Splashes BSS_DATA;
 extern u32 gOrbitSpark_Script[];
 extern u32 gAquaRockInside_SplashScript[];
 extern u32 gWadingSplash_Script[];
-extern u32 gWaterDropScript[];
+extern u32 gRippleScript[];
 /// The water pillars' tiles, compressed (graphics/aqua_rock_inside/tiles.s).
 extern const u8 gAquaRockInside_PillarTiles[];
 /// The splashes' tiles, compressed.
 extern const u8 gAquaRockInside_SplashTiles[];
 extern u32 gDust_BurstScript[];
-
-/// FieldActor_Create, by the name shared/actor_emit_water_drop.h calls it.
-static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
-                                                    s32 z) {
-  return Import_ActorCreate(kind, x, y, z);
-}
-
-/// FieldCamera_MoveToFX, by the name shared/leader_rise_from_water.h calls it.
-static __inline__ void Camera_MoveWithinMapBounds_(FIXED x, FIXED a, FIXED z,
-                                                   s32 b) {
-  FieldCamera_MoveWithinMapBounds(x, a, z, b);
-}
 
 /// Takes `size` bytes from the heap for a picture's decompression.
 static inline void *BumpAlloc(s32 size) {
@@ -182,7 +170,6 @@ static inline void *BumpAlloc(s32 size) {
 #include "sound/sound.h"
 #include "battle/battle.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "system/system.h"
@@ -2234,11 +2221,11 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/actor_spawn_wading_splash.h"
 
-#include "shared/actor_emit_water_drop.h"
+#include "shared/actor_emit_ripples.h"
 
 #include "shared/leader_flow_with_stream.h"
 
-#include "shared/actor_show_parts.h"
+#include "shared/moai_add_water.h"
 
 #include "shared/leader_spin_away.h"
 
@@ -2752,7 +2739,7 @@ u32 gWadingSplash_Script[] = {
     SC_RELEASE,
 };
 
-u32 gWaterDropScript[] = {
+u32 gRippleScript[] = {
     SC_ADD(SW_Y, toFIXED(0.25)),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),

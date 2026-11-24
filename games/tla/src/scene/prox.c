@@ -45,7 +45,6 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -69,6 +68,7 @@
 #include "text/msg_ids.h"
 #include "scene/falling_rocks.h"
 #include "scene/scene.h"
+#include "shop/shop.h"
 
 /// The people at the south gate for the farewell after the ending, numbering
 /// the rows of `gProx_SouthGateFarewellPlacements`; the party's rows go to
@@ -584,8 +584,6 @@ void Prox_TalkToInnkeeper(void) {
   }
 }
 
-s32 Shop_Run();
-
 /// Felix talks to the shopkeeper, the old woman behind the counter in the cave
 /// room behind the small door in the east cliff. From across the counter,
 /// facing north, she opens the shop; from anywhere else she marvels at the
@@ -607,8 +605,6 @@ void Prox_TalkToShopkeeper(void) {
     Prox_EndEvent();
   }
 }
-
-s32 Sanctum_Run();
 
 /// Felix talks to the healer, the old man behind the lectern in the Sanctum
 /// behind the wide wooden door in the west cliff. From in front of the
@@ -1752,7 +1748,6 @@ void Prox_GiveThanksForBeacon(void) {
   Prox_EndEvent();
 }
 
-void Actor_SetWideSprite(s32 id, s32 wide);
 void TilesetAnim_Resume(s32 layer);
 void TilesetAnim_Pause(u32 layer);
 void FieldEffect_StartBlankOverlay(s32 actor);
@@ -1801,7 +1796,7 @@ s32 Scene_Initialize(void) {
     scene = gMainRoutineState.next;
     if (scene == SCENE_PROX) {
       if (!Event_GetFlag(FLAG_DIG_SPOT_SCOOPED))
-        Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 1);
+        Actor_SetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
       Prox_InitializeTown();
     } else if (scene == SCENE_PROX_MOLD) {
       Prox_InitializeMold();

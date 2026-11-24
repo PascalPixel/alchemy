@@ -41,7 +41,6 @@
 #include "game/game.h"
 #include "game/class_djinn.h"
 #include "graphics/palette_buffers.h"
-#include "graphics/graphics.h"
 #include "graphics/resource.h"
 #include "graphics/vram_tab.h"
 #include "menu/menu.h"
@@ -67,13 +66,9 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 void WorldMap_LoadTidalWave(void);
 
 #include "shared/tables.h"
+#include "shared/ship_flight.h"
 
 struct Actor;
-
-/// FieldSprite's byte 0x11 read as its bits.
-struct SpriteCacheBits {
-  u8 retainCacheEntry : 1; ///< keeps the VRAM cache entry when it is released
-};
 
 /// A FieldSprite read as its sprite attribute 1, whose top two bits are the
 /// sprite size where FieldSprite names them its flips.
@@ -142,10 +137,6 @@ enum WorldMapCellBehavior {
   CELL_BEHAVIOR_WORLD_MAP_FIRST_FLIGHT = 40
 };
 
-/// The World Map's blocks (struct WorldMapBlocks): 32 pixels square, 32 to a
-/// row and a column.
-#define WORLD_MAP_BLOCK_SIZE toFIXED(32)
-#define WORLD_MAP_BLOCKS_ACROSS 32
 /// A block's terrain byte: the party may step ashore from the open sea here.
 #define WORLD_MAP_BLOCK_LANDING (1 << 6)
 
@@ -247,7 +238,7 @@ FIXED Party_GetPpRatio(void);
 void WorldMap_WatchVenusLighthouseCollapse(void);
 
 s32 Event_PickUpItem(s32 actor, s32 item, s32 flag);
-void Actor_StartMovementModeScript(void);
+void Actor_StartMovementModeScript(struct Actor *actor);
 s32 Field_FindNearbyTalkTarget(s32 owner);
 s32 WorldMap_IsWalkable(struct Actor *actor, s32 *position);
 void Party_GivePiersDjinn(void);
@@ -466,6 +457,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// while it rises, and the PP gauge appears, since flying uses the party's PP.
 void WorldMap_SetUpFlyingShip(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct Actor *leader;
 
   gMainRoutineState.movementMode = LEADER_MOVEMENT_FLYING_SHIP;
   if (Event_GetFlag(FLAG_SHIP_HOVERING)) {
@@ -474,8 +466,8 @@ void WorldMap_SetUpFlyingShip(void) {
     // "Hover"
     Message_ShowCentered((s32)MsgCastAbilityName, 4);
   }
-  if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
-    Actor_StartMovementModeScript();
+  if ((leader = Actor_Get(FieldParty_GetLeaderActor())) != NULL)
+    Actor_StartMovementModeScript(leader);
   Ship_TakeFlight();
   if (Event_GetFlag(FLAG_SHIP_HOVERING))
     state->climbing = 0;
@@ -587,11 +579,11 @@ void WorldMap_LeaveShip(void) {
   position[2] = ship->z.fixed;
   Vector_AddPolarOffset(toFIXED(24), ship->facing, position);
   blocked = 0;
-  block = &blocks->blocks[(position[0] / WORLD_MAP_BLOCK_SIZE &
-                           WORLD_MAP_BLOCKS_ACROSS - 1) +
-                          (position[2] / WORLD_MAP_BLOCK_SIZE &
-                           WORLD_MAP_BLOCKS_ACROSS - 1) *
-                              WORLD_MAP_BLOCKS_ACROSS];
+  block = &blocks->blocks[(position[0] / toFIXED(WORLD_MAP_CELL_PIXELS) &
+                           WORLD_MAP_VIEW_CELLS - 1) +
+                          (position[2] / toFIXED(WORLD_MAP_CELL_PIXELS) &
+                           WORLD_MAP_VIEW_CELLS - 1) *
+                              WORLD_MAP_VIEW_CELLS];
   if (cell > WORLD_MAP_COLLISION_WALKABLE_LAST) {
     blocked = 1;
   } else {
@@ -856,7 +848,7 @@ void WorldMap_ShowGoldenBoots(void) {
   FieldActor_ShowItemIconById(ACTOR_GOLDEN_BOOTS, ITEM_GOLDEN_BOOTS);
   actor = Actor_Get(ACTOR_GOLDEN_BOOTS);
   sprite = actor->sprite;
-  ((struct SpriteCacheBits *)&sprite->cacheBits)->retainCacheEntry = 1;
+  sprite->retainCacheEntry = 1;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GOLDEN_BOOTS), 0);
   a = FACING_SOUTH;
   id = ACTOR_GOLDEN_BOOTS;
@@ -875,8 +867,8 @@ void WorldMap_EnterProx(s32 id) {
 /// Walking onto Yallam from the World Map: coming from the north, the party
 /// enters by its north side, and from the south by its south side.
 void WorldMap_EnterYallam(s32 id) {
-  WorldMap_SelectExitByZ(id, WORLD_MAP_TO_YALLAM_SOUTH_B,
-                         WORLD_MAP_TO_YALLAM_SOUTH_A);
+  WorldMap_SelectExitByZ(id, WORLD_MAP_TO_YALLAM_NORTH,
+                         WORLD_MAP_TO_YALLAM_SOUTH);
 }
 
 /// Walking onto Daila from the World Map: coming from the north, the party
@@ -908,7 +900,8 @@ s32 Scene_Initialize(void) {
     FieldWorldMap_StartZoom(FIXED_ONE, 1);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   state = Ram_HeapSlots->fieldState;
-  state->transition = SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 0);
+  state->transition =
+      SCENE_TRANSITION(TRANSITION_CENTRE_LINE, CENTRE_LINE_STEADY);
   state->transitionFrames = 16;
   wait(1);
   FieldCamera_SetSpeed(8);
@@ -1043,7 +1036,7 @@ void WorldMap_ExplainGivingDjinn(void) {
   Event_SetFlag(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
   FieldEvent_Wait(30);
-  Field_RequestBattleFromEncounterTable(9, 5);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 5);
 }
 
 /// The bandit and the thieves from Vault, after a linked game, want Isaac.
@@ -2399,13 +2392,13 @@ void WorldMap_GlowInFlight(struct Actor *actor) {
   }
 }
 
-/// Sets the ship's look by flight mode: 0 plain, 1 powering up, 2 in flight.
+/// Sets the ship's look by flight mode (enum ShipFlightMode).
 void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
-  if (mode == 0) {
+  if (mode == SHIP_LANDED) {
     actor->update = 0;
     Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  } else if (mode == 1) {
+  } else if (mode == SHIP_POWERING_UP) {
     actor->update = (ObjectUpdate)WorldMap_FlashPoweringUp;
   } else {
     actor->update = (ObjectUpdate)WorldMap_GlowInFlight;
@@ -2417,7 +2410,7 @@ void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
 
 /// Brings the leader's ship down out of flight.
 void WorldMap_EndFlight(void) {
-  Actor_SetFlightMode(Actor_GetById(Party_GetLeaderActor()), 0);
+  Actor_SetFlightMode(Actor_GetById(Party_GetLeaderActor()), SHIP_LANDED);
 }
 
 /// Run each frame of the lighthouse transition: every other two frames the
@@ -2431,10 +2424,6 @@ void WorldMap_UpdateTransitionBlend(void) {
                          gWorldMapBlend | (BLEND_WEIGHT_MAX - 4));
   else
     Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gWorldMapBlend | BLEND_WEIGHT_MAX);
-}
-
-static inline void Camera_Move(FIXED x, FIXED y, FIXED z, s32 mode) {
-  FieldCamera_MoveToFX(x, y, z, mode);
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.
@@ -2660,7 +2649,7 @@ void WorldMap_SpawnTwinSparks(struct Actor *parent) {
         sprite->flags = 0;
         VramCache_FreeEntry(sprite->slot);
         sprite->slot = state->vramBlock;
-        ((struct SpriteCacheBits *)&sprite->cacheBits)->retainCacheEntry = 1;
+        sprite->retainCacheEntry = 1;
         sprite->tile =
             (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;
         sprite->fullColor = 0;
@@ -2838,9 +2827,9 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_SEA_OF_TIME_ISLET, CONDITION_ALWAYS, 13486, 0, 7482,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_YALLAM_SOUTH_A, CONDITION_ALWAYS, 12923, 0, 9681,
+    {WORLD_MAP_FROM_YALLAM_NORTH, CONDITION_ALWAYS, 12923, 0, 9681,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_YALLAM_SOUTH_B, CONDITION_ALWAYS, 12921, 0, 9752,
+    {WORLD_MAP_FROM_YALLAM_SOUTH, CONDITION_ALWAYS, 12921, 0, 9752,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_TAOPO_SWAMP_ENTRANCE, CONDITION_ALWAYS, 12680, 0, 10297,
      FACING_WEST, 0, -1, -1, -1, -1, 0},
@@ -2866,7 +2855,7 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_TUNDARIA_TOWER_ENTRANCE, CONDITION_ALWAYS, 9490, 0, 10960,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_SW_ATTEKA_ISLET, CONDITION_ALWAYS, 5836, 0, 10120,
+    {WORLD_MAP_FROM_SOUTHWEST_ATTEKA_ISLET, CONDITION_ALWAYS, 5836, 0, 10120,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_GONDOWAN_SETTLEMENT, CONDITION_ALWAYS, 8582, 0, 7420,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -2957,7 +2946,7 @@ LATE_DATA u32 gSceneExits[] = {
                IDEJIMA_FROM_WORLD_MAP_SOUTH),
     SCENE_EXIT(WORLD_MAP_TO_LEMURIAN_SHIP_TILLER_A, LemurianShipTiller,
                LEMURIAN_SHIP_TILLER_FROM_WORLD_MAP_C),
-    SCENE_EXIT(WORLD_MAP_TO_IDEJIMA_NORTH_B, Idejima, IDEJIMA_FROM_TITLE),
+    SCENE_EXIT(WORLD_MAP_TO_IDEJIMA_NORTH_B, Idejima, IDEJIMA_AFTER_DRIFT),
     SCENE_EXIT(WORLD_MAP_TO_AQUA_ROCK_MOAI_NORTH, AquaRockMoai,
                AQUA_ROCK_MOAI_FROM_WORLD_MAP_NORTH),
     SCENE_EXIT(WORLD_MAP_TO_IDEJIMA_SOUTHWEST, Idejima,
@@ -3030,10 +3019,8 @@ LATE_DATA u32 gSceneExits[] = {
                SOUTHEAST_ANGARA_ISLET_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_SEA_OF_TIME_ISLET, SeaOfTimeIslet,
                SEA_OF_TIME_ISLET_FROM_WORLD_MAP),
-    SCENE_EXIT(WORLD_MAP_TO_YALLAM_SOUTH_A, Yallam,
-               YALLAM_FROM_WORLD_MAP_SOUTH),
-    SCENE_EXIT(WORLD_MAP_TO_YALLAM_SOUTH_B, Yallam,
-               YALLAM_FROM_WORLD_MAP_NORTH),
+    SCENE_EXIT(WORLD_MAP_TO_YALLAM_SOUTH, Yallam, YALLAM_FROM_WORLD_MAP_SOUTH),
+    SCENE_EXIT(WORLD_MAP_TO_YALLAM_NORTH, Yallam, YALLAM_FROM_WORLD_MAP_NORTH),
     SCENE_EXIT(WORLD_MAP_TO_TAOPO_SWAMP_ENTRANCE, TaopoSwampEntrance,
                TAOPO_SWAMP_ENTRANCE_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_APOJII_ISLANDS, ApojiiIslands,
@@ -3056,8 +3043,8 @@ LATE_DATA u32 gSceneExits[] = {
                LEMURIA_ENTRANCE_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_TUNDARIA_TOWER_ENTRANCE, TundariaTowerEntrance,
                TUNDARIA_TOWER_ENTRANCE_FROM_WORLD_MAP),
-    SCENE_EXIT(WORLD_MAP_TO_SW_ATTEKA_ISLET, SwAttekaIslet,
-               SW_ATTEKA_ISLET_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_SOUTHWEST_ATTEKA_ISLET, SouthwestAttekaIslet,
+               SOUTHWEST_ATTEKA_ISLET_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_GONDOWAN_SETTLEMENT, GondowanSettlement,
                GONDOWAN_SETTLEMENT_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_HESPERIA_SETTLEMENT, HesperiaSettlement,
@@ -3278,10 +3265,8 @@ LATE_DATA struct Trigger gSceneEvents[] = {
      EVENT(WorldMap_MeetPetra)},
     {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_CORE, FLAG_DJINNI(DJINNI_CORE),
      EVENT(WorldMap_MeetCore)},
-    // 99 is what the search finds on open sea ahead of the ship,
-    // field_sequence_run.c's SHIP_SEA_EXAMINE_CODE.
-    {TRIGGER_EXAMINE, TRIGGER_SUBJECT_OWN_EFFECT | 99, CONDITION_ALWAYS,
-     EVENT(WorldMap_GazeIntoPond)},
+    {TRIGGER_EXAMINE, TRIGGER_SUBJECT_OWN_EFFECT | SHIP_SEA_EXAMINE_CODE,
+     CONDITION_ALWAYS, EVENT(WorldMap_GazeIntoPond)},
     {TRIGGER_STEP, STEP_TRIGGER_AREA(PLACED_DAILA), CONDITION_ALWAYS,
      EVENT(WorldMap_EnterDaila)},
     // Walking into a place's marker (its slot among gWorldMap_PlacedActors)
@@ -3357,7 +3342,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, STEP_TRIGGER_AREA(37), CONDITION_ALWAYS,
      WORLD_MAP_TO_TUNDARIA_TOWER_ENTRANCE},
     {TRIGGER_EXIT, STEP_TRIGGER_AREA(38), CONDITION_ALWAYS,
-     WORLD_MAP_TO_SW_ATTEKA_ISLET},
+     WORLD_MAP_TO_SOUTHWEST_ATTEKA_ISLET},
     {TRIGGER_EXIT, STEP_TRIGGER_AREA(39), CONDITION_ALWAYS,
      WORLD_MAP_TO_GONDOWAN_SETTLEMENT},
     {TRIGGER_EXIT, STEP_TRIGGER_AREA(40), CONDITION_ALWAYS,

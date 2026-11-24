@@ -20,9 +20,6 @@
 #include "field/field_psynergy.h"
 #include "field/event.h"
 #include "field/field_sequence_event.h"
-#include "field/scene_call.h"
-#include "field/flag_call.h"
-#include "field/screen_transition.h"
 #include "gamepak/far_call/window.h"
 #include "text/msg_ids.h"
 #include "window/window.h"
@@ -275,7 +272,7 @@ void FieldPsynergy_Whirlwind(void) {
         }
       }
     }
-    BattleEffect_SetObjectUpdateMode(scene->caster, 0);
+    BattleEffect_SetObjectUpdateMode(scene->caster, CASTER_LOOK_NORMAL);
     FieldPsynergy_FadeFromCastColor();
     orb->timer = 0;
     orb->update = (ObjectUpdate)Whirlwind_UpdateSpentOrb;
@@ -547,7 +544,7 @@ void FieldPsynergy_Catch(void) {
   actor->facing = mainActor->facing;
   actor->speedLimit = toFIXED(13) / 10;
   actor->motionFlags = 0;
-  Actor_SelectAnimationFar(actor, 5);
+  Actor_SelectAnimationFar(actor, MOVE_HAND_ANIMATION_FIST);
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_GRB);
   step = 0;
   do {
@@ -564,13 +561,13 @@ void FieldPsynergy_Catch(void) {
     step++;
   } while (step < steps);
   wait(10);
-  Actor_SelectAnimationFar(actor, 6);
+  Actor_SelectAnimationFar(actor, MOVE_HAND_ANIMATION_CLENCH);
   wait(15);
   for (index = 0; index < CATCH_PRESS_FRAMES; index++) {
     actor->y.fixed -= toFIXED(2);
     wait(1);
   }
-  Actor_SelectAnimationFar(actor, 5);
+  Actor_SelectAnimationFar(actor, MOVE_HAND_ANIMATION_FIST);
   Sound_PlayFar(SE_WATER);
   if (secondary != 0)
     Actor_SetPositionAndResetMotionFar(secondary, -toFIXED(9),
@@ -957,7 +954,7 @@ void FieldPsynergy_Retreat(void) {
 
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, Retreat_UpdateSpark);
-    FieldParticle_SetAnimation(effect, 7);
+    FieldParticle_SetAnimation(effect, ANIM_PARTICLE_TWINKLE);
     Sprite_SetAnimationColorModesFar(effect->sprite, Random_Below(7));
     scale = (Random16() >> 1) + FIXED_ONE * 6 / 5; // 1.2 to 1.7
     effect->scaleY = scale;
@@ -1251,14 +1248,12 @@ void FieldEffect_CycleActorAndSpawnArcs(struct Actor *actor) {
     BattleEffect_SpawnScaledArcObjects(actor);
 }
 
-/// Gives the caster its look while it casts: 0 none (normal colours), 1
-/// flashing white with swelling arcs (FieldEffect_FlickerActorAndSpawnArcs), 2
-/// cycling colours with them (FieldEffect_CycleActorAndSpawnArcs).
+/// Gives the caster its look while it casts (enum CasterLook).
 void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode) {
-  if (mode == 0) {
+  if (mode == CASTER_LOOK_NORMAL) {
     actor->update = 0;
     Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
-  } else if (mode == 1) {
+  } else if (mode == CASTER_LOOK_FLASHING_WHITE) {
     actor->update = (ObjectUpdate)FieldEffect_FlickerActorAndSpawnArcs;
   } else {
     actor->update = (ObjectUpdate)FieldEffect_CycleActorAndSpawnArcs;

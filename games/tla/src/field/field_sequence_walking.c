@@ -101,8 +101,12 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 
     x = position[0];
     z = position[2];
-    cell = Ram_MapBlocks +
-           ((((x / toFIXED(32)) & 31) + (((z / toFIXED(32)) & 31) << 5)) << 2);
+    cell =
+        Ram_MapBlocks +
+        ((((x / toFIXED(WORLD_MAP_CELL_PIXELS)) & (WORLD_MAP_VIEW_CELLS - 1)) +
+          (((z / toFIXED(WORLD_MAP_CELL_PIXELS)) & (WORLD_MAP_VIEW_CELLS - 1)) *
+           WORLD_MAP_VIEW_CELLS))
+         << 2);
   } else {
     FIXED x, z;
 
@@ -130,8 +134,11 @@ s32 Field_GetCollisionUnderLeader(void) {
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     cell = (struct MapCell *)Ram_MapBlocks +
-           (((position.x / toFIXED(32)) & 31) +
-            ((position.z / toFIXED(32)) & 31) * 32);
+           (((position.x / toFIXED(WORLD_MAP_CELL_PIXELS)) &
+             (WORLD_MAP_VIEW_CELLS - 1)) +
+            ((position.z / toFIXED(WORLD_MAP_CELL_PIXELS)) &
+             (WORLD_MAP_VIEW_CELLS - 1)) *
+                WORLD_MAP_VIEW_CELLS);
   } else {
     cell = map->layers[0].cells;
     cell += position.x / toFIXED(MAPGRID_CELL_PIXELS) +
@@ -226,8 +233,12 @@ void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
     previousHp[i] = Unit_Get(gMainRoutineState.party[i])->hp;
 
   if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    tile = &((struct MapCell *)Ram_MapBlocks)[((x / toFIXED(32)) & 31) +
-                                              (((z / toFIXED(32)) & 31) << 5)];
+    tile = &((
+        struct MapCell *)Ram_MapBlocks)[((x / toFIXED(WORLD_MAP_CELL_PIXELS)) &
+                                         (WORLD_MAP_VIEW_CELLS - 1)) +
+                                        (((z / toFIXED(WORLD_MAP_CELL_PIXELS)) &
+                                          (WORLD_MAP_VIEW_CELLS - 1)) *
+                                         WORLD_MAP_VIEW_CELLS)];
     event = tile->collisionCode;
     attributes = 0;
   } else {

@@ -13,7 +13,6 @@
 #include "sounds.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -49,9 +48,6 @@
 /// Set while Sunshine forges what the party brought him, as Yallam's
 /// FLAG_SUNSHINE_FORGING is; here only leaving the room clears it.
 #define FLAG_SHOP_TEST_SUNSHINE_FORGING FLAG_SCENE_TEMP_00
-
-/// The stage Scoop passes its spot's event each frame of the dig.
-enum { SCOOP_STAGE_DUG = 1, SCOOP_STAGE_AFTER_DIG };
 
 /// The room's people, numbered in the order of gActorPlacements: the shops'
 /// people, then the testers, each named for what talking to it opens
@@ -100,16 +96,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// The routines of other banks the tests open that no header declares yet,
 /// as their banks define them.
-struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
-                                   s32 y);
-struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
-s32 Shop_Run(s32 stockRow, s32 keeper);
-s32 Sanctum_Run(s32 keeper);
-s32 Inn_CheckIn(s32 innId, s32 keeper);
-s32 Forge_Run(s32 keeper);
-void Forge_SetItem(s32 item);
-s32 Forge_GetItem(void);
-s32 ItemPicker_RunToShow(s32 *selectedUnit, s32 *selectedSlot);
 s32 NameEntry_EditMemberName(s32 member);
 void Summon_ShowLearnedMessage(s32 summon);
 void Summon_Learn(s32 summonId);
@@ -861,7 +847,7 @@ UNUSED void ShopTest_GrowActor(s32 stage, s32 id, s32 x, s32 z) {
     actor->scaleX = 0;
     actor->scaleY = 0;
   }
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     while (actor->scaleX < FIXED_ONE) {
       wait(1);
       scale = actor->scaleX;
@@ -879,7 +865,7 @@ UNUSED void ShopTest_DropActor(s32 stage, s32 id, s32 x, s32 z) {
   struct Actor *actor;
 
   actor = Actor_GetById(id);
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     Actor_SetPosition(id, x, z);
     actor->y.fixed = toFIXED(32);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -900,7 +886,7 @@ UNUSED void ShopTest_RaiseStatue(s32 stage, s32 x, s32 z, s32 zone, s32 slot) {
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     }
   }
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     actor = ((struct Actor *)Import_ActorCreate(SPRITE_WINGED_STATUE,
                                                 toFIXED(x), 0, toFIXED(z)));
     if (actor != NULL) {

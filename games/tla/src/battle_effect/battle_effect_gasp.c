@@ -649,7 +649,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       if (frame == 4)
         Sound_PlayFar(SE_BEAST_CRY);
       if (frame == 48)
-        EFFECT_SHOW_DAMAGE(-1);
+        EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
       texture.logWidth = 5;
       texture.logHeight = 5;
       model->kind = MODEL_SHADED_ADDITIVE;
@@ -1097,7 +1097,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
         // Another pose first, so that the leap starts over, held on its first
         // picture until frame 14.
-        Actor_SelectAnimationFar(user, POSE_ENEMY_HELD);
+        Actor_SelectAnimationFar(user, POSE_STILL);
         Actor_SelectAnimationFar(user, POSE_LEAP);
         Actor_SetAnimationSpeedFar(user, 0);
         Sound_PlayFar(SE_POWER_UP);
@@ -1379,7 +1379,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                                  TINT_KEEP, 0, 30);
       }
       if (frame == 28)
-        EFFECT_SHOW_DAMAGE(-1);
+        EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
     } else if (mode == GASP_MODE_PSY_BOOST) {
       // Two rings shrink onto the user and a glow turns there, in grey.
       struct ScreenPoint pos;
@@ -1428,7 +1428,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                                  TINT_KEEP, 0, 30);
       }
       if (frame == 28)
-        EFFECT_SHOW_DAMAGE(-1);
+        EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
     } else {
       // Reflux, Counter-rush and Djinn Counter: a swirl grows and turns, at
       // the target or at the user.

@@ -1501,7 +1501,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
 
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_ClearTintTimers();
-  display->secondMode = BATTLE_BACKGROUND_FIXED;
+  display->bg1ScrollMode = BATTLE_BACKGROUND_FIXED;
   wait(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -1531,7 +1531,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                           DISPCNT_WIN1_ON,
                       IO_WRITE_HALFWORD);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-  display->secondMode = BATTLE_BACKGROUND_NONE;
+  display->bg1ScrollMode = BATTLE_BACKGROUND_NONE;
   wait(1);
 
   BattleEffect_SetupCanvasWindows();
@@ -1566,7 +1566,7 @@ UNUSED void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   s32 offset;
 
   BattleEffect_ClearTintTimers();
-  display->secondMode = BATTLE_BACKGROUND_FIXED;
+  display->bg1ScrollMode = BATTLE_BACKGROUND_FIXED;
   wait(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -1592,7 +1592,7 @@ UNUSED void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
                       IO_WRITE_HALFWORD);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-  display->secondMode = BATTLE_BACKGROUND_NONE;
+  display->bg1ScrollMode = BATTLE_BACKGROUND_NONE;
   wait(1);
 
   BattleEffect_SetupCanvasWindows();
@@ -1711,7 +1711,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   struct BattleState *battle;
   s32 *flag;
 
-  flag = &(Ram_HeapSlots->battleBackground)->secondMode;
+  flag = &(Ram_HeapSlots->battleBackground)->bg1ScrollMode;
   battle = Ram_HeapSlots->battleState;
   *flag = BATTLE_BACKGROUND_FIXED;
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
@@ -1747,7 +1747,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
   BattleEffect_ClearTintTimers();
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, screen->background, 0);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  layer->secondMode = BATTLE_BACKGROUND_NONE;
+  layer->bg1ScrollMode = BATTLE_BACKGROUND_NONE;
   // A blank tile, then the rows above the canvas, from the first one BG1
   // shows, which show nothing.
   Iwram_ClearWords(BG_CHAR_BLOCK(0) + CANVAS_BG1_BLANK_TILE * TILE_SIZE_8BPP,

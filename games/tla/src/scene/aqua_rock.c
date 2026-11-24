@@ -73,7 +73,7 @@ void AquaRock_DrawFallingBubbles(void);
 void AquaRock_DrawBubbles(void);
 
 extern u32 gWadingSplash_Script[];
-extern u32 gWaterDropScript[];
+extern u32 gRippleScript[];
 /// The bubbles' four frames, compressed (graphics/aqua_rock/tiles.s).
 extern const u8 gAquaRock_BubbleTiles[];
 extern struct SceneRegion gAquaRock_SlopesRegions[];
@@ -202,12 +202,6 @@ extern struct Trigger gAquaRock_Triggers[];
 extern struct Trigger gAquaRock_SlopesTriggers[];
 extern struct Trigger gAquaRock_MistSabreChestTriggers[];
 
-/// FieldActor_Create, by the name shared/actor_emit_water_drop.h calls it.
-static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
-                                                    s32 z) {
-  return Import_ActorCreate(kind, x, y, z);
-}
-
 /// Takes `size` bytes from the heap for a picture's decompression.
 static inline void *BumpAlloc(s32 size) {
   /* FAKEMATCH(wrapper): Heap_Alloc through this inline. */
@@ -219,7 +213,6 @@ static inline void *BumpAlloc(s32 size) {
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -227,7 +220,7 @@ static inline void *BumpAlloc(s32 size) {
 #include "types.h"
 #include "field/scene_tables.h"
 #include "field/event.h"
-#include "field/ground_mask.h"
+#include "field/weather.h"
 #include "scene/scene.h"
 #include "scene/ground_effects.h"
 #include "system/task.h"
@@ -282,7 +275,7 @@ void AquaRock_SetBubbleAnchor(s32 id);
 void Leader_FlowWithStream(void);
 void Actor_SpawnWadingSplash(struct Actor *actor);
 void AquaRock_AddMoaiWater(s32 id);
-void Actor_EmitWaterDrop(struct Actor *actor);
+void Actor_EmitRipples(struct Actor *actor);
 
 void AquaRock_KeepLeaderPriority(void);
 void AquaRock_StartBubbles(void);
@@ -996,7 +989,7 @@ void AquaRock_DouseMistSabreChestWaterStone(s32 unused, s32 id) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_WAY_INSIDE), 0);
   Actor_GetById(ACTOR_WAY_INSIDE)->collisionFlags = 0;
   Actor_GetById(ACTOR_WAY_INSIDE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_GetById(ACTOR_WAY_INSIDE)->update = (ObjectUpdate)Actor_EmitWaterDrop;
+  Actor_GetById(ACTOR_WAY_INSIDE)->update = (ObjectUpdate)Actor_EmitRipples;
   Event_Wait(30);
   for (i = 0; i < 6; i++) {
     Sound_Play(SE_WADE);
@@ -1245,7 +1238,8 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(id, 3);
     for (id = ACTOR_FIRST_BOTTOM_MOAI; id <= ACTOR_LAST_MOAI; id++)
       Actor_SetSpritePriority(id, 1);
-    Actor_GetById(ACTOR_FIRST_BOTTOM_MOAI)->retainSpriteCache = 2;
+    Actor_GetById(ACTOR_FIRST_BOTTOM_MOAI)->retainSpriteCache =
+        ACTOR_COMPOSE_OFF_SCREEN;
     Actor_SetAnimationById(ACTOR_FIRST_BOTTOM_MOAI, 3);
     for (id = ACTOR_FIRST_BOTTOM_MOAI + 1; id <= ACTOR_LAST_MOAI; id++) {
       Actor_SetAnimationById(id, 1);
@@ -1346,7 +1340,7 @@ s32 Scene_Initialize(void) {
         Actor_GetById(ACTOR_WAY_INSIDE)->collisionFlags = 0;
         Actor_GetById(ACTOR_WAY_INSIDE)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Actor_GetById(ACTOR_WAY_INSIDE)->update = Actor_EmitWaterDrop;
+        Actor_GetById(ACTOR_WAY_INSIDE)->update = Actor_EmitRipples;
         Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
         Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
         MapGrid_CopyCellTilesCellsRect(64, 68, 5, 13, 14, 94);
@@ -1369,7 +1363,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #include "shared/actor_spawn_wading_splash.h"
 
-#include "shared/actor_emit_water_drop.h"
+#include "shared/actor_emit_ripples.h"
 
 #include "shared/leader_flow_with_stream.h"
 
@@ -1717,7 +1711,7 @@ u32 gWadingSplash_Script[] = {
     SC_RELEASE,
 };
 
-#include "shared/water_drop_script.c"
+#include "shared/ripple_script.c"
 // clang-format on
 
 #undef DEFINE_AQUA_ROCK_FREEZE_PUDDLE

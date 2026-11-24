@@ -46,7 +46,6 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/palette_buffers.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -693,7 +692,8 @@ s32 GaiaRockInside_TossCask(void) {
   struct Actor *actor = Actor_Get(ACTOR_CASK);
   struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
 
-  if (FIELD_TILE(leader->z.fixed) <= 45 && FIELD_TILE(leader->x.fixed) <= 57)
+  if (FIELD_HALF_CELL(leader->z.fixed) <= 45 &&
+      FIELD_HALF_CELL(leader->x.fixed) <= 57)
     Actor_StartScript(actor, gGaiaRockInside_CaskTossedRightScript);
   else
     Actor_StartScript(actor, gGaiaRockInside_CaskTossedLeftScript);
@@ -944,8 +944,9 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   leader = Actor_Get(gMainRoutineState.leaderActorId);
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
-  if (FIELD_TILE(leader->z.fixed) > 53 && FIELD_TILE(leader->x.fixed) > 83 &&
-      FIELD_TILE(leader->x.fixed) <= 91) {
+  if (FIELD_HALF_CELL(leader->z.fixed) > 53 &&
+      FIELD_HALF_CELL(leader->x.fixed) > 83 &&
+      FIELD_HALF_CELL(leader->x.fixed) <= 91) {
     leader->speedLimit = toFIXED(2);
     Actor_ShowEmote(gMainRoutineState.leaderActorId,
                     EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1349,7 +1350,7 @@ void GaiaRockInside_ReadSandTablet(void) {
   ((s32 (*)())FieldMessage_Show)(message, 1);
   Actor_ShowEmote(gMainRoutineState.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  if (FIELD_TILE(leader->z.fixed) <= 39) {
+  if (FIELD_HALF_CELL(leader->z.fixed) <= 39) {
     Actor_WalkTo(gMainRoutineState.leaderActorId, 440, 328);
     FieldActor_WaitForMoveById(gMainRoutineState.leaderActorId);
   }
@@ -2028,12 +2029,12 @@ extern s16 gGaiaRockInside_StumpSpots[][2];
 s32 GaiaRockInside_RecordStumpSpots(void) {
   struct Actor *first = Actor_Get(ACTOR_STUMP_A);
   s8 firstIndex = 0;
-  s32 firstX = FIELD_TILE(first->x.fixed);
+  s32 firstX = FIELD_HALF_CELL(first->x.fixed);
   s8 secondIndex = 0;
-  s32 firstZ = FIELD_TILE(first->z.fixed);
+  s32 firstZ = FIELD_HALF_CELL(first->z.fixed);
   struct Actor *second = Actor_Get(ACTOR_STUMP_B);
-  s32 secondX = FIELD_TILE(second->x.fixed);
-  s32 secondZ = FIELD_TILE(second->z.fixed);
+  s32 secondX = FIELD_HALF_CELL(second->x.fixed);
+  s32 secondZ = FIELD_HALF_CELL(second->z.fixed);
   s8 i;
 
   for (i = 1; i <= STUMP_SPOTS; i++) {
@@ -2212,8 +2213,8 @@ void GaiaRockInside_StartPlatforms(u8 mode) {
     for (i = 0, id = ACTOR_FIRST_PLATFORM; id <= ACTOR_LAST_PLATFORM;
          i++, id++) {
       Actor_SetPositionFX(
-          id, FIELD_TILE_ORIGIN(gGaiaRockInside_PlatformPlaces[i][0]),
-          FIELD_TILE_ORIGIN(gGaiaRockInside_PlatformPlaces[i][1]));
+          id, FIELD_HALF_CELL_ORIGIN(gGaiaRockInside_PlatformPlaces[i][0]),
+          FIELD_HALF_CELL_ORIGIN(gGaiaRockInside_PlatformPlaces[i][1]));
       GaiaRockInside_SetPlatformMode(id, mode);
     }
   }
@@ -2817,7 +2818,7 @@ s32 Scene_Initialize(void) {
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Event_Wait(30);
-      Value2((s32 (*)())Actor_StartRepeatedMotion, ACTOR_SUSA, 2);
+      Actor_StartRepeatedMotion(ACTOR_SUSA, 2);
       Event_Wait(30);
       Event_SetMessageId((s32)MsgFieldLikeISaidTheSerpent);
       // "Like I said, the serpent can't be defeated by just weakening it..."
@@ -2858,13 +2859,14 @@ s32 Scene_Initialize(void) {
     high = (u8)(FieldGameFlag_GetByte(FLAG_STUMP_SPOTS) >> 4);
     if (low != 0)
       Actor_SetHorizontalPositionWithTerrain(
-          ACTOR_STUMP_A, FIELD_TILE_ORIGIN(gGaiaRockInside_StumpSpots[low][0]),
-          FIELD_TILE_ORIGIN(gGaiaRockInside_StumpSpots[low][1]));
+          ACTOR_STUMP_A,
+          FIELD_HALF_CELL_ORIGIN(gGaiaRockInside_StumpSpots[low][0]),
+          FIELD_HALF_CELL_ORIGIN(gGaiaRockInside_StumpSpots[low][1]));
     if ((s8)high != 0)
       Actor_SetHorizontalPositionWithTerrain(
           ACTOR_STUMP_B,
-          FIELD_TILE_ORIGIN(gGaiaRockInside_StumpSpots[(s8)high][0]),
-          FIELD_TILE_ORIGIN(gGaiaRockInside_StumpSpots[(s8)high][1]));
+          FIELD_HALF_CELL_ORIGIN(gGaiaRockInside_StumpSpots[(s8)high][0]),
+          FIELD_HALF_CELL_ORIGIN(gGaiaRockInside_StumpSpots[(s8)high][1]));
   } else if (state->next == SCENE_GAIA_ROCK_INSIDE_PLATFORMS) {
     if (Test(FLAG_PLATFORMS_SWAYING))
       GaiaRockInside_StartPlatforms(1);

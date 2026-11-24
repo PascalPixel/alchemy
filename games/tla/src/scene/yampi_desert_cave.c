@@ -27,7 +27,6 @@
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "graphics/palette_buffers.h"
-#include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/scene.h"
 #include "sound/sound.h"
@@ -40,7 +39,7 @@
 #include "system/task.h"
 #include "text/msg_ids.h"
 
-s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Point *position);
 
 #include "shared/tables.h"
 
@@ -757,8 +756,8 @@ void YampiDesertCave_MoveSandRipple(void) {
 /// Scoop cast right beside the ripple racing through the sand of Crystal's
 /// room stops it and digs up Crystal, the Venus Djinni, who drops to the
 /// ground.
-/// The ripple is stopped as Scoop acts (mode 1) and Crystal set down as it
-/// ends (mode 2).
+/// The ripple is stopped as the ground is dug (SCOOP_STAGE_DUG) and Crystal set
+/// down as she comes up (SCOOP_STAGE_DUG_UP).
 void YampiDesertCave_ScoopDjinni(s32 mode) {
   s32 index =
       (((s32)GameFlag_GetByte(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP)) /
@@ -780,11 +779,11 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   }
   if (px / MAPGRID_CELL_PIXELS != x || pz / MAPGRID_CELL_PIXELS != z)
     return;
-  if (mode == 1) {
+  if (mode == SCOOP_STAGE_DUG) {
     Task_Remove(YampiDesertCave_MoveSandRipple);
     Actor_SetPosition(ACTOR_SAND_RIPPLE, 0, 0);
   }
-  if (mode == 2) {
+  if (mode == SCOOP_STAGE_DUG_UP) {
     struct Actor *crystal = Actor_GetById(ACTOR_CRYSTAL);
 
     Actor_SetPositionFX(ACTOR_CRYSTAL, FIELD_HALF_CELL_ORIGIN(column),
@@ -860,8 +859,6 @@ extern u16 gTeleportCircle_PaletteSlots[];
 extern u16 gTeleportCircle_Colors[];
 extern u16 gTeleportCircle_ShimmerColors[];
 
-void Actor_SetWideSprite(s32 id, s32 wide);
-
 /// Sets up Yampi Desert Cave's three rooms as each one loads: the first room's
 /// palette cycle and Retreat destination, the third room's background
 /// priorities, and in each room the objects its flags place.
@@ -912,7 +909,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 12);
     }
     if (!Event_GetFlag(FLAG_YAMPI_DESERT_CAVE_MYTHRIL_SILVER_DUG_UP))
-      Actor_SetWideSprite(ACTOR_MYTHRIL_SILVER, 1);
+      Actor_SetWideSprite(ACTOR_MYTHRIL_SILVER, TREASURE_SPOT_WIDE);
   }
   if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
     // In the room of fallen columns, by any of its three ways in, the walls'

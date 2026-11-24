@@ -41,13 +41,11 @@
 #include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
-#include "field/flag_call.h"
 #include "field/map_grid.h"
 #include "field/object.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "graphics/glyph.h"
-#include "graphics/graphics.h"
 #include "graphics/resource.h"
 #include "menu/menu.h"
 #include "scene/scene.h"
@@ -175,8 +173,6 @@ enum YampiDesertCell {
   CELL_FLOW_CORNER_OUTSIDE = 8
 };
 
-void Actor_SetWideSprite(s32 actor, s32 value);
-
 void YampiDesert_StepOntoStakeTops(void);
 void YampiDesert_OpenLadderPit(void);
 void YampiDesert_SetBlocksShown(s32 show);
@@ -220,8 +216,8 @@ static inline void YampiDesert_PlaceRope(s32 index, s32 flag, s32 post,
   Rope_Place(index, flag, post, otherPost);
 }
 
-/// Scoop digs up a buried treasure: with `mode` 2, the hidden item comes up at
-/// its home and its flag is set (Actor_ReturnHome).
+/// Scoop digs up a buried treasure: with `mode` RETURN_HOME_DUG_UP, the hidden
+/// item comes up at its home and its flag is set (Actor_ReturnHome).
 static inline void YampiDesert_DigUpTreasure(s32 mode, s32 actorId, s32 flag) {
   Actor_ReturnHome(mode, actorId, flag);
 }
@@ -594,7 +590,7 @@ void YampiDesert_PoundBlitzStake(s32 mode, s32 count) {
 #define DEFINE_POUND_STAKE_STOPPING_SCORPION(name, stakes)                     \
   void name(s32 mode, s32 count) {                                             \
     Pound_SinkTarget(stakes, mode, count);                                     \
-    if (mode == 1) {                                                           \
+    if (mode == POUND_STAGE_LANDED) {                                          \
       if (gYampiDesert_RaisedEvent == 0)                                       \
         gYampiDesert_RaisedEvent = RAISED_WATCH_SCORPION_STOP;                 \
     }                                                                          \
@@ -657,7 +653,7 @@ void YampiDesert_StepOntoStakeTops(void) {
       actor->motionFlags = 0;
       cells->collisionCode = CELL_BEHAVIOR_NORMAL;
       cells->attributeB |= MAP_CELL_JUMP;
-      *shapes = MapCollision_FindOrAddTag(layer, shape, height + 4);
+      *shapes = MapShape_FindOrAdd(layer, shape, height + 4);
     }
     list++;
   }
@@ -698,7 +694,7 @@ void YampiDesert_StepOffStakeTops(void) {
       actor->motionFlags = 0;
       cells->collisionCode = CELL_BEHAVIOR_WALL;
       cells->attributeB &= ~MAP_CELL_JUMP;
-      *shapes = MapCollision_FindOrAddTag(layer, shape, height - 4);
+      *shapes = MapShape_FindOrAdd(layer, shape, height - 4);
     }
   }
   GameFlag_Clear(FLAG_YAMPI_DESERT_ON_STAKE_TOPS);
@@ -1069,7 +1065,7 @@ void YampiDesert_OpenGeyser(s32 mode) {
   struct Actor *actor;
   s32 height;
 
-  if (mode == 1) {
+  if (mode == SCOOP_STAGE_DUG) {
     actor = Actor_GetById(ACTOR_GEYSER);
     MapGrid_CopyCellTilesIndicesRect(35, 39, 13, 11, 3, 3);
     Actor_SetPosition(ACTOR_GEYSER, 232, 200);
@@ -1206,7 +1202,7 @@ void YampiDesert_OpenLadderPit(void) {
 /// Scoop on the oddly shaped sand puddle at the south of the travelers'
 /// spring's room (cell (8, 32)) digs it out to show a ladder going down.
 void YampiDesert_ScoopLadderPit(s32 mode) {
-  if (mode == 1) {
+  if (mode == SCOOP_STAGE_DUG) {
     YampiDesert_OpenLadderPit();
     GameFlag_Set(FLAG_YAMPI_DESERT_LADDER_DUG_UP);
   }
@@ -1436,7 +1432,7 @@ struct Actor *YampiDesert_CreateScoopGem(void) {
     mask |= OBJ_PRIORITY(1) >> 8;
     visual->attr2High = mask;
     actor->motionFlags = 0;
-    actor->retainSpriteCache = 1;
+    actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     visual->flags = 0;
     visual->layerCount = 0;
     icon = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
@@ -2404,7 +2400,7 @@ void YampiDesert_SetUpKingScorpion(void) {
 void YampiDesert_SetUpCoinsPuddle(void) {
   FieldEffect_StartBlankOverlay(0);
   if (GameFlag_Get(FLAG_YAMPI_DESERT_COINS_PUDDLE_DUG_UP) == 0)
-    Actor_SetWideSprite(ACTOR_HIDDEN_TREASURE, 0);
+    Actor_SetWideSprite(ACTOR_HIDDEN_TREASURE, TREASURE_SPOT_PUT_AWAY);
 }
 
 /// Sets up the Trainer's Whip chest's room: its rope, sign and flowing

@@ -15,7 +15,6 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -34,6 +33,7 @@
 #include "field/actor_script.h"
 #include "djinn_ids.h"
 #include "text/msg_ids.h"
+#include "shop/shop.h"
 
 /// Set once the old man of the mushroom house has been given the Healing
 /// Fungus and has traded Char for it.
@@ -180,8 +180,6 @@ extern struct Trigger gMadraRooms_TriggersAfterRaid[];
 extern struct Trigger gMadraRooms_TriggersOnReturn[];
 
 void Event_End(void);
-void Sanctum_Run(s32 actor);
-void Inn_CheckIn(s32 slot, s32 actor);
 void MadraRooms_ShinAngersPiers(void);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
@@ -481,9 +479,8 @@ static inline void MadraRooms_PlaceFacing(s32 actorId, s32 x, s32 z,
 /// the Kibombo's raid, when they are back in the jail.
 void MadraRooms_SetUpJail(void) {
   if (!Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    // Pound's fist and Scoop's hand drawn at priority 1, not sorted by depth,
-    // and without Pound's glow on the ground: both PSYNERGY_DRAW_ bits.
-    gFieldState->psynergyDrawFlags = 3;
+    gFieldState->psynergyDrawFlags =
+        PSYNERGY_DRAW_NO_SCENE_SPRITE | PSYNERGY_DRAW_FIXED_PRIORITY;
     if (!Event_GetFlag(FLAG_PIERS_INTERROGATED)) {
       MadraRooms_ShinAngersPiers();
     } else {
@@ -525,8 +522,8 @@ s32 Scene_Initialize(void) {
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineState.next == SCENE_MADRA_ROOMS_HOUSES) {
     event = Ram_HeapSlots->fieldState;
-    // As in the jail: both PSYNERGY_DRAW_ bits.
-    event->psynergyDrawFlags = 3;
+    event->psynergyDrawFlags =
+        PSYNERGY_DRAW_NO_SCENE_SPRITE | PSYNERGY_DRAW_FIXED_PRIORITY;
     if (!Event_GetFlag(FLAG_TRANSFERRED_WON_COLOSSO)) {
       Actor_SetPosition(ACTOR_MORGAN, 0, 0);
       Actor_SetPosition(ACTOR_DEKKA, 0, 0);
@@ -551,7 +548,7 @@ s32 Scene_Initialize(void) {
       ((struct FieldSprite *)Actor_Get(ACTOR_SISTER_IN_BED)->sprite)->flags |=
           SPRITE_FLAG_SUNK;
       sprite = Actor_Get(ACTOR_SISTER_IN_BED)->sprite;
-      sprite->cacheBits = (sprite->cacheBits & 3) | 8 << 2;
+      sprite->sunkRows = 8;
       ((struct FieldSprite *)Actor_Get(ACTOR_SISTER_IN_BED)->sprite)->dirty = 1;
     }
   }
@@ -596,7 +593,7 @@ void MadraRooms_ShinAngersPiers(void) {
 
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
-  Actor_SetAnimation(ACTOR_JAIL_PUDDLE, 1);
+  Actor_SetAnimation(ACTOR_JAIL_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   Actor_SetPosition(ACTOR_FELIX, 400, 888);
   FieldCamera_MoveTo(408, CAMERA_KEEP, 848, 1);
   Event_StartScreenTransition();

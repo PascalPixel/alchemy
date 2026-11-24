@@ -105,4 +105,18 @@ void ItemIconGrid_ShowInventory(struct Window *window, s32 x, s32 y,
 /// The frames the hand cursor takes to glide into a newly opened list.
 #define SHOP_CURSOR_ENTER_FRAMES 12
 
+/// The price digits 0 to 9, 32 bytes each (digits.4bpp), copied into a price
+/// sprite's tiles (Shop_DrawPriceDigit).
+extern u8 gShop_GlyphBytes[];
+s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind);
+
+/// The shops, inns, sanctums and forges as events open them.
+s32 Shop_Run(s32 stockRow, s32 keeper);
+s32 Sanctum_Run(s32 keeper);
+s32 Inn_CheckIn(s32 innId, s32 keeper);
+s32 Forge_Run(s32 keeper);
+void Forge_SetItem(s32 item);
+s32 Forge_GetItem(void);
+s32 ItemPicker_RunToShow(s32 *selectedUnit, s32 *selectedSlot);
+
 #endif

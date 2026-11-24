@@ -12,7 +12,6 @@
 #include "sounds.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -84,12 +83,6 @@ enum PsynergyTestCellBehavior {
   CELL_BEHAVIOR_CHEST = 100 ///< the chest, cell (14, 9)
 };
 
-/// The stage Scoop passes its spot's event each frame of the dig.
-enum { SCOOP_STAGE_DUG = 1, SCOOP_STAGE_AFTER_DIG };
-
-/// The stage Pound passes on the frame its fist lands.
-enum { POUND_STAGE_LANDS = 1 };
-
 /// The entrances Cyclone's spots bring the party back in by: there the leader
 /// leaves in a ring of light, or arrives in one (Scene_Initialize).
 enum { ENTRANCE_DEPART_IN_RING = 6, ENTRANCE_ARRIVE_IN_RING = 8 };
@@ -120,7 +113,6 @@ enum PsynergyTestActorId {
 };
 
 s32 ItemPicker_RunToDrop(s32 *selectedUnit, s32 *selectedSlot);
-s32 Inn_CheckIn(s32 innId, s32 keeper);
 void PsynergyTest_DigCells(s32 stage, s32 sourceX, s32 sourceY, s32 width,
                            s32 height, s32 destinationX, s32 destinationY);
 void PsynergyTest_GrowActor(s32 stage, s32 id, s32 x, s32 z);
@@ -131,14 +123,9 @@ void PsynergyTest_StopRings(struct Actor *actor);
 void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 animation);
 void Actor_FallOverById(u32 id, u32 angle);
 void Actor_DepartInRing(s32 actorId);
-s32 Sanctum_Run(s32 keeper);
 void Actor_ArriveInRing(s32 actorId);
 s32 Event_PickUpItem(s32 actor, s32 item, s32 flag);
 s32 NameEntry_EditMemberName(s32 member);
-s32 Shop_Run(s32 stockRow, s32 keeper);
-struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 options);
-struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
-                                   s32 y);
 
 extern u32 gLightRing_Tiles[];
 struct SparkleState gPsynergyTest_LeaderRings BSS_DATA ALIGNED(16);
@@ -442,7 +429,7 @@ void PsynergyTest_PoundTorch(s32 stage) {
   s32 destinationX;
   s32 destinationY;
 
-  if (stage == POUND_STAGE_LANDS) {
+  if (stage == POUND_STAGE_LANDED) {
     Actor_SetAnimation(ACTOR_TORCH, 2);
     destinationX = 25;
     destinationY = 0;
@@ -625,7 +612,7 @@ void PsynergyTest_GrowActor(s32 stage, s32 id, s32 x, s32 z) {
     actor->scaleX = 0;
     actor->scaleY = 0;
   }
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     while (actor->scaleX < FIXED_ONE) {
       wait(1);
       scale = actor->scaleX;
@@ -644,7 +631,7 @@ void PsynergyTest_DropActor(s32 stage, s32 id, s32 x, s32 z) {
   struct Actor *actor;
 
   actor = Actor_Get(id);
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     Actor_SetPosition(id, x, z);
     actor->y.fixed = toFIXED(32);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -667,7 +654,7 @@ void PsynergyTest_RaiseStatue(s32 stage, s32 x, s32 z, s32 row, s32 column) {
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     }
   }
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     actor =
         (FieldActor_Create(SPRITE_WINGED_STATUE, toFIXED(x), 0, toFIXED(z)));
     if (actor != NULL) {
@@ -873,7 +860,7 @@ struct Trigger gSceneEvents[] = {
 // worn out."
 #if !TLA_PATCH_1
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     5618},
+     MSGNO(MsgAnyTimeYouLike)},
 #endif
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
      MSGNO(MsgOooogOw)},

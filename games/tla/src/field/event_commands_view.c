@@ -158,7 +158,7 @@ struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
 }
 
 /// Returns 0 while the actor's sprite is an attached effect
-/// (SPRITE_ATTACHED_EFFECT), else 1.
+/// (SPRITE_RAY_ARC), else 1.
 s32 Actor_IsNotAttachedEffect(struct Actor *actor) {
   struct Sprite *sprite;
   s32 value;
@@ -167,7 +167,7 @@ s32 Actor_IsNotAttachedEffect(struct Actor *actor) {
       (sprite = actor->sprite) == 0 || sprite->entries[0] == 0)
     return 1;
   value = sprite->entries[0]->animationId;
-  value ^= SPRITE_ATTACHED_EFFECT;
+  value ^= SPRITE_RAY_ARC;
   if (value != 0)
     return 1;
   return 0;

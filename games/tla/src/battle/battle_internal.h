@@ -61,7 +61,7 @@
 #include "field/actor.h"
 #include "battle/battle_obj.h"
 #include "battle/battle_motion.h"
-#include "battle/battle_message.h"
+#include "text/msg_ids.h"
 #include "battle/battle_escape.h"
 #include "battle/battle_target.h"
 #include "field/actor_view.h"

@@ -14,7 +14,6 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/palette_buffers.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -509,7 +508,8 @@ void JupiterLighthouse_HealTarget(s32 actorId, s32 target) {
   s32 frame;
 
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_Get(actorId), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(actorId),
+                                   CASTER_LOOK_CYCLING_COLORS);
   Event_PlaySound(SE_ASCEND);
   System_Wait(50);
   Event_PlaySound(MUS_RECOVERING_AFTER_COMBAT);
@@ -527,7 +527,7 @@ void JupiterLighthouse_HealTarget(s32 actorId, s32 target) {
   }
   Actor_Get(target)->facing = FACING_NORTH;
   FieldActor_SetSpriteColor(Actor_Get(target), SPRITE_COLOR_NORMAL);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(actorId), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(actorId), CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Actor_SetAnimation(target, ANIM_STAND);
@@ -888,7 +888,7 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 #undef EFFECT_SET_SCRIPT
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
-#include "../field/map_cell_sprite.c"
+#include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
 

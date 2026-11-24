@@ -60,7 +60,7 @@ FarCall_OverworldTable:
 	export Event_AskYesNoAndShowResponseFar, Event_AskYesNoAndShowResponse
 	export Event_NoOpUpdateFar, Event_NoOpUpdate
 	export Event_ShowSpeakerMessageFar, Event_ShowSpeakerMessage
-	export Event_ShowCounterFar, Event_ShowCounter
+	export Event_ForwardShowMessageAtPositionFar, Event_ForwardShowMessageAtPosition
 	export Event_ShowMessageAtPositionFar, Event_ShowMessageAtPosition
 	export Actor_FaceDirectionByIdFar, Actor_FaceDirectionById
 	export Actor_FaceDirectionAndRefreshByIdFar, Actor_FaceDirectionAndRefreshById
@@ -234,7 +234,7 @@ FarCall_OverworldTable:
 	export Actor_PlaceBlocksFar, Actor_PlaceBlocks
 	export Actor_LiftTargetBlockFar, Actor_LiftTargetBlock
 	export Actor_PlaceMovedBlockFar, Actor_PlaceMovedBlock
-	export MapCollision_FindOrAddTagFar, MapCollision_FindOrAddTag
+	export MapShape_FindOrAddFar, MapShape_FindOrAdd
 	export Actor_FindAtCellFar, Actor_FindAtCell
 	export Leader_CanPushObjectAheadFar, Leader_CanPushObjectAhead
 	export Leader_PushObjectAheadFar, Leader_PushObjectAhead

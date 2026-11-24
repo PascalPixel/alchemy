@@ -20362,7 +20362,7 @@ msgctxt "message"
 msgid "04915"
 msgstr "あら いらないのね{page_break}"
 
-msgctxt "MsgTestName"
+msgctxt "MsgNamesMasterPoi"
 msgid "04916"
 msgstr "ピポイ{end_wait}"
 
@@ -20418,7 +20418,7 @@ msgctxt "message"
 msgid "04929"
 msgstr "オババ{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNamesSusa"
 msgid "04930"
 msgstr "スサ{end_wait}"
 
@@ -20506,7 +20506,7 @@ msgctxt "MsgNamesPiers"
 msgid "04951"
 msgstr "ピカード{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNamesAlex"
 msgid "04952"
 msgstr "アレクス{end_wait}"
 
@@ -20534,7 +20534,7 @@ msgctxt "message"
 msgid "04958"
 msgstr "ジェラばあ{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNamesWeaponsShop"
 msgid "04959"
 msgstr "武器屋 {end_wait}"
 
@@ -24606,7 +24606,7 @@ msgstr ""
 "ドラがなった時が・・・\n"
 "ファイナルの かいしだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAnyTimeYouLike"
 msgid "05618"
 msgstr ""
 "おう いつでもいいぜ\n"

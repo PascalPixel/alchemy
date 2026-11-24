@@ -29,9 +29,13 @@ const struct ElementLevelBonus gElement_PowerResistByLevel[16] = {
 };
 
 // clang-format off
-/// The 48 enemy element presets, by EnemyDefinition.elementPreset.
+/// The 48 enemy element presets, by EnemyDefinition.elementPreset; each is
+/// named by the enemies that have it, in the English release's words.
 const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
-    {
+    // The default: ???, Ruffian, Ruffian 2, Ruffian 3, Briggs, Sea Fighter,
+    // Champa 2, Champa 3, Moapa, Knight, Knight 3 and the enemy with no name
+    // message
+    [ELEMENT_PRESET_DEFAULT] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 1},
         .stats = {
@@ -41,7 +45,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 100, .resistance = 100},
         },
     },
-    {
+    // Bandit, Thief and Brigand
+    [ELEMENT_PRESET_BANDIT] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 1},
         .stats = {
@@ -51,7 +56,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 80, .resistance = 72},
         },
     },
-    {
+    // Azart, Satrage and Navampa
+    [ELEMENT_PRESET_AZART] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 1},
         .stats = {
@@ -61,7 +67,10 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 80, .resistance = 90},
         },
     },
-    {
+    // Chestbeater, Wild Gorilla, Crazy Gorilla, Wild Wolf, Dire Wolf, White
+    // Wolf, Vermin, Mad Vermin, Rat, Armored Rat, Plated Rat, Troll, Cave
+    // Troll, Brutal Troll, Mauler, Ravager, Mole, Mad Mole, Mole Mage and Ape
+    [ELEMENT_PRESET_CHESTBEATER] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {1},
         .stats = {
@@ -71,7 +80,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 80, .resistance = 72},
         },
     },
-    {
+    // Grisly, Killer Ape and Dirty Ape
+    [ELEMENT_PRESET_GRISLY] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {1},
         .stats = {
@@ -81,7 +91,9 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 80, .resistance = 127},
         },
     },
-    {
+    // Punch Ant, Flash Ant, Numb Ant, Angle Worm, Fire Worm, Chimera Worm,
+    // Spider, Tarantula, Recluse, Grub, Worm and Acid Maggot
+    [ELEMENT_PRESET_PUNCH_ANT] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {1},
         .stats = {
@@ -91,7 +103,9 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 85, .resistance = 48},
         },
     },
-    {
+    // King Scorpion, Devil Scorpion, Sand Scorpion, Urchin Beast, Needle Egg,
+    // Sea Hedgehog, Conch Shell, Spiral Shell and Poison Shell
+    [ELEMENT_PRESET_KING_SCORPION] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {1},
         .stats = {
@@ -101,7 +115,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 85, .resistance = 100},
         },
     },
-    {
+    // Mad Plant, Wild Mushroom and Death Cap
+    [ELEMENT_PRESET_MAD_PLANT] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 1},
         .stats = {
@@ -111,7 +126,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 70, .resistance = 72},
         },
     },
-    {
+    // Wood Walker, Elder Wood, Estre Wood and Tret
+    [ELEMENT_PRESET_WOOD_WALKER] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 1},
         .stats = {
@@ -121,7 +137,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 70, .resistance = 100},
         },
     },
-    {
+    // Drone Bee, Fighter Bee and Warrior Bee
+    [ELEMENT_PRESET_DRONE_BEE] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 0, 0, 2},
         .stats = {
@@ -131,6 +148,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 105, .resistance = 7},
         },
     },
+    // Unused: no enemy has it.
     {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 0, 0, 2},
@@ -141,7 +159,11 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 105, .resistance = 25},
         },
     },
-    {
+    // Momonga, Squirrelfang, Momangler, Emu, Talon Runner, Winged Runner,
+    // Wyvern Chick, Pteranodon, Winged Lizard, Seabird, Seafowl, Great Seagull,
+    // Bat, Rabid Bat, Giant Bat, Harpy, Virago, Dirge, Foul Dirge and Vile
+    // Dirge
+    [ELEMENT_PRESET_MOMONGA] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 2},
         .stats = {
@@ -151,7 +173,9 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 110, .resistance = 7},
         },
     },
-    {
+    // Pixie, Faery, Weird Nypmh, Roc, Raptor, Fell Raptor, Wyvern, Sky Dragon,
+    // Winged Dragon and Harridan
+    [ELEMENT_PRESET_PIXIE] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 2},
         .stats = {
@@ -161,7 +185,9 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 110, .resistance = 25},
         },
     },
-    {
+    // Mummy, Foul Mummy, Grave Wight, Zombie, Undead, Wight, Ghoul, Fiendish
+    // Ghoul and Cannibal Ghoul
+    [ELEMENT_PRESET_MUMMY] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 1},
         .stats = {
@@ -171,7 +197,9 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 80, .resistance = 48},
         },
     },
-    {
+    // Skeleton, Bone Fighter, Skull Warrior, Will Head, Death Head and
+    // Willowisp
+    [ELEMENT_PRESET_SKELETON] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 1},
         .stats = {
@@ -181,7 +209,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 80, .resistance = 48},
         },
     },
-    {
+    // Ghost, Ghost Mage, Horned Ghost, Amaze, Creeper and Spirit
+    [ELEMENT_PRESET_GHOST] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {0, 1, 1, 2},
         .stats = {
@@ -191,7 +220,9 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 95, .resistance = 7},
         },
     },
-    {
+    // Living Armor, Puppet Warrior, Estre Baron, Ghost Army, Soul Army, Spirit
+    // Army and Lich
+    [ELEMENT_PRESET_LIVING_ARMOR] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {0, 1, 1, 2},
         .stats = {
@@ -201,7 +232,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 95, .resistance = 25},
         },
     },
-    {
+    // Gargoyle, Clay Gargoyle and Ice Gargoyle
+    [ELEMENT_PRESET_GARGOYLE] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 1, 1, 1},
         .stats = {
@@ -211,7 +243,9 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 95, .resistance = 127},
         },
     },
-    {
+    // Serpent, Serpent 6, Serpent 7, Dino, Dinox, Dinosaurus, Minotaurus, Minos
+    // Warrior, Minos Knight and Guardian Ball
+    [ELEMENT_PRESET_SERPENT] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {4, 2, 2},
         .stats = {
@@ -221,7 +255,10 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 90, .resistance = 48},
         },
     },
-    {
+    // Aqua Hydra, Hydra, Pyrodra, Poseidon, Poseidon 3, Sea Dragon, Turtle
+    // Dragon, Ocean Dragon, Blue Dragon, Cruel Dragon, Dragon, Cerberus,
+    // Fenrir, Toadonpa, Poison Toad, Devil Frog, Kraken and Refresh Ball
+    [ELEMENT_PRESET_AQUA_HYDRA] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 4, 0, 2},
         .stats = {
@@ -231,7 +268,10 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 95, .resistance = 100},
         },
     },
-    {
+    // Avimander, Macetail, Bombander, Flame Dragon, Fire Dragon, Manticore,
+    // Magicore, Manticore King, Dread Hound, Chimera, Chimera Mage, Grand
+    // Chimera, Ant Lion, Roach, Doodle Bug and Anger Ball
+    [ELEMENT_PRESET_AVIMANDER] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 0, 4, 2},
         .stats = {
@@ -241,7 +281,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 95, .resistance = 100},
         },
     },
-    {
+    // Tornado Lizard, Storm Lizard, Tempest Lizard and Thunder Ball
+    [ELEMENT_PRESET_TORNADO_LIZARD] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {0, 2, 2, 4},
         .stats = {
@@ -251,6 +292,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 110, .resistance = 152},
         },
     },
+    // Unused: no enemy has it.
     {
         .elementLevels = {6, 2, 2},
         .stats = {
@@ -260,7 +302,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 80, .resistance = 7},
         },
     },
-    {
+    // Venus Djinni, Earth Lizard, Golem, Earth Golem and Grand Golem
+    [ELEMENT_PRESET_VENUS_DJINNI] = {
         .elementLevels = {6, 2, 2},
         .stats = {
             {.power = 120, .resistance = 193},
@@ -269,7 +312,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 80, .resistance = 25},
         },
     },
-    {
+    // Cuttle, Calamar, Man o' War, Aqua Jelly, Slime, Ooze and Slime Beast
+    [ELEMENT_PRESET_CUTTLE] = {
         .attackElement = ELEMENT_MERCURY,
         .elementLevels = {2, 6, 0, 2},
         .stats = {
@@ -279,7 +323,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 95, .resistance = 48},
         },
     },
-    {
+    // Mercury Djinni, Living Statue and Hydros Statue
+    [ELEMENT_PRESET_MERCURY_DJINNI] = {
         .attackElement = ELEMENT_MERCURY,
         .elementLevels = {2, 6, 0, 2},
         .stats = {
@@ -289,7 +334,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 95, .resistance = 100},
         },
     },
-    {
+    // Stone Soldier
+    [ELEMENT_PRESET_STONE_SOLDIER] = {
         .attackElement = ELEMENT_MARS,
         .elementLevels = {2, 0, 6, 2},
         .stats = {
@@ -299,7 +345,9 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 95, .resistance = 48},
         },
     },
-    {
+    // Mars Djinni, Phoenix, Fire Bird, Wonder Bird, Salamander, Boulder Beast
+    // and Raging Rock
+    [ELEMENT_PRESET_MARS_DJINNI] = {
         .attackElement = ELEMENT_MARS,
         .elementLevels = {2, 0, 6, 2},
         .stats = {
@@ -309,6 +357,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 95, .resistance = 100},
         },
     },
+    // Unused: no enemy has it.
     {
         .attackElement = ELEMENT_JUPITER,
         .elementLevels = {0, 2, 2, 6},
@@ -319,7 +368,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 120, .resistance = 127},
         },
     },
-    {
+    // Jupiter Djinni and Thunder Lizard
+    [ELEMENT_PRESET_JUPITER_DJINNI] = {
         .attackElement = ELEMENT_JUPITER,
         .elementLevels = {0, 2, 2, 6},
         .stats = {
@@ -329,7 +379,9 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 120, .resistance = 193},
         },
     },
-    {
+    // Mini-Goblin, Alec Goblin, Baboon Goblin, Kobold, Wargold, Kobold King,
+    // Gnome Wizard, Orc, Orc Captain and Goblin
+    [ELEMENT_PRESET_MINI_GOBLIN] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {3, 2, 2, 2},
         .stats = {
@@ -339,7 +391,10 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 85, .resistance = 48},
         },
     },
-    {
+    // Assassin, Slayer, Dark Murder, Doomsayer, Lich, Bane Wight, Gressil,
+    // Little Death, Mini-Death, Red Demon, Lesser Demon, Mad Demon, Orc Lord
+    // and Hobgoblin
+    [ELEMENT_PRESET_ASSASSIN] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {3, 2, 2, 2},
         .stats = {
@@ -349,7 +404,9 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 85, .resistance = 72},
         },
     },
-    {
+    // Wolfkin Cub, Wolfkin, Skinwalker, Rat Soldier, Rat Fighter and Rat
+    // Warrior
+    [ELEMENT_PRESET_WOLFKIN_CUB] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 3, 2, 2},
         .stats = {
@@ -359,7 +416,9 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 85, .resistance = 72},
         },
     },
-    {
+    // Merman, Gillman, Gillman Lord, Aka Manah, Druj, Aeshma, Siren, Succubus,
+    // Lizard Man, Lizard Fighter and Lizard King
+    [ELEMENT_PRESET_MERMAN] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 3, 2, 2},
         .stats = {
@@ -369,7 +428,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 85, .resistance = 100},
         },
     },
-    {
+    // Gnome
+    [ELEMENT_PRESET_GNOME] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 2, 3, 2},
         .stats = {
@@ -379,6 +439,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 85, .resistance = 72},
         },
     },
+    // Unused: no enemy has it.
     {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 2, 3, 2},
@@ -389,7 +450,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 85, .resistance = 100},
         },
     },
-    {
+    // Gnome Mage
+    [ELEMENT_PRESET_GNOME_MAGE] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 2, 2, 3},
         .stats = {
@@ -399,7 +461,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 100, .resistance = 100},
         },
     },
-    {
+    // Nightmare
+    [ELEMENT_PRESET_NIGHTMARE] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 2, 2, 3},
         .stats = {
@@ -409,7 +472,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 100, .resistance = 127},
         },
     },
-    {
+    // Mimic
+    [ELEMENT_PRESET_MIMIC] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {3, 3, 0, 4},
         .stats = {
@@ -419,7 +483,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 105, .resistance = 152},
         },
     },
-    {
+    // Agatio, Mystery Man and Saturos
+    [ELEMENT_PRESET_AGATIO] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {7, 5, 10, 7},
         .stats = {
@@ -429,7 +494,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 100, .resistance = 127},
         },
     },
-    {
+    // Karst, Mystery Woman and Menardi
+    [ELEMENT_PRESET_KARST] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {8, 6, 11, 8},
         .stats = {
@@ -439,7 +505,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 100, .resistance = 100},
         },
     },
-    {
+    // Fusion Dragon
+    [ELEMENT_PRESET_FUSION_DRAGON] = {
         .attackElement = ELEMENT_MARS,
         .elementLevels = {9, 7, 14, 9},
         .stats = {
@@ -449,7 +516,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 100, .resistance = 127},
         },
     },
-    {
+    // Sentinel and Deadbeard
+    [ELEMENT_PRESET_SENTINEL] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {4, 8, 6, 5},
         .stats = {
@@ -459,7 +527,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 110, .resistance = 152},
         },
     },
-    {
+    // Gryphon, Wild Gryphon and Wise Gryphon
+    [ELEMENT_PRESET_GRYPHON] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {0, 2, 1, 4},
         .stats = {
@@ -469,7 +538,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 110, .resistance = 48},
         },
     },
-    {
+    // Star Magician, Dark Wizard and Evil Shaman
+    [ELEMENT_PRESET_STAR_MAGICIAN] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {14, 16, 13, 15},
         .stats = {
@@ -479,7 +549,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 95, .resistance = 150},
         },
     },
-    {
+    // Valukar
+    [ELEMENT_PRESET_VALUKAR] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {11, 7, 14, 9},
         .stats = {
@@ -489,7 +560,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 95, .resistance = 100},
         },
     },
-    {
+    // Dullahan
+    [ELEMENT_PRESET_DULLAHAN] = {
         .attackElement = ELEMENT_NONE,
         .elementLevels = {17, 14, 12, 10},
         .stats = {
@@ -499,7 +571,8 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 100, .resistance = 110},
         },
     },
-    {
+    // Doom Dragon
+    [ELEMENT_PRESET_DOOM_DRAGON] = {
         .elementLevels = {18, 11, 15, 8},
         .stats = {
             {.power = 110, .resistance = 190},

@@ -500,7 +500,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     display->windowTop = DISPLAY_HEIGHT / 2;
     display->windowBottom = DISPLAY_HEIGHT / 2;
     wait(1);
-    if (variant == 0) {
+    if (variant == CENTRE_LINE_STEADY) {
       Task_Add(ScreenTransition_Update, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = DISPLAY_HEIGHT / 2;
@@ -574,7 +574,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
         ScreenTransition_AllocateAndClearState();
 
     state->centreLine = 1;
-    if (variant == 0) {
+    if (variant == CENTRE_LINE_STEADY) {
       Task_Add(ScreenTransition_Update, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 0;

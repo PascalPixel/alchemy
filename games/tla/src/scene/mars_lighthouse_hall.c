@@ -27,7 +27,6 @@
 #include "field/field_sequence.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -194,7 +193,7 @@ void MarsLighthouseHall_FlashDoorways(void);
 void Actor_Blink(struct Actor *actor);
 
 extern u32 gCrumbs_Script[];
-extern u32 gEmbers_Script[];
+extern u32 gIceChips_Script[];
 
 extern s32 gMarsLighthouseHall_TorchScript[];
 
@@ -677,7 +676,7 @@ void MarsLighthouseHall_StartDoorways(s32 entrance) {
 void MarsLighthouseHall_TeleportToAerie(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
-  gMainRoutineState.teleportState = 2;
+  gMainRoutineState.teleportState = TELEPORT_ARRIVING;
   FieldEvent_SetExitRequest(MARS_LIGHTHOUSE_HALL_TO_MARS_LIGHTHOUSE_AERIE);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();
@@ -1126,20 +1125,22 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 flags);
 
 #include "shared/actor_reset_scripted_for.h"
 
-/// A flame thrower's flame sent forward from `position` at speed `value`;
-/// `flag` keeps its sprite when off screen.
-void FlameThrower_SendForward(struct Vector3 *position, s32 value, s32 flag) {
+/// A flame thrower's flame (FLAME_FORWARD), sent south from `position` at
+/// `speed` (Flame_UpdateForward); `offScreen` keeps its sprite's picture
+/// loaded out of sight.
+void FlameThrower_SendForward(struct Vector3 *position, s32 speed,
+                              s32 offScreen) {
   struct Actor *actor = FieldActor_Create(SPRITE_BLAZE_FLAME, position->x,
                                           position->y, position->z);
 
   if (actor != 0) {
     actor->bounce = 0;
     actor->gravity = 0;
-    actor->sceneWord = value;
+    actor->sceneWord = speed;
     Actor_ResetScriptedFor(actor, 2);
     actor->update = Flame_UpdateForward;
-    if (flag != 0)
-      actor->retainSpriteCache = 2;
+    if (offScreen != 0)
+      actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     Actor_SelectAnimation(actor, 2);
   }
 }
@@ -1153,53 +1154,60 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 flags);
 
 #include "shared/actor_setup_scripted_part.h"
 
-/// A flame thrower's flame sent backward from `position` at speed `value`.
-void FlameThrower_SendBackward(struct Vector3 *position, s32 value, s32 flag) {
+/// A flame thrower's flame (FLAME_BACKWARD), sent north from `position` at
+/// `speed` (Flame_UpdateForward); `offScreen` keeps its sprite's picture
+/// loaded out of sight.
+void FlameThrower_SendBackward(struct Vector3 *position, s32 speed,
+                               s32 offScreen) {
   struct Actor *actor = FieldActor_Create(SPRITE_BLAZE_FLAME, position->x,
                                           position->y, position->z);
 
   if (actor != 0) {
     actor->bounce = 0;
     actor->gravity = 0;
-    actor->sceneWord = -value;
+    actor->sceneWord = -speed;
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateForward;
-    if (flag != 0)
-      actor->retainSpriteCache = 2;
+    if (offScreen != 0)
+      actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     Actor_SelectAnimation(actor, 2);
   }
 }
 
-/// A flame thrower's flame that lands as it goes forward from `position`.
-void FlameThrower_SendEast(struct Vector3 *position, s32 value, s32 flag) {
+/// A flame thrower's flame (FLAME_EAST), sent east from `position` at `speed`
+/// (Flame_UpdateSideways); `offScreen` keeps its sprite's picture loaded out of
+/// sight.
+void FlameThrower_SendEast(struct Vector3 *position, s32 speed, s32 offScreen) {
   struct Actor *actor = FieldActor_Create(SPRITE_BLAZE_FLAME, position->x,
                                           position->y, position->z);
 
   if (actor != 0) {
     actor->bounce = 0;
     actor->gravity = 0;
-    actor->sceneWord = value;
+    actor->sceneWord = speed;
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateSideways;
-    if (flag != 0)
-      actor->retainSpriteCache = 2;
+    if (offScreen != 0)
+      actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     Actor_SelectAnimation(actor, 2);
   }
 }
 
-/// A flame thrower's flame that lands as it goes backward from `position`.
-void FlameThrower_SendWest(struct Vector3 *position, s32 value, s32 flag) {
+/// A flame thrower's flame (FLAME_WEST), sent west from `position` at `speed`
+/// (Flame_UpdateSideways); `offScreen` keeps its sprite's picture loaded out of
+/// sight.
+void FlameThrower_SendWest(struct Vector3 *position, s32 speed, s32 offScreen) {
   struct Actor *actor = FieldActor_Create(SPRITE_BLAZE_FLAME, position->x,
                                           position->y, position->z);
 
   if (actor != 0) {
     actor->bounce = 0;
     actor->gravity = 0;
-    actor->sceneWord = -value;
+    actor->sceneWord = -speed;
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateSideways;
-    if (flag != 0)
-      actor->retainSpriteCache = 2;
+    if (offScreen != 0)
+      actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     Actor_SelectAnimation(actor, 2);
   }
 }
@@ -1211,7 +1219,8 @@ void FlameThrower_SendWest(struct Vector3 *position, s32 value, s32 flag) {
 #include "shared/actor_setup_scripted.h"
 
 /// A spark puffed from a flame thrower, drifting off in a random direction.
-void FlameThrower_SendSpark(struct Vector3 *position, s32 value, s32 mode) {
+void FlameThrower_SendSpark(struct Vector3 *position, s32 speed,
+                            s32 offScreen) {
   struct Actor *actor = FieldActor_Create(
       SPRITE_DUST_CLOUD, position->x, position->y, position->z - toFIXED(2));
   s32 spin;
@@ -1220,7 +1229,7 @@ void FlameThrower_SendSpark(struct Vector3 *position, s32 value, s32 mode) {
     actor->bounce =
         Trig_Cos(((u32)(Random16() * 3 << 12) >> 16) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
-    actor->sceneWord = ((u32)(Random16() << 17) >> 16) + value;
+    actor->sceneWord = ((u32)(Random16() << 17) >> 16) + speed;
     spin = (u16)Random16() - DEGtoANG(180);
     actor->timer = spin;
     ((void (*)())Actor_SetupScripted)(actor, 2);
@@ -1358,7 +1367,7 @@ s32 FlameThrowers_HasHitLeader(void) { return FLAME_THROWERS_STATE->active; }
 
 #include "shared/actor_scatter_crumbs.c"
 
-#include "shared/embers_spawn.h"
+#include "shared/ice_chips_spawn.h"
 
 #include "shared/actor_hold_during_event.c"
 

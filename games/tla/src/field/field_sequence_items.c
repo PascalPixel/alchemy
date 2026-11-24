@@ -317,18 +317,17 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
 /// leader faces, whose stage matches filter (PSYNERGY_TRIGGER_ANY takes any)
 /// and whose target is what selector names (Scene_SelectPsynergyTarget: a cell,
 /// an actor, or anything); NULL when there is none.
-struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
-                                               s32 selector) {
+struct Trigger *Scene_FindPsynergyTrigger(s32 filter, s32 kind, s32 selector) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
-  struct TriggerEvent *event = state->triggers;
+  struct Trigger *event = (struct Trigger *)state->triggers;
   u32 facing = Actor_Lookup(Party_GetLeaderActor())->facing;
 
   if (selector == -1)
     return NULL;
-  for (; event->control != -1; event++) {
-    s32 eventFacing = event->trigger & TRIGGER_SUBJECT_FACING;
-    s16 requiresFacing = (u16)event->trigger & TRIGGER_SUBJECT_NEEDS_FACING;
-    s32 eventTarget = (u16)event->trigger & TRIGGER_SUBJECT_TARGET;
+  for (; event->control != TRIGGER_TABLE_END; event++) {
+    s32 eventFacing = event->subject & TRIGGER_SUBJECT_FACING;
+    s16 requiresFacing = (u16)event->subject & TRIGGER_SUBJECT_NEEDS_FACING;
+    s32 eventTarget = (u16)event->subject & TRIGGER_SUBJECT_TARGET;
     s32 eventKind = Ability_Get((u16)event->control >> 8)->fieldPsynergy;
 
     if ((event->control & TRIGGER_KIND_MASK) == TRIGGER_PSYNERGY &&

@@ -283,7 +283,7 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
             CURTAIN_TILE(6), DMA_COPY_WORDS(8), REG_DMA3);
     Dma_Set(gBattleTransition_CurtainTiles + 6 * TILE_SIZE_4BPP,
             CURTAIN_TILE(7), DMA_COPY_WORDS(8), REG_DMA3);
-    view->secondMode = BATTLE_BACKGROUND_FIXED;
+    view->bg1ScrollMode = BATTLE_BACKGROUND_FIXED;
     view->busy = 0;
     view->mode = BATTLE_BACKGROUND_FIXED;
     REG_DISPCNT = DISPCNT_MODE_1;
@@ -355,7 +355,7 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   } else {
     battle = heap->battleState;
-    view->secondMode = BATTLE_BACKGROUND_FIXED;
+    view->bg1ScrollMode = BATTLE_BACKGROUND_FIXED;
     view->busy = 0;
     // Against the Doom Dragon the party, reserves too, is drawn at seven
     // tenths of its size for the rest of the battle; nothing sets it back.

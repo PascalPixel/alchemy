@@ -74,16 +74,6 @@ struct AreaNameRule {
   s32 areaNameIndex;
 };
 
-/// struct Trigger (scene_tables.h), a row of the scene's trigger table, as
-/// the item and Psynergy trigger searches read it: its control word signed,
-/// so that -1 ends the table, and its subject named trigger.
-struct TriggerEvent {
-  s32 control;
-  s16 trigger;
-  s16 condition;
-  u32 value;
-};
-
 /// A distance beyond any field Psynergy's reach, where the search for its
 /// nearest target starts.
 #define BEYOND_REACH 9999
@@ -101,6 +91,15 @@ struct ActionDescriptor {
   u16 facing;
   u8 talkFacing;
   u8 flags;
+};
+
+/// What the map screen is shown for (MapScreen_Show).
+enum MapScreenMode {
+  /// The player looks (FIELD_RAISED_TRIGGER_MAP_SCREEN).
+  MAP_SCREEN_LOOK = 0,
+  /// Teleport (FIELD_RAISED_TRIGGER_TELEPORT): A chooses the place whose
+  /// name shows and B cancels.
+  MAP_SCREEN_TELEPORT = 1
 };
 
 s32 MapScreen_Show(s32 mode);

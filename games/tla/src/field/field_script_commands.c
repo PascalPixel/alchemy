@@ -10,7 +10,6 @@
 #include "field_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
-#include "field/flag_call.h"
 #include "field/field.h"
 #include "field/resource_slot.h"
 #include "system/system.h"
@@ -21,15 +20,6 @@
 #include "system/frame.h"
 #include "field/field_sequence_event.h"
 #include "game/class_djinn.h"
-
-/// The footprints the leader leaves in snow and sand, and the leader's
-/// userValue that asks for the pair next. Every routine that moves the leader
-/// by the pad, here and in the parts after this one, sets it on a stop.
-enum FootprintAnimation {
-  FOOTPRINT_ONE_FOOT = 1, ///< one print, fading
-  /// Two prints side by side, fading: laid first after a stop.
-  FOOTPRINT_BOTH_FEET = 2
-};
 
 /// The actor script commands' limits, angles and distances.
 enum {
@@ -832,8 +822,8 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
 /// side, and within limit pixels of home. After SCRIPT_WANDER_TRIES failed
 /// tries it turns around and waits for the next frame.
 s32 Actor_Wander(struct Actor *actor) {
-  struct FieldPosition candidatePosition;
-  struct FieldPosition probePosition;
+  struct Point candidatePosition;
+  struct Point probePosition;
   s32 minimumDistance;
   const s32 *operands;
   s32 distanceRange;
@@ -911,8 +901,8 @@ s32 Actor_Wander(struct Actor *actor) {
 /// ground around the point, while it is within limit pixels of home; outside
 /// that, or when no point works, it heads back towards home.
 s32 ActorScript_WanderNearHome(struct Actor *actor) {
-  struct FieldPosition candidatePosition;
-  struct FieldPosition probePosition;
+  struct Point candidatePosition;
+  struct Point probePosition;
   s32 minimumDistance;
   const s32 *operands;
   s32 distanceRange;
@@ -1075,7 +1065,7 @@ enum ScriptOperandOperation {
   }
 
 /// The work value handlers, one for each entry of enum ActorScriptValue (see
-/// gActorScript_OperandHandlerTable in actor_script_operands.c); each names the
+/// gActorScript_OperandHandlerTable in map_grid_data.c); each names the
 /// actor field it sets, adds to or compares.
 SCRIPT_DEFINE_OPERAND_ADDRESS(ActorScript_SetOrCompareScriptAddress, script)
 
@@ -1213,9 +1203,9 @@ extern const s16 gWorldMap_KeyHeadings[16];
 /// SC_HOVER: the leader hovering (the Hover Psynergy), moved by the direction
 /// pad over what lies below.
 s32 Actor_UpdateHoverControl(struct Actor *actor) {
-  struct FieldPosition position;
-  struct FieldPosition testPosition;
-  struct FieldPosition contact;
+  struct Point position;
+  struct Point testPosition;
+  struct Point contact;
   s16 angleOffsets[22];
   s32 collision;
   s16 heading;

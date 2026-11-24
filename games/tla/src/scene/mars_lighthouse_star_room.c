@@ -30,7 +30,6 @@
 #include "scene/scene.h"
 #include "battle/battle.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -635,11 +634,11 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   sprite->palette = 0;
   sprite->priority = 1;
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  actor->retainSpriteCache = 1;
+  actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
   actor->update = MarsLighthouseStarRoom_DrawStarWithLeader;
   size = sizeof(IconTransfer);
   sprite->flags = clear;
-  sprite->countAndShadow[0] = clear;
+  sprite->count = clear;
   glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, size);
   Item_LoadIcon(ITEM_MARS_STAR);
   Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
@@ -819,8 +818,8 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     sprite->palette = 0;
     sprite->priority = 2;
     actor->motionFlags = 0;
-    actor->retainSpriteCache = 1;
-    sprite->countAndShadow[0] = 0;
+    actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
+    sprite->count = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Item_LoadIcon(ITEM_MARS_STAR);
@@ -951,8 +950,8 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       sprite->palette = 0;
       sprite->priority = 2;
       actor->motionFlags = 0;
-      actor->retainSpriteCache = 1;
-      sprite->countAndShadow[0] = 0;
+      actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
+      sprite->count = 0;
       actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
       Item_LoadIcon(ITEM_MARS_STAR);
@@ -1012,12 +1011,12 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   if (placedStar != 0) {
     placedStarSprite = placedStar->sprite;
     placedStarSprite->flags = 0;
-    placedStarSprite->countAndShadow[0] = 0;
+    placedStarSprite->count = 0;
     placedStarSprite->fullColor = 0;
     placedStarSprite->palette = 0;
     placedStarSprite->priority = 2;
     placedStar->motionFlags = 0;
-    placedStar->retainSpriteCache = 1;
+    placedStar->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     placedStar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     placedStarGlyph =
         HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
@@ -1180,7 +1179,7 @@ void MarsLighthouseStarRoom_SpawnRisingSparks(void) {
                                                toFIXED(32), z);
   }
   if (actor != NULL) {
-    actor->retainSpriteCache = 2;
+    actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     actor->motionFlags = 0;
     actor->timer = 0;
     actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -1232,7 +1231,7 @@ void FlameThrower_SendForward(s32 *position, s32 speed, s32 flag) {
     Actor_ResetScriptedFor(actor, 2);
     actor->update = Flame_UpdateForward;
     if (flag != 0)
-      actor->retainSpriteCache = 2;
+      actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     Actor_SelectAnimation(actor, 2);
   }
 }
@@ -1258,7 +1257,7 @@ s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
       Actor_SetupScriptedPart(actor, 3);                                       \
       actor->update = updateRoutine;                                           \
       if (flag != 0)                                                           \
-        actor->retainSpriteCache = 2;                                          \
+        actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;                   \
       Actor_SelectAnimation(actor, 2);                                         \
     }                                                                          \
   }
@@ -1277,7 +1276,7 @@ void FlameThrower_SendEast(s32 *position, s32 speed, s32 flag) {
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateSideways;
     if (flag != 0)
-      actor->retainSpriteCache = 2;
+      actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     Actor_SelectAnimation(actor, 2);
   }
 }
@@ -1431,9 +1430,9 @@ extern u32 gCrumbs_Script[];
 
 #include "shared/actor_scatter_crumbs.c"
 
-extern u32 gEmbers_Script[];
+extern u32 gIceChips_Script[];
 
-#include "shared/embers_spawn.h"
+#include "shared/ice_chips_spawn.h"
 
 #include "shared/actor_hold_during_event.c"
 
@@ -1488,7 +1487,7 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 #undef EFFECT_SET_SCRIPT
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
-#include "../field/map_cell_sprite.c"
+#include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
 

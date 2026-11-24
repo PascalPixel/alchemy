@@ -5,6 +5,7 @@
 #include "sounds.h"
 #include "debug/debug.h"
 #include "field/field.h"
+#include "field/dice_game.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"

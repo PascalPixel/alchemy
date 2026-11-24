@@ -72,13 +72,9 @@ extern const u8 Render_DrawMapCode[];
 /// The size of Render_DrawMapCode (draw_map.s).
 extern u8 Render_DrawMapCodeSize[];
 
-/// The map's collisions and the tags its cells carry.
+/// The map's collisions and the shape entries its cells take.
 s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height);
-s32 MapCollision_FindOrAddTagFar(s32 layer, s32 unused, s32 value);
+s32 MapShape_FindOrAddFar(s32 layer, s32 unused, s32 value);
 s32 Actor_LiftTargetBlockFar(s32 layer, s32 unused, s32 value);
-
-/// The debug sprite viewer's next sprite id in a direction, and its ring.
-s32 SpriteViewer_StepSpriteId(s32 spriteId, s32 direction);
-void SpriteViewer_PlaceRing(void);
 
 #endif

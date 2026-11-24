@@ -18,7 +18,6 @@
 #include "game/game.h"
 #include "graphics/palette_buffers.h"
 #include "graphics/glyph.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -529,13 +528,13 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
                                felix->y.fixed + toFIXED(8), felix->z.fixed);
       if (star != 0) {
         sprite = star->sprite;
-        sprite->countAndShadow[0] = 0;
+        sprite->count = 0;
         sprite->fullColor = 0;
         sprite->palette = 0;
         sprite->priority = 0;
         star->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         star->motionFlags = 0;
-        star->retainSpriteCache = 1;
+        star->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
         star->speedLimit = toFIXED(2) / 5;
         star->acceleration = toFIXED(1) / 20;
         glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
@@ -1136,10 +1135,11 @@ void JupiterLighthouse_ShebaJoinsTheFight(void) {
 /// healing Felix's party, or Alex healing Agatio and Karst.
 void JupiterLighthouse_HealActor(s32 casterId, s32 targetId) {
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_Get(casterId), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(casterId),
+                                   CASTER_LOOK_CYCLING_COLORS);
   Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(60);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(casterId), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(casterId), CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Actor_SetAnimation(targetId, ANIM_STAND);
@@ -2476,7 +2476,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #undef EFFECT_SET_SCRIPT
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
-#include "../field/map_cell_sprite.c"
+#include "../field/cracked_tile_mask.c"
 
 void CrackedTile_Update(void);
 
@@ -2743,8 +2743,8 @@ LATE_DATA struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 712, 16, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_STONE_BASIN, FLAG_JUPITER_BEACON_LIT, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 512, 0, 248, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_BASIN, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 512, 0, 248, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(426, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(426, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_QUARTER_DISC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_QUARTER_DISC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_AGATIO, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), MOVEMENT_TYPE_FACE_LEADER, 512, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KARST, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), MOVEMENT_TYPE_FACE_LEADER, 480, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ALEX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),

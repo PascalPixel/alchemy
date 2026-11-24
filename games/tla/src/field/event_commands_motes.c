@@ -8,7 +8,7 @@
 #include "field/event_commands.h"
 #include "field/field.h"
 #include "field/object.h"
-#include "field/ground_mask.h"
+#include "field/weather.h"
 
 /// The frames the first motes and sparkles are spread over as they start.
 #define FIRST_SPAWN_FRAMES 16
@@ -186,7 +186,7 @@ void FieldEffect_UpdateSparkles(void) {
           screenY < DISPLAY_HEIGHT) {
         sparkle->tile = state->tileBase + *frame;
         sparkle->x = screenX;
-        sparkle->shape = OAM_SHAPE_SQUARE;
+        sparkle->shape = OBJ_SHAPE_SQUARE;
         sparkle->size = OAM_SIZE_16X16;
 #ifdef UBFIX
         frames = gFrameCount;

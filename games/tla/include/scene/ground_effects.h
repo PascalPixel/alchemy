@@ -7,9 +7,13 @@
 
 #include "field/map_grid.h"
 
-/// The kind of wading a room with a second level sets, so that the leader
-/// wades only on the level the water is on.
-enum { MAP_WADING_UPPER_LEVEL = 1 };
+/// The map's kind of wading (GROUND_EFFECTS_WADING).
+enum MapWading {
+  /// A room with a second level: the leader wades only on the level the water
+  /// is on.
+  MAP_WADING_UPPER_LEVEL = 1,
+  MAP_WADING_MUD = 2 ///< Taopo Swamp: the leader sinks into the mud
+};
 
 /// MapState as far as groundEffects, read through its bits.
 struct MapStateGroundEffects {

@@ -12,9 +12,8 @@
 /// the grain moves on (Field_AdvanceWithGravity3D). Sand's
 /// GrowingParticle_Update is the same but for its own age check and
 /// Field_AdvanceWithGravity2D, so each Psynergy keeps its own.
-void BattleEffect_UpdateGrowingParticleSprite(
-    struct EffectSprite *sprite, struct FieldPsynergyParticle *particle,
-    s32 tiles) {
+void ScoopDust_UpdateGrain(struct EffectSprite *sprite,
+                           struct FieldPsynergyParticle *particle, s32 tiles) {
   s32 position[3];
   FIXED scale;
 

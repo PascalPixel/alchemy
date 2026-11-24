@@ -266,6 +266,9 @@ enum WorldMapCollision {
   /// The ship sails on WORLD_MAP_COLLISION_SEA_FIRST to
   /// WORLD_MAP_COLLISION_SEA_LAST and on shallow water (WorldMap_IsSailable).
   WORLD_MAP_COLLISION_SEA_FIRST = 1,
+  /// The first collision that is water to Scoop and Parch: the sea from here
+  /// to WORLD_MAP_COLLISION_SEA_LAST, all but WORLD_MAP_COLLISION_SEA_FIRST.
+  WORLD_MAP_COLLISION_WATER_FIRST = 2,
   WORLD_MAP_COLLISION_SEA_LAST = 4,
   /// The party walks only on WORLD_MAP_COLLISION_WALKABLE_FIRST to
   /// WORLD_MAP_COLLISION_WALKABLE_LAST (WorldMap_IsWalkable).

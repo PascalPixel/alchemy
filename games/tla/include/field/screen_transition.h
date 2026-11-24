@@ -3,45 +3,12 @@
 
 /// @file
 /// What the field sequence's parts share with the files that define their
-/// tables: the speakers' voices and Halted lines, the field effects' scripts
-/// and colour curves, the screen transitions' shapes and window values, and
-/// the views of an actor and of the map state that the ground mask reads.
+/// tables: the field effects' scripts and colour curves, and the screen
+/// transitions' shapes and window values.
 
 #include "types.h"
 #include "resource_ids.h"
 #include "battle/battle.h"
-
-/// A row of gSpeakerDefinitions: a sprite's voice and the lines it says while
-/// Halted.
-struct SpeakerDefinition {
-  u16 id; ///< the sprite id
-  /// The voice: a message plays SE_VOICE_FIRST + value as it types
-  /// (Speaker_GetVoice).
-  u8 value;
-  /// The pair of lines from MsgPonderEllipsis it says when talked to while
-  /// Halted with no event for that (Speaker_GetHaltedLines).
-  u8 haltedLines;
-};
-
-/// An actor (struct Actor) as the ground mask reads it: its place, its ground
-/// height's halves and its layer.
-struct FadeActor {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-  u16 groundHeightFraction; ///< Actor.groundHeight's fraction
-  s16 floor;                ///< its whole pixels
-  u8 unusedAfterFloor[10];  ///< no code names it
-  u8 terrainId;
-};
-
-/// The map state (struct MapState) as the ground mask reads its view position:
-/// viewX and viewZ as halfwords, the second of each its whole pixels.
-struct FadeView {
-  u8 unused[228]; ///< MapState up to viewX
-  s16 camera[4];
-};
 
 /// A run of lines of a window transition's shape (TransitionShape): its count
 /// of lines and its WIN_RANGE, or when that is 0 the window edges it moves
@@ -70,15 +37,6 @@ struct TransitionShape {
   u16 second;
   struct TransitionSpan spans[3];
 };
-
-/// SpeakerDefinition.value of a sprite that makes no sound as it speaks.
-#define SPEAKER_VOICE_NONE 255
-/// SpeakerDefinition.haltedLines of a sprite Halt never stops: the monsters
-/// that talk, and things such as chests, rocks, trees and signposts.
-#define SPEAKER_HALTED_LINES_NONE 255
-
-/// Each sprite's voice and Halted lines, the default last.
-extern struct SpeakerDefinition gSpeakerDefinitions[];
 
 /// The found item's picture over the leader: growing in from half size, then
 /// pulsing to 1.5 times its size and resting, over and over.

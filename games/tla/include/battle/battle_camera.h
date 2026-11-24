@@ -46,7 +46,7 @@ struct BattleBackgroundState {
   s32 mode;      ///< enum BattleBackgroundMode
   /// BATTLE_BACKGROUND_FIXED also sets BG1's scroll whatever the mode; the
   /// battle effects' canvas layers set it.
-  s32 secondMode;
+  s32 bg1ScrollMode;
   s32 busy; ///< while set, an effect owns BG1's scroll and the camera leaves it
   /// 0 lets the camera update set the background's range each frame.
   s32 keepRange;
@@ -57,17 +57,17 @@ struct BattleBackgroundState {
 /// A presentation's effect command, laid out as BattleEffectParams with a
 /// ninth actor, and the animation state it keeps.
 struct BattlePresentationState {
-  s32 kind;         ///< the effect's index in the handler table
-  s32 side;         ///< 1 when the targets are the party, 0 for enemies
-  s32 actor;        ///< the user's unit id
-  s32 firstTarget;  ///< the action's first target
-  s32 initialValue; ///< BattleEffectParams's range: the action's, or 1
-  s32 count;        ///< targets in actors
-  s32 variant;      ///< the ability's size, from 0
-  s32 flags;        ///< BattleEffectParams's prelude, at the same offset
-  u8 unused[4];     ///< no code names it
-  s16 actors[9];    ///< the targets' unit ids, count of them
-  u8 params[8][4];  ///< each target's animation entries' param, kept
+  s32 kind;        ///< the effect's index in the handler table
+  s32 side;        ///< 1 when the targets are the party, 0 for enemies
+  s32 actor;       ///< the user's unit id
+  s32 firstTarget; ///< the action's first target
+  s32 range;       ///< as BattleEffectParams's: the action's, or 1
+  s32 count;       ///< targets in actors
+  s32 variant;     ///< the ability's size, from 0
+  s32 prelude;     ///< as BattleEffectParams's: 1 plays a prelude
+  u8 unused[4];    ///< no code names it
+  s16 actors[9];   ///< the targets' unit ids, count of them
+  u8 params[8][4]; ///< each target's animation entries' param, kept
 };
 
 STATIC_ASSERT(sizeof(struct BattleBackgroundState) == 32);
@@ -77,8 +77,8 @@ STATIC_ASSERT(sizeof(struct BattlePresentationState) == 88);
 STATIC_ASSERT(offsetof(struct BattlePresentationState, actors) == 36);
 STATIC_ASSERT(offsetof(struct BattlePresentationState, params) == 54);
 
-/// BattleBackgroundState.mode and secondMode: how the battle background is
-/// shown.
+/// BattleBackgroundState.mode, how the battle background is shown, and its
+/// bg1ScrollMode.
 enum BattleBackgroundMode {
   /// Not loaded yet.
   BATTLE_BACKGROUND_NONE,

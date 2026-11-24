@@ -72,7 +72,8 @@ struct FlameHitState {
   u8 unusedAfterSlots[4]; ///< no code names it
   struct KnockBackDirection direction;
   struct Actor *car; ///< the fireball carrying the hurt leader
-  void *handle;
+  void *sharedFlame; ///< the flame whose sprite the crumbs share
+                     ///< (FlameThrowers_Create)
 };
 
 /// The step triggers the flame throwers raise: a flame that hits the leader

@@ -4,7 +4,7 @@
 /// @file
 /// The cracked floor cells that Jupiter Lighthouse, Mars Lighthouse and Anemos
 /// Inner Sanctum watch (scene/shared/cracked_tile_*.h), and the sprite
-/// field/map_cell_sprite.c draws over the one the leader stands on.
+/// field/cracked_tile_mask.c draws over the one the leader stands on.
 
 #include "fixed_math.h"
 #include "types.h"

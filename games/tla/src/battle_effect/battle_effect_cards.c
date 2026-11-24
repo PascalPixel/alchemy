@@ -363,7 +363,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       if (frame == CARD_FLIGHT_FRAMES)
         Sound_PlayFar(SE_POWER_UP);
       if (frame == 64)
-        EFFECT_SHOW_DAMAGE(-1);
+        EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
       if (frame >= CARD_FLIGHT_FRAMES && frame < CARD_FLIGHT_FRAMES + 32) {
         struct Particle *sheep;
         u32 mask = 127;
@@ -401,7 +401,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       // It strikes: the screen flashes and the shards burst.
       if (time == SWORD_CARD_DAGGER_FRAMES) {
         Sound_PlayFar(SE_POWER_UP);
-        EFFECT_SHOW_DAMAGE(-1);
+        EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
         state->shakeFrames = 4;
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                              CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
@@ -464,7 +464,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         Sound_PlayFar(SE_POWER_UP);
       if (frame == REAPER_SWING_FRAME) {
         Sound_PlayFar(SE_CLATTER);
-        EFFECT_SHOW_DAMAGE(-1);
+        EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
         BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(2),
                                       toFIXED(8), toFIXED(2), 110);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,

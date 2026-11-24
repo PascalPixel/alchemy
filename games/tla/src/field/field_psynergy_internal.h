@@ -25,7 +25,6 @@
 #include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -53,9 +52,9 @@
 #include "field/map_grid.h"
 #include "field/field_sequence.h"
 
-/// The key of a free entry in the map collision's tags
-/// (MapCollision_FindOrAddTag).
-#define COLLISION_TAG_FREE 255
+/// The shape of a free entry among the map's shape entries
+/// (MapShape_FindOrAdd).
+#define MAP_SHAPE_FREE 255
 
 void FieldEffect_AdvanceMotion(union FieldObject *object);
 
@@ -122,17 +121,6 @@ struct CycloneState {
 /// CANVAS_SHINE_SWING levels either side of CANVAS_SHINE_MIDDLE.
 #define CANVAS_SHINE_MIDDLE 16
 #define CANVAS_SHINE_SWING 12
-
-/// SPRITE_PUDDLE's animations (puddle.tsv) that a flag block shows: the ice
-/// pillar, held, and the puddle.
-#define PUDDLE_ANIMATION_FROZEN 0
-#define PUDDLE_ANIMATION_PUDDLE 1
-
-/// FieldState.psynergyDrawFlags, which a scene sets for Pound and Scoop to
-/// draw in its room.
-#define PSYNERGY_DRAW_NO_SCENE_SPRITE 0x1 ///< nor Pound's glow on the ground
-/// The fist or hand at priority 1, not sorted by depth.
-#define PSYNERGY_DRAW_FIXED_PRIORITY 0x2
 
 /// The map screen's marker tiles (MapScreen_Initialize draws them).
 enum WorldMarkerTile {

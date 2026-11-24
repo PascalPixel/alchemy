@@ -22,7 +22,6 @@
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -281,7 +280,7 @@ extern u16 gPushKinds[];
 
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *number, s32 *kind);
 
-s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Point *position);
 
 void Actor_StopAtPushTarget(struct Actor *actor);
 
@@ -352,7 +351,7 @@ void EasternAlhafra_PoundStake(s32 mode, s32 frame) {
   s32 frames;
 
   Pound_SinkTarget(gEasternAlhafra_PoundStakes, mode, frame);
-  if (mode == 1) {
+  if (mode == POUND_STAGE_LANDED) {
     firstEnd = Actor_Get(ACTOR_FIRST_STAKE_ROPE_END);
     secondEnd = Actor_Get(ACTOR_SECOND_STAKE_ROPE_END);
     firstEnd->speedLimit = toFIXED(4);

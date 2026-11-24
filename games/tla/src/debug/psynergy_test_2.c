@@ -10,7 +10,6 @@
 #include "field/field_sequence.h"
 #include "field/field.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -48,12 +47,6 @@ enum PsynergyTest2CellBehavior {
   /// The Psynergy test's first Scoop spot, cell (10, 10), west of this room.
   CELL_BEHAVIOR_HOLE_SPOT = 50
 };
-
-/// The stage Pound passes on the frame its fist lands.
-enum { POUND_STAGE_LANDS = 1 };
-
-/// The stage Scoop passes its spot's event each frame of the dig.
-enum { SCOOP_STAGE_DUG = 1, SCOOP_STAGE_AFTER_DIG };
 
 /// The room's actors, numbered in the order of gActorPlacements.
 enum PsynergyTest2ActorId {
@@ -103,7 +96,7 @@ void PsynergyTest2_DouseFire(void) { Actor_SetPosition(ACTOR_FIRE, 0, 0); }
 
 /// So does Pound, as its fist lands.
 void PsynergyTest2_PoundFire(s32 stage) {
-  if (stage == POUND_STAGE_LANDS)
+  if (stage == POUND_STAGE_LANDED)
     Actor_SetPosition(ACTOR_FIRE, 0, 0);
 }
 
@@ -324,7 +317,7 @@ UNUSED void PsynergyTest2_GrowActor(s32 stage, s32 id, s32 x, s32 z) {
     actor->scaleX = 0;
     actor->scaleY = 0;
   }
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     while (actor->scaleX < FIXED_ONE) {
       System_Wait(1);
       scale = actor->scaleX;
@@ -342,7 +335,7 @@ UNUSED void PsynergyTest2_DropActor(s32 stage, s32 id, s32 x, s32 z) {
   struct Actor *actor;
 
   actor = Actor_Get(id);
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     Actor_SetPosition(id, x, z);
     actor->y.fixed = toFIXED(32);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -363,7 +356,7 @@ UNUSED void PsynergyTest2_RaiseStatue(s32 stage, s32 x, s32 z, s32 row,
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     }
   }
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     actor =
         (FieldActor_Create(SPRITE_WINGED_STATUE, toFIXED(x), 0, toFIXED(z)));
     if (actor != NULL) {

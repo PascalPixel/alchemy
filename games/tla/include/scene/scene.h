@@ -20,7 +20,7 @@
 
 struct Actor;
 struct FieldEffect;
-struct FieldPosition;
+struct Point;
 struct FieldSprite;
 struct Particle;
 struct ParticleSprite;
@@ -168,10 +168,6 @@ struct Orbit {
 /// it in Jupiter Lighthouse.
 #define PILLAR_SINK_DEPTH 32
 
-/// SPRITE_PARTICLE's swells, from a speck to its full glow, held 32 frames,
-/// and back: slowly, 12 frames a step, or quickly, 6. Jupiter Lighthouse's
-/// sparks and the motes of light inside Air's Rock take turns at them.
-enum { ANIM_PARTICLE_SLOW_SWELL = 9, ANIM_PARTICLE_QUICK_SWELL };
 /// How long such a particle lives before it starts again: a slow swell and the
 /// 12 frames it stays gone after, or a quick one.
 enum { PARTICLE_SLOW_LIFETIME = 212, PARTICLE_QUICK_LIFETIME = 116 };

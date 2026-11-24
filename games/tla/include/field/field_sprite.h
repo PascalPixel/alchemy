@@ -8,16 +8,16 @@
 #include "types.h"
 
 /// struct Sprite (field/sprite.h) as the field's scenes read it: its image's
-/// OAM attributes as bit fields, its retain, own-scale and sunk-rows bits as
-/// one byte, its layer count and its shadow's first two attributes as bytes,
-/// and its shadow's attribute 2 as bit fields; the first layer is record.
+/// OAM attributes as bit fields, its retain, own-scale and sunk-rows bits, its
+/// layer count and its shadow's first two attributes as bytes, and its
+/// shadow's attribute 2 as bit fields; the first layer is record.
 struct FieldSprite {
   u8 unused[4]; ///< no code names it
   /// The image's OAM attributes 0 to 2.
   ///@{
   u16 y : 8; ///< screen pixels
   u16 affine : 2;
-  u16 blendMode : 2;
+  u16 objectMode : 2;
   u16 mosaic : 1;
   u16 fullColor : 1; ///< 256 colours
   u16 shape : 2;
@@ -31,23 +31,23 @@ struct FieldSprite {
   u8 unusedAfterPalette[2]; ///< no code names it
   FIXED scale;              ///< 16.16 fixed point, FIXED_ONE full size
   u8 slot;                  ///< VRAM cache entry holding its tiles
-  /// Sprite's retainCacheEntry (bit 0), useOwnScale (bit 1) and sunkRows
-  /// (bits 2 to 7) as one byte.
-  u8 cacheBits;
-  u16 rotation; ///< 1/65536 turns
-  u8 width;     ///< pixels; zero marks a free sprite
-  u8 height;    ///< pixels
-  s8 offsetX;   ///< pixels
-  s8 offsetY;   ///< pixels
+  u8 retainCacheEntry : 1;
+  u8 useOwnScale : 1;
+  u8 sunkRows : 6; ///< rows SPRITE_FLAG_SUNK sinks or SPRITE_FLAG_SHADED shades
+  u16 rotation;    ///< 1/65536 turns
+  u8 width;        ///< pixels; zero marks a free sprite
+  u8 height;       ///< pixels
+  s8 offsetX;      ///< pixels
+  s8 offsetY;      ///< pixels
   /// The animation number last selected, saved with the actor's snapshot.
   u8 lastNo;
   u8 dirty; ///< nonzero redraws its pixels into VRAM when next drawn
   /// The sprite flags (enum SpriteFlag), saved with the actor's snapshot;
   /// zeroed for sprites shown without them.
   u8 flags;
-  /// Byte 0 is the layer count (Sprite.count), cleared with the first layer;
-  /// then the shadow's link and attributes 0 and 1.
-  u8 countAndShadow[9];
+  u8 count; ///< the layer count (Sprite.count), cleared with the first layer
+  /// The shadow's link and attributes 0 and 1; no code names them.
+  u8 unusedShadow[8];
   /// The shadow's OAM attribute 2.
   ///@{
   u16 secondTile : 10;

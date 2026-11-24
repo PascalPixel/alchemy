@@ -4,7 +4,6 @@
 // Part of battle.c.
 
 #include "battle_internal.h"
-#include "field/flag_call.h"
 #include "battle/presentation.h"
 
 /// The most formations a monster battle chooses among.

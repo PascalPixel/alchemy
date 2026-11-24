@@ -6,7 +6,7 @@
 
 #include "fixed_math.h"
 #include "types.h"
-#include "field/ground_mask.h"
+#include "field/weather.h"
 
 /// The heap slot weather while the scenes' sparkles run (GroundParticles_Draw):
 /// The Broken Seal's WeatherState, grown to 64 particles, with the place the

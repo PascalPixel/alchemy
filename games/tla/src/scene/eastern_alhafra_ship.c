@@ -17,7 +17,6 @@
 #include "field/field.h"
 #include "field/field_sequence.h"
 #include "game/game.h"
-#include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -188,7 +187,8 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   Field_StartColorTransition(8, RGB(16, 16, 4));
   BattleEffect_StartArcEffect();
   // Eoleo cycles through colours with swelling arcs, as a caster does.
-  BattleEffect_SetObjectUpdateMode((s32)Actor_GetById(id), 2);
+  BattleEffect_SetObjectUpdateMode((s32)Actor_GetById(id),
+                                   CASTER_LOOK_CYCLING_COLORS);
   Sound_Play(SE_ASCEND);
   Event_Wait(30);
   flags = &actor->motionFlags;
@@ -198,7 +198,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
     Event_Wait(1);
   }
   Event_Wait(70);
-  BattleEffect_SetObjectUpdateMode((s32)Actor_GetById(id), 0);
+  BattleEffect_SetObjectUpdateMode((s32)Actor_GetById(id), CASTER_LOOK_NORMAL);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);

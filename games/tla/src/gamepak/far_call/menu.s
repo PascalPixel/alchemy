@@ -1,0 +1,27 @@
+@ Party menus and their interactive selection screens.
+	.syntax unified
+	.thumb
+	.include "games/tla/src/gamepak/far_call/veneer.s"
+	.global FarCall_MenuTable
+FarCall_MenuTable:
+	export ItemMenu_RunFar, ItemMenu_Run
+	export PsynergyMenu_RunFar, PsynergyMenu_Run
+	export StatusScreen_RunFar, StatusScreen_Run
+	export PartyMemberChooser_OpenFar, PartyMemberChooser_Open
+	export Icon_CreateHandCursorFar, Icon_CreateHandCursor
+	export Icon_ShowFar, Icon_Show
+	export DjinnMenu_RunFar, DjinnMenu_Run
+	export ItemMenu_DrawItemDetailsFar, ItemMenu_DrawItemDetails
+	export ItemMenu_DrawItemDetailsWithCountFar, ItemMenu_DrawItemDetailsWithCount
+	export Palette_LoadIconsIntoHighlightFar, Palette_LoadIconsIntoHighlight
+	export Menu_UpdatePartyFiguresFar, Menu_UpdatePartyFigures
+	export Menu_CreatePartyFiguresFar, Menu_CreatePartyFigures
+	export Menu_ShowPartyFiguresFar, Menu_ShowPartyFigures
+	export Menu_ReleasePartyFiguresFar, Menu_ReleasePartyFigures
+	export DjinnFigures_InitializeTopRowFar, DjinnFigures_InitializeTopRow
+	export DjinnFigures_ReleaseTopRowFar, DjinnFigures_ReleaseTopRow
+	export DjinnFigures_SetShownFar, DjinnFigures_SetShown
+	export DjinnFigures_ReplaceSlotFar, DjinnFigures_ReplaceSlot
+	export DjinnFigures_SetSlotPositionFar, DjinnFigures_SetSlotPosition
+	export DjinnFigures_SetSlotFacingFar, DjinnFigures_SetSlotFacing
+	export DjinnFigures_SetSlotPhaseFar, DjinnFigures_SetSlotPhase

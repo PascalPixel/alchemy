@@ -1,0 +1,32 @@
+channel	0
+picture	1948	2	580	20
+picture	1950	2	580	10
+jump	0
+channel	1
+picture	1362	2	1462	0
+picture	1394	2	1494	0
+picture	1426	2	1526	7
+picture	1364	2	1462	0
+picture	1396	2	1494	0
+picture	1428	2	1526	7
+picture	1366	2	1462	0
+picture	1398	2	1494	0
+picture	1430	2	1526	7
+picture	1368	2	1462	0
+picture	1400	2	1494	0
+picture	1432	2	1526	7
+picture	1370	2	1462	0
+picture	1402	2	1494	0
+picture	1434	2	1526	7
+picture	1466	2	1462	0
+picture	1498	2	1494	0
+picture	1530	2	1526	7
+picture	1464	2	1462	0
+picture	1496	2	1494	0
+picture	1528	2	1526	7
+jump	0
+channel	2
+picture	1872	2	478	0
+picture	1904	2	510	10
+jump	0
+end

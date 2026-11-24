@@ -1,0 +1,7 @@
+animation	command	value	frames
+0	picture	0	64
+0	hold
+1	picture	0	64
+1	hold
+2	picture	1	64
+2	hold

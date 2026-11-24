@@ -1,0 +1,507 @@
+after	name	file	left	pad	fill	edition
+empty_map	Tileset_BlankPalette	../graphics/tileset/test_0/palette.gbapal.lz	00			
+empty_map	Tileset_BlankTilesA	../graphics/tileset/test_0/tiles_a.4bpp.mtf	ff00			
+empty_map	Tileset_BlankTilesB	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+empty_map	Tileset_BlankTilesC	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+empty_map	Tileset_BlankTilesD	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07	4		
+vale_prologue	Tileset_ValeProloguePalette	../graphics/tileset/vale_prologue/palette.gbapal.lz	3f5578			
+vale_prologue	Tileset_ValePrologueTilesA	../graphics/tileset/vale_prologue/tiles_a.4bpp.mtf				
+vale_prologue	Tileset_ValePrologueTilesB	../graphics/tileset/vale_prologue/tiles_b.4bpp.mtf	5d0453			
+vale_prologue	Tileset_ValePrologueTilesC	../graphics/tileset/vale_prologue/tiles_c.4bpp.mtf				
+vale_prologue	Tileset_ValePrologueTilesD	../graphics/tileset/vale_prologue/tiles_d.4bpp.mtf	1485c2	4		
+vale	Tileset_ValePalette	../graphics/tileset/vale/palette.gbapal.lz	b3			
+vale	Tileset_ValeTilesA	../graphics/tileset/vale/tiles_a.4bpp.mtf	97			
+vale	Tileset_ValeTilesB	../graphics/tileset/vale/tiles_b.4bpp.mtf				
+vale	Tileset_ValeTilesC	../graphics/tileset/vale/tiles_c.4bpp.mtf				
+vale	Tileset_ValeTilesD	../graphics/tileset/vale/tiles_d.4bpp.mtf	8f	4		
+vale_plaza	Tileset_ValePlazaPalette	../graphics/tileset/vale_plaza/palette.gbapal.lz	c7			
+vale_plaza	Tileset_ValePlazaTilesA	../graphics/tileset/vale_plaza/tiles_a.4bpp.mtf	fc8900			
+vale_plaza	Tileset_ValePlazaTilesB	../graphics/tileset/vale_plaza/tiles_b.4bpp.mtf	dc73			
+vale_plaza	Tileset_ValePlazaTilesC	../graphics/tileset/vale_plaza/tiles_c.4bpp.mtf	5c40			
+vale_plaza	Tileset_ValePlazaTilesD	../graphics/tileset/vale_plaza/tiles_d.4bpp.mtf	f7	4		
+vale_kradens_cottage	Tileset_ValeKradensCottagePalette	../graphics/tileset/vale_kradens_cottage/palette.gbapal.lz	c1acce			
+vale_kradens_cottage	Tileset_ValeKradensCottageTilesA	../graphics/tileset/vale_kradens_cottage/tiles_a.4bpp.mtf	1e			
+vale_kradens_cottage	Tileset_ValeKradensCottageTilesB	../graphics/tileset/vale_kradens_cottage/tiles_b.4bpp.mtf	cb42da			
+vale_kradens_cottage	Tileset_ValeKradensCottageTilesC	../graphics/tileset/vale_kradens_cottage/tiles_c.4bpp.mtf	eb91			
+vale_kradens_cottage	Tileset_ValeKradensCottageTilesD	../graphics/tileset/vale_kradens_cottage/tiles_d.4bpp.mtf	e1f0f8	4		
+cottage_rooms_a	Tileset_CottageRoomsAPalette	../graphics/tileset/cottage_rooms_a/palette.gbapal.lz				
+cottage_rooms_a	Tileset_CottageRoomsATilesA	../graphics/tileset/cottage_rooms_a/tiles_a.4bpp.mtf				
+cottage_rooms_a	Tileset_CottageRoomsATilesB	../graphics/tileset/cottage_rooms_a/tiles_b.4bpp.mtf	02f607			
+cottage_rooms_a	Tileset_CottageRoomsATilesC	../graphics/tileset/cottage_rooms_a/tiles_c.4bpp.mtf	86b4			
+cottage_rooms_a	Tileset_CottageRoomsATilesD	../graphics/tileset/cottage_rooms_a/tiles_d.4bpp.mtf	3c	4		
+cottage_rooms_b	Tileset_CottageRoomsBPalette	../graphics/tileset/cottage_rooms_b/palette.gbapal.lz	643680			
+cottage_rooms_b	Tileset_CottageRoomsBTilesA	../graphics/tileset/cottage_rooms_b/tiles_a.4bpp.mtf	8647			
+cottage_rooms_b	Tileset_CottageRoomsBTilesB	../graphics/tileset/cottage_rooms_b/tiles_b.4bpp.mtf				
+cottage_rooms_b	Tileset_CottageRoomsBTilesC	../graphics/tileset/cottage_rooms_b/tiles_c.4bpp.mtf	38f03d			
+cottage_rooms_b	Tileset_CottageRoomsBTilesD	../graphics/tileset/cottage_rooms_b/tiles_d.4bpp.mtf	7e	4		
+sanctum	Tileset_SanctumPalette	../graphics/tileset/sanctum/palette.gbapal.lz	88d73c			
+sanctum	Tileset_SanctumTilesA	../graphics/tileset/sanctum/tiles_a.4bpp.mtf	8f85			
+sanctum	Tileset_SanctumTilesB	../graphics/tileset/sanctum/tiles_b.4bpp.mtf	e40541			
+sanctum	Tileset_SanctumTilesC	../graphics/tileset/sanctum/tiles_c.4bpp.mtf	50a3			
+sanctum	Tileset_SanctumTilesD	../graphics/tileset/sanctum/tiles_d.4bpp.mtf		4		
+sol_entrance	Tileset_SolEntrancePalette	../graphics/tileset/sol_entrance/palette.gbapal.lz	133e			
+sol_entrance	Tileset_SolEntranceTilesA	../graphics/tileset/sol_entrance/tiles_a.4bpp.mtf	f0a422			
+sol_entrance	Tileset_SolEntranceTilesB	../graphics/tileset/sol_entrance/tiles_b.4bpp.mtf	ce4348			
+sol_entrance	Tileset_SolEntranceTilesC	../graphics/tileset/sol_entrance/tiles_c.4bpp.mtf	3e			
+sol_entrance	Tileset_SolEntranceTilesD	../graphics/tileset/sol_entrance/tiles_d.4bpp.mtf	4e	4		
+sol_sanctum_luna_sol_rooms	Tileset_SolSanctumLunaSolRoomsPalette	../graphics/tileset/sol_sanctum_luna_sol_rooms/palette.gbapal.lz	cf8307			
+sol_sanctum_luna_sol_rooms	Tileset_SolSanctumLunaSolRoomsTilesA	../graphics/tileset/sol_sanctum_luna_sol_rooms/tiles_a.4bpp.mtf				
+sol_sanctum_luna_sol_rooms	Tileset_SolSanctumLunaSolRoomsTilesB	../graphics/tileset/sol_sanctum_luna_sol_rooms/tiles_b.4bpp.mtf	18			
+sol_sanctum_luna_sol_rooms	Tileset_SolSanctumLunaSolRoomsTilesC	../graphics/tileset/sol_sanctum_luna_sol_rooms/tiles_c.4bpp.mtf				
+sol_sanctum_luna_sol_rooms	Tileset_SolSanctumLunaSolRoomsTilesD	../graphics/tileset/sol_sanctum_luna_sol_rooms/tiles_d.4bpp.mtf	e171	4		
+sol_sanctum_statue	Tileset_SolSanctumStatuePalette	../graphics/tileset/sol_sanctum_statue/palette.gbapal.lz	d4			ja
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesA	../graphics/tileset/sol_sanctum_statue/tiles_a.4bpp.mtf	06			ja
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesB	../graphics/tileset/sol_sanctum_statue/tiles_b.4bpp.mtf	ee			ja
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesC	../graphics/tileset/sol_sanctum_statue/tiles_c.4bpp.mtf	1c40	4		ja
+sol_sanctum_statue	Tileset_SolSanctumStatuePalette	../graphics/tileset/sol_sanctum_statue/palette.gbapal.lz	d4			en
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesA	../graphics/tileset/sol_sanctum_statue/tiles_a.4bpp.mtf	06			en
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesB	../graphics/tileset/sol_sanctum_statue/tiles_b.4bpp.mtf	ee			en
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesC	../graphics/tileset/sol_sanctum_statue/tiles_c.4bpp.mtf	1c40	4		en
+sol_sanctum_statue	Tileset_SolSanctumStatuePalette	../graphics/tileset/sol_sanctum_statue/palette.gbapal.lz	d4			de
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesA	../graphics/tileset/sol_sanctum_statue/tiles_a.4bpp.mtf	06			de
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesB	../graphics/tileset/sol_sanctum_statue/tiles_b.4bpp.mtf	ee			de
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesC	../graphics/tileset/sol_sanctum_statue/tiles_c.4bpp.mtf	1c40	4		de
+sol_sanctum_statue	Tileset_SolSanctumStatuePalette	../graphics/tileset/sol_sanctum_statue/palette_es.gbapal.lz	d4			es
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesA	../graphics/tileset/sol_sanctum_statue/tiles_a_es.4bpp.mtf	8999			es
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesB	../graphics/tileset/sol_sanctum_statue/tiles_b.4bpp.mtf	86			es
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesC	../graphics/tileset/sol_sanctum_statue/tiles_c.4bpp.mtf	1c40	4		es
+sol_sanctum_statue	Tileset_SolSanctumStatuePalette	../graphics/tileset/sol_sanctum_statue/palette_es.gbapal.lz	d4			fr
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesA	../graphics/tileset/sol_sanctum_statue/tiles_a_es.4bpp.mtf	8999			fr
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesB	../graphics/tileset/sol_sanctum_statue/tiles_b.4bpp.mtf	86			fr
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesC	../graphics/tileset/sol_sanctum_statue/tiles_c.4bpp.mtf	1c40	4		fr
+sol_sanctum_statue	Tileset_SolSanctumStatuePalette	../graphics/tileset/sol_sanctum_statue/palette_es.gbapal.lz	d4			it
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesA	../graphics/tileset/sol_sanctum_statue/tiles_a_es.4bpp.mtf	8999			it
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesB	../graphics/tileset/sol_sanctum_statue/tiles_b.4bpp.mtf	86			it
+sol_sanctum_statue	Tileset_SolSanctumStatueTilesC	../graphics/tileset/sol_sanctum_statue/tiles_c.4bpp.mtf	1c40	4		it
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStonePalette	../graphics/tileset/sol_sanctum_psynergy_stone/palette.gbapal.lz				ja
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesA	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_a.4bpp.mtf	f04b			ja
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesB	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_b.4bpp.mtf	7d04c1			ja
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesC	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_c.4bpp.mtf	12a2			ja
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesD	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_d.4bpp.mtf	e3b0d3	4		ja
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStonePalette	../graphics/tileset/sol_sanctum_psynergy_stone/palette.gbapal.lz				en
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesA	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_a.4bpp.mtf	f04b			en
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesB	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_b.4bpp.mtf	7d04c1			en
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesC	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_c.4bpp.mtf	12a2			en
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesD	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_d.4bpp.mtf	e3b0d3	4		en
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStonePalette	../graphics/tileset/sol_sanctum_psynergy_stone/palette.gbapal.lz				de
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesA	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_a.4bpp.mtf	f04b			de
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesB	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_b.4bpp.mtf	7d04c1			de
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesC	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_c.4bpp.mtf	12a2			de
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesD	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_d.4bpp.mtf	e3b0d3	4		de
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStonePalette	../graphics/tileset/sol_sanctum_psynergy_stone/palette.gbapal.lz				es
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesA	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_a.4bpp.mtf	c936			es
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesB	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_b.4bpp.mtf	7d04c1			es
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesC	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_c.4bpp.mtf	12a2			es
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesD	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_d.4bpp.mtf	e3b0d3	4		es
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStonePalette	../graphics/tileset/sol_sanctum_psynergy_stone/palette.gbapal.lz				fr
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesA	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_a.4bpp.mtf	c936			fr
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesB	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_b.4bpp.mtf	7d04c1			fr
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesC	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_c.4bpp.mtf	12a2			fr
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesD	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_d.4bpp.mtf	e3b0d3	4		fr
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStonePalette	../graphics/tileset/sol_sanctum_psynergy_stone/palette.gbapal.lz				it
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesA	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_a.4bpp.mtf	c936			it
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesB	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_b.4bpp.mtf	7d04c1			it
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesC	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_c.4bpp.mtf	12a2			it
+sol_sanctum_psynergy_stone	Tileset_SolSanctumPsynergyStoneTilesD	../graphics/tileset/sol_sanctum_psynergy_stone/tiles_d.4bpp.mtf	e3b0d3	4		it
+sol_sanctum_corridor	Tileset_SolSanctumCorridorPalette	../graphics/tileset/sol_sanctum_corridor/palette.gbapal.lz	43			
+sol_sanctum_corridor	Tileset_SolSanctumCorridorTilesA	../graphics/tileset/sol_sanctum_corridor/tiles_a.4bpp.mtf				
+sol_sanctum_corridor	Tileset_SolSanctumCorridorTilesB	../graphics/tileset/sol_sanctum_corridor/tiles_b.4bpp.mtf	50923f			
+sol_sanctum_corridor	Tileset_SolSanctumCorridorTilesC	../graphics/tileset/sol_sanctum_corridor/tiles_c.4bpp.mtf	e1			
+sol_sanctum_corridor	Tileset_SolSanctumCorridorTilesD	../graphics/tileset/sol_sanctum_corridor/tiles_d.4bpp.mtf		4		
+sol_sanctum_elemental_star_room	Tileset_SolSanctumElementalStarRoomPalette	../graphics/tileset/sol_sanctum_elemental_star_room/palette.gbapal.lz	b1			
+sol_sanctum_elemental_star_room	Tileset_SolSanctumElementalStarRoomTilesA	../graphics/tileset/sol_sanctum_elemental_star_room/tiles_a.4bpp.mtf	7a			
+sol_sanctum_elemental_star_room	Tileset_SolSanctumElementalStarRoomTilesB	../graphics/tileset/sol_sanctum_elemental_star_room/tiles_b.4bpp.mtf				
+sol_sanctum_elemental_star_room	Tileset_SolSanctumElementalStarRoomTilesC	../graphics/tileset/sol_sanctum_elemental_star_room/tiles_c.4bpp.mtf	8a1832			
+sol_sanctum_elemental_star_room	Tileset_SolSanctumElementalStarRoomTilesD	../graphics/tileset/sol_sanctum_elemental_star_room/tiles_d.4bpp.mtf	01	4		
+sol_sanctum_eruption	Tileset_SolSanctumEruptionPalette	../graphics/tileset/sol_sanctum_eruption/palette.gbapal.lz	2750			
+sol_sanctum_eruption	Tileset_SolSanctumEruptionTilesA	../graphics/tileset/sol_sanctum_eruption/tiles_a.4bpp.mtf	fe4c			
+sol_sanctum_eruption	Tileset_SolSanctumEruptionTilesB	../graphics/tileset/sol_sanctum_eruption/tiles_b.4bpp.mtf	a5			
+sol_sanctum_eruption	Tileset_SolSanctumEruptionTilesC	../graphics/tileset/sol_sanctum_eruption/tiles_c.4bpp.mtf				
+sol_sanctum_eruption	Tileset_SolSanctumEruptionTilesD	../graphics/tileset/sol_sanctum_eruption/tiles_d.4bpp.mtf	01	4		
+sol_sanctum_reliefs	Tileset_PaletteSolSanctumReliefs	../graphics/tileset/palettes/sol_sanctum_reliefs.gbapal.lz	412840	4		
+vault	Tileset_VaultPalette	../graphics/tileset/vault/palette.gbapal.lz	c8			
+vault	Tileset_VaultTilesA	../graphics/tileset/vault/tiles_a.4bpp.mtf	8a332a			
+vault	Tileset_VaultTilesB	../graphics/tileset/vault/tiles_b.4bpp.mtf	131d			
+vault	Tileset_VaultTilesC	../graphics/tileset/vault/tiles_c.4bpp.mtf	0acd			
+vault	Tileset_VaultTilesD	../graphics/tileset/vault/tiles_d.4bpp.mtf	5e117d	4		
+vault_log_rooms	Tileset_VaultLogRoomsPalette	../graphics/tileset/vault_log_rooms/palette.gbapal.lz				
+vault_log_rooms	Tileset_VaultLogRoomsTilesA	../graphics/tileset/vault_log_rooms/tiles_a.4bpp.mtf	803605			
+vault_log_rooms	Tileset_VaultLogRoomsTilesB	../graphics/tileset/vault_log_rooms/tiles_b.4bpp.mtf	3b			
+vault_log_rooms	Tileset_VaultLogRoomsTilesC	../graphics/tileset/vault_log_rooms/tiles_c.4bpp.mtf	00a5			
+vault_log_rooms	Tileset_VaultLogRoomsTilesD	../graphics/tileset/vault_log_rooms/tiles_d.4bpp.mtf	6f	4		
+stone_rooms	Tileset_StoneRoomsPalette	../graphics/tileset/stone_rooms/palette.gbapal.lz	3f			
+stone_rooms	Tileset_StoneRoomsTilesA	../graphics/tileset/stone_rooms/tiles_a.4bpp.mtf				
+stone_rooms	Tileset_StoneRoomsTilesB	../graphics/tileset/stone_rooms/tiles_b.4bpp.mtf				
+stone_rooms	Tileset_StoneRoomsTilesC	../graphics/tileset/stone_rooms/tiles_c.4bpp.mtf	1d65			
+stone_rooms	Tileset_StoneRoomsTilesD	../graphics/tileset/stone_rooms/tiles_d.4bpp.mtf	82b0	4		
+goma_cave_entrance	Tileset_GomaCaveEntrancePalette	../graphics/tileset/goma_cave_entrance/palette.gbapal.lz				
+goma_cave_entrance	Tileset_GomaCaveEntranceTilesA	../graphics/tileset/goma_cave_entrance/tiles_a.4bpp.mtf	e1e8f4			
+goma_cave_entrance	Tileset_GomaCaveEntranceTilesB	../graphics/tileset/goma_cave_entrance/tiles_b.4bpp.mtf				
+goma_cave_entrance	Tileset_GomaCaveEntranceTilesC	../graphics/tileset/goma_cave_entrance/tiles_c.4bpp.mtf				
+goma_cave_entrance	Tileset_GomaCaveEntranceTilesD	../graphics/tileset/goma_cave_entrance/tiles_d.4bpp.mtf		4		
+goma_cave_pond	Tileset_GomaCavePondPalette	../graphics/tileset/goma_cave_pond/palette.gbapal.lz	71			ja
+goma_cave_pond	Tileset_GomaCavePondTilesA	../graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf				ja
+goma_cave_pond	Tileset_GomaCavePondTilesB	../graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf				ja
+goma_cave_pond	Tileset_GomaCavePondTilesC	../graphics/tileset/goma_cave_pond/tiles_c.4bpp.mtf	0090			ja
+goma_cave_pond	Tileset_GomaCavePondTilesD	../graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf	04	4		ja
+goma_cave_pond	Tileset_GomaCavePondPalette	../graphics/tileset/goma_cave_pond/palette.gbapal.lz	71			en
+goma_cave_pond	Tileset_GomaCavePondTilesA	../graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf				en
+goma_cave_pond	Tileset_GomaCavePondTilesB	../graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf				en
+goma_cave_pond	Tileset_GomaCavePondTilesC	../graphics/tileset/goma_cave_pond/tiles_c.4bpp.mtf	0090			en
+goma_cave_pond	Tileset_GomaCavePondTilesD	../graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf	04	4		en
+goma_cave_pond	Tileset_GomaCavePondPalette	../graphics/tileset/goma_cave_pond/palette.gbapal.lz	71			de
+goma_cave_pond	Tileset_GomaCavePondTilesA	../graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf				de
+goma_cave_pond	Tileset_GomaCavePondTilesB	../graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf				de
+goma_cave_pond	Tileset_GomaCavePondTilesC	../graphics/tileset/goma_cave_pond/tiles_c.4bpp.mtf	0090			de
+goma_cave_pond	Tileset_GomaCavePondTilesD	../graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf	04	4		de
+goma_cave_pond	Tileset_GomaCavePondPalette	../graphics/tileset/goma_cave_pond/palette.gbapal.lz	71			es
+goma_cave_pond	Tileset_GomaCavePondTilesA	../graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf				es
+goma_cave_pond	Tileset_GomaCavePondTilesB	../graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf				es
+goma_cave_pond	Tileset_GomaCavePondTilesC	../graphics/tileset/goma_cave_pond/tiles_c_es.4bpp.mtf	6082c0			es
+goma_cave_pond	Tileset_GomaCavePondTilesD	../graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf	04	4		es
+goma_cave_pond	Tileset_GomaCavePondPalette	../graphics/tileset/goma_cave_pond/palette.gbapal.lz	71			fr
+goma_cave_pond	Tileset_GomaCavePondTilesA	../graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf				fr
+goma_cave_pond	Tileset_GomaCavePondTilesB	../graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf				fr
+goma_cave_pond	Tileset_GomaCavePondTilesC	../graphics/tileset/goma_cave_pond/tiles_c_es.4bpp.mtf	6082c0			fr
+goma_cave_pond	Tileset_GomaCavePondTilesD	../graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf	04	4		fr
+goma_cave_pond	Tileset_GomaCavePondPalette	../graphics/tileset/goma_cave_pond/palette.gbapal.lz	71			it
+goma_cave_pond	Tileset_GomaCavePondTilesA	../graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf				it
+goma_cave_pond	Tileset_GomaCavePondTilesB	../graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf				it
+goma_cave_pond	Tileset_GomaCavePondTilesC	../graphics/tileset/goma_cave_pond/tiles_c_es.4bpp.mtf	6082c0			it
+goma_cave_pond	Tileset_GomaCavePondTilesD	../graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf	04	4		it
+goma_cave_pillar	Tileset_GomaCavePillarPalette	../graphics/tileset/goma_cave_pillar/palette.gbapal.lz				
+goma_cave_pillar	Tileset_GomaCavePillarTilesA	../graphics/tileset/goma_cave_pillar/tiles_a.4bpp.mtf	1200			
+goma_cave_pillar	Tileset_GomaCavePillarTilesB	../graphics/tileset/goma_cave_pillar/tiles_b.4bpp.mtf	2788			
+goma_cave_pillar	Tileset_GomaCavePillarTilesC	../graphics/tileset/goma_cave_pillar/tiles_c.4bpp.mtf				
+goma_cave_pillar	Tileset_GomaCavePillarTilesD	../graphics/tileset/goma_cave_pillar/tiles_d.4bpp.mtf		4		
+vault_cave_passage	Tileset_VaultCavePassagePalette	../graphics/tileset/vault_cave_passage/palette.gbapal.lz	e217			
+vault_cave_passage	Tileset_VaultCavePassageTilesA	../graphics/tileset/vault_cave_passage/tiles_a.4bpp.mtf		4		
+vault_cave_passage	Tileset_VaultCavePassageTilesB	../graphics/tileset/vault_cave_passage/tiles_b.4bpp.mtf		4		
+vault_cave_passage	Tileset_VaultCavePassageTilesC	../graphics/tileset/vault_cave_passage/tiles_c.4bpp.mtf				
+vault_cave_passage	Tileset_VaultCavePassageTilesD	../graphics/tileset/vault_cave_passage/tiles_d.4bpp.mtf	c639	4		
+vale_cave_mouth	Tileset_ValeCaveMouthPalette	../graphics/tileset/vale_cave_mouth/palette.gbapal.lz	9849			
+vale_cave_mouth	Tileset_ValeCaveMouthTilesA	../graphics/tileset/vale_cave_mouth/tiles_a.4bpp.mtf	dc06aa			
+vale_cave_mouth	Tileset_ValeCaveMouthTilesB	../graphics/tileset/vale_cave_mouth/tiles_b.4bpp.mtf	f1e805			
+vale_cave_mouth	Tileset_ValeCaveMouthTilesC	../graphics/tileset/vale_cave_mouth/tiles_c.4bpp.mtf	8338			
+vale_cave_mouth	Tileset_ValeCaveMouthTilesD	../graphics/tileset/vale_cave_mouth/tiles_d.4bpp.mtf	7c2f	4		
+vale_cave_kite	Tileset_ValeCaveKitePalette	../graphics/tileset/vale_cave_kite/palette.gbapal.lz				
+vale_cave_kite	Tileset_ValeCaveKiteTilesA	../graphics/tileset/vale_cave_kite/tiles_a.4bpp.mtf	041cf2			
+vale_cave_kite	Tileset_ValeCaveKiteTilesB	../graphics/tileset/vale_cave_kite/tiles_b.4bpp.mtf	f9			
+vale_cave_kite	Tileset_ValeCaveKiteTilesC	../graphics/tileset/vale_cave_kite/tiles_c.4bpp.mtf	f0	4		
+bilibin	Tileset_BilibinPalette	../graphics/tileset/bilibin/palette.gbapal.lz		4		
+bilibin	Tileset_BilibinTilesA	../graphics/tileset/bilibin/tiles_a.4bpp.mtf		4		
+bilibin	Tileset_BilibinTilesB	../graphics/tileset/bilibin/tiles_b.4bpp.mtf	a6099b			
+bilibin	Tileset_BilibinTilesC	../graphics/tileset/bilibin/tiles_c.4bpp.mtf				
+bilibin	Tileset_BilibinTilesD	../graphics/tileset/bilibin/tiles_d.4bpp.mtf		4		
+cottage_rooms_c	Tileset_CottageRoomsCPalette	../graphics/tileset/cottage_rooms_c/palette.gbapal.lz				
+cottage_rooms_c	Tileset_CottageRoomsCTilesA	../graphics/tileset/cottage_rooms_c/tiles_a.4bpp.mtf	07			
+cottage_rooms_c	Tileset_CottageRoomsCTilesB	../graphics/tileset/cottage_rooms_c/tiles_b.4bpp.mtf	003f	4		
+bilibin_treasury	Tileset_BilibinTreasuryPalette	../graphics/tileset/bilibin_treasury/palette.gbapal.lz	f3			
+bilibin_treasury	Tileset_BilibinTreasuryTilesA	../graphics/tileset/bilibin_treasury/tiles_a.4bpp.mtf	06	4		
+bilibin_barricade	Tileset_BilibinBarricadePalette	../graphics/tileset/bilibin_barricade/palette.gbapal.lz	08			
+bilibin_barricade	Tileset_BilibinBarricadeTilesA	../graphics/tileset/bilibin_barricade/tiles_a.4bpp.mtf	9e			
+bilibin_barricade	Tileset_BilibinBarricadeTilesB	../graphics/tileset/bilibin_barricade/tiles_b.4bpp.mtf	f1b321			
+bilibin_barricade	Tileset_BilibinBarricadeTilesC	../graphics/tileset/bilibin_barricade/tiles_c.4bpp.mtf	c9e1	4		
+mccoy_palace_grounds	Tileset_McCoyPalaceGroundsPalette	../graphics/tileset/mccoy_palace_grounds/palette.gbapal.lz	8cdad6			
+mccoy_palace_grounds	Tileset_McCoyPalaceGroundsTilesA	../graphics/tileset/mccoy_palace_grounds/tiles_a.4bpp.mtf	60cf83			
+mccoy_palace_grounds	Tileset_McCoyPalaceGroundsTilesB	../graphics/tileset/mccoy_palace_grounds/tiles_b.4bpp.mtf				
+mccoy_palace_grounds	Tileset_McCoyPalaceGroundsTilesC	../graphics/tileset/mccoy_palace_grounds/tiles_c.4bpp.mtf	b03e			
+mccoy_palace_grounds	Tileset_McCoyPalaceGroundsTilesD	../graphics/tileset/mccoy_palace_grounds/tiles_d.4bpp.mtf	a9	4		
+mccoy_palace	Tileset_McCoyPalacePalette	../graphics/tileset/mccoy_palace/palette.gbapal.lz	401508			
+mccoy_palace	Tileset_McCoyPalaceTilesA	../graphics/tileset/mccoy_palace/tiles_a.4bpp.mtf	fe			
+mccoy_palace	Tileset_McCoyPalaceTilesB	../graphics/tileset/mccoy_palace/tiles_b.4bpp.mtf				
+mccoy_palace	Tileset_McCoyPalaceTilesC	../graphics/tileset/mccoy_palace/tiles_c.4bpp.mtf	108455			
+mccoy_palace	Tileset_McCoyPalaceTilesD	../graphics/tileset/mccoy_palace/tiles_d.4bpp.mtf		4		
+kolima	Tileset_KolimaPalette	../graphics/tileset/kolima/palette.gbapal.lz	c023			
+kolima	Tileset_KolimaTilesA	../graphics/tileset/kolima/tiles_a.4bpp.mtf				
+kolima	Tileset_KolimaTilesB	../graphics/tileset/kolima/tiles_b.4bpp.mtf				
+kolima	Tileset_KolimaTilesC	../graphics/tileset/kolima/tiles_c.4bpp.mtf	ba			
+kolima	Tileset_KolimaTilesD	../graphics/tileset/kolima/tiles_d.4bpp.mtf	68182a	4		
+log_rooms_c	Tileset_LogRoomsCPalette	../graphics/tileset/log_rooms_c/palette.gbapal.lz	8e9e21			
+log_rooms_c	Tileset_LogRoomsCTilesA	../graphics/tileset/log_rooms_c/tiles_a.4bpp.mtf	212e	4		
+kolima_bridge	Tileset_KolimaBridgePalette	../graphics/tileset/kolima_bridge/palette.gbapal.lz	9e99b7			
+kolima_bridge	Tileset_KolimaBridgeTilesA	../graphics/tileset/kolima_bridge/tiles_a.4bpp.mtf				
+kolima_bridge	Tileset_KolimaBridgeTilesB	../graphics/tileset/kolima_bridge/tiles_b.4bpp.mtf	4d0c83			
+kolima_bridge	Tileset_KolimaBridgeTilesC	../graphics/tileset/kolima_bridge/tiles_c.4bpp.mtf	fa80			
+kolima_bridge	Tileset_KolimaBridgeTilesD	../graphics/tileset/kolima_bridge/tiles_d.4bpp.mtf	1ff8	4		
+kolima_tunnel	Tileset_PaletteKolimaTunnel	../graphics/tileset/palettes/kolima_tunnel.gbapal.lz	940106	4		
+kolima_forest_entrance	Tileset_KolimaForestPalette	../graphics/tileset/kolima_forest/palette.gbapal.lz	b1c1			
+kolima_forest_entrance	Tileset_KolimaForestTilesA	../graphics/tileset/kolima_forest/tiles_a.4bpp.mtf				
+kolima_forest_entrance	Tileset_KolimaForestTilesB	../graphics/tileset/kolima_forest/tiles_b.4bpp.mtf	4d0c83			
+kolima_forest_entrance	Tileset_KolimaForestTilesC	../graphics/tileset/kolima_forest/tiles_c.4bpp.mtf	b89264			
+kolima_forest_entrance	Tileset_KolimaForestTilesD	../graphics/tileset/kolima_forest/tiles_d.4bpp.mtf		4		
+kolima_forest_glade	Tileset_KolimaForestGladePalette	../graphics/tileset/kolima_forest_glade/palette.gbapal.lz	cb81			
+kolima_forest_glade	Tileset_KolimaForestGladeTilesA	../graphics/tileset/kolima_forest_glade/tiles_a.4bpp.mtf	008057	4		
+kolima_forest_cliff	Tileset_PaletteKolimaForestCliff	../graphics/tileset/palettes/kolima_forest_cliff.gbapal.lz	e365	4		
+kolima_forest_floodgate	Tileset_KolimaForestFloodgatePalette	../graphics/tileset/kolima_forest_floodgate/palette.gbapal.lz	6a7b	4		
+kolima_forest_floodgate	Tileset_KolimaForestFloodgateTilesA	../graphics/tileset/kolima_forest_floodgate/tiles_a.4bpp.mtf		4		
+kolima_forest_floodgate	Tileset_KolimaForestFloodgateTilesB	../graphics/tileset/kolima_forest_floodgate/tiles_b.4bpp.mtf				
+kolima_forest_floodgate	Tileset_KolimaForestFloodgateTilesC	../graphics/tileset/kolima_forest_floodgate/tiles_c.4bpp.mtf	d6b608			
+kolima_forest_floodgate	Tileset_KolimaForestFloodgateTilesD	../graphics/tileset/kolima_forest_floodgate/tiles_d.4bpp.mtf		4		
+kolima_forest_tree	Tileset_KolimaForestTreePalette	../graphics/tileset/kolima_forest_tree/palette.gbapal.lz	05			
+kolima_forest_tree	Tileset_KolimaForestTreeTilesA	../graphics/tileset/kolima_forest_tree/tiles_a.4bpp.mtf	07f0			
+kolima_forest_tree	Tileset_KolimaForestTreeTilesB	../graphics/tileset/kolima_forest_tree/tiles_b.4bpp.mtf	8f63			
+kolima_forest_tree	Tileset_KolimaForestTreeTilesC	../graphics/tileset/kolima_forest_tree/tiles_c.4bpp.mtf	6b			
+kolima_forest_tree	Tileset_KolimaForestTreeTilesD	../graphics/tileset/kolima_forest_tree/tiles_d.4bpp.mtf		4		
+tree_rooms	Tileset_TreeRoomsPalette	../graphics/tileset/tree_rooms/palette.gbapal.lz	34			
+tree_rooms	Tileset_TreeRoomsTilesA	../graphics/tileset/tree_rooms/tiles_a.4bpp.mtf		4		
+tree_rooms	Tileset_TreeRoomsTilesB	../graphics/tileset/tree_rooms/tiles_b.4bpp.mtf		4		
+tree_rooms	Tileset_TreeRoomsTilesC	../graphics/tileset/tree_rooms/tiles_c.4bpp.mtf	e8955a			
+tree_rooms	Tileset_TreeRoomsTilesD	../graphics/tileset/tree_rooms/tiles_d.4bpp.mtf	a4	4		
+tret_tree_branch	Tileset_TretTreeBranchPalette	../graphics/tileset/tret_tree_branch/palette.gbapal.lz	9b46			
+tret_tree_branch	Tileset_TretTreeBranchTilesA	../graphics/tileset/tret_tree_branch/tiles_a.4bpp.mtf	e0910f			
+tret_tree_branch	Tileset_TretTreeBranchTilesB	../graphics/tileset/tret_tree_branch/tiles_b.4bpp.mtf	2f			
+tret_tree_branch	Tileset_TretTreeBranchTilesC	../graphics/tileset/tret_tree_branch/tiles_c.4bpp.mtf	23e7			
+tret_tree_branch	Tileset_TretTreeBranchTilesD	../graphics/tileset/tret_tree_branch/tiles_d.4bpp.mtf	09	4		
+bilibin_cave_entrance	Tileset_BilibinCaveEntrancePalette	../graphics/tileset/bilibin_cave_entrance/palette.gbapal.lz				
+bilibin_cave_entrance	Tileset_BilibinCaveEntranceTilesA	../graphics/tileset/bilibin_cave_entrance/tiles_a.4bpp.mtf	8003	4		
+bilibin_cave_rapier	Tileset_BilibinCaveRapierPalette	../graphics/tileset/bilibin_cave_rapier/palette.gbapal.lz	dc32			
+bilibin_cave_rapier	Tileset_BilibinCaveRapierTilesA	../graphics/tileset/bilibin_cave_rapier/tiles_a.4bpp.mtf	71	4		
+bilibin_cave_ice	Tileset_BilibinCaveIcePalette	../graphics/tileset/bilibin_cave_ice/palette.gbapal.lz				
+bilibin_cave_ice	Tileset_BilibinCaveIceTilesA	../graphics/tileset/bilibin_cave_ice/tiles_a.4bpp.mtf	4558	4		
+imil	Tileset_ImilPalette	../graphics/tileset/imil/palette.gbapal.lz	c28204			
+imil	Tileset_ImilTilesA	../graphics/tileset/imil/tiles_a.4bpp.mtf				
+imil	Tileset_ImilTilesB	../graphics/tileset/imil/tiles_b.4bpp.mtf	69			
+imil	Tileset_ImilTilesC	../graphics/tileset/imil/tiles_c.4bpp.mtf	de			
+imil	Tileset_ImilTilesD	../graphics/tileset/imil/tiles_d.4bpp.mtf		4		
+ice_rooms	Tileset_IceRoomsPalette	../graphics/tileset/ice_rooms/palette.gbapal.lz	1f			
+ice_rooms	Tileset_IceRoomsTilesA	../graphics/tileset/ice_rooms/tiles_a.4bpp.mtf	47900e			
+ice_rooms	Tileset_IceRoomsTilesB	../graphics/tileset/ice_rooms/tiles_b.4bpp.mtf				
+ice_rooms	Tileset_IceRoomsTilesC	../graphics/tileset/ice_rooms/tiles_c.4bpp.mtf	c37389			
+ice_rooms	Tileset_IceRoomsTilesD	../graphics/tileset/ice_rooms/tiles_d.4bpp.mtf	c483	4		
+mercury_lighthouse_entrance	Tileset_MercuryLighthouseEntrancePalette	../graphics/tileset/mercury_lighthouse_entrance/palette.gbapal.lz	c0cf02			
+mercury_lighthouse_entrance	Tileset_MercuryLighthouseEntranceTilesA	../graphics/tileset/mercury_lighthouse_entrance/tiles_a.4bpp.mtf	2b			
+mercury_lighthouse_entrance	Tileset_MercuryLighthouseEntranceTilesB	../graphics/tileset/mercury_lighthouse_entrance/tiles_b.4bpp.mtf	e5			
+mercury_lighthouse_entrance	Tileset_MercuryLighthouseEntranceTilesC	../graphics/tileset/mercury_lighthouse_entrance/tiles_c.4bpp.mtf	7a40e2			
+mercury_lighthouse_entrance	Tileset_MercuryLighthouseEntranceTilesD	../graphics/tileset/mercury_lighthouse_entrance/tiles_d.4bpp.mtf	0c	4		
+fuchin_temple_grounds	Tileset_MercuryLighthousePalette	../graphics/tileset/mercury_lighthouse/palette.gbapal.lz	32c8			
+fuchin_temple_grounds	Tileset_MercuryLighthouseTilesA	../graphics/tileset/mercury_lighthouse/tiles_a.4bpp.mtf		4		
+lacquer_rooms_a	Tileset_LacquerRoomsAPalette	../graphics/tileset/lacquer_rooms_a/palette.gbapal.lz	a88060			
+lacquer_rooms_a	Tileset_LacquerRoomsATilesA	../graphics/tileset/lacquer_rooms_a/tiles_a.4bpp.mtf	1300			
+lacquer_rooms_a	Tileset_LacquerRoomsATilesB	../graphics/tileset/lacquer_rooms_a/tiles_b.4bpp.mtf				
+lacquer_rooms_a	Tileset_LacquerRoomsATilesC	../graphics/tileset/lacquer_rooms_a/tiles_c.4bpp.mtf	18			
+lacquer_rooms_a	Tileset_LacquerRoomsATilesD	../graphics/tileset/lacquer_rooms_a/tiles_d.4bpp.mtf	fb144d	4		
+fuchin_falls_cave_entrance	Tileset_PaletteFuchinFallsCave	../graphics/tileset/palettes/fuchin_falls_cave.gbapal.lz	7e5e	4		
+mogall_forest_sign	Tileset_MogallForestPalette	../graphics/tileset/mogall_forest/palette.gbapal.lz	cc			
+mogall_forest_sign	Tileset_MogallForestTilesA	../graphics/tileset/mogall_forest/tiles_a.4bpp.mtf	63			
+mogall_forest_sign	Tileset_MogallForestTilesB	../graphics/tileset/mogall_forest/tiles_b.4bpp.mtf	10a1			
+mogall_forest_sign	Tileset_MogallForestTilesC	../graphics/tileset/mogall_forest/tiles_c.4bpp.mtf	e5a2			
+mogall_forest_sign	Tileset_MogallForestTilesD	../graphics/tileset/mogall_forest/tiles_d.4bpp.mtf	0a07	4		
+lacquer_rooms_b	Tileset_LacquerRoomsBPalette	../graphics/tileset/lacquer_rooms_b/palette.gbapal.lz	98c9			
+lacquer_rooms_b	Tileset_LacquerRoomsBTilesA	../graphics/tileset/lacquer_rooms_b/tiles_a.4bpp.mtf	016d			
+lacquer_rooms_b	Tileset_LacquerRoomsBTilesB	../graphics/tileset/lacquer_rooms_b/tiles_b.4bpp.mtf	ec			
+lacquer_rooms_b	Tileset_LacquerRoomsBTilesC	../graphics/tileset/lacquer_rooms_b/tiles_c.4bpp.mtf	2e1f			
+lacquer_rooms_b	Tileset_LacquerRoomsBTilesD	../graphics/tileset/lacquer_rooms_b/tiles_d.4bpp.mtf		4		
+alpine_crossing	Tileset_PaletteAlpineCrossing	../graphics/tileset/palettes/alpine_crossing.gbapal.lz	db0eea	4		
+altin	Tileset_AltinPalette	../graphics/tileset/altin/palette.gbapal.lz				
+altin	Tileset_AltinTilesA	../graphics/tileset/altin/tiles_a.4bpp.mtf				
+altin	Tileset_AltinTilesB	../graphics/tileset/altin/tiles_b.4bpp.mtf	d654			
+altin	Tileset_AltinTilesC	../graphics/tileset/altin/tiles_c.4bpp.mtf				
+altin	Tileset_AltinTilesD	../graphics/tileset/altin/tiles_d.4bpp.mtf	d0	4		
+cottage_rooms_d	Tileset_CottageRoomsDPalette	../graphics/tileset/cottage_rooms_d/palette.gbapal.lz	b3ece0			
+cottage_rooms_d	Tileset_CottageRoomsDTilesA	../graphics/tileset/cottage_rooms_d/tiles_a.4bpp.mtf	00c101	4		
+altin_peak_first_water_beast	Tileset_PaletteAltinPeak	../graphics/tileset/palettes/altin_peak.gbapal.lz	5d0206	4		
+altin_peak_hydros_statue	Tileset_PaletteAltinPeakHydrosStatue	../graphics/tileset/palettes/altin_peak_hydros_statue.gbapal.lz	2a0298	4		
+lamakan_desert_cave	Tileset_PaletteLamakanDesertCave	../graphics/tileset/palettes/lamakan_desert_cave.gbapal.lz	1426	4		
+lamakan_desert_east	Tileset_LamakanDesertEastPalette	../graphics/tileset/lamakan_desert_east/palette.gbapal.lz				
+lamakan_desert_east	Tileset_LamakanDesertEastTilesA	../graphics/tileset/lamakan_desert_east/tiles_a.4bpp.mtf	54			
+lamakan_desert_east	Tileset_LamakanDesertEastTilesB	../graphics/tileset/lamakan_desert_east/tiles_b.4bpp.mtf	9c52			
+lamakan_desert_east	Tileset_LamakanDesertEastTilesC	../graphics/tileset/lamakan_desert_east/tiles_c.4bpp.mtf	96			
+lamakan_desert_east	Tileset_LamakanDesertEastTilesD	../graphics/tileset/lamakan_desert_east/tiles_d.4bpp.mtf	c084	4		
+kalay	Tileset_KalayPalette	../graphics/tileset/kalay/palette.gbapal.lz	94	4		
+kalay	Tileset_KalayTilesA	../graphics/tileset/kalay/tiles_a.4bpp.mtf		4		
+kalay	Tileset_KalayTilesB	../graphics/tileset/kalay/tiles_b.4bpp.mtf	d1bc			
+kalay	Tileset_KalayTilesC	../graphics/tileset/kalay/tiles_c.4bpp.mtf	24dabb			
+kalay	Tileset_KalayTilesD	../graphics/tileset/kalay/tiles_d.4bpp.mtf		4		
+stucco_rooms_a	Tileset_StuccoRoomsAPalette	../graphics/tileset/stucco_rooms_a/palette.gbapal.lz	c0			
+stucco_rooms_a	Tileset_StuccoRoomsATilesA	../graphics/tileset/stucco_rooms_a/tiles_a.4bpp.mtf				
+stucco_rooms_a	Tileset_StuccoRoomsATilesB	../graphics/tileset/stucco_rooms_a/tiles_b.4bpp.mtf				
+stucco_rooms_a	Tileset_StuccoRoomsATilesC	../graphics/tileset/stucco_rooms_a/tiles_c.4bpp.mtf				
+stucco_rooms_a	Tileset_StuccoRoomsATilesD	../graphics/tileset/stucco_rooms_a/tiles_d.4bpp.mtf		4		
+hammet_palace	Tileset_PaletteHammetPalace	../graphics/tileset/palettes/hammet_palace.gbapal.lz		4		
+lunpa	Tileset_LunpaPalette	../graphics/tileset/lunpa/palette.gbapal.lz	1441b9			
+lunpa	Tileset_LunpaTilesA	../graphics/tileset/lunpa/tiles_a.4bpp.mtf	0902			
+lunpa	Tileset_LunpaTilesB	../graphics/tileset/lunpa/tiles_b.4bpp.mtf		4		
+rock_rooms	Tileset_PaletteRockRooms	../graphics/tileset/palettes/rock_rooms.gbapal.lz	cc	4		
+west_lunpa_cave	Tileset_PaletteWestLunpaCave	../graphics/tileset/palettes/west_lunpa_cave.gbapal.lz		4		
+kalay_docks	Tileset_KalayDocksPalette	../graphics/tileset/kalay_docks/palette.gbapal.lz	2a911b			
+kalay_docks	Tileset_KalayDocksTilesA	../graphics/tileset/kalay_docks/tiles_a.4bpp.mtf				
+kalay_docks	Tileset_KalayDocksTilesB	../graphics/tileset/kalay_docks/tiles_b.4bpp.mtf	83			
+kalay_docks	Tileset_KalayDocksTilesC	../graphics/tileset/kalay_docks/tiles_c.4bpp.mtf		4		
+cottage_rooms_e	Tileset_CottageRoomsEPalette	../graphics/tileset/cottage_rooms_e/palette.gbapal.lz	05			
+cottage_rooms_e	Tileset_CottageRoomsETilesA	../graphics/tileset/cottage_rooms_e/tiles_a.4bpp.mtf		4		
+tolbi_ship_deck	Tileset_TolbiShipDeckPalette	../graphics/tileset/tolbi_ship_deck/palette.gbapal.lz	c53e03			
+tolbi_ship_deck	Tileset_TolbiShipDeckTilesA	../graphics/tileset/tolbi_ship_deck/tiles_a.4bpp.mtf	d143			
+tolbi_ship_deck	Tileset_TolbiShipDeckTilesB	../graphics/tileset/tolbi_ship_deck/tiles_b.4bpp.mtf	793a			
+tolbi_ship_deck	Tileset_TolbiShipDeckTilesC	../graphics/tileset/tolbi_ship_deck/tiles_c.4bpp.mtf				
+tolbi_ship_deck	Tileset_TolbiShipDeckTilesD	../graphics/tileset/tolbi_ship_deck/tiles_d.4bpp.mtf	087e	4		
+tolbi_ship_mast	Tileset_PaletteTolbiShipMast	../graphics/tileset/palettes/tolbi_ship_mast.gbapal.lz	e799	4		
+ship_rooms	Tileset_ShipRoomsPalette	../graphics/tileset/ship_rooms/palette.gbapal.lz				
+ship_rooms	Tileset_ShipRoomsTilesA	../graphics/tileset/ship_rooms/tiles_a.4bpp.mtf	c0bec0			
+ship_rooms	Tileset_ShipRoomsTilesB	../graphics/tileset/ship_rooms/tiles_b.4bpp.mtf	21cf49			
+ship_rooms	Tileset_ShipRoomsTilesC	../graphics/tileset/ship_rooms/tiles_c.4bpp.mtf	d68339			
+ship_rooms	Tileset_ShipRoomsTilesD	../graphics/tileset/ship_rooms/tiles_d.4bpp.mtf		4		
+tolbi_docks	Tileset_PaletteTolbiDocks	../graphics/tileset/palettes/tolbi_docks.gbapal.lz	19e978	4		
+crossbone_isle	Tileset_PaletteCrossboneIsle	../graphics/tileset/palettes/crossbone_isle.gbapal.lz	944bc1	4		
+babi_lighthouse_rooms	Tileset_BabiLighthousePalette	../graphics/tileset/babi_lighthouse/palette.gbapal.lz	beee			
+babi_lighthouse_rooms	Tileset_BabiLighthouseTilesA	../graphics/tileset/babi_lighthouse/tiles_a.4bpp.mtf				
+babi_lighthouse_rooms	Tileset_BabiLighthouseTilesB	../graphics/tileset/babi_lighthouse/tiles_b.4bpp.mtf	08e8			
+babi_lighthouse_rooms	Tileset_BabiLighthouseTilesC	../graphics/tileset/babi_lighthouse/tiles_c.4bpp.mtf	fe			
+babi_lighthouse_rooms	Tileset_BabiLighthouseTilesD	../graphics/tileset/babi_lighthouse/tiles_d.4bpp.mtf	ff	4		
+crossbone_isle_ice_pillars	Tileset_PaletteCrossboneIsleIcePillars	../graphics/tileset/palettes/crossbone_isle_ice_pillars.gbapal.lz	f8e4	4		
+crossbone_isle_keys_and_bane	Tileset_PaletteCrossboneIsleKeys	../graphics/tileset/palettes/crossbone_isle_keys.gbapal.lz	102f79	4		
+crossbone_isle_statues	Tileset_PaletteCrossboneIsleStatues	../graphics/tileset/palettes/crossbone_isle_statues.gbapal.lz	c70cb4	4		
+crossbone_isle_floodgate	Tileset_PaletteCrossboneIsleFloodgate	../graphics/tileset/palettes/crossbone_isle_floodgate.gbapal.lz	53			
+crossbone_isle_floodgate	Tileset_PaletteCrossboneIsleBane	../graphics/tileset/palettes/crossbone_isle_bane.gbapal.lz	000038	4		
+crossbone_isle_stacked_pillars	Tileset_PaletteCrossboneIsleStackedPillars	../graphics/tileset/palettes/crossbone_isle_stacked_pillars.gbapal.lz	b39080	4		
+crossbone_isle_dragon_statue	Tileset_PaletteCrossboneIsleDragonStatue	../graphics/tileset/palettes/crossbone_isle_dragon_statue.gbapal.lz		4		
+crossbone_isle_floating_logs	Tileset_PaletteCrossboneIsleFloatingLogs	../graphics/tileset/palettes/crossbone_isle_floating_logs.gbapal.lz	fea6	4		
+crossbone_isle_pier	Tileset_PaletteCrossboneIslePier	../graphics/tileset/palettes/crossbone_isle_pier.gbapal.lz	50427d	4		
+pirate_ship	Tileset_PalettePirateShip	../graphics/tileset/palettes/pirate_ship.gbapal.lz		4		
+crossbone_isle_cave	Tileset_PaletteCrossboneIsleCave	../graphics/tileset/palettes/crossbone_isle_cave.gbapal.lz	5c	4		ja
+crossbone_isle_cave	Tileset_PaletteCrossboneIsleCave	../graphics/tileset/palettes/crossbone_isle_cave.gbapal.lz	c8	4		en
+crossbone_isle_cave	Tileset_PaletteCrossboneIsleCave	../graphics/tileset/palettes/crossbone_isle_cave.gbapal.lz	c8	4		de
+crossbone_isle_cave	Tileset_PaletteCrossboneIsleCave	../graphics/tileset/palettes/crossbone_isle_cave.gbapal.lz	c8	4		es
+crossbone_isle_cave	Tileset_PaletteCrossboneIsleCave	../graphics/tileset/palettes/crossbone_isle_cave.gbapal.lz	c8	4		fr
+crossbone_isle_cave	Tileset_PaletteCrossboneIsleCave	../graphics/tileset/palettes/crossbone_isle_cave.gbapal.lz	c8	4		it
+tolbi	Tileset_PaletteTolbi	../graphics/tileset/palettes/tolbi.gbapal.lz	5b24d1	4		
+stucco_rooms_b	Tileset_PaletteStuccoRooms	../graphics/tileset/palettes/stucco_rooms.gbapal.lz	9c00	4		
+babi_palace_entrance	Tileset_PaletteBabiPalaceEntrance	../graphics/tileset/palettes/babi_palace_entrance.gbapal.lz	86f1	4		
+babi_palace	Tileset_PaletteBabiPalace	../graphics/tileset/palettes/babi_palace.gbapal.lz	1530	4		
+colosseum_tunnel	Tileset_ColosseumTunnelPalette	../graphics/tileset/colosseum_tunnel/palette.gbapal.lz	8e89			
+colosseum_tunnel	Tileset_ColosseumTunnelTilesA	../graphics/tileset/colosseum_tunnel/tiles_a.4bpp.mtf	e0			
+colosseum_tunnel	Tileset_ColosseumTunnelTilesB	../graphics/tileset/colosseum_tunnel/tiles_b.4bpp.mtf	8cba			
+colosseum_tunnel	Tileset_ColosseumTunnelTilesC	../graphics/tileset/colosseum_tunnel/tiles_c.4bpp.mtf	c6			
+colosseum_tunnel	Tileset_ColosseumTunnelTilesD	../graphics/tileset/colosseum_tunnel/tiles_d.4bpp.mtf	58	4		
+colosseum	Tileset_PaletteColosseum	../graphics/tileset/palettes/colosseum.gbapal.lz	9de1fd	4		
+colosseum_entrance	Tileset_PaletteColosseumEntrance	../graphics/tileset/palettes/colosseum_entrance.gbapal.lz	7f45d8	4		
+colosseum_azart_match	Tileset_ColosseumAzartMatchPalette	../graphics/tileset/colosseum_azart_match/palette.gbapal.lz	319d0f			
+colosseum_azart_match	Tileset_ColosseumAzartMatchTilesA	../graphics/tileset/colosseum_azart_match/tiles_a.4bpp.mtf	63			
+colosseum_azart_match	Tileset_ColosseumAzartMatchTilesB	../graphics/tileset/colosseum_azart_match/tiles_b.4bpp.mtf				
+colosseum_azart_match	Tileset_ColosseumAzartMatchTilesC	../graphics/tileset/colosseum_azart_match/tiles_c.4bpp.mtf	259685			
+colosseum_azart_match	Tileset_ColosseumAzartMatchTilesD	../graphics/tileset/colosseum_azart_match/tiles_d.4bpp.mtf	69	4		
+colosseum_satrage_match	Tileset_ColosseumSatrageMatchPalette	../graphics/tileset/colosseum_satrage_match/palette.gbapal.lz				
+colosseum_satrage_match	Tileset_ColosseumSatrageMatchTilesA	../graphics/tileset/colosseum_satrage_match/tiles_a.4bpp.mtf	91			
+colosseum_satrage_match	Tileset_ColosseumSatrageMatchTilesB	../graphics/tileset/colosseum_satrage_match/tiles_b.4bpp.mtf	6d			
+colosseum_satrage_match	Tileset_ColosseumSatrageMatchTilesC	../graphics/tileset/colosseum_satrage_match/tiles_c.4bpp.mtf	062187			
+colosseum_satrage_match	Tileset_ColosseumSatrageMatchTilesD	../graphics/tileset/colosseum_satrage_match/tiles_d.4bpp.mtf	7f3d47	4		
+colosseum_navampa_match	Tileset_ColosseumNavampaMatchPalette	../graphics/tileset/colosseum_navampa_match/palette.gbapal.lz	22b6			
+colosseum_navampa_match	Tileset_ColosseumNavampaMatchTilesA	../graphics/tileset/colosseum_navampa_match/tiles_a.4bpp.mtf	81df			
+colosseum_navampa_match	Tileset_ColosseumNavampaMatchTilesB	../graphics/tileset/colosseum_navampa_match/tiles_b.4bpp.mtf	ba			
+colosseum_navampa_match	Tileset_ColosseumNavampaMatchTilesC	../graphics/tileset/colosseum_navampa_match/tiles_c.4bpp.mtf	3ce013			
+colosseum_navampa_match	Tileset_ColosseumNavampaMatchTilesD	../graphics/tileset/colosseum_navampa_match/tiles_d.4bpp.mtf	a3	4		
+altmiller_cave_entrance	Tileset_PaletteAltmillerCaveEntrance	../graphics/tileset/palettes/altmiller_cave_entrance.gbapal.lz	c81f81	4		
+altmiller_cave_squall	Tileset_PaletteAltmillerCave	../graphics/tileset/palettes/altmiller_cave.gbapal.lz	f956	4		
+gondowan_passage	Tileset_PaletteGondowanPassage	../graphics/tileset/palettes/gondowan_passage.gbapal.lz		4		
+gondowan_cave_river	Tileset_PaletteGondowanCave	../graphics/tileset/palettes/gondowan_cave.gbapal.lz		4		
+lunpa_fortress_gates	Tileset_PaletteLunpaFortressGates	../graphics/tileset/palettes/lunpa_fortress_gates.gbapal.lz		4		
+lunpa_fortress_ground_floor	Tileset_PaletteLunpaFortress	../graphics/tileset/palettes/lunpa_fortress.gbapal.lz		4		
+kalay_tunnel_entrance	Tileset_PaletteKalayTunnelEntrance	../graphics/tileset/palettes/kalay_tunnel_entrance.gbapal.lz		4		
+kalay_tunnel_cave	Tileset_PaletteKalayTunnelCave	../graphics/tileset/palettes/kalay_tunnel_cave.gbapal.lz		4		
+kalay_tunnel_passage	Tileset_KalayTunnelPalette	../graphics/tileset/kalay_tunnel/palette.gbapal.lz	4af009			
+kalay_tunnel_passage	Tileset_KalayTunnelTilesA	../graphics/tileset/kalay_tunnel/tiles_a.4bpp.mtf	020430	4		
+suhalla_desert_north	Tileset_PaletteSuhallaDesert	../graphics/tileset/palettes/suhalla_desert.gbapal.lz		4		
+suhalla_desert_caves	Tileset_PaletteSuhallaDesertCaves	../graphics/tileset/palettes/suhalla_desert_caves.gbapal.lz	b503	4		
+suhalla	Tileset_SuhallaPalette	../graphics/tileset/suhalla/palette.gbapal.lz				ja
+suhalla	Tileset_SuhallaTilesA	../graphics/tileset/suhalla/tiles_a.4bpp.mtf	d8			ja
+suhalla	Tileset_SuhallaTilesB	../graphics/tileset/suhalla/tiles_b.4bpp.mtf				ja
+suhalla	Tileset_SuhallaTilesC	../graphics/tileset/suhalla/tiles_c.4bpp.mtf	0014			ja
+suhalla	Tileset_SuhallaTilesD	../graphics/tileset/suhalla/tiles_d.4bpp.mtf	8179	4		ja
+suhalla	Tileset_SuhallaPalette	../graphics/tileset/suhalla/palette.gbapal.lz				en
+suhalla	Tileset_SuhallaTilesA	../graphics/tileset/suhalla/tiles_a.4bpp.mtf	80			en
+suhalla	Tileset_SuhallaTilesB	../graphics/tileset/suhalla/tiles_b.4bpp.mtf				en
+suhalla	Tileset_SuhallaTilesC	../graphics/tileset/suhalla/tiles_c.4bpp.mtf	0014			en
+suhalla	Tileset_SuhallaTilesD	../graphics/tileset/suhalla/tiles_d.4bpp.mtf	8179	4		en
+suhalla	Tileset_SuhallaPalette	../graphics/tileset/suhalla/palette.gbapal.lz				de
+suhalla	Tileset_SuhallaTilesA	../graphics/tileset/suhalla/tiles_a.4bpp.mtf	d8			de
+suhalla	Tileset_SuhallaTilesB	../graphics/tileset/suhalla/tiles_b.4bpp.mtf				de
+suhalla	Tileset_SuhallaTilesC	../graphics/tileset/suhalla/tiles_c.4bpp.mtf	0014			de
+suhalla	Tileset_SuhallaTilesD	../graphics/tileset/suhalla/tiles_d.4bpp.mtf	8179	4		de
+suhalla	Tileset_SuhallaPalette	../graphics/tileset/suhalla/palette.gbapal.lz				es
+suhalla	Tileset_SuhallaTilesA	../graphics/tileset/suhalla/tiles_a.4bpp.mtf	80			es
+suhalla	Tileset_SuhallaTilesB	../graphics/tileset/suhalla/tiles_b.4bpp.mtf				es
+suhalla	Tileset_SuhallaTilesC	../graphics/tileset/suhalla/tiles_c.4bpp.mtf	0014			es
+suhalla	Tileset_SuhallaTilesD	../graphics/tileset/suhalla/tiles_d.4bpp.mtf	8179	4		es
+suhalla	Tileset_SuhallaPalette	../graphics/tileset/suhalla/palette.gbapal.lz				fr
+suhalla	Tileset_SuhallaTilesA	../graphics/tileset/suhalla/tiles_a.4bpp.mtf	80			fr
+suhalla	Tileset_SuhallaTilesB	../graphics/tileset/suhalla/tiles_b.4bpp.mtf				fr
+suhalla	Tileset_SuhallaTilesC	../graphics/tileset/suhalla/tiles_c.4bpp.mtf	0014			fr
+suhalla	Tileset_SuhallaTilesD	../graphics/tileset/suhalla/tiles_d.4bpp.mtf	8179	4		fr
+suhalla	Tileset_SuhallaPalette	../graphics/tileset/suhalla/palette.gbapal.lz				it
+suhalla	Tileset_SuhallaTilesA	../graphics/tileset/suhalla/tiles_a.4bpp.mtf	80			it
+suhalla	Tileset_SuhallaTilesB	../graphics/tileset/suhalla/tiles_b.4bpp.mtf				it
+suhalla	Tileset_SuhallaTilesC	../graphics/tileset/suhalla/tiles_c.4bpp.mtf	0014			it
+suhalla	Tileset_SuhallaTilesD	../graphics/tileset/suhalla/tiles_d.4bpp.mtf	8179	4		it
+timber_rooms_a	Tileset_TimberRoomsPalette	../graphics/tileset/timber_rooms/palette.gbapal.lz				
+timber_rooms_a	Tileset_TimberRoomsTilesA	../graphics/tileset/timber_rooms/tiles_a.4bpp.mtf	94	4		
+timber_rooms_a	Tileset_TimberRoomsTilesB	../graphics/tileset/timber_rooms/tiles_b.4bpp.mtf		4		
+timber_rooms_a	Tileset_TimberRoomsTilesC	../graphics/tileset/timber_rooms/tiles_c.4bpp.mtf				
+timber_rooms_a	Tileset_TimberRoomsTilesD	../graphics/tileset/timber_rooms/tiles_d.4bpp.mtf	694e50	4		
+suhalla_gate_checkpoint	Tileset_PaletteSuhallaGate	../graphics/tileset/palettes/suhalla_gate.gbapal.lz	fc228f	4		
+gateway_cave	Tileset_PaletteGatewayCave	../graphics/tileset/palettes/gateway_cave.gbapal.lz	941c	4		
+tunnel_ruins_great_statue	Tileset_PaletteTunnelRuins	../graphics/tileset/palettes/tunnel_ruins.gbapal.lz	ec5c	4		
+babi_lighthouse_entry	Tileset_PaletteBabiLighthouseEntry	../graphics/tileset/palettes/babi_lighthouse_entry.gbapal.lz	32			
+babi_lighthouse_entry	Tileset_PaletteBabiLighthouseLuff	../graphics/tileset/palettes/babi_lighthouse_luff.gbapal.lz		4		
+babi_lighthouse_stone_door	Tileset_PaletteBabiLighthouseStoneDoor	../graphics/tileset/palettes/babi_lighthouse_stone_door.gbapal.lz	9027d4	4		
+lalivero	Tileset_PaletteLalivero	../graphics/tileset/palettes/lalivero.gbapal.lz		4		ja
+lalivero	Tileset_PaletteLalivero	../graphics/tileset/palettes/lalivero.gbapal.lz		4		en
+lalivero	Tileset_PaletteLalivero	../graphics/tileset/palettes/lalivero_de.gbapal.lz		4		de
+lalivero	Tileset_PaletteLalivero	../graphics/tileset/palettes/lalivero_de.gbapal.lz		4		es
+lalivero	Tileset_PaletteLalivero	../graphics/tileset/palettes/lalivero_de.gbapal.lz		4		fr
+lalivero	Tileset_PaletteLalivero	../graphics/tileset/palettes/lalivero_de.gbapal.lz		4		it
+timber_rooms_b	Tileset_PaletteTimberRooms	../graphics/tileset/palettes/timber_rooms.gbapal.lz	3816	4		
+venus_entrance	Tileset_PaletteVenusEntrance	../graphics/tileset/palettes/venus_entrance.gbapal.lz	1e33	4		
+venus_lighthouse_ground_floor	Tileset_PaletteVenusLighthouseGroundFloor	../graphics/tileset/palettes/venus_lighthouse_ground_floor.gbapal.lz		4		
+venus_lighthouse_first_floor	Tileset_PaletteVenusLighthouse	../graphics/tileset/palettes/venus_lighthouse.gbapal.lz	f040ef	4		
+venus_lighthouse_aerie	Tileset_PaletteVenusLighthouseAerie	../graphics/tileset/palettes/venus_lighthouse_aerie.gbapal.lz	06	4		
+lemurian_ship	Tileset_LemurianShipPalette	../graphics/tileset/lemurian_ship/palette.gbapal.lz	4311f8			
+lemurian_ship	Tileset_LemurianShipTilesA	../graphics/tileset/lemurian_ship/tiles_a.4bpp.mtf	fd1705			
+lemurian_ship	Tileset_LemurianShipTilesB	../graphics/tileset/lemurian_ship/tiles_b.4bpp.mtf				
+lemurian_ship	Tileset_LemurianShipTilesC	../graphics/tileset/lemurian_ship/tiles_c.4bpp.mtf	d214			
+lemurian_ship	Tileset_LemurianShipTilesD	../graphics/tileset/lemurian_ship/tiles_d.4bpp.mtf	045c	4		
+tolbi_spring	Tileset_TolbiSpringPalette	../graphics/tileset/tolbi_spring/palette.gbapal.lz				
+tolbi_spring	Tileset_TolbiSpringTilesA	../graphics/tileset/tolbi_spring/tiles_a.4bpp.mtf	4e14			
+tolbi_spring	Tileset_TolbiSpringTilesB	../graphics/tileset/tolbi_spring/tiles_b.4bpp.mtf	58fe8a			
+tolbi_spring	Tileset_TolbiSpringTilesC	../graphics/tileset/tolbi_spring/tiles_c.4bpp.mtf	0f7cfe			
+tolbi_spring	Tileset_TolbiSpringTilesD	../graphics/tileset/tolbi_spring/tiles_d.4bpp.mtf	c402	4		
+battle_arena	Tileset_PaletteBattleArena	../graphics/tileset/palettes/battle_arena.gbapal.lz	1c	4		
+test_0	Tileset_Test0Palette	../graphics/tileset/test_0/palette.gbapal.lz	00			
+test_0	Tileset_Test0TilesA	../graphics/tileset/test_0/tiles_a.4bpp.mtf	ff00			
+test_0	Tileset_Test0TilesB	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_0	Tileset_Test0TilesC	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_0	Tileset_Test0TilesD	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07	4		
+test_1	Tileset_Test1Palette	../graphics/tileset/test_0/palette.gbapal.lz	00			
+test_1	Tileset_Test1TilesA	../graphics/tileset/test_0/tiles_a.4bpp.mtf	ff00			
+test_1	Tileset_Test1TilesB	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_1	Tileset_Test1TilesC	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_1	Tileset_Test1TilesD	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07	4		
+test_2	Tileset_Test2Palette	../graphics/tileset/test_0/palette.gbapal.lz	00			
+test_2	Tileset_Test2TilesA	../graphics/tileset/test_0/tiles_a.4bpp.mtf	ff00			
+test_2	Tileset_Test2TilesB	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_2	Tileset_Test2TilesC	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_2	Tileset_Test2TilesD	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07	4		
+test_3	Tileset_Test3Palette	../graphics/tileset/test_0/palette.gbapal.lz	00			
+test_3	Tileset_Test3TilesA	../graphics/tileset/test_0/tiles_a.4bpp.mtf	ff00			
+test_3	Tileset_Test3TilesB	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_3	Tileset_Test3TilesC	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_3	Tileset_Test3TilesD	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07	4		
+test_4	Tileset_Test4Palette	../graphics/tileset/test_0/palette.gbapal.lz	00			
+test_4	Tileset_Test4TilesA	../graphics/tileset/test_0/tiles_a.4bpp.mtf	ff00			
+test_4	Tileset_Test4TilesB	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_4	Tileset_Test4TilesC	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_4	Tileset_Test4TilesD	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07	4		
+test_5	Tileset_Test5Palette	../graphics/tileset/test_0/palette.gbapal.lz	00			
+test_5	Tileset_Test5TilesA	../graphics/tileset/test_0/tiles_a.4bpp.mtf	ff00			
+test_5	Tileset_Test5TilesB	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_5	Tileset_Test5TilesC	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_5	Tileset_Test5TilesD	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07	4		
+test_6	Tileset_Test6Palette	../graphics/tileset/test_0/palette.gbapal.lz	00			
+test_6	Tileset_Test6TilesA	../graphics/tileset/test_0/tiles_a.4bpp.mtf	ff00			
+test_6	Tileset_Test6TilesB	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_6	Tileset_Test6TilesC	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_6	Tileset_Test6TilesD	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07	4		
+test_7	Tileset_Test7Palette	../graphics/tileset/test_0/palette.gbapal.lz	00			
+test_7	Tileset_Test7TilesA	../graphics/tileset/test_0/tiles_a.4bpp.mtf	ff00			
+test_7	Tileset_Test7TilesB	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_7	Tileset_Test7TilesC	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07			
+test_7	Tileset_Test7TilesD	../graphics/tileset/test_0/tiles_b.4bpp.mtf	07	4		

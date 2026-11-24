@@ -31,6 +31,12 @@
  * after it in each edition (ja, en, de, es, fr, it), as hex digits. Each is
  * placed under Resource_OverlayNUMBER and filled to four bytes.
  *
+ * Three tables are ones the game's code reads, one row an entry:
+ * "song, player" is gSongTable (an empty song is the silent one);
+ * "scene, code, area, kind, map, attributes" is gScenes, a named row also
+ * giving SceneId_NAME its number; "resource, place" is the resource
+ * directory, a named row also giving ResourceId_NAME its number.
+ *
  * Each list becomes a global table of pointers ended by -1, with a global
  * LISTEnd label at that -1, followed by its pictures in the same order. A
  * picture named again later is pointed at again and placed once.
@@ -141,6 +147,92 @@ main(int argc, char **argv)
 				fprintf(out, "\t.byte 0x%c%c\n", digit[0], digit[1]);
 			if (cells[3][0])
 				fprintf(out, "\t.balign %s, 0\n", cells[3]);
+		}
+		fclose(in);
+		if (fclose(out))
+			fail(argv[2], "cannot write");
+		return 0;
+	}
+	if (!strcmp(line, "song\tplayer\n"))
+	{
+		out = fopen(argv[2], "w");
+		if (!out)
+			fail(argv[2], "cannot write");
+		fprintf(out, "@ Written by ags-list from its table: do not edit.\n\t.section .rodata\n\t.balign 4\n\t.global gSongTable\ngSongTable:\n");
+		while (fgets(line, sizeof line, in))
+		{
+			char *cells[2] = {line, ""};
+			int cell = 0;
+
+			line[strcspn(line, "\n")] = 0;
+			if (!line[0])
+				continue;
+			for (char *at = line; *at; at++)
+				if (*at == '\t' && cell < 1)
+				{
+					*at = 0;
+					cells[++cell] = at + 1;
+				}
+			fprintf(out, "\t.4byte %s\n\t.2byte %s, %s\n", cells[0][0] ? cells[0] : ".LEmptySong", cells[1], cells[1]);
+		}
+		fprintf(out, ".LEmptySong:\n\t.byte 0, 0, 0, 0\n");
+		fclose(in);
+		if (fclose(out))
+			fail(argv[2], "cannot write");
+		return 0;
+	}
+	if (!strncmp(line, "scene\tcode\t", 11))
+	{
+		out = fopen(argv[2], "w");
+		if (!out)
+			fail(argv[2], "cannot write");
+		fprintf(out, "@ Written by ags-list from its table: do not edit.\n\t.include \"enums/area_ids.inc\"\n\t.include \"enums/system/main_routine_state.inc\"\n\t.section .rodata\n\t.balign 4\n\t.global gScenes\ngScenes:\n");
+		while (fgets(line, sizeof line, in))
+		{
+			char *cells[6] = {line, "", "", "", "", ""};
+			int cell = 0;
+
+			line[strcspn(line, "\n")] = 0;
+			if (!line[0])
+				continue;
+			for (char *at = line; *at; at++)
+				if (*at == '\t' && cell < 5)
+				{
+					*at = 0;
+					cells[++cell] = at + 1;
+				}
+			if (cells[0][0])
+				fprintf(out, "\t.global SceneId_%s\n\t.equiv SceneId_%s, (. - gScenes) / 8\n", cells[0], cells[0]);
+			fprintf(out, "\t.2byte %s\n\t.byte %s, %s\n\t.2byte %s, %s\n", cells[1], cells[2], cells[3], cells[4], cells[5]);
+		}
+		fclose(in);
+		if (fclose(out))
+			fail(argv[2], "cannot write");
+		return 0;
+	}
+	if (!strcmp(line, "resource\tplace\n"))
+	{
+		out = fopen(argv[2], "w");
+		if (!out)
+			fail(argv[2], "cannot write");
+		fprintf(out, "@ Written by ags-list from its table: do not edit.\n\t.section .rodata\n\t.balign 4\n\t.global Resource_DirectoryTable\nResource_DirectoryTable:\n");
+		while (fgets(line, sizeof line, in))
+		{
+			char *cells[2] = {line, ""};
+			int cell = 0;
+
+			line[strcspn(line, "\n")] = 0;
+			if (!line[0])
+				continue;
+			for (char *at = line; *at; at++)
+				if (*at == '\t' && cell < 1)
+				{
+					*at = 0;
+					cells[++cell] = at + 1;
+				}
+			if (cells[0][0])
+				fprintf(out, "\t.global ResourceId_%s\n\t.equiv ResourceId_%s, (. - Resource_DirectoryTable) / 4\n", cells[0], cells[0]);
+			fprintf(out, "\t.4byte %s\n", cells[1]);
 		}
 		fclose(in);
 		if (fclose(out))

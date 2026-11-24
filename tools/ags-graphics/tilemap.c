@@ -5,6 +5,7 @@
  * Repeated map entries must agree after undoing flips. Animated drawings append
  * otherwise hidden tiles below the visible map, keeping every tile editable.
  */
+#include <ctype.h>
 #include "resource.h"
 
 /* Shared map entries must draw identical pixels after undoing their flips. */
@@ -75,7 +76,9 @@ mappedPart(const char *input, const char *path, const char *form,
 		for (size_t i = 0; i < wide; i++)
 		{
 			char *type = strrchr(columns.items[i], ':');
-			if (!type || strcmp(type, ":u16"))
+			bool named = (*columns.items[i] == 'x' || *columns.items[i] == 't') &&
+						 isdigit((unsigned char) columns.items[i][1]);
+			if (type ? strcmp(type, ":u16") != 0 : !named)
 				fail("tilemap requires u16 columns");
 		}
 		freeStrings(&columns);

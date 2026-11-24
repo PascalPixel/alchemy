@@ -1,0 +1,43 @@
+channel	0
+picture	1416	4	24	0
+picture	1448	4	56	0
+picture	1480	4	88	0
+picture	1512	4	120	6
+picture	1420	4	24	0
+picture	1452	4	56	0
+picture	1484	4	88	0
+picture	1516	4	120	6
+picture	1416	4	24	0
+picture	1448	4	56	0
+picture	1480	4	88	0
+picture	1512	4	120	6
+picture	1424	4	24	0
+picture	1456	4	56	0
+picture	1488	4	88	0
+picture	1520	4	120	6
+jump	0
+channel	7
+picture	1424	4	1306	0
+picture	1456	4	1338	0
+picture	1488	4	1370	0
+picture	1520	4	1402	6
+picture	1416	4	1306	0
+picture	1448	4	1338	0
+picture	1480	4	1370	0
+picture	1512	4	1402	6
+picture	1420	4	1306	0
+picture	1452	4	1338	0
+picture	1484	4	1370	0
+picture	1516	4	1402	6
+jump	0
+channel	8
+picture	1472	2	1220	0
+picture	1504	2	1252	6
+picture	1474	2	1220	0
+picture	1506	2	1252	6
+picture	1472	2	1220	0
+picture	1504	2	1252	6
+picture	1476	2	1220	0
+picture	1508	2	1252	6
+jump	0
+end

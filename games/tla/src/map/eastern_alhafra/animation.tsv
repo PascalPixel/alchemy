@@ -1,0 +1,45 @@
+channel	0
+picture	1536	24	1472	8
+picture	1568	24	1472	8
+picture	1600	24	1472	8
+picture	1632	24	1472	8
+picture	1664	24	1472	8
+picture	1696	24	1472	8
+picture	1728	24	1472	8
+picture	1760	24	1472	8
+jump	0
+channel	1
+picture	1560	8	1496	2
+picture	1592	8	1496	2
+picture	1624	8	1496	2
+picture	1656	8	1496	2
+picture	1688	8	1496	2
+picture	1720	8	1496	2
+picture	1752	8	1496	2
+picture	1784	8	1496	2
+picture	1792	8	1496	2
+picture	1824	8	1496	2
+picture	1856	8	1496	2
+picture	1888	8	1496	2
+picture	1920	8	1496	2
+picture	1952	8	1496	2
+picture	1984	8	1496	2
+picture	2016	8	1496	2
+picture	1800	8	1496	2
+picture	1832	8	1496	2
+picture	1864	8	1496	2
+picture	1896	8	1496	2
+picture	1928	8	1496	2
+picture	1960	8	1496	2
+picture	1992	8	1496	2
+picture	2024	8	1496	2
+picture	1808	8	1496	2
+picture	1840	8	1496	2
+picture	1872	8	1496	2
+picture	1904	8	1496	2
+picture	1936	8	1496	2
+picture	1968	8	1496	2
+picture	2000	8	1496	2
+picture	2032	8	1496	2
+jump	0
+end

@@ -1,0 +1,123 @@
+channel	1
+picture	458	2	2	0
+picture	490	2	34	14
+picture	460	2	2	0
+picture	492	2	34	14
+picture	462	2	2	0
+picture	494	2	34	14
+picture	460	2	2	0
+picture	492	2	34	14
+jump	0
+channel	2
+picture	464	2	66	0
+picture	496	2	98	0
+picture	320	1	132	0
+picture	352	1	164	0
+picture	321	1	133	0
+picture	353	1	165	0
+picture	256	1	130	0
+picture	288	1	162	18
+picture	466	2	66	0
+picture	498	2	98	0
+picture	322	1	132	0
+picture	354	1	164	0
+picture	323	1	133	0
+picture	355	1	165	0
+picture	258	1	130	0
+picture	290	1	162	18
+picture	468	2	66	0
+picture	500	2	98	0
+picture	324	1	132	0
+picture	356	1	164	0
+picture	325	1	133	0
+picture	357	1	165	0
+picture	260	1	130	0
+picture	292	1	162	18
+picture	466	2	66	0
+picture	498	2	98	0
+picture	322	1	132	0
+picture	354	1	164	0
+picture	323	1	133	0
+picture	355	1	165	0
+picture	258	1	130	0
+picture	290	1	162	18
+jump	0
+channel	3
+picture	257	1	131	0
+picture	289	1	163	0
+picture	192	2	134	0
+picture	224	2	166	18
+picture	259	1	131	0
+picture	291	1	163	0
+picture	194	2	134	0
+picture	226	2	166	18
+picture	261	1	131	0
+picture	293	1	163	0
+picture	196	2	134	0
+picture	228	2	166	18
+picture	259	1	131	0
+picture	291	1	163	0
+picture	194	2	134	0
+picture	226	2	166	18
+jump	0
+channel	4
+picture	268	2	72	0
+picture	300	2	104	0
+picture	270	2	74	0
+picture	302	2	106	18
+picture	272	2	72	0
+picture	304	2	104	0
+picture	274	2	74	0
+picture	306	2	106	18
+picture	276	2	72	0
+picture	308	2	104	0
+picture	278	2	74	0
+picture	310	2	106	18
+picture	272	2	72	0
+picture	304	2	104	0
+picture	274	2	74	0
+picture	306	2	106	18
+jump	0
+channel	5
+picture	332	2	16	0
+picture	364	2	48	18
+picture	336	2	16	0
+picture	368	2	48	18
+picture	340	2	16	0
+picture	372	2	48	18
+picture	336	2	16	0
+picture	368	2	48	18
+jump	0
+channel	6
+picture	396	2	80	0
+picture	428	2	112	0
+picture	398	2	82	0
+picture	430	2	114	18
+picture	400	2	80	0
+picture	432	2	112	0
+picture	402	2	82	0
+picture	434	2	114	18
+picture	404	2	80	0
+picture	436	2	112	0
+picture	406	2	82	0
+picture	438	2	114	18
+picture	400	2	80	0
+picture	432	2	112	0
+picture	402	2	82	0
+picture	434	2	114	18
+jump	0
+channel	7
+picture	1424	4	1306	0
+picture	1456	4	1338	0
+picture	1488	4	1370	0
+picture	1520	4	1402	6
+picture	1416	4	1306	0
+picture	1448	4	1338	0
+picture	1480	4	1370	0
+picture	1512	4	1402	6
+picture	1420	4	1306	0
+picture	1452	4	1338	0
+picture	1484	4	1370	0
+picture	1516	4	1402	6
+jump	0
+end

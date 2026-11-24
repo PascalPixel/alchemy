@@ -1,0 +1,131 @@
+channel	0
+picture	1792	6	150	0
+picture	1824	6	182	0
+picture	1856	6	214	0
+picture	1888	6	246	12
+picture	1798	6	150	0
+picture	1830	6	182	0
+picture	1862	6	214	0
+picture	1894	6	246	12
+picture	1792	6	150	0
+picture	1824	6	182	0
+picture	1856	6	214	0
+picture	1888	6	246	12
+picture	1804	6	150	0
+picture	1836	6	182	0
+picture	1868	6	214	0
+picture	1900	6	246	12
+jump	0
+channel	1
+picture	1810	2	860	0
+picture	1842	2	892	0
+picture	1874	2	924	0
+picture	1906	2	956	10
+picture	1812	2	860	0
+picture	1844	2	892	0
+picture	1876	2	924	0
+picture	1908	2	956	10
+picture	1814	2	860	0
+picture	1846	2	892	0
+picture	1878	2	924	0
+picture	1910	2	956	10
+picture	1816	2	860	0
+picture	1848	2	892	0
+picture	1880	2	924	0
+picture	1912	2	956	10
+picture	1818	2	860	0
+picture	1850	2	892	0
+picture	1882	2	924	0
+picture	1914	2	956	10
+picture	1820	2	860	0
+picture	1852	2	892	0
+picture	1884	2	924	0
+picture	1916	2	956	10
+jump	0
+channel	2
+picture	1920	2	524	0
+picture	1952	2	556	0
+picture	1926	2	526	0
+picture	1958	2	558	13
+picture	1922	2	524	0
+picture	1954	2	556	0
+picture	1928	2	526	0
+picture	1960	2	558	13
+picture	1924	2	524	0
+picture	1956	2	556	0
+picture	1930	2	526	0
+picture	1962	2	558	13
+picture	1926	2	524	0
+picture	1958	2	556	0
+picture	1920	2	526	0
+picture	1952	2	558	13
+picture	1928	2	524	0
+picture	1960	2	556	0
+picture	1922	2	526	0
+picture	1954	2	558	13
+picture	1930	2	524	0
+picture	1962	2	556	0
+picture	1924	2	526	0
+picture	1956	2	558	13
+jump	0
+channel	3
+picture	1536	4	2	0
+picture	1568	4	34	0
+picture	1600	4	66	0
+picture	1632	4	98	12
+picture	1540	4	2	0
+picture	1572	4	34	0
+picture	1604	4	66	0
+picture	1636	4	98	12
+picture	1544	4	2	0
+picture	1576	4	34	0
+picture	1608	4	66	0
+picture	1640	4	98	12
+picture	1548	4	2	0
+picture	1580	4	34	0
+picture	1612	4	66	0
+picture	1644	4	98	12
+jump	0
+channel	4
+picture	1552	4	280	0
+picture	1584	4	312	0
+picture	1616	4	344	0
+picture	1648	4	376	0
+picture	1680	4	408	0
+picture	1712	4	440	12
+picture	1556	4	280	0
+picture	1588	4	312	0
+picture	1620	4	344	0
+picture	1652	4	376	0
+picture	1684	4	408	0
+picture	1716	4	440	12
+picture	1560	4	280	0
+picture	1592	4	312	0
+picture	1624	4	344	0
+picture	1656	4	376	0
+picture	1688	4	408	0
+picture	1720	4	440	12
+picture	1564	4	280	0
+picture	1596	4	312	0
+picture	1628	4	344	0
+picture	1660	4	376	0
+picture	1692	4	408	0
+picture	1724	4	440	12
+jump	0
+channel	5
+picture	1664	4	176	12
+picture	1668	4	176	12
+picture	1672	4	176	12
+picture	1676	4	176	12
+jump	0
+channel	6
+picture	1728	5	972	0
+picture	1760	5	1004	12
+picture	1733	5	972	0
+picture	1765	5	1004	12
+picture	1738	5	972	0
+picture	1770	5	1004	12
+picture	1743	5	972	0
+picture	1775	5	1004	12
+jump	0
+end

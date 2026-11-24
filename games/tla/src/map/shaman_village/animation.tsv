@@ -1,0 +1,117 @@
+channel	0
+picture	1920	6	400	0
+picture	1952	6	432	0
+picture	1984	6	464	0
+picture	2016	6	496	15
+picture	1926	6	400	0
+picture	1958	6	432	0
+picture	1990	6	464	0
+picture	2022	6	496	15
+picture	1920	6	400	0
+picture	1952	6	432	0
+picture	1984	6	464	0
+picture	2016	6	496	15
+picture	1932	6	400	0
+picture	1964	6	432	0
+picture	1996	6	464	0
+picture	2028	6	496	15
+jump	0
+channel	1
+picture	1856	2	1090	0
+picture	1888	2	1122	0
+picture	1858	2	1092	0
+picture	1890	2	1124	14
+picture	1858	2	1090	0
+picture	1890	2	1122	0
+picture	1860	2	1092	0
+picture	1892	2	1124	14
+picture	1860	2	1090	0
+picture	1892	2	1122	0
+picture	1862	2	1092	0
+picture	1894	2	1124	14
+picture	1862	2	1090	0
+picture	1894	2	1122	0
+picture	1856	2	1092	0
+picture	1888	2	1124	14
+jump	0
+channel	2
+picture	1864	2	1036	0
+picture	1896	2	1068	0
+picture	1866	2	1224	0
+picture	1898	2	1256	14
+picture	1866	2	1036	0
+picture	1898	2	1068	0
+picture	1868	2	1224	0
+picture	1900	2	1256	14
+picture	1868	2	1036	0
+picture	1900	2	1068	0
+picture	1870	2	1224	0
+picture	1902	2	1256	14
+picture	1870	2	1036	0
+picture	1902	2	1068	0
+picture	1864	2	1224	0
+picture	1896	2	1256	14
+jump	0
+channel	3
+picture	1800	2	1034	0
+picture	1832	2	1066	14
+picture	1802	2	1034	0
+picture	1834	2	1066	14
+picture	1804	2	1034	0
+picture	1836	2	1066	14
+picture	1806	2	1034	0
+picture	1838	2	1066	14
+jump	0
+channel	4
+picture	2002	2	1098	0
+picture	2034	2	1130	0
+picture	2008	2	1100	0
+picture	2040	2	1132	12
+picture	2004	2	1098	0
+picture	2036	2	1130	0
+picture	2010	2	1100	0
+picture	2042	2	1132	12
+picture	2006	2	1098	0
+picture	2038	2	1130	0
+picture	2012	2	1100	0
+picture	2044	2	1132	12
+picture	2008	2	1098	0
+picture	2040	2	1130	0
+picture	2002	2	1100	0
+picture	2034	2	1132	12
+picture	2010	2	1098	0
+picture	2042	2	1130	0
+picture	2004	2	1100	0
+picture	2036	2	1132	12
+picture	2012	2	1098	0
+picture	2044	2	1132	0
+picture	2006	2	1100	0
+picture	2038	2	1132	12
+jump	0
+channel	5
+picture	1938	2	1290	0
+picture	1970	2	1322	0
+picture	1944	2	1292	0
+picture	1976	2	1324	12
+picture	1940	2	1290	0
+picture	1972	2	1322	0
+picture	1946	2	1292	0
+picture	1978	2	1324	12
+picture	1942	2	1098	0
+picture	1974	2	1130	0
+picture	1948	2	1292	0
+picture	1980	2	1324	12
+picture	1944	2	1290	0
+picture	1976	2	1322	0
+picture	1938	2	1292	0
+picture	1970	2	1324	12
+picture	1946	2	1290	0
+picture	1978	2	1322	0
+picture	1940	2	1292	0
+picture	1972	2	1324	12
+picture	1948	2	1290	0
+picture	1980	2	1322	0
+picture	1942	2	1292	0
+picture	1974	2	1324	12
+jump	0
+end

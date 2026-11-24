@@ -236,9 +236,9 @@ buildResource(const char *input, const char *form, const char *codec,
 	else if (!strcmp(form, "plane"))
 		raw = plane(&data);
 	else if (!strcmp(form, "grid"))
-		raw = grid(&data);
+		raw = grid(input);
 	else if (!strcmp(form, "scene"))
-		raw = scene(&data);
+		raw = scene(input);
 	else if (!strcmp(form, "tilemap"))
 		raw = tilemap(&data, NULL);
 	else if (!strcmp(form, "collision"))

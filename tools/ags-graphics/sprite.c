@@ -89,10 +89,9 @@ enum
 };
 
 static Buffer
-animationScript(const char *text)
+animationScript(Strings commands)
 {
 	Buffer script = {0};
-	Strings commands = split(text, ',');
 	for (size_t i = 0; i < commands.len; i++)
 	{
 		Strings words = split(trim(commands.items[i]), ' ');
@@ -132,10 +131,91 @@ animationScript(const char *text)
 	return script;
 }
 
+/*
+ * A sprite's animations as a table, one row a command: the animation it
+ * belongs to, counted from 0, the command, its value and its frames, as
+ * the commands above take them (picture N D is value N, frames D).
+ */
+#define ANIMATION_COLUMNS "animation\tcommand\tvalue\tframes"
+
 static void
-metadata(Sprite *sprite, const Buffer *data)
+animationTable(Sprite *sprite, const Strings *lines)
+{
+	Strings commands = {0};
+	char *animation = NULL;
+	for (size_t i = 1; i <= lines->len; i++)
+	{
+		Strings cells = {0};
+		if (i < lines->len)
+		{
+			if (!*trim(lines->items[i]))
+				continue;
+			cells = split(trim(lines->items[i]), '\t');
+			if (cells.len < 2)
+				fail("an animation row needs its animation and a command");
+		}
+		if (commands.len && (i == lines->len || strcmp(cells.items[0], animation)))
+		{
+			sprite->scripts = resize(sprite->scripts, sprite->scriptCount + 1,
+									 sizeof(Buffer));
+			sprite->scripts[sprite->scriptCount++] = animationScript(commands);
+			commands = (Strings){0};
+		}
+		if (i == lines->len)
+			break;
+		char text[256];
+		int length = snprintf(text, sizeof text, "%s", cells.items[1]);
+		for (size_t cell = 2; cell < cells.len; cell++)
+			if (*cells.items[cell])
+				length += snprintf(text + length, sizeof text - (size_t) length,
+								   " %s", cells.items[cell]);
+		addString(&commands, text);
+		free(animation);
+		animation = copyString(cells.items[0]);
+		freeStrings(&cells);
+	}
+	free(animation);
+}
+
+/*
+ * A setting of the sprite in a table of its own beside it, NAME.KIND.tsv:
+ * one column, one number a row. Nothing when there is no such table.
+ */
+static bool
+setting(const char *table, const char *kind, Strings *values)
+{
+	char *path = formatString("%.*s.%s.tsv", (int) (strlen(table) - 4), table, kind);
+	bool found = exists(path);
+	if (found)
+	{
+		Buffer text = readFile(path);
+		Strings lines = split((char *) text.data, '\n');
+		freeStrings(values);
+		for (size_t i = 1; i < lines.len; i++)
+			if (*trim(lines.items[i]))
+				addString(values, trim(lines.items[i]));
+		freeStrings(&lines);
+		free(text.data);
+	}
+	free(path);
+	return found;
+}
+
+static void
+metadata(Sprite *sprite, const Buffer *data, const char *table)
 {
 	Strings lines = split((char *) data->data, '\n');
+	if (lines.len && !strcmp(lines.items[0], ANIMATION_COLUMNS))
+	{
+		animationTable(sprite, &lines);
+		freeStrings(&lines);
+		if (setting(table, "pictures", &sprite->pictureList))
+			sprite->hasPictures = true;
+		if (setting(table, "animations", &sprite->animationList))
+			sprite->hasAnimations = true;
+		setting(table, "empty", &sprite->empty);
+		return;
+	}
 	for (size_t i = 0; i < lines.len; i++)
 	{
 		char *line = trim(lines.items[i]);
@@ -150,7 +230,8 @@ metadata(Sprite *sprite, const Buffer *data)
 		{
 			sprite->scripts = resize(sprite->scripts, sprite->scriptCount + 1,
 									 sizeof(Buffer));
-			sprite->scripts[sprite->scriptCount++] = animationScript(tab);
+			sprite->scripts[sprite->scriptCount++] =
+				animationScript(split(tab, ','));
 		}
 		else if (!strcmp(line, "animations"))
 		{
@@ -232,7 +313,7 @@ readBank(const char *input)
 		if (owns(&s, s.animations) || (owns(&s, s.pictures) && exists(path)))
 		{
 			Buffer meta = readFile(path);
-			metadata(&s, &meta);
+			metadata(&s, &meta, path);
 			free(meta.data);
 		}
 		free(path);

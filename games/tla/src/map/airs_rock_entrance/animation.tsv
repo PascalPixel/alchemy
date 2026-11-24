@@ -1,0 +1,23 @@
+channel	128
+picture	1536	2	1170	0
+picture	1568	2	1202	0
+picture	1600	2	1234	0
+picture	1632	2	1266	10
+picture	1538	2	1170	0
+picture	1570	2	1202	0
+picture	1602	2	1234	0
+picture	1634	2	1266	10
+picture	1540	2	1170	0
+picture	1572	2	1202	0
+picture	1604	2	1234	0
+picture	1636	2	1266	10
+picture	1542	2	1170	0
+picture	1574	2	1202	0
+picture	1606	2	1234	0
+picture	1638	2	1266	10
+picture	1544	2	1170	0
+picture	1576	2	1202	0
+picture	1608	2	1234	0
+picture	1640	2	1266	240
+jump	0
+end

@@ -1,0 +1,87 @@
+animation	command	value	frames
+0	picture	0	0
+0	hold
+1	picture	0	2
+1	blank		2
+1	loop
+2	picture	0	2
+2	blank		2
+2	loop
+3	picture	0	2
+3	blank		2
+3	loop
+4	picture	0	2
+4	blank		2
+4	loop
+5	picture	0	2
+5	blank		2
+5	loop
+6	picture	0	2
+6	blank		2
+6	loop
+7	picture	0	2
+7	blank		2
+7	loop
+8	picture	0	2
+8	blank		2
+8	loop
+9	picture	0	2
+9	blank		2
+9	loop
+10	picture	0	2
+10	blank		2
+10	loop
+11	picture	0	2
+11	blank		2
+11	loop
+12	picture	0	2
+12	blank		2
+12	loop
+13	picture	0	2
+13	blank		2
+13	loop
+14	picture	0	2
+14	blank		2
+14	loop
+15	picture	0	2
+15	blank		2
+15	loop
+16	picture	0	2
+16	blank		2
+16	loop
+17	picture	0	2
+17	blank		2
+17	loop
+18	picture	0	2
+18	blank		2
+18	loop
+19	picture	0	2
+19	blank		2
+19	loop
+20	picture	0	2
+20	blank		2
+20	loop
+21	picture	0	2
+21	blank		2
+21	loop
+22	picture	0	2
+22	blank		2
+22	loop
+23	picture	0	2
+23	blank		2
+23	loop
+24	picture	0	2
+24	blank		2
+24	loop
+25	picture	0	2
+25	blank		2
+25	loop
+26	picture	0	2
+26	blank		2
+26	loop
+27	picture	0	2
+27	blank		2
+27	loop
+28	picture	0	2
+28	blank		2
+28	loop

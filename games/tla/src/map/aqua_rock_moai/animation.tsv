@@ -1,0 +1,80 @@
+channel	0
+picture	1856	8	1024	15
+picture	1888	8	1024	10
+picture	1920	8	1024	10
+picture	1952	8	1024	15
+picture	1984	8	1024	10
+jump	0
+channel	1
+picture	1536	32	1056	2
+picture	1568	32	1056	2
+picture	1600	32	1056	2
+picture	1632	32	1056	2
+picture	1664	32	1056	2
+jump	0
+channel	2
+picture	1696	30	1088	2
+picture	1728	30	1088	2
+picture	1760	30	1088	2
+picture	1792	30	1088	2
+picture	1824	30	1088	2
+jump	0
+channel	3
+picture	1864	8	1032	10
+picture	1896	8	1032	10
+picture	1928	8	1032	10
+picture	1960	8	1032	10
+picture	1992	8	1032	10
+jump	0
+channel	4
+picture	1928	8	1040	10
+picture	1960	8	1040	10
+picture	1992	8	1040	10
+picture	1864	8	1040	10
+picture	1896	8	1040	10
+jump	0
+channel	5
+picture	1536	28	1120	1
+picture	1536	28	1120	2
+picture	1568	28	1120	2
+picture	1600	28	1120	2
+picture	1632	28	1120	2
+picture	1664	28	1120	2
+jump	2
+channel	6
+picture	1696	28	1152	2
+picture	1728	28	1152	2
+picture	1760	28	1152	2
+picture	1792	28	1152	2
+picture	1824	28	1152	2
+jump	0
+channel	135
+picture	1664	28	1120	1
+picture	1664	28	1120	2
+picture	1632	28	1120	2
+picture	1600	28	1120	2
+picture	1568	28	1120	2
+picture	1536	28	1120	2
+jump	2
+channel	136
+picture	1824	28	1152	2
+picture	1792	28	1152	2
+picture	1760	28	1152	2
+picture	1728	28	1152	2
+picture	1696	28	1152	2
+jump	0
+channel	9
+picture	1872	6	1186	5
+picture	1904	8	1186	5
+picture	1936	8	1186	5
+picture	1968	6	1186	5
+picture	2000	6	1186	5
+jump	0
+channel	10
+picture	2017	3	1206	15
+picture	2020	3	1206	10
+picture	2023	3	1206	10
+picture	2026	3	1206	15
+picture	2029	3	1206	10
+jump	0
+end

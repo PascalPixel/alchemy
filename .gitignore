@@ -39,4 +39,5 @@ tools/out/
 /games/**/*.d
 /games/**/list.s
 /games/**/*.list.s
+/games/*/src/map/maps.s
 /alchemy-devtools/

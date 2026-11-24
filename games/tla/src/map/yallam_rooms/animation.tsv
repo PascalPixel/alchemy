@@ -1,0 +1,66 @@
+channel	0
+picture	1816	2	1104	0
+picture	1848	2	1136	12
+picture	1818	2	1104	0
+picture	1850	2	1136	12
+picture	1820	2	1104	0
+picture	1852	2	1136	12
+picture	1818	2	1104	0
+picture	1850	2	1136	12
+jump	0
+channel	1
+picture	1866	4	1216	0
+picture	1898	4	1248	0
+picture	1930	4	1280	10
+picture	1870	4	1216	0
+picture	1902	4	1248	0
+picture	1934	4	1280	10
+picture	1874	4	1216	0
+picture	1906	4	1248	0
+picture	1938	4	1280	10
+picture	1870	4	1216	0
+picture	1902	4	1248	0
+picture	1934	4	1280	10
+picture	1866	4	1216	0
+picture	1898	4	1248	0
+picture	1930	4	1280	10
+picture	1862	4	1216	0
+picture	1894	4	1248	0
+picture	1926	4	1280	8
+picture	1866	4	1216	0
+picture	1898	4	1248	0
+picture	1930	4	1280	8
+picture	1870	4	1216	0
+picture	1902	4	1248	0
+picture	1934	4	1280	8
+picture	1874	4	1216	0
+picture	1906	4	1248	0
+picture	1938	4	1280	8
+picture	1958	4	1216	0
+picture	1990	4	1248	0
+picture	2022	4	1280	8
+picture	1962	4	1216	0
+picture	1994	4	1248	0
+picture	2026	4	1280	8
+jump	0
+channel	2
+picture	1878	1	1186	16
+picture	1879	1	1186	16
+picture	1880	1	1186	16
+picture	1879	1	1186	16
+jump	0
+channel	3
+picture	1536	2	1152	0
+picture	1568	2	1184	12
+picture	1538	2	1152	0
+picture	1570	2	1184	12
+picture	1540	2	1152	0
+picture	1572	2	1184	12
+picture	1542	2	1152	0
+picture	1574	2	1184	12
+picture	1540	2	1152	0
+picture	1572	2	1184	12
+picture	1538	2	1152	0
+picture	1570	2	1184	12
+jump	0
+end

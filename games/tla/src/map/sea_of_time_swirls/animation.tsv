@@ -1,0 +1,35 @@
+channel	0
+picture	1536	32	512	0
+picture	1568	32	544	0
+picture	1600	32	576	0
+picture	1632	32	608	0
+picture	1664	32	640	0
+picture	1696	32	672	0
+picture	1728	32	704	0
+picture	1760	32	736	16
+picture	1792	32	512	0
+picture	1824	32	544	0
+picture	1856	32	576	0
+picture	1888	32	608	0
+picture	1920	32	640	0
+picture	1952	32	672	0
+picture	1984	32	704	0
+picture	2016	32	736	16
+picture	768	32	512	0
+picture	800	32	544	0
+picture	832	32	576	0
+picture	864	32	608	0
+picture	896	32	640	0
+picture	928	32	672	0
+picture	960	32	704	0
+picture	992	32	736	16
+picture	1792	32	512	0
+picture	1824	32	544	0
+picture	1856	32	576	0
+picture	1888	32	608	0
+picture	1920	32	640	0
+picture	1952	32	672	0
+picture	1984	32	704	0
+picture	2016	32	736	16
+jump	0
+end

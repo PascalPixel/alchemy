@@ -1,0 +1,121 @@
+channel	0
+picture	1568	5	212	0
+picture	1600	5	244	0
+picture	1632	5	276	0
+picture	1664	5	308	0
+picture	1696	5	340	0
+picture	1728	5	372	0
+picture	1760	5	404	0
+picture	1792	5	436	0
+picture	1824	5	468	0
+picture	1856	5	500	10
+picture	1573	5	212	0
+picture	1605	5	244	0
+picture	1637	5	276	0
+picture	1669	5	308	0
+picture	1701	5	340	0
+picture	1733	5	372	0
+picture	1765	5	404	0
+picture	1797	5	436	0
+picture	1829	5	468	0
+picture	1861	5	500	10
+picture	1578	5	212	0
+picture	1610	5	244	0
+picture	1642	5	276	0
+picture	1674	5	308	0
+picture	1706	5	340	0
+picture	1738	5	372	0
+picture	1770	5	404	0
+picture	1802	5	436	0
+picture	1834	5	468	0
+picture	1866	5	500	10
+picture	1583	5	212	0
+picture	1615	5	244	0
+picture	1647	5	276	0
+picture	1679	5	308	0
+picture	1711	5	340	0
+picture	1743	5	372	0
+picture	1775	5	404	0
+picture	1807	5	436	0
+picture	1839	5	468	0
+picture	1871	5	500	10
+picture	1588	5	212	0
+picture	1620	5	244	0
+picture	1652	5	276	0
+picture	1684	5	308	0
+picture	1716	5	340	0
+picture	1748	5	372	0
+picture	1780	5	404	0
+picture	1812	5	436	0
+picture	1844	5	468	0
+picture	1876	5	500	10
+picture	1593	5	212	0
+picture	1625	5	244	0
+picture	1657	5	276	0
+picture	1689	5	308	0
+picture	1721	5	340	0
+picture	1753	5	372	0
+picture	1785	5	404	0
+picture	1817	5	436	0
+picture	1849	5	468	0
+picture	1881	5	500	10
+jump	0
+channel	1
+picture	1952	1	565	0
+picture	1984	1	597	0
+picture	2016	1	629	17
+picture	1953	1	565	0
+picture	1985	1	597	0
+picture	2017	1	629	17
+picture	1952	1	565	0
+picture	1984	1	597	0
+picture	2016	1	629	17
+picture	1954	1	565	0
+picture	1986	1	597	0
+picture	2018	1	629	17
+jump	0
+channel	2
+picture	1955	3	712	0
+picture	1987	3	744	17
+picture	1958	3	712	0
+picture	1990	3	744	17
+picture	1955	3	712	0
+picture	1987	3	744	17
+picture	1961	3	712	0
+picture	1993	3	744	17
+jump	0
+channel	3
+picture	2019	4	528	17
+picture	2023	4	528	17
+picture	2019	4	528	17
+picture	2027	4	528	17
+jump	0
+channel	4
+picture	1935	4	896	0
+picture	1967	4	928	0
+picture	1999	4	960	0
+picture	2031	4	992	17
+picture	1939	4	896	0
+picture	1971	4	928	0
+picture	2003	4	960	0
+picture	2035	4	992	17
+picture	1935	4	896	0
+picture	1967	4	928	0
+picture	1999	4	960	0
+picture	2031	4	992	17
+picture	1943	4	896	0
+picture	1975	4	928	0
+picture	2007	4	960	0
+picture	2039	4	992	17
+jump	0
+channel	5
+picture	1888	2	990	0
+picture	1920	2	1022	10
+picture	1890	2	990	0
+picture	1922	2	1022	10
+picture	1892	2	990	0
+picture	1924	2	1022	10
+picture	1894	2	990	0
+picture	1926	2	1022	10
+jump	0
+end

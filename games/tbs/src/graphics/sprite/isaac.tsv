@@ -1,0 +1,195 @@
+animation	command	value	frames
+0	picture	0	4
+0	hold
+1	picture	0	120
+1	picture	5	4
+1	picture	10	80
+1	picture	25	8
+1	picture	10	8
+1	picture	25	8
+1	picture	10	100
+1	picture	5	4
+1	loop
+2	picture	55	6
+2	picture	30	6
+2	picture	35	6
+2	picture	40	6
+2	picture	45	6
+2	picture	50	6
+2	loop
+3	picture	60	2
+3	picture	65	6
+3	picture	70	8
+3	play	1
+4	picture	75	6
+4	picture	70	3
+4	picture	80	6
+4	picture	70	3
+4	picture	75	6
+4	picture	70	3
+4	picture	80	6
+4	picture	70	3
+4	play	1
+5	picture	110	4
+5	picture	85	4
+5	picture	90	4
+5	picture	95	4
+5	picture	100	4
+5	picture	105	4
+5	loop
+6	picture	115	6
+6	play	1
+7	picture	110	24
+7	hold
+8	picture	120	30
+8	picture	125	15
+8	picture	130	30
+8	picture	125	15
+8	loop
+9	picture	0	120
+9	picture	5	4
+9	picture	10	80
+9	picture	25	8
+9	picture	10	8
+9	picture	25	8
+9	picture	10	20
+9	picture	15	20
+9	picture	10	8
+9	picture	20	20
+9	picture	10	8
+9	picture	15	20
+9	picture	10	8
+9	picture	20	20
+9	picture	10	60
+9	picture	5	4
+9	loop
+10	kind	17
+10	picture	135	7
+10	picture	136	9
+10	picture	137	7
+10	picture	136	9
+10	loop
+11	kind	17
+11	picture	137	4
+11	picture	138	8
+11	picture	139	15
+11	hold
+12	kind	17
+12	picture	136	6
+12	hold
+13	kind	17
+13	picture	139	4
+13	picture	138	8
+13	picture	137	4
+13	hold
+14	kind	17
+14	picture	140	6
+14	picture	141	6
+14	picture	136	8
+14	loop
+15	kind	17
+15	picture	142	6
+15	picture	143	6
+15	picture	136	8
+15	loop
+16	picture	110	4
+16	hold
+17	picture	159	4
+17	picture	164	24
+17	picture	169	8
+17	picture	174	15
+17	hold
+18	picture	144	6
+18	picture	154	6
+18	picture	149	7
+18	loop
+19	kind	17
+19	picture	179	6
+19	hold
+20	picture	159	4
+20	picture	164	24
+20	hold
+21	picture	164	2
+21	picture	169	8
+21	picture	174	15
+21	hold
+22	picture	115	1
+22	hold
+23	kind	17
+23	picture	188	12
+23	picture	189	6
+23	picture	190	6
+23	picture	191	6
+23	play	2
+24	kind	17
+24	picture	180	12
+24	picture	181	6
+24	picture	182	6
+24	picture	183	6
+24	play	2
+25	kind	17
+25	picture	184	6
+25	picture	185	6
+25	picture	186	6
+25	picture	187	6
+25	blank		6
+25	hold
+26	kind	17
+26	picture	192	6
+26	picture	193	6
+26	picture	194	6
+26	picture	195	6
+26	blank		6
+26	hold
+27	picture	50	3
+27	picture	45	3
+27	picture	40	3
+27	picture	35	3
+27	picture	30	3
+27	picture	55	3
+27	loop
+28	kind	17
+28	picture	196	10
+28	loop
+29	kind	17
+29	picture	199	12
+29	picture	198	6
+29	picture	197	12
+29	picture	200	3
+29	picture	201	60
+29	play	1
+30	picture	110	4
+30	picture	85	4
+30	picture	90	4
+30	picture	95	4
+30	picture	100	4
+30	picture	105	4
+30	loop
+31	kind	17
+31	picture	202	10
+31	hold
+32	kind	17
+32	picture	203	10
+32	hold
+33	kind	17
+33	picture	206	10
+33	play	32
+34	kind	17
+34	picture	204	7
+34	picture	203	7
+34	picture	205	7
+34	picture	203	7
+34	picture	204	7
+34	picture	203	7
+34	picture	205	7
+34	play	32
+35	picture	115	1
+35	hold
+36	kind	17
+36	picture	1	2
+36	picture	207	30
+36	picture	208	10
+36	play	37
+37	kind	17
+37	picture	209	10
+37	hold

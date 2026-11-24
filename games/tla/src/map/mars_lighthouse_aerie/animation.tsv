@@ -1,0 +1,11 @@
+channel	0
+picture	1792	8	280	0
+picture	1824	8	312	0
+picture	1856	8	344	0
+picture	1888	8	376	0
+picture	1920	8	408	0
+picture	1952	8	440	0
+picture	1984	8	472	0
+picture	2016	8	504	65535
+jump	0
+end

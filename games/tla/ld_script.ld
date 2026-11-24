@@ -244,7 +244,7 @@ SECTIONS
         "*/games/tla/src/field/field_psynergy_tables.o"(.rodata)
         "*/games/tla/src/field/world_map_cursor_angles.o"(.rodata)
         "*/games/tla/src/field/world_map_places.o"(.rodata)
-        "*/games/tla/src/field/scenes.o"(.rodata)
+        "*/games/tla/src/field/scenes.list.o"(.rodata)
         "*/games/tla/src/field/actor_placement.o"(.rodata)
         "*/games/tla/src/field/scene_items.o"(.data)
         "*/games/tla/src/field/screen_transition_shapes.o"(.data)
@@ -371,7 +371,7 @@ SECTIONS
         "*/games/tla/sound/voice_groups.o"(.rodata)
         "*/games/tla/sound/programmable_wave_samples.list.o"(.rodata)
         "*/games/tla/sound/music_player_table.o"(.rodata)
-        "*/games/tla/sound/song_table.o"(.rodata)
+        "*/games/tla/sound/song_table.list.o"(.rodata)
         "*/games/tla/sound/direct_sound_samples.o"(.rodata)
         "*/games/tla/sound/songs/mus_silence.o"(.rodata)
         "*/games/tla/sound/songs/mus_super_lucky_dice.o"(.rodata)
@@ -783,7 +783,8 @@ SECTIONS
         . = ABSOLUTE(ROM_SHIFT + 0x08300000);
         "*/games/tla/src/graphics/sprite/sprites.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x08680000);
-        "*/games/tla/src/gamepak/resource_directory.o"(.rodata)
+        "*/games/tla/src/gamepak/resource_directory.list.o"(.rodata)
+        "*/games/tla/src/gamepak/build_stamp.o"(.rodata)
         "*/games/tla/src/graphics/ui/ui.list.o"(.rodata.a)
         "*/games/tla/src/graphics/field/clock_digits.list.o"(.rodata)
         "*/games/tla/src/graphics/title/title.list.o"(.rodata.c)

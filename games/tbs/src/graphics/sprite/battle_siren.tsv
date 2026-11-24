@@ -1,0 +1,34 @@
+animation	command	value	frames
+0	picture	0	6
+0	hold
+1	picture	0	200
+1	picture	2	45
+1	picture	4	25
+1	picture	2	55
+1	picture	4	35
+1	picture	2	45
+1	picture	4	35
+1	picture	0	250
+1	picture	2	55
+1	picture	4	25
+1	picture	2	45
+1	picture	4	35
+1	picture	0	200
+1	picture	2	45
+1	picture	4	25
+1	picture	2	55
+1	picture	4	35
+1	loop
+2	picture	6	13
+2	picture	8	6
+2	hold
+3	picture	10	40
+3	picture	12	30
+3	picture	14	30
+3	jump	1
+4	picture	10	30
+4	picture	12	30
+4	picture	14	30
+4	jump	1
+5	picture	16	30
+5	hold

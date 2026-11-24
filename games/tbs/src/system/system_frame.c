@@ -198,8 +198,8 @@ void wait(s32 frames) {
     Input_UpdateKeyRepeatAndDirection();
     if (gSerialExchangeActive) {
       Serial_PollStatus();
-      if (gSerialWork.mode)
-        gSerialWork.transferEnabled = 1;
+      if (gSerialState.mode)
+        gSerialState.transferEnabled = 1;
     }
     // Sleep: after a second of white screen, Stop the CPU until L and R wake
     // it, then restore the screen. A request above 1 counts down first.

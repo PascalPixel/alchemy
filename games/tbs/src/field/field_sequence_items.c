@@ -11,11 +11,11 @@ typedef s32 (*ItemTriggerCallback)(s32 item, s32 actorId, s32 slot);
 /// Returns the scene's item trigger (TRIGGER_ITEM) for item that applies to
 /// what the leader faces, or 0 (item 0 matches any item).
 const struct Trigger *Field_FindItemTrigger(s32 item) {
-  struct FieldWork *work = gFieldWork;
-  const struct Trigger *trigger = work->triggers;
+  struct FieldState *state = gFieldState;
+  const struct Trigger *trigger = state->triggers;
   s32 facing =
-      ((struct Actor *)Actor_Lookup(gMainRoutineWork.leaderActorId))->facing;
-  s32 actorAhead = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
+      ((struct Actor *)Actor_Lookup(gMainRoutineState.leaderActorId))->facing;
+  s32 actorAhead = Field_FindNearbyTalkTarget(gMainRoutineState.leaderActorId);
   s32 tileAhead;
 
   item &= INVENTORY_ITEM_ID_MASK;
@@ -63,7 +63,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 mostMatchingSlots;
   s32 matchingSlots;
   s32 partyCount;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   result = -1;
   itemId = ACT_ITEM_ID(packedItem);
@@ -77,7 +77,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     if (actorId == UNIT_NONE) {
       actorId = 0;
       for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-        unit = Unit_GetFar(gMainRoutineWork.party[partyIndex]);
+        unit = Unit_GetFar(gMainRoutineState.party[partyIndex]);
         matchingSlots = 0;
         for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS;
              inventorySlot++) {
@@ -88,7 +88,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
         if (mostMatchingSlots < matchingSlots) {
           mostMatchingSlots = matchingSlots;
-          actorId = gMainRoutineWork.party[partyIndex];
+          actorId = gMainRoutineState.party[partyIndex];
         }
       }
     } else {
@@ -120,7 +120,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
     if ((s32)trigger->value < TRIGGER_RESULT_MESSAGE_END) {
       s32 nearbyActorId =
-          Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
+          Field_FindNearbyTalkTarget(gMainRoutineState.leaderActorId);
       Event_Start();
       Event_SetMessageId(trigger->value);
       Event_ShowMessageAndWait(nearbyActorId, 0);
@@ -138,7 +138,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     GameFlag_ClearFar(FLAG_ITEM_USED_UP);
     GameFlag_SetFar(FLAG_NOTHING_HAPPENS);
     abilityId = Item_GetDirectFar(itemId)->abilityId;
-    work = gFieldWork;
+    state = gFieldState;
 
     if (abilityId != 0) {
       GameFlag_SetFar(FLAG_ITEM_USE);
@@ -157,9 +157,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         if (partyIndex != 0)
           return 0;
 
-        gMainRoutineWork.next = gMainRoutineWork.retreatScene;
-        gMainRoutineWork.entrance = gMainRoutineWork.retreatEntrance;
-        work->exit = EXIT_KEEP_DESTINATION;
+        gMainRoutineState.next = gMainRoutineState.retreatScene;
+        gMainRoutineState.entrance = gMainRoutineState.retreatEntrance;
+        state->exit = EXIT_KEEP_DESTINATION;
       }
 
       MessageArgument_PushFar(actorId, MESSAGE_ARGUMENT_ACTOR);
@@ -173,9 +173,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 #else
       ((s32 (*)(s32, s32))FieldPsynergy_LoadResources)(abilityId, 0);
 #endif
-      work->psynergyActing = 1;
+      state->psynergyActing = 1;
       FieldPsynergy_Run();
-      work->psynergyActing = 0;
+      state->psynergyActing = 0;
       FieldPsynergy_End();
 
       if (Item_GetDirectFar(itemId)->useType & ITEM_USE_CONSUMED)
@@ -196,12 +196,12 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// the Psynergy would target in *target. eventFlags gives the event's phase and
 /// kind (PSYNERGY_TRIGGER_ANY for any phase).
 void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, s32 *target) {
-  struct FieldWork *work = gFieldWork;
-  const struct Trigger *trigger = work->triggers;
+  struct FieldState *state = gFieldState;
+  const struct Trigger *trigger = state->triggers;
   s32 facing =
-      ((struct Actor *)Actor_Lookup(gMainRoutineWork.leaderActorId))->facing;
+      ((struct Actor *)Actor_Lookup(gMainRoutineState.leaderActorId))->facing;
   s32 actorAhead =
-      Field_FindNearbyPsynergyTarget(gMainRoutineWork.leaderActorId, group);
+      Field_FindNearbyPsynergyTarget(gMainRoutineState.leaderActorId, group);
   s32 tileAhead;
   s32 anyPhase = 0;
 
@@ -255,13 +255,13 @@ s32 Field_RunPsynergyEndEvents(s32 packed) {
   userId = ACT_UNIT((u32)packed);
   group = Ability_Get(abilityId)->fieldPsynergy;
   // The leader is looked up and the result is not used.
-  Actor_Lookup(gMainRoutineWork.leaderActorId);
+  Actor_Lookup(gMainRoutineState.leaderActorId);
   beforeEvent = Scene_FindPsynergyTrigger(
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_BEFORE_END), group, &target);
   afterEvent = Scene_FindPsynergyTrigger(
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END), group, &target);
   FieldPsynergy_LoadResources(abilityId, 0);
-  FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId, target);
+  FieldPsynergy_SetupActorPair(gMainRoutineState.leaderActorId, target);
   Field_RunPsynergyEvent(beforeEvent, userId, target);
   FieldPsynergy_RunExtraHandler();
   FieldPsynergy_StopCasterUpdate();

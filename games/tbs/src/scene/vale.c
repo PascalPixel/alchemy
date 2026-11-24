@@ -117,7 +117,7 @@
 #include "system/heap_slots.h"
 #include "system/iwram_call.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/task.h"
 #include "system/vram_cache.h"
@@ -443,7 +443,7 @@ const u32 *Scene_GetExits(void) { return gVale_Exits; }
 /// Places the villagers for the story so far, or for the game's opening, when
 /// Isaac is mending the roof (VALE_FROM_TITLE).
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.entrance == VALE_FROM_TITLE)
+  if (gMainRoutineState.entrance == VALE_FROM_TITLE)
     return gVale_RepairActorPlacements;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gVale_ActorPlacementsAfterKalay;
@@ -748,7 +748,7 @@ static void Vale_EnterIsaacsHouse(void) {
       // "He promised not to return until he fulfills his mission. My..."
       Event_ShowMessage(ACTOR_DORA, 0);
     } else {
-      gFieldWork->message += 2;
+      gFieldState->message += 2;
       Event_Wait(40);
       Event_ShowMessage(ACTOR_DORA, 0);
     }
@@ -849,14 +849,14 @@ static void Vale_JennaSaysKradenIsWaiting(void) {
 /// nothing happens here. The view follows a point of its own, moved 2 pixels
 /// a frame for 40 frames, while Isaac stands still.
 static void Vale_WatchThePuppies(void) {
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   s32 *savedOrigin;
   struct Actor *leader;
   s32 frame;
   FIXED cameraPosition[3];
 
   if (GameFlag_Get(FLAG_MET_SATUROS_AND_MENARDI) == 0) {
-    grid = gMapGridWork[0];
+    grid = gMapGridState[0];
     Event_Start();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1140,8 +1140,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
   Actor_SetScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   Vale_PlaceOrHideBoards(ACTOR_FIRST_BOARD, 2, 1);
-  gFieldWork->transition = 0;
-  gFieldWork->transitionFrames = 32;
+  gFieldState->transition = 0;
+  gFieldState->transitionFrames = 32;
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_JENNA, 0.5);
   Actor_SetSpeed(ACTOR_GARET, 0.5);
@@ -1270,7 +1270,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_Wait(20);
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
@@ -1287,7 +1287,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   // "Do you think things would be any different if you'd had..."
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
@@ -1442,7 +1442,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_Wait(10);
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_Wait(40);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
@@ -1690,9 +1690,9 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 set;
 
-  if (gMainRoutineWork.entrance == VALE_FROM_TITLE) {
-    WindowColor_Apply(gMainRoutineWork.windowHue,
-                      gMainRoutineWork.windowBrightness);
+  if (gMainRoutineState.entrance == VALE_FROM_TITLE) {
+    WindowColor_Apply(gMainRoutineState.windowHue,
+                      gMainRoutineState.windowBrightness);
     Vale_MendingTheRoof();
   } else {
     if (!GameFlag_Get(FLAG_VALE_NUT_CAUGHT)) {
@@ -1766,13 +1766,13 @@ s32 Scene_Initialize(void) {
           Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = set;
           GameFlag_Clear(FLAG_VALE_MT_ALEPH_GUARD_PAUSED);
         }
-        if (gMainRoutineWork.entrance != VALE_FROM_TITLE &&
+        if (gMainRoutineState.entrance != VALE_FROM_TITLE &&
             !GameFlag_Get(FLAG_KALAY_REACHED)) {
           Task_AddFrame(Vale_SynchronizeAlephGuardPause, TASK_PASS_FRAME);
         }
       }
       if (!Event_GetFlag(FLAG_VALE_ROOF_MENDED_EVENT_PLAYED) &&
-          gMainRoutineWork.entrance == VALE_FROM_ROOF_MENDED) {
+          gMainRoutineState.entrance == VALE_FROM_ROOF_MENDED) {
         Vale_RoofMended();
         GameFlag_Set(FLAG_VALE_ROOF_MENDED_EVENT_PLAYED);
       }
@@ -1859,7 +1859,7 @@ static void Vale_GaretMeetsHisSister(void) {
   // "Have you gone home to see Dad yet?"
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
-    gFieldWork->message++;
+    gFieldState->message++;
     Actor_StartRepeatedMotion(ACTOR_GARETS_SISTER_AFTER_KALAY, 1);
   }
   FieldEvent_ShowMessageThenWait(
@@ -1982,7 +1982,7 @@ static void Vale_GaretAsksToProtectFamily(void) {
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 10);
@@ -2204,7 +2204,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_SetSpeed(ACTOR_JENNA, 0.7);
   Actor_WalkTo(ACTOR_JENNA, 420, 1068);
   Scene_PlayMusic();
-  gFieldWork->transitionFrames = 60;
+  gFieldState->transitionFrames = 60;
   Event_StartScreenTransition();
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetSpeed(ACTOR_JENNA, 1);
@@ -2461,7 +2461,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_WalkTo(ACTOR_JENNA, 450, 750);
   Actor_WalkTo(ACTOR_GARET, 450, 750);
   Event_Wait(60);
-  gFieldWork->transitionFrames = 60;
+  gFieldState->transitionFrames = 60;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(VALE_TO_ROOF_MENDED);
@@ -2525,7 +2525,7 @@ static void Vale_RoofMended(void) {
   FieldCamera_MoveTo(383, 160, 877, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  gFieldWork->transitionFrames = 32;
+  gFieldState->transitionFrames = 32;
   Event_StartScreenTransition();
   Actor_SetSpeedFX(ACTOR_JENNA, toFIXED(1) / 2, FACING_SOUTH);
   Actor_SetSpeedFX(ACTOR_GARET, toFIXED(1) / 2, FACING_SOUTH);
@@ -2685,7 +2685,7 @@ static void Vale_RoofMended(void) {
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   }
@@ -2701,7 +2701,7 @@ static void Vale_RoofMended(void) {
   // "Do you think things would be any different if you'd had..."
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH_NORTHEAST, 60);
@@ -2843,7 +2843,7 @@ static void Vale_RoofMended(void) {
   Event_OpenMessage(ACTOR_DORA, 0);
 
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Event_SetMessageId(MsgValeAsStubbornAsYourFather);

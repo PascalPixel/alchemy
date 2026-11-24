@@ -69,7 +69,7 @@
 #include "sound/sound.h"
 #include "system/heap_slots.h"
 #include "system/io_write_queue.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/system_call.h"
 #include "text/msg_ids.h"
@@ -195,7 +195,7 @@ enum VaultCaveMouthActorId {
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_VAULT_CAVE_PASSAGE) {
     return gVaultCavePassage_Entrances;
@@ -215,7 +215,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 }
 
 const u32 *Scene_GetExits(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_VAULT_CAVE_PASSAGE) {
     return gVaultCavePassage_Exits;
@@ -231,7 +231,7 @@ const u32 *Scene_GetExits(void) {
 
 /// Selects the torches, drops of water, puddles and ivy of the room.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_VAULT_CAVE_PASSAGE) {
     return gVaultCavePassage_ActorPlacements;
@@ -248,12 +248,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Finds a placed actor with collision enabled at the requested map
 /// cell.
 static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   u32 actorSlot;
 
   for (actorSlot = ACTOR_FIRST_PLACED; actorSlot <= ACTOR_LAST_ID;
        actorSlot++) {
-    struct Actor *actor = work->actors[actorSlot];
+    struct Actor *actor = state->actors[actorSlot];
 
     // UB: map creation leaves unused actor slots NULL.
     if (
@@ -355,7 +355,7 @@ static void VaultCave_ShowLockedDoor(void) {
 /// Selects the cave scene's examine triggers, movement checks and Psynergy
 /// callbacks.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_VAULT_CAVE_PASSAGE) {
     return gVaultCavePassage_Triggers;
@@ -621,7 +621,7 @@ static void VaultCave_UseAutomaticFrostPriorities(void) {
 /// churns, then the water fades away and the drained pool is drawn.
 static void VaultCave_RunRumble(void) {
   struct MapGridLayerScroll *layer =
-      &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
+      &((struct MapGridScrollState *)gMapGridState[0])->layers[2];
   s32 frame;
   s32 fadeLevel;
   s32 lowFadeLevel;
@@ -909,10 +909,10 @@ static void VaultCave_StartTimedFalls(void) {
 /// Arriving in any room of Vault Cave restores the room's puzzles and actors.
 /// It then sets the Retreat destination, the foot of the ladder from Vault.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == SCENE_VAULT_CAVE_PASSAGE) {
-    switch (gMainRoutineWork.entrance) {
+  if (gMainRoutineState.next == SCENE_VAULT_CAVE_PASSAGE) {
+    switch (gMainRoutineState.entrance) {
     case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST:
     case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST:
     case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST:
@@ -935,11 +935,11 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.next == SCENE_VAULT_CAVE_VAMBRACE) {
+  if (gMainRoutineState.next == SCENE_VAULT_CAVE_VAMBRACE) {
     if (GameFlag_Get(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY) == 0) {
       Actor_Get(ACTOR_IVY)->scaleY = 3 * FIXED_ONE / 2;
     }
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH:
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH:
     case VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM:
@@ -999,7 +999,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SOUTHERN_PILLAR), 0);
     Actor_Get(ACTOR_SOUTHERN_PILLAR)->collisionFlags = ACTOR_SOLID;
   }
-  if (gMainRoutineWork.next == SCENE_VAULT_CAVE_MOUTH) {
+  if (gMainRoutineState.next == SCENE_VAULT_CAVE_MOUTH) {
     Actor_SetAnimation(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH,
                        FLAME_PILLAR_ANIMATION_BURNING);
     if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
@@ -1011,7 +1011,7 @@ s32 Scene_Initialize(void) {
     Actor_Get(ACTOR_NORTHERN_PILLAR)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
     Actor_Get(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags |=
         ACTOR_BLOCKED_BY_SOLID;
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH:
     case VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH:
       VaultCave_StartTimedFalls();
@@ -1036,8 +1036,8 @@ s32 Scene_Initialize(void) {
   }
   // Retreat always returns to the foot of SceneId_VaultCavePassage's ladder
   // from Vault.
-  gMainRoutineWork.retreatEntrance = VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;
-  gMainRoutineWork.retreatScene = SCENE_VAULT_CAVE_PASSAGE;
+  gMainRoutineState.retreatEntrance = VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;
+  gMainRoutineState.retreatScene = SCENE_VAULT_CAVE_PASSAGE;
   return 0;
 }
 

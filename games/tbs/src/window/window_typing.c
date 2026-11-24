@@ -44,7 +44,7 @@ enum {
 /// its window animation or types more text, and on the text's end marks the
 /// window typed (WINDOW_TYPED) or closes it.
 void Message_UpdateAll(void) {
-  struct Message *message = WINDOW_WORK->messages;
+  struct Message *message = WINDOW_STATE->messages;
   s32 messageIndex = 0;
 
   do {
@@ -97,10 +97,10 @@ void Message_UpdateAll(void) {
 /// new page, pauses, colours) and draws characters, playing the speaker's voice
 /// blips.
 s32 Message_Type(struct Message *message) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   // DEAD: gKeysHeld read and not used; the ROM keeps the load.
   u32 keys = gKeysHeld;
-  s32 glyphsLeft = gMessageSpeed_Steps[gMainRoutineWork.messageSpeed];
+  s32 glyphsLeft = gMessageSpeed_Steps[gMainRoutineState.messageSpeed];
   s32 frameVBlanks;
   u32 code;
   u32 nextCode;
@@ -124,7 +124,7 @@ s32 Message_Type(struct Message *message) {
   // In battle, text runs at 3 glyphs a frame and 5 more for each VBlank the
   // last frame took (gLastFrameVBlanks, 1 for a frame on time), counting at
   // most two.
-  if (work->battleMode != WINDOW_FIELD) {
+  if (state->battleMode != WINDOW_FIELD) {
     frameVBlanks = gLastFrameVBlanks;
     CLAMP(frameVBlanks, 0, 2);
     glyphsLeft = frameVBlanks * 5 + 3;
@@ -146,7 +146,7 @@ s32 Message_Type(struct Message *message) {
   do {
     code = TEXT_END;
     if (message->ended == 0)
-      code = work->textBuffer[message->textIndex];
+      code = state->textBuffer[message->textIndex];
 
     if (code < TEXT_COMMANDS) {
       switch (code) {
@@ -169,7 +169,7 @@ s32 Message_Type(struct Message *message) {
 
       case TEXT_PAGE:
         // Under Mind Read a press from before the wait does not count.
-        if (work->mindRead != 0 &&
+        if (state->mindRead != 0 &&
             message->countdown < MESSAGE_KEY_WAIT_STARTED)
           gKeysPressedLatch = 0;
         message->countdown = MESSAGE_KEY_WAIT;
@@ -180,15 +180,15 @@ s32 Message_Type(struct Message *message) {
 
 #if TBS_PATCH_1
           if (arrowWindow->width == 0 || arrowWindow->height == 0 ||
-              work->pageArrowShown != 0)
+              state->pageArrowShown != 0)
             break;
 #else
-          if (work->pageArrowShown != 0)
+          if (state->pageArrowShown != 0)
             break;
 #endif
           Glyph_Draw(arrowWindow, 1, arrowWindow->width * 4 - 8,
                      arrowWindow->height * 8 - 16, GLYPH_DRAW_PAGE_ARROW);
-          work->pageArrowShown = 1;
+          state->pageArrowShown = 1;
           break;
         }
         // Clear the window, and refit it to the next page's text.
@@ -198,13 +198,13 @@ s32 Message_Type(struct Message *message) {
         oldWidth = window->width;
         oldHeight = window->height;
         entryIndex = message->textIndex;
-        work->pageArrowShown = 0;
+        state->pageArrowShown = 0;
         WindowSprite_PrepareForRedraw(window);
         if (message->flags == 0 && (window->width | window->height) != 0)
           Window_EraseBorderRect(window->x, window->y, window->width,
                                  window->height);
         entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
-        if (work->textBuffer[entryIndex] != 0 &&
+        if (state->textBuffer[entryIndex] != 0 &&
             (window->width | window->height) != 0) {
           if (message->flags != 0) {
             Window_EraseBorderRect(window->x, window->y, window->width,
@@ -245,13 +245,13 @@ s32 Message_Type(struct Message *message) {
         message->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
         Message_ApplyStyle(message);
 #endif
-        VramCache_FreeEntry(work->glyphResource);
-        work->glyphResource = NO_GLYPH_RESOURCE;
+        VramCache_FreeEntry(state->glyphResource);
+        state->glyphResource = NO_GLYPH_RESOURCE;
         break;
 
       case TEXT_WAIT_KEY:
         // The same hold as a page break's.
-        if (work->mindRead != 0 &&
+        if (state->mindRead != 0 &&
             message->countdown < MESSAGE_KEY_WAIT_STARTED)
           gKeysPressedLatch = 0;
         if (Text_CheckTextDismissed(message) != 0)
@@ -262,38 +262,38 @@ s32 Message_Type(struct Message *message) {
       case TEXT_PAUSE_SHORT:
         if (message->countdown == 0)
           message->countdown = 20;
-        work->voiceCountdown = 0;
+        state->voiceCountdown = 0;
         Text_CheckPauseSkipped(message);
         break;
 
       case TEXT_PAUSE_LONGEST:
         if (message->countdown == 0)
           message->countdown = 120;
-        work->voiceCountdown = 0;
+        state->voiceCountdown = 0;
         Text_CheckPauseSkipped(message);
         break;
 
       case TEXT_PAUSE_LONG:
         if (message->countdown == 0)
           message->countdown = 60;
-        work->voiceCountdown = 0;
+        state->voiceCountdown = 0;
         break;
 
       case TEXT_COLOR:
         message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
-        message->colour = work->textBuffer[message->textIndex];
+        message->colour = state->textBuffer[message->textIndex];
         Message_ApplyStyle(message);
         break;
 
       case TEXT_STYLE:
         message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
-        message->outline = work->textBuffer[message->textIndex];
+        message->outline = state->textBuffer[message->textIndex];
         Message_ApplyStyle(message);
         break;
 
       case TEXT_LINE_SPACING:
         message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
-        message->lineSpacing = work->textBuffer[message->textIndex];
+        message->lineSpacing = state->textBuffer[message->textIndex];
         Message_ApplyStyle(message);
         break;
 
@@ -309,7 +309,7 @@ s32 Message_Type(struct Message *message) {
         // (Window_StepSwellEffect counts it down); typing then resumes after
         // the operand.
         message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
-        message->window->animation = work->textBuffer[message->textIndex];
+        message->window->animation = state->textBuffer[message->textIndex];
         message->countdown = 10;
         message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
         break;
@@ -321,22 +321,22 @@ s32 Message_Type(struct Message *message) {
       }
 
       // Outside battle a control code ends this frame's typing.
-      if (work->battleMode == WINDOW_FIELD)
+      if (state->battleMode == WINDOW_FIELD)
         glyphsLeft = 1;
     } else {
       // A character: draw it at the pen position, rounded to whole pixels.
       pixelX = (message->x + 128) / 256;
       pixelY = (message->y + 128) / 256;
-      voiceGap = gMessageSpeed_VoiceGaps[gMainRoutineWork.messageSpeed];
+      voiceGap = gMessageSpeed_VoiceGaps[gMainRoutineState.messageSpeed];
       nextEntryIndex = message->textIndex;
       // Under Mind Read the text starts 8 pixels further in (Japanese and
       // English), in the window Window_FitOnScreen made 2 tiles wider.
 #if !TBS_PATCH_2
-      if (work->mindRead != 0)
+      if (state->mindRead != 0)
         pixelX += 8;
 #endif
       nextEntryIndex = (nextEntryIndex + 1) & TEXT_BUFFER_MASK;
-      nextCode = work->textBuffer[nextEntryIndex];
+      nextCode = state->textBuffer[nextEntryIndex];
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
       // A kana mark after the character is drawn with it.
       if (nextCode == TEXT_MARK_VOICED) {
@@ -356,7 +356,7 @@ s32 Message_Type(struct Message *message) {
         s16 pair = gFont_Glyphs[code - TEXT_SPACE].width +
                    gFont_Glyphs[nextCode - TEXT_SPACE].width;
 
-        if (work->outline == TEXT_STYLE_OUTLINED) {
+        if (state->outline == TEXT_STYLE_OUTLINED) {
           if ((u16)pair <= GLYPH_PAIR_OUTLINED_WIDTH_MAX) {
             code |= nextCode << 8;
             message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
@@ -379,19 +379,20 @@ s32 Message_Type(struct Message *message) {
 #endif
       glyphWidth = Glyph_Draw(message->window, code, pixelX, pixelY,
                               GLYPH_DRAW_CHARACTER);
-      message->glyphDelay = gMessageSpeed_Delays[gMainRoutineWork.messageSpeed];
+      message->glyphDelay =
+          gMessageSpeed_Delays[gMainRoutineState.messageSpeed];
       if (glyphWidth != 0) {
         // The speaker's voice blip (voiceSound, the first of four
         // sounds, one picked by the code's low two bits) every few characters
         // (gMessageSpeed_VoiceGaps), and the pen moves on by the glyph's width.
-        if (work->voiceSound != 0) {
-          if (work->voiceCountdown == 0) {
+        if (state->voiceSound != 0) {
+          if (state->voiceCountdown == 0) {
             if (code != TEXT_SPACE) {
-              Sound_PlayFar(work->voiceSound + (code & 3));
-              work->voiceCountdown = voiceGap;
+              Sound_PlayFar(state->voiceSound + (code & 3));
+              state->voiceCountdown = voiceGap;
             }
           } else {
-            work->voiceCountdown--;
+            state->voiceCountdown--;
           }
         }
         glyphAdvance = glyphWidth << 8;
@@ -411,7 +412,7 @@ s32 Message_Type(struct Message *message) {
         return TYPING_CLOSES_WINDOW;
 #endif
       // Outside battle a space ends this frame's typing.
-      if (code == TEXT_SPACE && work->battleMode == WINDOW_FIELD)
+      if (code == TEXT_SPACE && state->battleMode == WINDOW_FIELD)
         glyphsLeft = 1;
     }
 

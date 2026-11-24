@@ -32,7 +32,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   s32 step[3];
   s32 point[3];
   struct ScreenPoint position;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   BlitterPair draw;
   u8 *motes;
@@ -44,13 +44,13 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   s32 frame;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
-  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
-  work->fadeStep = 0;
+  state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
+  state->fadeStep = 0;
   if (element > ELEMENT_JUPITER) {
     element -= DJINNI_ENTRANCE_LONG;
     frameCount = ENTRANCE_LONG_FRAMES;
@@ -73,7 +73,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   }
   resource = Resource_GetTableEntry(sheetId);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
-  Decompress_TaggedLz(resource + SHEET_PALETTE_BYTES, work->sheet);
+  Decompress_TaggedLz(resource + SHEET_PALETTE_BYTES, state->sheet);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
   if (side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -90,8 +90,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   }
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-  user = GetBattleObjectSlotFar(work->args->user)->actor;
-  target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
+  user = GetBattleObjectSlotFar(state->args->user)->actor;
+  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
   for (i = 0; i != ENTRANCE_SPARK_SLOTS; i++) {
     struct Particle *spark = &PARTICLES[i];
     s32 angle = Random16() & TRIG_ANGLE_MASK;
@@ -102,7 +102,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
                  (Trig_Cos(angle) * speed) >> 5);
     spark->variant = 0;
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   SET_VECTOR(center, user->x.fixed, 0, user->z.fixed);
   switch (anchor) {
   case DJINNI_ANCHOR_OVER_TARGET:
@@ -138,11 +139,11 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     }
     Matrix_TranslateVector(center);
     if (frame == 0)
-      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
+      BattleEffect_TintBattler(state->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
     if (frame == 24)
-      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
-                               TINT_KEEP, 0);
+      BattleEffect_TintBattler(state->args->user, SPRITE_COLOR_NORMAL,
+                               TINT_KEEP, TINT_KEEP, 0);
     for (i = 0; i != ENTRANCE_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
@@ -199,14 +200,14 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
       *outX = position.x;
       *outY = position.y;
       position.x >>= 1;
-      draw[0](canvas, work->sheet, position.x - SMALL_DJINNI_WIDTH / 2,
+      draw[0](canvas, state->sheet, position.x - SMALL_DJINNI_WIDTH / 2,
               position.y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
               SMALL_DJINNI_HEIGHT);
     }
     // The long version's Djinni bursts into motes.
     if (frame == ENTRANCE_FRAMES) {
-      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-        struct Particle *mote = &work->particles[i];
+      for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+        struct Particle *mote = &state->particles[i];
         s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 speed = (Random16() & 255) + 128;
 
@@ -218,8 +219,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
       }
     }
     if (frame >= ENTRANCE_FRAMES) {
-      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-        struct Particle *mote = &work->particles[i];
+      for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+        struct Particle *mote = &state->particles[i];
 
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 2;
@@ -231,7 +232,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
         }
       }
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
@@ -383,7 +384,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   struct ScreenPoint position;
   s32 screenX;
   s32 screenY;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 i;
   s32 j;
@@ -402,23 +403,23 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   s32 hit;
   s32 x;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   soundCooldown = 0;
-  work->args = args;
+  state->args = args;
   comet = args->variant;
   if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
     BattleEffect_StartCanvasLayer(0);
   else
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  if (work->args->prelude == 1)
-    BattleEffect_RunDjinniEntrance(args, ELEMENT_MERCURY, work->args->side,
+  if (state->args->prelude == 1)
+    BattleEffect_RunDjinniEntrance(args, ELEMENT_MERCURY, state->args->side,
                                    DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
 
   if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
-    if (work->args->side == EFFECT_SIDE_PARTY)
+    if (state->args->side == EFFECT_SIDE_PARTY)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
@@ -426,7 +427,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
   } else {
-    if (work->args->side == EFFECT_SIDE_PARTY)
+    if (state->args->side == EFFECT_SIDE_PARTY)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
@@ -445,77 +446,78 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     if (mode == PROJECTILE_VOLLEY_IMPACT_COMETS)
       comet = PROJECTILE_VOLLEY_COMET_A;
     if (comet == PROJECTILE_VOLLEY_COMET_A)
-      Resource_LoadAndDecompress(RESOURCE_COMET_SHEET_A,
-                                 work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
-                                 1, 1);
+      Resource_LoadAndDecompress(
+          RESOURCE_COMET_SHEET_A,
+          state->sheet + PROJECTILE_VOLLEY_COMET_PICTURES, 1, 1);
     else if (comet == PROJECTILE_VOLLEY_COMET_B)
-      Resource_LoadAndDecompress(RESOURCE_COMET_SHEET_B,
-                                 work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
-                                 1, 1);
+      Resource_LoadAndDecompress(
+          RESOURCE_COMET_SHEET_B,
+          state->sheet + PROJECTILE_VOLLEY_COMET_PICTURES, 1, 1);
     else
-      Resource_LoadAndDecompress(RESOURCE_COMET_SHEET_C,
-                                 work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
-                                 1, 1);
+      Resource_LoadAndDecompress(
+          RESOURCE_COMET_SHEET_C,
+          state->sheet + PROJECTILE_VOLLEY_COMET_PICTURES, 1, 1);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       const void *pal = Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET);
       Iwram_CopyWords(BG_PLTT, pal, SHEET_PALETTE_BYTES);
     }
     Resource_LoadAndDecompress(RESOURCE_WIND_STREAK_SHEET,
-                               work->sheet + PROJECTILE_VOLLEY_STREAK_PICTURES,
+                               state->sheet + PROJECTILE_VOLLEY_STREAK_PICTURES,
                                1, 0);
     // The ice colours again, though the streaks left them as they were.
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       const void *pal = Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET);
       Iwram_CopyWords(BG_PLTT, pal, SHEET_PALETTE_BYTES);
     }
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
-    Resource_LoadAndDecompress(RESOURCE_SHURIKEN_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_SHURIKEN_SHEET, state->sheet, 1, 1);
     REG_BLDCNT = 0;
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_COMET_SHEET_A),
                     SHEET_PALETTE_BYTES);
-    Resource_LoadAndDecompress(RESOURCE_PROJECTILE_VOLLEY_IMAGE, work->sheet, 0,
-                               0);
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    Resource_LoadAndDecompress(RESOURCE_PROJECTILE_VOLLEY_IMAGE, state->sheet,
+                               0, 0);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER ||
              mode == PROJECTILE_VOLLEY_WING_BEAT ||
              mode == PROJECTILE_VOLLEY_WING_STROKE) {
-    Resource_LoadAndDecompress(RESOURCE_YELLOW_SPARK_SHEET, work->sheet, 1, 1);
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_SPARK_SHEET, state->sheet, 1, 1);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE) {
-    Resource_LoadAndDecompress(RESOURCE_FIREBALL_SHEET, work->sheet, 1, 1);
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    Resource_LoadAndDecompress(RESOURCE_FIREBALL_SHEET, state->sheet, 1, 1);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
-    Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET, state->sheet, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET,
-                               work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE,
+                               state->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE,
                                1, 0);
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  user = GetBattleObjectSlotFar(work->args->user)->actor;
+  user = GetBattleObjectSlotFar(state->args->user)->actor;
   shots = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_SHOTS]);
   steps = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_STEPS]);
   {
     s32 stagger = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_STAGGER]);
     s32 delay = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_DELAY]);
-    s32 height = BattleUnit_GetEffectHeightFar(work->args->user);
+    s32 height = BattleUnit_GetEffectHeightFar(state->args->user);
 
-    if (work->args->targetCount * shots > PROJECTILE_VOLLEY_SHOTS_MAX)
-      work->args->targetCount = 1;
+    if (state->args->targetCount * shots > PROJECTILE_VOLLEY_SHOTS_MAX)
+      state->args->targetCount = 1;
 
     // Each shot starts at the user and is aimed at its target.
 
-    EFFECT_FOR_EACH_TARGET(i, work->args) {
+    EFFECT_FOR_EACH_TARGET(i, state->args) {
       struct Actor *target =
-          GetBattleObjectSlotFar(work->args->targets[i])->actor;
-      s32 targetHeight = BattleUnit_GetEffectHeightFar(work->args->targets[i]);
+          GetBattleObjectSlotFar(state->args->targets[i])->actor;
+      s32 targetHeight = BattleUnit_GetEffectHeightFar(state->args->targets[i]);
 
       for (j = 0; j != shots; j++) {
-        struct Particle *shot = &work->particles[i * shots + j];
+        struct Particle *shot = &state->particles[i * shots + j];
 
         shot->x = user->x.fixed;
         if (mode == PROJECTILE_VOLLEY_SLEET)
@@ -579,9 +581,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     for (i = 0; i != PROJECTILE_VOLLEY_PARTICLE_COUNT; i++)
       PARTICLES[i].variant = 0;
     if (mode == PROJECTILE_VOLLEY_HEAT_WAVE)
-      total = work->args->targetCount * delay + shots * stagger + 32;
+      total = state->args->targetCount * delay + shots * stagger + 32;
     else
-      total = work->args->targetCount * delay + shots * stagger + 16;
+      total = state->args->targetCount * delay + shots * stagger + 16;
 
     for (frame = 0; frame != total; frame++) {
       s32 index;
@@ -602,7 +604,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       }
 
       // The prelude's small Djinni circles, then rises away.
-      if (work->args->prelude == 1) {
+      if (state->args->prelude == 1) {
         s32 x = FIXEDtoINT(-Trig_Sin(frame * (TRIG_TURN / 32)) * 4) +
                 screenX / 2 - 10;
         s32 y =
@@ -610,7 +612,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
         if (frame > 69)
           y = y - frame * 2 + 138;
-        if (work->args->side == EFFECT_SIDE_PARTY)
+        if (state->args->side == EFFECT_SIDE_PARTY)
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               COMPOSITE_ADDITIVE);
@@ -620,22 +622,22 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
         // Drawn twice, so brighter, over its first four frames.
         if (frame <= 3)
-          draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
+          draw[1](canvas, state->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
                   SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
-        draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
+        draw[1](canvas, state->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
                 SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
 
       EFFECT_VIEW_FROM_CAMERA(camera);
       index = 0;
-      EFFECT_FOR_EACH_TARGET(i, work->args) {
+      EFFECT_FOR_EACH_TARGET(i, state->args) {
         struct Actor *target =
-            GetBattleObjectSlotFar(work->args->targets[i])->actor;
+            GetBattleObjectSlotFar(state->args->targets[i])->actor;
 
         for (j = 0; j != shots; j++, index++) {
           if (j * stagger + i * delay < frame) {
-            struct Particle *shot = &work->particles[i * shots + j];
+            struct Particle *shot = &state->particles[i * shots + j];
 
             Projection_Point(shot, &position);
             position.x >>= 1;
@@ -710,17 +712,17 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 flash->variant = 1;
                 SET_POSITION(flash, position.x, position.y, 0);
                 if (mode != PROJECTILE_VOLLEY_SLEET)
-                  work->shakeFrames = 2;
-                BattleEffect_TintBattler(work->args->targets[i],
+                  state->shakeFrames = 2;
+                BattleEffect_TintBattler(state->args->targets[i],
                                          SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 8);
                 if (mode != PROJECTILE_VOLLEY_SLEET &&
                     mode != PROJECTILE_VOLLEY_BLIZZARD &&
                     mode != PROJECTILE_VOLLEY_ICE_BLESSING) {
                   if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
-                    BattleMotion_ApplyKnockbackFar(work->args->targets[i],
+                    BattleMotion_ApplyKnockbackFar(state->args->targets[i],
                                                    KNOCKBACK_HURL);
                   else
-                    BattleMotion_ApplyKnockbackFar(work->args->targets[i],
+                    BattleMotion_ApplyKnockbackFar(state->args->targets[i],
                                                    KNOCKBACK_SKID);
                 }
                 // Sparks fly from the hit.
@@ -752,7 +754,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             if (mode == PROJECTILE_VOLLEY_SLASH ||
                 mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
                 mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
-              if (work->args->side == EFFECT_SIDE_PARTY)
+              if (state->args->side == EFFECT_SIDE_PARTY)
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                                     COMPOSITE_LIGHTEN);
@@ -760,13 +762,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                     EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
               EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
-                  canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
+                  canvas, state->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                   position.x - PROJECTILE_VOLLEY_COMET_WIDTH / 2,
                   position.y - gProjectileVolley_CometHeights[comet],
                   PROJECTILE_VOLLEY_COMET_WIDTH,
                   gProjectileVolley_CometHeights[comet]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-              if (work->args->side == EFFECT_SIDE_PARTY)
+              if (state->args->side == EFFECT_SIDE_PARTY)
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                     COMPOSITE_LIGHTEN);
@@ -775,7 +777,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                                     COMPOSITE_LIGHTEN);
               EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
-                  canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
+                  canvas, state->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                   position.x - PROJECTILE_VOLLEY_COMET_WIDTH / 2, position.y,
                   PROJECTILE_VOLLEY_COMET_WIDTH,
                   gProjectileVolley_CometHeights[comet]);
@@ -783,7 +785,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
               if (ABS(shot->x) <= ABS(target->x.fixed))
                 draw[0](canvas,
-                        work->sheet + frame % 6 * PICTURE_BYTES(SHURIKEN),
+                        state->sheet + frame % 6 * PICTURE_BYTES(SHURIKEN),
                         position.x - SHURIKEN_WIDTH / 2,
                         position.y - SHURIKEN_HEIGHT / 2, SHURIKEN_WIDTH,
                         SHURIKEN_HEIGHT);
@@ -792,25 +794,25 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                        mode == PROJECTILE_VOLLEY_ICE_BLESSING) {
               s32 picture = j & 3;
               draw[0](canvas,
-                      work->sheet + gProjectileVolley_PelletPictures[picture],
+                      state->sheet + gProjectileVolley_PelletPictures[picture],
                       position.x - 4, position.y - 4, 8, 8);
             } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
-              draw[0](canvas, work->sheet + j % 6 * (8 * 16), position.x - 4,
+              draw[0](canvas, state->sheet + j % 6 * (8 * 16), position.x - 4,
                       position.y - 8, 8, 16);
             } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER) {
-              EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+              EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                   PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE,
                                   position.x - 9, position.y - 7);
             } else if (mode == PROJECTILE_VOLLEY_WING_BEAT) {
-              EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+              EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                   PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE,
                                   position.x - 6, position.y - 4);
             } else if (mode == PROJECTILE_VOLLEY_WING_STROKE) {
-              EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+              EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
                                   PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE,
                                   position.x - 15, position.y - 12);
             } else {
-              draw[0](canvas, work->sheet, position.x - FLAMEBALL_WIDTH / 2,
+              draw[0](canvas, state->sheet, position.x - FLAMEBALL_WIDTH / 2,
                       position.y - FLAMEBALL_HEIGHT / 2, FLAMEBALL_WIDTH,
                       FLAMEBALL_HEIGHT);
             }
@@ -821,7 +823,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       if (mode == PROJECTILE_VOLLEY_SLASH ||
           mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
           mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
-        for (i = 0; i != work->args->targetCount * shots; i++) {
+        for (i = 0; i != state->args->targetCount * shots; i++) {
           struct Particle *flash = &PARTICLES[i];
 
           if (flash->variant == 1) {
@@ -831,7 +833,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                   COMPOSITE_LIGHTEN);
               EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
-                  canvas, work->sheet + gProjectileVolley_FlashPictures[step],
+                  canvas, state->sheet + gProjectileVolley_FlashPictures[step],
                   flash->x - gProjectileVolley_FlashWidths[step],
                   flash->y - gProjectileVolley_FlashRises[step],
                   gProjectileVolley_FlashWidths[step],
@@ -841,7 +843,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_LIGHTEN);
               EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
-                  canvas, work->sheet + gProjectileVolley_FlashPictures[step],
+                  canvas, state->sheet + gProjectileVolley_FlashPictures[step],
                   flash->x,
                   flash->y + gProjectileVolley_FlashSteps[step] -
                       gProjectileVolley_FlashRises[step],
@@ -853,7 +855,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                   COMPOSITE_LIGHTEN);
               EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
                   canvas,
-                  work->sheet + gProjectileVolley_FlashPictures[step] +
+                  state->sheet + gProjectileVolley_FlashPictures[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,
                   flash->x - gProjectileVolley_FlashRises[step],
                   flash->y - gProjectileVolley_FlashWidths[step],
@@ -865,7 +867,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                   COMPOSITE_LIGHTEN);
               EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
                   canvas,
-                  work->sheet + gProjectileVolley_FlashPictures[step] +
+                  state->sheet + gProjectileVolley_FlashPictures[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,
                   flash->x + gProjectileVolley_FlashSteps[step] -
                       gProjectileVolley_FlashRises[step],
@@ -912,7 +914,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         }
       }
       BattleCamera_Shake(4, 4);
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
     }
   }
 

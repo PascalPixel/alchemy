@@ -81,7 +81,7 @@
 #include "sound/sound_driver_symbols.h"
 #include "system/heap.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "window/screens.h"
 #include "window/window.h"
@@ -655,7 +655,7 @@ static s32 ShipRooms_Hide(struct Actor *work) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == SCENE_SHIP_ROOMS) {
+  if (gMainRoutineState.next == SCENE_SHIP_ROOMS) {
     return gShipRooms_Entrances;
   }
   return gShipRooms_EntrancesOther;
@@ -671,7 +671,7 @@ const u32 *Scene_GetExits(void) { return gShipRooms_Exits; }
 
 /// Picks the actor placements for the room entered and the voyage's stage.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS:
@@ -783,7 +783,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// Chooses the room's interactions for the current stage of the voyage.
 const struct Trigger *Scene_GetTriggers(void) {
-  s32 entrance = gMainRoutineWork.entrance;
+  s32 entrance = gMainRoutineState.entrance;
 
   switch (entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
@@ -906,7 +906,7 @@ static void ShipRooms_TalkToCaptain(void) {
     Event_ShowMessage(ACTOR_QUARTERS_CAPTAIN, 0);
     if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) == 0 &&
         GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND) != 0) {
-      gFieldWork->fieldMenu = 1;
+      gFieldState->fieldMenu = 1;
     }
   } else {
     Event_SetMessageId(MsgTolbiShipItsTooLateHireMercenaries);
@@ -944,7 +944,7 @@ static void ShipRooms_TalkToWaitingWarrior(void) {
       // "I see. Sure, why don't you take over the rowing."
       Event_ShowMessage(ACTOR_HOLD_WARRIOR, 0);
     } else {
-      gFieldWork->message += 2;
+      gFieldState->message += 2;
       // "I figured you'd say that. Fine. Rowing is fine with me."
       Event_ShowMessage(ACTOR_HOLD_WARRIOR, 0);
       Actor_FaceDirection(ACTOR_HOLD_WARRIOR, FACING_SOUTH_SOUTHEAST, 0);
@@ -1107,7 +1107,7 @@ static void ShipRooms_AskStaredAtPassengerToRow(void) {
         GameFlag_Set(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + PASSENGER_STARED_AT);
       }
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
       // "What? You're not going to pick me? You really are a nice guy!"
       ShipRooms_Say(ACTOR_SEA_HOLD_STARED_AT_PASSENGER);
     }
@@ -1159,7 +1159,7 @@ static void ShipRooms_AskSecondGuideToRow(void) {
                      PASSENGER_SECOND_GUIDE);
       }
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
       // "Phew! Don't frighten me like that!"
       ShipRooms_Say(ACTOR_SEA_HOLD_SECOND_GUIDE);
     }
@@ -1226,7 +1226,7 @@ static void ShipRooms_AskOldManToRow(void) {
 /// Finds a placed actor within twelve pixels of the requested floor
 /// position.
 static struct Actor *ShipRooms_FindActorNear(s32 x, s32 z) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct Actor **actor;
   struct Actor *current;
   u32 i;
@@ -1237,13 +1237,13 @@ static struct Actor *ShipRooms_FindActorNear(s32 x, s32 z) {
   s32 right;
   s32 bottom;
 
-  work = gFieldWork;
+  state = gFieldState;
   i = ACTOR_FIRST_PLACED;
   left = x - 12;
   right = x + 12;
   top = z - 12;
   bottom = z + 12;
-  actor = &work->actors[ACTOR_FIRST_PLACED];
+  actor = &state->actors[ACTOR_FIRST_PLACED];
   for (; i <= ACTOR_LAST_ID; i++) {
     current = *actor++;
     actorX = current->x.part[0].integer;
@@ -1586,7 +1586,7 @@ static void ShipRooms_AskToRow(s32 speaker, s32 question, s32 seatFlag) {
     GameFlag_Set(FLAG_TOLBI_SHIP_ROWER_CHOSEN);
     GameFlag_Set(seatFlag);
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     ShipRooms_Say(speaker);
   }
   Event_End();
@@ -2270,9 +2270,9 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
     Actor_ShowEmote(ACTOR_QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
     // "I... I don't know what to say... Thank you..."
     ShipRooms_Say(captainSpeech);
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
   } else {
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
     Actor_RunRepeatedMotion(ACTOR_QUARTERS_KAJA, 1);
     // "You climbed up the mast to see the Crow's Nest, and there it..."
     ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_KAJA,
@@ -2376,9 +2376,9 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
         SPEAKER(ACTOR_QUARTERS_KAJA,
                 SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT),
         0, 40);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
-    gFieldWork->message += 3;
+    gFieldState->message += 3;
     Actor_StartRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 3);
     Event_ShowMessageThenWait(ACTOR_QUARTERS_CAPTAIN, 0, 40);
   }
@@ -2436,9 +2436,9 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == YES) {
     Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
     ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_CAPTAIN, SPEAKER_PORTRAIT_LEFT));
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_CAPTAIN, SPEAKER_PORTRAIT_LEFT));
   }
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2490,9 +2490,9 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
 s32 Scene_Initialize(void) {
   wait(1);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS:
@@ -2523,7 +2523,7 @@ s32 Scene_Initialize(void) {
     }
     break;
   }
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
     ShipRooms_SetUpHold();
@@ -2861,7 +2861,7 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   ShipRooms_PlaceActor(ACTOR_ROWING_DRUMMER, 452, 190, FACING_NORTH_NORTHWEST);
   Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_STAND);
   ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, 440, 134, FACING_WEST);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 408, 134);
@@ -3116,7 +3116,7 @@ static void ShipRooms_ShowRowing(void) {
   Sound_Play(SE_THUMP);
   Event_Wait(30);
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
 
   ShipRooms_RunEventCommand(SHIP_CLOSE_SCREEN, 0, 0);
@@ -3586,7 +3586,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     }
     break;
   case SHIP_OPEN_SCREEN:
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     Event_StartScreenTransition();
     if (arg != 0) {
@@ -3700,7 +3700,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     if (opt == 0) {
       break;
     }
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -4028,7 +4028,7 @@ static void ShipRooms_FindOarsmanMissing(void) {
     ShipRooms_Say(ACTOR_ROWING_KAJA);
   } else {
     Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_SHAKE_HEAD);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // "Look, I know you don't want to have to do this, but you..."
     ShipRooms_Say(ACTOR_ROWING_KAJA);
     ShipRooms_RunEventCommand(SHIP_SHOW_PARTY_EMOTE, 2, 40);
@@ -4048,7 +4048,7 @@ static void ShipRooms_FindOarsmanMissing(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 424, 272);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 424, 164);
   Event_Wait(60);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   ShipRooms_RunEventCommand(SHIP_CLOSE_SCREEN, 0, 0);
   GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS);
@@ -4367,9 +4367,9 @@ static void ShipRooms_ReachIsland(void) {
   }
   Actor_RunRepeatedMotion(firstRower, 1);
   if (reaction == ISLAND_REACTION_LADY_OR_ADMIRER) {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else if (reaction == ISLAND_REACTION_OLD_MAN) {
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
   }
   Actor_StartRepeatedMotion(firstRower, 2);
   // "Island? Isn't this Tolbi?", the lady's or the muscle admirer's "What do
@@ -4397,11 +4397,11 @@ static void ShipRooms_ReachIsland(void) {
     reaction = ISLAND_REACTION_GUIDE;
   }
   if (reaction == ISLAND_REACTION_OTHERS) {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else if (reaction == ISLAND_REACTION_LADY_OR_ADMIRER) {
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
   } else if (reaction == ISLAND_REACTION_OLD_MAN) {
-    gFieldWork->message += 3;
+    gFieldState->message += 3;
   }
   ShipRooms_Turn(firstRower, FACING_EAST);
   // A guide's "I'm going to check on the other passengers.", or the others'
@@ -4462,7 +4462,7 @@ static void ShipRooms_SwitchLeftAndRightTeams(void) {
   ShipRooms_RunEventCommand(SHIP_SETUP_ROWING_PARTY, 0, 0);
   ShipRooms_PlaceActor(ACTOR_ROWING_CREWMAN, 472, 144, FACING_SOUTH_SOUTHWEST);
   ShipRooms_PlaceActor(ACTOR_ROWING_KAJA, 408, 142, FACING_SOUTH_SOUTHEAST);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -4516,7 +4516,7 @@ static void ShipRooms_SwitchLeftAndRightTeams(void) {
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 132);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 444, 132);
   Actor_SetPosition(ACTOR_ROWING_KAJA, 0, 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

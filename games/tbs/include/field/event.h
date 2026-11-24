@@ -23,7 +23,7 @@
 #include "shop/shop.h"
 #include "sound/sound.h"
 #include "system/heap.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "window/window.h"
 
@@ -39,8 +39,8 @@
 /// Altmiller Cave's rock puzzle.
 extern u8 gSceneLocalState[];
 
-/// The Colosso race work, heap slot HEAP_SLOT_COLOSSO_RACE under its own name.
-#define gColossoWork (*(u8 **)&gHeapSlots[HEAP_SLOT_COLOSSO_RACE])
+/// The Colosso race state, heap slot HEAP_SLOT_COLOSSO_RACE under its own name.
+#define gColossoState (*(u8 **)&gHeapSlots[HEAP_SLOT_COLOSSO_RACE])
 
 #include "system/frame.h"
 
@@ -77,7 +77,7 @@ struct MapGridCellAnimation {
 // old-style declarations; Event_SetExitRequest also takes a u16 and Random16
 // returns a u32, where the scenes pass and read an int.
 /// Sets the field's exit request (Event_SetExitRequest); 999 leaves for
-/// gMainRoutineWork's scene and entrance.
+/// gMainRoutineState's scene and entrance.
 void Import_EventSetExitRequest();
 /// Puts an actor at rest at (x, z), in 16.16 pixels; one that follows
 /// the ground keeps its height above the terrain
@@ -131,7 +131,7 @@ void Sound_PlayFar(s32 id);
 /// Moves the event's message number count messages on, past lines the event
 /// doesn't show.
 static inline void Event_SkipMessages(s32 count) {
-  u16 *message = &gFieldWork->message;
+  u16 *message = &gFieldState->message;
 
   *message = *message + count;
 }

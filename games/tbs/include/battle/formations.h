@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-// Formation.layout and BattleWork.layout: the order
+// Formation.layout and BattleState.layout: the order
 // BattleFormation_BuildEnemyList draws a formation's enemies in, and how
 // BattleUnit_Collect stands them in their line. The two random orders stand
 // left to right as drawn; BattleUnit_Collect takes any other value as

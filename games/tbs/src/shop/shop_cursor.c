@@ -118,23 +118,23 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
   return priceSprite;
 }
 
-/// Saves the field's background colours in the field work and fades them to
+/// Saves the field's background colours in the field state and fades them to
 /// `tint` (PALETTE_TINT_CUSTOM with a colour) over SHOP_TINT_FRAMES frames.
 void Shop_SaveAndTintFieldPalette(s32 tint) {
-  // UB: slot 32 lies past scalar gFieldWork.
+  // UB: slot 32 lies past scalar gFieldState.
 #ifdef UBFIX
-  struct PaletteFade *paletteBuffers = gPaletteFadeWork;
-  u8 *fieldBytes = (u8 *)gFieldWork;
+  struct PaletteFade *paletteBuffers = gPaletteFadeState;
+  u8 *fieldBytes = (u8 *)gFieldState;
 #else
-  u32 *workCells = (u32 *)&gFieldWork;
-  struct PaletteFade *paletteBuffers =
-      (struct PaletteFade *)workCells[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD];
-  u8 *fieldBytes = (u8 *)workCells[0];
+  u32 *stateCells = (u32 *)&gFieldState;
+  struct PaletteFade *paletteBuffers = (struct PaletteFade *)
+      stateCells[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD];
+  u8 *fieldBytes = (u8 *)stateCells[0];
 #endif
   u16 *savedPalette = paletteBuffers->target;
 
   Dma_Set(
-      savedPalette, fieldBytes + offsetof(struct FieldWork, savedFadeTarget),
+      savedPalette, fieldBytes + offsetof(struct FieldState, savedFadeTarget),
       DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS * 3 * sizeof(u16) / 4), REG_DMA3);
   Dma_Set(savedPalette, paletteBuffers->current,
           DMA_COPY_WORDS(sizeof(paletteBuffers->current) / 4), REG_DMA3);
@@ -146,7 +146,7 @@ void Shop_SaveAndTintFieldPalette(s32 tint) {
 /// SHOP_TINT_FRAMES frames.
 void Shop_RestoreFieldPalette(void) {
   PaletteFade_SetTargetFar(
-      (s32)gFieldWork + offsetof(struct FieldWork, savedFadeTarget), 1);
+      (s32)gFieldState + offsetof(struct FieldState, savedFadeTarget), 1);
   PaletteFade_StartInterpolationFar(SHOP_TINT_FRAMES);
 }
 
@@ -269,11 +269,11 @@ void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
 void MenuCursor_Place(struct Window *window, s32 x, s32 y) {
   s32 cursorX;
   s32 cursorY;
-  struct ShopWork *shop;
+  struct ShopState *shop;
 
   cursorX = x;
   cursorY = y;
-  shop = gMenuWork;
+  shop = gMenuState;
   // A window's position is in tiles, and its interior starts one tile (its
   // frame) in
   if (window != NULL) {

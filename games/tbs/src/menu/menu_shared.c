@@ -60,12 +60,12 @@ s32 Menu_SuspendFieldTasks(void) {
   return Task_SuspendOverlayTasks();
 }
 
-/// Clears the whole menu work and sets its defaults: no side selected, one
+/// Clears the whole menu state and sets its defaults: no side selected, one
 /// entry in each side, and a 1x1 cursor grid.
-void Window_InitializeWork(s32 unused) {
-  struct ItemMenuWork *menu = gMenuWork;
+void Window_InitializeState(s32 unused) {
+  struct ItemMenuState *menu = gMenuState;
 
-  Dma_Fill32(0, menu, MENU_WORK_SIZE);
+  Dma_Fill32(0, menu, MENU_STATE_SIZE);
   menu->sideIndex[0] = -1;
   menu->sideCount[0] = 1;
   menu->sideCount[1] = 1;
@@ -112,7 +112,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
   s32 created;
   struct ItemDefinition *def;
   u32 item;
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   struct Unit *unit;
   struct Window *window;
   s32 ailmentRows;
@@ -120,7 +120,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
   u8 ailments[8];
 
   created = 0;
-  menu = gMenuWork;
+  menu = gMenuState;
   unit = Unit_GetFar(member);
   item = unit->inventory[slot];
   def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
@@ -453,7 +453,7 @@ void Menu_ReloadMemberPortrait(const void *unused, s32 unit) {
 /// Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor in
 /// it, hidden for now, as sideIcon[0].
 struct Window *MenuCursor_Create(void *source) {
-  struct PsynergyMenuWork *menu = source;
+  struct PsynergyMenuState *menu = source;
   struct Window *window;
   s32 depth;
   struct WindowSprite *cursor;
@@ -470,7 +470,7 @@ struct Window *MenuCursor_Create(void *source) {
   menu->sideIcon[0] = cursor;
   cursor->depth = OAM_DEPTH_FRONT - 1;
   // No screen ever makes a second marker: sideIcon[1] stays NULL, as the
-  // menu work was cleared, and this store and the screens' others through it
+  // menu state was cleared, and this store and the screens' others through it
   // land in the BIOS, which ignores them.
   menu->sideIcon[1]->depth = OAM_DEPTH_FRONT;
   return window;
@@ -482,7 +482,7 @@ struct Window *MenuCursor_Create(void *source) {
 void Menu_CreatePartyFigures(void *source, s32 originX, s32 originY,
                              s32 spacing, s32 unused) {
   u16 memberIds[14];
-  struct PsynergyMenuWork *menu = gMenuWork;
+  struct PsynergyMenuState *menu = gMenuState;
   struct Window *window = source;
   s32 memberCount = (u16)Party_ListMembersFar(memberIds);
   s32 i;
@@ -521,7 +521,7 @@ void Menu_CreatePartyFigures(void *source, s32 originX, s32 originY,
 /// stops their placement task.
 void Menu_ReleasePartyFigures(void) {
   u16 memberIds[14];
-  struct PsynergyMenuWork *menu = gMenuWork;
+  struct PsynergyMenuState *menu = gMenuState;
   s32 count;
   struct Sprite **figures;
   s32 i;
@@ -545,7 +545,7 @@ void Menu_ReleasePartyFigures(void) {
 /// Menu_CreatePartyFigures at its menu position and scale, through
 /// the field's projected placement.
 void Menu_PlacePartyFigures(void) {
-  struct PsynergyMenuWork *menu = gMenuWork;
+  struct PsynergyMenuState *menu = gMenuState;
   struct SpriteScale scale;
   struct SpritePlacement position;
   s32 i;
@@ -576,7 +576,7 @@ void Menu_PlacePartyFigures(void) {
 /// Places the hand cursor at (xOffset, yOffset) inside the menu's top-left
 /// window, bobbing.
 void MenuCursor_Position(s32 xOffset, s32 yOffset) {
-  struct PsynergyMenuWork *menu = gMenuWork;
+  struct PsynergyMenuState *menu = gMenuState;
   struct WindowSprite *cursor = menu->sideIcon[0];
 
   cursor->oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] + xOffset +
@@ -589,7 +589,7 @@ void MenuCursor_Position(s32 xOffset, s32 yOffset) {
 /// window over two frames, in 1/16 pixel steps.
 void MenuCursor_Slide(s32 x, s32 y) {
 
-  struct PsynergyMenuWork *menu = gMenuWork;
+  struct PsynergyMenuState *menu = gMenuState;
   struct WindowSprite *cursor;
   s32 steps;
   s32 startX;
@@ -658,7 +658,7 @@ void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
   s32 index;
 
   index = 0;
-  slot = ((struct PsynergyMenuWork *)gMenuWork)->entryIcons;
+  slot = ((struct PsynergyMenuState *)gMenuState)->entryIcons;
   scan = slot;
   do {
     if (*scan++ != NULL) {
@@ -707,9 +707,9 @@ void ItemMenu_RefreshEntry(s32 layout) {
   struct WindowSprite *icon;
   s32 index;
   s32 originY;
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   originY = 56;
   if (layout != 1) {
     originY = 40;
@@ -732,7 +732,7 @@ void ItemMenu_RefreshEntry(s32 layout) {
 /// window along the bottom. With x -1 it stays there for the next screen
 /// (FLAG_MENU_INFO_KEPT); otherwise it waits for A, B or Start.
 void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   struct Window *window;
   s32 height;
   s32 width;
@@ -1036,8 +1036,8 @@ void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
 /// is the new palette number.
 void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
                                s32 width, s32 height, u32 palette) {
-  struct WindowWork *work = WINDOW_WORK;
-  u8 *tilemap = (u8 *)work->tilemap;
+  struct WindowState *state = WINDOW_STATE;
+  u8 *tilemap = (u8 *)state->tilemap;
 
   x += window->x + 1;
   y += window->y + 1;
@@ -1081,7 +1081,7 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
       height--;
       x += 64;
     } while (height != 0);
-    work->dirty = 1;
+    state->dirty = 1;
   }
 }
 
@@ -1098,10 +1098,10 @@ void Palette_LoadIconsIntoHighlight(void) {
 
 /// Shows the icons of one page of a list, one row of 16 pixels each from (x,
 /// y): entries first to first + pageSize - 1, stopping early at an empty icon
-/// slot or the work's itemCount. Hides all the others.
+/// slot or the state's itemCount. Hides all the others.
 void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
                        s32 y) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   struct WindowSprite *icon;
   s32 i;
 
@@ -1124,7 +1124,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
 /// Writes the party's coins and the "Coins" label into window: the info
 /// window of the Item and Psynergy screens' party member choice.
 void Menu_DrawCoins(struct Window *window) {
-  Text_DrawNumberAtOffsetFar(gMainRoutineWork.holdings.coins, 7, window, 8, 0);
+  Text_DrawNumberAtOffsetFar(gMainRoutineState.holdings.coins, 7, window, 8, 0);
   Text_DrawMessageAsTilesFar(MsgCoinsLabel, window, 64, 0);
   // Only the Japanese editions draw a vertical divider at tile column 12.
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -1146,11 +1146,11 @@ void Window_SetBounds(struct Window *window, s32 x, s32 y, s32 width,
 /// Holds back the window tilemap's upload (holdTilemapUpload), so that what a
 /// menu draws meanwhile appears at once when Window_ReleaseTilemapUpload lets
 /// it go. Nothing calls it: the screens set holdTilemapUpload themselves.
-void Window_HoldTilemapUpload(void) { WINDOW_WORK->holdTilemapUpload = 1; }
+void Window_HoldTilemapUpload(void) { WINDOW_STATE->holdTilemapUpload = 1; }
 
 /// Lets the window tilemap be uploaded again after Window_HoldTilemapUpload.
 /// Nothing calls it.
-void Window_ReleaseTilemapUpload(void) { WINDOW_WORK->holdTilemapUpload = 0; }
+void Window_ReleaseTilemapUpload(void) { WINDOW_STATE->holdTilemapUpload = 0; }
 
 /// Plays a sound and returns 1.
 s32 Sound_PlayReturnOne(s32 sound) {

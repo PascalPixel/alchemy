@@ -14,7 +14,7 @@ struct SpriteAnimation;
 
 /// A unit's place on the battlefield: its actor, resources and
 /// animations, its anchor spot and scale, and the statuses it shows.
-/// BattleWork.objects holds the 14, reached by unit id through
+/// BattleState.objects holds the 14, reached by unit id through
 /// BattleObject_Get; BattleObject_Make fills one in when the unit is placed.
 struct BattleObject {
   struct Actor *actor; ///< NULL once released
@@ -63,7 +63,7 @@ enum BattleCommand {
 
 /// A unit's chosen action for the turn: its command, the command's parameter,
 /// its target and range, and its priority in the action order.
-/// BattleWork.actions holds the turn's actions.
+/// BattleState.actions holds the turn's actions.
 struct BattleAction {
   s16 unitId;
   u16 slot;      ///< in a link battle, unitId as the opponent knows it
@@ -76,7 +76,7 @@ struct BattleAction {
 };
 
 /// A battle's spoils so far: coins, experience, enemies defeated and up to
-/// four items. BattleWork.spoils, cleared as the battle starts and added to as
+/// four items. BattleState.spoils, cleared as the battle starts and added to as
 /// each enemy falls.
 struct BattleSpoils {
   s32 coins;

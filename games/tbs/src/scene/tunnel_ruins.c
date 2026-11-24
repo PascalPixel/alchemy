@@ -29,7 +29,7 @@
 ///   Lighthouse once all five stand on their marks
 ///   (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
 ///
-/// The getters choose by gMainRoutineWork.next. The actor placements of
+/// The getters choose by gMainRoutineState.next. The actor placements of
 /// TunnelRuinsLadyStatues answer any other scene number, and
 /// Scene_GetActorPlacements prepares each table's actors to appear only
 /// in view.
@@ -103,7 +103,7 @@
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -384,14 +384,14 @@ static void TunnelRuins_HopNorth(void) {
 /// south of a row of half cells set per room.
 static void TunnelRuins_UpdateFadeOverlayLeader(void) {
   struct Actor *leader;
-  struct FadeOverlayWork *effectWork;
+  struct FadeOverlayState *effectState;
   s32 boundaryRow;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  effectWork = gFadeOverlayWork;
+  effectState = gFadeOverlayState;
   boundaryRow = 0;
-  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
-    switch (gMainRoutineWork.entrance) {
+  if (gMainRoutineState.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
+    switch (gMainRoutineState.entrance) {
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE:
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH:
       boundaryRow = 94;
@@ -405,14 +405,14 @@ static void TunnelRuins_UpdateFadeOverlayLeader(void) {
       boundaryRow = 118;
       break;
     }
-  } else if (gMainRoutineWork.entrance ==
+  } else if (gMainRoutineState.entrance ==
              TUNNEL_RUINS_LADY_STATUES_REVEAL_STATUE_WEST) {
     boundaryRow = 93;
   }
   if (FIELD_HALF_CELL(leader->z.fixed) <= boundaryRow) {
-    effectWork->actor = NULL;
+    effectState->actor = NULL;
   } else {
-    effectWork->actor = leader;
+    effectState->actor = leader;
   }
 }
 
@@ -559,7 +559,7 @@ static void TunnelRuins_HopDownStep(void) {
 /// The entrances of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or
 /// a table for any other scene number.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     return gTunnelRuinsGreatStatueEntrances;
@@ -571,7 +571,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_LADY_STATUES) {
+  if (gMainRoutineState.next == SCENE_TUNNEL_RUINS_LADY_STATUES) {
     return gTunnelRuinsLadyStatuesRegions;
   }
   return 0;
@@ -584,7 +584,7 @@ const u32 *Scene_GetExits(void) { return gTunnelRuinsExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
-  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
+  if (gMainRoutineState.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     table = gTunnelRuinsGreatStatueActorPlacements;
   } else {
     table = gTunnelRuinsActorPlacementsOther;
@@ -1419,7 +1419,7 @@ static void TunnelRuins_SearchLockedDoor(void) {
 /// The triggers of TunnelRuinsGreatStatue, or of TunnelRuinsLadyStatues and
 /// any other scene.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
+  if (gMainRoutineState.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     return gTunnelRuinsGreatStatueTriggers;
   }
   return gTunnelRuinsTriggersOther;
@@ -1506,17 +1506,17 @@ static void TunnelRuins_UpdateGreyPillarCells(void) {
 /// statue in Venus Lighthouse opened (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
 /// _SECOND_PATH).
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE ||
-      gMainRoutineWork.next == SCENE_TUNNEL_RUINS_LADY_STATUES) {
+  if (gMainRoutineState.next == SCENE_TUNNEL_RUINS_GREAT_STATUE ||
+      gMainRoutineState.next == SCENE_TUNNEL_RUINS_LADY_STATUES) {
     FieldEffect_StartFadeOverlay(0);
-    gMainRoutineWork.retreatEntrance =
+    gMainRoutineState.retreatEntrance =
         TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR;
-    gMainRoutineWork.retreatScene = SCENE_TUNNEL_RUINS_GREAT_STATUE;
+    gMainRoutineState.retreatScene = SCENE_TUNNEL_RUINS_GREAT_STATUE;
   }
-  if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
-    switch (gMainRoutineWork.entrance) {
+  if (gMainRoutineState.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
+    switch (gMainRoutineState.entrance) {
     case TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR:
     case TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS:
       // The round floor lamps before the model of the lighthouse, with the
@@ -1645,15 +1645,15 @@ s32 Scene_Initialize(void) {
       break;
     }
   } else {
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case ENTRANCE_DEFAULT:
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST:
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH:
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH:
-      gMainRoutineWork.retreatEntrance =
+      gMainRoutineState.retreatEntrance =
           BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
-      gMainRoutineWork.retreatScene = SCENE_BABI_LIGHTHOUSE_ENTRY;
+      gMainRoutineState.retreatScene = SCENE_BABI_LIGHTHOUSE_ENTRY;
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       Actor_SetSpriteColorById(ACTOR_EAST_PILLAR_A, SPRITE_COLOR_GREY);
       Actor_SetSpriteColorById(ACTOR_EAST_PILLAR_B, SPRITE_COLOR_GREY);
@@ -1713,7 +1713,7 @@ s32 Scene_Initialize(void) {
         Actor_Get(ACTOR_WEST_CARRY_STONE)->timer = 0;
         Actor_Get(ACTOR_MIDDLE_CARRY_STONE)->timer = 0;
         Actor_Get(ACTOR_EAST_CARRY_STONE)->timer = 0;
-        if (gMainRoutineWork.entrance !=
+        if (gMainRoutineState.entrance !=
             TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH)
           break;
         Actor_Get(ACTOR_BALANCE_WEST)->y.fixed = -toFIXED(32);

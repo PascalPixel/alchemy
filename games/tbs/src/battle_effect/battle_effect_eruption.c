@@ -49,7 +49,7 @@ enum {
 /// A fountain of motes and puffs of smoke bursts up beside the targets and
 /// falls back, hitting the targets one after another.
 void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   /* LEFTOVER(frame): draw[1], the idle half of the pair. */
   BlitterPair draw;
@@ -58,11 +58,11 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, state->sheet, 1, 0);
   // Smoke Bomb's colours are a ramp of greys; Blast takes the fire streak's.
   if (mode == ERUPTION_SMOKE_BOMB) {
     for (i = 0; i != SHEET_PALETTE_COLORS; i++) {
@@ -74,14 +74,14 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   } else {
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_FIRE_STREAK_SHEET),
                     SHEET_PALETTE_BYTES);
-    variant = work->args->variant;
+    variant = state->args->variant;
   }
 
   // The puffs and motes burst up from beside the targets.
   for (i = 0; i != ERUPTION_PUFFS; i++) {
-    struct Particle *puff = &work->particles[i];
+    struct Particle *puff = &state->particles[i];
 
-    if (work->args->side == EFFECT_SIDE_PARTY)
+    if (state->args->side == EFFECT_SIDE_PARTY)
       puff->x = toFIXED(50);
     else
       puff->x = -toFIXED(50);
@@ -95,7 +95,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
     struct Particle *mote = &PARTICLES[i];
 
-    if (work->args->side == EFFECT_SIDE_PARTY)
+    if (state->args->side == EFFECT_SIDE_PARTY)
       mote->x = toFIXED(50);
     else
       mote->x = -toFIXED(50);
@@ -109,7 +109,8 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != gEruption_Counts[variant][ERUPTION_FIELD_FRAMES];
        frame++) {
@@ -130,12 +131,12 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
 
         Projection_Point(mote, &screen);
         screen.x >>= 1;
-        screen.x += work->args->side * 32 - 16;
+        screen.x += state->args->side * 32 - 16;
         CLAMP(screen.depth, MOTE_DEPTH_NEAR, MOTE_DEPTH_FAR);
         size = ERUPTION_MOTE_LARGEST -
                (screen.depth - MOTE_DEPTH_NEAR) / MOTE_DEPTH_STEP;
         draw[0](canvas,
-                work->sheet +
+                state->sheet +
                     (gBattleEffect_MotePictures[size - 1] +
                      (i & 1) * MOTE_SET_BYTES) +
                     ERUPTION_FIELD_MOTE_PICTURES,
@@ -148,12 +149,12 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     // The puffs.
     if (frame > 2) {
       for (i = 0; i != gEruption_Counts[variant][ERUPTION_FIELD_PUFFS]; i++) {
-        struct Particle *puff = &work->particles[i];
+        struct Particle *puff = &state->particles[i];
 
         if (i < frame && puff->y >= 0) {
           Projection_Point(puff, &screen);
           screen.x >>= 1;
-          screen.x += work->args->side * 32 - 16;
+          screen.x += state->args->side * 32 - 16;
           if (puff->variant >= 0 && puff->variant < ERUPTION_PUFF_FRAMES) {
             s32 picture = puff->variant / 3;
             u32 width;
@@ -161,11 +162,11 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
             width = gEruption_PuffSizes[picture];
-            draw[0](canvas, work->sheet + gEruption_PuffPictures[picture],
+            draw[0](canvas, state->sheet + gEruption_PuffPictures[picture],
                     screen.x - (width >> 1), screen.y - (width >> 1), width,
                     width);
 #else
-            draw[0](canvas, work->sheet + gEruption_PuffPictures[picture],
+            draw[0](canvas, state->sheet + gEruption_PuffPictures[picture],
                     screen.x - ((width = gEruption_PuffSizes[picture]) >> 1),
                     screen.y - (width >> 1), width, width);
 #endif
@@ -180,35 +181,35 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
 
     // The hits, one target a frame; Blast's targets also recoil.
     if (mode == ERUPTION_BLAST) {
-      EFFECT_FOR_EACH_TARGET(i, work->args) {
+      EFFECT_FOR_EACH_TARGET(i, state->args) {
         if (frame == i + 6) {
-          BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
+          BattleEffect_TintBattler(state->args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyKnockbackFar(work->args->targets[i],
+          BattleMotion_ApplyKnockbackFar(state->args->targets[i],
                                          KNOCKBACK_LEAP);
         }
       }
     } else {
-      EFFECT_FOR_EACH_TARGET(i, work->args) {
+      EFFECT_FOR_EACH_TARGET(i, state->args) {
         if (frame == i + 6)
-          BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
+          BattleEffect_TintBattler(state->args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 10);
       }
     }
     if (frame == 2)
-      work->shakeFrames = 6;
+      state->shakeFrames = 6;
     BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// Creates the `count` sprites a summon's figure is drawn from, all of sprite
-/// `spriteId`, into work->sprites: sprite n plays animation n, its piece of
+/// `spriteId`, into state->sprites: sprite n plays animation n, its piece of
 /// the figure, at BG priority `priority`.
 void BattleEffect_SpawnObjects(s32 count, s32 spriteId, u32 priority) {
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   s32 piece = 0;
 
   if (count == 0) {
@@ -217,11 +218,11 @@ void BattleEffect_SpawnObjects(s32 count, s32 spriteId, u32 priority) {
   for (; piece != count; piece++) {
     struct Sprite *sprite = Sprite_CreateFar(spriteId);
 
-    work->sprites[piece] = sprite;
+    state->sprites[piece] = sprite;
     if (sprite != 0) {
       sprite->flags = 0;
       Sprite_StartAnimationFar(sprite, piece);
-      work->sprites[piece]->image.priority = priority;
+      state->sprites[piece]->image.priority = priority;
     }
   }
 }

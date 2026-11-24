@@ -10,8 +10,8 @@
 #include "battle/playback_queue.h"
 #include "debug/debug.h"
 #include "field/event_inline.h"
-#include "field/field_psynergy_work.h"
-#include "field/field_work.h"
+#include "field/field_psynergy_state.h"
+#include "field/field_state.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "gamepak/far_call.h"
@@ -162,7 +162,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
   s32 redraw;
   s32 messageId;
 
-  unit = Unit_Get(gMainRoutineWork.leaderActorId);
+  unit = Unit_Get(gMainRoutineState.leaderActorId);
   window = Window_Create(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 
   // "Raise everyone's level.", the A and Start help, and "B Button: End".
@@ -462,16 +462,16 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
 /// Unused: requests an exit through TRANSITION_WINDOW over 24 frames; no event
 /// row names it.
 UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  gFieldWork->transitionFrames = 24;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldState->transitionFrames = 24;
   Import_EventSetExitRequest();
 }
 
 /// Sets up the room: the window transition in, the level editor's size, and
 /// what each emote bubble shows.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  gFieldWork->transitionFrames = 24;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldState->transitionFrames = 24;
   Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = LEVEL_EDITOR_SCALE;
   Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = LEVEL_EDITOR_SCALE;
 #if TBS_PATCH_1
@@ -515,10 +515,10 @@ static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
 /// before the shot, this sets the effect's childMode, and the shot then leaves
 /// its target where it is (field/event_commands_force.c).
 static void IncreaseItemAndLevel_KeepPortraitBrowserInPlace(void) {
-  struct FieldEffectWork *effectWork =
-      (struct FieldEffectWork *)gFieldEffectWork;
+  struct FieldEffectState *effectState =
+      (struct FieldEffectState *)gFieldEffectState;
 
-  effectWork->childMode = 1;
+  effectState->childMode = 1;
 }
 
 /// Talking to ACTOR_ICON_BROWSER: the icon browser.

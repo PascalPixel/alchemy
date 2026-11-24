@@ -26,7 +26,7 @@
 void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   void **slots;
   void **slot;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   void *sprites;
   DrawRectangle draw[2];
@@ -46,25 +46,26 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
   slot = slots;
-  work = *slot++;
+  state = *slot++;
   canvas = *slot;
-  work->args = args;
+  state->args = args;
   sprites =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_BATTLE_SHEET);
   EFFECT_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET,
-                             work->sheet + UNDEAD_SWORD_PUFF_SHEET, 1, 0);
-  BattleEffect_FetchRectangleBlitters(work->args->side, draw);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+                             state->sheet + UNDEAD_SWORD_PUFF_SHEET, 1, 0);
+  BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   // The canvas is scrolled to stand its middle over the target.
-  Projection_Unit(work->args->targets[0], &screenPosition);
+  Projection_Unit(state->args->targets[0], &screenPosition);
   REG_BG2X = (CANVAS_SIZE / 2 - screenPosition.x) << 8;
 
   // The clouds burst out from the blade's foot and drift upward.
-  for (i = 0, puff = work->particles; i != UNDEAD_SWORD_PUFFS; i++) {
+  for (i = 0, puff = state->particles; i != UNDEAD_SWORD_PUFFS; i++) {
     speed = (Random16() & 0x1ff) + 128;
     angle = Random16() & TRIG_ANGLE_MASK;
     puff->x = toFIXED(CANVAS_SIZE / 2);
@@ -74,14 +75,14 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
     puff->variant = Random16() & 7;
     puff++;
   }
-  work->shakeFrames = 8;
+  state->shakeFrames = 8;
   for (frame = 0; frame != UNDEAD_SWORD_FRAMES; frame++) {
     // The strike, with a second 8-frame shake.
     if (frame == 10) {
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
       EFFECT_SHOW_DAMAGE(SE_POWER_UP);
-      BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_NUDGE);
-      BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
+      BattleMotion_ApplyKnockbackFar(state->args->targets[0], KNOCKBACK_NUDGE);
+      BattleEffect_TintBattler(state->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
     }
 
@@ -111,7 +112,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
           // DEAD: draw[0] is fetched afresh before it is read; the ROM keeps
           // the store.
           draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE)(canvas, work->sheet, x,
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE)(canvas, state->sheet, x,
                                              UNDEAD_SWORD_FOOT_Y - height,
                                              LIME_COLUMN_WIDTH, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -120,8 +121,8 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
     }
 
     // The clouds billow out two a frame from frame 8.
-    BattleEffect_FetchRectangleBlitters(work->args->side, draw);
-    for (i = 0, particle = work->particles; i != UNDEAD_SWORD_PUFFS; i++) {
+    BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+    for (i = 0, particle = state->particles; i != UNDEAD_SWORD_PUFFS; i++) {
       if (frame >= i / 2 + 8 && particle->variant < UNDEAD_SWORD_PUFF_FRAMES) {
         s32 drawX;
         s32 drawY;
@@ -131,7 +132,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
         drawY = FIXEDtoINT(particle->y);
         if (picture > UNDEAD_SWORD_PUFF_PICTURES - 1)
           picture = UNDEAD_SWORD_PUFF_PICTURES - 1;
-        src = work->sheet + gUndeadSword_SparkPictures[picture] +
+        src = state->sheet + gUndeadSword_SparkPictures[picture] +
               UNDEAD_SWORD_PUFF_SHEET;
         size = gUndeadSword_SparkSizes[picture];
         draw[0](canvas, src, drawX - size / 2, drawY - size / 2, size, size);
@@ -145,7 +146,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
       BattleCamera_Shake(2, 2);
     else
       BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();

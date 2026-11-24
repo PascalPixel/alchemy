@@ -27,7 +27,7 @@
 #define BOREAS_SHARDS 64
 #define BOREAS_SPRAY 128
 #define BOREAS_SPRAY_SPARKLES (PARTICLES + BOREAS_SPRAY)
-/// The second part: the crystals of the torrent in work->particles and the
+/// The second part: the crystals of the torrent in state->particles and the
 /// sparkles among them in PARTICLES.
 #define BOREAS_TORRENT_CRYSTALS 64
 #define BOREAS_TORRENT_SPARKLES 64
@@ -83,7 +83,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   UNUSED s32 crystalPoints[32][2];
   struct SpritePlacement position;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   s32 frame;
   DrawRectangle draw;
   DrawRectangle drawAlt;
@@ -102,20 +102,20 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   struct SpriteScale scale;
 
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   sparkleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   edgeSpeed = 1;
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
-  work->transferMode = CANVAS_COPY;
+  state->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240); // an empty window
-  Resource_LoadAndDecompress(RESOURCE_ICE_BLOCK_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_ICE_BLOCK_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, sparkleSheet, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
@@ -124,13 +124,13 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
                       COMPOSITE_TRANSPARENT);
   drawAlt = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  BattleEffect_SelectLivingTargets(work->args);
+  BattleEffect_SelectLivingTargets(state->args);
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            RESOURCE_VIOLET_SKY_BACKDROP, 0);
   BattleEffect_SpawnObjects(BOREAS_SPRITES, SPRITE_BOREAS, 1);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (i = 0; i != BOREAS_MASS_CRYSTALS; i++) {
     PARTICLES[i].x = (Random16() & 63) + 32;
@@ -208,7 +208,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
 
     for (i = 0; i != count; i++) {
       s32 picture = i % 3;
-      draw(canvas, work->sheet + gBoreas_CrystalPictures[picture],
+      draw(canvas, state->sheet + gBoreas_CrystalPictures[picture],
            BOREAS_POINT_X(i) - shakeX,
            BOREAS_POINT_Y(i) - gBoreas_CrystalHeights[picture] - shakeY,
            gBoreas_CrystalWidths[picture], gBoreas_CrystalHeights[picture]);
@@ -217,11 +217,11 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     scale = unitScale;
     if (frame == 174) {
       for (i = 0; i != BOREAS_SPRITES; i++) {
-        work->sprites[i]->image.priority = 0;
+        state->sprites[i]->image.priority = 0;
       }
     }
     if (frame > BOREAS_BLOCK_SINK_FRAME) {
-      Sprite_StartAnimationFar(work->sprites[2],
+      Sprite_StartAnimationFar(state->sprites[2],
                                gBoreas_Animations[(frame / 4) & 3]);
     }
 
@@ -236,7 +236,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         position.x = INTtoFIXED(j * 32 + 144 - shakeX);
         position.y = INTtoFIXED(row * 32 + 76 - shakeY);
         Actor_ApplyProjectedPlacementFar(
-            work->sprites[row * BOREAS_SPRITE_ROWS + j], &position, &scale, 0);
+            state->sprites[row * BOREAS_SPRITE_ROWS + j], &position, &scale, 0);
       }
     }
 
@@ -252,7 +252,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       } else if (frame > BOREAS_BLOCK_SINK_FRAME) {
         blockY = sinkFrame / 4 + 8;
       }
-      drawAlt(canvas, work->sheet + BOREAS_BIG_BLOCK, blockX, blockY,
+      drawAlt(canvas, state->sheet + BOREAS_BIG_BLOCK, blockX, blockY,
               BOREAS_BIG_BLOCK_WIDTH, BOREAS_BIG_BLOCK_HEIGHT);
     }
 
@@ -313,7 +313,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
           } else {
             picture = i & 3;
           }
-          drawAlt(canvas, work->sheet + gBoreas_DebrisPictures[picture],
+          drawAlt(canvas, state->sheet + gBoreas_DebrisPictures[picture],
                   FIXEDtoINT(PARTICLES[i].x), FIXEDtoINT(PARTICLES[i].y),
                   gBoreas_DebrisWidths[picture],
                   gBoreas_DebrisHeights[picture]);
@@ -339,7 +339,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         if (frame >= i / 4 + 224) {
           s32 picture = i % 3;
           if ((i & 1) == 0) {
-            draw(canvas, work->sheet + gBoreas_SprayPictures[picture],
+            draw(canvas, state->sheet + gBoreas_SprayPictures[picture],
                  FIXEDtoINT(PARTICLES[i].x), FIXEDtoINT(PARTICLES[i].y),
                  gBoreas_SprayWidths[picture], gBoreas_SprayHeights[picture]);
           }
@@ -381,25 +381,25 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
     }
 
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   // Second half: ice crystals rain down on the targets, and more rise among
   // them and burst.
   for (i = 0; i != BOREAS_SPRITES; i++) {
-    Sprite_DestroyFar(work->sprites[i]);
+    Sprite_DestroyFar(state->sprites[i]);
   }
   BattleEffect_SetupBlendedDisplay();
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 
   for (i = 0; i != BOREAS_TORRENT_CRYSTALS; i++) {
-    work->particles[i].x = INTtoFIXED((Random16() & 127) + 64);
-    work->particles[i].z = -toFIXED(16);
-    work->particles[i].y = INTtoFIXED(-(Random16() & 127) - 64);
-    work->particles[i].velocityX = (-(Random16() & 63) - 127) << 12;
-    work->particles[i].velocityY = ((Random16() & 63) + 127) << 12;
-    work->particles[i].variant = 0;
+    state->particles[i].x = INTtoFIXED((Random16() & 127) + 64);
+    state->particles[i].z = -toFIXED(16);
+    state->particles[i].y = INTtoFIXED(-(Random16() & 127) - 64);
+    state->particles[i].velocityX = (-(Random16() & 63) - 127) << 12;
+    state->particles[i].velocityY = ((Random16() & 63) + 127) << 12;
+    state->particles[i].variant = 0;
   }
   for (i = 0; i != BOREAS_TORRENT_SPARKLES; i++) {
     PARTICLES[i].x = Random16() & 127;
@@ -413,7 +413,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     if (frame == BOREAS_TORRENT_RISE_FRAME) {
-      work->shakeFrames = 32;
+      state->shakeFrames = 32;
     }
     // Crystals rise among the targets.
     if (frame > BOREAS_TORRENT_RISE_FRAME) {
@@ -430,13 +430,13 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     }
     // A streak of ice falls from the top right.
     if (frame > 64) {
-      draw(canvas, work->sheet + BOREAS_STREAK, (64 - frame) * 7 + 88,
+      draw(canvas, state->sheet + BOREAS_STREAK, (64 - frame) * 7 + 88,
            frame * 14 - 992, BOREAS_STREAK_WIDTH, BOREAS_STREAK_HEIGHT);
     }
     if (frame < BOREAS_TORRENT_CRASH_FRAME) {
       for (i = 0; i != count; i++) {
         s32 picture = i % 3;
-        draw(canvas, work->sheet + gBoreas_RisingCrystalPictures[picture],
+        draw(canvas, state->sheet + gBoreas_RisingCrystalPictures[picture],
              BOREAS_POINT_X(i) - BOREAS_TARGETS_X_SHIFT,
              BOREAS_POINT_Y(i) - gBoreas_RisingCrystalHeights[picture],
              gBoreas_RisingCrystalWidths[picture],
@@ -445,17 +445,17 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     }
     if (frame == BOREAS_TORRENT_CRASH_FRAME) {
       for (i = 0; i != BOREAS_TORRENT_CRYSTALS; i++) {
-        work->particles[i].x = INTtoFIXED(
+        state->particles[i].x = INTtoFIXED(
             BOREAS_POINT_X(i & (BOREAS_POINTS - 1)) - BOREAS_TARGETS_X_SHIFT);
-        work->particles[i].y =
+        state->particles[i].y =
             INTtoFIXED(BOREAS_POINT_Y(i & (BOREAS_POINTS - 1)));
-        work->particles[i].velocityX = ((Random16() & 127) - 63) << 13;
-        work->particles[i].velocityY = (-(Random16() & 31) - 16) << 14;
+        state->particles[i].velocityX = ((Random16() & 127) - 63) << 13;
+        state->particles[i].velocityY = (-(Random16() & 31) - 16) << 14;
       }
       // DEAD: always true inside the crash's test; the ROM keeps the second
       // compare.
       if (frame == BOREAS_TORRENT_CRASH_FRAME) {
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
       }
     }
     if (frame >= BOREAS_TORRENT_CRASH_FRAME) {
@@ -464,11 +464,11 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         count = BOREAS_TORRENT_CRYSTALS;
       }
       for (i = 0; i != count; i++) {
-        struct Particle *crystal = &work->particles[i];
+        struct Particle *crystal = &state->particles[i];
         y = FIXEDtoINT(crystal->y);
         if (y <= 135) {
           s32 picture = i % 3;
-          draw(canvas, work->sheet + gBoreas_FallPictures[picture],
+          draw(canvas, state->sheet + gBoreas_FallPictures[picture],
                FIXEDtoINT(crystal->x), y - gBoreas_FallHeights[picture],
                gBoreas_FallWidths[picture], gBoreas_FallHeights[picture]);
           Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE,
@@ -478,7 +478,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
               crystal->velocityY > toFIXED(8)) {
             crystal->velocityY = -crystal->velocityY / 4;
             crystal->y = toFIXED(BATTLE_VIEW_HEIGHT);
-            work->shakeFrames = 1;
+            state->shakeFrames = 1;
           }
         }
       }
@@ -486,25 +486,26 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     // Crystals rain down.
     if (frame < BOREAS_TORRENT_CRASH_FRAME) {
       for (i = 0; i != BOREAS_TORRENT_CRYSTALS; i++) {
-        draw(canvas, work->sheet,
-             FIXEDtoINT(work->particles[i].x) - BOREAS_CRYSTAL_WIDTH / 2,
-             FIXEDtoINT(work->particles[i].y) - BOREAS_CRYSTAL_HEIGHT / 2,
+        draw(canvas, state->sheet,
+             FIXEDtoINT(state->particles[i].x) - BOREAS_CRYSTAL_WIDTH / 2,
+             FIXEDtoINT(state->particles[i].y) - BOREAS_CRYSTAL_HEIGHT / 2,
              BOREAS_CRYSTAL_WIDTH, BOREAS_CRYSTAL_HEIGHT);
-        work->particles[i].x += work->particles[i].velocityX;
-        work->particles[i].y += work->particles[i].velocityY;
-        if (FIXEDtoINT(work->particles[i].y) > BATTLE_VIEW_HEIGHT &&
+        state->particles[i].x += state->particles[i].velocityX;
+        state->particles[i].y += state->particles[i].velocityY;
+        if (FIXEDtoINT(state->particles[i].y) > BATTLE_VIEW_HEIGHT &&
             frame <= 47) {
-          work->particles[i].x = INTtoFIXED((Random16() & 127) + 64);
-          work->particles[i].y = -toFIXED(16);
+          state->particles[i].x = INTtoFIXED((Random16() & 127) + 64);
+          state->particles[i].y = -toFIXED(16);
         }
       }
     }
 
     // Each target turns blue and flinches in turn.
-    EFFECT_FOR_EACH_TARGET(i, work->args) {
+    EFFECT_FOR_EACH_TARGET(i, state->args) {
       if (frame == i * 8 + 32) {
-        BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLUE_TINT,
-                                 POSE_DAMAGE, TINT_KEEP, 0);
+        BattleEffect_TintBattler(state->args->targets[i],
+                                 SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, TINT_KEEP,
+                                 0);
       }
     }
 
@@ -532,7 +533,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     } else {
       BattleCamera_Shake(2, 2);
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   EFFECT_RELEASE_BLITTERS();

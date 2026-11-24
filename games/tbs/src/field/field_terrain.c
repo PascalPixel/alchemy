@@ -298,13 +298,13 @@ FIXED Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 /// height function of the cell's terrain kind applied to its samples.
 /// y is the map's down axis, an actor's z.
 FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED y) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   struct MapGridCell *cell;
   u8 *heightBytes;
 
   x = FIXEDtoINT(x);
   y = FIXEDtoINT(y);
-  // Before the map work exists, the grid is read from its start.
+  // Before the map state exists, the grid is read from its start.
   cell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   if (grid != NULL) {
     cell = grid->layers[layer & 3].cells;
@@ -332,7 +332,7 @@ FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED y) {
 /// Returns the terrain kind (enum TerrainKind) of a layer's cell at (x, y) in
 /// 16.16 pixels.
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED y) {
-  struct MapGridScrollWork *gridState = gMapGridWork[0];
+  struct MapGridScrollState *gridState = gMapGridState[0];
   struct MapGridCell *cells;
   s32 cellX;
   s32 cellY;
@@ -354,13 +354,13 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED y) {
 
 /// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels.
 s32 MapGrid_GetCellBehaviorAt(s32 layer, FIXED x, FIXED y) {
-  struct MapGridScrollWork *gridState;
+  struct MapGridScrollState *gridState;
   struct MapGridCell *cell;
 
-  gridState = gMapGridWork[0];
+  gridState = gMapGridState[0];
   x = FIELD_CELL(x);
   y = FIELD_CELL(y);
-  // Before the map work exists, the grid is read from its start.
+  // Before the map state exists, the grid is read from its start.
   cell = (struct MapGridCell *)gMapGridCellBuffer;
   if (gridState != NULL) {
     cell = gridState->layers[layer & 3].cells;
@@ -372,11 +372,11 @@ s32 MapGrid_GetCellBehaviorAt(s32 layer, FIXED x, FIXED y) {
 /// Sets the cell behavior of a layer's cell at (x, y) in 16.16 pixels. Writes
 /// the cell in the map's grid; does nothing before the map is set up.
 void MapGrid_SetCellBehaviorAt(u32 layer, FIXED x, FIXED y, u32 behavior) {
-  struct MapGridScrollWork *gridState = gMapGridWork[0];
+  struct MapGridScrollState *gridState = gMapGridState[0];
 
   x = FIELD_CELL(x);
   y = FIELD_CELL(y);
-  // Without the map work there is no layer to write to.
+  // Without the map state there is no layer to write to.
   if (gridState != NULL) {
     struct MapGridCell *cell = gridState->layers[layer & 3].cells;
 
@@ -402,7 +402,7 @@ UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
 /// the actor's.
 s32 MapGrid_CheckCollision(struct Actor *actor,
                            struct FieldPosition *position) {
-  struct MapGridScrollWork *gridState;
+  struct MapGridScrollState *gridState;
   s32 pixelX;
   s32 pixelZ;
   struct MapGridCell *cell;
@@ -412,7 +412,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 
   pixelX = ((struct FieldCoordinate *)&position->x)->part[0].integer;
   pixelZ = ((struct FieldCoordinate *)&position->z)->part[0].integer;
-  gridState = gMapGridWork[0];
+  gridState = gMapGridState[0];
   if (gridState == NULL)
     return COLLISION_NONE;
   // The three layers have their windows into the grid; any other layer
@@ -453,19 +453,19 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 
 /// Returns -1 when the cell under position (its x, and y less its height) in
 /// MAPGRID_LAYER_OVERHEAD is a wall (CELL_BEHAVIOR_WALL), else 0; also 0 before
-/// the map work exists.
+/// the map state exists.
 s32 MapGrid_IsWallAt(struct WorldPosition *position) {
   s32 pixelX;
   s32 pixelY;
   s32 cellX;
   s32 cellY;
-  struct MapGridScrollWork *gridState;
+  struct MapGridScrollState *gridState;
   struct MapGridCell *cell;
 
   pixelX = position->x / FIXED_ONE;
   // The point on the ground below the position.
   pixelY = (position->y - position->height) / FIXED_ONE;
-  gridState = gMapGridWork[0];
+  gridState = gMapGridState[0];
   if (gridState == NULL)
     return 0;
   // Always the overhead layer, the one on BG1.

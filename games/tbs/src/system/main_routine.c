@@ -5,7 +5,7 @@
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/event.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/map_grid_scroll.h"
 #include "field/scene.h"
 #include "system/dma.h"
@@ -32,7 +32,7 @@ void Scene_TakeExit(s32 exitId) {
   s32 kind;
   s32 flag;
 
-  currentScene = gMainRoutineWork.next;
+  currentScene = gMainRoutineState.next;
   exitTable = gOverlayArea.exits();
   destinationScene = EXIT_KEEP_DESTINATION;
   destinationEntrance = 0;
@@ -76,8 +76,8 @@ void Scene_TakeExit(s32 exitId) {
 
   // Commit the chosen exit only after a matching scene was found.
   if (destinationScene != EXIT_KEEP_DESTINATION) {
-    gMainRoutineWork.next = destinationScene;
-    gMainRoutineWork.entrance = destinationEntrance;
+    gMainRoutineState.next = destinationScene;
+    gMainRoutineState.entrance = destinationEntrance;
   }
 }
 
@@ -93,10 +93,10 @@ void Scene_ReturnFromSequence(s32 result) {
   s32 sceneId;
   s32 entrance;
 
-  gMainRoutineWork.sequenceResult = result;
+  gMainRoutineState.sequenceResult = result;
   if (result == -1) {
     // Revive the leader before choosing the restart point.
-    unit = Unit_GetFar(gMainRoutineWork.leaderActorId);
+    unit = Unit_GetFar(gMainRoutineState.leaderActorId);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
@@ -109,37 +109,37 @@ void Scene_ReturnFromSequence(s32 result) {
         Unit_UpdateGauges(unit);
       }
     }
-    sceneId = gMainRoutineWork.defeatScene;
-    entrance = gMainRoutineWork.defeatEntrance;
+    sceneId = gMainRoutineState.defeatScene;
+    entrance = gMainRoutineState.defeatEntrance;
     if (sceneId == -1 && entrance == -1) {
-      gMainRoutineWork.next = gMainRoutineWork.restartScene;
-      gMainRoutineWork.entrance = gMainRoutineWork.restartEntrance;
+      gMainRoutineState.next = gMainRoutineState.restartScene;
+      gMainRoutineState.entrance = gMainRoutineState.restartEntrance;
     } else {
       if (sceneId != -1)
-        gMainRoutineWork.next = sceneId;
+        gMainRoutineState.next = sceneId;
       else
-        gMainRoutineWork.next = gMainRoutineWork.returnScene;
+        gMainRoutineState.next = gMainRoutineState.returnScene;
       if (entrance != -1)
-        gMainRoutineWork.entrance = entrance;
+        gMainRoutineState.entrance = entrance;
       else
-        gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance;
+        gMainRoutineState.entrance = gMainRoutineState.returnEntrance;
     }
   } else {
     // An after-battle destination an event set overrides the return point.
-    sceneId = gMainRoutineWork.afterBattleScene;
-    entrance = gMainRoutineWork.afterBattleEntrance;
+    sceneId = gMainRoutineState.afterBattleScene;
+    entrance = gMainRoutineState.afterBattleEntrance;
     if (sceneId != -1 || entrance != -1) {
       if (sceneId != -1)
-        gMainRoutineWork.next = sceneId;
+        gMainRoutineState.next = sceneId;
       else
-        gMainRoutineWork.next = gMainRoutineWork.returnScene;
+        gMainRoutineState.next = gMainRoutineState.returnScene;
       if (entrance != -1)
-        gMainRoutineWork.entrance = entrance;
+        gMainRoutineState.entrance = entrance;
       else
-        gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance;
+        gMainRoutineState.entrance = gMainRoutineState.returnEntrance;
     } else {
-      gMainRoutineWork.next = gMainRoutineWork.returnScene;
-      gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance;
+      gMainRoutineState.next = gMainRoutineState.returnScene;
+      gMainRoutineState.entrance = gMainRoutineState.returnEntrance;
       GameFlag_SetFar(FLAG_KEEP_PARTY_POSITION);
     }
   }
@@ -193,20 +193,20 @@ void MainRoutine_Run(s32 mode) {
   // Read once: both debug starts test the same value.
   debug = gDebugMode;
   if (debug && mode == GAME_START_DEBUG_VALE) {
-    gMainRoutineWork.next = SCENE_VALE_PLAZA;
+    gMainRoutineState.next = SCENE_VALE_PLAZA;
     // Entrance 1, the value mode holds here.
-    gMainRoutineWork.entrance = mode;
+    gMainRoutineState.entrance = mode;
   } else if (debug && mode == GAME_START_DEBUG_FILE_SCREEN) {
-    gMainRoutineWork.next = SCENE_FILE_SCREEN;
-    gMainRoutineWork.entrance = FILE_SCREEN_FROM_SANCTUM;
+    gMainRoutineState.next = SCENE_FILE_SCREEN;
+    gMainRoutineState.entrance = FILE_SCREEN_FROM_SANCTUM;
   } else {
-    MainRoutineWork_InitializeDefaultsFar();
-    gMainRoutineWork.next = SCENE_TITLE;
-    gMainRoutineWork.entrance = TITLE_AFTER_RUN;
+    MainRoutineState_InitializeDefaultsFar();
+    gMainRoutineState.next = SCENE_TITLE;
+    gMainRoutineState.entrance = TITLE_AFTER_RUN;
   }
   // The window colours from the options: hue, then brightness.
-  WindowColor_ApplyFar(gMainRoutineWork.windowHue,
-                       gMainRoutineWork.windowBrightness);
+  WindowColor_ApplyFar(gMainRoutineState.windowHue,
+                       gMainRoutineState.windowBrightness);
   VramCache_Reset();
   Task_ResetAll();
   // DEAD: a second reset of the empty task table; the ROM keeps its call.
@@ -218,8 +218,8 @@ void MainRoutine_Run(s32 mode) {
       GameFlag_ClearFar(FLAG_SKIP_SCENE_CHANGE_SOUND);
     else
       Sound_PlayFar(SE_STOP_ACTION_SE);
-    record = &table[gMainRoutineWork.next];
-    entrance = gMainRoutineWork.entrance;
+    record = &table[gMainRoutineState.next];
+    entrance = gMainRoutineState.entrance;
 
     Dma0_Stop();
     // Drop the tasks, the HBlank and VCount handlers (IRQs 1 and 2) and every
@@ -231,10 +231,10 @@ void MainRoutine_Run(s32 mode) {
     DebugText_Clear();
     VramCache_Reset();
     // The battle, dice and slots sequences return a result, not an exit: the
-    // return scene is chosen from the main routine's work, and no overlay is
+    // return scene is chosen from the main routine's state, and no overlay is
     // loaded.
-    if (gMainRoutineWork.next >= SEQUENCE_NONE) {
-      switch (gMainRoutineWork.next) {
+    if (gMainRoutineState.next >= SEQUENCE_NONE) {
+      switch (gMainRoutineState.next) {
       case SEQUENCE_BATTLE:
         entrance = Battle_RunFar(entrance);
         break;
@@ -253,7 +253,7 @@ void MainRoutine_Run(s32 mode) {
     }
 
     // A scene: set its flags and music, load its code and run it.
-    Scene_Arrive(gMainRoutineWork.next,
+    Scene_Arrive(gMainRoutineState.next,
                  GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION));
     Scene_ChooseMusic();
     if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
@@ -264,14 +264,14 @@ void MainRoutine_Run(s32 mode) {
         GameFlag_ClearFar(FLAG_KEEP_MUSIC_ONCE);
       else
         Scene_PlayMusic();
-    } else if (gMainRoutineWork.returnMusic != -1) {
+    } else if (gMainRoutineState.returnMusic != -1) {
       // Back where the party was: resume the music saved when the Pause menu
       // last opened (field_sequence.c).
-      Sound_PlayFar(gMainRoutineWork.returnMusic);
+      Sound_PlayFar(gMainRoutineState.returnMusic);
     } else {
       Scene_PlayMusic();
     }
-    gMainRoutineWork.mapId = record->mapIndex;
+    gMainRoutineState.mapId = record->mapIndex;
     Scene_LoadOverlay(0);
     Scene_TakeExit(FieldSequence_Run(entrance));
   }
@@ -282,7 +282,7 @@ void Scene_LoadOverlay(s32 unused) {
   const struct Scene *table;
 
   table = gScenes;
-  Overlay_Load(table[gMainRoutineWork.next].resourceId, &gOverlayArea);
+  Overlay_Load(table[gMainRoutineState.next].resourceId, &gOverlayArea);
 }
 
 /// The scene id's row of gScenes.
@@ -294,26 +294,26 @@ void Scene_LoadOverlay(s32 unused) {
 /// Updates the flags and state that last for one scene or one area, on entering
 /// the current scene.
 void Scene_Arrive(s32 unused, s32 keep) {
-  s32 area = SCENE_ROW(gMainRoutineWork.next)->area;
+  s32 area = SCENE_ROW(gMainRoutineState.next)->area;
   s32 flag;
 
   if (keep == 0) {
     // Local puzzle flags expire on every normal entry to a scene.
     for (flag = FLAG_SCENE_TEMP_FIRST; flag <= FLAG_SCENE_TEMP_LAST; flag++)
       GameFlag_ClearFar(flag);
-    if (area != gMainRoutineWork.area) {
+    if (area != gMainRoutineState.area) {
       // Area state and Retreat's destination survive moves within it.
       for (flag = FLAG_AREA_TEMP_FIRST; flag <= FLAG_AREA_TEMP_LAST; flag++)
         GameFlag_ClearFar(flag);
       GameFlag_SetFar(FLAG_SHOW_AREA_NAME);
-      gMainRoutineWork.encounterSteps = 0;
-      gMainRoutineWork.hazardSteps = 0;
+      gMainRoutineState.encounterSteps = 0;
+      gMainRoutineState.hazardSteps = 0;
       GameFlag_ClearFar(FLAG_VENUS_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_MERCURY_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_MARS_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_JUPITER_LIGHTHOUSE_LIT);
-      gMainRoutineWork.retreatScene = gMainRoutineWork.next;
-      gMainRoutineWork.retreatEntrance = gMainRoutineWork.entrance;
+      gMainRoutineState.retreatScene = gMainRoutineState.next;
+      gMainRoutineState.retreatEntrance = gMainRoutineState.entrance;
     }
     // The Djinn's hiding flags last for one scene, even within an area,
     // and so do the 16 after them to FLAG_ARRIVAL_CLEARED_LAST, which nothing
@@ -328,18 +328,18 @@ void Scene_Arrive(s32 unused, s32 keep) {
     GameFlag_ClearFar(FLAG_NO_ENCOUNTERS_IN_AREA);
     GameFlag_ClearFar(FLAG_IN_TOWN);
     GameFlag_ClearFar(FLAG_WORLD_MAP_LEFT);
-    gMainRoutineWork.returnMusic = -1;
+    gMainRoutineState.returnMusic = -1;
   }
-  gMainRoutineWork.area = area;
+  gMainRoutineState.area = area;
   GameFlag_SetFar(FLAG_AREA_VISITED(area & AREA_VISITED_MASK));
-  gMainRoutineWork.sceneType = SCENE_ROW(gMainRoutineWork.next)->sceneType;
-  if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN)
+  gMainRoutineState.sceneType = SCENE_ROW(gMainRoutineState.next)->sceneType;
+  if (gMainRoutineState.sceneType == SCENE_TYPE_TOWN)
     GameFlag_SetFar(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();
 }
 
 /// Starts the current scene's field music, chosen by Scene_ChooseMusic.
-void Scene_PlayMusic(void) { Sound_PlayFar(gMainRoutineWork.sceneMusic); }
+void Scene_PlayMusic(void) { Sound_PlayFar(gMainRoutineState.sceneMusic); }
 
 #undef EXIT_DEFAULT_SCENE_MASK
 #undef AREA_VISITED_MASK

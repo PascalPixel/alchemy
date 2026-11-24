@@ -164,7 +164,7 @@
 	export PartyInventory_Remove, PartyInventory_RemoveFar
 	export Inventory_Equip, Inventory_EquipFar
 	export Ability_GetDirect, Ability_Get
-	export MainRoutineWork_InitializeDefaults, MainRoutineWork_InitializeDefaultsFar
+	export MainRoutineState_InitializeDefaults, MainRoutineState_InitializeDefaultsFar
 	export GameFlag_Get, GameFlag_GetFar
 	export GameFlag_Set, GameFlag_SetFar
 	export Import_GameFlagSet, GameFlag_SetFar

@@ -25,7 +25,7 @@ void BattleEffect_RunSpinningBeat(struct BattleEffectParams *args) {
 }
 /// A swirl sweeps across the first target from the user's side.
 void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   struct Actor *actor;
   struct ScreenPoint position;
@@ -35,11 +35,11 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 picture;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->args = args;
+  state->args = args;
   EFFECT_START_NARROW_CANVAS(0);
-  if (work->args->side == EFFECT_SIDE_PARTY) {
+  if (state->args->side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_TRANSPARENT);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -49,17 +49,18 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
                         COMPOSITE_TRANSPARENT);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   }
-  Resource_LoadAndDecompress(RESOURCE_MAGENTA_SWIRL_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_MAGENTA_SWIRL_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_MAGENTA_TAIL_SHEET, Ram_MapGridCellBuffer,
                              1, 0);
   if (mode == SWIRL_SWIPE_POISON_BEAT) {
     void *palette = Resource_GetTableEntry(RESOURCE_LIME_PALETTE);
     Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  actor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  Projection_ScaledUnit(work->args->targets[0], &position);
-  if (work->args->side == EFFECT_SIDE_ENEMIES)
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
+  actor = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  Projection_ScaledUnit(state->args->targets[0], &position);
+  if (state->args->side == EFFECT_SIDE_ENEMIES)
     REG_BG2X = (16 - position.x) << 8;
   else
     REG_BG2X = (112 - position.x) << 8;
@@ -71,14 +72,14 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
     picture = frame / 4;
     if (picture <= 5) {
       if (picture <= 3)
-        draw[0](canvas, work->sheet + gSpiderWeb_Pictures[picture],
-                gSpiderWeb_PictureX[picture + work->args->side * 6],
+        draw[0](canvas, state->sheet + gSpiderWeb_Pictures[picture],
+                gSpiderWeb_PictureX[picture + state->args->side * 6],
                 gSpiderWeb_PictureBiasY[picture] + 32,
                 gSpiderWeb_PictureWidths[picture],
                 gSpiderWeb_PictureHeights[picture]);
       else
         draw[0](canvas, Ram_MapGridCellBuffer + gSpiderWeb_Pictures[picture],
-                gSpiderWeb_PictureX[picture + work->args->side * 6],
+                gSpiderWeb_PictureX[picture + state->args->side * 6],
                 gSpiderWeb_PictureBiasY[picture] + 32,
                 gSpiderWeb_PictureWidths[picture],
                 gSpiderWeb_PictureHeights[picture]);
@@ -86,13 +87,13 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
     if (frame == 8) {
       if (mode == SWIRL_SWIPE_POISON_BEAT) {
         EFFECT_SHOW_DAMAGE(SE_IMPACT);
-        BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HOP);
+        BattleMotion_ApplyKnockbackFar(state->args->targets[0], KNOCKBACK_HOP);
       } else {
         Sound_PlayFar(SE_HEAVY_IMPACT);
-        BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
+        BattleEffect_TintBattler(state->args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 4);
       }
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
     }
     // Spinning Beat throws the target into the air.
     if (mode == SWIRL_SWIPE_SPINNING_BEAT) {
@@ -102,12 +103,12 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
         actor->bounce = FIXED_ONE / 4;
       }
       if (frame == 65) {
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
@@ -130,23 +131,23 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   struct ScreenPoint first;
   struct ScreenPoint last;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   s32 frame;
   s32 i;
 
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  work->args = args;
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(2));
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(0); // invisible to start with
-  Projection_ScaledUnit(work->args->targets[0], &first);
-  Projection_ScaledUnit(work->args->targets[work->args->targetCount - 1],
+  Projection_ScaledUnit(state->args->targets[0], &first);
+  Projection_ScaledUnit(state->args->targets[state->args->targetCount - 1],
                         &last);
   first.x += (last.x - first.x) / 2;
   REG_BG2X = (SPIDER_WEB_CENTER_X - first.x) << 8;
-  Resource_LoadAndDecompress(RESOURCE_SPIDER_WEB_SHEET, work->sheet, 1, 1);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  Resource_LoadAndDecompress(RESOURCE_SPIDER_WEB_SHEET, state->sheet, 1, 1);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_CRACK);
   for (frame = 0; frame != SPIDER_WEB_FRAMES; frame++) {
     if (frame <= 8)
@@ -156,37 +157,37 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_TRANSPARENT);
     EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
-        canvas, work->sheet, SPIDER_WEB_LEFT, SPIDER_WEB_TOP,
+        canvas, state->sheet, SPIDER_WEB_LEFT, SPIDER_WEB_TOP,
         SPIDER_WEB_QUARTER_WIDTH, SPIDER_WEB_QUARTER_HEIGHT);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_TRANSPARENT);
     EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
-        canvas, work->sheet, SPIDER_WEB_CENTER_X, SPIDER_WEB_TOP,
+        canvas, state->sheet, SPIDER_WEB_CENTER_X, SPIDER_WEB_TOP,
         SPIDER_WEB_QUARTER_WIDTH, SPIDER_WEB_QUARTER_HEIGHT);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                         COMPOSITE_TRANSPARENT);
     EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
-        canvas, work->sheet, SPIDER_WEB_LEFT, SPIDER_WEB_CENTER_Y,
+        canvas, state->sheet, SPIDER_WEB_LEFT, SPIDER_WEB_CENTER_Y,
         SPIDER_WEB_QUARTER_WIDTH, SPIDER_WEB_QUARTER_HEIGHT);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                         COMPOSITE_TRANSPARENT);
     EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
-        canvas, work->sheet, SPIDER_WEB_CENTER_X, SPIDER_WEB_CENTER_Y,
+        canvas, state->sheet, SPIDER_WEB_CENTER_X, SPIDER_WEB_CENTER_Y,
         SPIDER_WEB_QUARTER_WIDTH, SPIDER_WEB_QUARTER_HEIGHT);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(SE_CRACK);
-    EFFECT_FOR_EACH_TARGET(i, work->args) {
+    EFFECT_FOR_EACH_TARGET(i, state->args) {
       if (frame == 10)
-        BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
+        BattleEffect_TintBattler(state->args->targets[i], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, i, 8);
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();

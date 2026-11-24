@@ -84,7 +84,7 @@
 #define TARGET_NAME_INTERIOR_WIDTH ((DISPLAY_TILE_WIDTH - 2) * 8)
 
 /// Where the battle view slides while a target is chosen
-/// (BattleMenuWork.targetViewOffset): 16 pixels down when aiming at the
+/// (BattleMenuState.targetViewOffset): 16 pixels down when aiming at the
 /// enemies, 2 up when aiming at the party or the user.
 #define TARGET_VIEW_OFFSET_ENEMIES 16
 #define TARGET_VIEW_OFFSET_PARTY (-2)
@@ -141,7 +141,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct ScreenPoint markerPosition;
   struct AffineTransform effect;
   struct Unit *unit;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   struct Window *window;
   struct Window *conditionWindow;
   s32 targetIndex;
@@ -170,7 +170,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct SelectionSprite *firstSprite;
   struct Unit *target;
 
-  battle = gBattleWork;
+  battle = gBattleState;
   targetCount = 0;
   redraw = TARGET_REDRAW_ALL;
   cursorSlot = VramCache_AllocEntry(256);
@@ -178,9 +178,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (spread == 0)
     spread = 1;
   if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
-    gBattleMenuWork->targetViewOffset = TARGET_VIEW_OFFSET_PARTY;
+    gBattleMenuState->targetViewOffset = TARGET_VIEW_OFFSET_PARTY;
   else
-    gBattleMenuWork->targetViewOffset = TARGET_VIEW_OFFSET_ENEMIES;
+    gBattleMenuState->targetViewOffset = TARGET_VIEW_OFFSET_ENEMIES;
   for (i = 0; i < TARGET_MARKERS; i++)
     cursorTracks[i].flags = 0;
   // The candidates: the party, the acting unit alone, or the enemies.
@@ -705,15 +705,15 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     pressed = gKeysPressed;
     repeated = gKeysRepeat;
-    if (gBattleMenuWork->tutorialStep) {
+    if (gBattleMenuState->tutorialStep) {
       repeated = 0;
       pressed = 0;
-      if (gBattleMenuWork->tutorialDelay == 0) {
-        gBattleMenuWork->tutorialDelay = 60;
+      if (gBattleMenuState->tutorialDelay == 0) {
+        gBattleMenuState->tutorialDelay = 60;
         repeated = KEY_A;
         pressed = KEY_A;
       } else {
-        gBattleMenuWork->tutorialDelay--;
+        gBattleMenuState->tutorialDelay--;
       }
     }
     // A: the aimed unit's side and place; the loop ends after this frame.
@@ -759,7 +759,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         redraw |= TARGET_REDRAW_SPREAD;
       }
     }
-    if (gBattleMenuWork->timer == 0 || (pressed & KEY_B)) {
+    if (gBattleMenuState->timer == 0 || (pressed & KEY_B)) {
       Sound_PlayFar(SE_MENU_CANCEL);
       targetIndex = -1;
       break;
@@ -772,7 +772,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     Window_Close(conditionWindow, 1);
   Window_Close(window, 1);
   BattleHighlight_SetModesFar(candidateIds, HIGHLIGHT_OFF);
-  gBattleMenuWork->targetViewOffset = 0;
+  gBattleMenuState->targetViewOffset = 0;
   wait(1);
   return targetIndex;
 }

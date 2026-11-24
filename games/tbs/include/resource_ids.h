@@ -64,8 +64,8 @@ extern char ResourceId_IntroTilesB;
 // Battle backgrounds. BattleBackground_SelectForMap picks one for the current
 // scene from gScene_BattleBackgroundRules (field/battle_background_rules.c),
 // and on the world map BattleBackground_SelectForEnvironment picks one by
-// battle environment; either leaves it in gMainRoutineWork.battleBackground for
-// the battle. The credits (gCredits_Backgrounds) shows every one but
+// battle environment; either leaves it in gMainRoutineState.battleBackground
+// for the battle. The credits (gCredits_Backgrounds) shows every one but
 // DesertBackdrop and AerialViewBackdrop, and some summons draw one as their
 // sky.
 
@@ -207,7 +207,7 @@ extern char ResourceId_LuckyDiceSprites;
 #define RESOURCE_LUCKY_DICE_SPRITES ((s32)&ResourceId_LuckyDiceSprites)
 
 // The flashing strikes' pictures (battle_effect/battle_effect_thrash.c). Each
-// holds two pictures; the first of a pair fills work->imageStorage, the second
+// holds two pictures; the first of a pair fills state->imageStorage, the second
 // the start of Ram_MapGridCellBuffer.
 
 extern char ResourceId_RevealMaskA; ///< Vorpal Slash, first of its pair.

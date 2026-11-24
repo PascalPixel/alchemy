@@ -33,7 +33,7 @@ struct SolSanctumRingEntry {
   u8 hold;         ///< steps it has left hidden
 };
 
-/// The floating lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS, one entry per
+/// The floating lights' state in HEAP_SLOT_SOL_SANCTUM_LIGHTS, one entry per
 /// light.
 struct SolSanctumRingList {
   struct SolSanctumRingEntry entries[SOL_SANCTUM_RING_MAX];

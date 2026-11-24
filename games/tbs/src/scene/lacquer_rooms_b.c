@@ -37,7 +37,7 @@
 #include "menu/menu.h"
 #include "scene/field_effect_spawn.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -104,7 +104,7 @@ const u32 *Scene_GetExits(void) { return gLacquerRoomsB_Exits; }
 
 /// The room behind the school places only Master Feh, Feizhi and Hsu.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomActorPlacements;
   }
@@ -258,7 +258,7 @@ static void LacquerRoomsB_FeizhiThanksParty(void) {
 
 /// The room behind the school has its own triggers.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomTriggers;
   }
@@ -271,9 +271,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   s16 entrance;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  entrance = gMainRoutineWork.entrance;
+  entrance = gMainRoutineState.entrance;
   // XXX (no evidence): what these hidden chests are for; the player neither
   // sees nor meets them.
   if (entrance == LACQUER_ROOMS_B_INN_SOUTH ||

@@ -71,7 +71,7 @@
 #include "field/event_commands.h"
 #include "field/event_inline.h"
 #include "field/field.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/field_sequence.h"
 #include "field/pushed_actor.h"
 #include "field/scene_tables.h"
@@ -91,7 +91,7 @@
 #include "system/input.h"
 #include "system/io_write_queue.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/vram_cache.h"
 #include "window/screens.h"
@@ -478,9 +478,9 @@ static void ColosseumSatrageMatch_MoveMiniMazePillar(void) {
 /// shoves what else it hits, and the log topples from where it stands
 /// (ColosseumSatrageMatch_KnockDownLog).
 static void ColosseumSatrageMatch_KeepLogStillForForce(void) {
-  u8 *effectWork = gFieldEffectWork;
+  u8 *effectState = gFieldEffectState;
 
-  ((struct FieldEffectWork *)effectWork)->childMode = 1;
+  ((struct FieldEffectState *)effectState)->childMode = 1;
 }
 
 /// Force on the tall log standing at the east end of the Board Walk's channel
@@ -555,7 +555,7 @@ static void ColosseumSatrageMatch_GrowPlant(void) {
 /// Walking south off the top of the stone post just west of the sprout at the
 /// foot of The Wall, cell (31, 16), Isaac jumps down to the ground below.
 static void ColosseumSatrageMatch_JumpDownFromPost(void) {
-  FieldActor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
+  FieldActor_JumpDownLedge(gMainRoutineState.leaderActorId, 6, 0);
 }
 
 /// Walking west off the top of the stone post just west of the sprout at the
@@ -574,7 +574,7 @@ static void ColosseumSatrageMatch_MoveRidingLog(s32 logId, s32 offsetX,
   FIXED destinationX;
   FIXED destinationZ;
 
-  rider = Actor_Get(gMainRoutineWork.leaderActorId);
+  rider = Actor_Get(gMainRoutineState.leaderActorId);
   log = Actor_Get(logId);
   Event_Start();
   {
@@ -623,7 +623,7 @@ static void ColosseumSatrageMatch_MoveRidingLog(s32 logId, s32 offsetX,
 /// Right rolls it four cells across the pool with Isaac on top, towards the
 /// far bank: west from its east end, east from its west end.
 static void ColosseumSatrageMatch_RideLog(void) {
-  struct Actor *rider = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *rider = Actor_Get(gMainRoutineState.leaderActorId);
   s32 column = FIELD_CELL(rider->x.fixed);
   s32 offsetX = 0;
   s32 logId = ACTOR_RIDING_LOG_NORTH;
@@ -655,7 +655,7 @@ static void ColosseumSatrageMatch_RideLog(void) {
 /// in half cells, with Isaac walking after it half the way.
 static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
                                                 s32 halfCellZ) {
-  s32 pusher = gMainRoutineWork.leaderActorId;
+  s32 pusher = gMainRoutineState.leaderActorId;
   struct Actor *pusherActor = Actor_Get(pusher);
   struct Actor *log = Actor_Get(logId);
   s32 heading = FACING_NEAREST_EIGHTH(pusherActor->facing);
@@ -683,8 +683,8 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Event_Wait(6);
   Actor_SetAnimation(pusher, ANIM_WALK);
   // Follow halfway behind the rolling log while its finish effect runs.
-  Actor_StartCamera(((struct FieldWork *)HeapSlot_AllocEwram(
-                         HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
+  Actor_StartCamera(((struct FieldState *)HeapSlot_AllocEwram(
+                         HEAP_SLOT_FIELD, sizeof(struct FieldState)))
                         ->camera,
                     (s32)log);
   Actor_SetSpeedAndAcceleration(pusher, 0.5, 0.2);
@@ -781,7 +781,7 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   FIXED riderZ;
   FIXED deltaZ;
 
-  rider = Actor_Get(gMainRoutineWork.leaderActorId);
+  rider = Actor_Get(gMainRoutineState.leaderActorId);
   // Carry a rider only while both horizontal distances are less than ten
   // pixels.
   for (liftId = ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
@@ -1021,7 +1021,7 @@ s32 Scene_Initialize(void) {
   s32 columnOffset;
   s32 row;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   // Keep a copy of the Board Walk's cells at column 100 and the Log-Rolling
   // Stage's at column 120, off the stages, to put back before the logs' cells
@@ -1143,12 +1143,12 @@ s32 Scene_Initialize(void) {
     Task_SetFlags(ColosseumSatrageMatch_UpdateLifts, 1);
   }
   Actor_SetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
-  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+  gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_COTTON_SHIRT);
   Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_CHAIN_MAIL);
   Actor_SetSpriteColorById(ACTOR_OPPONENT, SPRITE_COLOR_GRB);
   // The race, the friends' turns, the tour, and the battle's result.
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND:
     ColosseumSatrageMatch_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 5,
                                          toFIXED(104), toFIXED(256),
@@ -1279,7 +1279,7 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
 static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
   s32 result;
 
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
@@ -1324,7 +1324,7 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
 static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
   s32 result;
 
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
@@ -1367,7 +1367,7 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
 static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
   s32 result;
 
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
@@ -1422,7 +1422,7 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
   struct Actor *actor;
   s32 result;
 
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
     return;
@@ -1480,7 +1480,7 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
 /// rolls west to (x, z) in pixels, with Isaac walking after it half the way.
 static void ColosseumSatrageMatch_DemonstrateLogPush(s32 obstacleId, s32 x,
                                                      s32 z) {
-  s32 pusher = gMainRoutineWork.leaderActorId;
+  s32 pusher = gMainRoutineState.leaderActorId;
   struct Actor *pusherActor = Actor_Get(pusher);
   struct Actor *obstacle = Actor_Get(obstacleId);
   // The test is ColosseumSatrageMatch_RollLogToCell's, made for half cells:
@@ -1524,7 +1524,7 @@ static void ColosseumSatrageMatch_DemonstrateLogPush(s32 obstacleId, s32 x,
 static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
   s32 result;
 
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
     return;
@@ -1587,23 +1587,23 @@ void ColosseumSatrageMatch_StartRaceGauge(s32 leaderId, s32 opponentId,
                                           s32 segments, s32 finishX,
                                           FIXED finishZ, s32 firstItem,
                                           s32 secondItem) {
-  struct ColossoRaceWork *work;
+  struct ColossoRaceState *state;
   struct Actor *leader;
   struct Actor *opponent;
   void *graphics;
   s32 vramSlot;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_COLOSSO_RACE,
-                             sizeof(struct ColossoRaceWork));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_COLOSSO_RACE,
+                              sizeof(struct ColossoRaceState));
   graphics = Heap_AllocEwram(512);
 
-  work->gauge.playerActorId = leaderId;
-  work->gauge.opponentActorId = opponentId;
-  work->gauge.finishItemActorIdA = firstItem;
-  work->gauge.finishItemActorIdB = secondItem;
-  work->gauge.segments = segments;
-  work->gauge.finishX = finishX;
-  work->gauge.finishZ = finishZ;
+  state->gauge.playerActorId = leaderId;
+  state->gauge.opponentActorId = opponentId;
+  state->gauge.finishItemActorIdA = firstItem;
+  state->gauge.finishItemActorIdB = secondItem;
+  state->gauge.segments = segments;
+  state->gauge.finishX = finishX;
+  state->gauge.finishZ = finishZ;
 
   leader = Actor_Get(leaderId);
   opponent = Actor_Get(opponentId);
@@ -1615,13 +1615,13 @@ void ColosseumSatrageMatch_StartRaceGauge(s32 leaderId, s32 opponentId,
     opponent->z.fixed = leader->z.fixed;
   }
 
-  work->gauge.level = 0;
-  work->gauge.hold = 0;
+  state->gauge.level = 0;
+  state->gauge.hold = 0;
 
   FieldDecompress_TaggedLz(gColosso_GaugeGraphics, graphics);
 
   vramSlot = VramCache_FindFreeEntry();
-  work->gauge.vramBlock = vramSlot;
+  state->gauge.vramBlock = vramSlot;
   VramCache_Load((s16)vramSlot, 512, graphics);
 
   Task_AddFrame(Colosso_DrawGauge, TASK_PASS_FRAME - 10);
@@ -1631,14 +1631,14 @@ void ColosseumSatrageMatch_StartRaceGauge(s32 leaderId, s32 opponentId,
 
 /// Decodes the opponent's recorded path and starts its playback task.
 static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
-  struct ColossoRaceWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_COLOSSO_RACE);
+  struct ColossoRaceState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_COLOSSO_RACE);
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneLocalState;
 
-  FieldDecompress_TaggedLz(Resource_GetTableEntry(pathResource), work->path);
+  FieldDecompress_TaggedLz(Resource_GetTableEntry(pathResource), state->path);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     recorder->mode = PATH_RECORDER_PLAY;
     recorder->mirror = 1;
-    recorder->actorId = work->gauge.opponentActorId;
+    recorder->actorId = state->gauge.opponentActorId;
     recorder->still = 0;
     recorder->pathIndex = 0;
   }

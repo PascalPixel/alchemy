@@ -14,8 +14,8 @@
 /// actor, with the speaker's portrait beside
 /// it when it has one, and moves on to the next message.
 struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
-  struct WindowWork *windowWork;
-  struct FieldWork *work;
+  struct WindowState *windowState;
+  struct FieldState *state;
   s32 sprite;
   s32 extra;
   s32 portraitTop;
@@ -38,8 +38,8 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
   s32 portraitId;
 #endif
 
-  windowWork = WINDOW_WORK;
-  work = gFieldWork;
+  windowState = WINDOW_STATE;
+  state = gFieldState;
   window = 0;
   portrait = 0;
   sprite = Actor_GetSpriteById(actorId);
@@ -47,17 +47,17 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
   portraitTop = 0;
   margin = 4;
   flags = actorId & SPEAKER_FLAGS;
-  message = work->message;
+  message = state->message;
   actorId &= SPEAKER_ACTOR_MASK;
   x = 0;
   actor = Actor_Lookup(actorId);
-  work->speaker = actorId;
+  state->speaker = actorId;
   y = 0;
   found = 0;
-  if (work->fastForward == 0) {
+  if (state->fastForward == 0) {
     // Find the speaker on screen, in 8-pixel tiles.
     if (actor != 0) {
-      if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+      if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
         Matrix_ProjectPoint(&actor->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
@@ -73,14 +73,14 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
       }
     } else if (actorId < ACTOR_FIRST_PLACED) {
       sprite = actorId;
-      actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-      if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+      actor = Actor_Lookup(gMainRoutineState.leaderActorId);
+      if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
         Matrix_ProjectPoint(&actor->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
       } else {
-        if (Actor_GetScreenPosition(gMainRoutineWork.leaderActorId, pos) != -1)
+        if (Actor_GetScreenPosition(gMainRoutineState.leaderActorId, pos) != -1)
           found = 1;
         else
           found = 0;
@@ -109,7 +109,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
     }
 
     // Place the portrait beside the speaker, on the side with more room.
-    if (windowWork->mindRead != 0)
+    if (windowState->mindRead != 0)
       margin = 5;
     column = x;
     if (flags & SPEAKER_PORTRAIT_LEFT) {
@@ -194,7 +194,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
       column = DISPLAY_TILE_WIDTH - 1 - margin;
 
     // Open the message and the portrait, and wait until the text is typed out.
-    if (windowWork->mindRead != 0) {
+    if (windowState->mindRead != 0) {
       wait(8);
       if (extra != 0)
         window = Message_OpenWindowFar(message, left, top + extra - 1,
@@ -217,17 +217,17 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
                                            MESSAGE_WINDOW_ZOOM);
     }
     // DEAD: both arms open the same portrait behind a test of
-    // windowWork->mindRead; the ROM keeps the test's load of mindRead.
-    if (windowWork->mindRead != 0)
+    // windowState->mindRead; the ROM keeps the test's load of mindRead.
+    if (windowState->mindRead != 0)
       portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     else
       portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     while (!Message_AllTypedFar())
       wait(1);
   }
-  work->messageWindow = (s32)window;
-  work->sideWindow = portrait;
-  work->message++;
+  state->messageWindow = (s32)window;
+  state->sideWindow = portrait;
+  state->message++;
   return window;
 }
 
@@ -236,7 +236,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
 /// closed once the text is typed out.
 void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
   s32 member;
-  struct FieldWork *fieldWork = gFieldWork;
+  struct FieldState *fieldState = gFieldState;
   struct Window *window = FieldMessage_ShowAtActor(actorId, flags);
   s32 sprite;
   u32 frames;
@@ -255,7 +255,7 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
   }
   Portrait_CloseWindowFar(sprite);
 
-  if (fieldWork->fastForward == 0) {
+  if (fieldState->fastForward == 0) {
     while (Window_IsClosedFar(window) == 0) {
       wait(1);
       frames++;
@@ -281,19 +281,19 @@ void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 frames) {
 /// message for yes or the one after it for no.
 s32 Event_AskYesNoAndShowResponse(s32 actorId, s32 flags) {
   s32 answer;
-  struct FieldWork *fieldWork;
-  struct MainRoutineWork *mainWork;
+  struct FieldState *fieldState;
+  struct MainRoutineState *mainState;
 
   FieldMessage_ShowAtActor(actorId, flags);
-  mainWork = &gMainRoutineWork;
-  answer = Event_AskYesNoWithActorAnimation(mainWork->leaderActorId, 0);
+  mainState = &gMainRoutineState;
+  answer = Event_AskYesNoWithActorAnimation(mainState->leaderActorId, 0);
   if (answer == 0) {
     Event_ShowMessageAndWait(actorId, flags);
-    fieldWork = gFieldWork;
-    fieldWork->message += 1;
+    fieldState = gFieldState;
+    fieldState->message += 1;
   } else {
-    fieldWork = gFieldWork;
-    fieldWork->message += 1;
+    fieldState = gFieldState;
+    fieldState->message += 1;
     Event_ShowMessageAndWait(actorId, flags);
   }
   return answer;
@@ -328,28 +328,28 @@ void Event_ShowSpeakerMessage(s32 speaker) {
     s32 x, y;
   } pos;
 #endif
-  struct FieldWork *fieldWork = gFieldWork;
+  struct FieldState *fieldState = gFieldState;
 
   speaker &= SPEAKER_ACTOR_MASK;
 #ifdef UBFIX
   // Only the actor slots hold actor pointers;
   // Actor_Lookup's legacy range also exposes the event fields after
   // them.
-  if ((u32)speaker < sizeof(fieldWork->actors) / sizeof(fieldWork->actors[0]))
+  if ((u32)speaker < sizeof(fieldState->actors) / sizeof(fieldState->actors[0]))
     actor = Actor_Lookup(speaker);
   else
     actor = NULL;
 #else
   Actor_Lookup(speaker);
 #endif
-  fieldWork->speaker = speaker;
-  if (fieldWork->fastForward == 0) {
+  fieldState->speaker = speaker;
+  if (fieldState->fastForward == 0) {
 #ifdef UBFIX
     s32 positionFound = 0;
 
     // Supply the actual speaker position as FieldMessage_ShowAtActor does.
     if (actor != NULL) {
-      if (fieldWork->mode == ACTOR_SYSTEM_WORLD_MAP)
+      if (fieldState->mode == ACTOR_SYSTEM_WORLD_MAP)
         positionFound =
             Matrix_ProjectPoint((const u8 *)actor + offsetof(struct Actor, x),
                                 pos) != 0;
@@ -378,16 +378,16 @@ void Event_ShowSpeakerMessage(s32 speaker) {
                                                     : windowY;
       if (windowY > MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y)
         windowY = MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y;
-      win = (s32)Message_OpenWindowFar(fieldWork->message, windowX, windowY,
+      win = (s32)Message_OpenWindowFar(fieldState->message, windowX, windowY,
                                        MESSAGE_WINDOW_ZOOM);
-      fieldWork->messageWindow = win;
+      fieldState->messageWindow = win;
       while (Window_IsClosedFar((struct Window *)win) == 0)
         wait(1);
 #ifdef UBFIX
     }
 #endif
   }
-  fieldWork->message++;
+  fieldState->message++;
 }
 
 /// Unused: reached only through a bare veneer in field_sequence.s; forwards its
@@ -402,7 +402,7 @@ void Event_ForwardShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x,
 /// MESSAGE_POSITION_WIDTH says, wait for it and advance the message index; its
 /// units are as unknown as Event_ShowSpeakerMessage's.
 void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y) {
-  struct FieldWork *fieldWork = gFieldWork;
+  struct FieldState *fieldState = gFieldState;
   s32 windowY = y;
   s32 windowX = x;
   s32 minX = MESSAGE_POSITION_MARGIN_X;
@@ -420,11 +420,11 @@ void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y) {
     windowX = MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X;
   CLAMP(windowY, minY, MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y);
 
-  window = (s32)Message_OpenWindowFar(fieldWork->message, windowX, windowY,
+  window = (s32)Message_OpenWindowFar(fieldState->message, windowX, windowY,
                                       MESSAGE_WINDOW_ZOOM);
   while (Window_IsClosedFar((struct Window *)window) == 0)
     wait(1);
-  fieldWork->message++;
+  fieldState->message++;
 }
 
 /// Closes the portrait of an actor's sprite, if it has one.
@@ -443,19 +443,19 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                   s32 firstPortraitX, s32 firstPortraitY,
                                   s32 second, s32 secondX, s32 secondY,
                                   s32 secondPortraitX, s32 secondPortraitY) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   s32 firstSprite = Actor_GetSpriteById(first);
   s32 secondSprite = Actor_GetSpriteById(second);
   s32 firstWindow;
   s32 secondWindow;
 
   firstWindow = (s32)Message_OpenWindowFar(
-      work->message++, firstX, firstY,
+      state->message++, firstX, firstY,
       MESSAGE_WINDOW_VOICE(Speaker_GetVoice(firstSprite)));
   Portrait_OpenWindowFar(firstSprite, 0, firstPortraitX, firstPortraitY);
 
   secondWindow = (s32)Message_OpenWindowFar(
-      work->message++, secondX, secondY,
+      state->message++, secondX, secondY,
       MESSAGE_WINDOW_VOICE(Speaker_GetVoice(secondSprite)));
   Portrait_OpenWindowFar(secondSprite, 0, secondPortraitX, secondPortraitY);
 
@@ -484,18 +484,18 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
 /// the rate the message speed option picks (gMessageSpeed_VoiceRates);
 /// MESSAGE_VOICE_NONE clears it.
 void Message_SetVoiceFromActor(s32 actorId) {
-  struct WindowWork *windowWork = WINDOW_WORK;
+  struct WindowState *windowState = WINDOW_STATE;
   u8 rate;
   s32 voice;
 
   if (actorId == MESSAGE_VOICE_NONE) {
-    windowWork->voiceSound = 0;
-    windowWork->voiceCountdown = 0;
+    windowState->voiceSound = 0;
+    windowState->voiceCountdown = 0;
   } else {
     voice = Speaker_GetVoice(Actor_GetSpriteById(actorId));
-    rate = gMessageSpeed_VoiceRates[gMainRoutineWork.messageSpeed];
-    windowWork->voiceSound = voice;
-    windowWork->voiceCountdown = rate;
+    rate = gMessageSpeed_VoiceRates[gMainRoutineState.messageSpeed];
+    windowState->voiceSound = voice;
+    windowState->voiceCountdown = rate;
   }
 }
 

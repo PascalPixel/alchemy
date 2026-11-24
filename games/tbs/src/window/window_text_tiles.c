@@ -31,11 +31,11 @@
 /// A 4bpp pixel: the low four bits of a byte, the colour of its palette.
 #define PIXEL_4BPP_MASK (PALETTE_COLORS - 1)
 
-/// A text tile's bits in WindowWork.textTileState; 0 is free.
+/// A text tile's bits in WindowState.textTileState; 0 is free.
 #define TEXT_TILE_TAKEN 1 ///< allocated to some text
 #define TEXT_TILE_SHOWN                                                        \
   2 ///< seen on the tilemap by Window_MarkVisibleTextTiles
-/// A text tile's place in WindowWork.textTileState: the TEXT_TILES tiles from
+/// A text tile's place in WindowState.textTileState: the TEXT_TILES tiles from
 /// TEXT_TILE_FIRST take the first places, those from TEXT_EXTRA_TILE_FIRST the
 /// next TEXT_TILES.
 #define TEXT_TILE_STATE_INDEX(tile) (((tile) & 0xFF) ^ TEXT_TILE_FIRST)
@@ -45,7 +45,7 @@
 /// the entry (and the same entry in mirror) a text tile of its own.
 UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
                                       u8 *remap) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   u8 pixels[128];
   u8 *sheet = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
   u32 tile = *(u8 *)entry;
@@ -91,15 +91,15 @@ UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 
   if ((s8)tile >= 0) {
     for (n = 0; n < TEXT_TILES; n++) {
-      u32 value = work->nextTextTile;
+      u32 value = state->nextTextTile;
       u32 following = (value + 1) % TEXT_TILES;
 
       tile = (u8)value;
-      work->nextTextTile = following;
-      if (work->textTileState[tile] == 0)
+      state->nextTextTile = following;
+      if (state->textTileState[tile] == 0)
         break;
     }
-    work->textTileState[tile] = TEXT_TILE_TAKEN;
+    state->textTileState[tile] = TEXT_TILE_TAKEN;
     tile |= TEXT_TILE_FIRST;
     *entry = WINDOW_TILE(tile);
     *mirror = WINDOW_TILE(tile);
@@ -116,7 +116,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
    * touches. */
   UNUSED u32 reserve[8];
   u8 pens[16];
-  struct WindowWork *work;
+  struct WindowState *state;
   u8 *canvas;
   u8 *glyphs;
   u32 paletteBits;
@@ -130,20 +130,20 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   s32 column;
   u32 bits;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   canvas = Heap_Alloc(TILE_TEXT_CANVAS_SIZE);
   glyphs = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
-  paletteBits = BG_TILE_PALETTE(work->textPalette);
+  paletteBits = BG_TILE_PALETTE(state->textPalette);
   Iwram_ClearWords(pens, 16);
   // pens maps a font pixel, 1 or 3 (the font's two shades), to a colour; 0
   // leaves the background.
   if (paletteBits == BG_TILE_PALETTE(WINDOW_PALETTE)) {
-    pens[1] = gFont_ColorPens[work->colour & (PALETTE_COLORS - 1)];
+    pens[1] = gFont_ColorPens[state->colour & (PALETTE_COLORS - 1)];
     pens[3] = WINDOW_BLACK_COLOR;
     Iwram_FillWords(canvas, TILE_TEXT_CANVAS_SIZE,
                     PIXELS_8BPP(WINDOW_BACKGROUND_COLOR));
   } else {
-    pens[1] = (u8)work->colour & (PALETTE_COLORS - 1);
+    pens[1] = (u8)state->colour & (PALETTE_COLORS - 1);
     pens[3] = 1;
     Iwram_FillWords(canvas, TILE_TEXT_CANVAS_SIZE,
                     PIXELS_8BPP(TEXT_BACKGROUND_COLOR));
@@ -158,8 +158,8 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
       if (glyphCode <= TEXT_END_ALT) {
         switch (glyphCode) {
         case TEXT_COLOR:
-          work->colour = *text++;
-          pens[1] = gFont_ColorPens[work->colour & (PALETTE_COLORS - 1)];
+          state->colour = *text++;
+          pens[1] = gFont_ColorPens[state->colour & (PALETTE_COLORS - 1)];
           break;
         // TEXT_RESET_STYLE, TEXT_STYLE and TEXT_LINE_SPACING all reset the
         // colour here, and the last two leave their operand to be read as the
@@ -167,8 +167,8 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         case TEXT_RESET_STYLE:
         case TEXT_STYLE:
         case TEXT_LINE_SPACING:
-          work->colour = TEXT_DEFAULT_COLOR;
-          pens[1] = gFont_ColorPens[work->colour];
+          state->colour = TEXT_DEFAULT_COLOR;
+          pens[1] = gFont_ColorPens[state->colour];
           break;
         case TEXT_NEWLINE:
           x += TILE_TEXT_NEWLINE_WIDTH;
@@ -281,20 +281,20 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
     u32 tile;
     u32 *vramTile;
 
-    if (work->extraTextTiles != 0)
+    if (state->extraTextTiles != 0)
       mask = 2 * TEXT_TILES - 1;
     // Text tile n is tile TEXT_TILE_FIRST + n, and with extraTextTiles set the
     // next TEXT_TILES are tiles from TEXT_EXTRA_TILE_FIRST.
     tile = *tiles & TILE_NUMBER_MASK;
     if ((tile < TEXT_TILE_FIRST || tile > TEXT_TILE_FIRST + TEXT_TILES - 1) &&
-        (work->extraTextTiles == 0 || tile < TEXT_EXTRA_TILE_FIRST ||
+        (state->extraTextTiles == 0 || tile < TEXT_EXTRA_TILE_FIRST ||
          tile > TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
-      tile = work->nextTextTile & mask;
-      for (column = 0; column <= mask && work->textTileState[tile] != 0;
+      tile = state->nextTextTile & mask;
+      for (column = 0; column <= mask && state->textTileState[tile] != 0;
            column++)
         tile = (tile + 1) & mask;
-      work->nextTextTile = (tile + 1) & mask;
-      work->textTileState[tile] = TEXT_TILE_TAKEN;
+      state->nextTextTile = (tile + 1) & mask;
+      state->textTileState[tile] = TEXT_TILE_TAKEN;
       if (tile > TEXT_TILES - 1)
         tile += TEXT_EXTRA_TILE_FIRST - TEXT_TILES;
       else
@@ -321,9 +321,9 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
 /// Frees the text tiles under a tilemap rectangle (x, y, width and height in
 /// tiles) for reuse: their taken and shown bits are cleared.
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
-  u8 *base = gWindowWork[0];
+  u8 *base = gWindowState[0];
   u16 *cursor = (u16 *)((y * BG_SCREEN_WIDTH + x) * 2 + (u32)base);
-  u32 alternateTiles = ((struct WindowWork *)base)->extraTextTiles;
+  u32 alternateTiles = ((struct WindowState *)base)->extraTextTiles;
   u32 row;
 
   for (row = 0; row < height; row++) {
@@ -336,7 +336,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
           (alternateTiles != 0 && tileId > TEXT_EXTRA_TILE_FIRST - 1 &&
            tileId <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
         u32 attributeIndex = TEXT_TILE_STATE_INDEX(tileId);
-        ((struct WindowWork *)base)->textTileState[attributeIndex] &=
+        ((struct WindowState *)base)->textTileState[attributeIndex] &=
             ~(TEXT_TILE_TAKEN | TEXT_TILE_SHOWN);
       }
     }
@@ -347,10 +347,10 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
 /// Marks the text tiles the tilemap shows, and frees those it no longer shows:
 /// a tile taken but not marked shown (its state exactly TEXT_TILE_TAKEN).
 void Window_MarkVisibleTextTiles(void) {
-  struct WindowWork *work = WINDOW_WORK;
-  u16 *cursor = work->tilemap;
+  struct WindowState *state = WINDOW_STATE;
+  u16 *cursor = state->tilemap;
   s32 width = DISPLAY_TILE_WIDTH;
-  u32 alternateTiles = work->extraTextTiles;
+  u32 alternateTiles = state->extraTextTiles;
   s32 row;
   s32 x;
 
@@ -368,7 +368,7 @@ void Window_MarkVisibleTextTiles(void) {
            tileId <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
         u32 attributeIndex = TEXT_TILE_STATE_INDEX(tileId);
 
-        work->textTileState[attributeIndex] |= TEXT_TILE_SHOWN;
+        state->textTileState[attributeIndex] |= TEXT_TILE_SHOWN;
       }
     }
 #ifdef BUGFIX
@@ -377,8 +377,8 @@ void Window_MarkVisibleTextTiles(void) {
   }
 
   for (row = 0; row < 2 * TEXT_TILES; row++) {
-    if (work->textTileState[row] == TEXT_TILE_TAKEN)
-      work->textTileState[row] = 0;
+    if (state->textTileState[row] == TEXT_TILE_TAKEN)
+      state->textTileState[row] = 0;
   }
 }
 
@@ -386,18 +386,18 @@ void Window_MarkVisibleTextTiles(void) {
 /// TEXT_EXTRA_TILE_FIRST), and with allowAlternateTiles set lets text take that
 /// range too; the first range's tiles keep their state.
 void Text_UseExtraTiles(s32 allowAlternateTiles) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   s32 i;
 
   if (allowAlternateTiles != 0) {
-    work->extraTextTiles = 1;
+    state->extraTextTiles = 1;
     for (i = TEXT_TILES; i <= 2 * TEXT_TILES - 1; i++)
-      work->textTileState[i] = 0;
+      state->textTileState[i] = 0;
     return;
   }
-  work->extraTextTiles = 0;
+  state->extraTextTiles = 0;
   for (i = TEXT_TILES; i <= 2 * TEXT_TILES - 1; i++)
-    work->textTileState[i] = 0;
+    state->textTileState[i] = 0;
 }
 
 /// Unused: an empty routine between the text tiles and the dividers.
@@ -408,7 +408,7 @@ UNUSED void Window_ReservedNoOp(void) {}
 /// meet, and it crosses the lines it passes over.
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
                             u32 y2) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   u16 *cursor;
   u32 pos;
   u32 tile;
@@ -423,7 +423,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
     }
     Window_ClearTextTilesInRect(win->x + x2, win->y + y1, 1, y2 - y1);
     cursor = (u16 *)(((win->y + y1) * BG_SCREEN_WIDTH + win->x + x2) * 2 +
-                     (u32)work->tilemap);
+                     (u32)state->tilemap);
     for (pos = y1; pos <= y2; pos++) {
       tile = *cursor;
       if (pos == y1) {
@@ -497,7 +497,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
     }
     Window_ClearTextTilesInRect(win->x + x1, win->y + y1, x2 - x1, 1);
     cursor = (u16 *)(((win->y + y1) * BG_SCREEN_WIDTH + win->x + x1) * 2 +
-                     (u32)work->tilemap);
+                     (u32)state->tilemap);
     for (pos = x1; pos <= x2; pos++) {
       tile = *cursor;
       if (pos == x1) {
@@ -566,27 +566,27 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
 
 /// Sets the colour (enum TextColor) text is drawn in.
 void Text_SetColor(s32 color) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
 
-  work->colour = color & (PALETTE_COLORS - 1);
+  state->colour = color & (PALETTE_COLORS - 1);
 }
 
 /// Sets the style (enum TextStyle) text is drawn in.
 void Text_SetStyle(u16 style) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
 
-  work->outline = style;
+  state->outline = style;
 }
 
 /// Decodes a message and draws it into a text canvas window at pixel (x, y),
 /// all at once.
 void Text_DrawMessage(s32 message, struct Window *window, s32 x, s32 y) {
-  struct WindowWork *work = WINDOW_WORK;
-  work->textBufferEnd = 0;
+  struct WindowState *state = WINDOW_STATE;
+  state->textBufferEnd = 0;
   Message_Decode(message, 1);
-  work->textBuffer[work->textBufferEnd] = 0;
-  work->textBufferEnd = (work->textBufferEnd + 1) & TEXT_BUFFER_MASK;
-  Text_DrawWideStringAtOffset(work->textBuffer, window, x, y);
+  state->textBuffer[state->textBufferEnd] = 0;
+  state->textBufferEnd = (state->textBufferEnd + 1) & TEXT_BUFFER_MASK;
+  Text_DrawWideStringAtOffset(state->textBuffer, window, x, y);
 }
 
 /// Decodes a message and draws it as tiles in a window at pixel (offsetX,
@@ -598,14 +598,14 @@ void Text_DrawMessageAsTiles(s32 message, const struct Window *window,
   s32 vramAddress;
   u16 *text;
   u32 cell;
-  struct WindowWork *work;
+  struct WindowState *state;
 
-  work = WINDOW_WORK;
-  work->textBufferEnd = 0;
+  state = WINDOW_STATE;
+  state->textBufferEnd = 0;
   Message_Decode(message, 1);
 
-  work->textBuffer[work->textBufferEnd] = 0;
-  work->textBufferEnd = (work->textBufferEnd + 1) & TEXT_BUFFER_MASK;
+  state->textBuffer[state->textBufferEnd] = 0;
+  state->textBufferEnd = (state->textBufferEnd + 1) & TEXT_BUFFER_MASK;
 
   cell = ((window->y + (offsetY >> 3) + 1) << 5) +
          (window->x + (offsetX >> 3)) + 1;
@@ -613,8 +613,8 @@ void Text_DrawMessageAsTiles(s32 message, const struct Window *window,
     // Inside the tilemap.
     byteOffset = cell * 2;
     vramAddress = byteOffset + (s32)WINDOW_TILEMAP_VRAM;
-    text = work->textBuffer;
-    Text_DrawStringAsTiles(text, (u16 *)((u8 *)work->tilemap + byteOffset),
+    text = state->textBuffer;
+    Text_DrawStringAsTiles(text, (u16 *)((u8 *)state->tilemap + byteOffset),
                            (u16 *)vramAddress, 7 & offsetX);
   }
 }
@@ -646,7 +646,7 @@ void Text_DrawString(const u8 *text, struct Window *window, s32 x, s32 y) {
 void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
                              s32 offsetX, s32 offsetY) {
   s16 *buffer;
-  struct WindowWork *work;
+  struct WindowState *state;
   u32 cell;
   s32 vram;
   s32 src;
@@ -654,7 +654,7 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
   s32 phase;
 
   buffer = Heap_AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   Text_WidenByteString(text, (u16 *)buffer);
 
   cell = ((window->y + ((u32)offsetY >> 3) + 1) << 5) +
@@ -664,7 +664,7 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
     vram = (s32)WINDOW_TILEMAP_VRAM;
     cell *= 2;
     dst = vram + cell;
-    src = (s32)work->tilemap + cell;
+    src = (s32)state->tilemap + cell;
     phase = offsetX & 7;
     Text_DrawStringAsTiles((u16 *)buffer, (u16 *)src, (u16 *)dst, phase);
     // The scratch is freed only here: a place outside the tilemap leaves it
@@ -726,13 +726,13 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
   u8 *text;
   s32 index;
   u32 cell;
-  struct WindowWork *work;
+  struct WindowState *state;
   s32 vram;
   s32 src;
   s32 dst;
   s32 phase;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   text = String_FormatNumber(formatted, value, 4);
   // Each label is two tiles; the PP label's second is the HP label's in
   // English, German and Japanese (WINDOW_TILE_PP_LABEL_END).
@@ -755,7 +755,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
     vram = (s32)WINDOW_TILEMAP_VRAM;
     cell *= 2;
     dst = vram + cell;
-    src = (s32)work->tilemap + cell;
+    src = (s32)state->tilemap + cell;
     phase = offsetX & 7;
     Text_DrawStringAsTiles((u16 *)output, (u16 *)src, (u16 *)dst, phase);
   }

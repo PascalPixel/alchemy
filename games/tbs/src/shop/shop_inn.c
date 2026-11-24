@@ -27,7 +27,7 @@ static const s8 sInnPricesPerGuest[12] = {
 /// Returns the night's price: the inn's price per guest times the party
 /// members still standing.
 s32 Inn_RoomPrice(s32 innId) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   s32 guestCount = 0;
   s32 pricePerGuest = sInnPricesPerGuest[innId];
   s32 memberIndex;
@@ -42,14 +42,14 @@ s32 Inn_RoomPrice(s32 innId) {
 /// Runs an inn's counter: the innkeeper names the price, and on Yes the party
 /// sleeps. actorId is the innkeeper, whose portrait the lines show.
 s32 Inn_CheckIn(s32 innId, s32 actorId) {
-  struct ShopWork *inn;
+  struct ShopState *inn;
   struct Actor *innkeeper;
   struct Window *innkeeperWindow;
   u32 roomPrice;
   s32 messageBase;
 
-  Shop_InitializeWork();
-  inn = gMenuWork;
+  Shop_InitializeState();
+  inn = gMenuState;
   // The innkeeper's lines are given as they are, as a weapon shop's are
   // (Shop_ShowKeeperMessage); Xian's inn has lines of its own, as far past the
   // other inns' as the warriors' shops' are past the weapon shop's.
@@ -76,7 +76,7 @@ s32 Inn_CheckIn(s32 innId, s32 actorId) {
     Shop_ShowKeeperMessage(messageBase +
                            (INN_MESSAGE_COME_AGAIN - INN_MESSAGE_WELCOME));
     Window_CloseFar(inn->moneyWindow, 2);
-  } else if (roomPrice > gMainRoutineWork.holdings.coins) {
+  } else if (roomPrice > gMainRoutineState.holdings.coins) {
     // "I'm afraid you don't have enough."
     Shop_ShowKeeperMessage(
         messageBase + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
@@ -98,7 +98,7 @@ s32 Inn_CheckIn(s32 innId, s32 actorId) {
   }
 
   Window_CloseFar(innkeeperWindow, 2);
-  Shop_ReleaseWork();
+  Shop_ReleaseState();
   return 0;
 }
 
@@ -109,7 +109,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   s32 memberCount;
   s32 memberIndex;
   struct Unit *unit;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   memberCount = Party_ListMembersFar(partyMemberIds);
   // Charge once and restore only party members who are alive.
@@ -125,10 +125,10 @@ void Inn_PlaySleep(s32 roomPrice) {
   }
 
   // The night's fades take 60 frames each.
-  work = gFieldWork;
-  work->transition =
+  state = gFieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  work->transitionFrames = 60;
+  state->transitionFrames = 60;
   wait(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
@@ -138,5 +138,5 @@ void Inn_PlaySleep(s32 roomPrice) {
   Event_StartScreenTransitionFar();
   Event_WaitTransitionFramesFar();
   wait(30);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
 }

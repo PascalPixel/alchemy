@@ -7,16 +7,16 @@
 /// pair the (0, 0) that ends it, as Colosso_UpdatePathOpponent records it.
 #define COLOSSO_PATH_HALFWORDS (7200 * 2)
 
-/// The race's work in HEAP_SLOT_COLOSSO_RACE, allocated whole when the gauge
+/// The race's state in HEAP_SLOT_COLOSSO_RACE, allocated whole when the gauge
 /// starts: the gauge, then the opponent's path.
-struct ColossoRaceWork {
-  struct ColossoGaugeWork gauge;
+struct ColossoRaceState {
+  struct ColossoGaugeState gauge;
   /// Pixels, as pairs of x and z, one pair a frame, ending with (0, 0):
   /// decoded from the map's resource, or recorded (PATH_RECORDER_RECORD).
   s16 path[COLOSSO_PATH_HALFWORDS];
 };
 
-STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 29040);
+STATIC_ASSERT(sizeof(struct ColossoRaceState) == 29040);
 
 /// The opponent's task, each frame. Playing, it puts him on the next point of
 /// his path, turning at most FACING_STEP a frame to face the way he runs and
@@ -25,7 +25,7 @@ STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 29040);
 /// Recording, it keeps the recorded actor's place each frame, and once the
 /// path is full (two minutes) plays it back on the opponent.
 static void Colosso_UpdatePathOpponent(void) {
-  struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
+  struct ColossoRaceState *state = (struct ColossoRaceState *)gColossoState;
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneLocalState;
   struct Actor *actor;
   s32 x, z, turn;
@@ -36,23 +36,23 @@ static void Colosso_UpdatePathOpponent(void) {
     return;
   }
   if (recorder->mode == PATH_RECORDER_PLAY) {
-    x = work->path[(s16)recorder->pathIndex++];
-    z = work->path[(s16)recorder->pathIndex++];
+    x = state->path[(s16)recorder->pathIndex++];
+    z = state->path[(s16)recorder->pathIndex++];
     if (x == 0 && z == 0) {
       FIXED finishZ;
       recorder->mode = PATH_RECORDER_FINISHED;
       Actor_SelectAnimation(actor, ANIM_STAND);
-      if (work->gauge.finishX < actor->x.fixed) {
-        x = work->gauge.finishX + toFIXED(12);
+      if (state->gauge.finishX < actor->x.fixed) {
+        x = state->gauge.finishX + toFIXED(12);
       } else {
-        x = work->gauge.finishX - toFIXED(12);
+        x = state->gauge.finishX - toFIXED(12);
       }
       if (GameFlag_Get(FLAG_ARENA_REACHED)) {
-        finishZ = work->gauge.finishZ + toFIXED(16);
-        itemActorId = &work->gauge.finishItemActorIdB;
+        finishZ = state->gauge.finishZ + toFIXED(16);
+        itemActorId = &state->gauge.finishItemActorIdB;
       } else {
-        finishZ = work->gauge.finishZ - toFIXED(16);
-        itemActorId = &work->gauge.finishItemActorIdA;
+        finishZ = state->gauge.finishZ - toFIXED(16);
+        itemActorId = &state->gauge.finishItemActorIdA;
       }
       actor->timer = *itemActorId;
       actor->acceleration = toFIXED(1) / 4;
@@ -65,7 +65,7 @@ static void Colosso_UpdatePathOpponent(void) {
     x = INTtoFIXED(x);
     z = INTtoFIXED(z);
     if (recorder->mirror != 0) {
-      x = work->gauge.finishX * 2 - x;
+      x = state->gauge.finishX * 2 - x;
     }
     if (actor->x.fixed != x || actor->z.fixed != z) {
       {
@@ -93,12 +93,12 @@ static void Colosso_UpdatePathOpponent(void) {
   } else if (recorder->mode == PATH_RECORDER_RECORD) {
     x = actor->x.part[0].integer;
     z = actor->z.part[0].integer;
-    work->path[(s16)recorder->pathIndex++] = x;
-    work->path[(s16)recorder->pathIndex++] = z;
+    state->path[(s16)recorder->pathIndex++] = x;
+    state->path[(s16)recorder->pathIndex++] = z;
     if ((s16)recorder->pathIndex == COLOSSO_PATH_HALFWORDS - 2) {
-      work->path[(s16)recorder->pathIndex++] = 0;
-      work->path[(s16)recorder->pathIndex] = 0;
-      recorder->actorId = work->gauge.opponentActorId;
+      state->path[(s16)recorder->pathIndex++] = 0;
+      state->path[(s16)recorder->pathIndex] = 0;
+      recorder->actorId = state->gauge.opponentActorId;
       recorder->pathIndex = 0;
       recorder->mode = PATH_RECORDER_PLAY;
     }
@@ -132,7 +132,7 @@ enum ColossoGaugeTile {
 /// when the race starts and back up while FLAG_MENU_OPEN is set; hold keeps it
 /// down.
 static void Colosso_DrawGauge(void) {
-  struct ColossoGaugeWork *gauge = (struct ColossoGaugeWork *)gColossoWork;
+  struct ColossoGaugeState *gauge = (struct ColossoGaugeState *)gColossoState;
   s32 *dst = (s32 *)gauge;
   struct ColossoGaugeSprite *entry = gauge->sprites;
   s32 tile;

@@ -265,10 +265,10 @@ void Actor_SetSpritePalette(struct Actor *actor, s32 palette) {
 /// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
 /// used with ACT_PACKED runs its ending events.
 void Field_EndBusyAndReveal(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
-  work->busy = 0;
-  if (work->revealActive != 0) {
+  state->busy = 0;
+  if (state->revealActive != 0) {
     Field_RunPsynergyEndEvents(ABILITY_REVEAL | ACT_PACKED);
   }
 }

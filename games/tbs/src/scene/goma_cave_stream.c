@@ -53,7 +53,7 @@
 #include "scene/field_effect_spawn.h"
 #include "scene/goma_cave.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 
 extern struct SceneEntrance gGomaCaveStreamEntrances[];
@@ -84,7 +84,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId);
 #include "shared/field_effect_spawn.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == SCENE_GOMA_CAVE_BRIDGE) {
+  if (gMainRoutineState.next == SCENE_GOMA_CAVE_BRIDGE) {
     return gGomaCaveBridgeEntrances;
   }
   return gGomaCaveStreamEntrances;
@@ -95,7 +95,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gGomaCaveStreamAndBridgeExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_GOMA_CAVE_BRIDGE) {
+  if (gMainRoutineState.next == SCENE_GOMA_CAVE_BRIDGE) {
     return gGomaCaveBridgeActorPlacements;
   }
   return gGomaCaveStreamActorPlacements;
@@ -115,7 +115,7 @@ static void GomaCaveStream_MoveStump(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_GOMA_CAVE_BRIDGE) {
+  if (gMainRoutineState.next == SCENE_GOMA_CAVE_BRIDGE) {
     return gGomaCaveBridgeTriggers;
   }
   return gGomaCaveStreamTriggers;
@@ -124,10 +124,10 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Sets up SceneId_GomaCaveStream as the party enters (SceneId_GomaCaveBridge
 /// needs nothing).
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == SCENE_GOMA_CAVE_STREAM) {
-    if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.next == SCENE_GOMA_CAVE_STREAM) {
+    if (gMainRoutineState.entrance ==
         GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     } else {

@@ -17,11 +17,11 @@
 /// Changes the shake without restarting an axis whose argument is negative.
 /// Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per frame.
 void MapGrid_SetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay) {
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
 
   // A negative argument leaves that value alone, so an event can change the
   // decay without restarting the shake, or start one axis only.
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
   if (shakeX >= 0) {
     grid->shakeX = shakeX;
   }
@@ -36,10 +36,10 @@ void MapGrid_SetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay) {
 /// Waits until both shake amplitudes have settled, at most
 /// MAPGRID_SHAKE_SETTLE_FRAMES for a shake whose decay never settles.
 void MapGrid_WaitForShakeToSettle(void) {
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   s32 waitedFrames;
 
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
   // A decay of 1.0 or more never settles, so the limit ends the wait.
   for (waitedFrames = 0; waitedFrames < MAPGRID_SHAKE_SETTLE_FRAMES &&
                          (grid->shakeX > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE ||

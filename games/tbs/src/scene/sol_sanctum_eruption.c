@@ -47,7 +47,7 @@
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "field/field_effect.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/ground_mask.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
@@ -61,7 +61,7 @@
 #include "system/heap_slots.h"
 #include "system/io_reg.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
@@ -224,9 +224,9 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
 /// Elemental Star Room, collapsing: Saturos's group leaves with its hostages.
 static void SolSanctumEruption_PlayHostageEvent(void) {
   struct Actor *actor;
-  struct WeatherWork *sparkles;
+  struct WeatherState *sparkles;
 
-  sparkles = gWeatherWork;
+  sparkles = gWeatherState;
   Event_Start();
   sparkles->stopped = 0;
   // Reopen the chamber during the first quake and stage the two groups.
@@ -240,7 +240,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_SetSpritePriority(ACTOR_WISE_ONE, 1);
   FieldCamera_MoveTo(232, CAMERA_KEEP, 156, 0);
   MapGrid_CenterOnFollowedPoint();
-  gFieldWork->transitionFrames = 8;
+  gFieldState->transitionFrames = 8;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
@@ -646,7 +646,7 @@ UNUSED static void SolSanctumEruption_UnusedNoOpB(void) {}
 
 /// Plays the collapse after the cut from the Elemental Star Room.
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
     FieldEffect_InitializeSparkles();
     SolSanctumEruption_PlayHostageEvent();
@@ -731,7 +731,7 @@ static void SolSanctumEruption_ResetEmberEmission(void) {
 
 /// Retires landed embers and launches new ones, shaking the map.
 static void SolSanctumEruption_StepEmbers(void) {
-  struct WeatherWork *sparkles;
+  struct WeatherState *sparkles;
   s32 shakePixels;
   u8 emberIndex;
   struct Actor *landedEmber;
@@ -740,7 +740,7 @@ static void SolSanctumEruption_StepEmbers(void) {
   FIXED x;
   FIXED z;
 
-  sparkles = gWeatherWork;
+  sparkles = gWeatherState;
   shakePixels = (u32)gEmberTimer / 10;
   if (shakePixels != 0) {
     sparkles->stopped = 0;
@@ -857,7 +857,7 @@ static inline void SolSanctumEruption_StopWiseOnePalette(void) {
 
 /// Elemental Star Room, collapsing: the Wise One sends Isaac and Garet out.
 static void SolSanctumEruption_PlayWiseOneRescue(void) {
-  struct WeatherWork *sparkles;
+  struct WeatherState *sparkles;
   struct Actor *wiseOne;
   struct Actor *center;
   struct Actor *leader;
@@ -872,7 +872,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   u32 frame;
   s32 flickerDelay;
 
-  sparkles = gWeatherWork;
+  sparkles = gWeatherState;
   wiseOne = Actor_Get(ACTOR_WISE_ONE);
   Task_Remove(SolSanctumEruption_UpdateEmberFrequency);
   gEmberMask = EMBER_EVERY(4);
@@ -1811,7 +1811,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
   struct Sprite *sprite;
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct FieldEffectState *effectState = gFieldEffectState;
   s32 effectIndex;
 
   Sound_Play(SE_ERUPTION_COLUMNS);
@@ -1829,7 +1829,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
         Sprite_StartAnimation(sprite, 0);
         sprite->flags = 0;
         VramCache_FreeEntry(sprite->slot);
-        sprite->slot = effectWork->tileSlot;
+        sprite->slot = effectState->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
             (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;

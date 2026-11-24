@@ -67,7 +67,7 @@
 #include "field/event.h"
 #include "field/scene_tables.h"
 #include "scene/colosso_story_flags.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "text/msg_ids.h"
 
 extern struct SceneEntrance gStuccoRoomsBEntrances[];
@@ -279,11 +279,11 @@ const struct Trigger *Scene_GetTriggers(void) {
 ///
 /// No event row names it.
 UNUSED static void StuccoRoomsB_ExitThroughWindow(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
-  work->transition =
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  work->transitionFrames = 24;
+  state->transitionFrames = 24;
   Import_EventSetExitRequest();
 }
 
@@ -296,18 +296,18 @@ UNUSED static void StuccoRoomsB_ExitThroughWindow(void) {
 static void StuccoRoomsB_EnterDoor(void) {
   u32 actorId;
   struct Actor *actor;
-  struct FieldWork *work;
+  struct FieldState *state;
   s16 *trigger;
   s32 doorIndex;
 
-  work = gFieldWork;
+  state = gFieldState;
   for (actorId = ACTOR_FIRST_PLACED; actorId < ACTOR_ID_COUNT; actorId++) {
     actor = Actor_Get(actorId);
     if (actor != NULL) {
       actor->motionFlags = 0;
     }
   }
-  trigger = &work->stepTrigger;
+  trigger = &state->stepTrigger;
   doorIndex = *trigger - CELL_BEHAVIOR_STUCCO_ROOMS_B_FIRST_DOOR;
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gStuccoRoomsBDoors[doorIndex].steps,
@@ -444,7 +444,7 @@ static void StuccoRoomsB_WatchPassengersArgue(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     MapGrid_CopyCellAttributes(51, 47, 3, 1, 51, 45);
@@ -459,7 +459,7 @@ s32 Scene_Initialize(void) {
       Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_WEST, 0);
     }
     // Each short event plays once, only when entering its room.
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE) {
       if (Event_GetFlag(FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN) == 0) {
         GameFlag_Set(FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN);
@@ -467,7 +467,7 @@ s32 Scene_Initialize(void) {
         StuccoRoomsB_WatchWomanHideMedal();
       }
     }
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE) {
       if (Event_GetFlag(FLAG_STUCCO_ROOMS_B_PASSENGERS_SEEN) == 0) {
         GameFlag_Set(FLAG_STUCCO_ROOMS_B_PASSENGERS_SEEN);

@@ -15,7 +15,7 @@
 #include "resource_ids.h"
 #include "battle/battle.h"
 #include "battle/battle_side.h"
-#include "battle/battle_work.h"
+#include "battle/battle_state.h"
 #include "field/event.h"
 #include "field/field.h"
 #include "field/map_grid_scroll.h"
@@ -337,9 +337,9 @@ enum BattleItemUse {
 /// cleared (its sendFlag set by saving at the game's end).
 #define SAVE_SCAN_ALL_CLEARED 100
 
-/// One icon of the command row (struct BattleCommandRowWork): its sprite, where
-/// it stands and the command it stands for. screens_menu_titles.c loads it,
-/// screens_battle_command_row.c runs the row.
+/// One icon of the command row (struct BattleCommandRowState): its sprite,
+/// where it stands and the command it stands for. screens_menu_titles.c loads
+/// it, screens_battle_command_row.c runs the row.
 struct BattleCommandRowIcon {
   /// The icon as a 32x32 sprite, drawn only while it is selected (pulsing);
   /// the others show as tiles of BG1.
@@ -353,9 +353,9 @@ struct BattleCommandRowIcon {
   s32 kind; ///< its command: MsgCommandName + kind names it
 };
 
-/// The command row's work block: the icons' shared palette, up to six icons,
+/// The command row's state block: the icons' shared palette, up to six icons,
 /// the label window, the pulsing icon's transform and the selection.
-struct BattleCommandRowWork {
+struct BattleCommandRowState {
   /// BG palette slots for the icons' 256-colour pixels, filled as each icon
   /// is loaded (BattleCommandRow_LoadIconTiles).
   struct GlyphPalette palette;

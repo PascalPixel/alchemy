@@ -16,16 +16,16 @@ struct SelectionNodeLinkView {
   struct SelectionNodeLinkView *next;
 };
 
-// XXX: likely a SelectionMenuWork (its row's first icon and the entry under
+// XXX: likely a SelectionMenuState (its row's first icon and the entry under
 // the hand), because head and cursorIndex sit at these offsets (840 and
 // 926); a caller of NodeChain_GetNodeAtIndex would settle it.
 /// A chain's first node and how many links to follow from it, which the unused
 /// NodeChain_GetNodeAtIndex reads.
 struct SelectionMenuCursorView {
   u8 paddingBeforeNode[840];
-  struct SelectionNodeLinkView *node; ///< SelectionMenuWork.head, if it is one
+  struct SelectionNodeLinkView *node; ///< SelectionMenuState.head, if it is one
   u8 paddingBeforeCount[82];
-  u16 count; ///< SelectionMenuWork.cursorIndex, if it is one
+  u16 count; ///< SelectionMenuState.cursorIndex, if it is one
 };
 
 STATIC_ASSERT(sizeof(struct SelectionNodeLinkView) == 8);

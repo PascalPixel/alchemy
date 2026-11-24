@@ -17,7 +17,7 @@
 /// A link cable packet: its packet number, the consoles not yet heard from,
 /// its checksum and a 24-byte payload.
 struct SerialPacket {
-  u8 packetNumber; ///< SerialWork's packet number when the packet was built
+  u8 packetNumber; ///< SerialState's packet number when the packet was built
   /// The consoles heard from before but not this frame (receivedMask ^
   /// currentMask); a receiver complements it once the checksum is good.
   u8 missingMask;
@@ -35,13 +35,13 @@ STATIC_ASSERT(offsetof(struct SerialPacket, checksum) == 2);
 STATIC_ASSERT(offsetof(struct SerialPacket, payload) == 4);
 STATIC_ASSERT(offsetof(struct SerialPacket, reservedTail) == 28);
 
-/// SerialWork.phase.
+/// SerialState.phase.
 enum SerialPhase {
   SERIAL_PHASE_SEARCHING = 0, ///< looking for the partner
   SERIAL_PHASE_CONNECTED = 1
 };
 
-/// SerialWork.mode: how this console takes part in the link.
+/// SerialState.mode: how this console takes part in the link.
 enum SerialMode {
   SERIAL_MODE_CHILD = 0,
   /// SIO_MULTI_SD alone of SIOCNT's SIO_START and SIO_MULTI_SD: this console
@@ -59,12 +59,12 @@ enum LinkStatus {
   LINK_STATUS_EXTRA_CONSOLE = 0x2000
 };
 
-/// The bytes of one packet buffer in SerialWork.storage.
+/// The bytes of one packet buffer in SerialState.storage.
 #define SERIAL_PACKET_BYTES 32
 
 /// The link cable's runtime: its mode and phase, the consoles heard from, the
 /// send position and the packet buffers the interrupt handler fills.
-struct SerialWork {
+struct SerialState {
   /// An enum SerialMode; SERIAL_MODE_CLOCKING adds LINK_STATUS_CLOCKING to the
   /// link status.
   u8 mode;
@@ -107,13 +107,13 @@ struct SerialWork {
   u8 storage[SERIAL_PACKET_BYTES * 8];
 };
 
-STATIC_ASSERT(sizeof(struct SerialWork) == 352);
-STATIC_ASSERT(offsetof(struct SerialWork, mode) == 0);
-STATIC_ASSERT(offsetof(struct SerialWork, transferEnabled) == 8);
-STATIC_ASSERT(offsetof(struct SerialWork, sendIndex) == 20);
-STATIC_ASSERT(offsetof(struct SerialWork, storage) == 96);
+STATIC_ASSERT(sizeof(struct SerialState) == 352);
+STATIC_ASSERT(offsetof(struct SerialState, mode) == 0);
+STATIC_ASSERT(offsetof(struct SerialState, transferEnabled) == 8);
+STATIC_ASSERT(offsetof(struct SerialState, sendIndex) == 20);
+STATIC_ASSERT(offsetof(struct SerialState, storage) == 96);
 
-/// SerialWork.channelFlags: what the transfer interrupts saw of a console's
+/// SerialState.channelFlags: what the transfer interrupts saw of a console's
 /// packets since the last frame.
 enum SerialChannelFlag {
   SERIAL_CHANNEL_PACKET_COMPLETE = 1, ///< its fourteenth halfword arrived
@@ -167,7 +167,7 @@ STATIC_ASSERT(offsetof(struct SerialTransferState, payload) == 4);
 
 /// This console's block transfer state, sent to the partners each VBlank.
 extern struct SerialTransferState gSerialTransfer;
-extern struct SerialWork gSerialWork;
+extern struct SerialState gSerialState;
 /// Set from Serial_Initialize while the consoles exchange packets every frame.
 extern u16 gSerialExchangeActive;
 /// What the send in progress sends from, 0 when none is running.
@@ -197,7 +197,7 @@ extern volatile u16 gLinkStatus;
 
 /// Adds LINK_STATUS_ERROR to a link status once a transfer has failed.
 static inline s32 Serial_AddErrorFlag(s32 status) {
-  if (gSerialWork.transferError != 0)
+  if (gSerialState.transferError != 0)
     status |= LINK_STATUS_ERROR;
   return status;
 }

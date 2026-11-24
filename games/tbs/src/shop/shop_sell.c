@@ -6,7 +6,7 @@
 
 /// Lets the player choose whose items to sell or repair, until B.
 s32 Shop_ChooseMember(void) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   struct Window *listWindow;
   s32 memberIndex = 0;
   s32 redraw = 1;
@@ -79,7 +79,7 @@ s32 Shop_ChooseMember(void) {
 /// empty. Returns -1 when cancelled, 0 when the inventory ran out.
 s32 Shop_SelectSell(s32 unitId) {
   struct Window *descriptionWindow;
-  struct ShopWork *shop;
+  struct ShopState *shop;
   struct Window *priceWindow;
   struct Unit *unit;
   s32 slot;
@@ -91,7 +91,7 @@ s32 Shop_SelectSell(s32 unitId) {
   struct Window *window;
   s32 x;
 
-  shop = gMenuWork;
+  shop = gMenuState;
   unit = Unit_GetFar(unitId);
   inventoryCount = 1;
   priceWindow =
@@ -231,10 +231,10 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 unitSalePrice;
   s32 stackQuantity;
   struct ItemDefinition *item;
-  struct ShopWork *shop;
+  struct ShopState *shop;
   struct Unit *unit;
 
-  shop = gMenuWork;
+  shop = gMenuState;
   unit = Unit_GetFar(unitId);
   item = Item_GetDirectFar(unit->inventory[slot]);
   result = 1;
@@ -261,7 +261,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
 /// it and a Yes; whatever the shops keep a stock of goes back on sale. A count
 /// of -1 sells the one old piece of equipment a purchase replaced.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   struct Unit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);

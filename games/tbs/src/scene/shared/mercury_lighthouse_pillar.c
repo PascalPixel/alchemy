@@ -124,7 +124,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
   struct Actor *spark;
   struct Sprite *sprite;
 
-  leader = gFieldWork->actors[gMainRoutineWork.leaderActorId];
+  leader = gFieldState->actors[gMainRoutineState.leaderActorId];
   spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, leader->x.fixed,
                             leader->y.fixed, leader->z.fixed);
   if (spark != NULL) {
@@ -172,7 +172,7 @@ void MercuryLighthouse_ChargeLights(void) {
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
-  leader = gFieldWork->actors[gMainRoutineWork.leaderActorId];
+  leader = gFieldState->actors[gMainRoutineState.leaderActorId];
   if (state->levels < 0 || state->levels > 2)
     return;
   Event_Start();
@@ -246,7 +246,7 @@ void MercuryLighthouse_LoseLights(void) {
 /// Landing in the pool with no light under them, the leader sinks until a key
 /// is pressed after half a second, and is put back at the heart.
 void MercuryLighthouse_HopAcrossPool(void) {
-  struct FieldWork *work;
+  struct FieldState *fieldState;
   struct MercuryLighthouseLights *state;
   struct Actor *actor;
   struct Actor *source;
@@ -264,8 +264,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
-  work = gFieldWork;
-  actor = work->actors[gMainRoutineWork.leaderActorId];
+  fieldState = gFieldState;
+  actor = fieldState->actors[gMainRoutineState.leaderActorId];
   flags = &actor->motionFlags;
   saved = *flags;
   keys = gKeysHeld;
@@ -362,7 +362,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
   }
   state->rippleTimer = 0;
   Event_End();
-  work->walkingDistance += Iwram_MulFX(work->walkingDistanceScale, toFIXED(32));
+  fieldState->walkingDistance +=
+      Iwram_MulFX(fieldState->walkingDistanceScale, toFIXED(32));
 }
 
 /// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER: while the leader stands there,
@@ -373,7 +374,7 @@ void MercuryLighthouse_RippleAroundLeader(void) {
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
-  leader = gFieldWork->actors[gMainRoutineWork.leaderActorId];
+  leader = gFieldState->actors[gMainRoutineState.leaderActorId];
   if (state->rippleTimer != 0) {
     state->rippleTimer--;
   } else {

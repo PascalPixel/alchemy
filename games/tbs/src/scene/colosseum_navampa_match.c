@@ -85,7 +85,7 @@
 #include "system/input.h"
 #include "system/io_write_queue.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/vram_cache.h"
 #include "window/screens.h"
@@ -341,8 +341,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// The Wall Wedge's task steps its pistons through their cycle, a step every 18
 /// frames.
 static void ColosseumNavampaMatch_UpdateWallWedge(void) {
-  struct FieldWork *work = gFieldWork;
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct FieldState *state = gFieldState;
+  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
   s32 row = FIELD_CELL(actor->z.fixed);
   s32 i;
   s32 kind;
@@ -375,9 +375,9 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
       if ((actor->x.fixed - toFIXED(i * PISTON_SPACING) > -toFIXED(50) &&
            actor->x.fixed - toFIXED(i * PISTON_SPACING) <= -toFIXED(30) - 1)) {
         if (row == 11 && kind == PISTON_ANIMATION_PUSH_HALF_OUT)
-          work->raisedTrigger = kind;
+          state->raisedTrigger = kind;
         if (row == 12 && kind == PISTON_ANIMATION_PUSH_OUT)
-          work->raisedTrigger = kind;
+          state->raisedTrigger = kind;
       }
     }
   }
@@ -422,10 +422,10 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
 
 /// The Moving Sidewalk Stage's belt carries the party west.
 static void ColosseumNavampaMatch_RideMovingSidewalk(void) {
-  struct FieldWork *work = gFieldWork;
-  struct MainRoutineWork *state = &gMainRoutineWork;
+  struct FieldState *fieldState = gFieldState;
+  struct MainRoutineState *state = &gMainRoutineState;
   s32 id = state->leaderActorId;
-  struct Actor *subject = work->camera;
+  struct Actor *subject = fieldState->camera;
   struct Actor *actor = Actor_Get(id);
   s32 z = actor->z.part[0].integer;
 
@@ -478,7 +478,7 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
   struct Actor *log;
   struct Actor *rider;
 
-  actorId = gMainRoutineWork.leaderActorId;
+  actorId = gMainRoutineState.leaderActorId;
   lowered = GameFlag_Get(FLAG_SCALES_FROZEN);
   if (lowered == 0) {
     log = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
@@ -511,7 +511,7 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
 static void ColosseumNavampaMatch_StepOffScales(void) {
   struct Actor *actor;
 
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
 
   actor = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
   actor->motionFlags = 0;
@@ -627,7 +627,7 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
   s32 z;
   s32 behavior;
 
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineState.leaderActorId);
   x = FIELD_CELL(actor->x.fixed);
   behavior = CELL_BEHAVIOR_LONG_LOG;
   z = FIELD_CELL(actor->z.fixed);
@@ -680,7 +680,7 @@ static s32 ColosseumNavampaMatch_CheckLongLogPath(s32 x, s32 z) {
 static void ColosseumNavampaMatch_RollLongLog(void) {
   struct Actor *rider;
   struct Actor *log;
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 angle;
   s32 actorId;
   FIXED x;
@@ -693,12 +693,12 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   s32 step;
   s32 ahead[3];
 
-  rider = Actor_Get(gMainRoutineWork.leaderActorId);
+  rider = Actor_Get(gMainRoutineState.leaderActorId);
   log = Actor_Get(ACTOR_LONG_LOG);
   steps = 0;
   angle =
       gColosseumNavampaMatch_FacingAngles[FACING_EIGHTH_INDEX(rider->facing)];
-  actorId = gMainRoutineWork.leaderActorId;
+  actorId = gMainRoutineState.leaderActorId;
   SET_VECTOR(ahead, (rider->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
              rider->y.fixed, (rider->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
   Vector_AddPolarOffset(toFIXED(16), angle, ahead);
@@ -753,8 +753,8 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   FieldActor_SetMoveTargetFX(log, x, 0, z);
   Event_Wait(6);
   Actor_SetAnimation(actorId, ANIM_WALK);
-  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  Actor_StartCamera(work->camera, (s32)log);
+  state = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldState));
+  Actor_StartCamera(state->camera, (s32)log);
   Actor_SetSpeedFX(actorId, toFIXED(1) / 2, acceleration);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SelectAnimation(rider, ANIM_WALK);
@@ -841,10 +841,10 @@ static void ColosseumNavampaMatch_ShovedByPiston(void) {
   struct Actor *actor;
   s32 z;
 
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineState.leaderActorId);
   actor->acceleration = toFIXED(1);
   actor->speedLimit = toFIXED(2);
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+  Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SelectAnimation(actor, ANIM_LEADER_RUN);
   z = actor->z.fixed & FIELD_CELL_MASK;
@@ -863,7 +863,7 @@ static void ColosseumNavampaMatch_ShovedOffWalkway(void) {
   struct Actor *actor;
   s32 z;
 
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineState.leaderActorId);
   if (actor->x.fixed > toFIXED(664)) {
     actor->x.fixed = toFIXED(664);
   }
@@ -874,9 +874,9 @@ static void ColosseumNavampaMatch_ShovedOffWalkway(void) {
   FieldActor_SetMoveTargetFX(actor, actor->x.fixed, actor->y.fixed,
                              z + toFIXED(12));
   Actor_WaitForMove(actor);
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+  Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
+  FieldActor_JumpDownLedge(gMainRoutineState.leaderActorId, 6, 0);
 }
 
 /// Unused: an empty function nothing refers to.
@@ -894,14 +894,14 @@ UNUSED static void ColosseumNavampaMatch_UnusedNoOp(void) {}
 /// the one the player moves alone, as the friends' turns do.
 UNUSED static void
 ColosseumNavampaMatch_UnusedAskToControlCharacter(s32 characterId) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 actorId;
   s32 messageOffset;
   s32 entrance;
 
-  work = gFieldWork;
-  actorId = gMainRoutineWork.leaderActorId;
-  entrance = gMainRoutineWork.entrance;
+  state = gFieldState;
+  actorId = gMainRoutineState.leaderActorId;
+  entrance = gMainRoutineState.entrance;
   if (entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Event_Start();
     messageOffset = characterId * 3;
@@ -910,9 +910,9 @@ ColosseumNavampaMatch_UnusedAskToControlCharacter(s32 characterId) {
     if (Event_AskYesNoWithActorAnimation(actorId, 0) == 0) {
       Event_SetMessageId(messageOffset + MsgColossoDidntThinkBattles + 1);
       Event_ShowMessage(characterId, 0);
-      work->transition =
+      state->transition =
           SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-      work->transitionFrames = 15;
+      state->transitionFrames = 15;
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
       Colosso_ControlCharacterAlone(characterId);
@@ -999,7 +999,7 @@ s32 Scene_Initialize(void) {
   FIXED height;
   s32 column;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   Task_AddFrame(ColosseumNavampaMatch_UpdateEastEndCollision, TASK_PASS_FRAME);
   MapGrid_CopyCellAttributes(74, 60, 8, 6, 120, 60);
@@ -1147,14 +1147,14 @@ s32 Scene_Initialize(void) {
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
-  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+  gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_CLAYMORE);
   Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_HUNTERS_SWORD);
   Actor_SetSpriteColorById(ACTOR_OPPONENT, SPRITE_COLOR_RBG);
 
   // Entrances: the race, the friends' turns, the tour, and the end of Colosso
   // after a win or a loss.
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 6, toFIXED(1512),
                            toFIXED(192), ACTOR_PRIZE_A, ACTOR_PRIZE_B);
@@ -1315,7 +1315,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_Get(ACTOR_MIA)->facing = FACING_EAST;
   wait(1);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1554,7 +1554,7 @@ static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
   struct Actor *eastPanAgain;
   s32 promptResult;
 
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
     return;
@@ -1617,7 +1617,7 @@ static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
 static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
   s32 promptResult;
 
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
     return;
@@ -1670,17 +1670,17 @@ static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
 
 /// The Wall Wedge's attendant explains stage 3 of Colosseum Final 3.
 static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 promptResult;
 
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     Event_Start();
     promptResult = Colosso_GreetAtStage(guideId, 3);
     if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
-      work = gFieldWork;
+      state = gFieldState;
       Event_SetMessageId(MsgColossoPlaceCalledWall);
       ColosseumNavampaMatch_ResetWallWedge();
       FieldCamera_SetSpeed(3);
@@ -1697,7 +1697,7 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       Colosso_WalkActorTo(ACTOR_PARTY_LEADER, 680, 200);
       for (promptResult = 0; promptResult < 4 * FRAMES_PER_SECOND &&
-                             work->raisedTrigger != PISTON_ANIMATION_PUSH_OUT;
+                             state->raisedTrigger != PISTON_ANIMATION_PUSH_OUT;
            promptResult++)
         wait(1);
       ColosseumNavampaMatch_ShovedOffWalkway();
@@ -1708,7 +1708,7 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 3);
-      work->raisedTrigger = 0;
+      state->raisedTrigger = 0;
     } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoOperatorWallsCheer);
       // "The operator of the walls will cheer for you on this stage."
@@ -1728,7 +1728,7 @@ static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
   FIXED raisedHeight;
   FIXED shiftedX;
 
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
@@ -1820,7 +1820,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
   s32 result;
   struct Actor *actor;
 
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
@@ -1864,7 +1864,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
       ColosseumNavampaMatch_RunActorTo(ACTOR_PARTY_LEADER, 1120, 184);
       Event_ShowMessage(guideId, 0);
       Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
-      gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
+      gMainRoutineState.movementMode = LEADER_MOVEMENT_CLIMB;
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 5);
@@ -1882,7 +1882,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
 static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
   s32 state;
 
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(actorId);
     return;

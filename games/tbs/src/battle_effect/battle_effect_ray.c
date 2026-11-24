@@ -28,7 +28,7 @@
 ///
 /// Abilities: Ray, Storm Ray, Destruct Ray.
 void BattleEffect_RunRay(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   u8 *motes;
@@ -37,12 +37,12 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   BlitterPair draw;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartTiledCanvas(1);
-  if (work->args->variant == EFFECT_VARIANT_STRONGEST)
+  if (state->args->variant == EFFECT_VARIANT_STRONGEST)
     REG_BG2PA = Q_8_8(0.5);
   else
     REG_BG2PA = Q_8_8(1);
@@ -54,15 +54,15 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
                       COMPOSITE_ADDITIVE);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
-                             work->sheet + RAY_PICTURES, 1, 1);
+                             state->sheet + RAY_PICTURES, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
-  if (work->args->variant == EFFECT_VARIANT_STRONGEST) {
-    if (work->args->side == EFFECT_SIDE_PARTY)
+  if (state->args->variant == EFFECT_VARIANT_STRONGEST) {
+    if (state->args->side == EFFECT_SIDE_PARTY)
       REG_BG2X = -(RAY_WIDE_CANVAS_SHIFT << 8);
     else
       REG_BG2X = RAY_WIDE_CANVAS_SHIFT << 8;
   } else {
-    if (work->args->side == EFFECT_SIDE_PARTY)
+    if (state->args->side == EFFECT_SIDE_PARTY)
       REG_BG2X = -(RAY_PARTY_CANVAS_X << 8);
   }
 
@@ -78,7 +78,8 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
     spark->variant = 0;
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_ITEM_BREAK);
 
   for (frame = 0; frame != RAY_FRAMES; frame++) {
@@ -97,16 +98,16 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
         angle = (frame * RAY_BOLT_TURN + DEGtoANG(90)) * bolt;
         x = FIXEDtoINT((32 - frame) * Trig_Sin(angle)) + 64;
         y = -FIXEDtoINT(Trig_Cos(angle) * 8) - 8;
-        if (work->args->variant == EFFECT_VARIANT_BASIC)
+        if (state->args->variant == EFFECT_VARIANT_BASIC)
           draw[0](canvas,
-                  work->sheet +
+                  state->sheet +
                       (Random16() & 3) * LIGHTNING_BOLT_PICTURE_BYTES +
                       RAY_PICTURES,
                   x + (Random16() & 7) - 16, y, LIGHTNING_BOLT_WIDTH,
                   LIGHTNING_BOLT_HEIGHT);
         else
           draw[bolt & 1](canvas,
-                         work->sheet +
+                         state->sheet +
                              (Random16() & 3) * LIGHTNING_BOLT_PICTURE_BYTES +
                              RAY_PICTURES,
                          x + (Random16() & 7) - 16, y, LIGHTNING_BOLT_WIDTH,
@@ -128,12 +129,13 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
             spark->velocityY = -(Trig_Cos(spread) * speed * 2) >> 7;
             spark->variant = (Random16() & 7) + 32;
             thrown++;
-            if (thrown == gRay_Sparks[work->args->variant][RAY_SPARKS_PER_BOLT])
+            if (thrown ==
+                gRay_Sparks[state->args->variant][RAY_SPARKS_PER_BOLT])
               break;
           }
         }
       }
-      work->shakeFrames = 1;
+      state->shakeFrames = 1;
     }
 
     // Sparks bounce off the bottom.
@@ -157,14 +159,14 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
     // The targets are hit 4 frames apart.
     if (frame >= 4 && frame < 96) {
-      EFFECT_FOR_EACH_TARGET(i, work->args) {
+      EFFECT_FOR_EACH_TARGET(i, state->args) {
         if (frame == i * 4 + 4)
-          BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
+          BattleEffect_TintBattler(state->args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 10);
       }
     }
     BattleCamera_Shake(2, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

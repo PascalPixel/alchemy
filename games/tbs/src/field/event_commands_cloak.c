@@ -12,18 +12,18 @@
 /// requests CLOAK_END. The behavior is byte 2 of a cell (MapGridCell.behavior),
 /// or of a 4-byte gCellPictures entry on the World Map.
 void FieldPsynergy_CheckCloakTile(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct Actor *leader;
   u8 *cell;
   FIXED x;
   FIXED y;
 
-  work = gFieldWork;
-  leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  cell = gMapGridWork[0];
+  state = gFieldState;
+  leader = Actor_Lookup(gMainRoutineState.leaderActorId);
+  cell = gMapGridState[0];
 
   // Whole blocks or cells, rounded toward zero as a division would be.
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     u32 tx;
     u32 ty;
 
@@ -40,8 +40,9 @@ void FieldPsynergy_CheckCloakTile(void) {
     cell = (u8 *)&gCellPictures[tx + ty * WORLD_MAP_BLOCKS_ACROSS];
   } else {
     if (leader->layer < MAPGRID_LAYER_COUNT) {
-      cell =
-          (u8 *)((struct MapGridScrollWork *)cell)->layers[leader->layer].cells;
+      cell = (u8 *)((struct MapGridScrollState *)cell)
+                 ->layers[leader->layer]
+                 .cells;
     } else
       cell = (u8 *)gMapGridCellBuffer;
 
@@ -60,7 +61,7 @@ void FieldPsynergy_CheckCloakTile(void) {
   }
 
   if (cell[2] != CELL_BEHAVIOR_CLOAK)
-    work->psynergy = CLOAK_END;
+    state->psynergy = CLOAK_END;
 }
 
 /// Ends Cloak: stops the cell check and makes the leader blink back into sight,
@@ -71,7 +72,7 @@ void FieldPsynergy_EndCloak(void) {
   struct SpriteAnimation *entry;
   u32 i;
 
-  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  actor = Actor_Lookup(gMainRoutineState.leaderActorId);
   sprite = actor->sprite;
   entry = sprite->entries[0];
 
@@ -101,13 +102,13 @@ void FieldPsynergy_EndCloak(void) {
   }
 
   sprite->flags = SPRITE_FLAG_SHADOW;
-  gMainRoutineWork.cloaked = 0;
+  gMainRoutineState.cloaked = 0;
 }
 
 /// Starts the Cloak cell check if the leader is hidden. FieldSequence_Run calls
-/// it as a scene loads, since gMainRoutineWork.cloaked outlives the scene.
+/// it as a scene loads, since gMainRoutineState.cloaked outlives the scene.
 void FieldPsynergy_ResumeCloakCheck(void) {
-  if (gMainRoutineWork.cloaked != 0) {
+  if (gMainRoutineState.cloaked != 0) {
     Task_Add(FieldPsynergy_CheckCloakTile, TASK_PASS_FRAME);
   }
 }
@@ -115,8 +116,8 @@ void FieldPsynergy_ResumeCloakCheck(void) {
 /// The leader blinks 10 times and hides (cloaked set), and the cell check
 /// starts; where the leader cannot hide it shows again at once.
 void FieldPsynergy_StartCloak(void) {
-  struct FieldWork *work = gFieldWork;
-  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  struct FieldState *state = gFieldState;
+  struct Actor *leader = Actor_Lookup(gMainRoutineState.leaderActorId);
   struct Sprite *sprite = leader->sprite;
   struct SpriteAnimation *entry = sprite->entries[0];
   u32 n;
@@ -142,11 +143,11 @@ void FieldPsynergy_StartCloak(void) {
   // the check just raised (n is 0 here).
   check = FieldPsynergy_CheckCloakTile;
   Task_Add(check, TASK_PASS_FRAME);
-  gMainRoutineWork.cloaked = 1;
+  gMainRoutineState.cloaked = 1;
   check();
-  if (work->psynergy == CLOAK_END) {
+  if (state->psynergy == CLOAK_END) {
     FieldPsynergy_EndCloak();
-    work->psynergy = n;
+    state->psynergy = n;
   }
 }
 

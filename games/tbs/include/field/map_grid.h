@@ -134,8 +134,8 @@ extern u8 gBgTileBuffer[];
 #define MAPGRID_SHAPE_KIND_MASK 0xf
 
 /// HEAP_SLOT_WORLD_MAP_AFFINE under its own name, which no code reads; the
-/// world map keeps its struct WorldMapAffineWork in the slot.
-#define gWorldMapAffineWork (*(u8 **)&gHeapSlots[HEAP_SLOT_WORLD_MAP_AFFINE])
+/// world map keeps its struct WorldMapAffineState in the slot.
+#define gWorldMapAffineState (*(u8 **)&gHeapSlots[HEAP_SLOT_WORLD_MAP_AFFINE])
 
 /// A row of gMaps: a layout's resources, each counted from ResourceId_EmptyMap.
 struct MapResources {

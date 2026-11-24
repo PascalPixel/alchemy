@@ -91,7 +91,7 @@
 #include "system/heap_slots.h"
 #include "system/io_reg.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -264,7 +264,7 @@ static s32 Kolima_UpdateFallingDebris(struct Actor *debris) {
 
 /// Selects the entrances of Kolima, Kolima Tunnel or Kolima Bridge.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_KOLIMA_BRIDGE) {
     return gKolimaBridgeEntrances;
@@ -278,7 +278,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// Only Kolima Tunnel has regions: its two ways out,
 /// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_KOLIMA_TUNNEL) {
+  if (gMainRoutineState.next == SCENE_KOLIMA_TUNNEL) {
     return gKolimaTunnelRegions;
   }
   return 0;
@@ -290,7 +290,7 @@ const u32 *Scene_GetExits(void) { return gKolimaExits; }
 /// Selects the people of Kolima or Kolima Bridge. Kolima Tunnel has none. In
 /// Kolima the villagers are trees until the curse is lifted.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s32 sceneId = gMainRoutineWork.next;
+  s32 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_KOLIMA) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
@@ -330,7 +330,7 @@ static void Kolima_GraniteJoins(void) {
 /// Selects Kolima Bridge's triggers, or the table Kolima and Kolima Tunnel
 /// share.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_KOLIMA_BRIDGE) {
+  if (gMainRoutineState.next == SCENE_KOLIMA_BRIDGE) {
     return gKolimaBridgeTriggers;
   }
   return gKolimaTriggers;
@@ -343,20 +343,20 @@ static void Kolima_WalkThroughExit(s32 exitNumber) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(exitNumber);
 }
 
 /// In Kolima, walking into one of the five doorways leads into the houses and
 /// shops.
 static void Kolima_EnterDoor(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   s32 x = 0;
   s32 y = 0;
 
   Event_Start();
   Sound_Play(SE_DOOR_OPEN);
-  switch (work->stepTrigger) {
+  switch (state->stepTrigger) {
   case KOLIMA_TO_INN:
     x = 71;
     y = 9;
@@ -377,13 +377,13 @@ static void Kolima_EnterDoor(void) {
     Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
-    gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+    gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
     Import_EventSetExitRequest(KOLIMA_TO_HOUSE_NORTH);
     Event_End();
     return;
   }
   MapGrid_PlayMapEdit(gKolima_DoorCells, x, y);
-  Kolima_WalkThroughExit(work->stepTrigger);
+  Kolima_WalkThroughExit(state->stepTrigger);
   Event_End();
 }
 
@@ -482,7 +482,7 @@ s32 Scene_Initialize(void) {
   u32 actorId;
   const s32 *table;
 
-  sceneId = gMainRoutineWork.next;
+  sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_KOLIMA_BRIDGE) {
     Kolima_RestoreBridgeState();
@@ -490,7 +490,7 @@ s32 Scene_Initialize(void) {
   }
 
   if (sceneId == SCENE_KOLIMA_TUNNEL) {
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     return 0;
   }
@@ -519,7 +519,7 @@ s32 Scene_Initialize(void) {
   }
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
-    if (gMainRoutineWork.entrance == KOLIMA_FROM_WORLD_MAP) {
+    if (gMainRoutineState.entrance == KOLIMA_FROM_WORLD_MAP) {
       Kolima_WitnessForestCurse();
     }
   }
@@ -703,7 +703,7 @@ static void Kolima_WitnessForestCurse(void) {
     Kolima_ShowMessageAndWait(ACTOR_MIA, 20);
     Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -722,7 +722,7 @@ static void Kolima_WitnessForestCurse(void) {
     Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   } else {
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   // Yes: "I see... It was because they hurt the holy tree?"
   // No: "I see... Who could have known?"
@@ -793,7 +793,7 @@ static void Kolima_WitnessForestCurse(void) {
     // "I... I can't... I can't even stand up!"
     Kolima_ShowMessageAndWait(ACTOR_MIA, 40);
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_Wait(20);
   if (gKolima_MiaInParty != 0) {
@@ -879,7 +879,7 @@ static void Kolima_WitnessForestCurse(void) {
     // "Oh, no... If it touches us, we'll turn into trees!"
     Kolima_ShowMessageAndWait(ACTOR_MIA, 10);
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   gFallingEffectState = KOLIMA_DUST_DRIFTING;
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -949,7 +949,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetPosition(ACTOR_LAUREL, 87, 139);
   wait(1);
   if (Event_AskYesNoWithActorAnimation(ACTOR_TRET, 0) == 1) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Event_Wait(20);
@@ -1018,7 +1018,7 @@ static void Kolima_WitnessForestCurse(void) {
     // "You're right. I can stand, too..."
     Kolima_ShowMessageAndWait(ACTOR_MIA, 20);
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Actor_Jump(ACTOR_GARET, 2, 0);
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTH, 20);
@@ -1072,7 +1072,7 @@ static void Kolima_WitnessForestCurse(void) {
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTHEAST, 10);
@@ -1096,7 +1096,7 @@ static void Kolima_WitnessForestCurse(void) {
     // "But what? The only way you can use Psynergy is by concentrating!"
     Kolima_ShowMessageAndWait(ACTOR_MIA, 10);
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
@@ -1147,7 +1147,7 @@ static void Kolima_WitnessForestCurse(void) {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(40);
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   // Yes: "Yeah! Let's start trying to master this power!"
   // No: "You... You're not really into this, are you?"
@@ -1410,7 +1410,7 @@ static void Kolima_WitnessForestCurse(void) {
         // "That's right... We can't just leave them to rot!"
         Kolima_ShowMessageAndWait(ACTOR_MIA, 20);
       } else {
-        gFieldWork->message++;
+        gFieldState->message++;
       }
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1430,7 +1430,7 @@ static void Kolima_WitnessForestCurse(void) {
         // "Ivan, you can't give up! Please, convince him to help!"
         Kolima_ShowMessageAndWait(ACTOR_MIA, 10);
       } else {
-        gFieldWork->message++;
+        gFieldState->message++;
       }
       Event_Wait(60);
       Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
@@ -1463,7 +1463,7 @@ static void Kolima_WitnessForestCurse(void) {
         // "I was beginning to lose faith in you, Isaac."
         Kolima_ShowMessageAndWait(ACTOR_MIA, 20);
       } else {
-        gFieldWork->message++;
+        gFieldState->message++;
       }
       Actor_SetAttachedEffect(ACTOR_GARET,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1483,7 +1483,7 @@ static void Kolima_WitnessForestCurse(void) {
         // "I'm not sure... What should we do?"
         Kolima_ShowMessageAndWait(ACTOR_MIA, 40);
       } else {
-        gFieldWork->message++;
+        gFieldState->message++;
       }
       Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
       Event_Wait(20);

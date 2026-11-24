@@ -7,7 +7,7 @@
 #include "flags.h"
 #include "resource_ids.h"
 #include "battle/battle.h"
-#include "battle/battle_work.h"
+#include "battle/battle_state.h"
 #include "field/field.h"
 #include "field/map_grid_scroll.h"
 #include "game/game.h"
@@ -290,7 +290,7 @@ extern u16 gCreditsScrollPosition __asm__("gWaitForFlashWrite");
 // and borrow them while flash operations are inactive: a sprite-buffer pointer,
 // the last rendered pixel position, and a zero/-1 end-of-text latch.
 // Borrowing them is harmless because the flash library sets them again before
-// it reads them: IdentifyFlash, which Save_InitializeWork runs before
+// it reads them: IdentifyFlash, which Save_InitializeState runs before
 // each use of the save, writes gFlash, gProgramFlashSector and
 // gWaitForFlashWrite, and each program routine sets gFlashNumRemainingBytes.
 // UB: the casts alias the flash declarations and store a pointer through

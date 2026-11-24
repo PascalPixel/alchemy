@@ -34,8 +34,8 @@ extern u8 gShop_GlyphBytes[];
 extern u8 gStatusScreen_LevelLetterString[];
 
 struct Sprite;
-struct ActorSystemWork;
-struct SelectionMenuWork;
+struct ActorSystemState;
+struct SelectionMenuState;
 struct MenuCursor;
 
 /// A background's horizontal and vertical scroll offsets.
@@ -58,16 +58,16 @@ extern const u8 gMenu_QuantityTiles[];
 extern const char gDjinnMenu_TextLevel[];
 /// `/`, between the Djinn menu's numbers.
 extern const char gDjinnMenu_TextSlash[];
-/// Heap slot 6: the actor system's work (struct ActorSystemWork).
-#define gActorSystemWork                                                       \
-  (*(struct ActorSystemWork **)&gHeapSlots[HEAP_SLOT_ACTOR_SYSTEM])
+/// Heap slot 6: the actor system's state (struct ActorSystemState).
+#define gActorSystemState                                                      \
+  (*(struct ActorSystemState **)&gHeapSlots[HEAP_SLOT_ACTOR_SYSTEM])
 /// The number text buffer: String_FormatHex writes eight digits and
 /// String_FormatDecimal eleven characters, right-aligned, each with a
 /// terminator.
 extern u8 gNumberBuffer[];
 /// Heap slot 18: the selection screen while it runs.
-#define gSelectionMenuWork                                                     \
-  (*(struct SelectionMenuWork **)&gHeapSlots[HEAP_SLOT_SELECTION_MENU])
+#define gSelectionMenuState                                                    \
+  (*(struct SelectionMenuState **)&gHeapSlots[HEAP_SLOT_SELECTION_MENU])
 /// Nonzero offers Battle on the File Screen, when a file
 /// has any of game flags 48 to 127 set.
 extern s16 gTitleBattleOptionEnabled;
@@ -151,7 +151,7 @@ void Import_CreditsRun(s32 mode);
 
 struct Unit;
 struct DjinnListTable;
-struct ItemMenuWork;
+struct ItemMenuState;
 struct PagedList;
 struct PsynergyEntry;
 struct Window;
@@ -181,7 +181,7 @@ enum ListSort {
 
 s32 Menu_ResumeFieldTasks(void);
 s32 Menu_SuspendFieldTasks(void);
-void Window_InitializeWork(s32 unused);
+void Window_InitializeState(s32 unused);
 s32 Window_UpdateOrCreate(struct Window **handle, s32 x, s32 y, s32 w, s32 h,
                           s32 flags);
 void Window_CloseIfOpen(struct Window **handle, s32 instant);
@@ -253,7 +253,7 @@ s32 ItemMenu_Run(void);
 s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut);
 s32 ItemMenu_Use(void);
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns);
-void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window);
+void Menu_SpawnIconEntries(struct ItemMenuState *menu, struct Window *window);
 void ItemMenu_HideAllIcons(void);
 void ItemMenu_HidePageIcons(void);
 void ItemMenu_Close(void);
@@ -299,7 +299,7 @@ s32 ItemMenu_ConfirmDrop(s32 item);
 s32 ItemMenu_ConfirmEquip(s32 unused);
 void Resource_LoadPairedBlocks(void);
 s32 ItemMenu_BuildPagedList(struct PagedList *result, s32 index);
-s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberWork,
+s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberState,
                                 struct PagedList *pageState);
 s32 ItemMenu_DrawNamePage(struct Window *window, s32 unused,
                           const struct PagedList *pageState);
@@ -323,7 +323,7 @@ void PsynergyMenu_CloseWindows(void);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
 s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode);
 s32 PsynergyMenu_BuildPagedList(struct PagedList *result, s32 index);
-s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
+s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *memberState,
                                 struct PagedList *state);
 s32 PsynergyMenu_DrawActionPage(struct Window *window, s32 unused,
                                 const struct PagedList *pageState);

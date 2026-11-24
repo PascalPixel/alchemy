@@ -42,7 +42,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   struct ScreenPoint base;
 #endif
   struct Vector3 scale;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   /* LEFTOVER(frame): draw[1], the idle half of the pair. */
@@ -62,12 +62,12 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   s32 k;
   struct Particle *corners;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   user = GetBattleObjectSlotFar(args->user)->actor;
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_RUNE_SHEET),
                   SHEET_PALETTE_BYTES);
@@ -77,14 +77,14 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL * 3);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = CANVAS_FADE_THREE_QUARTERS;
+  state->transferMode = CANVAS_COPY_AND_FADE;
+  state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  source = GetBattleObjectSlotFar(work->args->user)->actor;
-  target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  for (i = 0, point = work->particles; i != ASTRAL_BLAST_STARS; i++) {
+  source = GetBattleObjectSlotFar(state->args->user)->actor;
+  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  for (i = 0, point = state->particles; i != ASTRAL_BLAST_STARS; i++) {
     SET_POSITION(point, source->x.fixed, source->y.fixed + toFIXED(40),
                  source->z.fixed);
     if (i == 0)
@@ -108,7 +108,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
         speed = ASTRAL_BLAST_TURN_SPEED;
       else
         speed = 768 - frame * 16;
-      if (work->args->side == EFFECT_SIDE_ENEMIES)
+      if (state->args->side == EFFECT_SIDE_ENEMIES)
         view->yaw -= speed;
       else
         view->yaw += speed;
@@ -116,7 +116,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
     for (i = 0; i != ASTRAL_BLAST_STARS; i++) {
       start = i * ASTRAL_BLAST_STAR_INTERVAL;
       if (frame >= start) {
-        star = &work->particles[i];
+        star = &state->particles[i];
         size = (frame - start) / 4 + 2;
         if (size > MOTE_SIZE_MAX)
           size = MOTE_SIZE_MAX;
@@ -189,15 +189,15 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
             Sound_PlayFar(SE_HEAVY_IMPACT);
-            BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, 0, 8);
+            BattleEffect_TintBattler(state->args->targets[0],
+                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
           }
-          work->shakeFrames = 4;
+          state->shakeFrames = 4;
         }
       }
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -208,7 +208,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 ///
 /// Abilities: Shining Star.
 void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   /* LEFTOVER(frame): draw[1], the idle half of the pair. */
@@ -226,11 +226,11 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   s32 k;
   struct Particle *corners;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_RUNE_SHEET),
                   SHEET_PALETTE_BYTES);
@@ -238,14 +238,14 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
                       motes);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = CANVAS_FADE_HALF;
+  state->transferMode = CANVAS_COPY_AND_FADE;
+  state->transferValue = CANVAS_FADE_HALF;
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  source = GetBattleObjectSlotFar(work->args->user)->actor;
-  target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  for (i = 0, point = work->particles; i != SHINING_STARS; i++) {
+  source = GetBattleObjectSlotFar(state->args->user)->actor;
+  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  for (i = 0, point = state->particles; i != SHINING_STARS; i++) {
     s32 delay = i * 8;
 
     SET_POSITION(point, source->x.fixed / 2, source->y.fixed + toFIXED(120),
@@ -270,7 +270,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
     if (frame == 96)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     for (i = 0; i != SHINING_STARS; i++) {
-      star = &work->particles[i];
+      star = &state->particles[i];
       if (frame >= star->variant) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         Projection_Point(star, &screenPosition);
@@ -310,11 +310,11 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
           star->velocityY = -star->velocityY;
           star->velocityX /= 2;
           star->velocityZ /= 2;
-          work->shakeFrames = 4;
+          state->shakeFrames = 4;
           Sound_PlayFar(SE_HEAVY_IMPACT);
-          EFFECT_FOR_EACH_TARGET(j, work->args)
-            BattleEffect_TintBattler(work->args->targets[j], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, j, 8);
+          EFFECT_FOR_EACH_TARGET(j, state->args)
+            BattleEffect_TintBattler(state->args->targets[j],
+                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 8);
         }
         star->x += star->velocityX;
         star->y += star->velocityY;
@@ -322,7 +322,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

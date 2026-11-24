@@ -19,7 +19,7 @@ void FieldEffect_SwayParticle(struct Actor *actor) {
 /// position, at a radius of as many pixels as frames are left; released when
 /// timer reaches 0.
 void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct FieldEffectState *effectState = gFieldEffectState;
   struct Vector3 pos;
   s16 remainingFrames;
   s32 decrementedTimer;
@@ -29,9 +29,9 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
     particle->timer = decrementedTimer;
     remainingFrames = decrementedTimer;
     if (remainingFrames != 0) {
-      pos.x = effectWork->x;
-      pos.y = effectWork->y + toFIXED(10);
-      pos.z = effectWork->z;
+      pos.x = effectState->x;
+      pos.y = effectState->y + toFIXED(10);
+      pos.z = effectState->z;
       Vector_AddPolarOffset(
           toFIXED(remainingFrames),
           (s16)particle->userValue + remainingFrames * (TRIG_TURN / 32), &pos);
@@ -48,17 +48,17 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
 /// above the Psynergy's position, and every 3 frames sheds a spark that sways
 /// as it slowly falls.
 void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Actor *spark;
   s32 pos[3];
 
-  effectWork = gFieldEffectWork;
+  effectState = gFieldEffectState;
   if (emitter->timer != -1) {
     SET_ACTOR_POSITION(emitter,
-                       effectWork->x +
+                       effectState->x +
                            Iwram_MulFX(toFIXED(6), Trig_Sin(emitter->timer *
                                                             (TRIG_TURN / 64))),
-                       effectWork->y + ABOVE, effectWork->z);
+                       effectState->y + ABOVE, effectState->z);
     emitter->timer++;
     emitter->timer = (emitter->timer + 64) % 64;
   }
@@ -96,8 +96,8 @@ void FieldPsynergy_PlyOnTarget(s32 unused) {
 /// Eight particles spiral into the centre, where one appears, sheds sparks and
 /// flies far away.
 void FieldPsynergy_Ply(void) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *target = effectWork->mainActor;
+  struct FieldEffectState *effectState = gFieldEffectState;
+  struct Actor *target = effectState->mainActor;
   struct Actor *actor;
   struct Sprite *last;
   u8 resourceSlot;
@@ -138,9 +138,9 @@ void FieldPsynergy_Ply(void) {
   if (target != 0) {
     target->scaleY = FIXED_ONE * 7 / 10;
     target->scaleX = FIXED_ONE * 7 / 10;
-    target->x.fixed = effectWork->x;
-    target->y.fixed = effectWork->y + toFIXED(16);
-    target->z.fixed = effectWork->z;
+    target->x.fixed = effectState->x;
+    target->y.fixed = effectState->y + toFIXED(16);
+    target->z.fixed = effectState->z;
     target->motionFlags = ACTOR_FLOATS;
     Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_WHITE);
   }
@@ -168,7 +168,7 @@ void FieldPsynergy_Ply(void) {
     target->timer = 0;
     // Cast on a target (enabled cleared by FieldPsynergy_Dispatch),
     // the sparks fall for 192 frames instead of 128.
-    if (effectWork->enabled != 0)
+    if (effectState->enabled != 0)
       wait(128);
     else
       wait(192);
@@ -189,8 +189,8 @@ void FieldPsynergy_Ply(void) {
   // VramCache_FindFreeEntry returns VRAM_CACHE_ENTRY_COUNT for no entry.
   if (resourceSlot != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(resourceSlot);
-  if (effectWork->finishCallback != 0)
-    effectWork->finishCallback();
+  if (effectState->finishCallback != 0)
+    effectState->finishCallback();
   FieldPsynergy_FadeFromCastColor();
 }
 

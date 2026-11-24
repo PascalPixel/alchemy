@@ -32,10 +32,10 @@ struct WorldMapAffinePair {
   struct WorldMapAffineLine bg2, bg3;
 };
 
-/// The world map's affine work in HEAP_SLOT_WORLD_MAP_AFFINE: the scanline
+/// The world map's affine state in HEAP_SLOT_WORLD_MAP_AFFINE: the scanline
 /// terms and two pages of per-line affine parameters, one built while the other
 /// is shown.
-struct WorldMapAffineWork {
+struct WorldMapAffineState {
   struct WorldMapScanline scanlines[160];
   struct WorldMapAffinePair pages[2][160];
   u8 unused[4];
@@ -45,8 +45,8 @@ STATIC_ASSERT(sizeof(struct WorldMapScanline) == 20);
 STATIC_ASSERT(offsetof(struct WorldMapScanline, pa) == 16);
 STATIC_ASSERT(sizeof(struct WorldMapAffineLine) == 16);
 STATIC_ASSERT(sizeof(struct WorldMapAffinePair) == 32);
-STATIC_ASSERT(offsetof(struct WorldMapAffineWork, pages) == 3200);
-STATIC_ASSERT(offsetof(struct WorldMapAffineWork, unused) == 13440);
-STATIC_ASSERT(sizeof(struct WorldMapAffineWork) == 13444);
+STATIC_ASSERT(offsetof(struct WorldMapAffineState, pages) == 3200);
+STATIC_ASSERT(offsetof(struct WorldMapAffineState, unused) == 13440);
+STATIC_ASSERT(sizeof(struct WorldMapAffineState) == 13444);
 
 #endif

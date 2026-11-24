@@ -65,17 +65,18 @@ STATIC_ASSERT(sizeof(struct FieldParticle) == 72);
 STATIC_ASSERT(offsetof(struct FieldParticle, orbitRadius) == 60);
 STATIC_ASSERT(offsetof(struct FieldParticle, state) == 64);
 
-/// Gives every particle in use in `work->member` the state `newState`:
+/// Gives every particle in use in `effectState->member` the state `newState`:
 /// `cursor`, a byte pointer, walks their state bytes and `count` counts them
 /// down, both the caller's.
-#define FIELD_PARTICLES_SET_ACTIVE_STATE(cursor, count, work, member,          \
+#define FIELD_PARTICLES_SET_ACTIVE_STATE(cursor, count, effectState, member,   \
                                          newState)                             \
   {                                                                            \
     s32 state_ = (newState);                                                   \
-    (cursor) = (void *)(work);                                                 \
-    (cursor) += offsetof(__typeof__(*(work)), member) +                        \
+    (cursor) = (void *)(effectState);                                          \
+    (cursor) += offsetof(__typeof__(*(effectState)), member) +                 \
                 offsetof(struct FieldParticle, state);                         \
-    (count) = sizeof((work)->member) / sizeof(struct FieldParticle) - 1;       \
+    (count) =                                                                  \
+        sizeof((effectState)->member) / sizeof(struct FieldParticle) - 1;      \
     do {                                                                       \
       if (((s8 *)(cursor))[offsetof(struct FieldParticle, active) -            \
                            offsetof(struct FieldParticle, state)] != 0)        \

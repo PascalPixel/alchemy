@@ -11,9 +11,9 @@ everyone acts, repeat until one side is beaten or the party runs.
 A battle can start three ways: a random encounter, a Mimic, or an
 [event](glossary.md#event) that calls for one. All three do the same thing.
 They write a [formation](glossary.md#formation) number, the group of
-enemies to send, into the main routine's work and let the field end.
+enemies to send, into the main routine's state and let the field end.
 
-The battle reads everything it needs from that work: the party, the
+The battle reads everything it needs from that state: the party, the
 formation, the background and the music. When it is over it writes back one
 answer: won, fled or lost. That is the whole interface, and it is why a
 chest in Mercury Lighthouse and a walk through Goma Cave lead to exactly

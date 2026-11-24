@@ -18,10 +18,10 @@
 #include "battle/battle_action_run.h"
 #include "battle/battle_actor.h"
 #include "battle/battle_camera.h"
-#include "battle/battle_effect_work.h"
+#include "battle/battle_effect_state.h"
 #include "battle/battle_side.h"
 #include "battle/battle_unit.h"
-#include "battle/battle_work.h"
+#include "battle/battle_state.h"
 #include "battle/blitter.h"
 #include "battle/canvas.h"
 #include "battle/playback_queue.h"
@@ -67,8 +67,8 @@
 /// opens with it.
 #define CANVAS_BLEND_LEVEL 14
 
-// Display, palette and per-line work (README.md, "Around the canvas").
-// The tasks read the current effect's work block, so the runner that
+// Display, palette and per-line state (README.md, "Around the canvas").
+// The tasks read the current effect's state block, so the runner that
 // adds them must remove them before that block is released.
 
 /// The battle screen's display mode while an effect plays: background mode 1
@@ -150,7 +150,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define SUMMON_PROJECTION_CENTER_Y 240
 
 /// The frames the battle background darkens behind an effect's canvas
-/// (work->fadeFrames, Palette_StepFadeTransfer).
+/// (state->fadeFrames, Palette_StepFadeTransfer).
 #define BACKGROUND_DARKEN_FRAMES 24
 /// The level a canvas darkens the battle background to, a level a frame.
 #define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
@@ -178,21 +178,21 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define EFFECT_BLITTER(slot) ((DrawRectangle)gHeapSlots[slot])
 
 /// Sets what the canvas transfer leaves in the canvas after each copy.
-#define EFFECT_SET_TRANSFER(work, mode, value)                                 \
-  ((work)->transferMode = (mode), (work)->transferValue = (value))
+#define EFFECT_SET_TRANSFER(state, mode, value)                                \
+  ((state)->transferMode = (mode), (state)->transferValue = (value))
 
 /// Sets the transfer, then starts copying the canvas to VRAM once a frame.
-#define EFFECT_START_TRANSFER(work, mode, value)                               \
-  (EFFECT_SET_TRANSFER(work, mode, value),                                     \
+#define EFFECT_START_TRANSFER(state, mode, value)                              \
+  (EFFECT_SET_TRANSFER(state, mode, value),                                    \
    Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK))
 
 /// Presents the canvas and waits for the next frame.
-#define EFFECT_PRESENT_CANVAS(work) ((work)->transferPending = 1, wait(1))
+#define EFFECT_PRESENT_CANVAS(state) ((state)->transferPending = 1, wait(1))
 
 /// The usual end of an effect's frame: counts down the targets' flash timers,
 /// then presents the canvas.
-#define EFFECT_END_FRAME(work)                                                 \
-  (BattleEffect_CountDownBattlerTints(), EFFECT_PRESENT_CANVAS(work))
+#define EFFECT_END_FRAME(state)                                                \
+  (BattleEffect_CountDownBattlerTints(), EFFECT_PRESENT_CANVAS(state))
 
 /// Frees the two blitters, the alternate first.
 #define EFFECT_RELEASE_BLITTERS()                                              \
@@ -455,7 +455,7 @@ enum RedCrescentPicture {
   (REG_BG2X = 0, REG_BG2Y = -(BATTLE_VIEW_TOP << 8), REG_BG2PA = Q_8_8(0.5),   \
    REG_BG2PB = 0, REG_BG2PC = 0, REG_BG2PD = Q_8_8(1))
 
-/// A line's sideways sway as its BG2X value in work->bg2xLines, which the
+/// A line's sideways sway as its BG2X value in state->bg2xLines, which the
 /// wave HBlank DMA writes line by line. BG2X counts 256ths of a canvas pixel,
 /// so a sway of toFIXED(n) moves the line n / 4 canvas pixels: n / 2 screen
 /// pixels where the canvas is shown at twice its width.
@@ -521,7 +521,7 @@ enum SummonFormation {
 /// picks.
 enum SpinAxis { SPIN_YAW, SPIN_PITCH, SPIN_ROLL, SPIN_PITCH_AND_ROLL };
 
-/// work->cameraPhase, which BattleCamera_ApplyPhasedDelta and the effects
+/// state->cameraPhase, which BattleCamera_ApplyPhasedDelta and the effects
 /// that turn the camera through it (Fire, Froth) pass between them.
 enum CameraPhase {
   CAMERA_PHASE_IDLE,       ///< nothing marked since the last turn

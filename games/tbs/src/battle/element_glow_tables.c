@@ -3,7 +3,7 @@
 
 #include "battle/battle.h"
 
-/// Byte offsets into SparkWork.sheet, a byte a pixel, by frames of life left.
+/// Byte offsets into SparkState.sheet, a byte a pixel, by frames of life left.
 s32 gElementGlow_StarPictures[] = {0, 1, 5, 14, 30, 46, 62};
 
 /// The spark's width and height in pixels by frames of life left.

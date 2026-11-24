@@ -5,12 +5,12 @@
 /// height, is that of the 16.16 position, or 0. self is not read.
 static void *Actor_FindAtPosition(const struct FieldPosition *position,
                                   void *self) {
-  struct FieldWork *work = gFieldWork;
-  struct Actor **slots = work->actors;
+  struct FieldState *state = gFieldState;
+  struct Actor **slots = state->actors;
   u32 i;
 
   for (i = ACTOR_FIRST_PLACED;
-       i < sizeof(work->actors) / sizeof(work->actors[0]); i++) {
+       i < sizeof(state->actors) / sizeof(state->actors[0]); i++) {
     struct Actor *actor = slots[i];
 
     // UB: Actor_ClearAll leaves unused slots null.

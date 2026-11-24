@@ -30,12 +30,12 @@ extern s32 gPushedActor_Rectangles[];
 static struct Actor *
 PushedActor_FindAtTile(const struct FieldPosition *position,
                        const struct Actor *origin) {
-  struct FieldWork *work = gFieldWork;
-  struct Actor **slots = work->actors;
+  struct FieldState *state = gFieldState;
+  struct Actor **slots = state->actors;
   u32 i;
 
   for (i = ACTOR_FIRST_PLACED;
-       i < sizeof(work->actors) / sizeof(work->actors[0]); i++) {
+       i < sizeof(state->actors) / sizeof(state->actors[0]); i++) {
     struct Actor *actor = slots[i];
 
     // UB: Actor_ClearAll leaves unfilled slots null.
@@ -162,15 +162,15 @@ static UNREAD_RESULT PushedActor_StopBlockedMotion(struct Actor *actor) {
 /// leader's direction, its actor id and its rectangle; or NULL.
 static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
                                            s32 *rectangle) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   struct Actor *player = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Actor **list;
   u32 i, j;
 
   *direction = FACING_INDEX(player->facing);
-  list = work->actors + ACTOR_FIRST_PLACED;
+  list = state->actors + ACTOR_FIRST_PLACED;
   for (i = ACTOR_FIRST_PLACED;
-       i < sizeof(work->actors) / sizeof(work->actors[0]); list++, i++) {
+       i < sizeof(state->actors) / sizeof(state->actors[0]); list++, i++) {
     struct Actor *actor = *list;
     s32 kind;
     // UB: the same empty slots are scanned here.
@@ -319,7 +319,7 @@ found:
 /// (CELL_BEHAVIOR_WALL) at its new place, through the map grid's layer 1
 /// offset, and its old place is given back what was under it.
 UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
-  struct MapGridScrollWork *workspace;
+  struct MapGridScrollState *state;
   struct Actor *actor;
   struct FieldPosition originalPosition;
   struct FieldPosition tilePosition;
@@ -329,9 +329,9 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 
   // UB: the heap slot is read as a word rather than as the pointer it holds.
 #ifdef UBFIX
-  workspace = gMapGridWork[0];
+  state = gMapGridState[0];
 #else
-  workspace = (void *)((u32 *)gMapGridWork)[0];
+  state = (void *)((u32 *)gMapGridState)[0];
 #endif
   direction = FACING_INDEX(Actor_GetById(ACTOR_PARTY_LEADER)->facing);
   actor = Actor_GetById(probe.actorSlot);
@@ -435,8 +435,8 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
       probe.position.x = FIELD_CELL(probe.position.x);
       probe.position.z = FIELD_CELL(probe.position.z);
     }
-    horizontalOrigin = FIELD_CELL(workspace->layers[1].offsetX);
-    verticalOrigin = FIELD_CELL(workspace->layers[1].offsetY);
+    horizontalOrigin = FIELD_CELL(state->layers[1].offsetX);
+    verticalOrigin = FIELD_CELL(state->layers[1].offsetY);
 
     MapGrid_CopyCellAttributes(
         probe.position.x, probe.position.z, horizontalExtent, verticalExtent,
@@ -473,7 +473,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 /// through the map grid's layer 1 offset; returns 0 when its sprite is no large
 /// thing.
 UNUSED static s32 Scene_RedrawActorRectangle(s32 id) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   struct Actor *actor = Actor_GetById(id);
   struct PushedActorProbe probe;
   u32 idx = 0;

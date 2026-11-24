@@ -28,7 +28,7 @@ s32 Inventory_GetEquippedItemFar(struct Unit *unit, s32 type);
 struct AbilityDefinition *Ability_Get(s32 abilityId);
 s32 Unit_LearnPsynergyFar();
 s32 Unit_KnowsPsynergyFar(s32 unitId, s32 abilityId);
-void MainRoutineWork_InitializeDefaultsFar(void);
+void MainRoutineState_InitializeDefaultsFar(void);
 struct LevelUpResult *Unit_TryLevelUpFar(s32 unitId,
                                          struct LevelUpResult *gains);
 s32 GameFlag_GetFar(s32 flag);

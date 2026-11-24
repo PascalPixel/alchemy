@@ -108,7 +108,7 @@
 #include "field/field.h"
 #include "field/field_blend.h"
 #include "field/field_effect.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
@@ -118,7 +118,7 @@
 #include "sound/sound.h"
 #include "system/io_reg.h"
 #include "system/io_write.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "system/system.h"
 #include "system/vram_cache.h"
@@ -300,7 +300,7 @@ const u32 *Scene_GetExits(void) {
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
-  if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE)
+  if (gMainRoutineState.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE)
     return gCottageRoomsB_BabiScholarsActorPlacements;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     table = gCottageRoomsB_ActorPlacementsAfterKalay;
@@ -331,7 +331,7 @@ static void CottageRoomsB_ScholarAsksAboutKraden(s32 speakerId) {
 
 /// Chooses the events for the room the party is in.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
+  if (gMainRoutineState.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gCottageRoomsB_BabiScholarsLaterTriggers;
     }
@@ -367,7 +367,7 @@ static void CottageRoomsB_AskIsaacHisBusiness(void) {
   // "Do you have business with me?"
   Event_OpenMessage(ACTOR_MASKED_MAN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 1);
   Event_Wait(20);
@@ -377,7 +377,7 @@ static void CottageRoomsB_AskIsaacHisBusiness(void) {
 
 /// A young man asks whether the masked man was Felix.
 static void CottageRoomsB_AskWhetherMaskedManWasFelix(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Event_Start();
   Actor_FaceActor(ACTOR_YOUNG_MAN_SAW_MASK, ACTOR_PARTY_LEADER, 10);
@@ -388,8 +388,8 @@ static void CottageRoomsB_AskWhetherMaskedManWasFelix(void) {
     // "It's hard to believe, but...what if Jenna was involved in..."
     Event_ShowMessage(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   } else {
-    work = gFieldWork;
-    work->message = work->message + 1;
+    state = gFieldState;
+    state->message = state->message + 1;
     Event_AskYesNo(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   }
   Event_End();
@@ -401,7 +401,7 @@ static void CottageRoomsB_CloseScreenAndExit(s32 exitNumber) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     Weather_StopLightning();
   }
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -501,9 +501,9 @@ static void CottageRoomsB_ExitToValePrologueEast(void) {
 
 /// Sets up these rooms for the stormy night or the story's villagers.
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
+  if (gMainRoutineState.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   } else {
     if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -519,8 +519,8 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriority(ACTOR_INNKEEPER, 1);
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       Actor_SetSpriteFlags(Actor_Get(ACTOR_INVISIBLE_AFTER_KALAY), 0);
-      if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_VALE ||
-          gMainRoutineWork.entrance ==
+      if (gMainRoutineState.entrance == COTTAGE_ROOMS_B_FROM_VALE ||
+          gMainRoutineState.entrance ==
               COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS) {
         if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
           if (GameFlag_Get(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
@@ -533,24 +533,24 @@ s32 Scene_Initialize(void) {
         }
       }
     } else {
-      if (gMainRoutineWork.entrance ==
+      if (gMainRoutineState.entrance ==
           COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA) {
         CottageRoomsB_HurryToThePlaza();
       } else {
-        if (gMainRoutineWork.entrance ==
+        if (gMainRoutineState.entrance ==
             COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST) {
           GameFlag_Set(FLAG_VALE_STORM);
           CottageRoomsB_DoraWakesIsaac();
         } else {
-          if (gMainRoutineWork.entrance ==
+          if (gMainRoutineState.entrance ==
               COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG) {
             CottageRoomsB_ShowMythrilBag();
           } else {
-            gFieldWork->transition =
+            gFieldState->transition =
                 SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
             if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
               Weather_StartLightning();
-              ((struct FieldBlendWork *)gFieldBlendWork[0])->loud = 1;
+              ((struct FieldBlendState *)gFieldBlendState[0])->loud = 1;
               Weather_LastLightning();
               wait(30);
               Event_StartScreenTransition();
@@ -574,13 +574,13 @@ s32 Scene_Initialize(void) {
 static void CottageRoomsB_DoraWakesIsaac(void) {
   s32 firstMessage;
   struct Sprite *sprite;
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   struct Actor *viewCenter;
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
-  grid = gMapGridWork[0];
-  viewCenter = work->camera;
+  state = gFieldState;
+  grid = gMapGridState[0];
+  viewCenter = state->camera;
   sprite = Actor_Get(ACTOR_TUNIC)->sprite;
   Event_Start();
   Actor_SetPosition(ACTOR_YOUNG_SMITH, 0, 0);
@@ -619,11 +619,11 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   viewCenter->z.fixed = toFIXED(691);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  gFieldWork->transitionFrames = 64;
+  gFieldState->transitionFrames = 64;
   Weather_StartLightning();
-  ((struct FieldBlendWork *)gFieldBlendWork[0])->loud = 1;
+  ((struct FieldBlendState *)gFieldBlendState[0])->loud = 1;
   Weather_LastLightning();
   wait(30);
   Event_StartScreenTransition();
@@ -705,7 +705,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   // sorry, but we don't have time..."
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_Wait(20);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 20);
@@ -715,8 +715,8 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraLeavesScript);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacLeavesScript);
   Event_Wait(20);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(
@@ -757,7 +757,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   actor->motionFlags = 0;
   sprite->image.priority = 1;
   Actor_SetScript(ACTOR_FLAME_AND_SMOKE, gCottageRoomsB_FlameShakesScript);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   MapGrid_CopyCellsTo(83, 15, 83, 19, 5, 4);
   MapGrid_CopyCellsTo(90, 16, 90, 20, 5, 4);
   MapGrid_CopyCellsTo(77, 23, 82, 23, 5, 7);
@@ -771,7 +771,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   SetBlendTarget(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   Io_Write16(BLEND_ALPHA(12, 16), &REG_BLDALPHA);
   Weather_StartLightning();
-  ((struct FieldBlendWork *)gFieldBlendWork[0])->loud = 1;
+  ((struct FieldBlendState *)gFieldBlendState[0])->loud = 1;
   Weather_LastLightning();
   wait(30);
   // Dora and Isaac run out of the house (SE_DOOR_OPEN).
@@ -852,8 +852,8 @@ ramp:
   FieldCamera_FollowActor(ACTOR_DORA, 1);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_RunToPlazaScript);
   Actor_RunScriptAndWait(ACTOR_PARTY_LEADER, gCottageRoomsB_RunToPlazaScript);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 32;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = 32;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA);
@@ -993,7 +993,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   // "You promised you wouldn't come back until your quest was..."
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   }
   if (Event_GetFlag(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -1007,7 +1007,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   // "Who told you I was ill? The mayor? Or cough ...was it the..."
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   }
   if (GameFlag_Get(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -1127,7 +1127,7 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   Icon_DrawItem(ITEM_MYTHRIL_BAG);
   VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 480, 176);
@@ -1182,7 +1182,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
   struct Actor *child;
   struct Sprite *part;
   struct Sprite *sprite;
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct FieldEffectState *effectState = gFieldEffectState;
   s32 effectIndex;
 
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
@@ -1200,7 +1200,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
         Sprite_StartAnimation(part, 0);
         sprite->flags = 0;
         VramCache_FreeEntry(sprite->slot);
-        sprite->slot = effectWork->tileSlot;
+        sprite->slot = effectState->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
             (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;

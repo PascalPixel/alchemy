@@ -243,7 +243,7 @@ void Battle_ReservedNoOpF674(void) {}
 /// Ends a turn: sets recovered Djinn, then gives each unit its regeneration and
 /// counts down its stat changes and statuses, showing each that ends.
 UNREAD_RESULT Battle_ProcessTurnEnd(void) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 side;
   s32 sideCount;
   s32 count;
@@ -252,7 +252,7 @@ UNREAD_RESULT Battle_ProcessTurnEnd(void) {
 
   // Djinn recovery: the party's list, and in a link battle the opponent's
   // too. Only a Djinni whose unit is on the field with HP counts down.
-  battle = gBattleWork;
+  battle = gBattleState;
   sideCount = (battle->isLink != 0) + 1;
   for (side = 0; side < sideCount; side++) {
     list = &Djinn_GetRecoveryTableFar(side)->list;
@@ -300,7 +300,7 @@ UNREAD_RESULT Battle_ProcessTurnEnd(void) {
   }
   // Fade 0 leaves the palette as it is: this only puts the zoomed
   // background back and rebuilds its map.
-  BattleBackground_SetMode(BATTLE_BACKGROUND_ZOOMED, gBattleWork->background,
+  BattleBackground_SetMode(BATTLE_BACKGROUND_ZOOMED, gBattleState->background,
                            0);
   {
     s32 *groupList;
@@ -589,7 +589,7 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
     // A tenth of the maximum HP, a fifth for deadly poison (POISON_VENOM).
     if (*poison != 0) {
       s32 damage = unit->hpMax * *poison / 10;
-      struct BattleWork *battle = gBattleWork;
+      struct BattleState *battle = gBattleState;
       BattlePlayback_Push(PLAYBACK_HIT, unitId);
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
       BattlePlayback_Push(PLAYBACK_NUMBER, damage);

@@ -31,15 +31,15 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
 /// PsynergyEntry.encodedAction's top bit: the action comes from the class.
 #define PSYNERGY_FROM_CLASS_SHIFT 15
 
-/// Empties the battle's spoils (BattleWork.spoils) and
-/// gMainRoutineWork.pendingItem.
+/// Empties the battle's spoils (BattleState.spoils) and
+/// gMainRoutineState.pendingItem.
 void BattleSpoils_Clear(void) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   struct BattleSpoils *spoils = &battle->spoils;
   u16 *items;
   s32 index;
 
-  gMainRoutineWork.pendingItem = 0;
+  gMainRoutineState.pendingItem = 0;
   spoils->coins = 0;
   spoils->experience = 0;
   spoils->defeated = 0;
@@ -90,7 +90,7 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct Unit *unit;
   const struct EnemyDefinition *enemy;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   struct BattleSpoils *spoils;
   s32 i;
   s32 dropShift;
@@ -100,7 +100,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   s32 itemPriority;
 
   unit = Unit_GetFar(unitId);
-  battle = gBattleWork;
+  battle = gBattleState;
   spoils = &battle->spoils;
   if (unitId >= 0 && unitId <= ALLY_MAX)
     return -1;
@@ -183,7 +183,7 @@ void Battle_AwardSpoils(void) {
   struct LevelUpResult gains; // Read stat increases as signed values.
   u16 units[8];
 
-  spoils = &gBattleWork->spoils;
+  spoils = &gBattleState->spoils;
   if (spoils->experience != 0) {
     MessageArgument_PushFar(spoils->experience, MESSAGE_ARGUMENT_NUMBER);
     BattleMessage_ShowAndWaitFar(MsgExpGained);

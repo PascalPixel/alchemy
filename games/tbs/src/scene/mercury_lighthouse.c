@@ -86,13 +86,13 @@
 #include "field/facing.h"
 #include "field/field.h"
 #include "field/field_effect.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/ground_mask.h"
 #include "field/map_grid_scroll.h"
 #include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
-#include "field/world_map_render_work.h"
+#include "field/world_map_render_state.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
@@ -109,7 +109,7 @@
 #include "system/input.h"
 #include "system/io_write.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "system/system.h"
 #include "system/system_call.h"
@@ -392,14 +392,14 @@ static void MercuryLighthouse_StartDjinnBattle(void) {
 /// MAPGRID_LAYER_GROUND.
 static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  struct FadeOverlayWork *effectWork = gFadeOverlayWork;
+  struct FadeOverlayState *effectState = gFadeOverlayState;
 
   if (leader->layer == 0 &&
       FIELD_CELL(leader->z.fixed) >= OVERLAY_FREE_FIRST_ROW &&
       FIELD_CELL(leader->z.fixed) <= OVERLAY_FREE_LAST_ROW)
-    effectWork->actor = NULL;
+    effectState->actor = NULL;
   else
-    effectWork->actor = leader;
+    effectState->actor = leader;
 }
 #endif
 
@@ -407,7 +407,7 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
 #include "shared/mercury_lighthouse_palette_cycle.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_MERCURY_LIGHTHOUSE_EXTERIOR) {
     return gMercuryLighthouseExteriorEntrances;
@@ -428,7 +428,7 @@ const u32 *Scene_GetExits(void) { return gMercuryLighthouse_Exits; }
 
 /// Each scene's people, statues and pipes; the empty table is for no scene.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_MERCURY_LIGHTHOUSE_LOWER) {
     return gMercuryLighthouseLowerActorPlacements;
@@ -502,7 +502,7 @@ static void MercuryLighthouse_InspectSealedDoor(void) {
 
 /// Each scene's triggers, the exterior's last.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_MERCURY_LIGHTHOUSE_LOWER) {
     return gMercuryLighthouseLowerTriggers;
@@ -526,7 +526,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST, past
 /// EXIT_CELL_BEHAVIOR_OFFSET.
 static void MercuryLighthouse_WaterfallToSleetsRoom(void) {
-  MercuryLighthouse_WalkIntoWaterfall(gFieldWork->stepTrigger -
+  MercuryLighthouse_WalkIntoWaterfall(gFieldState->stepTrigger -
                                       EXIT_CELL_BEHAVIOR_OFFSET);
 }
 
@@ -535,7 +535,7 @@ static void MercuryLighthouse_WaterfallToSleetsRoom(void) {
 /// comes out at the foot of the room of vines, through
 /// MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP.
 static void MercuryLighthouse_WaterfallToGapRoom(void) {
-  MercuryLighthouse_WalkIntoWaterfall(gFieldWork->stepTrigger -
+  MercuryLighthouse_WalkIntoWaterfall(gFieldState->stepTrigger -
                                       EXIT_CELL_BEHAVIOR_OFFSET);
 }
 
@@ -543,7 +543,7 @@ static void MercuryLighthouse_WaterfallToGapRoom(void) {
 /// vanishes in a trail of sparkles and comes out again on the path that led
 /// there, through MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_PATH.
 static void MercuryLighthouse_WaterfallToUpperPath(void) {
-  MercuryLighthouse_WalkIntoWaterfall(gFieldWork->stepTrigger -
+  MercuryLighthouse_WalkIntoWaterfall(gFieldState->stepTrigger -
                                       EXIT_CELL_BEHAVIOR_OFFSET);
 }
 
@@ -564,7 +564,7 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
     MapGrid_SetShake(1, 1, 1);
     Sound_Play(SE_RUMBLE);
     Event_Wait(60);
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
@@ -663,20 +663,20 @@ static void MercuryLighthouse_PushChannelPipes(void) {
 /// chest's room and pauses half a second (MERCURY_LIGHTHOUSE_CARRY_LEADER_BACK
 /// and TBS_PATCH_1).
 static void MercuryLighthouse_PushLeaderOutOfSpout(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   Task_AddFrame(MercuryLighthouse_SparkleAroundLeader, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 2.5);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Sound_Play(SE_SPARKLING_PASSAGE);
-  if (work->stepTrigger == CELL_BEHAVIOR_EAST_SPOUT) {
+  if (state->stepTrigger == CELL_BEHAVIOR_EAST_SPOUT) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, 232, 616);
-  } else if (work->stepTrigger == CELL_BEHAVIOR_SOUTH_SPOUT) {
+  } else if (state->stepTrigger == CELL_BEHAVIOR_SOUTH_SPOUT) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, 360, 728);
-  } else if (work->stepTrigger == CELL_BEHAVIOR_WEST_SPOUT) {
+  } else if (state->stepTrigger == CELL_BEHAVIOR_WEST_SPOUT) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, 248, 792);
   } else {
     MERCURY_LIGHTHOUSE_CARRY_LEADER_BACK(ACTOR_PARTY_LEADER, 696, 592);
@@ -1373,7 +1373,7 @@ static void MercuryLighthouse_PushJetRoomPipes(void) {
           Event_Wait(40);
           GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL);
           PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-          gFieldWork->transition =
+          gFieldState->transition =
               SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
           Event_FinishScreenTransition();
           Event_WaitTransitionFrames();
@@ -1556,9 +1556,9 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     // "Alex is the only one other than I who can enter Mercury..."
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     // "You can't hear it? Well, I can. Alex is the only one other..."
@@ -1656,7 +1656,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     // "Did you do that?"
     Event_OpenMessage(ACTOR_MIA, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-      gFieldWork->message += 1;
+      gFieldState->message += 1;
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
       // "I knew it... I saw a ghostly force pushing it!"
@@ -1666,7 +1666,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
       Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
       // "No, I saw it! I'm certain that flow of force came from you."
       Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-      gFieldWork->message += 1;
+      gFieldState->message += 1;
     }
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     // Garet and Ivan step out to explain Psynergy; Mia tells of Ply.
@@ -1723,9 +1723,9 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
       // "Sure... They're the sworn protectors of a special power, just..."
       Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-      gFieldWork->message += 1;
+      gFieldState->message += 1;
     } else {
-      gFieldWork->message += 1;
+      gFieldState->message += 1;
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
       // "Oh, come on! Both of them are protectors of special powers! It's..."
@@ -2123,7 +2123,7 @@ static void MercuryLighthouse_InspectLockedDoor(void) {
 /// dry." before Saturos is beaten, "The fountain is flowing with water." after.
 ///
 /// With an Empty Bottle in the party it then asks for the field menu
-/// (gFieldWork->fieldMenu), so the bottle can be used there.
+/// (gFieldState->fieldMenu), so the bottle can be used there.
 static void MercuryLighthouse_InspectHealingFountain(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -2133,7 +2133,7 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
     FieldMessage_Show(MSGNO(MsgMercuryLighthouseFountainFlowsWithWater), 1);
   if (PartyInventory_FindMember(ITEM_EMPTY_BOTTLE) != -1) {
     // The field sequence handles this menu request after the inspection ends.
-    gFieldWork->fieldMenu = 1;
+    gFieldState->fieldMenu = 1;
   }
   Event_End();
 }
@@ -2162,7 +2162,7 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
 /// crystal (cell (13, 19)), only jumps him down to the floor below.
 static void MercuryLighthouse_JumpDownPastCrystal(void) {
   Event_Start();
-  if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_LOWER) {
+  if (gMainRoutineState.next == SCENE_MERCURY_LIGHTHOUSE_LOWER) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 472, 600);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
     FieldCamera_MoveTo(464, CAMERA_KEEP, 656, 1);
@@ -2173,7 +2173,7 @@ static void MercuryLighthouse_JumpDownPastCrystal(void) {
     Actor_Get(ACTOR_PARTY_LEADER)->gravity = toFIXED(1) / 2;
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
     FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, -1);
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
     Event_Wait(60);
     Import_EventSetExitRequest(
@@ -2364,9 +2364,10 @@ s32 Scene_Initialize(void) {
   s32 alpha;
 
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
-  gMainRoutineWork.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
-  gMainRoutineWork.retreatScene = SCENE_MERCURY_LIGHTHOUSE_EXTERIOR;
-  gFieldWork->transition =
+  gMainRoutineState.retreatEntrance =
+      MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
+  gMainRoutineState.retreatScene = SCENE_MERCURY_LIGHTHOUSE_EXTERIOR;
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Io_Write16(BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND, &REG_BLDCNT);
   alpha = BLEND_ALPHA(16, 16);
@@ -2379,9 +2380,9 @@ s32 Scene_Initialize(void) {
     Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
   else
     MercuryLighthouse_ClearPalette();
-  if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_LOWER) {
+  if (gMainRoutineState.next == SCENE_MERCURY_LIGHTHOUSE_LOWER) {
     // The great pool room, the pipe room and Mia's ledge.
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST:
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST:
     case MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE:
@@ -2438,8 +2439,8 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_MIDDLE) {
-    switch (gMainRoutineWork.entrance) {
+  if (gMainRoutineState.next == SCENE_MERCURY_LIGHTHOUSE_MIDDLE) {
+    switch (gMainRoutineState.entrance) {
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH:
     case MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE:
       SetEffectRecordMode(Actor_Get(ACTOR_SPOUT_PIPE), 1);
@@ -2505,8 +2506,8 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_UPPER) {
-    switch (gMainRoutineWork.entrance) {
+  if (gMainRoutineState.next == SCENE_MERCURY_LIGHTHOUSE_UPPER) {
+    switch (gMainRoutineState.entrance) {
     case MERCURY_LIGHTHOUSE_UPPER_ROW_STATUES_FROM_GATE:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST:
@@ -2614,7 +2615,7 @@ s32 Scene_Initialize(void) {
 #endif
       // Fall through.
     case MERCURY_LIGHTHOUSE_UPPER_JETS_FROM_GATE:
-      if (gMainRoutineWork.entrance == MERCURY_LIGHTHOUSE_UPPER_JETS_FROM_GATE)
+      if (gMainRoutineState.entrance == MERCURY_LIGHTHOUSE_UPPER_JETS_FROM_GATE)
         Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
       SetEffectRecordMode(Actor_Get(ACTOR_SLIDING_STATUE), 1);
       Actor_SetSpritePriority(ACTOR_WEST_EAST_PIPE, 2);
@@ -2625,7 +2626,7 @@ s32 Scene_Initialize(void) {
       SetEffectRecordMode(Actor_Get(ACTOR_FIRST_JET_ROOM_PIPE_END + 2), 1);
       Scene_RedrawActorRectangle(ACTOR_WEST_EAST_PIPE);
       Scene_RedrawActorRectangle(ACTOR_JET_SWITCH_PIPE);
-      if (gMainRoutineWork.entrance != MERCURY_LIGHTHOUSE_UPPER_JETS_FROM_GATE)
+      if (gMainRoutineState.entrance != MERCURY_LIGHTHOUSE_UPPER_JETS_FROM_GATE)
         break;
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         GameFlag_Clear(FLAG_WEST_EAST_PIPE_PUSHED);
@@ -2655,7 +2656,7 @@ s32 Scene_Initialize(void) {
       Actor_Get(ACTOR_FALLEN_STATUE)->motionFlags = 0;
       Actor_Get(ACTOR_FALLEN_STATUE)->bounce = 0;
       Actor_Get(ACTOR_FALLEN_STATUE)->gravity = toFIXED(3) / 10;
-      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+      gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Actor_Get(ACTOR_FALLEN_STATUE)->motionFlags =
@@ -2674,9 +2675,9 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_EXTERIOR) {
+  if (gMainRoutineState.next == SCENE_MERCURY_LIGHTHOUSE_EXTERIOR) {
     // This scene contains Mia's entrance, the lift and the healing fountain.
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH:
       Task_AddFrame(MercuryLighthouse_CycleWaterfallPalette, TASK_PASS_FRAME);
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -2889,7 +2890,7 @@ static void MercuryLighthouse_RideLift(void) {
   struct MapGridLayerScroll *liftLayer;
   FIXED liftSpeed;
 
-  liftLayer = &((struct MapGridScrollWork *)gMapGridWork[0])
+  liftLayer = &((struct MapGridScrollState *)gMapGridState[0])
                    ->layers[MAPGRID_LAYER_OVERHEAD];
   liftSpeed = toFIXED(0.61);
   liftLayer->offsetY = toFIXED(1161);
@@ -2977,15 +2978,15 @@ static void MercuryLighthouse_RideLift(void) {
 
 /// Mia casts Ply on the Ply target, moved onto the door.
 static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   u8 flags;
 
-  effectWork = gFieldEffectWork;
+  effectState = gFieldEffectState;
   Actor_SetPosition(ACTOR_PLY_TARGET, 840, 600);
   FieldPsynergy_LoadResources(ABILITY_PLY, 1);
   FieldPsynergy_SetupActorPair(ACTOR_MIA, ACTOR_PLY_TARGET);
-  flags = (u8)effectWork->messageMode | FIELD_MESSAGE_LOWER;
-  effectWork->messageMode = flags;
+  flags = (u8)effectState->messageMode | FIELD_MESSAGE_LOWER;
+  effectState->messageMode = flags;
   FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(1);
   FieldPsynergy_StopCasterUpdate();

@@ -67,10 +67,10 @@ lesson: the real screen opens, and the game presses the buttons for the
 player, a second and a half apart. To the screen they are ordinary
 presses.
 
-## The menu work
+## The menu state
 
 While the menu is open, what it has to keep track of lives in one block of
-memory, the menu's [work](../../glossary.md#work): its windows, which
+memory, the menu's [state](../../glossary.md#state): its windows, which
 question it is at, and where the hand last was for each party member, so
 that going back to Garet's items lands where you left them.
 

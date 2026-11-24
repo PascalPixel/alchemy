@@ -13,7 +13,7 @@
 #include "debug/debug.h"
 #include "field/actor.h"
 #include "field/event.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/scene_tables.h"
 #include "game/character.h"
 #include "game/game.h"
@@ -22,7 +22,7 @@
 #include "system/dma.h"
 #include "system/heap_slots.h"
 #include "system/input.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/system_call.h"
 #include "window/message_speed.h"
@@ -125,7 +125,7 @@ static void MenuTest_BrowseMessageRange(s32 messageId, s32 messageCount) {
   struct Window *window;
   s32 messageIndex;
 
-  gMainRoutineWork.messageSpeed = MESSAGE_SPEED_FAST;
+  gMainRoutineState.messageSpeed = MESSAGE_SPEED_FAST;
   window = Portrait_OpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
   for (messageIndex = 0; messageIndex < messageCount; messageIndex++) {
     // A sample name, item and number for each message to show: Garet, the
@@ -225,7 +225,7 @@ static void MenuTest_IgnorePsynergy(void) {}
 /// shot, this sets the effect's childMode, and the shot then leaves its target
 /// where it is (field/event_commands_force.c).
 static void MenuTest_KeepIvyInPlace(void) {
-  ((struct FieldEffectWork *)gFieldEffectWork)->childMode = 1;
+  ((struct FieldEffectState *)gFieldEffectState)->childMode = 1;
 }
 
 #if TBS_PATCH_3
@@ -789,7 +789,7 @@ s32 Scene_Initialize(void) {
   Item_AdjustCounter(ITEM_SPIRIT_ARMLET, 1);
   Item_AdjustCounter(ITEM_WARRIORS_HELM, 1);
 #if !TBS_PATCH_1
-  gMainRoutineWork.holdings.coins = 777777;
+  gMainRoutineState.holdings.coins = 777777;
 #endif
   Unit_LevelUpTo(ISAAC, DEBUG_ISAAC_LEVEL);
   Unit_LevelUpTo(GARET, DEBUG_PARTY_LEVEL);

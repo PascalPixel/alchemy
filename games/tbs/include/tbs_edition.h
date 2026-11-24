@@ -15,7 +15,7 @@
 #define LUNPA_RETURN_TRANSITION_VARIANT WINDOW_TRANSITION_BARS
 #endif
 
-/// Outside Japanese the windows' work (struct WindowWork) is laid out anew: 8
+/// Outside Japanese the windows' state (struct WindowState) is laid out anew: 8
 /// windows instead of 12, and a text ring of 512 codes instead of 256. The
 /// longer words widen the field menu's and the File Screen's icon rows and move
 /// the debug scene selector's columns, and two enemies of one kind are told

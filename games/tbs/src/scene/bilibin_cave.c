@@ -7,7 +7,7 @@
 /// end opens onto the World Map farther north.
 ///
 /// No one speaks here. Each scene is a run of Psynergy puzzles. The getters
-/// pick its tables by gMainRoutineWork.next, and Scene_Initialize
+/// pick its tables by gMainRoutineState.next, and Scene_Initialize
 /// restores what the party has already solved in the scene being entered.
 ///
 /// The Bilibin Cave Entrance is a clearing below a cliff, entered from the
@@ -89,7 +89,7 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/system_call.h"
 
@@ -221,7 +221,7 @@ static s32 BilibinCave_HideScriptedShadow(struct Actor *actor) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_BILIBIN_CAVE_ENTRANCE) {
     return gBilibinCaveEntranceEntrances;
@@ -240,7 +240,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gBilibinCaveExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_BILIBIN_CAVE_ENTRANCE) {
     return gBilibinCaveEntranceActorPlacements;
@@ -255,7 +255,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_BILIBIN_CAVE_ENTRANCE) {
     return gBilibinCaveEntranceTriggers;
@@ -447,20 +447,20 @@ static void BilibinCave_GrowPlant(void) {
 /// part of Bilibin Cave (cells (32..34, 32..35)), Isaac starts leaving
 /// footprints.
 static void BilibinCave_StartFootprints(void) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   grid->footprints = 1;
 }
 
 /// Walking off the snow at the cave mouth toward Imil, onto the cells round
 /// its edge, Isaac stops leaving footprints.
 static void BilibinCave_StopFootprints(void) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   grid->footprints = 0;
 }
 
 /// Sets up the scene being entered, with its puzzles already solved.
 s32 Scene_Initialize(void) {
-  s16 variant = gMainRoutineWork.next;
+  s16 variant = gMainRoutineState.next;
 
   if (variant == SCENE_BILIBIN_CAVE_ENTRANCE) {
     BilibinCave_RestoreEntrance();
@@ -483,7 +483,7 @@ static void BilibinCave_RestoreEntrance(void) {
 
 /// Sets up Bilibin Cave's SceneId_BilibinCaveRapier.
 static void BilibinCave_RestoreRapierRoom(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
   Actor_SetAnimation(ACTOR_RAPIER_ROOM_WEST_TORCH, TORCH_ANIMATION_UNLIT);
@@ -506,7 +506,7 @@ static inline void BilibinCave_HideShadow(s32 actorId) {
 static void BilibinCave_RestoreIceRoom(void) {
   s32 destinationCellX;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   BilibinCave_HideShadow(ACTOR_FIRST_ICE_PILLAR);
   BilibinCave_HideShadow(ACTOR_FIRST_ICE_PILLAR + 1);

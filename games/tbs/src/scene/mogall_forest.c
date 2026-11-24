@@ -89,7 +89,7 @@
 #include "scene/field_effect_spawn.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/system_call.h"
 #include "text/msg_ids.h"
@@ -399,7 +399,7 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_MOGALL_FOREST_SIGN) {
     return gMogallForestSign_Entrances;
@@ -419,7 +419,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gMogallForest_Exits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_MOGALL_FOREST_SIGN) {
     return gMogallForestSign_ActorPlacements;
@@ -1333,7 +1333,7 @@ static void MogallForest_KillerApeAttacks(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_MOGALL_FOREST_SIGN) {
     return gMogallForestSign_Triggers;
@@ -1355,11 +1355,11 @@ s32 Scene_Initialize(void) {
   s32 sceneId;
   s32 entrance;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  sceneId = gMainRoutineWork.next;
+  sceneId = gMainRoutineState.next;
   if (sceneId == SCENE_MOGALL_FOREST_SIGN) {
-    entrance = gMainRoutineWork.entrance;
+    entrance = gMainRoutineState.entrance;
     switch (entrance) {
     case MOGALL_FOREST_SIGN_FROM_WORLD_MAP:
     case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
@@ -1437,7 +1437,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   } else if (sceneId == SCENE_MOGALL_FOREST_QUARTZ) {
-    entrance = gMainRoutineWork.entrance;
+    entrance = gMainRoutineState.entrance;
     switch (entrance) {
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH:
     case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHWEST_CLEARING:
@@ -1495,7 +1495,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   } else if (sceneId == SCENE_MOGALL_FOREST_KILLER_APE) {
-    entrance = gMainRoutineWork.entrance;
+    entrance = gMainRoutineState.entrance;
     switch (entrance) {
     case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
     case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_CHEST:

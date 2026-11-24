@@ -24,7 +24,7 @@
 /// Swirling stars: stars spin about a point above the field, each on its own
 /// axis, then are drawn back towards it.
 UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 center[3];
   struct ScreenPoint screen;
@@ -33,12 +33,12 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   s32 i;
   s32 frame;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress(RESOURCE_STAR_DOT_SHEET, work->sheet, 1, 1);
-  BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, draw);
+  Resource_LoadAndDecompress(RESOURCE_STAR_DOT_SHEET, state->sheet, 1, 1);
+  BattleEffect_FetchRectangleBlitters(state->args->side ^ 1, draw);
   for (i = 0; i != SWIRLING_STARS_PLACED; i++) {
     star = &PARTICLES[i];
     SET_POSITION(star, INTtoFIXED((Random16() & 0xff) - 127),
@@ -47,7 +47,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
     SET_VELOCITY(star, 0, 0, 0);
     star->variant = 0;
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   SET_VECTOR(center, 0, toFIXED(80), 0);
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
@@ -83,8 +83,8 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
             SWIRLING_STAR_LARGEST - (screen.depth - SWIRLING_STAR_DEPTH_NEAR) /
                                         SWIRLING_STAR_DEPTH_STEP;
         draw[0](canvas,
-                work->sheet + ((i & 3) * MOTE_SET_BYTES +
-                               gBattleEffect_MotePictures[size - 1]),
+                state->sheet + ((i & 3) * MOTE_SET_BYTES +
+                                gBattleEffect_MotePictures[size - 1]),
                 screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(star, 60, 0);
         // After 30 frames a star springs back towards the centre.
@@ -99,14 +99,14 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   EFFECT_FINISH_CANVAS();
 }
 
 /// Orbiting skulls: three skulls circle each target in turn.
 UNUSED void BattleEffect_RunOrbitingSkulls(void) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 point[3];
   struct ScreenPoint center;
@@ -120,21 +120,21 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   s32 xOffset;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   skulls = Resource_GetTableEntry(RESOURCE_SKULL_SHEET);
   Iwram_CopyWords(BG_PLTT, skulls, SHEET_PALETTE_BYTES);
-  Decompress_TaggedLz(skulls + SHEET_PALETTE_BYTES, work->sheet);
+  Decompress_TaggedLz(skulls + SHEET_PALETTE_BYTES, state->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  if (work->args->side == EFFECT_SIDE_ENEMIES)
+  if (state->args->side == EFFECT_SIDE_ENEMIES)
     xOffset = 0;
   else
     xOffset = -NARROW_CANVAS_PARTY_X;
@@ -142,21 +142,21 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   do {
     REG_BG2X = xOffset << 8;
   } while (0);
-  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-    struct Particle *skull = &work->particles[i];
+  for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+    struct Particle *skull = &state->particles[i];
 
     skull->x = 0;
     skull->y = 0;
     skull->velocityX = 0;
     skull->z = 4;
   }
-  for (frame = 0; frame != work->args->targetCount * 16 + 64; frame++) {
-    EFFECT_FOR_EACH_TARGET(member, work->args) {
+  for (frame = 0; frame != state->args->targetCount * 16 + 64; frame++) {
+    EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor;
       u32 memberFrame;
 
-      actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
-      Projection_ScaledUnit(work->args->targets[member], &screen);
+      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+      Projection_ScaledUnit(state->args->targets[member], &screen);
       memberFrame = frame - member * 16;
       screen.x += xOffset;
       if (memberFrame < 64) {
@@ -174,7 +174,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
         } while (0);
         for (i = 0; i != 3; i++) {
           // A skull's velocityX is its angle round the target.
-          struct Particle *skull = &work->particles[member * 3 + i];
+          struct Particle *skull = &state->particles[member * 3 + i];
           s32 x;
           s32 y;
 
@@ -185,12 +185,12 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
               FIXEDtoINT(
                   (Trig_Cos(skull->velocityX + i * (DEGtoANG(120))) * 8));
           skull->velocityX += TRIG_TURN / 128;
-          draw[0](canvas, work->sheet + i * PICTURE_BYTES(SKULL),
+          draw[0](canvas, state->sheet + i * PICTURE_BYTES(SKULL),
                   x - SKULL_WIDTH / 2, y - 28, SKULL_WIDTH, SKULL_HEIGHT);
         }
       }
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
@@ -203,7 +203,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
 /// Target bursts: on each target in turn a burst flares while puffs of smoke
 /// scatter around it.
 UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   void *palette;
   s32 frame;
@@ -214,13 +214,13 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   s32 point[3];
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_TARGET_BURST_IMAGE,
-                             work->sheet + TARGET_BURST_PICTURES, 0, 0);
+                             state->sheet + TARGET_BURST_PICTURES, 0, 0);
   palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -230,11 +230,11 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
                       COMPOSITE_LIGHTEN);
   drawSmoke = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_PAIRED);
 
-  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
+  for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
     s32 angle;
     s32 speed;
 
-    puff = &work->particles[i];
+    puff = &state->particles[i];
     angle = Random16() & TRIG_ANGLE_MASK;
     speed = Random16() & 0xff;
     SET_POSITION(puff, 0, 0, 0);
@@ -249,16 +249,17 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
     puff->variant = 0;
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != TARGET_BURSTS_FRAMES; frame++) {
     s32 member;
     struct BattleCamera *camera = gBattleCamera;
 
-    EFFECT_FOR_EACH_TARGET(member, work->args) {
+    EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor;
 
-      actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
+      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, actor->x.fixed, toFIXED(20), actor->z.fixed);
       Matrix_TranslateVector(point);
@@ -268,7 +269,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
         for (i = 0; i != 6; i++) {
           s32 picture;
 
-          puff = &work->particles[member * 6 + i];
+          puff = &state->particles[member * 6 + i];
           picture = puff->variant / 6;
           if (picture > 5)
             picture = 5;
@@ -277,13 +278,14 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
           if (i == 5) {
             Particle_AdvanceWithGravity3D(puff, 62, toFIXED(1) / 32);
             drawBurst(canvas,
-                      work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
+                      state->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
                           TARGET_BURST_PICTURES,
                       screen.x - SMOKE_PUFF_WIDTH / 2, screen.y - 36,
                       SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           } else {
             Particle_AdvanceWithGravity3D(puff, 60, toFIXED(1) / 128);
-            drawSmoke(canvas, work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF),
+            drawSmoke(canvas,
+                      state->sheet + picture * PICTURE_BYTES(SMOKE_PUFF),
                       screen.x - SMOKE_PUFF_WIDTH / 2, screen.y - 36,
                       SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           }
@@ -291,7 +293,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   EFFECT_FINISH_CANVAS();
 }

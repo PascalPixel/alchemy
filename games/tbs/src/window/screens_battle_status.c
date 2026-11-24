@@ -92,7 +92,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   struct MenuSprite statusSprites[OWNER_STATUS_ICON_PLACES];
   struct MenuSprite portraitSprite;
   struct StatusCursor cursor;
-  struct WindowWork *work;
+  struct WindowState *state;
   struct Window *statusWindow;
   struct Window *helpWindow;
   s32 memberIndex;
@@ -117,17 +117,17 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   s32 agilityDelta;
   s32 helpValue;
   s32 groupPosition;
-  struct BattleMenuWork *navigation;
+  struct BattleMenuState *navigation;
   s32 iconX;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   redraw = OWNER_STATUS_REDRAW_ALL;
   memberIndex = -1;
   portraitSlot = VramCache_AllocEntry(512);
   statusCount = 0;
   hasDjinn = Party_SumDjinnCountsFar(-1);
 
-  navigation = gBattleMenuWork;
+  navigation = gBattleMenuState;
   navigation->timerHidden = 1;
   if (navigation->timerWindow != 0) {
     Window_Close(navigation->timerWindow, 1);
@@ -693,7 +693,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       Text_DrawWideStringAtOffset(helpText, (struct Window *)helpWindow, 0, 4);
       Heap_Release(helpText);
       redraw = 0;
-      work->dirty = 1;
+      state->dirty = 1;
     }
 
     // The status icons, 15 pixels apart from x 112 on the first row;
@@ -719,7 +719,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       }
     }
 
-    if (gBattleMenuWork->timer == 0) {
+    if (gBattleMenuState->timer == 0) {
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
@@ -763,8 +763,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 #endif
   Window_Close(statusWindow, 1);
   Window_Close(helpWindow, 1);
-  PartyStatus_Draw(gBattleWork->partyStatus);
-  gBattleMenuWork->timerHidden = 0;
+  PartyStatus_Draw(gBattleState->partyStatus);
+  gBattleMenuState->timerHidden = 0;
   wait(1);
   return 0;
 }

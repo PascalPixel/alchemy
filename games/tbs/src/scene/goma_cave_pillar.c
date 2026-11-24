@@ -482,10 +482,10 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// and shakes his head while the Djinni joins the party, then raises
 /// `RAISED_FORGE_JOINED`.
 static void GomaCavePillar_WatchForgeJoin(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 frame;
 
-  work = gFieldWork;
+  state = gFieldState;
   frame = ++gGomaCavePillar_WitnessFrames;
   switch (frame) {
   case 60:
@@ -503,8 +503,8 @@ static void GomaCavePillar_WatchForgeJoin(void) {
     Actor_SetAnimation(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
     break;
   }
-  if (gMainRoutineWork.pendingDjinni == 0)
-    work->raisedTrigger = RAISED_FORGE_JOINED;
+  if (gMainRoutineState.pendingDjinni == 0)
+    state->raisedTrigger = RAISED_FORGE_JOINED;
 }
 
 /// Once Forge has joined the party, the man who fought it is amazed: "You
@@ -537,12 +537,12 @@ static void GomaCavePillar_WitnessCheersForgeCaught(void) {
 /// party left them, and the east pillar's top as a stepping stone when the
 /// party comes in on the east side.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
-  work->transition =
+  state = gFieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  work->transitionFrames = 24;
+  state->transitionFrames = 24;
   Actor_Get(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   if (GameFlag_Get(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {
     Actor_SetPosition(ACTOR_WEST_PILLAR, 344, 104);
@@ -558,9 +558,9 @@ s32 Scene_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE) != 0) {
     Actor_SetPosition(ACTOR_EAST_PILLAR, 616, 232);
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
-        gMainRoutineWork.entrance ==
+        gMainRoutineState.entrance ==
             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
       Actor_Get(ACTOR_EAST_PILLAR)->layer = 2;
       Actor_Get(ACTOR_EAST_PILLAR)->y.fixed--;
@@ -568,7 +568,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(36, 48, 5, 1, 36, 14);
     }
   }
-  if (gMainRoutineWork.entrance == ENTRANCE_STUMP_FALL) {
+  if (gMainRoutineState.entrance == ENTRANCE_STUMP_FALL) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Actor_SetPosition(ACTOR_STUMP, 384, 192);
@@ -579,7 +579,7 @@ s32 Scene_Initialize(void) {
     GomaCavePillar_PushStumpOver();
   }
   // Coming back from a Djinni battle: the man reacts until it is over.
-  if (gMainRoutineWork.pendingDjinni != 0) {
+  if (gMainRoutineState.pendingDjinni != 0) {
     gGomaCavePillar_WitnessFrames = 0;
     Task_AddFrame(GomaCavePillar_WatchForgeJoin, TASK_PASS_FRAME);
   }

@@ -62,7 +62,7 @@
 #include "system/input.h"
 #include "system/io_reg.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -283,7 +283,7 @@ static inline void BabiPalace_RestorePartyAndInventory(void) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == SCENE_BABI_PALACE_ENTRANCE) {
+  if (gMainRoutineState.next == SCENE_BABI_PALACE_ENTRANCE) {
     return gBabiPalace_OutsideEntrances;
   }
   return gBabiPalace_Entrances;
@@ -300,7 +300,7 @@ const u32 *Scene_GetExits(void) { return gBabiPalace_Exits; }
 /// Returns the actor placements for the scene and the story, which is before
 /// Babi's rescue, during the finals or after Colosso.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_BABI_PALACE_ENTRANCE) {
+  if (gMainRoutineState.next == SCENE_BABI_PALACE_ENTRANCE) {
     return gBabiPalace_OutsideActorPlacements;
   }
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -598,11 +598,11 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-  gFieldWork->transitionFrames = 60;
+  gFieldState->transitionFrames = 60;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  gFieldWork->transitionFrames = 24;
+  gFieldState->transitionFrames = 24;
   Actor_SetSpeed(ACTOR_MIA, 1);
   Actor_WalkByAndWait(ACTOR_MIA, 16, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
@@ -669,11 +669,11 @@ static void BabiPalace_WakeFromFinalsDream(void) {
     Event_Wait(20);
     // "Isaac's awake now, so let's head over to the colosseum."
     Event_ShowMessage(ACTOR_GARET, 0);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
@@ -798,7 +798,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
       // "G'night."
       Event_ShowMessage(ACTOR_GARET, 0);
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
     }
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(10);
@@ -806,7 +806,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
       // "Sleep well."
       Event_ShowMessage(ACTOR_IVAN, 0);
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
     }
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
@@ -829,7 +829,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
       // "Good morning."
       Event_ShowMessage(ACTOR_IVAN, 0);
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
     }
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(10);
@@ -837,7 +837,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
       // "Good morning."
       Event_ShowMessage(ACTOR_MIA, 0);
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
     }
     Actor_WalkByAndWait(ACTOR_GARET, 0, 32);
     Actor_WalkBy(ACTOR_GARET, -112, 0);
@@ -1183,7 +1183,7 @@ static void BabiPalace_HearSoldiersReport(void) {
 static void BabiPalace_WakeAfterFinals(void) {
   s32 step;
   s32 pick;
-  struct FieldWork *work;
+  struct FieldState *fieldState;
   struct ScreenTransitionState *state;
 
   Event_Start();
@@ -1196,12 +1196,12 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
-  work = gFieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->transitionFrames = 12;
+  fieldState = gFieldState;
+  fieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  fieldState->transitionFrames = 12;
   wait(1);
   ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_LEADER);
-  state = gScreenTransitionWork;
+  state = gScreenTransitionState;
   state->value = 0;
   state->mask = WAKE_WININ;
   state->active = WINOUT_WIN01_BG0;
@@ -1219,10 +1219,10 @@ static void BabiPalace_WakeAfterFinals(void) {
     state->value = step;
   }
   state->active = WINOUT_WIN01_ALL & ~WINOUT_WIN01_CLR;
-  work = gFieldWork;
-  work->transition =
+  fieldState = gFieldState;
+  fieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  work->transitionFrames = 24;
+  fieldState->transitionFrames = 24;
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 40);
@@ -1274,7 +1274,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Actor_Jump(ACTOR_GARET, 4, 30);
     // "Oh, gimme a break. You were out cold! You don't remember a..."
     Event_ShowMessage(ACTOR_GARET, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
@@ -1282,7 +1282,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Actor_Jump(ACTOR_GARET, 4, 13);
     Actor_Jump(ACTOR_GARET, 4, 30);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Of course he doesn't! He was out cold! ...You had us worried!"
     Event_ShowMessage(ACTOR_GARET, 0);
   }
@@ -1326,13 +1326,13 @@ static void BabiPalace_WakeAfterFinals(void) {
     // "He'd better be all right, after sleeping this long. Sheesh!"
     Event_ShowMessage(ACTOR_GARET, 0);
     pick = 0;
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
-    gFieldWork->message++;
+    gFieldState->message++;
     pick = 1;
     // "If you feel out of sorts, it's probably because you slept..."
     Event_ShowMessage(ACTOR_GARET, 0);
@@ -1375,9 +1375,9 @@ static void BabiPalace_WakeAfterFinals(void) {
     Event_Wait(30);
     // "You're fine! Aren't you, Isaac?"
     Event_ShowMessage(ACTOR_GARET, 0);
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
   } else {
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
@@ -1553,9 +1553,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_Wait(20);
     // "Incidentally, Isaac, are you feeling better now?"
     Event_OpenMessage(ACTOR_BABI, 0);
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
   } else {
-    gFieldWork->message += 5;
+    gFieldState->message += 5;
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(20);
@@ -1581,12 +1581,12 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_Wait(20);
     // "Ah, the recuperative powers of youth...and after such fierce..."
     Event_ShowMessage(ACTOR_IODEM, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "You must be exhausted. I'm amazed to see you on your feet..."
     Event_ShowMessage(ACTOR_IODEM, 0);
   }
@@ -1689,12 +1689,12 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_Wait(30);
     // "Yes, indeed... Your desire is as plain as day."
     Event_ShowMessage(ACTOR_BABI, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "You can't hide your interest from me. It is written on your..."
     Event_ShowMessage(ACTOR_BABI, 0);
   }
@@ -1811,19 +1811,19 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_Wait(20);
     // "So the stone that grants immortality came from Lemuria?"
     Event_ShowMessage(ACTOR_GARET, 0);
-    gFieldWork->message += 3;
+    gFieldState->message += 3;
   } else {
     Event_Wait(10);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Huh? Don't tell me you forgot about the Stone of Sages..."
     Event_OpenMessage(ACTOR_GARET, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(20);
       // "It rules all, can change anything into gold, grants..."
       Event_ShowMessage(ACTOR_GARET, 0);
-      gFieldWork->message++;
+      gFieldState->message++;
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
       // "I can't think of anything else that would let him live for..."
       Event_ShowMessage(ACTOR_GARET, 0);
     }
@@ -2207,10 +2207,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_Wait(10);
     // "That must be it. No normal person could use that Cloak Ball."
     Event_ShowMessage(ACTOR_IVAN, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(10);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "But, Isaac, no normal person could master the Cloak Ball!"
     Event_ShowMessage(ACTOR_IVAN, 0);
   }
@@ -2283,10 +2283,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     // "Isaac, we have to beat Felix and the others to the lighthouse."
     Event_ShowMessage(ACTOR_GARET, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(10);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Not this time. We have to beat Felix and the others to the..."
     Event_ShowMessage(ACTOR_GARET, 0);
   }
@@ -2367,11 +2367,11 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     // "Ah, you will undertake this quest! I am most grateful!"
     Event_ShowMessage(ACTOR_BABI, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "If you need time to make up your mind, then please do so."
     Event_ShowMessage(ACTOR_BABI, 0);
   }
@@ -2504,19 +2504,19 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
 /// Each door opens by its own tileset animation (enum BabiPalaceDoorAnimation);
 /// the cell behaviour is the exit's number.
 static void BabiPalace_LeaveThroughDoor(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   Sound_Play(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  if (work->stepTrigger == BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM) {
+  if (state->stepTrigger == BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM) {
     TilesetAnim_Resume(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
     Event_Wait(10);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   } else {
-    if (work->stepTrigger == BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM) {
+    if (state->stepTrigger == BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM) {
       TilesetAnim_Resume(BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION);
       Event_Wait(10);
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
@@ -2527,7 +2527,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
     }
   }
   Event_Wait(16);
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
   BabiPalace_PauseDoorAnimations();
   Event_End();
 }
@@ -2647,7 +2647,7 @@ static void BabiPalace_ExamineWell(void) {
 /// Returns the triggers for the scene and the story, as for the actor
 /// placements.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_BABI_PALACE_ENTRANCE) {
+  if (gMainRoutineState.next == SCENE_BABI_PALACE_ENTRANCE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gBabiPalace_OutsideTriggersAfterColosso;
     }
@@ -2676,15 +2676,15 @@ s32 Scene_Initialize(void) {
   // XXX (no evidence): what BABI_PALACE_AFTER_BABI_SAVED and
   // BABI_PALACE_AFTER_COLOSSO were made for; only the debug scene selector
   // reaches them, and nothing in the game says why they set these story flags.
-  if (gMainRoutineWork.entrance == BABI_PALACE_AFTER_BABI_SAVED) {
+  if (gMainRoutineState.entrance == BABI_PALACE_AFTER_BABI_SAVED) {
     GameFlag_Set(FLAG_BABI_SAVED);
   }
-  if (gMainRoutineWork.entrance == BABI_PALACE_AFTER_COLOSSO) {
+  if (gMainRoutineState.entrance == BABI_PALACE_AFTER_COLOSSO) {
     GameFlag_Set(FLAG_BABI_SAVED);
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gMainRoutineWork.next != SCENE_BABI_PALACE_ENTRANCE) {
-    if (gMainRoutineWork.entrance == BABI_PALACE_FROM_COTTAGE_ROOMS_B) {
+  if (gMainRoutineState.next != SCENE_BABI_PALACE_ENTRANCE) {
+    if (gMainRoutineState.entrance == BABI_PALACE_FROM_COTTAGE_ROOMS_B) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     }
     if (GameFlag_Get(FLAG_COLOSSO_OVER)) {
@@ -2706,7 +2706,7 @@ s32 Scene_Initialize(void) {
         Vram_Load(sprite->slot, 128, glyph->tiles);
         HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       }
-      if (gMainRoutineWork.entrance ==
+      if (gMainRoutineState.entrance ==
               BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM &&
           !Event_GetFlag(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
         GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
@@ -2721,28 +2721,31 @@ s32 Scene_Initialize(void) {
                !GameFlag_Get(FLAG_BABI_PALACE_FINALS_REST_OFFERED)) {
       Actor_SetPosition(ACTOR_FINALS_ATTENDANT, 120, 72);
     }
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     // The attendant before the rescue and after Colosso; during the finals
     // ACTOR_FINALS_HURRYING_WARRIORS_ALONG has this number.
     Actor_Get(ACTOR_BED_ATTENDANT)->collisionFlags |= ACTOR_NEAR_TALK;
-    if (gMainRoutineWork.entrance == BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH) {
+    if (gMainRoutineState.entrance ==
+        BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH) {
       BabiPalace_RestorePartyAndInventory();
       BabiPalace_WakeAfterFinals();
       // Only this entrance chooses the waking, so rewriting it makes a
-      // later load of the scene from the main routine's work, as when a game
+      // later load of the scene from the main routine's state, as when a game
       // saved here is continued, an arrival from the statue room, not a second
       // waking.
-      gMainRoutineWork.entrance = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
+      gMainRoutineState.entrance =
+          BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
     }
-    if (gMainRoutineWork.entrance == BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH) {
+    if (gMainRoutineState.entrance == BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH) {
       BabiPalace_RestorePartyAndInventory();
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_REST_OFFERED);
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_BEDS_OPEN);
       Actor_SetPosition(ACTOR_FINALS_ATTENDANT, 56, 120);
       Actor_FaceDirection(ACTOR_FINALS_ATTENDANT, FACING_EAST_NORTHEAST, 0);
       BabiPalace_WakeFromFinalsDream();
-      gMainRoutineWork.entrance = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
+      gMainRoutineState.entrance =
+          BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
     }
   }
   return 0;

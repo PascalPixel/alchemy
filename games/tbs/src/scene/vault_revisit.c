@@ -60,7 +60,7 @@
 #include "scene/vault_range.h"
 #include "sound/sound.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "window/window.h"
 #include "text/msg_ids.h"
@@ -268,7 +268,7 @@ static void VaultRevisit_AskAboutJail(void) {
   // "Oh, so did you guys check out the jail?"
   Event_OpenMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   }
   Event_ShowMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
   GameFlag_Set(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
@@ -370,7 +370,7 @@ static void VaultRevisit_ReadMindOnJailKey(void) {
     // "Oh, so did you guys check out the jail?"
     Event_OpenMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-      gFieldWork->message++;
+      gFieldState->message++;
     }
     Event_ShowMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
     Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = 0;
@@ -580,7 +580,7 @@ static void VaultRevisit_TalkToDog(void) {
 
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
-    gFieldWork->fieldMenu = 1;
+    gFieldState->fieldMenu = 1;
   }
 
   Event_End();
@@ -627,16 +627,16 @@ s32 Scene_Initialize(void) {
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = 0;
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, 216, 392);
-  if (gMainRoutineWork.entrance <= VAULT_REVISIT_NORTH_UNUSED &&
+  if (gMainRoutineState.entrance <= VAULT_REVISIT_NORTH_UNUSED &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)) &&
       !VaultRevisit_ShouldKeepBellDjinniPosition())
     GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
   if (GameFlag_Get(FLAG_VAULT_SAP_CALLED_BY_BELL) &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)))
     Actor_SetPosition(ACTOR_SAP, 408, 120);
-  if (gMainRoutineWork.entrance == VAULT_REVISIT_FROM_SANCTUM)
+  if (gMainRoutineState.entrance == VAULT_REVISIT_FROM_SANCTUM)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-  if (gMainRoutineWork.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
+  if (gMainRoutineState.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
     GameFlag_Clear(FLAG_ARRIVAL_STAIRS_UP);
   return 0;
 }

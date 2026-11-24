@@ -1,5 +1,5 @@
 /// @file
-/// Actor script commands: waits, jumps, flags, moves and work values.
+/// Actor script commands: waits, jumps, flags, moves and state values.
 ///
 /// Each `SC_` handler here is reached through gActorScript_CommandTable
 /// (actor_script.c), which Actor_UpdateAll and Actor_UpdateAllThumb call
@@ -357,7 +357,7 @@ s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *actor) {
 /// the view stays on the map.
 s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
   struct Actor *leader;
-  struct MapGridScrollWork *bounds;
+  struct MapGridScrollState *bounds;
   s32 minX;
   FIXED minZ;
   s32 maxX;
@@ -373,7 +373,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
 
   // Use MapGrid_UpdateLayerScroll's viewport origin and the leader's elevation
   // when clamping its ground position to the viewport bounds.
-  bounds = gMapGridWork[0];
+  bounds = gMapGridState[0];
   leader = cameraActor->watchedActor;
   // UB: the bounds read the leader's height before the null check below.
 #ifdef UBFIX
@@ -699,7 +699,7 @@ done:
   return 1;
 }
 
-/// What a work value handler does with its value, for SC_SET, SC_ADD and
+/// What a state value handler does with its value, for SC_SET, SC_ADD and
 /// SC_CMP in turn.
 enum ScriptOperandOperation {
   SCRIPT_OPERAND_SET,
@@ -707,7 +707,7 @@ enum ScriptOperandOperation {
   SCRIPT_OPERAND_COMPARE ///< sets conditionResult to 1 when equal, else 0
 };
 
-/// Defines the handler for a 32-bit work value: set it, add to it, or compare
+/// Defines the handler for a 32-bit state value: set it, add to it, or compare
 /// it (into conditionResult).
 #define SCRIPT_DEFINE_OPERAND_WORD(name, field)                                \
   void name(struct ScriptOperands *operands, s32 operation, s32 value) {       \
@@ -748,13 +748,13 @@ enum ScriptOperandOperation {
     }                                                                          \
   }
 
-/// The work value handlers, one for each entry of enum ActorScriptValue (see
+/// The state value handlers, one for each entry of enum ActorScriptValue (see
 /// gActorScript_OperandHandlerTable in actor_script_operands.c); each names the
 /// actor field it sets, adds to or compares.
 SCRIPT_DEFINE_OPERAND_ADDRESS(ActorScript_SetOrCompareScriptAddress,
                               scriptAddress)
 
-/// Work value SW_CURSOR: sets, adds to or compares the script cursor.
+/// State value SW_CURSOR: sets, adds to or compares the script cursor.
 void ActorScript_SetOrCompareCursor(struct ScriptOperands *operands,
                                     s32 operation, s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
@@ -766,17 +766,17 @@ void ActorScript_SetOrCompareCursor(struct ScriptOperands *operands,
   }
 }
 
-/// Work value SW_FACING (and 2 and 4): sets, adds to or compares the actor's
+/// State value SW_FACING (and 2 and 4): sets, adds to or compares the actor's
 /// facing.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareFacing, facing, u16)
-/// Work value SW_X: sets, adds to or compares the actor's x.
+/// State value SW_X: sets, adds to or compares the actor's x.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareX, x)
-/// Work value SW_Y: sets, adds to or compares the actor's y.
+/// State value SW_Y: sets, adds to or compares the actor's y.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareY, y)
-/// Work value SW_Z: sets, adds to or compares the actor's z.
+/// State value SW_Z: sets, adds to or compares the actor's z.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareZ, z)
 
-/// Work value SW_RADIUS: sets, adds to or compares the actor's radius.
+/// State value SW_RADIUS: sets, adds to or compares the actor's radius.
 void ActorScript_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
                                     s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
@@ -790,106 +790,110 @@ void ActorScript_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
   state->conditionResult = state->radius == (s16)value;
 }
 
-/// Work value SW_SCALE_X: sets, adds to or compares the actor's horizontal
+/// State value SW_SCALE_X: sets, adds to or compares the actor's horizontal
 /// scale.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareScaleX, scaleX)
-/// Work value SW_SCALE_Y (and 11): sets, adds to or compares the actor's
+/// State value SW_SCALE_Y (and 11): sets, adds to or compares the actor's
 /// vertical scale.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareScaleY, scaleY)
-/// Work value SW_VELOCITY_X: sets, adds to or compares the actor's x velocity.
+/// State value SW_VELOCITY_X: sets, adds to or compares the actor's x velocity.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareVelocityX, velocityX)
-/// Work value SW_VELOCITY_Y: sets, adds to or compares the actor's y velocity.
+/// State value SW_VELOCITY_Y: sets, adds to or compares the actor's y velocity.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareVelocityY, velocityY)
-/// Work value SW_VELOCITY_Z: sets, adds to or compares the actor's z velocity.
+/// State value SW_VELOCITY_Z: sets, adds to or compares the actor's z velocity.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareVelocityZ, velocityZ)
-/// Work value SW_SPEED: sets, adds to or compares the actor's top speed.
+/// State value SW_SPEED: sets, adds to or compares the actor's top speed.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareSpeedLimit, speedLimit)
-/// Work value SW_ACCELERATION: sets, adds to or compares the actor's
+/// State value SW_ACCELERATION: sets, adds to or compares the actor's
 /// acceleration.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareAcceleration, acceleration)
-/// Work value SW_TARGET_X: sets, adds to or compares the x the actor heads for.
+/// State value SW_TARGET_X: sets, adds to or compares the x the actor heads
+/// for.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetX, targetX)
-/// Work value SW_TARGET_Y: sets, adds to or compares the y the actor heads for.
+/// State value SW_TARGET_Y: sets, adds to or compares the y the actor heads
+/// for.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetY, targetY)
-/// Work value SW_TARGET_Z: sets, adds to or compares the z the actor heads for.
+/// State value SW_TARGET_Z: sets, adds to or compares the z the actor heads
+/// for.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetZ, targetZ)
-/// Work value SW_BOUNCE: sets, adds to or compares the actor's bounce.
+/// State value SW_BOUNCE: sets, adds to or compares the actor's bounce.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareVerticalMotion, bounce)
-/// Work value SW_GRAVITY: sets, adds to or compares the actor's gravity.
+/// State value SW_GRAVITY: sets, adds to or compares the actor's gravity.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareGravity, gravity)
-/// Work value SW_GROUND: sets, adds to or compares the ground height under the
+/// State value SW_GROUND: sets, adds to or compares the ground height under the
 /// actor.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTerrainHeight, groundHeight)
-/// Work value 23: sets, adds to or compares the actor's riseBaseY, scene
+/// State value 23: sets, adds to or compares the actor's riseBaseY, scene
 /// code's own word.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareRiseBaseY, riseBaseY)
-/// Work value 24: sets, adds to or compares the actor's sprite.
+/// State value 24: sets, adds to or compares the actor's sprite.
 SCRIPT_DEFINE_OPERAND_ADDRESS(ActorScript_SetOrCompareSprite, sprite)
-/// Work value 25: sets, adds to or compares whether the actor draws no sprite,
+/// State value 25: sets, adds to or compares whether the actor draws no sprite,
 /// one or a group.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSpriteStorageKind,
                              spriteStorageKind, u8)
-/// Work value SW_MOTION: sets, adds to or compares the actor's motion flags.
+/// State value SW_MOTION: sets, adds to or compares the actor's motion flags.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareMotionFlags, motionFlags,
                              u8)
-/// Work value SW_ARRIVAL: sets, adds to or compares the axis the actor's
+/// State value SW_ARRIVAL: sets, adds to or compares the axis the actor's
 /// arrival is judged on.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareArrivalAxis, arrivalAxis,
                              u8)
-/// Work value SW_RESULT: sets, adds to or compares the last comparison's
+/// State value SW_RESULT: sets, adds to or compares the last comparison's
 /// result.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareComparisonResult,
                              conditionResult, u8)
-/// Work value SW_SNAP: sets, adds to or compares whether the actor snaps to its
-/// target.
+/// State value SW_SNAP: sets, adds to or compares whether the actor snaps to
+/// its target.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSnapToTarget, snapToTarget,
                              u8)
-/// Work value SW_COLLISION: sets, adds to or compares the actor's collision
+/// State value SW_COLLISION: sets, adds to or compares the actor's collision
 /// flags.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareCollisionFlags,
                              collisionFlags, u8)
-/// Work value SW_STEERING: sets, adds to or compares the actor's steering
+/// State value SW_STEERING: sets, adds to or compares the actor's steering
 /// flags.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSteeringFlags,
                              steeringFlags, u8)
-/// Work value SW_PAUSED: sets, adds to or compares whether the actor is paused.
+/// State value SW_PAUSED: sets, adds to or compares whether the actor is
+/// paused.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrComparePaused, paused, u8)
-/// Work value SW_REPEAT: sets, adds to or compares the script's repeat count.
+/// State value SW_REPEAT: sets, adds to or compares the script's repeat count.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRepeatCount, repeatCount,
                              u8)
 
-/// Work value SW_WAIT: sets, adds to or compares the wait counter.
-void ActorScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
+/// State value SW_WAIT: sets, adds to or compares the wait counter.
+void ActorScript_SetOrCompareWait(struct ScriptOperands *state, s32 operation,
                                   s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
-    work->wait = value;
+    state->wait = value;
     return;
   }
   if (operation == SCRIPT_OPERAND_ADD) {
-    work->wait += value;
+    state->wait += value;
     return;
   }
-  work->conditionResult = (s16)work->wait == (s16)value;
+  state->conditionResult = (s16)state->wait == (s16)value;
 }
 
-/// Work value SW_TIMER: sets, adds to or compares the actor's timer.
+/// State value SW_TIMER: sets, adds to or compares the actor's timer.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareTimer, timer, s16)
-/// Work value SW_USER_VALUE: sets, adds to or compares the actor's user value.
+/// State value SW_USER_VALUE: sets, adds to or compares the actor's user value.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareUserValue, userValue, s16)
-/// Work value 37: sets, adds to or compares the actor this one watches.
+/// State value 37: sets, adds to or compares the actor this one watches.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareWatchedActor, watchedActor)
-/// Work value SW_HOOK: sets, adds to or compares the actor's update routine.
+/// State value SW_HOOK: sets, adds to or compares the actor's update routine.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareUpdateAddress, update)
-/// Work value SW_RISE_COUNTER: sets, adds to or compares the actor's rise
+/// State value SW_RISE_COUNTER: sets, adds to or compares the actor's rise
 /// counter.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRiseCounter, riseCounter,
                              u8)
-/// Work value SW_RISE_ENABLED: sets, adds to or compares whether the actor
+/// State value SW_RISE_ENABLED: sets, adds to or compares whether the actor
 /// rises.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRiseEnabled, riseEnabled,
                              u8)
 
-/// Reads the two words after the command (a work value number and a value) and
+/// Reads the two words after the command (a state value number and a value) and
 /// passes operation to that value's handler.
 static __inline__ s32
 ActorScript_ApplyOperandCommand(struct ScriptOperands *operands,
@@ -905,21 +909,21 @@ ActorScript_ApplyOperandCommand(struct ScriptOperands *operands,
   return 1;
 }
 
-/// SC_SET(w, v): sets work value w to v.
+/// SC_SET(w, v): sets state value w to v.
 s32 ActorScript_ApplyOperandSet(struct Actor *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 
   return ActorScript_ApplyOperandCommand(operands, SCRIPT_OPERAND_SET);
 }
 
-/// SC_ADD(w, v): adds v to work value w.
+/// SC_ADD(w, v): adds v to state value w.
 s32 ActorScript_ApplyOperandAdd(struct Actor *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 
   return ActorScript_ApplyOperandCommand(operands, SCRIPT_OPERAND_ADD);
 }
 
-/// SC_CMP(w, v): tests whether work value w equals v.
+/// SC_CMP(w, v): tests whether state value w equals v.
 s32 ActorScript_ApplyOperandCompare(struct Actor *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 

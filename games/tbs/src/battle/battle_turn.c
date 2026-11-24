@@ -56,7 +56,7 @@ void Palette_UpdatePulseBrightness(void) {
 void BattleCamera_SetCommandView(s32 verticalOffset) {
   void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
   struct BattleCamera *camera = slots[0];
-  struct BattleBackgroundWork *view =
+  struct BattleBackgroundState *view =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE_BACKGROUND);
   struct Point eyeOffset;
   u32 result;
@@ -123,10 +123,10 @@ s32 BattleFlee_CheckSuccess(void) {
   s32 levelTotal;
   s32 unitIndex;
   s32 chance;
-  struct BattleWork *battle;
+  struct BattleState *battle;
 
   escaped = 0;
-  battle = gBattleWork;
+  battle = gBattleState;
   if (battle->firstStrike == FIRST_STRIKE_PARTY) {
     escaped = 1;
   } else {
@@ -150,7 +150,7 @@ s32 BattleFlee_CheckSuccess(void) {
     }
     *failedAttempts += 1;
   }
-  if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE) {
+  if (gMainRoutineState.battleType == BATTLE_TYPE_NO_ESCAPE) {
     escaped = 0;
   }
   return escaped;
@@ -215,7 +215,7 @@ s32 Battle_BuildPartyActions(struct BattleAction *entries) {
 s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
   u16 unitIds[UNIT_MAX];
   s32 entryCount = 0;
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   s32 unitCount;
   s32 i;
 
@@ -356,7 +356,7 @@ struct BattleLinkHeader {
 /// the opponent's, their units and targets seen from this side. Returns how
 /// many were received, or -1 when the exchange fails.
 s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   s32 result = 0;
   s32 allocationSize = LINK_ACTIONS_BYTES(count);
   struct BattleLinkHeader *header =
@@ -557,13 +557,13 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
 /// negative when the link fails.
 s32 Battle_GatherActions(struct BattleAction *actions) {
   struct Unit *unit;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 count;
   s32 received;
   s32 i;
 
-  battle = gBattleWork;
-  // Empty every action slot of the battle work.
+  battle = gBattleState;
+  // Empty every action slot of the battle state.
   {
     struct BattleAction *record = battle->actions;
     u32 actionIndex;
@@ -597,7 +597,7 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
 
   // The link opponent's actions, or the enemies'.
   // A link battle syncs even after a failed exchange, before giving up.
-  if (gBattleWork->isLink != 0) {
+  if (gBattleState->isLink != 0) {
     received = Battle_AppendLinkedActions(actions, count);
     if (LinkBattle_WaitSync() < 0) {
       count = -1;
@@ -631,14 +631,14 @@ finish:
   // The battle view again, turned toward the party's side.
   GameFlag_ClearFar(FLAG_CHOOSING_COMMANDS);
   BattleCamera_SetDefaultView();
-  gBattleBackgroundWork->targetYaw = YAW_PARTY_ACTION;
+  gBattleBackgroundState->targetYaw = YAW_PARTY_ACTION;
   return count;
 }
 
 /// Returns the unit id at a list place, PLACE_ENEMY_SIDE set for the enemies'
 /// list.
 s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
 
   if ((taggedPlace & PLACE_ENEMY_SIDE) != 0)
     return battle->enemyIds[taggedPlace & PLACE_INDEX_MASK];
@@ -648,7 +648,7 @@ s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
 /// Returns the list place of a unit, PLACE_PARTY or PLACE_ENEMY with its place,
 /// or -1 when it is in neither list.
 s32 Battle_FindUnitPlace(u32 unitId) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   s32 placeIndex;
   s16 listedUnit;
 

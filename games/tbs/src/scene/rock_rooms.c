@@ -46,7 +46,7 @@
 #include "types.h"
 #include "field/event.h"
 #include "field/scene_tables.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "text/msg_ids.h"
 
 /// The rooms by the entrance the party comes in by; each is also its door's
@@ -224,7 +224,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// The house beside Suhalla Gate has its own triggers; Lunpa's rooms have one
 /// table for the sealed village and one for after Donpa has dealt with Dodonpa.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.entrance == ROOM_GATE_TO_SUHALLA) {
+  if (gMainRoutineState.entrance == ROOM_GATE_TO_SUHALLA) {
     return gRockRooms_GateToSuhallaTriggers;
   }
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
@@ -464,13 +464,13 @@ static void RockRooms_TalkToArmorMerchant(void) {
 s32 Scene_Initialize(void) {
   s16 entrance;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  entrance = gMainRoutineWork.entrance;
+  entrance = gMainRoutineState.entrance;
   if (entrance == ROOM_GATE_TO_SUHALLA) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-    gMainRoutineWork.restartScene = SCENE_ROCK_ROOMS;
-    gMainRoutineWork.restartEntrance = entrance;
+    gMainRoutineState.restartScene = SCENE_ROCK_ROOMS;
+    gMainRoutineState.restartEntrance = entrance;
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_WEAPON_COUNTER), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ARMOR_COUNTER), 0);

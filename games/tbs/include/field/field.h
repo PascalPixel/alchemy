@@ -39,13 +39,13 @@ struct Trigger;
 struct ActorPlacement;
 
 /// The Colosso opponent's path player, at the start of gSceneLocalState: the
-/// path in ColossoRaceWork is played back or recorded by
+/// path in ColossoRaceState is played back or recorded by
 /// Colosso_UpdatePathOpponent.
 struct PathRecorder {
   s16 mode;      ///< 1 plays the path, 2 records it, 9 finished
   s16 mirror;    ///< nonzero mirrors the path across the finish
   s16 actorId;   ///< the actor id moved along the path
-  u16 pathIndex; ///< the next halfword of ColossoRaceWork.path, x then z
+  u16 pathIndex; ///< the next halfword of ColossoRaceState.path, x then z
   /// Frames the actor has not moved; from 3 it stands
   /// (Actor_SelectAnimation 1).
   s16 still;
@@ -253,7 +253,7 @@ enum SpritePictureCodec {
 /// Sprite.flags.
 enum SpriteFlag {
   SPRITE_FLAG_SHADOW = 1 << 0, ///< its shadow is drawn; set when created
-  /// Drawn as an outline, in ActorSystemWork's edge and fill colours.
+  /// Drawn as an outline, in ActorSystemState's edge and fill colours.
   SPRITE_FLAG_OUTLINED = 1 << 1
 };
 
@@ -400,7 +400,7 @@ void Actor_SelectAnimation(void *raw, s32 no);
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 val);
 s32 ActorScript_SetFlagAndTest(struct Actor *interpreter);
 s32 ActorScript_ClearFlagAndTest(struct Actor *interpreter);
-// The work values of SC_SET, SC_ADD and SC_CMP, one handler each
+// The state values of SC_SET, SC_ADD and SC_CMP, one handler each
 // (gActorScript_OperandHandlerTable, field/field_script_commands.c): by
 // operation, each sets one of the actor's fields to value, adds value to it, or
 // compares the two into conditionResult.
@@ -460,19 +460,19 @@ void ActorScript_SetOrCompareSteeringFlags(struct ScriptOperands *state,
                                            s32 operation, s32 value);
 void ActorScript_SetOrComparePaused(struct ScriptOperands *state, s32 operation,
                                     s32 value);
-void ActorScript_SetOrCompareRepeatCount(struct ScriptOperands *work,
+void ActorScript_SetOrCompareRepeatCount(struct ScriptOperands *state,
                                          s32 operation, s32 value);
-void ActorScript_SetOrCompareTimer(struct ScriptOperands *work, s32 operation,
+void ActorScript_SetOrCompareTimer(struct ScriptOperands *state, s32 operation,
                                    s32 value);
-void ActorScript_SetOrCompareUserValue(struct ScriptOperands *work,
+void ActorScript_SetOrCompareUserValue(struct ScriptOperands *state,
                                        s32 operation, s32 value);
-void ActorScript_SetOrCompareWatchedActor(struct ScriptOperands *work,
+void ActorScript_SetOrCompareWatchedActor(struct ScriptOperands *state,
                                           s32 operation, s32 value);
-void ActorScript_SetOrCompareUpdateAddress(struct ScriptOperands *work,
+void ActorScript_SetOrCompareUpdateAddress(struct ScriptOperands *state,
                                            s32 operation, s32 value);
-void ActorScript_SetOrCompareRiseCounter(struct ScriptOperands *work,
+void ActorScript_SetOrCompareRiseCounter(struct ScriptOperands *state,
                                          s32 operation, s32 value);
-void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *work,
+void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *state,
                                          s32 operation, s32 value);
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value);
 void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
@@ -552,7 +552,7 @@ void ActorScript_SetOrCompareCursor(struct ScriptOperands *operands,
                                     s32 operation, s32 value);
 void ActorScript_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
                                     s32 value);
-void ActorScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
+void ActorScript_SetOrCompareWait(struct ScriptOperands *state, s32 operation,
                                   s32 value);
 s32 ActorScript_ApplyOperandSet(struct Actor *interpreter);
 s32 ActorScript_ApplyOperandAdd(struct Actor *interpreter);

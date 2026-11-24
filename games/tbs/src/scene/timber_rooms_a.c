@@ -57,7 +57,7 @@
 #include "field/scene_tables.h"
 #include "scene/import.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "text/msg_ids.h"
 
 extern struct SceneEntrance gTimberRoomsAEntrances[];
@@ -527,10 +527,10 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
       Event_Wait(20);
       // "You took the same impression from their tale as I did..."
       Event_ShowMessage(ACTOR_IODEM, 0);
-      gFieldWork->message++;
+      gFieldState->message++;
     } else {
       Event_Wait(10);
-      gFieldWork->message++;
+      gFieldState->message++;
       // "I don't know why... but that is the sense I get from this..."
       Event_ShowMessage(ACTOR_IODEM, 0);
     }
@@ -580,11 +580,11 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// soldiers are laid flat in the beds.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
-  if (gMainRoutineWork.entrance == TIMBER_ROOMS_A_AFTER_BABI_SPOKE)
+  if (gMainRoutineState.entrance == TIMBER_ROOMS_A_AFTER_BABI_SPOKE)
     GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  gFieldWork->transitionFrames = 24;
+  gFieldState->transitionFrames = 24;
   // Nearer to talk to, across their counters.
   Actor_Get(ACTOR_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;

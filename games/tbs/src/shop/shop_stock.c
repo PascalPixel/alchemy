@@ -33,7 +33,7 @@ const s16 gShop_GiftItemIds[21] = {
 /// Gives a Game Ticket once the party's spending in shops reaches the next
 /// ticket's cost, and lets the player choose who takes it.
 void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   s32 creditCost;
   u32 savedSelectedItem;
   s32 redraw;
@@ -45,12 +45,12 @@ void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow) {
   redraw = 1;
   unitId = 0;
   savedSelectedItem = shop->selectedItem;
-  creditCost = sGameTicketCreditCosts[gMainRoutineWork.holdings.shopGifts];
+  creditCost = sGameTicketCreditCosts[gMainRoutineState.holdings.shopGifts];
   memberIndex = 0;
 
   // A ticket is paid for by the coins already spent, which it uses up; the
   // party's coins are left alone.
-  if (creditCost > gMainRoutineWork.holdings.shopCredit)
+  if (creditCost > gMainRoutineState.holdings.shopCredit)
     return;
   shop->selectedItem = ITEM_GAME_TICKET;
   MessageArgument_PushFar(ITEM_GAME_TICKET, MESSAGE_ARGUMENT_ITEM);

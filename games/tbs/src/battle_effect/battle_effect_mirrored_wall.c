@@ -57,7 +57,7 @@ void BattleEffect_RunRecovery(struct BattleEffectParams *args) {
 }
 /// Raises a mirrored wall at the first target's feet while the target glows.
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   u8 *resource;
   s32 x;
@@ -66,15 +66,15 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 picture;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
 
   resource = Resource_GetTableEntry(RESOURCE_EARTH_WALL_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   resource += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(resource, work->sheet);
+  Decompress_TaggedLz(resource, state->sheet);
   resource = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   if (mode == MIRRORED_WALL_RECOVERY) {
@@ -82,7 +82,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   }
 
-  Projection_Unit(work->args->targets[0], &screenPosition);
+  Projection_Unit(state->args->targets[0], &screenPosition);
   if (mode == MIRRORED_WALL_SPASM) {
     REG_BG2PA = Q_8_8(1);
     x = CANVAS_SIZE / 2 - screenPosition.x;
@@ -99,25 +99,25 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   if (mode == MIRRORED_WALL_RECOVERY) {
-    work->shakeFrames = 0;
+    state->shakeFrames = 0;
     Sound_PlayFar(SE_POWER_UP);
   } else if (mode == MIRRORED_WALL_BERSERK) {
-    work->shakeFrames = 8;
+    state->shakeFrames = 8;
     Sound_PlayFar(SE_POWER_UP);
   } else {
-    work->shakeFrames = 32;
+    state->shakeFrames = 32;
   }
 
   for (frame = 0; frame != MIRRORED_WALL_FRAMES; frame++) {
     if (frame == 0) {
       if (mode == MIRRORED_WALL_RECOVERY)
-        BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
+        BattleEffect_TintBattler(state->args->targets[0], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, 0, 32);
       else
-        BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_RED_TINT,
+        BattleEffect_TintBattler(state->args->targets[0], SPRITE_COLOR_RED_TINT,
                                  TINT_KEEP, 0, 32);
     }
     if (frame == 24)
@@ -132,12 +132,12 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
       if (picture > 2)
         picture = (picture & 1) + 1;
       if (frame <= 27) {
-        draw[0](canvas, work->sheet + gMirroredWall_Pictures[picture],
+        draw[0](canvas, state->sheet + gMirroredWall_Pictures[picture],
                 CANVAS_SIZE / 2 - gMirroredWall_PictureWidths[picture],
                 (screenPosition.y - gMirroredWall_PictureHeights[picture]) + 8,
                 gMirroredWall_PictureWidths[picture],
                 gMirroredWall_PictureHeights[picture]);
-        draw[1](canvas, work->sheet + gMirroredWall_Pictures[picture],
+        draw[1](canvas, state->sheet + gMirroredWall_Pictures[picture],
                 CANVAS_SIZE / 2,
                 (screenPosition.y - gMirroredWall_PictureHeights[picture]) + 8,
                 gMirroredWall_PictureWidths[picture],
@@ -148,7 +148,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
       BattleCamera_Shake(2, 2);
     else
       BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

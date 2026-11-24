@@ -65,7 +65,7 @@
 #include "scene/log_rooms_a.h"
 #include "scene/vault_item_icon.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/system_call.h"
 #include "text/msg_ids.h"
@@ -189,7 +189,7 @@ static void LogRoomsB_WelcomeIsaacBack(void) {
   // "We were worried that they might come after you. Have you run..."
   Event_OpenMessage(ACTOR_MAYOR, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
   GameFlag_Set(FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK);
@@ -247,7 +247,7 @@ static void LogRoomsB_OfferBones(void) {
   } else {
     // Declining selects the following line and the actor's response
     // pose.
-    gFieldWork->message++;
+    gFieldState->message++;
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_NOD);
     Event_Wait(20);
@@ -376,9 +376,9 @@ const struct Trigger *Scene_GetTriggers(void) { return gLogRoomsB_Triggers; }
 s32 Scene_Initialize(void) {
   s32 entrance;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  entrance = gMainRoutineWork.entrance;
+  entrance = gMainRoutineState.entrance;
 
   if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST) {
     MapGrid_CopyCellsTo(0, 120, 8, 67, 4, 3);

@@ -14,7 +14,7 @@ void FieldEffect_BlinkAvoidCaster(void) {
   struct SpriteAnimation *entry;
   s32 phase;
 
-  caster = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  caster = Actor_Lookup(gMainRoutineState.leaderActorId);
   sprite = caster->sprite;
   entry = sprite->entries[0];
   phase = gFrameCount % 5;
@@ -37,7 +37,7 @@ void FieldEffect_UpdateAvoidCaster(struct Actor *caster) {
   phase = caster->arcPhase;
   elapsedFrames = caster->arcFrames++;
 
-  if (gMainRoutineWork.mapId == MAP_INDEX_WORLD) {
+  if (gMainRoutineState.mapId == MAP_INDEX_WORLD) {
     if (elapsedFrames % 7 == 0)
       FieldEffect_SpawnDescendingArcParticles(caster);
   } else if (elapsedFrames % 5 == 0) {
@@ -49,12 +49,12 @@ void FieldEffect_UpdateAvoidCaster(struct Actor *caster) {
 }
 
 /// Says that Avoid, or the Sacred Feather, has worn off: "Avoid's effects wore
-/// off." Clears gMainRoutineWork.avoidDistance. Reached through
+/// off." Clears gMainRoutineState.avoidDistance. Reached through
 /// FieldPsynergy_RunExtraHandler when the Psynergy request the leader's walking
 /// raises as Avoid runs out (field_sequence_walking.c) is handled.
 void FieldPsynergy_ShowAvoidWoreOff(void) {
-  gMainRoutineWork.avoidDistance = 0;
-  if (gMainRoutineWork.avoidByItem == 0) {
+  gMainRoutineState.avoidDistance = 0;
+  if (gMainRoutineState.avoidByItem == 0) {
     MessageArgument_PushFar(ABILITY_AVOID, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar(MsgAbilityWoreOff, FIELD_MESSAGE_ZOOM);
     return;
@@ -70,7 +70,7 @@ void FieldPsynergy_ShowAvoidWoreOff(void) {
 /// The caster spins among falling arcs and flashes white, then flashes as an
 /// outline, and encounters are kept away until Avoid wears off.
 void FieldPsynergy_Avoid(void) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Actor *actor;
   struct Sprite *sprite;
   struct SpriteAnimation *entry;
@@ -78,18 +78,18 @@ void FieldPsynergy_Avoid(void) {
   s32 slot;
   s32 count;
 
-  effectWork = gFieldEffectWork;
-  actor = effectWork->mainActor;
+  effectState = gFieldEffectState;
+  actor = effectState->mainActor;
   sprite = actor->sprite;
   entry = sprite->entries[0];
   angle = actor->facing;
   slot = VramCache_FindFreeEntry();
   // The arcs' tiles (256 bytes) stay loaded until the Psynergy's end; the
   // distance is 2,400 pixels in 16.16.
-  effectWork->arcTileSlot = slot;
+  effectState->arcTileSlot = slot;
   VramCache_Load((s16)slot, 256, gFieldEffect_ArcSparkTiles);
-  gMainRoutineWork.avoidDistance = toFIXED(2400);
-  gMainRoutineWork.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
+  gMainRoutineState.avoidDistance = toFIXED(2400);
+  gMainRoutineState.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   actor->update = FieldEffect_UpdateAvoidCaster;
   actor->arcPhase = 0;
@@ -117,12 +117,12 @@ void FieldPsynergy_Avoid(void) {
   Task_Remove(FieldEffect_BlinkAvoidCaster);
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.
-  if (gMainRoutineWork.cloaked != 0)
+  if (gMainRoutineState.cloaked != 0)
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_OUTLINED);
   else
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
-  VramCache_FreeEntry(effectWork->arcTileSlot);
+  VramCache_FreeEntry(effectState->arcTileSlot);
   // "Monsters won't attack so often now."
   FieldMessage_ShowFar(MsgMonstersAttackLess, FIELD_MESSAGE_ZOOM);
 }

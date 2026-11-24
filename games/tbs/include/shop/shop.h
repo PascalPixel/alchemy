@@ -2,7 +2,7 @@
 #define ALCHEMY_SHOP_H
 
 /// @file
-/// The counters of a town, shops, sanctums and inns: ShopWork, the work they
+/// The counters of a town, shops, sanctums and inns: ShopState, the state they
 /// share, the shop screen's tiles, and every routine of the shop object.
 
 #include "types.h"
@@ -18,19 +18,19 @@
 /// The frames the hand cursor takes to glide into a newly opened list.
 #define SHOP_CURSOR_ENTER_FRAMES 12
 
-/// The particles a sanctum service's sparkles use (ShopWork.effects), and how
+/// The particles a sanctum service's sparkles use (ShopState.effects), and how
 /// many of them fly in at the party member's icon in its burst.
 #define SANCTUM_PARTICLE_COUNT 24
 #define SANCTUM_BURST_SPARKLES 18
 
-/// A shop's work: its windows, the party members' icons, the stock, the cursor
+/// A shop's state: its windows, the party members' icons, the stock, the cursor
 /// and its icons, and the field effect sprites.
 ///
 /// It is the HEAP_SLOT_MENU block, the same 2,672 bytes as the field menu's
-/// work: Shop_InitializeWork takes and clears it as a shop, the inn,
-/// the sanctum or the item picker opens, and Shop_ReleaseWork frees it.
-struct ShopWork {
-  u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
+/// state: Shop_InitializeState takes and clears it as a shop, the inn,
+/// the sanctum or the item picker opens, and Shop_ReleaseState frees it.
+struct ShopState {
+  u8 unused[8]; ///< no view of the menu state names it (see menu/README.md)
   s32 selectedMember; ///< the menu screens' chosen party member; not named here
   struct Window *moneyWindow; ///< the coins window
   /// The menu screens' first window and their two sides; not named here.
@@ -48,7 +48,7 @@ struct ShopWork {
   s16 stockItemIds[129];    ///< the items on sale, ended by 0
   s16 partyMemberIds[9];    ///< the party in order (Party_ListMembers)
   struct MenuCursor cursor; ///< the hand cursor
-  /// VRAM cache slots of the six cursor icons, loaded when the work is set
+  /// VRAM cache slots of the six cursor icons, loaded when the state is set
   /// up and freed with it.
   ///@{
   u16 cursorIcon; ///< the hand
@@ -58,9 +58,9 @@ struct ShopWork {
   u16 statUpIcon;
   u16 statDownIcon;
   ///@}
-  u16 unusedBeforeSelection;  ///< no view of the menu work names it
+  u16 unusedBeforeSelection;  ///< no view of the menu state names it
   u16 selectedItem;           ///< the item being bought, sold or repaired
-  u8 unusedAfterSelection[4]; ///< no view of the menu work names it
+  u8 unusedAfterSelection[4]; ///< no view of the menu state names it
   u16 keeperGraphics; ///< the shopkeeper's animation; picks the portrait
   s8 stockCount;
   s8 partyMemberCount;
@@ -83,22 +83,22 @@ struct ShopWork {
   struct FieldParticle effects[SANCTUM_PARTICLE_COUNT];
 };
 
-STATIC_ASSERT(sizeof(struct ShopWork) == 2672);
-STATIC_ASSERT(offsetof(struct ShopWork, moneyWindow) == 12);
-STATIC_ASSERT(offsetof(struct ShopWork, itemWindow) == 32);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIcons) == 276);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberScale) == 340);
-STATIC_ASSERT(offsetof(struct ShopWork, stockItemIds) == 620);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIds) == 878);
-STATIC_ASSERT(offsetof(struct ShopWork, cursor) == 896);
-STATIC_ASSERT(offsetof(struct ShopWork, stockCount) == 934);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberCount) == 935);
-STATIC_ASSERT(offsetof(struct ShopWork, action) == 938);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberX) == 308);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberY) == 324);
-STATIC_ASSERT(offsetof(struct ShopWork, burstMember) == 939);
-STATIC_ASSERT(offsetof(struct ShopWork, warriorShop) == 940);
-STATIC_ASSERT(offsetof(struct ShopWork, effects) == 944);
+STATIC_ASSERT(sizeof(struct ShopState) == 2672);
+STATIC_ASSERT(offsetof(struct ShopState, moneyWindow) == 12);
+STATIC_ASSERT(offsetof(struct ShopState, itemWindow) == 32);
+STATIC_ASSERT(offsetof(struct ShopState, partyMemberIcons) == 276);
+STATIC_ASSERT(offsetof(struct ShopState, partyMemberScale) == 340);
+STATIC_ASSERT(offsetof(struct ShopState, stockItemIds) == 620);
+STATIC_ASSERT(offsetof(struct ShopState, partyMemberIds) == 878);
+STATIC_ASSERT(offsetof(struct ShopState, cursor) == 896);
+STATIC_ASSERT(offsetof(struct ShopState, stockCount) == 934);
+STATIC_ASSERT(offsetof(struct ShopState, partyMemberCount) == 935);
+STATIC_ASSERT(offsetof(struct ShopState, action) == 938);
+STATIC_ASSERT(offsetof(struct ShopState, partyMemberX) == 308);
+STATIC_ASSERT(offsetof(struct ShopState, partyMemberY) == 324);
+STATIC_ASSERT(offsetof(struct ShopState, burstMember) == 939);
+STATIC_ASSERT(offsetof(struct ShopState, warriorShop) == 940);
+STATIC_ASSERT(offsetof(struct ShopState, effects) == 944);
 
 /// The shop's 16-by-16 sprites (graphics/ui/menu_sprites): the hand cursor,
 /// the gem and the list arrows.
@@ -121,12 +121,12 @@ struct SelectionMenuCursorView;
 struct WindowSprite;
 struct MenuCursor;
 
-/// A counter's work and the shop's visit, and what every counter shares: the
+/// A counter's state and the shop's visit, and what every counter shares: the
 /// keeper's lines, the Yes or No choice and waiting out a jingle (shop_run.c).
 s32 Shop_ListAvailableArtifacts(void);
 void MenuCursor_Step(void);
-void Shop_InitializeWork(void);
-void Shop_ReleaseWork(void);
+void Shop_InitializeState(void);
+void Shop_ReleaseState(void);
 s32 Shop_Run(s32 stockRow, s32 keeperId);
 s32 Shop_OpenDebugShop(s32 unused);
 void Sound_WaitForJingle(void);

@@ -27,10 +27,10 @@
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
   s32 *focus;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   u8 *enemyUnits;
-  struct BattleBackgroundWork *view;
-  struct BattleMessageWork *display;
+  struct BattleBackgroundState *view;
+  struct BattleMessageState *display;
   s32 enemyCount;
   u8 *enemyUnitDestination;
   s32 actionCount;
@@ -46,12 +46,12 @@ s32 Battle_Run(s32 enemyGroup) {
   UNUSED u8 unused[48];
   volatile u32 fill;
 
-  // The battle's work areas, all in EWRAM.
+  // The battle's state, all in EWRAM.
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-  battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
+  battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleState));
   enemyUnits = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
   view = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND,
-                             sizeof(struct BattleBackgroundWork));
+                             sizeof(struct BattleBackgroundState));
   HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_UNUSED, 640);
   focus = camera->focus;
   result = 0;
@@ -72,12 +72,12 @@ s32 Battle_Run(s32 enemyGroup) {
   Matrix_Initialize();
 
   Dma_Fill32Cell(fill, 0, camera, sizeof(struct BattleCamera));
-  Dma_Fill32Cell(fill, 0, battle, sizeof(struct BattleWork));
+  Dma_Fill32Cell(fill, 0, battle, sizeof(struct BattleState));
   battle->arrowTiles = -1;
   battle->formation = enemyGroup;
   display = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MESSAGE,
-                                sizeof(struct BattleMessageWork));
-  Dma_Fill32Cell(fill, 0, display, sizeof(struct BattleMessageWork));
+                                sizeof(struct BattleMessageState));
+  Dma_Fill32Cell(fill, 0, display, sizeof(struct BattleMessageState));
   battle->background = BattleBackground_GetSelectedFar();
   HeapSlot_AllocEwram(HEAP_SLOT_SPRITES, 3584);
   HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 1536);
@@ -130,7 +130,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // XXX: which piece is heard when two are started one after the other; a
   // recording of a link battle and of a battle with no music of its own would
   // settle it.
-  cue = gMainRoutineWork.battleMusic;
+  cue = gMainRoutineState.battleMusic;
   if (cue != 0) {
     Sound_PlayFar(cue);
     if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
@@ -169,7 +169,7 @@ s32 Battle_Run(s32 enemyGroup) {
   battle->firstStrike = FIRST_STRIKE_NONE;
   if (GameFlag_GetFar(FLAG_DJINN_LESSON) != 0) {
     battle->firstStrike = FIRST_STRIKE_PARTY;
-  } else if (gMainRoutineWork.battleType == BATTLE_TYPE_NORMAL) {
+  } else if (gMainRoutineState.battleType == BATTLE_TYPE_NORMAL) {
     if ((Battle_RandomFar() & 15) == 0)
       battle->firstStrike = FIRST_STRIKE_PARTY;
     else if ((Battle_RandomFar() & 31) == 0)
@@ -315,7 +315,7 @@ party_lost:
   Battle_ClearSerialTransferPayload();
   Sound_PlayFar(MUS_DEFEATED);
   MessageArgument_ClearAllFar();
-  MessageArgument_PushFar(gMainRoutineWork.party[0], MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_PushFar(gMainRoutineState.party[0], MESSAGE_ARGUMENT_ACTOR);
   if (BattleParty_PrepareMembers(0) == 1)
     BattleMessage_ShowAndWaitFar(MsgGoesDownInDefeat);
   else
@@ -352,7 +352,7 @@ s32 BattleParty_PrepareMembers(u16 *unitIds) {
   s32 index;
 
   limit = PARTY_BATTLE_SIZE;
-  if (gBattleWork->isLink != 0)
+  if (gBattleState->isLink != 0)
     limit = LINK_PARTY_SIZE;
 
   count = Party_CountMembersFar();
@@ -360,7 +360,7 @@ s32 BattleParty_PrepareMembers(u16 *unitIds) {
     count = limit;
 
   for (index = 0; index < count; index++) {
-    s32 unitId = gMainRoutineWork.party[index];
+    s32 unitId = gMainRoutineState.party[index];
 
     if (unitIds != 0)
       *unitIds++ = unitId;
@@ -450,11 +450,11 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
 /// Lists the units in the battle on the sides in sideMask, standing or not, and
 /// returns how many.
 s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 count;
   s32 i;
 
-  battle = gBattleWork;
+  battle = gBattleState;
   count = 0;
   if (sideMask & BATTLE_SIDE_MASK_PARTY) {
     for (i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {

@@ -113,7 +113,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
 /// returns -1.
 s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
                                       s32 *screenPosition) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   s32 viewX;
   s32 viewZ;
   FIXED x;
@@ -148,7 +148,7 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
 /// Sets up the actor system: allocates and zeroes the 64 actors and registers
 /// the per-frame updates.
 void ActorSystem_Initialize(s32 controlMode) {
-  struct ActorSystemWork *system;
+  struct ActorSystemState *system;
   struct Actor *pool;
   volatile u32 fill;
 
@@ -251,7 +251,7 @@ struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
     case ACTOR_CREATE_GROUP:
       // Take a zeroed list of four sprites, and fill it with id and id + 1.
       spriteSlots =
-          (void **)((u32 *)gActorSystemWork + gActorSystemWork->count++ + 2);
+          (void **)((u32 *)gActorSystemState + gActorSystemState->count++ + 2);
       actor->spriteStorageKind = spriteStorageKind;
       actor->sprite = (struct Sprite *)spriteSlots;
       Dma_Fill32(0, spriteSlots, 4 * sizeof(void *));

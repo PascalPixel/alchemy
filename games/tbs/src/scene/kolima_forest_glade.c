@@ -102,7 +102,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Sets up the floating Nut and the logs on entry.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
     Scene_FloatNut(ACTOR_NUT);

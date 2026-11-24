@@ -1,7 +1,7 @@
 /// @file
 /// The Alpine Crossing (SceneId_AlpineCrossing) and Lama Temple
 /// (SceneId_LamaTemple), two places on Silk Road west of Xian that share this
-/// overlay. The getters pick each scene's tables by gMainRoutineWork.next, and
+/// overlay. The getters pick each scene's tables by gMainRoutineState.next, and
 /// the two share one exit table.
 ///
 /// The Alpine Crossing is a valley of cliffs and ledges between Xian and Altin.
@@ -70,7 +70,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -212,7 +212,7 @@ static UNREAD_RESULT AlpineCrossing_LeaderFaceFeizhi(struct Actor *leader) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == MAP_ALPINE_CROSSING) {
+  if (gMainRoutineState.next == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_Entrances;
   }
   return gLamaTemple_Entrances;
@@ -224,7 +224,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gAlpineCrossingLamaTemple_Exits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == MAP_ALPINE_CROSSING) {
+  if (gMainRoutineState.next == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_ActorPlacements;
   }
   return gLamaTemple_ActorPlacements;
@@ -284,7 +284,7 @@ static void LamaTemple_EnterHamasRoom(void) {
   MapGrid_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   Event_Wait(16);
@@ -307,7 +307,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -836,7 +836,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Event_Wait(20);
   Event_End();
   GameFlag_Set(FLAG_HSU_RESCUED);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Import_EventSetExitRequest(ALPINE_CROSSING_TO_LAMA_TEMPLE);
 }
@@ -928,7 +928,7 @@ static void AlpineCrossing_GrowSprout(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == MAP_ALPINE_CROSSING) {
+  if (gMainRoutineState.next == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_Triggers;
   }
   return gLamaTemple_Triggers;
@@ -938,8 +938,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   s32 entrance;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gMainRoutineWork.next == MAP_LAMA_TEMPLE) {
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  if (gMainRoutineState.next == MAP_LAMA_TEMPLE) {
     // Lama Temple: the wind blows (SE_AMBIENT_WIND), two monks meditate, and
     // the mossy rock stands over the chest. The chest cell's attributes are
     // kept at (21, 73) for Reveal to restore.
@@ -953,14 +953,14 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_CHI_MONK, 136, 256);
       Actor_FaceDirection(ACTOR_CHI_MONK, FACING_EAST, 0);
     }
-    entrance = gMainRoutineWork.entrance;
+    entrance = gMainRoutineState.entrance;
     if (entrance == LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     } else if (entrance == LAMA_TEMPLE_FROM_ALPINE_CROSSING &&
                !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       LamaTemple_RunHamasFarewell();
     }
-  } else if (gMainRoutineWork.next == MAP_ALPINE_CROSSING) {
+  } else if (gMainRoutineState.next == MAP_ALPINE_CROSSING) {
     // Alpine Crossing: restore the Psynergy puzzles already solved.
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PUDDLE), 0);
     Actor_Get(ACTOR_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -972,9 +972,9 @@ s32 Scene_Initialize(void) {
       Actor_SetAnimation(ACTOR_SPROUT, SPROUT_ANIMATION_GROWN);
       AlpineCrossing_GrowSprout();
     }
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST ||
-        gMainRoutineWork.entrance ==
+        gMainRoutineState.entrance ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     }
@@ -990,7 +990,7 @@ s32 Scene_Initialize(void) {
     // Hsu: he has been freed without it and the boulder is gone.
     if (!Event_GetFlag(FLAG_HSU_RESCUED) &&
         GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
-        gMainRoutineWork.entrance == ALPINE_CROSSING_FROM_WORLD_MAP_NORTH) {
+        gMainRoutineState.entrance == ALPINE_CROSSING_FROM_WORLD_MAP_NORTH) {
       Actor_SetPosition(ACTOR_BOULDER, 0, 0);
       GameFlag_Set(FLAG_HSU_RESCUED);
       GameFlag_Set(FLAG_HSU_RESCUED_WITHOUT_PARTY);
@@ -1025,7 +1025,7 @@ s32 Scene_Initialize(void) {
       Actor_SetScript(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
       Actor_Get(ACTOR_HSU)->scaleX = -FIXED_ONE;
     }
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST &&
         !GameFlag_Get(FLAG_HAMA_REACHED_HSU) &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&

@@ -35,7 +35,7 @@ enum {
 ///
 /// Abilities: Frost, Tundra, Glacier.
 void BattleEffect_RunFrost(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   u8 *sparkleSheet;
@@ -46,29 +46,29 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   struct Particle *mote;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   sparkleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  work->args = args;
+  state->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, sparkleSheet, 0, 0);
   BattleEffect_FetchRectangleBlitters(0, draw);
 
-  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-    struct Particle *seed = &work->particles[i];
+  for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+    struct Particle *seed = &state->particles[i];
 
     seed->x = Random16() & TRIG_ANGLE_MASK;
     seed->z = (Random16() & 63) + 56;
     seed->y = INTtoFIXED((Random16() & 31) - 64);
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  if (work->args->side == EFFECT_SIDE_PARTY)
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  if (state->args->side == EFFECT_SIDE_PARTY)
     REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
 
   for (frame = 0;
-       frame != gFrost_Timings[work->args->variant][FROST_FRAME] + 75;
+       frame != gFrost_Timings[state->args->variant][FROST_FRAME] + 75;
        frame++) {
     s32 count;
     s32 lowest;
@@ -76,7 +76,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
     lowest = toFIXED(120);
     highest = 0;
-    if (frame == gFrost_Timings[work->args->variant][FROST_FRAME] + 11)
+    if (frame == gFrost_Timings[state->args->variant][FROST_FRAME] + 11)
       EFFECT_SHOW_DAMAGE(SE_WATER);
     SET_VECTOR(point, 0, 0, toFIXED(512));
     Matrix_Initialize();
@@ -85,23 +85,24 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_ICE);
     if (frame == 85)
       Sound_PlayFar(SE_WHOOSH);
-    EFFECT_FOR_EACH_TARGET(i, work->args) {
+    EFFECT_FOR_EACH_TARGET(i, state->args) {
       if (frame == i * 4 + 40)
-        BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLUE_TINT,
-                                 POSE_DAMAGE, TINT_KEEP, 0);
+        BattleEffect_TintBattler(state->args->targets[i],
+                                 SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, TINT_KEEP,
+                                 0);
     }
 
     // Motes spiral in and sink.
-    if (frame < gFrost_Timings[work->args->variant][FROST_FRAME])
-      count = gFrost_Timings[work->args->variant][FROST_MOTES];
+    if (frame < gFrost_Timings[state->args->variant][FROST_FRAME])
+      count = gFrost_Timings[state->args->variant][FROST_MOTES];
     else
       count = FROST_BURST_MOTES;
-    if (frame < gFrost_Timings[work->args->variant][FROST_FRAME] + 35) {
+    if (frame < gFrost_Timings[state->args->variant][FROST_FRAME] + 35) {
       for (i = 0; i != count; i++) {
         if (frame > i) {
           s32 picture = i % 8;
 
-          mote = &work->particles[i];
+          mote = &state->particles[i];
           if (mote->y < INTtoFIXED(FROST_MOTE_DEPTH - i / 2) &&
               mote->y > -toFIXED(FROST_MOTE_DEPTH)) {
             u32 width;
@@ -116,17 +117,17 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 #ifdef UBFIX
             width = gFrost_MoteWidths[picture];
             height = gFrost_MoteHeights[picture];
-            draw[1](canvas, work->sheet + gFrost_MotePictures[picture],
+            draw[1](canvas, state->sheet + gFrost_MotePictures[picture],
                     screen.x - (width >> 1), screen.y - (height >> 1), width,
                     height);
 #else
-            draw[1](canvas, work->sheet + gFrost_MotePictures[picture],
+            draw[1](canvas, state->sheet + gFrost_MotePictures[picture],
                     screen.x - ((width = gFrost_MoteWidths[picture]) >> 1),
                     screen.y - ((height = gFrost_MoteHeights[picture]) >> 1),
                     width, height);
 #endif
           }
-          if (frame < gFrost_Timings[work->args->variant][FROST_FRAME]) {
+          if (frame < gFrost_Timings[state->args->variant][FROST_FRAME]) {
             if (frame > i + 16) {
               if (mote->z > 4)
                 mote->z -= 2;
@@ -149,21 +150,22 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     highest += toFIXED(64);
 
     // Ice mounds spring up.
-    if (frame < gFrost_Timings[work->args->variant][FROST_FRAME]) {
-      for (i = 0; i != gFrost_Timings[work->args->variant][FROST_MOUNDS]; i++) {
+    if (frame < gFrost_Timings[state->args->variant][FROST_FRAME]) {
+      for (i = 0; i != gFrost_Timings[state->args->variant][FROST_MOUNDS];
+           i++) {
         if (i < (frame - 36) / 3) {
           s32 picture = i % 3;
           u32 height;
 
-          if (frame >= gFrost_Timings[work->args->variant][FROST_FRAME] - 7) {
+          if (frame >= gFrost_Timings[state->args->variant][FROST_FRAME] - 7) {
 #ifdef UBFIX
             height = gFrost_MoundHeights[picture];
-            draw[1](canvas, work->sheet + gFrost_MoundPictures[picture],
+            draw[1](canvas, state->sheet + gFrost_MoundPictures[picture],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
                     gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height,
                     FROST_MOUND_WIDTH, height);
 #else
-            draw[1](canvas, work->sheet + gFrost_MoundPictures[picture],
+            draw[1](canvas, state->sheet + gFrost_MoundPictures[picture],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
                     gFrost_MoundSpots[i][FROST_MOUND_FOOT] -
                         (height = gFrost_MoundHeights[picture]),
@@ -172,12 +174,12 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           } else {
 #ifdef UBFIX
             height = gFrost_MoundHeights[picture];
-            draw[0](canvas, work->sheet + gFrost_MoundPictures[picture],
+            draw[0](canvas, state->sheet + gFrost_MoundPictures[picture],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
                     gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height,
                     FROST_MOUND_WIDTH, height);
 #else
-            draw[0](canvas, work->sheet + gFrost_MoundPictures[picture],
+            draw[0](canvas, state->sheet + gFrost_MoundPictures[picture],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
                     gFrost_MoundSpots[i][FROST_MOUND_FOOT] -
                         (height = gFrost_MoundHeights[picture]),
@@ -193,7 +195,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     // its PARTICLES slot last held. Nothing in a battle clears that buffer,
     // the map grid's cells, so the word is the field's cells or an earlier
     // effect's particles or pictures.
-    if (frame == gFrost_Timings[work->args->variant][FROST_FRAME]) {
+    if (frame == gFrost_Timings[state->args->variant][FROST_FRAME]) {
       for (i = 0; i != FROST_CHIPS; i++) {
         struct Particle *chip = &PARTICLES[i];
 
@@ -207,14 +209,14 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         chip->variant = (Random16() & 15) + 16;
       }
     }
-    if (frame >= gFrost_Timings[work->args->variant][FROST_FRAME]) {
+    if (frame >= gFrost_Timings[state->args->variant][FROST_FRAME]) {
       for (i = 0; i != FROST_CHIPS_DRAWN; i++) {
         struct Particle *chip = &PARTICLES[i];
 
         if (chip->variant >= 0) {
           s32 picture = i % 8;
 
-          draw[1](canvas, work->sheet + gFrost_ChipPictures[picture],
+          draw[1](canvas, state->sheet + gFrost_ChipPictures[picture],
                   FIXEDtoINT(chip->x), FIXEDtoINT(chip->y),
                   gFrost_ChipWidths[picture], gFrost_ChipHeights[picture]);
           chip->x += chip->velocityX;
@@ -233,9 +235,9 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       highest = lowest + 1;
 
     // Sparkles rise over the motes and chips.
-    if (frame == gFrost_Timings[work->args->variant][FROST_FRAME]) {
+    if (frame == gFrost_Timings[state->args->variant][FROST_FRAME]) {
       for (i = 0; i != FROST_SPARKLES; i++) {
-        struct Particle *sparkle = &work->particles[i];
+        struct Particle *sparkle = &state->particles[i];
 
         // A sparkle keeps its place in its velocity, as it never moves.
         sparkle->velocityX = INTtoFIXED(Random16() & 127);
@@ -247,11 +249,12 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         sparkle->variant = (Random16() & 15) + 20;
       }
     }
-    if (frame >= gFrost_Timings[work->args->variant][FROST_FRAME]) {
-      s32 rise = (frame - gFrost_Timings[work->args->variant][FROST_FRAME]) / 2;
+    if (frame >= gFrost_Timings[state->args->variant][FROST_FRAME]) {
+      s32 rise =
+          (frame - gFrost_Timings[state->args->variant][FROST_FRAME]) / 2;
 
       for (i = 0; i != FROST_SPARKLES; i++) {
-        struct Particle *sparkle = &work->particles[i];
+        struct Particle *sparkle = &state->particles[i];
 
         if (sparkle->variant >= 0 && sparkle->variant < FROST_SPARKLE_LIFE) {
           s32 picture = (FROST_SPARKLE_LIFE - 1 - sparkle->variant) / 2;
@@ -274,7 +277,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         sparkle->variant--;
         if ((sparkle->variant == -1 ||
              sparkle->variant == FROST_SPARKLE_LIFE - 1) &&
-            frame < gFrost_Timings[work->args->variant][FROST_FRAME] + 35) {
+            frame < gFrost_Timings[state->args->variant][FROST_FRAME] + 35) {
           sparkle->variant = FROST_SPARKLE_LIFE - 1;
           sparkle->velocityX = INTtoFIXED(Random16() & 127);
           sparkle->velocityY =
@@ -282,7 +285,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   EFFECT_RELEASE_BLITTERS();

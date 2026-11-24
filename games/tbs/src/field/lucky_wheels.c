@@ -9,14 +9,14 @@
 #include "macros.h"
 #include "resource_ids.h"
 #include "battle/battle.h"
-#include "battle/battle_effect_work.h"
+#include "battle/battle_effect_state.h"
 #include "battle/blitter.h"
 #include "field/field.h"
 #include "field/lucky_wheels_lzpack.h"
 #include "field/map_grid_scroll.h"
 #include "system/dma.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/oam_words.h"
 #include "system/ram_buffer.h"
 #include "system/system.h"
@@ -25,8 +25,8 @@
 /// The sparks of the jackpot, kept in the map cell buffer.
 #define LUCKY_WHEELS_SPARKS ((struct Particle *)Ram_MapGridCellBuffer)
 
-/// Lucky Wheels' own work (struct LuckyWheelsWork), in the heap slot Lucky Dice
-/// keeps its sprites in, beside the battle effect slots it borrows.
+/// Lucky Wheels' own state (struct LuckyWheelsState), in the heap slot Lucky
+/// Dice keeps its sprites in, beside the battle effect slots it borrows.
 #define LUCKY_WHEELS_HEAP_SLOT HEAP_SLOT_LUCKY_GAME
 
 /// The paylines' canvas: 256 x 128 pixels of 8-bit colour, shown on BG2 from
@@ -70,7 +70,7 @@
 /// play time and runs the game. Returns 0.
 s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  gRandomSeed = gMainRoutineWork.playTime;
+  gRandomSeed = gMainRoutineState.playTime;
   Sound_PlayFar(MUS_TRY_YOUR_LUCK);
   LuckyWheels_Run();
   return 0;
@@ -82,12 +82,12 @@ s32 LuckyWheels_Start(void) {
 /// sends the canvas to its tiles in VRAM (LUCKY_WHEELS_CANVAS_TILES), then
 /// clears it or fades it into trails as transferMode says.
 void LuckyWheels_TransferCanvas(void) {
-  struct BattleEffectWork *effect;
+  struct BattleEffectState *effect;
   u8 *canvas;
 
-  effect = gBattleEffectWork[0];
+  effect = gBattleEffectState[0];
   if (effect->transferPending == 1) {
-    canvas = gBattleEffectWork[1];
+    canvas = gBattleEffectState[1];
     switch (effect->transferMode) {
     case CANVAS_COPY_AND_CLEAR:
       Dma_Set(canvas, (void *)LUCKY_WHEELS_CANVAS_TILES,
@@ -205,7 +205,7 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
   s32 frac = LINE_STEP_ONE / 2;
-  u8 *canvas = ((u8 **)gBattleEffectWork)[1];
+  u8 *canvas = ((u8 **)gBattleEffectState)[1];
   s32 step;
   s32 i;
   s32 x;
@@ -392,8 +392,8 @@ struct Reel {
 
 struct Window;
 
-/// Lucky Wheels' states (LuckyWheelsWork.state).
-enum LuckyWheelsState {
+/// Lucky Wheels' phases (LuckyWheelsState.state).
+enum LuckyWheelsPhase {
   LUCKY_WHEELS_BETTING = 0,  ///< Up and Down change the bet, A spins, B leaves
   LUCKY_WHEELS_SPINNING = 1, ///< the wheels spin until R or time stops each
   LUCKY_WHEELS_WON = 2,      ///< a payline won: a pause
@@ -406,7 +406,7 @@ enum LuckyWheelsState {
 };
 
 /// The prompt the top window shows while wheels are locked
-/// (LuckyWheelsWork.prompt), so that it is drawn again only when it changes.
+/// (LuckyWheelsState.prompt), so that it is drawn again only when it changes.
 enum LuckyWheelsPrompt {
   LUCKY_WHEELS_PROMPT_NONE = 0,
   /// "If you lock all the slots,", its first line.
@@ -420,10 +420,10 @@ enum LuckyWheelsPrompt {
   LUCKY_WHEELS_PROMPT_PULL_LEVER = 1
 };
 
-/// Lucky Wheels' work in LUCKY_WHEELS_HEAP_SLOT: its wheels, state, bet and
+/// Lucky Wheels' state in LUCKY_WHEELS_HEAP_SLOT: its wheels, state, bet and
 /// spins, keys, timer, winning lines, sprites, windows and the scanline
 /// offsets that shade the wheels.
-struct LuckyWheelsWork {
+struct LuckyWheelsState {
   struct Reel reels[LUCKY_WHEELS_REEL_COUNT];
   s32 state;
   s32 cursor;
@@ -456,7 +456,7 @@ const u16 gLuckyWheels_SparkPictures[] = {0,   4,   20,  56,  120,
                                           220, 364, 560, 816, 1140};
 
 /// The prize of each wheel symbol (enum LuckyWheelsPrize), kept in
-/// gMainRoutineWork.holdings.wonPrizes for each winning line.
+/// gMainRoutineState.holdings.wonPrizes for each winning line.
 const u8 gLuckyWheels_SymbolPrizes[] = {
     [LUCKY_WHEELS_SHIRT] = LUCKY_WHEELS_PRIZE_UNDERSHIRT,
     [LUCKY_WHEELS_HEART] = LUCKY_WHEELS_PRIZE_HEART_ITEM,
@@ -511,8 +511,8 @@ const u8 gLuckyWheels_TitleLetterWidths[LUCKY_WHEELS_TITLE_LETTERS] = {
 /// title letters of a win, the frame, the hold lamps, the spin counter, the
 /// paylines, the wheel symbols, the lever and the bottom bar.
 void LuckyWheels_Update(void) {
-  struct LuckyWheelsWork *wheels;
-  struct BattleEffectWork *effect;
+  struct LuckyWheelsState *wheels;
+  struct BattleEffectState *effect;
   volatile u16 *dma;
   s32 sprite;
   s32 objMode;
@@ -530,9 +530,9 @@ void LuckyWheels_Update(void) {
   s32 i;
 
   wheels =
-      ((struct LuckyWheelsWork **)
-           gBattleEffectWork)[LUCKY_WHEELS_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
-  effect = gBattleEffectWork[0];
+      ((struct LuckyWheelsState **)gBattleEffectState)[LUCKY_WHEELS_HEAP_SLOT -
+                                                       HEAP_SLOT_BATTLE_EFFECT];
+  effect = gBattleEffectState[0];
   sprite = 0;
   objMode = OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
 
@@ -572,7 +572,7 @@ void LuckyWheels_Update(void) {
                                  LUCKY_WHEELS_COIN_X, 0);
       Text_DrawNumberInWindowFar(wheels->bet, 2, wheels->subWindow, 64, 8);
       if (wheels->pressed & KEY_B) {
-        struct PartyHoldings *holdings = &gMainRoutineWork.holdings;
+        struct PartyHoldings *holdings = &gMainRoutineState.holdings;
 
         wheels->state = LUCKY_WHEELS_DONE;
         holdings->wonPrizes[0] = LUCKY_WHEELS_PRIZE_LIST_DONE;
@@ -791,7 +791,7 @@ void LuckyWheels_Update(void) {
       }
 
       if (stoppedReels == LUCKY_WHEELS_REEL_COUNT) {
-        struct PartyHoldings *holdings = &gMainRoutineWork.holdings;
+        struct PartyHoldings *holdings = &gMainRoutineState.holdings;
         s32 hits = 0;
 
         for (line = 0; line != LUCKY_WHEELS_PAYLINES; line++) {
@@ -1131,8 +1131,8 @@ void LuckyWheels_Update(void) {
 /// Sets up the bouncing title letters of a win, the brightness wave of the
 /// screen's lines and the betting window, and starts at betting.
 void LuckyWheels_InitializeTitle(void) {
-  struct LuckyWheelsWork *wheels;
-  struct BattleEffectWork *effect;
+  struct LuckyWheelsState *wheels;
+  struct BattleEffectState *effect;
   struct Particle *letter;
   const u8 *width;
   s32 left;
@@ -1144,9 +1144,9 @@ void LuckyWheels_InitializeTitle(void) {
   s32 message;
 
   wheels =
-      ((struct LuckyWheelsWork **)
-           gBattleEffectWork)[LUCKY_WHEELS_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
-  effect = gBattleEffectWork[0];
+      ((struct LuckyWheelsState **)gBattleEffectState)[LUCKY_WHEELS_HEAP_SLOT -
+                                                       HEAP_SLOT_BATTLE_EFFECT];
+  effect = gBattleEffectState[0];
   left = 0;
   // Twice the sparks the win uses are cleared.
   for (i = 0; i != 2 * LUCKY_WHEELS_SPARK_COUNT; i++)
@@ -1209,8 +1209,8 @@ void LuckyWheels_Run(void) {
   DrawRectangle draw[2];
   u8 *sheet;
   void *canvas;
-  struct BattleEffectWork *effect;
-  struct LuckyWheelsWork *wheels;
+  struct BattleEffectState *effect;
+  struct LuckyWheelsState *wheels;
   struct PartyHoldings *holdings;
   u8 *entry;
   u8 *tiles;
@@ -1223,11 +1223,11 @@ void LuckyWheels_Run(void) {
   sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, LUCKY_WHEELS_CANVAS_SIZE);
   effect = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT,
-                               sizeof(struct BattleEffectWork));
+                               sizeof(struct BattleEffectState));
   wheels = HeapSlot_AllocEwram(LUCKY_WHEELS_HEAP_SLOT,
-                               sizeof(struct LuckyWheelsWork));
+                               sizeof(struct LuckyWheelsState));
   tiles = Ram_MapGridCellBuffer;
-  holdings = &gMainRoutineWork.holdings;
+  holdings = &gMainRoutineState.holdings;
   Stub_NoOpHook(RESOURCE_BATTLE_EFFECT_FAR_CALLS);
   holdings->wonPrizes[0] = LUCKY_WHEELS_PRIZE_LIST_END;
   wheels->repeat = 0;
@@ -1595,10 +1595,10 @@ void LzPack_ResetChains(void) {
   struct LzPackNode **bucket;
 
   for (index = 0; index < PACK_WINDOW_SIZE; index++) {
-    gLzPackWork->nodes[index].slot = index;
-    gLzPackWork->nodes[index].previous = NULL;
+    gLzPackState->nodes[index].slot = index;
+    gLzPackState->nodes[index].previous = NULL;
   }
-  bucket = gLzPackWork->bucket;
+  bucket = gLzPackState->bucket;
   for (index = 0; index < PACK_BYTE_VALUES; index++) {
     *bucket++ = NULL;
   }
@@ -1606,23 +1606,23 @@ void LzPack_ResetChains(void) {
 
 /// Adds window position index to the chain of the byte it holds.
 void LzPack_InsertSlotNode(s32 index) {
-  struct LzPackWork *work = gLzPackWork;
+  struct LzPackState *state = gLzPackState;
 
-  work->nodes[index].previous =
-      (struct LzPackNode *)&work->bucket[work->bucketBySlot[index]];
-  work->nodes[index].next = work->bucket[work->bucketBySlot[index]];
-  work->bucket[work->bucketBySlot[index]] = &work->nodes[index];
-  if (work->nodes[index].next != NULL)
-    work->nodes[index].next->previous = &work->nodes[index];
+  state->nodes[index].previous =
+      (struct LzPackNode *)&state->bucket[state->bucketBySlot[index]];
+  state->nodes[index].next = state->bucket[state->bucketBySlot[index]];
+  state->bucket[state->bucketBySlot[index]] = &state->nodes[index];
+  if (state->nodes[index].next != NULL)
+    state->nodes[index].next->previous = &state->nodes[index];
 }
 
 /// Removes window position slot from its chain.
 void LzPack_RemoveSlotNode(s32 slot) {
-  if (gLzPackWork->nodes[slot].previous != NULL) {
-    if (gLzPackWork->nodes[slot].next != NULL)
-      gLzPackWork->nodes[slot].next->previous =
-          gLzPackWork->nodes[slot].previous;
-    gLzPackWork->nodes[slot].previous->next = gLzPackWork->nodes[slot].next;
+  if (gLzPackState->nodes[slot].previous != NULL) {
+    if (gLzPackState->nodes[slot].next != NULL)
+      gLzPackState->nodes[slot].next->previous =
+          gLzPackState->nodes[slot].previous;
+    gLzPackState->nodes[slot].previous->next = gLzPackState->nodes[slot].next;
   }
 }
 
@@ -1639,13 +1639,13 @@ void LzPack_ReadInput(s32 start, s32 count, const u8 *input) {
 
     do {
       u32 slot = start + current;
-      struct LzPackWork *state;
+      struct LzPackState *state;
       u32 readOffset;
       u32 nextOffset;
       u8 value;
 
       LzPack_RemoveSlotNode(removal & mask);
-      state = gLzPackWork;
+      state = gLzPackState;
       readOffset = state->inputCursor;
       value = input[readOffset];
       nextOffset = readOffset + 1;
@@ -1668,10 +1668,10 @@ void LzPack_ReadInput(s32 start, s32 count, const u8 *input) {
 
     do {
       u32 slot = (start + current) & mask;
-      struct LzPackWork *state;
+      struct LzPackState *state;
 
       LzPack_RemoveSlotNode(slot);
-      state = gLzPackWork;
+      state = gLzPackState;
       current++;
       state->bucketBySlot[slot] = -1;
     } while (current < count);
@@ -1681,12 +1681,12 @@ void LzPack_ReadInput(s32 start, s32 count, const u8 *input) {
 /// Appends the finished group (a flag byte and up to eight items) to the
 /// output.
 void LzPack_CopyBufferedBytes(u8 *destination) {
-  struct LzPackWork *work = gLzPackWork;
+  struct LzPackState *state = gLzPackState;
   s32 index;
 
-  for (index = 0; index != work->outCount; index++) {
-    destination[work->outTotal] = work->outBuffer[index];
-    work->outTotal++;
+  for (index = 0; index != state->outCount; index++) {
+    destination[state->outTotal] = state->outBuffer[index];
+    state->outTotal++;
   }
 }
 
@@ -1697,26 +1697,26 @@ static __inline__ void LzPack_FindWindowMatch(s32 start) {
   struct LzPackNode *node;
   s32 len;
 
-  gLzPackWork->matchLength = 1;
-  if (gLzPackWork->bucketBySlot[start] == -1) {
+  gLzPackState->matchLength = 1;
+  if (gLzPackState->bucketBySlot[start] == -1) {
     return;
   }
-  node = gLzPackWork->bucket[gLzPackWork->bucketBySlot[start]];
+  node = gLzPackState->bucket[gLzPackState->bucketBySlot[start]];
   if (start + PACK_MATCH_MAX > PACK_WINDOW_MASK) {
     while (node != NULL) {
       s32 dist = (start - node->slot) & PACK_WINDOW_MASK;
 
       if (dist > 0 && dist <= PACK_DISTANCE_MAX) {
         for (len = 1; len < PACK_MATCH_MAX; len++) {
-          if (gLzPackWork->bucketBySlot[(start + len) & PACK_WINDOW_MASK] !=
-              gLzPackWork
+          if (gLzPackState->bucketBySlot[(start + len) & PACK_WINDOW_MASK] !=
+              gLzPackState
                   ->bucketBySlot[(node->slot + len) & PACK_WINDOW_MASK]) {
             break;
           }
         }
-        if (gLzPackWork->matchLength < len) {
-          gLzPackWork->matchOffset = dist;
-          gLzPackWork->matchLength = len;
+        if (gLzPackState->matchLength < len) {
+          gLzPackState->matchOffset = dist;
+          gLzPackState->matchLength = len;
           if (len == PACK_MATCH_MAX) {
             return;
           }
@@ -1730,15 +1730,15 @@ static __inline__ void LzPack_FindWindowMatch(s32 start) {
 
       if (dist > 0 && dist <= PACK_DISTANCE_MAX) {
         for (len = 1; len < PACK_MATCH_MAX; len++) {
-          if (gLzPackWork->bucketBySlot[start + len] !=
-              gLzPackWork
+          if (gLzPackState->bucketBySlot[start + len] !=
+              gLzPackState
                   ->bucketBySlot[(node->slot + len) & PACK_WINDOW_MASK]) {
             break;
           }
         }
-        if (gLzPackWork->matchLength < len) {
-          gLzPackWork->matchOffset = dist;
-          gLzPackWork->matchLength = len;
+        if (gLzPackState->matchLength < len) {
+          gLzPackState->matchOffset = dist;
+          gLzPackState->matchLength = len;
           if (len == PACK_MATCH_MAX) {
             return;
           }
@@ -1763,79 +1763,79 @@ UNUSED s32 LzPack_PackData(const u8 *input, u8 *dst, s32 size) {
   s16 code;
 
   defer = 0;
-  gLzPackWork = (struct LzPackWork *)gMapGridCellBuffer;
+  gLzPackState = (struct LzPackState *)gMapGridCellBuffer;
   LzPack_ResetChains();
-  gLzPackWork->inputLimit = size;
-  gLzPackWork->position = 0;
-  gLzPackWork->inputCursor = 0;
-  gLzPackWork->outTotal = 0;
-  gLzPackWork->flagMask = PACK_FIRST_FLAG;
-  gLzPackWork->outBuffer[0] = 0;
-  gLzPackWork->outCount = 1;
+  gLzPackState->inputLimit = size;
+  gLzPackState->position = 0;
+  gLzPackState->inputCursor = 0;
+  gLzPackState->outTotal = 0;
+  gLzPackState->flagMask = PACK_FIRST_FLAG;
+  gLzPackState->outBuffer[0] = 0;
+  gLzPackState->outCount = 1;
   LzPack_ReadInput(0, PACK_LOOKAHEAD, input);
 
-  while (gLzPackWork->bucketBySlot[gLzPackWork->position] != -1) {
-    LzPack_FindWindowMatch(gLzPackWork->position);
+  while (gLzPackState->bucketBySlot[gLzPackState->position] != -1) {
+    LzPack_FindWindowMatch(gLzPackState->position);
     if (defer == 0) {
-      len = gLzPackWork->matchLength;
-      if (gLzPackWork->matchLength > 1) {
-        saveOffset = gLzPackWork->matchOffset;
+      len = gLzPackState->matchLength;
+      if (gLzPackState->matchLength > 1) {
+        saveOffset = gLzPackState->matchOffset;
         saveLen = len;
-        LzPack_FindWindowMatch((gLzPackWork->position + 1) & PACK_WINDOW_MASK);
-        if (gLzPackWork->matchLength > 2) {
-          reach[0] = gLzPackWork->matchLength + 1;
-          LzPack_FindWindowMatch((gLzPackWork->position + len) &
+        LzPack_FindWindowMatch((gLzPackState->position + 1) & PACK_WINDOW_MASK);
+        if (gLzPackState->matchLength > 2) {
+          reach[0] = gLzPackState->matchLength + 1;
+          LzPack_FindWindowMatch((gLzPackState->position + len) &
                                  PACK_WINDOW_MASK);
-          reach[1] = gLzPackWork->matchLength + len;
+          reach[1] = gLzPackState->matchLength + len;
           if (reach[0] >= reach[1]) {
             saveLen = 1;
             defer = 1;
           }
         }
-        gLzPackWork->matchOffset = saveOffset;
-        gLzPackWork->matchLength = saveLen;
+        gLzPackState->matchOffset = saveOffset;
+        gLzPackState->matchLength = saveLen;
       }
     }
 
-    if (gLzPackWork->matchLength > 1) {
+    if (gLzPackState->matchLength > 1) {
       defer = 0;
-      gLzPackWork->outBuffer[0] |= gLzPackWork->flagMask;
-      if (gLzPackWork->matchLength <= PACK_SHORT_MATCH_MAX) {
-        code = ((gLzPackWork->matchOffset << 4) & PACK_CODE_DISTANCE_HIGH) |
-               (gLzPackWork->matchOffset & PACK_CODE_DISTANCE_LOW) |
-               (((gLzPackWork->matchLength - 1) << 8) & PACK_CODE_LENGTH);
-        gLzPackWork->outBuffer[gLzPackWork->outCount++] = (u16)code >> 8;
-        gLzPackWork->outBuffer[gLzPackWork->outCount++] = code;
+      gLzPackState->outBuffer[0] |= gLzPackState->flagMask;
+      if (gLzPackState->matchLength <= PACK_SHORT_MATCH_MAX) {
+        code = ((gLzPackState->matchOffset << 4) & PACK_CODE_DISTANCE_HIGH) |
+               (gLzPackState->matchOffset & PACK_CODE_DISTANCE_LOW) |
+               (((gLzPackState->matchLength - 1) << 8) & PACK_CODE_LENGTH);
+        gLzPackState->outBuffer[gLzPackState->outCount++] = (u16)code >> 8;
+        gLzPackState->outBuffer[gLzPackState->outCount++] = code;
       } else {
-        code = ((gLzPackWork->matchOffset << 4) & PACK_CODE_DISTANCE_HIGH) |
-               (gLzPackWork->matchOffset & PACK_CODE_DISTANCE_LOW);
-        gLzPackWork->outBuffer[gLzPackWork->outCount++] = (u16)code >> 8;
-        gLzPackWork->outBuffer[gLzPackWork->outCount++] = code;
-        gLzPackWork->outBuffer[gLzPackWork->outCount++] =
-            gLzPackWork->matchLength - (PACK_SHORT_MATCH_MAX + 1);
+        code = ((gLzPackState->matchOffset << 4) & PACK_CODE_DISTANCE_HIGH) |
+               (gLzPackState->matchOffset & PACK_CODE_DISTANCE_LOW);
+        gLzPackState->outBuffer[gLzPackState->outCount++] = (u16)code >> 8;
+        gLzPackState->outBuffer[gLzPackState->outCount++] = code;
+        gLzPackState->outBuffer[gLzPackState->outCount++] =
+            gLzPackState->matchLength - (PACK_SHORT_MATCH_MAX + 1);
       }
     } else {
-      gLzPackWork->outBuffer[gLzPackWork->outCount++] =
-          gLzPackWork->bucketBySlot[gLzPackWork->position];
-      gLzPackWork->matchLength = 1;
+      gLzPackState->outBuffer[gLzPackState->outCount++] =
+          gLzPackState->bucketBySlot[gLzPackState->position];
+      gLzPackState->matchLength = 1;
     }
 
-    LzPack_ReadInput(gLzPackWork->position + PACK_LOOKAHEAD,
-                     gLzPackWork->matchLength, input);
-    gLzPackWork->position =
-        (gLzPackWork->position + gLzPackWork->matchLength) & PACK_WINDOW_MASK;
-    gLzPackWork->flagMask >>= 1;
-    if (gLzPackWork->flagMask == 0) {
+    LzPack_ReadInput(gLzPackState->position + PACK_LOOKAHEAD,
+                     gLzPackState->matchLength, input);
+    gLzPackState->position =
+        (gLzPackState->position + gLzPackState->matchLength) & PACK_WINDOW_MASK;
+    gLzPackState->flagMask >>= 1;
+    if (gLzPackState->flagMask == 0) {
       LzPack_CopyBufferedBytes(dst);
-      gLzPackWork->flagMask = PACK_FIRST_FLAG;
-      gLzPackWork->outBuffer[0] = 0;
-      gLzPackWork->outCount = 1;
+      gLzPackState->flagMask = PACK_FIRST_FLAG;
+      gLzPackState->outBuffer[0] = 0;
+      gLzPackState->outCount = 1;
     }
   }
 
-  gLzPackWork->outBuffer[0] |= gLzPackWork->flagMask;
-  gLzPackWork->outBuffer[gLzPackWork->outCount++] = 0;
-  gLzPackWork->outBuffer[gLzPackWork->outCount++] = 0;
+  gLzPackState->outBuffer[0] |= gLzPackState->flagMask;
+  gLzPackState->outBuffer[gLzPackState->outCount++] = 0;
+  gLzPackState->outBuffer[gLzPackState->outCount++] = 0;
   LzPack_CopyBufferedBytes(dst);
-  return gLzPackWork->outTotal;
+  return gLzPackState->outTotal;
 }

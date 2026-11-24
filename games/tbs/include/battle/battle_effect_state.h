@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_BATTLE_EFFECT_WORK_H
-#define ALCHEMY_BATTLE_EFFECT_WORK_H
+#ifndef ALCHEMY_BATTLE_EFFECT_STATE_H
+#define ALCHEMY_BATTLE_EFFECT_STATE_H
 
 /// @file
-/// BattleEffectWork, the running battle effect's work, and its sprites.
+/// BattleEffectState, the running battle effect's state, and its sprites.
 
 #include "static_assert.h"
 #include "types.h"
@@ -25,7 +25,7 @@ STATIC_ASSERT(sizeof(struct BattleBg2Origin) == 12);
 STATIC_ASSERT(offsetof(struct BattleBg2Origin, y) == 4);
 
 /// How BattleEffect_ProcessPendingGraphicsTransfer moves the effect's
-/// 128x128 canvas into VRAM once a frame (work->transferMode); the canvas
+/// 128x128 canvas into VRAM once a frame (state->transferMode); the canvas
 /// pixels are indices into a palette ramp, so scaling them fades a trail.
 /// For the clear, darken and brighten modes transferValue is a word, a fill or
 /// a step repeated in each of its four bytes (one per pixel,
@@ -59,10 +59,10 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 /// CANVAS_COPY_AND_BRIGHTEN stop at it.
 #define CANVAS_LEVEL_BRIGHTEST 63
 
-/// The running battle effect's work: its canvas image, 64 particles, the
+/// The running battle effect's state: its canvas image, 64 particles, the
 /// display registers it stages and its sprites. It lives in the
 /// HEAP_SLOT_BATTLE_EFFECT heap slot.
-struct BattleEffectWork {
+struct BattleEffectState {
   /// Images and scanline tables reuse the storage before the particles.
   /// The tile-effect mask extends beyond sprite sheet into the table area.
   union {
@@ -136,28 +136,29 @@ struct BattleEffectWork {
   struct BattleEffectParams *args; ///< the command being run
 };
 
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2xLines) == 27008);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, imageStorage) == 0);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, trackedCanvas.origin) == 5060);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, particles) == 28800);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, transferMode) == 30592);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, transferValue) == 30596);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, frame) == 30604);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, scrollTimer) == 30608);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, scrollStepX) == 30616);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, savedBg1X) == 30624);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, shakeFrames) == 30632);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, cameraDelta) == 30636);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeFrames) == 30644);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeStep) == 30648);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, win0h) == 30652);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2x) == 30672);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, sprites) == 30680);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 30744);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, vblanksSinceTransfer) == 30752);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 30756);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, args) == 30760);
-STATIC_ASSERT(sizeof(struct BattleEffectWork) == 30764);
+STATIC_ASSERT(offsetof(struct BattleEffectState, bg2xLines) == 27008);
+STATIC_ASSERT(offsetof(struct BattleEffectState, imageStorage) == 0);
+STATIC_ASSERT(offsetof(struct BattleEffectState, trackedCanvas.origin) == 5060);
+STATIC_ASSERT(offsetof(struct BattleEffectState, particles) == 28800);
+STATIC_ASSERT(offsetof(struct BattleEffectState, transferMode) == 30592);
+STATIC_ASSERT(offsetof(struct BattleEffectState, transferValue) == 30596);
+STATIC_ASSERT(offsetof(struct BattleEffectState, frame) == 30604);
+STATIC_ASSERT(offsetof(struct BattleEffectState, scrollTimer) == 30608);
+STATIC_ASSERT(offsetof(struct BattleEffectState, scrollStepX) == 30616);
+STATIC_ASSERT(offsetof(struct BattleEffectState, savedBg1X) == 30624);
+STATIC_ASSERT(offsetof(struct BattleEffectState, shakeFrames) == 30632);
+STATIC_ASSERT(offsetof(struct BattleEffectState, cameraDelta) == 30636);
+STATIC_ASSERT(offsetof(struct BattleEffectState, fadeFrames) == 30644);
+STATIC_ASSERT(offsetof(struct BattleEffectState, fadeStep) == 30648);
+STATIC_ASSERT(offsetof(struct BattleEffectState, win0h) == 30652);
+STATIC_ASSERT(offsetof(struct BattleEffectState, bg2x) == 30672);
+STATIC_ASSERT(offsetof(struct BattleEffectState, sprites) == 30680);
+STATIC_ASSERT(offsetof(struct BattleEffectState, actorTimers) == 30744);
+STATIC_ASSERT(offsetof(struct BattleEffectState, vblanksSinceTransfer) ==
+              30752);
+STATIC_ASSERT(offsetof(struct BattleEffectState, transferPending) == 30756);
+STATIC_ASSERT(offsetof(struct BattleEffectState, args) == 30760);
+STATIC_ASSERT(sizeof(struct BattleEffectState) == 30764);
 
 // The pixel fragments BattleEffect_BuildBlitter copies into its blitters, from
 // blitter_fragments.s: Forward reads the picture left to right and

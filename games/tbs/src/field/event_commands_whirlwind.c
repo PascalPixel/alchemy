@@ -136,9 +136,9 @@ void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 /// trigger names, it shrinks the target away and sends 16 leaves circling, then
 /// it whooshes off.
 void FieldPsynergy_Whirlwind(void) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *caster = effectWork->mainActor;
-  struct Actor *target = effectWork->child;
+  struct FieldEffectState *effectState = gFieldEffectState;
+  struct Actor *caster = effectState->mainActor;
+  struct Actor *target = effectState->child;
   struct Vector3 pos;
   struct Vector3 from;
   struct Vector3 to;
@@ -151,9 +151,9 @@ void FieldPsynergy_Whirlwind(void) {
   from.x = caster->x.fixed;
   from.y = caster->y.fixed;
   from.z = caster->z.fixed;
-  to.x = effectWork->x;
-  to.y = effectWork->y - toFIXED(4);
-  to.z = effectWork->z;
+  to.x = effectState->x;
+  to.y = effectState->y - toFIXED(4);
+  to.z = effectState->z;
   orb = Actor_Spawn(SPRITE_WHIRLWIND, 0, 0, 0);
   if (orb == 0) {
     return;
@@ -178,7 +178,7 @@ void FieldPsynergy_Whirlwind(void) {
   wait(20);
   // Cleared by FieldPsynergy_Dispatch: cast on a target a trigger
   // names, the target is blown away.
-  if (effectWork->enabled == 0) {
+  if (effectState->enabled == 0) {
     if (target != 0)
       target->update = FieldEffect_ShrinkActorScaleUntilHalf;
 

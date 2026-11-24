@@ -1,5 +1,6 @@
 /// @file
-/// Running a shop, its cursor work, and the message helpers every counter uses.
+/// Running a shop, its cursor state, and the message helpers every counter
+/// uses.
 // Part of shop.c.
 
 #include "shop_internal.h"
@@ -7,13 +8,13 @@
 /// Lists the current shop's artifacts: every item of the shop's type whose
 /// shared stock counter is above zero.
 s32 Shop_ListAvailableArtifacts(void) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
   s16 *stockItems;
   s32 itemId;
   s32 count;
   s8 equipmentGroup;
 
-  shop = gMenuWork;
+  shop = gMenuState;
   count = 0;
   itemId = 0;
   stockItems = shop->stockItemIds;
@@ -36,18 +37,18 @@ s32 Shop_ListAvailableArtifacts(void) {
 /// Advances the hand cursor one frame. Runs every frame as a task
 /// while a counter is open.
 void MenuCursor_Step(void) {
-  MenuCursor_Advance(&((struct ShopWork *)gMenuWork)->cursor);
+  MenuCursor_Advance(&((struct ShopState *)gMenuState)->cursor);
 }
 
-/// Opens a counter's work: the party list, the cursor icons and the cursor's
-/// task, which last until Shop_ReleaseWork. Every counter opens with it.
-void Shop_InitializeWork(void) {
-  struct ShopWork *shop;
+/// Opens a counter's state: the party list, the cursor icons and the cursor's
+/// task, which last until Shop_ReleaseState. Every counter opens with it.
+void Shop_InitializeState(void) {
+  struct ShopState *shop;
   s32 resourceSlot;
 
-  shop = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ShopWork));
+  shop = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ShopState));
   Field_EndBusyAndRevealFar();
-  Dma_Fill32(0, shop, sizeof(struct ShopWork));
+  Dma_Fill32(0, shop, sizeof(struct ShopState));
   shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   shop->partyMemberCount = Party_ListMembersFar(shop->partyMemberIds);
   // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
@@ -72,12 +73,12 @@ void Shop_InitializeWork(void) {
   Task_Add(MenuCursor_Step, TASK_PASS_FRAME);
 }
 
-/// Stops the cursor task, frees the six cursor icons and the work block.
+/// Stops the cursor task, frees the six cursor icons and the state block.
 /// Every counter closes with it.
-void Shop_ReleaseWork(void) {
-  struct ShopWork *state;
+void Shop_ReleaseState(void) {
+  struct ShopState *state;
 
-  state = gMenuWork;
+  state = gMenuState;
   Task_Remove(MenuCursor_Step);
   Message_CloseFinishedWindowsFar();
   VramCache_FreeEntry(state->cursorIcon);
@@ -93,7 +94,7 @@ void Shop_ReleaseWork(void) {
 /// until the player leaves. keeperId is the actor whose portrait the lines
 /// show.
 s32 Shop_Run(s32 stockRow, s32 keeperId) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
   struct WindowSprite *anchor;
   struct Window *window;
   s32 action = 0;
@@ -102,8 +103,8 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
     stockRow = SHOP_STOCK_ROW_EMPTY;
   // A shop's artifacts join the world's stock the first time it opens.
   ShopStock_AddArtifacts(stockRow);
-  Shop_InitializeWork();
-  shop = gMenuWork;
+  Shop_InitializeState();
+  shop = gMenuState;
   shop->shopType = ShopStock_GetType(stockRow);
   // Xian's shops are the warriors' shops, which greet differently.
   // XXX (no evidence): why by row number rather than a column of the row; the
@@ -124,7 +125,8 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   anchor =
       WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
   anchor->motion = WINDOW_SPRITE_MOTION_STILL;
-  // The hand's icon is the shop's, freed by Shop_ReleaseWork, not the sprite's.
+  // The hand's icon is the shop's, freed by Shop_ReleaseState, not the
+  // sprite's.
   anchor->kind = WINDOW_SPRITE_GLYPH;
   // The hand waits off the left edge until a screen places it
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
@@ -168,7 +170,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   // "Feel free to drop in anytime."
   Shop_ShowKeeperMessage(MsgShopFarewell);
   Window_CloseFar(window, 2);
-  Shop_ReleaseWork();
+  Shop_ReleaseState();
   return 0;
 }
 
@@ -189,8 +191,8 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 /// broken equipment for repairs and poisoned or haunted party members for the
 /// sanctum.
 s32 Shop_OpenDebugShop(s32 unused) {
-  gMainRoutineWork.holdings.coins = DEBUG_SHOP_COINS;
-  gMainRoutineWork.holdings.shopGifts = SHOP_GIFTS_MAX;
+  gMainRoutineState.holdings.coins = DEBUG_SHOP_COINS;
+  gMainRoutineState.holdings.shopGifts = SHOP_GIFTS_MAX;
   Inventory_EquipFar(
       GARET,
       Inventory_AddItemFar(GARET, INVENTORY_BROKEN | ITEM_VIRTUOUS_ARMLET));
@@ -216,7 +218,7 @@ void Sound_WaitForJingle(void) {
 /// as a weapon shop's: an armor or item shop says its own, the same distance
 /// on in the text, and a warriors' shop its own beyond that.
 void Shop_ShowKeeperMessage(s32 messageId) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   s32 voice = Speaker_GetVoiceFar(shop->keeperGraphics);
   s32 resolvedMessage = messageId;
   s8 shopType;
@@ -246,10 +248,10 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   s8 shopType;
   s8 warriorShop;
   u8 savedCursorMode;
-  struct ShopWork *shop;
+  struct ShopState *shop;
   struct WindowSprite **cursorSlot;
 
-  shop = gMenuWork;
+  shop = gMenuState;
   cursorSlot = &shop->cursor.anchor;
   savedCursorMode = (*cursorSlot)->motion;
   resolvedMessage = messageId;
@@ -281,7 +283,7 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
 /// or B.
 s32 Shop_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
-      &((struct ShopWork *)gMenuWork)->cursor.anchor;
+      &((struct ShopState *)gMenuState)->cursor.anchor;
   u8 savedCursorMode = (*cursorSlot)->motion;
   Icon_PrepareActorFar(*cursorSlot);
   choice = YesNoMenu_RunAtFar(SHOP_CONFIRM_MENU_X, 5, choice);
@@ -293,7 +295,7 @@ s32 Shop_AskYesNo(s32 choice) {
 /// it, keeping the hand cursor's motion.
 s32 Sanctum_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
-      &((struct ShopWork *)gMenuWork)->cursor.anchor;
+      &((struct ShopState *)gMenuState)->cursor.anchor;
   u8 savedCursorMode = (*cursorSlot)->motion;
   Icon_PrepareActorFar(*cursorSlot);
   choice = YesNoMenu_RunAtFar(7, 7, choice);

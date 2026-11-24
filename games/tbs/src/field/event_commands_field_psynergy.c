@@ -18,18 +18,18 @@ void FieldPsynergy_RunHandler(s32 kind) {
 }
 
 /// Casts the current field Psynergy with no target: runs the body of its kind
-/// (effectWork->fieldPsynergy).
+/// (effectState->fieldPsynergy).
 void FieldPsynergy_Run(void) {
-  struct FieldEffectWork *effectWork;
-  struct FieldWork *fieldWork;
+  struct FieldEffectState *effectState;
+  struct FieldState *fieldState;
   s32 kind;
   s32 targetId;
   s32 nearestTargetId;
 
-  effectWork = gFieldEffectWork;
-  fieldWork = gFieldWork;
-  kind = effectWork->fieldPsynergy;
-  targetId = effectWork->secondActorId;
+  effectState = gFieldEffectState;
+  fieldState = gFieldState;
+  kind = effectState->fieldPsynergy;
+  targetId = effectState->secondActorId;
 
   switch (kind) {
   case FIELD_PSYNERGY_MOVE:
@@ -64,29 +64,29 @@ void FieldPsynergy_Run(void) {
     return;
   case FIELD_PSYNERGY_HALT:
     // Resume the actor stopped before, then stop the nearest one.
-    if (gMainRoutineWork.haltedActor != -1) {
-      FieldPsynergy_ResumeHaltedActor(gMainRoutineWork.haltedActor);
-      gMainRoutineWork.haltedActor = -1;
+    if (gMainRoutineState.haltedActor != -1) {
+      FieldPsynergy_ResumeHaltedActor(gMainRoutineState.haltedActor);
+      gMainRoutineState.haltedActor = -1;
     }
 
     nearestTargetId =
-        Field_FindNearbyPsynergyTarget(gMainRoutineWork.leaderActorId, kind);
+        Field_FindNearbyPsynergyTarget(gMainRoutineState.leaderActorId, kind);
     nearestTargetId = FieldPsynergy_FilterHaltTarget(nearestTargetId);
     if (Scene_FindActorTalkTrigger(nearestTargetId) != 0) {
-      FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId,
+      FieldPsynergy_SetupActorPair(gMainRoutineState.leaderActorId,
                                    nearestTargetId);
       FieldPsynergy_HaltOnTarget(nearestTargetId);
       FieldPsynergy_HaltActor(nearestTargetId);
-      gMainRoutineWork.haltedActor = nearestTargetId;
+      gMainRoutineState.haltedActor = nearestTargetId;
     } else {
       FieldPsynergy_Halt();
     }
     return;
   case FIELD_PSYNERGY_MIND_READ:
     // The wave and colour effect, stopping a running Reveal first.
-    if (fieldWork->revealActive != 0)
+    if (fieldState->revealActive != 0)
       FieldPsynergy_EndReveal();
-    FieldPsynergy_StartMindReadWave(effectWork->firstActorId, targetId);
+    FieldPsynergy_StartMindReadWave(effectState->firstActorId, targetId);
     return;
   case FIELD_PSYNERGY_REVEAL:
     FieldPsynergy_Reveal();
@@ -106,19 +106,19 @@ void FieldPsynergy_Run(void) {
 /// Casts the current field Psynergy on its target (secondActorId): runs the
 /// handler of its kind.
 void FieldPsynergy_Dispatch(void) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct FieldWork *fieldWork = gFieldWork;
-  s32 kind = effectWork->fieldPsynergy;
-  s32 targetId = effectWork->secondActorId;
+  struct FieldEffectState *effectState = gFieldEffectState;
+  struct FieldState *fieldState = gFieldState;
+  s32 kind = effectState->fieldPsynergy;
+  s32 targetId = effectState->secondActorId;
 
-  effectWork->enabled = 0;
+  effectState->enabled = 0;
   switch (kind) {
   case FIELD_PSYNERGY_MIND_READ:
-    if (fieldWork->revealActive != 0)
+    if (fieldState->revealActive != 0)
       FieldPsynergy_EndReveal();
-    if (gMainRoutineWork.haltedActor != effectWork->secondActorId)
-      ((struct Actor *)effectWork->child)->paused = 1;
-    FieldPsynergy_StartMindReadWave(effectWork->firstActorId, targetId);
+    if (gMainRoutineState.haltedActor != effectState->secondActorId)
+      ((struct Actor *)effectState->child)->paused = 1;
+    FieldPsynergy_StartMindReadWave(effectState->firstActorId, targetId);
     break;
   case FIELD_PSYNERGY_MOVE:
     // Push the target with the direction keys.
@@ -143,12 +143,12 @@ void FieldPsynergy_Dispatch(void) {
     FieldPsynergy_GrowthOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_HALT:
-    if (gMainRoutineWork.haltedActor != -1) {
-      FieldPsynergy_ResumeHaltedActor(gMainRoutineWork.haltedActor);
-      gMainRoutineWork.haltedActor = -1;
+    if (gMainRoutineState.haltedActor != -1) {
+      FieldPsynergy_ResumeHaltedActor(gMainRoutineState.haltedActor);
+      gMainRoutineState.haltedActor = -1;
     }
     FieldPsynergy_HaltActor(targetId);
-    gMainRoutineWork.haltedActor = targetId;
+    gMainRoutineState.haltedActor = targetId;
     FieldPsynergy_HaltOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_PLY:
@@ -178,12 +178,12 @@ void FieldPsynergy_Dispatch(void) {
 /// Finishes the current field Psynergy when it is Mind Read: ends it and lets
 /// its target move again, unless the target is the actor kept stopped.
 void FieldPsynergy_FinishMindRead(void) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct FieldEffectState *effectState = gFieldEffectState;
 
-  if (effectWork->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
+  if (effectState->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     FieldPsynergy_StopMindReadWave();
-    if (gMainRoutineWork.haltedActor != effectWork->secondActorId) {
-      ((struct Actor *)effectWork->child)->paused = 0;
+    if (gMainRoutineState.haltedActor != effectState->secondActorId) {
+      ((struct Actor *)effectState->child)->paused = 0;
     }
   }
 }
@@ -192,7 +192,7 @@ void FieldPsynergy_FinishMindRead(void) {
 void FieldPsynergy_RunExtraHandler(void) {
   u32 kind;
 
-  kind = ((struct FieldEffectWork *)gFieldEffectWork)->fieldPsynergy;
+  kind = ((struct FieldEffectState *)gFieldEffectState)->fieldPsynergy;
   switch (kind) {
   case FIELD_PSYNERGY_REVEAL:
     FieldPsynergy_EndReveal();
@@ -299,7 +299,7 @@ struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
 /// Creates an actor for a field Psynergy, at the caster's ground height, with
 /// sprite priority 0 and animation 1.
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct FieldEffectState *effectState = gFieldEffectState;
   struct Actor *actor;
 
   actor = Actor_CreateFar(kind, x, y, z);
@@ -308,7 +308,8 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
       Actor_ReleaseFar(actor);
       return NULL;
     }
-    actor->groundHeight = ((struct Actor *)effectWork->mainActor)->groundHeight;
+    actor->groundHeight =
+        ((struct Actor *)effectState->mainActor)->groundHeight;
     actor->motionFlags = ACTOR_FLOATS;
     actor->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
     actor->sprite->image.priority = 0;

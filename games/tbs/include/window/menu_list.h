@@ -93,7 +93,7 @@ struct MenuPoint {
   s32 y; ///< screen pixels
 };
 
-/// The sprites BattleMenuWork.icons holds.
+/// The sprites BattleMenuState.icons holds.
 enum BattleMenuIcon {
   BATTLE_MENU_ICON_COMMAND,  ///< the chosen command's icon, 32x32
   BATTLE_MENU_ICON_ABILITY,  ///< the chosen Psynergy, summon or item's icon
@@ -101,9 +101,9 @@ enum BattleMenuIcon {
   BATTLE_MENU_ICON_COUNT
 };
 
-/// The battle command menus' work, HEAP_SLOT_BATTLE_MENU (260 bytes), reached
-/// as gBattleMenuWork.
-struct BattleMenuWork {
+/// The battle command menus' state, HEAP_SLOT_BATTLE_MENU (260 bytes), reached
+/// as gBattleMenuState.
+struct BattleMenuState {
   /// The sprites BattleMenu_Update draws each frame: the chosen
   /// command's icon, the chosen ability's icon and the party member's portrait.
   struct MenuSprite icons[BATTLE_MENU_ICON_COUNT];
@@ -143,38 +143,38 @@ struct BattleMenuWork {
   u32 chosenDjinn[8];
 };
 
-/// BattleMenuWork.chosenDjinn of a command that has chosen no Djinni.
+/// BattleMenuState.chosenDjinn of a command that has chosen no Djinni.
 #define BATTLE_MENU_NO_DJINNI 0x80000000
 
-STATIC_ASSERT(sizeof(struct BattleMenuWork) == 260);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, targetViewOffset) == 40);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, row) == 48);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, commandSelection) == 60);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, timerWindow) == 68);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, timer) == 76);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, standbyDjinn) == 84);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, tutorialStep) == 216);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, commandActor) == 224);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 228);
+STATIC_ASSERT(sizeof(struct BattleMenuState) == 260);
+STATIC_ASSERT(offsetof(struct BattleMenuState, targetViewOffset) == 40);
+STATIC_ASSERT(offsetof(struct BattleMenuState, row) == 48);
+STATIC_ASSERT(offsetof(struct BattleMenuState, commandSelection) == 60);
+STATIC_ASSERT(offsetof(struct BattleMenuState, timerWindow) == 68);
+STATIC_ASSERT(offsetof(struct BattleMenuState, timer) == 76);
+STATIC_ASSERT(offsetof(struct BattleMenuState, standbyDjinn) == 84);
+STATIC_ASSERT(offsetof(struct BattleMenuState, tutorialStep) == 216);
+STATIC_ASSERT(offsetof(struct BattleMenuState, commandActor) == 224);
+STATIC_ASSERT(offsetof(struct BattleMenuState, chosenDjinn) == 228);
 
 /// Restores the previous selection: page, row and return row.
 #define BATTLE_MENU_GET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \
-    (page_) = ((struct BattleMenuWork *)gWindowWork[42])->page;                \
-    (row_) = ((struct BattleMenuWork *)gWindowWork[42])->row;                  \
-    (preferred_) = ((struct BattleMenuWork *)gWindowWork[42])->preferredRow;   \
+    (page_) = ((struct BattleMenuState *)gWindowState[42])->page;              \
+    (row_) = ((struct BattleMenuState *)gWindowState[42])->row;                \
+    (preferred_) = ((struct BattleMenuState *)gWindowState[42])->preferredRow; \
   } while (0)
 
 /// Saves the selection: page, row and return row.
 #define BATTLE_MENU_SET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \
-    gBattleMenuWork->page = (page_);                                           \
-    gBattleMenuWork->row = (row_);                                             \
-    gBattleMenuWork->preferredRow = (preferred_);                              \
+    gBattleMenuState->page = (page_);                                          \
+    gBattleMenuState->row = (row_);                                            \
+    gBattleMenuState->preferredRow = (preferred_);                             \
   } while (0)
 
-#define gBattleMenuWork                                                        \
-  (*(struct BattleMenuWork **)&gHeapSlots[HEAP_SLOT_BATTLE_MENU])
+#define gBattleMenuState                                                       \
+  (*(struct BattleMenuState **)&gHeapSlots[HEAP_SLOT_BATTLE_MENU])
 /// The animated cursor's frames, 16 by 16 at a byte a pixel
 /// (graphics/ui/sprite_cursors/spin).
 extern const u8 gMenu_AnimatedCursorTiles[];

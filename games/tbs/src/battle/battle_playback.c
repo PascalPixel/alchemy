@@ -18,9 +18,9 @@ void Dma_StopAllThenRunHook(void) {
 /// Starts playback of the action's targets when the effect's blow lands, with
 /// cue as the hit's sound (0 keeps the one set); later calls change nothing.
 void BattlePlayback_Start(s32 cue) {
-  struct BattlePlaybackWork *events;
+  struct BattlePlaybackState *events;
 
-  events = &gBattleWork->playback;
+  events = &gBattleState->playback;
   if (events->phase == BATTLE_PLAYBACK_PHASE_IDLE) {
     events->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
     if (cue != 0) {
@@ -32,18 +32,18 @@ void BattlePlayback_Start(s32 cue) {
 /// Empties the playback queue and plays the commands queued next, after frames
 /// frames, with no targets to resolve.
 s32 BattlePlayback_SchedulePhase(s32 frames) {
-  struct BattlePlaybackWork *events;
+  struct BattlePlaybackState *events;
 
-  events = &gBattleWork->playback;
+  events = &gBattleState->playback;
   events->queue.count = 0;
   events->eventIndex = 0;
   events->timer = frames;
   events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
-  gBattleWork->actionRun.targetCount = 0;
+  gBattleState->actionRun.targetCount = 0;
   return Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
 }
 
-// BattlePlayback_Run's waits, in BattlePlaybackWork.phase beside the phases
+// BattlePlayback_Run's waits, in BattlePlaybackState.phase beside the phases
 // playback_queue.h names.
 #define PLAY_MESSAGE 3      ///< waits for the message, then for the player
 #define PLAY_ADVANCE 5      ///< shows the arrow and waits for the player
@@ -67,8 +67,8 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 void BattlePlayback_Run(void) {
   u16 selection[8];
   struct Sprite *sprites[4];
-  struct BattleWork *battle = gBattleWork;
-  struct BattlePlaybackWork *events = &battle->playback;
+  struct BattleState *battle = gBattleState;
+  struct BattlePlaybackState *events = &battle->playback;
 
   /// Clears a sprite's tiles in OBJ VRAM, at its VRAM cache entry's offset;
   /// the last step of a fallen enemy's dissolve.
@@ -138,7 +138,7 @@ void BattlePlayback_Run(void) {
                                     MESSAGE_ARGUMENT_ABILITY);
             break;
           case PLAYBACK_MARK:
-            gBattleMessageWork->marked = 1;
+            gBattleMessageState->marked = 1;
             break;
           // A message of MESSAGE_NONE only waits for the player, and only a
           // press after the message goes on.
@@ -197,7 +197,7 @@ void BattlePlayback_Run(void) {
             break;
           }
           case PLAYBACK_DRAW_STATUS:
-            PartyStatus_DrawFar(gBattleWork->partyStatus);
+            PartyStatus_DrawFar(gBattleState->partyStatus);
             break;
           case PLAYBACK_REFRESH_UNIT: {
             struct BattleObject *slot;
@@ -239,7 +239,7 @@ void BattlePlayback_Run(void) {
       struct AdvanceArrowSprite *prompt = &events->arrow;
       u8 *arrowTiles = gBattleMessage_AdvanceArrowTiles;
       s32 pictureTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
-      struct BattleMessageWork *display = gBattleMessageWork;
+      struct BattleMessageState *display = gBattleMessageState;
       struct Window *window = display->window;
       struct BattleMessageOffset *offset = display->offset;
       s32 x = 0;
@@ -393,9 +393,9 @@ void BattlePlayback_Run(void) {
 
 /// Stops playback and empties the playback queue.
 void BattlePlayback_Reset(void) {
-  struct BattlePlaybackWork *events;
+  struct BattlePlaybackState *events;
 
-  events = &gBattleWork->playback;
+  events = &gBattleState->playback;
   events->phase = BATTLE_PLAYBACK_PHASE_IDLE;
   events->queue.count = 0;
   events->eventIndex = 0;
@@ -409,9 +409,9 @@ void BattlePlayback_Reset(void) {
 /// never showed the damage.
 UNREAD_RESULT BattlePlayback_WaitForReady(void) {
   s32 state;
-  struct BattlePlaybackWork *events;
+  struct BattlePlaybackState *events;
 
-  events = &gBattleWork->playback;
+  events = &gBattleState->playback;
   state = events->phase;
   if (state == BATTLE_PLAYBACK_PHASE_IDLE) {
     events->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;

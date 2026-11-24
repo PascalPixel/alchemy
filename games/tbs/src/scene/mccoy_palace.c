@@ -63,7 +63,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -207,7 +207,7 @@ const u32 *Scene_GetExits(void) { return gMcCoyPalaceExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *placements;
 
-  if (gMainRoutineWork.next == SCENE_MC_COY_PALACE) {
+  if (gMainRoutineState.next == SCENE_MC_COY_PALACE) {
     placements = gMcCoyPalaceActorPlacements;
     Scene_AssignViewFlags(placements);
 
@@ -233,7 +233,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// What the party can talk to and search in the palace.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_MC_COY_PALACE) {
+  if (gMainRoutineState.next == SCENE_MC_COY_PALACE) {
     return gMcCoyPalaceTriggers;
   }
   return gMcCoyPalaceNoTriggers;
@@ -325,7 +325,7 @@ static void McCoyPalace_TalkToSoldierShowingTheReward(void) {
     Event_SetMessageId(MsgBilibinDoThinkTheseBilibinsGreat);
     if (GameFlag_Get(FLAG_MCCOY_PALACE_UNUSED_PICK_OFFERED) != 0) {
       // "Pick any one of the four treasures."
-      gFieldWork->message++;
+      gFieldState->message++;
     }
   }
 
@@ -383,12 +383,12 @@ static void McCoyPalace_ReadRewardSoldiersThoughts(void) {
 /// (McCoyPalace_CaptainTalksAboutBarricade) it stands open, so walking back in
 /// makes no sound and plays no opening.
 static void McCoyPalace_WalkThroughDoor(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 playDoorOpening;
 
-  work = gFieldWork;
+  state = gFieldState;
   playDoorOpening = 0;
-  if (work->stepTrigger == MCCOY_PALACE_ENTRANCE_ROOM_TO_MCCOYS_ROOM) {
+  if (state->stepTrigger == MCCOY_PALACE_ENTRANCE_ROOM_TO_MCCOYS_ROOM) {
     if (GameFlag_Get(FLAG_MCCOYS_DOOR_OPEN) == 0) {
       Sound_Play(SE_THUMP);
       playDoorOpening = 1;
@@ -405,12 +405,12 @@ static void McCoyPalace_WalkThroughDoor(void) {
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  if (work->stepTrigger == MCCOY_PALACE_ENTRANCE_ROOM_TO_MCCOYS_ROOM)
+  if (state->stepTrigger == MCCOY_PALACE_ENTRANCE_ROOM_TO_MCCOYS_ROOM)
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   else
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
   Event_Wait(16);
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
   Event_End();
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
@@ -559,7 +559,7 @@ static void McCoyPalace_CaptainSeesPartyOff(void) {
     Actor_SetSpeed(ACTOR_CAPTAIN, 0.8);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 570, 758);
     Actor_SetPosition(ACTOR_CAPTAIN, 0, 0);
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     GameFlag_Set(FLAG_MCCOY_PALACE_PARTY_REWARDED);
     GameFlag_Set(FLAG_PARTY_SEEN_OFF);
@@ -592,7 +592,7 @@ s32 Scene_Initialize(void) {
   s32 rewardTaken;
   s32 curseLifted;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
@@ -603,10 +603,10 @@ s32 Scene_Initialize(void) {
   // A first audience and a return visit have different greetings.
   if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0 &&
       GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
       McCoyPalace_AudienceWithMcCoy();
-    } else if (gMainRoutineWork.entrance ==
+    } else if (gMainRoutineState.entrance ==
                    MCCOY_PALACE_ENTRANCE_ROOM_FROM_MCCOYS_ROOM &&
                GameFlag_Get(FLAG_CAPTAIN_SEEING_PARTY_OUT) != 0) {
       McCoyPalace_CaptainTalksAboutBarricade();
@@ -614,7 +614,7 @@ s32 Scene_Initialize(void) {
   } else {
     rewardTaken = GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN);
     if (rewardTaken == 0) {
-      if (gMainRoutineWork.entrance ==
+      if (gMainRoutineState.entrance ==
           MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
         if (GameFlag_Get(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
           curseLifted = GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED);
@@ -623,7 +623,7 @@ s32 Scene_Initialize(void) {
           }
         }
       } else {
-        if (gMainRoutineWork.entrance ==
+        if (gMainRoutineState.entrance ==
             MCCOY_PALACE_TREASURE_ROOM_FROM_ENTRANCE_ROOM) {
           if (GameFlag_Get(FLAG_REWARD_OFFERED) != 0) {
             if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -686,8 +686,8 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   }
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 40;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = 40;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   if (GameFlag_Get(FLAG_MCCOY_PALACE_JOB_REFUSED) == 0) {
@@ -836,7 +836,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     GameFlag_Set(FLAG_MCCOY_PALACE_JOB_REFUSED);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 752);
-    gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+    gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     goto leave;
@@ -1152,7 +1152,7 @@ accepted:
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 752);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_CAPTAIN_SEEING_PARTY_OUT);
@@ -1258,9 +1258,9 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   MapGrid_CenterOnFollowedPoint();
   wait(1);
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
 
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1288,12 +1288,12 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Event_SetMessageId(MsgBilibinWeveBroughtWarriorsMilord);
   advanceAlternateReply = 1;
   if (Event_GetFlag(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
     advanceAlternateReply = 0;
   }
   Event_ShowMessage(ACTOR_CAPTAIN, 0);
   if (advanceAlternateReply != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
 
   FieldCamera_MoveTo(894, CAMERA_KEEP, 664, 1);
@@ -1331,25 +1331,25 @@ static void McCoyPalace_McCoyRewardsParty(void) {
 
   advanceAlternateReply = 1;
   if (Event_GetFlag(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
     advanceAlternateReply = 0;
   }
   Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 3);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  20);
   if (advanceAlternateReply != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
 
   advanceAlternateReply = 1;
   if (Event_GetFlag(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
     advanceAlternateReply = 0;
   }
   Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
   if (advanceAlternateReply != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
 
   McCoyPalace_FaceCompanionsForDiscussion();
@@ -1383,7 +1383,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
     McCoyPalace_FaceCompanionsForDiscussion();
     advanceAlternateReply = 1;
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-      gFieldWork->message++;
+      gFieldState->message++;
       advanceAlternateReply = 0;
     }
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 0);
@@ -1391,11 +1391,11 @@ static void McCoyPalace_McCoyRewardsParty(void) {
     Event_Wait(10);
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
     if (advanceAlternateReply != 0) {
-      gFieldWork->message++;
+      gFieldState->message++;
     }
     Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   } else {
-    gFieldWork->message += 4;
+    gFieldState->message += 4;
   }
 
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
@@ -1450,14 +1450,14 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   McCoyPalace_FaceCompanionsForDiscussion();
   advanceAlternateReply = 1;
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
-    gFieldWork->message++;
+    gFieldState->message++;
     advanceAlternateReply = 0;
   }
   McCoyPalace_FaceCompanionsForAudience();
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   if (advanceAlternateReply != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
 
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_WEST_SOUTHWEST, 10);
@@ -1561,9 +1561,9 @@ static void McCoyPalace_PresentRewardChests(void) {
   Actor_Get(ACTOR_WATER_OF_LIFE_CHEST)->y.fixed = -toFIXED(4);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetSpeed(ACTOR_CAPTAIN, 0.6);

@@ -51,7 +51,7 @@
 #include "system/heap_slots.h"
 #include "system/io_write.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
@@ -144,7 +144,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// 20) to (20, 20)) goes back into the shack in Lalivero. The backdrop colour
 /// is cleared to black for the way out.
 static void LemurianShip_LeaveTheShip(void) {
-  Import_EventSetExitRequest(gFieldWork->stepTrigger);
+  Import_EventSetExitRequest(gFieldState->stepTrigger);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
@@ -212,12 +212,12 @@ static void OrbGlow_Fade(void) {
 
 /// Keeps the raised ship alive with a glow, a swell and spray.
 static void Ship_UpdateSwell(void) {
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   struct Actor *actor;
   FIXED swell;
   s32 x, z;
 
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
   if (gOrbGlowActive != 0) {
     // The blend is stored through its address, so it stays in the frame and
     // is read back from it.
@@ -321,9 +321,9 @@ static s32 LemurianShip_IvanStepOnDeck(struct Actor *interpreter) {
 /// from above and below and the ending theme plays, until the screen fades to
 /// the staff credits.
 static void LemurianShip_SetSail(void) {
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   struct Actor *ship;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -373,11 +373,11 @@ static void LemurianShip_SetSail(void) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     // "The end of one journey, but the beginning of another? No way!"
     Event_ShowMessage(ACTOR_GARET, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "What did you say? Our next journey? What journey is that?"
     Event_ShowMessage(ACTOR_GARET, 0);
   }
@@ -424,14 +424,14 @@ static void LemurianShip_SetSail(void) {
     Event_Wait(20);
     // "Yeah. That's important."
     Event_ShowMessage(ACTOR_GARET, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Huh? Jenna's going to be very sad when I tell her what you said!"
     Event_ShowMessage(ACTOR_GARET, 0);
   }
@@ -468,12 +468,12 @@ static void LemurianShip_SetSail(void) {
     Event_Wait(20);
     // "This is a Lemurian ship. We'll be fine."
     Event_ShowMessage(ACTOR_MIA, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "I guess it's hard to say. Still, we must go, just the same..."
     Event_ShowMessage(ACTOR_MIA, 0);
   }
@@ -553,7 +553,7 @@ static void LemurianShip_SetSail(void) {
   Sound_SetBgmTempo(SOUND_TEMPO_SCALE_NORMAL * 15 / 16);
   Curtain_Start();
   Event_Wait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
   ship = Actor_Get(ACTOR_GANGWAY_NORTH);
   ship->acceleration = toFIXED(0.002);
   ship->speedLimit = toFIXED(2);
@@ -566,10 +566,10 @@ static void LemurianShip_SetSail(void) {
   FieldCamera_SetSpeedAndAcceleration(2.2, 0.01);
   FieldCamera_MoveTo(808, CAMERA_KEEP, 168, 1);
   Event_Wait(300);
-  work = gFieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state = gFieldState;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Io_Write16(0, &PLTT_BACKDROP);
-  work->transitionFrames = 96;
+  state->transitionFrames = 96;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(30);
@@ -577,13 +577,13 @@ static void LemurianShip_SetSail(void) {
   Event_SetDestination(SCENE_TITLE, TITLE_FROM_LEMURIAN_SHIP);
 }
 
-/// The water's ripple, this scene's view of the line scroll's work
-/// (gLineScroll, struct LineScrollWork).
+/// The water's ripple, this scene's view of the line scroll's state
+/// (gLineScroll, struct LineScrollState).
 ///
 /// It holds two pages of per-line scroll offsets, swapped each frame and
 /// built from a sine table. Here a line is one word, BG3's x and y, where
-/// LineScrollWork has three.
-struct RippleScrollWork {
+/// LineScrollState has three.
+struct RippleScrollState {
   u16 pages[2][960]; ///< per page: 160 lines of BG3 x, y; the rest unused
   u8 page;           ///< the page the HBlank DMA shows; the other is built
   u8 mode;
@@ -611,7 +611,7 @@ static inline s32 LemurianShip_WaveOffset(s32 angle, FIXED amplitude,
 /// up out of the sea beside the gangway. A white flash, the puzzle-solved
 /// jingle, and the departure follows (LemurianShip_SetSail).
 static void LemurianShip_RaiseTheShip(void) {
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   s32 i;
   s32 flash;
   s32 white;
@@ -620,7 +620,7 @@ static void LemurianShip_RaiseTheShip(void) {
   // Each control is stored through its address, so it stays in the frame.
   u16 cnt;
 
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
 
   Event_Start();
   Field_EndBusyAndReveal();
@@ -708,15 +708,15 @@ static void LemurianShip_RaiseTheShip(void) {
 /// and drawn behind the sea's, which is blended over them, while the gangway
 /// and the party are drawn above. The sea starts rippling.
 s32 Scene_Initialize(void) {
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   // Each control is stored through its address, so it stays in the frame.
   u16 cnt;
 
-  grid = gMapGridWork[0];
-  if (gMainRoutineWork.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
+  grid = gMapGridState[0];
+  if (gMainRoutineState.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
     Inventory_AddItem(ACTOR_PARTY_LEADER, ITEM_BLACK_ORB);
   }
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_Get(ACTOR_GANGWAY_NORTH)->collisionFlags = 0;
   Actor_Get(ACTOR_GANGWAY_NORTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(ACTOR_GANGWAY_SOUTH)->collisionFlags = 0;
@@ -780,13 +780,13 @@ s32 Scene_Initialize(void) {
 /// Arms DMA 0 to copy the shown ripple page into background 3's scroll
 /// registers.
 void LineScroll_ArmDma(void) {
-  struct RippleScrollWork *work;
+  struct RippleScrollState *state;
   u32 *source;
   volatile u16 *dma0;
   volatile u32 *destination;
 
-  work = (struct RippleScrollWork *)gLineScroll;
-  source = (u32 *)work->pages[work->page];
+  state = (struct RippleScrollState *)gLineScroll;
+  source = (u32 *)state->pages[state->page];
 
   dma0 = REG_DMA0;
   destination = (volatile u32 *)&REG_BG3HOFS;
@@ -801,7 +801,7 @@ void LineScroll_ArmDma(void) {
 
 /// Builds the other ripple page and swaps it in.
 void LineScroll_BuildPage(void) {
-  struct RippleScrollWork *work;
+  struct RippleScrollState *state;
   u16 *line;
   s32 angle;
   u16 base;
@@ -810,29 +810,29 @@ void LineScroll_BuildPage(void) {
   u16 y;
   s32 i;
 
-  work = (struct RippleScrollWork *)gLineScroll;
+  state = (struct RippleScrollState *)gLineScroll;
   y = gBgScroll[3].y;
-  line = work->pages[work->page ^ 1];
-  step = work->step[0];
-  angle = (work->phase + y) * work->frequency[0];
-  amplitude = work->amplitude[0];
+  line = state->pages[state->page ^ 1];
+  step = state->step[0];
+  angle = (state->phase + y) * state->frequency[0];
+  amplitude = state->amplitude[0];
   base = gBgScroll[3].x;
   for (i = 0; i != DISPLAY_HEIGHT; i++) {
     *line = LemurianShip_WaveOffset(angle, amplitude, base);
     angle += step;
     line += 2;
   }
-  line = work->pages[work->page ^ 1] + 1;
-  step = work->step[1];
-  angle = (work->phase + y) * work->frequency[1];
-  amplitude = work->amplitude[1];
+  line = state->pages[state->page ^ 1] + 1;
+  step = state->step[1];
+  angle = (state->phase + y) * state->frequency[1];
+  amplitude = state->amplitude[1];
   for (i = 0; i != DISPLAY_HEIGHT; i++) {
     *line = LemurianShip_WaveOffset(angle, amplitude, y);
     angle += step;
     line += 2;
   }
-  work->phase++;
-  work->page ^= 1;
+  state->phase++;
+  state->page ^= 1;
 }
 
 #include "shared/scroll_initialize_hblank_dma.c"

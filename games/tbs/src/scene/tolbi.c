@@ -267,8 +267,8 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
 /// widens to TALK_STOP_RANGE), the child being talked to stops whatever the
 /// direction.
 static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
-  struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
-  struct FieldWork *work = gFieldWork;
+  struct WindowState *window = (struct WindowState *)gWindowState[0];
+  struct FieldState *state = gFieldState;
   s32 force = 0;
   s32 range = STOP_RANGE;
   struct Actor *other;
@@ -285,7 +285,7 @@ static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((s16)work->talk != 0 || window->mindRead != 0) {
+  if ((s16)state->talk != 0 || window->mindRead != 0) {
     range = TALK_STOP_RANGE;
     if ((updated->timer & KID_TALKING) != 0) {
       force = 1;
@@ -357,7 +357,7 @@ static void Tolbi_ReadLuckyMedalSign(void) {
 ///
 /// On finals day and after Colosso he says and thinks other things.
 static void Tolbi_TalkToOlderBrother(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   struct Actor *kid;
   s16 facing;
   s32 msg;
@@ -366,7 +366,7 @@ static void Tolbi_TalkToOlderBrother(void) {
   facing = kid->facing;
   Event_Start();
   kid->timer |= KID_TALKING;
-  if (work->psynergy == 0) {
+  if (state->psynergy == 0) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiYayEasyRun;
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
@@ -399,7 +399,7 @@ static void Tolbi_TalkToOlderBrother(void) {
 ///
 /// After Colosso she laughs that her big brother is being nice again.
 static void Tolbi_TalkToYoungerSister(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   struct Actor *kid;
   s16 facing;
   s32 msg;
@@ -408,7 +408,7 @@ static void Tolbi_TalkToYoungerSister(void) {
   facing = kid->facing;
   Event_Start();
   kid->timer |= KID_TALKING;
-  if (work->psynergy == 0) {
+  if (state->psynergy == 0) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiHaHaHa;
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
@@ -556,7 +556,7 @@ static void Tolbi_TalkToSnackVendor(void) {
 /// Everyone in town stops while the door opens, and the leader walks a step in
 /// (except at the weapon and armor shop) before the screen closes.
 static void Tolbi_EnterDoor(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   u32 actorId;
   s32 door;
 
@@ -567,7 +567,7 @@ static void Tolbi_EnterDoor(void) {
       actor->motionFlags = 0;
     }
   }
-  door = work->stepTrigger - 1;
+  door = state->stepTrigger - 1;
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gTolbiDoors[door].steps, gTolbiDoors[door].x,
                        gTolbiDoors[door].y);
@@ -578,7 +578,7 @@ static void Tolbi_EnterDoor(void) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
     Event_Wait(10);
   }
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -608,7 +608,7 @@ s32 Scene_Initialize(s32 unused) {
   struct Actor *actor;
   void (*kidUpdate)(struct Actor *);
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
   // The two children run their loop south-east of the fountain.
   Actor_SetPosition(ACTOR_TOLBI_OLDER_BROTHER, 352, 352);
@@ -670,7 +670,7 @@ static void Tolbi_TalkToSpringVisitor(void) {
   Event_OpenMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // Past the No answer's line.
-    gFieldWork->message++;
+    gFieldState->message++;
     // Yes: "Really? Well then, I'll give you the chance to go first."
     Event_ShowMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
     Actor_SetSpeed(ACTOR_TOLBI_SPRING_VISITOR, 1);
@@ -699,7 +699,7 @@ static void Tolbi_EnterSpring(void) {
 ///
 /// The exit taken is the one numbered as the cell's behavior.
 static void Tolbi_RequestTouchedExit(void) {
-  Import_EventSetExitRequest(gFieldWork->stepTrigger);
+  Import_EventSetExitRequest(gFieldState->stepTrigger);
 }
 
 /// During the festival, the first time the party heads up the path toward
@@ -753,7 +753,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   Event_Wait(25);
   Portrait_OpenWindow(SPRITE_BABI, 0, 12, 7);
   Message_OpenWindow((firstMsg + 3), 11, 12, 2);
-  gFieldWork->speaker = ACTOR_TOLBI_MISSING_PERSON;
+  gFieldState->speaker = ACTOR_TOLBI_MISSING_PERSON;
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // Yes: "Babi must be nearby!!!" They nod and run east.
     Event_Wait(20);
@@ -796,7 +796,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
     Event_Wait(30);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // "Where's Babi!? He doesn't seem to be here. Let's look over..."
     Event_ShowMessage(ACTOR_TOLBI_SOLDIER_A, 0);
     Event_Wait(20);

@@ -40,7 +40,7 @@
 
 /// Each frame: runs the 16 tileset animations.
 void TilesetAnim_Update(void) {
-  struct MapGridScrollWork *gridState = gMapGridWork[0];
+  struct MapGridScrollState *gridState = gMapGridState[0];
   u32 channelIndex;
 
   for (channelIndex = 0; channelIndex < ARRAY_COUNT(gridState->animations);
@@ -120,7 +120,7 @@ void TilesetAnim_Update(void) {
 
 /// Resumes tileset animation channelIndex by clearing its paused byte.
 void TilesetAnim_Resume(u32 channelIndex) {
-  struct MapGridScrollWork *gridState = gMapGridWork[0];
+  struct MapGridScrollState *gridState = gMapGridState[0];
   struct TilesetAnim *channel = &gridState->animations[channelIndex];
 
   channel->paused = 0;
@@ -128,7 +128,7 @@ void TilesetAnim_Resume(u32 channelIndex) {
 
 /// Pauses tileset animation channelIndex by setting its paused byte.
 void TilesetAnim_Pause(u32 channelIndex) {
-  struct MapGridScrollWork *gridState = gMapGridWork[0];
+  struct MapGridScrollState *gridState = gMapGridState[0];
   struct TilesetAnim *channel = &gridState->animations[channelIndex];
 
   channel->paused = 1;
@@ -138,11 +138,11 @@ void TilesetAnim_Pause(u32 channelIndex) {
 /// TILESET_ANIM_MARKER starts the tileset animation its low four bits name
 /// there (paused with TILESET_ANIM_MARKER_PAUSED).
 void TilesetAnim_StartAll(const u16 *script) {
-  struct MapGridScrollWork *gridState;
+  struct MapGridScrollState *gridState;
   s32 channelsStarted;
   u32 marker;
 
-  gridState = gMapGridWork[0];
+  gridState = gMapGridState[0];
   channelsStarted = 0;
   Dma_Fill32(0, gridState->animations, sizeof(gridState->animations));
   // Each tileset animation's script starts just after its marker and runs on
@@ -175,20 +175,20 @@ void TilesetAnim_StartAll(const u16 *script) {
 /// Suspends the tileset animations, unless the world map's still image is
 /// shown.
 void TilesetAnim_SuspendAll(void) {
-  if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
+  if (((struct MapGridScrollState *)gMapGridState[0])->animationActive == 0)
     Task_SuspendAll(TilesetAnim_Update);
 }
 
 /// Resumes the tileset animations, unless the world map's still image is
 /// shown.
 void TilesetAnim_ResumeAll(void) {
-  if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
+  if (((struct MapGridScrollState *)gMapGridState[0])->animationActive == 0)
     Task_ResumeAll(TilesetAnim_Update);
 }
 
 /// Each frame: runs the map's blend script.
 void BlendScript_Run(void) {
-  struct MapGridScrollWork *gridState = gMapGridWork[0];
+  struct MapGridScrollState *gridState = gMapGridState[0];
   struct BlendScriptState *blend;
   u16 *commands;
   u32 instruction;
@@ -245,7 +245,7 @@ again:
   blend->delay = delayOrJumpIndex - 1;
 }
 
-/// Starts a map's blend script, unless it is empty. Clears the map work's
+/// Starts a map's blend script, unless it is empty. Clears the map state's
 /// three-word blend state first, then adds BlendScript_Run as a task.
 void BlendScript_Start(u16 *script) {
   struct BlendScriptState *blend;
@@ -256,7 +256,7 @@ void BlendScript_Start(u16 *script) {
   // paused; a script that is only its end marker leaves the blend unset.
   hasScript = 0;
   zero = 0;
-  blend = &((struct MapGridScrollWork *)gMapGridWork[0])->blend;
+  blend = &((struct MapGridScrollState *)gMapGridState[0])->blend;
   Dma_Set((const void *)&zero, blend, DMA_FILL_WORDS(3), REG_DMA3);
   if (*script != BLEND_SCRIPT_LOOP) {
     blend->script = script;
@@ -279,13 +279,13 @@ void BlendScript_Resume(void) { Task_ResumeAll(BlendScript_Run); }
 /// Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
 /// its four entries cleared.
 UNUSED void PaletteCycle_Initialize(void) {
-  struct PaletteCycleWork *paletteCycles;
+  struct PaletteCycleState *paletteCycles;
   struct PaletteCycle *cycle;
   u16 cycleIndex;
   u16 colorIndex;
 
   paletteCycles = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
-                                      sizeof(struct PaletteCycleWork));
+                                      sizeof(struct PaletteCycleState));
   cycle = paletteCycles->entries;
   for (cycleIndex = 0; cycleIndex != ARRAY_COUNT(paletteCycles->entries);
        cycleIndex++) {
@@ -309,13 +309,13 @@ UNUSED void PaletteCycle_Initialize(void) {
 /// the colours as they were, which every step rotates from.
 UNUSED s32 PaletteCycle_Add(s16 paletteNumber, s16 firstColor, s16 delay,
                             s16 colorCount) {
-  struct PaletteCycleWork *paletteQueue;
+  struct PaletteCycleState *paletteQueue;
   struct PaletteCycle *cycle;
   u16 *paletteColors;
   u32 cycleIndex;
   u16 colorCount16;
 
-  paletteQueue = gPaletteCycleWork;
+  paletteQueue = gPaletteCycleState;
   cycleIndex = paletteQueue->count;
   if (cycleIndex >= ARRAY_COUNT(paletteQueue->entries))
     return -1;
@@ -350,7 +350,7 @@ UNUSED void PaletteCycle_Start(void) {
 /// Each frame: advances each palette cycle whose timer has run out by one
 /// colour, writing the rotated colours back to the palette.
 void PaletteCycle_Step(void) {
-  struct PaletteCycleWork *paletteQueue = gPaletteCycleWork;
+  struct PaletteCycleState *paletteQueue = gPaletteCycleState;
   u8 cycleIndex;
   // BUG: four queued cycles become zero here, so none advance.
   u16 activeCycles = paletteQueue->count & 3;

@@ -37,7 +37,7 @@
 #include "event_commands_mercury.c"
 #include "event_commands_field_psynergy.c"
 #include "event_commands_arcs.c"
-#include "event_commands_field_psynergy_work.c"
+#include "event_commands_field_psynergy_state.c"
 #include "event_commands_mind_read.c"
 #include "event_commands_move.c"
 #include "event_commands_reveal.c"

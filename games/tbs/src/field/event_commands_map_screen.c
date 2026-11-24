@@ -62,8 +62,8 @@ enum MapScreenMarkerTile {
 #define MAP_SCREEN_MARKER_ALLOCATION_SIZE (MAP_SCREEN_MARKER_TILE_BYTES / 4)
 #endif
 
-/// Scratch work while MapScreen_Show owns gMapGridCellBuffer.
-struct MapScreenWork {
+/// The map screen's state while MapScreen_Show owns gMapGridCellBuffer.
+struct MapScreenState {
   u16 markerVramBlock;            ///< owns the four generated marker tiles
   u16 cursorVramBlock;            ///< owns the cursor picture's tiles
   struct FieldCoordinate cursorX; ///< screen column, 16.16 pixels
@@ -78,11 +78,11 @@ struct MapScreenWork {
   struct AnimationSpritePart markers[MAP_SCREEN_MARKER_CAPACITY + 1];
 };
 
-STATIC_ASSERT(offsetof(struct MapScreenWork, markers) == 32);
-STATIC_ASSERT(sizeof(struct MapScreenWork) == 836);
+STATIC_ASSERT(offsetof(struct MapScreenState, markers) == 32);
+STATIC_ASSERT(sizeof(struct MapScreenState) == 836);
 STATIC_ASSERT(MAP_SCREEN_MARKER_CAPACITY ==
-              sizeof(((struct FieldWork *)0)->actors) /
-                  sizeof(((struct FieldWork *)0)->actors[0]));
+              sizeof(((struct FieldState *)0)->actors) /
+                  sizeof(((struct FieldState *)0)->actors[0]));
 
 /// Sets up the map screen: the marker tiles and their OAM entries, the
 /// cursor where the leader is on the map (or mid-screen when the area is
@@ -90,7 +90,7 @@ STATIC_ASSERT(MAP_SCREEN_MARKER_CAPACITY ==
 void MapScreen_Initialize(void) {
   u32 *entryWords; // the markers' sprite entries, a word at a time
   u32 (*markerTiles)[TILE_SIZE_4BPP / 4];
-  struct MapScreenWork *work;
+  struct MapScreenState *state;
   struct Actor *actor;
   s32 tileAttributes;
   u32 i;
@@ -98,10 +98,10 @@ void MapScreen_Initialize(void) {
   u32 cursorAttributes;
 
   markerTiles = Heap_AllocEwram(MAP_SCREEN_MARKER_ALLOCATION_SIZE);
-  work = (struct MapScreenWork *)gMapGridCellBuffer;
-  entryWords = (u32 *)work->markers;
-  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
-  work->markerVramBlock = VramCache_FindFreeEntry();
+  state = (struct MapScreenState *)gMapGridCellBuffer;
+  entryWords = (u32 *)state->markers;
+  actor = Actor_GetById(gMainRoutineState.leaderActorId);
+  state->markerVramBlock = VramCache_FindFreeEntry();
   Dma_Fill32(0, markerTiles, MAP_SCREEN_MARKER_TILE_BYTES);
   // Each marker tile holds one dot in its top-left corner, with a shadow in
   // colour 1 to its right and below (# the dot, + the shadow):
@@ -140,7 +140,7 @@ void MapScreen_Initialize(void) {
       MAP_SCREEN_MARKER_ROW(0, 15, 15, 1, 1);
   markerTiles[MAP_SCREEN_MARKER_NEAREST][4] =
       MAP_SCREEN_MARKER_ROW(0, 0, 1, 1, 0);
-  tileAttributes = VramCache_Load(work->markerVramBlock,
+  tileAttributes = VramCache_Load(state->markerVramBlock,
                                   MAP_SCREEN_MARKER_TILE_BYTES, markerTiles) |
                    OBJ_PRIORITY(1);
   for (i = 0; i < MAP_SCREEN_MARKER_CAPACITY; i++) {
@@ -150,20 +150,20 @@ void MapScreen_Initialize(void) {
   }
   Heap_Release(markerTiles);
   if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT)) {
-    work->cursorX.fixed = toFIXED(MAP_SCREEN_WIDTH) / 2;
-    work->cursorY.fixed = toFIXED(MAP_SCREEN_HEIGHT) / 2;
+    state->cursorX.fixed = toFIXED(MAP_SCREEN_WIDTH) / 2;
+    state->cursorY.fixed = toFIXED(MAP_SCREEN_HEIGHT) / 2;
   } else {
-    work->cursorX.fixed =
+    state->cursorX.fixed =
         toFIXED(FIXEDtoINT(actor->x.fixed - WORLD_MAP_X_ORIGIN) *
                 MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE);
-    work->cursorY.fixed = toFIXED(
+    state->cursorY.fixed = toFIXED(
         (actor->z.part[0].integer * MAP_SCREEN_HEIGHT) / WORLD_MAP_WORLD_SIZE);
   }
-  work->cursorVramBlock = Resource_LoadFixedBlockBIntoFreeSlotFar();
-  tile = gVramCacheEntries[work->cursorVramBlock].offset;
-  work->nameWindow = Window_CreateFar(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
-  work->namedMarker = -1;
-  work->cursorSpeed = MAP_SCREEN_CURSOR_MIN_SPEED;
+  state->cursorVramBlock = Resource_LoadFixedBlockBIntoFreeSlotFar();
+  tile = gVramCacheEntries[state->cursorVramBlock].offset;
+  state->nameWindow = Window_CreateFar(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
+  state->namedMarker = -1;
+  state->cursorSpeed = MAP_SCREEN_CURSOR_MIN_SPEED;
   *entryWords++ = 0;
   *entryWords++ = OBJ_SIZE_16X16;
   cursorAttributes = OBJ_PRIORITY(1);
@@ -186,11 +186,11 @@ void MapScreen_Initialize(void) {
 /// Closes the map screen: returns its VRAM blocks and removes the name
 /// window.
 void MapScreen_Release(void) {
-  struct MapScreenWork *work = (struct MapScreenWork *)gMapGridCellBuffer;
+  struct MapScreenState *state = (struct MapScreenState *)gMapGridCellBuffer;
 
-  VramCache_FreeEntry(work->markerVramBlock);
-  VramCache_FreeEntry(work->cursorVramBlock);
-  Window_CloseFar(work->nameWindow, 2);
+  VramCache_FreeEntry(state->markerVramBlock);
+  VramCache_FreeEntry(state->cursorVramBlock);
+  Window_CloseFar(state->nameWindow, 2);
 }
 
 /// Task of the map screen: shows a marker at each area whose flag is set,
@@ -211,7 +211,7 @@ void MapScreen_UpdateMarkers(void) {
   s32 height;
   s32 width;
   struct FieldPosition position;
-  struct MapScreenWork *work;
+  struct MapScreenState *state;
   struct Actor *areaActor;
   s32 cursorY;
   s32 tile;
@@ -224,17 +224,17 @@ void MapScreen_UpdateMarkers(void) {
   s32 angle;
 
 #if MAP_SCREEN_CURSOR_SNAPS
-  leader = gMainRoutineWork.leaderActorId;
-  work = (struct MapScreenWork *)Ram_MapGridCellBuffer;
-  marker = work->markers;
+  leader = gMainRoutineState.leaderActorId;
+  state = (struct MapScreenState *)Ram_MapGridCellBuffer;
+  marker = state->markers;
   place = gMapScreen_AreaMarkers;
-  tileBase = gVramCacheEntries[work->markerVramBlock].offset >> 5;
+  tileBase = gVramCacheEntries[state->markerVramBlock].offset >> 5;
 #else
-  work = (struct MapScreenWork *)Ram_MapGridCellBuffer;
-  leader = gMainRoutineWork.leaderActorId;
+  state = (struct MapScreenState *)Ram_MapGridCellBuffer;
+  leader = gMainRoutineState.leaderActorId;
   place = gMapScreen_AreaMarkers;
-  tileBase = gVramCacheEntries[work->markerVramBlock].offset >> 5;
-  marker = work->markers;
+  tileBase = gVramCacheEntries[state->markerVramBlock].offset >> 5;
+  marker = state->markers;
 #endif
   nearestMarker = -1;
   nearestDistanceSquared = MAP_SCREEN_NAME_RANGE;
@@ -246,7 +246,7 @@ void MapScreen_UpdateMarkers(void) {
   // it while the marker task runs.
   if (!GameFlag_GetFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current area.
-    areaActor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+    areaActor = Actor_Lookup(gMainRoutineState.leaderActorId);
 #ifdef UBFIX
     // UB: with no selected actor the ROM leaves this frame's cursor
     // coordinates unset; UBFIX skips the frame.
@@ -263,10 +263,10 @@ void MapScreen_UpdateMarkers(void) {
     // The d-pad: faster the longer it is held.
     angle = gWorldMap_CursorDirectionAngles[DPAD_INDEX(gKeysHeld)];
     if (angle != DPAD_ANGLE_NONE) {
-      position.x = work->cursorX.fixed;
+      position.x = state->cursorX.fixed;
       position.y = 0;
-      position.z = work->cursorY.fixed;
-      Vector_AddPolarOffset(work->cursorSpeed, angle, &position);
+      position.z = state->cursorY.fixed;
+      Vector_AddPolarOffset(state->cursorSpeed, angle, &position);
       if (position.x < toFIXED(MAP_SCREEN_CURSOR_MIN_X))
         position.x = toFIXED(MAP_SCREEN_CURSOR_MIN_X);
       if (position.x > toFIXED(MAP_SCREEN_CURSOR_MAX_X))
@@ -275,15 +275,15 @@ void MapScreen_UpdateMarkers(void) {
         position.z = 0;
       if (position.z > toFIXED(MAP_SCREEN_CURSOR_MAX_Y))
         position.z = toFIXED(MAP_SCREEN_CURSOR_MAX_Y);
-      work->cursorX.fixed = position.x;
-      work->cursorY.fixed = position.z;
-      if (work->cursorSpeed < MAP_SCREEN_CURSOR_MAX_SPEED)
-        work->cursorSpeed += MAP_SCREEN_CURSOR_ACCELERATION;
+      state->cursorX.fixed = position.x;
+      state->cursorY.fixed = position.z;
+      if (state->cursorSpeed < MAP_SCREEN_CURSOR_MAX_SPEED)
+        state->cursorSpeed += MAP_SCREEN_CURSOR_ACCELERATION;
     } else {
-      work->cursorSpeed = MAP_SCREEN_CURSOR_MIN_SPEED;
+      state->cursorSpeed = MAP_SCREEN_CURSOR_MIN_SPEED;
     }
-    cursorX = work->cursorX.part[0].integer;
-    cursorY = work->cursorY.part[0].integer;
+    cursorX = state->cursorX.part[0].integer;
+    cursorY = state->cursorY.part[0].integer;
   }
 
   // Actor id 0 consumes no marker row.
@@ -351,26 +351,26 @@ void MapScreen_UpdateMarkers(void) {
   if (gKeysHeld == 0) {
     if (nearestMarker != -1) {
       if (nearestDistanceSquared <= 1) {
-        work->cursorX.fixed = toFIXED(nearestX);
-        work->cursorY.fixed = toFIXED(nearestY);
-        work->cursorSpeed = MAP_SCREEN_CURSOR_MIN_SPEED;
+        state->cursorX.fixed = toFIXED(nearestX);
+        state->cursorY.fixed = toFIXED(nearestY);
+        state->cursorSpeed = MAP_SCREEN_CURSOR_MIN_SPEED;
       } else {
-        if (work->cursorSpeed < toFIXED(2))
-          work->cursorSpeed = toFIXED(2);
+        if (state->cursorSpeed < toFIXED(2))
+          state->cursorSpeed = toFIXED(2);
         angle = Trig_Atan(nearestY - cursorY, nearestX - cursorX);
-        position.x = work->cursorX.fixed;
+        position.x = state->cursorX.fixed;
         position.y = 0;
-        position.z = work->cursorY.fixed;
-        Vector_AddPolarOffset(work->cursorSpeed, (u16)angle, &position);
-        work->cursorX.fixed = position.x;
-        work->cursorY.fixed = position.z;
-        if (work->cursorSpeed < MAP_SCREEN_CURSOR_MAX_SPEED)
-          work->cursorSpeed += MAP_SCREEN_CURSOR_ACCELERATION;
+        position.z = state->cursorY.fixed;
+        Vector_AddPolarOffset(state->cursorSpeed, (u16)angle, &position);
+        state->cursorX.fixed = position.x;
+        state->cursorY.fixed = position.z;
+        if (state->cursorSpeed < MAP_SCREEN_CURSOR_MAX_SPEED)
+          state->cursorSpeed += MAP_SCREEN_CURSOR_ACCELERATION;
       }
-      cursorX = work->cursorX.part[0].integer;
-      cursorY = work->cursorY.part[0].integer;
+      cursorX = state->cursorX.part[0].integer;
+      cursorY = state->cursorY.part[0].integer;
     } else {
-      work->cursorSpeed = MAP_SCREEN_CURSOR_MIN_SPEED;
+      state->cursorSpeed = MAP_SCREEN_CURSOR_MIN_SPEED;
     }
   }
 #endif
@@ -384,16 +384,16 @@ void MapScreen_UpdateMarkers(void) {
     Oam_AddSpriteAtDepth(marker, nearestY);
   }
 
-  marker = &work->markers[MAP_SCREEN_CURSOR_PART];
+  marker = &state->markers[MAP_SCREEN_CURSOR_PART];
   marker->affineIndex = 0;
   marker->x = cursorX - 17;
   marker->y = cursorY + 1;
   Oam_AddSpriteAtDepth(marker, MAP_SCREEN_CURSOR_DEPTH);
 
   // Redraw only when the selected marker changes, including to no marker.
-  if (work->namedMarker != nearestMarker) {
-    work->namedMarker = nearestMarker;
-    WindowSprite_PrepareForRedrawFar(work->nameWindow);
+  if (state->namedMarker != nearestMarker) {
+    state->namedMarker = nearestMarker;
+    WindowSprite_PrepareForRedrawFar(state->nameWindow);
     if (nearestMarker != -1) {
       // The party's marker: "Present location."
       if (nearestMarker == 0)
@@ -412,7 +412,7 @@ void MapScreen_UpdateMarkers(void) {
       }
       if (cursorY < 0)
         cursorY = 0;
-      Text_DrawMessageFar(nearestName, work->nameWindow, cursorX, cursorY);
+      Text_DrawMessageFar(nearestName, state->nameWindow, cursorX, cursorY);
     }
   }
 
@@ -427,10 +427,10 @@ void MapScreen_UpdateMarkers(void) {
 /// The map screen, shown over the World Map when the player presses R, until
 /// A or B closes it; it borrows the map-cell buffer for its pixels.
 void MapScreen_Show(s32 picture) {
-  struct MapGridScrollWork *gridState = gMapGridWork[0];
-  struct FieldWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  struct ActorSystemWork *menu = HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM);
+  struct MapGridScrollState *gridState = gMapGridState[0];
+  struct FieldState *state =
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldState));
+  struct ActorSystemState *menu = HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM);
   s32 resource = RESOURCE_WORLD_MAP_PICTURE;
   struct TilesetAnim *layer;
   u8 savedFlags[sizeof(gridState->animations) /
@@ -439,11 +439,11 @@ void MapScreen_Show(s32 picture) {
   u8 *graphics;
   s32 savedTransitionFrames;
 
-  if (work->mode != ACTOR_SYSTEM_WORLD_MAP)
+  if (state->mode != ACTOR_SYSTEM_WORLD_MAP)
     return;
-  work->camera->paused = 1;
-  savedTransitionFrames = work->transitionFrames;
-  work->transitionFrames = 6;
+  state->camera->paused = 1;
+  savedTransitionFrames = state->transitionFrames;
+  state->transitionFrames = 6;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   layer = gridState->animations;
@@ -495,8 +495,8 @@ void MapScreen_Show(s32 picture) {
     menu->suspended = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    work->transitionFrames = savedTransitionFrames;
-    work->camera->paused = 0;
+    state->transitionFrames = savedTransitionFrames;
+    state->camera->paused = 0;
   }
 }
 
@@ -514,8 +514,8 @@ void Field_UpdateActorVisibilityBounds(void) {
 
   // The selected actor lookup has no used result; the bounds follow the
   // camera.
-  Actor_GetById(gMainRoutineWork.leaderActorId);
-  actor = gFieldWork->camera;
+  Actor_GetById(gMainRoutineState.leaderActorId);
+  actor = gFieldState->camera;
   x = actor->x.fixed;
   left = x - toFIXED(320);
   right = x + toFIXED(320);
@@ -542,10 +542,10 @@ void Field_UpdateActorVisibilityBounds(void) {
 /// On the World Map, zooms the view out to FIXED_ONE * 8 / 13 while L is held,
 /// then back.
 void WorldMap_ZoomOutWhileLHeld(void) {
-  struct FieldWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
+  struct FieldState *state =
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldState));
 
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     Task_SuspendOverlayTasks();
     Field_UpdateActorVisibilityBounds();
     Leader_StopMoving();

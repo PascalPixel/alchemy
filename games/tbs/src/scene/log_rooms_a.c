@@ -104,7 +104,7 @@
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -354,7 +354,7 @@ const u32 *Scene_GetExits(void) { return gLogRoomsA_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
   case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
   case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
@@ -549,7 +549,7 @@ static void LogRoomsA_SearchEmptyChest(void) {
 /// Returns the loft's events for the loft's three entrances, else the
 /// houses' events, which change once FLAG_VAULT_THIEVES_JAILED is set.
 const struct Trigger *Scene_GetTriggers(void) {
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
   case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
   case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
@@ -577,7 +577,7 @@ static void LogRoomsA_AskYesNoAndAnswer(s32 speakerId) {
   LogRoomsA_FaceEachOtherAndWait(speakerId, ACTOR_PARTY_LEADER, 2);
   Event_OpenMessage(speakerId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_ShowMessage(speakerId, 0);
 }
@@ -843,7 +843,7 @@ static void LogRoomsA_MayorGivesWaterOfLife(void) {
     Event_Wait(30);
     LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_MAYOR, 20);
     LogRoomsA_PlayAnimationAndWait(ACTOR_MAYOR, ANIM_NOD, 20);
-    gFieldWork->message++;
+    gFieldState->message++;
     if (PartyInventory_HasSpace() == 0) {
       // "Oh no, Isaac and his friends have too many items!"
       Event_SetMessageId(MsgVaultYouWereSuchGreatHelp + 3);
@@ -859,7 +859,7 @@ static void LogRoomsA_MayorGivesWaterOfLife(void) {
   Event_OpenMessage(ACTOR_MAYOR, 0);
   Event_Wait(20);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_ShowMessage(ACTOR_MAYOR, 0);
   Event_End();
@@ -898,7 +898,7 @@ static void LogRoomsA_OfferBones(void) {
       GameFlag_Set(FLAG_VAULT_BONE_RECEIVED);
     }
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_NOD);
     Event_Wait(20);
@@ -1466,7 +1466,7 @@ static void LogRoomsA_FreeVillagerAndFightThieves(void) {
   LogRoomsA_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIM_SHAKE_HEAD, 20);
   Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
   GameFlag_Set(FLAG_VAULT_THIEVES_ATTACKED);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   base = SCENE_LOG_ROOMS_A;
   Event_SetAfterBattleDestination(base,
@@ -1489,7 +1489,7 @@ static void LogRoomsA_LeaveGuestsRoom(void) {
 static void LogRoomsA_EnterLoft(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(LOG_ROOMS_A_CRATE_ROOM_TO_LOFT);
 }
@@ -1507,7 +1507,7 @@ static void LogRoomsA_LeaveLoft(void) {
     Event_ShowMessage(ACTOR_TIED_UP_VILLAGER, 0);
     Event_End();
   }
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(LOG_ROOMS_A_LOFT_TO_CRATE_ROOM);
 }
@@ -1614,7 +1614,7 @@ static void LogRoomsA_DiscussSuspiciousGuests(void) {
   // Yes: Ivan asks how he can catch them; no: there must be a way.
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 30);
   // Garet's plan: the three of them surround one of the two.
@@ -1721,9 +1721,9 @@ static inline void LogRoomsA_SetPartyImagePriority(void) {
 /// while they wonder what he is doing; the screen flashes green and purple.
 static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
   s32 actorId;
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   Task_Remove(LogRoomsA_UpdateCorneringChase);
   GameFlag_Clear(FLAG_MENUS_RAISE_TRIGGER);
@@ -1740,7 +1740,7 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
   Event_Wait(10);
   actorId = ACTOR_SUSPECTED_LEADER;
   // The event identifies the suspects blocked on the last frame of the wait.
-  switch (work->raisedTrigger) {
+  switch (state->raisedTrigger) {
   case LOG_ROOMS_A_THIEF_CORNERED:
   case LOG_ROOMS_A_BOTH_CORNERED:
     Event_SetMessageId(MsgVaultImSurrounded);
@@ -1748,7 +1748,7 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_RunRepeatedMotion(ACTOR_SUSPECTED_THIEF, 2);
     LogRoomsA_ShowMessageAndWait(ACTOR_SUSPECTED_THIEF, 20);
-    if (work->raisedTrigger == LOG_ROOMS_A_THIEF_CORNERED) {
+    if (state->raisedTrigger == LOG_ROOMS_A_THIEF_CORNERED) {
       actorId = ACTOR_SUSPECTED_THIEF;
       break;
     }
@@ -1794,8 +1794,8 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(40);
   LogRoomsA_SetPartyImagePriority();
-  gFieldWork->transitionFrames = 24;
-  gFieldWork->transition =
+  gFieldState->transitionFrames = 24;
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1816,7 +1816,7 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
     suspect->timer = routeIndex;
   }
   Task_AddFrame(LogRoomsA_FaceSuspectsTowardLeader, TASK_PASS_FRAME);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_End();
 }
@@ -1854,10 +1854,10 @@ static void LogRoomsA_DiscussMindReading(void) {
   MapGrid_CenterOnFollowedPoint();
   Event_Wait(30);
   {
-    struct FieldWork *work = gFieldWork;
+    struct FieldState *state = gFieldState;
 
-    work->transitionFrames = 24;
-    work->transition =
+    state->transitionFrames = 24;
+    state->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   }
   Event_StartScreenTransition();
@@ -1951,7 +1951,7 @@ static void LogRoomsA_DiscussMindReading(void) {
 /// (4, 39) to (16, 43)) sends a suspect waiting at the matching spot on to the
 /// next.
 static void LogRoomsA_SuspectsRunFromParty(void) {
-  switch (gFieldWork->stepTrigger) {
+  switch (gFieldState->stepTrigger) {
   case CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE:
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 1, 2,
                                   gLogRoomsA_SuspectToMiddleBedHead);
@@ -2028,9 +2028,9 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 actorId, s32 expected, s32 next,
 /// Arriving in any room of Vault's houses, shops and inn sets the room up for
 /// the story so far, and in the loft plays its events.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST: {
     // The gem owner's house: he stands on the floor.
     Actor_Get(ACTOR_GEM_OWNER)->motionFlags = 0;
@@ -2214,7 +2214,7 @@ static void LogRoomsA_LoseToThieves(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTH_NORTHWEST, 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   FieldCamera_WaitForMove();
@@ -2258,13 +2258,13 @@ static void LogRoomsA_FightThievesAgain(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceActor(ACTOR_TIED_UP_VILLAGER, ACTOR_THIEF_LEADER, 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   FieldCamera_WaitForMove();
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  gFieldWork->transitionFrames = 32;
+  gFieldState->transitionFrames = 32;
   LogRoomsA_OpenWindowTransition();
   Event_Wait(60);
   Event_SetMessageId(MsgVaultWontGoAway);
@@ -2287,7 +2287,7 @@ static void LogRoomsA_FightThievesAgain(void) {
   // "We'll make you sorry you were ever born! Get 'em!!" and the battle.
   LogRoomsA_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIM_SHAKE_HEAD, 20);
   Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Event_SetAfterBattleDestination(SCENE_LOG_ROOMS_A,
                                   LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED);
@@ -2309,7 +2309,7 @@ static s32 LogRoomsA_GetIvanVenusDjinnCount(void) {
 /// floor. The freed young man runs for the mayor, who comes up with two
 /// strongmen; the thieves are tied up.
 static void LogRoomsA_DefeatThieves(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   const s32 *actions;
   struct Sprite *secondThiefSprite;
 
@@ -2337,7 +2337,7 @@ static void LogRoomsA_DefeatThieves(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH_NORTHWEST, 0);
   Actor_SetSpeed(ACTOR_TIED_UP_VILLAGER, 0.8);
   Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTH_NORTHWEST, 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   FieldCamera_WaitForMove();
@@ -2434,7 +2434,7 @@ static void LogRoomsA_DefeatThieves(void) {
     Event_Wait(20);
     LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 20);
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Event_Wait(60);
     LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 20);
@@ -2524,9 +2524,9 @@ static void LogRoomsA_DefeatThieves(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 50);
   // The window closes while the thieves are tied up.
-  work = gFieldWork;
-  work->transitionFrames = 30;
-  work->transition =
+  state = gFieldState;
+  state->transitionFrames = 30;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -2544,9 +2544,9 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   struct Actor *actor;
   s32 aftermath;
   s32 rod;
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   GameFlag_Set(FLAG_VAULT_THIEVES_JAILED);
   // With the screen still closed, the chests go back along the wall and the
   // thieves stand tied before the mayor.
@@ -2585,8 +2585,8 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIEF_LEADER, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_THIEF_LEADER, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_THIEF_LEADER, 0);
-  gFieldWork->transitionFrames = 30;
-  gFieldWork->transition =
+  gFieldState->transitionFrames = 30;
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2684,7 +2684,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   FieldMessage_Show((aftermath + 5), 1);
   Actor_SetAnimation(ACTOR_FIRST_CHEST, CHEST_ANIMATION_OPEN_EMPTY);
   Actor_SetPosition(ACTOR_FOUND_URN, 0, 0);
-  gFieldWork->message++;
+  gFieldState->message++;
   Actor_RunRepeatedMotion(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 1);
   LogRoomsA_ShowMessageAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
   LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 40);
@@ -2714,7 +2714,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   FieldMessage_Show((aftermath + 8), 1);
   Actor_SetAnimation(ACTOR_SECOND_CHEST, CHEST_ANIMATION_OPEN_EMPTY);
   Actor_SetPosition(ACTOR_FOUND_STATUE, 0, 0);
-  gFieldWork->message++;
+  gFieldState->message++;
   Actor_ShowEmote(ACTOR_LOFT_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
@@ -2967,7 +2967,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   {
-    s32 saved = (s16)work->message;
+    s32 saved = (s16)state->message;
 
     if (LogRoomsA_GetIvanVenusDjinnCount() != 0) {
       Event_SetMessageId(MsgVaultWaitDontWantTakeYour);
@@ -2976,7 +2976,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
       Vault_ReturnIsaacsDjinni();
     }
     Party_RemoveMemberRestored(IVAN);
-    work->message = saved;
+    state->message = saved;
   }
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 50);
   Actor_WalkToAndWait(ACTOR_IVAN, 776, 408);
@@ -3007,14 +3007,14 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_SetPosition(ACTOR_FIRST_THIEF, 0, 0);
   Actor_SetPosition(ACTOR_SECOND_THIEF, 0, 0);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_End();
 }
 
 /// Opens the window transition and waits one frame after it finishes.
 static void LogRoomsA_OpenWindowTransition(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -3191,7 +3191,7 @@ static void LogRoomsA_MoveActorToStop(struct Actor *actor,
 static void LogRoomsA_UpdateCorneringChase(void) {
   struct Actor *leader;
   struct Actor *actor;
-  struct FieldWork *work;
+  struct FieldState *state;
   struct LogRoomsAStop *entry;
   struct LogRoomsAStop *destination;
   s32 dx;
@@ -3203,7 +3203,7 @@ static void LogRoomsA_UpdateCorneringChase(void) {
 
   leader = Actor_Lookup(ACTOR_PARTY_LEADER);
   blocked = 0;
-  work = gFieldWork;
+  state = gFieldState;
 
   // Ivan runs ahead of the leader when the leader pushes toward him from
   // close by, and otherwise walks on the way he faces.
@@ -3216,7 +3216,7 @@ static void LogRoomsA_UpdateCorneringChase(void) {
     angle = Trig_Atan(dz, dx);
     dx = FIXEDtoINT(dx);
     dz = FIXEDtoINT(dz);
-    if (work->blockedSteps > 0 && dx * dx + dz * dz <= 20 * 20 &&
+    if (state->blockedSteps > 0 && dx * dx + dz * dz <= 20 * 20 &&
         (facingDifference = (u16)facing - angle) > -FACING_STEP &&
         facingDifference < FACING_STEP) {
       // Pushed toward from close by, he takes the leader's way.
@@ -3296,7 +3296,7 @@ static void LogRoomsA_UpdateCorneringChase(void) {
   // Only half a second with nowhere to run counts as cornered, naming who.
   if (blocked != 0) {
     if (++gLogRoomsA_StopTimer >= LOG_ROOMS_A_CORNERED_FRAMES)
-      work->raisedTrigger = LOG_ROOMS_A_CORNERED_EVENT_BASE + blocked;
+      state->raisedTrigger = LOG_ROOMS_A_CORNERED_EVENT_BASE + blocked;
   } else {
     gLogRoomsA_StopTimer = 0;
   }

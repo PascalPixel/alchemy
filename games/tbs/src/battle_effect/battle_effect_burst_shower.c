@@ -31,10 +31,10 @@ enum BurstShowerMode {
 
 /// Bends BG2 line by line from the effect's table.
 void BattleEffect_ArmBg2AffineHBlankDma(void) {
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
-  Dma_Set(work->bg2xLines, &REG_BG2X, DMA_HBLANK_WORD_PER_LINE,
+  Dma_Set(state->bg2xLines, &REG_BG2X, DMA_HBLANK_WORD_PER_LINE,
           (volatile u32 *)channel);
 }
 
@@ -91,7 +91,7 @@ void BattleEffect_RunDeadlyGas(struct BattleEffectParams *args) {
 /// The user fires one burst a frame at a point near one of the targets, taking
 /// them in turn, and each target is hit in turn.
 void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   u8 *sprites;
   BlitterPair draw;
@@ -106,9 +106,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   s32 paletteId;
 
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
@@ -121,19 +121,19 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
                         COMPOSITE_LIGHTEN);
     draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   } else {
-    BattleEffect_FetchRectangleBlitters(work->args->side, draw);
+    BattleEffect_FetchRectangleBlitters(state->args->side, draw);
   }
 
-  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
   if (mode == BURST_SHOWER_MODE_LIGHTNING) {
     Resource_LoadAndDecompress(RESOURCE_VIOLET_LIGHTNING_SHEET_A,
-                               (work->sheet + BURST_SHOWER_PICTURES), 1, 1);
+                               (state->sheet + BURST_SHOWER_PICTURES), 1, 1);
   } else if (mode == BURST_SHOWER_MODE_FACES) {
     Resource_LoadAndDecompress(RESOURCE_DEMON_FACE_SHEET,
-                               (work->sheet + BURST_SHOWER_PICTURES), 1, 1);
+                               (state->sheet + BURST_SHOWER_PICTURES), 1, 1);
   } else {
     Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                               (work->sheet + BURST_SHOWER_PICTURES), 1, 1);
+                               (state->sheet + BURST_SHOWER_PICTURES), 1, 1);
     Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
     // The grey mode: a ramp of greys, with blending off.
     if (mode == BURST_SHOWER_MODE_GREY) {
@@ -168,29 +168,30 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   }
 
   if (mode == BURST_SHOWER_MODE_FACES) {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-    work->particles[i].variant = -1;
+  for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+    state->particles[i].variant = -1;
   }
 
-  Projection_Sprite(work->args->user, &origin);
+  Projection_Sprite(state->args->user, &origin);
   if (mode == BURST_SHOWER_MODE_PINK) {
     origin.y -= 16;
   }
   if (mode == BURST_SHOWER_MODE_DJINNI) {
-    if (work->args->side == EFFECT_SIDE_PARTY) {
+    if (state->args->side == EFFECT_SIDE_PARTY) {
       origin.x += 28;
     } else {
       origin.x -= 28;
     }
   }
   if (mode == BURST_SHOWER_MODE_FACES) {
-    if (work->args->side == EFFECT_SIDE_PARTY) {
+    if (state->args->side == EFFECT_SIDE_PARTY) {
       origin.x += 16;
     } else {
       origin.x -= 16;
@@ -201,12 +202,12 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     REG_BG2PA = Q_8_8(1.0 / 3); // three times the width
   }
 
-  for (i = 0; i != work->args->targetCount; i++) {
-    Projection_ScaledUnit(work->args->targets[i], &targetSpots[i]);
+  for (i = 0; i != state->args->targetCount; i++) {
+    Projection_ScaledUnit(state->args->targets[i], &targetSpots[i]);
   }
 
   for (frame = 0; frame != BURST_SHOWER_FRAMES; frame++) {
-    target = frame % work->args->targetCount;
+    target = frame % state->args->targetCount;
     if (frame == 4) {
       Sound_PlayFar(SE_WHOOSH);
     }
@@ -223,15 +224,15 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     // The lightning mode flickers its bolt from the user towards the targets;
     // the others fire bursts at them.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
-      if (work->args->side == EFFECT_SIDE_PARTY) {
+      if (state->args->side == EFFECT_SIDE_PARTY) {
         draw[0](canvas,
-                (work->sheet + BURST_SHOWER_PICTURES) +
+                (state->sheet + BURST_SHOWER_PICTURES) +
                     frame / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
                 origin.x - 2, origin.y - 32, VIOLET_LIGHTNING_WIDTH,
                 VIOLET_LIGHTNING_HEIGHT);
       } else {
         draw[0](canvas,
-                (work->sheet + BURST_SHOWER_PICTURES) +
+                (state->sheet + BURST_SHOWER_PICTURES) +
                     frame / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
                 origin.x - (VIOLET_LIGHTNING_WIDTH - 2), origin.y - 32,
                 VIOLET_LIGHTNING_WIDTH, VIOLET_LIGHTNING_HEIGHT);
@@ -243,32 +244,32 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
         // A burst moves a 32nd of the way to its aim a frame for
         // BURST_SHOWER_BURST_LIFE frames: three quarters of the way down, and
         // across the half-width canvas half again as far, past the targets.
-        work->particles[frame].x = origin.x * (toFIXED(1) / 2);
-        work->particles[frame].y = INTtoFIXED(origin.y);
-        work->particles[frame].velocityX =
+        state->particles[frame].x = origin.x * (toFIXED(1) / 2);
+        state->particles[frame].y = INTtoFIXED(origin.y);
+        state->particles[frame].velocityX =
             (aim[0] - origin.x) * (toFIXED(1) / 32);
-        work->particles[frame].velocityY =
+        state->particles[frame].velocityY =
             (aim[1] - origin.y) * (toFIXED(1) / 32);
-        work->particles[frame].variant = 0;
+        state->particles[frame].variant = 0;
       }
     }
 
     // The bursts fly.
-    for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-      struct Particle *burst = &work->particles[i];
+    for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+      struct Particle *burst = &state->particles[i];
       if (burst->variant >= 0) {
         if (mode == BURST_SHOWER_MODE_FACES) {
           if (burst->variant > 5) {
-            draw[work->args->side](canvas,
-                                   (work->sheet + BURST_SHOWER_PICTURES),
-                                   FIXEDtoINT(burst->x) - DEMON_FACE_WIDTH / 2,
-                                   FIXEDtoINT(burst->y) - DEMON_FACE_HEIGHT / 2,
-                                   DEMON_FACE_WIDTH, DEMON_FACE_HEIGHT);
+            draw[state->args->side](
+                canvas, (state->sheet + BURST_SHOWER_PICTURES),
+                FIXEDtoINT(burst->x) - DEMON_FACE_WIDTH / 2,
+                FIXEDtoINT(burst->y) - DEMON_FACE_HEIGHT / 2, DEMON_FACE_WIDTH,
+                DEMON_FACE_HEIGHT);
           }
         } else if (mode == BURST_SHOWER_MODE_DJINNI) {
           if (burst->variant > 5) {
             draw[0](canvas,
-                    (work->sheet + BURST_SHOWER_PICTURES) +
+                    (state->sheet + BURST_SHOWER_PICTURES) +
                         (burst->variant / 4) * PICTURE_BYTES(FLASH_BURST),
                     FIXEDtoINT(burst->x) - FLASH_BURST_WIDTH / 2,
                     FIXEDtoINT(burst->y) - FLASH_BURST_HEIGHT / 2,
@@ -277,7 +278,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
         } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
           if (burst->variant > 1) {
             draw[0](canvas,
-                    (work->sheet + BURST_SHOWER_PICTURES) +
+                    (state->sheet + BURST_SHOWER_PICTURES) +
                         (burst->variant / 4) * PICTURE_BYTES(FLASH_BURST),
                     FIXEDtoINT(burst->x) - FLASH_BURST_WIDTH / 2,
                     FIXEDtoINT(burst->y) - FLASH_BURST_HEIGHT / 2,
@@ -295,26 +296,26 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
 
     // Each target is hit in turn.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
-      for (i = 0; i != work->args->targetCount; i++) {
+      for (i = 0; i != state->args->targetCount; i++) {
         // The bolt strikes target i without knocking it back.
         if ((frame >= (i * 4) + 2) && ((frame & 7) == i)) {
-          work->shakeFrames = 8;
-          BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
+          state->shakeFrames = 8;
+          BattleEffect_TintBattler(state->args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 4);
         }
       }
     } else {
-      for (i = 0; i != work->args->targetCount; i++) {
+      for (i = 0; i != state->args->targetCount; i++) {
         if ((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
-          work->shakeFrames = 8;
+          state->shakeFrames = 8;
           if (mode == BURST_SHOWER_MODE_GREY) {
-            BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLACK,
-                                     POSE_DAMAGE, i, 4);
+            BattleEffect_TintBattler(state->args->targets[i],
+                                     SPRITE_COLOR_BLACK, POSE_DAMAGE, i, 4);
           } else {
-            BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, i, 4);
+            BattleEffect_TintBattler(state->args->targets[i],
+                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
           }
-          BattleMotion_ApplyKnockbackFar(work->args->targets[i],
+          BattleMotion_ApplyKnockbackFar(state->args->targets[i],
                                          KNOCKBACK_HURL);
         }
       }
@@ -325,7 +326,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     if (mode != BURST_SHOWER_MODE_GREY) {
       BattleEffect_CountDownBattlerTints();
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   EFFECT_FINISH_CANVAS();

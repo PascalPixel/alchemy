@@ -87,7 +87,7 @@ extern u8 *gPsynergyIconsEnd[];
 
 struct Sprite;
 struct ArticleTable;
-struct PaletteCycleWork;
+struct PaletteCycleState;
 struct MenuCursor;
 struct TileMask;
 
@@ -138,12 +138,11 @@ extern const u8 PaletteFade_ScaleThreeQuartersKernel[];
 /// (Oam_AddSpriteAtDepth); Oam_ResetFrame empties them each frame.
 extern void *gOamDepthLists[];
 /// HEAP_SLOT_PARTY_STATUS: the party status window's layout (struct
-/// PartyStatusWindow), right after gWindowWork in IWRAM.
-#define gPartyStatusWork (*(u8 (*)[]) & gHeapSlots[HEAP_SLOT_PARTY_STATUS])
-/// HEAP_SLOT_SELECTION_WORKSPACE: struct SelectionWorkspace, which only two
+/// PartyStatusWindow), right after gWindowState in IWRAM.
+#define gPartyStatusState (*(u8 (*)[]) & gHeapSlots[HEAP_SLOT_PARTY_STATUS])
+/// HEAP_SLOT_SELECTION_STATE: struct SelectionState, which only two
 /// unused functions touch.
-#define gSelectionWorkspace                                                    \
-  (*(u8 (*)[]) & gHeapSlots[HEAP_SLOT_SELECTION_WORKSPACE])
+#define gSelectionState (*(u8 (*)[]) & gHeapSlots[HEAP_SLOT_SELECTION_STATE])
 /// The articles a message puts before a name, by article class, in the
 /// languages that have them.
 extern const struct ArticleTable gArticle_Table;
@@ -178,8 +177,8 @@ extern const u8 FarCall_ResourceTable[];
 extern u8 gDecodeFillByte;
 /// HEAP_SLOT_PALETTE_CYCLES: the queue of palette cycles, which no code in
 /// the game ever starts.
-#define gPaletteCycleWork                                                      \
-  (*(struct PaletteCycleWork **)&gHeapSlots[HEAP_SLOT_PALETTE_CYCLES])
+#define gPaletteCycleState                                                     \
+  (*(struct PaletteCycleState **)&gHeapSlots[HEAP_SLOT_PALETTE_CYCLES])
 /// Two 16-entry colour maps for 4bpp pixels: the first draws colour 1 as
 /// colour 10, the second leaves every colour as it is.
 extern const u16 gGraphics_ExpandNibbleTable[];

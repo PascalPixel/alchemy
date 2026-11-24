@@ -16,7 +16,7 @@ static void Colosso_PushActorAhead(void) {
   struct FieldPosition position;
   s32 leaderId;
 
-  leaderId = gMainRoutineWork.leaderActorId;
+  leaderId = gMainRoutineState.leaderActorId;
   leader = Actor_Get(leaderId);
 
   direction = FACING_INDEX(leader->facing);
@@ -96,7 +96,7 @@ void *Colosso_FindActorAhead(void) {
   struct FieldPosition position;
   struct Actor *occupant;
 
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
 
   facing = FACING_NEAREST_CARDINAL(leader->facing);
 

@@ -104,7 +104,7 @@ s32 ColossoMenu_Choose(s32 unused) {
 /// Shows that a Djinni joined a party member while the join jingle
 /// (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   s32 speaker;
   struct Window *window;
   s32 portrait[3];
@@ -120,7 +120,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   if (window == NULL)
     return;
   Window_DrawDividerLine(window, 4, 0, 4, 4);
-  work->dirty = 1;
+  state->dirty = 1;
   Icon_LoadWithPalette(Portrait_GetForSpeaker(speaker), cleared, &handle,
                        &palette, PORTRAIT_PALETTE, cleared);
   // The portrait as a bare OAM entry, drawn each frame at y 12: a link word,
@@ -130,8 +130,8 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   *word++ = OBJ_SIZE_32X32 | OBJ_X(DJINN_JOIN_X * 8 + 4) | 12;
   *word = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
   // No voice blips while the message types.
-  work->voiceSound = cleared;
-  work->voiceCountdown = cleared;
+  state->voiceSound = cleared;
+  state->voiceCountdown = cleared;
   MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
                            ABILITY_DJINNI_FIRST,
@@ -166,7 +166,7 @@ s32 Party_GetMemberPortraitSprite(u32 member) {
 /// Shows that a party member joined the party while the join jingle
 /// (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowJoinedMessage(s32 member) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   struct Window *window = NULL;
   s32 sprite[3];
   s32 *entry = sprite;
@@ -176,7 +176,7 @@ void Party_ShowJoinedMessage(s32 member) {
   window = Window_Create(2, 1, 26, 5, 0);
   if (window != NULL) {
     Window_DrawDividerLine(window, 4, 0, 4, 4);
-    work->dirty = 1;
+    state->dirty = 1;
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(member)), 0,
         &handle, &palette, PORTRAIT_PALETTE, 0);
@@ -186,8 +186,8 @@ void Party_ShowJoinedMessage(s32 member) {
     *p++ = 0;
     *p++ = OBJ_SIZE_32X32 | OBJ_X(2 * 8 + 4) | 12;
     *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
-    work->voiceSound = 0;
-    work->voiceCountdown = 0;
+    state->voiceSound = 0;
+    state->voiceCountdown = 0;
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
     JOINED_QUEUE_TEXT(window, Message_DecodeAndClearArguments(MsgJoinedParty),
                       36, 2, 0);
@@ -206,7 +206,7 @@ void Party_ShowJoinedMessage(s32 member) {
 /// Shows that two party members joined the party while the join jingle
 /// (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   struct Window *window;
   s32 secondOam[3];
   s32 firstOam[3];
@@ -230,7 +230,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     Window_DrawDividerLine(window, 8, 0, 4, 4);
 #endif
 
-    work->dirty = 1;
+    state->dirty = 1;
 
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(first)), 0,
@@ -251,8 +251,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     *p++ = OBJ_SIZE_32X32 | OBJ_X(44) | 12;
     *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE + 1);
 
-    work->voiceSound = 0;
-    work->voiceCountdown = 0;
+    state->voiceSound = 0;
+    state->voiceCountdown = 0;
 
     MessageArgument_Push(first, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_Push(second, MESSAGE_ARGUMENT_ACTOR);

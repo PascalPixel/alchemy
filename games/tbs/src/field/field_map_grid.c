@@ -212,7 +212,7 @@ struct MapHeader {
 /// starts the layer scrolling.
 s32 MapGrid_LoadMap(s32 index) {
   struct MapResources *mapResources;
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   struct MapHeader *mapHeader;
   struct MapGridLayerScroll *layer;
   struct MapLayer *layerSource;
@@ -229,9 +229,9 @@ s32 MapGrid_LoadMap(s32 index) {
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   ScreenFade_FromBlack(0);
   mapResources = (struct MapResources *)&gMaps[index];
-  grid =
-      HeapSlot_AllocEwram(HEAP_SLOT_MAP_GRID, sizeof(struct MapGridScrollWork));
-  Iwram_ClearWords(grid, sizeof(struct MapGridScrollWork));
+  grid = HeapSlot_AllocEwram(HEAP_SLOT_MAP_GRID,
+                             sizeof(struct MapGridScrollState));
+  Iwram_ClearWords(grid, sizeof(struct MapGridScrollState));
   mapHeader = MAPGRID_RESOURCE(mapResources->header);
   // The header's offsets count from the header itself.
   packed = (u8 *)mapHeader + mapHeader->cellPictures;
@@ -362,7 +362,7 @@ s32 MapGrid_LoadMap(s32 index) {
 /// Centres the camera on the point the map follows (origin: x, height, z), or
 /// on (0, 0) when there is none, and scrolls the layers there.
 void MapGrid_CenterOnFollowedPoint(void) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   s32 x;
   s32 depth;
   s32 height;
@@ -439,7 +439,7 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
 /// automatic scroll (wrapping at its period), draws the cell picture column or
 /// row that scrolls into view, and sets its BG scroll.
 void MapGrid_UpdateLayerScroll(void) {
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   struct MapGridLayerScroll *layer;
   s32 *origin;
   s32 x, y;
@@ -447,7 +447,7 @@ void MapGrid_UpdateLayerScroll(void) {
   s32 baseX, baseY;
   u32 layerIndex;
 
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
   origin = grid->origin;
   layer = grid->layers;
   if (origin == 0)
@@ -536,7 +536,7 @@ void MapGrid_UpdateLayerScroll(void) {
 void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
   u32 layerIndex;
   u8 *screenMap;
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   struct MapGridLayerScroll *layer = grid->layers;
 
   x -= FIELD_VIEW_FOCUS_X;
@@ -654,7 +654,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
   u32 *sourceCells = MAPGRID_CELL_WORDS + (sourceY * MAPGRID_SIZE + sourceX);
   u32 *destinationCells = MAPGRID_CELL_WORDS + (dstY * MAPGRID_SIZE + dstX);
   struct MapGridLayerScroll *layer =
-      ((struct MapGridScrollWork *)gMapGridWork[0])->layers;
+      ((struct MapGridScrollState *)gMapGridState[0])->layers;
   struct MapGridTilePosition visibleLayers[3];
   s32 i;
   struct MapGridTilePosition *visibleLayer = visibleLayers;
@@ -760,7 +760,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
   u32 *sourceCells = MAPGRID_CELL_WORDS + (sourceY * MAPGRID_SIZE + sourceX);
   u32 *destinationCells = MAPGRID_CELL_WORDS + (dstY * MAPGRID_SIZE + dstX);
   struct MapGridLayerScroll *layer =
-      ((struct MapGridScrollWork *)gMapGridWork[0])->layers;
+      ((struct MapGridScrollState *)gMapGridState[0])->layers;
   struct MapGridTilePosition visibleLayers[3];
   s32 i;
   struct MapGridTilePosition *visibleLayer = visibleLayers;
@@ -825,7 +825,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
   u32 *sourceCells = MAPGRID_CELL_WORDS + (sourceY * MAPGRID_SIZE + sourceX);
   u32 *destinationCells = MAPGRID_CELL_WORDS + (dstY * MAPGRID_SIZE + dstX);
   struct MapGridLayerScroll *layer =
-      ((struct MapGridScrollWork *)gMapGridWork[0])->layers;
+      ((struct MapGridScrollState *)gMapGridState[0])->layers;
   struct MapGridTilePosition visibleLayers[3];
   s32 i;
   struct MapGridTilePosition *visibleLayer = visibleLayers;
@@ -859,7 +859,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
 /// Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
 /// REG_DISPCNT) from layerFlags, keeping its other flags.
 void MapGrid_SetShownLayers(u32 layerFlags) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   u32 shown = layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);
   u32 flags = grid->flags;
 

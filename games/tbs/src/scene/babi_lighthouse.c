@@ -36,7 +36,7 @@
 /// through the locked door downstairs, which stays open from then on.
 ///
 /// The four places share this overlay and one exit table; the other tables are
-/// chosen by gMainRoutineWork.next, with the road as the fallback. Retreat
+/// chosen by gMainRoutineState.next, with the road as the fallback. Retreat
 /// anywhere but on the road leads back to the Entry.
 
 #include "ability_ids.h"
@@ -51,7 +51,7 @@
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "field/field_effect.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/pushed_actor.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
@@ -63,7 +63,7 @@
 #include "scene/walk_into_leader.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -304,7 +304,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     return gBabiLighthouse_EntryEntrances;
@@ -322,7 +322,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// Ruins, beside the two pillars and in the north-east corner. A leader below
 /// the ground there has climbed down one.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_BABI_LIGHTHOUSE_ENTRY) {
+  if (gMainRoutineState.next == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     return gBabiLighthouse_EntryRegions;
   }
   return 0;
@@ -332,7 +332,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gBabiLighthouse_Exits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     return gBabiLighthouse_EntryActorPlacements;
@@ -630,14 +630,14 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Event_Wait(30);
     // "Will you go for us?"
     Event_ShowMessage(ACTOR_IODEM, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "There is no one else who can go after them."
     Event_ShowMessage(ACTOR_IODEM, 0);
   }
@@ -682,12 +682,12 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Event_Wait(20);
     // "You seem quite sure of yourself, but what do you think you..."
     Event_ShowMessage(ACTOR_FARAN, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Hmph! Not with that attitude, you can't!"
     Event_ShowMessage(ACTOR_FARAN, 0);
   }
@@ -730,12 +730,12 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Event_Wait(30);
     // "Your confidence means nothing unless you show that you can..."
     Event_ShowMessage(ACTOR_IODEM, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Well, you have no choice... You will have to try."
     Event_ShowMessage(ACTOR_IODEM, 0);
   }
@@ -984,12 +984,12 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
     Event_Wait(20);
     // "Since we can't even open the door, we'd just be getting in your way."
     Event_ShowMessage(ACTOR_FARAN, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "It won't stop you, but if we can't open the door, we can't go with you."
     Event_ShowMessage(ACTOR_FARAN, 0);
   }
@@ -1031,14 +1031,14 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
     Event_Wait(30);
     // "That is how it seems."
     Event_ShowMessage(ACTOR_IODEM, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "The power they just displayed is but a fraction of their true might."
     Event_ShowMessage(ACTOR_IODEM, 0);
   }
@@ -1159,10 +1159,10 @@ static void BabiLighthouse_CloseTruthDoor(void) {
 /// there reads "The truth of this door is open to those seeing with their true
 /// heart."
 static void BabiLighthouse_InspectTruthDoorSwitch(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
   Event_Start();
-  if (work->revealActive != 0) {
+  if (state->revealActive != 0) {
     if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Sound_Play(SE_SWITCH);
@@ -1206,7 +1206,7 @@ static struct Actor *BabiLighthouse_FindActorAhead(struct Actor *actor) {
 /// It only asks Carry (through childOption) to wait for the dropped pillar to
 /// land and throw the puffs.
 static void BabiLighthouse_LandCarriedPillarInPuffs(void) {
-  ((struct FieldEffectWork *)gFieldEffectWork)->childOption = 1;
+  ((struct FieldEffectState *)gFieldEffectState)->childOption = 1;
 }
 
 /// After Move or Carry on the grey pillar on the Road to Babi Lighthouse, a
@@ -1262,7 +1262,8 @@ static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
   s32 climbDirection = FACING_NEAREST_CARDINAL(leader->facing);
   s32 climbResult = -1;
 
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_CLIMB || ahead == NULL) {
+  if (gMainRoutineState.movementMode == LEADER_MOVEMENT_CLIMB ||
+      ahead == NULL) {
     if (climbDirection == FACING_NORTH) {
       climbResult = Field_ClimbUp();
     }
@@ -1271,14 +1272,14 @@ static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
     }
   }
   if (climbResult != 0) {
-    if (gMainRoutineWork.movementMode != LEADER_MOVEMENT_CLIMB) {
+    if (gMainRoutineState.movementMode != LEADER_MOVEMENT_CLIMB) {
       BabiLighthouse_PushRoadPillar();
     }
   }
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_BABI_LIGHTHOUSE_ENTRY) {
     return gBabiLighthouse_EntryTriggers;
@@ -1370,14 +1371,14 @@ s32 Scene_Initialize(void) {
   s32 z;
 
   wait(1);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  sceneId = gMainRoutineWork.next;
+  sceneId = gMainRoutineState.next;
   if (sceneId != SCENE_ROAD_TO_BABI_LIGHTHOUSE) {
-    gMainRoutineWork.retreatEntrance =
+    gMainRoutineState.retreatEntrance =
         BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
-    gMainRoutineWork.retreatScene = SCENE_BABI_LIGHTHOUSE_ENTRY;
-    lighthouseSceneId = gMainRoutineWork.next;
+    gMainRoutineState.retreatScene = SCENE_BABI_LIGHTHOUSE_ENTRY;
+    lighthouseSceneId = gMainRoutineState.next;
   }
   // The road: the moved pillar's cell behavior where it stands.
   if (sceneId == SCENE_ROAD_TO_BABI_LIGHTHOUSE) {
@@ -1399,7 +1400,7 @@ s32 Scene_Initialize(void) {
     ((union ActorOrEffect *)Actor_Get(ACTOR_RIGHT_PILLAR))->actor.update =
         BabiLighthouse_MatchLeaderPriority;
 #endif
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
             BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTH &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_SetPosition(ACTOR_RIGHT_PILLAR, 312, 328);
@@ -1449,7 +1450,7 @@ s32 Scene_Initialize(void) {
   } else if (lighthouseSceneId == SCENE_BABI_LIGHTHOUSE_LUFF) {
     // Isaac comes in as the way he took drops him: landing from a slide,
     // or falling on through this floor to the one below.
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_STONE_DOOR_WEST:
       GameFlag_Set(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR);
       // Both entrances restore the same remembered cell changes.
@@ -1492,7 +1493,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpeed(ACTOR_LEFT_DOOR, 1);
     Actor_SetSpeed(ACTOR_RIGHT_DOOR, 1);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (gMainRoutineWork.entrance ==
+      if (gMainRoutineState.entrance ==
           BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE) {
         GameFlag_Set(FLAG_BEYOND_DOOR);
       } else {
@@ -1526,7 +1527,7 @@ s32 Scene_Initialize(void) {
       Actor_FaceDirection(ACTOR_RIGHT_DOOR, FACING_EAST, 0);
       MapGrid_CopyCellAttributes(81, 14, 4, 1, 17, 14);
     }
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_EAST) {
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
         BabiLighthouse_LandWithParticles();

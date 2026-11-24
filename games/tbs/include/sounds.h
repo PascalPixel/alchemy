@@ -479,7 +479,7 @@ enum SoundId {
   /// Wheels win, and the Jupiter battle effect.
   SE_THUNDER,
   /// The louder thunderclap lightning on the field plays in place of SE_THUNDER
-  /// (struct FieldBlendWork's loud).
+  /// (struct FieldBlendState's loud).
   SE_THUNDER_LOUD,
   /// The lowest of three rising notes, one for each bounce of a Djinni
   /// beginning to join or be caught, before SE_NOTE_MID and SE_NOTE_HIGH

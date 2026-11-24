@@ -144,7 +144,7 @@ void DebugBattle_ViewMessages(void) {
                    DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
                &REG_DISPCNT);
     // The fastest text speed (window/message_speed.c: 0 to 2, slowest first).
-    gMainRoutineWork.messageSpeed = 2;
+    gMainRoutineState.messageSpeed = 2;
     for (;;) {
       // Sample arguments for the message's placeholders.
       MessageArgument_ClearAllFar();
@@ -200,7 +200,7 @@ void DebugBattle_ViewMessages(void) {
       Window_CloseAllFar(1);
       // Close the window and clear its page arrow.
       Window_CloseFar(messageWindow, 1);
-      ((struct WindowWork *)gWindowWork[0])->pageArrowShown = 0;
+      ((struct WindowState *)gWindowState[0])->pageArrowShown = 0;
     }
   }
 }
@@ -219,7 +219,7 @@ void DebugBattle_RunMenu(void) {
   s32 set;
   s32 loadedSet;
 
-  MainRoutineWork_InitializeDefaultsFar();
+  MainRoutineState_InitializeDefaultsFar();
 restart:
   Window_LoadGraphics();
   DebugText_Clear();
@@ -259,7 +259,7 @@ restart:
           Battle_SetType(BATTLE_TYPE_DEBUG);
         }
         if (set != loadedSet) {
-          MainRoutineWork_InitializeDefaultsFar();
+          MainRoutineState_InitializeDefaultsFar();
           DebugParameterSet_Load(set);
           loadedSet = set;
         }
@@ -269,7 +269,7 @@ restart:
       if (gKeysHeld & KEY_DOWN)
         GameFlag_SetFar(FLAG_LINK_BATTLE);
       Unit_CalculateFar(ISAAC);
-      gMainRoutineWork.battleBackground = RESOURCE_SUHALLA_GATE_BACKDROP;
+      gMainRoutineState.battleBackground = RESOURCE_SUHALLA_GATE_BACKDROP;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
         GameFlag_SetFar(FLAG_DJINN_LESSON);
       GameFlag_SetFar(FLAG_DEBUG_BATTLE);

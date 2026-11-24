@@ -19,8 +19,8 @@
 /// The tint's channels run from this level, a quarter of the hue's own on top.
 #define MIND_READ_TINT_LEVEL_MIN 4
 
-/// The HEAP_SLOT_MIND_READ heap slot (gMindReadWork), 664 bytes.
-struct MindReadWork {
+/// The HEAP_SLOT_MIND_READ heap slot (gMindReadState), 664 bytes.
+struct MindReadState {
   /// Each scanline's BG0 horizontal scroll in pixels, two pages written in
   /// turn; 160 of each page's 162 are used.
   u16 lines[2][162];
@@ -40,34 +40,35 @@ struct MindReadWork {
 /// palettes toward a hue that shifts with the frame counter, and starts its
 /// per-frame update (FieldPsynergy_UpdateMindReadWave) after 8 frames.
 void FieldPsynergy_StartMindReadWave(s32 casterId, s32 targetId) {
-  struct MindReadWork *work;
+  struct MindReadState *state;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, sizeof(struct MindReadWork));
+  state =
+      HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, sizeof(struct MindReadState));
   FieldPsynergy_FadeToCastColor();
-  Dma_Fill32(0, work, sizeof(struct MindReadWork));
-  work->hue = ((u32)(gFrameCount << 1) % (u32)HUE_DEGREES);
+  Dma_Fill32(0, state, sizeof(struct MindReadState));
+  state->hue = ((u32)(gFrameCount << 1) % (u32)HUE_DEGREES);
   FieldEffect_AdvanceHueCycle();
   // PALETTE_TINT_CUSTOM: the BG colours tinted by the hue.
-  PaletteFade_SetTarget(RGB(work->red, work->green, work->blue) |
+  PaletteFade_SetTarget(RGB(state->red, state->green, state->blue) |
                             PALETTE_TINT_CUSTOM,
                         PALETTES_BG);
   PaletteFade_StartInterpolation(8);
-  work->sourceId = casterId;
-  work->targetId = targetId;
-  work->delay = 8;
+  state->sourceId = casterId;
+  state->targetId = targetId;
+  state->delay = 8;
   FieldPsynergy_GreyMindReadPalette();
   Task_Add(FieldPsynergy_UpdateMindReadWave, TASK_PASS_FRAME);
 }
 
 /// Stops the wave effect: restores the caster's colours and the palettes and
-/// releases the Psynergy's work.
+/// releases the Psynergy's state.
 void FieldPsynergy_StopMindReadWave(void) {
-  struct MindReadWork *work = gMindReadWork;
+  struct MindReadState *state = gMindReadState;
 
   FieldPsynergy_RestoreMindReadPalette();
   Task_Remove(FieldPsynergy_UpdateMindReadWave);
   // Back to SPRITE_COLOR_NORMAL.
-  Actor_SetSpritePalette(Actor_GetById(work->sourceId), 1);
+  Actor_SetSpritePalette(Actor_GetById(state->sourceId), 1);
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_MIND_READ);
 }
@@ -79,7 +80,7 @@ void FieldPsynergy_StopMindReadWave(void) {
 /// particles (SPRITE_CRESCENT), 8 frames apart, from the target to the caster,
 /// with SE_PSYNERGY_START.
 void FieldPsynergy_UpdateMindReadWave(void) {
-  struct MindReadWork *work = gMindReadWork;
+  struct MindReadState *state = gMindReadState;
   u16 *line;
   u32 scanline;
   struct Actor *caster;
@@ -90,42 +91,42 @@ void FieldPsynergy_UpdateMindReadWave(void) {
   struct Vector3 to;
   struct AnimationMetadata *meta;
 
-  if (work->delay != 0) {
-    work->delay--;
+  if (state->delay != 0) {
+    state->delay--;
     return;
   }
 
   // The scanlines' offsets on the hidden page; then show that page.
-  line = work->lines[work->page ^ 1];
+  line = state->lines[state->page ^ 1];
   for (scanline = 0; scanline < DISPLAY_HEIGHT; scanline++)
-    *line++ = MIND_READ_WAVE_OFFSET(work->phase + scanline * 8);
-  work->phase += 4;
-  work->page ^= 1;
+    *line++ = MIND_READ_WAVE_OFFSET(state->phase + scanline * 8);
+  state->phase += 4;
+  state->page ^= 1;
   // Every other frame the tint takes the next hue, in one frame.
-  if (work->page != 0) {
-    PaletteFade_SetTarget(RGB(work->red, work->green, work->blue) |
+  if (state->page != 0) {
+    PaletteFade_SetTarget(RGB(state->red, state->green, state->blue) |
                               PALETTE_TINT_CUSTOM,
                           PALETTES_BG);
     PaletteFade_StartInterpolation(1);
     FieldEffect_AdvanceHueCycle();
   }
   // The caster's colours cycle.
-  Actor_SetSpritePalette(Actor_GetById(work->sourceId), 0);
+  Actor_SetSpritePalette(Actor_GetById(state->sourceId), 0);
 
-  if (work->counter == 0 || work->counter == MIND_READ_PARTICLE_GAP ||
-      work->counter == 2 * MIND_READ_PARTICLE_GAP) {
-    caster = Actor_GetById(work->sourceId);
-    target = Actor_GetById(work->targetId);
+  if (state->counter == 0 || state->counter == MIND_READ_PARTICLE_GAP ||
+      state->counter == 2 * MIND_READ_PARTICLE_GAP) {
+    caster = Actor_GetById(state->sourceId);
+    target = Actor_GetById(state->targetId);
     if (caster != 0 && target != 0) {
       // From 2 pixels below each one's sprite height (its metadata's boxX).
       from.x = caster->x.fixed;
       meta = Resource_GetMetadataRecordFar(
-          (s16)Scene_FindActorPlacement(work->sourceId)->sprite);
+          (s16)Scene_FindActorPlacement(state->sourceId)->sprite);
       from.y = caster->y.fixed + toFIXED(meta->boxX) - toFIXED(2);
       from.z = caster->z.fixed;
       to.x = target->x.fixed;
       meta = Resource_GetMetadataRecordFar(
-          (s16)Scene_FindActorPlacement(work->targetId)->sprite);
+          (s16)Scene_FindActorPlacement(state->targetId)->sprite);
       to.y = target->y.fixed + toFIXED(meta->boxX) - toFIXED(2);
       to.z = target->z.fixed;
       particle = Actor_CreateFar(SPRITE_CRESCENT, to.x, to.y, to.z);
@@ -144,10 +145,10 @@ void FieldPsynergy_UpdateMindReadWave(void) {
     }
   }
 
-  if (work->counter == 0)
+  if (state->counter == 0)
     Sound_PlayFar(SE_PSYNERGY_START);
-  if (++work->counter > MIND_READ_CYCLE_LAST)
-    work->counter = 0;
+  if (++state->counter > MIND_READ_CYCLE_LAST)
+    state->counter = 0;
 }
 
 // What Mind Read's wave uses: BG0's line scroll, the hue cycle and BG
@@ -160,9 +161,9 @@ void FieldPsynergy_UpdateMindReadWave(void) {
 /// Task: restarts the HBlank DMA that writes BG0's horizontal
 /// scroll for each scanline from the wave's shown page.
 void FieldEffect_ArmBg0HBlankDma(void) {
-  struct MindReadWork *work = gMindReadWork;
-  if (!work->delay) {
-    u16 *line = work->lines[work->page];
+  struct MindReadState *state = gMindReadState;
+  if (!state->delay) {
+    u16 *line = state->lines[state->page];
     volatile u16 *dma = REG_DMA0;
     dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
     dma[5] &= ~DMA_ENABLE;
@@ -176,7 +177,7 @@ void FieldEffect_ArmBg0HBlankDma(void) {
 /// Moves the wave's hue on 4 degrees and works out its colour, each channel
 /// 4 to 11.
 void FieldEffect_AdvanceHueCycle(void) {
-  struct MindReadWork *work = gMindReadWork;
+  struct MindReadState *state = gMindReadState;
   s32 r = 0;
   s32 g = 0;
   s32 b = 0;
@@ -185,27 +186,27 @@ void FieldEffect_AdvanceHueCycle(void) {
   u8 *pg;
   u8 *pb;
 
-  FieldEffect_CalculateHueChannels(INTtoFIXED(work->hue), &r, &g, &b);
+  FieldEffect_CalculateHueChannels(INTtoFIXED(state->hue), &r, &g, &b);
 
   // Squeeze 0 to 31 into 4 to 11; offset walks red, green and blue.
-  offset = offsetof(struct MindReadWork, red);
-  pr = (u8 *)work + offset;
+  offset = offsetof(struct MindReadState, red);
+  pr = (u8 *)state + offset;
   *pr = (FIXEDtoINT(r) >> 2) + MIND_READ_TINT_LEVEL_MIN;
   offset += 1;
-  pg = (u8 *)work + offset;
+  pg = (u8 *)state + offset;
   *pg = (FIXEDtoINT(g) >> 2) + MIND_READ_TINT_LEVEL_MIN;
   offset += 1;
-  pb = (u8 *)work + offset;
+  pb = (u8 *)state + offset;
   *pb = (FIXEDtoINT(b) >> 2) + MIND_READ_TINT_LEVEL_MIN;
 
-  work->hue += 4;
+  state->hue += 4;
 
   *pr &= RGB_LEVEL_MAX;
   *pg &= RGB_LEVEL_MAX;
   *pb &= RGB_LEVEL_MAX;
 
-  if (work->hue >= HUE_DEGREES) {
-    work->hue = 0;
+  if (state->hue >= HUE_DEGREES) {
+    state->hue = 0;
   }
 }
 
@@ -269,7 +270,7 @@ void FieldPsynergy_GreyMindReadPalette(void) {
 
   // Window mode 1: messages show as thoughts until
   // FieldPsynergy_RestoreMindReadPalette clears it.
-  WINDOW_WORK->mindRead = 1;
+  WINDOW_STATE->mindRead = 1;
   p = &BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_WHITE_COLOR);
   *p = MIND_READ_GREY;
   p += WINDOW_BLACK_COLOR - WINDOW_WHITE_COLOR;
@@ -297,17 +298,17 @@ void FieldPsynergy_GreyMindReadPalette(void) {
 
 /// Stops the BG0 line scroll and restores WINDOW_PALETTE.
 void FieldPsynergy_RestoreMindReadPalette(void) {
-  void *work;
+  void *state;
 
-  work = gWindowWork[0];
+  state = gWindowState[0];
   Task_Remove(FieldEffect_ArmBg0HBlankDma);
   BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_WHITE_COLOR) = RGB_WHITE;
   BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BLACK_COLOR) = RGB(0, 0, 0);
   BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BORDER_DARK_COLOR) = RGB(10, 10, 10);
   BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BORDER_LIGHT_COLOR) = RGB(20, 20, 20);
-  WindowColor_ApplyFar(gMainRoutineWork.windowHue,
-                       gMainRoutineWork.windowBrightness);
-  ((struct WindowWork *)work)->mindRead = 0;
+  WindowColor_ApplyFar(gMainRoutineState.windowHue,
+                       gMainRoutineState.windowBrightness);
+  ((struct WindowState *)state)->mindRead = 0;
 }
 
 #undef MIND_READ_GREY

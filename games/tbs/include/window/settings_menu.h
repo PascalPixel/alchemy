@@ -2,7 +2,7 @@
 #define ALCHEMY_SETTINGS_MENU_H
 
 /// @file
-/// The work of the settings menu and the Pause menu.
+/// The state of the settings menu and the Pause menu.
 
 #include "static_assert.h"
 #include "types.h"
@@ -12,9 +12,9 @@
 #include "window/screens.h"
 #include "window/window.h"
 
-/// The settings menu's work (heap block 20): the settings being edited and how
+/// The settings menu's state (heap block 20): the settings being edited and how
 /// many values each takes, the page, and the cursor, markers and icons.
-struct OptionMenuWork {
+struct OptionMenuState {
   u8 unused[1024];
   /// Seven 52-byte entries (struct OptionMenuEntry in window_settings_menu.c),
   /// whose state only the unused SettingsMenu_ResetEntries writes.
@@ -45,11 +45,11 @@ struct OptionMenuWork {
   struct WindowSprite *icon[6];
 };
 
-STATIC_ASSERT(sizeof(struct OptionMenuWork) == 1576);
-STATIC_ASSERT(offsetof(struct OptionMenuWork, entries) == 1024);
+STATIC_ASSERT(sizeof(struct OptionMenuState) == 1576);
+STATIC_ASSERT(offsetof(struct OptionMenuState, entries) == 1024);
 
-/// The settings menu's work, HEAP_SLOT_SETTINGS_MENU under its own name.
-#define gOptionMenuWork                                                        \
-  (*(struct OptionMenuWork **)&gHeapSlots[HEAP_SLOT_SETTINGS_MENU])
+/// The settings menu's state, HEAP_SLOT_SETTINGS_MENU under its own name.
+#define gOptionMenuState                                                       \
+  (*(struct OptionMenuState **)&gHeapSlots[HEAP_SLOT_SETTINGS_MENU])
 
 #endif

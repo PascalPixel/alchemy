@@ -25,7 +25,7 @@ s32 Shop_RunRepairMemberChoice(void) {
 /// a time, with each one's repair price, until B or the inventory is empty.
 /// Returns -1 when cancelled, 0 when the inventory ran out.
 s32 Shop_SelectRepair(s32 unitId) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
   s32 inventoryCount;
   struct Window *descriptionWindow;
   struct Window *priceWindow;
@@ -39,7 +39,7 @@ s32 Shop_SelectRepair(s32 unitId) {
   s32 x;
   s32 y;
 
-  shop = gMenuWork;
+  shop = gMenuState;
   unit = Unit_GetFar(unitId);
   inventoryCount = 1;
   priceWindow =
@@ -133,7 +133,7 @@ s32 Shop_SelectRepair(s32 unitId) {
 /// the item away while three clangs sound, gives it back mended, charges the
 /// price and offers to equip it.
 void Shop_RepairItem(s32 unitId, s32 slot) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   struct Unit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
@@ -163,7 +163,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
     Shop_ShowKeeperMessageHidingCursor(MsgCursedWontComeOff);
     return;
   }
-  if (repairCost > gMainRoutineWork.holdings.coins) {
+  if (repairCost > gMainRoutineState.holdings.coins) {
     // "Uh-oh, you don't seem to have enough money."
     Shop_ShowKeeperMessageHidingCursor(MsgNotEnoughMoney);
     return;

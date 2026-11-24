@@ -14,17 +14,17 @@ void Actor_SnapToTerrain(void *object) {
   actor->groundHeight = groundHeight;
 }
 
-/// The map grid's work (gMapGridWork[0], HEAP_SLOT_MAP_GRID), seen as its
+/// The map grid's state (gMapGridState[0], HEAP_SLOT_MAP_GRID), seen as its
 /// treasure spot list.
 struct MapGridMarkers {
-  /// MapGridScrollWork's origin and shake; not named through this view.
+  /// MapGridScrollState's origin and shake; not named through this view.
   ///@{
   s32 *origin;
   s32 shakeX, shakeY, shakeDecay;
   ///@}
-  /// MapGridScrollWork's markers, read here as (column, row, id) triples, ended
-  /// by TREASURE_SPOT_LIST_END twice: a 16-pixel cell and the subject of the
-  /// trigger there; NULL for a map with none.
+  /// MapGridScrollState's markers, read here as (column, row, id) triples,
+  /// ended by TREASURE_SPOT_LIST_END twice: a 16-pixel cell and the subject of
+  /// the trigger there; NULL for a map with none.
   u8 *markers;
 };
 
@@ -48,11 +48,11 @@ enum {
 /// Stone for an examine trigger giving one, until it is taken.
 void Field_PlaceTreasureSpots(void) {
   u32 id;
-  struct MapGridMarkers *grid = gMapGridWork[0];
-  struct FieldWork *work = gFieldWork;
+  struct MapGridMarkers *grid = gMapGridState[0];
+  struct FieldState *state = gFieldState;
   s32 markerCount = 0;
   u8 *list = grid->markers;
-  struct TreasureSpot *marker = work->treasureSpots;
+  struct TreasureSpot *marker = state->treasureSpots;
   const struct Trigger *trigger;
   struct Actor *markerActor;
   u32 column;
@@ -152,7 +152,7 @@ s32 TreasureSpot_FindSlot(s32 id) {
   s32 matchingSlot;
   struct TreasureSpot *marker;
 
-  marker = gFieldWork->treasureSpots;
+  marker = gFieldState->treasureSpots;
   matchingSlot = -1;
   for (slotIndex = 0; slotIndex <= TREASURE_SPOT_MAX - 1;
        slotIndex++, marker++) {
@@ -177,7 +177,7 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &gFieldWork->treasureSpots[slotIndex];
+    marker = &gFieldState->treasureSpots[slotIndex];
     actor = marker->actor;
     if (actor != NULL)
       Actor_SelectAnimationFar(actor, animation);
@@ -203,7 +203,7 @@ void TreasureSpot_LaunchMimic(s32 id) {
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &gFieldWork->treasureSpots[slotIndex];
+    marker = &gFieldState->treasureSpots[slotIndex];
     actor = marker->actor;
     wait(18);
     if (actor != NULL)
@@ -230,7 +230,7 @@ void TreasureSpot_ShowOpened(s32 id) {
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &gFieldWork->treasureSpots[slotIndex];
+    marker = &gFieldState->treasureSpots[slotIndex];
     actor = marker->actor;
     if (actor != NULL)
       Actor_SelectAnimationFar(actor, TREASURE_SPOT_CHEST_OPEN);
@@ -244,7 +244,7 @@ struct Actor *TreasureSpot_GetActor(s32 id) {
 
   if (slotIndex == -1)
     return NULL;
-  marker = &gFieldWork->treasureSpots[slotIndex];
+  marker = &gFieldState->treasureSpots[slotIndex];
   return marker->actor;
 }
 
@@ -256,7 +256,7 @@ void TreasureSpot_Hide(s32 id) {
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &gFieldWork->treasureSpots[slotIndex];
+    marker = &gFieldState->treasureSpots[slotIndex];
     actor = marker->actor;
     if (actor != NULL)
       actor->spriteStorageKind = ACTOR_SPRITE_NONE;
@@ -277,7 +277,7 @@ void TreasureSpot_SetActorPosition(s32 id, FIXED x, FIXED z) {
   spotX = x;
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &gFieldWork->treasureSpots[slotIndex];
+    marker = &gFieldState->treasureSpots[slotIndex];
     actor = marker->actor;
     if (actor != NULL) {
       if (spotX == -1)

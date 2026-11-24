@@ -10,7 +10,7 @@
 /// when the unit's PP fall short and TEXT_COLOR_PINK while its Psynergy is
 /// sealed; the window above describes the one under the cursor.
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
-  struct WindowWork *work;
+  struct WindowState *state;
   s32 drawnFirstEntry;
   s32 firstEntry;
   s32 drawnRow;
@@ -20,7 +20,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   s32 iconCount;
   s32 preferredRow;
   struct MenuPoint cursorPosition;
-  struct BattleMenuWork *navigation;
+  struct BattleMenuState *navigation;
   struct Window *window;
   s32 selectedRow;
   s32 encodedAction;
@@ -35,7 +35,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   struct MenuSprite sprites[BATTLE_LIST_ROWS];
   s32 glyph;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   drawnRow = -1;
   drawnFirstEntry = -1;
   cursorHandle = VramCache_AllocEntry(128);
@@ -75,7 +75,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   iconSprite = &cursor;
   for (;;) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
-      work->holdTilemapUpload = 1;
+      state->holdTilemapUpload = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
                            window->width - 2, 1, WINDOW_PALETTE);
       Text_FillCanvasBackground();
@@ -118,12 +118,12 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
             Text_SetColor(TEXT_COLOR_PINK);
           }
 
-          work->textPalette = BASIC_COLORS_PALETTE;
+          state->textPalette = BASIC_COLORS_PALETTE;
           Text_DrawMessageAsTiles(encodedAction + MsgAbilityName, window, 16,
                                   i * 16);
           Text_DrawNumberAtOffset(action->ppCost, 2, window, 104, i * 16);
           Text_SetColor(TEXT_COLOR_WHITE);
-          work->textPalette = WINDOW_PALETTE;
+          state->textPalette = WINDOW_PALETTE;
 
           if (action->element != ELEMENT_NONE) {
             Window_SetTilemapEntry(window,
@@ -160,8 +160,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
 
       Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
                            window->width - 2, 1, HIGHLIGHT_PALETTE);
-      work->dirty = 1;
-      work->holdTilemapUpload = 0;
+      state->dirty = 1;
+      state->holdTilemapUpload = 0;
     }
 
     // Each frame: the current page's number lit 12 frames in 16, and the
@@ -186,7 +186,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           -1, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              -1, 0);
-      Window_MarkTilemapRow(work, window->y - 1);
+      Window_MarkTilemapRow(state, window->y - 1);
     }
 
     for (i = 0; i < iconCount; i++) {
@@ -203,7 +203,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     }
 
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
-    navigation = gBattleMenuWork;
+    navigation = gBattleMenuState;
 
     if ((gKeysPressed & KEY_A) != 0) {
       if (count != 0) {

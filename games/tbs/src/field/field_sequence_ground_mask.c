@@ -13,13 +13,13 @@
 /// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
 /// at the height of that ground.
 void FadeOverlay_DrawMarks(void) {
-  struct FadeOverlayWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct FadeOverlayState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
+  struct MapGridScrollState *grid = gMapGridState[0];
   s32 *view = grid->view;
   s32 cameraX = (s16)FIXEDtoINT(view[0]);
   s32 cameraZ = (s16)FIXEDtoINT(view[1]);
-  struct AnimationSpritePart *mark = work->marks;
-  struct Actor *actor = work->actor;
+  struct AnimationSpritePart *mark = state->marks;
+  struct Actor *actor = state->actor;
   FIXED x;
   FIXED z;
   s32 terrainFloor;
@@ -69,7 +69,7 @@ void FadeOverlay_DrawMarks(void) {
   x += toFIXED(16);
   height =
       FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + toFIXED(16)));
-  mark = &work->marks[1];
+  mark = &state->marks[1];
   secondHeight = FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x,
                                                         z + toFIXED(32))) -
                  16;
@@ -91,11 +91,11 @@ void FadeOverlay_DrawMarks(void) {
 /// Starts the fade overlay on object (the party leader when NULL): loads its
 /// solid tiles, sets the blending and draws it each frame.
 void FieldEffect_StartFadeOverlay(void *object) {
-  struct FadeOverlayWork *work;
+  struct FadeOverlayState *state;
   u8 *tiles;
   volatile u32 fill;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*state));
   // Upload the solid sprite tiles before enabling the drawing task.
   tiles = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
   Dma_Fill32Cell(fill, PIXELS_4BPP(1), tiles, 512);
@@ -108,13 +108,13 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
   // 31 is above the register's useful maximum of 16, which it acts as.
   Io_Write16(31, &REG_BLDY);
-  Dma_Fill32Cell(fill, 0, work, sizeof(*work));
+  Dma_Fill32Cell(fill, 0, state, sizeof(*state));
   if (object == NULL)
-    object = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  work->actor = object;
+    object = Actor_Lookup(gMainRoutineState.leaderActorId);
+  state->actor = object;
 }
 
-/// Stops drawing the fade overlay, keeping its work.
+/// Stops drawing the fade overlay, keeping its state.
 void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
 
 /// Draws the fade overlay again after FadeOverlay_Suspend.

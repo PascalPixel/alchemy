@@ -6,8 +6,8 @@
 
 #include "types.h"
 
-/// BattleWork.firstStrike: rolled as a battle opens when nothing set its
-/// start (gMainRoutineWork.battleType 0), and set back to normal after the
+/// BattleState.firstStrike: rolled as a battle opens when nothing set its
+/// start (gMainRoutineState.battleType 0), and set back to normal after the
 /// first turn (Battle_Run).
 enum BattleFirstStrike {
   FIRST_STRIKE_NONE = 0,

@@ -104,7 +104,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
 }
 
 // The party: the FLAG_IN_PARTY flags say who is in it, and
-// gMainRoutineWork.party lists them in order.
+// gMainRoutineState.party lists them in order.
 
 /// Returns the number of party members, counted from its FLAG_IN_PARTY flags.
 s32 Party_CountMembers(void) {
@@ -127,15 +127,15 @@ s32 Party_AddMember(s32 unitId) {
 
   GameFlag_Set(FLAG_IN_PARTY(unitId));
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    if (gMainRoutineWork.party[partyIndex] == unitId)
+    if (gMainRoutineState.party[partyIndex] == unitId)
       return partySize;
   }
-  gMainRoutineWork.party[partyIndex] = unitId;
+  gMainRoutineState.party[partyIndex] = unitId;
   return partySize + 1;
 }
 
 /// Takes character `unitId` out of the party: clears its game flag and closes
-/// the gap it leaves in gMainRoutineWork.party. Returns the party size.
+/// the gap it leaves in gMainRoutineState.party. Returns the party size.
 s32 Party_RemoveMember(s32 unitId) {
   s32 partySize = Party_CountMembers();
   s32 removedIndex;
@@ -143,11 +143,12 @@ s32 Party_RemoveMember(s32 unitId) {
 
   GameFlag_Clear(FLAG_IN_PARTY(unitId));
   for (removedIndex = 0; removedIndex < partySize; removedIndex++) {
-    if (gMainRoutineWork.party[removedIndex] == unitId)
+    if (gMainRoutineState.party[removedIndex] == unitId)
       break;
   }
   for (partyIndex = removedIndex; partyIndex < partySize - 1; partyIndex++)
-    gMainRoutineWork.party[partyIndex] = gMainRoutineWork.party[partyIndex + 1];
+    gMainRoutineState.party[partyIndex] =
+        gMainRoutineState.party[partyIndex + 1];
   return Party_CountMembers();
 }
 
@@ -160,7 +161,7 @@ s32 Party_ListMembers(s16 *unitIds) {
 
     count = Party_CountMembers();
     for (index = 0; index != count; index++) {
-      *unitIds++ = gMainRoutineWork.party[index];
+      *unitIds++ = gMainRoutineState.party[index];
     }
     *unitIds = BATTLE_UNIT_LIST_END;
   }
@@ -171,9 +172,9 @@ s32 Party_ListMembers(s16 *unitIds) {
 /// returns the new total.
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
-  struct MainRoutineWork *routine;
+  struct MainRoutineState *routine;
 
-  routine = &gMainRoutineWork;
+  routine = &gMainRoutineState;
   value = routine->holdings.coins;
   value += amount;
   if (value > COIN_MAX) {
@@ -191,7 +192,7 @@ s32 Party_AdjustCoins(s32 amount) {
 #define PARTY_DEFINE_ADJUST(name, field, max)                                  \
   s32 name(s32 amount) {                                                       \
     s32 value;                                                                 \
-    struct MainRoutineWork *progress = &gMainRoutineWork;                      \
+    struct MainRoutineState *progress = &gMainRoutineState;                    \
                                                                                \
     value = progress->field;                                                   \
     value += amount;                                                           \

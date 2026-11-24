@@ -15,13 +15,13 @@
 
 struct Unit;
 
-/// The work of the party member chooser and the Status menu, in the
+/// The state of the party member chooser and the Status menu, in the
 /// HEAP_SLOT_MENU heap slot, which each takes as it opens and frees before it
 /// returns.
-struct StatusScreenWork {
-  u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
+struct StatusScreenState {
+  u8 unused[8]; ///< no view of the menu state names it (see menu/README.md)
   s32 selectedMember;         ///< the party member chosen
-  struct Window *moneyWindow; ///< ShopWork's; not named here
+  struct Window *moneyWindow; ///< ShopState's; not named here
   struct Window *memberWindow;
   struct WindowSprite *memberCursors[2];
   s8 memberIndex[2]; ///< each side's party member, in memberIds
@@ -30,11 +30,11 @@ struct StatusScreenWork {
   struct Window *statusWindow;
   struct Window *unopenedWindow; ///< never given a window; only cleared
   struct Window *helpWindow;
-  /// ItemMenuWork's equipWindow to gridCursor; not named here.
+  /// ItemMenuState's equipWindow to gridCursor; not named here.
   u8 itemWindows[24];
   struct WindowSprite *entryIcons[32];
   struct WindowSprite *categoryIcons[8];
-  u8 unusedAfterIcons[36]; ///< no view of the menu work names it
+  u8 unusedAfterIcons[36]; ///< no view of the menu state names it
   struct Window *selectorWindow;
   u8 selectedColumn;
   u8 selectedRow;
@@ -47,7 +47,7 @@ struct StatusScreenWork {
   u16 selectedSlots[2];
   u16 selectedActions[2];
   struct WindowSprite *statusCursor;
-  /// DjinnMenuWork's backdrop pointer at 388; no view names the rest.
+  /// DjinnMenuState's backdrop pointer at 388; no view names the rest.
   u8 aroundBackdrop[72];
   u16 entries[32];
   u16 memberIds[8]; ///< the party in order (Party_ListMembers)
@@ -56,28 +56,28 @@ struct StatusScreenWork {
   u8 selectedIds[2]; ///< each side's party member
   struct WindowSprite *selectedIcon;
   u16 page;           ///< 3 for the party member chooser, 0 for the Status menu
-  s16 completionFlag; ///< ItemMenuWork's; not named here
+  s16 completionFlag; ///< ItemMenuState's; not named here
   struct Sprite *rowSprites[4];
   s16 rowX[4]; ///< screen pixels
   s16 rowY[4]; ///< screen pixels
 };
 
-STATIC_ASSERT(offsetof(struct StatusScreenWork, memberWindow) == 16);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, memberCursors) == 20);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, statusWindow) == 36);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, entryIcons) == 72);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, selectorWindow) == 268);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedColumn) == 272);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, memberSprites) == 276);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, memberY) == 324);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedSlots) == 372);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, statusCursor) == 380);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, memberIds) == 520);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedIds) == 538);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, page) == 544);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, rowSprites) == 548);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, rowX) == 564);
-STATIC_ASSERT(sizeof(struct StatusScreenWork) == 580);
+STATIC_ASSERT(offsetof(struct StatusScreenState, memberWindow) == 16);
+STATIC_ASSERT(offsetof(struct StatusScreenState, memberCursors) == 20);
+STATIC_ASSERT(offsetof(struct StatusScreenState, statusWindow) == 36);
+STATIC_ASSERT(offsetof(struct StatusScreenState, entryIcons) == 72);
+STATIC_ASSERT(offsetof(struct StatusScreenState, selectorWindow) == 268);
+STATIC_ASSERT(offsetof(struct StatusScreenState, selectedColumn) == 272);
+STATIC_ASSERT(offsetof(struct StatusScreenState, memberSprites) == 276);
+STATIC_ASSERT(offsetof(struct StatusScreenState, memberY) == 324);
+STATIC_ASSERT(offsetof(struct StatusScreenState, selectedSlots) == 372);
+STATIC_ASSERT(offsetof(struct StatusScreenState, statusCursor) == 380);
+STATIC_ASSERT(offsetof(struct StatusScreenState, memberIds) == 520);
+STATIC_ASSERT(offsetof(struct StatusScreenState, selectedIds) == 538);
+STATIC_ASSERT(offsetof(struct StatusScreenState, page) == 544);
+STATIC_ASSERT(offsetof(struct StatusScreenState, rowSprites) == 548);
+STATIC_ASSERT(offsetof(struct StatusScreenState, rowX) == 564);
+STATIC_ASSERT(sizeof(struct StatusScreenState) == 580);
 
 /// The statuses the Status screens show, as StatusScreen_BuildAvailability
 /// fills them: one byte each, nonzero while the party member has it.

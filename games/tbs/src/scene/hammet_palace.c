@@ -65,7 +65,7 @@
 #include "menu/menu.h"
 #include "scene/kalay.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -138,13 +138,13 @@ static void HammetPalace_HammetsHomecoming(void);
 
 /// Skips messages of the conversation, past an answer not taken.
 static inline void HammetPalace_AdvanceMessage(s32 amount) {
-  gFieldWork->message += amount;
+  gFieldState->message += amount;
 }
 
 /// Selects Hammet Palace's entrances, or the fallback table for any
 /// other scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_HAMMET_PALACE) {
     return gHammetPalaceEntrances;
@@ -159,7 +159,7 @@ const u32 *Scene_GetExits(void) { return gHammetPalaceExits; }
 /// Hammet Palace's actors, the people only of the room the party enters
 /// (CONDITION_IN_VIEW).
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_HAMMET_PALACE) {
+  if (gMainRoutineState.next == SCENE_HAMMET_PALACE) {
     Scene_AssignViewFlags(gHammetPalaceActorPlacements);
     return gHammetPalaceActorPlacements;
   }
@@ -168,7 +168,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// Hammet Palace's triggers, or none for any other scene.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_HAMMET_PALACE) {
     return gHammetPalaceTriggers;
@@ -227,12 +227,12 @@ static void HammetPalace_LayanaScoldsLunpaVisit(void) {
 /// room thumps open, and the leader walks straight on rather than first
 /// lining up with the middle of his column.
 static void HammetPalace_LeaveThroughDoor(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   Event_Wait(10);
-  if (work->stepTrigger == HAMMET_PALACE_ENTRANCE_ROOM_TO_LAYANAS_ROOM) {
+  if (state->stepTrigger == HAMMET_PALACE_ENTRANCE_ROOM_TO_LAYANAS_ROOM) {
     Sound_Play(SE_THUMP);
   } else {
     Sound_Play(SE_DOOR_OPEN);
@@ -242,13 +242,13 @@ static void HammetPalace_LeaveThroughDoor(void) {
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  if (work->stepTrigger == HAMMET_PALACE_ENTRANCE_ROOM_TO_LAYANAS_ROOM) {
+  if (state->stepTrigger == HAMMET_PALACE_ENTRANCE_ROOM_TO_LAYANAS_ROOM) {
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   } else {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
   }
   Event_Wait(16);
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
   Event_End();
@@ -256,9 +256,9 @@ static void HammetPalace_LeaveThroughDoor(void) {
 
 /// Sets up Hammet Palace as the party enters.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gMainRoutineWork.next == SCENE_HAMMET_PALACE) {
+  if (gMainRoutineState.next == SCENE_HAMMET_PALACE) {
     HammetPalace_SetUpEntrance();
   }
   return 0;
@@ -274,7 +274,7 @@ static void HammetPalace_SetUpEntrance(void) {
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
 
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM:
     if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
       // Hammet is home.
@@ -322,7 +322,7 @@ static void HammetPalace_SetUpEntrance(void) {
 /// Ivan's report in Hammet Palace, when the guards at the door bring the party
 /// to Layana: she had hoped Hammet came back with him.
 static void HammetPalace_IvanReportsToLayana(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 advanceAfterReply;
   const s32 *partyScript;
 
@@ -335,9 +335,9 @@ static void HammetPalace_IvanReportsToLayana(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  work = gFieldWork;
-  work->transitionFrames = 24;
-  work->transition =
+  state = gFieldState;
+  state->transitionFrames = 24;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Actor_SetPosition(ACTOR_LAYANA, 856, 440);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 856, 486);
@@ -529,12 +529,12 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   advanceAfterReply = 1;
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-    gFieldWork->message++;
+    gFieldState->message++;
     advanceAfterReply = 0;
   }
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   if (advanceAfterReply != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
   Actor_SetAttachedEffect(ACTOR_IVAN,
@@ -567,11 +567,11 @@ static void HammetPalace_IvanReportsToLayana(void) {
     // "I thought so... I knew there had to be a reason Ivan had stayed with
     // you, instead of returning home directly from Vault."
     Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "I do not believe that... Ivan would not have stayed with you for so long
     // if you did not have an important task ahead."
     Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
@@ -641,11 +641,11 @@ static void HammetPalace_IvanReportsToLayana(void) {
     Event_Wait(40);
     // "You are from Vale? Really? Then the prophecy was true."
     Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
   } else {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Give me a break! You don't know Vale!? It's our hometown!"
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
     Actor_SetAttachedEffect(ACTOR_LAYANA,
@@ -849,11 +849,11 @@ static void HammetPalace_IvanReportsToLayana(void) {
     Event_Wait(10);
     // "If Isaac says we will, then there's nothing to worry about!"
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
   } else {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "What's wrong with you, Isaac? Did you forget why we're here?"
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
     HammetPalace_FacePartyNorth(10);
@@ -901,9 +901,9 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_SetScript(ACTOR_GARET, partyScript);
   Actor_SetScript(ACTOR_IVAN, partyScript);
   Actor_RunScriptAndWait(ACTOR_MIA, partyScript);
-  work = gFieldWork;
-  work->transitionFrames = MAP_TRANSITION_FRAMES;
-  work->transition =
+  state = gFieldState;
+  state->transitionFrames = MAP_TRANSITION_FRAMES;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   GameFlag_Set(FLAG_IVAN_REPORTED_TO_LAYANA);
@@ -936,7 +936,7 @@ static void HammetPalace_FacePartyNorth(s32 waitFrames) {
 /// Layana's room once he is free.
 static void HammetPalace_HammetsHomecoming(void) {
   struct Actor *leader;
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 answeredYes;
   const s32 *partyScript;
 
@@ -947,8 +947,8 @@ static void HammetPalace_HammetsHomecoming(void) {
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 864, 630);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 40;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = 40;
   Event_StartScreenTransition();
   FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(864, CAMERA_KEEP, 472, 1);
@@ -1126,9 +1126,9 @@ static void HammetPalace_HammetsHomecoming(void) {
   Actor_SetScript(ACTOR_GARET, partyScript);
   Actor_SetScript(ACTOR_IVAN, partyScript);
   Actor_RunScriptAndWait(ACTOR_MIA, partyScript);
-  work = gFieldWork;
-  work->transitionFrames = MAP_TRANSITION_FRAMES;
-  work->transition =
+  state = gFieldState;
+  state->transitionFrames = MAP_TRANSITION_FRAMES;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   GameFlag_Set(FLAG_HAMMET_BACK_HOME_SEEN);

@@ -2,7 +2,7 @@
 #define ALCHEMY_PERSPECTIVE_H
 
 /// @file
-/// The world map's perspective view work.
+/// The world map's perspective view state.
 
 #include "fixed_math.h"
 #include "static_assert.h"
@@ -10,15 +10,17 @@
 
 /// The world map's perspective view: the followed position, screen shake,
 /// view position, window, pitch and yaw, tile ids and zoom, in
-/// HEAP_SLOT_MAP_GRID where a map keeps its MapGridScrollWork.
+/// HEAP_SLOT_MAP_GRID where a map keeps its MapGridScrollState.
 struct WorldMapView {
-  s32 *origin; ///< the followed point, as in MapGridScrollWork
-  s32 shakeX, shakeY, shakeDecay; ///< the screen shake, as in MapGridScrollWork
-  u8 *script;                     ///< NULL at load
-  u16 fade; ///< MapGridScrollWork's flags: REG_DISPCNT bits, BG0 to BG3 and the
-            ///< sprites at load
-  u8 fadeStep; ///< MapGridScrollWork's wideTiles, 0x80 at load
-  /// As MapGridScrollWork: footprints, tileset animations and blend script.
+  s32 *origin; ///< the followed point, as in MapGridScrollState
+  /// The screen shake, as in MapGridScrollState.
+  s32 shakeX, shakeY, shakeDecay;
+  u8 *script; ///< NULL at load
+  /// MapGridScrollState's flags: REG_DISPCNT bits, BG0 to BG3 and the sprites
+  /// at load.
+  u16 fade;
+  u8 fadeStep; ///< MapGridScrollState's wideTiles, 0x80 at load
+  /// As MapGridScrollState: footprints, tileset animations and blend script.
   u8 animationsAndBlend[228 - 23];
   FIXED view[2]; ///< the view's top left, x then y, 16.16 fixed-point pixels
   FIXED scaleX;  ///< 32 in 16.16 at load

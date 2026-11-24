@@ -187,102 +187,102 @@ gSprites:
 	.global gActors
 gActors:
 	.space 4
-	.global gActorSystemWork
-gActorSystemWork:
+	.global gActorSystemState
+gActorSystemState:
 	.space 4
-	.global gWorldMapAffineWork
-gWorldMapAffineWork:
+	.global gWorldMapAffineState
+gWorldMapAffineState:
 	.space 4
-	.global gMapGridWork
-gMapGridWork:
+	.global gMapGridState
+gMapGridState:
 	.space 4
-	.global gBattleWork
-gBattleWork:
+	.global gBattleState
+gBattleState:
 	.space 12
 	.global gBattleCamera
 gBattleCamera:
 	.space 12
-	.global gWindowWork
-gWindowWork:
-	.global gWindowWork
-gWindowWork:
+	.global gWindowState
+gWindowState:
+	.global gWindowState
+gWindowState:
 	.space 4
-	.global gPartyStatusWork
-gPartyStatusWork:
+	.global gPartyStatusState
+gPartyStatusState:
 	.space 4
-	.global gGlyphWork
-gGlyphWork:
+	.global gGlyphState
+gGlyphState:
 	.space 4
-	.global gSelectionMenuWork
-gSelectionMenuWork:
+	.global gSelectionMenuState
+gSelectionMenuState:
 	.space 4
-	.global gSelectionWorkspace
-gSelectionWorkspace:
+	.global gSelectionState
+gSelectionState:
 	.space 4
-	.global gOptionMenuWork
-gOptionMenuWork:
+	.global gOptionMenuState
+gOptionMenuState:
 	.space 8
-	.global gMindReadWork
-gMindReadWork:
+	.global gMindReadState
+gMindReadState:
 	.space 20
-	.global gFieldWork
-gFieldWork:
+	.global gFieldState
+gFieldState:
 	.space 4
-	.global gPaletteCycleWork
-gPaletteCycleWork:
+	.global gPaletteCycleState
+gPaletteCycleState:
 	.space 4
-	.global gWeatherWork
-gWeatherWork:
+	.global gWeatherState
+gWeatherState:
 	.space 4
-	.global gFieldBlendWork
-gFieldBlendWork:
+	.global gFieldBlendState
+gFieldBlendState:
 	.space 4
-	.global gScreenTransitionWork
-gScreenTransitionWork:
+	.global gScreenTransitionState
+gScreenTransitionState:
 	.space 4
-	.global gPaletteFadeWork
-gPaletteFadeWork:
+	.global gPaletteFadeState
+gPaletteFadeState:
 	.space 8
 	.global gLineScroll
 gLineScroll:
 	.space 8
-	.global gFadeOverlayWork
-gFadeOverlayWork:
+	.global gFadeOverlayState
+gFadeOverlayState:
 	.space 4
-	.global gBattleMessageWork
-gBattleMessageWork:
+	.global gBattleMessageState
+gBattleMessageState:
 	.space 8
-	.global gBattleEffectWork
-gBattleEffectWork:
+	.global gBattleEffectState
+gBattleEffectState:
 	.space 12
 	.global gBattleEntryTimer
 gBattleEntryTimer:
 	.space 8
-	.global gBattleBackgroundWork
-gBattleBackgroundWork:
+	.global gBattleBackgroundState
+gBattleBackgroundState:
 	.space 28
-	.global gSaveWork
-gSaveWork:
+	.global gSaveState
+gSaveState:
 	.space 12
 	.global gEnemyUnits
 gEnemyUnits:
 	.space 4
-	.global gMenuWork
-gMenuWork:
+	.global gMenuState
+gMenuState:
 	.space 4
-	.global gFieldEffectWork
-gFieldEffectWork:
-	.global gFieldEffectWork
-gFieldEffectWork:
+	.global gFieldEffectState
+gFieldEffectState:
+	.global gFieldEffectState
+gFieldEffectState:
 	.space 4
-	.global gBattleMenuWork
-gBattleMenuWork:
+	.global gBattleMenuState
+gBattleMenuState:
 	.space 4
-	.global gIconMenuWork
-gIconMenuWork:
+	.global gIconMenuState
+gIconMenuState:
 	.space 4
-	.global gColossoWork
-gColossoWork:
+	.global gColossoState
+gColossoState:
 	.space 24
 	.global gDebugMode
 gDebugMode:

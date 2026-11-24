@@ -31,7 +31,7 @@
 #include "system/heap_slots.h"
 #include "system/input.h"
 #include "system/io_write_queue.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "system/save.h"
 #include "system/system.h"
@@ -68,10 +68,10 @@ const struct Trigger *Scene_GetTriggers(void) { return gTitleTriggers; }
 s32 Scene_Initialize(void) {
   s32 waitFrames;
 
-  if (gMainRoutineWork.entrance == TITLE_FROM_WORLD_MAP) {
+  if (gMainRoutineState.entrance == TITLE_FROM_WORLD_MAP) {
     // "To Be Continued": after 120 frames the logo waits up to 3600 frames (a
     // minute) for a key press.
-    Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+    Actor_Get(gMainRoutineState.leaderActorId)->motionFlags = 0;
     Sound_Play(MUS_TO_BE_CONTINUED);
     Title_RevealScreen(0);
     wait(120);
@@ -80,7 +80,7 @@ s32 Scene_Initialize(void) {
     Event_SetDestination(SCENE_TITLE, TITLE_AFTER_RUN);
     return 0;
   }
-  if (gMainRoutineWork.entrance == TITLE_FROM_LEMURIAN_SHIP) {
+  if (gMainRoutineState.entrance == TITLE_FROM_LEMURIAN_SHIP) {
     Sound_Play(MUS_THE_BROKEN_SEAL_ENDING);
     // The staff credits (Credits_Run).
     Import_CreditsRun(0);
@@ -97,7 +97,7 @@ s32 Scene_Initialize(void) {
   // XXX (no evidence): what the call once did; the stub is empty in every
   // edition, so only an earlier build of the game would show.
   Stub_NoOpHook(RESOURCE_TITLE_FAR_CALLS);
-  if (gMainRoutineWork.entrance == TITLE_AFTER_RUN) {
+  if (gMainRoutineState.entrance == TITLE_AFTER_RUN) {
     for (;;) {
       Sound_Play(MUS_SILENCE);
       // The Nintendo logo, then the Camelot logo (Title_ShowCamelotLogo).
@@ -302,11 +302,11 @@ static void Title_RevealScreen(s32 unused) {
                         IO_WRITE_HALFWORD);
     wait(3);
   }
-  gFieldWork->transition = 0;
-  gFieldWork->transitionFrames = 1;
+  gFieldState->transition = 0;
+  gFieldState->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  gFieldWork->transitionFrames = 60;
+  gFieldState->transitionFrames = 60;
 }
 
 /// Loads the Golden Sun logo onto BG2 (title.h's LOGO_ map) with the
@@ -347,7 +347,7 @@ static void Title_LoadBackground(void) {
     bgScroll++;
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-  ((struct MapGridScrollWork *)gMapGridWork[0])->flags =
+  ((struct MapGridScrollState *)gMapGridState[0])->flags =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }
 

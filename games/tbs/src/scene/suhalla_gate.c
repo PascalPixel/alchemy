@@ -19,7 +19,7 @@
 ///   Stone.
 ///
 /// One exit table serves the three scenes. The other getters choose by
-/// gMainRoutineWork.next, and SuhallaGateCheckpoint's actor placements
+/// gMainRoutineState.next, and SuhallaGateCheckpoint's actor placements
 /// also by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its trigger table answers any scene
 /// not otherwise named.
 ///
@@ -67,7 +67,7 @@
 #include "menu/menu.h"
 #include "scene/walk_into_leader.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -145,7 +145,7 @@ static void SuhallaGate_FightDew(void) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_SUHALLA_GATE_DEW) {
     return gSuhallaGateDewEntrances;
@@ -163,7 +163,7 @@ const u32 *Scene_GetExits(void) { return gSuhallaGateExits; }
 /// Suhalla Gate's guards, standing or wounded, or Dew and the vines of the
 /// cliffs beyond.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_SUHALLA_GATE_DEW) {
     return gSuhallaGateDewActorPlacements;
@@ -180,7 +180,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// The events of the cliffs beyond the gate, of Gateway Cave, or of the gate
 /// itself for any other scene.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_SUHALLA_GATE_DEW) {
     return gSuhallaGateDewTriggers;
@@ -198,10 +198,10 @@ s32 Scene_Initialize(void) {
   s32 sceneId;
 
   if (GameFlag_Get(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
-    gMainRoutineWork.restartScene = SCENE_ROCK_ROOMS;
-    gMainRoutineWork.restartEntrance = ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT;
+    gMainRoutineState.restartScene = SCENE_ROCK_ROOMS;
+    gMainRoutineState.restartEntrance = ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT;
   }
-  sceneId = gMainRoutineWork.next;
+  sceneId = gMainRoutineState.next;
   if (sceneId == SCENE_SUHALLA_GATE_CHECKPOINT) {
     if (GameFlag_Get(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
       Actor_SetPosition(ACTOR_VANISHING_SOLDIER, 0, 0);
@@ -215,26 +215,26 @@ s32 Scene_Initialize(void) {
 #endif
     // Out of the house, Retreat leads back to the side the party came in by,
     // and the area's name is not shown again.
-    if (gMainRoutineWork.entrance == SUHALLA_GATE_CHECKPOINT_FROM_ROCK_ROOMS) {
+    if (gMainRoutineState.entrance == SUHALLA_GATE_CHECKPOINT_FROM_ROCK_ROOMS) {
       if (GameFlag_Get(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
-        gMainRoutineWork.retreatScene = SUHALLA_GATE_RETREAT_MAP(sceneId);
-        gMainRoutineWork.retreatEntrance =
+        gMainRoutineState.retreatScene = SUHALLA_GATE_RETREAT_MAP(sceneId);
+        gMainRoutineState.retreatEntrance =
             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH;
       }
       if (GameFlag_Get(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST)) {
-        gMainRoutineWork.retreatScene = SUHALLA_GATE_RETREAT_MAP(sceneId);
-        gMainRoutineWork.retreatEntrance =
+        gMainRoutineState.retreatScene = SUHALLA_GATE_RETREAT_MAP(sceneId);
+        gMainRoutineState.retreatEntrance =
             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST;
       }
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     }
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) {
       GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
       if (!GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO))
         MapGrid_CopyCellAttributes(6, 0, 2, 1, 8, 27);
     }
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
       GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
   } else if (sceneId == SCENE_SUHALLA_GATE_DEW) {
@@ -259,7 +259,7 @@ s32 Scene_Initialize(void) {
 static void SuhallaGate_EnterHouse(void) {
   s32 exitTrigger;
 
-  exitTrigger = gFieldWork->stepTrigger;
+  exitTrigger = gFieldState->stepTrigger;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(66, 36, 71, 8, 2, 2);
@@ -275,7 +275,7 @@ static void SuhallaGate_EnterHouse(void) {
 ///
 /// The gate forgets which way the party came in.
 static void SuhallaGate_LeaveForWorldMap(void) {
-  s16 exitTrigger = gFieldWork->stepTrigger;
+  s16 exitTrigger = gFieldState->stepTrigger;
 
   Sound_Play(SE_MAP_EXIT);
   GameFlag_Clear(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
@@ -385,7 +385,7 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
     Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
   } else {
     // Skips "After we find Sheba...".
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   }
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHWEST, 10);
   // "We must get to Babi Lighthouse as soon as possible!"
@@ -459,7 +459,7 @@ static void SuhallaGate_TalkToEastGuard(void) {
       // "What! You don't have travel papers? Then I cannot let you pass!"
       Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     } else {
-      gFieldWork->message += 2;
+      gFieldState->message += 2;
       // No: "Hmmph! You don't want to see Babi Lighthouse? You're a strange
       // one!"
       Event_ShowMessage(ACTOR_EAST_GUARD, 0);

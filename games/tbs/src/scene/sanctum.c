@@ -62,7 +62,7 @@
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/input.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/save.h"
 #include "system/system.h"
 #include "window/screens.h"
@@ -202,7 +202,7 @@ const u32 *Scene_GetExits(void) { return gSanctum_Exits; }
 /// Who stands in the room depends on the door the party came in by: the town's
 /// Healers, the gathering after the eruption, or nobody.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case SANCTUM_FROM_VALE:
   case SANCTUM_VALE_UNUSED:
     return gSanctum_ValeActorPlacements;
@@ -229,7 +229,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// The triggers by the door the party came in by; Vale's Sanctum also changes
 /// once the party has left Vale and again once it has reached Kalay.
 const struct Trigger *Scene_GetTriggers(void) {
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_LOG_ROOMS_A:
     return gSanctum_VaultTriggers;
@@ -272,7 +272,7 @@ static void Sanctum_TalkAboutGoldenStatue(void) {
     Event_SetMessageId(MsgSanctumHealerMustWorriedAboutNever);
   }
 
-  if (gMainRoutineWork.entrance == SANCTUM_FROM_VAULT_REVISIT) {
+  if (gMainRoutineState.entrance == SANCTUM_FROM_VAULT_REVISIT) {
     Event_SetMessageId(MsgSanctumPolishedGoldStatueReturnedUs);
   }
 
@@ -297,7 +297,7 @@ static void Sanctum_ReadMindAboutGoldenStatue(void) {
     Event_SetMessageId(MsgSanctumChildHasAwakenedOurTeachings);
   }
 
-  if (gMainRoutineWork.entrance == SANCTUM_FROM_VAULT_REVISIT) {
+  if (gMainRoutineState.entrance == SANCTUM_FROM_VAULT_REVISIT) {
     Event_SetMessageId(MsgSanctumDirtyGoldenStatueCleanedUp);
   }
 
@@ -399,7 +399,7 @@ static void Sanctum_AskAboutNewAdepts(void) {
     // "So, there are others besides Valeans who have been granted..."
     Event_ShowMessage(ACTOR_WEST_HEALER, 0);
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     // "......" from both at once.
     FieldEvent_ShowTwoMessagesAndWait(SANCTUM_NEW_FRIENDS_SPEAKER, 16, 1, 24, 1,
                                       ACTOR_MIA, 7, 16, 1, 14, 0);
@@ -422,7 +422,7 @@ static void Sanctum_AskAboutPsynergyChanges(void) {
   Event_OpenMessage(ACTOR_EAST_HEALER, 0);
 
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
-    (gFieldWork->message)++;
+    (gFieldState->message)++;
   }
 
   Event_ShowMessage(ACTOR_EAST_HEALER, 0);
@@ -435,12 +435,12 @@ static void Sanctum_AskAboutPsynergyChanges(void) {
 /// the stone counter is taken away and the Great Healer's question begins; a
 /// return from a battle or the menu (FLAG_KEEP_PARTY_POSITION) skips it.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   Event_Wait(1);
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_VAULT_REVISIT:
   case SANCTUM_FROM_LOG_ROOMS_A:
@@ -506,7 +506,7 @@ static void Sanctum_WarnBeforeLeaving(void) {
 /// Healer" or to go "To the File Screen" ("Restart the game" when there is no
 /// saved file).
 static void Sanctum_LeaveAfterRefusing(void) {
-  struct PaletteFade *paletteWork;
+  struct PaletteFade *paletteState;
 
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
@@ -519,17 +519,17 @@ static void Sanctum_LeaveAfterRefusing(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   Event_Wait(180);
-  paletteWork = gPaletteFadeWork;
+  paletteState = gPaletteFadeState;
   // ROOM_PALEST_COLOR fades to white rather than sepia: its blue, green and
   // red channels, each held in blue's place.
-  paletteWork->target[3 * ROOM_PALEST_COLOR] = RGB_LEVEL_MAX << BLUE_SHIFT;
-  paletteWork->target[3 * ROOM_PALEST_COLOR + 1] = RGB_LEVEL_MAX << BLUE_SHIFT;
-  paletteWork->target[3 * ROOM_PALEST_COLOR + 2] = RGB_LEVEL_MAX << BLUE_SHIFT;
-  paletteWork->page = 0;
-  paletteWork->duration = 1;
-  paletteWork->step = 1;
+  paletteState->target[3 * ROOM_PALEST_COLOR] = RGB_LEVEL_MAX << BLUE_SHIFT;
+  paletteState->target[3 * ROOM_PALEST_COLOR + 1] = RGB_LEVEL_MAX << BLUE_SHIFT;
+  paletteState->target[3 * ROOM_PALEST_COLOR + 2] = RGB_LEVEL_MAX << BLUE_SHIFT;
+  paletteState->page = 0;
+  paletteState->duration = 1;
+  paletteState->step = 1;
   // DEAD: a byte nothing reads set to 1; the ROM keeps its store.
-  paletteWork->padding = 1;
+  paletteState->padding = 1;
   Event_Wait(1);
   FieldMessage_ShowCentered(MsgSanctumWorldBeganDrifting, 1, 0);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
@@ -606,8 +606,8 @@ static void Sanctum_AskToAcceptQuest(void) {
     Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
     FieldCamera_MoveTo(192, CAMERA_KEEP, 160, 1);
     FieldCamera_WaitForMove();
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    gFieldWork->transitionFrames = 64;
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldState->transitionFrames = 64;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(120);
@@ -617,7 +617,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Event_Wait(1);
     FieldCamera_MoveTo(192, CAMERA_KEEP, 160, 1);
     FieldCamera_WaitForMove();
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -664,12 +664,12 @@ static void Sanctum_AskToAcceptQuest(void) {
       Event_Wait(20);
       // "They've been taken against their will... How awful!"
       Event_ShowMessage(ACTOR_DORA, 0);
-      gFieldWork->message++;
+      gFieldState->message++;
     } else {
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
       Event_Wait(20);
-      gFieldWork->message++;
+      gFieldState->message++;
       // "Well...we can only hope they're all right."
       Event_ShowMessage(ACTOR_DORA, 0);
     }
@@ -688,12 +688,12 @@ static void Sanctum_AskToAcceptQuest(void) {
       Event_Wait(20);
       // "Jenna's brother, Felix, will protect them, won't he?"
       Event_ShowMessage(ACTOR_WEST_HEALER, 0);
-      gFieldWork->message++;
+      gFieldState->message++;
     } else {
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_WEST_HEALER, ANIM_SHAKE_HEAD);
       Event_Wait(20);
-      gFieldWork->message++;
+      gFieldState->message++;
       // "Then our hopes must lie with Felix."
       Event_ShowMessage(ACTOR_WEST_HEALER, 0);
     }
@@ -2132,7 +2132,7 @@ static void Sanctum_TalkToVaultHealer(void) {
 
   Event_Start();
 
-  entrance = gMainRoutineWork.entrance;
+  entrance = gMainRoutineState.entrance;
 
   switch (entrance) {
   case SANCTUM_FROM_VAULT:

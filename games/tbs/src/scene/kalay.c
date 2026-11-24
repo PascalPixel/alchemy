@@ -92,7 +92,7 @@
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/system_call.h"
 #include "window/screens.h"
@@ -336,7 +336,7 @@ static s32 Kalay_UpdateWaitingTourist(struct Actor *actor) {
 #include "shared/actor_heading.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_KALAY) {
     return gKalay_TownEntrances;
@@ -367,7 +367,7 @@ const u32 *Scene_GetExits(void) { return gKalay_Exits; }
 /// The people of Kalay, Hammet Palace's front, the Kalay Tunnel Entrance and
 /// the Kalay Tunnel's treasure room.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_KALAY) {
     return gKalay_TownActorPlacements;
@@ -401,7 +401,7 @@ static void Kalay_CatchTunnelEntranceNut(void) {
 
 /// The conversations, exits and Psynergy targets of each scene.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_KALAY) {
     return gKalay_TownTriggers;
@@ -456,7 +456,7 @@ static void Kalay_AskAboutGoingToCave(void) {
       // "I'd like to let you go, but I cannot. You'd better just turn..."
       Event_ShowMessage(ACTOR_TUNNEL_GUARD, 0);
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
       Actor_SetAnimationAndWait(ACTOR_TUNNEL_GUARD, ANIM_NOD);
       Event_ShowMessage(ACTOR_TUNNEL_GUARD, 0);
     }
@@ -532,13 +532,13 @@ static void Kalay_TalkToItemMerchant(void) {
 /// Walking north into one of Kalay's eight doors opens it, and Isaac walks into
 /// a house, a shop, the inn or the Sanctum.
 static void Kalay_OpenDoorAndExit(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct Actor *actor;
   s16 *trigger;
   u32 i;
   s32 door;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   for (i = ACTOR_FIRST_PLACED; i <= ACTOR_LAST_ID; i++) {
     actor = Actor_Get(i);
@@ -546,7 +546,7 @@ static void Kalay_OpenDoorAndExit(void) {
       actor->motionFlags = 0;
     }
   }
-  trigger = &work->stepTrigger;
+  trigger = &state->stepTrigger;
   door = *trigger - 1;
   Sound_Play(SE_DOOR_OPEN);
   {
@@ -600,9 +600,9 @@ static void Kalay_WatchTourGroupDeparture(void) {
   s32 message;
   struct Actor *closing;
   struct Actor *last;
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   if (GameFlag_Get(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR) != 0 &&
       GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) == 0) {
@@ -624,7 +624,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Sound_Play(MUS_TRY_YOUR_LUCK);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    if (work->stepTrigger == 9) {
+    if (state->stepTrigger == 9) {
       FieldCamera_SetSpeed(2.4);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
     } else {
@@ -1059,7 +1059,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_ReleaseById(ACTOR_FIRST_TOURIST + 6);
     Actor_ReleaseById(ACTOR_OURANOS);
     Sound_Play(SOUND_FADE_OUT_BGM);
-    if (work->stepTrigger == 9) {
+    if (state->stepTrigger == 9) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 224, 458);
       Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
     } else {
@@ -1070,7 +1070,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     GameFlag_Set(FLAG_KALAY_COLOSSO_TOUR_LEFT);
   } else {
     Sound_Play(SE_MAP_EXIT);
-    Import_EventSetExitRequest(work->stepTrigger);
+    Import_EventSetExitRequest(state->stepTrigger);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
   }
@@ -1082,7 +1082,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
 /// around him; it stays where it was.
 static void Kalay_StopTrackingLeader(void) {
   if (Event_GetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) != 0) {
-    gFadeOverlayWork->actor = NULL;
+    gFadeOverlayState->actor = NULL;
     GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }
 }
@@ -1090,11 +1090,11 @@ static void Kalay_StopTrackingLeader(void) {
 /// Stepping from a hall of the Kalay Tunnel back into its narrow corridors,
 /// the faint green glow drifts after Isaac over the floor again.
 static void Kalay_StartTrackingLeader(void) {
-  struct FadeOverlayWork *work;
+  struct FadeOverlayState *state;
 
   if (Event_GetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) == 0) {
-    work = gFadeOverlayWork;
-    work->actor = Actor_Get(ACTOR_PARTY_LEADER);
+    state = gFadeOverlayState;
+    state->actor = Actor_Get(ACTOR_PARTY_LEADER);
     GameFlag_Set(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }
 }
@@ -1132,7 +1132,7 @@ s32 Scene_Initialize(void) {
   s32 sceneId;
 
   GameFlag_Set(FLAG_KALAY_REACHED);
-  sceneId = gMainRoutineWork.next;
+  sceneId = gMainRoutineState.next;
   if (sceneId == SCENE_KALAY) {
     Kalay_PrepareTown();
   } else if (sceneId == SCENE_HAMMET_PALACE_GROUNDS) {
@@ -1169,7 +1169,7 @@ static void Kalay_PrepareTown(void) {
   OrbitingMapActorSprite *sprite;
 
   Kalay_CatchUpWithLunpa();
-  if (gMainRoutineWork.entrance == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
+  if (gMainRoutineState.entrance == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
     Actor_SetPosition(ACTOR_TOWN_STATUE, 424, 88);
   }
   // The second guide shares the first's sprite, drawn with its green and blue
@@ -1203,7 +1203,7 @@ static void Kalay_PrepareTown(void) {
 /// Sets up Hammet Palace's front (HammetPalaceGrounds).
 static void Kalay_PrepareHammetPalace(void) {
   Kalay_CatchUpWithLunpa();
-  if (gMainRoutineWork.entrance != ENTRANCE_DEFAULT) {
+  if (gMainRoutineState.entrance != ENTRANCE_DEFAULT) {
     if (GameFlag_Get(FLAG_IVAN_REPORTED_TO_LAYANA) == 0) {
       Kalay_IvanMeetsPalaceGuards();
     }
@@ -1218,14 +1218,15 @@ static void Kalay_PrepareTunnelEntrance(void) {
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     Actor_Get(ACTOR_TUNNEL_GUARD)->facing = FACING_EAST;
   }
-  if (gMainRoutineWork.entrance == KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) {
+  if (gMainRoutineState.entrance ==
+      KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) {
     Kalay_HammetReturnsToPalace();
   }
 }
 
 /// Sets up the Kalay Tunnel's passage (KalayTunnelPassage).
 static void Kalay_PrepareTunnelPassage(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // Once the tunnel is open, the barred gate across the long corridor stands
   // open.
@@ -1236,7 +1237,7 @@ static void Kalay_PrepareTunnelPassage(void) {
     MapGrid_CenterOnFollowedPoint();
     wait(1);
   }
-  if (gMainRoutineWork.entrance <=
+  if (gMainRoutineState.entrance <=
       KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) {
     Scene_QueueMusic(SE_AMBIENT_WATER);
   }
@@ -1245,39 +1246,39 @@ static void Kalay_PrepareTunnelPassage(void) {
 /// Sets up the Kalay Tunnel's treasure room (KalayTunnelTreasureRoom).
 static void Kalay_PrepareTunnelTreasureRoom(void) {
   s32 following;
-  struct FadeOverlayWork *work;
+  struct FadeOverlayState *state;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldEffect_StartFadeOverlay(0);
   // The overlay follows the leader except on the way down from the town.
 #if TBS_PATCH_1
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    work = gFadeOverlayWork;
+    state = gFadeOverlayState;
     // The flag's own 0 is the overlay's want of an actor.
     following = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     if (following != 0)
       following = (s32)Actor_Get(ACTOR_PARTY_LEADER);
-    work->actor = (struct Actor *)following;
+    state->actor = (struct Actor *)following;
   } else {
     Event_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
-    if (gMainRoutineWork.entrance == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
-      gFadeOverlayWork->actor = NULL;
+    if (gMainRoutineState.entrance == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
+      gFadeOverlayState->actor = NULL;
       GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     }
   }
 #else
   Event_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    work = gFadeOverlayWork;
+    state = gFadeOverlayState;
     // The flag's own 0 is the overlay's want of an actor.
     following = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     if (following != 0)
       following = (s32)Actor_Get(ACTOR_PARTY_LEADER);
-    work->actor = (struct Actor *)following;
-  } else if (gMainRoutineWork.entrance ==
+    state->actor = (struct Actor *)following;
+  } else if (gMainRoutineState.entrance ==
              KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
-    gFadeOverlayWork->actor = NULL;
+    gFadeOverlayState->actor = NULL;
     GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }
 #endif
@@ -1346,7 +1347,7 @@ static void Kalay_PrepareTunnelTreasureRoom(void) {
     MapGrid_CopyCellAttributes(6, 13, 12, 12, 6, 44);
     MapGrid_CopyCellAttributes(0, 1, 1, 1, 7, 44);
   } else {
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST:
       Scene_QueueMusic(SE_AMBIENT_WATER);
@@ -1380,7 +1381,7 @@ static void Kalay_PrepareTunnelTreasureRoom(void) {
     MapGrid_CopyCellsTo(102, 14, 102, 44, 8, 12);
     MapGrid_CopyCellAttributes(37, 13, 10, 12, 37, 43);
   } else {
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY:
       Scene_QueueMusic(SE_AMBIENT_WATER);
@@ -1471,7 +1472,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   wait(1);
   FieldCamera_SetSpeed(0.2);
   FieldCamera_MoveTo(192, CAMERA_KEEP, 252, 1);
-  gFieldWork->transitionFrames = 40;
+  gFieldState->transitionFrames = 40;
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 192, 278);
@@ -1573,9 +1574,9 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     // "No, Isaac! There are no secrets between us!"
     Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     // "My companions and I have overcome many hardships together!"
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
@@ -1656,8 +1657,8 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_WalkToAndWait(ACTOR_SECOND_PALACE_GUARD, 194, 212);
   Actor_SetPosition(ACTOR_PALACE_GUARD, 0, 0);
   Actor_SetPosition(ACTOR_SECOND_PALACE_GUARD, 0, 0);
-  gFieldWork->transitionFrames = 24;
-  gFieldWork->transition =
+  gFieldState->transitionFrames = 24;
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1671,7 +1672,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
 /// guard opens the way, Hammet goes in, and the party rides on to Kalay.
 static void Kalay_HammetReturnsToPalace(void) {
   struct Actor *actor;
-  struct FieldWork *work;
+  struct FieldState *state;
   const s32 *exitActions;
 
   Event_Start();
@@ -1856,7 +1857,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(20);
-    gFieldWork->message += 3;
+    gFieldState->message += 3;
   } else {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_BUNZA, 2);
@@ -1907,7 +1908,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_WalkToAndWait(ACTOR_HAMMET, 246, 148);
   Actor_WalkToAndWait(ACTOR_HAMMET, 246, 142);
   Actor_SetPosition(ACTOR_HAMMET, 0, 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1951,9 +1952,9 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 500);
   Actor_WalkTo(ACTOR_WAGON, 440, 600);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  work = gFieldWork;
-  work->transitionFrames = 24;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state = gFieldState;
+  state->transitionFrames = 24;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH);

@@ -64,12 +64,12 @@ const struct Trigger *Scene_GetTriggers(void) { return gGomaCavePondTriggers; }
 
 /// Sets up the room as the party enters.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
-  work->transition =
+  state = gFieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  work->transitionFrames = 24;
+  state->transitionFrames = 24;
   if (GameFlag_Get(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
     Actor_SetPosition(ACTOR_FALLEN_STUMP, 216, 136);
     Actor_SetAnimation(ACTOR_FALLEN_STUMP, STUMP_ANIMATION_SINK);

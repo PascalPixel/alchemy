@@ -14,7 +14,7 @@
 ///
 /// Abilities: Fire, Fireball, Inferno.
 void BattleEffect_RunFire(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   struct BattleCamera *camera;
@@ -25,16 +25,16 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   struct Actor *user;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  work->args = args;
+  state->args = args;
   if (args->side == EFFECT_SIDE_PARTY)
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   else
     BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
@@ -45,8 +45,8 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The embers leave the top of the user in a random direction.
-  user = GetBattleObjectSlotFar(work->args->user)->actor;
-  bodyTop = user->y.fixed + BattleUnit_GetEffectHeightFar(work->args->user);
+  user = GetBattleObjectSlotFar(state->args->user)->actor;
+  bodyTop = user->y.fixed + BattleUnit_GetEffectHeightFar(state->args->user);
   for (i = 0; i != FIRE_EMBERS; i++) {
     struct Particle *ember = &PARTICLES[i];
     s32 angle;
@@ -61,25 +61,26 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
     ember->variant = -1;
   }
 
-  work->cameraDelta = 0;
-  work->cameraPhase = CAMERA_PHASE_IDLE;
+  state->cameraDelta = 0;
+  state->cameraPhase = CAMERA_PHASE_IDLE;
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
-  for (frame = 0; frame != (gFire_Counts[work->args->variant] >> 1) + 132;
+  for (frame = 0; frame != (gFire_Counts[state->args->variant] >> 1) + 132;
        frame++) {
     // The camera turns while the embers fly.
     if (frame > 16 && frame < 80)
-      work->cameraDelta = TRIG_TURN / 256;
+      state->cameraDelta = TRIG_TURN / 256;
     else
-      work->cameraDelta = 0;
-    if (frame == (gFire_Counts[work->args->variant] >> 1) + 108)
+      state->cameraDelta = 0;
+    if (frame == (gFire_Counts[state->args->variant] >> 1) + 108)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     // The embers in flight.
-    for (i = 0; i != gFire_Counts[work->args->variant]; i++) {
+    for (i = 0; i != gFire_Counts[state->args->variant]; i++) {
       struct Particle *ember = &PARTICLES[i];
       s32 launchFrame;
 
@@ -107,7 +108,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
         s32 vz;
 
         target = GetBattleObjectSlotFar(
-                     work->args->targets[i % work->args->targetCount])
+                     state->args->targets[i % state->args->targetCount])
                      ->actor;
         vx = ember->velocityX += (target->x.fixed - ember->x) >> 9;
         vy = ember->velocityY += (target->y.fixed - ember->y) >> 9;
@@ -124,16 +125,16 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
           ember->y = screen.y;
           Sound_PlayFar(SE_WHOOSH);
           BattleEffect_TintBattler(
-              work->args->targets[i % work->args->targetCount],
-              SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i % work->args->targetCount,
+              state->args->targets[i % state->args->targetCount],
+              SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i % state->args->targetCount,
               4);
-          work->shakeFrames = 2;
+          state->shakeFrames = 2;
         }
       }
     }
 
     // The impact flares.
-    for (i = 0; i != gFire_Counts[work->args->variant]; i++) {
+    for (i = 0; i != gFire_Counts[state->args->variant]; i++) {
       struct Particle *ember = &PARTICLES[i];
 
       if (ember->variant >= 0 && ember->variant < FIRE_FLARE_FRAMES) {
@@ -144,12 +145,12 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
         width = gFire_FlareWidths[picture];
-        draw[1](canvas, work->sheet + gFire_FlarePictures[picture],
+        draw[1](canvas, state->sheet + gFire_FlarePictures[picture],
                 ember->x - (width >> 1),
                 ember->y + gFire_FlareBiasY[picture] - 56, width,
                 gFire_FlareHeights[picture]);
 #else
-        draw[1](canvas, work->sheet + gFire_FlarePictures[picture],
+        draw[1](canvas, state->sheet + gFire_FlarePictures[picture],
                 ember->x - ((width = gFire_FlareWidths[picture]) >> 1),
                 ember->y + gFire_FlareBiasY[picture] - 56, width,
                 gFire_FlareHeights[picture]);
@@ -158,10 +159,10 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
       }
     }
 
-    if (work->cameraPhase == CAMERA_PHASE_IDLE)
-      work->cameraPhase = CAMERA_PHASE_FRAME_DONE;
+    if (state->cameraPhase == CAMERA_PHASE_IDLE)
+      state->cameraPhase = CAMERA_PHASE_FRAME_DONE;
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

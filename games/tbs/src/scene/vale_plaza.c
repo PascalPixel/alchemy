@@ -110,7 +110,7 @@
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "field/field_effect.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
 #include "field/speaker.h"
@@ -126,7 +126,7 @@
 #include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
 #include "system/io_reg.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/task.h"
 #include "system/vram_cache.h"
@@ -428,7 +428,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValePlaza_StormActorPlacements;
   }
-  if (gMainRoutineWork.entrance == VALE_PLAZA_FROM_SANCTUM) {
+  if (gMainRoutineState.entrance == VALE_PLAZA_FROM_SANCTUM) {
     return gValePlaza_DepartureActorPlacements;
   }
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
@@ -464,7 +464,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     return gValePlaza_TriggersAfterLeaving;
   }
-  if (gMainRoutineWork.entrance == VALE_PLAZA_FROM_SANCTUM) {
+  if (gMainRoutineState.entrance == VALE_PLAZA_FROM_SANCTUM) {
     return gValePlaza_DepartureTriggers;
   }
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -532,10 +532,10 @@ static void ValePlaza_DemonstratePsynergy(void) {
     // "...with just the two of you?", three or four: the flag numbered for a
     // character is set once that character has joined.
     if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0) {
-      gFieldWork->message++;
+      gFieldState->message++;
     }
     if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
-      gFieldWork->message++;
+      gFieldState->message++;
     }
     Event_OpenMessage(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -545,7 +545,7 @@ static void ValePlaza_DemonstratePsynergy(void) {
     }
     Event_ShowMessage(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
   } else {
-    origin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
+    origin = ((struct MapGridScrollState *)gMapGridState[0])->origin;
     Event_SetMessageId(MsgValeShownNewAbility);
     Actor_FaceEachOther(ACTOR_STRONGMAN_SHOWING_PSYNERGY, ACTOR_PARTY_LEADER,
                         0);
@@ -601,9 +601,9 @@ static void ValePlaza_AskAboutJourney(void) {
       // "You didn't, hmm? I can see in your eyes that you're not..."
       Event_ShowMessage(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     } else {
-      struct FieldWork *work = gFieldWork;
+      struct FieldState *state = gFieldState;
 
-      work->message++;
+      state->message++;
       Event_AskYesNo(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     }
   } else if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -882,7 +882,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_VALE_THIRD_IVY_BLOWN_AWAY) != 0) {
     Actor_SetPosition(ACTOR_THIRD_IVY, 0, 0);
   }
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case VALE_PLAZA_DEBUG_CHILDHOOD:
     GameFlag_Set(FLAG_CHILDHOOD);
     Import_EventSetExitRequest(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST);
@@ -930,7 +930,7 @@ s32 Scene_Initialize(void) {
         wait(1);
       }
     }
-    if (gMainRoutineWork.entrance == VALE_PLAZA_FROM_SANCTUM) {
+    if (gMainRoutineState.entrance == VALE_PLAZA_FROM_SANCTUM) {
       ValePlaza_DepartForQuest();
     } else {
       if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -962,7 +962,7 @@ s32 Scene_Initialize(void) {
         Actor_SetPosition(ACTOR_STORM_JENNA, 0, 0);
         Actor_SetPosition(ACTOR_STORM_CHARGED_UP_STRONGMAN, 0, 0);
       }
-      if (gMainRoutineWork.entrance == VALE_PLAZA_AFTER_TRAVELERS_BATTLE) {
+      if (gMainRoutineState.entrance == VALE_PLAZA_AFTER_TRAVELERS_BATTLE) {
         ValePlaza_TravelersLeaveAfterBattle();
       } else {
         if (GameFlag_Get(FLAG_VALE_STORM) != 0 &&
@@ -1068,11 +1068,11 @@ static void ValePlaza_SentToAidElders(void) {
       Actor_SetAnimation(ACTOR_STORM_GARETS_GRANDFATHER, ANIM_SHAKE_HEAD);
     } else {
       Actor_SetAnimation(ACTOR_STORM_GARETS_GRANDFATHER, ANIM_NOD);
-      gFieldWork->message++;
+      gFieldState->message++;
     }
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_STORM_GARETS_GRANDFATHER, 0);
     if (skipReply != 0) {
-      gFieldWork->message++;
+      gFieldState->message++;
     }
     // The rested strongman is all charged up; everyone turns to him.
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_CHARGED_UP_STRONGMAN,
@@ -1343,9 +1343,9 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_Get(ACTOR_STORM_GARET)->sprite->rotation = DEGtoANG(30);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_STORM_GARET), 0);
   {
-    struct FieldWork *work = gFieldWork;
+    struct FieldState *state = gFieldState;
 
-    work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   }
   Event_StartScreenTransition();
   Weather_ResumeLightning();
@@ -1385,7 +1385,7 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   wait(20);
   Weather_StopLightning();
   Event_Wait(40);
-  gFieldWork->transitionFrames = 120;
+  gFieldState->transitionFrames = 120;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Clear(FLAG_VALE_STORM);
@@ -1397,7 +1397,7 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
 /// as Isaac and Garet set out on the Wise One's quest.
 static void ValePlaza_DepartForQuest(void) {
   struct Actor *actor;
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 priorityFlags;
   const s32 *faceActions;
   const s32 *chaseActions;
@@ -1774,9 +1774,9 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_SetScript(ACTOR_GARET, departureActions);
   Event_Wait(60);
-  work = gFieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->transitionFrames = 60;
+  state = gFieldState;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state->transitionFrames = 60;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Actor_Stop(ACTOR_PARTY_LEADER);
@@ -1837,7 +1837,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
   struct Sprite *sprite;
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct FieldEffectState *effectState = gFieldEffectState;
   s32 i;
 
   Sound_Play(SE_PSYNERGY_SPARKLE);
@@ -1855,7 +1855,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
         Sprite_StartAnimation(sprite, 0);
         sprite->flags = 0;
         VramCache_FreeEntry(sprite->slot);
-        sprite->slot = effectWork->tileSlot;
+        sprite->slot = effectState->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
             (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;

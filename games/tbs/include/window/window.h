@@ -3,7 +3,7 @@
 
 /// @file
 /// Windows, the messages that type into them, and the window renderer's
-/// work.
+/// state.
 
 #include "edition.h"
 #include "fixed_math.h"
@@ -15,7 +15,7 @@
 #include "system/heap.h"
 #include "window/screens.h"
 
-/// Where the windows are drawn (WindowWork.battleMode).
+/// Where the windows are drawn (WindowState.battleMode).
 enum WindowBattleMode {
   WINDOW_FIELD = 0,  ///< on the field; the field setup clears the block
   WINDOW_BATTLE = 1, ///< in battle, from WindowSystem_InitBattle
@@ -64,7 +64,7 @@ struct Message {
   /// Japanese, after a space in the other editions.
   u16 spacing[4];
   u16 line;        ///< line of the page, indexes spacing; at most 3
-  u16 textIndex;   ///< next code in WindowWork.textBuffer
+  u16 textIndex;   ///< next code in WindowState.textBuffer
   u16 countdown;   ///< frames left of a pause, a page wait or a swell
   u16 colour;      ///< text colour; 15 by default
   u16 outline;     ///< outline colour; 0 for none
@@ -93,7 +93,7 @@ STATIC_ASSERT(offsetof(struct Message, flags) == 36);
 /// glyphs, icons and portraits together.
 enum { WINDOW_SPRITE_COUNT = 64 };
 
-/// WindowWork.portraitPictures of a free portrait slot, as Portrait_ClearSlots
+/// WindowState.portraitPictures of a free portrait slot, as Portrait_ClearSlots
 /// writes it.
 #define PORTRAIT_SLOT_EMPTY 999
 
@@ -101,12 +101,12 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 #define PORTRAIT_PALETTE 14
 
 /// The window tiles text is drawn into: TEXT_TILES from TEXT_TILE_FIRST, and
-/// with WindowWork.extraTextTiles as many more from TEXT_EXTRA_TILE_FIRST.
+/// with WindowState.extraTextTiles as many more from TEXT_EXTRA_TILE_FIRST.
 #define TEXT_TILE_FIRST 128
 #define TEXT_TILES 128
 #define TEXT_EXTRA_TILE_FIRST 512
 
-/// WindowWork.glyphResource when no glyph resource is loaded.
+/// WindowState.glyphResource when no glyph resource is loaded.
 #define NO_GLYPH_RESOURCE 99
 
 /// The last code the main font draws (gFont_Glyphs, from TEXT_SPACE) and the
@@ -116,12 +116,12 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 /// (gFont_KanjiGlyphs).
 #define KANJI_FIRST_CODE (TEXT_LAST_FONT_CODE + 1)
 
-/// The window system's work: the windows' tilemap, the windows, the three text
+/// The window system's state: the windows' tilemap, the windows, the three text
 /// messages, the 64 window sprites, and the decoded message and its arguments.
-struct WindowWork {
+struct WindowState {
   u16 tilemap[640]; ///< the windows' BG tilemap, 32 by 20 tiles
   struct Window windows[WINDOW_COUNT]; ///< 12 in Japanese, 8 in the others
-  struct Message messages[3];          ///< the messages, NULL work when free
+  struct Message messages[3]; ///< the messages, a NULL window when free
   struct WindowSprite sprites[WINDOW_SPRITE_COUNT];
   struct WindowSpriteList freeSprites; ///< the sprites not in any window
   /// Per text tile (tiles 128 to 255, then 512 to 639): bit 0 once allocated,
@@ -170,19 +170,19 @@ struct WindowWork {
   u8 spacingAfter;
 };
 
-/// Message_SetDecodeFlags' flags, which set WindowWork.haltingSpeech and
+/// Message_SetDecodeFlags' flags, which set WindowState.haltingSpeech and
 /// spacingAfter for the messages decoded next.
 enum MessageDecodeFlag {
   MESSAGE_DECODE_HALTING_SPEECH = 1, ///< a pause before each character
   MESSAGE_DECODE_SPACING_AFTER = 2   ///< a wide gap after some characters
 };
 
-/// The byte of WindowWork that Mind Read sets, for the scenes that read it
+/// The byte of WindowState that Mind Read sets, for the scenes that read it
 /// through a byte pointer.
-#define WINDOW_WORK_MIND_READ_OFFSET offsetof(struct WindowWork, mindRead)
+#define WINDOW_STATE_MIND_READ_OFFSET offsetof(struct WindowState, mindRead)
 
-/// The window renderer's work, heap slot HEAP_SLOT_WINDOW under its own name.
-#define gWindowWork (*(u8 *(*)[]) & gHeapSlots[HEAP_SLOT_WINDOW])
+/// The window renderer's state, heap slot HEAP_SLOT_WINDOW under its own name.
+#define gWindowState (*(u8 *(*)[]) & gHeapSlots[HEAP_SLOT_WINDOW])
 
 struct AbilityListEntry;
 struct BattleAction;
@@ -191,10 +191,10 @@ struct Window;
 struct WindowSprite;
 struct WindowSpriteList;
 struct SelectionNode;
-struct SelectionMenuWork;
+struct SelectionMenuState;
 struct MessageReader;
 struct Message;
-struct OptionMenuWork;
+struct OptionMenuState;
 
 /// The flags of a UI window (struct Window.flags), which Window_Create
 /// takes as its attributes.
@@ -223,13 +223,13 @@ enum {
 #define TEXT_CANVAS_FIRST_TILE 296
 
 /// The UI tilemap in VRAM (BG screen block 4), which WindowSystem_UploadTilemap
-/// copies the work block's tilemap to.
+/// copies the state block's tilemap to.
 #define WINDOW_TILEMAP_VRAM ((u8 *)0x06002000)
 
 /// The BG palette of the windows and their text, the UI palette.
 #define WINDOW_PALETTE 15
 
-// The window colour settings (MainRoutineWork.windowHue and windowBrightness),
+// The window colour settings (MainRoutineState.windowHue and windowBrightness),
 // which WindowColor_Apply turns into WINDOW_PALETTE's colours 4 to 10.
 #define WINDOW_COLOR_COUNT 24 ///< "Window color" takes 0 to 23
 /// "Window brightness" takes 0 to 14.
@@ -263,7 +263,7 @@ enum {
 #define TEXT_BACKGROUND_COLOR 14
 /// The BG palette that battle and the Djinn menu fill with the first basic
 /// sprite palette, its TEXT_BACKGROUND_COLOR the window background: the element
-/// icons and the coloured numbers are drawn in it (WindowWork.textPalette).
+/// icons and the coloured numbers are drawn in it (WindowState.textPalette).
 #define BASIC_COLORS_PALETTE 5
 
 /// Text colours (Text_SetColor), named as both the window palette (through
@@ -475,7 +475,7 @@ enum CenteredMessageMode {
 enum FieldMessageFlag {
   FIELD_MESSAGE_ZOOM = 1, ///< the window zooms open and shut
   FIELD_MESSAGE_WAITING_FOR_SOUND =
-      2,                            ///< the window work is busy while it shows
+      2,                            ///< the window state is busy while it shows
   FIELD_MESSAGE_KEEP_OPEN = 4,      ///< the window is left open
   FIELD_MESSAGE_LOWER = 8,          ///< 4 tiles below the top rows' centre
   FIELD_MESSAGE_HOLD_UPLOAD = 0x20, ///< the tilemap upload is held off
@@ -624,8 +624,8 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out);
 s32 Text_GetWideStringWidth(u16 *text);
 void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                  s32 y);
-void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *window,
-                                    s32 offsetX, s32 offsetY);
+void Text_DrawGlyphTileAtStateOffset(u16 *buffer, const struct Window *window,
+                                     s32 offsetX, s32 offsetY);
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 u32 Message_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
                               s32 plural, s32 *suffix);
@@ -684,7 +684,7 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
                                    s32 y);
 void Portrait_CloseWindow(u32 entry);
 
-#define WINDOW_WORK ((struct WindowWork *)gWindowWork[0])
+#define WINDOW_STATE ((struct WindowState *)gWindowState[0])
 
 /// The action id in a PsynergyEntry's encodedAction, below the marks for an
 /// action the class or an equipped item gave (PSYNERGY_ABILITY_MASK).
@@ -695,12 +695,12 @@ void Portrait_CloseWindow(u32 entry);
 /// returning its place and size in tiles. Returns 0 for an empty message.
 #define DEFINE_GET_RESOURCE_DIMENSIONS(name, flags)                            \
   s32 name(s32 no, s32 *x, s32 *y, u32 *width, u32 *height) {                  \
-    struct WindowWork *work;                                                   \
+    struct WindowState *state;                                                 \
     s32 idx;                                                                   \
                                                                                \
-    work = WINDOW_WORK;                                                        \
+    state = WINDOW_STATE;                                                      \
     idx = Message_Decode(no, 0);                                               \
-    if (work->textBuffer[idx] == 0) {                                          \
+    if (state->textBuffer[idx] == 0) {                                         \
       return 0;                                                                \
     }                                                                          \
     Window_FitOnScreen(idx, x, y, width, height, 0, flags);                    \
@@ -739,29 +739,29 @@ struct SelectionNode *SelectionMenu_FindFreeIcon(s32 kind);
 void SelectionMenu_StartDrawing(void);
 void SelectionMenu_StopDrawing(void);
 void SelectionMenu_Draw(void);
-void SelectionMenu_DrawArrow(struct SelectionMenuWork *state, s32 index);
+void SelectionMenu_DrawArrow(struct SelectionMenuState *state, s32 index);
 void SelectionMenu_OpenNameWindow(s32 mode, u32 count);
 void SelectionMenu_Close(void);
 void SelectionMenu_SetPosition(u32 first, u32 second);
 void Menu_SetupSelectionBothSides(void);
-void SelectionMenu_SetupArrow(struct SelectionMenuWork *state, s32 index);
+void SelectionMenu_SetupArrow(struct SelectionMenuState *state, s32 index);
 struct SelectionNode *
-SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen);
+SelectionMenu_GetCursorNode(struct SelectionMenuState *screen);
 s32 SelectionMenu_Run(s32 mode);
 u32 SelectionMenu_RunWithSounds(u32 mode);
-void Menu_MoveSelectionForward(struct SelectionMenuWork *screen);
-void Menu_MoveSelectionBackward(struct SelectionMenuWork *screen);
-void SelectionMenu_StepRight(struct SelectionMenuWork *state);
-void SelectionMenu_StepLeft(struct SelectionMenuWork *state);
-void SelectionMenu_RedrawIcon(struct SelectionMenuWork *state, u32 index);
-void SelectionMenu_HighlightIcon(struct SelectionMenuWork *state, u32 index);
-void Menu_ClearBattleHighlight(struct SelectionMenuWork *screen);
-void SelectionMenu_Scroll(struct SelectionMenuWork *screen, s32 forward);
+void Menu_MoveSelectionForward(struct SelectionMenuState *screen);
+void Menu_MoveSelectionBackward(struct SelectionMenuState *screen);
+void SelectionMenu_StepRight(struct SelectionMenuState *state);
+void SelectionMenu_StepLeft(struct SelectionMenuState *state);
+void SelectionMenu_RedrawIcon(struct SelectionMenuState *state, u32 index);
+void SelectionMenu_HighlightIcon(struct SelectionMenuState *state, u32 index);
+void Menu_ClearBattleHighlight(struct SelectionMenuState *screen);
+void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward);
 s32 Resource_LoadByMode(s32 mode, s32 value);
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option);
 void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                              s32 reuse);
-u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen);
+u32 Menu_ConfirmSelection(struct SelectionMenuState *screen);
 void MenuArrow_NoOpCallback(void);
 void MenuArrow_NoOpCallbackBank(void);
 void MenuArrow_NoOpCallbackA(void);
@@ -795,26 +795,26 @@ void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
                               const struct AbilityListEntry *entries);
 void Menu_RunSelectionHook(void);
 
-void Menu_AllocateSelectionWorkspace(void);
-void Menu_ReleaseSelectionWorkspace(void);
+void Menu_AllocateSelectionState(void);
+void Menu_ReleaseSelectionState(void);
 void SettingsMenu_ReservedNoOpA(void);
 void SettingsMenu_ReservedNoOpB(void);
 void SettingsMenu_ReservedNoOpC(void);
-void SettingsMenu_ResetEntries(struct OptionMenuWork *work);
-void WindowColor_CalculateTint(struct OptionMenuWork *work);
-void WindowColor_WritePalette(struct OptionMenuWork *work);
-u16 WindowColor_ScaleTint(struct OptionMenuWork *work, FIXED scale_r,
+void SettingsMenu_ResetEntries(struct OptionMenuState *state);
+void WindowColor_CalculateTint(struct OptionMenuState *state);
+void WindowColor_WritePalette(struct OptionMenuState *state);
+u16 WindowColor_ScaleTint(struct OptionMenuState *state, FIXED scale_r,
                           FIXED scale_g, FIXED scale_b);
 u16 Color_ScaleComponents(s16 *rgb, FIXED red_scale, FIXED green_scale,
                           FIXED blue_scale);
 void WindowColor_Apply(s32 phase, s32 brightness);
-void SettingsMenu_PreviousRow(struct OptionMenuWork *work);
-void SettingsMenu_NextRow(struct OptionMenuWork *work);
-void SettingsMenu_LowerSetting(struct OptionMenuWork *work);
-void SettingsMenu_RaiseSetting(struct OptionMenuWork *work);
+void SettingsMenu_PreviousRow(struct OptionMenuState *state);
+void SettingsMenu_NextRow(struct OptionMenuState *state);
+void SettingsMenu_LowerSetting(struct OptionMenuState *state);
+void SettingsMenu_RaiseSetting(struct OptionMenuState *state);
 void SettingsMenu_SelectionNoOp(void);
 void SettingsMenu_AnimateCursors(void);
-void SettingsMenu_InitializeWork(void);
+void SettingsMenu_InitializeState(void);
 void SettingsMenu_Release(void);
 struct Window *SettingsMenu_Open(void);
 s32 SettingsMenu_Run(void);

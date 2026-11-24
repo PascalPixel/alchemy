@@ -7,7 +7,7 @@
 /// Returns the placed actor drawn as SPRITE_FLOATING_PLATFORM nearest
 /// the leader, within FLOATING_PLATFORM_SEARCH_DISTANCE, or 0.
 s32 Actor_FindNearestFloatingPlatform(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   struct Actor **slot;
   struct Actor *origin;
   s32 nearestActorId = 0;
@@ -17,8 +17,9 @@ s32 Actor_FindNearestFloatingPlatform(void) {
   minDist = FLOATING_PLATFORM_SEARCH_DISTANCE;
   origin = Actor_GetById(ACTOR_PARTY_LEADER);
   actorId = ACTOR_FIRST_PLACED;
-  slot = &work->actors[ACTOR_FIRST_PLACED];
-  for (; actorId < sizeof(work->actors) / sizeof(work->actors[0]); actorId++) {
+  slot = &state->actors[ACTOR_FIRST_PLACED];
+  for (; actorId < sizeof(state->actors) / sizeof(state->actors[0]);
+       actorId++) {
     struct Actor *actor = *slot++;
     if (actor != NULL) {
       if (actor->sprite->entries[0]->animationId == SPRITE_FLOATING_PLATFORM) {

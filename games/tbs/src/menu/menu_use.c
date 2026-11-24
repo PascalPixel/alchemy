@@ -19,14 +19,14 @@ void Item_UseNoOpCallback(void) {}
 /// member when its action's range is ABILITY_RANGE_ALL: applies its action at
 /// its plain power (Ability_ApplyToTargets with fixedScale 1).
 s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   s32 useResult;
   s32 itemId;
   struct Unit *unit;
   struct ItemDefinition *item;
 
   unit = Unit_GetFar(memberId);
-  menu = gMenuWork;
+  menu = gMenuState;
   itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
   item = Item_GetDirectFar(itemId);
   useResult = Ability_ApplyToTargets(PSYNERGY_ABILITY_MASK & item->abilityId,
@@ -56,7 +56,7 @@ s32 Item_ReturnOne(void) { return 1; }
 s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                            s32 fixedScale) {
   struct AbilityDefinition *effect;
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   struct Unit *target;
   struct Unit *caster;
   s32 partyResultShown;
@@ -69,7 +69,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   s32 messageOffset;
 
   effect = Ability_Get(effectId);
-  menu = gMenuWork;
+  menu = gMenuState;
   changed = 0;
   messageOffset = 0;
   partyResultShown = 0;

@@ -44,7 +44,7 @@
 #define PROCNE_SWAY 32
 #define PROCNE_BOB 16
 
-/// Procne's particles in work->particles: the sparks that gather on it, the
+/// Procne's particles in state->particles: the sparks that gather on it, the
 /// ring of light each comet leaves, then one per comet.
 #define PROCNE_GATHERING_SPARKS 32
 #define PROCNE_RING PROCNE_GATHERING_SPARKS
@@ -77,7 +77,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   void **heap;
   void *canvas;
   struct BattleCamera *camera;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   BlitterPair draw;
   s32 frame;
   u8 *motes;
@@ -112,9 +112,10 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   heap = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = heap[0];
   camera = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_CAMERA);
-  work = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_EFFECT);
+  state =
+      HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_EFFECT);
   motes = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_SHEET);
-  work->args = args;
+  state->args = args;
 
   BattleEffect_StartCanvasLayer(0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -129,11 +130,11 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   resource = Resource_GetTableEntry(RESOURCE_WHIRLWIND_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   resource += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(resource, work->sheet);
+  Decompress_TaggedLz(resource, state->sheet);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       motes);
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   procne.x = toFIXED(128);
   procne.y = toFIXED(40);
@@ -141,8 +142,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   drift.y = 0;
 
   // Each target's place, for the whirlwind to turn it.
-  EFFECT_FOR_EACH_TARGET(index, work->args) {
-    battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
+  EFFECT_FOR_EACH_TARGET(index, state->args) {
+    battleObject = GetBattleObjectSlotFar(state->args->targets[index]);
     actor = battleObject->actor;
     home[index].x = actor->x.fixed;
     home[index].y = actor->z.fixed;
@@ -155,8 +156,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     actor->gravity = 0;
   }
 
-  for (index = 0; index != ARRAY_COUNT(work->particles); index++) {
-    point = &work->particles[index];
+  for (index = 0; index != ARRAY_COUNT(state->particles); index++) {
+    point = &state->particles[index];
     point->z = 120;
     point->y = 0;
     Random16(); // drawn and thrown away
@@ -189,9 +190,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
     // The targets, one every 16 frames, spiral in toward the centre and rise,
     // spinning faster; each strike flashes them.
-    EFFECT_FOR_EACH_TARGET(index, work->args) {
+    EFFECT_FOR_EACH_TARGET(index, state->args) {
       if (frame > index * 16) {
-        battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
+        battleObject = GetBattleObjectSlotFar(state->args->targets[index]);
         actor = battleObject->actor;
         actor->x.fixed = (radius[index] * Trig_Sin(heading[index])) >> 1;
         actor->z.fixed = (radius[index] * Trig_Cos(heading[index])) >> 1;
@@ -222,7 +223,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         for (slot = 0; slot != PROCNE_STRIKES; slot++) {
           if (frame == gProcne_Frames[slot]) {
             actor->velocityY = 0;
-            BattleEffect_TintBattler(work->args->targets[index],
+            BattleEffect_TintBattler(state->args->targets[index],
                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, index, 8);
           }
         }
@@ -239,8 +240,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       if (size > footHeight)
         size = footHeight;
       draw[0](canvas,
-              &work->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_PICTURE +
-                           (footHeight - size) * PROCNE_WHIRLWIND_WIDTH],
+              &state->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_PICTURE +
+                            (footHeight - size) * PROCNE_WHIRLWIND_WIDTH],
               32, 112 - size, width, size);
     }
 
@@ -249,21 +250,21 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       if (size > PROCNE_WHIRLWIND_HEIGHT)
         size = PROCNE_WHIRLWIND_HEIGHT;
       draw[0](canvas,
-              &work->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_PICTURE +
-                           (PROCNE_WHIRLWIND_HEIGHT - size) *
-                               PROCNE_WHIRLWIND_WIDTH],
+              &state->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_PICTURE +
+                            (PROCNE_WHIRLWIND_HEIGHT - size) *
+                                PROCNE_WHIRLWIND_WIDTH],
               32, 64 - size, width, size);
     }
 
     if (frame >= PROCNE_ARRIVAL_FRAME && frame < PROCNE_FRAMES) {
-      image = work->sheet + frame / 4 % 3 * PROCNE_WHIRLWIND_PICTURE;
+      image = state->sheet + frame / 4 % 3 * PROCNE_WHIRLWIND_PICTURE;
       draw[0](canvas, image, 8, 0, width, PROCNE_WHIRLWIND_HEIGHT);
       draw[0](canvas, image, 8, 64, width, PROCNE_WHIRLWIND_HEIGHT);
     }
 
     // The dust spirals in and up.
     if (frame < PROCNE_ARRIVAL_FRAME) {
-      point = work->particles;
+      point = state->particles;
       for (index = 0; index != PROCNE_DUST_MOTES; index++) {
         if (point[index].variant == 0) {
           world.x = point[index].z * Trig_Sin(point[index].velocityY);
@@ -274,7 +275,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           // DEAD: always true, as a mote restarts once past 48 pixels up and
           // climbs little more than 2 pixels a frame; the ROM keeps the test.
           if (point[index].y < toFIXED(64)) {
-            draw[0](canvas, work->sheet + PROCNE_DUST, screen.x - 12,
+            draw[0](canvas, state->sheet + PROCNE_DUST, screen.x - 12,
                     screen.y - 12, 16, 16);
           }
           if (point[index].z > 24)
@@ -307,21 +308,21 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                                RESOURCE_VIOLET_SKY_BACKDROP, 0);
       BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
                                   RESOURCE_VIOLET_SKY_BACKDROP, 8);
-      BattleEffect_SelectLivingTargets(work->args);
+      BattleEffect_SelectLivingTargets(state->args);
       BattleEffect_SpawnObjects(PROCNE_SPRITES, SPRITE_PROCNE, 2);
 
       resource = Resource_GetTableEntry(RESOURCE_VIOLET_COMET_SHEET);
       Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
       resource += SHEET_PALETTE_BYTES;
-      Decompress_TaggedLz(resource, work->sheet + PROCNE_COMET_PICTURES);
+      Decompress_TaggedLz(resource, state->sheet + PROCNE_COMET_PICTURES);
 
       for (index = 0; index != PROCNE_STRIKES * PROCNE_STRIKE_SPARK_ROWS;
            index++) {
         PARTICLES[index].variant = 0;
       }
 
-      EFFECT_FOR_EACH_TARGET(index, work->args) {
-        battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
+      EFFECT_FOR_EACH_TARGET(index, state->args) {
+        battleObject = GetBattleObjectSlotFar(state->args->targets[index]);
         actor = battleObject->actor;
         actor->y.fixed = INTtoFIXED((Random16() & 15) + 8);
       }
@@ -331,13 +332,13 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       for (index = 0; index != PROCNE_GATHERING_SPARKS; index++) {
         speed = Random16() & 127;
         angle = (Random16() & 0x7fff) + DEGtoANG(225) - 1;
-        work->particles[index].x = Trig_Sin(angle) * speed;
-        work->particles[index].y = Trig_Cos(angle) * speed;
-        work->particles[index].z = INTtoFIXED(Random16() % 200 - 100);
-        work->particles[index].variant = 0;
+        state->particles[index].x = Trig_Sin(angle) * speed;
+        state->particles[index].y = Trig_Cos(angle) * speed;
+        state->particles[index].z = INTtoFIXED(Random16() % 200 - 100);
+        state->particles[index].variant = 0;
       }
 
-      EFFECT_FOR_EACH_TARGET(index, work->args) {
+      EFFECT_FOR_EACH_TARGET(index, state->args) {
         radius[index] = PROCNE_CORE_RADIUS;
         spin[index] = PROCNE_SKY_SPIN;
       }
@@ -367,7 +368,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         place.x = INTtoFIXED(gProcne_GridX[index]) + procne.x + toFIXED(40);
         place.height = toFIXED(255) + index * toFIXED(64);
         place.y = INTtoFIXED(gProcne_GridY[index] + index * 64) + procne.y;
-        Actor_ApplyProjectedPlacementFar(work->sprites[index], &place, &scale,
+        Actor_ApplyProjectedPlacementFar(state->sprites[index], &place, &scale,
                                          0);
       }
 
@@ -390,7 +391,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             s32 yy;
             s32 zz;
 
-            point = &work->particles[index];
+            point = &state->particles[index];
             xx = (point->x >> 8) * (point->x >> 8);
             yy = (point->y >> 8) * (point->y >> 8);
             zz = (point->z >> 8) * (point->z >> 8);
@@ -480,7 +481,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         // The comets leave Procne one after another; each pushes it back
         // and shakes the screen.
         for (index = 0; index != PROCNE_STRIKES; index++) {
-          comet = &work->particles[index + PROCNE_COMET_PARTICLES];
+          comet = &state->particles[index + PROCNE_COMET_PARTICLES];
           launch = index * PROCNE_COMET_INTERVAL + PROCNE_COMET_FRAME;
           if (frame == launch) {
             comet->x = (FIXEDtoINT(procne.x) >> 1) + 32;
@@ -490,12 +491,12 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             comet->velocityY = FIXEDtoINT(procne.y) - 4;
 
             for (slot = 0; slot != PROCNE_RING_MOTES; slot++) {
-              work->particles[slot + PROCNE_RING].variant = 4;
+              state->particles[slot + PROCNE_RING].variant = 4;
             }
 
             drift.x = toFIXED(8);
             drift.y = -toFIXED(2);
-            work->shakeFrames = 8;
+            state->shakeFrames = 8;
           }
 
           if (frame >= launch) {
@@ -505,7 +506,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             picture = (frame - launch) / 2;
             if (picture > 2)
               picture = 2;
-            draw[1](canvas, work->sheet + gProcne_Pictures[picture], comet->x,
+            draw[1](canvas, state->sheet + gProcne_Pictures[picture], comet->x,
                     comet->y - gProcne_PictureBiasY[picture],
                     gProcne_PictureWidths[picture],
                     gProcne_PictureHeights[picture]);
@@ -517,7 +518,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               Matrix_RotateZ(-DEGtoANG(11.25));
               Matrix_RotateY(-DEGtoANG(22.5));
 
-              spark = &work->particles[PROCNE_RING];
+              spark = &state->particles[PROCNE_RING];
               for (slot = 0; slot != PROCNE_RING_MOTES; slot++) {
                 struct Particle *mote;
 
@@ -531,10 +532,10 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                 Projection_Point(&world.x, &screen);
                 screen.x =
                     (FIXEDtoINT(screen.x) >> 1) +
-                    work->particles[index + PROCNE_COMET_PARTICLES].velocityX;
+                    state->particles[index + PROCNE_COMET_PARTICLES].velocityX;
                 screen.y =
                     FIXEDtoINT(screen.y) +
-                    work->particles[index + PROCNE_COMET_PARTICLES].velocityY;
+                    state->particles[index + PROCNE_COMET_PARTICLES].velocityY;
                 screen.depth = FIXEDtoINT(screen.depth);
                 CLAMP(screen.depth, PROCNE_DEPTH_NEAR, PROCNE_DEPTH_FAR);
                 moteSize = PROCNE_SPARK_SIZE(screen.depth, 3);
@@ -547,16 +548,16 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       }
     }
 
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
   // Put the targets back.
-  EFFECT_FOR_EACH_TARGET(index, work->args) {
+  EFFECT_FOR_EACH_TARGET(index, state->args) {
     struct Actor *actor;
 
-    battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
+    battleObject = GetBattleObjectSlotFar(state->args->targets[index]);
     actor = battleObject->actor;
     actor->x.fixed = home[index].x;
     actor->z.fixed = home[index].y;
@@ -568,7 +569,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   BattleEffect_SetupBlendedDisplay();
 
   for (index = 0; index != PROCNE_SPRITES; index++) {
-    Sprite_DestroyFar(work->sprites[index]);
+    Sprite_DestroyFar(state->sprites[index]);
   }
 
   EFFECT_FINISH_CANVAS();

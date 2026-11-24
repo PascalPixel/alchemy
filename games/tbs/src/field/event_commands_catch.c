@@ -13,9 +13,9 @@ void FieldPsynergy_CatchOnTarget(s32 unused) { FieldPsynergy_Catch(); }
 /// and presses down 20 pixels, taking what it caught off the map, then rises
 /// 19.5 pixels and shrinks back into the caster.
 void FieldPsynergy_Catch(void) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *caster = effectWork->mainActor;
-  struct Actor *caught = effectWork->child;
+  struct FieldEffectState *effectState = gFieldEffectState;
+  struct Actor *caster = effectState->mainActor;
+  struct Actor *caught = effectState->child;
   struct Actor *hand;
   struct Point spawn;
   struct Point origin;
@@ -27,19 +27,19 @@ void FieldPsynergy_Catch(void) {
   origin.x = caster->x.fixed;
   origin.y = caster->y.fixed + toFIXED(16);
   origin.z = caster->z.fixed;
-  if (effectWork->enabled) {
+  if (effectState->enabled) {
     target.x = caster->x.fixed;
     target.y = caster->y.fixed + toFIXED(32);
     target.z = caster->z.fixed;
-    Vector_AddPolarOffset(toFIXED(32), effectWork->angle, &target.x);
+    Vector_AddPolarOffset(toFIXED(32), effectState->angle, &target.x);
   } else {
-    target.x = effectWork->x;
-    target.y = effectWork->y + toFIXED(32);
-    target.z = effectWork->z;
+    target.x = effectState->x;
+    target.y = effectState->y + toFIXED(32);
+    target.z = effectState->z;
   }
-  spawn.x = effectWork->x;
-  spawn.y = effectWork->y + toFIXED(32);
-  spawn.z = effectWork->z;
+  spawn.x = effectState->x;
+  spawn.y = effectState->y + toFIXED(32);
+  spawn.z = effectState->z;
   hand = Actor_Spawn(SPRITE_MOVE_HAND, spawn.x, spawn.y, spawn.z);
   if (hand == NULL)
     return;

@@ -14,8 +14,8 @@ enum ItemDisplayFlag {
 /// a treasure spot's centre is moved 20 pixels from that centre, in the
 /// direction it stood, and loses its move target.
 void TreasureSpot_MoveLeaderAway(void) {
-  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  struct TreasureSpot *marker = gFieldWork->treasureSpots;
+  struct Actor *leader = Actor_Lookup(gMainRoutineState.leaderActorId);
+  struct TreasureSpot *marker = gFieldState->treasureSpots;
   s32 markerIndex = 0;
   FIXED x;
   FIXED z;
@@ -98,10 +98,10 @@ void ItemDisplay_EmitSparkles(struct Actor *emitter) {
 struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   struct Actor *picture;
 
-  s32 work = (s32)gFieldWork;
-  u32 actorOffset = (actorId * 4) + offsetof(struct FieldWork, actors);
+  s32 state = (s32)gFieldState;
+  u32 actorOffset = (actorId * 4) + offsetof(struct FieldState, actors);
 
-  s32 source = (s32)*(struct Actor **)(work + actorOffset);
+  s32 source = (s32)*(struct Actor **)(state + actorOffset);
   union PolarOffsetPosition picturePosition;
   FIXED pictureX;
 
@@ -117,12 +117,12 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   // source now holds the cell's z, no longer the actor.
   source = (picturePosition.vector.z & FIELD_CELL_MASK) + toFIXED(8);
 
-  if (((struct FieldWork *)work)->revealActive != 0) {
+  if (((struct FieldState *)state)->revealActive != 0) {
     // Stop both the marker emitters and the sparkle actors they already made.
     struct Actor *effect = gActors;
 
-    // work now counts the actors left.
-    work = ACTOR_COUNT - 1;
+    // state now counts the actors left.
+    state = ACTOR_COUNT - 1;
 
     do {
       if (effect->script != 0) {
@@ -133,9 +133,9 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
           Actor_ReleaseFar(effect);
         }
       }
-      work--;
+      state--;
       effect++;
-    } while (work >= 0);
+    } while (state >= 0);
   }
 
   wait(3);
@@ -190,7 +190,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   if (actor == 0)
     return;
 
-  leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  leader = Actor_Lookup(gMainRoutineState.leaderActorId);
   // Up to 2 pixels a frame, gaining 1 a frame, in free flight: no motion
   // flags, so it neither falls nor follows the ground.
   actor->acceleration = toFIXED(1);
@@ -212,7 +212,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
   void *leader;
 
   if (object != NULL) {
-    leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
+    leader = Actor_Lookup(gMainRoutineState.leaderActorId);
     if (flags & ITEM_DISPLAY_SPARKLES) {
       Actor_SetSpriteFlagsFar(object, 0);
       Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
@@ -237,7 +237,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// with sparkles (ITEM_DISPLAY_SPARKLES) or held up as a found item
 /// (ITEM_DISPLAY_RAISED).
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
-  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gMainRoutineState.leaderActorId);
   void *iconBuffer =
       HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   struct Actor *actor =
@@ -275,7 +275,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 
 /// While Reveal is active, releases all its sparkles, leaving its marks.
 void FieldEffect_ReleaseRevealSparkles(void) {
-  if (gFieldWork->revealActive != 0) {
+  if (gFieldState->revealActive != 0) {
     struct Actor *effect = gActors;
     s32 remainingActors = ACTOR_COUNT - 1;
 
@@ -301,7 +301,7 @@ void Reveal_EmitSparkles(struct Actor *actor) {
   u32 randomRadius;
 
 #if TBS_PATCH_2
-  if (gFieldWork->menuOpen != 0)
+  if (gFieldState->menuOpen != 0)
     return;
 #endif
   if ((100 * Random16() >> 16) > 9)
@@ -321,10 +321,10 @@ void Reveal_EmitSparkles(struct Actor *actor) {
 s32 Field_IsRevealActive(struct Actor *interpreter) {
   s16 revealState;
   u32 isActive = 0;
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
-  if (work != NULL) {
-    revealState = work->revealActive;
+  if (state != NULL) {
+    revealState = state->revealActive;
     isActive = (0 - revealState) | revealState;
     isActive >>= 31;
   }
@@ -347,8 +347,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
 
   // The layout's treasure spots: (column, row, id) triples, ended by
   // TREASURE_SPOT_LIST_END twice, as Field_PlaceTreasureSpots reads them.
-  markerData = ((struct MapGridScrollWork *)gMapGridWork[0])->markers;
-  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  markerData = ((struct MapGridScrollState *)gMapGridState[0])->markers;
+  actor = Actor_Lookup(gMainRoutineState.leaderActorId);
   leaderColumn = FIELD_CELL(actor->x.fixed);
   leaderRow = FIELD_CELL(actor->z.fixed);
   if (markerData != 0) {

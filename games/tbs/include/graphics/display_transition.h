@@ -42,11 +42,11 @@ struct ScreenTransitionDissolveState {
   s8 step;     ///< frames
 };
 
-/// The map grid work as a transition reads it: the display control bits the
+/// The map grid state as a transition reads it: the display control bits the
 /// scene shows, and the two lines where the centre-line transition blanks the
 /// screen and shows it again, with the HBlank interrupt's copies of them.
 struct ScreenTransitionWin {
-  /// The map grid work's view, shake and script (WorldMapView's); no
+  /// The map grid state's view, shake and script (WorldMapView's); no
   /// transition reads them.
   ///@{
   s32 *origin;
@@ -56,7 +56,7 @@ struct ScreenTransitionWin {
   /// Display control bits ORed into DISPCNT; ScreenTransition_HideBackgrounds
   /// clears those of backgrounds 1 to 3.
   u16 dispcnt;
-  /// The map grid work's fields from fadeStep to its window rows
+  /// The map grid state's fields from fadeStep to its window rows
   /// (WorldMapView's); no transition reads them.
   u8 viewState[234];
   /// Scanlines: where the screen goes blank, below the screen

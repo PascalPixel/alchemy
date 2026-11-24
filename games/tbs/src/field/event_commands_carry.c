@@ -15,7 +15,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   struct Actor *fragment;
   u32 radius;
 
-  liftedActor = ((struct FieldEffectWork *)gFieldEffectWork)->child;
+  liftedActor = ((struct FieldEffectState *)gFieldEffectState)->child;
   position.x = liftedActor->x.fixed;
   position.y = liftedActor->y.fixed - Random16() * 16 + toFIXED(24);
   position.z = liftedActor->z.fixed;
@@ -49,7 +49,7 @@ FieldEffect_CheckRaisedTargetCollision(struct Actor *target,
 /// ground; the d-pad moves it 16 pixels at a time and A, B, L or R drops it
 /// where it is.
 void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Actor *caster;
   struct Actor *target;
   struct Actor *sparkles[CARRY_SPARKLE_COUNT];
@@ -61,9 +61,9 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   s32 angle;
   FIXED dist;
 
-  effectWork = gFieldEffectWork;
-  caster = effectWork->mainActor;
-  target = effectWork->child;
+  effectState = gFieldEffectState;
+  caster = effectState->mainActor;
+  target = effectState->child;
   if (target == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
@@ -72,7 +72,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
 
   // The hands appear 32 pixels to either side and move to 16 pixels: the east
   // one, hands[0], is held in actor until the sparkles.
-  SET_POSITION(&pos, effectWork->x, effectWork->y + toFIXED(16), effectWork->z);
+  SET_POSITION(&pos, effectState->x, effectState->y + toFIXED(16),
+               effectState->z);
   actor = FieldEffect_SpawnCarryHand(pos.x + toFIXED(32), pos.y, pos.z,
                                      FACING_WEST);
   hands[0] = actor;
@@ -236,16 +237,16 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   // Restore the target's look and motion, and throw it up at 10 pixels a
   // frame: it falls and follows the ground again, keeping 0.2 of its speed
   // as it bounces, and reads its ground from the ground layer.
-  Actor_SetSpriteColorModeFar(target, effectWork->savedPalette);
-  Actor_StartScriptFar(target, effectWork->savedScript);
-  target->update = effectWork->savedCallback;
+  Actor_SetSpriteColorModeFar(target, effectState->savedPalette);
+  Actor_StartScriptFar(target, effectState->savedScript);
+  target->update = effectState->savedCallback;
   target->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   target->velocityY = toFIXED(10);
   target->bounce = FIXED_ONE / 5;
   target->layer = MAPGRID_LAYER_GROUND;
   caster->update = 0;
   Actor_SetSpriteColorModeFar(caster, SPRITE_COLOR_NORMAL);
-  if (effectWork->childOption != 0) {
+  if (effectState->childOption != 0) {
     // Wait for it to rise and land (at most 90 frames each), then a ring.
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
       wait(1);

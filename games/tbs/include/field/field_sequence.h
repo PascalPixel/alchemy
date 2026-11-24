@@ -17,11 +17,11 @@ struct Trigger;
 struct Vector3;
 struct ActorPlacement;
 
-/// The exit request whose destination is already in gMainRoutineWork.next and
+/// The exit request whose destination is already in gMainRoutineState.next and
 /// .entrance, so that Scene_TakeExit leaves them as they are.
 #define EXIT_KEEP_DESTINATION 999
 
-/// gMainRoutineWork.movementMode: how the field sequence hands the party
+/// gMainRoutineState.movementMode: how the field sequence hands the party
 /// leader back to the player (FieldSequence_Run).
 enum LeaderMovementMode {
   /// Walking: the pad moves the leader, on the World Map or a layered map.
@@ -144,8 +144,8 @@ void FieldPsynergy_Carry(void);
 /// open it..." (MsgCantOpenIt).
 #define FIND_CHEST_LOCKED 0x10000
 
-/// A field Psynergy or item use, packed into one value, as FieldWork.psynergy
-/// and FieldWork.item hold it. bits: 13..10 the user (13 is ACT_PACKED) | 9..0
+/// A field Psynergy or item use, packed into one value, as FieldState.psynergy
+/// and FieldState.item hold it. bits: 13..10 the user (13 is ACT_PACKED) | 9..0
 /// the Psynergy or item.
 #define ACT_ID_MASK 0x3ff                 ///< bits 9..0
 #define ACT_UNIT_SHIFT 10                 ///< bits 13..10
@@ -177,7 +177,7 @@ void FieldPsynergy_Carry(void);
 #define FIELD_CELL_CENTER(cell) (FIELD_CELL_ORIGIN(cell) + toFIXED(8))
 
 /// The frames the leader pushes against a step trigger, a ledge, a gap or a
-/// wall before it runs, jumps or climbs (FieldWork.blockedSteps).
+/// wall before it runs, jumps or climbs (FieldState.blockedSteps).
 #define FIELD_PUSH_FRAMES 12
 
 //--------------------------------------------------------------------------

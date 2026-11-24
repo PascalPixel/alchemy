@@ -75,7 +75,7 @@
 #include "scene/import.h"
 #include "sound/sound.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -291,7 +291,7 @@ static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *carrier) {
   }
   // riseCounter counts the frames he has stood there.
   if (near && carrier->riseCounter > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
-    gFieldWork->raisedTrigger = RAISED_CARRIER_BLOCKED;
+    gFieldState->raisedTrigger = RAISED_CARRIER_BLOCKED;
     carrier->riseCounter = 0;
   }
   Xian_StopCarrierBeforeLeader(carrier, leader, 18, near);
@@ -365,7 +365,7 @@ static void Xian_TalkToWaterCarrier(void) {
     Event_Wait(10);
     Event_SetMessageId(MsgXianNowMustGetWaterAgain);
     if (GameFlag_Get(FLAG_XIAN_WATER_SPILLED) == 0) {
-      gFieldWork->message++;
+      gFieldState->message++;
       // "Do not speak to me. I might spill my water."
       Event_ShowMessage(ACTOR_WOMAN_CARRYING_WATER, 0);
       Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->timer = 0;
@@ -669,18 +669,18 @@ static void Xian_WalkThroughExit(s32 exitNumber) {
   } else {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   }
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(exitNumber);
 }
 
 /// Walking north into one of Xian's doors opens it with a creak, or the
 /// Sanctum's sliding door with a thump, and the party goes in.
 static void Xian_OpenDoorAndLeave(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
   Event_Start();
 
-  switch (work->stepTrigger) {
+  switch (state->stepTrigger) {
   case XIAN_TO_HOUSE:
     Sound_Play(SE_DOOR_OPEN);
     MapGrid_PlayMapEdit(gXian_HouseDoorOpens, 81, 18);
@@ -713,7 +713,7 @@ static void Xian_OpenDoorAndLeave(void) {
     break;
   }
 
-  Xian_WalkThroughExit(work->stepTrigger);
+  Xian_WalkThroughExit(state->stepTrigger);
   Event_End();
 }
 
@@ -745,7 +745,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   Event_Wait(10);
   Event_SetMessageId(MsgXianWhaWhaHappened);
   if (Event_GetFlag(FLAG_XIAN_TREE_JUMPED)) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_ShowMessage(ACTOR_KUNG_FU_STUDENT, 0);
   GameFlag_Set(FLAG_XIAN_TREE_JUMPED);
@@ -790,12 +790,12 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   u32 crateIndex;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Scene_QueueMusic(SE_AMBIENT_WIND);
   // Back from the school (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the
   // Sanctum (XIAN_FROM_SANCTUM_WEST), the last two entrances, the name
   // is not shown.
-  if (gMainRoutineWork.entrance >= XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+  if (gMainRoutineState.entrance >= XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {

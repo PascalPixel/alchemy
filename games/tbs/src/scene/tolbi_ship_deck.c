@@ -91,7 +91,7 @@
 #include "scene/tolbi_ship.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "window/screens.h"
 #include "window/window.h"
@@ -836,12 +836,12 @@ static void TolbiShipDeck_OpenSecondDoor(void) {
 /// Each cell's behaviour is its exit's number, which the trigger rows name.
 static void TolbiShipDeck_GoBelow(void) {
   s32 throughDoor;
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   throughDoor = 0;
-  switch (work->stepTrigger) {
+  switch (state->stepTrigger) {
   case TOLBI_SHIP_DECK_TO_SHIP_ROOMS_PASSENGER_HOLD:
     throughDoor = 1;
     TolbiShipDeck_OpenFirstDoor();
@@ -858,7 +858,7 @@ static void TolbiShipDeck_GoBelow(void) {
   } else {
     Sound_Play(SE_MAP_EXIT);
   }
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
 }
 
 #if TBS_PATCH_2
@@ -1133,11 +1133,11 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
 /// (TolbiShipDeck_ApplyEntryState).
 s32 Scene_Initialize(void) {
   struct MapGridLayerScroll *sea =
-      &((struct MapGridScrollWork *)gMapGridWork[0])
+      &((struct MapGridScrollState *)gMapGridState[0])
            ->layers[MAPGRID_LAYER_GROUND];
 
   GameFlag_Clear(FLAG_WORLD_MAP_LEFT);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   sea->speedY = 0;
   sRockAngleX = (u16)Random_Next();
@@ -1186,7 +1186,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWING) == 0) {
     TolbiShipDeck_RestOars();
   }
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST:
     Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority = 1;
     break;
@@ -1232,7 +1232,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     return;
   }
   if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-    ((struct MapGridScrollWork *)gMapGridWork[0])->minX = toFIXED(65);
+    ((struct MapGridScrollState *)gMapGridState[0])->minX = toFIXED(65);
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     TolbiShipDeck_SetUpAtAnchor();
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
@@ -1349,7 +1349,7 @@ static void TolbiShipDeck_SetUpAfterKraken(void) {
 /// At anchor off the island, the crew stand where they were left, by whether
 /// the party has agreed to scout the island.
 static void TolbiShipDeck_SetUpAtAnchor(void) {
-  ((struct MapGridScrollWork *)gMapGridWork[0])->minX = toFIXED(65);
+  ((struct MapGridScrollState *)gMapGridState[0])->minX = toFIXED(65);
   Event_Start();
   Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_KrakenActorPlacements);
@@ -1368,7 +1368,7 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
     Actor_SetPosition(ACTOR_SEA_OURANOS, 166, 668);
     Actor_Get(ACTOR_SEA_OURANOS)->facing = FACING_NORTH_NORTHWEST;
   }
-  if (gMainRoutineWork.entrance == TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) {
+  if (gMainRoutineState.entrance == TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) {
     TolbiShipDeck_ReturnFromIsland();
   }
   Event_End();
@@ -1433,7 +1433,7 @@ static void TolbiShipDeck_DepartWithParty(void) {
 /// Ready!`.
 static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
                                                     s32 crewMember) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -1453,7 +1453,7 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
   Event_SetMessageId(MsgTolbiShipPreparationsReady);
   // "Preparations... Ready!"
   Event_ShowMessageThenWait(crewMember, 0, 20);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1469,7 +1469,7 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
   wait(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1506,7 +1506,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   Actor_SetPosition(ACTOR_SEA_OURANOS, 248, 728);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_SEA_OURANOS, 1.6);
@@ -1608,7 +1608,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Actor_SetScript(ACTOR_SEA_FIRST_HOVERING_MONSTER + 3,
                   gTolbiShipDeck_HoverAndDiveAtOuranosActions);
   Actor_SetPosition(ACTOR_SEA_KAJA, 0, 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1718,7 +1718,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Actor_SetSpriteColorById(ACTOR_SEA_THIRD_ATTACK_MONSTER, SPRITE_COLOR_BGR);
   Actor_SetSpriteColorById(ACTOR_SEA_THIRD_ATTACK_MONSTER + 1,
                            SPRITE_COLOR_BGR);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1803,7 +1803,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_OURANOS), 0);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_SOUTH;
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1893,8 +1893,8 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_WalkTo(ACTOR_IVAN, 248, 564);
   Actor_WalkTo(ACTOR_MIA, 248, 564);
   Event_Wait(20);
-  gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
-  gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+  gMainRoutineState.restartScene = SCENE_SHIP_ROOMS;
+  gMainRoutineState.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Event_SetAfterBattleDestination(
       SCENE_TOLBI_SHIP_DECK, TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE);
@@ -1917,7 +1917,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Actor_Get(ACTOR_SEA_OURANOS)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
   Actor_SetSpeed(ACTOR_SEA_OURANOS, 0.8);
   Actor_SetScript(ACTOR_SEA_OURANOS, gTolbiShipDeck_OuranosPatrolsActions);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -1947,7 +1947,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Event_Wait(10);
   Actor_WalkToAndWait(ACTOR_SEA_KAJA, 216, 580);
   Actor_SetPosition(ACTOR_SEA_KAJA, 0, 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Set(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED);
   GameFlag_Clear(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK);
@@ -1970,13 +1970,13 @@ static void TolbiShipDeck_SightLand(void) {
   Actor_SetSpritePriority(ACTOR_SEA_OURANOS, 1);
   Actor_SetPosition(ACTOR_SEA_OURANOS, 184, 632);
   Actor_Get(ACTOR_SEA_OURANOS)->facing = FACING_NORTH_NORTHWEST;
-  // UB: the field work's pointer is read through a u32 lvalue, which keeps
+  // UB: the field state's pointer is read through a u32 lvalue, which keeps
   // the facing store ahead of its load; UBFIX reads it as declared.
 #ifdef UBFIX
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 #else
-  ((struct FieldWork *)*(u32 *)&gFieldWork)->transition =
+  ((struct FieldState *)*(u32 *)&gFieldState)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 #endif
   Event_StartScreenTransition();
@@ -2220,7 +2220,7 @@ static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
 
 /// The task that rocks the deck while under sail.
 static void TolbiShipDeck_RockDeck(void) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   s32 *origin = grid->origin;
   FIXED dx = Trig_Cos(sRockAngleX);
   FIXED dy = Trig_Sin(sRockAngleY);
@@ -2561,7 +2561,7 @@ static void TolbiShipDeck_SightIsland(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   wait(1);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2749,7 +2749,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
     Event_End();
     return;
   }
-  gFieldWork->message++;
+  gFieldState->message++;
   // "Well... Did you see any monsters out there?"
   // Yes: "...I see. Then we can't let the tourists go ashore after all?"
   // No: "If there aren't any monsters, I guess we can let the tourists out!"
@@ -2822,7 +2822,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   TolbiShipDeck_Turn(ACTOR_PARTY_LEADER, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

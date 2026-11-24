@@ -2,7 +2,7 @@
 #define ALCHEMY_LUCKY_WHEELS_LZPACK_H
 
 /// @file
-/// The LZ packer's work: hash chains over a 1024-byte window, one chain per
+/// The LZ packer's state: hash chains over a 1024-byte window, one chain per
 /// byte value, and the output it is building.
 
 #include "edition.h"
@@ -18,9 +18,9 @@ struct LzPackNode {
   s32 slot;      ///< its window position, 0 to 1023
 };
 
-/// The LZ packer's work: a node per window position, a chain head per byte
+/// The LZ packer's state: a node per window position, a chain head per byte
 /// value, the byte at each position, the best match and the output.
-struct LzPackWork {
+struct LzPackState {
   struct LzPackNode nodes[1024];  ///< one per window position
   struct LzPackNode *bucket[256]; ///< each byte value's chain, or null
   s32 flagMask;                   ///< the flag bit of the next item, 0x80 first
@@ -37,13 +37,14 @@ struct LzPackWork {
 };
 
 STATIC_ASSERT(sizeof(struct LzPackNode) == 12);
-STATIC_ASSERT(sizeof(struct LzPackWork) == 17476);
-STATIC_ASSERT(offsetof(struct LzPackWork, bucket) == 12288);
-STATIC_ASSERT(offsetof(struct LzPackWork, inputCursor) == 17464);
+STATIC_ASSERT(sizeof(struct LzPackState) == 17476);
+STATIC_ASSERT(offsetof(struct LzPackState, bucket) == 12288);
+STATIC_ASSERT(offsetof(struct LzPackState, inputCursor) == 17464);
 
-/// The packer has no cell of its own for its work pointer: it borrows the flash
-/// library's, which IdentifyFlash sets again before the flash code reads it.
-extern struct LzPackWork *gWaitForFlashWrite;
-#define gLzPackWork gWaitForFlashWrite
+/// The packer has no cell of its own for its state pointer: it borrows the
+/// flash library's, which IdentifyFlash sets again before the flash code reads
+/// it.
+extern struct LzPackState *gWaitForFlashWrite;
+#define gLzPackState gWaitForFlashWrite
 
 #endif

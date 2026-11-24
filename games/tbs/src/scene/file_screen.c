@@ -259,9 +259,9 @@ static void FileScreen_LoadBackground(void) {
     scroll++;
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-  ((struct MapGridScrollWork *)gMapGridWork[0])->flags =
+  ((struct MapGridScrollState *)gMapGridState[0])->flags =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+  Actor_Get(gMainRoutineState.leaderActorId)->motionFlags = 0;
 }
 
 /// The task that fades BG0 and the sprites in over the logo, a step of the
@@ -409,10 +409,10 @@ static s32 FileScreen_IsRetreatBlocked(void) {
   if (GameFlag_Get(FLAG_RETREAT_BLOCKED) == 0) {
     return 0;
   }
-  if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN) {
+  if (gMainRoutineState.sceneType == SCENE_TYPE_TOWN) {
     return 0;
   }
-  mapDifference = gMainRoutineWork.next ^ SCENE_WORLD_MAP;
+  mapDifference = gMainRoutineState.next ^ SCENE_WORLD_MAP;
   return -NONZERO(mapDifference);
 }
 
@@ -466,13 +466,13 @@ s32 Scene_Initialize(void) {
   blendStarted = 0;
   FileScreen_LoadBackground();
   Task_AddFrame(FileScreen_CheckButtonCodes, TASK_PASS_FRAME);
-  gFieldWork->transition = 0;
+  gFieldState->transition = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   // FILE_SCREEN_FROM_TITLE, after the credits (the title): save the cleared
   // game, then WORLD_MAP_FROM_FILE_SCREEN. Cancelling the file choice asks
   // again.
-  if (gMainRoutineWork.entrance == FILE_SCREEN_FROM_TITLE) {
+  if (gMainRoutineState.entrance == FILE_SCREEN_FROM_TITLE) {
   ask_to_save:
     // "Save your adventure?"
     FieldMessage_Show(MsgSaveAdventureQuestion,
@@ -484,7 +484,7 @@ s32 Scene_Initialize(void) {
       FieldMessage_Show(MsgSaveAdventureQuestion + 1, FIELD_MESSAGE_ZOOM);
       // Marks the file cleared (SaveFileSummary's sendFlag): its data can be
       // sent, and the message says it cannot be continued.
-      gMainRoutineWork.sendFlag = 1;
+      gMainRoutineState.sendFlag = 1;
       index = Save_ToChosenFile();
       if (index == -1) {
         goto ask_to_save;
@@ -503,7 +503,7 @@ menu_top:;
   // No backup memory: in debug mode, say so and turn idle sleep on.
   if (result < 0) {
     if (gDebugMode != 0) {
-      gMainRoutineWork.idleSleepEnabled = 1;
+      gMainRoutineState.idleSleepEnabled = 1;
       gIdleSleepEnabled = 1;
       // "Unable to detect backup memory."
       FieldMessage_ShowCentered(MsgNoBackupMemory, CENTERED_MESSAGE_WINDOW, 8);
@@ -529,9 +529,9 @@ menu_top:;
     // Hidden button codes expand the list of names offered for a new game:
     // Isaac alone, with the first code to Mia, with the second to Sheba. B on
     // the first name goes back to the menu.
-    MainRoutineWork_InitializeDefaults();
-    WindowColor_Apply(gMainRoutineWork.windowHue,
-                      gMainRoutineWork.windowBrightness);
+    MainRoutineState_InitializeDefaults();
+    WindowColor_Apply(gMainRoutineState.windowHue,
+                      gMainRoutineState.windowBrightness);
     limit = ISAAC + 1;
     index = ISAAC;
     for (;;) {
@@ -555,19 +555,19 @@ menu_top:;
       }
     }
     Party_StartChildhood();
-    gMainRoutineWork.next = SCENE_COTTAGE_ROOMS_B;
-    gMainRoutineWork.entrance = COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST;
+    gMainRoutineState.next = SCENE_COTTAGE_ROOMS_B;
+    gMainRoutineState.entrance = COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST;
     goto leave;
   }
   if (result == SAVE_ACTION_CONTINUE) {
-    struct MainRoutineWork *state;
+    struct MainRoutineState *state;
 
     result = Save_ChooseAndLoadFile(1);
     if (result == -1) {
       goto menu_top;
     }
     Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
-    state = &gMainRoutineWork;
+    state = &gMainRoutineState;
     WindowColor_Apply(state->windowHue, state->windowBrightness);
     if (state->buildStamp != BuildStamp_GetTime()) {
       state->next = state->restartScene;
@@ -629,7 +629,7 @@ menu_top:;
     if (result == -1) {
       goto menu_top;
     }
-    gMainRoutineWork.leaderActorId = 0;
+    gMainRoutineState.leaderActorId = 0;
     if (Event_GetFlag(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
       Party_RemoveMember(ISAAC);
@@ -641,8 +641,8 @@ menu_top:;
       Party_AddMember(IVAN);
       Party_AddMember(MIA);
     }
-    WindowColor_Apply(gMainRoutineWork.windowHue,
-                      gMainRoutineWork.windowBrightness);
+    WindowColor_Apply(gMainRoutineState.windowHue,
+                      gMainRoutineState.windowBrightness);
     GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
     GameFlag_Clear(FLAG_MENU_OPEN);
     GameFlag_Set(FLAG_IN_BATTLE_ARENA);
@@ -658,8 +658,8 @@ menu_top:;
     if (result == -1) {
       goto menu_top;
     }
-    WindowColor_Apply(gMainRoutineWork.windowHue,
-                      gMainRoutineWork.windowBrightness);
+    WindowColor_Apply(gMainRoutineState.windowHue,
+                      gMainRoutineState.windowBrightness);
   link_select:;
     result = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_TRANSFER_METHOD);
     if (result == -1) {
@@ -888,7 +888,7 @@ menu_top:;
                                    -1, TILEMAP_ENTRY_PLAIN);
             Window_SetTilemapEntry(pageWindow, PAGE_ARROW_RIGHT, 18, -1,
                                    TILEMAP_ENTRY_PLAIN);
-            Window_MarkTilemapRow((struct WindowWork *)gWindowWork[0],
+            Window_MarkTilemapRow((struct WindowState *)gWindowState[0],
                                   pageWindow->y);
           }
           // The page's symbols, each row split into two groups of five: rows
@@ -934,7 +934,7 @@ menu_top:;
     goto menu_top;
   }
 leave:;
-  gFieldWork->exit = EXIT_KEEP_DESTINATION;
+  gFieldState->exit = EXIT_KEEP_DESTINATION;
   Event_Wait(30);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_FinishScreenTransition();
@@ -962,7 +962,7 @@ FileScreen_FillTileGridByWindowWidth(struct Window *window,
   s32 col;
   s32 cell;
 
-  shadow = ((struct WindowWork *)gWindowWork[0])->tilemap;
+  shadow = ((struct WindowState *)gWindowState[0])->tilemap;
   decodedTiles = Heap_AllocEwram(768);
   FieldDecompress_TaggedLz(compressedTiles, decodedTiles);
   cell = window->y * BG_SCREEN_WIDTH + window->x;
@@ -985,7 +985,7 @@ FileScreen_FillTileGridByWindowWidth(struct Window *window,
 /// TILE_GRID_FIRST_TILE on, TILE_GRID_COLUMNS to a row.
 UNUSED static void
 FileScreen_FillTileGridByGridWidth(const struct Window *window) {
-  s16 *mirror = ((struct WindowWork *)gWindowWork[0])->tilemap;
+  s16 *mirror = ((struct WindowState *)gWindowState[0])->tilemap;
   s16 *buffer = Heap_AllocEwram(768);
   s16 *vram;
   s32 cell;
@@ -1211,9 +1211,9 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         }
       }
     }
-    out[PASSWORD_COINS_BYTE] = (u32)gMainRoutineWork.holdings.coins >> 16;
-    out[PASSWORD_COINS_BYTE + 1] = (u32)gMainRoutineWork.holdings.coins >> 8;
-    out[PASSWORD_COINS_BYTE + 2] = gMainRoutineWork.holdings.coins;
+    out[PASSWORD_COINS_BYTE] = (u32)gMainRoutineState.holdings.coins >> 16;
+    out[PASSWORD_COINS_BYTE + 1] = (u32)gMainRoutineState.holdings.coins >> 8;
+    out[PASSWORD_COINS_BYTE + 2] = gMainRoutineState.holdings.coins;
   }
 
   // Silver and Gold carry the stats rows. Each packs two party members in

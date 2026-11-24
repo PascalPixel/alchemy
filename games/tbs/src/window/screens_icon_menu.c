@@ -31,7 +31,7 @@
 #define ICON_ROW_LINES 24
 /// The most icons a menu shows, and so the row length of
 /// gFileList_ActionByPosition, which has an action for each place.
-#define ICON_MENU_MAX_ICONS ((s32)ARRAY_COUNT(gIconMenuWork->entries))
+#define ICON_MENU_MAX_ICONS ((s32)ARRAY_COUNT(gIconMenuState->entries))
 
 /// How far the selected icon overhangs its place while it pulses at the 8.8
 /// `scale`: on each side, half its 24-pixel width grown by the scale, rounded
@@ -60,7 +60,7 @@ struct WindowBuffer {
 /// transition runs, it widens window 1 over the icon row so the icons show
 /// through.
 void IconMenu_DrawIcons(void) {
-  struct IconMenuWork *work;
+  struct IconMenuState *iconMenuState;
   struct IconMenuEntry *entry;
   struct AffineTransform transform;
   s32 pulseScale;
@@ -74,8 +74,8 @@ void IconMenu_DrawIcons(void) {
   u16 *edge;
   struct ScreenTransitionState *state;
 
-  work = gIconMenuWork;
-  entry = work->entries;
+  iconMenuState = gIconMenuState;
+  entry = iconMenuState->entries;
   pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
   pulseScale = (pulseScale - Q_8_8(1)) / 4 + Q_8_8(1.1875);
   transform.scaleX = pulseScale;
@@ -83,7 +83,7 @@ void IconMenu_DrawIcons(void) {
   transform.angle = 0;
   affineIndex = OamMatrix_AllocFromTransform(&transform);
   // Pulse only the selection; the other icons keep their normal OAM shape.
-  for (index = 0; index < work->count; index++, entry++) {
+  for (index = 0; index < iconMenuState->count; index++, entry++) {
     s32 drawLayer;
     u32 *word;
     s32 x;
@@ -91,7 +91,7 @@ void IconMenu_DrawIcons(void) {
     x = entry->x;
     if (x == 0)
       continue;
-    if (index == work->selection) {
+    if (index == iconMenuState->selection) {
       s32 left = x + pulseScale * 7 / 512 - 20;
 
       // The icon grows to 32 * scale / Q_8_8(1) pixels in the middle of its
@@ -126,24 +126,25 @@ void IconMenu_DrawIcons(void) {
   // Window 1 widens around the selected icon on the lines it overhangs, below
   // it on the top row and above it on the bottom one, then covers the row's
   // ICON_ROW_LINES lines from the first icon, keeping each line's right edge.
-  if (work->row == 0) {
+  if (iconMenuState->row == 0) {
     struct WindowBuffer *page;
     s32 halfWidth;
 
-    state = gScreenTransitionWork;
-    if (state == NULL || work->count == 0)
+    state = gScreenTransitionState;
+    if (state == NULL || iconMenuState->count == 0)
       return;
     page = (struct WindowBuffer *)state->pages[state->page];
-    span = work->entries[work->selection].x;
+    span = iconMenuState->entries[iconMenuState->selection].x;
     halfWidth = PULSE_OVERHANG_X(pulseScale);
     span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
-    lastLine = work->entries[work->selection].y + ICON_ROW_LINES;
+    lastLine =
+        iconMenuState->entries[iconMenuState->selection].y + ICON_ROW_LINES;
     lastLine += PULSE_OVERHANG_LINES(pulseScale);
     edge = &page->lines[ICON_ROW_LINES].window1;
     for (index = ICON_ROW_LINES; index < lastLine; index++, edge += 2)
       *edge = (*edge & 0xff) | span;
-    span = work->entries[0].x;
-    if (work->selection == 0)
+    span = iconMenuState->entries[0].x;
+    if (iconMenuState->selection == 0)
       span -= PULSE_OVERHANG_X(pulseScale);
     span <<= 8;
     edge = &page->lines[0].window1;
@@ -154,21 +155,21 @@ void IconMenu_DrawIcons(void) {
     s32 firstLine;
     s32 halfWidth;
 
-    state = gScreenTransitionWork;
-    if (state == NULL || work->count == 0)
+    state = gScreenTransitionState;
+    if (state == NULL || iconMenuState->count == 0)
       return;
     page = (struct WindowBuffer *)state->pages[state->page];
-    span = work->entries[work->selection].x;
+    span = iconMenuState->entries[iconMenuState->selection].x;
     halfWidth = PULSE_OVERHANG_X(pulseScale);
     span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
-    firstLine = work->entries[work->selection].y;
+    firstLine = iconMenuState->entries[iconMenuState->selection].y;
     firstLine -= PULSE_OVERHANG_LINES(pulseScale);
     edge = &page->lines[firstLine].window1;
     for (index = firstLine; index < ICON_MENU_BOTTOM_ROW * 8;
          index++, edge += 2)
       *edge = (*edge & 0xff) | span;
-    span = work->entries[0].x;
-    if (work->selection == 0)
+    span = iconMenuState->entries[0].x;
+    if (iconMenuState->selection == 0)
       span -= PULSE_OVERHANG_X(pulseScale);
     span <<= 8;
     edge = &page->lines[ICON_MENU_BOTTOM_ROW * 8].window1;
@@ -178,33 +179,34 @@ void IconMenu_DrawIcons(void) {
   }
 }
 
-/// Allocates and clears the icon menu's work, which lives in
+/// Allocates and clears the icon menu's state, which lives in
 /// HEAP_SLOT_ICON_MENU until IconMenu_Close frees it, and starts the task that
 /// draws its icons. Every icon menu starts here.
 void *IconMenu_Open(void) {
-  void *work;
-  work = HeapSlot_AllocEwram(HEAP_SLOT_ICON_MENU, sizeof(struct IconMenuWork));
-  Dma_Fill32(0, work, sizeof(struct IconMenuWork));
+  void *state;
+  state =
+      HeapSlot_AllocEwram(HEAP_SLOT_ICON_MENU, sizeof(struct IconMenuState));
+  Dma_Fill32(0, state, sizeof(struct IconMenuState));
   Task_Add(IconMenu_DrawIcons, TASK_PASS_FRAME - 10);
-  return work;
+  return state;
 }
 
 /// Stops drawing the icons, closes the label window and releases each loaded
-/// icon before freeing the icon menu's work (HEAP_SLOT_ICON_MENU), then waits a
-/// frame.
+/// icon before freeing the icon menu's state (HEAP_SLOT_ICON_MENU), then waits
+/// a frame.
 void IconMenu_Close(void) {
   struct Window *labelWindow;
   s32 i;
-  struct IconMenuWork *work;
+  struct IconMenuState *state;
 
-  work = gIconMenuWork;
+  state = gIconMenuState;
   Task_Remove(IconMenu_DrawIcons);
-  labelWindow = work->window;
+  labelWindow = state->window;
   if (labelWindow != 0) {
     Window_Close(labelWindow, 2);
   }
-  for (i = 0; i < work->count; i++) {
-    VramCache_FreeEntry(work->entries[i].slot);
+  for (i = 0; i < state->count; i++) {
+    VramCache_FreeEntry(state->entries[i].slot);
   }
   HeapSlot_Release(HEAP_SLOT_ICON_MENU);
   wait(1U);
@@ -215,22 +217,22 @@ void IconMenu_Close(void) {
 /// message labelBase + position when the layout set a labelBase, else the
 /// icon's command name.
 s32 IconMenu_Run(s32 initial) {
-  struct IconMenuWork *work = gIconMenuWork;
+  struct IconMenuState *state = gIconMenuState;
   s32 resource;
 
-  work->selection = initial;
+  state->selection = initial;
 redraw:
-  WindowSprite_PrepareForRedraw(work->window);
-  if (work->labelBase != 0)
-    resource = work->labelBase + work->selection;
+  WindowSprite_PrepareForRedraw(state->window);
+  if (state->labelBase != 0)
+    resource = state->labelBase + state->selection;
   else
-    resource = work->commandIcons[work->selection] + MsgCommandName;
-  Text_DrawMessageAsTiles(resource, work->window, 0, 0);
+    resource = state->commandIcons[state->selection] + MsgCommandName;
+  Text_DrawMessageAsTiles(resource, state->window, 0, 0);
   for (;;) {
     wait(1);
     if (gKeysPressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
-      return work->selection;
+      return state->selection;
     }
     if (gKeysPressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
@@ -242,14 +244,14 @@ redraw:
     }
     if ((gKeysRepeat & KEY_LEFT) || (gKeysRepeat & KEY_UP)) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-      work->selection--;
-      if (work->selection < 0)
-        work->selection = work->count - 1;
+      state->selection--;
+      if (state->selection < 0)
+        state->selection = state->count - 1;
     } else if ((gKeysRepeat & KEY_RIGHT) || (gKeysRepeat & KEY_DOWN)) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-      work->selection++;
-      if (work->selection >= work->count)
-        work->selection = 0;
+      state->selection++;
+      if (state->selection >= state->count)
+        state->selection = 0;
     } else
       continue;
     goto redraw;
@@ -278,9 +280,9 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   s32 step;
   s32 delay;
   const u8 *stepDelays;
-  struct IconMenuWork *state;
+  struct IconMenuState *state;
 
-  state = gIconMenuWork;
+  state = gIconMenuState;
   step = 1;
   delay = 12;
   state->selection = start;
@@ -334,23 +336,23 @@ void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
 /// starts on the bottom row; IconMenu_Center or IconMenu_LayoutIcons places the
 /// row. Its VRAM cache entry is taken unchecked.
 void IconMenu_AddIcon(s32 icon) {
-  struct IconMenuWork *work;
+  struct IconMenuState *state;
   struct IconMenuEntry *entry;
   s16 index;
   s32 slot;
   s32 y = ICON_MENU_BOTTOM_ROW * 8;
 
-  work = gIconMenuWork;
-  index = work->count;
+  state = gIconMenuState;
+  index = state->count;
   if (index < ICON_MENU_MAX_ICONS) {
-    work->count++;
-    entry = &work->entries[index];
+    state->count++;
+    entry = &state->entries[index];
     slot = VramCache_FindFreeEntry();
     CommandIcon_LoadIntoSlot(slot, icon);
     entry->x = index * 24 + 32;
     entry->y = y;
     entry->slot = slot;
-    work->commandIcons[index] = icon;
+    state->commandIcons[index] = icon;
   }
 }
 
@@ -360,44 +362,44 @@ void IconMenu_AddIcon(s32 icon) {
 /// label window, `width` + 2 tiles wide and 3 tall, follows them; the centring
 /// counts two thirds of the window's width.
 void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
-  struct IconMenuWork *work = gIconMenuWork;
+  struct IconMenuState *state = gIconMenuState;
   s32 x;
   s32 i;
   s32 count;
 
-  work->width = width + 2;
-  work->labelBase = resourceBase;
-  work->row = row;
-  count = work->count;
-  x = DISPLAY_TILE_WIDTH / 2 - (count * 3 + work->width * 2 / 3) / 2;
-  for (i = 0; i < work->count; i++) {
-    struct IconMenuEntry *entry = &work->entries[i];
+  state->width = width + 2;
+  state->labelBase = resourceBase;
+  state->row = row;
+  count = state->count;
+  x = DISPLAY_TILE_WIDTH / 2 - (count * 3 + state->width * 2 / 3) / 2;
+  for (i = 0; i < state->count; i++) {
+    struct IconMenuEntry *entry = &state->entries[i];
 
     entry->x = x * 8;
     entry->y = row * 8;
     x += 3;
   }
-  work->window = Window_Create(x, row, work->width, 3, WINDOW_FLAG_INSTANT);
+  state->window = Window_Create(x, row, state->width, 3, WINDOW_FLAG_INSTANT);
 }
 
 /// Places the icons three tiles apart from tile (x, y), then opens their label
 /// window, `width` + 2 tiles wide, just after them.
 void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
-  struct IconMenuWork *work;
+  struct IconMenuState *state;
   s32 i;
   struct IconMenuEntry *entry;
 
-  work = gIconMenuWork;
-  work->width = width + 2;
-  work->labelBase = resourceBase;
-  work->row = y;
-  for (i = 0; i < work->count; i++) {
-    entry = &work->entries[i];
+  state = gIconMenuState;
+  state->width = width + 2;
+  state->labelBase = resourceBase;
+  state->row = y;
+  for (i = 0; i < state->count; i++) {
+    entry = &state->entries[i];
     entry->y = y << 3;
     entry->x = x << 3;
     x += 3;
   }
-  work->window = Window_Create(x, y, work->width, 3, WINDOW_FLAG_INSTANT);
+  state->window = Window_Create(x, y, state->width, 3, WINDOW_FLAG_INSTANT);
 }
 
 /// Reads the signed command-position mapping used by the icon menu.
@@ -553,7 +555,7 @@ s32 FileList_SelectAction(void) {
 /// "Djinn", "Character stats", "Items" and "Coins", Silver the first three,
 /// Bronze the first two.
 void PasswordLevel_DrawHelp(void) {
-  struct IconMenuWork *state = gIconMenuWork;
+  struct IconMenuState *state = gIconMenuState;
 
   if (state->drawnSelection != state->selection) {
     state->drawnSelection = state->selection;
@@ -607,7 +609,7 @@ void PasswordLevel_DrawHelp(void) {
 /// A task of the transfer method menu: when the selection moves between
 /// Password and Cable, explains the one chosen.
 void TransferMethod_DrawHelp(void) {
-  struct IconMenuWork *state = gIconMenuWork;
+  struct IconMenuState *state = gIconMenuState;
 
   if (state->drawnSelection != state->selection) {
     if (state->selection == TRANSFER_METHOD_PASSWORD) {
@@ -627,7 +629,7 @@ void TransferMethod_DrawHelp(void) {
 /// A task of the transfer method menu: when the selection moves between
 /// Password and Cable, explains the one chosen.
 void TransferMethod_DrawHelp(void) {
-  struct IconMenuWork *state = gIconMenuWork;
+  struct IconMenuState *state = gIconMenuState;
   s16 *shown = &state->drawnSelection;
 
   if (*shown != state->selection) {
@@ -658,14 +660,14 @@ void TransferMethod_DrawHelp(void) {
 /// Selects either the transfer method or the password level (enum
 /// ResourceLayoutMode).
 s32 IconMenu_ChooseSendOption(s32 mode) {
-  struct IconMenuWork *work;
+  struct IconMenuState *state;
   struct Window *window;
   s32 message;
   struct Window **upper;
   s32 result;
 
   IconMenu_Open();
-  work = gIconMenuWork;
+  state = gIconMenuState;
   if (mode == RESOURCE_LAYOUT_TRANSFER_METHOD) {
     IconMenu_AddIcon(COMMAND_ICON_PASSWORD);
     IconMenu_AddIcon(COMMAND_ICON_CABLE);
@@ -688,11 +690,11 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
 #endif
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
     Task_Add(PasswordLevel_DrawHelp, TASK_PASS_FRAME - 10);
-    work->drawnSelection = -1;
+    state->drawnSelection = -1;
     window = Window_Create(PASSWORD_LEVEL_WINDOW_X, 0,
                            PASSWORD_LEVEL_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
     message = MsgPasswordSelection;
-    upper = &work->upperWindow;
+    upper = &state->upperWindow;
     *upper = window;
     // "Password Selection", then "The data stored in your" "password depends
     // on which" "level you select:"
@@ -700,29 +702,29 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
 #if LANGUAGE != LANGUAGE_JAPANESE
     window = Window_Create(PASSWORD_HELP_WINDOW_X, 4,
                            PASSWORD_HELP_WINDOW_WIDTH, 12, WINDOW_FLAG_INSTANT);
-    work->lowerWindow = window;
+    state->lowerWindow = window;
     Text_DrawMessage(message + 1, window, 8, 0);
-    Text_DrawMessage(message + 2, work->lowerWindow, 8, 11);
+    Text_DrawMessage(message + 2, state->lowerWindow, 8, 11);
     message += 3;
-    Text_DrawMessage(message, work->lowerWindow, 8, 22);
+    Text_DrawMessage(message, state->lowerWindow, 8, 22);
 #else
     window = Window_Create(5, 4, 21, 12, WINDOW_FLAG_INSTANT);
-    work->lowerWindow = window;
+    state->lowerWindow = window;
     Text_DrawMessage(message + 1, window, 0, 4);
     message += 2;
-    Text_DrawMessage(message, work->lowerWindow, 0, 16);
+    Text_DrawMessage(message, state->lowerWindow, 0, 16);
 #endif
   } else {
     Task_Add(TransferMethod_DrawHelp, TASK_PASS_FRAME - 10);
-    work->drawnSelection = -1;
+    state->drawnSelection = -1;
     window =
         Window_Create(TRANSFER_METHOD_WINDOW_X, 0, TRANSFER_METHOD_WINDOW_WIDTH,
                       4, WINDOW_FLAG_INSTANT);
-    upper = &work->upperWindow;
+    upper = &state->upperWindow;
     *upper = window;
     // "Transfer Method"
     Text_DrawMessage(MsgTransferMethod, window, TRANSFER_METHOD_LABEL_X, 4);
-    work->lowerWindow =
+    state->lowerWindow =
         Window_Create(TRANSFER_HELP_WINDOW_X, 5, TRANSFER_HELP_WINDOW_WIDTH, 7,
                       WINDOW_FLAG_INSTANT);
   }
@@ -732,9 +734,9 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   else
     Task_Remove(TransferMethod_DrawHelp);
   WindowSprite_PrepareForRedraw(*upper);
-  WindowSprite_PrepareForRedraw(work->lowerWindow);
+  WindowSprite_PrepareForRedraw(state->lowerWindow);
   Window_Close(*upper, 2);
-  Window_Close(work->lowerWindow, 2);
+  Window_Close(state->lowerWindow, 2);
   wait(1);
   IconMenu_Close();
   return result;

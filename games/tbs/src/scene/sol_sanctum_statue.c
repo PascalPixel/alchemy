@@ -77,7 +77,7 @@
 #include "system/heap_release.h"
 #include "system/heap_slots.h"
 #include "system/io_reg.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -314,8 +314,8 @@ static void SolSanctumStatue_OpenCenterHole(void) {
 /// floor.
 static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Event_Start();
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 32;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = 32;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -359,9 +359,9 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Event_Wait(40);
   // The screen closes and opens on Kraden by the hole: "Where did that hole
   // come from?" Then back to the party.
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldCamera_MoveTo(287, CAMERA_KEEP, 176, 0);
@@ -447,21 +447,21 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Scene_WalkIntoLeader(ACTOR_GARET);
   Scene_WalkIntoLeader(ACTOR_JENNA);
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_End();
 }
 
 /// Kraden's first visit, an event in which he runs here to warn that the
 /// mechanism is a trap.
 static void SolSanctumStatue_ExplainStatuePuzzle(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Event_Start();
-  work = gFieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->transitionFrames = 32;
+  state = gFieldState;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state->transitionFrames = 32;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -635,24 +635,24 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Scene_WalkIntoLeader(ACTOR_JENNA);
   Scene_WalkIntoLeader(ACTOR_GARET);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-  work = gFieldWork;
-  work->transition =
+  state = gFieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  work->transitionFrames = MAP_TRANSITION_FRAMES;
+  state->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_End();
 }
 
 /// Unused: called only from the branch of SolSanctumStatue_OpenSeal that
 /// cannot run, since SolSanctumStatue_SelectStoryExit returns only 1 or -1.
 static void SolSanctumStatue_UnusedPutOutSeals(void) {
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   struct Actor *leader;
   s32 *savedOrigin;
   FIXED cameraPosition[3];
   s32 approachSide;
   s32 frame;
 
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   // Temporarily follow a local point, panning from the leader toward the seal.
   if (leader->z.fixed < toFIXED(179)) {
@@ -727,7 +727,7 @@ static void SolSanctumStatue_UnusedPutOutSeals(void) {
 
 /// Draws the three rows of sky clouds while they overlap the screen.
 static void SolSanctumStatue_UpdateScrollingSprites(void) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   struct AnimationSpritePart *sprite = sScrollingSprites.parts;
   s32 *view = grid->view;
   s32 cameraX = view[0] / toFIXED(1);
@@ -805,7 +805,7 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
 s32 Scene_Initialize(void) {
   struct Actor *centerEffect;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   SolSanctumStatue_InitializeScrollingSprites();
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -822,9 +822,9 @@ s32 Scene_Initialize(void) {
   Actor_SetSpritePriority(ACTOR_MOVED_CENTER_STATUE, 1);
   // Only the returns with the trap disarmed or triggered keep Jenna and Garet
   // staged for their conversations.
-  if (gMainRoutineWork.entrance !=
+  if (gMainRoutineState.entrance !=
           SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED &&
-      gMainRoutineWork.entrance !=
+      gMainRoutineState.entrance !=
           SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED) {
     Actor_SetPosition(ACTOR_JENNA, 0, 0);
     Actor_SetPosition(ACTOR_GARET, 0, 0);
@@ -889,7 +889,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellsTo(4, 31, 18, 11, 2, 1);
     MapGrid_CopyCellsTo(4, 58, 36, 43, 4, 1);
   }
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED) {
     if (Event_GetFlag(FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED) != 0) {
       Actor_SetPosition(ACTOR_GARET, 0, 0);
@@ -899,7 +899,7 @@ s32 Scene_Initialize(void) {
       GameFlag_Set(FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED);
     }
   }
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED) {
     if (Event_GetFlag(FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED) != 0) {
       Actor_SetPosition(ACTOR_GARET, 0, 0);

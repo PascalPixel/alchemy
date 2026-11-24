@@ -5,8 +5,8 @@ gSaveBuffer:
 	.global gGameFlagBytes
 gGameFlagBytes:
 	.space 512
-	.global gMainRoutineWork
-gMainRoutineWork:
+	.global gMainRoutineState
+gMainRoutineState:
 	.space 320
 	.global gRareItemStock
 gRareItemStock:
@@ -66,8 +66,8 @@ gSerialTransfer:
 	.global gSerialReceivedSize
 gSerialReceivedSize:
 	.space 8
-	.global gSerialWork
-gSerialWork:
+	.global gSerialState
+gSerialState:
 	.space 352
 	.global gLinkExchangeState
 gLinkExchangeState:

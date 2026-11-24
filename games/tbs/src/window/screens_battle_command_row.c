@@ -32,16 +32,16 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 /// COMMAND_ROW_CANCELLED or COMMAND_ROW_STATUS.
 s32 BattleCommandRow_Run(s32 mode) {
   u8 standbyDjinn[ELEMENT_COUNT];
-  struct WindowWork *work;
-  struct BattleCommandRowWork *selectionUi;
-  struct BattleMenuWork *navigation;
+  struct WindowState *state;
+  struct BattleCommandRowState *selectionUi;
+  struct BattleMenuState *navigation;
   s32 stripDirty, standbyCount, pulseScale, command;
   s32 entryIndex;
   s32 keys, repeat;
   s32 iconSlot;
   s32 i, kindCount;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   // One 1 KB entry for the selected icon's 32x32, 256-colour sprite.
   iconSlot = VramCache_AllocEntry(COMMAND_ICON_BYTES);
   stripDirty = 1;
@@ -68,9 +68,9 @@ s32 BattleCommandRow_Run(s32 mode) {
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FLEE;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_STATUS;
     selectionUi->commandKinds[kindCount] = -1;
-    selectionUi->selectedIndex = gBattleMenuWork->commandSelection[0];
+    selectionUi->selectedIndex = gBattleMenuState->commandSelection[0];
   } else {
-    selectionUi->selectedIndex = gBattleMenuWork->commandSelection[1];
+    selectionUi->selectedIndex = gBattleMenuState->commandSelection[1];
     kindCount = 0;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_ATTACK;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_PSYNERGY;
@@ -134,14 +134,14 @@ s32 BattleCommandRow_Run(s32 mode) {
     // 31), the UI tilemap cleared to 0 over them.
     if (stripDirty != 0) {
       stripDirty = 0;
-      work->holdTilemapUpload = 1;
+      state->holdTilemapUpload = 1;
       if (mode != COMMAND_ROW_PARTY) {
         s32 panel;
         for (panel = 0; panel < 6 - selectionUi->iconCount; panel++) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++)
-              *(work->tilemap +
+              *(state->tilemap +
                 (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
                 WINDOW_X - 18 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
           }
@@ -157,7 +157,7 @@ s32 BattleCommandRow_Run(s32 mode) {
               vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
                   panel * 16 + entryIndex * 4 + col + COMMAND_ROW_ICON_TILE;
-              *(work->tilemap +
+              *(state->tilemap +
                 (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
                 (col & 3) - selectionUi->iconCount * 3 + WINDOW_X) = 0;
             }
@@ -169,7 +169,7 @@ s32 BattleCommandRow_Run(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++)
-              *(work->tilemap +
+              *(state->tilemap +
                 (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
                 2 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
           }
@@ -185,7 +185,7 @@ s32 BattleCommandRow_Run(s32 mode) {
               vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
                   panel * 16 + entryIndex * 4 + col + COMMAND_ROW_ICON_TILE;
-              *(work->tilemap +
+              *(state->tilemap +
                 (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
                 (col & 3) - selectionUi->iconCount * 3 + 20) = 0;
             }
@@ -229,7 +229,7 @@ s32 BattleCommandRow_Run(s32 mode) {
     // party's row it takes Fight.
     keys = gKeysPressed;
     repeat = gKeysRepeat;
-    navigation = gBattleMenuWork;
+    navigation = gBattleMenuState;
     if (navigation->tutorialStep != 0) {
       keys = repeat = 0;
       if (navigation->tutorialDelay == 0) {
@@ -293,7 +293,7 @@ s32 BattleCommandRow_Run(s32 mode) {
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + selectionUi->iconCount - 1) %
           selectionUi->iconCount;
-    } else if (gBattleMenuWork->timer == 0) {
+    } else if (gBattleMenuState->timer == 0) {
       // The link battle's time is up.
       command = selectionUi->commandKinds[0];
       break;
@@ -302,17 +302,17 @@ s32 BattleCommandRow_Run(s32 mode) {
     IoWriteQueue_Store16((u32)&REG_DISPCNT,
                          DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                              DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON);
-    work->holdTilemapUpload = 0;
+    state->holdTilemapUpload = 0;
     wait(1);
   }
   if (mode != COMMAND_ROW_PARTY)
-    gBattleMenuWork->commandSelection[1] = selectionUi->selectedIndex;
+    gBattleMenuState->commandSelection[1] = selectionUi->selectedIndex;
   else
-    gBattleMenuWork->commandSelection[0] = selectionUi->selectedIndex;
+    gBattleMenuState->commandSelection[0] = selectionUi->selectedIndex;
   // Every icon names the same entry, so it is released once per icon.
   for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++)
     VramCache_FreeEntry(selectionUi->entries[entryIndex].resource);
-  work->holdTilemapUpload = 1;
+  state->holdTilemapUpload = 1;
   Window_Close(selectionUi->window, 1);
   // Cover the strip again: seven panels of WINDOW_TILE_COMMAND_PANEL from
   // column 5.
@@ -323,7 +323,7 @@ s32 BattleCommandRow_Run(s32 mode) {
         s32 col;
         // The VBlank handler uploads this tilemap (WindowSystem_UploadTilemap).
         for (col = 0; col <= 2; col++)
-          *(volatile u16 *)(work->tilemap +
+          *(volatile u16 *)(state->tilemap +
                             (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
                             panel * 3 + 5 + (col & 3)) =
               WINDOW_TILE_COMMAND_PANEL;
@@ -331,7 +331,7 @@ s32 BattleCommandRow_Run(s32 mode) {
     }
   }
   // Restore the normal BG1 handler after clearing the command strip.
-  work->dirty = 1;
+  state->dirty = 1;
   wait(1);
   Task_Remove(CommandRow_PutBg1Behind);
   Irq_SetHandler(IRQ_VCOUNT, 0, 0);
@@ -340,7 +340,7 @@ s32 BattleCommandRow_Run(s32 mode) {
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
                       IO_WRITE_HALFWORD);
   Heap_Release(selectionUi);
-  work->holdTilemapUpload = 0;
+  state->holdTilemapUpload = 0;
   wait(1);
   return command;
 }
@@ -350,7 +350,7 @@ s32 BattleCommandRow_Run(s32 mode) {
 /// the rest of each entry: the menus' row highlight. `paletteBit` is the
 /// palette, of which only the low bit counts.
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
 
   paletteBit &= 1;
   paletteBit = BG_TILE_PALETTE(paletteBit);
@@ -378,7 +378,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
 
   if (width > 0 && height > 0) {
     do {
-      u16 *cell = &((u16 (*)[BG_SCREEN_WIDTH])work->tilemap)[y][x];
+      u16 *cell = &((u16 (*)[BG_SCREEN_WIDTH])state->tilemap)[y][x];
       s32 remaining = width;
 
       while (remaining != 0) {
@@ -389,7 +389,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
         cell++;
       }
 
-      Window_MarkTilemapRow(work, y);
+      Window_MarkTilemapRow(state, y);
       height--;
       y++;
     } while (height != 0);
@@ -400,7 +400,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
 /// then highlights the columns of the units in `ids` (up to four, ended by
 /// BATTLE_UNIT_LIST_END): the party member whose commands are being chosen.
 s32 PartyStatus_HighlightMembers(u16 *ids) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   s32 count;
   s32 i;
   s32 j;

@@ -9,7 +9,7 @@
 
 /// MainRoutine_Run's mode: where the game starts.
 enum GameStart {
-  GAME_START_TITLE = 0,            ///< the Title, with the work cleared
+  GAME_START_TITLE = 0,            ///< the Title, with the state cleared
   GAME_START_DEBUG_VALE = 1,       ///< in debug mode, SceneId_ValePlaza
   GAME_START_DEBUG_FILE_SCREEN = 2 ///< in debug mode, the File Screen
 };

@@ -45,7 +45,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   s32 djinniX;
   s32 djinniY;
   BlitterPair draw;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   s32 offsetX;
@@ -53,29 +53,29 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   s32 i;
   s32 k;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
-  if (work->args->prelude == 1)
+  if (state->args->prelude == 1)
     BattleEffect_RunDjinniEntrance(
-        args, element, work->args->side ^ work->args->prelude,
+        args, element, state->args->side ^ state->args->prelude,
         DJINNI_ANCHOR_OVER_TARGET, &djinniX, &djinniY);
   palette = Resource_GetTableEntry(RESOURCE_EARTH_WALL_SHEET);
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet);
+  Decompress_TaggedLz(palette, state->sheet);
   palette = Resource_GetTableEntry(RESOURCE_CRESCENT_MOON_SHEET);
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_MOTE_PICTURES);
+  Decompress_TaggedLz(palette, state->sheet + DJINN_BEAMS_MOTE_PICTURES);
   if (element == ELEMENT_VENUS)
     palette = Resource_GetTableEntry(RESOURCE_VENUS_DJINN_SHEET);
   else
     palette = Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SHEET);
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_DJINNI_PICTURE);
+  Decompress_TaggedLz(palette, state->sheet + DJINN_BEAMS_DJINNI_PICTURE);
 
   for (i = 0; i != DJINN_BEAMS_MOTES; i++) {
     PARTICLES[i].x = 0;
@@ -85,20 +85,20 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   }
 
   REG_BG2PA = Q_8_8(1);
-  if (work->args->targetCount == 1) {
-    Projection_ScaledUnit(work->args->targets[0], &onlyTarget);
+  if (state->args->targetCount == 1) {
+    Projection_ScaledUnit(state->args->targets[0], &onlyTarget);
     offsetX = CANVAS_SIZE / 2 - onlyTarget.x;
   } else {
-    if (work->args->side == EFFECT_SIDE_PARTY)
+    if (state->args->side == EFFECT_SIDE_PARTY)
       offsetX = -NARROW_CANVAS_PARTY_X;
     else
       offsetX = 0;
   }
   REG_BG2X = offsetX << 8;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0;
-       frame != work->args->targetCount * DJINN_BEAMS_TARGET_FRAMES + 116;
+       frame != state->args->targetCount * DJINN_BEAMS_TARGET_FRAMES + 116;
        frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
@@ -108,7 +108,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
       EFFECT_SHOW_DAMAGE(0);
 
     // The Djinni sways, then rises away.
-    k = work->args->prelude;
+    k = state->args->prelude;
     if (k == 1) {
       s32 angle = frame * (TRIG_TURN / 32);
       s32 x = FIXEDtoINT(-Trig_Sin(angle) * DJINN_BEAMS_DJINNI_SWAY_X) +
@@ -116,13 +116,13 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
       s32 y = FIXEDtoINT(Trig_Cos(angle) * DJINN_BEAMS_DJINNI_SWAY_Y) +
               djinniY - 24;
 
-      BattleEffect_FetchRectangleBlitters(work->args->side ^ k, draw);
+      BattleEffect_FetchRectangleBlitters(state->args->side ^ k, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
+      draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
               DJINNI_WIDTH, DJINNI_HEIGHT);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
+        draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
                 DJINNI_WIDTH, DJINNI_HEIGHT);
       EFFECT_RELEASE_BLITTERS();
     }
@@ -135,9 +135,9 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 
     // Motes sink, swaying.
-    EFFECT_FOR_EACH_TARGET(k, work->args) {
+    EFFECT_FOR_EACH_TARGET(k, state->args) {
       struct Actor *target =
-          GetBattleObjectSlotFar(work->args->targets[k])->actor;
+          GetBattleObjectSlotFar(state->args->targets[k])->actor;
       s32 start = k * DJINN_BEAMS_TARGET_FRAMES;
 
       EFFECT_VIEW_FROM_CAMERA(camera);
@@ -159,7 +159,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
             else
               screenPosition.x += sway;
             draw[i & 1](canvas,
-                        work->sheet +
+                        state->sheet +
                             gDjinnBeams_MotePictures[mote->variant / 8 & 7] *
                                 PICTURE_BYTES(DJINN_BEAMS_MOTE) +
                             DJINN_BEAMS_MOTE_PICTURES,
@@ -174,19 +174,19 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     }
 
     // The column of light.
-    EFFECT_FOR_EACH_TARGET(i, work->args) {
+    EFFECT_FOR_EACH_TARGET(i, state->args) {
       s32 start = i * DJINN_BEAMS_TARGET_FRAMES;
 
       if (frame >= start + 72) {
         struct Actor *target =
-            GetBattleObjectSlotFar(work->args->targets[i])->actor;
+            GetBattleObjectSlotFar(state->args->targets[i])->actor;
 
         EFFECT_VIEW_FROM_CAMERA(camera);
         if (frame == start + 72)
-          BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_GRB,
+          BattleEffect_TintBattler(state->args->targets[i], SPRITE_COLOR_GRB,
                                    TINT_KEEP, TINT_KEEP, 0);
         if (frame == start + 88)
-          BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_NORMAL,
+          BattleEffect_TintBattler(state->args->targets[i], SPRITE_COLOR_NORMAL,
                                    TINT_KEEP, TINT_KEEP, 0);
         SET_VECTOR(ground, target->x.fixed, 0, target->z.fixed);
         Projection_Point(ground, &screenPosition);
@@ -200,25 +200,25 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
           if (pic > 2)
             pic = (pic & 1) + 1;
           if (frame < start + 100) {
-            draw[0](canvas, work->sheet + gDjinnBeams_HeadPictures[pic],
+            draw[0](canvas, state->sheet + gDjinnBeams_HeadPictures[pic],
                     screenPosition.x - gDjinnBeams_HeadWidths[pic],
                     screenPosition.y - gDjinnBeams_HeadHeights[pic] + 8,
                     gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
-            draw[1](canvas, work->sheet + gDjinnBeams_HeadPictures[pic],
+            draw[1](canvas, state->sheet + gDjinnBeams_HeadPictures[pic],
                     screenPosition.x,
                     screenPosition.y - gDjinnBeams_HeadHeights[pic] + 8,
                     gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
           }
           for (k = 0; k != screenPosition.y; k++) {
-            draw[0](canvas, work->sheet + 5, screenPosition.x - width, k, width,
-                    1);
-            draw[1](canvas, work->sheet + 5, screenPosition.x, k, width, 1);
+            draw[0](canvas, state->sheet + 5, screenPosition.x - width, k,
+                    width, 1);
+            draw[1](canvas, state->sheet + 5, screenPosition.x, k, width, 1);
           }
         }
       }
     }
     EFFECT_RELEASE_BLITTERS();
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

@@ -61,7 +61,7 @@
 #include "scene/import.h"
 #include "scene/walk_into_leader.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -221,7 +221,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_TIMBER_ROOMS_B) {
+  if (gMainRoutineState.next == SCENE_TIMBER_ROOMS_B) {
     return gTimberRoomsB_Regions;
   }
   return gTimberRoomsC_Regions;
@@ -231,7 +231,7 @@ const u32 *Scene_GetExits(void) { return gTimberRoomsBC_Exits; }
 
 /// The people of each scene.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_TIMBER_ROOMS_C) {
+  if (gMainRoutineState.next == SCENE_TIMBER_ROOMS_C) {
     // Faran's house and the inn.
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_ActorPlacementsAfterLighthouse;
@@ -417,7 +417,7 @@ static void TimberRoomsBC_TalkToIodem(void) {
 /// What the party can talk to, touch and search in each scene, before and
 /// after Venus Lighthouse.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_TIMBER_ROOMS_C) {
+  if (gMainRoutineState.next == SCENE_TIMBER_ROOMS_C) {
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_TriggersAfterLighthouse;
     }
@@ -566,7 +566,7 @@ static void TimberRoomsBC_ReportToFaran(void) {
     Event_Wait(30);
     // "Do not worry about Sheba. I just hope you are able to find..."
     Event_ShowMessage(ACTOR_FARAN, 0);
-    (gFieldWork->message)++;
+    (gFieldState->message)++;
   } else {
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -576,7 +576,7 @@ static void TimberRoomsBC_ReportToFaran(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    (gFieldWork->message)++;
+    (gFieldState->message)++;
     Event_ShowMessage(ACTOR_FARAN, 0);
   }
   Event_Wait(10);
@@ -838,12 +838,12 @@ s32 Scene_Initialize(void) {
   s16 entrance;
   struct Actor *actor;
 
-  if (gMainRoutineWork.entrance == TIMBER_ROOMS_ENTRANCE_AFTER_LIGHTHOUSE) {
+  if (gMainRoutineState.entrance == TIMBER_ROOMS_ENTRANCE_AFTER_LIGHTHOUSE) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  sceneId = gMainRoutineWork.next;
+  sceneId = gMainRoutineState.next;
   if (sceneId == SCENE_TIMBER_ROOMS_B) {
     // Each shopkeeper is drawn under the counter's top, and counts as nearer
     // to talk to (ACTOR_NEAR_TALK) so that the leader reaches it across the
@@ -861,13 +861,13 @@ s32 Scene_Initialize(void) {
     actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
     Actor_SetAnimation(ACTOR_NAPPING_WORKER, ANIM_WORKER_LIE_ASLEEP);
-    entrance = gMainRoutineWork.entrance;
+    entrance = gMainRoutineState.entrance;
     if (entrance == TIMBER_ROOMS_B_SANCTUM) {
-      gMainRoutineWork.restartScene = sceneId;
-      gMainRoutineWork.restartEntrance = entrance;
+      gMainRoutineState.restartScene = sceneId;
+      gMainRoutineState.restartEntrance = entrance;
     }
   }
-  if (gMainRoutineWork.next == SCENE_TIMBER_ROOMS_C) {
+  if (gMainRoutineState.next == SCENE_TIMBER_ROOMS_C) {
     actor = Actor_Get(ACTOR_INNKEEPER);
     actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->priorityFlags = 0;
@@ -875,14 +875,14 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_LALIVERO_INN_WORKER_APOLOGIZED) != 0) {
       Actor_SetScript(ACTOR_INN_WORKER, gTimberRoomsBC_InnWorkerChores);
     }
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE) {
       TimberRoomsBC_ReportToFaran();
       // Iodem and Faran turn toward the leader, as their later actor
       // placements do.
       Actor_SetMovementType(Actor_Get(ACTOR_IODEM), MOVEMENT_TYPE_FACE_LEADER);
       Actor_SetMovementType(Actor_Get(ACTOR_FARAN), MOVEMENT_TYPE_FACE_LEADER);
-      gMainRoutineWork.entrance = TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST;
+      gMainRoutineState.entrance = TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST;
     }
   }
   return 0;

@@ -84,14 +84,14 @@ s32 LinkBattle_ReceiveParty(void) {
   return memberCount;
 }
 
-/// BattleWork.opponentSlots for a party unit the opponent was not sent.
+/// BattleState.opponentSlots for a party unit the opponent was not sent.
 #define OPPONENT_SLOT_NONE 255
 
 /// Unused: sends the party, then the Djinn recovery list, each unit under the
 /// id the opponent knows it by.
 UNREAD_RESULT LinkBattle_SendParty(void) {
   u8 *buffer;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 j;
   struct DjinnRecoveryList *list;
   s32 size;
@@ -104,7 +104,7 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
   {
     s32 noSlot = OPPONENT_SLOT_NONE;
 
-    battle = gBattleWork;
+    battle = gBattleState;
     for (i = 0; i < PARTY_UNIT_COUNT; i++)
       battle->opponentSlots[i] = noSlot;
 
@@ -182,7 +182,7 @@ UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unusedA, u32 unusedB,
 /// In a link battle, shows the "EXEC" signature and waits up to 30 frames for
 /// the other console to show it too. Returns -1 when the link fails, else 0.
 s32 LinkBattle_WaitSync(void) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
@@ -224,7 +224,7 @@ s32 LinkBattle_WaitSync(void) {
 /// through the same handshake of signatures. Returns -1 when the link fails or
 /// the steps disagree, else 0.
 s32 LinkBattle_SyncTurn(void) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
@@ -335,7 +335,7 @@ s32 LinkBattle_SyncTurn(void) {
 /// Records the unit id the link opponent knows each party member by.
 UNREAD_RESULT BattleParty_AssignOpponentSlots(void) {
   u16 activeMembers[8];
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   s32 partySize = BattleParty_PrepareMembers(activeMembers);
   s32 memberSlot;
   s32 unitId;

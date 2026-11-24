@@ -61,7 +61,7 @@
 #include "field/event.h"
 #include "field/scene_tables.h"
 #include "scene/walk_into_leader.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "text/msg_ids.h"
 
 extern const struct SceneEntrance gWestLunpaCave_Entrances[];
@@ -251,7 +251,7 @@ const u32 *Scene_GetExits(void) { return gWestLunpaCave_Exits; }
 /// The puddles, and Bunza, Hammet and the party for the reunion, kept off
 /// the stage until it plays.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_WEST_LUNPA_CAVE) {
+  if (gMainRoutineState.next == SCENE_WEST_LUNPA_CAVE) {
     return gWestLunpaCave_ActorPlacements;
   }
   return gWestLunpaCave_NoActorPlacements;
@@ -1139,9 +1139,9 @@ static void WestLunpaCave_RideWagon(void) {
 
 /// Draws the gate and the ice pillars as the party left them.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == SCENE_WEST_LUNPA_CAVE) {
+  if (gMainRoutineState.next == SCENE_WEST_LUNPA_CAVE) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_UNUSED_PUDDLE), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SOUTH_PUDDLE), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_GATE_PUDDLE), 0);

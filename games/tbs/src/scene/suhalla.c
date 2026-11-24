@@ -52,7 +52,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -206,15 +206,15 @@ static void Suhalla_GrowSprout(void) {
 /// The door is drawn open, the leader walks a step in, and the scene leaves by
 /// the exit numbered as the door's cell behavior.
 static void Suhalla_EnterDoor(void) {
-  struct FieldWork *work = gFieldWork;
-  s32 exitTrigger = work->stepTrigger;
+  struct FieldState *state = gFieldState;
+  s32 exitTrigger = state->stepTrigger;
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
   u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaDoorOpenSteps, cellX, cellZ);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(exitTrigger);
 }
 
@@ -224,15 +224,15 @@ static void Suhalla_EnterDoor(void) {
 ///
 /// It works as Suhalla_EnterDoor does, with a door two cells wide.
 static void Suhalla_EnterSanctumDoor(void) {
-  struct FieldWork *work = gFieldWork;
-  s32 exitTrigger = work->stepTrigger;
+  struct FieldState *state = gFieldState;
+  s32 exitTrigger = state->stepTrigger;
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
   u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaWideDoorOpenSteps, cellX, cellZ);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(exitTrigger);
 }
 
@@ -249,15 +249,15 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// the village to its later people, and after a battle a vine Growth has grown
 /// stands again.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  if (gMainRoutineWork.entrance == SUHALLA_AFTER_BABI_SPOKE) {
+  if (gMainRoutineState.entrance == SUHALLA_AFTER_BABI_SPOKE) {
     GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   }
 
-  work = gFieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->transitionFrames = 24;
+  state = gFieldState;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state->transitionFrames = 24;
 
   if (GameFlag_Get(FLAG_SUHALLA_SPROUT_GROWN) != 0) {
     Suhalla_GrowSprout();

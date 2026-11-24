@@ -62,8 +62,8 @@ void FieldEffect_UpdateScaledArcActorB(struct Actor *arc) {
 /// SPRITE_GOLDEN_RINGS, B upside down); they follow it for CAST_RING_FRAMES,
 /// then release themselves.
 void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *source = effectWork->mainActor;
+  struct FieldEffectState *effectState = gFieldEffectState;
+  struct Actor *source = effectState->mainActor;
   struct Actor *arcs[2];
   struct Actor *arc;
   struct Sprite *sprite;
@@ -88,7 +88,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
     Sprite_StartAnimationFar(sprite, 0);
     sprite->flags = 0;
     VramCache_FreeEntry(sprite->slot);
-    sprite->slot = effectWork->tileSlot;
+    sprite->slot = effectState->tileSlot;
     sprite->retainCacheEntry = 1;
     sprite->image.tile =
         (gVramCacheEntries[sprite->slot].offset / TILE_SIZE_4BPP) &

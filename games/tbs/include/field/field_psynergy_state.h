@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_FIELD_PSYNERGY_WORK_H
-#define ALCHEMY_FIELD_PSYNERGY_WORK_H
+#ifndef ALCHEMY_FIELD_PSYNERGY_STATE_H
+#define ALCHEMY_FIELD_PSYNERGY_STATE_H
 
 /// @file
-/// FieldEffectWork, the work of a field Psynergy.
+/// FieldEffectState, the state of a field Psynergy.
 
 #include "fixed_math.h"
 #include "static_assert.h"
@@ -12,9 +12,9 @@
 struct Sprite;
 struct Actor;
 
-/// The work of a field Psynergy: its caster and target, where it takes place,
+/// The state of a field Psynergy: its caster and target, where it takes place,
 /// the map state it restores and its 24 field effect sprites.
-struct FieldEffectWork {
+struct FieldEffectState {
   s32 angle;         ///< 1/65536 turns
   FIXED x;           ///< 16.16 fixed-point pixels
   FIXED y;           ///< 16.16 fixed-point pixels
@@ -64,15 +64,15 @@ struct FieldEffectWork {
   u8 paddingAtEnd[3]; ///< up to the struct's word-aligned size
 };
 
-STATIC_ASSERT(sizeof(struct FieldEffectWork) == 1824);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, mainActor) == 16);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, action) == 28);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, savedCallback) == 56);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, tileSlot) == 70);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, savedShakeX) == 76);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, particles) == 88);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, arcTileSlot) == 1818);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, messageMode) == 1820);
+STATIC_ASSERT(sizeof(struct FieldEffectState) == 1824);
+STATIC_ASSERT(offsetof(struct FieldEffectState, mainActor) == 16);
+STATIC_ASSERT(offsetof(struct FieldEffectState, action) == 28);
+STATIC_ASSERT(offsetof(struct FieldEffectState, savedCallback) == 56);
+STATIC_ASSERT(offsetof(struct FieldEffectState, tileSlot) == 70);
+STATIC_ASSERT(offsetof(struct FieldEffectState, savedShakeX) == 76);
+STATIC_ASSERT(offsetof(struct FieldEffectState, particles) == 88);
+STATIC_ASSERT(offsetof(struct FieldEffectState, arcTileSlot) == 1818);
+STATIC_ASSERT(offsetof(struct FieldEffectState, messageMode) == 1820);
 
 /// Returns the value step tenths of the way from `from` to `to`; the field
 /// Psynergy that uses it steps from 0 to 10, one a frame.

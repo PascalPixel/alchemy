@@ -20,7 +20,7 @@ struct ActorCameraPoint {
   FIXED z; ///< 16.16 fixed-point pixels
 };
 
-/// The start of the 3D camera's work (heap slot HEAP_SLOT_CAMERA,
+/// The start of the 3D camera's state (heap slot HEAP_SLOT_CAMERA,
 /// gBattleCamera, a struct BattleCamera), as the fixed camera reads it: the eye
 /// and target it looks from and at, or the points that stand in for them.
 struct ActorCameraFixed {
@@ -37,10 +37,10 @@ void ActorSystem_PlaceSprites(void) {
    * touches. */
   UNUSED struct ActorCameraPoint unusedPoints[3];
   s32 actorIndex;
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   s32 viewX;
   s32 viewZ;
-  struct ActorSystemWork *system;
+  struct ActorSystemState *system;
   struct Actor *actor;
   struct Sprite *sprite;
   u32 kind;
@@ -53,16 +53,16 @@ void ActorSystem_PlaceSprites(void) {
   struct SpritePlacement drawPosition;
   u32 layerPlusOne;
 
-  // MapGridScrollWork owns all three layer cell pointers at their 48-byte
+  // MapGridScrollState owns all three layer cell pointers at their 48-byte
   // stride.
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
   {
     s32 *view = grid->view;
 
     viewX = view[0] & FIELD_PIXEL_MASK;
     viewZ = view[1] & FIELD_PIXEL_MASK;
   }
-  system = gActorSystemWork;
+  system = gActorSystemState;
   // Copy the picture decoder (Render_DecodePicture) into its heap slot.
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodePicture,
                    Render_DecodePictureCodeSize);
@@ -167,7 +167,7 @@ UNUSED s32 ActorCamera_ReturnTrue(void) { return 1; }
 void ActorSystem_ProjectSprites(void) {
   s32 i;
   struct ActorCameraFixed *camera;
-  struct ActorSystemWork *system;
+  struct ActorSystemState *system;
   struct ActorCameraPoint *eye;
   struct ActorCameraPoint *target;
   struct Actor *actor;
@@ -184,7 +184,7 @@ void ActorSystem_ProjectSprites(void) {
   UNUSED struct ActorCameraPoint unusedPoints[2];
 
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  system = gActorSystemWork;
+  system = gActorSystemState;
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodePicture,
                    Render_DecodePictureCodeSize);
   eye = &camera->eye;

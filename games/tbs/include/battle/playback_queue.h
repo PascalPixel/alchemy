@@ -11,7 +11,7 @@
 /// The most commands the playback queue holds.
 enum { BATTLE_PLAYBACK_CAPACITY = 64 };
 
-/// BattlePlaybackWork.phase: how far BattlePlayback_Run has got through the
+/// BattlePlaybackState.phase: how far BattlePlayback_Run has got through the
 /// action's targets. Its message phases (PLAY_MESSAGE and the like) are
 /// private to battle_playback.c.
 enum BattlePlaybackPhase {
@@ -24,7 +24,7 @@ enum BattlePlaybackPhase {
 
 /// The playback queue: up to BATTLE_PLAYBACK_CAPACITY commands, each an opcode
 /// (enum BattlePlaybackCommand) and one operand, in the order they play. It
-/// lives in BattleWork.playback.queue: BattlePlayback_Push appends to it and
+/// lives in BattleState.playback.queue: BattlePlayback_Push appends to it and
 /// playback reads it.
 struct BattlePlaybackQueue {
   u8 opcodes[BATTLE_PLAYBACK_CAPACITY]; ///< enum BattlePlaybackCommand
@@ -51,7 +51,7 @@ enum BattlePlaybackCommand {
   PLAYBACK_ABILITY_NAME = 3,    ///< an ability's name for the next message
   PLAYBACK_MESSAGE = 4,         ///< a message, waiting for the player
   PLAYBACK_MESSAGE_NO_WAIT = 5, ///< a message, going straight on
-  PLAYBACK_MARK = 6,            ///< sets gBattleMessageWork->marked
+  PLAYBACK_MARK = 6,            ///< sets gBattleMessageState->marked
   PLAYBACK_CLEAR_ARGUMENTS = 7, ///< forgets the names and numbers pushed
   PLAYBACK_HIT = 8,             ///< the unit flinches and flashes
   PLAYBACK_DEFEAT = 9,          ///< the unit falls; an enemy fades out

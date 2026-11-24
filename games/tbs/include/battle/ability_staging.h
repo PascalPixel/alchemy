@@ -8,7 +8,7 @@
 
 #include "edition.h"
 #include "battle/battle_action_run.h"
-#include "battle/battle_work.h"
+#include "battle/battle_state.h"
 #include "battle/playback_queue.h"
 #include "game/item.h"
 #include "gamepak/far_call.h"

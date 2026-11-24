@@ -17,12 +17,12 @@
 /// warrior's colours. His position and facing are kept for
 /// Colosso_RestoreWarrior.
 void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
-  struct ActorSystemWork *system;
+  struct ActorSystemState *system;
   struct Actor *actor;
   struct Sprite *sprite;
   s32 i;
 
-  system = gActorSystemWork;
+  system = gActorSystemState;
   actor = Actor_GetById(id);
   system->edge = WARRIOR_OUTLINE_EDGE;
   system->fill = WARRIOR_OUTLINE_FILL;
@@ -76,13 +76,13 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
 /// returns to his kept position and facing with his motion stopped, and the
 /// outline colours are the field's again.
 void Colosso_RestoreWarrior(s32 id) {
-  struct ActorSystemWork *system;
+  struct ActorSystemState *system;
   struct Actor *actor;
 
-  system = gActorSystemWork;
+  system = gActorSystemState;
   actor = Actor_GetById(id);
-  if (gMainRoutineWork.movementMode == 1) { // climbing
-    gMainRoutineWork.movementMode = 0;
+  if (gMainRoutineState.movementMode == 1) { // climbing
+    gMainRoutineState.movementMode = 0;
     Actor_SetAnimation(id, ANIM_STAND);
   } else {
     Actor_FaceDirection(id, FACING_SOUTH, 30);

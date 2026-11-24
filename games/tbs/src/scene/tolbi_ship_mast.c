@@ -12,7 +12,7 @@
 ///
 /// The entrances from TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on are
 /// the voyage's events here, each leading on into the next. During the attacks
-/// the restart point (gMainRoutineWork.restartScene) is set to
+/// the restart point (gMainRoutineState.restartScene) is set to
 /// SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT, which starts the voyage over.
 ///
 /// While the ship is under way, the setup rocks the view. The ship is under way
@@ -79,7 +79,7 @@
 #include "scene/tolbi_ship.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -199,7 +199,7 @@ enum TolbiShipMastCellBehavior {
 /// Each frame of the sparkle on the sea: it keeps its place against the
 /// rocking view and turns.
 static s32 TolbiShipMast_TurnSparkle(struct Actor *actor) {
-  s32 *camera = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
+  s32 *camera = ((struct MapGridScrollState *)gMapGridState[0])->origin;
   s32 cameraX = *camera++;
   s32 cameraY = *camera;
 
@@ -349,7 +349,7 @@ s32 Scene_Initialize(void) {
   struct Actor *leader;
 
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if ((GameFlag_Get(FLAG_TOLBI_SHIP_ROWING) != 0 ||
        GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) &&
@@ -364,7 +364,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_LOOKOUT, 164, 328);
   }
   // Each of the voyage's entrances plays its event.
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK:
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -387,18 +387,18 @@ s32 Scene_Initialize(void) {
     }
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK:
-    gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
-    gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gMainRoutineState.restartScene = SCENE_SHIP_ROOMS;
+    gMainRoutineState.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_PlayFirstAttack();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK:
-    gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
-    gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gMainRoutineState.restartScene = SCENE_SHIP_ROOMS;
+    gMainRoutineState.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_PlaySecondAttack();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK:
-    gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
-    gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gMainRoutineState.restartScene = SCENE_SHIP_ROOMS;
+    gMainRoutineState.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_PlayThirdAttack();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO:
@@ -440,7 +440,7 @@ static void TolbiShipMast_WatchCourseAgain(void) {
 /// On the mast at TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR, the
 /// lookout scans both sides and announces a clear course.
 static void TolbiShipMast_AnnounceClearCourse(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -465,7 +465,7 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
 /// On the mast at TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK, the first
 /// attack, three monsters close in and the lookout cries out. "Avast!"
 static void TolbiShipMast_PlayFirstAttack(void) {
-  s32 *cameraOrigin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
+  s32 *cameraOrigin = ((struct MapGridScrollState *)gMapGridState[0])->origin;
   struct Actor *actor;
   FIXED sparkleX;
   s32 sparkleY = 0;
@@ -476,7 +476,7 @@ static void TolbiShipMast_PlayFirstAttack(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -536,7 +536,7 @@ static void TolbiShipMast_PlayFirstAttack(void) {
   Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 3);
   // "Monsters sighted!"
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 20);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -595,7 +595,7 @@ static void TolbiShipMast_PlaySecondAttack(void) {
   wait(1);
   TolbiShipMast_StartBirdsDrifting();
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -696,7 +696,7 @@ static void TolbiShipMast_PlayThirdAttack(void) {
   wait(1);
   TolbiShipMast_StartBirdsDrifting();
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -777,7 +777,7 @@ static void TolbiShipMast_PlayThirdAttack(void) {
   actor->scaleY = FIXED_ONE;
   actor->facing = FACING_SOUTH_SOUTHWEST;
   Event_Wait(40);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -796,7 +796,7 @@ static void TolbiShipMast_AnnounceLand(void) {
   wait(1);
   TolbiShipMast_StartBirdsDrifting();
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -824,15 +824,16 @@ static void TolbiShipMast_AnnounceLand(void) {
   Event_SetMessageId(MsgTolbiShipLandHo);
   // "Land ho!"
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 20);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   // The rowing balance picks where the ship comes in:
   // ROWING_BALANCE_OFF_COURSE takes
   // TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the island.
-  gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
-  gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK;
+  gMainRoutineState.restartScene = SCENE_SHIP_ROOMS;
+  gMainRoutineState.restartEntrance =
+      SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK;
   if (TolbiShipMast_GetRowingBalance() == ROWING_BALANCE_OFF_COURSE) {
     Import_EventSetExitRequest(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE);
   } else {
@@ -844,7 +845,7 @@ static void TolbiShipMast_AnnounceLand(void) {
 /// Rocks the view with the ship: adds a random swing across and up and down to
 /// the camera's origin each frame.
 static void TolbiShipMast_RockView(void) {
-  s32 *camera = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
+  s32 *camera = ((struct MapGridScrollState *)gMapGridState[0])->origin;
   FIXED rockX = Trig_Cos(gTolbiShipMast_RockAngleX);
   s32 rockY = Trig_Sin(gTolbiShipMast_RockAngleY);
 

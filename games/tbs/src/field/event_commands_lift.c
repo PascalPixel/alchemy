@@ -8,7 +8,7 @@
 /// A hand appears 32 pixels to either side, each moves 14 pixels in, and they
 /// lift the target 32 pixels with them.
 void FieldPsynergy_LiftOnTarget(s32 unused) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Actor *caster;
   struct Actor *target;
   // Untyped: as struct Actor *, the load of pair[0] waits for the store to
@@ -21,9 +21,9 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   s32 handIndex;
   FIXED startY;
 
-  effectWork = gFieldEffectWork;
-  target = effectWork->child;
-  caster = effectWork->mainActor;
+  effectState = gFieldEffectState;
+  target = effectState->child;
+  caster = effectState->mainActor;
   if (target == NULL)
     return;
 
@@ -32,11 +32,11 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   caster->watchedActor = target;
   Actor_StartScriptFar(caster, gFieldEffect_SourceHoldScript);
 
-  x = effectWork->x;
+  x = effectState->x;
   pos[0] = x;
-  y = effectWork->y + toFIXED(16);
+  y = effectState->y + toFIXED(16);
   pos[1] = y;
-  z = effectWork->z;
+  z = effectState->z;
   pos[2] = z;
   pair[0] = FieldEffect_SpawnLiftHand(x + toFIXED(32), y, z, FACING_WEST);
   pair[1] = FieldEffect_SpawnLiftHand(pos[0] - toFIXED(32), pos[1], pos[2],
@@ -112,7 +112,7 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
 /// freed: each of Force's FORCE_FLASHES flashes (event_commands_force.c).
 void FieldEffect_UpdateRadialBurst(struct FieldParticle *effect) {
   // OUT_AND_BACK_FLYING_OUT must enter OUT_AND_BACK_AIM_BACK immediately.
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct FieldEffectState *effectState = gFieldEffectState;
   struct Vector3 pos;
   s32 state;
 
@@ -142,14 +142,14 @@ again:
   }
 
   if (state == OUT_AND_BACK_AIM_BACK) {
-    // 8 pixels toward effectWork->angle from 16 pixels above the caster,
+    // 8 pixels toward effectState->angle from 16 pixels above the caster,
     // on screen, give or take 4 pixels.
-    struct Actor *caster = effectWork->mainActor;
+    struct Actor *caster = effectState->mainActor;
 
     pos.x = caster->x.fixed;
     pos.y = caster->y.fixed + toFIXED(16);
     pos.z = caster->z.fixed;
-    Vector_AddPolarOffset(toFIXED(8), effectWork->angle, &pos);
+    Vector_AddPolarOffset(toFIXED(8), effectState->angle, &pos);
     Camera_WorldToScreen(&pos);
     Vector_AddPolarOffset(toFIXED(4), Random16(), &pos);
     effect->targetX = pos.x;

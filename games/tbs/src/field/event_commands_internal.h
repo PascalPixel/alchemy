@@ -17,7 +17,7 @@
 #include "field/field.h"
 #include "field/field_blend.h"
 #include "field/field_effect_scripts.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/ground_mask.h"
 #include "field/line_scroll.h"
 #include "field/world_map_lines.h"
@@ -39,18 +39,18 @@
 void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
                                                s32 magnitude, s32 angle);
 
-/// The field effect sprites of a field Psynergy (FieldEffectWork.particles).
+/// The field effect sprites of a field Psynergy (FieldEffectState.particles).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
-/// A pending Djinni battle's event (gMainRoutineWork.pendingDjinni,
+/// A pending Djinni battle's event (gMainRoutineState.pendingDjinni,
 /// event_commands_requests.c, event_commands_djinni.c): this plus the
 /// Djinni's id (DJINN_PER_ELEMENT to an element), with DJINN_NO_HOP beside it.
 #define DJINNI_BATTLE_EVENT_FIRST 300
 
-/// gMainRoutineWork.pendingDjinni's parts, as Djinn_ResolvePending reads them.
+/// gMainRoutineState.pendingDjinni's parts, as Djinn_ResolvePending reads them.
 /// bits: 15..12 kind (enum PendingBattleKind) | 11..0 event or flag.
 #define DJINN_PENDING_KIND_MASK 0xf000
-/// What waits in gMainRoutineWork.pendingDjinni through a battle.
+/// What waits in gMainRoutineState.pendingDjinni through a battle.
 enum PendingBattleKind {
   /// A Djinni battle, by its DJINNI_BATTLE_EVENT_FIRST event.
   PENDING_DJINNI_BATTLE = 0,
@@ -85,7 +85,7 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
   struct FieldParticle *effect;
   s32 remainingSlots;
 
-  effect = ((struct FieldEffectWork *)gFieldEffectWork)->particles;
+  effect = ((struct FieldEffectState *)gFieldEffectState)->particles;
   remainingSlots = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
     remainingSlots -= 1;
@@ -149,7 +149,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
 /// 32 pixels.
 #define DEFINE_CLAPPING_HANDS_CAST(name, spawn)                                \
   void name(void) {                                                            \
-    struct FieldEffectWork *effectWork;                                        \
+    struct FieldEffectState *effectState;                                      \
     struct Actor *obj;                                                         \
     struct Actor *pair[2];                                                     \
     struct Vector3 pos;                                                        \
@@ -157,11 +157,11 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     s32 n;                                                                     \
     s32 dist;                                                                  \
                                                                                \
-    effectWork = gFieldEffectWork;                                             \
+    effectState = gFieldEffectState;                                           \
     FieldPsynergy_FadeToCastColor();                                           \
-    pos.x = effectWork->x;                                                     \
-    pos.y = effectWork->y + toFIXED(16);                                       \
-    pos.z = effectWork->z;                                                     \
+    pos.x = effectState->x;                                                    \
+    pos.y = effectState->y + toFIXED(16);                                      \
+    pos.z = effectState->z;                                                    \
     pair[0] = spawn(pos.x + toFIXED(32), pos.y, pos.z, FACING_WEST);           \
     pair[1] = spawn(pos.x - toFIXED(32), pos.y, pos.z, FACING_EAST);           \
                                                                                \
@@ -177,9 +177,9 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     Actor_WaitForMoveFar(pair[0]);                                             \
     Sound_PlayFar(SE_HEAVY_IMPACT);                                            \
     for (n = 0; n < CLAP_SPARKLE_COUNT; n++) {                                 \
-      pos.x = effectWork->x;                                                   \
-      pos.y = effectWork->y + toFIXED(16);                                     \
-      pos.z = effectWork->z;                                                   \
+      pos.x = effectState->x;                                                  \
+      pos.y = effectState->y + toFIXED(16);                                    \
+      pos.z = effectState->z;                                                  \
       obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);                  \
       if (obj != 0) {                                                          \
         Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);                \

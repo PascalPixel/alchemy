@@ -51,7 +51,7 @@
 /// The south entrance also opens onto the Alpine Crossing, and the west exit
 /// onto the World Map.
 ///
-/// Every room's tables are picked by gMainRoutineWork.next,
+/// Every room's tables are picked by gMainRoutineState.next,
 /// all the rooms share one exit table, and Scene_Initialize calls the setup of
 /// the room being entered (AltinPeak_RestoreFirstWaterBeastRoom and so on),
 /// which puts back what the party has already done there. A beast is
@@ -94,7 +94,7 @@
 #include "system/io_write.h"
 #include "system/iwram_call.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -392,7 +392,7 @@ static s32 AltinPeak_FlyDebris(struct Actor *actor) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_ALTIN_PEAK_FIRST_WATER_BEAST) {
     return gAltinPeak_FirstWaterBeastEntrances;
@@ -433,7 +433,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// The falling-rocks passage and the Hydros statue's room have exit regions,
 /// round the ladder between them.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_ALTIN_PEAK_FALLING_ROCKS) {
     return gAltinPeak_FallingRocksRegions;
@@ -448,7 +448,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gAltinPeak_Exits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_ALTIN_PEAK_FIRST_WATER_BEAST) {
     return gAltinPeak_FirstWaterBeastActorPlacements;
@@ -741,7 +741,7 @@ enum { DRAIN_SINK_PIXELS = 24 };
 /// two cells under the west ladder (3, 14) and (3, 15) then take their dry
 /// form from cell (0, 0).
 static void AltinPeak_DrainFirstWater(void) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   struct MapGridLayerScroll *water;
   s32 step;
 
@@ -771,7 +771,7 @@ static void AltinPeak_DrainFirstWater(void) {
 /// The cells (77, 28) to (92, 31) take the pictures kept at (93, 41) while the
 /// water goes, and their dry form, kept at (77, 41), once it has gone.
 static void AltinPeak_DrainSecondWater(void) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   struct MapGridLayerScroll *water;
   s32 step;
 
@@ -796,7 +796,7 @@ static void AltinPeak_DrainSecondWater(void) {
 /// while the water goes, and their dry form, kept at (103, 14), once it has
 /// gone.
 static void AltinPeak_DrainThirdWater(void) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   struct MapGridLayerScroll *water;
   s32 step;
 
@@ -1295,31 +1295,31 @@ static void AltinPeak_ReadFallingRockSign(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   const struct Trigger *table;
 
-  if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_FIRST_WATER_BEAST) {
+  if (gMainRoutineState.next == SCENE_ALTIN_PEAK_FIRST_WATER_BEAST) {
     if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
       table = gAltinPeak_FirstWaterBeastTriggersDrained;
     } else {
       table = gAltinPeak_FirstWaterBeastTriggers;
     }
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_RAIL_TUNNEL) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_RAIL_TUNNEL) {
     table = gAltinPeak_RailTunnelTriggers;
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_SECOND_WATER_BEAST) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_SECOND_WATER_BEAST) {
     table = gAltinPeak_SecondWaterBeastTriggers;
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_SOUTH_ENTRANCE) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_SOUTH_ENTRANCE) {
     table = gAltinPeak_SouthEntranceTriggers;
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_THIRD_WATER_BEAST) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_THIRD_WATER_BEAST) {
     table = gAltinPeak_ThirdWaterBeastTriggers;
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_POOL) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_POOL) {
     table = gAltinPeak_PoolTriggers;
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_SPRITZ) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_SPRITZ) {
     table = gAltinPeak_SpritzTriggers;
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_JUNCTION) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_JUNCTION) {
     table = gAltinPeak_JunctionTriggers;
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_FALLING_ROCKS) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_FALLING_ROCKS) {
     table = gAltinPeak_FallingRocksTriggers;
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_HYDROS_STATUE) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_HYDROS_STATUE) {
     table = gAltinPeak_HydrosStatueTriggers;
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_WEST_EXIT) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_WEST_EXIT) {
     table = gAltinPeak_WestExitTriggers;
   } else {
     table = gAltinPeak_TriggersOther;
@@ -1594,25 +1594,25 @@ static void AltinPeak_FirstBeastHopsAway(void) {
 /// Sets up the room being entered, with what the party has done there put
 /// back and its water as low as the drains have left it. Returns 0.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_FIRST_WATER_BEAST) {
+  if (gMainRoutineState.next == SCENE_ALTIN_PEAK_FIRST_WATER_BEAST) {
     AltinPeak_RestoreFirstWaterBeastRoom();
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_SECOND_WATER_BEAST) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_SECOND_WATER_BEAST) {
     AltinPeak_RestoreSecondWaterBeastRoom();
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_SOUTH_ENTRANCE) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_SOUTH_ENTRANCE) {
     AltinPeak_RestoreSouthEntranceRoom();
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_THIRD_WATER_BEAST) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_THIRD_WATER_BEAST) {
     AltinPeak_RestoreThirdWaterBeastRoom();
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_POOL) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_POOL) {
     AltinPeak_RestorePoolRoom();
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_SPRITZ) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_SPRITZ) {
     AltinPeak_RestoreSpritzRoom();
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_FALLING_ROCKS) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_FALLING_ROCKS) {
     AltinPeak_RestoreFallingRocksRoom();
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_HYDROS_STATUE) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_HYDROS_STATUE) {
     AltinPeak_RestoreHydrosStatueRoom();
-  } else if (gMainRoutineWork.next == SCENE_ALTIN_PEAK_WEST_EXIT) {
+  } else if (gMainRoutineState.next == SCENE_ALTIN_PEAK_WEST_EXIT) {
     AltinPeak_RestoreWestExitRoom();
   }
   return 0;
@@ -1623,10 +1623,10 @@ s32 Scene_Initialize(void) {
 /// it, the two puddles, frozen if Frost has frozen them on this visit.
 static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
   struct Actor *actor;
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-    if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE) {
+    if (gMainRoutineState.entrance == ENTRANCE_AFTER_BATTLE) {
       AltinPeak_AwardFrostJewelAndDrain();
     }
   }
@@ -1678,7 +1678,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
                                    ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                    gAltinPeak_FaceLeaderScript);
   } else {
-    grid = gMapGridWork[0];
+    grid = gMapGridState[0];
     Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, 0, 0);
     MapGrid_CopyCellAttributes(0, 0, 1, 2, 3, 14);
     grid->flags &= ~DISPCNT_BG1_ON;
@@ -1708,12 +1708,12 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
 /// last flipped.
 static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
   if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
-    ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~DISPCNT_BG1_ON;
+    ((struct MapGridScrollState *)gMapGridState[0])->flags &= ~DISPCNT_BG1_ON;
     Actor_SetPosition(ACTOR_SECOND_WATER_BEAST, 0, 0);
   } else {
     AltinPeak_StartPaletteAnimation();
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
-        gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE) {
+        gMainRoutineState.entrance == ENTRANCE_AFTER_BATTLE) {
       AltinPeak_DrainAfterSecondBeast();
     } else {
       MapGrid_CopyCellAttributes(38, 24, 1, 2, 37, 24);
@@ -1739,14 +1739,14 @@ static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
 /// drain, and coming in from the Alpine Crossing shows no area name.
 static void AltinPeak_RestoreSouthEntranceRoom(void) {
   if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
-    ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~DISPCNT_BG1_ON;
+    ((struct MapGridScrollState *)gMapGridState[0])->flags &= ~DISPCNT_BG1_ON;
   } else {
     MapGrid_CopyCellAttributes(52, 42, 1, 1, 53, 42);
   }
   // Either entrance from the Alpine Crossing.
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
           ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST ||
-      gMainRoutineWork.entrance ==
+      gMainRoutineState.entrance ==
           ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
@@ -1756,11 +1756,11 @@ static void AltinPeak_RestoreSouthEntranceRoom(void) {
 /// before it, the beast spitting water; the frozen puddle; and the switch.
 static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
   if (GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
-    ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~DISPCNT_BG1_ON;
+    ((struct MapGridScrollState *)gMapGridState[0])->flags &= ~DISPCNT_BG1_ON;
     Actor_SetPosition(ACTOR_THIRD_WATER_BEAST, 0, 0);
   } else {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE) {
+      if (gMainRoutineState.entrance == ENTRANCE_AFTER_BATTLE) {
         AltinPeak_DrainAfterThirdBeast();
       }
     }
@@ -1796,7 +1796,7 @@ static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
 static void AltinPeak_RestorePoolRoom(void) {
   struct Actor *pillar;
 
-  if (gMainRoutineWork.entrance == ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST) {
+  if (gMainRoutineState.entrance == ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_SetPosition(ACTOR_CART, 358, 104);
     }
@@ -1811,7 +1811,7 @@ static void AltinPeak_RestorePoolRoom(void) {
     }
   }
   if (GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
-    ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~DISPCNT_BG1_ON;
+    ((struct MapGridScrollState *)gMapGridState[0])->flags &= ~DISPCNT_BG1_ON;
   }
   // The cells AltinPeak_FlipPoolRoomSwitch copies as it sets the flag, redrawn
   // on arrival.
@@ -1902,7 +1902,7 @@ static void AltinPeak_RestoreFallingRocksRoom(void) {
     MapGrid_CenterOnFollowedPoint();
     wait(1);
   }
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
           ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE &&
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     Event_Start();
@@ -1932,7 +1932,7 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
     // statuesDefeated is 0 here: nothing about the shadow is solid.
     Actor_Get(ACTOR_STATUE_SHADOW)->collisionFlags = statuesDefeated;
   }
-  entrance = gMainRoutineWork.entrance;
+  entrance = gMainRoutineState.entrance;
   if (entrance == ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS ||
       entrance == ENTRANCE_ROOM_START) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -1952,7 +1952,7 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
 /// stone pillar stands a cell west of its first place, at (184, 328).
 static void AltinPeak_RestoreWestExitRoom(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_WEST_EXIT_ROOM_PILLAR), 0);
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM) {
     Actor_SetPosition(ACTOR_WEST_EXIT_ROOM_PILLAR, 184, 328);
   }
@@ -2111,7 +2111,7 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, 0, 0);
   Actor_SetPosition(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, 0, 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2127,7 +2127,7 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   FieldCamera_MoveToFX(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
   FieldCamera_WaitForMove();
   Event_SetTriggers(gAltinPeak_FirstWaterBeastTriggersDrained);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Event_End();
 }
@@ -2143,12 +2143,12 @@ static void AltinPeak_DrainAfterSecondBeast(void) {
   AltinPeak_ToggleSecondWaterBeastRoomSwitchCells();
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   AltinPeak_DrainSecondWater();
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Event_End();
 }
@@ -2164,12 +2164,12 @@ static void AltinPeak_DrainAfterThirdBeast(void) {
   AltinPeak_ToggleThirdWaterBeastRoomSwitchCells();
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   AltinPeak_DrainThirdWater();
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Event_End();
 }
@@ -2230,7 +2230,7 @@ static void AltinPeak_FlickerStatue(void) {
 /// check it.
 static void AltinPeak_CelebrateHydrosVictory(void) {
   struct Actor *leader;
-  struct FieldWork *work;
+  struct FieldState *state;
   TaskFunc update;
   const s32 *celebrate;
   const s32 *party;
@@ -2239,9 +2239,9 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Actor_SetPosition(ACTOR_STATUE, 328, 88);
   Actor_SetPosition(ACTOR_STATUE_SHADOW, 328, 88);
   Actor_SetAnimation(ACTOR_STATUE, HYDROS_STATUE_ANIMATION_STONE);
-  work = gFieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->transitionFrames = 40;
+  state = gFieldState;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state->transitionFrames = 40;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -2350,10 +2350,10 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Actor_SetScript(ACTOR_IVAN, party);
   Actor_RunScriptAndWait(ACTOR_MIA, party);
   Event_Wait(20);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   GameFlag_Set(FLAG_HYDROS_STATUES_DEFEATED);
   Event_End();
 }
@@ -2362,7 +2362,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
 UNUSED static void AltinPeak_RequestPsynergy(void) {
   // XXX (no evidence): why the user is Felix, who never joins the party in
   // this game; nothing calls this, so no caller shows what it was for.
-  gFieldWork->psynergy = FIELD_PSYNERGY(FELIX, ABILITY_FROST);
+  gFieldState->psynergy = FIELD_PSYNERGY(FELIX, ABILITY_FROST);
 }
 
 /// Task in Spritz's room: while Isaac stands higher than 48 pixels, the ice
@@ -2423,7 +2423,7 @@ static void AltinPeak_StopCartAndJumpOff(struct Actor *actor) {
   SpriteAnimation_Clear(sprite->entries[1]);
   sprite->entries[1] = NULL;
   sprite->dirty = 1;
-  leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  leader = Actor_Lookup(gMainRoutineState.leaderActorId);
   Sound_Play(SE_JUMP);
   leader->x.fixed = x;
   leader->velocityY = toFIXED(6);
@@ -2573,7 +2573,7 @@ enum AltinPeakCellBehavior {
 /// (gAltinPeak_CartSpeeds).
 static void AltinPeak_RollCart(s32 id, s32 heading) {
   struct Actor *actor = Actor_Get(id);
-  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gMainRoutineState.leaderActorId);
   struct FieldPosition position;
   s32 directionIndex;
 
@@ -2642,7 +2642,7 @@ arrived:
 static void AltinPeak_StepPaletteAnimation(void) {
   // The palette cycle borrows RGB555 colours from the palette fade's source
   // palette; each step replaces BG colours 3 to 11.
-  u16 *palette = gPaletteFadeWork->palette;
+  u16 *palette = gPaletteFadeState->palette;
 
   if (gAltinPeak_PaletteHold <= 0) {
     s32 frame;

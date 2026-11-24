@@ -48,7 +48,7 @@ void Kolima_UpdateCurseDust(void) {
   }
   if ((gFrameCount & 7) == 0 &&
       (actor = FieldActor_Create(SPRITE_SPARKLE, 0, 0, 0)) != 0) {
-    origin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
+    origin = ((struct MapGridScrollState *)gMapGridState[0])->origin;
     if ((gFrameCount & 63) == 0)
       Sound_Play(SE_GLITTER);
     if (gFallingEffectState != KOLIMA_DUST_CENTRED)

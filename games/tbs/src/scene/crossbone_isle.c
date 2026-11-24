@@ -90,7 +90,7 @@
 #include "scene/import.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 
 extern u16 gCrossboneIsle_DoorOpens[];
@@ -344,7 +344,7 @@ static void CrossboneIsle_PlaceLogs(void);
 UNUSED static void CrossboneIsle_UnusedNoOp(void) {}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_CROSSBONE_ISLE) {
     return gCrossboneIsle_IsleEntrances;
@@ -370,7 +370,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gCrossboneIsle_Exits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_CROSSBONE_ISLE) {
     return gCrossboneIsle_IsleActorPlacements;
@@ -424,7 +424,8 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
 /// once that flag is set.
 static void CrossboneIsle_FightDeadbeard(void) {
   Event_Start();
-  Event_SetAfterBattleDestination(gMainRoutineWork.next, ENTRANCE_AFTER_BATTLE);
+  Event_SetAfterBattleDestination(gMainRoutineState.next,
+                                  ENTRANCE_AFTER_BATTLE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 5);
@@ -432,7 +433,7 @@ static void CrossboneIsle_FightDeadbeard(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_CROSSBONE_ISLE) {
     return gCrossboneIsle_IsleTriggers;
@@ -468,10 +469,10 @@ s32 Scene_Initialize(void) {
   s32 current;
   s32 first;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // The floating logs' room only places its logs.
-  sceneId = gMainRoutineWork.next;
+  sceneId = gMainRoutineState.next;
   if (sceneId == SCENE_CROSSBONE_ISLE_FLOATING_LOGS) {
     CrossboneIsle_PlaceLogs();
     return 0;
@@ -483,8 +484,8 @@ s32 Scene_Initialize(void) {
       TreasureSpot_SetPosition(TREASURE_SPOT_PIRATE_SHIP_MIMIC, toFIXED(216),
                                toFIXED(648));
     }
-    if (gMainRoutineWork.next == sceneId) {
-      if (gMainRoutineWork.entrance != ENTRANCE_AFTER_BATTLE) {
+    if (gMainRoutineState.next == sceneId) {
+      if (gMainRoutineState.entrance != ENTRANCE_AFTER_BATTLE) {
         if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED) == 0) {
           return 0;
         }
@@ -496,7 +497,7 @@ s32 Scene_Initialize(void) {
       return 0;
     }
   }
-  current = gMainRoutineWork.next;
+  current = gMainRoutineState.next;
   if (current == SCENE_CROSSBONE_ISLE) {
     CrossboneIsle_RestoreIvy();
     Actor_Get(ACTOR_ISLE_NUT)->targetX = toFIXED(129);
@@ -554,11 +555,11 @@ s32 Scene_Initialize(void) {
                                toFIXED(600), toFIXED(168));
     }
   }
-  current = gMainRoutineWork.next;
+  current = gMainRoutineState.next;
   if (current >= first) {
     if (current <= SCENE_CROSSBONE_ISLE_NINTH_FLOOR) {
       CrossboneIsle_RestorePillar();
-      if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE) {
+      if (gMainRoutineState.entrance == ENTRANCE_AFTER_BATTLE) {
         CrossboneIsle_OpenEastDoorAfterBattle();
       }
     }
@@ -575,8 +576,8 @@ static void CrossboneIsle_RestorePillar(void) {
 
   actor = Actor_Get(ACTOR_PILLAR);
   cleared = GameFlag_Get(
-      (gMainRoutineWork.next + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                                SCENE_CROSSBONE_ISLE_FIRST_FLOOR)));
+      (gMainRoutineState.next + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                                 SCENE_CROSSBONE_ISLE_FIRST_FLOOR)));
   if (cleared != 0) {
     Actor_SetPosition(ACTOR_PILLAR, 650, 168);
     actor->y.fixed = -toFIXED(32);
@@ -609,7 +610,7 @@ static void CrossboneIsle_MovePillar(void) {
   }
 
 #if TBS_PATCH_1
-  if (GameFlag_Get(gMainRoutineWork.next +
+  if (GameFlag_Get(gMainRoutineState.next +
                    (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                     SCENE_CROSSBONE_ISLE_FIRST_FLOOR)) != 0) {
     return;
@@ -631,7 +632,7 @@ static void CrossboneIsle_MovePillar(void) {
 
   MapGrid_CopyCellAttributes(42, 10, 1, 1, column, 10);
 
-  GameFlag_Set(gMainRoutineWork.next +
+  GameFlag_Set(gMainRoutineState.next +
                (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                 SCENE_CROSSBONE_ISLE_FIRST_FLOOR));
 }
@@ -662,16 +663,16 @@ static void CrossboneIsle_OpenWestDoor(void) {
 /// The battle brings the party back to ENTRANCE_AFTER_BATTLE, in front of the
 /// door (CrossboneIsle_OpenEastDoorAfterBattle).
 static void CrossboneIsle_OpenEastDoor(void) {
-  if (GameFlag_Get(gMainRoutineWork.next +
+  if (GameFlag_Get(gMainRoutineState.next +
                    (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
                     SCENE_CROSSBONE_ISLE_FIRST_FLOOR)) == 0) {
     Event_Start();
-    Event_SetAfterBattleDestination(gMainRoutineWork.next,
+    Event_SetAfterBattleDestination(gMainRoutineState.next,
                                     ENTRANCE_AFTER_BATTLE);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
     // The first four floors use ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS;
     // the next five use ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS.
-    switch (gMainRoutineWork.next - SCENE_CROSSBONE_ISLE_FIRST_FLOOR) {
+    switch (gMainRoutineState.next - SCENE_CROSSBONE_ISLE_FIRST_FLOOR) {
     case 0:
       Field_RequestBattleFromEncounterTable(
           ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 0);
@@ -728,7 +729,7 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  GameFlag_Set((gMainRoutineWork.next +
+  GameFlag_Set((gMainRoutineState.next +
                 (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
                  SCENE_CROSSBONE_ISLE_FIRST_FLOOR)));
   Event_Wait(30);
@@ -880,7 +881,7 @@ static void CrossboneIsle_RideLog(s32 actorId, s32 dx, s32 dz) {
   FIXED x;
   FIXED z;
 
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   log = Actor_Get(actorId);
   Event_Start();
   {

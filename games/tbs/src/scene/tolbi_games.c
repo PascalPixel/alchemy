@@ -256,7 +256,7 @@ enum {
 /// frame.
 enum { SPRING_WATER_SINK_PIXELS = 16 };
 
-/// A medal's prizes (MainRoutineWork's prizeWeights): its ring allows three
+/// A medal's prizes (MainRoutineState's prizeWeights): its ring allows three
 /// more for each ring out from the centre.
 enum { SPRING_MEDAL_PRIZES = 15, SPRING_MEDAL_PRIZES_PER_RING = 3 };
 
@@ -343,7 +343,7 @@ const u32 *Scene_GetExits(void) { return gTolbiSpring_Exits; }
 /// Selects the actors of Tolbi Spring or of the Lucky Dice and Lucky
 /// Wheels rooms.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_TOLBI_SPRING) {
+  if (gMainRoutineState.next == SCENE_TOLBI_SPRING) {
     return gTolbiSpringActorPlacements;
   }
   return gTolbiSpringActorPlacementsOther;
@@ -403,7 +403,7 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
 /// stands on the step with his back to the spring, and the party chooses what
 /// to toss (TolbiSpring_RunSpringGame).
 static void TolbiSpring_TossCoinOrMedal(void) {
-  s32 leader = gMainRoutineWork.leaderActorId;
+  s32 leader = gMainRoutineState.leaderActorId;
 
   if (Event_GetFlag(FLAG_TOLBI_SPRING_DRAINED) == 0) {
     GameFlag_Set(FLAG_TOLBI_SPRING_DRAINED);
@@ -450,7 +450,7 @@ static void TolbiSpring_TalkToWheelsAttendant(void) {
 /// Selects the triggers of Tolbi Spring or of the Lucky Dice and Lucky Wheels
 /// rooms.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_TOLBI_SPRING) {
+  if (gMainRoutineState.next == SCENE_TOLBI_SPRING) {
     return gTolbiSpringTriggers;
   }
   return gTolbiSpringTriggersOther;
@@ -471,8 +471,8 @@ s32 Scene_Initialize(void) {
   s32 prizeIndex;
   s32 item;
 
-  if (gMainRoutineWork.next == SCENE_TOLBI_SPRING) {
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  if (gMainRoutineState.next == SCENE_TOLBI_SPRING) {
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
                &REG_BLDCNT);
     Io_Write16(BLEND_ALPHA(12, 8), &REG_BLDALPHA);
@@ -485,7 +485,7 @@ s32 Scene_Initialize(void) {
     Actor_Get(ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS)->priorityFlags =
         ACTOR_PRIORITY_UNDERFOOT;
     Event_StartScreenTransition();
-    if (gMainRoutineWork.entrance == TOLBI_SPRING_FROM_TOLBI) {
+    if (gMainRoutineState.entrance == TOLBI_SPRING_FROM_TOLBI) {
       TolbiSpring_InitializeTossSimulation();
       if (GameFlag_Get(FLAG_TOLBI_SPRING_DRAINED)) {
         Io_SetBlendControl(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND |
@@ -498,16 +498,16 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_TOLBI_SPRING_SOLDIER, 0, 0);
     }
     gOamCopyEnabled = 1;
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    if (gMainRoutineWork.entrance == STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI) {
+    if (gMainRoutineState.entrance == STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI) {
       Actor_SetSpriteColorById(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT,
                                SPRITE_COLOR_GRB);
       Actor_SetSpriteColorById(ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
                                SPRITE_COLOR_RBG);
     }
     // Back from Lucky Dice, the attendant tells the coins won or lost.
-    if (gMainRoutineWork.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE &&
+    if (gMainRoutineState.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Event_Start();
       Actor_SetSpriteColorById(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT,
@@ -519,7 +519,7 @@ s32 Scene_Initialize(void) {
       Event_Wait(10);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 112);
       Event_Wait(20);
-      coinChange = gMainRoutineWork.holdings.coins - sLuckyDiceCoinsBefore;
+      coinChange = gMainRoutineState.holdings.coins - sLuckyDiceCoinsBefore;
       if (coinChange > 0) {
         if (coinChange >= LUCKY_DICE_LARGE_WIN) {
           Sound_Play(MUS_SUPER_LUCKY);
@@ -543,9 +543,9 @@ s32 Scene_Initialize(void) {
       Event_End();
     }
     // Back from the slot machine, the attendant hands over what was won.
-    if (gMainRoutineWork.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS &&
+    if (gMainRoutineState.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      wonPrizes = gMainRoutineWork.holdings.wonPrizes;
+      wonPrizes = gMainRoutineState.holdings.wonPrizes;
       Event_Start();
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
@@ -575,7 +575,7 @@ s32 Scene_Initialize(void) {
             Event_Wait(30);
           }
         }
-        gMainRoutineWork.holdings.wonPrizes[0] = LUCKY_WHEELS_PRIZES_AWARDED;
+        gMainRoutineState.holdings.wonPrizes[0] = LUCKY_WHEELS_PRIZES_AWARDED;
         Event_SetMessageId(MsgTolbiComeAgain);
         // "Come again!"
         Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
@@ -662,7 +662,7 @@ static void TolbiSpring_RevealPrize(s32 item) {
 /// pixel every fourth frame and then faded out through
 /// gTolbiSpring_AlphaSteps.
 static void TolbiSpring_DrainSpring(void) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   struct MapGridLayerScroll *spring;
   const u16 *alphaSteps;
   s32 stepIndex;
@@ -766,7 +766,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
 
   cost = Party_GetAverageLevel() * LUCKY_DICE_COINS_PER_LEVEL;
   Event_Start();
-  coins = gMainRoutineWork.holdings.coins;
+  coins = gMainRoutineState.holdings.coins;
   if (coins < cost) {
     Event_SetMessageId(MsgTolbiYaDontEnough);
     // "Hey! Ya don't have enough coins! Ya gotta pay to play."
@@ -790,7 +790,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
     Event_SetAfterBattleDestination(SCENE_STUCCO_ROOMS_C,
                                     STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE);
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     // "No? Oh, well. Who's next?"
     Event_ShowMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
   }
@@ -815,13 +815,13 @@ static s32 TolbiSpring_RunSpringGame(void) {
   s32 prizeIndex;
   s32 prizeRoll;
   s32 message;
-  struct MainRoutineWork *routine;
+  struct MainRoutineState *routine;
 
   Event_Start();
   Field_EndBusyAndReveal();
   message = MsgTolbiThrow;
 #if TBS_PATCH_1
-  routine = &gMainRoutineWork;
+  routine = &gMainRoutineState;
 prompt:
   coins = routine->holdings.coins;
   medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
@@ -890,7 +890,7 @@ prompt:
 #else
   for (;;) {
     text = MsgTolbiCoins;
-    routine = &gMainRoutineWork;
+    routine = &gMainRoutineState;
     coins = routine->holdings.coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
     Event_SetMessageId(message);
@@ -1015,7 +1015,7 @@ prompt:
       routine--;
       {
         s32 slot = prizeIndex +
-                   offsetof(struct MainRoutineWork, holdings.prizeWeights) - 1;
+                   offsetof(struct MainRoutineState, holdings.prizeWeights) - 1;
         /* FAKEMATCH(temporary): a byte pointer one past routine, indexed by
          * slot; as routine->holdings.prizeWeights[prizeIndex]. */
         s8 *weights = (s8 *)routine + 1;
@@ -1052,11 +1052,11 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
   }
 
   previousVariant =
-      gMainRoutineWork.holdings.wonPrizes[LUCKY_WHEELS_LAST_GIVEN + category];
+      gMainRoutineState.holdings.wonPrizes[LUCKY_WHEELS_LAST_GIVEN + category];
 
   variant = (previousVariant + (s32)Random_Below(2) + 4) % 3;
 
-  gMainRoutineWork.holdings.wonPrizes[LUCKY_WHEELS_LAST_GIVEN + category] =
+  gMainRoutineState.holdings.wonPrizes[LUCKY_WHEELS_LAST_GIVEN + category] =
       variant;
 
   return gTolbiSpring_LuckyWheelsPrizeItems[category * 3 + variant];
@@ -1631,7 +1631,7 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
       Sound_Play(SE_TOLBI_SPRING_TOSS);
     }
     if (sTossFrame == 16) {
-      Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_TOSS);
+      Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_TOSS);
       toss->launchFrame = 0;
       toss->velocity.x = toFIXED(13) / 10;
       toss->velocity.y = toFIXED(4);

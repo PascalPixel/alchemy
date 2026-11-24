@@ -71,21 +71,21 @@ static u16 KolimaPalette_CurseColor(u16 color, s32 divisor) {
 /// Keeps the healthy colours: the palette fade's colours into
 /// gKolimaPalette_Healthy.
 static void KolimaPalette_SaveHealthy(void) {
-  Dma_Set(gPaletteFadeWork->palette, gKolimaPalette_Healthy,
+  Dma_Set(gPaletteFadeState->palette, gKolimaPalette_Healthy,
           DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS), REG_DMA3);
 }
 
 /// Keeps the cursed colours: the palette fade's colours into
 /// gKolimaPalette_Cursed.
 static void KolimaPalette_SaveCursed(void) {
-  Dma_Set(gPaletteFadeWork->palette, gKolimaPalette_Cursed,
+  Dma_Set(gPaletteFadeState->palette, gKolimaPalette_Cursed,
           DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS), REG_DMA3);
 }
 
 /// Copies the palettes on the screen, background and sprites, into the palette
 /// fade's buffer as the colours to fade from.
 static void KolimaPalette_Capture(void) {
-  u16 *buf = gPaletteFadeWork->palette;
+  u16 *buf = gPaletteFadeState->palette;
 
   Dma_Set((const void *)BG_PLTT, buf,
           DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS * sizeof(u16) / 4), REG_DMA3);
@@ -98,7 +98,7 @@ static void KolimaPalette_Capture(void) {
 /// colours to fade to; the event then fades with
 /// PaletteFade_StartInterpolation.
 void KolimaPalette_Restore(s32 second) {
-  u16 *buf = gPaletteFadeWork->palette;
+  u16 *buf = gPaletteFadeState->palette;
 
   if (second)
     Dma_Set(gKolimaPalette_Cursed, buf, DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS),

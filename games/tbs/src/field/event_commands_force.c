@@ -19,7 +19,7 @@ static __inline__ void FieldEffect_GetPositionAboveActor(struct Actor *actor,
 
 /// Flashes burst from over the caster's head, then a fist (SPRITE_MOVE_HAND)
 /// appears in front of it, grows and flies forward with three afterimages;
-/// what it hits (effectWork->child) is pushed 16 pixels.
+/// what it hits (effectState->child) is pushed 16 pixels.
 void FieldPsynergy_Force(void) {
   struct Actor *target;
   s32 eventTarget;
@@ -28,7 +28,7 @@ void FieldPsynergy_Force(void) {
   struct Actor *projectile;
   struct Actor *copy;
   struct Actor *caster;
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct FieldParticle *effect;
   struct Sprite *sharedSprite;
   void *event;
@@ -36,14 +36,14 @@ void FieldPsynergy_Force(void) {
   s32 i;
   u8 resourceSlot;
 
-  effectWork = gFieldEffectWork;
-  target = effectWork->child;
+  effectState = gFieldEffectState;
+  target = effectState->child;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_PSYNERGY_START);
-  effect = effectWork->particles;
+  effect = effectState->particles;
 
   for (i = 0; i < FORCE_FLASHES; i++) {
-    caster = effectWork->mainActor;
+    caster = effectState->mainActor;
     FieldEffect_GetPositionAboveActor(caster, &pos);
     Camera_WorldToScreen(&pos);
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
@@ -58,11 +58,11 @@ void FieldPsynergy_Force(void) {
 
   // The fist: 8 pixels in front of the caster, growing from 0.25 to full
   // size by 5/256 a frame (39 frames).
-  caster = effectWork->mainActor;
+  caster = effectState->mainActor;
   pos.x = caster->x.fixed;
   pos.y = caster->y.fixed + ABOVE;
   pos.z = caster->z.fixed;
-  Vector_AddPolarOffset(toFIXED(8), effectWork->angle, &pos);
+  Vector_AddPolarOffset(toFIXED(8), effectState->angle, &pos);
   projectile = Actor_Spawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
   if (projectile == NULL) {
     FieldPsynergy_FadeFromCastColor();
@@ -70,7 +70,7 @@ void FieldPsynergy_Force(void) {
   }
   projectile->scaleY = FIXED_ONE / 4;
   projectile->scaleX = FIXED_ONE / 4;
-  projectile->facing = effectWork->angle;
+  projectile->facing = effectState->angle;
   projectile->speedLimit = toFIXED(4);
   projectile->acceleration = toFIXED(4);
   projectile->motionFlags = 0;
@@ -96,7 +96,7 @@ void FieldPsynergy_Force(void) {
     if (copy != NULL) {
       copy->scaleY = AFTERIMAGE_SCALE;
       copy->scaleX = AFTERIMAGE_SCALE;
-      copy->facing = effectWork->angle;
+      copy->facing = effectState->angle;
       copy->speedLimit = toFIXED(4);
       copy->acceleration = toFIXED(4);
       copy->motionFlags = 0;
@@ -108,18 +108,18 @@ void FieldPsynergy_Force(void) {
   }
   resourceSlot = sharedSprite->slot;
 
-  // Destination: 56 pixels in front of the caster with effectWork->enabled set
+  // Destination: 56 pixels in front of the caster with effectState->enabled set
   // (no trigger named the target), otherwise the Psynergy's position.
-  if (effectWork->enabled != 0) {
-    caster = effectWork->mainActor;
+  if (effectState->enabled != 0) {
+    caster = effectState->mainActor;
     pos.x = caster->x.fixed;
     pos.y = caster->y.fixed + ABOVE;
     pos.z = caster->z.fixed;
-    Vector_AddPolarOffset(toFIXED(56), effectWork->angle, &pos);
+    Vector_AddPolarOffset(toFIXED(56), effectState->angle, &pos);
   } else {
-    pos.x = effectWork->x;
-    pos.y = effectWork->y + ABOVE;
-    pos.z = effectWork->z;
+    pos.x = effectState->x;
+    pos.y = effectState->y + ABOVE;
+    pos.z = effectState->z;
   }
   Actor_SetMoveTargetFar(projectile, pos.x, pos.y, pos.z);
   Actor_StartScriptFar(projectile, gFieldEffect_HeavyImpactScript);
@@ -140,13 +140,13 @@ void FieldPsynergy_Force(void) {
   // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the way:
   // the ground there must be within a step (MapGrid_CheckCollision 0) and free
   // of actors.
-  if (target != NULL && effectWork->childMode == 0) {
-    if (effectWork->childOption != 0)
+  if (target != NULL && effectState->childMode == 0) {
+    if (effectState->childOption != 0)
       target->velocityY = toFIXED(8);
     pos.x = target->x.fixed;
     pos.y = target->y.fixed;
     pos.z = target->z.fixed;
-    Vector_AddPolarOffset(toFIXED(16), effectWork->angle, &pos);
+    Vector_AddPolarOffset(toFIXED(16), effectState->angle, &pos);
     if (MapGrid_CheckCollisionFar(target, (struct FieldPosition *)&pos) ==
             COLLISION_NONE &&
         ActorScript_CheckOverlapFar(target, (s32 *)&pos) == 0) {
@@ -159,7 +159,7 @@ void FieldPsynergy_Force(void) {
   event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                     FIELD_PSYNERGY_FORCE, &eventTarget);
   if (event != NULL)
-    Field_RunPsynergyEvent(event, gMainRoutineWork.leaderActorId, eventTarget);
+    Field_RunPsynergyEvent(event, gMainRoutineState.leaderActorId, eventTarget);
   wait(10);
   FieldPsynergy_FadeFromCastColor();
   wait(20);

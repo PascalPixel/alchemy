@@ -34,12 +34,12 @@ s32 BattleObject_GetPalette(s32 id) { return BattleObject_Get(id)->palette; }
 /// Returns 1 if the enemy would find room among the enemy sprite
 /// slots, two side by side for a large one.
 s32 Enemy_HasSpriteRoom(s32 enemyId) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 needsSingleSlot;
   s32 spriteSlot;
 
   needsSingleSlot = BattleSprite_IsSmall(enemyId);
-  battle = gBattleWork;
+  battle = gBattleState;
   for (spriteSlot = 0; spriteSlot < ENEMY_SPRITE_SLOTS; spriteSlot++) {
     if (battle->spriteSlots[spriteSlot] != 0)
       continue;
@@ -57,7 +57,7 @@ s32 Enemy_HasSpriteRoom(s32 enemyId) {
 /// its first slot (SPRITE_PICTURE_TAG), or 0.
 s32 EnemySprite_LoadIntoSlots(s32 unitId) {
   s32 spritePart;
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   struct Unit *unit = Unit_GetFar(unitId);
   s32 needsSingleSlot = BattleSprite_IsSmall(unit->id);
   s32 result;
@@ -115,9 +115,9 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
 }
 
 /// Frees every enemy sprite slot unit unitId holds, unloading its sprite.
-/// Clears those gBattleWork->spriteSlots.
+/// Clears those gBattleState->spriteSlots.
 UNREAD_RESULT BattleObject_ReleaseSpriteSlots(s32 unitId) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   s32 spriteSlot;
 
   for (spriteSlot = 0; spriteSlot < ENEMY_SPRITE_SLOTS; spriteSlot++) {

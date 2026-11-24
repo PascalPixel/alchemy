@@ -506,7 +506,7 @@ s32 Scene_Initialize(void) {
   actor->radius = 8;
   actor->scaleX = 3 * FIXED_ONE / 4;
   actor->scaleY = 3 * FIXED_ONE / 4;
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0)
     KolimaPalette_Curse(FLOODGATE_CURSE_DIVISOR);
@@ -614,7 +614,7 @@ static s32 KolimaForestFloodgate_CheckLogFits(s32 x, s32 z, s32 vertical) {
 /// shove.
 static void KolimaForestFloodgate_RollLog(struct FloodgateLog *logs) {
   struct Actor *actor;
-  struct FieldWork *work;
+  struct FieldState *state;
   struct FloodgateLog *log;
   s32 point[3];
   s32 facing;
@@ -669,8 +669,8 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *logs) {
   FieldActor_SetMoveTargetFX(actor, x, 0, z);
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
-  Actor_StartCamera(work->camera, (s32)actor);
+  state = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*state));
+  Actor_StartCamera(state->camera, (s32)actor);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.2);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,
                              gKolimaForestFloodgate_PushStepX[quarter],

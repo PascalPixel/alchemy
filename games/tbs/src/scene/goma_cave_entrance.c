@@ -39,7 +39,7 @@
 #include "field/event.h"
 #include "field/event_commands.h"
 #include "field/field.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "game/inventory.h"
@@ -158,10 +158,10 @@ enum { TRIGGER_PUSH_WEST_PILLAR_EAST = 5, TRIGGER_PUSH_WEST_PILLAR_WEST = 6 };
 /// Isaac walks into the pillar by the ladder from the west or the east, leans
 /// on it and pushes it one step.
 static void GomaCaveEntrance_PushWestPillar(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 offsetX;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(20);
@@ -171,7 +171,7 @@ static void GomaCaveEntrance_PushWestPillar(void) {
   // A cell, MAPGRID_CELL_PIXELS, east from TRIGGER_PUSH_WEST_PILLAR_EAST, west
   // from TRIGGER_PUSH_WEST_PILLAR_WEST.
   offsetX = (TRIGGER_PUSH_WEST_PILLAR_EAST + TRIGGER_PUSH_WEST_PILLAR_WEST -
-             (work->stepTrigger << 1))
+             (state->stepTrigger << 1))
             << 4;
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
   Actor_SetDestinationOffset(ACTOR_WEST_PILLAR, offsetX, 0);
@@ -510,14 +510,14 @@ static void GomaCaveEntrance_MoveStump(void) {
 
 /// Ivan casts Whirlwind on the stump's ivy, and the event waits for it.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   u8 flags;
 
-  effectWork = gFieldEffectWork;
+  effectState = gFieldEffectState;
   FieldPsynergy_LoadResources(ABILITY_WHIRLWIND, 1);
   FieldPsynergy_SetupActorPair(ACTOR_IVAN, ACTOR_STUMP_IVY);
-  flags = (u8)effectWork->messageMode | FIELD_MESSAGE_LOWER;
-  effectWork->messageMode = flags;
+  flags = (u8)effectState->messageMode | FIELD_MESSAGE_LOWER;
+  effectState->messageMode = flags;
   FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
   FieldPsynergy_StopCasterUpdate();

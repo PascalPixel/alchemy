@@ -63,34 +63,34 @@ void BattleEffect_RunVorpalSlash(struct BattleEffectParams *args) {
 
 /// Plays a flashing strike; nothing passes FLASHING_STRIKE_UNUSED.
 void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle draw[2];
   s32 frame;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT = 0;
 
   if (mode == FLASHING_STRIKE_UNUSED) {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_E, work->imageStorage, 1,
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_E, state->imageStorage, 1,
                                0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_F, Ram_MapGridCellBuffer, 1,
                                1);
   } else if (mode == FLASHING_STRIKE_QUICK_STRIKE) {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, work->imageStorage, 1,
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, state->imageStorage, 1,
                                0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_D, Ram_MapGridCellBuffer, 1,
                                1);
   } else {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, work->imageStorage, 1,
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, state->imageStorage, 1,
                                0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_B, Ram_MapGridCellBuffer, 1,
                                1);
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 
   // The user closes on the target in 16 frames, Quick Strike with a hop.
   if (mode == FLASHING_STRIKE_QUICK_STRIKE)
@@ -100,7 +100,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
   wait(16);
 
-  if (work->args->side == EFFECT_SIDE_PARTY)
+  if (state->args->side == EFFECT_SIDE_PARTY)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_COPY);
   else
@@ -109,10 +109,10 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   Sound_PlayFar(SE_POWER_UP);
   for (frame = 0; frame != FLASHING_STRIKE_FRAMES; frame++) {
     if (frame <= 3)
-      draw[0](canvas, work->imageStorage, 0, 0, SLASH_PICTURE_SIZE,
+      draw[0](canvas, state->imageStorage, 0, 0, SLASH_PICTURE_SIZE,
               SLASH_PICTURE_SIZE);
     else if (frame <= 7)
-      draw[0](canvas, work->imageStorage + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
+      draw[0](canvas, state->imageStorage + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
               SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
     else if (frame <= 11)
       draw[0](canvas, Ram_MapGridCellBuffer, 0, 0, SLASH_PICTURE_SIZE,
@@ -128,11 +128,11 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
     if (frame == FLASHING_STRIKE_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == FLASHING_STRIKE_HIT_FRAME) {
-      work->shakeFrames = 8;
-      BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
+      state->shakeFrames = 8;
+      BattleMotion_ApplyKnockbackFar(state->args->targets[0], KNOCKBACK_HURL);
     }
     BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

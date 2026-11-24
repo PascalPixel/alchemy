@@ -205,7 +205,7 @@
 	.include "games/tla/src/map/tundaria_tower_entrance/map.inc"
 	.include "games/tla/src/map/tundaria_tower_burst_brooch/map.inc"
 	.include "games/tla/src/map/gondowan_settlement_cave/map.inc"
-	.include "games/tla/src/map/sw_atteka_islet/map.inc"
+	.include "games/tla/src/map/southwest_atteka_islet/map.inc"
 	.include "games/tla/src/map/gondowan_settlement/map.inc"
 	.include "games/tla/src/map/hesperia_settlement/map.inc"
 	.include "games/tla/src/map/kalt_island/map.inc"

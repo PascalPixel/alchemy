@@ -1297,12 +1297,12 @@ Resource_DirectoryTable:
 	resource , Tileset_GondowanSettlementCaveTilesB
 	resource , Tileset_GondowanSettlementCaveTilesC
 	resource , Tileset_GondowanSettlementCaveTilesD
-	resource , Field_SwAttekaIslet
-	resource , Tileset_SwAttekaIsletPalette
-	resource , Tileset_SwAttekaIsletTilesA
-	resource , Tileset_SwAttekaIsletTilesB
-	resource , Tileset_SwAttekaIsletTilesC
-	resource , Tileset_SwAttekaIsletTilesD
+	resource , Field_SouthwestAttekaIslet
+	resource , Tileset_SouthwestAttekaIsletPalette
+	resource , Tileset_SouthwestAttekaIsletTilesA
+	resource , Tileset_SouthwestAttekaIsletTilesB
+	resource , Tileset_SouthwestAttekaIsletTilesC
+	resource , Tileset_SouthwestAttekaIsletTilesD
 	resource , Field_GondowanSettlement
 	resource , Tileset_PaletteSettlements1
 	resource , Field_HesperiaSettlement

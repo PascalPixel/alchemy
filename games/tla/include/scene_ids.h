@@ -952,10 +952,11 @@ extern char SceneId_KaltIslandHouses;
 #define SCENE_KALT_ISLAND_HOUSES ((s32)&SceneId_KaltIslandHouses)
 
 // Southwest Atteka Islet
-extern char SceneId_SwAttekaIslet;
-#define SCENE_SW_ATTEKA_ISLET ((s32)&SceneId_SwAttekaIslet)
-extern char SceneId_SwAttekaIsletHouses;
-#define SCENE_SW_ATTEKA_ISLET_HOUSES ((s32)&SceneId_SwAttekaIsletHouses)
+extern char SceneId_SouthwestAttekaIslet;
+#define SCENE_SOUTHWEST_ATTEKA_ISLET ((s32)&SceneId_SouthwestAttekaIslet)
+extern char SceneId_SouthwestAttekaIsletHouses;
+#define SCENE_SOUTHWEST_ATTEKA_ISLET_HOUSES                                    \
+  ((s32)&SceneId_SouthwestAttekaIsletHouses)
 
 // Mikasalla
 extern char SceneId_Mikasalla;

@@ -404,9 +404,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gSettlements_KaltIslandPlacements;
   if (scene == SCENE_KALT_ISLAND_HOUSES)
     return gSettlements_KaltIslandHousesPlacements;
-  if (scene == SCENE_SW_ATTEKA_ISLET)
+  if (scene == SCENE_SOUTHWEST_ATTEKA_ISLET)
     return gSettlements_AttekaIsletPlacements;
-  if (scene == SCENE_SW_ATTEKA_ISLET_HOUSES)
+  if (scene == SCENE_SOUTHWEST_ATTEKA_ISLET_HOUSES)
     return gSettlements_AttekaIsletHousesPlacements;
   return gSettlements_Placements;
 }
@@ -560,9 +560,9 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gSettlements_KaltIslandTriggers;
   if (scene == SCENE_KALT_ISLAND_HOUSES)
     return gSettlements_KaltIslandHousesTriggers;
-  if (scene == SCENE_SW_ATTEKA_ISLET)
+  if (scene == SCENE_SOUTHWEST_ATTEKA_ISLET)
     return gSettlements_AttekaIsletTriggers;
-  if (scene == SCENE_SW_ATTEKA_ISLET_HOUSES)
+  if (scene == SCENE_SOUTHWEST_ATTEKA_ISLET_HOUSES)
     return gSettlements_AttekaIsletHousesTriggers;
   return gSettlements_Triggers;
 }
@@ -653,7 +653,7 @@ s32 Scene_Initialize(void) {
   gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gMainRoutineState.next == SCENE_KALT_ISLAND)
     Settlements_SetUpKaltIsland();
-  if (gMainRoutineState.next == SCENE_SW_ATTEKA_ISLET) {
+  if (gMainRoutineState.next == SCENE_SOUTHWEST_ATTEKA_ISLET) {
     FieldEffect_StartBlankOverlay(0);
     Actor_PlaceBlocks(gSettlements_FallsObjects);
     if (Event_GetFlag(FLAG_FALLS_CRATE_LOST))
@@ -694,7 +694,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineState.next == SCENE_SW_ATTEKA_ISLET) {
+  if (gMainRoutineState.next == SCENE_SOUTHWEST_ATTEKA_ISLET) {
     if (Event_GetFlag(FLAG_FALLS_CRATE_AT_REST)) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
@@ -860,7 +860,7 @@ void Layer_TrackScroll(void) {
 
   // The third layer's picture starts 1024 pixels down the map; the line is
   // the map's row 424, line 72 of the screen with the view at the foot of its
-  // box (render probe SwAttekaIslet --entrance 99).
+  // box (render probe SouthwestAttekaIslet --entrance 99).
   gSettlements_WaterfallLine = 1024 + 424 - y;
   gSettlements_WaterfallScrollAbove = FIXEDtoINT(layer->x);
   gSettlements_WaterfallScrollBelow =
@@ -1339,11 +1339,11 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(KALT_ISLAND_TO_KALT_ISLAND_HOUSES, KaltIslandHouses, KALT_ISLAND_HOUSES_FROM_KALT_ISLAND, EXIT_FLAG_NONE),
     SCENE_EXITS(KaltIslandHouses),
     SCENE_EXIT_UNLESS(KALT_ISLAND_HOUSES_TO_KALT_ISLAND, KaltIsland, KALT_ISLAND_FROM_KALT_ISLAND_HOUSES, EXIT_FLAG_NONE),
-    SCENE_EXITS(SwAttekaIslet),
-    SCENE_EXIT_UNLESS(SW_ATTEKA_ISLET_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_SW_ATTEKA_ISLET, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(SW_ATTEKA_ISLET_TO_SW_ATTEKA_ISLET_HOUSES_NORTH, SwAttekaIsletHouses, SW_ATTEKA_ISLET_HOUSES_FROM_SW_ATTEKA_ISLET_SOUTH, EXIT_FLAG_NONE),
-    SCENE_EXITS(SwAttekaIsletHouses),
-    SCENE_EXIT_UNLESS(SW_ATTEKA_ISLET_HOUSES_TO_SW_ATTEKA_ISLET_NORTH, SwAttekaIslet, SW_ATTEKA_ISLET_FROM_SW_ATTEKA_ISLET_HOUSES_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXITS(SouthwestAttekaIslet),
+    SCENE_EXIT_UNLESS(SOUTHWEST_ATTEKA_ISLET_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_SOUTHWEST_ATTEKA_ISLET, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(SOUTHWEST_ATTEKA_ISLET_TO_SOUTHWEST_ATTEKA_ISLET_HOUSES_NORTH, SouthwestAttekaIsletHouses, SOUTHWEST_ATTEKA_ISLET_HOUSES_FROM_SOUTHWEST_ATTEKA_ISLET_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXITS(SouthwestAttekaIsletHouses),
+    SCENE_EXIT_UNLESS(SOUTHWEST_ATTEKA_ISLET_HOUSES_TO_SOUTHWEST_ATTEKA_ISLET_NORTH, SouthwestAttekaIslet, SOUTHWEST_ATTEKA_ISLET_FROM_SOUTHWEST_ATTEKA_ISLET_HOUSES_NORTH, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

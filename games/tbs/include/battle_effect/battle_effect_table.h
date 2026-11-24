@@ -45,6 +45,9 @@ enum TargetStrikeStyle {
   TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES
 };
 
+/// Where each picture begins in the sprite sheets many effects share: the ten
+/// motes and twenty flares of a glow sheet, the nine sparkles, the six flame
+/// puffs (size, drop and offset) and the six glints (offset and size).
 extern u16 gBattleEffect_MotePictures[];
 extern u16 gBattleEffect_FlarePictures[];
 extern u16 gBattleEffect_SparklePictures[];
@@ -74,8 +77,13 @@ enum {
 };
 extern u8 gDouse_Counts[][4];
 
+/// Each streak style's effect, hit, motion and shake, and the pixels a struck
+/// target trembles by, frame by frame.
 extern s8 gStreak_Styles[][4];
 extern s8 gStreak_Tremble[];
+/// The target strike: its twelve styles by the TARGET_STRIKE_ columns, the
+/// six slash pictures (size, offset and reach), the fang stage of each picture
+/// of a bite, and the flips a glint may take.
 extern u8 gTargetStrike_Styles[][7];
 extern u8 gTargetStrike_Widths[];
 extern u8 gTargetStrike_Heights[];
@@ -83,17 +91,23 @@ extern u16 gTargetStrike_Pictures[];
 extern u8 gTargetStrike_Reach[];
 extern u8 gTargetStrike_BiteStages[];
 extern u8 gTargetStrike_GlintDrawFlags[];
+/// The blade rain's four sword pictures, by how steeply the sword falls.
 extern u8 gBladeRain_SwordWidths[];
 extern u8 gBladeRain_SwordHeights[];
 extern u16 gBladeRain_SwordPictures[];
+/// The 33 pieces the shattering opening's picture breaks into: size, offset in
+/// the picture and where each starts on the canvas.
 extern u8 gShatteringOpening_PieceWidths[];
 extern u8 gShatteringOpening_PieceHeights[];
 extern u16 gShatteringOpening_PiecePictures[];
 extern u8 gShatteringOpening_PieceStartX[];
 extern u8 gShatteringOpening_PieceStartY[];
+/// The element burst's four corner sparks: offsets and flips.
 extern s8 gElementBurst_SparkX[];
 extern s8 gElementBurst_SparkY[];
 extern u8 gElementBurst_SparkFlips[];
+/// The swirl swipe's six pictures (Spider Web): size, offset, an x for each
+/// side and a y offset.
 extern u8 gSwirlSwipe_PictureWidths[];
 extern u8 gSwirlSwipe_PictureHeights[];
 extern u16 gSwirlSwipe_Pictures[];
@@ -115,23 +129,35 @@ enum GatheringLightsMode {
 };
 extern u8 gGatheringLights_Counts[][2];
 
+/// The earth wall's three pictures, as the mirrored wall reads them.
 extern u16 gMirroredWall_Pictures[];
 extern u8 gMirroredWall_PictureWidths[];
 extern u8 gMirroredWall_PictureHeights[];
+/// Revive's beams: the mote picture of each step of its eight-step cycle, and
+/// the three pictures of the glow at a target's feet.
 extern u8 gDjinnBeams_MotePictures[];
 extern u16 gDjinnBeams_HeadPictures[];
 extern u8 gDjinnBeams_HeadWidths[];
 extern u8 gDjinnBeams_HeadHeights[];
+/// The lobbed shells: two bytes for each mode, and the eighteen pictures of
+/// the tumbling shards, a large set of nine and a small one.
 extern s8 gLobbedShells_Styles[];
 extern u8 gLobbedShells_ShardWidths[];
 extern u8 gLobbedShells_ShardHeights[];
 extern u16 gLobbedShells_ShardPictures[];
+/// Where Condemn draws the reaper's seven pictures: an x for each casting
+/// side, and a y.
 extern u8 gCondemn_PictureX[][7];
 extern u8 gCondemn_PictureY[][7];
+/// The first vertex of Bind's spinning and striking triangles, 24 pixels up
+/// from the centre.
 extern struct Vector3 gBind_Vertex[];
 extern struct Vector3 gBind_TriangleStrikeVertex[];
+/// The stars' two points, 48 and 28 pixels up, and their radii.
 extern struct Vector3 gStar_Points[];
 extern u8 gStar_Radii[];
+/// Procne's nine sprites on a 3x3 grid, the frames of its four strikes, and
+/// its three comet pictures (size, lift and offset).
 extern u8 gProcne_GridX[];
 extern u8 gProcne_GridY[];
 extern u16 gProcne_Frames[];
@@ -139,6 +165,8 @@ extern u8 gProcne_PictureWidths[];
 extern u8 gProcne_PictureHeights[];
 extern u8 gProcne_PictureBiasY[];
 extern u16 gProcne_Pictures[];
+/// Tiamat's embers (speed and size by ember index & 3), its sparks' 1x2
+/// picture, and the six flame pictures (size, drop and offset).
 extern u8 gTiamat_EmberSpeeds[];
 extern u8 gTiamat_SparkPixels[];
 extern u8 gTiamat_EmberSizes[];
@@ -154,6 +182,8 @@ enum {
 };
 extern u8 gNereid_Columns[][2];
 
+/// A falling drop's gravity in 16.16 pixels a frame each frame, by drop
+/// index & 3.
 extern s32 gNereid_Gravity[];
 
 /// Each Froth variant: its motes and frames.
@@ -185,6 +215,7 @@ enum {
 };
 extern u8 gPrism_Counts[][2];
 
+/// The twelve pictures of Prism's shards.
 extern u8 gPrism_ShardWidths[];
 extern u8 gPrism_ShardHeights[];
 extern s32 gPrism_ShardPictures[];
@@ -196,6 +227,8 @@ enum {
 };
 extern u16 gPlasma_Sparks[][2];
 
+/// Each Plasma pillar's canvas x, seven for each side, and how many strike by
+/// variant.
 extern u8 gPlasma_Columns[][7];
 extern u8 gPlasma_Counts[];
 
@@ -216,10 +249,14 @@ enum {
 };
 extern u16 gSparkGroups_Shapes[][5];
 
+/// The flash picture for each three frames at the end of a flash's life.
 extern u8 gPlasma_FlashPictures[];
+/// Volcano's fire pillars by variant: how many stand, the depth of each and
+/// the frame each starts.
 extern u8 gVolcano_Counts[];
 extern s8 gVolcano_Depths[][4];
 extern u8 gVolcano_StartFrames[];
+/// The flips a glint around a target may take.
 extern u8 gTargetMotes_GlintFlips[];
 
 /// Cybele's face as she spits the thorns: the animations of sprites 3 and 4,
@@ -232,6 +269,9 @@ enum {
 };
 extern u8 gCybele_ObjectPoses[][2];
 
+/// Cybele's pictures, each by offset and size: the five thorns, the three
+/// flowers, the five chips (the thorns again), the five of a spark and
+/// the seven of the blast sheet, of which she draws only the last.
 extern u16 gCybele_ThornPictures[];
 extern u8 gCybele_ThornWidths[];
 extern u8 gCybele_ThornHeights[];
@@ -244,6 +284,10 @@ extern u16 gCybele_SparkPictures[];
 extern u8 gCybele_SparkSizes[];
 extern u16 gCybele_BlastPictures[];
 extern u16 gCybele_BlastSizes[];
+/// Boreas: where the crystals stand, the background's jolt as the ice block
+/// lands, its third sprite's animations as the block sinks, and the pictures
+/// of the crystals, the shards thrown as they crumble, the spray, the crystals
+/// that rise among the targets and those that fall.
 extern u8 gBoreas_Points[][2];
 extern s8 gBoreas_ShakeOffsets[];
 extern u16 gBoreas_CrystalPictures[];
@@ -262,11 +306,16 @@ extern u8 gBoreas_RisingCrystalHeights[];
 extern u8 gBoreas_FallWidths[];
 extern u8 gBoreas_FallHeights[];
 extern u16 gBoreas_FallPictures[];
+/// The gravity of Drain's ice shards, by shard index & 3.
 extern s32 gDrain_Gravities[];
+/// The twelve pictures of the stat changes' shards: four shapes, three frames
+/// each.
 extern u16 gStatChange_ShardPictures[];
 extern u8 gStatChange_ShardWidths[];
 extern u8 gStatChange_ShardHeights[];
+/// Each Quake variant: the effect's frames, each pillar's and the shake.
 extern u8 gQuake_Timings[][3];
+/// Fire's embers by variant, and the six pictures of its impact flare.
 extern u8 gFire_Counts[];
 extern u8 gFire_FlareWidths[];
 extern u8 gFire_FlareHeights[];
@@ -280,6 +329,8 @@ enum {
 };
 extern u8 gFrost_MoundSpots[][2];
 
+/// Frost: its motes, mounds and burst frame by variant, and the pictures of
+/// its motes, its three ice mounds and its chips (the motes again).
 extern u8 gFrost_Timings[][3];
 extern u8 gFrost_MoteWidths[];
 extern u8 gFrost_MoteHeights[];
@@ -289,15 +340,23 @@ extern u8 gFrost_MoundHeights[];
 extern u8 gFrost_ChipWidths[];
 extern u8 gFrost_ChipHeights[];
 extern u16 gFrost_ChipPictures[];
+/// Ray's sparks by variant; [1] is how many each bolt throws a frame.
 extern u8 gRay_Sparks[][2];
+/// Eruption's motes, puffs and frames by variant, and its seven puff
+/// pictures.
 extern u8 gEruption_Counts[][3];
 extern u16 gEruption_PuffPictures[];
 extern u16 gEruption_PuffSizes[];
+/// Unused: picture layouts nothing reads, from 6x6 to 20x20.
 extern u16 gUnused_SheetPicturesShort[];
 extern u16 gUnused_SheetPictures[];
 extern u8 gUnused_SheetWidths[];
 extern u8 gUnused_SheetHeights[];
+/// The scale Atalanta's sprites keep throughout, one to one.
 extern struct SpriteScale gAtalanta_UnitScale;
+/// Growth's columns: the three shapes' vine and pillar pictures and height
+/// caps, the columns by variant, their roots and the pillars' heights, and
+/// the seven pictures of a puff of dust.
 extern u8 gGrowth_VineWidths[];
 extern u8 gGrowth_HeightLimits[];
 extern u16 gGrowth_VinePictures[];
@@ -309,16 +368,21 @@ extern s8 gGrowth_PillarHeights[];
 extern s8 gGrowth_PuffWidths[];
 extern u8 gGrowth_PuffHeights[];
 extern u16 gGrowth_PuffPictures[];
+/// Each of Vine's roots, across from the middle of the targets.
 extern s8 gVine_ColumnOffsets[];
 // A thorn's kind in gThorn_Kinds.
 #define THORN_MIRRORED 1 ///< drawn mirrored across
 #define THORN_SMALL 2    ///< 32 pixels wide, not 48
+/// Thorn: each thorn's kind and root, the thorns by variant, and the seven
+/// pictures of a puff of dust.
 extern u8 gThorn_Kinds[];
 extern s8 gThorn_X[];
 extern u8 gThorn_Counts[];
 extern s8 gThorn_PuffWidths[];
 extern u8 gThorn_PuffHeights[];
 extern u16 gThorn_PuffPictures[];
+/// Bolt by variant (sparks, glints, their spread and bolts), the flips a
+/// glint may take, and the glints' blend mode by variant.
 extern u8 gBolt_Counts[][4];
 extern u8 gBolt_GlintFlips[];
 extern u8 gBolt_GlintModes[];
@@ -329,6 +393,7 @@ enum ProjectileVolleyComet {
   PROJECTILE_VOLLEY_COMET_B, ///< CometSheetB
   PROJECTILE_VOLLEY_COMET_C  ///< CometSheetC, also Cutting Edge's
 };
+/// Each comet's picture height.
 extern u8 gProjectileVolley_CometHeights[];
 /// The projectile volley's modes (BattleEffect_RunProjectileVolley), each named
 /// for the effect that fires it; the casting impacts fire two of them.
@@ -348,6 +413,8 @@ enum ProjectileVolleyMode {
   PROJECTILE_VOLLEY_ICE_BLESSING,  ///< ice chips streaming one a frame
   PROJECTILE_VOLLEY_WING_STROKE    ///< large yellow sparks, spread up and down
 };
+/// Each projectile volley mode by its columns, the seven pictures of the hit
+/// flash (size, step, rise and offset), and the four ice chip pictures.
 extern u8 gProjectileVolley_Modes[][5];
 extern u8 gProjectileVolley_FlashWidths[];
 extern u8 gProjectileVolley_FlashHeights[];
@@ -355,16 +422,22 @@ extern u8 gProjectileVolley_FlashSteps[];
 extern u8 gProjectileVolley_FlashRises[];
 extern u16 gProjectileVolley_FlashPictures[];
 extern u16 gProjectileVolley_PelletPictures[];
+/// The frames on which the Mercury Djinni fires each of its five flames.
 extern u8 gDjinnAttacks_LaunchFrames[];
+/// Hail's four 8x8 ice chip pictures.
 extern u8 gHail_PictureWidths[];
 extern u8 gHail_PictureHeights[];
 extern u16 gHail_Pictures[];
+/// Ground: the flips a crackle may take, and the portal's nine pictures (the
+/// portal, its white core and its crackles) by size, offset and place.
 extern u8 gGround_CrackleFlips[];
 extern u8 gGround_PortalWidths[];
 extern u8 gGround_PortalHeights[];
 extern u16 gGround_PortalPictures[];
 extern u8 gGround_PortalX[];
 extern u8 gGround_PortalY[];
+/// The colours a target flashes when Thor's bolt strikes it, and the flips of
+/// the crackles around Thor.
 extern u8 gThor_TargetPalettes[];
 extern u8 gThor_CrackleFlips[];
 
@@ -375,6 +448,8 @@ enum {
 };
 extern u8 gSpire_ShardOffsets[][2];
 
+/// Spire: each rock's offset across and the frame it appears, the rocks by
+/// variant, and its shards' fifteen pictures.
 extern s8 gSpire_RockX[];
 extern u8 gSpire_DropFrames[];
 extern u8 gSpire_RockCounts[];
@@ -409,6 +484,8 @@ enum FlurryPalette {
   FLURRY_PALETTE_EMBER ///< the ember streak sprite sheet's
 };
 extern u8 gFlurry_Styles[][7];
+/// Gaia's rising wall: its nine rows, the three flames at its foot, BG2's
+/// shift by side and variant, and the columns of the late rocks.
 extern u16 gGaia_RowPictures[];
 extern u8 gGaia_RowWidths[];
 extern u16 gGaia_FlamePictures[];
@@ -416,50 +493,72 @@ extern u8 gGaia_FlameWidths[];
 extern u8 gGaia_FlameHeights[];
 extern s8 gGaia_Bg2Shifts[][3];
 extern u8 gGaia_LateRockColumns[];
+/// The six pictures of the growing beam, and how far each reaches short of the
+/// user.
 extern u8 gBeam_PictureWidths[];
 extern u8 gBeam_PictureHeights[];
 extern u16 gBeam_Pictures[];
 extern u8 gBeam_PictureReaches[];
+/// The casting impacts: the flips a glint may take, where Mortal Danger draws
+/// the reaper's pictures, and the four ice chip pictures.
 extern u8 gCastingImpact_GlintDrawFlags[];
 extern u8 gReaper_PictureX[][7];
 extern u8 gReaper_PictureY[];
 extern u16 gCastingImpact_IceChipPictures[];
+/// The seven pictures of Helm Splitter's fire swirl, and where each sits from
+/// the user.
 extern u8 gHelmSplitter_PictureWidths[];
 extern u8 gHelmSplitter_PictureHeights[];
 extern u16 gHelmSplitter_Pictures[];
 extern s8 gHelmSplitter_PictureBiasX[];
 extern s8 gHelmSplitter_PictureBiasY[];
+/// Where the sprites of a summon's formation stand, in pixels, one axis at a
+/// time (BattleEffect_PlaceFormationSprites).
 extern u8 gSummonFormation_NereidX[];
 extern u8 gSummonFormation_NereidZ[];
 extern u8 gSummonFormation_CybeleX[];
 extern u8 gSummonFormation_CybeleZ[];
 extern u8 gSummonFormation_TiamatX[];
 extern u8 gSummonFormation_TiamatZ[];
+/// The eight pictures of the impact flash.
 extern u8 gImpactBurst_PictureWidths[];
 extern u8 gImpactBurst_PictureHeights[];
 extern u16 gImpactBurst_Pictures[];
+/// The starfield fall: the seven sparks that orbit the falling sprite, where
+/// the seven fireballs fall, and the blast sheet's seven flash pictures.
 extern s16 gStarfieldFall_OrbitPoints[][3];
 extern s16 gStarfieldFall_FireballPoints[][2];
 extern u16 gStarfieldFall_FlashPictures[];
 extern u16 gStarfieldFall_FlashSizes[];
+/// Where Ramses's sprites stand from the statue's corner, and the blast
+/// sheet's puff pictures.
 extern u8 gRamses_StatueColumns[];
 extern u8 gRamses_StatueRows[];
 extern u16 gRamses_PuffPictures[];
 extern u16 gRamses_PuffSizes[];
+/// Ragnarok's strike columns, three for each side, and the flash picture for
+/// each three frames at the end of a flash's life.
 extern u8 gRagnarok_StrikeColumns[][3];
 extern u8 gRagnarok_FlashPictures[];
+/// Titan Blade's fading flash pictures and its dust's gravity.
 extern u8 gTitanBlade_FlashPictures[];
 extern s32 gTitanBlade_DustGravity[];
+/// Judgment: its burst's seven quarter pictures, and the six shards thrown
+/// from it.
 extern u8 gJudgment_BurstHeights[];
 extern u16 gJudgment_ShieldSprites[];
 extern u16 gJudgment_ShardPictures[];
 extern u8 gJudgment_ShardWidths[];
 extern u8 gJudgment_ShardHeights[];
+/// Where Kirin's nine sprites stand, in pixels from its corner.
 extern u8 gKirin_Columns[];
 extern u8 gKirin_Rows[];
+/// Neptune's eight sprites, offsets in pixels scaled by 1.5 as placed, and its
+/// spray's gravity by particle index & 3.
 extern u8 gNeptune_ObjectX[];
 extern u8 gNeptune_ObjectY[];
 extern s32 gNeptune_Gravity[];
+/// The seven square pictures of Undead Sword's puffs.
 extern u16 gUndeadSword_PuffPictures[];
 extern u16 gUndeadSword_PuffSizes[];
 

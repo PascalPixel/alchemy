@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_PsynergyTestPalette	../graphics/tileset/psynergy_test/palette.gbapal.lz
+Tileset_PsynergyTestTilesA	../graphics/tileset/psynergy_test/tiles_a.4bpp.mtf
+Tileset_PsynergyTestTilesB	../graphics/tileset/psynergy_test/tiles_b.4bpp.mtf	e0
+Tileset_PsynergyTestTilesC	../graphics/tileset/psynergy_test/tiles_c.4bpp.mtf	e0
+Tileset_PsynergyTestTilesD	../graphics/tileset/psynergy_test/tiles_d.4bpp.mtf	e0

@@ -1,0 +1,8 @@
+block	file	pad	edition
+cell_tiles	cell_tiles.delta1.lz	4
+shapes	shapes.table.lz	4
+grid	map.grid.lz	4
+shape_grid	shape_grid.plane.lz	4
+animation	kalt_island_houses/animation.script.lz	4
+blend	daila_rooms_houses/blend.script.lz	4
+scene	scene.scene.lz	4

@@ -1,0 +1,5 @@
+name	file	left	pad	fill	edition
+Tileset_ValeCaveKitePalette	../graphics/tileset/vale_cave_kite/palette.gbapal.lz
+Tileset_ValeCaveKiteTilesA	../graphics/tileset/vale_cave_kite/tiles_a.4bpp.mtf	041cf2
+Tileset_ValeCaveKiteTilesB	../graphics/tileset/vale_cave_kite/tiles_b.4bpp.mtf	f9
+Tileset_ValeCaveKiteTilesC	../graphics/tileset/vale_cave_kite/tiles_c.4bpp.mtf	f0	4

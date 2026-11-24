@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_ProxSouthGatePalette	../graphics/tileset/prox_south_gate/palette.gbapal.lz	18
+Tileset_ProxSouthGateTilesA	../graphics/tileset/prox_south_gate/tiles_a.4bpp.mtf
+Tileset_ProxSouthGateTilesB	../graphics/tileset/prox_south_gate/tiles_b.4bpp.mtf	f6
+Tileset_ProxSouthGateTilesC	../graphics/tileset/prox_south_gate/tiles_c.4bpp.mtf	65ab31
+Tileset_ProxSouthGateTilesD	../graphics/tileset/prox_south_gate/tiles_d.4bpp.mtf	e1

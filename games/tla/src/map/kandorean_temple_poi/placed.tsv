@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_KandoreanTemplePoiPalette	../graphics/tileset/kandorean_temple_poi/palette.gbapal.lz
+Tileset_KandoreanTemplePoiTilesA	../graphics/tileset/kandorean_temple_poi/tiles_a.4bpp.mtf
+Tileset_KandoreanTemplePoiTilesB	../graphics/tileset/kandorean_temple_poi/tiles_b.4bpp.mtf
+Tileset_KandoreanTemplePoiTilesC	../graphics/tileset/kandorean_temple_poi/tiles_c.4bpp.mtf	c6
+Tileset_KandoreanTemplePoiTilesD	../graphics/tileset/kandorean_temple_poi/tiles_d.4bpp.mtf	3d87a4

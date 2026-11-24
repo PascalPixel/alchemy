@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_CavernsOseniaPalette	../graphics/tileset/caverns_osenia/palette.gbapal.lz	746c5a
+Tileset_CavernsOseniaTilesA	../graphics/tileset/caverns_osenia/tiles_a.4bpp.mtf	e2
+Tileset_CavernsOseniaTilesB	../graphics/tileset/caverns_osenia/tiles_b.4bpp.mtf	e028
+Tileset_CavernsOseniaTilesC	../graphics/tileset/caverns_osenia/tiles_c.4bpp.mtf
+Tileset_CavernsOseniaTilesD	../graphics/tileset/caverns_osenia/tiles_d.4bpp.mtf	c5de76

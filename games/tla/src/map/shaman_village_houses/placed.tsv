@@ -1,0 +1,8 @@
+name	file	left	pad	fill	edition
+Tileset_ShamanVillageHousesPalette	../graphics/tileset/shaman_village_houses/palette.gbapal.lz	f7991a
+Tileset_ShamanVillageHousesTilesA	../graphics/tileset/shaman_village_houses/tiles_a.4bpp.mtf	07
+Tileset_ShamanVillageHousesTilesB	../graphics/tileset/shaman_village_houses/tiles_b.4bpp.mtf
+Tileset_ShamanVillageHousesTilesC	../graphics/tileset/shaman_village_houses/tiles_c.4bpp.mtf	3a6cb7
+Tileset_ShamanVillageHousesTilesD	../graphics/tileset/shaman_village_houses/tiles_d.4bpp.mtf	84b0a3
+Tileset_PaletteShamanVillageHousesA	../graphics/tileset/palettes/shaman_village_houses_a.gbapal.lz	cee007
+Tileset_PaletteShamanVillageHousesB	../graphics/tileset/palettes/shaman_village_houses_b.gbapal.lz	f2

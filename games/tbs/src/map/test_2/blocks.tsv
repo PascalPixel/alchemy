@@ -1,0 +1,7 @@
+block	file	pad	edition
+cell_tiles	empty_map/cell_tiles.delta0.lz	4
+shapes	empty_map/shapes.table.lz	4
+grid	empty_map/map.grid.lz	4
+none
+none
+markers		4

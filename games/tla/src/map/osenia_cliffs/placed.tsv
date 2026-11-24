@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_OseniaCliffsPalette	../graphics/tileset/osenia_cliffs/palette.gbapal.lz
+Tileset_OseniaCliffsTilesA	../graphics/tileset/osenia_cliffs/tiles_a.4bpp.mtf	61
+Tileset_OseniaCliffsTilesB	../graphics/tileset/osenia_cliffs/tiles_b.4bpp.mtf	5a14
+Tileset_OseniaCliffsTilesC	../graphics/tileset/osenia_cliffs/tiles_c.4bpp.mtf	9d
+Tileset_OseniaCliffsTilesD	../graphics/tileset/osenia_cliffs/tiles_d.4bpp.mtf	53b622

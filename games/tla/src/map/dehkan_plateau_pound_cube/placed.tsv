@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_DehkanPlateauPoundCubePalette	../graphics/tileset/dehkan_plateau_pound_cube/palette.gbapal.lz
+Tileset_DehkanPlateauPoundCubeTilesA	../graphics/tileset/dehkan_plateau_pound_cube/tiles_a.4bpp.mtf	f83e
+Tileset_DehkanPlateauPoundCubeTilesB	../graphics/tileset/dehkan_plateau_pound_cube/tiles_b.4bpp.mtf
+Tileset_DehkanPlateauPoundCubeTilesC	../graphics/tileset/dehkan_plateau_pound_cube/tiles_c.4bpp.mtf	83b49c
+Tileset_DehkanPlateauPoundCubeTilesD	../graphics/tileset/dehkan_plateau_pound_cube/tiles_d.4bpp.mtf	1ff8

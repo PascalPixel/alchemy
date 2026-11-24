@@ -1,0 +1,4 @@
+name	file	left	pad	fill	edition
+Tileset_MarsLighthouseAeriePalette	../graphics/tileset/mars_lighthouse_aerie/palette.gbapal.lz	c7ba
+Tileset_MarsLighthouseAerieTilesA	../graphics/tileset/mars_lighthouse_aerie/tiles_a.4bpp.mtf	04071a
+Tileset_MarsLighthouseAerieTilesB	../graphics/tileset/mars_lighthouse_aerie/tiles_b.4bpp.mtf	c1c3

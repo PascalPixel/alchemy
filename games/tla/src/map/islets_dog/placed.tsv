@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_IsletsDogPalette	../graphics/tileset/islets_dog/palette.gbapal.lz	119870
+Tileset_IsletsDogTilesA	../graphics/tileset/islets_dog/tiles_a.4bpp.mtf	4d25
+Tileset_IsletsDogTilesB	../graphics/tileset/islets_dog/tiles_b.4bpp.mtf	02
+Tileset_IsletsDogTilesC	../graphics/tileset/islets_dog/tiles_c.4bpp.mtf
+Tileset_IsletsDogTilesD	../graphics/tileset/islets_dog/tiles_d.4bpp.mtf	f3

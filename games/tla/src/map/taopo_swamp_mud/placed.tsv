@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_TaopoSwampMudPalette	../graphics/tileset/taopo_swamp_mud/palette.gbapal.lz	2795
+Tileset_TaopoSwampMudTilesA	../graphics/tileset/taopo_swamp_mud/tiles_a.4bpp.mtf	4c4f3a
+Tileset_TaopoSwampMudTilesB	../graphics/tileset/taopo_swamp_mud/tiles_b.4bpp.mtf
+Tileset_TaopoSwampMudTilesC	../graphics/tileset/taopo_swamp_mud/tiles_c.4bpp.mtf
+Tileset_TaopoSwampMudTilesD	../graphics/tileset/taopo_swamp_mud/tiles_d.4bpp.mtf	4b

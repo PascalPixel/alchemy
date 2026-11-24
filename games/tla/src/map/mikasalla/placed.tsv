@@ -1,0 +1,4 @@
+name	file	left	pad	fill	edition
+Tileset_MikasallaPalette	../graphics/tileset/mikasalla/palette.gbapal.lz	2f430e
+Tileset_MikasallaTilesA	../graphics/tileset/mikasalla/tiles_a.4bpp.mtf	0880
+Tileset_MikasallaTilesB	../graphics/tileset/mikasalla/tiles_b.4bpp.mtf		4

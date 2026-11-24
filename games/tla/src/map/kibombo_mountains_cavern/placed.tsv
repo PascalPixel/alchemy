@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_KibomboMountainsCavernPalette	../graphics/tileset/kibombo_mountains_cavern/palette.gbapal.lz
+Tileset_KibomboMountainsCavernTilesA	../graphics/tileset/kibombo_mountains_cavern/tiles_a.4bpp.mtf	f60904
+Tileset_KibomboMountainsCavernTilesB	../graphics/tileset/kibombo_mountains_cavern/tiles_b.4bpp.mtf	1d947f
+Tileset_KibomboMountainsCavernTilesC	../graphics/tileset/kibombo_mountains_cavern/tiles_c.4bpp.mtf	e4
+Tileset_KibomboMountainsCavernTilesD	../graphics/tileset/kibombo_mountains_cavern/tiles_d.4bpp.mtf	7fe0

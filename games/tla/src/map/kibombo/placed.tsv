@@ -1,0 +1,31 @@
+name	file	left	pad	fill	edition
+Tileset_KibomboPalette	../graphics/tileset/kibombo/palette.gbapal.lz	5f52			ja
+Tileset_KibomboTilesA	../graphics/tileset/kibombo/tiles_a.4bpp.mtf	d40e40			ja
+Tileset_KibomboTilesB	../graphics/tileset/kibombo/tiles_b.4bpp.mtf	8e1618			ja
+Tileset_KibomboTilesC	../graphics/tileset/kibombo/tiles_c.4bpp.mtf				ja
+Tileset_KibomboTilesD	../graphics/tileset/kibombo/tiles_d.4bpp.mtf	e075			ja
+Tileset_KibomboPalette	../graphics/tileset/kibombo/palette.gbapal.lz	5f52			en
+Tileset_KibomboTilesA	../graphics/tileset/kibombo/tiles_a.4bpp.mtf	ef1240			en
+Tileset_KibomboTilesB	../graphics/tileset/kibombo/tiles_b.4bpp.mtf	8e1618			en
+Tileset_KibomboTilesC	../graphics/tileset/kibombo/tiles_c.4bpp.mtf				en
+Tileset_KibomboTilesD	../graphics/tileset/kibombo/tiles_d.4bpp.mtf	e075			en
+Tileset_KibomboPalette	../graphics/tileset/kibombo/palette.gbapal.lz	5f52			de
+Tileset_KibomboTilesA	../graphics/tileset/kibombo/tiles_a.4bpp.mtf	ef1240			de
+Tileset_KibomboTilesB	../graphics/tileset/kibombo/tiles_b.4bpp.mtf	8e1618			de
+Tileset_KibomboTilesC	../graphics/tileset/kibombo/tiles_c.4bpp.mtf				de
+Tileset_KibomboTilesD	../graphics/tileset/kibombo/tiles_d.4bpp.mtf	e075			de
+Tileset_KibomboPalette	../graphics/tileset/kibombo/palette.gbapal.lz	5f52			es
+Tileset_KibomboTilesA	../graphics/tileset/kibombo/tiles_a.4bpp.mtf	ef1240			es
+Tileset_KibomboTilesB	../graphics/tileset/kibombo/tiles_b.4bpp.mtf	8e1618			es
+Tileset_KibomboTilesC	../graphics/tileset/kibombo/tiles_c.4bpp.mtf				es
+Tileset_KibomboTilesD	../graphics/tileset/kibombo/tiles_d.4bpp.mtf	e075			es
+Tileset_KibomboPalette	../graphics/tileset/kibombo/palette.gbapal.lz	5f52			fr
+Tileset_KibomboTilesA	../graphics/tileset/kibombo/tiles_a.4bpp.mtf	ef1240			fr
+Tileset_KibomboTilesB	../graphics/tileset/kibombo/tiles_b.4bpp.mtf	8e1618			fr
+Tileset_KibomboTilesC	../graphics/tileset/kibombo/tiles_c.4bpp.mtf				fr
+Tileset_KibomboTilesD	../graphics/tileset/kibombo/tiles_d.4bpp.mtf	e075			fr
+Tileset_KibomboPalette	../graphics/tileset/kibombo/palette.gbapal.lz	5f52			it
+Tileset_KibomboTilesA	../graphics/tileset/kibombo/tiles_a.4bpp.mtf	ef1240			it
+Tileset_KibomboTilesB	../graphics/tileset/kibombo/tiles_b.4bpp.mtf	8e1618			it
+Tileset_KibomboTilesC	../graphics/tileset/kibombo/tiles_c.4bpp.mtf				it
+Tileset_KibomboTilesD	../graphics/tileset/kibombo/tiles_d.4bpp.mtf	e075			it

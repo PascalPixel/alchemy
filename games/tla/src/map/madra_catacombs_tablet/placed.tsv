@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_MadraCatacombsTabletPalette	../graphics/tileset/madra_catacombs_tablet/palette.gbapal.lz	2d40ff
+Tileset_MadraCatacombsTabletTilesA	../graphics/tileset/madra_catacombs_tablet/tiles_a.4bpp.mtf	04
+Tileset_MadraCatacombsTabletTilesB	../graphics/tileset/madra_catacombs_tablet/tiles_b.4bpp.mtf	ce80
+Tileset_MadraCatacombsTabletTilesC	../graphics/tileset/madra_catacombs_tablet/tiles_c.4bpp.mtf	20db
+Tileset_MadraCatacombsTabletTilesD	../graphics/tileset/madra_catacombs_tablet/tiles_d.4bpp.mtf

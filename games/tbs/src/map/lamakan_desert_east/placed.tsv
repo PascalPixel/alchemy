@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_LamakanDesertEastPalette	../graphics/tileset/lamakan_desert_east/palette.gbapal.lz
+Tileset_LamakanDesertEastTilesA	../graphics/tileset/lamakan_desert_east/tiles_a.4bpp.mtf	54
+Tileset_LamakanDesertEastTilesB	../graphics/tileset/lamakan_desert_east/tiles_b.4bpp.mtf	9c52
+Tileset_LamakanDesertEastTilesC	../graphics/tileset/lamakan_desert_east/tiles_c.4bpp.mtf	96
+Tileset_LamakanDesertEastTilesD	../graphics/tileset/lamakan_desert_east/tiles_d.4bpp.mtf	c084	4

@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_ApojiiIslandsPalette	../graphics/tileset/apojii_islands/palette.gbapal.lz	789f
+Tileset_ApojiiIslandsTilesA	../graphics/tileset/apojii_islands/tiles_a.4bpp.mtf
+Tileset_ApojiiIslandsTilesB	../graphics/tileset/apojii_islands/tiles_b.4bpp.mtf	a3
+Tileset_ApojiiIslandsTilesC	../graphics/tileset/apojii_islands/tiles_c.4bpp.mtf	0f74f6
+Tileset_ApojiiIslandsTilesD	../graphics/tileset/apojii_islands/tiles_d.4bpp.mtf	6d93a2

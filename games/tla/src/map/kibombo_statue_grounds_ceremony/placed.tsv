@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_KibomboStatueGroundsCeremonyPalette	../graphics/tileset/kibombo_statue_grounds_ceremony/palette.gbapal.lz	3c78f0
+Tileset_KibomboStatueGroundsCeremonyTilesA	../graphics/tileset/kibombo_statue_grounds_ceremony/tiles_a.4bpp.mtf	00
+Tileset_KibomboStatueGroundsCeremonyTilesB	../graphics/tileset/kibombo_statue_grounds_ceremony/tiles_b.4bpp.mtf	08
+Tileset_KibomboStatueGroundsCeremonyTilesC	../graphics/tileset/kibombo_statue_grounds_ceremony/tiles_c.4bpp.mtf
+Tileset_KibomboStatueGroundsCeremonyTilesD	../graphics/tileset/kibombo_statue_grounds_ceremony/tiles_d.4bpp.mtf	e07c

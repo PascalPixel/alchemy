@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_SuhallaGatePsynergyStonePalette	../graphics/tileset/suhalla_gate_psynergy_stone/palette.gbapal.lz	1f44
+Tileset_SuhallaGatePsynergyStoneTilesA	../graphics/tileset/suhalla_gate_psynergy_stone/tiles_a.4bpp.mtf	d1
+Tileset_SuhallaGatePsynergyStoneTilesB	../graphics/tileset/suhalla_gate_psynergy_stone/tiles_b.4bpp.mtf	00a0bb
+Tileset_SuhallaGatePsynergyStoneTilesC	../graphics/tileset/suhalla_gate_psynergy_stone/tiles_c.4bpp.mtf	27e90b
+Tileset_SuhallaGatePsynergyStoneTilesD	../graphics/tileset/suhalla_gate_psynergy_stone/tiles_d.4bpp.mtf	f0

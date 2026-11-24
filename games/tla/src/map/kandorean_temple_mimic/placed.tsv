@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_KandoreanTempleMimicPalette	../graphics/tileset/kandorean_temple_mimic/palette.gbapal.lz	cecf
+Tileset_KandoreanTempleMimicTilesA	../graphics/tileset/kandorean_temple_mimic/tiles_a.4bpp.mtf
+Tileset_KandoreanTempleMimicTilesB	../graphics/tileset/kandorean_temple_mimic/tiles_b.4bpp.mtf	dc
+Tileset_KandoreanTempleMimicTilesC	../graphics/tileset/kandorean_temple_mimic/tiles_c.4bpp.mtf	d088f9
+Tileset_KandoreanTempleMimicTilesD	../graphics/tileset/kandorean_temple_mimic/tiles_d.4bpp.mtf	7270f9

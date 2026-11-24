@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_MadraDrawbridgePalette	../graphics/tileset/madra_drawbridge/palette.gbapal.lz	7028
+Tileset_MadraDrawbridgeTilesA	../graphics/tileset/madra_drawbridge/tiles_a.4bpp.mtf	3e
+Tileset_MadraDrawbridgeTilesB	../graphics/tileset/madra_drawbridge/tiles_b.4bpp.mtf	cfde
+Tileset_MadraDrawbridgeTilesC	../graphics/tileset/madra_drawbridge/tiles_c.4bpp.mtf
+Tileset_MadraDrawbridgeTilesD	../graphics/tileset/madra_drawbridge/tiles_d.4bpp.mtf

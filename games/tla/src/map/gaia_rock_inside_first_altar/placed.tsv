@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_GaiaRockInsideFirstAltarPalette	../graphics/tileset/gaia_rock_inside_first_altar/palette.gbapal.lz	5c13
+Tileset_GaiaRockInsideFirstAltarTilesA	../graphics/tileset/gaia_rock_inside_first_altar/tiles_a.4bpp.mtf	1f
+Tileset_GaiaRockInsideFirstAltarTilesB	../graphics/tileset/gaia_rock_inside_first_altar/tiles_b.4bpp.mtf	a2
+Tileset_GaiaRockInsideFirstAltarTilesC	../graphics/tileset/gaia_rock_inside_first_altar/tiles_c.4bpp.mtf	02
+Tileset_GaiaRockInsideFirstAltarTilesD	../graphics/tileset/gaia_rock_inside_first_altar/tiles_d.4bpp.mtf	b94000

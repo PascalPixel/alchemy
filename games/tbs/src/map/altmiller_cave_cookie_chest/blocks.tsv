@@ -1,0 +1,37 @@
+block	file	pad	edition
+cell_tiles	cell_tiles.delta1.lz	4	ja
+shapes	altmiller_cave_entrance/shapes.table.lz	4	ja
+grid	map.grid.lz	4	ja
+animation	tileset_anims.script.lz	4	ja
+blend	goma_cave_entrance/blend.script.lz	4	ja
+markers		4	ja
+cell_tiles	cell_tiles.delta1.lz	4	en
+shapes	altmiller_cave_entrance/shapes.table.lz	4	en
+grid	map.grid.lz	4	en
+animation	tileset_anims.script.lz	4	en
+blend	goma_cave_entrance/blend.script.lz	4	en
+markers		4	en
+cell_tiles	cell_tiles_de.delta1.lz	4	de
+shapes	altmiller_cave_entrance/shapes.table.lz	4	de
+grid	map_de.grid.lz	4	de
+animation	tileset_anims.script.lz	4	de
+blend	goma_cave_entrance/blend.script.lz	4	de
+markers		4	de
+cell_tiles	cell_tiles_de.delta1.lz	4	es
+shapes	altmiller_cave_entrance/shapes.table.lz	4	es
+grid	map_de.grid.lz	4	es
+animation	tileset_anims.script.lz	4	es
+blend	goma_cave_entrance/blend.script.lz	4	es
+markers		4	es
+cell_tiles	cell_tiles_de.delta1.lz	4	fr
+shapes	altmiller_cave_entrance/shapes.table.lz	4	fr
+grid	map_de.grid.lz	4	fr
+animation	tileset_anims.script.lz	4	fr
+blend	goma_cave_entrance/blend.script.lz	4	fr
+markers		4	fr
+cell_tiles	cell_tiles_de.delta1.lz	4	it
+shapes	altmiller_cave_entrance/shapes.table.lz	4	it
+grid	map_de.grid.lz	4	it
+animation	tileset_anims.script.lz	4	it
+blend	goma_cave_entrance/blend.script.lz	4	it
+markers		4	it

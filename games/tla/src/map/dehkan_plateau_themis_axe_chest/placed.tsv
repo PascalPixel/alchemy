@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_DehkanPlateauThemisAxeChestPalette	../graphics/tileset/dehkan_plateau_themis_axe_chest/palette.gbapal.lz	98
+Tileset_DehkanPlateauThemisAxeChestTilesA	../graphics/tileset/dehkan_plateau_themis_axe_chest/tiles_a.4bpp.mtf
+Tileset_DehkanPlateauThemisAxeChestTilesB	../graphics/tileset/dehkan_plateau_themis_axe_chest/tiles_b.4bpp.mtf	e701
+Tileset_DehkanPlateauThemisAxeChestTilesC	../graphics/tileset/dehkan_plateau_themis_axe_chest/tiles_c.4bpp.mtf	01
+Tileset_DehkanPlateauThemisAxeChestTilesD	../graphics/tileset/dehkan_plateau_themis_axe_chest/tiles_d.4bpp.mtf	70

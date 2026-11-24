@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_TolbiShipDeckPalette	../graphics/tileset/tolbi_ship_deck/palette.gbapal.lz	c53e03
+Tileset_TolbiShipDeckTilesA	../graphics/tileset/tolbi_ship_deck/tiles_a.4bpp.mtf	d143
+Tileset_TolbiShipDeckTilesB	../graphics/tileset/tolbi_ship_deck/tiles_b.4bpp.mtf	793a
+Tileset_TolbiShipDeckTilesC	../graphics/tileset/tolbi_ship_deck/tiles_c.4bpp.mtf
+Tileset_TolbiShipDeckTilesD	../graphics/tileset/tolbi_ship_deck/tiles_d.4bpp.mtf	087e	4

@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_KolimaForestFloodgatePalette	../graphics/tileset/kolima_forest_floodgate/palette.gbapal.lz	6a7b	4
+Tileset_KolimaForestFloodgateTilesA	../graphics/tileset/kolima_forest_floodgate/tiles_a.4bpp.mtf		4
+Tileset_KolimaForestFloodgateTilesB	../graphics/tileset/kolima_forest_floodgate/tiles_b.4bpp.mtf
+Tileset_KolimaForestFloodgateTilesC	../graphics/tileset/kolima_forest_floodgate/tiles_c.4bpp.mtf	d6b608
+Tileset_KolimaForestFloodgateTilesD	../graphics/tileset/kolima_forest_floodgate/tiles_d.4bpp.mtf		4

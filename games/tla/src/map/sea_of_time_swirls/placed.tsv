@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_SeaOfTimeSwirlsPalette	../graphics/tileset/sea_of_time_swirls/palette.gbapal.lz	0408f0
+Tileset_SeaOfTimeSwirlsTilesA	../graphics/tileset/sea_of_time_swirls/tiles_a.4bpp.mtf	24038f
+Tileset_SeaOfTimeSwirlsTilesB	../graphics/tileset/sea_of_time_swirls/tiles_b.4bpp.mtf	00
+Tileset_SeaOfTimeSwirlsTilesC	../graphics/tileset/sea_of_time_swirls/tiles_c.4bpp.mtf	f8
+Tileset_SeaOfTimeSwirlsTilesD	../graphics/tileset/sea_of_time_swirls/tiles_d.4bpp.mtf	2440

@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_TreasureIsleChestsPalette	../graphics/tileset/treasure_isle_chests/palette.gbapal.lz	173c
+Tileset_TreasureIsleChestsTilesA	../graphics/tileset/treasure_isle_chests/tiles_a.4bpp.mtf
+Tileset_TreasureIsleChestsTilesB	../graphics/tileset/treasure_isle_chests/tiles_b.4bpp.mtf	97
+Tileset_TreasureIsleChestsTilesC	../graphics/tileset/treasure_isle_chests/tiles_c.4bpp.mtf
+Tileset_TreasureIsleChestsTilesD	../graphics/tileset/treasure_isle_chests/tiles_d.4bpp.mtf	1641

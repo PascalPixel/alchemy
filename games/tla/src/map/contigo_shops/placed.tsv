@@ -1,0 +1,37 @@
+name	file	left	pad	fill	edition
+Tileset_ContigoShopsPalette	../graphics/tileset/contigo_shops/palette.gbapal.lz	800798			ja
+Tileset_ContigoShopsTilesA	../graphics/tileset/contigo_shops/tiles_a.4bpp.mtf				ja
+Tileset_ContigoShopsTilesB	../graphics/tileset/contigo_shops/tiles_b.4bpp.mtf	5b4403			ja
+Tileset_ContigoShopsTilesC	../graphics/tileset/contigo_shops/tiles_c.4bpp.mtf	1dfff3			ja
+Tileset_ContigoShopsTilesD	../graphics/tileset/contigo_shops/tiles_d.4bpp.mtf				ja
+Tileset_PaletteContigoShops	../graphics/tileset/palettes/contigo_shops.gbapal.lz	a7			ja
+Tileset_ContigoShopsPalette	../graphics/tileset/contigo_shops/palette.gbapal.lz	800798			en
+Tileset_ContigoShopsTilesA	../graphics/tileset/contigo_shops/tiles_a.4bpp.mtf				en
+Tileset_ContigoShopsTilesB	../graphics/tileset/contigo_shops/tiles_b.4bpp.mtf	5b4403			en
+Tileset_ContigoShopsTilesC	../graphics/tileset/contigo_shops/tiles_c.4bpp.mtf		4		en
+Tileset_ContigoShopsTilesD	../graphics/tileset/contigo_shops/tiles_d.4bpp.mtf				en
+Tileset_PaletteContigoShops	../graphics/tileset/palettes/contigo_shops.gbapal.lz	a7			en
+Tileset_ContigoShopsPalette	../graphics/tileset/contigo_shops/palette.gbapal.lz	800798			de
+Tileset_ContigoShopsTilesA	../graphics/tileset/contigo_shops/tiles_a.4bpp.mtf				de
+Tileset_ContigoShopsTilesB	../graphics/tileset/contigo_shops/tiles_b.4bpp.mtf	5b4403			de
+Tileset_ContigoShopsTilesC	../graphics/tileset/contigo_shops/tiles_c.4bpp.mtf		4		de
+Tileset_ContigoShopsTilesD	../graphics/tileset/contigo_shops/tiles_d.4bpp.mtf				de
+Tileset_PaletteContigoShops	../graphics/tileset/palettes/contigo_shops.gbapal.lz	a7			de
+Tileset_ContigoShopsPalette	../graphics/tileset/contigo_shops/palette.gbapal.lz	800798			es
+Tileset_ContigoShopsTilesA	../graphics/tileset/contigo_shops/tiles_a.4bpp.mtf				es
+Tileset_ContigoShopsTilesB	../graphics/tileset/contigo_shops/tiles_b.4bpp.mtf	5b4403			es
+Tileset_ContigoShopsTilesC	../graphics/tileset/contigo_shops/tiles_c.4bpp.mtf		4		es
+Tileset_ContigoShopsTilesD	../graphics/tileset/contigo_shops/tiles_d.4bpp.mtf				es
+Tileset_PaletteContigoShops	../graphics/tileset/palettes/contigo_shops.gbapal.lz	a7			es
+Tileset_ContigoShopsPalette	../graphics/tileset/contigo_shops/palette.gbapal.lz	800798			fr
+Tileset_ContigoShopsTilesA	../graphics/tileset/contigo_shops/tiles_a.4bpp.mtf				fr
+Tileset_ContigoShopsTilesB	../graphics/tileset/contigo_shops/tiles_b.4bpp.mtf	5b4403			fr
+Tileset_ContigoShopsTilesC	../graphics/tileset/contigo_shops/tiles_c.4bpp.mtf		4		fr
+Tileset_ContigoShopsTilesD	../graphics/tileset/contigo_shops/tiles_d.4bpp.mtf				fr
+Tileset_PaletteContigoShops	../graphics/tileset/palettes/contigo_shops.gbapal.lz	a7			fr
+Tileset_ContigoShopsPalette	../graphics/tileset/contigo_shops/palette.gbapal.lz	800798			it
+Tileset_ContigoShopsTilesA	../graphics/tileset/contigo_shops/tiles_a.4bpp.mtf				it
+Tileset_ContigoShopsTilesB	../graphics/tileset/contigo_shops/tiles_b.4bpp.mtf	5b4403			it
+Tileset_ContigoShopsTilesC	../graphics/tileset/contigo_shops/tiles_c.4bpp.mtf		4		it
+Tileset_ContigoShopsTilesD	../graphics/tileset/contigo_shops/tiles_d.4bpp.mtf				it
+Tileset_PaletteContigoShops	../graphics/tileset/palettes/contigo_shops.gbapal.lz	a7			it

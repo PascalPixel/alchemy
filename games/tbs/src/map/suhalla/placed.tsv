@@ -1,0 +1,31 @@
+name	file	left	pad	fill	edition
+Tileset_SuhallaPalette	../graphics/tileset/suhalla/palette.gbapal.lz				ja
+Tileset_SuhallaTilesA	../graphics/tileset/suhalla/tiles_a.4bpp.mtf	d8			ja
+Tileset_SuhallaTilesB	../graphics/tileset/suhalla/tiles_b.4bpp.mtf				ja
+Tileset_SuhallaTilesC	../graphics/tileset/suhalla/tiles_c.4bpp.mtf	0014			ja
+Tileset_SuhallaTilesD	../graphics/tileset/suhalla/tiles_d.4bpp.mtf	8179	4		ja
+Tileset_SuhallaPalette	../graphics/tileset/suhalla/palette.gbapal.lz				en
+Tileset_SuhallaTilesA	../graphics/tileset/suhalla/tiles_a.4bpp.mtf	80			en
+Tileset_SuhallaTilesB	../graphics/tileset/suhalla/tiles_b.4bpp.mtf				en
+Tileset_SuhallaTilesC	../graphics/tileset/suhalla/tiles_c.4bpp.mtf	0014			en
+Tileset_SuhallaTilesD	../graphics/tileset/suhalla/tiles_d.4bpp.mtf	8179	4		en
+Tileset_SuhallaPalette	../graphics/tileset/suhalla/palette.gbapal.lz				de
+Tileset_SuhallaTilesA	../graphics/tileset/suhalla/tiles_a.4bpp.mtf	d8			de
+Tileset_SuhallaTilesB	../graphics/tileset/suhalla/tiles_b.4bpp.mtf				de
+Tileset_SuhallaTilesC	../graphics/tileset/suhalla/tiles_c.4bpp.mtf	0014			de
+Tileset_SuhallaTilesD	../graphics/tileset/suhalla/tiles_d.4bpp.mtf	8179	4		de
+Tileset_SuhallaPalette	../graphics/tileset/suhalla/palette.gbapal.lz				es
+Tileset_SuhallaTilesA	../graphics/tileset/suhalla/tiles_a.4bpp.mtf	80			es
+Tileset_SuhallaTilesB	../graphics/tileset/suhalla/tiles_b.4bpp.mtf				es
+Tileset_SuhallaTilesC	../graphics/tileset/suhalla/tiles_c.4bpp.mtf	0014			es
+Tileset_SuhallaTilesD	../graphics/tileset/suhalla/tiles_d.4bpp.mtf	8179	4		es
+Tileset_SuhallaPalette	../graphics/tileset/suhalla/palette.gbapal.lz				fr
+Tileset_SuhallaTilesA	../graphics/tileset/suhalla/tiles_a.4bpp.mtf	80			fr
+Tileset_SuhallaTilesB	../graphics/tileset/suhalla/tiles_b.4bpp.mtf				fr
+Tileset_SuhallaTilesC	../graphics/tileset/suhalla/tiles_c.4bpp.mtf	0014			fr
+Tileset_SuhallaTilesD	../graphics/tileset/suhalla/tiles_d.4bpp.mtf	8179	4		fr
+Tileset_SuhallaPalette	../graphics/tileset/suhalla/palette.gbapal.lz				it
+Tileset_SuhallaTilesA	../graphics/tileset/suhalla/tiles_a.4bpp.mtf	80			it
+Tileset_SuhallaTilesB	../graphics/tileset/suhalla/tiles_b.4bpp.mtf				it
+Tileset_SuhallaTilesC	../graphics/tileset/suhalla/tiles_c.4bpp.mtf	0014			it
+Tileset_SuhallaTilesD	../graphics/tileset/suhalla/tiles_d.4bpp.mtf	8179	4		it

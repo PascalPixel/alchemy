@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_KibomboStatueFacePalette	../graphics/tileset/kibombo_statue_face/palette.gbapal.lz
+Tileset_KibomboStatueFaceTilesA	../graphics/tileset/kibombo_statue_face/tiles_a.4bpp.mtf	0004
+Tileset_KibomboStatueFaceTilesB	../graphics/tileset/kibombo_statue_face/tiles_b.4bpp.mtf	4dcb82
+Tileset_KibomboStatueFaceTilesC	../graphics/tileset/kibombo_statue_face/tiles_c.4bpp.mtf
+Tileset_KibomboStatueFaceTilesD	../graphics/tileset/kibombo_statue_face/tiles_d.4bpp.mtf	dc

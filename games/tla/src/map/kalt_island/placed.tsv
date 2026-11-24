@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_KaltIslandPalette	../graphics/tileset/kalt_island/palette.gbapal.lz	c039
+Tileset_KaltIslandTilesA	../graphics/tileset/kalt_island/tiles_a.4bpp.mtf
+Tileset_KaltIslandTilesB	../graphics/tileset/kalt_island/tiles_b.4bpp.mtf
+Tileset_KaltIslandTilesC	../graphics/tileset/kalt_island/tiles_c.4bpp.mtf		4
+Tileset_KaltIslandTilesD	../graphics/tileset/kalt_island/tiles_d.4bpp.mtf	e1

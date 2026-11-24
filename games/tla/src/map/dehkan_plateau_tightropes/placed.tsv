@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_DehkanPlateauTightropesPalette	../graphics/tileset/dehkan_plateau_tightropes/palette.gbapal.lz
+Tileset_DehkanPlateauTightropesTilesA	../graphics/tileset/dehkan_plateau_tightropes/tiles_a.4bpp.mtf
+Tileset_DehkanPlateauTightropesTilesB	../graphics/tileset/dehkan_plateau_tightropes/tiles_b.4bpp.mtf	e701
+Tileset_DehkanPlateauTightropesTilesC	../graphics/tileset/dehkan_plateau_tightropes/tiles_c.4bpp.mtf	d4
+Tileset_DehkanPlateauTightropesTilesD	../graphics/tileset/dehkan_plateau_tightropes/tiles_d.4bpp.mtf	70

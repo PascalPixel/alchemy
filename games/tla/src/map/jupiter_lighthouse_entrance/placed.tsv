@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_JupiterLighthouseEntrancePalette	../graphics/tileset/jupiter_lighthouse_entrance/palette.gbapal.lz
+Tileset_JupiterLighthouseEntranceTilesA	../graphics/tileset/jupiter_lighthouse_entrance/tiles_a.4bpp.mtf
+Tileset_JupiterLighthouseEntranceTilesB	../graphics/tileset/jupiter_lighthouse_entrance/tiles_b.4bpp.mtf
+Tileset_JupiterLighthouseEntranceTilesC	../graphics/tileset/jupiter_lighthouse_entrance/tiles_c.4bpp.mtf
+Tileset_JupiterLighthouseEntranceTilesD	../graphics/tileset/jupiter_lighthouse_entrance/tiles_d.4bpp.mtf	4416

@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_TreasureIsleJestersArmletChestPalette	../graphics/tileset/treasure_isle_jesters_armlet_chest/palette.gbapal.lz	83f0
+Tileset_TreasureIsleJestersArmletChestTilesA	../graphics/tileset/treasure_isle_jesters_armlet_chest/tiles_a.4bpp.mtf
+Tileset_TreasureIsleJestersArmletChestTilesB	../graphics/tileset/treasure_isle_jesters_armlet_chest/tiles_b.4bpp.mtf	0f
+Tileset_TreasureIsleJestersArmletChestTilesC	../graphics/tileset/treasure_isle_jesters_armlet_chest/tiles_c.4bpp.mtf
+Tileset_TreasureIsleJestersArmletChestTilesD	../graphics/tileset/treasure_isle_jesters_armlet_chest/tiles_d.4bpp.mtf	73

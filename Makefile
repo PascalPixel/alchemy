@@ -500,10 +500,11 @@ LISTS := $(patsubst %.tsv,%.s,$(shell find games -name list.tsv -o -name '*.list
 lists: $(LISTS) $(MAPS)
 $(LISTS): %.s: %.tsv | tools
 	tools/out/ags-list $< $@
-# Every map of the field is rows in five tables beside the maps' folders;
+# Every map of the field has its tables in its own folder, and maps.tsv
+# beside the folders gives their order;
 # ags-maps writes maps.s from them.
 MAPS := games/tbs/src/map/maps.s games/tla/src/map/maps.s
-$(MAPS): %/maps.s: %/maps.tsv %/layers.tsv %/blocks.tsv %/spots.tsv %/placed.tsv | tools
+$(MAPS): %/maps.s: %/maps.tsv $$(wildcard $$*/*/header.tsv $$*/*/layers.tsv $$*/*/blocks.tsv $$*/*/spots.tsv $$*/*/placed.tsv) | tools
 	tools/out/ags-maps $* $@
 
 # --- Tools and tests -------------------------------------------------------

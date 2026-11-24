@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_MadraPalette	../graphics/tileset/madra/palette.gbapal.lz	120508
+Tileset_MadraTilesA	../graphics/tileset/madra/tiles_a.4bpp.mtf	0002
+Tileset_MadraTilesB	../graphics/tileset/madra/tiles_b.4bpp.mtf	0804
+Tileset_MadraTilesC	../graphics/tileset/madra/tiles_c.4bpp.mtf	41f2
+Tileset_MadraTilesD	../graphics/tileset/madra/tiles_d.4bpp.mtf	0386c0

@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_KolimaBridgePalette	../graphics/tileset/kolima_bridge/palette.gbapal.lz	9e99b7
+Tileset_KolimaBridgeTilesA	../graphics/tileset/kolima_bridge/tiles_a.4bpp.mtf
+Tileset_KolimaBridgeTilesB	../graphics/tileset/kolima_bridge/tiles_b.4bpp.mtf	4d0c83
+Tileset_KolimaBridgeTilesC	../graphics/tileset/kolima_bridge/tiles_c.4bpp.mtf	fa80
+Tileset_KolimaBridgeTilesD	../graphics/tileset/kolima_bridge/tiles_d.4bpp.mtf	1ff8	4

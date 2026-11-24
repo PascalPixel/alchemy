@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_MtAlephSummitPalette	../graphics/tileset/mt_aleph_summit/palette.gbapal.lz
+Tileset_MtAlephSummitTilesA	../graphics/tileset/mt_aleph_summit/tiles_a.4bpp.mtf	0e5980
+Tileset_MtAlephSummitTilesB	../graphics/tileset/mt_aleph_summit/tiles_b.4bpp.mtf	0cea4c
+Tileset_MtAlephSummitTilesC	../graphics/tileset/mt_aleph_summit/tiles_c.4bpp.mtf	56
+Tileset_MtAlephSummitTilesD	../graphics/tileset/mt_aleph_summit/tiles_d.4bpp.mtf	3e7f

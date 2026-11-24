@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_EasternAlhafraShipPalette	../graphics/tileset/eastern_alhafra_ship/palette.gbapal.lz
+Tileset_EasternAlhafraShipTilesA	../graphics/tileset/eastern_alhafra_ship/tiles_a.4bpp.mtf	a03214
+Tileset_EasternAlhafraShipTilesB	../graphics/tileset/eastern_alhafra_ship/tiles_b.4bpp.mtf	9aa6e3
+Tileset_EasternAlhafraShipTilesC	../graphics/tileset/eastern_alhafra_ship/tiles_c.4bpp.mtf	88f005
+Tileset_EasternAlhafraShipTilesD	../graphics/tileset/eastern_alhafra_ship/tiles_d.4bpp.mtf	f6813a

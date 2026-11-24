@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_KibomboMountainsWaftPalette	../graphics/tileset/kibombo_mountains_waft/palette.gbapal.lz
+Tileset_KibomboMountainsWaftTilesA	../graphics/tileset/kibombo_mountains_waft/tiles_a.4bpp.mtf	9680
+Tileset_KibomboMountainsWaftTilesB	../graphics/tileset/kibombo_mountains_waft/tiles_b.4bpp.mtf
+Tileset_KibomboMountainsWaftTilesC	../graphics/tileset/kibombo_mountains_waft/tiles_c.4bpp.mtf
+Tileset_KibomboMountainsWaftTilesD	../graphics/tileset/kibombo_mountains_waft/tiles_d.4bpp.mtf

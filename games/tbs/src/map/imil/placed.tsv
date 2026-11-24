@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_ImilPalette	../graphics/tileset/imil/palette.gbapal.lz	c28204
+Tileset_ImilTilesA	../graphics/tileset/imil/tiles_a.4bpp.mtf
+Tileset_ImilTilesB	../graphics/tileset/imil/tiles_b.4bpp.mtf	69
+Tileset_ImilTilesC	../graphics/tileset/imil/tiles_c.4bpp.mtf	de
+Tileset_ImilTilesD	../graphics/tileset/imil/tiles_d.4bpp.mtf		4

@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_GomaCavePillarPalette	../graphics/tileset/goma_cave_pillar/palette.gbapal.lz
+Tileset_GomaCavePillarTilesA	../graphics/tileset/goma_cave_pillar/tiles_a.4bpp.mtf	1200
+Tileset_GomaCavePillarTilesB	../graphics/tileset/goma_cave_pillar/tiles_b.4bpp.mtf	2788
+Tileset_GomaCavePillarTilesC	../graphics/tileset/goma_cave_pillar/tiles_c.4bpp.mtf
+Tileset_GomaCavePillarTilesD	../graphics/tileset/goma_cave_pillar/tiles_d.4bpp.mtf		4

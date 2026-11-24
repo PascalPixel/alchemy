@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_SolSanctumEruptionPalette	../graphics/tileset/sol_sanctum_eruption/palette.gbapal.lz	2750
+Tileset_SolSanctumEruptionTilesA	../graphics/tileset/sol_sanctum_eruption/tiles_a.4bpp.mtf	fe4c
+Tileset_SolSanctumEruptionTilesB	../graphics/tileset/sol_sanctum_eruption/tiles_b.4bpp.mtf	a5
+Tileset_SolSanctumEruptionTilesC	../graphics/tileset/sol_sanctum_eruption/tiles_c.4bpp.mtf
+Tileset_SolSanctumEruptionTilesD	../graphics/tileset/sol_sanctum_eruption/tiles_d.4bpp.mtf	01	4

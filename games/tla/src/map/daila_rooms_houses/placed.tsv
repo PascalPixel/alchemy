@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_DailaRoomsHousesPalette	../graphics/tileset/daila_rooms_houses/palette.gbapal.lz
+Tileset_DailaRoomsHousesTilesA	../graphics/tileset/daila_rooms_houses/tiles_a.4bpp.mtf
+Tileset_DailaRoomsHousesTilesB	../graphics/tileset/daila_rooms_houses/tiles_b.4bpp.mtf	58
+Tileset_DailaRoomsHousesTilesC	../graphics/tileset/daila_rooms_houses/tiles_c.4bpp.mtf
+Tileset_DailaRoomsHousesTilesD	../graphics/tileset/daila_rooms_houses/tiles_d.4bpp.mtf

@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_TimberRoomsPalette	../graphics/tileset/timber_rooms/palette.gbapal.lz
+Tileset_TimberRoomsTilesA	../graphics/tileset/timber_rooms/tiles_a.4bpp.mtf	94	4
+Tileset_TimberRoomsTilesB	../graphics/tileset/timber_rooms/tiles_b.4bpp.mtf		4
+Tileset_TimberRoomsTilesC	../graphics/tileset/timber_rooms/tiles_c.4bpp.mtf
+Tileset_TimberRoomsTilesD	../graphics/tileset/timber_rooms/tiles_d.4bpp.mtf	694e50	4

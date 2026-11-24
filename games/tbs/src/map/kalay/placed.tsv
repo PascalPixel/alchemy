@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_KalayPalette	../graphics/tileset/kalay/palette.gbapal.lz	94	4
+Tileset_KalayTilesA	../graphics/tileset/kalay/tiles_a.4bpp.mtf		4
+Tileset_KalayTilesB	../graphics/tileset/kalay/tiles_b.4bpp.mtf	d1bc
+Tileset_KalayTilesC	../graphics/tileset/kalay/tiles_c.4bpp.mtf	24dabb
+Tileset_KalayTilesD	../graphics/tileset/kalay/tiles_d.4bpp.mtf		4

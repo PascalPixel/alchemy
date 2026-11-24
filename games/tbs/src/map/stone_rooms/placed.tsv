@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_StoneRoomsPalette	../graphics/tileset/stone_rooms/palette.gbapal.lz	3f
+Tileset_StoneRoomsTilesA	../graphics/tileset/stone_rooms/tiles_a.4bpp.mtf
+Tileset_StoneRoomsTilesB	../graphics/tileset/stone_rooms/tiles_b.4bpp.mtf
+Tileset_StoneRoomsTilesC	../graphics/tileset/stone_rooms/tiles_c.4bpp.mtf	1d65
+Tileset_StoneRoomsTilesD	../graphics/tileset/stone_rooms/tiles_d.4bpp.mtf	82b0	4

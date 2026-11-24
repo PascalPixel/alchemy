@@ -1,0 +1,8 @@
+block	file	pad	edition
+cell_tiles	cell_tiles.delta1.lz	4
+shapes	sea_of_time_swirls/shapes.table.lz	4
+grid	map.grid.lz	4
+shape_grid	shape_grid.plane.lz	4
+animation	animation.script.lz	4
+blend	lobby/blend.script.lz	4
+scene	trial_road_summit/scene.scene.lz	4

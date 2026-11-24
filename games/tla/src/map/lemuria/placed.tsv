@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_LemuriaPalette	../graphics/tileset/lemuria/palette.gbapal.lz	6405
+Tileset_LemuriaTilesA	../graphics/tileset/lemuria/tiles_a.4bpp.mtf	fa10
+Tileset_LemuriaTilesB	../graphics/tileset/lemuria/tiles_b.4bpp.mtf	0a1c4b
+Tileset_LemuriaTilesC	../graphics/tileset/lemuria/tiles_c.4bpp.mtf	24
+Tileset_LemuriaTilesD	../graphics/tileset/lemuria/tiles_d.4bpp.mtf

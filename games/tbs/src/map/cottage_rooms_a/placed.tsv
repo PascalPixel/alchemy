@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_CottageRoomsAPalette	../graphics/tileset/cottage_rooms_a/palette.gbapal.lz
+Tileset_CottageRoomsATilesA	../graphics/tileset/cottage_rooms_a/tiles_a.4bpp.mtf
+Tileset_CottageRoomsATilesB	../graphics/tileset/cottage_rooms_a/tiles_b.4bpp.mtf	02f607
+Tileset_CottageRoomsATilesC	../graphics/tileset/cottage_rooms_a/tiles_c.4bpp.mtf	86b4
+Tileset_CottageRoomsATilesD	../graphics/tileset/cottage_rooms_a/tiles_d.4bpp.mtf	3c	4

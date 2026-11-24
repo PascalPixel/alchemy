@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_IzumoPalette	../graphics/tileset/izumo/palette.gbapal.lz	f3
+Tileset_IzumoTilesA	../graphics/tileset/izumo/tiles_a.4bpp.mtf
+Tileset_IzumoTilesB	../graphics/tileset/izumo/tiles_b.4bpp.mtf
+Tileset_IzumoTilesC	../graphics/tileset/izumo/tiles_c.4bpp.mtf	918107
+Tileset_IzumoTilesD	../graphics/tileset/izumo/tiles_d.4bpp.mtf	10

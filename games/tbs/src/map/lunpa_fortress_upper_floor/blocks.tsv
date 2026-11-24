@@ -1,0 +1,37 @@
+block	file	pad	edition
+cell_tiles	cell_tiles.delta1.lz	4	ja
+shapes	fuchin_falls_cave_entrance/shapes.table.lz	4	ja
+grid	map_ja.grid.lz	4	ja
+animation	vale_cave_kite/tileset_anims.script.lz	4	ja
+blend	lunpa_fortress_ground_floor/blend.script.lz	4	ja
+markers		4	ja
+cell_tiles	cell_tiles.delta1.lz	4	en
+shapes	fuchin_falls_cave_entrance/shapes.table.lz	4	en
+grid	map.grid.lz	4	en
+animation	vale_cave_kite/tileset_anims.script.lz	4	en
+blend	lunpa_fortress_ground_floor/blend.script.lz	4	en
+markers		4	en
+cell_tiles	cell_tiles.delta1.lz	4	de
+shapes	fuchin_falls_cave_entrance/shapes.table.lz	4	de
+grid	map.grid.lz	4	de
+animation	vale_cave_kite/tileset_anims.script.lz	4	de
+blend	lunpa_fortress_ground_floor/blend.script.lz	4	de
+markers		4	de
+cell_tiles	cell_tiles.delta1.lz	4	es
+shapes	fuchin_falls_cave_entrance/shapes.table.lz	4	es
+grid	map.grid.lz	4	es
+animation	vale_cave_kite/tileset_anims.script.lz	4	es
+blend	lunpa_fortress_ground_floor/blend.script.lz	4	es
+markers		4	es
+cell_tiles	cell_tiles.delta1.lz	4	fr
+shapes	fuchin_falls_cave_entrance/shapes.table.lz	4	fr
+grid	map.grid.lz	4	fr
+animation	vale_cave_kite/tileset_anims.script.lz	4	fr
+blend	lunpa_fortress_ground_floor/blend.script.lz	4	fr
+markers		4	fr
+cell_tiles	cell_tiles.delta1.lz	4	it
+shapes	fuchin_falls_cave_entrance/shapes.table.lz	4	it
+grid	map.grid.lz	4	it
+animation	vale_cave_kite/tileset_anims.script.lz	4	it
+blend	lunpa_fortress_ground_floor/blend.script.lz	4	it
+markers		4	it

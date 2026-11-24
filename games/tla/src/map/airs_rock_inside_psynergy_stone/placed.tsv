@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_AirsRockInsidePsynergyStonePalette	../graphics/tileset/airs_rock_inside_psynergy_stone/palette.gbapal.lz	e1
+Tileset_AirsRockInsidePsynergyStoneTilesA	../graphics/tileset/airs_rock_inside_psynergy_stone/tiles_a.4bpp.mtf	8000
+Tileset_AirsRockInsidePsynergyStoneTilesB	../graphics/tileset/airs_rock_inside_psynergy_stone/tiles_b.4bpp.mtf
+Tileset_AirsRockInsidePsynergyStoneTilesC	../graphics/tileset/airs_rock_inside_psynergy_stone/tiles_c.4bpp.mtf	ca
+Tileset_AirsRockInsidePsynergyStoneTilesD	../graphics/tileset/airs_rock_inside_psynergy_stone/tiles_d.4bpp.mtf	13

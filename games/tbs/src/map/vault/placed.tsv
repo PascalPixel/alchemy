@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_VaultPalette	../graphics/tileset/vault/palette.gbapal.lz	c8
+Tileset_VaultTilesA	../graphics/tileset/vault/tiles_a.4bpp.mtf	8a332a
+Tileset_VaultTilesB	../graphics/tileset/vault/tiles_b.4bpp.mtf	131d
+Tileset_VaultTilesC	../graphics/tileset/vault/tiles_c.4bpp.mtf	0acd
+Tileset_VaultTilesD	../graphics/tileset/vault/tiles_d.4bpp.mtf	5e117d	4

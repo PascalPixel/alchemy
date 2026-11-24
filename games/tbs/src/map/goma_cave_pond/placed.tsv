@@ -1,0 +1,31 @@
+name	file	left	pad	fill	edition
+Tileset_GomaCavePondPalette	../graphics/tileset/goma_cave_pond/palette.gbapal.lz	71			ja
+Tileset_GomaCavePondTilesA	../graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf				ja
+Tileset_GomaCavePondTilesB	../graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf				ja
+Tileset_GomaCavePondTilesC	../graphics/tileset/goma_cave_pond/tiles_c.4bpp.mtf	0090			ja
+Tileset_GomaCavePondTilesD	../graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf	04	4		ja
+Tileset_GomaCavePondPalette	../graphics/tileset/goma_cave_pond/palette.gbapal.lz	71			en
+Tileset_GomaCavePondTilesA	../graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf				en
+Tileset_GomaCavePondTilesB	../graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf				en
+Tileset_GomaCavePondTilesC	../graphics/tileset/goma_cave_pond/tiles_c.4bpp.mtf	0090			en
+Tileset_GomaCavePondTilesD	../graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf	04	4		en
+Tileset_GomaCavePondPalette	../graphics/tileset/goma_cave_pond/palette.gbapal.lz	71			de
+Tileset_GomaCavePondTilesA	../graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf				de
+Tileset_GomaCavePondTilesB	../graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf				de
+Tileset_GomaCavePondTilesC	../graphics/tileset/goma_cave_pond/tiles_c.4bpp.mtf	0090			de
+Tileset_GomaCavePondTilesD	../graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf	04	4		de
+Tileset_GomaCavePondPalette	../graphics/tileset/goma_cave_pond/palette.gbapal.lz	71			es
+Tileset_GomaCavePondTilesA	../graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf				es
+Tileset_GomaCavePondTilesB	../graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf				es
+Tileset_GomaCavePondTilesC	../graphics/tileset/goma_cave_pond/tiles_c_es.4bpp.mtf	6082c0			es
+Tileset_GomaCavePondTilesD	../graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf	04	4		es
+Tileset_GomaCavePondPalette	../graphics/tileset/goma_cave_pond/palette.gbapal.lz	71			fr
+Tileset_GomaCavePondTilesA	../graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf				fr
+Tileset_GomaCavePondTilesB	../graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf				fr
+Tileset_GomaCavePondTilesC	../graphics/tileset/goma_cave_pond/tiles_c_es.4bpp.mtf	6082c0			fr
+Tileset_GomaCavePondTilesD	../graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf	04	4		fr
+Tileset_GomaCavePondPalette	../graphics/tileset/goma_cave_pond/palette.gbapal.lz	71			it
+Tileset_GomaCavePondTilesA	../graphics/tileset/goma_cave_pond/tiles_a.4bpp.mtf				it
+Tileset_GomaCavePondTilesB	../graphics/tileset/goma_cave_pond/tiles_b.4bpp.mtf				it
+Tileset_GomaCavePondTilesC	../graphics/tileset/goma_cave_pond/tiles_c_es.4bpp.mtf	6082c0			it
+Tileset_GomaCavePondTilesD	../graphics/tileset/goma_cave_pond/tiles_d.4bpp.mtf	04	4		it

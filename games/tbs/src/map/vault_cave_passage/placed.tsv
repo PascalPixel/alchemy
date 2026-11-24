@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_VaultCavePassagePalette	../graphics/tileset/vault_cave_passage/palette.gbapal.lz	e217
+Tileset_VaultCavePassageTilesA	../graphics/tileset/vault_cave_passage/tiles_a.4bpp.mtf		4
+Tileset_VaultCavePassageTilesB	../graphics/tileset/vault_cave_passage/tiles_b.4bpp.mtf		4
+Tileset_VaultCavePassageTilesC	../graphics/tileset/vault_cave_passage/tiles_c.4bpp.mtf
+Tileset_VaultCavePassageTilesD	../graphics/tileset/vault_cave_passage/tiles_d.4bpp.mtf	c639	4

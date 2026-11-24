@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_LohoPalette	../graphics/tileset/loho/palette.gbapal.lz	a3
+Tileset_LohoTilesA	../graphics/tileset/loho/tiles_a.4bpp.mtf	05
+Tileset_LohoTilesB	../graphics/tileset/loho/tiles_b.4bpp.mtf	c40def
+Tileset_LohoTilesC	../graphics/tileset/loho/tiles_c.4bpp.mtf	f2007f
+Tileset_LohoTilesD	../graphics/tileset/loho/tiles_d.4bpp.mtf	f5

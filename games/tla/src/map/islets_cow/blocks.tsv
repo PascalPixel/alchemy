@@ -1,0 +1,43 @@
+block	file	pad	edition
+cell_tiles	cell_tiles.delta1.lz	4	ja
+shapes	shapes.table.lz	4	ja
+grid	map_ja.grid.lz	4	ja
+shape_grid	shape_grid.plane.lz	4	ja
+animation	daila_flooded/animation.script.lz	4	ja
+none			ja
+scene	scene_ja.scene.lz		ja
+cell_tiles	cell_tiles.delta1.lz	4	en
+shapes	shapes.table.lz	4	en
+grid	map.grid.lz	4	en
+shape_grid	shape_grid.plane.lz	4	en
+animation	daila_flooded/animation.script.lz	4	en
+none			en
+scene	scene.scene.lz		en
+cell_tiles	cell_tiles.delta1.lz	4	de
+shapes	shapes.table.lz	4	de
+grid	map.grid.lz	4	de
+shape_grid	shape_grid.plane.lz	4	de
+animation	daila_flooded/animation.script.lz	4	de
+none			de
+scene	scene.scene.lz		de
+cell_tiles	cell_tiles.delta1.lz	4	es
+shapes	shapes.table.lz	4	es
+grid	map.grid.lz	4	es
+shape_grid	shape_grid.plane.lz	4	es
+animation	daila_flooded/animation.script.lz	4	es
+none			es
+scene	scene.scene.lz		es
+cell_tiles	cell_tiles.delta1.lz	4	fr
+shapes	shapes.table.lz	4	fr
+grid	map.grid.lz	4	fr
+shape_grid	shape_grid.plane.lz	4	fr
+animation	daila_flooded/animation.script.lz	4	fr
+none			fr
+scene	scene.scene.lz		fr
+cell_tiles	cell_tiles.delta1.lz	4	it
+shapes	shapes.table.lz	4	it
+grid	map.grid.lz	4	it
+shape_grid	shape_grid.plane.lz	4	it
+animation	daila_flooded/animation.script.lz	4	it
+none			it
+scene	scene.scene.lz		it

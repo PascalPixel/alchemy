@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_IsletsTurtlePalette	../graphics/tileset/islets_turtle/palette.gbapal.lz	800e
+Tileset_IsletsTurtleTilesA	../graphics/tileset/islets_turtle/tiles_a.4bpp.mtf	060d54
+Tileset_IsletsTurtleTilesB	../graphics/tileset/islets_turtle/tiles_b.4bpp.mtf
+Tileset_IsletsTurtleTilesC	../graphics/tileset/islets_turtle/tiles_c.4bpp.mtf	005c
+Tileset_IsletsTurtleTilesD	../graphics/tileset/islets_turtle/tiles_d.4bpp.mtf	a14f64

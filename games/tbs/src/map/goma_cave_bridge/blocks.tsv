@@ -1,0 +1,37 @@
+block	file	pad	edition
+cell_tiles	cell_tiles.delta2.lz	4	ja
+shapes	shapes.table.lz	4	ja
+grid	map.grid.lz	4	ja
+animation	goma_cave_pillar/tileset_anims.script.lz	4	ja
+blend	goma_cave_pillar/blend.script.lz	4	ja
+markers		4	ja
+cell_tiles	cell_tiles.delta2.lz	4	en
+shapes	shapes.table.lz	4	en
+grid	map.grid.lz	4	en
+animation	goma_cave_pillar/tileset_anims.script.lz	4	en
+blend	goma_cave_pillar/blend.script.lz	4	en
+markers		4	en
+cell_tiles	cell_tiles.delta2.lz	4	de
+shapes	shapes.table.lz	4	de
+grid	map_de.grid.lz	4	de
+animation	goma_cave_pillar/tileset_anims.script.lz	4	de
+blend	goma_cave_pillar/blend.script.lz	4	de
+markers		4	de
+cell_tiles	cell_tiles.delta2.lz	4	es
+shapes	shapes.table.lz	4	es
+grid	map_de.grid.lz	4	es
+animation	goma_cave_pillar/tileset_anims.script.lz	4	es
+blend	goma_cave_pillar/blend.script.lz	4	es
+markers		4	es
+cell_tiles	cell_tiles.delta2.lz	4	fr
+shapes	shapes.table.lz	4	fr
+grid	map_de.grid.lz	4	fr
+animation	goma_cave_pillar/tileset_anims.script.lz	4	fr
+blend	goma_cave_pillar/blend.script.lz	4	fr
+markers		4	fr
+cell_tiles	cell_tiles.delta2.lz	4	it
+shapes	shapes.table.lz	4	it
+grid	map_de.grid.lz	4	it
+animation	goma_cave_pillar/tileset_anims.script.lz	4	it
+blend	goma_cave_pillar/blend.script.lz	4	it
+markers		4	it

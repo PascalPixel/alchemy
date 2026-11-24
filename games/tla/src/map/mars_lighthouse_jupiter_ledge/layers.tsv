@@ -1,0 +1,4 @@
+x	y	rate_x	rate_y	drift_x	drift_y	a	b	edition
+0	0	12	12	-2	-2	15	15
+0	80	16	16	0	0	255	255
+0	160	16	16	0	0	255	255

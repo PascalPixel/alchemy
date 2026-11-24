@@ -1,0 +1,5 @@
+name	file	left	pad	fill	edition
+Tileset_BilibinBarricadePalette	../graphics/tileset/bilibin_barricade/palette.gbapal.lz	08
+Tileset_BilibinBarricadeTilesA	../graphics/tileset/bilibin_barricade/tiles_a.4bpp.mtf	9e
+Tileset_BilibinBarricadeTilesB	../graphics/tileset/bilibin_barricade/tiles_b.4bpp.mtf	f1b321
+Tileset_BilibinBarricadeTilesC	../graphics/tileset/bilibin_barricade/tiles_c.4bpp.mtf	c9e1	4

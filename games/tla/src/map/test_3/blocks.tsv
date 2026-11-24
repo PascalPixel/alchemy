@@ -1,0 +1,8 @@
+block	file	pad	edition
+cell_tiles	empty_map/cell_tiles.delta0.lz	4
+shapes	kandorean_temple_fog/shapes.table.lz	4
+grid	map.grid.lz	4
+shape_grid	kandorean_temple_fog/shape_grid.plane.lz	4
+none
+none
+scene	empty_map/scene.scene.lz	4

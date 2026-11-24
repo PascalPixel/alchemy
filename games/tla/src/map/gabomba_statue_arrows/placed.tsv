@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_GabombaStatueArrowsPalette	../graphics/tileset/gabomba_statue_arrows/palette.gbapal.lz	1104
+Tileset_GabombaStatueArrowsTilesA	../graphics/tileset/gabomba_statue_arrows/tiles_a.4bpp.mtf	00
+Tileset_GabombaStatueArrowsTilesB	../graphics/tileset/gabomba_statue_arrows/tiles_b.4bpp.mtf	27e0fb
+Tileset_GabombaStatueArrowsTilesC	../graphics/tileset/gabomba_statue_arrows/tiles_c.4bpp.mtf
+Tileset_GabombaStatueArrowsTilesD	../graphics/tileset/gabomba_statue_arrows/tiles_d.4bpp.mtf

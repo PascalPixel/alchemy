@@ -1,0 +1,6 @@
+name	file	left	pad	fill	edition
+Tileset_ValeKradensCottagePalette	../graphics/tileset/vale_kradens_cottage/palette.gbapal.lz	c1acce
+Tileset_ValeKradensCottageTilesA	../graphics/tileset/vale_kradens_cottage/tiles_a.4bpp.mtf	1e
+Tileset_ValeKradensCottageTilesB	../graphics/tileset/vale_kradens_cottage/tiles_b.4bpp.mtf	cb42da
+Tileset_ValeKradensCottageTilesC	../graphics/tileset/vale_kradens_cottage/tiles_c.4bpp.mtf	eb91
+Tileset_ValeKradensCottageTilesD	../graphics/tileset/vale_kradens_cottage/tiles_d.4bpp.mtf	e1f0f8	4

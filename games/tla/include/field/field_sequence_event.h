@@ -6,9 +6,10 @@
 
 #include "field/field_state.h"
 
-/// A row of the scene's trigger table as the Psynergy and item triggers read
-/// it: its key (kind and detail), flags, condition, and its action (a message
-/// below 0x10000, else a routine).
+/// struct Trigger (scene_tables.h), a row of the scene's trigger table, as
+/// the Psynergy and item triggers run it: its control word as key, its
+/// subject as flags, its condition unsigned, and its value as action (a
+/// message below 0x10000, else a routine).
 struct PendingEvent {
   u32 key;
   u16 flags;

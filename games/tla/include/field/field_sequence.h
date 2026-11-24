@@ -74,9 +74,9 @@ struct AreaNameRule {
   s32 areaNameIndex;
 };
 
-/// A row of the scene's trigger table as the Psynergy trigger search reads
-/// it: its kind and flags (-1 ends the table), what it answers, its
-/// condition and its value.
+/// struct Trigger (scene_tables.h), a row of the scene's trigger table, as
+/// the item and Psynergy trigger searches read it: its control word signed,
+/// so that -1 ends the table, and its subject named trigger.
 struct TriggerEvent {
   s32 control;
   s16 trigger;
@@ -88,9 +88,9 @@ struct TriggerEvent {
 /// nearest target starts.
 #define BEYOND_REACH 9999
 
-/// A row of a scene's actor placement table as the field reads it: its
-/// sprite, condition, movement type, position, facing, the facing it takes
-/// to talk and its flags.
+/// struct ActorPlacement (scene_tables.h), a row of a scene's actor
+/// placement table, as Scene_FindActorPlacement reads it: its sprite unsigned
+/// and its spot in plain words.
 struct ActionDescriptor {
   u16 sprite;
   s16 condition;

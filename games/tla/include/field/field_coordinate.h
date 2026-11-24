@@ -38,9 +38,9 @@ STATIC_ASSERT(offsetof(struct FieldCoordinate, part[0].integer) == 2);
 #define FIELD_CELL(coordinate) ((coordinate) >> FIELD_CELL_SHIFT)
 /// The half cell, 8 pixels, a 16.16 coordinate lies in, counted from 0 along
 /// its axis.
-#define FIELD_HALF_CELL(coordinate) ((coordinate) >> 19)
+#define FIELD_HALF_CELL(coordinate) ((coordinate) >> (FIELD_CELL_SHIFT - 1))
 /// The 16.16 coordinate of a half cell's first pixel, FIELD_HALF_CELL undone.
-#define FIELD_HALF_CELL_ORIGIN(halfCell) ((halfCell) << 19)
+#define FIELD_HALF_CELL_ORIGIN(halfCell) ((halfCell) << (FIELD_CELL_SHIFT - 1))
 /// A 16.16 coordinate's whole pixels, its fraction cleared.
 #define FIELD_PIXEL_MASK 0xffff0000
 /// The 16.16 coordinate of a map grid cell's first pixel, FIELD_CELL undone.
@@ -48,9 +48,9 @@ STATIC_ASSERT(offsetof(struct FieldCoordinate, part[0].integer) == 2);
 /// The 16.16 coordinate of the middle of a map grid cell.
 #define FIELD_CELL_CENTER(cell)                                                \
   (FIELD_CELL_ORIGIN(cell) + toFIXED(MAPGRID_CELL_PIXELS / 2))
-/// The 8-pixel tile a 16.16 coordinate lies in, half a map grid cell.
-#define FIELD_TILE(coordinate) ((coordinate) >> 19)
-/// The 16.16 coordinate of an 8-pixel tile's first pixel, FIELD_TILE undone.
-#define FIELD_TILE_ORIGIN(tile) ((tile) << 19)
+/// FIELD_HALF_CELL and FIELD_HALF_CELL_ORIGIN under the names three scenes
+/// still use.
+#define FIELD_TILE(coordinate) FIELD_HALF_CELL(coordinate)
+#define FIELD_TILE_ORIGIN(tile) FIELD_HALF_CELL_ORIGIN(tile)
 
 #endif

@@ -7,8 +7,10 @@
 #include "fixed_math.h"
 #include "types.h"
 
-/// An animated sprite on the field: its image's sprite attributes, VRAM
-/// cache entry, rotation, its shadow's attribute 2 and its first layer.
+/// struct Sprite (field/sprite.h) as the field's scenes read it: its image's
+/// OAM attributes as bit fields, its retain, own-scale and sunk-rows bits as
+/// one byte, its layer count and its shadow's first two attributes as bytes,
+/// and its shadow's attribute 2 as bit fields; the first layer is record.
 struct FieldSprite {
   u8 unused[4]; ///< no code names it
   /// The image's OAM attributes 0 to 2.
@@ -33,9 +35,10 @@ struct FieldSprite {
   /// (bits 2 to 7) as one byte.
   u8 cacheBits;
   u16 rotation; ///< 1/65536 turns
-  /// Sprite's width and height in pixels and its signed x and y offsets, as
-  /// bytes; scene code moves the offsets (bytes 2 and 3).
-  u8 box[4];
+  u8 width;     ///< pixels; zero marks a free sprite
+  u8 height;    ///< pixels
+  s8 offsetX;   ///< pixels
+  s8 offsetY;   ///< pixels
   /// The animation number last selected, saved with the actor's snapshot.
   u8 lastNo;
   u8 dirty; ///< nonzero redraws its pixels into VRAM when next drawn

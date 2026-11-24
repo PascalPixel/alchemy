@@ -84,6 +84,17 @@
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
 
+/// Arrivals no exit leads to, which only the debug scene selector reaches (it
+/// exits to any entrance from 0 to 99): before the stone building on the
+/// village's north side, at the foot of the stone steps up the hillside to
+/// the north-west, and by the door of the thatched cottage on the west side
+/// that VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST also arrives at.
+enum {
+  VALE_PROLOGUE_DEBUG_BY_STONE_BUILDING = 1,
+  VALE_PROLOGUE_DEBUG_BY_HILLSIDE_STEPS = 2,
+  VALE_PROLOGUE_DEBUG_BY_WEST_COTTAGE = 11
+};
+
 extern u8 gValePrologue_FlashColorModes[];
 extern s32 gValePrologue_ShovingManScript[];
 extern s32 gValePrologue_UnusedGaretRunsUpScript[];
@@ -1539,13 +1550,16 @@ static void ValePrologue_WatchBoulderFall(void) {
     Actor_SetAttachedEffect(ACTOR_ELDER_EAST,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_RunRepeatedMotion(ACTOR_ELDER_EAST, 2);
+    // "Ugh... Ughnn... It's too heavy! We can't hold it for long!"
     Event_ShowMessage(ACTOR_ELDER_WEST_STAND_IN, 0);
     Actor_ShowEmote(ACTOR_ELDER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_RunRepeatedMotion(ACTOR_ELDER_WEST, 2);
+    // "If our Psynergy runs out, Vale will be destroyed!"
     Event_ShowMessageThenWait(ACTOR_ELDER_EAST_STAND_IN, 0, 40);
     Actor_SetAttachedEffect(ACTOR_ELDER_FAR_EAST,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_RunRepeatedMotion(ACTOR_ELDER_FAR_EAST, 2);
+    // "We have to hold on until the villagers are safe!"
     Event_ShowMessage(ACTOR_ELDER_FAR_EAST, 0);
     // The westernmost elder stops straining, looks about and calls to the
     // boys, and the camera returns to Isaac.
@@ -1565,6 +1579,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Actor_SetAnimation(ACTOR_ELDER_FAR_WEST,
                        YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_CALL_OUT);
     Event_Wait(10);
+    // "Hurry, boys! Run!!! It's just a little farther!"
     Event_ShowMessageThenWait(ACTOR_ELDER_FAR_WEST, 0, 20);
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -1579,6 +1594,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Event_Wait(30);
     Task_Remove(updateEffects);
     Task_Remove(ValePrologue_CycleBoulderPalette);
+    // "Come on, Isaac, run! The Boulder is coming!"
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
     Event_Wait(20);
@@ -2223,18 +2239,20 @@ static inline void ValePrologue_PlayImpactBeat(s32 shakeAmplitude, s32 frames) {
 /// away.
 static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   struct Sprite *boulderSprite;
-  struct Sprite *boulderShadowSprite;
+  // The actor being set up and its sprite: the Boulder's shadow, and while
+  // the lightning flashes Kyle and each of Jenna's parents in turn.
+  struct Sprite *figureSprite;
   struct Actor *actor;
   struct Actor *lookingActor;
-  struct Actor *boulderShadow;
+  struct Actor *figure;
   const s32 *entryActions;
   const s32 *lookAroundActions;
   const s32 *departureActions;
 
   actor = Actor_Get(ACTOR_BOULDER);
-  boulderShadow = Actor_Get(ACTOR_BOULDER_SHADOW);
+  figure = Actor_Get(ACTOR_BOULDER_SHADOW);
   boulderSprite = actor->sprite;
-  boulderShadowSprite = boulderShadow->sprite;
+  figureSprite = figure->sprite;
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(110, CAMERA_KEEP, 1419, 1);
   Actor_SetSpeed(ACTOR_EXHAUSTED_STRONGMAN, 1.2);
@@ -2319,10 +2337,10 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetSpriteColorById(ACTOR_BOULDER, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BOULDER), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BOULDER_SHADOW), 0);
-  boulderShadow->scaleX = 4 * FIXED_ONE / 5;
-  boulderShadow->scaleY = 4 * FIXED_ONE / 5;
-  boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  boulderShadowSprite->image.priority = 1;
+  figure->scaleX = 4 * FIXED_ONE / 5;
+  figure->scaleY = 4 * FIXED_ONE / 5;
+  figure->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  figureSprite->image.priority = 1;
   ValePrologue_PlaceActor(actor, toFIXED(200), toFIXED(898));
   actor->motionFlags = 0;
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2362,10 +2380,10 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_Stop(ACTOR_BOULDER);
   wait(1);
   Actor_SetAnimation(ACTOR_BOULDER, ANIM_STILL);
-  boulderShadow->scaleX = 5 * FIXED_ONE / 4;
-  boulderShadow->scaleY = 5 * FIXED_ONE / 4;
-  boulderShadowSprite->offsetY = 2;
-  boulderShadowSprite->scale = 5 * FIXED_ONE / 4;
+  figure->scaleX = 5 * FIXED_ONE / 4;
+  figure->scaleY = 5 * FIXED_ONE / 4;
+  figureSprite->offsetY = 2;
+  figureSprite->scale = 5 * FIXED_ONE / 4;
   actor->scaleX = 2 * FIXED_ONE;
   actor->scaleY = 2 * FIXED_ONE;
   actor->x.fixed = 0;
@@ -2399,41 +2417,40 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetPosition(ACTOR_BOULDER_SHADOW, 218, 1176);
   FieldCamera_MoveTo(210, 0, 1196, 0);
   MapGrid_CenterOnFollowedPoint();
-  boulderShadow->scaleX = 2 * FIXED_ONE;
-  boulderShadow->scaleY = 2 * FIXED_ONE;
+  figure->scaleX = 2 * FIXED_ONE;
+  figure->scaleY = 2 * FIXED_ONE;
   Task_AddFrame(ValePrologue_FlickerBoulderShadow, TASK_PASS_FRAME);
   Actor_Stop(ACTOR_KYLE);
   Actor_Stop(ACTOR_JENNAS_FATHER);
   Actor_Stop(ACTOR_JENNAS_MOTHER);
   wait(1);
   // Kyle and Jenna's parents freeze in the flash, drawn in front of all else.
-  // The shadow's variables hold each of them in turn.
-  boulderShadow = Actor_Get(ACTOR_KYLE);
-  boulderShadowSprite = boulderShadow->sprite;
-  boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  boulderShadow->scaleX = FIXED_ONE;
-  boulderShadow->scaleY = FIXED_ONE;
-  boulderShadow->facing = FACING_NORTH_NORTHEAST;
-  boulderShadowSprite->image.priority = 0;
+  figure = Actor_Get(ACTOR_KYLE);
+  figureSprite = figure->sprite;
+  figure->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  figure->scaleX = FIXED_ONE;
+  figure->scaleY = FIXED_ONE;
+  figure->facing = FACING_NORTH_NORTHEAST;
+  figureSprite->image.priority = 0;
   Actor_SetAnimation(ACTOR_KYLE, ANIM_STILL);
-  boulderShadow = Actor_Get(ACTOR_JENNAS_FATHER);
-  boulderShadowSprite = boulderShadow->sprite;
-  boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  boulderShadow->scaleX = FIXED_ONE;
-  boulderShadow->scaleY = FIXED_ONE;
-  boulderShadow->facing = FACING_NORTH_NORTHWEST;
-  boulderShadowSprite->image.priority = 0;
+  figure = Actor_Get(ACTOR_JENNAS_FATHER);
+  figureSprite = figure->sprite;
+  figure->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  figure->scaleX = FIXED_ONE;
+  figure->scaleY = FIXED_ONE;
+  figure->facing = FACING_NORTH_NORTHWEST;
+  figureSprite->image.priority = 0;
   Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_RECOIL);
-  boulderShadow = Actor_Get(ACTOR_JENNAS_MOTHER);
-  boulderShadowSprite = boulderShadow->sprite;
-  boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  boulderShadow->scaleX = FIXED_ONE;
-  boulderShadow->scaleY = FIXED_ONE;
-  boulderShadow->facing = FACING_NORTH_NORTHWEST;
-  boulderShadowSprite->image.priority = 0;
+  figure = Actor_Get(ACTOR_JENNAS_MOTHER);
+  figureSprite = figure->sprite;
+  figure->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  figure->scaleX = FIXED_ONE;
+  figure->scaleY = FIXED_ONE;
+  figure->facing = FACING_NORTH_NORTHWEST;
+  figureSprite->image.priority = 0;
   Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_RECOIL);
-  boulderShadow = Actor_Get(ACTOR_BOULDER_SHADOW);
-  boulderShadowSprite = boulderShadow->sprite;
+  figure = Actor_Get(ACTOR_BOULDER_SHADOW);
+  figureSprite = figure->sprite;
   ValePrologue_FlashLightning();
   actor->y.fixed = toFIXED(48);
   actor->x.fixed = toFIXED(214);
@@ -2441,7 +2458,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
-  boulderShadowSprite->image.priority = 1;
+  figureSprite->image.priority = 1;
   Actor_SetPosition(ACTOR_BOULDER_SHADOW, 214, 1216);
   Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_NORTH, 20);
@@ -2462,7 +2479,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Event_Wait(80);
   Event_Wait(100);
   Task_Remove(ValePrologue_FlickerBoulderShadow);
-  boulderShadowSprite->scale = boulderShadow->scaleX;
+  figureSprite->scale = figure->scaleX;
   GameFlag_Clear(FLAG_WEATHER_HELD);
   TilesetAnim_Resume(0);
   TilesetAnim_Resume(1);
@@ -3223,8 +3240,10 @@ s32 gValePrologue_BoulderRollsDownriver[] = {
 struct SceneEntrance gValePrologue_Entrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {1, CONDITION_ALWAYS, 257, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {VALE_PROLOGUE_DEBUG_BY_STONE_BUILDING, CONDITION_ALWAYS, 257, 0, 456,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {VALE_PROLOGUE_DEBUG_BY_HILLSIDE_STEPS, CONDITION_ALWAYS, 113, 0, 303,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VALE_PROLOGUE_FROM_VALE_KRADENS_COTTAGE_NORTH, CONDITION_ALWAYS, 27, 0,
      621, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {VALE_PROLOGUE_FROM_VALE_KRADENS_COTTAGE_SOUTH, CONDITION_ALWAYS, 29, 0,
@@ -3241,7 +3260,8 @@ struct SceneEntrance gValePrologue_Entrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_WEST, CONDITION_ALWAYS, 374, 0, 1254,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {11, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {VALE_PROLOGUE_DEBUG_BY_WEST_COTTAGE, CONDITION_ALWAYS, 102, 0, 1222,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST, CONDITION_ALWAYS, 101, 0, 1216,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST, CONDITION_ALWAYS, 146, 0, 1193,

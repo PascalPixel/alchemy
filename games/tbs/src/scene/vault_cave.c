@@ -29,9 +29,8 @@
 ///   room of six puddles, where drops of water fall from the ceiling one at a
 ///   time. Frost freezes a puddle into a tall ice pillar whose top Isaac can
 ///   leap across, and frozen pillars make a way over the room; a drop landing
-///   on one stops on its top. The walkthrough's advice is to freeze all but
-///   the far east one. Up on the room's ledge, Whirlwind blows away the ivy
-///   over the way to the Vambrace's chest (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY,
+///   on one stops on its top. Up on the room's ledge, Whirlwind blows away the
+///   ivy over the way to the Vambrace's chest (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY,
 ///   kept while the party stays in the cave).
 /// - SceneId_VaultCaveMouth leads out to the cave mouth
 ///   (VAULT_CAVE_MOUTH_TO_VAULT_REVISIT). In its room of three torches, Isaac
@@ -104,8 +103,10 @@ static void VaultCave_UseUnderfootFrostPriorities(void);
 static void VaultCave_UseAutomaticFrostPriorities(void);
 static void VaultCave_SpawnSplash(struct Actor *source);
 
-/// The map cell a 16.16 coordinate lies in.
-#define TILE(position) ((position) / toFIXED(16))
+/// The map cell a 16.16 coordinate lies in, by division: the same as
+/// FIELD_CELL's shift but for a coordinate below 0, which it rounds toward
+/// cell 0.
+#define CELL_OF(position) ((position) / toFIXED(16))
 
 /// The cell behaviors of the cells the events answer.
 enum VaultCaveCellBehavior {
@@ -566,7 +567,7 @@ static void VaultCave_FreezeEastLowerPuddle(void) {
 
 /// In the room of six puddles, Isaac casts Frost on the far east puddle (cell
 /// (28, 33)), and it freezes into a tall ice pillar whose top Isaac can leap
-/// across. The walkthrough's advice is to leave this one unfrozen.
+/// across.
 static void VaultCave_FreezeFarEastPuddle(void) {
   struct Actor *target = Actor_Get(ACTOR_FAR_EAST_PUDDLE);
 
@@ -673,8 +674,9 @@ static void VaultCave_RunRumble(void) {
 
 /// Isaac flips the switch on the ledge in the pool room (cell (28, 29)).
 /// "Isaac flipped the switch." The cave rumbles and shakes, and the pool
-/// drains away. Its water floods the floor of a room below, which the
-/// walkthrough warns cuts off the way back.
+/// drains away, and its water runs down into the northern room of
+/// SceneId_VaultCaveVambrace below, whose floor Scene_Initialize draws dry
+/// until then.
 ///
 /// The switch can be flipped once each time the party comes down the ladder
 /// from Vault.
@@ -711,10 +713,10 @@ static s32 VaultCave_ResetFallingActorAtActorCell(s32 subjectActorId) {
         Actor_Get(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP);
 
     if (fallingActor->y.fixed > 0 && fallingActor->y.fixed < toFIXED(16)) {
-      s32 fallingRow = TILE(fallingActor->z.fixed);
-      s32 fallingColumn = TILE(fallingActor->x.fixed);
-      s32 subjectRow = TILE(subject->z.fixed);
-      s32 subjectColumn = TILE(subject->x.fixed);
+      s32 fallingRow = CELL_OF(fallingActor->z.fixed);
+      s32 fallingColumn = CELL_OF(fallingActor->x.fixed);
+      s32 subjectRow = CELL_OF(subject->z.fixed);
+      s32 subjectColumn = CELL_OF(subject->x.fixed);
       s32 zDelta = subjectRow - fallingRow;
       s32 xDelta = subjectColumn - fallingColumn;
 

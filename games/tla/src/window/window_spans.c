@@ -65,8 +65,9 @@ u16 *ScanlineWindow_BuildSpans(u16 *scanlineBounds, u16 *tilemap) {
           foundLeftEdge++;
           break;
         // A side, or a side meeting a divider.
-        // XXX: tile 7 (window_tiles.png, a red mark on yellow) counts as a
-        // side too; a screen whose window edge shows it would say why.
+        // XXX: tile 7 is blank in every edition's window tiles and no code
+        // draws it; a tilemap that places it at a window's side would say why
+        // it counts as one.
         case WINDOW_TILE(7):
         case WINDOW_TILE_BORDER_LEFT:
         case WINDOW_TILE_BORDER_LEFT_TEE:

@@ -27,7 +27,7 @@ struct WeatherParticle {
   u8 unused[4]; ///< no code names it
   u16 y : 8;
   u16 affine : 2;
-  u16 blendMode : 2;
+  u16 objectMode : 2;
   u16 mosaic : 1;
   u16 fullColor : 1;
   u16 shape : 2;

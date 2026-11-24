@@ -654,7 +654,7 @@ void KandoreanTemple_SpawnSplashRing(struct Actor *actor) {
     ring->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     if (sprite) {
       Sprite_StartAnimation(sprite, 2);
-      sprite->blendMode = 1;
+      sprite->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
       sprite->flags = 0;
       sprite->priority = 3;
     }

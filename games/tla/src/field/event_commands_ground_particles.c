@@ -108,7 +108,7 @@ void RisingParticles_Update(void) {
       particle->sprite.attributes.shape = OAM_SHAPE_SQUARE;
       particle->sprite.attributes.size = OAM_SIZE_16X16;
       particle->sprite.attributes.priority = 3;
-      particle->sprite.attributes.blendMode = OBJ_MODE_SEMI_TRANSPARENT;
+      particle->sprite.attributes.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
       particle->sprite.attributes.y = y;
       Oam_AddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
     }

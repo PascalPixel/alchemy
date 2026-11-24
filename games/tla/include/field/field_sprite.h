@@ -17,7 +17,7 @@ struct FieldSprite {
   ///@{
   u16 y : 8; ///< screen pixels
   u16 affine : 2;
-  u16 blendMode : 2;
+  u16 objectMode : 2;
   u16 mosaic : 1;
   u16 fullColor : 1; ///< 256 colours
   u16 shape : 2;

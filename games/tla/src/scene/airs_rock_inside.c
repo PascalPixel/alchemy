@@ -2418,7 +2418,7 @@ void AirsRockInside_VanishStone(s32 x, s32 y) {
   Scene_SetActorSpritePriority(marker, 0);
   Actor_SetSpriteFlags(marker, 0);
   sprite = marker->sprite;
-  sprite->blendMode = OBJ_MODE_WINDOW;
+  sprite->objectMode = OBJ_MODE_WINDOW;
   Event_Start();
   Event_EndLastingPsynergy(0);
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |

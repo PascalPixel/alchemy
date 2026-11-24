@@ -1742,7 +1742,7 @@ void MagmaRockInside_FadeStoneAway(s32 x, s32 z) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Scene_SetActorSpritePriority(actor, 0);
   Actor_SetSpriteFlags(actor, 0);
-  ((struct FieldSprite *)actor->sprite)->blendMode = OBJ_MODE_WINDOW;
+  ((struct FieldSprite *)actor->sprite)->objectMode = OBJ_MODE_WINDOW;
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |

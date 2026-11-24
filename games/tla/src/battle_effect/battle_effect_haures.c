@@ -226,7 +226,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         struct FieldSprite *added = state->sprites[HAURES_FIRST_FLAME + i];
 
         added->priority = 1;
-        added->blendMode = OBJ_MODE_SEMI_TRANSPARENT;
+        added->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
       }
     }
   }
@@ -247,7 +247,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   sprite =
       EffectSprite_CreateWithTiles(64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
   ((struct FieldSprite **)state->sprites)[HAURES_STAMP] = sprite;
-  sprite->blendMode = OBJ_MODE_SEMI_TRANSPARENT;
+  sprite->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
   STAMP_TILES(state) = gVramCacheEntries[sprite->slot].offset + OBJ_VRAM0;
   {
     u8 *c = state->sheet;

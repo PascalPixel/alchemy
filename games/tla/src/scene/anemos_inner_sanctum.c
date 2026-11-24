@@ -1352,7 +1352,7 @@ void AnemosInnerSanctum_DropMimicStone(void) {
   mask->scaleX = FIXED_ONE * 3 / 2;
   mask->scaleY = FIXED_ONE * 3 / 2;
   sprite = mask->sprite;
-  sprite->blendMode = OBJ_MODE_WINDOW;
+  sprite->objectMode = OBJ_MODE_WINDOW;
   REG_WINOUT = WINOUT_WIN01_ALL | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
                WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3 | WINOUT_WINOBJ_CLR;
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;

@@ -889,7 +889,7 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 #undef EFFECT_SET_SCRIPT
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
-#include "../field/map_cell_sprite.c"
+#include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
 

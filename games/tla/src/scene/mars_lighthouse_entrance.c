@@ -1837,7 +1837,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
-#include "../field/map_cell_sprite.c"
+#include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
 

@@ -26,6 +26,33 @@
 /// transition keeps as it was.
 #define WINOUT_WINOBJ_MASK 0xff00
 
+/// Keeps a line's window edges on the screen, 0 to DISPLAY_WIDTH.
+#define CLAMP_SPAN_TO_SCREEN(left, right)                                      \
+  {                                                                            \
+    if (left < 0)                                                              \
+      left = 0;                                                                \
+    if (right < 0)                                                             \
+      right = 0;                                                               \
+    if (left > DISPLAY_WIDTH)                                                  \
+      left = DISPLAY_WIDTH;                                                    \
+    if (right > DISPLAY_WIDTH)                                                 \
+      right = DISPLAY_WIDTH;                                                   \
+  }
+/// Writes every line's window edges for an ellipse round (centerX, centerY)
+/// whose half-width on a line dy from its centre is sqrt(r * r - squash * dy *
+/// dy), with r * r in radiusSquaredFixed (squash in 16.16).
+#define WRITE_ELLIPSE_LINES(squash)                                            \
+  for (i = 0; i < DISPLAY_HEIGHT; i++) {                                       \
+    value = i - centerY;                                                       \
+    horizontalExtent =                                                         \
+        Iwram_Sqrt(radiusSquaredFixed - value * value * (squash)) >> 8;        \
+    left = centerX - horizontalExtent;                                         \
+    right = centerX + horizontalExtent;                                        \
+    CLAMP_SPAN_TO_SCREEN(left, right);                                         \
+    scanlineData[0] = (left << 8) + right;                                     \
+    scanlineData += 2;                                                         \
+  }
+
 /// Each VBlank, before drawing: turns windows 0 and 1 on, writes the first four
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
 /// copy the rest into WIN0H and WIN1H one word each HBlank, so that every line
@@ -212,14 +239,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
           Iwram_Sqrt(radiusSquaredFixed - INTtoFIXED(value * value)) >> 8;
       left = DISPLAY_WIDTH / 2 - horizontalExtent;
       right = horizontalExtent + DISPLAY_WIDTH / 2;
-      if (left < 0)
-        left = 0;
-      if (right < 0)
-        right = 0;
-      if (left > DISPLAY_WIDTH)
-        left = DISPLAY_WIDTH;
-      if (right > DISPLAY_WIDTH)
-        right = DISPLAY_WIDTH;
+      CLAMP_SPAN_TO_SCREEN(left, right);
       scanlineData[0] = (left << 8) + right;
       scanlineData += 2;
     }
@@ -268,28 +288,10 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // On odd frames the ellipse has no size: the flicker.
     if (gFrameCount & 1)
       value = 0;
-    // Half-widths of sqrt(r * r - 1.5 * dy * dy) with r 5 pixels a step: an
-    // ellipse 1.22 times as wide as it is tall.
+    // Squashed by 1.5: an ellipse 1.22 times as wide as it is tall.
     value *= 5;
     radiusSquaredFixed = INTtoFIXED(value * value);
-    for (i = 0; i < DISPLAY_HEIGHT; i++) {
-      value = i - centerY;
-      horizontalExtent = Iwram_Sqrt(radiusSquaredFixed -
-                                    value * value * 3 * (FIXED_ONE / 2)) >>
-                         8;
-      left = centerX - horizontalExtent;
-      right = centerX + horizontalExtent;
-      if (left < 0)
-        left = 0;
-      if (right < 0)
-        right = 0;
-      if (left > DISPLAY_WIDTH)
-        left = DISPLAY_WIDTH;
-      if (right > DISPLAY_WIDTH)
-        right = DISPLAY_WIDTH;
-      scanlineData[0] = (left << 8) + right;
-      scanlineData += 2;
-    }
+    WRITE_ELLIPSE_LINES(3 * (FIXED_ONE / 2));
     break;
   }
 
@@ -336,14 +338,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
           right = DISPLAY_WIDTH;
         }
       }
-      if (left < 0)
-        left = 0;
-      if (right < 0)
-        right = 0;
-      if (left > DISPLAY_WIDTH)
-        left = DISPLAY_WIDTH;
-      if (right > DISPLAY_WIDTH)
-        right = DISPLAY_WIDTH;
+      CLAMP_SPAN_TO_SCREEN(left, right);
       scanlineData[0] = (left << 8) + right;
       scanlineData += 2;
       k += 2;
@@ -369,24 +364,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
       value &= TRANSITION_OPEN - 1;
     value *= 5;
     radiusSquaredFixed = INTtoFIXED(value * value);
-    for (i = 0; i < DISPLAY_HEIGHT; i++) {
-      value = i - centerY;
-      horizontalExtent = Iwram_Sqrt(radiusSquaredFixed -
-                                    value * value * 3 * (FIXED_ONE / 2)) >>
-                         8;
-      left = centerX - horizontalExtent;
-      right = centerX + horizontalExtent;
-      if (left < 0)
-        left = 0;
-      if (right < 0)
-        right = 0;
-      if (left > DISPLAY_WIDTH)
-        left = DISPLAY_WIDTH;
-      if (right > DISPLAY_WIDTH)
-        right = DISPLAY_WIDTH;
-      scanlineData[0] = (left << 8) + right;
-      scanlineData += 2;
-    }
+    WRITE_ELLIPSE_LINES(3 * (FIXED_ONE / 2));
     break;
   }
 
@@ -409,27 +387,10 @@ void ScreenTransition_UpdateScanlineTable(void) {
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
     else
       value &= TRANSITION_OPEN - 1;
-    // sqrt(r * r - 0.75 * dy * dy): 1.15 times as tall as it is wide.
+    // Squashed by 0.75: 1.15 times as tall as it is wide.
     value *= 5;
     radiusSquaredFixed = INTtoFIXED(value * value);
-    for (i = 0; i < DISPLAY_HEIGHT; i++) {
-      value = i - centerY;
-      horizontalExtent = Iwram_Sqrt(radiusSquaredFixed -
-                                    value * value * 3 * (FIXED_ONE / 4)) >>
-                         8;
-      left = centerX - horizontalExtent;
-      right = centerX + horizontalExtent;
-      if (left < 0)
-        left = 0;
-      if (right < 0)
-        right = 0;
-      if (left > DISPLAY_WIDTH)
-        left = DISPLAY_WIDTH;
-      if (right > DISPLAY_WIDTH)
-        right = DISPLAY_WIDTH;
-      scanlineData[0] = (left << 8) + right;
-      scanlineData += 2;
-    }
+    WRITE_ELLIPSE_LINES(3 * (FIXED_ONE / 4));
     break;
   }
   }

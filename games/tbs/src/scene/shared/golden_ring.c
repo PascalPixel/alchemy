@@ -30,10 +30,11 @@ void Scene_SpawnGoldenRing(struct Actor *parent) {
         sprite->slot = effectState->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
-            (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;
+            (gVramCacheEntries[sprite->slot].offset / TILE_SIZE_4BPP) &
+            OBJ_TILE_MASK;
         sprite->image.fullColor = 0;
-        sprite->image.shape = 1;
-        sprite->image.size = 2;
+        sprite->image.shape = RING_HALF_SHAPE;
+        sprite->image.size = RING_HALF_SIZE;
         sprite->entries[0]->picture = 0;
       }
     }

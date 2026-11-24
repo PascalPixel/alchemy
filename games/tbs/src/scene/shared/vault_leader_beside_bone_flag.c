@@ -15,9 +15,8 @@ static void Vault_UpdateLeaderBesideBoneFlag(void) {
   s32 column;
   s32 row;
 
-  struct Actor *leaderAgain = Actor_GetById(ACTOR_PARTY_LEADER);
+  row = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed;
   column = FIELD_CELL(fixedX);
-  row = leaderAgain->z.fixed;
   column -= 34;
   row = FIELD_CELL(row);
 

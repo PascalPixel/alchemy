@@ -206,6 +206,10 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
       Actor_SetPosition(ACTOR_VANISHING_SOLDIER, 0, 0);
 #if TBS_PATCH_3
+    // The wounded soldiers lie without collision here, so the two cells under
+    // each are taken off the path, copied from the empty cell (0, 0) at height
+    // 0: the third soldier's (29, 18) and (30, 18), the west guard's (8, 25)
+    // and (9, 25), the east guard's (9, 26) and (10, 26).
     else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO))
       MapGrid_CopyCellAttributes(0, 0, 2, 1, 29, 18);
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
@@ -231,6 +235,10 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineState.entrance ==
         SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) {
       GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
+      // Coming up from the desert before the audience, the top of the slope
+      // below the gate, (8, 27) and (9, 27), loses the guards' approach
+      // behavior for the plain slope kept at (6, 0); the gate's own cells
+      // still bring them out.
       if (!GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO))
         MapGrid_CopyCellAttributes(6, 0, 2, 1, 8, 27);
     }
@@ -249,6 +257,10 @@ s32 Scene_Initialize(void) {
 #ifndef UBFIX
     Actor_Get(ACTOR_EIGHTH_PLACED)->scaleY = 8 * FIXED_ONE / 5;
 #endif
+    // Map layer 1, whose cells begin at the map's column 64, takes Gateway
+    // Cave's exit (SUHALLA_GATE_DEW_TO_GATEWAY_CAVE, from its spare cell
+    // (44, 38)) at its cell (38, 56), just north of the exit at the cave mouth
+    // on the ground, (38, 57).
     MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
   }
   return 0;
@@ -298,6 +310,9 @@ static void SuhallaGate_GuardsBlockPassage(void) {
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH, 0);
   Actor_SetAnimation(ACTOR_WEST_GUARD, ANIM_STAND);
+  // The gate's approach cells go back to plain ground until the party comes
+  // again. From TBS_PATCH_3 they are copied from (11, 26), clear of the east
+  // guard's cells, which are taken off the path once he lies wounded.
   MapGrid_CopyCellAttributes(6, 27, 1, 1, 7, 27);
 #if TBS_PATCH_3
   MapGrid_CopyCellAttributes(11, 26, 1, 1, 7, 26);
@@ -423,6 +438,8 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   // "We're going after them, right, Isaac!"
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
   Scene_WalkIntoLeader(ACTOR_IODEM);
+  // The gate's approach cells go back to plain ground, as after the guards
+  // block the way.
 #if TBS_PATCH_3
   MapGrid_CopyCellAttributes(6, 27, 1, 1, 7, 27);
   MapGrid_CopyCellAttributes(11, 26, 1, 1, 7, 26);
@@ -512,6 +529,7 @@ static void SuhallaGate_SoldierVanishes(void) {
 
   GameFlag_Set(FLAG_SUHALLA_GATE_SOLDIER_VANISHED);
 
+  // The path the third soldier lay on is open again.
 #if TBS_PATCH_3
   MapGrid_CopyCellAttributes(29, 19, 2, 1, 29, 18);
 #endif

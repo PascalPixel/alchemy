@@ -69,6 +69,11 @@
 #include "system/main_routine_state.h"
 #include "text/msg_ids.h"
 
+/// SPRITE_PARTICLE's animations (particle.tsv), whose pictures run from the
+/// largest glow (0) to a dot (7): growing from the dot and then flickering
+/// between the two largest, and shrinking to the dot and holding it.
+enum { PARTICLE_ANIMATION_SHRINK = 1, PARTICLE_ANIMATION_GROW_AND_FLICKER = 6 };
+
 extern struct SceneEntrance gStuccoRoomsBEntrances[];
 extern u32 gStuccoRoomsBExits[];
 extern struct ActorPlacement gStuccoRoomsBActorPlacements[];
@@ -333,9 +338,9 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   Event_Wait(40);
   sparkle = FieldActor_Create(SPRITE_PARTICLE, toFIXED(600), 0, toFIXED(824));
   Actor_SetSpriteFlags(sparkle, 0);
-  Actor_SelectAnimation(sparkle, 6);
+  Actor_SelectAnimation(sparkle, PARTICLE_ANIMATION_GROW_AND_FLICKER);
   Event_Wait(10);
-  Actor_SelectAnimation(sparkle, 1);
+  Actor_SelectAnimation(sparkle, PARTICLE_ANIMATION_SHRINK);
   Event_Wait(40);
   Actor_Release(sparkle);
   Event_Wait(2);
@@ -446,6 +451,9 @@ s32 Scene_Initialize(void) {
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
+    // The raised floor at cells (51, 45) to (53, 45), by where the angry
+    // passenger and his wife now stand, becomes wall as row 47 is, and the two
+    // keep sprite priority 2 rather than taking it from the cells under them.
     MapGrid_CopyCellAttributes(51, 47, 3, 1, 51, 45);
     actor = Actor_Get(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER);
     actor->priorityFlags = 0;

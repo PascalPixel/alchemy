@@ -259,17 +259,18 @@ enum {
   ACTOR_EAST_VANISHING_STATUE,
   ACTOR_EAST_PILLAR_A,
   ACTOR_EAST_PILLAR_B,
-  /// The game's text calls it violet: "Violet shines southeast of me."
-  /// (MsgTunnelRuinsVioletShinesSoutheastOfMe), the south-east statue's line.
-  ACTOR_LADY_STATUE_NORTHWEST,
-  ACTOR_LADY_STATUE_NORTHEAST,
-  ACTOR_LADY_STATUE_SOUTHWEST,
-  /// The game's text calls it red: "Red shines northwest of me."
-  /// (MsgTunnelRuinsRedShinesNorthwestOfMe), the north-west statue's line.
-  ACTOR_LADY_STATUE_SOUTHEAST,
-  /// The game's text calls it yellow: "Yellow shines northeast of me."
-  /// (MsgTunnelRuinsYellowShinesNortheastOfMe), the north-east statue's line.
-  ACTOR_LADY_STATUE_SOUTH
+  /// The five coloured statues of a woman, by colour, in their places at the
+  /// start: violet north-west, green north-east, blue south-west, red
+  /// south-east and yellow, gold in colour, south of the middle. Mind Read on
+  /// each finds a hint where another belongs: the violet one "Red shines
+  /// northwest of me.", the green one "Yellow shines northeast of me.", the
+  /// blue one "Red shines due west of me.", and the red one and the yellow
+  /// one "Violet shines southeast of me."
+  ACTOR_VIOLET_LADY_STATUE,
+  ACTOR_GREEN_LADY_STATUE,
+  ACTOR_BLUE_LADY_STATUE,
+  ACTOR_RED_LADY_STATUE,
+  ACTOR_YELLOW_LADY_STATUE
 };
 
 /// The chests of TunnelRuinsLadyStatues, each on the cell of a vanishing
@@ -1282,7 +1283,7 @@ static void TunnelRuins_HideVanishingStatues(void) {
 
 /// The five marks the statues must stand on, west of the door: the corners
 /// and middle of the square of cells (23, 47) to (25, 49). Each corner statue
-/// belongs on the opposite corner, and the gold statue in the middle.
+/// belongs on the opposite corner, and the yellow statue in the middle.
 enum {
   MARKS_WEST_COLUMN = 23,
   MARKS_MIDDLE_COLUMN,
@@ -1294,7 +1295,7 @@ enum {
 
 /// After Move shifts one of the five coloured statues of a woman, the door in
 /// the room's east wall (cell (32, 47)) opens once all five stand on their
-/// marks: red north-west, blue north-east, gold in the middle, green
+/// marks: red north-west, blue north-east, yellow in the middle, green
 /// south-west and violet south-east.
 ///
 /// The camera slides over to the door and it opens with the door sound; it
@@ -1307,51 +1308,51 @@ static void TunnelRuins_MoveLadyStatue(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   MapGrid_CopyCellAttributes(
-      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->x.fixed),
-      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed));
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_VIOLET_LADY_STATUE)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_VIOLET_LADY_STATUE)->z.fixed));
   MapGrid_CopyCellAttributes(
-      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->x.fixed),
-      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed));
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_GREEN_LADY_STATUE)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_GREEN_LADY_STATUE)->z.fixed));
   MapGrid_CopyCellAttributes(
-      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->x.fixed),
-      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed));
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_BLUE_LADY_STATUE)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_BLUE_LADY_STATUE)->z.fixed));
   MapGrid_CopyCellAttributes(
-      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->x.fixed),
-      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed));
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_RED_LADY_STATUE)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_RED_LADY_STATUE)->z.fixed));
   MapGrid_CopyCellAttributes(
-      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->x.fixed),
-      FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed));
-  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->x.fixed) ==
+      20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_YELLOW_LADY_STATUE)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_YELLOW_LADY_STATUE)->z.fixed));
+  if (FIELD_CELL(Actor_Get(ACTOR_VIOLET_LADY_STATUE)->x.fixed) ==
       MARKS_EAST_COLUMN) {
-    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed) ==
+    if (FIELD_CELL(Actor_Get(ACTOR_VIOLET_LADY_STATUE)->z.fixed) ==
         MARKS_SOUTH_ROW) {
       correctPositions = 1;
     }
   }
-  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->x.fixed) ==
+  if (FIELD_CELL(Actor_Get(ACTOR_GREEN_LADY_STATUE)->x.fixed) ==
       MARKS_WEST_COLUMN) {
-    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed) ==
+    if (FIELD_CELL(Actor_Get(ACTOR_GREEN_LADY_STATUE)->z.fixed) ==
         MARKS_SOUTH_ROW) {
       correctPositions++;
     }
   }
-  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->x.fixed) ==
+  if (FIELD_CELL(Actor_Get(ACTOR_BLUE_LADY_STATUE)->x.fixed) ==
       MARKS_EAST_COLUMN) {
-    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed) ==
+    if (FIELD_CELL(Actor_Get(ACTOR_BLUE_LADY_STATUE)->z.fixed) ==
         MARKS_NORTH_ROW) {
       correctPositions++;
     }
   }
-  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->x.fixed) ==
+  if (FIELD_CELL(Actor_Get(ACTOR_RED_LADY_STATUE)->x.fixed) ==
       MARKS_WEST_COLUMN) {
-    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed) ==
+    if (FIELD_CELL(Actor_Get(ACTOR_RED_LADY_STATUE)->z.fixed) ==
         MARKS_NORTH_ROW) {
       correctPositions++;
     }
   }
-  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->x.fixed) ==
+  if (FIELD_CELL(Actor_Get(ACTOR_YELLOW_LADY_STATUE)->x.fixed) ==
       MARKS_MIDDLE_COLUMN) {
-    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed) ==
+    if (FIELD_CELL(Actor_Get(ACTOR_YELLOW_LADY_STATUE)->z.fixed) ==
         MARKS_MIDDLE_ROW) {
       correctPositions++;
     }
@@ -1767,48 +1768,43 @@ s32 Scene_Initialize(void) {
       // were left.
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
         MapGrid_CopyCells(24, 59, 1, 2, 32, 46);
-        Actor_SetPosition(ACTOR_LADY_STATUE_NORTHWEST, 408, 792);
-        Actor_SetPosition(ACTOR_LADY_STATUE_NORTHEAST, 376, 792);
-        Actor_SetPosition(ACTOR_LADY_STATUE_SOUTHWEST, 408, 760);
-        Actor_SetPosition(ACTOR_LADY_STATUE_SOUTHEAST, 376, 760);
-        Actor_SetPosition(ACTOR_LADY_STATUE_SOUTH, 392, 776);
+        Actor_SetPosition(ACTOR_VIOLET_LADY_STATUE, 408, 792);
+        Actor_SetPosition(ACTOR_GREEN_LADY_STATUE, 376, 792);
+        Actor_SetPosition(ACTOR_BLUE_LADY_STATUE, 408, 760);
+        Actor_SetPosition(ACTOR_RED_LADY_STATUE, 376, 760);
+        Actor_SetPosition(ACTOR_YELLOW_LADY_STATUE, 392, 776);
       }
-      Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->motionFlags &=
+      Actor_Get(ACTOR_VIOLET_LADY_STATUE)->motionFlags &=
           ~ACTOR_FOLLOWS_TERRAIN;
-      Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->motionFlags &=
+      Actor_Get(ACTOR_GREEN_LADY_STATUE)->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
+      Actor_Get(ACTOR_BLUE_LADY_STATUE)->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
+      Actor_Get(ACTOR_RED_LADY_STATUE)->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
+      Actor_Get(ACTOR_YELLOW_LADY_STATUE)->motionFlags &=
           ~ACTOR_FOLLOWS_TERRAIN;
-      Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->motionFlags &=
-          ~ACTOR_FOLLOWS_TERRAIN;
-      Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->motionFlags &=
-          ~ACTOR_FOLLOWS_TERRAIN;
-      Actor_Get(ACTOR_LADY_STATUE_SOUTH)->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
-      Actor_SetSpriteColorById(ACTOR_LADY_STATUE_NORTHWEST, SPRITE_COLOR_GBR);
-      Actor_SetSpriteColorById(ACTOR_LADY_STATUE_NORTHEAST, SPRITE_COLOR_GRB);
-      Actor_SetSpriteColorById(ACTOR_LADY_STATUE_SOUTHWEST, SPRITE_COLOR_GBR);
-      Actor_SetSpriteColorById(ACTOR_LADY_STATUE_SOUTHEAST,
-                               SPRITE_COLOR_RED_TINT);
-      Actor_SetSpriteColorById(ACTOR_LADY_STATUE_SOUTH, SPRITE_COLOR_NORMAL);
-      Actor_SetAnimation(ACTOR_LADY_STATUE_NORTHWEST, 2);
-      Actor_SetAnimation(ACTOR_LADY_STATUE_SOUTH, 2);
+      Actor_SetSpriteColorById(ACTOR_VIOLET_LADY_STATUE, SPRITE_COLOR_GBR);
+      Actor_SetSpriteColorById(ACTOR_GREEN_LADY_STATUE, SPRITE_COLOR_GRB);
+      Actor_SetSpriteColorById(ACTOR_BLUE_LADY_STATUE, SPRITE_COLOR_GBR);
+      Actor_SetSpriteColorById(ACTOR_RED_LADY_STATUE, SPRITE_COLOR_RED_TINT);
+      Actor_SetSpriteColorById(ACTOR_YELLOW_LADY_STATUE, SPRITE_COLOR_NORMAL);
+      Actor_SetAnimation(ACTOR_VIOLET_LADY_STATUE, 2);
+      Actor_SetAnimation(ACTOR_YELLOW_LADY_STATUE, 2);
       MapGrid_CopyCellAttributeRect(
           20, 56, 1, 1,
-          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->x.fixed),
-          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed));
+          FIELD_CELL(Actor_Get(ACTOR_VIOLET_LADY_STATUE)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_VIOLET_LADY_STATUE)->z.fixed));
+      MapGrid_CopyCellAttributeRect(
+          20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_GREEN_LADY_STATUE)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_GREEN_LADY_STATUE)->z.fixed));
+      MapGrid_CopyCellAttributeRect(
+          20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_BLUE_LADY_STATUE)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_BLUE_LADY_STATUE)->z.fixed));
+      MapGrid_CopyCellAttributeRect(
+          20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_RED_LADY_STATUE)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_RED_LADY_STATUE)->z.fixed));
       MapGrid_CopyCellAttributeRect(
           20, 56, 1, 1,
-          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->x.fixed),
-          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed));
-      MapGrid_CopyCellAttributeRect(
-          20, 56, 1, 1,
-          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->x.fixed),
-          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed));
-      MapGrid_CopyCellAttributeRect(
-          20, 56, 1, 1,
-          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->x.fixed),
-          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed));
-      MapGrid_CopyCellAttributeRect(
-          20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->x.fixed),
-          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed));
+          FIELD_CELL(Actor_Get(ACTOR_YELLOW_LADY_STATUE)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_YELLOW_LADY_STATUE)->z.fixed));
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST:
       MapGrid_CopyCellAttributes(49, 43, 1, 1, 49, 107);
@@ -1870,6 +1866,9 @@ u16 gTunnelRuins_DoorCloseSteps[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
+/// Unused: the entrances of any scene but the two this overlay serves, so no
+/// scene reads them. Entrance 10 would set the party at (440, 552), facing
+/// south.
 struct SceneEntrance gTunnelRuinsEntrancesOther[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
@@ -2304,20 +2303,20 @@ struct Trigger gTunnelRuinsTriggersOther[] = {
         EVENT(TunnelRuins_MoveEastPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR_B, CONDITION_ALWAYS,
         EVENT(TunnelRuins_MoveEastPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_NORTHWEST, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_NORTHEAST, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_SOUTHWEST, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_SOUTHEAST, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_SOUTH, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LADY_STATUE_NORTHWEST, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VIOLET_LADY_STATUE, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GREEN_LADY_STATUE, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BLUE_LADY_STATUE, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RED_LADY_STATUE, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_YELLOW_LADY_STATUE, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VIOLET_LADY_STATUE, CONDITION_ALWAYS,
         MSGNO(MsgTunnelRuinsRedShinesNorthwestOfMe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LADY_STATUE_NORTHEAST, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREEN_LADY_STATUE, CONDITION_ALWAYS,
         MSGNO(MsgTunnelRuinsYellowShinesNortheastOfMe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LADY_STATUE_SOUTHWEST, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BLUE_LADY_STATUE, CONDITION_ALWAYS,
         MSGNO(MsgTunnelRuinsRedShinesDueWestOfMe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LADY_STATUE_SOUTHEAST, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RED_LADY_STATUE, CONDITION_ALWAYS,
         MSGNO(MsgTunnelRuinsVioletShinesSoutheastOfMe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LADY_STATUE_SOUTH, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YELLOW_LADY_STATUE, CONDITION_ALWAYS,
         MSGNO(MsgTunnelRuinsVioletPointsSoutheast)},
     {TRIGGER_TABLE_END},
 };

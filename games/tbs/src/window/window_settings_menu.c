@@ -363,6 +363,7 @@ struct Window *SettingsMenu_Open(void) {
   struct SettingsMenuState *state;
   struct Window *window;
   struct WindowSprite *marker;
+  s32 cacheSlot;
   s32 x;
   s32 y;
   s32 labelMessage;
@@ -389,10 +390,11 @@ struct Window *SettingsMenu_Open(void) {
   Text_DrawMessageAsTiles(MsgSpeechLabel, window, 8, 64);
   Text_DrawMessageAsTiles(MsgAutoSleepLabel, window, 8, 88);
 
-  x = VramCache_FindFreeEntry();
-  if (x < VRAM_CACHE_ENTRY_COUNT) {
-    VramCache_Load(x, 128, gPointingHandTiles);
-    marker = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
+  cacheSlot = VramCache_FindFreeEntry();
+  if (cacheSlot < VRAM_CACHE_ENTRY_COUNT) {
+    VramCache_Load(cacheSlot, 128, gPointingHandTiles);
+    marker =
+        WindowSprite_Create(cacheSlot, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
     state->cursor.sprite = marker;
     x = window->x * 8;
     y = window->y * 8 + 12;
@@ -401,25 +403,25 @@ struct Window *SettingsMenu_Open(void) {
 
   // The ends of both sliders: OUTPUT_SIZE_32X8 sprites, the right end 4 tiles
   // into the picture, each slider in its own palette.
-  x = VramCache_FindFreeEntry();
-  if (x < VRAM_CACHE_ENTRY_COUNT) {
+  cacheSlot = VramCache_FindFreeEntry();
+  if (cacheSlot < VRAM_CACHE_ENTRY_COUNT) {
     Dma_Set(gSettingsMenu_SliderPalette,
             (void *)&OBJ_PLTT_COLOR(WINDOW_COLOR_SLIDER_PALETTE, 0),
             DMA_COPY_HALFWORDS(2 * PALETTE_COLORS), REG_DMA3);
-    VramCache_Load(x, 256, gSettingsMenu_SliderTiles);
+    VramCache_Load(cacheSlot, 256, gSettingsMenu_SliderTiles);
     y = 0;
-    marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
+    marker = WindowSprite_Create(cacheSlot, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X - 6, y);
     marker->oam.palette = WINDOW_COLOR_SLIDER_PALETTE;
-    marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
+    marker = WindowSprite_Create(cacheSlot, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X + 26, y);
     marker->oam.index += 4;
     marker->oam.palette = WINDOW_COLOR_SLIDER_PALETTE;
     y = 16;
-    marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
+    marker = WindowSprite_Create(cacheSlot, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X - 6, y);
     marker->oam.palette = WINDOW_BRIGHTNESS_SLIDER_PALETTE;
-    marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
+    marker = WindowSprite_Create(cacheSlot, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X + 26, y);
     marker->oam.index += 4;
     marker->oam.palette = WINDOW_BRIGHTNESS_SLIDER_PALETTE;
@@ -427,10 +429,11 @@ struct Window *SettingsMenu_Open(void) {
 
   // The two markers: 16x16 sprites of 256 colours, whose 256 bytes
   // SettingsMenu_AnimateCursors fills each frame.
-  x = VramCache_FindFreeEntry();
-  if (x < VRAM_CACHE_ENTRY_COUNT) {
-    VramCache_Load(x, 256, 0);
-    marker = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
+  cacheSlot = VramCache_FindFreeEntry();
+  if (cacheSlot < VRAM_CACHE_ENTRY_COUNT) {
+    VramCache_Load(cacheSlot, 256, 0);
+    marker =
+        WindowSprite_Create(cacheSlot, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
     marker->oam.fullColor = 1;
     state->marker[0].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
@@ -440,10 +443,11 @@ struct Window *SettingsMenu_Open(void) {
     MenuCursor_SetPositionImmediateFar(&state->marker[0].cursor, x, y);
   }
 
-  x = VramCache_FindFreeEntry();
-  if (x < VRAM_CACHE_ENTRY_COUNT) {
-    VramCache_Load(x, 256, 0);
-    marker = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
+  cacheSlot = VramCache_FindFreeEntry();
+  if (cacheSlot < VRAM_CACHE_ENTRY_COUNT) {
+    VramCache_Load(cacheSlot, 256, 0);
+    marker =
+        WindowSprite_Create(cacheSlot, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
     marker->oam.fullColor = 1;
     state->marker[1].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;

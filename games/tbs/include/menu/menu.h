@@ -179,6 +179,9 @@ enum ListSort {
   LIST_SORT_COUNT = 4
 };
 
+// What the menus share (menu_shared.c): their state, windows, status panel,
+// hand cursor, party figures and entry icons, the paged lists and their
+// highlights, and the watch for Start.
 s32 Menu_ResumeFieldTasks(void);
 s32 Menu_SuspendFieldTasks(void);
 void Menu_InitializeState(s32 unused);
@@ -191,10 +194,13 @@ void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
 void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window);
 void Text_DrawStatComparison(const struct Unit *after,
                              const struct Unit *before, struct Window *window);
-s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x, s32 y);
+
+s32 Icon_CreateHandCursorUnusedArgument(struct Window *window, s32 unused,
+                                        s32 x, s32 y);
 s32 Icon_CreateHandCursor(struct Window *window, s32 x, s32 y);
 void Icon_Show(struct WindowSprite *object);
 void Menu_ReloadMemberPortrait(const void *unused, s32 unit);
+
 struct Window *MenuCursor_Create(void *source);
 void Menu_CreatePartyFigures(void *source, s32 originX, s32 originY,
                              s32 spacing, s32 unused);
@@ -202,7 +208,8 @@ void Menu_ReleasePartyFigures(void);
 void Menu_PlacePartyFigures(void);
 void MenuCursor_Position(s32 xOffset, s32 yOffset);
 void MenuCursor_Slide(s32 x, s32 y);
-void PsynergyMenu_ReservedNoOp(void);
+void MenuCursor_NoOp(void);
+
 void PsynergyMenu_PlaceEntryIconsDefault(void);
 void PsynergyMenu_PlaceEntryIcons(s32 originX, s32 originY, s32 columns);
 void PsynergyMenu_PlaceEntryIcon(struct WindowSprite **slot, s32 index,
@@ -213,6 +220,7 @@ void ItemMenu_PlaceIcons(s32 layout);
 void ItemMenu_ShowMessage(s32 message, s32 x, s32 y);
 s32 ItemMenu_Sort(u16 *inventory, s32 mode);
 void Menu_CopyListOrder(s32 mode, u8 *order);
+
 s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
                           s32 *page);
 void Palette_LightenHighlight(s32 paletteNumber);
@@ -224,6 +232,7 @@ void Palette_LoadIconsIntoHighlight(void);
 void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
                        s32 y);
 void Menu_DrawCoins(struct Window *window);
+
 void Window_SetBounds(struct Window *window, s32 x, s32 y, s32 width,
                       s32 height);
 void Window_HoldTilemapUpload(void);
@@ -235,8 +244,6 @@ void Menu_StopWatchingStart(void);
 void WindowPalette_SetNormalTextColor(void);
 void WindowPalette_SetNoHpTextColor(void);
 void WindowPalette_SetLowHpTextColor(void);
-void DjinnFigures_ReleaseTopRow(void);
-void DjinnFigures_ReleaseBottomRow(void);
 
 /// The rows a page of the Psynergy and item lists holds.
 #define LIST_PAGE_SIZE 5
@@ -249,6 +256,8 @@ void DjinnFigures_ReleaseBottomRow(void);
 /// 24 pixels apart.
 #define MENU_MEMBER_CURSOR_X(member) ((member) * 24 - 10)
 
+// The Item menu (menu_item.c): its member and command choices, the item list
+// and its pages, the details, giving, dropping and equipping.
 s32 ItemMenu_Run(void);
 s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut);
 s32 ItemMenu_Use(void);
@@ -307,6 +316,8 @@ s32 ItemMenu_ItemNamePageReturnTrue(void);
 void ItemMenu_ItemNamePageNoOp(void);
 s32 ItemMenu_RunList(s32 sideIndex);
 
+// The Psynergy menu (menu_psynergy.c): its member and target choices, the
+// shortcuts, and the Psynergy list and its pages.
 s32 PsynergyMenu_Run(void);
 s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction);
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
@@ -330,6 +341,8 @@ s32 PsynergyMenu_DrawPage(struct Window *window, s32 unused,
 s32 PsynergyMenu_RunList(s32 sideIndex);
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 
+// The party member chooser and the Status menu (menu_status.c): the party
+// row, the status page, the Psynergy page and the equipment page.
 s32 PartyMemberChooser_Open(void);
 s32 PartyMemberChooser_Run(void);
 s32 StatusScreen_Run(void);
@@ -353,47 +366,51 @@ void Menu_BusyWait(void);
 void StatusScreen_DrawTopRows(struct Window *window, s32 memberId, s32 flags);
 s32 StatusScreen_ListStatuses(u8 *ailments, s32 requested, s32 memberId);
 s32 PagedList_Build(struct PagedList *result, s32 index);
+
 void Menu_BuildPatternTiles(void);
 void PsynergyMenu_DrawRange(struct Window *window, s32 x, s32 y, s32 range,
                             s32 unused);
-s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
-                               struct PagedList *state);
-s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
-                              const struct PagedList *res);
+s32 StatusScreen_ShowPsynergyRow(struct Window *window, s32 unused,
+                                 struct PagedList *state);
+s32 StatusScreen_DrawPsynergyPage(struct Window *window, s32 unused,
+                                  const struct PagedList *res);
 s32 StatusScreen_RunPsynergyPage(void);
-s32 PsynergyMenu_ActionReturnTrue(void);
+s32 StatusScreen_PsynergyPageReturnTrue(void);
 void PsynergyMenu_DrawPreparedPsynergyIcons(const void *unused, s32 memberId);
 void PsynergyMenu_PreparedIconsNoOp(void);
 void PsynergyMenu_PreparedIconsSecondNoOp(void);
-s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
-                           struct PagedList *state);
-s32 ItemMenu_DrawItemPage(struct Window *window, s32 unused,
-                          struct PagedList *state);
+s32 StatusScreen_ShowEquipmentRow(struct Window *window, s32 unused,
+                                  struct PagedList *state);
+s32 StatusScreen_DrawEquipmentPage(struct Window *window, s32 unused,
+                                   struct PagedList *state);
 s32 StatusScreen_RunEquipmentPage(void);
 s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction);
-s32 Menu_ReservedStatusOne(void);
+s32 Menu_GridCursorReturnTrue(void);
+
 void ItemMenu_DrawEquipment(struct Window *window, s32 memberId, s32 mode);
 void ItemMenu_DrawEquippedItemNames(struct Window *window, u16 *items);
 void Menu_PlaceEntryIconsInGrid(s32 originX, s32 originY, s32 columns);
 void Menu_PlaceEntryIconInGrid(struct WindowSprite *icon, s32 index,
                                s32 originX, s32 originY, s32 columns);
-void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
+void ItemMenu_PlaceEquippedIcons(u16 *items);
 void Menu_HideEntryIcons(void);
-s32 Menu_CreateEightEntryActors(struct Window *window);
+s32 StatusScreen_CreateStatusIcons(struct Window *window);
 void StatusScreen_ShowStatusIcons(const u8 *flags);
 void StatusScreen_HideStatusIcons(void);
-s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled);
+s32 StatusScreen_LoadStatusIcons(const u8 *enabled);
 
+// Using an item or Psynergy from the menus (menu_use.c).
 void Item_PrepareUsePalette(void);
-void Item_UseNoOpCallback(void);
+void Item_UseNoOp(void);
 s32 Item_Use(s32 slot, s32 memberId, s32 targetId);
-s32 Item_ReturnOne(void);
+s32 Item_UseReturnTrue(void);
 s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                            s32 fixedScale);
 void Item_PlayUseSound(u32 item);
 void Ability_PlayUseSound(s32 action);
+s32 Ability_ReturnFalse(void);
 
-s32 Menu_ReservedStatusZero(void);
+// The Djinn menu (menu_djinn.c): its screen, the Djinn lists and their help.
 s32 Menu_WrapIndex(s32 value, s32 modulus);
 s32 DjinnMenu_PlacePartyFigures(s32 yOffset);
 s32 DjinnMenu_Run(void);
@@ -426,6 +443,8 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
                               s32 removePairSlot, s32 addPairSlot,
                               s32 previewMode, s32 page, s32 side);
 
+// The rows of Djinn figures over the Djinn and Status menus
+// (menu_djinn_figures.c).
 void DjinnFigures_InitializeTopRow(void *window, s32 unused);
 void DjinnFigures_UpdateAllPositions(void);
 void DjinnFigures_UpdateBottomRow(void);
@@ -434,12 +453,18 @@ s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative);
 s32 DjinnFigures_SetSlotPhase(s32 index, FIXED phase);
 s32 DjinnFigures_ReplaceSlot(s32 index, s32 element, s32 animation);
 void Menu_StartPartyFiguresStanding(void);
+void DjinnFigures_ReleaseTopRow(void);
+void DjinnFigures_ReleaseBottomRow(void);
 
+// The Djinn menu's preview of a change before it is made, and the checks that
+// keep the party members' Djinn counts even (menu_djinn_preview.c).
 s32 DjinnMenu_RunPreview(u32 mode);
 s32 DjinnMenu_ShowMemberStatus(void);
 s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn);
 s32 Djinn_CheckGiveBalance(s32 sourceMemberColumn, s32 targetMemberColumn);
 void Djinn_CountOwned(u8 *ownedCounts);
+
+// The menus' small icons: the arrows and the Psynergy icons (menu_icons.c).
 void Menu_LoadDjinnArrows(void);
 void IconMenu_ReleaseArrows(void);
 s32 Icon_LoadResourceIntoSlot(s32 abilityId, s32 slot);

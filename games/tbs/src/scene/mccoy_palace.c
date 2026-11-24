@@ -157,6 +157,16 @@ enum McCoyPalaceCellBehavior {
   CELL_BEHAVIOR_MCCOY_PALACE_BOOKCASE = 201
 };
 
+/// The palace's doors swing open by the map's tileset animations, which each
+/// scene entry pauses so every door is drawn shut; walking through any door
+/// runs both a moment.
+enum McCoyPalaceDoorAnimation {
+  /// McCoy's door at the top of the red carpet, four tiles across.
+  MCCOY_PALACE_MCCOYS_DOOR_ANIMATION = 1,
+  /// The two bedroom doors in Lady McCoy's room, two tiles across.
+  MCCOY_PALACE_BEDROOM_DOORS_ANIMATION = 2
+};
+
 /// The palace's temporary flags.
 /// The scene temp flags last until the party leaves the palace's scene, the
 /// area temp flags until it leaves McCoy's Palace.
@@ -398,8 +408,8 @@ static void McCoyPalace_WalkThroughDoor(void) {
     playDoorOpening = 1;
   }
   if (playDoorOpening != 0) {
-    TilesetAnim_Resume(1);
-    TilesetAnim_Resume(2);
+    TilesetAnim_Resume(MCCOY_PALACE_MCCOYS_DOOR_ANIMATION);
+    TilesetAnim_Resume(MCCOY_PALACE_BEDROOM_DOORS_ANIMATION);
   }
   Event_Start();
   Event_Wait(10);
@@ -412,8 +422,8 @@ static void McCoyPalace_WalkThroughDoor(void) {
   Event_Wait(16);
   Import_EventSetExitRequest(state->stepTrigger);
   Event_End();
-  TilesetAnim_Pause(1);
-  TilesetAnim_Pause(2);
+  TilesetAnim_Pause(MCCOY_PALACE_MCCOYS_DOOR_ANIMATION);
+  TilesetAnim_Pause(MCCOY_PALACE_BEDROOM_DOORS_ANIMATION);
 }
 
 /// "Isaac checked the chest... but it was empty."
@@ -593,8 +603,8 @@ s32 Scene_Initialize(void) {
 
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  TilesetAnim_Pause(1);
-  TilesetAnim_Pause(2);
+  TilesetAnim_Pause(MCCOY_PALACE_MCCOYS_DOOR_ANIMATION);
+  TilesetAnim_Pause(MCCOY_PALACE_BEDROOM_DOORS_ANIMATION);
   GameFlag_Set(FLAG_MCCOY_PALACE_VISITED);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     GameFlag_Clear(FLAG_MCCOYS_DOOR_OPEN);
@@ -1175,14 +1185,14 @@ static void McCoyPalace_CaptainTalksAboutBarricade(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   GameFlag_Set(FLAG_MCCOYS_DOOR_OPEN);
   Sound_Play(SE_THUMP);
-  TilesetAnim_Resume(1);
-  TilesetAnim_Resume(2);
+  TilesetAnim_Resume(MCCOY_PALACE_MCCOYS_DOOR_ANIMATION);
+  TilesetAnim_Resume(MCCOY_PALACE_BEDROOM_DOORS_ANIMATION);
   Actor_SetPosition(ACTOR_CAPTAIN, 256, 632);
   wait(1);
   Actor_SetSpeed(ACTOR_CAPTAIN, 0.6);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 256, 644);
-  TilesetAnim_Pause(1);
-  TilesetAnim_Pause(2);
+  TilesetAnim_Pause(MCCOY_PALACE_MCCOYS_DOOR_ANIMATION);
+  TilesetAnim_Pause(MCCOY_PALACE_BEDROOM_DOORS_ANIMATION);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Event_SetMessageId(MsgBilibinNameSorryRejected);
@@ -1249,6 +1259,8 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   viewCenter = FieldCamera_GetActor();
+  /* FAKEMATCH(temporary): advanceAlternateReply holds the 0 the camera's
+     motion flags take; as viewCenter->motionFlags = 0. */
   advanceAlternateReply = 0;
   viewCenter->motionFlags = advanceAlternateReply;
   FieldCamera_MoveTo(894, CAMERA_KEEP, 664, 0);
@@ -1334,6 +1346,8 @@ static void McCoyPalace_McCoyRewardsParty(void) {
     advanceAlternateReply = 0;
   }
   Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 3);
+  // "So, yeh're the wee--I mean, brave--lads I met before!" or "...lads who
+  // saved Kolima..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  20);
   if (advanceAlternateReply != 0) {
@@ -1346,6 +1360,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
     advanceAlternateReply = 0;
   }
   Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
+  // "What were yer names, again?" or "What are yer names, then?"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
   if (advanceAlternateReply != 0) {
     gFieldState->message++;
@@ -1361,15 +1376,19 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   }
 
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 10);
+  // "He's Isaac, sir, and I'm Garet..."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  // "I am called Ivan."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  // "And I am Mia, from the village of Imil."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
   Event_Wait(20);
+  // "Isaac and company..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
@@ -1378,6 +1397,9 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0) {
     Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
     Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
+    // "And did I not decline yer offer when we first met?"
+    // Yes: "I did nae give it enough consideration back then."
+    // No: "Are yeh no' just sayin' that tae appease me?"
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
     McCoyPalace_FaceCompanionsForDiscussion();
     advanceAlternateReply = 1;
@@ -1397,6 +1419,11 @@ static void McCoyPalace_McCoyRewardsParty(void) {
     gFieldState->message += 4;
   }
 
+  // "And yet yeh went oan tae break the curse despite my words, did yeh not?"
+  // for a party he turned away, else "Are yeh no' the ones who ended the curse
+  // of the holy tree?"
+  // Yes: "I humbly thank you."
+  // No: "Nae, yeh dinnae need tae hide it. My men told me aught yeh did."
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
   McCoyPalace_FaceCompanionsForDiscussion();
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -1409,9 +1436,9 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  20);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
-  // McCoy explains his caution and offers a choice from the treasury.
-  // XXX: McCoy's line opens over the captain, without his portrait; staging
-  // this audience would show whether the window is the captain's.
+  // McCoy explains his caution and offers a choice from the treasury. His
+  // first line names the captain as its speaker, so it shows without McCoy's
+  // portrait.
   Event_SetMessageId(MsgBilibinWasButWorriedYehMight);
   // "I was but worried yeh might nae stop here on yer way back."
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
@@ -1427,6 +1454,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   McCoyPalace_FaceCompanionsForAudience();
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "I relied oan my money, but I forgot about my people's needs."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1435,15 +1463,24 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
+  // "Yeh reminded me of my duties."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
+  // "As lord of these lands, I will do my best for everyone's behalf."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHEAST, 10);
+  // "Isaac, it would honor me greatly if yeh'd accept a wee token of my
+  // gratitude."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
+  // "I could give it tae yeh here, but would yeh no' rather choose it
+  // yerself?"
+  // Yes: "Very well. Yeh can choose somethin' that'll help yeh along yer way."
+  // No: "Words are nae enough tae express my regret in doubting yeh. Please,
+  // choose a token in thanks..."
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
 
   McCoyPalace_FaceCompanionsForDiscussion();
@@ -1465,13 +1502,16 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
+  // "I will show Isaac and his friends the way, milord."
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 10);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHEAST, 20);
   Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
+  // "Many thanks tae yeh, and tae yer companions, as well!!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
+  // "Visit me anytime! Yeh'll always find a warm hearth here!"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -1514,6 +1554,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_SOUTHEAST, 10);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
   Event_Wait(10);
+  // "Follow me, and I'll take you to the treasure room."
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 886, 708);
   Actor_WalkTo(ACTOR_CAPTAIN, 894, 764);

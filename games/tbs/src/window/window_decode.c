@@ -23,6 +23,20 @@
 /// a halfword.
 #define OPERAND_VALUE(stored) ((stored) + (u32)(u16)-1)
 
+/// Copies the unit name at `unitName` into `out`, each byte widened to a
+/// character code, through the decoder's cursors nameBytes and nameOutput and
+/// its counter `i`. It is several statements, written only as a case's own.
+#define UNIT_NAME_WIDEN(out, unitName, i)                                      \
+  nameBytes = (unitName);                                                      \
+  nameOutput = (out);                                                          \
+  (i) = 0;                                                                     \
+  do {                                                                         \
+    *nameOutput = *nameBytes;                                                  \
+    (i)++;                                                                     \
+    nameBytes++;                                                               \
+    nameOutput++;                                                              \
+  } while ((i) < UNIT_NAME_SIZE)
+
 #if LANGUAGE != LANGUAGE_JAPANESE
 /// The article classes a name can take in each European language, and the bits
 /// of its class.
@@ -78,9 +92,8 @@ enum {
   /// any number but -1, 0 and 1 makes what follows plural.
   MESSAGE_ARGUMENT_SIGNED_NUMBER = 22,
   MESSAGE_ARGUMENT_LOCATION_NAME = 23,
-  /// TEXT_ARGUMENT_SPACE (code 143 in English, a space in German, Spanish,
-  /// French and Italian) and a hyphen, and in those four a space after; the
-  /// Japanese decoder keeps the code as it is.
+  /// A dash: TEXT_EM_DASH_LEAD and a hyphen, and outside English a space
+  /// after; the Japanese decoder keeps the code as it is.
   MESSAGE_EM_DASH = 24,
   /// English: the plural suffix; German, Spanish, French and Italian: the
   /// item's possessive
@@ -640,47 +653,25 @@ s32 Message_Decode(s32 script, s32 clear) {
             writePosition = nextPosition;
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            // A unit's name, widened here to codes.
-            nameBytes = Unit_GetFar(gMainRoutineState.leaderActorId)->name;
-            nameOutput = name;
-            i = 0;
-            do {
-              *nameOutput = *nameBytes;
-              i++;
-              nameBytes++;
-              nameOutput++;
-            } while (i < UNIT_NAME_SIZE);
+            UNIT_NAME_WIDEN(
+                name, Unit_GetFar(gMainRoutineState.leaderActorId)->name, i);
             writePosition = Message_AppendArticleName(0, name, writePosition,
                                                       entry, 0, 0, &lastLetter);
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             articleForm = decode(&reader) - 1;
-            nameBytes = Unit_GetFar(MessageArgument_Lookup(
-                                        MESSAGE_ARGUMENT_ACTOR, clear))
-                            ->name;
-            nameOutput = name;
-            j = 0;
-            do {
-              *nameOutput = *nameBytes;
-              j++;
-              nameBytes++;
-              nameOutput++;
-            } while (j < UNIT_NAME_SIZE);
+            UNIT_NAME_WIDEN(name,
+                            Unit_GetFar(MessageArgument_Lookup(
+                                            MESSAGE_ARGUMENT_ACTOR, clear))
+                                ->name,
+                            j);
             writePosition =
                 Message_AppendArticleName(0, name, writePosition, entry,
                                           articleForm, plural, &lastLetter);
             break;
           case MESSAGE_ACTOR_NAME:
             argument = decode(&reader) - 1;
-            nameBytes = Unit_GetFar(argument)->name;
-            nameOutput = name;
-            j = 0;
-            do {
-              *nameOutput = *nameBytes;
-              j++;
-              nameBytes++;
-              nameOutput++;
-            } while (j < UNIT_NAME_SIZE);
+            UNIT_NAME_WIDEN(name, Unit_GetFar(argument)->name, j);
             writePosition = Message_AppendArticleName(0, name, writePosition,
                                                       entry, 0, 0, &lastLetter);
             break;
@@ -690,7 +681,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             TEXT_APPEND(entry, writePosition, argument + 1);
             break;
           case MESSAGE_EM_DASH:
-            TEXT_APPEND(entry, writePosition, TEXT_ARGUMENT_SPACE);
+            TEXT_APPEND(entry, writePosition, TEXT_EM_DASH_LEAD);
             TEXT_APPEND(entry, writePosition, '-');
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
@@ -699,7 +690,8 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
 #if LANGUAGE == LANGUAGE_GERMAN
           case MESSAGE_LOCALIZED_WORD:
-            // The operand picks the noun here, not an article form.
+            /* FAKEMATCH(temporary): articleForm holds the operand, which picks
+             * a noun here; the plain form reads it into a noun local. */
             articleForm = decode(&reader) - 1;
             nameBytes =
                 gLocalizedWord_CountedNouns[(articleForm & 7) * 2 + plural];
@@ -868,7 +860,12 @@ extern __inline__ u32 Message_AppendArticleName(s32 inBattleMessage, u16 *name,
   return writePosition;
 }
 
-/// The Japanese Message_Decode, as above with no articles or plurals.
+/// The Japanese Message_Decode: the European decoder's loop without its
+/// articles, plurals, possessives, dashes, button icons and opening quotes.
+/// What only this one does: halting speech breaks off with ・・・。 rather than
+/// "...", a battle message doubles each space and frames each name with spaces
+/// and line spacing codes (Message_AppendArticleName above), and in battle the
+/// Mystery Man and Mystery Woman take their names from MsgMysteryPersonName.
 s32 Message_Decode(s32 script, s32 clear) {
   struct WindowState *state = WINDOW_STATE;
   u32 code = 0;
@@ -1046,15 +1043,8 @@ s32 Message_Decode(s32 script, s32 clear) {
                 inBattleMessage, name, writePosition, entry, 0, 0, 0);
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            nameBytes = Unit_GetFar(gMainRoutineState.leaderActorId)->name;
-            nameOutput = name;
-            i = 0;
-            do {
-              *nameOutput = *nameBytes;
-              i++;
-              nameBytes++;
-              nameOutput++;
-            } while (i < UNIT_NAME_SIZE);
+            UNIT_NAME_WIDEN(
+                name, Unit_GetFar(gMainRoutineState.leaderActorId)->name, i);
             writePosition = Message_AppendArticleName(
                 inBattleMessage, name, writePosition, entry, 0, 0, 0);
             break;
@@ -1074,30 +1064,14 @@ s32 Message_Decode(s32 script, s32 clear) {
               writePosition = Message_AppendArticleName(
                   inBattleMessage, name, writePosition, entry, 0, 0, 0);
             } else {
-              nameBytes = unit->name;
-              nameOutput = name;
-              j = 0;
-              do {
-                *nameOutput = *nameBytes;
-                j++;
-                nameBytes++;
-                nameOutput++;
-              } while (j < UNIT_NAME_SIZE);
+              UNIT_NAME_WIDEN(name, unit->name, j);
               writePosition = Message_AppendArticleName(
                   inBattleMessage, name, writePosition, entry, 0, 0, 0);
             }
             break;
           case MESSAGE_ACTOR_NAME:
             argument = decode(&reader) - 1;
-            nameBytes = Unit_GetFar(argument)->name;
-            nameOutput = name;
-            j = 0;
-            do {
-              *nameOutput = *nameBytes;
-              j++;
-              nameBytes++;
-              nameOutput++;
-            } while (j < UNIT_NAME_SIZE);
+            UNIT_NAME_WIDEN(name, Unit_GetFar(argument)->name, j);
             writePosition = Message_AppendArticleName(
                 inBattleMessage, name, writePosition, entry, 0, 0, 0);
             break;
@@ -1137,3 +1111,4 @@ s32 Message_Decode(s32 script, s32 clear) {
 #undef HALTING_SPEECH_MAX_CODES
 #undef BUTTON_ICON_FIRST_CODE
 #undef OPERAND_VALUE
+#undef UNIT_NAME_WIDEN

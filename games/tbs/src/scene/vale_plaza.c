@@ -345,14 +345,23 @@ enum ValePlazaFarewellActorId {
   /// Garet's father, a man with brown hair in a teal shirt, by his sprite
   /// (cottage_rooms_a.c's).
   ACTOR_FAREWELL_GARETS_FATHER,
-  /// The rest of the crowd at the gate, ten who only nod and jump: an old man
-  /// with a cane, an old woman, a young man with brown hair, a woman with fair
-  /// hair, three strongmen, a burly grey-haired man, a woman in a green dress
-  /// and a stout man.
-  ACTOR_FAREWELL_FIRST_CROWD_VILLAGER,
+  /// The rest of the crowd at the gate, ten who only nod and jump, by their
+  /// sprites: an old man with a cane, an old woman, a young man with brown
+  /// hair, a woman with fair hair, three strongmen, a burly grey-haired man, a
+  /// woman in a green dress and a stout man.
+  ACTOR_FAREWELL_OLD_MAN,
+  ACTOR_FAREWELL_OLD_WOMAN,
+  ACTOR_FAREWELL_YOUNG_MAN,
+  ACTOR_FAREWELL_FAIR_HAIRED_WOMAN,
+  ACTOR_FAREWELL_FIRST_STRONGMAN,
+  ACTOR_FAREWELL_SECOND_STRONGMAN,
+  ACTOR_FAREWELL_THIRD_STRONGMAN,
+  ACTOR_FAREWELL_BURLY_MAN,
+  ACTOR_FAREWELL_WOMAN_IN_GREEN,
+  ACTOR_FAREWELL_STOUT_MAN,
   /// The sprite of the dog of vault.c ("Woof! Woof!"), which runs past the
   /// children and later after ACTOR_FAREWELL_CAT.
-  ACTOR_FAREWELL_DOG = ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 10,
+  ACTOR_FAREWELL_DOG,
   /// A small cat set down where the dog stops, which runs off with the dog
   /// after it. No other scene places its sprite.
   ACTOR_FAREWELL_CAT
@@ -1055,6 +1064,7 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_FaceDirection(ACTOR_STORM_GARETS_GRANDFATHER, FACING_WEST, 0);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_JENNA, FACING_SOUTHWEST, 20);
     Actor_RunRepeatedMotion(ACTOR_STORM_JENNA, 2);
+    // "Garet, Isaac... You came to help me?"
     ValePlaza_SayThenWait(ACTOR_STORM_JENNA, 10);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_STORM_GARET, ANIM_NOD);
@@ -1062,6 +1072,7 @@ static void ValePlaza_SentToAidElders(void) {
     // Garet's grandfather asks whether Jenna told them about Felix. Yes: good
     // boys, Jenna could use a hand; no: help her regardless.
     Actor_RunRepeatedMotion(ACTOR_STORM_GARETS_GRANDFATHER, 2);
+    // "Jenna told me about Felix. Is that why you're here?"
     Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_STORM_GARETS_GRANDFATHER, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
       skipReply = 1;
@@ -1070,6 +1081,8 @@ static void ValePlaza_SentToAidElders(void) {
       Actor_SetAnimation(ACTOR_STORM_GARETS_GRANDFATHER, ANIM_NOD);
       gFieldState->message++;
     }
+    // Yes: "Good boys! Jenna could use a hand." No: "Well, regardless, I want
+    // you two to help Jenna."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_STORM_GARETS_GRANDFATHER, 0);
     if (skipReply != 0) {
       gFieldState->message++;
@@ -1077,6 +1090,7 @@ static void ValePlaza_SentToAidElders(void) {
     // The rested strongman is all charged up; everyone turns to him.
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_CHARGED_UP_STRONGMAN,
                                    FACING_SOUTH, 30);
+    // "Great! I'm all charged up!"
     Event_ShowMessage(ACTOR_STORM_CHARGED_UP_STRONGMAN, 0);
     Actor_ShowEmote(ACTOR_STORM_GARETS_GRANDFATHER,
                     EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1100,8 +1114,10 @@ static void ValePlaza_SentToAidElders(void) {
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_CHARGED_UP_STRONGMAN,
                                    FACING_SOUTHEAST, 60);
     Actor_RunRepeatedMotion(ACTOR_STORM_GARETS_GRANDFATHER, 2);
+    // "How are you? Have you recovered your Psynergy?"
     ValePlaza_SayThenWait(ACTOR_STORM_GARETS_GRANDFATHER, 10);
     Actor_SetAnimationAndWait(ACTOR_STORM_CHARGED_UP_STRONGMAN, ANIM_NOD);
+    // "Enough to save Felix, thanks to the Psynergy Stone."
     ValePlaza_SayThenWait(ACTOR_STORM_CHARGED_UP_STRONGMAN, 20);
     Actor_SetAnimationAndWait(ACTOR_STORM_GARETS_GRANDFATHER, ANIM_NOD);
     Event_Wait(10);
@@ -1109,6 +1125,7 @@ static void ValePlaza_SentToAidElders(void) {
     // and Garet to show the way past the fallen rocks; Jenna thanks Isaac.
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARETS_GRANDFATHER, FACING_SOUTH,
                                    30);
+    // "OK, Jenna, you heard him. Now hurry back!"
     ValePlaza_SayThenWait(SPEAKER_WINDOW_ABOVE + ACTOR_STORM_GARETS_GRANDFATHER,
                           10);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_JENNA, FACING_NORTHEAST, 30);
@@ -1116,6 +1133,7 @@ static void ValePlaza_SentToAidElders(void) {
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARETS_GRANDFATHER, FACING_WEST,
                                    30);
     Actor_RunRepeatedMotion(ACTOR_STORM_GARETS_GRANDFATHER, 2);
+    // "The path may be blocked by fallen rocks. You two can show them the way!"
     ValePlaza_SayThenWait(SPEAKER_WINDOW_ABOVE + ACTOR_STORM_GARETS_GRANDFATHER,
                           10);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_STORM_GARET, 40);
@@ -1123,6 +1141,7 @@ static void ValePlaza_SentToAidElders(void) {
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_EAST, 20);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_JENNA, FACING_WEST, 30);
     Actor_SetAnimationAndWait(ACTOR_STORM_JENNA, ANIM_NOD);
+    // "...Thank you, Isaac."
     ValePlaza_SayThenWait(ACTOR_STORM_JENNA, 30);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_JENNA, FACING_NORTH, 30);
     Actor_SetAnimationAndWait(ACTOR_STORM_JENNA, ANIM_NOD);
@@ -1188,24 +1207,31 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   // They talk of Sol Sanctum's fury and its trap switch, of the power of
   // Alchemy, and of their next attempt on the sanctum.
   Actor_SetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_SHAKE_HEAD);
+  // "How could we have anticipated Sol Sanctum would unleash such fury?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
   Actor_RunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
+  // "It's a miracle that even the two of us were spared..."
   ValePlaza_SayThenWait(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 30);
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_NORTH_NORTHWEST,
                                  20);
+  // "That switch... It must have been a trap..."
   ValePlaza_SayThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 10);
   ValePlaza_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER, FACING_NORTH_NORTHWEST,
                                  40);
+  // "But to think it could conjure up a storm this powerful!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 0);
   Actor_SetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_SHAKE_HEAD);
+  // "...Another demonstration of the awesome powers of Alchemy."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER, FACING_EAST_NORTHEAST,
                                  10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
+  // "Regardless, we must not fail the next time we challenge Sol Sanctum."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_SOUTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_NOD);
   Event_Wait(20);
+  // "Next time, we shall certainly..."
   ValePlaza_SayThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 20);
   ValePlaza_FightTravelers();
   Event_End();
@@ -1221,6 +1247,7 @@ static void ValePlaza_FightTravelers(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_STORM_GARET), 0);
   Actor_SetPosition(ACTOR_STORM_GARET, 0, 331);
   wait(1);
+  // "Isaac! Wait!"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_STORM_GARET, 0);
   Actor_ShowEmote(ACTOR_FIRST_TRAVELER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_SECOND_TRAVELER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -1258,6 +1285,7 @@ static void ValePlaza_FightTravelers(void) {
   Actor_WalkToAndWait(ACTOR_STORM_GARET, 37, 339);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
+  // "You were eavesdropping on us just now... weren't you?"
   Event_OpenMessage(ACTOR_FIRST_TRAVELER, 0);
   Actor_ShowEmote(ACTOR_STORM_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST,
@@ -1267,12 +1295,14 @@ static void ValePlaza_FightTravelers(void) {
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_EAST, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_WEST, 20);
   Actor_RunRepeatedMotion(ACTOR_STORM_GARET, 2);
+  // "Isaac..."
   ValePlaza_SayThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_STORM_GARET, 10);
   FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_STORM_GARET,
                                  gValePlaza_FaceTargetActions);
   Actor_WalkToAndWait(ACTOR_STORM_GARET, 93, 361);
   ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_NORTH_NORTHEAST, 40);
+  // "Isaac, they look scary... Are you sure you should be talking to them?"
   ValePlaza_SayThenWait(ACTOR_STORM_GARET, 20);
   Actor_Stop(ACTOR_PARTY_LEADER);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_EAST, 0);
@@ -1284,12 +1314,14 @@ static void ValePlaza_FightTravelers(void) {
                                  30);
   // The travelers: forget everything you heard; we'll help you forget.
   Actor_SetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_SHAKE_HEAD);
+  // "You must forget everything you heard."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST,
                                  30);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
   Actor_RunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
   Actor_SetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
+  // "Don't worry... We'll help you forget!"
   ValePlaza_SayThenWait(ACTOR_FIRST_TRAVELER, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1411,12 +1443,12 @@ static void ValePlaza_DepartForQuest(void) {
   FieldCamera_MoveTo(180, 16, 618, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 2), 0);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 3), 0);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4), 0);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5), 0);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 6), 0);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 9), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_YOUNG_MAN), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FAIR_HAIRED_WOMAN), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_STRONGMAN), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_SECOND_STRONGMAN), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_THIRD_STRONGMAN), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_STOUT_MAN), 0);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Actor_SetSpritePriority(ACTOR_GARET, 1);
   Actor_SetSpritePriority(ACTOR_FAREWELL_GARETS_BROTHER, 1);
@@ -1433,14 +1465,17 @@ static void ValePlaza_DepartForQuest(void) {
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
                                  FACING_WEST_SOUTHWEST, 20);
   Event_SetMessageId(MSGNO(MsgValeWhysEveryoneHanging));
+  // "Why's everyone hanging around the town gate?"
   ValePlaza_SayThenWait(ACTOR_FAREWELL_SECOND_CHILD, 10);
   Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
                                  FACING_EAST_SOUTHEAST, 10);
+  // "What, didn't you hear?"
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 10);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_SECOND_CHILD, ANIM_NOD);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_FIRST_CHILD, 2);
+  // "Isaac and Garet are leaving Vale on a journey."
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 10);
   // They walk to the top of the path: the second child wishes to go too, the
   // first has heard it will be dangerous, and everyone is down there to say
@@ -1451,16 +1486,19 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_WalkToAndWait(ACTOR_FAREWELL_SECOND_CHILD, 184, 618);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
                                  FACING_SOUTH_SOUTHEAST, 60);
+  // "I wish I could go!"
   ValePlaza_SayThenWait(ACTOR_FAREWELL_SECOND_CHILD, 20);
   Actor_SetSpeed(ACTOR_FAREWELL_FIRST_CHILD, 1);
   Actor_WalkToAndWait(ACTOR_FAREWELL_FIRST_CHILD, 168, 618);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
                                  FACING_EAST_NORTHEAST, 10);
   Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CHILD, ANIM_SHAKE_HEAD);
+  // "I heard it's going to be really dangerous!"
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
                                  FACING_WEST_SOUTHWEST, 10);
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_SECOND_CHILD, 1);
+  // "Oh, yeah? So everyone's down there to say good-bye?"
   Event_ShowMessage(ACTOR_FAREWELL_SECOND_CHILD, 0);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_FAREWELL_DOG, 2.4);
@@ -1528,8 +1566,10 @@ static void ValePlaza_DepartForQuest(void) {
                   40);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
                                  FACING_EAST_SOUTHEAST, 10);
+  // "Hey, what's the matter?"
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 20);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_SECOND_CHILD, ANIM_NOD);
+  // "Weird. Isaac's mother isn't there to see him off!"
   ValePlaza_SayThenWait(ACTOR_FAREWELL_SECOND_CHILD, 10);
   Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -1542,6 +1582,7 @@ static void ValePlaza_DepartForQuest(void) {
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
                                  FACING_SOUTH_SOUTHWEST, 60);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
+  // "You're right. She's not there."
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 10);
   actor = Actor_GetById(ACTOR_FAREWELL_DOG);
 
@@ -1568,12 +1609,14 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_SECOND_CHILD, 2);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
                                  FACING_WEST_SOUTHWEST, 10);
+  // "Hey, should we go say good-bye, too?"
   ValePlaza_SayThenWait(ACTOR_FAREWELL_SECOND_CHILD, 10);
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_FIRST_CHILD, 1);
   Event_Wait(20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
                                  FACING_EAST_SOUTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
+  // "Sure! Let's go!"
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 20);
   Actor_SetAnimation(ACTOR_FAREWELL_SECOND_CHILD, ANIM_NOD);
   Event_Wait(10);
@@ -1596,6 +1639,7 @@ static void ValePlaza_DepartForQuest(void) {
   // The Great Healer counts on Isaac, and on Garet too; the two nod.
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_GREAT_HEALER, 2);
   Event_Wait(20);
+  // "We are counting on you, Isaac. Oh, and you, too, Garet."
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GREAT_HEALER, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_WEST_NORTHWEST, 20);
@@ -1609,6 +1653,7 @@ static void ValePlaza_DepartForQuest(void) {
   // Herb.
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_GARETS_SISTER, 2);
   Event_Wait(20);
+  // "Don't drink the water if it smells funny. And...take this with you, too."
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_SISTER, 10);
   Actor_SetSpeed(ACTOR_FAREWELL_GARETS_SISTER, 1);
   Actor_WalkToAndWait(ACTOR_FAREWELL_GARETS_SISTER, 216, 800);
@@ -1620,8 +1665,11 @@ static void ValePlaza_DepartForQuest(void) {
   // and Garet jumps.
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_EAST_NORTHEAST, 10);
+  // "I know not to drink stagnant water, Sis!"
   ValePlaza_SayThenWait(ACTOR_GARET, 10);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_GARETS_BROTHER, ANIM_SHAKE_HEAD);
+  // "Don't listen to him, Isaac! He's a pig! He'll eat anything that's not tied
+  // down!"
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_BROTHER, 10);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
@@ -1632,6 +1680,7 @@ static void ValePlaza_DepartForQuest(void) {
   Event_Wait(20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_MAN_AWAITING_DORA,
                                  FACING_NORTH_NORTHEAST, 10);
+  // "Hmm... Dora is very late..."
   ValePlaza_SayThenWait(ACTOR_FAREWELL_MAN_AWAITING_DORA, 60);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_FAREWELL_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_WINCE,
@@ -1644,6 +1693,7 @@ static void ValePlaza_DepartForQuest(void) {
                   80);
   Actor_ShowEmote(ACTOR_FAREWELL_GARETS_BROTHER,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  // "Oh! That's right!"
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_BROTHER, 60);
   // Garet's brother brings the Catch Beads Aunty Dora sent for Isaac; Isaac and
   // Garet turn to follow.
@@ -1651,6 +1701,7 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_FAREWELL_GARETS_BROTHER);
   Actor_WalkToAndWait(ACTOR_FAREWELL_GARETS_BROTHER, 216, 800);
   Actor_FaceDirection(ACTOR_FAREWELL_GARETS_BROTHER, FACING_SOUTH, 0);
+  // "Aunty Dora asked me to give this to you, Isaac."
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_BROTHER, 60);
   Party_GiveItem(ITEM_CATCH_BEADS, 0);
   Actor_Stop(ACTOR_PARTY_LEADER);
@@ -1661,48 +1712,57 @@ static void ValePlaza_DepartForQuest(void) {
   // for Dora.
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_WEST_NORTHWEST, 10);
+  // "I guess we're all set to go, huh, Isaac?"
   ValePlaza_SayThenWait(ACTOR_GARET, 10);
   Actor_FaceDirection(ACTOR_FAREWELL_MAN_AWAITING_DORA, FACING_SOUTH_SOUTHEAST,
                       0);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_EAST, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_GARETS_SISTER, 1);
+  // "Think again, Garet!"
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_SISTER, 10);
   ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_EAST_NORTHEAST, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_GARETS_SISTER, ANIM_SHAKE_HEAD);
+  // "It must be very difficult for Dora..."
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_SISTER, 10);
   // Garet's mother knows how Dora feels: she does not want Isaac to go, but
   // knows he must. The crowd nods.
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_NOD);
+  // "As Garet's mother, I know how Dora must be feeling."
   Event_ShowMessage(ACTOR_FAREWELL_GARETS_MOTHER, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
   Actor_SetAnimation(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_SHAKE_HEAD);
+  // "But I still have Garet's father, while Dora has only Isaac."
   Event_ShowMessage(ACTOR_FAREWELL_GARETS_MOTHER, 0);
   Actor_StartRepeatedMotion(ACTOR_FAREWELL_GARETS_MOTHER, 3);
+  // "She doesn't want you to go, Isaac, but she knows you have to, and it hurts
+  // to see you leave."
   Event_ShowMessage(ACTOR_FAREWELL_GARETS_MOTHER, 0);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_GARETS_SISTER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FAREWELL_GARETS_FATHER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FAREWELL_GARETS_BROTHER, ANIM_NOD);
   Event_Wait(10);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_STRONGMAN, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 7, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_BURLY_MAN, ANIM_NOD);
   Event_Wait(10);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 8, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_WOMAN_IN_GREEN, ANIM_NOD);
   Event_Wait(10);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 1, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_SECOND_STRONGMAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_OLD_MAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FAREWELL_OLD_WOMAN, ANIM_NOD);
   // Garet's grandfather hops: they will never leave standing around like this,
   // so one final farewell.
   Actor_Jump(ACTOR_FAREWELL_GARETS_GRANDFATHER, 2, 10);
   Actor_Jump(ACTOR_FAREWELL_GARETS_GRANDFATHER, 4, 40);
+  // "They can't keep standing around here like this, or they'll never leave."
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_GRANDFATHER, 10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_GARETS_GRANDFATHER,
                                  FACING_NORTH_NORTHEAST, 10);
+  // "So, one final farewell!"
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_GRANDFATHER, 10);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_GARETS_GRANDFATHER,
                                  FACING_WEST_NORTHWEST, 20);
@@ -1712,44 +1772,45 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FAREWELL_MAN_AWAITING_DORA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FAREWELL_GARETS_BROTHER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 3, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 6, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 9, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_OLD_MAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FAIR_HAIRED_WOMAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_THIRD_STRONGMAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_STOUT_MAN, ANIM_NOD);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_FAREWELL_SECOND_CHILD, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FAREWELL_GARETS_GRANDFATHER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 1, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 7, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_OLD_WOMAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_STRONGMAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_BURLY_MAN, ANIM_NOD);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_FAREWELL_GREAT_HEALER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FAREWELL_GARETS_SISTER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FAREWELL_GARETS_FATHER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 2, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 8, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_YOUNG_MAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_SECOND_STRONGMAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FAREWELL_WOMAN_IN_GREEN, ANIM_NOD);
   Event_Wait(80);
   Actor_Jump(ACTOR_FAREWELL_FIRST_CHILD, 4, 0);
   Actor_Jump(ACTOR_FAREWELL_MAN_AWAITING_DORA, 4, 0);
   Actor_Jump(ACTOR_FAREWELL_GARETS_BROTHER, 4, 0);
-  Actor_Jump(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER, 4, 0);
-  Actor_Jump(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 3, 4, 0);
-  Actor_Jump(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 6, 4, 0);
-  Actor_Jump(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 9, 4, 0);
+  Actor_Jump(ACTOR_FAREWELL_OLD_MAN, 4, 0);
+  Actor_Jump(ACTOR_FAREWELL_FAIR_HAIRED_WOMAN, 4, 0);
+  Actor_Jump(ACTOR_FAREWELL_THIRD_STRONGMAN, 4, 0);
+  Actor_Jump(ACTOR_FAREWELL_STOUT_MAN, 4, 0);
   Actor_Jump(ACTOR_FAREWELL_SECOND_CHILD, 4, 0);
   Actor_Jump(ACTOR_FAREWELL_GARETS_GRANDFATHER, 4, 0);
   Actor_Jump(ACTOR_FAREWELL_GARETS_MOTHER, 4, 0);
-  Actor_Jump(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 1, 4, 0);
-  Actor_Jump(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4, 4, 0);
-  Actor_Jump(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 7, 4, 0);
+  Actor_Jump(ACTOR_FAREWELL_OLD_WOMAN, 4, 0);
+  Actor_Jump(ACTOR_FAREWELL_FIRST_STRONGMAN, 4, 0);
+  Actor_Jump(ACTOR_FAREWELL_BURLY_MAN, 4, 0);
   Actor_Jump(ACTOR_FAREWELL_GREAT_HEALER, 4, 0);
   Actor_Jump(ACTOR_FAREWELL_GARETS_SISTER, 4, 0);
   Actor_Jump(ACTOR_FAREWELL_GARETS_FATHER, 4, 0);
-  Actor_Jump(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 2, 4, 0);
-  Actor_Jump(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5, 4, 0);
-  Actor_Jump(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 8, 4, 0);
+  Actor_Jump(ACTOR_FAREWELL_YOUNG_MAN, 4, 0);
+  Actor_Jump(ACTOR_FAREWELL_SECOND_STRONGMAN, 4, 0);
+  Actor_Jump(ACTOR_FAREWELL_WOMAN_IN_GREEN, 4, 0);
+  // "Farewell!"
   FieldMessage_Show(MSGNO(MsgValeFarewell), 1);
   priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   Event_Wait(80);

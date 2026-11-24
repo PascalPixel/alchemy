@@ -12,9 +12,12 @@ extern const u8 gTitle_PromptBlendLevels[60];
 void Title_UpdateIntroSprites(void);
 void Title_LoadIntroBackgrounds(void);
 s32 Title_ShowTitleScreen(s32 prompt);
+/// Unused: an empty entry of the title's far-call table, before the logos.
 void Title_BeforeLogosNoOp(void);
 s32 Title_ShowNintendoLogo(s32 fadeOut);
 s32 Title_ShowCamelotLogo(void);
+/// Unused: an empty entry of the title's far-call table, after
+/// Title_ShowTitleScreen's.
 void Title_AfterIntroNoOp(void);
 void TitlePaletteFade_CalculateSteps(s16 *sourceComponents,
                                      s16 *targetComponents, s16 *componentSteps,

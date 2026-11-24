@@ -580,13 +580,15 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
                                s32 fullWidth);
 s32 Message_AllTyped(void);
 s32 Window_IsClosed(struct Window *window);
+/// Declared without a prototype, so that Window_Create can pass it an argument
+/// it never reads.
 void Text_ResetStyle();
 void WindowSystem_StartFieldUpdate(void);
 void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles);
 void BattleMessage_Close(void);
 void BattleMessage_Open(s32 argument);
 void BattleMessage_ShowAndWait(s32 argument);
-s32 Message_OpenDecoded(struct Window *window, s32 argument);
+s32 Message_OpenDecoded(struct Window *window, s32 message);
 void Message_SetDecodeFlags(s32 flags);
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
 /// The bob of a prompt or cursor: up and down by up to 2 pixels, a sine every
@@ -614,7 +616,7 @@ enum MessageWindowOption {
   MESSAGE_WINDOW_ANCHOR_BOTTOM = 0x10, ///< WINDOW_FLAG_ANCHOR_BOTTOM
   MESSAGE_WINDOW_FIXED_X = 0x20        ///< WINDOW_FLAG_FIXED_X
 };
-void FieldMessage_Show(s32 no, s32 flags);
+void FieldMessage_Show(s32 message, s32 flags);
 void WindowSystem_Update(void);
 #if LANGUAGE != LANGUAGE_JAPANESE
 s32 Text_DrawGlyphPair(s32 code, u32 *out);
@@ -627,19 +629,20 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 void Text_DrawWideStringAsTiles(u16 *buffer, const struct Window *window,
                                 s32 offsetX, s32 offsetY);
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
-u32 Message_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
-                              s32 plural, s32 *suffix);
+u32 Message_AppendArticleName(s32 inBattleMessage, u16 *name, u32 writePosition,
+                              u16 *entries, s32 articleForm, s32 plural,
+                              s32 *lastLetter);
 s32 Message_Decode(s32 script, s32 clear);
 void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
                         u32 *windowWidth, u32 *windowHeight, u16 *spacing,
                         u32 flags);
-void Text_MeasureMessage(s32 no, s32 *x, s32 *y);
+void Text_MeasureMessage(s32 message, s32 *x, s32 *y);
 s32 Text_GetMessageSize(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
 s32 Text_GetMessageSizeAllPages(s32 no, s32 *x, s32 *y, u32 *width,
                                 u32 *height);
-void Text_MeasureDecoded(s32 pos, u32 *out_width, u32 *out_height,
+void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                          u16 *spacing);
-void Text_MeasureAllPages(s32 start, u32 *out_width, u32 *out_height,
+void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                           u16 *spacing);
 s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode);
 
@@ -660,10 +663,10 @@ enum TilemapEntryMode {
 };
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode);
-void WindowSprite_UpdateScaleAnimation(struct WindowSprite *sprite);
+void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite);
 void WindowSprite_UpdateAll(void);
-void Message_DecodeRawUnbounded(s32 message, u16 *buf);
-s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
+void Message_DecodeRawUnbounded(s32 message, u16 *text);
+s32 Message_CopyExpanded(s32 message, u16 *destination, u32 capacity);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 s32 *Memory_ClearWordIfSet(s32 *p);
 void Window_CloseAll(s32 unused);
@@ -682,7 +685,7 @@ void Portrait_ClearSlots(void);
 s32 Portrait_GetForSpeaker(u32 value);
 struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
                                    s32 y);
-void Portrait_CloseWindow(u32 entry);
+void Portrait_CloseWindow(u32 speaker);
 
 #define WINDOW_STATE ((struct WindowState *)gWindowState[0])
 
@@ -709,67 +712,68 @@ void Portrait_CloseWindow(u32 entry);
 
 s32 Icon_CountItemIcons(void);
 s32 Icon_CountPsynergyIcons(void);
-void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
+void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 frame, s32 *slot,
                                 s32 *tileOut, s32 reuse);
-void Ability_BuildItemIconTiles(s32 action, s32 with_base, s32 *slot, s32 *tile,
+void Ability_BuildItemIconTiles(s32 action, s32 withBase, s32 *slot, s32 *tile,
                                 s32 reuse);
-void Icon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
-                             s32 reuse);
+void Icon_BuildItemIconTiles(u32 icon, s32 withBase, s32 *cacheSlot,
+                             s32 *tileOut, s32 reuse);
 s32 ItemIcon_Compose(u32 code, u32 layers);
 s32 ItemIcon_LoadLayersIntoSlot(s32 inventoryCode, s32 layers, s32 cacheSlot);
-s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 slot);
-s32 MenuTitle_LoadFirstTile(u32 value, s32 unused, u32 slot);
+s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot);
+s32 MenuTitle_LoadFirstTile(u32 entry, s32 unused, u32 slot);
 void Icon_DrawItem(s32 code);
-void Ability_BuildIconTiles(s32 action, s32 with_base, s32 *slot, s32 *tile,
+void Ability_BuildIconTiles(s32 action, s32 withBase, s32 *slot, s32 *tile,
                             s32 reuse);
-void Icon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
-                                s32 reuse);
-void Icon_DrawMisc(u32 index);
+void Icon_BuildAbilityIconTiles(u32 icon, s32 withBase, s32 *cacheSlot,
+                                s32 *tileOut, s32 reuse);
+void Icon_DrawMisc(u32 iconIndex);
 void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                           s32 palette, s32 reuse);
 void Icon_ReservedNoOp(void);
-void Icon_Decode(IconTransfer *glyph, s32 outlined);
+void Icon_Decode(IconTransfer *glyph, s32 overlay);
 
 void SelectionMenu_Create(void);
 void SelectionMenu_Clear(void);
-void SelectionMenu_AddEntry(u32 first, u32 second);
+void SelectionMenu_AddEntry(u32 kind, u32 base);
 void SelectionMenu_BuildEntries(u32 unused);
 void SelectionMenu_ReservedNoOp(void);
 struct SelectionNode *SelectionMenu_FindFreeIcon(s32 kind);
 void SelectionMenu_StartDrawing(void);
 void SelectionMenu_StopDrawing(void);
 void SelectionMenu_Draw(void);
-void SelectionMenu_DrawArrow(struct SelectionMenuState *state, s32 index);
+void SelectionMenu_DrawArrow(struct SelectionMenuState *state, s32 side);
 void SelectionMenu_OpenNameWindow(s32 mode, u32 count);
 void SelectionMenu_Close(void);
-void SelectionMenu_SetPosition(u32 first, u32 second);
+void SelectionMenu_SetPosition(u32 x, u32 y);
 void Menu_SetupSelectionBothSides(void);
-void SelectionMenu_SetupArrow(struct SelectionMenuState *state, s32 index);
+void SelectionMenu_SetupArrow(struct SelectionMenuState *state, s32 side);
 struct SelectionNode *
-SelectionMenu_GetCursorNode(struct SelectionMenuState *screen);
+SelectionMenu_GetCursorNode(struct SelectionMenuState *state);
 s32 SelectionMenu_Run(s32 mode);
 u32 SelectionMenu_RunWithSounds(u32 mode);
-void Menu_MoveSelectionForward(struct SelectionMenuState *screen);
-void Menu_MoveSelectionBackward(struct SelectionMenuState *screen);
+void Menu_MoveSelectionForward(struct SelectionMenuState *state);
+void Menu_MoveSelectionBackward(struct SelectionMenuState *state);
 void SelectionMenu_StepRight(struct SelectionMenuState *state);
 void SelectionMenu_StepLeft(struct SelectionMenuState *state);
-void SelectionMenu_RedrawIcon(struct SelectionMenuState *state, u32 index);
-void SelectionMenu_HighlightIcon(struct SelectionMenuState *state, u32 index);
-void Menu_ClearBattleHighlight(struct SelectionMenuState *screen);
-void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward);
+void SelectionMenu_RedrawIcon(struct SelectionMenuState *state, u32 rowIndex);
+void SelectionMenu_HighlightIcon(struct SelectionMenuState *state,
+                                 u32 rowIndex);
+void Menu_ClearBattleHighlight(struct SelectionMenuState *state);
+void SelectionMenu_Scroll(struct SelectionMenuState *state, s32 forward);
 s32 SelectionIcon_Load(s32 mode, s32 value);
 s32 SelectionIcon_LoadIntoSlot(s32 mode, s32 value, s32 result, s32 option);
 void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                              s32 reuse);
-u32 Menu_ConfirmSelection(struct SelectionMenuState *screen);
+u32 Menu_ConfirmSelection(struct SelectionMenuState *state);
 void MenuArrow_NoOpCallback(void);
 void MenuArrow_NoOpCallbackBank(void);
 void MenuArrow_NoOpCallbackA(void);
 void MenuArrow_NoOpCallbackB(void);
 void MenuArrow_NoOpCallbackC(void);
 void MenuArrow_NoOpCallbackD(void);
-void MenuArrow_Create(struct MenuSprite *object, s32 *slot);
-void MenuArrow_SetPosition(struct MenuSprite *obj, s32 x, s32 y);
+void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot);
+void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y);
 void MenuArrow_Release(s32 value);
 void SelectionMenu_LoadLargeIcon(void);
 void SelectionMenu_FreeLargeIcon(void);
@@ -781,7 +785,7 @@ void PartyStatus_OpenAndWait(void);
 void PartyStatus_CloseWithMenu(void);
 #endif
 void SelectionMenu_CreateEmpty(void);
-u32 Menu_RunSelectionForValue(u32 value);
+u32 Menu_RunSelectionForValue(u32 initialIndex);
 
 void AreaNameWindow_Show(void);
 void AreaNameWindow_Update(void);
@@ -791,7 +795,7 @@ s32 Item_ReturnTrue(void);
 void SettingsMenu_StepWindowHue(s32 keys);
 void Debug_SelectShortcuts(void);
 s32 Party_ListPsynergy(struct AbilityListEntry *output);
-void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
+void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
                               const struct AbilityListEntry *entries);
 void Menu_RunSelectionHook(void);
 
@@ -800,13 +804,13 @@ void Menu_ReleaseSelectionState(void);
 void SettingsMenu_ReservedNoOpA(void);
 void SettingsMenu_ReservedNoOpB(void);
 void SettingsMenu_ReservedNoOpC(void);
-void SettingsMenu_ResetEntries(struct SettingsMenuState *state);
+void SettingsMenu_ResetEntries(struct SettingsMenuState *optionMenuState);
 void WindowColor_CalculateTint(struct SettingsMenuState *state);
 void WindowColor_WritePalette(struct SettingsMenuState *state);
-u16 WindowColor_ScaleTint(struct SettingsMenuState *state, FIXED scale_r,
-                          FIXED scale_g, FIXED scale_b);
-u16 Color_ScaleComponents(s16 *rgb, FIXED red_scale, FIXED green_scale,
-                          FIXED blue_scale);
+u16 WindowColor_ScaleTint(struct SettingsMenuState *state, FIXED redScale,
+                          FIXED greenScale, FIXED blueScale);
+u16 Color_ScaleComponents(s16 *rgb, FIXED redScale, FIXED greenScale,
+                          FIXED blueScale);
 void WindowColor_Apply(s32 phase, s32 brightness);
 void SettingsMenu_PreviousRow(struct SettingsMenuState *state);
 void SettingsMenu_NextRow(struct SettingsMenuState *state);
@@ -825,13 +829,13 @@ struct Window *PauseMenu_Open(void);
 s32 PauseMenu_Choose(void);
 
 void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap);
-s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x);
+s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x);
 void Window_MarkVisibleTextTiles(void);
-void Text_UseExtraTiles(s32 flag);
+void Text_UseExtraTiles(s32 allowAlternateTiles);
 void Window_ReservedNoOp(void);
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
-void Text_SetColor(s32 param);
-void Text_SetStyle(u16 value);
+void Text_SetColor(s32 color);
+void Text_SetStyle(u16 style);
 void Text_DrawMessage(s32 message, struct Window *window, s32 x, s32 y);
 void Text_DrawMessageAsTiles(s32 message, const struct Window *window,
                              u32 offsetX, u32 offsetY);

@@ -172,6 +172,24 @@ static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags);
 /// How TolbiShipDeck_SwingOar swings an oar: on the starboard side, mirrored;
 /// and at rest, at the angle it has rather than its stroke's.
 enum { OAR_SWING_MIRRORED = 1, OAR_SWING_AT_REST = 2 };
+
+/// How hard a rower pulls, which sets how fast his oars go round: the oar left
+/// still, then ever faster. A seat no one rows still has its oars swing
+/// steadily.
+enum OarStroke {
+  OAR_STROKE_STILL = 1,
+  OAR_STROKE_SLOW,
+  OAR_STROKE_STEADY,
+  OAR_STROKE_FAST
+};
+
+/// SPRITE_OAR's animations (oar.tsv): the dry blade in the air, the blade
+/// splashing in the water, and the blade dipping in with a splash.
+enum {
+  OAR_ANIMATION_IN_AIR = 1,
+  OAR_ANIMATION_IN_WATER = 2,
+  OAR_ANIMATION_DIPPING = 3
+};
 static void TolbiShipDeck_RestOars(void);
 static void TolbiShipDeck_CopyUnderwayCells(void);
 static void TolbiShipDeck_CopyAnchoredCells(void);
@@ -199,8 +217,9 @@ enum TolbiShipDeckActorId {
   /// Four oars, with the same sprite as the others, that keep the strokes of
   /// gTolbiShipDeckRowerStrokes.
   ///
-  /// There is one each from 1 (the oar left still) to 4 (fastest), drawn under
-  /// the deck. Each oar at the sides copies the frames of its seat's stroke
+  /// There is one for each enum OarStroke, from the still oar to the fastest,
+  /// drawn under the deck. Each oar at the sides copies the frames of its
+  /// seat's stroke
   /// (TolbiShipDeck_SwingOar). At rest the first stands in for the first oar.
   ACTOR_FIRST_STROKE_OAR = ACTOR_FIRST_PLACED,
   /// The eight oars at the ship's sides (SPRITE_OAR).
@@ -367,9 +386,25 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
 }
 
 // The diving scripts own the actor's scratch fields: sceneWord is
-// sideways drift in 16.16 pixels per frame, sceneCounter the dive step (0
-// hovering), sceneByte the return side, timer the drift direction and
+// sideways drift in 16.16 pixels per frame, sceneCounter the dive step
+// (enum TolbiShipDeckDiveStep), sceneByte the return side, timer the drift
+// direction and
 // userValue the bob direction.
+
+/// The steps of a hovering monster's dive (TOLBI_SHIP_DECK_HOVER_AND_DIVE), in
+/// sceneCounter. After each move is started one frame passes before the
+/// arrival is tested.
+enum TolbiShipDeckDiveStep {
+  DIVE_STEP_HOVERING, ///< drifting and bobbing on its side
+  DIVE_STEP_DIVE,     ///< sets off at the warrior
+  DIVE_STEP_DIVE_STARTED,
+  DIVE_STEP_DIVING, ///< on arriving it cries, and the warrior turns and jumps
+  DIVE_STEP_WARRIOR_JUMPED,
+  DIVE_STEP_RETURN, ///< sets off back to its side
+  DIVE_STEP_RETURN_STARTED,
+  DIVE_STEP_RETURNING, ///< on arriving it slows and stops drifting
+  DIVE_STEP_BACK
+};
 
 /// Defines `name`, the update of a sea monster hovering by one warrior's side
 /// of the deck while the monsters attack.
@@ -383,18 +418,18 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
 #define TOLBI_SHIP_DECK_HOVER_AND_DIVE(name, warrior, diveX, diveZ, eastX,     \
                                        eastZ, westX, westZ, minX, maxX)        \
   static s32 name(struct Actor *actor) {                                       \
-    if (actor->sceneCounter != 0) {                                            \
+    if (actor->sceneCounter != DIVE_STEP_HOVERING) {                           \
       switch (actor->sceneCounter) {                                           \
-      case 1:                                                                  \
+      case DIVE_STEP_DIVE:                                                     \
         actor->speedLimit = toFIXED(4);                                        \
         actor->acceleration = toFIXED(2);                                      \
         FieldActor_SetMoveTarget(actor, diveX, 20, diveZ);                     \
         actor->sceneCounter++;                                                 \
         break;                                                                 \
-      case 2:                                                                  \
+      case DIVE_STEP_DIVE_STARTED:                                             \
         actor->sceneCounter++;                                                 \
         break;                                                                 \
-      case 3:                                                                  \
+      case DIVE_STEP_DIVING:                                                   \
         if (actor->targetX == ACTOR_NO_TARGET &&                               \
             actor->targetY == actor->targetX &&                                \
             actor->targetZ == actor->targetY) {                                \
@@ -412,20 +447,20 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
           }                                                                    \
         }                                                                      \
         break;                                                                 \
-      case 4:                                                                  \
+      case DIVE_STEP_WARRIOR_JUMPED:                                           \
         actor->sceneCounter++;                                                 \
         break;                                                                 \
-      case 5:                                                                  \
+      case DIVE_STEP_RETURN:                                                   \
         if (actor->sceneByte != 0)                                             \
           FieldActor_SetMoveTarget(actor, eastX, 0, eastZ);                    \
         else                                                                   \
           FieldActor_SetMoveTarget(actor, westX, 0, westZ);                    \
         actor->sceneCounter++;                                                 \
         break;                                                                 \
-      case 6:                                                                  \
+      case DIVE_STEP_RETURN_STARTED:                                           \
         actor->sceneCounter++;                                                 \
         break;                                                                 \
-      case 7:                                                                  \
+      case DIVE_STEP_RETURNING:                                                \
         if (actor->targetX == ACTOR_NO_TARGET &&                               \
             actor->targetY == actor->targetX &&                                \
             actor->targetZ == actor->targetY) {                                \
@@ -437,8 +472,8 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
           actor->sceneWord = 0;                                                \
         }                                                                      \
         break;                                                                 \
-      case 8:                                                                  \
-        actor->sceneCounter = 0;                                               \
+      case DIVE_STEP_BACK:                                                     \
+        actor->sceneCounter = DIVE_STEP_HOVERING;                              \
         break;                                                                 \
       }                                                                        \
     } else {                                                                   \
@@ -466,7 +501,7 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
       }                                                                        \
     }                                                                          \
     if (Random_Below(100) == 0)                                                \
-      actor->sceneCounter = 1;                                                 \
+      actor->sceneCounter = DIVE_STEP_DIVE;                                    \
     return 1;                                                                  \
   }
 
@@ -537,6 +572,21 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
   return 1;
 }
 
+/// The steps of a monster's leap on deck (TOLBI_SHIP_DECK_LEAP_AT), in timer.
+/// After each jump is started one frame passes before the landing is tested.
+enum TolbiShipDeckLeapStep {
+  LEAP_STEP_WAITING, ///< one frame in 40 it gets ready
+  LEAP_STEP_READY,
+  LEAP_STEP_LEAP, ///< jumps at the warrior
+  LEAP_STEP_LEAP_STARTED,
+  LEAP_STEP_LEAPING, ///< on landing the warrior turns and jumps
+  LEAP_STEP_WARRIOR_JUMPED,
+  LEAP_STEP_HOP_AWAY, ///< jumps to where it lands
+  LEAP_STEP_HOP_STARTED,
+  LEAP_STEP_HOPPING,
+  LEAP_STEP_LANDED
+};
+
 /// Defines `name`, the update of a monster on deck that, at random, leaps at
 /// a warrior.
 ///
@@ -544,30 +594,30 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
 /// an emote), and it lands. While sceneByte is set he turns to setFacing and
 /// it lands on (setX, setZ), else clearFacing and (clearX, clearZ).
 ///
-/// The actor's timer holds the step. Returns 1.
+/// The actor's timer holds the step (enum TolbiShipDeckLeapStep). Returns 1.
 #define TOLBI_SHIP_DECK_LEAP_AT(name, warrior, atX, atZ, setFacing,            \
                                 clearFacing, setX, setZ, clearX, clearZ)       \
   static s32 name(struct Actor *actor) {                                       \
     switch (actor->timer) {                                                    \
-    case 0:                                                                    \
+    case LEAP_STEP_WAITING:                                                    \
       if ((Random_Below(40)) == 0) {                                           \
         actor->timer++;                                                        \
       }                                                                        \
       break;                                                                   \
-    case 1:                                                                    \
+    case LEAP_STEP_READY:                                                      \
       actor->timer++;                                                          \
       break;                                                                   \
-    case 2:                                                                    \
+    case LEAP_STEP_LEAP:                                                       \
       actor->velocityY = toFIXED(4);                                           \
       actor->speedLimit = toFIXED(4);                                          \
       actor->acceleration = toFIXED(2);                                        \
       FieldActor_SetMoveTarget(actor, atX, 0, atZ);                            \
       actor->timer++;                                                          \
       break;                                                                   \
-    case 3:                                                                    \
+    case LEAP_STEP_LEAP_STARTED:                                               \
       actor->timer++;                                                          \
       break;                                                                   \
-    case 4:                                                                    \
+    case LEAP_STEP_LEAPING:                                                    \
       if (actor->targetX == ACTOR_NO_TARGET &&                                 \
           actor->targetY == actor->targetX &&                                  \
           actor->targetZ == actor->targetY) {                                  \
@@ -586,10 +636,10 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
         }                                                                      \
       }                                                                        \
       break;                                                                   \
-    case 5:                                                                    \
+    case LEAP_STEP_WARRIOR_JUMPED:                                             \
       actor->timer++;                                                          \
       break;                                                                   \
-    case 6:                                                                    \
+    case LEAP_STEP_HOP_AWAY:                                                   \
       actor->timer++;                                                          \
       actor->velocityY = toFIXED(4);                                           \
       actor->speedLimit = toFIXED(2);                                          \
@@ -600,18 +650,18 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
         FieldActor_SetMoveTarget(actor, clearX, 0, clearZ);                    \
       }                                                                        \
       break;                                                                   \
-    case 7:                                                                    \
+    case LEAP_STEP_HOP_STARTED:                                                \
       actor->timer++;                                                          \
       break;                                                                   \
-    case 8:                                                                    \
+    case LEAP_STEP_HOPPING:                                                    \
       if (actor->targetX == ACTOR_NO_TARGET &&                                 \
           actor->targetY == actor->targetX &&                                  \
           actor->targetZ == actor->targetY) {                                  \
         actor->timer++;                                                        \
       }                                                                        \
       break;                                                                   \
-    case 9:                                                                    \
-      actor->timer = 0;                                                        \
+    case LEAP_STEP_LANDED:                                                     \
+      actor->timer = LEAP_STEP_WAITING;                                        \
       break;                                                                   \
     }                                                                          \
     return 1;                                                                  \
@@ -2307,29 +2357,29 @@ static void TolbiShipDeck_ChooseOarStrokes(void) {
     if (TolbiShipDeck_GetRowerAtSeat(i) != 0)
       *mode = TolbiShipDeck_GetSeatStroke(i);
     else
-      *mode = 3;
+      *mode = OAR_STROKE_STEADY;
     mode++;
   }
   if (TolbiShipDeck_GetRowerAtSeat(0) != 0)
     sOarStroke[0] = TolbiShipDeck_GetSeatStroke(0);
   else
-    sOarStroke[0] = 3;
+    sOarStroke[0] = OAR_STROKE_STEADY;
   if (TolbiShipDeck_GetRowerAtSeat(2) != 0)
     sOarStroke[1] = TolbiShipDeck_GetSeatStroke(2);
   else
-    sOarStroke[1] = 3;
-  sOarStroke[2] = 3;
-  sOarStroke[3] = 3;
+    sOarStroke[1] = OAR_STROKE_STEADY;
+  sOarStroke[2] = OAR_STROKE_STEADY;
+  sOarStroke[3] = OAR_STROKE_STEADY;
   if (TolbiShipDeck_GetRowerAtSeat(1) != 0)
     sOarStroke[4] = TolbiShipDeck_GetSeatStroke(1);
   else
-    sOarStroke[4] = 3;
+    sOarStroke[4] = OAR_STROKE_STEADY;
   if (TolbiShipDeck_GetRowerAtSeat(3) != 0)
     sOarStroke[5] = TolbiShipDeck_GetSeatStroke(3);
   else
-    sOarStroke[5] = 3;
-  sOarStroke[6] = 3;
-  sOarStroke[7] = 3;
+    sOarStroke[5] = OAR_STROKE_STEADY;
+  sOarStroke[6] = OAR_STROKE_STEADY;
+  sOarStroke[7] = OAR_STROKE_STEADY;
 }
 
 /// Returns the stroke (1 to 4) of the rower at a seat, or 0 if the seat is
@@ -2380,24 +2430,27 @@ static void TolbiShipDeck_RowOars(void) {
   TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 7, 7, OAR_SWING_MIRRORED);
 }
 
-/// Advances one stroke's phase.
+/// Advances one stroke's phase, by its oar's angle in the turn: the blade is
+/// in the water from 7/16 to 15/16 of the turn and goes round slowly there,
+/// slowest as it dips in and comes out over the first and last 1/32, and
+/// swings back through the air fastest.
 static void TolbiShipDeck_AdvanceStroke(s32 actorId, s32 slot) {
   u16 value = sOarAngle[slot];
 
   if (value >= TRIG_TURN * 13 / 32 + 1 && value <= TRIG_TURN * 7 / 16 - 1) {
     sStrokePhase[slot] += TRIG_TURN * 7 / 4096;
-    Actor_SetAnimation(actorId, 3);
+    Actor_SetAnimation(actorId, OAR_ANIMATION_DIPPING);
   } else if (value >= TRIG_TURN * 29 / 32 + 1 &&
              value <= TRIG_TURN * 15 / 16 - 1) {
     sStrokePhase[slot] += TRIG_TURN * 7 / 2048;
-    Actor_SetAnimation(actorId, 3);
+    Actor_SetAnimation(actorId, OAR_ANIMATION_DIPPING);
   } else if (value >= TRIG_TURN * 7 / 16 + 1 &&
              value <= TRIG_TURN * 15 / 16 - 1) {
     sStrokePhase[slot] += TRIG_TURN * 7 / 1024;
-    Actor_SetAnimation(actorId, 2);
+    Actor_SetAnimation(actorId, OAR_ANIMATION_IN_WATER);
   } else {
     sStrokePhase[slot] += TRIG_TURN * 3 / 256;
-    Actor_SetAnimation(actorId, 1);
+    Actor_SetAnimation(actorId, OAR_ANIMATION_IN_AIR);
   }
 }
 
@@ -2410,19 +2463,19 @@ static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags) {
 
   if ((flags & OAR_SWING_AT_REST) == 0) {
     switch (sOarStroke[slot]) {
-    case 1:
+    case OAR_STROKE_STILL:
       sOarAngle[slot] = sStrokePhase[0];
       Actor_CopyGraphics(id, ACTOR_FIRST_STROKE_OAR);
       break;
-    case 2:
+    case OAR_STROKE_SLOW:
       sOarAngle[slot] = sStrokePhase[1];
       Actor_CopyGraphics(id, ACTOR_FIRST_STROKE_OAR + 1);
       break;
-    case 3:
+    case OAR_STROKE_STEADY:
       sOarAngle[slot] = sStrokePhase[2];
       Actor_CopyGraphics(id, ACTOR_FIRST_STROKE_OAR + 2);
       break;
-    case 4:
+    case OAR_STROKE_FAST:
       sOarAngle[slot] = sStrokePhase[3];
       Actor_CopyGraphics(id, ACTOR_FIRST_STROKE_OAR + 3);
       break;
@@ -3503,6 +3556,9 @@ const struct Trigger gTolbiShipDeckTriggersAtIsland[] = {
 
 /// How hard each passenger rows, from ACTOR_ARRIVED_FIRST_PASSENGER on.
 ///
-/// 1 leaves the oar still, 2 to 4 row ever faster; an empty seat's oars take
-/// stroke 3 (TolbiShipDeck_ChooseOarStrokes).
-const s32 gTolbiShipDeckRowerStrokes[] = {3, 2, 3, 1, 4, 4, 2, 1, 1};
+/// An empty seat's oars take OAR_STROKE_STEADY
+/// (TolbiShipDeck_ChooseOarStrokes).
+const s32 gTolbiShipDeckRowerStrokes[] = {
+    OAR_STROKE_STEADY, OAR_STROKE_SLOW,  OAR_STROKE_STEADY,
+    OAR_STROKE_STILL,  OAR_STROKE_FAST,  OAR_STROKE_FAST,
+    OAR_STROKE_SLOW,   OAR_STROKE_STILL, OAR_STROKE_STILL};

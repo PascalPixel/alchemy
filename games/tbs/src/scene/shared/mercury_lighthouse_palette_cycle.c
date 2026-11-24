@@ -15,20 +15,20 @@
 /// ramp; green and blue stay those of gPaletteCycleGreen and
 /// gPaletteCycleBlue.
 static void MercuryLighthouse_CyclePalette(void) {
-  // below is written through its address.
   u16 below;
   u32 i;
   s32 red;
   s32 greenAndBlue;
   volatile u16 *color;
 
+  /* FAKEMATCH(dead): below cleared through its own address, before anything
+     reads it; as below = 0. */
   *&below = 0;
   if (gFrameCount % 5 != 0)
     return;
   gPaletteCycleRed = (gPaletteCycleRed + 4) & RGB_LEVEL_MAX;
   for (i = 0; i < SHIMMER_LAST_COLOR - SHIMMER_FIRST_COLOR; i++) {
-    *&below =
-        RGB_RED(BG_PLTT_COLOR(SHIMMER_PALETTE, SHIMMER_LAST_COLOR - 1 - i));
+    below = RGB_RED(BG_PLTT_COLOR(SHIMMER_PALETTE, SHIMMER_LAST_COLOR - 1 - i));
     red = below;
     if (i < SHIMMER_DIMMED_COLORS)
       red -= red * 4 / 10;

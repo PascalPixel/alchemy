@@ -47,17 +47,17 @@ struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
 
 /// Bobs the two sprites of a pair (see MenuTitle_Create) up and down
 /// by gMenuTitleBobOffsets, one step every four frames.
-void MenuTitle_Bob(struct WindowSprite *obj) {
+void MenuTitle_Bob(struct WindowSprite *sprite) {
   s32 value;
 
   // The VBlank interrupt counts gVBlankCount, so each sprite reads it afresh.
-  value = (u8)obj->y +
+  value = (u8)sprite->y +
           gMenuTitleBobOffsets[(*(volatile u32 *)&gVBlankCount >> 2) & 7];
-  obj->oam.y = value;
-  obj = obj->next;
-  value = (u8)obj->y +
+  sprite->oam.y = value;
+  sprite = sprite->next;
+  value = (u8)sprite->y +
           gMenuTitleBobOffsets[(*(volatile u32 *)&gVBlankCount >> 2) & 7];
-  obj->oam.y = value;
+  sprite->oam.y = value;
 }
 
 /// Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB)
@@ -95,24 +95,24 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
   return sprite;
 }
 
-/// Makes the sprite `obj` pulse: scales it about its centre by
+/// Makes `sprite` pulse: scales it about its centre by
 /// gWindowSprite_PulseScales (in 1/65536, used in 1/256), one step every two
 /// frames, and puts it on draw layer 252.
-void WindowSprite_Pulse(struct WindowSprite *obj) {
+void WindowSprite_Pulse(struct WindowSprite *sprite) {
   s32 scale = gWindowSprite_PulseScales[(gVBlankCount >> 1) & 7] / 256;
   struct AffineTransform effect;
 
-  if (obj != 0) {
+  if (sprite != 0) {
     effect.scaleX = scale;
     effect.scaleY = scale;
     effect.angle = 0;
-    obj->oam.matrix = OamMatrix_AllocFromTransform(&effect);
+    sprite->oam.matrix = OamMatrix_AllocFromTransform(&effect);
     // Affine mode 3 doubles the sprite's box, so it moves up and left by 16
     // pixels (-16 in the 16-bit x and 8-bit y) to keep its centre.
-    obj->oam.affineMode = 3;
-    obj->oam.x = obj->x + (u16)-16;
-    obj->oam.y = (u8)obj->y + (u8)-16;
-    obj->depth = OAM_DEPTH_FRONT - 3;
+    sprite->oam.affineMode = 3;
+    sprite->oam.x = sprite->x + (u16)-16;
+    sprite->oam.y = (u8)sprite->y + (u8)-16;
+    sprite->depth = OAM_DEPTH_FRONT - 3;
   }
 }
 
@@ -370,12 +370,12 @@ s32 Portrait_Load(u32 member, s32 cacheSlot) {
   return tile;
 }
 
-/// Returns gWindowSprite_PointerTiles[0], whatever `no` is. The battle's prompt
-/// reads it by far call (BattleMessage_WaitForAdvanceAt).
-s32 WindowSprite_GetPointerTiles(s32 no) {
-  if (no != 0)
-    no = 0;
-  return gWindowSprite_PointerTiles[no];
+/// Returns gWindowSprite_PointerTiles[0], whatever `index` is. The battle's
+/// prompt reads it by far call (BattleMessage_WaitForAdvanceAt).
+s32 WindowSprite_GetPointerTiles(s32 index) {
+  if (index != 0)
+    index = 0;
+  return gWindowSprite_PointerTiles[index];
 }
 
 /// Copies the 4bpp decoder into RAM, calls it with the transfer's encoded

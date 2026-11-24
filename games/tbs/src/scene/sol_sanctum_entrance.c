@@ -459,7 +459,10 @@ static void SolSanctumEntrance_SetSecondSmallJewel(void) {
   }
 }
 
-/// Remembers which of a statue's two columns beside its start it stands in.
+/// Notes which side of its starting column a moved statue now stands on, so
+/// it stays there for the rest of the visit: flagBase (its _AT_EAST flag) for
+/// rightColumn, the flag after it (_AT_WEST) for leftColumn, neither back at
+/// its start.
 static inline void SolSanctumEntrance_RecordStatueColumn(s32 column,
                                                          s32 flagBase,
                                                          s32 leftColumn,
@@ -476,8 +479,7 @@ static inline void SolSanctumEntrance_RecordStatueColumn(s32 column,
 /// Isaac shifts the westmost statue of the checkered statue hall a cell east or
 /// west, with Move or by pushing it, and uncovers the dark doorway behind it
 /// (cell (94, 7)) to a small room whose statue will not budge. Nothing more
-/// happens on screen; the game notes which side the statue now stands on, so
-/// it is still there when the party comes back into the hall.
+/// happens on screen.
 ///
 /// The Move row runs this after Move has shifted the statue, and
 /// SolSanctumEntrance_PushStatue after a push. The statue starts in column 94;
@@ -497,8 +499,7 @@ static void SolSanctumEntrance_WestStatueMoved(void) {
 /// Isaac shifts the eastmost statue of the checkered statue hall a cell east or
 /// west, with Move or by pushing it, and uncovers the doorway behind it (cell
 /// (114, 7)) to the steps up to the maze. As for the west statue, the game
-/// notes which side it now stands on, so it stays there for the rest of the
-/// visit.
+/// notes which side it now stands on.
 ///
 /// The statue starts in column 114; columns 113 and 115 set its two flags.
 static void SolSanctumEntrance_EastStatueMoved(void) {
@@ -520,8 +521,7 @@ static void SolSanctumEntrance_EastStatueMoved(void) {
 
 /// Isaac uses Move on the westmost of the six statues across the water (cell
 /// (100, 32)) and shifts it a cell east or west, uncovering the second minotaur
-/// relief in the wall behind it. The game notes where the statue now stands,
-/// so it stays there for the rest of the visit.
+/// relief in the wall behind it.
 ///
 /// SolSanctumEntrance_PushStatue runs this too, after a push by hand.
 /// SolSanctumEntrance_RestoreRowStatueCells then lets Isaac jump into the cell
@@ -541,8 +541,7 @@ static void SolSanctumEntrance_RowStatueAMoved(void) {
 
 /// Isaac uses Move on the second of the six statues from the west (cell
 /// (104, 32)) and shifts it aside, uncovering a dark doorway behind it into a
-/// winding passage that leads nowhere. The game notes where the statue now
-/// stands, so it stays there for the rest of the visit.
+/// winding passage that leads nowhere.
 static void SolSanctumEntrance_RowStatueBMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_B);
   s32 column;
@@ -557,9 +556,7 @@ static void SolSanctumEntrance_RowStatueBMoved(void) {
 }
 
 /// Isaac uses Move on the third of the six statues from the west (cell
-/// (108, 32)) and shifts it aside; only plain wall stands behind it. The game
-/// notes where the statue now stands, so it stays there for the rest of the
-/// visit.
+/// (108, 32)) and shifts it aside; only plain wall stands behind it.
 static void SolSanctumEntrance_RowStatueCMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_C);
   s32 column;
@@ -574,9 +571,7 @@ static void SolSanctumEntrance_RowStatueCMoved(void) {
 }
 
 /// Isaac uses Move on the fourth of the six statues from the west (cell
-/// (112, 32)) and shifts it aside; only plain wall stands behind it. The game
-/// notes where the statue now stands, so it stays there for the rest of the
-/// visit.
+/// (112, 32)) and shifts it aside; only plain wall stands behind it.
 static void SolSanctumEntrance_RowStatueDMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_D);
   s32 column;
@@ -591,9 +586,7 @@ static void SolSanctumEntrance_RowStatueDMoved(void) {
 }
 
 /// Isaac uses Move on the fifth of the six statues from the west (cell
-/// (116, 32)) and shifts it aside; only plain wall stands behind it. The game
-/// notes where the statue now stands, so it stays there for the rest of the
-/// visit.
+/// (116, 32)) and shifts it aside; only plain wall stands behind it.
 static void SolSanctumEntrance_RowStatueEMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_E);
   s32 column;
@@ -609,9 +602,7 @@ static void SolSanctumEntrance_RowStatueEMoved(void) {
 
 /// Isaac uses Move on the eastmost of the six statues (cell (120, 32)) and
 /// shifts it aside. Behind it is plain wall until the second Small Jewel is
-/// set in the relief, then the doorway on to the rooms of Sol and Luna. The
-/// game notes where the statue now stands, so it stays there for the rest of
-/// the visit.
+/// set in the relief, then the doorway on to the rooms of Sol and Luna.
 static void SolSanctumEntrance_RowStatueFMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_F);
   s32 column;
@@ -1036,20 +1027,20 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   // Kraden hops: "Let's see if we can find it!"
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 20);
-  // Garet: "I think he's serious! Should we help him?"
+  // Garet: "I think he's serious! Should we help him, Isaac?"
+  // Yes: Garet, "But it's too dangerous for us to split up. We should stay
+  // together."
+  // No: Jenna, "You can't seriously want to turn back after we've come this
+  // far."
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    // Yes: Garet says it is too dangerous to split up; they stay together.
     Event_SetMessageId(MsgSolSanctumDangerousSplitStay);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-    // "But it's too dangerous for us to split up. We should stay..."
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   } else {
-    // No: Jenna objects to turning back now; Isaac nods and Garet agrees to
-    // help Kraden.
+    // Isaac winces, and Garet nods and agrees to help Kraden.
     Event_SetMessageId(MsgSolSanctumCantSeriouslyWant);
     Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 20);
-    // "You can't seriously want to turn back after we've come this far."
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);

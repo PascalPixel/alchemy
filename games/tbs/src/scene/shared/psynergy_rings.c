@@ -6,7 +6,9 @@
 
 /// Sets off a golden ring around the actor, its two halves
 /// (field_effect_vertical.c) drawn from the Psynergy's cached tiles, with the
-/// sound the includer names as PSYNERGY_RINGS_SOUND.
+/// sound the includer names as PSYNERGY_RINGS_SOUND. Vale's and the World
+/// Map's Scene_SpawnGoldenRing (golden_ring.c) is the same ring without the
+/// sound, its halves always at sprite priority 1 rather than the actor's.
 static void Scene_SpawnPsynergyRings(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
@@ -32,10 +34,11 @@ static void Scene_SpawnPsynergyRings(struct Actor *parent) {
         sprite->slot = effectState->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
-            (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;
+            (gVramCacheEntries[sprite->slot].offset / TILE_SIZE_4BPP) &
+            OBJ_TILE_MASK;
         sprite->image.fullColor = 0;
-        sprite->image.shape = 1;
-        sprite->image.size = 2;
+        sprite->image.shape = RING_HALF_SHAPE;
+        sprite->image.size = RING_HALF_SIZE;
         sprite->entries[0]->picture = 0;
       }
     }

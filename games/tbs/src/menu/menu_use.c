@@ -12,8 +12,8 @@ void Item_PrepareUsePalette(void) {
   Palette_LightenHighlight(HIGHLIGHT_PALETTE - 1);
 }
 
-/// Nothing calls it.
-void Item_UseNoOpCallback(void) {}
+/// Unused: does nothing.
+UNUSED void Item_UseNoOp(void) {}
 
 /// Uses the item in memberId's inventory slot on targetId, or on every party
 /// member when its action's range is ABILITY_RANGE_ALL: applies its action at
@@ -47,8 +47,8 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   return useResult;
 }
 
-/// Nothing calls it.
-s32 Item_ReturnOne(void) { return 1; }
+/// Unused: returns 1.
+UNUSED s32 Item_UseReturnTrue(void) { return 1; }
 
 /// Applies the healing, curing, revival or lasting stat rise of action
 /// effectId, used by party member sourceId, to targetId, or to every party
@@ -164,6 +164,8 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         messageOffset = ITEM_USE_RESULT_LUCK_UP;
         changed = 1;
         break;
+      // No edition's "Your Attack increased!" or "Your Defense increased!"
+      // shows a number, so the 3 and the 4 pushed for them are never seen.
       case ABILITY_APPLE:
         target->baseAttack += amount + randomAdjust;
         MessageArgument_PushFar(3, MESSAGE_ARGUMENT_NUMBER);
@@ -315,8 +317,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   return 0;
 }
 
-/// Plays the use sound of item's action (Ability_PlayUseSound, which, for
-/// all its name, plays only a sound).
+/// Plays the use sound of item's action (Ability_PlayUseSound).
 void Item_PlayUseSound(u32 item) {
   Ability_PlayUseSound(Item_GetDirectFar(item)->abilityId &
                        PSYNERGY_ABILITY_MASK);
@@ -365,5 +366,5 @@ void Ability_PlayUseSound(s32 action) {
   }
 }
 
-/// Nothing calls it.
-s32 Menu_ReservedStatusZero(void) { return 0; }
+/// Unused: returns 0.
+UNUSED s32 Ability_ReturnFalse(void) { return 0; }

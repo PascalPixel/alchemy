@@ -48,7 +48,8 @@ struct MenuSprite {
   } oam;
 };
 
-/// A cursor or prompt sprite: a list link and its OAM attributes as fields.
+/// A cursor or prompt sprite: MenuSprite's layout with its OAM fields named
+/// directly, for code that never writes the attributes as words.
 struct CursorSprite {
   struct CursorSprite *next;
   u16 y : 8;
@@ -160,9 +161,9 @@ STATIC_ASSERT(offsetof(struct BattleMenuState, chosenDjinn) == 228);
 /// Restores the previous selection: page, row and return row.
 #define BATTLE_MENU_GET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \
-    (page_) = ((struct BattleMenuState *)gWindowState[42])->page;              \
-    (row_) = ((struct BattleMenuState *)gWindowState[42])->row;                \
-    (preferred_) = ((struct BattleMenuState *)gWindowState[42])->preferredRow; \
+    (page_) = gBattleMenuState->page;                                          \
+    (row_) = gBattleMenuState->row;                                            \
+    (preferred_) = gBattleMenuState->preferredRow;                             \
   } while (0)
 
 /// Saves the selection: page, row and return row.

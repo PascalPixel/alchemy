@@ -370,9 +370,9 @@ void ScanlineWindow_BuildEdges(u16 *scanlineBounds, u16 *tilemap) {
           break;
         // Outside Japanese the left edge meeting a divider counts as a side
         // too.
-        // XXX: tile 7 is blank in every edition's window tiles and no code
-        // draws it; a tilemap that places it at a window's side would say why
-        // it counts as one.
+        // XXX (no evidence): why tile 7 counts as a side; it is blank in every
+        // edition's window tiles and no code writes it into the UI tilemap, so
+        // no screen shows it.
         case WINDOW_TILE(7):
         case WINDOW_TILE_BORDER_LEFT:
 #if LANGUAGE != LANGUAGE_JAPANESE

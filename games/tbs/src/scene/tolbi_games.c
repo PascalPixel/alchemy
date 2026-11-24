@@ -75,13 +75,13 @@ s32 Scene_Initialize(void);
 extern const struct SceneEntrance gTolbiSpring_Entrances[];
 extern const u32 gTolbiSpring_Exits[];
 extern const struct ActorPlacement gTolbiSpringActorPlacements[];
-extern const struct ActorPlacement gTolbiSpringActorPlacementsOther[];
-extern const struct Trigger gTolbiSpringTriggersOther[];
+extern const struct ActorPlacement gStuccoRoomsCActorPlacements[];
+extern const struct Trigger gStuccoRoomsCTriggers[];
 extern const struct Trigger gTolbiSpringTriggers[];
 extern const u16 gTolbiSpring_AlphaSteps[];
 extern const u32 gTolbiSpring_PrizeItems[];
 extern const u16 gTolbiSpring_CoinPrizes[];
-extern const u32 gTolbiSpring_LuckyWheelsPrizeItems[];
+extern const u32 gStuccoRoomsC_LuckyWheelsPrizeItems[];
 extern const u8 gTolbiSpring_CrabFrames[];
 extern const u8 gTolbiSpring_CircleFrames[];
 extern const u8 gTolbiSpring_ActorPixelX[];
@@ -105,55 +105,59 @@ extern const u16 gTolbiSpring_ActorHeadings[];
 #endif
 
 static void TolbiSpring_DrainSpring(void);
-static void TolbiSpring_OfferLuckyWheels(s32 spoken);
+static void StuccoRoomsC_OfferLuckyWheels(s32 spoken);
 static s32 TolbiSpring_RunSpringGame(void);
-static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category);
+static s32 StuccoRoomsC_SelectLuckyWheelsPrize(s32 category);
 static void TolbiSpring_InitializeTossSimulation(void);
 static s32 TolbiSpring_RunToss(s32 tossKind);
+
+/// An exit's flag word of -1 stands for no flag: GameFlag_GetFar reads it as
+/// flag 0xfff, which nothing sets, so the exit is always taken.
+#define EXIT_FLAG_NONE 0xffffffff
 
 /// What the player throws into the spring, chosen by Menu_SelectCoinsOrMedals.
 enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 
 /// The people and boards of the Lucky Dice tent and the Lucky Wheels room,
-/// numbered in the order of gTolbiSpringActorPlacementsOther from
+/// numbered in the order of gStuccoRoomsCActorPlacements from
 /// ACTOR_FIRST_PLACED.
-enum TolbiSpringGameRoomActorId {
+enum StuccoRoomsCActorId {
   /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN) behind the curved
   /// counter of the Lucky Wheels room, who runs the slot machine
-  /// (TolbiSpring_TalkToWheelsAttendant).
-  ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT = ACTOR_FIRST_PLACED,
+  /// (StuccoRoomsC_TalkToWheelsAttendant).
+  ACTOR_LUCKY_WHEELS_ATTENDANT = ACTOR_FIRST_PLACED,
   /// A young man with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR), the left
   /// of the two behind the Lucky Dice counter, who runs the game
-  /// (TolbiSpring_OfferLuckyDice).
-  ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
+  /// (StuccoRoomsC_OfferLuckyDice).
+  ACTOR_LUCKY_DICE_ATTENDANT,
   /// The other young man behind the Lucky Dice counter, on the right, who
   /// points the party to the rules: `Read the sign if ya don't know the
   /// rules.`
-  ACTOR_TOLBI_SPRING_DICE_RULES_ATTENDANT,
+  ACTOR_LUCKY_DICE_RULES_ATTENDANT,
   /// A Lucky Dice player, a burly grey-haired man
   /// (SPRITE_BURLY_MAN_WITH_GREY_HAIR) at the west end of the yellow rug.
-  ACTOR_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME,
+  ACTOR_LUCKY_DICE_PLAYER_FIRST_TIME,
   /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE) by the green table.
-  ACTOR_TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS,
+  ACTOR_LUCKY_DICE_PLAYER_TRIPLE_DIGITS,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS) by the east
   /// wall.
-  ACTOR_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS,
+  ACTOR_LUCKY_DICE_PLAYER_OUT_OF_COINS,
   /// The green board of Lucky Wheels prizes north-west of the counter. The map
   /// draws it; an unseen actor (SPRITE_BLANK) stands on it to be read
-  /// (TolbiSpring_ReadLuckyWheelsPrizes).
-  ACTOR_TOLBI_SPRING_WHEELS_PRIZE_SIGN,
+  /// (StuccoRoomsC_ReadLuckyWheelsPrizes).
+  ACTOR_LUCKY_WHEELS_PRIZE_SIGN,
   /// The green board of Lucky Wheels rules east of the counter, read the same
-  /// way (TolbiSpring_ReadLuckyWheelsRules).
-  ACTOR_TOLBI_SPRING_WHEELS_RULES_SIGN,
+  /// way (StuccoRoomsC_ReadLuckyWheelsRules).
+  ACTOR_LUCKY_WHEELS_RULES_SIGN,
   /// The Lucky Dice rules, on a green board east of the counter, read the
   /// same way.
-  ACTOR_TOLBI_SPRING_DICE_RULES_SIGN,
+  ACTOR_LUCKY_DICE_RULES_SIGN,
   /// A soldier by the red rug in the Lucky Dice tent, gone after Colosso, drawn
   /// with the long-haired fighter's
   /// sprite (SPRITE_PERSON_WITH_SWORD).
-  ACTOR_TOLBI_SPRING_SOLDIER,
+  ACTOR_LUCKY_DICE_SOLDIER,
   /// The Lucky Dice rules for pairs, on a green board west of the counter.
-  ACTOR_TOLBI_SPRING_DICE_PAIRS_SIGN
+  ACTOR_LUCKY_DICE_PAIRS_SIGN
 };
 
 /// Tolbi Spring's own actors (TolbiSpring), numbered in the order of
@@ -239,7 +243,7 @@ enum {
 
 /// What a line of Lucky Wheels wins, as the slot machine reports it: one of
 /// LUCKY_WHEELS_KINDS kinds of prize, three items each in
-/// gTolbiSpring_LuckyWheelsPrizeItems, or a moon, which wins any kind.
+/// gStuccoRoomsC_LuckyWheelsPrizeItems, or a moon, which wins any kind.
 enum { LUCKY_WHEELS_KINDS = 5, LUCKY_WHEELS_MOON = 5 };
 
 /// The slot machine's report in the holdings' wonPrizes: the kinds won, ended
@@ -346,7 +350,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineState.next == SCENE_TOLBI_SPRING) {
     return gTolbiSpringActorPlacements;
   }
-  return gTolbiSpringActorPlacementsOther;
+  return gStuccoRoomsCActorPlacements;
 }
 
 /// The man with a pack by Tolbi Spring's north-west corner asks whether Isaac
@@ -377,7 +381,7 @@ static void TolbiSpring_AskAboutLuckyMedal(s32 actorId) {
 ///
 /// Yes, and he warns that once you start you won't want to stop; no, and he
 /// says Lucky Dice is all the rage in Tolbi.
-static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
+static void StuccoRoomsC_AskAboutFirstDiceGame(s32 actorId) {
   s32 question = MsgTolbiYerFirstTime;
   Event_SetMessageId(question);
   // "Is this yer first time to play Lucky Dice?"
@@ -419,7 +423,7 @@ static void TolbiSpring_TossCoinOrMedal(void) {
 /// Isaac reads the green board east of the Lucky Wheels counter: pull the
 /// lever up to five times to line up matching icons, press the star to hold
 /// a wheel, and play 1, 3, 5 or 7 lines for 1 to 4 Game Tickets.
-static void TolbiSpring_ReadLuckyWheelsRules(void) {
+static void StuccoRoomsC_ReadLuckyWheelsRules(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiLuckyWheelsRulesPullLever);
   // "Lucky Wheels Rules Pull the lever and try to line up..."
@@ -430,7 +434,7 @@ static void TolbiSpring_ReadLuckyWheelsRules(void) {
 /// Isaac reads the green board north-west of the Lucky Wheels counter: shirts
 /// win undershirts, rings win rings, boots win boots, stars and hearts win
 /// items, and moons can win anything.
-static void TolbiSpring_ReadLuckyWheelsPrizes(void) {
+static void StuccoRoomsC_ReadLuckyWheelsPrizes(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiLuckyWheelsPrizesPrizesDetermined);
   // "Lucky Wheels Prizes Prizes are determined by which icons you..."
@@ -442,9 +446,9 @@ static void TolbiSpring_ReadLuckyWheelsPrizes(void) {
 /// and if he has Game Tickets and agrees, sends him to the slot machine.
 ///
 /// Without tickets she tells him he needs them to play. See
-/// TolbiSpring_OfferLuckyWheels.
-static void TolbiSpring_TalkToWheelsAttendant(void) {
-  TolbiSpring_OfferLuckyWheels(0);
+/// StuccoRoomsC_OfferLuckyWheels.
+static void StuccoRoomsC_TalkToWheelsAttendant(void) {
+  StuccoRoomsC_OfferLuckyWheels(0);
 }
 
 /// Selects the triggers of Tolbi Spring or of the Lucky Dice and Lucky Wheels
@@ -453,7 +457,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineState.next == SCENE_TOLBI_SPRING) {
     return gTolbiSpringTriggers;
   }
-  return gTolbiSpringTriggersOther;
+  return gStuccoRoomsCTriggers;
 }
 
 /// The setup of both scenes, and what the attendants say when a game ends.
@@ -495,25 +499,21 @@ s32 Scene_Initialize(void) {
     }
   } else {
     if (GameFlag_Get(FLAG_COLOSSO_OVER)) {
-      Actor_SetPosition(ACTOR_TOLBI_SPRING_SOLDIER, 0, 0);
+      Actor_SetPosition(ACTOR_LUCKY_DICE_SOLDIER, 0, 0);
     }
     gOamCopyEnabled = 1;
     gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     if (gMainRoutineState.entrance == STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI) {
-      Actor_SetSpriteColorById(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT,
-                               SPRITE_COLOR_GRB);
-      Actor_SetSpriteColorById(ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
-                               SPRITE_COLOR_RBG);
+      Actor_SetSpriteColorById(ACTOR_LUCKY_WHEELS_ATTENDANT, SPRITE_COLOR_GRB);
+      Actor_SetSpriteColorById(ACTOR_LUCKY_DICE_ATTENDANT, SPRITE_COLOR_RBG);
     }
     // Back from Lucky Dice, the attendant tells the coins won or lost.
     if (gMainRoutineState.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Event_Start();
-      Actor_SetSpriteColorById(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT,
-                               SPRITE_COLOR_GRB);
-      Actor_SetSpriteColorById(ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
-                               SPRITE_COLOR_RBG);
+      Actor_SetSpriteColorById(ACTOR_LUCKY_WHEELS_ATTENDANT, SPRITE_COLOR_GRB);
+      Actor_SetSpriteColorById(ACTOR_LUCKY_DICE_ATTENDANT, SPRITE_COLOR_RBG);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Event_Wait(10);
@@ -532,13 +532,13 @@ s32 Scene_Initialize(void) {
         Event_SetMessageId(MsgTolbiYaWonNumber);
         MessageArgument_Push(coinChange, MESSAGE_ARGUMENT_NUMBER);
         // "Ya won ... coin! Talk about lucky!"
-        Event_ShowMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
+        Event_ShowMessage(ACTOR_LUCKY_DICE_ATTENDANT, 0);
         Sound_WaitForJingle();
       } else if (coinChange < 0) {
         Event_SetMessageId(MsgTolbiYaLostNumber);
         MessageArgument_Push(-coinChange, MESSAGE_ARGUMENT_NUMBER);
         // "Ya lost ... coin. Better luck next time."
-        Event_ShowMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
+        Event_ShowMessage(ACTOR_LUCKY_DICE_ATTENDANT, 0);
       }
       Event_End();
     }
@@ -551,11 +551,11 @@ s32 Scene_Initialize(void) {
       Event_WaitTransitionFrames();
       Event_Wait(10);
       if (wonPrizes[0] == LUCKY_WHEELS_PRIZES_END) {
-        TolbiSpring_OfferLuckyWheels(1);
+        StuccoRoomsC_OfferLuckyWheels(1);
       } else if (wonPrizes[0] != LUCKY_WHEELS_PRIZES_AWARDED) {
         Event_SetMessageId(MsgTolbiCongratulations);
         // "Congratulations!"
-        Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+        Event_ShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
         if (*wonPrizes != LUCKY_WHEELS_PRIZES_END) {
           for (prizeIndex = 0; wonPrizes[prizeIndex] != LUCKY_WHEELS_PRIZES_END;
                prizeIndex++) {
@@ -564,10 +564,10 @@ s32 Scene_Initialize(void) {
             } else {
               Event_SetMessageId(MsgTolbiAndYouWonItem);
             }
-            item = TolbiSpring_SelectLuckyWheelsPrize(wonPrizes[prizeIndex]);
+            item = StuccoRoomsC_SelectLuckyWheelsPrize(wonPrizes[prizeIndex]);
             MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
             // "You won ...! Here you go.", then "And you won ...! Here you go."
-            Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+            Event_ShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
             Item_ShowFound(item, 3);
             Party_GiveItem(item, 0);
             Event_Wait(10);
@@ -578,7 +578,7 @@ s32 Scene_Initialize(void) {
         gMainRoutineState.holdings.wonPrizes[0] = LUCKY_WHEELS_PRIZES_AWARDED;
         Event_SetMessageId(MsgTolbiComeAgain);
         // "Come again!"
-        Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+        Event_ShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       }
       Event_End();
     }
@@ -688,7 +688,7 @@ static void TolbiSpring_DrainSpring(void) {
 ///
 /// spoken is 1 when the game has just ended with nothing won: she says `Too
 /// bad...` and offers another game, or says to come back with tickets.
-static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
+static void StuccoRoomsC_OfferLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
 
@@ -698,58 +698,58 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
 
     Event_SetMessageId(message);
     // "Step right up and try your hand at lucky wheels!"
-    Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+    Event_ShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     if (tickets == 0) {
       // "You gotta have game tickets to play."
-      Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      Event_ShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       return;
     }
     Event_SetMessageId(message + 2);
     MessageArgument_Push(tickets, MESSAGE_ARGUMENT_NUMBER);
     // "You have ... game ticket, Isaac. Would you like to use these..."
-    Event_OpenMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+    Event_OpenMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
       // "The rules are listed on the sign. Take a look, take a look."
-      Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      Event_ShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       return;
     }
     room = PartyInventory_CountFreeSlots();
     if (room == 0) {
       Event_SetMessageId(message + 4);
       // "You can't carry any more items. Are you sure you want to play?"
-      Event_OpenMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      Event_OpenMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     } else if (room <= 6) {
       Event_SetMessageId(message + 5);
       // "If you win anything, you might not be able to take it with..."
-      Event_OpenMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      Event_OpenMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     }
     if (room <= 6 &&
         Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
       Event_SetMessageId(MsgTolbiGetRidItems);
       // "Then get rid of some items and come again."
-      Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      Event_ShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       return;
     }
   } else {
     if (tickets == 0) {
       Event_SetMessageId(MsgTolbiBadComeBack);
       // "Too bad... Come back after you get some tickets."
-      Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      Event_ShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       return;
     }
     Event_SetMessageId(MsgTolbiBadLikeUse);
     // "Too bad... Would you like to use your tickets to keep playing?"
-    Event_OpenMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+    Event_OpenMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
       Event_SetMessageId(MsgTolbiComeAgain);
       // "Come again!"
-      Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      Event_ShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       return;
     }
   }
   Event_SetMessageId(MsgTolbiStepRightEnjoy);
   // "Step right up and enjoy yourself."
-  Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+  Event_ShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
   Event_LeaveFor(SEQUENCE_SLOTS, 0);
   Event_SetAfterBattleDestination(SCENE_STUCCO_ROOMS_C,
                                   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS);
@@ -760,7 +760,7 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
 /// he walks down to the green table and the game of Lucky Dice begins.
 ///
 /// Without enough coins he is told `Ya gotta pay to play.`
-static void TolbiSpring_OfferLuckyDice(void) {
+static void StuccoRoomsC_OfferLuckyDice(void) {
   u32 cost;
   u32 coins;
 
@@ -770,7 +770,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
   if (coins < cost) {
     Event_SetMessageId(MsgTolbiYaDontEnough);
     // "Hey! Ya don't have enough coins! Ya gotta pay to play."
-    Event_OpenMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
+    Event_OpenMessage(ACTOR_LUCKY_DICE_ATTENDANT, 0);
     return;
   }
   sLuckyDiceCoinsBefore = coins;
@@ -778,10 +778,10 @@ static void TolbiSpring_OfferLuckyDice(void) {
   Event_SetMessageId(MsgTolbiBuddyWannaTry);
   MessageArgument_Push(cost, MESSAGE_ARGUMENT_NUMBER);
   // "Hey, buddy, wanna try yer luck at the dice? It's ... coin to..."
-  Event_OpenMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
+  Event_OpenMessage(ACTOR_LUCKY_DICE_ATTENDANT, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // "OK! Then take the dice."
-    Event_ShowMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
+    Event_ShowMessage(ACTOR_LUCKY_DICE_ATTENDANT, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 128);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 152);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
@@ -792,7 +792,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
   } else {
     gFieldState->message++;
     // "No? Oh, well. Who's next?"
-    Event_ShowMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
+    Event_ShowMessage(ACTOR_LUCKY_DICE_ATTENDANT, 0);
   }
   Event_End();
 }
@@ -1039,7 +1039,7 @@ end:
 
 /// Chooses which of the three items of a kind the Lucky Wheels attendant hands
 /// over, never the one she gave last time. A moon wins a kind at random.
-static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
+static s32 StuccoRoomsC_SelectLuckyWheelsPrize(s32 category) {
   s32 previousVariant;
   s32 variant;
 
@@ -1059,7 +1059,7 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
   gMainRoutineState.holdings.wonPrizes[LUCKY_WHEELS_LAST_GIVEN + category] =
       variant;
 
-  return gTolbiSpring_LuckyWheelsPrizeItems[category * 3 + variant];
+  return gStuccoRoomsC_LuckyWheelsPrizeItems[category * 3 + variant];
 }
 
 /// Places the actor at the three coordinates and sets its facing, animation
@@ -1686,12 +1686,12 @@ const struct SceneEntrance gTolbiSpring_Entrances[] = {
 const u32 gTolbiSpring_Exits[] = {
     SCENE_EXITS(TolbiSpring),
     SCENE_EXIT_UNLESS(TOLBI_SPRING_TO_TOLBI, Tolbi, TOLBI_FROM_TOLBI_SPRING,
-                      0xffffffff),
+                      EXIT_FLAG_NONE),
     SCENE_EXITS(StuccoRoomsC),
     SCENE_EXIT_UNLESS(STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI, Tolbi,
-                      TOLBI_FROM_LUCKY_DICE, 0xffffffff),
+                      TOLBI_FROM_LUCKY_DICE, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI, Tolbi,
-                      TOLBI_FROM_LUCKY_WHEELS, 0xffffffff),
+                      TOLBI_FROM_LUCKY_WHEELS, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -1742,7 +1742,7 @@ const struct ActorPlacement gTolbiSpringActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ActorPlacement gTolbiSpringActorPlacementsOther[] = {
+const struct ActorPlacement gStuccoRoomsCActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         144, 0, 360, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1768,29 +1768,29 @@ const struct ActorPlacement gTolbiSpringActorPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-const struct Trigger gTolbiSpringTriggersOther[] = {
+const struct Trigger gStuccoRoomsCTriggers[] = {
     { TRIGGER_EXIT, STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI },
     { TRIGGER_EXIT, STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, EVENT(TolbiSpring_TalkToWheelsAttendant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringHmmIWonderIfTheseKids) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_ATTENDANT, CONDITION_ALWAYS, EVENT(TolbiSpring_OfferLuckyDice) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringReadTheSignIfYaDont) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME, CONDITION_ALWAYS, EVENT(TolbiSpring_AskAboutFirstDiceGame) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWhoaGettingTripleDigitsIsReal) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringIDontWantToStopPlaying) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWinningOrLosingIsPureLuck) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTheRulesForLuckyDiceAint) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringSometimesPeopleWhoHaveNeverPlayed) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringThinkingWontHelpYouWinThis) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringMyLuckHasRunOutFor) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_WHEELS_PRIZE_SIGN, CONDITION_ALWAYS, EVENT(TolbiSpring_ReadLuckyWheelsPrizes) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_WHEELS_RULES_SIGN, CONDITION_ALWAYS, EVENT(TolbiSpring_ReadLuckyWheelsRules) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_RULES_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceThrowTheDiceOn) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_PAIRS_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceIfTwoNumbersMatch) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_SOLDIER, FLAG_BABI_SAVED, MSGNO(MsgTolbiSpringYeahThatDiceGameLooksKinda) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_SOLDIER, FLAG_BABI_SAVED, MSGNO(MsgTolbiSpringILikePlayingLuckyDiceBut) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringOhThereAreAlwaysScalpersAt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTheresNoWayPoorSoldiersLike) },
+    { TRIGGER_TALK, ACTOR_LUCKY_WHEELS_ATTENDANT, CONDITION_ALWAYS, EVENT(StuccoRoomsC_TalkToWheelsAttendant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_WHEELS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringHmmIWonderIfTheseKids) },
+    { TRIGGER_TALK, ACTOR_LUCKY_DICE_ATTENDANT, CONDITION_ALWAYS, EVENT(StuccoRoomsC_OfferLuckyDice) },
+    { TRIGGER_TALK, ACTOR_LUCKY_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringReadTheSignIfYaDont) },
+    { TRIGGER_TALK, ACTOR_LUCKY_DICE_PLAYER_FIRST_TIME, CONDITION_ALWAYS, EVENT(StuccoRoomsC_AskAboutFirstDiceGame) },
+    { TRIGGER_TALK, ACTOR_LUCKY_DICE_PLAYER_TRIPLE_DIGITS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWhoaGettingTripleDigitsIsReal) },
+    { TRIGGER_TALK, ACTOR_LUCKY_DICE_PLAYER_OUT_OF_COINS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringIDontWantToStopPlaying) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_DICE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWinningOrLosingIsPureLuck) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTheRulesForLuckyDiceAint) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_DICE_PLAYER_FIRST_TIME, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringSometimesPeopleWhoHaveNeverPlayed) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_DICE_PLAYER_TRIPLE_DIGITS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringThinkingWontHelpYouWinThis) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_DICE_PLAYER_OUT_OF_COINS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringMyLuckHasRunOutFor) },
+    { TRIGGER_TALK, ACTOR_LUCKY_WHEELS_PRIZE_SIGN, CONDITION_ALWAYS, EVENT(StuccoRoomsC_ReadLuckyWheelsPrizes) },
+    { TRIGGER_TALK, ACTOR_LUCKY_WHEELS_RULES_SIGN, CONDITION_ALWAYS, EVENT(StuccoRoomsC_ReadLuckyWheelsRules) },
+    { TRIGGER_TALK, ACTOR_LUCKY_DICE_RULES_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceThrowTheDiceOn) },
+    { TRIGGER_TALK, ACTOR_LUCKY_DICE_PAIRS_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceIfTwoNumbersMatch) },
+    { TRIGGER_TALK, ACTOR_LUCKY_DICE_SOLDIER, FLAG_BABI_SAVED, MSGNO(MsgTolbiSpringYeahThatDiceGameLooksKinda) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_DICE_SOLDIER, FLAG_BABI_SAVED, MSGNO(MsgTolbiSpringILikePlayingLuckyDiceBut) },
+    { TRIGGER_TALK, ACTOR_LUCKY_DICE_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringOhThereAreAlwaysScalpersAt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_DICE_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTheresNoWayPoorSoldiersLike) },
     { TRIGGER_TABLE_END },
 };
 
@@ -1833,7 +1833,7 @@ const u16 gTolbiSpring_CoinPrizes[] = {
 };
 
 /// What Lucky Wheels wins, three items to each of its LUCKY_WHEELS_KINDS kinds.
-const u32 gTolbiSpring_LuckyWheelsPrizeItems[] = {
+const u32 gStuccoRoomsC_LuckyWheelsPrizeItems[] = {
     ITEM_MYTHRIL_SHIRT, ITEM_SILK_SHIRT, ITEM_RUNNING_SHIRT, ITEM_HYPER_BOOTS, ITEM_QUICK_BOOTS, ITEM_FUR_BOOTS,
     ITEM_ADEPT_RING, ITEM_WAR_RING, ITEM_SLEEP_RING, ITEM_POTION, ITEM_VIAL, ITEM_NUT,
     ITEM_WATER_OF_LIFE, ITEM_PSY_CRYSTAL, ITEM_ELIXIR,

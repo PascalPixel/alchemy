@@ -50,13 +50,15 @@
 #define ITEM_POSSESSIVE_TEXT_COUNT 4
 #endif
 
-/// The space written between a message's arguments: a plain space in the
-/// European editions.
+/// What a message's em dash (MESSAGE_EM_DASH) draws before its hyphen. In
+/// English it is the font's code 143, a 9-pixel line at the hyphen's height
+/// that runs into it as one long dash; German, Spanish, French and Italian
+/// write a space, and a space after the hyphen.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-#define TEXT_ARGUMENT_SPACE ' '
+#define TEXT_EM_DASH_LEAD ' '
 #else
-#define TEXT_ARGUMENT_SPACE 143
+#define TEXT_EM_DASH_LEAD 143
 #endif
 
 /// A space's width in sprite text, in pixels.

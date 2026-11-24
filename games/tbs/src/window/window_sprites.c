@@ -156,12 +156,13 @@ done:
   return width;
 }
 
-/// A window sprite as the code that moves and queues it sees it: its link and
-/// OAM entry are the one sprite cell it queues, attr.
+/// A window sprite as the code that moves and queues it sees it: WindowSprite
+/// with its motion and index unsigned, and its link and OAM entry the one
+/// sprite cell it queues, attr.
 struct WindowSpriteCellView {
   struct WindowSpriteCellView *next;
   u8 kind;
-  u8 active;         ///< its WINDOW_SPRITE_MOTION_ motion
+  u8 motion;         ///< its WINDOW_SPRITE_MOTION_ motion
   u16 x;             ///< screen pixels, where the motion is centred
   u16 y;             ///< screen pixels, where the motion is centred
   u16 unused;        ///< WindowSprite's
@@ -175,7 +176,7 @@ STATIC_ASSERT(offsetof(struct WindowSpriteCellView, x) ==
               offsetof(struct WindowSprite, x));
 STATIC_ASSERT(offsetof(struct WindowSpriteCellView, y) ==
               offsetof(struct WindowSprite, y));
-STATIC_ASSERT(offsetof(struct WindowSpriteCellView, active) ==
+STATIC_ASSERT(offsetof(struct WindowSpriteCellView, motion) ==
               offsetof(struct WindowSprite, motion));
 STATIC_ASSERT(offsetof(struct WindowSpriteCellView, animationStep) ==
               offsetof(struct WindowSprite, animationStep));
@@ -204,13 +205,15 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     return;
   if (mode == GLYPH_DRAW_PAGE_ARROW) {
     s32 column = (u16)-2;
+    /* FAKEMATCH(temporary): state, done with the window state, holds the
+     * acquired sprite until out takes it. */
     state = WindowSprite_AcquireFree();
     if (state == NULL)
       return;
     out = state;
     idx = ((struct WindowSprite *)out - ((struct WindowState *)base)->sprites) *
           4;
-    out->active = WINDOW_SPRITE_MOTION_PAGE_ARROW;
+    out->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
     attr = &out->attr;
     slot = &((struct WindowState *)base)->glyphResource;
     if (*slot == NO_GLYPH_RESOURCE)
@@ -230,8 +233,8 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     out->y = attr->y;
     out->next = NULL;
     out->index = idx;
-    if (out->active == 0)
-      out->active = mode;
+    if (out->motion == 0)
+      out->motion = mode;
     WindowSprite_AppendToList(&win->sprites, (struct WindowSprite *)out);
   } else if (tile <= TEXT_LAST_FONT_CODE) {
     // Past the border's top-left tile, and only inside the tilemap.
@@ -278,7 +281,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       return;
     idx = ((struct WindowSprite *)out - ((struct WindowState *)base)->sprites) *
           4;
-    out->active = WINDOW_SPRITE_MOTION_PAGE_ARROW;
+    out->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
     attr = &out->attr;
     slot = &((struct WindowState *)base)->glyphResource;
     if (*slot == NO_GLYPH_RESOURCE)
@@ -299,8 +302,8 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     out->y = attr->y;
     out->next = NULL;
     out->index = idx;
-    if (out->active == 0)
-      out->active = mode;
+    if (out->motion == 0)
+      out->motion = mode;
     WindowSprite_AppendToList(&win->sprites, (struct WindowSprite *)out);
   } else if (tile <= TEXT_LAST_FONT_CODE) {
     if (tile - TEXT_MARK_VOICED <= 1) {
@@ -481,9 +484,9 @@ void WindowSprite_UpdateAll(void) {
 
       if (window->animation == WINDOW_ANIMATION_SWELL) {
         windowSprite->animationStep = 2;
-        windowSprite->active = WINDOW_SPRITE_MOTION_PULSE;
+        windowSprite->motion = WINDOW_SPRITE_MOTION_PULSE;
       }
-      switch (windowSprite->active) {
+      switch (windowSprite->motion) {
       case WINDOW_SPRITE_MOTION_PAGE_ARROW:
         // VRAM_CACHE_ENTRY_COUNT means no entry was free for the arrow.
         if (state->glyphResource != VRAM_CACHE_ENTRY_COUNT) {
@@ -609,10 +612,10 @@ void WindowSprite_UpdateAll(void) {
         break;
       }
       // Queue it unless it is hidden, or an arrow with no picture.
-      if (windowSprite->active == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
+      if (windowSprite->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
         if (state->glyphResource != VRAM_CACHE_ENTRY_COUNT)
           Oam_AddSpriteAtDepth(sprite, windowSprite->depth);
-      } else if (windowSprite->active != WINDOW_SPRITE_MOTION_HIDDEN) {
+      } else if (windowSprite->motion != WINDOW_SPRITE_MOTION_HIDDEN) {
         Oam_AddSpriteAtDepth(sprite, windowSprite->depth);
       }
       windowSprite = windowSprite->next;

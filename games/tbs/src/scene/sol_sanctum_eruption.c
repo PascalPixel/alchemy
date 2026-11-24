@@ -70,6 +70,9 @@
 /// reuse once the crystals are gone.
 enum { EMBER_COUNT = 16 };
 
+/// The lights that rise at a corner of the chamber, one after another.
+enum { RISING_LIGHT_COUNT = 10 };
+
 /// Unused: eight bytes before the embers' states that nothing reads.
 u8 gSolSanctumEruption_UnusedBeforeEmberState[8] BSS_DATA;
 /// Each ember's state, and the shake an ember's landing starts: ten times its
@@ -80,8 +83,10 @@ s32 gEmberTimer BSS_DATA;
 u8 gSolSanctumEruption_UnusedAfterEmberTimer[12] BSS_DATA;
 /// The elemental lights the chamber throws out: each one's actor, and its age
 /// in frames, 0 for none.
-struct Actor *gRisingLights[12] BSS_DATA;
-s32 gRisingLightTimers[10] BSS_DATA;
+struct Actor *gRisingLights[RISING_LIGHT_COUNT] BSS_DATA;
+/// Unused: eight bytes after the lights' actors that nothing reads.
+u8 gSolSanctumEruption_UnusedAfterRisingLights[8] BSS_DATA;
+s32 gRisingLightTimers[RISING_LIGHT_COUNT] BSS_DATA;
 s32 gEmberMask BSS_DATA;
 s32 gEmberLevel BSS_DATA;
 s32 gEmberLevelTimer BSS_DATA;
@@ -133,7 +138,7 @@ static void SolSanctumEruption_FlickerSecondCollapseTiles(void);
 static void SolSanctumEruption_RaiseElementalLights(u32 corner);
 static void SolSanctumEruption_UpdateElementalLights(void);
 static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z);
-static void SolSanctumEruption_RestoreCornerCellAttributes(void);
+static void SolSanctumEruption_ClearStatueCells(void);
 static void SolSanctumEruption_SetPaleTint(s32 enabled, s32 frames,
                                            s32 waitFrames);
 static void SolSanctumEruption_FlashWiseOne(struct Actor *actor);
@@ -892,7 +897,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   sparkles->stopped = 0;
   MapGrid_SetShake(1, 1, 1);
   Event_Wait(80);
-  SolSanctumEruption_RestoreCornerCellAttributes();
+  SolSanctumEruption_ClearStatueCells();
   center = FieldCamera_GetActor();
   center->motionFlags = 0;
   center->x.fixed = toFIXED(231);
@@ -1308,6 +1313,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     VramCache_Load(starSprite->slot, ICON_TILE_BYTES, glyph->tiles);
     HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
+    // With sparkles, then held up over Isaac's head (ITEM_DISPLAY_SPARKLES |
+    // ITEM_DISPLAY_RAISED of field_sequence_item_display.c).
     ItemDisplay_ShowPicture(star, 3);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
@@ -1527,7 +1534,10 @@ static void SolSanctumEruption_PlaceBeforeStar(s32 actorId) {
 }
 
 /// Draws the patch of floor that breaks up first, by the Wise One, broken or
-/// whole.
+/// whole. The patch is on map layer 2, whose cells start at the map's
+/// (56, 0): its cells (7, 7) to (8, 9), under where the Wise One floats.
+/// Broken takes the cells layer 1 keeps at the same place (from the map's
+/// (0, 40)); whole takes layer 2's own spare cells.
 static void SolSanctumEruption_DrawFirstCollapseTiles(s32 broken) {
   if (broken != 0) {
     s32 cellSize;
@@ -1546,7 +1556,9 @@ static void SolSanctumEruption_DrawFirstCollapseTiles(s32 broken) {
   MapGrid_CenterOnFollowedPoint();
 }
 
-/// Draws the patch of floor that breaks up second, broken or whole.
+/// Draws the patch of floor that breaks up second, broken or whole: layer 2's
+/// cells (9, 5) to (11, 7), north east of the first patch, again from layer
+/// 1's cells at the same place or from layer 2's spare cells.
 static void SolSanctumEruption_DrawSecondCollapseTiles(s32 broken) {
   if (broken != 0) {
     s32 patchSize;
@@ -1588,10 +1600,6 @@ static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
 /// Tints the chamber and raises ten lights, one after another, at one of its
 /// four corners, then waits until the last has risen out of view.
 static void SolSanctumEruption_RaiseElementalLights(u32 corner) {
-  void Actor_ShowEmote(s32, s32, s32);
-  void PaletteFade_ApplyTarget(s32, s32);
-  void Sound_Play(s32);
-
   u32 lightIndex, clear;
   FIXED x;
   s32 y;
@@ -1620,8 +1628,8 @@ static void SolSanctumEruption_RaiseElementalLights(u32 corner) {
   Sound_Play(SE_RISING_CHIMES);
   lightIndex = 0;
   clear = lightIndex;
-  for (origin = &gEruption_RisingLightOrigins[0]; lightIndex <= 9;
-       lightIndex++, origin += 2) {
+  for (origin = &gEruption_RisingLightOrigins[0];
+       lightIndex < RISING_LIGHT_COUNT; lightIndex++, origin += 2) {
     x = origin[0];
     y = origin[1];
     z = 0;
@@ -1660,6 +1668,7 @@ static void SolSanctumEruption_RaiseElementalLights(u32 corner) {
   wait(20);
   Task_AddFrame(SolSanctumEruption_UpdateElementalLights, TASK_PASS_FRAME);
   Sound_Play(SE_GLITTER);
+  // The lights rise in turn, six frames apart.
   gRisingLightTimers[0] = 1;
   wait(6);
   gRisingLightTimers[1] = 1;
@@ -1681,7 +1690,7 @@ static void SolSanctumEruption_RaiseElementalLights(u32 corner) {
   gRisingLightTimers[9] = 1;
   wait(6);
   for (;;) {
-    for (lightIndex = 0; lightIndex <= 9; lightIndex++) {
+    for (lightIndex = 0; lightIndex < RISING_LIGHT_COUNT; lightIndex++) {
       if (gRisingLightTimers[lightIndex] != 0) {
         lightIndex = LIGHT_SCAN_STILL_ACTIVE;
         break;
@@ -1704,7 +1713,7 @@ static void SolSanctumEruption_UpdateElementalLights(void) {
   u32 age;
   struct Actor *actor;
 
-  for (lightIndex = 0; lightIndex <= 9; lightIndex++) {
+  for (lightIndex = 0; lightIndex < RISING_LIGHT_COUNT; lightIndex++) {
     age = gRisingLightTimers[lightIndex];
     if (age != 0) {
       actor = gRisingLights[lightIndex];
@@ -1751,8 +1760,13 @@ static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z) {
   wait(30);
 }
 
-/// Restores eight corner-cell cell behaviors from the chamber placements.
-static void SolSanctumEruption_RestoreCornerCellAttributes(void) {
+/// Makes the cells of the four statues at the chamber's corners plain floor,
+/// taking the cell behavior and flags of the floor west of each, once the
+/// statues' cell behaviors are saved in cells 10 to 13 of the map's top row,
+/// which nothing reads back.
+static void SolSanctumEruption_ClearStatueCells(void) {
+  // Mars (north west), Jupiter (south west), Mercury (north east) and Venus
+  // (south east), as sol_sanctum_elemental_star_room.c places them.
   MapGrid_CopyCellAttributes(14, 8, 1, 1, 10, 0);
   MapGrid_CopyCellAttributes(14, 28, 1, 1, 11, 0);
   MapGrid_CopyCellAttributes(44, 8, 1, 1, 12, 0);

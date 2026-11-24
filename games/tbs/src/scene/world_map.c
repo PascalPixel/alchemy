@@ -2422,15 +2422,17 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   Import_EventSetExitRequest(WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND);
 }
 
-/// The rowers' balance, as TolbiShipMast_GetRowingBalance (tolbi_ship_mast.c)
-/// reckons it.
+/// The rowing balance of the chosen passengers, as
+/// TolbiShipMast_GetRowingBalance reckons it: the values of those at the west
+/// seats (the first and third) less those at the east seats (the second and
+/// fourth).
 static s32 WorldMap_GetRowingBalance(void) {
-  s32 positiveTotal = WorldMap_GetSeatRowValue(0);
-  s32 negativeTotal;
+  s32 westSeats;
+  s32 eastSeats;
 
-  positiveTotal += WorldMap_GetSeatRowValue(2);
-  negativeTotal = WorldMap_GetSeatRowValue(1) + WorldMap_GetSeatRowValue(3);
-  return positiveTotal - negativeTotal;
+  westSeats = WorldMap_GetSeatRowValue(0) + WorldMap_GetSeatRowValue(2);
+  eastSeats = WorldMap_GetSeatRowValue(1) + WorldMap_GetSeatRowValue(3);
+  return westSeats - eastSeats;
 }
 
 /// The rowing value of the passenger chosen for a seat, or 0 while it is empty.
@@ -2559,15 +2561,13 @@ static void WorldMap_UpdateStormTimer(void) {
 
 /// Draws the leader into the storm, lifts him and starts its timer.
 static void WorldMap_CatchInStorm(s32 targetActorId) {
-  s32 alreadyCaught;
   struct Actor *actor;
   struct Actor *storm;
   s32 id;
 
   id = gMainRoutineState.leaderActorId;
   actor = Actor_Get(id);
-  alreadyCaught = Event_GetFlag(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
-  if (alreadyCaught == 0) {
+  if (Event_GetFlag(FLAG_WORLD_MAP_CAUGHT_IN_STORM) == 0) {
     Event_Start();
     Actor_SetAttachedEffect(id,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -2580,11 +2580,11 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
     Actor_WaitForMoveById(id);
     Sound_Play(SE_SANDSTORM);
     Task_AddFrame(WorldMap_UpdateStormTimer, TASK_PASS_FRAME);
-    actor->motionFlags = alreadyCaught;
+    actor->motionFlags = 0;
     FieldActor_SetMoveTargetFX(actor, actor->x.fixed,
                                actor->y.fixed + toFIXED(32), actor->z.fixed);
     Actor_WaitForMoveById(id);
-    actor->velocityY = alreadyCaught;
+    actor->velocityY = 0;
     actor->motionFlags = ACTOR_FLOATS;
     gMainRoutineState.movementMode = LEADER_MOVEMENT_AIRBORNE;
     GameFlag_Set(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
@@ -2879,6 +2879,8 @@ s32 gCaravanWagonHeadsNorth[] = {
     SC_END,
 };
 
+/// The second to fourth wagons stop in a column 32 pixels west of the first,
+/// the second southmost and each after it 16 pixels north.
 s32 gCaravanSecondWagonArrives[] = {
     SC_POSITION(5848, 0, 1576),
     SC_SET(SW_SCALE_X, 3 * FIXED_ONE / 2),
@@ -2897,6 +2899,8 @@ s32 gCaravanSecondWagonArrives[] = {
     SC_END,
 };
 
+/// The second to fourth wagons wait side by side north of the first, west to
+/// east.
 s32 gCaravanSecondWagonDeparts[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(5863, 0, 1640),
@@ -2908,6 +2912,8 @@ s32 gCaravanSecondWagonDeparts[] = {
     SC_END,
 };
 
+/// The second to fourth wagons each roll south to the first's road and follow
+/// it.
 s32 gCaravanSecondWagonReturns[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(5640, 0, 1795),
@@ -2987,6 +2993,9 @@ s32 gCaravanFourthWagonDeparts[] = {
 };
 
 s32 gCaravanFourthWagonReturns[] = {
+    // ANIM_NOD where the others take ANIM_WALK. The wagon's nod (wagon.png)
+    // holds its standing picture, so this wagon glides back to the road
+    // without the walk's rolling pictures.
     SC_ANIMATION(ANIM_NOD),
     SC_MOVE(5672, 0, 1795),
     SC_SYNC,
@@ -3277,6 +3286,9 @@ struct SceneEntrance gWorldSceneEntrances[] = {
      200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_KRAKEN, CONDITION_ALWAYS, 7944, 0, 200,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    // The one row with a camera bound: the view goes no farther north than
+    // 128 pixels, where the ship blown off course drifts north
+    // (gCrossingShipDriftsNorth).
     {WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND, CONDITION_ALWAYS, 7944, 0, 200,
      FACING_SOUTH, 0, -1, 128, -1, -1, 0},
     {WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI, CONDITION_ALWAYS, 5096, 0,

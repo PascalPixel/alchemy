@@ -114,9 +114,11 @@ enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 #define DJINN_LIST_COLUMN_WIDTH 56
 #define DJINN_LIST_FIGURE_X(element) (32 + (element) * DJINN_LIST_COLUMN_WIDTH)
 #define DJINN_LIST_FIGURE_Y 70
-/// The window map entry of the first element icon, in palette 1 as
-/// TILEMAP_ENTRY_ICON gives it; the four elements follow it in order.
-#define STATUS_ELEMENT_TILE (BG_TILE_PALETTE(1) | 1)
+/// The window tile of the first element icon, Venus's; the four elements
+/// follow it in order. STATUS_ELEMENT_TILE is its map entry in palette 1, as
+/// TILEMAP_ENTRY_ICON gives it.
+#define ELEMENT_ICON_FIRST_TILE 1
+#define STATUS_ELEMENT_TILE (BG_TILE_PALETTE(1) | ELEMENT_ICON_FIRST_TILE)
 
 /// The switch help's two lines, drawn above the status window's interior.
 #define SWITCH_HELP_Y -24
@@ -126,7 +128,8 @@ enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 
 /// The status page's four element columns, 4 tiles apart from tile 15, where
 /// each element's icon stands; its figures end left of it.
-#define STATUS_ELEMENT_X(element) (((element) * 4 + 15) * 8)
+#define STATUS_ELEMENT_COLUMN(element) ((element) * 4 + 15)
+#define STATUS_ELEMENT_X(element) (STATUS_ELEMENT_COLUMN(element) * 8)
 
 /// Lets the player choose one party member, over the field (the Colosso scenes
 /// use it, through menu.s, and so does the debug test).
@@ -208,7 +211,7 @@ s32 StatusScreen_Run(void) {
   // element icons drawn as window tiles: palette 0, for the highlighted row,
   // takes HIGHLIGHT_PALETTE's WINDOW_BACKGROUND_COLOR as its
   // TEXT_BACKGROUND_COLOR, palette 1 WINDOW_PALETTE's
-  // (PsynergyMenu_DrawRangePage).
+  // (StatusScreen_ShowPsynergyRow).
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),
@@ -699,7 +702,7 @@ void StatusScreen_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 /// Shows `member`'s status in the status window (0, 5, 30 by 15),
 /// opening it first with the party member's portrait (kept as the state's
 /// statusCursor), the 32 entry icons (the chooser's Psynergy icons) on the
-/// chooser page, and the eight category sprites that show the status icons;
+/// chooser page, and the eight status icon sprites;
 /// then draws the stats and statuses. frame is not used.
 void StatusScreen_ShowMemberStatus(s32 member, s32 frame) {
   s32 created;
@@ -718,12 +721,12 @@ void StatusScreen_ShowMemberStatus(s32 member, s32 frame) {
   if (created != 0) {
     cursor = Portrait_CreateFar(member, 0, 0, window, 0, 0);
     menu->statusCursor = cursor;
-    // The portrait goes to depth slot 240, as the category sprites do.
+    // The portrait goes to depth slot 240, as the status icons do.
     if ((cursor->depth = OAM_DEPTH_WINDOW, menu->page) ==
         STATUS_SCREEN_PAGE_CHOOSER) {
       Menu_SpawnIconEntries((struct ItemMenuState *)menu, window);
     }
-    Menu_CreateEightEntryActors(window);
+    StatusScreen_CreateStatusIcons(window);
     StatusScreen_DrawStatusPage(window, member, STATUS_PAGE_NO_CLEAR);
     return;
   }
@@ -1017,7 +1020,7 @@ void StatusScreen_DrawStatusPage(struct Window *window, s32 memberId,
   menu->statusCursor->motion = ICON_SHOWN;
   StatusScreen_DrawTopRows(window, memberId, mode);
   StatusScreen_ListStatuses(ailments, 1, memberId);
-  StatusScreen_UpdateSelectionIcons(ailments);
+  StatusScreen_LoadStatusIcons(ailments);
   keepDrawn = mode & STATUS_PAGE_NO_CLEAR;
   if (keepDrawn == 0)
     Window_ClearInteriorTilesFar(window, 0, 40, 96, 96);
@@ -1045,7 +1048,7 @@ void StatusScreen_DrawStatusPage(struct Window *window, s32 memberId,
   }
   if (i == 0)
     Text_DrawMessageAsTilesFar(MsgNormalLabel, window, 0, STATUS_AILMENT_Y(0));
-  StatusScreen_UpdateSelectionIcons(ailments);
+  StatusScreen_LoadStatusIcons(ailments);
   StatusScreen_ShowStatusIcons(ailments);
   if (menu->page == STATUS_SCREEN_PAGE_CHOOSER)
     return;
@@ -1057,10 +1060,18 @@ void StatusScreen_DrawStatusPage(struct Window *window, s32 memberId,
   // the elemental levels, Power and Resist.
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (mode == STATUS_PAGE_FULL || hasDjinn == 1) {
-    Window_SetTilemapEntryFar(window, 1, 15, djinnRow, TILEMAP_ENTRY_ICON);
-    Window_SetTilemapEntryFar(window, 2, 19, djinnRow, TILEMAP_ENTRY_ICON);
-    Window_SetTilemapEntryFar(window, 3, 23, djinnRow, TILEMAP_ENTRY_ICON);
-    Window_SetTilemapEntryFar(window, 4, 27, djinnRow, TILEMAP_ENTRY_ICON);
+    Window_SetTilemapEntryFar(window, ELEMENT_ICON_FIRST_TILE + ELEMENT_VENUS,
+                              STATUS_ELEMENT_COLUMN(ELEMENT_VENUS), djinnRow,
+                              TILEMAP_ENTRY_ICON);
+    Window_SetTilemapEntryFar(window, ELEMENT_ICON_FIRST_TILE + ELEMENT_MERCURY,
+                              STATUS_ELEMENT_COLUMN(ELEMENT_MERCURY), djinnRow,
+                              TILEMAP_ENTRY_ICON);
+    Window_SetTilemapEntryFar(window, ELEMENT_ICON_FIRST_TILE + ELEMENT_MARS,
+                              STATUS_ELEMENT_COLUMN(ELEMENT_MARS), djinnRow,
+                              TILEMAP_ENTRY_ICON);
+    Window_SetTilemapEntryFar(window, ELEMENT_ICON_FIRST_TILE + ELEMENT_JUPITER,
+                              STATUS_ELEMENT_COLUMN(ELEMENT_JUPITER), djinnRow,
+                              TILEMAP_ENTRY_ICON);
   }
   if (hasDjinn)
     Text_DrawMessageAsTilesFar(MsgDjinnLabel, window, 64, (djinnRow + 1) * 8);
@@ -1278,7 +1289,7 @@ void Menu_BuildPatternTiles(void) {
 /// pair range of the range icon tiles (Menu_BuildPatternTiles), the side tile
 /// on both ends, mirrored on the left, and the centre tile between. range is
 /// the ability's range less one (0 for the aimed unit alone), or
-/// RANGE_ICON_ALL for ABILITY_RANGE_ALL (PsynergyMenu_DrawListPage).
+/// RANGE_ICON_ALL for ABILITY_RANGE_ALL (StatusScreen_DrawPsynergyPage).
 void PsynergyMenu_DrawRange(struct Window *window, s32 x, s32 y, s32 range,
                             s32 unused) {
   s32 iconIndex;
@@ -1298,8 +1309,8 @@ void PsynergyMenu_DrawRange(struct Window *window, s32 x, s32 y, s32 range,
 /// Updates the Psynergy page for the row under the cursor: the Psynergy's
 /// description in the info window, where it can be used (in the field, in
 /// battle, or anywhere), and the row highlights with the range icons.
-s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
-                               struct PagedList *state) {
+s32 StatusScreen_ShowPsynergyRow(struct Window *window, s32 unused,
+                                 struct PagedList *state) {
   struct PsynergyMenuState *menu;
   struct AbilityDefinition *ability;
   s32 row;
@@ -1404,8 +1415,8 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
 /// Draws one page of the Status menu's Psynergy list into window: up to
 /// STATUS_LIST_PAGE_ROWS names with their icons, PP costs and range icons, the
 /// page numbers or "no Psynergy", and the party member's name, class and level.
-s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
-                              const struct PagedList *res) {
+s32 StatusScreen_DrawPsynergyPage(struct Window *window, s32 unused,
+                                  const struct PagedList *res) {
   struct PsynergyMenuState *menu = gMenuState;
   struct Unit *member;
   u32 firstEntry;
@@ -1545,9 +1556,9 @@ s32 StatusScreen_RunPsynergyPage(void) {
         redraw = 0;
         if (listNeedsRedraw != 0) {
           listNeedsRedraw = 0;
-          PsynergyMenu_DrawListPage(menu->statusWindow, 0, &state);
+          StatusScreen_DrawPsynergyPage(menu->statusWindow, 0, &state);
         }
-        PsynergyMenu_DrawRangePage(menu->statusWindow, 0, &state);
+        StatusScreen_ShowPsynergyRow(menu->statusWindow, 0, &state);
         wait(1);
       }
       wait(1);
@@ -1603,8 +1614,8 @@ s32 StatusScreen_RunPsynergyPage(void) {
   return result;
 }
 
-/// Nothing calls it.
-s32 PsynergyMenu_ActionReturnTrue(void) { return 1; }
+/// Unused: returns 1.
+UNUSED s32 StatusScreen_PsynergyPageReturnTrue(void) { return 1; }
 
 /// Hides every entry icon, then loads the icons of the Psynergy already listed
 /// in the state (psynergies) into them. memberId is only looked up.
@@ -1616,17 +1627,16 @@ void PsynergyMenu_DrawPreparedPsynergyIcons(const void *unused, s32 memberId) {
   PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
 }
 
-/// Nothing calls it.
-void PsynergyMenu_PreparedIconsNoOp(void) {}
+/// Unused: two routines that do nothing.
+UNUSED void PsynergyMenu_PreparedIconsNoOp(void) {}
 
-/// Nothing calls it.
-void PsynergyMenu_PreparedIconsSecondNoOp(void) {}
+UNUSED void PsynergyMenu_PreparedIconsSecondNoOp(void) {}
 
 /// Updates the Status menu's equipment page for the row under the cursor: the
 /// item's plain name in the info window, the row highlights, and in the
 /// equipment window the highlight of the slot the item is worn in, if it is.
-s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
-                           struct PagedList *state) {
+s32 StatusScreen_ShowEquipmentRow(struct Window *window, s32 unused,
+                                  struct PagedList *state) {
   struct ItemMenuState *menu;
   struct ItemDefinition *item;
   s32 firstEntry;
@@ -1719,8 +1729,8 @@ s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
 /// STATUS_LIST_PAGE_ROWS item names with their icons and the page numbers, or
 /// "no items", and the party member's name with their Attack and Defense.
 /// Returns 1.
-s32 ItemMenu_DrawItemPage(struct Window *window, s32 unused,
-                          struct PagedList *state) {
+s32 StatusScreen_DrawEquipmentPage(struct Window *window, s32 unused,
+                                   struct PagedList *state) {
   struct ItemMenuState *menu = gMenuState;
   struct Unit *unit;
   u16 *inventoryEntry;
@@ -1831,9 +1841,9 @@ s32 StatusScreen_RunEquipmentPage(void) {
         redraw = 0;
         if (listNeedsRedraw != 0) {
           listNeedsRedraw = 0;
-          ItemMenu_DrawItemPage(menu->statusWindow, 0, &state);
+          StatusScreen_DrawEquipmentPage(menu->statusWindow, 0, &state);
         }
-        ItemMenu_DrawEquipPage(menu->statusWindow, 0, &state);
+        StatusScreen_ShowEquipmentRow(menu->statusWindow, 0, &state);
       }
       menu->sideIcons[0]->motion = ICON_SHOWN;
       MenuCursor_Position(96, state.row * 16 + 52);
@@ -1965,8 +1975,8 @@ s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction) {
   return (row * 9) + column;
 }
 
-/// Nothing calls it.
-s32 Menu_ReservedStatusOne(void) { return 1; }
+/// Unused: returns 1.
+UNUSED s32 Menu_GridCursorReturnTrue(void) { return 1; }
 
 /// The worn items' rows in ItemMenu_DrawEquipment's window, 16 pixels apart:
 /// weapon, helm, shield and armor from the top. A slot's label stands on its
@@ -1998,7 +2008,7 @@ void ItemMenu_DrawEquipment(struct Window *window, s32 memberId, s32 mode) {
   if (mode == 0) {
     wait(1);
     ItemMenu_DrawIcons(items, 1);
-    ItemMenu_ArrangeCategoryItemIcons(items);
+    ItemMenu_PlaceEquippedIcons(items);
   }
 }
 
@@ -2075,7 +2085,7 @@ void Menu_PlaceEntryIconInGrid(struct WindowSprite *icon, s32 index,
 
 /// Places the icon of each worn weapon, armor, shield and helm at
 /// EQUIPPED_ICON_X, on its slot's row; the others stay off screen.
-void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
+void ItemMenu_PlaceEquippedIcons(u16 *items) {
   struct ItemMenuState *menu;
   struct WindowSprite *icon;
   s32 slotIndex;
@@ -2131,11 +2141,11 @@ void Menu_HideEntryIcons(void) {
   }
 }
 
-/// Creates the eight category sprites in window, off screen at
+/// Creates the eight status icon sprites in window, off screen at
 /// MENU_ICON_HIDDEN_X and _Y, each on item graphic slot of the same number; the
 /// Status menu shows the status icons with the first five
-/// (StatusScreen_UpdateSelectionIcons).
-s32 Menu_CreateEightEntryActors(struct Window *window) {
+/// (StatusScreen_LoadStatusIcons).
+s32 StatusScreen_CreateStatusIcons(struct Window *window) {
   struct WindowSprite **slot;
   struct WindowSprite *icon;
   s32 slotIndex;
@@ -2182,7 +2192,7 @@ void StatusScreen_ShowStatusIcons(const u8 *flags) {
   }
 }
 
-/// Moves the five status icons (the first category sprites) off screen,
+/// Moves the five status icons off screen,
 /// before they are shown again or while another view covers them.
 void StatusScreen_HideStatusIcons(void) {
   struct ItemMenuState *menu = gMenuState;
@@ -2200,10 +2210,10 @@ void StatusScreen_HideStatusIcons(void) {
   }
 }
 
-/// Loads each enabled status's icon into its category resource slot: kind is
+/// Loads each enabled status's icon into its sprite's tile slot: kind is
 /// the icon's number in gIcon_MiscIconPointers, which the battle Status screen
 /// shows for the same status.
-s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled) {
+s32 StatusScreen_LoadStatusIcons(const u8 *enabled) {
   struct ItemMenuState *menu = gMenuState;
   s32 index;
 
@@ -2256,6 +2266,7 @@ s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled) {
 #undef SWITCH_HELP_Y
 #undef STATUS_AILMENT_Y
 #undef STATUS_ELEMENT_X
+#undef STATUS_ELEMENT_COLUMN
 #undef EQUIPPED_ICON_X
 #undef EQUIPPED_ICON_Y
 #undef EQUIPPED_ROW_Y

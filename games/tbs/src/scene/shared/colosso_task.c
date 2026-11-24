@@ -85,7 +85,10 @@ static void Colosso_LoadLettering(s32 id) {
   u8 *buf;
   s32 off;
 
-  buf = Heap_AllocEwram(7168 + COLOSSO_PALETTE_BYTES);
+  // Room for the palettes and seven pictures: Go!, the eighth, unpacks past
+  // the block's end into the free EWRAM after it.
+  buf = Heap_AllocEwram(COLOSSO_PALETTE_BYTES +
+                        7 * COLOSSO_LETTERING_PICTURE_BYTES);
   if (gColosso_LetteringSlot == -1)
     gColosso_LetteringSlot = VramCache_FindFreeEntry();
   off = gColosso_LetteringPaletteOffsets[id];
@@ -109,7 +112,7 @@ static void Colosso_UpdateLettering(void) {
   // Each lettering piece is queued as a sprite part written as three words:
   // the queue link, attributes 0 and 1, and attribute 2.
   struct AnimationSpritePart *sprite = (struct AnimationSpritePart *)write;
-  s32 tile = gVramCacheEntries[gColosso_LetteringSlot].offset >> 5;
+  s32 tile = gVramCacheEntries[gColosso_LetteringSlot].offset / TILE_SIZE_4BPP;
   u32 flags;
   s32 scale, blend, speed, centerX;
   s32 matrix, i, x, y, left;

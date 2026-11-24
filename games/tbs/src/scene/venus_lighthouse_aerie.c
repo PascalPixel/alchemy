@@ -282,8 +282,9 @@ static void VenusLighthouseAerie_UpdateDriftingParticle(struct Actor *actor) {
   effect->sprite->rotation += effect->spin;
 }
 
-/// Felix's sprite turns as he dives off the broken aerie after Sheba, until
-/// its angle is out of the negative half-turn.
+/// Felix's sprite turns as he dives off the broken aerie after Sheba, 5/128 of
+/// a turn a frame, until he has turned over: from upright, 13 frames and about
+/// half a turn.
 static void VenusLighthouseAerie_StepSpriteRotation(struct Actor *actor) {
   struct Sprite *sprite = actor->sprite;
   u16 rotation = sprite->rotation;
@@ -2097,8 +2098,9 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   }
 }
 
-/// Tests whether all three movement targets are unset.
-static inline s32 Actor_IsParked(struct Actor *actor) {
+/// Whether an actor has no move target left: it has reached where it was
+/// sent, or was never sent anywhere.
+static inline s32 VenusLighthouseAerie_HasArrived(struct Actor *actor) {
   if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
       actor->targetZ == actor->targetY) {
     return 1;
@@ -2114,19 +2116,20 @@ static inline s32 Actor_IsParked(struct Actor *actor) {
 static void VenusLighthouseAerie_UpdateFusion(void) {
   struct Actor *saturos;
   struct Actor *menardi;
-  s32 pairParked;
+  s32 pairArrived;
 
   saturos = Actor_Get(ACTOR_SATUROS);
   menardi = Actor_Get(ACTOR_MENARDI);
   // BUG: Saturos's test is overwritten by Menardi's, so only Menardi needs to
-  // be parked.
+  // have arrived.
 #ifdef BUGFIX
-  pairParked = Actor_IsParked(saturos) && Actor_IsParked(menardi);
+  pairArrived = VenusLighthouseAerie_HasArrived(saturos) &&
+                VenusLighthouseAerie_HasArrived(menardi);
 #else
-  pairParked = Actor_IsParked(saturos);
-  pairParked = Actor_IsParked(menardi);
+  pairArrived = VenusLighthouseAerie_HasArrived(saturos);
+  pairArrived = VenusLighthouseAerie_HasArrived(menardi);
 #endif
-  if (pairParked != 0) {
+  if (pairArrived != 0) {
     saturos->facing = FACING_EAST;
     menardi->facing = FACING_EAST;
     if (GameFlag_Get(FLAG_VENUS_AERIE_FUSION_GROWING) != 0) {

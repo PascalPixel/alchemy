@@ -135,7 +135,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
     spark->timer = 0;
     spark->watchedActor = leader;
     if (sprite != NULL) {
-      Sprite_StartAnimation(sprite, 2);
+      Sprite_StartAnimation(sprite, GOLDEN_RINGS_ANIMATION_FRONT_ARC);
       sprite->flags = 0;
       sprite->image.priority = 1;
     }
@@ -151,7 +151,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
     spark->watchedActor = leader;
     spark->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     if (sprite != NULL) {
-      Sprite_StartAnimation(sprite, 1);
+      Sprite_StartAnimation(sprite, GOLDEN_RINGS_ANIMATION_BACK_ARC);
       sprite->flags = 0;
     }
   }
@@ -203,7 +203,7 @@ void MercuryLighthouse_ChargeLights(void) {
     MercuryLighthouse_SpawnSparkPair();
     wait(30);
     pillar->spriteStorageKind = 1;
-    Actor_SelectAnimation(pillar, 5 - step);
+    Actor_SelectAnimation(pillar, GOLDEN_RINGS_ANIMATION_COLUMN(step + 1));
   }
   state->levels = 3;
   state->targetX = (pillar->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
@@ -231,7 +231,7 @@ void MercuryLighthouse_LoseLights(void) {
   if (target != NULL) {
     target->timer = 0;
     Actor_StartScript(target, gMercuryLighthouse_LightOutScript);
-    Actor_SelectAnimation(target, 7);
+    Actor_SelectAnimation(target, GOLDEN_RINGS_ANIMATION_LIGHT_OUT);
     state->pillar = NULL;
   }
 }
@@ -292,7 +292,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   if (obj != NULL) {
     obj->timer = 0;
     Actor_StartScript(obj, gMercuryLighthouse_LightOutScript);
-    Actor_SelectAnimation(obj, 7);
+    Actor_SelectAnimation(obj, GOLDEN_RINGS_ANIMATION_LIGHT_OUT);
     state->stepEffect = NULL;
   }
   if (to->behavior == state->poolBehavior && state->levels != 0) {
@@ -310,7 +310,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
       obj->acceleration = toFIXED(2);
       FieldActor_SetMoveTargetFX(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
       if (sprite != NULL) {
-        Sprite_StartAnimation(sprite, 6);
+        Sprite_StartAnimation(sprite, GOLDEN_RINGS_ANIMATION_POOL_LIGHT);
         sprite->flags = 0;
       }
       state->stepEffect = obj;
@@ -322,7 +322,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
       state->pillar = NULL;
       GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_AREA);
     } else if (state->pillar != NULL) {
-      Actor_SelectAnimation(state->pillar, 6 - n);
+      Actor_SelectAnimation(state->pillar, GOLDEN_RINGS_ANIMATION_COLUMN(n));
     }
   }
   Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);

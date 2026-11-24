@@ -18,15 +18,15 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
                                          struct Window *window, s32 offsetX,
                                          s32 offsetY);
 struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
-                                                     struct Window *input,
+                                                     struct Window *window,
                                                      s32 x, s32 y);
-struct WindowSprite *WindowSprite_CreateLoaded(s32 code, s32 layers,
-                                               struct Window *input, s32 x,
+struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
+                                               struct Window *window, s32 x,
                                                s32 y);
 struct WindowSprite *
-WindowSprite_CreateOverlaidIcon(s32 icon, struct Window *input, s32 x, s32 y);
-struct WindowSprite *WindowSprite_CreateFromTable(s32 table_entry,
-                                                  struct Window *input, s32 x,
+WindowSprite_CreateOverlaidIcon(s32 icon, struct Window *window, s32 x, s32 y);
+struct WindowSprite *WindowSprite_CreateFromTable(s32 tableEntry,
+                                                  struct Window *window, s32 x,
                                                   s32 y);
 struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
                                      struct Window *window, s32 x, s32 y);
@@ -48,7 +48,7 @@ void Window_SetInteriorPaletteBit(const struct Window *window, s32 x, s32 y,
 
 struct SaveFileSummary;
 
-void *String_FormatPlayTime(s32 value, u8 *out);
+void *String_FormatPlayTime(s32 frames, u8 *out);
 u32 Save_FindFreeFile(void);
 s32 Save_CountFilesExcludingSent(s32 excludeSent);
 s32 Save_ScanFileSummaries(void);
@@ -64,16 +64,18 @@ void FileList_StartPulse(void);
 void FileList_StopPulse(void);
 void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
                             s32 height);
-void FileList_ShowPartySprites(struct Window *origin, s32 x, s32 y,
-                               struct SaveFileSummary *descriptor);
+void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
+                               struct SaveFileSummary *summary);
 void FileList_HidePartySprites(void);
 void FileList_PlacePartySprites(void);
-void FileList_ShowDjinnSprites(struct Window *origin, s32 x, s32 y);
+void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y);
 void FileList_HideDjinnSprites(void);
 void FileList_PlaceDjinnSprites(void);
-void FileList_DrawDjinnCounts(struct Window *win, struct SaveFileSummary *row);
-void FileList_DrawSummary(struct Window *win, struct SaveFileSummary *rec);
-s32 FileList_SelectFile(s32 file, s32 mode);
+void FileList_DrawDjinnCounts(struct Window *window,
+                              struct SaveFileSummary *summary);
+void FileList_DrawSummary(struct Window *window,
+                          struct SaveFileSummary *summary);
+s32 FileList_SelectFile(s32 selectedFile, s32 menuMode);
 s32 Save_ToChosenFile(void);
 s32 Save_ChooseAndLoadFile(s32 mode);
 s32 PointingHand_LoadIntoFreeSlot(void);
@@ -95,11 +97,11 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second);
 void MenuTitle_Load(s32 picture, s32 slot);
 struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
                                       s32 y);
-void MenuTitle_Bob(struct WindowSprite *obj);
+void MenuTitle_Bob(struct WindowSprite *sprite);
 void CommandIcon_Load(s32 icon, s32 slot, s32 remap);
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
                                         struct Window *window, s32 x, s32 y);
-void WindowSprite_Pulse(struct WindowSprite *obj);
+void WindowSprite_Pulse(struct WindowSprite *sprite);
 
 struct BattleAction;
 struct AbilityDefinition;
@@ -118,14 +120,14 @@ s32 StatusIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 AbilityIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 Portrait_Load(u32 member, s32 cacheSlot);
-s32 WindowSprite_GetPointerTiles(s32 no);
+s32 WindowSprite_GetPointerTiles(s32 index);
 void Icon_Decompress(IconTransfer *state);
 struct Window *Link_CreateCountdownLabelWindow(void);
 s32 CommandIcon_ReloadSlot(s32 slotIndex, s32 icon);
 void BattleCommandRow_LoadIconTiles(struct IconPalette *palette, s32 glyph,
                                     s32 tile);
 void BattleCommandRow_LoadIcon(struct BattleCommandRowState *state, s32 index,
-                               u32 kind);
+                               u32 icon);
 void CommandRow_PutBg1Behind(void);
 void CommandRow_PutBg1InFront(void);
 void Graphics_InstallBg1VCountHandler(void);
@@ -137,23 +139,24 @@ UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value);
 s32 BattleDjinnMenu_ListChangedAbilities(const struct PsynergyEntry *oldGrid,
                                          const struct PsynergyEntry *newGrid,
                                          u16 *out, s32 *gained, s32 *lost);
-UNREAD_RESULT WindowSprite_CreateAbilityIcon(struct Window *input, s32 x, s32 y,
-                                             s32 ability);
+UNREAD_RESULT WindowSprite_CreateAbilityIcon(struct Window *window, s32 x,
+                                             s32 y, s32 abilityId);
 struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
-                                                 s32 code, s32 page,
+                                                 s32 encodedDjinn, s32 page,
                                                  s32 *pageCount);
 s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member);
 s32 BattleDjinnMenu_Run(s32 member, s32 unused);
 s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby);
 s32 Item_CheckBattleUse(s32 unit, s32 itemId);
-void Vram_CopyTile(u32 source_tile, u32 destination_tile);
+void Vram_CopyTile(u32 sourceTile, u32 destinationTile);
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count);
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count);
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind);
 void BattleMenu_Update(void);
 s32 Battle_RefuseFlee(void);
 s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act);
-s32 Battle_CollectPartyCommands(struct BattleAction *out, u16 *in, s32 count);
+s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
+                                s32 commandCount);
 
 void IconMenu_DrawIcons(void);
 void *IconMenu_Open(void);
@@ -161,7 +164,7 @@ void IconMenu_Close(void);
 s32 IconMenu_Run(s32 initial);
 s32 IconMenu_AnimateTo(s32 start, s32 goal);
 void CommandIcon_LoadIntoSlot(s32 slot, s32 index);
-void IconMenu_AddIcon(s32 no);
+void IconMenu_AddIcon(s32 icon);
 void IconMenu_Center(s32 row, s32 width, s32 resourceBase);
 void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase);
 /// The field menu's commands, as FieldMenu_SelectCommand takes and returns them
@@ -216,8 +219,8 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection);
 s32 Menu_SelectCoinsOrMedals(s32 selection);
 
 void DebugSceneSelect_Schedule(void);
-void DebugSceneSelect_DrawRow(struct Window *window, s32 first,
-                              const s16 *second);
+void DebugSceneSelect_DrawRow(struct Window *window, s32 sceneId,
+                              const s16 *entrance);
 #ifdef UBFIX
 void DebugSceneSelect_Run(void);
 #else
@@ -227,7 +230,7 @@ s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
                                     s16 *entrance, s16 *selectedField);
 s32 DebugFlagEditor_Run(void);
 void String_FormatHexDigits(u32 value, u32 count, u8 *out);
-void DebugFlagEditor_DrawTable(struct Window *window, s32 start_flag);
+void DebugFlagEditor_DrawTable(struct Window *window, s32 page);
 s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor);
 void Menu_ReservedNoOp(void);
 void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index);

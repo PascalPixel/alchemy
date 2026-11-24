@@ -5,6 +5,28 @@
 #include "system/dma.h"
 #include "system/ram_buffer.h"
 
+/// SPRITE_GOLDEN_RINGS's animations for the pool's lights (golden_rings.tsv).
+enum GoldenRingsAnimation {
+  /// The back half of a ring, an arc bowed upward: the charging spark behind
+  /// the leader.
+  GOLDEN_RINGS_ANIMATION_BACK_ARC = 1,
+  /// The front half, bowed downward: the charging spark in front.
+  GOLDEN_RINGS_ANIMATION_FRONT_ARC = 2,
+  /// The column of light while it holds three lights: three small rings
+  /// turning. 4 shows two rings and 5 one (GOLDEN_RINGS_ANIMATION_COLUMN).
+  GOLDEN_RINGS_ANIMATION_THREE_LIGHTS = 3,
+  GOLDEN_RINGS_ANIMATION_ONE_LIGHT = 5,
+  /// A whole ring, shimmering: the light that holds the leader up in the
+  /// pool.
+  GOLDEN_RINGS_ANIMATION_POOL_LIGHT = 6,
+  /// A whole ring breaking into dots: a light going out.
+  GOLDEN_RINGS_ANIMATION_LIGHT_OUT = 7
+};
+
+/// The column of light's animation while it holds this many lights, 1 to 3.
+#define GOLDEN_RINGS_ANIMATION_COLUMN(lights)                                  \
+  (GOLDEN_RINGS_ANIMATION_ONE_LIGHT + 1 - (lights))
+
 /// Sets up the lights for a floor whose pool is the cell behavior region,
 /// keeping their state for the pool's events. On an ordinary arrival the
 /// leader has no lights. When the party returns to where it was, as after a
@@ -42,7 +64,8 @@ void MercuryLighthouse_RestoreLights(s32 region,
       light->motionFlags = ACTOR_FLOATS;
       light->y.fixed -= toFIXED(1) / 2;
       if (sprite != NULL) {
-        Sprite_StartAnimation(sprite, 6 - lights->levels);
+        Sprite_StartAnimation(sprite,
+                              GOLDEN_RINGS_ANIMATION_COLUMN(lights->levels));
         sprite->flags = 0;
         sprite->image.priority = 1;
       }
@@ -64,7 +87,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     light->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     light->speedLimit = toFIXED(4);
     if (sprite != NULL) {
-      Sprite_StartAnimation(sprite, 6);
+      Sprite_StartAnimation(sprite, GOLDEN_RINGS_ANIMATION_POOL_LIGHT);
       sprite->flags = 0;
     }
     lights->stepEffect = light;

@@ -367,7 +367,7 @@ void Actor_StartScript(struct Actor *actor, const void *script);
 #undef EFFECT_SET_SCRIPT
 
 extern u16 gDehkanPlateau_FullMetalVestChestCrackPictures[];
-extern u16 gDehkanPlateau_FullMetalVestChestCracks[][6];
+extern u16 gDehkanPlateau_FullMetalVestChestCracks[][CRACK_FIELDS];
 
 extern s16 gDehkanPlateau_ThemisAxeChestCrumblingPillars[];
 extern s16 gDehkanPlateau_TightropesCrumblingPillars[];
@@ -725,7 +725,7 @@ void DehkanPlateau_ForgetFall(void) {
 /// forgotten.
 #define DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(name, cracks, count, pictures)    \
   void name(void) {                                                            \
-    const u16 *cell = &cracks[0][0];                                           \
+    const u16 *cell = &cracks[0][CRACK_STARTS_CRACKED];                        \
     s32 flag = FLAG_CRACK_OPENED_FIRST;                                        \
     u32 i;                                                                     \
                                                                                \
@@ -735,7 +735,7 @@ void DehkanPlateau_ForgetFall(void) {
           s32 x;                                                               \
           s32 y;                                                               \
                                                                                \
-          cell = &cracks[i][1];                                                \
+          cell = &cracks[i][CRACK_X];                                          \
           x = *cell++;                                                         \
           y = *cell++;                                                         \
           MapGrid_CopyCellTilesIndicesRect(pictures[0], pictures[1], x, y, 1,  \
@@ -744,7 +744,7 @@ void DehkanPlateau_ForgetFall(void) {
       } else {                                                                 \
         if (*cell != 0)                                                        \
           GameFlag_Set(flag);                                                  \
-        cell += 6;                                                             \
+        cell += CRACK_FIELDS;                                                  \
       }                                                                        \
       flag++;                                                                  \
     }                                                                          \
@@ -760,7 +760,7 @@ DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(
     gDehkanPlateau_FullMetalVestChestCrackPictures)
 
 extern u16 gDehkanPlateau_ThemisAxeChestCrackPictures[];
-extern u16 gDehkanPlateau_ThemisAxeChestCracks[][6];
+extern u16 gDehkanPlateau_ThemisAxeChestCracks[][CRACK_FIELDS];
 
 /// Restores the Themis Axe's stretch's eight cracks, as the first stretch's.
 DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(DehkanPlateau_RestoreThemisAxeChestCracks,
@@ -769,7 +769,7 @@ DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(DehkanPlateau_RestoreThemisAxeChestCracks,
                                      gDehkanPlateau_ThemisAxeChestCrackPictures)
 
 extern u16 gDehkanPlateau_TightropesCrackPictures[];
-extern u16 gDehkanPlateau_TightropesCracks[][6];
+extern u16 gDehkanPlateau_TightropesCracks[][CRACK_FIELDS];
 
 /// Restores the rope bridge's stretch's six cracks, as the first stretch's.
 DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(DehkanPlateau_RestoreTightropesCracks,
@@ -780,7 +780,7 @@ DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(DehkanPlateau_RestoreTightropesCracks,
 /// As the other rooms' (DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS) for the Pound
 /// Cube's cave's sixteen cracks.
 void DehkanPlateau_RestorePoundCubeCracks(void) {
-  u16 *record = &gDehkanPlateau_PoundCubeCracks[0][0];
+  u16 *record = &gDehkanPlateau_PoundCubeCracks[0][CRACK_STARTS_CRACKED];
   s32 flag = FLAG_CRACK_OPENED_FIRST;
   u32 i;
 
@@ -790,7 +790,7 @@ void DehkanPlateau_RestorePoundCubeCracks(void) {
         s32 x;
         s32 y;
 
-        record = &gDehkanPlateau_PoundCubeCracks[i][1];
+        record = &gDehkanPlateau_PoundCubeCracks[i][CRACK_X];
         x = *record++;
         y = *record++;
         MapGrid_CopyCellTilesIndicesRect(
@@ -800,7 +800,7 @@ void DehkanPlateau_RestorePoundCubeCracks(void) {
     } else {
       if (*record != 0)
         GameFlag_Set(flag);
-      record += 6;
+      record += CRACK_FIELDS;
     }
   }
 }
@@ -826,24 +826,24 @@ void DehkanPlateau_StepOnCrack(void) {
   if (gMainRoutineState.next == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST) {
     n = state->stepTrigger - TRIGGER_FULL_METAL_VEST_CHEST_FIRST_CRACK;
     flag = FLAG_CRACK_OPENED_FIRST + n;
-    record = &gDehkanPlateau_FullMetalVestChestCracks[n][1];
+    record = &gDehkanPlateau_FullMetalVestChestCracks[n][CRACK_X];
   } else if (gMainRoutineState.next == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST) {
     n = state->stepTrigger - TRIGGER_THEMIS_AXE_CHEST_FIRST_CRACK;
     flag = FLAG_CRACK_OPENED_FIRST + n;
-    record = &gDehkanPlateau_ThemisAxeChestCracks[n][1];
+    record = &gDehkanPlateau_ThemisAxeChestCracks[n][CRACK_X];
   } else if (gMainRoutineState.next == SCENE_DEHKAN_PLATEAU_TIGHTROPES) {
     n = state->stepTrigger - TRIGGER_TIGHTROPES_FIRST_CRACK;
     flag = FLAG_CRACK_OPENED_FIRST + n;
-    record = &gDehkanPlateau_TightropesCracks[n][1];
+    record = &gDehkanPlateau_TightropesCracks[n][CRACK_X];
   } else if (gMainRoutineState.next == SCENE_DEHKAN_PLATEAU_POUND_CUBE) {
     n = state->stepTrigger - TRIGGER_POUND_CUBE_FIRST_CRACK;
     flag = FLAG_CRACK_OPENED_FIRST + n;
-    record = &gDehkanPlateau_PoundCubeCracks[n][1];
+    record = &gDehkanPlateau_PoundCubeCracks[n][CRACK_X];
     if (GameFlag_Get(FLAG_FELL_THROUGH(
             DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTH)))
       // Once the party has fallen in beside Cannon, the fifth crack's hole is
       // drawn with the fourth hole picture instead of the first.
-      gDehkanPlateau_PoundCubeCracks[4][3] = 3;
+      gDehkanPlateau_PoundCubeCracks[4][CRACK_HOLE] = 3;
   } else {
     return;
   }
@@ -883,6 +883,7 @@ void DehkanPlateau_StepOnCrack(void) {
             gDehkanPlateau_PoundCubeCrackPictures[2],
             gDehkanPlateau_PoundCubeCrackPictures[3], x, y, 1, 1);
     }
+    // The rest of the crack's record: its hole picture and where it is drawn.
     index = *record++;
     cellX = index * 2;
     toX = record[0];
@@ -950,6 +951,8 @@ void DehkanPlateau_StepOnCrack(void) {
     Actor_SetAnimationById(gMainRoutineState.leaderActorId,
                            ANIM_LEADER_ARMS_RAISED);
     Event_Wait(16);
+    /* FAKEMATCH(temporary): the fall's frames counted in cellX, the leader's
+     * cell before and the hole picture's index after. */
     for (cellX = 0; (u32)cellX < FALL_FRAMES; cellX++) {
       if (cellX == 5)
         Sound_Play(SE_DUST_PUFF);
@@ -1807,7 +1810,7 @@ void Tightrope_Initialize(void);
 /// as he has gone.
 void DehkanPlateau_InitializeTightropes(void) {
   struct Actor *actor;
-  FIXED zero, pillarX;
+  FIXED pillarX;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Actor_GetById(gMainRoutineState.leaderActorId)->priorityFlags |=
@@ -1856,7 +1859,6 @@ void DehkanPlateau_InitializeTightropes(void) {
     struct Actor *pillar = Actor_GetById(ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR);
 
     pillarX = pillar->x.fixed;
-    zero = 0;
     if (FIELD_CELL(pillarX) == 54) {
       struct MapCell *cell =
           ((struct MapState *)Ram_HeapSlots->mapGrid)->layers[0].cells;
@@ -1896,14 +1898,16 @@ void DehkanPlateau_InitializeTightropes(void) {
   CrumblingPillar_Place(gDehkanPlateau_TightropesCrumblingPillars);
   DehkanPlateau_SetTightropesStandingPillarCells();
   DehkanPlateau_HideTightropesBlocks();
+  // The second unseen block, at (408, 72), stands on a cell 32 pixels high
+  // beside the path; it is held at the path's height instead.
   {
     struct Actor *block = Actor_GetById(ACTOR_TIGHTROPES_FIRST_BLOCK + 1);
 
-    block->motionFlags = zero;
-    block->y.fixed = zero;
+    block->motionFlags = 0;
+    block->y.fixed = 0;
   }
-  gDehkanPlateau_CrackX = zero;
-  gDehkanPlateau_CrackZ = zero;
+  gDehkanPlateau_CrackX = 0;
+  gDehkanPlateau_CrackZ = 0;
   Task_Add(DehkanPlateau_ForgetCrackOnLeaving, TASK_PASS_FRAME);
 }
 
@@ -1937,6 +1941,8 @@ extern u16 gDehkanPlateau_FallLandingCells[];
         x = entry[0];                                                          \
         y = entry[1];                                                          \
         MapGrid_CopyCellsTo(columnSourceX, columnSourceZ, x, y, 1, 5);         \
+        /* The second crack's shaft of light starts a row lower: its top cell  \
+         * takes the shaft's second picture, the Mint chest cave's (67, 4). */ \
         if (fall == 1)                                                         \
           MapGrid_CopyCellsTo(67, 4, 69, 3, 1, 1);                             \
         x -= 64;                                                               \
@@ -2278,7 +2284,7 @@ u16 gDehkanPlateau_PoundCubeHolePictures[] = {
 
 /// Each room's cracks: whether it starts cracked, its cell, its hole picture and
 /// where the hole is drawn below.
-u16 gDehkanPlateau_FullMetalVestChestCracks[][6] = {
+u16 gDehkanPlateau_FullMetalVestChestCracks[][CRACK_FIELDS] = {
     {0, 76, 12, 0, 76, 48},
     {0, 77, 13, 0, 77, 49},
     {1, 79, 12, 0, 79, 48},
@@ -2294,7 +2300,7 @@ u16 gDehkanPlateau_FullMetalVestChestCracks[][6] = {
     {1, 122, 16, 0, 122, 52},
     {0, 122, 18, 5, 122, 54},
 };
-u16 gDehkanPlateau_ThemisAxeChestCracks[][6] = {
+u16 gDehkanPlateau_ThemisAxeChestCracks[][CRACK_FIELDS] = {
     {1, 105, 4, 0, 41, 36},
     {0, 109, 17, 0, 45, 49},
     {0, 110, 19, 3, 46, 51},
@@ -2304,7 +2310,7 @@ u16 gDehkanPlateau_ThemisAxeChestCracks[][6] = {
     {0, 114, 18, 0, 50, 50},
     {0, 105, 6, 0, 41, 38},
 };
-u16 gDehkanPlateau_TightropesCracks[][6] = {
+u16 gDehkanPlateau_TightropesCracks[][CRACK_FIELDS] = {
     {1, 91, 11, 0, 27, 43},
     {0, 92, 11, 0, 28, 43},
     {1, 93, 9, 0, 29, 41},
@@ -2312,7 +2318,7 @@ u16 gDehkanPlateau_TightropesCracks[][6] = {
     {1, 109, 7, 0, 45, 39},
     {1, 112, 6, 0, 48, 38},
 };
-u16 gDehkanPlateau_PoundCubeCracks[][6] = {
+u16 gDehkanPlateau_PoundCubeCracks[][CRACK_FIELDS] = {
     {1, 13, 8, 2, 13, 72},
     {0, 13, 9, 0, 13, 73},
     {0, 13, 11, 1, 13, 75},

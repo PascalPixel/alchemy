@@ -79,9 +79,21 @@ void DehkanPlateau_InitializeCannon(void);
 /// Sets up the field's ropes for the scene (Rope_Initialize).
 void DehkanPlateau_InitializeRopes(void);
 
+/// A crack record's halfwords: a crack in a room's floor that Felix can fall
+/// through, and the hole it leaves in the ceiling of the cave below.
+enum DehkanPlateauCrackField {
+  CRACK_STARTS_CRACKED, ///< nonzero: cracked when the room is first entered
+  CRACK_X,              ///< its map cell
+  CRACK_Z,
+  CRACK_HOLE,   ///< its hole picture, a pair of the room's hole pictures
+  CRACK_HOLE_X, ///< the map cell the hole is drawn at
+  CRACK_HOLE_Z,
+  CRACK_FIELDS
+};
+
 /// The cracks' pictures and records (each room's crack table).
 extern u16 gDehkanPlateau_PoundCubeCrackPictures[];
-extern u16 gDehkanPlateau_PoundCubeCracks[][6];
+extern u16 gDehkanPlateau_PoundCubeCracks[][CRACK_FIELDS];
 extern u16 gDehkanPlateau_FullMetalVestChestHolePictures[];
 extern u16 gDehkanPlateau_ThemisAxeChestHolePictures[];
 extern u16 gDehkanPlateau_TightropesHolePictures[];

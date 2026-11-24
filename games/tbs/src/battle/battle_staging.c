@@ -10,6 +10,10 @@
 #define CRITICAL_ZOOM_START 100
 #define CRITICAL_ZOOM_GAIN 30
 
+/// BattleStaging_RunPlainAttack's flag for a miss: the target hops back and no
+/// effect plays. Nothing calls the routine, so its other flags are unknown.
+#define PLAIN_ATTACK_MISSED 2
+
 /// Plays one action of the turn, after delay frames facing the party: the
 /// action is built and staged, its end effects run and every unit returns to
 /// its spot. Returns 1 when the party got away, -1 when the unit is already
@@ -587,7 +591,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
   Unit_GetFar(state.effect.user);
   Unit_GetFar(savedInput->targetIds[0]);
 
-  missed = flags & 2;
+  missed = flags & PLAIN_ATTACK_MISSED;
   animation = Actor_GetSprite(BattleObject_Get(savedInput->unitId)->actor, 0);
   frames = SpriteAnimation_SumCommandLengthsFar(
       animation->entries[0]->animationId, 2, 1);
@@ -625,6 +629,8 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
                           struct BattleAction *selection) {
   struct BattleStagingState state;
   struct Actor *actor;
+  /* FAKEMATCH(temporary): one local is both the targets' index and the
+   * dimming's frame count. */
   s32 targetOrFadeIndex;
   s32 inventoryEntry;
   struct Unit *unit;

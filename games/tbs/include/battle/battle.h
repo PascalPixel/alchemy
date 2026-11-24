@@ -387,7 +387,7 @@ UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 void BattlePlayback_MarkMessage(void);
 UNREAD_RESULT BattleUnit_RemoveEnemy(s32 unitId);
 void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackState *runtime,
-                                    u32 operand);
+                                    u32 unused);
 #ifdef UBFIX
 void BattlePlayback_RunAll(void);
 #else

@@ -155,7 +155,7 @@ UNREAD_RESULT BattleUnit_RemoveEnemy(s32 unitId) {
 
 /// Grants the Djinn bonus for the rest of the action.
 void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackState *runtime,
-                                    u32 operand) {
+                                    u32 unused) {
   runtime->djinnBonus |= PLAYBACK_FLAG_DJINN_BONUS;
 }
 

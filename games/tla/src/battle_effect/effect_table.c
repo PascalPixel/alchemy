@@ -367,10 +367,10 @@ const s32 gStar_Points[] = {0, toFIXED(48), 0, 0, toFIXED(28), 0};
 /// The ring radii, alternating, in pixels.
 const u8 gStar_Radii[] = {32, 16};
 
-/// The nine comets' grid: each comet's x, in pixels.
+/// The grid Procne's nine sprites sit on: each one's x, in pixels.
 const u8 gProcne_GridX[] = {0, 32, 64, 0, 32, 64, 0, 32, 64};
 
-/// The nine comets' grid: each comet's depth, in pixels.
+/// The grid Procne's nine sprites sit on: each one's depth, in pixels.
 const u8 gProcne_GridY[] = {0, 0, 0, 32, 32, 32, 64, 64, 64};
 
 /// The frames of the four comet strikes.
@@ -1260,10 +1260,10 @@ const s8 gUlysses_ParticleStarts[][5] = {
     {100, 60, 64, -6, -6}, {112, 44, -64, -6, 4}, {96, 28, 64, -6, -5},
     {112, 80, -64, -6, 4}, {104, 32, 64, -6, 5},  {102, 68, -64, -6, 4}};
 
-/// Each Spider Web picture's width, in pixels.
+/// Each Swirl Swipe picture's width, in pixels.
 const u8 gSwirlSwipe_PictureWidths[] = {40, 112, 112, 112, 88, 64};
 
-/// Each Spider Web picture's height, in pixels.
+/// Each Swirl Swipe picture's height, in pixels.
 const u8 gSwirlSwipe_PictureHeights[] = {56, 80, 64, 64, 80, 88};
 
 /// The swirl's six pictures: their byte offsets; the tables after it give their
@@ -1654,13 +1654,13 @@ const u8 gMegaera_GlintFlips[] = {0, 4, 8, 12};
 /// How the glints are blended, by variant.
 const u8 gMegaera_GlintModes[] = {1, 1, 0, 0};
 
-/// Each pillar's full scale, in 65536ths, which its growth multiplies.
+/// Each ring's full scale, in 65536ths, which its growth multiplies.
 const s32 gLightSurge_RingSizes[4] = {18000, 12000, 30000, 40000};
 
-/// Each pillar's shade, before it dims.
+/// Each ring's shade, before it dims.
 const s8 gLightSurge_RingShades[4] = {-2, -8, -4, 0};
 
-/// How far each pillar sways, in pixels at the sway's widest.
+/// How far each ring sways, in pixels at the sway's widest.
 const s8 gLightSurge_RingSways[4] = {-24, -8, 24, 48};
 
 /// Each mode's flags for the Djinni's entrance.
@@ -1839,7 +1839,7 @@ const struct ModelVertex gBattleEffect_SquareCorners[] = {
 const struct ModelVertex gBattleEffect_StandingSquareCorners[] = {
     {-32, -64, 0}, {32, -64, 0}, {-32, 0, 0}, {32, 0, 0}};
 
-/// The wing's corners, as signed x, y and z.
+/// The fan flame's corners, as signed x, y and z.
 const struct ModelVertex gLegend_FanFlameCorners[] = {
     {-16, 64, -64}, {16, 64, -64}, {-16, 56, 0}, {16, 56, 0}};
 
@@ -1903,23 +1903,23 @@ const u16 gHaures_BurstMesh[] = {MESH_FACE(1, 3, 2, 47, 0, 47, 71, 0, 71),
                                  MESH_FACE(0, 1, 2, 16, 16, 47, 16, 16, 47),
                                  MESH_END};
 
-/// The swing's pictures: their widths; the tables after it give their heights
-/// and offsets, and the fist's heights, y offsets and offsets.
+/// The spark burst's pictures: their widths; the tables after it give their
+/// heights and offsets, and the heart burn's heights, y offsets and offsets.
 const u8 gHeartbreak_SparkBurstWidths[] = {32, 39, 42, 71};
 
-/// Each swing picture's height, in pixels.
+/// Each spark burst picture's height, in pixels.
 const u8 gHeartbreak_SparkBurstHeights[] = {29, 32, 48, 57};
 
-/// Each swing picture's byte offset in Heartbreak's sprite sheet.
+/// Each spark burst picture's byte offset in Heartbreak's sprite sheet.
 const u16 gHeartbreak_SparkBurstPictures[] = {0, 928, 2176, 4192};
 
-/// Each fist picture's height, in pixels.
+/// Each heart burn picture's height, in pixels.
 const u8 gHeartbreak_HeartBurnHeights[] = {29, 37, 48, 47, 52, 32, 22, 17};
 
-/// Each fist's y, in pixels.
+/// Each heart burn picture's y, in pixels.
 const u8 gHeartbreak_HeartBurnY[] = {34, 26, 15, 14, 7, 11, 8, 6};
 
-/// Each fist picture's byte offset in Heartbreak's sprite sheet.
+/// Each heart burn picture's byte offset in Heartbreak's sprite sheet.
 const u16 gHeartbreak_HeartBurnPictures[] = {0,    928,  2112, 3648,
                                              5152, 6816, 7840, 8544};
 
@@ -2047,12 +2047,12 @@ const u8 gDaedalusStrike_HitFrames[] = {80, 84, 86, 88, 90, 92, 94};
 const u8 gVengeance_ArrowStrikes[][7] = {
     {0, 0, 1, 0, 0, 0, 1}, {1, 0, 1, 1, 0, 0, 1}, {1, 1, 1, 1, 1, 1, 1}};
 
-/// The blade's mesh.
+/// The pale blade's mesh.
 const u16 gLifeShear_PaleBladeMesh[] = {
     MESH_FACE(1, 3, 2, 127, 14, 127, 53, 0, 53),
     MESH_FACE(0, 1, 2, 0, 14, 127, 14, 0, 53), MESH_END};
 
-/// The handle's mesh.
+/// The orange blade's mesh.
 const u16 gLifeShear_OrangeBladeMesh[] = {
     MESH_FACE(1, 3, 2, 127, 0, 127, 31, 0, 31),
     MESH_FACE(0, 1, 2, 0, 0, 127, 0, 0, 31), MESH_END};

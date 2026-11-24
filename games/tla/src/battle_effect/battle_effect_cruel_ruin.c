@@ -1371,10 +1371,10 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           // The sprite takes priority 1, in bits 2 and 3 of the high byte of
           // its OAM attribute 2.
           {
-            s32 b = ((u8 *)obj)[9];
+            s32 b = obj->attr.bytes[1];
             u8 x = b & -13;
             x |= 4;
-            ((u8 *)obj)[9] = x;
+            obj->attr.bytes[1] = x;
           }
           Iwram_CopyWords((void *)OBJ_TILES(obj), src, OBJ_32X32_4BPP_BYTES);
           src += OBJ_32X32_4BPP_BYTES;

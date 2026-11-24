@@ -106,6 +106,7 @@ struct RuinObject {
       u16 palette : 4;
     } bits;
     u16 all;
+    u8 bytes[2];
   } attr;
 };
 

@@ -17,8 +17,8 @@ enum {
   MATRIX_WORDS = 12
 };
 
-/// A matrix, as SGL types one: twelve 16.16 words, the rotation's nine and
-/// then the translation's three.
+/// A matrix of twelve 16.16 words, as SGL types one; ours holds the
+/// rotation's nine and then the translation's three.
 typedef FIXED MATRIX[MATRIX_WORDS];
 
 /// The current 3D transform. Iwram_MultiplyMatrix multiplies the matrix it is

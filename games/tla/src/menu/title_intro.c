@@ -728,7 +728,7 @@ void TitleIntro_UpdateLogo(void) {
     Title_PlaceLogoPiece(LOGO_PIECE_TILES, LOGO_MIDDLE_X, y);
     pieceX = LOGO_RIGHT_X - (logo->step - LOGO_MATRIX_REST) / 4;
     Title_PlaceLogoPiece(2 * LOGO_PIECE_TILES, pieceX, y);
-    // Affine matrix 0, in attribute 3 of the first four entries.
+    // Affine matrix 0, in the fourth halfwords of the first four entries.
     matrix = (volatile u16 *)((u8 *)OAM + 6);
     *matrix = logo->step;
     matrix += 4;

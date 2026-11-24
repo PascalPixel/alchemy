@@ -26,7 +26,8 @@
 #define BGCNT_256_COLORS 0x0080 ///< 8bpp tiles, not 16-colour 4bpp ones
 /// The 2 KB screen block, 0 to 31, the layer's map is read from.
 #define BGCNT_SCREEN_BASE(block) ((block) << 8)
-/// Affine backgrounds only: wrap around instead of showing the backdrop.
+/// Affine backgrounds only: wrap around off the layer's area, which is
+/// otherwise transparent.
 #define BGCNT_WRAP 0x2000
 /// The background's size: for an affine one, 0 to 3 are 128, 256, 512 and 1024
 /// pixels square.
@@ -368,10 +369,10 @@ enum KeyMask {
 #define REG_SOUNDCNT_H (*(volatile u16 *)0x04000082)
 /// SOUNDCNT_H flags: the mixing volumes, then each direct
 /// sound channel's speakers, timer and FIFO reset.
-#define SOUND_CGB_MIX_FULL 0x0002 ///< the four tone channels at full volume
+#define SOUND_CGB_MIX_FULL 0x0002 ///< sounds 1 to 4 at full volume
 #define SOUND_A_MIX_FULL 0x0004   ///< direct sound A at full, not half
 #define SOUND_B_MIX_FULL 0x0008   ///< direct sound B at full, not half
-/// The tone channels and both direct sound channels all at full volume.
+/// Sounds 1 to 4 and both direct sound channels all at full volume.
 #define SOUND_ALL_MIX_FULL                                                     \
   (SOUND_CGB_MIX_FULL | SOUND_A_MIX_FULL | SOUND_B_MIX_FULL)
 #define SOUND_A_RIGHT_OUTPUT 0x0100 ///< A to the right speaker

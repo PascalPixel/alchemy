@@ -11,7 +11,7 @@ void FlameThrowers_Create(void) {
   actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
   Actor_SelectAnimation(actor, 1);
   animation = actor->sprite;
-  state->handle = actor;
+  state->sharedFlame = actor;
   state->flameVramBlock = animation->slot;
   animation->retainCacheEntry = 1;
 }

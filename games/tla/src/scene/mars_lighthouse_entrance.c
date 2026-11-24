@@ -1551,8 +1551,8 @@ void FlameThrower_UpdateSpark(struct Actor *actor);
 UNUSED void FlameThrowers_Release(void) {
   struct FlameHitState *state = FLAME_THROWERS_STATE;
 
-  Actor_Release(state->handle);
-  state->handle = NULL;
+  Actor_Release(state->sharedFlame);
+  state->sharedFlame = NULL;
 }
 
 /// Sets whether the flame throwers keep puffing while Psynergy is used.

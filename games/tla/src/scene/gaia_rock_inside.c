@@ -160,17 +160,62 @@ enum GaiaRockInsideCellBehavior {
   CELL_BEHAVIOR_CLOUD_BRAND = 77
 };
 
-/// The maze's one actor, in the middle of each of its rooms.
+/// The maze's one actor, in the middle of each of its rooms, and its
+/// treasures in scene_items.c's order: the Mimic's chest in the third room,
+/// the Rusty Mace's in the ninth, and the Cloud Brand hidden behind the stone
+/// Serpent in the lair.
 enum {
   /// A sprig that Growth turns into an arrow pointing the way on
   /// (GaiaRockInside_PlantPointsTheWay).
-  ACTOR_ARROW_PLANT = 8
+  ACTOR_ARROW_PLANT = 8,
+  ACTOR_MIMIC_CHEST = FIELD_TREASURE_ACTOR,
+  ACTOR_RUSTY_MACE_CHEST,
+  ACTOR_CLOUD_BRAND
 };
+
+/// Leaves the Mimic's chest out of the maze's third room while set. Nothing in
+/// the code sets it.
+#define FLAG_MIMIC_CHEST_LEFT_OUT FLAG_AREA_TEMP_F6
 
 /// The exit the lair would take after showing a beam if none waited to be
 /// shown: the scene has no exit of this number, but the party only comes in by
 /// entrance 20 from an event that has just let a beam in.
 #define EXIT_NO_SUNBEAM 20
+
+/// The passages within the first altar's room and the altar room, from one
+/// side of a doorway to the other (scene_exits.h names only those between
+/// scenes). An exit and the entrance on its side of the doorway share a number.
+/// In the first altar's room, the doorway east of the altar leads to the
+/// stumps and the maze, and the passages north of the two faces' doorways to
+/// the leafy platforms. In the altar room, the three doorways along the wall of
+/// handholds lead to the west and east sides of the altar ringed by bushes and
+/// to the great cobweb; the middle one comes in by
+/// GAIA_ROCK_INSIDE_ALTAR_FROM_GAIA_ROCK_INSIDE_MAZE_A and the east one by
+/// GAIA_ROCK_INSIDE_ALTAR_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_SOUTHEAST_A_A.
+enum GaiaRockInsidePassage {
+  GAIA_ROCK_INSIDE_FIRST_ALTAR_TO_STUMPS = 2,
+  GAIA_ROCK_INSIDE_FIRST_ALTAR_STUMPS_TO_ALTAR,
+  GAIA_ROCK_INSIDE_FIRST_ALTAR_TO_WEST_PASSAGE = 5,
+  GAIA_ROCK_INSIDE_FIRST_ALTAR_WEST_PASSAGE_TO_ALTAR,
+  GAIA_ROCK_INSIDE_FIRST_ALTAR_TO_EAST_PASSAGE = 8,
+  GAIA_ROCK_INSIDE_FIRST_ALTAR_EAST_PASSAGE_TO_ALTAR,
+  GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_STUMPS = 2,
+  GAIA_ROCK_INSIDE_FIRST_ALTAR_STUMPS_FROM_ALTAR,
+  GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_WEST_PASSAGE = 5,
+  GAIA_ROCK_INSIDE_FIRST_ALTAR_WEST_PASSAGE_FROM_ALTAR,
+  GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_EAST_PASSAGE = 8,
+  GAIA_ROCK_INSIDE_FIRST_ALTAR_EAST_PASSAGE_FROM_ALTAR,
+  GAIA_ROCK_INSIDE_ALTAR_WALL_TO_ALTAR_WEST = 1,
+  GAIA_ROCK_INSIDE_ALTAR_ALTAR_WEST_TO_WALL,
+  GAIA_ROCK_INSIDE_ALTAR_WALL_TO_ALTAR_EAST,
+  GAIA_ROCK_INSIDE_ALTAR_ALTAR_EAST_TO_WALL,
+  GAIA_ROCK_INSIDE_ALTAR_WALL_TO_COBWEB,
+  GAIA_ROCK_INSIDE_ALTAR_COBWEB_TO_WALL,
+  GAIA_ROCK_INSIDE_ALTAR_WALL_FROM_ALTAR_WEST = 1,
+  GAIA_ROCK_INSIDE_ALTAR_ALTAR_WEST_FROM_WALL,
+  GAIA_ROCK_INSIDE_ALTAR_WALL_FROM_ALTAR_EAST,
+  GAIA_ROCK_INSIDE_ALTAR_WALL_FROM_COBWEB = 5
+};
 
 /// The trigger Susa's hook raises when the party has stood in his or his
 /// cask's way for half a second (GaiaRockInside_CheckBlocked).
@@ -1552,13 +1597,13 @@ void GaiaRockInside_RiseFromSand(void) {
 void GaiaRockInside_FindCloudBrand(void) {
   struct Actor *actor;
 
-  actor = Actor_Get(FIELD_TREASURE_ACTOR + 2);
+  actor = Actor_Get(ACTOR_CLOUD_BRAND);
   actor->x.fixed = toFIXED(552);
   actor->z.fixed = toFIXED(296);
   actor->y.fixed = toFIXED(-30);
   actor->groundHeight = toFIXED(-32);
   Event_ClearFlag(FLAG_NOTHING_HAPPENS);
-  Scene_TalkToActor(FIELD_TALK_SILENT | (FIELD_TREASURE_ACTOR + 2));
+  Scene_TalkToActor(FIELD_TALK_SILENT | ACTOR_CLOUD_BRAND);
 }
 
 /// Felix examines one of the altars where the Dancing Idol dances: "Felix
@@ -2254,29 +2299,10 @@ extern u32 gGaiaRockInside_SerpentSmokeScript[];
 extern u32 gGaiaRockInside_AltarShadowScript[];
 extern s32 gGaiaRockInside_SusaFeedsSerpentScript[];
 
-struct Actor *Actor_CreateSilhouette(s32 x, s32 y, s32 z, s32 kind);
-s32 __modsi3(s32 numerator, s32 denominator);
-void GaiaRockInside_TurnFaceToAltar();
-void GaiaRockInside_RingOfDust(void);
+// The stone heads and the wall of handholds, which Scene_Initialize sets up,
+// come later, with the code the altar room shares with Gaia Rock's cliffs.
 void StoneHead_Place(s32 id, s32 x, s32 y, s32 z);
 void GaiaRockInside_StartWallTriggers(void);
-void Actor_Release();
-void BlendScript_Resume(void);
-void BlendScript_Suspend(void);
-void Actor_SetSpritePriorityDirect();
-void Event_Start(void);
-void Event_End(void);
-void FieldCamera_WaitForArrival(void);
-void FieldCamera_MoveToActorById();
-void Event_SetDestination();
-void FieldEffect_StartBlankOverlay();
-void HangingVine_Place();
-void WorldMap_SetReturnLeavingScene();
-void Actor_SetAnimationSpeed();
-void Actor_SetSpriteColorMode();
-void Event_FinishScreenTransition(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 /// Sets up the room the party arrives in. In the lair: the beams of sunlight
 /// let in, the stone Serpent and the slate once it is slain, the scene of a
@@ -2571,7 +2597,6 @@ s32 Scene_Initialize(void) {
       }
     } else if (*entrance == ENTRANCE_SERPENT_BEATEN) {
       s32 flag;
-      FIXED scale;
       struct Actor *susa;
       s32 slow;
       s32 *owner;
@@ -2589,7 +2614,7 @@ s32 Scene_Initialize(void) {
         Event_SetMessageId((s32)MsgFieldItLooksLikeTheDragon);
         Actor_SetPosition(ACTOR_CASK, 0, 0);
         Actor_SetAnimationById(ACTOR_SERPENT, 3);
-        Actor_GetById(ACTOR_KRADEN)->speedLimit = scale = toFIXED(1);
+        Actor_GetById(ACTOR_KRADEN)->speedLimit = toFIXED(1);
         slow = toFIXED(1) / 2;
         susa = Actor_GetById(ACTOR_SUSA);
         susa->speedLimit = slow;
@@ -2645,13 +2670,13 @@ s32 Scene_Initialize(void) {
         PaletteFade_StartInterpolation(10);
         Event_Wait(10);
         Sound_Play(SE_SEA_OF_TIME_OPENS);
-        PaletteFade_SetTarget(scale, 0);
+        PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
         PaletteFade_StartInterpolation(10);
         Event_Wait(10);
         PaletteFade_ApplyTarget(RGB_WHITE, 0);
         PaletteFade_StartInterpolation(10);
         Event_Wait(10);
-        PaletteFade_SetTarget(scale, 0);
+        PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
         PaletteFade_StartInterpolation(10);
         Event_Wait(10);
         PaletteFade_SetTarget(RGB_WHITE, 0);
@@ -2664,7 +2689,7 @@ s32 Scene_Initialize(void) {
         susa->speedLimit = slow;
         Actor_SetPosition(ACTOR_SUSA, 456, 360);
         Actor_SetAnimationById(ACTOR_SUSA, ANIM_STAND);
-        PaletteFade_SetTarget(scale, 0);
+        PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
         PaletteFade_StartInterpolation(10);
         Event_Wait(10);
         Actor_FaceActorById(ACTOR_SUSA, *owner, 0);
@@ -2710,7 +2735,7 @@ s32 Scene_Initialize(void) {
         Actor_SetPosition(ACTOR_SUSA, 0, 0);
         Actor_WalkToById(*owner, 488, 376);
         Actor_WaitForMoveById(*owner);
-        MapGrid_SetShakeFX(toFIXED(5), toFIXED(5), scale);
+        MapGrid_SetShakeFX(toFIXED(5), toFIXED(5), FIXED_ONE);
         Sound_Play(SE_TREMOR);
         Event_Wait(30);
         Actor_ShowEmoteById(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2719,7 +2744,7 @@ s32 Scene_Initialize(void) {
         Event_Wait(15);
         other = Actor_GetById(ACTOR_SAND_TABLET);
         alpha = REG_BLDALPHA;
-        MapGrid_SetShakeFX(toFIXED(10), toFIXED(10), scale);
+        MapGrid_SetShakeFX(toFIXED(10), toFIXED(10), FIXED_ONE);
         Sound_Play(SE_TREMOR);
         BlendScript_Suspend();
         alpha = *(u8 *)&alpha;
@@ -2928,7 +2953,9 @@ s32 Scene_Initialize(void) {
   } else if (state->next == SCENE_GAIA_ROCK_INSIDE_ALTAR) {
     HangingVine_Place(ACTOR_HANGING_VINE, 1);
     GaiaRockInside_TurnFaceToAltar(ACTOR_ALTAR_FACE, ACTOR_ALTAR);
-    if (state->entrance == 1 || state->entrance == 3 || state->entrance == 5)
+    if (state->entrance == GAIA_ROCK_INSIDE_ALTAR_WALL_FROM_ALTAR_WEST ||
+        state->entrance == GAIA_ROCK_INSIDE_ALTAR_WALL_FROM_ALTAR_EAST ||
+        state->entrance == GAIA_ROCK_INSIDE_ALTAR_WALL_FROM_COBWEB)
       GaiaRockInside_StartWallTriggers();
     if (Test(FLAG_WEST_STONE_HEAD_RISEN))
       StoneHead_Place(ACTOR_WEST_STONE_HEAD, toFIXED(384), toFIXED(75),
@@ -3016,10 +3043,10 @@ s32 Scene_PrepareMap(void) {
       }
       GaiaRockInside_DrawMazeRoom();
       stage = &gPath->current;
-      if (*stage == 3 && !GameFlag_Get(FLAG_AREA_TEMP_F6))
-        Actor_SetPosition(FIELD_TREASURE_ACTOR, 104, 88);
+      if (*stage == 3 && !GameFlag_Get(FLAG_MIMIC_CHEST_LEFT_OUT))
+        Actor_SetPosition(ACTOR_MIMIC_CHEST, 104, 88);
       if (*stage == 9)
-        Actor_SetPosition(FIELD_TREASURE_ACTOR + 1, 104, 72);
+        Actor_SetPosition(ACTOR_RUSTY_MACE_CHEST, 104, 72);
       if (GameFlag_Get(FLAG_MAZE_PLANT_POINTED(*stage))) {
         struct Actor *plant = Actor_GetById(ACTOR_ARROW_PLANT);
         u32 angle = GaiaRockInside_GetMazeWayOn();
@@ -3058,32 +3085,32 @@ s32 Scene_PrepareMap(void) {
   } else if (gMainRoutineState.next == SCENE_GAIA_ROCK_INSIDE_FIRST_ALTAR) {
     switch (gMainRoutineState.entrance) {
     case GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_GAIA_ROCK_SUSA:
-    case 2:
-    case 5:
-    case 8:
+    case GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_STUMPS:
+    case GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_WEST_PASSAGE:
+    case GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_EAST_PASSAGE:
       GaiaRockInside_KeepOverheadPart(OVERHEAD_PART_A);
       break;
-    case 9:
+    case GAIA_ROCK_INSIDE_FIRST_ALTAR_EAST_PASSAGE_FROM_ALTAR:
     case GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_GAIA_ROCK_INSIDE_PLATFORMS_EAST:
       GaiaRockInside_KeepOverheadPart(OVERHEAD_PART_C);
       break;
-    case 3:
+    case GAIA_ROCK_INSIDE_FIRST_ALTAR_STUMPS_FROM_ALTAR:
     case GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_GAIA_ROCK_INSIDE_MAZE:
       GaiaRockInside_KeepOverheadPart(OVERHEAD_PART_D);
       break;
-    case 6:
+    case GAIA_ROCK_INSIDE_FIRST_ALTAR_WEST_PASSAGE_FROM_ALTAR:
     case GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_GAIA_ROCK_INSIDE_PLATFORMS_WEST:
       GaiaRockInside_KeepOverheadPart(OVERHEAD_PART_B);
       break;
     }
   } else if (gMainRoutineState.next == SCENE_GAIA_ROCK_INSIDE_ALTAR) {
     switch (gMainRoutineState.entrance) {
-    case 1:
-    case 3:
-    case 5:
+    case GAIA_ROCK_INSIDE_ALTAR_WALL_FROM_ALTAR_WEST:
+    case GAIA_ROCK_INSIDE_ALTAR_WALL_FROM_ALTAR_EAST:
+    case GAIA_ROCK_INSIDE_ALTAR_WALL_FROM_COBWEB:
       GaiaRockInside_KeepOverheadPart(OVERHEAD_PART_A);
       break;
-    case 2:
+    case GAIA_ROCK_INSIDE_ALTAR_ALTAR_WEST_FROM_WALL:
     case GAIA_ROCK_INSIDE_ALTAR_FROM_GAIA_ROCK_INSIDE_MAZE_A:
     case GAIA_ROCK_INSIDE_ALTAR_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_NORTHWEST:
       GaiaRockInside_KeepOverheadPart(OVERHEAD_PART_B);
@@ -3145,7 +3172,9 @@ restart:
     y = GRID_WIDTH / 2;
     o = 0;
     b = &AT(GRID_WIDTH, 0);
-    // step counts the border's rows here, before the walk numbers its steps.
+    // step counts the border's cells here, before the walk numbers its steps:
+    // a runs down column 0 and b down column GRID_WIDTH, e along row 0, and
+    // the byte offset o along row GRID_WIDTH.
     step = GRID_WIDTH;
     a = grid->cells;
     e = grid->cells;
@@ -3156,8 +3185,8 @@ restart:
       b += GRID_WIDTH;
       e->step = MAZE_BORDER;
       e++;
-      t = o + GRID_WIDTH * GRID_WIDTH * 4;
-      ((s8 *)grid)[t] = MAZE_BORDER;
+      t = o + GRID_WIDTH * GRID_WIDTH * sizeof(PathCell);
+      ((PathCell *)((s8 *)grid + t))->step = MAZE_BORDER;
       o += sizeof(PathCell);
       step--;
     } while (step >= 0);
@@ -3618,14 +3647,14 @@ u32 gSceneExits[] = {
     SCENE_EXIT(251, GaiaRockInsideMaze, GAIA_ROCK_INSIDE_MAZE_FROM_GAIA_ROCK_INSIDE_FIRST_ALTAR_B),
     SCENE_EXITS(GaiaRockInsideFirstAltar),
     SCENE_EXIT(GAIA_ROCK_INSIDE_FIRST_ALTAR_TO_GAIA_ROCK_SUSA, GaiaRockSusa, GAIA_ROCK_SUSA_FROM_GAIA_ROCK_INSIDE_FIRST_ALTAR),
-    SCENE_EXIT(2, GaiaRockInsideFirstAltar, 3),
-    SCENE_EXIT(3, GaiaRockInsideFirstAltar, 2),
+    SCENE_EXIT(GAIA_ROCK_INSIDE_FIRST_ALTAR_TO_STUMPS, GaiaRockInsideFirstAltar, GAIA_ROCK_INSIDE_FIRST_ALTAR_STUMPS_FROM_ALTAR),
+    SCENE_EXIT(GAIA_ROCK_INSIDE_FIRST_ALTAR_STUMPS_TO_ALTAR, GaiaRockInsideFirstAltar, GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_STUMPS),
     SCENE_EXIT(GAIA_ROCK_INSIDE_FIRST_ALTAR_TO_GAIA_ROCK_INSIDE_MAZE, GaiaRockInsideMaze, GAIA_ROCK_INSIDE_MAZE_FROM_GAIA_ROCK_INSIDE_FIRST_ALTAR_A),
-    SCENE_EXIT(5, GaiaRockInsideFirstAltar, 6),
-    SCENE_EXIT(6, GaiaRockInsideFirstAltar, 5),
+    SCENE_EXIT(GAIA_ROCK_INSIDE_FIRST_ALTAR_TO_WEST_PASSAGE, GaiaRockInsideFirstAltar, GAIA_ROCK_INSIDE_FIRST_ALTAR_WEST_PASSAGE_FROM_ALTAR),
+    SCENE_EXIT(GAIA_ROCK_INSIDE_FIRST_ALTAR_WEST_PASSAGE_TO_ALTAR, GaiaRockInsideFirstAltar, GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_WEST_PASSAGE),
     SCENE_EXIT(GAIA_ROCK_INSIDE_FIRST_ALTAR_TO_GAIA_ROCK_INSIDE_PLATFORMS_WEST, GaiaRockInsidePlatforms, GAIA_ROCK_INSIDE_PLATFORMS_FROM_GAIA_ROCK_INSIDE_FIRST_ALTAR_EAST_A),
-    SCENE_EXIT(8, GaiaRockInsideFirstAltar, 9),
-    SCENE_EXIT(9, GaiaRockInsideFirstAltar, 8),
+    SCENE_EXIT(GAIA_ROCK_INSIDE_FIRST_ALTAR_TO_EAST_PASSAGE, GaiaRockInsideFirstAltar, GAIA_ROCK_INSIDE_FIRST_ALTAR_EAST_PASSAGE_FROM_ALTAR),
+    SCENE_EXIT(GAIA_ROCK_INSIDE_FIRST_ALTAR_EAST_PASSAGE_TO_ALTAR, GaiaRockInsideFirstAltar, GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_EAST_PASSAGE),
     SCENE_EXIT(GAIA_ROCK_INSIDE_FIRST_ALTAR_TO_GAIA_ROCK_INSIDE_PLATFORMS_EAST, GaiaRockInsidePlatforms, GAIA_ROCK_INSIDE_PLATFORMS_FROM_GAIA_ROCK_INSIDE_FIRST_ALTAR_EAST_B),
     SCENE_EXITS(GaiaRockInsideTwinAltars),
     SCENE_EXIT(GAIA_ROCK_INSIDE_TWIN_ALTARS_TO_GAIA_ROCK_INSIDE_PLATFORMS, GaiaRockInsidePlatforms, GAIA_ROCK_INSIDE_PLATFORMS_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS),
@@ -3637,12 +3666,12 @@ u32 gSceneExits[] = {
     SCENE_EXIT(GAIA_ROCK_INSIDE_PLATFORMS_TO_GAIA_ROCK_INSIDE_FIRST_ALTAR_EAST_B, GaiaRockInsideFirstAltar, GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_GAIA_ROCK_INSIDE_PLATFORMS_WEST),
     SCENE_EXIT(GAIA_ROCK_INSIDE_PLATFORMS_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS, GaiaRockInsideTwinAltars, GAIA_ROCK_INSIDE_TWIN_ALTARS_FROM_GAIA_ROCK_INSIDE_PLATFORMS),
     SCENE_EXITS(GaiaRockInsideAltar),
-    SCENE_EXIT(1, GaiaRockInsideAltar, 2),
-    SCENE_EXIT(2, GaiaRockInsideAltar, 1),
-    SCENE_EXIT(3, GaiaRockInsideAltar, GAIA_ROCK_INSIDE_ALTAR_FROM_GAIA_ROCK_INSIDE_MAZE_A),
-    SCENE_EXIT(4, GaiaRockInsideAltar, 3),
-    SCENE_EXIT(5, GaiaRockInsideAltar, GAIA_ROCK_INSIDE_ALTAR_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_SOUTHEAST_A_A),
-    SCENE_EXIT(6, GaiaRockInsideAltar, 5),
+    SCENE_EXIT(GAIA_ROCK_INSIDE_ALTAR_WALL_TO_ALTAR_WEST, GaiaRockInsideAltar, GAIA_ROCK_INSIDE_ALTAR_ALTAR_WEST_FROM_WALL),
+    SCENE_EXIT(GAIA_ROCK_INSIDE_ALTAR_ALTAR_WEST_TO_WALL, GaiaRockInsideAltar, GAIA_ROCK_INSIDE_ALTAR_WALL_FROM_ALTAR_WEST),
+    SCENE_EXIT(GAIA_ROCK_INSIDE_ALTAR_WALL_TO_ALTAR_EAST, GaiaRockInsideAltar, GAIA_ROCK_INSIDE_ALTAR_FROM_GAIA_ROCK_INSIDE_MAZE_A),
+    SCENE_EXIT(GAIA_ROCK_INSIDE_ALTAR_ALTAR_EAST_TO_WALL, GaiaRockInsideAltar, GAIA_ROCK_INSIDE_ALTAR_WALL_FROM_ALTAR_EAST),
+    SCENE_EXIT(GAIA_ROCK_INSIDE_ALTAR_WALL_TO_COBWEB, GaiaRockInsideAltar, GAIA_ROCK_INSIDE_ALTAR_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_SOUTHEAST_A_A),
+    SCENE_EXIT(GAIA_ROCK_INSIDE_ALTAR_COBWEB_TO_WALL, GaiaRockInsideAltar, GAIA_ROCK_INSIDE_ALTAR_WALL_FROM_COBWEB),
     SCENE_EXIT(GAIA_ROCK_INSIDE_ALTAR_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_NORTHWEST, GaiaRockInsideTwinAltars, GAIA_ROCK_INSIDE_TWIN_ALTARS_FROM_GAIA_ROCK_INSIDE_ALTAR_NORTHWEST),
     SCENE_EXIT(GAIA_ROCK_INSIDE_ALTAR_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_SOUTHEAST_A_B, GaiaRockInsideTwinAltars, GAIA_ROCK_INSIDE_TWIN_ALTARS_FROM_GAIA_ROCK_INSIDE_ALTAR_SOUTHEAST_A),
     SCENE_EXIT(GAIA_ROCK_INSIDE_ALTAR_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_SOUTHEAST_B, GaiaRockInsideTwinAltars, GAIA_ROCK_INSIDE_TWIN_ALTARS_FROM_GAIA_ROCK_INSIDE_ALTAR_SOUTHEAST_B),

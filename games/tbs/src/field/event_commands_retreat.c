@@ -114,7 +114,7 @@ void FieldPsynergy_Retreat(void) {
   // Start spinning.
   Sound_PlayFar(SE_SHIMMER);
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
-  Actor_SelectAnimationFar(actor, 3);
+  Actor_SelectAnimationFar(actor, ANIM_NOD);
   actor->update = FieldEffect_UpdateSpinAngle;
   actor->timer = 0;
   wait(70);
@@ -215,52 +215,6 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   particle->z.fixed = source->z.fixed - ((FIXED_ONE - scale) * 5) + toFIXED(16);
 }
 
-/// A falling arc's sprite (struct Sprite), seen as the image attributes, VRAM
-/// cache entry and first layer that Avoid's arcs set on it, under struct
-/// Sprite's names; its image bit fields are read here as bytes.
-struct DescendingArcSprite {
-  u8 link[4];
-  u8 y;
-  u8 affine : 2;
-  u8 objectMode : 2;
-  u8 mosaic : 1;
-  u8 fullColor : 1; ///< 0 for 16 colours
-  u8 shape : 2;     ///< 1 wide
-  u8 xLow;
-  u8 xHigh : 1;
-  u8 affineIndex : 5;
-  u8 size : 2;
-  union {
-    struct {
-      u16 tile : 10; ///< the first sprite tile in VRAM
-      u16 priority : 2;
-      u16 palette : 4;
-    } half;
-    struct {
-      u8 tileLow;
-      u8 tileHigh : 2;
-      u8 priority : 2;
-      u8 palette : 4;
-    } byte;
-  } attr;
-  struct AnimationSpritePart shadow;
-  s32 scale;
-  u8 slot;                 ///< the VRAM cache entry holding its tiles
-  u8 retainCacheEntry : 1; ///< the borrowed tiles stay loaded
-  u8 useOwnScale : 1;
-  u8 unusedFlags : 6;
-  u16 rotation;
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
-  u8 lastNo;
-  u8 dirty;
-  u8 flags; ///< 0 drops the shadow
-  u8 count;
-  struct SpriteAnimation *firstEntry; ///< entries[0], its first layer
-};
-
 /// Avoid's rings: a pair of falling arcs (one upside down) 64 pixels above
 /// source, at 0.4 of full size, drawn with the tiles in
 /// effectState->arcTileSlot.
@@ -269,7 +223,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
   struct Actor *leader = effectState->caster;
   struct Actor *actors[2];
   struct Actor *actor;
-  struct DescendingArcSprite *sprite;
+  struct Sprite *sprite;
   s32 arcIndex;
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
@@ -279,7 +233,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
     if (actor == NULL)
       continue;
     actor->groundHeight = source->groundHeight;
-    sprite = (struct DescendingArcSprite *)actor->sprite;
+    sprite = actor->sprite;
     actor->motionFlags = 0;
     actor->timer = 0;
     actor->watchedActor = source;
@@ -287,21 +241,21 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
     actor->scaleX = FIXED_ONE * 2 / 5;
     if (sprite == NULL)
       continue;
-    Sprite_StartAnimationFar((struct Sprite *)sprite, 0);
+    Sprite_StartAnimationFar(sprite, 0);
     sprite->flags = 0;
     VramCache_FreeEntry(sprite->slot);
     sprite->slot = effectState->arcTileSlot;
     sprite->retainCacheEntry = 1;
-    sprite->attr.half.tile = gVramCacheEntries[sprite->slot].offset >> 5;
-    sprite->fullColor = 0;
-    sprite->shape = 1;
-    sprite->size = 2;
-    sprite->firstEntry->picture = 0;
+    sprite->image.tile = gVramCacheEntries[sprite->slot].offset >> 5;
+    // In 16 colours, 32 by 16 pixels: OBJ shape 1, horizontal, at size 2.
+    sprite->image.fullColor = 0;
+    sprite->image.shape = 1;
+    sprite->image.size = 2;
+    sprite->entries[0]->picture = 0;
   }
   // BUG: failed allocations above leave a missing arc or sprite here.
   actors[0]->update = FieldEffect_UpdateDescendingParticleNegativeArc;
-  ((struct DescendingArcSprite *)actors[0]->sprite)->attr.byte.priority = 0;
+  actors[0]->sprite->image.priority = 0;
   actors[1]->update = FieldEffect_UpdateDescendingParticlePositiveArc;
-  ((struct DescendingArcSprite *)actors[1]->sprite)->attr.byte.priority =
-      ((struct DescendingArcSprite *)leader->sprite)->attr.byte.priority;
+  actors[1]->sprite->image.priority = leader->sprite->image.priority;
 }

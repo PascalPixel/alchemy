@@ -483,7 +483,7 @@ s32 Scene_Initialize(void) {
   gMainRoutineState.retreatEntrance =
       MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gMainRoutineState.retreatScene = SCENE_MERCURY_LIGHTHOUSE_EXTERIOR;
-  FieldEffect_StartFadeOverlay(0);
+  FieldEffect_StartGroundMask(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
   else

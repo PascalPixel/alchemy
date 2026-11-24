@@ -56,7 +56,7 @@
 #define Ram_CameraState ((void **)&gHeapSlots[HEAP_SLOT_CAMERA])
 #define Ram_FieldState ((void **)&gHeapSlots[HEAP_SLOT_FIELD])
 #define Ram_DisplayState ((void **)&gHeapSlots[HEAP_SLOT_SCREEN_TRANSITION])
-#define Ram_ActorEffectState ((void **)&gHeapSlots[HEAP_SLOT_FADE_OVERLAY])
+#define Ram_ActorEffectState ((void **)&gHeapSlots[HEAP_SLOT_GROUND_MASK])
 #define Ram_BattleEntryTimer                                                   \
   ((void **)&gHeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER])
 #define Ram_FieldEffectState ((void **)&gHeapSlots[HEAP_SLOT_FIELD_EFFECT])

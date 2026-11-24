@@ -1242,25 +1242,25 @@ static void CrossboneIsleSteppingStones_PushOrClimbDown(void) {
 
 /// Nothing visible happens when Isaac walks onto the lowest floor of the
 /// seventh floor's side room, among the brown pits, for example cell (54, 15)
-/// in its north east. The game starts the fade overlay on him and sets his
+/// in its north east. The game starts the ground mask on him and sets his
 /// `sceneCounter`. From then on, walking on the brown floor along the raised
-/// pink ground south of it, he shows only from the waist up: the overlay
+/// pink ground south of it, he shows only from the waist up: the ground mask
 /// covers the rest in the colour of the raised ground, as if he stood behind
 /// it.
 static void CrossboneIsleSteppingStones_StartRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  gFadeOverlayState->actor = leader;
+  gGroundMaskState->actor = leader;
   leader->sceneCounter = 1;
 }
 
 /// Nothing visible happens when Isaac leaves the lowest floor of the seventh
 /// floor's side room at cell (33, 27), below the west ladders, or cell
-/// (54, 14) in the north east. The fade overlay lets him go and his
+/// (54, 14) in the north east. The ground mask lets him go and his
 /// `sceneCounter` is cleared.
 static void CrossboneIsleSteppingStones_StopRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  gFadeOverlayState->actor = NULL;
+  gGroundMaskState->actor = NULL;
   leader->sceneCounter = 0;
 }
 
@@ -1655,7 +1655,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_Get(ACTOR_PARTY_LEADER)->sceneCounter = 1;
     }
-    FieldEffect_StartFadeOverlay(0);
+    FieldEffect_StartGroundMask(0);
     if (Actor_Get(ACTOR_PARTY_LEADER)->sceneCounter == 0) {
       CrossboneIsleSteppingStones_StopRising();
     }

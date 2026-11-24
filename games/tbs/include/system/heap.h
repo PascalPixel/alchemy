@@ -117,8 +117,8 @@ enum HeapSlot {
   /// Where Mercury Lighthouse keeps a pointer to the state of the lights that
   /// carry the leader over its pools (struct MercuryLighthouseLights).
   HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS = 35,
-  /// The fade overlay's state (struct FadeOverlayState).
-  HEAP_SLOT_FADE_OVERLAY = 36,
+  /// The ground mask's state (struct GroundMaskState).
+  HEAP_SLOT_GROUND_MASK = 36,
   /// The battle message window's state (struct BattleMessageState).
   HEAP_SLOT_BATTLE_MESSAGE = 37,
   /// The running battle effect's own state (gBattleEffectState). Lucky Dice

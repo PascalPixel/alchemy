@@ -294,7 +294,7 @@
 	export WorldMap_Freeze, WorldMap_FreezeFar
 	export WorldMap_Unfreeze, WorldMap_UnfreezeFar
 	export Actor_Lookup, Actor_LookupFar
-	export FieldEffect_StartFadeOverlay, FieldEffect_StartFadeOverlayFar
+	export FieldEffect_StartGroundMask, FieldEffect_StartGroundMaskFar
 	export FieldPsynergy_RunHandler, FieldPsynergy_RunHandlerFar
 	export FieldPsynergy_LoadResources, FieldPsynergy_LoadResourcesFar
 	export FieldPsynergy_SetupActorPair, FieldPsynergy_SetupActorPairFar

@@ -246,8 +246,8 @@ gPaletteFadeState:
 	.global gLineScroll
 gLineScroll:
 	.space 8
-	.global gFadeOverlayState
-gFadeOverlayState:
+	.global gGroundMaskState
+gGroundMaskState:
 	.space 4
 	.global gBattleMessageState
 gBattleMessageState:

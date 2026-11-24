@@ -131,9 +131,9 @@ FarCall_OverworldTable:
 	overlay_veneer Event_SpawnActorPlacements
 	overlay_veneer Actor_ReleaseAtIndex
 	export Actor_LookupFar, Actor_Lookup
-	export FieldEffect_StartFadeOverlayFar, FieldEffect_StartFadeOverlay
-	overlay_veneer FadeOverlay_Suspend
-	overlay_veneer FadeOverlay_Resume
+	export FieldEffect_StartGroundMaskFar, FieldEffect_StartGroundMask
+	overlay_veneer GroundMask_Suspend
+	overlay_veneer GroundMask_Resume
 	export FieldPsynergy_RunHandlerFar, FieldPsynergy_RunHandler
 	export FieldPsynergy_LoadResourcesFar, FieldPsynergy_LoadResources
 	export FieldPsynergy_SetupActorPairFar, FieldPsynergy_SetupActorPair

@@ -114,7 +114,7 @@ void TreasureSpot_MoveLeaderAwayFar(void);
 void WorldMap_FreezeFar(void);
 void WorldMap_UnfreezeFar(void);
 void *Actor_LookupFar(u32 actorIndex);
-void FieldEffect_StartFadeOverlayFar(void *object);
+void FieldEffect_StartGroundMaskFar(void *object);
 void FieldPsynergy_RunHandlerFar(s32 kind);
 void FieldPsynergy_LoadResourcesFar(s32 abilityId, s32 mode);
 void FieldPsynergy_SetupActorPairFar(s32 userId, s32 targetId);

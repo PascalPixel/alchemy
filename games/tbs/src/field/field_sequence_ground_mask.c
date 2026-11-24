@@ -1,5 +1,5 @@
 /// @file
-/// The fade overlay: raised ground in front of an actor hides the part of it
+/// The ground mask: raised ground in front of an actor hides the part of it
 /// behind, as a ledge in the Kalay Tunnel's treasure room hides Isaac's legs.
 // Part of field_sequence.c.
 
@@ -9,13 +9,13 @@
 /// MAPGRID_CELL_PIXEL_MASK takes a whole pixel coordinate's.
 #define CELL_GRID_ROW_MASK 0xf0
 
-/// Each frame of the fade overlay: on each of the two cells beside the actor
+/// Each frame of the ground mask: on each of the two cells beside the actor
 /// (left and right of it), where the ground one or two cells south rises above
 /// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
 /// at the height of that ground, which hides what of the actor is below that
 /// ground's edge.
-void FadeOverlay_DrawMarks(void) {
-  struct FadeOverlayState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
+void GroundMask_DrawMarks(void) {
+  struct GroundMaskState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_GROUND_MASK);
   struct MapGridScrollState *grid = gMapGridState[0];
   s32 *view = grid->view;
   s32 cameraX = (s16)FIXEDtoINT(view[0]);
@@ -40,9 +40,9 @@ void FadeOverlay_DrawMarks(void) {
   z = actor->z.fixed;
   terrainFloor = FIXEDtoINT(actor->groundHeight);
   terrainLayer = actor->layer;
-  // The first tile of the solid block FieldEffect_StartFadeOverlay loaded.
+  // The first tile of the solid block FieldEffect_StartGroundMask loaded.
   tile =
-      gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset / TILE_SIZE_4BPP;
+      gVramCacheEntries[VRAM_CACHE_ENTRY_GROUND_MASK].offset / TILE_SIZE_4BPP;
   // The left cell, 8 pixels left of the actor.
   x -= toFIXED(8);
   height =
@@ -90,22 +90,22 @@ void FadeOverlay_DrawMarks(void) {
   }
 }
 
-/// Starts the fade overlay on object (the party leader when NULL): loads its
+/// Starts the ground mask on object (the party leader when NULL): loads its
 /// solid tiles, sets the blending and draws it each frame. Kalay's tunnel,
 /// Mercury and Venus Lighthouse, the Fuchin Falls cave, the Tunnel Ruins and
 /// Crossbone Isle start it.
-void FieldEffect_StartFadeOverlay(void *object) {
-  struct FadeOverlayState *state;
+void FieldEffect_StartGroundMask(void *object) {
+  struct GroundMaskState *state;
   u8 *tiles;
   volatile u32 fill;
 
-  state = HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*state));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_GROUND_MASK, sizeof(*state));
   // Upload the solid sprite tiles before enabling the drawing task.
   tiles = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
   Dma_Fill32Cell(fill, PIXELS_4BPP(1), tiles, 512);
-  VramCache_Load(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, tiles);
+  VramCache_Load(VRAM_CACHE_ENTRY_GROUND_MASK, 512, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
-  Task_Add(FadeOverlay_DrawMarks, TASK_PASS_FRAME);
+  Task_Add(GroundMask_DrawMarks, TASK_PASS_FRAME);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);
@@ -118,10 +118,10 @@ void FieldEffect_StartFadeOverlay(void *object) {
   state->actor = object;
 }
 
-/// Stops drawing the fade overlay, keeping its state.
-void FadeOverlay_Suspend(void) { Task_Suspend(FadeOverlay_DrawMarks); }
+/// Stops drawing the ground mask, keeping its state.
+void GroundMask_Suspend(void) { Task_Suspend(GroundMask_DrawMarks); }
 
-/// Draws the fade overlay again after FadeOverlay_Suspend.
-void FadeOverlay_Resume(void) { Task_Resume(FadeOverlay_DrawMarks); }
+/// Draws the ground mask again after GroundMask_Suspend.
+void GroundMask_Resume(void) { Task_Resume(GroundMask_DrawMarks); }
 
 #undef CELL_GRID_ROW_MASK

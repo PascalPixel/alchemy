@@ -490,7 +490,7 @@ struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z);
 void Actor_StartScript(struct Actor *actor, const s32 *script);
 void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step);
 void Actor_SetSpriteRotation(struct Actor *actor, u32 rotation);
-void Actor_SetFirstSpriteAnimation(void *rawDispatchActor, s32 animationId);
+void Actor_SetFirstSpriteAnimation(struct Actor *actor, s32 animationId);
 void Actor_RegisterSpriteMetadata(struct Actor *actor, s32 animationId);
 void Actor_StartApproachWatched(struct Actor *actor, s32 watchedActorHandle);
 void Actor_StartKeyCheck(struct Actor *actor);

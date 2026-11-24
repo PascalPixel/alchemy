@@ -44,9 +44,6 @@ s32 Leader_StepOffTightrope(void);
 /// The sprite VRAM blocks the Pause menu needs free, or the field's sprites
 /// stop drawing while it runs.
 #define PAUSE_MENU_VRAM_BLOCKS 136
-/// The search code aboard the ship facing sea of world map collision 3: the
-/// World Map has no examine trigger for it, so the search finds nothing there.
-#define SHIP_SEA_EXAMINE_CODE 99
 /// A map entrance stream's row: the entrance, its x and z, and its flags byte.
 #define MAP_ENTRANCE_ROW_BYTES 6
 
@@ -795,7 +792,6 @@ void Field_ApplyEntrance(void) {
 #undef PLACE_MARKER_ON_FOOT
 #undef PLACE_MARKER_ABOARD
 #undef PAUSE_MENU_VRAM_BLOCKS
-#undef SHIP_SEA_EXAMINE_CODE
 #undef MAP_ENTRANCE_FACING_MASK
 #undef MAP_ENTRANCE_RAISED
 #undef MAP_ENTRANCE_KEEP_BOUNDS

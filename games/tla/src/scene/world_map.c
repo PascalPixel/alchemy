@@ -3266,10 +3266,8 @@ LATE_DATA struct Trigger gSceneEvents[] = {
      EVENT(WorldMap_MeetPetra)},
     {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_CORE, FLAG_DJINNI(DJINNI_CORE),
      EVENT(WorldMap_MeetCore)},
-    // 99 is what the search finds on open sea ahead of the ship,
-    // field_sequence_run.c's SHIP_SEA_EXAMINE_CODE.
-    {TRIGGER_EXAMINE, TRIGGER_SUBJECT_OWN_EFFECT | 99, CONDITION_ALWAYS,
-     EVENT(WorldMap_GazeIntoPond)},
+    {TRIGGER_EXAMINE, TRIGGER_SUBJECT_OWN_EFFECT | SHIP_SEA_EXAMINE_CODE,
+     CONDITION_ALWAYS, EVENT(WorldMap_GazeIntoPond)},
     {TRIGGER_STEP, STEP_TRIGGER_AREA(PLACED_DAILA), CONDITION_ALWAYS,
      EVENT(WorldMap_EnterDaila)},
     // Walking into a place's marker (its slot among gWorldMap_PlacedActors)

@@ -219,6 +219,10 @@ struct Trigger {
 /// event shows its own message in place of the "uses" message
 /// (MsgActorUsesItem); an examine trigger shows no checking message.
 #define TRIGGER_SUBJECT_OWN_EFFECT 0x400
+/// The examine code the search finds aboard the ship facing open sea (World
+/// Map collision 3), for the World Map's examine trigger on it
+/// (WorldMap_GazeIntoPond).
+#define SHIP_SEA_EXAMINE_CODE 99
 /// Trigger.subject bit 9 on a Psynergy trigger: the cast neither flashes the
 /// caster nor announces the ability (FieldEffectState.flashCaster and
 /// .announceName).

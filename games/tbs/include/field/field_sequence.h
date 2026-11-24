@@ -263,6 +263,13 @@ void ItemDisplay_EmitSparkles(struct Actor *actor);
 struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item);
 void Actor_ReleaseIfPresent(void *object);
 void ItemDisplay_RaiseAboveLeader(struct Actor *actor);
+
+/// ItemDisplay_ShowPicture's and ItemDisplay_ShowItem's flags.
+enum ItemDisplayFlag {
+  ITEM_DISPLAY_SPARKLES = 1, ///< sparkles appear round the picture
+  ITEM_DISPLAY_RAISED = 2    ///< the leader holds it up over his head
+};
+
 void ItemDisplay_ShowPicture(void *object, s32 flags);
 void ItemDisplay_ShowItem(s32 item, s32 flags);
 void FieldEffect_ReleaseRevealSparkles(void);

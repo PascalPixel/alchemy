@@ -1313,9 +1313,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     VramCache_Load(starSprite->slot, ICON_TILE_BYTES, glyph->tiles);
     HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
-    // With sparkles, then held up over Isaac's head (ITEM_DISPLAY_SPARKLES |
-    // ITEM_DISPLAY_RAISED of field_sequence_item_display.c).
-    ItemDisplay_ShowPicture(star, 3);
+    ItemDisplay_ShowPicture(star, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
   SolSanctumEruption_SetPaleTint(1, 20, 0);

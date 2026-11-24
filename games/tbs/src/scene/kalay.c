@@ -1124,7 +1124,7 @@ static void Kalay_CatchTownNut(void) {
   wait(1);
   Actor_SetPosition(ACTOR_TOWN_NUT, 0, 0);
   GameFlag_Set(FLAG_KALAY_TOWN_NUT_CAUGHT);
-  ItemDisplay_ShowItem(ITEM_NUT, 3);
+  ItemDisplay_ShowItem(ITEM_NUT, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
   PartyInventory_GiveItem(ITEM_NUT, 0);
 }
 

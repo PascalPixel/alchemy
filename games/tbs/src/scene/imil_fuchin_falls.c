@@ -1681,7 +1681,8 @@ static void FuchinFallsCave_FindDragonsEye(void) {
   Event_Start();
 
   if (gImilFuchinFalls_DragonsEye != NULL) {
-    ItemDisplay_ShowPicture(gImilFuchinFalls_DragonsEye, 3);
+    ItemDisplay_ShowPicture(gImilFuchinFalls_DragonsEye,
+                            ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
   }
 
   Party_GiveItem(ITEM_DRAGONS_EYE, 0);

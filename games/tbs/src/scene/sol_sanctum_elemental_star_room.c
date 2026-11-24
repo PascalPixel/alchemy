@@ -2295,7 +2295,7 @@ static s32 SolSanctumElementalStarRoom_PresentStarFX(s32 item, FIXED x, FIXED y,
   VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   Sound_Play(MUS_TREASURE_FOUND);
-  ItemDisplay_ShowPicture(actor, 3);
+  ItemDisplay_ShowPicture(actor, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
   Inventory_Discard(member, slot);
   Inventory_AddItem(member, item);
   Actor_Release(actor);

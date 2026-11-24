@@ -394,11 +394,9 @@ void Text_DrawStatComparison(const struct Unit *after,
   }
 }
 
-/// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
-/// into a free VRAM block; Icon_CreateHandCursor, with an argument it
-/// ignores.
-UNUSED s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x,
-                                   s32 y) {
+/// Unused: Icon_CreateHandCursor with a second argument it ignores.
+UNUSED s32 Icon_CreateHandCursorUnusedArgument(struct Window *window,
+                                               s32 unused, s32 x, s32 y) {
   s32 block;
   s32 icon;
   icon = 0;
@@ -645,7 +643,8 @@ void MenuCursor_Slide(s32 x, s32 y) {
   } while (steps != 0);
 }
 
-UNUSED void PsynergyMenu_ReservedNoOp(void) {}
+/// Unused: does nothing.
+UNUSED void MenuCursor_NoOp(void) {}
 
 /// Lays the entry icons out eight to a row from (108, 40). Nothing calls it.
 UNUSED void PsynergyMenu_PlaceEntryIconsDefault(void) {
@@ -889,6 +888,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   s32 pages;
   s32 next;
   s32 previous;
+  s32 pageBack;
   s32 pageForward;
   s32 result;
 
@@ -900,19 +900,18 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   pages = count / pageSize;
   if (count % pageSize != 0)
     pages++;
-  // horizontal is reused for the page-back key.
   if (horizontal) {
     next = gKeysRepeat & KEY_RIGHT;
     previous = gKeysRepeat & KEY_LEFT;
-    horizontal = gKeysRepeat & KEY_UP;
+    pageBack = gKeysRepeat & KEY_UP;
     pageForward = gKeysRepeat & KEY_DOWN;
   } else {
     next = gKeysRepeat & KEY_DOWN;
     previous = gKeysRepeat & KEY_UP;
-    horizontal = gKeysRepeat & KEY_LEFT;
+    pageBack = gKeysRepeat & KEY_LEFT;
     pageForward = gKeysRepeat & KEY_RIGHT;
   }
-  if (horizontal) {
+  if (pageBack) {
     Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     if (--*page < 0)
       *page = pages - 1;

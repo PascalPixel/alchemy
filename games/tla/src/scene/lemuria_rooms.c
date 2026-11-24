@@ -1136,6 +1136,9 @@ void LemuriaRooms_MeetLunpa(void) {
   }
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  // A sliver short of west: from the east Felix, and Jenna below, turn round
+  // by the south, toward the viewer, where west itself would take them round
+  // by the north.
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST - 1, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
@@ -1222,6 +1225,8 @@ void LemuriaRooms_MeetLunpa(void) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "Let me get this straight... You felt you couldn't tell us this until..."
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
+  // A sliver past west: from the east Kraden turns round by the north, his
+  // back to the viewer.
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST + 1, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);

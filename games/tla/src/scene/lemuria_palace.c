@@ -356,6 +356,7 @@ static __inline__ void Blend_WriteAlpha(s32 value) { REG_BLDALPHA = value; }
 void LemuriaPalace_FadeMapsIn(void) {
   s32 i;
 
+  /* FAKEMATCH(wrapper): BLEND_SET_ALPHA's do-while around each write. */
   BLEND_SET_ALPHA(BLEND_ALPHA(0, BLEND_WEIGHT_MAX));
   gLemuriaPalace_MapMode = MAP_MODE_HELD;
   for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
@@ -370,6 +371,7 @@ void LemuriaPalace_FadeMapsIn(void) {
 void LemuriaPalace_FadeMapsOut(void) {
   s32 i;
 
+  /* FAKEMATCH(wrapper): BLEND_SET_ALPHA's do-while around each write. */
   BLEND_SET_ALPHA(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0));
   gLemuriaPalace_MapMode = MAP_MODE_HELD;
   for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
@@ -743,6 +745,8 @@ s32 LemuriaPalace_MeetKingHydros(void) {
   Actor_SetAnimationAndWait(ACTOR_CONSERVATO, 3);
   Event_Wait(15);
   Actor_FaceDirection(ACTOR_LUNPA, FACING_WEST, 0);
+  // A sliver short of west: from the east he turns round by the south, toward
+  // the viewer, where west itself would take him round by the north.
   Actor_FaceDirectionAndWait(ACTOR_HYDROS, FACING_WEST - 1);
   Event_Wait(10);
   // "Tell me, Piers... You were able to investigate this matter,..."

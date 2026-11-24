@@ -20,7 +20,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 
   camera = Ram_HeapSlots->cameraState;
   object = BattleObject_GetFar(unit)->object;
-  info = GetMotionRecordFar(object, 0);
+  info = Actor_GetSpriteFar(object, 0);
   EFFECT_VIEW_FROM_CAMERA(camera);
   scale = Iwram_MulFX(Matrix_ProjectPoint(&object->x, screen), info->scale);
   screen[1] -=

@@ -354,11 +354,11 @@
 	export FieldEffect_SpawnMoveHand, FieldEffect_SpawnMoveHandFar
 	export FieldPsynergy_StopMindReadWave, FieldPsynergy_StopMindReadWaveFar
 	export FieldPsynergy_GreyMindReadPalette, FieldPsynergy_GreyMindReadPaletteFar
-	export FieldEffect_SnapScaleToFull, FieldEffect_SnapScaleToFullFar
+	export FieldEffect_GrowHandAndWait, FieldEffect_GrowHandAndWaitFar
 	export Scene_PlayMusic, Scene_PlayMusicFar
 	export Scene_ChooseMusic, Scene_ChooseMusicFar
 	export FieldPsynergy_RestoreMindReadPalette, FieldPsynergy_RestoreMindReadPaletteFar
-	export UpdateRisingParticleBurst, UpdateRisingParticleBurstFar
+	export FieldEffect_BurstHand, FieldEffect_BurstHandFar
 	export Djinn_JoinParty, Djinn_JoinPartyFar
 	export Camera_WorldToScreen, Camera_WorldToScreenFar
 	export Import_HangingVinePlace, HangingVine_PlaceFar

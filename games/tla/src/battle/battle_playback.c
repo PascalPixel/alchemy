@@ -154,8 +154,7 @@ void BattlePlayback_Run(void) {
             MessageArgument_ClearAllFar();
             break;
           case PLAYBACK_REMOVE_UNIT:
-            BattleObject_DestroyTemporaryObject(
-                events->queue.operands[eventIndex]);
+            BattleUnit_RemoveEnemy(events->queue.operands[eventIndex]);
             break;
           case PLAYBACK_HIT:
             if (events->pendingSound > 0)
@@ -172,10 +171,10 @@ void BattlePlayback_Run(void) {
             s32 recordIndex;
 
             events->unitId = events->queue.operands[eventIndex];
-            BattleEnemy_RecordDefeat(events->unitId, events->flags);
+            BattleEnemy_RecordDefeat(events->unitId, events->djinnBonus);
             BattleUnit_ClearStatuses(events->unitId);
             unit = Unit_Get(events->unitId);
-            for (recordIndex = 0; (record = GetMotionRecord(
+            for (recordIndex = 0; (record = Actor_GetSprite(
                                        BattleObject_Get(events->unitId)->object,
                                        recordIndex)) != 0;
                  recordIndex++) {
@@ -293,7 +292,7 @@ void BattlePlayback_Run(void) {
       if (events->timer == 0 || events->timer >= FELLED_FLASH) {
         s32 colorMode = SPRITE_COLOR_GREY;
 
-        if (events->timer == 0 && events->flags != 0) {
+        if (events->timer == 0 && events->djinnBonus != 0) {
           s32 kind =
               BattleSprite_GetDefeatSound(Unit_Get(events->unitId)->enemyId);
 
@@ -324,7 +323,7 @@ void BattlePlayback_Run(void) {
           s32 noPicture = SPRITE_PICTURE_NONE;
 
           for (; (record =
-                      GetMotionRecord(BattleObject_Get(events->unitId)->object,
+                      Actor_GetSprite(BattleObject_Get(events->unitId)->object,
                                       recordIndex)) != 0;
                recordIndex++) {
             struct SpriteAnimation *child;
@@ -357,7 +356,7 @@ void BattlePlayback_Run(void) {
 
         slot = BattleObject_Get(events->unitId);
         slot->fading = 1;
-        for (count = 0; (record = GetMotionRecord(slot->object, count)) != 0;
+        for (count = 0; (record = Actor_GetSprite(slot->object, count)) != 0;
              count++)
           records[count] = record;
         base = events->timer * DISSOLVE_STEPS_PER_FRAME;
@@ -405,7 +404,7 @@ u32 BattlePlayback_Reset(void) {
   events->queue.targetIndex = 0;
   events->pendingSound = SE_HEAVY_IMPACT;
   events->keepPendingSound = 0;
-  events->flags = 0;
+  events->djinnBonus = 0;
 }
 
 /// Waits until playback has played every target, starting it if the effect

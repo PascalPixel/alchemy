@@ -1496,7 +1496,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     args->targets[args->targetCount] = BATTLE_UNIT_LIST_END;
     BattleActor_SpawnObjectsForListFar(args->targets, 0);
     // The fall: sixteen missiles dive onto the foes.
-    BattleEffect_SpawnObjects(1, SPRITE_DAEDALUS_MISSILE, 1);
+    BattleEffect_CreateSprites(1, SPRITE_DAEDALUS_MISSILE, 1);
     for (i = 0; i != DAEDALUS_MISSILE_COPIES; i++) {
       state->sprites[1 + i] =
           EffectSprite_Acquire(32, 16, OBJ_SIZE_32X16 | OBJ_256_COLORS, 0);
@@ -1724,8 +1724,8 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_SpawnObjects(1, SPRITE_DAEDALUS_ROCKET, 3);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_CreateSprites(1, SPRITE_DAEDALUS_ROCKET, 3);
+  BattleEffect_ShowLivingTargets(state->args);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);

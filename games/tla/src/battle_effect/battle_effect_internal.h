@@ -979,7 +979,7 @@ enum CameraPhase {
 void BattleCamera_ApplyPhasedDelta(void);
 
 // dispatch.c
-void BattleEffect_SelectLivingTargets(struct BattleEffectParams *party);
+void BattleEffect_ShowLivingTargets(struct BattleEffectParams *args);
 void BattleEffect_CallDoNothing(s32 cnt);
 void BattleEffect_BuildWindowEdgeTable(void);
 
@@ -996,7 +996,7 @@ void BattleEffect_RunDull(struct BattleEffectParams *args);
 void BattleEffect_RunWeaken(struct BattleEffectParams *args);
 
 // eruption.c
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
+void BattleEffect_CreateSprites(s32 count, s32 spriteId, u32 priority);
 
 // projectiles.c
 void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
@@ -1166,12 +1166,12 @@ void BattlePlayback_StartFar(s32 phase);
 /// Whether an enemy's sprite takes the heavy impact, through its far call.
 s32 BattleSprite_HasHeavyImpactFar(s32 enemyId);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void *GetMotionRecordFar(void *object, s32 index);
+void *Actor_GetSpriteFar(void *object, s32 index);
 u32 Heap_GetRemainingIwram(void);
 s32 Inn_RoomPrice(s32 innId);
 void Palette_LoadBasicSpriteColors(void);
 u32 Random16(void);
-void ReleaseBattleObjectRecordsFar(s32 actor);
+void BattleObject_DestroySpritesFar(s32 actor);
 s32 Matrix_ProjectPoint(const void *point, s32 *screen);
 void Matrix_TranslateVector(const FIXED *pos);
 void Matrix_Translate(FIXED x, FIXED y, FIXED z);

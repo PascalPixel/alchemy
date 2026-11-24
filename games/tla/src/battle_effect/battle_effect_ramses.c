@@ -56,9 +56,9 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   state->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   // The statue, its fist and wrist, then six rocks.
-  BattleEffect_SpawnObjects(RAMSES_FIRST_ROCK_SPRITE, SPRITE_RAMSES, 2);
+  BattleEffect_CreateSprites(RAMSES_FIRST_ROCK_SPRITE, SPRITE_RAMSES, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 

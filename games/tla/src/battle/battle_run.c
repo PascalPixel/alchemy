@@ -174,9 +174,9 @@ s32 Battle_Run(s32 enemyGroup) {
   Task_ResetAll();
   background->targetYaw = YAW_PARTY_ACTION;
   background->frames = 0;
-  background->flag = 1;
-  background->unusedAfterFlag[0] = 0;
-  background->unusedAfterFlag[1] = 0;
+  background->keepRange = 1;
+  background->unusedAfterKeepRange[0] = 0;
+  background->unusedAfterKeepRange[1] = 0;
   REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_Set(FLAG_IN_BATTLE);
   // XXX (no evidence): what flag 0x169 marks; it is set as every battle
@@ -277,7 +277,7 @@ s32 Battle_Run(s32 enemyGroup) {
     battle->firstStrike = FIRST_STRIKE_ENEMIES;
   }
   BattleTransition_Run(enemyCount, enemyGroup);
-  background->flag = 0;
+  background->keepRange = 0;
   gCpuLoadDisplayEnabled = 0;
   Task_Add(BattleObject_UpdateSpritePriorities, TASK_PASS_FRAME);
 
@@ -479,7 +479,7 @@ finished:
   if ((enemyGroup == FORMATION_KARST_AND_AGATIO_A ||
        enemyGroup == FORMATION_KARST_AND_AGATIO_B))
     ScriptedBattle_SaveUnits();
-  BattleParty_ResetActiveRuntimeFields();
+  BattleParty_ClearBattleStatuses();
   Battle_TurnEndNoOp();
   DjinnRecovery_CountDown();
   Battle_SetType(BATTLE_TYPE_NORMAL);

@@ -521,7 +521,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   }
   ActorShadow_LoadTilesFar();
   battle->arrowTiles = VramCache_AllocEntry(128);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   for (i = 0; i != args->targetCount; i++) {
     BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_GRB, TINT_KEEP,
                              TINT_KEEP, 0);

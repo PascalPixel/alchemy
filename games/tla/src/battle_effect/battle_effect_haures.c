@@ -202,7 +202,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = Q_8_8(4);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   background->busy = 1;
   gBgScroll[1].x = 0;
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
@@ -210,7 +210,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   morph = 0;
   morphStep = 0;
   dived = 0;
-  BattleEffect_SpawnObjects(HAURES_CLAW_PIECES, SPRITE_HAURES, 2);
+  BattleEffect_CreateSprites(HAURES_CLAW_PIECES, SPRITE_HAURES, 2);
   for (i = 0; i != HAURES_FLAME_COUNT; i++) {
     sprite = Sprite_CreateFar(SPRITE_HAURES_FLAME);
     state->sprites[HAURES_FIRST_FLAME + i] = sprite;
@@ -754,7 +754,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             Sprite_DestroyFar(state->sprites[HAURES_FIRST_DROP_SPRITE + i]);
           }
           Sprite_DestroyFar(state->sprites[HAURES_STAMP]);
-          BattleEffect_SpawnObjects(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
+          BattleEffect_CreateSprites(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
           q = gHaures_PartPoints;
           {
             struct Particle *p = state->particles;
@@ -926,7 +926,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingStampTransfer);
   BattleEffect_SetupBlendedDisplay();
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-  BattleEffect_SpawnObjects(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
+  BattleEffect_CreateSprites(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                        SHEET_PALETTE_BYTES);

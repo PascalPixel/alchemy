@@ -145,7 +145,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   state->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
 
   // Atalanta's eleven sprites, with her palette and tiles.
   Ram_HeapSlots->battleState->keepBackdropPalette = 1;

@@ -114,7 +114,7 @@ void BattleStatusIcon_Cycle(struct BattleObject *slot) {
       changed = 1;
     }
 
-    sprite = GetMotionRecord(owner, 0);
+    sprite = Actor_GetSprite(owner, 0);
     if (sprite != 0) {
       if (animation >= 0) {
         if (sprite->width == 32)
@@ -177,7 +177,7 @@ void BattleObject_UpdatePose(s32 id) {
 
 /// Destroys a unit's sprites, its status icon and shadow with them, leaving its
 /// battle object with none.
-void ReleaseBattleObjectRecords(s32 unitId) {
+void BattleObject_DestroySprites(s32 unitId) {
   struct BattleObject *slot;
   struct MotionObject *object;
   s32 i;
@@ -189,7 +189,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
     if (object != NULL) {
       slot->animationEntry = 0;
       slot->shadowEntry = 0;
-      for (i = 0; (sprite = GetMotionRecord(object, i)) != NULL; i += 1) {
+      for (i = 0; (sprite = Actor_GetSprite(object, i)) != NULL; i += 1) {
         Sprite_DestroyFar(sprite);
       }
       object->recordStorageKind = ACTOR_SPRITE_NONE;
@@ -223,7 +223,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         releasedUnitId = unitIndex + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
         if (unitIndex <= ALLY_MAX)
           releasedUnitId = unitIndex;
-        ReleaseBattleObjectRecords(releasedUnitId);
+        BattleObject_DestroySprites(releasedUnitId);
       }
     }
   }
@@ -342,7 +342,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh) {
 }
 
 /// Detaches the scripts from the four sprite entries of one sprite.
-void ResetMotionRecordGroup(void *recordGroup) {
+void Sprite_DetachScripts(void *recordGroup) {
   struct Sprite *record = recordGroup;
   s32 entryIndex;
 
@@ -400,7 +400,7 @@ void BattleObject_UpdateSpritePriorities(void) {
         object = slot->object;
         BattleStatusIcon_Cycle(slot);
         if (slot->shadowEntry != 0) {
-          struct Sprite *record = GetMotionRecord(object, 0);
+          struct Sprite *record = Actor_GetSprite(object, 0);
 
           if (record != 0) {
             struct SpriteAnimation *effect;
@@ -497,7 +497,7 @@ void BattleObject_UpdateSpritePriorities(void) {
 }
 
 /// Unused: detaches the scripts from every sprite of a unit's actor.
-void ResetBattleObjectRecordGroups(struct MotionObject *object) {
+void Actor_DetachSpriteScripts(struct MotionObject *object) {
   s32 storageKind;
   s32 remaining;
   void **recordGroups;
@@ -507,7 +507,7 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
     storageKind = object->recordStorageKind & ACTOR_SPRITE_KIND_MASK;
     switch (storageKind) {
     case ACTOR_SPRITE_ONE:
-      ResetMotionRecordGroup(object->records);
+      Sprite_DetachScripts(object->records);
       return;
     case ACTOR_SPRITE_GROUP:
       recordGroups = object->records;
@@ -515,7 +515,7 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
       do {
         recordGroup = *recordGroups++;
         if (recordGroup != NULL) {
-          ResetMotionRecordGroup(recordGroup);
+          Sprite_DetachScripts(recordGroup);
         }
         remaining -= 1;
       } while (remaining >= 0);
@@ -570,7 +570,7 @@ void BattleMotion_DestroyAllSlotObjects(void) {
 
 /// Unused: writes the anchor of the battle object in place `slot` to out, at
 /// height 0.
-s32 Battle_GetStateEntryPair(s32 slot, struct Point *out) {
+s32 BattleObject_GetAnchor(s32 slot, struct Point *out) {
   struct BattleState *battle = Ram_HeapSlots->battleState;
   s32 result;
 
@@ -598,7 +598,7 @@ UNREAD_RESULT BattleCamera_ApplyTransform(void) {
 /// Projects a battle object's position to the screen, in projected.
 s32 BattleMotion_ProjectPosition(s32 id, s32 *projected) {
   struct MotionObject *object = BattleObject_FindSlot(id)->object;
-  struct Sprite *record = GetMotionRecord(object, 0);
+  struct Sprite *record = Actor_GetSprite(object, 0);
   s32 position[3];
   s32 scaled;
 
@@ -618,7 +618,7 @@ s32 BattleMotion_ProjectPosition(s32 id, s32 *projected) {
 
 /// Returns sprite recordIndex of an actor (0 only, for a single sprite), or
 /// null when it has no such sprite.
-void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
+void *Actor_GetSprite(struct MotionObject *object, s32 recordIndex) {
   s32 storageKind;
 
   if (object == NULL)

@@ -198,7 +198,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   FIXED objectPlace[4];
   FIXED revealPlace[4];
   FIXED finalePlace[4];
-  DrawRectangleFn blitters[2];
+  DrawRectangle blitters[2];
   struct ModelTexture sealTexture;
   struct ModelTexture fireRingTexture;
   struct ModelTexture swirlTexture;
@@ -211,7 +211,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   u32 savedScrollX;
   u8 *motePictures;
   struct BattleState *battle;
-  DrawRectangleFn *blit;
+  DrawRectangle *blit;
   FIXED beastX;
   FIXED beastZ;
   s32 sealFrame;

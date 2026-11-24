@@ -322,7 +322,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   flakeAway = 0;
   skip = 0;
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   // The battle background darkens to black, its green first.
   for (frame = 0; frame != 32; frame++) {
     volatile u16 *c = (volatile u16 *)&BG_PLTT_COLOR(6, 0);
@@ -380,7 +380,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       }
     }
   }
-  BattleEffect_SpawnObjects(ULYSSES_MAGE_SPRITES + 1, SPRITE_ULYSSES, 3);
+  BattleEffect_CreateSprites(ULYSSES_MAGE_SPRITES + 1, SPRITE_ULYSSES, 3);
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = EFFECT_BLEND_ADD;

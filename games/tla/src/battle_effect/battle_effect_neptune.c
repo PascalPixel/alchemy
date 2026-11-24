@@ -118,7 +118,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(DISPLAY_WIDTH, DISPLAY_WIDTH);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   // Neptune: its colours over the sprites', its tiles, and its sprites.
   Ram_HeapSlots->battleState->keepBackdropPalette = 1;
   {

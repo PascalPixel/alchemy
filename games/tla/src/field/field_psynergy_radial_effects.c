@@ -1164,7 +1164,7 @@ void FieldPsynergy_Avoid(void) {
   tiles = gFieldEffect_ArcSparkTiles;
   VramCache_Load((s16)slot, 256, tiles);
   gMainRoutineState.avoidDistance = toFIXED(2400);
-  gMainRoutineState.avoidByItem = GameFlag_Get(FLAG_ITEM_USE);
+  gMainRoutineState.avoidByItem = GameFlag_Get(FLAG_PSYNERGY_FROM_ITEM);
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   actor->update = (ObjectUpdate)FieldEffect_UpdateAvoidCaster;
   actor->arcPhase = 0;

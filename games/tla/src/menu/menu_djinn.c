@@ -1836,13 +1836,13 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
                                  x * 8 + DJINN_PREVIEW_POOL_X,
                                  DJINN_PREVIEW_STAT_Y(y, 1));
     }
-    Text_DrawNumberInWindowFar(unit->atk, DJINN_PREVIEW_DIGITS, window,
+    Text_DrawNumberInWindowFar(unit->attack, DJINN_PREVIEW_DIGITS, window,
                                x * 8 + DJINN_PREVIEW_CURRENT_X,
                                DJINN_PREVIEW_STAT_Y(y, 2));
-    Text_DrawNumberInWindowFar(unit->def, DJINN_PREVIEW_DIGITS, window,
+    Text_DrawNumberInWindowFar(unit->defense, DJINN_PREVIEW_DIGITS, window,
                                x * 8 + DJINN_PREVIEW_CURRENT_X,
                                DJINN_PREVIEW_STAT_Y(y, 3));
-    Text_DrawNumberInWindowFar(unit->agi, DJINN_PREVIEW_DIGITS, window,
+    Text_DrawNumberInWindowFar(unit->agility, DJINN_PREVIEW_DIGITS, window,
                                x * 8 + DJINN_PREVIEW_CURRENT_X,
                                DJINN_PREVIEW_STAT_Y(y, 4));
     Text_DrawNumberInWindowFar(unit->luck, 2, window,
@@ -1962,11 +1962,11 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
               window, x * 8 + DJINN_PREVIEW_POOL_ARROW_X,
               DJINN_PREVIEW_STAT_Y(y, 1), STAT_ARROW_DOWN);
       }
-      if (unit->atk != originalUnit->atk) {
-        Text_DrawNumberInWindowFar(unit->atk, 4, window,
+      if (unit->attack != originalUnit->attack) {
+        Text_DrawNumberInWindowFar(unit->attack, 4, window,
                                    DJINN_PREVIEW_VALUE_X(x),
                                    DJINN_PREVIEW_STAT_Y(y, 2));
-        if (unit->atk > originalUnit->atk)
+        if (unit->attack > originalUnit->attack)
           Icon_DrawVariantWithTileOffset(
               window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
               DJINN_PREVIEW_STAT_Y(y, 2), STAT_ARROW_UP);
@@ -1975,11 +1975,11 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
               window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
               DJINN_PREVIEW_STAT_Y(y, 2), STAT_ARROW_DOWN);
       }
-      if (unit->def != originalUnit->def) {
-        Text_DrawNumberInWindowFar(unit->def, 4, window,
+      if (unit->defense != originalUnit->defense) {
+        Text_DrawNumberInWindowFar(unit->defense, 4, window,
                                    DJINN_PREVIEW_VALUE_X(x),
                                    DJINN_PREVIEW_STAT_Y(y, 3));
-        if (unit->def > originalUnit->def)
+        if (unit->defense > originalUnit->defense)
           Icon_DrawVariantWithTileOffset(
               window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
               DJINN_PREVIEW_STAT_Y(y, 3), STAT_ARROW_UP);
@@ -1988,11 +1988,11 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
               window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
               DJINN_PREVIEW_STAT_Y(y, 3), STAT_ARROW_DOWN);
       }
-      if (unit->agi != originalUnit->agi) {
-        Text_DrawNumberInWindowFar(unit->agi, 4, window,
+      if (unit->agility != originalUnit->agility) {
+        Text_DrawNumberInWindowFar(unit->agility, 4, window,
                                    DJINN_PREVIEW_VALUE_X(x),
                                    DJINN_PREVIEW_STAT_Y(y, 4));
-        if (unit->agi > originalUnit->agi)
+        if (unit->agility > originalUnit->agility)
           Icon_DrawVariantWithTileOffset(
               window, x * 8 + DJINN_PREVIEW_STAT_ARROW_X,
               DJINN_PREVIEW_STAT_Y(y, 4), STAT_ARROW_UP);

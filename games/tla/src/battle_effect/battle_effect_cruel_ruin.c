@@ -920,7 +920,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES,
                   CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            RESOURCE_SUNBEAM_CLOUDS_BACKDROP, 0);
   backdrop->busy = 1;

@@ -240,12 +240,6 @@ struct AbilityDefinition {
   u16 power; ///< what the kind applies, 0 for none
 };
 
-/// AbilityDefinition.flags: where an ability can be used.
-enum BattleActionUse {
-  ACTION_USABLE_IN_FIELD = 0x40, ///< can be used outside battle
-  ACTION_USABLE_IN_BATTLE = 0x80 ///< can be used in battle
-};
-
 /// The curse bits of Unit.curse.
 enum CurseFlag {
   CURSE_BOUND = 0x01,      ///< the unit is bound: one action in four is lost
@@ -354,9 +348,9 @@ struct Unit {
   s16 ppMax;         ///< maximum PP (Unit_Calculate)
   s16 hp;            ///< current HP, 0 when downed
   s16 pp;            ///< current PP
-  u16 atk;           ///< Attack (Unit_Calculate)
-  u16 def;           ///< Defense (Unit_Calculate)
-  u16 agi;           ///< Agility (Unit_Calculate)
+  u16 attack;        ///< Attack (Unit_Calculate)
+  u16 defense;       ///< Defense (Unit_Calculate)
+  u16 agility;       ///< Agility (Unit_Calculate)
   u8 luck;           ///< Luck (Unit_Calculate)
   u8 actionsPerTurn; ///< actions each turn (Unit_Calculate)
   u8 hpRegen;        ///< HP regained at each turn's end
@@ -397,7 +391,7 @@ struct Unit {
   /// Defend's is 1.
   u8 defendLevel;
   s8 summonBoost[ELEMENT_COUNT]; ///< cleared by
-                                 ///< BattleParty_ResetActiveRuntimeFields
+                                 ///< BattleParty_ClearBattleStatuses
   /// The curse: nonzero shows it in the menus and lets the sanctum remove it.
   s8 curse;
   s8 poison; ///< 1 poisoned, 2 deadly poison

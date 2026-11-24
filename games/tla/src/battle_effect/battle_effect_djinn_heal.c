@@ -339,7 +339,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   for (bgX = -80, frame = 0; frame != SUMMON_OPENING_LOAD_FRAME + 1; frame++) {
     if (frame == SUMMON_OPENING_LOAD_FRAME) {
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-      BattleEffect_SelectLivingTargets(state->args);
+      BattleEffect_ShowLivingTargets(state->args);
       state->scrollStepX = -8;
       backdrop->busy = 1;
       Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0),
@@ -383,9 +383,9 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                        SHEET_PALETTE_BYTES);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   wait(1);
-  BattleEffect_SpawnObjects(ZAGAN_PARTS, SPRITE_ZAGAN, 1);
+  BattleEffect_CreateSprites(ZAGAN_PARTS, SPRITE_ZAGAN, 1);
   REG_BG2X = skip;
   REG_BG2PA = Q_8_8(0.5);
 

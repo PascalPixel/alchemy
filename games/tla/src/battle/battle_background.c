@@ -121,7 +121,7 @@ void BattleBackground_SetMode(s32 mode, s32 backgroundId, s32 fade) {
       destination[i] = RGB(red, green, blue);
     }
   }
-  Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
+  BattleTransition_BuildAffineTilemap((void *)BG_SCREEN_BLOCK(7));
   BattleTransition_BuildTilemap(
       (void *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK));
 }
@@ -168,7 +168,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
     BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
         BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   }
-  Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
+  BattleTransition_BuildAffineTilemap((void *)BG_SCREEN_BLOCK(7));
   BattleTransition_BuildTilemap(
       (void *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK));
   // BG1's last row is left clear.

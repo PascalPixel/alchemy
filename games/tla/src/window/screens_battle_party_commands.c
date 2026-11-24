@@ -173,7 +173,7 @@ s32 BattleParty_SplitChoosers(u16 *ready, struct BattleActionRecord **cursor,
         struct BattleActionRecord *entry = &entries[forced];
 
         entry->unitId = unitIds[i];
-        entry->priority = unit->agi;
+        entry->priority = unit->agility;
         entry->command = COMMAND_NONE;
         entry->parameter = 0;
         // The other side's place 0, as a lost action's target.

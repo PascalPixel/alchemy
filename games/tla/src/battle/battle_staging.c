@@ -177,7 +177,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   // the far depth well past the battlefield.
   view = Ram_HeapSlots->battleBackground;
   view->frames = 60;
-  view->flag = 0;
+  view->keepRange = 0;
   camera = Ram_HeapSlots->cameraState;
   battle->brightness = FIXED_ONE;
   Matrix_Initialize();
@@ -209,7 +209,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     case 0: // an ability with no staging plays nothing
       break;
     case STAGING_MESSAGES:
-      BattleStaging_RunActorEntries(&battle->plan, 0);
+      BattleStaging_RunMessages(&battle->plan, 0);
       break;
     case STAGING_ATTACK:
       BattleStaging_RunAttack(&battle->plan, 0);
@@ -218,14 +218,14 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       BattleStaging_RunAttack(&battle->plan, 2);
       break;
     case STAGING_SUMMON:
-      BattleStaging_HideField(&battle->plan, STAGING_HIDE_ACTOR);
+      BattleStaging_RunFullScreen(&battle->plan, STAGING_HIDE_ACTOR);
       break;
     case STAGING_FULL_SCREEN:
-      BattleStaging_HideField(&battle->plan, 0);
+      BattleStaging_RunFullScreen(&battle->plan, 0);
       break;
     case STAGING_DAEDALUS:
-      BattleStaging_HideField(&battle->plan,
-                              STAGING_HIDE_ACTOR | STAGING_NO_CAST);
+      BattleStaging_RunFullScreen(&battle->plan,
+                                  STAGING_HIDE_ACTOR | STAGING_NO_CAST);
       break;
     case STAGING_CAST:
     case STAGING_BEAST_PSYNERGY:
@@ -289,7 +289,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       break;
     }
     case STAGING_MEGAERA:
-      BattleStaging_HideField(&battle->plan, STAGING_HIDE_ACTOR);
+      BattleStaging_RunFullScreen(&battle->plan, STAGING_HIDE_ACTOR);
       if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) == 0)
         break;
       if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0)
@@ -298,7 +298,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       break;
     case STAGING_IRIS:
-      BattleStaging_HideField(&battle->plan, STAGING_HIDE_ACTOR);
+      BattleStaging_RunFullScreen(&battle->plan, STAGING_HIDE_ACTOR);
       BattleStaging_PlanAuroraField(&battle->plan);
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       break;
@@ -435,7 +435,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
 /// Plays a summon or a full-screen Psynergy: the unit glows in its element and
 /// the other side fades out while the effect plays, then everyone fades back
 /// in. STAGING_HIDE_ACTOR hides the unit too, as the summons do.
-s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
+s32 BattleStaging_RunFullScreen(struct BattlePlan *plan, s32 mode) {
   u16 units[UNIT_MAX];
   struct BattlePresentationState state;
   u32 actor;
@@ -532,7 +532,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
     // Each target's colour modes are saved beside the effect command.
     for (i = 0; i != state.count; i++) {
       struct Sprite *animation =
-          GetMotionRecord(BattleObject_Get(state.actors[i])->object, 0);
+          Actor_GetSprite(BattleObject_Get(state.actors[i])->object, 0);
       u32 child;
 
       for (child = 0; child != animation->count - 1; child++)
@@ -598,8 +598,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
 /// Plays an action with no battle effect (STAGING_MESSAGES): each target's
 /// outcome is applied and its messages shown in turn. With no targets, it only
 /// waits for the message to advance.
-UNREAD_RESULT BattleStaging_RunActorEntries(struct BattlePlan *plan,
-                                            s32 unused) {
+UNREAD_RESULT BattleStaging_RunMessages(struct BattlePlan *plan, s32 unused) {
   s32 targetIndex;
 
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);

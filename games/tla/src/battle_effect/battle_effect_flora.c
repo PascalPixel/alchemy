@@ -188,7 +188,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
     if (frame == SUMMON_OPENING_LOAD_FRAME) {
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-      BattleEffect_SelectLivingTargets(state->args);
+      BattleEffect_ShowLivingTargets(state->args);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                RESOURCE_VIOLET_SKY_BACKDROP, 0);
       state->scrollTimer = 0;
@@ -1138,7 +1138,7 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
   struct PlacedSprite *record;
   s32 i;
 
-  for (i = 0; (record = GetMotionRecordFar(slot->object, i)) != NULL; i++) {
+  for (i = 0; (record = Actor_GetSpriteFar(slot->object, i)) != NULL; i++) {
     if (slot->fading == 0)
       record->priority = priority;
   }

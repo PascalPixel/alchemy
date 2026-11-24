@@ -1088,11 +1088,11 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
   Text_DrawMessageAsTilesFar(STAT_LABEL(1), window, 152, 8);
   Text_DrawMessageAsTilesFar(STAT_LABEL(2), window, 152, 16);
   Text_DrawMessageAsTilesFar(STAT_LABEL(3), window, 152, 24);
-  Text_DrawNumberInWindowFar(unit->atk, STATUS_STAT_DIGITS, window,
+  Text_DrawNumberInWindowFar(unit->attack, STATUS_STAT_DIGITS, window,
                              STATUS_STAT_X, 0);
-  Text_DrawNumberInWindowFar(unit->def, STATUS_STAT_DIGITS, window,
+  Text_DrawNumberInWindowFar(unit->defense, STATUS_STAT_DIGITS, window,
                              STATUS_STAT_X, 8);
-  Text_DrawNumberInWindowFar(unit->agi, STATUS_STAT_DIGITS, window,
+  Text_DrawNumberInWindowFar(unit->agility, STATUS_STAT_DIGITS, window,
                              STATUS_STAT_X, 16);
   Text_DrawNumberInWindowFar(unit->luck, STATUS_STAT_DIGITS, window,
                              STATUS_STAT_X, 24);
@@ -1281,12 +1281,12 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
     // One line for each place the ability works, then the end of the
     // sentence on the line below them.
     if (ability->fieldPsynergy != 0 ||
-        (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
+        (ability->flags & ABILITY_USABLE_IN_FIELD) != 0) {
       Text_DrawMessageAsTilesFar(USABLE_IN_FIELD_MESSAGE, window, 0,
                                  USABLE_TOP);
       row = 1;
     }
-    if ((ability->flags & ACTION_USABLE_IN_BATTLE) != 0) {
+    if ((ability->flags & ABILITY_USABLE_IN_BATTLE) != 0) {
       Text_DrawMessageAsTilesFar(USABLE_IN_BATTLE_MESSAGE, window, 0,
                                  row * 8 + USABLE_TOP);
       row++;
@@ -1296,10 +1296,10 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #else
     // row holds where it works for now: 2 in the field, 1 in battle.
     if (ability->fieldPsynergy != 0 ||
-        (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
+        (ability->flags & ABILITY_USABLE_IN_FIELD) != 0) {
       row = 2;
     }
-    if ((ability->flags & ACTION_USABLE_IN_BATTLE) != 0) {
+    if ((ability->flags & ABILITY_USABLE_IN_BATTLE) != 0) {
       row |= 1;
     }
     if (row == 3) {
@@ -1759,8 +1759,8 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
   message = MsgStatLabel;
   Text_DrawMessageAsTilesFar(message, window, 32, 16);
   Text_DrawMessageAsTilesFar(message + 1, window, 32, 24);
-  Text_DrawNumberInWindowFar(unit->atk, 3, window, STAT_X, 16);
-  Text_DrawNumberInWindowFar(unit->def, 3, window, STAT_X, 24);
+  Text_DrawNumberInWindowFar(unit->attack, 3, window, STAT_X, 16);
+  Text_DrawNumberInWindowFar(unit->defense, 3, window, STAT_X, 24);
   return 1;
 }
 

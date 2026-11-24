@@ -88,9 +88,9 @@ struct LevelUpState {
 struct StatState {
   s32 hp;          ///< maximum HP
   s32 pp;          ///< maximum PP
-  s32 atk;         ///< Attack, 0 to UNIT_STAT_MAX once clamped
-  s32 def;         ///< Defense, 0 to UNIT_STAT_MAX once clamped
-  s32 agi;         ///< Agility, 0 to UNIT_STAT_MAX once clamped
+  s32 attack;      ///< Attack, 0 to UNIT_STAT_MAX once clamped
+  s32 defense;     ///< Defense, 0 to UNIT_STAT_MAX once clamped
+  s32 agility;     ///< Agility, 0 to UNIT_STAT_MAX once clamped
   s32 unused;      ///< never written; a gap between Agility and Luck
   s32 luck;        ///< Luck, 0 to UNIT_LUCK_MAX once clamped
   s32 actionCount; ///< actions a turn

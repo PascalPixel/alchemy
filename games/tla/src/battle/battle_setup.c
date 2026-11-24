@@ -65,7 +65,7 @@ void BattleCamera_Update(void) {
   SET_POSITION(&eyeOffset, 0, 0, camera->distance);
   Iwram_TransformVector(&eyeOffset.x, (s32 *)camera);
 
-  if (background->flag == 0) {
+  if (background->keepRange == 0) {
     BattleCamera_SetRange(toFIXED(120), toFIXED(120), 0, 0, FIXED_ONE);
   }
 }
@@ -136,7 +136,7 @@ void BattleUnit_Collect(void) {
     }
   }
   for (i = 0; i < count; i++) {
-    position = gBattleParty_CenterOrderOffsets[i] + count / 2;
+    position = gBattleFormation_CenteredOffsets[i] + count / 2;
     battle->enemyIds[position] = unitIds[i];
   }
 placed:
@@ -159,9 +159,9 @@ UNUSED void Battle_ClearBg0Vofs(void) { Io_Write16(0, &REG_BG0VOFS); }
 /// Does nothing; Battle_Run calls it with 1 as the battle is set up.
 void Party_BattleSetupNoOp(s32 unused) {}
 
-/// Clears the party's battle-only states, and works their stats out again, as a
-/// battle ends.
-UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
+/// Clears the party's battle-only statuses, and works their stats out again, as
+/// a battle ends.
+UNREAD_RESULT BattleParty_ClearBattleStatuses(void) {
   u16 owners[10];
   s32 count;
   s32 i;

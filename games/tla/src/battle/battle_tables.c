@@ -17,7 +17,7 @@ const u32 gBattleTables_UnusedWord = 17;
 
 /// Where a centred formation's enemies stand, as places from the middle of
 /// the line: the first in the middle, the rest either side in turn.
-const s8 gBattleParty_CenterOrderOffsets[] = {0, -1, 1, -2, 2, -3, 3, -4, 4};
+const s8 gBattleFormation_CenteredOffsets[] = {0, -1, 1, -2, 2, -3, 3, -4, 4};
 
 // clang-format off
 // Each by enum BattleWeaponKind.

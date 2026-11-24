@@ -79,9 +79,9 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 
     focus.x = toFIXED(128);
     focus.y = toFIXED(64);
-    BattleEffect_SelectLivingTargets(state->args);
+    BattleEffect_ShowLivingTargets(state->args);
     wait(1);
-    BattleEffect_SpawnObjects(MOLOCH_SPRITES, SPRITE_MOLOCH, 2);
+    BattleEffect_CreateSprites(MOLOCH_SPRITES, SPRITE_MOLOCH, 2);
 
     frame = 0;
     do {
@@ -1194,7 +1194,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         if (frame <= 386) {
           for (i = 0; i != IRIS_GODDESS_SPRITES; i++)
             Sprite_DestroyFar(state->sprites[i]);
-          BattleEffect_SelectLivingTargets(state->args);
+          BattleEffect_ShowLivingTargets(state->args);
           Palette_LoadBasicSpriteColors();
           for (i = 0; i != state->args->targetCount; i++)
             BattleEffect_TintBattler(state->args->targets[i], TINT_KEEP,
@@ -1487,7 +1487,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (frame == 386) {
         for (i = 0; i != IRIS_GODDESS_SPRITES; i++)
           Sprite_DestroyFar(state->sprites[i]);
-        BattleEffect_SelectLivingTargets(state->args);
+        BattleEffect_ShowLivingTargets(state->args);
         Palette_LoadBasicSpriteColors();
         for (i = 0; i != state->args->targetCount; i++)
           BattleEffect_TintBattler(state->args->targets[i], TINT_KEEP,

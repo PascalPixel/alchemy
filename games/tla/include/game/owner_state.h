@@ -67,9 +67,9 @@ struct ClassDefinition {
   u8 required[4]; ///< the whole level needed in each element
   u8 hp;          ///< tenths of the base stat
   u8 pp;          ///< tenths of the base stat
-  u8 atk;         ///< tenths of the base stat
-  u8 def;         ///< tenths of the base stat
-  u8 agi;         ///< tenths of the base stat
+  u8 attack;      ///< tenths of the base stat
+  u8 defense;     ///< tenths of the base stat
+  u8 agility;     ///< tenths of the base stat
   u8 luck;        ///< tenths of the base stat
   u8 padding[2];  ///< padding
   /// The Psynergy the class teaches.

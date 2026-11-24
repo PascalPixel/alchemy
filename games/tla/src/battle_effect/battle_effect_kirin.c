@@ -78,9 +78,9 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Setup: wipe the battle away in dark red, swap in the forest and wipe back.
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleEffect_SpawnObjects(KIRIN_SPRITES, SPRITE_KIRIN, 1);
+  BattleEffect_CreateSprites(KIRIN_SPRITES, SPRITE_KIRIN, 1);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 202);

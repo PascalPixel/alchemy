@@ -59,7 +59,7 @@ enum BattlePlaybackCommand {
   PLAYBACK_BLOW_AWAY = 15 ///< the unit leaves the lists, as one that flees
 };
 
-s32 BattleObject_DestroyTemporaryObject(s32 unitId);
+s32 BattleUnit_RemoveEnemy(s32 unitId);
 
 void BattlePlayback_Push(u32 opcode, u32 operand);
 

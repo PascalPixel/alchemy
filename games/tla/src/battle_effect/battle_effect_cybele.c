@@ -107,7 +107,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
   state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_SpawnObjects(CYBELE_SPRITES, SPRITE_CYBELE, 1);
+  BattleEffect_CreateSprites(CYBELE_SPRITES, SPRITE_CYBELE, 1);
 
   order = Ram_MapCellBuffer;
   for (i = 0; i != CYBELE_DISSOLVE_RUNS * CANVAS_SIZE; i++)
@@ -167,7 +167,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     thorn->velocityY = 0;
     thorn->variant = 0;
   }
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
 
   height = -toFIXED(64);
   speed = 0;
@@ -437,7 +437,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           if (target->y > toFIXED(128))
             target->y = toFIXED(128);
           target->verticalMotionStrength = 0;
-          for (n = 0; (record = GetMotionRecordFar(slot->object, n)) != 0; n++)
+          for (n = 0; (record = Actor_GetSpriteFar(slot->object, n)) != 0; n++)
             Sprite_StartAnimationFar(record, POSE_DAMAGE);
         }
       }

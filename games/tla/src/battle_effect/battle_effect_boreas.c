@@ -128,11 +128,11 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
                       BLITTER_TRANSPARENT);
   drawAlt = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            RESOURCE_VIOLET_SKY_BACKDROP, 0);
-  BattleEffect_SpawnObjects(BOREAS_SPRITES, SPRITE_BOREAS, 1);
+  BattleEffect_CreateSprites(BOREAS_SPRITES, SPRITE_BOREAS, 1);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 

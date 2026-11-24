@@ -75,9 +75,9 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
 
     EFFECT_FREE_PARTICLES(k, PARTICLES, NEREID_DROPS);
     drops = PARTICLES;
-    BattleEffect_SelectLivingTargets(state->args);
+    BattleEffect_ShowLivingTargets(state->args);
     wait(1);
-    BattleEffect_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
+    BattleEffect_CreateSprites(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
     for (frame = 0; frame != NEREID_FRAMES; frame++) {
       if ((gInput.repeat & (KEY_A | KEY_B)) && frame > NEREID_COLUMNS_FRAME &&

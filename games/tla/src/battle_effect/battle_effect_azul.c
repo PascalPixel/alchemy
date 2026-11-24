@@ -150,7 +150,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit = Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
@@ -190,7 +190,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     }
   }
   wait(1);
-  BattleEffect_SpawnObjects(AZUL_SERPENT_OBJECTS, SPRITE_AZUL, 1);
+  BattleEffect_CreateSprites(AZUL_SERPENT_OBJECTS, SPRITE_AZUL, 1);
   for (i = 0; i != AZUL_BODY_COPIES; i++) {
     obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
     state->sprites[i + AZUL_SERPENT_OBJECTS] = obj;
@@ -554,10 +554,10 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         void *record;
 
         if (frame == AZUL_BURST_FRAME) {
-          ReleaseBattleObjectRecordsFar(args->targets[i]);
+          BattleObject_DestroySpritesFar(args->targets[i]);
         }
         if (frame == AZUL_SHATTER_FRAME) {
-          for (j = 0; (record = GetMotionRecordFar(slot->object, j)) != 0;
+          for (j = 0; (record = Actor_GetSpriteFar(slot->object, j)) != 0;
                j++) {
             Sprite_RemoveAnimationFar(record, (s32)slot->shadowEntry);
           }

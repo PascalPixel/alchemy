@@ -112,7 +112,7 @@ void Actor_SetAnimationSpeedFar(struct Actor *actor, s32 value);
 void Unit_SetHpFar(struct Unit *unit, s32 hp);
 void MessageArgument_ClearAllFar(void);
 void BattleMessage_CloseFar(void);
-void UpdateRisingParticleBurst(void *object);
+void FieldEffect_BurstHand(void *object);
 
 struct Sprite;
 struct PaletteFade;
@@ -149,7 +149,7 @@ void Field_AdvanceWithGravity3D(s32 *vector, s32 damping, s32 gravity);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position);
 void BattleEffect_RunBurstShower(struct BattleEffectParams *effect, u32 mode);
 void BattleEffect_RunSparkGroups(struct BattleEffectParams *effect, s32 kind);
-void FieldEffect_SnapScaleToFull(struct Actor *actor);
+void FieldEffect_GrowHandAndWait(struct Actor *actor);
 void PaletteFade_StartInterpolation(s32 frames);
 struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item);
 void BattleEffect_UpdateArcEffect(void);
@@ -238,7 +238,7 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action);
 s32 Battle_FindUnitPlace(u32 id);
 void Battle_ProcessTurnEnd(void);
 void Battle_AwardSpoils(void);
-s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode);
+s32 BattleStaging_RunFullScreen(struct BattlePlan *plan, s32 mode);
 s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode);
 s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
                           struct BattleActionRecord *selection);
@@ -249,7 +249,7 @@ void BattleBackground_RestorePalette(void);
 s32 BattleUnit_GetPartyAttackEffect(s32 kind);
 s32 EnemySprite_LoadIntoSlots(s32 unit);
 void BattleCamera_SetViewAtPairMidpoint(s32 first, s32 second, s32 scale);
-void BattleUnit_ListAllAndSubmit(void);
+void BattleObject_PutKeepingPoses(void);
 s32 BattlePlayback_WaitForReady(void);
 void BattleStaging_BuildTargetList(struct BattlePlan *plan,
                                    struct BattlePresentationState *effect);

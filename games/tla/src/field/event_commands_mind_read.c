@@ -312,7 +312,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
                target->z.fixed);
   Vector_AddPolarOffset(toFIXED(16), angle, &position);
   Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
-  FieldEffect_SnapScaleToFull(pusher);
+  FieldEffect_GrowHandAndWait(pusher);
   pusher->speedLimit = toFIXED(4);
   pusher->acceleration = FIXED_ONE / 2;
   pusher->motionFlags = ACTOR_FLOATS;
@@ -443,7 +443,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
     Actor_GetById(scene->firstActorId)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   FieldPsynergy_FadeFromCastColor();
-  UpdateRisingParticleBurst(pusher);
+  FieldEffect_BurstHand(pusher);
 }
 
 /// Field effect sprite callback of a particle that flies 30 pixels out from
@@ -506,13 +506,13 @@ void FieldPsynergy_Move(void) {
 
   FieldPsynergy_FadeToCastColor();
   object = FieldEffect_SpawnMoveHand(object);
-  FieldEffect_SnapScaleToFull(object);
+  FieldEffect_GrowHandAndWait(object);
   if (object != 0) {
     Actor_SelectAnimationFar(object, 4);
     wait(30);
   }
   FieldPsynergy_FadeFromCastColor();
-  UpdateRisingParticleBurst(object);
+  FieldEffect_BurstHand(object);
 }
 
 /// Move's hand appears at a quarter size 16 pixels above the caster, with a
@@ -567,7 +567,7 @@ void *FieldEffect_SpawnMoveHand(void *object) {
 
 /// Grows a hand to full size at once and waits for it to reach where it is
 /// going.
-void FieldEffect_SnapScaleToFull(struct Actor *actor) {
+void FieldEffect_GrowHandAndWait(struct Actor *actor) {
   FIXED next;
   FIXED scale;
 
@@ -590,7 +590,7 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
 
 /// The hand spins as it rises for BURST_RISE_FRAMES, shrinks, and bursts into
 /// BURST_SPARKLES sparkles (SPRITE_SPARKLE).
-void UpdateRisingParticleBurst(void *object) {
+void FieldEffect_BurstHand(void *object) {
   struct Actor *src = object;
   struct Actor *child;
   s32 i;
@@ -996,8 +996,8 @@ void FieldPsynergy_LiftOnTarget(void) {
     } while (((struct EffectChild *)child)->y <= startY + toFIXED(32));
   }
 
-  UpdateRisingParticleBurst(anchors[0]);
-  UpdateRisingParticleBurst(anchors[1]);
+  FieldEffect_BurstHand(anchors[0]);
+  FieldEffect_BurstHand(anchors[1]);
   FieldPsynergy_FadeFromCastColor();
 }
 

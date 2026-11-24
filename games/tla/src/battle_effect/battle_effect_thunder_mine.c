@@ -445,7 +445,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
                        SHEET_PALETTE_BYTES);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   wait(1);
 
   for (frame = 0; frame != MEGAERA_FRAMES; frame++) {
@@ -465,12 +465,12 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
       position.y = toFIXED(72);
       velocity.x = toFIXED(9);
       velocity.y = -toFIXED(2);
-      BattleEffect_SpawnObjects(MEGAERA_SWORDS, SPRITE_MEGAERA_SWORD, 2);
+      BattleEffect_CreateSprites(MEGAERA_SWORDS, SPRITE_MEGAERA_SWORD, 2);
     }
     if (frame == MEGAERA_SWOOP_FRAME) {
       Sprite_DestroyFar(state->sprites[0]);
       Sprite_DestroyFar(state->sprites[1]);
-      BattleEffect_SpawnObjects(MEGAERA_OBJECTS, SPRITE_MEGAERA, 2);
+      BattleEffect_CreateSprites(MEGAERA_OBJECTS, SPRITE_MEGAERA, 2);
     }
 
     // Megaera swoops, trailing sparkles.

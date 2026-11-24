@@ -114,7 +114,7 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
 /// picture's two halves come from character blocks 2 and 3: the upper half's
 /// tiles numbered from 0, the lower half's from 0 again, then tile 255 for the
 /// rest.
-void Graphics_BuildSequentialTileTable(void *tilemap) {
+void BattleTransition_BuildAffineTilemap(void *tilemap) {
   u32 *words = tilemap;
   u32 tiles;
   u32 i;

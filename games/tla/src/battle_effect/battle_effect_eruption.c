@@ -205,7 +205,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
 
 /// Creates the effect's sprites in its state: count sprites of spriteId,
 /// the nth showing its animation n, all at the given priority.
-void BattleEffect_SpawnObjects(s32 count, s32 spriteId, u32 priority) {
+void BattleEffect_CreateSprites(s32 count, s32 spriteId, u32 priority) {
   struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   s32 i = 0;
 

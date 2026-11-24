@@ -312,8 +312,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                                  RESOURCE_VIOLET_SKY_BACKDROP, 0);
         BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
                                     RESOURCE_VIOLET_SKY_BACKDROP, 8);
-        BattleEffect_SelectLivingTargets(state->args);
-        BattleEffect_SpawnObjects(PROCNE_SPRITES, SPRITE_PROCNE, 2);
+        BattleEffect_ShowLivingTargets(state->args);
+        BattleEffect_CreateSprites(PROCNE_SPRITES, SPRITE_PROCNE, 2);
         Resource_LoadAndDecompress(RESOURCE_VIOLET_COMET_SHEET,
                                    state->sheet + PROCNE_COMET_PICTURES, 1, 1);
 
@@ -748,9 +748,9 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     }
     EFFECT_FREE_PARTICLES(i, PARTICLES, DRAGON_FIRE_EMBERS);
     if (mode == DRAGON_FIRE_TIAMAT) {
-      BattleEffect_SelectLivingTargets(state->args);
+      BattleEffect_ShowLivingTargets(state->args);
       wait(1);
-      BattleEffect_SpawnObjects(DRAGON_FIRE_TIAMAT_SPRITES, SPRITE_TIAMAT, 2);
+      BattleEffect_CreateSprites(DRAGON_FIRE_TIAMAT_SPRITES, SPRITE_TIAMAT, 2);
     }
 
     for (frame = 0; frame != DRAGON_FIRE_FRAMES; frame++) {

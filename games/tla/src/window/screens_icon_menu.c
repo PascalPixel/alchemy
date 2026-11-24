@@ -738,10 +738,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       Sound_PlayFar(SE_CHIME);
       command->unitId = actorId;
       {
-        s32 priority = unit->agi;
+        s32 priority = unit->agility;
 
         if (priority != 0)
-          priority += (u32)(unit->agi * Random16()) >> 20;
+          priority += (u32)(unit->agility * Random16()) >> 20;
         command->priority = priority;
         if (commandIndex != 0 &&
             actors[commandIndex] == actors[commandIndex - 1])

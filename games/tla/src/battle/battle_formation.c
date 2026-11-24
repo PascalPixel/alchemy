@@ -287,7 +287,7 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
     return;
 #endif
   if (nameLength > 0)
-    suffix = unit->name[nameLength - 1] - LIST_MARKER_CHAR;
+    suffix = unit->name[nameLength - 1] - ENEMY_NAME_SUFFIX_FIRST;
   battle->nameLetterMasks[index] &= ~(1 << suffix);
 }
 
@@ -311,7 +311,7 @@ s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
     // the suffix; nameIndex holds the terminator, 0.
     nameIndex = 0;
     if (unit->name[0] == 0) {
-      unit->name[0] = LIST_MARKER_CHAR;
+      unit->name[0] = ENEMY_NAME_SUFFIX_FIRST;
       unit->name[nameByte] = nameIndex;
       return;
     }
@@ -324,7 +324,7 @@ s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
     if (nameByte != 0)
       goto scan_slots;
     terminatorIndex = nameIndex + 1;
-    unit->name[nameIndex] = LIST_MARKER_CHAR;
+    unit->name[nameIndex] = ENEMY_NAME_SUFFIX_FIRST;
     unit->name[terminatorIndex] = nameByte;
     return;
   }

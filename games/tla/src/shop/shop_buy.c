@@ -535,15 +535,15 @@ void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
   savedEntry = unit->inventory[previewSlot];
   unit->inventory[previewSlot] = itemId | INVENTORY_EQUIPPED;
   Unit_CalculateFar(unitId);
-  previewStats[0] = unit->atk;
-  previewStats[1] = unit->def;
-  previewStats[2] = unit->agi;
+  previewStats[0] = unit->attack;
+  previewStats[1] = unit->defense;
+  previewStats[2] = unit->agility;
   previewStats[3] = unit->luck;
   unit->inventory[previewSlot] = savedEntry;
   Unit_CalculateFar(unitId);
-  baseStats[0] = unit->atk;
-  baseStats[1] = unit->def;
-  baseStats[2] = unit->agi;
+  baseStats[0] = unit->attack;
+  baseStats[1] = unit->defense;
+  baseStats[2] = unit->agility;
   baseStats[3] = unit->luck;
   for (index = 0; index <= 2; index++) {
     if (baseStats[index] > previewStats[index])

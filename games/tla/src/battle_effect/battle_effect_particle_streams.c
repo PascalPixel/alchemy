@@ -106,9 +106,9 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
       life += sizeof(struct Particle) / sizeof(s32);
     }
     drops = PARTICLES;
-    BattleEffect_SelectLivingTargets(state->args);
+    BattleEffect_ShowLivingTargets(state->args);
     wait(1);
-    BattleEffect_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
+    BattleEffect_CreateSprites(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
     for (frame = 0; frame != NEREID_FRAMES; frame++) {
       if ((gInput.repeat & (KEY_A | KEY_B)) && frame > NEREID_COLUMNS_FRAME &&
@@ -801,7 +801,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       }
     }
   } else {
-    BattleEffect_SpawnObjects(1, SPRITE_METEOR, 3);
+    BattleEffect_CreateSprites(1, SPRITE_METEOR, 3);
   }
   // The starfield.
   Resource_LoadAndDecompress(RESOURCE_FLAME_SHEET_B, state->sheet, 1, 1);
@@ -841,7 +841,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
   // The dissolve: the map is erased from the top in ragged columns.
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
 
   state->bg2x = 0;
   state->bg2y = 0;

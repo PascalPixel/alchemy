@@ -266,10 +266,10 @@ enum BattleActionFailure {
   ACTION_FAILURE_NO_PP   ///< the user has too little PP
 };
 
-/// BattleStaging_HideField's mode bit that hides the acting unit too, as the
-/// summons do.
+/// BattleStaging_RunFullScreen's mode bit that hides the acting unit too, as
+/// the summons do.
 #define STAGING_HIDE_ACTOR 1
-/// BattleStaging_HideField's mode bit for Daedalus's strike at the turn's
+/// BattleStaging_RunFullScreen's mode bit for Daedalus's strike at the turn's
 /// end: the acting unit plays no cast, with no pose, sound or star field.
 #define STAGING_NO_CAST 2
 
@@ -317,7 +317,7 @@ extern const s32 gBattleObject_EmptyScript[];
 
 /// The order enemies of a fixed formation take from the centre out: 0, -1, 1,
 /// -2, 2 and on.
-extern const s8 gBattleParty_CenterOrderOffsets[];
+extern const s8 gBattleFormation_CenteredOffsets[];
 
 /// Each character's battle sprite for each weapon kind
 /// (BattleUnit_GetWeaponSprite).

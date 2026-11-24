@@ -27,13 +27,14 @@
 #define TYPE_MENU_WIDTH 4
 #endif
 
-/// Where the debug destination list's cursor sits; further right in Japanese.
+/// The debug scene selector's colons, where its arrow points, and the y of its
+/// first row; further right in Japanese.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define MENU_TEXT_X 74
+#define DEBUG_SCENE_SELECTOR_COLON_X 74
 #else
-#define MENU_TEXT_X 100
+#define DEBUG_SCENE_SELECTOR_COLON_X 100
 #endif
-#define MENU_TEXT_Y 60
+#define DEBUG_SCENE_SELECTOR_FIRST_ROW_Y 60
 
 /// A link battle's opponent names take up to 8 letters of prefix, then a space,
 /// in the European editions, instead of 5.
@@ -47,9 +48,9 @@
 /// The first of the letters that tell enemies of one kind apart in battle: the
 /// alphabet from 'A' in Japanese, the digits from '1' in the others.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define LIST_MARKER_CHAR 'A'
+#define ENEMY_NAME_SUFFIX_FIRST 'A'
 #else
-#define LIST_MARKER_CHAR '1'
+#define ENEMY_NAME_SUFFIX_FIRST '1'
 #endif
 
 /// The letters of Lucky Wheels' title.

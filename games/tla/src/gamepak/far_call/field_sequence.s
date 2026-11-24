@@ -170,8 +170,8 @@ FarCall_OverworldTable:
 	export Sprite_ShareVramCacheEntryFar, Sprite_ShareVramCacheEntry
 	export BattleBackground_GetSelectedFar, BattleBackground_GetSelected
 	export FieldEffect_SpawnMoveHandFar, FieldEffect_SpawnMoveHand
-	export FieldEffect_SnapScaleToFullFar, FieldEffect_SnapScaleToFull
-	export UpdateRisingParticleBurstFar, UpdateRisingParticleBurst
+	export FieldEffect_GrowHandAndWaitFar, FieldEffect_GrowHandAndWait
+	export FieldEffect_BurstHandFar, FieldEffect_BurstHand
 	export Party_AddPpFar, Party_AddPp
 	export Party_AddHpFar, Party_AddHp
 	export ResourceTable_CountFreeBlocksFar, ResourceTable_CountFreeBlocks

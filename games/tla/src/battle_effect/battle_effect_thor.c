@@ -401,8 +401,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   view->busy = 0;
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   BattleEffect_SetupBlendedDisplay();
-  BattleEffect_SelectLivingTargets(state->args);
-  BattleEffect_SpawnObjects(THOR_SPRITES, SPRITE_THOR, 1);
+  BattleEffect_ShowLivingTargets(state->args);
+  BattleEffect_CreateSprites(THOR_SPRITES, SPRITE_THOR, 1);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, Ram_MapCellBuffer, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_PILLAR_SHEET, state->sheet, 1,
                              1);

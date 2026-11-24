@@ -120,8 +120,8 @@ void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct ScreenPoint *position);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
-void BattleEffect_SelectLivingTargets(struct BattleEffectParams *party);
+void BattleEffect_CreateSprites(s32 count, s32 spriteId, u32 priority);
+void BattleEffect_ShowLivingTargets(struct BattleEffectParams *args);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);

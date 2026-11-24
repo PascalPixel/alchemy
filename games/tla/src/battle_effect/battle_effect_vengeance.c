@@ -2308,7 +2308,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   wait(1);
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;

@@ -63,7 +63,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   view->busy = 1;
   BattleCamera_SetRange(toFIXED(120), toFIXED(118 - verticalOffset), 0, 8 << 8,
                         FIXED_ONE * 2);
-  view->flag = 1;
+  view->keepRange = 1;
   view->busy = 0;
 }
 
@@ -186,7 +186,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
       s32 agility;
 
       entry->unitId = unitId;
-      agility = unit->agi;
+      agility = unit->agility;
       entry->priority = agility;
       entry->turnAction = copyIndex;
       if (unit->actionsPerTurn == 4) {

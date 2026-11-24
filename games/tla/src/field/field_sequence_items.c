@@ -205,7 +205,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     state = Ram_HeapSlots->fieldState;
 
     if (abilityId != 0) {
-      GameFlag_Set(FLAG_ITEM_USE);
+      GameFlag_Set(FLAG_PSYNERGY_FROM_ITEM);
       GameFlag_Clear(FLAG_NOTHING_HAPPENS);
 
       if (abilityId == ABILITY_RETREAT && !GameFlag_Get(FLAG_RETREAT_BLOCKED)) {

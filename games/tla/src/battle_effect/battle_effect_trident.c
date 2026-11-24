@@ -110,8 +110,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_SelectLivingTargets(state->args);
-  BattleEffect_SpawnObjects(TRIDENT_SPRITES, SPRITE_TRIDENT, 1);
+  BattleEffect_ShowLivingTargets(state->args);
+  BattleEffect_CreateSprites(TRIDENT_SPRITES, SPRITE_TRIDENT, 1);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WINOUT = EFFECT_WINOUT;

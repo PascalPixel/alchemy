@@ -50,6 +50,5 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 typedef s32 (*BattleEffectDrawRectangle)(void *destination, const void *source,
                                          s32 x, s32 y, s32 width, s32 height);
 typedef BattleEffectDrawRectangle DrawRectangle;
-typedef BattleEffectDrawRectangle DrawRectangleFn;
 
 #endif

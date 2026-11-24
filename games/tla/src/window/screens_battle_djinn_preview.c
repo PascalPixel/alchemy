@@ -56,8 +56,8 @@ s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
 #define DJINN_PREVIEW_ABILITY_GAINED 0x8000 ///< new with the change
 #define DJINN_PREVIEW_ABILITY_LOST 0x4000   ///< gone with the change
 
-/// Lists into `out` the abilities usable in battle (ACTION_USABLE_IN_BATTLE) of
-/// the action list `newGrid`, in its order, marking with
+/// Lists into `out` the abilities usable in battle (ABILITY_USABLE_IN_BATTLE)
+/// of the action list `newGrid`, in its order, marking with
 /// DJINN_PREVIEW_ABILITY_GAINED those `oldGrid` lacks; then appends those of
 /// `oldGrid` that `newGrid` lacks, marked DJINN_PREVIEW_ABILITY_LOST.
 /// Both lists are 32 slots, ended early by a 0 action. Returns the entries
@@ -76,7 +76,7 @@ s32 BattleDjinnMenu_ListChangedPsynergy(const struct PsynergyEntry *oldGrid,
   count = 0;
   for (i = 0; i < PSYNERGY_SLOTS && newGrid[i].encodedAction != 0; i++) {
     if (Ability_Get(newGrid[i].encodedAction)->flags &
-        ACTION_USABLE_IN_BATTLE) {
+        ABILITY_USABLE_IN_BATTLE) {
       out[count] = newGrid[i].encodedAction & PSYNERGY_ABILITY_MASK;
       count++;
       for (j = 0; j < PSYNERGY_SLOTS; j++) {
@@ -92,7 +92,7 @@ s32 BattleDjinnMenu_ListChangedPsynergy(const struct PsynergyEntry *oldGrid,
   }
   for (i = 0; i < PSYNERGY_SLOTS && oldGrid[i].encodedAction != 0; i++) {
     if (Ability_Get(oldGrid[i].encodedAction)->flags &
-        ACTION_USABLE_IN_BATTLE) {
+        ABILITY_USABLE_IN_BATTLE) {
       for (j = 0; j < PSYNERGY_SLOTS; j++) {
         if (((oldGrid[i].encodedAction ^ newGrid[j].encodedAction) &
              PSYNERGY_ABILITY_MASK) == 0)
@@ -267,15 +267,15 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
     String_FormatNumberToHalfwords(numberText, oldPp);
     Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
                                 window, OLD_VALUE_X, 2);
-    oldAtk = savedUnit->atk;
+    oldAtk = savedUnit->attack;
     String_FormatNumberToHalfwords(numberText, oldAtk);
     Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
                                 window, OLD_VALUE_X, 3);
-    oldDef = savedUnit->def;
+    oldDef = savedUnit->defense;
     String_FormatNumberToHalfwords(numberText, oldDef);
     Text_DrawWideStringInWindow(numberText + OLD_DEFENSE_AGILITY_TEXT, window,
                                 OLD_DEFENSE_AGILITY_X, 4);
-    oldAgi = savedUnit->agi;
+    oldAgi = savedUnit->agility;
     String_FormatNumberToHalfwords(numberText, oldAgi);
     Text_DrawWideStringInWindow(numberText + OLD_DEFENSE_AGILITY_TEXT, window,
                                 OLD_DEFENSE_AGILITY_X, 5);
@@ -381,32 +381,32 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(2),
                               rising);
     }
-    String_FormatNumberToHalfwords(numberText, unit->atk);
+    String_FormatNumberToHalfwords(numberText, unit->attack);
     Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
                                 window, 11, 3);
-    if (unit->atk != oldAtk) {
+    if (unit->attack != oldAtk) {
       rising = 0;
-      if (unit->atk > oldAtk)
+      if (unit->attack > oldAtk)
         rising = 1;
       DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(3),
                               rising);
     }
-    String_FormatNumberToHalfwords(numberText, unit->def);
+    String_FormatNumberToHalfwords(numberText, unit->defense);
     Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
                                 window, 11, 4);
-    if (unit->def != oldDef) {
+    if (unit->defense != oldDef) {
       rising = 0;
-      if (unit->def > oldDef)
+      if (unit->defense > oldDef)
         rising = 1;
       DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(4),
                               rising);
     }
-    String_FormatNumberToHalfwords(numberText, unit->agi);
+    String_FormatNumberToHalfwords(numberText, unit->agility);
     Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
                                 window, 11, 5);
-    if (unit->agi != oldAgi) {
+    if (unit->agility != oldAgi) {
       rising = 0;
-      if (unit->agi > oldAgi)
+      if (unit->agility > oldAgi)
         rising = 1;
       DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(5),
                               rising);

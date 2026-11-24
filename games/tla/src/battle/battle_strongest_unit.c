@@ -41,7 +41,7 @@ s32 BattleAI_ChooseRandomTarget(s32 party) {
 s32 BattleUnit_FindStrongestAlly(u32 unitId) {
   struct BattleState *battle = Ram_HeapSlots->battleState;
   u32 best = unitId;
-  s32 bestAttack = Unit_Get(unitId)->atk;
+  s32 bestAttack = Unit_Get(unitId)->attack;
   s32 i;
   s32 id;
 
@@ -49,9 +49,9 @@ s32 BattleUnit_FindStrongestAlly(u32 unitId) {
     for (i = 0; (id = battle->partyUnits[i]) != BATTLE_UNIT_LIST_END; i++) {
       if (id != BATTLE_UNIT_REMOVED && Unit_Get(id)->hp != 0) {
         if (best == unitId ||
-            (id != unitId && Unit_Get(id)->atk > bestAttack)) {
+            (id != unitId && Unit_Get(id)->attack > bestAttack)) {
           best = id;
-          bestAttack = Unit_Get(best)->atk;
+          bestAttack = Unit_Get(best)->attack;
         }
       }
     }
@@ -59,9 +59,9 @@ s32 BattleUnit_FindStrongestAlly(u32 unitId) {
     for (i = 0; (id = battle->enemyIds[i]) != BATTLE_UNIT_LIST_END; i++) {
       if (id != BATTLE_UNIT_REMOVED && Unit_Get(id)->hp != 0) {
         if (best == unitId ||
-            (id != unitId && Unit_Get(id)->atk > bestAttack)) {
+            (id != unitId && Unit_Get(id)->attack > bestAttack)) {
           best = id;
-          bestAttack = Unit_Get(best)->atk;
+          bestAttack = Unit_Get(best)->attack;
         }
       }
     }

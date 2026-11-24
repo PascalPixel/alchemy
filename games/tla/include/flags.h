@@ -160,7 +160,7 @@
 /// frame. Nothing in the game sets it.
 #define FLAG_FAST_WALK 0x17f
 #define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
-#define FLAG_ITEM_USE 0x145     ///< the Psynergy comes from an item
+#define FLAG_PSYNERGY_FROM_ITEM 0x145 ///< the Psynergy comes from an item
 /// Set while the flying ship hovers on the World Map: Hover cast aboard it sets
 /// it, the ship takes off and the World Map announces "Hover"
 /// (WorldMap_SetUpFlyingShip); taking off with the dash keys clears it.

@@ -166,8 +166,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   wait(1);
   IWRAM_FILL_WORDS(map, 256 * 128, CANVAS_FILL_WORD(1));
   Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(2), map, BATTLE_BACKGROUND_BYTES);
-  BattleEffect_SelectLivingTargets(state->args);
-  BattleEffect_SpawnObjects(1, SPRITE_METEOR, 1);
+  BattleEffect_ShowLivingTargets(state->args);
+  BattleEffect_CreateSprites(1, SPRITE_METEOR, 1);
   REG_BLDCNT = blank;
   REG_BG2PA = Q_8_8(1);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);

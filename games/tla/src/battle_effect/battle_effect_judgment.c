@@ -162,7 +162,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   // Wipe the battle away, change the battle background behind it and set out
   // Judgment's sprites in its first pose, then wipe back.
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            RESOURCE_VIOLET_SKY_BACKDROP, 0);
 

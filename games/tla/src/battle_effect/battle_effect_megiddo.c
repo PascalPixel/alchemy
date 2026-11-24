@@ -241,7 +241,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       BattleEffect_BuildRepeatingTilemap();
       Palette_BrightenBattleBg(MEGIDDO_HAZE_FADE_RED, MEGIDDO_HAZE_FADE,
                                MEGIDDO_HAZE_FADE);
-      BattleEffect_SpawnObjects(1, SPRITE_SUN, 2);
+      BattleEffect_CreateSprites(1, SPRITE_SUN, 2);
     }
     EffectPosition_ProjectScaledBattler(args->user, &pos);
     if (frame == 3) {

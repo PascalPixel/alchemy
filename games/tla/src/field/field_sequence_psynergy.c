@@ -37,7 +37,7 @@ s32 Field_UsePsynergy(u32 code) {
   Leader_StopMoving();
   fieldState->psynergyHitObject = -1;
   fieldState->standing = retreat;
-  GameFlag_Clear(FLAG_ITEM_USE);
+  GameFlag_Clear(FLAG_PSYNERGY_FROM_ITEM);
   if (userId == UNIT_NONE)
     userId = 0;
 

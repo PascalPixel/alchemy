@@ -178,7 +178,7 @@ enum SpriteId {
   SPRITE_GIRL_WITH_RED_BOW,
   /// A turtle in a 32-pixel sprite sheet, standing alone and with a child
   /// riding it; it stands on one of the islets of the turtle trade.
-  SPRITE_SMALL_TURTLE,
+  SPRITE_TURTLE_WITH_RIDER,
   /// A smaller turtle in a 16-pixel sprite sheet, the one the islets' trade
   /// spawns wading.
   SPRITE_TURTLE_SMALL,

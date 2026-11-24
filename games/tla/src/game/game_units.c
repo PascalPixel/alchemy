@@ -13,6 +13,8 @@
 #include "system/ram_buffer.h"
 #include "resource_ids.h"
 #include "system/save.h"
+#include "window/message_speed.h"
+#include "window/window.h"
 
 extern s16 gSaveSlot;
 
@@ -603,11 +605,13 @@ void MainRoutineState_InitializeDefaults(void) {
   gMainRoutineState.transferredCoins = 0;
   gMainRoutineState.forgeItem = 0;
   gMainRoutineState.weirdAnswers = 0;
-  gMainRoutineState.messageSpeed = 1;
+  // The settings a new game starts with: Normal messages with speech on, and
+  // the first window colour one step brighter than neutral.
+  gMainRoutineState.messageSpeed = MESSAGE_SPEED_NORMAL;
   gMainRoutineState.speech = 1;
   gMainRoutineState.unusedAfterSpeech = 1;
   gMainRoutineState.windowHue = 0;
-  gMainRoutineState.windowBrightness = 8;
+  gMainRoutineState.windowBrightness = WINDOW_BRIGHTNESS_NEUTRAL + 1;
   gMainRoutineState.buildStamp = 0;
   gMainRoutineState.startStamp = BuildStamp_GetTime();
   gPlayTimeFrames = 0;
@@ -935,6 +939,9 @@ void ClearData_Apply(u8 *save) {
 
     unit->baseHp = saved->baseHp;
     unit->basePp = saved->basePp;
+    // The gauges take the base HP and PP, which are no share of HP or PP;
+    // Unit_Calculate, finding a gauge out of step with its HP or PP, fills
+    // both gauges and sets HP and PP to their maximums.
     unit->hpGauge = unit->baseHp;
     unit->ppGauge = unit->basePp;
     unit->baseAttack = saved->baseAttack;

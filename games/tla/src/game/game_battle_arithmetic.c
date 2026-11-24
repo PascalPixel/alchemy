@@ -16,8 +16,8 @@ s32 Battle_GetElementMultiplier(s32 difference, s32 halve) {
   s32 multiplierSpan;
 
   maximumDifference = gElement_PowerResistCurve[0][0];
-  minimumDifference = gElement_PowerResistCurve[4][0];
-  pointCount = 5;
+  pointCount = ARRAY_COUNT(gElement_PowerResistCurve);
+  minimumDifference = gElement_PowerResistCurve[pointCount - 1][0];
   if (difference > maximumDifference)
     difference = maximumDifference;
   else if (difference < minimumDifference)

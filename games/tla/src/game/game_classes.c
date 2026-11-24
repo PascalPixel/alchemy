@@ -68,15 +68,10 @@ s32 Unit_GetElementLevel(s32 unitId, s32 element) {
 s32 Enemy_GetAttackElement(void *state) {
   struct Unit *unit = state;
   u8 preset = Enemy_GetDefinition(unit->enemyId)->elementPreset;
-  const struct EnemyElementPreset *table;
-  u32 offset;
 
   if (preset >= ENEMY_ELEMENT_PRESET_COUNT)
     preset = 0;
-  table = gEnemy_ElementPresetTable;
-  offset = preset * sizeof(struct EnemyElementPreset);
-  return ((const struct EnemyElementPreset *)((const u8 *)table + offset))
-      ->attackElement;
+  return gEnemy_ElementPresetTable[preset].attackElement;
 }
 
 /// Writes a unit's base power and resistance in each element: an enemy's from

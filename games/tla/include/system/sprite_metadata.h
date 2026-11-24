@@ -11,18 +11,23 @@
 /// An animation's metadata: the sprite's size, scale and offsets, how its
 /// pictures are drawn and decoded, its pictures and its animation scripts.
 struct AnimationMetadata {
-  u8 width;
-  u8 height;
-  u16 scale;
+  u8 width;  ///< pixels; 0 marks a row with no sprite
+  u8 height; ///< pixels
+  u16 scale; ///< 8.8 fixed point, 256 full size (a Sprite's scale over 256)
+  /// The AnimationFacingKind: which facing table turns its pictures.
   u8 drawKind;
-  u8 animationCount;
-  s8 adjustX;
-  s8 adjustY;
+  u8 animationCount; ///< scripts in animation
+  s8 adjustX;        ///< pixels the sprite is drawn off its position
+  s8 adjustY;        ///< pixels the sprite is drawn off its position
+  /// Pixels from the actor's feet up to the top of its sprite, read signed:
+  /// where Mind Read's line starts, and what an actor carried on top of
+  /// another is raised by.
   u8 spriteTop;
-  u8 footprint;
+  u8 footprint; ///< pixels across the actor stands on, twice its radius
+  /// How its pictures are packed: 1 type-01, 3 LZ, anything else raw.
   u8 pictureCodec;
-  void **pictures;
-  u8 **animation;
+  void **pictures; ///< null for a sprite whose pictures a cache loads
+  u8 **animation;  ///< its command scripts, one per animation number
 };
 
 STATIC_ASSERT(sizeof(struct AnimationMetadata) == 20);

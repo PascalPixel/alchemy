@@ -38,6 +38,10 @@
 #include "battle/battle_unit.h"
 #include "window/window.h"
 #include "shop/shop.h"
+#include "field/object.h"
+#include "field/event_commands.h"
+#include "window/screens.h"
+#include "graphics/text_render.h"
 
 /// The entrance that brings Isaac's party in (Party_AddIsaacsParty).
 #define ENTRANCE_WITH_ISAACS_PARTY 99
@@ -94,10 +98,26 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-void *Portrait_OpenWindow(s32, s32, s32, s32);
-void Message_CloseFinishedWindows(void);
-void Message_OpenWindow(s32, s32, s32, s32);
-s32 Message_AllTyped(void);
+/// The routines of other banks the tests open that no header declares yet,
+/// as their banks define them.
+struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
+                                   s32 y);
+struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
+s32 Shop_Run(s32 stockRow, s32 keeper);
+s32 Sanctum_Run(s32 keeper);
+s32 Inn_CheckIn(s32 innId, s32 keeper);
+s32 Forge_Run(s32 keeper);
+void Forge_SetItem(s32 item);
+s32 Forge_GetItem(void);
+s32 ItemPicker_RunToShow(s32 *selectedUnit, s32 *selectedSlot);
+s32 NameEntry_EditMemberName(s32 member);
+void Summon_ShowLearnedMessage(s32 summon);
+void Summon_Learn(s32 summonId);
+s32 Inventory_Break(s32 unitId, s32 slot);
+void GameFlag_RefreshLureCap(void);
+void Party_AddIsaacsParty(void);
+void WindowSprite_PrepareForRedraw(struct Window *window);
+void ItemMenu_DrawItemDetails(s32 window, s32 item);
 
 /// Browses `count` messages from `message`, each typed out at once: A for the
 /// next, B to close; each moves on by itself after 10 frames held, or 60
@@ -156,16 +176,6 @@ done:
   Window_Close(window, 2);
 }
 
-void Shop_Run(s32 stockRow, s32 keeper);
-void Sanctum_Run(void);
-void Inn_CheckIn(s32 innId, s32 keeper);
-void ItemPicker_RunToShow(s32 *selectedUnit, s32 *selectedSlot);
-void NameEntry_EditMemberName(s32 index);
-void Summon_ShowLearnedMessage(s32 value);
-void Summon_Learn(s32 summonId);
-void DebugBrowser_Icons(void);
-void DebugBrowser_Portraits(void);
-
 /// The shop and sanctum message browsers: talking to ACTOR_SANCTUM_MESSAGES and
 /// the three after it.
 void ShopTest_BrowseWeaponShopMessages(void) {
@@ -206,13 +216,7 @@ void ShopTest_OpenGeneralStore(s32 keeper) { Shop_Run(SHOP_IZUMO, keeper); }
 void ShopTest_OpenInn(s32 keeper) { Inn_CheckIn(DAILA_INN, keeper); }
 
 /// Talking to ACTOR_SANCTUM_PRIEST opens the Sanctum.
-void ShopTest_OpenSanctum(void) { Sanctum_Run(); }
-
-s32 PartyInventory_FindRoom(s32 item);
-void ItemDisplay_ShowItem(s32 item, s32 mode);
-void Forge_Run(s32 actor);
-void Forge_SetItem(s32 value);
-s32 Forge_GetItem(void);
+void ShopTest_OpenSanctum(s32 keeper) { Sanctum_Run(keeper); }
 
 /// Sunshine, as in Yallam (YallamRooms_TalkToSunshine) without his walk to
 /// the anvil: while FLAG_FORGE_OPEN is set he forges what the party
@@ -537,9 +541,6 @@ struct Trigger gSceneEvents[] = {
 
 // The routines after the tables.
 
-void Inventory_Break(s32 owner, s32 slot);
-void GameFlag_RefreshLureCap(void);
-
 /// Takes HP and PP from Felix, Jenna and Sheba, poisons and haunts Felix,
 /// curses and envenoms Jenna, and breaks the first item each of Felix and
 /// Jenna holds that may break when used. Talking to ACTOR_FORTUNE_TELLER.
@@ -645,8 +646,6 @@ void ShopTest_GiveMuramasaAndSummon(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-void Party_AddIsaacsParty(void);
-
 /// Opens on the backdrop fade at the fast message speed, shows "..." over the
 /// message browsers and a light bulb over ACTOR_LIGHT_BULB_A to
 /// ACTOR_LIGHT_BULB_D, and brings Isaac's party in when the party came in by
@@ -673,8 +672,6 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Unit_Calculate(s32 owner);
-
 /// Raises every party member `levels` levels.
 void ShopTest_RaisePartyLevels(s32 levels) {
   s16 owners[16];
@@ -688,9 +685,6 @@ void ShopTest_RaisePartyLevels(s32 levels) {
     Unit_Calculate(owner);
   }
 }
-
-void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
-void Text_DrawStringAtOffset(const void *text, void *window, s32 x, s32 y);
 
 /// The level-raising window, as Increase item and level's
 /// (IncreaseItemAndLevel_RunLevelEditor): shows the leader's name and level,
@@ -732,13 +726,6 @@ void ShopTest_RunLevelEditor(void) {
   Window_Close(window, 2);
 }
 
-void WindowSprite_PrepareForRedraw(void *window);
-void Text_DrawNumberAtOffset(s32 value, s32 digits, void *window, s32 x, s32 y);
-void Text_DrawMessageAsTiles(s32 message, void *window, s32 x, s32 y);
-s32 PartyInventory_HasSpace(void);
-s32 PartyInventory_Add(s32 item);
-void ItemMenu_DrawItemDetails(void *window, s32 item);
-
 /// The selector's item numbers, 0 to 499, wrapping.
 #define ITEM_SELECTOR_ITEM_COUNT 500
 
@@ -778,7 +765,7 @@ void ShopTest_SelectItem(void) {
         Text_DrawStringInWindow(gShopTest_ItemHelp, window, 0, 32);
         Text_DrawMessageAsTiles((s32)(item + MsgItemName), window, 120, 0);
         Text_DrawMessage((s32)(item + MsgItemDescription), window, 0, 16);
-        ItemMenu_DrawItemDetails(details, item);
+        ItemMenu_DrawItemDetails((s32)details, item);
       } else {
         Text_DrawStringInWindow(gShopTest_ItemFull, window, 0, 32);
       }
@@ -900,8 +887,6 @@ UNUSED void ShopTest_DropActor(s32 stage, s32 id, s32 x, s32 z) {
     wait(50);
   }
 }
-
-void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 
 /// Unused: the Psynergy test's PsynergyTest_RaiseStatue again, which starts
 /// the battle in slot `slot` of encounter zone `zone`.

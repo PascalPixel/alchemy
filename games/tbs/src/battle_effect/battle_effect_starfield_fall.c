@@ -124,8 +124,8 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 /// The fall's own VBlank tasks run first in the pass, ahead of the image copy:
 /// the starfield's scroll, then the backdrop's HBlank DMA, so that both are set
 /// before the frame's first line.
-#define STARFIELD_FALL_SCROLL_PRIORITY (TASK_PASS_VBLANK + 127)
-#define STARFIELD_FALL_BACKDROP_PRIORITY (TASK_PASS_VBLANK + 126)
+#define STARFIELD_FALL_SCROLL_PRIORITY TASK_PASS_VBLANK_FIRST
+#define STARFIELD_FALL_BACKDROP_PRIORITY (TASK_PASS_VBLANK_FIRST - 1)
 
 /// The mote pictures in the blast sprite sheet, after its seven blast pictures
 /// (BLAST_PICTURE_SIZES): two sets, MOTE_SET_BYTES apart.

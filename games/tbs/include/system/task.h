@@ -38,6 +38,9 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 /// added at TASK_PASS_FRAME.
 #define TASK_PASS_VBLANK 0x480
 #define TASK_PASS_FRAME 0xc80
+/// The highest rank in the VBlank pass: a task added here runs first of the
+/// VBlank tasks, before the frame's first line is drawn.
+#define TASK_PASS_VBLANK_FIRST (TASK_PASS_VBLANK + 127)
 /// An empty slot's priority, sorted last: the sort reads priorities signed.
 #define TASK_PRIORITY_EMPTY -1
 /// A removed task's priority: its odd high byte matches no pass, and as the

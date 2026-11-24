@@ -214,16 +214,19 @@ static s32 Kolima_TwinkleGroundSparkle(struct Actor *actor) {
   return 1;
 }
 
-/// While the curse lasts, gives Kolima's nine villagers tree sprites. The
-/// villagers are actor placement rows 3 to 11, ACTOR_FIRST_VILLAGER to
-/// ACTOR_LAST_VILLAGER.
-///
-/// The sprite is SPRITE_TREE or, for rows 9 and 10
-/// (ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE and ACTOR_GIRL_SLEEPY_TREES),
-/// SPRITE_SMALL_TREE. They stand still and keep their facing when spoken to.
+/// gKolimaActorPlacements' rows for Garet, Ivan and Mia, before the villagers'.
+#define KOLIMA_PARTY_ROWS 3
+
+/// While the curse lasts, gives Kolima's nine villagers, ACTOR_FIRST_VILLAGER
+/// to ACTOR_LAST_VILLAGER, tree sprites: SPRITE_TREE, or SPRITE_SMALL_TREE for
+/// the two children, ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE and
+/// ACTOR_GIRL_SLEEPY_TREES. They stand still and keep their facing when spoken
+/// to.
 static void
 Kolima_InitializeCursedVillagers(struct ActorPlacement *placements) {
-  struct ActorPlacement *villager = &placements[3];
+  struct ActorPlacement *villager =
+      &placements[KOLIMA_PARTY_ROWS + ACTOR_FIRST_VILLAGER -
+                  ACTOR_FIRST_PLACED];
   u32 villagerIndex;
   s32 treeSprite;
   s32 alternateTreeSprite;
@@ -231,9 +234,12 @@ Kolima_InitializeCursedVillagers(struct ActorPlacement *placements) {
   villagerIndex = 0;
   treeSprite = SPRITE_TREE;
   alternateTreeSprite = SPRITE_SMALL_TREE;
-  for (; villagerIndex <= 8; villagerIndex++) {
+  for (; villagerIndex <= ACTOR_LAST_VILLAGER - ACTOR_FIRST_VILLAGER;
+       villagerIndex++) {
     villager->sprite = treeSprite;
-    if ((villagerIndex - 6) <= 1) {
+    if (villagerIndex -
+            (ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE - ACTOR_FIRST_VILLAGER) <=
+        ACTOR_GIRL_SLEEPY_TREES - ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE) {
       villager->sprite = alternateTreeSprite;
     }
     villager->talkFacing = TALK_FACING_KEEP;

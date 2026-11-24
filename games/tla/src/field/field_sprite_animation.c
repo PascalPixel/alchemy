@@ -181,25 +181,26 @@ s32 Sprite_ResetAnimations(struct Sprite *sprite) {
 
 /// Resets a sprite animation from its metadata: its pictures, scripts, codec
 /// and drawing kind, with no script running and no picture shown.
-void SpriteAnimation_Reset(struct SpriteAnimation *layer) {
+void SpriteAnimation_Reset(struct SpriteAnimation *spriteAnimation) {
   void **pictures;
   u8 **scripts;
   struct AnimationMetadata *metadata;
 
-  if (layer != NULL) {
-    metadata = Resource_GetMetadataRecordFar(layer->animationId);
+  if (spriteAnimation != NULL) {
+    metadata = Resource_GetMetadataRecordFar(spriteAnimation->animationId);
     if (metadata->width != 0) {
       pictures = metadata->pictures;
       if (pictures == 0)
-        pictures = (void **)SpritePictureCache_FindByTag(layer->animationId);
-      layer->kind = metadata->drawKind;
-      Io_Write32(0, (u32 *)&layer->script);
+        pictures =
+            (void **)SpritePictureCache_FindByTag(spriteAnimation->animationId);
+      spriteAnimation->kind = metadata->drawKind;
+      Io_Write32(0, (u32 *)&spriteAnimation->script);
       scripts = metadata->animation;
-      layer->pictures = pictures;
-      layer->scripts = scripts;
-      layer->scriptOffset = 0;
-      layer->mode = metadata->pictureCodec;
-      layer->picture = SPRITE_PICTURE_NONE;
+      spriteAnimation->pictures = pictures;
+      spriteAnimation->scripts = scripts;
+      spriteAnimation->scriptOffset = 0;
+      spriteAnimation->mode = metadata->pictureCodec;
+      spriteAnimation->picture = SPRITE_PICTURE_NONE;
     }
   }
 }
@@ -208,27 +209,27 @@ void SpriteAnimation_Reset(struct SpriteAnimation *layer) {
 /// four slots that is free; returns it, 0 when none could be taken, or -1 when
 /// all four are in use.
 s32 Sprite_AddAnimation(struct Sprite *sprite, s32 id) {
-  s32 layerHandle = (s32)sprite->entries[0];
+  s32 spriteAnimation = (s32)sprite->entries[0];
   s32 freeIndex = 0;
   struct SpriteAnimation **entry;
   struct AnimationMetadata *metadata;
 
-  if (layerHandle != 0) {
+  if (spriteAnimation != 0) {
     entry = &sprite->entries[0];
     do {
       freeIndex++;
       if (freeIndex >= ANIM_LAYER_COUNT)
         break;
       entry++;
-      layerHandle = (s32)*entry;
-    } while (layerHandle != 0);
+      spriteAnimation = (s32)*entry;
+    } while (spriteAnimation != 0);
   }
   if (freeIndex == ANIM_LAYER_COUNT)
     return -1;
-  layerHandle = (s32)SpriteAnimation_Alloc(id);
-  if (layerHandle == 0)
+  spriteAnimation = (s32)SpriteAnimation_Alloc(id);
+  if (spriteAnimation == 0)
     return 0;
-  sprite->entries[freeIndex] = (struct SpriteAnimation *)layerHandle;
+  sprite->entries[freeIndex] = (struct SpriteAnimation *)spriteAnimation;
   metadata = Resource_GetMetadataRecordFar(id);
   // Only the first registered sprite animation establishes the sprite's
   // geometry.
@@ -241,31 +242,31 @@ s32 Sprite_AddAnimation(struct Sprite *sprite, s32 id) {
   }
   if (freeIndex == sprite->count)
     sprite->count = freeIndex + 1;
-  return layerHandle;
+  return spriteAnimation;
 }
 
 /// Removes the sprite animation handle from a sprite and clears it, trimming
 /// the sprite's animation count when no later sprite animation remains.
-void Sprite_RemoveAnimation(struct Sprite *sprite, s32 layer) {
-  s32 laterLayers;
+void Sprite_RemoveAnimation(struct Sprite *sprite, s32 spriteAnimation) {
+  s32 laterAnimations;
   u32 index;
   u32 i;
 
-  if (sprite != NULL && layer != 0) {
-    SpriteAnimation_Clear((struct SpriteAnimation *)layer);
+  if (sprite != NULL && spriteAnimation != 0) {
+    SpriteAnimation_Clear((struct SpriteAnimation *)spriteAnimation);
     // Locate the handle, then trim only empty slots at the end of the list.
     for (index = 0; index < ANIM_LAYER_COUNT; index++) {
-      if (layer == (s32)sprite->entries[index])
+      if (spriteAnimation == (s32)sprite->entries[index])
         break;
     }
     if (index != ANIM_LAYER_COUNT) {
       sprite->entries[index] = 0;
-      laterLayers = 0;
+      laterAnimations = 0;
       for (i = index + 1; i < ANIM_LAYER_COUNT; i++) {
         if (sprite->entries[i] != 0)
-          laterLayers++;
+          laterAnimations++;
       }
-      if (laterLayers == 0)
+      if (laterAnimations == 0)
         sprite->count = index;
     }
   }
@@ -275,22 +276,22 @@ void Sprite_RemoveAnimation(struct Sprite *sprite, s32 layer) {
 /// trimming the sprite's animation count when no later sprite animation
 /// remains.
 void Sprite_RemoveAnimationAt(struct Sprite *sprite, u32 index) {
-  struct SpriteAnimation *layer;
-  s32 laterLayers;
+  struct SpriteAnimation *spriteAnimation;
+  s32 laterAnimations;
   u32 i;
 
   if (sprite != NULL && index < ANIM_LAYER_COUNT) {
-    layer = sprite->entries[index];
-    if (layer != NULL) {
-      SpriteAnimation_Clear(layer);
+    spriteAnimation = sprite->entries[index];
+    if (spriteAnimation != NULL) {
+      SpriteAnimation_Clear(spriteAnimation);
       sprite->entries[index] = NULL;
-      laterLayers = 0;
+      laterAnimations = 0;
       // Interior holes stay available; only trailing holes reduce the count.
       for (i = index + 1; i < ANIM_LAYER_COUNT; i++) {
         if (sprite->entries[i] != NULL)
-          laterLayers++;
+          laterAnimations++;
       }
-      if (laterLayers == 0)
+      if (laterAnimations == 0)
         sprite->count = index;
     }
   }
@@ -300,22 +301,23 @@ void Sprite_RemoveAnimationAt(struct Sprite *sprite, u32 index) {
 /// contains it. Unlike Sprite_StartAnimation it does not mask
 /// SPRITE_ANIMATION_KEEP_PLACE off, so with it set the index would pass
 /// animationCount only in a set of more than 128 animations.
-void SpriteAnimation_Start(struct SpriteAnimation *layer, s32 animation) {
+void SpriteAnimation_Start(struct SpriteAnimation *spriteAnimation,
+                           s32 animation) {
   s32 keepPlace;
   struct AnimationMetadata *metadata;
   s32 scriptAddress;
 
   keepPlace = SPRITE_ANIMATION_KEEP_PLACE & animation;
-  if (layer->scripts != 0) {
-    metadata = Resource_GetMetadataRecordFar(layer->animationId);
+  if (spriteAnimation->scripts != 0) {
+    metadata = Resource_GetMetadataRecordFar(spriteAnimation->animationId);
     if (animation < metadata->animationCount) {
-      scriptAddress = (s32)layer->scripts[animation];
-      layer->kind = metadata->drawKind;
-      layer->script = (u8 *)scriptAddress;
-      layer->step = SPRITE_ANIMATION_NORMAL_STEP;
+      scriptAddress = (s32)spriteAnimation->scripts[animation];
+      spriteAnimation->kind = metadata->drawKind;
+      spriteAnimation->script = (u8 *)scriptAddress;
+      spriteAnimation->step = SPRITE_ANIMATION_NORMAL_STEP;
       if (keepPlace == 0) {
-        layer->scriptOffset = keepPlace;
-        layer->timer = keepPlace;
+        spriteAnimation->scriptOffset = keepPlace;
+        spriteAnimation->timer = keepPlace;
       }
     }
   }
@@ -337,20 +339,20 @@ s32 Sprite_StartAnimation(struct Sprite *sprite, s32 animation) {
   entry_loop:
     // Only the first sprite animation supplies the sprite's offsets.
     {
-      struct SpriteAnimation *layer = sprite->entries[i];
+      struct SpriteAnimation *spriteAnimation = sprite->entries[i];
       struct AnimationMetadata *metadata;
       s32 selectedAnimation;
 
-      if (layer != 0 && layer->scripts != 0) {
-        metadata = Resource_GetMetadataRecordFar(layer->animationId);
+      if (spriteAnimation != 0 && spriteAnimation->scripts != 0) {
+        metadata = Resource_GetMetadataRecordFar(spriteAnimation->animationId);
         if (animation < metadata->animationCount) {
-          selectedAnimation = (s32)layer->scripts[animation];
-          layer->kind = metadata->drawKind;
-          layer->script = (u8 *)selectedAnimation;
-          layer->step = SPRITE_ANIMATION_NORMAL_STEP;
+          selectedAnimation = (s32)spriteAnimation->scripts[animation];
+          spriteAnimation->kind = metadata->drawKind;
+          spriteAnimation->script = (u8 *)selectedAnimation;
+          spriteAnimation->step = SPRITE_ANIMATION_NORMAL_STEP;
           if (keepPlace == 0) {
-            layer->scriptOffset = 0;
-            layer->timer = 0;
+            spriteAnimation->scriptOffset = 0;
+            spriteAnimation->timer = 0;
           }
           if (i == 0) {
             sprite->offsetY = metadata->adjustY;
@@ -374,11 +376,11 @@ s32 Sprite_SetAnimationTimers(struct Sprite *sprite, s32 frames) {
   s32 i;
 
   for (i = 0; i < sprite->count; i++) {
-    struct SpriteAnimation *layer = sprite->entries[i];
+    struct SpriteAnimation *spriteAnimation = sprite->entries[i];
 
     // The sprite animation timer counts sixteenths of a frame.
-    if (layer != NULL && layer->scripts != NULL) {
-      layer->timer = frames << 4;
+    if (spriteAnimation != NULL && spriteAnimation->scripts != NULL) {
+      spriteAnimation->timer = frames << 4;
     }
   }
   return 0;
@@ -390,37 +392,38 @@ void Sprite_SetAnimationSpeed(struct Sprite *sprite, s32 step) {
   s32 i;
 
   for (i = 0; i < sprite->count; i++) {
-    struct SpriteAnimation *layer = sprite->entries[i];
+    struct SpriteAnimation *spriteAnimation = sprite->entries[i];
 
-    if (layer != NULL && layer->scripts != NULL)
-      layer->step = step;
+    if (spriteAnimation != NULL && spriteAnimation->scripts != NULL)
+      spriteAnimation->step = step;
   }
 }
 
-/// Takes the sprite and layer pools (from EWRAM first on the World Map,
-/// ACTOR_SYSTEM_WORLD_MAP, and IWRAM first otherwise) and clears them, loads
-/// the shadow tiles into VRAM cache entry VRAM_CACHE_ENTRY_ACTOR_SHADOW and
-/// copies the strided tile copier into RAM.
+/// Takes the sprite and sprite animation pools (from EWRAM first on the World
+/// Map, ACTOR_SYSTEM_WORLD_MAP, and IWRAM first otherwise) and clears them,
+/// loads the shadow tiles into VRAM cache entry VRAM_CACHE_ENTRY_ACTOR_SHADOW
+/// and copies the strided tile copier into RAM.
 void ActorSystem_Configure(s32 mode) {
   void *sprites;
-  void *layers;
+  void *spriteAnimations;
   volatile u32 zero;
 
   if (mode == ACTOR_SYSTEM_WORLD_MAP) {
     sprites = HeapSlot_AllocEwram(HEAP_SLOT_SPRITES,
                                   ANIM_OBJECT_COUNT * sizeof(struct Sprite));
-    layers =
+    spriteAnimations =
         HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS,
                             ANIM_OBJECT_COUNT * sizeof(struct SpriteAnimation));
   } else {
     sprites = HeapSlot_Alloc(HEAP_SLOT_SPRITES,
                              ANIM_OBJECT_COUNT * sizeof(struct Sprite));
-    layers = HeapSlot_Alloc(HEAP_SLOT_SPRITE_ANIMATIONS,
-                            ANIM_OBJECT_COUNT * sizeof(struct SpriteAnimation));
+    spriteAnimations =
+        HeapSlot_Alloc(HEAP_SLOT_SPRITE_ANIMATIONS,
+                       ANIM_OBJECT_COUNT * sizeof(struct SpriteAnimation));
   }
   Palette_LoadBasicSpriteColors();
   Dma_Fill32Cell(zero, 0, sprites, ANIM_OBJECT_COUNT * sizeof(struct Sprite));
-  Dma_Fill32Cell(zero, 0, layers,
+  Dma_Fill32Cell(zero, 0, spriteAnimations,
                  ANIM_OBJECT_COUNT * sizeof(struct SpriteAnimation));
   VramCache_Load(VRAM_CACHE_ENTRY_ACTOR_SHADOW, ANIM_SHADOW_TILE_BYTES,
                  gActor_ShadowTiles);
@@ -600,14 +603,14 @@ struct ResourceObject *Sprite_Create(s32 id) {
 void Sprite_Destroy(struct Sprite *sprite) {
   volatile u32 zero;
   s32 n;
-  struct SpriteAnimation **layer;
+  struct SpriteAnimation **entry;
 
   if (sprite) {
     if (!sprite->retainCacheEntry)
       VramCache_FreeEntry(sprite->slot);
-    layer = sprite->entries;
+    entry = sprite->entries;
     for (n = 0; n < ANIM_LAYER_COUNT; n++) {
-      SpriteAnimation_Clear(*layer++);
+      SpriteAnimation_Clear(*entry++);
     }
     Dma_Fill32Cell(zero, 0, sprite, sizeof(*sprite));
   }

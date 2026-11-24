@@ -1,0 +1,4 @@
+name	file	section	align	left	pad	edition	fill
+gWorldMapPalettes	lighthouse_transition_palette.gbapal						
+gWorldMapPackedPictures	lighthouse_transition_map.tilemap.lz						
+gWorldMapPackedTiles	lighthouse_transition.4bpp.lz				4		

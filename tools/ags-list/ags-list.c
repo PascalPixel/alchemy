@@ -22,8 +22,9 @@
  * the packed file beside the table, "section" (empty, or the letter of a
  * .rodata.X section), "align" (an alignment before it), "left" (bytes the
  * original packer left after it, as hex digits) and "pad" (an alignment to
- * zero-fill to after it) and "edition" (empty, or the one language edition
- * the row is for: ja, en, de, es, fr or it).
+ * fill to after it), "edition" (empty, or the one language edition
+ * the row is for: ja, en, de, es, fr or it) and "fill" (the byte the padding is
+ * made of, as hex digits, when it is not zero).
  *
  * Each list becomes a global table of pointers ended by -1, with a global
  * LISTEnd label at that -1, followed by its pictures in the same order. A
@@ -151,14 +152,14 @@ main(int argc, char **argv)
 		fprintf(out, "@ Written by ags-list from its table: do not edit.\n");
 		while (fgets(line, sizeof line, in))
 		{
-			char *cells[7] = {line, "", "", "", "", "", ""};
+			char *cells[8] = {line, "", "", "", "", "", "", ""};
 			int cell = 0;
 
 			line[strcspn(line, "\n")] = 0;
 			if (!line[0])
 				continue;
 			for (char *at = line; *at; at++)
-				if (*at == '\t' && cell < 6)
+				if (*at == '\t' && cell < 7)
 				{
 					*at = 0;
 					cells[++cell] = at + 1;
@@ -178,7 +179,7 @@ main(int argc, char **argv)
 			for (const char *digit = cells[4]; digit[0] && digit[1]; digit += 2)
 				fprintf(out, "\t.byte 0x%c%c\n", digit[0], digit[1]);
 			if (cells[5][0])
-				fprintf(out, "\t.balign %s, 0\n", cells[5]);
+				fprintf(out, "\t.balign %s, 0x%s\n", cells[5], cells[7][0] ? cells[7] : "0");
 			if (cells[6][0])
 				fprintf(out, "\t.endif\n");
 		}

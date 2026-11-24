@@ -1,0 +1,3 @@
+name	file	section	align	left	pad	edition	fill
+gHeatGauge_Palette	heat_gauge.gbapal						
+gHeatGauge_Tiles	heat_gauge.4bpp.lz			ff	4		

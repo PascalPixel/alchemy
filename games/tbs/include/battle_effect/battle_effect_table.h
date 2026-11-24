@@ -386,12 +386,13 @@ extern u16 gThorn_PuffPictures[];
 extern u8 gBolt_Counts[][4];
 extern u8 gBolt_GlintFlips[];
 extern u8 gBolt_GlintModes[];
-/// The volley's comets, its CometSheet resources: Slash, Wind Slash and Sonic
+/// The volley's three comet sheets: Slash, Wind Slash and Sonic
 /// Slash fire the one their variant picks.
 enum ProjectileVolleyComet {
-  PROJECTILE_VOLLEY_COMET_A, ///< CometSheetA
-  PROJECTILE_VOLLEY_COMET_B, ///< CometSheetB
-  PROJECTILE_VOLLEY_COMET_C  ///< CometSheetC, also Cutting Edge's
+  PROJECTILE_VOLLEY_COMET_A, ///< SlashCometSheet, Slash's
+  PROJECTILE_VOLLEY_COMET_B, ///< WindSlashCometSheet, Wind Slash's
+  PROJECTILE_VOLLEY_COMET_C ///< SonicSlashCometSheet, Sonic Slash's and Cutting
+                            ///< Edge's
 };
 /// Each comet's picture height.
 extern u8 gProjectileVolley_CometHeights[];

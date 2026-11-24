@@ -494,7 +494,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     paletteId = RESOURCE_PINK_BURST_SHEET;
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId),
                   SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress(RESOURCE_PALETTE_RAMP_IMAGE,
+  Resource_LoadAndDecompress(RESOURCE_STAT_REDUCTION_SHARD_SHEET,
                              state->sheet + STAT_REDUCTION_SHARD_PICTURES, 0,
                              0);
 

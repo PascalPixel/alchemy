@@ -160,7 +160,8 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   perspective->limitX = toFIXED(8160);
   perspective->limitY = toFIXED(8160);
   perspective->script = NULL;
-  perspective->tiles = Resource_GetTableEntry(RESOURCE_PERSPECTIVE_DATA_A);
+  perspective->tiles =
+      Resource_GetTableEntry(RESOURCE_WORLD_MAP_PERSPECTIVE_TILES);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_TILE_ANIMATION),
                       MAPGRID_ANIMATION_SCRIPT);
   TilesetAnim_StartAll((const u16 *)MAPGRID_ANIMATION_SCRIPT);

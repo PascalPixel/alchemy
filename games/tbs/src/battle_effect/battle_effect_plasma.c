@@ -51,7 +51,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
                              1);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   if (state->args->variant != EFFECT_VARIANT_STRONGEST) {
-    void *palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_B);
+    void *palette = Resource_GetTableEntry(RESOURCE_PLASMA_VIOLET_PALETTE);
     Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
 
@@ -239,7 +239,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   if (mode == SPARK_GROUPS_DYNAMITE) {
-    Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
+    Iwram_CopyWords(BG_PLTT,
+                    Resource_GetTableEntry(RESOURCE_VOLCANO_ORANGE_PALETTE),
                     SHEET_PALETTE_BYTES);
   } else if (mode == SPARK_GROUPS_RISING) {
     Iwram_CopyWords(BG_PLTT,

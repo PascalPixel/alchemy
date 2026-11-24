@@ -58,7 +58,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     REG_BG2PA = Q_8_8(1);
     REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-    sheet = Resource_GetTableEntry(RESOURCE_COUNTER_REVEAL_SHEET);
+    sheet = Resource_GetTableEntry(RESOURCE_REAPER_SHEET);
     Iwram_CopyWords(BG_PLTT, sheet, SHEET_PALETTE_BYTES);
     sheet = sheet + SHEET_PALETTE_BYTES;
     Decompress_TaggedLz(sheet, state->sheet);

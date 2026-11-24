@@ -30,9 +30,9 @@ void BattleEffect_RunHaunting(struct BattleEffectParams *args) {
 /// from GATHERING_LIGHTS_HIT_FRAME.
 #define GATHERING_LIGHTS_TARGET_FRAMES 20
 #define GATHERING_LIGHTS_HIT_FRAME 70
-/// MemberBurstImage's three lights.
-#define MEMBER_BURST_WIDTH 20
-#define MEMBER_BURST_HEIGHT 32
+/// GatheringLightsImage's three lights.
+#define GATHERING_LIGHT_WIDTH 20
+#define GATHERING_LIGHT_HEIGHT 32
 /// How far the canvas's ripple sways each line either side of its middle, in
 /// CANVAS_WAVE_BG2X's quarter canvas pixels (4 canvas pixels, 8 on screen); the
 /// wave moves a 64th of a turn a line and a frame.
@@ -58,7 +58,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_MEMBER_BURST_IMAGE),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GATHERING_LIGHTS_IMAGE),
                       state);
   if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
     paletteId = RESOURCE_PINK_BURST_SHEET;
@@ -139,10 +139,11 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
               mote->variant >= 0) {
             Projection_Point(mote, &screenPosition);
             screenPosition.x >>= 1;
-            draw[0](canvas, state->sheet + i % 3 * PICTURE_BYTES(MEMBER_BURST),
-                    screenPosition.x - MEMBER_BURST_WIDTH / 2,
-                    screenPosition.y - MEMBER_BURST_HEIGHT / 2,
-                    MEMBER_BURST_WIDTH, MEMBER_BURST_HEIGHT);
+            draw[0](canvas,
+                    state->sheet + i % 3 * PICTURE_BYTES(GATHERING_LIGHT),
+                    screenPosition.x - GATHERING_LIGHT_WIDTH / 2,
+                    screenPosition.y - GATHERING_LIGHT_HEIGHT / 2,
+                    GATHERING_LIGHT_WIDTH, GATHERING_LIGHT_HEIGHT);
             Particle_AdvanceWithGravity3D(mote, 62, 0);
             // Thirty frames on, the light is pulled toward the middle of its
             // target's body, its speed gaining a 512th of the distance a frame,
@@ -175,5 +176,5 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 #undef GATHERING_LIGHTS_RIPPLE
 #undef GATHERING_LIGHTS_TARGET_FRAMES
 #undef GATHERING_LIGHTS_HIT_FRAME
-#undef MEMBER_BURST_WIDTH
-#undef MEMBER_BURST_HEIGHT
+#undef GATHERING_LIGHT_WIDTH
+#undef GATHERING_LIGHT_HEIGHT

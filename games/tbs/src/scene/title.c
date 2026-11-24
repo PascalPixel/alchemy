@@ -158,7 +158,7 @@ static void Title_LoadSprites(s32 unused) {
   u8 *encodedGraphics;
 
   decodedSprites = Heap_AllocEwram(DISPLAY_WIDTH * DISPLAY_HEIGHT);
-  encodedGraphics = Resource_GetTableEntry(RESOURCE_INTRO_TILES_B);
+  encodedGraphics = Resource_GetTableEntry(RESOURCE_TO_BE_CONTINUED_LETTERING);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
   // The resource opens with its colours, before its compressed data.
@@ -177,8 +177,9 @@ static void Title_LoadSprites(s32 unused) {
   decodedSprites = Heap_AllocEwram(PALETTE_COLORS * 2 + 40 * TILE_SIZE_4BPP);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
-  FieldDecompress_TaggedLz(Resource_GetTableEntry(RESOURCE_INTRO_TILES_B),
-                           decodedSprites);
+  FieldDecompress_TaggedLz(
+      Resource_GetTableEntry(RESOURCE_TO_BE_CONTINUED_LETTERING),
+      decodedSprites);
   Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(LETTERING_PALETTE, 0),
           DMA_COPY_WORDS(PALETTE_COLORS / 2), REG_DMA3);
   Vram_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP,

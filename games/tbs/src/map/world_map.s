@@ -1,11 +1,11 @@
 	.section .rodata
-	.global Field_PerspectiveDataA
-Field_PerspectiveDataA:
+	.global Field_WorldMapPerspectiveTiles
+Field_WorldMapPerspectiveTiles:
 	.incbin "games/tbs/src/map/world/blocks.blocks"
 	.global Field_DefaultGridCells
 Field_DefaultGridCells:
 	.incbin "games/tbs/src/map/default/cell_tiles.table.lz"
-	.byte 0x01	@ PACKER: left in the buffer by Field_PerspectiveDataA+0x39eb
+	.byte 0x01	@ PACKER: left in the buffer by Field_WorldMapPerspectiveTiles+0x39eb
 	.global Field_DefaultTileAnimation
 Field_DefaultTileAnimation:
 	.incbin "games/tbs/src/map/default/tileset_anims.script.lz"

@@ -366,16 +366,16 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sheet, 0, 0);
   switch (state->args->kind) {
   case ELEMENT_VENUS:
-    palette = Resource_GetTableEntry(RESOURCE_YELLOW_PALETTE_A);
+    palette = Resource_GetTableEntry(RESOURCE_DEATH_PLUNGE_YELLOW_PALETTE);
     break;
   case ELEMENT_MERCURY:
     palette = Resource_GetTableEntry(RESOURCE_ICE_TILE_SHEET);
     break;
   case ELEMENT_MARS:
-    palette = Resource_GetTableEntry(RESOURCE_RED_PALETTE_A);
+    palette = Resource_GetTableEntry(RESOURCE_DEATH_PLUNGE_RED_PALETTE);
     break;
   default:
-    palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_A);
+    palette = Resource_GetTableEntry(RESOURCE_DEATH_PLUNGE_VIOLET_PALETTE);
     break;
   }
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
@@ -878,16 +878,16 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sheet, 0, 0);
   switch (state->args->kind) {
   case ELEMENT_VENUS:
-    palette = Resource_GetTableEntry(RESOURCE_YELLOW_PALETTE_A);
+    palette = Resource_GetTableEntry(RESOURCE_DEATH_PLUNGE_YELLOW_PALETTE);
     break;
   case ELEMENT_MERCURY:
     palette = Resource_GetTableEntry(RESOURCE_ICE_TILE_SHEET);
     break;
   case ELEMENT_MARS:
-    palette = Resource_GetTableEntry(RESOURCE_RED_PALETTE_A);
+    palette = Resource_GetTableEntry(RESOURCE_DEATH_PLUNGE_RED_PALETTE);
     break;
   default:
-    palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_A);
+    palette = Resource_GetTableEntry(RESOURCE_DEATH_PLUNGE_VIOLET_PALETTE);
     break;
   }
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
@@ -1052,7 +1052,7 @@ void BattleEffect_StartElementStreaks(s32 element) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   switch (element) {
   case ELEMENT_VENUS:
-    id = RESOURCE_YELLOW_PALETTE_B;
+    id = RESOURCE_VENUS_STAR_FIELD_PALETTE;
     break;
   case ELEMENT_MERCURY:
     id = RESOURCE_CRYSTAL_SHEET;
@@ -1061,7 +1061,7 @@ void BattleEffect_StartElementStreaks(s32 element) {
     id = RESOURCE_EMBER_STREAK_SHEET;
     break;
   case ELEMENT_JUPITER:
-    id = RESOURCE_VIOLET_PALETTE_D;
+    id = RESOURCE_JUPITER_STAR_FIELD_PALETTE;
     break;
   case ELEMENT_NONE:
   default:

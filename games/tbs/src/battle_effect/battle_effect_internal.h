@@ -301,7 +301,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
       (level) = 0;                                                             \
   }
 
-/// The reaper in CounterRevealSheet, which Condemn and Mortal Danger decode:
+/// The reaper in ReaperSheet, which Condemn and Mortal Danger decode:
 /// the reaper with its scythe raised, then swung, then the red crescent the
 /// swing leaves.
 #define REAPER_SHEET_RAISED_WIDTH 57

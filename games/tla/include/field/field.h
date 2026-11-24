@@ -606,10 +606,6 @@ void Event_NoOp(void);
 
 void Actor_UpdateBlink(struct Actor *actor);
 
-/// The world map camera's yaw, in 1/65536 turns, the scanline parameters were
-/// built for; the vertex update rebuilds them when it changes.
-extern u32 gScanlineAngle;
-
 /// Every sprite animation's metadata, by number (graphics/sprite/sprites.s).
 extern struct AnimationMetadata gSprite_AnimationMetadata[];
 

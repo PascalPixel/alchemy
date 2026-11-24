@@ -41,6 +41,10 @@ struct WorldMapAffineState {
 };
 
 STATIC_ASSERT(sizeof(struct WorldMapScanline) == 20);
+/// The world map camera's yaw, in 1/65536 turns, the scanline parameters were
+/// built for; the vertex update rebuilds them when it changes.
+extern u32 gScanlineAngle;
+
 STATIC_ASSERT(offsetof(struct WorldMapScanline, pa) == 16);
 STATIC_ASSERT(sizeof(struct WorldMapAffineLine) == 16);
 STATIC_ASSERT(sizeof(struct WorldMapAffinePair) == 32);

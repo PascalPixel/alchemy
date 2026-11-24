@@ -19,6 +19,16 @@
  * INCLUDES below, each named with its reason.
  *
  * LIMITS. A .c file has at most 2,000 lines, a .h file 500, a .s file 1,500.
+ * The limit is for code. A .c or .h file that is a table has none: an array
+ * of rows, or a list of enum values, #defines and extern data, as the first
+ * developers would also have kept it in C. The test is plain. A file is a
+ * table when no line of it, the lines that are only comment aside, holds
+ * ") {" (a function's body, or a statement that takes a block) or ");" (a
+ * function declared or called). It can be fooled: by code that reaches the
+ * file through an #include or a macro defined elsewhere, by a macro that is
+ * an expression and no statement, by a header of structs alone, and by a
+ * statement that starts its line with "*", which reads as comment. A string
+ * or a comment after code that holds either mark errs the safe way.
  *
  * TABLES. A .tsv file is rows of cells divided by tabs and ended by newlines.
  * Its first line is the names of its columns and nothing else: each name is
@@ -34,14 +44,16 @@
  * that only tells it from its neighbours, like wave_52 or set_119. A name may
  * end in _NUMBER (before a language's _ja, _en, _de, _es, _fr or _it) only as
  * one of a series: the same name beside it in the same folder with the
- * numbers running from 0 or 1 without a gap, all written at one width, as in
- * digit_0 to digit_9 or the frames blast_00 to blast_30.
+ * numbers running without a gap from wherever they start, all written at one
+ * width, as in digit_0 to digit_9 or the frames blast_00 to blast_30. The few
+ * names whose number is their own and yet stand alone are in NUMBERED below,
+ * each with its reason.
  *
  * ALARMS. These are things to look at, not errors, and --alarms lists them: a
- * table of more than 1,000 rows, of more than 16 columns (a grid aside) or of
- * more than 64 KB; rows that end in empty cells; cells that hold spaces; and
- * cells that hold a "/", since a file should not name another file's path
- * where that can be avoided.
+ * table in C that is over the limit code has; a table of more than 1,000 rows,
+ * of more than 16 columns (a grid aside) or of more than 64 KB; rows that end
+ * in empty cells; cells that hold spaces; and cells that hold a "/", since a
+ * file should not name another file's path where that can be avoided.
  *
  * PENDING. What the tree does not yet meet is named in this file, in the
  * PENDING tables and at the line limits, never passed over in silence. Each
@@ -78,10 +90,13 @@ static const char *const INCLUDES[] = {
 
 /* PENDING: a column name that is a file form, in monster/list.tsv. */
 static const char *const PENDING_COLUMNS[] = {"pictures.lz"};
-/* PENDING: numbered names that are no series, by the word they start with. */
-static const char *const PENDING_NAMES[] = {
-    "item_", "psynergy_", "icon_", "spr_",          "blank_",
-    "set_",  "test_",     "map_",  "psynergy_test_"};
+/* The numbered names that stay though no series, as paths inside a game. */
+static const char *const NUMBERED[] = {
+    /* A picture of the number 159, shown for an empty ability slot. */
+    "src/graphics/ui/menu_icons/psynergy_159.png",
+    /* The game's own name for the room: message 3770 of its debug menu. */
+    "src/debug/psynergy_test_2.c",
+};
 /* PENDING: the line limits hold under tools/ and not yet under games/. */
 static const char *const LIMITS_HOLD_IN = "tools/";
 
@@ -258,6 +273,19 @@ static void checkTable(const char *path, const char *name) {
   free(text);
 }
 
+/* Whether C text is a table: see LIMITS at the head of this file. */
+static bool isTable(char *text) {
+  for (char *line = text, *next; line; line = next) {
+    next = cut(line, '\n');
+    line += strspn(line, " \t");
+    if (!strncmp(line, "//", 2) || !strncmp(line, "/*", 2) || *line == '*')
+      continue;
+    if (strstr(line, ") {") || strstr(line, ");"))
+      return false;
+  }
+  return true;
+}
+
 static void checkLines(const char *path, const char *kind, long limit) {
   size_t size;
   char *text = readText(path, &size);
@@ -266,10 +294,14 @@ static void checkLines(const char *path, const char *kind, long limit) {
   long lines = 0;
   for (size_t i = 0; i < size; i++)
     lines += text[i] == '\n';
+  bool table = lines > limit && strcmp(kind, "s") && isTable(text);
   free(text);
   if (lines <= limit)
     return;
-  if (!strncmp(path, LIMITS_HOLD_IN, strlen(LIMITS_HOLD_IN)))
+  if (table)
+    tally(false, path, lines, "table in a .%s file of more than %ld lines",
+          kind, limit);
+  else if (!strncmp(path, LIMITS_HOLD_IN, strlen(LIMITS_HOLD_IN)))
     wrong(path, "%ld lines, and a .%s file has at most %ld", lines, kind,
           limit);
   else
@@ -354,7 +386,7 @@ static void checkNames(void) {
   for (size_t first = 0, end; first < numberedCount; first = end) {
     /* A folder is noted once for each file in it: count it once. */
     long members = 1;
-    bool series = numbered[first].number <= 1;
+    bool series = true;
     for (end = first + 1; end < numberedCount &&
                           !strcmp(numbered[end].series, numbered[first].series);
          end++) {
@@ -367,21 +399,16 @@ static void checkNames(void) {
     if (series && members > 1)
       continue;
     const char *path = numbered[first].series, *name = strrchr(path, '#');
-    const char *word = name;
-    while (word > path && word[-1] != '/')
-      word--;
-    char start[1024];
-    snprintf(start, sizeof(start), "%.*s", (int)(name - word), word);
-    bool pending = among(start, PENDING_NAMES, COUNT(PENDING_NAMES));
     for (size_t i = first; i < end; i++) {
       if (i > first && !byName(&numbered[i], &numbered[i - 1]))
         continue;
       char shown[1024];
       snprintf(shown, sizeof(shown), "%.*s%0*ld%s", (int)(name - path), path,
                numbered[i].width, numbered[i].number, name + 1);
-      if (pending)
-        tally(true, shown, 0, "numbered name that is not a series");
-      else
+      /* games/GAME/REST: a name is allowed by the path inside its game. */
+      const char *rest =
+          strncmp(shown, "games/", 6) ? NULL : strchr(shown + 6, '/');
+      if (!rest || !among(rest + 1, NUMBERED, COUNT(NUMBERED)))
         wrong(shown, "a numbered name that is not one of a series");
     }
   }

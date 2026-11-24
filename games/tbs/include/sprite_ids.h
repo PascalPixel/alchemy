@@ -39,11 +39,12 @@ enum SpriteId {
   /// counter, or that a map draws an item's icon on, as for the Nuts that Catch
   /// takes.
   SPRITE_BLANK,
-  /// A blank 32-pixel square (blank_32.png holds no drawn pixel). Its one
-  /// actor, an unused one in Bilibin, gives it no role, so it keeps
-  /// its size as its name; SPRITE_BLANK_LARGE is the same size, used for
-  /// actors seen only by their shadows.
-  SPRITE_BLANK_32,
+  /// A blank 32-pixel square (world_map_forest_cover.png holds no drawn
+  /// pixel): the second layer the leader takes on the World Map, kept undrawn
+  /// there, and the same picture The Lost Age gives that layer. An unused
+  /// actor in Bilibin takes it too. SPRITE_BLANK_LARGE is the same size, used
+  /// for actors seen only by their shadows.
+  SPRITE_WORLD_MAP_FOREST_COVER,
   /// Rings spreading out on water: where someone wades (the field's own
   /// FIELD_SPRITE_RIPPLE), and around the leader at Mercury Lighthouse's pools,
   /// grey in its first animation and blue in its second.

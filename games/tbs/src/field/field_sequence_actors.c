@@ -266,8 +266,8 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   Actor_StartCameraFar(camera, (s32)actor);
   if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     struct SpriteAnimation *meta =
-        (struct SpriteAnimation *)Sprite_AddAnimationFar(actor->sprite,
-                                                         SPRITE_BLANK_32);
+        (struct SpriteAnimation *)Sprite_AddAnimationFar(
+            actor->sprite, SPRITE_WORLD_MAP_FOREST_COVER);
     meta->colorMode = SPRITE_COLOR_HIDDEN;
     meta->priority = 9;
   }

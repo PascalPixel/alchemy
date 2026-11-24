@@ -3,4 +3,4 @@ palette	palette.gbapal.lz
 tiles_a	tiles_a.4bpp.mtf	260000
 tiles_b	tiles_b.4bpp.mtf	0fd8
 tiles_c	tiles_c.4bpp.mtf	06
-tiles_d	../set_119/tiles_d.4bpp.mtf	e53d
+tiles_d	../unused_test_room/tiles_d.4bpp.mtf	e53d

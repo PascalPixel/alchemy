@@ -164,8 +164,9 @@ enum BilibinBarricadeActorId {
   /// hair the villages use (SPRITE_WOMAN_WITH_FAIR_HAIR), though the text calls
   /// the three children.
   ACTOR_JILL,
-  /// Unused: a blank actor (SPRITE_BLANK_32) placed at the map's origin. No
-  /// code or trigger addresses it, so it never shows or answers anything.
+  /// Unused: a blank actor (SPRITE_WORLD_MAP_FOREST_COVER) placed at the map's
+  /// origin. No code or trigger addresses it, so it never shows or answers
+  /// anything.
   ACTOR_INVISIBLE_AT_ORIGIN,
   /// The invisible actor (SPRITE_BLANK) that stands where the middle tree lies
   /// pushed down and answers for it.
@@ -1121,7 +1122,7 @@ struct ActorPlacement gBilibinBarricadeActorPlacements[] = {
         246, 0, 170, FACING_WEST_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         262, 0, 156, FACING_WEST_NORTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_BLANK_32, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+    ACTOR_PLACEMENT(SPRITE_WORLD_MAP_FOREST_COVER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),

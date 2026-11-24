@@ -8,9 +8,9 @@
 
 /// Sprite ids, one for each row of the sprite table (sprite/sprites.tsv) in
 /// order. A party member's field sprite shares its character number, so the
-/// field draws a character id as its sprite. A row whose sprite sheet keeps its
-/// number (spr_013.png) has no name here; the next named row's number is
-/// written after it.
+/// field draws a character id as its sprite. A row that only borrows another
+/// sprite's pictures and animations has no name here; the next named row's
+/// number is written after it.
 enum SpriteId {
   SPRITE_ISAAC,
   SPRITE_GARET,
@@ -25,10 +25,14 @@ enum SpriteId {
   SPRITE_WINGED_SHIP_FLYING_SMALL,
   SPRITE_WINGED_SHIP,
   SPRITE_WINGED_SHIP_FLYING,
+  /// A gold coin that spins on its edge and bursts into sparkles.
+  SPRITE_SPINNING_GOLD_COIN,
   /// The splash at the feet of an actor wading through water
   /// (Actor_SpawnWaterSplash).
-  SPRITE_WADING_SPLASH = 14,
-  SPRITE_BRIGGS = 16,
+  SPRITE_WADING_SPLASH,
+  /// A thin blue circle, drawn as an outline only.
+  SPRITE_THIN_BLUE_RING,
+  SPRITE_BRIGGS,
   SPRITE_TAVI,
   SPRITE_RIKI,
   SPRITE_MADRAS_ELDER,
@@ -363,7 +367,9 @@ enum SpriteId {
   SPRITE_ARCHER_STATUE,
   SPRITE_WHITE_WINGS,
   SPRITE_MOORED_BOAT,
-  SPRITE_PERSON_WITH_SWORD = 344,
+  /// A pale statue of a long-haired woman, one arm raised, on a round base.
+  SPRITE_WOMAN_STATUE_WITH_RAISED_ARM,
+  SPRITE_PERSON_WITH_SWORD,
   SPRITE_SHIP,
   SPRITE_MENARDIS_SHIP,
   SPRITE_GANGWAY,
@@ -371,7 +377,9 @@ enum SpriteId {
   /// A small blue orb of energy and the rings it bursts into: the Gabomba
   /// Statue's charges, "the energy charge" that runs over its blocks.
   SPRITE_ENERGY_CHARGE,
-  SPRITE_STEAM_VENT = 351,
+  /// A white hand in nine poses: open, flat, edge on, and fists.
+  SPRITE_WHITE_HAND,
+  SPRITE_STEAM_VENT,
   SPRITE_POUND_FIST,
   SPRITE_SCOOP_HAND,
   SPRITE_BROWN_BOULDER,
@@ -455,7 +463,9 @@ enum SpriteId {
   /// A white dragon head seen from the side, a Mars Lighthouse flame thrower.
   SPRITE_DRAGON_HEAD_SIDE,
   SPRITE_ROBED_STATUE,
-  SPRITE_MARS_TORCH_LIT = 418,
+  /// A flame as wide as it is tall, 32 pixels, in three frames.
+  SPRITE_BROAD_FLAME,
+  SPRITE_MARS_TORCH_LIT,
   SPRITE_MARS_TORCH,
   SPRITE_CANNON,
   SPRITE_LOHO_CANNON,
@@ -467,7 +477,9 @@ enum SpriteId {
   SPRITE_STONE_BASIN,
   /// A white quarter disc, 32 pixels across, held (white_quarter_disc.png).
   SPRITE_WHITE_QUARTER_DISC,
-  SPRITE_STONE_BLOCK = 428,
+  /// A thin upright beam of blue light, 32 pixels tall.
+  SPRITE_THIN_BLUE_BEAM,
+  SPRITE_STONE_BLOCK,
   SPRITE_COILED_DRAGON_STATUE,
   /// A grey stone block, concentric squares on its face, that carries a
   /// glowing symbol in the Anemos Inner Sanctum.
@@ -576,7 +588,9 @@ enum SpriteId {
   SPRITE_WEAPON_PIERS_LIGHT_BLADE,
   /// The enemies' battle sprites, from here to SPRITE_BATTLE_BANDIT: animations
   /// only, drawn from each class's battle pictures, named for the first class
-  /// gSummon_EntryTable gives each.
+  /// gSummon_EntryTable gives each. Three belong to no class, and are named for
+  /// the monster pictures that stand at their place in the resource directory
+  /// (graphics/monster): the red beast, the pink worm and the blue crab.
   SPRITE_BATTLE_BLUE_DRAGON,
   SPRITE_BATTLE_RED_DEMON,
   SPRITE_BATTLE_AKA_MANAH,
@@ -584,13 +598,16 @@ enum SpriteId {
   SPRITE_BATTLE_FLAME_DRAGON,
   SPRITE_BATTLE_CHESTBEATER,
   SPRITE_BATTLE_PIXIE,
-  SPRITE_BATTLE_PUNCH_ANT = 534,
-  SPRITE_BATTLE_ASSASSIN = 536,
+  SPRITE_BATTLE_RED_BEAST,
+  SPRITE_BATTLE_PUNCH_ANT,
+  SPRITE_BATTLE_PINK_WORM,
+  SPRITE_BATTLE_ASSASSIN,
   SPRITE_BATTLE_WYVERN_CHICK,
   SPRITE_BATTLE_DULLAHAN,
   SPRITE_BATTLE_DOOMSAYER,
   SPRITE_BATTLE_MAD_PLANT,
-  SPRITE_BATTLE_EMU = 542,
+  SPRITE_BATTLE_BLUE_CRAB,
+  SPRITE_BATTLE_EMU,
   SPRITE_BATTLE_GRESSIL,
   SPRITE_BATTLE_STAR_MAGICIAN,
   SPRITE_BATTLE_GHOST_ARMY,

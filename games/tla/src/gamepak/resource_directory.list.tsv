@@ -1542,12 +1542,12 @@ EmptyMap	Field_EmptyMap
 	Tileset_MtAlephSummitTilesB
 	Tileset_MtAlephSummitTilesC
 	Tileset_MtAlephSummitTilesD
-	Field_Map290
-	Tileset_Set119Palette
-	Tileset_Set119TilesA
-	Tileset_Set119TilesB
-	Tileset_Set119TilesC
-	Tileset_Set119TilesD
+	Field_UnusedTestRoom
+	Tileset_UnusedTestRoomPalette
+	Tileset_UnusedTestRoomTilesA
+	Tileset_UnusedTestRoomTilesB
+	Tileset_UnusedTestRoomTilesC
+	Tileset_UnusedTestRoomTilesD
 	Field_PsynergyTest
 	Tileset_PsynergyTestPalette
 	Tileset_PsynergyTestTilesA

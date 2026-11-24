@@ -1431,9 +1431,9 @@ extern u32 gCrumbs_Script[];
 
 #include "shared/actor_scatter_crumbs.c"
 
-extern u32 gEmbers_Script[];
+extern u32 gIceChips_Script[];
 
-#include "shared/embers_spawn.h"
+#include "shared/ice_chips_spawn.h"
 
 #include "shared/actor_hold_during_event.c"
 

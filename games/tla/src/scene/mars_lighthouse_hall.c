@@ -194,7 +194,7 @@ void MarsLighthouseHall_FlashDoorways(void);
 void Actor_Blink(struct Actor *actor);
 
 extern u32 gCrumbs_Script[];
-extern u32 gEmbers_Script[];
+extern u32 gIceChips_Script[];
 
 extern s32 gMarsLighthouseHall_TorchScript[];
 
@@ -1368,7 +1368,7 @@ s32 FlameThrowers_HasHitLeader(void) { return FLAME_THROWERS_STATE->active; }
 
 #include "shared/actor_scatter_crumbs.c"
 
-#include "shared/embers_spawn.h"
+#include "shared/ice_chips_spawn.h"
 
 #include "shared/actor_hold_during_event.c"
 

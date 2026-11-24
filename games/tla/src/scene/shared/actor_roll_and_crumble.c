@@ -88,8 +88,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 1, middleX, middleZ);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_ICE_CRACK);
-          Embers_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
-                       FIELD_CELL_CENTER(z), actor->facing);
+          IceChips_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
+                         FIELD_CELL_CENTER(z), actor->facing);
         }
         cell = (struct MapCell *)(offset + (s32)overheadCells);
         if (cell->collisionCode == CELL_BEHAVIOR_BREAKABLE_ICE) {
@@ -97,8 +97,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 2, overheadX, overheadZ);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_CRUMBLE);
-          Embers_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
-                       FIELD_CELL_CENTER(z), actor->facing);
+          IceChips_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
+                         FIELD_CELL_CENTER(z), actor->facing);
         }
       }
     }

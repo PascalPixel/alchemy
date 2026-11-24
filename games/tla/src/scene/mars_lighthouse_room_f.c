@@ -1648,9 +1648,9 @@ s32 VramCache_FreeEntry(u32 slot);
 
 #include "shared/actor_scatter_crumbs.c"
 
-extern u32 gEmbers_Script[];
+extern u32 gIceChips_Script[];
 
-#include "shared/embers_spawn.h"
+#include "shared/ice_chips_spawn.h"
 
 #include "shared/actor_hold_during_event.c"
 #undef position
@@ -1658,7 +1658,7 @@ extern u32 gEmbers_Script[];
 
 s32 MapGrid_GetTerrainKindOrBumpAt(s32 terrain, s32 x, s32 z);
 void Actor_ScatterCrumbs(struct Actor *actor);
-void Embers_Spawn(s32 x, s32 y, s32 z, s32 speed);
+void IceChips_Spawn(s32 x, s32 y, s32 z, s32 speed);
 extern u8 gInventorySnapshot[];
 
 #include "shared/actor_roll_and_crumble.c"

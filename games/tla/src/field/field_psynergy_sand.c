@@ -531,8 +531,8 @@ void FieldPsynergy_Sand(void) {
         Sound_PlayFar(SE_WHOOSH);
       if (frame == 60) {
         Actor_SetFirstSpriteAnimationFar(owner, SPRITE_SAND_RIPPLE);
-        // The image's OAM shape and size: square, 16 by 16 pixels.
-        ((struct FieldSprite *)owner->sprite)->shape = 0;
+        // The image's OAM shape and size: 16 by 16 pixels.
+        ((struct FieldSprite *)owner->sprite)->shape = OBJ_SHAPE_SQUARE;
         ((struct FieldSprite *)owner->sprite)->size = 1;
         Actor_SelectAnimationFar(owner, 1);
         Actor_SetSpriteFlagsFar(Actor_GetById(effect->casterId), 0);

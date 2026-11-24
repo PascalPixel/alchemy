@@ -502,6 +502,15 @@ enum ObjMode {
   OBJ_MODE_WINDOW = 2            ///< drawn into the OBJ window, not shown
 };
 
+/// A sprite's shape, OAM attribute 0's bits 15..14; its size, attribute 1's
+/// bits 15..14, gives its dimensions with it (GBATEK, "LCD OBJ - OAM
+/// Attributes").
+enum ObjShape {
+  OBJ_SHAPE_SQUARE = 0,
+  OBJ_SHAPE_HORIZONTAL = 1, ///< wider than tall
+  OBJ_SHAPE_VERTICAL = 2    ///< taller than wide
+};
+
 /// A sprite's attributes 0 and 1 as one word, attr0 | attr1 << 16, the way
 /// routines that build their own sprite lists write them; x, 0 to 511, is
 /// shifted into the high half and y, 0 to 255, is the low byte.

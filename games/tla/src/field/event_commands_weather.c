@@ -15,11 +15,9 @@
 /// the last basic sprite palette (Palette_LoadBasicSpriteColors loads 0 to 13).
 #define WEATHER_PICTURE_BYTES (SPRITE_TILES(16, 16) * TILE_SIZE_4BPP)
 #define WEATHER_PALETTE 13
-/// OAM attribute 0's shape and attribute 1's size (GBATEK, "LCD OBJ - OAM
-/// Attributes"): a square sprite of size 1 is 16 by 16, a horizontal one of
-/// size 2 32 by 16.
-#define OAM_SHAPE_SQUARE 0
-#define OAM_SHAPE_HORIZONTAL 1
+/// OAM attribute 1's size (GBATEK, "LCD OBJ - OAM Attributes"): an
+/// OBJ_SHAPE_SQUARE sprite of size 1 is 16 by 16, an OBJ_SHAPE_HORIZONTAL one
+/// of size 2 32 by 16.
 #define OAM_SIZE_16X16 1
 #define OAM_SIZE_32X16 2
 
@@ -108,7 +106,7 @@ void Weather_UpdateRain(void) {
       particle->x = x;
       particle->y = y;
       particle->tile = state->tileBase;
-      particle->shape = OAM_SHAPE_HORIZONTAL;
+      particle->shape = OBJ_SHAPE_HORIZONTAL;
       particle->size = OAM_SIZE_32X16;
       Oam_AddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
     }

@@ -90,8 +90,7 @@ struct OamEntry {
 /// OamEntry.affine for a sprite drawn through its matrix in a box twice its
 /// size, so that scaling it up never clips it.
 #define OAM_AFFINE_DOUBLE_SIZE 3
-/// OamEntry.shape and .size for a 64 by 64 sprite.
-#define OAM_SHAPE_SQUARE 0
+/// OamEntry.size for a 64 by 64 OBJ_SHAPE_SQUARE sprite.
 #define OAM_SIZE_64 3
 
 /// TitleLogoState.phase: what TitleIntro_UpdateLogo draws.
@@ -598,7 +597,7 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
   struct OamEntry oam;
 
   Dma_Fill32(0, &oam, sizeof(oam));
-  oam.shape = OAM_SHAPE_SQUARE;
+  oam.shape = OBJ_SHAPE_SQUARE;
   oam.size = OAM_SIZE_64;
   oam.fullColor = 1;
   oam.mode = OBJ_MODE_SEMI_TRANSPARENT;

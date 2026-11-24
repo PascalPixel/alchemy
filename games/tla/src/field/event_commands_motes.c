@@ -186,7 +186,7 @@ void FieldEffect_UpdateSparkles(void) {
           screenY < DISPLAY_HEIGHT) {
         sparkle->tile = state->tileBase + *frame;
         sparkle->x = screenX;
-        sparkle->shape = OAM_SHAPE_SQUARE;
+        sparkle->shape = OBJ_SHAPE_SQUARE;
         sparkle->size = OAM_SIZE_16X16;
 #ifdef UBFIX
         frames = gFrameCount;

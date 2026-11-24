@@ -105,7 +105,7 @@ void RisingParticles_Update(void) {
           ((gFrameCount >> 3) & 1) * MOTE_PICTURE_TILES +
           particle->sprite.attributes.tile;
       particle->sprite.attributes.x = x;
-      particle->sprite.attributes.shape = OAM_SHAPE_SQUARE;
+      particle->sprite.attributes.shape = OBJ_SHAPE_SQUARE;
       particle->sprite.attributes.size = OAM_SIZE_16X16;
       particle->sprite.attributes.priority = 3;
       particle->sprite.attributes.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
@@ -211,7 +211,7 @@ void FieldMotes_Update(void) {
           mote->tile += MOTE_PICTURE_TILES;
         mote->x = x;
         mote->y = y - (mote->delay >> 2);
-        mote->shape = OAM_SHAPE_SQUARE;
+        mote->shape = OBJ_SHAPE_SQUARE;
         mote->size = OAM_SIZE_16X16;
         Oam_AddSpriteAtDepthClamped(mote, OAM_DEPTH_WINDOW);
       } else {

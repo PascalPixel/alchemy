@@ -156,13 +156,12 @@ void Field_PlaceTreasureSpots(void) {
   } while (!(type & SCENE_ITEMS_HEADER));
 }
 
-/// OAM shapes and sizes (GBATEK "OBJ Attributes"): a horizontal sprite of size
-/// 0 is 16 by 8 pixels, a square one of size 1 16 by 16.
+/// OAM attribute 1's sizes (GBATEK "OBJ Attributes"): an OBJ_SHAPE_HORIZONTAL
+/// sprite of size 0 is 16 by 8 pixels, an OBJ_SHAPE_SQUARE one of size 1 16 by
+/// 16.
 enum {
-  OAM_SHAPE_SQUARE = 0,
-  OAM_SHAPE_HORIZONTAL = 1,
-  OAM_SIZE_16X8 = 0, ///< with OAM_SHAPE_HORIZONTAL
-  OAM_SIZE_16X16 = 1 ///< with OAM_SHAPE_SQUARE
+  OAM_SIZE_16X8 = 0, ///< with OBJ_SHAPE_HORIZONTAL
+  OAM_SIZE_16X16 = 1 ///< with OBJ_SHAPE_SQUARE
 };
 
 /// What the scenes ask of a treasure spot's actor (Actor_SetWideSprite).
@@ -199,7 +198,7 @@ void Actor_SetWideSprite(u32 actorId, s32 mode) {
   if (sprite == 0)
     return;
   sprite->offsetY += 4;
-  sprite->image.shape = OAM_SHAPE_HORIZONTAL;
+  sprite->image.shape = OBJ_SHAPE_HORIZONTAL;
   sprite->image.size = OAM_SIZE_16X8;
 }
 
@@ -215,7 +214,7 @@ void Actor_SetSquareSprite(u32 actorId) {
   if (sprite == 0)
     return;
   sprite->offsetY = 8;
-  sprite->image.shape = OAM_SHAPE_SQUARE;
+  sprite->image.shape = OBJ_SHAPE_SQUARE;
   sprite->image.size = OAM_SIZE_16X16;
 }
 
@@ -224,7 +223,7 @@ void Actor_SetSquareSprite(u32 actorId) {
 s32 Actor_GetSpriteShape(u32 actorId) {
   struct Actor *actor;
   struct Sprite *sprite;
-  s32 shape = OAM_SHAPE_SQUARE;
+  s32 shape = OBJ_SHAPE_SQUARE;
 
   actor = Actor_Lookup(actorId);
   if (actor != 0) {

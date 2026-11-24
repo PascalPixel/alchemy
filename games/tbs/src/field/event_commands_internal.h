@@ -100,16 +100,14 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
 /// lasts (FIXED_ONE * 13 / 16) / -step frames, rounded down, plus one.
 #define DEFINE_SHRINK_AND_DESTROY(name, step)                                  \
   void name(struct Actor *actor) {                                             \
-    void *obj = actor;                                                         \
     s32 scale;                                                                 \
                                                                                \
-    scale = ((struct Actor *)obj)->scaleX + step;                              \
-    ((struct Actor *)obj)->scaleY = ((struct Actor *)obj)->scaleY + step;      \
-    ((struct Actor *)obj)->facing =                                            \
-        ((struct Actor *)obj)->facing + DEGtoANG(45);                          \
-    ((struct Actor *)obj)->scaleX = scale;                                     \
+    scale = actor->scaleX + step;                                              \
+    actor->scaleY += step;                                                     \
+    actor->facing += DEGtoANG(45);                                             \
+    actor->scaleX = scale;                                                     \
     if (scale < FIXED_ONE * 3 / 16) {                                          \
-      Actor_ReleaseFar(obj);                                                   \
+      Actor_ReleaseFar(actor);                                                 \
     }                                                                          \
   }
 

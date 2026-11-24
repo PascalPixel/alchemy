@@ -1,5 +1,6 @@
 /// @file
-/// The fade overlay drawn on the ground beside an actor.
+/// The fade overlay: raised ground in front of an actor hides the part of it
+/// behind, as a ledge in the Kalay Tunnel's treasure room hides Isaac's legs.
 // Part of field_sequence.c.
 
 #include "field_sequence_internal.h"
@@ -11,7 +12,8 @@
 /// Each frame of the fade overlay: on each of the two cells beside the actor
 /// (left and right of it), where the ground one or two cells south rises above
 /// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
-/// at the height of that ground.
+/// at the height of that ground, which hides what of the actor is below that
+/// ground's edge.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
   struct MapGridScrollState *grid = gMapGridState[0];
@@ -89,7 +91,9 @@ void FadeOverlay_DrawMarks(void) {
 }
 
 /// Starts the fade overlay on object (the party leader when NULL): loads its
-/// solid tiles, sets the blending and draws it each frame.
+/// solid tiles, sets the blending and draws it each frame. Kalay's tunnel,
+/// Mercury and Venus Lighthouse, the Fuchin Falls cave, the Tunnel Ruins and
+/// Crossbone Isle start it.
 void FieldEffect_StartFadeOverlay(void *object) {
   struct FadeOverlayState *state;
   u8 *tiles;

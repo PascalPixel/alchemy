@@ -6,43 +6,6 @@
 
 #define GROWTH_PARTICLE_MAX 24 ///< particles round the target
 
-/// A point Growth works out round the Psynergy's position.
-struct BurstParticleVector {
-  s32 values[3]; ///< x, y, z
-};
-
-/// A sprite part's OAM attributes (struct AnimationSpritePart) as Growth
-/// copies them; each member names the AnimationSpritePart fields it covers.
-struct BurstParticleVisual {
-  u8 link[4];
-  u8 y;
-  u8 flagsALow : 5; ///< affine, objectMode and mosaic
-  u8 fullColor : 1;
-  u8 flagsAHigh : 2; ///< shape
-  u8 xLow;
-  u8 flagsBLow : 6;  ///< x's top bit and affineIndex
-  u8 flagsBHigh : 2; ///< size
-  union {
-    struct {
-      u16 tile : 10;
-      u16 unused : 6;
-    } bits;
-    struct {
-      u8 lo;
-      u8 highLow : 4;
-      u8 palette : 4;
-    } bytes;
-  } attributes;
-};
-
-/// A particle's sprite, seen as its two parts' attributes, which Growth copies
-/// from the first to the second: the image and the shadow
-/// (Sprite.image and shadow).
-struct BurstParticleVisualGroup {
-  struct BurstParticleVisual image;
-  struct BurstParticleVisual shadow;
-};
-
 /// When Growth is cast on a target, particles fly from in front of the caster
 /// to points round the target, which then takes the sprite priority of the
 /// ground under it.
@@ -69,7 +32,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
 /// the Psynergy's position.
 void FieldPsynergy_Growth(void) {
   struct FieldEffectState *effectState = gFieldEffectState;
-  struct BurstParticleVector pos;
+  struct Vector3 pos;
   s32 i;
 
   FieldEffect_SpawnBurstParticleField();
@@ -78,13 +41,12 @@ void FieldPsynergy_Growth(void) {
     struct Actor *particle;
     FIXED radius;
 
-    pos.values[0] = effectState->x;
-    pos.values[2] = effectState->z;
+    pos.x = effectState->x;
+    pos.z = effectState->z;
     radius = (Random16() * 6) + toFIXED(4);
     Vector_AddPolarOffset(radius, Random16(), &pos);
-    pos.values[1] = effectState->y;
-    particle =
-        Actor_Spawn(SPRITE_VINE, pos.values[0], pos.values[1], pos.values[2]);
+    pos.y = effectState->y;
+    particle = Actor_Spawn(SPRITE_VINE, pos.x, pos.y, pos.z);
     if (particle != 0) {
       Actor_StartScriptFar(particle, gGrowth_LeafScript);
       particle->motionFlags = ACTOR_FALLS;
@@ -110,8 +72,8 @@ void FieldEffect_SpawnBurstParticleField(void) {
   for (particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;
        particleIndex++) {
     struct Actor *particle;
-    struct BurstParticleVisual *image;
-    struct BurstParticleVisual *shadow;
+    struct AnimationSpritePart *image;
+    struct AnimationSpritePart *shadow;
     FIXED radius;
 
     if (effectState->angle == FACING_SOUTH) {
@@ -131,13 +93,13 @@ void FieldEffect_SpawnBurstParticleField(void) {
     // with the particle's picture. BUG: the copy comes before the NULL test, so
     // a failed spawn (a full gActors) is read through.
     particle = Actor_Spawn(SPRITE_PARTICLE, pos[0], pos[1], pos[2]);
-    image = &((struct BurstParticleVisualGroup *)particle->sprite)->image;
-    shadow = &((struct BurstParticleVisualGroup *)particle->sprite)->shadow;
+    image = &particle->sprite->image;
+    shadow = &particle->sprite->shadow;
     shadow->fullColor = image->fullColor;
-    shadow->flagsAHigh = image->flagsAHigh;
-    shadow->flagsBHigh = image->flagsBHigh;
-    shadow->attributes.bits.tile = image->attributes.bits.tile;
-    shadow->attributes.bytes.palette = image->attributes.bytes.palette;
+    shadow->shape = image->shape;
+    shadow->size = image->size;
+    shadow->tile = image->tile;
+    shadow->palette = image->palette;
 
     if (particle != 0) {
       particle->scaleY = FIXED_ONE * 7 / 10;

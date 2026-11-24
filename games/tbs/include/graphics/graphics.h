@@ -160,7 +160,10 @@ extern const struct TileMask gMenu_BarPatternRows[];
 extern const struct TileMask gMenu_PatternRowMasks[];
 /// One row of a tile XORed with a row's mask: how Menu_BuildPatternTiles and
 /// RangeIcon_BuildTiles mark each tile of a pair.
-static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
+static __inline__ u32 XorWord(u32 word, u32 mask) {
+  /* FAKEMATCH(wrapper): the XOR through this inline; plainly, row ^= mask. */
+  return word ^ mask;
+}
 /// The credits' 8x8 one-bit font, ASCII 32 to 127.
 extern const u8 gCredits_Font[];
 /// The order in which the dissolve sets the 64 pixels of its tile.

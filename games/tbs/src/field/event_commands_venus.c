@@ -7,6 +7,10 @@
 /// The motes that circle down onto the leader, evenly spread round a circle.
 #define VENUS_DESCENDING_MOTES 24
 
+/// A Djinni sheet's animation 3 (venus_djinni.tsv): crouched, standing and
+/// stretched up in turn, a bounce.
+#define DJINNI_ANIMATION_BOUNCE 3
+
 /// A Venus Djinni joins the party: on a green screen it hops twice, spins and
 /// leaps, then shrinks away; the leader turns to the camera and raises both
 /// arms as green particles rise and 24 motes circle down onto him, and a burst
@@ -45,7 +49,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   Sound_PlayFar(SE_SPIN);
   MapGrid_SetScreenShakeFar(toFIXED(13) / 10, toFIXED(13) / 10, FIXED_ONE);
   djinni->update = FieldEffect_ShrinkActorAndDestroyFast;
-  Actor_SelectAnimationFar(djinni, 3);
+  Actor_SelectAnimationFar(djinni, DJINNI_ANIMATION_BOUNCE);
   // The leader turns to face the camera (FACING_SOUTH).
   wait(90);
   Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
@@ -201,3 +205,4 @@ void FieldEffect_HalveDistanceToTarget(struct Actor *actor) {
 }
 
 #undef VENUS_DESCENDING_MOTES
+#undef DJINNI_ANIMATION_BOUNCE

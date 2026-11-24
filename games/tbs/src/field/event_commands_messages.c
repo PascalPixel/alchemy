@@ -11,15 +11,16 @@
 #define PORTRAIT_WINDOW_TILES 5
 
 /// Opens the event's current message in a speech window next to the speaking
-/// actor, with the speaker's portrait beside
-/// it when it has one, and moves on to the next message.
-struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
+/// actor, with the speaker's portrait beside it when it has one, and moves on
+/// to the next message. speaker is the actor id with SPEAKER_ bits above it;
+/// the event's flags argument is not read.
+struct Window *FieldMessage_ShowAtActor(s32 speaker, s32 unusedFlags) {
   struct WindowState *windowState;
   struct FieldState *state;
   s32 sprite;
   s32 extra;
   s32 portraitTop;
-  s32 margin;
+  s32 portraitReach;
   s32 height;
   s32 width;
   s32 top;
@@ -42,16 +43,16 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
   state = gFieldState;
   window = 0;
   portrait = 0;
-  sprite = Actor_GetSpriteById(actorId);
+  sprite = Actor_GetSpriteById(speaker);
   extra = 0;
   portraitTop = 0;
-  margin = 4;
-  flags = actorId & SPEAKER_FLAGS;
+  portraitReach = PORTRAIT_WINDOW_TILES - 1;
+  flags = speaker & SPEAKER_FLAGS;
   message = state->message;
-  actorId &= SPEAKER_ACTOR_MASK;
+  speaker &= SPEAKER_ACTOR_MASK;
   x = 0;
-  actor = Actor_Lookup(actorId);
-  state->speaker = actorId;
+  actor = Actor_Lookup(speaker);
+  state->speaker = speaker;
   y = 0;
   found = 0;
   if (state->fastForward == 0) {
@@ -64,15 +65,15 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
         found = 1;
         y -= 2;
       } else {
-        if (Actor_GetScreenPosition(actorId, pos) != -1)
+        if (Actor_GetScreenPosition(speaker, pos) != -1)
           found = 1;
         else
           found = 0;
         x = pos[0] >> 3;
         y = pos[1] >> 3;
       }
-    } else if (actorId < ACTOR_FIRST_PLACED) {
-      sprite = actorId;
+    } else if (speaker < ACTOR_FIRST_PLACED) {
+      sprite = speaker;
       actor = Actor_Lookup(gMainRoutineState.leaderActorId);
       if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
         Matrix_ProjectPoint(&actor->x.fixed, pos);
@@ -108,26 +109,29 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
         top = y + 4;
     }
 
-    // Place the portrait beside the speaker, on the side with more room.
+    // Place the portrait beside the speaker, on the side with more room,
+    // portraitReach tiles kept clear from its column to the screen's edge.
+    // XXX: why Mind Read keeps a tile more; a Mind Read photo of a speaker at
+    // the screen's right edge would show what that tile holds.
     if (windowState->mindRead != 0)
-      margin = 5;
+      portraitReach = PORTRAIT_WINDOW_TILES;
     column = x;
     if (flags & SPEAKER_PORTRAIT_LEFT) {
-      column = x - margin - 2;
+      column = x - portraitReach - 2;
       if (column < 0)
         column = 0;
     } else if (flags & SPEAKER_PORTRAIT_RIGHT) {
       column += 2;
-      if (column + margin > DISPLAY_TILE_WIDTH - 1)
-        column = DISPLAY_TILE_WIDTH - 1 - margin;
+      if (column + portraitReach > DISPLAY_TILE_WIDTH - 1)
+        column = DISPLAY_TILE_WIDTH - 1 - portraitReach;
     } else if (column <= DISPLAY_TILE_WIDTH / 2) {
-      column = column - margin - 2;
+      column = column - portraitReach - 2;
       if (column < 0)
         column = x + 2;
     } else {
       column += 2;
-      if (column + margin > DISPLAY_TILE_WIDTH - 1)
-        column = x - margin - 2;
+      if (column + portraitReach > DISPLAY_TILE_WIDTH - 1)
+        column = x - portraitReach - 2;
     }
 
     // A speaker with a portrait: put the portrait just above or below the
@@ -190,8 +194,8 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
 #endif
     if (column < 0)
       column = 0;
-    else if (column + margin > DISPLAY_TILE_WIDTH - 1)
-      column = DISPLAY_TILE_WIDTH - 1 - margin;
+    else if (column + portraitReach > DISPLAY_TILE_WIDTH - 1)
+      column = DISPLAY_TILE_WIDTH - 1 - portraitReach;
 
     // Open the message and the portrait, and wait until the text is typed out.
     if (windowState->mindRead != 0) {

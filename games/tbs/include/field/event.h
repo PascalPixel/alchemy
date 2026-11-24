@@ -310,18 +310,26 @@ static inline void MapGrid_SetShakeFX(FIXED horizontal, FIXED vertical,
   MapGrid_SetShakeFX(EVENT_SHAKE_FIXED(horizontal),                            \
                      EVENT_SHAKE_FIXED(vertical), EVENT_SHAKE_FIXED(decay))
 
-// Most events call GameFlag_Get, GameFlag_Set and GameFlag_Clear directly; the
-// events that match only through an inline call spell them Event_GetFlag,
-// Event_SetFlag and Event_ClearFlag.
+// GameFlag_Get, GameFlag_Set and GameFlag_Clear under an event's name; most
+// events call those routines by their own.
 
 /// GameFlag_Get, from an event: 1 when the FLAG_ is set.
-static inline s32 Event_GetFlag(s32 flag) { return GameFlag_Get(flag); }
+static inline s32 Event_GetFlag(s32 flag) {
+  /* FAKEMATCH(wrapper): GameFlag_Get through this inline. */
+  return GameFlag_Get(flag);
+}
 
 /// GameFlag_Set, from an event.
-static inline void Event_SetFlag(s32 flag) { GameFlag_Set(flag); }
+static inline void Event_SetFlag(s32 flag) {
+  /* FAKEMATCH(wrapper): GameFlag_Set through this inline. */
+  GameFlag_Set(flag);
+}
 
 /// GameFlag_Clear, from an event.
-static inline void Event_ClearFlag(s32 flag) { GameFlag_Clear(flag); }
+static inline void Event_ClearFlag(s32 flag) {
+  /* FAKEMATCH(wrapper): GameFlag_Clear through this inline. */
+  GameFlag_Clear(flag);
+}
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
 /// Plays a sound effect or music from an event, as an actor script's SC_SE

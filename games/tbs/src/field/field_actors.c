@@ -252,7 +252,7 @@ struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
     case ACTOR_CREATE_GROUP:
       // Take a zeroed list of four sprites, and fill it with id and id + 1.
       spriteSlots =
-          (void **)((u32 *)gActorSystemState + gActorSystemState->count++ + 2);
+          (void **)gActorSystemState->spriteGroups + gActorSystemState->count++;
       actor->spriteStorageKind = spriteStorageKind;
       actor->sprite = (struct Sprite *)spriteSlots;
       Dma_Fill32(0, spriteSlots, 4 * sizeof(void *));
@@ -376,8 +376,7 @@ void Actor_SetSpriteRotation(struct Actor *actor, u32 rotation) {
 
 /// Gives a one-sprite actor's first sprite animation the animation animationId
 /// and restarts its animations. A negative animationId does nothing.
-void Actor_SetFirstSpriteAnimation(void *rawDispatchActor, s32 animationId) {
-  struct Actor *actor = rawDispatchActor;
+void Actor_SetFirstSpriteAnimation(struct Actor *actor, s32 animationId) {
   struct Sprite *sprite;
 
   if (actor != NULL &&

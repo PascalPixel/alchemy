@@ -148,16 +148,24 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return FIXED_ONE / value; }
 /// ":Throw" (MsgLuckyDiceThrow) and ":Quit" (MsgLuckyDiceQuit).
 enum { DICE_LABEL_THROW = 10, DICE_LABEL_QUIT = 11 };
 
-/// The used prefix of Lucky Dice's 1,560-byte state block
-/// (HEAP_SLOT_LUCKY_GAME): its sprites and windows. The allocation
-/// extends beyond these members.
+/// Lucky Dice's state block (HEAP_SLOT_LUCKY_GAME): its sprites and windows,
+/// between two runs of bytes it allocates and never touches.
 struct LuckyDiceSprites {
-  u8 unused[200];                ///< Lucky Dice never touches these bytes
+  u8 unused[200];
   struct OamWords oam[128];      ///< copied to OAM each frame
   struct Window *coinsWindow;    ///< the player's coins
   struct Window *winningsWindow; ///< the winnings of the last throw
   struct Window *helpWindow;     ///< the Throw and Quit buttons
+  u8 unusedEnd[324];
 };
+
+/// The battle effects' sprite sheet block, allocated at the size a battle
+/// effect gives it (BattleEffect_RunByIdRange); Lucky Dice leaves it empty.
+#define BATTLE_SHEET_BYTES 1550
+
+/// sprites.tsv's seven sheets, from the rolling die to the lucky numbers: 496
+/// 256-colour tiles, nearly all of sprite VRAM.
+#define DICE_SPRITE_TILES 496
 
 /// What a throw's four numbers make, in the rules' words: "If two numbers match
 /// on either the dice or the table... it's called a pair, and you don't win or
@@ -356,11 +364,11 @@ void LuckyDice_Run(void) {
   s16 affineScale;
 
   // Allocate the screen's state blocks and reset the camera and tasks.
-  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, BATTLE_SHEET_BYTES);
   spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS,
                                  DICE_SPRITES_PALETTE_COLORS * sizeof(u16));
   diceState = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(*diceState));
-  sprites = HeapSlot_AllocEwram(HEAP_SLOT_LUCKY_GAME, 1560);
+  sprites = HeapSlot_AllocEwram(HEAP_SLOT_LUCKY_GAME, sizeof(*sprites));
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
   Stub_NoOpHook(RESOURCE_BATTLE_EFFECT_FAR_CALLS);
   Camera_ResetViewDefaults();
@@ -399,8 +407,8 @@ void LuckyDice_Run(void) {
   resourceAddress += DICE_SPRITES_PALETTE_COLORS * 2;
   FieldDecompress_TaggedLz((const void *)resourceAddress,
                            Ram_MapGridCellBuffer);
-  Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(7936),
-          REG_DMA3);
+  Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0,
+          DMA_COPY_WORDS(DICE_SPRITE_TILES * TILE_SIZE_8BPP / 4), REG_DMA3);
   Palette_ScaleRgb555(spritePalette, (u16 *)OBJ_PLTT, 0, BG_PLTT_COLORS);
   Palette_ScaleRgb555(bgPalette, (u16 *)BG_PLTT, 0, BG_PLTT_COLORS);
 
@@ -583,6 +591,9 @@ void LuckyDice_Run(void) {
         Text_DrawNumberInWindowFar(winnings, digits, sprites->winningsWindow,
                                    DICE_WINNINGS_NUMBER_X, 0);
       }
+      // DEAD: the count down of the 60 frames a throw's end sets, which
+      // nothing reads (the payout starts its own count at 0); the ROM keeps
+      // the test and the decrement.
       if (payoutTimer > 0) {
         payoutTimer--;
       }
@@ -947,6 +958,8 @@ void LuckyDice_Run(void) {
         resultTimer = 0;
         resultKind = DICE_RESULT_NONE;
         winnings = 0;
+        // DEAD: a count nothing reads, run down above; the ROM keeps the
+        // store.
         payoutTimer = 60;
         if (numbers[0] == numbers[1] && numbers[0] == numbers[2] &&
             numbers[0] == numbers[3]) {

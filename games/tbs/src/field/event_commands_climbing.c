@@ -26,7 +26,7 @@ s32 Field_TryJumpForward(void) {
   struct Actor *platform;
 
   /* LEFTOVER(template): position holds &positionStorage, as Field_ClimbDown and
-   * Field_ClimbUp point position at their stack vector. */
+   * Field_ClimbUp point position at their first of two positions. */
   position = &positionStorage;
 again:
   // The middle of the cell in front, then of the cell beyond.
@@ -117,10 +117,9 @@ s32 Field_ClimbDown(void) {
 
     // A wall goes down only where the cell below has the same cell behavior.
     if (MAPGRID_CELLS[index].behavior == MAPGRID_CELLS_SOUTH[index].behavior) {
-      // Six words, of which the position uses three; the rest give the stack
-      // frame its 24 bytes.
-      s32 vector[6];
-      struct FieldPosition *position = (struct FieldPosition *)vector;
+      /* LEFTOVER(frame): two positions, of which only the first is used. */
+      struct FieldPosition positions[2];
+      struct FieldPosition *position = positions;
 
       // The ground under the point 16 pixels lower may not be a wall cell
       // of the overhead layer: the check returns nonzero for a wall.
@@ -191,10 +190,9 @@ s32 Field_ClimbUp(void) {
                 (gridZ / MAPGRID_CELL_PIXELS) * MAPGRID_SIZE;
 
     if (MAPGRID_CELLS[index].behavior == MAPGRID_CELLS_NORTH[index].behavior) {
-      // Six words, of which the position uses three; the rest give the stack
-      // frame its 24 bytes.
-      s32 vector[6];
-      struct FieldPosition *position = (struct FieldPosition *)vector;
+      /* LEFTOVER(frame): two positions, of which only the first is used. */
+      struct FieldPosition positions[2];
+      struct FieldPosition *position = positions;
 
       // The ground under the leader may not be a wall cell of the overhead
       // layer.

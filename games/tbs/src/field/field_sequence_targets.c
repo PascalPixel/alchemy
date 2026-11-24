@@ -210,22 +210,23 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   return nearestActorId;
 }
 
-/// Opens the chest that is actor target (SE_CHEST_OPEN and the chest sheet's
-/// animation 4) and, 12 frames later, shows itemId in front of actor actorId
-/// with sparkles; returns the item's picture, or 0 when there is no chest.
+/// Opens the chest that is actor target (SE_CHEST_OPEN, the lid lifting on
+/// treasure) and, 12 frames later, shows itemId in front of actor actorId with
+/// sparkles; returns the actor that shows the item, or 0 when there is no
+/// chest.
 s32 Chest_OpenAndShowItem(s32 actorId, s32 target, s32 itemId) {
   void *targetActor;
-  s32 emitter;
+  s32 itemActor;
 
   targetActor = Actor_GetById(target);
-  emitter = 0;
+  itemActor = 0;
   if (targetActor != 0) {
     Sound_PlayFar(SE_CHEST_OPEN);
-    Actor_SelectAnimationFar(targetActor, 4);
+    Actor_SelectAnimationFar(targetActor, CHEST_ANIMATION_OPEN_ON_TREASURE);
     wait(12);
-    emitter = (s32)ItemDisplay_ShowItemInFront(actorId, itemId);
+    itemActor = (s32)ItemDisplay_ShowItemInFront(actorId, itemId);
   }
-  return emitter;
+  return itemActor;
 }
 
 /// Gives each running layer of an actor's one sprite the colour mode

@@ -94,7 +94,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // The leader stops pulsing.
   wait(10);
-  // effect, done with the sparks, carries the NULL.
+  /* FAKEMATCH(temporary): effect, done with the sparks, stands for NULL. */
   effect = NULL;
   leader->update = (void *)effect;
   leader->scaleX = FIXED_ONE;

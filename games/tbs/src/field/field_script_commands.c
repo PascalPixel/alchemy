@@ -766,8 +766,9 @@ void ActorScript_SetOrCompareCursor(struct ScriptOperands *operands,
   }
 }
 
-/// State value SW_FACING (and 2 and 4): sets, adds to or compares the actor's
-/// facing.
+/// State value SW_FACING, and the values 2 and 4 either side of it, which
+/// actor_script_operands.c points here too: sets, adds to or compares the
+/// actor's facing.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareFacing, facing, u16)
 /// State value SW_X: sets, adds to or compares the actor's x.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareX, x)
@@ -793,8 +794,9 @@ void ActorScript_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
 /// State value SW_SCALE_X: sets, adds to or compares the actor's horizontal
 /// scale.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareScaleX, scaleX)
-/// State value SW_SCALE_Y (and 11): sets, adds to or compares the actor's
-/// vertical scale.
+/// State value SW_SCALE_Y, and the value 11 after it, which
+/// actor_script_operands.c points here too: sets, adds to or compares the
+/// actor's vertical scale.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareScaleY, scaleY)
 /// State value SW_VELOCITY_X: sets, adds to or compares the actor's x velocity.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareVelocityX, velocityX)
@@ -823,13 +825,13 @@ SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareGravity, gravity)
 /// State value SW_GROUND: sets, adds to or compares the ground height under the
 /// actor.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTerrainHeight, groundHeight)
-/// State value 23: sets, adds to or compares the actor's sceneWord, scene
-/// code's own word.
+/// State value SW_SCENE_WORD: sets, adds to or compares the actor's sceneWord,
+/// scene code's own word.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareSceneWord, sceneWord)
-/// State value 24: sets, adds to or compares the actor's sprite.
+/// State value SW_SPRITE: sets, adds to or compares the actor's sprite.
 SCRIPT_DEFINE_OPERAND_ADDRESS(ActorScript_SetOrCompareSprite, sprite)
-/// State value 25: sets, adds to or compares whether the actor draws no sprite,
-/// one or a group.
+/// State value SW_SPRITE_KIND: sets, adds to or compares whether the actor
+/// draws no sprite, one or a group.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSpriteStorageKind,
                              spriteStorageKind, u8)
 /// State value SW_MOTION: sets, adds to or compares the actor's motion flags.
@@ -880,16 +882,17 @@ void ActorScript_SetOrCompareWait(struct ScriptOperands *state, s32 operation,
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareTimer, timer, s16)
 /// State value SW_USER_VALUE: sets, adds to or compares the actor's user value.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareUserValue, userValue, s16)
-/// State value 37: sets, adds to or compares the actor this one watches.
+/// State value SW_WATCHED_ACTOR: sets, adds to or compares the actor this one
+/// watches.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareWatchedActor, watchedActor)
 /// State value SW_HOOK: sets, adds to or compares the actor's update routine.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareUpdateAddress, update)
-/// State value SW_SCENE_COUNTER: sets, adds to or compares the actor's rise
-/// counter.
+/// State value SW_SCENE_COUNTER: sets, adds to or compares the actor's
+/// sceneCounter, scene code's own counter.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSceneCounter, sceneCounter,
                              u8)
-/// State value SW_SCENE_BYTE: sets, adds to or compares whether the actor
-/// rises.
+/// State value SW_SCENE_BYTE: sets, adds to or compares the actor's sceneByte,
+/// scene code's own byte.
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSceneByte, sceneByte, u8)
 
 /// Reads the two words after the command (a state value number and a value) and

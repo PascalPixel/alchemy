@@ -79,8 +79,12 @@ struct ScreenTransitionState {
   /// Window edges, two pages: WININ and WINOUT, then a WIN0H and WIN1H pair,
   /// each (left << 8 | right), for each of the 160 lines.
   u16 pages[2][322];
-  /// The dissolve's solid tile, one 8 by 8 tile of 4-bit pixels.
-  u32 solidTile[8];
+  /// The dissolve's solid tile, one 8 by 8 tile of 4-bit pixels: as words,
+  /// or as bytes of two pixels each, which the dissolve sets two at a time.
+  union {
+    u32 solidTile[8];
+    u8 solidTilePixels[32];
+  };
   /// The window transition's shape, an enum WindowTransitionMode, which
   /// ScreenTransition_UpdateScanlineTable draws.
   u16 mode;

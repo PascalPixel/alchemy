@@ -67,9 +67,9 @@ void Message_CloseFinishedWindowsFar(void);
 void Window_CloseAllFar(s32 unused);
 s32 Battle_CollectPartyCommandsFar(struct BattleAction *commands, u16 *actors,
                                    s32 commandCount);
-void BattleMessage_ShowAndWaitFar(s32 argument);
-void BattleMessage_OpenFar(s32 argument);
-s32 Portrait_GetForSpeakerFar(u32 value);
+void BattleMessage_ShowAndWaitFar(s32 message);
+void BattleMessage_OpenFar(s32 message);
+s32 Portrait_GetForSpeakerFar(u32 speaker);
 s32 FieldMenu_RunFar(void);
 s32 FileList_SelectActionFar(void);
 s32 IconMenu_ChooseSendOptionFar(s32 mode);
@@ -80,7 +80,7 @@ void BattleMessage_CloseFar(void);
 void Message_ResetIdleFar(void);
 void MenuArrow_CreateFar(struct MenuSprite *sprite, s32 *slot);
 void MenuArrow_SetPositionFar(struct MenuSprite *sprite, s32 x, s32 y);
-void MenuArrow_ReleaseFar(s32 value);
+void MenuArrow_ReleaseFar(s32 slot);
 void Icon_DrawItemFar(s32 code);
 void Text_DrawWideStringAtOffsetFar(u16 *text, struct Window *window, s32 x,
                                     s32 y);
@@ -98,7 +98,7 @@ void DebugSceneSelect_RunFar(void);
 s16 DebugSceneSelect_RunFar(void);
 #endif
 s32 DebugFlagEditor_RunFar(void);
-s32 SelectionIcon_LoadIntoSlotFar(s32 mode, s32 value, s32 result, s32 option);
+s32 SelectionIcon_LoadIntoSlotFar(s32 kind, s32 entry, s32 slot, s32 baseIcon);
 void Window_MarkVisibleTextTilesFar(void);
 s32 PartyStatus_HighlightMembersFar(u16 *ids);
 struct WindowSprite *WindowSprite_CreateLoadedFar(s32 icon, s32 layers,

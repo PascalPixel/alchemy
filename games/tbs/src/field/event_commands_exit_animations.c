@@ -60,8 +60,9 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
     // WINDOW_TRANSITION_LEADER_INVERSE.
     Io_Write16(RGB_WHITE,
                (u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BLACK_COLOR));
-    ScreenTransition_Finish(SCENE_TRANSITION(TRANSITION_CENTER_LINE, 1),
-                            ENCOUNTER_CLOSE_FRAMES);
+    ScreenTransition_Finish(
+        SCENE_TRANSITION(TRANSITION_CENTER_LINE, CENTER_LINE_FLICKER),
+        ENCOUNTER_CLOSE_FRAMES);
     state->transitionActive = 0;
     wait(ENCOUNTER_CLOSE_FRAMES);
     for (i = 0; i < ENCOUNTER_FADE_FRAMES; i++) {

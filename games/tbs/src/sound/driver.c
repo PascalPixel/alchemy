@@ -575,6 +575,10 @@ void CgbModVol(struct CgbChannel *note) {
 /// own envelopes, where one step a VBlank would give 59.7.
 enum { CGB_EXTRA_STEP_PERIOD = 15 };
 
+/// The envelope steps a sustained CGB note waits each time before its level is
+/// set to its sustain level again.
+enum { CGB_SUSTAIN_STEPS = 7 };
+
 /// Steps CGB note envelopes and writes changed pitch, volume and trigger
 /// registers, once a VBlank.
 void CgbSound(void) {
@@ -738,7 +742,7 @@ void CgbSound(void) {
                    SOUND_CHANNEL_SF_ENV_SUSTAIN) {
         sustain:
           note->level = note->sustainLevel;
-          note->counter = 7;
+          note->counter = CGB_SUSTAIN_STEPS;
         } else if ((note->state & SOUND_CHANNEL_SF_ENV) ==
                    SOUND_CHANNEL_SF_ENV_DECAY) {
           note->level--;

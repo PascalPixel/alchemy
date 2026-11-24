@@ -4,6 +4,14 @@
 
 #include "shop_internal.h"
 
+/// The SPRITE_PARTICLE animation that shows its two largest pictures in turn,
+/// two frames each, looping: the sparkles of a service's burst.
+#define PARTICLE_ANIMATION_PULSE 7
+/// The colour modes a burst picks from at random for its sparkles and the
+/// party member's icon: SPRITE_COLOR_NORMAL, the channel swaps and
+/// SPRITE_COLOR_GREY.
+#define SANCTUM_BURST_COLOR_MODES (SPRITE_COLOR_GREY + 1)
+
 /// The donations the sanctum asks, in coins: reviving and removing a curse ask
 /// so many for each of the party member's levels.
 enum SanctumDonation {
@@ -438,7 +446,7 @@ void Sanctum_UpdateBurst(void) {
   burstMember = shop->burstMember;
   if (burstMember != -1)
     Sprite_SetAnimationColorModesFar(shop->partyMemberIcons[burstMember],
-                                     Random16_Below(7));
+                                     Random16_Below(SANCTUM_BURST_COLOR_MODES));
 }
 
 /// The tune each service's burst plays.
@@ -479,8 +487,9 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_InitializeFar(effect, SPRITE_PARTICLE, position.x,
                                 position.z);
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
-    FieldParticle_SetAnimationFar(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->sprite, Random16_Below(7));
+    FieldParticle_SetAnimationFar(effect, PARTICLE_ANIMATION_PULSE);
+    Sprite_SetAnimationColorModesFar(effect->sprite,
+                                     Random16_Below(SANCTUM_BURST_COLOR_MODES));
     effect->scaleY = FIXED_ONE * 7 / 10;
     effect->scaleX = FIXED_ONE * 7 / 10;
     wait(3);
@@ -506,20 +515,10 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   wait(20);
 
   // Free the sparkles still flying.
-  {
-    u8 *flagEntry = (u8 *)&shop->effects[0].active;
-    struct FieldParticle *effectSlot = shop->effects;
-    for (effectIndex = 0; effectIndex < SANCTUM_PARTICLE_COUNT; effectIndex++) {
-      s32 flag = *flagEntry;
-
-      flag <<= 24;
-
-      flagEntry += sizeof(struct FieldParticle);
-      if (flag != 0) {
-        FieldEffect_ClearOwnedSlotFar(effectSlot);
-      }
-      effectSlot++;
-    }
+  for (effectIndex = 0; effectIndex < SANCTUM_PARTICLE_COUNT; effectIndex++) {
+    effect = &shop->effects[effectIndex];
+    if (effect->active != 0)
+      FieldEffect_ClearOwnedSlotFar(effect);
   }
 
   Task_Remove(Sanctum_UpdateBurst);

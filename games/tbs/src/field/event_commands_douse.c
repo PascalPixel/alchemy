@@ -6,7 +6,11 @@
 #include "event_commands_internal.h"
 
 /// The drops Douse rains: cast at nothing, cast on a target, and cast on a
-/// target where they sway down (FieldEffectState.lit).
+/// target in Mercury Lighthouse's entrance or middle floors
+/// (FieldEffectState.lit), where larger blue drops sway down in their place
+/// and none splashes; elsewhere, as in Imil, the drops are small and white.
+// XXX (no evidence): why those two floors take other drops; the code only
+// tests the map, and a recording shows the difference, not its reason.
 #define DOUSE_DROPS 10
 #define DOUSE_DROPS_ON_TARGET 24
 #define DOUSE_SWAYING_DROPS_ON_TARGET 30
@@ -14,24 +18,21 @@
 /// Per-frame update of a falling drop: on reaching its ground height it is
 /// released 2 frames later and scatters three half-size splashes, which hop
 /// toward points 32 pixels away and are released after 6 frames.
-void FieldEffect_UpdateDouseDrop(struct Actor *actor) {
-  struct Actor *particle = (struct Actor *)actor;
+void FieldEffect_UpdateDouseDrop(struct Actor *drop) {
   s32 i;
   struct Actor *splash;
-  s32 dropWait = 2;
-  s16 *splashWaitField;
 
-  if (particle->y.fixed <= particle->groundHeight) {
-    particle->wait = dropWait;
-    Actor_StartScriptFar(particle, gFieldEffect_SharedParticleScript);
+  if (drop->y.fixed <= drop->groundHeight) {
+    drop->wait = 2;
+    Actor_StartScriptFar(drop, gFieldEffect_SharedParticleScript);
     splash = NULL;
-    particle->update = NULL;
+    drop->update = NULL;
 
     // Half size, hopping up at a pixel a frame, toward a random point 32 pixels
     // away.
     for (i = 0; i <= 2; i++) {
-      splash = Actor_Spawn(SPRITE_DROPLET, particle->x.fixed, particle->y.fixed,
-                           particle->z.fixed);
+      splash = Actor_Spawn(SPRITE_DROPLET, drop->x.fixed, drop->y.fixed,
+                           drop->z.fixed);
       if (splash == NULL) {
         break;
       }
@@ -42,13 +43,8 @@ void FieldEffect_UpdateDouseDrop(struct Actor *actor) {
       splash->speedLimit = Random16() + toFIXED(6) / 5;
       Actor_SetTargetPositionFromMagnitudeAngle(splash, toFIXED(32),
                                                 Random16());
-      splashWaitField = &splash->wait;
-      {
-        s32 splashWait = 6;
-
-        *splashWaitField = splashWait;
-        Actor_StartScriptFar(splash, gFieldEffect_SharedParticleScript);
-      }
+      splash->wait = 6;
+      Actor_StartScriptFar(splash, gFieldEffect_SharedParticleScript);
     }
   }
 }
@@ -123,8 +119,8 @@ void FieldPsynergy_Douse(void) {
   wait(10);
 
   if ((s8)effectState->lit == 0) {
-    // Drop a particle every 6 frames from 3 to 8 pixels round the cloud (the
-    // last right under it); enabled is cleared once a target is dispatched.
+    // A drop every 6 frames from 3 to 8 pixels round the cloud (the last right
+    // under it); aimAhead is cleared once a target is dispatched.
     count = DOUSE_DROPS;
     if (effectState->aimAhead == 0)
       count = DOUSE_DROPS_ON_TARGET;
@@ -150,7 +146,7 @@ void FieldPsynergy_Douse(void) {
     }
     wait(10);
   } else {
-    // Every 6 frames, a swaying particle falls from 3 to 8 pixels round the
+    // Every 6 frames, a blue drop sways down from 3 to 8 pixels round the
     // cloud.
     if (effectState->aimAhead != 0)
       count = DOUSE_DROPS;

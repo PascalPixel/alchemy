@@ -11,9 +11,7 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   struct FieldEffectState *effectState;
   struct Actor *caster;
   struct Actor *target;
-  // Untyped: as struct Actor *, the load of pair[0] waits for the store to
-  // the target's motion flags.
-  void *pair[2];
+  void *hands[2]; // right then left
   FIXED pos[3];
   s32 x;
   FIXED y;
@@ -38,39 +36,39 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   pos[1] = y;
   z = effectState->z;
   pos[2] = z;
-  pair[0] = FieldEffect_SpawnLiftHand(x + toFIXED(32), y, z, FACING_WEST);
-  pair[1] = FieldEffect_SpawnLiftHand(pos[0] - toFIXED(32), pos[1], pos[2],
-                                      FACING_EAST);
+  hands[0] = FieldEffect_SpawnLiftHand(x + toFIXED(32), y, z, FACING_WEST);
+  hands[1] = FieldEffect_SpawnLiftHand(pos[0] - toFIXED(32), pos[1], pos[2],
+                                       FACING_EAST);
 
   // Each hand faces the target (FACING_WEST on the right, FACING_EAST on the
   // left) and moves 14 pixels that way.
   wait(15);
   for (handIndex = 0; handIndex < 2; handIndex++) {
-    struct Actor *hand = pair[handIndex];
+    struct Actor *hand = hands[handIndex];
     if (hand != NULL)
       Actor_SetTargetPositionFromMagnitudeAngle(hand, toFIXED(14),
                                                 hand->facing);
   }
 
-  Actor_WaitForMoveFar(pair[0]);
+  Actor_WaitForMoveFar(hands[0]);
   target->update = Actor_CycleSpriteColors;
   Sound_PlayFar(SE_PSYNERGY_START);
   target->motionFlags = ACTOR_FLOATS;
 
   // Lift 32 pixels, a quarter pixel at a time.
   startY = target->y.fixed;
-  if (pair[0] != NULL && pair[1] != NULL && startY <= startY + toFIXED(32)) {
-    do {
-      ((struct Actor *)pair[0])->y.fixed += toFIXED(1) / 4;
-      ((struct Actor *)pair[1])->y.fixed += toFIXED(1) / 4;
+  if (hands[0] != NULL && hands[1] != NULL) {
+    while (target->y.fixed <= startY + toFIXED(32)) {
+      ((struct Actor *)hands[0])->y.fixed += toFIXED(1) / 4;
+      ((struct Actor *)hands[1])->y.fixed += toFIXED(1) / 4;
       target->y.fixed += toFIXED(1) / 4;
       wait(1);
-    } while (target->y.fixed <= startY + toFIXED(32));
+    }
   }
 
   // The hands burst into particles; the target stays up.
-  FieldEffect_BurstHand(pair[0]);
-  FieldEffect_BurstHand(pair[1]);
+  FieldEffect_BurstHand(hands[0]);
+  FieldEffect_BurstHand(hands[1]);
   FieldPsynergy_FadeFromCastColor();
 }
 

@@ -10,11 +10,6 @@ static __inline__ void Io_Write16Inline(s32 value, volatile u16 *reg) {
   *reg = value;
 }
 
-/// Io_Write16Inline with the address first.
-static __inline__ void Io_Write16Swapped(volatile u16 *reg, s32 value) {
-  *reg = value;
-}
-
 /// WorldMap_UpdateAffineLines, run from RAM: works out each screen line's BG2
 /// and BG3 affine parameters for the camera into one of the two affine pages.
 typedef s32 (*WorldMapPlaneFn)(void *camera, s32 *position, void *lines,
@@ -255,7 +250,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     // of a turn) and yaw 0, with the eye one pixel beyond the distance.
     SET_VECTOR(cameraPosition, 0, 0, 0);
     Matrix_Initialize();
-    Io_Write16Swapped(&perspective->pitch, TRIG_TURN * 7 / 8);
+    perspective->pitch = TRIG_TURN * 7 / 8;
     perspective->yaw = 0;
     Matrix_Initialize();
     Matrix_TranslateVector(cameraPosition);

@@ -248,8 +248,10 @@ struct SoundChannel {
   u8 priority;  ///< A new note of higher priority takes this one's place.
   u8 rhythmPan; ///< A rhythm voice's pan.
   u8 paddingAfterPan[3]; ///< Unused by this driver (pret's dummy3).
-  /// The low byte of the word at 0x18 in which the mixer keeps a PCM note's
-  /// samples left.
+  /// For a PCM note, this byte and the three after it are one word, the
+  /// samples left, which the mixer keeps; for a CGB note, they are
+  /// CgbChannel's. The driver's C, built by old_agbcc, cannot name the word
+  /// in an unnamed union, which that compiler leaves out of the struct.
   u8 samplesLeftLow;
   /// CgbChannel.sustainLevel; inside the samples-left word for a PCM note.
   u8 sustainLevel;
@@ -257,8 +259,8 @@ struct SoundChannel {
               ///< note.
   u8 panBits; ///< CgbChannel.panBits; inside the samples-left word for a PCM
               ///< note.
-  /// CgbChannel.channelBits; for a PCM note, the mixer's fractional sample
-  /// position is the word at 0x1c.
+  /// CgbChannel.channelBits; for a PCM note, this byte and the three after it
+  /// are one word, the mixer's fraction of a sample position.
   u8 channelBits;
   u8 modified;          ///< CgbChannel.modified.
   u8 length;            ///< CgbChannel.length.

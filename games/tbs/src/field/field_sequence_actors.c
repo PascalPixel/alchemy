@@ -18,6 +18,10 @@ enum {
 /// past them reads the field state's members after the slots.
 #define LOOKUP_ID_COUNT 192
 
+/// The last sprite the tests below take as a party member's: one past PIERS,
+/// though only Isaac's and Garet's sprites are ever swapped.
+#define PARTY_SPRITE_LAST (PIERS + 1)
+
 /// Returns the sprite of character, which is the character itself except that
 /// FLAG_CHILDHOOD gives Isaac and Garet SPRITE_ISAAC_CHILD and
 /// SPRITE_GARET_CHILD, and FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite
@@ -26,7 +30,7 @@ s32 Party_GetCharacterSprite(s32 character) {
   s32 sprite;
 
   sprite = character;
-  if (sprite <= 8) {
+  if (sprite <= PARTY_SPRITE_LAST) {
     if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0) {
       if (sprite == ISAAC) {
         sprite = SPRITE_ISAAC_CHILD;
@@ -48,7 +52,7 @@ s32 Party_GetCharacterSpriteForChildhood(s32 character, s32 childhood) {
   s32 sprite;
 
   sprite = character;
-  if ((sprite <= 8) && (childhood != 0)) {
+  if ((sprite <= PARTY_SPRITE_LAST) && (childhood != 0)) {
     if (sprite == ISAAC) {
       sprite = SPRITE_ISAAC_CHILD;
     }
@@ -575,4 +579,5 @@ void Actor_Restore(void) {
 #undef PLACED_MAX
 #undef PLACEMENT_SPRITE_MAX
 #undef LOOKUP_ID_COUNT
+#undef PARTY_SPRITE_LAST
 #undef SPRITE_CACHE_FLAGS

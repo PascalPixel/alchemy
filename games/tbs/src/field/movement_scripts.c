@@ -44,6 +44,9 @@ const u8 gMessageSpeed_VoiceRates[] = {
     [MESSAGE_SPEED_FAST] = 10,
 };
 
+/// The emote bubble's pop: it appears squashed to half its width and a quarter
+/// taller, springs back in smaller swings every 2 frames until it is square,
+/// stays 30 frames and is released.
 const s32 gEmote_BubbleScript[] = {
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 2),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 4),

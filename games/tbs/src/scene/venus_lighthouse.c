@@ -116,6 +116,11 @@ extern s32 gPushedActor_DirectionSteps[];
 extern struct SwitchCell gVenusThirdFloorSockets[];
 extern u32 gBalance_PlatformHeights[];
 extern struct SwitchCell gVenusFourthFloorSockets[];
+
+/// A socket index past the third floor's four (gVenusThirdFloorSockets) and
+/// the fourth floor's eight (gVenusFourthFloorSockets): the pillar is in none.
+#define NO_THIRD_FLOOR_SOCKET 5
+#define NO_FOURTH_FLOOR_SOCKET 8
 extern u8 gVenusTracksMovingWest[];
 extern u8 gVenusTracksMovingEast[];
 extern u8 gVenusTracksMovingNorth[];
@@ -445,12 +450,14 @@ enum VenusTrack {
 /// The tag VENUS_COLOR_MARK puts above the colour mode.
 enum { VENUS_COLOR_MARK_TAG = 0x212 };
 
+/// Sets bits in a byte of flags.
+static inline void VenusLighthouse_SetFlagBits(u8 *flags, u8 bits) {
+  *flags |= bits;
+}
+
 static UNUSED s32 MapGrid_FillCollisionRectangle(u32 layer, s32 x, s32 z,
                                                  u32 width, u32 height,
                                                  s32 value);
-
-/// Sets bits in a byte of flags.
-static inline void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 
 /// Makes a mask still, never a talk or Psynergy target, shadowless and drawn in
 /// the given colour mode.
@@ -1217,8 +1224,9 @@ static void VenusLighthouse_ThrowBackFromLightning(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, leader->x.part[0].integer,
                       landingQuarterZ << 2);
   Event_Wait(1);
-  SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags,
-              ACTOR_FACES_MOTION);
+  /* FAKEMATCH(wrapper): the flag set through a helper. */
+  VenusLighthouse_SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags,
+                              ACTOR_FACES_MOTION);
   Event_Wait(20);
   leader->update =
       (void (*)(struct Actor *))VenusLighthouse_EmitRisingParticles;
@@ -1759,9 +1767,7 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
 /// 45)) it sinks in with a thump, a light runs from the lady statue along the
 /// track and over the pillar to the gate, and the gate opens.
 ///
-/// That happens the first time only (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN). The
-/// walkthrough's puzzle is just this: move the block with the vertical stripe
-/// into the hole.
+/// That happens the first time only (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN).
 static void VenusLighthouse_MoveGatePillar(void) {
   s32 row;
   s32 column;
@@ -1841,9 +1847,10 @@ static void VenusLighthouse_JumpOrPushGatePillar(void) {
 /// that reaches a socket sinks in. With all three sunk, two lights run from
 /// the statue along the track, and the gate opens if one of them reaches it.
 ///
-/// The walkthrough's answer is to slide the two corner pieces into the left
-/// or right two holes and the straight piece into the upper or lower one
-/// left.
+/// Which three of the four sockets they fill decides where the track
+/// carries the lights (gVenusThirdFloorLightToNortheast and
+/// gVenusThirdFloorLightToSoutheast), and the flags remember which socket was
+/// left empty, the south-east or the north-west.
 static void VenusLighthouse_MoveSwitchPillar(void) {
   struct Actor *occlusionEffect = 0;
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1868,7 +1875,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
       MapGrid_CopyCellAttributes(46, 39, 1, 1, FIELD_CELL(pillar->x.fixed),
                                  FIELD_CELL(pillar->z.fixed));
     }
-    socketIndex = 5;
+    socketIndex = NO_THIRD_FLOOR_SOCKET;
     for (candidateIndex = 0; candidateIndex <= 3; candidateIndex++) {
       if (FIELD_CELL(pillar->x.fixed) ==
               gVenusThirdFloorSockets[candidateIndex].x &&
@@ -1879,7 +1886,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
         break;
       }
     }
-    if (socketIndex == 5) {
+    if (socketIndex == NO_THIRD_FLOOR_SOCKET) {
       continue;
     }
     for (candidateIndex = ACTOR_FIRST_SWITCH_PILLAR;
@@ -1888,11 +1895,11 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
       if (pillarId != candidateIndex &&
           FIELD_CELL(pillar->x.fixed) == FIELD_CELL(other->x.fixed) &&
           FIELD_CELL(pillar->z.fixed) == FIELD_CELL(other->z.fixed)) {
-        socketIndex = 5;
+        socketIndex = NO_THIRD_FLOOR_SOCKET;
         break;
       }
     }
-    if (socketIndex == 5) {
+    if (socketIndex == NO_THIRD_FLOOR_SOCKET) {
       continue;
     }
     savedPriority = leader->sprite->image.priority;
@@ -2012,6 +2019,12 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
   if (waitFrames != 0) {
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   }
+  // The two platforms and the first three floating pillars: the fourth,
+  // ACTOR_FIRST_FLOATING_PILLAR + 3, is left out.
+  // XXX: whether that shows in play, the fourth block's cell not opened when
+  // it ends in reach; a recording of the four blocks set down with the fourth
+  // last, on top of a stack that ends between the floor and 30 pixels below
+  // it, settles it.
   for (pillarIndex = 0; pillarIndex < 5; pillarIndex++) {
     struct Actor *actor = Actor_Get(pillarIndex + ACTOR_BALANCE_WEST);
 
@@ -2064,17 +2077,17 @@ static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
 }
 
 /// Stops a floating block where it is.
-static inline void FloatingPillar_Settle(struct Actor *pillar, s32 resetValue) {
+static inline void VenusLighthouse_SettleFloatingPillar(struct Actor *pillar) {
   pillar->targetY = ACTOR_NO_TARGET;
-  pillar->groundHeight = resetValue;
-  pillar->velocityY = resetValue;
-  pillar->motionFlags = resetValue;
-  pillar->timer = resetValue;
+  pillar->groundHeight = 0;
+  pillar->velocityY = 0;
+  pillar->motionFlags = 0;
+  pillar->timer = 0;
 }
 
 /// Copies all three fixed-point position components without changing motion.
-static inline void Actor_CopyPosition(struct Actor *destination,
-                                      struct Actor *source) {
+static inline void VenusLighthouse_CopyPosition(struct Actor *destination,
+                                                struct Actor *source) {
   destination->x.fixed = source->x.fixed;
   destination->y.fixed = source->y.fixed;
   destination->z.fixed = source->z.fixed;
@@ -2083,8 +2096,8 @@ static inline void Actor_CopyPosition(struct Actor *destination,
 /// Isaac lifts one of the four grey spiral-marked blocks floating in the
 /// fourth floor's west room with Carry and drops it onto one of the two
 /// balance platforms at the south of the room. The platforms sink and rise
-/// to the blocks' weight, and the walkthrough's answer is two blocks on the
-/// west one.
+/// to the blocks' weight; one that ends between the floor and 30 pixels below
+/// it can be stepped on (VenusLighthouse_LowerFloatingPillars).
 ///
 /// A block dropped on a platform stays there (FLAG_SCENE_TEMP_00 plus its
 /// number), and the camera looks south at the platforms as they move.
@@ -2135,20 +2148,20 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
     }
     if (FIELD_CELL(pillar->z.fixed) == 19 &&
         !GameFlag_Get(FLAG_SCENE_TEMP_00 + pillarIndex)) {
-      FloatingPillar_Settle(pillar, 0);
+      VenusLighthouse_SettleFloatingPillar(pillar);
       settledIndex = pillarIndex;
       for (earlierIndex = 0; earlierIndex < pillarIndex; earlierIndex++) {
         if (!GameFlag_Get(FLAG_SCENE_TEMP_00 + earlierIndex)) {
           other = Actor_Get(earlierIndex + ACTOR_FIRST_FLOATING_PILLAR);
-          Actor_CopyPosition(&savedPosition, pillar);
-          Actor_CopyPosition(pillar, other);
-          Actor_CopyPosition(other, &savedPosition);
+          VenusLighthouse_CopyPosition(&savedPosition, pillar);
+          VenusLighthouse_CopyPosition(pillar, other);
+          VenusLighthouse_CopyPosition(other, &savedPosition);
           settledIndex = earlierIndex;
           break;
         }
       }
       other = Actor_Get(settledIndex + ACTOR_FIRST_FLOATING_PILLAR);
-      FloatingPillar_Settle(other, 0);
+      VenusLighthouse_SettleFloatingPillar(other);
       FieldCamera_SetSpeed(3);
       FieldCamera_GetActor()->motionFlags = 0;
       FieldCamera_MoveTo(136, 8, 344, 1);
@@ -2369,8 +2382,9 @@ static void VenusLighthouse_MoveSocketPillar(void) {
       MapGrid_CopyCellAttributes(73, 48, 1, 1, FIELD_CELL(pillar->x.fixed),
                                  FIELD_CELL(pillar->z.fixed));
 
-    socketIndex = 8;
-    for (candidateIndex = 0; candidateIndex < 8; candidateIndex++) {
+    socketIndex = NO_FOURTH_FLOOR_SOCKET;
+    for (candidateIndex = 0; candidateIndex < NO_FOURTH_FLOOR_SOCKET;
+         candidateIndex++) {
       if (FIELD_CELL(pillar->x.fixed) ==
               gVenusFourthFloorSockets[candidateIndex].x &&
           (FIELD_CELL(pillar->z.fixed)) ==
@@ -2380,7 +2394,7 @@ static void VenusLighthouse_MoveSocketPillar(void) {
         break;
       }
     }
-    if (socketIndex == 8)
+    if (socketIndex == NO_FOURTH_FLOOR_SOCKET)
       continue;
     for (candidateIndex = ACTOR_FIRST_SOCKET_PILLAR;
          candidateIndex <= ACTOR_FIRST_SOCKET_PILLAR + 3; candidateIndex++) {
@@ -2388,11 +2402,11 @@ static void VenusLighthouse_MoveSocketPillar(void) {
       if (pillarId != candidateIndex &&
           (FIELD_CELL(pillar->x.fixed)) == FIELD_CELL(otherPillar->x.fixed) &&
           (FIELD_CELL(pillar->z.fixed)) == FIELD_CELL(otherPillar->z.fixed)) {
-        socketIndex = 8;
+        socketIndex = NO_FOURTH_FLOOR_SOCKET;
         break;
       }
     }
-    if (socketIndex == 8)
+    if (socketIndex == NO_FOURTH_FLOOR_SOCKET)
       continue;
 
     savedPriority = leader->sprite->image.priority;
@@ -2503,9 +2517,9 @@ static void VenusLighthouse_JumpOrPushSocketPillar(void) {
 }
 
 /// Isaac walks south into the gap in the floor of the fourth floor's last
-/// room (cell (32, 44)) and drops through it, the walkthrough's point of no
-/// return. He lands on a small round platform, which carries him up to the
-/// Lighthouse Aerie (VenusLighthouse_RaiseLeaderInSparkles).
+/// room (cell (32, 44)) and drops through it. He lands on a small round
+/// platform, which carries him up to the Lighthouse Aerie
+/// (VenusLighthouse_RaiseLeaderInSparkles).
 static void VenusLighthouse_EnterRisingPassage(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
@@ -2568,6 +2582,7 @@ static void VenusLighthouse_VisitPillarActors(void) {
 
   for (actorId = ACTOR_FIRST_SOCKET_PILLAR;
        actorId <= ACTOR_FIRST_SOCKET_PILLAR + 3; actorId++) {
+    // DEAD: each pillar is looked up and dropped; the ROM keeps the calls.
     Actor_Get(actorId);
   }
 }

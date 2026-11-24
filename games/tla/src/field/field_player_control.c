@@ -69,14 +69,6 @@ enum FieldShortcutKind {
 /// leader sinks into the mud.
 enum { MAP_WADING_MUD = 2 };
 
-/// The footprints the leader leaves in snow and sand, and the leader's
-/// userValue that asks for the pair next.
-enum FootprintAnimation {
-  FOOTPRINT_ONE_FOOT = 1, ///< one print, fading
-  /// Two prints side by side, fading: laid first after a stop.
-  FOOTPRINT_BOTH_FEET = 2
-};
-
 /// SC_WALK (LEADER_MOVEMENT_WALKING): the leader's control at one pace, a
 /// pixel a frame whatever the keys. Unused: nothing sets
 /// LEADER_MOVEMENT_WALKING. It is SC_PLAYER (Actor_UpdatePlayerControl) without

@@ -252,4 +252,25 @@ s32 PauseMenu_Run(void);
 s32 DebugBrowser_Icons(void);
 s32 DebugBrowser_Portraits(void);
 
+/// The Japanese name entry screen's second keyboard, which Select switches to.
+extern const u8 gNameEntry_AlternateKeyboardTilemap[];
+/// Eight offsets, 0 to 3 and back, that make the name entry screen's caret
+/// circle: the x offset leads the y offset by five steps.
+extern s8 gNameEntry_CaretWave[];
+/// The kana that take the voiced mark, as first and last pairs ended by 0.
+extern const u8 gNameEntry_VoicedMarkRanges[];
+/// The Delete key's label on the German, Spanish and French name entry screen
+/// keyboards ("ENT", "SUP", "EFF").
+extern u8 gNameEntry_DeleteKeyLabel[];
+/// The End key's label on the German, Spanish and French keyboards ("ENDE",
+/// "FIN", "FIN").
+extern u8 gNameEntry_EndKeyLabel[];
+/// The kana that take the semi-voiced mark, in the same pairs.
+extern const u8 gNameEntry_SemivoicedMarkRanges[];
+/// The name entry screen keyboard's compressed tilemap, the Spanish edition's
+/// with its own letters.
+extern const u8 gNameEntry_KeyboardTilemap[];
+/// The 16x16 sprite the name entry screen shows as its name caret.
+extern const u8 gNameEntry_CaretTiles[];
+
 #endif

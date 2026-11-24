@@ -34,4 +34,13 @@ extern u16 gFont_MarkGlyphCodes[];
 extern const u8 gWindowSprite_CursorBobOffsets[80];
 extern const u8 gWindowSprite_WobbleTail[16];
 
+struct ArticleTable;
+
+/// The articles a message puts before a name, by article class, in the
+/// languages that have them.
+extern const struct ArticleTable gArticle_Table;
+/// Spanish's indefinite articles, by article class; gArticle_Table holds its
+/// definite ones.
+extern const struct ArticleTable gArticle_Indefinite;
+
 #endif

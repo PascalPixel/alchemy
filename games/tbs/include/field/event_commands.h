@@ -399,6 +399,22 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               FIXED z);
 void FieldEffect_ClearOwnedSlot(struct FieldParticle *effect);
 
+/// The map screen's marker tiles: the party's dot, the two kinds of area a
+/// MAP_SCREEN_MARKER row (AREA_MARKER or LIGHTHOUSE_MARKER) asks for (a town
+/// or a place on the way; a lighthouse or Sol Sanctum), and the larger dot that
+/// blinks over the marker nearest the cursor.
+enum MapScreenMarkerTile {
+  MAP_SCREEN_MARKER_PARTY,
+  MAP_SCREEN_MARKER_AREA,
+  MAP_SCREEN_MARKER_LIGHTHOUSE,
+  MAP_SCREEN_MARKER_NEAREST
+};
+
+/// The World Map's area markers, {tile << 16 | flag, area} for
+/// each area's actor id from 11, ended by -1; a zero row reserves an
+/// actor id with no marker.
+extern const s32 gMapScreen_AreaMarkers[];
+
 void MapScreen_Initialize(void);
 void MapScreen_Release(void);
 void MapScreen_UpdateMarkers(void);

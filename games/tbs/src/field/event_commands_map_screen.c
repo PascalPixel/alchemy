@@ -8,20 +8,12 @@
 /// The generated marker pictures: four 16-colour 8 by 8 tiles, 32 bytes each.
 #define MAP_SCREEN_MARKER_TILES 4
 #define MAP_SCREEN_MARKER_TILE_BYTES (MAP_SCREEN_MARKER_TILES * TILE_SIZE_4BPP)
-/// The marker tiles: the party's dot, the two kinds of area an AREA_MARKER
-/// row asks for (a town or a place on the way; a lighthouse or Sol Sanctum),
-/// and the larger dot that blinks over the marker nearest the cursor.
-enum MapScreenMarkerTile {
-  MAP_SCREEN_MARKER_PARTY,
-  MAP_SCREEN_MARKER_AREA,
-  MAP_SCREEN_MARKER_LIGHTHOUSE,
-  MAP_SCREEN_MARKER_NEAREST
-};
 /// The first five of a marker tile row's eight 4-bit pixels, the leftmost in
 /// the low bits; the rest are 0.
 #define MAP_SCREEN_MARKER_ROW(p0, p1, p2, p3, p4)                              \
   ((p0) | (p1) << 4 | (p2) << 8 | (p3) << 12 | (p4) << 16)
-/// The marker tile an AREA_MARKER row's first word holds above its flag.
+/// The marker tile a MAP_SCREEN_MARKER row (AREA_MARKER or LIGHTHOUSE_MARKER)
+/// holds above its flag in its first word.
 #define MAP_SCREEN_AREA_MARKER_TILE(row) ((row) >> 16)
 #define MAP_SCREEN_WIDTH 240  ///< the image's width, the screen's
 #define MAP_SCREEN_HEIGHT 160 ///< the image's height, the screen's

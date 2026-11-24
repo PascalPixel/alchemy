@@ -150,10 +150,6 @@ extern const u8 gMessageSpeed_VoiceRates[];
 /// markers' blend cycle (field_sequence_tables.c).
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];
-/// The World Map's area markers, {tile << 16 | flag, area} for
-/// each area's actor id from 11, ended by -1; a zero row reserves an
-/// actor id with no marker.
-extern const s32 gMapScreen_AreaMarkers[];
 /// The ARM decoder for a battle background's image, which
 /// BattleBackground_Load copies to RAM and runs as a BitDecoder.
 void BitDecoder_DecodeImage(void);

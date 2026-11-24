@@ -16,6 +16,16 @@
 #include "field/object.h"
 #include "system/ram_buffer.h"
 
+/// SPRITE_SAND_RIPPLE's animations, the leader as Sand: the mound of sand
+/// shifting as it moves, and standing upright as it climbs a face.
+#define SAND_ANIMATION_MOVE 1
+#define SAND_ANIMATION_CLIMB 3
+/// The puff of sand the leader leaves behind, thinning away over 64 frames
+/// (SPRITE_SAND_PUFF), and a grain dropping off as he climbs, a cloud that
+/// scatters into specks over 48 frames (SPRITE_DUST_CLOUD).
+#define SAND_PUFF_ANIMATION_THIN 1
+#define DUST_CLOUD_ANIMATION_SCATTER 2
+
 /// Whether the actor can step 8 pixels toward angle: probe is set to the
 /// step's place and tested against the map.
 #define STEP_IS_CLEAR(actor, probe, angle)                                     \
@@ -478,7 +488,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       collision = PLAYER_STEP_STOPPED;
     } else {
       SET_CLIMB_STEP(&position, actor, (u16)angle);
-      Actor_SelectAnimation(actor, 3);
+      Actor_SelectAnimation(actor, SAND_ANIMATION_CLIMB);
       if (!(CLIMB_STEP_IS_CLEAR(actor, &testPosition, (u16)angle) &&
             CLIMB_STEP_IS_CLEAR(actor, &testPosition,
                                 (u16)angle + FIELD_PROBE_ANGLE) &&
@@ -530,7 +540,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         effect->scaleX = toFIXED(0.3);
         effect->scaleY = toFIXED(0.3);
         if (sprite != NULL) {
-          Sprite_StartAnimation(sprite, 2);
+          Sprite_StartAnimation(sprite, DUST_CLOUD_ANIMATION_SCATTER);
           sprite->flags = 0;
           sprite->priority = 0;
         }
@@ -596,7 +606,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
             actor->velocityX = 0;
             actor->velocityY = 0;
             actor->velocityZ = 0;
-            Actor_SelectAnimation(actor, 3);
+            Actor_SelectAnimation(actor, SAND_ANIMATION_CLIMB);
             goto done;
           }
         }
@@ -615,7 +625,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
             actor->velocityX = 0;
             actor->velocityY = 0;
             actor->velocityZ = 0;
-            Actor_SelectAnimation(actor, 3);
+            Actor_SelectAnimation(actor, SAND_ANIMATION_CLIMB);
             goto done;
           }
         }
@@ -633,7 +643,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         state->heldKeys = gInput.held;
       }
     }
-    Actor_SelectAnimation(actor, 1);
+    Actor_SelectAnimation(actor, SAND_ANIMATION_MOVE);
     if (collision != 0) {
       actor->targetX = ACTOR_NO_TARGET;
       actor->targetY = ACTOR_NO_TARGET;
@@ -683,7 +693,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         if (sprite != NULL) {
           struct FieldState *state = Ram_HeapSlots->fieldState;
 
-          Sprite_StartAnimation(sprite, 1);
+          Sprite_StartAnimation(sprite, SAND_PUFF_ANIMATION_THIN);
           sprite->flags = 0;
           // DEAD: overwritten by the next line; the ROM keeps its mask and OR.
           sprite->priority = 2;
@@ -805,7 +815,7 @@ update_object:
       state->blockedSteps = 0;
     state->heldKeys = gInput.held;
   }
-  Actor_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, SAND_ANIMATION_MOVE);
 
   if (collision != 0) {
     actor->targetX = ACTOR_NO_TARGET;
@@ -867,7 +877,7 @@ update_object:
       ripple->wakeFrames = 100;
       ripple->motionFlags = 0;
       if (rippleSprite != NULL) {
-        Sprite_StartAnimation(rippleSprite, 1);
+        Sprite_StartAnimation(rippleSprite, SAND_PUFF_ANIMATION_THIN);
         rippleSprite->flags = 0;
         // DEAD: overwritten by the next line; the ROM keeps its mask and OR.
         rippleSprite->priority = 2;

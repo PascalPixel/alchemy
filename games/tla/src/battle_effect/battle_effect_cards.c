@@ -5,10 +5,16 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// The card's picture, CARD_WIDTH by CARD_HEIGHT, in the map cell buffer;
-/// SheepCardSheet's four sheep follow it.
-#define CARD (gMapGridCellBuffer + 24638)
-#define CARD_SHEEP (Ram_MapCellBuffer + 24638 + CARD_WIDTH * CARD_HEIGHT)
+/// The Death Card's RedCrescentSheetA, decoded at the start of the map cell
+/// buffer: its four pictures' bytes.
+#define RED_CRESCENT_BYTES                                                     \
+  (RED_CRESCENT_FADE_D + PICTURE_BYTES(RED_CRESCENT_FADE_D))
+/// The card's picture, CARD_WIDTH by CARD_HEIGHT, in the map cell buffer after
+/// the crescent's; SheepCardSheet's four sheep follow it. CARD_SHEEP reaches
+/// the same buffer by its fixed address.
+#define CARD (gMapGridCellBuffer + RED_CRESCENT_BYTES)
+#define CARD_SHEEP                                                             \
+  (Ram_MapCellBuffer + RED_CRESCENT_BYTES + CARD_WIDTH * CARD_HEIGHT)
 /// After the Death and Sword cards' pictures: the step of the dissolve, 0 to
 /// 15, at which each pixel clears, for eight rows repeated down the card.
 #define CARD_DISSOLVE_STEPS (CARD + CARD_WIDTH * CARD_HEIGHT)
@@ -524,6 +530,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
+#undef RED_CRESCENT_BYTES
 #undef CARD
 #undef CARD_SHEEP
 #undef CARD_DISSOLVE_STEPS

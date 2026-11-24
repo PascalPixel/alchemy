@@ -352,10 +352,6 @@ enum LiftOperatorAnimation {
   LIFT_OPERATOR_ANIMATION_LIFTS_APART = 11
 };
 
-/// SPRITE_LOG_NORTH_SOUTH lying still after a roll (log_north_south.tsv's
-/// first rolling picture, held), beside its LogAnimation.
-#define LOG_ANIMATION_AT_REST 1
-
 /// The cell behaviours the stages' step triggers answer.
 enum ColosseumSatrageMatchCellBehavior {
   /// The ledge at the foot of The Wall, cell (37, 16), a cell east of where

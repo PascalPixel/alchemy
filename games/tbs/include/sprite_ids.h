@@ -655,6 +655,12 @@ enum BabiAnimation {
 /// SPRITE_LOG_NORTH_SOUTH's animations (log_north_south.tsv) as a log tips into
 /// a river.
 enum LogAnimation {
+  /// Picture 10 held, a log lying still, the first of the pictures its rolls
+  /// turn through.
+  LOG_ANIMATION_AT_REST = 1,
+  /// Pictures 10 to 13 in turn, rolling over toward the east, as a shove east
+  /// or south rolls it.
+  LOG_ANIMATION_ROLL_EAST = 2,
   LOG_ANIMATION_ROLL_WEST = 3, ///< rolling over toward the west
   LOG_ANIMATION_FLOAT = 4,     ///< bobbing in the water
   /// Drops into the water with a ring of spray, then LOG_ANIMATION_FLOAT.

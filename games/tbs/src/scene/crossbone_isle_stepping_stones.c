@@ -204,10 +204,6 @@ enum {
   CELL_BEHAVIOR_STACKED_PILLARS_LEAVE_LOWEST_FLOOR = 41
 };
 
-/// A log lying still: log_north_south.tsv's and log_west_east.tsv's picture 10
-/// held, the first of the pictures their rolls turn through.
-#define LOG_ANIMATION_AT_REST 1
-
 /// SPRITE_TURNING_ROCK's round boulder (turning_rock.tsv's picture 1), as the
 /// dragon statue's room's boulder is drawn.
 #define TURNING_ROCK_ANIMATION_BOULDER 2

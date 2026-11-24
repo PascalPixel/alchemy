@@ -123,13 +123,12 @@ enum StandingLogAnimation {
   STANDING_LOG_ANIMATION_FALLEN = 3
 };
 
-/// The long log's animations besides LogAnimation's (log_north_south.tsv):
-/// picture 10 held, once it stops, and the roll through pictures 10 to 13 it
-/// plays rolling west. Rolling east it plays the same pictures backwards,
-/// LOG_ANIMATION_ROLL_WEST, which Vale Cave plays rolling west.
+/// The long log's roll through pictures 10 to 13 (log_north_south.tsv), which
+/// it plays rolling west, where Vale Cave and Kolima's floodgate play it as
+/// LOG_ANIMATION_ROLL_EAST. Rolling east it plays the same pictures backwards,
+/// LOG_ANIMATION_ROLL_WEST.
 // XXX: which way pictures 10 to 13 turn the log; a recording of the long log
 // rolled each way, beside one of Vale Cave's west log, would settle it.
-#define LOG_ANIMATION_AT_REST 1
 #define LONG_LOG_ANIMATION_ROLL_WEST 2
 
 /// The Wall Wedge's operator's poses (young_man_with_fair_hair.tsv's held

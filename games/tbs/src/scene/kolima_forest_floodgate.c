@@ -127,14 +127,6 @@ enum {
   ACTOR_SIGN
 };
 
-/// SPRITE_LOG_NORTH_SOUTH's and SPRITE_LOG_WEST_EAST's animations besides
-/// LogAnimation's (log_north_south.tsv): picture 10 held, a log lying still on
-/// dry ground, and pictures 10 to 13 in turn, the roll a shove east or south
-/// plays (gKolimaForestFloodgate_PushAnimations), as LOG_ANIMATION_ROLL_WEST
-/// plays them backwards. The bank log rolls this way whichever way it goes.
-#define LOG_ANIMATION_AT_REST 1
-#define LOG_ANIMATION_ROLL_EAST 2
-
 /// A map grid row, MAPGRID_SIZE cells, as a shift.
 #define MAPGRID_ROW_SHIFT 7
 

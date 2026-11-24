@@ -167,9 +167,6 @@ enum { CRATES_ANIMATION_SUNK = 2 };
 /// The pushed logs' animations beyond enum LogAnimation, from
 /// log_north_south.tsv and log_west_east.tsv, which order theirs alike.
 enum ValeCaveLogAnimation {
-  /// Rolling over the opposite way to LOG_ANIMATION_ROLL_WEST: the west log's
-  /// roll as it is pushed east.
-  LOG_ANIMATION_ROLL_EAST = 2,
   /// log_west_east.tsv's roll in the order of LOG_ANIMATION_ROLL_WEST, as the
   /// south log tips north into the pool.
   LOG_WEST_EAST_ANIMATION_ROLL = 3

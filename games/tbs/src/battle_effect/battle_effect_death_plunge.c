@@ -24,10 +24,6 @@
 #define DEATH_PLUNGE_RUN_PERCENT 90
 /// The flashes thrown in a ring after the strike.
 #define DEATH_PLUNGE_RING_FLASHES 16
-/// The pose the user comes down in: animation 0 of a battle sprite, its first
-/// standing picture held still, without POSE_STANDING's breathing.
-#define POSE_STILL 0
-
 /// The user runs at the first target, both leap and turn upside down, and on
 /// the hit they bounce apart while a ball of fire swells over them.
 ///
@@ -1120,4 +1116,3 @@ void BattleEffect_EndElementStreaks(void) {
 #undef STREAK_START_DISTANCE
 #undef STREAK_LENGTH
 #undef ELEMENT_BURST_MOTE_LIFE
-#undef POSE_STILL

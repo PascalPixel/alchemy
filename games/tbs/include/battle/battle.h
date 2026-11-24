@@ -146,7 +146,9 @@ enum BattleKnockback {
 /// The battle sprites' animations (Sprite_StartAnimation numbers)
 /// that the battle code picks by name.
 enum BattlePose {
-  POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held
+  /// The first standing picture held still, without POSE_STANDING's
+  /// breathing: how an enemy asleep, stunned or held stands.
+  POSE_STILL = 0,
   POSE_STANDING = 1,
   POSE_LEAP = 2,       ///< running up to a target and leaping
   POSE_CAST = 3,       ///< a hand raised to cast or use an item

@@ -281,8 +281,7 @@ UNREAD_RESULT BattleObject_UpdatePose(s32 unitId) {
   pose = POSE_STANDING;
   if (unit->hp != 0) {
     if (unit->sleep != 0 || unit->stun != 0 || unit->immobile != 0)
-      pose =
-          unit->side == BATTLE_SIDE_ENEMY ? POSE_ENEMY_HELD : POSE_PARTY_HELD;
+      pose = unit->side == BATTLE_SIDE_ENEMY ? POSE_STILL : POSE_PARTY_HELD;
   } else if (unit->side == BATTLE_SIDE_ENEMY) {
     pose = POSE_ENEMY_DOWN;
   } else {

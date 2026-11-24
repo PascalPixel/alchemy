@@ -134,7 +134,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     struct Point2D wave;
     struct Point2D drift;
     Resource_LoadAndDecompress(RESOURCE_WHIRLWIND_SHEET, state->sheet, 1, 1);
-    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
     EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     wave.x = toFIXED(128);
     wave.y = toFIXED(40);
@@ -693,7 +693,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET,
                              state->sheet + DRAGON_FIRE_FLAME_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   if (mode == DRAGON_FIRE_DRAGON_DRIVER) {
     LOAD_BG_PALETTE(RESOURCE_LIGHTNING_BOLT_SHEET);
   }

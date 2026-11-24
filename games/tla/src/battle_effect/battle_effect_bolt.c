@@ -60,7 +60,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              state->sheet + BOLT_PICTURES, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   for (j = 0; j != PARTICLE_POOL_COUNT; j++)
     PARTICLES[j].variant = 0;
   EFFECT_FREE_PARTICLES(j, state->particles, 64);

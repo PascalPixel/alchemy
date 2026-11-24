@@ -344,7 +344,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       backdrop->busy = 1;
       Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0),
                            BATTLE_BACKGROUND_COLORS * 2, COLOR_PAIR(RGB_WHITE));
-      Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, state->sheet, 0,
+      Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, state->sheet, 0,
                                  0);
       // DEAD: ever-fainter copies of one mote, which Zagan never draws; the
       // ROM keeps the copies.

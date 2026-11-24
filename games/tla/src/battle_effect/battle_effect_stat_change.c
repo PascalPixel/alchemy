@@ -133,7 +133,7 @@ void BattleEffect_RunCrucibleFire(struct BattleEffectParams *args) {
 
 /// Where each picture sits in the sprite sheet.
 enum StatBoostSheet {
-  STAT_BOOST_FLARES = 0,      ///< flares (ParticleSpritesD)
+  STAT_BOOST_FLARES = 0,      ///< flares (BlueGlowSheet)
   STAT_BOOST_BURST = 1550,    ///< six bursts of light (GlowOrb)
   STAT_BOOST_PICTURE = 11150, ///< the picture the mode picks
   STAT_BOOST_DJINNI = 26048   ///< the Djinni
@@ -238,7 +238,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   REG_BG2PA = Q_8_8(0.8); // 1.25 times the width
 
   // The pictures and the colours.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET,
                              state->sheet + STAT_BOOST_FLARES, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,
                              state->sheet + STAT_BOOST_BURST, 1, 1);

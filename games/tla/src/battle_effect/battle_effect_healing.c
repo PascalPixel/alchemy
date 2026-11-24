@@ -240,7 +240,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   }
 
   // The pictures, Eddy's bubble narrowed, and the colours.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, state->sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET,
                              state->sheet + HEALING_BUBBLE_SHEET, 1, 0);

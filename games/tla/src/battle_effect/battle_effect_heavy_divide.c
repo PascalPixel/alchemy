@@ -606,7 +606,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
       goto nextRow;
     }
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BURNING_SKULL_SHEET,
                              state->sheet + WYRD_CURSE_SKULL_PICTURES, 0, 0);
 

@@ -197,7 +197,7 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
 /// puffs, FlashBurstSheet's six 32x64 bursts, or StarCrossSheet's star.
 #define TARGET_STRIKE_HIT_PICTURES 12800
 /// The bite's stages after the tornado sprite sheet: BeamImage for a slash,
-/// TwelveModeImage otherwise.
+/// BlueDropletSheet otherwise.
 #define TARGET_STRIKE_BITE_PICTURES 3200
 
 /// Strikes the first target with slashes or a bite of closing fangs, with the
@@ -239,13 +239,13 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
   // The sprite sheets: motes, the tornado, the slashes or fangs, the style's
   // colours and the hit's pictures (smoke, flashes or the star).
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
   if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH)
     Resource_LoadAndDecompress(
         RESOURCE_BEAM_IMAGE, state->sheet + TARGET_STRIKE_BITE_PICTURES, 0, 0);
   else
-    Resource_LoadAndDecompress(RESOURCE_TWELVE_MODE_IMAGE,
+    Resource_LoadAndDecompress(RESOURCE_BLUE_DROPLET_SHEET,
                                state->sheet + TARGET_STRIKE_BITE_PICTURES, 0,
                                0);
   switch (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COLOR)) {
@@ -947,7 +947,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 /// ELEMENT_PILLAR_TURN_FRAMES.
 #define ELEMENT_PILLAR_MOTES 32
 #define ELEMENT_PILLAR_TURN_FRAMES 64
-/// The bytes of ParticleSpritesD, the motes' sheet, which the pillar
+/// The bytes of BlueGlowSheet, the motes' sheet, which the pillar
 /// allocates for itself.
 #define ELEMENT_PILLAR_SHEET_BYTES 1550
 
@@ -979,7 +979,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(ELEMENT_BLEND_LEVEL);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress(RESOURCE_ICE_TILE_SHEET, state->sheet, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sheet, 0, 0);
   switch (args->kind) {
   case ELEMENT_VENUS:
     palette = Resource_GetTableEntry(RESOURCE_YELLOW_PALETTE_A);

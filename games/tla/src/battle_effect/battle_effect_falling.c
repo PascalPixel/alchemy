@@ -246,7 +246,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 #define DOUSE_DROP_SPACING(variant) gFalling_Counts[(variant) * 4 + 2]
 #define DOUSE_FRAMES(variant) gFalling_Counts[(variant) * 4 + 3]
 
-/// BlueBeamSheet, after ParticleSpritesD's ten flare pictures: the falling
+/// BlueBeamSheet, after BlueGlowSheet's ten flare pictures: the falling
 /// drop, a blue bubble; the small splash it lands in; then the large splash.
 #define DOUSE_FALLING_PICTURE FLARE_SET_BYTES
 #define DOUSE_SMALL_SPLASH_PICTURE                                             \
@@ -276,7 +276,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET,
                              state->sheet + DOUSE_FALLING_PICTURE, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, state->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, state->sheet, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |

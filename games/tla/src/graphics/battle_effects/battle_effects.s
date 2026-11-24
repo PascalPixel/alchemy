@@ -517,15 +517,15 @@ BattleEffect_IceTileSheet:
 	.incbin "games/tla/src/graphics/battle_effects/ice_tile_00.gbapal"
 	.incbin "games/tla/src/graphics/battle_effects/ice_tile.parts.lz"
 	.byte 0x00, 0x01	@ PACKER: left in the buffer by BattleEffect_CyanSparkSheet+0x106a
-	.global BattleEffect_FiveModeImage
-BattleEffect_FiveModeImage:
+	.global BattleEffect_FlameArcSheet
+BattleEffect_FlameArcSheet:
 	.incbin "games/tla/src/graphics/battle_effects/five_mode.bitmap.lz"
 	.byte 0x96	@ PACKER: left in the buffer by BattleEffect_IceTileSheet+0xfc7
 	.global BattleEffect_SpiderWebSheet
 BattleEffect_SpiderWebSheet:
 	.incbin "games/tla/src/graphics/battle_effects/spider_web.gbapal"
 	.incbin "games/tla/src/graphics/battle_effects/spider_web.bitmap.lz"
-	.byte 0x18, 0x85	@ PACKER: left in the buffer by BattleEffect_FiveModeImage+0x25a
+	.byte 0x18, 0x85	@ PACKER: left in the buffer by BattleEffect_FlameArcSheet+0x25a
 	.global BattleEffect_VioletLightningSheetA
 BattleEffect_VioletLightningSheetA:
 	.incbin "games/tla/src/graphics/battle_effects/violet_lightning_a.gbapal"
@@ -576,15 +576,15 @@ BattleEffect_BlueCrescentSheet:
 	.incbin "games/tla/src/graphics/battle_effects/blue_crescent.gbapal"
 	.incbin "games/tla/src/graphics/battle_effects/blue_crescent.bitmap.lz"
 	.byte 0xe0, 0x02	@ PACKER: left in the buffer by BattleEffect_FireBurstSheet+0x21e
-	.global BattleEffect_OverlayImageA
-BattleEffect_OverlayImageA:
+	.global BattleEffect_JudgmentFlashSheet
+BattleEffect_JudgmentFlashSheet:
 	.incbin "games/tla/src/graphics/battle_effects/overlay_a.parts.lz"
 	.byte 0x88	@ PACKER: left in the buffer by BattleEffect_FireBurstSheet+0x43b
 	.global BattleEffect_VioletMoteSheet
 BattleEffect_VioletMoteSheet:
 	.incbin "games/tla/src/graphics/battle_effects/violet_mote.gbapal"
 	.incbin "games/tla/src/graphics/battle_effects/violet_mote.bitmap.lz"
-	.byte 0x28, 0x41, 0x42	@ PACKER: left in the buffer by BattleEffect_OverlayImageA+0x111
+	.byte 0x28, 0x41, 0x42	@ PACKER: left in the buffer by BattleEffect_JudgmentFlashSheet+0x111
 	.global BattleEffect_FireballSheet
 BattleEffect_FireballSheet:
 	.incbin "games/tla/src/graphics/battle_effects/fireball.gbapal"
@@ -635,21 +635,21 @@ BattleEffect_MagentaSwirlSheet:
 BattleEffect_MagentaTailSheet:
 	.incbin "games/tla/src/graphics/battle_effects/magenta_tail.gbapal"
 	.incbin "games/tla/src/graphics/battle_effects/magenta_tail.bitmap.lz"
-	.global BattleEffect_ParticleSpritesA
-BattleEffect_ParticleSpritesA:
+	.global BattleEffect_YellowGlowSheet
+BattleEffect_YellowGlowSheet:
 	.incbin "games/tla/src/graphics/battle_effects/dot_cells_a.parts.lz"
 	.byte 0x59, 0x45	@ PACKER: left in the buffer by BattleEffect_MagentaTailSheet+0x1ba
-	.global BattleEffect_ParticleSpritesB
-BattleEffect_ParticleSpritesB:
+	.global BattleEffect_PaleBlueGlowSheet
+BattleEffect_PaleBlueGlowSheet:
 	.incbin "games/tla/src/graphics/battle_effects/dot_cells_b.parts.lz"
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.global BattleEffect_ParticleSpritesC
-BattleEffect_ParticleSpritesC:
+	.global BattleEffect_BlueTallGlowSheet
+BattleEffect_BlueTallGlowSheet:
 	.incbin "games/tla/src/graphics/battle_effects/dot_cells_c.parts.lz"
-	.global BattleEffect_ParticleSpritesD
-BattleEffect_ParticleSpritesD:
+	.global BattleEffect_BlueGlowSheet
+BattleEffect_BlueGlowSheet:
 	.incbin "games/tla/src/graphics/battle_effects/dot_cells_d.parts.lz"
-	.byte 0x0c	@ PACKER: left in the buffer by BattleEffect_ParticleSpritesC+0x417
+	.byte 0x0c	@ PACKER: left in the buffer by BattleEffect_BlueTallGlowSheet+0x417
 	.global BattleEffect_GreenPalette
 BattleEffect_GreenPalette:
 	.incbin "games/tla/src/graphics/battle_effects/green_palette.gbapal"
@@ -1019,8 +1019,8 @@ BattleEffect_LightningBoltSheet:
 BattleEffect_BeamImage:
 	.incbin "games/tla/src/graphics/battle_effects/beam_image.parts.lz"
 	.byte 0x5f	@ PACKER: left in the buffer by BattleEffect_LightningBoltSheet+0x37b
-	.global BattleEffect_TwelveModeImage
-BattleEffect_TwelveModeImage:
+	.global BattleEffect_BlueDropletSheet
+BattleEffect_BlueDropletSheet:
 	.incbin "games/tla/src/graphics/battle_effects/twelve_mode.bitmap.lz"
 	.byte 0xa5	@ PACKER: left in the buffer by BattleEffect_LightningBoltSheet+0x42f
 	.global BattleEffect_WindStreakSheet

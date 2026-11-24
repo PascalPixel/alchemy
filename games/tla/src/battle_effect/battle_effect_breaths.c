@@ -75,7 +75,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_StartCanvasLayer(0);
   else
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   if (mode == BREATH_PIKE) {
     LOAD_BG_PALETTE(RESOURCE_BLUE_FLAME_SHEET);
   } else {

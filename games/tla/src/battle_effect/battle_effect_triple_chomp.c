@@ -69,7 +69,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
                       BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, pixels, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                        SHEET_PALETTE_BYTES);

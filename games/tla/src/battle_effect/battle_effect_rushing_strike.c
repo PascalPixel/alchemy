@@ -56,7 +56,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motePictures, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motePictures, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, Ram_MapCellBuffer, 0,
                              0);
 

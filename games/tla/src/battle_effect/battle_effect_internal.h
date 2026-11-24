@@ -305,7 +305,7 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define EFFECT_DRAW_PICTURE(draw, canvas, sheet, name, x, y)                   \
   (draw)(canvas, (sheet) + (name), x, y, name##_WIDTH, name##_HEIGHT)
 
-/// A bite's half pictures (TwelveModeImage's closing fangs, each drawn beside
+/// A bite's half pictures (BlueDropletSheet's closing fangs, each drawn beside
 /// its mirror): the canvas row they start at, and their size.
 #define TARGET_STRIKE_BITE_Y 56
 #define TARGET_STRIKE_BITE_WIDTH 18
@@ -585,7 +585,7 @@ enum RedCrescentPicture {
     if ((level) < 0)                                                           \
       (level) = 0;                                                             \
   }
-/// The bytes of ParticleSpritesD's ten flare pictures, 2 to 20 pixels square:
+/// The bytes of BlueGlowSheet's ten flare pictures, 2 to 20 pixels square:
 /// 4 * (1 + 4 + ... + 100).
 #define FLARE_SET_BYTES 1540
 #define MOTE_PICTURES 10

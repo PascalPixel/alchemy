@@ -113,7 +113,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
     state->particles[DJINNI_CHARGE_START].x = focus[0];
     state->particles[DJINNI_CHARGE_START].y = focus[1];
     state->particles[DJINNI_CHARGE_START].z = focus[2];
-    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
     Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET,
                                state->sheet + DJINNI_CHARGE_DJINNI_PICTURE, 1,
                                1);

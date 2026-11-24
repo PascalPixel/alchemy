@@ -108,7 +108,7 @@ extern const struct Scale gCharon_FinaleScale;
 
 /// Where the pictures that load once are decoded in the effect's sprite sheet:
 /// the rune seal as it is stamped (RuneSealSheet, 184 by 80), then at frame 132
-/// Charon's, its wisp's and ParticleSpritesD's in turn.
+/// Charon's, its wisp's and BlueGlowSheet's in turn.
 #define CHARON_BEAST_PICTURES 9216
 #define CHARON_RUNE_SEAL 9216
 #define RUNE_SEAL_WIDTH 184
@@ -318,8 +318,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     SPRITES[CHARON_SHARD_FRAMES + i] = object;
     Iwram_CopyWords(object, sprites[0], offsetof(struct Sprite, lastNo));
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motePictures, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, state->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motePictures, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, state->sheet, 0, 0);
   for (j = 0; j != CHARON_RING_SHADES; j++) {
     moteSize = CHARON_RING_MOTE;
     for (i = 0; i != moteSize * moteSize * 2; i++) {
@@ -696,7 +696,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         source = (u8 *)Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_E);
         Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
-        Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
+        Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET,
                                    state->sheet + CHARON_BEAST_PICTURES, 0, 0);
         Iwram_CopyWords(motePictures, state->sheet + CHARON_BEAST_PICTURES,
                         MOTE_SET_BYTES);
@@ -1437,7 +1437,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                   CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   Resource_LoadAndDecompress(RESOURCE_GLOW_RING_TEXTURE,
                              state->sheet + CHARON_GLOW_RING, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motePictures, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motePictures, 0, 0);
   // DEAD: i counts to MOTE_SET_BYTES by 35, and nothing reads it; the ROM
   // keeps the add and the test.
   {

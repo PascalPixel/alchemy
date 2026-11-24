@@ -88,7 +88,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, RESOURCE_FOREST_BACKDROP,
                            0);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_BLOB_SHEET, state->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(CANVAS_BLEND_LEVEL);
 

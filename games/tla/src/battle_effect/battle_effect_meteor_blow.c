@@ -492,7 +492,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
                              state->sheet + METEOR_BLOW_BILLOW, 0, 0);

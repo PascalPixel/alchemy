@@ -139,7 +139,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     for (k = 0; k != gGaia_FlameWidths[i] * gGaia_FlameHeights[i]; k++)
       state->sheet[sheetIndex++] = *src++;
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 
   for (i = 0; i != GAIA_ROCKS; i++) {
     struct Sprite *rock = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);

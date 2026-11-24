@@ -80,7 +80,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FLAME_BLADE_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              state->sheet + RAGNAROK_FLASH_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, cells, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, cells, 0, 0);
 
   // Each column's flashes (a ring, 2 pixels apart, living 25 to 32 frames)
   // and sparks (from y = 88, at random speeds and angles, living 32 to 39).
@@ -360,7 +360,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              state->sheet + TITAN_BLADE_FLASH_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, cells, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, cells, 0, 0);
 
   // Acheron's Grief turns the canvas's colours: red to blue, blue to green,
   // green to red.

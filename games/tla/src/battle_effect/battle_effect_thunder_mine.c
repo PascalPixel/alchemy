@@ -85,7 +85,7 @@ void BattleEffect_RunBallLightning(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                              state->sheet + BALL_LIGHTNING_TORNADO_PICTURES, 1,
                              0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, buffer, 1, 1);
   if (mode == BALL_LIGHTNING_EARTH_FORCE) {
     Iwram_CopyWords((void *)BG_PLTT,
@@ -413,7 +413,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              state->sheet + MEGAERA_FLASH_BURST_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, pictures, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              pictures + MEGAERA_LIGHTNING_BOLT_PICTURES, 1, 0);
@@ -813,7 +813,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_COMET_SHEET_B,
                              state->sheet + VOID_BEAM_COMET_B_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 
   // The motes, one shade dimmer.
   for (i = 0; i != MOTE_SET_BYTES; i++) {

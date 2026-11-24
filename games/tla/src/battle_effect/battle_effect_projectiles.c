@@ -101,7 +101,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   }
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, state->sheet);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
 
   // Additive and max blitters, clipped, and mirrored when the party casts.
   if (side == EFFECT_SIDE_PARTY) {
@@ -614,7 +614,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
   // The shot pictures.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   if (mode == PROJECTILE_VOLLEY_SLASH ||
       mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
       mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {

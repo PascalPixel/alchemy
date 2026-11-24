@@ -58,7 +58,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              state->sheet + RAY_PICTURES, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
 
   // Destruct Ray's wide canvas is scrolled towards the targets' side; the
   // others' is centred on the targets and kept on the screen, and where it

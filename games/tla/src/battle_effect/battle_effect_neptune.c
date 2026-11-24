@@ -14,7 +14,7 @@
 #define NEPTUNE_FLARES_FRAME 152
 #define NEPTUNE_BURST_FRAME 222
 
-/// ParticleSpritesD's flare pictures, after the spray.
+/// BlueGlowSheet's flare pictures, after the spray.
 #define NEPTUNE_FLARE_SHEET 20000
 /// The splash where the beam meets the head, growing and curling.
 #define NEPTUNE_SPLASH PICTURE_BYTES(WATER_WAVE)
@@ -141,9 +141,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            RESOURCE_DUSK_CLOUDS_BACKDROP, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, particleSheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, particleSheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET,
                              state->sheet + NEPTUNE_FLARE_SHEET, 0, 0);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   windowEdgeStep = 1;

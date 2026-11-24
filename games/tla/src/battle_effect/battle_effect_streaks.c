@@ -78,7 +78,7 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, STREAK_STYLE_LIME);
 }
 
-/// FiveModeImage's streaks: three animation frames, each six pictures that
+/// FlameArcSheet's streaks: three animation frames, each six pictures that
 /// grow; each picture is the lower half of a ring, and the upper half is it
 /// drawn flipped, so a streak flies as a ring of light.
 #define STREAK_WIDTH 20
@@ -134,7 +134,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   }
 
   // The streak pictures, and the mode's colours.
-  Resource_LoadAndDecompress(RESOURCE_FIVE_MODE_IMAGE, state->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_ARC_SHEET, state->sheet, 0, 0);
   switch (mode) {
   case STREAK_STYLE_EMBER:
     resource = RESOURCE_EMBER_STREAK_SHEET;
@@ -369,7 +369,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   if (mode == MOTE_FOUNTAIN_HEALING)
     resource = RESOURCE_ORANGE_PALETTE_A;
   else if (mode == MOTE_FOUNTAIN_DRIFTING)

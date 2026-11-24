@@ -57,7 +57,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
 
   // Open the canvas and load the pictures.
   EFFECT_START_NARROW_CANVAS(0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET,
                              state->sheet + UNDEAD_SWORD_SPARK_SHEET, 1, 0);
@@ -215,7 +215,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
       (void *)BG_PLTT,
       Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SMALL_SHEET),
       SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              state->sheet + PLUME_EDGE_FOAM_PICTURES, 1, 0);
@@ -901,7 +901,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     frames = args->targetCount * 6 + 12;
   }
   Resource_LoadAndDecompress(RESOURCE_STREAK_TEXTURE, state->sheet, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(
       RESOURCE_JUPITER_DJINN_SMALL_SHEET,
       state->sheet + WIND_FUNNEL_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
@@ -1177,7 +1177,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   // rows before it; the ROM keeps the call.
   Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
                              cells + DIAMOND_BERG_BILLOW, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                              state->sheet + DIAMOND_BERG_FIRE_RING, 0, 0);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);

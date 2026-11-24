@@ -59,7 +59,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                              state->sheet + LIQUIFIER_GLOW_BAND, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, gEffectScratch, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->user, &from);
@@ -478,7 +478,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   else
     frames = 66;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
 
   // Discs of sizes 2 to 64 one after another in the map cell buffer, with
   // their offsets at the start of the sheet.

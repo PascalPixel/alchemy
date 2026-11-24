@@ -123,7 +123,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
   // Load the card and what comes out of it; the Sword Card makes seven
   // darker copies of its shards for their fade.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   if (mode == CARD_SLEEP) {
     Resource_LoadAndDecompress(RESOURCE_SHEEP_CARD_SHEET, CARD, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET, state->sheet, 0,

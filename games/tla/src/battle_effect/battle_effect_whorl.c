@@ -189,7 +189,7 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
   } else {
     Resource_LoadAndDecompress(RESOURCE_STREAK_TEXTURE, state->sheet, 0, 0);
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(
       RESOURCE_JUPITER_DJINN_SMALL_SHEET,
       state->sheet + TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES, 1, 1);

@@ -175,7 +175,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
         screen, otherPoint);
 
   // The pictures and the palette.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   // The orb's pictures, packed to half width: the canvas is shown twice as
   // wide.
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, state->sheet, 1, 0);

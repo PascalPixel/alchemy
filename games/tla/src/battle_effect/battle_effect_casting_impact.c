@@ -362,7 +362,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
 
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   // Setup: the pictures.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, pictures, 1, 0);
   BattleEffect_PackTileRows(
@@ -459,7 +459,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   } else if (kind == CASTING_IMPACT_IMPACT_WILD_WOLF ||
              kind == CASTING_IMPACT_IMPACT_DINOX ||
              kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE) {
-    Resource_LoadAndDecompress(RESOURCE_TWELVE_MODE_IMAGE, pictures, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_DROPLET_SHEET, pictures, 0, 0);
     Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                pictures + CASTING_IMPACT_FLASH_BURST_PICTURES,
                                1, 0);

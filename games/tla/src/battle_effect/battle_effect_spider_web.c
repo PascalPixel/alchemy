@@ -408,7 +408,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLUTTERING_FLAKE_SHEET, picture, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sprites, 0, 0);
   loaded = 0;
   mage.x = toFIXED(200);
   mage.z = toFIXED(84);

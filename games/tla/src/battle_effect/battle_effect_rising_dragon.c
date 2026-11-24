@@ -94,7 +94,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
     EffectPosition_ProjectBattler(args->user, &source);
     EffectPosition_ProjectBattler(args->targets[0], &target);
     Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
-    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
     Resource_LoadAndDecompress(
         RESOURCE_CLAW_SLASH_SHEET,
         state->sheet + RISING_DRAGON_FLAME_DRAGON_HEAD_PICTURES, 1, 1);

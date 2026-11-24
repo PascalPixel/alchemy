@@ -44,7 +44,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A,
                              state->sheet + NEREID_COLUMN_PICTURE, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
   {

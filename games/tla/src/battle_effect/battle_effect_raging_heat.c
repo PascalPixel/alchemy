@@ -77,7 +77,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   baseY = targets[0].y - 48;
   Resource_LoadAndDecompress(RESOURCE_CORNER_RUNE_B_SHEET, buffer, 1, 1);
   Picture_MirrorIntoQuadrants(buffer, state->sheet, 64, 64);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              state->sheet + RAGING_HEAT_FLASH_BURST_PICTURES, 1,
                              0);
@@ -314,7 +314,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_SMALL_FLAME_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sparkCels, 0, 0);
   if (args->variant == EFFECT_VARIANT_STRONGEST) {
     LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   }

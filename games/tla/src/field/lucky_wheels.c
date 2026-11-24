@@ -1410,8 +1410,7 @@ void LuckyWheels_Run(void) {
       }
     }
   }
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_D),
-                      sheet);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_BLUE_GLOW_SHEET), sheet);
   entry = Resource_GetTableEntry(RESOURCE_SLOTS_MACHINE_PICTURE);
   Dma_Set(entry, (void *)&BG_PLTT_COLOR(LUCKY_WHEELS_MACHINE_PALETTE, 0),
           DMA_COPY_WORDS(8), REG_DMA3);

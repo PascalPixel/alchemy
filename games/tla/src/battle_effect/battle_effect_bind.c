@@ -166,8 +166,8 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
         origin, originWorld);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET,
                              state->sheet + BIND_FLARE_PICTURES, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SHEET,
                              state->sheet + BIND_DJINNI_PICTURE, 1, 0);
@@ -323,8 +323,8 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   // transfer that darkens the canvas a little each frame.
   EFFECT_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET,
                              state->sheet + BIND_FLARE_PICTURES, 0, 0);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 

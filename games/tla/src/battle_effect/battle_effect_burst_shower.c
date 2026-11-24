@@ -314,7 +314,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The blitters: the first keeps the brighter pixel, the second adds, both

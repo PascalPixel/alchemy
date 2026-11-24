@@ -109,7 +109,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       }
     }
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET,
                              &state->sheet[DRAGON_CLOUD_PUFF_PICTURES], 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, Ram_MapCellBuffer, 1,

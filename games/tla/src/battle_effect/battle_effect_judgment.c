@@ -56,8 +56,8 @@
 #define JUDGMENT_SHEET_FLARE_A 16384
 #define JUDGMENT_SHEET_FLARE_B                                                 \
   (JUDGMENT_SHEET_FLARE_A + PICTURE_BYTES(JUDGMENT_FLARE))
-/// OverlayImageA's three flash pictures, a byte a pixel, one after another in
-/// the sprite sheet: the small flash, the large flash and the glow.
+/// JudgmentFlashSheet's three flash pictures, a byte a pixel, one after another
+/// in the sprite sheet: the small flash, the large flash and the glow.
 #define JUDGMENT_SHEET_FLASH_SMALL_WIDTH 16
 #define JUDGMENT_SHEET_FLASH_SMALL_HEIGHT 17
 #define JUDGMENT_SHEET_FLASH_LARGE_WIDTH 24
@@ -194,7 +194,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                              state->sheet + JUDGMENT_SHEET_TORNADO, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                              Ram_MapCellBuffer + JUDGMENT_FIRE_RING, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   pal = Resource_GetTableEntry(RESOURCE_BLUE_CRESCENT_SHEET);
   Iwram_CopyWordsEntry((void *)BG_PLTT, pal, SHEET_PALETTE_BYTES);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -583,7 +583,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
       Resource_LoadAndDecompress(RESOURCE_EXPLOSION_SHEET,
                                  state->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);
-      Resource_LoadAndDecompress(RESOURCE_OVERLAY_IMAGE_A,
+      Resource_LoadAndDecompress(RESOURCE_JUDGMENT_FLASH_SHEET,
                                  state->sheet + JUDGMENT_SHEET_FLASH_SMALL, 0,
                                  0);
     }

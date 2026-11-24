@@ -149,7 +149,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit = Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   BattleEffect_ShowLivingTargets(state->args);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);

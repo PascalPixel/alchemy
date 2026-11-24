@@ -126,7 +126,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
                              state->sheet + LIGHT_SURGE_GLOW_ORB, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                              state->sheet + LIGHT_SURGE_GLOW_BAND, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_VIOLET_PALETTE_F);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   camera = Ram_HeapSlots->cameraState;

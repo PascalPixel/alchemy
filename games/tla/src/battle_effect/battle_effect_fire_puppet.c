@@ -98,7 +98,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   PUPPET_TARGET_COPY.velocityY = target->scaleY;
   Resource_LoadAndDecompress(RESOURCE_STREAK_TEXTURE, state->sheet, 0, 0);
   // DEAD: Fire Puppet draws none of these motes; the ROM keeps the load.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GHOST_SKULL_TEXTURE,
                              state->sheet + FIRE_PUPPET_GHOST_SKULL, 0, 0);
   // The ghost takes the Mercury Djinn's blues.
@@ -296,7 +296,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[0] = (DrawRectangle)heap->ramCode;
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_SLASH_FLAME_SHEET, state->sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_F),

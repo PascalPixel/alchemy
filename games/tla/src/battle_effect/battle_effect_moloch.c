@@ -70,7 +70,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE,
                              state->sheet + MOLOCH_RING_TEXTURE, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   Graphics_LoadGreyRamp();
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   {
@@ -1170,8 +1170,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                       BLITTER_ADDITIVE);
   draw[0] = Ram_HeapSlots->ramCode;
   draw[1] = Ram_HeapSlots->ramCodePaired;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, tileBuffer, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, tileBuffer, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   for (i = 0; i != MOTE_SET_BYTES; i++)
     sprites[i] >>= 1;
   BattleEffect_DrawShadedCircles(state->sheet, 32, FIXED_ONE);
@@ -1422,7 +1422,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         petals->vx[i] = ((Random16() & 63) - 32) << 12;
         petals->vy[i] = ((Random16() & 63) - 32) << 12;
       }
-      Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, state->sheet, 0,
+      Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, state->sheet, 0,
                                  0);
       for (i = 0; i != IRIS_FIRST_MOTES / 2; i++) {
         state->particles[i].x = INTtoFIXED(Random16() % 15) + toFIXED(33);
@@ -1597,7 +1597,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
       for (i = 0; i != IRIS_PETALS; i++)
         petals->life[i] = 0;
-      Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+      Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
       for (i = 0; i != IRIS_SPRAY_HEIGHT; i++)
         for (j = 0; j != IRIS_SPRAY_WIDTH; j++)
           sprites[IRIS_SPRAY + i * IRIS_SPRAY_WIDTH + j] = gIris_LineShades[j];

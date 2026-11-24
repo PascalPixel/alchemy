@@ -38,7 +38,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   view = Ram_HeapSlots->cameraState;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_PINK_BURST_SHEET);
   object = BattleObject_GetFar(args->targets[0])->object;
   half = BattleUnit_GetEffectHeightFar(args->targets[0]) / 2;
@@ -318,7 +318,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET,
                              state->sheet + SOUL_SHATTER_SPARK_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);

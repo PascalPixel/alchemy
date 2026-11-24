@@ -208,7 +208,7 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define DAEDALUS_PARTICLE_COUNT (DAEDALUS_MISSILE_COUNT * DAEDALUS_TRAIL_LENGTH)
 
 /// The opening's mote copies: DAEDALUS_MOTE_COPIES copies of
-/// ParticleSpritesA's mote DAEDALUS_MOTE, 4 pixels wide and 8 tall, in the
+/// YellowGlowSheet's mote DAEDALUS_MOTE, 4 pixels wide and 8 tall, in the
 /// battle sprite sheet's heap slot, the first DAEDALUS_MOTE_DIM_FIRST levels
 /// dimmer than the mote and each next DAEDALUS_MOTE_DIM_STEP more. Nothing in
 /// Daedalus draws them.
@@ -517,7 +517,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       state->scrollStepY = 0;
       Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
       view->busy = 1;
-      Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, state->sheet, 0,
+      Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, state->sheet, 0,
                                  0);
       // The dimmed mote copies, from the state's sprite sheet.
       off = offsetof(struct BattleEffectState, sheet);

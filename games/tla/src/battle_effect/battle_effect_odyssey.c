@@ -90,7 +90,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GIANT_SWORD_SHEET, state->sheet, 0, 0);
   // DEAD: DustBlobSheet, which Megiddo draws, is decoded and never drawn; the
   // ROM keeps the load.

@@ -224,7 +224,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   }
   Iwram_FillWords(canvas, CANVAS_VIEW_BYTES, 0);
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   REG_BG2X = 0;
   baseX = 0;

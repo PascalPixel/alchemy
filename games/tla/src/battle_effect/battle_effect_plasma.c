@@ -57,7 +57,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_PILLAR_SHEET, state->sheet, 1,
                              1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   if (args->variant != EFFECT_VARIANT_STRONGEST) {
     LOAD_BG_PALETTE(RESOURCE_VIOLET_PALETTE_B);
   }
@@ -243,7 +243,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   if (mode == SPARK_GROUPS_DYNAMITE) {
     LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   } else if (mode == SPARK_GROUPS_RISING) {

@@ -414,7 +414,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(ELEMENT_BLEND_LEVEL);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress(RESOURCE_CYAN_SPARK_SHEET, state->sheet, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sheet, 0, 0);
   switch (args->kind) {
   case ELEMENT_VENUS:
     palette = Resource_GetTableEntry(RESOURCE_YELLOW_PALETTE_A);
@@ -929,7 +929,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   REG_BG2X = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motePictures, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motePictures, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, gMapGridCellBuffer, 0,
                              0);
   Resource_LoadAndDecompress(RESOURCE_CORNER_RUNE_A_SHEET, state->sheet, 1, 0);

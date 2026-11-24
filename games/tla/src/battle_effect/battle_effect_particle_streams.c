@@ -69,7 +69,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
   palette = Resource_GetTableEntry(RESOURCE_FIRE_PILLAR_SHEET_A);
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, state->sheet + NEREID_COLUMN_PICTURE);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_YELLOW_GLOW_SHEET),
                       cells);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
@@ -387,7 +387,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
   additive = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLARE_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLARE_IMAGE,
                              state->sheet + IMPACT_BURST_SHARD_PICTURES, 0, 0);

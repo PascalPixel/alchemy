@@ -24,8 +24,8 @@ extern char ResourceId_RuneSheet;
 /// Drawn by Bind, Charon, Cruel Ruin, the shards of Ice and Douse, Lucky
 /// Wheels, Neptune, the effect position helpers, Spider Web, the stat changes
 /// and the monster strikes.
-extern char ResourceId_ParticleSpritesD;
-#define RESOURCE_PARTICLE_SPRITES_D ((s32)&ResourceId_ParticleSpritesD)
+extern char ResourceId_BlueGlowSheet;
+#define RESOURCE_BLUE_GLOW_SHEET ((s32)&ResourceId_BlueGlowSheet)
 /// Drawn by Bind, Gasp, the healing motes, Lucky Wheels, Rime, the stat
 /// changes, Thor and Vengeance.
 extern char ResourceId_JupiterDjinnSheet;
@@ -212,8 +212,8 @@ extern char ResourceId_LightningBoltSheet;
 #define RESOURCE_LIGHTNING_BOLT_SHEET ((s32)&ResourceId_LightningBoltSheet)
 
 /// Drawn by the streak volleys.
-extern char ResourceId_FiveModeImage;
-#define RESOURCE_FIVE_MODE_IMAGE ((s32)&ResourceId_FiveModeImage)
+extern char ResourceId_FlameArcSheet;
+#define RESOURCE_FLAME_ARC_SHEET ((s32)&ResourceId_FlameArcSheet)
 /// Colours for the casting impacts, the streak volleys and Volcano.
 extern char ResourceId_RedPaletteB;
 #define RESOURCE_RED_PALETTE_B ((s32)&ResourceId_RedPaletteB)
@@ -258,8 +258,8 @@ extern char ResourceId_TornadoSheet;
 extern char ResourceId_BeamImage;
 #define RESOURCE_BEAM_IMAGE ((s32)&ResourceId_BeamImage)
 /// Drawn by the casting impacts and the monster strikes.
-extern char ResourceId_TwelveModeImage;
-#define RESOURCE_TWELVE_MODE_IMAGE ((s32)&ResourceId_TwelveModeImage)
+extern char ResourceId_BlueDropletSheet;
+#define RESOURCE_BLUE_DROPLET_SHEET ((s32)&ResourceId_BlueDropletSheet)
 /// Colours for the blessings' burst showers and the monster strikes.
 extern char ResourceId_PinkPalette;
 #define RESOURCE_PINK_PALETTE ((s32)&ResourceId_PinkPalette)
@@ -559,8 +559,8 @@ extern char ResourceId_BillowTexture;
 #define RESOURCE_BILLOW_TEXTURE ((s32)&ResourceId_BillowTexture)
 /// The particle sprites nearly every battle effect loads first, 90 of them,
 /// from Annihilation to Zagan.
-extern char ResourceId_ParticleSpritesA;
-#define RESOURCE_PARTICLE_SPRITES_A ((s32)&ResourceId_ParticleSpritesA)
+extern char ResourceId_YellowGlowSheet;
+#define RESOURCE_YELLOW_GLOW_SHEET ((s32)&ResourceId_YellowGlowSheet)
 /// Drawn by the Djinni charge and Zagan.
 extern char ResourceId_PetalSheet;
 #define RESOURCE_PETAL_SHEET ((s32)&ResourceId_PetalSheet)
@@ -915,14 +915,14 @@ extern char ResourceId_FlameballSheet;
 extern char ResourceId_PortalSheet;
 #define RESOURCE_PORTAL_SHEET ((s32)&ResourceId_PortalSheet)
 /// Drawn by Thor.
-extern char ResourceId_ParticleSpritesB;
-#define RESOURCE_PARTICLE_SPRITES_B ((s32)&ResourceId_ParticleSpritesB)
+extern char ResourceId_PaleBlueGlowSheet;
+#define RESOURCE_PALE_BLUE_GLOW_SHEET ((s32)&ResourceId_PaleBlueGlowSheet)
 /// Drawn by Thor.
 extern char ResourceId_LightFanSheet;
 #define RESOURCE_LIGHT_FAN_SHEET ((s32)&ResourceId_LightFanSheet)
 /// Drawn by Thor.
-extern char ResourceId_ParticleSpritesC;
-#define RESOURCE_PARTICLE_SPRITES_C ((s32)&ResourceId_ParticleSpritesC)
+extern char ResourceId_BlueTallGlowSheet;
+#define RESOURCE_BLUE_TALL_GLOW_SHEET ((s32)&ResourceId_BlueTallGlowSheet)
 /// Drawn by Thor.
 extern char ResourceId_VioletLightningSheetB;
 #define RESOURCE_VIOLET_LIGHTNING_SHEET_B                                      \
@@ -1033,8 +1033,8 @@ extern char ResourceId_BlueCrescentSheet;
 extern char ResourceId_ExplosionSheet;
 #define RESOURCE_EXPLOSION_SHEET ((s32)&ResourceId_ExplosionSheet)
 /// Drawn by Judgment.
-extern char ResourceId_OverlayImageA;
-#define RESOURCE_OVERLAY_IMAGE_A ((s32)&ResourceId_OverlayImageA)
+extern char ResourceId_JudgmentFlashSheet;
+#define RESOURCE_JUDGMENT_FLASH_SHEET ((s32)&ResourceId_JudgmentFlashSheet)
 /// Drawn by Kirin.
 extern char ResourceId_FireBlobSheet;
 #define RESOURCE_FIRE_BLOB_SHEET ((s32)&ResourceId_FireBlobSheet)

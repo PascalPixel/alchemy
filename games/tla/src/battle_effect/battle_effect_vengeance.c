@@ -788,7 +788,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
     Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer,
              TASK_PASS_VBLANK);
     spawned = 0;
-    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sparkCels, 0, 0);
     if (mode == GEYSER_PURGATORY) {
       Resource_LoadAndDecompress(RESOURCE_CROSS_TEXTURE_SHEET, state->sheet, 1,
                                  1);
@@ -1017,7 +1017,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   state->fadeStep = 0;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sparkCels, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -1485,7 +1485,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   zero = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   table = state->backdropLines;
   lift = -8;

@@ -90,7 +90,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              state->sheet + STAR_MINE_FLASH_BURST_PICTURES, 1,
                              0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                        SHEET_PALETTE_BYTES);
@@ -380,7 +380,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(
       RESOURCE_CLAW_SLASH_SHEET,
       state->sheet + RISING_DRAGON_ENEMY_FLAME_DRAGON_HEAD_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(strip, 4, 32, RISING_DRAGON_ENEMY_SEGMENTS - 1);
 

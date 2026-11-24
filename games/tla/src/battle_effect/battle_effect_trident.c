@@ -157,7 +157,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
                              Ram_MapCellBuffer + TRIDENT_FLAME_ZIGZAG, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
                              Ram_MapCellBuffer + TRIDENT_BILLOW, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_F),
                        SHEET_PALETTE_BYTES);
@@ -611,7 +611,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
   if (mode == LEAPING_STRIKE_PLANET_DIVER) {
     Resource_LoadAndDecompress(RESOURCE_FLAMEBALL_SHEET,

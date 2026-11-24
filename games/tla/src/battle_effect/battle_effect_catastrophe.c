@@ -367,7 +367,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
                   SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
                              Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
   camZ = 0;
@@ -1529,7 +1529,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
                                state->sheet + CATASTROPHE_SWEEP_PICTURES, 1, 0);
-    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
     Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                state->sheet + CATASTROPHE_FLASH_BURST_PICTURES,
                                1, 0);

@@ -251,8 +251,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     REG_BG2X = bgX << 8;
     EFFECT_PRESENT_CANVAS(state);
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, source, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, source, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   // DEAD: the dimmed mote copies, which nothing reads; the ROM keeps the
   // loop.
   size = FLORA_DIMMED_MOTE;

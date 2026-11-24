@@ -292,7 +292,7 @@ Resource_DirectoryTable:
 	resource FlameBladeSheet, BattleEffect_FlameBladeSheet
 	resource SwordSheet, BattleEffect_SwordSheet
 	resource IceTileSheet, BattleEffect_IceTileSheet
-	resource FiveModeImage, BattleEffect_FiveModeImage
+	resource FlameArcSheet, BattleEffect_FlameArcSheet
 	resource SpiderWebSheet, BattleEffect_SpiderWebSheet
 	resource VioletLightningSheetA, BattleEffect_VioletLightningSheetA
 	resource YellowSparkSheet, BattleEffect_YellowSparkSheet
@@ -305,7 +305,7 @@ Resource_DirectoryTable:
 	resource VioletLightningSheetB, BattleEffect_VioletLightningSheetB
 	resource FireBurstSheet, BattleEffect_FireBurstSheet
 	resource BlueCrescentSheet, BattleEffect_BlueCrescentSheet
-	resource OverlayImageA, BattleEffect_OverlayImageA
+	resource JudgmentFlashSheet, BattleEffect_JudgmentFlashSheet
 	resource VioletMoteSheet, BattleEffect_VioletMoteSheet
 	resource FireballSheet, BattleEffect_FireballSheet
 	resource MemberBurstImage, BattleEffect_MemberBurstImage
@@ -318,10 +318,10 @@ Resource_DirectoryTable:
 	resource ExplosionSheet, BattleEffect_ExplosionSheet
 	resource MagentaSwirlSheet, BattleEffect_MagentaSwirlSheet
 	resource MagentaTailSheet, BattleEffect_MagentaTailSheet
-	resource ParticleSpritesA, BattleEffect_ParticleSpritesA
-	resource ParticleSpritesB, BattleEffect_ParticleSpritesB
-	resource ParticleSpritesC, BattleEffect_ParticleSpritesC
-	resource ParticleSpritesD, BattleEffect_ParticleSpritesD
+	resource YellowGlowSheet, BattleEffect_YellowGlowSheet
+	resource PaleBlueGlowSheet, BattleEffect_PaleBlueGlowSheet
+	resource BlueTallGlowSheet, BattleEffect_BlueTallGlowSheet
+	resource BlueGlowSheet, BattleEffect_BlueGlowSheet
 	resource GreenPalette, BattleEffect_GreenPalette
 	resource CrossedDaggersSheet, BattleEffect_CrossedDaggersSheet
 	resource RuneSheet, BattleEffect_RuneSheet
@@ -404,7 +404,7 @@ Resource_DirectoryTable:
 	resource RockSpireSheet, BattleEffect_RockSpireSheet
 	resource LightningBoltSheet, BattleEffect_LightningBoltSheet
 	resource BeamImage, BattleEffect_BeamImage
-	resource TwelveModeImage, BattleEffect_TwelveModeImage
+	resource BlueDropletSheet, BattleEffect_BlueDropletSheet
 	resource WindStreakSheet, BattleEffect_WindStreakSheet
 	resource YellowPaletteB, BattleEffect_YellowPaletteB
 	resource BlueRingSheet, BattleEffect_BlueRingSheet

@@ -217,6 +217,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   SET_POSITION(&pos, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
   // Sparkles: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
+  // actor, the east hand until now, holds each sparkle in turn.
   for (i = 0; i < CARRY_SPARKLE_COUNT; i++) {
     actor = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     // DEAD: nothing reads the sparkles back; the ROM keeps the stores.
@@ -247,7 +248,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   caster->update = 0;
   Actor_SetSpriteColorModeFar(caster, SPRITE_COLOR_NORMAL);
   if (effectState->sceneVariant != 0) {
-    // Wait for it to rise and land (at most 90 frames each), then a ring.
+    // As the Road to Babi Lighthouse asks for its grey pillar: wait for it to
+    // rise and land (at most 90 frames each), then a ring of dust puffs.
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
       wait(1);
     wait(1);

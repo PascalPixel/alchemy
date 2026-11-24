@@ -353,7 +353,7 @@ void FieldPsynergy_CheckCloakTile(void);
 void FieldPsynergy_EndCloak(void);
 void FieldPsynergy_ResumeCloakCheck(void);
 void FieldPsynergy_StartCloak(void);
-void FieldEffect_UpdateDouseDrop(struct Actor *actor);
+void FieldEffect_UpdateDouseDrop(struct Actor *drop);
 void FieldEffect_UpdateDriftingFallActor(struct Actor *actor);
 void FieldPsynergy_DouseOnTarget(s32 unused);
 void FieldPsynergy_Douse(void);

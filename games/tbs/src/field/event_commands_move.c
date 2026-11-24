@@ -9,7 +9,7 @@
 /// DPAD_ANGLE_NONE when none or a diagonal is held.
 s32 Input_GetDpadAngle(u32 unused) {
   // Indexed by the right, left, up and down bits.
-  return gFieldEffect_CyclePatternWords[DPAD_INDEX(gKeysHeld)];
+  return gInput_DpadAngles[DPAD_INDEX(gKeysHeld)];
 }
 
 /// Per-frame update of Move's hand (FieldEffect_SpawnMoveHand): turns it
@@ -73,8 +73,8 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   s32 cellZ;
 
   effectState = gFieldEffectState;
-  caster = effectState->mainActor;
-  target = effectState->child;
+  caster = effectState->caster;
+  target = effectState->target;
   // effectState->angle is the way the caster faces; the hand's side of the
   // target is the opposite way, toward the caster.
   angle = effectState->angle + DEGtoANG(180);
@@ -96,7 +96,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
                target->z.fixed);
   Vector_AddPolarOffset(toFIXED(16), angle, &position);
   Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
-  FieldEffect_SnapScaleToFull(pusher);
+  FieldEffect_GrowHandAndWait(pusher);
   // The hand floats at up to 4 pixels a frame.
   pusher->speedLimit = toFIXED(4);
   pusher->acceleration = toFIXED(1) / 2;
@@ -151,7 +151,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
         Sound_PlayFar(SE_MENU_ERROR);
       continue;
     }
-    hit = ActorScript_FindOverlappingEntryFar(target, (s32 *)&position);
+    hit = ActorScript_FindOverlappingActorFar(target, (s32 *)&position);
     if (hit != NULL) {
       if (hit != caster) {
         Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
@@ -175,8 +175,8 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
       if (cellX == (beyond.x & FIELD_CELL_MASK) &&
           cellZ == (beyond.z & FIELD_CELL_MASK)) {
         // The caster can be pushed only onto flat ground.
-        if (MapGrid_GetCellAttributeLowNibbleFar(caster->layer, beyond.x,
-                                                 beyond.z) != TERRAIN_FLAT) {
+        if (MapGrid_GetTerrainKindAtFar(caster->layer, beyond.x, beyond.z) !=
+            TERRAIN_FLAT) {
           Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
           if ((gFrameCount & 15) == 0)
             Sound_PlayFar(SE_MENU_ERROR);
@@ -207,7 +207,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     Actor_SetMoveTargetFar(pusher, position.x, position.y + toFIXED(16),
                            position.z);
     if (moved == 1) {
-      Actor_GetById(effectState->firstActorId)->steeringFlags &=
+      Actor_GetById(effectState->casterId)->steeringFlags &=
           ~ACTOR_FACES_MOTION;
       caster->speedLimit = toFIXED(1) / 5;
       caster->acceleration = toFIXED(1) / 5;
@@ -228,10 +228,9 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   target->update = effectState->savedCallback;
   FieldPsynergy_StopCasterUpdate();
   if (moved == 1)
-    Actor_GetById(effectState->firstActorId)->steeringFlags |=
-        ACTOR_FACES_MOTION;
+    Actor_GetById(effectState->casterId)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldPsynergy_FadeFromCastColor();
-  UpdateRisingParticleBurst(pusher);
+  FieldEffect_BurstHand(pusher);
 }
 
 /// Field effect sprite callback of a particle that flies 30 pixels out from
@@ -291,20 +290,20 @@ void FieldPsynergy_Move(void) {
   struct Actor *hand;
 
   effectState = gFieldEffectState;
-  caster = effectState->mainActor;
+  caster = effectState->caster;
 
   /* FAKEMATCH(dead): an empty once-only loop before the call. */
   do {
   } while (0);
   FieldPsynergy_FadeToCastColor();
   hand = FieldEffect_SpawnMoveHand(caster);
-  FieldEffect_SnapScaleToFull(hand);
+  FieldEffect_GrowHandAndWait(hand);
   if (hand != 0) {
     Actor_SelectAnimationFar(hand, MOVE_HAND_ANIMATION_FLEX);
     wait(30);
   }
   FieldPsynergy_FadeFromCastColor();
-  UpdateRisingParticleBurst(hand);
+  FieldEffect_BurstHand(hand);
 }
 
 /// Spawns Move's hand (SPRITE_MOVE_HAND) 16 pixels above the caster, at quarter
@@ -361,7 +360,7 @@ struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
 /// Sets an actor's scale at once to full size (its first step of 1/16 past
 /// FIXED_ONE - 1: exactly FIXED_ONE from a multiple of 1/16) when it is
 /// smaller, then waits, at most 600 frames, for it to arrive at its target.
-void FieldEffect_SnapScaleToFull(struct Actor *actor) {
+void FieldEffect_GrowHandAndWait(struct Actor *actor) {
   FIXED next;
   FIXED scale;
 
@@ -381,7 +380,7 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
 
 /// Ends a hand: over 31 frames it rises 1 pixel, turns 1/8 turn and shrinks by
 /// 1/32 of full size a frame, then bursts into 8 sparkles and is released.
-void UpdateRisingParticleBurst(struct Actor *hand) {
+void FieldEffect_BurstHand(struct Actor *hand) {
   struct Actor *sparkle;
   s32 i;
   FIXED dist;

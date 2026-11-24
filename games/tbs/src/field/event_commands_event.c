@@ -10,7 +10,7 @@
 #if LANGUAGE == LANGUAGE_GERMAN
 #define GIFT_RECEIVED_MESSAGE MsgGaveItemToMember
 #else
-#define GIFT_RECEIVED_MESSAGE (MsgColossoIsaacGotItem + 1)
+#define GIFT_RECEIVED_MESSAGE (MsgGotItem + 1)
 #endif
 
 /// Japanese and English show it zooming open and waiting for the jingle; from
@@ -31,7 +31,7 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
   }
 #endif
   MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-  FieldMessage_ShowFar(MsgColossoIsaacGotItem, flags);
+  FieldMessage_ShowFar(MsgGotItem, flags);
 }
 
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
@@ -282,7 +282,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       if (result != 0)
         goto retry;
       // "Isaac drops the <item>."
-      Item_AdjustCounterFar(item, 1);
+      Item_AdjustRareItemStockFar(item, 1);
       MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar(MsgWhatWillYouDrop + 2, FIELD_MESSAGE_ZOOM);
       state->message = savedMessage;
@@ -295,7 +295,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         /* FAKEMATCH(dead): unit and the picked item read through it. */
         UNUSED s32 pickedItem = unit->inventory[slot];
 
-        discardQuantity = Shop_GetSelectionState(member, slot);
+        discardQuantity = Inventory_GetQuantityFar(member, slot);
       }
       // A party member who already carries INVENTORY_STACK_MAX of the new item
       // cannot take it: say so and ask again.

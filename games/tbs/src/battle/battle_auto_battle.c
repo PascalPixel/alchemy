@@ -27,7 +27,7 @@ s32 AutoBattle_BuildActions(struct BattleAction *entries) {
     unit = Unit_GetFar(unitId);
     entry = &entries[index];
     entry->unitId = unitId;
-    entry->priority = unit->agi;
+    entry->priority = unit->agility;
     entry->command = COMMAND_ATTACK;
     entry->parameter = 0;
     entry->target = FIRST_ENEMY_UNIT;
@@ -43,9 +43,9 @@ s32 AutoBattle_BuildActions(struct BattleAction *entries) {
 
     unit = Unit_GetFar(unitId);
     entry->unitId = unitId;
-    entry->priority = unit->agi >> 1;
+    entry->priority = unit->agility >> 1;
     if (entry->priority != 0)
-      entry->priority += Random16_Below(unit->agi);
+      entry->priority += Random16_Below(unit->agility);
     entry->command = COMMAND_ATTACK;
     entry->parameter = 0;
     entry->target = Random16_Below(targetRange);
@@ -117,9 +117,9 @@ s32 AutoBattle_RunAction(struct BattleAction *action) {
   case COMMAND_ATTACK:
   default: {
     struct BattleBackgroundState *view = gBattleBackgroundState;
-    view->flag = 0;
+    view->keepRange = 0;
     AutoBattle_RunAttackOrItem(action);
-    view->flag = 0;
+    view->keepRange = 0;
     break;
   }
   case COMMAND_PSYNERGY:

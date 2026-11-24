@@ -1,7 +1,7 @@
 @ The ground particles', motes of light's and sparkles' 16 by 16 tiles, packed.
 	.section .rodata
-	.global gFieldEffect_GroundParticleTiles
-gFieldEffect_GroundParticleTiles:
+	.global gWeather_ParticleTiles
+gWeather_ParticleTiles:
 	.incbin "games/tbs/src/field/ground.4bpp16x16.plz"
 	.global gFieldEffect_MoteTiles
 gFieldEffect_MoteTiles:

@@ -72,9 +72,9 @@ struct BattlePlaybackState {
   s32 arrowResource; ///< the arrow's resource entry; -1 until it is shown
   s32 unitId;        ///< the unit of the hit or defeat being played
   s32 pendingSound;  ///< hit sound (an SE_ id), played on the next hit
-  /// bits: 0 Djinn bonus (PLAYBACK_FLAG_DJINN_BONUS), for the enemies that fall
+  /// PLAYBACK_FLAG_DJINN_BONUS: the Djinn bonus, for the enemies that fall
   /// during the action
-  s32 flags;
+  s32 djinnBonus;
 };
 
 /// The most actions a turn's queue holds.
@@ -188,7 +188,7 @@ STATIC_ASSERT(offsetof(struct BattleState, background) == 1608);
 STATIC_ASSERT(offsetof(struct BattleState, actionRun) == 1620);
 STATIC_ASSERT(offsetof(struct BattleState, playback) == 1720);
 STATIC_ASSERT(offsetof(struct BattlePlaybackState, phase) == 328);
-STATIC_ASSERT(offsetof(struct BattlePlaybackState, flags) == 364);
+STATIC_ASSERT(offsetof(struct BattlePlaybackState, djinnBonus) == 364);
 
 /// The battle's state: gHeapSlots[HEAP_SLOT_BATTLE] under its own name.
 #define gBattleState (*(struct BattleState **)&gHeapSlots[HEAP_SLOT_BATTLE])

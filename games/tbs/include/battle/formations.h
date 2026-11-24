@@ -52,6 +52,6 @@ extern struct Formation gFormations[FORMATION_COUNT];
 
 /// The 20 enemies whose defeated flags a monster battle clears before it picks
 /// a formation (battle/formations.c).
-extern u16 gBattleFormation_LevelMatchedEnemies[20];
+extern u16 gBattleFormation_ExcludedEnemies[20];
 
 #endif

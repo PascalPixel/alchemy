@@ -88,7 +88,7 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
       if (distance <= toFIXED(1) / 16 - 1) {
         spark->life = 0;
       } else {
-        scale = Iwram_RatioMulQ14(distance, FIXED_ONE);
+        scale = Iwram_DivFX(distance, FIXED_ONE);
         spark->life--;
         axisPosition = spark->motion;
         for (axis = 0; axis < 3; axis++) {
@@ -131,8 +131,8 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
         picture = 0;
       else if (picture > 6)
         picture = 6;
-      size = gElementGlow_StarSizes[picture];
-      draw(canvas, (u8 *)state + gElementGlow_StarPictures[picture],
+      size = gElementGlow_SparkSizes[picture];
+      draw(canvas, (u8 *)state + gElementGlow_SparkPictures[picture],
            x - (size >> 1), y - (size >> 1), size, size);
     }
   }

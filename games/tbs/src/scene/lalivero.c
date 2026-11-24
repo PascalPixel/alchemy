@@ -871,7 +871,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   struct Sprite *sprite;
-  GlyphTransfer *icon;
+  IconTransfer *icon;
 
   // Coming back from the lighthouse switches the town to its later state.
   if (gMainRoutineState.entrance == LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE) {
@@ -907,10 +907,10 @@ s32 Scene_Initialize(void) {
   sprite->count = 0;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  icon = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   Icon_DrawItem(ITEM_BLACK_ORB);
   VramCache_Load(sprite->slot, ICON_TILE_BYTES, icon->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
 
   if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     // A sign now stands at the north exit, and the three open cells of the

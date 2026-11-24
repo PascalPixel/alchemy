@@ -66,7 +66,7 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, STREAK_STYLE_LIME);
 }
 
-/// FiveModeImage's streaks: three animation frames, each six pictures that
+/// FlameArcSheet's streaks: three animation frames, each six pictures that
 /// grow; the lower half is the upper drawn flipped.
 #define STREAK_WIDTH 20
 #define STREAK_HEIGHT 40
@@ -117,7 +117,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     drawLower = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_PAIRED);
   }
 
-  Resource_LoadAndDecompress(RESOURCE_FIVE_MODE_IMAGE, state->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_ARC_SHEET, state->sheet, 0, 0);
   switch (mode) {
   case STREAK_STYLE_EMBER:
     resource = RESOURCE_EMBER_STREAK_SHEET;
@@ -140,7 +140,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
                   SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  source = GetBattleObjectSlotFar(state->args->user)->actor;
+  source = BattleObject_GetFar(state->args->user)->actor;
   {
     // The loop counts 6 frames for each streak though targets are 32 frames
     // apart, so with three or four targets it stops before the last one's
@@ -148,7 +148,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     s32 totalFrames = streaks * state->args->targetCount * STREAK_SPACING + 48;
 
     EFFECT_FOR_EACH_TARGET(k, state->args) {
-      target = GetBattleObjectSlotFar(state->args->targets[k])->actor;
+      target = BattleObject_GetFar(state->args->targets[k])->actor;
       for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
         struct Particle *streak = &state->particles[k * streaks + streakIndex];
 
@@ -215,7 +215,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               frame >= k * STREAK_TARGET_DELAY + 30 &&
               frame < k * STREAK_TARGET_DELAY + 62) {
             struct Actor *struck =
-                GetBattleObjectSlotFar(state->args->targets[k])->actor;
+                BattleObject_GetFar(state->args->targets[k])->actor;
 
             struck->x.fixed += INTtoFIXED(
                 gStreak_Tremble[(frame - k * STREAK_TARGET_DELAY - 30) % 8]);
@@ -321,7 +321,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_LIGHTEN);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   if (mode == MOTE_FOUNTAIN_HEALING)
     resource = RESOURCE_ORANGE_PALETTE_A;
   else
@@ -331,7 +331,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
 
-  source = GetBattleObjectSlotFar(state->args->user)->actor;
+  source = BattleObject_GetFar(state->args->user)->actor;
   for (i = 0; i != MOTE_FOUNTAIN_MOTES; i++) {
     s32 speed;
     s32 angle;

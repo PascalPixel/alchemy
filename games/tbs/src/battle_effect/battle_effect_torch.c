@@ -57,7 +57,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
   REG_BG2PA = Q_8_8(1.0 / 1.5);
-  BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+  BattleEffect_BuildCanvasBlitters(state->args->side, draw);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
 

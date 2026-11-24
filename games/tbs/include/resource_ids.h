@@ -114,9 +114,9 @@ extern char ResourceId_MercuryLighthouseAerieBackdrop;
 #define RESOURCE_MERCURY_LIGHTHOUSE_AERIE_BACKDROP                             \
   ((s32)&ResourceId_MercuryLighthouseAerieBackdrop)
 /// SceneId_ShipRooms.
-extern char ResourceId_TolbiShipInteriorsBackdrop;
-#define RESOURCE_TOLBI_SHIP_INTERIORS_BACKDROP                                 \
-  ((s32)&ResourceId_TolbiShipInteriorsBackdrop)
+extern char ResourceId_TolbiShipRoomsBackdrop;
+#define RESOURCE_TOLBI_SHIP_ROOMS_BACKDROP                                     \
+  ((s32)&ResourceId_TolbiShipRoomsBackdrop)
 /// Fuchin Falls Cave, and SceneId_CrossboneIsleFloatingLogs on Crossbone
 /// Isle.
 extern char ResourceId_ImilFuchinFallsBackdrop;
@@ -125,16 +125,16 @@ extern char ResourceId_ImilFuchinFallsBackdrop;
 extern char ResourceId_KolimaForestBackdrop; ///< Kolima Forest's five scenes.
 #define RESOURCE_KOLIMA_FOREST_BACKDROP ((s32)&ResourceId_KolimaForestBackdrop)
 /// SceneId_TreeRooms.
-extern char ResourceId_TretTreeInteriorsBackdrop;
-#define RESOURCE_TRET_TREE_INTERIORS_BACKDROP                                  \
-  ((s32)&ResourceId_TretTreeInteriorsBackdrop)
+extern char ResourceId_TretTreeRoomsBackdrop;
+#define RESOURCE_TRET_TREE_ROOMS_BACKDROP                                      \
+  ((s32)&ResourceId_TretTreeRoomsBackdrop)
 /// Goma Cave, Kolima Tunnel, Bilibin Cave and Gateway Cave, and any scene the
 /// table doesn't list, since it comes last.
 extern char ResourceId_GomaCaveBackdrop;
 #define RESOURCE_GOMA_CAVE_BACKDROP ((s32)&ResourceId_GomaCaveBackdrop)
 /// The vault rooms and Lalivero's scenes, Faran's house included.
-extern char ResourceId_InteriorBackdrop;
-#define RESOURCE_INTERIOR_BACKDROP ((s32)&ResourceId_InteriorBackdrop)
+extern char ResourceId_RoomsBackdrop;
+#define RESOURCE_ROOMS_BACKDROP ((s32)&ResourceId_RoomsBackdrop)
 /// Altin Peak's scenes but the Hydros statue.
 extern char ResourceId_AltinPeakBackdrop;
 #define RESOURCE_ALTIN_PEAK_BACKDROP ((s32)&ResourceId_AltinPeakBackdrop)
@@ -210,20 +210,22 @@ extern char ResourceId_LuckyDiceSprites;
 // holds two pictures; the first of a pair fills state->imageStorage, the second
 // the start of Ram_MapGridCellBuffer.
 
-extern char ResourceId_RevealMaskA; ///< Vorpal Slash, first of its pair.
-#define RESOURCE_REVEAL_MASK_A ((s32)&ResourceId_RevealMaskA)
-extern char ResourceId_RevealMaskB; ///< Vorpal Slash, second of its pair.
-#define RESOURCE_REVEAL_MASK_B ((s32)&ResourceId_RevealMaskB)
-extern char ResourceId_RevealMaskC; ///< Quick Strike, first of its pair.
-#define RESOURCE_REVEAL_MASK_C ((s32)&ResourceId_RevealMaskC)
-extern char ResourceId_RevealMaskD; ///< Quick Strike, second of its pair.
-#define RESOURCE_REVEAL_MASK_D ((s32)&ResourceId_RevealMaskD)
+extern char ResourceId_VorpalSlashImageA; ///< Vorpal Slash, first of its pair.
+#define RESOURCE_VORPAL_SLASH_IMAGE_A ((s32)&ResourceId_VorpalSlashImageA)
+extern char ResourceId_VorpalSlashImageB; ///< Vorpal Slash, second of its pair.
+#define RESOURCE_VORPAL_SLASH_IMAGE_B ((s32)&ResourceId_VorpalSlashImageB)
+extern char ResourceId_QuickStrikeImageA; ///< Quick Strike, first of its pair.
+#define RESOURCE_QUICK_STRIKE_IMAGE_A ((s32)&ResourceId_QuickStrikeImageA)
+extern char ResourceId_QuickStrikeImageB; ///< Quick Strike, second of its pair.
+#define RESOURCE_QUICK_STRIKE_IMAGE_B ((s32)&ResourceId_QuickStrikeImageB)
 /// First of the pair for FLASHING_STRIKE_UNUSED, which nothing passes.
-extern char ResourceId_RevealMaskE;
-#define RESOURCE_REVEAL_MASK_E ((s32)&ResourceId_RevealMaskE)
+extern char ResourceId_UnusedFlashingStrikeImageA;
+#define RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_A                                \
+  ((s32)&ResourceId_UnusedFlashingStrikeImageA)
 /// Second of the pair for FLASHING_STRIKE_UNUSED.
-extern char ResourceId_RevealMaskF;
-#define RESOURCE_REVEAL_MASK_F ((s32)&ResourceId_RevealMaskF)
+extern char ResourceId_UnusedFlashingStrikeImageB;
+#define RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_B                                \
+  ((s32)&ResourceId_UnusedFlashingStrikeImageB)
 
 // Battle effect pictures. A sprite sheet holds 64 colours (128 bytes) and then
 // its compressed pictures, which the animation parts load with
@@ -262,12 +264,12 @@ extern char ResourceId_BlueFlameSheet;
 #define RESOURCE_BLUE_FLAME_SHEET ((s32)&ResourceId_BlueFlameSheet)
 /// The particles nearly every animation loads, from Annihilation to Volcano and
 /// most summons.
-extern char ResourceId_ParticleSpritesA;
-#define RESOURCE_PARTICLE_SPRITES_A ((s32)&ResourceId_ParticleSpritesA)
+extern char ResourceId_YellowGlowSheet;
+#define RESOURCE_YELLOW_GLOW_SHEET ((s32)&ResourceId_YellowGlowSheet)
 /// A second shared particle sprite sheet: the beams, Bind, Death Plunge,
 /// Ice and Douse, the Neptune summon, the stat changes, and Lucky Wheels.
-extern char ResourceId_ParticleSpritesD;
-#define RESOURCE_PARTICLE_SPRITES_D ((s32)&ResourceId_ParticleSpritesD)
+extern char ResourceId_BlueGlowSheet;
+#define RESOURCE_BLUE_GLOW_SHEET ((s32)&ResourceId_BlueGlowSheet)
 /// Curse's flames (BattleEffect_RunCurse).
 extern char ResourceId_FlameColumnSheet;
 #define RESOURCE_FLAME_COLUMN_SHEET ((s32)&ResourceId_FlameColumnSheet)
@@ -383,8 +385,8 @@ extern char ResourceId_PerspectiveDataA;
 extern char ResourceId_DefaultGridCells;
 #define RESOURCE_DEFAULT_GRID_CELLS ((s32)&ResourceId_DefaultGridCells)
 /// Colosso's first opponent's recorded path, played by the Azart match.
-extern char ResourceId_OpponentPathA;
-#define RESOURCE_OPPONENT_PATH_A ((s32)&ResourceId_OpponentPathA)
+extern char ResourceId_AzartOpponentPath;
+#define RESOURCE_AZART_OPPONENT_PATH ((s32)&ResourceId_AzartOpponentPath)
 /// The world map's tileset animations (TilesetAnim_StartAll).
 extern char ResourceId_DefaultTileAnimation;
 #define RESOURCE_DEFAULT_TILE_ANIMATION ((s32)&ResourceId_DefaultTileAnimation)
@@ -424,10 +426,11 @@ extern char ResourceId_WorldMapTilesI; ///< Snowfield set, fourth tileset.
 extern char ResourceId_WorldMapTilesJ; ///< Snowfield set, animation pictures.
 #define RESOURCE_WORLD_MAP_TILES_J ((s32)&ResourceId_WorldMapTilesJ)
 /// The Satrage match's opponent path (ColosseumSatrageMatch_StartOpponentPath).
-extern char ResourceId_OpponentPathB;
-#define RESOURCE_OPPONENT_PATH_B ((s32)&ResourceId_OpponentPathB)
-extern char ResourceId_OpponentPathC; ///< The Navampa match's opponent path.
-#define RESOURCE_OPPONENT_PATH_C ((s32)&ResourceId_OpponentPathC)
+extern char ResourceId_SatrageOpponentPath;
+#define RESOURCE_SATRAGE_OPPONENT_PATH ((s32)&ResourceId_SatrageOpponentPath)
+extern char
+    ResourceId_NavampaOpponentPath; ///< The Navampa match's opponent path.
+#define RESOURCE_NAVAMPA_OPPONENT_PATH ((s32)&ResourceId_NavampaOpponentPath)
 /// Colosso's lettering pictures, which Colosso_LoadLettering decodes with
 /// their colours for sprite palette 15.
 extern char ResourceId_Lettering;
@@ -515,16 +518,16 @@ extern char ResourceId_CyanPalette;
 #define RESOURCE_CYAN_PALETTE ((s32)&ResourceId_CyanPalette)
 /// The title intro's sprite colours and compressed sprite tiles
 /// (Title_LoadIntroBackgrounds).
-extern char ResourceId_IntroGraphicsA;
-#define RESOURCE_INTRO_GRAPHICS_A ((s32)&ResourceId_IntroGraphicsA)
-/// The 256-colour picture Title_ShowIntro puts on BG2 once the intro's
+extern char ResourceId_IntroSun;
+#define RESOURCE_INTRO_SUN ((s32)&ResourceId_IntroSun)
+/// The 256-colour picture Title_ShowTitleScreen puts on BG2 once the intro's
 /// sprites are gone.
-extern char ResourceId_IntroGraphicsB;
-#define RESOURCE_INTRO_GRAPHICS_B ((s32)&ResourceId_IntroGraphicsB)
+extern char ResourceId_TitleScreen;
+#define RESOURCE_TITLE_SCREEN ((s32)&ResourceId_TitleScreen)
 /// The title intro's scrolling backgrounds: their colours, then their
 /// compressed tiles (Title_LoadIntroBackgrounds).
-extern char ResourceId_IntroGraphicsC;
-#define RESOURCE_INTRO_GRAPHICS_C ((s32)&ResourceId_IntroGraphicsC)
+extern char ResourceId_IntroPeak;
+#define RESOURCE_INTRO_PEAK ((s32)&ResourceId_IntroPeak)
 extern char ResourceId_CyanSparkSheet; ///< Death Plunge.
 #define RESOURCE_CYAN_SPARK_SHEET ((s32)&ResourceId_CyanSparkSheet)
 extern char ResourceId_StarBurstSheet; ///< The beams.
@@ -608,8 +611,9 @@ extern char ResourceId_VortexSheet;
 extern char ResourceId_LightningPillarSheet; ///< Plasma and the Thor summon.
 #define RESOURCE_LIGHTNING_PILLAR_SHEET ((s32)&ResourceId_LightningPillarSheet)
 /// The shattering opening (BattleEffect_RunShatteringOpening).
-extern char ResourceId_TileAnimationMask;
-#define RESOURCE_TILE_ANIMATION_MASK ((s32)&ResourceId_TileAnimationMask)
+extern char ResourceId_ShatteringOpeningSheet;
+#define RESOURCE_SHATTERING_OPENING_SHEET                                      \
+  ((s32)&ResourceId_ShatteringOpeningSheet)
 extern char ResourceId_VioletPaletteA; ///< Colours for Death Plunge.
 #define RESOURCE_VIOLET_PALETTE_A ((s32)&ResourceId_VioletPaletteA)
 extern char ResourceId_RedPaletteA; ///< Colours for Death Plunge.
@@ -621,8 +625,8 @@ extern char ResourceId_FlameBladeSheet; ///< Ragnarok.
 extern char ResourceId_IceTileSheet; ///< Death Plunge.
 #define RESOURCE_ICE_TILE_SHEET ((s32)&ResourceId_IceTileSheet)
 /// The streak volleys' images: three colour rows of six 20x40 images.
-extern char ResourceId_FiveModeImage;
-#define RESOURCE_FIVE_MODE_IMAGE ((s32)&ResourceId_FiveModeImage)
+extern char ResourceId_FlameArcSheet;
+#define RESOURCE_FLAME_ARC_SHEET ((s32)&ResourceId_FlameArcSheet)
 extern char ResourceId_SpiderWebSheet; ///< Spider Web and the lobbed shells.
 #define RESOURCE_SPIDER_WEB_SHEET ((s32)&ResourceId_SpiderWebSheet)
 extern char ResourceId_FlareSheet; ///< Helm Splitter.
@@ -635,23 +639,23 @@ extern char ResourceId_VioletLightningSheetB; ///< The Thor summon.
 extern char ResourceId_BlueCrescentSheet; ///< Judgment.
 #define RESOURCE_BLUE_CRESCENT_SHEET ((s32)&ResourceId_BlueCrescentSheet)
 /// Judgment's small flash (JUDGMENT_SHEET_FLASH_SMALL).
-extern char ResourceId_OverlayImageA;
-#define RESOURCE_OVERLAY_IMAGE_A ((s32)&ResourceId_OverlayImageA)
+extern char ResourceId_JudgmentFlashSheet;
+#define RESOURCE_JUDGMENT_FLASH_SHEET ((s32)&ResourceId_JudgmentFlashSheet)
 extern char ResourceId_VioletMoteSheet; ///< The Thor summon.
 #define RESOURCE_VIOLET_MOTE_SHEET ((s32)&ResourceId_VioletMoteSheet)
 /// Judgment's burst (JUDGMENT_SHEET_BURST).
-extern char ResourceId_OverlayImageB;
-#define RESOURCE_OVERLAY_IMAGE_B ((s32)&ResourceId_OverlayImageB)
+extern char ResourceId_JudgmentBurstSheet;
+#define RESOURCE_JUDGMENT_BURST_SHEET ((s32)&ResourceId_JudgmentBurstSheet)
 extern char ResourceId_SlashSheet; ///< The Atalanta summon.
 #define RESOURCE_SLASH_SHEET ((s32)&ResourceId_SlashSheet)
 /// Judgment's explosion (JUDGMENT_SHEET_EXPLOSION).
 extern char ResourceId_ExplosionSheet;
 #define RESOURCE_EXPLOSION_SHEET ((s32)&ResourceId_ExplosionSheet)
-extern char ResourceId_ParticleSpritesB; ///< The Thor summon.
-#define RESOURCE_PARTICLE_SPRITES_B ((s32)&ResourceId_ParticleSpritesB)
-/// The Thor summon, beside ParticleSpritesB.
-extern char ResourceId_ParticleSpritesC;
-#define RESOURCE_PARTICLE_SPRITES_C ((s32)&ResourceId_ParticleSpritesC)
+extern char ResourceId_PaleBlueGlowSheet; ///< The Thor summon.
+#define RESOURCE_PALE_BLUE_GLOW_SHEET ((s32)&ResourceId_PaleBlueGlowSheet)
+/// The Thor summon, beside PaleBlueGlowSheet.
+extern char ResourceId_BlueTallGlowSheet;
+#define RESOURCE_BLUE_TALL_GLOW_SHEET ((s32)&ResourceId_BlueTallGlowSheet)
 /// Rotten Blood's green, which Decompose shares.
 extern char ResourceId_GreenPalette;
 #define RESOURCE_GREEN_PALETTE ((s32)&ResourceId_GreenPalette)
@@ -693,8 +697,8 @@ extern char ResourceId_LightFanSheet; ///< The Thor summon.
 extern char ResourceId_FlameSheetB; ///< Meteor and Outer Space.
 #define RESOURCE_FLAME_SHEET_B ((s32)&ResourceId_FlameSheetB)
 /// The monster strikes' picture for every kind but a slash.
-extern char ResourceId_TwelveModeImage;
-#define RESOURCE_TWELVE_MODE_IMAGE ((s32)&ResourceId_TwelveModeImage)
+extern char ResourceId_BlueDropletSheet;
+#define RESOURCE_BLUE_DROPLET_SHEET ((s32)&ResourceId_BlueDropletSheet)
 /// The star field's rings (ElementGlow_InitializeStarField), with the Mercury
 /// field's colours.
 extern char ResourceId_BlueRingSheet;
@@ -703,8 +707,9 @@ extern char ResourceId_BlueRingSheet;
 extern char ResourceId_RedPaletteC;
 #define RESOURCE_RED_PALETTE_C ((s32)&ResourceId_RedPaletteC)
 /// The path Atalanta's particles follow.
-extern char ResourceId_StagedParticlePath;
-#define RESOURCE_STAGED_PARTICLE_PATH ((s32)&ResourceId_StagedParticlePath)
-extern char ResourceId_DualStreamPath; ///< The path of Dragon Cloud's streams.
-#define RESOURCE_DUAL_STREAM_PATH ((s32)&ResourceId_DualStreamPath)
+extern char ResourceId_AtalantaPath;
+#define RESOURCE_ATALANTA_PATH ((s32)&ResourceId_AtalantaPath)
+extern char
+    ResourceId_DragonCloudFlamePath; ///< The path of Dragon Cloud's flame.
+#define RESOURCE_DRAGON_CLOUD_FLAME_PATH ((s32)&ResourceId_DragonCloudFlamePath)
 #endif

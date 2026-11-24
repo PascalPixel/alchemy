@@ -31,9 +31,9 @@ struct CharacterDefinition {
   ///@{
   s16 hp[GROWTH_POINTS];
   s16 pp[GROWTH_POINTS];
-  u16 atk[GROWTH_POINTS];
-  u16 def[GROWTH_POINTS];
-  u16 agi[GROWTH_POINTS];
+  u16 attack[GROWTH_POINTS];
+  u16 defense[GROWTH_POINTS];
+  u16 agility[GROWTH_POINTS];
   u8 luck[GROWTH_POINTS];
   ///@}
   /// Added to ten times the Djinn set in each element to give the
@@ -97,12 +97,12 @@ struct ClassDefinition {
   /// The element levels the class needs, in tens: the last class of the
   /// series the character meets in all four is its class.
   u8 required[4];
-  u8 hp;   ///< tenths of the base stat
-  u8 pp;   ///< tenths of the base stat
-  u8 atk;  ///< tenths of the base stat
-  u8 def;  ///< tenths of the base stat
-  u8 agi;  ///< tenths of the base stat
-  u8 luck; ///< tenths of the base stat
+  u8 hp;      ///< tenths of the base stat
+  u8 pp;      ///< tenths of the base stat
+  u8 attack;  ///< tenths of the base stat
+  u8 defense; ///< tenths of the base stat
+  u8 agility; ///< tenths of the base stat
+  u8 luck;    ///< tenths of the base stat
   u8 padding[2];
   struct ClassAbility
       abilities[CLASS_ABILITY_SLOTS]; ///< the Psynergy the class teaches
@@ -120,9 +120,9 @@ struct DjinnDefinition {
   ///@{
   s8 hp;
   s8 pp;
-  s8 atk;
-  s8 def;
-  s8 agi;
+  s8 attack;
+  s8 defense;
+  s8 agility;
   s8 luck;
   ///@}
   u8 reservedAfterStats[2];
@@ -168,9 +168,9 @@ struct EnemyDefinition {
   ///@{
   u16 hp;
   u16 pp;
-  u16 atk;
-  u16 def;
-  u16 agi;
+  u16 attack;
+  u16 defense;
+  u16 agility;
   u8 luck;
   u8 actionCount; ///< actions a turn (Unit.baseActionCount)
   u8 hpRegen;     ///< HP restored at each turn's end (Unit.baseHpRegen)
@@ -218,9 +218,9 @@ struct LevelUpResult {
   ///@{
   u16 hp;
   u16 pp;
-  u16 atk;
-  u16 def;
-  u16 agi;
+  u16 attack;
+  u16 defense;
+  u16 agility;
   u16 luck;
   ///@}
 };

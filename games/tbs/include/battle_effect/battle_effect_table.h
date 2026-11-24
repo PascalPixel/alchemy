@@ -62,7 +62,7 @@ enum {
   ICE_SHARD_COUNT, ///< shards that fall
   ICE_FRAMES       ///< the effect's frames; the damage shows 16 before
 };
-extern u8 gFalling_IceCounts[][2];
+extern u8 gIce_Counts[][2];
 
 /// Each Douse variant: its drops, the droplets each splash throws, the
 /// spacing and the frames.
@@ -72,7 +72,7 @@ enum {
   DOUSE_DROP_SPACING,      ///< pixels between drops along the slant
   DOUSE_FRAMES             ///< the effect's frames; the damage shows 64 before
 };
-extern u8 gFalling_Counts[][4];
+extern u8 gDouse_Counts[][4];
 
 extern s8 gStreak_Styles[][4];
 extern s8 gStreak_Tremble[];
@@ -83,22 +83,22 @@ extern u16 gTargetStrike_Pictures[];
 extern u8 gTargetStrike_Reach[];
 extern u8 gTargetStrike_BiteStages[];
 extern u8 gTargetStrike_GlintDrawFlags[];
-extern u8 gDeathPlunge_SwordWidths[];
-extern u8 gDeathPlunge_SwordHeights[];
-extern u16 gDeathPlunge_SwordPictures[];
-extern u8 gDeathPlunge_PieceWidths[];
-extern u8 gDeathPlunge_PieceHeights[];
-extern u16 gDeathPlunge_PiecePictures[];
-extern u8 gDeathPlunge_PieceStartX[];
-extern u8 gDeathPlunge_PieceStartY[];
-extern s8 gDeathPlunge_X[];
-extern s8 gDeathPlunge_Y[];
-extern u8 gDeathPlunge_DrawFlags[];
-extern u8 gSpiderWeb_PictureWidths[];
-extern u8 gSpiderWeb_PictureHeights[];
-extern u16 gSpiderWeb_Pictures[];
-extern u8 gSpiderWeb_PictureX[];
-extern s8 gSpiderWeb_PictureBiasY[];
+extern u8 gBladeRain_SwordWidths[];
+extern u8 gBladeRain_SwordHeights[];
+extern u16 gBladeRain_SwordPictures[];
+extern u8 gShatteringOpening_PieceWidths[];
+extern u8 gShatteringOpening_PieceHeights[];
+extern u16 gShatteringOpening_PiecePictures[];
+extern u8 gShatteringOpening_PieceStartX[];
+extern u8 gShatteringOpening_PieceStartY[];
+extern s8 gElementBurst_SparkX[];
+extern s8 gElementBurst_SparkY[];
+extern u8 gElementBurst_SparkFlips[];
+extern u8 gSwirlSwipe_PictureWidths[];
+extern u8 gSwirlSwipe_PictureHeights[];
+extern u16 gSwirlSwipe_Pictures[];
+extern u8 gSwirlSwipe_PictureX[];
+extern s8 gSwirlSwipe_PictureBiasY[];
 
 /// Each gathering-lights mode: the lights per target and the frames before the
 /// targets' turns.
@@ -214,7 +214,7 @@ enum {
                       ///< impact and BattleEffect_RunUnusedSevereBlowLeap
   SPARK_GROUPS_THRASH ///< 32 sparks: Thrash
 };
-extern u16 gPlasma_Shapes[][5];
+extern u16 gSparkGroups_Shapes[][5];
 
 extern u8 gPlasma_FlashPictures[];
 extern u8 gVolcano_Counts[];
@@ -309,16 +309,16 @@ extern s8 gGrowth_PillarHeights[];
 extern s8 gGrowth_PuffWidths[];
 extern u8 gGrowth_PuffHeights[];
 extern u16 gGrowth_PuffPictures[];
-extern s8 gGrowth_ColumnOffsets[];
-// A thorn's kind in gGrowth_Kinds.
+extern s8 gVine_ColumnOffsets[];
+// A thorn's kind in gThorn_Kinds.
 #define THORN_MIRRORED 1 ///< drawn mirrored across
 #define THORN_SMALL 2    ///< 32 pixels wide, not 48
-extern u8 gGrowth_Kinds[];
-extern s8 gGrowth_X[];
-extern u8 gGrowth_Counts[];
-extern s8 gGrowth_ThornPuffWidths[];
-extern u8 gGrowth_ThornPuffHeights[];
-extern u16 gGrowth_ThornPuffPictures[];
+extern u8 gThorn_Kinds[];
+extern s8 gThorn_X[];
+extern u8 gThorn_Counts[];
+extern s8 gThorn_PuffWidths[];
+extern u8 gThorn_PuffHeights[];
+extern u16 gThorn_PuffPictures[];
 extern u8 gBolt_Counts[][4];
 extern u8 gBolt_GlintFlips[];
 extern u8 gBolt_GlintModes[];
@@ -359,12 +359,12 @@ extern u8 gDjinnAttacks_LaunchFrames[];
 extern u8 gHail_PictureWidths[];
 extern u8 gHail_PictureHeights[];
 extern u16 gHail_Pictures[];
-extern u8 gHail_CrackleFlips[];
-extern u8 gHail_PortalWidths[];
-extern u8 gHail_PortalHeights[];
-extern u16 gHail_PortalPictures[];
-extern u8 gHail_PortalX[];
-extern u8 gHail_PortalY[];
+extern u8 gGround_CrackleFlips[];
+extern u8 gGround_PortalWidths[];
+extern u8 gGround_PortalHeights[];
+extern u16 gGround_PortalPictures[];
+extern u8 gGround_PortalX[];
+extern u8 gGround_PortalY[];
 extern u8 gThor_TargetPalettes[];
 extern u8 gThor_CrackleFlips[];
 
@@ -421,27 +421,27 @@ extern u8 gBeam_PictureHeights[];
 extern u16 gBeam_Pictures[];
 extern u8 gBeam_PictureReaches[];
 extern u8 gCastingImpact_GlintDrawFlags[];
-extern u8 gCastingImpact_PictureX[][7];
-extern u8 gCastingImpact_PictureY[];
+extern u8 gReaper_PictureX[][7];
+extern u8 gReaper_PictureY[];
 extern u16 gCastingImpact_IceChipPictures[];
 extern u8 gHelmSplitter_PictureWidths[];
 extern u8 gHelmSplitter_PictureHeights[];
 extern u16 gHelmSplitter_Pictures[];
 extern s8 gHelmSplitter_PictureBiasX[];
 extern s8 gHelmSplitter_PictureBiasY[];
-extern u8 gHelmSplitter_TwelveX[];
-extern u8 gHelmSplitter_TwelveZ[];
-extern u8 gHelmSplitter_RightEightX[];
-extern u8 gHelmSplitter_RightEightZ[];
-extern u8 gHelmSplitter_SmallEightX[];
-extern u8 gHelmSplitter_SmallEightZ[];
-extern u8 gHelmSplitter_ImpactBurstPictureWidths[];
-extern u8 gHelmSplitter_ImpactBurstPictureHeights[];
-extern u16 gHelmSplitter_ImpactBurstPictures[];
-extern s16 gParticleStreams_OrbitPoints[][3];
-extern s16 gParticleStreams_FireballPoints[][2];
-extern u16 gParticleStreams_FlashPictures[];
-extern u16 gParticleStreams_FlashSizes[];
+extern u8 gSummonFormation_NereidX[];
+extern u8 gSummonFormation_NereidZ[];
+extern u8 gSummonFormation_CybeleX[];
+extern u8 gSummonFormation_CybeleZ[];
+extern u8 gSummonFormation_TiamatX[];
+extern u8 gSummonFormation_TiamatZ[];
+extern u8 gImpactBurst_PictureWidths[];
+extern u8 gImpactBurst_PictureHeights[];
+extern u16 gImpactBurst_Pictures[];
+extern s16 gStarfieldFall_OrbitPoints[][3];
+extern s16 gStarfieldFall_FireballPoints[][2];
+extern u16 gStarfieldFall_FlashPictures[];
+extern u16 gStarfieldFall_FlashSizes[];
 extern u8 gRamses_StatueColumns[];
 extern u8 gRamses_StatueRows[];
 extern u16 gRamses_PuffPictures[];
@@ -451,7 +451,7 @@ extern u8 gRagnarok_FlashPictures[];
 extern u8 gTitanBlade_FlashPictures[];
 extern s32 gTitanBlade_DustGravity[];
 extern u8 gJudgment_BurstHeights[];
-extern u16 gJudgment_BurstPictures[];
+extern u16 gJudgment_ShieldSprites[];
 extern u16 gJudgment_ShardPictures[];
 extern u8 gJudgment_ShardWidths[];
 extern u8 gJudgment_ShardHeights[];
@@ -460,7 +460,7 @@ extern u8 gKirin_Rows[];
 extern u8 gNeptune_ObjectX[];
 extern u8 gNeptune_ObjectY[];
 extern s32 gNeptune_Gravity[];
-extern u16 gUndeadSword_SparkPictures[];
-extern u16 gUndeadSword_SparkSizes[];
+extern u16 gUndeadSword_PuffPictures[];
+extern u16 gUndeadSword_PuffSizes[];
 
 #endif

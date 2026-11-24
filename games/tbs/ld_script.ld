@@ -105,9 +105,9 @@ Tile_ExpandMaskedCodeSize = Tile_ExpandOpaque - Tile_ExpandMasked;
 Tile_ExpandOpaqueCodeSize = WindowSprite_AcquireFree - Tile_ExpandOpaque;
 Credits_DecodeBackgroundCodeSize = Credits_ClearBuffer - Credits_DecodeBackground;
 Actor_UpdateAllCodeSize = Decompress_Lz - Actor_UpdateAll;
-Tile_BuildCellTilesCodeSize = Tile_Decompress4bpp - Tile_BuildCellTiles;
-Matrix_UpdateVerticesSize = Tile_ConvertMapGrid - Matrix_UpdateVertices;
-Glyph_DrawCodeSize = Tile_BuildCellTiles - Glyph_DrawArm;
+Tile_BuildCellTilesCodeSize = Tile_Decompress4bpp - ScanlineWindow_BuildEdges;
+Matrix_UpdateVerticesSize = Tile_ConvertMapGrid - WorldMap_UpdateAffineLines;
+Glyph_DrawCodeSize = ScanlineWindow_BuildEdges - Glyph_DrawArm;
 BitDecoder_Size = DebugParameterSet_Load - BitDecoder_DecodeImage;
 
 MEMORY
@@ -232,7 +232,7 @@ SECTIONS
         "*/games/tbs/src/gamepak/far_call/game.o"(.text .padding)
         "*/games/tbs/src/game/game.o"(.text .padding)
         "*/games/tbs/src/game/experience_table.o"(.text .padding)
-        "*/games/tbs/src/game/artifact_slots.o"(.text .padding)
+        "*/games/tbs/src/game/rare_item_stock.o"(.text .padding)
         "*/games/tbs/src/game/starting_equipment.o"(.text .padding)
         "*/games/tbs/src/game/item_table.o"(.text .padding)
         "*/games/tbs/src/game/ability_table.o"(.text .padding)
@@ -245,7 +245,7 @@ SECTIONS
         "*/games/tbs/src/gamepak/far_call/game.o"(.rodata)
         "*/games/tbs/src/game/game.o"(.rodata)
         "*/games/tbs/src/game/experience_table.o"(.rodata)
-        "*/games/tbs/src/game/artifact_slots.o"(.rodata)
+        "*/games/tbs/src/game/rare_item_stock.o"(.rodata)
         "*/games/tbs/src/game/starting_equipment.o"(.rodata)
         "*/games/tbs/src/game/item_table.o"(.rodata)
         "*/games/tbs/src/game/ability_table.o"(.rodata)
@@ -258,7 +258,7 @@ SECTIONS
         "*/games/tbs/src/gamepak/far_call/game.o"(.data .overlays)
         "*/games/tbs/src/game/game.o"(.data .overlays)
         "*/games/tbs/src/game/experience_table.o"(.data .overlays)
-        "*/games/tbs/src/game/artifact_slots.o"(.data .overlays)
+        "*/games/tbs/src/game/rare_item_stock.o"(.data .overlays)
         "*/games/tbs/src/game/starting_equipment.o"(.data .overlays)
         "*/games/tbs/src/game/item_table.o"(.data .overlays)
         "*/games/tbs/src/game/ability_table.o"(.data .overlays)

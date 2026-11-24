@@ -84,14 +84,14 @@ u8 gBattleEffect_GlintPictureHeights[] = {31, 31, 31, 21, 21, 24};
 // battle_effect_falling.c: Falling shard and bolt wave counts.
 
 /// Ice, by variant: shards and frames (ICE_SHARD_COUNT, ICE_FRAMES).
-u8 gFalling_IceCounts[][2] = {
+u8 gIce_Counts[][2] = {
     // shards, frames
     [EFFECT_VARIANT_BASIC] = {16, 46},     // Ice
     [EFFECT_VARIANT_STRONGER] = {20, 52},  // Ice Horn
     [EFFECT_VARIANT_STRONGEST] = {32, 80}, // Ice Missile
 };
-/// Douse, by variant: the FALLING_BOLT_ columns.
-u8 gFalling_Counts[][4] = {
+/// Douse, by variant: the DOUSE_ columns.
+u8 gDouse_Counts[][4] = {
     // bolts, sparks per bolt, spacing, frames
     [EFFECT_VARIANT_BASIC] = {6, 8, 32, 80},     // Douse
     [EFFECT_VARIANT_STRONGER] = {8, 16, 24, 80}, // Drench
@@ -165,45 +165,45 @@ u8 gTargetStrike_GlintDrawFlags[] = GLINT_FLIPS;
 // battle_effect_death_plunge.c: Blade rain and shattering tile pieces.
 
 /// The sword pictures, by how steeply the sword falls.
-u8 gDeathPlunge_SwordWidths[] = {20, 21, 22, 25};
-u8 gDeathPlunge_SwordHeights[] = {32, 31, 27, 24};
-u16 gDeathPlunge_SwordPictures[] = {0, 640, 1291, 1885};
-/// The 33 pieces of the TileAnimationMask picture: where each starts on the
-/// canvas, its size, and where its pixels begin in the decoded picture. The
+u8 gBladeRain_SwordWidths[] = {20, 21, 22, 25};
+u8 gBladeRain_SwordHeights[] = {32, 31, 27, 24};
+u16 gBladeRain_SwordPictures[] = {0, 640, 1291, 1885};
+/// The 33 pieces of the ShatteringOpeningSheet picture: where each starts on
+/// the canvas, its size, and where its pixels begin in the decoded picture. The
 /// offsets carry one more entry, where the last piece ends.
-u8 gDeathPlunge_PieceWidths[] = {21, 20, 24, 30, 35, 69, 19, 23, 9,  22, 33,
-                                 10, 18, 9,  7,  9,  17, 55, 30, 25, 40, 29,
-                                 10, 28, 14, 5,  32, 23, 19, 32, 8,  43, 15};
-u8 gDeathPlunge_PieceHeights[] = {23, 47, 25, 40, 20, 53, 28, 29, 23, 14, 35,
-                                  17, 18, 14, 15, 12, 13, 37, 38, 41, 60, 41,
-                                  15, 45, 59, 41, 26, 50, 21, 35, 12, 57, 11};
-u16 gDeathPlunge_PiecePictures[] = {
+u8 gShatteringOpening_PieceWidths[] = {
+    21, 20, 24, 30, 35, 69, 19, 23, 9, 22, 33, 10, 18, 9, 7,  9, 17,
+    55, 30, 25, 40, 29, 10, 28, 14, 5, 32, 23, 19, 32, 8, 43, 15};
+u8 gShatteringOpening_PieceHeights[] = {
+    23, 47, 25, 40, 20, 53, 28, 29, 23, 14, 35, 17, 18, 14, 15, 12, 13,
+    37, 38, 41, 60, 41, 15, 45, 59, 41, 26, 50, 21, 35, 12, 57, 11};
+u16 gShatteringOpening_PiecePictures[] = {
     0,     483,   1423,  2023,  3223,  3923,  7580,  8112,  8779,
     8986,  9294,  10449, 10619, 10943, 11069, 11174, 11282, 11503,
     13538, 14678, 15703, 18103, 19292, 19442, 20702, 21528, 21733,
     22565, 23715, 24114, 25234, 25330, 27781, 27946};
-u8 gDeathPlunge_PieceStartX[] = {0,  21, 28, 46, 70, 51, 0,  13, 37, 77, 87,
-                                 19, 25, 35, 44, 45, 48, 65, 0,  0,  0,  5,
-                                 33, 15, 36, 46, 47, 50, 53, 65, 72, 77, 105};
-u8 gDeathPlunge_PieceStartY[] = {0,  0,  0,  0,  0,  0,  19, 17, 23,  28, 8,
-                                 36, 43, 43, 40, 47, 48, 37, 42, 67,  60, 79,
-                                 62, 75, 61, 62, 60, 70, 74, 85, 108, 63, 74};
+u8 gShatteringOpening_PieceStartX[] = {
+    0,  21, 28, 46, 70, 51, 0,  13, 37, 77, 87, 19, 25, 35, 44, 45, 48,
+    65, 0,  0,  0,  5,  33, 15, 36, 46, 47, 50, 53, 65, 72, 77, 105};
+u8 gShatteringOpening_PieceStartY[] = {
+    0,  0,  0,  0,  0,  0,  19, 17, 23, 28, 8,  36, 43, 43,  40, 47, 48,
+    37, 42, 67, 60, 79, 62, 75, 61, 62, 60, 70, 74, 85, 108, 63, 74};
 
 // battle_effect_death_plunge.c and battle_effect_spider_web.c: Canvas corner
 // sparks and two-resource pictures.
 
 /// The element burst's corner sparks: offsets and flips.
-s8 gDeathPlunge_X[] = {0, 32, 0, 32};
-s8 gDeathPlunge_Y[] = {0, 0, 32, 32};
-u8 gDeathPlunge_DrawFlags[] = GLINT_FLIPS;
+s8 gElementBurst_SparkX[] = {0, 32, 0, 32};
+s8 gElementBurst_SparkY[] = {0, 0, 32, 32};
+u8 gElementBurst_SparkFlips[] = GLINT_FLIPS;
 /// The six pictures: the first four from the swirl sprite sheet, the last two
-/// from the tail sprite sheet. gSpiderWeb_PictureX has six entries for each
+/// from the tail sprite sheet. gSwirlSwipe_PictureX has six entries for each
 /// side.
-u8 gSpiderWeb_PictureWidths[] = {40, 112, 112, 112, 88, 64};
-u8 gSpiderWeb_PictureHeights[] = {56, 80, 64, 64, 80, 88};
-u16 gSpiderWeb_Pictures[] = {0, 2240, 11200, 18368, 0, 7040};
-u8 gSpiderWeb_PictureX[] = {72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0};
-s8 gSpiderWeb_PictureBiasY[] = {0, 4, 24, -6, -20, -28, 0, 0};
+u8 gSwirlSwipe_PictureWidths[] = {40, 112, 112, 112, 88, 64};
+u8 gSwirlSwipe_PictureHeights[] = {56, 80, 64, 64, 80, 88};
+u16 gSwirlSwipe_Pictures[] = {0, 2240, 11200, 18368, 0, 7040};
+u8 gSwirlSwipe_PictureX[] = {72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0};
+s8 gSwirlSwipe_PictureBiasY[] = {0, 4, 24, -6, -20, -28, 0, 0};
 
 // battle_effect_gathering_lights.c
 
@@ -381,7 +381,7 @@ u8 gPlasma_Counts[] = {1, 3, 7};
 // battle_effect_plasma.c: Spark group shapes and flash pictures.
 
 /// The spark groups, by variant: the SPARK_GROUPS_ columns.
-u16 gPlasma_Shapes[][5] = {
+u16 gSparkGroups_Shapes[][5] = {
     // sparks per burst, bursts, each burst's offset across
     [EFFECT_VARIANT_BASIC] = {128, 1, 16, 0, 0},
     [EFFECT_VARIANT_STRONGER] = {255, 1, 16, 0, 0},
@@ -735,7 +735,7 @@ BattleEffectHandler gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
         BattleEffect_RunSpinningBeat, // battle_effect_spider_web.c: Spinning
                                       // Beat
     [BATTLE_EFFECT_OUTER_SPACE - 1] =
-        BattleEffect_RunOuterSpace, // battle_effect_particle_streams.c:
+        BattleEffect_RunOuterSpace, // battle_effect_starfield_fall.c:
                                     // Outer Space
     [BATTLE_EFFECT_DRAGON_DRIVER - 1] =
         BattleEffect_RunDragonDriver, // battle_effect_tiamat.c: Dragon Driver
@@ -932,19 +932,19 @@ s8 gGrowth_PuffWidths[] = {5, 7, 11, 16, 23, 27, 16};
 u8 gGrowth_PuffHeights[] = {10, 14, 21, 32, 45, 50, 32};
 u16 gGrowth_PuffPictures[] = {0, 50, 148, 379, 891, 1926, 3276};
 /// Each vine's root, across from the middle of the targets.
-s8 gGrowth_ColumnOffsets[] = {0,   14, -32, 8,   32, -48, 4,   12,
-                              -24, 24, -12, -40, -4, -16, -32, 12};
+s8 gVine_ColumnOffsets[] = {0,   14, -32, 8,   32, -48, 4,   12,
+                            -24, 24, -12, -40, -4, -16, -32, 12};
 /// Each thorn's kind (THORN_ flags) and root.
-u8 gGrowth_Kinds[] = {
+u8 gThorn_Kinds[] = {
     0,           THORN_SMALL | THORN_MIRRORED, THORN_SMALL, THORN_MIRRORED,
     THORN_SMALL, THORN_SMALL | THORN_MIRRORED, THORN_SMALL, THORN_MIRRORED};
-s8 gGrowth_X[] = {24, 80, 24, 48, 88, 40, 8, 96};
+s8 gThorn_X[] = {24, 80, 24, 48, 88, 40, 8, 96};
 /// Thorns by variant.
-u8 gGrowth_Counts[] = {3, 5, 8};
+u8 gThorn_Counts[] = {3, 5, 8};
 /// The seven pictures of a puff of dust.
-s8 gGrowth_ThornPuffWidths[] = {5, 7, 11, 17, 32, 32, 19};
-u8 gGrowth_ThornPuffHeights[] = {10, 14, 21, 34, 59, 60, 38};
-u16 gGrowth_ThornPuffPictures[] = {5888, 5938, 6036, 6267, 6845, 8733, 10653};
+s8 gThorn_PuffWidths[] = {5, 7, 11, 17, 32, 32, 19};
+u8 gThorn_PuffHeights[] = {10, 14, 21, 34, 59, 60, 38};
+u16 gThorn_PuffPictures[] = {5888, 5938, 6036, 6267, 6845, 8733, 10653};
 
 // battle_effect_bolt.c: Lightning bolt counts and glint palettes.
 
@@ -1006,18 +1006,18 @@ u8 gHail_PictureHeights[] = {8, 8, 8, 8};
 u16 gHail_Pictures[] = {2308, 2372, 2436, 2500};
 /// The blitter flags a crackle may take, chosen at random: clipped at the
 /// canvas edges, and drawn as is, mirrored across, mirrored down or both.
-u8 gHail_CrackleFlips[] = {
+u8 gGround_CrackleFlips[] = {
     EFFECT_CLIP_BOUNDS, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP};
 /// The portal (picture 0), its white core (1 and 2) and its crackles (3 to 8)
 /// in the portal sprite sheet: size, where each begins in the sprite sheet, and
 /// its offset from the portal's corner.
-u8 gHail_PortalWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
-u8 gHail_PortalHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
-u16 gHail_PortalPictures[] = {0,    1152, 1243, 1341, 1533,
-                              1677, 1898, 2098, 2252};
-u8 gHail_PortalX[] = {0, 9, 9, 11, 10, 0, 3, 13, 7};
-u8 gHail_PortalY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
+u8 gGround_PortalWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
+u8 gGround_PortalHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
+u16 gGround_PortalPictures[] = {0,    1152, 1243, 1341, 1533,
+                                1677, 1898, 2098, 2252};
+u8 gGround_PortalX[] = {0, 9, 9, 11, 10, 0, 3, 13, 7};
+u8 gGround_PortalY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
 
 // battle_effect_spire.c and battle_effect_thor.c: Storm effect colours and
 // shattering rocks.
@@ -1104,8 +1104,8 @@ u8 gBeam_PictureReaches[] = SLASH_PICTURE_REACH;
 
 /// The flips a glint may take, picked at random.
 u8 gCastingImpact_GlintDrawFlags[] = GLINT_FLIPS;
-u8 gCastingImpact_PictureX[][7] = REAPER_PICTURE_X;
-u8 gCastingImpact_PictureY[] = REAPER_PICTURE_Y;
+u8 gReaper_PictureX[][7] = REAPER_PICTURE_X;
+u8 gReaper_PictureY[] = REAPER_PICTURE_Y;
 /// The four ice chip pictures, 8x8.
 u16 gCastingImpact_IceChipPictures[] = {2308, 2372, 2436, 2500, 0};
 
@@ -1121,35 +1121,36 @@ s8 gHelmSplitter_PictureBiasY[] = {2, 3, 3, 3, 4, 14, 29};
 // battle_effect_helm_splitter.c: Sprite formation coordinates and impact burst
 // pictures.
 
-/// The offsets of BattleEffect_PlaceFormationObjects' formations in pixels, one
+/// The offsets of BattleEffect_PlaceFormationSprites' formations in pixels, one
 /// axis at a time: Nereid's twelve in rows of 1, 3, 4 and 4; Cybele's eight in
 /// rows of 3, 2 and 3; Tiamat's eight drawn at 1.25 times their size. Thor's,
 /// a 3x3 grid, needs no table.
-u8 gHelmSplitter_TwelveX[] = {52, 25, 57, 89, 7, 39, 71, 103, 21, 53, 85, 117};
-u8 gHelmSplitter_TwelveZ[] = {0, 32, 32, 32, 64, 64, 64, 64, 96, 96, 96, 96};
-u8 gHelmSplitter_RightEightX[] = {0, 32, 64, 16, 48, 0, 32, 64};
-u8 gHelmSplitter_RightEightZ[] = {0, 0, 0, 32, 32, 64, 64, 64};
-u8 gHelmSplitter_SmallEightX[] = {0, 40, 80, 0, 40, 80, 40, 80};
-u8 gHelmSplitter_SmallEightZ[] = {13, 0, 0, 53, 40, 40, 80, 80};
+u8 gSummonFormation_NereidX[] = {52, 25,  57, 89, 7,  39,
+                                 71, 103, 21, 53, 85, 117};
+u8 gSummonFormation_NereidZ[] = {0, 32, 32, 32, 64, 64, 64, 64, 96, 96, 96, 96};
+u8 gSummonFormation_CybeleX[] = {0, 32, 64, 16, 48, 0, 32, 64};
+u8 gSummonFormation_CybeleZ[] = {0, 0, 0, 32, 32, 64, 64, 64};
+u8 gSummonFormation_TiamatX[] = {0, 40, 80, 0, 40, 80, 40, 80};
+u8 gSummonFormation_TiamatZ[] = {13, 0, 0, 53, 40, 40, 80, 80};
 /// The eight pictures of the impact flash.
-u8 gHelmSplitter_ImpactBurstPictureWidths[] = {48, 48, 46, 36, 36, 32, 26, 6};
-u8 gHelmSplitter_ImpactBurstPictureHeights[] = {96, 96, 90, 74, 74, 62, 52, 12};
-u16 gHelmSplitter_ImpactBurstPictures[] = {0,     4608,  9216,  13356,
-                                           16020, 18684, 20668, 22020};
+u8 gImpactBurst_PictureWidths[] = {48, 48, 46, 36, 36, 32, 26, 6};
+u8 gImpactBurst_PictureHeights[] = {96, 96, 90, 74, 74, 62, 52, 12};
+u16 gImpactBurst_Pictures[] = {0,     4608,  9216,  13356,
+                               16020, 18684, 20668, 22020};
 
-// battle_effect_particle_streams.c and battle_effect_ramses.c: The fall's
+// battle_effect_starfield_fall.c and battle_effect_ramses.c: The fall's
 // orbiting sparks, fireballs and flashes; Ramses' statue and puffs.
 
 /// The seven sparks that orbit the falling sprite.
-s16 gParticleStreams_OrbitPoints[][3] = {
+s16 gStarfieldFall_OrbitPoints[][3] = {
     {-64, -96, 24}, {-48, -120, 32}, {-32, -80, -48}, {-16, -72, -24},
     {16, -80, 16},  {32, -112, -32}, {48, -96, 56}};
 /// Where the seven fireballs fall, in pixels.
-s16 gParticleStreams_FireballPoints[][2] = {
+s16 gStarfieldFall_FireballPoints[][2] = {
     {32, 32}, {48, 96}, {80, 80}, {112, 100}, {176, 80}, {196, 64}, {204, 96}};
 /// The seven growing flash pictures of the blast sprite sheet, square.
-u16 gParticleStreams_FlashPictures[] = BLAST_PICTURES;
-u16 gParticleStreams_FlashSizes[] = BLAST_PICTURE_SIZES;
+u16 gStarfieldFall_FlashPictures[] = BLAST_PICTURES;
+u16 gStarfieldFall_FlashSizes[] = BLAST_PICTURE_SIZES;
 /// Where the statue's sprites stand, in pixels from its corner.
 u8 gRamses_StatueColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
 u8 gRamses_StatueRows[] = {0, 0, 32, 32, 64, 64, 64, 32, 32};
@@ -1179,7 +1180,7 @@ s32 gTitanBlade_DustGravity[] = {toFIXED(1) / 2, toFIXED(1) / 4, toFIXED(1) / 4,
 /// Judgment's burst: seven quarter pictures, each half as wide as it is
 /// tall, from JUDGMENT_SHEET_BURST.
 u8 gJudgment_BurstHeights[] = {2, 3, 4, 6, 10, 11, 12};
-u16 gJudgment_BurstPictures[] = {0, 8, 26, 58, 130, 330, 572};
+u16 gJudgment_ShieldSprites[] = {0, 8, 26, 58, 130, 330, 572};
 /// The six shard pictures thrown from the burst, from the sprite sheet's start.
 u16 gJudgment_ShardPictures[] = {2396, 2985, 3698, 4411, 4810, 5146};
 u8 gJudgment_ShardWidths[] = {19, 23, 23, 19, 16, 17};
@@ -1200,8 +1201,8 @@ u8 gNeptune_ObjectY[] = {0, 0, 0, 32, 32, 32, 0, 32};
 s32 gNeptune_Gravity[] = {toFIXED(1) / 2, toFIXED(1) / 4, toFIXED(1) / 4,
                           toFIXED(1) / 8};
 
-// battle_effect_undead_sword.c: Rising burst spark pictures.
+// battle_effect_undead_sword.c: Rising burst puff pictures.
 
-/// The seven square spark pictures, from UNDEAD_SWORD_SPARK_SHEET.
-u16 gUndeadSword_SparkPictures[] = BLAST_PICTURES;
-u16 gUndeadSword_SparkSizes[] = BLAST_PICTURE_SIZES;
+/// The seven square puff pictures, from UNDEAD_SWORD_PUFF_SHEET.
+u16 gUndeadSword_PuffPictures[] = BLAST_PICTURES;
+u16 gUndeadSword_PuffSizes[] = BLAST_PICTURE_SIZES;

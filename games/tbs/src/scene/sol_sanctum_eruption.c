@@ -92,11 +92,11 @@ extern u32 gSolSanctumEruption_Exits[];
 extern struct ActorPlacement gSolSanctumEruption_ActorPlacements[];
 extern struct Trigger gSolSanctumEruption_Triggers[];
 extern s32 gEruption_EmberScript[];
-extern u8 gSolSanctum_RingDrift[][3];
-extern u8 gSolSanctum_RingSwing[][3];
-extern s8 gSolSanctum_RingDirection[][3];
-extern FIXED gSolSanctum_RingMaxScales[];
-extern FIXED gSolSanctum_RingScaleSteps[];
+extern u8 gSolSanctum_LightDrift[][3];
+extern u8 gSolSanctum_LightSwing[][3];
+extern s8 gSolSanctum_LightDirection[][3];
+extern FIXED gSolSanctum_LightMaxScales[];
+extern FIXED gSolSanctum_LightScaleSteps[];
 
 /// The eruption's actors, numbered in the order of
 /// gSolSanctumEruption_ActorPlacements.
@@ -867,7 +867,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   struct Sprite *garetSprite;
   struct Actor *star;
   struct Sprite *starSprite;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   u8 crystalIndex;
   u32 frame;
   s32 flickerDelay;
@@ -1297,7 +1297,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
       FieldActor_Create(SPRITE_BLANK, starOrigin->x.fixed,
                         starOrigin->y.fixed + toFIXED(36), starOrigin->z.fixed);
   if (star != NULL) {
-    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     starSprite = star->sprite;
     starSprite->flags = 0;
     starSprite->count = 0;
@@ -1306,7 +1306,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     starSprite->image.priority = 1;
     Icon_DrawItem(ITEM_MARS_STAR);
     VramCache_Load(starSprite->slot, ICON_TILE_BYTES, glyph->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
     ItemDisplay_ShowPicture(star, 3);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
@@ -1840,7 +1840,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
       }
     }
   }
-  pair[0]->update = FieldEffect_AnimateVerticalNegative;
+  pair[0]->update = FieldEffect_RiseRingFrontHalf;
   pair[0]->sprite->image.priority =
       Actor_Get(ACTOR_WISE_ONE)->sprite->image.priority;
   {
@@ -1848,7 +1848,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
     struct Actor *risingEffect = pair[1];
 
     risingEffect->sprite->image.priority = wiseOne->sprite->image.priority;
-    risingEffect->update = FieldEffect_AnimateVerticalPositive;
+    risingEffect->update = FieldEffect_RiseRingBackHalf;
     risingEffect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
 }

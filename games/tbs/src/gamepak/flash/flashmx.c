@@ -9,7 +9,7 @@
 /// milliseconds, the timer's reload value and its control. Its erases may take
 /// two seconds.
 // clang-format off
-const u16 Flash_MaxTimeMacronix[] = {
+const u16 gFlash_MaxTimeMacronix[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     2000, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
@@ -19,7 +19,7 @@ const u16 Flash_MaxTimeMacronix[] = {
 
 /// The Panasonic chip's time limits, laid out as the Macronix chip's.
 // clang-format off
-const u16 Flash_MaxTimePanasonic[] = {
+const u16 gFlash_MaxTimePanasonic[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     500, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
@@ -27,24 +27,24 @@ const u16 Flash_MaxTimePanasonic[] = {
 };
 // clang-format on
 
-const struct FlashSetupInfo Flash_ChipMacronix = {
+const struct FlashSetupInfo gFlash_ChipMacronix = {
     .program = ProgramFlashSector,
     .eraseChip = EraseFlashChip,
     .eraseSector = EraseFlashSector,
     .wait = WaitForFlashWrite,
-    .maxTime = (u16 *)Flash_MaxTimeMacronix,
+    .maxTime = (u16 *)gFlash_MaxTimeMacronix,
     .type = {.romSize = 65536,
              .sector = {.size = 4096, .shift = 12, .count = 16, .top = 0},
              .wait = {3, 1},
              .id = {.joined = 0x1cc2}},
 };
 
-const struct FlashSetupInfo Flash_ChipPanasonic = {
+const struct FlashSetupInfo gFlash_ChipPanasonic = {
     .program = ProgramFlashSector,
     .eraseChip = EraseFlashChip,
     .eraseSector = EraseFlashSector,
     .wait = WaitForFlashWrite,
-    .maxTime = (u16 *)Flash_MaxTimePanasonic,
+    .maxTime = (u16 *)gFlash_MaxTimePanasonic,
     .type = {.romSize = 65536,
              .sector = {.size = 4096, .shift = 12, .count = 16, .top = 0},
              .wait = {0, 2},

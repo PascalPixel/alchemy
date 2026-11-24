@@ -27,7 +27,7 @@ enum FileMenuMode {
   FILE_LIST_COPY,     ///< copying: any file with data
   FILE_LIST_ERASE,    ///< erasing: any file with data
   /// The title's Battle: files whose party has found a Djinni
-  /// (SaveFileSummary.flagCount).
+  /// (SaveFileSummary.djinnCount).
   FILE_LIST_BATTLE,
   FILE_LIST_CLEARED ///< the title's Send: cleared files only
 };
@@ -160,7 +160,7 @@ s32 Save_ScanFileSummaries(void) {
         gTitleSendOptionEnabled = 1;
         sentCount++;
       }
-      if (state->summary[i].flagCount != 0) {
+      if (state->summary[i].djinnCount != 0) {
         gTitleBattleOptionEnabled = 1;
       }
     }
@@ -237,11 +237,11 @@ u32 Save_BuildFileSummary(void) {
   summary->windowHue = gMainRoutineState.windowHue;
   summary->windowBrightness = gMainRoutineState.windowBrightness;
   summary->sendFlag = gMainRoutineState.sendFlag;
-  summary->flagCount = 0;
+  summary->djinnCount = 0;
   for (i = FLAG_DJINN_FIRST; i < FLAG_DJINNI(ELEMENT_COUNT * DJINN_PER_ELEMENT);
        i++) {
     if (GameFlag_GetFar(i))
-      summary->flagCount++;
+      summary->djinnCount++;
   }
   summary->childhood = GameFlag_GetFar(FLAG_CHILDHOOD) != 0;
   {
@@ -254,7 +254,7 @@ u32 Save_BuildFileSummary(void) {
     i = 0;
     n <<= 2;
     word = (u32 *)gGameFlagBytes;
-    Io_Write32(frames, &summary->frames);
+    Io_Write32(frames, &summary->buildStamp);
     // A while loop, entered at its test.
     goto test;
     do {
@@ -332,7 +332,7 @@ s32 Save_WriteFile(s32 file) {
 /// Writes the 64-byte save stamp (gBattleArenaRecord, which lies in the first
 /// half of the save buffer) into the current file's first part, leaving the
 /// rest of the part as it was saved.
-s32 Save_ProcessSelectedFile(void) {
+s32 Save_WriteLinkTallies(void) {
   void *part;
   s32 result;
   s32 error;
@@ -371,7 +371,7 @@ s32 Save_ProcessSelectedFile(void) {
 }
 
 /// Asks whether to save over the current file and, on Yes, writes the save
-/// stamp into it (Save_ProcessSelectedFile) and says so.
+/// stamp into it (Save_WriteLinkTallies) and says so.
 UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
   s32 result;
 
@@ -389,7 +389,7 @@ UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
   } else {
     Message_CloseFinishedWindows();
     Sound_PlayFar(MUS_SAVED);
-    result = Save_ProcessSelectedFile();
+    result = Save_WriteLinkTallies();
     if (result >= 0) {
       FieldMessage_Show(MsgGameSaved, FIELD_MESSAGE_ZOOM);
     }
@@ -607,8 +607,9 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
   s32 i;
 
   for (i = 0; i < 4 && summary->party[i] != -1; i++) {
-    struct Sprite *sprite = Sprite_CreateFar(Party_RemapCharacterIdIfEnabledFar(
-        summary->party[i], (s8)summary->childhood));
+    struct Sprite *sprite =
+        Sprite_CreateFar(Party_GetCharacterSpriteForChildhoodFar(
+            summary->party[i], (s8)summary->childhood));
 
     if (sprite != NULL) {
       Sprite_StartAnimationFar(sprite, ANIM_STAND);
@@ -659,7 +660,8 @@ void FileList_PlacePartySprites(void) {
       position.height = toFIXED(500);
       position.y = toFIXED(menu->partyMemberY[index]) + toFIXED(500);
       position.groundHeight = 0;
-      Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, FACING_SOUTH);
+      Render_ApplyProjectedPlacementFar(sprite, &position, &scale,
+                                        FACING_SOUTH);
     }
     index += 1;
     if (index > 3) {
@@ -730,7 +732,8 @@ void FileList_PlaceDjinnSprites(void) {
       position.height = height;
       position.y = toFIXED(menu->figureY[index]) + height;
       position.groundHeight = 0;
-      Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, FACING_SOUTH);
+      Render_ApplyProjectedPlacementFar(sprite, &position, &scale,
+                                        FACING_SOUTH);
     }
   }
 }
@@ -879,7 +882,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   } else if (menuMode == FILE_LIST_BATTLE) {
     for (i = 0; i < SAVE_FILE_COUNT &&
                 (save->summary[selectedFile].level == 0 ||
-                 (s8)save->summary[selectedFile].flagCount == 0);
+                 (s8)save->summary[selectedFile].djinnCount == 0);
          i++) {
       selectedFile++;
       if (selectedFile == SAVE_FILE_COUNT)
@@ -924,7 +927,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   for (i = 0; i < SAVE_FILE_COUNT; i++, y += 16, summary++) {
     if (summary->level == 0) {
       Text_DrawMessage(MsgSaveNoData, fileList, 10, y);
-    } else if (summary->frames < buildStamp) {
+    } else if (summary->buildStamp < buildStamp) {
       // Saved by an older build: "(Continue from a Sanctum)", since such a
       // file resumes at MainRoutineState.restartScene, not where it was saved
       // (scene/file_screen.c).
@@ -969,7 +972,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   }
   if (menuMode == FILE_LIST_BATTLE) {
     for (i = 0; i < SAVE_FILE_COUNT &&
-                ((s8)save->summary[selectedFile].flagCount == 0);
+                ((s8)save->summary[selectedFile].djinnCount == 0);
          i++) {
       selectedFile++;
       if (selectedFile == SAVE_FILE_COUNT)
@@ -1001,7 +1004,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   for (i = 0, summary = save->summary; i < SAVE_FILE_COUNT; i++, summary++) {
     if (save->summary[i].level == 0) {
       Text_DrawMessage(MsgSaveNoData, fileList, 10, i * 16);
-    } else if (save->summary[i].frames < buildStamp) {
+    } else if (save->summary[i].buildStamp < buildStamp) {
       // Saved by an older build: see the other editions' list above.
       Text_DrawMessage(MsgSaveContinue, fileList, 10, i * 16);
     } else if (save->summary[i].playTime !=
@@ -1026,7 +1029,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     x = -12;
     y = selectedFile * 16 + 4;
     cursorSprite =
-        WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, fileList, x, y);
+        WindowSprite_Create(vramSlot, WINDOW_SPRITE_SIZE_16X16, fileList, x, y);
     cursorSprite->motion = WINDOW_SPRITE_MOTION_STILL;
     fileCursor.anchor = cursorSprite;
   }
@@ -1107,7 +1110,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                 (menuMode == FILE_LIST_CONTINUE &&
                  (s8)save->summary[selectedFile].sendFlag != 0) ||
                 (menuMode == FILE_LIST_BATTLE &&
-                 (s8)save->summary[selectedFile].flagCount == 0) ||
+                 (s8)save->summary[selectedFile].djinnCount == 0) ||
                 (menuMode == FILE_LIST_CLEARED &&
                  (s8)save->summary[selectedFile].sendFlag == 0)));
     } else if (gKeysRepeat & KEY_DOWN) {
@@ -1121,7 +1124,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                 (menuMode == FILE_LIST_CONTINUE &&
                  (s8)save->summary[selectedFile].sendFlag != 0) ||
                 (menuMode == FILE_LIST_BATTLE &&
-                 (s8)save->summary[selectedFile].flagCount == 0) ||
+                 (s8)save->summary[selectedFile].djinnCount == 0) ||
                 (menuMode == FILE_LIST_CLEARED &&
                  (s8)save->summary[selectedFile].sendFlag == 0)));
     } else if (gKeysPressed & KEY_B) {
@@ -1195,7 +1198,7 @@ s32 Save_ToChosenFile(void) {
         wait(1);
       }
       Save_BuildFileSummary();
-      Save_CaptureActorsFar();
+      Actor_SnapshotFar();
       error = Save_WritePart(file, gSaveBuffer);
       error |=
           Save_WritePart(file + SAVE_FILE_COUNT, gSaveBuffer + SAVE_PART_BYTES);
@@ -1255,7 +1258,7 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
 /// Loads the pointing hand cursor's tiles (gPointingHandTiles, 128 bytes) into
 /// a free VRAM slot and returns the slot, which the caller frees with
 /// VramCache_FreeEntry.
-s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
+s32 PointingHand_LoadIntoFreeSlot(void) {
   s32 slot;
 
   slot = VramCache_FindFreeEntry();

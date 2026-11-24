@@ -30,7 +30,7 @@ extern u8 Render_DecodePictureCodeSize[];
 /// Four 256-byte colour tables (remap0 to remap3), indexed by pixel: the
 /// SpriteColorMode tables after gSpriteColorTables' five, the
 /// first also remapping the command icons (SpriteColor_RemapPixels).
-extern const u8 gSpriteColorRemapTables[];
+extern const u8 gSpriteColorGreyTable[];
 
 struct BattleEffectParams;
 struct FieldPosition;
@@ -94,7 +94,7 @@ enum WorldMapLighthouse {
 extern u16 gColosso_GaugePalette[];
 /// Frames in a row the chase has found a suspect cornered; at
 /// LOG_ROOMS_A_CORNERED_FRAMES the chase raises its event.
-extern u16 gLogRoomsA_StopTimer;
+extern u16 gLogRoomsA_CorneredFrames;
 /// The size of Actor_UpdateAll's code, an address equal to the size
 /// (ld_script.ld).
 extern u8 Actor_UpdateAllCodeSize[];
@@ -116,7 +116,7 @@ extern const s32 gMovementType_WanderCloseScript[];
 extern const s32 gActor_LaunchScript[];
 /// Movement type 5: Actor_MoveTowardTarget every frame, forever.
 extern const s32 gMovementType_FollowWatchedScript[];
-/// Movement type 7: Actor_ClearChildAndCollisionFlags once, then SC_END.
+/// Movement type 7: Actor_ClearSpriteAndCollisionFlags once, then SC_END.
 extern const s32 gMovementType_ResetActionScript[];
 /// Turns by Actor_StepAngle until it faces the kept angle, then SC_END.
 extern const s32 gActor_StepAngleScript[];
@@ -140,8 +140,8 @@ extern u32 gPushedActor_RectangleKinds[];
 extern const u8 TileMap_DrawRows[];
 /// The size of TileMap_DrawRows (picture_decode.s).
 extern u8 TileMap_DrawRowsCodeSize[];
-/// The size of Matrix_UpdateVertices, copied to HEAP_SLOT_RAM_CODE; an address
-/// equal to the size (ld_script.ld).
+/// The size of WorldMap_UpdateAffineLines, copied to HEAP_SLOT_RAM_CODE; an
+/// address equal to the size (ld_script.ld).
 extern u8 Matrix_UpdateVerticesSize;
 extern const s32 gWorldMap_FootprintActions[6];
 extern const s16 gWorldMap_KeyHeadings[16];
@@ -149,27 +149,27 @@ extern const s16 gWorldMap_KeyHeadings[16];
 // The field effects' scripts and tables (field_sequence_tables.c,
 // movement_scripts.c, field_effect_tables.c and
 // graphics/field_effects/spark_tiles.s).
-extern const u16 gFieldEffect_CyclePatternWords[];
-extern const s8 gFieldEffect_RandomChildValues[];
+extern const u16 gInput_DpadAngles[];
+extern const s8 gHalt_FlickerColorModes[];
 /// The 32 by 16 spark of Avoid's falling arcs (arc_spark.png), 4 bits a pixel;
 /// FieldPsynergy_Avoid loads it.
 extern const u8 gFieldEffect_ArcSparkTiles[];
-extern const s32 gFieldEffect_BurstParticleActorScript[];
-/// Waits to arrive, sets off SpawnHeavyImpactEffect and releases the actor:
-/// Force's fist as it lands.
-extern const s32 gFieldEffect_HeavyImpactScript[];
+extern const s32 gGrowth_LeafScript[];
+/// Waits to arrive, sets off FieldEffect_SpawnHeavyImpact and releases the
+/// actor: Force's fist as it lands.
+extern const s32 gForce_FistScript[];
 /// The emote bubble's script (Actor_ShowEmoteById): eight 2-frame steps
 /// of squash and stretch (SC_ADD to SW_SCALE_X and SW_SCALE_Y), 30 frames
 /// still, then SC_RELEASE.
-extern const s32 gFieldEffect_WatchedActorScript[];
-extern const s32 gFieldEffect_MarkerParticleScript[];
-extern const s32 gFieldEffect_ParticleEmitterScript[];
+extern const s32 gEmote_BubbleScript[];
+extern const s32 gReveal_MarkerScript[];
+extern const s32 gItemDisplay_GrowInScript[];
 extern const s32 gFieldEffect_ParticleScript[];
 extern const u32 gFieldEffect_PulseScales[];
 extern const s32 gFieldEffect_SourceHoldScript[];
 extern const s16 gFieldEffect_TargetRangeByMode[];
 /// A lone SC_RELEASE: an actor that has arrived releases itself
-/// (FieldEffect_ReleaseOnArrival).
+/// (MindRead_UpdateCrescent).
 extern const s32 gFieldEffect_UntargetedActorScript[];
 /// The 32 by 16 spark a field Psynergy's particles draw (spark.png), 4
 /// bits a pixel; FieldPsynergy_LoadResources loads it.
@@ -178,11 +178,11 @@ extern const u8 gFieldEffect_QuadrantModes[];
 /// The eight tints (PALETTE_TINT_CUSTOM and an RGB555 colour) a field
 /// Psynergy fades the palettes toward, picked by the frame counter or
 /// by the FLAG_PSYNERGY_TINT flags (FieldPsynergy_FadeToCastColor).
-extern const s32 gFieldEffect_TargetColors[];
-extern const s16 gFieldEffect_GroundParticleFrames[];
+extern const s32 gFieldPsynergy_CastColors[];
+extern const s16 gWeather_RainSplashFrames[];
 /// The ground particles' 16 by 16 tiles, packed (Decompress_ByteLz).
-extern const u8 gFieldEffect_GroundParticleTiles[];
-extern const s32 gFieldEffect_RisingPulseScript[];
+extern const u8 gWeather_ParticleTiles[];
+extern const s32 gItemDisplay_PulseScript[];
 
 /// The first five 256-byte colour tables of SpriteColorMode, indexed by pixel.
 extern const u8 gSpriteColorTables[][256];
@@ -341,7 +341,7 @@ enum TerrainKind {
   TERRAIN_BEND_SUM_DIAGONAL = 5,
   /// Three samples, bending on the diagonal x = y.
   TERRAIN_BEND_DIFFERENCE_DIAGONAL = 6,
-  /// A raised or sunken rounded square (gTerrain_LerpWeightTable).
+  /// A raised or sunken rounded square (gTerrain_RoundedSquareMask).
   TERRAIN_ROUNDED_SQUARE = 7,
   TERRAIN_STEP_X = 8,  ///< the first sample for x below 8, then the second
   TERRAIN_STEP_Y = 9,  ///< the first sample for y below 8, then the second
@@ -365,7 +365,7 @@ enum Collision {
 };
 
 u8 *Decompress_Lz(const u8 *source, u8 *destination);
-s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir);
+s32 Sprite_ComposePicture(struct Sprite *sprite, u16 dir);
 void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
                                 s32 height, s32 screenY, s32 groundHeight,
                                 FIXED *scale);
@@ -434,13 +434,13 @@ void ActorScript_SetOrCompareTargetY(struct ScriptOperands *state,
                                      s32 operation, s32 value);
 void ActorScript_SetOrCompareTargetZ(struct ScriptOperands *state,
                                      s32 operation, s32 value);
-void ActorScript_SetOrCompareVerticalMotion(struct ScriptOperands *state,
-                                            s32 operation, s32 value);
+void ActorScript_SetOrCompareBounce(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
 void ActorScript_SetOrCompareGravity(struct ScriptOperands *state,
                                      s32 operation, s32 value);
 void ActorScript_SetOrCompareTerrainHeight(struct ScriptOperands *state,
                                            s32 operation, s32 value);
-void ActorScript_SetOrCompareRiseBaseY(struct ScriptOperands *state,
+void ActorScript_SetOrCompareSceneWord(struct ScriptOperands *state,
                                        s32 operation, s32 value);
 void ActorScript_SetOrCompareSprite(struct ScriptOperands *state, s32 operation,
                                     s32 value);
@@ -470,12 +470,12 @@ void ActorScript_SetOrCompareWatchedActor(struct ScriptOperands *state,
                                           s32 operation, s32 value);
 void ActorScript_SetOrCompareUpdateAddress(struct ScriptOperands *state,
                                            s32 operation, s32 value);
-void ActorScript_SetOrCompareRiseCounter(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
-void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
-void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value);
-void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
+void ActorScript_SetOrCompareSceneCounter(struct ScriptOperands *state,
+                                          s32 operation, s32 value);
+void ActorScript_SetOrCompareSceneByte(struct ScriptOperands *state,
+                                       s32 operation, s32 value);
+void SpriteViewer_SetLayerColorMode(s32 slot, s32 value);
+void SpriteViewer_SetLayerPriority(s32 slot, s32 value);
 
 s32 MapGrid_GetScreenRelativePosition(struct Actor *actor, s32 *screenPosition);
 void ActorSystem_Initialize(s32 controlMode);
@@ -513,7 +513,7 @@ s32 ActorScript_HideSprites(struct Actor *interpreter);
 s32 ActorScript_ShowSprite(struct Actor *interpreter);
 void Actor_WaitForMove(void *actor);
 s32 Actor_IsTargetUnset(struct Actor *actor);
-void Actor_UpdateAllThumb(void);
+void Actor_UpdateAllOnField(void);
 void Actor_SetPositionAndResetMotion(struct Actor *actor, FIXED x, FIXED y,
                                      FIXED z);
 void Actor_SetMoveTarget(struct Actor *actor, FIXED x, FIXED y, FIXED z);
@@ -535,7 +535,7 @@ s32 ActorScript_Release(struct Actor *interpreter);
 s32 ActorScript_Nop(struct Actor *interpreter);
 s32 ActorScript_PlaySound(struct Actor *interpreter);
 s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values);
-struct Actor *ActorScript_FindOverlappingEntry(struct Actor *actor,
+struct Actor *ActorScript_FindOverlappingActor(struct Actor *actor,
                                                s32 *values);
 s32 ActorScript_SetPositionAndResetMotion(struct Actor *interpreter);
 s32 ActorScript_ApplyAbsolutePosition(struct Actor *interpreter);
@@ -594,14 +594,14 @@ UNREAD_RESULT WorldMap_InitializePerspective(void);
 void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 cellX, s32 cellY);
 void WorldMap_LoadGraphics(s32 x, s32 z);
 void WorldMap_ApplyAffinePage(void);
-void WorldMap_RenderPaletteMappedRow(u32 tileRow);
-void WorldMap_RenderPaletteMappedColumn(u32 tileColumn);
+void WorldMap_DrawCellRow(u32 tileRow);
+void WorldMap_DrawCellColumn(u32 tileColumn);
 void WorldMap_UpdateView(void);
 void WorldMap_UpdateCurrentTileBlock(void);
 void WorldMap_PreloadCurrentTileBlock(void);
 void WorldMap_PresentStillImage(void);
 void WorldMap_StartStillImage(void);
-void WorldMap_ShowBg1FromBuffer(void);
+void WorldMap_EndStillImage(void);
 void WorldMap_LoadAreaGraphics(void);
 void WorldMap_LoadDefaultCellsAndUpdateBlock(void);
 void TilesetAnim_Update(void);
@@ -644,7 +644,7 @@ FIXED Terrain_GetFlatBHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
 FIXED Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
 
 FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED y);
-s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED y);
+s32 MapGrid_GetTerrainKindAt(s32 layer, FIXED x, FIXED y);
 s32 MapGrid_GetCellBehaviorAt(s32 layer, FIXED x, FIXED y);
 void MapGrid_SetCellBehaviorAt(u32 layer, FIXED x, FIXED y, u32 behavior);
 s32 MapGrid_GetCellHighFlags(s32 x, s32 y);
@@ -652,8 +652,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 s32 MapGrid_IsWallAt(struct WorldPosition *position);
 s32 WorldMap_GetCollision(struct WorldPosition *position);
 s32 WorldMap_IsWalkable(s32 unused, struct WorldPosition *position);
-s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
-                                  s32 *terrainKind);
+s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position, s32 *region);
 /// A screen shake's component left as it is; any negative value does.
 #define SHAKE_KEEP (-1)
 void MapGrid_SetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay);
@@ -664,11 +663,11 @@ void WorldMap_BuildScanlineTable(FIXED depth, s32 *position,
                                  struct WorldMapScanline *scanline);
 
 void SpriteViewer_Run(void);
-s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction);
-void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
-                                 struct SpritePlacement *positions);
+s32 SpriteViewer_StepSpriteId(s32 spriteId, s32 direction);
+void SpriteViewer_LayOutRing(s32 centerX, s32 centerY,
+                             struct SpritePlacement *positions);
 void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex);
-void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId);
+void SpriteViewer_SetLayerSprite(s32 layerIndex, s32 spriteId);
 void SpriteViewer_PlaceRing(void);
 
 #endif

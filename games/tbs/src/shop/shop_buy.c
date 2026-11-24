@@ -222,7 +222,7 @@ next_page:
   // list is made again without what is gone.
   if (selectionResult == 0 && shop->action == SHOP_ACTION_ARTIFACTS) {
     for (removedCount = 0; removedCount < quantity; removedCount++)
-      Item_AdjustCounterFar(shop->selectedItem, -1);
+      Item_AdjustRareItemStockFar(shop->selectedItem, -1);
     if (Shop_ListAvailableArtifacts() == 0)
       goto close;
     if (selected > shop->stockCount - 1)
@@ -261,16 +261,16 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
     WindowSprite_PrepareForRedrawFar(window);
     // The arrows show the shop's own icons, which closing the window leaves.
     if (stockIndex != 0) {
-      icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
-                                    window, 216, -16);
-      icon->kind = WINDOW_SPRITE_GLYPH;
+      icon = WindowSprite_CreateFar(shop->previousPageIcon,
+                                    WINDOW_SPRITE_SIZE_16X16, window, 216, -16);
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
       icon->animationStep = 0;
     }
     if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
-      icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
-                                    window, 216, 24);
-      icon->kind = WINDOW_SPRITE_GLYPH;
+      icon = WindowSprite_CreateFar(shop->nextPageIcon,
+                                    WINDOW_SPRITE_SIZE_16X16, window, 216, 24);
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
       icon->animationStep = 0;
     }
@@ -440,26 +440,26 @@ void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
   savedEntry = unit->inventory[previewSlot];
   unit->inventory[previewSlot] = itemId | INVENTORY_EQUIPPED;
   Unit_CalculateFar(unitId);
-  previewStats[0] = unit->atk;
-  previewStats[1] = unit->def;
-  previewStats[2] = unit->agi;
+  previewStats[0] = unit->attack;
+  previewStats[1] = unit->defense;
+  previewStats[2] = unit->agility;
   previewStats[3] = unit->luck;
   unit->inventory[previewSlot] = savedEntry;
   Unit_CalculateFar(unitId);
-  baseStats[0] = unit->atk;
-  baseStats[1] = unit->def;
-  baseStats[2] = unit->agi;
+  baseStats[0] = unit->attack;
+  baseStats[1] = unit->defense;
+  baseStats[2] = unit->agility;
   baseStats[3] = unit->luck;
   // Attack, Defense and Agility, each with the shop's own arrow icon.
   for (index = 0; index <= 2; index++) {
     if (baseStats[index] > previewStats[index])
-      WindowSprite_CreateFar(shop->statDownIcon, OUTPUT_SIZE_16X16, window, 56,
-                             index * 16 - 4)
-          ->kind = WINDOW_SPRITE_GLYPH;
+      WindowSprite_CreateFar(shop->statDownIcon, WINDOW_SPRITE_SIZE_16X16,
+                             window, 56, index * 16 - 4)
+          ->kind = WINDOW_SPRITE_PLAIN;
     else if (baseStats[index] < previewStats[index])
-      WindowSprite_CreateFar(shop->statUpIcon, OUTPUT_SIZE_16X16, window, 56,
-                             index * 16 - 4)
-          ->kind = WINDOW_SPRITE_GLYPH;
+      WindowSprite_CreateFar(shop->statUpIcon, WINDOW_SPRITE_SIZE_16X16, window,
+                             56, index * 16 - 4)
+          ->kind = WINDOW_SPRITE_PLAIN;
     Text_DrawNumberInWindowFar(baseStats[index], 3, window, 32, index * 16);
     if (baseStats[index] != previewStats[index])
       Text_DrawNumberInWindowFar(previewStats[index], 3, window, 72,
@@ -552,9 +552,9 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
       quantityLimit = (u32)gMainRoutineState.holdings.coins / item->price;
 
     if (shop->action == SHOP_ACTION_ARTIFACTS) {
-      artifactLimit = Item_AdjustCounterFar(itemId, 0);
+      artifactLimit = Item_AdjustRareItemStockFar(itemId, 0);
       if (quantityLimit > artifactLimit)
-        artifactLimit = Item_AdjustCounterFar(itemId, 0);
+        artifactLimit = Item_AdjustRareItemStockFar(itemId, 0);
       else
         artifactLimit = quantityLimit;
       quantityLimit = artifactLimit;

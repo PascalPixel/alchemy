@@ -36,7 +36,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET),
                   SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -55,7 +55,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
     struct Particle *shard;
 
     offset = member * BREAK_SHARDS_PER_TARGET * sizeof(struct Particle);
-    actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+    actor = BattleObject_GetFar(state->args->targets[member])->actor;
     height = BattleUnit_GetEffectHeightFar(state->args->targets[member]) / 2;
     SET_VECTOR(point, actor->x.fixed, height, actor->z.fixed);
     Projection_Point(point, &screen);
@@ -167,7 +167,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
     alternate = 1;
   state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Iwram_CopyWords(BG_PLTT,
                   Resource_GetTableEntry(alternate == 0
                                              ? RESOURCE_ICE_BLOCK_SHEET
@@ -181,7 +181,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
     struct Actor *actor;
     s32 halfHeight;
 
-    actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+    actor = BattleObject_GetFar(state->args->targets[member])->actor;
     halfHeight =
         BattleUnit_GetEffectHeightFar(state->args->targets[member]) / 2;
     for (i = 0; i != DRAIN_MOTES_PER_TARGET; i++) {
@@ -208,7 +208,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
     struct Actor *user;
     s32 halfHeight;
 
-    user = GetBattleObjectSlotFar(state->args->user)->actor;
+    user = BattleObject_GetFar(state->args->user)->actor;
     halfHeight = BattleUnit_GetEffectHeightFar(state->args->user) / 2;
     if (frame == DRAIN_HIT_FRAME)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);

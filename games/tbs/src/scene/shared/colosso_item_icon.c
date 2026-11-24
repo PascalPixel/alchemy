@@ -9,17 +9,17 @@
 void Colosso_ShowItemIcon(s32 id, s32 item) {
   struct Actor *actor;
   struct Sprite *sprite;
-  GlyphTransfer *icon;
+  IconTransfer *icon;
   s32 tile;
 
   actor = Actor_GetById(id);
   if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
     sprite = actor->sprite;
-    icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    icon = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Dma_Fill32(0, icon->tiles, ICON_TILE_BYTES);
     Icon_DrawItem(item);
     tile = VramCache_Load(sprite->slot, ICON_TILE_BYTES, icon->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     actor->retainSpriteCache = 1;
     SpriteAnimation_Clear(sprite->entries[0]);
     sprite->entries[0] = NULL;

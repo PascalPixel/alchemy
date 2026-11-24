@@ -38,7 +38,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   state->args = args;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_STAR_DOT_SHEET, state->sheet, 1, 1);
-  BattleEffect_FetchRectangleBlitters(state->args->side ^ 1, draw);
+  BattleEffect_BuildCanvasBlitters(state->args->side ^ 1, draw);
   for (i = 0; i != SWIRLING_STARS_PLACED; i++) {
     star = &PARTICLES[i];
     SET_POSITION(star, INTtoFIXED((Random16() & 0xff) - 127),
@@ -133,7 +133,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   if (state->args->side == EFFECT_SIDE_ENEMIES)
     xOffset = 0;
   else
@@ -155,7 +155,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
       struct Actor *actor;
       u32 memberFrame;
 
-      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+      actor = BattleObject_GetFar(state->args->targets[member])->actor;
       Projection_ScaledUnit(state->args->targets[member], &screen);
       memberFrame = frame - member * 16;
       screen.x += xOffset;
@@ -259,7 +259,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
     EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor;
 
-      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+      actor = BattleObject_GetFar(state->args->targets[member])->actor;
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, actor->x.fixed, toFIXED(20), actor->z.fixed);
       Matrix_TranslateVector(point);

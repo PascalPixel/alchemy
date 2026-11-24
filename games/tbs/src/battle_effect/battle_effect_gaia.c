@@ -135,7 +135,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     for (k = 0; k != gGaia_FlameWidths[i] * gGaia_FlameHeights[i]; k++)
       state->sheet[sheetIndex++] = *src++;
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 
   for (i = 0; i != GAIA_ROCKS; i++) {
     struct Sprite *rock = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
@@ -304,8 +304,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           // DEAD: slot != -1 always holds, slot being a remainder of a
           // positive count; the ROM keeps the test.
           if (slot != -1)
-            Actor_ApplyProjectedPlacementFar(state->sprites[slot], &position,
-                                             &scale, 0);
+            Render_ApplyProjectedPlacementFar(state->sprites[slot], &position,
+                                              &scale, 0);
           rock->y -= rock->z;
           // DEAD: velocityX steps from 1 to 12 by velocityY and nothing reads
           // it; the ROM keeps the count.
@@ -354,7 +354,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   for (i = 0; i != GAIA_ROCKS; i++)
     Sprite_DestroyFar(state->sprites[i]);

@@ -86,8 +86,8 @@ void DjinnFigures_UpdateAllPositions(void) {
       placement.height = vertical;
       placement.y = toFIXED((s32)state->figureY[index]) + vertical;
       placement.groundHeight = 0;
-      Actor_ApplyProjectedPlacementFar(figure, &placement, &scale,
-                                       FACING_SOUTH);
+      Render_ApplyProjectedPlacementFar(figure, &placement, &scale,
+                                        FACING_SOUTH);
     }
     index += 1;
     if (index > 3)
@@ -104,7 +104,7 @@ void DjinnFigures_UpdateBottomRow(void) {
   struct SpriteScale scale;
   struct SpritePlacement placement;
 
-  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
+  PageArrows_DrawFar(PAGE_ARROW_VRAM);
   for (index = 0; index <= 3; index++) {
     struct Sprite *figure = menu->figures[index];
 
@@ -139,7 +139,7 @@ void DjinnFigures_UpdateBottomRow(void) {
       facing = FACING_WEST;
       if (rowY >= 0)
         facing = FACING_SOUTH;
-      Actor_ApplyProjectedPlacementFar(figure, &placement, &scale, facing);
+      Render_ApplyProjectedPlacementFar(figure, &placement, &scale, facing);
     }
   }
 }

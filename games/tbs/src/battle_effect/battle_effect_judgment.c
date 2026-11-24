@@ -62,7 +62,7 @@ struct JudgmentState {
 /// The pink burst's beam picture, at the sprite sheet's start.
 #define JUDGMENT_BEAM_WIDTH 24
 #define JUDGMENT_BEAM_HEIGHT 64
-/// The burst's seven quarter pictures (OverlayImageB), after the beam.
+/// The burst's seven quarter pictures (JudgmentBurstSheet), after the beam.
 #define JUDGMENT_SHEET_BURST PICTURE_BYTES(JUDGMENT_BEAM)
 /// The tornado sprite sheet, after the burst's seven quarter pictures; its six
 /// glint pictures are the burst's shards (gJudgment_ShardPictures counts from
@@ -79,8 +79,8 @@ struct JudgmentState {
 #define JUDGMENT_SHEET_FLARE_A 16384
 #define JUDGMENT_SHEET_FLARE_B                                                 \
   (JUDGMENT_SHEET_FLARE_A + PICTURE_BYTES(JUDGMENT_FLARE))
-/// OverlayImageA's three flash pictures, a byte a pixel, one after another in
-/// the sprite sheet: the small flash, the large flash and the glow.
+/// JudgmentFlashSheet's three flash pictures, a byte a pixel, one after another
+/// in the sprite sheet: the small flash, the large flash and the glow.
 #define JUDGMENT_SHEET_FLASH_SMALL_WIDTH 16
 #define JUDGMENT_SHEET_FLASH_SMALL_HEIGHT 17
 #define JUDGMENT_SHEET_FLASH_LARGE_WIDTH 24
@@ -191,12 +191,12 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   draw[0] = (DrawRectangle)HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS,
                                           HEAP_SLOT_RAM_CODE);
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   // Wipe the battle away, change the battle background behind it, wipe
   // back.
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  BattleEffect_SelectLivingTargets(state->args);
-  BattleEffect_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, SPRITE_JUDGMENT, 1);
+  BattleEffect_ShowLivingTargets(state->args);
+  BattleEffect_CreateSprites(JUDGMENT_FORMATION_OBJECTS, SPRITE_JUDGMENT, 1);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
@@ -210,11 +210,11 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   minimumDepth = JUDGMENT_SPARK_DEPTH_NONE;
   maximumDepth = 0;
   Resource_LoadAndDecompress(RESOURCE_PINK_BURST_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_OVERLAY_IMAGE_B,
+  Resource_LoadAndDecompress(RESOURCE_JUDGMENT_BURST_SHEET,
                              state->sheet + JUDGMENT_SHEET_BURST, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                              state->sheet + JUDGMENT_SHEET_TORNADO, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
 
   for (i = 0; i != DIMMED_COPIES; i++) {
     u8 *src = motes;
@@ -352,7 +352,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       place.y = INTtoFIXED(i / JUDGMENT_FORMATION_COLUMNS *
                            JUDGMENT_FORMATION_SPRITE_SIZE) +
                 depth;
-      Actor_ApplyProjectedPlacementFar(state->sprites[i], &place, &pair, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], &place, &pair, 0);
     }
 
     depth += zoom;
@@ -390,7 +390,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         n = 6;
       }
       high = gJudgment_BurstHeights[n];
-      picture = gJudgment_BurstPictures[n] + JUDGMENT_SHEET_BURST;
+      picture = gJudgment_ShieldSprites[n] + JUDGMENT_SHEET_BURST;
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
@@ -579,7 +579,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
       Resource_LoadAndDecompress(RESOURCE_EXPLOSION_SHEET,
                                  state->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);
-      Resource_LoadAndDecompress(RESOURCE_OVERLAY_IMAGE_A,
+      Resource_LoadAndDecompress(RESOURCE_JUDGMENT_FLASH_SHEET,
                                  state->sheet + JUDGMENT_SHEET_FLASH_SMALL, 0,
                                  0);
     }
@@ -920,8 +920,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           debrisPlace.x = particle->x;
           debrisPlace.height = toFIXED(255);
           debrisPlace.y = particle->y + toFIXED(255);
-          Actor_ApplyProjectedPlacementFar(state->sprites[i], &debrisPlace,
-                                           &scale, 0);
+          Render_ApplyProjectedPlacementFar(state->sprites[i], &debrisPlace,
+                                            &scale, 0);
           particle->y -= particle->velocityY;
           if (particle->y < toFIXED(16)) {
             if (frame < JUDGMENT_SWEEP_RETURN) {

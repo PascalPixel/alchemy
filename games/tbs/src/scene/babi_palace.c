@@ -1203,8 +1203,8 @@ static void BabiPalace_WakeAfterFinals(void) {
   ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_LEADER);
   state = gScreenTransitionState;
   state->value = 0;
-  state->mask = WAKE_WININ;
-  state->active = WINOUT_WIN01_BG0;
+  state->insideLayers = WAKE_WININ;
+  state->outsideLayers = WINOUT_WIN01_BG0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   for (step = 1; step <= 5; step++) {
@@ -1218,7 +1218,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     wait(3);
     state->value = step;
   }
-  state->active = WINOUT_WIN01_ALL & ~WINOUT_WIN01_CLR;
+  state->outsideLayers = WINOUT_WIN01_ALL & ~WINOUT_WIN01_CLR;
   fieldState = gFieldState;
   fieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -2669,7 +2669,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   struct Sprite *sprite;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   s32 set;
 
   BabiPalace_PauseDoorAnimations();
@@ -2701,10 +2701,10 @@ s32 Scene_Initialize(void) {
         sprite->image.fullColor = 0;
         sprite->image.palette = 0;
         // The icon's tiles are the 128 bytes of a 16 by 16 sprite.
-        glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+        glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
         Item_LoadIcon(ITEM_CLOAK_BALL);
         Vram_Load(sprite->slot, 128, glyph->tiles);
-        HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+        HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
       }
       if (gMainRoutineState.entrance ==
               BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM &&

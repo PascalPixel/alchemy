@@ -89,8 +89,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   CommandIcon_ReloadSlot(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable(
       (u16 *)(BG_CHAR_BLOCK(0) + PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
-  Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
-  Menu_BuildLocalizedPatternTiles();
+  PageArrows_Draw(LIST_PAGE_ARROW_VRAM);
+  RangeIcon_BuildTiles();
   battle = gBattleState;
   for (k = 0; k < 8; k++) {
     state->chosenDjinn[k] = BATTLE_MENU_NO_DJINNI;
@@ -680,9 +680,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       Sound_PlayFar(SE_CHIME);
       command->unitId = unitId;
       // Draw the priority random value once, only for a nonzero agility.
-      priority = unit->agi;
+      priority = unit->agility;
       if (priority != 0) {
-        priority += (u32)(unit->agi * Random16()) >> 20;
+        priority += (u32)(unit->agility * Random16()) >> 20;
       }
       command->priority = priority;
       if (commandIndex != 0 &&

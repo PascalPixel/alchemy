@@ -774,20 +774,20 @@ s32 Scene_Initialize(void) {
   Party_AddMember(IVAN);
   // How many of each rare item the shops may sell: three Shamshirs, two Silver
   // Blades, a Masamune and eight rare pieces of armor.
-  Item_AdjustCounter(ITEM_SHAMSHIR, 1);
-  Item_AdjustCounter(ITEM_SHAMSHIR, 1);
-  Item_AdjustCounter(ITEM_SHAMSHIR, 1);
-  Item_AdjustCounter(ITEM_SILVER_BLADE, 1);
-  Item_AdjustCounter(ITEM_SILVER_BLADE, 1);
-  Item_AdjustCounter(ITEM_MASAMUNE, 1);
-  Item_AdjustCounter(ITEM_CHINA_DRESS, 1);
-  Item_AdjustCounter(ITEM_COCKTAIL_DRESS, 1);
-  Item_AdjustCounter(ITEM_BLESSED_ROBE, 1);
-  Item_AdjustCounter(ITEM_ORACLES_ROBE, 1);
-  Item_AdjustCounter(ITEM_DRAGON_SHIELD, 1);
-  Item_AdjustCounter(ITEM_VAMBRACE, 1);
-  Item_AdjustCounter(ITEM_SPIRIT_ARMLET, 1);
-  Item_AdjustCounter(ITEM_WARRIORS_HELM, 1);
+  Item_AdjustRareItemStock(ITEM_SHAMSHIR, 1);
+  Item_AdjustRareItemStock(ITEM_SHAMSHIR, 1);
+  Item_AdjustRareItemStock(ITEM_SHAMSHIR, 1);
+  Item_AdjustRareItemStock(ITEM_SILVER_BLADE, 1);
+  Item_AdjustRareItemStock(ITEM_SILVER_BLADE, 1);
+  Item_AdjustRareItemStock(ITEM_MASAMUNE, 1);
+  Item_AdjustRareItemStock(ITEM_CHINA_DRESS, 1);
+  Item_AdjustRareItemStock(ITEM_COCKTAIL_DRESS, 1);
+  Item_AdjustRareItemStock(ITEM_BLESSED_ROBE, 1);
+  Item_AdjustRareItemStock(ITEM_ORACLES_ROBE, 1);
+  Item_AdjustRareItemStock(ITEM_DRAGON_SHIELD, 1);
+  Item_AdjustRareItemStock(ITEM_VAMBRACE, 1);
+  Item_AdjustRareItemStock(ITEM_SPIRIT_ARMLET, 1);
+  Item_AdjustRareItemStock(ITEM_WARRIORS_HELM, 1);
 #if !TBS_PATCH_1
   gMainRoutineState.holdings.coins = 777777;
 #endif

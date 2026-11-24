@@ -67,7 +67,7 @@ void WorldMap_StartZoom(FIXED zoom, s32 frames) {
           ->mode != ACTOR_SYSTEM_WORLD_MAP)
     return;
   {
-    inverse = Iwram_RatioMulQ14(zoom, FIXED_ONE); // 1 / zoom
+    inverse = Iwram_DivFX(zoom, FIXED_ONE); // 1 / zoom
   }
   perspective->previousZoom = perspective->zoom;
   perspective->zoom = inverse;
@@ -96,7 +96,7 @@ void Event_WaitForZoomTransition(void) {
 
 /// Per-frame update of an emote bubble or attached effect: keeps it on the
 /// actor it rides (its watched actor, whose id is its userValue), raised by
-/// that actor's sprite height (its metadata's boxX) and 8 pixels.
+/// that actor's sprite height (its metadata's spriteTop) and 8 pixels.
 UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
   struct Actor *host;
 
@@ -109,7 +109,7 @@ UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
         toFIXED(
             (s8)Resource_GetMetadataRecordFar(
                 (s16)Scene_FindActorPlacement((s16)actor->userValue)->sprite)
-                ->boxX) +
+                ->spriteTop) +
         toFIXED(8);
     actor->groundHeight = host->groundHeight;
     actor->z.fixed = host->z.fixed;
@@ -136,7 +136,7 @@ void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
     if (bubble != 0) {
       struct Sprite *sprite;
 
-      Actor_StartScriptFar(bubble, gFieldEffect_WatchedActorScript);
+      Actor_StartScriptFar(bubble, gEmote_BubbleScript);
       Actor_SelectAnimationFar(bubble, emote & EMOTE_ANIMATION_MASK);
       bubble->motionFlags = 0;
       bubble->timer = 0;

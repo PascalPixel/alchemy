@@ -244,22 +244,22 @@ enum TolbiShipMastDrift {
 /// Each frame of a bird about the mast: it drifts east and west, speeding up
 /// and slowing by random amounts, and bobs up and down.
 static s32 TolbiShipMast_DriftBird(struct Actor *actor) {
-  // The drift: riseBaseY is the speed added to x each frame.
+  // The drift: sceneWord is the speed added to x each frame.
   if (actor->timer == DRIFT_HELD) {
-    actor->riseBaseY = 0;
+    actor->sceneWord = 0;
   } else if (actor->timer != DRIFT_INCREASING) {
-    actor->riseBaseY -= Random_Below(2048);
-    if (actor->riseBaseY < -toFIXED(3) / 4) {
+    actor->sceneWord -= Random_Below(2048);
+    if (actor->sceneWord < -toFIXED(3) / 4) {
       actor->timer = DRIFT_INCREASING;
     }
   } else {
-    actor->riseBaseY += Random_Below(2048);
-    if (actor->riseBaseY > toFIXED(3) / 4) {
+    actor->sceneWord += Random_Below(2048);
+    if (actor->sceneWord > toFIXED(3) / 4) {
       actor->timer = DRIFT_DECREASING;
     }
   }
   if (actor->x.fixed > toFIXED(40) && actor->x.fixed < toFIXED(320)) {
-    actor->x.fixed += actor->riseBaseY;
+    actor->x.fixed += actor->sceneWord;
   }
 
   // The bob, between the deck and 16 pixels up.
@@ -550,7 +550,7 @@ static inline void TolbiShipMast_StopBirdDrifting(struct Actor *actor) {
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   SET_VELOCITY(actor, 0, 0, 0);
-  actor->riseBaseY = 0;
+  actor->sceneWord = 0;
 }
 
 /// Sets each of the seven birds drifting about the mast in its own way.
@@ -673,7 +673,7 @@ static void TolbiShipMast_StartBirdDrifting(s32 actorId) {
   actor->timer = Random_Below(2);
   actor->userValue = Random_Below(2);
   actor->y.fixed = toFIXED(Random_Below(4)) + toFIXED(6);
-  actor->riseBaseY = Random_Below(toFIXED(3) / 8) - toFIXED(3) / 16;
+  actor->sceneWord = Random_Below(toFIXED(3) / 8) - toFIXED(3) / 16;
   actor->scaleX = 5 * FIXED_ONE / 4;
   actor->scaleY = 5 * FIXED_ONE / 4;
   Actor_SetScript(actorId, gTolbiShipMast_DriftActions);

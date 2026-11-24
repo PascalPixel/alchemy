@@ -171,8 +171,6 @@ enum {
   ACTOR_FIRST_LOW_ICE = 23
 };
 
-/// SPRITE_SPROUT's first animation: grown into a vine, held.
-enum { SPROUT_ANIMATION_VINE = 0 };
 /// SPRITE_FIRE's flickering flame.
 enum { FIRE_ANIMATION_BURNING = 2 };
 

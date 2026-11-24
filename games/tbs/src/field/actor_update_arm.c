@@ -1,6 +1,6 @@
 /// @file
 /// Unused: an ARM copy of the actors' update, made to run from RAM. Nothing
-/// runs it; the field moves its actors with Actor_UpdateAllThumb.
+/// runs it; the field moves its actors with Actor_UpdateAllOnField.
 
 #include "field/actor_update_arm.h"
 #include "fixed_math.h"
@@ -20,13 +20,13 @@
 /// still reaches when it runs from its copy in RAM.
 #define IWRAM_ENTRY(type, offset) ((type)(IwramIrqMain + (offset)))
 #define IwramSqrt IWRAM_ENTRY(s32 (*)(s32 value), Iwram_SqrtOffset)
-#define IwramRatioMulQ14                                                       \
-  IWRAM_ENTRY(s32 (*)(s32 divisor, s32 value), Iwram_RatioMulQ14Offset)
+#define IwramDivFX                                                             \
+  IWRAM_ENTRY(s32 (*)(s32 divisor, s32 value), Iwram_DivFXOffset)
 
 /// Far-call stubs copied to RAM together with this code (actor_update_far.s).
 s32 Trig_AtanFarArm(s32 z, s32 x);
 s32 Iwram_SqrtFarArm(s32 value);
-s32 Iwram_RatioMulQ14FarArm(s32 divisor, s32 value);
+s32 Iwram_DivFXFarArm(s32 divisor, s32 value);
 
 /// Advances the eight script-driven actors by one frame.
 void Actor_UpdateAll(void) {
@@ -109,7 +109,7 @@ void Actor_UpdateAll(void) {
           z = actor->targetZ;
         } else {
           // speedRatio is acceleration / distance in 16.16.
-          speedRatio = IwramRatioMulQ14(distance, actor->acceleration);
+          speedRatio = IwramDivFX(distance, actor->acceleration);
           velocityX = actor->velocityX + MulFX(deltaX, speedRatio);
           actor->velocityX = velocityX;
           // Limit the combined horizontal velocity after accelerating both
@@ -121,7 +121,7 @@ void Actor_UpdateAll(void) {
                      << 8;
           if (distance > actor->speedLimit) {
             // Too fast: scale the velocity back to the speed limit.
-            speedRatio = IwramRatioMulQ14(distance, actor->speedLimit);
+            speedRatio = IwramDivFX(distance, actor->speedLimit);
             actor->velocityX = MulFX(velocityX, speedRatio);
             actor->velocityZ = MulFX(velocityZ, speedRatio);
           }
@@ -138,8 +138,8 @@ void Actor_UpdateAll(void) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
           } else {
-            speedRatio = Iwram_RatioMulQ14FarArm(
-                distance, distance - actor->acceleration);
+            speedRatio =
+                Iwram_DivFXFarArm(distance, distance - actor->acceleration);
             actor->velocityX = MulFX(deltaX, speedRatio);
             actor->velocityZ = MulFX(deltaZ, speedRatio);
           }

@@ -30,7 +30,7 @@ the frame.
 | Rank | Task | Each frame it |
 | --- | --- | --- |
 | 15 | `PaletteFade_Update` | moves the colours a step toward their target |
-| 10 | `Actor_UpdateAllThumb` | carries every actor's script on and moves the actor |
+| 10 | `Actor_UpdateAllOnField` | carries every actor's script on and moves the actor |
 | 5 | `MapGrid_UpdateLayerScroll` | centres the map on the point it follows and scrolls the three layers |
 | 0 | `ActorSystem_PlaceSprites` | places every actor's sprite on the screen |
 | 0 | `WindowSystem_Update` | grows, shrinks and types into the windows |
@@ -41,7 +41,7 @@ On the World Map the tasks at ranks 5 and 0 are `WorldMap_UpdateView` and
 whatever only it has. One more runs from the VBlank handler,
 `WindowSystem_UploadTilemap`, which copies the windows to the screen.
 
-None of these is a villager or a door. `Actor_UpdateAllThumb` is the one
+None of these is a villager or a door. `Actor_UpdateAllOnField` is the one
 task for all 64 actors.
 
 ### The twelve requests
@@ -107,7 +107,7 @@ each pointing at the row that actor has.
 An [actor script](../../glossary.md#actor-script) is a list of orders
 written with `SC_` macros (script command): set an animation, set a speed,
 move to a spot, wait, loop. It is a table of numbers, not code. One
-[task](../../glossary.md#task), `Actor_UpdateAllThumb`, visits every actor
+[task](../../glossary.md#task), `Actor_UpdateAllOnField`, visits every actor
 each frame and reads its script on from where it stopped. In a battle the
 task is `Actor_UpdateAllMotion`. An order that takes no time runs at once,
 and one that takes time holds the script there until it is done:

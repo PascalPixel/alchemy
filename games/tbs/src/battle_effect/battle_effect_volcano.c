@@ -46,7 +46,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   if (state->args->variant == EFFECT_VARIANT_BASIC)
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_RED_PALETTE_B),
                     SHEET_PALETTE_BYTES);
@@ -63,7 +63,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   for (i = 0; i != VOLCANO_SPARK_POOL; i++)
     PARTICLES[i].variant = 0;
 
-  actor = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  actor = BattleObject_GetFar(state->args->targets[0])->actor;
   // Each pillar stands 72 to 87 pixels out on the first target's side of the
   // field, at its own depth.
   for (i = 0; i != VOLCANO_MOST_PILLARS; i++) {
@@ -207,7 +207,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

@@ -23,7 +23,7 @@ s32 Shop_ListAvailableArtifacts(void) {
   for (; itemId <= INVENTORY_ITEM_ID_MASK; itemId++) {
     equipmentGroup = shop->shopType;
     if (equipmentGroup == Item_GetEquipmentGroupFar(itemId) &&
-        Item_AdjustCounterFar(itemId, 0) != 0) {
+        Item_AdjustRareItemStockFar(itemId, 0) != 0) {
       *stockItems = itemId;
       count++;
       stockItems++;
@@ -122,12 +122,12 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
   if (window == 0)
     window = Window_CreateFar(-5, 0, 5, 5, WINDOW_FLAG_INSTANT);
-  anchor =
-      WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
+  anchor = WindowSprite_CreateFar(shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16,
+                                  window, 0, 0);
   anchor->motion = WINDOW_SPRITE_MOTION_STILL;
   // The hand's icon is the shop's, freed by Shop_ReleaseState, not the
   // sprite's.
-  anchor->kind = WINDOW_SPRITE_GLYPH;
+  anchor->kind = WINDOW_SPRITE_PLAIN;
   // The hand waits off the left edge until a screen places it
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = anchor;
@@ -285,7 +285,7 @@ s32 Shop_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
       &((struct ShopState *)gMenuState)->cursor.anchor;
   u8 savedCursorMode = (*cursorSlot)->motion;
-  Icon_PrepareActorFar(*cursorSlot);
+  Icon_ShowFar(*cursorSlot);
   choice = YesNoMenu_RunAtFar(SHOP_CONFIRM_MENU_X, 5, choice);
   (*cursorSlot)->motion = savedCursorMode;
   return choice;
@@ -297,7 +297,7 @@ s32 Sanctum_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
       &((struct ShopState *)gMenuState)->cursor.anchor;
   u8 savedCursorMode = (*cursorSlot)->motion;
-  Icon_PrepareActorFar(*cursorSlot);
+  Icon_ShowFar(*cursorSlot);
   choice = YesNoMenu_RunAtFar(7, 7, choice);
   (*cursorSlot)->motion = savedCursorMode;
   return choice;

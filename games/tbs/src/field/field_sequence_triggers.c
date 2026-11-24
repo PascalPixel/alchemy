@@ -580,7 +580,7 @@ s32 Field_ExamineCell(s32 tile) {
                                         MESSAGE_ARGUMENT_ITEM);
                 if (recipient == gMainRoutineState.leaderActorId) {
                   // "Isaac got [item]."
-                  FieldMessage_ShowFar(MsgColossoIsaacGotItem,
+                  FieldMessage_ShowFar(MsgGotItem,
                                        FIELD_MESSAGE_ZOOM |
                                            FIELD_MESSAGE_WAITING_FOR_SOUND);
                 } else {

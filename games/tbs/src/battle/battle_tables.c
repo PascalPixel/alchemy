@@ -16,7 +16,7 @@
 /// 17.
 const u32 gBattleTables_UnusedWord = 16;
 
-const s8 gBattleParty_CenterOrderOffsets[] = {0, -1, 1, -2, 2, -3, 3, -4, 4};
+const s8 gBattleFormation_CenteredOffsets[] = {0, -1, 1, -2, 2, -3, 3, -4, 4};
 
 // clang-format off
 /// Isaac's battle sprite for each kind of weapon he holds.
@@ -70,7 +70,7 @@ const u16 gBattleUnit_WeaponAnimationsJenna[] = {
     [WEAPON_KIND_NONE]        = SPRITE_WEAPON_JENNA_STAFF,
 };
 
-const s8 gBattlePlacement_StepPairs[] = {
+const s8 gBattlePlacement_Spots[] = {
     80, 48,
     80, 16,
     80, -16,

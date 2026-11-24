@@ -106,7 +106,7 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
 
 /// Builds the zoomed background's 32 by 32 affine map, in which the background
 /// picture's two halves come from character blocks 2 and 3.
-void Graphics_BuildSequentialTileTable(void *tilemap) {
+void BattleTransition_BuildAffineTilemap(void *tilemap) {
   u32 *words = tilemap;
   u32 tiles;
   u32 i;
@@ -127,7 +127,7 @@ void Graphics_BuildSequentialTileTable(void *tilemap) {
 /// Builds BG1's flat map of the same picture: its tiles in rows 6 to 20, from
 /// screen line 16 at BATTLE_BACKGROUND_SCROLL_Y, and the last tile in the rows
 /// around them.
-void BattleTransition_BuildTilemap(void *tilemap) {
+void BattleTransition_BuildFlatTilemap(void *tilemap) {
   u32 *pairs = tilemap;
   u32 pair;
   u32 i;
@@ -177,7 +177,7 @@ void BattleTransition_UploadTileVariant(void) {
 
 /// Advances the curtain opening by a frame: BG0 slides into place as the camera
 /// turns round to the party and zooms out.
-void BattleTransition_AdvanceTimer(void) {
+void BattleTransition_AdvanceOpening(void) {
   void **slots = &gHeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER];
   u32 *timer = slots[0];
   u32 frame = *timer;
@@ -319,7 +319,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       BattleCamera_SetView(0, 0, 0,
                            BATTLE_ZOOM_NORMAL + TRANSITION_OPEN_FRAMES);
       *timer = start;
-      Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_FRAME);
+      Task_Add(BattleTransition_AdvanceOpening, TASK_PASS_FRAME);
       Task_Add(BattleTransition_DrawRows, TASK_PASS_VBLANK);
       Irq_SetHandler(IRQ_VCOUNT, TRANSITION_BG0_BAND,
                      BattleTransition_ClearBg0Vofs);
@@ -330,7 +330,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(2));
       IoWriteQueue_SetBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(0));
       BattleIntro_AnnounceEncounter(enemyCount);
-      Task_Remove(BattleTransition_AdvanceTimer);
+      Task_Remove(BattleTransition_AdvanceOpening);
       Task_Remove(BattleTransition_DrawRows);
       gBgScroll[0].y = start;
       Irq_SetHandler(IRQ_VCOUNT, 0, 0);

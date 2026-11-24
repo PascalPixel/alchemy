@@ -12,7 +12,7 @@ s32 PartyMemberChooser_OpenFar(void);
 void Menu_CreatePartyFiguresFar(void *source, s32 originX, s32 originY,
                                 s32 spacing, s32 unused);
 void Menu_ReleasePartyFiguresFar(void);
-void Icon_PrepareActorFar(struct WindowSprite *object);
+void Icon_ShowFar(struct WindowSprite *object);
 s32 DjinnMenu_RunFar(void);
 void ItemMenu_DrawItemDetailsFar(s32 window, s32 inventoryEntry);
 

@@ -49,11 +49,11 @@ struct BurstParticleVisualGroup {
 void FieldPsynergy_GrowthOnTarget(s32 unused) {
   struct Actor *target;
 
-  target = ((struct FieldEffectState *)gFieldEffectState)->child;
+  target = ((struct FieldEffectState *)gFieldEffectState)->target;
   if (target != NULL) {
     FieldEffect_SpawnBurstParticleField();
     // A sprout grows tall: sprout.tsv's animation 2, pictures 0 to 6.
-    Actor_SelectAnimationFar(target, 2);
+    Actor_SelectAnimationFar(target, SPROUT_ANIMATION_GROW);
     target->collisionFlags = 0;
     Actor_SetSpriteFlagsFar(target, 0);
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -86,7 +86,7 @@ void FieldPsynergy_Growth(void) {
     particle =
         Actor_Spawn(SPRITE_VINE, pos.values[0], pos.values[1], pos.values[2]);
     if (particle != 0) {
-      Actor_StartScriptFar(particle, gFieldEffect_BurstParticleActorScript);
+      Actor_StartScriptFar(particle, gGrowth_LeafScript);
       particle->motionFlags = ACTOR_FALLS;
     }
     wait(((Random16() * 2) >> 16) + 2);
@@ -104,7 +104,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
   s32 particleIndex;
 
   effectState = gFieldEffectState;
-  caster = effectState->mainActor;
+  caster = effectState->caster;
   FieldPsynergy_FadeToCastColor();
 
   for (particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;

@@ -21,7 +21,7 @@ static const s16 sGameTicketCreditCosts[30] = {
 /// Unused: a list of items ended by 0, which nothing reads: the Long Sword to
 /// the Muramasa, the Short Sword, Mint, the Demon Axe, Asura's Armor, the Cotton
 /// Shirt, the Travel Vest, Herb, Nut and the id after the Water of Life.
-const s16 gShop_GiftItemIds[21] = {
+const s16 gShop_UnusedItemIds[21] = {
     ITEM_LONG_SWORD, ITEM_BROAD_SWORD, ITEM_CLAYMORE, ITEM_GREAT_SWORD, ITEM_SHAMSHIR,
     ITEM_SILVER_BLADE, ITEM_MASAMUNE, ITEM_ARCTIC_BLADE, ITEM_GAIA_BLADE,
     ITEM_SOL_BLADE, ITEM_MURAMASA, ITEM_SHORT_SWORD, ITEM_MINT, ITEM_DEMON_AXE,
@@ -360,7 +360,7 @@ void ShopStock_AddArtifacts(s32 stockRow) {
       stockEntries = sStockTable[stockRow];
       artifactCursor = stockEntries + SHOP_STOCK_ARTIFACTS;
       do {
-        Item_AdjustCounterFar(itemId, 1);
+        Item_AdjustRareItemStockFar(itemId, 1);
         artifactIndex++;
         if (artifactIndex > SHOP_STOCK_ARTIFACT_COUNT - 1)
           break;

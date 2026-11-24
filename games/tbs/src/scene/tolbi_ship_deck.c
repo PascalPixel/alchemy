@@ -87,7 +87,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/actor_pulse.h"
+#include "scene/squash_and_stretch.h"
 #include "scene/tolbi_ship.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
@@ -351,7 +351,7 @@ enum TolbiShipDeckCellBehavior {
   CELL_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_CABIN_DOOR = 12
 };
 
-#include "shared/actor_pulse.c"
+#include "shared/squash_and_stretch.c"
 
 /// The door to the passengers' hold has been drawn open this visit.
 #define FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN FLAG_SCENE_TEMP_71
@@ -366,9 +366,9 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
   return 0;
 }
 
-// The diving scripts own the actor's scratch fields: riseBaseY is
-// sideways drift in 16.16 pixels per frame, riseCounter the dive step (0
-// hovering), riseEnabled the return side, timer the drift direction and
+// The diving scripts own the actor's scratch fields: sceneWord is
+// sideways drift in 16.16 pixels per frame, sceneCounter the dive step (0
+// hovering), sceneByte the return side, timer the drift direction and
 // userValue the bob direction.
 
 /// Defines `name`, the update of a sea monster hovering by one warrior's side
@@ -377,30 +377,30 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
 /// It drifts between minX and maxX and bobs, at random. One frame in a hundred
 /// it dives at the warrior to (diveX, diveZ), 20 pixels up, and the warrior
 /// turns and jumps (sometimes with an emote). Then it returns to its side,
-/// (eastX, eastZ) or (westX, westZ) as riseEnabled picks.
+/// (eastX, eastZ) or (westX, westZ) as sceneByte picks.
 ///
 /// Returns 1 to keep running.
 #define TOLBI_SHIP_DECK_HOVER_AND_DIVE(name, warrior, diveX, diveZ, eastX,     \
                                        eastZ, westX, westZ, minX, maxX)        \
   static s32 name(struct Actor *actor) {                                       \
-    if (actor->riseCounter != 0) {                                             \
-      switch (actor->riseCounter) {                                            \
+    if (actor->sceneCounter != 0) {                                            \
+      switch (actor->sceneCounter) {                                           \
       case 1:                                                                  \
         actor->speedLimit = toFIXED(4);                                        \
         actor->acceleration = toFIXED(2);                                      \
         FieldActor_SetMoveTarget(actor, diveX, 20, diveZ);                     \
-        actor->riseCounter++;                                                  \
+        actor->sceneCounter++;                                                 \
         break;                                                                 \
       case 2:                                                                  \
-        actor->riseCounter++;                                                  \
+        actor->sceneCounter++;                                                 \
         break;                                                                 \
       case 3:                                                                  \
         if (actor->targetX == ACTOR_NO_TARGET &&                               \
             actor->targetY == actor->targetX &&                                \
             actor->targetZ == actor->targetY) {                                \
-          actor->riseCounter++;                                                \
+          actor->sceneCounter++;                                               \
           Sound_Play(SE_ENEMY_CRY);                                            \
-          if (actor->riseEnabled != 0)                                         \
+          if (actor->sceneByte != 0)                                           \
             Actor_FaceDirection(warrior, FACING_NORTH_NORTHEAST, 0);           \
           else                                                                 \
             Actor_FaceDirection(warrior, FACING_NORTH_NORTHWEST, 0);           \
@@ -413,17 +413,17 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
         }                                                                      \
         break;                                                                 \
       case 4:                                                                  \
-        actor->riseCounter++;                                                  \
+        actor->sceneCounter++;                                                 \
         break;                                                                 \
       case 5:                                                                  \
-        if (actor->riseEnabled != 0)                                           \
+        if (actor->sceneByte != 0)                                             \
           FieldActor_SetMoveTarget(actor, eastX, 0, eastZ);                    \
         else                                                                   \
           FieldActor_SetMoveTarget(actor, westX, 0, westZ);                    \
-        actor->riseCounter++;                                                  \
+        actor->sceneCounter++;                                                 \
         break;                                                                 \
       case 6:                                                                  \
-        actor->riseCounter++;                                                  \
+        actor->sceneCounter++;                                                 \
         break;                                                                 \
       case 7:                                                                  \
         if (actor->targetX == ACTOR_NO_TARGET &&                               \
@@ -433,26 +433,26 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
           actor->acceleration = toFIXED(1);                                    \
           actor->timer = 0;                                                    \
           actor->userValue = 0;                                                \
-          actor->riseCounter++;                                                \
-          actor->riseBaseY = 0;                                                \
+          actor->sceneCounter++;                                               \
+          actor->sceneWord = 0;                                                \
         }                                                                      \
         break;                                                                 \
       case 8:                                                                  \
-        actor->riseCounter = 0;                                                \
+        actor->sceneCounter = 0;                                               \
         break;                                                                 \
       }                                                                        \
     } else {                                                                   \
       if (actor->timer != 0) {                                                 \
-        actor->riseBaseY -= Random_Below(4096);                                \
-        if (actor->riseBaseY < -toFIXED(1) / 4)                                \
+        actor->sceneWord -= Random_Below(4096);                                \
+        if (actor->sceneWord < -toFIXED(1) / 4)                                \
           actor->timer = 0;                                                    \
       } else {                                                                 \
-        actor->riseBaseY += Random_Below(4096);                                \
-        if (actor->riseBaseY > toFIXED(1) / 4)                                 \
+        actor->sceneWord += Random_Below(4096);                                \
+        if (actor->sceneWord > toFIXED(1) / 4)                                 \
           actor->timer = 1;                                                    \
       }                                                                        \
       if (actor->x.fixed > toFIXED(minX) && actor->x.fixed < toFIXED(maxX))    \
-        actor->x.fixed += actor->riseBaseY;                                    \
+        actor->x.fixed += actor->sceneWord;                                    \
       if ((s16)actor->userValue != 0) {                                        \
         actor->y.fixed =                                                       \
             actor->y.fixed - (Random_Below(32768)) - toFIXED(1) / 2;           \
@@ -466,7 +466,7 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
       }                                                                        \
     }                                                                          \
     if (Random_Below(100) == 0)                                                \
-      actor->riseCounter = 1;                                                  \
+      actor->sceneCounter = 1;                                                 \
     return 1;                                                                  \
   }
 
@@ -541,7 +541,7 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
 /// a warrior.
 ///
 /// It jumps to him at (atX, atZ), he turns and jumps back (sometimes with
-/// an emote), and it lands. While riseEnabled is set he turns to setFacing and
+/// an emote), and it lands. While sceneByte is set he turns to setFacing and
 /// it lands on (setX, setZ), else clearFacing and (clearX, clearZ).
 ///
 /// The actor's timer holds the step. Returns 1.
@@ -573,7 +573,7 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
           actor->targetZ == actor->targetY) {                                  \
         actor->timer++;                                                        \
         Sound_Play(SE_JUMP);                                                   \
-        if (actor->riseEnabled != 0) {                                         \
+        if (actor->sceneByte != 0) {                                           \
           Actor_FaceDirection(warrior, setFacing, 0);                          \
         } else {                                                               \
           Actor_FaceDirection(warrior, clearFacing, 0);                        \
@@ -594,7 +594,7 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
       actor->velocityY = toFIXED(4);                                           \
       actor->speedLimit = toFIXED(2);                                          \
       actor->acceleration = toFIXED(1);                                        \
-      if (actor->riseEnabled != 0) {                                           \
+      if (actor->sceneByte != 0) {                                             \
         FieldActor_SetMoveTarget(actor, setX, 0, setZ);                        \
       } else {                                                                 \
         FieldActor_SetMoveTarget(actor, clearX, 0, clearZ);                    \
@@ -646,8 +646,8 @@ static void TolbiShipDeck_ShrinkToNormalSize(struct Actor *actor) {
 /// Turns the actor east, northeast-by-north or southeast-by-south at
 /// random intervals of 80 to 160 frames.
 static s32 TolbiShipDeck_IdleTurn(struct Actor *actor) {
-  if (actor->riseCounter != 0) {
-    actor->riseCounter--;
+  if (actor->sceneCounter != 0) {
+    actor->sceneCounter--;
   } else {
     u32 roll = Random_Below(300);
 
@@ -658,7 +658,7 @@ static s32 TolbiShipDeck_IdleTurn(struct Actor *actor) {
     } else {
       actor->facing = FACING_EAST;
     }
-    actor->riseCounter = (Random_Below(80)) + 80;
+    actor->sceneCounter = (Random_Below(80)) + 80;
   }
   return 1;
 }
@@ -1595,10 +1595,10 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Actor_SetPosition(ACTOR_SEA_FIRST_HOVERING_MONSTER + 1, 264, 600);
   Actor_SetPosition(ACTOR_SEA_FIRST_HOVERING_MONSTER + 2, 254, 668);
   Actor_SetPosition(ACTOR_SEA_FIRST_HOVERING_MONSTER + 3, 282, 658);
-  Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER)->riseEnabled = 0;
-  Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER + 1)->riseEnabled = 1;
-  Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER + 2)->riseEnabled = 0;
-  Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER + 3)->riseEnabled = 1;
+  Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER)->sceneByte = 0;
+  Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER + 1)->sceneByte = 1;
+  Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER + 2)->sceneByte = 0;
+  Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER + 3)->sceneByte = 1;
   Actor_SetScript(ACTOR_SEA_FIRST_HOVERING_MONSTER,
                   gTolbiShipDeck_HoverAndDiveAtSeanActions);
   Actor_SetScript(ACTOR_SEA_FIRST_HOVERING_MONSTER + 1,
@@ -1692,10 +1692,10 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Actor_SetPosition(ACTOR_SEA_FIRST_LEAPING_MONSTER + 3, 256, 686);
   Actor_SetPosition(ACTOR_SEA_THIRD_ATTACK_MONSTER, 172, 632);
   Actor_SetPosition(ACTOR_SEA_THIRD_ATTACK_MONSTER + 1, 256, 622);
-  Actor_Get(ACTOR_SEA_FIRST_LEAPING_MONSTER)->riseEnabled = 0;
-  Actor_Get(ACTOR_SEA_FIRST_LEAPING_MONSTER + 1)->riseEnabled = 1;
-  Actor_Get(ACTOR_SEA_FIRST_LEAPING_MONSTER + 2)->riseEnabled = 0;
-  Actor_Get(ACTOR_SEA_FIRST_LEAPING_MONSTER + 3)->riseEnabled = 2;
+  Actor_Get(ACTOR_SEA_FIRST_LEAPING_MONSTER)->sceneByte = 0;
+  Actor_Get(ACTOR_SEA_FIRST_LEAPING_MONSTER + 1)->sceneByte = 1;
+  Actor_Get(ACTOR_SEA_FIRST_LEAPING_MONSTER + 2)->sceneByte = 0;
+  Actor_Get(ACTOR_SEA_FIRST_LEAPING_MONSTER + 3)->sceneByte = 2;
   Actor_SetPosition(ACTOR_SEA_KAJA, 0, 0);
   Actor_SetScript(ACTOR_SEA_FIRST_LEAPING_MONSTER,
                   gTolbiShipDeck_LeapAtSeanActions);
@@ -2951,7 +2951,7 @@ const s32 gTolbiShipDeck_HoverAndDiveAtOuranosActions[] = {
     SC_SET(SW_MOTION, 0),
     SC_SET(SW_TIMER, 0),
     SC_SET(SW_USER_VALUE, 0),
-    SC_SET(SW_RISE_COUNTER, 0),
+    SC_SET(SW_SCENE_COUNTER, 0),
     SC_SET(23, 0),
     SC_CALL(TolbiShipDeck_HoverAndDiveAtOuranos),
 };
@@ -2960,7 +2960,7 @@ const s32 gTolbiShipDeck_HoverAndDiveAtSeanActions[] = {
     SC_SET(SW_MOTION, 0),
     SC_SET(SW_TIMER, 0),
     SC_SET(SW_USER_VALUE, 0),
-    SC_SET(SW_RISE_COUNTER, 0),
+    SC_SET(SW_SCENE_COUNTER, 0),
     SC_SET(23, 0),
     SC_CALL(TolbiShipDeck_HoverAndDiveAtSean),
 };
@@ -3047,7 +3047,7 @@ const s32 gTolbiShipDeck_GoBelowActions[] = {
 
 /// Sean standing by, turning now and then (TolbiShipDeck_IdleTurn).
 const s32 gTolbiShipDeck_SeanLooksAboutActions[] = {
-    SC_SET(SW_RISE_COUNTER, 0),
+    SC_SET(SW_SCENE_COUNTER, 0),
     SC_CALL(TolbiShipDeck_IdleTurn),
 };
 

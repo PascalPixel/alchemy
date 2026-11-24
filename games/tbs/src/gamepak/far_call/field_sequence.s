@@ -99,7 +99,7 @@ FarCall_OverworldTable:
 	overlay_veneer FieldMotes_Start
 	export FieldEffect_InitializeSparklesFar, FieldEffect_InitializeSparkles
 	export ScreenTransition_StartHeldWindowFar, ScreenTransition_StartHeldWindow
-	overlay_veneer ScreenTransition_InitializeState
+	overlay_veneer ScreenTransition_StartDissolveHeld
 	overlay_veneer ScreenTransition_Start
 	overlay_veneer ScreenTransition_Finish
 	overlay_veneer ScreenTransition_HideBackgrounds
@@ -115,7 +115,7 @@ FarCall_OverworldTable:
 	export Event_WaitTransitionFramesFar, Event_WaitTransitionFrames
 	export LineScroll_InitWaveFar, LineScroll_InitWave
 	export LineScroll_StopFar, LineScroll_Stop
-	export FieldEffect_PlayCueAndStartEmitterOnTargetFar, FieldEffect_PlayCueAndStartEmitterOnTarget
+	export Chest_OpenAndShowItemFar, Chest_OpenAndShowItem
 	export ItemDisplay_ShowPictureFar, ItemDisplay_ShowPicture
 	export ItemDisplay_ShowItemFar, ItemDisplay_ShowItem
 	overlay_veneer TreasureSpot_GetActor
@@ -147,13 +147,13 @@ FarCall_OverworldTable:
 	export FieldPsynergy_StopMindReadWaveFar, FieldPsynergy_StopMindReadWave
 	overlay_veneer FieldPsynergy_GreyMindReadPalette
 	export FieldPsynergy_RestoreMindReadPaletteFar, FieldPsynergy_RestoreMindReadPalette
-	export Scene_HasFieldPsynergyTriggerFar, Scene_HasFieldPsynergyTrigger
 	export Scene_HasPsynergyTriggerFar, Scene_HasPsynergyTrigger
+	export Scene_HasItemTriggerFar, Scene_HasItemTrigger
 	export Sprite_ShareVramCacheEntryFar, Sprite_ShareVramCacheEntry
 	export BattleBackground_GetSelectedFar, BattleBackground_GetSelected
 	overlay_veneer FieldEffect_SpawnMoveHand
-	overlay_veneer FieldEffect_SnapScaleToFull
-	overlay_veneer UpdateRisingParticleBurst
+	overlay_veneer FieldEffect_GrowHandAndWait
+	overlay_veneer FieldEffect_BurstHand
 	export Party_AddPpFar, Party_AddPp
 	overlay_veneer Party_AddHp
 	overlay_veneer VramCache_CountFreeBlocks
@@ -165,7 +165,7 @@ FarCall_OverworldTable:
 	export FieldParticle_UpdateFar, FieldParticle_Update
 	export FieldParticle_HasPendingTargetFar, FieldParticle_HasPendingTarget
 	export FieldParticle_SetPositionFar, FieldParticle_SetPosition
-	export FieldParticle_SetActorModeFar, FieldParticle_SetActorMode
+	export FieldParticle_SetAnimationFar, FieldParticle_SetAnimation
 	export FieldParticle_SetCallbackFar, FieldParticle_SetCallback
 	export FieldParticle_InitializeFar, FieldParticle_Initialize
 	export FieldEffect_ClearOwnedSlotFar, FieldEffect_ClearOwnedSlot
@@ -184,7 +184,7 @@ FarCall_OverworldTable:
 	overlay_veneer FieldPsynergy_ResumeHaltedActor
 	overlay_veneer Actor_FindBySprite
 	overlay_veneer Actor_GetSpriteById
-	export Save_CaptureActorsFar, Actor_Snapshot
+	export Actor_SnapshotFar, Actor_Snapshot
 	export Actor_RestoreFar, Actor_Restore
 	export WorldMap_StartZoomFar, WorldMap_StartZoom
 	export Event_WaitForZoomTransitionFar, Event_WaitForZoomTransition
@@ -192,7 +192,7 @@ FarCall_OverworldTable:
 	export Actor_SetMovementTypeFar, Actor_SetMovementType
 	export Scene_QueueMusicFar, Scene_QueueMusic
 	export Scene_PlayQueuedMusicFar, Scene_PlayQueuedMusic
-	export Party_RemapCharacterIdIfEnabledFar, Party_RemapCharacterIdIfEnabled
+	export Party_GetCharacterSpriteForChildhoodFar, Party_GetCharacterSpriteForChildhood
 	@ German, French, Spanish and Italian
 	.ifndef TBS_EDITION_JA
 	.ifndef TBS_EDITION_EN

@@ -68,7 +68,7 @@ void BattleEffect_RunZephyr(struct BattleEffectParams *args) {
 }
 /// Where each picture sits in the sprite sheet.
 enum StatBoostSheet {
-  STAT_BOOST_FLARES = 0,      ///< flares (ParticleSpritesD)
+  STAT_BOOST_FLARES = 0,      ///< flares (BlueGlowSheet)
   STAT_BOOST_BURST = 1550,    ///< six bursts of light (GlowOrb)
   STAT_BOOST_PICTURE = 11150, ///< the picture the mode picks
   STAT_BOOST_DJINNI = 26048   ///< the Djinni
@@ -144,7 +144,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   }
   REG_BG2PA = Q_8_8(0.8); // 1.25 times the width
 
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET,
                              state->sheet + STAT_BOOST_FLARES, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,
                              state->sheet + STAT_BOOST_BURST, 1, 1);
@@ -212,7 +212,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   REG_BG2X = canvasShiftX << 8;
   state->transferMode = CANVAS_COPY_AND_FADE;
   state->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   if (state->args->side == EFFECT_SIDE_PARTY)
     drawFlags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
   else
@@ -253,7 +253,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
     EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor =
-          GetBattleObjectSlotFar(state->args->targets[member])->actor;
+          BattleObject_GetFar(state->args->targets[member])->actor;
       s32 height =
           BattleUnit_GetEffectHeightFar(state->args->targets[member]) * 2 / 3;
 
@@ -421,7 +421,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -545,7 +545,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     shard->variant = Random16() & 0xff;
   }
 
-  BattleEffect_FetchRectangleBlitters(state->args->side, blitters);
+  BattleEffect_BuildCanvasBlitters(state->args->side, blitters);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0;
@@ -568,7 +568,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
       s32 y;
 
       targetFrame = frame - j * STAT_REDUCTION_TARGET_DELAY;
-      actor = GetBattleObjectSlotFar(state->args->targets[j])->actor;
+      actor = BattleObject_GetFar(state->args->targets[j])->actor;
       if (targetFrame > 0) {
         // DEAD: the view set from the camera a first time, which the second
         // call repeats; the ROM keeps both calls.

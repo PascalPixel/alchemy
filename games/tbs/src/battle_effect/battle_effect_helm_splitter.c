@@ -35,11 +35,11 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   state->args = args;
   EFFECT_START_NARROW_CANVAS(0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_SWIRL_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PINK_STAR_SHEET,
                              state->sheet + HELM_SPLITTER_STAR_PICTURES, 1, 0);
-  BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+  BattleEffect_BuildCanvasBlitters(state->args->side, draw);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (i = 0; i != HELM_SPLITTER_CLEARED_SLOTS; i++)
@@ -47,9 +47,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   sparks = PARTICLES;
 
   {
-    struct Actor *actor = GetBattleObjectSlotFar(state->args->user)->actor;
-    struct Actor *target =
-        GetBattleObjectSlotFar(state->args->targets[0])->actor;
+    struct Actor *actor = BattleObject_GetFar(state->args->user)->actor;
+    struct Actor *target = BattleObject_GetFar(state->args->targets[0])->actor;
     FIXED diffX = target->x.fixed - actor->x.fixed;
     FIXED startX = actor->x.fixed;
     FIXED deltaX = diffX * 80 / 100;
@@ -157,7 +156,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
 /// Places a summon's figure, the sprites in state->sprites, in its formation;
 /// x and z are its origin in 16.16 pixels.
-void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
+void BattleEffect_PlaceFormationSprites(s32 formation, FIXED x, FIXED z) {
   static struct SpriteScale normalScale = {{{FIXED_ONE, FIXED_ONE}}};
   static struct SpriteScale largeScale = {
       {{FIXED_ONE * 5 / 4, FIXED_ONE * 5 / 4}}};
@@ -178,28 +177,28 @@ void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
           INTtoFIXED(i % FORMATION_GRID_COLUMNS * FORMATION_GRID_SPACING) + x;
       pos.y =
           INTtoFIXED(i / FORMATION_GRID_COLUMNS * FORMATION_GRID_SPACING) + z;
-      Actor_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_NEREID:
     for (i = 0; i != FORMATION_TWELVE; i++) {
-      pos.x = INTtoFIXED(gHelmSplitter_TwelveX[i]) + x - toFIXED(16);
-      pos.y = INTtoFIXED(gHelmSplitter_TwelveZ[i]) + z - toFIXED(32);
-      Actor_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
+      pos.x = INTtoFIXED(gSummonFormation_NereidX[i]) + x - toFIXED(16);
+      pos.y = INTtoFIXED(gSummonFormation_NereidZ[i]) + z - toFIXED(32);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_CYBELE:
     for (i = 0; i != FORMATION_EIGHT; i++) {
-      pos.x = INTtoFIXED(gHelmSplitter_RightEightX[i]) + x + toFIXED(16);
-      pos.y = INTtoFIXED(gHelmSplitter_RightEightZ[i]) + z;
-      Actor_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
+      pos.x = INTtoFIXED(gSummonFormation_CybeleX[i]) + x + toFIXED(16);
+      pos.y = INTtoFIXED(gSummonFormation_CybeleZ[i]) + z;
+      Render_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT:
     for (i = 0; i != FORMATION_EIGHT; i++) {
-      pos.x = INTtoFIXED(gHelmSplitter_SmallEightX[i]) + x;
-      pos.y = INTtoFIXED(gHelmSplitter_SmallEightZ[i]) + z;
-      Actor_ApplyProjectedPlacementFar(state->sprites[i], &pos, &big, 0);
+      pos.x = INTtoFIXED(gSummonFormation_TiamatX[i]) + x;
+      pos.y = INTtoFIXED(gSummonFormation_TiamatZ[i]) + z;
+      Render_ApplyProjectedPlacementFar(state->sprites[i], &pos, &big, 0);
     }
     break;
   }
@@ -258,7 +257,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   additive = slots[HEAP_SLOT_RAM_CODE_PAIRED - HEAP_SLOT_BATTLE_EFFECT];
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLARE_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLARE_IMAGE,
                              state->sheet + IMPACT_BURST_FRAGMENT_PICTURES, 0,
@@ -314,21 +313,18 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
         picture = 0;
       // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-      width = gHelmSplitter_ImpactBurstPictureWidths[picture];
-      height = gHelmSplitter_ImpactBurstPictureHeights[picture];
-      maxBlend(canvas,
-               state->sheet + gHelmSplitter_ImpactBurstPictures[picture],
+      width = gImpactBurst_PictureWidths[picture];
+      height = gImpactBurst_PictureHeights[picture];
+      maxBlend(canvas, state->sheet + gImpactBurst_Pictures[picture],
                FIXEDtoINT(x) - (width >> 1), FIXEDtoINT(y) - (height >> 1),
                width, height);
 #else
-      maxBlend(
-          canvas, state->sheet + gHelmSplitter_ImpactBurstPictures[picture],
-          FIXEDtoINT(x) -
-              ((width = gHelmSplitter_ImpactBurstPictureWidths[picture]) >> 1),
-          FIXEDtoINT(y) -
-              ((height = gHelmSplitter_ImpactBurstPictureHeights[picture]) >>
-               1),
-          width, height);
+      maxBlend(canvas, state->sheet + gImpactBurst_Pictures[picture],
+               FIXEDtoINT(x) -
+                   ((width = gImpactBurst_PictureWidths[picture]) >> 1),
+               FIXEDtoINT(y) -
+                   ((height = gImpactBurst_PictureHeights[picture]) >> 1),
+               width, height);
 #endif
     }
 
@@ -387,11 +383,11 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
     }
 
     if (frame <= 35)
-      BattleEffect_PlaceFormationObjects(formation, originX, y);
+      BattleEffect_PlaceFormationSprites(formation, originX, y);
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   EFFECT_RELEASE_BLITTERS();
 }

@@ -49,8 +49,8 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectState *state,
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   state->args->prelude = 0;
-  Task_Remove(Palette_StepFadeTransfer);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_DarkenBackgroundStep);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
 }
 
@@ -165,7 +165,7 @@ enum CastingImpact {
 /// Where Mortal Danger draws `picture`, one of the reaper's seven pictures
 /// (REAPER_PICTURE_X), for the casting `side`.
 #define CASTING_IMPACT_PICTURE_X(side, picture)                                \
-  gCastingImpact_PictureX[(side)][(picture)]
+  gReaper_PictureX[(side)][(picture)]
 
 /// Gathers sparks around the caster, launches the Djinni and draws the
 /// impact on the first target.
@@ -221,10 +221,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // Setup: the pictures.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, state, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, pictures, 1, 0);
-  BattleEffect_PackTileRows(
+  BattleEffect_PackYellowOrbs(
       pictures, state->sheet + CASTING_IMPACT_ORB_PICTURES, YELLOW_ORB_WIDTH,
       YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT);
   if (mode == CASTING_IMPACT_SCORCH || mode == CASTING_IMPACT_BARRAGE) {
@@ -321,13 +321,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   } else {
     state->transferValue = CANVAS_FADE_HALF;
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   Projection_ScaledUnit(state->args->targets[0], &targetPos);
   Projection_ScaledUnit(state->args->user, &casterPos);
-  BattleEffect_FetchRectangleBlitters(state->args->side, blitters);
+  BattleEffect_BuildCanvasBlitters(state->args->side, blitters);
   state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   state->fadeStep = 0;
-  casterActor = GetBattleObjectSlotFar(state->args->user)->actor;
+  casterActor = BattleObject_GetFar(state->args->user)->actor;
 
   for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
     particle = &state->particles[i];
@@ -487,7 +487,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
 
   {
     struct Actor *targetActor =
-        GetBattleObjectSlotFar(state->args->targets[0])->actor;
+        BattleObject_GetFar(state->args->targets[0])->actor;
 
     SET_POSITION(&velocity, (targetActor->x.fixed - djinniPos.x) / 6,
                  (targetActor->y.fixed - djinniPos.y + toFIXED(30)) / 6,
@@ -744,7 +744,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           struct Particle *mote;
           struct Actor *caster;
           s32 height;
-          caster = GetBattleObjectSlotFar(state->args->user)->actor;
+          caster = BattleObject_GetFar(state->args->user)->actor;
           height = BattleUnit_GetEffectHeightFar(state->args->user) / 2;
           for (i = 0; i != CASTING_IMPACT_PARTICLE_COUNT / 2; i++) {
             mote = &CASTING_IMPACT_PARTICLES[i];
@@ -804,7 +804,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                 imageY + 56, gBattleEffect_GlintPictureWidths[image],
                 gBattleEffect_GlintPictureHeights[image]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-            BattleEffect_FetchRectangleBlitters(state->args->side, blitters);
+            BattleEffect_BuildCanvasBlitters(state->args->side, blitters);
           }
         }
       } else if (mode == CASTING_IMPACT_AQUA_SOCK) {
@@ -866,7 +866,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             }
           }
         }
-        BattleEffect_FetchRectangleBlitters(state->args->side, blitters);
+        BattleEffect_BuildCanvasBlitters(state->args->side, blitters);
       } else if (mode == CASTING_IMPACT_PSYPHON_SEAL) {
         s32 height;
         EFFECT_RELEASE_BLITTERS();
@@ -888,7 +888,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                                                     RUNE_HALF_WIDTH, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
-        BattleEffect_FetchRectangleBlitters(state->args->side, blitters);
+        BattleEffect_BuildCanvasBlitters(state->args->side, blitters);
       } else if (mode == CASTING_IMPACT_CYCLONE_SLASH) {
         // A tornado stands over the target.
         s32 image;
@@ -947,19 +947,19 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         if (frame <= 3) {
           blitters[0](canvas, state->sheet,
                       CASTING_IMPACT_PICTURE_X(state->args->side, 0),
-                      imageY + gCastingImpact_PictureY[0],
-                      REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
+                      imageY + gReaper_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
+                      REAPER_SHEET_RAISED_HEIGHT);
         } else {
           if (frame <= 7) {
             blitters[0](canvas, state->sheet,
                         CASTING_IMPACT_PICTURE_X(state->args->side, 0),
-                        imageY + gCastingImpact_PictureY[0],
-                        REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
+                        imageY + gReaper_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
+                        REAPER_SHEET_RAISED_HEIGHT);
           }
           EFFECT_DRAW_PICTURE(blitters[0], canvas, state->sheet,
                               REAPER_SHEET_SWUNG,
                               CASTING_IMPACT_PICTURE_X(state->args->side, 1),
-                              imageY + gCastingImpact_PictureY[1]);
+                              imageY + gReaper_PictureY[1]);
           if (frame == 4 || frame == 5) {
             Iwram_FillWords(canvas, CANVAS_BYTES,
                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
@@ -968,31 +968,31 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             EFFECT_DRAW_PICTURE(blitters[0], canvas, state->sheet,
                                 REAPER_SHEET_CRESCENT,
                                 CASTING_IMPACT_PICTURE_X(state->args->side, 2),
-                                imageY + gCastingImpact_PictureY[2]);
+                                imageY + gReaper_PictureY[2]);
           }
           if (frame == 8 || frame == 9) {
             EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
                                 RED_CRESCENT_FADE_A,
                                 CASTING_IMPACT_PICTURE_X(state->args->side, 3),
-                                imageY + gCastingImpact_PictureY[3]);
+                                imageY + gReaper_PictureY[3]);
           }
           if (frame == 10 || frame == 11) {
             EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
                                 RED_CRESCENT_FADE_B,
                                 CASTING_IMPACT_PICTURE_X(state->args->side, 4),
-                                imageY + gCastingImpact_PictureY[4]);
+                                imageY + gReaper_PictureY[4]);
           }
           if (frame == 12 || frame == 13) {
             EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
                                 RED_CRESCENT_FADE_C,
                                 CASTING_IMPACT_PICTURE_X(state->args->side, 5),
-                                imageY + gCastingImpact_PictureY[5]);
+                                imageY + gReaper_PictureY[5]);
           }
           if (frame == 14 || frame == 15) {
             EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
                                 RED_CRESCENT_FADE_D,
                                 CASTING_IMPACT_PICTURE_X(state->args->side, 6),
-                                imageY + gCastingImpact_PictureY[6]);
+                                imageY + gReaper_PictureY[6]);
           }
         }
       } else if (mode == CASTING_IMPACT_ASURA) {
@@ -1276,8 +1276,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
     Iwram_ClearWords(canvas, CANVAS_BYTES);
     state->args->prelude = 0;
-    Task_Remove(Palette_StepFadeTransfer);
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_DarkenBackgroundStep);
+    Task_Remove(BattleEffect_TransferCanvas);
     EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpair(args);
   } else {

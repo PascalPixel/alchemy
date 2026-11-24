@@ -131,16 +131,15 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
     state->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
-  for (frame = 0; frame != gFalling_IceCounts[state->args->variant][ICE_FRAMES];
+  for (frame = 0; frame != gIce_Counts[state->args->variant][ICE_FRAMES];
        frame++) {
-    if (frame == gFalling_IceCounts[state->args->variant][ICE_FRAMES] - 16)
+    if (frame == gIce_Counts[state->args->variant][ICE_FRAMES] - 16)
       EFFECT_SHOW_DAMAGE(SE_WATER);
 
     // Shards fall down the slant, and on landing shatter, kicking up puffs.
-    for (i = 0; i != gFalling_IceCounts[state->args->variant][ICE_SHARD_COUNT];
-         i++) {
+    for (i = 0; i != gIce_Counts[state->args->variant][ICE_SHARD_COUNT]; i++) {
       shard = &state->particles[i];
       if (shard->variant == -1) {
         s32 x = shard->x / 8;
@@ -218,7 +217,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Task_Remove(BattleEffect_ArmWin0HBlankDma);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
@@ -235,7 +234,7 @@ struct DropSplashBuffer {
 /// Ram_MapGridCellBuffer seen as Douse's struct DropSplashBuffer.
 #define DOUSE_SPLASH_BUFFER ((struct DropSplashBuffer *)Ram_MapGridCellBuffer)
 
-/// BlueBeamSheet, after ParticleSpritesD's ten flare pictures (as many bytes as
+/// BlueBeamSheet, after BlueGlowSheet's ten flare pictures (as many bytes as
 /// two sets of motes): the falling drop, a blue bubble; the white flash it
 /// lands in, as large as the drop; then the white splash that spreads.
 #define DOUSE_DROP_WIDTH 24
@@ -269,7 +268,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET,
                              state->sheet + DOUSE_FALLING_PICTURE, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, state->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, state->sheet, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
@@ -293,7 +292,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
     drop = &state->particles[i];
     x = Random16() & 63;
-    y = -(i * gFalling_Counts[state->args->variant][DOUSE_DROP_SPACING] + 16);
+    y = -(i * gDouse_Counts[state->args->variant][DOUSE_DROP_SPACING] + 16);
     if (state->args->side == EFFECT_SIDE_PARTY)
       x = x + y / 2 - 48;
     else
@@ -323,15 +322,15 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
-  for (frame = 0; frame != gFalling_Counts[state->args->variant][DOUSE_FRAMES];
+  for (frame = 0; frame != gDouse_Counts[state->args->variant][DOUSE_FRAMES];
        frame++) {
-    if (frame == gFalling_Counts[state->args->variant][DOUSE_FRAMES] - 64)
+    if (frame == gDouse_Counts[state->args->variant][DOUSE_FRAMES] - 64)
       EFFECT_SHOW_DAMAGE(SE_WATER);
 
     // Drops fall down the slant, then splash.
-    for (i = 0; i != gFalling_Counts[state->args->variant][DOUSE_DROP_COUNT];
+    for (i = 0; i != gDouse_Counts[state->args->variant][DOUSE_DROP_COUNT];
          i++) {
       s32 x;
       s32 y;
@@ -353,12 +352,12 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
           drop->variant = 0;
           for (k = 0;
                k !=
-               gFalling_Counts[state->args->variant][DOUSE_DROPLETS_PER_DROP];
+               gDouse_Counts[state->args->variant][DOUSE_DROPLETS_PER_DROP];
                k++) {
             droplet =
                 &DOUSE_SPLASH_BUFFER
-                     ->droplets[i * gFalling_Counts[state->args->variant]
-                                                   [DOUSE_DROPLETS_PER_DROP] +
+                     ->droplets[i * gDouse_Counts[state->args->variant]
+                                                 [DOUSE_DROPLETS_PER_DROP] +
                                 k];
             droplet->x = INTtoFIXED(x + DOUSE_DROP_WIDTH / 2);
             droplet->y = INTtoFIXED(y);

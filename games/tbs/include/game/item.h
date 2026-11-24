@@ -178,8 +178,8 @@ struct ItemDefinition {
   u8 flags;           ///< enum ItemFlags
   u16 equipMask;      ///< one bit per character that can equip it, bit 0 Isaac
   u16 icon;           ///< indexes gItemIcons
-  s16 primaryBonus;   ///< Attack added while equipped
-  s8 secondaryBonus;  ///< Defense added while equipped
+  s16 attack;         ///< Attack added while equipped
+  s8 defense;         ///< Defense added while equipped
   u8 unleashChance;   ///< in steps of 5 percent
   u8 useType;         ///< what using it costs (an ITEM_USE_ value)
   u16 unleashAbility; ///< the action a weapon unleashes, or 0
@@ -196,8 +196,8 @@ STATIC_ASSERT(offsetof(struct ItemDefinition, type) == 2);
 STATIC_ASSERT(offsetof(struct ItemDefinition, flags) == 3);
 STATIC_ASSERT(offsetof(struct ItemDefinition, equipMask) == 4);
 STATIC_ASSERT(offsetof(struct ItemDefinition, icon) == 6);
-STATIC_ASSERT(offsetof(struct ItemDefinition, primaryBonus) == 8);
-STATIC_ASSERT(offsetof(struct ItemDefinition, secondaryBonus) == 10);
+STATIC_ASSERT(offsetof(struct ItemDefinition, attack) == 8);
+STATIC_ASSERT(offsetof(struct ItemDefinition, defense) == 10);
 STATIC_ASSERT(offsetof(struct ItemDefinition, unleashChance) == 11);
 STATIC_ASSERT(offsetof(struct ItemDefinition, useType) == 12);
 STATIC_ASSERT(offsetof(struct ItemDefinition, unleashAbility) == 14);

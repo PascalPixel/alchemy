@@ -282,7 +282,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
 
   case COMMAND_ATTACK:
     // A weapon unleash replaces the action with its ability.
-    abilityId = RollWeaponUnleashFar(actor);
+    abilityId = Equipment_RollUnleashFar(actor);
     if (BattleActionRun_SetTargets(abilityId) == ACTION_REPORTED)
       return ACTION_REPORTED;
     if (abilityId != ABILITY_ATTACK) {
@@ -567,7 +567,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     struct Unit *target = Unit_GetFar(plan->targetIds[0]);
 
     plan->abilityId = ABILITY_ATTACK;
-    plan->element = Item_GetEquippedElementFar(request->unitId);
+    plan->element = Unit_GetAttackElementFar(request->unitId);
     plan->staging = STAGING_ATTACK;
     // An enemy's attack effect comes from its battle sprite's row; a party
     // member's from who it is.

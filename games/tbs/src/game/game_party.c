@@ -49,9 +49,9 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   unit->ppMax = enemy->pp;
   unit->hpGauge = UNIT_GAUGE_FULL;
   unit->ppGauge = UNIT_GAUGE_FULL;
-  unit->baseAttack = enemy->atk;
-  unit->baseDefense = enemy->def;
-  unit->baseAgility = enemy->agi;
+  unit->baseAttack = enemy->attack;
+  unit->baseDefense = enemy->defense;
+  unit->baseAgility = enemy->agility;
   unit->baseLuck = enemy->luck;
   unit->baseActionCount = enemy->actionCount;
   unit->baseHpRegen = enemy->hpRegen;

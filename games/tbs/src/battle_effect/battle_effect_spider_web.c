@@ -58,7 +58,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
-  actor = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  actor = BattleObject_GetFar(state->args->targets[0])->actor;
   Projection_ScaledUnit(state->args->targets[0], &position);
   if (state->args->side == EFFECT_SIDE_ENEMIES)
     REG_BG2X = (16 - position.x) << 8;
@@ -72,17 +72,17 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
     picture = frame / 4;
     if (picture <= 5) {
       if (picture <= 3)
-        draw[0](canvas, state->sheet + gSpiderWeb_Pictures[picture],
-                gSpiderWeb_PictureX[picture + state->args->side * 6],
-                gSpiderWeb_PictureBiasY[picture] + 32,
-                gSpiderWeb_PictureWidths[picture],
-                gSpiderWeb_PictureHeights[picture]);
+        draw[0](canvas, state->sheet + gSwirlSwipe_Pictures[picture],
+                gSwirlSwipe_PictureX[picture + state->args->side * 6],
+                gSwirlSwipe_PictureBiasY[picture] + 32,
+                gSwirlSwipe_PictureWidths[picture],
+                gSwirlSwipe_PictureHeights[picture]);
       else
-        draw[0](canvas, Ram_MapGridCellBuffer + gSpiderWeb_Pictures[picture],
-                gSpiderWeb_PictureX[picture + state->args->side * 6],
-                gSpiderWeb_PictureBiasY[picture] + 32,
-                gSpiderWeb_PictureWidths[picture],
-                gSpiderWeb_PictureHeights[picture]);
+        draw[0](canvas, Ram_MapGridCellBuffer + gSwirlSwipe_Pictures[picture],
+                gSwirlSwipe_PictureX[picture + state->args->side * 6],
+                gSwirlSwipe_PictureBiasY[picture] + 32,
+                gSwirlSwipe_PictureWidths[picture],
+                gSwirlSwipe_PictureHeights[picture]);
     }
     if (frame == 8) {
       if (mode == SWIRL_SWIPE_POISON_BEAT) {
@@ -189,7 +189,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
     }
     EFFECT_END_FRAME(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

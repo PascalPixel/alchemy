@@ -78,7 +78,7 @@
 /// area), so the floors stay solved between them.
 ///
 /// The FLAG_SCENE_TEMP_ states last only until the next change of scene other
-/// than a return from battle. Every arrival sets FLAG_VENUS_LIGHTHOUSE_LIT.
+/// than a return from battle. Every arrival sets FLAG_IN_VENUS_LIGHTHOUSE.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -445,9 +445,9 @@ enum VenusTrack {
 /// The tag VENUS_COLOR_MARK puts above the colour mode.
 enum { VENUS_COLOR_MARK_TAG = 0x212 };
 
-static UNUSED s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x,
-                                                         s32 z, u32 width,
-                                                         u32 height, s32 value);
+static UNUSED s32 MapGrid_FillCollisionRectangle(u32 layer, s32 x, s32 z,
+                                                 u32 width, u32 height,
+                                                 s32 value);
 
 /// Sets bits in a byte of flags.
 static inline void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
@@ -514,8 +514,8 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 /// (VenusLighthouse_PushPillarAhead). A light sets
 /// SW_VENUS_LIGHT_ARRIVED as it reaches its gate, which then opens.
 enum {
-  SW_VENUS_IMMOVABLE = SW_RISE_COUNTER,
-  SW_VENUS_LIGHT_ARRIVED = SW_RISE_ENABLED
+  SW_VENUS_IMMOVABLE = SW_SCENE_COUNTER,
+  SW_VENUS_LIGHT_ARRIVED = SW_SCENE_BYTE
 };
 
 #include "shared/actor_distance.c"
@@ -562,7 +562,7 @@ static void VenusLighthouse_PushPillarAhead(void) {
     return;
 
   // A pillar still sinking into its socket stays where it is.
-  rising = pillar->riseCounter;
+  rising = pillar->sceneCounter;
   if (rising != 0)
     return;
 
@@ -891,7 +891,7 @@ static struct Actor *VenusLighthouse_CreateLight(s32 x, s32 z,
   effect->collisionFlags = 0;
   effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   effect->update = (void (*)(struct Actor *))VenusLighthouse_TrailLight;
-  effect->riseEnabled = 0;
+  effect->sceneByte = 0;
   Actor_StartScript(effect, script);
   return effect;
 }
@@ -1943,8 +1943,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
     // The gate opens as soon as either light reaches it
     // (SW_VENUS_LIGHT_ARRIVED), while the other may still be running.
     while ((firstGateEffect)->script != 0 || (secondGateEffect)->script != 0) {
-      if (firstGateEffect->riseEnabled != 0 ||
-          secondGateEffect->riseEnabled != 0) {
+      if (firstGateEffect->sceneByte != 0 || secondGateEffect->sceneByte != 0) {
         Event_Wait(30);
         Sound_Play(SE_DOOR_OPEN);
         MapGrid_PlayMapEdit(gVenusThirdFloorGateCells, 109, 37);
@@ -2474,8 +2473,8 @@ static void VenusLighthouse_MoveSocketPillar(void) {
           216, 760, gVenusFourthFloorLightToSouthwest);
       while ((firstGateEffect)->script != 0 ||
              (secondGateEffect)->script != 0) {
-        if (firstGateEffect->riseEnabled != 0 ||
-            secondGateEffect->riseEnabled != 0) {
+        if (firstGateEffect->sceneByte != 0 ||
+            secondGateEffect->sceneByte != 0) {
           Event_Wait(30);
           MapGrid_AnimateCells(gVenusFourthFloorGateCells, 77, 35);
           MapGrid_CopyCellAttributes(13, 35, 1, 1, 13, 36);
@@ -2585,7 +2584,7 @@ s32 Scene_Initialize(void) {
   Event_Wait(1);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     VenusLighthouse_RestoreMarkedColors();
-  GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
+  GameFlag_Set(FLAG_IN_VENUS_LIGHTHOUSE);
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   sceneId = gMainRoutineState.next;
@@ -2685,13 +2684,13 @@ s32 Scene_Initialize(void) {
       wait(2);
       actor = Actor_Get(ACTOR_FIRST_CAPPED_PILLAR);
       actor->motionFlags = 0;
-      actor->update = Actor_SetFlagBitByRelativeDepth;
+      actor->update = Actor_UpdateBlockDrawOrder;
       actor = Actor_Get(ACTOR_FIRST_CAPPED_PILLAR + 1);
       actor->motionFlags = 0;
-      actor->update = Actor_SetFlagBitByRelativeDepth;
+      actor->update = Actor_UpdateBlockDrawOrder;
       actor = Actor_Get(ACTOR_FIRST_CAPPED_PILLAR + 2);
       actor->motionFlags = 0;
-      actor->update = Actor_SetFlagBitByRelativeDepth;
+      actor->update = Actor_UpdateBlockDrawOrder;
       VenusLighthouse_MoveCappedPillar();
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_GAP:

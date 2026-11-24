@@ -48,7 +48,7 @@
 #include "menu/menu.h"
 #include "scene/import.h"
 #include "scene/kolima.h"
-#include "scene/kolima_forest_bridge_falling_effect.h"
+#include "scene/kolima_curse_dust.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
@@ -62,8 +62,8 @@
 extern s32 gKolimaForestEntrance_GaretAction[];
 extern s32 gKolimaForestEntrance_IvanAction[];
 extern s32 gKolimaForestEntrance_MiaAction[];
-extern s32 gKolima_PartySquashActions[];
-extern s32 gKolima_PartyRestoreScaleActions[];
+extern s32 gKolima_PartySquashScript[];
+extern s32 gKolima_PartyRestoreScaleScript[];
 extern s32 gKolimaForestEntrance_PsynergyFieldGrowAction[];
 extern s32 gKolimaForestEntrance_PsynergyFieldShrinkAction[];
 extern s32 gKolimaForestEntrance_GroundSparkleAction[];
@@ -73,7 +73,7 @@ extern struct ActorPlacement gKolimaForestEntrance_ActorPlacements[];
 extern struct Trigger gKolimaForestEntrance_Triggers[];
 extern s32 gKolimaForestEntrance_SparkleScript[];
 extern s32 gKolima_SparkleBurstScript[];
-extern s32 gFallingEffectScript[];
+extern s32 gKolima_CurseDustScript[];
 
 /// The scene's actors after Garet's, Ivan's and Mia's party slots,
 /// numbering the rows of gKolimaForestEntrance_ActorPlacements from
@@ -104,7 +104,7 @@ static void KolimaForestEntrance_FaceActorAndWait(s32 actorId, s32 facing,
 static void KolimaForestEntrance_SpawnCurseSparkle(void);
 static void KolimaForestEntrance_FlickerPsynergyFields(void);
 
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.
@@ -162,7 +162,7 @@ static void KolimaForestEntrance_PushLog(void) {
   Event_Start();
 
   if (PushedActor_FindClearPosition(&result)) {
-    Actor_MoveAndRedraw(result);
+    PushedActor_Roll(result);
     if (result.actorSlot == ACTOR_RIVER_LOG &&
         (FIELD_CELL(result.position.x)) == RIVER_EDGE_COLUMN) {
       Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
@@ -174,8 +174,7 @@ static void KolimaForestEntrance_PushLog(void) {
       // become ground to cross on.
       Actor_Get(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
-      PushedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4,
-                                             CELL_BEHAVIOR_NORMAL);
+      MapGrid_FillCollisionRectangle(2, 20, 17, 1, 4, CELL_BEHAVIOR_NORMAL);
       GameFlag_Set(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_RIVER_LOG), 0);
     }
@@ -194,16 +193,15 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// On entry a log already in the river floats there again and the logs mark the
 /// cells they cover.
 s32 Scene_Initialize(void) {
-  Scene_RedrawActorRectangle(ACTOR_RIVER_LOG);
+  PushedActor_BlockFootprint(ACTOR_RIVER_LOG);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER) != 0) {
     Actor_Get(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
-    PushedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4,
-                                           CELL_BEHAVIOR_NORMAL);
+    MapGrid_FillCollisionRectangle(2, 20, 17, 1, 4, CELL_BEHAVIOR_NORMAL);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_RIVER_LOG), 0);
   }
-  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG);
-  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 1);
+  PushedActor_BlockFootprint(ACTOR_FIRST_LOG);
+  PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 1);
   if (gMainRoutineState.entrance == KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
       KolimaForestEntrance_WitnessForestCurse();
@@ -346,7 +344,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(120);
   wait(60);
-  squashAction = gKolima_PartySquashActions;
+  squashAction = gKolima_PartySquashScript;
   Actor_SetScript(ACTOR_PARTY_LEADER, squashAction);
   Actor_SetScript(ACTOR_GARET, squashAction);
   Actor_SetScript(ACTOR_IVAN, squashAction);
@@ -371,7 +369,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     Event_Wait(10);
     Actor_SetSpeedAndAcceleration(ACTOR_MIA, 2, 2);
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
-    Actor_SetScript(ACTOR_MIA, gKolima_PartyRestoreScaleActions);
+    Actor_SetScript(ACTOR_MIA, gKolima_PartyRestoreScaleScript);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), 0);
     Actor_SetAnimation(ACTOR_MIA, ANIM_COLLAPSE);
     Event_Wait(10);
@@ -379,7 +377,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = toFIXED(2);
   Event_Wait(10);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
-  restoreScaleAction = gKolima_PartyRestoreScaleActions;
+  restoreScaleAction = gKolima_PartyRestoreScaleScript;
   Actor_SetScript(ACTOR_PARTY_LEADER, restoreScaleAction);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
@@ -403,9 +401,9 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   wait(60);
-  gFallingEffectWidth = 0;
-  gFallingEffectOffset = toFIXED(128);
-  gFallingEffectState = KOLIMA_DUST_CLOSING;
+  gKolima_CurseDustWidth = 0;
+  gKolima_CurseDustOffset = toFIXED(128);
+  gKolima_CurseDustState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(180);
   Sound_Play(MUS_FOREST_THEME);
@@ -420,7 +418,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Event_Wait(60);
   // "We've got to get out of here!"
   KolimaForestEntrance_ShowMessageAndWait(ACTOR_IVAN, 20);
-  gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
+  gKolima_CurseDustState = KOLIMA_DUST_CLOSING_WIDE;
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -445,7 +443,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   } else {
     gFieldState->message += 1;
   }
-  gFallingEffectState = KOLIMA_DUST_DRIFTING;
+  gKolima_CurseDustState = KOLIMA_DUST_DRIFTING;
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_GARET)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_IVAN)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -480,7 +478,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_GARET_PSYNERGY_FIELD, 2);
   Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 227, 580);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldAction);
-  while (gFallingEffectState != KOLIMA_DUST_CENTRED) {
+  while (gKolima_CurseDustState != KOLIMA_DUST_CENTRED) {
     wait(1);
   }
   Event_Wait(300);
@@ -727,9 +725,9 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   wait(60);
-  gFallingEffectWidth = 0;
-  gFallingEffectOffset = toFIXED(128);
-  gFallingEffectState = KOLIMA_DUST_CLOSING;
+  gKolima_CurseDustWidth = 0;
+  gKolima_CurseDustOffset = toFIXED(128);
+  gKolima_CurseDustState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(80);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -754,7 +752,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_GARET, 3);
   Actor_SetSpritePriority(ACTOR_IVAN, 3);
   Actor_SetSpritePriority(ACTOR_MIA, 3);
-  gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
+  gKolima_CurseDustState = KOLIMA_DUST_CLOSING_WIDE;
   Sound_Play(SE_SHIMMER);
   Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, 253, 603);
   growFieldAction = gKolimaForestEntrance_PsynergyFieldGrowAction;
@@ -768,10 +766,10 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 227, 580);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldAction);
   Event_Wait(120);
-  gFallingEffectState = KOLIMA_DUST_DRIFTING;
+  gKolima_CurseDustState = KOLIMA_DUST_DRIFTING;
   do {
     wait(1);
-  } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
+  } while (gKolima_CurseDustState != KOLIMA_DUST_CENTRED);
   // "Hroom! Why? Why don't they turn into trees...?"
   KolimaForestEntrance_ShowMessageAndWait(ACTOR_TRET, 80);
   // "Who are they?"
@@ -1195,7 +1193,7 @@ static s32 KolimaForestEntrance_BurstOnPsynergyField(struct Actor *sparkle) {
   return 0;
 }
 
-#include "shared/kolima_forest_bridge_falling_effect.c"
+#include "shared/kolima_curse_dust.c"
 s32 gKolimaForestEntrance_PsynergyFieldHit BSS_DATA;
 s32 gKolimaForestEntrance_MiaInParty BSS_DATA;
 s32 gKolimaForestEntrance_SparkleSoundOn BSS_DATA;
@@ -1386,7 +1384,7 @@ s32 gKolimaForestEntrance_SparkleScript[] = {
 
 #include "shared/kolima_sparkle_burst_script.c"
 
-s32 gFallingEffectScript[] = {
+s32 gKolima_CurseDustScript[] = {
     SC_ADD(SW_Y, -toFIXED(2)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),

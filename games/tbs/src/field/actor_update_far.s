@@ -12,13 +12,13 @@ Trig_AtanFarArm:
 Iwram_SqrtFarArm:
 	ldr	r4, .L_IwramSqrt
 	bx	r4
-	.global Iwram_RatioMulQ14FarArm
-Iwram_RatioMulQ14FarArm:
-	ldr	r4, .L_IwramRatioMulQ14
+	.global Iwram_DivFXFarArm
+Iwram_DivFXFarArm:
+	ldr	r4, .L_IwramDivFX
 	bx	r4
 .L_Trig_Atan:
 	.4byte	Trig_Atan
 .L_IwramSqrt:
 	.4byte	IwramSqrt
-.L_IwramRatioMulQ14:
-	.4byte	IwramRatioMulQ14
+.L_IwramDivFX:
+	.4byte	IwramDivFX

@@ -222,7 +222,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     }
     // Knock the target back.
     if (frame == CONDEMN_SWING_FRAME) {
-      target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+      target = BattleObject_GetFar(state->args->targets[0])->actor;
       target->velocityY = toFIXED(1);
       target->acceleration = toFIXED(2);
       target->speedLimit = toFIXED(2);
@@ -234,7 +234,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
                                TINT_KEEP, 0);
     }
     if (frame == CONDEMN_BOUNCE_FRAME) {
-      GetBattleObjectSlotFar(state->args->targets[0])->actor->gravity =
+      BattleObject_GetFar(state->args->targets[0])->actor->gravity =
           BATTLE_UNIT_GRAVITY;
     }
     EFFECT_PRESENT_CANVAS(state);
@@ -243,7 +243,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   // canvas leaves it, which repairs nothing this effect changed.
   // XXX (no evidence): why Condemn reloads the background; the reload puts
   // back the picture already there, so nothing the game shows says why.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, gBattleState->background,
                            BACKGROUND_DARKENED_LEVEL);

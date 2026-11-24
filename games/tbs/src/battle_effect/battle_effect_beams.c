@@ -128,7 +128,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_CRESCENT_SHEET),
                     SHEET_PALETTE_BYTES);
   wait(1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, Ram_MapGridCellBuffer,
                              1, 0);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -149,7 +149,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   gBgScroll[1].y = BEAM_CANVAS_SCROLL_Y;
   wait(1);
   // Sparks fly from the target, mostly rising.
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   half = BattleUnit_GetEffectHeightFar(state->args->targets[0]) / 2;
   for (i = 0; i != BEAM_SPARKS; i++) {
     struct Particle *spark = &state->particles[i];
@@ -248,7 +248,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleEffect_HideBg1AndRestoreBackdrop();
@@ -335,7 +335,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   BattleCamera_SetViewAtPairMidpointFar(
       state->args->user, state->args->firstTarget, CRITICAL_HIT_ZOOM);
   wait(1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sheet, 0, 0);
   BattleCamera_SetViewAtPairMidpointFar(
       state->args->user, state->args->firstTarget, CRITICAL_HIT_ZOOM);
   wait(1);
@@ -343,7 +343,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
 
   // The gathering.
   if (gathers == 1) {
-    actor = GetBattleObjectSlotFar(state->args->user)->actor;
+    actor = BattleObject_GetFar(state->args->user)->actor;
     for (i = 0; i != CRITICAL_HIT_MOTES; i++) {
       struct Particle *mote = &state->particles[i];
 
@@ -366,7 +366,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     gBgScroll[1].y = BEAM_CANVAS_SCROLL_Y;
     state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     state->fadeStep = 0;
-    Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
+    Task_Add(BattleEffect_DarkenBackgroundStep, TASK_PASS_FRAME);
     Sound_PlayFar(SE_POWER_UP);
     for (frame = 0; frame != BEAM_FRAMES; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(
@@ -395,7 +395,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
       }
       EFFECT_PRESENT_CANVAS(state);
     }
-    Task_Remove(Palette_StepFadeTransfer);
+    Task_Remove(BattleEffect_DarkenBackgroundStep);
     Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);
     SET_VELOCITY(actor, velocityX, velocityY, velocityZ);
     actor->acceleration = acceleration;
@@ -420,7 +420,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   anchor.x += scrollX;
   gBgScroll[1].y = BEAM_CANVAS_SCROLL_Y;
   gBgScroll[1].x = scrollX;
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   half = BattleUnit_GetEffectHeightFar(state->args->targets[0]) / 2;
   for (i = 0; i != BEAM_SPARKS; i++) {
     struct Particle *spark = &state->particles[i];
@@ -480,7 +480,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   battle = gBattleState;

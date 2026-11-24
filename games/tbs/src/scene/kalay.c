@@ -85,7 +85,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/actor_orbit.h"
+#include "scene/floating_nut.h"
 #include "scene/catch_nut.h"
 #include "scene/kalay.h"
 #include "scene/orbit.h"
@@ -1165,7 +1165,7 @@ static inline void Kalay_CatchUpWithLunpa(void) {
 /// Sets up Kalay.
 static void Kalay_PrepareTown(void) {
   OrbitingMapActor *nut;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   OrbitingMapActorSprite *sprite;
 
   Kalay_CatchUpWithLunpa();
@@ -1183,15 +1183,15 @@ static void Kalay_PrepareTown(void) {
     sprite->priority = 1;
     sprite->fullColor = 0;
     sprite->paletteNumber = 0;
-    sprite->state = 0;
-    nut->active = 1;
-    nut->mode = 0;
+    sprite->count = 0;
+    nut->retainSpriteCache = 1;
+    nut->motionFlags = 0;
     nut->y = toFIXED(10);
-    nut->visible = 1;
-    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    nut->frozen = 1;
+    glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_NUT);
-    VramCache_Load(sprite->palette, ICON_TILE_BYTES, glyph->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     nut->orbitAngle = 0;
     nut->orbitCenterX = nut->x;
     nut->orbitCenterY = nut->y;
@@ -2273,7 +2273,7 @@ static void Kalay_FreezePuddle(void) {
   GameFlag_Set(FLAG_TUNNEL_PUDDLE_FROZEN);
 }
 
-#include "shared/actor_orbit.c"
+#include "shared/floating_nut.c"
 
 #include "shared/pushed_actor_direction_steps.c"
 

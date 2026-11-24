@@ -665,7 +665,7 @@ static void SuhallaDesert_StormGivesChase(void) {
 static void SuhallaDesert_DouseCastAtStorm(void) {
   struct FieldEffectState *effectState = gFieldEffectState;
 
-  effectState->childOption = 1;
+  effectState->sceneVariant = 1;
 }
 
 /// Douse on a sandstorm in Suhalla Desert that holds the party stops it, and

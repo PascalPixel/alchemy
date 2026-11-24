@@ -661,7 +661,7 @@ menu_top:;
     WindowColor_Apply(gMainRoutineState.windowHue,
                       gMainRoutineState.windowBrightness);
   link_select:;
-    result = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_TRANSFER_METHOD);
+    result = IconMenu_ChooseSendOption(SEND_OPTION_TRANSFER_METHOD);
     if (result == -1) {
       goto link_load;
     }
@@ -781,7 +781,7 @@ menu_top:;
     // PasswordLevel): 260, 61 or 16 symbols, shown PASSWORD_SYMBOLS_PER_PAGE
     // to a page.
     page_select:;
-      result = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_PASSWORD_LEVEL);
+      result = IconMenu_ChooseSendOption(SEND_OPTION_PASSWORD_LEVEL);
 
       if (result == -1) {
         goto link_select;
@@ -827,7 +827,7 @@ menu_top:;
       // turn back and forth, wrapping round; B goes back to the level choice.
       // index is 1 when the page must be drawn again.
       for (;;) {
-        Link_DrawPageArrows(PAGE_ARROW_VRAM);
+        PageArrows_Draw(PAGE_ARROW_VRAM);
         if ((gKeysPressed & KEY_B) != 0) {
           Sound_Play(SE_MENU_CANCEL);
           WindowSprite_PrepareForRedraw(pageWindow);

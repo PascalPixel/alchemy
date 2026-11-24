@@ -5,7 +5,7 @@
 #include "battle_internal.h"
 
 /// Unused: stops DMA3, then calls a routine that is not one.
-void Dma_StopAllThenRunHook(void) {
+void Dma_StopDma3(void) {
   // XXX (no evidence): what the call was meant to run; it calls the word of the
   // IRQ return instruction, which would branch into nonsense, and nothing calls
   // this in either game.
@@ -157,8 +157,7 @@ void BattlePlayback_Run(void) {
             MessageArgument_ClearAllFar();
             break;
           case PLAYBACK_REMOVE_UNIT:
-            BattleObject_DestroyTemporaryObject(
-                events->queue.operands[eventIndex]);
+            BattleUnit_RemoveEnemy(events->queue.operands[eventIndex]);
             break;
           // The hit's sound, then the damage pose and PLAY_HIT's flashes.
           case PLAYBACK_HIT:
@@ -178,10 +177,10 @@ void BattlePlayback_Run(void) {
             s32 spriteIndex;
 
             events->unitId = events->queue.operands[eventIndex];
-            BattleEnemy_RecordDefeat(events->unitId, events->flags);
+            BattleEnemy_RecordDefeat(events->unitId, events->djinnBonus);
             BattleUnit_ClearStatuses(events->unitId);
             unit = Unit_GetFar(events->unitId);
-            for (spriteIndex = 0; (sprite = GetMotionRecord(
+            for (spriteIndex = 0; (sprite = Actor_GetSprite(
                                        BattleObject_Get(events->unitId)->actor,
                                        spriteIndex)) != 0;
                  spriteIndex++) {
@@ -294,7 +293,7 @@ void BattlePlayback_Run(void) {
       if (events->timer == 0 || events->timer >= FELLED_FLASH) {
         s32 colorMode = SPRITE_COLOR_GREY;
 
-        if (events->timer == 0 && events->flags != 0) {
+        if (events->timer == 0 && events->djinnBonus != 0) {
           s32 kind =
               BattleSprite_GetDefeatSound(Unit_GetFar(events->unitId)->id);
 
@@ -326,7 +325,7 @@ void BattlePlayback_Run(void) {
 
           for (spriteIndex = 0, slot = sprites,
               lastPictureMask = SPRITE_PICTURE_NONE;
-               (sprite = GetMotionRecord(
+               (sprite = Actor_GetSprite(
                     BattleObject_Get(events->unitId)->actor, spriteIndex)) != 0;
                spriteIndex++) {
             struct SpriteAnimation *child;
@@ -357,7 +356,7 @@ void BattlePlayback_Run(void) {
 
         slot = BattleObject_Get(events->unitId);
         slot->fading = 1;
-        for (count = 0; (sprite = GetMotionRecord(slot->actor, count)) != 0;
+        for (count = 0; (sprite = Actor_GetSprite(slot->actor, count)) != 0;
              count++)
           sprites[count] = sprite;
         base = events->timer * 4;
@@ -402,7 +401,7 @@ void BattlePlayback_Reset(void) {
   events->timer = 0;
   events->queue.targetIndex = 0;
   events->pendingSound = SE_HEAVY_IMPACT;
-  events->flags = 0;
+  events->djinnBonus = 0;
 }
 
 /// Waits until playback has played every target, starting it if the effect

@@ -55,7 +55,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, state->sheet, 1, 1);
-  BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+  BattleEffect_BuildCanvasBlitters(state->args->side, draw);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The crystals wait above the screen, each eight frames behind the last,

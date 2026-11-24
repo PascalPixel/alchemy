@@ -151,7 +151,7 @@ enum QuantityBarColor {
 /// The quantity bar and price sprites, the field's tint behind a counter and
 /// the hand cursor's moves (shop_cursor.c).
 void QuantityBar_Fill(s32 itemCount, s32 color, u8 *tileBuffer);
-void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition);
+void Shop_DrawPriceDigit(s32 digit, u8 *tileBuffer, u32 digitPosition);
 struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
                                             s32 x, s32 y);
 void Shop_SaveAndTintFieldPalette(s32 tint);

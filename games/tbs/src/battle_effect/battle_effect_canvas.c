@@ -72,7 +72,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
 
 /// Copies the canvas to VRAM once the effect has finished a frame, then clears,
 /// fades, darkens or brightens it as transferMode says.
-void BattleEffect_ProcessPendingGraphicsTransfer(void) {
+void BattleEffect_TransferCanvas(void) {
   struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   void *source;
   s32 *counter;
@@ -118,7 +118,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
 
 /// Copies a full-screen image to VRAM once the effect has finished a frame,
 /// as transferMode says.
-void BattleEffect_FlushPendingGraphicsTransfer(void) {
+void BattleEffect_TransferFullScreenImage(void) {
   struct BattleEffectState *state;
   void *source;
   s32 transferMode;
@@ -176,7 +176,7 @@ void BattleEffect_ApplyWindowBlendRegisters(void) {
 }
 
 /// Writes the effect's BG2 reference point to BG2X and BG2Y.
-void Display_ApplyBg2Reference(void) {
+void BattleEffect_ApplyBg2Reference(void) {
   struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
   REG_BG2X = state->bg2x;
@@ -185,7 +185,7 @@ void Display_ApplyBg2Reference(void) {
 
 /// Darkens the battle background a step each frame while the canvas is open, so
 /// the effect stands out.
-void Palette_StepFadeTransfer(void) {
+void BattleEffect_DarkenBackgroundStep(void) {
   struct BattleState *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
@@ -200,7 +200,7 @@ void Palette_StepFadeTransfer(void) {
 }
 
 /// Clears every target's flash timer.
-void BattleEffect_ClearActorTimers(void) {
+void BattleEffect_ClearTintTimers(void) {
   struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
   Iwram_ClearWords(state->actorTimers, sizeof state->actorTimers);
@@ -236,7 +236,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   s32 row;
   s32 column;
 
-  BattleEffect_ClearActorTimers();
+  BattleEffect_ClearTintTimers();
   display->secondMode = BATTLE_BACKGROUND_FIXED;
   wait(1);
   REG_BLDCNT = 0;
@@ -247,7 +247,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   state->fadeFrames = 0;
   state->fadeStep = 0;
-  Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_DarkenBackgroundStep, TASK_PASS_FRAME);
 
   // Change BG2's settings while it is hidden.
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -302,7 +302,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   s32 row;
   s32 column;
 
-  BattleEffect_ClearActorTimers();
+  BattleEffect_ClearTintTimers();
   display->secondMode = BATTLE_BACKGROUND_FIXED;
   wait(1);
   REG_BLDCNT = 0;
@@ -316,7 +316,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                               BATTLE_BACKGROUND_FADE_RESTORE);
   state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   state->fadeStep = 0;
-  Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_DarkenBackgroundStep, TASK_PASS_FRAME);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
@@ -393,7 +393,7 @@ void BattleEffect_EndCanvasLayer(void) {
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  Task_Remove(Palette_StepFadeTransfer);
+  Task_Remove(BattleEffect_DarkenBackgroundStep);
   // This overwrites the saved y restored above, so BG1 is always left at
   // BATTLE_BACKGROUND_SCROLL_Y.
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
@@ -478,7 +478,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
   s32 column;
   s32 byteOffset;
 
-  BattleEffect_ClearActorTimers();
+  BattleEffect_ClearTintTimers();
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, screen->background, 0);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   layer->secondMode = BATTLE_BACKGROUND_NONE;

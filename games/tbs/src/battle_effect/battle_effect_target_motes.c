@@ -224,7 +224,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
     EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor =
-          GetBattleObjectSlotFar(state->args->targets[member])->actor;
+          BattleObject_GetFar(state->args->targets[member])->actor;
 
       // Paralyze's glints sparkle near the target.
       if (mode == TARGET_MOTES_PARALYZE &&
@@ -341,7 +341,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   if (TARGET_MOTES_RIPPLE(mode))
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleEffect_EndCanvasLayer();
@@ -418,7 +418,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
     EFFECT_FOR_EACH_TARGET(targetIndex, state->args) {
       struct Actor *target;
 
-      target = GetBattleObjectSlotFar(state->args->targets[targetIndex])->actor;
+      target = BattleObject_GetFar(state->args->targets[targetIndex])->actor;
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(anchor, target->x.fixed, toFIXED(40), target->z.fixed);
       Matrix_TranslateVector(anchor);
@@ -515,7 +515,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   state->transferMode = CANVAS_COPY_AND_CLEAR;
   state->transferValue = 0;
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   // Each flame starts at a random point of its flicker.
   EFFECT_FOR_EACH_TARGET(i, state->args) {
     state->particles[i].variant = Random16() & 63;

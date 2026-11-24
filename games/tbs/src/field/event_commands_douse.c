@@ -70,14 +70,14 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *particle) {
 void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
 
 /// A rain cloud rises from 16 pixels above the caster to 32 pixels above the
-/// destination (80 with childOption) over GROW_STEPS frames, growing as it
+/// destination (80 with sceneVariant) over GROW_STEPS frames, growing as it
 /// goes, rains drops, and returns.
 void FieldPsynergy_Douse(void) {
   struct Vector3 pos;
   struct Vector3 start;
   struct Vector3 end;
   struct FieldEffectState *effectState = gFieldEffectState;
-  struct Actor *caster = effectState->mainActor;
+  struct Actor *caster = effectState->caster;
   struct Actor *cloud;
   s32 step;
   s32 steps = GROW_STEPS + 1;
@@ -91,7 +91,7 @@ void FieldPsynergy_Douse(void) {
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
   // No target: 16 pixels in front of the caster, at the ground's height.
-  if (effectState->child == 0) {
+  if (effectState->target == 0) {
     effectState->x = caster->x.fixed;
     effectState->z = caster->z.fixed;
     Vector_AddPolarOffset(toFIXED(16), effectState->angle,
@@ -105,7 +105,7 @@ void FieldPsynergy_Douse(void) {
   y = effectState->y;
   end.y = y + toFIXED(32);
   end.z = effectState->z;
-  if (effectState->childOption != 0)
+  if (effectState->sceneVariant != 0)
     end.y = y + toFIXED(80);
 
   // Grow from a quarter to full size on the way.
@@ -126,7 +126,7 @@ void FieldPsynergy_Douse(void) {
     // Drop a particle every 6 frames from 3 to 8 pixels round the cloud (the
     // last right under it); enabled is cleared once a target is dispatched.
     count = DOUSE_DROPS;
-    if (effectState->enabled == 0)
+    if (effectState->aimAhead == 0)
       count = DOUSE_DROPS_ON_TARGET;
     for (step = 0; step < count; step++) {
       pos.x = cloud->x.fixed;
@@ -152,7 +152,7 @@ void FieldPsynergy_Douse(void) {
   } else {
     // Every 6 frames, a swaying particle falls from 3 to 8 pixels round the
     // cloud.
-    if (effectState->enabled != 0)
+    if (effectState->aimAhead != 0)
       count = DOUSE_DROPS;
     else
       count = DOUSE_SWAYING_DROPS_ON_TARGET;

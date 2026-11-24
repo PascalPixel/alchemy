@@ -32,9 +32,7 @@ enum {
 /// A blitter BattleEffect_BuildBlitter writes into a heap slot: it draws a
 /// width by height picture from source onto the destination canvas with its
 /// top left at (x, y), in pixels.
-typedef s32 (*BattleEffectDrawRectangle)(void *destination, const void *source,
-                                         s32 x, s32 y, s32 width, s32 height);
-typedef BattleEffectDrawRectangle DrawRectangle;
-typedef BattleEffectDrawRectangle DrawRectangleFn;
+typedef s32 (*DrawRectangle)(void *destination, const void *source, s32 x,
+                             s32 y, s32 width, s32 height);
 
 #endif

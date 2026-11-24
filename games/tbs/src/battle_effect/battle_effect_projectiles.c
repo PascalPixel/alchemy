@@ -74,7 +74,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   resource = Resource_GetTableEntry(sheetId);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   Decompress_TaggedLz(resource + SHEET_PALETTE_BYTES, state->sheet);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   if (side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -90,8 +90,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   }
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-  user = GetBattleObjectSlotFar(state->args->user)->actor;
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  user = BattleObject_GetFar(state->args->user)->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   for (i = 0; i != ENTRANCE_SPARK_SLOTS; i++) {
     struct Particle *spark = &PARTICLES[i];
     s32 angle = Random16() & TRIG_ANGLE_MASK;
@@ -234,9 +234,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     }
     EFFECT_PRESENT_CANVAS(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove(Palette_StepFadeTransfer);
+  Task_Remove(BattleEffect_DarkenBackgroundStep);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -290,7 +290,7 @@ static inline void
 BattleEffect_RunVolleyWithAction(struct BattleEffectParams *args, s32 mode) {
   struct Actor *user;
 
-  user = GetBattleObjectSlotFar(args->user)->actor;
+  user = BattleObject_GetFar(args->user)->actor;
   Actor_SelectAnimationFar(user, POSE_LEAP);
   Actor_SetAnimationSpeedFar(user, PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
   BattleEffect_RunProjectileVolley(args, mode);
@@ -437,7 +437,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   }
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   if (mode == PROJECTILE_VOLLEY_SLASH ||
       mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
       mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
@@ -496,9 +496,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                1, 0);
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
-  user = GetBattleObjectSlotFar(state->args->user)->actor;
+  user = BattleObject_GetFar(state->args->user)->actor;
   shots = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_SHOTS]);
   steps = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_STEPS]);
   {
@@ -513,7 +513,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
     EFFECT_FOR_EACH_TARGET(i, state->args) {
       struct Actor *target =
-          GetBattleObjectSlotFar(state->args->targets[i])->actor;
+          BattleObject_GetFar(state->args->targets[i])->actor;
       s32 targetHeight = BattleUnit_GetEffectHeightFar(state->args->targets[i]);
 
       for (j = 0; j != shots; j++) {
@@ -633,7 +633,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       index = 0;
       EFFECT_FOR_EACH_TARGET(i, state->args) {
         struct Actor *target =
-            GetBattleObjectSlotFar(state->args->targets[i])->actor;
+            BattleObject_GetFar(state->args->targets[i])->actor;
 
         for (j = 0; j != shots; j++, index++) {
           if (j * stagger + i * delay < frame) {
@@ -922,8 +922,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 }
 
 /// Sends a unit back to its place (its anchor) with a hop.
-UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
-  struct BattleObject *slot = GetBattleObjectSlotFar(id);
+UNUSED void BattleEffect_HopBackToSpot(s32 id) {
+  struct BattleObject *slot = BattleObject_GetFar(id);
   struct Actor *actor = slot->actor;
 
   actor->acceleration = toFIXED(2);
@@ -944,8 +944,8 @@ UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
 /// Moves a unit APPROACH_PERCENT of the way to another one over frames, in
 /// its leap pose.
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
-  struct BattleObject *slot = GetBattleObjectSlotFar(id);
-  struct BattleObject *targetSlot = GetBattleObjectSlotFar(targetId);
+  struct BattleObject *slot = BattleObject_GetFar(id);
+  struct BattleObject *targetSlot = BattleObject_GetFar(targetId);
   struct Actor *actor = slot->actor;
   struct Actor *target = targetSlot->actor;
   s32 rate = APPROACH_PERCENT;

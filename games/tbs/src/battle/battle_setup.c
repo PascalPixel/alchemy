@@ -64,7 +64,7 @@ void BattleCamera_Update(void) {
   Iwram_TransformVector(&eyeOffset.x, (s32 *)camera);
 
   // The plane centred on the projection's centre, at a zoom of 1.
-  if (view->flag == 0) {
+  if (view->keepRange == 0) {
     BattleCamera_SetRange(toFIXED(BATTLE_PROJECTION_CENTER_X),
                           toFIXED(BATTLE_PROJECTION_CENTER_Y), 0, 0, FIXED_ONE);
   }
@@ -132,7 +132,7 @@ void BattleUnit_Collect(void) {
   case FORMATION_LAYOUT_CENTERED:
   default:
     for (i = 0; i < count; i++) {
-      position = gBattleParty_CenterOrderOffsets[i] + count / 2;
+      position = gBattleFormation_CenteredOffsets[i] + count / 2;
       battle->enemyIds[position] = unitIds[i];
     }
     break;
@@ -158,7 +158,7 @@ void Party_BattleSetupNoOp(s32 unused) {}
 
 /// Clears the party's battle-only states, and works their stats out again, as a
 /// battle ends.
-UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
+UNREAD_RESULT BattleParty_ClearBattleStatuses(void) {
   u16 unitIds[10];
   s32 count;
   s32 i;

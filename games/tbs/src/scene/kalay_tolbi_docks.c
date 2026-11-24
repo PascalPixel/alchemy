@@ -510,13 +510,13 @@ static void KalayTolbiDocks_TalkToWomanSellingTickets(void) {
       MessageArgument_Push(ticketPrice, MESSAGE_ARGUMENT_NUMBER);
       // "Let's see...there are four of you, so it will cost ......"
       Event_OpenMessage(ACTOR_SELLING_TICKETS, 0);
-      coinsWindow =
-          Window_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH, 4, 2);
+      coinsWindow = Window_Create(DOCKS_COINS_WINDOW_X, 8,
+                                  DOCKS_COINS_WINDOW_WIDTH, 4, 2);
       coinLabel = MSGNO(MsgYourCoins);
       Text_DrawMessageAsTiles(coinLabel, coinsWindow, 0, 0);
       state = &gMainRoutineState;
       Text_DrawNumberInWindow(state->holdings.coins, 6, coinsWindow,
-                              TICKET_COUNTER_X, 8);
+                              DOCKS_COINS_X, 8);
 #if LANGUAGE == LANGUAGE_JAPANESE
       Text_DrawMessageAsTiles(coinLabel +
                                   (MSGNO(MsgCoins) - MSGNO(MsgYourCoins)),
@@ -1144,13 +1144,13 @@ struct SceneEntrance gKalayTolbiDocks_RoomEntrances[] = {
 u32 gKalayTolbiDocks_Exits[] = {
     SCENE_EXITS(KalayDocks),
     SCENE_EXIT(KALAY_DOCKS_TO_WORLD_MAP_SOUTH, WorldMap,
-               WORLD_MAP_FROM_KALAY_DOCKS_EAST),
+               WORLD_MAP_FROM_KALAY_DOCKS_SOUTH),
     SCENE_EXIT(KALAY_DOCKS_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
                TOLBI_SHIP_DECK_FROM_KALAY_DOCKS),
     SCENE_EXIT(KALAY_DOCKS_TO_COTTAGE_ROOMS_E, CottageRoomsE,
                COTTAGE_ROOMS_E_FROM_KALAY_DOCKS),
     SCENE_EXIT(KALAY_DOCKS_TO_WORLD_MAP_NORTH, WorldMap,
-               WORLD_MAP_FROM_KALAY_DOCKS_WEST),
+               WORLD_MAP_FROM_KALAY_DOCKS_NORTH),
     SCENE_EXITS(TolbiDocks),
     SCENE_EXIT(TOLBI_DOCKS_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_TOLBI_DOCKS),
     SCENE_EXIT(TOLBI_DOCKS_TO_TOLBI_SHIP_DECK, TolbiShipDeck,

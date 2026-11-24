@@ -312,7 +312,7 @@ s32 Inventory_Discard(s32 unitId, s32 slot) {
   s32 removalResult = Inventory_Remove(unitId, slot);
 
   if (removalResult != INVENTORY_REMOVE_EMPTY_SLOT) {
-    Item_AdjustCounter(item, 1);
+    Item_AdjustRareItemStock(item, 1);
     Party_ClearUnusableShortcutsFar();
   }
   return removalResult;
@@ -413,7 +413,7 @@ s32 RareItemStock_Adjust(s32 index, s32 delta) {
 
 /// Adds delta to how many of an item the shops' Artifacts offer, and returns
 /// the new count; 0 for an item they keep no stock of. A delta of 0 reads it.
-s32 Item_AdjustCounter(s32 itemId, s32 delta) {
+s32 Item_AdjustRareItemStock(s32 itemId, s32 delta) {
   s32 count = 0;
   u8 counter = gItem_RareItemStockIndex[itemId & INVENTORY_ITEM_ID_MASK];
 

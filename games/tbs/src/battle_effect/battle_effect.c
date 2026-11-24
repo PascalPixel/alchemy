@@ -60,7 +60,7 @@
 #include "battle_effect_casting_impact.c"
 #include "battle_effect_torch.c"
 #include "battle_effect_helm_splitter.c"
-#include "battle_effect_particle_streams.c"
+#include "battle_effect_starfield_fall.c"
 #include "battle_effect_ramses.c"
 #include "battle_effect_dragon_cloud.c"
 #include "battle_effect_annihilation.c"

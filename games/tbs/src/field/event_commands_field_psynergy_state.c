@@ -37,16 +37,16 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   } else {
     effectState = gFieldEffectState;
   }
-  effectState->action = abilityId;
+  effectState->ability = abilityId;
   effectState->fieldPsynergy = Ability_Get(abilityId)->fieldPsynergy;
   running = fieldState->psynergyActing;
   if (running != 0)
     return;
   effectState->freeBlocks = VRAM_BLOCK_COUNT - VramCache_CountFreeBlocks();
   effectState->mode = mode;
-  effectState->visible = 1;
-  effectState->enabled = 1;
-  effectState->active = 1;
+  effectState->flashCaster = 1;
+  effectState->aimAhead = 1;
+  effectState->announceName = 1;
   effectState->messageMode = 1;
   // Keep the map's shake and its decay, to restore after the Psynergy.
   effectState->savedShakeX = grid->shakeX;
@@ -75,13 +75,13 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   struct FieldEffectState *effectState;
 
   effectState = gFieldEffectState;
-  effectState->firstActorId = userId;
+  effectState->casterId = userId;
   user = Actor_Lookup((s16)userId);
-  effectState->secondActorId = targetId;
-  effectState->mainActor = user;
+  effectState->targetId = targetId;
+  effectState->caster = user;
   target = Actor_Lookup((s16)targetId);
   facing = FACING_NEAREST_CARDINAL(user->facing);
-  effectState->child = target;
+  effectState->target = target;
   effectState->angle = facing;
   if (target != NULL) {
     // Keep the target's motion and colours, to restore them later.
@@ -108,7 +108,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
 /// frame.
 void FieldPsynergy_StopCasterUpdate(void) {
   struct FieldEffectState *effectState = gFieldEffectState;
-  struct Actor *user = effectState->mainActor;
+  struct Actor *user = effectState->caster;
 
   user->update = NULL;
   Actor_SetSpriteColorModeFar(user, SPRITE_COLOR_NORMAL);
@@ -191,18 +191,18 @@ void FieldPsynergy_StartCast(void) {
 
   effectState = *(void **)Ram_FieldEffectState;
   fieldState = *(void **)Ram_FieldState;
-  caster = effectState->mainActor;
-  ability = (s16)effectState->action;
+  caster = effectState->caster;
+  ability = (s16)effectState->ability;
   Actor_SelectAnimationFar(caster, ANIM_CAST_PSYNERGY_START);
   caster->targetX = caster->x.fixed;
   caster->targetY = caster->y.fixed;
   caster->targetZ = caster->z.fixed;
   SET_VELOCITY(caster, 0, 0, 0);
-  if (effectState->visible != 0) {
+  if (effectState->flashCaster != 0) {
     Sound_PlayFar(SE_POWER_UP);
     caster->update = FieldEffect_FlickerActorAndSpawnArcs;
   }
-  if (effectState->active != 0) {
+  if (effectState->announceName != 0) {
     Actor_SetOthersPaused(caster, 1, 0);
     MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
     // On the World Map and off it alike, the same announcement.
@@ -214,7 +214,7 @@ void FieldPsynergy_StartCast(void) {
     Actor_SetOthersPaused(caster, 0, ANIM_STEP_NORMAL);
   }
   if (GameFlag_GetFar(FLAG_PLAY_PSYNERGY_CAST) != 0) {
-    if (effectState->visible != 0) {
+    if (effectState->flashCaster != 0) {
       caster->update = FieldEffect_CycleActorAndSpawnArcs;
     }
     Actor_SelectAnimationFar(caster, ANIM_CAST_PSYNERGY_END);
@@ -225,7 +225,7 @@ void FieldPsynergy_StartCast(void) {
 }
 
 /// Saves the palettes for the Psynergy and fades them toward one of the eight
-/// cast colours (gFieldEffect_TargetColors), picked by the frame counter or
+/// cast colours (gFieldPsynergy_CastColors), picked by the frame counter or
 /// forced by FLAG_PSYNERGY_TINT(0) to (7), over 8 frames.
 void FieldPsynergy_FadeToCastColor(void) {
   struct FieldState *fieldState;
@@ -263,7 +263,7 @@ void FieldPsynergy_FadeToCastColor(void) {
     tint = 6;
   if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(7)))
     tint = 7;
-  PaletteFade_SetTarget(gFieldEffect_TargetColors[tint], PALETTES_BG);
+  PaletteFade_SetTarget(gFieldPsynergy_CastColors[tint], PALETTES_BG);
   PaletteFade_StartInterpolation(8);
 }
 

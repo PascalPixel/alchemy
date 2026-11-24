@@ -175,7 +175,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
           break;
         // The other codes are skipped with their operands.
         case TEXT_UNUSED_14:
-        case TEXT_WINDOW_STATE:
+        case TEXT_WINDOW_ANIMATION:
         case TEXT_ACTOR_NAME_START:
           text++;
           // Skip the second operand too.

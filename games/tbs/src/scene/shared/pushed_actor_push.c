@@ -8,7 +8,7 @@ static void PushedActor_PushIfClear(void) {
 
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
-    Actor_MoveAndRedraw(probe);
+    PushedActor_Roll(probe);
   }
   Event_End();
 }

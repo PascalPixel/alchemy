@@ -28,7 +28,7 @@
 #include "field/world_map_affine.h"
 #include "field/world_map_lines.h"
 #include "graphics/graphics.h"
-#include "graphics/palette_snapshots.h"
+#include "graphics/palette_cycles.h"
 #include "menu/menu.h"
 #include "system/affine.h"
 #include "system/point.h"

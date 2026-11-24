@@ -78,7 +78,7 @@ s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void));
 void ReadFlashCore(const u8 *source, u8 *destination, u32 size);
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size);
 u8 *VerifyFlashCore(u8 *source, u8 *flash, u16 size);
-s32 Flash_VerifySector(u16 sector, u8 *source);
+s32 VerifyFlashSector(u16 sector, u8 *source);
 s32 CountRemainingErasedFlashBytes(u8 *cursor);
 s32 RunFlashEraseVerifier(u8 *sector, s32 (*verify)(u8 *));
 void StartFlashTimer(u8 timingIndex);

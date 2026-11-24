@@ -41,9 +41,9 @@ struct ScriptOperands {
   u32 targetZ;       ///< SW_TARGET_Z
   u32 bounce;        ///< SW_BOUNCE, or a floating actor's phase
   u32 gravity;       ///< SW_GRAVITY
-  /// SW_RISE_BASE_Y: the word Actor_Create zeroes and only scene code
+  /// SW_SCENE_WORD: the word Actor_Create zeroes and only scene code
   /// reads.
-  u32 riseBaseY;
+  u32 sceneWord;
   u32 sprite;           ///< SW_SPRITE: the sprite, or its list of four
   u8 spriteStorageKind; ///< SW_SPRITE_KIND, an enum ActorSpriteKind
   u8 motionFlags;       ///< SW_MOTION, ActorMotionFlag bits
@@ -58,8 +58,8 @@ struct ScriptOperands {
   u16 wait;             ///< SW_WAIT, compared as signed
   u8 refused;           ///< Actor.refused; no state value
   u8 frozen;            ///< ActorArmView.frozen; no state value
-  u8 riseCounter;       ///< SW_RISE_COUNTER, kept by scene code
-  u8 riseEnabled;       ///< SW_RISE_ENABLED, kept by scene code
+  u8 sceneCounter;      ///< SW_SCENE_COUNTER, kept by scene code
+  u8 sceneByte;         ///< SW_SCENE_BYTE, kept by scene code
   s16 timer;            ///< SW_TIMER, what its actor script reads
   s16 userValue;        ///< SW_USER_VALUE, or scene scratch
   u32 watchedActor;     ///< SW_WATCHED_ACTOR, the actor it follows or faces
@@ -70,7 +70,7 @@ STATIC_ASSERT(offsetof(struct ScriptOperands, scriptAddress) == 0);
 STATIC_ASSERT(offsetof(struct ScriptOperands, cursor) == 4);
 STATIC_ASSERT(offsetof(struct ScriptOperands, facing) == 6);
 STATIC_ASSERT(offsetof(struct ScriptOperands, radius) == 32);
-STATIC_ASSERT(offsetof(struct ScriptOperands, riseBaseY) == 76);
+STATIC_ASSERT(offsetof(struct ScriptOperands, sceneWord) == 76);
 STATIC_ASSERT(offsetof(struct ScriptOperands, spriteStorageKind) == 84);
 STATIC_ASSERT(offsetof(struct ScriptOperands, repeatCount) == 93);
 STATIC_ASSERT(offsetof(struct ScriptOperands, refused) == 96);

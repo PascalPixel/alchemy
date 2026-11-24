@@ -130,7 +130,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
 }
 
 /// Spawns the battle sprites of every unit with HP left on the targets' side.
-void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
+void BattleEffect_ShowLivingTargets(struct BattleEffectParams *args) {
   s16 list[UNIT_MAX];
   s32 count;
   s32 i;
@@ -187,11 +187,11 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
   struct BattleEffectState *state;
   s32 groupIndex;
 
-  slot = GetBattleObjectSlotFar(unitId);
+  slot = BattleObject_GetFar(unitId);
   state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
   for (groupIndex = 0;
-       (group = GetMotionRecordFar(slot->actor, groupIndex)) != NULL;
+       (group = Actor_GetSpriteFar(slot->actor, groupIndex)) != NULL;
        groupIndex++) {
     if (timerSlot != TINT_KEEP) {
       state->actorTimers[timerSlot] = timerFrames;

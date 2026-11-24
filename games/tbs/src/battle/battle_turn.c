@@ -83,7 +83,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   eyeOffset.z = camera->distance;
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
 
-  result = Iwram_RatioMulQ14(toFIXED(969), FIXED_ONE * 3 / 4);
+  result = Iwram_DivFX(toFIXED(969), FIXED_ONE * 3 / 4);
   Projection_Set(0, result, toFIXED(1938));
 
   // While the view is busy, BattleCamera_SetRange leaves BG1's scroll alone.
@@ -91,7 +91,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   view->busy = 1;
   BattleCamera_SetRange(toFIXED(120), toFIXED(118 - verticalOffset), 0,
                         Q_8_8(8), FIXED_ONE * 2);
-  view->flag = 1;
+  view->keepRange = 1;
   view->busy = 0;
 }
 
@@ -179,7 +179,7 @@ s32 Battle_BuildPartyActions(struct BattleAction *entries) {
           unit->stun != 0) {
         struct BattleAction *entry = &entries[entryCount];
         entry->unitId = unitIds[unitIndex];
-        entry->priority = unit->agi;
+        entry->priority = unit->agility;
         entry->command = COMMAND_NONE;
         entry->parameter = 0;
         entry->target = TARGET_NONE_PARTY;
@@ -258,7 +258,7 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
       s32 agility;
 
       entry->unitId = unitId;
-      agility = unit->agi;
+      agility = unit->agility;
       entry->priority = agility;
       if (copyIndex != 0) {
         entry->priority = (s16)agility / 2;

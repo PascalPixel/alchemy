@@ -409,7 +409,7 @@ enum KajaPaceStep {
 enum { KAJA_PACE_PAUSE_FRAMES = 80 };
 
 /// What Kaja's pacing cues the captain to do (ShipRooms_WatchKaja), held in
-/// Kaja's riseEnabled until the captain takes it; only while the captain is
+/// Kaja's sceneByte until the captain takes it; only while the captain is
 /// not paused.
 enum KajaPaceCue {
   KAJA_CUE_NONE,
@@ -520,20 +520,20 @@ static s32 ShipRooms_LookAround(struct Actor *actor) {
   return 1;
 }
 
-/// Counts the frames of one of Kaja's pauses in riseCounter and moves him to
+/// Counts the frames of one of Kaja's pauses in sceneCounter and moves him to
 /// his next step once it passes KAJA_PACE_PAUSE_FRAMES.
 static void ShipRooms_WaitThenAdvance(struct Actor *actor) {
-  if (++actor->riseCounter > KAJA_PACE_PAUSE_FRAMES) {
+  if (++actor->sceneCounter > KAJA_PACE_PAUSE_FRAMES) {
     actor->userValue += 1;
   }
 }
 
-/// Counts down the actor's walking time in riseBaseY.
+/// Counts down the actor's walking time in sceneWord.
 ///
 /// Returns 1 once the time is up or the actor has reached its target, else 0.
 static s32 ShipRooms_HasArrived(struct Actor *actor) {
-  if (actor->riseBaseY != 0) {
-    actor->riseBaseY--;
+  if (actor->sceneWord != 0) {
+    actor->sceneWord--;
   } else {
     return 1;
   }
@@ -555,25 +555,25 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *actor) {
   case KAJA_PACE_FACE_NORTH_NORTHWEST:
     actor->facing = FACING_NORTH_NORTHWEST;
     actor->userValue++;
-    actor->riseCounter = 0;
+    actor->sceneCounter = 0;
     break;
   case KAJA_PACE_FACE_EAST:
     actor->facing = FACING_EAST;
     actor->userValue++;
-    actor->riseCounter = 0;
+    actor->sceneCounter = 0;
     break;
   case KAJA_PACE_WALK_SOUTH:
     Actor_SelectAnimation(actor, ANIM_WALK);
     FieldActor_SetMoveTarget(actor, 468, 32, 632);
-    actor->riseBaseY = 60;
+    actor->sceneWord = 60;
     actor->userValue++;
     break;
   case KAJA_PACE_ARRIVE_SOUTH:
     if (ShipRooms_HasArrived(actor) != 0) {
       Actor_SelectAnimation(actor, ANIM_STAND);
-      actor->riseCounter = 0;
+      actor->sceneCounter = 0;
       if (captain->paused == 0) {
-        actor->riseEnabled = KAJA_CUE_LOOK;
+        actor->sceneByte = KAJA_CUE_LOOK;
       }
       actor->userValue++;
     }
@@ -581,24 +581,24 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *actor) {
   case KAJA_PACE_NOD:
     if (captain->paused == 0) {
       Actor_SelectAnimation(actor, ANIM_NOD);
-      actor->riseEnabled = KAJA_CUE_NOD;
+      actor->sceneByte = KAJA_CUE_NOD;
     }
     actor->userValue++;
-    actor->riseCounter = 0;
+    actor->sceneCounter = 0;
     break;
   case KAJA_PACE_WALK_BACK:
     Actor_SelectAnimation(actor, ANIM_WALK);
     FieldActor_SetMoveTarget(actor, 480, 32, 600);
-    actor->riseBaseY = 60;
+    actor->sceneWord = 60;
     actor->userValue++;
     if (captain->paused == 0) {
-      actor->riseEnabled = KAJA_CUE_FACE_EAST;
+      actor->sceneByte = KAJA_CUE_FACE_EAST;
     }
     break;
   case KAJA_PACE_ARRIVE_BACK:
     if (ShipRooms_HasArrived(actor) != 0) {
       Actor_SelectAnimation(actor, ANIM_STAND);
-      actor->riseCounter = 0;
+      actor->sceneCounter = 0;
       actor->userValue++;
     }
     break;
@@ -616,25 +616,25 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *actor) {
 }
 
 /// The update of the captain while Kaja paces: he takes Kaja's cues (enum
-/// KajaPaceCue), keeping in riseCounter whether he has turned to Kaja.
+/// KajaPaceCue), keeping in sceneCounter whether he has turned to Kaja.
 static void ShipRooms_WatchKaja(struct Actor *captain) {
   struct Actor *kaja;
 
   kaja = Actor_Get(ACTOR_QUARTERS_KAJA);
   if (captain->paused != 0)
     return;
-  if (kaja->riseEnabled == KAJA_CUE_LOOK) {
+  if (kaja->sceneByte == KAJA_CUE_LOOK) {
     captain->facing = FACING_NORTH_NORTHEAST;
-    captain->riseCounter = 1;
-    kaja->riseEnabled = KAJA_CUE_NONE;
-  } else if (kaja->riseEnabled == KAJA_CUE_NOD) {
-    if (captain->riseCounter != 0)
+    captain->sceneCounter = 1;
+    kaja->sceneByte = KAJA_CUE_NONE;
+  } else if (kaja->sceneByte == KAJA_CUE_NOD) {
+    if (captain->sceneCounter != 0)
       Actor_SelectAnimation(captain, ANIM_NOD);
-    captain->riseCounter = 0;
-    kaja->riseEnabled = KAJA_CUE_NONE;
-  } else if (kaja->riseEnabled == KAJA_CUE_FACE_EAST) {
+    captain->sceneCounter = 0;
+    kaja->sceneByte = KAJA_CUE_NONE;
+  } else if (kaja->sceneByte == KAJA_CUE_FACE_EAST) {
     captain->facing = FACING_EAST;
-    kaja->riseEnabled = KAJA_CUE_NONE;
+    kaja->sceneByte = KAJA_CUE_NONE;
   }
 }
 
@@ -2670,11 +2670,11 @@ static void ShipRooms_SetUpCaptainsQuarters(void) {
     ShipRooms_PlaceActor(ACTOR_QUARTERS_KAJA, 480, 600, FACING_NORTH_NORTHWEST);
     Actor_SetSpeed(ACTOR_QUARTERS_KAJA, 0.8);
     actor->userValue = KAJA_PACE_FACE_NORTH_NORTHWEST;
-    actor->riseEnabled = KAJA_CUE_NONE;
+    actor->sceneByte = KAJA_CUE_NONE;
     actor->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
     actor->update = ShipRooms_PaceCaptainsQuarters;
     other = Actor_Get(ACTOR_QUARTERS_CAPTAIN);
-    other->riseCounter = 0;
+    other->sceneCounter = 0;
     other->update = ShipRooms_WatchKaja;
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, 480, 666, FACING_NORTHWEST);
@@ -3345,7 +3345,7 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   s32 set = Event_GetFlag(FLAG_TOLBI_SHIP_ANCHOR_CHARM_PLACED);
   struct Actor *actor;
   struct Sprite *sprite;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
 
   if (set != 0) {
     return gShipRooms_AnchorCharm;
@@ -3358,10 +3358,10 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   sprite->count = set;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   Icon_DrawItem(ITEM_ANCHOR_CHARM);
   VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_PLACED);
   gShipRooms_AnchorCharm = actor;
   return actor;

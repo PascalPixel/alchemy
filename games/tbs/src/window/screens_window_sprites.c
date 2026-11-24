@@ -71,11 +71,11 @@ struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
                                                      s32 x, s32 y) {
   s32 slot;
 
-  slot = Resource_LoadByMode(mode, resource);
+  slot = SelectionIcon_Load(mode, resource);
   if (slot < 0) {
     return NULL;
   }
-  return WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+  return WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
 }
 
 /// Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
@@ -89,17 +89,16 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
   slot = VramCache_FindFreeEntry();
   sprite = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
-    Icon_CopyResourceToSlot(icon, layers, slot);
-    sprite = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+    ItemIcon_LoadLayersIntoSlot(icon, layers, slot);
+    sprite = WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   }
   return sprite;
 }
 
 /// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
 /// over it, and shows it at (x, y) in `window` on draw layer 251.
-struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
-                                                      struct Window *window,
-                                                      s32 x, s32 y) {
+struct WindowSprite *
+WindowSprite_CreateOverlaidIcon(s32 icon, struct Window *window, s32 x, s32 y) {
   s32 slot;
   s32 unusedTile;
   struct WindowSprite *sprite;
@@ -109,7 +108,7 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
     return NULL;
   }
   Icon_BuildCommandIconTiles(icon, 1, &slot, &unusedTile, 1);
-  sprite = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+  sprite = WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   // Not checked: with every sprite in use, this stores through NULL.
   sprite->depth = OAM_DEPTH_FRONT - 4;
   return sprite;
@@ -127,8 +126,8 @@ struct WindowSprite *WindowSprite_CreateFromTable(s32 tableEntry,
   slot = VramCache_FindFreeEntry();
   sprite = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
-    Resource_LoadTableEntry(tableEntry, 0, slot);
-    sprite = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+    MenuTitle_LoadFirstTile(tableEntry, 0, slot);
+    sprite = WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   }
   return sprite;
 }
@@ -227,7 +226,7 @@ void WindowSprite_SetMotion(struct WindowSprite *sprite, s32 mode) {
 
 /// Sets the draw layer of the window sprite `sprite` to 255 - `priority`, so a
 /// higher priority draws on a lower layer. Does nothing when `sprite` is NULL.
-void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority) {
+void WindowSprite_SetPriority(void *sprite, s32 priority) {
   if (sprite != NULL)
     ((struct WindowSprite *)sprite)->depth = ~priority;
 }
@@ -237,7 +236,7 @@ typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 /// Fills `spans`, a page of the screen transition's window edges past its WININ
 /// and WINOUT, with the windows' horizontal extent on each of the 160 scan
 /// lines: (left << 8) | right in the second halfword (WIN1H) of each line's
-/// pair, read from the UI tilemap by the ARM routine Tile_BuildCellTiles,
+/// pair, read from the UI tilemap by the ARM routine ScanlineWindow_BuildEdges,
 /// copied into RAM for the call.
 void ScanlineWindow_FillSpans(void *spans) {
   void *tilemap = gWindowState[0];
@@ -254,7 +253,8 @@ void ScanlineWindow_FillSpans(void *spans) {
   } else {
     WindowSpanRoutine routine;
 
-    RamCode_Load(routine, Tile_BuildCellTiles, Tile_BuildCellTilesCodeSize);
+    RamCode_Load(routine, ScanlineWindow_BuildEdges,
+                 Tile_BuildCellTilesCodeSize);
     routine(spans, tilemap);
     Heap_Release(routine);
   }

@@ -142,10 +142,9 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     pool[i].score = -1;
 
   // Forget the defeated enemies the monster battles exclude.
-  for (i = 0; i < ARRAY_COUNT(gBattleFormation_LevelMatchedEnemies); i++) {
-    Enemy_GetDefinitionFar(gBattleFormation_LevelMatchedEnemies[i]);
-    GameFlag_ClearFar(
-        ENEMY_DEFEATED_FLAG(gBattleFormation_LevelMatchedEnemies[i]));
+  for (i = 0; i < ARRAY_COUNT(gBattleFormation_ExcludedEnemies); i++) {
+    Enemy_GetDefinitionFar(gBattleFormation_ExcludedEnemies[i]);
+    GameFlag_ClearFar(ENEMY_DEFEATED_FLAG(gBattleFormation_ExcludedEnemies[i]));
   }
 
   // Each qualifying formation replaces the pool's lowest entry; empty
@@ -314,7 +313,7 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
   // the hardware gives as 0, so no letter is freed; UBFIX skips the clear.
   suffixIndex = NAME_LETTER_MASK_BITS;
   if (nameLength > 0)
-    suffixIndex = unit->name[nameLength - 1] - LIST_MARKER_CHAR;
+    suffixIndex = unit->name[nameLength - 1] - ENEMY_NAME_LETTER_FIRST;
 #ifdef UBFIX
   if (suffixIndex < NAME_LETTER_MASK_BITS)
 #endif
@@ -337,7 +336,7 @@ UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 enemyId) {
     // The name's end, then the letter and a new terminator after it.
     for (nameIndex = 0; nameIndex <= UNIT_NAME_SIZE - 2; nameIndex++) {
       if (unit->name[nameIndex] == 0) {
-        unit->name[nameIndex] = LIST_MARKER_CHAR;
+        unit->name[nameIndex] = ENEMY_NAME_LETTER_FIRST;
         unit->name[nameIndex + 1] = 0;
         break;
       }

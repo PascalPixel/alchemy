@@ -51,8 +51,8 @@ struct Actor {
   FIXED groundHeight;       ///< 16.16 fixed-point pixels
   FIXED scaleX;             ///< 16.16 fixed point, FIXED_ONE full size
   FIXED scaleY;             ///< 16.16 fixed point, FIXED_ONE full size
-  /// Collision radius in pixels: 16, or half the sprite metadata's boxY, when
-  /// created; the overlap checks use it less 2.
+  /// Collision radius in pixels: 16, or half the sprite metadata's footprint,
+  /// when created; the overlap checks use it less 2.
   u16 radius;
   /// The map layer (0 to 3) its ground height is read from, which the
   /// scrolling camera updates from the cell under it; the fixed camera passes
@@ -81,7 +81,7 @@ struct Actor {
   FIXED gravity;
   /// Zeroed by FieldActor_Create and not read by the field; scene code keeps a
   /// resting height, a sway or a countdown here.
-  s32 riseBaseY;
+  s32 sceneWord;
   /// Its sprite, by spriteStorageKind: one sprite for ACTOR_SPRITE_ONE; for
   /// ACTOR_SPRITE_GROUP four, empty ones null, read as void **.
   struct Sprite *sprite;
@@ -108,8 +108,8 @@ struct Actor {
   /// Nonzero skips steering, terrain, gravity and floating; its velocity
   /// still moves it.
   u8 frozen;
-  u8 riseCounter; ///< not read by the field; scene code's own counter
-  u8 riseEnabled; ///< not read by the field; scene code's own state
+  u8 sceneCounter; ///< not read by the field; scene code's own counter
+  u8 sceneByte;    ///< not read by the field; scene code's own state
   /// Two halfwords whose meaning depends on what runs the actor.
   union {
     struct {
@@ -180,10 +180,10 @@ STATIC_ASSERT(offsetof(struct Actor, repeatCount) == 93);
 STATIC_ASSERT(offsetof(struct Actor, wait) == 94);
 STATIC_ASSERT(offsetof(struct Actor, refused) == 96);
 STATIC_ASSERT(offsetof(struct Actor, frozen) == 97);
-STATIC_ASSERT(offsetof(struct Actor, riseEnabled) == 99);
+STATIC_ASSERT(offsetof(struct Actor, sceneByte) == 99);
 STATIC_ASSERT(offsetof(struct Actor, bounce) == 68);
 STATIC_ASSERT(offsetof(struct Actor, gravity) == 72);
-STATIC_ASSERT(offsetof(struct Actor, riseBaseY) == 76);
+STATIC_ASSERT(offsetof(struct Actor, sceneWord) == 76);
 STATIC_ASSERT(offsetof(struct Actor, velocityY) == 40);
 STATIC_ASSERT(offsetof(struct Actor, speedLimit) == 48);
 STATIC_ASSERT(offsetof(struct Actor, targetX) == 56);

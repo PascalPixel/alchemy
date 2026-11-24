@@ -308,10 +308,10 @@ void Scene_Arrive(s32 unused, s32 keep) {
       GameFlag_SetFar(FLAG_SHOW_AREA_NAME);
       gMainRoutineState.encounterSteps = 0;
       gMainRoutineState.hazardSteps = 0;
-      GameFlag_ClearFar(FLAG_VENUS_LIGHTHOUSE_LIT);
-      GameFlag_ClearFar(FLAG_MERCURY_LIGHTHOUSE_LIT);
-      GameFlag_ClearFar(FLAG_MARS_LIGHTHOUSE_LIT);
-      GameFlag_ClearFar(FLAG_JUPITER_LIGHTHOUSE_LIT);
+      GameFlag_ClearFar(FLAG_IN_VENUS_LIGHTHOUSE);
+      GameFlag_ClearFar(FLAG_IN_MERCURY_LIGHTHOUSE);
+      GameFlag_ClearFar(FLAG_IN_MARS_LIGHTHOUSE);
+      GameFlag_ClearFar(FLAG_IN_JUPITER_LIGHTHOUSE);
       gMainRoutineState.retreatScene = gMainRoutineState.next;
       gMainRoutineState.retreatEntrance = gMainRoutineState.entrance;
     }

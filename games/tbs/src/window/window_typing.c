@@ -304,7 +304,7 @@ s32 Message_Type(struct Message *message) {
         Message_ApplyStyle(message);
         break;
 
-      case TEXT_WINDOW_STATE:
+      case TEXT_WINDOW_ANIMATION:
         // The animation lasts while the countdown of 10 runs out
         // (Window_StepSwellEffect counts it down); typing then resumes after
         // the operand.

@@ -84,7 +84,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/actor_orbit.h"
+#include "scene/floating_nut.h"
 #include "scene/catch_nut.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
@@ -335,7 +335,7 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void);
 static void CrossboneIsle_RestoreIvy(void);
 static void CrossboneIsle_PlaceLogs(void);
 
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
@@ -501,8 +501,8 @@ s32 Scene_Initialize(void) {
   if (current == SCENE_CROSSBONE_ISLE) {
     CrossboneIsle_RestoreIvy();
     Actor_Get(ACTOR_ISLE_NUT)->targetX = toFIXED(129);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_ISLE_LOG);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_ISLE_LOG + 1);
+    PushedActor_BlockFootprint(ACTOR_FIRST_ISLE_LOG);
+    PushedActor_BlockFootprint(ACTOR_FIRST_ISLE_LOG + 1);
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT);
       if (actor != NULL) {
@@ -2224,7 +2224,7 @@ static void CrossboneIsle_RideLogIEast(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-#include "shared/actor_orbit.c"
+#include "shared/floating_nut.c"
 
 #include "shared/pushed_actor_tables.c"
 // clang-format off

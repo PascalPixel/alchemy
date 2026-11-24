@@ -196,7 +196,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     FieldPsynergy_FadeFromCastColor();                                         \
   }
 
-#define ABOVE toFIXED(16) ///< 16 pixels up
+#define PSYNERGY_EFFECT_HEIGHT toFIXED(16) ///< 16 pixels up
 
 /// The states of a particle that flies out and back: Halt's, Force's and Move's
 /// (FieldEffect_UpdateHaltParticle, FieldEffect_UpdateRadialBurst,

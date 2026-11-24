@@ -23,7 +23,6 @@
 #include "battle/battle_unit.h"
 #include "battle/battle_state.h"
 #include "battle/blitter.h"
-#include "battle/canvas.h"
 #include "battle/playback_queue.h"
 #include "battle_effect/battle_effect.h"
 #include "battle_effect/battle_effect_table.h"
@@ -150,7 +149,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define SUMMON_PROJECTION_CENTER_Y 240
 
 /// The frames the battle background darkens behind an effect's canvas
-/// (state->fadeFrames, Palette_StepFadeTransfer).
+/// (state->fadeFrames, BattleEffect_DarkenBackgroundStep).
 #define BACKGROUND_DARKEN_FRAMES 24
 /// The level a canvas darkens the battle background to, a level a frame.
 #define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
@@ -184,7 +183,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// Sets the transfer, then starts copying the canvas to VRAM once a frame.
 #define EFFECT_START_TRANSFER(state, mode, value)                              \
   (EFFECT_SET_TRANSFER(state, mode, value),                                    \
-   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK))
+   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK))
 
 /// Presents the canvas and waits for the next frame.
 #define EFFECT_PRESENT_CANVAS(state) ((state)->transferPending = 1, wait(1))
@@ -202,12 +201,12 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// The usual end of a canvas effect: the transfer, the blitters, then the
 /// canvas layer.
 #define EFFECT_FINISH_CANVAS()                                                 \
-  (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
-   EFFECT_RELEASE_BLITTERS(), BattleEffect_EndCanvasLayer())
+  (Task_Remove(BattleEffect_TransferCanvas), EFFECT_RELEASE_BLITTERS(),        \
+   BattleEffect_EndCanvasLayer())
 
 /// The same for an effect that drew through one blitter.
 #define EFFECT_FINISH_CANVAS_ONE_BLITTER()                                     \
-  (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
+  (Task_Remove(BattleEffect_TransferCanvas),                                   \
    HeapSlot_Release(HEAP_SLOT_RAM_CODE), BattleEffect_EndCanvasLayer())
 
 /// The bytes of a sprite sheet picture, one byte a pixel, from its name's
@@ -356,7 +355,7 @@ enum RedCrescentPicture {
 #define BLUE_ARC_HEIGHT 72
 #define YELLOW_ORB_WIDTH 40
 #define YELLOW_ORB_HEIGHT 48
-/// The yellow orb as BattleEffect_PackTileRows packs it, every second byte.
+/// The yellow orb as BattleEffect_PackYellowOrbs packs it, every second byte.
 #define YELLOW_ORB_PACKED_WIDTH (YELLOW_ORB_WIDTH / 2)
 #define YELLOW_ORB_PACKED_HEIGHT YELLOW_ORB_HEIGHT
 #define YELLOW_ORB_PICTURES 6
@@ -507,7 +506,7 @@ enum CanvasWipeFill {
   CANVAS_WIPE_CLEAR ///< colour 0: the canvas cleared
 };
 
-/// The summons' sprite formations (BattleEffect_PlaceFormationObjects and
+/// The summons' sprite formations (BattleEffect_PlaceFormationSprites and
 /// BattleEffect_RunImpactBurst), each named for the summon that keeps it.
 enum SummonFormation {
   SUMMON_FORMATION_THOR,   ///< nine in a 3x3 grid at 32-pixel spacing

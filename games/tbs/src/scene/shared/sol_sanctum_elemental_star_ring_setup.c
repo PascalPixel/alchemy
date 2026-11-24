@@ -17,7 +17,7 @@ enum { SOL_SANCTUM_RING_MAX = 10 };
 
 /// One floating light: its actor, its drift and its pulsing scale, and
 /// where it is while hidden.
-struct SolSanctumRingEntry {
+struct SolSanctumLightEntry {
   struct Actor *actor;
   FIXED x; ///< 16.16 fixed-point pixels
   FIXED y; ///< 16.16 fixed-point pixels
@@ -35,18 +35,18 @@ struct SolSanctumRingEntry {
 
 /// The floating lights' state in HEAP_SLOT_SOL_SANCTUM_LIGHTS, one entry per
 /// light.
-struct SolSanctumRingList {
-  struct SolSanctumRingEntry entries[SOL_SANCTUM_RING_MAX];
+struct SolSanctumLightList {
+  struct SolSanctumLightEntry entries[SOL_SANCTUM_RING_MAX];
   u16 count;
 };
 
 /// A task: every SOL_SANCTUM_LIGHT_STEP_FRAMES each light pulses between a
 /// tenth of its size and its largest scale and drifts, swinging about on a
 /// sine of its drift speed on each axis it drifts on.
-static void SolSanctum_UpdateRing(void) {
-  struct SolSanctumRingList *list = HeapSlot_AllocEwram(
-      HEAP_SLOT_SOL_SANCTUM_LIGHTS, sizeof(struct SolSanctumRingList));
-  struct SolSanctumRingEntry *entry = list->entries;
+static void SolSanctum_UpdateFloatingLights(void) {
+  struct SolSanctumLightList *list = HeapSlot_AllocEwram(
+      HEAP_SLOT_SOL_SANCTUM_LIGHTS, sizeof(struct SolSanctumLightList));
+  struct SolSanctumLightEntry *entry = list->entries;
   u32 i;
 
   i = 0;
@@ -84,10 +84,10 @@ static void SolSanctum_UpdateRing(void) {
       timer = SOL_SANCTUM_LIGHT_STEP_FRAMES;
       if (hold == 0) {
         scale += step;
-        if (scale >= gSolSanctum_RingMaxScales[i]) {
-          step = -gSolSanctum_RingScaleSteps[i];
+        if (scale >= gSolSanctum_LightMaxScales[i]) {
+          step = -gSolSanctum_LightScaleSteps[i];
         } else if (scale <= FIXED_ONE / 10) {
-          step = gSolSanctum_RingScaleSteps[i];
+          step = gSolSanctum_LightScaleSteps[i];
           scale = FIXED_ONE / 10;
           hold = SOL_SANCTUM_LIGHT_HIDDEN_STEPS;
           x = actor->x.fixed;
@@ -100,34 +100,34 @@ static void SolSanctum_UpdateRing(void) {
         actor->scaleX = scale;
         actor->scaleY = scale;
       }
-      rx = Random_Below(gSolSanctum_RingDrift[i][0]);
-      ry = Random_Below(gSolSanctum_RingDrift[i][1]);
-      rz = Random_Below(gSolSanctum_RingDrift[i][2]);
+      rx = Random_Below(gSolSanctum_LightDrift[i][0]);
+      ry = Random_Below(gSolSanctum_LightDrift[i][1]);
+      rz = Random_Below(gSolSanctum_LightDrift[i][2]);
       rx = rx != 0 ? INTtoFIXED(rx) / 1000 : 0;
       ry = ry != 0 ? INTtoFIXED(ry) / 1000 : 0;
       rz = rz != 0 ? INTtoFIXED(rz) / 1000 : 0;
-      if (gSolSanctum_RingDirection[i][0] == 1)
+      if (gSolSanctum_LightDirection[i][0] == 1)
         speedX += rx;
-      else if (gSolSanctum_RingDirection[i][0] == -1)
+      else if (gSolSanctum_LightDirection[i][0] == -1)
         speedX -= rx;
       else
         speedX = 0;
-      if (gSolSanctum_RingDirection[i][1] == 1)
+      if (gSolSanctum_LightDirection[i][1] == 1)
         speedY += ry;
-      else if (gSolSanctum_RingDirection[i][1] == -1)
+      else if (gSolSanctum_LightDirection[i][1] == -1)
         speedY -= ry;
       else
         speedY = 0;
-      if (gSolSanctum_RingDirection[i][2] == 1)
+      if (gSolSanctum_LightDirection[i][2] == 1)
         speedZ += rz;
-      else if (gSolSanctum_RingDirection[i][2] == -1)
+      else if (gSolSanctum_LightDirection[i][2] == -1)
         speedZ -= rz;
       else
         speedZ = 0;
-      dx = Trig_Sin(speedX * gSolSanctum_RingSwing[i][0]) * 2;
-      dy = Trig_Sin(speedY * gSolSanctum_RingSwing[i][1]) * 2;
+      dx = Trig_Sin(speedX * gSolSanctum_LightSwing[i][0]) * 2;
+      dy = Trig_Sin(speedY * gSolSanctum_LightSwing[i][1]) * 2;
       {
-        FIXED dz = Trig_Cos(speedZ * gSolSanctum_RingSwing[i][2]) * 2;
+        FIXED dz = Trig_Cos(speedZ * gSolSanctum_LightSwing[i][2]) * 2;
 
         if (hold != 0) {
           x += dx;
@@ -175,16 +175,16 @@ static void SolSanctum_UpdateRing(void) {
 void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   // Each light is set up through its effect view (union ActorOrEffect); the
   // task reads it as an actor.
-  struct SolSanctumRingList *list;
-  struct SolSanctumRingEntry *entry;
+  struct SolSanctumLightList *list;
+  struct SolSanctumLightEntry *entry;
   struct FieldEffect *light;
   u32 i;
   s32 cleared;
 
   list = HeapSlot_AllocEwram(HEAP_SLOT_SOL_SANCTUM_LIGHTS,
-                             sizeof(struct SolSanctumRingList));
+                             sizeof(struct SolSanctumLightList));
   entry = list->entries;
-  Dma_Fill32(0, list, sizeof(struct SolSanctumRingList));
+  Dma_Fill32(0, list, sizeof(struct SolSanctumLightList));
   if (count > SOL_SANCTUM_RING_MAX)
     count = SOL_SANCTUM_RING_MAX;
   i = 0;
@@ -200,8 +200,8 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
       }
       light->motionFlags = cleared;
       Actor_SetBlendMode(Actor_GetById(first), ACTOR_BLEND_TRANSLUCENT);
-      entry->scale = gSolSanctum_RingMaxScales[i];
-      entry->scaleStep = -gSolSanctum_RingScaleSteps[i];
+      entry->scale = gSolSanctum_LightMaxScales[i];
+      entry->scaleStep = -gSolSanctum_LightScaleSteps[i];
       entry->timer = SOL_SANCTUM_LIGHT_STEP_FRAMES;
       i++;
       entry++;
@@ -209,5 +209,5 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
     } while (i != count);
   }
   list->count = count;
-  Task_AddFrame(SolSanctum_UpdateRing, TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctum_UpdateFloatingLights, TASK_PASS_FRAME);
 }

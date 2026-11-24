@@ -14,8 +14,8 @@ void MenuCursor_SetFar(struct MenuCursor *cursor, s32 targetX, s32 targetY,
                        s32 frames);
 void MenuCursor_SetPositionImmediateFar(struct MenuCursor *cursor, s32 x,
                                         s32 y);
-void QuantityBar_FillFar(s32 itemCount, s32 paletteSelector, u8 *tileBuffer);
-void Shop_SaveAndTintFieldPaletteFar(s32 layer);
+void QuantityBar_FillFar(s32 itemCount, s32 color, u8 *tileBuffer);
+void Shop_SaveAndTintFieldPaletteFar(s32 tint);
 void Shop_RestoreFieldPaletteFar(void);
 s32 ItemPicker_RunFar(s32 *selectedUnit, s32 *selectedSlot);
 void Sound_WaitForJingleFar(void);

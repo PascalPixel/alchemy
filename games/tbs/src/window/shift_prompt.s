@@ -1,4 +1,4 @@
-@ The two page arrows, 4 bits a pixel (Link_DrawPageArrows).
+@ The two page arrows, 4 bits a pixel (PageArrows_Draw).
 	.section .rodata
 	.balign 4
 	.global gPageArrowTiles

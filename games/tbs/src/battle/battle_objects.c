@@ -31,7 +31,7 @@ void BattleObject_UpdateSpritePriorities(void) {
 
         BattleStatusIcon_Cycle(slot);
         if (slot->shadowEntry != 0) {
-          sprite = GetMotionRecord(actor, 0);
+          sprite = Actor_GetSprite(actor, 0);
 
           if (sprite != 0) {
             struct SpriteAnimation *shadow;
@@ -226,7 +226,7 @@ UNREAD_RESULT BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
 
     // Swap the icon on the unit's first sprite; iconAnimation is -1 when no
     // status is left.
-    sprite = GetMotionRecord(actor, 0);
+    sprite = Actor_GetSprite(actor, 0);
     if (sprite != 0) {
       // Units 32 pixels wide take their own set of icon animations.
       if (iconAnimation >= 0) {
@@ -288,7 +288,7 @@ UNREAD_RESULT BattleObject_UpdatePose(s32 unitId) {
 
 /// Releases every sprite unitId's actor holds and leaves it with none, clearing
 /// the battle object's animationEntry and shadowEntry.
-void ReleaseBattleObjectRecords(s32 unitId) {
+void BattleObject_DestroySprites(s32 unitId) {
   struct BattleObject *battleObject;
   struct Actor *actor;
   s32 spriteIndex;
@@ -301,7 +301,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
       battleObject->animationEntry = 0;
       battleObject->shadowEntry = 0;
       for (spriteIndex = 0;
-           (sprite = GetMotionRecord(actor, spriteIndex)) != NULL;
+           (sprite = Actor_GetSprite(actor, spriteIndex)) != NULL;
            spriteIndex++) {
         Sprite_DestroyFar(sprite);
       }
@@ -330,7 +330,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       releasedUnitId = unitIndex + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
       if (unitIndex <= ALLY_MAX)
         releasedUnitId = unitIndex;
-      ReleaseBattleObjectRecords(releasedUnitId);
+      BattleObject_DestroySprites(releasedUnitId);
     }
   }
   // A frame passes between releasing and creating sprites, except inside a
@@ -367,7 +367,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       sprite = Sprite_CreateFar(spriteId);
       if (sprite != 0) {
         sprite->scale = Iwram_MulFX(sprite->scale, battleObject->scale);
-        actor->radius = Resource_GetMetadataRecordFar(spriteId)->boxY >> 1;
+        actor->radius = Resource_GetMetadataRecordFar(spriteId)->footprint >> 1;
         *sprites = sprite;
         sprites++;
       }
@@ -449,7 +449,7 @@ struct BattleObject *BattleObject_Get(s32 unitId) {
 }
 
 /// Detaches the scripts from the four sprite entries of one sprite.
-void ResetMotionRecordGroup(void *untypedSprite) {
+void Sprite_DetachScripts(void *untypedSprite) {
   struct Sprite *sprite = untypedSprite;
   s32 entryIndex;
 
@@ -462,7 +462,7 @@ void ResetMotionRecordGroup(void *untypedSprite) {
 }
 
 /// Unused: detaches the scripts from every sprite of a unit's actor.
-void ResetBattleObjectRecordGroups(struct Actor *actor) {
+void Actor_DetachSpriteScripts(struct Actor *actor) {
   void **groups;
   s32 i;
 
@@ -470,13 +470,13 @@ void ResetBattleObjectRecordGroups(struct Actor *actor) {
     return;
   switch (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
   case ACTOR_SPRITE_ONE:
-    ResetMotionRecordGroup(actor->sprite);
+    Sprite_DetachScripts(actor->sprite);
     break;
   case ACTOR_SPRITE_GROUP:
     groups = (void **)actor->sprite;
     for (i = 0; i < ACTOR_SPRITE_GROUP_SIZE; i++) {
       if (groups[i] != NULL)
-        ResetMotionRecordGroup(groups[i]);
+        Sprite_DetachScripts(groups[i]);
     }
     break;
   }
@@ -519,7 +519,7 @@ void *BattleObject_DestroyAll(void) {
 
 /// Unused: writes the battlefield spot of place (its anchor, on the ground) to
 /// position, and returns 0.
-s32 Battle_GetStateEntryPair(s32 place, struct Point *position) {
+s32 BattleObject_GetAnchor(s32 place, struct Point *position) {
   struct BattleState *battle = gBattleState;
 
   SET_POSITION(position, battle->objects[place].anchorX, 0,
@@ -544,7 +544,7 @@ UNREAD_RESULT BattleCamera_ApplyTransform(void) {
 /// y, then its depth; Matrix_ProjectPoint). Returns 0.
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
   struct Actor *actor = BattleObject_Get(unitId)->actor;
-  struct Sprite *sprite = GetMotionRecord(actor, 0);
+  struct Sprite *sprite = Actor_GetSprite(actor, 0);
   s32 position[3];
   s32 projectionScale;
 
@@ -559,7 +559,7 @@ s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
 
 /// Returns sprite spriteIndex of an actor (0 only, for a single sprite), or
 /// null when it has no such sprite.
-void *GetMotionRecord(struct Actor *actor, s32 spriteIndex) {
+void *Actor_GetSprite(struct Actor *actor, s32 spriteIndex) {
   s32 storageKind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
   if (storageKind == ACTOR_SPRITE_ONE) {
     if (spriteIndex == 0) {

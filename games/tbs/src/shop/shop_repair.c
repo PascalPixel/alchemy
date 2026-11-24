@@ -42,8 +42,8 @@ s32 Shop_SelectRepair(s32 unitId) {
   shop = gMenuState;
   unit = Unit_GetFar(unitId);
   inventoryCount = 1;
-  priceWindow =
-      Window_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, WINDOW_FLAG_INSTANT);
+  priceWindow = Window_CreateFar(SHOP_SELL_PRICE_X, 8, SHOP_SELL_PRICE_WIDTH, 4,
+                                 WINDOW_FLAG_INSTANT);
   slot = 0;
 
   for (;;) {

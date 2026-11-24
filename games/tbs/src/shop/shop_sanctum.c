@@ -142,10 +142,10 @@ s32 Sanctum_Run(s32 keeperId) {
     Portrait_CreateFar(IVAN, 0, 0, listWindow, -4, -4);
   }
 
-  cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
-                                        listWindow, 0, 0);
+  cursorAnchor = WindowSprite_CreateFar(
+      shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, listWindow, 0, 0);
   cursorAnchor->motion = WINDOW_SPRITE_MOTION_STILL;
-  cursorAnchor->kind = WINDOW_SPRITE_GLYPH; // the icon is the shop state's
+  cursorAnchor->kind = WINDOW_SPRITE_PLAIN; // the icon is the shop state's
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
   // "Welcome, weary wanderers. What aid do you seek?"
@@ -479,8 +479,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_InitializeFar(effect, SPRITE_PARTICLE, position.x,
                                 position.z);
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
-    FieldParticle_SetActorModeFar(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->actor, Random16_Below(7));
+    FieldParticle_SetAnimationFar(effect, 7);
+    Sprite_SetAnimationColorModesFar(effect->sprite, Random16_Below(7));
     effect->scaleY = FIXED_ONE * 7 / 10;
     effect->scaleX = FIXED_ONE * 7 / 10;
     wait(3);

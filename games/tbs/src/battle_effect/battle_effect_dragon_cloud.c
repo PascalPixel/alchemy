@@ -92,12 +92,12 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       }
     }
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET,
                              &state->sheet[DRAGON_CLOUD_PUFF_PICTURES], 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, Ram_MapGridCellBuffer,
                              1, 0);
-  BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+  BattleEffect_BuildCanvasBlitters(state->args->side, draw);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
 
@@ -139,7 +139,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     puff->y = FIXEDtoINT(Trig_Cos(j) * DRAGON_CLOUD_PUFF_RADIUS_Y) + 40;
     puff->variant = -(i * 2);
   }
-  path = Resource_GetTableEntry(RESOURCE_DUAL_STREAM_PATH);
+  path = Resource_GetTableEntry(RESOURCE_DRAGON_CLOUD_FLAME_PATH);
 
   for (frame = 0; frame != DRAGON_CLOUD_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;

@@ -175,14 +175,14 @@ void TilesetAnim_StartAll(const u16 *script) {
 /// shown.
 void TilesetAnim_SuspendAll(void) {
   if (((struct MapGridScrollState *)gMapGridState[0])->animationActive == 0)
-    Task_SuspendAll(TilesetAnim_Update);
+    Task_Suspend(TilesetAnim_Update);
 }
 
 /// Resumes the tileset animations, unless the world map's still image is
 /// shown.
 void TilesetAnim_ResumeAll(void) {
   if (((struct MapGridScrollState *)gMapGridState[0])->animationActive == 0)
-    Task_ResumeAll(TilesetAnim_Update);
+    Task_Resume(TilesetAnim_Update);
 }
 
 /// Each frame: runs the map's blend script.
@@ -270,10 +270,10 @@ void BlendScript_Start(u16 *script) {
 
 /// Suspends the blend script. The lighthouse scenes and Vale's Babi event
 /// reach it through BlendScript_SuspendFar.
-void BlendScript_Suspend(void) { Task_SuspendAll(BlendScript_Run); }
+void BlendScript_Suspend(void) { Task_Suspend(BlendScript_Run); }
 
 /// Resumes the blend script, through BlendScript_ResumeFar.
-void BlendScript_Resume(void) { Task_ResumeAll(BlendScript_Run); }
+void BlendScript_Resume(void) { Task_Resume(BlendScript_Run); }
 
 /// Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
 /// its four entries cleared.

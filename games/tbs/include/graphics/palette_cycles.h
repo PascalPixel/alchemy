@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_PALETTE_SNAPSHOTS_H
-#define ALCHEMY_PALETTE_SNAPSHOTS_H
+#ifndef ALCHEMY_PALETTE_CYCLES_H
+#define ALCHEMY_PALETTE_CYCLES_H
 
 /// @file
 /// Palette cycles: runs of background colours rotated one place every few

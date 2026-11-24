@@ -146,7 +146,7 @@ void Debug_SelectShortcuts(void) {
     slot = VramCache_FindFreeEntry();
     if (slot != 0) {
       VramCache_Load(slot, 128, gPointingHandTiles);
-      cursor = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, picks, 0, 0);
+      cursor = WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_16X16, picks, 0, 0);
     }
     // The picker borrows the status panel's labels: "HP/Max" over it,
     // "Status" over the picks, "Attack" and "Defense" (the two messages before

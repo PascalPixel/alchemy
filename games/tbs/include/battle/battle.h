@@ -17,7 +17,7 @@ struct Actor;
 
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
 /// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_tables.c).
-extern const s8 gBattlePlacement_StepPairs[];
+extern const s8 gBattlePlacement_Spots[];
 /// Read as a halfword by Actor_SetOthersPaused: the actor id of the
 /// player's actor, which it leaves alone.
 extern u8 gPlayerActorId[];
@@ -59,10 +59,10 @@ extern FIXED gBattleKnockback_SpeedLimit[];
 extern FIXED gBattleKnockback_VelocityY[];
 /// A fixed formation's places by order, as offsets from the middle place:
 /// 0, -1, 1, -2, 2 and so on out to 4.
-extern const s8 gBattleParty_CenterOrderOffsets[];
+extern const s8 gBattleFormation_CenteredOffsets[];
 /// Turn-end effects go to the party (BATTLE_SIDE_MASK_PARTY), then the enemies
 /// (BATTLE_SIDE_MASK_ENEMIES).
-extern const struct BattleSideOrder gBattleParty_TurnEndSideOrder;
+extern const struct BattleSideOrder gBattle_TurnEndSideOrder;
 /// A lone SC_END: a battle unit's actor script, which BattleObject_Make
 /// starts.
 extern const s32 gBattleObject_EmptyScript[];
@@ -91,9 +91,9 @@ extern u8 BitDecoder_Size[];
 extern const FIXED gBattleCamera_CommandMatrix[];
 /// Where SparkState.sheet holds the spark's square picture for each frame of
 /// life left, 0 to 6: byte offsets, a byte a pixel.
-extern s32 gElementGlow_StarPictures[];
+extern s32 gElementGlow_SparkPictures[];
 /// The spark's width and height in pixels by life left: 1 to 4, 4 from three.
-extern u8 gElementGlow_StarSizes[];
+extern u8 gElementGlow_SparkSizes[];
 /// Where SparkState.sheet holds the ring's four 32 by 32 frames: byte offsets,
 /// 1,024 apart.
 extern s32 gElementGlow_RingPictures[];
@@ -226,13 +226,13 @@ void BattleUnit_Collect(void);
 s32 Battle_ShiftVramTiles(void);
 void Battle_ClearBg0Vofs(void);
 void Party_BattleSetupNoOp(s32 unused);
-UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void);
+UNREAD_RESULT BattleParty_ClearBattleStatuses(void);
 UNREAD_RESULT DjinnRecovery_Reconcile(void);
 struct DjinnRecoveryTable *BattleSummon_UpdateAvailability(void);
 void BattleSummon_ReservedNoOp(void);
 s32 LinkBattle_ReceiveParty(void);
 UNREAD_RESULT LinkBattle_SendParty(void);
-u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unusedA, u32 unusedB, u16 *source);
+u8 *Text_CopyFourCharsUnderscored(u32 unusedA, u32 unusedB, u16 *source);
 s32 LinkBattle_WaitSync(void);
 s32 LinkBattle_SyncTurn(void);
 UNREAD_RESULT BattleParty_AssignOpponentSlots(void);
@@ -269,7 +269,7 @@ s32 BattleUnit_CountDownSleep(s32 unitId);
     if ((gKeysHeld & KEY_R) != 0) {                                            \
       cam->yaw -= 512;                                                         \
     }                                                                          \
-    if (view->flag == 0) {                                                     \
+    if (view->keepRange == 0) {                                                \
       BattleCamera_SetRange(toFIXED(120), toFIXED(120), 0, 0, FIXED_ONE);      \
     }                                                                          \
   }
@@ -279,7 +279,7 @@ s32 BattleEnemy_List(s16 *unitIds);
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds);
 s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds);
 void BattleObject_Put(void);
-void BattleUnit_ListAllAndSubmit(void);
+void BattleObject_PutKeepingPoses(void);
 s32 BattleObject_GetPalette(s32 unitId);
 s32 Enemy_HasSpriteRoom(s32 enemyId);
 s32 EnemySprite_LoadIntoSlots(s32 unitId);
@@ -300,21 +300,21 @@ UNREAD_RESULT BattleUnit_BuildStatusFlags(s32 unitId,
                                           struct BattleObject *battleObject);
 UNREAD_RESULT BattleStatusIcon_Cycle(struct BattleObject *battleObject);
 UNREAD_RESULT BattleObject_UpdatePose(s32 unitId);
-void ReleaseBattleObjectRecords(s32 unitId);
+void BattleObject_DestroySprites(s32 unitId);
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses);
 struct BattleObject *BattleObject_Get(s32 unitId);
-void ResetMotionRecordGroup(void *recordGroup);
-void ResetBattleObjectRecordGroups(struct Actor *actor);
+void Sprite_DetachScripts(void *recordGroup);
+void Actor_DetachSpriteScripts(struct Actor *actor);
 s32 BattleObject_MarkForRelease(s32 unitId);
 #ifdef UBFIX
 void BattleObject_DestroyAll(void);
 #else
 void *BattleObject_DestroyAll(void);
 #endif
-s32 Battle_GetStateEntryPair(s32 place, struct Point *position);
+s32 BattleObject_GetAnchor(s32 place, struct Point *position);
 UNREAD_RESULT BattleCamera_ApplyTransform(void);
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected);
-void *GetMotionRecord(struct Actor *actor, s32 recordIndex);
+void *Actor_GetSprite(struct Actor *actor, s32 recordIndex);
 void BattleCamera_SetDefaultView(void);
 void BattleMotion_ReturnToSpot(s32 unitId);
 void BattleMotion_SetupEscapeObject(s32 unitId);
@@ -331,7 +331,7 @@ void BattleMotion_MidpointNoOp();
 void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId);
 void BattleMotion_PlayHitFlash(s32 unitId);
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected);
-s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected);
+s32 BattleMotion_ProjectCursorPoint(s32 unitId, s32 *projected);
 s32 BattleUnit_GetEffectHeight(s32 unitId);
 
 s32 AutoBattle_BuildActions(struct BattleAction *entries);
@@ -365,9 +365,9 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay);
 UNREAD_RESULT BattleStaging_BuildTargetList(struct BattleActionRun *plan,
                                             struct BattleEffectParams *args);
 s32 BattleStaging_RunFlee(struct BattleActionRun *plan);
-s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode);
-UNREAD_RESULT BattleStaging_RunActorEntries(struct BattleActionRun *plan,
-                                            s32 unused);
+s32 BattleStaging_RunFullScreen(struct BattleActionRun *plan, s32 mode);
+UNREAD_RESULT BattleStaging_RunMessages(struct BattleActionRun *plan,
+                                        s32 unused);
 s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode);
 s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input, s32 flags);
 s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
@@ -384,7 +384,7 @@ UNREAD_RESULT BattleUnit_ClearStatuses(s32 unitId);
 UNREAD_RESULT BattleMessage_WaitForAdvance(void);
 UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 void BattlePlayback_MarkMessage(void);
-UNREAD_RESULT BattleObject_DestroyTemporaryObject(s32 unitId);
+UNREAD_RESULT BattleUnit_RemoveEnemy(s32 unitId);
 void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackState *runtime,
                                     u32 operand);
 #ifdef UBFIX
@@ -398,7 +398,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
                                           s32 slot);
 u32 Ability_IsPsynergy(s32 abilityId);
 UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 acting);
-void Dma_StopAllThenRunHook(void);
+void Dma_StopDma3(void);
 void BattlePlayback_Start(s32 cue);
 s32 BattlePlayback_SchedulePhase(s32 frames);
 void BattlePlayback_Run(void);
@@ -418,16 +418,16 @@ s32 BattleUnit_CountDownReflect(s32 unitId);
 s32 BattleUnit_CountDownAgilityStage(s32 unitId);
 s32 DjinnRecovery_CountDown(void);
 s32 DjinnRecovery_CountDownTwenty(void);
-void Battle_ReservedNoOpF674(void);
+void Battle_TurnEndNoOp(void);
 UNREAD_RESULT Battle_ProcessTurnEnd(void);
 UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan);
 
 s32 BattleTransition_RunMosaicFadeOut(void);
-void Graphics_BuildSequentialTileTable(void *tilemap);
-void BattleTransition_BuildTilemap(void *tilemap);
+void BattleTransition_BuildAffineTilemap(void *tilemap);
+void BattleTransition_BuildFlatTilemap(void *tilemap);
 void BattleBackground_ShowZoomedPage(void);
 void BattleTransition_UploadTileVariant(void);
-void BattleTransition_AdvanceTimer(void);
+void BattleTransition_AdvanceOpening(void);
 void BattleTransition_DrawRows(void);
 void BattleTransition_ClearBg0Vofs(void);
 void BattleTransition_Run(s32 enemyCount, s32 encounterId);

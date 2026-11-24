@@ -133,7 +133,7 @@ UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
 void BattlePlayback_MarkMessage(void) { gBattleMessageState->marked = 1; }
 
 /// Takes an enemy out of the battle at once, one that leaves rather than falls.
-UNREAD_RESULT BattleObject_DestroyTemporaryObject(s32 unitId) {
+UNREAD_RESULT BattleUnit_RemoveEnemy(s32 unitId) {
   struct Unit *enemy;
   struct BattleObject *slot;
 
@@ -149,14 +149,14 @@ UNREAD_RESULT BattleObject_DestroyTemporaryObject(s32 unitId) {
   }
 }
 
-/// BattlePlaybackState.flags bit 0: a Djinni struck a weakness, so enemies that
+/// BattlePlaybackState.djinnBonus: a Djinni struck a weakness, so enemies that
 /// fall pay the Djinn bonus (BattleEnemy_RecordDefeat).
 #define PLAYBACK_FLAG_DJINN_BONUS 1
 
 /// Grants the Djinn bonus for the rest of the action.
 void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackState *runtime,
                                     u32 operand) {
-  runtime->flags |= PLAYBACK_FLAG_DJINN_BONUS;
+  runtime->djinnBonus |= PLAYBACK_FLAG_DJINN_BONUS;
 }
 
 /// Plays the queued playback at once, in order, where BattlePlayback_Run plays
@@ -179,7 +179,7 @@ u32 BattlePlayback_RunAll(void) {
         BattlePlayback_GrantDjinnBonus(runtime, queue->operands[eventIndex]);
         break;
       case PLAYBACK_REMOVE_UNIT:
-        BattleObject_DestroyTemporaryObject(queue->operands[eventIndex]);
+        BattleUnit_RemoveEnemy(queue->operands[eventIndex]);
         break;
       case PLAYBACK_UNIT_NAME:
         MessageArgument_PushFar(queue->operands[eventIndex],
@@ -223,7 +223,8 @@ u32 BattlePlayback_RunAll(void) {
         BattleMotion_FlashHit(queue->operands[eventIndex], 0, 0);
         break;
       case PLAYBACK_DEFEAT:
-        BattleEnemy_RecordDefeat(queue->operands[eventIndex], runtime->flags);
+        BattleEnemy_RecordDefeat(queue->operands[eventIndex],
+                                 runtime->djinnBonus);
         BattleUnit_ClearStatuses(queue->operands[eventIndex]);
         BattleMotion_ShowDowned(queue->operands[eventIndex]);
         break;

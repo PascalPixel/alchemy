@@ -238,7 +238,7 @@ s32 DjinnRecovery_CountDownTwenty(void) {
 
 /// Does nothing; Battle_Run calls it at the end of each turn and of
 /// the battle.
-void Battle_ReservedNoOpF674(void) {}
+void Battle_TurnEndNoOp(void) {}
 
 /// Ends a turn: sets recovered Djinn, then gives each unit its regeneration and
 /// counts down its stat changes and statuses, showing each that ends.
@@ -304,7 +304,7 @@ UNREAD_RESULT Battle_ProcessTurnEnd(void) {
                            0);
   {
     s32 *groupList;
-    struct BattleSideOrder order = gBattleParty_TurnEndSideOrder;
+    struct BattleSideOrder order = gBattle_TurnEndSideOrder;
     u16 unitIds[UNIT_MAX];
     s32 group;
     s32 unitIndex;

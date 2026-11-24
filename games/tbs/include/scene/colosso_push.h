@@ -1,9 +1,9 @@
-#ifndef ALCHEMY_COLOSSO_OCCUPANT_H
-#define ALCHEMY_COLOSSO_OCCUPANT_H
+#ifndef ALCHEMY_COLOSSO_PUSH_H
+#define ALCHEMY_COLOSSO_PUSH_H
 
 /// @file
 /// The rocks, weights and stone pillars Isaac pushes on the stages of the
-/// three Colosso finals matches (shared/colosso_occupant.c).
+/// three Colosso finals matches (shared/colosso_push.c).
 
 #include "types.h"
 

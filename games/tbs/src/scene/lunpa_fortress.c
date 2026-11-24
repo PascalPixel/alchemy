@@ -514,7 +514,7 @@ static void LunpaFortress_RestoreUpperFloorDoors(void);
 static void LunpaFortress_RestoreCaveDoors(void);
 static void LunpaFortress_RestoreToadonpaDoors(void);
 
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 /// Donpa has judged Dodonpa, so Hammet's cell no longer starts the trap.
 #define FLAG_LUNPA_FORTRESS_DODONPA_JUDGED FLAG_AREA_TEMP_01
@@ -894,7 +894,7 @@ static s32 LunpaFortress_TryTakeChestItem(s32 actorId, s32 itemId) {
   s32 itemEffect;
 
   Event_Start();
-  itemEffect = FieldEffect_PlayCueAndStartEmitterOnTarget(0, actorId, itemId);
+  itemEffect = Chest_OpenAndShowItem(0, actorId, itemId);
   if (Party_GiveItem(itemId, 0) != -1) {
     Actor_SetAnimation(actorId, CHEST_ANIMATION_OPEN_EMPTY);
     itemGiven = 1;
@@ -3821,7 +3821,7 @@ static void LunpaFortress_RestoreToadonpaDoors(void) {
 }
 
 /// Lunpa Fortress keeps its pushed-actor tables with its read-only data, though
-/// the shared declarations in field.h and staged_actor.c are not const.
+/// the shared declarations in field.h and pushed_actor.c are not const.
 #define PUSHED_ACTOR_TABLES_READ_ONLY
 #include "shared/pushed_actor_tables.c"
 // clang-format off

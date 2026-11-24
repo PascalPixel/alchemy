@@ -243,7 +243,7 @@ STATIC_ASSERT(offsetof(union CrossboneIslePillarCell, bits.shape) == 3);
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 #include "shared/map_grid_panel.c"
 
@@ -420,9 +420,8 @@ static s32 CrossboneIsleSteppingStones_StrandLog(s32 actorId) {
 
     MapGrid_CopyCellAttributes(sourceCellX, sourceCellZ, width, depth,
                                probe.position.x, probe.position.z);
-    PushedActor_FillGridAttributeRectangle(0, probe.position.x,
-                                           probe.position.z, width, depth,
-                                           CELL_BEHAVIOR_WALL);
+    MapGrid_FillCollisionRectangle(0, probe.position.x, probe.position.z, width,
+                                   depth, CELL_BEHAVIOR_WALL);
   }
 
   Actor_SelectAnimation(actor, 1);
@@ -744,7 +743,7 @@ static void CrossboneIsleSteppingStones_PushPillar(void) {
 
   Event_Start();
   if (PushedActor_FindClearPosition(&out) != 0)
-    Actor_MoveAndRedraw(out);
+    PushedActor_Roll(out);
   Event_End();
 }
 
@@ -1202,25 +1201,25 @@ static void CrossboneIsleSteppingStones_PushOrClimbDown(void) {
 /// Nothing visible happens when Isaac walks onto the lowest floor of the
 /// seventh floor's side room, among the brown pits, for example cell (54, 15)
 /// in its north east. The game starts the fade overlay on him and sets his
-/// `riseCounter`. From then on, walking on the brown floor along the raised
+/// `sceneCounter`. From then on, walking on the brown floor along the raised
 /// pink ground south of it, he shows only from the waist up: the overlay
 /// covers the rest in the colour of the raised ground, as if he stood behind
 /// it.
 static void CrossboneIsleSteppingStones_StartRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   gFadeOverlayState->actor = leader;
-  leader->riseCounter = 1;
+  leader->sceneCounter = 1;
 }
 
 /// Nothing visible happens when Isaac leaves the lowest floor of the seventh
 /// floor's side room at cell (33, 27), below the west ladders, or cell
 /// (54, 14) in the north east. The fade overlay lets him go and his
-/// `riseCounter` is cleared.
+/// `sceneCounter` is cleared.
 static void CrossboneIsleSteppingStones_StopRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   gFadeOverlayState->actor = NULL;
-  leader->riseCounter = 0;
+  leader->sceneCounter = 0;
 }
 
 /// Puts the frozen puddle under the leader when it is behind and below the
@@ -1436,7 +1435,7 @@ static void CrossboneIsleSteppingStones_StartMovingSinkingBoulder(void) {
   x = FIELD_CELL(boulder->x.fixed);
   z = FIELD_CELL(boulder->z.fixed);
 
-  PushedActor_FillGridAttributeRectangle(2, x, z, 1, 1, CELL_BEHAVIOR_NORMAL);
+  MapGrid_FillCollisionRectangle(2, x, z, 1, 1, CELL_BEHAVIOR_NORMAL);
   Event_End();
 }
 
@@ -1450,9 +1449,9 @@ static void CrossboneIsleSteppingStones_MoveSinkingBoulder(void) {
 
   boulder = Actor_Get(ACTOR_SINKING_BOULDER);
   Event_Start();
-  PushedActor_FillGridAttributeRectangle(2, FIELD_CELL(boulder->x.fixed),
-                                         (FIELD_CELL(boulder->z.fixed)), 1, 1,
-                                         CELL_BEHAVIOR_WALL);
+  MapGrid_FillCollisionRectangle(2, FIELD_CELL(boulder->x.fixed),
+                                 (FIELD_CELL(boulder->z.fixed)), 1, 1,
+                                 CELL_BEHAVIOR_WALL);
   if (FIELD_CELL(boulder->x.fixed) == SINKING_BOULDER_COLUMN) {
     alreadyLowered =
         Event_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK);
@@ -1475,7 +1474,7 @@ static void CrossboneIsleSteppingStones_PushSinkingBoulder(void) {
 
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
-    Actor_MoveAndRedraw(probe);
+    PushedActor_Roll(probe);
   } else {
     CrossboneIsleSteppingStones_StartMovingSinkingBoulder();
     PushedActor_AdvancePair();
@@ -1584,21 +1583,21 @@ s32 Scene_Initialize(void) {
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineState.next == SCENE_CROSSBONE_ISLE_ICE_PILLARS) {
-    Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR + 1);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR + 2);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR + 3);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR + 4);
+    PushedActor_BlockFootprint(ACTOR_FIRST_PILLAR);
+    PushedActor_BlockFootprint(ACTOR_FIRST_PILLAR + 1);
+    PushedActor_BlockFootprint(ACTOR_FIRST_PILLAR + 2);
+    PushedActor_BlockFootprint(ACTOR_FIRST_PILLAR + 3);
+    PushedActor_BlockFootprint(ACTOR_FIRST_PILLAR + 4);
   } else if (gMainRoutineState.next == SCENE_CROSSBONE_ISLE_FLOODGATE) {
     MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 1);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 2);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 3);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 4);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 5);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 6);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 7);
+    PushedActor_BlockFootprint(ACTOR_FIRST_LOG);
+    PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 1);
+    PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 2);
+    PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 3);
+    PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 4);
+    PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 5);
+    PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 6);
+    PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 7);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0 &&
         GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED) != 0) {
       MapGrid_CopyCellsTo(79, 34, 84, 24, 1, 2);
@@ -1610,10 +1609,10 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineState.next == SCENE_CROSSBONE_ISLE_STACKED_PILLARS) {
     Actor_CreateConfigured(584, 0, 200, SPRITE_CRATE);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Actor_Get(ACTOR_PARTY_LEADER)->riseCounter = 1;
+      Actor_Get(ACTOR_PARTY_LEADER)->sceneCounter = 1;
     }
     FieldEffect_StartFadeOverlay(0);
-    if (Actor_Get(ACTOR_PARTY_LEADER)->riseCounter == 0) {
+    if (Actor_Get(ACTOR_PARTY_LEADER)->sceneCounter == 0) {
       CrossboneIsleSteppingStones_StopRising();
     }
     CrossboneIsleSteppingStones_InitializePillarPriority(ACTOR_FIRST_PILLAR);
@@ -1650,8 +1649,8 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineState.next == SCENE_CROSSBONE_ISLE_DRAGON_STATUE) {
     Actor_SetAnimation(ACTOR_SINKING_BOULDER, 2);
     Actor_SetSpriteColorById(ACTOR_SINKING_BOULDER, SPRITE_COLOR_GREY);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG);
-    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 1);
+    PushedActor_BlockFootprint(ACTOR_FIRST_LOG);
+    PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 1);
 #if TBS_PATCH_1
     Actor_Get(ACTOR_FIRST_LOG)->motionFlags = 0;
     Actor_Get(ACTOR_FIRST_LOG + 1)->motionFlags = 0;

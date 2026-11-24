@@ -144,9 +144,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, state->sheet);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_YELLOW_GLOW_SHEET),
                       graphics);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_D),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_BLUE_GLOW_SHEET),
                       state->sheet + BIND_FLARE_PICTURES);
   palette = Resource_GetTableEntry(RESOURCE_JUPITER_DJINN_SHEET);
   palette += SHEET_PALETTE_BYTES;
@@ -172,7 +172,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       x = FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) * BIND_DJINNI_SWAY) +
           originX + shift - DJINNI_WIDTH / 2;
       y = FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * 4) + originY - 24;
-      BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+      BattleEffect_BuildCanvasBlitters(state->args->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, state->sheet + BIND_DJINNI_PICTURE, x, y, DJINNI_WIDTH,
@@ -196,7 +196,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     // for every target.
     for (member = 0; member != 1; member++) {
       memberFrame = frame - member * 8;
-      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+      actor = BattleObject_GetFar(state->args->targets[member])->actor;
       if (memberFrame >= 0 && memberFrame < 96) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         SET_VECTOR(ScreenPoint_Coordinates(&corner), actor->x.fixed,
@@ -255,7 +255,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -297,9 +297,9 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, state->sheet);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_YELLOW_GLOW_SHEET),
                       graphics);
-  palette = Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_D);
+  palette = Resource_GetTableEntry(RESOURCE_BLUE_GLOW_SHEET);
   Decompress_TaggedLz(palette, state->sheet + BIND_FLARE_PICTURES);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Projection_ScaledUnit(state->args->targets[0], &anchor);
@@ -330,7 +330,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     // for every target.
     for (member = 0; member != 1; member++) {
       memberFrame = frame - member * 8;
-      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+      actor = BattleObject_GetFar(state->args->targets[member])->actor;
       if (memberFrame >= 0 && memberFrame < 96) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         SET_VECTOR(ScreenPoint_Coordinates(&corner), actor->x.fixed,
@@ -388,7 +388,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

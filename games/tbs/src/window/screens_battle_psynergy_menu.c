@@ -106,8 +106,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
                                  0);
           Window_SetTilemapEntry(window, PSYNERGY_COST_SECOND_TILE, 12, i * 2,
                                  0);
-          Ability_LoadGlyph(encodedAction & ACTION_ID_MASK, 0, &iconSlots[i],
-                            &glyph, 1);
+          Ability_BuildIconTiles(encodedAction & ACTION_ID_MASK, 0,
+                                 &iconSlots[i], &glyph, 1);
           sprites[i].oam.f.tile = glyph;
 
           if ((action->flags & ABILITY_USABLE_IN_BATTLE) == 0) {

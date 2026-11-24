@@ -46,7 +46,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   state->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_YELLOW_GLOW_SHEET),
                       motes);
   resource = Resource_GetTableEntry(RESOURCE_FLASH_BURST_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
@@ -63,8 +63,8 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
 
   for (i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
     PLANET_DIVER_IMPACT_CHIPS[i].life = 0;
-  user = GetBattleObjectSlotFar(state->args->user)->actor;
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  user = BattleObject_GetFar(state->args->user)->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   if (user->x.fixed > 0)
     stepX = -toFIXED(15);
   else
@@ -259,7 +259,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
     EFFECT_FOR_EACH_TARGET(k, state->args) {
       struct Actor *target =
-          GetBattleObjectSlotFar(state->args->targets[k])->actor;
+          BattleObject_GetFar(state->args->targets[k])->actor;
 
       // Spin the skulls about a point above the target.
       EFFECT_VIEW_FROM_CAMERA(camera);
@@ -300,7 +300,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
@@ -378,7 +378,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor;
 
-      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+      actor = BattleObject_GetFar(state->args->targets[member])->actor;
       if (frame > member * ORBITING_SPIRALS_INTERVAL &&
           frame <
               (member * ORBITING_SPIRALS_INTERVAL) + ORBITING_SPIRALS_LIFE) {
@@ -415,7 +415,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     }
     EFFECT_PRESENT_CANVAS(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();

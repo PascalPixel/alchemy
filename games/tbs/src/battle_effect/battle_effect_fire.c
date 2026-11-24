@@ -35,7 +35,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   else
     BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -45,7 +45,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The embers leave the top of the user in a random direction.
-  user = GetBattleObjectSlotFar(state->args->user)->actor;
+  user = BattleObject_GetFar(state->args->user)->actor;
   bodyTop = user->y.fixed + BattleUnit_GetEffectHeightFar(state->args->user);
   for (i = 0; i != FIRE_EMBERS; i++) {
     struct Particle *ember = &PARTICLES[i];
@@ -107,7 +107,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
         s32 vy;
         s32 vz;
 
-        target = GetBattleObjectSlotFar(
+        target = BattleObject_GetFar(
                      state->args->targets[i % state->args->targetCount])
                      ->actor;
         vx = ember->velocityX += (target->x.fixed - ember->x) >> 9;
@@ -165,7 +165,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Task_Remove(BattleCamera_ApplyPhasedDelta);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();

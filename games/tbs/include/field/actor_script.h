@@ -153,7 +153,7 @@ enum ActorScriptValue {
   SW_BOUNCE = 20,
   SW_GRAVITY = 21,
   SW_GROUND = 22,
-  SW_RISE_BASE_Y = 23, ///< Actor.riseBaseY, scene code's own word
+  SW_SCENE_WORD = 23,  ///< Actor.sceneWord, scene code's own word
   SW_SPRITE = 24,      ///< the sprite, or its list of four
   SW_SPRITE_KIND = 25, ///< Actor.spriteStorageKind
   SW_MOTION = 26,
@@ -173,8 +173,8 @@ enum ActorScriptValue {
   SW_USER_VALUE = 36,
   SW_WATCHED_ACTOR = 37, ///< the actor it follows or faces
   SW_HOOK = 38,
-  SW_RISE_COUNTER = 39, ///< Actor.riseCounter, scene code's own byte
-  SW_RISE_ENABLED = 40  ///< Actor.riseEnabled, scene code's own byte
+  SW_SCENE_COUNTER = 39, ///< Actor.sceneCounter, scene code's own byte
+  SW_SCENE_BYTE = 40     ///< Actor.sceneByte, scene code's own byte
 };
 
 #include "field/script_operands.h"

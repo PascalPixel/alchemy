@@ -192,7 +192,7 @@ struct MainRoutineState {
   s8 avoidByItem;      ///< Avoid came from an item (the Sacred Feather)
   /// Halt: the stopped actor's sprite colour mode, which Halt flickers and
   /// puts back when the actor resumes.
-  s8 pausedPose;
+  s8 pausedColorMode;
   s16 haltedActor; ///< Halt: the stopped actor; -1 for none
   s16 cloaked;     ///< 1 under Cloak, which prevents battles
   /// Halt: the stopped actor's per-frame update, put back when it resumes.

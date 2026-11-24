@@ -24,7 +24,7 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 code, s32 layers,
                                                struct Window *input, s32 x,
                                                s32 y);
 struct WindowSprite *
-WindowSprite_CreateWithTransform(s32 icon, struct Window *input, s32 x, s32 y);
+WindowSprite_CreateOverlaidIcon(s32 icon, struct Window *input, s32 x, s32 y);
 struct WindowSprite *WindowSprite_CreateFromTable(s32 table_entry,
                                                   struct Window *input, s32 x,
                                                   s32 y);
@@ -32,7 +32,7 @@ struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
                                      struct Window *window, s32 x, s32 y);
 void Portrait_Reload(u32 side, s32 character, s32 unused);
 void WindowSprite_SetMotion(struct WindowSprite *sprite, s32 mode);
-void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority);
+void WindowSprite_SetPriority(void *sprite, s32 priority);
 void ScanlineWindow_FillSpans(void *spans);
 void BgScreen_FillRect(s32 x, s32 y, u32 width, u32 height, s32 value);
 
@@ -55,7 +55,7 @@ s32 Save_ScanFileSummaries(void);
 u32 Save_BuildFileSummary(void);
 s16 Save_WriteCurrentFile(void);
 s32 Save_WriteFile(s32 file);
-s32 Save_ProcessSelectedFile(void);
+s32 Save_WriteLinkTallies(void);
 s32 Save_ConfirmAndProcessSelectedFile(void);
 s32 Save_CopyFile(void);
 s32 Save_EraseSelectedFile(void);
@@ -76,7 +76,7 @@ void FileList_DrawSummary(struct Window *win, struct SaveFileSummary *rec);
 s32 FileList_SelectFile(s32 file, s32 mode);
 s32 Save_ToChosenFile(void);
 s32 Save_ChooseAndLoadFile(s32 mode);
-s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
+s32 PointingHand_LoadIntoFreeSlot(void);
 s32 NameEntry_AcceptsMark(s32 mark, s32 letter);
 s32 NameEntry_CountLetters(const u8 *name);
 void Window_CopyTilemapRegion(const struct Window *window, const void *source);
@@ -103,26 +103,26 @@ void WindowSprite_Pulse(struct WindowSprite *obj);
 
 struct BattleAction;
 struct AbilityDefinition;
-struct GlyphPalette;
+struct IconPalette;
 struct PsynergyEntry;
 struct BattleCommandRowState;
 
-UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void);
+UNREAD_RESULT RangeIcon_BuildTiles(void);
 UNREAD_RESULT RangeIcon_Draw(struct Window *window, s32 x, s32 y, s32 pattern,
                              s32 unused);
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
-void Link_DrawPageArrows(s32 offset);
+void PageArrows_Draw(s32 offset);
 void Graphics_ExpandVramTilesByColorTable(u16 *dst);
 s32 StatusIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 AbilityIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 Portrait_Load(u32 member, s32 cacheSlot);
 s32 WindowSprite_GetPointerTiles(s32 no);
-void Icon_Decompress(GlyphTransfer *state);
+void Icon_Decompress(IconTransfer *state);
 struct Window *Link_CreateCountdownLabelWindow(void);
 s32 CommandIcon_ReloadSlot(s32 slotIndex, s32 icon);
-void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
+void BattleCommandRow_LoadIconTiles(struct IconPalette *palette, s32 glyph,
                                     s32 tile);
 void BattleCommandRow_LoadIcon(struct BattleCommandRowState *state, s32 index,
                                u32 kind);
@@ -186,14 +186,14 @@ enum FileAction {
 
 /// What IconMenu_ChooseSendOption offers.
 enum ResourceLayoutMode {
-  RESOURCE_LAYOUT_TRANSFER_METHOD = 0, ///< Password or Cable
-  RESOURCE_LAYOUT_PASSWORD_LEVEL = 1   ///< Gold, Silver or Bronze
+  SEND_OPTION_TRANSFER_METHOD = 0, ///< Password or Cable
+  SEND_OPTION_PASSWORD_LEVEL = 1   ///< Gold, Silver or Bronze
 };
 
-/// The places of the transfer method menu (RESOURCE_LAYOUT_TRANSFER_METHOD).
+/// The places of the transfer method menu (SEND_OPTION_TRANSFER_METHOD).
 enum TransferMethod { TRANSFER_METHOD_PASSWORD = 0, TRANSFER_METHOD_CABLE = 1 };
 
-/// The places of the password level menu (RESOURCE_LAYOUT_PASSWORD_LEVEL).
+/// The places of the password level menu (SEND_OPTION_PASSWORD_LEVEL).
 enum PasswordLevel {
   PASSWORD_LEVEL_GOLD = 0,
   PASSWORD_LEVEL_SILVER = 1,

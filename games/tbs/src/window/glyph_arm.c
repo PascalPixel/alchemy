@@ -319,7 +319,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 /// stay in view while the transition covers the rest: each line takes a pair
 /// of halfwords in `scanlineBounds`, the second (left << 8) | right, and a
 /// corner's line is a pixel narrower.
-void Tile_BuildCellTiles(u16 *scanlineBounds, u16 *tilemap) {
+void ScanlineWindow_BuildEdges(u16 *scanlineBounds, u16 *tilemap) {
   u32 tileRow;
   u32 tileColumn;
   s32 left;

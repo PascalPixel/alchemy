@@ -53,7 +53,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, sparkleSheet, 0, 0);
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_BuildCanvasBlitters(0, draw);
 
   for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
     struct Particle *seed = &state->particles[i];
@@ -289,7 +289,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

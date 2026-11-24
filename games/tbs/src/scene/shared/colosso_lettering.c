@@ -39,8 +39,8 @@ static void Colosso_StartLettering(u32 shape, u32 secondHalf) {
 
   gColosso_LetteringTimer = 0;
   gColosso_LetteringScript = (s16 *)script;
-  gColosso_ModeMoveTarget = 0;
-  gColosso_ModeMoveDuration = 0;
+  gColosso_LetteringMoveTarget = 0;
+  gColosso_LetteringMoveDuration = 0;
   gColosso_LetteringPosition = 0;
 }
 

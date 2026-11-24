@@ -21,10 +21,10 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   shop = gMenuState;
   shop->itemWindow = Window_CreateFar(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
   partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
-  cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
-                                        partyWindow, 0, 0);
+  cursorAnchor = WindowSprite_CreateFar(
+      shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, partyWindow, 0, 0);
   cursorAnchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-  cursorAnchor->kind = WINDOW_SPRITE_GLYPH;
+  cursorAnchor->kind = WINDOW_SPRITE_PLAIN;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
   shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;

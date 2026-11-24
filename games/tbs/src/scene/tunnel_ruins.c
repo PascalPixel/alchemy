@@ -285,7 +285,7 @@ static void TunnelRuins_UpdateSecondPillarCells(void);
 static void TunnelRuins_UpdateSmallPillarCells(void);
 static void TunnelRuins_UpdateGreyPillarCells(void);
 
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
@@ -542,10 +542,10 @@ static void TunnelRuins_HopDownStep(void) {
 /// The update functions the stones take, cast to the update slot's type
 /// where they return a value.
 #ifdef UBFIX
-#define UPDATE_BY_RELATIVE_DEPTH Actor_SetFlagBitByRelativeDepth
+#define UPDATE_BY_RELATIVE_DEPTH Actor_UpdateBlockDrawOrder
 #else
 #define UPDATE_BY_RELATIVE_DEPTH                                               \
-  ((void (*)(struct Actor *))Actor_SetFlagBitByRelativeDepth)
+  ((void (*)(struct Actor *))Actor_UpdateBlockDrawOrder)
 #endif
 #ifdef UBFIX
 #define UPDATE_RIDE_STONE_BELOW TunnelRuins_RideStoneBelow
@@ -695,10 +695,10 @@ static void TunnelRuins_HopSouthOrPushSmallPillars(void) {
 static void TunnelRuins_BlowAwayIvyA(void) {
   GameFlag_Set(FLAG_TUNNEL_RUINS_IVY_WEST_HALF_GONE);
   if (GameFlag_Get(FLAG_TUNNEL_RUINS_IVY_EAST_HALF_GONE) != 0) {
-    Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->sceneCounter = 0;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
   } else {
-    Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->sceneCounter = 1;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags |= ACTOR_NOT_TARGETED;
   }
 }
@@ -709,10 +709,10 @@ static void TunnelRuins_BlowAwayIvyA(void) {
 static void TunnelRuins_BlowAwayIvyB(void) {
   GameFlag_Set(FLAG_TUNNEL_RUINS_IVY_EAST_HALF_GONE);
   if (GameFlag_Get(FLAG_TUNNEL_RUINS_IVY_WEST_HALF_GONE) != 0) {
-    Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->sceneCounter = 0;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
   } else {
-    Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->sceneCounter = 1;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags |= ACTOR_NOT_TARGETED;
   }
 }
@@ -1492,11 +1492,11 @@ static void TunnelRuins_UpdateSmallPillarCells(void) {
 /// 19) to (111, 19)) and makes each pillar's cell a wall.
 static void TunnelRuins_UpdateGreyPillarCells(void) {
   MapGrid_CopyCellAttributes(108, 19, 4, 1, 44, 19);
-  PushedActor_FillGridAttributeRectangle(
+  MapGrid_FillCollisionRectangle(
       0, FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_A)->x.fixed),
       FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_A)->z.fixed), 1, 1,
       CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(
+  MapGrid_FillCollisionRectangle(
       0, FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_B)->x.fixed),
       FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_B)->z.fixed), 1, 1,
       CELL_BEHAVIOR_WALL);

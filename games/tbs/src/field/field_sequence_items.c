@@ -141,7 +141,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     state = gFieldState;
 
     if (abilityId != 0) {
-      GameFlag_SetFar(FLAG_ITEM_USE);
+      GameFlag_SetFar(FLAG_PSYNERGY_FROM_ITEM);
       GameFlag_ClearFar(FLAG_NOTHING_HAPPENS);
 
       if (abilityId == ABILITY_RETREAT &&

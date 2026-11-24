@@ -159,7 +159,7 @@ void MapScreen_Initialize(void) {
     state->cursorY.fixed = toFIXED(
         (actor->z.part[0].integer * MAP_SCREEN_HEIGHT) / WORLD_MAP_WORLD_SIZE);
   }
-  state->cursorVramBlock = Resource_LoadFixedBlockBIntoFreeSlotFar();
+  state->cursorVramBlock = PointingHand_LoadIntoFreeSlotFar();
   tile = gVramCacheEntries[state->cursorVramBlock].offset;
   state->nameWindow = Window_CreateFar(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
   state->namedMarker = -1;

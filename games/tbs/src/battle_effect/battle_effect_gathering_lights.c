@@ -68,12 +68,12 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     paletteId = RESOURCE_MERCURY_DJINN_SHEET;
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId),
                   SHEET_PALETTE_BYTES);
-  BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+  BattleEffect_BuildCanvasBlitters(state->args->side, draw);
 
   // The lights fly off the user in every direction.
   EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
   EFFECT_FOR_EACH_TARGET(k, state->args) {
-    struct Actor *user = GetBattleObjectSlotFar(state->args->user)->actor;
+    struct Actor *user = BattleObject_GetFar(state->args->user)->actor;
     s32 height = BattleUnit_GetEffectHeightFar(state->args->user);
 
     for (i = 0; i != GATHERING_LIGHTS_SLOTS; i++) {
@@ -115,7 +115,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 
     EFFECT_FOR_EACH_TARGET(k, state->args) {
       struct Actor *target =
-          GetBattleObjectSlotFar(state->args->targets[k])->actor;
+          BattleObject_GetFar(state->args->targets[k])->actor;
       s32 half = BattleUnit_GetEffectHeightFar(state->args->targets[k]) / 2;
 
       if (frame ==
@@ -165,7 +165,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleEffect_EndCanvasLayer();

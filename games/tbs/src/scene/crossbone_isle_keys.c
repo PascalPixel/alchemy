@@ -299,7 +299,7 @@ static inline void CrossboneIsleKeys_LiftFirstPillar(s32 column,
   Actor_Get(ACTOR_FIRST_PILLAR)->y.fixed = toFIXED(32);
 }
 
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 /// Talking to Bane on the spiked ledge in the south-east of Bane's room while
 /// Halt holds it still: Bane, a Venus Djinni, joins the party.

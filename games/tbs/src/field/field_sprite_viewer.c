@@ -8,7 +8,7 @@
 
 enum {
   /// The copies of the sprite and their places on the ring; a facing kind
-  /// uses 4, 6, 8 or 10 of them (SpriteViewer_BuildProbeRing).
+  /// uses 4, 6, 8 or 10 of them (SpriteViewer_LayOutRing).
   SPRITE_VIEWER_COPY_COUNT = 10,
   SPRITE_VIEWER_SPRITE_LIMIT = 512,    ///< sprite ids 0 to 511 are offered
   SPRITE_VIEWER_ANIMATION_LIMIT = 100, ///< animations 0 to 99
@@ -72,14 +72,14 @@ void SpriteViewer_Run(void) {
   // A sprite animation in SPRITE_COLOR_FILL is painted in colour 3.
   gDecodeFillByte = 3;
 
-  // Only the ring's first word is cleared; SpriteViewer_BuildProbeRing fills
+  // Only the ring's first word is cleared; SpriteViewer_LayOutRing fills
   // it.
   Dma_Fill32Cell(fillWord, 0, ring, 4);
   Dma_Fill32Cell(fillWord, 0, layers, sizeof(layers));
 
   // All four sprite animations start on the first sprite with an image,
   // animation 1, priority 1; only sprite animation 0 is shown.
-  spriteId = SpriteViewer_FindNextSpriteWithPictures(-1, 1);
+  spriteId = SpriteViewer_StepSpriteId(-1, 1);
   for (i = 0; i < ANIM_LAYER_COUNT; i++) {
     layers[i].animationIndex = 1;
     layers[i].priority = 1;
@@ -137,16 +137,16 @@ restart:
   // priorities 0 to 3.
   for (i = 0; i < ANIM_LAYER_COUNT; i++) {
     if (layers[i].enabled != 0) {
-      SpriteViewer_SetGridColumnPriority(i, layers[i].priority);
+      SpriteViewer_SetLayerPriority(i, layers[i].priority);
     } else {
-      SpriteViewer_SetGridColumnPriority(i, SPRITE_VIEWER_HIDDEN_PRIORITY);
+      SpriteViewer_SetLayerPriority(i, SPRITE_VIEWER_HIDDEN_PRIORITY);
     }
-    SpriteViewer_SetGridColumnColorMode(i, layers[i].colorMode);
+    SpriteViewer_SetLayerColorMode(i, layers[i].colorMode);
     SpriteViewer_StartStaggeredAnimations(i, layers[i].animationIndex);
   }
   // The copies are drawn each frame by the task below, from the ring's
   // positions.
-  SpriteViewer_BuildProbeRing(x, y, ring);
+  SpriteViewer_LayOutRing(x, y, ring);
   Task_Add(SpriteViewer_PlaceRing, TASK_PASS_FRAME);
 
 next:
@@ -170,7 +170,7 @@ next:
       if ((*heldKeys & KEY_DOWN) != 0) {
         y++;
       }
-      SpriteViewer_BuildProbeRing(x, y, ring);
+      SpriteViewer_LayOutRing(x, y, ring);
     } else {
       // DEAD: a read of gKeysRepeat whose value goes unused; the ROM keeps
       // the load.
@@ -243,16 +243,14 @@ next:
       if ((*repeatedKeys & KEY_L) != 0) {
         for (i = 0; i < spriteSteps; i++) {
           layers[selectedLayer].spriteId =
-              SpriteViewer_FindNextSpriteWithPictures(
-                  layers[selectedLayer].spriteId, -1);
+              SpriteViewer_StepSpriteId(layers[selectedLayer].spriteId, -1);
         }
         changed = 1;
       }
       if ((*repeatedKeys & KEY_R) != 0) {
         for (i = 0; i < spriteSteps; i++) {
           layers[selectedLayer].spriteId =
-              SpriteViewer_FindNextSpriteWithPictures(
-                  layers[selectedLayer].spriteId, 1);
+              SpriteViewer_StepSpriteId(layers[selectedLayer].spriteId, 1);
         }
         changed = 1;
       }
@@ -267,12 +265,12 @@ next:
       // A hidden sprite animation only remembers the number until it is shown
       // again.
       if (layers[selectedLayer].enabled != 0) {
-        SpriteViewer_SetGridColumnNumber(selectedLayer,
-                                         layers[selectedLayer].spriteId);
-        SpriteViewer_SetGridColumnPriority(selectedLayer,
-                                           layers[selectedLayer].priority);
-        SpriteViewer_SetGridColumnColorMode(selectedLayer,
-                                            layers[selectedLayer].colorMode);
+        SpriteViewer_SetLayerSprite(selectedLayer,
+                                    layers[selectedLayer].spriteId);
+        SpriteViewer_SetLayerPriority(selectedLayer,
+                                      layers[selectedLayer].priority);
+        SpriteViewer_SetLayerColorMode(selectedLayer,
+                                       layers[selectedLayer].colorMode);
         SpriteViewer_StartStaggeredAnimations(
             selectedLayer, layers[selectedLayer].animationIndex);
       }
@@ -299,8 +297,8 @@ next:
         break;
       }
       if (layers[selectedLayer].enabled != 0) {
-        SpriteViewer_SetGridColumnPriority(selectedLayer,
-                                           layers[selectedLayer].priority);
+        SpriteViewer_SetLayerPriority(selectedLayer,
+                                      layers[selectedLayer].priority);
       }
       goto next;
 
@@ -327,8 +325,8 @@ next:
         break;
       }
       if (layers[selectedLayer].enabled != 0) {
-        SpriteViewer_SetGridColumnColorMode(selectedLayer,
-                                            layers[selectedLayer].colorMode);
+        SpriteViewer_SetLayerColorMode(selectedLayer,
+                                       layers[selectedLayer].colorMode);
       }
       goto next;
 
@@ -353,10 +351,10 @@ next:
         }
       } else if (selectedLayer != 0) {
         layers[selectedLayer].enabled ^= 1;
-        SpriteViewer_SetGridColumnPriority(selectedLayer,
-                                           layers[selectedLayer].enabled != 0
-                                               ? layers[selectedLayer].priority
-                                               : SPRITE_VIEWER_HIDDEN_PRIORITY);
+        SpriteViewer_SetLayerPriority(selectedLayer,
+                                      layers[selectedLayer].enabled != 0
+                                          ? layers[selectedLayer].priority
+                                          : SPRITE_VIEWER_HIDDEN_PRIORITY);
         goto next;
       }
     }
@@ -379,7 +377,7 @@ next:
 
 /// Returns the next sprite id after spriteId, stepping by direction (1 or -1)
 /// and wrapping within 0-511, whose metadata has an image (a nonzero width).
-s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction) {
+s32 SpriteViewer_StepSpriteId(s32 spriteId, s32 direction) {
   for (;;) {
     spriteId += direction;
     // Past either end, jump to just beyond the other, so the next step
@@ -405,8 +403,8 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction) {
 /// position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
 /// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part sprite).
-void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
-                                 struct SpritePlacement *positions) {
+void SpriteViewer_LayOutRing(s32 centerX, s32 centerY,
+                             struct SpritePlacement *positions) {
   struct SpritePlacement *pairedPositions;
   s32 angle;
   s32 facingIndex;
@@ -537,8 +535,8 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 /// Sets the colour mode (SpriteColorMode, the sprite animation's draw
 /// parameter) or the priority of one sprite animation of the viewer's ten
 /// sprites.
-SPRITE_VIEWER_DEFINE_SET_LAYER(SpriteViewer_SetGridColumnColorMode, colorMode)
-SPRITE_VIEWER_DEFINE_SET_LAYER(SpriteViewer_SetGridColumnPriority, priority)
+SPRITE_VIEWER_DEFINE_SET_LAYER(SpriteViewer_SetLayerColorMode, colorMode)
+SPRITE_VIEWER_DEFINE_SET_LAYER(SpriteViewer_SetLayerPriority, priority)
 
 /// Starts animationIndex on layerIndex of each of the viewer's ten sprites,
 /// each one a frame (16 timer units) behind the last, so the copies are
@@ -578,7 +576,7 @@ void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex) {
 
 /// Sets spriteId on layerIndex of each of the viewer's ten sprites. Resets each
 /// sprite animation from its new metadata.
-void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
+void SpriteViewer_SetLayerSprite(s32 layerIndex, s32 spriteId) {
   struct Sprite *spriteGroup = gSprites;
   s32 spriteIndex;
 
@@ -638,7 +636,7 @@ void SpriteViewer_PlaceRing(void) {
     pairedFacingStep = DEGtoANG(180);
     count = 4;
     break;
-  // The eighth-turn start matches SpriteViewer_BuildProbeRing's default ring.
+  // The eighth-turn start matches SpriteViewer_LayOutRing's default ring.
   default:
     angle = DEGtoANG(45);
     step = DEGtoANG(90);

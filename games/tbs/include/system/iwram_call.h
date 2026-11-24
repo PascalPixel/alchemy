@@ -14,8 +14,8 @@
 
 /// The IWRAM-resident routines at their fixed addresses, each called through
 /// the inline below it.
-#define Iwram_RatioMulQ14Entry                                                 \
-  FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x0300013c, IwramRatioMulQ14)
+#define Iwram_DivFXEntry                                                       \
+  FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x0300013c, IwramDivFX)
 #define Iwram_ClearWordsEntry                                                  \
   FIXED_ADDRESS((s32 (*)(void *destination, s32 size)), 0x03000164,            \
                 IwramClearWords)
@@ -49,8 +49,8 @@
                 0x03001388, IwramCopyWords)
 
 /// value * FIXED_ONE / divisor: the 16.16 ratio of two 16.16 numbers.
-static inline FIXED Iwram_RatioMulQ14(FIXED divisor, FIXED value) {
-  return Iwram_RatioMulQ14Entry(divisor, value);
+static inline FIXED Iwram_DivFX(FIXED divisor, FIXED value) {
+  return Iwram_DivFXEntry(divisor, value);
 }
 
 /// Clears size bytes, rounded down to whole words, from destination. Returns
@@ -160,8 +160,7 @@ extern u8 IwramMulFXReturnIp[];
 /// Three IWRAM routines' distances in bytes from IwramIrqMain, for code that
 /// calls them from the interrupt handler's address.
 #define Iwram_CopyWordsOffset FIXED_OFFSET(5000, IwramCopyWords, IwramIrqMain)
-#define Iwram_RatioMulQ14Offset                                                \
-  FIXED_OFFSET(316, IwramRatioMulQ14, IwramIrqMain)
+#define Iwram_DivFXOffset FIXED_OFFSET(316, IwramDivFX, IwramIrqMain)
 #define Iwram_SqrtOffset FIXED_OFFSET(472, IwramSqrt, IwramIrqMain)
 
 #endif

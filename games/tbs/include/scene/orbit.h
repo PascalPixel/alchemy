@@ -3,13 +3,13 @@
 
 /// @file
 /// A floating Nut's actor and sprite, seen through the fields its scenes set
-/// (shared/actor_orbit.c and kalay.c): the actor's fields where the Nut keeps
+/// (shared/floating_nut.c and kalay.c): the actor's fields where the Nut keeps
 /// the spot it sways round and how far through the sway it is.
 
 #include "fixed_math.h"
 #include "types.h"
 
-/// A floating Nut's sprite, seen as the attribute bits, palette and state its
+/// A floating Nut's sprite, seen as the attribute bits, slot and count its
 /// scenes set: struct Sprite read a byte at a time.
 typedef struct OrbitingMapActorSprite {
   u8 link[4]; ///< Sprite's queue link
@@ -36,7 +36,7 @@ typedef struct OrbitingMapActorSprite {
   u8 scale[4];
   /// Sprite's slot: the VRAM cache entry the Nut's icon is loaded
   /// into.
-  u8 palette;
+  u8 slot;
   u8 cacheFlags; ///< retainCacheEntry and useOwnScale
   u8 rotation[2];
   u8 width;
@@ -46,7 +46,7 @@ typedef struct OrbitingMapActorSprite {
   u8 lastNo;
   u8 dirty;
   u8 flags;
-  u8 state; ///< Sprite's count of layers; the Nut's scenes zero it
+  u8 count; ///< Sprite's count of layers; the Nut's scenes zero it
 } OrbitingMapActorSprite;
 
 /// A floating Nut's actor: its position, the spot it sways around and
@@ -78,13 +78,13 @@ typedef struct OrbitingMapActor {
   FIXED orbitCenterZ; ///< Actor.targetZ: 16.16 fixed-point pixels
   s32 bounce;
   s32 gravity;
-  s32 riseBaseY;
+  s32 sceneWord;
   OrbitingMapActorSprite *sprite;
   u8 spriteStorageKind;
-  u8 mode; ///< Actor's motionFlags; the Nut's scenes zero it
+  u8 motionFlags; ///< the Nut's scenes zero it
   /// Actor.arrivalAxis, the axis watched for arrival; Scene_FloatNut
   /// zeroes it.
-  u8 state;
+  u8 arrivalAxis;
   u8 conditionResult;
   u8 snapToTarget;
   u8 collisionFlags;
@@ -92,15 +92,15 @@ typedef struct OrbitingMapActor {
   u8 paused;
   /// Actor.retainSpriteCache: the Nut's scenes keep its sprite's VRAM
   /// cache entry.
-  u8 active;
+  u8 retainSpriteCache;
   u8 repeatCount;
   s16 wait;
   u8 refused;
   /// Actor's frozen, which skips steering, terrain, gravity and floating;
   /// the Nut's scenes set it.
-  u8 visible;
-  u8 riseCounter;
-  u8 riseEnabled;
+  u8 frozen;
+  u8 sceneCounter;
+  u8 sceneByte;
   s16 timer;
   u16 userValue;
   struct Actor *watchedActor;

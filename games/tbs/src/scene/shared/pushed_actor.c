@@ -88,7 +88,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
   if (FieldActor_CheckMovementCollision(next, &dst) > 0)
     return;
 
-  if (next->riseCounter != 0)
+  if (next->sceneCounter != 0)
     return;
 
   Actor_SelectAnimation(lead, ANIM_PUSH);
@@ -160,8 +160,8 @@ static UNREAD_RESULT PushedActor_StopBlockedMotion(struct Actor *actor) {
 /// Returns the large thing whose rectangle covers the cell ahead of the leader
 /// (the leader not standing in line with its first column or row), with the
 /// leader's direction, its actor id and its rectangle; or NULL.
-static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
-                                           s32 *rectangle) {
+static struct Actor *PushedActor_FindLargeThingAhead(s32 *direction, s32 *slot,
+                                                     s32 *rectangle) {
   struct FieldState *state = gFieldState;
   struct Actor *player = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Actor **list;
@@ -234,8 +234,8 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
   s32 offset;
 
   probe->callback = 0;
-  actor = Scene_FindActorRegion(&direction, &probe->actorSlot,
-                                &probe->rectangleIndex);
+  actor = PushedActor_FindLargeThingAhead(&direction, &probe->actorSlot,
+                                          &probe->rectangleIndex);
   if (actor == NULL) {
     return 0;
   }
@@ -318,7 +318,7 @@ found:
 /// SE_STOP_ACTION_SE and SE_HEAVY_STOP. Its cells are blocked
 /// (CELL_BEHAVIOR_WALL) at its new place, through the map grid's layer 1
 /// offset, and its old place is given back what was under it.
-UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
+UNUSED static void PushedActor_Roll(struct PushedActorProbe probe) {
   struct MapGridScrollState *state;
   struct Actor *actor;
   struct FieldPosition originalPosition;
@@ -367,9 +367,9 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   tilePosition.x = FIELD_CELL(tilePosition.x);
   tilePosition.z = FIELD_CELL(tilePosition.z);
 
-  PushedActor_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
-                                         horizontalExtent, verticalExtent,
-                                         CELL_BEHAVIOR_NORMAL);
+  MapGrid_FillCollisionRectangle(0, tilePosition.x, tilePosition.z,
+                                 horizontalExtent, verticalExtent,
+                                 CELL_BEHAVIOR_NORMAL);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.5, 0.1);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(15);
@@ -441,12 +441,12 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
     MapGrid_CopyCellAttributes(
         probe.position.x, probe.position.z, horizontalExtent, verticalExtent,
         horizontalOrigin + probe.position.x, verticalOrigin + probe.position.z);
-    PushedActor_FillGridAttributeRectangle(0, probe.position.x,
-                                           probe.position.z, horizontalExtent,
-                                           verticalExtent, CELL_BEHAVIOR_WALL);
-    PushedActor_FillGridAttributeRectangle(2, probe.position.x,
-                                           probe.position.z, horizontalExtent,
-                                           verticalExtent, CELL_BEHAVIOR_WALL);
+    MapGrid_FillCollisionRectangle(0, probe.position.x, probe.position.z,
+                                   horizontalExtent, verticalExtent,
+                                   CELL_BEHAVIOR_WALL);
+    MapGrid_FillCollisionRectangle(2, probe.position.x, probe.position.z,
+                                   horizontalExtent, verticalExtent,
+                                   CELL_BEHAVIOR_WALL);
 
     {
       originalPosition.x +=
@@ -462,9 +462,9 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
     MapGrid_CopyCellAttributeRect(horizontalOrigin, verticalOrigin,
                                   horizontalExtent, verticalExtent,
                                   originalPosition.x, originalPosition.z);
-    PushedActor_FillGridAttributeRectangle(
-        2, originalPosition.x, originalPosition.z, horizontalExtent,
-        verticalExtent, CELL_BEHAVIOR_NORMAL);
+    MapGrid_FillCollisionRectangle(2, originalPosition.x, originalPosition.z,
+                                   horizontalExtent, verticalExtent,
+                                   CELL_BEHAVIOR_NORMAL);
   }
   Scene_PlayQueuedMusic();
 }
@@ -472,7 +472,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 /// Blocks large thing id's cells (CELL_BEHAVIOR_WALL) where it stands,
 /// through the map grid's layer 1 offset; returns 0 when its sprite is no large
 /// thing.
-UNUSED static s32 Scene_RedrawActorRectangle(s32 id) {
+UNUSED static s32 PushedActor_BlockFootprint(s32 id) {
   struct MapGridScrollState *grid = gMapGridState[0];
   struct Actor *actor = Actor_GetById(id);
   struct PushedActorProbe probe;
@@ -524,9 +524,9 @@ UNUSED static s32 Scene_RedrawActorRectangle(s32 id) {
   MapGrid_CopyCellAttributeRect(probe.position.x, probe.position.z, width,
                                 height, idx + probe.position.x,
                                 dstZ + probe.position.z);
-  PushedActor_FillGridAttributeRectangle(0, probe.position.x, probe.position.z,
-                                         width, height, CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(2, probe.position.x, probe.position.z,
-                                         width, height, CELL_BEHAVIOR_WALL);
+  MapGrid_FillCollisionRectangle(0, probe.position.x, probe.position.z, width,
+                                 height, CELL_BEHAVIOR_WALL);
+  MapGrid_FillCollisionRectangle(2, probe.position.x, probe.position.z, width,
+                                 height, CELL_BEHAVIOR_WALL);
   return 1;
 }

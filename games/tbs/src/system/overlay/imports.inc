@@ -138,7 +138,7 @@
 	export Save_ChooseAndLoadFile, Save_ChooseAndLoadFileFar
 	export Save_CopyFile, Save_CopyFileFar
 	export Save_EraseSelectedFile, Save_EraseSelectedFileFar
-	export Save_ProcessSelectedFile, Save_ProcessSelectedFileFar
+	export Save_WriteLinkTallies, Save_WriteLinkTalliesFar
 	export Save_ScanFileSummaries, Save_ScanFileSummariesFar
 	export NameEntry_EditMemberName, NameEntry_EditMemberNameFar
 	export DebugBrowser_Icons, DebugBrowser_IconsFar
@@ -147,11 +147,11 @@
 	export YesNoMenu_Run, YesNoMenu_RunFar
 	export Menu_SelectCoinsOrMedals, Menu_SelectCoinsOrMedalsFar
 	export ColossoMenu_Choose, ColossoMenu_ChooseFar
-	export Resource_LoadFixedBlockBIntoFreeSlot, Resource_LoadFixedBlockBIntoFreeSlotFar
+	export PointingHand_LoadIntoFreeSlot, PointingHand_LoadIntoFreeSlotFar
 	export Graphics_ExpandVramTilesByColorTable, Graphics_ExpandVramTilesByColorTableFar
 	export Menu_AnimateSelectionToEntry, Menu_AnimateSelectionToEntryFar
 	export Save_CountFilesExcludingSent, Save_CountFilesExcludingSentFar
-	export Link_DrawPageArrows, Link_DrawPageArrowsFar
+	export PageArrows_Draw, PageArrows_DrawFar
 @ Game bank (far_call/game.s)
 	export Djinn_GetRecoveryTable, Djinn_GetRecoveryTableFar
 	export Unit_Get, Unit_GetFar
@@ -184,11 +184,11 @@
 	export Djinn_Transfer, Djinn_TransferFar
 	export Unit_LevelUpTo, Unit_LevelUpToFar
 	export Party_AdjustCoins, Party_AdjustCoinsFar
-	export Item_AdjustCounter, Item_AdjustCounterFar
+	export Item_AdjustRareItemStock, Item_AdjustRareItemStockFar
 	export Inventory_Count, Inventory_CountFar
 	export PartyInventory_HasSpace, PartyInventory_HasSpaceFar
 	export Party_RestoreHpPp, Party_RestoreHpPpFar
-	export Party_RestorePpOfLitElements, Party_RestorePpOfLitElementsFar
+	export Party_RestorePpInLighthouse, Party_RestorePpInLighthouseFar
 	export Party_StartChildhood, Party_StartChildhoodFar
 	export Party_EndChildhood, Party_EndChildhoodFar
 	export Inventory_Discard, Inventory_DiscardFar
@@ -286,7 +286,7 @@
 	export Event_WaitTransitionFrames, Event_WaitTransitionFramesFar
 	export LineScroll_InitWave, LineScroll_InitWaveFar
 	export LineScroll_Stop, LineScroll_StopFar
-	export FieldEffect_PlayCueAndStartEmitterOnTarget, FieldEffect_PlayCueAndStartEmitterOnTargetFar
+	export Chest_OpenAndShowItem, Chest_OpenAndShowItemFar
 	export ItemDisplay_ShowPicture, ItemDisplay_ShowPictureFar
 	export ItemDisplay_ShowItem, ItemDisplay_ShowItemFar
 	export TreasureSpot_SetActorPosition, TreasureSpot_SetActorPositionFar
@@ -311,7 +311,7 @@
 	export Scene_PlayMusic, Scene_PlayMusicFar
 	export Djinn_JoinParty, Djinn_JoinPartyFar
 	export FieldParticle_HasPendingTarget, FieldParticle_HasPendingTargetFar
-	export FieldParticle_SetActorMode, FieldParticle_SetActorModeFar
+	export FieldParticle_SetAnimation, FieldParticle_SetAnimationFar
 	export FieldParticle_SetCallback, FieldParticle_SetCallbackFar
 	export FieldParticle_Initialize, FieldParticle_InitializeFar
 	export FieldEffect_ClearOwnedSlot, FieldEffect_ClearOwnedSlotFar
@@ -324,7 +324,7 @@
 	export Actor_WalkByAndWaitById, Actor_WalkByAndWaitByIdFar
 	export Actor_WatchAndSetScript, Actor_WatchAndSetScriptFar
 	export FieldPsynergy_HaltActor, FieldPsynergy_HaltActorFar
-	export Actor_Snapshot, Save_CaptureActorsFar
+	export Actor_Snapshot, Actor_SnapshotFar
 	export Actor_Restore, Actor_RestoreFar
 	export WorldMap_StartZoom, WorldMap_StartZoomFar
 	export Event_WaitForZoomTransition, Event_WaitForZoomTransitionFar
@@ -351,7 +351,7 @@
 @ Credits bank (far_call/credits.s)
 	export Import_CreditsRun, Credits_RunFar
 @ Title bank (far_call/title.s)
-	export Title_ShowIntro, Title_ShowIntroFar
+	export Title_ShowTitleScreen, Title_ShowTitleScreenFar
 	export Title_ShowNintendoLogo, Title_ShowNintendoLogoFar
 	export Import_TitleShowCamelotLogo, Title_ShowCamelotLogoFar
 @ Sound bank (far_call/sound.s)

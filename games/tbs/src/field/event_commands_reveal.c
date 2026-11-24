@@ -86,8 +86,8 @@ void FieldPsynergy_Reveal(void) {
   ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_RIPPLE);
   state = HEAP_SLOT_BLOCK(HEAP_SLOT_SCREEN_TRANSITION);
   target = Actor_Lookup(gMainRoutineState.leaderActorId);
-  state->centreX = target->x.fixed;
-  state->centreY = target->z.fixed - target->y.fixed;
+  state->centerX = target->x.fixed;
+  state->centerY = target->z.fixed - target->y.fixed;
   // The BG palettes turn grey in one frame.
   PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
@@ -106,8 +106,8 @@ void FieldPsynergy_Reveal(void) {
   // Record the centre (in pixels) and the time in the field state, and put
   // markers nearby.
   fieldState->revealActive = 1;
-  fieldState->revealCenterX = state->centreX / FIXED_ONE;
-  fieldState->revealCenterY = state->centreY / FIXED_ONE;
+  fieldState->revealCenterX = state->centerX / FIXED_ONE;
+  fieldState->revealCenterY = state->centerY / FIXED_ONE;
   fieldState->revealFrames = REVEAL_FRAMES;
   fieldState->effectTimerRunning = 1;
   FieldEffect_SpawnRevealMarkers();
@@ -148,7 +148,7 @@ void FieldPsynergy_EndReveal(void) {
       Field_RunPsynergyEvent(event, gMainRoutineState.leaderActorId,
                              eventTarget);
 
-    if (effectState->childOption == 0) {
+    if (effectState->sceneVariant == 0) {
       transition->nextMode = 0;
       transition->duration = 1;
       transition->step = 1;

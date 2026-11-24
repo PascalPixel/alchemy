@@ -124,8 +124,8 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
     }
   }
 
-  Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
-  BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
+  BattleTransition_BuildAffineTilemap(BG_SCREEN_BLOCK(7));
+  BattleTransition_BuildFlatTilemap(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
 }
 
 /// Allocates the zoomed background's scanline state.
@@ -174,8 +174,8 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
-  Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
-  BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
+  BattleTransition_BuildAffineTilemap(BG_SCREEN_BLOCK(7));
+  BattleTransition_BuildFlatTilemap(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
   // BG1's last row is left clear.
   Iwram_ClearWords((BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN) + BG_SCREEN_SIZE -
                     BG_SCREEN_WIDTH * 2),
@@ -227,7 +227,7 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   // centre stays put and the picture's top row is the first line below the
   // plane's hidden lines.
   line = scanlines->lines[scanlines->page ^ 1];
-  ratio = Iwram_RatioMulQ14(scale, FIXED_ONE);
+  ratio = Iwram_DivFX(scale, FIXED_ONE);
   step = ratio >> 8;
   affine = &scanlines->affine;
   affine->pa = step;
@@ -242,7 +242,7 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   affine->y = y;
 
   // The first line that reaches the picture's lower half at this zoom.
-  lowerHalfLine = FIXEDtoINT(Iwram_RatioMulQ14(
+  lowerHalfLine = FIXEDtoINT(Iwram_DivFX(
                       (s16)step, (BACKGROUND_UPPER_HALF_LINES << 8) - y)) +
                   1;
 
@@ -291,7 +291,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   origin[1] = 0;
   origin[2] = 0;
 
-  nearDepth = Iwram_RatioMulQ14(distance, nearShare);
+  nearDepth = Iwram_DivFX(distance, nearShare);
   Projection_Set(distance, nearDepth, distance * 2);
   Matrix_Initialize();
   Matrix_TranslateVector(focus);
@@ -313,7 +313,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
       (BATTLE_PROJECTION_CENTER_Y - originOnScreen[1]) << 8, scale);
   halfFocal = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
   focal = halfFocal * 2;
-  nearDepth = Iwram_RatioMulQ14(focal, nearShare);
+  nearDepth = Iwram_DivFX(focal, nearShare);
   Projection_Set(focal, nearDepth, halfFocal * 4);
 }
 
@@ -339,7 +339,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   origin[2] = 0;
 
   // The eye BATTLE_CAMERA_DISTANCE back from the focus.
-  nearDepth = Iwram_RatioMulQ14(distance, nearShare);
+  nearDepth = Iwram_DivFX(distance, nearShare);
   Projection_Set(distance, nearDepth, distance * 2);
   Matrix_Initialize();
   Matrix_TranslateVector(focus);
@@ -363,7 +363,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   // The zoom scales the focal length and both depths.
   halfFocal = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
   focal = halfFocal * 2;
-  nearDepth = Iwram_RatioMulQ14(focal, nearShare);
+  nearDepth = Iwram_DivFX(focal, nearShare);
   Projection_Set(focal, nearDepth, halfFocal * 4);
 }
 

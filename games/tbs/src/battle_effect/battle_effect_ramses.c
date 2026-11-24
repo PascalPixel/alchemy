@@ -53,11 +53,11 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   PLTT_BACKDROP = 0;
   BG_PLTT[1] = 0;
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   // The statue, its fist and wrist, then six rocks.
-  BattleEffect_SpawnObjects(RAMSES_FIRST_ROCK_SPRITE, SPRITE_RAMSES, 2);
+  BattleEffect_CreateSprites(RAMSES_FIRST_ROCK_SPRITE, SPRITE_RAMSES, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
@@ -82,7 +82,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, RESOURCE_DESERT_BACKDROP,
                            0);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, state->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -126,7 +126,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       position.x =
           INTtoFIXED(gRamses_StatueColumns[i]) + statue.x - toFIXED(32);
       position.y = INTtoFIXED(gRamses_StatueRows[i]) + statue.y - toFIXED(32);
-      Actor_ApplyProjectedPlacementFar(state->sprites[i], &position, &scale, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], &position, &scale,
+                                        0);
     }
     // The fist circles.
     if (frame < RAMSES_FIRST_SLAM) {
@@ -168,11 +169,11 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       position.x = fist.x;
       position.height = -toFIXED(256);
       position.y = fist.y - toFIXED(256);
-      Actor_ApplyProjectedPlacementFar(state->sprites[RAMSES_FIST_SPRITE],
-                                       &position, &scale, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[RAMSES_FIST_SPRITE],
+                                        &position, &scale, 0);
       position.x = fist.x + toFIXED(32);
-      Actor_ApplyProjectedPlacementFar(state->sprites[RAMSES_FIST_SPRITE + 1],
-                                       &position, &scale, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[RAMSES_FIST_SPRITE + 1],
+                                        &position, &scale, 0);
     }
     position.height = 0;
     // The rocks fall.
@@ -182,7 +183,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       if (rock->variant != 2) {
         position.x = rock->x;
         position.y = rock->y;
-        Actor_ApplyProjectedPlacementFar(
+        Render_ApplyProjectedPlacementFar(
             state->sprites[RAMSES_FIRST_ROCK_SPRITE + i], &position, &scale, 0);
         rock->x += rock->velocityX;
         rock->y += rock->velocityY;

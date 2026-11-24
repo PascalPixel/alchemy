@@ -158,7 +158,7 @@
 #define ACTION_REPORTED -1 ///< the action failed and its message is shown
 #define ACTION_NOTHING_TO_SHOW -2 ///< nothing to stage or show
 
-/// BattleStaging_HideField's mode: a summon hides its user too.
+/// BattleStaging_RunFullScreen's mode: a summon hides its user too.
 #define STAGING_HIDE_ACTOR 1
 
 /// BattleStaging_RunPsynergyCast's mode: what is cast, which decides the

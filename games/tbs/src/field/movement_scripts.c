@@ -44,7 +44,7 @@ const u8 gMessageSpeed_VoiceRates[] = {
     [MESSAGE_SPEED_FAST] = 10,
 };
 
-const s32 gFieldEffect_WatchedActorScript[] = {
+const s32 gEmote_BubbleScript[] = {
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 2),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 4),
     SC_WAIT(2),
@@ -105,7 +105,7 @@ const s32 gMovementType_WanderScript[] = {
 const s32 gMovementType_StandScript[] = {SC_END};
 
 const s32 gMovementType_ResetActionScript[] = {
-    SC_CALL(Actor_ClearChildAndCollisionFlags),
+    SC_CALL(Actor_ClearSpriteAndCollisionFlags),
     SC_END,
 };
 

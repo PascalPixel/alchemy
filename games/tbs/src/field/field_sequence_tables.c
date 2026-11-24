@@ -43,12 +43,12 @@ const s16 gFieldEffect_TargetRangeByMode[25] = {
     -1,
 };
 
-/// The palette cycle of Mind Read's caster (Actor_SetSpritePalette,
+/// The palette cycle of Mind Read's caster (Actor_SetLayersColorMode,
 /// (gFrameCount >> 1) & 7): palettes 1 to 4 and back to 0, two frames each.
 const u8 gMindRead_CasterPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
 
 /// Grows from half size to full size, a step every 2 frames.
-const s32 gFieldEffect_ParticleEmitterScript[] = {
+const s32 gItemDisplay_GrowInScript[] = {
     SC_SET(SW_SCALE_X, FIXED_ONE / 2),
     SC_SET(SW_SCALE_Y, FIXED_ONE / 2),
     SC_WAIT(2),
@@ -68,7 +68,7 @@ const s32 gFieldEffect_ParticleEmitterScript[] = {
 
 /// Pulses twice, to 1.5 times full size, then rests, over and over: the found
 /// item's picture held over the leader (field_sequence_item_display.c).
-const s32 gFieldEffect_RisingPulseScript[] = {
+const s32 gItemDisplay_PulseScript[] = {
     SC_WAIT(10),
     SC_SET(SW_SCALE_X, FIXED_ONE * 11 / 8),
     SC_SET(SW_SCALE_Y, FIXED_ONE * 11 / 8),
@@ -109,7 +109,7 @@ const s32 gFieldEffect_ParticleScript[] = {
 
 /// A Reveal marker: stays while Field_IsRevealActive returns nonzero (SC_CALL
 /// runs it again each frame), and releases itself once Reveal ends.
-const s32 gFieldEffect_MarkerParticleScript[] = {
+const s32 gReveal_MarkerScript[] = {
     SC_CALL(Field_IsRevealActive),
     SC_RELEASE,
 };
@@ -352,7 +352,7 @@ const s16 gLineScroll_WaveSine[256] = {
 /// {dx, dy, tile, shape, size} for each of the 16 frames of a raindrop's
 /// splash (event_commands_weather.c): dx and dy in screen pixels from its
 /// spot, tile from its first tile.
-const s16 gFieldEffect_GroundParticleFrames[80] = {
+const s16 gWeather_RainSplashFrames[80] = {
     -8, -12, 20, 0, 1,
     -8, -12, 20, 0, 1,
     -8, -12, 20, 0, 1,
@@ -442,7 +442,7 @@ const s32 gFieldEffect_FragmentScript[] = {
 
 /// An angle for each value of the right, left, up and down bits of the +Control
 /// Pad; DPAD_ANGLE_NONE for none (Input_GetDpadAngle, event_commands_move.c).
-const u16 gFieldEffect_CyclePatternWords[16] = {
+const u16 gInput_DpadAngles[16] = {
     DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,
     FACING_NORTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_NORTH,
     FACING_SOUTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_SOUTH,
@@ -455,8 +455,8 @@ const u16 gFieldEffect_CyclePatternWords[16] = {
 const u8 gFieldEffect_QuadrantModes[4] = {3, 1, 2, 1};
 
 /// Waits 60 frames and releases the actor. Word +4 is
-/// gFieldEffect_HeavyImpactScript.
-const s32 gFieldEffect_BurstParticleActorScript[] = {
+/// gForce_FistScript.
+const s32 gGrowth_LeafScript[] = {
     SC_WAIT(60),
     SC_RELEASE,
 };
@@ -464,11 +464,11 @@ const s32 gFieldEffect_BurstParticleActorScript[] = {
 /// The same four bytes as gFieldEffect_QuadrantModes; nothing reads them.
 const u8 gUnused_BattleEffectBytes[4] = {3, 1, 2, 1};
 
-/// Waits to arrive, sets off SpawnHeavyImpactEffect (event_commands_lift.c)
+/// Waits to arrive, sets off FieldEffect_SpawnHeavyImpact (event_commands_lift.c)
 /// and releases the actor.
-const s32 gFieldEffect_HeavyImpactScript[] = {
+const s32 gForce_FistScript[] = {
     SC_SYNC,
-    SC_CALL(SpawnHeavyImpactEffect),
+    SC_CALL(FieldEffect_SpawnHeavyImpact),
     SC_RELEASE,
 };
 
@@ -491,7 +491,7 @@ const s32 gFieldEffect_LongEffectScript[] = {
 /// The colour modes a Halted actor flickers through at random
 /// (FieldPsynergy_UpdateHaltedActor, event_commands_halt.c): its own colours
 /// twice as often as each of the five channel swaps and grey.
-const s8 gFieldEffect_RandomChildValues[8] = {
+const s8 gHalt_FlickerColorModes[8] = {
     SPRITE_COLOR_NORMAL, SPRITE_COLOR_NORMAL, SPRITE_COLOR_GRB, SPRITE_COLOR_RBG,
     SPRITE_COLOR_BGR, SPRITE_COLOR_GBR, SPRITE_COLOR_BRG, SPRITE_COLOR_GREY,
 };

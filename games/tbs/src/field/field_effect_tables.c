@@ -9,7 +9,7 @@
 #include "system/io_reg.h"
 
 /// The cast colours: blue, green, red, cyan, magenta, yellow, grey and white.
-const s32 gFieldEffect_TargetColors[] = {
+const s32 gFieldPsynergy_CastColors[] = {
     PALETTE_TINT_CUSTOM | RGB(4, 4, 16),  PALETTE_TINT_CUSTOM | RGB(4, 16, 4),
     PALETTE_TINT_CUSTOM | RGB(16, 4, 4),  PALETTE_TINT_CUSTOM | RGB(4, 16, 16),
     PALETTE_TINT_CUSTOM | RGB(16, 4, 16), PALETTE_TINT_CUSTOM | RGB(16, 16, 4),

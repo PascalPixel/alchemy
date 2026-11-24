@@ -19,7 +19,7 @@ struct ScreenTransitionDissolveState {
   /// ScreenTransitionState's solidTile, as 4-bit pixels two a byte: the
   /// dissolve sets two more each frame and copies the tile to BG character
   /// block 0.
-  u8 paletteNibbles[34];
+  u8 solidTilePixels[34];
   /// The progress, moved from start to end over duration frames: the
   /// TRANSITION_OPEN bit says whether the dissolve fills or clears the tile,
   /// the bits below it how far it has gone.
@@ -27,15 +27,15 @@ struct ScreenTransitionDissolveState {
   /// ScreenTransitionState's centre, layers and spare byte; the dissolve
   /// reads none of them.
   ///@{
-  s32 centreX;
-  s32 centreY;
-  s16 mask;
-  s16 active;
+  s32 centerX;
+  s32 centerY;
+  s16 insideLayers;
+  s16 outsideLayers;
   u8 unused;
   ///@}
   /// ScreenTransitionState's page: the dissolve flips it each frame and
   /// never reads it.
-  u8 ditherToggle;
+  u8 page;
   s8 start;    ///< the value's first step
   s8 end;      ///< the value's last step
   s8 duration; ///< frames; 0 when the value is not moving
@@ -45,7 +45,7 @@ struct ScreenTransitionDissolveState {
 /// The map grid state as a transition reads it: the display control bits the
 /// scene shows, and the two lines where the centre-line transition blanks the
 /// screen and shows it again, with the HBlank interrupt's copies of them.
-struct ScreenTransitionWin {
+struct ScreenTransitionDisplay {
   /// The map grid state's view, shake and script (WorldMapView's); no
   /// transition reads them.
   ///@{
@@ -90,14 +90,14 @@ struct ScreenTransitionState {
   u16 value;
   /// 16.16 fixed-point pixels: the centre of Reveal's rippling ellipse
   /// (WINDOW_TRANSITION_RIPPLE), the leader's place on the map.
-  FIXED centreX;
-  FIXED centreY; ///< as centreX: the leader's z less its height
+  FIXED centerX;
+  FIXED centerY; ///< as centerX: the leader's z less its height
   /// The layers shown inside the window: WININ, or WINOUT in the modes that
   /// swap the two.
-  s16 mask;
+  s16 insideLayers;
   /// The layers shown outside it, BG0 alone when a transition starts: WINOUT,
   /// or WININ in the modes that swap the two.
-  s16 active;
+  s16 outsideLayers;
   u8 unused;
   u8 page;     ///< the pages entry shown; the next is built in the other
   s8 start;    ///< the value's first step
@@ -111,16 +111,16 @@ struct ScreenTransitionState {
 STATIC_ASSERT(offsetof(struct ScreenTransitionDissolveState, value) == 1322);
 STATIC_ASSERT(offsetof(struct ScreenTransitionDissolveState, start) == 1338);
 STATIC_ASSERT(sizeof(struct ScreenTransitionDissolveState) == 1344);
-STATIC_ASSERT(offsetof(struct ScreenTransitionWin, dispcnt) == 20);
-STATIC_ASSERT(offsetof(struct ScreenTransitionWin, firstLine) == 256);
-STATIC_ASSERT(offsetof(struct ScreenTransitionWin, irqPhase) == 264);
-STATIC_ASSERT(sizeof(struct ScreenTransitionWin) == 268);
+STATIC_ASSERT(offsetof(struct ScreenTransitionDisplay, dispcnt) == 20);
+STATIC_ASSERT(offsetof(struct ScreenTransitionDisplay, firstLine) == 256);
+STATIC_ASSERT(offsetof(struct ScreenTransitionDisplay, irqPhase) == 264);
+STATIC_ASSERT(sizeof(struct ScreenTransitionDisplay) == 268);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, pages) == 0);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, solidTile) == 1288);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, page) == 1337);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, mode) == 1320);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, centreX) == 1324);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, mask) == 1332);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, centerX) == 1324);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, insideLayers) == 1332);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, nextMode) == 1342);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, duration) == 1340);
 STATIC_ASSERT(sizeof(struct ScreenTransitionState) == 1344);

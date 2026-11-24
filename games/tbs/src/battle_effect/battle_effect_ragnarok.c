@@ -53,7 +53,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
 
-  user = GetBattleObjectSlotFar(args->user)->actor;
+  user = BattleObject_GetFar(args->user)->actor;
   // Nothing in the effect or the battle reads the variant afterwards.
   // XXX (no evidence): why it is forced to the stronger one; the store
   // changes nothing the game shows, so only the author's intent would say.
@@ -61,7 +61,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_FetchRectangleBlitters(state->args->side, blit);
+  BattleEffect_BuildCanvasBlitters(state->args->side, blit);
   // The user takes its leap pose and animates fast until the end.
   Actor_SelectAnimationFar(user, POSE_LEAP);
   Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL * 3);
@@ -69,7 +69,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FLAME_BLADE_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              state->sheet + RAGNAROK_FLASH_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
 
   // Flashes and sparks for three columns, though only two strike: the third's
   // random draws are still taken.

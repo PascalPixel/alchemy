@@ -7,7 +7,7 @@
 
 #include "types.h"
 
-extern u16 gUnused_BitOperands[];
-extern u16 gBattleEffect_BitOperands[];
+extern u16 gBlitter_UnusedImmediatePowers[];
+extern u16 gBlitter_ImmediatePowers[];
 
 #endif

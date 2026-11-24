@@ -106,19 +106,19 @@ void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
   for (line = 0; line < DISPLAY_HEIGHT; line++) {
     // The line's ray slope: its offset from the projection's centre line over
     // the focal length.
-    slope = Iwram_RatioMulQ14(focus, toFIXED(gProjection.centerY - line));
+    slope = Iwram_DivFX(focus, toFIXED(gProjection.centerY - line));
     // A ray parallel to the ground would divide by zero.
     difference = slope - pitchSlope;
     if (difference == 0)
       difference = 1;
-    scale = Iwram_RatioMulQ14(difference, horizon);
+    scale = Iwram_DivFX(difference, horizon);
     // A negative scale is a line below the horizon, whose ray meets the
     // ground; the lines above it are sky and get zeros.
     if (scale < 0) {
       // The width scale is half the line's scale over the focal length, and
       // the depth is stored halved.
       halfScale = Iwram_MulFX(-scale, FIXED_ONE / 2);
-      scanline->scale = Iwram_RatioMulQ14(gProjection.focal, halfScale);
+      scanline->scale = Iwram_DivFX(gProjection.focal, halfScale);
       rayHeight = Iwram_MulFX(scale, slope);
       // The distance along the ground from the followed point: the root of
       // the two squared terms, taken in sixteenths (the root of a 16.16

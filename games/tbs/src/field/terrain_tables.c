@@ -10,7 +10,7 @@
 /// (row << 4) + column: the second (1) inside a square whose corners are
 /// rounded off, the first (0) in the corners.
 // clang-format off
-const u8 gTerrain_LerpWeightTable[256] = {
+const u8 gTerrain_RoundedSquareMask[256] = {
     0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
     0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
     0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,

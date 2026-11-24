@@ -438,7 +438,7 @@ s32 FieldMenu_SelectCommand(s32 selection) {
   }
   IconMenu_AddIcon(COMMAND_ICON_ITEM);
   IconMenu_AddIcon(COMMAND_ICON_STATUS);
-  IconMenu_Center(ICON_MENU_BOTTOM_ROW, SELECT_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, FIELD_MENU_ICON_ROW_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
 
@@ -529,7 +529,7 @@ s32 FileList_SelectAction(void) {
   if (gTitleSendOptionEnabled != 0) {
     IconMenu_AddIcon(COMMAND_ICON_SEND);
   }
-  IconMenu_Center(ICON_MENU_BOTTOM_ROW, TYPE_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, FILE_SCREEN_ICON_ROW_WIDTH, 0);
   result = IconMenu_Run(initial);
   IconMenu_Close();
   // With Send shown but not Battle, Send's place maps to SAVE_ACTION_BATTLE:
@@ -668,7 +668,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
 
   IconMenu_Open();
   state = gIconMenuState;
-  if (mode == RESOURCE_LAYOUT_TRANSFER_METHOD) {
+  if (mode == SEND_OPTION_TRANSFER_METHOD) {
     IconMenu_AddIcon(COMMAND_ICON_PASSWORD);
     IconMenu_AddIcon(COMMAND_ICON_CABLE);
   } else {
@@ -688,7 +688,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
 #else
   IconMenu_Center(ICON_MENU_BOTTOM_ROW, 5, 0);
 #endif
-  if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
+  if (mode != SEND_OPTION_TRANSFER_METHOD) {
     Task_Add(PasswordLevel_DrawHelp, TASK_PASS_FRAME - 10);
     state->drawnSelection = -1;
     window = Window_Create(PASSWORD_LEVEL_WINDOW_X, 0,
@@ -729,7 +729,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
                       WINDOW_FLAG_INSTANT);
   }
   result = IconMenu_Run(0);
-  if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD)
+  if (mode != SEND_OPTION_TRANSFER_METHOD)
     Task_Remove(PasswordLevel_DrawHelp);
   else
     Task_Remove(TransferMethod_DrawHelp);

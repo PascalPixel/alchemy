@@ -33,7 +33,7 @@ void FieldEffect_UpdateRetreatCaster(struct Actor *actor) {
     actor->spriteStorageKind = ACTOR_SPRITE_NONE;
 }
 
-/// The states of a Retreat particle (FieldEffect_UpdateRadialLaunch).
+/// The states of a Retreat particle (Retreat_UpdateSpark).
 enum RetreatParticleState {
   RETREAT_PARTICLE_AIM = 0,    ///< placed on the main actor and aimed
   RETREAT_PARTICLE_FLYING = 1, ///< back to RETREAT_PARTICLE_AIM on arrival
@@ -45,13 +45,13 @@ enum RetreatParticleState {
 /// actor's screen position (8 pixels lower) in a direction within 1/8 turn of
 /// up the screen, at up to 5 pixels a frame, and starts again from the main
 /// actor on arrival until it takes its last flight.
-void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
+void Retreat_UpdateSpark(struct FieldParticle *effect) {
   struct Vector3 pos;
   struct Actor *main;
   s32 state;
   u32 spread;
 
-  main = ((struct FieldEffectState *)gFieldEffectState)->mainActor;
+  main = ((struct FieldEffectState *)gFieldEffectState)->caster;
   state = effect->state;
 
   if (state == RETREAT_PARTICLE_AIM) {
@@ -95,7 +95,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
 /// Spins the main actor and shrinks it while 24 particles fly out, one a frame.
 void FieldPsynergy_Retreat(void) {
   struct FieldEffectState *effectState = gFieldEffectState;
-  struct Actor *actor = effectState->mainActor;
+  struct Actor *actor = effectState->caster;
   struct Vector3 pos;
   struct FieldParticle *effect;
   u32 i;
@@ -104,7 +104,7 @@ void FieldPsynergy_Retreat(void) {
   FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldPsynergy_FadeToCastColor();
   wait(10);
-  Actor_FaceDirectionById(effectState->firstActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(effectState->casterId, FACING_SOUTH, 0);
   wait(30);
   actor->update = Actor_CycleSpriteColors;
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
@@ -133,9 +133,9 @@ void FieldPsynergy_Retreat(void) {
   do {
     FIXED scale;
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
-    FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
-    FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->actor, Random16_Below(7));
+    FieldParticle_SetCallback(effect, Retreat_UpdateSpark);
+    FieldParticle_SetAnimation(effect, 7);
+    Sprite_SetAnimationColorModesFar(effect->sprite, Random16_Below(7));
     scale = (Random16() >> 1) + FIXED_ONE * 6 / 5; // 1.2 to 1.7
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -266,7 +266,7 @@ struct DescendingArcSprite {
 /// effectState->arcTileSlot.
 void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
   struct FieldEffectState *effectState = gFieldEffectState;
-  struct Actor *leader = effectState->mainActor;
+  struct Actor *leader = effectState->caster;
   struct Actor *actors[2];
   struct Actor *actor;
   struct DescendingArcSprite *sprite;

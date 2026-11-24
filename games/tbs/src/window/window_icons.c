@@ -4,7 +4,7 @@
 
 #include "window_internal.h"
 
-// The builders that load an icon into VRAM take HEAP_SLOT_GLYPH_TRANSFER
+// The builders that load an icon into VRAM take HEAP_SLOT_ICON_TRANSFER
 // (gGlyphState) for the build and free it before returning; ItemIcon_Compose
 // and the Icon_Draw functions draw into the slot their caller holds.
 
@@ -20,9 +20,9 @@ s32 Icon_CountPsynergyIcons(void) { return gPsynergyIconsEnd - gPsynergyIcons; }
 /// loads it into a sprite tile slot: *slot, or a free one when reuse is 0.
 void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 frame, s32 *slot,
                                 s32 *tileOut, s32 reuse) {
-  GlyphTransfer *state;
+  IconTransfer *state;
 
-  state = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  state = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   state->encoded = gIcon_BasePointerTable[frame];
   state->width = 2;
   state->height = 2;
@@ -35,13 +35,13 @@ void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 frame, s32 *slot,
     *slot = VramCache_FindFreeEntry();
   }
   *tileOut = VramCache_Load(*slot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
 }
 
 /// Unused: builds an ability's icon from the item icons rather than the
 /// Psynergy icons, as Icon_BuildItemIconTiles.
-UNUSED void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
-                                 s32 reuse) {
+UNUSED void Ability_BuildItemIconTiles(s32 action, s32 withBase, s32 *slot,
+                                       s32 *tile, s32 reuse) {
   Icon_BuildItemIconTiles(Ability_Get(action)->icon, withBase, slot, tile,
                           reuse);
 }
@@ -50,11 +50,11 @@ UNUSED void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
 /// loads it into *cacheSlot (a free slot unless reuse is set).
 void Icon_BuildItemIconTiles(u32 icon, s32 withBase, s32 *cacheSlot,
                              s32 *tileOut, s32 reuse) {
-  GlyphTransfer *state;
+  IconTransfer *state;
   s32 overlay;
 
   overlay = 0;
-  state = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  state = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
 
   if (icon >= Icon_CountItemIcons())
     icon = 0;
@@ -76,7 +76,7 @@ void Icon_BuildItemIconTiles(u32 icon, s32 withBase, s32 *cacheSlot,
     *cacheSlot = VramCache_FindFreeEntry();
 
   *tileOut = VramCache_Load(*cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
 }
 
 /// Draws an item's icon into the glyph transfer buffer from its inventory code
@@ -86,7 +86,7 @@ void Icon_BuildItemIconTiles(u32 icon, s32 withBase, s32 *cacheSlot,
 s32 ItemIcon_Compose(u32 code, u32 layers) {
   s32 overlay;
   struct ItemDefinition *item;
-  GlyphTransfer *state;
+  IconTransfer *state;
   s32 count;
 
   overlay = 0;
@@ -118,7 +118,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
     state->height = 2;
     Icon_Decode(state, 1);
   }
-  if ((layers & ICON_ARTIFACT) && (code & INVENTORY_EQUIPPED) &&
+  if ((layers & ICON_CURSED) && (code & INVENTORY_EQUIPPED) &&
       (item->flags & ITEM_CURSED) && (item->flags & ITEM_CANNOT_UNEQUIP)) {
     state->encoded = gIcon_MarkPointers[ICON_MARK_CURSED];
     state->width = 2;
@@ -157,32 +157,32 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
 
 /// Draws an item's icon from its inventory code with the layers asked for
 /// (ItemIcon_Compose) and loads it into sprite tile slot cacheSlot.
-s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
-  GlyphTransfer *state;
+s32 ItemIcon_LoadLayersIntoSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
+  IconTransfer *state;
 
-  state = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  state = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   ItemIcon_Compose(inventoryCode, layers);
   VramCache_Load(cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   return 1;
 }
 
 /// Builds one of the other icons (gIcon_MiscIconPointers) and loads it into
 /// sprite tile slot cacheSlot.
 s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
-  GlyphTransfer *state;
+  IconTransfer *state;
 
-  state = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  state = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   Icon_DrawMisc(icon);
   VramCache_Load(cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   return 1;
 }
 
 /// Loads 32 bytes, one sprite tile, from the start of gMenuTitlePictures into
 /// the VRAM cache entry slot, whichever entry is asked for: those bytes are the
 /// table's first pointers, not a picture.
-s32 Resource_LoadTableEntry(u32 entry, s32 unused, u32 slot) {
+s32 MenuTitle_LoadFirstTile(u32 entry, s32 unused, u32 slot) {
   extern const u8 *gMenuTitlePicturesCaseA[] __asm__("gMenuTitlePictures"),
       *gMenuTitlePicturesCaseB[] __asm__("gMenuTitlePictures"),
       *gMenuTitlePicturesCaseC[] __asm__("gMenuTitlePictures");
@@ -209,7 +209,7 @@ s32 Resource_LoadTableEntry(u32 entry, s32 unused, u32 slot) {
 /// Draws an item's icon from its inventory code into the glyph transfer buffer,
 /// with no frame or marks; code 0 draws icon 0. The caller holds the buffer.
 void Icon_DrawItem(s32 code) {
-  GlyphTransfer *glyph = gGlyphState;
+  IconTransfer *glyph = gGlyphState;
   struct ItemDefinition *item =
       Item_GetDirectFar(INVENTORY_ITEM_ID_MASK & code);
 
@@ -224,8 +224,8 @@ void Icon_DrawItem(s32 code) {
 }
 
 /// Builds an ability's Psynergy icon, as Icon_BuildAbilityIconTiles.
-void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
-                       s32 reuse) {
+void Ability_BuildIconTiles(s32 action, s32 withBase, s32 *slot, s32 *tile,
+                            s32 reuse) {
   Icon_BuildAbilityIconTiles(Ability_Get(action)->icon, withBase, slot, tile,
                              reuse);
 }
@@ -234,10 +234,10 @@ void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
 /// and loads it into *cacheSlot (a free slot unless reuse is set).
 void Icon_BuildAbilityIconTiles(u32 icon, s32 withBase, s32 *cacheSlot,
                                 s32 *tileOut, s32 reuse) {
-  GlyphTransfer *state;
+  IconTransfer *state;
   s32 overlay;
 
-  state = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  state = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   overlay = 0;
 
   if (icon >= Icon_CountPsynergyIcons())
@@ -260,12 +260,12 @@ void Icon_BuildAbilityIconTiles(u32 icon, s32 withBase, s32 *cacheSlot,
     *cacheSlot = VramCache_FindFreeEntry();
 
   *tileOut = VramCache_Load(*cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
 }
 
 /// Draws one of the other icons into the glyph transfer buffer.
 void Icon_DrawMisc(u32 iconIndex) {
-  GlyphTransfer *glyph = gGlyphState;
+  IconTransfer *glyph = gGlyphState;
 
   glyph->encoded = gIcon_MiscIconPointers[iconIndex];
   glyph->width = 2;
@@ -278,12 +278,12 @@ void Icon_DrawMisc(u32 iconIndex) {
 /// by palette.
 void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                           s32 palette, s32 reuse) {
-  GlyphTransfer *state;
+  IconTransfer *state;
   u16 *offsets;
   u8 *encodedEntry;
   u32 index;
 
-  state = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  state = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   offsets = Resource_GetTableEntry(RESOURCE_ICONS);
   // A number below PORTRAIT_SPRITE_MAP_FIRST is the entry itself; the other
   // speakers' portraits, numbered from it (Portrait_GetForSpeaker), are the
@@ -301,7 +301,7 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   if (reuse == 0)
     *slot = VramCache_FindFreeEntry();
   *tile = VramCache_Load(*slot, 4 * 4 * TILE_SIZE_4BPP, state->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   Dma_Set(encodedEntry, (void *)&OBJ_PLTT_COLOR(palette, 0),
           DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
 }
@@ -311,7 +311,7 @@ UNUSED void Icon_ReservedNoOp(void) {}
 
 /// Decodes a compressed icon into the glyph buffer and expands it to tiles:
 /// opaque for the first layer, or drawn over what is there when overlay is set.
-void Icon_Decode(GlyphTransfer *glyph, s32 overlay) {
+void Icon_Decode(IconTransfer *glyph, s32 overlay) {
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, Tile_Decompress4bpp,
                    Tile_Decompress4bppCodeSize);
   ((void (*)(const void *, u8 *))gHeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(

@@ -106,8 +106,7 @@ void Event_WaitTransitionFramesFar(void);
 void LineScroll_InitWaveFar(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
                             s32 stepY, s32 ampY);
 void LineScroll_StopFar(void);
-s32 FieldEffect_PlayCueAndStartEmitterOnTargetFar(s32 actorId, s32 target,
-                                                  s32 itemId);
+s32 Chest_OpenAndShowItemFar(s32 actorId, s32 target, s32 itemId);
 void ItemDisplay_ShowPictureFar(void *object, s32 flags);
 void ItemDisplay_ShowItemFar(s32 item, s32 flags);
 void TreasureSpot_SetActorPositionFar(s32 id, s32 x, s32 z);
@@ -126,8 +125,8 @@ void Field_EndBusyAndRevealFar(void);
 void FieldPsynergy_StartMindReadWaveFar(s32 x, s32 y);
 void FieldPsynergy_StopMindReadWaveFar(void);
 void FieldPsynergy_RestoreMindReadPaletteFar(void);
-s32 Scene_HasFieldPsynergyTriggerFar(s32 group);
-u32 Scene_HasPsynergyTriggerFar(u16 item);
+s32 Scene_HasPsynergyTriggerFar(s32 group);
+u32 Scene_HasItemTriggerFar(u16 item);
 struct Sprite *Sprite_ShareVramCacheEntryFar(struct Sprite *sourceSprite,
                                              struct Sprite *sharedSprite);
 s16 BattleBackground_GetSelectedFar(void);
@@ -138,7 +137,7 @@ void Djinn_JoinPartyFar(s32 slot, s32 element, s32 djinn);
 void FieldParticle_UpdateFar(struct FieldParticle *effect);
 u32 FieldParticle_HasPendingTargetFar(struct FieldParticle *effect);
 void FieldParticle_SetPositionFar(struct FieldParticle *effect, s32 x, s32 z);
-void FieldParticle_SetActorModeFar(struct FieldParticle *effect, s32 mode);
+void FieldParticle_SetAnimationFar(struct FieldParticle *effect, s32 mode);
 void FieldParticle_SetCallbackFar(struct FieldParticle *effect,
                                   EffectCallback callback);
 void FieldParticle_InitializeFar(struct FieldParticle *effect, s32 kind, s32 x,
@@ -157,7 +156,7 @@ void Actor_WatchAndSetScriptFar(u32 actorId, u32 watchedActorId);
 void FieldPsynergy_HaltActorFar(s32 actorId);
 /// Captures up to 32 actors into gActorSnapshot, for
 /// Actor_Restore (Actor_Snapshot); the save menu calls it.
-void Save_CaptureActorsFar(void);
+void Actor_SnapshotFar(void);
 void Actor_RestoreFar(void);
 void WorldMap_StartZoomFar(s32 zoom, s32 frames);
 void Event_WaitForZoomTransitionFar(void);
@@ -165,7 +164,7 @@ s32 Area_GetNameIndexFar(s32 sceneId, s32 entrance);
 void Actor_SetMovementTypeFar(struct Actor *actor, s32 action);
 void Scene_QueueMusicFar(s32 soundId);
 void Scene_PlayQueuedMusicFar(void);
-s32 Party_RemapCharacterIdIfEnabledFar(s32 character, s32 childhood);
+s32 Party_GetCharacterSpriteForChildhoodFar(s32 character, s32 childhood);
 #if TBS_PATCH_2
 void FieldEffect_ReleaseRevealSparklesFar(void);
 #endif

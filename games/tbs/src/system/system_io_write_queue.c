@@ -42,7 +42,7 @@ void IoWriteQueue_FlushPending(void) {
   queue = &gIoWriteQueue;
   count = queue->count;
   if (count != 0) {
-    u32 wordCount = (u32)TransferCommandExecutor_Size / 4;
+    u32 wordCount = (u32)Resource_ExecuteTransferCodeSize / 4;
     u8 routineBytes[wordCount * 4];
     QueueFlushRoutine routine = (QueueFlushRoutine)routineBytes;
 

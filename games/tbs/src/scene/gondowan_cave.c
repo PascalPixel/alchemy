@@ -174,7 +174,7 @@ static void GondowanCave_LeapIntoWater(s32 actorId);
 #include "shared/field_effect_create.c"
 
 #include "shared/field_effect_spawn.c"
-#include "shared/staged_actor.c"
+#include "shared/pushed_actor.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineState.next;
@@ -601,8 +601,8 @@ struct SceneEntrance gGondowanCaveEntrances[] = {
 
 u32 gGondowanCaveExits[] = {
     SCENE_EXITS(GondowanPassage),
-    SCENE_EXIT(GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_PASSAGE_EAST),
-    SCENE_EXIT(GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_PASSAGE_WEST),
+    SCENE_EXIT(GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_PASSAGE_NORTH),
+    SCENE_EXIT(GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_PASSAGE_SOUTH),
     SCENE_EXITS(GondowanCaveRiver),
     SCENE_EXIT(GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH, GondowanCave, GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_NORTH),
     SCENE_EXIT(GONDOWAN_CAVE_RIVER_TO_BOULDER_PASSAGE, GondowanCaveRiver, GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_FROM_RIVER),

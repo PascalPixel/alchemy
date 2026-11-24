@@ -39,9 +39,9 @@
 /// A map's palette: the first 14 of the 16 BG palettes, 224 colours.
 #define MAP_PALETTE_BYTES (14 * PALETTE_COLORS * sizeof(u16))
 
-/// Remaps byteCount bytes in place through gSpriteColorRemapTables.
+/// Remaps byteCount bytes in place through gSpriteColorGreyTable.
 void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
-  u8 *remapTable = (u8 *)gSpriteColorRemapTables;
+  u8 *remapTable = (u8 *)gSpriteColorGreyTable;
 
   while (byteCount-- != 0) {
     *bytes = remapTable[*bytes];

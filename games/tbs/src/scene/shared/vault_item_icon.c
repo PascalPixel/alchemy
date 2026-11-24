@@ -6,7 +6,7 @@
 void Vault_PlaceItemIcon(s32 item, FIXED x, FIXED y, FIXED z) {
   struct Actor *actor;
   struct Sprite *sprite;
-  GlyphTransfer *icon;
+  IconTransfer *icon;
   u8 clear = 0;
 
   actor = Actor_Create(SPRITE_BLANK, x, y, z);
@@ -18,9 +18,9 @@ void Vault_PlaceItemIcon(s32 item, FIXED x, FIXED y, FIXED z) {
     sprite->image.palette = 0;
     actor->motionFlags = clear;
     actor->retainSpriteCache = 1;
-    icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    icon = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(item);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, icon->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
 }

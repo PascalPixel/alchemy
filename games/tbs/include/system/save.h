@@ -45,8 +45,8 @@ struct SaveFileSummary {
   /// game sets; the file list for cleared data lists a file without it as not
   /// cleared.
   s8 sendFlag;
-  s8 flagCount; ///< how many Djinn flags (FLAG_DJINN_FIRST on) are set
-  u8 childhood; ///< FLAG_CHILDHOOD is set; remaps the party's sprites
+  s8 djinnCount; ///< how many Djinn flags (FLAG_DJINN_FIRST on) are set
+  u8 childhood;  ///< FLAG_CHILDHOOD is set; remaps the party's sprites
   /// bits: 15..8 windowBrightness | 7..0 windowHue
   ///@{
   u16 windowHue : 8;        ///< MainRoutineState.windowHue
@@ -54,7 +54,7 @@ struct SaveFileSummary {
   ///@}
   /// Low half of MainRoutineState.buildStamp; a file below the current stamp
   /// is listed as from an older build.
-  u16 frames;
+  u16 buildStamp;
   /// Filled on reading: the play time from the file's second part. A file
   /// whose playTime differs is listed as corrupted.
   u32 secondPartPlayTime;
@@ -89,7 +89,7 @@ STATIC_ASSERT(sizeof(struct SaveSectorHeader) == 16);
 STATIC_ASSERT(sizeof(struct SaveState) == 4352);
 STATIC_ASSERT(offsetof(struct SaveState, partId) == 16);
 STATIC_ASSERT(offsetof(struct SaveState, counter) == 32);
-STATIC_ASSERT(offsetof(struct SaveFileSummary, flagCount) == 50);
+STATIC_ASSERT(offsetof(struct SaveFileSummary, djinnCount) == 50);
 STATIC_ASSERT(offsetof(struct SaveFileSummary, secondPartPlayTime) == 56);
 
 /// The save state, heap slot HEAP_SLOT_SAVE under its own name; null between

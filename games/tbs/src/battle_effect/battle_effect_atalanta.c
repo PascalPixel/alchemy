@@ -145,15 +145,15 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  BattleEffect_SelectLivingTargets(state->args);
-  BattleEffect_SpawnObjects(ATALANTA_SPRITES, SPRITE_ATALANTA, 1);
+  BattleEffect_ShowLivingTargets(state->args);
+  BattleEffect_CreateSprites(ATALANTA_SPRITES, SPRITE_ATALANTA, 1);
   Resource_LoadAndDecompress(RESOURCE_SLASH_SHEET, state->sheet, 1, 1);
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_LIME_PALETTE),
                   SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  path = Resource_GetTableEntry(RESOURCE_STAGED_PARTICLE_PATH);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
+  path = Resource_GetTableEntry(RESOURCE_ATALANTA_PATH);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
@@ -216,7 +216,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
         for (column = 0; column != ATALANTA_SPRITE_ROWS; column++) {
           position.x = INTtoFIXED(pathX + 80 + column * 32);
           position.y = INTtoFIXED(64 - pathY + row * 32);
-          Actor_ApplyProjectedPlacementFar(
+          Render_ApplyProjectedPlacementFar(
               state->sprites[row * ATALANTA_SPRITE_ROWS + column], &position,
               &gAtalanta_UnitScale, 0);
         }

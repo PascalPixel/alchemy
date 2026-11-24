@@ -42,7 +42,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "scene/scroll_initialize_hblank_dma.h"
+#include "scene/lemurian_ship_ripple.h"
 #include "shop/shop.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
@@ -835,7 +835,7 @@ void LineScroll_BuildPage(void) {
   state->page ^= 1;
 }
 
-#include "shared/scroll_initialize_hblank_dma.c"
+#include "shared/lemurian_ship_ripple.c"
 
 /// Takes the ripple's tasks off and stops DMA 0.
 static void Ripple_Stop(void) {

@@ -243,18 +243,18 @@ void Battle_AwardSpoils(void) {
           BattleMessage_ShowAndWaitFar(MsgMaxPpRises);
           BattleMessage_WaitForAdvance();
         }
-        if ((s16)gains.atk != 0) {
-          MessageArgument_PushFar((s16)gains.atk, MESSAGE_ARGUMENT_NUMBER);
+        if ((s16)gains.attack != 0) {
+          MessageArgument_PushFar((s16)gains.attack, MESSAGE_ARGUMENT_NUMBER);
           BattleMessage_ShowAndWaitFar(MsgAttackRises);
           BattleMessage_WaitForAdvance();
         }
-        if ((s16)gains.def != 0) {
-          MessageArgument_PushFar((s16)gains.def, MESSAGE_ARGUMENT_NUMBER);
+        if ((s16)gains.defense != 0) {
+          MessageArgument_PushFar((s16)gains.defense, MESSAGE_ARGUMENT_NUMBER);
           BattleMessage_ShowAndWaitFar(MsgDefenseRises);
           BattleMessage_WaitForAdvance();
         }
-        if ((s16)gains.agi != 0) {
-          MessageArgument_PushFar((s16)gains.agi, MESSAGE_ARGUMENT_NUMBER);
+        if ((s16)gains.agility != 0) {
+          MessageArgument_PushFar((s16)gains.agility, MESSAGE_ARGUMENT_NUMBER);
           BattleMessage_ShowAndWaitFar(MsgAgilityRises);
           BattleMessage_WaitForAdvance();
         }

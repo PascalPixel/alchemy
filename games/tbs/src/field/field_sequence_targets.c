@@ -213,8 +213,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 /// Opens the chest that is actor target (SE_CHEST_OPEN and the chest sheet's
 /// animation 4) and, 12 frames later, shows itemId in front of actor actorId
 /// with sparkles; returns the item's picture, or 0 when there is no chest.
-s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
-                                               s32 itemId) {
+s32 Chest_OpenAndShowItem(s32 actorId, s32 target, s32 itemId) {
   void *targetActor;
   s32 emitter;
 
@@ -230,9 +229,9 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
 }
 
 /// Gives each running layer of an actor's one sprite the colour mode
-/// palette - 1 (SPRITE_COLOR_NORMAL for 1), or for 0 the next of Mind Read's
-/// caster cycle, a mode every 2 frames; a hidden layer stays hidden.
-void Actor_SetSpritePalette(struct Actor *actor, s32 palette) {
+/// colorModePlusOne - 1 (SPRITE_COLOR_NORMAL for 1), or for 0 the next of Mind
+/// Read's caster cycle, a mode every 2 frames; a hidden layer stays hidden.
+void Actor_SetLayersColorMode(struct Actor *actor, s32 colorModePlusOne) {
   struct Sprite *sprite;
   struct SpriteAnimation **entrySlot;
   struct SpriteAnimation *entry;
@@ -242,8 +241,8 @@ void Actor_SetSpritePalette(struct Actor *actor, s32 palette) {
 
   if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     sprite = actor->sprite;
-    replacement = palette - 1;
-    if (palette == 0)
+    replacement = colorModePlusOne - 1;
+    if (colorModePlusOne == 0)
       replacement = gMindRead_CasterPaletteCycle[(gFrameCount >> 1) & 7];
 
     partCount = sprite->count;

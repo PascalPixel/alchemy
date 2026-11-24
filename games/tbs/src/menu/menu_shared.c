@@ -62,7 +62,7 @@ s32 Menu_SuspendFieldTasks(void) {
 
 /// Clears the whole menu state and sets its defaults: no side selected, one
 /// entry in each side, and a 1x1 cursor grid.
-void Window_InitializeState(s32 unused) {
+void Menu_InitializeState(s32 unused) {
   struct ItemMenuState *menu = gMenuState;
 
   Dma_Fill32(0, menu, MENU_STATE_SIZE);
@@ -139,7 +139,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
       Window_ClearInteriorTilesFar(menu->statusWindow, 0, 0, 88, 32);
     }
     Text_DrawStringAtOffsetFar(unit->name, window, STATUS_PANEL_TEXT_X, 0);
-    StatusScreen_BuildAvailability(ailments, 1, member);
+    StatusScreen_ListStatuses(ailments, 1, member);
     ailmentRows = 0;
     if (ailments[CHARACTER_POISON]) {
       Text_DrawMessageAsTilesFar(MsgPoisonLabel, window, STATUS_PANEL_TEXT_X,
@@ -247,16 +247,16 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
   case STATUS_PANEL_STATS: {
     // The labels are consecutive messages: Attack, Defense, Status, Luck and
     // Agility.
-    s32 labels = MsgPanelStatLabel;
+    s32 labels = MsgPanelAttackLabel;
 
     Text_DrawMessageAsTilesFar(labels, window, 0, 40); // "Attack"
-    value = unit->atk;
+    value = unit->attack;
     Text_DrawNumberInWindowFar(value, 3, window, 64, 40);
     Text_DrawMessageAsTilesFar(labels + 1, window, 0, 48); // "Defense"
-    value = unit->def;
+    value = unit->defense;
     Text_DrawNumberInWindowFar(value, 3, window, 64, 48);
     Text_DrawMessageAsTilesFar(labels + 4, window, 0, 56); // "Agility"
-    value = unit->agi;
+    value = unit->agility;
     Text_DrawNumberInWindowFar(value, 3, window, 64, 56);
     Text_DrawMessageAsTilesFar(labels + 3, window, 0, 64); // "Luck"
     value = unit->luck;
@@ -354,7 +354,7 @@ void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window) {
 }
 
 /// The stat arrows: the up and down arrow sprites the menu loads into its two
-/// sprite picture cache slots (Resource_LoadPairedBlocks).
+/// sprite picture cache slots (Menu_LoadStatArrows).
 enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
 
 /// Writes Attack, Defense and Agility into a status window as they are now
@@ -362,31 +362,31 @@ enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
 /// or down arrow: the equipment preview.
 void Text_DrawStatComparison(const struct Unit *after,
                              const struct Unit *before, struct Window *window) {
-  Text_DrawMessageAsTilesFar(MsgPanelStatLabel, window, 0, 32);
-  Text_DrawNumberAtOffsetFar(before->atk, 3, window, 16, 40);
-  if (after->atk != before->atk) {
-    Text_DrawNumberAtOffsetFar(after->atk, 3, window, 64, 40);
-    if (after->atk > before->atk) {
+  Text_DrawMessageAsTilesFar(MsgPanelAttackLabel, window, 0, 32);
+  Text_DrawNumberAtOffsetFar(before->attack, 3, window, 16, 40);
+  if (after->attack != before->attack) {
+    Text_DrawNumberAtOffsetFar(after->attack, 3, window, 64, 40);
+    if (after->attack > before->attack) {
       Icon_CreateStatChangeArrow(window, 44, 36, STAT_ARROW_UP);
     } else {
       Icon_CreateStatChangeArrow(window, 44, 36, STAT_ARROW_DOWN);
     }
   }
   Text_DrawMessageAsTilesFar(MsgPanelDefenseLabel, window, 0, 48);
-  Text_DrawNumberAtOffsetFar(before->def, 3, window, 16, 56);
-  if (after->def != before->def) {
-    Text_DrawNumberAtOffsetFar(after->def, 3, window, 64, 56);
-    if (after->def > before->def) {
+  Text_DrawNumberAtOffsetFar(before->defense, 3, window, 16, 56);
+  if (after->defense != before->defense) {
+    Text_DrawNumberAtOffsetFar(after->defense, 3, window, 64, 56);
+    if (after->defense > before->defense) {
       Icon_CreateStatChangeArrow(window, 44, 52, STAT_ARROW_UP);
     } else {
       Icon_CreateStatChangeArrow(window, 44, 52, STAT_ARROW_DOWN);
     }
   }
   Text_DrawMessageAsTilesFar(MsgAgilityLabel, window, 0, 64);
-  Text_DrawNumberAtOffsetFar(before->agi, 3, window, 16, 72);
-  if (after->agi != before->agi) {
-    Text_DrawNumberAtOffsetFar(after->agi, 3, window, 64, 72);
-    if (after->agi > before->agi) {
+  Text_DrawNumberAtOffsetFar(before->agility, 3, window, 16, 72);
+  if (after->agility != before->agility) {
+    Text_DrawNumberAtOffsetFar(after->agility, 3, window, 64, 72);
+    if (after->agility > before->agility) {
       Icon_CreateStatChangeArrow(window, 44, 68, STAT_ARROW_UP);
     } else {
       Icon_CreateStatChangeArrow(window, 44, 68, STAT_ARROW_DOWN);
@@ -395,7 +395,7 @@ void Text_DrawStatComparison(const struct Unit *after,
 }
 
 /// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
-/// into a free VRAM block; Icon_CreateWithResourceVariant, with an argument it
+/// into a free VRAM block; Icon_CreateHandCursor, with an argument it
 /// ignores.
 UNUSED s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x,
                                    s32 y) {
@@ -405,14 +405,15 @@ UNUSED s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x,
   block = VramCache_FindFreeEntry();
   if (block != 0) {
     VramCache_Load(block, ICON_TILE_BYTES, gIcon_ResourceTiles);
-    icon = (s32)WindowSprite_CreateFar(block, OUTPUT_SIZE_16X16, window, x, y);
+    icon = (s32)WindowSprite_CreateFar(block, WINDOW_SPRITE_SIZE_16X16, window,
+                                       x, y);
   }
   return icon;
 }
 
 /// Creates the menu's hand cursor sprite in window at (x, y), loading the
 /// hand's tiles into a free VRAM block.
-s32 Icon_CreateWithResourceVariant(struct Window *window, s32 x, s32 y) {
+s32 Icon_CreateHandCursor(struct Window *window, s32 x, s32 y) {
   s32 block;
   s32 icon;
 
@@ -428,13 +429,14 @@ s32 Icon_CreateWithResourceVariant(struct Window *window, s32 x, s32 y) {
   if (block != 0) {
 #endif
     VramCache_Load(block, ICON_TILE_BYTES, gIcon_ResourceTiles);
-    icon = (s32)WindowSprite_CreateFar(block, OUTPUT_SIZE_16X16, window, x, y);
+    icon = (s32)WindowSprite_CreateFar(block, WINDOW_SPRITE_SIZE_16X16, window,
+                                       x, y);
   }
   return icon;
 }
 
 /// Shows a menu icon at its stored position, without rotation or scaling.
-void Icon_PrepareActor(struct WindowSprite *object) {
+void Icon_Show(struct WindowSprite *object) {
   if (object != NULL) {
     object->motion = ICON_SHOWN;
     object->oam.x = object->x;
@@ -462,8 +464,7 @@ struct Window *MenuCursor_Create(void *source) {
   Window_UpdateOrCreate(&menu->auxiliaryWindow, 0, 0, 13, 5,
                         WINDOW_FLAG_INSTANT);
   window = menu->auxiliaryWindow;
-  cursor =
-      (struct WindowSprite *)Icon_CreateWithResourceVariant(window, -8, 11);
+  cursor = (struct WindowSprite *)Icon_CreateHandCursor(window, -8, 11);
   cursor->motion = ICON_HIDDEN;
   menu->tabIndex[0] = -1;
   menu->tabIndex[1] = 0;
@@ -565,7 +566,8 @@ void Menu_PlacePartyFigures(void) {
       position.height = placeY;
       position.y = toFIXED(menu->rowPositions[i]) + placeY; // always 482
       position.groundHeight = 0;
-      Actor_ApplyProjectedPlacementFar(figure, &position, &scale, FACING_SOUTH);
+      Render_ApplyProjectedPlacementFar(figure, &position, &scale,
+                                        FACING_SOUTH);
     }
   }
 }
@@ -646,13 +648,13 @@ void MenuCursor_Slide(s32 x, s32 y) {
 UNUSED void PsynergyMenu_ReservedNoOp(void) {}
 
 /// Lays the entry icons out eight to a row from (108, 40). Nothing calls it.
-UNUSED void PsynergyMenu_RefreshMemberEntriesDefault(void) {
-  PsynergyMenu_RefreshMemberEntries(108, 40, 8);
+UNUSED void PsynergyMenu_PlaceEntryIconsDefault(void) {
+  PsynergyMenu_PlaceEntryIcons(108, 40, 8);
 }
 
 /// Lays the menu's entry icons (up to 32) out in a grid of 16x16 cells,
 /// columns wide, from (originX, originY); empty slots keep their place.
-void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
+void PsynergyMenu_PlaceEntryIcons(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
   s32 index;
@@ -662,7 +664,7 @@ void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
   scan = slot;
   do {
     if (*scan++ != NULL) {
-      PsynergyMenu_PositionMemberEntry(slot, index, originX, originY, columns);
+      PsynergyMenu_PlaceEntryIcon(slot, index, originX, originY, columns);
     }
     index++;
     slot++;
@@ -671,8 +673,8 @@ void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
 
 /// Places the icon in *slot at grid cell index (0 above 31) of a grid of
 /// 16x16 cells, columns wide, from (originX, originY), and shows it.
-void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
-                                      s32 originX, s32 originY, s32 columns) {
+void PsynergyMenu_PlaceEntryIcon(struct WindowSprite **slot, s32 index,
+                                 s32 originX, s32 originY, s32 columns) {
   struct WindowSprite *icon;
 
   if (index > MENU_ENTRY_ICONS - 1) {
@@ -681,7 +683,7 @@ void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
   icon = *slot;
   icon->y = (index / columns) * 16 + originY;
   icon->x = (index % columns) * 16 + originX;
-  Icon_PrepareActor(icon);
+  Icon_Show(icon);
 }
 
 /// Places the icon at slotIndex in a columns-wide grid of 24x16 cells starting
@@ -696,12 +698,12 @@ void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
   icon = *slot;
   icon->y = slotIndex / columns * 16 + originY;
   icon->x = slotIndex % columns * 24 + originX;
-  Icon_PrepareActor(icon);
+  Icon_Show(icon);
 }
 
 /// Lays the inventory's INVENTORY_SLOTS item icons out five to a row from (116,
 /// y): y is 56 for layout 1 and 40 otherwise.
-void ItemMenu_RefreshEntry(s32 layout) {
+void ItemMenu_PlaceIcons(s32 layout) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
   struct WindowSprite *icon;
@@ -894,7 +896,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   if (count == 0)
     return result;
   // Animate the page arrows.
-  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
+  PageArrows_DrawFar(PAGE_ARROW_VRAM);
   pages = count / pageSize;
   if (count % pageSize != 0)
     pages++;
@@ -1034,8 +1036,8 @@ void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
 /// Switches a rectangle of a window's text between WINDOW_PALETTE (normal) and
 /// HIGHLIGHT_PALETTE (the highlight made by Palette_LightenHighlight): palette
 /// is the new palette number.
-void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
-                               s32 width, s32 height, u32 palette) {
+void Window_SetHighlightRect(const struct Window *window, s32 x, s32 y,
+                             s32 width, s32 height, u32 palette) {
   struct WindowState *state = WINDOW_STATE;
   u8 *tilemap = (u8 *)state->tilemap;
 
@@ -1116,7 +1118,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
        i++) {
     icon->x = x;
     icon->y = y + (i - first) * 16;
-    Icon_PrepareActor(icon);
+    Icon_Show(icon);
     icon->motion = ICON_SHOWN;
   }
 }

@@ -304,8 +304,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   keyRow = NAME_LAST_ROW;
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(vramSlot, 2 * 2 * TILE_SIZE_4BPP, gPointingHandTiles);
-    sprite =
-        WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
+    sprite = WindowSprite_Create(vramSlot, WINDOW_SPRITE_SIZE_16X16,
+                                 keyboardWindow, 0, 0);
     keyCursor.sprite = sprite;
     MenuCursor_SetPositionImmediateFar(&keyCursor.cursor,
                                        keyboardWindow->x * 8 + 140,
@@ -314,8 +314,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(vramSlot, 2 * 2 * TILE_SIZE_4BPP, gNameEntry_CaretTiles);
-    sprite =
-        WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
+    sprite = WindowSprite_Create(vramSlot, WINDOW_SPRITE_SIZE_16X16,
+                                 keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
     sprite->depth = OAM_DEPTH_FRONT;
     sprite->oam.priority = 0;
@@ -568,8 +568,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   keyRow = NAME_LAST_ROW;
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(vramSlot, 2 * 2 * TILE_SIZE_4BPP, gPointingHandTiles);
-    sprite =
-        WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
+    sprite = WindowSprite_Create(vramSlot, WINDOW_SPRITE_SIZE_16X16,
+                                 keyboardWindow, 0, 0);
     keyCursor.sprite = sprite;
     MenuCursor_SetPositionImmediateFar(&keyCursor.cursor,
                                        keyboardWindow->x * 8 + 140,
@@ -578,8 +578,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(vramSlot, 2 * 2 * TILE_SIZE_4BPP, gNameEntry_CaretTiles);
-    sprite =
-        WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
+    sprite = WindowSprite_Create(vramSlot, WINDOW_SPRITE_SIZE_16X16,
+                                 keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
     sprite->depth = OAM_DEPTH_FRONT;
     sprite->oam.priority = 0;

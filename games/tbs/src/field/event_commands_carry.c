@@ -15,7 +15,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   struct Actor *fragment;
   u32 radius;
 
-  liftedActor = ((struct FieldEffectState *)gFieldEffectState)->child;
+  liftedActor = ((struct FieldEffectState *)gFieldEffectState)->target;
   position.x = liftedActor->x.fixed;
   position.y = liftedActor->y.fixed - Random16() * 16 + toFIXED(24);
   position.z = liftedActor->z.fixed;
@@ -62,8 +62,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   FIXED dist;
 
   effectState = gFieldEffectState;
-  caster = effectState->mainActor;
-  target = effectState->child;
+  caster = effectState->caster;
+  target = effectState->target;
   if (target == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
@@ -246,7 +246,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->layer = MAPGRID_LAYER_GROUND;
   caster->update = 0;
   Actor_SetSpriteColorModeFar(caster, SPRITE_COLOR_NORMAL);
-  if (effectState->childOption != 0) {
+  if (effectState->sceneVariant != 0) {
     // Wait for it to rise and land (at most 90 frames each), then a ring.
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
       wait(1);

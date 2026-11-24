@@ -9768,7 +9768,7 @@ msgstr ""
 "{protagonist_name} got\n"
 "{argument_signed_number} coin{plural_suffix}.{end_wait}"
 
-msgctxt "MsgColossoIsaacGotItem"
+msgctxt "MsgGotItem"
 msgid "02410"
 msgstr ""
 "{protagonist_name} got\n"
@@ -11550,7 +11550,7 @@ msgctxt "message"
 msgid "02843"
 msgstr "Total number available"
 
-msgctxt "MsgPanelStatLabel"
+msgctxt "MsgPanelAttackLabel"
 msgid "02844"
 msgstr "Attack"
 

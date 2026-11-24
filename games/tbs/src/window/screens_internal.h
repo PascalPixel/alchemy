@@ -178,7 +178,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #endif
 
 /// The password level menu (IconMenu_ChooseSendOption,
-/// RESOURCE_LAYOUT_PASSWORD_LEVEL): its heading window ("Password Selection")
+/// SEND_OPTION_PASSWORD_LEVEL): its heading window ("Password Selection")
 /// and, outside the Japanese edition, the explanation window under it.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN ||             \
     LANGUAGE == LANGUAGE_ITALIAN
@@ -206,7 +206,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #endif
 
 /// The transfer method menu (IconMenu_ChooseSendOption,
-/// RESOURCE_LAYOUT_TRANSFER_METHOD): its heading window ("Transfer Method"),
+/// SEND_OPTION_TRANSFER_METHOD): its heading window ("Transfer Method"),
 /// the heading's x in it in pixels, and the help window.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN
 #define TRANSFER_METHOD_WINDOW_X 6
@@ -276,12 +276,12 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 enum {
   /// Element icon: + enum Element, in BASIC_COLORS_PALETTE.
   LIST_TILE_SUMMON_ELEMENT = BG_TILE_PALETTE(BASIC_COLORS_PALETTE) | 1,
-  /// Left arrow, tile 820, which Link_DrawPageArrows slides.
+  /// Left arrow, tile 820, which PageArrows_Draw slides.
   LIST_TILE_PAGES_LEFT = WINDOW_TILE(820),
   LIST_TILE_PAGES_RIGHT = WINDOW_TILE(821) ///< Right arrow, tile 821
 };
 
-/// The battle lists' two page arrow tiles in VRAM, which Link_DrawPageArrows
+/// The battle lists' two page arrow tiles in VRAM, which PageArrows_Draw
 /// draws each frame (LIST_TILE_PAGES_LEFT and LIST_TILE_PAGES_RIGHT).
 #define LIST_PAGE_ARROW_VRAM                                                   \
   ((s32)BG_CHAR_BLOCK(0) +                                                     \
@@ -358,7 +358,7 @@ struct BattleCommandRowIcon {
 struct BattleCommandRowState {
   /// BG palette slots for the icons' 256-colour pixels, filled as each icon
   /// is loaded (BattleCommandRow_LoadIconTiles).
-  struct GlyphPalette palette;
+  struct IconPalette palette;
   struct BattleCommandRowIcon entries[6];
   struct Window *window; ///< shows the selected command's name
   s32 iconCount;

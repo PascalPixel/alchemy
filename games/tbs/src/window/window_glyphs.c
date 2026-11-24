@@ -318,7 +318,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         y += TEXT_LINE_HEIGHT;
         break;
       case TEXT_UNUSED_14:
-      case TEXT_WINDOW_STATE:
+      case TEXT_WINDOW_ANIMATION:
       case TEXT_ACTOR_NAME_START:
         text++;
         // Skip the second operand too.
@@ -380,9 +380,8 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 /// Unused: draws a string of 16-bit character codes as tiles in a window at
 /// tile (offsetX, offsetY) of its interior, as Text_DrawMessageAsTiles draws a
 /// message; a NULL string draws the decoded text in WindowState.textBuffer.
-UNUSED void Text_DrawGlyphTileAtStateOffset(u16 *buffer,
-                                            const struct Window *window,
-                                            s32 offsetX, s32 offsetY) {
+UNUSED void Text_DrawWideStringAsTiles(u16 *buffer, const struct Window *window,
+                                       s32 offsetX, s32 offsetY) {
   struct WindowState *state = WINDOW_STATE;
   u32 cell;
 
@@ -433,7 +432,7 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
           y++;
           break;
         case TEXT_UNUSED_14:
-        case TEXT_WINDOW_STATE:
+        case TEXT_WINDOW_ANIMATION:
         case TEXT_ACTOR_NAME_START:
           text++;
           // Skip the second operand too.

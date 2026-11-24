@@ -70,8 +70,8 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
    * touches. */
   UNUSED s32 unused[3];
 
-  actor = GetBattleObjectSlotFar(unit)->actor;
-  sprite = GetMotionRecordFar(actor, 0);
+  actor = BattleObject_GetFar(unit)->actor;
+  sprite = Actor_GetSpriteFar(actor, 0);
   EFFECT_VIEW_FROM_CAMERA(camera);
   scale =
       Iwram_MulFX(Matrix_ProjectPoint(&actor->x.fixed, screen), sprite->scale);
@@ -82,7 +82,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 
 /// Unused: reads the held keys when the first target is an enemy and does
 /// nothing with them.
-UNUSED void BattleEffect_ProbeKeysForExtendedActor(void) {
+UNUSED void BattleEffect_ReadKeysForEnemyTarget(void) {
   // XXX (no evidence): what the keys were for, perhaps choosing an effect for
   // enemy targets; nothing calls this in either game.
   struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);

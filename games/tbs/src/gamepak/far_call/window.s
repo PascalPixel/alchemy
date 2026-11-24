@@ -32,7 +32,7 @@ FarCall_WindowTable:
 	export Portrait_CreateFar, Portrait_Create
 	export Portrait_ReloadFar, Portrait_Reload
 	overlay_veneer WindowSprite_SetMotion
-	overlay_veneer WindowSprite_SetInvertedSentinel
+	overlay_veneer WindowSprite_SetPriority
 	export Portrait_OpenWindowFar, Portrait_OpenWindow
 	export Portrait_CloseWindowFar, Portrait_CloseWindow
 	export Text_GetMessageSizeFar, Text_GetMessageSize
@@ -85,7 +85,7 @@ FarCall_WindowTable:
 	export Window_SetTilemapEntryFar, Window_SetTilemapEntry
 	export DebugSceneSelect_RunFar, DebugSceneSelect_Run
 	export DebugFlagEditor_RunFar, DebugFlagEditor_Run
-	export Resource_LoadByModeIntoSlotFar, Resource_LoadByModeIntoSlot
+	export SelectionIcon_LoadIntoSlotFar, SelectionIcon_LoadIntoSlot
 	overlay_veneer Debug_SelectShortcuts
 	export Window_MarkVisibleTextTilesFar, Window_MarkVisibleTextTiles
 	overlay_veneer ItemIcon_Compose
@@ -99,7 +99,7 @@ FarCall_WindowTable:
 	export Save_ChooseAndLoadFileFar, Save_ChooseAndLoadFile
 	export Save_CopyFileFar, Save_CopyFile
 	export Save_EraseSelectedFileFar, Save_EraseSelectedFile
-	export Save_ProcessSelectedFileFar, Save_ProcessSelectedFile
+	export Save_WriteLinkTalliesFar, Save_WriteLinkTallies
 	overlay_veneer Save_WriteFile
 	export Save_ScanFileSummariesFar, Save_ScanFileSummaries
 	export NameEntry_EditMemberNameFar, NameEntry_EditMemberName
@@ -119,12 +119,12 @@ FarCall_WindowTable:
 	export YesNoMenu_RunFar, YesNoMenu_Run
 	export Menu_SelectCoinsOrMedalsFar, Menu_SelectCoinsOrMedals
 	export ColossoMenu_ChooseFar, ColossoMenu_Choose
-	overlay_veneer Resource_LoadTableEntry
+	overlay_veneer MenuTitle_LoadFirstTile
 	export YesNoMenu_RunAtFar, YesNoMenu_RunAt
-	export Resource_LoadFixedBlockBIntoFreeSlotFar, Resource_LoadFixedBlockBIntoFreeSlot
+	export PointingHand_LoadIntoFreeSlotFar, PointingHand_LoadIntoFreeSlot
 	export Text_MeasureMessageFar, Text_MeasureMessage
 	export Window_HighlightRectFar, Window_HighlightRect
-	export Ability_LoadGlyphFar, Ability_LoadGlyph
+	export Ability_BuildIconTilesFar, Ability_BuildIconTiles
 	export Graphics_ExpandVramTilesByColorTableFar, Graphics_ExpandVramTilesByColorTable
 	export Text_UseExtraTilesFar, Text_UseExtraTiles
 	export Menu_AnimateSelectionToEntryFar, Menu_AnimateSelectionToEntry
@@ -133,6 +133,6 @@ FarCall_WindowTable:
 	export Save_CountFilesExcludingSentFar, Save_CountFilesExcludingSent
 	export Window_DrawBorderFar, Window_DrawBorder
 	export Window_EraseBorderRectFar, Window_EraseBorderRect
-	export Link_DrawPageArrowsFar, Link_DrawPageArrows
+	export PageArrows_DrawFar, PageArrows_Draw
 	export Party_ShowJoinedMessageFar, Party_ShowJoinedMessage
 	export Party_ShowPairJoinedMessageFar, Party_ShowPairJoinedMessage

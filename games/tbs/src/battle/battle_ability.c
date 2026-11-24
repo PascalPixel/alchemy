@@ -298,7 +298,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
     } else if (ability->effect == ABILITY_EFFECT_INSTANT_DEATH) {
       skipDamage = 1;
     } else if (ability->effect == ABILITY_EFFECT_SELF_DESTRUCT) {
-      // The user leaves the battle (BattleObject_DestroyTemporaryObject).
+      // The user leaves the battle (BattleUnit_RemoveEnemy).
       if (actor->hp != 0)
         BattlePlayback_Push(PLAYBACK_REMOVE_UNIT, unitId);
     } else if (ability->effect == ABILITY_EFFECT_DRAIN_PP) {
@@ -328,7 +328,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       s32 pass;
 
       hp = target->hp;
-      baseDefense = target->def;
+      baseDefense = target->defense;
       defense = baseDefense;
       if (halveDefense != 0)
         defense = (u32)baseDefense / 2;
@@ -341,12 +341,12 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
           elementBonus = 0;
         power = ability->power;
         if (kind == ABILITY_FORMULA_ATTACK_MULTIPLIED)
-          amount = Battle_CalculateAttackDamageFar(actor->atk, defense, 0,
+          amount = Battle_CalculateAttackDamageFar(actor->attack, defense, 0,
                                                    elementBonus) *
                    power / 10;
         else
-          amount = Battle_CalculateAttackDamageFar(actor->atk, defense, power,
-                                                   elementBonus);
+          amount = Battle_CalculateAttackDamageFar(actor->attack, defense,
+                                                   power, elementBonus);
         amount *= multiplier;
         // A critical hit adds a quarter (a half for an ability's), then
         // the target's level / 5 + 6.
@@ -821,7 +821,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->agilityStage = AGILITY_STAGE_DOUBLED;
       target->agilityTurns = AGILITY_CHANGE_TURNS;
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, target->agi - savedTarget->agi);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          target->agility - savedTarget->agility);
       PUSH_MESSAGE(MsgAgiUp);
       break;
 
@@ -829,7 +830,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->agilityStage = STAT_STAGE_MIN;
       target->agilityTurns = AGILITY_CHANGE_TURNS;
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, savedTarget->agi - target->agi);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          savedTarget->agility - target->agility);
       PUSH_MESSAGE(MsgAgiDown);
       break;
 
@@ -837,7 +839,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->attackStage--;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, savedTarget->atk - target->atk);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          savedTarget->attack - target->attack);
       PUSH_MESSAGE(MsgAtkDown);
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
@@ -846,7 +849,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->attackStage -= 2;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, savedTarget->atk - target->atk);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          savedTarget->attack - target->attack);
       PUSH_MESSAGE(MsgAtkDown);
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
@@ -855,7 +859,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->attackStage++;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, target->atk - savedTarget->atk);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          target->attack - savedTarget->attack);
       PUSH_MESSAGE(MsgAtkUp);
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
@@ -864,7 +869,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->attackStage += 2;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, target->atk - savedTarget->atk);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          target->attack - savedTarget->attack);
       PUSH_MESSAGE(MsgAtkUp);
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
@@ -873,7 +879,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->defenseStage--;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, savedTarget->def - target->def);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          savedTarget->defense - target->defense);
       PUSH_MESSAGE(MsgDefDown);
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
@@ -882,7 +889,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->defenseStage -= 2;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, savedTarget->def - target->def);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          savedTarget->defense - target->defense);
       PUSH_MESSAGE(MsgDefDown);
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
@@ -891,7 +899,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->defenseStage++;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, target->def - savedTarget->def);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          target->defense - savedTarget->defense);
       PUSH_MESSAGE(MsgDefUp);
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
@@ -900,7 +909,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->defenseStage += 2;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, target->def - savedTarget->def);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          target->defense - savedTarget->defense);
       PUSH_MESSAGE(MsgDefUp);
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;

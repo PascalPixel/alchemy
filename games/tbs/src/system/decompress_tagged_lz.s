@@ -652,8 +652,8 @@ Resource_ExecuteTransfer:
 	add	ip, ip, #212
 	stm	ip, {r2, r3, r4}
 	b	.Ltransfer_count
-	.global TransferCommandExecutor_Size
-	.set TransferCommandExecutor_Size, . - Resource_ExecuteTransfer
+	.global Resource_ExecuteTransferCodeSize
+	.set Resource_ExecuteTransferCodeSize, . - Resource_ExecuteTransfer
 .syntax unified
 	.arm
 	.global Resource_PatchThumbBranch

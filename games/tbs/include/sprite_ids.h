@@ -10,7 +10,7 @@
 /// in sprites.tsv's order) in order. A party member's field sprite shares its
 /// character number, so the field draws a character id as its sprite. The
 /// summons' figures, from SPRITE_ATALANTA on, are each summon's own sprite: its
-/// event creates its objects of it (BattleEffect_SpawnObjects), each playing
+/// event creates its objects of it (BattleEffect_CreateSprites), each playing
 /// one of its animations. A row sprites.tsv leaves empty, with no size and no
 /// pictures, shows nothing and has no name; the next named row's number is
 /// written after it.
@@ -610,9 +610,11 @@ enum StumpAnimation {
   STUMP_ANIMATION_SPLASH = 3 ///< drops into water with a splash
 };
 
-/// SPRITE_SPROUT's animations for a sprout that stands grown, or half grown
-/// (sprout.tsv).
+/// SPRITE_SPROUT's animations (sprout.tsv): grown into a vine, growing under
+/// Growth, and standing grown or half grown.
 enum SproutAnimation {
+  SPROUT_ANIMATION_VINE = 0,       ///< grown into a vine, held
+  SPROUT_ANIMATION_GROW = 2,       ///< pictures 0 to 6, as Growth plays it
   SPROUT_ANIMATION_HALF_GROWN = 3, ///< held at picture 3, half grown
   SPROUT_ANIMATION_GROWN = 4       ///< picture 6, grown tall, held
 };

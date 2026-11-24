@@ -88,7 +88,7 @@ static s32 Colosso_RaisePrize(struct Actor *warrior) {
 
 /// Isaac reaches the finish: he walks up to the first prize, or the second
 /// when the opponent is there before him, holds it up, is given and equipped
-/// with it, and MsgColossoIsaacGotItem names him and the item he got. Returns
+/// with it, and MsgGotItem names him and the item he got. Returns
 /// nonzero when the opponent arrived first.
 static s32 Colosso_TakePrize(s32 firstItem, s32 secondItem) {
   struct ColossoGaugeState *gauge = (struct ColossoGaugeState *)gColossoState;
@@ -131,7 +131,7 @@ static s32 Colosso_TakePrize(s32 firstItem, s32 secondItem) {
     MessageArgument_Push(secondItem, MESSAGE_ARGUMENT_ITEM);
   }
   MessageArgument_Push(gMainRoutineState.leaderActorId, MESSAGE_ARGUMENT_ACTOR);
-  FieldMessage_Show(MsgColossoIsaacGotItem, 3);
+  FieldMessage_Show(MsgGotItem, 3);
   Actor_WaitForScriptEnd(leader);
   return opponentFirst;
 }

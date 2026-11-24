@@ -6,7 +6,7 @@
 
 /// Packs the six yellow orb pictures to half width, keeping every second
 /// byte. Its rows are always the orbs' own; rowCount is not read.
-void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
+void BattleEffect_PackYellowOrbs(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
   s32 row = 0;
   s32 rows = YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT;
   s32 offset = 0;
@@ -113,10 +113,10 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, state->sheet, 1, 0);
-  BattleEffect_PackTileRows(state->sheet, (u8 *)rings, YELLOW_ORB_WIDTH,
-                            YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT);
+  BattleEffect_PackYellowOrbs(state->sheet, (u8 *)rings, YELLOW_ORB_WIDTH,
+                              YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT);
   Resource_LoadAndDecompress(RESOURCE_BLUE_BURST_SHEET, state->sheet, 1, 1);
   switch (mode) {
   case RUSHING_STRIKE_BONE_CHARGE:
@@ -140,7 +140,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   // Send the user in, and ready the sparks at the target.
   BattleEffect_SetApproachMotion(state->args->user, state->args->targets[0],
                                  10);
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
     newSpark = &state->particles[i];
     newSpark->x = target->x.fixed;

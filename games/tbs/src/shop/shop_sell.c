@@ -94,8 +94,8 @@ s32 Shop_SelectSell(s32 unitId) {
   shop = gMenuState;
   unit = Unit_GetFar(unitId);
   inventoryCount = 1;
-  priceWindow =
-      Window_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, WINDOW_FLAG_INSTANT);
+  priceWindow = Window_CreateFar(SHOP_SELL_PRICE_X, 8, SHOP_SELL_PRICE_WIDTH, 4,
+                                 WINDOW_FLAG_INSTANT);
   slot = 0;
 
   for (;;) {
@@ -239,8 +239,8 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   item = Item_GetDirectFar(unit->inventory[slot]);
   result = 1;
   unitSalePrice = Shop_SalePrice(unit->inventory[slot]);
-  // Shop_GetSelectionState is game.s's name for Inventory_GetQuantity
-  stackQuantity = Shop_GetSelectionState(unitId, slot);
+  // Inventory_GetQuantityFar is game.s's name for Inventory_GetQuantity
+  stackQuantity = Inventory_GetQuantityFar(unitId, slot);
   if ((item->flags & ITEM_STACKABLE) && stackQuantity > 1) {
     // "How many will you sell?"
     Shop_ShowKeeperMessage(MsgHowManyToSell);
@@ -251,7 +251,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
     MenuCursor_Place(NULL, SHOP_QUANTITY_CURSOR_X, 48);
     result = Shop_SelectQuantity(0, stackQuantity, unitSalePrice);
     wait(1);
-    Icon_PrepareActorFar(shop->cursor.anchor);
+    Icon_ShowFar(shop->cursor.anchor);
     MenuCursor_Place(NULL, savedX, savedY);
   }
   return result;

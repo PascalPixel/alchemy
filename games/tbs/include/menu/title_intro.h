@@ -11,11 +11,11 @@ extern const u8 gTitle_FlareColumns[];
 extern const u8 gTitle_PromptBlendLevels[60];
 void Title_UpdateIntroSprites(void);
 void Title_LoadIntroBackgrounds(void);
-s32 Title_ShowIntro(s32 prompt);
-void Title_NoOpPalette(void);
+s32 Title_ShowTitleScreen(s32 prompt);
+void Title_BeforeLogosNoOp(void);
 s32 Title_ShowNintendoLogo(s32 fadeOut);
 s32 Title_ShowCamelotLogo(void);
-void Title_NoOpColor(void);
+void Title_AfterIntroNoOp(void);
 void TitlePaletteFade_CalculateSteps(s16 *sourceComponents,
                                      s16 *targetComponents, s16 *componentSteps,
                                      s32 frames);
@@ -26,7 +26,8 @@ void TitlePaletteFade_Initialize(void);
 void TitlePaletteFade_Release(void);
 void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes);
 // UB: the early call implicitly returns int, but the definition returns void.
-// A plain prototype reverses the two argument moves in Title_ShowIntro (EN).
+// A plain prototype reverses the two argument moves in Title_ShowTitleScreen
+// (EN).
 #ifdef UBFIX
 void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes);
 #endif

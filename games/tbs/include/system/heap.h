@@ -78,14 +78,14 @@ enum HeapSlot {
   HEAP_SLOT_WINDOW = 15,
   /// The party status window's layout (struct PartyStatusWindow).
   HEAP_SLOT_PARTY_STATUS = 16,
-  /// The buffers an icon or portrait is decoded through (GlyphTransfer).
-  HEAP_SLOT_GLYPH_TRANSFER = 17,
+  /// The buffers an icon or portrait is decoded through (IconTransfer).
+  HEAP_SLOT_ICON_TRANSFER = 17,
   /// The selection screen's state (struct SelectionMenuState).
   HEAP_SLOT_SELECTION_MENU = 18,
   /// The selection state Menu_AllocateSelectionState allocates, which nothing
   /// calls.
   HEAP_SLOT_SELECTION_STATE = 19,
-  /// The settings menu's state (struct OptionMenuState, gOptionMenuState).
+  /// The settings menu's state (struct SettingsMenuState, gOptionMenuState).
   HEAP_SLOT_SETTINGS_MENU = 20,
   /// Mind Read's wave state (struct MindReadState, gMindReadState).
   HEAP_SLOT_MIND_READ = 22,
@@ -110,7 +110,7 @@ enum HeapSlot {
   /// intro's struct TitlePaletteFade.
   HEAP_SLOT_PALETTE_FADE = 32,
   /// The floating lights of Sol Sanctum's Elemental Star room (struct
-  /// SolSanctumRingList, sol_sanctum_elemental_star_ring_setup.c).
+  /// SolSanctumLightList, sol_sanctum_elemental_star_ring_setup.c).
   HEAP_SLOT_SOL_SANCTUM_LIGHTS = 33,
   /// The line scroll's state (struct LineScrollState).
   HEAP_SLOT_LINE_SCROLL = 34,
@@ -139,7 +139,7 @@ enum HeapSlot {
   HEAP_SLOT_LUCKY_GAME = 45,
   /// A routine run from RAM: the canvas drawing routine
   /// BattleEffect_BuildBlitter writes, called as a DrawRectangle and released
-  /// before its canvas, or the world map's copy of Matrix_UpdateVertices.
+  /// before its canvas, or the world map's copy of WorldMap_UpdateAffineLines.
   HEAP_SLOT_RAM_CODE = 46,
   /// A second routine as HEAP_SLOT_RAM_CODE, released before it: always a
   /// BattleEffect_BuildBlitter routine, the second of a pair whose first is in

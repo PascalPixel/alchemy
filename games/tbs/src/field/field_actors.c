@@ -162,7 +162,7 @@ void ActorSystem_Initialize(s32 controlMode) {
   if (controlMode == ACTOR_SYSTEM_BATTLE)
     Task_Add(Actor_UpdateAllMotion, TASK_PASS_FRAME + 10);
   else
-    Task_Add(Actor_UpdateAllThumb, TASK_PASS_FRAME + 10);
+    Task_Add(Actor_UpdateAllOnField, TASK_PASS_FRAME + 10);
   if (controlMode >= ACTOR_SYSTEM_WORLD_MAP &&
       controlMode <= ACTOR_SYSTEM_BATTLE) {
     Task_Add(ActorSystem_ProjectSprites, TASK_PASS_FRAME);
@@ -243,7 +243,8 @@ struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
       if (sprite != NULL) {
         actor->spriteStorageKind = ACTOR_SPRITE_ONE;
         actor->sprite = sprite;
-        actor->radius = Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
+        actor->radius =
+            Resource_GetMetadataRecordFar(encodedSprite)->footprint >> 1;
       } else {
         actor->spriteStorageKind = ACTOR_SPRITE_NONE;
       }
@@ -257,7 +258,8 @@ struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
       Dma_Fill32(0, spriteSlots, 4 * sizeof(void *));
       sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
-        actor->radius = Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
+        actor->radius =
+            Resource_GetMetadataRecordFar(encodedSprite)->footprint >> 1;
         *spriteSlots++ = sprite;
       }
       sprite = Sprite_Create(encodedSprite + 1);
@@ -283,7 +285,7 @@ struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
     actor->bounce = FIXED_ONE / 4;
     actor->collisionFlags = 0;
     actor->steeringFlags = ACTOR_FACES_MOTION;
-    actor->riseBaseY = 0;
+    actor->sceneWord = 0;
     actor->facing = FACING_SOUTH;
     // Its home position, in pixels.
     actor->homeX = x / toFIXED(1);
@@ -500,8 +502,8 @@ void Actor_SetSpriteColorMode(struct Actor *actor, u32 param) {
 /// Suspends the actor camera updates, starts the palette back to normal and, a
 /// frame later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged.
 void ActorSystem_SuspendProjectionAndShowSprites(void) {
-  Task_SuspendAll(ActorSystem_PlaceSprites);
-  Task_SuspendAll(ActorSystem_ProjectSprites);
+  Task_Suspend(ActorSystem_PlaceSprites);
+  Task_Suspend(ActorSystem_ProjectSprites);
   PaletteFade_SetTargetFar(PALETTE_TINT_NONE, 1);
   PaletteFade_StartInterpolationFar(1);
   wait(1);
@@ -512,8 +514,8 @@ void ActorSystem_SuspendProjectionAndShowSprites(void) {
 
 /// Resumes the actor camera updates and hides BG1-3 and the sprites.
 void ActorSystem_ResumeProjectionAndHideLayers(void) {
-  Task_ResumeAll(ActorSystem_PlaceSprites);
-  Task_ResumeAll(ActorSystem_ProjectSprites);
+  Task_Resume(ActorSystem_PlaceSprites);
+  Task_Resume(ActorSystem_ProjectSprites);
   REG_DISPCNT &=
       ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON);
 }

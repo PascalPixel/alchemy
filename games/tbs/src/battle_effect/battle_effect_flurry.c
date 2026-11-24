@@ -83,7 +83,7 @@ enum FlurryColumn {
 };
 
 /// The flash pictures, packed to half width after the arcs.
-#define FLURRY_FLASH_PICTURES 20736
+#define FLURRY_ORB_PICTURES 20736
 /// The wave pictures, in the map grid buffer past the motes.
 #define FLURRY_WAVE_PICTURES (Ram_MapGridCellBuffer + 24064)
 
@@ -122,13 +122,13 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                                    state->args->side, DJINNI_ANCHOR_OVER_USER,
                                    &screenX, &screenY);
 
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, state->sheet, 1, 0);
   for (row = 0; row != YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT; row++) {
     for (col = 0; col != YELLOW_ORB_WIDTH; col++) {
       s32 src = row * YELLOW_ORB_WIDTH + col;
-      s32 dst = row * YELLOW_ORB_PACKED_WIDTH + col / 2 + FLURRY_FLASH_PICTURES;
+      s32 dst = row * YELLOW_ORB_PACKED_WIDTH + col / 2 + FLURRY_ORB_PICTURES;
 
       state->sheet[dst] = state->sheet[src];
     }
@@ -161,7 +161,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                         CANVAS_FADE_THREE_QUARTERS);
 
   // Motes wait above the target until their strike releases them.
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   for (i = 0; i != FLURRY_WAITING_MOTES; i++) {
     struct Particle *mote = &PARTICLES[i];
 
@@ -254,7 +254,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                 state->sheet +
                     ((frame - start - 2) / 2) *
                         PICTURE_BYTES(YELLOW_ORB_PACKED) +
-                    FLURRY_FLASH_PICTURES,
+                    FLURRY_ORB_PICTURES,
                 targetPos.x / 2 - YELLOW_ORB_PACKED_WIDTH / 2,
                 targetPos.y - YELLOW_ORB_PACKED_HEIGHT / 2,
                 YELLOW_ORB_PACKED_WIDTH, YELLOW_ORB_PACKED_HEIGHT);
@@ -291,13 +291,13 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
 #undef FLURRY_WAITING_MOTES
 #undef FLURRY_DRAWN_MOTES
 #undef FLURRY_MOTES_PER_STRIKE
-#undef FLURRY_FLASH_PICTURES
+#undef FLURRY_ORB_PICTURES
 #undef FLURRY_WAVE_PICTURES
 #undef FLURRY_DEFINE_BY_VARIANT

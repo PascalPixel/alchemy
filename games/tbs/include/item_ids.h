@@ -9,7 +9,7 @@
 /// MsgItemName + its id. Each kind of item leaves spare ids after its last,
 /// whose rows are blank and whose names in the text are "?"; nothing reaches
 /// them but the debug menus' item browser (debug/level.c, items 0 to 269)
-/// and gShop_GiftItemIds, which nothing reads. A kind's first id is written
+/// and gShop_UnusedItemIds, which nothing reads. A kind's first id is written
 /// where spares come before it.
 enum ItemId {
   ITEM_NONE,

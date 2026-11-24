@@ -6,9 +6,9 @@ FarCall_MenuTable:
 	export PsynergyMenu_RunFar, PsynergyMenu_Run
 	export StatusScreen_RunFar, StatusScreen_Run
 	export PartyMemberChooser_OpenFar, PartyMemberChooser_Open
-	overlay_veneer Icon_CreateWithResourceVariant
+	overlay_veneer Icon_CreateHandCursor
 	export Menu_CreatePartyFiguresFar, Menu_CreatePartyFigures
 	export Menu_ReleasePartyFiguresFar, Menu_ReleasePartyFigures
-	export Icon_PrepareActorFar, Icon_PrepareActor
+	export Icon_ShowFar, Icon_Show
 	export DjinnMenu_RunFar, DjinnMenu_Run
 	export ItemMenu_DrawItemDetailsFar, ItemMenu_DrawItemDetails

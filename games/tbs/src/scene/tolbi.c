@@ -72,7 +72,6 @@
 #include "field/map_grid.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
-#include "scene/colosso_story_flags.h"
 #include "scene/vault_range.h"
 #include "system/heap.h"
 #include "system/iwram_call.h"

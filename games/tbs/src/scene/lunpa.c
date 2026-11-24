@@ -65,7 +65,7 @@
 #include "field/field_effect.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
-#include "scene/actor_orbit.h"
+#include "scene/floating_nut.h"
 #include "scene/catch_nut.h"
 #include "scene/field_effect_spawn.h"
 #include "system/main_routine_state.h"
@@ -1131,7 +1131,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/actor_orbit.c"
+#include "shared/floating_nut.c"
 
 /// An entrance of the town, with its camera free, and of the Fortress gates,
 /// its camera kept in their bounds.

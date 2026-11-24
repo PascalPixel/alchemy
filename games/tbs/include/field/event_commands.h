@@ -215,7 +215,7 @@ enum AttachedEffectFlag {
   ATTACHED_EFFECT_IN_FRONT = 0x100
 };
 void FieldEffect_SetAttached(s32 actorId, s32 flags);
-s32 Actor_ClearChildAndCollisionFlags(struct Actor *actor);
+s32 Actor_ClearSpriteAndCollisionFlags(struct Actor *actor);
 s32 Actor_MoveTowardTarget(struct Actor *actor);
 s32 Actor_TurnTowardWatchedActor(struct Actor *actor);
 void Actor_SetMovementType(struct Actor *actor, s32 movement);
@@ -307,16 +307,16 @@ void Camera_WorldToScreen(struct Vector3 *position);
 void FieldPsynergy_StartMindReadWave(s32 casterId, s32 targetId);
 void FieldPsynergy_StopMindReadWave(void);
 void FieldPsynergy_UpdateMindReadWave(void);
-void FieldEffect_ArmBg0HBlankDma(void);
-void FieldEffect_AdvanceHueCycle(void);
+void MindRead_StartRipple(void);
+void MindRead_AdvanceTint(void);
 void FieldEffect_CalculateHueChannels(FIXED hue, FIXED *r, FIXED *g, FIXED *b);
 s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, FIXED high);
 FIXED FixedPoint_Remainder(FIXED value, FIXED divisor);
-void FieldEffect_ReleaseOnArrival(struct Actor *actor);
+void MindRead_UpdateCrescent(struct Actor *actor);
 void FieldPsynergy_GreyMindReadPalette(void);
 void FieldPsynergy_RestoreMindReadPalette(void);
 /// What Input_GetDpadAngle returns when no direction, or a diagonal, is held:
-/// the blank entries of gFieldEffect_CyclePatternWords.
+/// the blank entries of gInput_DpadAngles.
 #define DPAD_ANGLE_NONE 65535
 s32 Input_GetDpadAngle(u32 unused);
 void FieldEffect_UpdateMoveHand(struct Actor *actor);
@@ -324,8 +324,8 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId);
 void FieldEffect_UpdateOutAndBack(struct FieldParticle *effect);
 void FieldPsynergy_Move(void);
 struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster);
-void FieldEffect_SnapScaleToFull(struct Actor *actor);
-void UpdateRisingParticleBurst(struct Actor *hand);
+void FieldEffect_GrowHandAndWait(struct Actor *actor);
+void FieldEffect_BurstHand(struct Actor *hand);
 void Actor_SetRevealSpriteColor(s32 value);
 void FieldPsynergy_WatchLeaderDistance(void);
 void FieldPsynergy_Reveal(void);
@@ -336,7 +336,7 @@ void FieldEffect_SpawnBurstParticleField(void);
 void FieldPsynergy_LiftOnTarget(s32 unused);
 struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle);
 void FieldEffect_UpdateRadialBurst(struct FieldParticle *effect);
-s32 SpawnHeavyImpactEffect(struct Actor *interpreter);
+s32 FieldEffect_SpawnHeavyImpact(struct Actor *interpreter);
 void FieldPsynergy_ForceOnTarget(s32 unused);
 void FieldPsynergy_Force(void);
 void FieldEffect_UpdateOrbitingParticleFade(struct Actor *actor);
@@ -363,7 +363,7 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle);
 void FieldEffect_SpawnRadialParticleRing(struct Actor *origin);
 void FieldEffect_WanderAroundAnchor(struct Actor *actor);
 void FieldEffect_CircleAnchor(struct Actor *actor);
-void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor);
+void Whirlwind_UpdateTarget(struct Actor *actor);
 void FieldPsynergy_WhirlwindOnTarget(s32 unused);
 void FieldPsynergy_Whirlwind(void);
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect);
@@ -377,7 +377,7 @@ void FieldPsynergy_CatchOnTarget(s32 unused);
 void FieldPsynergy_Catch(void);
 void FieldEffect_UpdateSpinAngle(struct Actor *actor);
 void FieldEffect_UpdateRetreatCaster(struct Actor *actor);
-void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect);
+void Retreat_UpdateSpark(struct FieldParticle *effect);
 void FieldPsynergy_Retreat(void);
 void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor);
 void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor);
@@ -392,7 +392,7 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object);
 void FieldParticle_UpdateMotion(struct FieldParticle *effect);
 u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect);
 void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z);
-void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode);
+void FieldParticle_SetAnimation(struct FieldParticle *effect, s32 mode);
 void FieldParticle_SetCallback(struct FieldParticle *effect,
                                EffectCallback callback);
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,

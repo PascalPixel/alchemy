@@ -22,8 +22,8 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   FIXED startY;
 
   effectState = gFieldEffectState;
-  target = effectState->child;
-  caster = effectState->mainActor;
+  target = effectState->target;
+  caster = effectState->caster;
   if (target == NULL)
     return;
 
@@ -69,8 +69,8 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   }
 
   // The hands burst into particles; the target stays up.
-  UpdateRisingParticleBurst(pair[0]);
-  UpdateRisingParticleBurst(pair[1]);
+  FieldEffect_BurstHand(pair[0]);
+  FieldEffect_BurstHand(pair[1]);
   FieldPsynergy_FadeFromCastColor();
 }
 
@@ -144,7 +144,7 @@ again:
   if (state == OUT_AND_BACK_AIM_BACK) {
     // 8 pixels toward effectState->angle from 16 pixels above the caster,
     // on screen, give or take 4 pixels.
-    struct Actor *caster = effectState->mainActor;
+    struct Actor *caster = effectState->caster;
 
     pos.x = caster->x.fixed;
     pos.y = caster->y.fixed + toFIXED(16);
@@ -170,7 +170,7 @@ again:
 /// A heavy impact: places a star burst (SPRITE_STAR_BURST) 32 pixels below the
 /// source for 20 frames and scatters HEAVY_IMPACT_SPARKLES sparkles
 /// (SPRITE_SPARKLE) from it.
-s32 SpawnHeavyImpactEffect(struct Actor *source) {
+s32 FieldEffect_SpawnHeavyImpact(struct Actor *source) {
   struct Vector3 pos;
   struct Actor *impact;
   struct Actor *sparkle;

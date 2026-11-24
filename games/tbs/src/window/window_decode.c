@@ -62,7 +62,8 @@ enum {
   /// plural suffix
   MESSAGE_LOCALIZED_WORD = 13,
   MESSAGE_UNUSED_14 = 14, ///< kept with its two operands as TEXT_UNUSED_14
-  /// Kept with its operand as TEXT_WINDOW_STATE: the window animation to run.
+  /// Kept with its operand as TEXT_WINDOW_ANIMATION: the window animation to
+  /// run.
   MESSAGE_WINDOW_EFFECT = 15,
   /// The name of the unit gMainRoutineState.leaderActorId names.
   MESSAGE_PROTAGONIST_NAME = 16,

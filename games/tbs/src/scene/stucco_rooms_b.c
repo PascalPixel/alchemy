@@ -66,7 +66,6 @@
 #include "field/actor_script.h"
 #include "field/event.h"
 #include "field/scene_tables.h"
-#include "scene/colosso_story_flags.h"
 #include "system/main_routine_state.h"
 #include "text/msg_ids.h"
 

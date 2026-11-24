@@ -143,7 +143,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   if (picture == 0)
     return 0;
 
-  Actor_StartScriptFar(picture, gFieldEffect_ParticleEmitterScript);
+  Actor_StartScriptFar(picture, gItemDisplay_GrowInScript);
   {
     struct Sprite *sprite = picture->sprite;
     void *iconBuffer;
@@ -159,17 +159,16 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
     picture->velocityY = toFIXED(2);
     picture->gravity = toFIXED(1) / 4;
 
-    // Draw the item's icon into HEAP_SLOT_GLYPH_TRANSFER, then send its tiles
+    // Draw the item's icon into HEAP_SLOT_ICON_TRANSFER, then send its tiles
     // to the sprite's.
-    iconBuffer =
-        HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    iconBuffer = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItemFar(item);
 
     sprite->image.tile =
         VramCache_Load(sprite->slot, ICON_TILE_BYTES,
-                       (u8 *)iconBuffer + offsetof(GlyphTransfer, tiles));
+                       (u8 *)iconBuffer + offsetof(IconTransfer, tiles));
 
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     picture->update = ItemDisplay_EmitSparkles;
   }
 
@@ -200,7 +199,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
                          leader->z.fixed);
   wait(3);
   Actor_SelectAnimationFar(leader, ANIM_LEADER_ARMS_RAISED);
-  Actor_StartScriptFar(actor, gFieldEffect_RisingPulseScript);
+  Actor_StartScriptFar(actor, gItemDisplay_PulseScript);
   // FACING_SOUTH, a quarter turn, faces the screen.
   leader->facing = FACING_SOUTH;
 }
@@ -215,7 +214,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
     leader = Actor_Lookup(gMainRoutineState.leaderActorId);
     if (flags & ITEM_DISPLAY_SPARKLES) {
       Actor_SetSpriteFlagsFar(object, 0);
-      Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
+      Actor_StartScriptFar(object, gItemDisplay_GrowInScript);
       ((struct Actor *)object)->velocityY = toFIXED(2);
       ((struct Actor *)object)->gravity = toFIXED(1) / 4;
       ((struct Actor *)object)->update = ItemDisplay_EmitSparkles;
@@ -239,7 +238,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *leader = Actor_Lookup(gMainRoutineState.leaderActorId);
   void *iconBuffer =
-      HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+      HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   struct Actor *actor =
       Actor_CreateFar(SPRITE_BLANK, leader->x.fixed,
                       leader->y.fixed + toFIXED(36), leader->z.fixed);
@@ -255,8 +254,8 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 
     Icon_DrawItemFar(item);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES,
-                   (u8 *)iconBuffer + offsetof(GlyphTransfer, tiles));
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+                   (u8 *)iconBuffer + offsetof(IconTransfer, tiles));
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
 
     if (flags & ITEM_DISPLAY_SPARKLES)
       actor->update = ItemDisplay_EmitSparkles;
@@ -389,7 +388,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
                   column * toFIXED(MAPGRID_CELL_PIXELS) + toFIXED(8), 0,
                   row * toFIXED(MAPGRID_CELL_PIXELS) + toFIXED(8));
               if (actor != 0) {
-                Actor_StartScriptFar(actor, gFieldEffect_MarkerParticleScript);
+                Actor_StartScriptFar(actor, gReveal_MarkerScript);
                 Actor_SetSpriteFlagsFar(actor, 0);
                 actor->update = Reveal_EmitSparkles;
               }

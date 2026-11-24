@@ -98,7 +98,7 @@ void DebugSceneSelect_RunFar(void);
 s16 DebugSceneSelect_RunFar(void);
 #endif
 s32 DebugFlagEditor_RunFar(void);
-s32 Resource_LoadByModeIntoSlotFar(s32 mode, s32 value, s32 result, s32 option);
+s32 SelectionIcon_LoadIntoSlotFar(s32 mode, s32 value, s32 result, s32 option);
 void Window_MarkVisibleTextTilesFar(void);
 s32 PartyStatus_HighlightMembersFar(u16 *ids);
 struct WindowSprite *WindowSprite_CreateLoadedFar(s32 icon, s32 layers,
@@ -108,7 +108,7 @@ s32 Save_ToChosenFileFar(void);
 s32 Save_ChooseAndLoadFileFar(s32 mode);
 s32 Save_CopyFileFar(void);
 s32 Save_EraseSelectedFileFar(void);
-s32 Save_ProcessSelectedFileFar(void);
+s32 Save_WriteLinkTalliesFar(void);
 s32 Save_ScanFileSummariesFar(void);
 s32 NameEntry_EditMemberNameFar(s32 member);
 s32 DebugBrowser_IconsFar(void);
@@ -122,12 +122,12 @@ s32 YesNoMenu_RunFar(s32 bottom, s32 message, s32 labelWidth, s32 selection);
 s32 Menu_SelectCoinsOrMedalsFar(s32 selection);
 s32 ColossoMenu_ChooseFar(s32 unused);
 s32 YesNoMenu_RunAtFar(s32 x, s32 y, s32 selection);
-s32 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
+s32 PointingHand_LoadIntoFreeSlotFar(void);
 void Text_MeasureMessageFar(s32 message, s32 *x, s32 *y);
 void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height,
                              s32 paletteBit);
-void Ability_LoadGlyphFar(s32 action, s32 withBase, s32 *slot, s32 *tile,
-                          s32 reuse);
+void Ability_BuildIconTilesFar(s32 action, s32 withBase, s32 *slot, s32 *tile,
+                               s32 reuse);
 void Graphics_ExpandVramTilesByColorTableFar(u16 *dst);
 void Text_UseExtraTilesFar(s32 allowAlternateTiles);
 s32 Menu_AnimateSelectionToEntryFar(s32 start, s32 command);
@@ -136,7 +136,7 @@ s32 Message_OpenDecodedFar(struct Window *window, s32 message);
 s32 Save_CountFilesExcludingSentFar(s32 excludeSent);
 void Window_DrawBorderFar(s32 x, s32 y, u32 width, u32 height);
 void Window_EraseBorderRectFar(s32 x, s32 y, u32 width, u32 height);
-void Link_DrawPageArrowsFar(s32 offset);
+void PageArrows_DrawFar(s32 offset);
 void Party_ShowJoinedMessageFar();
 void Party_ShowPairJoinedMessageFar(s32 first, s32 second);
 

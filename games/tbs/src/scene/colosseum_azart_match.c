@@ -80,8 +80,8 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/colosso_gauge.h"
-#include "scene/colosso_marker.h"
-#include "scene/colosso_occupant.h"
+#include "scene/colosso_guide.h"
+#include "scene/colosso_push.h"
 #include "scene/colosso_setup.h"
 #include "scene/colosso_solo.h"
 #include "scene/import.h"
@@ -97,43 +97,43 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-s16 gColosso_MarkerStep BSS_DATA;
-s16 gColosso_ModeScaleDuration BSS_DATA ALIGNED(4);
-s16 gColosso_MarkerFlip BSS_DATA ALIGNED(4);
+s16 gColosso_PointerStep BSS_DATA;
+s16 gColosso_LetteringScaleDuration BSS_DATA ALIGNED(4);
+s16 gColosso_PointerFlip BSS_DATA ALIGNED(4);
 /// Isaac's z before he is shown on the stage, 16.16 fixed-point pixels.
 FIXED gColosso_WarriorStartZ BSS_DATA;
-s16 gColosso_MarkerEndX BSS_DATA;
+s16 gColosso_PointerEndX BSS_DATA;
 s16 gColosso_LetteringParameter BSS_DATA ALIGNED(4);
-s16 gColosso_ModeScaleStart BSS_DATA ALIGNED(4);
-s16 gColosso_ModeMoveDuration BSS_DATA ALIGNED(4);
+s16 gColosso_LetteringScaleStart BSS_DATA ALIGNED(4);
+s16 gColosso_LetteringMoveDuration BSS_DATA ALIGNED(4);
 s32 gColosso_LetteringPosition BSS_DATA;
-s16 gColosso_MarkerBlink BSS_DATA;
-s16 gColosso_ModeScaleTarget BSS_DATA ALIGNED(4);
-s16 gColosso_ModeMoveStep BSS_DATA ALIGNED(4);
-s16 gColosso_MarkerY BSS_DATA ALIGNED(4);
-s16 gColosso_ModeBlendStep BSS_DATA ALIGNED(4);
+s16 gColosso_PointerBlink BSS_DATA;
+s16 gColosso_LetteringScaleTarget BSS_DATA ALIGNED(4);
+s16 gColosso_LetteringMoveStep BSS_DATA ALIGNED(4);
+s16 gColosso_PointerY BSS_DATA ALIGNED(4);
+s16 gColosso_LetteringFadeStep BSS_DATA ALIGNED(4);
 /// Isaac's facing before Colosso_FadeInWarrior, which
 /// Colosso_RestoreWarrior puts back.
 s32 gColosso_WarriorStartAngle BSS_DATA;
-s16 gColosso_MarkerSteps BSS_DATA;
+s16 gColosso_PointerSteps BSS_DATA;
 s16 gColosso_LetteringMode BSS_DATA ALIGNED(4);
-s16 gColosso_ModeBlendTarget BSS_DATA ALIGNED(4);
-s16 gColosso_ModeBlendStart BSS_DATA ALIGNED(4);
+s16 gColosso_LetteringFadeTarget BSS_DATA ALIGNED(4);
+s16 gColosso_LetteringFadeStart BSS_DATA ALIGNED(4);
 s16 gColosso_LetteringTimer BSS_DATA ALIGNED(4);
 s16 *gColosso_LetteringScript BSS_DATA;
-union MarkerCoordinate gColosso_MarkerStartX BSS_DATA;
-s16 gColosso_ModeBlendDuration BSS_DATA ALIGNED(4);
+union PointerCoordinate gColosso_PointerStartX BSS_DATA;
+s16 gColosso_LetteringFadeDuration BSS_DATA ALIGNED(4);
 u8 gColosseumAzartMatch_UnusedAfterBlendDuration[6] BSS_DATA;
 /// The blinking pointer's sprite part: the queue link and attributes 0 to 2.
 s32 gColosso_PointerOam[3] BSS_DATA;
-union MarkerCoordinate gColosso_MarkerStartY BSS_DATA;
+union PointerCoordinate gColosso_PointerStartY BSS_DATA;
 /// The lettering's sprite parts, three words each, written every frame.
 u32 gColosso_LetteringSprites[12] BSS_DATA;
-s16 gColosso_ModeMoveStart BSS_DATA;
-s16 gColosso_MarkerX BSS_DATA ALIGNED(4);
-s16 gColosso_ModeMoveTarget BSS_DATA ALIGNED(4);
-s16 gColosso_ModeScaleStep BSS_DATA ALIGNED(4);
-s16 gColosso_MarkerEndY BSS_DATA ALIGNED(4);
+s16 gColosso_LetteringMoveStart BSS_DATA;
+s16 gColosso_PointerX BSS_DATA ALIGNED(4);
+s16 gColosso_LetteringMoveTarget BSS_DATA ALIGNED(4);
+s16 gColosso_LetteringScaleStep BSS_DATA ALIGNED(4);
+s16 gColosso_PointerEndY BSS_DATA ALIGNED(4);
 /// Isaac's x before he is shown on the stage, 16.16 fixed-point pixels.
 FIXED gColosso_WarriorStartX BSS_DATA;
 
@@ -156,7 +156,7 @@ extern s32 gColosso_LeaderFinishScript[];
 extern char gHexDigits[20];
 extern s32 gPushedActor_DirectionSteps[];
 extern s16 gColosso_LetteringSlot;
-extern s16 gColosso_MarkerSlot;
+extern s16 gColosso_PointerSlot;
 
 // UB: each of these calls a void function through an s32 function type, the
 // call the bytes show; UBFIX calls it as declared.
@@ -854,7 +854,7 @@ s32 Scene_Initialize(void) {
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
-    Colosso_StartOpponent(RESOURCE_OPPONENT_PATH_A);
+    Colosso_StartOpponent(RESOURCE_AZART_OPPONENT_PATH);
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST:
     Task_AddFrame(Colosso_RaiseTakePlaceOnPsynergy, TASK_PASS_FRAME);
@@ -1291,7 +1291,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
 
 #include "shared/colosso_lettering.c"
 
-#include "shared/colosso_marker.c"
+#include "shared/colosso_guide.c"
 #include "shared/colosso_item_icon.c"
 
 #include "shared/colosso_hex_string.c"
@@ -1302,7 +1302,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
 #include "shared/colosso_map_state.c"
 #include "shared/actor_find_at_position.c"
 
-#include "shared/colosso_occupant.c"
+#include "shared/colosso_push.c"
 
 #include "shared/colosso_lettering_tables.c"
 // clang-format off
@@ -1397,7 +1397,7 @@ struct Trigger gColosseumAzartMatch_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_C, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_UpdateRockCells) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT(ColosseumAzartMatch_GrowPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_PIPE_WEST, FLAG_PIPES_MOVED, EVENT(ColosseumAzartMatch_DousePipe) },
-    { TRIGGER_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT(Colosso_AskReadyToRace) },
+    { TRIGGER_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT(Colosso_AskDoneLookingAround) },
     { TRIGGER_TALK, ACTOR_ROCK_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_TalkToRockAttendant) },
     { TRIGGER_TALK, ACTOR_PIPEWORKS_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_TalkToPipeworksAttendant) },
     { TRIGGER_TALK, ACTOR_BRIDGE_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_TalkToBridgeAttendant) },
@@ -1419,6 +1419,6 @@ s16 gColosso_LetteringSlot = -1;
 // clang-format on
 
 /// The VRAM cache entry holding the marker's tiles, -1 when none is loaded.
-s16 gColosso_MarkerSlot = -1;
+s16 gColosso_PointerSlot = -1;
 
 #include "shared/colosso_finish_scripts.c"

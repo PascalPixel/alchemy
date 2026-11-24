@@ -148,7 +148,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     doubleWidth = 1;
   }
 
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, state->sheet, 0, 0);
   if (mode <= HEALING_MODE_WISH || mode == HEALING_MODE_CURE_POISON ||
       mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC) {
@@ -176,7 +176,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   }
   resource += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(resource, state->sheet + HEALING_DJINNI_PICTURE);
-  BattleEffect_FetchRectangleBlitters(state->args->side, blit);
+  BattleEffect_BuildCanvasBlitters(state->args->side, blit);
 
   // Scatter the motes around each target's centre.
   if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL) {
@@ -240,7 +240,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     motesPerTarget = HEALING_MOTES * 2;
   state->transferMode = CANVAS_COPY_AND_FADE;
   state->transferValue = CANVAS_FADE_THREE_QUARTERS;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = gBattleCamera;
@@ -283,7 +283,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
     EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor =
-          GetBattleObjectSlotFar(state->args->targets[member])->actor;
+          BattleObject_GetFar(state->args->targets[member])->actor;
       s32 start = member * 8;
 
       EFFECT_VIEW_FROM_CAMERA(camera);

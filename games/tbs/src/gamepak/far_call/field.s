@@ -3,7 +3,7 @@
 	.global FarCall_FieldTable
 FarCall_FieldTable:
 	export ActorSystem_ConfigureFar, ActorSystem_Configure
-	export Actor_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
+	export Render_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
 	overlay_veneer Render_PlaceProjectedSprite
 	overlay_veneer Sprite_ResetAnimations
 	export Sprite_StartAnimationFar, Sprite_StartAnimation
@@ -86,6 +86,6 @@ FarCall_FieldTable:
 	export SpriteColor_RemapPixelsFar, SpriteColor_RemapPixels
 	export TilesetAnim_SuspendAllFar, TilesetAnim_SuspendAll
 	export TilesetAnim_ResumeAllFar, TilesetAnim_ResumeAll
-	export ActorScript_FindOverlappingEntryFar, ActorScript_FindOverlappingEntry
-	export MapGrid_GetCellAttributeLowNibbleFar, MapGrid_GetCellAttributeLowNibble
+	export ActorScript_FindOverlappingActorFar, ActorScript_FindOverlappingActor
+	export MapGrid_GetTerrainKindAtFar, MapGrid_GetTerrainKindAt
 	overlay_veneer SpriteViewer_Run

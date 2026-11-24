@@ -55,7 +55,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              state->sheet + RAY_PICTURES, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   if (state->args->variant == EFFECT_VARIANT_STRONGEST) {
     if (state->args->side == EFFECT_SIDE_PARTY)
       REG_BG2X = -(RAY_WIDE_CANVAS_SHIFT << 8);

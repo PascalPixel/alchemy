@@ -119,7 +119,7 @@ Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
     ((s16 *)destination)[i * 2] =
         gElement_PowerResistByLevel[level].power + tenths;
     ((s16 *)destination)[i * 2 + 1] =
-        gElement_PowerResistByLevel[level].res + tenths;
+        gElement_PowerResistByLevel[level].resistance + tenths;
   }
 }
 

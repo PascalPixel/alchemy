@@ -33,7 +33,7 @@ struct Window {
   u16 x;                           ///< tiles
   u16 y;                           ///< tiles
   u16 opened; ///< 1 once opened, 0 once freed; nothing reads it
-  /// The animation a message's TEXT_WINDOW_STATE code sets.
+  /// The animation a message's TEXT_WINDOW_ANIMATION code sets.
   u16 animation;
   /// 0 while a message is typing into the window; 1 once its text has
   /// ended or closed the window, which frees the message for the next text.
@@ -194,7 +194,7 @@ struct SelectionNode;
 struct SelectionMenuState;
 struct MessageReader;
 struct Message;
-struct OptionMenuState;
+struct SettingsMenuState;
 
 /// The flags of a UI window (struct Window.flags), which Window_Create
 /// takes as its attributes.
@@ -280,7 +280,7 @@ enum TextColor {
 /// The OAM shape and size a window sprite is created with
 /// (WindowSprite_Create): attribute 0's shape in the low half, attribute 1's
 /// size in the high half.
-#define OUTPUT_SIZE_16X16 0x40000000
+#define WINDOW_SPRITE_SIZE_16X16 0x40000000
 #define OUTPUT_SIZE_32X32 0x80000000
 #define OUTPUT_SIZE_32X8 0x40004000
 #define OUTPUT_SIZE_32X16 0x80004000
@@ -294,7 +294,7 @@ enum TextColor {
 
 /// The two page arrows beside a paged list's page numbers, in the menus and
 /// the File Screen: tiles 296 and 297 of character block 0, which
-/// Link_DrawPageArrows slides back and forth each frame, and their
+/// PageArrows_Draw slides back and forth each frame, and their
 /// tilemap entries.
 #define PAGE_ARROW_TILE 296
 #define PAGE_ARROW_VRAM                                                        \
@@ -495,7 +495,7 @@ enum PauseMenuEntry {
 };
 
 /// The kinds of icon the selection screen lists (SelectionNode.kind) and
-/// Resource_LoadByMode, Resource_LoadByModeIntoSlot and
+/// SelectionIcon_Load, SelectionIcon_LoadIntoSlot and
 /// WindowSprite_CreateFromResource load.
 enum IconKind {
   ICON_KIND_NONE = 0,    ///< a free selection icon entry
@@ -508,7 +508,7 @@ enum IconKind {
   /// An item's icon without the broken mark, for the equipment view.
   ICON_KIND_EQUIPMENT_ITEM = 7,
   ICON_KIND_PATTERN = 8, ///< one of the other icons (Icon_BuildMiscIconTiles)
-  /// The one tile Resource_LoadTableEntry loads.
+  /// The one tile MenuTitle_LoadFirstTile loads.
   ICON_KIND_TABLE_ENTRY = 9
 };
 
@@ -520,9 +520,9 @@ enum IconKind {
 #define ICON_BROKEN 8
 /// Mark 0, the equip mark, on an item with INVENTORY_EQUIPPED.
 #define ICON_EQUIPPED 16
-/// Mark 2, Icon_MarkPhi, on a cursed item that cannot be unequipped
+/// Mark 2, Icon_MarkCursed, on a cursed item that cannot be unequipped
 /// (ITEM_CURSED and ITEM_CANNOT_UNEQUIP) when its code has INVENTORY_EQUIPPED.
-#define ICON_ARTIFACT 32
+#define ICON_CURSED 32
 
 /// The kinds of message argument (MessageArgument_Push), which the message
 /// codes such as {argument_item_name} read.
@@ -624,8 +624,8 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out);
 s32 Text_GetWideStringWidth(u16 *text);
 void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                  s32 y);
-void Text_DrawGlyphTileAtStateOffset(u16 *buffer, const struct Window *window,
-                                     s32 offsetX, s32 offsetY);
+void Text_DrawWideStringAsTiles(u16 *buffer, const struct Window *window,
+                                s32 offsetX, s32 offsetY);
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 u32 Message_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
                               s32 plural, s32 *suffix);
@@ -655,7 +655,7 @@ enum TilemapEntryMode {
   TILEMAP_ENTRY_WINDOW, ///< in WINDOW_PALETTE
   /// In palette 1, which the Status screen and the party rearranging fill
   /// with the element icons' colours for the rows that are not highlighted
-  /// (StatusScreen_Run, PartyMemberChooser_RunRearrange).
+  /// (StatusScreen_Run, StatusScreen_RunPartyRow).
   TILEMAP_ENTRY_ICON
 };
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
@@ -711,24 +711,24 @@ s32 Icon_CountItemIcons(void);
 s32 Icon_CountPsynergyIcons(void);
 void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
                                 s32 *tileOut, s32 reuse);
-void Ability_RequestGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
-                          s32 reuse);
+void Ability_BuildItemIconTiles(s32 action, s32 with_base, s32 *slot, s32 *tile,
+                                s32 reuse);
 void Icon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
                              s32 reuse);
 s32 ItemIcon_Compose(u32 code, u32 layers);
-s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot);
+s32 ItemIcon_LoadLayersIntoSlot(s32 inventoryCode, s32 layers, s32 cacheSlot);
 s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 slot);
-s32 Resource_LoadTableEntry(u32 value, s32 unused, u32 slot);
+s32 MenuTitle_LoadFirstTile(u32 value, s32 unused, u32 slot);
 void Icon_DrawItem(s32 code);
-void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
-                       s32 reuse);
+void Ability_BuildIconTiles(s32 action, s32 with_base, s32 *slot, s32 *tile,
+                            s32 reuse);
 void Icon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
                                 s32 reuse);
 void Icon_DrawMisc(u32 index);
 void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                           s32 palette, s32 reuse);
 void Icon_ReservedNoOp(void);
-void Icon_Decode(GlyphTransfer *glyph, s32 outlined);
+void Icon_Decode(IconTransfer *glyph, s32 outlined);
 
 void SelectionMenu_Create(void);
 void SelectionMenu_Clear(void);
@@ -757,8 +757,8 @@ void SelectionMenu_RedrawIcon(struct SelectionMenuState *state, u32 index);
 void SelectionMenu_HighlightIcon(struct SelectionMenuState *state, u32 index);
 void Menu_ClearBattleHighlight(struct SelectionMenuState *screen);
 void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward);
-s32 Resource_LoadByMode(s32 mode, s32 value);
-s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option);
+s32 SelectionIcon_Load(s32 mode, s32 value);
+s32 SelectionIcon_LoadIntoSlot(s32 mode, s32 value, s32 result, s32 option);
 void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                              s32 reuse);
 u32 Menu_ConfirmSelection(struct SelectionMenuState *screen);
@@ -772,7 +772,7 @@ void MenuArrow_Create(struct MenuSprite *object, s32 *slot);
 void MenuArrow_SetPosition(struct MenuSprite *obj, s32 x, s32 y);
 void MenuArrow_Release(s32 value);
 void SelectionMenu_LoadLargeIcon(void);
-void Resource_ResetPendingTransfer(void);
+void SelectionMenu_FreeLargeIcon(void);
 s32 FieldMenu_Run(void);
 void PartyStatus_OpenAndWait(void);
 // UB: FieldMenu_Run calls it with no prototype and uses the result, though it
@@ -800,18 +800,18 @@ void Menu_ReleaseSelectionState(void);
 void SettingsMenu_ReservedNoOpA(void);
 void SettingsMenu_ReservedNoOpB(void);
 void SettingsMenu_ReservedNoOpC(void);
-void SettingsMenu_ResetEntries(struct OptionMenuState *state);
-void WindowColor_CalculateTint(struct OptionMenuState *state);
-void WindowColor_WritePalette(struct OptionMenuState *state);
-u16 WindowColor_ScaleTint(struct OptionMenuState *state, FIXED scale_r,
+void SettingsMenu_ResetEntries(struct SettingsMenuState *state);
+void WindowColor_CalculateTint(struct SettingsMenuState *state);
+void WindowColor_WritePalette(struct SettingsMenuState *state);
+u16 WindowColor_ScaleTint(struct SettingsMenuState *state, FIXED scale_r,
                           FIXED scale_g, FIXED scale_b);
 u16 Color_ScaleComponents(s16 *rgb, FIXED red_scale, FIXED green_scale,
                           FIXED blue_scale);
 void WindowColor_Apply(s32 phase, s32 brightness);
-void SettingsMenu_PreviousRow(struct OptionMenuState *state);
-void SettingsMenu_NextRow(struct OptionMenuState *state);
-void SettingsMenu_LowerSetting(struct OptionMenuState *state);
-void SettingsMenu_RaiseSetting(struct OptionMenuState *state);
+void SettingsMenu_PreviousRow(struct SettingsMenuState *state);
+void SettingsMenu_NextRow(struct SettingsMenuState *state);
+void SettingsMenu_LowerSetting(struct SettingsMenuState *state);
+void SettingsMenu_RaiseSetting(struct SettingsMenuState *state);
 void SettingsMenu_SelectionNoOp(void);
 void SettingsMenu_AnimateCursors(void);
 void SettingsMenu_InitializeState(void);

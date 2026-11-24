@@ -2,7 +2,7 @@
 /// Actor script commands: waits, jumps, flags, moves and state values.
 ///
 /// Each `SC_` handler here is reached through gActorScript_CommandTable
-/// (actor_script.c), which Actor_UpdateAll and Actor_UpdateAllThumb call
+/// (actor_script.c), which Actor_UpdateAll and Actor_UpdateAllOnField call
 /// for each live actor; each returns 1 to run on and 0 to end the actor's
 /// frame (the protocol is in this folder's README).
 
@@ -43,7 +43,7 @@ s32 ActorScript_Wait(struct Actor *interpreter) {
 
 /// SC_SYNC: waits until the actor arrives at its target, or until a solid actor
 /// has blocked it for 60 frames (refused is the blocked count, which
-/// Actor_UpdateAllThumb raises).
+/// Actor_UpdateAllOnField raises).
 s32 ActorScript_WaitForArrival(struct Actor *interpreter) {
   if (interpreter->refused > SCRIPT_BLOCKED_MOVE_FRAMES - 1) {
     interpreter->refused = 0;
@@ -252,7 +252,7 @@ s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
 
 /// Returns the first solid actor that an actor at position values would
 /// overlap, as ActorScript_CheckOverlap tests, or NULL.
-struct Actor *ActorScript_FindOverlappingEntry(struct Actor *actor,
+struct Actor *ActorScript_FindOverlappingActor(struct Actor *actor,
                                                s32 *values) {
   s32 actorIndex;
   struct Actor *candidate = gActors;
@@ -434,8 +434,8 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
         // Shorten the offset to moveStep along the same direction: dx over
         // the distance is a 16.16 fraction, times the step.
         if (distance > moveStep) {
-          dx = Iwram_MulFX(Iwram_RatioMulQ14(distance, dx), moveStep);
-          dz = Iwram_MulFX(Iwram_RatioMulQ14(distance, dz), moveStep);
+          dx = Iwram_MulFX(Iwram_DivFX(distance, dx), moveStep);
+          dz = Iwram_MulFX(Iwram_DivFX(distance, dz), moveStep);
         }
         cameraActor->x.fixed += dx;
         cameraActor->z.fixed += dz;
@@ -817,15 +817,15 @@ SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetY, targetY)
 /// for.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetZ, targetZ)
 /// State value SW_BOUNCE: sets, adds to or compares the actor's bounce.
-SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareVerticalMotion, bounce)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareBounce, bounce)
 /// State value SW_GRAVITY: sets, adds to or compares the actor's gravity.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareGravity, gravity)
 /// State value SW_GROUND: sets, adds to or compares the ground height under the
 /// actor.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTerrainHeight, groundHeight)
-/// State value 23: sets, adds to or compares the actor's riseBaseY, scene
+/// State value 23: sets, adds to or compares the actor's sceneWord, scene
 /// code's own word.
-SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareRiseBaseY, riseBaseY)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareSceneWord, sceneWord)
 /// State value 24: sets, adds to or compares the actor's sprite.
 SCRIPT_DEFINE_OPERAND_ADDRESS(ActorScript_SetOrCompareSprite, sprite)
 /// State value 25: sets, adds to or compares whether the actor draws no sprite,
@@ -884,14 +884,13 @@ SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareUserValue, userValue, s16)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareWatchedActor, watchedActor)
 /// State value SW_HOOK: sets, adds to or compares the actor's update routine.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareUpdateAddress, update)
-/// State value SW_RISE_COUNTER: sets, adds to or compares the actor's rise
+/// State value SW_SCENE_COUNTER: sets, adds to or compares the actor's rise
 /// counter.
-SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRiseCounter, riseCounter,
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSceneCounter, sceneCounter,
                              u8)
-/// State value SW_RISE_ENABLED: sets, adds to or compares whether the actor
+/// State value SW_SCENE_BYTE: sets, adds to or compares whether the actor
 /// rises.
-SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRiseEnabled, riseEnabled,
-                             u8)
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSceneByte, sceneByte, u8)
 
 /// Reads the two words after the command (a state value number and a value) and
 /// passes operation to that value's handler.

@@ -27,10 +27,10 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareTargetX,           // 17 SW_TARGET_X
     ActorScript_SetOrCompareTargetY,           // 18 SW_TARGET_Y
     ActorScript_SetOrCompareTargetZ,           // 19 SW_TARGET_Z
-    ActorScript_SetOrCompareVerticalMotion,    // 20 SW_BOUNCE
+    ActorScript_SetOrCompareBounce,            // 20 SW_BOUNCE
     ActorScript_SetOrCompareGravity,           // 21 SW_GRAVITY
     ActorScript_SetOrCompareTerrainHeight,     // 22 SW_GROUND
-    ActorScript_SetOrCompareRiseBaseY,         // 23 SW_RISE_BASE_Y
+    ActorScript_SetOrCompareSceneWord,         // 23 SW_SCENE_WORD
     ActorScript_SetOrCompareSprite,            // 24 SW_SPRITE
     ActorScript_SetOrCompareSpriteStorageKind, // 25 SW_SPRITE_KIND
     ActorScript_SetOrCompareMotionFlags,       // 26 SW_MOTION
@@ -46,6 +46,6 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareUserValue,         // 36 SW_USER_VALUE
     ActorScript_SetOrCompareWatchedActor,      // 37 SW_WATCHED_ACTOR
     ActorScript_SetOrCompareUpdateAddress,     // 38 SW_HOOK
-    ActorScript_SetOrCompareRiseCounter,       // 39 SW_RISE_COUNTER
-    ActorScript_SetOrCompareRiseEnabled,       // 40 SW_RISE_ENABLED
+    ActorScript_SetOrCompareSceneCounter,      // 39 SW_SCENE_COUNTER
+    ActorScript_SetOrCompareSceneByte,         // 40 SW_SCENE_BYTE
 };

@@ -62,13 +62,13 @@
 // arrival, and Scene_Arrive clears all four when the party enters another area,
 // so a flag is set only while the party is inside.
 /// The party is inside Venus Lighthouse.
-#define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
+#define FLAG_IN_VENUS_LIGHTHOUSE 0x110
 /// The party is inside Mercury Lighthouse.
-#define FLAG_MERCURY_LIGHTHOUSE_LIT 0x111
+#define FLAG_IN_MERCURY_LIGHTHOUSE 0x111
 /// The party is inside Mars Lighthouse; no scene in The Broken Seal sets it.
-#define FLAG_MARS_LIGHTHOUSE_LIT 0x112
+#define FLAG_IN_MARS_LIGHTHOUSE 0x112
 /// The party is inside Jupiter Lighthouse; no scene in The Broken Seal sets it.
-#define FLAG_JUPITER_LIGHTHOUSE_LIT 0x113
+#define FLAG_IN_JUPITER_LIGHTHOUSE 0x113
 /// The next scene keeps the music that is playing; main_routine.c clears
 /// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
 #define FLAG_KEEP_MUSIC_ONCE 0x11a
@@ -117,7 +117,7 @@
 /// "It doesn't work here." Cleared on every normal scene entry (not a return
 /// keeping the party's position); the scenes that forbid Retreat set it.
 #define FLAG_RETREAT_BLOCKED 0x144
-#define FLAG_ITEM_USE 0x145 ///< the Psynergy comes from an item
+#define FLAG_PSYNERGY_FROM_ITEM 0x145 ///< the Psynergy comes from an item
 /// No random encounters while set (Encounter_CountStepsAndSelectFormation),
 /// unless FLAG_IGNORE_ENCOUNTER_CHECKS is set; debug entrances set it.
 #define FLAG_NO_ENCOUNTERS 0x160
@@ -150,7 +150,7 @@
 /// colosseum's escorts as they swap Mia in for Jenna.
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
 /// The highest of these that is set picks the tint a field Psynergy fades
-/// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
+/// toward, gFieldPsynergy_CastColors[n], in place of the frame counter's pick
 /// (FieldPsynergy_FadeToCastColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
 /// Holds the field's palette blend still (PaletteFade_Update), while a

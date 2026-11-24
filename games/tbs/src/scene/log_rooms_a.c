@@ -2943,7 +2943,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  temporaryActor = (struct Actor *)FieldEffect_PlayCueAndStartEmitterOnTarget(
+  temporaryActor = (struct Actor *)Chest_OpenAndShowItem(
       ACTOR_IVAN, ACTOR_THIRD_CHEST, ITEM_SHAMANS_ROD);
   Event_Wait(60);
   rod = MsgVaultIvanGotShamansRod;
@@ -3295,10 +3295,10 @@ static void LogRoomsA_UpdateCorneringChase(void) {
 
   // Only half a second with nowhere to run counts as cornered, naming who.
   if (blocked != 0) {
-    if (++gLogRoomsA_StopTimer >= LOG_ROOMS_A_CORNERED_FRAMES)
+    if (++gLogRoomsA_CorneredFrames >= LOG_ROOMS_A_CORNERED_FRAMES)
       state->raisedTrigger = LOG_ROOMS_A_CORNERED_EVENT_BASE + blocked;
   } else {
-    gLogRoomsA_StopTimer = 0;
+    gLogRoomsA_CorneredFrames = 0;
   }
 }
 
@@ -3328,7 +3328,7 @@ static void LogRoomsA_SpreadOutToCornerSuspects(void) {
   Actor_SetSpeed(ACTOR_IVAN, 0.75);
   Actor_SetSpeedAndAcceleration(ACTOR_SUSPECTED_LEADER, 1, 1.2);
   Actor_SetSpeedAndAcceleration(ACTOR_SUSPECTED_THIEF, 1.5, 1.5);
-  gLogRoomsA_StopTimer = 0;
+  gLogRoomsA_CorneredFrames = 0;
   Task_AddOrUpdateFrame(LogRoomsA_UpdateCorneringChase, TASK_PASS_FRAME + 20);
   // DEAD: the last system flag holds nothing, since no table, script or
   // routine sets or reads it; the ROM keeps the call that clears it.
@@ -4022,4 +4022,4 @@ s32 *gLogRoomsA_ThiefRuns[] = {
     gLogRoomsA_SuspectAlongToSouthEastCorner,
 };
 
-u16 gLogRoomsA_StopTimer;
+u16 gLogRoomsA_CorneredFrames;

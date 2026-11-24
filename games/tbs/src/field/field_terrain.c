@@ -160,7 +160,7 @@ FIXED Terrain_GetBendDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
   return middleHeight + pixelDifference;
 }
 
-/// A raised or sunken rounded square: sample 1 where gTerrain_LerpWeightTable
+/// A raised or sunken rounded square: sample 1 where gTerrain_RoundedSquareMask
 /// is 1, sample 0 in the corners.
 FIXED Terrain_GetRoundedSquareHeight(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
@@ -170,7 +170,7 @@ FIXED Terrain_GetRoundedSquareHeight(const u8 *heightBytes, s32 x, s32 y) {
   // The weight is 0 or 1, so the result is one sample or the other, never
   // between.
   return startHeight + ((CURVE_HEIGHT_FIXED(samples[1]) - startHeight) *
-                        gTerrain_LerpWeightTable[x + (y * CURVE_FULL_STEPS)]);
+                        gTerrain_RoundedSquareMask[x + (y * CURVE_FULL_STEPS)]);
 }
 
 /// The steps along one axis: sample 0 where `along`, the pixel's coordinate
@@ -331,7 +331,7 @@ FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED y) {
 
 /// Returns the terrain kind (enum TerrainKind) of a layer's cell at (x, y) in
 /// 16.16 pixels.
-s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED y) {
+s32 MapGrid_GetTerrainKindAt(s32 layer, FIXED x, FIXED y) {
   struct MapGridScrollState *gridState = gMapGridState[0];
   struct MapGridCell *cells;
   s32 cellX;

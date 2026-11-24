@@ -65,12 +65,12 @@ s32 PsynergyMenu_Run(void) {
   gActorSystemState->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeState(0);
+  Menu_InitializeState(0);
   menu->memberCount = Party_ListMembersFar(menu->memberTable);
   ItemMenu_Initialize(0, 3, 0, 7);
   menu->messageWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
-  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
+  PageArrows_DrawFar(PAGE_ARROW_VRAM);
 #if TBS_PATCH_2
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(saved, PSYNERGY_PROMPT_TILES, PSYNERGY_PROMPT_TILES_SIZE);
@@ -183,7 +183,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
           ItemMenu_DrawMessage(0, MsgPsynergyChooseForR);
           break;
         }
-        ItemMenu_PositionCategory();
+        Menu_HideEntryIcons();
         StatusPanel_Draw(menu->statusWindow, menu->memberIds[0], 0,
                          STATUS_PANEL_EXPERIENCE);
         chosenAction = PsynergyMenu_RunList(0);
@@ -263,7 +263,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
       if (useResult != -1) {
         StatusPanel_Draw(menu->statusWindow, menu->memberIds[1], 0,
                          STATUS_PANEL_EXPERIENCE);
-        Ability_PlayUseAnimation(menu->sideAction[0] & PSYNERGY_ABILITY_MASK);
+        Ability_PlayUseSound(menu->sideAction[0] & PSYNERGY_ABILITY_MASK);
         WindowSprite_ClearListFar((void *)menu->infoWindow);
         ItemMenu_ShowMessage(menu->useResult + MsgItemUseResult, 0, -1);
       } else {
@@ -312,7 +312,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
 
   action = Ability_Get(PSYNERGY_ABILITY_MASK &
                        ((struct PsynergyMenuState *)gMenuState)->sideAction[0]);
-  if (Scene_HasFieldPsynergyTriggerFar(action->fieldPsynergy) != 0) {
+  if (Scene_HasPsynergyTriggerFar(action->fieldPsynergy) != 0) {
     return ITEM_USE_MODE_FROM_FIELD;
   }
   classification = ITEM_USE_MODE_WHOLE_PARTY;
@@ -359,7 +359,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
       PsynergyMenu_CollectActions(unit, actions, PSYNERGY_LIST_FIELD);
   result = PsynergyMenu_SelectMember(menu->memberTable, actions);
   icon = menu->sideIcon[partySlot];
-  Icon_PrepareActor(icon);
+  Icon_Show(icon);
   wait(1);
   return result;
 }
@@ -487,7 +487,7 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 memberId) {
   menu->psynergyCount =
       PsynergyMenu_CollectActions(member, psynergies, PSYNERGY_LIST_FIELD);
   WindowSprite_RedrawSavedRectFar((void *)menu->psynergyWindow);
-  PsynergyMenu_RefreshMemberEntries(108, 32, 8);
+  PsynergyMenu_PlaceEntryIcons(108, 32, 8);
   PsynergyMenu_DrawPsynergyIcons(psynergies);
   if (menu->psynergyCount == 0) {
     Text_DrawMessageAsTilesFar(MsgPsynergyMenuEmpty, menu->psynergyWindow, 0,
@@ -569,7 +569,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
   // The marker, still NULL.
   marker = menu->sideIcon[1];
   menu->tabIndex[1] = selection;
-  Icon_PrepareActor(marker);
+  Icon_Show(marker);
   marker->motion = ICON_HIDDEN;
   wait(1);
   menu->tabIndex[1] = selection;
@@ -763,7 +763,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
   menu->columnCount = ICON_GRID_ROW;
   menu->rowCount = 2;
 
-  cursor = (struct WindowSprite *)Icon_CreateWithResourceVariant(window, 0, 4);
+  cursor = (struct WindowSprite *)Icon_CreateHandCursor(window, 0, 4);
   cursor->motion = ICON_HIDDEN;
   menu->entryGridCursor = cursor;
   Portrait_CreateFar(ISAAC, 0, 0, window, 0, 0);
@@ -816,8 +816,8 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   for (i = 0; i < PSYNERGY_SLOTS; i++) {
     psynergyId = *p++;
     if (psynergyId != 0) {
-      Resource_LoadByModeIntoSlotFar(ICON_KIND_ABILITY, psynergyId,
-                                     (u8)(*icons)->index, 0);
+      SelectionIcon_LoadIntoSlotFar(ICON_KIND_ABILITY, psynergyId,
+                                    (u8)(*icons)->index, 0);
     }
     icons++;
   }
@@ -917,8 +917,8 @@ s32 PsynergyMenu_BuildPagedList(struct PagedList *result, s32 index) {
 /// Updates the Psynergy list for the row under the cursor: puts the Psynergy's
 /// description in the info window, unless a kept message is there, and
 /// highlights its row of the five. window and memberState are not used.
-s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *memberState,
-                                struct PagedList *state) {
+s32 PsynergyMenu_ShowSelectedRow(struct Window *window, s32 *memberState,
+                                 struct PagedList *state) {
   struct PsynergyMenuState *menu;
   s32 actionIndex;
   s32 rowIndex;
@@ -951,13 +951,13 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *memberState,
 
   for (rowIndex = 0; rowIndex < LIST_PAGE_SIZE; rowIndex++) {
     if (rowIndex == state->row) {
-      Render_SetTilemapFlagRect(
-          (void *)menu->psynergyWindow, PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
-          PSYNERGY_DETAIL_ROW_WIDTH, 1, HIGHLIGHT_PALETTE);
+      Window_SetHighlightRect((void *)menu->psynergyWindow,
+                              PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
+                              PSYNERGY_DETAIL_ROW_WIDTH, 1, HIGHLIGHT_PALETTE);
     } else {
-      Render_SetTilemapFlagRect((void *)menu->psynergyWindow,
-                                PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
-                                PSYNERGY_DETAIL_ROW_WIDTH, 1, WINDOW_PALETTE);
+      Window_SetHighlightRect((void *)menu->psynergyWindow,
+                              PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
+                              PSYNERGY_DETAIL_ROW_WIDTH, 1, WINDOW_PALETTE);
     }
   }
 
@@ -970,8 +970,8 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *memberState,
 /// colour and one restricted here in the low-HP colour, the page numbers, and
 /// the help line (how to set a shortcut while Select is held, else how to
 /// change party member).
-s32 PsynergyMenu_DrawActionPage(struct Window *window, s32 unused,
-                                const struct PagedList *pageState) {
+s32 PsynergyMenu_DrawPage(struct Window *window, s32 unused,
+                          const struct PagedList *pageState) {
   u32 firstEntry;
   u32 visibleCount;
   u8 row;
@@ -1084,14 +1084,14 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
         changed = 0;
         if (menu->psynergies[previous] != 0) {
           icon = menu->entryIcons[previous];
-          Icon_PrepareActor(icon);
+          Icon_Show(icon);
         }
         if (redraw != 0) {
           redraw = 0;
           wait(1);
-          PsynergyMenu_DrawActionPage(window, 0, &state);
+          PsynergyMenu_DrawPage(window, 0, &state);
         }
-        PsynergyMenu_DrawDetailPage(window, memberState, &state);
+        PsynergyMenu_ShowSelectedRow(window, memberState, &state);
         menu->sideAction[sideIndex] = menu->psynergies[state.selectedIndex];
         menu->cursorIcon->motion = ICON_HIDDEN;
         if (menu->psynergies[state.selectedIndex] != 0) {
@@ -1257,7 +1257,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
   }
 
   menu->flags &= ~PSYNERGY_MENU_SHORTCUT_HELP;
-  Icon_PrepareActor(menu->entryGridCursor);
+  Icon_Show(menu->entryGridCursor);
   menu->sideRow[sideIndex] = state.selectedIndex;
   menu->selectedIndexByMember[menu->memberIds[sideIndex]] = state.selectedIndex;
   menu->sideAction[sideIndex] = result;

@@ -48,8 +48,8 @@ s32 BattleCommandRow_Run(s32 mode) {
   standbyCount = 0;
   selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
   // No icon colour placed yet; the shared palette starts at BG entry 1.
-  for (i = 0; i < GLYPH_PALETTE_ICON_COLORS; i++)
-    selectionUi->palette.slot[i] = GLYPH_PALETTE_SLOT_UNSET;
+  for (i = 0; i < ICON_PALETTE_COLORS; i++)
+    selectionUi->palette.slot[i] = ICON_PALETTE_SLOT_UNSET;
   selectionUi->palette.count = 1;
   if (mode == COMMAND_ROW_PARTY)
     selectionUi->window = Window_Create(20, 17, 10, 3, MENU_WINDOW_FLAGS);

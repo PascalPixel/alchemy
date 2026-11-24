@@ -65,8 +65,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   BattleEffect_ClearTintTimers();
   view->bg1ScrollMode = BATTLE_BACKGROUND_FIXED;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
-                              BATTLE_BACKGROUND_ID(battle), 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   view->bg1ScrollMode = BATTLE_BACKGROUND_NONE;
@@ -161,8 +160,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_CRASH);
     if (frame == 5) {
       gBgScroll[1].x = state->savedBg1X;
-      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               BATTLE_BACKGROUND_ID(battle), -1);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, -1);
     }
 
     // From frame 8, step each colour of BG palettes 6 to 13 one shade towards
@@ -367,8 +365,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                            TINT_KEEP, 0);
   gBgScroll[1].x = state->savedBg1X;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED,
-                              BATTLE_BACKGROUND_ID(battle), 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |

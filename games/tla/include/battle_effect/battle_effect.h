@@ -92,15 +92,6 @@ enum BattleKnockback {
   KNOCKBACK_HURL_FAR
 };
 
-/// A battle background's id, as BATTLE_BACKGROUND_ID reads it in the summons.
-/// Nothing reads the word or the bytes: read as BattleState.background's plain
-/// u16, the summons compile the same in all six editions.
-union BattleBackgroundId {
-  u16 id;
-  s32 word;
-  u8 bytes[6];
-};
-
 /// Rebuilds the background palette's first ramp as a grey whose channels sway
 /// with the frame, each at its own phase, so the effect shimmers through
 /// colours.

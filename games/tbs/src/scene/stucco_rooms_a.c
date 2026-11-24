@@ -315,7 +315,10 @@ static void StuccoRoomsA_TalkToHealer(void) {
 /// doorways (cells (50, 38) and (52, 49)), back out to the passage.
 ///
 /// Each door's step trigger is the exit it leaves by, and
-/// gStuccoRoomsA_DoorCells holds the cells its opening is drawn on.
+/// gStuccoRoomsA_DoorCells holds the cells its opening is drawn on: the two
+/// cells over the door's step cell on map layer 2, whose cells begin at the
+/// map's row 60, so the door at (34, 40) opens at the map's (34, 98) and
+/// (34, 99).
 static void StuccoRoomsA_OpenDoorAndExit(void) {
   struct FieldState *state = gFieldState;
   u32 slot;
@@ -384,7 +387,9 @@ s32 Scene_Initialize(void) {
 }
 
 /// Once the Colosso tour has left, its guests are gone from Kalay's inn, and
-/// two people from the houses.
+/// two people from the houses. In the north-east house's lower room the
+/// weapon shop's top right corner, cells (30, 16) to (33, 17), would show at
+/// the bottom left of the view, so the empty cells north of it cover it.
 static void StuccoRoomsA_ApplyRoomState(void) {
   s16 entrance = gMainRoutineState.entrance;
 
@@ -710,7 +715,9 @@ struct Trigger gStuccoRoomsA_SanctumTriggers[] = {
 };
 // clang-format on
 
-/// A door of the rooms opening, and where each door is.
+/// A door of the rooms opening, and where each door is: its two cells on map
+/// layer 2, 58 rows below the door's step cell in the map (60 rows down to the
+/// layer, then the two rows over the step cell).
 u16 gStuccoRoomsA_DoorCellSteps[] = {
     MAPGRID_ANIMATION_STEP(7, 125, 1, 2, 5),
     MAPGRID_ANIMATION_STEP(8, 125, 1, 2, 5),

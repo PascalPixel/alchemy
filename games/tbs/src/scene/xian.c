@@ -423,6 +423,9 @@ static void Xian_TalkToWaterCarrier(void) {
   Actor_SetPositionFX(ACTOR_SPILLED_WATER,
                       FIELD_CELL_CENTER(FIELD_CELL(carrierX)),
                       FIELD_CELL_CENTER(carrierCellZ));
+  /* FAKEMATCH(temporary): carrierColumnX, the carrier's x read again into a
+     local of its own; as carrierX read again, the cell's column is reckoned
+     in other registers. */
   carrierColumnX = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   MapGrid_CopyCellAttributes(16, 16, 1, 1, FIELD_CELL(carrierColumnX),
@@ -515,14 +518,12 @@ static void Xian_FreezeSpilledWater(void) {
 /// after-images and strikes the post, which jumps spinning into the air and
 /// drops back. "Heh heh heh..." After that she only boasts of her kung fu.
 static void Xian_TalkToKungFuStudent(void) {
-  s32 demonstrationSeen;
   FIXED reboundVelocity;
   s32 stepBackOffset[3];
   struct EffectOptions options;
 
   Event_Start();
-  demonstrationSeen = GameFlag_Get(FLAG_XIAN_STRIKE_SHOWN);
-  if (demonstrationSeen != 0) {
+  if (GameFlag_Get(FLAG_XIAN_STRIKE_SHOWN) != 0) {
     Actor_FaceActor(ACTOR_KUNG_FU_STUDENT, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Event_SetMessageId(MsgXianKungFuStrong);
@@ -536,8 +537,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Event_ShowMessage(ACTOR_KUNG_FU_STUDENT, 0);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    SET_VECTOR(stepBackOffset, demonstrationSeen, demonstrationSeen,
-               demonstrationSeen);
+    SET_VECTOR(stepBackOffset, 0, 0, 0);
     FieldVector_AddPolarOffset(-8, Actor_Get(ACTOR_PARTY_LEADER)->facing,
                                (struct FieldPosition *)stepBackOffset);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);

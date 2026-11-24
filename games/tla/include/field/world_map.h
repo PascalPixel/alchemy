@@ -122,4 +122,8 @@ const struct WorldMapPlace *WorldMapPlaces_GetTable(void);
 #define MAP_SCREEN_MARKER_DEPTH 246
 u32 WorldMapPlace_GetMarker(const struct WorldMapPlace *place);
 
+/// WorldMap_UpdateAffineLines' Thumb entry and ARM code
+/// (world_map_lines_entry.s), copied to RAM to run.
+extern const u8 WorldMap_UpdateAffineLinesCode[];
+
 #endif

@@ -3,8 +3,7 @@
 
 /// @file
 /// What the resource_slot object lends the field and the scenes: a few of its
-/// routines through their far calls, the vertex code copied to RAM, and the
-/// sprite animation reset.
+/// routines through their far calls, and the sprite animation reset.
 
 #include "types.h"
 #include "resource_ids.h"
@@ -13,9 +12,6 @@ struct Actor;
 struct SpriteAnimation;
 
 s32 Party_GetPpRatioFar(void);
-/// WorldMap_UpdateAffineLines' Thumb entry and ARM code
-/// (world_map_lines_entry.s), copied to RAM to run.
-extern const u8 WorldMap_UpdateAffineLinesCode[];
 s32 MapGrid_IsClimbableCellFar(s32 x, s32 z, s32 kind);
 s32 Actor_GetCellIndexFar(struct Actor *actor);
 s32 FlagBlock_PlaceAllMarkingEdgesFar(struct Actor *actor);

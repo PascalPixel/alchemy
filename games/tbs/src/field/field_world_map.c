@@ -237,7 +237,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     Matrix_Initialize();
     Matrix_SetLookAt(camera->eye, cameraPosition);
     RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, WorldMap_UpdateAffineLines,
-                     &Matrix_UpdateVerticesSize);
+                     &WorldMap_UpdateAffineLinesCodeSize);
     WorldMap_BuildScanlineTable(
         Iwram_DivFX(Trig_Cos(perspective->pitch), Trig_Sin(perspective->pitch)),
         cameraPosition, affineState->scanlines);

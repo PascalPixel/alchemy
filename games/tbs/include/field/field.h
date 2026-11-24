@@ -142,7 +142,7 @@ extern const u8 TileMap_DrawRows[];
 extern u8 TileMap_DrawRowsCodeSize[];
 /// The size of WorldMap_UpdateAffineLines, copied to HEAP_SLOT_RAM_CODE; an
 /// address equal to the size (ld_script.ld).
-extern u8 Matrix_UpdateVerticesSize;
+extern u8 WorldMap_UpdateAffineLinesCodeSize;
 extern const s32 gWorldMap_FootprintActions[6];
 /// The direction pad's headings, defined as u16 in facing.c. Declared here
 /// with the sign, so Up's three quarters of a turn reads negative; the

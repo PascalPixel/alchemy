@@ -607,6 +607,9 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
         !GameFlag_Get(FLAG_SUSA_HEARS_KUSHINADA_IS_SAFE)) {
       Actor_SetPosition(ACTOR_SUSA, 798, 800);
+      // He lies across cells (49, 49) and (50, 49), in front of the sapling
+      // by the cave mouth; both take the wall of cell (53, 52), so that no
+      // one walks over him.
       Map_CopyCellAttributeRect(53, 52, 1, 1, 49, 49);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 50, 49);
       Actor_SetAnimationById(ACTOR_SUSA, 5);

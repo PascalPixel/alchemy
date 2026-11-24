@@ -82,7 +82,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   s32 reach;
   s8 pillarHeight;
 
-  s32 n;
+  s32 n; // a target that reacts, then a free slot for the dust
   s32 reactFrame;
 
   s32 i;

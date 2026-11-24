@@ -26,6 +26,11 @@
  * the row is for: ja, en, de, es, fr or it) and "fill" (the byte the padding is
  * made of, as hex digits, when it is not zero).
  *
+ * A table whose first column is "overlay" is the list of overlays, one row
+ * each: the overlay's number in hex, then the bytes the original packer left
+ * after it in each edition (ja, en, de, es, fr, it), as hex digits. Each is
+ * placed under Resource_OverlayNUMBER and filled to four bytes.
+ *
  * Each list becomes a global table of pointers ended by -1, with a global
  * LISTEnd label at that -1, followed by its pictures in the same order. A
  * picture named again later is pointed at again and placed once.
@@ -136,6 +141,48 @@ main(int argc, char **argv)
 				fprintf(out, "\t.byte 0x%c%c\n", digit[0], digit[1]);
 			if (cells[3][0])
 				fprintf(out, "\t.balign %s, 0\n", cells[3]);
+		}
+		fclose(in);
+		if (fclose(out))
+			fail(argv[2], "cannot write");
+		return 0;
+	}
+	if (!strncmp(line, "overlay\t", 8))
+	{
+		static const char *const EDITIONS[] = {"JA", "EN", "DE", "ES", "FR", "IT"};
+
+		out = fopen(argv[2], "w");
+		if (!out)
+			fail(argv[2], "cannot write");
+		fprintf(out, "@ Written by ags-list from its table: do not edit.\n\t.section .overlays,\"a\"\n");
+		while (fgets(line, sizeof line, in))
+		{
+			char *cells[7] = {line, "", "", "", "", "", ""}, upper[MAX_TEXT];
+			int cell = 0;
+
+			line[strcspn(line, "\n")] = 0;
+			if (!line[0])
+				continue;
+			for (char *at = line; *at; at++)
+				if (*at == '\t' && cell < 6)
+				{
+					*at = 0;
+					cells[++cell] = at + 1;
+				}
+			for (cell = 0; cells[0][cell]; cell++)
+				upper[cell] = (char)toupper((unsigned char)cells[0][cell]);
+			upper[cell] = 0;
+			fprintf(out, "\t.global Resource_Overlay%s\nResource_Overlay%s:\n\t.incbin \"overlays/resource_%s.lz\"\n", upper, upper, cells[0]);
+			for (cell = 1; cell < 7; cell++)
+			{
+				if (!cells[cell][0])
+					continue;
+				fprintf(out, "\t.ifdef %s_EDITION_%s\n", edition, EDITIONS[cell - 1]);
+				for (const char *digit = cells[cell]; digit[0] && digit[1]; digit += 2)
+					fprintf(out, "\t.byte 0x%c%c\n", digit[0], digit[1]);
+				fprintf(out, "\t.endif\n");
+			}
+			fprintf(out, "\t.balign 4, 0\n");
 		}
 		fclose(in);
 		if (fclose(out))

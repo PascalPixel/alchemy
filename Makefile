@@ -200,7 +200,7 @@ ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/actor_update_arm
 ASFLAGS := -mcpu=arm7tdmi -mthumb-interwork
 EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS) $(if $(SHIFT),--defsym ROM_SHIFT=$(SHIFT))
 
-OVERLAY_STREAM := games/$(GAME)/src/system/overlay/overlays
+OVERLAY_STREAM := games/$(GAME)/src/system/overlay/overlays.list
 # The linker script: games/$(GAME)/ld_script.ld, run through the C
 # preprocessor for the edition as its C is, once for the main image and once
 # for each overlay (-DOVERLAY=0x<number>). The overlays are the numbers its

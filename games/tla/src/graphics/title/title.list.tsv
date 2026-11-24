@@ -1,0 +1,67 @@
+name	file	section	align	left	pad	edition	fill
+Title_IntroLighthousePicture	intro_lighthouse.gbapal						
+	intro_lighthouse.8bpp.plz				4		
+Title_IntroGullSprites	intro_gulls.gbapal						
+	intro_gulls.4bpp.plz			192f63			
+Title_NintendoLogo	nintendo_splash.gbapal	a					
+	nintendo_splash.8bpp.lz	a					
+Title_CamelotLogo	camelot_logo.parts.lz	a					
+Title_WorldMapPicture	world_map_picture.strips	b		8f			
+Title_WorldMapPictureLarge	world_map_picture_large.strips	b					
+Title_IntroTilesB	to_be_continued.parts.lz	b					
+Title_ScreenPicture	title_screen_ja.gbapal	c				ja	
+	title_screen_ja.8bpp.lz	c			4	ja	
+Title_ScreenPicture	title_screen.gbapal	c				en	
+	title_screen.8bpp.lz	c			4	en	
+Title_ScreenPicture	title_screen_de.gbapal	c				de	
+	title_screen_de.8bpp.lz	c			4	de	
+Title_ScreenPicture	title_screen_es.gbapal	c				es	
+	title_screen_es.8bpp.lz	c			4	es	
+Title_ScreenPicture	title_screen_fr.gbapal	c				fr	
+	title_screen_fr.8bpp.lz	c			4	fr	
+Title_ScreenPicture	title_screen_it.gbapal	c				it	
+	title_screen_it.8bpp.lz	c			4	it	
+Title_IntroPeak	intro_peak.gbapal	c					
+	intro_peak.parts.plz	c			4		
+Title_IntroClouds	intro_clouds/palette_ja.gbapal	c				ja	
+	intro_clouds/picture_ja.parts.plz	c		0804		ja	
+Resource_SubtitlePalette	subtitle_palette_ja.gbapal	d				ja	
+Resource_SubtitleA	subtitle_a_ja.8bpp64x64.plz	d				ja	
+Resource_SubtitleB	subtitle_b_ja.8bpp64x64.plz	d				ja	
+Resource_SubtitleC	subtitle_c_ja.8bpp64x64.plz	d		750801		ja	
+Resource_SubtitleD	subtitle_d_ja.8bpp64x64.plz	d				ja	
+Title_IntroClouds	intro_clouds/palette.gbapal	c				en	
+	intro_clouds/picture.parts.plz	c				en	
+Resource_SubtitlePalette	subtitle_palette.gbapal	d				en	
+Resource_SubtitleA	subtitle_a.8bpp64x64.plz	d		d0df		en	
+Resource_SubtitleB	subtitle_b.8bpp64x64.plz	d		1c0740		en	
+Resource_SubtitleC	subtitle_c.8bpp64x64.plz	d		02		en	
+Resource_SubtitleD	subtitle_d.8bpp64x64.plz	d		d506		en	
+Title_IntroClouds	intro_clouds/palette_de.gbapal	c				de	
+	intro_clouds/picture_de.parts.plz	c				de	
+Resource_SubtitlePalette	subtitle_palette_de.gbapal	d				de	
+Resource_SubtitleA	subtitle_a_de.8bpp64x64.plz	d				de	
+Resource_SubtitleB	subtitle_b_de.8bpp64x64.plz	d		3440		de	
+Resource_SubtitleC	subtitle_c_de.8bpp64x64.plz	d		49		de	
+Resource_SubtitleD	subtitle_d_de.8bpp64x64.plz	d				de	
+Title_IntroClouds	intro_clouds/palette_es.gbapal	c				es	
+	intro_clouds/picture_es.parts.plz	c		0871		es	
+Resource_SubtitlePalette	subtitle_palette_es.gbapal	d				es	
+Resource_SubtitleA	subtitle_a_es.8bpp64x64.plz	d		e0df		es	
+Resource_SubtitleB	subtitle_b_es.8bpp64x64.plz	d		00e0		es	
+Resource_SubtitleC	subtitle_c_es.8bpp64x64.plz	d				es	
+Resource_SubtitleD	subtitle_d_es.8bpp64x64.plz	d		0319cb		es	
+Title_IntroClouds	intro_clouds/palette_fr.gbapal	c				fr	
+	intro_clouds/picture_fr.parts.plz	c		526204		fr	
+Resource_SubtitlePalette	subtitle_palette_fr.gbapal	d				fr	
+Resource_SubtitleA	subtitle_a_fr.8bpp64x64.plz	d		f5a1		fr	
+Resource_SubtitleB	subtitle_b_fr.8bpp64x64.plz	d			4	fr	
+Resource_SubtitleC	subtitle_c_fr.8bpp64x64.plz	d		0818		fr	
+Resource_SubtitleD	subtitle_d_fr.8bpp64x64.plz	d		14		fr	
+Title_IntroClouds	intro_clouds/palette_it.gbapal	c				it	
+	intro_clouds/picture_it.parts.plz	c		eeac		it	
+Resource_SubtitlePalette	subtitle_palette_it.gbapal	d				it	
+Resource_SubtitleA	subtitle_a_it.8bpp64x64.plz	d		1c		it	
+Resource_SubtitleB	subtitle_b_it.8bpp64x64.plz	d			4	it	
+Resource_SubtitleC	subtitle_c_it.8bpp64x64.plz	d		f9		it	
+Resource_SubtitleD	subtitle_d_it.8bpp64x64.plz	d				it	

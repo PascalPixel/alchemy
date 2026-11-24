@@ -1,0 +1,27 @@
+name	file	section	align	left	pad	edition	fill
+Ending_CliffDayPicture	cliff_day.gbapal						
+	cliff_day.bitmap.d7						
+Ending_CliffSunsetPicture	cliff_sunset.gbapal						
+	cliff_sunset.bitmap.d7				4		
+Ending_VillagersPictureA	villagers_a.gbapal						
+	villagers_a.bitmap.d7				4		
+Ending_VillagersPictureB	villagers_b.gbapal						
+	villagers_b.bitmap.d7			0105			
+Ending_EmbracePicture	embrace.gbapal						
+	embrace.bitmap.d7						
+Ending_ReunionPicture	reunion.gbapal						
+	reunion.bitmap.d7			3716			
+Ending_SunsetPlainPicture	sunset_plain.gbapal						
+	sunset_plain.bitmap.d7			5e21			
+Ending_TheEndPicture	the_end_ja.gbapal					ja	
+Ending_TheEndPicture	the_end.gbapal					en	
+Ending_TheEndPicture	the_end_de.gbapal					de	
+Ending_TheEndPicture	the_end_es.gbapal					es	
+Ending_TheEndPicture	the_end_es.gbapal					fr	
+Ending_TheEndPicture	the_end_it.gbapal					it	
+	the_end_ja.bitmap.d7			880e		ja	
+	the_end.bitmap.d7			c519		en	
+	the_end_de.bitmap.d7			0000		de	
+	the_end_es.bitmap.d7					es	
+	the_end_es.bitmap.d7					fr	
+	the_end_it.bitmap.d7			5045		it	

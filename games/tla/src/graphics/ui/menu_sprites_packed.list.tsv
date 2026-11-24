@@ -1,0 +1,27 @@
+name	file	section	align	left	pad	edition	fill
+MenuSprites_Unused	menu_sprites/hand.4bpp16x16.plz						
+	menu_sprites/gem.4bpp16x16.plz						
+	menu_sprites/sdown.4bpp16x16.plz						
+	menu_sprites/sup.4bpp16x16.plz						
+	menu_sprites/up.4bpp16x16.plz						
+	menu_sprites/down.4bpp16x16.plz						
+	djinn_arrow_up.4bpp16x16.plz						
+	djinn_arrow_down.4bpp16x16.plz						
+	menu_sprites/hand.4bpp16x16.plz						
+	menu_sprites/gem.4bpp16x16.plz						
+	menu_sprites/sdown.4bpp16x16.plz						
+	menu_sprites/sup.4bpp16x16.plz						
+	menu_sprites/up.4bpp16x16.plz						
+	menu_sprites/down.4bpp16x16.plz						
+	djinn_arrow_up.4bpp16x16.plz						
+	djinn_arrow_down.4bpp16x16.plz						
+	menu_sprites/sprite_c.4bpp16x16.plz			7d06			
+MenuSprites_UiIconTiles	menu_sprites/hand.4bpp16x16.plz			550005			
+MenuSprites_ShopGemTiles	menu_sprites/gem.4bpp16x16.plz						
+MenuSprites_SmallDownArrowTiles	menu_sprites/sdown.4bpp16x16.plz				4		
+MenuSprites_ArrowTiles	menu_sprites/sup.4bpp16x16.plz			00			
+MenuSprites_ShopUpArrowTiles	menu_sprites/up.4bpp16x16.plz				4		
+MenuSprites_ShopDownArrowTiles	menu_sprites/down.4bpp16x16.plz			00			
+MenuSprites_ItemMenuTilesA	djinn_arrow_up.4bpp16x16.plz			03f5			
+MenuSprites_ItemMenuTilesB	djinn_arrow_down.4bpp16x16.plz				4		
+MenuSprites_NameCaretTiles	menu_sprites/sprite_c.4bpp16x16.plz						

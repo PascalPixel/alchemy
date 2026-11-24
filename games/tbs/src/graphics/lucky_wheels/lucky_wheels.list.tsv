@@ -1,0 +1,17 @@
+name	file	section	align	left	pad	edition	fill
+LuckyWheels_MachinePicture	machine.gbapal						
+	machine.4bpp.lz			0f8ba4			
+LuckyWheels_Icons	icons.gbapal						
+	icons.8bpp.lz						
+LuckyWheels_Jackpot	jackpot_ja.gbapal					ja	
+LuckyWheels_Jackpot	jackpot.gbapal					en	
+LuckyWheels_Jackpot	jackpot.gbapal					de	
+LuckyWheels_Jackpot	jackpot.gbapal					es	
+LuckyWheels_Jackpot	jackpot.gbapal					fr	
+LuckyWheels_Jackpot	jackpot.gbapal					it	
+	jackpot_ja.4bpp32x32.lz			a2		ja	
+	jackpot.4bpp32x32.lz			39		en	
+	jackpot.4bpp32x32.lz			39		de	
+	jackpot.4bpp32x32.lz			39		es	
+	jackpot.4bpp32x32.lz			39		fr	
+	jackpot.4bpp32x32.lz			39		it	

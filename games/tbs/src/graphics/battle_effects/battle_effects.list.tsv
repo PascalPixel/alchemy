@@ -1,0 +1,280 @@
+name	file	section	align	left	pad	edition	fill
+BattleEffect_ShatteringOpeningSheet	shattering_opening_00.gbapal						
+	shattering_opening.bitmaps.lz			ad1ed8		ja	
+	shattering_opening.bitmaps.lz			32b981		en	
+	shattering_opening.bitmaps.lz			1b902f		de	
+	shattering_opening.bitmaps.lz			c6afea		es	
+	shattering_opening.bitmaps.lz			ea0159		fr	
+	shattering_opening.bitmaps.lz			c77fea		it	
+BattleEffect_CyanSparkSheet	cyan_spark_00.gbapal						
+	cyan_spark.bitmaps.lz						
+BattleEffect_VioletPaletteA	violet_palette_a.gbapal						
+	violet_palette_a.bitmap.lz						
+BattleEffect_RedPaletteA	red_palette_a.gbapal						
+	red_palette_a.bitmap.lz						
+BattleEffect_YellowPaletteA	yellow_palette_a.gbapal						
+	yellow_palette_a.bitmap.lz						
+BattleEffect_StarBurstSheet	star_burst.gbapal						
+	star_burst.bitmap.lz			a1			
+BattleEffect_CrescentSheet	crescent.gbapal						
+	crescent.bitmap.lz			0901			
+BattleEffect_VorpalSlashImageA	vorpal_slash_a.gbapal						
+	vorpal_slash_a.bitmap.lz			0a21			
+BattleEffect_VorpalSlashImageB	vorpal_slash_b.gbapal						
+	vorpal_slash_b.bitmap.lz			007b09			
+BattleEffect_QuickStrikeImageA	quick_strike_a.gbapal						
+	quick_strike_a.bitmap.lz						
+BattleEffect_QuickStrikeImageB	quick_strike_b.gbapal						
+	quick_strike_b.bitmap.lz				4		
+BattleEffect_UnusedFlashingStrikeImageA	unused_flashing_strike_a.gbapal						
+	unused_flashing_strike_a.bitmap.lz				4		
+BattleEffect_UnusedFlashingStrikeImageB	unused_flashing_strike_b.gbapal						
+	unused_flashing_strike_b.bitmap.lz			30e108			
+BattleEffect_LimeColumnSheet	lime_column.gbapal						
+	lime_column.bitmap.lz			02			
+BattleEffect_RainSheet	rain.gbapal						
+	rain.bitmap.lz			20			
+BattleEffect_FlameSheetA	flame_a.gbapal						
+	flame_a.bitmap.lz			2f18			
+BattleEffect_DemonFaceSheet	demon.gbapal						
+	demon.bitmap.lz						
+BattleEffect_FlameBladeSheet	flame_bld.gbapal						
+	flame_bld.bitmap.lz			b7			
+BattleEffect_SwordSheet	sword.gbapal						
+	sword.bitmap.lz						
+BattleEffect_IceTileSheet	ice_tile_00.gbapal						
+	ice_tile.bitmaps.lz			0001			
+BattleEffect_FlameArcSheet	five_mode.bitmap.lz			96			
+BattleEffect_SpiderWebSheet	web.gbapal						
+	web.bitmap.lz			1885			
+BattleEffect_VioletLightningSheetA	bolt_a.gbapal						
+	bolt_a.bitmap.lz						
+BattleEffect_YellowSparkSheet	yellow_spark_00.gbapal						
+	yellow_spark.bitmaps.lz			176ea0			
+BattleEffect_ProjectileVolleyImage	projectile_volley.bitmap.lz						
+BattleEffect_ShurikenSheet	shuriken.gbapal						
+	shuriken.bitmap.lz			478d13			
+BattleEffect_FlareSheet	flare_00.gbapal						
+	flare.bitmaps.lz			8047		ja	
+	flare.bitmaps.lz			9038		en	
+	flare.bitmaps.lz			c501		de	
+	flare.bitmaps.lz			10b6		es	
+	flare.bitmaps.lz			0a16		fr	
+	flare.bitmaps.lz			d10a		it	
+BattleEffect_FlareImage	flare_cels.bitmap.lz			05			
+BattleEffect_VioletPaletteB	violet_palette_b.gbapal						
+	violet_palette_b.bitmap.lz						
+BattleEffect_FireSwirlSheet	fire_swirl_00.gbapal						
+	fire_swirl.bitmaps.lz			1221			
+BattleEffect_VioletLightningSheetB	bolt_b.gbapal						
+	bolt_b.bitmap.lz			e5	4		
+BattleEffect_FireBurstSheet	fire_burst.gbapal						
+	fire_burst.bitmap.lz				4		
+BattleEffect_BlueCrescentSheet	blue_crescent.gbapal						
+	blue_crescent.bitmap.lz			e002			
+BattleEffect_JudgmentFlashSheet	judgment_flash.bitmaps.lz			88			
+BattleEffect_VioletMoteSheet	mote.gbapal						
+	mote.bitmap.lz			284142			
+BattleEffect_JudgmentBurstSheet	judgment_burst.bitmaps.lz						
+BattleEffect_FireballSheet	fireball.gbapal						
+	fireball.bitmap.lz			32			
+BattleEffect_MemberBurstImage	member_burst.bitmap.lz			191456			
+BattleEffect_SlashSheet	slash_00.gbapal						
+	slash.bitmaps.lz			f159			
+BattleEffect_WaveSheet	wave.gbapal						
+	wave.bitmap.lz						
+BattleEffect_TargetBurstImage	target_burst.bitmap.lz			2f00			
+BattleEffect_PinkStarSheet	pink_star.gbapal						
+	pink_star.bitmap.lz			80			
+BattleEffect_WaterSpraySheet	water_spray_00.gbapal						
+	water_spray.bitmaps.lz						
+BattleEffect_BlueFlameSheet	blue_flame_00.gbapal						
+	blue_flame.bitmaps.lz			b77c			
+BattleEffect_ExplosionSheet	explosion.gbapal						
+	explosion.bitmap.lz			ec103c			
+BattleEffect_MagentaSwirlSheet	magenta_swirl.gbapal						
+	magenta_swirl.bitmap.lz			1c4c			
+BattleEffect_MagentaTailSheet	magenta_tail.gbapal						
+	magenta_tail.bitmap.lz						
+BattleEffect_YellowGlowSheet	dot_cells_a.bitmaps.lz			0c4008			
+BattleEffect_PaleBlueGlowSheet	dot_cells_b.bitmaps.lz			94			
+BattleEffect_BlueTallGlowSheet	dot_cells_c.bitmaps.lz						
+BattleEffect_BlueGlowSheet	dot_cells_d.bitmaps.lz			0c			
+BattleEffect_GreenPalette	green_palette.gbapal						
+	green_palette.bitmap.lz						
+BattleEffect_SwordSlashSheet	sword_slash_00.gbapal						
+	sword_slash.bitmaps.lz			02			
+BattleEffect_RuneSheet	rune.gbapal						
+	rune.bitmap.lz			4321be			
+BattleEffect_FlameColumnSheet	flame_column.gbapal						
+	flame_column.bitmap.lz			41			
+BattleEffect_EarthWallSheet	earth_wall_00.gbapal						
+	earth_wall.bitmaps.lz						
+BattleEffect_OrangePaletteA	orange_palette_a.gbapal						
+	orange_palette_a.bitmap.lz						
+BattleEffect_FlashBurstSheet	flash_burst.gbapal						
+	flash_burst.bitmap.lz			60			
+BattleEffect_ThornSheet	thorn_00.gbapal						
+	thorn.bitmaps.lz			78			
+BattleEffect_CometSheetA	comet_a.gbapal						
+	comet_a.bitmap.lz			2a			
+BattleEffect_CometSheetB	comet_b.gbapal						
+	comet_b.bitmap.lz			af			
+BattleEffect_CometSheetC	comet_c.gbapal						
+	comet_c.bitmap.lz						
+BattleEffect_WhirlwindSheet	whirlwind_00.gbapal						
+	whirlwind.bitmaps.lz						
+BattleEffect_GreenPillarSheet	green_pillar_00.gbapal						
+	green_pillar.bitmaps.lz			21f028			
+BattleEffect_VineSheet	vine_00.gbapal						
+	vine.bitmaps.lz			be			
+BattleEffect_FirePillarSheetA	fire_pillar_a_00.gbapal						
+	fire_pillar_a.bitmaps.lz						
+BattleEffect_RedPaletteB	red_palette_b.gbapal						
+	red_palette_b.bitmap.lz						
+BattleEffect_OrangePaletteB	orange_palette_b.gbapal						
+	orange_palette_b.bitmap.lz						
+BattleEffect_VioletCometSheet	violet_comet_00.gbapal						
+	violet_comet.bitmaps.lz			5eda33			
+BattleEffect_FlameballSheet	flameball.gbapal						
+	flameball.bitmap.lz			83			
+BattleEffect_BoulderSheet	boulder_00.gbapal						
+	boulder.bitmaps.lz						
+BattleEffect_RockWallSheet	rock_wall.gbapal						
+	rock_wall.bitmap.lz			07430b			
+BattleEffect_StarDotSheet	star_dot_00.gbapal						
+	star_dot.bitmaps.lz			01ba			
+BattleEffect_MarsDjinnSheet	mars_djinn.gbapal						
+	mars_djinn.bitmap.lz			04			
+BattleEffect_MarsDjinnSmallSheet	mars_djinn_small.gbapal						
+	mars_djinn_small.bitmap.lz			8a1439			
+BattleEffect_JupiterDjinnSheet	jupiter_djinn.gbapal						
+	jupiter_djinn.bitmap.lz			13			
+BattleEffect_JupiterDjinnSmallSheet	jupiter_djinn_small.gbapal						
+	jupiter_djinn_small.bitmap.lz			0b1f	4		
+BattleEffect_MercuryDjinnSheet	mercury_djinn.gbapal						
+	mercury_djinn.bitmap.lz				4		
+BattleEffect_MercuryDjinnSmallSheet	mercury_djinn_small.gbapal						
+	mercury_djinn_small.bitmap.lz						
+BattleEffect_VenusDjinnSheet	venus_djinn.gbapal						
+	venus_djinn.bitmap.lz						
+BattleEffect_VenusDjinnSmallSheet	venus_djinn_small.gbapal						
+	venus_djinn_small.bitmap.lz						
+BattleEffect_FireBlobSheet	fire_blob.gbapal						
+	fire_blob.bitmap.lz			1a			
+BattleEffect_FireStreakSheet	fire_streak.gbapal						
+	fire_streak.bitmap.lz			0048			
+BattleEffect_LavaOrbSheet	lava_orb_00.gbapal						
+	lava_orb.bitmaps.lz						
+BattleEffect_YellowRingSheet	yellow_ring.gbapal						
+	yellow_ring.bitmap.lz						
+BattleEffect_YellowOrbSheet	yellow_orb.gbapal						
+	yellow_orb.bitmap.lz			019d			
+BattleEffect_BubbleSheet	bubble.gbapal						
+	bubble.bitmap.lz			14b150			
+BattleEffect_ShieldSheet	shield.gbapal						
+	shield.bitmap.lz			45b112			
+BattleEffect_DaggerSheet	dagger.gbapal						
+	dagger.bitmap.lz			0a7719			
+BattleEffect_PaletteRampImage	spark_cells.bitmaps.lz			010d			
+BattleEffect_SmokeSheet	smoke.gbapal						
+	smoke.bitmap.lz			c1			
+BattleEffect_BluePalette	blue_palette.gbapal						
+	blue_palette.bitmap.lz						
+BattleEffect_LimePalette	lime_palette.gbapal						
+	lime_palette.bitmap.lz						
+BattleEffect_PinkPalette	pink_palette.gbapal						
+	pink_palette.bitmap.lz						
+BattleEffect_VioletPaletteC	violet_palette_c.gbapal						
+	violet_palette_c.bitmap.lz						
+BattleEffect_CyanPalette	cyan_palette.gbapal						
+	cyan_palette.bitmap.lz						
+BattleEffect_TanPalette	tan_palette.gbapal						
+	tan_palette.bitmap.lz						
+BattleEffect_WispSheet	wisp.gbapal						
+	wisp.bitmap.lz			2e06			
+BattleEffect_GreenVineSheet	green_vine.gbapal						
+	green_vine.bitmap.lz			1caf			
+BattleEffect_PortalSheet	portal_00.gbapal						
+	portal.bitmaps.lz			3f10			
+BattleEffect_SheepSheet	sheep.gbapal						
+	sheep.bitmap.lz			134e03			
+BattleEffect_SkullSheet	skull.gbapal						
+	skull.bitmap.lz			98434a			
+BattleEffect_HeartSheet	heart.gbapal						
+	heart.bitmap.lz			09			
+BattleEffect_CounterRevealSheet	counter_reveal_00.gbapal						
+	counter_reveal.bitmaps.lz						
+BattleEffect_RedCrescentSheetA	red_crescent_a_00.gbapal						
+	red_crescent_a.bitmaps.lz			34			
+BattleEffect_BlueBeastSheet	blue_beast_00.gbapal						
+	blue_beast.bitmaps.lz						
+BattleEffect_RedCrescentSheetB	red_crescent_b.gbapal						
+	red_crescent_b.bitmap.lz			f079			
+BattleEffect_SpiralSheet	spiral.gbapal						
+	spiral.bitmap.lz						
+BattleEffect_VioletStreakSheet	violet_streak.gbapal						
+	violet_streak.bitmap.lz			5b			
+BattleEffect_CrescentMoonSheet	crescent_moon.gbapal						
+	crescent_moon.bitmap.lz			2b			
+BattleEffect_ThornVineSheet	thorn_vine_00.gbapal						
+	thorn_vine.bitmaps.lz			1e9903			
+BattleEffect_IceShardSheet	ice_shard_00.gbapal						
+	ice_shard.bitmaps.lz			3e			
+BattleEffect_EmberStreakSheet	ember_streak_00.gbapal						
+	ember_streak.bitmaps.lz						
+BattleEffect_BlueArcSheetA	blue_arc_a.gbapal						
+	blue_arc_a.bitmap.lz			15c004			
+BattleEffect_BlueArcSheetB	blue_arc_b.gbapal						
+	blue_arc_b.bitmap.lz			aa30			
+BattleEffect_GlowOrbSheet	glow_orb.gbapal						
+	glow_orb.bitmap.lz			e0			
+BattleEffect_IceChipSheet	ice_chip_00.gbapal						
+	ice_chip.bitmaps.lz			04			
+BattleEffect_IceBlockSheet	ice_block_00.gbapal						
+	ice_block.bitmaps.lz			30ae			
+BattleEffect_SparkleDots	sparkle_dots.bitmaps.lz			633477			
+BattleEffect_PinkBurstSheet	pink_burst.gbapal						
+	pink_burst.bitmap.lz			57			
+BattleEffect_LightFanSheet	light_fan.gbapal						
+	light_fan.bitmap.lz			098276			
+BattleEffect_BlueBurstSheet	blue_burst.gbapal						
+	blue_burst.bitmap.lz			c499d3	4		
+BattleEffect_DustPuffSheet	dust_puff.gbapal						
+	dust_puff.bitmap.lz				4		
+BattleEffect_GoldShellSheet	gold_shell_00.gbapal						
+	gold_shell.bitmaps.lz			15b2			
+BattleEffect_BlastSheet	blast_00.gbapal						
+	blast.bitmaps.lz						
+BattleEffect_FlameSheetB	flame_b.gbapal						
+	flame_b.bitmap.lz						
+BattleEffect_FirePillarSheetB	fire_pillar_b.gbapal						
+	fire_pillar_b.bitmap.lz			0d03			
+BattleEffect_RockSpireSheet	rock_spire.gbapal						
+	rock_spire.bitmap.lz			a02072			
+BattleEffect_LightningBoltSheet	lightning_bolt.gbapal						
+	lightning_bolt.bitmap.lz						
+BattleEffect_BeamImage	beam_image.bitmaps.lz			5f			
+BattleEffect_BlueDropletSheet	twelve_mode.bitmap.lz			a5			
+BattleEffect_WindStreakSheet	wind_streak_00.gbapal						
+	wind_streak.bitmaps.lz						
+BattleEffect_YellowPaletteB	yellow_palette_b.gbapal						
+	yellow_palette_b.bitmap.lz						
+BattleEffect_BlueRingSheet	blue_ring_00.gbapal						
+	blue_ring.bitmaps.lz						
+BattleEffect_RedPaletteC	red_palette_c.gbapal						
+	red_palette_c.bitmap.lz						
+BattleEffect_VioletPaletteD	violet_palette_d.gbapal						
+	violet_palette_d.bitmap.lz						
+BattleEffect_BlueBeamSheet	blue_beam_00.gbapal						
+	blue_beam.bitmaps.lz			015333			
+BattleEffect_VortexSheet	vortex_00.gbapal						
+	vortex.bitmaps.lz			dd20			
+BattleEffect_TornadoSheet	tornado_00.gbapal						
+	tornado.bitmaps.lz			7f02			
+BattleEffect_CrystalSheet	crystal_00.gbapal						
+	crystal.bitmaps.lz			134203			
+BattleEffect_WaterSparkleSheet	water_sparkle.gbapal						
+	water_sparkle.bitmap.lz			11	4		
+BattleEffect_LightningPillarSheet	lightning_pillar.gbapal						
+	lightning_pillar.bitmap.lz				4		ff

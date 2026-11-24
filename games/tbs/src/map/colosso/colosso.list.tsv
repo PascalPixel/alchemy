@@ -1,0 +1,10 @@
+name	file	section	align	left	pad	edition	fill
+Colosso_AzartOpponentPath	azart_opponent_path.table.lz			e0c8b4			
+Colosso_SatrageOpponentPath	satrage_opponent_path.table.lz			3359			
+Colosso_NavampaOpponentPath	navampa_opponent_path.table.lz			8d8f			
+Colosso_Lettering	../../graphics/colosso/lettering_ja.parts.lz			bd8e		ja	
+Colosso_Lettering	../../graphics/colosso/lettering.parts.lz			c5		en	
+Colosso_Lettering	../../graphics/colosso/lettering_de.parts.lz			3058		de	
+Colosso_Lettering	../../graphics/colosso/lettering_es.parts.lz					es	
+Colosso_Lettering	../../graphics/colosso/lettering_fr.parts.lz			73		fr	
+Colosso_Lettering	../../graphics/colosso/lettering_it.parts.lz					it	

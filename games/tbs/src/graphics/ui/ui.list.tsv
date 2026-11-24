@@ -1,0 +1,8 @@
+name	file	section	align	left	pad	edition	fill
+Window_Tiles	window_tiles_ja.4bpp					ja	
+Window_Tiles	window_tiles.4bpp					en	
+Window_Tiles	window_tiles_de.4bpp					de	
+Window_Tiles	window_tiles_es.4bpp					es	
+Window_Tiles	window_tiles_fr.4bpp					fr	
+Window_Tiles	window_tiles_it.4bpp					it	
+Text_SmallFont	small_font.glyphs						

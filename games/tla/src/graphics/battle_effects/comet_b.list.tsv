@@ -1,0 +1,8 @@
+name	file	section	align	left	pad	edition	fill
+BattleEffect_CometSheetB	comet_b.gbapal						
+	comet_b.bitmap.lz			af		ja	
+	comet_b.bitmap.lz				4	en	
+	comet_b.bitmap.lz				4	de	
+	comet_b.bitmap.lz				4	es	
+	comet_b.bitmap.lz				4	fr	
+	comet_b.bitmap.lz				4	it	

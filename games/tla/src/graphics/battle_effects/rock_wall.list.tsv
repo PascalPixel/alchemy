@@ -1,0 +1,8 @@
+name	file	section	align	left	pad	edition	fill
+BattleEffect_RockWallSheet	rock_wall.gbapal						
+	rock_wall.bitmap.lz			07430b		ja	
+	rock_wall.bitmap.lz				4	en	
+	rock_wall.bitmap.lz				4	de	
+	rock_wall.bitmap.lz				4	es	
+	rock_wall.bitmap.lz				4	fr	
+	rock_wall.bitmap.lz				4	it	

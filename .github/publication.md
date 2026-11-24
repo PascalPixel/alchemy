@@ -16,7 +16,7 @@ its main branch: it clones Alchemy's main, generates the pages from the source
 and serves them at <https://alchemy.pascalpixel.com/>. A push to `alchemy-docs`
 builds the same way. A push here does not: a site build takes several minutes
 of a four-core machine, and one for every push made build minutes the largest
-line of the month's bill (Pascal, 22 November 2026). There is no generated Git
+line of the month's bill. There is no generated Git
 branch; Vercel keeps the last successful deployment on failure.
 
 Both games are complete, so CI measures and publishes nothing. The record of

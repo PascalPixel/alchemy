@@ -452,6 +452,8 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
   s32 battleContinues;
   s32 counts[ELEMENT_COUNT];
   struct DjinnRecoveryList *list;
+  /* FAKEMATCH(temporary): the strongest element's local is also the index of
+   * the first loop over the recovery list. */
   s32 strongestElement;
   s32 recoveryTurn;
 

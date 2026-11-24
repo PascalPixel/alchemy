@@ -51,6 +51,11 @@ void Palette_UpdatePulseBrightness(void) {
   }
 }
 
+/// The command view's projection has no focal length, so every unit is drawn at
+/// one scale (Matrix_ProjectPoint's 1.32) whatever its depth, out to twice this
+/// depth; its near depth, as BattleCamera_SetView's, is a fraction of a pixel.
+#define COMMAND_VIEW_DEPTH toFIXED(969)
+
 /// Sets the camera up for the fixed view the battle shows while commands are
 /// chosen, raised by verticalOffset pixels.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
@@ -83,10 +88,11 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   eyeOffset.z = camera->distance;
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
 
-  result = Iwram_DivFX(toFIXED(969), FIXED_ONE * 3 / 4);
-  Projection_Set(0, result, toFIXED(1938));
+  result = Iwram_DivFX(COMMAND_VIEW_DEPTH, FIXED_ONE * 3 / 4);
+  Projection_Set(0, result, COMMAND_VIEW_DEPTH * 2);
 
-  // While the view is busy, BattleCamera_SetRange leaves BG1's scroll alone.
+  // The background zoomed twofold and raised 8 of its pixels (16 on screen);
+  // while the view is busy, BattleCamera_SetRange leaves BG1's scroll alone.
   gProjection.centerY = verticalOffset + BATTLE_PROJECTION_CENTER_Y;
   view->busy = 1;
   BattleCamera_SetRange(toFIXED(120), toFIXED(118 - verticalOffset), 0,

@@ -3,7 +3,7 @@
 	.global FarCall_FieldTable
 FarCall_FieldTable:
 	export ActorSystem_ConfigureFar, ActorSystem_Configure
-	export Actor_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
+	export Render_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
 	overlay_veneer Render_PlaceProjectedSprite
 	overlay_veneer Sprite_ResetAnimations
 	export Sprite_StartAnimationFar, Sprite_StartAnimation

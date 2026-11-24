@@ -47,9 +47,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   sparks = PARTICLES;
 
   {
-    struct Actor *actor = GetBattleObjectSlotFar(state->args->user)->actor;
-    struct Actor *target =
-        GetBattleObjectSlotFar(state->args->targets[0])->actor;
+    struct Actor *actor = BattleObject_GetFar(state->args->user)->actor;
+    struct Actor *target = BattleObject_GetFar(state->args->targets[0])->actor;
     FIXED diffX = target->x.fixed - actor->x.fixed;
     FIXED startX = actor->x.fixed;
     FIXED deltaX = diffX * 80 / 100;
@@ -178,28 +177,28 @@ void BattleEffect_PlaceFormationSprites(s32 formation, FIXED x, FIXED z) {
           INTtoFIXED(i % FORMATION_GRID_COLUMNS * FORMATION_GRID_SPACING) + x;
       pos.y =
           INTtoFIXED(i / FORMATION_GRID_COLUMNS * FORMATION_GRID_SPACING) + z;
-      Actor_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_NEREID:
     for (i = 0; i != FORMATION_TWELVE; i++) {
       pos.x = INTtoFIXED(gSummonFormation_NereidX[i]) + x - toFIXED(16);
       pos.y = INTtoFIXED(gSummonFormation_NereidZ[i]) + z - toFIXED(32);
-      Actor_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_CYBELE:
     for (i = 0; i != FORMATION_EIGHT; i++) {
       pos.x = INTtoFIXED(gSummonFormation_CybeleX[i]) + x + toFIXED(16);
       pos.y = INTtoFIXED(gSummonFormation_CybeleZ[i]) + z;
-      Actor_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT:
     for (i = 0; i != FORMATION_EIGHT; i++) {
       pos.x = INTtoFIXED(gSummonFormation_TiamatX[i]) + x;
       pos.y = INTtoFIXED(gSummonFormation_TiamatZ[i]) + z;
-      Actor_ApplyProjectedPlacementFar(state->sprites[i], &pos, &big, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], &pos, &big, 0);
     }
     break;
   }

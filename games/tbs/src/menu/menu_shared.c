@@ -565,7 +565,8 @@ void Menu_PlacePartyFigures(void) {
       position.height = placeY;
       position.y = toFIXED(menu->rowPositions[i]) + placeY; // always 482
       position.groundHeight = 0;
-      Actor_ApplyProjectedPlacementFar(figure, &position, &scale, FACING_SOUTH);
+      Render_ApplyProjectedPlacementFar(figure, &position, &scale,
+                                        FACING_SOUTH);
     }
   }
 }

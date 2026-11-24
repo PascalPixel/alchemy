@@ -58,7 +58,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
-  actor = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  actor = BattleObject_GetFar(state->args->targets[0])->actor;
   Projection_ScaledUnit(state->args->targets[0], &position);
   if (state->args->side == EFFECT_SIDE_ENEMIES)
     REG_BG2X = (16 - position.x) << 8;

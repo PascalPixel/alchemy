@@ -222,7 +222,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     }
     // Knock the target back.
     if (frame == CONDEMN_SWING_FRAME) {
-      target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+      target = BattleObject_GetFar(state->args->targets[0])->actor;
       target->velocityY = toFIXED(1);
       target->acceleration = toFIXED(2);
       target->speedLimit = toFIXED(2);
@@ -234,7 +234,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
                                TINT_KEEP, 0);
     }
     if (frame == CONDEMN_BOUNCE_FRAME) {
-      GetBattleObjectSlotFar(state->args->targets[0])->actor->gravity =
+      BattleObject_GetFar(state->args->targets[0])->actor->gravity =
           BATTLE_UNIT_GRAVITY;
     }
     EFFECT_PRESENT_CANVAS(state);

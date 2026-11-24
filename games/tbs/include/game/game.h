@@ -36,7 +36,7 @@ extern const struct SummonDefinition gSummon_DefinitionTable[];
 /// The 519 abilities by ability id (ability_table.c).
 extern const struct AbilityDefinition gAbilityDefinitions[];
 /// The lighthouses inside which a character's PP is refilled at an aerie
-/// (Party_RestorePpOfLitElements).
+/// (Party_RestorePpInLighthouse).
 enum LighthouseGroup {
   LIGHTHOUSE_GROUP_VENUS_MARS,     ///< Isaac, Garet, Felix and Jenna
   LIGHTHOUSE_GROUP_MERCURY_JUPITER ///< Ivan, Mia, Sheba and Piers
@@ -92,7 +92,7 @@ extern u8 gRareItemStock[RARE_ITEM_STOCK_COUNT];
 /// Battle Arena writes into the current file alone.
 extern u8 gBattleArenaRecord[];
 /// Each item's place in gRareItemStock plus one, or 0 for an item the shops
-/// keep no stock of (Item_AdjustCounter).
+/// keep no stock of (Item_AdjustRareItemStock).
 extern const u8 gItem_RareItemStockIndex[];
 /// Each party member's sprite, by character; Piers, who has none, keeps his
 /// character number.
@@ -121,7 +121,7 @@ void MainRoutineState_InitializeDefaults(void);
 void Party_StartChildhood(void);
 void Party_EndChildhood(void);
 void Party_RestoreHpPp(s32 cureConditions);
-void Party_RestorePpOfLitElements(void);
+void Party_RestorePpInLighthouse(void);
 void Unit_GaugeNoOp(void);
 void Unit_RecalculateGauges(s32 unitId);
 void Unit_SetHp(struct Unit *unit, s32 hp);
@@ -161,7 +161,7 @@ s32 Inventory_Break(s32 unitId, s32 slot);
 s32 Inventory_Repair(s32 unitId, s32 slot);
 u8 Item_GetTargetMode(s32 itemId);
 s32 RareItemStock_Adjust(s32 index, s32 delta);
-s32 Item_AdjustCounter(s32 itemId, s32 delta);
+s32 Item_AdjustRareItemStock(s32 itemId, s32 delta);
 s32 Inventory_CountItem(s32 unitId, s32 itemId);
 s32 PartyInventory_CountItem(s32 itemId);
 struct AbilityDefinition *Ability_GetDirect(s32 abilityId);
@@ -222,9 +222,9 @@ s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
 /// The battle's multipliers are 256ths: this one keeps an amount as it is.
 #define BATTLE_MULTIPLIER_ONE 256
 s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier);
-s32 Item_GetEquippedElement(s32 unitId);
+s32 Unit_GetAttackElement(s32 unitId);
 s32 Equipment_GetUnleashRateBonus(struct Unit *unit);
-s32 RollWeaponUnleash(struct Unit *unit);
+s32 Equipment_RollUnleash(struct Unit *unit);
 s32 Battle_GetEffectBaseSuccessRate(s32 effectId);
 s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId);
 s32 Battle_IsReviveEffect(s32 effectId);

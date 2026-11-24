@@ -55,7 +55,7 @@
 /// through the door to the ground before it, Mercury Lighthouse's
 /// SceneId_MercuryLighthouseExterior (mercury_lighthouse.c).
 ///
-/// Every entry sets FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts
+/// Every entry sets FLAG_IN_MERCURY_LIGHTHOUSE, under which Mercury Adepts
 /// regain PP faster. It also makes SceneId_MercuryLighthouseExterior's
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP the Retreat point.
 ///
@@ -479,7 +479,7 @@ s32 Scene_Initialize(void) {
   MercuryLighthouse_RestoreLights(
       CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER,
       (struct MercuryLighthouseLights *)gSceneLocalState);
-  GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
+  GameFlag_Set(FLAG_IN_MERCURY_LIGHTHOUSE);
   gMainRoutineState.retreatEntrance =
       MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gMainRoutineState.retreatScene = SCENE_MERCURY_LIGHTHOUSE_EXTERIOR;

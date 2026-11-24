@@ -151,11 +151,10 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
   // Each target's shell starts at the user.
   EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
-  source = GetBattleObjectSlotFar(state->args->user)->actor;
+  source = BattleObject_GetFar(state->args->user)->actor;
   height = toFIXED(4);
   EFFECT_FOR_EACH_TARGET(k, state->args) {
-    struct Actor *target =
-        GetBattleObjectSlotFar(state->args->targets[k])->actor;
+    struct Actor *target = BattleObject_GetFar(state->args->targets[k])->actor;
 
     for (i = 0; i != LOBBED_SHELLS_SLOTS; i++) {
       struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];

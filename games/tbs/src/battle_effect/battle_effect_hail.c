@@ -201,8 +201,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                              state->sheet + GROUND_DJINNI_PICTURE, 1, 1);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
-  user = GetBattleObjectSlotFar(state->args->user)->actor;
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  user = BattleObject_GetFar(state->args->user)->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   // The portals fan out from above the user.
   // DEAD: the last two portals are set out but never drawn or moved; the ROM
   // keeps their stores.

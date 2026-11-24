@@ -45,7 +45,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The embers leave the top of the user in a random direction.
-  user = GetBattleObjectSlotFar(state->args->user)->actor;
+  user = BattleObject_GetFar(state->args->user)->actor;
   bodyTop = user->y.fixed + BattleUnit_GetEffectHeightFar(state->args->user);
   for (i = 0; i != FIRE_EMBERS; i++) {
     struct Particle *ember = &PARTICLES[i];
@@ -107,7 +107,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
         s32 vy;
         s32 vz;
 
-        target = GetBattleObjectSlotFar(
+        target = BattleObject_GetFar(
                      state->args->targets[i % state->args->targetCount])
                      ->actor;
         vx = ember->velocityX += (target->x.fixed - ember->x) >> 9;

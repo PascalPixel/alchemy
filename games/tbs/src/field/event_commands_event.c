@@ -282,7 +282,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       if (result != 0)
         goto retry;
       // "Isaac drops the <item>."
-      Item_AdjustCounterFar(item, 1);
+      Item_AdjustRareItemStockFar(item, 1);
       MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar(MsgWhatWillYouDrop + 2, FIELD_MESSAGE_ZOOM);
       state->message = savedMessage;
@@ -295,7 +295,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         /* FAKEMATCH(dead): unit and the picked item read through it. */
         UNUSED s32 pickedItem = unit->inventory[slot];
 
-        discardQuantity = Shop_GetSelectionState(member, slot);
+        discardQuantity = Inventory_GetQuantityFar(member, slot);
       }
       // A party member who already carries INVENTORY_STACK_MAX of the new item
       // cannot take it: say so and ask again.

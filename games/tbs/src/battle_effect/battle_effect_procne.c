@@ -143,7 +143,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
   // Each target's place, for the whirlwind to turn it.
   EFFECT_FOR_EACH_TARGET(index, state->args) {
-    battleObject = GetBattleObjectSlotFar(state->args->targets[index]);
+    battleObject = BattleObject_GetFar(state->args->targets[index]);
     actor = battleObject->actor;
     home[index].x = actor->x.fixed;
     home[index].y = actor->z.fixed;
@@ -192,7 +192,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     // spinning faster; each strike flashes them.
     EFFECT_FOR_EACH_TARGET(index, state->args) {
       if (frame > index * 16) {
-        battleObject = GetBattleObjectSlotFar(state->args->targets[index]);
+        battleObject = BattleObject_GetFar(state->args->targets[index]);
         actor = battleObject->actor;
         actor->x.fixed = (radius[index] * Trig_Sin(heading[index])) >> 1;
         actor->z.fixed = (radius[index] * Trig_Cos(heading[index])) >> 1;
@@ -322,7 +322,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       }
 
       EFFECT_FOR_EACH_TARGET(index, state->args) {
-        battleObject = GetBattleObjectSlotFar(state->args->targets[index]);
+        battleObject = BattleObject_GetFar(state->args->targets[index]);
         actor = battleObject->actor;
         actor->y.fixed = INTtoFIXED((Random16() & 15) + 8);
       }
@@ -368,8 +368,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         place.x = INTtoFIXED(gProcne_GridX[index]) + procne.x + toFIXED(40);
         place.height = toFIXED(255) + index * toFIXED(64);
         place.y = INTtoFIXED(gProcne_GridY[index] + index * 64) + procne.y;
-        Actor_ApplyProjectedPlacementFar(state->sprites[index], &place, &scale,
-                                         0);
+        Render_ApplyProjectedPlacementFar(state->sprites[index], &place, &scale,
+                                          0);
       }
 
       if (frame > 255) {
@@ -557,7 +557,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   EFFECT_FOR_EACH_TARGET(index, state->args) {
     struct Actor *actor;
 
-    battleObject = GetBattleObjectSlotFar(state->args->targets[index]);
+    battleObject = BattleObject_GetFar(state->args->targets[index]);
     actor = battleObject->actor;
     actor->x.fixed = home[index].x;
     actor->z.fixed = home[index].y;

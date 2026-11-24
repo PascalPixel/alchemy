@@ -66,7 +66,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  user = GetBattleObjectSlotFar(args->user)->actor;
+  user = BattleObject_GetFar(args->user)->actor;
   state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_RUNE_SHEET),
@@ -82,8 +82,8 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
-  source = GetBattleObjectSlotFar(state->args->user)->actor;
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  source = BattleObject_GetFar(state->args->user)->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   for (i = 0, point = state->particles; i != ASTRAL_BLAST_STARS; i++) {
     SET_POSITION(point, source->x.fixed, source->y.fixed + toFIXED(40),
                  source->z.fixed);
@@ -243,8 +243,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
-  source = GetBattleObjectSlotFar(state->args->user)->actor;
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  source = BattleObject_GetFar(state->args->user)->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   for (i = 0, point = state->particles; i != SHINING_STARS; i++) {
     s32 delay = i * 8;
 

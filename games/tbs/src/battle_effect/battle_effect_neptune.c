@@ -261,7 +261,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
             INTtoFIXED((gNeptune_ObjectX[i] * 3) >> 1) + neptuneX - toFIXED(32);
         place.y =
             INTtoFIXED((gNeptune_ObjectY[i] * 3) >> 1) + neptuneZ - toFIXED(24);
-        Actor_ApplyProjectedPlacementFar(state->sprites[i], &place, &scale, 0);
+        Render_ApplyProjectedPlacementFar(state->sprites[i], &place, &scale, 0);
       }
     }
 

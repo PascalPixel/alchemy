@@ -48,7 +48,7 @@
 ///   (MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) leaves the
 ///   lift up.
 ///
-/// Every arrival sets FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts
+/// Every arrival sets FLAG_IN_MERCURY_LIGHTHOUSE, under which Mercury Adepts
 /// regain PP faster.
 ///
 /// On the aerie Retreat is blocked, and the beacon flickers and sheds sparks
@@ -214,7 +214,7 @@ s32 Scene_Initialize(void) {
   s32 actorId;
   struct Actor *actor;
 
-  GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
+  GameFlag_Set(FLAG_IN_MERCURY_LIGHTHOUSE);
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineState.next == SCENE_MERCURY_LIGHTHOUSE_AERIE) {
@@ -295,7 +295,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   struct Actor *leader;
 
   Event_Start();
-  Party_RestorePpOfLitElements();
+  Party_RestorePpInLighthouse();
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);

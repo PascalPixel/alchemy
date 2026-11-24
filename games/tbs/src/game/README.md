@@ -23,7 +23,7 @@ The source gives every number a name, so a table reads like this:
     .type = ITEM_TYPE_WEAPON,
     .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
     .icon = 1,
-    .primaryBonus = 14,
+    .attack = 14,
     .element = ELEMENT_NONE,
 },
 ```

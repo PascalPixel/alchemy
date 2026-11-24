@@ -184,11 +184,11 @@
 	export Djinn_Transfer, Djinn_TransferFar
 	export Unit_LevelUpTo, Unit_LevelUpToFar
 	export Party_AdjustCoins, Party_AdjustCoinsFar
-	export Item_AdjustCounter, Item_AdjustCounterFar
+	export Item_AdjustRareItemStock, Item_AdjustRareItemStockFar
 	export Inventory_Count, Inventory_CountFar
 	export PartyInventory_HasSpace, PartyInventory_HasSpaceFar
 	export Party_RestoreHpPp, Party_RestoreHpPpFar
-	export Party_RestorePpOfLitElements, Party_RestorePpOfLitElementsFar
+	export Party_RestorePpInLighthouse, Party_RestorePpInLighthouseFar
 	export Party_StartChildhood, Party_StartChildhoodFar
 	export Party_EndChildhood, Party_EndChildhoodFar
 	export Inventory_Discard, Inventory_DiscardFar
@@ -324,7 +324,7 @@
 	export Actor_WalkByAndWaitById, Actor_WalkByAndWaitByIdFar
 	export Actor_WatchAndSetScript, Actor_WatchAndSetScriptFar
 	export FieldPsynergy_HaltActor, FieldPsynergy_HaltActorFar
-	export Actor_Snapshot, Save_CaptureActorsFar
+	export Actor_Snapshot, Actor_SnapshotFar
 	export Actor_Restore, Actor_RestoreFar
 	export WorldMap_StartZoom, WorldMap_StartZoomFar
 	export Event_WaitForZoomTransition, Event_WaitForZoomTransitionFar

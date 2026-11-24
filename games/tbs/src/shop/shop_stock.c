@@ -360,7 +360,7 @@ void ShopStock_AddArtifacts(s32 stockRow) {
       stockEntries = sStockTable[stockRow];
       artifactCursor = stockEntries + SHOP_STOCK_ARTIFACTS;
       do {
-        Item_AdjustCounterFar(itemId, 1);
+        Item_AdjustRareItemStockFar(itemId, 1);
         artifactIndex++;
         if (artifactIndex > SHOP_STOCK_ARTIFACT_COUNT - 1)
           break;

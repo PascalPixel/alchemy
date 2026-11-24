@@ -56,8 +56,8 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   BattleEffect_BuildCanvasBlitters(state->args->side ^ 1, draw);
   {
-    struct Actor *actor = GetBattleObjectSlotFar(state->args->user)->actor;
-    struct Actor *goal = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+    struct Actor *actor = BattleObject_GetFar(state->args->user)->actor;
+    struct Actor *goal = BattleObject_GetFar(state->args->targets[0])->actor;
 
     for (i = 0; i != DJINN_HEAL_SWIRL_SLOTS; i++) {
       struct Particle *spark = &PARTICLES[i];
@@ -173,7 +173,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
             MERCURY_SMALL_DJINNI_HEIGHT);
     EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *object =
-          GetBattleObjectSlotFar(state->args->targets[member])->actor;
+          BattleObject_GetFar(state->args->targets[member])->actor;
       s32 start = member * 8;
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(position, object->x.fixed, toFIXED(40), object->z.fixed);

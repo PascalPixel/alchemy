@@ -178,7 +178,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       for (i = 0; i != KIRIN_SPRITES; i++) {
         place.x = INTtoFIXED(kirinX + gKirin_Columns[i] - lift) + toFIXED(224);
         place.y = INTtoFIXED(gKirin_Rows[i] - bounce) + toFIXED(72);
-        Actor_ApplyProjectedPlacementFar(state->sprites[i], &place, &pair, 0);
+        Render_ApplyProjectedPlacementFar(state->sprites[i], &place, &pair, 0);
       }
     }
 
@@ -317,8 +317,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         for (i = 0; i != KIRIN_SPRITES; i++) {
           chargePlace.x = INTtoFIXED(chargeX + gKirin_Columns[i]);
           chargePlace.y = INTtoFIXED(gKirin_Rows[i] - rise) + toFIXED(72);
-          Actor_ApplyProjectedPlacementFar(state->sprites[i], &chargePlace,
-                                           &chargeScaleCopy, 0);
+          Render_ApplyProjectedPlacementFar(state->sprites[i], &chargePlace,
+                                            &chargeScaleCopy, 0);
         }
       }
 

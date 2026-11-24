@@ -187,7 +187,7 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
   struct BattleEffectState *state;
   s32 groupIndex;
 
-  slot = GetBattleObjectSlotFar(unitId);
+  slot = BattleObject_GetFar(unitId);
   state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
   for (groupIndex = 0;

@@ -23,7 +23,7 @@ s32 Shop_ListAvailableArtifacts(void) {
   for (; itemId <= INVENTORY_ITEM_ID_MASK; itemId++) {
     equipmentGroup = shop->shopType;
     if (equipmentGroup == Item_GetEquipmentGroupFar(itemId) &&
-        Item_AdjustCounterFar(itemId, 0) != 0) {
+        Item_AdjustRareItemStockFar(itemId, 0) != 0) {
       *stockItems = itemId;
       count++;
       stockItems++;

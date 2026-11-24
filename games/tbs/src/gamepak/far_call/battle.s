@@ -21,7 +21,7 @@ FarCall_BattleTable:
 	overlay_veneer BattleMotion_LeapBack
 	export BattleMotion_ApplyKnockbackFar, BattleMotion_ApplyKnockback
 	export BattleUnit_ListIdsFar, BattleUnit_ListIds
-	export GetBattleObjectSlotFar, BattleObject_Get
+	export BattleObject_GetFar, BattleObject_Get
 	export Battle_RunFar, Battle_Run
 	export BattleMotion_ProjectPositionFar, BattleMotion_ProjectPosition
 	export BattleMotion_ProjectScaledPositionFar, BattleMotion_ProjectScaledPosition

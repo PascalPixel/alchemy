@@ -235,8 +235,8 @@ static void TretTreeBranch_EnterTretTreeRooms(void) {
 /// Reveal.
 static inline void
 TretTreeBranch_SetRevealWindow(struct ScreenTransitionState *state) {
-  state->mask = REVEAL_WININ;
-  state->active = REVEAL_WINOUT;
+  state->insideLayers = REVEAL_WININ;
+  state->outsideLayers = REVEAL_WINOUT;
   state->value = REVEAL_WINDOW_STEPS;
 }
 

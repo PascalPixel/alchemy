@@ -186,7 +186,7 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   direction = mode;
   if (direction == STARFIELD_FALL_OUTER_SPACE) {
-    struct Actor *actor = GetBattleObjectSlotFar(state->args->user)->actor;
+    struct Actor *actor = BattleObject_GetFar(state->args->user)->actor;
 
     actor->velocityY = toFIXED(10);
     actor->gravity = toFIXED(57) / 100;
@@ -390,18 +390,18 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
         scale.y = size;
         position.x = INTtoFIXED(x) + toFIXED(80);
         position.y = INTtoFIXED(64 - y);
-        Actor_ApplyProjectedPlacementFar(state->sprites[0], &position, &scale,
-                                         0);
-        Actor_ApplyProjectedPlacementFar(state->sprites[1], &position, &scale,
-                                         0);
+        Render_ApplyProjectedPlacementFar(state->sprites[0], &position, &scale,
+                                          0);
+        Render_ApplyProjectedPlacementFar(state->sprites[1], &position, &scale,
+                                          0);
       } else {
         size = growth + FIXED_ONE;
         scale.x = size;
         scale.y = size;
         position.x = INTtoFIXED(x) + toFIXED(96);
         position.y = INTtoFIXED(96 - y);
-        Actor_ApplyProjectedPlacementFar(state->sprites[0], &position, &scale,
-                                         0);
+        Render_ApplyProjectedPlacementFar(state->sprites[0], &position, &scale,
+                                          0);
       }
       // A new flame below the falling sprite.
       for (i = 0, y = 32 - y; i != STARFIELD_FALL_FLAME_COUNT; i++) {
@@ -643,14 +643,17 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
       scale.y = dragonScale;
       position.x = INTtoFIXED(x) + toFIXED(96);
       position.y = INTtoFIXED(96 - y);
-      Actor_ApplyProjectedPlacementFar(state->sprites[0], &position, &scale, 0);
-      Actor_ApplyProjectedPlacementFar(state->sprites[1], &position, &scale, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[0], &position, &scale,
+                                        0);
+      Render_ApplyProjectedPlacementFar(state->sprites[1], &position, &scale,
+                                        0);
     } else {
       scale.x = meteorScale;
       scale.y = meteorScale;
       position.x = INTtoFIXED(x) + toFIXED(96);
       position.y = INTtoFIXED(96 - y);
-      Actor_ApplyProjectedPlacementFar(state->sprites[0], &position, &scale, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[0], &position, &scale,
+                                        0);
     }
     state->shakeFrames = 1;
     BattleCamera_Shake(8, 8);

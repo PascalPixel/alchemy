@@ -137,7 +137,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     // Motes sink, swaying.
     EFFECT_FOR_EACH_TARGET(k, state->args) {
       struct Actor *target =
-          GetBattleObjectSlotFar(state->args->targets[k])->actor;
+          BattleObject_GetFar(state->args->targets[k])->actor;
       s32 start = k * DJINN_BEAMS_TARGET_FRAMES;
 
       EFFECT_VIEW_FROM_CAMERA(camera);
@@ -179,7 +179,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
 
       if (frame >= start + 72) {
         struct Actor *target =
-            GetBattleObjectSlotFar(state->args->targets[i])->actor;
+            BattleObject_GetFar(state->args->targets[i])->actor;
 
         EFFECT_VIEW_FROM_CAMERA(camera);
         if (frame == start + 72)

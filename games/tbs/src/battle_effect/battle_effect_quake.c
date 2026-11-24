@@ -131,7 +131,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
         EFFECT_FOR_EACH_TARGET(member, state->args) {
           struct Actor *actor;
 
-          actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+          actor = BattleObject_GetFar(state->args->targets[member])->actor;
           SET_VECTOR(point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
           Projection_Point(point, &screen);
           screen.x += xOffset;
@@ -153,7 +153,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
       struct Actor *actor;
       struct Particle *landing;
 
-      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+      actor = BattleObject_GetFar(state->args->targets[member])->actor;
       landing = &state->particles[member];
       if (landing->variant == 0 && actor->y.fixed <= 0 &&
           actor->velocityY < 0) {

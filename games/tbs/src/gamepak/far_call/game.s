@@ -6,7 +6,7 @@ FarCall_GameTable:
 	export Unit_GetFar, Unit_Get
 	export Unit_CalculateFar, Unit_Calculate
 	export Item_GetDirectFar, Item_GetDirect
-	export Shop_GetSelectionState, Inventory_GetQuantity
+	export Inventory_GetQuantityFar, Inventory_GetQuantity
 	export Inventory_AddItemFar, Inventory_AddItem
 	export PartyInventory_AddFar, PartyInventory_Add
 	export Inventory_FindFar, Inventory_Find
@@ -46,9 +46,9 @@ FarCall_GameTable:
 	export Party_CountMembersFar, Party_CountMembers
 	export Party_AddMemberFar, Party_AddMember
 	export Party_ListMembersFar, Party_ListMembers
-	export RollWeaponUnleashFar, RollWeaponUnleash
+	export Equipment_RollUnleashFar, Equipment_RollUnleash
 	export Party_RemoveMemberFar, Party_RemoveMember
-	export Item_GetEquippedElementFar, Item_GetEquippedElement
+	export Unit_GetAttackElementFar, Unit_GetAttackElement
 	export Battle_RollEffectSuccessFar, Battle_RollEffectSuccess
 	export Battle_CalculateAttackDamageFar, Battle_CalculateAttackDamage
 	export Battle_CalculatePsynergyPowerFar, Battle_CalculatePsynergyPower
@@ -74,12 +74,12 @@ FarCall_GameTable:
 	export Inventory_FindEquippedFar, Inventory_FindEquipped
 	export Party_AdjustCoinsFar, Party_AdjustCoins
 	export Item_GetEquipmentGroupFar, Item_GetEquipmentGroup
-	export Item_AdjustCounterFar, Item_AdjustCounter
+	export Item_AdjustRareItemStockFar, Item_AdjustRareItemStock
 	export Inventory_CountFar, Inventory_Count
 	export PartyInventory_HasSpaceFar, PartyInventory_HasSpace
 	export Unit_GetExperienceForLevelFar, Unit_GetExperienceForLevel
 	export Party_RestoreHpPpFar, Party_RestoreHpPp
-	export Party_RestorePpOfLitElementsFar, Party_RestorePpOfLitElements
+	export Party_RestorePpInLighthouseFar, Party_RestorePpInLighthouse
 	export Party_StartChildhoodFar, Party_StartChildhood
 	export Party_EndChildhoodFar, Party_EndChildhood
 	overlay_veneer Unit_GaugeNoOp

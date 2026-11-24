@@ -155,7 +155,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
       struct Actor *actor;
       u32 memberFrame;
 
-      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+      actor = BattleObject_GetFar(state->args->targets[member])->actor;
       Projection_ScaledUnit(state->args->targets[member], &screen);
       memberFrame = frame - member * 16;
       screen.x += xOffset;
@@ -259,7 +259,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
     EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor;
 
-      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+      actor = BattleObject_GetFar(state->args->targets[member])->actor;
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, actor->x.fixed, toFIXED(20), actor->z.fixed);
       Matrix_TranslateVector(point);

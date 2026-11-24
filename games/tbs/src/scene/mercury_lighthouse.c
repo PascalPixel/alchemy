@@ -7,7 +7,7 @@
 /// Lizard Man and the goddess's pool, is mercury_lighthouse_entrance.c, and the
 /// beacon at the top, the Lighthouse Aerie, is mercury_lighthouse_aerie.c. The
 /// four scenes here share one exit table, and every arrival sets
-/// FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts regain PP faster.
+/// FLAG_IN_MERCURY_LIGHTHOUSE, under which Mercury Adepts regain PP faster.
 /// Retreat leads out to the foot of the causeway
 /// (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP).
 ///
@@ -2363,7 +2363,7 @@ s32 Scene_Initialize(void) {
   s32 keepPartyPosition;
   s32 alpha;
 
-  GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
+  GameFlag_Set(FLAG_IN_MERCURY_LIGHTHOUSE);
   gMainRoutineState.retreatEntrance =
       MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gMainRoutineState.retreatScene = SCENE_MERCURY_LIGHTHOUSE_EXTERIOR;

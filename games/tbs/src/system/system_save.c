@@ -134,7 +134,7 @@ u32 Save_WriteSector(s32 sector) {
 
   if (gProgramFlashSector(index, state->slot.bytes) != 0)
     return 1;
-  result = Flash_VerifySector(index, state->slot.bytes);
+  result = VerifyFlashSector(index, state->slot.bytes);
   return NONZERO(result);
 }
 

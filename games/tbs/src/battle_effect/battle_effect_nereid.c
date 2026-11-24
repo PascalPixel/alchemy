@@ -206,7 +206,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
 
             if (phase == 0) {
               struct Actor *actor =
-                  GetBattleObjectSlotFar(state->args->targets[k])->actor;
+                  BattleObject_GetFar(state->args->targets[k])->actor;
 
               BattleEffect_TintBattler(state->args->targets[k],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE,

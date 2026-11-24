@@ -161,7 +161,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                         CANVAS_FADE_THREE_QUARTERS);
 
   // Motes wait above the target until their strike releases them.
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   for (i = 0; i != FLURRY_WAITING_MOTES; i++) {
     struct Particle *mote = &PARTICLES[i];
 

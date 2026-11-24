@@ -353,7 +353,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     if (phase >= 0 && phase <= CYBELE_SPARKS_END) {
       EFFECT_FOR_EACH_TARGET(i, state->args) {
         struct Actor *actor =
-            GetBattleObjectSlotFar(state->args->targets[i])->actor;
+            BattleObject_GetFar(state->args->targets[i])->actor;
 
         SET_VECTOR(point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
         Projection_Point(point, &screen);
@@ -417,7 +417,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       EFFECT_FOR_EACH_TARGET(i, state->args) {
         if (frame > i * 8 + 160) {
           struct BattleObject *slot =
-              GetBattleObjectSlotFar(state->args->targets[i]);
+              BattleObject_GetFar(state->args->targets[i]);
           struct Actor *actor = slot->actor;
           void *record;
           s32 n;
@@ -435,7 +435,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     EFFECT_FOR_EACH_TARGET(i, state->args) {
       if (frame == i * 5 + CYBELE_LANDING_FRAME - 16) {
         struct Actor *actor =
-            GetBattleObjectSlotFar(state->args->targets[i])->actor;
+            BattleObject_GetFar(state->args->targets[i])->actor;
 
         actor->y.fixed = toFIXED(96);
         actor->gravity = BATTLE_UNIT_GRAVITY;
@@ -469,7 +469,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
                             CANVAS_FADE_THREE_QUARTERS);
       EFFECT_FOR_EACH_TARGET(i, state->args) {
         struct Actor *actor =
-            GetBattleObjectSlotFar(state->args->targets[i])->actor;
+            BattleObject_GetFar(state->args->targets[i])->actor;
 
         for (j = 0; j != CYBELE_TARGET_DUST; j++) {
           struct Particle *dust = &state->particles[i * CYBELE_TARGET_DUST + j];
@@ -490,7 +490,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         if (frame >= start && frame < i * 4 + CYBELE_LANDING_FRAME + 12) {
           s32 pictureIndex = (frame - start) / 2;
           struct Actor *actor =
-              GetBattleObjectSlotFar(state->args->targets[i])->actor;
+              BattleObject_GetFar(state->args->targets[i])->actor;
 
           SET_VECTOR(point, actor->x.fixed, 0, actor->z.fixed);
           Projection_Point(point, &screen);

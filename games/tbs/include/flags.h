@@ -62,13 +62,13 @@
 // arrival, and Scene_Arrive clears all four when the party enters another area,
 // so a flag is set only while the party is inside.
 /// The party is inside Venus Lighthouse.
-#define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
+#define FLAG_IN_VENUS_LIGHTHOUSE 0x110
 /// The party is inside Mercury Lighthouse.
-#define FLAG_MERCURY_LIGHTHOUSE_LIT 0x111
+#define FLAG_IN_MERCURY_LIGHTHOUSE 0x111
 /// The party is inside Mars Lighthouse; no scene in The Broken Seal sets it.
-#define FLAG_MARS_LIGHTHOUSE_LIT 0x112
+#define FLAG_IN_MARS_LIGHTHOUSE 0x112
 /// The party is inside Jupiter Lighthouse; no scene in The Broken Seal sets it.
-#define FLAG_JUPITER_LIGHTHOUSE_LIT 0x113
+#define FLAG_IN_JUPITER_LIGHTHOUSE 0x113
 /// The next scene keeps the music that is playing; main_routine.c clears
 /// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
 #define FLAG_KEEP_MUSIC_ONCE 0x11a

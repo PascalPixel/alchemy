@@ -660,7 +660,8 @@ void FileList_PlacePartySprites(void) {
       position.height = toFIXED(500);
       position.y = toFIXED(menu->partyMemberY[index]) + toFIXED(500);
       position.groundHeight = 0;
-      Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, FACING_SOUTH);
+      Render_ApplyProjectedPlacementFar(sprite, &position, &scale,
+                                        FACING_SOUTH);
     }
     index += 1;
     if (index > 3) {
@@ -731,7 +732,8 @@ void FileList_PlaceDjinnSprites(void) {
       position.height = height;
       position.y = toFIXED(menu->figureY[index]) + height;
       position.groundHeight = 0;
-      Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, FACING_SOUTH);
+      Render_ApplyProjectedPlacementFar(sprite, &position, &scale,
+                                        FACING_SOUTH);
     }
   }
 }
@@ -1196,7 +1198,7 @@ s32 Save_ToChosenFile(void) {
         wait(1);
       }
       Save_BuildFileSummary();
-      Save_CaptureActorsFar();
+      Actor_SnapshotFar();
       error = Save_WritePart(file, gSaveBuffer);
       error |=
           Save_WritePart(file + SAVE_FILE_COUNT, gSaveBuffer + SAVE_PART_BYTES);

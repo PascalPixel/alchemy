@@ -70,7 +70,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
    * touches. */
   UNUSED s32 unused[3];
 
-  actor = GetBattleObjectSlotFar(unit)->actor;
+  actor = BattleObject_GetFar(unit)->actor;
   sprite = Actor_GetSpriteFar(actor, 0);
   EFFECT_VIEW_FROM_CAMERA(camera);
   scale =

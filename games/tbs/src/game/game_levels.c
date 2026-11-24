@@ -241,7 +241,7 @@ void Party_InitializeCharacters(void) {
   const struct CharacterDefinition *character;
   u16 nameBuf[16];
   s32 unitId;
-  const s32 *startingUnitId = gCharacter_StartingEquipUnitIds;
+  const s32 *startingUnitId = gCharacter_NewGameIds;
   s32 i;
   s32 slot;
   u8 *name;
@@ -263,7 +263,7 @@ void Party_InitializeCharacters(void) {
     unit->name[UNIT_NAME_SIZE - 1] = 0;
   }
 
-  // gCharacter_StartingEquipUnitIds lists the characters given starting
+  // gCharacter_NewGameIds lists the characters given starting
   // equipment, ended by -1 (starting_equipment.c).
   for (; *startingUnitId != -1; startingUnitId++) {
     unit = Unit_Get(*startingUnitId);

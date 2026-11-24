@@ -202,7 +202,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   /* LEFTOVER(template): a per-target loop whose count is 1, the first target
    * only. */
   for (k = 0; k != 1; k++) {
-    target = GetBattleObjectSlotFar(state->args->targets[k])->actor;
+    target = BattleObject_GetFar(state->args->targets[k])->actor;
     for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
       struct Particle *puff = &state->particles[i];
 
@@ -456,7 +456,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     draw[1] = *pairedBlitter;
     /* LEFTOVER(template): a per-target loop whose count is 1, the user only. */
     for (k = 0; k != 1; k++) {
-      user = GetBattleObjectSlotFar(state->args->user)->actor;
+      user = BattleObject_GetFar(state->args->user)->actor;
       // Smoke puffs rise and spread.
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_SMOKE) {
         for (i = 0; i != ARRAY_COUNT(state->particles); i++) {

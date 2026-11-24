@@ -318,7 +318,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     // The party member's battle figure: its battle object's sprite image's
     // tiles, as a 64x64, 256-colour sprite at (172, 56).
     {
-      struct Sprite *figure = GetBattleObjectSlotFar(member)->actor->sprite;
+      struct Sprite *figure = BattleObject_GetFar(member)->actor->sprite;
 
       figureSprite.oam.word.attr01 =
           OBJ_SIZE_64X64 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);

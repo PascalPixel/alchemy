@@ -312,8 +312,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     gFrameCount;
     // This mode writes the two masks and folds the progress the other way
     // round from WINDOW_TRANSITION_LEADER.
-    *scanlineData++ = state->active;
-    *scanlineData++ = state->mask;
+    *scanlineData++ = state->outsideLayers;
+    *scanlineData++ = state->insideLayers;
     value = state->value;
     if ((value & TRANSITION_OPEN) == 0) {
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
@@ -347,15 +347,15 @@ void ScreenTransition_UpdateScanlineTable(void) {
     rippleCameraX = view[0] & FIELD_PIXEL_MASK;
     rippleCameraY = view[1] & FIELD_PIXEL_MASK;
   }
-    // Centred on state->centreX and centreY; each line's edges move out by
+    // Centred on state->centerX and centerY; each line's edges move out by
     // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
     // frame, so the outline ripples.
-    centerX = (state->centreX - rippleCameraX) / FIXED_ONE;
+    centerX = (state->centerX - rippleCameraX) / FIXED_ONE;
     centerY =
-        (state->centreY - rippleCameraY) / FIXED_ONE - TRANSITION_ELLIPSE_RISE;
+        (state->centerY - rippleCameraY) / FIXED_ONE - TRANSITION_ELLIPSE_RISE;
     k = -centerY * 2 + gFrameCount;
-    *scanlineData++ = state->mask;
-    *scanlineData++ = state->active;
+    *scanlineData++ = state->insideLayers;
+    *scanlineData++ = state->outsideLayers;
     value = state->value;
     if (value & TRANSITION_OPEN) {
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
@@ -405,8 +405,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // DEAD: as in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read
     // and not used; the ROM keeps the load.
     gFrameCount;
-    *scanlineData++ = state->mask;
-    *scanlineData++ = state->active;
+    *scanlineData++ = state->insideLayers;
+    *scanlineData++ = state->outsideLayers;
     value = state->value;
     if (value & TRANSITION_OPEN) {
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
@@ -445,8 +445,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // DEAD: as in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read
     // and not used; the ROM keeps the load.
     gFrameCount;
-    *scanlineData++ = state->mask;
-    *scanlineData++ = state->active;
+    *scanlineData++ = state->insideLayers;
+    *scanlineData++ = state->outsideLayers;
     value = state->value;
     if (value & TRANSITION_OPEN) {
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
@@ -484,8 +484,8 @@ void ScreenTransition_StartHeldWindow(s32 mode) {
   Dma_Fill32(0, state, sizeof(*state));
   state->mode = mode;
   state->value = 0;
-  state->mask = WININ_WIN0_ALL | WININ_WIN1_ALL;
-  state->active = WINOUT_WIN01_BG0;
+  state->insideLayers = WININ_WIN0_ALL | WININ_WIN1_ALL;
+  state->outsideLayers = WINOUT_WIN01_BG0;
   Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
   Task_Add(ScreenTransition_StartWindowHBlankDma, TASK_PASS_VBLANK);
 }
@@ -513,7 +513,7 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
 /// a dissolve, or opening from the centre line, which a non-zero low byte makes
 /// flicker).
 void ScreenTransition_Start(s32 mode, s32 frames) {
-  struct ScreenTransitionWin *display;
+  struct ScreenTransitionDisplay *display;
   s32 variant;
   s32 style;
 
@@ -541,8 +541,8 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
         ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = 0;
-    state->mask = WININ_WIN0_ALL;
-    state->active = WINOUT_WIN01_BG0;
+    state->insideLayers = WININ_WIN0_ALL;
+    state->outsideLayers = WINOUT_WIN01_BG0;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
     Task_Add(ScreenTransition_StartWindowHBlankDma, TASK_PASS_VBLANK);
     wait(1);
@@ -623,8 +623,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
         ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = TRANSITION_OPEN;
-    state->mask = WININ_WIN0_ALL;
-    state->active = WINOUT_WIN01_BG0;
+    state->insideLayers = WININ_WIN0_ALL;
+    state->outsideLayers = WINOUT_WIN01_BG0;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
     Task_Add(ScreenTransition_StartWindowHBlankDma, TASK_PASS_VBLANK);
     wait(1);
@@ -677,7 +677,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
 /// is set.
 void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
                                       s32 clearBg1) {
-  struct ScreenTransitionWin *state;
+  struct ScreenTransitionDisplay *state;
 
   state = gMapGridState[0];
   if (state != NULL) {
@@ -697,8 +697,8 @@ void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
 /// sets the two lines where the screen switches between shown and blank.
 void ScreenTransition_Update(void) {
   struct ScreenTransitionDissolveState *state = *Ram_DisplayState;
-  struct ScreenTransitionWin *display =
-      *(struct ScreenTransitionWin **)Ram_MapGridState;
+  struct ScreenTransitionDisplay *display =
+      *(struct ScreenTransitionDisplay **)Ram_MapGridState;
   u32 edgeDistance;
 
   if (state->duration != 0) {
@@ -731,8 +731,8 @@ void ScreenTransition_Update(void) {
 /// As ScreenTransition_Update, but the lines flicker every other frame.
 void ScreenTransition_UpdateFromCenter(void) {
   struct ScreenTransitionDissolveState *state = *Ram_DisplayState;
-  struct ScreenTransitionWin *window =
-      *(struct ScreenTransitionWin **)Ram_MapGridState;
+  struct ScreenTransitionDisplay *window =
+      *(struct ScreenTransitionDisplay **)Ram_MapGridState;
   u16 edgeDistance;
 
   if (state->duration != 0) {
@@ -781,7 +781,7 @@ enum ScreenTransitionIrqPhase {
 /// at the second.
 void ScreenTransition_UpdateScanline(void) {
   u32 scanline = REG_VCOUNT;
-  struct ScreenTransitionWin *state;
+  struct ScreenTransitionDisplay *state;
   state = gMapGridState[0];
 
   // Keep the same VCount sample across phase changes.

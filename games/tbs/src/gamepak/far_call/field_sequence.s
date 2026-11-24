@@ -184,7 +184,7 @@ FarCall_OverworldTable:
 	overlay_veneer FieldPsynergy_ResumeHaltedActor
 	overlay_veneer Actor_FindBySprite
 	overlay_veneer Actor_GetSpriteById
-	export Save_CaptureActorsFar, Actor_Snapshot
+	export Actor_SnapshotFar, Actor_Snapshot
 	export Actor_RestoreFar, Actor_Restore
 	export WorldMap_StartZoomFar, WorldMap_StartZoom
 	export Event_WaitForZoomTransitionFar, Event_WaitForZoomTransition

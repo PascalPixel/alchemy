@@ -79,7 +79,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_LIGHTEN);
   REG_BLDALPHA = BLEND_ALPHA(15, 15);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-  source = GetBattleObjectSlotFar(state->args->user)->actor;
+  source = BattleObject_GetFar(state->args->user)->actor;
   y = source->y.fixed + BattleUnit_GetEffectHeightFar(state->args->user);
   for (i = 0; i != FROTH_BUBBLE_SLOTS; i++) {
     bubble = &state->particles[i];
@@ -92,7 +92,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   }
   EFFECT_FOR_EACH_TARGET(i, state->args) {
     place = &state->particles[FROTH_FIRST_TARGET + i];
-    actor = GetBattleObjectSlotFar(state->args->targets[i])->actor;
+    actor = BattleObject_GetFar(state->args->targets[i])->actor;
     SET_POSITION(place, actor->x.fixed, 0, actor->z.fixed);
   }
   state->cameraDelta = 0;

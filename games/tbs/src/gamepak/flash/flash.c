@@ -11,7 +11,7 @@
 
 typedef u8 (*FlashByteRead)(u8 *address);
 
-/// The id a Macronix chip answers with (Flash_ChipMacronix's): its device id
+/// The id a Macronix chip answers with (gFlash_ChipMacronix's): its device id
 /// 0x1c above the maker id 0xc2.
 #define FLASH_ID_MACRONIX (0x1c << 8 | 0xc2)
 
@@ -237,7 +237,7 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
 }
 
 /// Returns the first byte in flash that differs from `source`, or NULL when
-/// all `size` match; Flash_VerifySector runs it from a copy in RAM.
+/// all `size` match; VerifyFlashSector runs it from a copy in RAM.
 u8 *VerifyFlashCore(u8 *source, u8 *flash, u16 size) {
   u16 index = size - 1;
 
@@ -259,7 +259,7 @@ typedef u8 *(*FlashVerifyCore)(u8 *source, u8 *flash, u16 size);
 
 /// Compares a 4 KB sector with `source` after it is written: returns 0 when
 /// they match, else the address of the first byte that differs.
-s32 Flash_VerifySector(u16 sector, u8 *source) {
+s32 VerifyFlashSector(u16 sector, u8 *source) {
   u16 code[128];
   u16 *sourceCode;
   u16 *destinationCode;
@@ -270,7 +270,7 @@ s32 Flash_VerifySector(u16 sector, u8 *source) {
   sourceCode = (u16 *)VerifyFlashCore;
   sourceCode = (u16 *)((u32)sourceCode ^ 1);
   destinationCode = code;
-  halfwordsRemaining = ((u32)Flash_VerifySector - (u32)VerifyFlashCore) / 2;
+  halfwordsRemaining = ((u32)VerifyFlashSector - (u32)VerifyFlashCore) / 2;
   while (halfwordsRemaining != 0) {
     *destinationCode++ = *sourceCode++;
     halfwordsRemaining--;

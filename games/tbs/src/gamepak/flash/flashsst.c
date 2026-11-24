@@ -28,7 +28,7 @@ const struct FlashSetupInfo gFlash_ChipDefault = {
              .id = {.joined = 0}},
 };
 
-const struct FlashSetupInfo Flash_ChipSst = {
+const struct FlashSetupInfo gFlash_ChipSst = {
     .program = ProgramFlashSectorWithEraseRetry,
     .eraseChip = EraseFlashChip,
     .eraseSector = EraseFlashSector,

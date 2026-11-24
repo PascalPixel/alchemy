@@ -140,7 +140,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   // Send the user in, and ready the sparks at the target.
   BattleEffect_SetApproachMotion(state->args->user, state->args->targets[0],
                                  10);
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
     newSpark = &state->particles[i];
     newSpark->x = target->x.fixed;

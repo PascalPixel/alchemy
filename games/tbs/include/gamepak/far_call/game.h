@@ -12,7 +12,7 @@ void Unit_CalculateFar(s32 unitId);
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 /// Returns how many of the item in `slot` the unit carries, 0 for an empty
 /// slot (Inventory_GetQuantity); the sell screen reads a stack's size with it.
-s32 Shop_GetSelectionState(s32 unitId, s32 slot);
+s32 Inventory_GetQuantityFar(s32 unitId, s32 slot);
 s32 Inventory_AddItemFar(s32 unitId, s32 itemId);
 s32 PartyInventory_AddFar(s32 itemId);
 s32 Inventory_FindFar(s32 unitId, s32 itemId);
@@ -51,9 +51,9 @@ s32 BattleUnit_SetFar(s32 unitId, s32 enemyId, s32 suffix);
 s32 Party_CountMembersFar(void);
 s32 Party_AddMemberFar(s32 unitId);
 s32 Party_ListMembersFar(s16 *unitIds);
-s32 RollWeaponUnleashFar(struct Unit *unit);
+s32 Equipment_RollUnleashFar(struct Unit *unit);
 s32 Party_RemoveMemberFar(s32 unitId);
-s32 Item_GetEquippedElementFar(s32 unitId);
+s32 Unit_GetAttackElementFar(s32 unitId);
 s32 Battle_RollEffectSuccessFar(s32 caster, s32 target, s32 element,
                                 s32 effectId, s32 successScale);
 s32 Battle_CalculateAttackDamageFar(s32 attack, s32 defense, s32 addedPower,
@@ -86,12 +86,12 @@ s32 Item_IsCompatibleWithUnitFar(s32 unitId, s32 itemId);
 s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
 s32 Party_AdjustCoinsFar(s32 amount);
 s32 Item_GetEquipmentGroupFar(s32 itemId);
-s32 Item_AdjustCounterFar(s32 itemId, s32 delta);
+s32 Item_AdjustRareItemStockFar(s32 itemId, s32 delta);
 s32 Inventory_CountFar(s32 unitId);
 s32 PartyInventory_HasSpaceFar(void);
 u32 Unit_GetExperienceForLevelFar(s32 unitId, s32 level);
 void Party_RestoreHpPpFar(s32 cureConditions);
-void Party_RestorePpOfLitElementsFar(void);
+void Party_RestorePpInLighthouseFar(void);
 void Party_StartChildhoodFar(void);
 void Party_EndChildhoodFar(void);
 s32 Djinn_GiveToPartyFar(s32 element, s32 djinn);

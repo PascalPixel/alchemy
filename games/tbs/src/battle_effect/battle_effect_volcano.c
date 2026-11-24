@@ -63,7 +63,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   for (i = 0; i != VOLCANO_SPARK_POOL; i++)
     PARTICLES[i].variant = 0;
 
-  actor = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  actor = BattleObject_GetFar(state->args->targets[0])->actor;
   // Each pillar stands 72 to 87 pixels out on the first target's side of the
   // field, at its own depth.
   for (i = 0; i != VOLCANO_MOST_PILLARS; i++) {

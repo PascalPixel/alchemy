@@ -149,7 +149,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   gBgScroll[1].y = BEAM_CANVAS_SCROLL_Y;
   wait(1);
   // Sparks fly from the target, mostly rising.
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   half = BattleUnit_GetEffectHeightFar(state->args->targets[0]) / 2;
   for (i = 0; i != BEAM_SPARKS; i++) {
     struct Particle *spark = &state->particles[i];
@@ -343,7 +343,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
 
   // The gathering.
   if (gathers == 1) {
-    actor = GetBattleObjectSlotFar(state->args->user)->actor;
+    actor = BattleObject_GetFar(state->args->user)->actor;
     for (i = 0; i != CRITICAL_HIT_MOTES; i++) {
       struct Particle *mote = &state->particles[i];
 
@@ -420,7 +420,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   anchor.x += scrollX;
   gBgScroll[1].y = BEAM_CANVAS_SCROLL_Y;
   gBgScroll[1].x = scrollX;
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   half = BattleUnit_GetEffectHeightFar(state->args->targets[0]) / 2;
   for (i = 0; i != BEAM_SPARKS; i++) {
     struct Particle *spark = &state->particles[i];

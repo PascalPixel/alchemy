@@ -9,6 +9,6 @@
 /// Isaac, Garet, Ivan, Mia and Jenna, ended by -1: the characters
 /// Party_InitializeCharacters equips with their definitions' items at a new
 /// game.
-extern const s32 gCharacter_StartingEquipUnitIds[6];
+extern const s32 gCharacter_NewGameIds[6];
 
 #endif

@@ -283,7 +283,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
     EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor =
-          GetBattleObjectSlotFar(state->args->targets[member])->actor;
+          BattleObject_GetFar(state->args->targets[member])->actor;
       s32 start = member * 8;
 
       EFFECT_VIEW_FROM_CAMERA(camera);

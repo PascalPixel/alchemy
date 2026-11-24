@@ -78,7 +78,7 @@
 /// area), so the floors stay solved between them.
 ///
 /// The FLAG_SCENE_TEMP_ states last only until the next change of scene other
-/// than a return from battle. Every arrival sets FLAG_VENUS_LIGHTHOUSE_LIT.
+/// than a return from battle. Every arrival sets FLAG_IN_VENUS_LIGHTHOUSE.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -2584,7 +2584,7 @@ s32 Scene_Initialize(void) {
   Event_Wait(1);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     VenusLighthouse_RestoreMarkedColors();
-  GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
+  GameFlag_Set(FLAG_IN_VENUS_LIGHTHOUSE);
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   sceneId = gMainRoutineState.next;

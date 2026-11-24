@@ -63,8 +63,8 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
 
   for (i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
     PLANET_DIVER_IMPACT_CHIPS[i].life = 0;
-  user = GetBattleObjectSlotFar(state->args->user)->actor;
-  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  user = BattleObject_GetFar(state->args->user)->actor;
+  target = BattleObject_GetFar(state->args->targets[0])->actor;
   if (user->x.fixed > 0)
     stepX = -toFIXED(15);
   else
@@ -259,7 +259,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
     EFFECT_FOR_EACH_TARGET(k, state->args) {
       struct Actor *target =
-          GetBattleObjectSlotFar(state->args->targets[k])->actor;
+          BattleObject_GetFar(state->args->targets[k])->actor;
 
       // Spin the skulls about a point above the target.
       EFFECT_VIEW_FROM_CAMERA(camera);
@@ -378,7 +378,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor;
 
-      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+      actor = BattleObject_GetFar(state->args->targets[member])->actor;
       if (frame > member * ORBITING_SPIRALS_INTERVAL &&
           frame <
               (member * ORBITING_SPIRALS_INTERVAL) + ORBITING_SPIRALS_LIFE) {

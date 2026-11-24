@@ -327,7 +327,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_BuildCanvasBlitters(state->args->side, blitters);
   state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   state->fadeStep = 0;
-  casterActor = GetBattleObjectSlotFar(state->args->user)->actor;
+  casterActor = BattleObject_GetFar(state->args->user)->actor;
 
   for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
     particle = &state->particles[i];
@@ -487,7 +487,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
 
   {
     struct Actor *targetActor =
-        GetBattleObjectSlotFar(state->args->targets[0])->actor;
+        BattleObject_GetFar(state->args->targets[0])->actor;
 
     SET_POSITION(&velocity, (targetActor->x.fixed - djinniPos.x) / 6,
                  (targetActor->y.fixed - djinniPos.y + toFIXED(30)) / 6,
@@ -744,7 +744,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           struct Particle *mote;
           struct Actor *caster;
           s32 height;
-          caster = GetBattleObjectSlotFar(state->args->user)->actor;
+          caster = BattleObject_GetFar(state->args->user)->actor;
           height = BattleUnit_GetEffectHeightFar(state->args->user) / 2;
           for (i = 0; i != CASTING_IMPACT_PARTICLE_COUNT / 2; i++) {
             mote = &CASTING_IMPACT_PARTICLES[i];

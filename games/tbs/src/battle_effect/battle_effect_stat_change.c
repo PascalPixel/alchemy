@@ -253,7 +253,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
     EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor =
-          GetBattleObjectSlotFar(state->args->targets[member])->actor;
+          BattleObject_GetFar(state->args->targets[member])->actor;
       s32 height =
           BattleUnit_GetEffectHeightFar(state->args->targets[member]) * 2 / 3;
 
@@ -568,7 +568,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
       s32 y;
 
       targetFrame = frame - j * STAT_REDUCTION_TARGET_DELAY;
-      actor = GetBattleObjectSlotFar(state->args->targets[j])->actor;
+      actor = BattleObject_GetFar(state->args->targets[j])->actor;
       if (targetFrame > 0) {
         // DEAD: the view set from the camera a first time, which the second
         // call repeats; the ROM keeps both calls.

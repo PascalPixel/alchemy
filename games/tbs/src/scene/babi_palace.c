@@ -1203,8 +1203,8 @@ static void BabiPalace_WakeAfterFinals(void) {
   ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_LEADER);
   state = gScreenTransitionState;
   state->value = 0;
-  state->mask = WAKE_WININ;
-  state->active = WINOUT_WIN01_BG0;
+  state->insideLayers = WAKE_WININ;
+  state->outsideLayers = WINOUT_WIN01_BG0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   for (step = 1; step <= 5; step++) {
@@ -1218,7 +1218,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     wait(3);
     state->value = step;
   }
-  state->active = WINOUT_WIN01_ALL & ~WINOUT_WIN01_CLR;
+  state->outsideLayers = WINOUT_WIN01_ALL & ~WINOUT_WIN01_CLR;
   fieldState = gFieldState;
   fieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

@@ -197,8 +197,8 @@ void Unit_Calculate(s32 unitId) {
       stats->item = Item_GetDirect(unit->inventory[index]);
       if (stats->item->flags & ITEM_CURSED)
         unit->curse |= CURSE_BOUND | CURSE_ITEM;
-      stats->attack += stats->item->primaryBonus;
-      stats->defense += stats->item->secondaryBonus;
+      stats->attack += stats->item->attack;
+      stats->defense += stats->item->defense;
       for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
         effectKind = stats->item->effects[effectIndex].kind;
         effectAmount = stats->item->effects[effectIndex].amount;
@@ -362,19 +362,19 @@ void Unit_Calculate(s32 unitId) {
     // Faster PP recovery inside the lighthouse of the character's own element.
     switch (unit->id) {
     case ISAAC:
-      inOwnLighthouse = GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_LIT);
+      inOwnLighthouse = GameFlag_Get(FLAG_IN_VENUS_LIGHTHOUSE);
       break;
     case GARET:
-      inOwnLighthouse = GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT);
+      inOwnLighthouse = GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE);
       break;
     case IVAN:
-      inOwnLighthouse = GameFlag_Get(FLAG_JUPITER_LIGHTHOUSE_LIT);
+      inOwnLighthouse = GameFlag_Get(FLAG_IN_JUPITER_LIGHTHOUSE);
       break;
     case MIA:
-      inOwnLighthouse = GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_LIT);
+      inOwnLighthouse = GameFlag_Get(FLAG_IN_MERCURY_LIGHTHOUSE);
       break;
     case JENNA:
-      inOwnLighthouse = GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT);
+      inOwnLighthouse = GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE);
       break;
     }
     if (inOwnLighthouse)
@@ -636,7 +636,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 /// Refills the PP of each party member whose lighthouse group
 /// (gCharacter_LighthouseGroupTable) holds the lighthouse the party is inside.
 /// The aeries of Venus and Mercury Lighthouse call it.
-void Party_RestorePpOfLitElements(void) {
+void Party_RestorePpInLighthouse(void) {
   s32 partySize;
   s32 partyIndex;
   u8 unitId;
@@ -650,13 +650,13 @@ void Party_RestorePpOfLitElements(void) {
     lighthouseGroup = gCharacter_LighthouseGroupTable[unitId];
     restorePp = 0;
     if (lighthouseGroup == LIGHTHOUSE_GROUP_VENUS_MARS) {
-      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_LIT) ||
-          GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT)) {
+      if (GameFlag_Get(FLAG_IN_VENUS_LIGHTHOUSE) ||
+          GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE)) {
         restorePp = 1;
       }
     } else {
-      if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_LIT) ||
-          GameFlag_Get(FLAG_JUPITER_LIGHTHOUSE_LIT)) {
+      if (GameFlag_Get(FLAG_IN_MERCURY_LIGHTHOUSE) ||
+          GameFlag_Get(FLAG_IN_JUPITER_LIGHTHOUSE)) {
         restorePp = 1;
       }
     }

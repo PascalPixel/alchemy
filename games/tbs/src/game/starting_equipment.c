@@ -10,7 +10,7 @@
 /// equips each with their definition's items and raises them to their
 /// starting level. Felix, Sheba and Piers are left out.
 // clang-format off
-const s32 gCharacter_StartingEquipUnitIds[6] = {
+const s32 gCharacter_NewGameIds[6] = {
     ISAAC, GARET, IVAN, MIA, JENNA, -1,
 };
 // clang-format on

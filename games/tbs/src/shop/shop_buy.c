@@ -222,7 +222,7 @@ next_page:
   // list is made again without what is gone.
   if (selectionResult == 0 && shop->action == SHOP_ACTION_ARTIFACTS) {
     for (removedCount = 0; removedCount < quantity; removedCount++)
-      Item_AdjustCounterFar(shop->selectedItem, -1);
+      Item_AdjustRareItemStockFar(shop->selectedItem, -1);
     if (Shop_ListAvailableArtifacts() == 0)
       goto close;
     if (selected > shop->stockCount - 1)
@@ -552,9 +552,9 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
       quantityLimit = (u32)gMainRoutineState.holdings.coins / item->price;
 
     if (shop->action == SHOP_ACTION_ARTIFACTS) {
-      artifactLimit = Item_AdjustCounterFar(itemId, 0);
+      artifactLimit = Item_AdjustRareItemStockFar(itemId, 0);
       if (quantityLimit > artifactLimit)
-        artifactLimit = Item_AdjustCounterFar(itemId, 0);
+        artifactLimit = Item_AdjustRareItemStockFar(itemId, 0);
       else
         artifactLimit = quantityLimit;
       quantityLimit = artifactLimit;

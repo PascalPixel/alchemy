@@ -55,7 +55,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
     struct Particle *shard;
 
     offset = member * BREAK_SHARDS_PER_TARGET * sizeof(struct Particle);
-    actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+    actor = BattleObject_GetFar(state->args->targets[member])->actor;
     height = BattleUnit_GetEffectHeightFar(state->args->targets[member]) / 2;
     SET_VECTOR(point, actor->x.fixed, height, actor->z.fixed);
     Projection_Point(point, &screen);
@@ -181,7 +181,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
     struct Actor *actor;
     s32 halfHeight;
 
-    actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+    actor = BattleObject_GetFar(state->args->targets[member])->actor;
     halfHeight =
         BattleUnit_GetEffectHeightFar(state->args->targets[member]) / 2;
     for (i = 0; i != DRAIN_MOTES_PER_TARGET; i++) {
@@ -208,7 +208,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
     struct Actor *user;
     s32 halfHeight;
 
-    user = GetBattleObjectSlotFar(state->args->user)->actor;
+    user = BattleObject_GetFar(state->args->user)->actor;
     halfHeight = BattleUnit_GetEffectHeightFar(state->args->user) / 2;
     if (frame == DRAIN_HIT_FRAME)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);

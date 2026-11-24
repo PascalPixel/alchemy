@@ -216,7 +216,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
         for (column = 0; column != ATALANTA_SPRITE_ROWS; column++) {
           position.x = INTtoFIXED(pathX + 80 + column * 32);
           position.y = INTtoFIXED(64 - pathY + row * 32);
-          Actor_ApplyProjectedPlacementFar(
+          Render_ApplyProjectedPlacementFar(
               state->sprites[row * ATALANTA_SPRITE_ROWS + column], &position,
               &gAtalanta_UnitScale, 0);
         }

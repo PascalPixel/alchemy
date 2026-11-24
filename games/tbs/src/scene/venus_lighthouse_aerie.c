@@ -5,7 +5,7 @@
 /// What happens here is one chain of events cut by two battles and two trips
 /// to the World Map. Each part starts in Scene_Initialize from
 /// the entrance the part before sent the party to. Every arrival blocks
-/// Retreat and sets FLAG_VENUS_LIGHTHOUSE_LIT.
+/// Retreat and sets FLAG_IN_VENUS_LIGHTHOUSE.
 ///
 /// The parts, in the order the entrances chain them:
 /// - The arrival (VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR,
@@ -28,7 +28,7 @@
 /// - After it (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE,
 ///   VenusLighthouseAerie_CombineSaturosAndMenardi). Saturos throws the Venus
 ///   Star into the beacon (ACTOR_VENUS_STAR_SHADOW), Felix and Sheba leave,
-///   and Saturos and Menardi fuse. Party_RestorePpOfLitElements refills the PP
+///   and Saturos and Menardi fuse. Party_RestorePpInLighthouse refills the PP
 ///   of Isaac and Garet, inside the lighthouse of their element group, and the
 ///   second battle follows (slot 0, FLAG_AERIE_SECOND_BATTLE_BEGUN).
 /// - After that (VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE,
@@ -437,7 +437,7 @@ s32 Scene_Initialize(void) {
 
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   wait(1);
-  GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
+  GameFlag_Set(FLAG_IN_VENUS_LIGHTHOUSE);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEACON_STATUE_SOUTHWEST), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEACON_STATUE_NORTHWEST), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEACON_STATUE_NORTHEAST), 0);
@@ -1998,7 +1998,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
                              VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 0);
-  Party_RestorePpOfLitElements();
+  Party_RestorePpInLighthouse();
   GameFlag_Set(FLAG_AERIE_SECOND_BATTLE_BEGUN);
 }
 

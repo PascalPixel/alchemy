@@ -156,7 +156,7 @@ void Actor_WatchAndSetScriptFar(u32 actorId, u32 watchedActorId);
 void FieldPsynergy_HaltActorFar(s32 actorId);
 /// Captures up to 32 actors into gActorSnapshot, for
 /// Actor_Restore (Actor_Snapshot); the save menu calls it.
-void Save_CaptureActorsFar(void);
+void Actor_SnapshotFar(void);
 void Actor_RestoreFar(void);
 void WorldMap_StartZoomFar(s32 zoom, s32 frames);
 void Event_WaitForZoomTransitionFar(void);

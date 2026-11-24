@@ -235,7 +235,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       for (j = 0; j != BOREAS_SPRITE_ROWS; j++) {
         position.x = INTtoFIXED(j * 32 + 144 - shakeX);
         position.y = INTtoFIXED(row * 32 + 76 - shakeY);
-        Actor_ApplyProjectedPlacementFar(
+        Render_ApplyProjectedPlacementFar(
             state->sprites[row * BOREAS_SPRITE_ROWS + j], &position, &scale, 0);
       }
     }

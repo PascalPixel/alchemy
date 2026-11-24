@@ -57,7 +57,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(state->args->user, state->args->targets[0], 4,
                                  0);
   wait(1);
-  targetActor = GetBattleObjectSlotFar(state->args->targets[0])->actor;
+  targetActor = BattleObject_GetFar(state->args->targets[0])->actor;
 
   for (i = 0; i != ANNIHILATION_SHARDS; i++) {
     // Shards burst from the target.

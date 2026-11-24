@@ -352,7 +352,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       place.y = INTtoFIXED(i / JUDGMENT_FORMATION_COLUMNS *
                            JUDGMENT_FORMATION_SPRITE_SIZE) +
                 depth;
-      Actor_ApplyProjectedPlacementFar(state->sprites[i], &place, &pair, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], &place, &pair, 0);
     }
 
     depth += zoom;
@@ -920,8 +920,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           debrisPlace.x = particle->x;
           debrisPlace.height = toFIXED(255);
           debrisPlace.y = particle->y + toFIXED(255);
-          Actor_ApplyProjectedPlacementFar(state->sprites[i], &debrisPlace,
-                                           &scale, 0);
+          Render_ApplyProjectedPlacementFar(state->sprites[i], &debrisPlace,
+                                            &scale, 0);
           particle->y -= particle->velocityY;
           if (particle->y < toFIXED(16)) {
             if (frame < JUDGMENT_SWEEP_RETURN) {

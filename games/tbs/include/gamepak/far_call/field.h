@@ -10,10 +10,10 @@ void ActorSystem_ConfigureFar(s32 mode);
 /// a draw slot by depth (Render_ApplyProjectedPlacement). `position` is in
 /// 16.16 pixels; an affine matrix is built when the sprite is mirrored, scaled
 /// or rotated.
-void Actor_ApplyProjectedPlacementFar(struct Sprite *sprite,
-                                      const struct SpritePlacement *position,
-                                      const struct SpriteScale *scale,
-                                      s32 facing);
+void Render_ApplyProjectedPlacementFar(struct Sprite *sprite,
+                                       const struct SpritePlacement *position,
+                                       const struct SpriteScale *scale,
+                                       s32 facing);
 s32 Sprite_StartAnimationFar(struct Sprite *sprite, s32 animation);
 struct Sprite *Sprite_CreateFar(s32 id);
 void Sprite_DestroyFar(struct Sprite *sprite);

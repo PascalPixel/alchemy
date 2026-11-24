@@ -10,7 +10,7 @@
 /// milliseconds, the timer's reload value and its control. It erases a sector
 /// by programming it, so the sector-erase row is empty.
 // clang-format off
-const u16 Flash_MaxTimeAtmel[] = {
+const u16 gFlash_MaxTimeAtmel[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     40, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     0, 0, 0,
@@ -23,7 +23,7 @@ const struct FlashSetupInfo gFlash_ChipAtmel = {
     .eraseChip = EraseAtmelFlashChip,
     .eraseSector = EraseAtmelFlashBlock,
     .wait = WaitForFlashWrite,
-    .maxTime = (u16 *)Flash_MaxTimeAtmel,
+    .maxTime = (u16 *)gFlash_MaxTimeAtmel,
     .type = {.romSize = 65536,
              .sector = {.size = 4096, .shift = 12, .count = 16, .top = 0},
              .wait = {3, 3},
@@ -37,7 +37,7 @@ const struct FlashSetupInfo gFlash_ChipAtmelLayout = {
     .eraseChip = EraseAtmelFlashChip,
     .eraseSector = EraseAtmelFlashSector,
     .wait = WaitForFlashWrite,
-    .maxTime = (u16 *)Flash_MaxTimeAtmel,
+    .maxTime = (u16 *)gFlash_MaxTimeAtmel,
     .type = {.romSize = 65536,
              .sector = {.size = 128, .shift = 7, .count = 512, .top = 0},
              .wait = {3, 3},

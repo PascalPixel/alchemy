@@ -304,8 +304,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           // DEAD: slot != -1 always holds, slot being a remainder of a
           // positive count; the ROM keeps the test.
           if (slot != -1)
-            Actor_ApplyProjectedPlacementFar(state->sprites[slot], &position,
-                                             &scale, 0);
+            Render_ApplyProjectedPlacementFar(state->sprites[slot], &position,
+                                              &scale, 0);
           rock->y -= rock->z;
           // DEAD: velocityX steps from 1 to 12 by velocityY and nothing reads
           // it; the ROM keeps the count.

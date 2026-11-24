@@ -53,7 +53,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
 
-  user = GetBattleObjectSlotFar(args->user)->actor;
+  user = BattleObject_GetFar(args->user)->actor;
   // Nothing in the effect or the battle reads the variant afterwards.
   // XXX (no evidence): why it is forced to the stronger one; the store
   // changes nothing the game shows, so only the author's intent would say.

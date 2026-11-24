@@ -44,7 +44,7 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *particle) {
   position.groundHeight = 0;
   if (particle->x > -toFIXED(32) && particle->x < toFIXED(272) &&
       particle->z > -toFIXED(32) && particle->z < toFIXED(224))
-    Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, 0);
+    Render_ApplyProjectedPlacementFar(sprite, &position, &scale, 0);
 }
 
 /// Moves a field effect sprite toward its target, turning at most turnStepMax

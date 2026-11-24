@@ -448,8 +448,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         Unit_GetFar(command);
         for (removedCount = 0; removedCount < result + 1; removedCount++) {
           Inventory_RemoveFar(command, menu->selectedSlots[0]);
-          Item_AdjustCounterFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK,
-                                1);
+          Item_AdjustRareItemStockFar(
+              menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK, 1);
         }
         Unit_CalculateFar(command);
 #else
@@ -457,8 +457,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         Unit_GetFar(member);
         for (removedCount = 0; removedCount < result + 1; removedCount++) {
           Inventory_RemoveFar(member, menu->selectedSlots[0]);
-          Item_AdjustCounterFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK,
-                                1);
+          Item_AdjustRareItemStockFar(
+              menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK, 1);
         }
         Unit_CalculateFar(member);
 #endif
@@ -2084,7 +2084,7 @@ void ItemMenu_DrawItemDetails(struct Window *window, s32 inventoryEntry) {
   // Equipment: a heading, then its Attack and Defense bonuses.
   if (def->type != ITEM_TYPE_NONE) {
     hasEffects = 0;
-    if (def->primaryBonus == 0 && def->secondaryBonus == 0) {
+    if (def->attack == 0 && def->defense == 0) {
       for (i = 0; i < EQUIP_EFFECT_SLOTS; i++) {
         if (def->effects[i].kind != 0 || def->useType == ITEM_USE_TEACHES) {
           hasEffects = 1;
@@ -2098,15 +2098,15 @@ void ItemMenu_DrawItemDetails(struct Window *window, s32 inventoryEntry) {
       Text_DrawMessageAsTilesFar(MsgEquipEffectHeading, window, 16, 0);
       row = 1;
     }
-    if (def->primaryBonus != 0) {
+    if (def->attack != 0) {
       Text_DrawMessageAsTilesFar(MsgStatLabel, window, 0, row * 8);
-      amount = def->primaryBonus;
+      amount = def->attack;
       ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
       row++;
     }
-    if (def->secondaryBonus != 0) {
+    if (def->defense != 0) {
       Text_DrawMessageAsTilesFar(MsgDefenseLabel, window, 0, row * 8);
-      amount = def->secondaryBonus;
+      amount = def->defense;
       ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
       row++;
     }

@@ -463,13 +463,13 @@ static void AltmillerCave_InitializeDarkness(void) {
   state = gScreenTransitionState;
   state->value = ALTMILLER_CAVE_LIGHT_STEPS;
   if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS) != 0) {
-    state->mask = ALTMILLER_CAVE_STEPS_LIGHT_WININ;
-    state->active = ALTMILLER_CAVE_STEPS_LIGHT_WINOUT;
+    state->insideLayers = ALTMILLER_CAVE_STEPS_LIGHT_WININ;
+    state->outsideLayers = ALTMILLER_CAVE_STEPS_LIGHT_WINOUT;
     AltmillerCave_ApplyFadeBlend();
     return;
   }
-  state->mask = ALTMILLER_CAVE_DARK_LIGHT_WININ;
-  state->active = ALTMILLER_CAVE_DARK_LIGHT_WINOUT;
+  state->insideLayers = ALTMILLER_CAVE_DARK_LIGHT_WININ;
+  state->outsideLayers = ALTMILLER_CAVE_DARK_LIGHT_WINOUT;
   Io_Write16(ALTMILLER_CAVE_DARKNESS_BLEND, &REG_BLDCNT);
   Io_Write16(ALTMILLER_CAVE_DARK_ALPHA, &REG_BLDALPHA);
 }
@@ -1251,7 +1251,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     wait(7);
   }
   {
-    u16 *slot = (u16 *)&state->active;
+    u16 *slot = (u16 *)&state->outsideLayers;
     s32 value = ALTMILLER_CAVE_BRIGHTENING_WINOUT;
 
     *slot = value;
@@ -1593,7 +1593,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   }
   state->value = ALTMILLER_CAVE_LIGHT_STEPS;
   {
-    u16 *slot = (u16 *)&state->active;
+    u16 *slot = (u16 *)&state->outsideLayers;
     s32 value = ALTMILLER_CAVE_DARK_LIGHT_WINOUT;
 
     *slot = value;

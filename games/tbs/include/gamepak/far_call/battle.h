@@ -22,7 +22,7 @@ s32 BattleUnit_ListIdsFar(s32 sideMask, u16 *unitIds);
 /// Returns a unit's battle object, or null for a unit with no place
 /// (BattleObject_Get); the battle effects find the sprites they move through
 /// it.
-struct BattleObject *GetBattleObjectSlotFar(s32 unitId);
+struct BattleObject *BattleObject_GetFar(s32 unitId);
 s32 Battle_RunFar(s32 enemyGroup);
 s32 BattleMotion_ProjectPositionFar(s32 unitId, s32 *projected);
 s32 BattleMotion_ProjectScaledPositionFar(s32 unitId, s32 *projected);

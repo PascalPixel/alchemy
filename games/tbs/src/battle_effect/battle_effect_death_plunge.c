@@ -58,8 +58,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   // The run, most of the way to the target.
-  first = GetBattleObjectSlotFar(state->args->user);
-  second = GetBattleObjectSlotFar(state->args->targets[0]);
+  first = BattleObject_GetFar(state->args->user);
+  second = BattleObject_GetFar(state->args->targets[0]);
   user = first->actor;
   target = second->actor;
   {
@@ -439,7 +439,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     // DEAD: a lookup whose result is dropped; the ROM keeps the call.
-    GetBattleObjectSlotFar(state->args->user);
+    BattleObject_GetFar(state->args->user);
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     for (i = 0; i != ELEMENT_PILLAR_MOTES; i++) {

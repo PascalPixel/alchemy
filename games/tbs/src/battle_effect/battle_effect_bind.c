@@ -196,7 +196,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     // for every target.
     for (member = 0; member != 1; member++) {
       memberFrame = frame - member * 8;
-      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+      actor = BattleObject_GetFar(state->args->targets[member])->actor;
       if (memberFrame >= 0 && memberFrame < 96) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         SET_VECTOR(ScreenPoint_Coordinates(&corner), actor->x.fixed,
@@ -330,7 +330,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     // for every target.
     for (member = 0; member != 1; member++) {
       memberFrame = frame - member * 8;
-      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+      actor = BattleObject_GetFar(state->args->targets[member])->actor;
       if (memberFrame >= 0 && memberFrame < 96) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         SET_VECTOR(ScreenPoint_Coordinates(&corner), actor->x.fixed,

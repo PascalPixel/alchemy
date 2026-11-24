@@ -69,11 +69,6 @@
 #include "system/main_routine_state.h"
 #include "text/msg_ids.h"
 
-/// SPRITE_PARTICLE's animations (particle.tsv), whose pictures run from the
-/// largest glow (0) to a dot (7): growing from the dot and then flickering
-/// between the two largest, and shrinking to the dot and holding it.
-enum { PARTICLE_ANIMATION_SHRINK = 1, PARTICLE_ANIMATION_GROW_AND_FLICKER = 6 };
-
 extern struct SceneEntrance gStuccoRoomsBEntrances[];
 extern u32 gStuccoRoomsBExits[];
 extern struct ActorPlacement gStuccoRoomsBActorPlacements[];

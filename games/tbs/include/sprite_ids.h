@@ -846,6 +846,17 @@ enum GoldenRingsAnimation {
 #define GOLDEN_RINGS_ANIMATION_COLUMN(lights)                                  \
   (GOLDEN_RINGS_ANIMATION_ONE_LIGHT + 1 - (lights))
 
+/// SPRITE_PARTICLE's animations (particle.tsv), whose pictures run from the
+/// largest glow (0) to a dot (7).
+enum ParticleAnimation {
+  PARTICLE_ANIMATION_SHRINK = 1, ///< shrinking to the dot and holding it
+  /// Growing from the dot, then PARTICLE_ANIMATION_FLICKER.
+  PARTICLE_ANIMATION_GROW_AND_FLICKER = 6,
+  /// Flickering between the two largest pictures, two frames each: a light's
+  /// sparkle.
+  PARTICLE_ANIMATION_FLICKER = 7
+};
+
 /// SPRITE_TORCH's animations (torch.tsv).
 enum TorchAnimation {
   TORCH_ANIMATION_UNLIT = 1, ///< a cold torch, its bowl grey with ash

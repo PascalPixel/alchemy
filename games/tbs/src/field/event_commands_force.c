@@ -49,7 +49,7 @@ void FieldPsynergy_Force(void) {
     Camera_WorldToScreen(&pos);
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialBurst);
-    FieldParticle_SetAnimation(effect, 7);
+    FieldParticle_SetAnimation(effect, PARTICLE_ANIMATION_FLICKER);
     Sprite_SetAnimationColorModesFar(effect->sprite, SPRITE_COLOR_BLUE_TINT);
     effect->scaleY = FIXED_ONE * 7 / 10;
     effect->scaleX = FIXED_ONE * 7 / 10;

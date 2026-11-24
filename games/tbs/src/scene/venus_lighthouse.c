@@ -412,10 +412,7 @@ enum {
   /// The hurt scholars and soldiers lying on the ground
   /// (old_man_in_blue_cap.tsv and
   /// soldier.tsv, the same pose).
-  ANIM_HURT_LYING = 5,
-  /// A light's sparkle, flickering between its two largest pictures
-  /// (particle.tsv).
-  PARTICLE_ANIMATION_FLICKER = 7
+  ANIM_HURT_LYING = 5
 };
 
 /// An animation timer step for Actor_SetAnimationSpeedById, in sixteenths of a

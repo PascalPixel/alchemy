@@ -11,9 +11,9 @@
 #include "tbs_edition.h"
 #include "types.h"
 #include "graphics/glyph.h"
-#include "graphics/render_input.h"
 #include "system/heap.h"
 #include "window/screens.h"
+#include "window/window_sprite.h"
 
 /// Where the windows are drawn (WindowState.battleMode).
 enum WindowBattleMode {

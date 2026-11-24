@@ -11,9 +11,9 @@
 #include "field/field_particle.h"
 #include "field/sprite.h"
 #include "game/item.h"
-#include "graphics/render_input.h"
 #include "system/heap_slots.h"
 #include "window/cursor.h"
+#include "window/window_sprite.h"
 
 /// The frames the hand cursor takes to glide into a newly opened list.
 #define SHOP_CURSOR_ENTER_FRAMES 12

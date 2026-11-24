@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_RENDER_INPUT_H
-#define ALCHEMY_RENDER_INPUT_H
+#ifndef ALCHEMY_WINDOW_SPRITE_H
+#define ALCHEMY_WINDOW_SPRITE_H
 
 /// @file
 /// Sprites as the windows draw them: a sprite's OAM attributes, and the lists

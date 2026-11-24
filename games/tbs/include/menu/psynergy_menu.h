@@ -6,11 +6,11 @@
 
 #include "fixed_math.h"
 #include "static_assert.h"
-#include "graphics/render_input.h"
 #include "menu/menu.h"
 #include "menu/paged_list.h"
 #include "system/heap_slots.h"
 #include "text/msg_ids.h"
+#include "window/window_sprite.h"
 
 struct Sprite;
 

@@ -6,11 +6,11 @@
 
 #include "static_assert.h"
 #include "types.h"
-#include "graphics/render_input.h"
 #include "system/heap.h"
 #include "window/cursor.h"
 #include "window/screens.h"
 #include "window/window.h"
+#include "window/window_sprite.h"
 
 /// The settings menu's state (heap block 20): the settings being edited and how
 /// many values each takes, the page, and the cursor, markers and icons.

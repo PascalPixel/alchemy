@@ -36,6 +36,15 @@
 #include "field/field_sprite.h"
 #include "system/dma.h"
 
+/// The caster's look while it casts, BattleEffect_SetObjectUpdateMode's mode.
+enum CasterLook {
+  CASTER_LOOK_NORMAL = 0, ///< its own colours
+  /// Flashing white, with swelling arcs (FieldEffect_FlickerActorAndSpawnArcs).
+  CASTER_LOOK_FLASHING = 1,
+  /// Cycling colours, with swelling arcs (FieldEffect_CycleActorAndSpawnArcs).
+  CASTER_LOOK_CYCLING = 2
+};
+
 /// How long FieldPsynergy_End waits at most for the World Map's palette fade.
 #define END_FADE_WAIT_FRAMES 90
 
@@ -216,7 +225,7 @@ void FieldPsynergy_StartCast(void) {
   actor->velocityZ = 0;
   if (state->flashCaster != 0) {
     Sound_PlayFar(SE_POWER_UP);
-    BattleEffect_SetObjectUpdateMode(actor, 1);
+    BattleEffect_SetObjectUpdateMode(actor, CASTER_LOOK_FLASHING);
   }
   if (state->announceName != 0) {
     state->messageShown = 1;
@@ -228,7 +237,7 @@ void FieldPsynergy_StartCast(void) {
   }
   if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST)) {
     if (state->flashCaster != 0)
-      BattleEffect_SetObjectUpdateMode(actor, 2);
+      BattleEffect_SetObjectUpdateMode(actor, CASTER_LOOK_CYCLING);
     Actor_SelectAnimationFar(actor, ANIM_CAST_PSYNERGY_END);
   } else {
     BattleEffect_StopMainActor();
@@ -240,7 +249,7 @@ void FieldPsynergy_StartCast(void) {
 void BattleEffect_StopMainActor(void) {
   struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
 
-  BattleEffect_SetObjectUpdateMode(state->caster, 0);
+  BattleEffect_SetObjectUpdateMode(state->caster, CASTER_LOOK_NORMAL);
   wait(1);
 }
 
@@ -340,7 +349,8 @@ void FieldPsynergy_StopMindReadWave(void) {
 
   FieldPsynergy_RestoreMindReadPalette();
   Task_Remove(FieldPsynergy_UpdateMindReadWave);
-  Actor_SetLayersColorMode(Actor_GetById(state->sourceId), 1);
+  Actor_SetLayersColorMode(Actor_GetById(state->sourceId),
+                           SPRITE_COLOR_NORMAL + 1);
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_MIND_READ);
 }

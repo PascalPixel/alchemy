@@ -43,11 +43,11 @@ void LineScroll_ArmDma(void) {
     volatile u16 *dma = REG_DMA0;
     u16 control;
 
-    control = dma[5];
-    dma[5] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
-    dma[5] &= ~DMA_ENABLE;
+    control = dma[DMA0_CONTROL];
+    dma[DMA0_CONTROL] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
+    dma[DMA0_CONTROL] &= ~DMA_ENABLE;
     target = dest;
-    (void)dma[5];
+    (void)dma[DMA0_CONTROL];
   }
   *dest = *line++;
   *dest = *line++;
@@ -215,14 +215,9 @@ void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
 
 /// Stops the line scroll: removes its two tasks and stops DMA 0.
 void LineScroll_Stop(void) {
-  volatile u16 *dma0;
-
   Task_Remove(LineScroll_ArmDma);
   Task_Remove(LineScroll_BuildPage);
-  dma0 = REG_DMA0;
-  dma0[5] = (u16)~DMA_START_TIMING_DRQ_REPEAT & dma0[5];
-  dma0[5] = (u16)~DMA_ENABLE & dma0[5];
-  (void)dma0[5];
+  DMA0_STOP();
 }
 
 #undef LINE_SCROLL_ALL_LAYERS

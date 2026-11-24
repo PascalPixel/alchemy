@@ -144,7 +144,7 @@ enum EquipEffectKind {
   EQUIP_EFFECT_ADD_MARS_RESIST,
   EQUIP_EFFECT_ADD_JUPITER_RESIST,
   EQUIP_EFFECT_ADD_UNLEASH_CHANCE, ///< percent added to the weapon's unleash
-  /// Summed by Unit_Calculate into equipBonus[1]; nothing reads the total.
+  /// Nothing sums or reads it: Unit_Calculate has no case for it.
   EQUIP_EFFECT_ADD_COUNTERSTRIKE_RATE,
   /// "The curse can be removed": sets CURSE_REMOVABLE, which lifts
   /// CURSE_BOUND.

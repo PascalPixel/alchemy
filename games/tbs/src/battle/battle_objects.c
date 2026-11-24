@@ -366,8 +366,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       // A two-part enemy: its two sprites in the actor system's next group
       // table. BUG: a failed create leaves sprite null, and its flags are still
       // written.
-      sprites = (struct Sprite **)gActorSystemState->spriteGroups +
-                gActorSystemState->count;
+      sprites = gActorSystemState->spriteGroups + gActorSystemState->count;
       spriteId = battleObject->resource;
       actor->spriteStorageKind = ACTOR_SPRITE_GROUP;
       actor->sprite = sprites;

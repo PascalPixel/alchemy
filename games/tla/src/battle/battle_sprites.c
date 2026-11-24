@@ -9,7 +9,9 @@
 
 // clang-format off
 struct BattleSpriteDefinition gBattleSprites[] = {
-    // The characters' rows.
+    // The characters' rows: their attack and hop are read, but a party
+    // member's sprite comes from BattleObject_Make by character, so each row's
+    // Vermin sprite is never shown.
     [ISAAC] = {
         .animation = SPRITE_BATTLE_VERMIN,
         .attackEffect = ATTACK_EFFECT_SLASH,

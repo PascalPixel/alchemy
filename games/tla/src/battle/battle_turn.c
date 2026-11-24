@@ -67,8 +67,6 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   view->busy = 0;
 }
 
-#define Unit_CalculateFar ((void (*)(u16))Unit_CalculateFar)
-
 /// Ends every unit's guard (Defend and the like) and recalculates its stats.
 void BattleUnit_ResetGuardLevels(void) {
   u16 unitIds[UNIT_MAX];
@@ -129,10 +127,15 @@ s32 BattleFlee_CheckSuccess(void) {
   return escaped;
 }
 
+/// The list Battle_CollectPartyCommands fills with the unit id of each action
+/// the party is still to choose (BattleParty_SplitChoosers): eight halfwords,
+/// and a byte over.
+#define CHOOSER_LIST_BYTES (8 * sizeof(u16) + 1)
+
 /// Builds the party's commands for the turn into entries and returns how many
 /// there are, or -1 when none could be chosen.
 s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
-  void *buffer = Heap_AllocEwram(17);
+  void *buffer = Heap_AllocEwram(CHOOSER_LIST_BYTES);
   s32 count = Battle_CollectPartyCommandsFar(entries, buffer, 0);
   s32 result = -1;
 

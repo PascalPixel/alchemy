@@ -45,8 +45,9 @@
 #define BATTLE_ARENA_PREFIX_LAST 4
 #endif
 
-/// The first of the letters that tell enemies of one kind apart in battle: the
-/// alphabet from 'A' in Japanese, the digits from '1' in the others.
+/// The first of the letters that tell enemies of one kind apart in battle, put
+/// right after the name: the alphabet from 'A' in Japanese, the digits from '1'
+/// in the others ("Chestbeater1" to "Chestbeater3").
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define ENEMY_NAME_LETTER_FIRST 'A'
 #else

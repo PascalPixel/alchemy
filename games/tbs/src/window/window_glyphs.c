@@ -211,12 +211,6 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
   return width;
 }
 
-/// From the German release on, every code up to TEXT_LAST_FONT_CODE counts as
-/// 10 pixels, and those above as nothing.
-#if TBS_PATCH_2
-#define WIDE_WIDTH_FIXED 1
-#endif
-
 /// The main font's glyph n, counted from the space character.
 #define FONT_GLYPH(n)                                                          \
   ((const struct FontGlyph *)((n) * sizeof(struct FontGlyph) +                 \
@@ -229,7 +223,7 @@ s32 Text_GetWideStringWidth(u16 *text) {
   s32 width;
   u16 *cursor;
   u32 code;
-#if !defined(WIDE_WIDTH_FIXED)
+#if !TBS_PATCH_2
   u32 glyphIndex;
 #endif
 
@@ -240,7 +234,9 @@ s32 Text_GetWideStringWidth(u16 *text) {
     if (code == TEXT_SPACE) {
       width += 4;
     } else if (code <= TEXT_LAST_FONT_CODE) {
-#if defined(WIDE_WIDTH_FIXED)
+#if TBS_PATCH_2
+      // From the German release on, every font code counts as 10 pixels, and
+      // the codes above them as nothing.
       width += 10;
 #else
       glyphIndex = code - TEXT_MARK_VOICED;
@@ -264,7 +260,6 @@ s32 Text_GetWideStringWidth(u16 *text) {
 /// line codes; other control codes are skipped with their arguments.
 void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                  s32 y) {
-  u8 *base;
   struct WindowState *state;
   u32 code;
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -272,8 +267,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 #endif
   s16 lineStartX;
 
-  base = gWindowState[0];
-  state = (struct WindowState *)base;
+  state = (struct WindowState *)gWindowState[0];
   code = 0;
   lineStartX = x;
   if (text == NULL) {

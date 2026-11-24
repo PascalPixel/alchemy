@@ -183,6 +183,8 @@ s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
 /// the VRAM cache entry slot, whichever entry is asked for: those bytes are the
 /// table's first pointers, not a picture.
 s32 MenuTitle_LoadFirstTile(u32 entry, s32 unused, u32 slot) {
+  /* FAKEMATCH(dead): a switch whose every case picks gMenuTitlePictures, three
+   * of them through other names for it; the plain form loads it directly. */
   extern const u8 *gMenuTitlePicturesCaseA[] __asm__("gMenuTitlePictures"),
       *gMenuTitlePicturesCaseB[] __asm__("gMenuTitlePictures"),
       *gMenuTitlePicturesCaseC[] __asm__("gMenuTitlePictures");

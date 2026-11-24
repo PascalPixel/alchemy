@@ -4,8 +4,6 @@
 /// @file
 /// Djinn numbers, named from the English release.
 
-#include "sprite_ids.h"
-
 /// The numbers each element's Djinn take, its spares among them.
 #define DJINN_PER_ELEMENT 20
 /// The first of each element's two spares, after its eighteen Djinn (a

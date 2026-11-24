@@ -169,7 +169,7 @@ enum GondowanCaveActorId {
 static void GondowanCave_MovePillar(void);
 /// The actor spins in place, leaps off the ledge and lands with a shake and a
 /// ring of dust, then hops on into the water with a splash and floats there.
-static void GondowanCave_LeapIntoWater(s32 actorId);
+static void GondowanCave_LeapStump(s32 actorId);
 
 #include "shared/field_effect_create.c"
 
@@ -418,7 +418,7 @@ static void GondowanCave_MoveStump(void) {
   Actor_Get(ACTOR_STUMP);
   Event_Start();
   if (FIELD_CELL(Actor_Get(ACTOR_STUMP)->x.fixed) < STUMP_COLUMN) {
-    GondowanCave_LeapIntoWater(ACTOR_STUMP);
+    GondowanCave_LeapStump(ACTOR_STUMP);
     MapGrid_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     GameFlag_Set(FLAG_GONDOWAN_CAVE_STUMP_MOVED);
   }
@@ -456,13 +456,14 @@ static void GondowanCave_MovePillar(void) {
 /// Unused: an empty function nothing refers to.
 static UNUSED void GondowanCave_UnusedNoOpA(void) {}
 
-/// Spins the leaping actor a sixty-fourth of a turn each frame.
-static void GondowanCave_RotateLeapingActor(struct Actor *actor) {
+/// Spins the leaping stump a sixty-fourth of a turn each frame.
+static void GondowanCave_SpinStump(struct Actor *actor) {
   actor->sprite->rotation -= TRIG_TURN / 64;
 }
 
-/// Waits until the actor has come down to the height, forty frames at most.
-static void GondowanCave_WaitToLand(struct Actor *actor, s32 height) {
+/// Waits until the actor has come down to height (16.16), forty frames at
+/// most: Actor_WaitBelowHeight with a shorter limit.
+static void GondowanCave_WaitBelowHeight(struct Actor *actor, s32 height) {
   s32 framesRemaining = 40;
 
   while (framesRemaining != 0) {
@@ -474,7 +475,14 @@ static void GondowanCave_WaitToLand(struct Actor *actor, s32 height) {
   }
 }
 
-static void GondowanCave_LeapIntoWater(s32 actorId) {
+/// The stump tips over the ledge, leaps spinning off it with a whoosh, lands
+/// with a shake and a ring of dust, and slides on into the water, where it
+/// splashes and settles to float.
+///
+/// Goma Cave's stumps leap the same way (shared/stump_leap.c); this one spins
+/// and leaps slower, lands with no thump, slides on without a bounce and
+/// throws no spray, so it is written again here.
+static void GondowanCave_LeapStump(s32 actorId) {
   struct Actor *actor;
   u32 stepIndex;
   struct Vector3 particleVelocity;
@@ -489,7 +497,7 @@ static void GondowanCave_LeapIntoWater(s32 actorId) {
     actor->x.fixed -= Trig_Cos(actor->sprite->rotation) / 2;
     actor->targetX = ACTOR_NO_TARGET;
   }
-  actor->update = GondowanCave_RotateLeapingActor;
+  actor->update = GondowanCave_SpinStump;
   Sound_Play(SE_WHOOSH);
   Actor_SetSpeed(actorId, 2);
   Actor_SetDestination(actorId, 472, 288);
@@ -497,7 +505,7 @@ static void GondowanCave_LeapIntoWater(s32 actorId) {
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   actor->layer = 0;
   Actor_WaitForMoveById(actorId);
-  GondowanCave_WaitToLand(actor, toFIXED(32));
+  GondowanCave_WaitBelowHeight(actor, toFIXED(32));
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   for (stepIndex = 0; stepIndex <= TRIG_TURN / FACING_STEP; stepIndex++) {
@@ -513,7 +521,7 @@ static void GondowanCave_LeapIntoWater(s32 actorId) {
   }
   Actor_SetDestination(actorId, 440, 308);
   Actor_WaitForMoveById(actorId);
-  GondowanCave_WaitToLand(actor, toFIXED(32));
+  GondowanCave_WaitBelowHeight(actor, toFIXED(32));
   actor->update = NULL;
   actor->sprite->rotation = TRIG_TURN / 16;
   Sound_Play(SE_CAST);

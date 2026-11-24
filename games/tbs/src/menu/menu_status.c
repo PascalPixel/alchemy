@@ -2156,7 +2156,7 @@ s32 StatusScreen_CreateStatusIcons(struct Window *window) {
   {
     s32 y = MENU_ICON_HIDDEN_Y;
 
-    slot = menu->categoryIcons;
+    slot = menu->statusIcons;
     do {
       icon = WindowSprite_CreateFromResourceFar(ICON_KIND_ITEM, slotIndex,
                                                 window, MENU_ICON_HIDDEN_X, y);
@@ -2180,7 +2180,7 @@ void StatusScreen_ShowStatusIcons(const u8 *flags) {
 
   menu = gMenuState;
   StatusScreen_HideStatusIcons();
-  for (index = 0, slot = menu->categoryIcons, shown = 0; index <= 4; index++) {
+  for (index = 0, slot = menu->statusIcons, shown = 0; index <= 4; index++) {
     entry = *slot++;
     if (entry != 0 && flags[index] != 0) {
       entry->x = 8;
@@ -2199,7 +2199,7 @@ void StatusScreen_HideStatusIcons(void) {
   s32 index;
 
   for (index = 0; index < 5; index++) {
-    struct WindowSprite *object = menu->categoryIcons[index];
+    struct WindowSprite *object = menu->statusIcons[index];
 
     if (object != 0) {
       object->x = MENU_ICON_HIDDEN_X;
@@ -2241,7 +2241,7 @@ s32 StatusScreen_LoadStatusIcons(const u8 *enabled) {
         break;
       }
       SelectionIcon_LoadIntoSlotFar(ICON_KIND_PATTERN, kind,
-                                    (u8)menu->categoryIcons[index]->index, 0);
+                                    (u8)menu->statusIcons[index]->index, 0);
     }
   }
   return 1;

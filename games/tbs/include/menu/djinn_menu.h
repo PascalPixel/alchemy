@@ -71,7 +71,7 @@ struct DjinnMenuState {
   ///@{
   u8 itemWindows[16];
   struct WindowSprite *entryIcons[32];
-  struct WindowSprite *categoryIcons[8];
+  struct WindowSprite *statusIcons[8];
   ///@}
   u8 unusedAfterIcons[36]; ///< no view of the menu state names it
   struct Window *helpWindow;

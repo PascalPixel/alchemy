@@ -54,7 +54,7 @@ struct ItemMenuState {
   struct Window *secondUnopenedWindow; ///< never given a window; only closed
   struct WindowSprite *gridCursor;     ///< only prepared by name
   struct WindowSprite *entryIcons[MENU_ENTRY_ICONS];
-  struct WindowSprite *categoryIcons[8];
+  struct WindowSprite *statusIcons[8];
   u8 unusedAfterIcons[36]; ///< no view of the menu state names it
   struct Window *questionWindow;
   /// The cursor grid: its place and its size, 1 by 1 at first.
@@ -110,7 +110,7 @@ STATIC_ASSERT(offsetof(struct ItemMenuState, itemWindow) == 32);
 STATIC_ASSERT(offsetof(struct ItemMenuState, descriptionWindow) == 44);
 STATIC_ASSERT(offsetof(struct ItemMenuState, gridCursor) == 68);
 STATIC_ASSERT(offsetof(struct ItemMenuState, entryIcons) == 72);
-STATIC_ASSERT(offsetof(struct ItemMenuState, categoryIcons) == 200);
+STATIC_ASSERT(offsetof(struct ItemMenuState, statusIcons) == 200);
 STATIC_ASSERT(offsetof(struct ItemMenuState, questionWindow) == 268);
 STATIC_ASSERT(offsetof(struct ItemMenuState, selectedColumn) == 272);
 STATIC_ASSERT(offsetof(struct ItemMenuState, selectedRow) == 273);

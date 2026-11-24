@@ -1,13 +1,13 @@
 /// @file
 /// Sol Sanctum's Elemental Star room and its eruption: the ten lights that
 /// float in the room, actors in a row from the first the map passes, each
-/// pulsing and drifting on its own path from the tables gSolSanctum_Ring*
+/// pulsing and drifting on its own path from the tables gSolSanctum_Light*
 /// (sol_sanctum_elemental_star_ring_tables.c), by its index.
 
 #include "system/dma.h"
 
 /// The most lights the task keeps.
-enum { SOL_SANCTUM_RING_MAX = 10 };
+enum { SOL_SANCTUM_LIGHT_MAX = 10 };
 
 /// A light moves every this many frames.
 #define SOL_SANCTUM_LIGHT_STEP_FRAMES 3
@@ -36,7 +36,7 @@ struct SolSanctumLightEntry {
 /// The floating lights' state in HEAP_SLOT_SOL_SANCTUM_LIGHTS, one entry per
 /// light.
 struct SolSanctumLightList {
-  struct SolSanctumLightEntry entries[SOL_SANCTUM_RING_MAX];
+  struct SolSanctumLightEntry entries[SOL_SANCTUM_LIGHT_MAX];
   u16 count;
 };
 
@@ -170,7 +170,7 @@ static void SolSanctum_UpdateFloatingLights(void) {
   }
 }
 
-/// Starts the floating lights: count actors (at most SOL_SANCTUM_RING_MAX)
+/// Starts the floating lights: count actors (at most SOL_SANCTUM_LIGHT_MAX)
 /// from first, each drawn translucent and starting at its largest scale.
 void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   // Each light is set up through its effect view (union ActorOrEffect); the
@@ -185,8 +185,8 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
                              sizeof(struct SolSanctumLightList));
   entry = list->entries;
   Dma_Fill32(0, list, sizeof(struct SolSanctumLightList));
-  if (count > SOL_SANCTUM_RING_MAX)
-    count = SOL_SANCTUM_RING_MAX;
+  if (count > SOL_SANCTUM_LIGHT_MAX)
+    count = SOL_SANCTUM_LIGHT_MAX;
   i = 0;
   if (count != 0) {
     cleared = 0;

@@ -1693,7 +1693,6 @@ void Actor_SetupScriptedFor(struct Actor *actor, s32 unused);
 #undef position
 #undef STATE
 #undef MapLayer
-#undef FieldCamera_MoveWithinMapBounds_
 void Actor_StartScript(struct Actor *actor, const void *script);
 extern const s32 *gFieldEffect_DurationScripts[];
 #define EFFECT_SET_MODE Actor_SelectAnimation

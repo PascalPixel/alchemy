@@ -202,12 +202,6 @@ extern struct Trigger gAquaRock_Triggers[];
 extern struct Trigger gAquaRock_SlopesTriggers[];
 extern struct Trigger gAquaRock_MistSabreChestTriggers[];
 
-/// FieldActor_Create, by the name shared/actor_emit_water_drop.h calls it.
-static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
-                                                    s32 z) {
-  return Import_ActorCreate(kind, x, y, z);
-}
-
 /// Takes `size` bytes from the heap for a picture's decompression.
 static inline void *BumpAlloc(s32 size) {
   /* FAKEMATCH(wrapper): Heap_Alloc through this inline. */

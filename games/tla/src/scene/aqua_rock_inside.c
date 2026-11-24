@@ -155,18 +155,6 @@ extern const u8 gAquaRockInside_PillarTiles[];
 extern const u8 gAquaRockInside_SplashTiles[];
 extern u32 gDust_BurstScript[];
 
-/// FieldActor_Create, by the name shared/actor_emit_water_drop.h calls it.
-static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
-                                                    s32 z) {
-  return Import_ActorCreate(kind, x, y, z);
-}
-
-/// FieldCamera_MoveToFX, by the name shared/leader_rise_from_water.h calls it.
-static __inline__ void Camera_MoveWithinMapBounds_(FIXED x, FIXED a, FIXED z,
-                                                   s32 b) {
-  FieldCamera_MoveWithinMapBounds(x, a, z, b);
-}
-
 /// Takes `size` bytes from the heap for a picture's decompression.
 static inline void *BumpAlloc(s32 size) {
   /* FAKEMATCH(wrapper): Heap_Alloc through this inline. */

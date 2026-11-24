@@ -464,7 +464,7 @@ void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
 
   for (i = 0; i < 6; i++) {
     FIXED x = source->x.fixed + (Random16() << 4) - (Random16() << 4);
-    struct Actor *actor = Import_ActorCreate_(
+    struct Actor *actor = FieldActor_Create(
         SPRITE_WIND_STONE, x, (Random16() << 3) + source->y.fixed + toFIXED(4),
         source->z.fixed + (Random16() << 4) - (Random16() << 4));
 
@@ -504,7 +504,7 @@ void MarsLighthouseEntrance_GrindIce(void) {
   x = 32;
   count = 6;
   do {
-    MapGrid_CopyCellTilesCellsRect_(x, 125, 3, 3, 39, 85);
+    MapGrid_CopyCellsLayered(x, 125, 3, 3, 39, 85);
     MarsLighthouseEntrance_ScatterIceChips(ACTOR_ICE_SHAFT);
     count--;
     System_Wait(10);
@@ -542,8 +542,8 @@ void MarsLighthouseEntrance_TeleportFromLapisNorthCircle(void) {
     Actor_Get(gMainRoutineState.leaderActorId)->update = NULL;
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineState.leaderActorId),
                               SPRITE_COLOR_NORMAL);
-    Actor_SetHorizontalPositionWithTerrain_(gMainRoutineState.leaderActorId,
-                                            toFIXED(688), toFIXED(360));
+    Actor_SetPositionFX(gMainRoutineState.leaderActorId, toFIXED(688),
+                        toFIXED(360));
     FieldCamera_MoveTo(688, CAMERA_KEEP, 360, 1);
     FieldCamera_WaitForArrival();
     Teleport_PlayWhirl();
@@ -583,8 +583,8 @@ void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
     Event_PlaySound(SE_FLASH);
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_Interpolate(60);
-    MapGrid_CopyCellTilesCellsRect_(47, 94, 10, 6, 47, 100);
-    Map_CopyCellAttributeRect_(110, 40, 12, 4, 46, 40);
+    MapGrid_CopyCellsLayered(47, 94, 10, 6, 47, 100);
+    MapGrid_CopyCellAttributes(110, 40, 12, 4, 46, 40);
     Actor_SetPosition(ACTOR_ICE_SHEET, 0, 0);
     Flag_Set(FLAG_LAPIS_SHEET_BURST);
   }
@@ -611,11 +611,11 @@ void MarsLighthouseEntrance_WatchFireballCrackIce(void) {
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveWithinMapBounds_(toFIXED(168), 0, toFIXED(664), 1);
+  FieldCamera_MoveToFX(toFIXED(168), 0, toFIXED(664), 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
   FieldCamera_SetSpeed(4);
-  FieldCamera_MoveWithinMapBounds_(toFIXED(472), 0, toFIXED(664), 1);
+  FieldCamera_MoveToFX(toFIXED(472), 0, toFIXED(664), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(90);
   Event_End();
@@ -793,7 +793,7 @@ void MarsLighthouseEntrance_WatchFireballMeltIce(void) {
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveWithinMapBounds_(toFIXED(872), -1, toFIXED(168), 1);
+  FieldCamera_MoveToFX(toFIXED(872), -1, toFIXED(168), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 264, 1);

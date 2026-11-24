@@ -121,3 +121,4 @@
 #include "battle_effect_megiddo.c"
 #include "battle_effect_odyssey.c"
 #include "battle_effect_moloch.c"
+#include "battle_effect_render.c"

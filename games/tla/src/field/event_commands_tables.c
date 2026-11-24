@@ -134,7 +134,8 @@ const struct SparklePicture gFieldEffect_SparklePictures[32] = {
     {-120, 0},
 };
 
-/// Two scales that alternate ((gVBlankCount >> 2) & 1): full size and 0.97 of
-/// it (event_commands_jupiter.c); The Broken Seal's third word is gone.
+/// The two scales FieldEffect_PulseActorScale switches between every 4 frames,
+/// full size and 0.97 of it: the leader pulsing as a Mars Djinni joins; The
+/// Broken Seal's gFieldEffect_PulseScales, its third word gone.
 const u32 gBattleEffect_PulseScales[2] = {FIXED_ONE, FIXED_ONE * 97 / 100};
 // clang-format on

@@ -29,7 +29,7 @@
 
 /// Wraps a cursor index that has stepped one past either end of modulus
 /// entries: -1 becomes modulus - 1 and modulus becomes 0.
-s32 Menu_GetModuloOfSum(s32 value, s32 modulus) {
+s32 Menu_WrapIndex(s32 value, s32 modulus) {
   return (value + modulus) % modulus;
 }
 
@@ -890,13 +890,13 @@ s32 DjinnMenu_ShowHelp(void) {
       wait(1);
       if (gInput.repeat & (KEY_RIGHT | KEY_DOWN)) {
         selection++;
-        selection = Menu_GetModuloOfSum(selection, DJINN_HELP_TOPICS);
+        selection = Menu_WrapIndex(selection, DJINN_HELP_TOPICS);
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         break;
       }
       if (gInput.repeat & (KEY_LEFT | KEY_UP)) {
         selection--;
-        selection = Menu_GetModuloOfSum(selection, DJINN_HELP_TOPICS);
+        selection = Menu_WrapIndex(selection, DJINN_HELP_TOPICS);
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         break;
       } else if (gInput.pressed & KEY_START) {
@@ -910,7 +910,7 @@ s32 DjinnMenu_ShowHelp(void) {
       } else if (gInput.pressed & KEY_A) {
         if (Message_AllTypedFar()) {
           selection++;
-          selection = Menu_GetModuloOfSum(selection, DJINN_HELP_TOPICS);
+          selection = Menu_WrapIndex(selection, DJINN_HELP_TOPICS);
           Sound_PlayFar(SE_MENU_CONFIRM);
           break;
         }
@@ -976,7 +976,7 @@ void DjinnFigures_SetSlotFacing(s32 index, s32 facing);
 void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation);
 
 void DjinnRecovery_CountDownFar(void);
-s32 Menu_GetModuloOfSum(s32 value, s32 count) __attribute__((const));
+s32 Menu_WrapIndex(s32 value, s32 modulus) __attribute__((const));
 
 /// Shows one tutorial message and waits for its text to finish.
 #define DJINN_TUTORIAL_MESSAGE(window, offset)                                 \
@@ -1052,7 +1052,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     for (i = 0; i < menu->memberCount; i++) {
       if (status[memberColumn] == DJINN_COLUMN_EMPTY) {
         memberColumn++;
-        memberColumn = Menu_GetModuloOfSum(memberColumn, menu->memberCount);
+        memberColumn = Menu_WrapIndex(memberColumn, menu->memberCount);
       }
     }
   } else {
@@ -1566,7 +1566,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         continue;
       }
       djinnRow--;
-      djinnRow = Menu_GetModuloOfSum(djinnRow, backdrop->counts[memberColumn]);
+      djinnRow = Menu_WrapIndex(djinnRow, backdrop->counts[memberColumn]);
       savedRow = djinnRow;
       redraw = DJINN_REDRAW_DJINNI;
       continue;
@@ -1579,7 +1579,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       UiPanel_HighlightGridCell(listWindow, memberColumn, djinnRow, 0);
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       djinnRow++;
-      djinnRow = Menu_GetModuloOfSum(djinnRow, backdrop->counts[memberColumn]);
+      djinnRow = Menu_WrapIndex(djinnRow, backdrop->counts[memberColumn]);
       if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER) {
         columnFlags[memberColumn] &= ~DJINN_COLUMN_ON_HEADER;
         djinnRow = 0;
@@ -1624,7 +1624,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       result = backdrop->counts[memberColumn];
       if (result == 0)
         result = 1;
-      djinnRow = Menu_GetModuloOfSum(djinnRow, result);
+      djinnRow = Menu_WrapIndex(djinnRow, result);
       redraw = DJINN_REDRAW_DJINNI;
       if (oldColumn / 4 * 4 != memberColumn / 4 * 4)
         redraw = DJINN_REDRAW_PAGE | DJINN_REDRAW_DJINNI;

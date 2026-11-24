@@ -512,7 +512,7 @@ s32 StatusScreen_ListStatuses(u8 *ailments, s32 requested, s32 owner);
 void ItemMenu_DrawEquipment(s32 window, s32 ownerId, s32 mode);
 s32 Ability_ApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
                            s32 plainPower);
-s32 Ability_PlayUseSound(s32 action);
+void Ability_PlayUseSound(s32 abilityId);
 void DjinnFigures_InitializeTopRow(void);
 void DjinnFigures_ReleaseTopRow(void);
 void Menu_FreeArrows(void);

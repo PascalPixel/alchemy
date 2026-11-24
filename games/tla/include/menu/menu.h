@@ -69,7 +69,6 @@ void SelectionMenu_FreeLargeIcon(void);
 s32 Sanctum_NeedsService(s32 entry_id, s32 kind);
 void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 
-struct Obj;
 struct Window;
 struct WindowSprite;
 struct DjinnMenuBackdrop;
@@ -80,10 +79,6 @@ struct DjinnMenuBackdrop;
 extern u8 gMenu_ClassChangeArrowTile[];
 void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 first);
 void Event_FinishScreenTransitionFar(void);
-void Scene_TalkToActorFar(s32, s32);
-void PaletteFade_SetSourceFar(s32);
-void PaletteFade_ReleaseFar(void);
-void PaletteFade_SetBackdropFar(void);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items);
 void DebugFlagEditor_DrawTable(s32 window, s32 startFlag);
@@ -93,22 +88,13 @@ s32 IconMenu_Run(s32 initial);
 void Party_AdjustCoinsFar(s32 amount);
 s32 Party_ListMembersFar(s16 *unitIds);
 s32 Party_SumDjinnCountsFar(s32 element);
-#ifndef OWN_WindowSprite_CreateFromResourceFar
 struct WindowSprite *WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
                                                         struct Window *window,
                                                         s32 x, s32 y);
-#endif
 void SelectionMenu_StopDrawing(void);
 void *String_FormatPlayTime(s32 frames, u8 *out);
 void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Icon_Show(struct WindowSprite *icon);
-#ifndef OWN_MenuArrow_Create
-struct MenuSprite;
-void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot);
-#endif
-#ifndef OWN_MenuArrow_SetPosition
-void MenuArrow_SetPosition(struct Obj *obj, s32 x, s32 y);
-#endif
 void Window_SetTilemapEntryFar(s32 window, s32 value, s32 x, s32 y, u32 mode);
 
 /// `:` and the sixteen hex digits, for the debug rooms' flag and destination

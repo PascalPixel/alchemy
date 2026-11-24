@@ -793,7 +793,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 }
 
 s32 Item_Use(s32 slot, s32 owner, s32 target);
-s32 Item_PlayUseSound(s32 item);
+void Item_PlayUseSound(s32 item);
 
 /// Uses the selected item from the party member in side 0 on the one in side 1.
 /// On failure plays the error sound, shows why in the info window and returns

@@ -137,6 +137,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     if (forestSpeed > KIRIN_FOREST_SPEED_MAX) {
       forestSpeed = KIRIN_FOREST_SPEED_MAX;
     }
+    // The forest scrolls the whole bound: this test and the one below are
+    // always true, as the bound ends at KIRIN_SWEEP_FRAMES (120).
     if (frame <= 135) {
       gBgScroll[1].x -= forestSpeed;
       scrolled += forestSpeed;

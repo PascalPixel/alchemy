@@ -4,6 +4,7 @@
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
+#include "field/map.h"
 
 /// Sets up Alhafra's and the Alhafran Cave's puddles as FlagBlock_PlaceAll
 /// does, and marks the open cells on each puddle's four sides a gap to jump
@@ -122,23 +123,23 @@ s32 Actor_GetCellIndex(struct Actor *actor) {
          (actor->z.fixed / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE;
 }
 
-/// Returns the index of the shape table's entry (gMapGridShapes) of kind key
-/// whose first height is height, in 8-pixel steps, writing one at the first
-/// free entry (kind COLLISION_TAG_FREE) when there is none: the index a raised
-/// or lowered cell's shape takes. The layer goes unread.
-s32 MapCollision_FindOrAddTag(s32 layer, s32 key, s32 height) {
-  u8 *entry = Ram_MapCollision;
+/// Returns the index of the map's shape entry (gMapGridShapes, MAP_SHAPE) of
+/// shape whose first height is height, in 8-pixel steps, writing it into the
+/// first free entry (COLLISION_TAG_FREE) when there is none: the entry a raised
+/// or lowered cell's shape grid byte takes. The layer goes unread.
+s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height) {
+  u8 *entry = gMapGridShapes;
   s8 entryHeight;
   s32 i = 0;
 
   entryHeight = height;
   while (1) {
-    if (entry[0] == key) {
+    if (entry[0] == shape) {
       if (*(s8 *)++entry == entryHeight)
         return i;
       entry--;
     } else if (entry[0] == COLLISION_TAG_FREE) {
-      entry[0] = key;
+      entry[0] = shape;
       entry[1] = entryHeight;
       return i;
     }

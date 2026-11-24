@@ -401,8 +401,8 @@ void KandoreanTemple_FightFog(void) {
   Field_RequestDjinnBattle(ACTOR_FOG, DJINNI_FOG);
 }
 
-/// A cloud of steam's script call: counts down its life and reports whether any
-/// is left.
+/// Unused: a cloud of steam's script call, from the steam script's unreached
+/// tail; counts down its life and reports whether any is left.
 u32 KandoreanTemple_CountDownSteam(struct Actor *actor) {
   s32 left;
 
@@ -968,73 +968,59 @@ s32 KandoreanTemple_IsEastVentBlocked(void) {
   return 0;
 }
 
-/// The west vent starts blowing: its column and cover ready to rise,
-/// carrying the leader if it stands there.
-void KandoreanTemple_StartWestVent(void) {
-  Actor_SetAnimationById(ACTOR_WEST_COLUMN_TOP, 2);
-  Actor_SetAnimationById(ACTOR_WEST_COLUMN_UPPER_PIECE, 3);
-  Actor_SetAnimationById(ACTOR_WEST_COLUMN_MIDDLE_PIECE, 3);
-  Actor_SetAnimationById(ACTOR_WEST_COLUMN_LOWER_PIECE, 3);
-  Actor_SetAnimationById(ACTOR_WEST_COLUMN_FOOT, 3);
-  Actor_SetAnimationById(ACTOR_WEST_VENT_COVER, 0);
-  Actor_SetSpritePriority(ACTOR_WEST_VENT_COVER, 2);
-  Actor_GetById(ACTOR_WEST_VENT_COVER)->priorityFlags &=
-      ~ACTOR_PRIORITY_UNDERFOOT;
-  FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_WEST_VENT_COVER),
-                                       toFIXED(216), toFIXED(8), toFIXED(216));
-  if (GameFlag_Get(FLAG_ON_WEST_LIFT)) {
-    Actor_SetAnimationById(ACTOR_WEST_VENT_COVER, 4);
-    FieldActor_SetPositionAndResetMotion(
-        Actor_GetById(gMainRoutineState.leaderActorId), toFIXED(216),
-        toFIXED(12), toFIXED(216));
-    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId), 0);
+/// A vent starts blowing: its column and cover ready to rise, carrying the
+/// leader if it stands there. `lowerColumn` lays a piece of the column flat
+/// under the cover; the two lower pieces are laid out only when the pillar
+/// weighs the other vent down (`pillarOnOther`).
+#define DEFINE_KANDOREAN_TEMPLE_START_VENT(                                    \
+    name, coverId, coverX, coverZ, top, upper, middle, lower, foot, onLift,    \
+    lowerColumn, pillarOnOther, blowingVar, blowingFlag)                       \
+  void name(void) {                                                            \
+    Actor_SetAnimationById(top, 2);                                            \
+    Actor_SetAnimationById(upper, 3);                                          \
+    Actor_SetAnimationById(middle, 3);                                         \
+    Actor_SetAnimationById(lower, 3);                                          \
+    Actor_SetAnimationById(foot, 3);                                           \
+    Actor_SetAnimationById(coverId, 0);                                        \
+    Actor_SetSpritePriority(coverId, 2);                                       \
+    Actor_GetById(coverId)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;        \
+    FieldActor_SetPositionAndResetMotion(                                      \
+        Actor_GetById(coverId), toFIXED(coverX), toFIXED(8), toFIXED(coverZ)); \
+    if (GameFlag_Get(onLift)) {                                                \
+      Actor_SetAnimationById(coverId, 4);                                      \
+      FieldActor_SetPositionAndResetMotion(                                    \
+          Actor_GetById(gMainRoutineState.leaderActorId), toFIXED(coverX),     \
+          toFIXED(12), toFIXED(coverZ));                                       \
+      Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId), 0); \
+    }                                                                          \
+    Actor_GetById(top)->scaleY = FIXED_ONE;                                    \
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(top), toFIXED(coverX),  \
+                                         0, toFIXED(coverZ));                  \
+    lowerColumn(upper);                                                        \
+    lowerColumn(middle);                                                       \
+    if (GameFlag_Get(pillarOnOther)) {                                         \
+      lowerColumn(lower);                                                      \
+      lowerColumn(foot);                                                       \
+    }                                                                          \
+    blowingVar = 1;                                                            \
+    Event_SetFlag(blowingFlag);                                                \
   }
-  Actor_GetById(ACTOR_WEST_COLUMN_TOP)->scaleY = FIXED_ONE;
-  FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_WEST_COLUMN_TOP),
-                                       toFIXED(216), 0, toFIXED(216));
-  KandoreanTemple_LowerWestColumn(ACTOR_WEST_COLUMN_UPPER_PIECE);
-  KandoreanTemple_LowerWestColumn(ACTOR_WEST_COLUMN_MIDDLE_PIECE);
-  if (GameFlag_Get(FLAG_PILLAR_ON_EAST_VENT)) {
-    KandoreanTemple_LowerWestColumn(ACTOR_WEST_COLUMN_LOWER_PIECE);
-    KandoreanTemple_LowerWestColumn(ACTOR_WEST_COLUMN_FOOT);
-  }
-  gKandoreanTemple_WestVentBlowing = 1;
-  Event_SetFlag(FLAG_WEST_VENT_BLOWING);
-}
 
-/// The east vent starts blowing: its column and cover ready to rise,
-/// carrying the leader if it stands there.
-void KandoreanTemple_StartEastVent(void) {
-  Actor_SetAnimationById(ACTOR_EAST_COLUMN_TOP, 2);
-  Actor_SetAnimationById(ACTOR_EAST_COLUMN_UPPER_PIECE, 3);
-  Actor_SetAnimationById(ACTOR_EAST_COLUMN_MIDDLE_PIECE, 3);
-  Actor_SetAnimationById(ACTOR_EAST_COLUMN_LOWER_PIECE, 3);
-  Actor_SetAnimationById(ACTOR_EAST_COLUMN_FOOT, 3);
-  Actor_SetAnimationById(ACTOR_EAST_VENT_COVER, 0);
-  Actor_SetSpritePriority(ACTOR_EAST_VENT_COVER, 2);
-  Actor_GetById(ACTOR_EAST_VENT_COVER)->priorityFlags &=
-      ~ACTOR_PRIORITY_UNDERFOOT;
-  FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_EAST_VENT_COVER),
-                                       toFIXED(376), toFIXED(8), toFIXED(248));
-  if (GameFlag_Get(FLAG_ON_EAST_LIFT)) {
-    Actor_SetAnimationById(ACTOR_EAST_VENT_COVER, 4);
-    FieldActor_SetPositionAndResetMotion(
-        Actor_GetById(gMainRoutineState.leaderActorId), toFIXED(376),
-        toFIXED(12), toFIXED(248));
-    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId), 0);
-  }
-  Actor_GetById(ACTOR_EAST_COLUMN_TOP)->scaleY = FIXED_ONE;
-  FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_EAST_COLUMN_TOP),
-                                       toFIXED(376), 0, toFIXED(248));
-  KandoreanTemple_LowerEastColumn(ACTOR_EAST_COLUMN_UPPER_PIECE);
-  KandoreanTemple_LowerEastColumn(ACTOR_EAST_COLUMN_MIDDLE_PIECE);
-  if (GameFlag_Get(FLAG_PILLAR_ON_WEST_VENT)) {
-    KandoreanTemple_LowerEastColumn(ACTOR_EAST_COLUMN_LOWER_PIECE);
-    KandoreanTemple_LowerEastColumn(ACTOR_EAST_COLUMN_FOOT);
-  }
-  gKandoreanTemple_EastVentBlowing = 1;
-  Event_SetFlag(FLAG_EAST_VENT_BLOWING);
-}
+DEFINE_KANDOREAN_TEMPLE_START_VENT(
+    KandoreanTemple_StartWestVent, ACTOR_WEST_VENT_COVER, 216, 216,
+    ACTOR_WEST_COLUMN_TOP, ACTOR_WEST_COLUMN_UPPER_PIECE,
+    ACTOR_WEST_COLUMN_MIDDLE_PIECE, ACTOR_WEST_COLUMN_LOWER_PIECE,
+    ACTOR_WEST_COLUMN_FOOT, FLAG_ON_WEST_LIFT, KandoreanTemple_LowerWestColumn,
+    FLAG_PILLAR_ON_EAST_VENT, gKandoreanTemple_WestVentBlowing,
+    FLAG_WEST_VENT_BLOWING)
+
+DEFINE_KANDOREAN_TEMPLE_START_VENT(
+    KandoreanTemple_StartEastVent, ACTOR_EAST_VENT_COVER, 376, 248,
+    ACTOR_EAST_COLUMN_TOP, ACTOR_EAST_COLUMN_UPPER_PIECE,
+    ACTOR_EAST_COLUMN_MIDDLE_PIECE, ACTOR_EAST_COLUMN_LOWER_PIECE,
+    ACTOR_EAST_COLUMN_FOOT, FLAG_ON_EAST_LIFT, KandoreanTemple_LowerEastColumn,
+    FLAG_PILLAR_ON_WEST_VENT, gKandoreanTemple_EastVentBlowing,
+    FLAG_EAST_VENT_BLOWING)
 
 /// A vent's cycle, in frames of its timer. Shut, it counts only while nothing
 /// holds it shut; at VENT_BLOW it blows, walls off its cover's cell and lifts
@@ -1054,291 +1040,165 @@ enum VentFrame {
   VENT_SHUT = 3000
 };
 
-/// The west vent's task, its timer through its cycle.
-void KandoreanTemple_RunWestVent(void) {
-  s32 *timer = &gKandoreanTemple_WestTimer;
-  struct Actor *cover;
-  struct Actor *leader;
-  u16 *phase;
-  s32 limit;
-  s32 timerEnd;
-  s32 t;
-  s32 flag;
-
-  if (*timer < VENT_BLOW) {
-    if (KandoreanTemple_IsWestVentBlocked() != 0)
-      return;
-  } else if (*timer == VENT_BLOW) {
-    MapGrid_CopyCellAttributes(15, 15, 1, 1, 13, 13);
-    MapGrid_CopyCellAttributes(65, 15, 1, 1, 63, 13);
-    KandoreanTemple_StartWestVent();
-  } else {
-    timerEnd = VENT_SHUT - 1;
-    if (*timer <= timerEnd) {
-      cover = Actor_GetById(ACTOR_WEST_VENT_COVER);
-      flag = GameFlag_Get(FLAG_PILLAR_ON_EAST_VENT);
-      t = *timer;
-      if (flag) {
-        if (t <= VENT_RISE_END) {
-          cover->y.fixed += toFIXED(9) / 2;
-          limit = FIXED_ONE / 16;
-          KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_TOP, toFIXED(2), limit);
-          KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_UPPER_PIECE,
-                                     toFIXED(3) / 2, limit);
-          KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_MIDDLE_PIECE, toFIXED(1),
-                                     limit);
-          KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_LOWER_PIECE,
-                                     toFIXED(1) / 2, limit);
-          KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_FOOT, 0, limit);
-        } else if (t < VENT_FLOAT_END) {
-          if (GameFlag_Get(FLAG_ON_WEST_LIFT) && *timer == VENT_CARRY_LEADER) {
-            MapGrid_CopyCellAttributes(22, 0, 1, 1, 13, 13);
-            Task_Remove(KandoreanTemple_RunWestVent);
-          }
-          phase = &gKandoreanTemple_WestFloatPhase;
-          cover->y.fixed += Trig_Sin(*phase) >> 1;
-          *phase += TRIG_TURN / 16;
-        } else if (t < VENT_SINK) {
-          phase = &gKandoreanTemple_WestFloatPhase;
-          if (*phase == 0) {
-            gKandoreanTemple_WestVentBlowing = 0;
-            *timer = VENT_SINK - 1;
-            GameFlag_Clear(FLAG_WEST_VENT_BLOWING);
-          }
-          cover->y.fixed += Trig_Sin(*phase) >> 1;
-          *phase += TRIG_TURN / 16;
-        } else {
-          cover->y.fixed += -toFIXED(27) / 4;
-          limit = FIXED_ONE * 3 / 32;
-          KandoreanTemple_ShrinkColumn(ACTOR_WEST_COLUMN_TOP, toFIXED(3),
-                                       limit);
-          KandoreanTemple_ShrinkColumn(ACTOR_WEST_COLUMN_UPPER_PIECE,
-                                       toFIXED(9) / 4, limit);
-          KandoreanTemple_ShrinkColumn(ACTOR_WEST_COLUMN_MIDDLE_PIECE,
-                                       toFIXED(3) / 2, limit);
-          KandoreanTemple_ShrinkColumn(ACTOR_WEST_COLUMN_LOWER_PIECE,
-                                       toFIXED(3) / 4, limit);
-          KandoreanTemple_ShrinkColumn(ACTOR_WEST_COLUMN_FOOT, 0, limit);
-          if (Actor_GetById(ACTOR_WEST_COLUMN_FOOT)->scaleY <= limit)
-            *timer = timerEnd;
-        }
-      } else {
-        if (t <= VENT_RISE_END) {
-          cover->y.fixed += toFIXED(2.475);
-          limit = FIXED_ONE / 16;
-          KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_TOP, toFIXED(1), limit);
-          KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_UPPER_PIECE,
-                                     toFIXED(1) / 2, limit);
-          KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_MIDDLE_PIECE, 0, limit);
-        } else if (t < VENT_FLOAT_END) {
-          phase = &gKandoreanTemple_WestFloatPhase;
-          cover->y.fixed += Trig_Sin(*phase) >> 1;
-          *phase += TRIG_TURN / 16;
-        } else if (t < VENT_SINK) {
-          phase = &gKandoreanTemple_WestFloatPhase;
-          if (*phase == 0) {
-            gKandoreanTemple_WestVentBlowing = 0;
-            *timer = VENT_SINK - 1;
-            GameFlag_Clear(FLAG_WEST_VENT_BLOWING);
-          }
-          cover->y.fixed += Trig_Sin(*phase) >> 1;
-          *phase += TRIG_TURN / 16;
-        } else {
-          cover->y.fixed += -toFIXED(3.7125);
-          limit = FIXED_ONE * 3 / 32;
-          KandoreanTemple_ShrinkColumn(ACTOR_WEST_COLUMN_TOP, toFIXED(3) / 2,
-                                       limit);
-          KandoreanTemple_ShrinkColumn(ACTOR_WEST_COLUMN_UPPER_PIECE,
-                                       toFIXED(3) / 4, limit);
-          KandoreanTemple_ShrinkColumn(ACTOR_WEST_COLUMN_MIDDLE_PIECE, 0,
-                                       limit);
-          if (Actor_GetById(ACTOR_WEST_COLUMN_MIDDLE_PIECE)->scaleY <= limit)
-            *timer = timerEnd;
-        }
-      }
-      if (GameFlag_Get(FLAG_ON_WEST_LIFT)) {
-        leader = Actor_GetById(gMainRoutineState.leaderActorId);
-        leader->y.fixed = cover->y.fixed + toFIXED(4);
-        leader->targetY = ACTOR_NO_TARGET;
-        leader->velocityY = 0;
-      }
-    } else if (*timer == VENT_SHUT) {
-      MapGrid_CopyCellAttributes(8, 0, 1, 1, 13, 13);
-      MapGrid_CopyCellAttributes(58, 0, 1, 1, 63, 13);
-      Actor_SetPosition(ACTOR_WEST_COLUMN_TOP, 0, 0);
-      Actor_SetPosition(ACTOR_WEST_COLUMN_UPPER_PIECE, 0, 0);
-      Actor_SetPosition(ACTOR_WEST_COLUMN_MIDDLE_PIECE, 0, 0);
-      Actor_SetPosition(ACTOR_WEST_COLUMN_LOWER_PIECE, 0, 0);
-      Actor_SetPosition(ACTOR_WEST_COLUMN_FOOT, 0, 0);
-      Actor_SetAnimationById(ACTOR_WEST_VENT_COVER, 1);
-      FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_WEST_VENT_COVER),
-                                           toFIXED(216), 0, toFIXED(216));
-      Actor_GetById(ACTOR_WEST_VENT_COVER)->priorityFlags |=
-          ACTOR_PRIORITY_UNDERFOOT;
-      Actor_SetSpritePriority(ACTOR_WEST_VENT_COVER, 3);
-      if (GameFlag_Get(FLAG_ON_WEST_LIFT)) {
-        leader = Actor_GetById(gMainRoutineState.leaderActorId);
-        Actor_SetPositionAndResetMotion(leader, leader->x.fixed, 0,
-                                        leader->z.fixed);
-        Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId),
-                             SPRITE_FLAG_SHADOW);
-      }
-    } else {
-      s32 none = KandoreanTemple_IsWestVentBlocked();
-
-      if (none != 0)
-        return;
-      *timer += (Random16() << 7) >> 16;
-      if ((u32)*timer > (Random_Below(10000)) + 10000)
-        *timer = none;
-    }
+/// A vent's task, its timer through its cycle. Its cover stands on cell
+/// (`cellX`, `cellZ`), walled off while it blows, with the same cell of the
+/// map's second layer 50 columns east; `carryCell`, in the map's top row, is
+/// the cell copied there to carry a riding leader up to the lift above.
+/// `pillarOnOther` is the flag of the pillar weighing the other vent down,
+/// which sends this one higher.
+#define DEFINE_KANDOREAN_TEMPLE_RUN_VENT(                                      \
+    name, timerVar, phaseVar, blowingVar, blowingFlag, isBlocked, start,       \
+    cellX, cellZ, carryCell, coverId, coverX, coverZ, top, upper, middle,      \
+    lower, foot, onLift, pillarOnOther)                                        \
+  void name(void) {                                                            \
+    s32 *timer = &timerVar;                                                    \
+    struct Actor *cover;                                                       \
+    struct Actor *leader;                                                      \
+    u16 *phase;                                                                \
+    s32 limit;                                                                 \
+    s32 raised;                                                                \
+    s32 last;                                                                  \
+    s32 t;                                                                     \
+                                                                               \
+    t = *timer;                                                                \
+    if (t < VENT_BLOW) {                                                       \
+      if (isBlocked() != 0)                                                    \
+        return;                                                                \
+    } else if (t == VENT_BLOW) {                                               \
+      MapGrid_CopyCellAttributes(15, 15, 1, 1, cellX, cellZ);                  \
+      MapGrid_CopyCellAttributes(65, 15, 1, 1, (cellX) + 50, cellZ);           \
+      start();                                                                 \
+    } else {                                                                   \
+      last = VENT_SHUT - 1;                                                    \
+      if (t <= last) {                                                         \
+        cover = Actor_GetById(coverId);                                        \
+        raised = GameFlag_Get(pillarOnOther);                                  \
+        t = *timer;                                                            \
+        if (raised) {                                                          \
+          if (t <= VENT_RISE_END) {                                            \
+            cover->y.fixed += toFIXED(9) / 2;                                  \
+            limit = FIXED_ONE / 16;                                            \
+            KandoreanTemple_GrowColumn(top, toFIXED(2), limit);                \
+            KandoreanTemple_GrowColumn(upper, toFIXED(3) / 2, limit);          \
+            KandoreanTemple_GrowColumn(middle, toFIXED(1), limit);             \
+            KandoreanTemple_GrowColumn(lower, toFIXED(1) / 2, limit);          \
+            KandoreanTemple_GrowColumn(foot, 0, limit);                        \
+          } else if (t < VENT_FLOAT_END) {                                     \
+            if (GameFlag_Get(onLift) && *timer == VENT_CARRY_LEADER) {         \
+              MapGrid_CopyCellAttributes(carryCell, 0, 1, 1, cellX, cellZ);    \
+              Task_Remove(name);                                               \
+            }                                                                  \
+            phase = &phaseVar;                                                 \
+            cover->y.fixed += Trig_Sin(*phase) >> 1;                           \
+            *phase += TRIG_TURN / 16;                                          \
+          } else if (t < VENT_SINK) {                                          \
+            phase = &phaseVar;                                                 \
+            if (*phase == 0) {                                                 \
+              blowingVar = 0;                                                  \
+              *timer = VENT_SINK - 1;                                          \
+              GameFlag_Clear(blowingFlag);                                     \
+            }                                                                  \
+            cover->y.fixed += Trig_Sin(*phase) >> 1;                           \
+            *phase += TRIG_TURN / 16;                                          \
+          } else {                                                             \
+            cover->y.fixed += -toFIXED(27) / 4;                                \
+            limit = FIXED_ONE * 3 / 32;                                        \
+            KandoreanTemple_ShrinkColumn(top, toFIXED(3), limit);              \
+            KandoreanTemple_ShrinkColumn(upper, toFIXED(9) / 4, limit);        \
+            KandoreanTemple_ShrinkColumn(middle, toFIXED(3) / 2, limit);       \
+            KandoreanTemple_ShrinkColumn(lower, toFIXED(3) / 4, limit);        \
+            KandoreanTemple_ShrinkColumn(foot, 0, limit);                      \
+            if (Actor_GetById(foot)->scaleY <= limit)                          \
+              *timer = last;                                                   \
+          }                                                                    \
+        } else {                                                               \
+          if (t <= VENT_RISE_END) {                                            \
+            cover->y.fixed += toFIXED(2.475);                                  \
+            limit = FIXED_ONE / 16;                                            \
+            KandoreanTemple_GrowColumn(top, toFIXED(1), limit);                \
+            KandoreanTemple_GrowColumn(upper, toFIXED(1) / 2, limit);          \
+            KandoreanTemple_GrowColumn(middle, 0, limit);                      \
+          } else if (t < VENT_FLOAT_END) {                                     \
+            phase = &phaseVar;                                                 \
+            cover->y.fixed += Trig_Sin(*phase) >> 1;                           \
+            *phase += TRIG_TURN / 16;                                          \
+          } else if (t < VENT_SINK) {                                          \
+            phase = &phaseVar;                                                 \
+            if (*phase == 0) {                                                 \
+              blowingVar = 0;                                                  \
+              *timer = VENT_SINK - 1;                                          \
+              GameFlag_Clear(blowingFlag);                                     \
+            }                                                                  \
+            cover->y.fixed += Trig_Sin(*phase) >> 1;                           \
+            *phase += TRIG_TURN / 16;                                          \
+          } else {                                                             \
+            cover->y.fixed += -toFIXED(3.7125);                                \
+            limit = FIXED_ONE * 3 / 32;                                        \
+            KandoreanTemple_ShrinkColumn(top, toFIXED(3) / 2, limit);          \
+            KandoreanTemple_ShrinkColumn(upper, toFIXED(3) / 4, limit);        \
+            KandoreanTemple_ShrinkColumn(middle, 0, limit);                    \
+            if (Actor_GetById(middle)->scaleY <= limit)                        \
+              *timer = last;                                                   \
+          }                                                                    \
+        }                                                                      \
+        if (GameFlag_Get(onLift)) {                                            \
+          leader = Actor_GetById(gMainRoutineState.leaderActorId);             \
+          leader->y.fixed = cover->y.fixed + toFIXED(4);                       \
+          leader->targetY = ACTOR_NO_TARGET;                                   \
+          leader->velocityY = 0;                                               \
+        }                                                                      \
+      } else if (t == VENT_SHUT) {                                             \
+        MapGrid_CopyCellAttributes(8, 0, 1, 1, cellX, cellZ);                  \
+        MapGrid_CopyCellAttributes(58, 0, 1, 1, (cellX) + 50, cellZ);          \
+        Actor_SetPosition(top, 0, 0);                                          \
+        Actor_SetPosition(upper, 0, 0);                                        \
+        Actor_SetPosition(middle, 0, 0);                                       \
+        Actor_SetPosition(lower, 0, 0);                                        \
+        Actor_SetPosition(foot, 0, 0);                                         \
+        Actor_SetAnimationById(coverId, 1);                                    \
+        FieldActor_SetPositionAndResetMotion(                                  \
+            Actor_GetById(coverId), toFIXED(coverX), 0, toFIXED(coverZ));      \
+        Actor_GetById(coverId)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;     \
+        Actor_SetSpritePriority(coverId, 3);                                   \
+        if (GameFlag_Get(onLift)) {                                            \
+          leader = Actor_GetById(gMainRoutineState.leaderActorId);             \
+          Actor_SetPositionAndResetMotion(leader, leader->x.fixed, 0,          \
+                                          leader->z.fixed);                    \
+          Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId), \
+                               SPRITE_FLAG_SHADOW);                            \
+        }                                                                      \
+      } else {                                                                 \
+        s32 none = isBlocked();                                                \
+                                                                               \
+        if (none != 0)                                                         \
+          return;                                                              \
+        *timer += (Random16() << 7) >> 16;                                     \
+        if ((u32)*timer > (Random_Below(10000)) + 10000)                       \
+          *timer = none;                                                       \
+      }                                                                        \
+    }                                                                          \
+    timerVar++;                                                                \
   }
-  gKandoreanTemple_WestTimer++;
-}
 
-/// The east vent's task, as KandoreanTemple_RunWestVent with the vents
-/// swapped.
-void KandoreanTemple_RunEastVent(void) {
-  s32 *timer = &gKandoreanTemple_EastTimer;
-  struct Actor *cover;
-  struct Actor *leader;
-  u16 *phase;
-  s32 limit;
-  s32 raised;
-  s32 last;
-  s32 t;
+/// The west vent's task.
+DEFINE_KANDOREAN_TEMPLE_RUN_VENT(
+    KandoreanTemple_RunWestVent, gKandoreanTemple_WestTimer,
+    gKandoreanTemple_WestFloatPhase, gKandoreanTemple_WestVentBlowing,
+    FLAG_WEST_VENT_BLOWING, KandoreanTemple_IsWestVentBlocked,
+    KandoreanTemple_StartWestVent, 13, 13, 22, ACTOR_WEST_VENT_COVER, 216, 216,
+    ACTOR_WEST_COLUMN_TOP, ACTOR_WEST_COLUMN_UPPER_PIECE,
+    ACTOR_WEST_COLUMN_MIDDLE_PIECE, ACTOR_WEST_COLUMN_LOWER_PIECE,
+    ACTOR_WEST_COLUMN_FOOT, FLAG_ON_WEST_LIFT, FLAG_PILLAR_ON_EAST_VENT)
 
-  t = *timer;
-  if (t < VENT_BLOW) {
-    if (KandoreanTemple_IsEastVentBlocked() != 0)
-      return;
-  } else if (t == VENT_BLOW) {
-    MapGrid_CopyCellAttributes(15, 15, 1, 1, 23, 15);
-    MapGrid_CopyCellAttributes(65, 15, 1, 1, 73, 15);
-    KandoreanTemple_StartEastVent();
-  } else {
-    last = VENT_SHUT - 1;
-    if (t <= last) {
-      cover = Actor_GetById(ACTOR_EAST_VENT_COVER);
-      raised = GameFlag_Get(FLAG_PILLAR_ON_WEST_VENT);
-      t = *timer;
-      if (raised) {
-        if (t <= VENT_RISE_END) {
-          cover->y.fixed += toFIXED(9) / 2;
-          limit = FIXED_ONE / 16;
-          KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_TOP, toFIXED(2), limit);
-          KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_UPPER_PIECE,
-                                     toFIXED(3) / 2, limit);
-          KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_MIDDLE_PIECE, toFIXED(1),
-                                     limit);
-          KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_LOWER_PIECE,
-                                     toFIXED(1) / 2, limit);
-          KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_FOOT, 0, limit);
-        } else if (t < VENT_FLOAT_END) {
-          if (GameFlag_Get(FLAG_ON_EAST_LIFT) && *timer == VENT_CARRY_LEADER) {
-            MapGrid_CopyCellAttributes(23, 0, 1, 1, 23, 15);
-            Task_Remove(KandoreanTemple_RunEastVent);
-          }
-          phase = &gKandoreanTemple_EastFloatPhase;
-          cover->y.fixed += Trig_Sin(*phase) >> 1;
-          *phase += TRIG_TURN / 16;
-        } else if (t < VENT_SINK) {
-          phase = &gKandoreanTemple_EastFloatPhase;
-          if (*phase == 0) {
-            gKandoreanTemple_EastVentBlowing = 0;
-            *timer = VENT_SINK - 1;
-            GameFlag_Clear(FLAG_EAST_VENT_BLOWING);
-          }
-          cover->y.fixed += Trig_Sin(*phase) >> 1;
-          *phase += TRIG_TURN / 16;
-        } else {
-          cover->y.fixed += -toFIXED(27) / 4;
-          limit = FIXED_ONE * 3 / 32;
-          KandoreanTemple_ShrinkColumn(ACTOR_EAST_COLUMN_TOP, toFIXED(3),
-                                       limit);
-          KandoreanTemple_ShrinkColumn(ACTOR_EAST_COLUMN_UPPER_PIECE,
-                                       toFIXED(9) / 4, limit);
-          KandoreanTemple_ShrinkColumn(ACTOR_EAST_COLUMN_MIDDLE_PIECE,
-                                       toFIXED(3) / 2, limit);
-          KandoreanTemple_ShrinkColumn(ACTOR_EAST_COLUMN_LOWER_PIECE,
-                                       toFIXED(3) / 4, limit);
-          KandoreanTemple_ShrinkColumn(ACTOR_EAST_COLUMN_FOOT, 0, limit);
-          if (Actor_GetById(ACTOR_EAST_COLUMN_FOOT)->scaleY <= limit)
-            *timer = last;
-        }
-      } else {
-        if (t <= VENT_RISE_END) {
-          cover->y.fixed += toFIXED(2.475);
-          limit = FIXED_ONE / 16;
-          KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_TOP, toFIXED(1), limit);
-          KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_UPPER_PIECE,
-                                     toFIXED(1) / 2, limit);
-          KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_MIDDLE_PIECE, 0, limit);
-        } else if (t < VENT_FLOAT_END) {
-          phase = &gKandoreanTemple_EastFloatPhase;
-          cover->y.fixed += Trig_Sin(*phase) >> 1;
-          *phase += TRIG_TURN / 16;
-        } else if (t < VENT_SINK) {
-          phase = &gKandoreanTemple_EastFloatPhase;
-          if (*phase == 0) {
-            gKandoreanTemple_EastVentBlowing = 0;
-            *timer = VENT_SINK - 1;
-            GameFlag_Clear(FLAG_EAST_VENT_BLOWING);
-          }
-          cover->y.fixed += Trig_Sin(*phase) >> 1;
-          *phase += TRIG_TURN / 16;
-        } else {
-          cover->y.fixed += -toFIXED(3.7125);
-          limit = FIXED_ONE * 3 / 32;
-          KandoreanTemple_ShrinkColumn(ACTOR_EAST_COLUMN_TOP, toFIXED(3) / 2,
-                                       limit);
-          KandoreanTemple_ShrinkColumn(ACTOR_EAST_COLUMN_UPPER_PIECE,
-                                       toFIXED(3) / 4, limit);
-          KandoreanTemple_ShrinkColumn(ACTOR_EAST_COLUMN_MIDDLE_PIECE, 0,
-                                       limit);
-          if (Actor_GetById(ACTOR_EAST_COLUMN_MIDDLE_PIECE)->scaleY <= limit)
-            *timer = last;
-        }
-      }
-      if (GameFlag_Get(FLAG_ON_EAST_LIFT)) {
-        leader = Actor_GetById(gMainRoutineState.leaderActorId);
-        leader->y.fixed = cover->y.fixed + toFIXED(4);
-        leader->targetY = ACTOR_NO_TARGET;
-        leader->velocityY = 0;
-      }
-    } else if (t == VENT_SHUT) {
-      MapGrid_CopyCellAttributes(8, 0, 1, 1, 23, 15);
-      MapGrid_CopyCellAttributes(58, 0, 1, 1, 73, 15);
-      Actor_SetPosition(ACTOR_EAST_COLUMN_TOP, 0, 0);
-      Actor_SetPosition(ACTOR_EAST_COLUMN_UPPER_PIECE, 0, 0);
-      Actor_SetPosition(ACTOR_EAST_COLUMN_MIDDLE_PIECE, 0, 0);
-      Actor_SetPosition(ACTOR_EAST_COLUMN_LOWER_PIECE, 0, 0);
-      Actor_SetPosition(ACTOR_EAST_COLUMN_FOOT, 0, 0);
-      Actor_SetAnimationById(ACTOR_EAST_VENT_COVER, 1);
-      FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_EAST_VENT_COVER),
-                                           toFIXED(376), 0, toFIXED(248));
-      Actor_GetById(ACTOR_EAST_VENT_COVER)->priorityFlags |=
-          ACTOR_PRIORITY_UNDERFOOT;
-      Actor_SetSpritePriority(ACTOR_EAST_VENT_COVER, 3);
-      if (GameFlag_Get(FLAG_ON_EAST_LIFT)) {
-        leader = Actor_GetById(gMainRoutineState.leaderActorId);
-        Actor_SetPositionAndResetMotion(leader, leader->x.fixed, 0,
-                                        leader->z.fixed);
-        Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId),
-                             SPRITE_FLAG_SHADOW);
-      }
-    } else {
-      s32 none = KandoreanTemple_IsEastVentBlocked();
-
-      if (none != 0)
-        return;
-      *timer += (Random16() << 7) >> 16;
-      if ((u32)*timer > (Random_Below(10000)) + 10000)
-        *timer = none;
-    }
-  }
-  gKandoreanTemple_EastTimer++;
-}
+/// The east vent's task.
+DEFINE_KANDOREAN_TEMPLE_RUN_VENT(
+    KandoreanTemple_RunEastVent, gKandoreanTemple_EastTimer,
+    gKandoreanTemple_EastFloatPhase, gKandoreanTemple_EastVentBlowing,
+    FLAG_EAST_VENT_BLOWING, KandoreanTemple_IsEastVentBlocked,
+    KandoreanTemple_StartEastVent, 23, 15, 23, ACTOR_EAST_VENT_COVER, 376, 248,
+    ACTOR_EAST_COLUMN_TOP, ACTOR_EAST_COLUMN_UPPER_PIECE,
+    ACTOR_EAST_COLUMN_MIDDLE_PIECE, ACTOR_EAST_COLUMN_LOWER_PIECE,
+    ACTOR_EAST_COLUMN_FOOT, FLAG_ON_EAST_LIFT, FLAG_PILLAR_ON_WEST_VENT)
 
 /// A lift's cycle, in frames of its timer: at LIFT_RISE it starts up its column
 /// from LIFT_SUNK_HEIGHT below the floor until it stands level with it, frees
@@ -1357,129 +1217,85 @@ enum LiftFrame {
 /// How far below the lift room's floor a lift starts and ends, in pixels.
 #define LIFT_SUNK_HEIGHT (-20)
 
-/// The lift room's west lift, the top of the west vent's column, its timer
-/// through its cycle.
-void KandoreanTemple_RunWestLift(void) {
-  struct Actor *lift = Actor_GetById(ACTOR_WEST_LIFT);
-  struct Actor *base = Actor_GetById(ACTOR_WEST_LIFT_COLUMN);
-  s32 *timer = &gKandoreanTemple_WestTimer;
-
-  if (*timer == LIFT_RISE) {
-    Scene_QueueMusic(SE_WAVE);
-    FieldActor_SetPositionAndResetMotion(
-        Actor_GetById(ACTOR_WEST_LIFT), toFIXED(440), toFIXED(LIFT_SUNK_HEIGHT),
-        toFIXED(204));
-    Actor_SetPositionAndResetMotion(Actor_GetById(ACTOR_WEST_LIFT_COLUMN),
-                                    toFIXED(440), toFIXED(LIFT_SUNK_HEIGHT),
-                                    toFIXED(200));
-    Actor_SetSpritePriority(ACTOR_WEST_LIFT, 3);
-    Actor_SetSpritePriority(ACTOR_WEST_LIFT_COLUMN, 3);
-    base->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    base->scaleY = FIXED_ONE / 64;
-    Actor_SetAnimationById(ACTOR_WEST_LIFT, 0);
-    Actor_SetAnimationById(ACTOR_WEST_LIFT_COLUMN, 2);
-  } else if (*timer > LIFT_RISE && *timer < LIFT_RISEN) {
-    lift->y.fixed += toFIXED(4);
-    KandoreanTemple_GrowColumn(ACTOR_WEST_LIFT_COLUMN, toFIXED(0.3),
-                               toFIXED(0.3));
-    if (lift->y.fixed > -toFIXED(5))
-      Actor_SetSpritePriority(ACTOR_WEST_LIFT, 2);
-    if (lift->y.fixed >= 0) {
-      MapGrid_CopyCellAttributes(0, 0, 1, 1, 27, 12);
-      *timer = LIFT_RISEN;
-    }
-  } else if (*timer < LIFT_SINK) {
-    u16 *phase = &gKandoreanTemple_WestFloatPhase;
-
-    lift->y.fixed += Trig_Sin(*phase) >> 1;
-    *phase += TRIG_TURN / 16;
-    if (*timer == LIFT_WALL_OFF)
-      MapGrid_CopyCellAttributes(27, 10, 1, 1, 27, 12);
-    if (*timer > LIFT_FLOAT_END && *phase == 0) {
-      if (GameFlag_Get(FLAG_ON_WEST_LIFT)) {
-        MapGrid_CopyCellAttributes(21, 0, 1, 1, 27, 12);
-        Task_Remove(KandoreanTemple_RunWestLift);
-      } else {
-        *timer = LIFT_SINK;
-      }
-    }
-  } else {
-    lift->y.fixed += toFIXED(-4);
-    KandoreanTemple_ShrinkColumn(ACTOR_WEST_LIFT_COLUMN, toFIXED(0.3),
-                                 toFIXED(0.3));
-    if (lift->y.fixed < -toFIXED(5))
-      Actor_SetSpritePriority(ACTOR_WEST_LIFT, 3);
-    if (lift->y.fixed <= toFIXED(LIFT_SUNK_HEIGHT)) {
-      Scene_QueueMusic(SE_AMBIENT_STREAM);
-      Actor_SetPosition(ACTOR_WEST_LIFT, 0, 0);
-      Actor_SetPosition(ACTOR_WEST_LIFT_COLUMN, 0, 0);
-      gKandoreanTemple_WestTimer = 0;
-    }
+/// A lift of the lift room, the top of a vent's column, its timer through its
+/// cycle. It rises at (`x`, `z`), its column 4 pixels north of it, and frees
+/// cell (`cellX`, `cellZ`) while it stands level with the floor; `carryCell`,
+/// in the map's top row, is the cell copied there to take a riding leader
+/// down.
+#define DEFINE_KANDOREAN_TEMPLE_RUN_LIFT(name, liftId, columnId, timerVar,     \
+                                         phaseVar, x, z, cellX, cellZ,         \
+                                         carryCell, onLift)                    \
+  void name(void) {                                                            \
+    struct Actor *lift = Actor_GetById(liftId);                                \
+    struct Actor *base = Actor_GetById(columnId);                              \
+    s32 *timer = &timerVar;                                                    \
+                                                                               \
+    if (*timer == LIFT_RISE) {                                                 \
+      Scene_QueueMusic(SE_WAVE);                                               \
+      FieldActor_SetPositionAndResetMotion(Actor_GetById(liftId), toFIXED(x),  \
+                                           toFIXED(LIFT_SUNK_HEIGHT),          \
+                                           toFIXED(z));                        \
+      Actor_SetPositionAndResetMotion(Actor_GetById(columnId), toFIXED(x),     \
+                                      toFIXED(LIFT_SUNK_HEIGHT),               \
+                                      toFIXED((z) - 4));                       \
+      Actor_SetSpritePriority(liftId, 3);                                      \
+      Actor_SetSpritePriority(columnId, 3);                                    \
+      base->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;                         \
+      base->scaleY = FIXED_ONE / 64;                                           \
+      Actor_SetAnimationById(liftId, 0);                                       \
+      Actor_SetAnimationById(columnId, 2);                                     \
+    } else if (*timer > LIFT_RISE && *timer < LIFT_RISEN) {                    \
+      lift->y.fixed += toFIXED(4);                                             \
+      KandoreanTemple_GrowColumn(columnId, toFIXED(0.3), toFIXED(0.3));        \
+      if (lift->y.fixed > -toFIXED(5))                                         \
+        Actor_SetSpritePriority(liftId, 2);                                    \
+      if (lift->y.fixed >= 0) {                                                \
+        MapGrid_CopyCellAttributes(0, 0, 1, 1, cellX, cellZ);                  \
+        *timer = LIFT_RISEN;                                                   \
+      }                                                                        \
+    } else if (*timer < LIFT_SINK) {                                           \
+      u16 *phase = &phaseVar;                                                  \
+                                                                               \
+      lift->y.fixed += Trig_Sin(*phase) >> 1;                                  \
+      *phase += TRIG_TURN / 16;                                                \
+      if (*timer == LIFT_WALL_OFF)                                             \
+        MapGrid_CopyCellAttributes(cellX, (cellZ) - 2, 1, 1, cellX, cellZ);    \
+      if (*timer > LIFT_FLOAT_END && *phase == 0) {                            \
+        if (GameFlag_Get(onLift)) {                                            \
+          MapGrid_CopyCellAttributes(carryCell, 0, 1, 1, cellX, cellZ);        \
+          Task_Remove(name);                                                   \
+        } else {                                                               \
+          *timer = LIFT_SINK;                                                  \
+        }                                                                      \
+      }                                                                        \
+    } else {                                                                   \
+      lift->y.fixed += toFIXED(-4);                                            \
+      KandoreanTemple_ShrinkColumn(columnId, toFIXED(0.3), toFIXED(0.3));      \
+      if (lift->y.fixed < -toFIXED(5))                                         \
+        Actor_SetSpritePriority(liftId, 3);                                    \
+      if (lift->y.fixed <= toFIXED(LIFT_SUNK_HEIGHT)) {                        \
+        Scene_QueueMusic(SE_AMBIENT_STREAM);                                   \
+        Actor_SetPosition(liftId, 0, 0);                                       \
+        Actor_SetPosition(columnId, 0, 0);                                     \
+        timerVar = 0;                                                          \
+      }                                                                        \
+    }                                                                          \
+    timerVar++;                                                                \
   }
-  gKandoreanTemple_WestTimer++;
-}
 
-/// The lift room's east lift, the top of the east vent's column, as
-/// KandoreanTemple_RunWestLift.
-void KandoreanTemple_RunEastLift(void) {
-  struct Actor *lift = Actor_GetById(ACTOR_EAST_LIFT);
-  struct Actor *base = Actor_GetById(ACTOR_EAST_LIFT_COLUMN);
-  s32 *timer = &gKandoreanTemple_EastTimer;
+/// The lift room's west lift, the top of the west vent's column.
+DEFINE_KANDOREAN_TEMPLE_RUN_LIFT(KandoreanTemple_RunWestLift, ACTOR_WEST_LIFT,
+                                 ACTOR_WEST_LIFT_COLUMN,
+                                 gKandoreanTemple_WestTimer,
+                                 gKandoreanTemple_WestFloatPhase, 440, 204, 27,
+                                 12, 21, FLAG_ON_WEST_LIFT)
 
-  if (*timer == LIFT_RISE) {
-    Scene_QueueMusic(SE_WAVE);
-    FieldActor_SetPositionAndResetMotion(
-        Actor_GetById(ACTOR_EAST_LIFT), toFIXED(600), toFIXED(LIFT_SUNK_HEIGHT),
-        toFIXED(236));
-    Actor_SetPositionAndResetMotion(Actor_GetById(ACTOR_EAST_LIFT_COLUMN),
-                                    toFIXED(600), toFIXED(LIFT_SUNK_HEIGHT),
-                                    toFIXED(232));
-    Actor_SetSpritePriority(ACTOR_EAST_LIFT, 3);
-    Actor_SetSpritePriority(ACTOR_EAST_LIFT_COLUMN, 3);
-    base->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    base->scaleY = FIXED_ONE / 64;
-    Actor_SetAnimationById(ACTOR_EAST_LIFT, 0);
-    Actor_SetAnimationById(ACTOR_EAST_LIFT_COLUMN, 2);
-  } else if (*timer > LIFT_RISE && *timer < LIFT_RISEN) {
-    lift->y.fixed += toFIXED(4);
-    KandoreanTemple_GrowColumn(ACTOR_EAST_LIFT_COLUMN, toFIXED(0.3),
-                               toFIXED(0.3));
-    if (lift->y.fixed > -toFIXED(5))
-      Actor_SetSpritePriority(ACTOR_EAST_LIFT, 2);
-    if (lift->y.fixed >= 0) {
-      MapGrid_CopyCellAttributes(0, 0, 1, 1, 37, 14);
-      *timer = LIFT_RISEN;
-    }
-  } else if (*timer < LIFT_SINK) {
-    u16 *phase = &gKandoreanTemple_EastFloatPhase;
-
-    lift->y.fixed += Trig_Sin(*phase) >> 1;
-    *phase += TRIG_TURN / 16;
-    if (*timer == LIFT_WALL_OFF)
-      MapGrid_CopyCellAttributes(37, 12, 1, 1, 37, 14);
-    if (*timer > LIFT_FLOAT_END && *phase == 0) {
-      if (GameFlag_Get(FLAG_ON_EAST_LIFT)) {
-        MapGrid_CopyCellAttributes(22, 0, 1, 1, 37, 14);
-        Task_Remove(KandoreanTemple_RunEastLift);
-      } else {
-        *timer = LIFT_SINK;
-      }
-    }
-  } else {
-    lift->y.fixed += toFIXED(-4);
-    KandoreanTemple_ShrinkColumn(ACTOR_EAST_LIFT_COLUMN, toFIXED(0.3),
-                                 toFIXED(0.3));
-    if (lift->y.fixed < -toFIXED(5))
-      Actor_SetSpritePriority(ACTOR_EAST_LIFT, 3);
-    if (lift->y.fixed <= toFIXED(LIFT_SUNK_HEIGHT)) {
-      Scene_QueueMusic(SE_AMBIENT_STREAM);
-      Actor_SetPosition(ACTOR_EAST_LIFT, 0, 0);
-      Actor_SetPosition(ACTOR_EAST_LIFT_COLUMN, 0, 0);
-      gKandoreanTemple_EastTimer = 0;
-    }
-  }
-  gKandoreanTemple_EastTimer++;
-}
+/// The lift room's east lift, the top of the east vent's column.
+DEFINE_KANDOREAN_TEMPLE_RUN_LIFT(KandoreanTemple_RunEastLift, ACTOR_EAST_LIFT,
+                                 ACTOR_EAST_LIFT_COLUMN,
+                                 gKandoreanTemple_EastTimer,
+                                 gKandoreanTemple_EastFloatPhase, 600, 236, 37,
+                                 14, 22, FLAG_ON_EAST_LIFT)
 
 /// The vent room's task: notes whether the leader stands on a cover (where
 /// it cannot save), lets a blowing vent's steam push it south, and starts or
@@ -2360,54 +2176,6 @@ void KandoreanTemple_LandFromAbove(void) {
   Event_End();
 }
 
-/// Coming down the west lift from the room above: the party arrives atop the
-/// west vent's cover, raised high on its column, and sinks with it to the
-/// ground.
-void KandoreanTemple_ArriveOnWestVent(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
-  struct Actor *cover = Actor_GetById(ACTOR_WEST_VENT_COVER);
-  struct Actor *camera = FieldCamera_GetActor();
-  s16 i;
-  u16 next;
-  s32 limit;
-
-  Event_Start();
-  Event_EndLastingPsynergy(0);
-  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  FieldCamera_GetActor()->motionFlags = 0;
-  leader->motionFlags = 0;
-  wait(1);
-  GameFlag_Set(FLAG_ON_WEST_LIFT);
-  GameFlag_Clear(FLAG_ON_EAST_LIFT);
-  GameFlag_Set(FLAG_PILLAR_ON_EAST_VENT);
-  GameFlag_Clear(FLAG_PILLAR_ON_WEST_VENT);
-  Sound_Play(SE_WAVE);
-  KandoreanTemple_StartWestVent();
-  i = 0;
-  do {
-    leader->y.fixed += toFIXED(9) / 2;
-    cover->y.fixed += toFIXED(9) / 2;
-    camera->y.fixed += toFIXED(9) / 5;
-    limit = FIXED_ONE / 16;
-    KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_TOP, toFIXED(2), limit);
-    KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_UPPER_PIECE, toFIXED(3) / 2,
-                               limit);
-    KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_MIDDLE_PIECE, toFIXED(1),
-                               limit);
-    KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_LOWER_PIECE, toFIXED(1) / 2,
-                               limit);
-    KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_FOOT, 0, limit);
-    next = i;
-    next++;
-    i = next;
-  } while (next < VENT_RISE_END - VENT_BLOW);
-  MapGrid_CenterOnFollowedPoint();
-  wait(1);
-  gFieldState->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_Wait(10);
 // One step of a steam column sinking back under its cover: the leader, the
 // cover and the camera go down, and each of the column's five pieces shrinks,
 // the top fastest.
@@ -2425,103 +2193,95 @@ void KandoreanTemple_ArriveOnWestVent(void) {
     wait(1);                                                                   \
   } while (Actor_GetById(foot)->scaleY > limit);
 
-  SINK_COVER(ACTOR_WEST_COLUMN_TOP, ACTOR_WEST_COLUMN_UPPER_PIECE,
-             ACTOR_WEST_COLUMN_MIDDLE_PIECE, ACTOR_WEST_COLUMN_LOWER_PIECE,
-             ACTOR_WEST_COLUMN_FOOT)
-  gKandoreanTemple_WestVentBlowing = 0;
-  GameFlag_Clear(FLAG_WEST_VENT_BLOWING);
-  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  Actor_SetPosition(ACTOR_WEST_COLUMN_TOP, 0, 0);
-  Actor_SetPosition(ACTOR_WEST_COLUMN_UPPER_PIECE, 0, 0);
-  Actor_SetPosition(ACTOR_WEST_COLUMN_MIDDLE_PIECE, 0, 0);
-  Actor_SetPosition(ACTOR_WEST_COLUMN_LOWER_PIECE, 0, 0);
-  Actor_SetPosition(ACTOR_WEST_COLUMN_FOOT, 0, 0);
-  Actor_SetAnimationById(ACTOR_WEST_VENT_COVER, 1);
-  FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_WEST_VENT_COVER),
-                                       toFIXED(216), 0, toFIXED(216));
-  cover->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetSpritePriority(ACTOR_WEST_VENT_COVER, 3);
-  Actor_SetPositionAndResetMotion(leader, leader->x.fixed, 0, leader->z.fixed);
-  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId),
-                       SPRITE_FLAG_SHADOW);
-  wait(1);
-  gFieldState->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  Event_End();
-}
+/// Coming down a lift from the room above: the party arrives atop that vent's
+/// cover, raised high on its column, and sinks with it to the ground. It now
+/// rides this side's lift and the pillar weighs the other vent down:
+/// `westSide` is GameFlag_Set on the west lift's arrival and GameFlag_Clear on
+/// the east's, `eastSide` the other way round.
+#define DEFINE_KANDOREAN_TEMPLE_ARRIVE_ON_VENT(                                \
+    name, coverId, coverX, coverZ, top, upper, middle, lower, foot, westSide,  \
+    eastSide, start, blowingVar, blowingFlag)                                  \
+  void name(void) {                                                            \
+    struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);     \
+    struct Actor *cover = Actor_GetById(coverId);                              \
+    struct Actor *camera = FieldCamera_GetActor();                             \
+    s16 i;                                                                     \
+    u16 next;                                                                  \
+    s32 limit;                                                                 \
+                                                                               \
+    Event_Start();                                                             \
+    Event_EndLastingPsynergy(0);                                               \
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
+    FieldCamera_GetActor()->motionFlags = 0;                                   \
+    leader->motionFlags = 0;                                                   \
+    wait(1);                                                                   \
+    westSide(FLAG_ON_WEST_LIFT);                                               \
+    eastSide(FLAG_ON_EAST_LIFT);                                               \
+    westSide(FLAG_PILLAR_ON_EAST_VENT);                                        \
+    eastSide(FLAG_PILLAR_ON_WEST_VENT);                                        \
+    Sound_Play(SE_WAVE);                                                       \
+    start();                                                                   \
+    i = 0;                                                                     \
+    do {                                                                       \
+      leader->y.fixed += toFIXED(9) / 2;                                       \
+      cover->y.fixed += toFIXED(9) / 2;                                        \
+      camera->y.fixed += toFIXED(9) / 5;                                       \
+      limit = FIXED_ONE / 16;                                                  \
+      KandoreanTemple_GrowColumn(top, toFIXED(2), limit);                      \
+      KandoreanTemple_GrowColumn(upper, toFIXED(3) / 2, limit);                \
+      KandoreanTemple_GrowColumn(middle, toFIXED(1), limit);                   \
+      KandoreanTemple_GrowColumn(lower, toFIXED(1) / 2, limit);                \
+      KandoreanTemple_GrowColumn(foot, 0, limit);                              \
+      next = i;                                                                \
+      next++;                                                                  \
+      i = next;                                                                \
+    } while (next < VENT_RISE_END - VENT_BLOW);                                \
+    MapGrid_CenterOnFollowedPoint();                                           \
+    wait(1);                                                                   \
+    gFieldState->transition =                                                  \
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);         \
+    Event_StartScreenTransition();                                             \
+    Event_WaitTransitionFrames();                                              \
+    Event_Wait(10);                                                            \
+    SINK_COVER(top, upper, middle, lower, foot)                                \
+    blowingVar = 0;                                                            \
+    GameFlag_Clear(blowingFlag);                                               \
+    Sound_Play(SOUND_FADE_OUT_ACTION_SE);                                      \
+    Actor_SetPosition(top, 0, 0);                                              \
+    Actor_SetPosition(upper, 0, 0);                                            \
+    Actor_SetPosition(middle, 0, 0);                                           \
+    Actor_SetPosition(lower, 0, 0);                                            \
+    Actor_SetPosition(foot, 0, 0);                                             \
+    Actor_SetAnimationById(coverId, 1);                                        \
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(coverId),               \
+                                         toFIXED(coverX), 0, toFIXED(coverZ)); \
+    cover->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;                          \
+    Actor_SetSpritePriority(coverId, 3);                                       \
+    Actor_SetPositionAndResetMotion(leader, leader->x.fixed, 0,                \
+                                    leader->z.fixed);                          \
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId),       \
+                         SPRITE_FLAG_SHADOW);                                  \
+    wait(1);                                                                   \
+    gFieldState->transition = SCENE_TRANSITION(                                \
+        TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);                 \
+    Event_End();                                                               \
+  }
 
-/// Coming down the east lift from the room above: the party arrives atop the
-/// east vent's cover, raised high on its column, and sinks with it to the
-/// ground.
-void KandoreanTemple_ArriveOnEastVent(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
-  struct Actor *cover = Actor_GetById(ACTOR_EAST_VENT_COVER);
-  struct Actor *camera = FieldCamera_GetActor();
-  s16 i;
-  u16 next;
-  s32 limit;
+DEFINE_KANDOREAN_TEMPLE_ARRIVE_ON_VENT(
+    KandoreanTemple_ArriveOnWestVent, ACTOR_WEST_VENT_COVER, 216, 216,
+    ACTOR_WEST_COLUMN_TOP, ACTOR_WEST_COLUMN_UPPER_PIECE,
+    ACTOR_WEST_COLUMN_MIDDLE_PIECE, ACTOR_WEST_COLUMN_LOWER_PIECE,
+    ACTOR_WEST_COLUMN_FOOT, GameFlag_Set, GameFlag_Clear,
+    KandoreanTemple_StartWestVent, gKandoreanTemple_WestVentBlowing,
+    FLAG_WEST_VENT_BLOWING)
 
-  Event_Start();
-  Event_EndLastingPsynergy(0);
-  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  FieldCamera_GetActor()->motionFlags = 0;
-  leader->motionFlags = 0;
-  wait(1);
-  GameFlag_Clear(FLAG_ON_WEST_LIFT);
-  GameFlag_Set(FLAG_ON_EAST_LIFT);
-  GameFlag_Clear(FLAG_PILLAR_ON_EAST_VENT);
-  GameFlag_Set(FLAG_PILLAR_ON_WEST_VENT);
-  Sound_Play(SE_WAVE);
-  KandoreanTemple_StartEastVent();
-  i = 0;
-  do {
-    leader->y.fixed += toFIXED(9) / 2;
-    cover->y.fixed += toFIXED(9) / 2;
-    camera->y.fixed += toFIXED(9) / 5;
-    limit = FIXED_ONE / 16;
-    KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_TOP, toFIXED(2), limit);
-    KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_UPPER_PIECE, toFIXED(3) / 2,
-                               limit);
-    KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_MIDDLE_PIECE, toFIXED(1),
-                               limit);
-    KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_LOWER_PIECE, toFIXED(1) / 2,
-                               limit);
-    KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_FOOT, 0, limit);
-    next = i;
-    next++;
-    i = next;
-  } while (next < VENT_RISE_END - VENT_BLOW);
-  MapGrid_CenterOnFollowedPoint();
-  wait(1);
-  gFieldState->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_Wait(10);
-  SINK_COVER(ACTOR_EAST_COLUMN_TOP, ACTOR_EAST_COLUMN_UPPER_PIECE,
-             ACTOR_EAST_COLUMN_MIDDLE_PIECE, ACTOR_EAST_COLUMN_LOWER_PIECE,
-             ACTOR_EAST_COLUMN_FOOT)
-  gKandoreanTemple_EastVentBlowing = 0;
-  GameFlag_Clear(FLAG_EAST_VENT_BLOWING);
-  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  Actor_SetPosition(ACTOR_EAST_COLUMN_TOP, 0, 0);
-  Actor_SetPosition(ACTOR_EAST_COLUMN_UPPER_PIECE, 0, 0);
-  Actor_SetPosition(ACTOR_EAST_COLUMN_MIDDLE_PIECE, 0, 0);
-  Actor_SetPosition(ACTOR_EAST_COLUMN_LOWER_PIECE, 0, 0);
-  Actor_SetPosition(ACTOR_EAST_COLUMN_FOOT, 0, 0);
-  Actor_SetAnimationById(ACTOR_EAST_VENT_COVER, 1);
-  FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_EAST_VENT_COVER),
-                                       toFIXED(376), 0, toFIXED(248));
-  cover->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetSpritePriority(ACTOR_EAST_VENT_COVER, 3);
-  Actor_SetPositionAndResetMotion(leader, leader->x.fixed, 0, leader->z.fixed);
-  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId),
-                       SPRITE_FLAG_SHADOW);
-  wait(1);
-  gFieldState->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  Event_End();
-}
+DEFINE_KANDOREAN_TEMPLE_ARRIVE_ON_VENT(
+    KandoreanTemple_ArriveOnEastVent, ACTOR_EAST_VENT_COVER, 376, 248,
+    ACTOR_EAST_COLUMN_TOP, ACTOR_EAST_COLUMN_UPPER_PIECE,
+    ACTOR_EAST_COLUMN_MIDDLE_PIECE, ACTOR_EAST_COLUMN_LOWER_PIECE,
+    ACTOR_EAST_COLUMN_FOOT, GameFlag_Clear, GameFlag_Set,
+    KandoreanTemple_StartEastVent, gKandoreanTemple_EastVentBlowing,
+    FLAG_EAST_VENT_BLOWING)
 
 /// Felix rises out of the vent room on a vent's column, the screen closing in
 /// on him.
@@ -3548,12 +3308,15 @@ extern u32 gFieldEffect_LongScript[];
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
+/// A cloud of steam lives 44 frames, then is put away and released.
 s32 gKandoreanTemple_SteamScript[] = {
     SC_WAIT(44),
     SC_SET(SW_HOOK, 0),
     SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_RELEASE,
+    // Unused: SC_RELEASE has freed the cloud's actor, and nothing starts a
+    // script here, so its life is never counted down.
     SC_CALL((s32)KandoreanTemple_CountDownSteam),
     SC_SET(SW_HOOK, 0),
     SC_POSITION_ORIGIN,

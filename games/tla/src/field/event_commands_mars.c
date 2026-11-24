@@ -15,10 +15,6 @@
 #include "field/event.h"
 #include "macros.h"
 
-/// A Djinni's lively animation, facing the player: Venus bounces, Mars, Jupiter
-/// and Mercury wave their arms. It plays as the Djinni shrinks away on joining.
-#define DJINNI_ANIMATION_EXCITED 3
-
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of sparks
 /// (FieldEffect_UpdateMarsSpark). The leader turns to the camera and raises

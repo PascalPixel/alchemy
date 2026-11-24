@@ -325,6 +325,11 @@ enum ActorAnimation {
   ANIM_LEADER_SIT = 49
 };
 
+/// A Djinni's lively animation on the four Djinn sprite sheets, facing the
+/// player: Venus bounces, Mars, Jupiter and Mercury wave their arms. It plays
+/// as the Djinni shrinks away on joining.
+#define DJINNI_ANIMATION_EXCITED 3
+
 /// SPRITE_PARTICLE's animations.
 enum ParticleAnimation {
   ANIM_PARTICLE_FADE = 2, ///< its glow shrinking to a speck and gone

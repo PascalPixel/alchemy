@@ -60,7 +60,7 @@ FarCall_OverworldTable:
 	export Event_AskYesNoAndShowResponseFar, Event_AskYesNoAndShowResponse
 	export Event_NoOpUpdateFar, Event_NoOpUpdate
 	export Event_ShowSpeakerMessageFar, Event_ShowSpeakerMessage
-	export Event_ShowCounterFar, Event_ShowCounter
+	export Event_ForwardShowMessageAtPositionFar, Event_ForwardShowMessageAtPosition
 	export Event_ShowMessageAtPositionFar, Event_ShowMessageAtPosition
 	export Actor_FaceDirectionByIdFar, Actor_FaceDirectionById
 	export Actor_FaceDirectionAndRefreshByIdFar, Actor_FaceDirectionAndRefreshById

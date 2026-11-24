@@ -218,13 +218,13 @@ s32 Sprite_AddAnimation(struct Sprite *sprite, s32 id) {
     entry = &sprite->entries[0];
     do {
       freeIndex++;
-      if (freeIndex >= ANIM_LAYER_COUNT)
+      if (freeIndex >= SPRITE_ANIMATION_COUNT)
         break;
       entry++;
       spriteAnimation = (s32)*entry;
     } while (spriteAnimation != 0);
   }
-  if (freeIndex == ANIM_LAYER_COUNT)
+  if (freeIndex == SPRITE_ANIMATION_COUNT)
     return -1;
   spriteAnimation = (s32)SpriteAnimation_Alloc(id);
   if (spriteAnimation == 0)
@@ -255,14 +255,14 @@ void Sprite_RemoveAnimation(struct Sprite *sprite, s32 spriteAnimation) {
   if (sprite != NULL && spriteAnimation != 0) {
     SpriteAnimation_Clear((struct SpriteAnimation *)spriteAnimation);
     // Locate the handle, then trim only empty slots at the end of the list.
-    for (index = 0; index < ANIM_LAYER_COUNT; index++) {
+    for (index = 0; index < SPRITE_ANIMATION_COUNT; index++) {
       if (spriteAnimation == (s32)sprite->entries[index])
         break;
     }
-    if (index != ANIM_LAYER_COUNT) {
+    if (index != SPRITE_ANIMATION_COUNT) {
       sprite->entries[index] = 0;
       laterAnimations = 0;
-      for (i = index + 1; i < ANIM_LAYER_COUNT; i++) {
+      for (i = index + 1; i < SPRITE_ANIMATION_COUNT; i++) {
         if (sprite->entries[i] != 0)
           laterAnimations++;
       }
@@ -280,14 +280,14 @@ void Sprite_RemoveAnimationAt(struct Sprite *sprite, u32 index) {
   s32 laterAnimations;
   u32 i;
 
-  if (sprite != NULL && index < ANIM_LAYER_COUNT) {
+  if (sprite != NULL && index < SPRITE_ANIMATION_COUNT) {
     spriteAnimation = sprite->entries[index];
     if (spriteAnimation != NULL) {
       SpriteAnimation_Clear(spriteAnimation);
       sprite->entries[index] = NULL;
       laterAnimations = 0;
       // Interior holes stay available; only trailing holes reduce the count.
-      for (i = index + 1; i < ANIM_LAYER_COUNT; i++) {
+      for (i = index + 1; i < SPRITE_ANIMATION_COUNT; i++) {
         if (sprite->entries[i] != NULL)
           laterAnimations++;
       }
@@ -609,7 +609,7 @@ void Sprite_Destroy(struct Sprite *sprite) {
     if (!sprite->retainCacheEntry)
       VramCache_FreeEntry(sprite->slot);
     entry = sprite->entries;
-    for (n = 0; n < ANIM_LAYER_COUNT; n++) {
+    for (n = 0; n < SPRITE_ANIMATION_COUNT; n++) {
       SpriteAnimation_Clear(*entry++);
     }
     Dma_Fill32Cell(zero, 0, sprite, sizeof(*sprite));

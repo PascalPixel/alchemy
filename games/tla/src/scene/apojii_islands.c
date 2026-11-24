@@ -46,6 +46,7 @@ enum {
 #include "graphics/window_sprite_list.h"
 #include "system/io_write.h"
 #include "system/system.h"
+#include "system/irq.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "system/main_routine_state.h"
@@ -136,7 +137,6 @@ enum ApojiiIslandsHazeActorId {
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 void Sprite_StartAnimation(void *animation, s32 value);
 u8 *Sprite_AddAnimation(void *animation, s32 id);
-void Irq_SetHandler(s32 irq, s32 vcount, void *callback);
 void Actor_StartScript(struct Actor *actor, const void *data);
 s32 MapGrid_CheckCollision(struct Actor *actor, s32 *position);
 void Field_TryJumpForward(void);

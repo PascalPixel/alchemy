@@ -53,7 +53,7 @@ const struct Scale gGaia_UnitScale = UNIT_SCALE;
 /// The white flake's scale as it flutters away at Ulysses's end.
 const struct SpriteScale gUlysses_ParticleScale = {{UNIT_SCALE}};
 
-/// The ship's scale in Ulysses, copied each frame it sails.
+/// The mage's sprite scale in Ulysses, copied each frame the mage stands.
 const struct Scale gUlysses_MageScale = UNIT_SCALE;
 
 /// The scale of the formation's objects that are drawn at their size.

@@ -167,7 +167,10 @@ enum ColosseumEntranceActorId {
   /// The four soldiers at the gates on the finals day (SPRITE_SOLDIER, as in
   /// the waiting room), gColosseumEntranceActorPlacementsFinalsDay only. The
   /// first greets Isaac ("Hey, you're Isaac!") and leads the party in.
-  ACTOR_FIRST_GATE_SOLDIER
+  ACTOR_FIRST_GATE_SOLDIER,
+  ACTOR_SECOND_GATE_SOLDIER,
+  ACTOR_THIRD_GATE_SOLDIER,
+  ACTOR_FOURTH_GATE_SOLDIER
 };
 
 /// The Colosseum's stands, numbered by the rows of
@@ -236,6 +239,8 @@ enum { WARRIOR_ANIMATION_BACK_TURNED = 11 };
 /// take their own actor slots.
 enum ColosseumSoldierActorId {
   ACTOR_FIRST_SOLDIER = ACTOR_FIRST_PLACED,
+  ACTOR_SECOND_SOLDIER,
+  ACTOR_THIRD_SOLDIER,
   /// The last, who leads Isaac on to each finals stage.
   ACTOR_ESCORTING_SOLDIER = ACTOR_FIRST_PLACED + 3
 };
@@ -427,6 +432,7 @@ static void ColosseumEntrance_DiscussLuckyGuessWinnings(void) {
   if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     Actor_RunRepeatedMotion(ACTOR_SCALPER, 2);
     Event_SetMessageId(MsgColosseumHoldOnSecond);
+    // "Hey, hold on a second!"
     ColosseumEntrance_ShowMessageAndPause(ACTOR_SCALPER);
     Actor_TurnToFaceEachOther(ACTOR_SCALPER, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
@@ -462,6 +468,8 @@ static void ColosseumEntrance_OfferLuckyGuess(void) {
           gFieldState->message++;
         }
         Event_Wait(40);
+        // Yes: "Look, I'm sorry, but we have some rules to help keep..."
+        // No: "You can't fool me... You fit the features I've heard about..."
         Event_ShowMessage(ACTOR_LUCKY_GUESS_MAN, 0);
         GameFlag_Set(FLAG_LUCKY_GUESS_REFUSED_ISAAC);
       } else {
@@ -488,8 +496,10 @@ static void ColosseumEntrance_TalkToAzart(void) {
   Actor_Stop(ACTOR_AZART);
   Actor_TurnToFaceEachOther(ACTOR_AZART, ACTOR_PARTY_LEADER, 20);
   Event_SetMessageId(MsgColosseumImRatedAsSecondBest);
+  // "I'm rated as the second-best, but I'll prove them wrong. The name's..."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_AZART);
   Actor_RunRepeatedMotion(ACTOR_AZART, 1);
+  // "I'm not going to lose to someone who didn't even clear the trials."
   Event_ShowMessage(ACTOR_AZART, 0);
   // He wanders about his place again, the home SC_WANDER_HOME keeps.
   contestant->homeX = 720;
@@ -506,8 +516,10 @@ static void ColosseumEntrance_TalkToGalahad(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_GALAHAD, 2);
   Event_SetMessageId(MsgColosseumWaahDontFrightenMe);
+  // "Waah! Don't frighten me!"
   ColosseumEntrance_ShowMessageAndPause(ACTOR_GALAHAD);
   Actor_ShowEmote(ACTOR_GALAHAD, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "I'm incredibly nervous. Wha? Me? I... I'm Galahad, the third-seeded..."
   Event_ShowMessage(ACTOR_GALAHAD, 0);
   Event_End();
 }
@@ -517,11 +529,14 @@ static void ColosseumEntrance_TalkToGalahad(void) {
 static void ColosseumEntrance_TalkToSatrage(void) {
   Event_Start();
   Event_SetMessageId(MsgColosseumWhoHaveComeQuestionMe);
+  // "...You who have come to question me... You are...Isaac?"
   ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
   Actor_TurnToFaceEachOther(ACTOR_SATRAGE, ACTOR_PARTY_LEADER, 20);
+  // "I had closed my eyes... to focus my mind before battle."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
   Actor_SetAnimationAndWait(ACTOR_SATRAGE, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SATRAGE, ANIM_STILL);
+  // "My name is Satrage. I'm the fourth-ranked warrior."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
   ColosseumEntrance_FaceDirection(ACTOR_SATRAGE, FACING_SOUTH_SOUTHWEST);
   Event_End();
@@ -539,11 +554,14 @@ static void ColosseumEntrance_TalkToDekka(void) {
   } else {
     ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_EAST);
     Actor_RunRepeatedMotion(ACTOR_NAVAMPA, 1);
+    // "He won't answer, no matter how much you speak to him."
     ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
     Actor_TurnToFaceEachOther(ACTOR_NAVAMPA, ACTOR_PARTY_LEADER, 20);
     Actor_SetAnimation(ACTOR_NAVAMPA, ANIM_SHAKE_HEAD);
+    // "He's trying to get himself psyched up for the battle."
     ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
     Actor_ShowEmote(ACTOR_NAVAMPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+    // "The finals can't be won that easily!"
     ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
     ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_SOUTH_SOUTHWEST);
     GameFlag_Set(FLAG_NAVAMPA_SPOKE_FOR_DEKKA);
@@ -557,11 +575,14 @@ static void ColosseumEntrance_TalkToNavampa(void) {
   Event_Start();
   Actor_TurnToFaceEachOther(ACTOR_NAVAMPA, ACTOR_PARTY_LEADER, 20);
   Event_SetMessageId(MsgColosseumAmNavampaGondowanSixthRanked);
+  // "I am Navampa of Gondowan, the sixth-ranked warrior."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_NAVAMPA, ANIM_NOD);
+  // "You're the warrior Babi selected? The one they're all talking about?"
   ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
   Actor_RunRepeatedMotion(ACTOR_NAVAMPA, 1);
+  // "I heard rumors that you were a huge, hulking man. I guess they were..."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
   ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_SOUTH_SOUTHWEST);
   Event_End();
@@ -573,13 +594,16 @@ static void ColosseumEntrance_TalkToBuford(void) {
   Event_Start();
   Actor_TurnToFaceEachOther(ACTOR_BUFORD, ACTOR_PARTY_LEADER, 20);
   Event_SetMessageId(MsgColosseumImBufordSeventhSeed);
+  // "I'm Buford, the seventh seed."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_BUFORD);
   Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTH_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_BUFORD, FACING_WEST, 40);
   Actor_TurnToFaceEachOther(ACTOR_BUFORD, ACTOR_PARTY_LEADER, 20);
+  // "All who cleared the trials are powerful warriors..."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_BUFORD);
   Actor_SetAnimationAndWait(ACTOR_BUFORD, ANIM_NOD);
+  // "This is a balanced match—anyone could win today!"
   ColosseumEntrance_ShowMessageAndPause(ACTOR_BUFORD);
   ColosseumEntrance_FaceDirection(ACTOR_BUFORD, FACING_SOUTH_SOUTHWEST);
   Event_End();
@@ -595,6 +619,8 @@ static void ColosseumEntrance_AskIfReadyForFinals(void) {
   Event_OpenMessage(ACTOR_FINALS_SOLDIER, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0)
     gFieldState->message++;
+  // Yes: "Then please wait in the eighth circle."
+  // No: "We'll be starting soon, so you'd better get ready fast!"
   Event_ShowMessage(ACTOR_FINALS_SOLDIER, 0);
   Event_End();
 }
@@ -616,55 +642,62 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
                                   FACING_SOUTH_SOUTHEAST);
   Event_SetMessageId(MsgColosseumHeyYouRe);
   Actor_StartRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER, 2);
+  // "Hey, you're Isaac!"
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
-  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 1, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_GATE_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_THIRD_GATE_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FOURTH_GATE_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(256, CAMERA_KEEP, 172, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 1, EMOTE_IN_FRONT | EMOTE_WINCE,
-                  40);
-  ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER + 1);
+  Actor_ShowEmote(ACTOR_SECOND_GATE_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "You're kidding... That's Isaac? The one Babi picked?"
+  ColosseumEntrance_ShowMessageAndPause(ACTOR_SECOND_GATE_SOLDIER);
   Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
+  // "Yeah, there's no mistaking it... He's Isaac, for sure."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
-  Actor_SetAttachedEffect(ACTOR_FIRST_GATE_SOLDIER + 2,
+  Actor_SetAttachedEffect(ACTOR_THIRD_GATE_SOLDIER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2, FACING_EAST);
-  ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER + 2);
-  Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 3,
-                  EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-  ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3, FACING_EAST);
-  Actor_StartRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER + 3, 2);
-  Event_ShowMessageThenWait(ACTOR_FIRST_GATE_SOLDIER + 3, 0, 20);
+  ColosseumEntrance_FaceDirection(ACTOR_THIRD_GATE_SOLDIER, FACING_EAST);
+  // "He's just a kid! What does Babi think Colosso is? A playground?"
+  ColosseumEntrance_ShowMessageAndPause(ACTOR_THIRD_GATE_SOLDIER);
+  Actor_ShowEmote(ACTOR_FOURTH_GATE_SOLDIER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
+                  40);
+  ColosseumEntrance_FaceDirection(ACTOR_FOURTH_GATE_SOLDIER, FACING_EAST);
+  Actor_StartRepeatedMotion(ACTOR_FOURTH_GATE_SOLDIER, 2);
+  // "Putting him in the finals is an insult to everyone who cleared the..."
+  Event_ShowMessageThenWait(ACTOR_FOURTH_GATE_SOLDIER, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER, 1);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_NORTH_NORTHWEST, 20);
+  // "Don't you people have faith in Babi?"
   Event_ShowMessageThenWait(ACTOR_FIRST_GATE_SOLDIER, 0, 20);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER + 1, 1);
-  Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 1, ANIM_SHAKE_HEAD);
+  Actor_RunRepeatedMotion(ACTOR_SECOND_GATE_SOLDIER, 1);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_SOLDIER, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_WEST);
+  // "Babi wouldn't let him into the finals just to repay a favor!"
   Event_ShowMessageThenWait(ACTOR_FIRST_GATE_SOLDIER, 0, 20);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER + 2, 1);
+  Actor_RunRepeatedMotion(ACTOR_THIRD_GATE_SOLDIER, 1);
   Event_Wait(40);
-  Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 2, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_THIRD_GATE_SOLDIER, ANIM_SHAKE_HEAD);
+  // "I guess Babi wouldn't let Isaac in if he weren't a good match."
   Event_ShowMessageThenWait(ACTOR_FIRST_GATE_SOLDIER, 0, 20);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER + 3, 2);
+  Actor_RunRepeatedMotion(ACTOR_FOURTH_GATE_SOLDIER, 2);
   Event_Wait(40);
-  Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 3, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FOURTH_GATE_SOLDIER, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_FIRST_GATE_SOLDIER + 1, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_FIRST_GATE_SOLDIER + 2, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 3, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SECOND_GATE_SOLDIER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_THIRD_GATE_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FOURTH_GATE_SOLDIER, ANIM_NOD);
   Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 1, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2, FACING_SOUTH_SOUTHEAST, 0);
-  ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3,
+  Actor_FaceDirection(ACTOR_SECOND_GATE_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_THIRD_GATE_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
+  ColosseumEntrance_FaceDirection(ACTOR_FOURTH_GATE_SOLDIER,
                                   FACING_SOUTH_SOUTHEAST);
   Actor_SetSpeed(ACTOR_FIRST_GATE_SOLDIER, 0.6);
   Actor_WalkToAndWait(ACTOR_FIRST_GATE_SOLDIER, 258, 172);
@@ -686,12 +719,14 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 40);
   Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER, 1);
+  // "We've been waiting for you and your friends, Isaac."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
+  // "All of the Colosso participants go to the waiting room, OK?"
   Event_OpenMessage(ACTOR_FIRST_GATE_SOLDIER, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
@@ -699,6 +734,7 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   // Either leave with the guide or let the companions persuade Isaac.
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
+    // "All right, this way please."
     ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
     Actor_SetScript(ACTOR_GARET, gColosseumEntrance_GatherIntoIsaacScript);
     Actor_SetScript(ACTOR_IVAN, gColosseumEntrance_GatherIntoIsaacScript);
@@ -718,44 +754,51 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   } else {
     Event_SkipMessages(1);
     Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+    // "Isaac! You can't just watch the finals! You're fighting in them!"
     ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
-    Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 1, EMOTE_IN_FRONT | EMOTE_WINCE,
+    Actor_ShowEmote(ACTOR_SECOND_GATE_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE,
                     40);
-    ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER + 1);
-    Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 2, EMOTE_IN_FRONT | EMOTE_WINCE,
+    // "Babi is looking forward to seeing your battles."
+    ColosseumEntrance_ShowMessageAndPause(ACTOR_SECOND_GATE_SOLDIER);
+    Actor_ShowEmote(ACTOR_THIRD_GATE_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+    // "He'll be angry if you just watch from the sidelines. Trust me on that."
+    ColosseumEntrance_ShowMessageAndPause(ACTOR_THIRD_GATE_SOLDIER);
+    Actor_ShowEmote(ACTOR_FOURTH_GATE_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE,
                     40);
-    ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER + 2);
-    Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 3, EMOTE_IN_FRONT | EMOTE_WINCE,
-                    40);
-    ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER + 2);
+    // "We were told to make sure you appear in the finals, no matter what."
+    ColosseumEntrance_ShowMessageAndPause(ACTOR_THIRD_GATE_SOLDIER);
     Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_SHAKE_HEAD);
+    // "Really, you might as well get used to the idea. You're competing in..."
     ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     Event_Wait(20);
+    // "Well, it seems we have no choice—we have to fight in the finals!"
     ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+    // "Would it cause problems for everyone if we didn't do this?"
     ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_NORTH_NORTHWEST, 0);
-    Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2, FACING_WEST, 0);
-    Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3, FACING_EAST, 60);
+    Actor_FaceDirection(ACTOR_THIRD_GATE_SOLDIER, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_FOURTH_GATE_SOLDIER, FACING_EAST, 60);
     Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
-    Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2, FACING_SOUTH_SOUTHEAST,
-                        0);
-    Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3, FACING_SOUTH_SOUTHEAST,
-                        20);
+    Actor_FaceDirection(ACTOR_THIRD_GATE_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_FOURTH_GATE_SOLDIER, FACING_SOUTH_SOUTHEAST, 20);
     Actor_SetAnimation(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
-    Actor_SetAnimation(ACTOR_FIRST_GATE_SOLDIER + 1, ANIM_NOD);
-    Actor_SetAnimation(ACTOR_FIRST_GATE_SOLDIER + 2, ANIM_NOD);
-    Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 3, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_SECOND_GATE_SOLDIER, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_THIRD_GATE_SOLDIER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_FOURTH_GATE_SOLDIER, ANIM_NOD);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     ColosseumEntrance_FaceDirection(ACTOR_MIA, FACING_NORTHWEST);
+    // "I don't want to be the source of any trouble. Let's fight."
     ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
     Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "We're in a fix, Isaac. We have to do it, don't you think?"
     Event_OpenMessage(ACTOR_GARET, 0);
 
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
+      // "We appreciate this, Isaac. Well, come this way, please."
       ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
       Actor_SetScript(ACTOR_GARET, gColosseumEntrance_GatherIntoIsaacScript);
       Actor_SetScript(ACTOR_IVAN, gColosseumEntrance_GatherIntoIsaacScript);
@@ -777,11 +820,14 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
       Event_SkipMessages(1);
       Event_Wait(20);
       Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+      // "Why do you have to be so stubborn at a time like this?"
       Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
       Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+      // "Garet, why don't you pretend to be our leader... just until we're..."
       ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
       ColosseumEntrance_FaceDirection(ACTOR_MIA, FACING_WEST);
       Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
+      // "Yes. Maybe once we get that far, Isaac will have a better mindset."
       ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
       Actor_SetScript(ACTOR_IVAN, gColosseumEntrance_GatherIntoGaretScript);
       Actor_RunScriptAndWait(ACTOR_MIA,
@@ -792,6 +838,7 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
       Actor_WalkToAndWait(ACTOR_GARET, 262, 188);
       ColosseumEntrance_FaceDirection(ACTOR_GARET, FACING_NORTH);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+      // "All right, guys! Lead on!"
       ColosseumEntrance_ShowMessageAndPause(ACTOR_GARET);
       FieldCamera_SetSpeed(0.4);
       FieldCamera_MoveTo(256, CAMERA_KEEP, 100, 1);
@@ -838,6 +885,7 @@ static void ColosseumEntrance_FinalsStart(void) {
       ColosseumEntrance_FaceDirection(ACTOR_MORGAN, FACING_NORTH_NORTHEAST);
       Actor_RunRepeatedMotion(ACTOR_MORGAN, 1);
       Event_SetMessageId(MsgColosseumDayTiredWaiting);
+      // "Hey, any day now! We're tired of waiting! Let's get this thing..."
       ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_ABOVE |
                                             ACTOR_MORGAN);
       ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_EAST);
@@ -847,15 +895,18 @@ static void ColosseumEntrance_FinalsStart(void) {
       Actor_SetAnimation(ACTOR_SATRAGE, ANIM_STAND);
       Actor_FaceDirection(ACTOR_SATRAGE, FACING_NORTH_NORTHEAST, 20);
       Actor_RunRepeatedMotion(ACTOR_SATRAGE, 1);
+      // "I agree... Let the finals begin already."
       ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
       ColosseumEntrance_FaceDirection(ACTOR_DEKKA, FACING_WEST);
       Actor_SetAnimationAndWait(ACTOR_DEKKA, ANIM_NOD);
       Actor_RunRepeatedMotion(ACTOR_NAVAMPA, 2);
       ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_NORTHWEST);
+      // "Um... Yeah. I'll show you... We're here to win the finals."
       ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_ABOVE |
                                             ACTOR_NAVAMPA);
       ColosseumEntrance_FaceDirection(ACTOR_BUFORD, FACING_NORTH_NORTHWEST);
       Actor_StartRepeatedMotion(ACTOR_BUFORD, 2);
+      // "Hey, what's the matter... Hurry up and start!"
       ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_ABOVE |
                                             ACTOR_BUFORD);
       ColosseumEntrance_FaceDirection(ACTOR_GONG_SOLDIER,
@@ -864,6 +915,7 @@ static void ColosseumEntrance_FinalsStart(void) {
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Event_Wait(60);
       Actor_StartRepeatedMotion(ACTOR_GONG_SOLDIER, 2);
+      // "Line up starting with the top-ranked warrior, and await the signal!"
       ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_BELOW |
                                             ACTOR_GONG_SOLDIER);
       Actor_Stop(ACTOR_AZART);
@@ -901,6 +953,7 @@ static void ColosseumEntrance_FinalsStart(void) {
       FieldCamera_MoveTo(808, CAMERA_KEEP, 86, 1);
       FieldCamera_WaitForArrival();
       Actor_RunRepeatedMotion(ACTOR_FINALS_SOLDIER, 2);
+      // "Now then, chosen warriors. Let the finals begin!"
       ColosseumEntrance_ShowMessageAndPause(ACTOR_FINALS_SOLDIER);
       Actor_SetSpeed(ACTOR_FINALS_SOLDIER, 1);
       Actor_Get(ACTOR_FINALS_SOLDIER)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -965,6 +1018,7 @@ static void ColosseumEntrance_TalkToTrialAttendant(void) {
   if (clearedTrialSeen != 0) {
     Actor_TurnToFaceEachOther(ACTOR_TRIAL_ATTENDANT, ACTOR_PARTY_LEADER, 40);
     Event_SetMessageId(MsgColosseumHavePerfectTechniquesLikeThose);
+    // "You have to perfect techniques like those to reach the finals. That..."
     ColosseumEntrance_ShowMessageAndPause(ACTOR_TRIAL_ATTENDANT);
     Actor_FaceDirection(ACTOR_TRIAL_ATTENDANT, FACING_SOUTH_SOUTHEAST, 20);
   } else {
@@ -1125,6 +1179,8 @@ static void ColosseumEntrance_ExplainTrial(void) {
     gFieldState->message = gFieldState->message + 1;
   }
 
+  // "You have to make it through countless matches to reach the finals..."
+  // once the cleared warrior's trial is seen: "You have to perfect..."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_TRIAL_ATTENDANT);
   ColosseumEntrance_FaceDirection(ACTOR_TRIAL_ATTENDANT,
                                   FACING_SOUTH_SOUTHEAST);
@@ -1350,7 +1406,13 @@ static void ColosseumEntrance_FaceDirection(s32 actorId, s32 facing) {
   Actor_FaceDirection(actorId, (u16)facing, 10);
 }
 
-/// The Colosseum Entrance's setup changes the cells by the gates.
+/// Once Colosso is over the colosseum's doors are shut: the doorway, on map
+/// layer 1 at (48..49, 5..6), takes the closed doors kept at (64..65, 0..1),
+/// and the doorway's floor, (16..17, 8), the walls beside it at (14..15, 8).
+/// Before then, once Babi is saved, the tops of the westmost stone posts on the
+/// cliff below the gates, (14, 11..12), take the walls kept at (30, 22..23)
+/// (render probe ColosseumEntrance with and without FLAG_COLOSSO_OVER,
+/// --mark-cells).
 static void ColosseumEntrance_UpdateEntranceCells(void) {
   s32 column, row;
 
@@ -1413,44 +1475,56 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Event_Wait(20);
   // The soldiers explain Isaac's selection and the companions' role.
   Event_SetMessageId(MsgColosseumIsaacOnlyOneEnteringFinals);
+  // "Huh? Isaac's the only one entering the finals?"
   ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
   Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
+  // "The warriors entered in the finals must go in alone."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "But why Isaac?"
   ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_FIRST_SOLDIER + 1, FACING_EAST, 40);
+  Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_EAST, 40);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_SOUTH_SOUTHWEST, 0);
-  ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER + 1,
-                                  FACING_SOUTH_SOUTHEAST);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 1, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
-  ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
+  ColosseumEntrance_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_SOUTH_SOUTHEAST);
+  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  // "That is what Babi wanted..."
+  ColosseumEntrance_ShowMessageAndPause(ACTOR_SECOND_SOLDIER);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  // "But I wanted to enter, too!"
   ColosseumEntrance_ShowMessageAndPause(ACTOR_GARET);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 2, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 2);
+  Actor_ShowEmote(ACTOR_THIRD_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "We aren't accepting any more entries."
+  ColosseumEntrance_ShowMessageAndPause(ACTOR_THIRD_SOLDIER);
   Actor_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
+  // "Well, Master Isaac, please prepare yourself."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_ESCORTING_SOLDIER);
   ColosseumEntrance_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+  // "I guess all you can do... is get it over with, Isaac."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
+  // "I know you want to enter, too, Garet, but there's nothing we can do."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   ColosseumEntrance_FaceDirection(ACTOR_GARET, FACING_EAST);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  // "This is crazy! Isaac won't survive against those Colosso warriors!"
   ColosseumEntrance_ShowMessageAndPause(ACTOR_GARET);
   ColosseumEntrance_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   ColosseumEntrance_FaceDirection(ACTOR_IVAN, FACING_WEST);
+  // "If Isaac wants to win, he'll have to use Psynergy."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
   Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Well, Babi does seem very interested in his Psynergy..."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   ColosseumEntrance_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST);
+  // "Even so, how's he supposed to use it here?"
   ColosseumEntrance_ShowMessageAndPause(ACTOR_GARET);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 0);
@@ -1462,29 +1536,34 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   ColosseumEntrance_FaceDirection(ACTOR_IVAN, FACING_NORTH);
+  // "What did Babi say we're supposed to do while Isaac is competing?"
   ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
+  // "We've made a slight exception. You can cheer him on from the stage."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 1, 1);
-  ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
+  Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 1);
+  // "You'll be able to see from right up close."
+  ColosseumEntrance_ShowMessageAndPause(ACTOR_SECOND_SOLDIER);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 40);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 2, 1);
-  ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 2);
+  Actor_RunRepeatedMotion(ACTOR_THIRD_SOLDIER, 1);
+  // "This is the first time it has ever been permitted! You should thank..."
+  ColosseumEntrance_ShowMessageAndPause(ACTOR_THIRD_SOLDIER);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   ColosseumEntrance_FaceDirection(ACTOR_MIA, FACING_NORTH);
   Actor_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
+  // "If everything is settled, I shall take you there."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_ESCORTING_SOLDIER);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -1496,10 +1575,12 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   ColosseumEntrance_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST);
+  // "Umm, can't Isaac go to see the finals stages, too?"
   ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 20);
   Actor_ShowEmote(ACTOR_ESCORTING_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "I bet you want to learn as much as you can about the finals, eh, Isaac?"
   Event_OpenMessage(ACTOR_IVAN, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -1507,42 +1588,46 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   flag = 0;
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
+    // "Of course, we won't argue if you don't, but if you can, you should."
     ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
     flag = 1;
   } else {
     gFieldState->message++;
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     ColosseumEntrance_FaceDirection(ACTOR_IVAN, FACING_NORTH);
+    // "Come on, you can make another exception, can't you?"
     ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
   }
   if (flag != 0) {
     gFieldState->message++;
   }
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_FIRST_SOLDIER + 1, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_FIRST_SOLDIER + 2, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_THIRD_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_ESCORTING_SOLDIER, FACING_NORTH_NORTHWEST, 20);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 1, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 2, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_THIRD_SOLDIER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_ESCORTING_SOLDIER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 1);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_SOUTH_SOUTHEAST);
+  // "...I don't see the harm in it."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 1, 1);
-  ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER + 1,
-                                  FACING_SOUTH_SOUTHEAST);
-  ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 2, 1);
-  ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER + 2,
-                                  FACING_SOUTH_SOUTHWEST);
-  ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 2);
+  Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 1);
+  ColosseumEntrance_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_SOUTH_SOUTHEAST);
+  // "I can't believe Isaac is entering midway through Colosso!"
+  ColosseumEntrance_ShowMessageAndPause(ACTOR_SECOND_SOLDIER);
+  Actor_RunRepeatedMotion(ACTOR_THIRD_SOLDIER, 1);
+  ColosseumEntrance_FaceDirection(ACTOR_THIRD_SOLDIER, FACING_SOUTH_SOUTHWEST);
+  // "This is a first! Totally unheard of! ...Like I said earlier."
+  ColosseumEntrance_ShowMessageAndPause(ACTOR_THIRD_SOLDIER);
   ColosseumEntrance_FaceDirection(ACTOR_ESCORTING_SOLDIER, FACING_WEST);
   Actor_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
+  // "Are we ready? I'll give you a tour of the arena. Let's go."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_ESCORTING_SOLDIER);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
@@ -1637,6 +1722,7 @@ static void ColosseumEntrance_AnnounceFinals(void) {
   Actor_FaceDirection(ACTOR_NAVAMPA, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTH_NORTHWEST, 0);
   Event_SetMessageId(MsgColosseumPrepareYourselvesContestantsFinalsWill);
+  // "Prepare yourselves, contestants! The finals will begin shortly."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FINALS_SOLDIER);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   // Azart wanders about his place again, as in ColosseumEntrance_TalkToAzart.
@@ -1685,12 +1771,15 @@ static void ColosseumEntrance_PraiseFirstMatchWon(void) {
   Event_SetMessageId(MsgColosseumSeeYouveMadeThroughYour);
   // "I see you've made it through your first match."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 1, 1);
-  ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 2, 1);
-  ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 2);
+  Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 1);
+  // "Winning your first match after jumping right into the finals is awesome!"
+  ColosseumEntrance_ShowMessageAndPause(ACTOR_SECOND_SOLDIER);
+  Actor_RunRepeatedMotion(ACTOR_THIRD_SOLDIER, 1);
+  // "I should have expected as much from a warrior selected by Babi."
+  ColosseumEntrance_ShowMessageAndPause(ACTOR_THIRD_SOLDIER);
   Actor_RunRepeatedMotion(ACTOR_ESCORTING_SOLDIER, 1);
   Actor_SetAnimation(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
+  // "Now, we can go have a look at the next series of stages..."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_ESCORTING_SOLDIER);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
@@ -1780,12 +1869,15 @@ static void ColosseumEntrance_PraiseBothMatchesWon(void) {
   Event_SetMessageId(MsgColosseumWonBothMatches);
   // "You've managed to win both of your matches."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 1, 1);
-  ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 2, 1);
-  ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 2);
+  Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 1);
+  // "You're incredible, Isaac! If you win the next one, you'll be the..."
+  ColosseumEntrance_ShowMessageAndPause(ACTOR_SECOND_SOLDIER);
+  Actor_RunRepeatedMotion(ACTOR_THIRD_SOLDIER, 1);
+  // "A fantastic performance, just as Babi expected... I won't..."
+  ColosseumEntrance_ShowMessageAndPause(ACTOR_THIRD_SOLDIER);
   Actor_RunRepeatedMotion(ACTOR_ESCORTING_SOLDIER, 1);
   Actor_SetAnimation(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
+  // "Let me take you to the next group of stages."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_ESCORTING_SOLDIER);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);

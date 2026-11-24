@@ -427,4 +427,18 @@ enum ExamineTarget {
 #define EVENT(script) ((u32)(script))
 #define TRIGGER_TABLE_END 0xffffffff
 
+/// SC_FACE_WATCHED every frame, forever: the script of an actor told to
+/// keep facing its watched actor.
+extern const s32 gActor_FaceWatchedScript[];
+
+/// Where the party returns after a defeat: {scene, entrance (-1 any),
+/// return scene, return entrance} rows, ended by scene -1
+/// (Scene_SetRestartPoint).
+extern const s16 gScene_RestartRules[];
+
+/// Battle backgrounds by scene: a background word (bit 31 set, resource id
+/// below) and then its scenes, ended by 0; a scene not listed takes the last
+/// background (BattleBackground_SelectForMap).
+extern s32 gScene_BattleBackgroundRules[];
+
 #endif

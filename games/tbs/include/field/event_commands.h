@@ -422,4 +422,9 @@ void MapScreen_Show(s32 image);
 void Field_UpdateActorVisibilityBounds(void);
 void WorldMap_ZoomOutWhileLHeld(void);
 
+/// The message voice's rate by message speed option: 1, 3, then 10
+/// (Message_SetVoiceFromActor). The same values as
+/// gMessageSpeed_VoiceGaps, which the message reads, in a copy of its own.
+extern const u8 gMessageSpeed_VoiceRates[];
+
 #endif

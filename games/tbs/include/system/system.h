@@ -281,4 +281,8 @@ void Serial_StepBlockTransfer(void);
 void SerialTest_Delay(void);
 void SerialTest_Run(void);
 
+/// Random16's seed; Lucky Wheels seeds it with the play time, and a link
+/// battle's parent sends it as the turn's gBattleRandomSeed.
+extern u32 gRandomSeed;
+
 #endif

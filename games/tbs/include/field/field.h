@@ -688,4 +688,8 @@ void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex);
 void SpriteViewer_SetLayerSprite(s32 layerIndex, s32 spriteId);
 void SpriteViewer_PlaceRing(void);
 
+/// Read as a halfword by Actor_SetOthersPaused: the actor id of the
+/// player's actor, which it leaves alone.
+extern u8 gPlayerActorId[];
+
 #endif

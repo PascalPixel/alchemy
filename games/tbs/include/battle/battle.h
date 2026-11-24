@@ -18,9 +18,6 @@ struct Actor;
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
 /// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_tables.c).
 extern const s8 gBattlePlacement_Spots[];
-/// Read as a halfword by Actor_SetOthersPaused: the actor id of the
-/// player's actor, which it leaves alone.
-extern u8 gPlayerActorId[];
 /// Each weapon's kind: bits 15..9 the kind, which indexes the
 /// gBattleUnit_WeaponAnimations tables, and 8..0 the item id; ended by 0xffff
 /// (BattleUnit_GetWeaponKind).
@@ -41,9 +38,6 @@ struct Ring {
   s32 velocityY; ///< 1/1024 canvas pixels per frame
   s32 age;       ///< frames
 };
-/// Mind Read's caster's palette cycle, two frames a step
-/// (field_sequence_tables.c).
-extern const u8 gMindRead_CasterPaletteCycle[];
 /// The weights an enemy picks among its eight actions by, one table for each
 /// weighted action strategy (enum EnemyActionStrategy, battle_internal.h):
 /// even, falling by 6, or falling steeply from 113 to 5.
@@ -118,38 +112,13 @@ extern u16 gEncounterZones[];
 /// BATTLE_UNIT_SIZE bytes each, that Unit_Get returns for unit ids 128 to 133
 /// during a battle.
 #define gEnemyUnits (*(u8 **)&gHeapSlots[HEAP_SLOT_ENEMY_UNITS])
-/// Random16's seed; Lucky Wheels seeds it with the play time, and a link
-/// battle's parent sends it as the turn's gBattleRandomSeed.
-extern u32 gRandomSeed;
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the camera's turn, which
 /// battle_staging.c, battle_auto_battle.c and battle_turn.c set for each
 /// action, and the background's display mode.
 #define gBattleBackgroundState                                                 \
   (*(struct BattleBackgroundState **)&gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND])
-/// SC_FACE_WATCHED every frame, forever: the script of an actor told to
-/// keep facing its watched actor.
-extern const s32 gActor_FaceWatchedScript[];
-/// Where the party returns after a defeat: {scene, entrance (-1 any),
-/// return scene, return entrance} rows, ended by scene -1
-/// (Scene_SetRestartPoint).
-extern const s16 gScene_RestartRules[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_GetWeaponSprite).
 extern const u16 gBattleUnit_WeaponAnimationsIsaac[];
-/// Battle backgrounds by scene: a background word (bit 31 set, resource id
-/// below) and then its scenes, ended by 0; a scene not listed takes the last
-/// background (BattleBackground_SelectForMap).
-extern s32 gScene_BattleBackgroundRules[];
-/// The template BattleEffect_BuildBlitter walks word by word to write a blitter
-/// (blitter_fragments.s); none of it runs where it is.
-extern const u32 gBlitterTemplate[];
-/// The message voice's rate by message speed option: 1, 3, then 10
-/// (Message_SetVoiceFromActor). The same values as
-/// gMessageSpeed_VoiceGaps, which the message reads, in a copy of its own.
-extern const u8 gMessageSpeed_VoiceRates[];
-/// The World Map cursor's angle for each +Control Pad direction, and its
-/// markers' blend cycle (field_sequence_tables.c).
-extern const u16 gWorldMap_CursorDirectionAngles[];
-extern const u8 gWorldMap_MarkerBlendCycle[];
 /// The ARM decoder for a battle background's image, which
 /// BattleBackground_Load copies to RAM and runs as a BitDecoder.
 void BitDecoder_DecodeImage(void);

@@ -334,4 +334,13 @@ s32 Speaker_GetActorSprite(s32 id);
 s32 Speaker_GetVoice(u32 id);
 s32 Speaker_GetHaltedLines(s32 id);
 
+/// Mind Read's caster's palette cycle, two frames a step
+/// (field_sequence_tables.c).
+extern const u8 gMindRead_CasterPaletteCycle[];
+
+/// The World Map cursor's angle for each +Control Pad direction, and its
+/// markers' blend cycle (field_sequence_tables.c).
+extern const u16 gWorldMap_CursorDirectionAngles[];
+extern const u8 gWorldMap_MarkerBlendCycle[];
+
 #endif

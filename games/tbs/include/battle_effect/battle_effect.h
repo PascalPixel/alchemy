@@ -677,4 +677,8 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
 
+/// The template BattleEffect_BuildBlitter walks word by word to write a blitter
+/// (blitter_fragments.s); none of it runs where it is.
+extern const u32 gBlitterTemplate[];
+
 #endif

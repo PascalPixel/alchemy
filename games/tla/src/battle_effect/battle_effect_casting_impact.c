@@ -3025,7 +3025,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       }
       // The cues.
       if (kind != CASTING_IMPACT_IMPACT_ECHO && frame == 3)
-        EFFECT_SHOW_DAMAGE(-1);
+        EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
       if (frame == 4) {
         if (kind == CASTING_IMPACT_IMPACT_STUN_JIP)
           Sound_PlayFar(SE_CRASH);

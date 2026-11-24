@@ -1018,7 +1018,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       }
     } else {
       if (frame == 12) {
-        EFFECT_SHOW_DAMAGE(-1);
+        EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
       }
       for (k = 0; k != args->targetCount; k++) {
         if (frame == k * 4 + 12) {

@@ -265,7 +265,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
             if (frame == k * STREAK_TARGET_DELAY + 24) {
               Sound_PlayFar(SE_IMPACT);
               if (k == 0)
-                EFFECT_SHOW_DAMAGE(-1);
+                EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
               BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, k, 8);
             }
@@ -470,7 +470,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     if (mode == MOTE_FOUNTAIN_DRIFTING) {
       for (i = 0; i != args->targetCount; i++) {
         if (frame == i * 8 + 48) {
-          EFFECT_SHOW_DAMAGE(-1);
+          EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 8);
         }
@@ -479,7 +479,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != args->targetCount; i++) {
         if (frame == i * 8 + 48) {
           Sound_PlayFar(SE_RECOVERY);
-          EFFECT_SHOW_DAMAGE(-1);
+          EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    TINT_KEEP, i, 8);
         }

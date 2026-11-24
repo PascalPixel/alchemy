@@ -1047,13 +1047,13 @@ void LuckyWheels_Update(void) {
 
       if (LUCKY_WHEELS_TITLE_FIRST_TURNED && i == 0)
         state->oam[state->spriteCount].attr01 =
-            OBJ_X((*(s16 *)((u8 *)&p->x + 2) + 512 - 16) & OBJ_X_MASK) |
-            objMode | ((*(s16 *)((u8 *)&p->y + 2) + 256 + 8) & OBJ_Y_MASK) |
-            OBJ_SIZE_32X32 | OBJ_HFLIP | OBJ_VFLIP;
+            OBJ_X((PIXEL_PART(p->x) + 512 - 16) & OBJ_X_MASK) | objMode |
+            ((PIXEL_PART(p->y) + 256 + 8) & OBJ_Y_MASK) | OBJ_SIZE_32X32 |
+            OBJ_HFLIP | OBJ_VFLIP;
       else
         state->oam[state->spriteCount].attr01 =
-            OBJ_X(*(s16 *)((u8 *)&p->x + 2)) | objMode |
-            ((*(s16 *)((u8 *)&p->y + 2) + 256) & OBJ_Y_MASK) | OBJ_SIZE_32X32;
+            OBJ_X(PIXEL_PART(p->x)) | objMode |
+            ((PIXEL_PART(p->y) + 256) & OBJ_Y_MASK) | OBJ_SIZE_32X32;
       state->oam[state->spriteCount].attr2 =
           (gLuckyWheels_TitleLetterTiles[i] * SPRITE_TILES(32, 32) +
            LUCKY_WHEELS_TITLE_TILES) |
@@ -1216,9 +1216,17 @@ void LuckyWheels_Update(void) {
   }
 }
 
-/// The end of Lucky Wheels' frame: while a win shows it bounces the first
-/// eight title letters, then restarts the HBlank DMA of the scanline offsets
-/// into BLDY and copies the frame's sprites to OAM.
+/// The title letters LuckyWheels_FinishFrame bounces in every edition: the
+/// Japanese title's eight. The other editions also bounce every letter as
+/// LuckyWheels_Update draws it, so there the first eight move twice a frame and
+/// the Spanish title's ninth once.
+// XXX: how the Spanish title's ninth letter bounces beside the others; a
+// recording of a Spanish win would settle it.
+#define LUCKY_WHEELS_BOUNCED_LETTERS 8
+
+/// The end of Lucky Wheels' frame: while a win shows it bounces the title
+/// letters, then restarts the HBlank DMA of the scanline offsets into BLDY and
+/// copies the frame's sprites to OAM.
 void LuckyWheels_FinishFrame(void) {
   struct LuckyWheelsState *state;
   struct ReelEffectState *fx;
@@ -1228,7 +1236,7 @@ void LuckyWheels_FinishFrame(void) {
   state = (struct LuckyWheelsState *)Ram_HeapSlots->canvasMap;
   fx = (struct ReelEffectState *)Ram_HeapSlots->battleEffect;
   if (state->state == LUCKY_WHEELS_SHOWING_WIN) {
-    for (i = 0; i != 8; i++) {
+    for (i = 0; i != LUCKY_WHEELS_BOUNCED_LETTERS; i++) {
       struct Particle *p = &fx->particles[i];
 
       p->y += p->velocityY;

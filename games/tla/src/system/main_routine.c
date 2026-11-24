@@ -202,7 +202,7 @@ enum {
   }
 
 /// The debug start's entrance into Venus Lighthouse's grounds: the path south
-/// of the round stone platform.
+/// of the plaza, which venus_lighthouse_entrance.c calls ENTRANCE_PLAZA_PATH.
 #define DEBUG_VENUS_LIGHTHOUSE_START 10
 /// The debug start's entrance into Mt. Aleph's summit, one no stretch of the
 /// ending uses: Alex stands on the summit while B is held, and the staff

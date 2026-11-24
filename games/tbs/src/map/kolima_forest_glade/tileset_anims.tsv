@@ -1,9 +1,7 @@
-paused	0
-picture	0	2	0	4
-picture	2	2	0	4
-jump	0
-channel	1
-picture	0	2	0	4
-picture	2	2	0	4
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	0	2	0	4
+0	picture	2	2	0	4
+0	jump	0
+1	picture	0	2	0	4
+1	picture	2	2	0	4
+1	jump	0

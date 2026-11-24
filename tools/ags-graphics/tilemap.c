@@ -49,23 +49,19 @@ mappedPart(const char *input, const char *path, const char *form,
 	bool pictures = fields->len == 6;
 	if (pictures && strcmp(fields->items[5], "pictures"))
 		fail("invalid mapped part option");
-	size_t first = decimalOrHex(fields->items[3], 1023),
-		   count = decimalOrHex(fields->items[4], 1024);
+	size_t first = number(fields->items[3], 10, 1023),
+		   count = number(fields->items[4], 10, 1024);
 	if (!count)
 		fail("empty tile range");
-	/* A tile map written as text (tilemap form), else a table of u16 columns. */
-	char *text = formatString("%s.txt", fields->items[2]),
-		 *textPath = sibling(input, text);
-	bool isText = exists(textPath);
-	free(text);
-	free(textPath);
-	char *name = formatString("%s.%s", fields->items[2], isText ? "txt" : "tsv");
-	Buffer rawMap = readSibling(input, name);
+	/* A tile map's grid, its columns numbered, else a table of u16 columns. */
+	char *name = formatString("%s.tsv", fields->items[2]),
+		 *mapPath = sibling(input, name);
+	Buffer rawMap = readFile(mapPath);
 	free(name);
 	size_t wide = 0;
 	Buffer map;
-	if (isText)
-		map = tilemap(&rawMap, &wide);
+	if (rawMap.len && isdigit(*rawMap.data))
+		map = tilemap(mapPath, &wide);
 	else
 	{
 		Strings lines = linesOf(&rawMap);
@@ -74,13 +70,9 @@ mappedPart(const char *input, const char *path, const char *form,
 		Strings columns = split(lines.items[0], '\t');
 		wide = columns.len;
 		for (size_t i = 0; i < wide; i++)
-		{
-			char *type = strrchr(columns.items[i], ':');
-			bool named = (*columns.items[i] == 'x' || *columns.items[i] == 't') &&
-						 isdigit((unsigned char) columns.items[i][1]);
-			if (type ? strcmp(type, ":u16") != 0 : !named)
+			if ((*columns.items[i] != 'x' && *columns.items[i] != 't') ||
+				!isdigit((unsigned char) columns.items[i][1]))
 				fail("tilemap requires u16 columns");
-		}
 		freeStrings(&columns);
 		freeStrings(&lines);
 		map = table(&rawMap);
@@ -162,5 +154,6 @@ mappedPart(const char *input, const char *path, const char *form,
 	freeImage(&image);
 	free(map.data);
 	free(rawMap.data);
+	free(mapPath);
 	return out;
 }

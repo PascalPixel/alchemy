@@ -162,29 +162,34 @@ mapped(const Buffer *map, int32_t codepoint)
 	return UINT32_MAX;
 }
 /*
- * Unspecified or BOX entries reserve a slot but cannot match ordinary text.
+ * The Japanese text font's character map, as pret's charmap.txt: under the
+ * columns code and character, each font code from 32 up in order and the
+ * character it draws. SPACE is U+0020; BOX marks a slot that draws a filled
+ * placeholder box and no character, and cannot match ordinary text. Voiced
+ * kana are written as their base kana followed by code 222 or 223.
  */
 static Buffer
 charmap(const char *path)
 {
 	Buffer data = readFile(path), result = {0};
 	Strings lines = split((char *) data.data, '\n');
-	for (size_t i = 0; i < lines.len; i++)
+	if (!lines.len || strcmp(lines.items[0], "code\tcharacter"))
+		fail("a character map's columns are code and character");
+	for (size_t i = 1; i < lines.len; i++)
 	{
-		const char *s = lines.items[i];
-		if (!*s || *s == '#')
+		if (!*lines.items[i])
 			continue;
-		Strings fields = split(s, '\t');
+		Strings fields = split(lines.items[i], '\t');
 		int32_t code = 0xfffd;
-		if (fields.len > 1)
-		{
-			const char *value = fields.items[1];
-			if (!strcmp(value, "SPACE"))
-				code = ' ';
-			else if (strcmp(value, "BOX") &&
-					 decodeUtf8((const uint8_t *) value, &code) < 0)
-				fail("invalid UTF-8 in charmap");
-		}
+		if (fields.len != 2 ||
+			number(fields.items[0], 10, 65535) != 32 + result.len / 4)
+			fail("character map codes run from 32 in order");
+		const char *value = fields.items[1];
+		if (!strcmp(value, "SPACE"))
+			code = ' ';
+		else if (strcmp(value, "BOX") &&
+				 decodeUtf8((const uint8_t *) value, &code) < 0)
+			fail("invalid UTF-8 in charmap");
 		word(&result, code);
 		freeStrings(&fields);
 	}

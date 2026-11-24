@@ -1,45 +1,43 @@
-channel	0
-picture	1736	2	542	1
-picture	1768	2	574	1
-picture	1752	2	538	1
-picture	1784	2	570	1
-picture	1560	2	534	1
-picture	1592	2	566	1
-picture	1618	2	532	1
-picture	1650	2	564	6
-picture	1738	2	542	1
-picture	1770	2	574	1
-picture	1754	2	538	1
-picture	1786	2	570	1
-picture	1562	2	534	1
-picture	1594	2	566	1
-picture	1620	2	532	1
-picture	1652	2	564	6
-picture	1740	2	542	1
-picture	1772	2	574	1
-picture	1756	2	538	1
-picture	1788	2	570	1
-picture	1564	2	534	1
-picture	1596	2	566	1
-picture	1622	2	532	1
-picture	1654	2	564	6
-picture	1742	2	542	1
-picture	1774	2	574	1
-picture	1758	2	538	1
-picture	1790	2	570	1
-picture	1566	2	534	1
-picture	1598	2	566	1
-picture	1624	2	532	1
-picture	1656	2	564	6
-jump	0
-channel	1
-picture	1688	2	536	1
-picture	1720	2	568	6
-picture	1690	2	536	1
-picture	1722	2	568	6
-picture	1692	2	536	1
-picture	1724	2	568	6
-picture	1694	2	536	1
-picture	1726	2	568	6
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	1736	2	542	1
+0	picture	1768	2	574	1
+0	picture	1752	2	538	1
+0	picture	1784	2	570	1
+0	picture	1560	2	534	1
+0	picture	1592	2	566	1
+0	picture	1618	2	532	1
+0	picture	1650	2	564	6
+0	picture	1738	2	542	1
+0	picture	1770	2	574	1
+0	picture	1754	2	538	1
+0	picture	1786	2	570	1
+0	picture	1562	2	534	1
+0	picture	1594	2	566	1
+0	picture	1620	2	532	1
+0	picture	1652	2	564	6
+0	picture	1740	2	542	1
+0	picture	1772	2	574	1
+0	picture	1756	2	538	1
+0	picture	1788	2	570	1
+0	picture	1564	2	534	1
+0	picture	1596	2	566	1
+0	picture	1622	2	532	1
+0	picture	1654	2	564	6
+0	picture	1742	2	542	1
+0	picture	1774	2	574	1
+0	picture	1758	2	538	1
+0	picture	1790	2	570	1
+0	picture	1566	2	534	1
+0	picture	1598	2	566	1
+0	picture	1624	2	532	1
+0	picture	1656	2	564	6
+0	jump	0
+1	picture	1688	2	536	1
+1	picture	1720	2	568	6
+1	picture	1690	2	536	1
+1	picture	1722	2	568	6
+1	picture	1692	2	536	1
+1	picture	1724	2	568	6
+1	picture	1694	2	536	1
+1	picture	1726	2	568	6
+1	jump	0

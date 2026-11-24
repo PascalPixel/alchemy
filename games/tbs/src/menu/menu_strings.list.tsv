@@ -1,0 +1,57 @@
+string	text	edition
+gStatusPanel_LevelString	Nv.	es
+gStatusPanel_LevelString	Niv	fr
+gStatusPanel_LevelString	Lv	ja
+gStatusPanel_LevelString	Lv	en
+gStatusPanel_LevelString	Lv	de
+gStatusPanel_LevelString	Lv	it
+gStatusPanel_HpRowString	HP    /	ja
+gStatusPanel_PpRowString	EP    /	ja
+gStatusPanel_HpString	KP	de
+gStatusPanel_HpString	PV	es
+gStatusPanel_HpString	PV	fr
+gStatusPanel_HpString	PS	it
+gStatusPanel_HpString	HP	en
+gStatusPanel_SlashString	/	en
+gStatusPanel_SlashString	/	de
+gStatusPanel_SlashString	/	es
+gStatusPanel_SlashString	/	fr
+gStatusPanel_SlashString	/	it
+gStatusPanel_PpString	PP	en
+gStatusPanel_PpString	PP	de
+gStatusPanel_PpString	PP	es
+gStatusPanel_PpString	PP	fr
+gStatusPanel_PpString	PP	it
+gMenu_TimesString	x	en
+gMenu_TimesString	x	de
+gMenu_TimesString	x	es
+gMenu_TimesString	x	fr
+gMenu_TimesString	x	it
+gItemMenu_ArrangeKeysString	L+A:	ja
+gItemMenu_EquipmentKeyString	R:	ja
+gMenu_PointString	.	
+gMenu_PlusSignString	+	
+gMenu_MinusSignString	-	
+gMenu_ShortcutLString	L	ja
+gMenu_ShortcutLColonString	L:	ja
+gMenu_ShortcutRString	R	ja
+gMenu_ShortcutRColonString	R:	ja
+gMenu_LvString	Nv.	es
+gMenu_LvString	Niv	fr
+gMenu_LvString	Lv	ja
+gMenu_LvString	Lv	en
+gMenu_LvString	Lv	de
+gMenu_LvString	Lv	it
+gMenu_SlashString	/	
+gMenu_HpString	KP	de
+gMenu_HpString	PV	es
+gMenu_HpString	PV	fr
+gMenu_HpString	PS	it
+gMenu_HpString	HP	ja
+gMenu_HpString	HP	en
+gMenu_PpString	PP	en
+gMenu_PpString	PP	de
+gMenu_PpString	PP	es
+gMenu_PpString	PP	fr
+gMenu_PpString	PP	it
+gMenu_PpString	EP	ja

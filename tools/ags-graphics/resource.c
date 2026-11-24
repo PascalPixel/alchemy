@@ -56,20 +56,24 @@ dataForm(const char *form)
 		   !strcmp(form, "scene") || !strcmp(form, "parts") ||
 		   !strcmp(form, "tilemap") || !strcmp(form, "collision") ||
 		   !strcmp(form, "icons4") || !strcmp(form, "blocks") ||
-		   !strcmp(form, "script") || !strcmp(form, "sprites") ||
-		   !strcmp(form, "spriteblocks");
+		   !strcmp(form, "script");
 }
 
 /*
- * Parts may compose ordinary pictures and tables. Containers and fonts have
- * their own metadata and cannot be nested as plain parts.
+ * A part list names its parts in order under the columns `part` and `form`.
+ * A part drawn through a tile map also names the map, the first tile and the
+ * count of tiles it takes from it, and `pictures` under `drawing` when the
+ * drawing stacks several pictures. Parts are ordinary pictures, tables and
+ * tile maps; containers and fonts cannot be nested as parts.
  */
 static Buffer
 parts(const char *input, const Buffer *data, unsigned depth)
 {
 	Strings lines = linesOf(data);
 	Buffer out = {0};
-	for (size_t i = 0; i < lines.len; i++)
+	if (!lines.len || strncmp(lines.items[0], "part\tform", 9))
+		fail("a part list starts with its columns, part and form");
+	for (size_t i = 1; i < lines.len; i++)
 	{
 		Strings f = split(lines.items[i], '\t');
 		for (size_t j = 0; j < f.len; j++)
@@ -78,15 +82,16 @@ parts(const char *input, const Buffer *data, unsigned depth)
 			free(f.items[j]);
 			f.items[j] = v;
 		}
+		while (f.len && !*f.items[f.len - 1])
+			free(f.items[--f.len]);
 		if (f.len < 2)
 			fail("part needs a name and form");
 		const char *form = f.items[1];
-		bool map = !strcmp(form, "tilemap");
 		if ((dataForm(form) && strcmp(form, "table") &&
-			 strcmp(form, "plane") && !map) ||
+			 strcmp(form, "plane") && strcmp(form, "tilemap")) ||
 			!strcmp(form, "font"))
 			fail("part must be an image, table or tile map");
-		const char *ext = map ? "txt" : dataForm(form) ? "tsv" : "png";
+		const char *ext = dataForm(form) ? "tsv" : "png";
 		char *name = formatString("%s.%s", f.items[0], ext),
 			 *path = sibling(input, name);
 		free(name);
@@ -130,34 +135,35 @@ pictureRun(const char *input)
 }
 
 /*
- * Absent slots retain zero offsets; present slots include their own palette.
+ * An icon bank's slots in order under the columns slot, icon and align: the
+ * slot's icon with its own palette, padded to a multiple of align bytes. A
+ * row with its slot alone is an empty slot, whose offset stays zero.
  */
 static Buffer
 iconBank(const char *input, const Buffer *data)
 {
-	Strings lines = linesOf(data), slots = {0};
-	size_t align = 4;
-	for (size_t i = 0; i < lines.len; i++)
+	Strings lines = linesOf(data);
+	if (!lines.len || strcmp(lines.items[0], "slot\ticon\talign"))
+		fail("an icon bank's columns are slot, icon and align");
+	Buffer out = {0};
+	for (size_t i = 1; i < lines.len; i++)
+		half(&out, 0);
+	for (size_t i = 0; i + 1 < lines.len; i++)
 	{
-		if (!strncmp(lines.items[i], "align\t", 6))
+		Strings f = split(lines.items[i + 1], '\t');
+		if (number(trim(f.items[0]), 10, SIZE_MAX) != i ||
+			(f.len != 1 && f.len != 3))
+			fail("icon slots are numbered in order, each with an icon and "
+				 "its alignment or neither");
+		if (f.len == 3)
 		{
-			align = number(trim(lines.items[i] + 6), 10, 65536);
+			size_t align = number(trim(f.items[2]), 10, 65536);
 			if (!align || align & (align - 1))
 				fail("icon alignment is not a power of two");
-		}
-		else
-			addString(&slots, lines.items[i]);
-	}
-	Buffer out = {0};
-	for (size_t i = 0; i < slots.len; i++)
-		half(&out, 0);
-	for (size_t i = 0; i < slots.len; i++)
-		if (strcmp(slots.items[i], "-"))
-		{
 			if (out.len > 65535)
 				fail("icon bank is too large");
 			write16(out.data + 2 * i, (unsigned) out.len);
-			char *name = formatString("%s.png", slots.items[i]);
+			char *name = formatString("%s.png", trim(f.items[1]));
 			Buffer png = readSibling(input, name);
 			free(name);
 			Image image = readImage(&png);
@@ -174,8 +180,9 @@ iconBank(const char *input, const Buffer *data)
 			free(packed.data);
 			freeImage(&image);
 		}
+		freeStrings(&f);
+	}
 	freeStrings(&lines);
-	freeStrings(&slots);
 	return out;
 }
 
@@ -208,8 +215,8 @@ patched(const char *input, const Buffer *data)
 			if (f.len != 4 || !*trim(f.items[3]))
 				fail("packing patch needs four fields and proof");
 			size_t at = number(trim(f.items[0]), 10, SIZE_MAX);
-			unsigned pack = decimalOrHex(trim(f.items[1]), 255),
-					 ship = decimalOrHex(trim(f.items[2]), 255);
+			unsigned pack = number(trim(f.items[1]), 10, 255),
+					 ship = number(trim(f.items[2]), 10, 255);
 			if (at >= data->len || (i > 1 && at <= previous) ||
 				ship != data->data[at] || pack == ship)
 				fail("packing patch disagrees with asset");
@@ -240,11 +247,11 @@ buildResource(const char *input, const char *form, const char *codec,
 	else if (!strcmp(form, "scene"))
 		raw = scene(input);
 	else if (!strcmp(form, "tilemap"))
-		raw = tilemap(&data, NULL);
+		raw = tilemap(input, NULL);
 	else if (!strcmp(form, "collision"))
 		raw = collision(&data);
 	else if (!strcmp(form, "script"))
-		raw = script(&data);
+		raw = script(input, &data);
 	else if (!strcmp(form, "blocks"))
 		raw = blocks(&data);
 	else if (!strcmp(form, "parts"))
@@ -253,8 +260,6 @@ buildResource(const char *input, const char *form, const char *codec,
 		raw = iconBank(input, &data);
 	else if (!strcmp(form, "bitmaps"))
 		raw = pictureRun(input);
-	else if (!strcmp(form, "sprites") || !strcmp(form, "spriteblocks"))
-		raw = spriteSource(input, !strcmp(form, "spriteblocks"));
 	else if (!strncmp(form, "delta", 5))
 	{
 		Buffer t = table(&data);

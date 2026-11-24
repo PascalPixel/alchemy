@@ -1,39 +1,35 @@
-channel	2
-picture	1948	2	580	7
-picture	1950	2	580	20
-jump	0
-channel	6
-picture	1874	2	1056	0
-picture	1906	2	1088	8
-picture	1876	2	1056	0
-picture	1908	2	1088	8
-picture	1878	2	1056	0
-picture	1910	2	1088	8
-picture	1880	2	1056	0
-picture	1912	2	1088	8
-picture	1882	2	1056	0
-picture	1914	2	1088	8
-picture	1884	2	1056	0
-picture	1916	2	1088	8
-picture	1886	2	1056	0
-picture	1918	2	1088	8
-jump	0
-channel	7
-picture	1848	1	1065	0
-picture	1852	1	1061	8
-picture	1849	1	1065	0
-picture	1853	1	1061	8
-picture	1850	1	1065	0
-picture	1854	1	1061	8
-picture	1851	1	1065	0
-picture	1855	1	1061	32
-jump	0
-channel	8
-picture	1664	6	1490	0
-picture	1696	6	1522	10
-picture	1670	6	1490	0
-picture	1702	6	1522	10
-picture	1676	6	1490	0
-picture	1708	6	1522	10
-jump	0
-end
+animation	command	value	count	destination	frames
+2	picture	1948	2	580	7
+2	picture	1950	2	580	20
+2	jump	0
+6	picture	1874	2	1056	0
+6	picture	1906	2	1088	8
+6	picture	1876	2	1056	0
+6	picture	1908	2	1088	8
+6	picture	1878	2	1056	0
+6	picture	1910	2	1088	8
+6	picture	1880	2	1056	0
+6	picture	1912	2	1088	8
+6	picture	1882	2	1056	0
+6	picture	1914	2	1088	8
+6	picture	1884	2	1056	0
+6	picture	1916	2	1088	8
+6	picture	1886	2	1056	0
+6	picture	1918	2	1088	8
+6	jump	0
+7	picture	1848	1	1065	0
+7	picture	1852	1	1061	8
+7	picture	1849	1	1065	0
+7	picture	1853	1	1061	8
+7	picture	1850	1	1065	0
+7	picture	1854	1	1061	8
+7	picture	1851	1	1065	0
+7	picture	1855	1	1061	32
+7	jump	0
+8	picture	1664	6	1490	0
+8	picture	1696	6	1522	10
+8	picture	1670	6	1490	0
+8	picture	1702	6	1522	10
+8	picture	1676	6	1490	0
+8	picture	1708	6	1522	10
+8	jump	0

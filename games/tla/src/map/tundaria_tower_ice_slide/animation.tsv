@@ -1,25 +1,22 @@
-channel	0
-picture	1840	2	1504	7
-picture	1842	2	1504	7
-picture	1844	2	1504	7
-picture	1846	2	1504	7
-picture	1848	2	1504	7
-picture	1850	2	1504	90
-jump	0
-channel	1
-picture	1840	2	1506	7
-picture	1842	2	1506	7
-picture	1844	2	1506	7
-picture	1846	2	1506	7
-picture	1848	2	1506	7
-picture	1850	2	1506	120
-jump	0
-channel	2
-picture	1840	2	1508	7
-picture	1842	2	1508	7
-picture	1844	2	1508	7
-picture	1846	2	1508	7
-picture	1848	2	1508	7
-picture	1850	2	1508	130
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	1840	2	1504	7
+0	picture	1842	2	1504	7
+0	picture	1844	2	1504	7
+0	picture	1846	2	1504	7
+0	picture	1848	2	1504	7
+0	picture	1850	2	1504	90
+0	jump	0
+1	picture	1840	2	1506	7
+1	picture	1842	2	1506	7
+1	picture	1844	2	1506	7
+1	picture	1846	2	1506	7
+1	picture	1848	2	1506	7
+1	picture	1850	2	1506	120
+1	jump	0
+2	picture	1840	2	1508	7
+2	picture	1842	2	1508	7
+2	picture	1844	2	1508	7
+2	picture	1846	2	1508	7
+2	picture	1848	2	1508	7
+2	picture	1850	2	1508	130
+2	jump	0

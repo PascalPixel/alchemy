@@ -1,51 +1,48 @@
-channel	0
-picture	1536	4	28	0
-picture	1568	4	60	0
-picture	1600	4	92	0
-picture	1632	4	124	8
-picture	1540	4	28	0
-picture	1572	4	60	0
-picture	1604	4	92	0
-picture	1636	4	124	8
-picture	1664	4	28	0
-picture	1696	4	60	0
-picture	1728	4	92	0
-picture	1760	4	124	8
-picture	1668	4	28	0
-picture	1700	4	60	0
-picture	1732	4	92	0
-picture	1764	4	124	8
-picture	1792	4	28	0
-picture	1824	4	60	0
-picture	1856	4	92	0
-picture	1888	4	124	8
-picture	1796	4	28	0
-picture	1828	4	60	0
-picture	1860	4	92	0
-picture	1892	4	124	8
-picture	1920	4	28	0
-picture	1952	4	60	0
-picture	1984	4	92	0
-picture	2016	4	124	8
-picture	1924	4	28	0
-picture	1956	4	60	0
-picture	1988	4	92	0
-picture	2020	4	124	8
-jump	0
-channel	1
-picture	2036	1	816	8
-picture	2038	1	816	8
-picture	2040	1	816	8
-picture	2042	1	816	8
-picture	2044	1	816	8
-picture	2046	1	816	96
-jump	0
-channel	2
-picture	2037	1	817	8
-picture	2039	1	817	8
-picture	2041	1	817	8
-picture	2043	1	817	8
-picture	2045	1	817	8
-picture	2047	1	817	128
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	1536	4	28	0
+0	picture	1568	4	60	0
+0	picture	1600	4	92	0
+0	picture	1632	4	124	8
+0	picture	1540	4	28	0
+0	picture	1572	4	60	0
+0	picture	1604	4	92	0
+0	picture	1636	4	124	8
+0	picture	1664	4	28	0
+0	picture	1696	4	60	0
+0	picture	1728	4	92	0
+0	picture	1760	4	124	8
+0	picture	1668	4	28	0
+0	picture	1700	4	60	0
+0	picture	1732	4	92	0
+0	picture	1764	4	124	8
+0	picture	1792	4	28	0
+0	picture	1824	4	60	0
+0	picture	1856	4	92	0
+0	picture	1888	4	124	8
+0	picture	1796	4	28	0
+0	picture	1828	4	60	0
+0	picture	1860	4	92	0
+0	picture	1892	4	124	8
+0	picture	1920	4	28	0
+0	picture	1952	4	60	0
+0	picture	1984	4	92	0
+0	picture	2016	4	124	8
+0	picture	1924	4	28	0
+0	picture	1956	4	60	0
+0	picture	1988	4	92	0
+0	picture	2020	4	124	8
+0	jump	0
+1	picture	2036	1	816	8
+1	picture	2038	1	816	8
+1	picture	2040	1	816	8
+1	picture	2042	1	816	8
+1	picture	2044	1	816	8
+1	picture	2046	1	816	96
+1	jump	0
+2	picture	2037	1	817	8
+2	picture	2039	1	817	8
+2	picture	2041	1	817	8
+2	picture	2043	1	817	8
+2	picture	2045	1	817	8
+2	picture	2047	1	817	128
+2	jump	0

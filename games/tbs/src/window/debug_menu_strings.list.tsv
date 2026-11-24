@@ -1,0 +1,8 @@
+string	text	edition
+gMenu_ColonString	:	
+gMenu_HexDigitsString	0123456789ABCDEF	
+gDebugMenu_ItemTitle	ITEM	
+gDebugMenu_EnergyTitle	ENERGY	
+gDebugMenu_StatusTitle	STATUS	
+gDebugMenu_PageLabel	PAGE:	
+gDebugMenu_RangeDash	-	

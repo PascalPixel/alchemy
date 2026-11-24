@@ -25,7 +25,7 @@ size_t tileRowOffset(const Image *image, size_t width, size_t height,
 					 size_t row);
 Buffer buildResource(const char *input, const char *form, const char *codec,
 					 unsigned depth);
-Buffer spriteSource(const char *input, bool blocks);
+Buffer spriteSource(const char *input, const char *bankName, bool blocks);
 Buffer redraw(const char *input, const char *from, const char *to, size_t wide,
 			  const char *palette);
 #endif

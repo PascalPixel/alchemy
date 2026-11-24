@@ -1,49 +1,45 @@
-channel	0
-picture	1536	32	1472	15
-picture	1568	32	1472	15
-picture	1600	32	1472	15
-picture	1632	32	1472	15
-picture	1664	32	1472	15
-picture	1696	32	1472	15
-picture	1728	32	1472	15
-picture	1760	32	1472	15
-jump	0
-channel	1
-picture	1792	8	1504	15
-picture	1800	8	1504	15
-picture	1808	8	1504	15
-picture	1816	8	1504	15
-picture	1824	8	1504	15
-picture	1832	8	1504	15
-picture	1840	8	1504	15
-picture	1848	8	1504	15
-picture	1856	8	1504	15
-picture	1864	8	1504	15
-picture	1872	8	1504	15
-picture	1880	8	1504	15
-picture	1888	8	1504	15
-picture	1896	8	1504	15
-picture	1904	8	1504	15
-picture	1912	8	1504	15
-jump	0
-channel	2
-picture	1920	8	1512	8
-picture	1928	8	1512	8
-picture	1936	8	1512	8
-picture	1944	8	1512	8
-picture	1952	8	1512	8
-picture	1960	8	1512	8
-picture	1968	8	1512	8
-picture	1976	8	1512	8
-jump	0
-channel	3
-picture	1984	4	1520	15
-picture	1988	4	1520	15
-picture	1992	4	1520	15
-picture	1996	4	1520	15
-picture	2000	4	1520	15
-picture	2004	4	1520	15
-picture	2008	4	1520	15
-picture	2012	4	1520	15
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	1536	32	1472	15
+0	picture	1568	32	1472	15
+0	picture	1600	32	1472	15
+0	picture	1632	32	1472	15
+0	picture	1664	32	1472	15
+0	picture	1696	32	1472	15
+0	picture	1728	32	1472	15
+0	picture	1760	32	1472	15
+0	jump	0
+1	picture	1792	8	1504	15
+1	picture	1800	8	1504	15
+1	picture	1808	8	1504	15
+1	picture	1816	8	1504	15
+1	picture	1824	8	1504	15
+1	picture	1832	8	1504	15
+1	picture	1840	8	1504	15
+1	picture	1848	8	1504	15
+1	picture	1856	8	1504	15
+1	picture	1864	8	1504	15
+1	picture	1872	8	1504	15
+1	picture	1880	8	1504	15
+1	picture	1888	8	1504	15
+1	picture	1896	8	1504	15
+1	picture	1904	8	1504	15
+1	picture	1912	8	1504	15
+1	jump	0
+2	picture	1920	8	1512	8
+2	picture	1928	8	1512	8
+2	picture	1936	8	1512	8
+2	picture	1944	8	1512	8
+2	picture	1952	8	1512	8
+2	picture	1960	8	1512	8
+2	picture	1968	8	1512	8
+2	picture	1976	8	1512	8
+2	jump	0
+3	picture	1984	4	1520	15
+3	picture	1988	4	1520	15
+3	picture	1992	4	1520	15
+3	picture	1996	4	1520	15
+3	picture	2000	4	1520	15
+3	picture	2004	4	1520	15
+3	picture	2008	4	1520	15
+3	picture	2012	4	1520	15
+3	jump	0

@@ -1,63 +1,29 @@
 /*
  * tables.c
  *
- * Encode typed records, sparse planes, animation scripts, and block grids.
- * These are distinct TSV formats: column types describe record widths, while
- * planes and blocks retain spatial positions even when cells are omitted.
+ * Encode records, planes, animation scripts, and block grids.
+ * These are distinct TSV formats: column names give record widths, while
+ * planes and blocks keep spatial positions.
  */
 #include <ctype.h>
 #include "resource.h"
 
 /*
- * A strN column holds a quoted string of at most N bytes, written in full and
- * padded with zeros: "Vermin", "" or "\xff", with \\, \" and \xNN escapes.
- */
-static void
-text(Buffer *out, const char *s, unsigned size)
-{
-	size_t len = strlen(s), start = out->len;
-	if (len < 2 || s[0] != '"' || s[len - 1] != '"')
-		fail("table string is not quoted");
-	for (size_t i = 1; i < len - 1; i++)
-	{
-		unsigned c = (unsigned char) s[i];
-		if (c == '\\')
-		{
-			char e = i + 1 < len - 1 ? s[++i] : 0;
-			if (e == 'x' && i + 2 < len - 1)
-			{
-				char digits[3] = {s[i + 1], s[i + 2], 0};
-				c = (unsigned) number(digits, 16, 255);
-				i += 2;
-			}
-			else if (e == '\\' || e == '"')
-				c = (unsigned char) e;
-			else
-				fail("unknown table string escape");
-		}
-		else if (c == '"')
-			fail("table string has an unescaped quote");
-		if (out->len - start >= size)
-			fail("table string is longer than its column");
-		byte(out, c);
-	}
-	while (out->len - start < size)
-		byte(out, 0);
-}
-
-/*
- * A final short record is allowed; once encountered, no later row may follow.
- * A column named without a type is a label for people, such as a name, and
- * writes nothing.
+ * A table's columns are known by their names: each writes a number of its
+ * own width, and a column this file does not know is a label for people,
+ * such as a name, and writes nothing. A final short record is allowed; once
+ * encountered, no later row may follow.
  */
 /*
  * The type of a column that is known by its name alone, or nothing.
  */
-static char *
+static const char *
 typeOf(const char *name)
 {
 	static const char *const BYTES[] = {"shape", "height0", "height1",
-										"height2", "id", "flags"};
+										"height2", "id", "flags",
+										"upper_left", "upper_right",
+										"lower_left", "lower_right"};
 	static const char *const SIGNED[] = {"left", "top", "right", "bottom"};
 	static const char *const HALVES[] = {"top_left", "top_right", "bottom_left",
 										 "bottom_right", "x", "z"};
@@ -78,7 +44,8 @@ typeOf(const char *name)
 	size_t letters = strcspn(name, "0123456789");
 	if (!name[letters] || name[letters + strspn(name + letters, "0123456789")])
 		return NULL;
-	if (letters == 1 && (*name == 'x' || *name == 't'))
+	if ((letters == 1 && (*name == 'x' || *name == 't')) ||
+		(letters == 4 && !strncmp(name, "word", 4)))
 		return "u16";
 	if (letters == 1 && *name == 'w')
 		return "u32";
@@ -105,7 +72,6 @@ table(const Buffer *input)
 		shortRow = fields.len < columns.len;
 		for (size_t i = 0; i < fields.len; i++)
 		{
-			char *type = strrchr(columns.items[i], ':');
 			size_t named = strlen(columns.items[i]);
 			/* A corner's flip (h, v or hv) and palette join the tile before. */
 			if (named > 5 && !strcmp(columns.items[i] + named - 5, "_flip"))
@@ -128,26 +94,16 @@ table(const Buffer *input)
 					number(trim(fields.items[i]), 10, 15) << 4;
 				continue;
 			}
-			type = type ? type + 1 : typeOf(columns.items[i]);
+			const char *type = typeOf(columns.items[i]);
 			if (!type)
 				continue;
-			if (!strncmp(type, "str", 3))
-			{
-				text(&out, trim(fields.items[i]),
-					 number(type + 3, 10, 65535));
-				continue;
-			}
 			bool sign = *type == 's';
-			if (!sign && *type != 'u')
-				fail("unknown table column type");
 			unsigned bits = number(type + 1, 10, 32);
-			if (bits != 8 && bits != 16 && bits != 32)
-				fail("unknown table column width");
 			char *s = trim(fields.items[i]);
 			bool neg = *s == '-';
 			if (neg)
 				s++;
-			uint64_t magnitude = decimalOrHex(s, UINT32_MAX),
+			uint64_t magnitude = number(s, 10, UINT32_MAX),
 					 limit = sign ? (UINT64_C(1) << (bits - 1)) - !neg
 								  : (UINT64_C(1) << bits) - 1;
 			if ((neg && !sign) || magnitude > limit)
@@ -187,89 +143,126 @@ plane(const Buffer *input)
 }
 
 /*
- * Commands encode either a prefixed operand or a fixed count of halfwords.
- * `paused n` is `channel n` with the marker's bit 7 set, so n stays below 128.
+ * A map's timed changes, one command a row; the game reads halfwords.
+ *
+ * Tileset animations, under the columns animation, command, value, count,
+ * destination and frames. The rows of one animation, 0 to 15, stand
+ * together:
+ *
+ *   picture   copy count tiles from tile value to tile destination, then
+ *             wait frames
+ *   jump      continue at the animation's command value, counted from 0
+ *   stop      stay here for good
+ *
+ * NAME.paused.tsv beside the table, one column, lists the animations that
+ * start paused.
+ *
+ * A blend script, under the columns command, value and frames:
+ *
+ *   control   set the blend register to value
+ *   level     set the blend level to value, then wait frames
+ *   jump      continue at command value, counted from 0
+ *
+ * The marker that starts each animation and the one that ends the script are
+ * written here. The game jumps to a pair of halfwords, so a jump's target
+ * starts on one.
  */
 Buffer
-script(const Buffer *input)
+script(const char *input, const Buffer *data)
 {
-	Strings lines = linesOf(input);
+	Strings lines = linesOf(data), paused = {0};
+	if (!lines.len)
+		fail("a script names its columns");
+	bool blend = !strcmp(lines.items[0], "command\tvalue\tframes");
+	if (!blend &&
+		strcmp(lines.items[0],
+			   "animation\tcommand\tvalue\tcount\tdestination\tframes"))
+		fail("a script's columns are a tileset animation's or a blend's");
+	char *path = formatString("%.*s.paused.tsv", (int) (strlen(input) - 4),
+							  input);
+	if (!blend && exists(path))
+	{
+		Buffer text = readFile(path);
+		paused = linesOf(&text);
+		free(text.data);
+	}
+	free(path);
 	Buffer out = {0};
-	for (size_t i = 0; i < lines.len; i++)
+	size_t starts[256], count = 0, first = blend ? 0 : 1;
+	char *animation = NULL;
+	for (size_t i = 1; i < lines.len; i++)
 	{
 		Strings f = split(lines.items[i], '\t');
-		const char *key = f.items[0];
-		size_t n;
-		unsigned prefix = 0, operand = 255;
-		if (!strcmp(key, "channel"))
+		for (size_t j = 0; j < f.len; j++)
+			memmove(f.items[j], trim(f.items[j]), strlen(trim(f.items[j])) + 1);
+		if (f.len <= first)
+			fail("a script row needs its command");
+		if (!blend && (!animation || strcmp(animation, f.items[0])))
 		{
-			n = 1;
-			prefix = 0xfd00;
+			half(&out, 0xfd00 | number(f.items[0], 10, 15) |
+						   (hasString(&paused, f.items[0]) ? 0x80 : 0));
+			free(animation);
+			animation = copyString(f.items[0]);
+			count = 0;
 		}
-		else if (!strcmp(key, "paused"))
+		const char *command = f.items[first];
+		size_t values = f.len - first - 1;
+		if (count == 256)
+			fail("too many script commands");
+		starts[count++] = out.len;
+		if (!strcmp(command, "jump") && values == 1)
 		{
-			n = 1;
-			prefix = 0xfd80;
-			operand = 127;
+			size_t to = number(f.items[first + 1], 10, count - 1),
+				   bytes = starts[to] - starts[0];
+			if (bytes % 4 || bytes / 4 > 254)
+				fail("a jump's target does not start on a pair of halfwords");
+			half(&out, 0xfe00 | (unsigned) (bytes / 4));
 		}
-		else if (!strcmp(key, "jump"))
-		{
-			n = 1;
-			prefix = 0xfe00;
-		}
-		else if (!strcmp(key, "stop"))
-		{
-			n = 0;
-			prefix = 0xfeff;
-		}
-		else if (!strcmp(key, "end"))
-		{
-			n = 0;
-			prefix = 0xffff;
-		}
-		else if (!strcmp(key, "picture"))
-			n = 4;
-		else if (!strcmp(key, "control"))
-			n = 1;
-		else if (!strcmp(key, "level"))
-			n = 2;
+		else if (!strcmp(command, "stop") && values == 0)
+			half(&out, 0xfeff);
+		else if ((!blend && !strcmp(command, "picture") && values == 4) ||
+				 (blend && !strcmp(command, "control") && values == 1) ||
+				 (blend && !strcmp(command, "level") && values == 2))
+			for (size_t j = first + 1; j < f.len; j++)
+				half(&out, number(f.items[j], 10,
+								  j == first + 1 ? 0xfcff : 0xffff));
 		else
-			fail("unknown script command: %s", key);
-		if (f.len != n + 1)
-			fail("wrong number of script arguments");
-		if (prefix)
-			half(&out,
-				 prefix | (n ? decimalOrHex(trim(f.items[1]), operand) : 0));
-		else
-			for (size_t j = 1; j < f.len; j++)
-				half(&out, decimalOrHex(trim(f.items[j]), 65535));
+			fail("unknown script command: %s", lines.items[i]);
 		freeStrings(&f);
 	}
+	half(&out, 0xffff);
+	free(animation);
+	freeStrings(&paused);
 	freeStrings(&lines);
 	return out;
 }
 
 /*
- * A missing block omits all 256 cells. Offsets point to independently packed
- * blocks, while fully omitted blocks retain zero offsets.
+ * A grid of 16x16 blocks under a header line numbering its columns, one
+ * number a cell. A block whose 256 cells are all empty is missing: its
+ * offset stays zero, while every other block is packed on its own. A row may
+ * stop at its last number.
  */
 Buffer
 blocks(const Buffer *input)
 {
-	Strings lines = linesOf(input);
-	if (!lines.len || lines.len % 16)
+	Strings lines = split((char *) input->data, '\n');
+	if (lines.len && !*lines.items[lines.len - 1])
+		free(lines.items[--lines.len]);
+	if (lines.len < 17 || (lines.len - 1) % 16)
+		fail("block grid needs its header and whole 16x16 blocks");
+	Strings header = split(lines.items[0], '\t');
+	size_t width = header.len, high = lines.len - 1;
+	if (width % 16)
 		fail("block grid needs whole 16x16 blocks");
-	Strings *rows = allocate(lines.len, sizeof(Strings));
-	size_t width = 0;
-	for (size_t y = 0; y < lines.len; y++)
+	Strings *rows = allocate(high, sizeof(Strings));
+	for (size_t y = 0; y < high; y++)
 	{
-		rows[y] = split(lines.items[y], '\t');
-		if (!y)
-			width = rows[y].len;
-		if (!width || width % 16 || rows[y].len != width)
-			fail("block grid rows differ");
+		rows[y] = split(lines.items[y + 1], '\t');
+		if (rows[y].len > width)
+			fail("a block grid row is wider than its header");
 	}
-	size_t count = width / 16 * (lines.len / 16);
+	size_t count = width / 16 * (high / 16);
 	Buffer out = {0};
 	for (size_t i = 0; i < count; i++)
 		word(&out, 0);
@@ -281,11 +274,13 @@ blocks(const Buffer *input)
 		for (size_t dy = 0; dy < 16; dy++)
 			for (size_t dx = 0; dx < 16; dx++)
 			{
-				char *s = trim(rows[y + dy].items[x + dx]);
-				if (!strcmp(s, "-"))
+				const char *s = x + dx < rows[y + dy].len
+									? trim(rows[y + dy].items[x + dx])
+									: "";
+				if (!*s)
 					missing++;
 				else
-					word(&values, number(s, 16, UINT32_MAX));
+					word(&values, number(s, 10, UINT32_MAX));
 			}
 		if (missing && missing != 256)
 			fail("block is omitted only in part");
@@ -298,9 +293,10 @@ blocks(const Buffer *input)
 		}
 		free(values.data);
 	}
-	for (size_t i = 0; i < lines.len; i++)
+	for (size_t i = 0; i < high; i++)
 		freeStrings(rows + i);
 	free(rows);
+	freeStrings(&header);
 	freeStrings(&lines);
 	return out;
 }
@@ -360,87 +356,101 @@ grid(const char *pictures)
 }
 
 /*
- * A background's tile map as the screen shows it: a `palette:N` header, then
- * one text row per row of the screen, one cell per 8x8 square, the tile's
- * number in decimal followed by `h` and `v` where it is flipped. Blank lines
- * may separate screens. Each cell becomes the hardware's halfword; the width,
- * when asked for, is the number of cells in a row.
+ * A background's tile map as the screen shows it: NAME.tsv, a header line
+ * numbering its columns and a row for every row of the screen, one tile
+ * number for each 8x8 square. Two tables of the same shape may sit beside
+ * it: NAME.flip.tsv, where a square is h, v, hv or empty, and
+ * NAME.palette.tsv, the palette of each square; without them nothing is
+ * flipped and the palette is 0. A row of flips may stop at its last flip.
+ * Each square becomes the hardware's halfword; the width, when asked for,
+ * is the number of squares in a row.
  */
 Buffer
-tilemap(const Buffer *input, size_t *width)
+tilemap(const char *input, size_t *width)
 {
-	Strings lines = linesOf(input);
-	if (!lines.len || strncmp(lines.items[0], "palette:", 8))
-		fail("tile map needs a palette:N header");
-	unsigned palette = number(trim(lines.items[0] + 8), 10, 15);
-	size_t wide = 0;
-	Buffer out = {0};
-	for (size_t y = 1; y < lines.len; y++)
+	static const char *const KINDS[] = {"", ".flip", ".palette"};
+	Strings lines[3] = {{0}, {0}, {0}};
+	for (size_t k = 0; k < 3; k++)
 	{
-		Strings row = words(lines.items[y]);
-		if (y == 1)
-			wide = row.len;
-		if (row.len != wide)
-			fail("tile map rows differ");
-		for (size_t x = 0; x < row.len; x++)
+		char *path = formatString("%.*s%s.tsv", (int) (strlen(input) - 4),
+								  input, KINDS[k]);
+		if (exists(path))
 		{
-			char *cell = row.items[x];
-			unsigned flips = 0;
-			size_t len = strlen(cell);
-			if (len && cell[len - 1] == 'v')
-			{
-				flips |= 2;
-				cell[--len] = 0;
-			}
-			if (len && cell[len - 1] == 'h')
-			{
-				flips |= 1;
-				cell[--len] = 0;
-			}
-			half(&out, number(cell, 10, 1023) | flips << 10 | palette << 12);
+			Buffer text = readFile(path);
+			lines[k] = split((char *) text.data, '\n');
+			free(text.data);
 		}
-		freeStrings(&row);
+		free(path);
+	}
+	while (lines[0].len && !*trim(lines[0].items[lines[0].len - 1]))
+		free(lines[0].items[--lines[0].len]);
+	if (lines[0].len < 2)
+		fail("a tile map needs its header and a row");
+	Strings header = split(lines[0].items[0], '\t');
+	size_t wide = header.len;
+	Buffer out = {0};
+	for (size_t y = 1; y < lines[0].len; y++)
+	{
+		Strings row[3];
+		for (size_t k = 0; k < 3; k++)
+			row[k] = split(y < lines[k].len ? lines[k].items[y] : "", '\t');
+		if (row[0].len != wide || (lines[2].len && row[2].len != wide))
+			fail("a tile map row is not as wide as its header");
+		for (size_t x = 0; x < wide; x++)
+		{
+			unsigned value = number(trim(row[0].items[x]), 10, 1023);
+			for (const char *c = x < row[1].len ? trim(row[1].items[x]) : "";
+				 *c; c++)
+			{
+				if (*c != 'h' && *c != 'v')
+					fail("a flip is h, v or hv");
+				value |= *c == 'h' ? 1024 : 2048;
+			}
+			if (lines[2].len)
+				value |= number(trim(row[2].items[x]), 10, 15) << 12;
+			half(&out, value);
+		}
+		for (size_t k = 0; k < 3; k++)
+			freeStrings(row + k);
 	}
 	if (width)
 		*width = wide;
-	freeStrings(&lines);
+	freeStrings(&header);
+	for (size_t k = 0; k < 3; k++)
+		freeStrings(lines + k);
 	return out;
 }
 
 /*
- * The world map's collision tiles as the game reads them: each tile is 4x4
- * values of 4 bits, written as four words of four hex digits, one under the
- * other, each word a row of the tile. Tiles run left to right, then down;
- * blank lines are ignored. Each row packs into two bytes, the left value in
- * the low nibble.
+ * The world map's collision tiles as the game reads them: a grid of values
+ * of 4 bits under a header line naming its columns, a tile being 4 by 4 of
+ * them. Tiles run left to right, then down. Each row of a tile packs into
+ * two bytes, the left value in the low nibble.
  */
 Buffer
 collision(const Buffer *input)
 {
 	Strings lines = linesOf(input);
-	if (!lines.len || lines.len % 4)
-		fail("collision tiles need whole rows of four");
+	if (lines.len < 5 || (lines.len - 1) % 4)
+		fail("collision tiles need a header and whole rows of four");
+	size_t wide = 0;
 	Strings *rows = allocate(lines.len, sizeof(Strings));
 	for (size_t y = 0; y < lines.len; y++)
 	{
-		rows[y] = words(lines.items[y]);
-		if (!rows[y].len || rows[y].len != rows[0].len)
-			fail("collision rows differ");
+		rows[y] = split(lines.items[y], '\t');
+		if (!y)
+			wide = rows[y].len;
+		if (!wide || wide % 4 || rows[y].len != wide)
+			fail("collision rows differ, or are not whole tiles");
 	}
 	Buffer out = {0};
-	for (size_t band = 0; band < lines.len; band += 4)
-		for (size_t x = 0; x < rows[0].len; x++)
+	for (size_t band = 1; band < lines.len; band += 4)
+		for (size_t x = 0; x < wide; x += 4)
 			for (size_t y = band; y < band + 4; y++)
 			{
-				const char *s = rows[y].items[x];
-				if (strlen(s) != 4)
-					fail("collision tile row needs four values");
 				unsigned values[4];
 				for (unsigned i = 0; i < 4; i++)
-				{
-					char digit[2] = {s[i], 0};
-					values[i] = number(digit, 16, 15);
-				}
+					values[i] = number(trim(rows[y].items[x + i]), 10, 15);
 				byte(&out, values[0] | values[1] << 4);
 				byte(&out, values[2] | values[3] << 4);
 			}

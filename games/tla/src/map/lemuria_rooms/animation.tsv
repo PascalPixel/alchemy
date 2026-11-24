@@ -1,45 +1,43 @@
-channel	0
-picture	1664	4	796	0
-picture	1696	4	828	0
-picture	1728	4	860	0
-picture	1760	4	892	15
-picture	1668	4	796	0
-picture	1700	4	828	0
-picture	1732	4	860	0
-picture	1764	4	892	15
-picture	1672	4	796	0
-picture	1704	4	828	0
-picture	1736	4	860	0
-picture	1768	4	892	15
-picture	1668	4	796	0
-picture	1700	4	828	0
-picture	1732	4	860	0
-picture	1764	4	892	15
-jump	0
-channel	1
-picture	1540	4	364	0
-picture	1572	4	396	0
-picture	1604	4	428	0
-picture	1636	4	460	10
-picture	1544	4	364	0
-picture	1576	4	396	0
-picture	1608	4	428	0
-picture	1640	4	460	10
-picture	1548	4	364	0
-picture	1580	4	396	0
-picture	1612	4	428	0
-picture	1644	4	460	10
-picture	1552	4	364	0
-picture	1584	4	396	0
-picture	1616	4	428	0
-picture	1648	4	460	10
-picture	1556	4	364	0
-picture	1588	4	396	0
-picture	1620	4	428	0
-picture	1652	4	460	10
-picture	1560	4	364	0
-picture	1592	4	396	0
-picture	1624	4	428	0
-picture	1656	4	460	10
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	1664	4	796	0
+0	picture	1696	4	828	0
+0	picture	1728	4	860	0
+0	picture	1760	4	892	15
+0	picture	1668	4	796	0
+0	picture	1700	4	828	0
+0	picture	1732	4	860	0
+0	picture	1764	4	892	15
+0	picture	1672	4	796	0
+0	picture	1704	4	828	0
+0	picture	1736	4	860	0
+0	picture	1768	4	892	15
+0	picture	1668	4	796	0
+0	picture	1700	4	828	0
+0	picture	1732	4	860	0
+0	picture	1764	4	892	15
+0	jump	0
+1	picture	1540	4	364	0
+1	picture	1572	4	396	0
+1	picture	1604	4	428	0
+1	picture	1636	4	460	10
+1	picture	1544	4	364	0
+1	picture	1576	4	396	0
+1	picture	1608	4	428	0
+1	picture	1640	4	460	10
+1	picture	1548	4	364	0
+1	picture	1580	4	396	0
+1	picture	1612	4	428	0
+1	picture	1644	4	460	10
+1	picture	1552	4	364	0
+1	picture	1584	4	396	0
+1	picture	1616	4	428	0
+1	picture	1648	4	460	10
+1	picture	1556	4	364	0
+1	picture	1588	4	396	0
+1	picture	1620	4	428	0
+1	picture	1652	4	460	10
+1	picture	1560	4	364	0
+1	picture	1592	4	396	0
+1	picture	1624	4	428	0
+1	picture	1656	4	460	10
+1	jump	0

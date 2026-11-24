@@ -1,7 +1,7 @@
 /// @file
 /// The map table: what each map loads, its layout, palette, three tile sheets
 /// and tileset animation tiles. A scene names its map by row in the scene
-/// table (field/scenes.s), and MapGrid_LoadMap loads that row.
+/// table (field/scenes.list.tsv), and MapGrid_LoadMap loads that row.
 ///
 /// Each number is a place in the resource directory
 /// (gamepak/resource_directory.s), counted on from the empty map's

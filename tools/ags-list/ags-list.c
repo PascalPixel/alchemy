@@ -37,6 +37,15 @@
  * giving SceneId_NAME its number; "resource, place" is the resource
  * directory, a named row also giving ResourceId_NAME its number.
  *
+ * The rest are tables of records, one row an entry, each with its layout in
+ * ROWS below: the first line it is known by, what is written before the rows,
+ * for each row and after them (the end marker). In a layout {a} is the row's
+ * first cell, {b} its second and so on; {A} is the cell in mixed case; {a|X}
+ * is the cell, or X when it is empty; {a?X|Y} is X when the cell is filled
+ * (with @ for the cell) and Y when it is empty; {0} is the table's file name
+ * in mixed case and {/} its folder. A last column named "edition" holds the
+ * one language edition the row is for, or nothing when every edition has it.
+ *
  * Each list becomes a global table of pointers ended by -1, with a global
  * LISTEnd label at that -1, followed by its pictures in the same order. A
  * picture named again later is pointed at again and placed once.
@@ -84,6 +93,174 @@ label(const char *name, char *out)
 	*out = 0;
 }
 
+struct rows
+{
+	const char *header, *game, *before, *row, *after;
+};
+
+#define RODATA "@ Written by ags-list from its table: do not edit.\n\t.section .rodata\n"
+#define MUSIC_ROW "\t.2byte {a?SceneId_@|{b}}, ({c|-1} & 0x7fff) | {a?0x8000|0}, {d|-1}, {e}\n"
+#define NAME_ROW "\t.2byte {a?SceneId_@|{b}}, ({c|-1} & 0x7fff) | {a?0x8000|0}\n\t.4byte {d}\n"
+#define NAME_END "\t.2byte -1, -1\n\t.4byte -1\n\t.2byte 0, 0\n\t.4byte 0\n"
+
+static const struct rows ROWS[] = {
+	/* A voice group, Sound_NAMEVoices: one row a voice. */
+	{"voice\tkey\tlength\tpan\ttarget\tattack\tdecay\tsustain\trelease", NULL,
+	 RODATA "\t.set voice_direct, 0\n\t.set voice_square1, 1\n\t.set voice_square2, 2\n\t.set voice_wave, 3\n"
+	        "\t.set voice_noise, 4\n\t.set voice_direct_fixed, 8\n\t.set voice_square1_alt, 9\n"
+	        "\t.set voice_square2_alt, 10\n\t.set voice_wave_alt, 11\n\t.set voice_noise_alt, 12\n"
+	        "\t.set voice_drums, 128\n\t.balign 4\n\t.global Sound_{0}Voices\nSound_{0}Voices:\n",
+	 "\t.byte voice_{a}, {b}, {c}, {d}\n\t.4byte {e}\n\t.byte {f}, {g}, {h}, {i}\n", ""},
+	/* gMPlayTable: each music player's work area, its tracks and how many. */
+	{"player\ttracks\tcount", NULL, RODATA "\t.balign 4\n\t.global gMPlayTable\ngMPlayTable:\n",
+	 "\t.4byte {a}, {b}\n\t.byte {c}, 0\n\t.2byte 0\n",
+	 "\t.global gNumMusicPlayers\n\t.equ gNumMusicPlayers, (. - gMPlayTable) / 12\n"
+	 "\t.global gMaxLines\n\t.equ gMaxLines, 0\n"},
+	/* The samples in the table's folder: a recorded one is NAME.pcm8.bin
+	 * under Sound_WaveNAME, a synthesized one is Sound_SynthNAME. */
+	{"sample\tsynth\tduty\tspeed\tdepth\tphase", NULL,
+	 RODATA "\t.set synth_pulse, 0\n\t.set synth_saw, 1\n\t.set synth_triangle, 2\n\t.balign 4\n",
+	 "\t.global Sound_{b?Synth|Wave}{A}\nSound_{b?Synth|Wave}{A}:\n"
+	 "{b?\t.4byte 1 << 30, 17140000, 0, 0\n\t.byte 0x80, synth_@\n{c?\t.byte @, {d}, {e}, {f}\n|}\t.balign 4\n"
+	 "|\t.incbin \"{/}/{a}.pcm8.bin\"\n}",
+	 ""},
+	/* gScenes of The Broken Seal; MapIndex_World is the World Map's map. */
+	{"scene\tcode\tarea\tkind\tmap", NULL, RODATA "\t.balign 4\n\t.global gScenes\ngScenes:\n",
+	 "{a?\t.global SceneId_@\n\t.equiv SceneId_@, (. - gScenes) / 8\n\t.equiv SceneMap_@, {e}\n|}"
+	 "\t.2byte {b}\n\t.byte {c}, {d}\n\t.2byte {e}, 0\n",
+	 "\t.global MapIndex_World\n\t.equiv MapIndex_World, SceneMap_WorldMap\n"},
+	/* gScene_EncounterRules: an empty entrance is any, an empty flag always. */
+	{"scene\tentrance\tflag\tshift\tzone", NULL,
+	 RODATA "\t.include \"enums/flags.inc\"\n\t.balign 4\n\t.global gScene_EncounterRules\ngScene_EncounterRules:\n",
+	 "\t.2byte SceneId_{a}, {b|-1}\n\t.2byte ({c|-1} & 0x7fff) | ({d} << 15), {e}\n", "\t.2byte -1, -1, 0, 0\n"},
+	{"scene\tentrance\tflag\tzone0\tzone1\tedition", NULL,
+	 RODATA "\t.include \"enums/flags.inc\"\n\t.global gScene_EncounterRules\ngScene_EncounterRules:\n",
+	 "\t.2byte SceneId_{a}, {b|-1}, {c|-1}\n\t.byte {d}, {e}\n", "\t.2byte -1, -1, 0, 0\n"},
+	/* gScene_MusicRules: a rule is for a scene or for an area. */
+	{"scene\tarea\tentrance\tflag\tmusic", "tbs",
+	 RODATA "\t.include \"enums/flags.inc\"\n\t.include \"enums/sounds.inc\"\n\t.balign 4\n"
+	        "\t.global gScene_MusicRules\ngScene_MusicRules:\n",
+	 MUSIC_ROW, "\t.2byte -1, -1, -1, 0\n"},
+	{"scene\tarea\tentrance\tflag\tmusic", "tla",
+	 RODATA "\t.include \"enums/flags.inc\"\n\t.include \"enums/sounds.inc\"\n\t.include \"enums/area_ids.inc\"\n"
+	        "\t.global gScene_MusicRules\ngScene_MusicRules:\n",
+	 MUSIC_ROW, "\t.2byte -1, -1, -1, 0\n"},
+	/* gArea_NameRules; a row of zeros follows its end. */
+	{"scene\tarea\tentrance\tname\tedition", "tbs", RODATA "\t.global gArea_NameRules\ngArea_NameRules:\n", NAME_ROW,
+	 NAME_END},
+	{"scene\tarea\tentrance\tname\tedition", "tla",
+	 RODATA "\t.include \"enums/area_ids.inc\"\n\t.global gArea_NameRules\ngArea_NameRules:\n", NAME_ROW, NAME_END},
+	/* gScene_RestartRules: where the party returns to after a defeat. */
+	{"scene\tentrance\tsaved\tsaved_entrance", NULL, RODATA "\t.global gScene_RestartRules\ngScene_RestartRules:\n",
+	 "\t.2byte SceneId_{a}, {b|-1}, SceneId_{c}, {d}\n", "\t.2byte -1, -1, -1, -1\n"},
+	/* gWorldMapPlaces (struct WorldMapPlace). */
+	{"place\tmarker\tmap_marker\tsprite\tx\tz\tfacing\tshown_flag\tshown_while\tvisit_scene\tvisit_entrance\tscene\tentrance\tedition",
+	 NULL,
+	 RODATA "\t.include \"enums/flags.inc\"\n\t.include \"enums/sprite_ids.inc\"\n"
+	        "\t.set shown_while_set, 0x1000\n\t.set shown_while_clear, 0\n\t.global gWorldMapPlaces\ngWorldMapPlaces:\n",
+	 "\t.byte {a}, {b} | ({c} << 4)\n\t.2byte {d}, {e}, {f}, {g} * 0x10000 / 360, {h?@ + shown_while_{i}|-1}\n"
+	 "\t.2byte {j?SceneId_@|-1}, {j?{k|-1}|-2}, {l?SceneId_@|0}, {m|-1}\n",
+	 "\t.2byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\n"},
+	/* gSpritePictureCache_Sources: the resource an animation's pictures are in. */
+	{"animation\tresource", NULL, RODATA "\t.global gSpritePictureCache_Sources\ngSpritePictureCache_Sources:\n",
+	 "\t.2byte ResourceId_{b}, {a}\n", "\t.2byte 0, 0\n"},
+	/* Strings the code names, each written as the assembler reads it and
+	 * filled to four bytes. Resource_BuildStamp is when an edition was built:
+	 * year, month, day, hour, minute and second, two digits each. */
+	{"string\ttext\tedition", NULL, RODATA "\t.balign 4\n",
+	 "\t.global {a}\n{a}:\n\t.asciz \"{b}\"\n\t.balign 4, 0\n", ""},
+};
+
+static const char *row_folder, *row_table;
+
+/* Write a layout, filling its {} from the row's cells. */
+static void
+expand(FILE *out, const char *at, const char *end, char **cells, const char *self)
+{
+	while (at < end)
+	{
+		const char *close = at + 1, *bar = NULL, *cell;
+		char text[MAX_TEXT];
+
+		if (*at == '@' && self)
+			fputs(self, out);
+		if (*at != '{')
+		{
+			if (*at != '@' || !self)
+				fputc(*at, out);
+			at++;
+			continue;
+		}
+		for (int depth = 1; depth; close++)
+		{
+			depth += (*close == '{') - (*close == '}');
+			if (depth == 1 && *close == '|' && !bar)
+				bar = close;
+		}
+		close--;
+		cell = at[1] == '/' ? row_folder : at[1] == '0' ? row_table : cells[tolower((unsigned char)at[1]) - 'a'];
+		if (at[1] == '0' || isupper((unsigned char)at[1]))
+		{
+			label(cell, text);
+			cell = text;
+		}
+		if (at[2] == '?' && cell[0])
+			expand(out, at + 3, bar ? bar : close, cells, cell);
+		else if (at[2] == '}' || cell[0])
+			fputs(at[2] == '?' ? "" : cell, out);
+		if (bar && !cell[0])
+			expand(out, bar + 1, close, cells, self);
+		at = close + 1;
+	}
+}
+
+static int
+records(const struct rows *rows, FILE *in, char **argv, const char *folder, const char *game)
+{
+	char line[1024], table[MAX_TEXT], *cells[16];
+	const char *base = strrchr(argv[1], '/') + 1;
+	int last = 0, edition;
+	FILE *out = fopen(argv[2], "w");
+
+	if (!out)
+		fail(argv[2], "cannot write");
+	snprintf(table, sizeof table, "%.*s", (int)strcspn(base, "."), base);
+	row_folder = folder;
+	row_table = table;
+	for (const char *at = rows->header; *at; at++)
+		last += *at == '\t';
+	edition = strlen(rows->header) > 8 && !strcmp(rows->header + strlen(rows->header) - 8, "\tedition");
+	expand(out, rows->before, rows->before + strlen(rows->before), cells, NULL);
+	while (fgets(line, sizeof line, in))
+	{
+		int cell = 0;
+
+		line[strcspn(line, "\n")] = 0;
+		if (!line[0])
+			continue;
+		for (cell = 0; cell < 16; cell++)
+			cells[cell] = "";
+		cells[cell = 0] = line;
+		for (char *at = line; *at; at++)
+			if (*at == '\t' && cell < last)
+			{
+				*at = 0;
+				cells[++cell] = at + 1;
+			}
+		if (edition && cells[last][0])
+			fprintf(out, "\t.ifdef %s_EDITION_%c%c\n", game, toupper((unsigned char)cells[last][0]),
+			        toupper((unsigned char)cells[last][1]));
+		expand(out, rows->row, rows->row + strlen(rows->row), cells, NULL);
+		if (edition && cells[last][0])
+			fprintf(out, "\t.endif\n");
+	}
+	expand(out, rows->after, rows->after + strlen(rows->after), cells, NULL);
+	fclose(in);
+	if (fclose(out))
+		fail(argv[2], "cannot write");
+	return 0;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -112,6 +289,11 @@ main(int argc, char **argv)
 		fail(argv[1], "cannot open");
 	if (!fgets(line, sizeof line, in))
 		fail(argv[1], "empty");
+	line[strcspn(line, "\n")] = 0;
+	for (size_t row = 0; row < sizeof ROWS / sizeof *ROWS; row++)
+		if (!strcmp(line, ROWS[row].header) && (!ROWS[row].game || !strncmp(game + 6, ROWS[row].game, 3)))
+			return records(&ROWS[row], in, argv, folder, edition);
+	strcat(line, "\n");
 	if (sscanf(line, "section\t%255[^\t\n]", form) == 1)
 	{
 		char prefix[MAX_TEXT], section[MAX_TEXT] = "\1";

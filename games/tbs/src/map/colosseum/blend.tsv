@@ -1,3 +1,4 @@
+command	value	frames
 level	8	16
 level	9	16
 level	10	16
@@ -16,4 +17,3 @@ level	9	16
 level	8	16
 level	7	16
 jump	0
-end

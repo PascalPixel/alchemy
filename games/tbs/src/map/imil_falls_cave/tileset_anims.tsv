@@ -1,109 +1,97 @@
-channel	1
-picture	586	2	522	0
-picture	618	2	554	10
-picture	588	2	522	0
-picture	620	2	554	10
-picture	586	2	522	0
-picture	618	2	554	10
-picture	590	2	522	0
-picture	622	2	554	10
-jump	0
-channel	2
-picture	156	4	4	0
-picture	188	4	36	0
-picture	220	4	68	0
-picture	252	4	100	20
-picture	384	4	4	0
-picture	416	4	36	0
-picture	448	4	68	0
-picture	480	4	100	20
-picture	388	4	4	0
-picture	420	4	36	0
-picture	452	4	68	0
-picture	484	4	100	20
-picture	384	4	4	0
-picture	416	4	36	0
-picture	448	4	68	0
-picture	480	4	100	20
-jump	0
-channel	3
-picture	16	4	28	0
-picture	48	4	60	0
-picture	80	4	92	0
-picture	112	4	124	20
-picture	20	4	28	0
-picture	52	4	60	0
-picture	84	4	92	0
-picture	116	4	124	20
-picture	24	4	28	0
-picture	56	4	60	0
-picture	88	4	92	0
-picture	120	4	124	20
-picture	20	4	28	0
-picture	52	4	60	0
-picture	84	4	92	0
-picture	116	4	124	20
-jump	0
-channel	4
-picture	140	2	128	0
-picture	172	2	160	20
-picture	142	2	128	0
-picture	174	2	160	20
-picture	144	2	128	0
-picture	176	2	160	20
-jump	0
-channel	5
-picture	982	2	918	0
-picture	950	2	950	20
-picture	1046	2	918	0
-picture	1078	2	950	20
-picture	1048	2	918	0
-picture	1080	2	950	20
-jump	0
-channel	6
-picture	952	2	920	20
-picture	984	2	920	20
-picture	1016	2	920	20
-jump	0
-picture	0	2	920	20
-channel	7
-picture	923	1	922	20
-picture	955	1	954	20
-picture	986	1	922	20
-picture	1018	1	954	20
-picture	987	1	922	20
-picture	1019	1	954	20
-jump	0
-channel	8
-picture	538	4	592	20
-picture	570	4	592	20
-picture	602	4	592	20
-jump	0
-channel	9
-picture	204	4	296	20
-picture	236	4	296	20
-picture	284	4	296	20
-jump	0
-channel	10
-picture	1024	2	792	0
-picture	1056	2	824	20
-picture	1040	2	792	0
-picture	1072	2	824	20
-jump	0
-channel	11
-picture	1354	2	1288	0
-picture	1386	2	1320	12
-picture	1346	2	1288	0
-picture	1378	2	1320	12
-picture	1352	2	1288	0
-picture	1384	2	1320	12
-jump	0
-channel	12
-picture	1354	2	1306	0
-picture	1386	2	1338	18
-picture	1346	2	1306	0
-picture	1378	2	1338	18
-picture	1352	2	1306	0
-picture	1384	2	1338	18
-jump	0
-end
+animation	command	value	count	destination	frames
+1	picture	586	2	522	0
+1	picture	618	2	554	10
+1	picture	588	2	522	0
+1	picture	620	2	554	10
+1	picture	586	2	522	0
+1	picture	618	2	554	10
+1	picture	590	2	522	0
+1	picture	622	2	554	10
+1	jump	0
+2	picture	156	4	4	0
+2	picture	188	4	36	0
+2	picture	220	4	68	0
+2	picture	252	4	100	20
+2	picture	384	4	4	0
+2	picture	416	4	36	0
+2	picture	448	4	68	0
+2	picture	480	4	100	20
+2	picture	388	4	4	0
+2	picture	420	4	36	0
+2	picture	452	4	68	0
+2	picture	484	4	100	20
+2	picture	384	4	4	0
+2	picture	416	4	36	0
+2	picture	448	4	68	0
+2	picture	480	4	100	20
+2	jump	0
+3	picture	16	4	28	0
+3	picture	48	4	60	0
+3	picture	80	4	92	0
+3	picture	112	4	124	20
+3	picture	20	4	28	0
+3	picture	52	4	60	0
+3	picture	84	4	92	0
+3	picture	116	4	124	20
+3	picture	24	4	28	0
+3	picture	56	4	60	0
+3	picture	88	4	92	0
+3	picture	120	4	124	20
+3	picture	20	4	28	0
+3	picture	52	4	60	0
+3	picture	84	4	92	0
+3	picture	116	4	124	20
+3	jump	0
+4	picture	140	2	128	0
+4	picture	172	2	160	20
+4	picture	142	2	128	0
+4	picture	174	2	160	20
+4	picture	144	2	128	0
+4	picture	176	2	160	20
+4	jump	0
+5	picture	982	2	918	0
+5	picture	950	2	950	20
+5	picture	1046	2	918	0
+5	picture	1078	2	950	20
+5	picture	1048	2	918	0
+5	picture	1080	2	950	20
+5	jump	0
+6	picture	952	2	920	20
+6	picture	984	2	920	20
+6	picture	1016	2	920	20
+6	jump	0
+6	picture	0	2	920	20
+7	picture	923	1	922	20
+7	picture	955	1	954	20
+7	picture	986	1	922	20
+7	picture	1018	1	954	20
+7	picture	987	1	922	20
+7	picture	1019	1	954	20
+7	jump	0
+8	picture	538	4	592	20
+8	picture	570	4	592	20
+8	picture	602	4	592	20
+8	jump	0
+9	picture	204	4	296	20
+9	picture	236	4	296	20
+9	picture	284	4	296	20
+9	jump	0
+10	picture	1024	2	792	0
+10	picture	1056	2	824	20
+10	picture	1040	2	792	0
+10	picture	1072	2	824	20
+10	jump	0
+11	picture	1354	2	1288	0
+11	picture	1386	2	1320	12
+11	picture	1346	2	1288	0
+11	picture	1378	2	1320	12
+11	picture	1352	2	1288	0
+11	picture	1384	2	1320	12
+11	jump	0
+12	picture	1354	2	1306	0
+12	picture	1386	2	1338	18
+12	picture	1346	2	1306	0
+12	picture	1378	2	1338	18
+12	picture	1352	2	1306	0
+12	picture	1384	2	1338	18
+12	jump	0

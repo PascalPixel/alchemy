@@ -43,7 +43,7 @@ enum SoundControl {
 };
 
 /// The music players by their row in gMPlayTable
-/// (sound/music_player_table.s), as a song table row names them
+/// (sound/music_players.list.tsv), as a song table row names them
 /// (Song.slot).
 enum MusicPlayerId {
   MUSIC_PLAYER_JINGLE = 0,    ///< gMPlayInfo_Jingle

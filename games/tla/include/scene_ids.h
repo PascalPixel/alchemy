@@ -3,7 +3,7 @@
 
 /// @file
 /// Scene numbers, named after their places, in the order of gScenes
-/// (field/scenes.s).
+/// (field/scenes.list.tsv).
 ///
 /// Each SceneId_ is an absolute symbol whose value is the scene's row in the
 /// table; C names the number by its macro, SCENE_DAILA_FLOODED for

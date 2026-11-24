@@ -1,57 +1,53 @@
-channel	0
-picture	1536	4	710	0
-picture	1568	4	742	0
-picture	1600	4	774	0
-picture	1632	4	806	3
-picture	1540	4	710	0
-picture	1572	4	742	0
-picture	1604	4	774	0
-picture	1636	4	806	2
-picture	1544	4	710	0
-picture	1576	4	742	0
-picture	1608	4	774	0
-picture	1640	4	806	3
-picture	1548	4	710	0
-picture	1580	4	742	0
-picture	1612	4	774	0
-picture	1644	4	806	2
-jump	0
-channel	1
-picture	1664	2	840	0
-picture	1696	2	872	3
-picture	1666	2	840	0
-picture	1698	2	872	2
-picture	1668	2	840	0
-picture	1700	2	872	3
-picture	1670	2	840	0
-picture	1702	2	872	2
-jump	0
-channel	130
-picture	1536	4	710	0
-picture	1568	4	742	0
-picture	1600	4	774	0
-picture	1632	4	806	16
-picture	1540	4	710	0
-picture	1572	4	742	0
-picture	1604	4	774	0
-picture	1636	4	806	16
-picture	1544	4	710	0
-picture	1576	4	742	0
-picture	1608	4	774	0
-picture	1640	4	806	16
-picture	1548	4	710	0
-picture	1580	4	742	0
-picture	1612	4	774	0
-picture	1644	4	806	16
-jump	0
-channel	131
-picture	1664	2	840	0
-picture	1696	2	872	16
-picture	1666	2	840	0
-picture	1698	2	872	16
-picture	1668	2	840	0
-picture	1700	2	872	16
-picture	1670	2	840	0
-picture	1702	2	872	16
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	1536	4	710	0
+0	picture	1568	4	742	0
+0	picture	1600	4	774	0
+0	picture	1632	4	806	3
+0	picture	1540	4	710	0
+0	picture	1572	4	742	0
+0	picture	1604	4	774	0
+0	picture	1636	4	806	2
+0	picture	1544	4	710	0
+0	picture	1576	4	742	0
+0	picture	1608	4	774	0
+0	picture	1640	4	806	3
+0	picture	1548	4	710	0
+0	picture	1580	4	742	0
+0	picture	1612	4	774	0
+0	picture	1644	4	806	2
+0	jump	0
+1	picture	1664	2	840	0
+1	picture	1696	2	872	3
+1	picture	1666	2	840	0
+1	picture	1698	2	872	2
+1	picture	1668	2	840	0
+1	picture	1700	2	872	3
+1	picture	1670	2	840	0
+1	picture	1702	2	872	2
+1	jump	0
+2	picture	1536	4	710	0
+2	picture	1568	4	742	0
+2	picture	1600	4	774	0
+2	picture	1632	4	806	16
+2	picture	1540	4	710	0
+2	picture	1572	4	742	0
+2	picture	1604	4	774	0
+2	picture	1636	4	806	16
+2	picture	1544	4	710	0
+2	picture	1576	4	742	0
+2	picture	1608	4	774	0
+2	picture	1640	4	806	16
+2	picture	1548	4	710	0
+2	picture	1580	4	742	0
+2	picture	1612	4	774	0
+2	picture	1644	4	806	16
+2	jump	0
+3	picture	1664	2	840	0
+3	picture	1696	2	872	16
+3	picture	1666	2	840	0
+3	picture	1698	2	872	16
+3	picture	1668	2	840	0
+3	picture	1700	2	872	16
+3	picture	1670	2	840	0
+3	picture	1702	2	872	16
+3	jump	0

@@ -1,126 +1,120 @@
-channel	0
-picture	513	8	48	0
-picture	529	8	64	0
-picture	546	6	81	20
-picture	560	8	48	0
-picture	576	8	64	0
-picture	593	6	81	15
-picture	608	8	48	0
-picture	624	8	64	0
-picture	641	6	81	20
-picture	560	8	48	0
-picture	576	8	64	0
-picture	593	6	81	20
-jump	0
-channel	1
-picture	656	6	9	0
-picture	672	6	25	0
-picture	688	6	41	0
-picture	704	6	57	0
-picture	720	6	73	0
-picture	736	6	89	20
-picture	618	6	9	0
-picture	634	6	25	0
-picture	650	6	41	0
-picture	666	6	57	0
-picture	682	6	73	0
-picture	698	6	89	15
-picture	522	6	9	0
-picture	538	6	25	0
-picture	554	6	41	0
-picture	570	6	57	0
-picture	586	6	73	0
-picture	602	6	89	20
-picture	618	6	9	0
-picture	634	6	25	0
-picture	650	6	41	0
-picture	666	6	57	0
-picture	682	6	73	0
-picture	698	6	89	20
-jump	0
-channel	2
-picture	750	2	480	0
-picture	766	2	496	10
-picture	748	2	480	0
-picture	764	2	496	10
-picture	746	2	480	0
-picture	762	2	496	10
-jump	0
-channel	3
-picture	752	2	464	10
-picture	754	2	464	10
-picture	756	2	464	10
-jump	0
-channel	4
-picture	678	1	272	0
-picture	694	1	288	0
-picture	710	1	304	0
-picture	726	1	320	0
-picture	742	1	336	0
-picture	758	1	352	20
-picture	679	1	272	0
-picture	695	1	288	0
-picture	711	1	304	0
-picture	727	1	320	0
-picture	743	1	336	0
-picture	759	1	352	10
-picture	680	1	272	0
-picture	696	1	288	0
-picture	712	1	304	0
-picture	728	1	320	0
-picture	744	1	336	0
-picture	760	1	352	10
-picture	681	1	272	0
-picture	697	1	288	0
-picture	713	1	304	0
-picture	729	1	320	0
-picture	745	1	336	0
-picture	761	1	352	10
-picture	584	1	272	0
-picture	600	1	288	0
-picture	616	1	304	0
-picture	632	1	320	0
-picture	648	1	336	0
-picture	664	1	352	10
-picture	585	1	272	0
-picture	601	1	288	0
-picture	617	1	304	0
-picture	633	1	320	0
-picture	649	1	336	0
-picture	665	1	352	20
-picture	584	1	272	0
-picture	600	1	288	0
-picture	616	1	304	0
-picture	632	1	320	0
-picture	648	1	336	0
-picture	664	1	352	10
-picture	681	1	272	0
-picture	697	1	288	0
-picture	713	1	304	0
-picture	729	1	320	0
-picture	745	1	336	0
-picture	761	1	352	10
-picture	680	1	272	0
-picture	696	1	288	0
-picture	712	1	304	0
-picture	728	1	320	0
-picture	744	1	336	0
-picture	760	1	352	10
-picture	679	1	272	0
-picture	695	1	288	0
-picture	711	1	304	0
-picture	727	1	320	0
-picture	743	1	336	0
-picture	759	1	352	10
-jump	0
-channel	5
-picture	714	2	230	0
-picture	730	2	246	15
-picture	716	2	230	0
-picture	732	2	246	15
-picture	718	2	230	0
-picture	734	2	246	15
-picture	716	2	230	0
-picture	732	2	246	15
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	513	8	48	0
+0	picture	529	8	64	0
+0	picture	546	6	81	20
+0	picture	560	8	48	0
+0	picture	576	8	64	0
+0	picture	593	6	81	15
+0	picture	608	8	48	0
+0	picture	624	8	64	0
+0	picture	641	6	81	20
+0	picture	560	8	48	0
+0	picture	576	8	64	0
+0	picture	593	6	81	20
+0	jump	0
+1	picture	656	6	9	0
+1	picture	672	6	25	0
+1	picture	688	6	41	0
+1	picture	704	6	57	0
+1	picture	720	6	73	0
+1	picture	736	6	89	20
+1	picture	618	6	9	0
+1	picture	634	6	25	0
+1	picture	650	6	41	0
+1	picture	666	6	57	0
+1	picture	682	6	73	0
+1	picture	698	6	89	15
+1	picture	522	6	9	0
+1	picture	538	6	25	0
+1	picture	554	6	41	0
+1	picture	570	6	57	0
+1	picture	586	6	73	0
+1	picture	602	6	89	20
+1	picture	618	6	9	0
+1	picture	634	6	25	0
+1	picture	650	6	41	0
+1	picture	666	6	57	0
+1	picture	682	6	73	0
+1	picture	698	6	89	20
+1	jump	0
+2	picture	750	2	480	0
+2	picture	766	2	496	10
+2	picture	748	2	480	0
+2	picture	764	2	496	10
+2	picture	746	2	480	0
+2	picture	762	2	496	10
+2	jump	0
+3	picture	752	2	464	10
+3	picture	754	2	464	10
+3	picture	756	2	464	10
+3	jump	0
+4	picture	678	1	272	0
+4	picture	694	1	288	0
+4	picture	710	1	304	0
+4	picture	726	1	320	0
+4	picture	742	1	336	0
+4	picture	758	1	352	20
+4	picture	679	1	272	0
+4	picture	695	1	288	0
+4	picture	711	1	304	0
+4	picture	727	1	320	0
+4	picture	743	1	336	0
+4	picture	759	1	352	10
+4	picture	680	1	272	0
+4	picture	696	1	288	0
+4	picture	712	1	304	0
+4	picture	728	1	320	0
+4	picture	744	1	336	0
+4	picture	760	1	352	10
+4	picture	681	1	272	0
+4	picture	697	1	288	0
+4	picture	713	1	304	0
+4	picture	729	1	320	0
+4	picture	745	1	336	0
+4	picture	761	1	352	10
+4	picture	584	1	272	0
+4	picture	600	1	288	0
+4	picture	616	1	304	0
+4	picture	632	1	320	0
+4	picture	648	1	336	0
+4	picture	664	1	352	10
+4	picture	585	1	272	0
+4	picture	601	1	288	0
+4	picture	617	1	304	0
+4	picture	633	1	320	0
+4	picture	649	1	336	0
+4	picture	665	1	352	20
+4	picture	584	1	272	0
+4	picture	600	1	288	0
+4	picture	616	1	304	0
+4	picture	632	1	320	0
+4	picture	648	1	336	0
+4	picture	664	1	352	10
+4	picture	681	1	272	0
+4	picture	697	1	288	0
+4	picture	713	1	304	0
+4	picture	729	1	320	0
+4	picture	745	1	336	0
+4	picture	761	1	352	10
+4	picture	680	1	272	0
+4	picture	696	1	288	0
+4	picture	712	1	304	0
+4	picture	728	1	320	0
+4	picture	744	1	336	0
+4	picture	760	1	352	10
+4	picture	679	1	272	0
+4	picture	695	1	288	0
+4	picture	711	1	304	0
+4	picture	727	1	320	0
+4	picture	743	1	336	0
+4	picture	759	1	352	10
+4	jump	0
+5	picture	714	2	230	0
+5	picture	730	2	246	15
+5	picture	716	2	230	0
+5	picture	732	2	246	15
+5	picture	718	2	230	0
+5	picture	734	2	246	15
+5	picture	716	2	230	0
+5	picture	732	2	246	15
+5	jump	0

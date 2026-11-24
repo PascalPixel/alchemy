@@ -14,9 +14,9 @@ Buffer table(const Buffer *input);
 Buffer plane(const Buffer *input);
 Buffer grid(const char *pictures);
 Buffer scene(const char *points);
-Buffer tilemap(const Buffer *input, size_t *width);
+Buffer tilemap(const char *input, size_t *width);
 Buffer collision(const Buffer *input);
-Buffer script(const Buffer *input);
+Buffer script(const char *input, const Buffer *data);
 Buffer blocks(const Buffer *input);
 Buffer imageForm(const char *input, const char *form, const Buffer *data);
 Buffer mappedPart(const char *input, const char *path, const char *form,

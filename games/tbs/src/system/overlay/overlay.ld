@@ -135,9 +135,9 @@ SECTIONS \
 #if OVERLAY == 0x36f
 SCENE_WITH_BSS(title)
 #elif OVERLAY == 0x370
-SCENE_AND(file_screen, scene/file_screen_keyboard)
+SCENE_AND(file_screen, scene/file_screen_keyboard.list)
 #elif OVERLAY == 0x371
-SCENE_AND(world_map, graphics/world_map/lighthouse_transition)
+SCENE_AND(world_map, graphics/world_map/lighthouse_transition.list)
 #elif OVERLAY == 0x372
 SCENE(vale_prologue)
 #elif OVERLAY == 0x373
@@ -157,7 +157,7 @@ SCENE(vale_eruption)
 #elif OVERLAY == 0x37a
 SCENE(sol_sanctum_luna_sol_rooms)
 #elif OVERLAY == 0x37b
-SCENE_AND(sol_sanctum_statue, graphics/sol_sanctum_statue/rows)
+SCENE_AND(sol_sanctum_statue, graphics/sol_sanctum_statue/rows.list)
 #elif OVERLAY == 0x37c
 SCENE(sol_sanctum_psynergy_stone)
 #elif OVERLAY == 0x37d
@@ -241,7 +241,7 @@ SCENE(altin)
 #elif OVERLAY == 0x3a4
 SCENE(altin_peak)
 #elif OVERLAY == 0x3a5
-SCENE_AND(lamakan_desert, graphics/lamakan_desert/heat_gauge)
+SCENE_AND(lamakan_desert, graphics/lamakan_desert/heat_gauge.list)
 #elif OVERLAY == 0x3a6
 SCENE(vale_cave)
 #elif OVERLAY == 0x3a7
@@ -283,11 +283,11 @@ SCENE(babi_palace)
 #elif OVERLAY == 0x3b9
 SCENE(colosseum_entrance)
 #elif OVERLAY == 0x3ba
-SCENE_AND(colosseum_azart_match, graphics/colosso/gauge)
+SCENE_AND(colosseum_azart_match, graphics/colosso/gauge.list)
 #elif OVERLAY == 0x3bb
-SCENE_AND(colosseum_satrage_match, graphics/colosso/gauge)
+SCENE_AND(colosseum_satrage_match, graphics/colosso/gauge.list)
 #elif OVERLAY == 0x3bc
-SCENE_AND(colosseum_navampa_match, graphics/colosso/gauge)
+SCENE_AND(colosseum_navampa_match, graphics/colosso/gauge.list)
 #elif OVERLAY == 0x3bd
 SCENE(altmiller_cave)
 #elif OVERLAY == 0x3be

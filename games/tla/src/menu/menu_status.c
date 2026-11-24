@@ -1147,7 +1147,7 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
 
 /// Pairs of 4-bit rows of dots in colour 5, each reaching further right than
 /// the last, that Menu_BuildPatternTiles XORs into its tile pairs
-/// (menu_strings.s).
+/// (menu_tiles.s).
 extern const u32 gMenu_PatternRowMasks[][2];
 
 /// The words of one range icon's two tiles.

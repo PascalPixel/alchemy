@@ -128,8 +128,12 @@ main(int argc, char **argv)
 		Strings parts = split(base, '.');
 		if ((parts.len != 2 && parts.len != 3) || !*parts.items[0])
 			fail("output must name STEM.FORM[.CODEC]");
-		out = buildResource(input, parts.items[1],
-							parts.len == 3 ? parts.items[2] : NULL, 0);
+		if (parts.len == 2 && !strncmp(parts.items[1], "sprite", 6))
+			out = spriteSource(input, parts.items[0],
+							   !strcmp(parts.items[1], "spriteblocks"));
+		else
+			out = buildResource(input, parts.items[1],
+								parts.len == 3 ? parts.items[2] : NULL, 0);
 		freeStrings(&parts);
 	}
 	writeFile(output, &out);

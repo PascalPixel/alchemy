@@ -1,3 +1,4 @@
+command	value	frames
 control	16194
 level	4107	4
 level	4108	4
@@ -10,4 +11,3 @@ level	4110	4
 level	4109	4
 level	4108	4
 jump	0
-end

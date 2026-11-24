@@ -1,49 +1,45 @@
-channel	0
-picture	1920	6	400	0
-picture	1952	6	432	0
-picture	1984	6	464	0
-picture	2016	6	496	15
-picture	1926	6	400	0
-picture	1958	6	432	0
-picture	1990	6	464	0
-picture	2022	6	496	15
-picture	1920	6	400	0
-picture	1952	6	432	0
-picture	1984	6	464	0
-picture	2016	6	496	15
-picture	1932	6	400	0
-picture	1964	6	432	0
-picture	1996	6	464	0
-picture	2028	6	496	15
-jump	0
-channel	1
-picture	1856	2	1090	0
-picture	1888	2	1122	14
-picture	1858	2	1090	0
-picture	1890	2	1122	14
-picture	1860	2	1090	0
-picture	1892	2	1122	14
-picture	1862	2	1090	0
-picture	1894	2	1122	14
-jump	0
-channel	2
-picture	1864	2	1036	0
-picture	1896	2	1068	14
-picture	1866	2	1036	0
-picture	1898	2	1068	14
-picture	1868	2	1036	0
-picture	1900	2	1068	14
-picture	1870	2	1036	0
-picture	1902	2	1068	14
-jump	0
-channel	3
-picture	1800	2	1034	0
-picture	1832	2	1066	14
-picture	1802	2	1034	0
-picture	1834	2	1066	14
-picture	1804	2	1034	0
-picture	1836	2	1066	14
-picture	1806	2	1034	0
-picture	1838	2	1066	14
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	1920	6	400	0
+0	picture	1952	6	432	0
+0	picture	1984	6	464	0
+0	picture	2016	6	496	15
+0	picture	1926	6	400	0
+0	picture	1958	6	432	0
+0	picture	1990	6	464	0
+0	picture	2022	6	496	15
+0	picture	1920	6	400	0
+0	picture	1952	6	432	0
+0	picture	1984	6	464	0
+0	picture	2016	6	496	15
+0	picture	1932	6	400	0
+0	picture	1964	6	432	0
+0	picture	1996	6	464	0
+0	picture	2028	6	496	15
+0	jump	0
+1	picture	1856	2	1090	0
+1	picture	1888	2	1122	14
+1	picture	1858	2	1090	0
+1	picture	1890	2	1122	14
+1	picture	1860	2	1090	0
+1	picture	1892	2	1122	14
+1	picture	1862	2	1090	0
+1	picture	1894	2	1122	14
+1	jump	0
+2	picture	1864	2	1036	0
+2	picture	1896	2	1068	14
+2	picture	1866	2	1036	0
+2	picture	1898	2	1068	14
+2	picture	1868	2	1036	0
+2	picture	1900	2	1068	14
+2	picture	1870	2	1036	0
+2	picture	1902	2	1068	14
+2	jump	0
+3	picture	1800	2	1034	0
+3	picture	1832	2	1066	14
+3	picture	1802	2	1034	0
+3	picture	1834	2	1066	14
+3	picture	1804	2	1034	0
+3	picture	1836	2	1066	14
+3	picture	1806	2	1034	0
+3	picture	1838	2	1066	14
+3	jump	0

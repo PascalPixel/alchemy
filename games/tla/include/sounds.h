@@ -247,7 +247,7 @@ enum SoundId {
   SE_FOOTSTEP,
   /// SE_FOOTSTEP's two notes far lower on its voice; nothing plays it.
   SE_UNUSED_FOOTSTEP_LOW,
-  SE_120,
+  SE_UNUSED_STATIC_CRACKLE,
   SE_SCUFFLE,
   /// Gasp fleeing the party on the Trial Road (TrialRoad_GaspFlees), after
   /// SE_ENEMY_CRY.
@@ -295,7 +295,7 @@ enum SoundId {
   SE_GATE_MOVE,
   SE_DOOR_OPEN,
   SE_DOOR_CLOSE,
-  SE_160,
+  SE_UNUSED_NOISE_SWELL,
   SE_RATTLE,
   /// The Mercury, Judgment and Neptune battle effects; also Charon and Meteor
   /// Blow, the Aquarius Stone in Aqua Rock and the Kandorean Temple's steam
@@ -380,7 +380,7 @@ enum SoundId {
   SE_SPARKLE_FALL,
   SE_ASCEND,
   SE_FLAME_FLARE,
-  SE_203,
+  SE_UNUSED_NOISE_PUFF,
   SE_DUST_PUFF,
   /// SE_AMBIENT_STREAM ten semitones higher on a noise voice and not held;
   /// nothing plays it.
@@ -397,7 +397,7 @@ enum SoundId {
   SE_SPLASH_SMALL,
   SE_BURST,
   SE_FLOOR_SWITCH,
-  SE_218,
+  SE_UNUSED_STATIC_BURST,
   SE_GUSH,
   SE_SHIMMER,
   SE_RISE_WITH_SPARKS,
@@ -405,7 +405,7 @@ enum SoundId {
   /// appear.
   SE_WHIRLWIND,
   SE_LIFT,
-  SE_224,
+  SE_UNUSED_WARBLE_TONE,
   /// Played as Moloch's white cloud starts billowing up from the ground under
   /// the falling flakes, at its frame 90 (BattleEffect_RunMoloch).
   SE_CLOUD_BILLOWS,
@@ -443,7 +443,7 @@ enum SoundId {
   /// An arrow of the Gabomba Statue raised or lowered once its statues are
   /// ready.
   SE_GABOMBA_STATUE_ARROW,
-  SE_249,
+  SE_UNUSED_FALLING_HISS,
   /// SE_BLACK_CRYSTAL_SET seven semitones lower; nothing plays it.
   SE_UNUSED_BLACK_CRYSTAL_SET_LOW,
   /// Played as the Black Crystal is set on the Lemurian Ship.
@@ -533,9 +533,9 @@ enum SoundId {
   /// SE_MARS_LIGHTHOUSE_DOORWAY's notes on voice 70 at tempo 100; nothing plays
   /// it.
   SE_UNUSED_MARS_LIGHTHOUSE_DOORWAY_A,
-  /// SE_528's first eight notes and times on noise voice 21 at SE_529's tempo,
+  /// SE_UNUSED_CLATTER_SLOW's first eight notes and times on noise voice 21 at SE_UNUSED_CLATTER_SWELL's tempo,
   /// the seventh 82 for 63; nothing plays it.
-  SE_524,
+  SE_UNUSED_CLATTER_BRIEF,
   /// Played as Garoh's people howl at night.
   SE_HOWL,
   /// SE_HOWL's note and length on voice 115 at a slower tempo; nothing plays
@@ -544,24 +544,24 @@ enum SoundId {
   /// SE_GABOMBA_JAWS_OPEN's voice on one note above its two, held and bent up
   /// and down until stopped; nothing plays it.
   SE_UNUSED_GABOMBA_JAWS_OPEN_HELD,
-  SE_528,
-  /// SE_528's notes at a faster tempo, their loudness rising and falling;
+  SE_UNUSED_CLATTER_SLOW,
+  /// SE_UNUSED_CLATTER_SLOW's notes at a faster tempo, their loudness rising and falling;
   /// nothing plays either.
-  SE_529,
+  SE_UNUSED_CLATTER_SWELL,
   /// The Sea of Time opening a way (SeaOfTime_Open).
   SE_SEA_OF_TIME_OPENS,
   /// SE_SANDSTORM's second track alone, six semitones lower and played once;
   /// nothing plays it.
   SE_UNUSED_SANDSTORM_LOW,
-  SE_532,
-  SE_533,
-  SE_534,
+  SE_UNUSED_STATIC_WASH,
+  SE_UNUSED_STATIC_WASH_RISING,
+  SE_UNUSED_TICK,
   /// The Madra Catacombs' chest sliding with its bookshelf.
   SE_BOOKSHELF_SLIDE,
-  SE_536,
-  /// SE_536's notes six semitones lower and more slowly; nothing plays
+  SE_UNUSED_HISS_CASCADE,
+  /// SE_UNUSED_HISS_CASCADE's notes six semitones lower and more slowly; nothing plays
   /// either.
-  SE_538 = 538,
+  SE_UNUSED_HISS_CASCADE_LOW = 538,
   /// The leader emerging as Sand ends (FieldPsynergy_EndSand).
   SE_SAND_EMERGE,
   /// The field Psynergy Parch.
@@ -580,18 +580,18 @@ enum SoundId {
   SE_UNUSED_SETTLE_SHORT,
   /// SE_TABLET_RISE two semitones lower and softer; nothing plays it.
   SE_UNUSED_TABLET_RISE_LOW,
-  /// The first seven notes of SE_538's second track seventeen semitones lower,
+  /// The first seven notes of SE_UNUSED_HISS_CASCADE_LOW's second track seventeen semitones lower,
   /// louder and at half its tempo; nothing plays either.
-  SE_548,
+  SE_UNUSED_HISS_PUFFS_LOW,
   /// SE_BOOKSHELF_SLIDE with its first note three semitones higher; nothing
   /// plays it.
   SE_UNUSED_BOOKSHELF_SLIDE_HIGH,
   /// Played as the party drops through a hole on an islet.
   SE_DROP_THROUGH_HOLE,
-  SE_551,
-  /// SE_551's five note times and three of its notes on voice 92, at a faster
+  SE_UNUSED_FLUTTER,
+  /// SE_UNUSED_FLUTTER's five note times and three of its notes on voice 92, at a faster
   /// tempo; nothing plays either.
-  SE_552,
+  SE_UNUSED_RING_FLUTTER,
   /// Played as Magma Rock's flames grow.
   SE_FLAME_GROW = 554,
   /// SE_FLAME_GROW's falling run fourteen semitones lower on voice 99, its last
@@ -616,7 +616,7 @@ enum SoundId {
   /// SE_MARS_LIGHTHOUSE_DOORWAY's notes on voice 94 at tempo 110; nothing plays
   /// it.
   SE_UNUSED_MARS_LIGHTHOUSE_DOORWAY_B,
-  SE_562,
+  SE_UNUSED_WARBLING_BLOOP,
   /// SE_COIN_PAYOUT's notes with voice 93 in its first track; nothing plays it.
   SE_UNUSED_COIN_PAYOUT_A,
   /// SE_COIN_PAYOUT's notes on voices 92 and 90: a stone face's eyes glowing as
@@ -661,7 +661,7 @@ enum SoundId {
   SE_GABOMBA_JAWS_OPEN,
   /// SE_UNUSED_LOUD_CURRENT_A's notes again; nothing plays it.
   SE_UNUSED_LOUD_CURRENT_B,
-  SE_579,
+  SE_UNUSED_LOW_DRONE_FALL,
   /// SE_GABOMBA_STATUE_HOLE's first three pairs of notes, the first two an
   /// octave higher and the third two; nothing plays it.
   SE_UNUSED_GABOMBA_STATUE_HOLE_HIGH,
@@ -682,9 +682,9 @@ enum SoundId {
   SE_UNUSED_SPARK,
   /// The Gabomba Statue's cogs turning back.
   SE_GABOMBA_STATUE_COGS,
-  SE_587,
-  SE_588,
-  /// SE_588's times and loudness, a note of each of its chords, with other
+  SE_UNUSED_LOW_BUZZ,
+  SE_UNUSED_ARPEGGIO_RISING,
+  /// SE_UNUSED_ARPEGGIO_RISING's times and loudness, a note of each of its chords, with other
   /// notes falling on the Surf sample (voice 108) at a slower tempo; nothing
   /// plays either.
   SE_UNUSED_SURF_FALL,
@@ -696,7 +696,7 @@ enum SoundId {
   /// SE_IMPACT's rhythm and most of its notes, doubled by a second track on
   /// voice 90; nothing plays it.
   SE_UNUSED_IMPACT_DOUBLED,
-  SE_593,
+  SE_UNUSED_RING_ARPEGGIO,
   /// SE_UNUSED_CURSE_RUMBLE_LOW's noise and Rumble tracks alone; nothing plays
   /// it.
   SE_UNUSED_RUMBLE_LOW,

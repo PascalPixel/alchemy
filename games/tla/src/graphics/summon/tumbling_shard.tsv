@@ -1,0 +1,4 @@
+part	form
+TUMBLING_SHARD	4bpp
+TUMBLING_SHARD_LEFTOVER	table
+ZERO_FILL	table

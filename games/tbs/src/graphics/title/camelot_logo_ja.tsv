@@ -1,0 +1,5 @@
+part	form	map	first	count	drawing
+CAMELOT_LOGO_JA	gbapal				
+CAMELOT_LOGO_MAP_JA	tilemap				
+CAMELOT_LOGO_JA	8bpp	CAMELOT_LOGO_MAP_JA	0	256	
+CAMELOT_FLAG	8bpp	CAMELOT_LOGO_MAP_JA	4	16	pictures

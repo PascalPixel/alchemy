@@ -158,7 +158,7 @@ enum {
 /// Area flags that choose the aerie's field music after each battle.
 ///
 /// They work by the scene's field music rules (gScene_MusicRules,
-/// field/scene_rules.s). The music is MUS_SILENCE before the first battle,
+/// field/music_rules.list.tsv). The music is MUS_SILENCE before the first battle,
 /// MUS_BABIS_THEME once the first has begun and MUS_ELEMENTAL_STARS once the
 /// second has.
 ///

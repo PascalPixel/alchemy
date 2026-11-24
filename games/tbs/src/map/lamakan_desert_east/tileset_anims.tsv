@@ -1,129 +1,121 @@
-channel	0
-picture	1536	4	28	0
-picture	1568	4	60	0
-picture	1600	4	92	0
-picture	1632	4	124	15
-picture	1540	4	28	0
-picture	1572	4	60	0
-picture	1604	4	92	0
-picture	1636	4	124	15
-picture	1544	4	28	0
-picture	1576	4	60	0
-picture	1608	4	92	0
-picture	1640	4	124	15
-picture	1548	4	28	0
-picture	1580	4	60	0
-picture	1612	4	92	0
-picture	1644	4	124	15
-jump	0
-channel	1
-picture	1664	4	156	0
-picture	1696	4	188	0
-picture	1728	4	220	0
-picture	1760	4	252	15
-picture	1668	4	156	0
-picture	1700	4	188	0
-picture	1732	4	220	0
-picture	1764	4	252	15
-picture	1672	4	156	0
-picture	1704	4	188	0
-picture	1736	4	220	0
-picture	1768	4	252	15
-picture	1676	4	156	0
-picture	1708	4	188	0
-picture	1740	4	220	0
-picture	1772	4	252	15
-jump	0
-channel	2
-picture	1552	4	284	0
-picture	1584	4	316	0
-picture	1616	4	348	0
-picture	1648	4	380	15
-picture	1556	4	284	0
-picture	1588	4	316	0
-picture	1620	4	348	0
-picture	1652	4	380	15
-picture	1560	4	284	0
-picture	1592	4	316	0
-picture	1624	4	348	0
-picture	1656	4	380	15
-picture	1564	4	284	0
-picture	1596	4	316	0
-picture	1628	4	348	0
-picture	1660	4	380	15
-jump	0
-channel	3
-picture	1680	4	412	0
-picture	1712	4	444	0
-picture	1744	4	476	0
-picture	1776	4	508	15
-picture	1684	4	412	0
-picture	1716	4	444	0
-picture	1748	4	476	0
-picture	1780	4	508	15
-picture	1688	4	412	0
-picture	1720	4	444	0
-picture	1752	4	476	0
-picture	1784	4	508	15
-picture	1692	4	412	0
-picture	1724	4	444	0
-picture	1756	4	476	0
-picture	1788	4	508	15
-jump	0
-channel	4
-picture	1792	4	20	0
-picture	1824	4	52	0
-picture	1856	4	84	0
-picture	1888	4	116	15
-picture	1796	4	20	0
-picture	1828	4	52	0
-picture	1860	4	84	0
-picture	1892	4	116	15
-picture	1800	4	20	0
-picture	1832	4	52	0
-picture	1864	4	84	0
-picture	1896	4	116	15
-picture	1804	4	20	0
-picture	1836	4	52	0
-picture	1868	4	84	0
-picture	1900	4	116	15
-jump	0
-channel	5
-picture	1808	4	24	0
-picture	1840	4	56	0
-picture	1872	4	88	0
-picture	1904	4	120	15
-picture	1812	4	24	0
-picture	1844	4	56	0
-picture	1876	4	88	0
-picture	1908	4	120	15
-picture	1816	4	24	0
-picture	1848	4	56	0
-picture	1880	4	88	0
-picture	1912	4	120	15
-picture	1820	4	24	0
-picture	1852	4	56	0
-picture	1884	4	88	0
-picture	1916	4	120	15
-jump	0
-channel	6
-picture	1920	5	539	0
-picture	1952	5	571	15
-picture	1925	5	539	0
-picture	1957	5	571	15
-picture	1930	5	539	0
-picture	1962	5	571	15
-picture	1935	5	539	0
-picture	1967	5	571	15
-jump	0
-channel	7
-picture	1984	4	279	0
-picture	2016	4	311	15
-picture	1988	4	279	0
-picture	2020	4	311	15
-picture	1992	4	279	0
-picture	2024	4	311	15
-picture	1996	4	279	0
-picture	2028	4	311	15
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	1536	4	28	0
+0	picture	1568	4	60	0
+0	picture	1600	4	92	0
+0	picture	1632	4	124	15
+0	picture	1540	4	28	0
+0	picture	1572	4	60	0
+0	picture	1604	4	92	0
+0	picture	1636	4	124	15
+0	picture	1544	4	28	0
+0	picture	1576	4	60	0
+0	picture	1608	4	92	0
+0	picture	1640	4	124	15
+0	picture	1548	4	28	0
+0	picture	1580	4	60	0
+0	picture	1612	4	92	0
+0	picture	1644	4	124	15
+0	jump	0
+1	picture	1664	4	156	0
+1	picture	1696	4	188	0
+1	picture	1728	4	220	0
+1	picture	1760	4	252	15
+1	picture	1668	4	156	0
+1	picture	1700	4	188	0
+1	picture	1732	4	220	0
+1	picture	1764	4	252	15
+1	picture	1672	4	156	0
+1	picture	1704	4	188	0
+1	picture	1736	4	220	0
+1	picture	1768	4	252	15
+1	picture	1676	4	156	0
+1	picture	1708	4	188	0
+1	picture	1740	4	220	0
+1	picture	1772	4	252	15
+1	jump	0
+2	picture	1552	4	284	0
+2	picture	1584	4	316	0
+2	picture	1616	4	348	0
+2	picture	1648	4	380	15
+2	picture	1556	4	284	0
+2	picture	1588	4	316	0
+2	picture	1620	4	348	0
+2	picture	1652	4	380	15
+2	picture	1560	4	284	0
+2	picture	1592	4	316	0
+2	picture	1624	4	348	0
+2	picture	1656	4	380	15
+2	picture	1564	4	284	0
+2	picture	1596	4	316	0
+2	picture	1628	4	348	0
+2	picture	1660	4	380	15
+2	jump	0
+3	picture	1680	4	412	0
+3	picture	1712	4	444	0
+3	picture	1744	4	476	0
+3	picture	1776	4	508	15
+3	picture	1684	4	412	0
+3	picture	1716	4	444	0
+3	picture	1748	4	476	0
+3	picture	1780	4	508	15
+3	picture	1688	4	412	0
+3	picture	1720	4	444	0
+3	picture	1752	4	476	0
+3	picture	1784	4	508	15
+3	picture	1692	4	412	0
+3	picture	1724	4	444	0
+3	picture	1756	4	476	0
+3	picture	1788	4	508	15
+3	jump	0
+4	picture	1792	4	20	0
+4	picture	1824	4	52	0
+4	picture	1856	4	84	0
+4	picture	1888	4	116	15
+4	picture	1796	4	20	0
+4	picture	1828	4	52	0
+4	picture	1860	4	84	0
+4	picture	1892	4	116	15
+4	picture	1800	4	20	0
+4	picture	1832	4	52	0
+4	picture	1864	4	84	0
+4	picture	1896	4	116	15
+4	picture	1804	4	20	0
+4	picture	1836	4	52	0
+4	picture	1868	4	84	0
+4	picture	1900	4	116	15
+4	jump	0
+5	picture	1808	4	24	0
+5	picture	1840	4	56	0
+5	picture	1872	4	88	0
+5	picture	1904	4	120	15
+5	picture	1812	4	24	0
+5	picture	1844	4	56	0
+5	picture	1876	4	88	0
+5	picture	1908	4	120	15
+5	picture	1816	4	24	0
+5	picture	1848	4	56	0
+5	picture	1880	4	88	0
+5	picture	1912	4	120	15
+5	picture	1820	4	24	0
+5	picture	1852	4	56	0
+5	picture	1884	4	88	0
+5	picture	1916	4	120	15
+5	jump	0
+6	picture	1920	5	539	0
+6	picture	1952	5	571	15
+6	picture	1925	5	539	0
+6	picture	1957	5	571	15
+6	picture	1930	5	539	0
+6	picture	1962	5	571	15
+6	picture	1935	5	539	0
+6	picture	1967	5	571	15
+6	jump	0
+7	picture	1984	4	279	0
+7	picture	2016	4	311	15
+7	picture	1988	4	279	0
+7	picture	2020	4	311	15
+7	picture	1992	4	279	0
+7	picture	2024	4	311	15
+7	picture	1996	4	279	0
+7	picture	2028	4	311	15
+7	jump	0

@@ -1,0 +1,135 @@
+scene	area	entrance	name	edition
+	0		0	
+	1		1	
+	2		2	
+Sanctum		1	3	
+Sanctum		2	3	
+Sanctum		20	3	
+Sanctum		21	3	
+Sanctum		12	4	
+Sanctum		11	4	
+Sanctum		10	4	
+Sanctum		35	5	
+Sanctum		32	6	
+Sanctum		29	7	
+Sanctum			8	
+CottageRoomsB		19	9	
+	3		10	
+SolEntrance			11	
+SolSanctumElementalStarRoom			12	
+SolSanctumEruption			12	
+	4		13	
+RockRooms		7	14	
+RockRooms		11	14	
+StoneRooms		2	15	
+	5		16	
+	6		17	
+	7		18	
+BilibinTreasury			19	
+	8		20	
+McCoyPalaceGrounds			21	
+	9		21	
+	10		22	
+KolimaTunnel			23	
+	11		24	
+	12		25	
+	13		26	
+	14		27	
+BilibinCaveEntrance			28	
+	15		29	
+IceRooms		7	30	
+	17		31	
+	18		32	
+MercuryLighthouseAerie			33	
+	19		34	
+LacquerRoomsA		2	35	
+LacquerRoomsA		3	36	
+	20		37	
+	21		38	
+	22		39	
+	23		40	
+	24		41	
+AltinPeakSouthEntrance		6	41	en
+AltinPeakSouthEntrance		6	41	de
+AltinPeakSouthEntrance		6	41	es
+AltinPeakSouthEntrance		6	41	fr
+AltinPeakSouthEntrance		6	41	it
+AltinPeakSouthEntrance		7	41	en
+AltinPeakSouthEntrance		7	41	de
+AltinPeakSouthEntrance		7	41	es
+AltinPeakSouthEntrance		7	41	fr
+AltinPeakSouthEntrance		7	41	it
+	25		42	
+	26		43	
+	27		44	
+	28		45	
+	29		46	
+	30		47	
+	31		48	
+KalaySanctum			49	
+	32		50	
+HammetPalace			51	
+	33		51	
+RockRooms		10	52	
+	34		53	
+	35		54	
+CottageRoomsE		2	55	
+	36		56	
+	37		57	
+	38		58	
+CrossboneIsle			59	
+PirateShip			60	
+	39		61	
+StuccoRoomsB		8	62	
+StuccoRoomsB		30	62	
+	40		63	
+BabiPalaceEntrance			64	
+BabiPalace			64	
+ColosseumTunnel			65	
+ColosseumEntrance			66	
+Colosseum		2	67	
+Colosseum		4	67	
+Colosseum			68	
+ColosseumAzartMatch			69	
+ColosseumSatrageMatch			70	
+ColosseumNavampaMatch			71	
+	43		72	
+	44		73	
+	45		74	
+	46		75	
+	47		76	
+	48		77	
+	49		78	
+	50		79	
+TimberRoomsA		2	80	
+TimberRoomsA		6	80	
+	51		81	
+GatewayCave			82	
+	52		83	
+TunnelRuinsLadyStatues		1	84	
+TunnelRuinsLadyStatues		2	84	
+TunnelRuinsLadyStatues		3	84	
+	53		85	
+BabiLighthouseEntry			86	
+RoadToBabiLighthouse			87	
+	54		88	
+TimberRoomsB		11	89	
+TimberRoomsB		12	89	
+	55		90	
+VenusLighthouseGroundFloor			91	
+	56		92	
+VenusLighthouseAerie			93	
+	57		94	
+	58		95	
+	59		96	
+BattleArena		1	97	
+	61		98	
+	62		99	
+	63		100	
+	64		101	
+	65		102	
+	66		103	
+	67		104	
+	68		105	
+	69		106	
+	70		107	

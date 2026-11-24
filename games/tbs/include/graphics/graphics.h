@@ -138,7 +138,7 @@ struct TileMask {
 /// over a colour-4 fill, read by RangeIcon_BuildTiles.
 extern const struct TileMask gMenu_BarPatternRows[];
 /// The row masks Menu_BuildPatternTiles XORs into the range icons' tile
-/// pairs (menu_strings.s).
+/// pairs (menu_tiles.s).
 extern const struct TileMask gMenu_PatternRowMasks[];
 /// One row of a tile XORed with a row's mask: how Menu_BuildPatternTiles and
 /// RangeIcon_BuildTiles mark each tile of a pair.

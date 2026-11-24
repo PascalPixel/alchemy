@@ -84,10 +84,10 @@ void SoundMainBTM(void *block);
 extern struct CgbChannel gCgbChans[4];
 
 /// The music player count, gMPlayTable's rows, as this symbol's address
-/// (sound/music_player_table.s).
+/// (sound/music_players.list.tsv).
 extern char gNumMusicPlayers[];
 /// The mixer's line limit, 0 for none, as this symbol's address
-/// (sound/music_player_table.s).
+/// (sound/music_players.list.tsv).
 extern char gMaxLines[];
 
 /// The song commands (gMPlayJumpTableTemplate) and the extended commands

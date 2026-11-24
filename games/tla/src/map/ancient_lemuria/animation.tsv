@@ -1,185 +1,181 @@
-channel	0
-picture	1792	8	256	0
-picture	1824	8	288	0
-picture	1856	8	320	0
-picture	1888	8	352	0
-picture	1920	8	384	0
-picture	1952	8	416	0
-picture	1984	8	448	0
-picture	2016	8	480	8
-picture	1800	8	256	0
-picture	1832	8	288	0
-picture	1864	8	320	0
-picture	1896	8	352	0
-picture	1928	8	384	0
-picture	1960	8	416	0
-picture	1992	8	448	0
-picture	2024	8	480	8
-picture	1808	8	256	0
-picture	1840	8	288	0
-picture	1872	8	320	0
-picture	1904	8	352	0
-picture	1936	8	384	0
-picture	1968	8	416	0
-picture	2000	8	448	0
-picture	2032	8	480	8
-picture	1816	8	256	0
-picture	1848	8	288	0
-picture	1880	8	320	0
-picture	1912	8	352	0
-picture	1944	8	384	0
-picture	1976	8	416	0
-picture	2008	8	448	0
-picture	2040	8	480	8
-picture	1280	8	256	0
-picture	1312	8	288	0
-picture	1344	8	320	0
-picture	1376	8	352	0
-picture	1408	8	384	0
-picture	1440	8	416	0
-picture	1472	8	448	0
-picture	1504	8	480	8
-picture	1288	8	256	0
-picture	1320	8	288	0
-picture	1352	8	320	0
-picture	1384	8	352	0
-picture	1416	8	384	0
-picture	1448	8	416	0
-picture	1480	8	448	0
-picture	1512	8	480	8
-picture	1296	8	256	0
-picture	1328	8	288	0
-picture	1360	8	320	0
-picture	1392	8	352	0
-picture	1424	8	384	0
-picture	1456	8	416	0
-picture	1488	8	448	0
-picture	1520	8	480	8
-picture	1304	8	256	0
-picture	1336	8	288	0
-picture	1368	8	320	0
-picture	1400	8	352	0
-picture	1432	8	384	0
-picture	1464	8	416	0
-picture	1496	8	448	0
-picture	1528	8	480	8
-jump	0
-channel	1
-picture	1536	2	796	0
-picture	1568	2	828	8
-picture	1538	2	796	0
-picture	1570	2	828	8
-picture	1540	2	796	0
-picture	1572	2	828	8
-picture	1542	2	796	0
-picture	1574	2	828	8
-picture	1544	2	796	0
-picture	1576	2	828	8
-picture	1546	2	796	0
-picture	1578	2	828	8
-picture	1548	2	796	0
-picture	1580	2	828	8
-picture	1550	2	796	0
-picture	1582	2	828	8
-picture	1552	2	796	0
-picture	1584	2	828	8
-picture	1554	2	796	0
-picture	1586	2	828	8
-picture	1556	2	796	0
-picture	1588	2	828	8
-picture	1558	2	796	0
-picture	1590	2	828	8
-picture	1560	2	796	0
-picture	1592	2	828	8
-picture	1562	2	796	0
-picture	1594	2	828	8
-picture	1564	2	796	0
-picture	1596	2	828	8
-picture	1566	2	796	0
-picture	1598	2	828	8
-picture	1600	2	796	0
-picture	1632	2	828	8
-picture	1602	2	796	0
-picture	1634	2	828	8
-picture	1604	2	796	0
-picture	1636	2	828	8
-picture	1606	2	796	0
-picture	1638	2	828	8
-picture	1608	2	796	0
-picture	1640	2	828	8
-picture	1610	2	796	0
-picture	1642	2	828	8
-picture	1612	2	796	0
-picture	1644	2	828	8
-picture	1614	2	796	0
-picture	1646	2	828	8
-picture	1616	2	796	0
-picture	1648	2	828	8
-picture	1618	2	796	0
-picture	1650	2	828	8
-picture	1620	2	796	0
-picture	1652	2	828	8
-picture	1622	2	796	0
-picture	1654	2	828	8
-picture	1624	2	796	0
-picture	1656	2	828	8
-picture	1626	2	796	0
-picture	1658	2	828	8
-picture	1628	2	796	0
-picture	1660	2	828	8
-picture	1630	2	796	0
-picture	1662	2	828	8
-picture	1664	2	796	0
-picture	1696	2	828	8
-picture	1666	2	796	0
-picture	1698	2	828	8
-picture	1668	2	796	0
-picture	1700	2	828	8
-picture	1670	2	796	0
-picture	1702	2	828	8
-picture	1672	2	796	0
-picture	1704	2	828	8
-picture	1674	2	796	0
-picture	1706	2	828	8
-picture	1676	2	796	0
-picture	1708	2	828	8
-picture	1678	2	796	0
-picture	1710	2	828	8
-jump	0
-channel	2
-picture	1680	2	732	0
-picture	1712	2	764	8
-picture	1682	2	732	0
-picture	1714	2	764	8
-picture	1684	2	732	0
-picture	1716	2	764	8
-picture	1686	2	732	0
-picture	1718	2	764	8
-picture	1688	2	732	0
-picture	1720	2	764	8
-picture	1690	2	732	0
-picture	1722	2	764	8
-picture	1692	2	732	0
-picture	1724	2	764	8
-picture	1694	2	732	0
-picture	1726	2	764	8
-jump	0
-channel	4
-picture	1744	2	734	0
-picture	1776	2	766	8
-picture	1746	2	734	0
-picture	1778	2	766	8
-picture	1748	2	734	0
-picture	1780	2	766	8
-picture	1750	2	734	0
-picture	1782	2	766	8
-picture	1752	2	734	0
-picture	1784	2	766	8
-picture	1754	2	734	0
-picture	1786	2	766	8
-picture	1756	2	734	0
-picture	1788	2	766	8
-picture	1758	2	734	0
-picture	1790	2	766	8
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	1792	8	256	0
+0	picture	1824	8	288	0
+0	picture	1856	8	320	0
+0	picture	1888	8	352	0
+0	picture	1920	8	384	0
+0	picture	1952	8	416	0
+0	picture	1984	8	448	0
+0	picture	2016	8	480	8
+0	picture	1800	8	256	0
+0	picture	1832	8	288	0
+0	picture	1864	8	320	0
+0	picture	1896	8	352	0
+0	picture	1928	8	384	0
+0	picture	1960	8	416	0
+0	picture	1992	8	448	0
+0	picture	2024	8	480	8
+0	picture	1808	8	256	0
+0	picture	1840	8	288	0
+0	picture	1872	8	320	0
+0	picture	1904	8	352	0
+0	picture	1936	8	384	0
+0	picture	1968	8	416	0
+0	picture	2000	8	448	0
+0	picture	2032	8	480	8
+0	picture	1816	8	256	0
+0	picture	1848	8	288	0
+0	picture	1880	8	320	0
+0	picture	1912	8	352	0
+0	picture	1944	8	384	0
+0	picture	1976	8	416	0
+0	picture	2008	8	448	0
+0	picture	2040	8	480	8
+0	picture	1280	8	256	0
+0	picture	1312	8	288	0
+0	picture	1344	8	320	0
+0	picture	1376	8	352	0
+0	picture	1408	8	384	0
+0	picture	1440	8	416	0
+0	picture	1472	8	448	0
+0	picture	1504	8	480	8
+0	picture	1288	8	256	0
+0	picture	1320	8	288	0
+0	picture	1352	8	320	0
+0	picture	1384	8	352	0
+0	picture	1416	8	384	0
+0	picture	1448	8	416	0
+0	picture	1480	8	448	0
+0	picture	1512	8	480	8
+0	picture	1296	8	256	0
+0	picture	1328	8	288	0
+0	picture	1360	8	320	0
+0	picture	1392	8	352	0
+0	picture	1424	8	384	0
+0	picture	1456	8	416	0
+0	picture	1488	8	448	0
+0	picture	1520	8	480	8
+0	picture	1304	8	256	0
+0	picture	1336	8	288	0
+0	picture	1368	8	320	0
+0	picture	1400	8	352	0
+0	picture	1432	8	384	0
+0	picture	1464	8	416	0
+0	picture	1496	8	448	0
+0	picture	1528	8	480	8
+0	jump	0
+1	picture	1536	2	796	0
+1	picture	1568	2	828	8
+1	picture	1538	2	796	0
+1	picture	1570	2	828	8
+1	picture	1540	2	796	0
+1	picture	1572	2	828	8
+1	picture	1542	2	796	0
+1	picture	1574	2	828	8
+1	picture	1544	2	796	0
+1	picture	1576	2	828	8
+1	picture	1546	2	796	0
+1	picture	1578	2	828	8
+1	picture	1548	2	796	0
+1	picture	1580	2	828	8
+1	picture	1550	2	796	0
+1	picture	1582	2	828	8
+1	picture	1552	2	796	0
+1	picture	1584	2	828	8
+1	picture	1554	2	796	0
+1	picture	1586	2	828	8
+1	picture	1556	2	796	0
+1	picture	1588	2	828	8
+1	picture	1558	2	796	0
+1	picture	1590	2	828	8
+1	picture	1560	2	796	0
+1	picture	1592	2	828	8
+1	picture	1562	2	796	0
+1	picture	1594	2	828	8
+1	picture	1564	2	796	0
+1	picture	1596	2	828	8
+1	picture	1566	2	796	0
+1	picture	1598	2	828	8
+1	picture	1600	2	796	0
+1	picture	1632	2	828	8
+1	picture	1602	2	796	0
+1	picture	1634	2	828	8
+1	picture	1604	2	796	0
+1	picture	1636	2	828	8
+1	picture	1606	2	796	0
+1	picture	1638	2	828	8
+1	picture	1608	2	796	0
+1	picture	1640	2	828	8
+1	picture	1610	2	796	0
+1	picture	1642	2	828	8
+1	picture	1612	2	796	0
+1	picture	1644	2	828	8
+1	picture	1614	2	796	0
+1	picture	1646	2	828	8
+1	picture	1616	2	796	0
+1	picture	1648	2	828	8
+1	picture	1618	2	796	0
+1	picture	1650	2	828	8
+1	picture	1620	2	796	0
+1	picture	1652	2	828	8
+1	picture	1622	2	796	0
+1	picture	1654	2	828	8
+1	picture	1624	2	796	0
+1	picture	1656	2	828	8
+1	picture	1626	2	796	0
+1	picture	1658	2	828	8
+1	picture	1628	2	796	0
+1	picture	1660	2	828	8
+1	picture	1630	2	796	0
+1	picture	1662	2	828	8
+1	picture	1664	2	796	0
+1	picture	1696	2	828	8
+1	picture	1666	2	796	0
+1	picture	1698	2	828	8
+1	picture	1668	2	796	0
+1	picture	1700	2	828	8
+1	picture	1670	2	796	0
+1	picture	1702	2	828	8
+1	picture	1672	2	796	0
+1	picture	1704	2	828	8
+1	picture	1674	2	796	0
+1	picture	1706	2	828	8
+1	picture	1676	2	796	0
+1	picture	1708	2	828	8
+1	picture	1678	2	796	0
+1	picture	1710	2	828	8
+1	jump	0
+2	picture	1680	2	732	0
+2	picture	1712	2	764	8
+2	picture	1682	2	732	0
+2	picture	1714	2	764	8
+2	picture	1684	2	732	0
+2	picture	1716	2	764	8
+2	picture	1686	2	732	0
+2	picture	1718	2	764	8
+2	picture	1688	2	732	0
+2	picture	1720	2	764	8
+2	picture	1690	2	732	0
+2	picture	1722	2	764	8
+2	picture	1692	2	732	0
+2	picture	1724	2	764	8
+2	picture	1694	2	732	0
+2	picture	1726	2	764	8
+2	jump	0
+4	picture	1744	2	734	0
+4	picture	1776	2	766	8
+4	picture	1746	2	734	0
+4	picture	1778	2	766	8
+4	picture	1748	2	734	0
+4	picture	1780	2	766	8
+4	picture	1750	2	734	0
+4	picture	1782	2	766	8
+4	picture	1752	2	734	0
+4	picture	1784	2	766	8
+4	picture	1754	2	734	0
+4	picture	1786	2	766	8
+4	picture	1756	2	734	0
+4	picture	1788	2	766	8
+4	picture	1758	2	734	0
+4	picture	1790	2	766	8
+4	jump	0

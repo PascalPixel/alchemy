@@ -480,8 +480,9 @@ struct SceneEntrance gStuccoRoomsA_SanctumEntrances[] = {
      -1, -1, 0},
     {KALAY_SANCTUM_FROM_KALAY, CONDITION_ALWAYS, 248, 0, 304, FACING_NORTH, 0,
      110, 35, 390, 345, 0},
-    {KALAY_SANCTUM_AFTER_DEFEAT, CONDITION_ALWAYS, 248, 0, 128, FACING_SOUTH, 0,
-     110, 35, 390, 345, 0},
+    // Behind the counter, where a defeat in Kalay returns the party
+    // (field/restart_rules.list.tsv).
+    {2, CONDITION_ALWAYS, 248, 0, 128, FACING_SOUTH, 0, 110, 35, 390, 345, 0},
     {SCENE_TABLE_END},
 };
 

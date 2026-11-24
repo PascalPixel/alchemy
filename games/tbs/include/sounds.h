@@ -293,7 +293,7 @@ enum SoundId {
   SE_FOOTSTEP,
   /// Unused: SE_FOOTSTEP's two notes far lower on its voice; nothing plays it.
   SE_UNUSED_FOOTSTEP_LOW,
-  SE_120,
+  SE_UNUSED_STATIC_CRACKLE,
   /// The guards throwing the leader out of Lunpa.
   SE_SCUFFLE,
   /// Unused: nothing plays it here. The Lost Age plays the same sequence as
@@ -434,7 +434,7 @@ enum SoundId {
   /// Temple, the Kalay docks, Altin Peak's cart, and the lady statues moved in
   /// the Tunnel Ruins.
   SE_DOOR_CLOSE,
-  SE_160,
+  SE_UNUSED_NOISE_SWELL,
   /// Plays as Felix is unmasked, as Tret rejects the Hermes' Water, as
   /// Levitation is shown at the gate to Mt. Aleph, as Vale's roof is mended, at
   /// Venus Lighthouse's switches, and as Saturos and Menardi combine. It sounds
@@ -582,7 +582,7 @@ enum SoundId {
   /// On the stormy night, as Isaac and Dora hurry to the plaza, a flame flares
   /// up and rises away as smoke (gCottageRoomsB_FlameRisesScript).
   SE_FLAME_FLARE,
-  SE_203,
+  SE_UNUSED_NOISE_PUFF,
   /// Landing in dust at Babi Lighthouse, the Mercury Lighthouse entrance and
   /// Venus Lighthouse; the Tret Tree's leaves and rooms; and the water drops
   /// striking Vault Cave's pillars.
@@ -626,7 +626,7 @@ enum SoundId {
   /// Mercury Lighthouse's floor switches and gates, the Colosso's moving
   /// walkway, and an actor jumping down a ledge.
   SE_FLOOR_SWITCH,
-  SE_218,
+  SE_UNUSED_STATIC_BURST,
   /// Mercury Lighthouse's fountain, and the storm carrying the party off in
   /// Suhalla Desert and dropping it on the world map. It sounds like a rushing
   /// noise that swells in and fades over about three seconds.
@@ -643,7 +643,7 @@ enum SoundId {
   SE_WHIRLWIND,
   /// The lifts of Mercury Lighthouse and its aerie, as they carry the party.
   SE_LIFT,
-  SE_224,
+  SE_UNUSED_WARBLE_TONE,
   /// Unused: nothing plays it here. The Lost Age plays the same sequence as
   /// Moloch's white cloud billows up from the ground.
   SE_CLOUD_BILLOWS,
@@ -720,7 +720,7 @@ enum SoundId {
   /// Unused: nothing plays it here. The Lost Age plays the same sequence as an
   /// arrow of the Gabomba Statue is raised or lowered.
   SE_GABOMBA_STATUE_ARROW,
-  SE_249,
+  SE_UNUSED_FALLING_HISS,
   /// Unused: SE_BLACK_CRYSTAL_SET seven semitones lower; nothing plays it.
   SE_UNUSED_BLACK_CRYSTAL_SET_LOW,
   /// Unused: nothing plays it here. The Lost Age plays the same sequence as the

@@ -136,6 +136,9 @@ $(foreach form,$(PICTURE_FORMS),$(foreach codec,$(CODECS),$(eval %.$(form).$(cod
 %/scene.scene.lz: %/points.tsv %/entrances.tsv %/bounds.tsv $(AGSGFX) ; $(AGSGFX) $< $@
 %/scene_ja.scene.lz: %/points_ja.tsv %/entrances_ja.tsv %/bounds_ja.tsv $(AGSGFX) ; $(AGSGFX) $< $@
 $(foreach form,$(TABLE_FORMS),$(eval %.$(form): %.tsv $$(AGSGFX) ; $$(AGSGFX) $$< $$@))
+# A sprite bank is one table for every edition: an edition's bank, sprites_ja,
+# draws NAME_ja.png and reads NAME_ja.tsv wherever a sprite has them.
+$(foreach form,sprites spriteblocks,$(foreach lang,ja en de es fr it,$(eval %/sprites_$(lang).$(form): %/sprites.tsv $$(AGSGFX) ; $$(AGSGFX) $$< $$@)))
 $(foreach form,$(TABLE_FORMS),$(foreach codec,$(CODECS),$(eval %.$(form).$(codec): %.tsv $(PATCH) $$(AGSGFX) ; $$(AGSGFX) $$< $$@)))
 
 # An animation whose pictures differ in size, so that no one sheet holds them:
@@ -144,13 +147,11 @@ $(foreach form,$(TABLE_FORMS),$(foreach codec,$(CODECS),$(eval %.$(form).$(codec
 PICTURE_RUN := $$$$(wildcard $$$$(basename $$$$(basename $$$$@))_[0-9][0-9].png)
 $(foreach codec,$(CODECS),$(eval %.bitmaps.$(codec): %_00.png $(PICTURE_RUN) $(PATCH) $$(AGSGFX) ; $$(AGSGFX) $$< $$@))
 
-# A map's grid: map.txt, one cell per square, builds the three planes the
-# game reads.
-
-# A background's tile map as the screen shows it, and the world map's
-# collision tiles as the game reads them: text grids, like map.txt.
-%.tilemap.lz: %.txt $$(wildcard $$(basename $$(basename $$@))_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
-%.collision.lz: %.txt $$(wildcard $$(basename $$(basename $$@))_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
+# A background's tile map as the screen shows it, a grid of tile numbers with
+# its flips and palettes in two tables beside it where it has them, and the
+# world map's collision tiles as the game reads them.
+%.tilemap.lz: %.tsv $$(wildcard $$*.flip.tsv $$*.palette.tsv $$*_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
+%.collision.lz: %.tsv $$(wildcard $$(basename $$(basename $$@))_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
 
 # Sound samples: NAME.pcm8.bin from NAME.pcm8.wav, NAME.bin from NAME.pcm4.
 %.pcm8.bin: %.pcm8.wav $(WAV2AGS) ; $(WAV2AGS) $< $@
@@ -498,13 +499,14 @@ MAPS = games/tbs/src/map/maps.s games/tla/src/map/maps.s
 LISTS := $(patsubst %.tsv,%.s,$(shell find games -name list.tsv -o -name '*.list.tsv'))
 .PHONY: lists
 lists: $(LISTS) $(MAPS)
-$(LISTS): %.s: %.tsv | tools
+tools/out/ags-list tools/out/ags-maps: | tools
+$(LISTS): %.s: %.tsv tools/out/ags-list
 	tools/out/ags-list $< $@
 # Every map of the field has its tables in its own folder, and maps.tsv
 # beside the folders gives their order;
 # ags-maps writes maps.s from them.
 MAPS := games/tbs/src/map/maps.s games/tla/src/map/maps.s
-$(MAPS): %/maps.s: %/maps.tsv $$(wildcard $$*/*/header.tsv $$*/*/layers.tsv $$*/*/contents.tsv $$*/*/spots.tsv $$*/*/placed.tsv) | tools
+$(MAPS): %/maps.s: %/maps.tsv $$(wildcard $$*/*/header.tsv $$*/*/layers.tsv $$*/*/contents.tsv $$*/*/spots.tsv $$*/*/placed.tsv) tools/out/ags-maps
 	tools/out/ags-maps $* $@
 
 # --- Tools and tests -------------------------------------------------------

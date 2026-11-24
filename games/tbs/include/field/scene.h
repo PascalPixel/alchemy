@@ -73,7 +73,7 @@ struct FieldPosition {
 
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
-/// Every scene's row, by scene number (field/scenes.s).
+/// Every scene's row, by scene number (field/scenes.list.tsv).
 extern const struct Scene gScenes[];
 /// The running scene's overlay, loaded into these 32 KB of EWRAM at each scene
 /// change; its code opens with its 48-byte entry table.

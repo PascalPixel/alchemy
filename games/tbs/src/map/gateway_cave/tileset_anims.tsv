@@ -1,200 +1,186 @@
-channel	0
-picture	1412	4	1306	0
-picture	1444	4	1338	0
-picture	1476	4	1370	0
-picture	1508	4	1402	6
-picture	1416	4	1306	0
-picture	1448	4	1338	0
-picture	1480	4	1370	0
-picture	1512	4	1402	6
-picture	1420	4	1306	0
-picture	1452	4	1338	0
-picture	1484	4	1370	0
-picture	1516	4	1402	6
-jump	0
-channel	1
-picture	458	2	2	0
-picture	490	2	34	14
-picture	460	2	2	0
-picture	492	2	34	14
-picture	462	2	2	0
-picture	494	2	34	14
-picture	460	2	2	0
-picture	492	2	34	14
-jump	0
-channel	2
-picture	586	2	522	0
-picture	618	2	554	10
-picture	588	2	522	0
-picture	620	2	554	10
-picture	586	2	522	0
-picture	618	2	554	10
-picture	590	2	522	0
-picture	622	2	554	10
-jump	0
-channel	3
-picture	330	2	170	18
-picture	362	2	170	18
-picture	394	2	170	18
-jump	0
-channel	4
-picture	464	2	66	0
-picture	496	2	98	0
-picture	320	1	132	0
-picture	352	1	164	0
-picture	321	1	133	0
-picture	353	1	165	0
-picture	256	1	130	0
-picture	288	1	162	18
-picture	466	2	66	0
-picture	498	2	98	0
-picture	322	1	132	0
-picture	354	1	164	0
-picture	323	1	133	0
-picture	355	1	165	0
-picture	258	1	130	0
-picture	290	1	162	18
-picture	468	2	66	0
-picture	500	2	98	0
-picture	324	1	132	0
-picture	356	1	164	0
-picture	325	1	133	0
-picture	357	1	165	0
-picture	260	1	130	0
-picture	292	1	162	18
-picture	466	2	66	0
-picture	498	2	98	0
-picture	322	1	132	0
-picture	354	1	164	0
-picture	323	1	133	0
-picture	355	1	165	0
-picture	258	1	130	0
-picture	290	1	162	18
-jump	0
-channel	5
-picture	257	1	131	0
-picture	289	1	163	0
-picture	192	2	134	0
-picture	224	2	166	18
-picture	259	1	131	0
-picture	291	1	163	0
-picture	194	2	134	0
-picture	226	2	166	18
-picture	261	1	131	0
-picture	293	1	163	0
-picture	196	2	134	0
-picture	228	2	166	18
-picture	259	1	131	0
-picture	291	1	163	0
-picture	194	2	134	0
-picture	226	2	166	18
-jump	0
-channel	6
-picture	204	2	8	0
-picture	236	2	40	0
-picture	206	2	10	0
-picture	238	2	42	18
-picture	208	2	8	0
-picture	240	2	40	0
-picture	210	2	10	0
-picture	242	2	42	18
-picture	212	2	8	0
-picture	244	2	40	0
-picture	214	2	10	0
-picture	246	2	42	18
-picture	208	2	8	0
-picture	240	2	40	0
-picture	210	2	10	0
-picture	242	2	42	18
-jump	0
-channel	7
-picture	268	2	72	0
-picture	300	2	104	0
-picture	270	2	74	0
-picture	302	2	106	18
-picture	272	2	72	0
-picture	304	2	104	0
-picture	274	2	74	0
-picture	306	2	106	18
-picture	276	2	72	0
-picture	308	2	104	0
-picture	278	2	74	0
-picture	310	2	106	18
-picture	272	2	72	0
-picture	304	2	104	0
-picture	274	2	74	0
-picture	306	2	106	18
-jump	0
-channel	8
-picture	332	2	16	0
-picture	364	2	48	18
-picture	336	2	16	0
-picture	368	2	48	18
-picture	340	2	16	0
-picture	372	2	48	18
-picture	336	2	16	0
-picture	368	2	48	18
-jump	0
-channel	9
-picture	334	2	18	0
-picture	366	2	50	18
-picture	338	2	18	0
-picture	370	2	50	18
-picture	342	2	18	0
-picture	374	2	50	18
-picture	338	2	18	0
-picture	370	2	50	18
-jump	0
-channel	10
-picture	396	2	80	0
-picture	428	2	112	0
-picture	398	2	82	0
-picture	430	2	114	18
-picture	400	2	80	0
-picture	432	2	112	0
-picture	402	2	82	0
-picture	434	2	114	18
-picture	404	2	80	0
-picture	436	2	112	0
-picture	406	2	82	0
-picture	438	2	114	18
-picture	400	2	80	0
-picture	432	2	112	0
-picture	402	2	82	0
-picture	434	2	114	18
-jump	0
-channel	11
-picture	798	2	970	0
-picture	830	2	1002	0
-picture	1050	2	846	0
-picture	1082	2	878	16
-picture	862	2	970	0
-picture	894	2	1002	0
-picture	1052	2	846	0
-picture	1084	2	878	16
-picture	926	2	970	0
-picture	958	2	1002	0
-picture	1054	2	846	0
-picture	1086	2	878	16
-jump	0
-channel	12
-picture	1174	4	1106	0
-picture	1206	4	1138	40
-picture	1110	4	1106	0
-picture	1142	4	1138	35
-picture	1170	4	1106	0
-picture	1202	4	1138	40
-picture	1110	4	1106	0
-picture	1142	4	1138	35
-jump	0
-channel	13
-picture	1174	4	1230	0
-picture	1206	4	1262	50
-picture	1110	4	1230	0
-picture	1142	4	1262	55
-picture	1170	4	1230	0
-picture	1202	4	1262	50
-picture	1110	4	1230	0
-picture	1142	4	1262	55
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	1412	4	1306	0
+0	picture	1444	4	1338	0
+0	picture	1476	4	1370	0
+0	picture	1508	4	1402	6
+0	picture	1416	4	1306	0
+0	picture	1448	4	1338	0
+0	picture	1480	4	1370	0
+0	picture	1512	4	1402	6
+0	picture	1420	4	1306	0
+0	picture	1452	4	1338	0
+0	picture	1484	4	1370	0
+0	picture	1516	4	1402	6
+0	jump	0
+1	picture	458	2	2	0
+1	picture	490	2	34	14
+1	picture	460	2	2	0
+1	picture	492	2	34	14
+1	picture	462	2	2	0
+1	picture	494	2	34	14
+1	picture	460	2	2	0
+1	picture	492	2	34	14
+1	jump	0
+2	picture	586	2	522	0
+2	picture	618	2	554	10
+2	picture	588	2	522	0
+2	picture	620	2	554	10
+2	picture	586	2	522	0
+2	picture	618	2	554	10
+2	picture	590	2	522	0
+2	picture	622	2	554	10
+2	jump	0
+3	picture	330	2	170	18
+3	picture	362	2	170	18
+3	picture	394	2	170	18
+3	jump	0
+4	picture	464	2	66	0
+4	picture	496	2	98	0
+4	picture	320	1	132	0
+4	picture	352	1	164	0
+4	picture	321	1	133	0
+4	picture	353	1	165	0
+4	picture	256	1	130	0
+4	picture	288	1	162	18
+4	picture	466	2	66	0
+4	picture	498	2	98	0
+4	picture	322	1	132	0
+4	picture	354	1	164	0
+4	picture	323	1	133	0
+4	picture	355	1	165	0
+4	picture	258	1	130	0
+4	picture	290	1	162	18
+4	picture	468	2	66	0
+4	picture	500	2	98	0
+4	picture	324	1	132	0
+4	picture	356	1	164	0
+4	picture	325	1	133	0
+4	picture	357	1	165	0
+4	picture	260	1	130	0
+4	picture	292	1	162	18
+4	picture	466	2	66	0
+4	picture	498	2	98	0
+4	picture	322	1	132	0
+4	picture	354	1	164	0
+4	picture	323	1	133	0
+4	picture	355	1	165	0
+4	picture	258	1	130	0
+4	picture	290	1	162	18
+4	jump	0
+5	picture	257	1	131	0
+5	picture	289	1	163	0
+5	picture	192	2	134	0
+5	picture	224	2	166	18
+5	picture	259	1	131	0
+5	picture	291	1	163	0
+5	picture	194	2	134	0
+5	picture	226	2	166	18
+5	picture	261	1	131	0
+5	picture	293	1	163	0
+5	picture	196	2	134	0
+5	picture	228	2	166	18
+5	picture	259	1	131	0
+5	picture	291	1	163	0
+5	picture	194	2	134	0
+5	picture	226	2	166	18
+5	jump	0
+6	picture	204	2	8	0
+6	picture	236	2	40	0
+6	picture	206	2	10	0
+6	picture	238	2	42	18
+6	picture	208	2	8	0
+6	picture	240	2	40	0
+6	picture	210	2	10	0
+6	picture	242	2	42	18
+6	picture	212	2	8	0
+6	picture	244	2	40	0
+6	picture	214	2	10	0
+6	picture	246	2	42	18
+6	picture	208	2	8	0
+6	picture	240	2	40	0
+6	picture	210	2	10	0
+6	picture	242	2	42	18
+6	jump	0
+7	picture	268	2	72	0
+7	picture	300	2	104	0
+7	picture	270	2	74	0
+7	picture	302	2	106	18
+7	picture	272	2	72	0
+7	picture	304	2	104	0
+7	picture	274	2	74	0
+7	picture	306	2	106	18
+7	picture	276	2	72	0
+7	picture	308	2	104	0
+7	picture	278	2	74	0
+7	picture	310	2	106	18
+7	picture	272	2	72	0
+7	picture	304	2	104	0
+7	picture	274	2	74	0
+7	picture	306	2	106	18
+7	jump	0
+8	picture	332	2	16	0
+8	picture	364	2	48	18
+8	picture	336	2	16	0
+8	picture	368	2	48	18
+8	picture	340	2	16	0
+8	picture	372	2	48	18
+8	picture	336	2	16	0
+8	picture	368	2	48	18
+8	jump	0
+9	picture	334	2	18	0
+9	picture	366	2	50	18
+9	picture	338	2	18	0
+9	picture	370	2	50	18
+9	picture	342	2	18	0
+9	picture	374	2	50	18
+9	picture	338	2	18	0
+9	picture	370	2	50	18
+9	jump	0
+10	picture	396	2	80	0
+10	picture	428	2	112	0
+10	picture	398	2	82	0
+10	picture	430	2	114	18
+10	picture	400	2	80	0
+10	picture	432	2	112	0
+10	picture	402	2	82	0
+10	picture	434	2	114	18
+10	picture	404	2	80	0
+10	picture	436	2	112	0
+10	picture	406	2	82	0
+10	picture	438	2	114	18
+10	picture	400	2	80	0
+10	picture	432	2	112	0
+10	picture	402	2	82	0
+10	picture	434	2	114	18
+10	jump	0
+11	picture	798	2	970	0
+11	picture	830	2	1002	0
+11	picture	1050	2	846	0
+11	picture	1082	2	878	16
+11	picture	862	2	970	0
+11	picture	894	2	1002	0
+11	picture	1052	2	846	0
+11	picture	1084	2	878	16
+11	picture	926	2	970	0
+11	picture	958	2	1002	0
+11	picture	1054	2	846	0
+11	picture	1086	2	878	16
+11	jump	0
+12	picture	1174	4	1106	0
+12	picture	1206	4	1138	40
+12	picture	1110	4	1106	0
+12	picture	1142	4	1138	35
+12	picture	1170	4	1106	0
+12	picture	1202	4	1138	40
+12	picture	1110	4	1106	0
+12	picture	1142	4	1138	35
+12	jump	0
+13	picture	1174	4	1230	0
+13	picture	1206	4	1262	50
+13	picture	1110	4	1230	0
+13	picture	1142	4	1262	55
+13	picture	1170	4	1230	0
+13	picture	1202	4	1262	50
+13	picture	1110	4	1230	0
+13	picture	1142	4	1262	55
+13	jump	0

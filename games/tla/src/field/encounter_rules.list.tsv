@@ -1,0 +1,236 @@
+scene	entrance	flag	zone0	zone1	edition
+KandoreanTempleLifts			17	0	
+KandoreanTempleMimic	2		18	0	
+KandoreanTempleMimic	3		18	0	
+KandoreanTempleMimic			16	0	
+KandoreanTempleChestbeaters			18	0	
+KandoreanTemplePillar	2		17	0	
+KandoreanTempleCurrent			17	0	
+KandoreanTempleFog	3		18	0	
+KandoreanTempleFog	4		18	0	
+KandoreanTempleFog			16	0	
+ShrineOfTheSeaGodCrossroads	3		19	0	
+ShrineOfTheSeaGodCrossroads	4		19	0	
+ShrineOfTheSeaGodCrossroads	5		19	0	
+ShrineOfTheSeaGodCrossroads			20	0	
+ShrineOfTheSeaGodFootprints			19	0	
+ShrineOfTheSeaGodBreath			19	0	
+ShrineOfTheSeaGodPillars			20	0	
+ShrineOfTheSeaGodSeaGodsTear			0	20	
+ShrineOfTheSeaGodLadders			21	0	
+DehkanPlateauFullMetalVestChest			22	0	
+DehkanPlateauThemisAxeChest			22	0	
+DehkanPlateauTightropes			23	0	
+DehkanPlateauMintChest	3		24	0	
+DehkanPlateauMintChest			23	0	
+DehkanPlateauPoundCube			24	0	
+DehkanPlateauCannon			24	0	
+MadraCatacombsEntrance			27	0	
+MadraCatacombsLadders			27	0	
+MadraCatacombsChampaTunnel			27	0	
+MadraCatacombsStoneDoor			28	0	
+MadraCatacombsBookshelf			28	0	
+MadraCatacombsTablet			28	0	
+YampiDesertGuardianRingChest			31	0	
+YampiDesertBlitz			31	0	
+YampiDesertPsynergyStone			32	0	
+YampiDesertCoinsPuddle			32	0	
+YampiDesertSandPass			33	0	
+YampiDesertTrainersWhipChest			33	0	
+YampiDesertHiddenPsynergyStone			33	0	
+YampiDesertSpringCave			32	0	
+YampiDesertBlowMaceChest			32	0	
+AirsRockStormBrandChest			34	0	
+AirsRockEntrance			35	0	
+AirsRockFujinShieldChest	8		0	35	
+AirsRockFujinShieldChest	9		0	35	
+AirsRockFujinShieldChest			35	0	
+AirsRockInsideHall	5		38	0	
+AirsRockInsideHall	4		37	0	
+AirsRockInsideHall	6		37	0	
+AirsRockInsideHall	7		37	0	
+AirsRockInsideHall	10		37	0	
+AirsRockInsideHall	14		38	0	
+AirsRockInsideHall	15		38	0	
+AirsRockInsideHall			36	37	
+AirsRockInsideVialChest			36	0	
+AirsRockInsideClarityCircletChest			36	0	
+AirsRockInsideTightropes			37	38	
+AirsRockInsideElixirChest			37	0	
+AirsRockInsidePairedStakes			36	0	
+AirsRockInsideFaceVents			36	0	
+AirsRockInsideCoinsChest			38	0	
+AlhafranCave			39	0	
+AlhafraJail	8		0	0	
+AlhafraJail	9		0	0	
+AlhafraJail			39	0	
+GondowanCliffs	2		40	0	
+GondowanCliffs			41	0	
+KibomboMountainsWaft		FLAG_GABOMBA_MESSAGE_CARRIED	0	45	
+KibomboMountainsWaft			45	45	
+KibomboMountainsDiskAxeChest		FLAG_GABOMBA_MESSAGE_CARRIED	0	44	
+KibomboMountainsDiskAxeChest			45	45	
+KibomboMountainsCavern			0	45	
+GabombaStatueBoneArmletChest			46	0	
+GabombaStatueElixirChest	1		47	0	
+GabombaStatueElixirChest	2		47	0	
+GabombaStatueElixirChest			48	0	
+GabombaStatueSteel	1		47	0	
+GabombaStatueSteel	4		47	0	
+GabombaStatueSteel			48	0	
+GabombaStatueMouse			0	47	
+GabombaStatueCogs			48	0	
+GabombaStatueChamberIdol			48	0	
+GabombaStatuePinion			46	0	
+GabombaCatacombsTeleporters			49	0	
+GabombaCatacombsMud			49	0	
+GabombaCatacombsHiddenWall			50	0	
+GabombaCatacombsTomegathericon			50	0	
+GabombaCatacombsStream			50	0	
+LemurianShipCabins		2435	0	51	
+TaopoSwampEntrance			0	55	
+TaopoSwampMud			0	55	
+TaopoSwampTearStones			55	0	
+TaopoSwampFlower			55	0	
+TaopoSwampVents			55	0	
+TaopoSwampPool			56	0	
+TaopoSwampPillarGap			56	0	
+TaopoSwampDrips			56	0	
+TaopoSwampLavaRocks			57	0	
+TaopoSwampTremor			57	0	
+TaopoSwampStarDust			57	0	
+ApojiiIslandsCave			58	0	
+AquaRockMoai			58	0	
+AquaRockMistSabreChest			59	0	
+AquaRockInsideWaterOfLifeChest			62	0	
+AquaRockInsideSteam			62	0	
+AquaRockInsideAquariusStone			62	0	
+AquaRockInsideRustySwordChest	6		0	0	
+AquaRockInsideRustySwordChest	7		0	0	
+AquaRockInsideRustySwordChest			62	0	
+AquaRockInsideCrystalPowderChest			60	0	
+AquaRockInsideVialChest			60	0	
+AquaRockInsidePsynergyStone			62	0	
+AquaRockInsideTightrope			61	0	
+AquaRockInsideTearStone			61	0	
+AquaRockInsideParchTablet			0	0	
+GaiaRockSusa			63	0	
+GaiaRockStatueSpots	3		64	0	
+GaiaRockStatueSpots	4		64	0	
+GaiaRockStatueSpots			63	0	
+GaiaRockDancingIdol			63	0	
+GaiaRockInsideMaze	9		0	0	
+GaiaRockInsideMaze	10		0	0	
+GaiaRockInsideMaze			65	66	
+GaiaRockInsideFirstAltar			65	0	
+GaiaRockInsideTwinAltars			66	0	
+GaiaRockInsidePlatforms			66	0	
+GaiaRockInsideAltar			67	0	
+IzumoRuinsFirstRoom			68	0	
+IzumoRuinsSecondRoom			69	0	
+AnkohlRuinsStoneFaces			71	0	
+AnkohlRuinsThanatosMaceChest			71	0	
+AnkohlRuinsGreatFace			71	0	
+AnkohlRuinsFaceHalves			72	0	
+AnkohlRuinsCrystalPowderChest			73	0	
+TundariaTowerCenterProng			74	0	
+TundariaTowerIceSlide			74	0	
+TundariaTowerReflux			75	0	
+TundariaTowerIceColumns			75	0	
+TundariaTowerPillarPuzzle			76	0	
+JupiterLighthouseBasementTeleporters			82	0	
+JupiterLighthouseRoomGateButton			82	0	
+JupiterLighthouseRoomBeam			82	0	
+JupiterLighthouseRoomErinyesTunicChest	3		82	83	
+JupiterLighthouseRoomErinyesTunicChest	4		82	83	
+JupiterLighthouseRoomErinyesTunicChest	8		82	83	
+JupiterLighthouseRoomErinyesTunicChest	9		82	83	
+JupiterLighthouseRoomErinyesTunicChest			83	0	
+JupiterLighthouseRoomLockedDoors	5		83	0	
+JupiterLighthouseRoomLockedDoors	7		83	0	
+JupiterLighthouseRoomLockedDoors			82	0	
+JupiterLighthouseRoomRedKey			0	83	
+JupiterLighthouseRoomCrackedFloor			83	0	
+JupiterLighthouseWhorl			84	0	
+JupiterLighthouseRoomBlueKey			83	0	
+JupiterLighthouseRoomPhaetonsBladeChest			84	0	
+JupiterLighthouseTerraces			83	0	
+MagmaRockSlide			86	0	
+MagmaRockSalamanderTailChest	13		86	0	
+MagmaRockSalamanderTailChest	14		86	0	
+MagmaRockSalamanderTailChest	15		86	0	
+MagmaRockSalamanderTailChest	16		86	0	
+MagmaRockSalamanderTailChest	17		86	0	
+MagmaRockSalamanderTailChest			87	0	
+MagmaRockStatue			87	0	
+MagmaRockInsideLuckyMedalChest			88	0	
+MagmaRockInsideEntrance			88	0	
+MagmaRockInsideFury			89	0	
+MagmaRockInsideCrackedPillars	1		89	0	
+MagmaRockInsideCrackedPillars	2		89	0	
+MagmaRockInsideCrackedPillars	3		89	0	
+MagmaRockInsideCrackedPillars	4		89	0	
+MagmaRockInsideCrackedPillars	5		89	0	
+MagmaRockInsideCrackedPillars	6		89	0	
+MagmaRockInsideCrackedPillars	7		89	0	
+MagmaRockInsideCrackedPillars			90	0	
+MagmaRockInsideGolemCoreChest			89	0	
+MagmaRockInsideSalamanderTailChest			90	0	
+MagmaRockInsideEmberStone			90	0	
+MagmaRockInsideBlazeTablet			90	0	
+NorthernReaches			91	0	
+MarsLighthouseEntranceFugue			92	0	
+MarsLighthouseEntranceTeleportLapis			92	0	
+MarsLighthouseEntranceBalm			92	0	
+MarsLighthouseEntranceHiddenCircle			92	0	
+MarsLighthouseEntranceValkyrieMailChest		7	0	0	ja
+MarsLighthouseEntranceValkyrieMailChest		8	0	0	ja
+MarsLighthouseEntranceValkyrieMailChest		11	0	0	ja
+MarsLighthouseEntranceValkyrieMailChest		7	0	93	en
+MarsLighthouseEntranceValkyrieMailChest		7	0	93	de
+MarsLighthouseEntranceValkyrieMailChest		7	0	93	es
+MarsLighthouseEntranceValkyrieMailChest		7	0	93	fr
+MarsLighthouseEntranceValkyrieMailChest		7	0	93	it
+MarsLighthouseEntranceValkyrieMailChest		8	0	93	en
+MarsLighthouseEntranceValkyrieMailChest		8	0	93	de
+MarsLighthouseEntranceValkyrieMailChest		8	0	93	es
+MarsLighthouseEntranceValkyrieMailChest		8	0	93	fr
+MarsLighthouseEntranceValkyrieMailChest		8	0	93	it
+MarsLighthouseEntranceValkyrieMailChest		11	0	93	en
+MarsLighthouseEntranceValkyrieMailChest		11	0	93	de
+MarsLighthouseEntranceValkyrieMailChest		11	0	93	es
+MarsLighthouseEntranceValkyrieMailChest		11	0	93	fr
+MarsLighthouseEntranceValkyrieMailChest		11	0	93	it
+MarsLighthouseEntranceValkyrieMailChest			93	0	
+MarsLighthouseEntranceSolBladeChest			93	0	
+MarsLighthouseStarRoom			93	0	
+MarsLighthouseHall			93	0	
+MarsLighthouseMercuryLedge			94	0	
+MarsLighthouseJupiterLedge			94	0	
+MarsLighthouseMarsLedge			94	0	
+MarsLighthouseVenusLedge			94	0	
+MarsLighthouseMarsTower			94	0	
+MarsLighthouseMercuryTower			94	0	
+MarsLighthouseJupiterTower			94	0	
+MarsLighthouseVenusTower			94	0	
+YampiDesertCaveWaterOfLifeChest			96	0	
+YampiDesertCaveGuardian	15		97	0	
+YampiDesertCaveGuardian	16		97	0	
+YampiDesertCaveGuardian	17		97	0	
+YampiDesertCaveGuardian			96	0	
+YampiDesertCaveCrystal			97	0	
+TreasureIsleEntrance			80	0	
+TreasureIsleChests			80	0	
+TreasureIsleJestersArmletChest			80	0	
+TreasureIsleGale			95	0	
+ShamanVillageCave			0	81	
+TrialRoadCaveRock			85	0	
+TrialRoadGasp			85	0	
+IsletCaveHalls			70	0	
+IsletCaveCorridors			98	99	
+AnemosInnerSanctumElevator			100	0	
+AnemosInnerSanctumSwitches			100	0	
+AnemosInnerSanctumOrihalconChest	1		100	0	
+AnemosInnerSanctumOrihalconChest	2		100	0	
+AnemosInnerSanctumOrihalconChest			101	0	
+AnemosInnerSanctumGuardian			101	0	

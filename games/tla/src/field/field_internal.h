@@ -290,11 +290,11 @@ extern u8 Render_ConvertMapCodeSize[];
 /// The scene data's halfword offset of its edits, from gMapScene.
 extern u8 gMapSceneEditsOffset[];
 
-/// Each animation number's packed pictures, ending at number 0 (animdata.s).
+/// Each animation number's packed pictures, ending at number 0 (sprite_sources.list.tsv).
 extern struct SpritePictureCacheSource gSpritePictureCache_Sources[];
 
 /// The sprites' shadow, 16 by 8 at 256 colours, loaded into VRAM cache entry
-/// VRAM_CACHE_ENTRY_ACTOR_SHADOW (animdata.s).
+/// VRAM_CACHE_ENTRY_ACTOR_SHADOW (actor_shadow.list.tsv).
 extern const u8 gActor_ShadowTiles[];
 
 /// The strided copy's Thumb entry and ARM code (copy_strided.s), copied to RAM

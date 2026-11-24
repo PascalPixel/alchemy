@@ -1,21 +1,19 @@
-channel	0
-picture	1536	2	612	0
-picture	1568	2	644	0
-picture	1600	2	676	12
-picture	1538	2	612	0
-picture	1570	2	644	0
-picture	1602	2	676	12
-picture	1540	2	612	0
-picture	1572	2	644	0
-picture	1604	2	676	12
-picture	1538	2	612	0
-picture	1570	2	644	0
-picture	1602	2	676	12
-jump	0
-channel	1
-picture	1702	1	592	15
-picture	1703	1	592	15
-picture	1704	1	592	15
-picture	1703	1	592	15
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	1536	2	612	0
+0	picture	1568	2	644	0
+0	picture	1600	2	676	12
+0	picture	1538	2	612	0
+0	picture	1570	2	644	0
+0	picture	1602	2	676	12
+0	picture	1540	2	612	0
+0	picture	1572	2	644	0
+0	picture	1604	2	676	12
+0	picture	1538	2	612	0
+0	picture	1570	2	644	0
+0	picture	1602	2	676	12
+0	jump	0
+1	picture	1702	1	592	15
+1	picture	1703	1	592	15
+1	picture	1704	1	592	15
+1	picture	1703	1	592	15
+1	jump	0

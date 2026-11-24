@@ -1,103 +1,97 @@
-channel	0
-picture	1816	2	1104	0
-picture	1848	2	1136	12
-picture	1818	2	1104	0
-picture	1850	2	1136	12
-picture	1820	2	1104	0
-picture	1852	2	1136	12
-picture	1818	2	1104	0
-picture	1850	2	1136	12
-jump	0
-channel	1
-picture	1866	4	1216	0
-picture	1898	4	1248	0
-picture	1930	4	1280	10
-picture	1870	4	1216	0
-picture	1902	4	1248	0
-picture	1934	4	1280	10
-picture	1874	4	1216	0
-picture	1906	4	1248	0
-picture	1938	4	1280	10
-picture	1870	4	1216	0
-picture	1902	4	1248	0
-picture	1934	4	1280	10
-picture	1866	4	1216	0
-picture	1898	4	1248	0
-picture	1930	4	1280	10
-picture	1862	4	1216	0
-picture	1894	4	1248	0
-picture	1926	4	1280	8
-picture	1866	4	1216	0
-picture	1898	4	1248	0
-picture	1930	4	1280	8
-picture	1870	4	1216	0
-picture	1902	4	1248	0
-picture	1934	4	1280	8
-picture	1874	4	1216	0
-picture	1906	4	1248	0
-picture	1938	4	1280	8
-picture	1958	4	1216	0
-picture	1990	4	1248	0
-picture	2022	4	1280	8
-picture	1962	4	1216	0
-picture	1994	4	1248	0
-picture	2026	4	1280	8
-jump	0
-channel	2
-picture	1878	1	1186	16
-picture	1879	1	1186	16
-picture	1880	1	1186	16
-picture	1879	1	1186	16
-jump	0
-channel	3
-picture	1536	2	1152	0
-picture	1568	2	1184	12
-picture	1538	2	1152	0
-picture	1570	2	1184	12
-picture	1540	2	1152	0
-picture	1572	2	1184	12
-picture	1542	2	1152	0
-picture	1574	2	1184	12
-picture	1540	2	1152	0
-picture	1572	2	1184	12
-picture	1538	2	1152	0
-picture	1570	2	1184	12
-jump	0
-channel	4
-picture	1696	2	1056	0
-picture	1728	2	1088	0
-picture	1760	2	1120	10
-picture	1698	2	1056	0
-picture	1730	2	1088	0
-picture	1762	2	1120	10
-picture	1700	2	1056	0
-picture	1732	2	1088	0
-picture	1764	2	1120	10
-picture	1702	2	1056	0
-picture	1734	2	1088	0
-picture	1766	2	1120	10
-picture	1704	2	1056	0
-picture	1736	2	1088	0
-picture	1768	2	1120	22
-jump	0
-channel	5
-picture	1600	3	1444	0
-picture	1632	3	1476	0
-picture	1664	3	1508	10
-picture	1603	3	1444	0
-picture	1635	3	1476	0
-picture	1667	3	1508	10
-picture	1606	3	1444	0
-picture	1638	3	1476	0
-picture	1670	3	1508	10
-picture	1609	3	1444	0
-picture	1641	3	1476	0
-picture	1673	3	1508	10
-picture	1606	3	1444	0
-picture	1638	3	1476	0
-picture	1670	3	1508	10
-picture	1603	3	1444	0
-picture	1635	3	1476	0
-picture	1667	3	1508	10
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	1816	2	1104	0
+0	picture	1848	2	1136	12
+0	picture	1818	2	1104	0
+0	picture	1850	2	1136	12
+0	picture	1820	2	1104	0
+0	picture	1852	2	1136	12
+0	picture	1818	2	1104	0
+0	picture	1850	2	1136	12
+0	jump	0
+1	picture	1866	4	1216	0
+1	picture	1898	4	1248	0
+1	picture	1930	4	1280	10
+1	picture	1870	4	1216	0
+1	picture	1902	4	1248	0
+1	picture	1934	4	1280	10
+1	picture	1874	4	1216	0
+1	picture	1906	4	1248	0
+1	picture	1938	4	1280	10
+1	picture	1870	4	1216	0
+1	picture	1902	4	1248	0
+1	picture	1934	4	1280	10
+1	picture	1866	4	1216	0
+1	picture	1898	4	1248	0
+1	picture	1930	4	1280	10
+1	picture	1862	4	1216	0
+1	picture	1894	4	1248	0
+1	picture	1926	4	1280	8
+1	picture	1866	4	1216	0
+1	picture	1898	4	1248	0
+1	picture	1930	4	1280	8
+1	picture	1870	4	1216	0
+1	picture	1902	4	1248	0
+1	picture	1934	4	1280	8
+1	picture	1874	4	1216	0
+1	picture	1906	4	1248	0
+1	picture	1938	4	1280	8
+1	picture	1958	4	1216	0
+1	picture	1990	4	1248	0
+1	picture	2022	4	1280	8
+1	picture	1962	4	1216	0
+1	picture	1994	4	1248	0
+1	picture	2026	4	1280	8
+1	jump	0
+2	picture	1878	1	1186	16
+2	picture	1879	1	1186	16
+2	picture	1880	1	1186	16
+2	picture	1879	1	1186	16
+2	jump	0
+3	picture	1536	2	1152	0
+3	picture	1568	2	1184	12
+3	picture	1538	2	1152	0
+3	picture	1570	2	1184	12
+3	picture	1540	2	1152	0
+3	picture	1572	2	1184	12
+3	picture	1542	2	1152	0
+3	picture	1574	2	1184	12
+3	picture	1540	2	1152	0
+3	picture	1572	2	1184	12
+3	picture	1538	2	1152	0
+3	picture	1570	2	1184	12
+3	jump	0
+4	picture	1696	2	1056	0
+4	picture	1728	2	1088	0
+4	picture	1760	2	1120	10
+4	picture	1698	2	1056	0
+4	picture	1730	2	1088	0
+4	picture	1762	2	1120	10
+4	picture	1700	2	1056	0
+4	picture	1732	2	1088	0
+4	picture	1764	2	1120	10
+4	picture	1702	2	1056	0
+4	picture	1734	2	1088	0
+4	picture	1766	2	1120	10
+4	picture	1704	2	1056	0
+4	picture	1736	2	1088	0
+4	picture	1768	2	1120	22
+4	jump	0
+5	picture	1600	3	1444	0
+5	picture	1632	3	1476	0
+5	picture	1664	3	1508	10
+5	picture	1603	3	1444	0
+5	picture	1635	3	1476	0
+5	picture	1667	3	1508	10
+5	picture	1606	3	1444	0
+5	picture	1638	3	1476	0
+5	picture	1670	3	1508	10
+5	picture	1609	3	1444	0
+5	picture	1641	3	1476	0
+5	picture	1673	3	1508	10
+5	picture	1606	3	1444	0
+5	picture	1638	3	1476	0
+5	picture	1670	3	1508	10
+5	picture	1603	3	1444	0
+5	picture	1635	3	1476	0
+5	picture	1667	3	1508	10
+5	jump	0

@@ -1,4 +1,4 @@
-word0:u16	word1:u16	word2:u16	word3:u16	word4:u16	word5:u16	word6:u16	word7:u16
+word0	word1	word2	word3	word4	word5	word6	word7
 64768	513	8	48	0	529	8	64
 0	546	6	81	20	560	8	48
 0	576	8	64	0	593	6	81

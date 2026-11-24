@@ -1,0 +1,199 @@
+scene	entrance	flag	shift	zone
+SolSanctumCorridor		FLAG_SOL_SANCTUM_ERUPTED	1	1
+SolSanctumReliefs	1	FLAG_SOL_SANCTUM_ERUPTED	0	2
+SolSanctumReliefs	2	FLAG_SOL_SANCTUM_ERUPTED	0	2
+SolSanctumReliefs	3	FLAG_SOL_SANCTUM_ERUPTED	1	3
+SolSanctumReliefs	6	FLAG_SOL_SANCTUM_ERUPTED	1	3
+SolSanctumReliefs	7	FLAG_SOL_SANCTUM_ERUPTED	1	3
+SolSanctumMaze		FLAG_SOL_SANCTUM_ERUPTED	1	4
+SolSanctumReliefs	10	FLAG_SOL_SANCTUM_ERUPTED	1	5
+SolSanctumLunaSolRooms		FLAG_SOL_SANCTUM_ERUPTED	0	6
+GomaCavePond			1	9
+GomaCavePillar			1	10
+GomaCaveStream			1	11
+KolimaTunnel			1	15
+KolimaForestEntrance			1	16
+KolimaForestGlade			1	17
+KolimaForestCliff			0	18
+KolimaForestTree			1	19
+TretTreeBranch	1		1	20
+TretTreeBranch	2		1	20
+TretTreeBranch	3		1	20
+TretTreeBranch			1	23
+TreeRooms	1		1	21
+TreeRooms	11		1	21
+TreeRooms	16		1	21
+TreeRooms	21		1	21
+TreeRooms	22		1	21
+TreeRooms	23		1	21
+TreeRooms	24		1	21
+TreeRooms	25		1	21
+TreeRooms	26		1	21
+TreeRooms	27		1	21
+TreeRooms	28		1	21
+TreeRooms	29		1	21
+TreeRooms	2		0	22
+TreeRooms	3		0	22
+TreeRooms	4		0	22
+TreeRooms	5		0	22
+TreeRooms	12		0	22
+TreeRooms	13		0	22
+TreeRooms	31		0	22
+TreeRooms	32		0	22
+TreeRooms	6		0	24
+TreeRooms	7		0	24
+TreeRooms	8		0	24
+TreeRooms	9		0	24
+TreeRooms	14		0	24
+TreeRooms	51		0	24
+TreeRooms	52		0	24
+TreeRooms	53		0	24
+TreeRooms	54		0	24
+TreeRooms	55		0	24
+TreeRooms	56		0	24
+TreeRooms	57		0	24
+TreeRooms	58		0	24
+TreeRooms	59		0	24
+BilibinCaveRapier	5		1	27
+BilibinCaveRapier	6		1	27
+BilibinCaveRapier			1	25
+BilibinCaveIce	5		1	28
+BilibinCaveIce			0	26
+MercuryLighthouseEntrance	7		1	31
+MercuryLighthouseEntrance	8		1	31
+MercuryLighthouseEntrance	9		1	31
+MercuryLighthouseEntrance	10		1	31
+MercuryLighthouseEntrance	11		1	31
+MercuryLighthouseEntrance	12		1	31
+MercuryLighthouseLower	1		0	31
+MercuryLighthouseLower	2		0	31
+MercuryLighthouseLower	3		0	31
+MercuryLighthouseEntrance	19		1	31
+MercuryLighthouseEntrance	20		1	31
+MercuryLighthouseEntrance	16		1	31
+MercuryLighthouseEntrance	17		1	31
+MercuryLighthouseEntrance	18		1	31
+MercuryLighthouseLower	5		1	32
+MercuryLighthouseLower	6		1	32
+MercuryLighthouseMiddle	3		0	32
+MercuryLighthouseMiddle	4		0	32
+MercuryLighthouseLower	11		1	32
+MercuryLighthouseLower	7		1	32
+MercuryLighthouseLower	8		1	32
+MercuryLighthouseUpper	1		1	33
+MercuryLighthouseUpper	2		1	33
+MercuryLighthouseUpper	3		1	33
+MercuryLighthouseMiddle	10		1	33
+MercuryLighthouseMiddle	5		1	33
+MercuryLighthouseMiddle	6		1	33
+MercuryLighthouseExterior	1		1	34
+MercuryLighthouseExterior	2		1	34
+MercuryLighthouseUpper	12		1	34
+MercuryLighthouseUpper	13		1	34
+MercuryLighthouseExterior	3		1	35
+MercuryLighthouseExterior	4		1	35
+FuchinFallsCaveEntrance			0	39
+FuchinFallsCaveZephyr			0	39
+FuchinFallsCaveDragonsEye			1	40
+FuchinFallsCaveDragonStatue			0	41
+MogallForestSign			1	42
+MogallForestQuartz			1	43
+MogallForestKillerApe			1	44
+AltinPeakRailTunnel			0	47
+AltinPeakSecondWaterBeast			1	47
+AltinPeakSouthEntrance			1	47
+AltinPeakThirdWaterBeast			1	48
+AltinPeakPool			1	48
+AltinPeakSpritz			1	49
+AltinPeakJunction			1	49
+AltinPeakFallingRocks	1		1	49
+AltinPeakFallingRocks	2		1	49
+AltinPeakWestExit			1	49
+LamakanDesertEast			1	50
+LamakanDesertSmog			1	51
+LamakanDesertManticore			0	52
+VaultCavePassage			0	60
+VaultCaveVambrace			0	61
+VaultCaveMouth			0	61
+ValeCaveKite	1		0	56
+ValeCaveKite	2		0	56
+ValeCaveKite	3		0	56
+ValeCaveKite	4		0	56
+ValeCaveKite	8		0	57
+ValeCaveKite	9		0	57
+ValeCaveKite	10		0	57
+ValeCaveLogs	1		0	58
+ValeCaveLogs	2		0	58
+ValeCaveLogs	3		0	58
+ValeCaveLogs	4		1	59
+ValeCaveLogs	5		1	59
+AltmillerCaveEntrance			1	66
+AltmillerCaveBabi			1	67
+AltmillerCaveVialChest			1	68
+AltmillerCaveSquall			0	69
+AltmillerCaveCookieChest			1	70
+AltmillerCaveDraught	50		1	71
+AltmillerCaveDraught	51		1	71
+GondowanCaveRiver	1		0	75
+GondowanCaveRiver	2		0	75
+GondowanCaveRiver			1	74
+GondowanCave	1		0	76
+GondowanCave	2		0	76
+GondowanCave	3		0	76
+GondowanCave			1	73
+LunpaFortressCave	1		1	77
+LunpaFortressCave	2		1	77
+LunpaFortressCave			1	78
+LunpaFortressToadonpa	1		1	79
+LunpaFortressToadonpa	2		1	79
+SuhallaDesertNorth			1	82
+SuhallaDesertSouth			1	83
+SuhallaGateDew	1		1	85
+SuhallaGateDew	2		1	85
+SuhallaGateDew			1	86
+GatewayCave	1		1	87
+GatewayCave	2		1	87
+GatewayCave			1	88
+VenusLighthouseGroundFloor	20		1	90
+VenusLighthouseGroundFloor	21		1	90
+VenusLighthouseGroundFloor	22		1	90
+VenusLighthouseGroundFloor	23		1	90
+VenusLighthouseGroundFloor	24		1	90
+VenusLighthouseGroundFloor	25		1	90
+VenusLighthouseGroundFloor	26		1	90
+VenusLighthouseGroundFloor	30		1	90
+VenusLighthouseGroundFloor	31		1	90
+VenusLighthouseGroundFloor	32		1	90
+VenusLighthouseGroundFloor			1	89
+BabiLighthouseEntry			1	91
+BabiLighthouseLuff			1	91
+BabiLighthouseStoneDoor			1	91
+TunnelRuinsLadyStatues	1		1	91
+TunnelRuinsLadyStatues	2		1	91
+TunnelRuinsLadyStatues	3		1	91
+TunnelRuinsGreatStatue	1		1	92
+TunnelRuinsGreatStatue	2		1	92
+TunnelRuinsGreatStatue	5		1	92
+TunnelRuinsGreatStatue	6		1	92
+TunnelRuinsGreatStatue	7		1	92
+TunnelRuinsGreatStatue	14		1	92
+TunnelRuinsGreatStatue	15		1	92
+TunnelRuinsGreatStatue	16		1	92
+TunnelRuinsGreatStatue	17		1	92
+TunnelRuinsGreatStatue	18		1	92
+TunnelRuinsLadyStatues	8		1	92
+TunnelRuinsLadyStatues	9		1	92
+TunnelRuinsLadyStatues	10		1	92
+TunnelRuinsLadyStatues	11		1	92
+TunnelRuinsLadyStatues	12		1	93
+TunnelRuinsLadyStatues	15		1	93
+TunnelRuinsLadyStatues	16		1	93
+TunnelRuinsLadyStatues	17		1	93
+VenusLighthouseFirstFloor	19		1	95
+VenusLighthouseFirstFloor	20		1	95
+VenusLighthouseFirstFloor			0	94
+VenusLighthouseSecondFloor	9		0	95
+VenusLighthouseSecondFloor	10		0	95
+VenusLighthouseSecondFloor			1	95
+VenusLighthouseThirdFloor			0	96
+VenusLighthouseFourthFloor			0	97

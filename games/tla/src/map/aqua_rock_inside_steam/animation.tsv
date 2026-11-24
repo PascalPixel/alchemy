@@ -1,135 +1,128 @@
-channel	0
-picture	1688	2	532	1
-picture	1720	2	564	1
-picture	1560	2	530	1
-picture	1592	2	562	1
-picture	1618	2	528	1
-picture	1650	2	560	6
-picture	1690	2	532	1
-picture	1722	2	564	1
-picture	1562	2	530	1
-picture	1594	2	562	1
-picture	1620	2	528	1
-picture	1652	2	560	6
-picture	1692	2	532	1
-picture	1724	2	564	1
-picture	1564	2	530	1
-picture	1596	2	562	1
-picture	1622	2	528	1
-picture	1654	2	560	6
-picture	1694	2	532	1
-picture	1726	2	564	1
-picture	1566	2	530	1
-picture	1598	2	562	1
-picture	1624	2	528	1
-picture	1656	2	560	6
-jump	0
-channel	1
-picture	1736	2	542	1
-picture	1768	2	574	1
-picture	1744	2	536	1
-picture	1776	2	568	1
-picture	1752	2	534	1
-picture	1784	2	566	6
-picture	1738	2	542	1
-picture	1770	2	574	1
-picture	1746	2	536	1
-picture	1778	2	568	1
-picture	1754	2	534	1
-picture	1786	2	566	6
-picture	1740	2	542	1
-picture	1772	2	574	1
-picture	1748	2	536	1
-picture	1780	2	568	1
-picture	1756	2	534	1
-picture	1788	2	566	6
-picture	1742	2	542	1
-picture	1774	2	574	1
-picture	1750	2	536	1
-picture	1782	2	568	1
-picture	1758	2	534	1
-picture	1790	2	566	6
-jump	0
-channel	2
-picture	1792	2	654	1
-picture	1824	2	686	1
-picture	1728	2	652	1
-picture	1760	2	684	4
-picture	1794	2	654	1
-picture	1826	2	686	1
-picture	1730	2	652	1
-picture	1762	2	684	4
-picture	1796	2	654	1
-picture	1828	2	686	1
-picture	1732	2	652	1
-picture	1764	2	684	4
-picture	1798	2	654	1
-picture	1830	2	686	1
-picture	1734	2	652	1
-picture	1766	2	684	4
-jump	0
-channel	3
-picture	1816	2	596	1
-picture	1848	2	628	1
-picture	1808	2	594	1
-picture	1840	2	626	1
-picture	1800	2	656	1
-picture	1832	2	688	2
-picture	1818	2	596	1
-picture	1850	2	628	1
-picture	1810	2	594	1
-picture	1842	2	626	1
-picture	1802	2	656	1
-picture	1834	2	688	2
-picture	1820	2	596	1
-picture	1852	2	628	1
-picture	1812	2	594	1
-picture	1844	2	626	1
-picture	1804	2	656	1
-picture	1836	2	688	2
-picture	1822	2	596	1
-picture	1854	2	628	1
-picture	1814	2	594	1
-picture	1846	2	626	1
-picture	1806	2	656	1
-picture	1838	2	688	2
-jump	0
-channel	4
-picture	1936	4	662	1
-picture	1856	4	598	1
-picture	1888	4	630	1
-picture	1872	4	326	1
-picture	1904	4	358	3
-picture	1940	4	662	1
-picture	1860	4	598	1
-picture	1892	4	630	1
-picture	1876	4	326	1
-picture	1908	4	358	3
-picture	1944	4	662	1
-picture	1864	4	598	1
-picture	1896	4	630	1
-picture	1880	4	326	1
-picture	1912	4	358	3
-picture	1948	4	662	1
-picture	1868	4	598	1
-picture	1900	4	630	1
-picture	1884	4	326	1
-picture	1916	4	358	3
-jump	0
-channel	5
-picture	1920	4	320	4
-picture	1924	4	320	4
-picture	1928	4	320	4
-picture	1932	4	320	4
-jump	0
-channel	6
-picture	1628	1	216	1
-picture	1660	1	248	4
-picture	1629	1	216	1
-picture	1661	1	248	4
-picture	1630	1	216	1
-picture	1662	1	248	4
-picture	1631	1	216	1
-picture	1663	1	248	4
-jump	0
-end
+animation	command	value	count	destination	frames
+0	picture	1688	2	532	1
+0	picture	1720	2	564	1
+0	picture	1560	2	530	1
+0	picture	1592	2	562	1
+0	picture	1618	2	528	1
+0	picture	1650	2	560	6
+0	picture	1690	2	532	1
+0	picture	1722	2	564	1
+0	picture	1562	2	530	1
+0	picture	1594	2	562	1
+0	picture	1620	2	528	1
+0	picture	1652	2	560	6
+0	picture	1692	2	532	1
+0	picture	1724	2	564	1
+0	picture	1564	2	530	1
+0	picture	1596	2	562	1
+0	picture	1622	2	528	1
+0	picture	1654	2	560	6
+0	picture	1694	2	532	1
+0	picture	1726	2	564	1
+0	picture	1566	2	530	1
+0	picture	1598	2	562	1
+0	picture	1624	2	528	1
+0	picture	1656	2	560	6
+0	jump	0
+1	picture	1736	2	542	1
+1	picture	1768	2	574	1
+1	picture	1744	2	536	1
+1	picture	1776	2	568	1
+1	picture	1752	2	534	1
+1	picture	1784	2	566	6
+1	picture	1738	2	542	1
+1	picture	1770	2	574	1
+1	picture	1746	2	536	1
+1	picture	1778	2	568	1
+1	picture	1754	2	534	1
+1	picture	1786	2	566	6
+1	picture	1740	2	542	1
+1	picture	1772	2	574	1
+1	picture	1748	2	536	1
+1	picture	1780	2	568	1
+1	picture	1756	2	534	1
+1	picture	1788	2	566	6
+1	picture	1742	2	542	1
+1	picture	1774	2	574	1
+1	picture	1750	2	536	1
+1	picture	1782	2	568	1
+1	picture	1758	2	534	1
+1	picture	1790	2	566	6
+1	jump	0
+2	picture	1792	2	654	1
+2	picture	1824	2	686	1
+2	picture	1728	2	652	1
+2	picture	1760	2	684	4
+2	picture	1794	2	654	1
+2	picture	1826	2	686	1
+2	picture	1730	2	652	1
+2	picture	1762	2	684	4
+2	picture	1796	2	654	1
+2	picture	1828	2	686	1
+2	picture	1732	2	652	1
+2	picture	1764	2	684	4
+2	picture	1798	2	654	1
+2	picture	1830	2	686	1
+2	picture	1734	2	652	1
+2	picture	1766	2	684	4
+2	jump	0
+3	picture	1816	2	596	1
+3	picture	1848	2	628	1
+3	picture	1808	2	594	1
+3	picture	1840	2	626	1
+3	picture	1800	2	656	1
+3	picture	1832	2	688	2
+3	picture	1818	2	596	1
+3	picture	1850	2	628	1
+3	picture	1810	2	594	1
+3	picture	1842	2	626	1
+3	picture	1802	2	656	1
+3	picture	1834	2	688	2
+3	picture	1820	2	596	1
+3	picture	1852	2	628	1
+3	picture	1812	2	594	1
+3	picture	1844	2	626	1
+3	picture	1804	2	656	1
+3	picture	1836	2	688	2
+3	picture	1822	2	596	1
+3	picture	1854	2	628	1
+3	picture	1814	2	594	1
+3	picture	1846	2	626	1
+3	picture	1806	2	656	1
+3	picture	1838	2	688	2
+3	jump	0
+4	picture	1936	4	662	1
+4	picture	1856	4	598	1
+4	picture	1888	4	630	1
+4	picture	1872	4	326	1
+4	picture	1904	4	358	3
+4	picture	1940	4	662	1
+4	picture	1860	4	598	1
+4	picture	1892	4	630	1
+4	picture	1876	4	326	1
+4	picture	1908	4	358	3
+4	picture	1944	4	662	1
+4	picture	1864	4	598	1
+4	picture	1896	4	630	1
+4	picture	1880	4	326	1
+4	picture	1912	4	358	3
+4	picture	1948	4	662	1
+4	picture	1868	4	598	1
+4	picture	1900	4	630	1
+4	picture	1884	4	326	1
+4	picture	1916	4	358	3
+4	jump	0
+5	picture	1920	4	320	4
+5	picture	1924	4	320	4
+5	picture	1928	4	320	4
+5	picture	1932	4	320	4
+5	jump	0
+6	picture	1628	1	216	1
+6	picture	1660	1	248	4
+6	picture	1629	1	216	1
+6	picture	1661	1	248	4
+6	picture	1630	1	216	1
+6	picture	1662	1	248	4
+6	picture	1631	1	216	1
+6	picture	1663	1	248	4
+6	jump	0

@@ -1,0 +1,22 @@
+string	text	edition
+gBattleStatusScreen_NivString	Niv	es
+gBattleStatusScreen_NivString	Niv	it
+gBattleStatusScreen_NvString	Nv.	es
+gBattleStatusScreen_NvString	Nv.	it
+gBattleStatusScreen_LevelString	Niv	fr
+gBattleStatusScreen_LevelString	Lv	ja
+gBattleStatusScreen_LevelString	Lv	en
+gBattleStatusScreen_LevelString	Lv	de
+gBattleStatusScreen_LevelString	Lv	es
+gBattleStatusScreen_LevelString	Lv	it
+gBattleStatusScreen_KpString	KP	es
+gBattleStatusScreen_KpString	KP	it
+gBattleStatusScreen_PvString	PV	es
+gBattleStatusScreen_PvString	PV	it
+gBattleStatusScreen_HpString	KP	de
+gBattleStatusScreen_HpString	PS	es
+gBattleStatusScreen_HpString	PV	fr
+gBattleStatusScreen_HpString	PS	it
+gBattleStatusScreen_HpString	HP	ja
+gBattleStatusScreen_HpString	HP	en
+gBattleStatusScreen_SlashString	/	

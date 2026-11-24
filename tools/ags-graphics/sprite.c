@@ -1,17 +1,20 @@
 /*
  * sprite.c
  *
- * Build sprite records, shared animations, and picture banks from TSV lists.
- * A sprite may borrow another sprite's picture or animation list. The bank owns
- * all parsed metadata; assembly labels and pointers preserve those relationships
- * in either the flat-bank or sectioned layout.
+ * Build sprite records, shared animations, and picture banks from tables.
+ * sprites.tsv has a row for each sprite: its sizes, and the sprite whose
+ * pictures and whose animations it uses, itself or another, or neither; a
+ * sprite that uses only the first of another's animations says how many.
+ * An edition's bank, sprites_ja, is built from the same table, and draws
+ * NAME_ja.png and reads NAME_ja.tsv wherever a sprite has them. The bank owns
+ * all it reads; labels and pointers keep the sharing in either layout.
  */
 #include "resource.h"
 #include "../shared/assembly.h"
 
 typedef struct
 {
-	char *name, *files, *pictures, *animations;
+	char *name, *pictures, *animations;
 	size_t animationLimit;
 	uint8_t bytes[12];
 	Buffer *scripts;
@@ -23,7 +26,7 @@ typedef struct
 {
 	Sprite *sprites;
 	size_t count;
-	const char *input;
+	const char *input, *edition;
 	Strings pictures;
 } Bank;
 
@@ -48,7 +51,7 @@ integer(const char *s, bool sign, unsigned max)
 	bool negative = *s == '-';
 	if (negative)
 		s++;
-	uint64_t v = decimalOrHex(s, sign ? (negative ? 128 : 127) : max);
+	uint64_t v = number(s, 10, sign ? (negative ? 128 : 127) : max);
 	if (negative && !sign)
 		fail("negative sprite field");
 	return negative ? (unsigned) -v : (unsigned) v;
@@ -57,7 +60,7 @@ integer(const char *s, bool sign, unsigned max)
 /*
  * An animation script is a list of commands, two bytes each, which the
  * field reads (enum AnimationCommand in games/tbs/src/field/field_internal.h).
- * An anim line names them, separated by commas:
+ * A row of the sprite's table is one of them:
  *
  *   picture N D   show picture N for D frames (N below 239)
  *   wait D        keep the current picture D frames longer
@@ -201,94 +204,69 @@ setting(const char *table, const char *kind, Strings *values)
 	return found;
 }
 
-static void
-metadata(Sprite *sprite, const Buffer *data, const char *table)
+/*
+ * A sprite's file for the bank's edition: name_ja.png where there is one,
+ * else name.png.
+ */
+static char *
+spriteFile(const Bank *bank, const char *name, const char *suffix)
 {
-	Strings lines = split((char *) data->data, '\n');
-	if (lines.len && !strcmp(lines.items[0], ANIMATION_COLUMNS))
-	{
-		animationTable(sprite, &lines);
-		freeStrings(&lines);
-		if (setting(table, "pictures", &sprite->pictureList))
-			sprite->hasPictures = true;
-		if (setting(table, "animations", &sprite->animationList))
-			sprite->hasAnimations = true;
-		setting(table, "empty", &sprite->empty);
-		return;
-	}
-	for (size_t i = 0; i < lines.len; i++)
-	{
-		char *line = trim(lines.items[i]);
-		if (!*line)
-			continue;
-		char *tab = strchr(line, '\t');
-		if (!tab)
-			fail("sprite metadata needs key and values");
-		*tab++ = 0;
-		Strings values = split(tab, ' ');
-		if (!strcmp(line, "anim"))
-		{
-			sprite->scripts = resize(sprite->scripts, sprite->scriptCount + 1,
-									 sizeof(Buffer));
-			sprite->scripts[sprite->scriptCount++] =
-				animationScript(split(tab, ','));
-		}
-		else if (!strcmp(line, "animations"))
-		{
-			freeStrings(&sprite->animationList);
-			sprite->animationList = values;
-			sprite->hasAnimations = true;
-			values = (Strings){0};
-		}
-		else if (!strcmp(line, "list"))
-		{
-			freeStrings(&sprite->pictureList);
-			sprite->pictureList = values;
-			sprite->hasPictures = true;
-			values = (Strings){0};
-		}
-		else if (!strcmp(line, "empty"))
-		{
-			freeStrings(&sprite->empty);
-			sprite->empty = values;
-			values = (Strings){0};
-		}
-		else
-			fail("unknown sprite metadata key: %s", line);
-		freeStrings(&values);
-	}
+	char *file = formatString("%s%s%s", name, bank->edition, suffix),
+		 *path = sibling(bank->input, file);
+	free(file);
+	if (exists(path))
+		return path;
+	free(path);
+	file = formatString("%s%s", name, suffix);
+	path = sibling(bank->input, file);
+	free(file);
+	return path;
+}
+
+static void
+metadata(Sprite *sprite, const char *table)
+{
+	Buffer data = readFile(table);
+	Strings lines = split((char *) data.data, '\n');
+	if (!lines.len || strcmp(lines.items[0], ANIMATION_COLUMNS))
+		fail("a sprite's columns are animation, command, value and frames");
+	animationTable(sprite, &lines);
 	freeStrings(&lines);
+	free(data.data);
+	if (setting(table, "pictures", &sprite->pictureList))
+		sprite->hasPictures = true;
+	if (setting(table, "animations", &sprite->animationList))
+		sprite->hasAnimations = true;
+	setting(table, "empty", &sprite->empty);
 }
 
 /*
- * Parse sharing relationships before writing records. Metadata is loaded only
- * by an owner, so aliases do not emit a second copy of a list.
+ * Parse sharing relationships before writing records. A sprite's own table
+ * is read only by an owner, so a borrower does not emit a second copy.
  */
 static Bank
-readBank(const char *input)
+readBank(const char *input, const char *edition)
 {
 	Bank b = {0};
 	b.input = input;
+	b.edition = edition;
 	Buffer data = readFile(input);
-	Strings lines = split((char *) data.data, '\n');
-	Strings header = split(lines.items[0], '\t');
-	if (header.len != 12)
-		fail("sprite table requires twelve columns");
-	freeStrings(&header);
+	Strings lines = linesOf(&data);
+	if (!lines.len ||
+		strcmp(lines.items[0],
+			   "sprite\twidth\theight\tscale\tdraw\tadjust_x\tadjust_y\tbox_x"
+			   "\tbox_y\tcodec\tpictures\tanimations\tanimation_count"))
+		fail("a sprite table has its thirteen columns");
 	for (size_t i = 1; i < lines.len; i++)
 	{
-		if (!*trim(lines.items[i]))
-			continue;
 		Strings f = split(lines.items[i], '\t');
-		if (f.len != 12)
-			fail("sprite row requires twelve fields");
+		if (f.len < 10 || f.len > 13)
+			fail("a sprite row has ten to thirteen cells");
+		while (f.len < 13)
+			addString(&f, "");
 		Sprite s = {0};
 		s.animationLimit = SIZE_MAX;
-		char *alias = strchr(f.items[0], '=');
-		if (alias)
-			*alias++ = 0;
 		s.name = copyString(f.items[0]);
-		s.files = copyString(alias ? alias : f.items[0]);
 		s.bytes[0] = integer(f.items[1], false, 255);
 		s.bytes[1] = integer(f.items[2], false, 255);
 		write16(s.bytes + 2, integer(f.items[3], false, 65535));
@@ -297,25 +275,15 @@ readBank(const char *input)
 		s.bytes[7] = integer(f.items[6], true, 0);
 		for (unsigned j = 7; j <= 9; j++)
 			s.bytes[j + 1] = integer(f.items[j], false, 255);
-		if (strcmp(f.items[10], "-"))
+		if (*f.items[10])
 			s.pictures = copyString(f.items[10]);
-		char *colon = strchr(f.items[11], ':');
-		if (colon)
-		{
-			*colon++ = 0;
-			s.animationLimit = number(colon, 10, SIZE_MAX);
-		}
-		if (strcmp(f.items[11], "-"))
+		if (*f.items[11])
 			s.animations = copyString(f.items[11]);
-		char *name = formatString("%s.tsv", s.files),
-			 *path = sibling(input, name);
-		free(name);
+		if (*trim(f.items[12]))
+			s.animationLimit = number(trim(f.items[12]), 10, SIZE_MAX);
+		char *path = spriteFile(&b, s.name, ".tsv");
 		if (owns(&s, s.animations) || (owns(&s, s.pictures) && exists(path)))
-		{
-			Buffer meta = readFile(path);
-			metadata(&s, &meta, path);
-			free(meta.data);
-		}
+			metadata(&s, path);
 		free(path);
 		b.sprites = resize(b.sprites, b.count + 1, sizeof(Sprite));
 		b.sprites[b.count++] = s;
@@ -450,22 +418,20 @@ scripts(Sprite *sprite, Assembly *assembly)
 static void
 spritePictures(Bank *bank, Sprite *sprite, Assembly *list, Assembly *data)
 {
-	char *name = formatString("%s.png", sprite->files);
+	char *name = spriteFile(bank, sprite->name, ".png");
 	// pictures.tsv draws a sprite with another sprite's picture.
 	for (size_t i = 1; i < bank->pictures.len; i++)
 	{
 		Strings f = split(bank->pictures.items[i], '\t');
-		if (f.len == 2 && !strcmp(f.items[0], sprite->files))
+		if (f.len == 2 && !strcmp(f.items[0], sprite->name))
 		{
 			free(name);
-			name = formatString("%s.png", f.items[1]);
+			name = spriteFile(bank, f.items[1], ".png");
 		}
 		freeStrings(&f);
 	}
-	Buffer png = readSibling(bank->input, name);
+	Image image = readImageFile(name);
 	free(name);
-	Image image = readImage(&png);
-	free(png.data);
 	size_t width = sprite->bytes[0], height = sprite->bytes[1];
 	if (!width || !height || image.width != width || image.height % height)
 		fail("sprite pictures have wrong dimensions");
@@ -540,7 +506,6 @@ freeBank(Bank *bank)
 	{
 		Sprite *sprite = bank->sprites + i;
 		free(sprite->name);
-		free(sprite->files);
 		free(sprite->pictures);
 		free(sprite->animations);
 		for (size_t j = 0; j < sprite->scriptCount; j++)
@@ -557,12 +522,18 @@ freeBank(Bank *bank)
 
 /*
  * The flat layout groups tables and payloads. The sectioned layout follows
- * layout.tsv and emits each picture list after that sprite's picture payload.
+ * layout.tsv, each sprite in order with the section it is placed in, and
+ * emits each picture list after that sprite's picture payload. The bank's
+ * name after its table's is its edition: sprites_ja from sprites.tsv is _ja.
  */
 Buffer
-spriteSource(const char *input, bool blocks)
+spriteSource(const char *input, const char *bankName, bool blocks)
 {
-	Bank bank = readBank(input);
+	const char *slash = strrchr(input, '/'), *table = slash ? slash + 1 : input;
+	size_t stem = strcspn(table, ".");
+	if (strncmp(bankName, table, stem))
+		fail("a sprite bank is named after its table");
+	Bank bank = readBank(input, bankName + stem);
 	Assembly data = {0};
 	records(&bank, &data);
 	Buffer out = {0};
@@ -592,32 +563,34 @@ spriteSource(const char *input, bool blocks)
 	else
 	{
 		Buffer layout = readSibling(input, "layout.tsv");
-		Strings lines = split((char *) layout.data, '\n'), order = {0};
-		for (size_t i = 0; i < lines.len; i++)
+		Strings lines = linesOf(&layout), order = {0};
+		char *section = copyString("");
+		if (!lines.len || strcmp(lines.items[0], "sprite\tsection"))
+			fail("a sprite layout's columns are sprite and section");
+		for (size_t i = 1; i < lines.len; i++)
 		{
-			char *line = trim(lines.items[i]);
-			if (!*line)
-				continue;
-			if (!strncmp(line, "section\t", 8))
+			Strings f = split(lines.items[i], '\t');
+			const char *name = trim(f.items[0]),
+					   *placed = f.len > 1 ? trim(f.items[1]) : "";
+			if (strcmp(placed, section))
 			{
 				appendAssemblySource(&out, &data);
 				freeAssembly(&data);
-				print(&out, "\t.section .rodata.%s,\"a\"\n", line + 8);
+				print(&out, "\t.section .rodata.%s,\"a\"\n", placed);
+				free(section);
+				section = copyString(placed);
 			}
-			else
+			Sprite *s = find(&bank, name);
+			if (owns(s, s->animations))
 			{
-				if (strchr(line, '\t'))
-					fail("invalid sprite layout row");
-				Sprite *s = find(&bank, line);
-				if (owns(s, s->animations))
-				{
-					scripts(s, &data);
-					alignAssembly(&data, 4, 0);
-					animationList(&bank, s, &data);
-				}
-				addString(&order, line);
+				scripts(s, &data);
+				alignAssembly(&data, 4, 0);
+				animationList(&bank, s, &data);
 			}
+			addString(&order, name);
+			freeStrings(&f);
 		}
+		free(section);
 		for (size_t i = 0; i < order.len; i++)
 		{
 			Sprite *s = find(&bank, order.items[i]);

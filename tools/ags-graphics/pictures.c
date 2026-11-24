@@ -8,9 +8,10 @@
 #include "resource.h"
 
 /*
- * Metadata supplies the glyph range and the rows kept from each 16x16 cell.
- * Glyph codes are hex, as the character map writes them; the first row kept,
- * the number of rows and the widths are decimal.
+ * A font's table, NAME.tsv beside its sheet, has a row for each 16x16 cell
+ * of the sheet in order: the glyph's code, one more than the row before, its
+ * width where the font stores one, and its height, the rows kept from the
+ * top of the cell.
  */
 static Buffer
 font(const char *input, const Image *image)
@@ -22,45 +23,37 @@ font(const char *input, const Image *image)
 	Buffer data = readFile(name);
 	free(name);
 	Strings lines = linesOf(&data);
-	size_t first = SIZE_MAX, top = SIZE_MAX, rows = SIZE_MAX, index = 0;
+	size_t first = 0;
 	Buffer out = {0};
 	if (image->width < 16 || image->width % 16 || image->height % 16)
 		fail("font needs whole 16x16 glyph cells");
-	for (size_t i = 0; i < lines.len; i++)
+	if (!lines.len || strcmp(lines.items[0], "glyph\twidth\theight"))
+		fail("a font table's columns are glyph, width and height");
+	for (size_t index = 0; index + 1 < lines.len; index++)
 	{
-		Strings f = split(lines.items[i], '\t');
-		if ((!strcmp(f.items[0], "first") || !strcmp(f.items[0], "top") ||
-			 !strcmp(f.items[0], "rows")) &&
-			f.len != 2)
-			fail("font metadata row needs one value");
-		if (!strcmp(f.items[0], "first"))
-			first = number(f.items[1], 16, SIZE_MAX);
-		else if (!strcmp(f.items[0], "top"))
-			top = number(f.items[1], 10, 16);
-		else if (!strcmp(f.items[0], "rows"))
-			rows = number(f.items[1], 10, 16);
-		else
+		Strings f = split(lines.items[index + 1], '\t');
+		if (f.len != 3)
+			fail("a glyph row has three cells");
+		size_t code = number(trim(f.items[0]), 10, SIZE_MAX),
+			   rows = number(trim(f.items[2]), 10, 16),
+			   columns = image->width / 16, x = index % columns * 16,
+			   y = index / columns * 16;
+		if (!index)
+			first = code;
+		if (code != first + index)
+			fail("glyphs are not in order");
+		if (y + 16 > image->height)
+			fail("glyph lies outside font sheet");
+		if (*trim(f.items[1]))
+			half(&out, number(trim(f.items[1]), 10, 65535));
+		for (size_t dy = 0; dy < rows; dy++)
 		{
-			if (first == SIZE_MAX || top > 16 || rows > 16 || top + rows > 16 ||
-				number(f.items[0], 16, SIZE_MAX) != first + index)
-				fail("invalid font glyph order or dimensions");
-			size_t columns = image->width / 16, x = index % columns * 16,
-				   y = index / columns * 16;
-			if (y + 16 > image->height)
-				fail("glyph lies outside font sheet");
-			for (size_t j = 1; j < f.len; j++)
-				half(&out, number(trim(f.items[j]), 10, 65535));
-			for (size_t dy = 0; dy < rows; dy++)
-			{
-				unsigned value = 0;
-				for (size_t dx = 0; dx < 16; dx++)
-					value |=
-						(image->pixels
-							 .data[(y + top + dy) * image->width + x + dx] != 0)
-						<< (15 - dx);
-				half(&out, value);
-			}
-			index++;
+			unsigned value = 0;
+			for (size_t dx = 0; dx < 16; dx++)
+				value |=
+					(image->pixels.data[(y + dy) * image->width + x + dx] != 0)
+					<< (15 - dx);
+			half(&out, value);
 		}
 		freeStrings(&f);
 	}

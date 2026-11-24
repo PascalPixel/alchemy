@@ -1,57 +1,55 @@
-channel	1
-picture	1792	4	1422	0
-picture	1824	4	1454	0
-picture	1856	4	1486	0
-picture	1888	4	1518	5
-picture	1796	4	1422	0
-picture	1828	4	1454	0
-picture	1860	4	1486	0
-picture	1892	4	1518	5
-picture	1800	4	1422	0
-picture	1832	4	1454	0
-picture	1864	4	1486	0
-picture	1896	4	1518	5
-picture	1804	4	1422	0
-picture	1836	4	1454	0
-picture	1868	4	1486	0
-picture	1900	4	1518	5
-picture	1808	4	1422	0
-picture	1840	4	1454	0
-picture	1872	4	1486	0
-picture	1904	4	1518	5
-picture	1920	4	1422	0
-picture	1952	4	1454	0
-picture	1984	4	1486	0
-picture	2016	4	1518	5
-picture	1924	4	1422	0
-picture	1956	4	1454	0
-picture	1988	4	1486	0
-picture	2020	4	1518	5
-picture	1928	4	1422	0
-picture	1960	4	1454	0
-picture	1992	4	1486	0
-picture	2024	4	1518	5
-picture	1932	4	1422	0
-picture	1964	4	1454	0
-picture	1996	4	1486	0
-picture	2028	4	1518	5
-picture	1936	4	1422	0
-picture	1968	4	1454	0
-picture	2000	4	1486	0
-picture	2032	4	1518	5
-jump	0
-channel	2
-picture	1812	3	1458	0
-picture	1844	3	1490	0
-picture	1876	3	1522	10
-picture	1815	3	1458	0
-picture	1847	3	1490	0
-picture	1879	3	1522	10
-picture	1818	3	1458	0
-picture	1850	3	1490	0
-picture	1882	3	1522	10
-picture	1815	3	1458	0
-picture	1847	3	1490	0
-picture	1879	3	1522	10
-jump	0
-end
+animation	command	value	count	destination	frames
+1	picture	1792	4	1422	0
+1	picture	1824	4	1454	0
+1	picture	1856	4	1486	0
+1	picture	1888	4	1518	5
+1	picture	1796	4	1422	0
+1	picture	1828	4	1454	0
+1	picture	1860	4	1486	0
+1	picture	1892	4	1518	5
+1	picture	1800	4	1422	0
+1	picture	1832	4	1454	0
+1	picture	1864	4	1486	0
+1	picture	1896	4	1518	5
+1	picture	1804	4	1422	0
+1	picture	1836	4	1454	0
+1	picture	1868	4	1486	0
+1	picture	1900	4	1518	5
+1	picture	1808	4	1422	0
+1	picture	1840	4	1454	0
+1	picture	1872	4	1486	0
+1	picture	1904	4	1518	5
+1	picture	1920	4	1422	0
+1	picture	1952	4	1454	0
+1	picture	1984	4	1486	0
+1	picture	2016	4	1518	5
+1	picture	1924	4	1422	0
+1	picture	1956	4	1454	0
+1	picture	1988	4	1486	0
+1	picture	2020	4	1518	5
+1	picture	1928	4	1422	0
+1	picture	1960	4	1454	0
+1	picture	1992	4	1486	0
+1	picture	2024	4	1518	5
+1	picture	1932	4	1422	0
+1	picture	1964	4	1454	0
+1	picture	1996	4	1486	0
+1	picture	2028	4	1518	5
+1	picture	1936	4	1422	0
+1	picture	1968	4	1454	0
+1	picture	2000	4	1486	0
+1	picture	2032	4	1518	5
+1	jump	0
+2	picture	1812	3	1458	0
+2	picture	1844	3	1490	0
+2	picture	1876	3	1522	10
+2	picture	1815	3	1458	0
+2	picture	1847	3	1490	0
+2	picture	1879	3	1522	10
+2	picture	1818	3	1458	0
+2	picture	1850	3	1490	0
+2	picture	1882	3	1522	10
+2	picture	1815	3	1458	0
+2	picture	1847	3	1490	0
+2	picture	1879	3	1522	10
+2	jump	0

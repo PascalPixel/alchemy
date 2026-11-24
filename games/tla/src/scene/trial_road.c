@@ -4072,16 +4072,16 @@ void (*gTrialRoad_StageSetUps[])(void) = {
 /// pattern, in gTrialRoad_StageSetUps' order, then his run at the blue chests
 /// when he reached the stage's switch first and when Felix did.
 u32 gTrialRoad_RivalRecordings[] = {
-    450, // the pillar stage
-    451, // the torch stage
-    452, // the weeds stage
-    453, // the Pound stage
-    454, // the crumbling stage
-    455, // the log stage
-    456, // the fountain stage
-    457, // the sand stage
-    458, // the chests, Moapa at the switch first
-    459, // the chests, Felix at the switch first
+    RESOURCE_TRIAL_ROAD_PILLAR_RECORDING,
+    RESOURCE_TRIAL_ROAD_TORCH_RECORDING,
+    RESOURCE_TRIAL_ROAD_WEEDS_RECORDING,
+    RESOURCE_TRIAL_ROAD_POUND_RECORDING,
+    RESOURCE_TRIAL_ROAD_CRUMBLING_RECORDING,
+    RESOURCE_TRIAL_ROAD_LOG_RECORDING,
+    RESOURCE_TRIAL_ROAD_FOUNTAIN_RECORDING,
+    RESOURCE_TRIAL_ROAD_SAND_RECORDING,
+    RESOURCE_TRIAL_ROAD_CHESTS_MOAPA_FIRST_RECORDING,
+    RESOURCE_TRIAL_ROAD_CHESTS_FELIX_FIRST_RECORDING,
 };
 
 /// Each stage's place in the map, in cells.

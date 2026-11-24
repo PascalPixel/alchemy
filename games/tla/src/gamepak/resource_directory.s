@@ -460,16 +460,16 @@ Resource_DirectoryTable:
 	resource WhirlwindMap, Field_WhirlwindMap
 	resource LightningTiles, Field_LightningTiles
 	resource LightningMap, Field_LightningMap
-	resource , Field_WalkPathA
-	resource , Field_WalkPathB
-	resource , Field_WalkPathC
-	resource , Field_WalkPathD
-	resource , Field_WalkPathE
-	resource , Field_WalkPathF
-	resource , Field_WalkPathG
-	resource , Field_WalkPathH
-	resource , Field_WalkPathI
-	resource , Field_WalkPathJ
+	resource TrialRoadPillarRecording, Field_WalkPathA
+	resource TrialRoadTorchRecording, Field_WalkPathB
+	resource TrialRoadWeedsRecording, Field_WalkPathC
+	resource TrialRoadPoundRecording, Field_WalkPathD
+	resource TrialRoadCrumblingRecording, Field_WalkPathE
+	resource TrialRoadLogRecording, Field_WalkPathF
+	resource TrialRoadFountainRecording, Field_WalkPathG
+	resource TrialRoadSandRecording, Field_WalkPathH
+	resource TrialRoadChestsMoapaFirstRecording, Field_WalkPathI
+	resource TrialRoadChestsFelixFirstRecording, Field_WalkPathJ
 	resource LetteringBanner, Lettering_Banner
 	resource ShopCursorPictures, Shop_CursorPictureA
 	resource , Shop_CursorPictureB

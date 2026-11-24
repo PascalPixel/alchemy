@@ -1410,4 +1410,44 @@ extern char ResourceId_SpriteMetadata;
 extern char ResourceId_EmptyMap;
 #define RESOURCE_EMPTY_MAP ((s32)&ResourceId_EmptyMap)
 
+/// Moapa's recorded runs through the Trial Road's stages, in
+/// gTrialRoad_RivalRecordings' order, which TrialRoad_PlayRivalRecording
+/// plays.
+///@{
+extern char ResourceId_TrialRoadPillarRecording; ///< the pillar stage
+#define RESOURCE_TRIAL_ROAD_PILLAR_RECORDING                                   \
+  ((s32)&ResourceId_TrialRoadPillarRecording)
+extern char ResourceId_TrialRoadTorchRecording; ///< the torch stage
+#define RESOURCE_TRIAL_ROAD_TORCH_RECORDING                                    \
+  ((s32)&ResourceId_TrialRoadTorchRecording)
+extern char ResourceId_TrialRoadWeedsRecording; ///< the weeds stage
+#define RESOURCE_TRIAL_ROAD_WEEDS_RECORDING                                    \
+  ((s32)&ResourceId_TrialRoadWeedsRecording)
+extern char ResourceId_TrialRoadPoundRecording; ///< the Pound stage
+#define RESOURCE_TRIAL_ROAD_POUND_RECORDING                                    \
+  ((s32)&ResourceId_TrialRoadPoundRecording)
+extern char ResourceId_TrialRoadCrumblingRecording; ///< the crumbling stage
+#define RESOURCE_TRIAL_ROAD_CRUMBLING_RECORDING                                \
+  ((s32)&ResourceId_TrialRoadCrumblingRecording)
+extern char ResourceId_TrialRoadLogRecording; ///< the log stage
+#define RESOURCE_TRIAL_ROAD_LOG_RECORDING                                      \
+  ((s32)&ResourceId_TrialRoadLogRecording)
+extern char ResourceId_TrialRoadFountainRecording; ///< the fountain stage
+#define RESOURCE_TRIAL_ROAD_FOUNTAIN_RECORDING                                 \
+  ((s32)&ResourceId_TrialRoadFountainRecording)
+extern char ResourceId_TrialRoadSandRecording; ///< the sand stage
+#define RESOURCE_TRIAL_ROAD_SAND_RECORDING                                     \
+  ((s32)&ResourceId_TrialRoadSandRecording)
+extern char
+    ResourceId_TrialRoadChestsMoapaFirstRecording; ///< the chests, Moapa at the
+                                                   ///< switch first
+#define RESOURCE_TRIAL_ROAD_CHESTS_MOAPA_FIRST_RECORDING                       \
+  ((s32)&ResourceId_TrialRoadChestsMoapaFirstRecording)
+extern char
+    ResourceId_TrialRoadChestsFelixFirstRecording; ///< the chests, Felix at the
+                                                   ///< switch first
+#define RESOURCE_TRIAL_ROAD_CHESTS_FELIX_FIRST_RECORDING                       \
+  ((s32)&ResourceId_TrialRoadChestsFelixFirstRecording)
+///@}
+
 #endif

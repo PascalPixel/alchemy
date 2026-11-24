@@ -52,7 +52,7 @@ Find them with `grep -rn "FAKEMATCH(" games`. The kinds, worst first:
 | `temporary` | a local that only stands for another value              |
 | `dead`      | a statement that changes nothing                        |
 
-To solve one, write the plain form and build that edition with `make compare-tla-en`. If it still prints OK, remove the mark and run `make` for all twelve. If it doesn’t, try other ways of writing the same thing: the order of declarations, the type of a local, an `if` turned around. [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools) has a permuter that tries these for you.
+To solve one, write the plain form and build that edition with `make compare-tla-en`. If it still prints OK, remove the mark and run `make` for all twelve. If it doesn’t, try other ways of writing the same thing: the order of declarations, the type of a local, an `if` turned around.
 
 Don’t replace a fake match with a worse kind, and don’t add a register pin (`register int x asm("r4")`). Neither is accepted.
 

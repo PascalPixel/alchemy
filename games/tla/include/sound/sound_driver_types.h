@@ -262,21 +262,20 @@ struct SoundChannel {
   u8 priority;   ///< A new note of higher priority takes this one's place.
   u8 rhythmPan;  ///< A rhythm voice's pan.
   u8 dummy3[3];  ///< Unused by this driver, as in pret's.
-  /// The low byte of the word at 0x18 in which the mixer keeps a PCM note's
-  /// samples left.
-  u8 samplesLeftLow;
-  /// CgbChannel.sustainLevel; inside the samples-left word for a PCM note.
+  /// For a PCM note, samplesLeftLow to panBits are one word, in which the
+  /// mixer keeps the samples left to play, and channelBits to sweep another,
+  /// its fractional sample position; for a CGB note each byte is the
+  /// CgbChannel field of its name.
+  ///@{
+  u8 samplesLeftLow; ///< the samples-left word's low byte
   u8 sustainLevel;
-  u8 trigger; ///< CgbChannel.trigger; inside the samples-left word for a PCM
-              ///< note.
-  u8 panBits; ///< CgbChannel.panBits; inside the samples-left word for a PCM
-              ///< note.
-  /// CgbChannel.channelBits; for a PCM note, the mixer's fractional sample
-  /// position is the word at 0x1c.
+  u8 trigger;
+  u8 panBits;
   u8 channelBits;
-  u8 modified;          ///< CgbChannel.modified.
-  u8 length;            ///< CgbChannel.length.
-  u8 sweep;             ///< CgbChannel.sweep.
+  u8 modified;
+  u8 length;
+  u8 sweep;
+  ///@}
   u32 frequency;        ///< The note's frequency, as in CgbChannel.
   const void *sample;   ///< The voice's target: the sample it plays.
   const s8 *nextSample; ///< The next sample byte the mixer reads.

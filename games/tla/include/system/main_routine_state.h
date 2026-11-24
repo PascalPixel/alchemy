@@ -99,8 +99,10 @@ struct MainRoutineState {
   /// (Contigo_SelectLuckyWheelsPrize).
   s8 wheelsPrizeCursors[6];
   u8 unusedAfterWheelsPrizes[134]; ///< no code names it
+  /// The scene the party is in, or bound for once Scene_TakeExit has chosen
+  /// an exit.
   s16 next;
-  s16 entrance;
+  s16 entrance;        ///< its entrance, a number of that scene's entrance list
   u16 restartScene;    ///< where a defeat returns to without a defeat point
   u16 restartEntrance; ///< where a defeat returns to without a defeat point
   s16 returnScene;     ///< the default scene: the fallback of both destinations
@@ -119,12 +121,16 @@ struct MainRoutineState {
   s16 battleBackground; ///< the battle background chosen for the scene or
                         ///< terrain
   u8 unusedAfterBackground[2];
-  s16 mapId;
-  s32 x; ///< the party's position on entering
-  s32 y;
-  s32 z;
+  s16 mapId; ///< the current scene's map, a row of gMaps
+  /// The leader's position in 16.16 pixels and facing (an angle), set from the
+  /// entrance taken and noted again each time the field handles a request.
+  ///@{
+  FIXED x;
+  FIXED y;
+  FIXED z;
   s32 heading;
-  u16 layer;              ///< 0 on taking an entrance
+  ///@}
+  u16 layer;              ///< the leader's layer; 0 on taking an entrance
   s16 battleMusic;        ///< the battle music chosen for the encounter
   s16 sceneMusic;         ///< the current scene's field music
   u8 movementMode;        ///< how the leader moves, an enum LeaderMovementMode
@@ -234,8 +240,9 @@ struct MainRoutineState {
   /// Set while the leader stands on the upper level of the Alhafran Cave,
   /// where Sand ends; cleared on entering a scene.
   s8 onUpperLevel;
-  /// The link lobby's tallies: 3 cleared on choosing a monster
-  /// battle, 0 and 3 counted up together, 6 read by the lobby.
+  /// The Link Lobby's records (lobby.c's enum LinkTally): the wins, losses,
+  /// best streak and current streak of its monster battles, then the same four
+  /// of its battles against another player.
   u16 linkTallies[8];
   u8 unusedAfterTallies[4];
   u32 startStamp; ///< BuildStamp_GetTime's value at a new game

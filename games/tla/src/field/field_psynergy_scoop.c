@@ -109,8 +109,7 @@ void Scoop_Update(void) {
            i++, particle++) {
         sprite = &state->sprites[i];
         if (particle->timer >= 0 && particle->timer < 32)
-          BattleEffect_UpdateGrowingParticleSprite(sprite, particle,
-                                                   state->particleTile);
+          ScoopDust_UpdateGrain(sprite, particle, state->particleTile);
         particle->timer++;
       }
     }
@@ -192,8 +191,7 @@ void Scoop_Update(void) {
     sprite = state->sprites;
     for (i = 0; i < SCOOP_DRAWN_TARGET_DUST; i++, sprite++, particle++) {
       if (particle->timer >= 0 && particle->timer < 32)
-        BattleEffect_UpdateGrowingParticleSprite(sprite, particle,
-                                                 state->particleTile);
+        ScoopDust_UpdateGrain(sprite, particle, state->particleTile);
       particle->timer++;
     }
   }

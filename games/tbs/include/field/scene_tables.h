@@ -119,6 +119,9 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 /// and when it is set the search goes on to the next exit.
 #define SCENE_EXIT_UNLESS(exit, map, entrance, flag)                           \
   (SCENE_EXIT(exit, map, entrance) + EXIT_HAS_FLAG), (u32)(flag)
+/// SCENE_EXIT_UNLESS's flag for no flag: GameFlag_GetFar reads it as flag
+/// 0xfff, which nothing sets, so the exit is always taken.
+#define EXIT_FLAG_NONE 0xffffffff
 /// The last header word: it ends the last scene's exits and the table.
 #define SCENE_EXITS_END 511
 /// Where a scene numbers its door or exit cells by their exits (Imil, Mercury

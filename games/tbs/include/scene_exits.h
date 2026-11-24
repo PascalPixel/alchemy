@@ -2991,8 +2991,8 @@ enum {
   STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI = 10,
   STUCCO_ROOMS_C_LUCKY_WHEELS_FROM_TOLBI = 11,
   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS =
-      12,                                     ///< TolbiSpring_OfferLuckyWheels
-  STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE = 13, ///< TolbiSpring_OfferLuckyDice
+      12,                                     ///< StuccoRoomsC_OfferLuckyWheels
+  STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE = 13, ///< StuccoRoomsC_OfferLuckyDice
 };
 /// SceneId_StuccoRoomsC's exits.
 enum {

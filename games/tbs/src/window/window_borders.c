@@ -317,9 +317,9 @@ void BattleMessage_Close(void) {
 /// Shows a message in the battle message window, opening the window (a
 /// full-width text canvas along the bottom of the screen) if it is not open,
 /// and returns without waiting.
-void BattleMessage_Open(s32 argument) {
+void BattleMessage_Open(s32 message) {
   s32 entryIndex;
-  struct Message *message;
+  struct Message *continued;
   struct Window *previousWindow;
   struct Window *messageWindow;
   struct WindowState *state;
@@ -327,9 +327,9 @@ void BattleMessage_Open(s32 argument) {
 
   state = WINDOW_STATE;
   control = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_MESSAGE);
-  message = NULL;
+  continued = NULL;
   state->battleMode = WINDOW_BATTLE_MESSAGE;
-  entryIndex = Message_Decode(argument, 1);
+  entryIndex = Message_Decode(message, 1);
   state->battleMode = WINDOW_BATTLE;
 
   if (state->textBuffer[entryIndex] != 0) {
@@ -346,13 +346,13 @@ void BattleMessage_Open(s32 argument) {
       messageWindow = previousWindow;
     }
     if (messageWindow != NULL) {
-      message =
+      continued =
           BattleMessage_Continue(messageWindow, entryIndex, control->marked);
-      control->offset = (struct BattleMessageOffset *)message;
+      control->offset = (struct BattleMessageOffset *)continued;
       control->marked = 0;
       // With no message free the window is closed, though control->window
       // still names its slot.
-      if (message == NULL) {
+      if (continued == NULL) {
         Window_Close(messageWindow, 1);
       }
     }
@@ -361,8 +361,8 @@ void BattleMessage_Open(s32 argument) {
 
 /// Shows a message in the battle message window and waits until it has been
 /// typed out.
-void BattleMessage_ShowAndWait(s32 argument) {
-  BattleMessage_Open(argument);
+void BattleMessage_ShowAndWait(s32 message) {
+  BattleMessage_Open(message);
   while (Message_AllTyped() == 0)
     wait(1);
   wait(1);

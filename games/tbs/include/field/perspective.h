@@ -42,8 +42,8 @@ struct WorldMapView {
   u16 shownBottom;   ///< windowBottom as the frame update last applied it
   u16 windowPending; ///< cleared by the frame update; not set by name
   u8 unusedAfterWindow[6];
-  /// The world map's tile offsets (ResourceId_PerspectiveDataA), each tile
-  /// LZ-compressed.
+  /// The world map's tile offsets (ResourceId_WorldMapPerspectiveTiles), each
+  /// tile LZ-compressed.
   void *tiles;
   u8 unusedAfterTiles[4];
   u16 pitch;      ///< 1/65536 turns

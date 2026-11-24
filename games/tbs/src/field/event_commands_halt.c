@@ -166,12 +166,12 @@ void FieldPsynergy_HaltActor(s32 actorId) {
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    gMainRoutineState.pausedUpdate = (u32)actor->update;
-    gMainRoutineState.pausedColorMode = 0;
+    gMainRoutineState.haltedUpdate = (u32)actor->update;
+    gMainRoutineState.haltedColorMode = 0;
     if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
       entry = actor->sprite->entries[0];
       if (entry != NULL) {
-        gMainRoutineState.pausedColorMode = entry->colorMode;
+        gMainRoutineState.haltedColorMode = entry->colorMode;
       }
     }
     actor->update = FieldPsynergy_UpdateHaltedActor;
@@ -187,9 +187,9 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
   if (actor != NULL) {
     if (actor->update == FieldPsynergy_UpdateHaltedActor) {
       struct MainRoutineState *mainState = &gMainRoutineState;
-      actor->update = (void (*)(struct Actor *))mainState->pausedUpdate;
-      mainState->pausedUpdate = 0;
-      Actor_SetSpriteColorModeFar(actor, mainState->pausedColorMode);
+      actor->update = (void (*)(struct Actor *))mainState->haltedUpdate;
+      mainState->haltedUpdate = 0;
+      Actor_SetSpriteColorModeFar(actor, mainState->haltedColorMode);
     }
     actor->paused = 0;
     Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);

@@ -42,9 +42,9 @@
 ///   Venus Lighthouse opened (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
 ///   FLAG_VENUS_LIGHTHOUSE_SECOND_PATH).
 /// - It sets the retreat point.
-/// - In the rooms that need it, it starts a fade overlay that follows the
+/// - In the rooms that need it, it starts a ground mask that follows the
 ///   leader south of a depth set per room
-///   (TunnelRuins_UpdateFadeOverlayLeader).
+///   (TunnelRuins_UpdateGroundMaskLeader).
 ///
 /// The walking events, keyed on the cell behaviors under the leader, are shared
 /// by both scenes. Walking against a one-cell gap or a pillar makes Isaac leap
@@ -381,15 +381,15 @@ static void TunnelRuins_HopNorth(void) {
   TunnelRuins_HopLeaderTo(&target);
 }
 
-/// The fade overlay (FieldEffect_StartFadeOverlay) follows the leader only
+/// The ground mask (FieldEffect_StartGroundMask) follows the leader only
 /// south of a row of half cells set per room.
-static void TunnelRuins_UpdateFadeOverlayLeader(void) {
+static void TunnelRuins_UpdateGroundMaskLeader(void) {
   struct Actor *leader;
-  struct FadeOverlayState *effectState;
+  struct GroundMaskState *effectState;
   s32 boundaryRow;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  effectState = gFadeOverlayState;
+  effectState = gGroundMaskState;
   boundaryRow = 0;
   if (gMainRoutineState.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     switch (gMainRoutineState.entrance) {
@@ -1511,7 +1511,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineState.next == SCENE_TUNNEL_RUINS_GREAT_STATUE ||
       gMainRoutineState.next == SCENE_TUNNEL_RUINS_LADY_STATUES) {
-    FieldEffect_StartFadeOverlay(0);
+    FieldEffect_StartGroundMask(0);
     gMainRoutineState.retreatEntrance =
         TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR;
     gMainRoutineState.retreatScene = SCENE_TUNNEL_RUINS_GREAT_STATUE;
@@ -1553,7 +1553,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_PILLAR_B), 0);
       Actor_Get(ACTOR_FIRST_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
       Actor_Get(ACTOR_FIRST_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
-      Task_AddFrame(TunnelRuins_UpdateFadeOverlayLeader, TASK_PASS_FRAME);
+      Task_AddFrame(TunnelRuins_UpdateGroundMaskLeader, TASK_PASS_FRAME);
       break;
     case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_FIRST_PILLARS:
     case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SECOND_PILLARS:
@@ -1574,7 +1574,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_PILLAR_B), 0);
       Actor_Get(ACTOR_SECOND_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
       Actor_Get(ACTOR_SECOND_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
-      Task_AddFrame(TunnelRuins_UpdateFadeOverlayLeader, TASK_PASS_FRAME);
+      Task_AddFrame(TunnelRuins_UpdateGroundMaskLeader, TASK_PASS_FRAME);
       break;
     case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_NORTH:
     case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH:
@@ -1642,7 +1642,7 @@ s32 Scene_Initialize(void) {
       Actor_Get(ACTOR_SMALL_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
       Actor_Get(ACTOR_SMALL_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
       Actor_Get(ACTOR_SMALL_PILLAR_C)->update = UPDATE_BY_RELATIVE_DEPTH;
-      Task_AddFrame(TunnelRuins_UpdateFadeOverlayLeader, TASK_PASS_FRAME);
+      Task_AddFrame(TunnelRuins_UpdateGroundMaskLeader, TASK_PASS_FRAME);
       break;
     }
   } else {
@@ -1758,7 +1758,7 @@ s32 Scene_Initialize(void) {
     case TUNNEL_RUINS_LADY_STATUES_REVEAL_STATUE_WEST:
       MapGrid_CopyCellAttributes(8, 49, 1, 1, 8, 113);
       TunnelRuins_ShowVanishingStatues();
-      Task_AddFrame(TunnelRuins_UpdateFadeOverlayLeader, TASK_PASS_FRAME);
+      Task_AddFrame(TunnelRuins_UpdateGroundMaskLeader, TASK_PASS_FRAME);
       break;
     case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH:
     case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST:

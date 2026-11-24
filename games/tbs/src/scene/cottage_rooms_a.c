@@ -17,11 +17,11 @@
 ///   (COTTAGE_ROOMS_A_FROM_VALE_NORTH); and two more houses
 ///   (COTTAGE_ROOMS_A_FROM_VALE_SOUTH and COTTAGE_ROOMS_A_FROM_VALE_WEST).
 /// - From the part of Vale with the Psynergy Stone (SceneId_ValePlaza): the
-///   shops (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST), where the item, weapon and
+///   shops (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH), where the item, weapon and
 ///   armor shops each open across a counter, and three houses
-///   (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST,
-///   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH and
-///   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH).
+///   (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH,
+///   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST and
+///   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST).
 /// - Unused: a ninth room drawn at the map's lower left, whose camera box no
 ///   entrance gives, so no door leads in.
 ///
@@ -344,11 +344,7 @@ static void CottageRoomsA_LeaveThroughDoor(s32 exitNumber) {
 // The rooms' doors: stepping on a door's cell, whose cell behavior is its
 // exit's number, takes that exit back out, in every table. On the stormy night
 // the exits to SceneId_Vale lead to the storm's scene (SceneId_ValePrologue)
-// instead. A room's exit has its entrance's number, but the plaza's four
-// doors are named one way going in and another coming out: the shops are
-// entered at COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST and left by
-// COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH, which comes out at
-// VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH.
+// instead. A room's exit has its entrance's number.
 
 /// Leaves the house where a young man dreams of leaving.
 static void CottageRoomsA_LeaveToValeWest(void) {
@@ -957,17 +953,17 @@ struct SceneEntrance gCottageRoomsA_Entrances[] = {
      0, 4, 4, 244, 292, 0},
     {COTTAGE_ROOMS_A_FROM_VALE_NORTH, CONDITION_ALWAYS, 337, 0, 199,
      FACING_NORTH, 0, 252, 4, 548, 236, 0},
-    {COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH, CONDITION_ALWAYS, 656, 0, 244,
+    {COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST, CONDITION_ALWAYS, 656, 0, 244,
      FACING_NORTH, 0, 556, 4, 900, 276, 0},
-    {COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST, CONDITION_ALWAYS, 159, 0, 525,
+    {COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH, CONDITION_ALWAYS, 159, 0, 525,
      FACING_NORTH, 0, 4, 324, 332, 564, 0},
     {COTTAGE_ROOMS_A_FROM_VALE_SOUTH, CONDITION_ALWAYS, 528, 0, 486,
      FACING_NORTH, 0, 348, 284, 612, 516, 0},
     {COTTAGE_ROOMS_A_FROM_VALE_EAST, CONDITION_ALWAYS, 816, 0, 522,
      FACING_NORTH, 0, 628, 284, 884, 548, 0},
-    {COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH, CONDITION_ALWAYS, 463, 0, 851,
+    {COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST, CONDITION_ALWAYS, 463, 0, 851,
      FACING_NORTH, 0, 324, 604, 588, 884, 0},
-    {COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST, CONDITION_ALWAYS, 769, 0, 857,
+    {COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH, CONDITION_ALWAYS, 769, 0, 857,
      FACING_NORTH, 0, 580, 628, 852, 884, 0},
     {SCENE_TABLE_END},
 };

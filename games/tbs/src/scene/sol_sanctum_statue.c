@@ -87,11 +87,6 @@ extern struct ActorPlacement gSolSanctumStatue_ActorPlacements[];
 extern struct Trigger gSolSanctumStatue_Triggers[];
 extern s32 gSolSanctumStatue_ScrollOffset;
 
-/// Where the Luna and Sol rooms' event exits arrive, at (576, 136) facing
-/// south, once more. No exit leads to it: only the debug scene selector, which
-/// exits to any entrance from 0 to 99, reaches it.
-enum { SOL_SANCTUM_STATUE_DEBUG_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 99 };
-
 /// Both beams have opened the hole in the floor before the center statue.
 /// Until then, Move on the center statue first walks the leader clear of it.
 #define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_SCENE_TEMP_07

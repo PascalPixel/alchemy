@@ -58,8 +58,9 @@ extern char ResourceId_WorldMapPicture;
 /// The lettering sprites Title_LoadSprites loads: 40 tiles of 16 colours in
 /// English and Japanese, a whole 224-colour screen in the other editions, of
 /// which it keeps the bottom 32 rows.
-extern char ResourceId_IntroTilesB;
-#define RESOURCE_INTRO_TILES_B ((s32)&ResourceId_IntroTilesB)
+extern char ResourceId_ToBeContinuedLettering;
+#define RESOURCE_TO_BE_CONTINUED_LETTERING                                     \
+  ((s32)&ResourceId_ToBeContinuedLettering)
 
 // Battle backgrounds. BattleBackground_SelectForMap picks one for the current
 // scene from gScene_BattleBackgroundRules (field/battle_background_rules.c),
@@ -119,9 +120,9 @@ extern char ResourceId_TolbiShipRoomsBackdrop;
   ((s32)&ResourceId_TolbiShipRoomsBackdrop)
 /// Fuchin Falls Cave, and SceneId_CrossboneIsleFloatingLogs on Crossbone
 /// Isle.
-extern char ResourceId_ImilFuchinFallsBackdrop;
-#define RESOURCE_IMIL_FUCHIN_FALLS_BACKDROP                                    \
-  ((s32)&ResourceId_ImilFuchinFallsBackdrop)
+extern char ResourceId_FuchinFallsCaveBackdrop;
+#define RESOURCE_FUCHIN_FALLS_CAVE_BACKDROP                                    \
+  ((s32)&ResourceId_FuchinFallsCaveBackdrop)
 extern char ResourceId_KolimaForestBackdrop; ///< Kolima Forest's five scenes.
 #define RESOURCE_KOLIMA_FOREST_BACKDROP ((s32)&ResourceId_KolimaForestBackdrop)
 /// SceneId_TreeRooms.
@@ -245,7 +246,7 @@ extern char ResourceId_VioletLightningSheetA;
 /// The yellow sparks of Wing Flutter, Wing Beat and Wing Stroke.
 extern char ResourceId_YellowSparkSheet;
 #define RESOURCE_YELLOW_SPARK_SHEET ((s32)&ResourceId_YellowSparkSheet)
-/// Crazy Voice's bouncing pellets, drawn in CometSheetA's colours.
+/// Crazy Voice's bouncing pellets, drawn in SlashCometSheet's colours.
 extern char ResourceId_ProjectileVolleyImage;
 #define RESOURCE_PROJECTILE_VOLLEY_IMAGE                                       \
   ((s32)&ResourceId_ProjectileVolleyImage)
@@ -279,16 +280,16 @@ extern char ResourceId_FlashBurstSheet;
 #define RESOURCE_FLASH_BURST_SHEET ((s32)&ResourceId_FlashBurstSheet)
 extern char ResourceId_ThornSheet;
 #define RESOURCE_THORN_SHEET ((s32)&ResourceId_ThornSheet)
-/// The comet of the impact's comets (PROJECTILE_VOLLEY_IMPACT_COMETS), and
-/// the colours of Crazy Voice's pellets.
-extern char ResourceId_CometSheetA;
-#define RESOURCE_COMET_SHEET_A ((s32)&ResourceId_CometSheetA)
-/// One of Slash's comets, which the animation's variant picks.
-extern char ResourceId_CometSheetB;
-#define RESOURCE_COMET_SHEET_B ((s32)&ResourceId_CometSheetB)
-/// Cutting Edge's large comet, and one of Slash's.
-extern char ResourceId_CometSheetC;
-#define RESOURCE_COMET_SHEET_C ((s32)&ResourceId_CometSheetC)
+/// Slash's comet, which the impact's comets (PROJECTILE_VOLLEY_IMPACT_COMETS)
+/// fire too, and the colours of Crazy Voice's pellets.
+extern char ResourceId_SlashCometSheet;
+#define RESOURCE_SLASH_COMET_SHEET ((s32)&ResourceId_SlashCometSheet)
+/// Wind Slash's comet.
+extern char ResourceId_WindSlashCometSheet;
+#define RESOURCE_WIND_SLASH_COMET_SHEET ((s32)&ResourceId_WindSlashCometSheet)
+/// Sonic Slash's comet, and Cutting Edge's in ice colours.
+extern char ResourceId_SonicSlashCometSheet;
+#define RESOURCE_SONIC_SLASH_COMET_SHEET ((s32)&ResourceId_SonicSlashCometSheet)
 /// GROWING_COLUMNS_PILLARS, in BattleEffect_RunGrowingColumns.
 extern char ResourceId_GreenPillarSheet;
 #define RESOURCE_GREEN_PILLAR_SHEET ((s32)&ResourceId_GreenPillarSheet)
@@ -318,9 +319,9 @@ extern char ResourceId_PinkPalette;
 #define RESOURCE_PINK_PALETTE ((s32)&ResourceId_PinkPalette)
 extern char ResourceId_GreenVineSheet;
 #define RESOURCE_GREEN_VINE_SHEET ((s32)&ResourceId_GreenVineSheet)
-extern char ResourceId_CounterRevealSheet; ///< Condemn and the casting impact.
-#define RESOURCE_COUNTER_REVEAL_SHEET ((s32)&ResourceId_CounterRevealSheet)
-/// Condemn and the casting impact, beside CounterRevealSheet.
+extern char ResourceId_ReaperSheet; ///< Condemn and the casting impact.
+#define RESOURCE_REAPER_SHEET ((s32)&ResourceId_ReaperSheet)
+/// Condemn and the casting impact, beside ReaperSheet.
 extern char ResourceId_RedCrescentSheetA;
 #define RESOURCE_RED_CRESCENT_SHEET_A ((s32)&ResourceId_RedCrescentSheetA)
 extern char ResourceId_SpiralSheet; ///< The orbiting spirals of
@@ -358,12 +359,14 @@ extern char ResourceId_WindStreakSheet;
 #define RESOURCE_WIND_STREAK_SHEET ((s32)&ResourceId_WindStreakSheet)
 /// The Venus star field's colours (ElementGlow_InitializeStarField), and
 /// Death Plunge's.
-extern char ResourceId_YellowPaletteB;
-#define RESOURCE_YELLOW_PALETTE_B ((s32)&ResourceId_YellowPaletteB)
+extern char ResourceId_VenusStarFieldPalette;
+#define RESOURCE_VENUS_STAR_FIELD_PALETTE                                      \
+  ((s32)&ResourceId_VenusStarFieldPalette)
 /// The Jupiter star field's colours (ElementGlow_InitializeStarField), and
 /// those of Death Plunge and the streaks.
-extern char ResourceId_VioletPaletteD;
-#define RESOURCE_VIOLET_PALETTE_D ((s32)&ResourceId_VioletPaletteD)
+extern char ResourceId_JupiterStarFieldPalette;
+#define RESOURCE_JUPITER_STAR_FIELD_PALETTE                                    \
+  ((s32)&ResourceId_JupiterStarFieldPalette)
 /// Froth and Whirlwind, Bolt, Judgment, the Thor summon, the showers, the
 /// casting impact, the status motes and the monster strikes.
 extern char ResourceId_TornadoSheet;
@@ -377,8 +380,9 @@ extern char ResourceId_CrystalSheet;
 /// The world map's tile offsets and packed tiles, which
 /// WorldMap_WriteLayerCellTile decodes one at a time as the view moves
 /// (perspective->tiles).
-extern char ResourceId_PerspectiveDataA;
-#define RESOURCE_PERSPECTIVE_DATA_A ((s32)&ResourceId_PerspectiveDataA)
+extern char ResourceId_WorldMapPerspectiveTiles;
+#define RESOURCE_WORLD_MAP_PERSPECTIVE_TILES                                   \
+  ((s32)&ResourceId_WorldMapPerspectiveTiles)
 /// The world map cells WorldMap_InitializePerspective decodes into
 /// Ram_MapGridCellBuffer, and that the still images put back on their way
 /// out.
@@ -536,8 +540,8 @@ extern char ResourceId_CrescentSheet; ///< The beams.
 #define RESOURCE_CRESCENT_SHEET ((s32)&ResourceId_CrescentSheet)
 extern char ResourceId_SwordSheet; ///< Titan Blade.
 #define RESOURCE_SWORD_SHEET ((s32)&ResourceId_SwordSheet)
-extern char ResourceId_VioletPaletteB; ///< Colours for Plasma.
-#define RESOURCE_VIOLET_PALETTE_B ((s32)&ResourceId_VioletPaletteB)
+extern char ResourceId_PlasmaVioletPalette; ///< Colours for Plasma.
+#define RESOURCE_PLASMA_VIOLET_PALETTE ((s32)&ResourceId_PlasmaVioletPalette)
 extern char ResourceId_FireSwirlSheet; ///< Helm Splitter.
 #define RESOURCE_FIRE_SWIRL_SHEET ((s32)&ResourceId_FireSwirlSheet)
 extern char ResourceId_FireBurstSheet; ///< Annihilation.
@@ -546,8 +550,8 @@ extern char ResourceId_FireBurstSheet; ///< Annihilation.
 extern char ResourceId_FireballSheet;
 #define RESOURCE_FIREBALL_SHEET ((s32)&ResourceId_FireballSheet)
 /// The three lights of Demon Night, Rumble and Haunting.
-extern char ResourceId_MemberBurstImage;
-#define RESOURCE_MEMBER_BURST_IMAGE ((s32)&ResourceId_MemberBurstImage)
+extern char ResourceId_GatheringLightsImage;
+#define RESOURCE_GATHERING_LIGHTS_IMAGE ((s32)&ResourceId_GatheringLightsImage)
 /// The beams' waves, and the rush bursts.
 extern char ResourceId_WaveSheet;
 #define RESOURCE_WAVE_SHEET ((s32)&ResourceId_WaveSheet)
@@ -560,10 +564,12 @@ extern char ResourceId_EarthWallSheet;
 /// Volcano, Titan Blade and the Nereid summon.
 extern char ResourceId_FirePillarSheetA;
 #define RESOURCE_FIRE_PILLAR_SHEET_A ((s32)&ResourceId_FirePillarSheetA)
-extern char ResourceId_RedPaletteB; ///< Colours for Volcano and the streaks.
-#define RESOURCE_RED_PALETTE_B ((s32)&ResourceId_RedPaletteB)
-extern char ResourceId_OrangePaletteB; ///< Colours for Plasma and Volcano.
-#define RESOURCE_ORANGE_PALETTE_B ((s32)&ResourceId_OrangePaletteB)
+extern char
+    ResourceId_VolcanoRedPalette; ///< Colours for Volcano and the streaks.
+#define RESOURCE_VOLCANO_RED_PALETTE ((s32)&ResourceId_VolcanoRedPalette)
+extern char
+    ResourceId_VolcanoOrangePalette; ///< Colours for Plasma and Volcano.
+#define RESOURCE_VOLCANO_ORANGE_PALETTE ((s32)&ResourceId_VolcanoOrangePalette)
 extern char ResourceId_FlameballSheet; ///< Planet Diver and the Djinn attacks.
 #define RESOURCE_FLAMEBALL_SHEET ((s32)&ResourceId_FlameballSheet)
 extern char ResourceId_BoulderSheet; ///< Spire.
@@ -578,10 +584,11 @@ extern char ResourceId_ShieldSheet; ///< The stat changes.
 #define RESOURCE_SHIELD_SHEET ((s32)&ResourceId_ShieldSheet)
 extern char ResourceId_DaggerSheet; ///< The stat changes.
 #define RESOURCE_DAGGER_SHEET ((s32)&ResourceId_DaggerSheet)
-/// The stat reductions' picture after their shards
+/// The shards a stat reduction's dagger or shield breaks into
 /// (STAT_REDUCTION_SHARD_PICTURES).
-extern char ResourceId_PaletteRampImage;
-#define RESOURCE_PALETTE_RAMP_IMAGE ((s32)&ResourceId_PaletteRampImage)
+extern char ResourceId_StatReductionShardSheet;
+#define RESOURCE_STAT_REDUCTION_SHARD_SHEET                                    \
+  ((s32)&ResourceId_StatReductionShardSheet)
 extern char ResourceId_HeartSheet; ///< Heartrender, among the status motes.
 #define RESOURCE_HEART_SHEET ((s32)&ResourceId_HeartSheet)
 /// Revive and its family (battle_effect_djinn_beams.c).
@@ -614,12 +621,15 @@ extern char ResourceId_LightningPillarSheet; ///< Plasma and the Thor summon.
 extern char ResourceId_ShatteringOpeningSheet;
 #define RESOURCE_SHATTERING_OPENING_SHEET                                      \
   ((s32)&ResourceId_ShatteringOpeningSheet)
-extern char ResourceId_VioletPaletteA; ///< Colours for Death Plunge.
-#define RESOURCE_VIOLET_PALETTE_A ((s32)&ResourceId_VioletPaletteA)
-extern char ResourceId_RedPaletteA; ///< Colours for Death Plunge.
-#define RESOURCE_RED_PALETTE_A ((s32)&ResourceId_RedPaletteA)
-extern char ResourceId_YellowPaletteA; ///< Colours for Death Plunge.
-#define RESOURCE_YELLOW_PALETTE_A ((s32)&ResourceId_YellowPaletteA)
+extern char ResourceId_DeathPlungeVioletPalette; ///< Colours for Death Plunge.
+#define RESOURCE_DEATH_PLUNGE_VIOLET_PALETTE                                   \
+  ((s32)&ResourceId_DeathPlungeVioletPalette)
+extern char ResourceId_DeathPlungeRedPalette; ///< Colours for Death Plunge.
+#define RESOURCE_DEATH_PLUNGE_RED_PALETTE                                      \
+  ((s32)&ResourceId_DeathPlungeRedPalette)
+extern char ResourceId_DeathPlungeYellowPalette; ///< Colours for Death Plunge.
+#define RESOURCE_DEATH_PLUNGE_YELLOW_PALETTE                                   \
+  ((s32)&ResourceId_DeathPlungeYellowPalette)
 extern char ResourceId_FlameBladeSheet; ///< Ragnarok.
 #define RESOURCE_FLAME_BLADE_SHEET ((s32)&ResourceId_FlameBladeSheet)
 extern char ResourceId_IceTileSheet; ///< Death Plunge.
@@ -661,8 +671,8 @@ extern char ResourceId_GreenPalette;
 #define RESOURCE_GREEN_PALETTE ((s32)&ResourceId_GreenPalette)
 extern char ResourceId_SwordSlashSheet; ///< Death Plunge.
 #define RESOURCE_SWORD_SLASH_SHEET ((s32)&ResourceId_SwordSlashSheet)
-extern char ResourceId_OrangePaletteA; ///< Colours for Gaia and the streaks.
-#define RESOURCE_ORANGE_PALETTE_A ((s32)&ResourceId_OrangePaletteA)
+extern char ResourceId_GaiaOrangePalette; ///< Colours for Gaia and the streaks.
+#define RESOURCE_GAIA_ORANGE_PALETTE ((s32)&ResourceId_GaiaOrangePalette)
 extern char ResourceId_WhirlwindSheet; ///< The Procne summon.
 #define RESOURCE_WHIRLWIND_SHEET ((s32)&ResourceId_WhirlwindSheet)
 /// The Procne summon, after its sky is drawn.
@@ -704,8 +714,8 @@ extern char ResourceId_BlueDropletSheet;
 extern char ResourceId_BlueRingSheet;
 #define RESOURCE_BLUE_RING_SHEET ((s32)&ResourceId_BlueRingSheet)
 /// The Mars star field's colours (ElementGlow_InitializeStarField).
-extern char ResourceId_RedPaletteC;
-#define RESOURCE_RED_PALETTE_C ((s32)&ResourceId_RedPaletteC)
+extern char ResourceId_MarsStarFieldPalette;
+#define RESOURCE_MARS_STAR_FIELD_PALETTE ((s32)&ResourceId_MarsStarFieldPalette)
 /// The path Atalanta's particles follow.
 extern char ResourceId_AtalantaPath;
 #define RESOURCE_ATALANTA_PATH ((s32)&ResourceId_AtalantaPath)

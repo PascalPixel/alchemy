@@ -62,12 +62,12 @@
 #include "battle/battle.h"
 #include "debug/debug.h"
 #include "field/actor.h"
-#include "field/create_configured_actor.h"
 #include "field/event_commands.h"
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "field/field_effect.h"
 #include "field/field_psynergy_state.h"
+#include "field/field_sequence.h"
 #include "field/ground_mask.h"
 #include "field/map_grid_scroll.h"
 #include "field/pushed_actor.h"
@@ -204,10 +204,6 @@ enum {
   CELL_BEHAVIOR_STACKED_PILLARS_LEAVE_LOWEST_FLOOR = 41
 };
 
-/// A log lying still: log_north_south.tsv's and log_west_east.tsv's picture 10
-/// held, the first of the pictures their rolls turn through.
-#define LOG_ANIMATION_AT_REST 1
-
 /// SPRITE_TURNING_ROCK's round boulder (turning_rock.tsv's picture 1), as the
 /// dragon statue's room's boulder is drawn.
 #define TURNING_ROCK_ANIMATION_BOULDER 2
@@ -320,10 +316,9 @@ CrossboneIsleSteppingStones_StopAtGroundOrHeight(struct Actor *actor,
 /// Finds the cells the actor covers: their width and depth, the top-left one,
 /// and the cell where the map grid's layer 1 starts.
 ///
-/// The actor's row of gPushedActor_Rectangles is read as the four words of a
-/// struct PushedActorRectangle: [0] x0, [1] z0, [2] x1 and [3] z1. An actor
-/// whose animation is none of the six kinds gets row 7, past them, and is
-/// refused.
+/// The actor's edges are its row of gPushedActor_Rectangles. An actor whose
+/// animation is none of the six kinds gets PUSHED_ACTOR_NO_RECTANGLE, past
+/// them, and is refused.
 static s32 CrossboneIsleSteppingStones_QueryCoveredCells(
     s32 id, u32 *width, u32 *depth, struct PushedActorProbe *probe,
     s32 *layerOriginX, s32 *layerOriginZ) {
@@ -339,7 +334,7 @@ static s32 CrossboneIsleSteppingStones_QueryCoveredCells(
       probe->rectangleIndex = i;
       break;
     }
-    probe->rectangleIndex = 7;
+    probe->rectangleIndex = PUSHED_ACTOR_NO_RECTANGLE;
   }
   if (probe->rectangleIndex < 0 || probe->rectangleIndex > 6) {
     return 0;
@@ -348,30 +343,29 @@ static s32 CrossboneIsleSteppingStones_QueryCoveredCells(
   probe->position.x = actor->x.fixed;
   probe->position.y = actor->y.fixed;
   probe->position.z = actor->z.fixed;
-  coordinate = gPushedActor_Rectangles[probe->rectangleIndex * 4 + 1];
+  coordinate = gPushedActor_Rectangles[probe->rectangleIndex].z0;
   if (coordinate < 0) {
     coordinate = -coordinate;
   }
-  farExtent = gPushedActor_Rectangles[probe->rectangleIndex * 4 + 3];
+  farExtent = gPushedActor_Rectangles[probe->rectangleIndex].z1;
   if (farExtent < 0) {
     farExtent = -farExtent;
   }
   *depth = (coordinate + farExtent) >> 4;
-  coordinate = gPushedActor_Rectangles[probe->rectangleIndex * 4];
+  coordinate = gPushedActor_Rectangles[probe->rectangleIndex].x0;
   if (coordinate < 0) {
     coordinate = -coordinate;
   }
-  farExtent = gPushedActor_Rectangles[probe->rectangleIndex * 4 + 2];
+  farExtent = gPushedActor_Rectangles[probe->rectangleIndex].x1;
   if (farExtent < 0) {
     farExtent = -farExtent;
   }
   *width = (coordinate + farExtent) >> 4;
   // Move from the actor's center to the top-left cell it covers.
   probe->position.x +=
-      INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex * 4]);
+      INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex].x0);
   {
-    s32 offsetZ =
-        INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex * 4 + 1]);
+    s32 offsetZ = INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex].z0);
 
     coordinate = probe->position.z;
     coordinate += offsetZ;
@@ -472,7 +466,7 @@ static void CrossboneIsleSteppingStones_ReadMapGridCell(
   if (grid != NULL) {
     struct MapGridCell *cell = grid->layers[layer].cells;
 
-    cell += x + (y << 7);
+    cell += x + (y << MAPGRID_ROW_SHIFT);
     Dma_Set(cell, dst, DMA_COPY_WORDS(sizeof(*cell) / sizeof(u32)), REG_DMA3);
     Dma_Wait(REG_DMA3);
   }
@@ -488,7 +482,7 @@ static void CrossboneIsleSteppingStones_SetCellAttributes(
     struct CrossboneIslePillarCellBits *cell =
         (struct CrossboneIslePillarCellBits *)grid->layers[layer].cells;
 
-    cell += x + (y << 7);
+    cell += x + (y << MAPGRID_ROW_SHIFT);
     cell->lowFlags = source->bits.lowFlags;
     cell->highFlags = source->bits.highFlags;
     cell->behavior = source->bits.behavior;
@@ -1248,25 +1242,25 @@ static void CrossboneIsleSteppingStones_PushOrClimbDown(void) {
 
 /// Nothing visible happens when Isaac walks onto the lowest floor of the
 /// seventh floor's side room, among the brown pits, for example cell (54, 15)
-/// in its north east. The game starts the fade overlay on him and sets his
+/// in its north east. The game starts the ground mask on him and sets his
 /// `sceneCounter`. From then on, walking on the brown floor along the raised
-/// pink ground south of it, he shows only from the waist up: the overlay
+/// pink ground south of it, he shows only from the waist up: the ground mask
 /// covers the rest in the colour of the raised ground, as if he stood behind
 /// it.
 static void CrossboneIsleSteppingStones_StartRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  gFadeOverlayState->actor = leader;
+  gGroundMaskState->actor = leader;
   leader->sceneCounter = 1;
 }
 
 /// Nothing visible happens when Isaac leaves the lowest floor of the seventh
 /// floor's side room at cell (33, 27), below the west ladders, or cell
-/// (54, 14) in the north east. The fade overlay lets him go and his
+/// (54, 14) in the north east. The ground mask lets him go and his
 /// `sceneCounter` is cleared.
 static void CrossboneIsleSteppingStones_StopRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  gFadeOverlayState->actor = NULL;
+  gGroundMaskState->actor = NULL;
   leader->sceneCounter = 0;
 }
 
@@ -1334,7 +1328,7 @@ static void CrossboneIsleSteppingStones_FrostStartsOnThirdPuddle(void) {
   if (FIELD_CELL(puddle->x.fixed) == FIELD_CELL(leader->x.fixed) &&
       FIELD_CELL(puddle->z.fixed) == FIELD_CELL(leader->z.fixed)) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE);
-    effectState->childMode = 1;
+    effectState->leaveTarget = 1;
   } else {
     GameFlag_Clear(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE);
   }
@@ -1661,7 +1655,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_Get(ACTOR_PARTY_LEADER)->sceneCounter = 1;
     }
-    FieldEffect_StartFadeOverlay(0);
+    FieldEffect_StartGroundMask(0);
     if (Actor_Get(ACTOR_PARTY_LEADER)->sceneCounter == 0) {
       CrossboneIsleSteppingStones_StopRising();
     }

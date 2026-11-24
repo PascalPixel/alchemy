@@ -530,7 +530,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     // Mortal Danger and Asura replace the caster's overlay and the impact's
     // pictures.
     if (mode == CASTING_IMPACT_MORTAL_DANGER) {
-      Resource_LoadAndDecompress(RESOURCE_COUNTER_REVEAL_SHEET, state, 1, 1);
+      Resource_LoadAndDecompress(RESOURCE_REAPER_SHEET, state, 1, 1);
       Resource_LoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_A, pictures, 1, 0);
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 14);
     }

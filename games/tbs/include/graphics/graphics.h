@@ -57,23 +57,9 @@ extern const u32 RelocatedInnerProduct[];
 extern u8 Decompress_MoveToFrontLzCommandsCodeSize[];
 /// Decompress_ByteLzArm: how much Decompress_ByteLz allocates for it.
 extern u8 Decompress_ByteLzCodeSize[];
-/// The Japanese status panel's PP row, "EP    /": label and slash in one
-/// string, drawn by the unit summary in menu/menu_shared.c.
-extern const u8 gStatusPanel_PpRowString[];
 /// A one-entry table of sprite tiles: the pointing hand cursor
 /// (gPointingHandTiles), returned by WindowSprite_GetPointerTiles.
 extern s32 gWindowSprite_PointerTiles[];
-/// The Japanese status panel's HP row, "HP    /", the slash already in its
-/// cell at 48.
-extern const u8 gStatusPanel_HpRowString[];
-/// The HP label outside Japan, in each language's form ("KP" in German, "PV"
-/// in Spanish and French, "PS" in Italian).
-extern const u8 gStatusPanel_HpString[];
-/// The PP label outside Japan, which every language writes "PP".
-extern const u8 gStatusPanel_PpString[];
-/// The slash between a current and maximum figure on the status panel,
-/// outside Japan.
-extern const u8 gStatusPanel_SlashString[];
 /// The compressed item icons, indexed by an item's icon field.
 extern u8 *gItemIcons[];
 /// The end of gItemIcons, so Icon_CountItemIcons can count them.
@@ -86,54 +72,53 @@ extern u8 *gPsynergyIcons[];
 extern u8 *gPsynergyIconsEnd[];
 
 struct Sprite;
-struct ArticleTable;
 struct PaletteCycleState;
 struct MenuCursor;
 struct TileMask;
 
-// The pixel shading kernels and their sizes: each
-// PaletteFade_BackupAnd... function in system/system_decompress.c copies its
-// kernel onto its own stack and runs it there.
-/// PaletteFade_BrightenKernel, for PaletteFade_BackupAndBrighten.
-extern u8 PaletteFade_BackupAndBrightenCodeSize[];
-/// PaletteFade_BrightenPartialKernel, for
-/// PaletteFade_BackupAndBrightenPartial.
-extern u8 PaletteFade_BackupAndBrightenPartialCodeSize[];
-/// PaletteFade_DarkenKernel, for PaletteFade_BackupAndDarken.
-extern u8 PaletteFade_BackupAndDarkenCodeSize[];
-/// PaletteFade_DarkenPartialKernel, for PaletteFade_BackupAndDarkenPartial.
-extern u8 PaletteFade_BackupAndDarkenPartialCodeSize[];
-/// PaletteFade_HalveKernel, for PaletteFade_BackupAndHalve.
-extern u8 PaletteFade_BackupAndHalveCodeSize[];
-/// PaletteFade_HalveNonzeroKernel, for PaletteFade_BackupAndHalveNonzero.
-extern u8 PaletteFade_BackupAndHalveNonzeroCodeSize[];
-/// PaletteFade_ScaleNonzeroThreeQuartersKernel, for
-/// PaletteFade_BackupAndScaleNonzeroThreeQuarters.
-extern u8 PaletteFade_BackupAndScaleNonzeroThreeQuartersCodeSize[];
-/// PaletteFade_ScaleThreeQuartersKernel, for
-/// PaletteFade_BackupAndScaleThreeQuarters.
-extern u8 PaletteFade_BackupAndScaleThreeQuartersCodeSize[];
+// The canvas fades' ARM routines and their sizes: each Canvas_CopyAnd...
+// function in system/system_decompress.c copies its routine onto its own
+// stack and runs it there.
+/// Canvas_BrightenArm, for Canvas_CopyAndBrighten.
+extern u8 Canvas_CopyAndBrightenCodeSize[];
+/// Canvas_BrightenPartialArm, for
+/// Canvas_CopyAndBrightenPartial.
+extern u8 Canvas_CopyAndBrightenPartialCodeSize[];
+/// Canvas_DarkenArm, for Canvas_CopyAndDarken.
+extern u8 Canvas_CopyAndDarkenCodeSize[];
+/// Canvas_DarkenPartialArm, for Canvas_CopyAndDarkenPartial.
+extern u8 Canvas_CopyAndDarkenPartialCodeSize[];
+/// Canvas_HalveArm, for Canvas_CopyAndHalve.
+extern u8 Canvas_CopyAndHalveCodeSize[];
+/// Canvas_HalveNonzeroArm, for Canvas_CopyAndHalveNonzero.
+extern u8 Canvas_CopyAndHalveNonzeroCodeSize[];
+/// Canvas_ScaleNonzeroThreeQuartersArm, for
+/// Canvas_CopyAndScaleNonzeroThreeQuarters.
+extern u8 Canvas_CopyAndScaleNonzeroThreeQuartersCodeSize[];
+/// Canvas_ScaleThreeQuartersArm, for
+/// Canvas_CopyAndScaleThreeQuarters.
+extern u8 Canvas_CopyAndScaleThreeQuartersCodeSize[];
 /// Raises each pixel step by an amount, capped at 63, after backing the
 /// buffer up.
-extern const u8 PaletteFade_BrightenKernel[];
-/// Brightens as PaletteFade_BrightenKernel, writing back only groups of four
+extern const u8 Canvas_BrightenArm[];
+/// Brightens as Canvas_BrightenArm, writing back only groups of four
 /// pixels not all at 63 already.
-extern const u8 PaletteFade_BrightenPartialKernel[];
+extern const u8 Canvas_BrightenPartialArm[];
 /// Lowers each pixel step by an amount, stopping at 0, after backing the
 /// buffer up.
-extern const u8 PaletteFade_DarkenKernel[];
-/// Darkens as PaletteFade_DarkenKernel, writing back only groups of four
+extern const u8 Canvas_DarkenArm[];
+/// Darkens as Canvas_DarkenArm, writing back only groups of four
 /// pixels not all 0 already.
-extern const u8 PaletteFade_DarkenPartialKernel[];
+extern const u8 Canvas_DarkenPartialArm[];
 /// Halves each pixel step; the battle effect canvas's transfers use it.
-extern const u8 PaletteFade_HalveKernel[];
+extern const u8 Canvas_HalveArm[];
 /// Halves each pixel step, skipping all-zero groups; Lucky Wheels' canvas uses
 /// it.
-extern const u8 PaletteFade_HalveNonzeroKernel[];
+extern const u8 Canvas_HalveNonzeroArm[];
 /// Scales each pixel step to three quarters, skipping all-zero groups.
-extern const u8 PaletteFade_ScaleNonzeroThreeQuartersKernel[];
+extern const u8 Canvas_ScaleNonzeroThreeQuartersArm[];
 /// Scales each pixel step to three quarters.
-extern const u8 PaletteFade_ScaleThreeQuartersKernel[];
+extern const u8 Canvas_ScaleThreeQuartersArm[];
 /// The 256 depth slots' list heads that every drawn sprite is linked into
 /// (Oam_AddSpriteAtDepth); Oam_ResetFrame empties them each frame.
 extern void *gOamDepthLists[];
@@ -143,9 +128,6 @@ extern void *gOamDepthLists[];
 /// HEAP_SLOT_SELECTION_STATE: struct SelectionState, which only two
 /// unused functions touch.
 #define gSelectionState (*(u8 (*)[]) & gHeapSlots[HEAP_SLOT_SELECTION_STATE])
-/// The articles a message puts before a name, by article class, in the
-/// languages that have them.
-extern const struct ArticleTable gArticle_Table;
 /// One row's masks for a pair of bar-pattern tiles: a word XORed into each
 /// tile's row.
 struct TileMask {
@@ -191,24 +173,6 @@ extern const u16 gGraphics_ExpandNibbleTable[];
 /// The right-pointing arrow cursor, an 8x16 sprite of 256 colours, beside
 /// its left-pointing twin.
 extern const u8 gMenu_CursorActorTiles[];
-/// The Japanese name entry screen's second keyboard, which Select switches to.
-extern const u8 gNameEntry_AlternateKeyboardTilemap[];
-/// Eight offsets, 0 to 3 and back, that make the name entry screen's caret
-/// circle: the x offset leads the y offset by five steps.
-extern s8 gNameEntry_CaretWave[];
-/// The kana that take the voiced mark, as first and last pairs ended by 0.
-extern const u8 gNameEntry_VoicedMarkRanges[];
-/// The Delete key's label on the German, Spanish and French name entry screen
-/// keyboards ("ENT", "SUP", "EFF").
-extern u8 gNameEntry_DeleteKeyLabel[];
-/// The End key's label on the German, Spanish and French keyboards ("ENDE",
-/// "FIN", "FIN").
-extern u8 gNameEntry_EndKeyLabel[];
-/// The kana that take the semi-voiced mark, in the same pairs.
-extern const u8 gNameEntry_SemivoicedMarkRanges[];
-/// The name entry screen keyboard's compressed tilemap, the Spanish edition's
-/// with its own letters.
-extern const u8 gNameEntry_KeyboardTilemap[];
 /// 224 zeroed bytes right after Render_DecodePicture's code and tables; its
 /// address ends the stretch the field sprites' draw copies to RAM.
 extern const u8 gRender_DecodePictureEnd[];
@@ -229,8 +193,6 @@ extern u8 Decompress_HalfwordsCodeSize[];
 /// The pointing hand cursor, a 16x16 sprite, shared by the battle menus, the
 /// name entry screen and the talk choices.
 extern u8 gPointingHandTiles[];
-/// The 16x16 sprite the name entry screen shows as its name caret.
-extern const u8 gNameEntry_CaretTiles[];
 /// Decodes a credits slide's packed picture into 8bpp tiles, adding a palette
 /// offset to each pixel; it relocates its own command table wherever it's
 /// copied.
@@ -245,7 +207,7 @@ extern const u8 Text_DecodeSymbol[];
 extern u8 Text_DecodeSymbolCodeSize[];
 /// ScanlineWindow_BuildEdges, copied to the heap by ScanlineWindow_FillSpans
 /// for each frame of a window transition.
-extern u8 Tile_BuildCellTilesCodeSize[];
+extern u8 ScanlineWindow_BuildEdgesCodeSize[];
 /// Interleaves a layout's three decoded cell planes into cell words, for
 /// TileMap_ConvertBuffer.
 extern const u8 Tile_ConvertMapGrid[];
@@ -300,9 +262,6 @@ extern const u8 gFont_ColorPens[];
 extern u8 Glyph_DrawCodeSize[];
 /// Each main font glyph's width in pixels, from the space (32) on.
 extern const u8 gFont_GlyphWidths[];
-/// Spanish's indefinite articles, by article class; gArticle_Table holds its
-/// definite ones.
-extern const struct ArticleTable gArticle_Indefinite;
 /// Points a struct MessageReader at a message's compressed bits and first
 /// context.
 extern const u8 Message_FindArm[];

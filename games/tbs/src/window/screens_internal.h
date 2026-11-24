@@ -19,6 +19,7 @@
 #include "field/event.h"
 #include "field/field.h"
 #include "field/map_grid_scroll.h"
+#include "field/particle.h"
 #include "game/game.h"
 #include "graphics/display_transition.h"
 #include "graphics/graphics.h"

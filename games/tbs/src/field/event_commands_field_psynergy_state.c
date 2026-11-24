@@ -274,7 +274,7 @@ void FieldPsynergy_FadeFromCastColor(void) {
   struct FieldState *state = gFieldState;
   s32 savedPalettes = (s32)state->savedFadeTarget;
 
-  PaletteFade_SetTarget(savedPalettes, PALETTES_OBJECTS);
+  PaletteFade_SetTarget(savedPalettes, PALETTES_SPRITES);
   if (state->revealActive != 0) {
     PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   } else {

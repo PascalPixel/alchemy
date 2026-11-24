@@ -447,15 +447,15 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       comet = PROJECTILE_VOLLEY_COMET_A;
     if (comet == PROJECTILE_VOLLEY_COMET_A)
       Resource_LoadAndDecompress(
-          RESOURCE_COMET_SHEET_A,
+          RESOURCE_SLASH_COMET_SHEET,
           state->sheet + PROJECTILE_VOLLEY_COMET_PICTURES, 1, 1);
     else if (comet == PROJECTILE_VOLLEY_COMET_B)
       Resource_LoadAndDecompress(
-          RESOURCE_COMET_SHEET_B,
+          RESOURCE_WIND_SLASH_COMET_SHEET,
           state->sheet + PROJECTILE_VOLLEY_COMET_PICTURES, 1, 1);
     else
       Resource_LoadAndDecompress(
-          RESOURCE_COMET_SHEET_C,
+          RESOURCE_SONIC_SLASH_COMET_SHEET,
           state->sheet + PROJECTILE_VOLLEY_COMET_PICTURES, 1, 1);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       const void *pal = Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET);
@@ -476,7 +476,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     REG_BLDCNT = 0;
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
-    Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_COMET_SHEET_A),
+    Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_SLASH_COMET_SHEET),
                     SHEET_PALETTE_BYTES);
     Resource_LoadAndDecompress(RESOURCE_PROJECTILE_VOLLEY_IMAGE, state->sheet,
                                0, 0);

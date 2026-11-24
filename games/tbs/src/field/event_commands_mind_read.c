@@ -166,9 +166,9 @@ void MindRead_StartRipple(void) {
   if (!state->delay) {
     u16 *line = state->lines[state->page];
     volatile u16 *dma = REG_DMA0;
-    dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-    dma[5] &= ~DMA_ENABLE;
-    (void)dma[5];
+    dma[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
+    dma[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
+    (void)dma[DMA_CNT_H_INDEX];
     // One halfword at each HBlank (repeating, destination reloaded).
     Dma_Set(line, REG_BG0HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
             (volatile u32 *)dma);

@@ -1,7 +1,7 @@
 /// @file
 /// Sol Sanctum's Elemental Star room and its eruption: each floating light's
 /// drift, swing, direction and pulse, by its index, as
-/// sol_sanctum_elemental_star_ring_setup.c reads them.
+/// sol_sanctum_elemental_star_lights.c reads them.
 
 #include "fixed_math.h"
 #include "types.h"

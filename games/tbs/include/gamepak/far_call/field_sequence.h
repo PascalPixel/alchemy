@@ -50,7 +50,7 @@ void Actor_SetSpriteColorFar(struct Actor *actor, s32 color);
 void Actor_WatchAndStartScriptFar(u32 actorId, s32 targetId,
                                   const void *script);
 void Event_SetMessageIdFar(s32 message);
-struct Window *FieldMessage_ShowAtActorFar(s32 actorId, s32 unused);
+struct Window *FieldMessage_ShowAtActorFar(s32 speaker, s32 unusedFlags);
 void Event_ShowMessageAndWaitFar(s32 actorId, s32 flags);
 void Event_ShowMessageThenWaitFar(s32 actorId, s32 flags, s32 frames);
 s32 Event_AskYesNoAndShowResponseFar(s32 actorId, s32 flags);
@@ -114,7 +114,7 @@ void TreasureSpot_MoveLeaderAwayFar(void);
 void WorldMap_FreezeFar(void);
 void WorldMap_UnfreezeFar(void);
 void *Actor_LookupFar(u32 actorIndex);
-void FieldEffect_StartFadeOverlayFar(void *object);
+void FieldEffect_StartGroundMaskFar(void *object);
 void FieldPsynergy_RunHandlerFar(s32 kind);
 void FieldPsynergy_LoadResourcesFar(s32 abilityId, s32 mode);
 void FieldPsynergy_SetupActorPairFar(s32 userId, s32 targetId);

@@ -493,9 +493,9 @@ void WindowSprite_AppendToList(struct WindowSpriteList *list,
 /// entry unless it is a glyph, and for a portrait frees its palette slot too.
 void WindowSprite_Release(struct WindowSprite *entry) {
   WindowSprite_ReleaseFree(entry);
-  if ((u8)entry->kind != WINDOW_SPRITE_PLAIN) {
-    VramCache_FreeEntry((u8)entry->index);
-    if ((u8)entry->kind == WINDOW_SPRITE_PORTRAIT) {
+  if (entry->kind != WINDOW_SPRITE_PLAIN) {
+    VramCache_FreeEntry(entry->index);
+    if (entry->kind == WINDOW_SPRITE_PORTRAIT) {
       WINDOW_STATE->portraitPictures[entry->oam.palette - PORTRAIT_PALETTE] =
           PORTRAIT_SLOT_EMPTY;
     }

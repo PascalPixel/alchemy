@@ -2,7 +2,7 @@
 #define ALCHEMY_GROUND_MASK_H
 
 /// @file
-/// The fade overlay, which hides the parts of an actor that raised ground in
+/// The ground mask, which hides the parts of an actor that raised ground in
 /// front of it should cover, and the state of the weather's ground particles,
 /// motes of light and sparkles.
 
@@ -14,23 +14,23 @@
 
 struct Actor;
 
-/// The fade overlay: where the ground just south of an actor rises above its
+/// The ground mask: where the ground just south of an actor rises above its
 /// floor (a ledge, the rim of a sunken floor), a 16-pixel square on each side
 /// of it is drawn over what of it the ground should stand in front of: beside
 /// a ledge in the Kalay Tunnel's treasure room, Isaac shows from the waist up.
-struct FadeOverlayState {
+struct GroundMaskState {
   /// The left and right marks: 16-pixel-wide semi-transparent sprites drawn
   /// where the ground beside the actor rises above its floor.
   struct AnimationSpritePart marks[2];
   struct Actor *actor; ///< the actor tracked; null draws nothing
 };
 
-STATIC_ASSERT(sizeof(struct FadeOverlayState) == 28);
+STATIC_ASSERT(sizeof(struct GroundMaskState) == 28);
 
-/// HEAP_SLOT_FADE_OVERLAY: the fade overlay's state from
-/// FieldEffect_StartFadeOverlay until the next scene change.
-#define gFadeOverlayState                                                      \
-  (*(struct FadeOverlayState **)&gHeapSlots[HEAP_SLOT_FADE_OVERLAY])
+/// HEAP_SLOT_GROUND_MASK: the ground mask's state from
+/// FieldEffect_StartGroundMask until the next scene change.
+#define gGroundMaskState                                                       \
+  (*(struct GroundMaskState **)&gHeapSlots[HEAP_SLOT_GROUND_MASK])
 
 #define WEATHER_PARTICLE_COUNT 32 ///< WeatherState.particles
 

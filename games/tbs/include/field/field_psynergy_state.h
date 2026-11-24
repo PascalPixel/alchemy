@@ -36,8 +36,8 @@ struct FieldEffectState {
   /// Set by some scenes before a field Psynergy; Carry, Frost, Force and Reveal
   /// treat the target differently with it.
   s8 sceneVariant;
-  s8 childMode; ///< set by some scenes: Frost and Force leave the target be
-  u8 paddingAfterChildMode[2]; ///< up to the word savedCallback starts on
+  s8 leaveTarget; ///< set by some scenes: Frost and Force leave the target be
+  u8 paddingAfterLeaveTarget[2]; ///< up to the word savedCallback starts on
   /// The target's update routine and script, saved at the start and restored
   /// when Move or Carry lets it go.
   ///@{

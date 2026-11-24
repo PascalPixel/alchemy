@@ -17,6 +17,7 @@
 #include "battle/battle_state.h"
 #include "field/event.h"
 #include "field/field.h"
+#include "field/particle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

@@ -53,7 +53,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   do {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
-    FieldParticle_SetAnimation(effect, 7);
+    FieldParticle_SetAnimation(effect, PARTICLE_ANIMATION_FLICKER);
     Sprite_SetAnimationColorModesFar(
         effect->sprite, (Random16() * (SPRITE_COLOR_GREY + 1)) >> 16);
     scale = Random16() / 3 + FIXED_ONE; // 1.0 to 1.33

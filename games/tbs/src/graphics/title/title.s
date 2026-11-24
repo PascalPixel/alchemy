@@ -78,8 +78,8 @@ Field_WorldMapPicture:
 	.incbin "games/tbs/src/graphics/world_map/picture.8bpp.lz"
 	.byte 0x02, 0x31, 0x01	@ PACKER: left in the buffer by Title_IntroPeak+0x3b01
 @ "To be continued" lettering
-	.global Title_IntroTilesB
-Title_IntroTilesB:
+	.global Title_ToBeContinuedLettering
+Title_ToBeContinuedLettering:
 	.ifdef TBS_EDITION_DE
 	.incbin "games/tbs/src/graphics/title/to_be_continued_de.gbapal"
 	.incbin "games/tbs/src/graphics/title/to_be_continued_de.8bpp.lz"

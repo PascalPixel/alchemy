@@ -11,7 +11,7 @@ struct Vector3;
 struct WorldMapScanline;
 
 /// The world map camera's yaw, in 1/65536 turns, the scanline parameters were
-/// built for; the vertex update rebuilds them when it changes.
+/// built for; WorldMap_UpdateAffineLines rebuilds them when it changes.
 extern u32 gScanlineAngle;
 /// The world map camera's pitch the scanline parameters were built for.
 extern u32 gScanlinePitch;

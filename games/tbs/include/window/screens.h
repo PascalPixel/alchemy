@@ -71,6 +71,20 @@ void FileList_PlacePartySprites(void);
 void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y);
 void FileList_HideDjinnSprites(void);
 void FileList_PlaceDjinnSprites(void);
+
+/// What the file list is choosing a file for, which decides the files the
+/// cursor may stop on.
+enum FileMenuMode {
+  FILE_LIST_SAVE,     ///< saving: any file, empty ones too
+  FILE_LIST_CONTINUE, ///< continuing: files not yet cleared
+  FILE_LIST_COPY,     ///< copying: any file with data
+  FILE_LIST_ERASE,    ///< erasing: any file with data
+  /// The title's Battle: files whose party has found a Djinni
+  /// (SaveFileSummary.djinnCount).
+  FILE_LIST_BATTLE,
+  FILE_LIST_CLEARED ///< the title's Send: cleared files only
+};
+
 void FileList_DrawDjinnCounts(struct Window *window,
                               struct SaveFileSummary *summary);
 void FileList_DrawSummary(struct Window *window,
@@ -141,9 +155,9 @@ s32 BattleDjinnMenu_ListChangedAbilities(const struct PsynergyEntry *oldGrid,
                                          u16 *out, s32 *gained, s32 *lost);
 UNREAD_RESULT WindowSprite_CreateAbilityIcon(struct Window *window, s32 x,
                                              s32 y, s32 abilityId);
-struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
-                                                 s32 encodedDjinn, s32 page,
-                                                 s32 *pageCount);
+struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
+                                                 s32 member, s32 encodedDjinn,
+                                                 s32 page, s32 *pageCount);
 s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member);
 s32 BattleDjinnMenu_Run(s32 member, s32 unused);
 s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby);
@@ -237,5 +251,26 @@ void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index);
 s32 PauseMenu_Run(void);
 s32 DebugBrowser_Icons(void);
 s32 DebugBrowser_Portraits(void);
+
+/// The Japanese name entry screen's second keyboard, which Select switches to.
+extern const u8 gNameEntry_AlternateKeyboardTilemap[];
+/// Eight offsets, 0 to 3 and back, that make the name entry screen's caret
+/// circle: the x offset leads the y offset by five steps.
+extern s8 gNameEntry_CaretWave[];
+/// The kana that take the voiced mark, as first and last pairs ended by 0.
+extern const u8 gNameEntry_VoicedMarkRanges[];
+/// The Delete key's label on the German, Spanish and French name entry screen
+/// keyboards ("ENT", "SUP", "EFF").
+extern u8 gNameEntry_DeleteKeyLabel[];
+/// The End key's label on the German, Spanish and French keyboards ("ENDE",
+/// "FIN", "FIN").
+extern u8 gNameEntry_EndKeyLabel[];
+/// The kana that take the semi-voiced mark, in the same pairs.
+extern const u8 gNameEntry_SemivoicedMarkRanges[];
+/// The name entry screen keyboard's compressed tilemap, the Spanish edition's
+/// with its own letters.
+extern const u8 gNameEntry_KeyboardTilemap[];
+/// The 16x16 sprite the name entry screen shows as its name caret.
+extern const u8 gNameEntry_CaretTiles[];
 
 #endif

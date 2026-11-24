@@ -5,19 +5,19 @@
 @ Why Oam_BuildBufferKernel is assembly:
 @ unshifted movs r6, r6/r5/r4/r3 copy and test; ldmdb r2! also loads
 @ a four-register list outside the block-copy patterns.
-@ Why PaletteFade_ScaleThreeQuartersKernel to PaletteFade_HalveKernel are assembly:
-@ both kernels save callee-saved r5/r6 without lr, and write modified
+@ Why Canvas_ScaleThreeQuartersArm to Canvas_HalveArm are assembly:
+@ both routines save callee-saved r5/r6 without lr, and write modified
 @ words back with stmia r0!, {r3-r6}, beyond their initial block copy.
-@ Why PaletteFade_DarkenKernel to PaletteFade_BackupKernelsEnd are assembly:
+@ Why Canvas_DarkenArm to Canvas_DarkenArmEnd are assembly:
 @ stmia r0!, {r4-r7} writes arithmetic-modified words, not a block copy.
-@ Why PaletteFade_BrightenKernel to PaletteFade_HalveNonzeroKernel are assembly:
-@ all three kernels save callee-saved r5/r6 (and further registers in
-@ BrightenKernel) without saving lr.
-@ Why PaletteFade_DarkenPartialKernel is assembly:
+@ Why Canvas_BrightenArm to Canvas_HalveNonzeroArm are assembly:
+@ all three routines save callee-saved r5/r6 (and further registers in
+@ Canvas_BrightenArm) without saving lr.
+@ Why Canvas_DarkenPartialArm is assembly:
 @ ldm r0!, {r4-r7} and stmia r2!, {r4-r7} write back through a
 @ four-register list starting at r4. GCC 2.95.2's block-copy expander
 @ fixes that list at r0-r3; its general ldm/stm peepholes never write back.
-@ Why PaletteFade_BrightenPartialKernel to PaletteFade_KernelsEnd are assembly:
+@ Why Canvas_BrightenPartialArm to Canvas_BrightenPartialArmEnd are assembly:
 @ push {r5-r9} saves callee-saved registers without lr.
 @ Why Decompress_HalfwordLz is assembly:
 @ bcc and adc consume lsls r3's carry; the intervening ldrh keeps flags.
@@ -258,8 +258,8 @@ Oam_BuildBufferKernel:
 	.set Oam_BuildBufferKernelCodeSize, . - Oam_BuildBufferKernel
 .syntax unified
 	.arm
-	.global PaletteFade_ScaleThreeQuartersKernel
-PaletteFade_ScaleThreeQuartersKernel:
+	.global Canvas_ScaleThreeQuartersArm
+Canvas_ScaleThreeQuartersArm:
 	push	{r5, r6}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -281,8 +281,8 @@ PaletteFade_ScaleThreeQuartersKernel:
 	bne	.Lthree_quarters_next
 	pop	{r5, r6}
 	bx	lr
-	.global PaletteFade_HalveKernel
-PaletteFade_HalveKernel:
+	.global Canvas_HalveArm
+Canvas_HalveArm:
 	push	{r5, r6}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -301,14 +301,14 @@ PaletteFade_HalveKernel:
 	pop	{r5, r6}
 	bx	lr
 .L_halve_end:
-	.global PaletteFade_BackupAndScaleThreeQuartersCodeSize
-	.set PaletteFade_BackupAndScaleThreeQuartersCodeSize, PaletteFade_HalveKernel - PaletteFade_ScaleThreeQuartersKernel
-	.global PaletteFade_BackupAndHalveCodeSize
-	.set PaletteFade_BackupAndHalveCodeSize, .L_halve_end - PaletteFade_HalveKernel
+	.global Canvas_CopyAndScaleThreeQuartersCodeSize
+	.set Canvas_CopyAndScaleThreeQuartersCodeSize, Canvas_HalveArm - Canvas_ScaleThreeQuartersArm
+	.global Canvas_CopyAndHalveCodeSize
+	.set Canvas_CopyAndHalveCodeSize, .L_halve_end - Canvas_HalveArm
 .syntax unified
 	.arm
-	.global PaletteFade_DarkenKernel
-PaletteFade_DarkenKernel:
+	.global Canvas_DarkenArm
+Canvas_DarkenArm:
 	rsb	ip, r1, #0x80000000
 	add	ip, ip, #0x800000
 	add	ip, ip, #0x8000
@@ -342,13 +342,13 @@ PaletteFade_DarkenKernel:
 	bne	.Ldarken_next
 	pop	{r5, r6, r7, r8, ip}
 	bx	ip
-PaletteFade_BackupKernelsEnd:
-	.global PaletteFade_BackupAndDarkenCodeSize
-	.set PaletteFade_BackupAndDarkenCodeSize, PaletteFade_BackupKernelsEnd - PaletteFade_DarkenKernel
+Canvas_DarkenArmEnd:
+	.global Canvas_CopyAndDarkenCodeSize
+	.set Canvas_CopyAndDarkenCodeSize, Canvas_DarkenArmEnd - Canvas_DarkenArm
 .syntax unified
 	.arm
-	.global PaletteFade_BrightenKernel
-PaletteFade_BrightenKernel:
+	.global Canvas_BrightenArm
+Canvas_BrightenArm:
 	push	{r5, r6, r7, r8, r9}
 	mov	r8, #64
 	orr	r8, r8, r8, lsl #8
@@ -383,8 +383,8 @@ PaletteFade_BrightenKernel:
 	bne	.Lbrighten_next
 	pop	{r5, r6, r7, r8, r9}
 	bx	lr
-	.global PaletteFade_ScaleNonzeroThreeQuartersKernel
-PaletteFade_ScaleNonzeroThreeQuartersKernel:
+	.global Canvas_ScaleNonzeroThreeQuartersArm
+Canvas_ScaleNonzeroThreeQuartersArm:
 	push	{r5, r6}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -409,8 +409,8 @@ PaletteFade_ScaleNonzeroThreeQuartersKernel:
 	bne	.Lnonzero_three_quarters_next
 	pop	{r5, r6}
 	bx	lr
-	.global PaletteFade_HalveNonzeroKernel
-PaletteFade_HalveNonzeroKernel:
+	.global Canvas_HalveNonzeroArm
+Canvas_HalveNonzeroArm:
 	push	{r5, r6}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -436,16 +436,16 @@ PaletteFade_HalveNonzeroKernel:
 	pop	{r5, r6}
 	bx	lr
 .L_halve_nonzero_end:
-	.global PaletteFade_BackupAndBrightenCodeSize
-	.set PaletteFade_BackupAndBrightenCodeSize, PaletteFade_ScaleNonzeroThreeQuartersKernel - PaletteFade_BrightenKernel
-	.global PaletteFade_BackupAndScaleNonzeroThreeQuartersCodeSize
-	.set PaletteFade_BackupAndScaleNonzeroThreeQuartersCodeSize, PaletteFade_HalveNonzeroKernel - PaletteFade_ScaleNonzeroThreeQuartersKernel
-	.global PaletteFade_BackupAndHalveNonzeroCodeSize
-	.set PaletteFade_BackupAndHalveNonzeroCodeSize, .L_halve_nonzero_end - PaletteFade_HalveNonzeroKernel
+	.global Canvas_CopyAndBrightenCodeSize
+	.set Canvas_CopyAndBrightenCodeSize, Canvas_ScaleNonzeroThreeQuartersArm - Canvas_BrightenArm
+	.global Canvas_CopyAndScaleNonzeroThreeQuartersCodeSize
+	.set Canvas_CopyAndScaleNonzeroThreeQuartersCodeSize, Canvas_HalveNonzeroArm - Canvas_ScaleNonzeroThreeQuartersArm
+	.global Canvas_CopyAndHalveNonzeroCodeSize
+	.set Canvas_CopyAndHalveNonzeroCodeSize, .L_halve_nonzero_end - Canvas_HalveNonzeroArm
 .syntax unified
 	.arm
-	.global PaletteFade_DarkenPartialKernel
-PaletteFade_DarkenPartialKernel:
+	.global Canvas_DarkenPartialArm
+Canvas_DarkenPartialArm:
 	rsb	ip, r1, #0x80000000
 	add	ip, ip, #0x800000
 	add	ip, ip, #0x8000
@@ -508,12 +508,12 @@ PaletteFade_DarkenPartialKernel:
 	pop	{r5, r6, r7, r8, ip}
 	bx	ip
 .L_darken_partial_end:
-	.global PaletteFade_BackupAndDarkenPartialCodeSize
-	.set PaletteFade_BackupAndDarkenPartialCodeSize, .L_darken_partial_end - PaletteFade_DarkenPartialKernel
+	.global Canvas_CopyAndDarkenPartialCodeSize
+	.set Canvas_CopyAndDarkenPartialCodeSize, .L_darken_partial_end - Canvas_DarkenPartialArm
 .syntax unified
 	.arm
-	.global PaletteFade_BrightenPartialKernel
-PaletteFade_BrightenPartialKernel:
+	.global Canvas_BrightenPartialArm
+Canvas_BrightenPartialArm:
 	push	{r5, r6, r7, r8, r9}
 	mov	r8, #64
 	orr	r8, r8, r8, lsl #8
@@ -576,9 +576,9 @@ PaletteFade_BrightenPartialKernel:
 .Lbrighten_partial_done:
 	pop	{r5, r6, r7, r8, r9}
 	bx	lr
-PaletteFade_KernelsEnd:
-	.global PaletteFade_BackupAndBrightenPartialCodeSize
-	.set PaletteFade_BackupAndBrightenPartialCodeSize, PaletteFade_KernelsEnd - PaletteFade_BrightenPartialKernel
+Canvas_BrightenPartialArmEnd:
+	.global Canvas_CopyAndBrightenPartialCodeSize
+	.set Canvas_CopyAndBrightenPartialCodeSize, Canvas_BrightenPartialArmEnd - Canvas_BrightenPartialArm
 .syntax unified
 	.arm
 	.global Decompress_HalfwordLz

@@ -42,11 +42,6 @@ struct StatState {
 #define NEW_GAME_SPEECH 1
 #define NEW_GAME_WINDOW_BRIGHTNESS (WINDOW_BRIGHTNESS_NEUTRAL + 1)
 
-/// The enemy unit whose record holds the link opponent's Djinn recovery
-/// table: the opponent's three party members take the three before it
-/// (BattleArena_ReceivePartyRecords), and the table fits in one unit's record.
-#define OPPONENT_RECOVERY_UNIT (FIRST_ENEMY_UNIT + 3)
-
 /// The distance between `a` and `b`, |a - b|.
 #define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 

@@ -216,19 +216,43 @@ enum DjinnMenuResult {
   DJINN_RESULT_HELP = 10 ///< Select: the help
 };
 
-/// DjinnMenuBackdrop.tutorialStep: where the Djinn tutorial is.
+/// DjinnMenuBackdrop.tutorialStep: where the Djinn tutorial is. Each lesson's
+/// own steps follow it: each waits its frames, then presses a key for the
+/// player and goes on to the next. DjinnMenu_SelectDjinn runs most;
+/// DjinnMenu_RunPreview presses A on each preview.
 enum DjinnTutorialStep {
   DJINN_TUTORIAL_OFF = 0,
   /// Giving a Djinni and setting it: "To give your Djinni to someone else..."
   DJINN_TUTORIAL_GIVE = 1,
+  DJINN_TUTORIAL_GIVE_PICK = 2,    ///< A, taking the Djinni
+  DJINN_TUTORIAL_GIVE_MOVE = 3,    ///< Right, to the next party member
+  DJINN_TUTORIAL_GIVE_DROP = 4,    ///< A there
+  DJINN_TUTORIAL_GIVE_PREVIEW = 5, ///< A on the give preview
   /// "After choosing who will take the Djinni, you can set it."
   DJINN_TUTORIAL_SET_AFTER_GIVE = 6,
+  /// As DJINN_TUTORIAL_SET_AFTER_GIVE; no step leads here.
+  DJINN_TUTORIAL_SET_SPARE = 7,
+  DJINN_TUTORIAL_SET_PICK = 8,   ///< A, taking the Djinni
+  DJINN_TUTORIAL_SET_CHOOSE = 9, ///< A on its own column
   /// "Setting a Djinni changes your attributes and maybe even your class."
   DJINN_TUTORIAL_SET_CHANGES = 10,
   /// "When your class changes, the Psynergy you can use may also change."
   DJINN_TUTORIAL_CLASS_PSYNERGY = 11,
+  DJINN_TUTORIAL_SET_PREVIEW = 12, ///< A on the set preview
+  DJINN_TUTORIAL_SET_DONE = 13,    ///< B, out of the menu
   /// The Djinn's powers: "Each Djinni has different powers."
   DJINN_TUTORIAL_POWERS = 14,
+  DJINN_TUTORIAL_POWERS_TALK = 15,      ///< Flint's three lines on the powers
+  DJINN_TUTORIAL_POWERS_WAIT = 16,      ///< a wait
+  DJINN_TUTORIAL_POWERS_WAIT_MORE = 17, ///< another
+  DJINN_TUTORIAL_POWERS_PICK = 18,      ///< A, taking the Djinni
+  /// As DJINN_TUTORIAL_POWERS_PICK; no step leads here.
+  DJINN_TUTORIAL_POWERS_PICK_SPARE = 20,
+  DJINN_TUTORIAL_POWERS_MOVE = 21,    ///< Left
+  DJINN_TUTORIAL_POWERS_CHOOSE = 22,  ///< A there
+  DJINN_TUTORIAL_POWERS_PREVIEW = 23, ///< A on the preview
+  DJINN_TUTORIAL_POWERS_DONE = 24,    ///< B, out of the menu
+  DJINN_TUTORIAL_POWERS_END = 25,     ///< nothing more is pressed
   /// Recovery after a summon: "After a Djinni has been used to summon..."
   DJINN_TUTORIAL_RECOVERY = 27,
   /// Waits for the player's A, then presses B.

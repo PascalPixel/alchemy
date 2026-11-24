@@ -49,7 +49,7 @@ void FieldPsynergy_Force(void) {
     Camera_WorldToScreen(&pos);
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialBurst);
-    FieldParticle_SetAnimation(effect, 7);
+    FieldParticle_SetAnimation(effect, PARTICLE_ANIMATION_FLICKER);
     Sprite_SetAnimationColorModesFar(effect->sprite, SPRITE_COLOR_BLUE_TINT);
     effect->scaleY = FIXED_ONE * 7 / 10;
     effect->scaleX = FIXED_ONE * 7 / 10;
@@ -141,7 +141,7 @@ void FieldPsynergy_Force(void) {
   // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the way:
   // the ground there must be within a step (MapGrid_CheckCollision 0) and free
   // of actors.
-  if (target != NULL && effectState->childMode == 0) {
+  if (target != NULL && effectState->leaveTarget == 0) {
     if (effectState->sceneVariant != 0)
       target->velocityY = toFIXED(8);
     pos.x = target->x.fixed;

@@ -1138,15 +1138,13 @@ static void HeatGauge_Draw(void) {
   }
 
   // Window 1 spans the gauge, from the screen's left edge to the gauge's
-  // right, on the lines it covers. A page holds WININ and WINOUT, then a WIN0H
-  // and WIN1H pair for each line: the first is line HEAT_GAUGE_TOP's WIN1H,
-  // and each next one a pair further on.
+  // right, on the lines it covers, from line HEAT_GAUGE_TOP.
   state = gScreenTransitionState;
   if (state != NULL) {
     u16 *edge = state->pages[state->page];
     s32 right = (s16)(shown << 3);
 
-    edge += 2 + 2 * HEAT_GAUGE_TOP + 1;
+    edge = &((struct WindowBuffer *)edge)->lines[HEAT_GAUGE_TOP].window1;
     for (i = 0; i < HEAT_GAUGE_HEIGHT; i++) {
       *edge = right;
       edge += 2;

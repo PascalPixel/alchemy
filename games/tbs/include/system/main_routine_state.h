@@ -192,11 +192,11 @@ struct MainRoutineState {
   s8 avoidByItem;      ///< Avoid came from an item (the Sacred Feather)
   /// Halt: the stopped actor's sprite colour mode, which Halt flickers and
   /// puts back when the actor resumes.
-  s8 pausedColorMode;
+  s8 haltedColorMode;
   s16 haltedActor; ///< Halt: the stopped actor; -1 for none
   s16 cloaked;     ///< 1 under Cloak, which prevents battles
   /// Halt: the stopped actor's per-frame update, put back when it resumes.
-  u32 pausedUpdate;
+  u32 haltedUpdate;
   u8 unusedAfterHalt[80];
   /// The Battle Arena's tallies: 4 the total wins and 7 the consecutive wins it
   /// reports, 3 cleared on choosing a monster battle; the others not named by

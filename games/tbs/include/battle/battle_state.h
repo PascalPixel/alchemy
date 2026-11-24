@@ -97,6 +97,10 @@ enum { BATTLE_ACTION_CAPACITY = 20 };
 /// member ("This is no time to be running away!").
 #define BATTLE_CHALLENGED_PARTY 2
 
+/// The battle has six enemy sprite slots; a large enemy takes two side by
+/// side, a small one (BattleSprite_IsSmall) one.
+#define ENEMY_SPRITE_SLOTS 6
+
 /// The battle's own state: its enemies, units and their battle objects, the
 /// turn's actions, the spoils, the background palette, the action under way and
 /// the playback.
@@ -106,8 +110,9 @@ enum { BATTLE_ACTION_CAPACITY = 20 };
 /// clears the heap. Every battle part reads it through gBattleState, and the
 /// battle effects read its background id and palette.
 struct BattleState {
-  s32 formation;      ///< the encounter's enemy formation
-  s16 spriteSlots[6]; ///< the unit in each enemy sprite slot, 0 when free
+  s32 formation; ///< the encounter's enemy formation
+  /// The unit in each enemy sprite slot, 0 when free.
+  s16 spriteSlots[ENEMY_SPRITE_SLOTS];
   /// The enemies met so far, for their name letters, and the first
   /// enemy to fall (firstDefeated).
   u16 enemyKinds[6];

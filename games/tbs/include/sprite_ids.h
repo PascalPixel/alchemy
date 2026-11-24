@@ -655,6 +655,12 @@ enum BabiAnimation {
 /// SPRITE_LOG_NORTH_SOUTH's animations (log_north_south.tsv) as a log tips into
 /// a river.
 enum LogAnimation {
+  /// Picture 10 held, a log lying still, the first of the pictures its rolls
+  /// turn through.
+  LOG_ANIMATION_AT_REST = 1,
+  /// Pictures 10 to 13 in turn, rolling over toward the east, as a shove east
+  /// or south rolls it.
+  LOG_ANIMATION_ROLL_EAST = 2,
   LOG_ANIMATION_ROLL_WEST = 3, ///< rolling over toward the west
   LOG_ANIMATION_FLOAT = 4,     ///< bobbing in the water
   /// Drops into the water with a ring of spray, then LOG_ANIMATION_FLOAT.
@@ -809,6 +815,46 @@ enum StrongmanAnimation {
   STRONGMAN_ANIMATION_PROPPED_UP = 7,
   STRONGMAN_ANIMATION_PROPPED_UP_OTHER_WAY = 8,
   STRONGMAN_ANIMATION_SQUATS = 9 ///< his knees bending, over and over
+};
+
+/// Each of SPRITE_GOLDEN_RINGS's arcs, the halves of a ring, is a 32x16
+/// sprite: OBJ Shape 1, horizontal, at OBJ Size 2 (GBATEK "OBJ Attribute 0"
+/// and "OBJ Attribute 1").
+#define RING_HALF_SHAPE 1
+#define RING_HALF_SIZE 2
+
+/// SPRITE_GOLDEN_RINGS's animations for Mercury Lighthouse's pool lights
+/// (golden_rings.tsv).
+enum GoldenRingsAnimation {
+  /// The back half of a ring, an arc bowed upward: the charging spark behind
+  /// the leader.
+  GOLDEN_RINGS_ANIMATION_BACK_ARC = 1,
+  /// The front half, bowed downward: the charging spark in front.
+  GOLDEN_RINGS_ANIMATION_FRONT_ARC = 2,
+  /// The column of light while it holds three lights: three small rings
+  /// turning. 4 shows two rings and 5 one (GOLDEN_RINGS_ANIMATION_COLUMN).
+  GOLDEN_RINGS_ANIMATION_THREE_LIGHTS = 3,
+  GOLDEN_RINGS_ANIMATION_ONE_LIGHT = 5,
+  /// A whole ring, shimmering: the light that holds the leader up in the
+  /// pool.
+  GOLDEN_RINGS_ANIMATION_POOL_LIGHT = 6,
+  /// A whole ring breaking into dots: a light going out.
+  GOLDEN_RINGS_ANIMATION_LIGHT_OUT = 7
+};
+
+/// The column of light's animation while it holds this many lights, 1 to 3.
+#define GOLDEN_RINGS_ANIMATION_COLUMN(lights)                                  \
+  (GOLDEN_RINGS_ANIMATION_ONE_LIGHT + 1 - (lights))
+
+/// SPRITE_PARTICLE's animations (particle.tsv), whose pictures run from the
+/// largest glow (0) to a dot (7).
+enum ParticleAnimation {
+  PARTICLE_ANIMATION_SHRINK = 1, ///< shrinking to the dot and holding it
+  /// Growing from the dot, then PARTICLE_ANIMATION_FLICKER.
+  PARTICLE_ANIMATION_GROW_AND_FLICKER = 6,
+  /// Flickering between the two largest pictures, two frames each: a light's
+  /// sparkle.
+  PARTICLE_ANIMATION_FLICKER = 7
 };
 
 /// SPRITE_TORCH's animations (torch.tsv).

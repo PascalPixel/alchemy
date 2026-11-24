@@ -204,7 +204,7 @@ const u32 *Scene_GetExits(void) { return gSanctum_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineState.entrance) {
   case SANCTUM_FROM_VALE:
-  case SANCTUM_VALE_UNUSED:
+  case SANCTUM_VALE_AFTER_DEFEAT:
     return gSanctum_ValeActorPlacements;
 
   case SANCTUM_FROM_VAULT:
@@ -529,7 +529,7 @@ static void Sanctum_LeaveAfterRefusing(void) {
   paletteState->duration = 1;
   paletteState->step = 1;
   // DEAD: a byte nothing reads set to 1; the ROM keeps its store.
-  paletteState->padding = 1;
+  paletteState->unusedAfterStep = 1;
   Event_Wait(1);
   FieldMessage_ShowCentered(MsgSanctumWorldBeganDrifting, 1, 0);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
@@ -1718,7 +1718,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
   Actor_SetPosition(ACTOR_DORA, 0, 0);
   Actor_SetPosition(ACTOR_GARETS_GRANDFATHER, 0, 0);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(1);
   Event_Wait(1);
   window = Window_Create(QUESTION_X, 7, QUESTION_WIDTH, 5, 1);
@@ -2276,7 +2276,7 @@ s32 gSanctum_ItemIconEndScript[] = {
 struct SceneEntrance gSanctum_Entrances[] = {
     { SANCTUM_UNUSED, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SANCTUM_FROM_VALE, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
-    { SANCTUM_VALE_UNUSED, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
+    { SANCTUM_VALE_AFTER_DEFEAT, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_VAULT, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_VAULT_REVISIT, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_LOG_ROOMS_A, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },

@@ -28,7 +28,7 @@
 ///
 /// The tremors are MapGrid_SetShake calls. Each comes with a flash
 /// (Weather_LastLightning) and SE_CRASH, over a burst of red flashes on the
-/// warm colours (Weather_StartLightningFlash).
+/// dimmed colours (Weather_StartLightningFlash).
 ///
 /// The scene sets FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it. Sol
 /// Sanctum's entrance scene does (sol_sanctum_entrance.c).
@@ -141,7 +141,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_WalkToAndWait(ACTOR_GARETS_BROTHER, 256, 500);
   Actor_FaceDirection(ACTOR_GARETS_BROTHER, FACING_NORTHWEST, 0);
   // A lightning flash, then the screen opens on the villagers below.
-  Weather_StartLightningFlash(PALETTE_TINT_WARM, PALETTE_TINT_RED);
+  Weather_StartLightningFlash(PALETTE_TINT_DIM, PALETTE_TINT_RED);
   Weather_LastLightning();
   wait(60);
   FieldCamera_MoveTo(256, CAMERA_KEEP, 612, 0);

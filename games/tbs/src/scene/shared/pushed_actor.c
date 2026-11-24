@@ -21,7 +21,7 @@
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 extern s32 gPushedActor_DirectionSteps[];
-extern s32 gPushedActor_Rectangles[];
+extern struct PushedActorRectangle gPushedActor_Rectangles[];
 
 #include "actor_distance.c"
 
@@ -188,17 +188,11 @@ static struct Actor *PushedActor_FindLargeThingAhead(s32 *direction, s32 *slot,
         z = ((FIXEDtoINT(player->z.fixed)) +
              (s16)gPushedActor_DirectionSteps[*direction]) >>
             4;
-        left =
-            (actor->x.part[0].integer + gPushedActor_Rectangles[j * 4 + 0]) >>
-            4;
-        top = (actor->z.part[0].integer + gPushedActor_Rectangles[j * 4 + 1]) >>
-              4;
-        right =
-            (actor->x.part[0].integer + gPushedActor_Rectangles[j * 4 + 2]) >>
-            4;
+        left = (actor->x.part[0].integer + gPushedActor_Rectangles[j].x0) >> 4;
+        top = (actor->z.part[0].integer + gPushedActor_Rectangles[j].z0) >> 4;
+        right = (actor->x.part[0].integer + gPushedActor_Rectangles[j].x1) >> 4;
         bottom =
-            (actor->z.part[0].integer + gPushedActor_Rectangles[j * 4 + 3]) >>
-            4;
+            (actor->z.part[0].integer + gPushedActor_Rectangles[j].z1) >> 4;
         if (left <= x && x < right && top <= z && z < bottom) {
           if (j & 1) {
             if (left != FIELD_CELL(player->x.fixed)) {
@@ -231,7 +225,7 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
   u8 *layer;
   s32 column, row;
   s32 nearEdge, farEdge;
-  s32 offset;
+  s32 index;
 
   probe->callback = 0;
   actor = PushedActor_FindLargeThingAhead(&direction, &probe->actorSlot,
@@ -245,21 +239,21 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
     s32 rectangle = probe->rectangleIndex;
 
     steps = 0;
-    offset = rectangle * 4;
-    nearEdge = gPushedActor_Rectangles[offset + 1];
+    index = rectangle;
+    nearEdge = gPushedActor_Rectangles[index].z0;
     if (nearEdge < 0) {
       nearEdge = -nearEdge;
     }
-    farEdge = gPushedActor_Rectangles[offset + 3];
+    farEdge = gPushedActor_Rectangles[index].z1;
     if (farEdge < 0) {
       farEdge = -farEdge;
     }
     height = (nearEdge + farEdge) >> 4;
-    nearEdge = gPushedActor_Rectangles[offset];
+    nearEdge = gPushedActor_Rectangles[index].x0;
     if (nearEdge < 0) {
       nearEdge = -nearEdge;
     }
-    farEdge = gPushedActor_Rectangles[offset + 2];
+    farEdge = gPushedActor_Rectangles[index].x1;
     if (farEdge < 0) {
       farEdge = -farEdge;
     }
@@ -278,11 +272,11 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
   for (;;) {
     probe->position.z =
         position.z +
-        INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex * 4 + 1]);
+        INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex].z0);
     for (row = 0; row < height; row++) {
       probe->position.x =
           position.x +
-          INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex * 4]);
+          INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex].x0);
       for (column = 0; column < width; column++) {
         if (FieldActor_CheckMovementCollision(actor, &probe->position) == 2) {
           goto found;
@@ -336,19 +330,19 @@ UNUSED static void PushedActor_Roll(struct PushedActorProbe probe) {
   direction = FACING_INDEX(Actor_GetById(ACTOR_PARTY_LEADER)->facing);
   actor = Actor_GetById(probe.actorSlot);
   {
-    s32 extentA = gPushedActor_Rectangles[probe.rectangleIndex * 4 + 1];
+    s32 extentA = gPushedActor_Rectangles[probe.rectangleIndex].z0;
     s32 extentB;
 
     if (extentA < 0)
       extentA = -extentA;
-    extentB = gPushedActor_Rectangles[probe.rectangleIndex * 4 + 3];
+    extentB = gPushedActor_Rectangles[probe.rectangleIndex].z1;
     if (extentB < 0)
       extentB = -extentB;
     verticalExtent = (extentA + extentB) >> 4;
-    extentA = gPushedActor_Rectangles[probe.rectangleIndex * 4 + 0];
+    extentA = gPushedActor_Rectangles[probe.rectangleIndex].x0;
     if (extentA < 0)
       extentA = -extentA;
-    extentB = gPushedActor_Rectangles[probe.rectangleIndex * 4 + 2];
+    extentB = gPushedActor_Rectangles[probe.rectangleIndex].x1;
     if (extentB < 0)
       extentB = -extentB;
     horizontalExtent = (extentA + extentB) >> 4;
@@ -358,12 +352,10 @@ UNUSED static void PushedActor_Roll(struct PushedActorProbe probe) {
   actor->acceleration = toFIXED(1) / 10;
   originalPosition.x = actor->x.fixed;
   originalPosition.z = actor->z.fixed;
-  tilePosition.x =
-      actor->x.fixed +
-      INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex * 4]);
-  tilePosition.z =
-      actor->z.fixed +
-      INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex * 4 + 1]);
+  tilePosition.x = actor->x.fixed +
+                   INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].x0);
+  tilePosition.z = actor->z.fixed +
+                   INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].z0);
   tilePosition.x = FIELD_CELL(tilePosition.x);
   tilePosition.z = FIELD_CELL(tilePosition.z);
 
@@ -429,9 +421,9 @@ UNUSED static void PushedActor_Roll(struct PushedActorProbe probe) {
 
     {
       probe.position.x +=
-          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex * 4]);
+          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].x0);
       probe.position.z +=
-          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex * 4 + 1]);
+          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].z0);
       probe.position.x = FIELD_CELL(probe.position.x);
       probe.position.z = FIELD_CELL(probe.position.z);
     }
@@ -450,9 +442,9 @@ UNUSED static void PushedActor_Roll(struct PushedActorProbe probe) {
 
     {
       originalPosition.x +=
-          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex * 4]);
+          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].x0);
       originalPosition.z +=
-          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex * 4 + 1]);
+          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex].z0);
       originalPosition.x = FIELD_CELL(originalPosition.x);
       originalPosition.z = FIELD_CELL(originalPosition.z);
     }
@@ -477,7 +469,7 @@ UNUSED static s32 PushedActor_BlockFootprint(s32 id) {
   struct Actor *actor = Actor_GetById(id);
   struct PushedActorProbe probe;
   u32 idx = 0;
-  s32 offset;
+  s32 index;
   s32 width;
   s32 height;
   s32 x0;
@@ -492,7 +484,7 @@ UNUSED static s32 PushedActor_BlockFootprint(s32 id) {
       probe.rectangleIndex = idx;
       break;
     }
-    probe.rectangleIndex = 7;
+    probe.rectangleIndex = PUSHED_ACTOR_NO_RECTANGLE;
   }
 
   if (probe.rectangleIndex < 0 || probe.rectangleIndex > 6)
@@ -500,23 +492,23 @@ UNUSED static s32 PushedActor_BlockFootprint(s32 id) {
   probe.position.x = actor->x.fixed;
   probe.position.y = actor->y.fixed;
   probe.position.z = actor->z.fixed;
-  offset = probe.rectangleIndex * 4;
-  z0 = gPushedActor_Rectangles[offset + 1];
+  index = probe.rectangleIndex;
+  z0 = gPushedActor_Rectangles[index].z0;
   if (z0 < 0)
     z0 = -z0;
-  z1 = gPushedActor_Rectangles[offset + 3];
+  z1 = gPushedActor_Rectangles[index].z1;
   if (z1 < 0)
     z1 = -z1;
   height = (z0 + z1) >> 4;
-  x0 = gPushedActor_Rectangles[offset];
+  x0 = gPushedActor_Rectangles[index].x0;
   if (x0 < 0)
     x0 = -x0;
-  x1 = gPushedActor_Rectangles[offset + 2];
+  x1 = gPushedActor_Rectangles[index].x1;
   if (x1 < 0)
     x1 = -x1;
   width = (x0 + x1) >> 4;
-  probe.position.x += INTtoFIXED(gPushedActor_Rectangles[offset]);
-  probe.position.z += INTtoFIXED(gPushedActor_Rectangles[offset + 1]);
+  probe.position.x += INTtoFIXED(gPushedActor_Rectangles[index].x0);
+  probe.position.z += INTtoFIXED(gPushedActor_Rectangles[index].z0);
   probe.position.x = FIELD_CELL(probe.position.x);
   probe.position.z = FIELD_CELL(probe.position.z);
   idx = FIELD_CELL(grid->layers[1].offsetX);

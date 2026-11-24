@@ -4,9 +4,6 @@
 
 #include "shop_internal.h"
 
-/// The SPRITE_PARTICLE animation that shows its two largest pictures in turn,
-/// two frames each, looping: the sparkles of a service's burst.
-#define PARTICLE_ANIMATION_PULSE 7
 /// The colour modes a burst picks from at random for its sparkles and the
 /// party member's icon: SPRITE_COLOR_NORMAL, the channel swaps and
 /// SPRITE_COLOR_GREY.
@@ -487,7 +484,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_InitializeFar(effect, SPRITE_PARTICLE, position.x,
                                 position.z);
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
-    FieldParticle_SetAnimationFar(effect, PARTICLE_ANIMATION_PULSE);
+    FieldParticle_SetAnimationFar(effect, PARTICLE_ANIMATION_FLICKER);
     Sprite_SetAnimationColorModesFar(effect->sprite,
                                      Random16_Below(SANCTUM_BURST_COLOR_MODES));
     effect->scaleY = FIXED_ONE * 7 / 10;

@@ -159,10 +159,6 @@ struct LuckyDiceSprites {
   u8 unusedEnd[324];
 };
 
-/// The battle effects' sprite sheet block, allocated at the size a battle
-/// effect gives it (BattleEffect_RunByIdRange); Lucky Dice leaves it empty.
-#define BATTLE_SHEET_BYTES 1550
-
 /// sprites.tsv's seven sheets, from the rolling die to the lucky numbers: 496
 /// 256-colour tiles, nearly all of sprite VRAM.
 #define DICE_SPRITE_TILES 496
@@ -364,7 +360,7 @@ void LuckyDice_Run(void) {
   s16 affineScale;
 
   // Allocate the screen's state blocks and reset the camera and tasks.
-  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, BATTLE_SHEET_BYTES);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, GLOW_SHEET_ROOM);
   spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS,
                                  DICE_SPRITES_PALETTE_COLORS * sizeof(u16));
   diceState = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(*diceState));
@@ -469,14 +465,14 @@ void LuckyDice_Run(void) {
 
   // Open the coins window and the Throw / Quit help.
   WindowSystem_InitFieldFar();
-  window =
-      Window_CreateFar(DICE_COINS_WINDOW_X, 0, DICE_COINS_WINDOW_WIDTH, 3, 6);
+  window = Window_CreateFar(DICE_COINS_WINDOW_X, 0, DICE_COINS_WINDOW_WIDTH, 3,
+                            WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   sprites->coinsWindow = window;
   Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins, window, DICE_COINS_LABEL_X, 0);
   Text_DrawNumberInWindowFar(gMainRoutineState.holdings.coins, DICE_COIN_DIGITS,
                              sprites->coinsWindow, 0, 0);
-  window =
-      Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4, 6);
+  window = Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4,
+                            WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   sprites->helpWindow = window;
   // ":Throw" and ":Quit" after their buttons.
   Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins + DICE_LABEL_THROW, window, 0,
@@ -581,7 +577,8 @@ void LuckyDice_Run(void) {
           digits = 5;
         }
         window = Window_CreateFar(DICE_WINNINGS_WINDOW_X - digits / 2, 16,
-                                  digits + DICE_WINNINGS_WINDOW_WIDTH, 3, 6);
+                                  digits + DICE_WINNINGS_WINDOW_WIDTH, 3,
+                                  WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         sprites->winningsWindow = window;
         Text_DrawMessageAsTilesFar(MsgLuckyDiceWinnings, window, 0, 0);
         // "Coins" after the number (MsgLuckyDiceCoins, one before).
@@ -607,8 +604,9 @@ void LuckyDice_Run(void) {
           state = LUCKY_DICE_AIM;
 #if TBS_PATCH_1
           // From patch 1 a lost throw reopens the Throw / Quit help.
-          window = Window_CreateFar(DICE_HELP_WINDOW_X, 16,
-                                    DICE_HELP_WINDOW_WIDTH, 4, 6);
+          window =
+              Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH,
+                               4, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
           sprites->helpWindow = window;
           Text_DrawMessageAsTilesFar(MsgLuckyDiceThrow, window, 0, 0);
           Text_DrawMessageAsTilesFar(MsgLuckyDiceThrow + 1, sprites->helpWindow,
@@ -633,8 +631,9 @@ void LuckyDice_Run(void) {
       if (payoutTimer == DICE_PAYOUT_FRAMES) {
         state = LUCKY_DICE_AIM;
         Window_CloseFar(sprites->winningsWindow, 1);
-        window = Window_CreateFar(DICE_HELP_WINDOW_X, 16,
-                                  DICE_HELP_WINDOW_WIDTH, 4, 6);
+        window =
+            Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4,
+                             WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         sprites->helpWindow = window;
         Text_DrawMessageAsTilesFar(MsgLuckyDiceThrow, window, 0, 0);
         Text_DrawMessageAsTilesFar(MsgLuckyDiceThrow + 1, sprites->helpWindow,

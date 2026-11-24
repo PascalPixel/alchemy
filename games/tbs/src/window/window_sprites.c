@@ -122,7 +122,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
 #endif
     }
 
-    if ((u8)windowSprite->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
+    if (windowSprite->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
       // The page arrow sits in the window's bottom-right corner.
       sprite = SPRITE_CELL(windowSprite);
       if (state->glyphResource == NO_GLYPH_RESOURCE)
@@ -157,8 +157,7 @@ done:
 }
 
 /// A window sprite as the code that moves and queues it sees it: WindowSprite
-/// with its motion and index unsigned, and its link and OAM entry the one
-/// sprite cell it queues, attr.
+/// with its link and OAM entry the one sprite cell it queues, attr.
 struct WindowSpriteCellView {
   struct WindowSpriteCellView *next;
   u8 kind;
@@ -407,7 +406,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
   struct CursorSprite *sprite = SPRITE_CELL(windowSprite);
   struct AffineTransform effect;
 
-  switch ((u8)windowSprite->motion) {
+  switch (windowSprite->motion) {
   case WINDOW_SPRITE_MOTION_SWELL:
     scale = gWindowSprite_BounceScales[windowSprite->animationStep++ &
                                        (BOUNCE_SCALE_STEPS - 1)];

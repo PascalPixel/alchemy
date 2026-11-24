@@ -60,7 +60,7 @@ FarCall_FieldTable:
 	export MapGrid_CopyCellTilesCellsRectFar, MapGrid_CopyCellTilesCellsRect
 	export MapGrid_CopyCellAttributeRectFar, MapGrid_CopyCellAttributeRect
 	export MapGrid_CopyCellIndexRectFar, MapGrid_CopyCellIndexRect
-	export WorldMap_SetWindowCellTileFar, WorldMap_SetWindowCellTile
+	export WorldMap_SetGridTileFar, WorldMap_SetGridTile
 	export MapGrid_CheckCollisionFar, MapGrid_CheckCollision
 	export Actor_SetSpriteFlagsFar, Actor_SetSpriteFlags
 	export Actor_SetBlendModeFar, Actor_SetBlendMode

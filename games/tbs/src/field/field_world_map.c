@@ -160,7 +160,8 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   perspective->limitX = toFIXED(8160);
   perspective->limitY = toFIXED(8160);
   perspective->script = NULL;
-  perspective->tiles = Resource_GetTableEntry(RESOURCE_PERSPECTIVE_DATA_A);
+  perspective->tiles =
+      Resource_GetTableEntry(RESOURCE_WORLD_MAP_PERSPECTIVE_TILES);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_TILE_ANIMATION),
                       MAPGRID_ANIMATION_SCRIPT);
   TilesetAnim_StartAll((const u16 *)MAPGRID_ANIMATION_SCRIPT);
@@ -237,7 +238,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     Matrix_Initialize();
     Matrix_SetLookAt(camera->eye, cameraPosition);
     RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, WorldMap_UpdateAffineLines,
-                     &Matrix_UpdateVerticesSize);
+                     &WorldMap_UpdateAffineLinesCodeSize);
     WorldMap_BuildScanlineTable(
         Iwram_DivFX(Trig_Cos(perspective->pitch), Trig_Sin(perspective->pitch)),
         cameraPosition, affineState->scanlines);
@@ -285,7 +286,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
 /// cellY count 32-pixel world map cells, so a grid cell is a 512-pixel tile; it
 /// is next to the view when cellX / 8 and cellY / 8, in 256-pixel steps, are
 /// within one step of the followed point's.
-void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 cellX, s32 cellY) {
+void WorldMap_SetGridTile(s32 x, s32 y, s32 cellX, s32 cellY) {
   struct WorldMapView *perspective;
   s32 *followedPosition;
   s32 originX;
@@ -418,9 +419,9 @@ void WorldMap_ApplyAffinePage(void) {
   // Stop the last VBlank's HBlank DMA, then load line 0's eight words (BG2PA to
   // BG3Y) by hand; the DMA repeats eight words into the same registers at
   // each HBlank for the lines after it.
-  dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-  dma0[5] &= ~DMA_ENABLE;
-  (void)dma0[5];
+  dma0[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
+  dma0[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
+  (void)dma0[DMA_CNT_H_INDEX];
   if (affinePages != NULL) {
     affineSource = (u32 *)affinePages[gFrameCount & 1];
     *affineRegisters++ = *affineSource++;

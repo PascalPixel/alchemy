@@ -302,10 +302,6 @@ enum {
 /// The pieces the wall bursts into (AltmillerCave_ReleaseWallBurst).
 enum { WALL_BURST_PIECES = 24 };
 
-/// SPRITE_PARTICLE twinkling, its first two pictures by turns, as the pieces
-/// of the wall fly.
-enum { PARTICLE_ANIMATION_TWINKLE = 7 };
-
 /// The cave's own state, bytes of gSceneLocalState: the rock puzzle and the
 /// passage's darkness.
 enum {
@@ -573,7 +569,7 @@ static void AltmillerCave_CheckPuddleCovered(void) {
   position.z = target->z.fixed;
 
   if (FieldActor_CheckMovementCollision(target, &position) > 0) {
-    effectState->childMode = 1;
+    effectState->leaveTarget = 1;
   }
 }
 
@@ -587,7 +583,7 @@ static void AltmillerCave_FreezePuddle(void) {
   struct Actor *puddle = Actor_Get(ACTOR_SQUALL_ROOM_PUDDLE);
   s32 blocked;
 
-  blocked = effectState->childMode;
+  blocked = effectState->leaveTarget;
   if (blocked == 0) {
     MapGrid_CopyCellAttributes(76, 16, 1, 1, 73, 17);
     if (puddle != NULL) {
@@ -2337,7 +2333,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
 
     FieldParticle_Initialize(fragment, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
-    FieldParticle_SetAnimation(fragment, PARTICLE_ANIMATION_TWINKLE);
+    FieldParticle_SetAnimation(fragment, PARTICLE_ANIMATION_FLICKER);
     Sprite_SetAnimationColorModes(fragment->sprite, Random_Below(7));
     scale = Math_DivideUnsigned(Random_Next(), 3) + 3 * FIXED_ONE / 2;
     fragment->scaleY = scale;

@@ -14,7 +14,7 @@ static inline void Scene_CatchNut(s32 actorId, s32 flag) {
   // Called by the routines' own names, not through event_inline.h's
   // Item_ShowFound and Party_GiveItem, because those inlines compile
   // differently inside this one.
-  ItemDisplay_ShowItem(ITEM_NUT, 3);
+  ItemDisplay_ShowItem(ITEM_NUT, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   Event_End();
 }

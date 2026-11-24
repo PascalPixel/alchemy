@@ -25,11 +25,6 @@
 /// The sparks of the jackpot, kept in the map cell buffer.
 #define LUCKY_WHEELS_SPARKS ((struct Particle *)Ram_MapGridCellBuffer)
 
-/// The battle effects' sprite sheet block, allocated at the size a battle
-/// effect gives it (BattleEffect_RunByIdRange): the blue glow sheet the
-/// jackpot's sparks are drawn from.
-#define BATTLE_SHEET_BYTES 1550
-
 /// Lucky Wheels' own state (struct LuckyWheelsState), in the heap slot Lucky
 /// Dice keeps its sprites in, beside the battle effect slots it borrows.
 #define LUCKY_WHEELS_HEAP_SLOT HEAP_SLOT_LUCKY_GAME
@@ -102,10 +97,10 @@ void LuckyWheels_TransferCanvas(void) {
     case CANVAS_COPY_AND_FADE:
       // Trails: nonzero colour numbers drop to 1/2 or 3/4.
       if (effect->transferValue == CANVAS_FADE_HALF)
-        PaletteFade_BackupAndHalveNonzero(canvas, LUCKY_WHEELS_CANVAS_TILES,
-                                          LUCKY_WHEELS_CANVAS_SIZE);
+        Canvas_CopyAndHalveNonzero(canvas, LUCKY_WHEELS_CANVAS_TILES,
+                                   LUCKY_WHEELS_CANVAS_SIZE);
       else
-        PaletteFade_BackupAndScaleNonzeroThreeQuarters(
+        Canvas_CopyAndScaleNonzeroThreeQuarters(
             canvas, LUCKY_WHEELS_CANVAS_TILES, LUCKY_WHEELS_CANVAS_SIZE);
       break;
     }
@@ -349,24 +344,6 @@ enum LuckyWheelsSymbol {
 };
 /// The symbol that matches any other on a payline.
 #define LUCKY_WHEELS_WILD_SYMBOL LUCKY_WHEELS_MOON
-/// What a line of each symbol wins, as the prize sign reads it: "Shirts win
-/// undershirts, Rings win rings, Boots win boots, Stars and Hearts win items,
-/// and Moons can win you anything." Tolbi's attendant gives one of three items
-/// of the kind.
-enum LuckyWheelsPrize {
-  LUCKY_WHEELS_PRIZE_UNDERSHIRT, ///< a Mythril, Silk or Running Shirt
-  LUCKY_WHEELS_PRIZE_BOOTS,      ///< Hyper, Quick or Fur Boots
-  LUCKY_WHEELS_PRIZE_RING,       ///< an Adept, War or Sleep Ring
-  LUCKY_WHEELS_PRIZE_HEART_ITEM, ///< a Potion, Vial or Nut
-  LUCKY_WHEELS_PRIZE_STAR_ITEM,  ///< a Water of Life, Psy Crystal or Elixir
-  LUCKY_WHEELS_PRIZE_ANYTHING,   ///< one of the five kinds above
-  /// Ends the list of prizes; first in it, the last pull won nothing.
-  LUCKY_WHEELS_PRIZE_LIST_END = -1,
-  /// First in the list: the player left at the bet, or Tolbi's attendant has
-  /// given the prizes.
-  LUCKY_WHEELS_PRIZE_LIST_DONE = -2
-};
-
 /// The machine fades in and out over 16 frames, a sixteenth of full brightness
 /// a frame; the win flashes the screen darker over as many.
 #define LUCKY_WHEELS_FADE_FRAMES 16
@@ -544,9 +521,9 @@ void LuckyWheels_Update(void) {
   Random16();
 
   dma = REG_DMA0;
-  dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-  dma[5] &= ~DMA_ENABLE;
-  (void)dma[5];
+  dma[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
+  dma[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
+  (void)dma[DMA_CNT_H_INDEX];
   // One halfword at each HBlank (repeating, destination reloaded).
   Dma_Set(wheels->scanlineOffsets, (void *)&REG_BLDY,
           DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)dma);
@@ -662,9 +639,9 @@ void LuckyWheels_Update(void) {
             if (wheels->prompt != LUCKY_WHEELS_PROMPT_ALL_HELD &&
                 wheels->prompt != LUCKY_WHEELS_PROMPT_ALL_HELD_BOTH_LINES) {
               Window_CloseFar(wheels->window, 1);
-              wheels->window =
-                  Window_CreateFar(LUCKY_WHEELS_ALL_HELD_X, 0,
-                                   LUCKY_WHEELS_ALL_HELD_WIDTH, 4, 6);
+              wheels->window = Window_CreateFar(
+                  LUCKY_WHEELS_ALL_HELD_X, 0, LUCKY_WHEELS_ALL_HELD_WIDTH, 4,
+                  WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
               Text_DrawMessageAsTilesFar(MsgSlotsAllHeld, wheels->window, 0, 0);
               wheels->prompt = LUCKY_WHEELS_PROMPT_ALL_HELD;
             } else if (wheels->prompt == LUCKY_WHEELS_PROMPT_ALL_HELD) {
@@ -675,8 +652,9 @@ void LuckyWheels_Update(void) {
           } else {
             if (wheels->prompt != LUCKY_WHEELS_PROMPT_START) {
               Window_CloseFar(wheels->window, 1);
-              wheels->window = Window_CreateFar(LUCKY_WHEELS_START_X, 0,
-                                                LUCKY_WHEELS_START_WIDTH, 3, 6);
+              wheels->window = Window_CreateFar(
+                  LUCKY_WHEELS_START_X, 0, LUCKY_WHEELS_START_WIDTH, 3,
+                  WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
               Text_DrawMessageAsTilesFar(MsgSlotsStart, wheels->window, 0, 0);
             }
             wheels->prompt = LUCKY_WHEELS_PROMPT_START;
@@ -684,16 +662,18 @@ void LuckyWheels_Update(void) {
         } else if (wheels->reels[wheels->cursor].held == 0) {
           if (wheels->prompt != LUCKY_WHEELS_PROMPT_HOLD) {
             Window_CloseFar(wheels->window, 1);
-            wheels->window = Window_CreateFar(LUCKY_WHEELS_HOLD_X, 0,
-                                              LUCKY_WHEELS_HOLD_WIDTH, 3, 6);
+            wheels->window = Window_CreateFar(
+                LUCKY_WHEELS_HOLD_X, 0, LUCKY_WHEELS_HOLD_WIDTH, 3,
+                WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
             Text_DrawMessageAsTilesFar(MsgSlotsHold, wheels->window, 0, 0);
           }
           wheels->prompt = LUCKY_WHEELS_PROMPT_HOLD;
         } else {
           if (wheels->prompt != LUCKY_WHEELS_PROMPT_RELEASE) {
             Window_CloseFar(wheels->window, 1);
-            wheels->window = Window_CreateFar(LUCKY_WHEELS_RELEASE_X, 0,
-                                              LUCKY_WHEELS_RELEASE_WIDTH, 3, 6);
+            wheels->window = Window_CreateFar(
+                LUCKY_WHEELS_RELEASE_X, 0, LUCKY_WHEELS_RELEASE_WIDTH, 3,
+                WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
             Text_DrawMessageAsTilesFar(MsgSlotsRelease, wheels->window, 0, 0);
           }
           wheels->prompt = LUCKY_WHEELS_PROMPT_RELEASE;
@@ -702,14 +682,17 @@ void LuckyWheels_Update(void) {
         Window_CloseFar(wheels->window, 1);
         if (wheels->cursor == LUCKY_WHEELS_LEVER) {
           if (allHeld != 0) {
-            wheels->window = Window_CreateFar(12, 0, 18, 3, 6);
+            wheels->window = Window_CreateFar(
+                12, 0, 18, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
             Text_DrawMessageAsTilesFar(MsgSlotsAllHeld, wheels->window, 0, 0);
           } else {
-            wheels->window = Window_CreateFar(18, 0, 12, 3, 6);
+            wheels->window = Window_CreateFar(
+                18, 0, 12, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
             Text_DrawMessageAsTilesFar(MsgSlotsStart, wheels->window, 0, 0);
           }
         } else {
-          wheels->window = Window_CreateFar(18, 0, 12, 3, 6);
+          wheels->window = Window_CreateFar(
+              18, 0, 12, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
           if (wheels->reels[wheels->cursor].held == 0)
             Text_DrawMessageAsTilesFar(MsgSlotsHold, wheels->window, 0, 0);
           else
@@ -759,8 +742,9 @@ void LuckyWheels_Update(void) {
         wheels->state = LUCKY_WHEELS_DONE;
     } else if (wheels->state != LUCKY_WHEELS_DONE) {
       if (wheels->timer == 4) {
-        wheels->window = Window_CreateFar(LUCKY_WHEELS_STOP_X, 17,
-                                          LUCKY_WHEELS_STOP_WIDTH, 3, 6);
+        wheels->window =
+            Window_CreateFar(LUCKY_WHEELS_STOP_X, 17, LUCKY_WHEELS_STOP_WIDTH,
+                             3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         Text_DrawMessageAsTilesFar(MsgSlotsStopReels, wheels->window, 0, 0);
       }
       if (wheels->timer == LUCKY_WHEELS_STOP_PROMPT_FRAME)
@@ -864,7 +848,8 @@ void LuckyWheels_Update(void) {
           if (wheels->spins < LUCKY_WHEELS_PULLS - 1)
 #endif
           {
-            wheels->window = Window_CreateFar(3, 16, 24, 4, 6);
+            wheels->window = Window_CreateFar(
+                3, 16, 24, 4, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
             Text_DrawMessageAsTilesFar(MsgSlotsChooseHeld, wheels->window, 0,
                                        0);
           }
@@ -873,7 +858,8 @@ void LuckyWheels_Update(void) {
           {
             s32 message;
 
-            wheels->window = Window_CreateFar(7, 16, 16, 4, 6);
+            wheels->window = Window_CreateFar(
+                7, 16, 16, 4, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
             // "When you've chosen which slots" above "to lock, pull the
             // lever!".
             message = MsgSlotsChooseHeld;
@@ -903,7 +889,8 @@ void LuckyWheels_Update(void) {
             effect->transferMode = CANVAS_COPY_AND_CLEAR;
             effect->transferValue = 0;
             REG_BLDCNT = 0;
-            window = Window_CreateFar(18, 0, 12, 4, 6);
+            window = Window_CreateFar(18, 0, 12, 4,
+                                      WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
             wheels->subWindow = window;
             // "Game ticket" above "Bet".
             message = MsgSlotsBet;
@@ -1191,7 +1178,8 @@ void LuckyWheels_SetUpBetting(void) {
   effect->transferMode = CANVAS_COPY_AND_CLEAR;
   effect->transferValue = 0;
   REG_BLDCNT = 0;
-  window = Window_CreateFar(18, 0, 12, 4, 6);
+  window =
+      Window_CreateFar(18, 0, 12, 4, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   wheels->subWindow = window;
   // "Game ticket" above "Bet".
   message = MsgSlotsBet;
@@ -1225,7 +1213,7 @@ void LuckyWheels_Run(void) {
   s32 j;
   s32 k;
 
-  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, BATTLE_SHEET_BYTES);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, GLOW_SHEET_ROOM);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, LUCKY_WHEELS_CANVAS_SIZE);
   effect = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT,
                                sizeof(struct BattleEffectState));
@@ -1405,13 +1393,15 @@ void LuckyWheels_Run(void) {
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                   DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
     if (PartyInventory_CountItemFar(ITEM_GAME_TICKET) == 1) {
-      struct Window *window = Window_CreateFar(6, 16, 18, 3, 6);
+      struct Window *window = Window_CreateFar(
+          6, 16, 18, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
 
       wheels->window = window;
       Text_DrawMessageAsTilesFar(MsgSlotsControls, window, 0, 0);
     } else {
       struct Window *window = Window_CreateFar(
-          LUCKY_WHEELS_HELP_WINDOW_X, 16, LUCKY_WHEELS_HELP_WINDOW_WIDTH, 4, 6);
+          LUCKY_WHEELS_HELP_WINDOW_X, 16, LUCKY_WHEELS_HELP_WINDOW_WIDTH, 4,
+          WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
       s32 message;
 
       wheels->window = window;

@@ -131,7 +131,7 @@ void Ability_BuildIconTilesFar(s32 action, s32 withBase, s32 *slot, s32 *tile,
 void Graphics_ExpandVramTilesByColorTableFar(u16 *dst);
 void Text_UseExtraTilesFar(s32 allowAlternateTiles);
 s32 Menu_AnimateSelectionToEntryFar(s32 start, s32 command);
-s32 WindowSprite_GetPointerTilesFar(s32 no);
+s32 WindowSprite_GetPointerTilesFar(s32 index);
 s32 Message_OpenDecodedFar(struct Window *window, s32 message);
 s32 Save_CountFilesExcludingSentFar(s32 excludeSent);
 void Window_DrawBorderFar(s32 x, s32 y, u32 width, u32 height);

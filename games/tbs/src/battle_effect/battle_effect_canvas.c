@@ -90,20 +90,19 @@ void BattleEffect_TransferCanvas(void) {
       break;
     case CANVAS_COPY_AND_FADE:
       if (state->transferValue == CANVAS_FADE_HALF) {
-        PaletteFade_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(1),
-                                   CANVAS_BYTES);
+        Canvas_CopyAndHalve(source, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       } else {
-        PaletteFade_BackupAndScaleThreeQuarters(
-            source, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
+        Canvas_CopyAndScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(1),
+                                         CANVAS_BYTES);
       }
       break;
     case CANVAS_COPY_AND_DARKEN:
-      PaletteFade_BackupAndDarken(source, state->transferValue,
-                                  (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
+      Canvas_CopyAndDarken(source, state->transferValue,
+                           (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       break;
     case CANVAS_COPY_AND_BRIGHTEN:
-      PaletteFade_BackupAndBrighten(source, state->transferValue,
-                                    (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
+      Canvas_CopyAndBrighten(source, state->transferValue,
+                             (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       break;
     }
     state->transferPending = 0;
@@ -139,17 +138,16 @@ void BattleEffect_TransferFullScreenImage(void) {
     break;
   case CANVAS_COPY_AND_FADE:
     if (state->transferValue == CANVAS_FADE_HALF) {
-      PaletteFade_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(2),
-                                 BATTLE_BACKGROUND_BYTES);
+      Canvas_CopyAndHalve(source, (void *)BG_CHAR_BLOCK(2),
+                          BATTLE_BACKGROUND_BYTES);
     } else {
-      PaletteFade_BackupAndScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
-                                              BATTLE_BACKGROUND_BYTES);
+      Canvas_CopyAndScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
+                                       BATTLE_BACKGROUND_BYTES);
     }
     break;
   case CANVAS_COPY_AND_DARKEN:
-    PaletteFade_BackupAndDarken(source, state->transferValue,
-                                (void *)BG_CHAR_BLOCK(2),
-                                BATTLE_BACKGROUND_BYTES);
+    Canvas_CopyAndDarken(source, state->transferValue, (void *)BG_CHAR_BLOCK(2),
+                         BATTLE_BACKGROUND_BYTES);
     break;
   }
 

@@ -6,7 +6,7 @@
 
 #include "edition.h"
 #include "graphics/battle_sprite_id.h"
-#include "graphics/render_input.h"
+#include "window/window_sprite.h"
 
 /// The OAM entry of a window sprite (from WindowSprite.link on), as the Djinn
 /// preview places its stat arrows (DjinnMenu_DrawStatArrow).

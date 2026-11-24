@@ -19,19 +19,6 @@
 /// No backup memory. "Unable to detect backup memory."
 #define SAVE_ERROR_NO_MEMORY -9
 
-/// What the file list is choosing a file for, which decides the files the
-/// cursor may stop on.
-enum FileMenuMode {
-  FILE_LIST_SAVE,     ///< saving: any file, empty ones too
-  FILE_LIST_CONTINUE, ///< continuing: files not yet cleared
-  FILE_LIST_COPY,     ///< copying: any file with data
-  FILE_LIST_ERASE,    ///< erasing: any file with data
-  /// The title's Battle: files whose party has found a Djinni
-  /// (SaveFileSummary.djinnCount).
-  FILE_LIST_BATTLE,
-  FILE_LIST_CLEARED ///< the title's Send: cleared files only
-};
-
 /// FileList_SelectFile's result when no file can be chosen in its mode.
 #define FILE_LIST_NO_FILE -2
 
@@ -329,9 +316,9 @@ s32 Save_WriteFile(s32 file) {
   return result;
 }
 
-/// Writes the 64-byte save stamp (gBattleArenaRecord, which lies in the first
-/// half of the save buffer) into the current file's first part, leaving the
-/// rest of the part as it was saved.
+/// Writes the 64-byte save stamp (gBattleArenaSaveStamp, which lies in the
+/// first half of the save buffer) into the current file's first part, leaving
+/// the rest of the part as it was saved.
 s32 Save_WriteLinkTallies(void) {
   void *part;
   s32 result;
@@ -356,9 +343,9 @@ s32 Save_WriteLinkTallies(void) {
       result = SAVE_ERROR_READ;
     }
     // The stamp's place in the part is its place in the save buffer.
-    stamp = (u8 *)part + (s32)gBattleArenaRecord;
+    stamp = (u8 *)part + (s32)gBattleArenaSaveStamp;
     stamp -= (s32)gSaveBuffer;
-    Iwram_CopyWords(stamp, gBattleArenaRecord, 16);
+    Iwram_CopyWords(stamp, gBattleArenaSaveStamp, 16);
     error = Save_WritePart(gSaveSlot, part);
     if (error != 0) {
       FieldMessage_Show(MsgSaveFailed, FIELD_MESSAGE_ZOOM);

@@ -8,8 +8,9 @@
 
 #define RAY_SPARK_COUNT PARTICLE_POOL_COUNT ///< sparks in PARTICLES
 
-#define RAY_PICTURES 1550 ///< where the bolt pictures start in the sheet
-#define RAY_COUNT 4       ///< bolts
+#define RAY_PICTURES                                                           \
+  GLOW_SHEET_ROOM   ///< where the bolt pictures start in the sheet
+#define RAY_COUNT 4 ///< bolts
 /// The bolts turn a 32nd of a turn a frame, each a quarter turn more than the
 /// one before.
 #define RAY_BOLT_TURN (TRIG_TURN / 32)

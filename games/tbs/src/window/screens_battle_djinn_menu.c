@@ -35,7 +35,7 @@
 /// (BattleDjinnMenu_ShowChangePreview; holding R shows the Psynergy pages, Left
 /// and Right turn them).
 s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
-  struct CursorSprite cursorStorage;
+  struct MenuSprite cursorStorage;
   u16 messageText[64];
   struct WindowState *state;
   struct Window *previewWindow;
@@ -141,7 +141,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     /* LEFTOVER(template): sprite holds &cursorStorage, as
      * Battle_CollectPartyCommands' iconSprite holds each of its sprites in
      * turn; as &cursorStorage at each use. */
-    struct CursorSprite *sprite = &cursorStorage;
+    struct MenuSprite *sprite = &cursorStorage;
 
     // Rebuild descriptions only when the selection or preview page changes:
     // the message ("Cannot use the same Djinni twice.", "Ready to summon."
@@ -501,9 +501,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     }
 
     MENU_PLACE_CURSOR(cursorPos, listWindow, selectedRow, 2, sprite);
-    sprite->tile = VramCache_Reload(cursorSlot, (s32)gPointingHandTiles);
-    sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
-    sprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
+    sprite->oam.f.tile = VramCache_Reload(cursorSlot, (s32)gPointingHandTiles);
+    sprite->oam.f.x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
+    sprite->oam.f.y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0) {
       Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
     }

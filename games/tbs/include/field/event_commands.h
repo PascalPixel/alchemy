@@ -89,9 +89,9 @@ void Event_SetDestination(s32 sceneId, s32 entrance);
 void Event_SetRestartPoint(u16 sceneId, u16 entrance);
 void Event_SetExitRequest(u16 request);
 void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
-/// Field_RequestDjinnBattle's flag: the Djinni does not hop first.
+/// Field_RequestDjinnBattle's actorAndHop: the Djinni does not hop first.
 #define DJINN_NO_HOP 0x800
-void Field_RequestDjinnBattle(s32 flag, s32 no);
+void Field_RequestDjinnBattle(s32 actorAndHop, s32 djinni);
 void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance);
 void Event_SetDefeatDestination(s32 sceneId, s32 entrance);
 void Event_LeaveFor(u16 sceneId, u16 entrance);
@@ -399,11 +399,32 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               FIXED z);
 void FieldEffect_ClearOwnedSlot(struct FieldParticle *effect);
 
+/// The map screen's marker tiles: the party's dot, the two kinds of area a
+/// MAP_SCREEN_MARKER row (AREA_MARKER or LIGHTHOUSE_MARKER) asks for (a town
+/// or a place on the way; a lighthouse or Sol Sanctum), and the larger dot that
+/// blinks over the marker nearest the cursor.
+enum MapScreenMarkerTile {
+  MAP_SCREEN_MARKER_PARTY,
+  MAP_SCREEN_MARKER_AREA,
+  MAP_SCREEN_MARKER_LIGHTHOUSE,
+  MAP_SCREEN_MARKER_NEAREST
+};
+
+/// The World Map's area markers, {tile << 16 | flag, area} for
+/// each area's actor id from 11, ended by -1; a zero row reserves an
+/// actor id with no marker.
+extern const s32 gMapScreen_AreaMarkers[];
+
 void MapScreen_Initialize(void);
 void MapScreen_Release(void);
 void MapScreen_UpdateMarkers(void);
 void MapScreen_Show(s32 image);
 void Field_UpdateActorVisibilityBounds(void);
 void WorldMap_ZoomOutWhileLHeld(void);
+
+/// The message voice's rate by message speed option: 1, 3, then 10
+/// (Message_SetVoiceFromActor). The same values as
+/// gMessageSpeed_VoiceGaps, which the message reads, in a copy of its own.
+extern const u8 gMessageSpeed_VoiceRates[];
 
 #endif

@@ -4,11 +4,6 @@
 
 #include "battle_internal.h"
 
-/// A stat stage changes the stat by an eighth of it (Unit_Calculate), from half
-/// at the lowest to one and a half at the highest.
-#define STAT_STAGE_MIN -4
-#define STAT_STAGE_MAX 4
-
 #ifndef UBFIX
 /// BattleState's unit lists, read as one array of halfwords.
 struct BattleStateUnitListView {

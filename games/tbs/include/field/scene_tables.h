@@ -77,13 +77,6 @@ enum {
 /// A condition that holds while flag is set.
 #define IF_FLAG_SET(flag) ((flag) | CONDITION_FLAG_SET)
 
-/// Set once the party has left Vale (WORLD_MAP_FROM_VALE_PLAZA): Vale's
-/// scenes then place their later actors and lines, the Sanctum takes
-/// another trigger table and Healer line, and the Sol Sanctum approach moves
-/// its sentry, changes cell behaviors and stops sending its way down to
-/// SceneId_ValeEruption.
-enum { FLAG_VALE_PARTY_LEFT = 0x815 };
-
 /// A scene's entrance: where and facing which way the party arrives,
 /// and the camera's bounds there (-1 for none).
 struct SceneEntrance {
@@ -126,6 +119,9 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 /// and when it is set the search goes on to the next exit.
 #define SCENE_EXIT_UNLESS(exit, map, entrance, flag)                           \
   (SCENE_EXIT(exit, map, entrance) + EXIT_HAS_FLAG), (u32)(flag)
+/// SCENE_EXIT_UNLESS's flag for no flag: GameFlag_GetFar reads it as flag
+/// 0xfff, which nothing sets, so the exit is always taken.
+#define EXIT_FLAG_NONE 0xffffffff
 /// The last header word: it ends the last scene's exits and the table.
 #define SCENE_EXITS_END 511
 /// Where a scene numbers its door or exit cells by their exits (Imil, Mercury
@@ -430,5 +426,19 @@ enum ExamineTarget {
 /// TRIGGER_RESULT_MESSAGE_END, so it is never taken for a message.
 #define EVENT(script) ((u32)(script))
 #define TRIGGER_TABLE_END 0xffffffff
+
+/// SC_FACE_WATCHED every frame, forever: the script of an actor told to
+/// keep facing its watched actor.
+extern const s32 gActor_FaceWatchedScript[];
+
+/// Where the party returns after a defeat: {scene, entrance (-1 any),
+/// return scene, return entrance} rows, ended by scene -1
+/// (Scene_SetRestartPoint).
+extern const s16 gScene_RestartRules[];
+
+/// Battle backgrounds by scene: a background word (bit 31 set, resource id
+/// below) and then its scenes, ended by 0; a scene not listed takes the last
+/// background (BattleBackground_SelectForMap).
+extern s32 gScene_BattleBackgroundRules[];
 
 #endif

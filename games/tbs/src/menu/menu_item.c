@@ -730,12 +730,12 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
     // Equip it.
     case ITEM_STEP_EQUIP:
       result = Inventory_EquipFar(menu->sideMember[0], menu->selectedSlots[0]);
-      if (result == -1) {
+      if (result == INVENTORY_EQUIP_REFUSED) {
         state = ITEM_STEP_ITEM;
         break;
       }
       // The item it would replace is cursed and will not come off.
-      if (result == -2) {
+      if (result == INVENTORY_EQUIP_STUCK) {
         WindowSprite_ClearListFar(menu->descriptionWindow);
         ItemMenu_ShowMessage(MsgCannotRemoveItem, 0, -1);
 #if !TBS_PATCH_1
@@ -2563,9 +2563,11 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   saved = Heap_Alloc(BATTLE_UNIT_SIZE);
   Iwram_CopyWords(saved, unit, BATTLE_UNIT_SIZE);
   window = menu->questionWindow;
-  // Equip it now; a result of -1 or -2 means it cannot be equipped.
-  if ((u32)(Inventory_EquipFar(menu->sideMember[1], menu->selectedSlots[1]) +
-            2) <= 1) {
+  // Equip it now; INVENTORY_EQUIP_REFUSED or INVENTORY_EQUIP_STUCK means it
+  // cannot be equipped.
+  if ((u32)(Inventory_EquipFar(menu->sideMember[1], menu->selectedSlots[1]) -
+            INVENTORY_EQUIP_STUCK) <=
+      INVENTORY_EQUIP_REFUSED - INVENTORY_EQUIP_STUCK) {
     selection = 1;
   } else {
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -2815,7 +2817,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
           ItemMenu_DrawListPage(window, 0, &state);
           if (sideIndex == 0) {
             Text_DrawMessageAsTilesFar(MsgChangeCharacterHelp, window,
-                                       HELP_TEXT_X, 88);
+                                       CHANGE_CHARACTER_HELP_X, 88);
           }
           redraw = 0;
         }

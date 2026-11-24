@@ -819,7 +819,8 @@ s32 Scene_Initialize(void) {
     Import_EventSetExitRequest(WORLD_MAP_TO_ROCK_ROOMS);
   } else {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
-    gFieldState->transition = SCENE_TRANSITION(TRANSITION_CENTER_LINE, 0);
+    gFieldState->transition =
+        SCENE_TRANSITION(TRANSITION_CENTER_LINE, CENTER_LINE_STEADY);
     gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
     wait(1);
     FieldCamera_SetSpeed(8);
@@ -828,7 +829,7 @@ s32 Scene_Initialize(void) {
     // The bridge south of Vault, which the quake broke as Hammet's caravan
     // left, lies broken until the Manticore of the Lamakan Desert is beaten.
     if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
-      Field_SetWorldMapWindowCellTile(128, 256, 176, 56);
+      Field_SetWorldMapGridTile(128, 256, 176, 56);
     }
     // Each special entrance resumes its journey or story event.
     switch (routine->entrance) {
@@ -2189,7 +2190,7 @@ static void WorldMap_ShowEndingEvent(void) {
   wait(1);
   WorldMap_StartZoom(3 * FIXED_ONE / 2, 16);
   gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
   gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_StartScreenTransition();
   Event_WaitForZoomTransition();
@@ -2337,7 +2338,7 @@ static void WorldMap_ShakeVenusLighthouse(void) {
   Task_AddFrame(WorldMap_UpdateLighthouseQuake, TASK_PASS_FRAME);
   PaletteFade_ApplySource(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_MUTED, PALETTES_BG);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(40);
   Event_Wait(240);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
@@ -2503,7 +2504,7 @@ static void WorldMap_SpawnIslandWake(void) {
 /// across a darkened sea, trailing a pale wake, as the view closes in on it,
 /// then the screen fades to white.
 ///
-/// The darkening is PALETTE_TINT_WARM, applied to the backgrounds only.
+/// The darkening is PALETTE_TINT_DIM, applied to the backgrounds only.
 static void WorldMap_ShowIslandDrifting(void) {
   struct Actor *actor;
 
@@ -2523,7 +2524,7 @@ static void WorldMap_ShowIslandDrifting(void) {
   Actor_SetScript(ACTOR_DRIFTING_ISLAND, gIslandDriftsEast);
   Task_AddFrame(WorldMap_SpawnIslandWake, TASK_PASS_FRAME);
   gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
   gFieldState->transitionFrames = 32;
   Event_StartScreenTransition();
   Event_Wait(120);

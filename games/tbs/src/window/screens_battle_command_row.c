@@ -74,7 +74,7 @@ s32 BattleCommandRow_Run(s32 mode) {
     kindCount = 0;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_ATTACK;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_PSYNERGY;
-    if (*((s32 *)Djinn_GetRecoveryTableFar(0)) != 0) {
+    if (*((s32 *)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)) != 0) {
       BattleDjinn_CountStandbyFar(0, standbyDjinn);
       for (i = 0; i < ELEMENT_COUNT; i++)
         standbyCount += standbyDjinn[i];

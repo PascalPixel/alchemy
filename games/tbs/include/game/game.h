@@ -90,7 +90,7 @@ enum { RARE_ITEM_STOCK_COUNT = 128, RARE_ITEM_STOCK_MAX = 99 };
 extern u8 gRareItemStock[RARE_ITEM_STOCK_COUNT];
 /// The 64-byte save stamp, in the first half of the save buffer, that the
 /// Battle Arena writes into the current file alone.
-extern u8 gBattleArenaRecord[];
+extern u8 gBattleArenaSaveStamp[];
 /// Each item's place in gRareItemStock plus one, or 0 for an item the shops
 /// keep no stock of (Item_AdjustRareItemStock).
 extern const u8 gItem_RareItemStockIndex[];

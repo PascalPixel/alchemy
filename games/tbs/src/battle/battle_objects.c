@@ -281,8 +281,7 @@ UNREAD_RESULT BattleObject_UpdatePose(s32 unitId) {
   pose = POSE_STANDING;
   if (unit->hp != 0) {
     if (unit->sleep != 0 || unit->stun != 0 || unit->immobile != 0)
-      pose =
-          unit->side == BATTLE_SIDE_ENEMY ? POSE_ENEMY_HELD : POSE_PARTY_HELD;
+      pose = unit->side == BATTLE_SIDE_ENEMY ? POSE_STILL : POSE_PARTY_HELD;
   } else if (unit->side == BATTLE_SIDE_ENEMY) {
     pose = POSE_ENEMY_DOWN;
   } else {
@@ -366,8 +365,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       // A two-part enemy: its two sprites in the actor system's next group
       // table. BUG: a failed create leaves sprite null, and its flags are still
       // written.
-      sprites = (struct Sprite **)gActorSystemState->spriteGroups +
-                gActorSystemState->count;
+      sprites = gActorSystemState->spriteGroups + gActorSystemState->count;
       spriteId = battleObject->resource;
       actor->spriteStorageKind = ACTOR_SPRITE_GROUP;
       actor->sprite = sprites;

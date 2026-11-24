@@ -195,8 +195,16 @@ enum {
   WORLD_MAP_TO_ROCK_ROOMS = 112,
 };
 
-/// SceneId_ValePrologue's entrances.
+/// SceneId_ValePrologue's entrances. VALE_PROLOGUE_DEBUG_BY_STONE_BUILDING,
+/// VALE_PROLOGUE_DEBUG_BY_HILLSIDE_STEPS and
+/// VALE_PROLOGUE_DEBUG_BY_WEST_COTTAGE are arrivals no exit leads to, which
+/// only the debug scene selector reaches (it exits to any entrance from 0 to
+/// 99).
 enum {
+  /// Before the stone building on the village's north side.
+  VALE_PROLOGUE_DEBUG_BY_STONE_BUILDING = 1,
+  /// At the foot of the stone steps up the hillside to the north-west.
+  VALE_PROLOGUE_DEBUG_BY_HILLSIDE_STEPS = 2,
   VALE_PROLOGUE_FROM_VALE_KRADENS_COTTAGE_NORTH = 3,
   VALE_PROLOGUE_FROM_VALE_KRADENS_COTTAGE_SOUTH = 4,
   VALE_PROLOGUE_FROM_VALE_PLAZA = 5,
@@ -205,6 +213,9 @@ enum {
   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE = 8,
   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_NORTH = 9,
   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_WEST = 10,
+  /// By the door of the thatched cottage on the west side, where
+  /// VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST also arrives.
+  VALE_PROLOGUE_DEBUG_BY_WEST_COTTAGE = 11,
   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST = 12,
   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST = 13,
   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA = 15,
@@ -290,11 +301,11 @@ enum {
 };
 /// SceneId_ValePlaza's exits.
 enum {
-  VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST = 1,
+  VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH = 1,
   VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH = 2,
-  VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH = 3,
-  VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH = 4,
-  VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST = 5,
+  VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST = 3,
+  VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST = 4,
+  VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH = 5,
   VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST = 6,
   VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH = 7,
   VALE_PLAZA_TO_VALE = 8,
@@ -334,12 +345,12 @@ enum {
 enum {
   COTTAGE_ROOMS_A_FROM_VALE_WEST = 1,
   COTTAGE_ROOMS_A_FROM_VALE_NORTH = 2,
-  COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH = 3,
-  COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST = 4,
+  COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST = 3,
+  COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH = 4,
   COTTAGE_ROOMS_A_FROM_VALE_SOUTH = 5,
   COTTAGE_ROOMS_A_FROM_VALE_EAST = 6,
-  COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH = 7,
-  COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST = 8,
+  COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST = 7,
+  COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH = 8,
 };
 /// SceneId_CottageRoomsA's exits.
 enum {
@@ -395,8 +406,10 @@ enum {
   SANCTUM_UNUSED = 0, ///< no exit leads here and it places nobody; the area
                       ///< names call it Sanctum
   SANCTUM_FROM_VALE = 1,
-  /// Vale Sanctum, inside by the healers and facing south; no exit leads here.
-  SANCTUM_VALE_UNUSED = 2,
+  /// Vale Sanctum, inside by the healers and facing south, where a party
+  /// defeated in Vale wakes (its return point in field/scene_rules.s); no exit
+  /// leads here.
+  SANCTUM_VALE_AFTER_DEFEAT = 2,
   SANCTUM_FROM_VAULT = 10,
   SANCTUM_FROM_VAULT_REVISIT = 11,
   SANCTUM_FROM_LOG_ROOMS_A = 12,
@@ -463,6 +476,10 @@ enum {
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED = 4,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN = 5,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED = 6,
+  /// Where the Luna and Sol rooms' event exits arrive, at (576, 136) facing
+  /// south, once more. No exit leads to it: only the debug scene selector,
+  /// which exits to any entrance from 0 to 99, reaches it.
+  SOL_SANCTUM_STATUE_DEBUG_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 99,
 };
 /// SceneId_SolSanctumStatue's exits.
 enum {
@@ -2333,6 +2350,9 @@ enum {
 /// SceneId_KalaySanctum's entrances.
 enum {
   KALAY_SANCTUM_FROM_KALAY = 1,
+  /// Behind the counter, where a party defeated in Kalay wakes (its return
+  /// point in field/scene_rules.s).
+  KALAY_SANCTUM_AFTER_DEFEAT = 2,
 };
 /// SceneId_KalaySanctum's exits.
 enum {
@@ -2885,6 +2905,10 @@ enum {
   TOLBI_FROM_COLOSSEUM_ENTRANCE = 12,
   TOLBI_FROM_LUCKY_DICE = 13,
   TOLBI_FROM_TOLBI_SPRING = 20,
+  /// Beside the sprout on the town's east side, facing north. No exit leads to
+  /// it: only the debug scene selector, which exits to any entrance from 0 to
+  /// 99, reaches it.
+  TOLBI_DEBUG_BY_SPROUT = 30,
 };
 /// SceneId_Tolbi's exits.
 enum {
@@ -2967,8 +2991,8 @@ enum {
   STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI = 10,
   STUCCO_ROOMS_C_LUCKY_WHEELS_FROM_TOLBI = 11,
   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS =
-      12,                                     ///< TolbiSpring_OfferLuckyWheels
-  STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE = 13, ///< TolbiSpring_OfferLuckyDice
+      12,                                     ///< StuccoRoomsC_OfferLuckyWheels
+  STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE = 13, ///< StuccoRoomsC_OfferLuckyDice
 };
 /// SceneId_StuccoRoomsC's exits.
 enum {

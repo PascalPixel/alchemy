@@ -412,10 +412,7 @@ enum {
   /// The hurt scholars and soldiers lying on the ground
   /// (old_man_in_blue_cap.tsv and
   /// soldier.tsv, the same pose).
-  ANIM_HURT_LYING = 5,
-  /// A light's sparkle, flickering between its two largest pictures
-  /// (particle.tsv).
-  PARTICLE_ANIMATION_FLICKER = 7
+  ANIM_HURT_LYING = 5
 };
 
 /// An animation timer step for Actor_SetAnimationSpeedById, in sixteenths of a
@@ -763,18 +760,18 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
 
 /// Nothing visible happens when Isaac steps into the dotted square of floor
 /// where the first floor's three capped pillars stand (cells (11..16,
-/// 43..53)). The game starts drawing the fade overlay on him, a see-through
+/// 43..53)). The game starts drawing the ground mask on him, a see-through
 /// strip on each side wherever the floor beside him is higher than his own,
 /// but on this flat floor it leaves him looking just as before.
 static void VenusLighthouse_EnterCappedPillarRows(void) {
-  gFadeOverlayState->actor = Actor_Get(ACTOR_PARTY_LEADER);
+  gGroundMaskState->actor = Actor_Get(ACTOR_PARTY_LEADER);
 }
 
 /// Nothing visible happens when Isaac steps out of the dotted square of the
-/// capped pillars onto the floor round it. The game stops drawing the fade
-/// overlay (VenusLighthouse_EnterCappedPillarRows) on him.
+/// capped pillars onto the floor round it. The game stops drawing the ground
+/// mask (VenusLighthouse_EnterCappedPillarRows) on him.
 static void VenusLighthouse_LeaveCappedPillarRows(void) {
-  gFadeOverlayState->actor = NULL;
+  gGroundMaskState->actor = NULL;
 }
 
 #include "shared/actor_depth.c"
@@ -2695,7 +2692,7 @@ s32 Scene_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_FROM_LADDERS:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST:
-      FieldEffect_StartFadeOverlay(0);
+      FieldEffect_StartGroundMask(0);
       wait(2);
       actor = Actor_Get(ACTOR_FIRST_CAPPED_PILLAR);
       actor->motionFlags = 0;
@@ -2714,7 +2711,7 @@ s32 Scene_Initialize(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PILLARS:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PSYNERGY_STONE:
       Scene_QueueMusic(SE_AMBIENT_WATER);
-      FieldEffect_StartFadeOverlay(0);
+      FieldEffect_StartGroundMask(0);
       wait(2);
       // With the wall on the floor above moved, the sand that poured down the
       // middle of this room has stopped: the fall is drawn as the dry stone
@@ -2744,7 +2741,7 @@ s32 Scene_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR:
-      FieldEffect_StartFadeOverlay(0);
+      FieldEffect_StartGroundMask(0);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_WALL_SWITCH:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_PILLAR_PIT:

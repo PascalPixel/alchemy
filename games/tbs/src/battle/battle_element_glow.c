@@ -175,8 +175,7 @@ u32 ElementGlow_UploadStarField(void) {
   if (source != 0) {
     if (state->ready != 0) {
       state->ready = 0;
-      PaletteFade_BackupAndScaleThreeQuarters(source, BG_CHAR_BLOCK(1),
-                                              BG_CHAR_SIZE);
+      Canvas_CopyAndScaleThreeQuarters(source, BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
     }
   }
 }
@@ -254,16 +253,16 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   Decompress_TaggedLz(graphics, state);
   switch (element) {
   case ELEMENT_VENUS:
-    graphics = Resource_GetTableEntry(RESOURCE_YELLOW_PALETTE_B);
+    graphics = Resource_GetTableEntry(RESOURCE_VENUS_STAR_FIELD_PALETTE);
     break;
   case ELEMENT_MERCURY:
     graphics = Resource_GetTableEntry(RESOURCE_BLUE_RING_SHEET);
     break;
   case ELEMENT_MARS:
-    graphics = Resource_GetTableEntry(RESOURCE_RED_PALETTE_C);
+    graphics = Resource_GetTableEntry(RESOURCE_MARS_STAR_FIELD_PALETTE);
     break;
   default:
-    graphics = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_D);
+    graphics = Resource_GetTableEntry(RESOURCE_JUPITER_STAR_FIELD_PALETTE);
     break;
   }
   Dma_Set(graphics, BG_PLTT, DMA_COPY_WORDS(STAR_FIELD_COLORS / 2), REG_DMA3);

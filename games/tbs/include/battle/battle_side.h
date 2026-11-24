@@ -47,6 +47,11 @@ struct BattleSideOrder {
 #define DJINN_RECOVERY_PARTY 0
 #define DJINN_RECOVERY_OPPONENT 1
 
+/// The enemy unit whose record holds the link opponent's Djinn recovery
+/// table: the opponent's three party members take the three before it
+/// (BattleArena_ReceivePartyRecords), and the table fits in one unit's record.
+#define OPPONENT_RECOVERY_UNIT (FIRST_ENEMY_UNIT + 3)
+
 /// DjinnRecoveryEntry.turns of a Djinni on standby. In battle it stays so
 /// until a Djinn command sets it again or a summon uses it
 /// (DJINN_RECOVERY_SUMMONED), both in
@@ -82,7 +87,7 @@ struct DjinnRecoveryList {
 
 /// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it: the
 /// party's gMainRoutineState.holdings, the enemies' over
-/// battle unit FIRST_ENEMY_UNIT + 3.
+/// battle unit OPPONENT_RECOVERY_UNIT.
 struct DjinnRecoveryTable {
   /// The summons the party can call, bit n for summon n; nonzero offers the
   /// Summon command (BattleSummon_UpdateAvailability).

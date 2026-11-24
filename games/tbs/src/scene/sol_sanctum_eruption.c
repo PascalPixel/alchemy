@@ -55,7 +55,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/event_psynergy.h"
-#include "scene/sol_sanctum_elemental_star_ring_setup.h"
+#include "scene/sol_sanctum_elemental_star_lights.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
@@ -323,10 +323,10 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   FieldCamera_WaitForMove();
   Sound_Play(SE_MAP_TRANSITION);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(20, 20, 20),
-                          PALETTES_OBJECTS);
+                          PALETTES_SPRITES);
   PaletteFade_StartInterpolation(20);
   wait(20);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(20);
   Event_Wait(200);
   // Garet: "That rock... It's floating... Do you know what it is?" Yes:
@@ -1313,9 +1313,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     VramCache_Load(starSprite->slot, ICON_TILE_BYTES, glyph->tiles);
     HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
-    // With sparkles, then held up over Isaac's head (ITEM_DISPLAY_SPARKLES |
-    // ITEM_DISPLAY_RAISED of field_sequence_item_display.c).
-    ItemDisplay_ShowPicture(star, 3);
+    ItemDisplay_ShowPicture(star, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
   SolSanctumEruption_SetPaleTint(1, 20, 0);
@@ -1502,7 +1500,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
   Task_AddFrame(SolSanctumEruption_UpdateWiseOnePalette, TASK_PASS_FRAME);
   Event_Wait(20);
-  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(60);
   wait(100);
   PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_BG);
@@ -1848,8 +1846,8 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
         sprite->image.tile =
             (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;
         sprite->image.fullColor = 0;
-        sprite->image.shape = 1;
-        sprite->image.size = 2;
+        sprite->image.shape = RING_HALF_SHAPE;
+        sprite->image.size = RING_HALF_SIZE;
         sprite->entries[0]->picture = 0;
       }
     }
@@ -1874,7 +1872,7 @@ static void SolSanctumEruption_UpdateWiseOnePalette(void) {
   SolSanctumEruption_CycleActorPalette(Actor_Get(ACTOR_WISE_ONE));
 }
 
-#include "shared/sol_sanctum_elemental_star_ring_setup.c"
+#include "shared/sol_sanctum_elemental_star_lights.c"
 
 /// Unused: an actor script nothing starts. It sends an actor up at 6 pixels a
 /// frame, growing it by a 25th each frame of its loop, then sets it back to
@@ -1982,5 +1980,5 @@ s32 gEruption_EmberScript[] = {
     SC_END,
 };
 
-#include "shared/sol_sanctum_elemental_star_ring_tables.c"
+#include "shared/sol_sanctum_elemental_star_light_tables.c"
 // clang-format on

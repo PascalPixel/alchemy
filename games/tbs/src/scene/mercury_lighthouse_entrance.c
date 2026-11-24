@@ -483,7 +483,7 @@ s32 Scene_Initialize(void) {
   gMainRoutineState.retreatEntrance =
       MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gMainRoutineState.retreatScene = SCENE_MERCURY_LIGHTHOUSE_EXTERIOR;
-  FieldEffect_StartFadeOverlay(0);
+  FieldEffect_StartGroundMask(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
   else
@@ -582,7 +582,7 @@ s32 Scene_Initialize(void) {
     Actor_Get(ACTOR_PARTY_LEADER)->bounce = FIXED_ONE / 4;
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
       PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+      PaletteFade_ApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
       PaletteFade_StartInterpolation(30);
       Event_WaitTransitionFrames();
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

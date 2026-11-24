@@ -6,6 +6,7 @@
 /// table.
 
 #include "field/world_map_lines.h"
+#include "field/world_map_affine.h"
 #include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
@@ -60,28 +61,6 @@ STATIC_ASSERT(offsetof(struct FarCallSystemTable, cos) == 96);
 /// The System bank's far-call table, through which the world map reaches its
 /// arctangent, sine and cosine.
 extern const struct FarCallSystemTable FarCall_RuntimeTable;
-
-/// One screen line of the world map's ground, as WorldMap_BuildScanlineTable
-/// fills it, as world_map_affine.h declares it.
-struct WorldMapScanline {
-  FIXED scale; ///< the line's width scale
-  FIXED depth; ///< the line's ground distance, halved
-  s32 offsetX; ///< where the line starts on the map, from the origin, 16.16
-  s32 offsetY; ///< the same, down the map
-  s16 pa;      ///< BG2PA as last worked out, kept while the yaw holds
-  s16 pc;      ///< BG2PC, the same
-};
-
-/// One background's affine registers, BG2PA to BG2Y, as world_map_affine.h
-/// declares them.
-struct WorldMapAffineLine {
-  s16 pa;
-  s16 pb; ///< not written by this routine
-  s16 pc;
-  s16 pd; ///< not written by this routine
-  s32 x;
-  s32 y;
-};
 
 /// Builds the world map's per-scanline affine table for one frame: the ground
 /// plane seen from eye towards target. line points at the 160 scanlines' ground

@@ -122,6 +122,8 @@ extern u8 gBgTileBuffer[];
 /// The map grid: 128 by 128 cells, each 16 pixels square, wrapping at its
 /// edges.
 #define MAPGRID_SIZE 128
+/// A map grid row, MAPGRID_SIZE cells, as a shift.
+#define MAPGRID_ROW_SHIFT 7
 #define MAPGRID_CELL_PIXELS 16
 /// The map grid's cells, row by row, in Ram_MapGridCellBuffer
 /// (system/ram_buffer.h): the cell at column x, row y is

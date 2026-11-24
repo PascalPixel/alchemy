@@ -83,10 +83,6 @@ extern s32 gGaretBoardsShip[];
 extern s32 gIvanBoardsShip[];
 extern s32 gMiaBoardsShip[];
 
-/// DMA 0's control, DMA0CNT_H, as a halfword after REG_DMA0's source,
-/// destination and count (GBATEK "GBA DMA Transfers").
-#define DMA_CNT_H_INDEX 5
-
 /// The ship's glow (ShipGlow_CyclePalette): SHIP_GLOW_COLORS of
 /// gShipGlowPalettes at a time, from a start that moves one colour every
 /// SHIP_GLOW_STEP_FRAMES frames, through as many starts as colours shown.

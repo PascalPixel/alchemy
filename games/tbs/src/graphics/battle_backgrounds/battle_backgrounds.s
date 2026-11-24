@@ -65,10 +65,10 @@ Battle_TolbiShipRoomsBackdrop:
 	.incbin "games/tbs/src/graphics/battle_backgrounds/tolbi_ship_rooms.gbapal"
 	.incbin "games/tbs/src/graphics/battle_backgrounds/tolbi_ship_rooms.bitmap.d7"
 	.byte 0x39, 0x66	@ PACKER: left in the buffer by Battle_MogallForestBackdrop+0x4076
-	.global Battle_ImilFuchinFallsBackdrop
-Battle_ImilFuchinFallsBackdrop:
-	.incbin "games/tbs/src/graphics/battle_backgrounds/imil_fuchin_falls.gbapal"
-	.incbin "games/tbs/src/graphics/battle_backgrounds/imil_fuchin_falls.bitmap.d7"
+	.global Battle_FuchinFallsCaveBackdrop
+Battle_FuchinFallsCaveBackdrop:
+	.incbin "games/tbs/src/graphics/battle_backgrounds/fuchin_falls_cave.gbapal"
+	.incbin "games/tbs/src/graphics/battle_backgrounds/fuchin_falls_cave.bitmap.d7"
 	.byte 0x45, 0x15	@ PACKER: left in the buffer by Battle_TolbiShipRoomsBackdrop+0x383e
 	.global Battle_KolimaForestBackdrop
 Battle_KolimaForestBackdrop:

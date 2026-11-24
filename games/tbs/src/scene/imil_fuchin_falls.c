@@ -296,8 +296,8 @@ static void Scene_HopLeaderBy(s32 dx, s32 dz);
 static void ImilFuchinFalls_PlaceDragonsEye(void);
 static void Leader_SlideOnIce(void);
 
-/// Set while the floor's fade overlay follows the leader
-/// (FuchinFallsCave_FadeOverlayFollowsLeader).
+/// Set while the floor's ground mask follows the leader
+/// (FuchinFallsCave_GroundMaskFollowsLeader).
 s32 gImilFuchinFalls_TrackLeader;
 
 /// The fields of EffectOptions that the dragon's fire sets, up to its scales,
@@ -1454,19 +1454,19 @@ static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
 }
 
 /// Nothing visible happens when Isaac walks north out of the middle passage
-/// into the dragon statue's dark room (cells (14, 17) to (16, 17)); the fade
-/// overlay the room started takes him up again.
+/// into the dragon statue's dark room (cells (14, 17) to (16, 17)); the ground
+/// mask the room started takes him up again.
 ///
-/// The overlay (field/field_sequence_ground_mask.c) covers him with squares
+/// The ground mask (field/field_sequence_ground_mask.c) covers him with squares
 /// the colour of the floor wherever the ground just south of him stands
 /// higher than his feet: walking along the south side of the room's sunken
 /// middle floor, he shows only from the knees down. It runs only when he came
 /// in from the room of Ki or up the middle passage, and coming up the passage
 /// starts it with no one to follow; come in any other way, he walks there
 /// whole.
-static void FuchinFallsCave_FadeOverlayFollowsLeader(void) {
+static void FuchinFallsCave_GroundMaskFollowsLeader(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
-    struct FadeOverlayState *state = *(gHeapSlots + HEAP_SLOT_FADE_OVERLAY);
+    struct GroundMaskState *state = *(gHeapSlots + HEAP_SLOT_GROUND_MASK);
 
     state->actor = Actor_Get(ACTOR_PARTY_LEADER);
   }
@@ -1474,10 +1474,10 @@ static void FuchinFallsCave_FadeOverlayFollowsLeader(void) {
 
 /// Nothing visible happens when Isaac walks south into the top of the middle
 /// passage out of the dragon statue's dark room (cells (14, 18) to (16, 18));
-/// the room's fade overlay stops following him.
-static void FuchinFallsCave_FadeOverlayStopsFollowing(void) {
+/// the room's ground mask stops following him.
+static void FuchinFallsCave_GroundMaskStopsFollowing(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
-    struct FadeOverlayState *state = *(gHeapSlots + HEAP_SLOT_FADE_OVERLAY);
+    struct GroundMaskState *state = *(gHeapSlots + HEAP_SLOT_GROUND_MASK);
 
     state->actor = NULL;
   }
@@ -1513,7 +1513,7 @@ static void Imil_WalkTowardFever(void) {
 /// or lit.
 static void ImilFuchinFalls_PrepareRoom(void) {
   struct Actor *actor;
-  struct FadeOverlayState *state;
+  struct GroundMaskState *state;
 
   ImilFuchinFalls_RebuildLogRoom();
   if (gMainRoutineState.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
@@ -1538,7 +1538,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     }
   } else if (gMainRoutineState.next == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
     // Default: NULL unless the arrival from the south half's middle takes the
-    // fade overlay.
+    // ground mask.
     state = NULL;
     actor = Actor_Get(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE);
     gImilFuchinFalls_TrackLeader = 0;
@@ -1550,13 +1550,13 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     switch (gMainRoutineState.entrance) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST:
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST:
-      FieldEffect_StartFadeOverlay(0);
+      FieldEffect_StartGroundMask(0);
       gImilFuchinFalls_TrackLeader = 1;
       break;
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE:
-      FieldEffect_StartFadeOverlay(0);
+      FieldEffect_StartGroundMask(0);
       gImilFuchinFalls_TrackLeader = 1;
-      state = gFadeOverlayState;
+      state = gGroundMaskState;
       state->actor = NULL;
       break;
     }
@@ -1681,7 +1681,8 @@ static void FuchinFallsCave_FindDragonsEye(void) {
   Event_Start();
 
   if (gImilFuchinFalls_DragonsEye != NULL) {
-    ItemDisplay_ShowPicture(gImilFuchinFalls_DragonsEye, 3);
+    ItemDisplay_ShowPicture(gImilFuchinFalls_DragonsEye,
+                            ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
   }
 
   Party_GiveItem(ITEM_DRAGONS_EYE, 0);
@@ -2312,9 +2313,9 @@ struct Trigger gImilFuchinFalls_DragonRoomTriggers[] = {
      FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ENTRANCE_WEST},
     {TRIGGER_STEP,
      CELL_BEHAVIOR_FUCHIN_FALLS_DRAGON_ROOM_NORTH_OF_MIDDLE_PASSAGE,
-     CONDITION_ALWAYS, EVENT(FuchinFallsCave_FadeOverlayFollowsLeader)},
+     CONDITION_ALWAYS, EVENT(FuchinFallsCave_GroundMaskFollowsLeader)},
     {TRIGGER_STEP, CELL_BEHAVIOR_FUCHIN_FALLS_DRAGON_ROOM_MIDDLE_PASSAGE,
-     CONDITION_ALWAYS, EVENT(FuchinFallsCave_FadeOverlayStopsFollowing)},
+     CONDITION_ALWAYS, EVENT(FuchinFallsCave_GroundMaskStopsFollowing)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT),
      CELL_BEHAVIOR_FUCHIN_FALLS_DRAGON_ROOM_TABLET, CONDITION_ALWAYS,
      EVENT(FuchinFallsCave_ReadShadowInscription)},

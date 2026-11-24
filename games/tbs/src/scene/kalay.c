@@ -48,9 +48,9 @@
 /// full, sparkles stream from its statue as it nears the waterfall. Five
 /// chests hold Spirit Gloves, a Sleep Bomb, a Lucky Medal, 200 coins and a
 /// Potion. Once the tunnel is open a man waits here, thinking `The things
-/// beyond these doors belong to you all.` A faint green glow drifts over the
-/// floor around Isaac in the narrow corridors and stays behind in the halls
-/// (the fade overlay, field/field_sequence_ground_mask.c). Stairs lead up into
+/// beyond these doors belong to you all.` In the narrow corridors, raised
+/// ground in front of Isaac hides his legs, and in the halls it lets go of him
+/// (the ground mask, field/field_sequence_ground_mask.c). Stairs lead up into
 /// Hammet's palace, and a way up into the town under the statue.
 ///
 /// Every scene sets FLAG_KALAY_REACHED on entry.
@@ -144,11 +144,11 @@ extern s32 gKalay_TunnelParticleScript[];
 /// The cells of the Kalay Tunnel's treasure rooms the scene gives a meaning of
 /// its own.
 enum KalayTunnelCellBehavior {
-  /// The floor of the halls with the statues, where the green glow stays
-  /// behind and walking into a statue pushes it.
+  /// The floor of the halls with the statues, where the ground mask lets go of
+  /// Isaac and walking into a statue pushes it.
   CELL_BEHAVIOR_KALAY_TUNNEL_HALL = 10,
-  /// The edge of a hall where it meets a corridor, where the glow follows
-  /// Isaac again and walking into a statue still pushes it.
+  /// The edge of a hall where it meets a corridor, where the ground mask
+  /// follows Isaac again and walking into a statue still pushes it.
   CELL_BEHAVIOR_KALAY_TUNNEL_HALL_EDGE = 11,
   /// Cells (26, 45) to (26, 47), and (25, 45), in the west hall, where
   /// walking west (or south, on (25, 45)) pushes a statue standing ahead.
@@ -264,8 +264,8 @@ enum KalayTunnelActorId {
 /// passages (area temp flags) last while the party stays in the tunnel's
 /// scenes.
 enum KalayTunnelFlag {
-  /// The fade overlay follows the leader.
-  FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER = FLAG_SCENE_TEMP_00,
+  /// The ground mask follows the leader.
+  FLAG_TUNNEL_MASK_FOLLOWS_LEADER = FLAG_SCENE_TEMP_00,
   FLAG_TUNNEL_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
   /// Each statue's particles have started their sound.
   FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_02,
@@ -1079,24 +1079,25 @@ static void Kalay_WatchTourGroupDeparture(void) {
 }
 
 /// Walking out of the Kalay Tunnel's narrow corridors into a hall with a
-/// statue, Isaac leaves behind the faint green glow that drifts over the floor
-/// around him; it stays where it was.
+/// statue, Isaac is let go by the ground mask: raised ground in front of him no
+/// longer hides his legs.
 static void Kalay_StopTrackingLeader(void) {
-  if (Event_GetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) != 0) {
-    gFadeOverlayState->actor = NULL;
-    GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+  if (Event_GetFlag(FLAG_TUNNEL_MASK_FOLLOWS_LEADER) != 0) {
+    gGroundMaskState->actor = NULL;
+    GameFlag_Clear(FLAG_TUNNEL_MASK_FOLLOWS_LEADER);
   }
 }
 
 /// Stepping from a hall of the Kalay Tunnel back into its narrow corridors,
-/// the faint green glow drifts after Isaac over the floor again.
+/// Isaac is followed by the ground mask again: raised ground in front of him
+/// hides his legs.
 static void Kalay_StartTrackingLeader(void) {
-  struct FadeOverlayState *state;
+  struct GroundMaskState *state;
 
-  if (Event_GetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) == 0) {
-    state = gFadeOverlayState;
+  if (Event_GetFlag(FLAG_TUNNEL_MASK_FOLLOWS_LEADER) == 0) {
+    state = gGroundMaskState;
     state->actor = Actor_Get(ACTOR_PARTY_LEADER);
-    GameFlag_Set(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+    GameFlag_Set(FLAG_TUNNEL_MASK_FOLLOWS_LEADER);
   }
 }
 
@@ -1123,7 +1124,7 @@ static void Kalay_CatchTownNut(void) {
   wait(1);
   Actor_SetPosition(ACTOR_TOWN_NUT, 0, 0);
   GameFlag_Set(FLAG_KALAY_TOWN_NUT_CAUGHT);
-  ItemDisplay_ShowItem(ITEM_NUT, 3);
+  ItemDisplay_ShowItem(ITEM_NUT, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
   PartyInventory_GiveItem(ITEM_NUT, 0);
 }
 
@@ -1247,40 +1248,40 @@ static void Kalay_PrepareTunnelPassage(void) {
 /// Sets up the Kalay Tunnel's treasure room (KalayTunnelTreasureRoom).
 static void Kalay_PrepareTunnelTreasureRoom(void) {
   s32 following;
-  struct FadeOverlayState *state;
+  struct GroundMaskState *state;
 
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  FieldEffect_StartFadeOverlay(0);
-  // The overlay follows the leader except on the way down from the town.
+  FieldEffect_StartGroundMask(0);
+  // The ground mask follows the leader except on the way down from the town.
 #if TBS_PATCH_1
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    state = gFadeOverlayState;
-    // The flag's own 0 is the overlay's want of an actor.
-    following = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+    state = gGroundMaskState;
+    // The flag's own 0 is the ground mask's want of an actor.
+    following = GameFlag_Get(FLAG_TUNNEL_MASK_FOLLOWS_LEADER);
     if (following != 0)
       following = (s32)Actor_Get(ACTOR_PARTY_LEADER);
     state->actor = (struct Actor *)following;
   } else {
-    Event_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+    Event_SetFlag(FLAG_TUNNEL_MASK_FOLLOWS_LEADER);
     if (gMainRoutineState.entrance == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
-      gFadeOverlayState->actor = NULL;
-      GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+      gGroundMaskState->actor = NULL;
+      GameFlag_Clear(FLAG_TUNNEL_MASK_FOLLOWS_LEADER);
     }
   }
 #else
-  Event_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+  Event_SetFlag(FLAG_TUNNEL_MASK_FOLLOWS_LEADER);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    state = gFadeOverlayState;
-    // The flag's own 0 is the overlay's want of an actor.
-    following = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+    state = gGroundMaskState;
+    // The flag's own 0 is the ground mask's want of an actor.
+    following = GameFlag_Get(FLAG_TUNNEL_MASK_FOLLOWS_LEADER);
     if (following != 0)
       following = (s32)Actor_Get(ACTOR_PARTY_LEADER);
     state->actor = (struct Actor *)following;
   } else if (gMainRoutineState.entrance ==
              KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
-    gFadeOverlayState->actor = NULL;
-    GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+    gGroundMaskState->actor = NULL;
+    GameFlag_Clear(FLAG_TUNNEL_MASK_FOLLOWS_LEADER);
   }
 #endif
   if (GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) != 0) {

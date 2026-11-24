@@ -15,6 +15,7 @@ struct ActorPlacement;
 struct Trigger;
 struct Actor;
 struct MapGridCell;
+struct Window;
 
 /// The actor ids FieldState.actors maps (enum ActorId): the party's eight
 /// characters, then the actors a scene places.
@@ -129,7 +130,10 @@ struct FieldState {
   /// The leader's two-row actor placement table (its row and an end
   /// row), which Actor_ResetForLeader builds through its offset.
   u8 leaderPlacements[48];
-  u8 unusedAfterPlacements[6];
+  /// The area name notice's window (AreaNameWindow_Show); it may since have
+  /// closed.
+  struct Window *areaNameWindow;
+  u16 areaNameCountdown; ///< frames left to show the area name
   /// The palette a field Psynergy's tint fades back to, as a palette fade's
   /// target (BG half, then sprite half), saved as the tint starts.
   u16 savedFadeTarget[448 * 3];
@@ -184,6 +188,7 @@ STATIC_ASSERT(offsetof(struct FieldState, unusedBeforeCamera) == 476);
 STATIC_ASSERT(offsetof(struct FieldState, speaker) == 500);
 STATIC_ASSERT(offsetof(struct FieldState, messageWindow) == 504);
 STATIC_ASSERT(offsetof(struct FieldState, sideWindow) == 508);
+STATIC_ASSERT(offsetof(struct FieldState, areaNameWindow) == 560);
 STATIC_ASSERT(offsetof(struct FieldState, savedFadeTarget) == 566);
 STATIC_ASSERT(offsetof(struct FieldState, busy) == 3254);
 STATIC_ASSERT(offsetof(struct FieldState, revealActive) == 3256);

@@ -409,7 +409,7 @@ s32 BattleFormation_BuildEnemyList(s32 formationId) {
 
   // The enemy sprite slots left once every member's minimum is placed; a
   // large enemy takes two.
-  freeSpriteSlots = ARRAY_COUNT(battle->spriteSlots);
+  freeSpriteSlots = ENEMY_SPRITE_SLOTS;
   enemyCount = 0;
   for (i = 0; i < FORMATION_MEMBERS; i++) {
     if (formation->minimumCounts[i] != 0) {

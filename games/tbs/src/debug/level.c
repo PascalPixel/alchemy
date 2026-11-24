@@ -512,13 +512,13 @@ static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
 #endif
 
 /// Keeps Force from pushing ACTOR_PORTRAIT_BROWSER: run as Force is cast at it,
-/// before the shot, this sets the effect's childMode, and the shot then leaves
-/// its target where it is (field/event_commands_force.c).
+/// before the shot, this sets the effect's leaveTarget, and the shot then
+/// leaves its target where it is (field/event_commands_force.c).
 static void IncreaseItemAndLevel_KeepPortraitBrowserInPlace(void) {
   struct FieldEffectState *effectState =
       (struct FieldEffectState *)gFieldEffectState;
 
-  effectState->childMode = 1;
+  effectState->leaveTarget = 1;
 }
 
 /// Talking to ACTOR_ICON_BROWSER: the icon browser.

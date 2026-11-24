@@ -134,7 +134,7 @@ void FieldPsynergy_Retreat(void) {
     FIXED scale;
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, Retreat_UpdateSpark);
-    FieldParticle_SetAnimation(effect, 7);
+    FieldParticle_SetAnimation(effect, PARTICLE_ANIMATION_FLICKER);
     Sprite_SetAnimationColorModesFar(effect->sprite, Random16_Below(7));
     scale = (Random16() >> 1) + FIXED_ONE * 6 / 5; // 1.2 to 1.7
     effect->scaleY = scale;
@@ -247,10 +247,10 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
     sprite->slot = effectState->arcTileSlot;
     sprite->retainCacheEntry = 1;
     sprite->image.tile = gVramCacheEntries[sprite->slot].offset >> 5;
-    // In 16 colours, 32 by 16 pixels: OBJ shape 1, horizontal, at size 2.
+    // In 16 colours, 32 by 16 pixels.
     sprite->image.fullColor = 0;
-    sprite->image.shape = 1;
-    sprite->image.size = 2;
+    sprite->image.shape = RING_HALF_SHAPE;
+    sprite->image.size = RING_HALF_SIZE;
     sprite->entries[0]->picture = 0;
   }
   // BUG: failed allocations above leave a missing arc or sprite here.

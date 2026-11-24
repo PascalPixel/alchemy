@@ -126,10 +126,10 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     resource = RESOURCE_LIME_PALETTE;
     break;
   case STREAK_STYLE_VIOLET:
-    resource = RESOURCE_VIOLET_PALETTE_D;
+    resource = RESOURCE_JUPITER_STAR_FIELD_PALETTE;
     break;
   case STREAK_STYLE_RED:
-    resource = RESOURCE_RED_PALETTE_B;
+    resource = RESOURCE_VOLCANO_RED_PALETTE;
     break;
   case STREAK_STYLE_CYAN:
   default:
@@ -323,7 +323,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   if (mode == MOTE_FOUNTAIN_HEALING)
-    resource = RESOURCE_ORANGE_PALETTE_A;
+    resource = RESOURCE_GAIA_ORANGE_PALETTE;
   else
     resource = RESOURCE_EARTH_WALL_SHEET;
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(resource),

@@ -142,7 +142,7 @@ extern const u8 TileMap_DrawRows[];
 extern u8 TileMap_DrawRowsCodeSize[];
 /// The size of WorldMap_UpdateAffineLines, copied to HEAP_SLOT_RAM_CODE; an
 /// address equal to the size (ld_script.ld).
-extern u8 Matrix_UpdateVerticesSize;
+extern u8 WorldMap_UpdateAffineLinesCodeSize;
 extern const s32 gWorldMap_FootprintActions[6];
 /// The direction pad's headings, defined as u16 in facing.c. Declared here
 /// with the sign, so Up's three quarters of a turn reads negative; the
@@ -323,11 +323,26 @@ enum BattleEnvironment {
 };
 
 /// A world map cell's encounter region (bits 30..24 of its block word), which
-/// picks its encounter zones (gWorldMap_EncounterRules).
+/// picks its encounter zones (gWorldMap_EncounterRules), each named for the
+/// places whose entrances lie in it.
 enum WorldMapEncounterRegion {
+  WORLD_MAP_ENCOUNTER_REGION_VALE_VAULT = 1, ///< also Lunpa and Goma Cave
+  /// Also Bilibin Cave and the bridge out of Goma Cave.
+  WORLD_MAP_ENCOUNTER_REGION_BILIBIN_KOLIMA = 2,
+  /// Also Lama Temple and the Alpine Crossing.
+  WORLD_MAP_ENCOUNTER_REGION_XIAN_ALTIN = 3,
+  /// Also the Lamakan Desert's cave and Gondowan Cave's north end.
+  WORLD_MAP_ENCOUNTER_REGION_KALAY = 4,
+  /// Also Kalay's docks, Altmiller Cave and the Gondowan Passage's north end.
+  WORLD_MAP_ENCOUNTER_REGION_TOLBI = 5,
+  /// Also Lalivero, the Venus Lighthouse and the road to Babi Lighthouse.
+  WORLD_MAP_ENCOUNTER_REGION_SUHALLA = 6,
   /// Takes the second world map graphics set (WorldMap_LoadGraphics) and the
   /// snowfield's battle environments (WorldMap_GetBattleEnvironment).
-  WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD = 21
+  WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD = 21,
+  /// Fuchin Temple, the sign before Mogall Forest and the north end of Kolima
+  /// Bridge.
+  WORLD_MAP_ENCOUNTER_REGION_FUCHIN = 31
 };
 
 /// A map cell's terrain kind: the low four bits of its shape's first byte,
@@ -378,7 +393,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     s32 facing);
 void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
                                  s32 facing, s32 depth);
-void Sprite_SetAnimationColorModes(void *rawSprite, u32 value);
+void Sprite_SetAnimationColorModes(void *rawSprite, u32 colorMode);
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
 s32 SpritePictureCache_FindByTag(s32 tag);
 s32 Sprite_ResetAnimations(struct Sprite *sprite);
@@ -396,7 +411,7 @@ void SpriteAnimation_Clear(struct SpriteAnimation *record);
 struct Sprite *Sprite_Create(s32 id);
 void Sprite_Destroy(struct Sprite *sprite);
 s32 SpriteAnimation_SumCommandLengths(s32 id, u32 animation, s32 frameCount);
-void SpriteDissolve_Step(u8 *obj, u32 pos);
+void SpriteDissolve_Step(u8 *rawSprite, u32 step);
 void SpriteDissolve_Run(u8 *sprite);
 void SpriteDissolve_RunMany(u8 **sprites, s32 count);
 void Actor_SelectAnimation(void *raw, s32 no);
@@ -503,7 +518,7 @@ void Actor_WaitForScriptEnd(void *rawActor);
 void Actor_SetSpriteFlags(struct Actor *actor, u32 flags);
 void Actor_SetBlendMode(struct Actor *actor, u32 mode);
 void Actor_SetSpriteScale(struct Actor *actor, u32 fixedScale);
-void Actor_SetSpriteColorMode(struct Actor *actor, u32 param);
+void Actor_SetSpriteColorMode(struct Actor *actor, u32 colorMode);
 void ActorSystem_SuspendProjectionAndShowSprites(void);
 void ActorSystem_ResumeProjectionAndHideLayers(void);
 s32 Actor_ReturnTrue(void);
@@ -594,7 +609,7 @@ void MapGrid_SetShownLayers(u32 layerFlags);
 
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 UNREAD_RESULT WorldMap_InitializePerspective(void);
-void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 cellX, s32 cellY);
+void WorldMap_SetGridTile(s32 x, s32 y, s32 cellX, s32 cellY);
 void WorldMap_LoadGraphics(s32 x, s32 z);
 void WorldMap_ApplyAffinePage(void);
 void WorldMap_DrawCellRow(u32 tileRow);
@@ -672,5 +687,9 @@ void SpriteViewer_LayOutRing(s32 centerX, s32 centerY,
 void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex);
 void SpriteViewer_SetLayerSprite(s32 layerIndex, s32 spriteId);
 void SpriteViewer_PlaceRing(void);
+
+/// Read as a halfword by Actor_SetOthersPaused: the actor id of the
+/// player's actor, which it leaves alone.
+extern u8 gPlayerActorId[];
 
 #endif

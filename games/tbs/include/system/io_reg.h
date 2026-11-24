@@ -185,6 +185,9 @@ enum DisplayControl {
 /// DMA channel 0's registers as halfwords, for the line scrolls that set
 /// the whole channel up.
 #define REG_DMA0 ((volatile u16 *)0x040000b0)
+/// A DMA channel's control, DMAxCNT_H, as a halfword after its source,
+/// destination and count (GBATEK "GBA DMA Transfers").
+#define DMA_CNT_H_INDEX 5
 
 /// DMA channel 3's registers as words: the channel Dma_Set copies with.
 #define REG_DMA3 ((volatile u32 *)0x040000d4)

@@ -51,9 +51,9 @@ void ScreenTransition_StartWindowHBlankDma(void) {
   volatile u16 *dma0 = REG_DMA0;
 
   // Stop the previous transfer before priming the first line's registers.
-  dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-  dma0[5] &= ~DMA_ENABLE;
-  (void)dma0[5];
+  dma0[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
+  dma0[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
+  (void)dma0[DMA_CNT_H_INDEX];
   REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   Io_Write16(*scanlineData++, &REG_WININ);
   Io_Write16(*scanlineData++, &REG_WINOUT);
@@ -117,9 +117,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
         {
           volatile u16 *dma0 = REG_DMA0;
 
-          dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-          dma0[5] &= ~DMA_ENABLE;
-          dma0[5];
+          dma0[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
+          dma0[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
+          dma0[DMA_CNT_H_INDEX];
         }
         return;
       }
@@ -579,7 +579,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     display->firstLine = DISPLAY_HEIGHT / 2;
     display->secondLine = DISPLAY_HEIGHT / 2;
     wait(1);
-    if (variant == 0) {
+    if (variant == CENTER_LINE_STEADY) {
       Task_Add(ScreenTransition_Update, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = DISPLAY_HEIGHT / 2;
@@ -652,7 +652,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
   case TRANSITION_CENTER_LINE: {
     struct ScreenTransitionState *state =
         ScreenTransition_AllocateAndClearState();
-    if (variant == 0) {
+    if (variant == CENTER_LINE_STEADY) {
       Task_Add(ScreenTransition_Update, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
@@ -696,7 +696,7 @@ void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
 /// Each frame of the centre-line transition: moves the value toward its end and
 /// sets the two lines where the screen switches between shown and blank.
 void ScreenTransition_Update(void) {
-  struct ScreenTransitionDissolveState *state = *Ram_DisplayState;
+  struct ScreenTransitionState *state = *Ram_DisplayState;
   struct ScreenTransitionDisplay *display =
       *(struct ScreenTransitionDisplay **)Ram_MapGridState;
   u32 edgeDistance;
@@ -730,7 +730,7 @@ void ScreenTransition_Update(void) {
 
 /// As ScreenTransition_Update, but the lines flicker every other frame.
 void ScreenTransition_UpdateFromCenter(void) {
-  struct ScreenTransitionDissolveState *state = *Ram_DisplayState;
+  struct ScreenTransitionState *state = *Ram_DisplayState;
   struct ScreenTransitionDisplay *window =
       *(struct ScreenTransitionDisplay **)Ram_MapGridState;
   u16 edgeDistance;
@@ -827,7 +827,7 @@ again:
 /// with DISSOLVE_COVER_COLOR), and to DISSOLVE_COVER_COLOR while it closes
 /// (values after it fill the clear tile ScreenTransition_Finish starts from).
 void ScreenTransition_UpdateDissolve(void) {
-  struct ScreenTransitionDissolveState *state = *Ram_DisplayState;
+  struct ScreenTransitionState *state = *Ram_DisplayState;
   s32 ditherIndex;
   s32 colorIndex;
   u32 i;
@@ -838,9 +838,9 @@ void ScreenTransition_UpdateDissolve(void) {
       state->duration = 0;
       Task_Remove(ScreenTransition_UpdateDissolve);
       dma0 = REG_DMA0;
-      dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-      dma0[5] &= ~DMA_ENABLE;
-      (void)dma0[5];
+      dma0[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
+      dma0[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
+      (void)dma0[DMA_CNT_H_INDEX];
       return;
     } else {
       s32 delta = state->end - state->start;

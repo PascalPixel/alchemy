@@ -81,6 +81,7 @@
 #include "menu/menu.h"
 #include "scene/colosso_gauge.h"
 #include "scene/colosso_guide.h"
+#include "scene/colosso_lettering.h"
 #include "scene/colosso_push.h"
 #include "scene/colosso_setup.h"
 #include "scene/colosso_solo.h"
@@ -100,7 +101,7 @@
 
 /// The match held here, as the lettering `The 2nd Match` reads; the friends'
 /// turns open with `Lend a Hand!` instead (Colosso_ShowOpeningLettering).
-enum { LETTERING_LEND_A_HAND = 0, FINALS_MATCH = 2 };
+enum { FINALS_MATCH = 2 };
 
 /// The stages, as their attendants number them: "This is stage 1 of the second
 /// finals".
@@ -352,10 +353,6 @@ enum LiftOperatorAnimation {
   LIFT_OPERATOR_ANIMATION_LIFTS_APART = 11
 };
 
-/// SPRITE_LOG_NORTH_SOUTH lying still after a roll (log_north_south.tsv's
-/// first rolling picture, held), beside its LogAnimation.
-#define LOG_ANIMATION_AT_REST 1
-
 /// The cell behaviours the stages' step triggers answer.
 enum ColosseumSatrageMatchCellBehavior {
   /// The ledge at the foot of The Wall, cell (37, 16), a cell east of where
@@ -502,13 +499,13 @@ static void ColosseumSatrageMatch_MoveMiniMazePillar(void) {
 
 /// Nothing visible happens when Force is cast at the tall log by the Board
 /// Walk's channel, just before the fist flies. The scene sets the Psynergy's
-/// `childMode`, so that the fist does not shove the log 16 pixels away as it
+/// `leaveTarget`, so that the fist does not shove the log 16 pixels away as it
 /// shoves what else it hits, and the log topples from where it stands
 /// (ColosseumSatrageMatch_KnockDownLog).
 static void ColosseumSatrageMatch_KeepLogStillForForce(void) {
   u8 *effectState = gFieldEffectState;
 
-  ((struct FieldEffectState *)effectState)->childMode = 1;
+  ((struct FieldEffectState *)effectState)->leaveTarget = 1;
 }
 
 /// Force on the tall log standing at the east end of the Board Walk's channel

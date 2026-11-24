@@ -237,6 +237,12 @@
 /// Afterwards the two stand watching the leader, and Vale's barking puppies are
 /// gone.
 #define FLAG_MET_SATUROS_AND_MENARDI 0x808
+/// Set once the party has left Vale (WORLD_MAP_FROM_VALE_PLAZA): Vale's
+/// scenes then place their later actors and lines, the Sanctum takes
+/// another trigger table and Healer line, and the Sol Sanctum approach moves
+/// its sentry, changes cell behaviors and stops sending its way down to
+/// SceneId_ValeEruption.
+#define FLAG_VALE_PARTY_LEFT 0x815
 /// The first Small Jewel is set in the empty eye of Sol Sanctum's first
 /// minotaur relief, which opened the passage beside it; the relief then shows
 /// both eyes sparkling, and the passage stays open on later visits.

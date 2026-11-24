@@ -473,4 +473,19 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
                                s32 variant);
 s32 Icon_CreateDjinnArrow(struct Window *window, s32 x, s32 y, s32 variant);
 
+/// The Japanese status panel's PP row, "EP    /": label and slash in one
+/// string, drawn by the unit summary in menu/menu_shared.c.
+extern const u8 gStatusPanel_PpRowString[];
+/// The Japanese status panel's HP row, "HP    /", the slash already in its
+/// cell at 48.
+extern const u8 gStatusPanel_HpRowString[];
+/// The HP label outside Japan, in each language's form ("KP" in German, "PV"
+/// in Spanish and French, "PS" in Italian).
+extern const u8 gStatusPanel_HpString[];
+/// The PP label outside Japan, which every language writes "PP".
+extern const u8 gStatusPanel_PpString[];
+/// The slash between a current and maximum figure on the status panel,
+/// outside Japan.
+extern const u8 gStatusPanel_SlashString[];
+
 #endif

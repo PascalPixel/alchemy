@@ -10,7 +10,7 @@
 /// The storm's lightning state: the colours it flashes between and their
 /// difference, the countdown to the next flash and whether the thunder is loud.
 struct FieldBlendState {
-  /// The storm's dark colours (PALETTE_TINT_WARM), as the palette fade's
+  /// The storm's dark colours (PALETTE_TINT_DIM), as the palette fade's
   /// B, G and R channels: each flash fades back to them.
   s16 from[1344];
   s16 to[1344];    ///< the lit colours (PALETTE_TINT_PALE), as from

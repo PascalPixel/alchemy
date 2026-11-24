@@ -14,7 +14,8 @@ static void Vault_FindBone(void) {
     // "Wow, you have so many things. Aren't you a greedy lad!"
     Event_ShowMessageAndWait(ACTOR_GIRL_AT_THE_INN, 0);
   } else {
-    ItemDisplay_ShowItem(ITEM_BONE, 3);
+    ItemDisplay_ShowItem(ITEM_BONE,
+                         ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
     PartyInventory_GiveItem(ITEM_BONE, 0);
   }
   Event_End();

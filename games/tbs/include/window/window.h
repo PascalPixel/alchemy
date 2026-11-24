@@ -11,9 +11,9 @@
 #include "tbs_edition.h"
 #include "types.h"
 #include "graphics/glyph.h"
-#include "graphics/render_input.h"
 #include "system/heap.h"
 #include "window/screens.h"
+#include "window/window_sprite.h"
 
 /// Where the windows are drawn (WindowState.battleMode).
 enum WindowBattleMode {
@@ -586,8 +586,8 @@ void Text_ResetStyle();
 void WindowSystem_StartFieldUpdate(void);
 void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles);
 void BattleMessage_Close(void);
-void BattleMessage_Open(s32 argument);
-void BattleMessage_ShowAndWait(s32 argument);
+void BattleMessage_Open(s32 message);
+void BattleMessage_ShowAndWait(s32 message);
 s32 Message_OpenDecoded(struct Window *window, s32 message);
 void Message_SetDecodeFlags(s32 flags);
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
@@ -682,7 +682,7 @@ s32 Message_DecodeAndClearArguments(s32 message);
 void Message_Find(struct MessageReader *reader, s32 message);
 s32 Text_DecodeSymbolInC(struct MessageReader *reader);
 void Portrait_ClearSlots(void);
-s32 Portrait_GetForSpeaker(u32 value);
+s32 Portrait_GetForSpeaker(u32 speaker);
 struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
                                    s32 y);
 void Portrait_CloseWindow(u32 speaker);
@@ -762,7 +762,7 @@ void SelectionMenu_HighlightIcon(struct SelectionMenuState *state,
 void Menu_ClearBattleHighlight(struct SelectionMenuState *state);
 void SelectionMenu_Scroll(struct SelectionMenuState *state, s32 forward);
 s32 SelectionIcon_Load(s32 mode, s32 value);
-s32 SelectionIcon_LoadIntoSlot(s32 mode, s32 value, s32 result, s32 option);
+s32 SelectionIcon_LoadIntoSlot(s32 kind, s32 entry, s32 slot, s32 baseIcon);
 void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                              s32 reuse);
 u32 Menu_ConfirmSelection(struct SelectionMenuState *state);
@@ -774,7 +774,7 @@ void MenuArrow_NoOpCallbackC(void);
 void MenuArrow_NoOpCallbackD(void);
 void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot);
 void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y);
-void MenuArrow_Release(s32 value);
+void MenuArrow_Release(s32 slot);
 void SelectionMenu_LoadLargeIcon(void);
 void SelectionMenu_FreeLargeIcon(void);
 s32 FieldMenu_Run(void);

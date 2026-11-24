@@ -17,8 +17,8 @@ gOverflowItem:
 	.global gPlayerActorId
 gPlayerActorId:
 	.space 90
-	.global gBattleArenaRecord
-gBattleArenaRecord:
+	.global gBattleArenaSaveStamp
+gBattleArenaSaveStamp:
 	.space 28
 	.global gCharacterUnits
 gCharacterUnits:

@@ -6,11 +6,11 @@
 
 #include "fixed_math.h"
 #include "static_assert.h"
-#include "graphics/render_input.h"
 #include "menu/menu.h"
 #include "menu/paged_list.h"
 #include "system/heap_slots.h"
 #include "text/msg_ids.h"
+#include "window/window_sprite.h"
 
 struct Sprite;
 
@@ -35,8 +35,8 @@ struct PsynergyMenuState {
   u8 itemWindows[12];
   struct WindowSprite *entryGridCursor;
   struct WindowSprite *entryIcons[32];
-  struct WindowSprite *categoryIcons[8]; ///< ItemMenuState's; not named here
-  u8 unusedAfterIcons[36];               ///< no view of the menu state names it
+  struct WindowSprite *statusIcons[8]; ///< ItemMenuState's; not named here
+  u8 unusedAfterIcons[36];             ///< no view of the menu state names it
   struct Window *messageWindow;
   /// The cursor grid: its place and its size.
   ///@{

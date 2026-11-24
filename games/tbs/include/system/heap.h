@@ -110,15 +110,15 @@ enum HeapSlot {
   /// intro's struct TitlePaletteFade.
   HEAP_SLOT_PALETTE_FADE = 32,
   /// The floating lights of Sol Sanctum's Elemental Star room (struct
-  /// SolSanctumLightList, sol_sanctum_elemental_star_ring_setup.c).
+  /// SolSanctumLightList, sol_sanctum_elemental_star_lights.c).
   HEAP_SLOT_SOL_SANCTUM_LIGHTS = 33,
   /// The line scroll's state (struct LineScrollState).
   HEAP_SLOT_LINE_SCROLL = 34,
   /// Where Mercury Lighthouse keeps a pointer to the state of the lights that
   /// carry the leader over its pools (struct MercuryLighthouseLights).
   HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS = 35,
-  /// The fade overlay's state (struct FadeOverlayState).
-  HEAP_SLOT_FADE_OVERLAY = 36,
+  /// The ground mask's state (struct GroundMaskState).
+  HEAP_SLOT_GROUND_MASK = 36,
   /// The battle message window's state (struct BattleMessageState).
   HEAP_SLOT_BATTLE_MESSAGE = 37,
   /// The running battle effect's own state (gBattleEffectState). Lucky Dice
@@ -178,5 +178,11 @@ enum HeapSlot {
   /// gColossoState reads by its own name.
   HEAP_SLOT_COLOSSO_RACE = 59
 };
+
+/// The room an effect gives its glow pictures: HEAP_SLOT_BATTLE_SHEET's size,
+/// and where an effect's own pictures start in a sheet whose glow pictures
+/// come first. The largest glow sheet, BlueGlowSheet's ten flares from 2x2 to
+/// 20x20, takes 1540 bytes of it.
+#define GLOW_SHEET_ROOM 1550
 
 #endif

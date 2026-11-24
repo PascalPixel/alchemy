@@ -10,13 +10,13 @@
 #include "types.h"
 #include "gamepak/far_call.h"
 #include "graphics/battle_sprite_id.h"
-#include "graphics/render_input.h"
 #include "system/frame.h"
 #include "system/heap.h"
 #include "system/input.h"
 #include "system/task.h"
 #include "window/screens.h"
 #include "window/window.h"
+#include "window/window_sprite.h"
 
 /// The items a battle's item list shows at once, two tiles a row.
 enum { BATTLE_LIST_ROWS = 5 };

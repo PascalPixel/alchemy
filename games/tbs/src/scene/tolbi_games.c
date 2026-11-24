@@ -53,6 +53,7 @@
 #include "field/event_commands.h"
 #include "field/event_inline.h"
 #include "field/field.h"
+#include "field/lucky_wheels.h"
 #include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
@@ -110,10 +111,6 @@ static s32 TolbiSpring_RunSpringGame(void);
 static s32 StuccoRoomsC_SelectLuckyWheelsPrize(s32 category);
 static void TolbiSpring_InitializeTossSimulation(void);
 static s32 TolbiSpring_RunToss(s32 tossKind);
-
-/// An exit's flag word of -1 stands for no flag: GameFlag_GetFar reads it as
-/// flag 0xfff, which nothing sets, so the exit is always taken.
-#define EXIT_FLAG_NONE 0xffffffff
 
 /// What the player throws into the spring, chosen by Menu_SelectCoinsOrMedals.
 enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
@@ -241,20 +238,16 @@ enum {
   LUCKY_DICE_LARGE_WIN = 20000
 };
 
-/// What a line of Lucky Wheels wins, as the slot machine reports it: one of
-/// LUCKY_WHEELS_KINDS kinds of prize, three items each in
-/// gStuccoRoomsC_LuckyWheelsPrizeItems, or a moon, which wins any kind.
-enum { LUCKY_WHEELS_KINDS = 5, LUCKY_WHEELS_MOON = 5 };
+/// The kinds of prize a line of Lucky Wheels wins, three items each in
+/// gStuccoRoomsC_LuckyWheelsPrizeItems: those before
+/// LUCKY_WHEELS_PRIZE_ANYTHING, which wins any of them.
+enum { LUCKY_WHEELS_KINDS = LUCKY_WHEELS_PRIZE_ANYTHING };
 
 /// The slot machine's report in the holdings' wonPrizes: the kinds won, ended
-/// by LUCKY_WHEELS_PRIZES_END, or LUCKY_WHEELS_PRIZES_AWARDED once the
+/// by LUCKY_WHEELS_PRIZE_LIST_END, or LUCKY_WHEELS_PRIZE_LIST_DONE once the
 /// attendant has handed them over; from LUCKY_WHEELS_LAST_GIVEN on, the item
 /// of each kind she gave last.
-enum {
-  LUCKY_WHEELS_PRIZES_END = -1,
-  LUCKY_WHEELS_PRIZES_AWARDED = -2,
-  LUCKY_WHEELS_LAST_GIVEN = 8
-};
+enum { LUCKY_WHEELS_LAST_GIVEN = 8 };
 
 /// The pixels the spring's water sinks before it fades, one every fourth
 /// frame.
@@ -550,14 +543,15 @@ s32 Scene_Initialize(void) {
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Event_Wait(10);
-      if (wonPrizes[0] == LUCKY_WHEELS_PRIZES_END) {
+      if (wonPrizes[0] == LUCKY_WHEELS_PRIZE_LIST_END) {
         StuccoRoomsC_OfferLuckyWheels(1);
-      } else if (wonPrizes[0] != LUCKY_WHEELS_PRIZES_AWARDED) {
+      } else if (wonPrizes[0] != LUCKY_WHEELS_PRIZE_LIST_DONE) {
         Event_SetMessageId(MsgTolbiCongratulations);
         // "Congratulations!"
         Event_ShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
-        if (*wonPrizes != LUCKY_WHEELS_PRIZES_END) {
-          for (prizeIndex = 0; wonPrizes[prizeIndex] != LUCKY_WHEELS_PRIZES_END;
+        if (*wonPrizes != LUCKY_WHEELS_PRIZE_LIST_END) {
+          for (prizeIndex = 0;
+               wonPrizes[prizeIndex] != LUCKY_WHEELS_PRIZE_LIST_END;
                prizeIndex++) {
             if (prizeIndex == 0) {
               Event_SetMessageId(MsgTolbiWonItemGo);
@@ -575,7 +569,7 @@ s32 Scene_Initialize(void) {
             Event_Wait(30);
           }
         }
-        gMainRoutineState.holdings.wonPrizes[0] = LUCKY_WHEELS_PRIZES_AWARDED;
+        gMainRoutineState.holdings.wonPrizes[0] = LUCKY_WHEELS_PRIZE_LIST_DONE;
         Event_SetMessageId(MsgTolbiComeAgain);
         // "Come again!"
         Event_ShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
@@ -1047,7 +1041,7 @@ static s32 StuccoRoomsC_SelectLuckyWheelsPrize(s32 category) {
     return 0;
   }
 
-  if (category == LUCKY_WHEELS_MOON) {
+  if (category == LUCKY_WHEELS_PRIZE_ANYTHING) {
     category = Random_Below(LUCKY_WHEELS_KINDS);
   }
 

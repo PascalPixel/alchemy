@@ -44,11 +44,12 @@ static void Colosso_StartLettering(u32 shape, u32 secondHalf) {
   gColosso_LetteringPosition = 0;
 }
 
-/// Shows the lettering a visit opens with: `Lend a Hand!` when match is 0, or
-/// else `The 1st Match` to `The 3rd Match`, held for match seconds, and the
-/// count of 3, 2, 1 and `GO`, after which the race music starts.
+/// Shows the lettering a visit opens with: `Lend a Hand!` when match is
+/// LETTERING_LEND_A_HAND, or else `The 1st Match` to `The 3rd Match`, held for
+/// match seconds, and the count of 3, 2, 1 and `GO`, after which the race music
+/// starts.
 static void Colosso_ShowOpeningLettering(s32 match) {
-  if (match == 0) {
+  if (match == LETTERING_LEND_A_HAND) {
     Event_Start();
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();

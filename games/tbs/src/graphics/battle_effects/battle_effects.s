@@ -29,18 +29,18 @@ BattleEffect_ShatteringOpeningSheet:
 BattleEffect_CyanSparkSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/cyan_spark_00.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/cyan_spark.bitmaps.lz"
-	.global BattleEffect_VioletPaletteA
-BattleEffect_VioletPaletteA:
-	.incbin "games/tbs/src/graphics/battle_effects/violet_palette_a.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/violet_palette_a.bitmap.lz"
-	.global BattleEffect_RedPaletteA
-BattleEffect_RedPaletteA:
-	.incbin "games/tbs/src/graphics/battle_effects/red_palette_a.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/red_palette_a.bitmap.lz"
-	.global BattleEffect_YellowPaletteA
-BattleEffect_YellowPaletteA:
-	.incbin "games/tbs/src/graphics/battle_effects/yellow_palette_a.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/yellow_palette_a.bitmap.lz"
+	.global BattleEffect_DeathPlungeVioletPalette
+BattleEffect_DeathPlungeVioletPalette:
+	.incbin "games/tbs/src/graphics/battle_effects/death_plunge_violet_palette.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/death_plunge_violet_palette.bitmap.lz"
+	.global BattleEffect_DeathPlungeRedPalette
+BattleEffect_DeathPlungeRedPalette:
+	.incbin "games/tbs/src/graphics/battle_effects/death_plunge_red_palette.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/death_plunge_red_palette.bitmap.lz"
+	.global BattleEffect_DeathPlungeYellowPalette
+BattleEffect_DeathPlungeYellowPalette:
+	.incbin "games/tbs/src/graphics/battle_effects/death_plunge_yellow_palette.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/death_plunge_yellow_palette.bitmap.lz"
 	.global BattleEffect_StarBurstSheet
 BattleEffect_StarBurstSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/star_burst.gbapal"
@@ -168,10 +168,10 @@ BattleEffect_FlareSheet:
 BattleEffect_FlareImage:
 	.incbin "games/tbs/src/graphics/battle_effects/flare_cels.bitmap.lz"
 	.byte 0x05	@ PACKER: left in the buffer by BattleEffect_FlareSheet+0x277
-	.global BattleEffect_VioletPaletteB
-BattleEffect_VioletPaletteB:
-	.incbin "games/tbs/src/graphics/battle_effects/violet_palette_b.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/violet_palette_b.bitmap.lz"
+	.global BattleEffect_PlasmaVioletPalette
+BattleEffect_PlasmaVioletPalette:
+	.incbin "games/tbs/src/graphics/battle_effects/plasma_violet_palette.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/plasma_violet_palette.bitmap.lz"
 	.global BattleEffect_FireSwirlSheet
 BattleEffect_FireSwirlSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/fire_swirl_00.gbapal"
@@ -210,9 +210,9 @@ BattleEffect_FireballSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/fireball.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/fireball.bitmap.lz"
 	.byte 0x32	@ PACKER: left in the buffer by BattleEffect_FireBurstSheet+0x5df
-	.global BattleEffect_MemberBurstImage
-BattleEffect_MemberBurstImage:
-	.incbin "games/tbs/src/graphics/battle_effects/member_burst.bitmap.lz"
+	.global BattleEffect_GatheringLightsImage
+BattleEffect_GatheringLightsImage:
+	.incbin "games/tbs/src/graphics/battle_effects/gathering_lights.bitmap.lz"
 	.byte 0x19, 0x14, 0x56	@ PACKER: left in the buffer by BattleEffect_FireballSheet+0x49d
 	.global BattleEffect_SlashSheet
 BattleEffect_SlashSheet:
@@ -293,10 +293,10 @@ BattleEffect_FlameColumnSheet:
 BattleEffect_EarthWallSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/earth_wall_00.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/earth_wall.bitmaps.lz"
-	.global BattleEffect_OrangePaletteA
-BattleEffect_OrangePaletteA:
-	.incbin "games/tbs/src/graphics/battle_effects/orange_palette_a.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/orange_palette_a.bitmap.lz"
+	.global BattleEffect_GaiaOrangePalette
+BattleEffect_GaiaOrangePalette:
+	.incbin "games/tbs/src/graphics/battle_effects/gaia_orange_palette.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/gaia_orange_palette.bitmap.lz"
 	.global BattleEffect_FlashBurstSheet
 BattleEffect_FlashBurstSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/flash_burst.gbapal"
@@ -307,20 +307,20 @@ BattleEffect_ThornSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/thorn_00.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/thorn.bitmaps.lz"
 	.byte 0x78	@ PACKER: left in the buffer by BattleEffect_FlashBurstSheet+0xd9b
-	.global BattleEffect_CometSheetA
-BattleEffect_CometSheetA:
-	.incbin "games/tbs/src/graphics/battle_effects/comet_a.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/comet_a.bitmap.lz"
+	.global BattleEffect_SlashCometSheet
+BattleEffect_SlashCometSheet:
+	.incbin "games/tbs/src/graphics/battle_effects/slash_comet.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/slash_comet.bitmap.lz"
 	.byte 0x2a	@ PACKER: left in the buffer by BattleEffect_ThornSheet+0x21b
-	.global BattleEffect_CometSheetB
-BattleEffect_CometSheetB:
-	.incbin "games/tbs/src/graphics/battle_effects/comet_b.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/comet_b.bitmap.lz"
+	.global BattleEffect_WindSlashCometSheet
+BattleEffect_WindSlashCometSheet:
+	.incbin "games/tbs/src/graphics/battle_effects/wind_slash_comet.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/wind_slash_comet.bitmap.lz"
 	.byte 0xaf	@ PACKER: left in the buffer by BattleEffect_ThornSheet+0x2fb
-	.global BattleEffect_CometSheetC
-BattleEffect_CometSheetC:
-	.incbin "games/tbs/src/graphics/battle_effects/comet_c.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/comet_c.bitmap.lz"
+	.global BattleEffect_SonicSlashCometSheet
+BattleEffect_SonicSlashCometSheet:
+	.incbin "games/tbs/src/graphics/battle_effects/sonic_slash_comet.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/sonic_slash_comet.bitmap.lz"
 	.global BattleEffect_WhirlwindSheet
 BattleEffect_WhirlwindSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/whirlwind_00.gbapal"
@@ -339,14 +339,14 @@ BattleEffect_VineSheet:
 BattleEffect_FirePillarSheetA:
 	.incbin "games/tbs/src/graphics/battle_effects/fire_pillar_a_00.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/fire_pillar_a.bitmaps.lz"
-	.global BattleEffect_RedPaletteB
-BattleEffect_RedPaletteB:
-	.incbin "games/tbs/src/graphics/battle_effects/red_palette_b.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/red_palette_b.bitmap.lz"
-	.global BattleEffect_OrangePaletteB
-BattleEffect_OrangePaletteB:
-	.incbin "games/tbs/src/graphics/battle_effects/orange_palette_b.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/orange_palette_b.bitmap.lz"
+	.global BattleEffect_VolcanoRedPalette
+BattleEffect_VolcanoRedPalette:
+	.incbin "games/tbs/src/graphics/battle_effects/volcano_red_palette.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/volcano_red_palette.bitmap.lz"
+	.global BattleEffect_VolcanoOrangePalette
+BattleEffect_VolcanoOrangePalette:
+	.incbin "games/tbs/src/graphics/battle_effects/volcano_orange_palette.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/volcano_orange_palette.bitmap.lz"
 	.global BattleEffect_VioletCometSheet
 BattleEffect_VioletCometSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/violet_comet_00.gbapal"
@@ -447,9 +447,9 @@ BattleEffect_DaggerSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/dagger.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/dagger.bitmap.lz"
 	.byte 0x0a, 0x77, 0x19	@ PACKER: left in the buffer by BattleEffect_ShieldSheet+0xb45
-	.global BattleEffect_PaletteRampImage
-BattleEffect_PaletteRampImage:
-	.incbin "games/tbs/src/graphics/battle_effects/spark_cells.bitmaps.lz"
+	.global BattleEffect_StatReductionShardSheet
+BattleEffect_StatReductionShardSheet:
+	.incbin "games/tbs/src/graphics/battle_effects/stat_reduction_shard.bitmaps.lz"
 	.byte 0x01, 0x0d	@ PACKER: left in the buffer by BattleEffect_DaggerSheet+0x196
 	.global BattleEffect_SmokeSheet
 BattleEffect_SmokeSheet:
@@ -510,15 +510,15 @@ BattleEffect_HeartSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/heart.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/heart.bitmap.lz"
 	.byte 0x09	@ PACKER: left in the buffer by BattleEffect_SkullSheet+0x297
-	.global BattleEffect_CounterRevealSheet
-BattleEffect_CounterRevealSheet:
-	.incbin "games/tbs/src/graphics/battle_effects/counter_reveal_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/counter_reveal.bitmaps.lz"
+	.global BattleEffect_ReaperSheet
+BattleEffect_ReaperSheet:
+	.incbin "games/tbs/src/graphics/battle_effects/reaper_00.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/reaper.bitmaps.lz"
 	.global BattleEffect_RedCrescentSheetA
 BattleEffect_RedCrescentSheetA:
 	.incbin "games/tbs/src/graphics/battle_effects/red_crescent_a_00.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/red_crescent_a.bitmaps.lz"
-	.byte 0x34	@ PACKER: left in the buffer by BattleEffect_CounterRevealSheet+0x49b
+	.byte 0x34	@ PACKER: left in the buffer by BattleEffect_ReaperSheet+0x49b
 	.global BattleEffect_BlueBeastSheet
 BattleEffect_BlueBeastSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/blue_beast_00.gbapal"
@@ -645,22 +645,22 @@ BattleEffect_BlueDropletSheet:
 BattleEffect_WindStreakSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/wind_streak_00.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/wind_streak.bitmaps.lz"
-	.global BattleEffect_YellowPaletteB
-BattleEffect_YellowPaletteB:
-	.incbin "games/tbs/src/graphics/battle_effects/yellow_palette_b.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/yellow_palette_b.bitmap.lz"
+	.global BattleEffect_VenusStarFieldPalette
+BattleEffect_VenusStarFieldPalette:
+	.incbin "games/tbs/src/graphics/battle_effects/venus_star_field_palette.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/venus_star_field_palette.bitmap.lz"
 	.global BattleEffect_BlueRingSheet
 BattleEffect_BlueRingSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/blue_ring_00.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/blue_ring.bitmaps.lz"
-	.global BattleEffect_RedPaletteC
-BattleEffect_RedPaletteC:
-	.incbin "games/tbs/src/graphics/battle_effects/red_palette_c.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/red_palette_c.bitmap.lz"
-	.global BattleEffect_VioletPaletteD
-BattleEffect_VioletPaletteD:
-	.incbin "games/tbs/src/graphics/battle_effects/violet_palette_d.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/violet_palette_d.bitmap.lz"
+	.global BattleEffect_MarsStarFieldPalette
+BattleEffect_MarsStarFieldPalette:
+	.incbin "games/tbs/src/graphics/battle_effects/mars_star_field_palette.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/mars_star_field_palette.bitmap.lz"
+	.global BattleEffect_JupiterStarFieldPalette
+BattleEffect_JupiterStarFieldPalette:
+	.incbin "games/tbs/src/graphics/battle_effects/jupiter_star_field_palette.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/jupiter_star_field_palette.bitmap.lz"
 	.global BattleEffect_BlueBeamSheet
 BattleEffect_BlueBeamSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/blue_beam_00.gbapal"

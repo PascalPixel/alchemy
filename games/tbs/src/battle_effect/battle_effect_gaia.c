@@ -91,7 +91,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
   Resource_LoadAndDecompress(RESOURCE_EARTH_WALL_SHEET, Ram_MapGridCellBuffer,
                              1, 0);
-  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_A),
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_GAIA_ORANGE_PALETTE),
                   SHEET_PALETTE_BYTES);
   color = &BG_PLTT[1];
   for (i = 0; i != SHEET_PALETTE_COLORS - 1; i++) {

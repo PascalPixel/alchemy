@@ -4,12 +4,6 @@
 
 #include "field_sequence_internal.h"
 
-/// ItemDisplay_ShowPicture's and ItemDisplay_ShowItem's flags.
-enum ItemDisplayFlag {
-  ITEM_DISPLAY_SPARKLES = 1, ///< sparkles appear round the picture
-  ITEM_DISPLAY_RAISED = 2    ///< the leader holds it up over his head
-};
-
 /// Keeps the party leader off the treasure spots: a leader within 16 pixels of
 /// a treasure spot's centre is moved 20 pixels from that centre, in the
 /// direction it stood, and loses its move target.

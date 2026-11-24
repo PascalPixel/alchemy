@@ -384,21 +384,20 @@ static void MercuryLighthouse_StartDjinnBattle(void) {
 }
 
 #if TBS_PATCH_3
-/// The rows of MercuryLighthouseMiddle's gate room where the fade overlay lets
+/// The rows of MercuryLighthouseMiddle's gate room where the ground mask lets
 /// go of the leader walking on the ground layer.
-#define OVERLAY_FREE_FIRST_ROW 13
-#define OVERLAY_FREE_LAST_ROW 18
+#define UNMASKED_FIRST_ROW 13
+#define UNMASKED_LAST_ROW 18
 
-/// Task: the fade overlay stops following the leader while he crosses the
-/// rows from OVERLAY_FREE_FIRST_ROW to OVERLAY_FREE_LAST_ROW on
+/// Task: the ground mask stops following the leader while he crosses the
+/// rows from UNMASKED_FIRST_ROW to UNMASKED_LAST_ROW on
 /// MAPGRID_LAYER_GROUND.
 static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  struct FadeOverlayState *effectState = gFadeOverlayState;
+  struct GroundMaskState *effectState = gGroundMaskState;
 
-  if (leader->layer == 0 &&
-      FIELD_CELL(leader->z.fixed) >= OVERLAY_FREE_FIRST_ROW &&
-      FIELD_CELL(leader->z.fixed) <= OVERLAY_FREE_LAST_ROW)
+  if (leader->layer == 0 && FIELD_CELL(leader->z.fixed) >= UNMASKED_FIRST_ROW &&
+      FIELD_CELL(leader->z.fixed) <= UNMASKED_LAST_ROW)
     effectState->actor = NULL;
   else
     effectState->actor = leader;
@@ -2145,7 +2144,8 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
 static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Event_Start();
   Sound_Play(MUS_TREASURE_FOUND);
-  ItemDisplay_ShowItem(ITEM_HERMES_WATER, 3);
+  ItemDisplay_ShowItem(ITEM_HERMES_WATER,
+                       ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
   Inventory_ReplaceItem(ITEM_EMPTY_BOTTLE, ITEM_HERMES_WATER);
   MessageArgument_Push(PartyInventory_FindMember(ITEM_HERMES_WATER),
                        MESSAGE_ARGUMENT_ACTOR);
@@ -2377,7 +2377,7 @@ s32 Scene_Initialize(void) {
   MercuryLighthouse_RestoreLights(
       CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER,
       (struct MercuryLighthouseLights *)gSceneLocalState);
-  FieldEffect_StartFadeOverlay(0);
+  FieldEffect_StartGroundMask(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
   else
@@ -2689,7 +2689,7 @@ s32 Scene_Initialize(void) {
       MercuryLighthouse_ArriveWithSparks();
       Scene_QueueMusic(SE_AMBIENT_WATER);
       PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+      PaletteFade_ApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
       PaletteFade_StartInterpolation(30);
       Event_WaitTransitionFrames();
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

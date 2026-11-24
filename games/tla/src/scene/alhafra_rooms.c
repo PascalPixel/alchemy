@@ -489,137 +489,122 @@ extern u32 gAlhafraRooms_TravelersWalkOffScript[];
 /// FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE; outside the Japanese edition, only
 /// when Felix came in from the east of the map (FLAG_ENTERED_IN_THE_EAST).
 void AlhafraRooms_OverhearCrossboneIsleTale(void) {
-
-  if (Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
-  } else {
-#if TLA_PATCH_1 /* The Japanese edition does not check                         \
-                   FLAG_ENTERED_IN_THE_EAST. */
-    if (!Event_GetFlag(FLAG_ENTERED_IN_THE_EAST)) {
-    } else
+  if (Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE))
+    return;
+#if TLA_PATCH_1 // The Japanese edition does not check FLAG_ENTERED_IN_THE_EAST.
+  if (!Event_GetFlag(FLAG_ENTERED_IN_THE_EAST))
+    return;
 #endif
-    {
-      Event_SetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE);
-      Event_Start();
-      FieldEvent_EndLastingPsynergy(0);
-      FieldEvent_SetMessageId((s32)MsgAlhafraRoomsLegendsSaidThatCrossboneIsle);
-      Actor_WalkToAndWait(ACTOR_FELIX, 504, 328);
-      Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_WEST);
-      FieldCamera_MoveTo(408, CAMERA_KEEP, 328, 1);
-      FieldCamera_WaitForArrival();
-      FieldEvent_Wait(10);
-      Actor_RunRepeatedMotion(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 2);
-      FieldEvent_Wait(5);
-      // "Legends said that Crossbone Isle could be found in the middle of..."
-      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
-                                     5);
-      Actor_ShowEmote(ACTOR_SAILOR_EAGER_TO_JOIN,
-                      EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-      // "Ah... Crossbone Isle... Wait, did you say "could"? Is it not there..."
-      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
-      Actor_ShowEmote(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
-                      EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-      // "Well, it's still there, but there's no point in going. Someone..."
-      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
-                                     5);
-      Actor_ShowEmote(ACTOR_SAILOR_EAGER_TO_JOIN, EMOTE_IN_FRONT | EMOTE_WINCE,
-                      30);
-      // "What, he took all the treasure?"
-      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
-      Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
-                                ANIM_NOD);
-      FieldEvent_Wait(10);
-      // "Yeah. And apparently, he even defeated the ancient ghost pirate..."
-      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
-                                     5);
-      FieldActor_Jump(ACTOR_SAILOR_EAGER_TO_JOIN, 6, 15);
-      FieldActor_Jump(ACTOR_SAILOR_EAGER_TO_JOIN, 6, 23);
-      // "What about the stories that if you beat the ghost pirate, you..."
-      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
-      Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
-                                ANIM_NOD);
-      FieldEvent_Wait(10);
-      // "Well, you see, that means that Isaac is our leader now."
-      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
-                                     5);
-      Actor_ShowEmote(ACTOR_SAILOR_EAGER_TO_JOIN,
-                      EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-      // "Wow... just like that? I'll bet he's pretty tough."
-      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
-      Actor_RunRepeatedMotion(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 2);
-      FieldEvent_Wait(5);
-      // "No doubt. But you know, he must be a reliable guy, too..."
-      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
-                                     5);
-      Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, ANIM_NOD);
-      FieldEvent_Wait(10);
-      // "You think?"
-      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
-      Actor_FaceDirectionAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
-                                 FACING_NORTH_NORTHEAST);
-      FieldEvent_Wait(15);
-      // "You'd have to be to beat that ghost. That's why we're looking for..."
-      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
-                                     5);
-      Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, ANIM_NOD);
-      FieldEvent_Wait(10);
-      // "If he's looking for a pirate crew, he can count me in!"
-      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
-      Actor_FaceDirectionAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
-                                 FACING_SOUTH_SOUTHEAST);
-      FieldEvent_Wait(15);
-      Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
-                                ANIM_NOD);
-      FieldEvent_Wait(20);
-      Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, ANIM_NOD);
-      FieldEvent_Wait(20);
-      Actor_SetSpeed(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 1);
-      Actor_SetSpeed(ACTOR_SAILOR_EAGER_TO_JOIN, 1);
-      FieldActor_SetSpritePriority(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 2);
-      FieldActor_SetSpritePriority(ACTOR_SAILOR_EAGER_TO_JOIN, 2);
-      EventCamera_FollowActor(ACTOR_SAILOR_EAGER_TO_JOIN, 1);
-      Actor_WalkTo(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 394, 342);
-      FieldEvent_Wait(10);
-      Actor_WalkTo(ACTOR_SAILOR_EAGER_TO_JOIN, 450, 346);
-      FieldActor_WaitForMoveById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
-      Actor_WalkTo(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 450, 346);
-      FieldActor_WaitForMoveById(ACTOR_SAILOR_EAGER_TO_JOIN);
-      Actor_WalkTo(ACTOR_SAILOR_EAGER_TO_JOIN, 470, 328);
-      FieldActor_WaitForMoveById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
-      Actor_WalkTo(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 470, 328);
-      FieldActor_WaitForMoveById(ACTOR_SAILOR_EAGER_TO_JOIN);
-      Actor_WalkTo(ACTOR_SAILOR_EAGER_TO_JOIN, 486, 328);
-      FieldActor_WaitForMoveById(ACTOR_SAILOR_EAGER_TO_JOIN);
-      Actor_SetAnimation(ACTOR_SAILOR_EAGER_TO_JOIN, ANIM_STAND);
-      Actor_FaceDirectionAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, FACING_EAST);
-      FieldActor_WaitForMoveById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
-      Actor_SetAnimation(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, ANIM_STAND);
-      Actor_FaceDirectionAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
-                                 FACING_EAST);
-      Actor_WalkByAndWait(ACTOR_FELIX, 0, -16);
-      Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
-      FieldEvent_Wait(10);
-      Actor_SetScript(ACTOR_SAILOR_EAGER_TO_JOIN,
-                      gAlhafraRooms_TravelersWalkOffScript);
-      FieldEvent_Wait(10);
-      Actor_SetScript(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
-                      gAlhafraRooms_TravelersWalkOffScript);
-      FieldEvent_Wait(10);
-      FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_SAILOR_EAGER_TO_JOIN);
-      FieldEvent_Wait(60);
-      FieldActor_SetSpritePriority(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 3);
-      FieldActor_SetSpritePriority(ACTOR_SAILOR_EAGER_TO_JOIN, 3);
-      FieldActor_WaitForScriptEndById(ACTOR_SAILOR_EAGER_TO_JOIN);
-      FieldActor_Stop(ACTOR_FELIX);
-      FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-      Actor_SetPosition(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 0);
-      Event_PlaySound(SE_MAP_EXIT);
-      FieldActor_WaitForScriptEndById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
-      Actor_SetPosition(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0, 0);
-      Event_PlaySound(SE_MAP_EXIT);
-      FieldEvent_Wait(10);
-      Event_End();
-    }
-  }
+  Event_SetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE);
+  Event_Start();
+  FieldEvent_EndLastingPsynergy(0);
+  FieldEvent_SetMessageId((s32)MsgAlhafraRoomsLegendsSaidThatCrossboneIsle);
+  Actor_WalkToAndWait(ACTOR_FELIX, 504, 328);
+  Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_WEST);
+  FieldCamera_MoveTo(408, CAMERA_KEEP, 328, 1);
+  FieldCamera_WaitForArrival();
+  FieldEvent_Wait(10);
+  Actor_RunRepeatedMotion(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 2);
+  FieldEvent_Wait(5);
+  // "Legends said that Crossbone Isle could be found in the middle of..."
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0, 5);
+  Actor_ShowEmote(ACTOR_SAILOR_EAGER_TO_JOIN,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Ah... Crossbone Isle... Wait, did you say "could"? Is it not there..."
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
+  Actor_ShowEmote(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
+                  EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "Well, it's still there, but there's no point in going. Someone..."
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0, 5);
+  Actor_ShowEmote(ACTOR_SAILOR_EAGER_TO_JOIN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "What, he took all the treasure?"
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
+  Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, ANIM_NOD);
+  FieldEvent_Wait(10);
+  // "Yeah. And apparently, he even defeated the ancient ghost pirate..."
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0, 5);
+  FieldActor_Jump(ACTOR_SAILOR_EAGER_TO_JOIN, 6, 15);
+  FieldActor_Jump(ACTOR_SAILOR_EAGER_TO_JOIN, 6, 23);
+  // "What about the stories that if you beat the ghost pirate, you..."
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
+  Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, ANIM_NOD);
+  FieldEvent_Wait(10);
+  // "Well, you see, that means that Isaac is our leader now."
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0, 5);
+  Actor_ShowEmote(ACTOR_SAILOR_EAGER_TO_JOIN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP,
+                  30);
+  // "Wow... just like that? I'll bet he's pretty tough."
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
+  Actor_RunRepeatedMotion(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 2);
+  FieldEvent_Wait(5);
+  // "No doubt. But you know, he must be a reliable guy, too..."
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0, 5);
+  Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, ANIM_NOD);
+  FieldEvent_Wait(10);
+  // "You think?"
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
+                             FACING_NORTH_NORTHEAST);
+  FieldEvent_Wait(15);
+  // "You'd have to be to beat that ghost. That's why we're looking for..."
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0, 5);
+  Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, ANIM_NOD);
+  FieldEvent_Wait(10);
+  // "If he's looking for a pirate crew, he can count me in!"
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
+                             FACING_SOUTH_SOUTHEAST);
+  FieldEvent_Wait(15);
+  Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, ANIM_NOD);
+  FieldEvent_Wait(20);
+  Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, ANIM_NOD);
+  FieldEvent_Wait(20);
+  Actor_SetSpeed(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 1);
+  Actor_SetSpeed(ACTOR_SAILOR_EAGER_TO_JOIN, 1);
+  FieldActor_SetSpritePriority(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 2);
+  FieldActor_SetSpritePriority(ACTOR_SAILOR_EAGER_TO_JOIN, 2);
+  EventCamera_FollowActor(ACTOR_SAILOR_EAGER_TO_JOIN, 1);
+  Actor_WalkTo(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 394, 342);
+  FieldEvent_Wait(10);
+  Actor_WalkTo(ACTOR_SAILOR_EAGER_TO_JOIN, 450, 346);
+  FieldActor_WaitForMoveById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
+  Actor_WalkTo(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 450, 346);
+  FieldActor_WaitForMoveById(ACTOR_SAILOR_EAGER_TO_JOIN);
+  Actor_WalkTo(ACTOR_SAILOR_EAGER_TO_JOIN, 470, 328);
+  FieldActor_WaitForMoveById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
+  Actor_WalkTo(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 470, 328);
+  FieldActor_WaitForMoveById(ACTOR_SAILOR_EAGER_TO_JOIN);
+  Actor_WalkTo(ACTOR_SAILOR_EAGER_TO_JOIN, 486, 328);
+  FieldActor_WaitForMoveById(ACTOR_SAILOR_EAGER_TO_JOIN);
+  Actor_SetAnimation(ACTOR_SAILOR_EAGER_TO_JOIN, ANIM_STAND);
+  Actor_FaceDirectionAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, FACING_EAST);
+  FieldActor_WaitForMoveById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
+  Actor_SetAnimation(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, ANIM_STAND);
+  Actor_FaceDirectionAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
+                             FACING_EAST);
+  Actor_WalkByAndWait(ACTOR_FELIX, 0, -16);
+  Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
+  FieldEvent_Wait(10);
+  Actor_SetScript(ACTOR_SAILOR_EAGER_TO_JOIN,
+                  gAlhafraRooms_TravelersWalkOffScript);
+  FieldEvent_Wait(10);
+  Actor_SetScript(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
+                  gAlhafraRooms_TravelersWalkOffScript);
+  FieldEvent_Wait(10);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_SAILOR_EAGER_TO_JOIN);
+  FieldEvent_Wait(60);
+  FieldActor_SetSpritePriority(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 3);
+  FieldActor_SetSpritePriority(ACTOR_SAILOR_EAGER_TO_JOIN, 3);
+  FieldActor_WaitForScriptEndById(ACTOR_SAILOR_EAGER_TO_JOIN);
+  FieldActor_Stop(ACTOR_FELIX);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+  Actor_SetPosition(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 0);
+  Event_PlaySound(SE_MAP_EXIT);
+  FieldActor_WaitForScriptEndById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
+  Actor_SetPosition(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0, 0);
+  Event_PlaySound(SE_MAP_EXIT);
+  FieldEvent_Wait(10);
+  Event_End();
 }
 
 // clang-format off

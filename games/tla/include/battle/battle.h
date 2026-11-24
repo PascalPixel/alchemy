@@ -249,7 +249,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position);
 
 // The game's rules: units, Djinn, flags and elements.
 s32 Battle_GetElementMultiplier(s32 selector, s32 mode);
-s32 Enemy_GetAttackElement(void *state);
+s32 Enemy_GetAttackElement(struct Unit *unit);
 #ifndef OWN_Unit_CalculateFar
 /// Works a unit's stats out again from its base stats, equipment, set Djinn,
 /// class and battle stat levels, keeping its HP and PP at the same fraction.

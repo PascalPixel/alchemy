@@ -65,8 +65,7 @@ s32 Unit_GetElementLevel(s32 unitId, s32 element) {
 
 /// Returns the element an enemy attacks with, from its element preset; an id
 /// past the table's end reads the first preset.
-s32 Enemy_GetAttackElement(void *state) {
-  struct Unit *unit = state;
+s32 Enemy_GetAttackElement(struct Unit *unit) {
   u8 preset = Enemy_GetDefinition(unit->enemyId)->elementPreset;
 
   if (preset >= ENEMY_ELEMENT_PRESET_COUNT)

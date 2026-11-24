@@ -9,8 +9,6 @@
 #include "system/ram_buffer.h"
 #include "system/task.h"
 #include "graphics/vram_tab.h"
-#include "graphics/resource.h"
-#include "game/class_djinn.h"
 
 /// An icon slot that holds no VRAM cache entry.
 #define ICON_NONE VRAM_CACHE_ENTRY_COUNT

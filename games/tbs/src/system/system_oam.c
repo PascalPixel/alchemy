@@ -99,7 +99,7 @@ void Oam_AddSpriteAtDepth(void *slotEntry, s32 slot) {
 void Oam_BuildBuffer(void *work) {
   OamBuildRoutine routine;
 
-  RamCode_Load(routine, Oam_BuildBufferKernel, LoadedRuntime_Size);
+  RamCode_Load(routine, Oam_BuildBufferKernel, Oam_BuildBufferKernelCodeSize);
   routine(work);
   Heap_Release((void *)routine);
 }

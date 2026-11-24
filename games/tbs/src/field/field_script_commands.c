@@ -434,8 +434,8 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
         // Shorten the offset to moveStep along the same direction: dx over
         // the distance is a 16.16 fraction, times the step.
         if (distance > moveStep) {
-          dx = Iwram_MulFX(Iwram_RatioMulQ14(distance, dx), moveStep);
-          dz = Iwram_MulFX(Iwram_RatioMulQ14(distance, dz), moveStep);
+          dx = Iwram_MulFX(Iwram_DivFX(distance, dx), moveStep);
+          dz = Iwram_MulFX(Iwram_DivFX(distance, dz), moveStep);
         }
         cameraActor->x.fixed += dx;
         cameraActor->z.fixed += dz;

@@ -115,9 +115,9 @@ void FieldEffect_StartFadeOverlay(void *object) {
 }
 
 /// Stops drawing the fade overlay, keeping its state.
-void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
+void FadeOverlay_Suspend(void) { Task_Suspend(FadeOverlay_DrawMarks); }
 
 /// Draws the fade overlay again after FadeOverlay_Suspend.
-void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }
+void FadeOverlay_Resume(void) { Task_Resume(FadeOverlay_DrawMarks); }
 
 #undef CELL_GRID_ROW_MASK

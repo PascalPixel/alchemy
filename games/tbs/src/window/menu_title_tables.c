@@ -12,7 +12,7 @@ const FIXED gWindowSprite_PulseScales[] = {
 };
 
 /// A row of 4-bit pixels for the centre tile and one for the end tile, colour
-/// 5 where the pattern marks (Menu_BuildLocalizedPatternTiles); a word's
+/// 5 where the pattern marks (RangeIcon_BuildTiles); a word's
 /// lowest nibble is its leftmost pixel.
 const struct TileMask gMenu_BarPatternRows[] = {
     {0x00055000, 0x00000000}, {0x05055050, 0x00000000},

@@ -254,8 +254,8 @@ Oam_BuildBufferKernel:
 	.4byte	IwramFillWords
 	.4byte	gOamMatrixCount
 	.4byte	gOamMatrices
-	.global LoadedRuntime_Size
-	.set LoadedRuntime_Size, . - Oam_BuildBufferKernel
+	.global Oam_BuildBufferKernelCodeSize
+	.set Oam_BuildBufferKernelCodeSize, . - Oam_BuildBufferKernel
 .syntax unified
 	.arm
 	.global PaletteFade_ScaleThreeQuartersKernel

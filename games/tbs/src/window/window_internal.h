@@ -122,7 +122,7 @@ enum {
   TEXT_UNUSED_11 = 11,
   TEXT_UNUSED_12 = 12,
   TEXT_UNUSED_14 = 14,
-  TEXT_WINDOW_STATE = 15, ///< the next entry is the window animation to run
+  TEXT_WINDOW_ANIMATION = 15, ///< the next entry is the window animation to run
   /// MESSAGE_ACTOR_NAME as Message_DecodeRaw keeps it, unexpanded: the next
   /// entry names the unit, and drawing and measuring skip both.
   TEXT_ACTOR_NAME = 17,
@@ -180,8 +180,8 @@ enum TextStyle {
 /// each glyph by one.
 #define GLYPH_PAIR_OUTLINED_WIDTH_MAX 14
 
-/// The window animation a message can start (TEXT_WINDOW_STATE): the window's
-/// frame grows by a tile and its text sprites pulse, for the message's
+/// The window animation a message can start (TEXT_WINDOW_ANIMATION): the
+/// window's frame grows by a tile and its text sprites pulse, for the message's
 /// countdown.
 #define WINDOW_ANIMATION_SWELL 4
 

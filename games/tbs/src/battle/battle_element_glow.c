@@ -88,7 +88,7 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
       if (distance <= toFIXED(1) / 16 - 1) {
         spark->life = 0;
       } else {
-        scale = Iwram_RatioMulQ14(distance, FIXED_ONE);
+        scale = Iwram_DivFX(distance, FIXED_ONE);
         spark->life--;
         axisPosition = spark->motion;
         for (axis = 0; axis < 3; axis++) {

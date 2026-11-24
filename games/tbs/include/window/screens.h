@@ -24,7 +24,7 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 code, s32 layers,
                                                struct Window *input, s32 x,
                                                s32 y);
 struct WindowSprite *
-WindowSprite_CreateWithTransform(s32 icon, struct Window *input, s32 x, s32 y);
+WindowSprite_CreateOverlaidIcon(s32 icon, struct Window *input, s32 x, s32 y);
 struct WindowSprite *WindowSprite_CreateFromTable(s32 table_entry,
                                                   struct Window *input, s32 x,
                                                   s32 y);
@@ -32,7 +32,7 @@ struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
                                      struct Window *window, s32 x, s32 y);
 void Portrait_Reload(u32 side, s32 character, s32 unused);
 void WindowSprite_SetMotion(struct WindowSprite *sprite, s32 mode);
-void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority);
+void WindowSprite_SetPriority(void *sprite, s32 priority);
 void ScanlineWindow_FillSpans(void *spans);
 void BgScreen_FillRect(s32 x, s32 y, u32 width, u32 height, s32 value);
 
@@ -76,7 +76,7 @@ void FileList_DrawSummary(struct Window *win, struct SaveFileSummary *rec);
 s32 FileList_SelectFile(s32 file, s32 mode);
 s32 Save_ToChosenFile(void);
 s32 Save_ChooseAndLoadFile(s32 mode);
-s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
+s32 PointingHand_LoadIntoFreeSlot(void);
 s32 NameEntry_AcceptsMark(s32 mark, s32 letter);
 s32 NameEntry_CountLetters(const u8 *name);
 void Window_CopyTilemapRegion(const struct Window *window, const void *source);
@@ -107,12 +107,12 @@ struct IconPalette;
 struct PsynergyEntry;
 struct BattleCommandRowState;
 
-UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void);
+UNREAD_RESULT RangeIcon_BuildTiles(void);
 UNREAD_RESULT RangeIcon_Draw(struct Window *window, s32 x, s32 y, s32 pattern,
                              s32 unused);
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
-void Link_DrawPageArrows(s32 offset);
+void PageArrows_Draw(s32 offset);
 void Graphics_ExpandVramTilesByColorTable(u16 *dst);
 s32 StatusIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index);

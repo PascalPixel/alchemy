@@ -40,8 +40,8 @@ void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 frame, s32 *slot,
 
 /// Unused: builds an ability's icon from the item icons rather than the
 /// Psynergy icons, as Icon_BuildItemIconTiles.
-UNUSED void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
-                                 s32 reuse) {
+UNUSED void Ability_BuildItemIconTiles(s32 action, s32 withBase, s32 *slot,
+                                       s32 *tile, s32 reuse) {
   Icon_BuildItemIconTiles(Ability_Get(action)->icon, withBase, slot, tile,
                           reuse);
 }
@@ -118,7 +118,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
     state->height = 2;
     Icon_Decode(state, 1);
   }
-  if ((layers & ICON_ARTIFACT) && (code & INVENTORY_EQUIPPED) &&
+  if ((layers & ICON_CURSED) && (code & INVENTORY_EQUIPPED) &&
       (item->flags & ITEM_CURSED) && (item->flags & ITEM_CANNOT_UNEQUIP)) {
     state->encoded = gIcon_MarkPointers[ICON_MARK_CURSED];
     state->width = 2;
@@ -157,7 +157,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
 
 /// Draws an item's icon from its inventory code with the layers asked for
 /// (ItemIcon_Compose) and loads it into sprite tile slot cacheSlot.
-s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
+s32 ItemIcon_LoadLayersIntoSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   IconTransfer *state;
 
   state = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
@@ -182,7 +182,7 @@ s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
 /// Loads 32 bytes, one sprite tile, from the start of gMenuTitlePictures into
 /// the VRAM cache entry slot, whichever entry is asked for: those bytes are the
 /// table's first pointers, not a picture.
-s32 Resource_LoadTableEntry(u32 entry, s32 unused, u32 slot) {
+s32 MenuTitle_LoadFirstTile(u32 entry, s32 unused, u32 slot) {
   extern const u8 *gMenuTitlePicturesCaseA[] __asm__("gMenuTitlePictures"),
       *gMenuTitlePicturesCaseB[] __asm__("gMenuTitlePictures"),
       *gMenuTitlePicturesCaseC[] __asm__("gMenuTitlePictures");
@@ -224,8 +224,8 @@ void Icon_DrawItem(s32 code) {
 }
 
 /// Builds an ability's Psynergy icon, as Icon_BuildAbilityIconTiles.
-void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
-                       s32 reuse) {
+void Ability_BuildIconTiles(s32 action, s32 withBase, s32 *slot, s32 *tile,
+                            s32 reuse) {
   Icon_BuildAbilityIconTiles(Ability_Get(action)->icon, withBase, slot, tile,
                              reuse);
 }

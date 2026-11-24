@@ -27,7 +27,7 @@ enum FileMenuMode {
   FILE_LIST_COPY,     ///< copying: any file with data
   FILE_LIST_ERASE,    ///< erasing: any file with data
   /// The title's Battle: files whose party has found a Djinni
-  /// (SaveFileSummary.flagCount).
+  /// (SaveFileSummary.djinnCount).
   FILE_LIST_BATTLE,
   FILE_LIST_CLEARED ///< the title's Send: cleared files only
 };
@@ -160,7 +160,7 @@ s32 Save_ScanFileSummaries(void) {
         gTitleSendOptionEnabled = 1;
         sentCount++;
       }
-      if (state->summary[i].flagCount != 0) {
+      if (state->summary[i].djinnCount != 0) {
         gTitleBattleOptionEnabled = 1;
       }
     }
@@ -237,11 +237,11 @@ u32 Save_BuildFileSummary(void) {
   summary->windowHue = gMainRoutineState.windowHue;
   summary->windowBrightness = gMainRoutineState.windowBrightness;
   summary->sendFlag = gMainRoutineState.sendFlag;
-  summary->flagCount = 0;
+  summary->djinnCount = 0;
   for (i = FLAG_DJINN_FIRST; i < FLAG_DJINNI(ELEMENT_COUNT * DJINN_PER_ELEMENT);
        i++) {
     if (GameFlag_GetFar(i))
-      summary->flagCount++;
+      summary->djinnCount++;
   }
   summary->childhood = GameFlag_GetFar(FLAG_CHILDHOOD) != 0;
   {
@@ -882,7 +882,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   } else if (menuMode == FILE_LIST_BATTLE) {
     for (i = 0; i < SAVE_FILE_COUNT &&
                 (save->summary[selectedFile].level == 0 ||
-                 (s8)save->summary[selectedFile].flagCount == 0);
+                 (s8)save->summary[selectedFile].djinnCount == 0);
          i++) {
       selectedFile++;
       if (selectedFile == SAVE_FILE_COUNT)
@@ -972,7 +972,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   }
   if (menuMode == FILE_LIST_BATTLE) {
     for (i = 0; i < SAVE_FILE_COUNT &&
-                ((s8)save->summary[selectedFile].flagCount == 0);
+                ((s8)save->summary[selectedFile].djinnCount == 0);
          i++) {
       selectedFile++;
       if (selectedFile == SAVE_FILE_COUNT)
@@ -1110,7 +1110,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                 (menuMode == FILE_LIST_CONTINUE &&
                  (s8)save->summary[selectedFile].sendFlag != 0) ||
                 (menuMode == FILE_LIST_BATTLE &&
-                 (s8)save->summary[selectedFile].flagCount == 0) ||
+                 (s8)save->summary[selectedFile].djinnCount == 0) ||
                 (menuMode == FILE_LIST_CLEARED &&
                  (s8)save->summary[selectedFile].sendFlag == 0)));
     } else if (gKeysRepeat & KEY_DOWN) {
@@ -1124,7 +1124,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                 (menuMode == FILE_LIST_CONTINUE &&
                  (s8)save->summary[selectedFile].sendFlag != 0) ||
                 (menuMode == FILE_LIST_BATTLE &&
-                 (s8)save->summary[selectedFile].flagCount == 0) ||
+                 (s8)save->summary[selectedFile].djinnCount == 0) ||
                 (menuMode == FILE_LIST_CLEARED &&
                  (s8)save->summary[selectedFile].sendFlag == 0)));
     } else if (gKeysPressed & KEY_B) {
@@ -1258,7 +1258,7 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
 /// Loads the pointing hand cursor's tiles (gPointingHandTiles, 128 bytes) into
 /// a free VRAM slot and returns the slot, which the caller frees with
 /// VramCache_FreeEntry.
-s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
+s32 PointingHand_LoadIntoFreeSlot(void) {
   s32 slot;
 
   slot = VramCache_FindFreeEntry();

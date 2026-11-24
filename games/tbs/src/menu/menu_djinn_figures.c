@@ -104,7 +104,7 @@ void DjinnFigures_UpdateBottomRow(void) {
   struct SpriteScale scale;
   struct SpritePlacement placement;
 
-  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
+  PageArrows_DrawFar(PAGE_ARROW_VRAM);
   for (index = 0; index <= 3; index++) {
     struct Sprite *figure = menu->figures[index];
 

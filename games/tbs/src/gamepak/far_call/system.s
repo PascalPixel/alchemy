@@ -7,8 +7,8 @@ FarCall_RuntimeTable:
 	overlay_veneer Task_ResetAll
 	export Task_AddFar, Task_Add
 	export Task_RemoveFar, Task_Remove
-	overlay_veneer Task_SuspendAll
-	overlay_veneer Task_ResumeAll
+	overlay_veneer Task_Suspend
+	overlay_veneer Task_Resume
 	overlay_veneer Task_RunPass
 	export Random16Far, Random16
 	export Trig_AtanFar, Trig_Atan

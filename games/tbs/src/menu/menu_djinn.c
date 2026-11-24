@@ -136,7 +136,7 @@ s32 DjinnMenu_Run(void) {
   }
   Menu_SuspendFieldTasks();
   Text_UseExtraTilesFar(1);
-  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
+  PageArrows_DrawFar(PAGE_ARROW_VRAM);
   menu->memberCount = Party_ListMembersFar(menu->members);
   Menu_LoadDjinnArrows();
   ItemMenu_Initialize(0, 3, 0, 7);

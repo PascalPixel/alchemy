@@ -11303,7 +11303,7 @@ msgctxt "message"
 msgid "02766"
 msgstr "Verfügbare Anzahl"
 
-msgctxt "MsgPanelStatLabel"
+msgctxt "MsgPanelAttackLabel"
 msgid "02767"
 msgstr "Attacke"
 

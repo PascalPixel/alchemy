@@ -247,7 +247,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
   case STATUS_PANEL_STATS: {
     // The labels are consecutive messages: Attack, Defense, Status, Luck and
     // Agility.
-    s32 labels = MsgPanelStatLabel;
+    s32 labels = MsgPanelAttackLabel;
 
     Text_DrawMessageAsTilesFar(labels, window, 0, 40); // "Attack"
     value = unit->attack;
@@ -362,7 +362,7 @@ enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
 /// or down arrow: the equipment preview.
 void Text_DrawStatComparison(const struct Unit *after,
                              const struct Unit *before, struct Window *window) {
-  Text_DrawMessageAsTilesFar(MsgPanelStatLabel, window, 0, 32);
+  Text_DrawMessageAsTilesFar(MsgPanelAttackLabel, window, 0, 32);
   Text_DrawNumberAtOffsetFar(before->attack, 3, window, 16, 40);
   if (after->attack != before->attack) {
     Text_DrawNumberAtOffsetFar(after->attack, 3, window, 64, 40);
@@ -894,7 +894,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   if (count == 0)
     return result;
   // Animate the page arrows.
-  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
+  PageArrows_DrawFar(PAGE_ARROW_VRAM);
   pages = count / pageSize;
   if (count % pageSize != 0)
     pages++;

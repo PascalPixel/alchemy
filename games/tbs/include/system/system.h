@@ -58,7 +58,7 @@ extern s16 gSaveSlot;
 /// The five reverb codes' mixer code, SOUND_REVERB_CODE_SIZE bytes each.
 extern u8 IwramSoundReverbCodes[];
 /// The size of Oam_BuildBufferKernel (decompress_byte_lz.s).
-extern u8 LoadedRuntime_Size[];
+extern u8 Oam_BuildBufferKernelCodeSize[];
 /// The ARM OAM list builder, run from a heap copy by Oam_BuildBuffer.
 extern const u8 Oam_BuildBufferKernel[];
 /// The ARM register-write executor, run from a stack copy by
@@ -78,7 +78,7 @@ extern u8 Tile_CopyStrided[];
 /// The size of Tile_CopyStrided (map_grid_convert.s).
 extern u8 Tile_CopyStridedCodeSize[];
 /// The size of Resource_ExecuteTransfer (decompress_tagged_lz.s).
-extern u8 TransferCommandExecutor_Size[];
+extern u8 Resource_ExecuteTransferCodeSize[];
 /// Stops the console for good with the BIOS Stop call: in the German, French,
 /// Spanish and Italian editions, what pulling the Game Pak out does.
 void Iwram_Halt(void);
@@ -171,10 +171,10 @@ s32 Task_Add(TaskFunc func, s32 priority);
 void Task_Idle(void);
 void Task_Empty(void);
 s32 Task_Remove(TaskFunc func);
-s32 Task_SuspendAll(TaskFunc func);
+s32 Task_Suspend(TaskFunc func);
 s32 Task_SuspendOverlayTasks(void);
 s32 Task_SetFlags(TaskFunc func, u32 mask);
-s32 Task_ResumeAll(TaskFunc func);
+s32 Task_Resume(TaskFunc func);
 s32 Task_ResumeOverlayTasks(void);
 void Task_RunPass(s32 pass);
 

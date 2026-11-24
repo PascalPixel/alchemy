@@ -12,10 +12,10 @@ extern const u8 gTitle_PromptBlendLevels[60];
 void Title_UpdateIntroSprites(void);
 void Title_LoadIntroBackgrounds(void);
 s32 Title_ShowIntro(s32 prompt);
-void Title_NoOpPalette(void);
+void Title_BeforeLogosNoOp(void);
 s32 Title_ShowNintendoLogo(s32 fadeOut);
 s32 Title_ShowCamelotLogo(void);
-void Title_NoOpColor(void);
+void Title_AfterIntroNoOp(void);
 void TitlePaletteFade_CalculateSteps(s16 *sourceComponents,
                                      s16 *targetComponents, s16 *componentSteps,
                                      s32 frames);

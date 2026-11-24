@@ -33,7 +33,7 @@ struct Window {
   u16 x;                           ///< tiles
   u16 y;                           ///< tiles
   u16 opened; ///< 1 once opened, 0 once freed; nothing reads it
-  /// The animation a message's TEXT_WINDOW_STATE code sets.
+  /// The animation a message's TEXT_WINDOW_ANIMATION code sets.
   u16 animation;
   /// 0 while a message is typing into the window; 1 once its text has
   /// ended or closed the window, which frees the message for the next text.
@@ -294,7 +294,7 @@ enum TextColor {
 
 /// The two page arrows beside a paged list's page numbers, in the menus and
 /// the File Screen: tiles 296 and 297 of character block 0, which
-/// Link_DrawPageArrows slides back and forth each frame, and their
+/// PageArrows_Draw slides back and forth each frame, and their
 /// tilemap entries.
 #define PAGE_ARROW_TILE 296
 #define PAGE_ARROW_VRAM                                                        \
@@ -508,7 +508,7 @@ enum IconKind {
   /// An item's icon without the broken mark, for the equipment view.
   ICON_KIND_EQUIPMENT_ITEM = 7,
   ICON_KIND_PATTERN = 8, ///< one of the other icons (Icon_BuildMiscIconTiles)
-  /// The one tile Resource_LoadTableEntry loads.
+  /// The one tile MenuTitle_LoadFirstTile loads.
   ICON_KIND_TABLE_ENTRY = 9
 };
 
@@ -520,9 +520,9 @@ enum IconKind {
 #define ICON_BROKEN 8
 /// Mark 0, the equip mark, on an item with INVENTORY_EQUIPPED.
 #define ICON_EQUIPPED 16
-/// Mark 2, Icon_MarkPhi, on a cursed item that cannot be unequipped
+/// Mark 2, Icon_MarkCursed, on a cursed item that cannot be unequipped
 /// (ITEM_CURSED and ITEM_CANNOT_UNEQUIP) when its code has INVENTORY_EQUIPPED.
-#define ICON_ARTIFACT 32
+#define ICON_CURSED 32
 
 /// The kinds of message argument (MessageArgument_Push), which the message
 /// codes such as {argument_item_name} read.
@@ -624,8 +624,8 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out);
 s32 Text_GetWideStringWidth(u16 *text);
 void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                  s32 y);
-void Text_DrawGlyphTileAtStateOffset(u16 *buffer, const struct Window *window,
-                                     s32 offsetX, s32 offsetY);
+void Text_DrawWideStringAsTiles(u16 *buffer, const struct Window *window,
+                                s32 offsetX, s32 offsetY);
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 u32 Message_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
                               s32 plural, s32 *suffix);
@@ -711,17 +711,17 @@ s32 Icon_CountItemIcons(void);
 s32 Icon_CountPsynergyIcons(void);
 void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
                                 s32 *tileOut, s32 reuse);
-void Ability_RequestGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
-                          s32 reuse);
+void Ability_BuildItemIconTiles(s32 action, s32 with_base, s32 *slot, s32 *tile,
+                                s32 reuse);
 void Icon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
                              s32 reuse);
 s32 ItemIcon_Compose(u32 code, u32 layers);
-s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot);
+s32 ItemIcon_LoadLayersIntoSlot(s32 inventoryCode, s32 layers, s32 cacheSlot);
 s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 slot);
-s32 Resource_LoadTableEntry(u32 value, s32 unused, u32 slot);
+s32 MenuTitle_LoadFirstTile(u32 value, s32 unused, u32 slot);
 void Icon_DrawItem(s32 code);
-void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
-                       s32 reuse);
+void Ability_BuildIconTiles(s32 action, s32 with_base, s32 *slot, s32 *tile,
+                            s32 reuse);
 void Icon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
                                 s32 reuse);
 void Icon_DrawMisc(u32 index);

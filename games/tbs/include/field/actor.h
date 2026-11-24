@@ -51,8 +51,8 @@ struct Actor {
   FIXED groundHeight;       ///< 16.16 fixed-point pixels
   FIXED scaleX;             ///< 16.16 fixed point, FIXED_ONE full size
   FIXED scaleY;             ///< 16.16 fixed point, FIXED_ONE full size
-  /// Collision radius in pixels: 16, or half the sprite metadata's boxY, when
-  /// created; the overlap checks use it less 2.
+  /// Collision radius in pixels: 16, or half the sprite metadata's footprint,
+  /// when created; the overlap checks use it less 2.
   u16 radius;
   /// The map layer (0 to 3) its ground height is read from, which the
   /// scrolling camera updates from the cell under it; the fixed camera passes

@@ -89,8 +89,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   CommandIcon_ReloadSlot(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable(
       (u16 *)(BG_CHAR_BLOCK(0) + PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
-  Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
-  Menu_BuildLocalizedPatternTiles();
+  PageArrows_Draw(LIST_PAGE_ARROW_VRAM);
+  RangeIcon_BuildTiles();
   battle = gBattleState;
   for (k = 0; k < 8; k++) {
     state->chosenDjinn[k] = BATTLE_MENU_NO_DJINNI;

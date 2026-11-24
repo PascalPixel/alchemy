@@ -100,8 +100,8 @@ static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
     actor->z.fixed = targetZ;
   } else {
     if (distance > moveDistance) {
-      deltaX = Iwram_MulFX(Iwram_RatioMulQ14(distance, deltaX), moveDistance);
-      deltaZ = Iwram_MulFX(Iwram_RatioMulQ14(distance, deltaZ), moveDistance);
+      deltaX = Iwram_MulFX(Iwram_DivFX(distance, deltaX), moveDistance);
+      deltaZ = Iwram_MulFX(Iwram_DivFX(distance, deltaZ), moveDistance);
     }
     actor->x.fixed += deltaX;
     actor->z.fixed += deltaZ;

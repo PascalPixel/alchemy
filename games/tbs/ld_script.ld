@@ -105,9 +105,9 @@ Tile_ExpandMaskedCodeSize = Tile_ExpandOpaque - Tile_ExpandMasked;
 Tile_ExpandOpaqueCodeSize = WindowSprite_AcquireFree - Tile_ExpandOpaque;
 Credits_DecodeBackgroundCodeSize = Credits_ClearBuffer - Credits_DecodeBackground;
 Actor_UpdateAllCodeSize = Decompress_Lz - Actor_UpdateAll;
-Tile_BuildCellTilesCodeSize = Tile_Decompress4bpp - Tile_BuildCellTiles;
+Tile_BuildCellTilesCodeSize = Tile_Decompress4bpp - ScanlineWindow_BuildEdges;
 Matrix_UpdateVerticesSize = Tile_ConvertMapGrid - WorldMap_UpdateAffineLines;
-Glyph_DrawCodeSize = Tile_BuildCellTiles - Glyph_DrawArm;
+Glyph_DrawCodeSize = ScanlineWindow_BuildEdges - Glyph_DrawArm;
 BitDecoder_Size = DebugParameterSet_Load - BitDecoder_DecodeImage;
 
 MEMORY

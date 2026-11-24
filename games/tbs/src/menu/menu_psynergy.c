@@ -70,7 +70,7 @@ s32 PsynergyMenu_Run(void) {
   ItemMenu_Initialize(0, 3, 0, 7);
   menu->messageWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
-  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
+  PageArrows_DrawFar(PAGE_ARROW_VRAM);
 #if TBS_PATCH_2
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(saved, PSYNERGY_PROMPT_TILES, PSYNERGY_PROMPT_TILES_SIZE);

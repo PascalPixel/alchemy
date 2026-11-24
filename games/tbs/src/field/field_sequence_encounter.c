@@ -146,8 +146,8 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
     // the zone's level) means smaller steps and fewer battles: a step is
     // 16 / (16 * rate + 16 * (rate - 1) * bias), that is
     // 1 / (rate + (rate - 1) * bias) with bias a 16.16 fraction from -1 to 1.
-    step = Iwram_RatioMulQ14(rate * toFIXED(16) + (rate - 1) * 16 * bias,
-                             toFIXED(16));
+    step =
+        Iwram_DivFX(rate * toFIXED(16) + (rate - 1) * 16 * bias, toFIXED(16));
     total = gMainRoutineState.encounterSteps += Iwram_MulFX(step, steps);
     if (total < state->encounterThreshold)
       return 0;

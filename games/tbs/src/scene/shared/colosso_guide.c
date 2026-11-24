@@ -128,7 +128,7 @@ void Actor_ResetMotionFields(s32 actorId) {
 /// Loads the pointer's picture into a free VRAM block, once.
 static void Colosso_LoadPointer(void) {
   if (gColosso_PointerSlot == -1) {
-    gColosso_PointerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
+    gColosso_PointerSlot = PointingHand_LoadIntoFreeSlot();
   }
 }
 
@@ -163,12 +163,12 @@ static void Colosso_UpdatePointer(void) {
   if (total != 0) {
     step = ++gColosso_PointerStep;
     gColosso_PointerX =
-        gColosso_PointerStartX.value +
-        (gColosso_PointerEndX - gColosso_PointerStartX.signedValue) *
+        gColosso_PointerStartX.pixels +
+        (gColosso_PointerEndX - gColosso_PointerStartX.signedPixels) *
             (s16)step / total;
     gColosso_PointerY =
-        gColosso_PointerStartY.value +
-        (gColosso_PointerEndY - gColosso_PointerStartY.signedValue) *
+        gColosso_PointerStartY.pixels +
+        (gColosso_PointerEndY - gColosso_PointerStartY.signedPixels) *
             (s16)step / total;
     if ((s16)step >= total)
       gColosso_PointerSteps = 0;

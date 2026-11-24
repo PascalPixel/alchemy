@@ -23,10 +23,10 @@ struct AnimationMetadata {
   s8 adjustY; ///< pixels
   /// Pixels from the actor's position up to the top of its sprite
   /// (Actor_GetScreenPosition).
-  s8 boxX;
+  s8 spriteTop;
   /// Pixels; half of it is a battle unit's radius, and can be an
   /// actor's radius (Actor.radius).
-  u8 boxY;
+  u8 footprint;
   u8 pictureCodec; ///< an enum SpritePictureCodec, copied to
                    ///< SpriteAnimation.mode
   /// The picture pointers; null takes them from the sprite picture cache slot
@@ -38,8 +38,8 @@ struct AnimationMetadata {
 STATIC_ASSERT(sizeof(struct AnimationMetadata) == 20);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, scale) == 2);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animationCount) == 5);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, boxX) == 8);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, boxY) == 9);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, spriteTop) == 8);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, footprint) == 9);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, pictureCodec) == 10);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, pictures) == 12);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animation) == 16);

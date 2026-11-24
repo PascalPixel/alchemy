@@ -56,7 +56,7 @@ static const u16 sPriceDigitTileOffsets[5] = {
 /// price's tiles. A digit is up to four rows of eight pixels, the right half of
 /// one tile and the left half of the next; its glyph's bytes end at the first
 /// 0.
-void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
+void Shop_DrawPriceDigit(s32 digit, u8 *tileBuffer, u32 digitPosition) {
   u8 *src = gShop_GlyphBytes + digit * TILE_SIZE_4BPP;
   u8 *dst = tileBuffer + sPriceDigitTileOffsets[digitPosition] + 2;
   s32 count;
@@ -90,21 +90,21 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
   // the blank price's eight tiles (8 * TILE_SIZE_4BPP bytes)
   Dma_Set(gShop_PriceTiles, tileBuffer, DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4),
           REG_DMA3);
-  Shop_CopyGlyphs(value % 10, tileBuffer, 0);
+  Shop_DrawPriceDigit(value % 10, tileBuffer, 0);
   value = value / 10;
   if (value != 0) {
-    Shop_CopyGlyphs(value % 10, tileBuffer, 1);
+    Shop_DrawPriceDigit(value % 10, tileBuffer, 1);
     value = value / 10;
     if (value != 0) {
-      Shop_CopyGlyphs(value % 10, tileBuffer, 2);
+      Shop_DrawPriceDigit(value % 10, tileBuffer, 2);
       value = value / 10;
       if (value != 0) {
         s32 remainingDigits;
 
-        Shop_CopyGlyphs(value % 10, tileBuffer, 3);
+        Shop_DrawPriceDigit(value % 10, tileBuffer, 3);
         remainingDigits = value / 10;
         if (remainingDigits != 0)
-          Shop_CopyGlyphs(remainingDigits % 10, tileBuffer, 4);
+          Shop_DrawPriceDigit(remainingDigits % 10, tileBuffer, 4);
       }
     }
   }

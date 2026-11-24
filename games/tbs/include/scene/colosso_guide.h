@@ -30,8 +30,8 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z);
 
 /// The pointer's glide start on one axis, read signed or unsigned.
 union PointerCoordinate {
-  s16 signedValue; ///< screen pixels
-  u16 value;       ///< screen pixels
+  s16 signedPixels; ///< screen pixels
+  u16 pixels;       ///< screen pixels
 };
 
 #endif

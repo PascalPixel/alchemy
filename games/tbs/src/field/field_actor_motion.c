@@ -159,7 +159,7 @@ void Actor_UpdateAllOnField(void) {
             // ratio is acceleration / distance in 16.16, and dx, dy and dz
             // are whole pixels, so each axis gains its share of the
             // acceleration toward the target.
-            ratio = Iwram_RatioMulQ14(toFIXED(distance), actor->acceleration);
+            ratio = Iwram_DivFX(toFIXED(distance), actor->acceleration);
             actor->velocityX += dx * ratio;
             actor->velocityY += dy * ratio;
             actor->velocityZ += dz * ratio;
@@ -171,7 +171,7 @@ void Actor_UpdateAllOnField(void) {
                                 Iwram_MulFX(velocityZ, velocityZ));
             // Too fast: scale the velocity by speedLimit / speed.
             if (speed > actor->speedLimit) {
-              ratio = Iwram_RatioMulQ14(speed, actor->speedLimit);
+              ratio = Iwram_DivFX(speed, actor->speedLimit);
               SET_VELOCITY(actor, Iwram_MulFX(velocityX, ratio),
                            Iwram_MulFX(velocityY, ratio),
                            Iwram_MulFX(velocityZ, ratio));
@@ -189,7 +189,7 @@ void Actor_UpdateAllOnField(void) {
             reducedSpeed = speed - actor->acceleration;
             if (reducedSpeed < 0)
               reducedSpeed = 0;
-            ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
+            ratio = Iwram_DivFX(speed, reducedSpeed);
             SET_VELOCITY(actor, Iwram_MulFX(dx, ratio), Iwram_MulFX(dy, ratio),
                          Iwram_MulFX(dz, ratio));
           } else {
@@ -213,7 +213,7 @@ void Actor_UpdateAllOnField(void) {
             x = actor->targetX;
             z = actor->targetZ;
           } else {
-            ratio = Iwram_RatioMulQ14(distance, actor->acceleration);
+            ratio = Iwram_DivFX(distance, actor->acceleration);
             actor->velocityX += Iwram_MulFX(dx, ratio);
             actor->velocityZ += Iwram_MulFX(dz, ratio);
             velocityX = actor->velocityX;
@@ -221,7 +221,7 @@ void Actor_UpdateAllOnField(void) {
             speed = Math_SqrtFX(Iwram_MulFX(velocityX, velocityX) +
                                 Iwram_MulFX(velocityZ, velocityZ));
             if (speed > actor->speedLimit) {
-              ratio = Iwram_RatioMulQ14(speed, actor->speedLimit);
+              ratio = Iwram_DivFX(speed, actor->speedLimit);
               actor->velocityX = Iwram_MulFX(velocityX, ratio);
               actor->velocityZ = Iwram_MulFX(velocityZ, ratio);
             }
@@ -234,7 +234,7 @@ void Actor_UpdateAllOnField(void) {
             reducedSpeed = speed - actor->acceleration;
             if (reducedSpeed < 0)
               reducedSpeed = 0;
-            ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
+            ratio = Iwram_DivFX(speed, reducedSpeed);
             actor->velocityX = Iwram_MulFX(dx, ratio);
             actor->velocityZ = Iwram_MulFX(dz, ratio);
           } else {
@@ -270,7 +270,7 @@ void Actor_UpdateAllOnField(void) {
               reducedSpeed = speed - velocityY;
               if (reducedSpeed < 0)
                 reducedSpeed = 0;
-              ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
+              ratio = Iwram_DivFX(speed, reducedSpeed);
               SET_VELOCITY(actor, Iwram_MulFX(dx, ratio),
                            Iwram_MulFX(dy, ratio), Iwram_MulFX(dz, ratio));
             }
@@ -432,7 +432,7 @@ void Actor_SetMoveTarget(struct Actor *actor, FIXED x, FIXED y, FIXED z) {
     // speedLimit squared over acceleration, in 16.16 pixels: twice the
     // distance an actor at its limit coasts while it brakes to a stop, so
     // the shortened target leaves it room to coast onto the point asked for.
-    brakingDistance = Iwram_RatioMulQ14(
+    brakingDistance = Iwram_DivFX(
         actor->acceleration, Iwram_MulFX(actor->speedLimit, actor->speedLimit));
     if (distance > brakingDistance)
       brakingDistance = distance - brakingDistance / 2;
@@ -440,7 +440,7 @@ void Actor_SetMoveTarget(struct Actor *actor, FIXED x, FIXED y, FIXED z) {
       brakingDistance = distance / 2;
     // Scale the offset to the target by the shortened distance's share of
     // the whole.
-    distance = Iwram_RatioMulQ14(distance, brakingDistance);
+    distance = Iwram_DivFX(distance, brakingDistance);
     x = actor->x.fixed + Iwram_MulFX(x - actor->x.fixed, distance);
     y = actor->y.fixed + Iwram_MulFX(y - actor->y.fixed, distance);
     z = actor->z.fixed + Iwram_MulFX(z - actor->z.fixed, distance);
@@ -529,7 +529,7 @@ void Actor_UpdateAllMotion(void) {
           x = actor->targetX;
           z = actor->targetZ;
         } else {
-          ratio = Iwram_RatioMulQ14(distance, actor->acceleration);
+          ratio = Iwram_DivFX(distance, actor->acceleration);
           velocityX = actor->velocityX + Iwram_MulFX(dx, ratio);
           actor->velocityX = velocityX;
           dx = actor->velocityZ + Iwram_MulFX(dz, ratio);
@@ -538,7 +538,7 @@ void Actor_UpdateAllMotion(void) {
                                 Iwram_MulFX(dx, dx))
                      << 8;
           if (distance > actor->speedLimit) {
-            ratio = Iwram_RatioMulQ14(distance, actor->speedLimit);
+            ratio = Iwram_DivFX(distance, actor->speedLimit);
             actor->velocityX = Iwram_MulFX(velocityX, ratio);
             actor->velocityZ = Iwram_MulFX(dx, ratio);
           }
@@ -553,8 +553,7 @@ void Actor_UpdateAllMotion(void) {
               actor->velocityX = 0;
               actor->velocityZ = 0;
             } else {
-              ratio =
-                  Iwram_RatioMulQ14(distance, distance - actor->acceleration);
+              ratio = Iwram_DivFX(distance, distance - actor->acceleration);
               actor->velocityX = Iwram_MulFX(dx, ratio);
               actor->velocityZ = Iwram_MulFX(dz, ratio);
             }

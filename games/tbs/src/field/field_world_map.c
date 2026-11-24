@@ -243,9 +243,9 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     Matrix_SetLookAt(camera->eye, cameraPosition);
     RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, WorldMap_UpdateAffineLines,
                      &Matrix_UpdateVerticesSize);
-    WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(perspective->pitch),
-                                                  Trig_Sin(perspective->pitch)),
-                                cameraPosition, affineState->scanlines);
+    WorldMap_BuildScanlineTable(
+        Iwram_DivFX(Trig_Cos(perspective->pitch), Trig_Sin(perspective->pitch)),
+        cameraPosition, affineState->scanlines);
     gScanlineAngle = 0;
     gScanlinePitch = perspective->pitch;
     ((WorldMapPlaneFn)gHeapSlots[HEAP_SLOT_RAM_CODE])(
@@ -613,7 +613,7 @@ void WorldMap_UpdateView(void) {
     FIXED cosine = Trig_Cos(perspective->pitch);
     FIXED sine = Trig_Sin(perspective->pitch);
 
-    WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(cosine, sine), cameraPosition,
+    WorldMap_BuildScanlineTable(Iwram_DivFX(cosine, sine), cameraPosition,
                                 affineState->scanlines);
     gScanlineAngle = 0;
     gScanlinePitch = perspective->pitch;
@@ -713,7 +713,7 @@ void WorldMap_StartStillImage(void) {
   struct WorldMapView *perspective = gMapGridState[0];
 
   perspective->animationActive = 1;
-  Task_SuspendAll(TilesetAnim_Update);
+  Task_Suspend(TilesetAnim_Update);
   Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer,
           DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
   wait(1);
@@ -766,7 +766,7 @@ void WorldMap_LoadAreaGraphics(void) {
                       decodeBuffer);
   WorldMap_UpdateCurrentTileBlock();
   perspective->animationActive = 0;
-  Task_ResumeAll(TilesetAnim_Update);
+  Task_Resume(TilesetAnim_Update);
   wait(1);
 }
 
@@ -781,7 +781,7 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_GRID_CELLS),
                       gMapGridCellBuffer);
   WorldMap_UpdateCurrentTileBlock();
-  Task_ResumeAll(TilesetAnim_Update);
+  Task_Resume(TilesetAnim_Update);
   wait(1);
 }
 

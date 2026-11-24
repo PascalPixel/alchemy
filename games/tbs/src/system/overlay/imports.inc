@@ -147,11 +147,11 @@
 	export YesNoMenu_Run, YesNoMenu_RunFar
 	export Menu_SelectCoinsOrMedals, Menu_SelectCoinsOrMedalsFar
 	export ColossoMenu_Choose, ColossoMenu_ChooseFar
-	export Resource_LoadFixedBlockBIntoFreeSlot, Resource_LoadFixedBlockBIntoFreeSlotFar
+	export PointingHand_LoadIntoFreeSlot, PointingHand_LoadIntoFreeSlotFar
 	export Graphics_ExpandVramTilesByColorTable, Graphics_ExpandVramTilesByColorTableFar
 	export Menu_AnimateSelectionToEntry, Menu_AnimateSelectionToEntryFar
 	export Save_CountFilesExcludingSent, Save_CountFilesExcludingSentFar
-	export Link_DrawPageArrows, Link_DrawPageArrowsFar
+	export PageArrows_Draw, PageArrows_DrawFar
 @ Game bank (far_call/game.s)
 	export Djinn_GetRecoveryTable, Djinn_GetRecoveryTableFar
 	export Unit_Get, Unit_GetFar

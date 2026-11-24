@@ -367,7 +367,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       sprite = Sprite_CreateFar(spriteId);
       if (sprite != 0) {
         sprite->scale = Iwram_MulFX(sprite->scale, battleObject->scale);
-        actor->radius = Resource_GetMetadataRecordFar(spriteId)->boxY >> 1;
+        actor->radius = Resource_GetMetadataRecordFar(spriteId)->footprint >> 1;
         *sprites = sprite;
         sprites++;
       }

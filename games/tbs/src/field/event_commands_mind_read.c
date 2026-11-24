@@ -118,16 +118,17 @@ void FieldPsynergy_UpdateMindReadWave(void) {
     caster = Actor_GetById(state->sourceId);
     target = Actor_GetById(state->targetId);
     if (caster != 0 && target != 0) {
-      // From 2 pixels below each one's sprite height (its metadata's boxX).
+      // From 2 pixels below each one's sprite height (its metadata's
+      // spriteTop).
       from.x = caster->x.fixed;
       meta = Resource_GetMetadataRecordFar(
           (s16)Scene_FindActorPlacement(state->sourceId)->sprite);
-      from.y = caster->y.fixed + toFIXED(meta->boxX) - toFIXED(2);
+      from.y = caster->y.fixed + toFIXED(meta->spriteTop) - toFIXED(2);
       from.z = caster->z.fixed;
       to.x = target->x.fixed;
       meta = Resource_GetMetadataRecordFar(
           (s16)Scene_FindActorPlacement(state->targetId)->sprite);
-      to.y = target->y.fixed + toFIXED(meta->boxX) - toFIXED(2);
+      to.y = target->y.fixed + toFIXED(meta->spriteTop) - toFIXED(2);
       to.z = target->z.fixed;
       particle = Actor_CreateFar(SPRITE_CRESCENT, to.x, to.y, to.z);
       if (particle != 0) {
@@ -225,12 +226,12 @@ void FieldEffect_CalculateHueChannels(FIXED hue, FIXED *r, FIXED *g, FIXED *b) {
 s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, FIXED high) {
   angle = FixedPoint_Remainder(angle, HUE_CIRCLE);
   if (angle < HUE_CIRCLE / 6)
-    return Iwram_RatioMulQ14(HUE_CIRCLE / 6, Iwram_MulFX(high, angle));
+    return Iwram_DivFX(HUE_CIRCLE / 6, Iwram_MulFX(high, angle));
   if (angle >= HUE_CIRCLE / 6 && angle < HUE_CIRCLE / 2)
     return high;
   if (angle >= HUE_CIRCLE / 2 && angle < HUE_CIRCLE * 2 / 3)
-    return Iwram_RatioMulQ14(HUE_CIRCLE / 6,
-                             Iwram_MulFX(high, HUE_CIRCLE * 2 / 3 - angle));
+    return Iwram_DivFX(HUE_CIRCLE / 6,
+                       Iwram_MulFX(high, HUE_CIRCLE * 2 / 3 - angle));
   return low;
 }
 
@@ -242,7 +243,7 @@ FIXED FixedPoint_Remainder(FIXED value, FIXED divisor) {
     return 0;
   if (divisor & 0xf0000000)
     divisor = -divisor;
-  quot = Iwram_RatioMulQ14(divisor, value);
+  quot = Iwram_DivFX(divisor, value);
   // Less the quotient's whole part times divisor.
   return value - Iwram_MulFX(quot & 0xffff0000, divisor);
 }

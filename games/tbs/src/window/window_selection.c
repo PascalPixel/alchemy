@@ -1073,17 +1073,17 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
     result = VramCache_FindFreeEntry();
     if (result == VRAM_CACHE_ENTRY_COUNT)
       return -1;
-    Icon_CopyResourceToSlot(
+    ItemIcon_LoadLayersIntoSlot(
         value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN, result);
     break;
   case ICON_KIND_TABLE_ENTRY:
     result = VramCache_FindFreeEntry();
     if (result == VRAM_CACHE_ENTRY_COUNT)
       return -1;
-    Resource_LoadTableEntry(value, 0, result);
+    MenuTitle_LoadFirstTile(value, 0, result);
     break;
   case ICON_KIND_ABILITY:
-    Ability_LoadGlyph(value, 1, &result, &output, 0);
+    Ability_BuildIconTiles(value, 1, &result, &output, 0);
     break;
   }
   return result;
@@ -1107,23 +1107,22 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
     Icon_BuildCommandIconTiles(value, option, &result, &output, 1);
     break;
   case ICON_KIND_ITEM:
-    Icon_CopyResourceToSlot(value,
-                            ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN |
-                                ICON_ARTIFACT,
-                            result);
+    ItemIcon_LoadLayersIntoSlot(
+        value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN | ICON_CURSED,
+        result);
     break;
   case ICON_KIND_EQUIPMENT_ITEM:
-    Icon_CopyResourceToSlot(
-        value, ICON_COUNT_ABOVE_ONE | ICON_BROKEN | ICON_ARTIFACT, result);
+    ItemIcon_LoadLayersIntoSlot(
+        value, ICON_COUNT_ABOVE_ONE | ICON_BROKEN | ICON_CURSED, result);
     break;
   case ICON_KIND_ABILITY:
-    Ability_LoadGlyph(value, option, &result, &output, 1);
+    Ability_BuildIconTiles(value, option, &result, &output, 1);
     break;
   case ICON_KIND_PATTERN:
     Icon_BuildMiscIconTiles(value, 0, result);
     break;
   case ICON_KIND_TABLE_ENTRY:
-    Resource_LoadTableEntry(value, 0, result);
+    MenuTitle_LoadFirstTile(value, 0, result);
     break;
   }
 
@@ -1156,7 +1155,7 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
   case ICON_KIND_ABILITY:
     if (reuse != 0)
       cacheSlot = node->slot;
-    Ability_LoadGlyph(base, 1, &cacheSlot, &tile, reuse);
+    Ability_BuildIconTiles(base, 1, &cacheSlot, &tile, reuse);
     node->message = base + MsgAbilityName;
     break;
   }

@@ -12,6 +12,6 @@ struct Window;
 
 s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
                   const u8 *font);
-void Tile_BuildCellTiles(u16 *scanlineBounds, u16 *tilemap);
+void ScanlineWindow_BuildEdges(u16 *scanlineBounds, u16 *tilemap);
 
 #endif

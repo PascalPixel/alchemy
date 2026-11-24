@@ -276,12 +276,12 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 enum {
   /// Element icon: + enum Element, in BASIC_COLORS_PALETTE.
   LIST_TILE_SUMMON_ELEMENT = BG_TILE_PALETTE(BASIC_COLORS_PALETTE) | 1,
-  /// Left arrow, tile 820, which Link_DrawPageArrows slides.
+  /// Left arrow, tile 820, which PageArrows_Draw slides.
   LIST_TILE_PAGES_LEFT = WINDOW_TILE(820),
   LIST_TILE_PAGES_RIGHT = WINDOW_TILE(821) ///< Right arrow, tile 821
 };
 
-/// The battle lists' two page arrow tiles in VRAM, which Link_DrawPageArrows
+/// The battle lists' two page arrow tiles in VRAM, which PageArrows_Draw
 /// draws each frame (LIST_TILE_PAGES_LEFT and LIST_TILE_PAGES_RIGHT).
 #define LIST_PAGE_ARROW_VRAM                                                   \
   ((s32)BG_CHAR_BLOCK(0) +                                                     \

@@ -245,7 +245,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                           CANVAS_FADE_THREE_QUARTERS);
     }
     Projection_Set(BATTLE_CAMERA_DISTANCE,
-                   Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, FIXED_ONE * 3 / 4),
+                   Iwram_DivFX(BATTLE_CAMERA_DISTANCE, FIXED_ONE * 3 / 4),
                    toFIXED(32767));
     Matrix_Initialize();
     if (frame > THOR_SINK_FRAME) {

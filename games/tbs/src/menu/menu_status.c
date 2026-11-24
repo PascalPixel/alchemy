@@ -232,7 +232,7 @@ s32 StatusScreen_Run(void) {
     menu->rowX[index] = STATUS_FIGURE_X(index);
     menu->rowY[index] = STATUS_FIGURE_ROW_Y;
   }
-  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
+  PageArrows_DrawFar(PAGE_ARROW_VRAM);
   // Run the pages.
   Menu_StartWatchingStart();
   menu->page = STATUS_SCREEN_PAGE_STATUS;

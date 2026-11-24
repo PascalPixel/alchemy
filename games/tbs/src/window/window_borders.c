@@ -103,30 +103,26 @@ void Window_DrawZoomBorder(void *windowArg, s32 savePosition) {
   stage = window->zoomStage;
   duration = window->duration;
   remaining = duration - stage;
-  // Iwram_RatioMulQ14(d, v) is v / d in 16.16 fixed point: the left edge
+  // Iwram_DivFX(d, v) is v / d in 16.16 fixed point: the left edge
   // moves in by stage / duration of half the width, and the width is
   // (duration - stage) / duration of the whole, twice that half; the same for
   // the top and the height.
   scratch.scaledPart = toFIXED(stage * window->width);
   scratch.scaledDuration = toFIXED(2 * duration);
-  scratch.result =
-      Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
+  scratch.result = Iwram_DivFX(scratch.scaledDuration, scratch.scaledPart);
   x = FIXEDtoINT(scratch.result) + window->x;
 
   scratch.scaledPart = toFIXED(remaining * window->width);
-  scratch.result =
-      Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
+  scratch.result = Iwram_DivFX(scratch.scaledDuration, scratch.scaledPart);
   width = FIXEDtoINT_TWICE(scratch.result);
 
   scratch.scaledPart = toFIXED(stage * window->height);
   scratch.scaledDuration = toFIXED(2 * window->duration);
-  scratch.result =
-      Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
+  scratch.result = Iwram_DivFX(scratch.scaledDuration, scratch.scaledPart);
   y = FIXEDtoINT(scratch.result) + window->y;
 
   scratch.scaledPart = toFIXED(remaining * window->height);
-  scratch.result =
-      Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
+  scratch.result = Iwram_DivFX(scratch.scaledDuration, scratch.scaledPart);
   height = FIXEDtoINT_TWICE(scratch.result);
 
   Window_DrawBorder(x, y, width, height);

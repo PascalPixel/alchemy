@@ -113,7 +113,7 @@ s32 ItemMenu_Run(void) {
   ItemMenu_Initialize(0, 3, 0, 7);
   Menu_LoadStatArrows();
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
-  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
+  PageArrows_DrawFar(PAGE_ARROW_VRAM);
   screen->questionWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
 #if TBS_PATCH_1
   // Save the window tiles the menu draws over, and fill them with colour 3.

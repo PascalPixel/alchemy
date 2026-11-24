@@ -11550,7 +11550,7 @@ msgctxt "message"
 msgid "02843"
 msgstr "Total number available"
 
-msgctxt "MsgPanelStatLabel"
+msgctxt "MsgPanelAttackLabel"
 msgid "02844"
 msgstr "Attack"
 

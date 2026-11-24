@@ -337,9 +337,9 @@ void Projection_SetFieldOfView(u32 fieldOfView, FIXED nearDepth,
 
   halfAngle = (s32)fieldOfView / 2;
   sine = Trig_Sin(halfAngle);
-  // Iwram_RatioMulQ14(d, v) is v * FIXED_ONE / d: here
+  // Iwram_DivFX(d, v) is v * FIXED_ONE / d: here
   // (DISPLAY_HEIGHT / 2) * cos / sin
-  focal = Iwram_RatioMulQ14(sine, Trig_Cos(halfAngle) * (DISPLAY_HEIGHT / 2));
+  focal = Iwram_DivFX(sine, Trig_Cos(halfAngle) * (DISPLAY_HEIGHT / 2));
   gProjection.near = nearDepth;
   gProjection.focal = focal;
   gProjection.far = farDepth;

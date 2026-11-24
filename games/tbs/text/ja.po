@@ -13886,7 +13886,7 @@ msgctxt "message"
 msgid "03237"
 msgstr "もってるかず"
 
-msgctxt "MsgPanelStatLabel"
+msgctxt "MsgPanelAttackLabel"
 msgid "03238"
 msgstr "こうげき"
 

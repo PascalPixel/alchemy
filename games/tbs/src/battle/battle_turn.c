@@ -83,7 +83,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   eyeOffset.z = camera->distance;
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
 
-  result = Iwram_RatioMulQ14(toFIXED(969), FIXED_ONE * 3 / 4);
+  result = Iwram_DivFX(toFIXED(969), FIXED_ONE * 3 / 4);
   Projection_Set(0, result, toFIXED(1938));
 
   // While the view is busy, BattleCamera_SetRange leaves BG1's scroll alone.

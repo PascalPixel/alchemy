@@ -28,7 +28,7 @@ extern s8 gFieldMenu_CommandByPosition[];
 /// The inverse: each command's icon position plus one, in the same two rows.
 extern s8 gFieldMenu_PositionByCommand[];
 /// The price digits 0 to 9, 32 bytes each (digits.4bpp), copied into a price
-/// sprite's tiles (Shop_CopyGlyphs).
+/// sprite's tiles (Shop_DrawPriceDigit).
 extern u8 gShop_GlyphBytes[];
 /// The level label of a save summary: `L`; `Nv.` in Spanish, `Niv` in French.
 extern u8 gStatusScreen_LevelLetterString[];

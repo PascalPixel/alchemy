@@ -81,9 +81,9 @@ STATIC_ASSERT(offsetof(struct PaletteFade, page) == 10752);
 /// The title intro's own copies of the colour channel curves its tints read:
 /// each maps a 5-bit channel to a fade channel shifted up 10 bits, plain,
 /// lighter, or with more contrast.
-extern u16 gTitleIntro_ChannelCurve[32];
-extern u16 gTitleIntro_ChannelCurveLight[32];
-extern u16 gTitleIntro_ChannelCurveContrast[32];
+extern u16 gTitlePaletteFade_ChannelCurve[32];
+extern u16 gTitlePaletteFade_ChannelCurveLight[32];
+extern u16 gTitlePaletteFade_ChannelCurveContrast[32];
 
 /// A palette tint, a palette fade's build mode: below PALETTE_TINT_FROM_SOURCE,
 /// one RGB555 colour for all.

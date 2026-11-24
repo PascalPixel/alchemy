@@ -46,7 +46,7 @@ extern u8 gScreenFadeStartLevel;
 // volatile: ScreenFade_Start sets it for the VBlank handler's
 // ScreenFade_Update.
 extern volatile u8 gScreenFadeTargetLevel;
-/// The two page arrow tiles, 4bpp, that Link_DrawPageArrows slides
+/// The two page arrow tiles, 4bpp, that PageArrows_Draw slides
 /// outward over the border's top edge.
 extern u8 gPageArrowTiles[];
 /// Matrix_BuildLookAt's ARM dot product, seven words it copies onto its
@@ -153,13 +153,13 @@ struct TileMask {
   u32 secondTile;
 };
 /// The six row patterns that mark the battle menus' range icons, colour 5
-/// over a colour-4 fill, read by Menu_BuildLocalizedPatternTiles.
+/// over a colour-4 fill, read by RangeIcon_BuildTiles.
 extern const struct TileMask gMenu_BarPatternRows[];
 /// The row masks Menu_BuildPatternTiles XORs into the range icons' tile
 /// pairs (menu_strings.s).
 extern const struct TileMask gMenu_PatternRowMasks[];
 /// One row of a tile XORed with a row's mask: how Menu_BuildPatternTiles and
-/// Menu_BuildLocalizedPatternTiles mark each tile of a pair.
+/// RangeIcon_BuildTiles mark each tile of a pair.
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 /// The credits' 8x8 one-bit font, ASCII 32 to 127.
 extern const u8 gCredits_Font[];
@@ -240,8 +240,8 @@ extern const u8 Text_DecodeSymbol[];
 /// Text_DecodeSymbol, which the message decoders copy into
 /// HEAP_SLOT_MESSAGE_DECODER.
 extern u8 Text_DecodeSymbolCodeSize[];
-/// Tile_BuildCellTiles, copied to the heap by ScanlineWindow_FillSpans for
-/// each frame of a window transition.
+/// ScanlineWindow_BuildEdges, copied to the heap by ScanlineWindow_FillSpans
+/// for each frame of a window transition.
 extern u8 Tile_BuildCellTilesCodeSize[];
 /// Interleaves a layout's three decoded cell planes into cell words, for
 /// TileMap_ConvertBuffer.

@@ -11,7 +11,7 @@
 @ This proves a hand-written multiply, not by itself a hand-written
 @ file. The routine has no other tell: its four instructions are a frameless
 @ leaf that reuses the argument registers, as compiled code also may.
-@ Why IwramRatioMulQ14 is assembly:
+@ Why IwramDivFX is assembly:
 @ Both smull halves are consumed from nonconsecutive r3/r0; compiler DI
 @ multiply patterns require consecutive halves, highpart patterns discard low
 @ half.
@@ -58,8 +58,8 @@ IwramMulFX:
 .syntax unified
 	.arm
 
-	.global IwramRatioMulQ14
-IwramRatioMulQ14:
+	.global IwramDivFX
+IwramDivFX:
 	stmfd	sp!, {lr}
 	mov	r4, r1
 	mov	r1, r0

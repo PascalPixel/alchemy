@@ -29,7 +29,7 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
     *position -=
         Resource_GetMetadataRecordFar(actor->sprite->entries[0]->animationId)
-            ->boxX;
+            ->spriteTop;
   return 0;
 }
 

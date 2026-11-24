@@ -129,7 +129,7 @@ void WindowSprite_Pulse(struct WindowSprite *obj) {
 /// tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end tile,
 /// filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR with
 /// gMenu_BarPatternRows (its colour 5 turns the fill to colour 1).
-UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void) {
+UNREAD_RESULT RangeIcon_BuildTiles(void) {
   u32 *vram =
       (u32 *)(BG_CHAR_BLOCK(0) + RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP);
   s32 patternSet;
@@ -227,7 +227,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
 /// Draws the two page arrows (gPageArrowTiles) into the two tiles at VRAM
 /// address `offset`, sliding outward: the left arrow 2 or 3 pixels to the left,
 /// the right one as far to the right, eight frames each.
-void Link_DrawPageArrows(s32 offset) {
+void PageArrows_Draw(s32 offset) {
   s32 phase = (gFrameCount >> 2) & 3;
 
   // Phases 0 to 3 of a 16-frame cycle become shifts 2, 2, 3, 3.
@@ -337,7 +337,7 @@ s32 AbilityIcon_LoadIntoSlot(s32 resource, s32 index) {
 
   state = HeapSlot_AllocEwram(HEAP_SLOT_ICON_TRANSFER, sizeof(*state));
   slot = index;
-  Ability_LoadGlyph(resource, 0, &slot, &tile, 1);
+  Ability_BuildIconTiles(resource, 0, &slot, &tile, 1);
   result = VramCache_Reload(index, (s32)state->tiles);
   HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   return result;

@@ -61,7 +61,7 @@ void BattleMenu_Update(void) {
       if (state->iconShown[i] != 0)
         Oam_AddSpriteAtDepth(&state->icons[i], OAM_DEPTH_WINDOW);
     }
-    Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
+    PageArrows_Draw(LIST_PAGE_ARROW_VRAM);
 
     // Local battles still animate the UI, but do not run the link timer.
     if (state->linkTimer == 0)

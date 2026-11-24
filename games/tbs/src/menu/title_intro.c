@@ -643,7 +643,7 @@ s32 Title_ShowIntro(s32 prompt) {
 }
 
 /// Unused: an empty entry the far-call table keeps.
-UNUSED void Title_NoOpPalette(void) {}
+UNUSED void Title_BeforeLogosNoOp(void) {}
 
 #define LOGO_PALETTE_BYTES (LOGO_PALETTE_COLORS * 2)
 
@@ -809,7 +809,7 @@ s32 Title_ShowCamelotLogo(void) {
 }
 
 /// Unused: an empty entry the far-call table keeps.
-UNUSED void Title_NoOpColor(void) {}
+UNUSED void Title_AfterIntroNoOp(void) {}
 
 // The intro's palette fade (struct TitlePaletteFade) keeps the saved palettes,
 // and the colours shown now, their target and their steps as components: each
@@ -964,9 +964,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
           green = SEPIA_LEVEL_MAX;
         if (blue > SEPIA_LEVEL_MAX)
           blue = SEPIA_LEVEL_MAX;
-        *destination++ = gTitleIntro_ChannelCurveLight[blue];
-        *destination++ = gTitleIntro_ChannelCurveLight[green];
-        *destination++ = gTitleIntro_ChannelCurveLight[red];
+        *destination++ = gTitlePaletteFade_ChannelCurveLight[blue];
+        *destination++ = gTitlePaletteFade_ChannelCurveLight[green];
+        *destination++ = gTitlePaletteFade_ChannelCurveLight[red];
       }
       break;
     case PALETTE_TINT_WARM:
@@ -985,9 +985,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         red = TitlePaletteFade_ClampChannel(red);
         green = TitlePaletteFade_ClampChannel(green);
         blue = TitlePaletteFade_ClampChannel(blue);
-        SET_VECTOR(destination, gTitleIntro_ChannelCurveContrast[blue],
-                   gTitleIntro_ChannelCurveLight[green],
-                   gTitleIntro_ChannelCurve[red]);
+        SET_VECTOR(destination, gTitlePaletteFade_ChannelCurveContrast[blue],
+                   gTitlePaletteFade_ChannelCurveLight[green],
+                   gTitlePaletteFade_ChannelCurve[red]);
         destination += 3;
       }
       break;
@@ -1014,9 +1014,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         red = TitlePaletteFade_ClampChannel(red);
         green = TitlePaletteFade_ClampChannel(green);
         blue = TitlePaletteFade_ClampChannel(blue);
-        *destination++ = gTitleIntro_ChannelCurve[blue];
-        *destination++ = gTitleIntro_ChannelCurve[green];
-        *destination++ = gTitleIntro_ChannelCurve[red];
+        *destination++ = gTitlePaletteFade_ChannelCurve[blue];
+        *destination++ = gTitlePaletteFade_ChannelCurve[green];
+        *destination++ = gTitlePaletteFade_ChannelCurve[red];
       }
       break;
     case PALETTE_TINT_PALE:
@@ -1034,9 +1034,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         red = TitlePaletteFade_ClampChannel(red);
         green = TitlePaletteFade_ClampChannel(green);
         blue = TitlePaletteFade_ClampChannel(blue);
-        SET_VECTOR(destination, gTitleIntro_ChannelCurveContrast[blue],
-                   gTitleIntro_ChannelCurveContrast[green],
-                   gTitleIntro_ChannelCurveContrast[red]);
+        SET_VECTOR(destination, gTitlePaletteFade_ChannelCurveContrast[blue],
+                   gTitlePaletteFade_ChannelCurveContrast[green],
+                   gTitlePaletteFade_ChannelCurveContrast[red]);
         destination += 3;
       }
       break;
@@ -1050,9 +1050,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         red = TitlePaletteFade_ClampChannel(red);
         green -= green / 3;
         blue -= blue / 3;
-        SET_VECTOR(destination, gTitleIntro_ChannelCurve[blue],
-                   gTitleIntro_ChannelCurve[green],
-                   gTitleIntro_ChannelCurveLight[red]);
+        SET_VECTOR(destination, gTitlePaletteFade_ChannelCurve[blue],
+                   gTitlePaletteFade_ChannelCurve[green],
+                   gTitlePaletteFade_ChannelCurveLight[red]);
         destination += 3;
       }
       break;
@@ -1070,9 +1070,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         red = TitlePaletteFade_ClampChannel(red);
         green = TitlePaletteFade_ClampChannel(green);
         blue = TitlePaletteFade_ClampChannel(blue);
-        SET_VECTOR(destination, gTitleIntro_ChannelCurveContrast[blue],
-                   gTitleIntro_ChannelCurveLight[green],
-                   gTitleIntro_ChannelCurve[red]);
+        SET_VECTOR(destination, gTitlePaletteFade_ChannelCurveContrast[blue],
+                   gTitlePaletteFade_ChannelCurveLight[green],
+                   gTitlePaletteFade_ChannelCurve[red]);
         destination += 3;
       }
       break;
@@ -1134,9 +1134,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
       red = TitlePaletteFade_ClampChannel(FIXEDtoINT((u32)red));
       green = TitlePaletteFade_ClampChannel(FIXEDtoINT((u32)green));
       blue = TitlePaletteFade_ClampChannel(FIXEDtoINT((u32)blue));
-      *destination++ = gTitleIntro_ChannelCurve[blue];
-      *destination++ = gTitleIntro_ChannelCurve[green];
-      *destination++ = gTitleIntro_ChannelCurve[red];
+      *destination++ = gTitlePaletteFade_ChannelCurve[blue];
+      *destination++ = gTitlePaletteFade_ChannelCurve[green];
+      *destination++ = gTitlePaletteFade_ChannelCurve[red];
     }
   } else if (mode & PALETTE_TINT_SPLIT) {
     for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
@@ -1238,7 +1238,7 @@ s32 TitlePaletteFade_ClampShiftedChannel(s32 value) {
 
 /// Maps a channel (0..31) to a component (0..31 << 10).
 // clang-format off
-u16 gTitleIntro_ChannelCurve[32] = {
+u16 gTitlePaletteFade_ChannelCurve[32] = {
     0, 524, 1071, 1643, 2240, 2863, 3513, 4191,
     4898, 5635, 6403, 7202, 8035, 8901, 9803, 10740,
     11715, 12729, 13783, 14877, 16014, 17195, 18422, 19694,
@@ -1246,7 +1246,7 @@ u16 gTitleIntro_ChannelCurve[32] = {
 };
 
 /// A brighter curve
-u16 gTitleIntro_ChannelCurveLight[32] = {
+u16 gTitlePaletteFade_ChannelCurveLight[32] = {
     0, 613, 1247, 1902, 2580, 3281, 4005, 4753,
     5526, 6324, 7148, 7999, 8876, 9782, 10716, 11680,
     12674, 13699, 14755, 15843, 16965, 18121, 19312, 20538,
@@ -1254,7 +1254,7 @@ u16 gTitleIntro_ChannelCurveLight[32] = {
 };
 
 /// A high-contrast curve (25 and above are full)
-u16 gTitleIntro_ChannelCurveContrast[32] = {
+u16 gTitlePaletteFade_ChannelCurveContrast[32] = {
     0, 360, 759, 1201, 1689, 2226, 2817, 3466,
     4178, 4957, 5808, 6738, 7752, 8856, 10058, 11365,
     12784, 14325, 15996, 17806, 19767, 21888, 24183, 26662,

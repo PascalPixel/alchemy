@@ -167,8 +167,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
                 break;
             }
             affordable = element == ELEMENT_COUNT;
-            Ability_LoadGlyph(summon->abilityId & ACTION_ID_MASK, 0,
-                              &iconSlots[index], &glyph, 1);
+            Ability_BuildIconTiles(summon->abilityId & ACTION_ID_MASK, 0,
+                                   &iconSlots[index], &glyph, 1);
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
             // A summon the party cannot afford is drawn in TEXT_COLOR_RED.

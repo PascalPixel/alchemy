@@ -40,7 +40,7 @@ void IconMenu_ReleaseArrows(void) {
 }
 
 /// Loads the Psynergy icon of ability abilityId into VRAM block slot, building
-/// it (Ability_LoadGlyphFar) in a IconTransfer in HEAP_SLOT_ICON_TRANSFER,
+/// it (Ability_BuildIconTilesFar) in a IconTransfer in HEAP_SLOT_ICON_TRANSFER,
 /// which is released again. Returns the block's first tile.
 s32 Icon_LoadResourceIntoSlot(s32 abilityId, s32 slot) {
   s32 decodedResource;
@@ -51,7 +51,7 @@ s32 Icon_LoadResourceIntoSlot(s32 abilityId, s32 slot) {
   allocation =
       HeapSlot_AllocEwram(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   selectedSlot = slot;
-  Ability_LoadGlyphFar(abilityId, 0, &selectedSlot, &decodedResource, 1);
+  Ability_BuildIconTilesFar(abilityId, 0, &selectedSlot, &decodedResource, 1);
   firstTile = VramCache_Reload(slot, (s32)allocation->tiles);
   HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   return firstTile;

@@ -247,10 +247,10 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
     sprite->slot = effectState->arcTileSlot;
     sprite->retainCacheEntry = 1;
     sprite->image.tile = gVramCacheEntries[sprite->slot].offset >> 5;
-    // In 16 colours, 32 by 16 pixels: OBJ shape 1, horizontal, at size 2.
+    // In 16 colours, 32 by 16 pixels.
     sprite->image.fullColor = 0;
-    sprite->image.shape = 1;
-    sprite->image.size = 2;
+    sprite->image.shape = RING_HALF_SHAPE;
+    sprite->image.size = RING_HALF_SIZE;
     sprite->entries[0]->picture = 0;
   }
   // BUG: failed allocations above leave a missing arc or sprite here.

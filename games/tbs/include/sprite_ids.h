@@ -817,6 +817,35 @@ enum StrongmanAnimation {
   STRONGMAN_ANIMATION_SQUATS = 9 ///< his knees bending, over and over
 };
 
+/// Each of SPRITE_GOLDEN_RINGS's arcs, the halves of a ring, is a 32x16
+/// sprite: OBJ Shape 1, horizontal, at OBJ Size 2 (GBATEK "OBJ Attribute 0"
+/// and "OBJ Attribute 1").
+#define RING_HALF_SHAPE 1
+#define RING_HALF_SIZE 2
+
+/// SPRITE_GOLDEN_RINGS's animations for Mercury Lighthouse's pool lights
+/// (golden_rings.tsv).
+enum GoldenRingsAnimation {
+  /// The back half of a ring, an arc bowed upward: the charging spark behind
+  /// the leader.
+  GOLDEN_RINGS_ANIMATION_BACK_ARC = 1,
+  /// The front half, bowed downward: the charging spark in front.
+  GOLDEN_RINGS_ANIMATION_FRONT_ARC = 2,
+  /// The column of light while it holds three lights: three small rings
+  /// turning. 4 shows two rings and 5 one (GOLDEN_RINGS_ANIMATION_COLUMN).
+  GOLDEN_RINGS_ANIMATION_THREE_LIGHTS = 3,
+  GOLDEN_RINGS_ANIMATION_ONE_LIGHT = 5,
+  /// A whole ring, shimmering: the light that holds the leader up in the
+  /// pool.
+  GOLDEN_RINGS_ANIMATION_POOL_LIGHT = 6,
+  /// A whole ring breaking into dots: a light going out.
+  GOLDEN_RINGS_ANIMATION_LIGHT_OUT = 7
+};
+
+/// The column of light's animation while it holds this many lights, 1 to 3.
+#define GOLDEN_RINGS_ANIMATION_COLUMN(lights)                                  \
+  (GOLDEN_RINGS_ANIMATION_ONE_LIGHT + 1 - (lights))
+
 /// SPRITE_TORCH's animations (torch.tsv).
 enum TorchAnimation {
   TORCH_ANIMATION_UNLIT = 1, ///< a cold torch, its bowl grey with ash

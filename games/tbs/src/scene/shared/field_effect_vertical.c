@@ -9,11 +9,6 @@
 /// wave.
 #define VERTICAL_EFFECT_FRAMES 32
 
-/// Each half of the ring is a 32x16 sprite: OBJ Shape 1, horizontal, at OBJ
-/// Size 2 (GBATEK "OBJ Attribute 0" and "OBJ Attribute 1").
-#define RING_HALF_SHAPE 1
-#define RING_HALF_SIZE 2
-
 /// The ring's back half: it rises a pixel a frame on the watched actor, up to
 /// 13 pixels south of it while small.
 static void FieldEffect_RiseRingBackHalf(struct Actor *actor) {

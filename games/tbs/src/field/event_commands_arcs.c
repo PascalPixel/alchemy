@@ -94,8 +94,8 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
         (gVramCacheEntries[sprite->slot].offset / TILE_SIZE_4BPP) &
         OBJ_TILE_MASK;
     sprite->image.fullColor = 0;
-    sprite->image.shape = 1;
-    sprite->image.size = 2;
+    sprite->image.shape = RING_HALF_SHAPE;
+    sprite->image.size = RING_HALF_SIZE;
     sprite->entries[0]->picture = 0;
   }
   // The front half in front of everything, the back half under the caster.

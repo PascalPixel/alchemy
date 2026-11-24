@@ -28,6 +28,9 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 #define TEXT_TILES 128
 #define TEXT_EXTRA_TILE_FIRST 512
 
+/// The window renderer's windows.
+#define WINDOW_COUNT 12
+
 /// The window system's state: its text tile and upload state, the windows'
 /// tilemap, the windows, the three text messages, the 64 window sprites, and
 /// the decoded message and its arguments.

@@ -262,6 +262,17 @@ void Title_UpdateIntroSprites(void) {
   Dma_Set(&INTRO_OBJ(0), OAM, DMA_COPY_WORDS(8), REG_DMA3);
 }
 
+/// Writes map rows `first` to `last` at tilemap: each row the screen's width of
+/// tiles numbered on from tileIndex, then two columns past the edge that show
+/// offscreenTile.
+#define FILL_INTRO_MAP_ROWS(first, last)                                       \
+  for (row = (first); row <= (last); row++) {                                  \
+    for (column = 0; column < DISPLAY_TILE_WIDTH; column++)                    \
+      *tilemap++ = tileIndex++;                                                \
+    *tilemap++ = offscreenTile;                                                \
+    *tilemap++ = offscreenTile;                                                \
+  }
+
 /// Loads the title intro's two scrolling images, the clouds and the peak, and
 /// the sun's and lens flare's sprite tiles, builds the images' maps and sets
 /// the blending and windows.
@@ -303,34 +314,14 @@ void Title_LoadIntroBackgrounds(void) {
     tilemap = (u16 *)BG_SCREEN_BLOCK(INTRO_FRONT_SCREEN);
     tileIndex = PEAK_FIRST_TILE +
                 (INTRO_VRAM_ROWS - INTRO_FIRST_MAP_ROW) * DISPLAY_TILE_WIDTH;
-    for (row = 0; row < INTRO_FIRST_MAP_ROW; row++) {
-      for (column = 0; column < DISPLAY_TILE_WIDTH; column++)
-        *tilemap++ = tileIndex++;
-      *tilemap++ = offscreenTile;
-      *tilemap++ = offscreenTile;
-    }
+    FILL_INTRO_MAP_ROWS(0, INTRO_FIRST_MAP_ROW - 1);
     tileIndex = PEAK_FIRST_TILE;
-    for (row = INTRO_FIRST_MAP_ROW; row <= INTRO_MAP_ROWS - 1; row++) {
-      for (column = 0; column < DISPLAY_TILE_WIDTH; column++)
-        *tilemap++ = tileIndex++;
-      *tilemap++ = offscreenTile;
-      *tilemap++ = offscreenTile;
-    }
+    FILL_INTRO_MAP_ROWS(INTRO_FIRST_MAP_ROW, INTRO_MAP_ROWS - 1);
     tilemap = (u16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
     tileIndex = (INTRO_VRAM_ROWS - INTRO_FIRST_MAP_ROW) * DISPLAY_TILE_WIDTH;
-    for (row = 0; row < INTRO_FIRST_MAP_ROW; row++) {
-      for (column = 0; column < DISPLAY_TILE_WIDTH; column++)
-        *tilemap++ = tileIndex++;
-      *tilemap++ = offscreenTile;
-      *tilemap++ = offscreenTile;
-    }
+    FILL_INTRO_MAP_ROWS(0, INTRO_FIRST_MAP_ROW - 1);
     tileIndex = 0;
-    for (row = INTRO_FIRST_MAP_ROW; row <= INTRO_MAP_ROWS - 1; row++) {
-      for (column = 0; column < DISPLAY_TILE_WIDTH; column++)
-        *tilemap++ = tileIndex++;
-      *tilemap++ = offscreenTile;
-      *tilemap++ = offscreenTile;
-    }
+    FILL_INTRO_MAP_ROWS(INTRO_FIRST_MAP_ROW, INTRO_MAP_ROWS - 1);
 
     REG_BG1CNT =
         BGCNT_PRIORITY(3) | BGCNT_MOSAIC | BGCNT_SCREEN_BASE(INTRO_BACK_SCREEN);
@@ -438,8 +429,8 @@ s32 Title_ShowTitleScreen(s32 prompt) {
   wait(1);
   Task_ResetAll();
   // The intro writes OAM itself in VBlank.
-  gOamCopyEnabled = result;
-  gCpuLoadDisplayEnabled = result;
+  gOamCopyEnabled = 0;
+  gCpuLoadDisplayEnabled = 0;
   Title_LoadIntroBackgrounds();
   // The pictures fade up from a near-black red over a second.
   TitlePaletteFade_Initialize();
@@ -570,10 +561,12 @@ s32 Title_ShowTitleScreen(s32 prompt) {
     struct IntroSprite *sprite = introState->area.prompt.sprites;
 
     Decompress_ByteLz(gTitle_PromptTiles, buffer);
+    // The pictures are packed one after another, each half the size of a
+    // 32-by-8 picture of 256 colours.
     for (i = 0; i < PROMPT_TILES; i++) {
       s32 vramBlock =
           VramCache_Load(VramCache_FindFreeEntry(), PROMPT_SPRITE_BYTES,
-                         buffer + (i << 8) / 2);
+                         buffer + i * (4 * TILE_SIZE_8BPP) / 2);
       u32 *spriteWords = (u32 *)sprite;
 
       // Unlinked, 32 by 8, and its tiles.
@@ -888,6 +881,28 @@ void TitlePaletteFade_Update(void) {
   }
 }
 
+/// The warm, dark tint: red halved, green cut by a third, then red and green
+/// raised and blue lowered, each channel through its own curve.
+#define BUILD_WARM_DARK_COLORS()                                               \
+  for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {                \
+    color = *source++;                                                         \
+    red = RGB_RED(color);                                                      \
+    green = RGB_GREEN(color);                                                  \
+    blue = RGB_BLUE(color);                                                    \
+    red -= (u32)red >> 1;                                                      \
+    green -= green / 3;                                                        \
+    red += 6;                                                                  \
+    green += 4;                                                                \
+    blue -= 6;                                                                 \
+    red = TitlePaletteFade_ClampChannel(red);                                  \
+    green = TitlePaletteFade_ClampChannel(green);                              \
+    blue = TitlePaletteFade_ClampChannel(blue);                                \
+    SET_VECTOR(destination, gTitlePaletteFade_ChannelCurveContrast[blue],      \
+               gTitlePaletteFade_ChannelCurveLight[green],                     \
+               gTitlePaletteFade_ChannelCurve[red]);                           \
+    destination += 3;                                                          \
+  }
+
 /// Tints 512 source colours into destination components (three per colour, each
 /// in the high bits of a halfword). `mode` picks the tint: a colour below
 /// PALETTE_TINT_FROM_SOURCE fills every colour with it;
@@ -972,24 +987,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     case PALETTE_TINT_WARM:
       // Unlike the field's fade, the intro's builds this tint as
       // PALETTE_TINT_WARM_DARK.
-      for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
-        color = *source++;
-        red = RGB_RED(color);
-        green = RGB_GREEN(color);
-        blue = RGB_BLUE(color);
-        red -= (u32)red >> 1;
-        green -= green / 3;
-        red += 6;
-        green += 4;
-        blue -= 6;
-        red = TitlePaletteFade_ClampChannel(red);
-        green = TitlePaletteFade_ClampChannel(green);
-        blue = TitlePaletteFade_ClampChannel(blue);
-        SET_VECTOR(destination, gTitlePaletteFade_ChannelCurveContrast[blue],
-                   gTitlePaletteFade_ChannelCurveLight[green],
-                   gTitlePaletteFade_ChannelCurve[red]);
-        destination += 3;
-      }
+      BUILD_WARM_DARK_COLORS();
       break;
     case PALETTE_TINT_MUTED:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
@@ -1057,24 +1055,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
       }
       break;
     case PALETTE_TINT_WARM_DARK:
-      for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
-        color = *source++;
-        red = RGB_RED(color);
-        green = RGB_GREEN(color);
-        blue = RGB_BLUE(color);
-        red -= (u32)red >> 1;
-        green -= green / 3;
-        red += 6;
-        green += 4;
-        blue -= 6;
-        red = TitlePaletteFade_ClampChannel(red);
-        green = TitlePaletteFade_ClampChannel(green);
-        blue = TitlePaletteFade_ClampChannel(blue);
-        SET_VECTOR(destination, gTitlePaletteFade_ChannelCurveContrast[blue],
-                   gTitlePaletteFade_ChannelCurveLight[green],
-                   gTitlePaletteFade_ChannelCurve[red]);
-        destination += 3;
-      }
+      BUILD_WARM_DARK_COLORS();
       break;
     default:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {

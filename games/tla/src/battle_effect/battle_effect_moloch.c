@@ -262,7 +262,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
       // Four rings, each starting at its own frame, grow and fade out over
       // eight frames.
       if (frame >= MOLOCH_SPREAD_FRAME) {
-        projected = Heap_AllocEwram(1024);
+        // Room for 128 projected corners; a ring has 32.
+        projected = Heap_AllocEwram(128 * sizeof(struct ProjectedVertex));
         model = Render_AllocateModelList(1);
         texture.logWidth = 7;
         texture.logHeight = 5;
@@ -305,14 +306,15 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
         BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_MOLOCH, focus.x,
                                            focus.y);
 
-      // Frames 212-268, every eight: the targets flash and are thrown back.
+      // Frames 212-268, every eight: the targets flash and are thrown back,
+      // each strike's reach 16 percent further than the last's.
       for (i = 0; i != 8; i++) {
         if (frame == i * 8 + 212) {
           for (k = 0; k != state->args->targetCount; k++) {
             BattleEffect_TintBattler(state->args->targets[k],
                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
-            BattleEffect_StartActorMotion(args->targets[k], 1, toFIXED(1),
-                                          toFIXED(4), toFIXED(1), i * 16 + 100);
+            BattleEffect_StartActorMotion(args->targets[k], TRUE, toFIXED(1),
+                                          toFIXED(4), toFIXED(1), 100 + i * 16);
           }
         }
       }
@@ -629,14 +631,55 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
 #define IRIS_GODDESS_TILE 32
 /// A sprite of her 256-colour figure, a byte a pixel.
 #define IRIS_GODDESS_SPRITE_BYTES (IRIS_GODDESS_TILE * IRIS_GODDESS_TILE)
-/// The frame she appears; A or B skips the opening to it.
+/// Whether frame is one of first to last, both included.
+#define IRIS_DURING(frame, first, last)                                        \
+  ((u32)((frame) - (first)) <= (last) - (first))
+/// The summon's milestones. The opening's circle of light and streaks run to
+/// IRIS_APPEAR_FRAME, when she appears; A or B skips the opening to it.
 #define IRIS_APPEAR_FRAME 176
-/// The frame the fountain starts; A or B after her appearance skips to it.
+/// She comes to rest, and the next frame the drops' pictures are made.
+#define IRIS_ARRIVAL_FRAME 229
+#define IRIS_DROPS_FRAME 230
+/// The sunset darkens from here.
+#define IRIS_DARKEN_FRAME 240
+/// She turns white and sinks, then rises away, and is gone.
+#define IRIS_LEAVE_FRAME 351
+#define IRIS_RISE_FRAME 366
+#define IRIS_GONE_FRAME 386
+/// The pillars of light climb, until a band of light rises over them.
+#define IRIS_PILLARS_FRAME 370
+#define IRIS_PILLARS_END_FRAME 422
+/// The fountain starts under the starfield; A or B after her appearance skips
+/// to it.
 #define IRIS_FOUNTAIN_FRAME 446
-/// From her appearance to frame 229 she drops into place on a sine, a 1024th
-/// of a turn a frame and 64 pixels high; this is how far it has carried her
-/// by frame 229, taken off so that she comes to rest there.
+/// The rings of the healing.
+#define IRIS_HEAL_FRAME 639
+/// The glow's textures are made; the canvas flashes white for three frames,
+/// the cone of light reaches out a frame later, and the tall ring of motes
+/// follows.
+#define IRIS_GLOW_FRAME 754
+#define IRIS_CONE_FRAME 759
+#define IRIS_TALL_RING_FRAME 783
+/// The backdrop whitens, and the summon ends.
+#define IRIS_WHITE_OUT_FRAME 817
+#define IRIS_END_FRAME 850
+/// From her appearance to IRIS_ARRIVAL_FRAME she drops into place on a sine, a
+/// 1024th of a turn a frame and 64 pixels high; this is how far it has carried
+/// her by then, taken off so that she comes to rest there.
 #define IRIS_ARRIVAL_DROP toFIXED(20.4453125)
+/// The five light bars of the fountain, 45-degree lines growing a pixel a
+/// frame up and right from where they start. Each lasts IRIS_BAR_FRAMES from
+/// its own first frame, fading over its last 31.
+#define IRIS_BAR_FRAMES 210
+#define IRIS_CORNER_BAR_FRAME 513
+#define IRIS_INNER_LEFT_BAR_FRAME 522
+#define IRIS_INNER_LOWER_BAR_FRAME 531
+#define IRIS_OUTER_LEFT_BAR_FRAME 535
+#define IRIS_OUTER_LOWER_BAR_FRAME 554
+#define IRIS_BAR_SHOWN(frame, start)                                           \
+  IRIS_DURING(frame, start, (start) + IRIS_BAR_FRAMES - 1)
+#define IRIS_BAR_SHADE(frame, start) ((start) + IRIS_BAR_FRAMES - (frame))
+#define IRIS_BAR_LENGTH(frame, start) ((frame) - ((start) - 1))
 /// The opening's streaks rise until their heads reach this row.
 #define IRIS_STREAK_TOP 59
 /// The sounds at the frames of gIris_PsynergySoundFrames,
@@ -665,6 +708,7 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
 /// IRIS_SWEEP_STEP apart, of IRIS_SWEEP_MOTE pixels.
 #define IRIS_HEAL_RINGS 10
 #define IRIS_HEAL_RING_GAP 8
+#define IRIS_HEAL_RING_FRAMES 31 ///< each ring's life
 #define IRIS_HEAL_RING_POINTS 128
 #define IRIS_WIDE_ARC_MOTES 96
 #define IRIS_TALL_RING_MOTES 197
@@ -1186,12 +1230,13 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     if (gInput.repeat & (KEY_A | KEY_B)) {
       if (frame < IRIS_APPEAR_FRAME) {
         frame = IRIS_APPEAR_FRAME;
-      } else if ((u32)(frame - 177) <= 268) {
+      } else if (IRIS_DURING(frame, IRIS_APPEAR_FRAME + 1,
+                             IRIS_FOUNTAIN_FRAME - 1)) {
         REG_BLDALPHA = EFFECT_BLEND_ADD;
         IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         EFFECT_PRESENT_CANVAS(state);
-        if (frame <= 386) {
+        if (frame <= IRIS_GONE_FRAME) {
           for (i = 0; i != IRIS_GODDESS_SPRITES; i++)
             Sprite_DestroyFar(state->sprites[i]);
           BattleEffect_ShowLivingTargets(state->args);
@@ -1208,7 +1253,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         break;
       }
     }
-    if (frame == 850)
+    if (frame == IRIS_END_FRAME)
       break;
 
     if (frame == 0)
@@ -1216,7 +1261,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     for (i = 0; i != IRIS_PSYNERGY_SOUNDS; i++)
       if (frame == gIris_PsynergySoundFrames[i])
         Sound_PlayFar(SE_PSYNERGY_START);
-    if (frame == 175)
+    if (frame == IRIS_APPEAR_FRAME - 1)
       Sound_PlayFar(SE_POWER_UP);
     for (i = 0; i != IRIS_DOOR_SOUNDS; i++)
       if (frame == gIris_DoorSoundFrames[i])
@@ -1224,15 +1269,15 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     for (i = 0; i != IRIS_POWER_UP_SOUNDS; i++)
       if (frame == gIris_PowerUpSoundFrames[i])
         Sound_PlayFar(SE_POWER_UP);
-    if (frame == 369)
+    if (frame == IRIS_PILLARS_FRAME - 1)
       Sound_PlayFar(SE_CURSE_FALL);
     for (i = 0; i != 6; i++)
       if (frame == 644 + i * 12)
         Sound_PlayFar(SE_LAUNCH);
-    if (frame == 755)
+    if (frame == IRIS_GLOW_FRAME + 1)
       Sound_PlayFar(SE_POWER_UP);
     for (i = 0; i != 6; i++)
-      if (frame == 759 + i * 9)
+      if (frame == IRIS_CONE_FRAME + i * 9)
         Sound_PlayFar(SE_CRASH);
     if (frame == 820)
       Sound_PlayFar(SE_BANE_ESCAPE);
@@ -1257,7 +1302,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
       EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
-    if (frame <= 175) {
+    if (frame < IRIS_APPEAR_FRAME) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
       draw[1] = Ram_HeapSlots->ramCodePaired;
@@ -1344,7 +1389,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         Canvas_BlitMirroredQuarters(state->sheet, scene->xPixels,
                                     scene->yPixels, size);
       }
-      if (frame == 175) {
+      if (frame == IRIS_APPEAR_FRAME - 1) {
         REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                      BGCNT_SCREEN_BASE(7);
         IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
@@ -1436,12 +1481,12 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
       EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, IRIS_CANVAS_FADE_SHARE);
     }
-    if ((u32)(frame - 177) <= 216) {
+    if (IRIS_DURING(frame, IRIS_APPEAR_FRAME + 1, IRIS_GONE_FRAME + 7)) {
       scale = gIris_UnitScale;
       pos[3] = 0;
       pos[1] = toFIXED(255);
       lift = 0;
-      if (frame > 350) {
+      if (frame >= IRIS_LEAVE_FRAME) {
         u16 *pal = (u16 *)OBJ_PLTT;
 
         // Every sprite colour but the last steps toward white.
@@ -1464,15 +1509,15 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           *pal++ = RGB(r, g, b);
         }
       }
-      // She drops into place on a sine until frame 229; from frame 351 she
-      // sinks 64 pixels on a sine, a 64th of a turn a frame, then rises away
-      // ten pixels a frame.
-      if (frame <= 385) {
-        if ((u32)(frame - 351) <= 14)
-          lift = Trig_Sin(IRIS_TURN_64THS(frame - 350)) << 6;
-        else if (frame > 365)
-          lift = (366 - frame) * toFIXED(10) + toFIXED(64);
-        if (frame <= 229)
+      // She drops into place on a sine until IRIS_ARRIVAL_FRAME; from
+      // IRIS_LEAVE_FRAME she sinks 64 pixels on a sine, a 64th of a turn a
+      // frame, then from IRIS_RISE_FRAME rises away ten pixels a frame.
+      if (frame < IRIS_GONE_FRAME) {
+        if (IRIS_DURING(frame, IRIS_LEAVE_FRAME, IRIS_RISE_FRAME - 1))
+          lift = Trig_Sin(IRIS_TURN_64THS(frame - (IRIS_LEAVE_FRAME - 1))) << 6;
+        else if (frame >= IRIS_RISE_FRAME)
+          lift = (IRIS_RISE_FRAME - frame) * toFIXED(10) + toFIXED(64);
+        if (frame <= IRIS_ARRIVAL_FRAME)
           lift = (Trig_Sin((frame << 6) - (IRIS_APPEAR_FRAME << 6)) << 6) -
                  IRIS_ARRIVAL_DROP;
         for (j = 0; j != IRIS_GODDESS_ROWS; j++) {
@@ -1485,7 +1530,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           }
         }
       }
-      if (frame == 386) {
+      // She is gone: the targets show again, in their damage pose.
+      if (frame == IRIS_GONE_FRAME) {
         for (i = 0; i != IRIS_GODDESS_SPRITES; i++)
           Sprite_DestroyFar(state->sprites[i]);
         BattleEffect_ShowLivingTargets(state->args);
@@ -1494,7 +1540,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           BattleEffect_TintBattler(state->args->targets[i], TINT_KEEP,
                                    POSE_DAMAGE, TINT_KEEP, 0);
       }
-      if (frame <= 191) {
+      // For her first frames a line of light crosses the canvas's middle,
+      // three rows of it.
+      if (frame <= IRIS_APPEAR_FRAME + 15) {
         for (i = 0; i != 3; i++) {
           s32 y = i + 62;
           u8 v = frame + (i & 1) * 47 + 80;
@@ -1515,9 +1563,10 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
     }
     // As she appears her petals fly out, shrinking.
-    if ((u32)(frame - 177) <= 46) {
+    if (IRIS_DURING(frame, IRIS_APPEAR_FRAME + 1, IRIS_APPEAR_FRAME + 47)) {
       for (i = 0; i != IRIS_PETALS; i++) {
-        shrink.x = shrink.y = FIXED_ONE - IRIS_PETAL_SHRINK(frame - 177);
+        shrink.x = shrink.y =
+            FIXED_ONE - IRIS_PETAL_SHRINK(frame - (IRIS_APPEAR_FRAME + 1));
         pos[3] = 0;
         pos[1] = toFIXED(255);
         pos[0] = petals->x[i];
@@ -1532,7 +1581,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         objects[i]->image.tile = petals->tiles[petals->frames[i]];
       }
     }
-    if ((u32)(frame - 179) <= 38) {
+    // A ring of motes spreads about her and the first motes fly out, while
+    // the canvas's weight over the battle falls.
+    if (IRIS_DURING(frame, IRIS_APPEAR_FRAME + 3, IRIS_APPEAR_FRAME + 41)) {
       s32 radius = frame - 170;
 
       for (i = 0; i != IRIS_APPEAR_RING_POINTS; i++) {
@@ -1555,12 +1606,12 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         state->particles[i].x += state->particles[i].velocityX;
       }
     }
-    if ((u32)(frame - 179) <= 31)
+    if (IRIS_DURING(frame, IRIS_APPEAR_FRAME + 3, IRIS_APPEAR_FRAME + 34))
       REG_BLDALPHA = EFFECT_BLEND_CANVAS((210 - frame) >> 1);
 
     // The drops: the motes' fading sets, the drops' pictures and the spray's
     // column.
-    if (frame == 230) {
+    if (frame == IRIS_DROPS_FRAME) {
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
       for (i = 1; i != IRIS_MOTE_FADES; i++) {
@@ -1635,8 +1686,10 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-    if ((u32)(frame - 240) <= 127 && !(frame & 15)) {
-      s32 v = (240 - frame) / 16;
+    // The sunset darkens a step every 16 frames, eight times.
+    if (IRIS_DURING(frame, IRIS_DARKEN_FRAME, IRIS_DARKEN_FRAME + 127) &&
+        !(frame & 15)) {
+      s32 v = (IRIS_DARKEN_FRAME - frame) / 16;
 
       Palette_BrightenSavedBattleBg(v, v, v);
     }
@@ -1665,12 +1718,12 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         }
       }
     }
-    if ((u32)(frame - 279) <= 132 || frame > IRIS_FOUNTAIN_FRAME)
+    if (IRIS_DURING(frame, 279, 411) || frame > IRIS_FOUNTAIN_FRAME)
       UpdatePetals();
     HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 
     // The pillars of light.
-    if (frame == 370) {
+    if (frame == IRIS_PILLARS_FRAME) {
       BattleEffect_DrawShadedCircles(state->sheet + IRIS_PILLAR_CIRCLE,
                                      IRIS_PILLAR_TEXTURE_SIZE, FIXED_ONE);
       for (i = 0; i != IRIS_PILLAR_TEXTURE_SIZE; i++) {
@@ -1683,31 +1736,37 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(8);
     }
-    if ((u32)(frame - 414) <= 7) {
-      s32 alpha = frame - 406;
+    // Over the pillars' last eight frames the canvas's weight rises from 8 to
+    // 15.
+    if (IRIS_DURING(frame, IRIS_PILLARS_END_FRAME - 8,
+                    IRIS_PILLARS_END_FRAME - 1)) {
+      s32 alpha = frame - (IRIS_PILLARS_END_FRAME - 16);
       REG_BLDALPHA = BLEND_ALPHA(alpha, BLEND_WEIGHT_MAX);
     }
-    if (frame > 385)
-      gProjection.centerY = 2556 - frame * 6;
-    if (frame <= 422) {
-      if (frame > 370) {
-        s32 h = (frame - 370) << 3;
+    // Once she is gone the projection's centre climbs six lines a frame from
+    // SUMMON_PROJECTION_CENTER_Y, past the battle's own at frame 406.
+    if (frame >= IRIS_GONE_FRAME)
+      gProjection.centerY =
+          SUMMON_PROJECTION_CENTER_Y + IRIS_GONE_FRAME * 6 - frame * 6;
+    if (frame <= IRIS_PILLARS_END_FRAME) {
+      if (frame > IRIS_PILLARS_FRAME) {
+        s32 h = (frame - IRIS_PILLARS_FRAME) << 3;
 
         if (h > CANVAS_SIZE - 1)
           h = CANVAS_SIZE - 1;
         Iris_DrawPillar(3, 34, h);
       }
-      if (frame > 375) {
+      if (frame > IRIS_PILLARS_FRAME + 5) {
         struct FiveWidths widths = gIris_RisingPillarWidths;
-        s32 h = (frame - 375) << 3;
+        s32 h = (frame - (IRIS_PILLARS_FRAME + 5)) << 3;
 
         if (h > CANVAS_SIZE - 1)
           h = CANVAS_SIZE - 1;
         Iris_DrawPillar(widths.widths[h >> 5], (h >> 5) * 2 + 94, h);
       }
-      if (frame > 380) {
+      if (frame > IRIS_PILLARS_FRAME + 10) {
         struct SevenWidths widths = gIris_WideningPillarWidths;
-        s32 h = (frame - 380) << 2;
+        s32 h = (frame - (IRIS_PILLARS_FRAME + 10)) << 2;
         s32 q;
 
         if (h > CANVAS_SIZE - 1)
@@ -1715,9 +1774,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         q = h / IRIS_WIDENING_STEP;
         Iris_DrawPillar(widths.widths[q], q + 12, h);
       }
-      if (frame > 382) {
+      if (frame > IRIS_PILLARS_FRAME + 12) {
         struct SevenWidths widths = gIris_NarrowingPillarWidths;
-        s32 h = (frame - 382) << 3;
+        s32 h = (frame - (IRIS_PILLARS_FRAME + 12)) << 3;
         s32 q;
 
         if (h > CANVAS_SIZE - 1)
@@ -1725,20 +1784,22 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         q = h / IRIS_NARROWING_STEP;
         Iris_DrawPillar(widths.widths[q], q * 2 + 70, h);
       }
-      if (frame > 385) {
-        s32 h = (frame - 385) << 2;
+      if (frame > IRIS_PILLARS_FRAME + 15) {
+        s32 h = (frame - (IRIS_PILLARS_FRAME + 15)) << 2;
 
         if (h > CANVAS_SIZE - 1)
           h = CANVAS_SIZE - 1;
         Iris_DrawPillar(14, (h >> 3) + 48, h);
       }
-      if (frame == 422) {
+      if (frame == IRIS_PILLARS_END_FRAME) {
         EFFECT_SET_TRANSFER(state, CANVAS_COPY, 0);
         REG_BLDALPHA = EFFECT_BLEND_ADD;
       }
     }
-    if ((u32)(frame - 423) <= 19) {
-      s32 step = frame - 422;
+    // A band of light rises up the canvas.
+    if (IRIS_DURING(frame, IRIS_PILLARS_END_FRAME + 1,
+                    IRIS_PILLARS_END_FRAME + 20)) {
+      s32 step = frame - IRIS_PILLARS_END_FRAME;
       s32 first;
       s32 dead;
       s32 top;
@@ -1775,7 +1836,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         }
       }
     }
-    if ((u32)(frame - 401) <= 30 && (frame & 1)) {
+    if (IRIS_DURING(frame, 401, 431) && (frame & 1)) {
       // DEAD: the violet sky's entry is looked up and not used; the ROM keeps
       // the call.
       Resource_GetTableEntry(RESOURCE_VIOLET_SKY_BACKDROP);
@@ -1881,7 +1942,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
       EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, IRIS_CANVAS_FADE_SHARE);
     }
-    if ((u32)(frame - 447) <= 15) {
+    if (IRIS_DURING(frame, IRIS_FOUNTAIN_FRAME + 1, IRIS_FOUNTAIN_FRAME + 16)) {
       s32 step = frame - IRIS_FOUNTAIN_FRAME;
       s32 top;
       s32 off;
@@ -1911,7 +1972,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     }
     if (frame > IRIS_FOUNTAIN_FRAME)
       DrawParticles();
-    if ((u32)(frame - 447) <= 194) {
+    if (IRIS_DURING(frame, IRIS_FOUNTAIN_FRAME + 1,
+                    IRIS_FOUNTAIN_FRAME + 195)) {
       void *verts = Heap_AllocEwram(80);
       struct RenderModel *model = Render_AllocateModelList(1);
       s32 scroll;
@@ -2004,67 +2066,83 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Heap_Release(verts);
     }
 
-    // The five light bars sweeping in from the edges.
-    if ((u32)(frame - 513) <= 209) {
-      s16 shade = 723 - frame;
-
-      if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
-        shade = CANVAS_LEVEL_BRIGHTEST;
-      BattleEffect_DrawDiagonalCanvasLine(0, 127, frame - 512, shade);
-    }
-    if ((u32)(frame - 522) <= 209) {
-      s16 shade = 732 - frame;
+    // The five light bars, each from its own frame: the corner's, then an
+    // inner and an outer pair either side of it, one starting on the
+    // canvas's left edge and slipping down it, one on its bottom edge and
+    // slipping left.
+    if (IRIS_BAR_SHOWN(frame, IRIS_CORNER_BAR_FRAME)) {
+      s16 shade = IRIS_BAR_SHADE(frame, IRIS_CORNER_BAR_FRAME);
 
       if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
         shade = CANVAS_LEVEL_BRIGHTEST;
       BattleEffect_DrawDiagonalCanvasLine(
-          0,
-          FIXEDtoINT(Iwram_MulFX((frame - 521) * toFIXED(1), FIXED_ONE / 64) +
-                     toFIXED(123)),
-          frame - 521, shade);
+          0, 127, IRIS_BAR_LENGTH(frame, IRIS_CORNER_BAR_FRAME), shade);
     }
-    if ((u32)(frame - 531) <= 209) {
-      s32 x = toFIXED(4);
-      s16 shade = 741 - frame;
-
-      if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
-        shade = CANVAS_LEVEL_BRIGHTEST;
-      x -= Iwram_MulFX((frame - 530) * toFIXED(1), toFIXED(1) / 64);
-      BattleEffect_DrawDiagonalCanvasLine(FIXEDtoINT(x), 127, frame - 530,
-                                          shade);
-    }
-    if ((u32)(frame - 535) <= 209) {
-      s16 shade = 745 - frame;
+    if (IRIS_BAR_SHOWN(frame, IRIS_INNER_LEFT_BAR_FRAME)) {
+      s16 shade = IRIS_BAR_SHADE(frame, IRIS_INNER_LEFT_BAR_FRAME);
 
       if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
         shade = CANVAS_LEVEL_BRIGHTEST;
       BattleEffect_DrawDiagonalCanvasLine(
           0,
           FIXEDtoINT(
-              Iwram_MulFX((frame - 534) * toFIXED(1), FIXED_ONE * 3 / 128) +
-              toFIXED(120)),
-          frame - 534, shade);
+              Iwram_MulFX(IRIS_BAR_LENGTH(frame, IRIS_INNER_LEFT_BAR_FRAME) *
+                              toFIXED(1),
+                          FIXED_ONE / 64) +
+              toFIXED(123)),
+          IRIS_BAR_LENGTH(frame, IRIS_INNER_LEFT_BAR_FRAME), shade);
     }
-    if ((u32)(frame - 554) <= 209) {
-      s32 x = toFIXED(6);
-      s16 shade = 764 - frame;
+    if (IRIS_BAR_SHOWN(frame, IRIS_INNER_LOWER_BAR_FRAME)) {
+      s32 x = toFIXED(4);
+      s16 shade = IRIS_BAR_SHADE(frame, IRIS_INNER_LOWER_BAR_FRAME);
 
       if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
         shade = CANVAS_LEVEL_BRIGHTEST;
-      x -= Iwram_MulFX((frame - 553) * toFIXED(1), toFIXED(3) / 128);
-      BattleEffect_DrawDiagonalCanvasLine(FIXEDtoINT(x), 127, frame - 553,
-                                          shade);
+      x -= Iwram_MulFX(IRIS_BAR_LENGTH(frame, IRIS_INNER_LOWER_BAR_FRAME) *
+                           toFIXED(1),
+                       toFIXED(1) / 64);
+      BattleEffect_DrawDiagonalCanvasLine(
+          FIXEDtoINT(x), 127,
+          IRIS_BAR_LENGTH(frame, IRIS_INNER_LOWER_BAR_FRAME), shade);
+    }
+    if (IRIS_BAR_SHOWN(frame, IRIS_OUTER_LEFT_BAR_FRAME)) {
+      s16 shade = IRIS_BAR_SHADE(frame, IRIS_OUTER_LEFT_BAR_FRAME);
+
+      if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
+        shade = CANVAS_LEVEL_BRIGHTEST;
+      BattleEffect_DrawDiagonalCanvasLine(
+          0,
+          FIXEDtoINT(
+              Iwram_MulFX(IRIS_BAR_LENGTH(frame, IRIS_OUTER_LEFT_BAR_FRAME) *
+                              toFIXED(1),
+                          FIXED_ONE * 3 / 128) +
+              toFIXED(120)),
+          IRIS_BAR_LENGTH(frame, IRIS_OUTER_LEFT_BAR_FRAME), shade);
+    }
+    if (IRIS_BAR_SHOWN(frame, IRIS_OUTER_LOWER_BAR_FRAME)) {
+      s32 x = toFIXED(6);
+      s16 shade = IRIS_BAR_SHADE(frame, IRIS_OUTER_LOWER_BAR_FRAME);
+
+      if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
+        shade = CANVAS_LEVEL_BRIGHTEST;
+      x -= Iwram_MulFX(IRIS_BAR_LENGTH(frame, IRIS_OUTER_LOWER_BAR_FRAME) *
+                           toFIXED(1),
+                       toFIXED(3) / 128);
+      BattleEffect_DrawDiagonalCanvasLine(
+          FIXEDtoINT(x), 127,
+          IRIS_BAR_LENGTH(frame, IRIS_OUTER_LOWER_BAR_FRAME), shade);
     }
 
     // The healing: rings turning about the centre, then the great glow.
-    if ((u32)(frame - 639) <= 110) {
+    if (IRIS_DURING(frame, IRIS_HEAL_FRAME, IRIS_HEAL_FRAME + 110)) {
       s32 sinT = Trig_Sin(TRIG_TURN * 15 / 32);
       s32 cosT = Trig_Cos(TRIG_TURN * 15 / 32);
 
       for (j = 0; j != IRIS_HEAL_RINGS * IRIS_HEAL_RING_GAP;
            j += IRIS_HEAL_RING_GAP) {
-        if (638 + j < frame && frame < 670 + j) {
-          s32 t = frame - j - 638;
+        if (IRIS_HEAL_FRAME - 1 + j < frame &&
+            frame < IRIS_HEAL_FRAME + IRIS_HEAL_RING_FRAMES + j) {
+          s32 t = frame - j - (IRIS_HEAL_FRAME - 1);
           s32 ry = t >> 1;
           s32 tile = gBattleEffect_MotePictures[0] + t / 4 * MOTE_SET_BYTES;
 
@@ -2084,10 +2162,13 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         }
       }
     }
-    if ((u32)(frame - 755) <= 2 || frame == 781)
+    // The canvas flashes white for three frames after the glow is made, and
+    // once before the tall ring.
+    if (IRIS_DURING(frame, IRIS_GLOW_FRAME + 1, IRIS_GLOW_FRAME + 3) ||
+        frame == IRIS_TALL_RING_FRAME - 2)
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-    if (frame == 754) {
+    if (frame == IRIS_GLOW_FRAME) {
       s32 white;
       BattleEffect_BuildSteepShadeRampWave(state->sheet + IRIS_CONE_TEXTURE, 16,
                                            IRIS_CONE_TEXTURE_SIZE, FIXED_ONE);
@@ -2132,10 +2213,11 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         }
       }
     }
-    if ((u32)(frame - 759) <= 30) {
+    // The wide arc of motes, spreading with the cone.
+    if (IRIS_DURING(frame, IRIS_CONE_FRAME, IRIS_CONE_FRAME + 30)) {
       s32 sinT = Trig_Sin(TRIG_TURN * 11 / 32);
       s32 cosT = Trig_Cos(TRIG_TURN * 11 / 32);
-      s32 t = frame - 758;
+      s32 t = frame - (IRIS_CONE_FRAME - 1);
       s32 tile = gBattleEffect_MotePictures[IRIS_SWEEP_MOTE - 1] +
                  t / 4 * MOTE_SET_BYTES;
 
@@ -2150,10 +2232,11 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                                  IRIS_SWEEP_MOTE, 2 * IRIS_SWEEP_MOTE);
       }
     }
-    if ((u32)(frame - 783) <= 46) {
+    // The tall ring of motes.
+    if (IRIS_DURING(frame, IRIS_TALL_RING_FRAME, IRIS_TALL_RING_FRAME + 46)) {
       FIXED sinT = Trig_Sin(TRIG_TURN * 29 / 32);
       FIXED cosT = Trig_Cos(TRIG_TURN * 7 / 8);
-      s32 t = frame - 782;
+      s32 t = frame - (IRIS_TALL_RING_FRAME - 1);
       s32 tile = gBattleEffect_MotePictures[IRIS_SWEEP_MOTE - 1] +
                  t / 6 * MOTE_SET_BYTES;
 
@@ -2168,7 +2251,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                                  IRIS_SWEEP_MOTE, 2 * IRIS_SWEEP_MOTE);
       }
     }
-    if (frame > 758) {
+    // The cone of light, stretching out to its full length over 64 frames.
+    if (frame >= IRIS_CONE_FRAME) {
       void *verts = Heap_AllocEwram(64);
       struct RenderModel *model = Render_AllocateModelList(1);
       FIXED place[3];
@@ -2185,7 +2269,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Matrix_TranslateVector(place);
       Matrix_RotateZ(TRIG_TURN * 19 / 32);
       grow[0] = FIXED_ONE;
-      grow[1] = IRIS_CONE_GROWTH(frame - 758);
+      grow[1] = IRIS_CONE_GROWTH(frame - (IRIS_CONE_FRAME - 1));
       if (grow[1] > FIXED_ONE)
         grow[1] = FIXED_ONE;
       grow[2] = 0;
@@ -2236,13 +2320,15 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         }
       }
     }
-    if (frame > 782) {
+    // From the tall ring on the battle background shakes up and down.
+    if (frame >= IRIS_TALL_RING_FRAME) {
       if (frame & 2)
         gBgScroll[1].y = gBgScroll[1].y + (frame & 1) + 2;
       else
         gBgScroll[1].y = gBgScroll[1].y - (frame & 1) - 2;
     }
-    if (frame > 816) {
+    // At the end the battle background's colours step to white.
+    if (frame >= IRIS_WHITE_OUT_FRAME) {
       {
         u16 *fade = FADE_PLTT;
 
@@ -2285,6 +2371,11 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
+
+// The model renderers, which follow Iris in the battle effect code. The first
+// three draw a mesh straight into the canvas in C, filled, textured or as a
+// wireframe, and nothing calls them; the effects draw through
+// Render_DrawModelList and the ARM kernels it copies into IWRAM.
 
 /// Swaps two integers without a temporary.
 #define XOR_SWAP(a, b)                                                         \

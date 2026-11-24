@@ -132,10 +132,10 @@ s32 YallamRooms_MindReadSunshine(void) {
   Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_SUNSHINE_FORGING)) {
     // "It's been a long time since I've been able to work. I'm so excited!..."
-    Event_SetMessageId((s32)MsgYallamInteriorsItsBeenALong);
+    Event_SetMessageId((s32)MsgYallamRoomsItsBeenALong);
   } else {
     // "If it's not raining, I can't get into Taopo Swamp. And if I can't..."
-    Event_SetMessageId((s32)MsgYallamInteriorsIfItsNotRaining);
+    Event_SetMessageId((s32)MsgYallamRoomsIfItsNotRaining);
   }
   Event_ShowMessage(ACTOR_SUNSHINE, 0);
   Event_End();
@@ -149,10 +149,10 @@ s32 YallamRooms_MindReadSunshinesWife(void) {
   Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_SUNSHINE_FORGING)) {
     // "What happened to Sunshine? He's so happy, and he just talks about..."
-    Event_SetMessageId((s32)MsgYallamInteriorsWhatHappenedToSunshine);
+    Event_SetMessageId((s32)MsgYallamRoomsWhatHappenedToSunshine);
   } else {
     // "Sunshine's a pretty stubborn guy. If he says he isn't going to work..."
-    Event_SetMessageId((s32)MsgYallamInteriorsSunshinesAPrettyStubborn);
+    Event_SetMessageId((s32)MsgYallamRoomsSunshinesAPrettyStubborn);
   }
   Event_ShowMessage(ACTOR_SUNSHINES_WIFE, 0);
   Event_End();
@@ -166,10 +166,10 @@ s32 YallamRooms_MindReadSunshinesChild(void) {
   Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_SUNSHINE_FORGING)) {
     // "Now that my dad's working again, I have to watch his every move..."
-    Event_SetMessageId((s32)MsgYallamInteriorsNowThatMyDads);
+    Event_SetMessageId((s32)MsgYallamRoomsNowThatMyDads);
   } else {
     // "Everyone thinks Dad is stubborn, but he's not... He's a true artist..."
-    Event_SetMessageId((s32)MsgYallamInteriorsEveryoneThinksDadIs);
+    Event_SetMessageId((s32)MsgYallamRoomsEveryoneThinksDadIs);
   }
   Event_ShowMessage(ACTOR_SUNSHINES_CHILD, 0);
   Event_End();
@@ -183,10 +183,10 @@ s32 YallamRooms_TalkToSunshinesChild(void) {
   Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_SUNSHINE_FORGING)) {
     // "It's so weird, but something really inspired my father to work!..."
-    Event_SetMessageId((s32)MsgYallamInteriorsItsSoWeirdBut);
+    Event_SetMessageId((s32)MsgYallamRoomsItsSoWeirdBut);
   } else {
     // "Dad's not doing any work right now, but I'm making some basic things..."
-    Event_SetMessageId((s32)MsgYallamInteriorsDadsNotDoingAny);
+    Event_SetMessageId((s32)MsgYallamRoomsDadsNotDoingAny);
   }
   Event_ShowMessage(ACTOR_SUNSHINES_CHILD, 0);
   Event_End();
@@ -198,7 +198,7 @@ s32 YallamRooms_TalkToSunshinesChild(void) {
 s32 YallamRooms_MindReadWeaponMerchant(void) {
   Event_Start();
   Event_EndLastingPsynergy(0);
-  Event_SetMessageId((s32)MsgYallamInteriorsIfSunshineSetHis);
+  Event_SetMessageId((s32)MsgYallamRoomsIfSunshineSetHis);
   // "If Sunshine set his mind to it, he could make a lot of money! What a..."
   Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   Event_End();
@@ -209,7 +209,7 @@ s32 YallamRooms_MindReadWeaponMerchant(void) {
 s32 YallamRooms_MindReadArmorMerchant(void) {
   Event_Start();
   Event_EndLastingPsynergy(0);
-  Event_SetMessageId((s32)MsgYallamInteriorsIShouldntTellHim);
+  Event_SetMessageId((s32)MsgYallamRoomsIShouldntTellHim);
   // "I shouldn't tell him how boring all this stuff is. I wish Sunshine..."
   Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
   Event_End();
@@ -221,7 +221,7 @@ s32 YallamRooms_MindReadArmorMerchant(void) {
 s32 YallamRooms_MindReadItemMerchant(void) {
   Event_Start();
   Event_EndLastingPsynergy(0);
-  Event_SetMessageId((s32)MsgYallamInteriorsWhatDoesSunshineWant);
+  Event_SetMessageId((s32)MsgYallamRoomsWhatDoesSunshineWant);
   // "What does Sunshine want in Taopo Swamp? There's nothing up there but..."
   Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
   Event_End();
@@ -247,7 +247,7 @@ void YallamRooms_AskLikeChildrensSongs(void) {
 
   Event_Start();
   Event_EndLastingPsynergy(0);
-  msg = (s32)MsgYallamInteriorsDoYouLikeChildrens;
+  msg = (s32)MsgYallamRoomsDoYouLikeChildrens;
   Event_SetMessageId(msg);
   // "Do you like children's songs?"
   Event_OpenMessage(ACTOR_CHILDRENS_SONGS_VILLAGER, 0);
@@ -282,7 +282,7 @@ void YallamRooms_TalkToWeaponMerchant(s32 actor) {
   } else {
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Event_SetMessageId((s32)MsgYallamInteriorsIfTheBlacksmithIsnt);
+    Event_SetMessageId((s32)MsgYallamRoomsIfTheBlacksmithIsnt);
     // "If the blacksmith isn't willing to work, then how am I supposed to..."
     Event_ShowMessage(actor, 0);
     Event_End();
@@ -299,7 +299,7 @@ void YallamRooms_TalkToArmorMerchant(s32 actor) {
   } else {
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Event_SetMessageId((s32)MsgYallamInteriorsIfYouWantPlain);
+    Event_SetMessageId((s32)MsgYallamRoomsIfYouWantPlain);
     // "If you want plain old, boring armor, have a look around. If you're..."
     Event_ShowMessage(actor, 0);
     Event_End();
@@ -316,7 +316,7 @@ void YallamRooms_TalkToItemMerchant(s32 actor) {
   } else {
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Event_SetMessageId((s32)MsgYallamInteriorsIfYoureLookingFor);
+    Event_SetMessageId((s32)MsgYallamRoomsIfYoureLookingFor);
     // "If you're looking for Taopo Swamp, head west around the northern..."
     Event_ShowMessage(actor, 0);
     Event_End();
@@ -334,7 +334,7 @@ void YallamRooms_TalkToInnkeeper(s32 actor) {
   } else {
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Event_SetMessageId((s32)MsgYallamInteriorsItsABitStrange);
+    Event_SetMessageId((s32)MsgYallamRoomsItsABitStrange);
     // "It's a bit strange trying to run an inn in a city that never gets..."
     Event_ShowMessage(actor, 0);
     Event_End();
@@ -369,7 +369,7 @@ UNUSED void YallamRooms_OfferToForge(void) {
   Event_Start();
   Event_EndLastingPsynergy(0);
   Actor_StartRepeatedMotion(ACTOR_SUNSHINE, 2);
-  msg = (s32)MsgYallamInteriorsAhSoYouWant;
+  msg = (s32)MsgYallamRoomsAhSoYouWant;
   Event_SetMessageId(msg);
   // "Ah, so you want me to make you a little something special?"
   Event_OpenMessage(ACTOR_SUNSHINE, 0);
@@ -733,17 +733,17 @@ struct Trigger gYallamRoomsInnTriggers[] = {
     {TRIGGER_EXIT, YALLAM_ROOMS_INN_TO_YALLAM_WEST, CONDITION_ALWAYS,
      YALLAM_ROOMS_INN_TO_YALLAM_WEST},
     {TRIGGER_TALK, ACTOR_YEPP_SONGS_VILLAGER, CONDITION_ALWAYS,
-     MSGNO(MsgYallamInteriorsYeppHadThreeDifferent)},
+     MSGNO(MsgYallamRoomsYeppHadThreeDifferent)},
     {TRIGGER_TALK, ACTOR_CHILDRENS_SONGS_VILLAGER, CONDITION_ALWAYS,
      EVENT(YallamRooms_AskLikeChildrensSongs)},
     {TRIGGER_TALK, ACTOR_DRY_MONTHS_VILLAGER, CONDITION_ALWAYS,
-     MSGNO(MsgYallamInteriorsItsBeenReallyDry)},
+     MSGNO(MsgYallamRoomsItsBeenReallyDry)},
     {TRIGGER_TALK, ACTOR_RAINY_SEASON_VILLAGER, CONDITION_ALWAYS,
-     MSGNO(MsgYallamInteriorsWereSupposedToBe)},
+     MSGNO(MsgYallamRoomsWereSupposedToBe)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
      EVENT(YallamRooms_TalkToInnkeeper)},
     {TRIGGER_TALK, ACTOR_DRIED_SWAMP_VILLAGER, CONDITION_ALWAYS,
-     MSGNO(MsgYallamInteriorsTaopoSwampHasDried)},
+     MSGNO(MsgYallamRoomsTaopoSwampHasDried)},
     {TRIGGER_TALK, ACTOR_SUNSHINE, CONDITION_ALWAYS,
      EVENT(YallamRooms_TalkToSunshine)},
     {TRIGGER_TALK, ACTOR_SUNSHINES_WIFE, CONDITION_ALWAYS,
@@ -753,17 +753,17 @@ struct Trigger gYallamRoomsInnTriggers[] = {
     {TRIGGER_TALK, ACTOR_SUNSHINES_BED, CONDITION_ALWAYS,
      EVENT(YallamRooms_TalkToSunshine)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YEPP_SONGS_VILLAGER,
-     CONDITION_ALWAYS, MSGNO(MsgYallamInteriorsTheSongsAreSupposed)},
+     CONDITION_ALWAYS, MSGNO(MsgYallamRoomsTheSongsAreSupposed)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILDRENS_SONGS_VILLAGER,
-     CONDITION_ALWAYS, MSGNO(MsgYallamInteriorsIWonderWhyYepp)},
+     CONDITION_ALWAYS, MSGNO(MsgYallamRoomsIWonderWhyYepp)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DRY_MONTHS_VILLAGER,
-     CONDITION_ALWAYS, MSGNO(MsgYallamInteriorsWhenTaopoSwampDries)},
+     CONDITION_ALWAYS, MSGNO(MsgYallamRoomsWhenTaopoSwampDries)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RAINY_SEASON_VILLAGER,
-     CONDITION_ALWAYS, MSGNO(MsgYallamInteriorsICantStandThis)},
+     CONDITION_ALWAYS, MSGNO(MsgYallamRoomsICantStandThis)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgYallamInteriorsYallamWasAlwaysSuch)},
+     MSGNO(MsgYallamRoomsYallamWasAlwaysSuch)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DRIED_SWAMP_VILLAGER,
-     CONDITION_ALWAYS, MSGNO(MsgYallamInteriorsThereWerentALot)},
+     CONDITION_ALWAYS, MSGNO(MsgYallamRoomsThereWerentALot)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUNSHINE, CONDITION_ALWAYS,
      EVENT(YallamRooms_MindReadSunshine)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUNSHINES_WIFE,
@@ -773,7 +773,7 @@ struct Trigger gYallamRoomsInnTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUNSHINES_BED,
      CONDITION_ALWAYS, EVENT(YallamRooms_MindReadSunshine)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgYallamInteriorsTheSteelRestingIn))},
+     FIND_MESSAGE(MSGNO(MsgYallamRoomsTheSteelRestingIn))},
     {TRIGGER_TABLE_END},
 };
 
@@ -787,9 +787,9 @@ struct Trigger gYallamRoomsShopsTriggers[] = {
     {TRIGGER_EXIT, YALLAM_ROOMS_SHOPS_TO_YALLAM_NORTH, CONDITION_ALWAYS,
      YALLAM_ROOMS_SHOPS_TO_YALLAM_NORTH},
     {TRIGGER_TALK, ACTOR_COMPLAINT_VILLAGER, CONDITION_ALWAYS,
-     MSGNO(MsgYallamInteriorsSunshineHasStartedComplaining)},
+     MSGNO(MsgYallamRoomsSunshineHasStartedComplaining)},
     {TRIGGER_TALK, ACTOR_BLACKSMITH_VILLAGER, CONDITION_ALWAYS,
-     MSGNO(MsgYallamInteriorsOurBlacksmithSunshineMakes)},
+     MSGNO(MsgYallamRoomsOurBlacksmithSunshineMakes)},
     {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
      EVENT(YallamRooms_TalkToWeaponMerchant)},
     {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
@@ -803,15 +803,15 @@ struct Trigger gYallamRoomsShopsTriggers[] = {
     {TRIGGER_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS,
      EVENT(YallamRooms_TalkToItemMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COMPLAINT_VILLAGER,
-     CONDITION_ALWAYS, MSGNO(MsgYallamInteriorsWhatKindOfPerson)},
+     CONDITION_ALWAYS, MSGNO(MsgYallamRoomsWhatKindOfPerson)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BLACKSMITH_VILLAGER,
-     CONDITION_ALWAYS, MSGNO(MsgYallamInteriorsSunshinesALittleEccentric)},
+     CONDITION_ALWAYS, MSGNO(MsgYallamRoomsSunshinesALittleEccentric)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgYallamInteriorsIfSunshineSetHis)},
+     CONDITION_ALWAYS, MSGNO(MsgYallamRoomsIfSunshineSetHis)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgYallamInteriorsIShouldntTellHim)},
+     CONDITION_ALWAYS, MSGNO(MsgYallamRoomsIShouldntTellHim)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgYallamInteriorsWhatDoesSunshineWant)},
+     CONDITION_ALWAYS, MSGNO(MsgYallamRoomsWhatDoesSunshineWant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_COUNTER,
      CONDITION_ALWAYS, EVENT(YallamRooms_MindReadWeaponMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_COUNTER,

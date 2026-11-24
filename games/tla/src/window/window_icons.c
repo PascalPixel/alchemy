@@ -187,7 +187,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
 
 /// Draws an item's icon from its inventory code with the layers asked for
 /// (ItemIcon_Compose) and loads it into VRAM cache entry cacheSlot.
-s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
+s32 ItemIcon_LoadLayersIntoSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   GlyphTransfer *state;
 
   state = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
@@ -198,7 +198,7 @@ s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
 }
 
 /// Draws one of the other icons (ICON_KIND_PATTERN) and loads it into
-/// cacheSlot, as Icon_CopyResourceToSlot does an item's.
+/// cacheSlot, as ItemIcon_LoadLayersIntoSlot does an item's.
 s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
   GlyphTransfer *state;
 

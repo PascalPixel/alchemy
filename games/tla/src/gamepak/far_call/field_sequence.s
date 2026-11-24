@@ -268,10 +268,10 @@ FarCall_OverworldTable:
 @ Why assembly: 8-byte far-call veneers: ldr r4, the target's word, bx r4.
 	export Actor_CheckBlockedFar, Actor_CheckBlocked
 	export MapGrid_GetCellBehaviorFar, MapGrid_GetCellBehavior
-	export MapGrid_GetAttributeBAtFar, MapGrid_GetAttributeBAt
+	export MapGrid_GetCellAttributesAtFar, MapGrid_GetCellAttributesAt
 	export MapGrid_SetCellBehaviorFar, MapGrid_SetCellBehavior
-	export MapGrid_SetAttributeBAtFar, MapGrid_SetAttributeBAt
-	export MapGrid_SetAttributeBBitsAtFar, MapGrid_SetAttributeBBitsAt
+	export MapGrid_SetCellAttributesAtFar, MapGrid_SetCellAttributesAt
+	export MapGrid_SetCellAttributeBitsAtFar, MapGrid_SetCellAttributeBitsAt
 	export MapGrid_ClearAttributeBBitsAtFar, MapGrid_ClearAttributeBBitsAt
 	export Actor_ShowItemIconByIdFar, Actor_ShowItemIconById
 	export Tightrope_ReleaseFar, Tightrope_Release

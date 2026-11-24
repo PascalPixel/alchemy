@@ -74,7 +74,7 @@ void BattleMenu_UpdateEachFrame(void) {
       i--;
       entry++;
     } while (i >= 0);
-    Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
+    PageArrows_Draw(LIST_PAGE_ARROW_VRAM);
 
     // Local battles still animate the UI, but do not run the link timer.
     if (state->linkTimer == 0)

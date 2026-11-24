@@ -119,7 +119,7 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z,
                                                     s32 angle);
 void Actor_SetAnimationAndWait(s32 actorId, s32 animation);
 void Actor_Jump(s32 actorId, s32 speed, s32 frames);
-void Actor_RunRepeatedMotion(u32 objectId, s32 variant);
+void Actor_RunRepeatedMotion(u32 actorId, s32 count);
 void Actor_SetSpritePriority(u32 actorId, s32 priority);
 void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void Actor_WatchAndSetScript(s32 actorId, s32 watchedActorId);

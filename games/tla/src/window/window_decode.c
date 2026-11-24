@@ -51,7 +51,7 @@ enum {
   MESSAGE_LINE_SPACING = 10, ///< kept with its operand as TEXT_LINE_SPACING
   // XXX (no evidence): what codes 11, 12 and 14 mean; every reader skips each
   // with its operands (one, one and two), and only one message uses one of
-  // them (12, in MsgLemuriaInteriorsWhatInWhatsWithAll), so nothing the game
+  // them (12, in MsgLemuriaRoomsWhatInWhatsWithAll), so nothing the game
   // shows tells them apart.
   /// German: a counted noun; Italian: a gender ending; Spanish and French: the
   /// plural suffix

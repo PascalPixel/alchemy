@@ -32,7 +32,7 @@ struct IconSprite {
 
 s32 VramCache_FreeEntry(u32 entry);
 s32 VramCache_FindFreeEntry(void);
-void Icon_CopyResourceToSlotFar(s32 item, s32 mode, s32 resource);
+void ItemIcon_LoadLayersIntoSlotFar(s32 item, s32 mode, s32 resource);
 struct Unit *Unit_Get(u32 unitId);
 
 void ItemIconGrid_Draw(void);

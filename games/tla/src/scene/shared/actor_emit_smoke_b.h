@@ -1,8 +1,8 @@
-/// Unused: a copy of Actor_EmitRisingSparks, which three overlays keep and
+/// Unused: a copy of Actor_EmitSmoke, which three overlays keep and
 /// nothing sets as an update: every eighth frame a black puff of smoke at 0.7
 /// of its size rises from within 4 pixels of the actor, 13 to 32 pixels up, at
 /// half a pixel to 0.9 a frame.
-UNUSED s32 Actor_EmitRisingSparksB(struct Actor *actor) {
+UNUSED s32 Actor_EmitSmokeB(struct Actor *actor) {
   struct EffectOptions puff;
 
   if ((gFrameCount & 7) == 0) {

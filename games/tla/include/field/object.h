@@ -15,8 +15,8 @@ struct FieldParticle;
 struct ParticleEmitter;
 struct HangingVineSlot;
 
-s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
-u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
+s32 MapGrid_GetCellAttributesAt(s32 x, s32 z, s32 layer);
+u8 MapGrid_SetCellAttributesAt(s32 x, s32 z, s32 layer, s32 value);
 
 extern const s32 gActor_LaunchScript[];
 

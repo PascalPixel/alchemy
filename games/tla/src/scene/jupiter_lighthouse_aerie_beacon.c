@@ -233,7 +233,7 @@ void JupiterLighthouse_PlaceRaisedActors(void);
 
 s32 HangingVine_Place();
 
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 s32 MapGrid_GetCellBehavior();
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
@@ -2425,7 +2425,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks_b.h"
+#include "shared/actor_emit_smoke_b.h"
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 

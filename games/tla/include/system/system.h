@@ -104,7 +104,7 @@ void LuckyDice_Run(void);
 /// bank's far-call table.
 void Actor_NoOp(void);
 void Overlay_Load(u32 index, void *destination);
-s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
+s32 AbilityIcon_LoadIntoSlot(s32 resource, s32 index);
 void SpriteAnimation_Clear(void *destination);
 void String_FormatHex(u32);
 
@@ -276,7 +276,7 @@ extern u8 Resource_ExecuteTransferSize[];
 
 /// Which of the 256 depth slots of gOamDepthLists hold sprites this frame, a
 /// bit a slot; Oam_ResetFrame clears it.
-extern u8 gOamBucketMasks[];
+extern u8 gOamDepthMasks[];
 
 /// The 256 depth slots' list heads that every drawn sprite is linked into
 /// (Oam_AddSpriteAtDepth); Oam_ResetFrame empties them each frame.

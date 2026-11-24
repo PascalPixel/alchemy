@@ -116,7 +116,7 @@ s32 ItemMenu_Run(void) {
   ItemMenu_Initialize(0, 3, 0, 7);
   Menu_LoadStatArrows();
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
-  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
+  PageArrows_DrawFar(PAGE_ARROW_VRAM);
   screen->questionWindow =
       (struct Window *)Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
 #if TLA_PATCH_1
@@ -422,7 +422,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         break;
       }
       menu->sideMember[1] = 0;
-      Resource_LoadByModeIntoSlotFar(
+      SelectionIcon_LoadIntoSlotFar(
           ICON_KIND_ITEM,
           (menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) |
               (result << INVENTORY_QUANTITY_SHIFT),
@@ -1226,7 +1226,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
             !descriptionShown) {
           ItemMenu_ClearInfo(menu->infoWindow);
           ItemMenu_DrawInfo((menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
-                                (s32)MsgItemPlainName,
+                                (s32)MsgItemDescription,
                             menu->infoWindow, 0, 0);
           descriptionShown = 1;
         } else {
@@ -1411,11 +1411,11 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
     itemId = *entries++;
     if (itemId != 0) {
       if (iconStyle == 0) {
-        Resource_LoadByModeIntoSlotFar(ICON_KIND_ITEM, itemId,
-                                       (u8)(*icons)->index, 0);
+        SelectionIcon_LoadIntoSlotFar(ICON_KIND_ITEM, itemId,
+                                      (u8)(*icons)->index, 0);
       } else {
-        Resource_LoadByModeIntoSlotFar(ICON_KIND_EQUIPMENT_ITEM, itemId,
-                                       (u8)(*icons)->index, 0);
+        SelectionIcon_LoadIntoSlotFar(ICON_KIND_EQUIPMENT_ITEM, itemId,
+                                      (u8)(*icons)->index, 0);
       }
     }
     icons++;
@@ -2571,8 +2571,8 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
 void ItemMenu_DrawItemHead(void) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
 
-  Resource_LoadByModeIntoSlotFar(ICON_KIND_ITEM, menu->selectedItems[0],
-                                 (u8)menu->selectedItemIcon->index, 0);
+  SelectionIcon_LoadIntoSlotFar(ICON_KIND_ITEM, menu->selectedItems[0],
+                                (u8)menu->selectedItemIcon->index, 0);
   menu->selectedItemIcon->motion = ICON_SHOWN;
   menu->selectedItemIcon->x = 112;
   menu->selectedItemIcon->y = 8;
@@ -2838,7 +2838,7 @@ s32 ItemMenu_ShowSelectedRow(s32 listWindow, void *unused,
   combined = state->selectedIndex;
   if (menu->items[combined] != 0) {
     s32 masked = (menu->items[combined] & INVENTORY_ITEM_ID_MASK) +
-                 (s32)MsgItemPlainName;
+                 (s32)MsgItemDescription;
 
     // Japanese draws the name as a resource string.
 #if LANGUAGE == LANGUAGE_JAPANESE

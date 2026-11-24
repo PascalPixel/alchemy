@@ -542,8 +542,8 @@ void MenuIcon_LoadSlots(void) {
 
       /* FAKEMATCH(temporary): the table read at a byte offset of its own; as
        * ids[i]. */
-      Resource_LoadByModeIntoSlotFar(ICON_KIND_PATTERN,
-                                     *(u16 *)(offset + (u32)ids), entry, 0);
+      SelectionIcon_LoadIntoSlotFar(ICON_KIND_PATTERN,
+                                    *(u16 *)(offset + (u32)ids), entry, 0);
       attributes = (u32 *)&slot->attr;
       *attributes++ = WINDOW_SPRITE_SIZE_16X16;
       *attributes = 0;

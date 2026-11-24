@@ -72,7 +72,5 @@ extern s8 gSceneLocalState[];
 /// its element plus one, or 0 when the party has them all. An element's last
 /// Djinni stands for it in actor placements and Djinni battles.
 #define SCENE_STATE_CHOSEN_DJINN 6480
-/// SCENE_STATE_CHOSEN_DJINN under the name Party_AddIsaacsParty writes it by.
-#define SCENE_STATE_REUNION_DJINN SCENE_STATE_CHOSEN_DJINN
 
 #endif

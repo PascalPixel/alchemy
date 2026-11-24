@@ -150,7 +150,7 @@ void Party_ClearUnusableShortcuts(void);
 void HangingVine_Place(s32 id, s32 mode);
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 #include "text/msg_ids.h"
@@ -272,7 +272,7 @@ void JupiterLighthouse_RideWhirlwind(void) {
   }
 }
 
-s32 Actor_EmitRisingSparks(struct Actor *actor);
+s32 Actor_EmitSmoke(struct Actor *actor);
 
 /// Lightning strikes the energy block in a white flash, the ground shakes,
 /// Felix jumps back, sparks rise from the block, and the path lights up to the
@@ -330,7 +330,7 @@ void JupiterLighthouse_FlashSky(void) {
   FieldActor_Jump(ACTOR_FELIX, 6, 0);
   Actor_Get(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(ACTOR_FELIX, -16, 0);
-  Actor_Get(ACTOR_ENERGY_BLOCK)->update = Actor_EmitRisingSparks;
+  Actor_Get(ACTOR_ENERGY_BLOCK)->update = Actor_EmitSmoke;
   for (i = 0; i != 2 * BLEND_WEIGHT_MAX; i++) {
     REG_BLDALPHA =
         (BLEND_WEIGHT_MAX - (i >> 1)) | BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
@@ -1904,7 +1904,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

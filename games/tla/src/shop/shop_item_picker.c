@@ -31,7 +31,7 @@ s32 Forge_Run(s32 actorId) {
                                 window, 0, 0);
   icon->depth = OAM_DEPTH_FRONT;
   icon->motion = WINDOW_SPRITE_MOTION_STILL;
-  icon->kind = 0;
+  icon->kind = WINDOW_SPRITE_PLAIN;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = icon;
   messageBase = (s32)MsgRightWhenI;
@@ -260,7 +260,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       MenuCursor_Place(window, column * 16, row * 16 + 8);
       shop->cursorFrames = 3;
       ItemPicker_DrawItem(priceWindow, unitId, slot);
-      Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemPlainName);
+      Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemDescription);
     }
     wait(1);
     if (gInput.pressed & KEY_A) {
@@ -501,7 +501,7 @@ void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode) {
       if (entry < VRAM_CACHE_ENTRY_COUNT) {
         u32 *attr;
 
-        Icon_CopyResourceToSlotFar(items[i], mode, entry);
+        ItemIcon_LoadLayersIntoSlotFar(items[i], mode, entry);
         attr = (u32 *)&sprite->attr;
         *attr++ = WINDOW_SPRITE_SIZE_16X16;
         *attr = 0;

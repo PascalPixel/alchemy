@@ -2,7 +2,7 @@
 /// size rises from within 4 pixels of it, 13 to 32 pixels up, at half a pixel
 /// to 0.9 a frame. The energy block smokes so once lightning has struck it
 /// (JupiterLighthouse_FlashSky).
-s32 Actor_EmitRisingSparks(struct Actor *actor) {
+s32 Actor_EmitSmoke(struct Actor *actor) {
   struct EffectOptions puff;
 
   if ((gFrameCount & 7) == 0) {

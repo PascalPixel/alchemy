@@ -537,6 +537,6 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
 /// no ground lies above height base.
 void MapGrid_MarkJumpIfOpen(FIXED x, FIXED z, s32 layer, FIXED base) {
   if (MapGrid_GetTerrainHeightAboveFar(x, z, layer, base) == 0)
-    MapGrid_SetAttributeBAt(
-        x, z, layer, MapGrid_GetAttributeBAt(x, z, layer) | MAP_CELL_JUMP);
+    MapGrid_SetCellAttributesAt(
+        x, z, layer, MapGrid_GetCellAttributesAt(x, z, layer) | MAP_CELL_JUMP);
 }

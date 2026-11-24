@@ -49,8 +49,8 @@ gSleepDisabled:
 	.global gCpuLoadPeak
 gCpuLoadPeak:
 	.space 0x0000000c
-	.global gOamBucketMasks
-gOamBucketMasks:
+	.global gOamDepthMasks
+gOamDepthMasks:
 	.space 0x00000020
 	.global gScreenFadeTargetLevel
 gScreenFadeTargetLevel:

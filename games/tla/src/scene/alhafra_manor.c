@@ -988,6 +988,6 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JIYA, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraManorTheMayorHatesSeeingAnyone)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsThatSeafoodStewHasAn))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsThatSeafoodStewHasAn))},
     {TRIGGER_TABLE_END},
 };

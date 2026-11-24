@@ -442,7 +442,7 @@ won:
 
 aborted:
   Battle_ClearSerialTransferPayload();
-  Task_SuspendAll(0);
+  Task_Suspend(0);
   REG_DISPCNT = DISPCNT_MODE_1;
   result = battle->spoils.defeated;
   GameFlag_Set(FLAG_AREA_TEMP_E8);

@@ -120,7 +120,7 @@ s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
 
   iconSlot = VramCache_FindFreeEntry();
   if (iconSlot != VRAM_CACHE_ENTRY_COUNT) {
-    Resource_LoadIndexedEntryToBuffer(abilityId, iconSlot);
+    AbilityIcon_LoadIntoSlot(abilityId, iconSlot);
     // If the sprite pool is full, the creator releases iconSlot itself.
     WindowSprite_Create(iconSlot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   }

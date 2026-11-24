@@ -57,7 +57,7 @@ extern s8 gMenu_TopEntryCommandByPosition[];
 extern s8 gMenu_TopEntryPositionByCommand[];
 ///@}
 /// The price digits 0 to 9, 32 bytes each (digits.4bpp), copied into a price
-/// sprite's tiles (Shop_CopyGlyphs).
+/// sprite's tiles (Shop_DrawPriceDigit).
 extern u8 gShop_GlyphBytes[];
 /// `L`, before a level in the file list (screens_save.c).
 extern const u8 gStatusMenu_LevelLetterString[];
@@ -65,7 +65,7 @@ void *IconMenu_Open(void);
 void Menu_HideEntryIcons(void);
 void IconMenu_AddIcon(s32 icon);
 void IconMenu_Close(void);
-void Resource_ResetPendingTransfer(void);
+void SelectionMenu_FreeLargeIcon(void);
 s32 Sanctum_NeedsService(s32 entry_id, s32 kind);
 void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 
@@ -120,5 +120,9 @@ extern const u8 gMenu_HexDigitsString[];
 /// The frames a selection made for the player to watch waits at each step, by
 /// the icons still to go (IconMenu_AnimateTo).
 extern u8 gMenu_SelectionStepDelays[];
+
+/// Credits_Run's modes: the title's story crawl over the slideshow, or the
+/// staff credits from a page, CREDITS_MODE_FIRST_PAGE being their first.
+enum CreditsMode { CREDITS_MODE_STORY_CRAWL = 1, CREDITS_MODE_FIRST_PAGE = 2 };
 
 #endif

@@ -277,7 +277,7 @@ void Text_ResetStyle(void) {
 
   state->colour = TEXT_COLOR_WHITE;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
-  state->glyphSpacing = TEXT_DEFAULT_GLYPH_SPACING;
+  state->letterSpacing = TEXT_DEFAULT_GLYPH_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
   state->unusedAfterLineSpacing = 1;
 }
@@ -293,7 +293,7 @@ void WindowSystem_StartFieldUpdate(void) {
 
   state->glyphTiles =
       VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_TILES, GLYPH_TILES_SIZE, 0);
-  state->glyphSpacing = TEXT_DEFAULT_GLYPH_SPACING;
+  state->letterSpacing = TEXT_DEFAULT_GLYPH_SPACING;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = TEXT_COLOR_WHITE;
@@ -310,7 +310,7 @@ void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
   if (loadGlyphTiles != 0)
     state->glyphTiles =
         VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_TILES, GLYPH_TILES_SIZE, 0);
-  state->glyphSpacing = TEXT_DEFAULT_GLYPH_SPACING;
+  state->letterSpacing = TEXT_DEFAULT_GLYPH_SPACING;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = TEXT_COLOR_WHITE;

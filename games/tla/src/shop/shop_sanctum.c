@@ -161,7 +161,7 @@ s32 Sanctum_Run(s32 actorId) {
   cursorAnchor = WindowSprite_CreateFar(
       shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, listWindow, 0, 0);
   cursorAnchor->motion = WINDOW_SPRITE_MOTION_STILL;
-  cursorAnchor->kind = 0;
+  cursorAnchor->kind = WINDOW_SPRITE_PLAIN;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
   Sanctum_ShowKeeperMessage((s32)MsgWelcomeWearyWanderers);
@@ -395,14 +395,14 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
     if (first != 0) {
       icon = WindowSprite_CreateFar(shop->previousPageIcon,
                                     WINDOW_SPRITE_SIZE_16X16, window, 88, -12);
-      icon->kind = 0;
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
       icon->animationStep = 0;
     }
     if (first + SHOP_PARTY_PAGE_MEMBERS < count) {
       icon = WindowSprite_CreateFar(shop->nextPageIcon,
                                     WINDOW_SPRITE_SIZE_16X16, window, 88, 0);
-      icon->kind = 0;
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
       icon->animationStep = 0;
     }

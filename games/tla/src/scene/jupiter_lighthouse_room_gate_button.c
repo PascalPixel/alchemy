@@ -6,7 +6,7 @@
 /// (JupiterLighthouse_StepOnButton), and they slide shut as Felix steps off
 /// (JupiterLighthouse_StepOffButton); the stone pillar west of it, pushed or
 /// Moved three cells east onto the button, opens them for good
-/// (JupiterLighthouse_CheckBlockOnCell), so the way in from the lighthouse's
+/// (JupiterLighthouse_CheckPillarOnButton), so the way in from the lighthouse's
 /// entrance stays open. Cyclone on the teleporter pad at cell (29, 47) takes
 /// the party back down (JupiterLighthouse_LeaveByCyclone).
 
@@ -136,7 +136,7 @@ void JupiterLighthouse_CloseGates(void) {
 }
 
 /// Opens the gates for good once the stone pillar stands on the button.
-void JupiterLighthouse_CheckBlockOnCell(void) {
+void JupiterLighthouse_CheckPillarOnButton(void) {
   struct Actor *actor = Actor_Get(ACTOR_GATES_PILLAR);
 
   if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED) &&
@@ -164,7 +164,7 @@ void JupiterLighthouse_StepOffButton(void) {
     Event_ClearFlag(FLAG_GATES_BUTTON_HELD);
     JupiterLighthouse_CloseGates();
   }
-  JupiterLighthouse_CheckBlockOnCell();
+  JupiterLighthouse_CheckPillarOnButton();
 }
 
 #include "shared/jupiter_lighthouse_finish_moving_block.c"
@@ -214,7 +214,7 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 #include "shared/palette_cycle_step.h"
 
 void MapGrid_SetCellHeight();
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 
 #include "shared/jupiter_lighthouse_load_palettes.h"
 
@@ -237,7 +237,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks_b.h"
+#include "shared/actor_emit_smoke_b.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

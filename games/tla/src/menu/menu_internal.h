@@ -502,10 +502,10 @@ void Menu_MarkChosenMember(s32 unused, s32 index, s32 count);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 /// Loads entry id's icon of kind mode into sprite tile slot slot (a free one
 /// when -1).
-void Resource_LoadByModeIntoSlotFar(s32 mode, s32 id, s32 slot, s32 flags);
+void SelectionIcon_LoadIntoSlotFar(s32 mode, s32 id, s32 slot, s32 flags);
 s32 Sprite_StartAnimationFar(void *object, s32 argument);
 /// Animates the page arrows on a window's top border, from tile offset.
-void Link_DrawPageArrowsFar(s32 offset);
+void PageArrows_DrawFar(s32 offset);
 void Menu_UpdatePartyFigures(void);
 void Input_ResetKeyRepeat(void);
 s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 owner);

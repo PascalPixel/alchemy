@@ -260,7 +260,7 @@ u16 gEasternAlhafra_WaveLines[2][DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
 void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 animation);
 void Rope_Initialize(void);
 void Tightrope_Initialize(void);
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 
 extern u16 gEasternAlhafra_PoundStakes[];
 extern struct ActorPlacement gEasternAlhafra_Placements[];
@@ -950,7 +950,8 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     actor->collisionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     FieldMapGrid_SetCellBehavior(actor->x.fixed, actor->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
+    MapGrid_SetCellAttributesAt(actor->x.fixed, actor->z.fixed, 0,
+                                MAP_CELL_JUMP);
   }
   if (Event_GetFlag(FLAG_SAIL_CRATE_SUNK)) {
     actor = Actor_Get(ACTOR_SAIL_CRATE);
@@ -959,7 +960,8 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     actor->collisionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     FieldMapGrid_SetCellBehavior(actor->x.fixed, actor->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
+    MapGrid_SetCellAttributesAt(actor->x.fixed, actor->z.fixed, 0,
+                                MAP_CELL_JUMP);
   }
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     MapGrid_CopyCells(32, 24, 2, 2, 30, 24);

@@ -211,7 +211,7 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
   return 0;
 }
 
-s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellAttributesAt(s32 x, s32 z, s32 layer);
 
 extern struct MapGridCellAnimation gLemuria_UnclesDoor;
 extern struct MapGridCellAnimation gLemuria_GirlsHouseDoor;
@@ -454,11 +454,11 @@ void Lemuria_GrowVine(void) {
   Event_SetFlag(FLAG_LEMURIA_VINE_GROWN);
   x = toFIXED(856);
   z = toFIXED(1016);
-  attribute = MapGrid_GetAttributeBAt(x, z, 0);
-  MapGrid_SetAttributeBAt(x, z, 0, attribute | MAP_CELL_CLIMBABLE);
+  attribute = MapGrid_GetCellAttributesAt(x, z, 0);
+  MapGrid_SetCellAttributesAt(x, z, 0, attribute | MAP_CELL_CLIMBABLE);
   z = toFIXED(1032);
-  MapGrid_SetAttributeBAt(
-      x, z, 0, MapGrid_GetAttributeBAt(x, z, 0) | MAP_CELL_CLIMBABLE);
+  MapGrid_SetCellAttributesAt(
+      x, z, 0, MapGrid_GetCellAttributesAt(x, z, 0) | MAP_CELL_CLIMBABLE);
 }
 
 /// Unused: Scoop digs up the Water of Life of Lemuria's first treasure spot. No

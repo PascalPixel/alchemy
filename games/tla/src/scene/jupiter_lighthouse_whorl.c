@@ -454,7 +454,7 @@ void JupiterLighthouse_LiftPathBlock(s32 unused, s32 id) {
 }
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits);
+void MapGrid_SetCellAttributeBitsAt(s32 x, s32 z, s32 layer, s32 bits);
 
 /// An energy path block, pushed or Moved, comes to rest, landing with a thump
 /// if it dropped off a ledge. In one of the east hall's three gaps, (35, 15),
@@ -550,8 +550,8 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   } else {
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, MAPGRID_LAYER_GROUND,
                           8);
-    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed,
-                                MAPGRID_LAYER_GROUND, MAP_CELL_JUMP);
+    MapGrid_SetCellAttributeBitsAt(actor->x.fixed, actor->z.fixed,
+                                   MAPGRID_LAYER_GROUND, MAP_CELL_JUMP);
   }
 }
 
@@ -832,8 +832,8 @@ s32 Scene_PrepareMap(void) {
                                    MAPGRID_LAYER_GROUND);
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, MAPGRID_LAYER_GROUND,
                           height + 2);
-    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed,
-                                MAPGRID_LAYER_GROUND, MAP_CELL_JUMP);
+    MapGrid_SetCellAttributeBitsAt(actor->x.fixed, actor->z.fixed,
+                                   MAPGRID_LAYER_GROUND, MAP_CELL_JUMP);
   }
   JupiterLighthouse_LightWestPath(0);
   return 0;
@@ -852,7 +852,7 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 
 #include "shared/palette_cycle_step.h"
 
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 
 #include "shared/jupiter_lighthouse_load_palettes.h"
 
@@ -894,7 +894,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

@@ -777,7 +777,7 @@ void ShopTest_SelectItem(void) {
       if (PartyInventory_HasSpace()) {
         Text_DrawStringInWindow(gShopTest_ItemHelp, window, 0, 32);
         Text_DrawMessageAsTiles((s32)(item + MsgItemName), window, 120, 0);
-        Text_DrawMessage((s32)(item + MsgItemPlainName), window, 0, 16);
+        Text_DrawMessage((s32)(item + MsgItemDescription), window, 0, 16);
         ItemMenu_DrawItemDetails(details, item);
       } else {
         Text_DrawStringInWindow(gShopTest_ItemFull, window, 0, 32);

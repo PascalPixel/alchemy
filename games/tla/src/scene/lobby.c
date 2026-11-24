@@ -1210,7 +1210,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
 void MapGrid_CenterOnFollowedPoint(void);
 void MapGrid_CopyCellTilesIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                       s32 width, s32 height);
-void Save_ProcessSelectedFile(void);
+void Save_WriteLinkTallies(void);
 /// Leaves for an entrance of a scene (Event_SetDestination, through the
 /// overlay's own import row).
 void Import_EventSetDestination(s32 scene, s32 entrance);
@@ -1382,13 +1382,13 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// Saves and reports the link battle's results.
 s32 LinkLobby_SaveBattleResults(void) {
-  Save_ProcessSelectedFile();
+  Save_WriteLinkTallies();
   FieldMessage_Show(MsgLobbyBattleResultsWereSaved, 1);
 }
 
 /// Saves and reports the monster battle's results.
 s32 LinkLobby_SaveMonsterBattleResults(void) {
-  Save_ProcessSelectedFile();
+  Save_WriteLinkTallies();
   FieldMessage_Show(MsgLobbyMonsterBattleResultsWereSaved, 1);
 }
 

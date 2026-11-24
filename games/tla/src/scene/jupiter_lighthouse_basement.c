@@ -80,7 +80,7 @@ struct EffectOptions;
 
 void Actor_DepartInRing(s32 id);
 
-u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
+u8 MapGrid_SetCellAttributesAt(s32 x, s32 z, s32 layer, s32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -336,7 +336,7 @@ void Actor_RaiseFromCell(s32 id) {
   height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
   Import_MapGridSetCellHeight(actor->x.fixed, actor->z.fixed, 0,
                               CELL_HEIGHT_STEPS(height) + 6);
-  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
+  MapGrid_SetCellAttributesAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
 }
 
 #include "shared/whirlwind_carry_leader_lower.h"
@@ -353,7 +353,7 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

@@ -202,14 +202,14 @@ UNUSED void DailaRooms_PracticeShout(s32 unused, s32 actor) {
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
   if (!Event_GetFlag(FLAG_DAILA_PRACTICE_AT_DOOR)) {
-    Event_SetMessageId((s32)MsgDailaInteriorsGah);
+    Event_SetMessageId((s32)MsgDailaRoomsGah);
     // "GAH!"
     Event_ShowMessageAndWait(actor, 0);
     Actor_WalkToAndWait(actor, 360, 72);
     Actor_FaceDirectionById(actor, FACING_SOUTH, 0);
     GameFlag_Set(FLAG_DAILA_PRACTICE_AT_DOOR);
   } else {
-    Event_SetMessageId((s32)MsgDailaInteriorsYarg);
+    Event_SetMessageId((s32)MsgDailaRoomsYarg);
     // "YARG!"
     Event_ShowMessageAndWait(actor, 0);
     Actor_WalkToAndWait(actor, 392, 104);
@@ -227,7 +227,7 @@ UNUSED void DailaRooms_StartleAtTheLeader(s32 unused, s32 actor) {
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
-  Event_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  Event_SetMessageId((s32)MsgDailaRoomsWhatAreYouDoing);
   // "What are you doing???"
   Event_ShowMessageAndWait(actor, 0);
   FieldEvent_Wait(10);
@@ -238,7 +238,7 @@ UNUSED void DailaRooms_StartleAtTheLeader(s32 unused, s32 actor) {
 s32 DailaRooms_ReadArmorMerchantsMind(void) {
   Event_Start();
   Event_EndLastingPsynergy(0);
-  Event_SetMessageId((s32)MsgDailaInteriorsScamps);
+  Event_SetMessageId((s32)MsgDailaRoomsScamps);
   // "If those two scamps knew there were travelers in town, they'd have a..."
   Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
   Event_End();
@@ -250,7 +250,7 @@ s32 DailaRooms_ReadArmorMerchantsMind(void) {
 s32 DailaRooms_ReadArmorMerchantsMindAfterRescue(void) {
   Event_Start();
   Event_EndLastingPsynergy(0);
-  Event_SetMessageId((s32)MsgDailaInteriorsMazeTreasure);
+  Event_SetMessageId((s32)MsgDailaRoomsMazeTreasure);
   // "Maybe they hid treasure here because this town is so mazelike..."
   Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
   Event_End();
@@ -294,7 +294,7 @@ void DailaRooms_TalkToWeaponMerchant(s32 actor) {
   } else {
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Event_SetMessageId((s32)MsgDailaInteriorsSouthRoadDanger);
+    Event_SetMessageId((s32)MsgDailaRoomsSouthRoadDanger);
     // "You folks ain't thinkin' 'bout goin' south, are ya? The roads to the..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
@@ -312,7 +312,7 @@ void DailaRooms_TalkToArmorMerchant(s32 actor) {
   } else {
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Event_SetMessageId((s32)MsgDailaInteriorsNewTravelers);
+    Event_SetMessageId((s32)MsgDailaRoomsNewTravelers);
     // "You guys look new 'round these parts! What brings you to here?..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
@@ -329,7 +329,7 @@ void DailaRooms_TalkToInnkeeper(s32 actor) {
   } else {
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Event_SetMessageId((s32)MsgDailaInteriorsDinnerChoice);
+    Event_SetMessageId((s32)MsgDailaRoomsDinnerChoice);
     // "What should I cook for our guests tonight? I just can't decide."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
@@ -348,7 +348,7 @@ void DailaRooms_TalkToHealer(s32 actor) {
     if (GameFlag_Get(FLAG_DAILA_HEALER_SENT_TO_POI) == 0) {
       Event_Start();
       Event_EndLastingPsynergy(0);
-      msg = (s32)MsgDailaInteriorsTravelersFreeTime;
+      msg = (s32)MsgDailaRoomsTravelersFreeTime;
       Event_SetMessageId(msg);
       // "Travelers! Well, I'll be! Do you have a lot of time and nowhere to..."
       FieldMessage_ShowAtActor(actor, 0);
@@ -368,7 +368,7 @@ void DailaRooms_TalkToHealer(s32 actor) {
   } else {
     Event_Start();
     Event_EndLastingPsynergy(0);
-    msg = (s32)MsgDailaInteriorsTravelersFreeTime;
+    msg = (s32)MsgDailaRoomsTravelersFreeTime;
     Event_SetMessageId(msg);
     // "Travelers! Well, I'll be! Do you have a lot of time and nowhere to go?"
     FieldMessage_ShowAtActor(actor, 0);
@@ -396,7 +396,7 @@ void DailaRooms_TalkToHealerOnceTaviIsRescued(s32 actor) {
   } else {
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Event_SetMessageId((s32)MsgDailaInteriorsLeaveForMadra);
+    Event_SetMessageId((s32)MsgDailaRoomsLeaveForMadra);
     // "There is nothing left for you in Daila... Please be careful on your..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
@@ -413,7 +413,7 @@ void DailaRooms_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
   } else {
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Event_SetMessageId((s32)MsgDailaInteriorsPirateTreasure);
+    Event_SetMessageId((s32)MsgDailaRoomsPirateTreasure);
     // "Way back when, Daila used to be a hideout for a band of pirates......"
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
@@ -430,7 +430,7 @@ void DailaRooms_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
   } else {
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Event_SetMessageId((s32)MsgDailaInteriorsSpaciousVillage);
+    Event_SetMessageId((s32)MsgDailaRoomsSpaciousVillage);
     // "We don't have a lot of people in Daila, but it's a very spacious..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
@@ -448,7 +448,7 @@ void DailaRooms_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
   } else {
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Event_SetMessageId((s32)MsgDailaInteriorsFishermenWaiting);
+    Event_SetMessageId((s32)MsgDailaRoomsFishermenWaiting);
     // "Our fishermen still can't head out to sea... When will they start..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
@@ -462,7 +462,7 @@ void DailaRooms_AskGoingToMadra(void) {
 
   Event_Start();
   Event_EndLastingPsynergy(0);
-  msg = (s32)MsgDailaInteriorsGoingToMadra;
+  msg = (s32)MsgDailaRoomsGoingToMadra;
   Event_SetMessageId(msg);
   // "Are you going to Madra?"
   FieldMessage_ShowAtActor(ACTOR_OLD_MAN_ON_MADRA, 0);
@@ -484,7 +484,7 @@ void DailaRooms_AskLookingForBoat(void) {
 
   Event_Start();
   Event_EndLastingPsynergy(0);
-  msg = (s32)MsgDailaInteriorsLookingForBoat;
+  msg = (s32)MsgDailaRoomsLookingForBoat;
   Event_SetMessageId(msg);
   // "Don't tell me you're all looking for a boat, too!"
   FieldMessage_ShowAtActor(ACTOR_MAYOR, 0);
@@ -504,7 +504,7 @@ void DailaRooms_AskLookingForBoat(void) {
 void DailaRooms_TalkCaughtPracticing(void) {
   Event_Start();
   Event_EndLastingPsynergy(0);
-  Event_SetMessageId((s32)MsgDailaInteriorsWatchingPractice);
+  Event_SetMessageId((s32)MsgDailaRoomsWatchingPractice);
   // "Er... Aheh heh... You... weren't watching, were you?"
   Event_ShowMessageAndWait(ACTOR_PRACTICING_PERFORMER, 0);
   FieldEvent_Wait(30);
@@ -1000,7 +1000,7 @@ struct Trigger gDailaRooms_HousesEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_RUMBLING, CONDITION_ALWAYS, MSGNO(MsgFieldWeShouldFindADifferentWay)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_DAILAS_LUCK, CONDITION_ALWAYS, MSGNO(MsgFieldNowThatBriggsIsLockedAway)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgFieldImGladImNotGoingTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsScamps)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgDailaRoomsScamps)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgFieldWeCantSailAndWeCant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgFieldLookAtAllTheseGuestsWe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELER_FROM_MADRA, CONDITION_ALWAYS, MSGNO(MsgFieldAfterAllThatShakingIWouldnt)},
@@ -1048,9 +1048,9 @@ struct Trigger gDailaRooms_HousesEventsOnceTaviIsRescued[] = {
     {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(DailaRooms_TalkToWeaponMerchantOnceTaviIsRescued)},
     {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(DailaRooms_TalkToArmorMerchantOnceTaviIsRescued)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(DailaRooms_TalkToInnkeeperOnceTaviIsRescued)},
-    {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsDinnerShowPractice)},
-    {TRIGGER_TALK, ACTOR_TRAVELER_FROM_MADRA, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsSeafoodWhen)},
-    {TRIGGER_TALK, ACTOR_GUEST_ON_MADRAS_SEAFOOD, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsVegetablesAgain)},
+    {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgDailaRoomsDinnerShowPractice)},
+    {TRIGGER_TALK, ACTOR_TRAVELER_FROM_MADRA, CONDITION_ALWAYS, MSGNO(MsgDailaRoomsSeafoodWhen)},
+    {TRIGGER_TALK, ACTOR_GUEST_ON_MADRAS_SEAFOOD, CONDITION_ALWAYS, MSGNO(MsgDailaRoomsVegetablesAgain)},
     {TRIGGER_TALK, ACTOR_RIKI, CONDITION_ALWAYS, MSGNO(MsgFieldMmmMmnphDadWasSoMad)},
     {TRIGGER_TALK, ACTOR_TAVI, CONDITION_ALWAYS, MSGNO(MsgFieldMmmphMmmmDontTellAnyoneWe)},
     {TRIGGER_TALK, ACTOR_PRACTICING_PERFORMER, CONDITION_ALWAYS, EVENT(DailaRooms_TalkCaughtPracticing)},
@@ -1069,14 +1069,14 @@ struct Trigger gDailaRooms_HousesEventsOnceTaviIsRescued[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_RUMBLING, CONDITION_ALWAYS, MSGNO(MsgFieldMaybeThatGuyWashedUpOn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_DAILAS_LUCK, CONDITION_ALWAYS, MSGNO(MsgFieldBriggsProbablyHasLotsOfMen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgFieldThisTownMayBeDirtPoor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsMazeTreasure)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsTiredPerformer)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsDragonKingLine)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELER_FROM_MADRA, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsBadShows)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUEST_ON_MADRAS_SEAFOOD, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsGuestDance)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgDailaRoomsMazeTreasure)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgDailaRoomsTiredPerformer)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgDailaRoomsDragonKingLine)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELER_FROM_MADRA, CONDITION_ALWAYS, MSGNO(MsgDailaRoomsBadShows)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUEST_ON_MADRAS_SEAFOOD, CONDITION_ALWAYS, MSGNO(MsgDailaRoomsGuestDance)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RIKI, CONDITION_ALWAYS, MSGNO(MsgFieldIStillWantToCatchThat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TAVI, CONDITION_ALWAYS, MSGNO(MsgFieldImSureGladIMadeIt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRACTICING_PERFORMER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsSeafoodStory)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRACTICING_PERFORMER, CONDITION_ALWAYS, MSGNO(MsgDailaRoomsSeafoodStory)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_CURRENTS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeHusbandDizzy)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_RED_ROCKS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeYeppToldMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_HER_SONS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeGiveUp)},
@@ -1099,7 +1099,7 @@ struct Trigger gDailaRooms_SanctumEventsOnceTaviIsRescued[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_EAST_OF_PUDDLE, CONDITION_ALWAYS, EVENT(DailaRooms_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_SOUTH_OF_PUDDLE, CONDITION_ALWAYS, EVENT(DailaRooms_JumpForward)},
     {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(DailaRooms_TalkToHealerOnceTaviIsRescued)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsBoringVillage)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgDailaRoomsBoringVillage)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 0, EVENT(Scene_FreezePuddleIntoPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 1, EVENT(Scene_FreezePuddleIntoPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE, FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 2, EVENT(Scene_FreezePuddleIntoPillar)},

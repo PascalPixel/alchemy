@@ -153,7 +153,7 @@ s32 Shop_SelectSell(s32 unitId) {
           Shop_DrawItemPrice(priceWindow, itemId,
                              Forge_GetItemCondition(itemId),
                              SHOP_PRICE_KIND_FORGE);
-        Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemPlainName);
+        Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemDescription);
       }
       if (gInput.pressed & KEY_A) {
         Sound_PlayFar(SE_MENU_CONFIRM);

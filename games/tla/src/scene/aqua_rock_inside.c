@@ -1293,7 +1293,7 @@ void AquaRockInside_ParchLastPool(void) {
 
 #include "shared/actor_step_to_watched.h"
 
-#include "shared/actor_emit_bubbles.h"
+#include "shared/actor_emit_sparkles.h"
 
 extern u32 gLesson_TabletRiseScript[];
 extern u32 gAquaRockInside_TabletGlowScript[];
@@ -1429,7 +1429,7 @@ void AquaRockInside_PiersLearnsParch(s32 tabletId, s32 adeptId) {
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(tabletId, gLesson_TabletSettleScript);
   Actor_SetMovementTypeById(adeptId, gLesson_AdeptSettleScript);
-  adept->update = Actor_EmitBubbles;
+  adept->update = Actor_EmitSparkles;
   wait(120);
   adept->update = 0;
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);

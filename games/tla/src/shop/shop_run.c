@@ -136,7 +136,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
                                   window, 0, 0);
   anchor->depth = OAM_DEPTH_FRONT;
   anchor->motion = WINDOW_SPRITE_MOTION_STILL;
-  anchor->kind = 0;
+  anchor->kind = WINDOW_SPRITE_PLAIN;
   // The hand waits off the left edge until a screen places it
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = anchor;

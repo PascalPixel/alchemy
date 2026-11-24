@@ -378,14 +378,14 @@ void PsynergyTest_PracticeShout(s32 unused, s32 actor) {
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
   if (Event_GetFlag(FLAG_KRADEN_MOVED) == 0) {
-    FieldEvent_SetMessageId((s32)MsgDailaInteriorsGah);
+    FieldEvent_SetMessageId((s32)MsgDailaRoomsGah);
     // "GAH!"
     Event_ShowMessage(actor, 0);
     Actor_WalkToAndWait(actor, 360, 72);
     Actor_FaceDirection(actor, FACING_SOUTH, 0);
     Event_SetFlag(FLAG_KRADEN_MOVED);
   } else {
-    FieldEvent_SetMessageId((s32)MsgDailaInteriorsYarg);
+    FieldEvent_SetMessageId((s32)MsgDailaRoomsYarg);
     // "YARG!"
     Event_ShowMessage(actor, 0);
     Actor_WalkToAndWait(actor, 392, 104);
@@ -404,7 +404,7 @@ void PsynergyTest_StartleAfterBlaze(s32 unused, s32 actor) {
   FieldActor_Jump(actor, 6, 15);
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
-  FieldEvent_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  FieldEvent_SetMessageId((s32)MsgDailaRoomsWhatAreYouDoing);
   // "What are you doing???"
   Event_ShowMessage(actor, 0);
   FieldEvent_Wait(10);
@@ -418,7 +418,7 @@ void PsynergyTest_StartleAgain(s32 unused, s32 actor) {
   FieldActor_Jump(actor, 6, 15);
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
-  FieldEvent_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  FieldEvent_SetMessageId((s32)MsgDailaRoomsWhatAreYouDoing);
   // "What are you doing???"
   Event_ShowMessage(actor, 0);
   FieldEvent_Wait(10);

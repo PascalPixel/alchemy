@@ -149,7 +149,7 @@ void ApojiiIslands_CycleFallsColors(void);
 void ApojiiIslands_CycleSeaColors(void);
 void ApojiiIslands_CycleAquaStoneColors(void);
 void ApojiiIslands_StopFlashing(struct Actor *actor);
-void Actor_FlickerChild(struct Actor *actor);
+void Actor_FlashWhite(struct Actor *actor);
 void ApojiiIslands_FatherSeesTheStone(void);
 void Scroll_HBlank(void);
 void Layer_TrackScroll(void);
@@ -457,13 +457,13 @@ void ApojiiIslands_CycleSeaColors(void) {
 
 /// Reveal holds the sea's colour cycle as it takes effect.
 void ApojiiIslands_PauseSeaColors(void) {
-  Task_SuspendAll(ApojiiIslands_CycleSeaColors);
+  Task_Suspend(ApojiiIslands_CycleSeaColors);
   System_Wait(3);
 }
 
 /// The sea's colour cycle runs again as Reveal fades.
 void ApojiiIslands_ResumeSeaColors(void) {
-  Task_ResumeAll(ApojiiIslands_CycleSeaColors);
+  Task_Resume(ApojiiIslands_CycleSeaColors);
   System_Wait(3);
 }
 
@@ -494,7 +494,7 @@ void ApojiiIslands_StopFlashing(struct Actor *actor) {
   actor->update = 0;
 }
 
-#include "shared/actor_flicker_child.h"
+#include "shared/actor_flash_white.h"
 
 /// Douse on the Aqua Stone: it flickers white as Aqua Rock's music starts,
 /// sparkles rise round it and the screen flashes four times in random colours;
@@ -508,7 +508,7 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
 
   Event_Start();
   Event_EndLastingPsynergy(0);
-  actor->update = Actor_FlickerChild;
+  actor->update = Actor_FlashWhite;
   Sound_Play(SOUND_FADE_OUT_BGM);
   wait(30);
   Sound_Play(MUS_AQUA_ROCK);

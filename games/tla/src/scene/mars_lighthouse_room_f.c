@@ -378,7 +378,7 @@ void Actor_DepartInRing(s32 id);
 void Actor_ArriveInRing(s32 id);
 void Map_CopyPalette(s32 scene, s32 a1);
 void MapGrid_SetCellHeight();
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -1465,7 +1465,7 @@ extern s32 gWhirlwindEndScript[];
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks_b.h"
+#include "shared/actor_emit_smoke_b.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

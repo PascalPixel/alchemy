@@ -1528,7 +1528,7 @@ void ShamanVillage_MeetMoapa(void) {
   Event_End();
 }
 
-#include "shared/drift_spawn.c"
+#include "shared/emote_pop_tilted.c"
 
 // The Shaman Village's events after Moapa's house: the rod, the trial's rules
 // and paths, the race's lettering, and each place's set-up and tables.
@@ -1706,9 +1706,9 @@ void ShamanVillage_ShowShamansRod(void) {
     FIXED y = toFIXED(80);
     FIXED z = toFIXED(242);
 
-    DriftScene_SpawnObject(toFIXED(116), y, z, DEGtoANG(315));
+    Emote_PopTilted(toFIXED(116), y, z, DEGtoANG(315));
     Event_Wait(10);
-    DriftScene_SpawnObject(toFIXED(124), y, z, DEGtoANG(45));
+    Emote_PopTilted(toFIXED(124), y, z, DEGtoANG(45));
     Event_Wait(30);
     FieldActor_ShowEmote(ACTOR_WEST_KNIGHT, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB,
                          20);
@@ -3935,7 +3935,7 @@ struct Trigger gShamanVillageSanctumTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gDriftScene_SpawnScript[] = {
+u32 gEmote_PopTiltedScript[] = {
     SC_WAIT(46),
     SC_RELEASE,
 };

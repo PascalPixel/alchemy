@@ -34,7 +34,7 @@ FarCall_WindowTable:
 	export Portrait_CreateFar, Portrait_Create
 	export Portrait_ReloadFar, Portrait_Reload
 	export WindowSprite_SetMotionFar, WindowSprite_SetMotion
-	export WindowSprite_SetInvertedSentinelFar, WindowSprite_SetInvertedSentinel
+	export WindowSprite_SetPriorityFar, WindowSprite_SetPriority
 	export Portrait_OpenWindowFar, Portrait_OpenWindow
 	export Portrait_CloseWindowFar, Portrait_CloseWindow
 	export Text_GetMessageSizeFar, Text_GetMessageSize
@@ -85,7 +85,7 @@ FarCall_WindowTable:
 	export Window_SetTilemapEntryFar, Window_SetTilemapEntry
 	export DebugSceneSelect_RunFar, DebugSceneSelect_Run
 	export DebugFlagEditor_RunFar, DebugFlagEditor_Run
-	export Resource_LoadByModeIntoSlotFar, Resource_LoadByModeIntoSlot
+	export SelectionIcon_LoadIntoSlotFar, SelectionIcon_LoadIntoSlot
 	export Window_MarkVisibleTextTilesFar, Window_MarkVisibleTextTiles
 	export ItemIcon_ComposeFar, ItemIcon_Compose
 	export PartyStatus_HighlightMembersFar, PartyStatus_HighlightMembers
@@ -96,7 +96,7 @@ FarCall_WindowTable:
 	export Save_ChooseAndLoadFileFar, Save_ChooseAndLoadFile
 	export Save_CopyFileFar, Save_CopyFile
 	export Save_EraseSelectedFileFar, Save_EraseSelectedFile
-	export Save_ProcessSelectedFileFar, Save_ProcessSelectedFile
+	export Save_WriteLinkTalliesFar, Save_WriteLinkTallies
 	export Save_WriteFileFar, Save_WriteFile
 	export Save_ScanFileSummariesFar, Save_ScanFileSummaries
 	export NameEntry_EditMemberNameFar, NameEntry_EditMemberName
@@ -131,10 +131,10 @@ FarCall_WindowTable:
 	export Save_CountFilesExcludingSentFar, Save_CountFilesExcludingSent
 	export Window_DrawBorderFar, Window_DrawBorder
 	export Window_EraseBorderRectFar, Window_EraseBorderRect
-	export Link_DrawPageArrowsFar, Link_DrawPageArrows
+	export PageArrows_DrawFar, PageArrows_Draw
 	export String_FormatStopwatchFar, String_FormatStopwatch
 	export Save_ToFileFar, Save_ToFile
-	export Icon_CopyResourceToSlotFar, Icon_CopyResourceToSlot
+	export ItemIcon_LoadLayersIntoSlotFar, ItemIcon_LoadLayersIntoSlot
 	export Text_DrawMessageToCanvasFar, Text_DrawMessageToCanvas
 	export Glyph_DrawAsSpriteFar, Glyph_DrawAsSprite
 	export Glyph_DrawToTilesFar, Glyph_DrawToTiles

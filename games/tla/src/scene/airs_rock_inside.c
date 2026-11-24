@@ -2562,7 +2562,7 @@ s32 AirsRockInside_OrbitAnchor(struct Orbiter *orbiter) {
 
 #include "shared/actor_step_to_watched.h"
 
-#include "shared/actor_emit_bubbles.h"
+#include "shared/actor_emit_sparkles.h"
 
 extern u32 gLesson_TabletRiseScript[];
 extern u32 gAirsRockInside_RisingSparkScript[];
@@ -2700,7 +2700,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 tabletId, s32 shebaId) {
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(tabletId, gLesson_TabletSettleScript);
   Actor_SetMovementTypeById(shebaId, gLesson_AdeptSettleScript);
-  sheba->update = Actor_EmitBubbles;
+  sheba->update = Actor_EmitSparkles;
   wait(120);
   sheba->update = 0;
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);

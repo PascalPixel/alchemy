@@ -1000,7 +1000,7 @@ void Party_AddIsaacsParty(void) {
       djinni = missing[(Random16() * count) >> 16] + 1;
     else
       djinni = 0;
-    gSceneLocalState[SCENE_STATE_REUNION_DJINN + i] = djinni;
+    gSceneLocalState[SCENE_STATE_CHOSEN_DJINN + i] = djinni;
   }
   // The Psynergy items Isaac's party carried in The Broken Seal.
   Party_GiveItemIfMissing(ITEM_FROST_JEWEL, MIA);

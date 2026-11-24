@@ -75,7 +75,7 @@ void AquaRock_DrawBubbles(void);
 extern u32 gWadingSplash_Script[];
 extern u32 gWaterDropScript[];
 /// The bubbles' four frames, compressed (graphics/aqua_rock/tiles.s).
-extern const u8 gAquaRock_MarkerTiles[];
+extern const u8 gAquaRock_BubbleTiles[];
 extern struct SceneRegion gAquaRock_SlopesRegions[];
 extern struct SceneRegion gAquaRock_MistSabreChestRegions[];
 extern struct ActorPlacement gAquaRock_Placements[];
@@ -616,7 +616,7 @@ void AquaRock_SetUpStreams(void) {
   Task_Add(AquaRock_UpdateStreams, TASK_PASS_FRAME);
 }
 
-#include "shared/actor_flicker_child.h"
+#include "shared/actor_flash_white.h"
 
 /// Unused: a moai's update while it flashes, grey every other two frames.
 UNUSED void AquaRock_FlashMoai(struct Actor *actor) {
@@ -643,7 +643,7 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
 
   Event_Start();
   Event_EndLastingPsynergy(0);
-  actor->update = (ObjectUpdate)Actor_FlickerChild;
+  actor->update = (ObjectUpdate)Actor_FlashWhite;
   wait(30);
   if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK) == 0)
     GroundParticles_SetAnchor(ACTOR_WATER_STONE);
@@ -951,7 +951,7 @@ void AquaRock_DouseMistSabreChestWaterStone(s32 unused, s32 id) {
 
   Event_Start();
   Event_EndLastingPsynergy(0);
-  actor->update = (ObjectUpdate)Actor_FlickerChild;
+  actor->update = (ObjectUpdate)Actor_FlashWhite;
   wait(30);
   GroundParticles_SetAnchor(ACTOR_MIST_SABRE_WATER_STONE);
   Sound_Play(SE_SHIMMER);
@@ -1615,7 +1615,7 @@ void AquaRock_StartBubbles(void) {
 
   Iwram_ClearWordsEntry(state, sizeof(struct AquaRockBubbles));
   buffer = MemAlloc_(256);
-  Decompress_TaggedLz(gAquaRock_MarkerTiles, buffer);
+  Decompress_TaggedLz(gAquaRock_BubbleTiles, buffer);
   state->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(state->vramEntry, 256, buffer);
   Heap_Release(buffer);

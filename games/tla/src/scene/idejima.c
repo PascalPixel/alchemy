@@ -960,7 +960,7 @@ void DriftScene_Prepare(void) {
   Actor_SetAnimation(ACTOR_SHIP, 2);
 }
 
-#include "shared/drift_spawn.c"
+#include "shared/emote_pop_tilted.c"
 
 /// Jenna and Kraden reach Idejima and find Menardi's ship, which cannot sail
 /// without the orb that moved it. Alex joins them, the beacon is lit and the
@@ -1092,10 +1092,9 @@ void Idejima_BreakAwayFromGondowan(void) {
   // "The thingie... that makes it go."
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  DriftScene_SpawnObject(toFIXED(238), toFIXED(48), toFIXED(172),
-                         DEGtoANG(315));
+  Emote_PopTilted(toFIXED(238), toFIXED(48), toFIXED(172), DEGtoANG(315));
   FieldEvent_Wait(10);
-  DriftScene_SpawnObject(toFIXED(246), toFIXED(48), toFIXED(172), DEGtoANG(45));
+  Emote_PopTilted(toFIXED(246), toFIXED(48), toFIXED(172), DEGtoANG(45));
   FieldEvent_Wait(30);
   // "What do you mean? What's so important about this...thingie?"
   Event_ShowMessage(ACTOR_JENNA, 0);
@@ -2096,7 +2095,7 @@ struct Trigger gIdejimaEventsWake[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gDriftScene_SpawnScript[] = {
+u32 gEmote_PopTiltedScript[] = {
     SC_WAIT(46),
     SC_RELEASE,
 };

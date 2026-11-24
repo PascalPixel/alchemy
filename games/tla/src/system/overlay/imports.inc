@@ -17,8 +17,8 @@
 	export wait, waitFar
 	export Task_Add, Task_AddFar
 	export Task_Remove, Task_RemoveFar
-	export Task_SuspendAll, Task_SuspendAllFar
-	export Task_ResumeAll, Task_ResumeAllFar
+	export Task_Suspend, Task_SuspendFar
+	export Task_Resume, Task_ResumeFar
 	export Random16, Random16Far
 	export Trig_Atan, Trig_AtanFar
 	export Trig_Sin, Trig_SinFar
@@ -152,7 +152,7 @@
 	export MessageArgument_Push, MessageArgument_PushFar
 	export Window_CloseMatchingId, Portrait_CloseWindowFar
 	export Text_GetMessageSize, Text_GetMessageSizeFar
-	export Save_ProcessSelectedFile, Save_ProcessSelectedFileFar
+	export Save_WriteLinkTallies, Save_WriteLinkTalliesFar
 	export PartyInventory_Discard, PartyInventory_DiscardFar
 	export Message_CloseFinishedWindows, Message_CloseFinishedWindowsFar
 	export FileList_SelectAction, FileList_SelectActionFar
@@ -432,7 +432,7 @@
 	export Import_MadPlantLeapAtLeader, MadPlant_LeapAtLeaderFar
 	export EndingImage_Start, EndingImage_StartFar
 	export Actor_PlaySoundInView, Actor_PlaySoundInViewFar
-	export MapGrid_GetAttributeBAt, MapGrid_GetAttributeBAtFar
+	export MapGrid_GetCellAttributesAt, MapGrid_GetCellAttributesAtFar
 	export Actor_GetSpriteDepth, Actor_GetSpriteDepthFar
 	export Field_StartColorTransition, Field_StartColorTransitionFar
 	export Field_StartPaletteTransition, Field_StartPaletteTransitionFar
@@ -454,7 +454,7 @@
 	export SceneEvent_FindActiveRecord, Scene_FindTriggerFar
 	export EasternAlhafraShip_CountAnswer, Event_CountAnswerFar
 	export Actor_WatchActor, Actor_WatchActorFar
-	export MapGrid_SetAttributeBAt, MapGrid_SetAttributeBAtFar
+	export MapGrid_SetCellAttributesAt, MapGrid_SetCellAttributesAtFar
 @ A second row for Credits_RunFar: the staff credits overlay's table keeps
 @ its stub at this place, after the field's.
 	export StaffCredit_RunCredits, Credits_RunFar
@@ -463,7 +463,7 @@
 	export Actor_DepartInRing, Actor_DepartInRingFar
 	export Actor_ArriveInRing, Actor_ArriveInRingFar
 	export Tightrope_Release, Tightrope_ReleaseFar
-	export MapGrid_SetAttributeBBitsAt, MapGrid_SetAttributeBBitsAtFar
+	export MapGrid_SetCellAttributeBitsAt, MapGrid_SetCellAttributeBitsAtFar
 	export MapGrid_ClearAttributeBBitsAt, MapGrid_ClearAttributeBBitsAtFar
 	export Teleport_PlaySparksAndFade, Teleport_PlaySparksAndFadeFar
 	export AlhafraManor_CountAnswer, Event_CountAnswerFar

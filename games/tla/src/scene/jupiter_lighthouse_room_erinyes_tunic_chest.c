@@ -107,7 +107,7 @@ void MapGrid_SetCellHeight();
 void Actor_DisableById(s32 id);
 void Field_TryJumpForward(void);
 void HangingVine_Place(s32 id, s32 a);
-void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
+void MapGrid_SetCellAttributesAt(s32 x, s32 z, s32 layer, s32 value);
 void Actor_DepartInRing(s32 id);
 s32 PushTarget_FillRectangle(s32 id);
 s32 PushTarget_FindStop(struct PushTarget *target);
@@ -191,7 +191,7 @@ void JupiterLighthouse_PushColumnOffTheLedge(void) {
       FieldMapGrid_SetCellHeight(toFIXED(256), x, 0, 0);
       MapGrid_SetCellBehavior(toFIXED(256), x, 0, 0);
       if (i <= 1)
-        MapGrid_SetAttributeBAt(toFIXED(256), x, 0, MAP_CELL_JUMP);
+        MapGrid_SetCellAttributesAt(toFIXED(256), x, 0, MAP_CELL_JUMP);
     }
   }
   actor->update = 0;
@@ -305,7 +305,7 @@ s32 Scene_PrepareMap(void) {
       FieldMapGrid_SetCellHeight(toFIXED(256), x, 0, 0);
       MapGrid_SetCellBehavior(toFIXED(256), x, 0, 0);
       if (i <= 1)
-        MapGrid_SetAttributeBAt(toFIXED(256), x, 0, MAP_CELL_JUMP);
+        MapGrid_SetCellAttributesAt(toFIXED(256), x, 0, MAP_CELL_JUMP);
     }
   }
   return 0;
@@ -352,7 +352,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

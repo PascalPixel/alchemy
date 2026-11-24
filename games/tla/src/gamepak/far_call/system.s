@@ -7,8 +7,8 @@ FarCall_RuntimeTable:
 	export Task_ResetAllFar, Task_ResetAll
 	export Task_AddFar, Task_Add
 	export Task_RemoveFar, Task_Remove
-	export Task_SuspendAllFar, Task_SuspendAll
-	export Task_ResumeAllFar, Task_ResumeAll
+	export Task_SuspendFar, Task_Suspend
+	export Task_ResumeFar, Task_Resume
 	export Task_RunPassFar, Task_RunPass
 	export Random16Far, Random16
 	export Trig_AtanFar, Trig_Atan

@@ -541,7 +541,7 @@ void SelectionMenu_Close(void) {
     }
     node = node->next;
   }
-  Resource_ResetPendingTransfer();
+  SelectionMenu_FreeLargeIcon();
   // The arrows' entries, taken together by Menu_SetupSelectionBothSides.
   if (state->records[SELECTION_ARROW_LEFT].y != 0) {
     VramCache_FreeEntry(state->records[SELECTION_ARROW_LEFT].slot);
@@ -726,7 +726,7 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionMenuState *screen) {
     return;
   }
   SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
-  screen->status = NODE_STATUS_SCROLLING;
+  screen->status = SELECTION_STATUS_SCROLLING;
   wait(1);
   screen->cursorIndex++;
   if (screen->cursorIndex == SELECTION_LAST_PLACE &&
@@ -740,7 +740,7 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionMenuState *screen) {
     }
     screen->records[SELECTION_ARROW_LEFT].kind = TRUE;
   }
-  screen->status = NODE_STATUS_SHOWN;
+  screen->status = SELECTION_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(screen, screen->cursorIndex);
   wait(1);
   SelectionMenu_OpenNameWindow(screen->head->kind, 0);
@@ -754,7 +754,7 @@ void Menu_MoveSelectionBackward(struct SelectionMenuState *screen) {
     return;
   }
   SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
-  screen->status = NODE_STATUS_SCROLLING;
+  screen->status = SELECTION_STATUS_SCROLLING;
   wait(1);
   if (screen->cursorIndex == 1 && screen->top != 0) {
     screen->records[SELECTION_ARROW_LEFT].base = ARROW_SCROLL_FRAMES;
@@ -767,7 +767,7 @@ void Menu_MoveSelectionBackward(struct SelectionMenuState *screen) {
   } else {
     screen->cursorIndex--;
   }
-  screen->status = NODE_STATUS_SHOWN;
+  screen->status = SELECTION_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(screen, screen->cursorIndex);
   wait(1);
   SelectionMenu_OpenNameWindow(screen->head->kind, 0);
@@ -783,7 +783,7 @@ void SelectionMenu_StepRight(struct SelectionMenuState *state) {
   u32 end;
 
   SelectionMenu_RedrawIcon(state, state->cursorIndex);
-  state->status = NODE_STATUS_SCROLLING;
+  state->status = SELECTION_STATUS_SCROLLING;
   wait(1);
   state->cursorIndex++;
   if (state->count > SELECTION_ROW_PLACES) {
@@ -837,7 +837,7 @@ void SelectionMenu_StepRight(struct SelectionMenuState *state) {
   } else if (state->cursorIndex == state->count) {
     state->cursorIndex = 0;
   }
-  state->status = NODE_STATUS_SHOWN;
+  state->status = SELECTION_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(state, state->cursorIndex);
   wait(1);
   SelectionMenu_OpenNameWindow(state->head->kind, 0);
@@ -852,7 +852,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuState *state) {
   s32 kind;
 
   SelectionMenu_RedrawIcon(state, state->cursorIndex);
-  state->status = NODE_STATUS_SCROLLING;
+  state->status = SELECTION_STATUS_SCROLLING;
   wait(1);
   if (state->count > SELECTION_ROW_PLACES) {
     if ((state->cursorIndex | state->top) != 0) {
@@ -906,7 +906,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuState *state) {
   } else {
     state->cursorIndex = state->count - 1;
   }
-  state->status = NODE_STATUS_SHOWN;
+  state->status = SELECTION_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(state, state->cursorIndex);
   wait(1);
   kind = state->head->kind;
@@ -1074,7 +1074,7 @@ void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward) {
 /// Loads the icon of an entry of kind mode (enum IconKind: a command, a yes or
 /// no, an item or a Psynergy) into a free sprite tile slot and returns the
 /// slot, or -1 when none was free or mode is another kind.
-s32 Resource_LoadByMode(u32 mode, s32 value) {
+s32 SelectionIcon_Load(u32 mode, s32 value) {
   s32 output;
   s32 result = -1;
 
@@ -1087,7 +1087,7 @@ s32 Resource_LoadByMode(u32 mode, s32 value) {
     result = VramCache_FindFreeEntry();
     if (result == VRAM_CACHE_ENTRY_COUNT)
       return -1;
-    Icon_CopyResourceToSlot(
+    ItemIcon_LoadLayersIntoSlot(
         value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN, result);
     break;
   case ICON_KIND_ABILITY:
@@ -1099,7 +1099,7 @@ s32 Resource_LoadByMode(u32 mode, s32 value) {
 
 /// Loads the icon of an entry of kind mode into sprite tile slot result (a free
 /// slot when -1) and returns the slot, or -1 when none was free.
-s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
+s32 SelectionIcon_LoadIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   s32 output;
   s32 original = result;
 
@@ -1115,13 +1115,13 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
     Icon_BuildCommandIconTiles(value, option, &result, &output, 1);
     break;
   case ICON_KIND_ITEM:
-    Icon_CopyResourceToSlot(value,
-                            ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN |
-                                ICON_ARTIFACT,
-                            result);
+    ItemIcon_LoadLayersIntoSlot(value,
+                                ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED |
+                                    ICON_BROKEN | ICON_ARTIFACT,
+                                result);
     break;
   case ICON_KIND_EQUIPMENT_ITEM:
-    Icon_CopyResourceToSlot(
+    ItemIcon_LoadLayersIntoSlot(
         value, ICON_COUNT_ABOVE_ONE | ICON_BROKEN | ICON_ARTIFACT, result);
     break;
   case ICON_KIND_ABILITY:
@@ -1199,13 +1199,13 @@ u32 Menu_ConfirmSelection(struct SelectionMenuState *screen) {
   index = screen->top + screen->cursorIndex;
   Menu_ClearBattleHighlight(screen);
   SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
-  screen->status = NODE_STATUS_SCROLLING;
+  screen->status = SELECTION_STATUS_SCROLLING;
   wait(1);
   screen->records[SELECTION_ARROW_LEFT].kind = 0;
   screen->records[SELECTION_ARROW_RIGHT].kind = 0;
   screen->records[SELECTION_RECORD_HAND].kind = 0;
   screen->records[SELECTION_RECORD_HAND].scale = 0;
-  Resource_ResetPendingTransfer();
+  SelectionMenu_FreeLargeIcon();
   node = screen->head;
   for (; node != NULL && screen->cursorIndex != place; place++) {
     node = node->next;
@@ -1341,7 +1341,7 @@ void MenuArrow_Release(s32 slot) { VramCache_FreeEntry(slot); }
 /// Loads the large icon of the command under the cursor, zooming in: 32x32 in
 /// 256 colours (SELECTION_RECORD_LARGE_ICON), its scale growing by
 /// LARGE_ICON_ZOOM_STEP a frame. Other kinds of entry show none. The icon keeps
-/// its VRAM cache entry until Resource_ResetPendingTransfer.
+/// its VRAM cache entry until SelectionMenu_FreeLargeIcon.
 void SelectionMenu_LoadLargeIcon(void) {
   struct SelectionMenuState *state = Ram_HeapSlots->selectionMenu;
   struct SelectionNode *node = SelectionMenu_GetCursorNode(state);
@@ -1379,7 +1379,7 @@ void SelectionMenu_LoadLargeIcon(void) {
 
 /// Frees the large icon's VRAM cache entry, if it holds one, and marks it
 /// empty.
-void Resource_ResetPendingTransfer(void) {
+void SelectionMenu_FreeLargeIcon(void) {
   struct SelectionNode *largeIcon =
       &((struct SelectionMenuState *)Ram_HeapSlots->selectionMenu)
            ->records[SELECTION_RECORD_LARGE_ICON];

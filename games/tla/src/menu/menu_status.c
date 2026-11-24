@@ -163,7 +163,7 @@ s32 StatusScreen_Run(void) {
   state->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   if (Party_SumDjinnCountsFar(result) != 0)
     DjinnFigures_InitializeTopRow();
-  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
+  PageArrows_DrawFar(PAGE_ARROW_VRAM);
   MenuIcon_LoadSlots();
   Menu_StartWatchingStart();
   *page = 0;
@@ -350,7 +350,7 @@ void DjinnMenu_ShowCurrentList(void) {
       ((struct WindowState *)Ram_HeapSlots->windowState)->dirty = 1;
       redraw = 0;
     }
-    Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
+    PageArrows_DrawFar(PAGE_ARROW_VRAM);
     wait(1);
     if (gInput.pressed & (KEY_A | KEY_B | KEY_SELECT))
       break;
@@ -1616,12 +1616,12 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct PagedList *state) {
 #if LANGUAGE == LANGUAGE_JAPANESE
     Text_DrawMessageFar(
         (menu->items[state->selectedIndex] & INVENTORY_ITEM_ID_MASK) +
-            (s32)MsgItemPlainName,
+            (s32)MsgItemDescription,
         menu->infoWindow, 0, 0);
 #else
     Text_DrawMessageAsTilesFar(
         (menu->items[state->selectedIndex] & INVENTORY_ITEM_ID_MASK) +
-            MsgItemPlainName,
+            MsgItemDescription,
         menu->infoWindow, 0, 0);
 #endif
   }

@@ -12,7 +12,7 @@
 /// Where each of the quantity bar's 30 segments starts in its tile buffer: a
 /// byte column of a 4-bit tile, so four segments to a tile and the next tile
 /// 32 bytes on, eight tiles in all.
-const u16 gShop_SelectorTileOffsets[30] = {
+const u16 gShop_QuantityBarSegmentOffsets[30] = {
     0, 1, 2, 3,
     32, 33, 34, 35,
     64, 65, 66, 67,

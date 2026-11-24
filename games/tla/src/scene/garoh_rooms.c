@@ -160,11 +160,11 @@ void GarohRooms_TalkToWeaponsVendor(s32 actor) {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       // "What do you think? I'll bet these weapons suit you better than any
       // fangs would!"
-      Event_SetMessageId((s32)MsgGarohInteriorsWhatDoYouThinkIll);
+      Event_SetMessageId((s32)MsgGarohRoomsWhatDoYouThinkIll);
     else
       // "I'm sorry, but on nights of the full moon, we only sell claws and
       // fangs."
-      Event_SetMessageId((s32)MsgGarohInteriorsImSorryButOnNights);
+      Event_SetMessageId((s32)MsgGarohRoomsImSorryButOnNights);
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -182,10 +182,10 @@ void GarohRooms_TalkToArmorVendor(s32 actor) {
   } else {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       // "When we change form, it's best to be unclothed."
-      Event_SetMessageId((s32)MsgGarohInteriorsWhenWeChangeFormIts);
+      Event_SetMessageId((s32)MsgGarohRoomsWhenWeChangeFormIts);
     else
       // "Unfortunate that you should come on a night of the full moon, sir..."
-      Event_SetMessageId((s32)MsgGarohInteriorsUnfortunateThatYouShouldCome);
+      Event_SetMessageId((s32)MsgGarohRoomsUnfortunateThatYouShouldCome);
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -201,11 +201,11 @@ void GarohRooms_TalkToItemShopkeeper(s32 actor) {
   if (facing == FACING_NORTH) {
     Shop_Run(SHOP_GAROH_ITEMS, actor);
   } else if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED)) {
-    Event_SetMessageId((s32)MsgGarohInteriorsIveHeardStoriesAboutOther);
+    Event_SetMessageId((s32)MsgGarohRoomsIveHeardStoriesAboutOther);
     // "I've heard stories about other mountains like our own Air's Rock..."
     Event_ShowMessageAndWait(actor, 0);
   } else {
-    s32 message = (s32)MsgGarohInteriorsDidYouComeHereFrom;
+    s32 message = (s32)MsgGarohRoomsDidYouComeHereFrom;
 
     // "Did you come here from Alhafra?" Yes: "Really? You must have gone
     // through the cave..." No: "Oh, so you must have come by way of
@@ -235,10 +235,10 @@ void GarohRooms_TalkToInnkeeper(s32 actor) {
   } else {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       // "If you can pass the tests of Air's Rock, you can do anything!"
-      Event_SetMessageId((s32)MsgGarohInteriorsIfYouCanPassThe);
+      Event_SetMessageId((s32)MsgGarohRoomsIfYouCanPassThe);
     else
       // "A clear night around here always means fair weather on the morrow..."
-      Event_SetMessageId((s32)MsgGarohInteriorsAClearNightAroundHere);
+      Event_SetMessageId((s32)MsgGarohRoomsAClearNightAroundHere);
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -258,10 +258,10 @@ void GarohRooms_TalkToPriest(void) {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       // "I've heard about you. They say you're special, like the people in this
       // town."
-      Event_SetMessageId((s32)MsgGarohInteriorsIveHeardAboutYouThey);
+      Event_SetMessageId((s32)MsgGarohRoomsIveHeardAboutYouThey);
     else
       // "The people here may be different, but they certainly are nice..."
-      Event_SetMessageId((s32)MsgGarohInteriorsThePeopleHereMayBe);
+      Event_SetMessageId((s32)MsgGarohRoomsThePeopleHereMayBe);
     Event_ShowMessageAndWait(ACTOR_PRIEST, 0);
   }
   Actor_FaceDirection(ACTOR_PRIEST, FACING_SOUTH, 0);
@@ -275,7 +275,7 @@ void GarohRooms_AskWhatTheWanderersSeek(s32 actor) {
 
   Event_Start();
   Event_EndLastingPsynergy(0);
-  message = (s32)MsgGarohInteriorsGoodEveningWanderersAreYou;
+  message = (s32)MsgGarohRoomsGoodEveningWanderersAreYou;
   Event_SetMessageId(message);
   // "Good evening, wanderers! Are you looking for something?"
   FieldMessage_ShowAtActor(actor, 0);
@@ -310,10 +310,10 @@ void GarohRooms_TalkToDisappointedTraveler(void) {
   Event_EndLastingPsynergy(0);
   if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
     // "Those wolves were really noisy last night, too."
-    Event_SetMessageId((s32)MsgGarohInteriorsThoseWolvesWereReallyNoisy);
+    Event_SetMessageId((s32)MsgGarohRoomsThoseWolvesWereReallyNoisy);
   else
     // "Zzzz... Zzzz... What a waste... Just a big rock..."
-    Event_SetMessageId((s32)MsgGarohInteriorsZzzzZzzzWhatAWaste);
+    Event_SetMessageId((s32)MsgGarohRoomsZzzzZzzzWhatAWaste);
   Event_ShowMessageAndWait(ACTOR_DISAPPOINTED_TRAVELER, 0);
   Event_End();
 }
@@ -326,10 +326,10 @@ void GarohRooms_TalkToStubbornTraveler(void) {
   Event_EndLastingPsynergy(0);
   if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
     // "Maybe we should stay and try climbing Air's Rock one more time."
-    Event_SetMessageId((s32)MsgGarohInteriorsMaybeWeShouldStayAnd);
+    Event_SetMessageId((s32)MsgGarohRoomsMaybeWeShouldStayAnd);
   else
     // "Zzz... Whuzza? Whirlwind? Wind Stone? Zzzzrrrgg..."
-    Event_SetMessageId((s32)MsgGarohInteriorsZzzWhuzzaWhirlwindWindStone);
+    Event_SetMessageId((s32)MsgGarohRoomsZzzWhuzzaWhirlwindWindStone);
   Event_ShowMessageAndWait(ACTOR_STUBBORN_TRAVELER, 0);
   Event_End();
 }
@@ -342,10 +342,10 @@ void GarohRooms_ReadDisappointedTravelersMind(void) {
   Event_EndLastingPsynergy(0);
   if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
     // "I'm scared of wolves, so I don't go out much at night..."
-    Event_SetMessageId((s32)MsgGarohInteriors64);
+    Event_SetMessageId((s32)MsgGarohRooms64);
   else
     // "...Climbed all over that stupid rock, and for what? Nothing!"
-    Event_SetMessageId((s32)MsgGarohInteriorsClimbedAllOverThatStupid);
+    Event_SetMessageId((s32)MsgGarohRoomsClimbedAllOverThatStupid);
   Event_ShowMessageAndWait(ACTOR_DISAPPOINTED_TRAVELER, 0);
   Event_End();
 }
@@ -358,10 +358,10 @@ void GarohRooms_ReadStubbornTravelersMind(void) {
   Event_EndLastingPsynergy(0);
   if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
     // "If I used a lever, I could probably make that rock spin..."
-    Event_SetMessageId((s32)MsgGarohInteriorsIfIUsedALever);
+    Event_SetMessageId((s32)MsgGarohRoomsIfIUsedALever);
   else
     // "That rock was huge. How was I supposed to make it spin?"
-    Event_SetMessageId((s32)MsgGarohInteriorsThatRockWasHugeHow);
+    Event_SetMessageId((s32)MsgGarohRoomsThatRockWasHugeHow);
   Event_ShowMessageAndWait(ACTOR_STUBBORN_TRAVELER, 0);
   Event_End();
 }
@@ -370,7 +370,7 @@ void GarohRooms_ReadStubbornTravelersMind(void) {
 /// first time: "You... Is it true that you learned Reveal?", with an answer
 /// for Yes and one for No.
 void GarohRooms_AskAboutReveal(void) {
-  s32 message = (s32)MsgGarohInteriorsYouIsItTrueThat;
+  s32 message = (s32)MsgGarohRoomsYouIsItTrueThat;
 
   // "You... Is it true that you learned Reveal?"
   Event_SetMessageId(message);
@@ -486,14 +486,14 @@ void GarohRooms_WakeAtInn(void) {
   ActorSystem_SuspendProjectionAndShowSprites();
   Sound_Play(MUS_OVERNIGHT_AT_THE_INN);
   // "Felix and party stayed the night at the inn."
-  FieldMessage_ShowCentered((s32)MsgGarohInteriorsAndPartyStayedTheNight, 0, 0);
+  FieldMessage_ShowCentered((s32)MsgGarohRoomsAndPartyStayedTheNight, 0, 0);
   Event_Wait(20);
   ActorSystem_ResumeProjectionAndHideLayers();
   MapGrid_CenterOnFollowedPoint();
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   // "You folks didn't sleep much last night..."
-  Event_SetMessageId((s32)MsgGarohInteriorsYouFolksDidntSleepMuch);
+  Event_SetMessageId((s32)MsgGarohRoomsYouFolksDidntSleepMuch);
   // "You folks didn't sleep much last night... You don't look like you..."
   Event_ShowMessageThenWait(ACTOR_INN_WORKER, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_INNKEEPER, 2);
@@ -592,39 +592,39 @@ struct Trigger gGarohRooms_HousesNightTriggers[] = {
     {TRIGGER_TALK, ACTOR_PUPS_FATHER, CONDITION_ALWAYS,
      EVENT(GarohRooms_AskWhatTheWanderersSeek)},
     {TRIGGER_TALK, ACTOR_PUPS_MOTHER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsOurOldestSonIsAlways)},
+     MSGNO(MsgGarohRoomsOurOldestSonIsAlways)},
     {TRIGGER_TALK, ACTOR_PUPS_BROTHER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsNoFairMyBrotherAlways)},
+     MSGNO(MsgGarohRoomsNoFairMyBrotherAlways)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PUPS_FATHER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsOutsidersCouldNeverUnderstandThe)},
+     MSGNO(MsgGarohRoomsOutsidersCouldNeverUnderstandThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PUPS_MOTHER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsThatPupOfMineJust)},
+     MSGNO(MsgGarohRoomsThatPupOfMineJust)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PUPS_BROTHER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsWhatMadeMasterMahaTake)},
+     MSGNO(MsgGarohRoomsWhatMadeMasterMahaTake)},
     {TRIGGER_TALK, ACTOR_REVEAL_SEEKER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsWhenOurPeopleGrowOlder)},
+     MSGNO(MsgGarohRoomsWhenOurPeopleGrowOlder)},
     {TRIGGER_TALK, ACTOR_REVEAL_SEEKERS_MATE, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsMyMateIsCloseTo)},
+     MSGNO(MsgGarohRoomsMyMateIsCloseTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_REVEAL_SEEKER,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsICastWhirlwindOnThe)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRoomsICastWhirlwindOnThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_REVEAL_SEEKERS_MATE,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriors16)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRooms16)},
     {TRIGGER_TALK, ACTOR_WEAPONS_VENDOR, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToWeaponsVendor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPONS_VENDOR,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsIShouldBeOutsideHowling)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRoomsIShouldBeOutsideHowling)},
     {TRIGGER_TALK, ACTOR_ARMOR_VENDOR, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToArmorVendor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_VENDOR, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsTheseStrangersSeemNormalEnough)},
+     MSGNO(MsgGarohRoomsTheseStrangersSeemNormalEnough)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToInnkeeper)},
     {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsAirsRockCanGetQuite)},
+     MSGNO(MsgGarohRoomsAirsRockCanGetQuite)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsItOnlyRainsAFew)},
+     MSGNO(MsgGarohRoomsItOnlyRainsAFew)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsMostPeopleSeeNothingOf)},
+     MSGNO(MsgGarohRoomsMostPeopleSeeNothingOf)},
     {TRIGGER_TALK, ACTOR_DISAPPOINTED_TRAVELERS_BED, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToDisappointedTraveler)},
     {TRIGGER_TALK, ACTOR_STUBBORN_TRAVELERS_BED, CONDITION_ALWAYS,
@@ -635,14 +635,13 @@ struct Trigger gGarohRooms_HousesNightTriggers[] = {
      CONDITION_ALWAYS, EVENT(GarohRooms_ReadStubbornTravelersMind)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_LARVAE_STOVE,
      CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgGarohInteriorsEeeeewTheyreFryingUpBug))},
+     FIND_MESSAGE(MSGNO(MsgGarohRoomsEeeeewTheyreFryingUpBug))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_LAMB_STOVE, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgGarohInteriorsItsLambOnTheBone))},
+     FIND_MESSAGE(MSGNO(MsgGarohRoomsItsLambOnTheBone))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_NEWT_STOVE, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgGarohInteriorsNewtsSkeweredOverAnOpen))},
+     FIND_MESSAGE(MSGNO(MsgGarohRoomsNewtsSkeweredOverAnOpen))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_PLANT_POT_STOVE,
-     CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgGarohInteriorsThereAreLotsOfStrange))},
+     CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohRoomsThereAreLotsOfStrange))},
     {TRIGGER_TABLE_END},
 };
 
@@ -655,24 +654,23 @@ struct Trigger gGarohRooms_ShopNightTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_AIRS_ROCK_GUARDIAN, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsGarohExistsToProtectAirs)},
+     MSGNO(MsgGarohRoomsGarohExistsToProtectAirs)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_WHIRLWIND, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsSoYouveHeardOfWhirlwind)},
+     MSGNO(MsgGarohRoomsSoYouveHeardOfWhirlwind)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_WIND_STONE, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsIveHeardAboutTheWind)},
+     MSGNO(MsgGarohRoomsIveHeardAboutTheWind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AIRS_ROCK_GUARDIAN,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsWeHaveOtherPowersThan)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRoomsWeHaveOtherPowersThan)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_WHIRLWIND,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsAndDifferentPeopleUseWhirlwind)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRoomsAndDifferentPeopleUseWhirlwind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WIND_STONE,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsIWishIKnewWhat)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRoomsIWishIKnewWhat)},
     {TRIGGER_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToItemShopkeeper)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsINeverChangeMyStock)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRoomsINeverChangeMyStock)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_LOBSTER_STOVE,
-     CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgGarohInteriorsHuhWhatIsThatLobster))},
+     CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohRoomsHuhWhatIsThatLobster))},
     {TRIGGER_TABLE_END},
 };
 
@@ -681,15 +679,15 @@ struct Trigger gGarohRooms_SanctumTriggers[] = {
     {TRIGGER_TALK, ACTOR_PRIEST, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToPriest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST,
-     FLAG_GAROH_SECRET_SHARED, MSGNO(MsgGarohInteriors32)},
+     FLAG_GAROH_SECRET_SHARED, MSGNO(MsgGarohRooms32)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsAmITheOnlyOne)},
+     MSGNO(MsgGarohRoomsAmITheOnlyOne)},
     // The same rows again for an actor 9, which the sanctum does not place.
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(GarohRooms_TalkToPriest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_GAROH_SECRET_SHARED,
-     MSGNO(MsgGarohInteriors32)},
+     MSGNO(MsgGarohRooms32)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsAmITheOnlyOne)},
+     MSGNO(MsgGarohRoomsAmITheOnlyOne)},
     {TRIGGER_TABLE_END},
 };
 
@@ -702,43 +700,43 @@ struct Trigger gGarohRooms_HousesMorningTriggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_PUPS_FATHER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsHeyItsYouThanksFor)},
+     MSGNO(MsgGarohRoomsHeyItsYouThanksFor)},
     {TRIGGER_TALK, ACTOR_PUPS_MOTHER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsEveryoneIsAmazedThatYou)},
+     MSGNO(MsgGarohRoomsEveryoneIsAmazedThatYou)},
     {TRIGGER_TALK, ACTOR_PUPS_BROTHER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsMyBrotherShouldHaveGotten)},
+     MSGNO(MsgGarohRoomsMyBrotherShouldHaveGotten)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PUPS_FATHER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsTheYoungerTheWerewolfThe)},
+     MSGNO(MsgGarohRoomsTheYoungerTheWerewolfThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PUPS_MOTHER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsOhThankGoodnessEverythingWorked)},
+     MSGNO(MsgGarohRoomsOhThankGoodnessEverythingWorked)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PUPS_BROTHER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsAndDadSaidHeWas)},
+     MSGNO(MsgGarohRoomsAndDadSaidHeWas)},
     {TRIGGER_TALK, ACTOR_REVEAL_SEEKER, FLAG_GAROH_ASKED_ABOUT_REVEAL,
      EVENT(GarohRooms_AskAboutReveal)},
     {TRIGGER_TALK, ACTOR_REVEAL_SEEKER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsToThinkIveWastedSo)},
+     MSGNO(MsgGarohRoomsToThinkIveWastedSo)},
     {TRIGGER_TALK, ACTOR_REVEAL_SEEKERS_MATE, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsHesWorkedSoHardBut)},
+     MSGNO(MsgGarohRoomsHesWorkedSoHardBut)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_REVEAL_SEEKER,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsIThoughtICouldBecome)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRoomsIThoughtICouldBecome)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_REVEAL_SEEKERS_MATE,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsSoNowEvenOutsidersAre)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRoomsSoNowEvenOutsidersAre)},
     {TRIGGER_TALK, ACTOR_WEAPONS_VENDOR, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToWeaponsVendor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPONS_VENDOR,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsIPreferTheToothAnd)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRoomsIPreferTheToothAnd)},
     {TRIGGER_TALK, ACTOR_ARMOR_VENDOR, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToArmorVendor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_VENDOR, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsMahaSaysThatWhenWere)},
+     MSGNO(MsgGarohRoomsMahaSaysThatWhenWere)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToInnkeeper)},
     {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsMahaCameAlongAndSaid)},
+     MSGNO(MsgGarohRoomsMahaCameAlongAndSaid)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsIveHeardStoriesAboutOtherPlaces)},
+     MSGNO(MsgGarohRoomsIveHeardStoriesAboutOtherPlaces)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsHeSaidIfTheyWere)},
+     MSGNO(MsgGarohRoomsHeSaidIfTheyWere)},
     {TRIGGER_TALK, ACTOR_DISAPPOINTED_TRAVELER, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToDisappointedTraveler)},
     {TRIGGER_TALK, ACTOR_STUBBORN_TRAVELER, CONDITION_ALWAYS,
@@ -749,14 +747,13 @@ struct Trigger gGarohRooms_HousesMorningTriggers[] = {
      CONDITION_ALWAYS, EVENT(GarohRooms_ReadStubbornTravelersMind)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_LARVAE_STOVE,
      CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgGarohInteriorsEeeeewTheyreFryingUpBug))},
+     FIND_MESSAGE(MSGNO(MsgGarohRoomsEeeeewTheyreFryingUpBug))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_LAMB_STOVE, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgGarohInteriorsItsLambOnTheBone))},
+     FIND_MESSAGE(MSGNO(MsgGarohRoomsItsLambOnTheBone))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_NEWT_STOVE, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgGarohInteriorsNewtsSkeweredOverAnOpen))},
+     FIND_MESSAGE(MSGNO(MsgGarohRoomsNewtsSkeweredOverAnOpen))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_PLANT_POT_STOVE,
-     CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgGarohInteriorsThereAreLotsOfStrange))},
+     CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohRoomsThereAreLotsOfStrange))},
     {TRIGGER_TABLE_END},
 };
 
@@ -769,23 +766,22 @@ struct Trigger gGarohRooms_ShopMorningTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_AIRS_ROCK_GUARDIAN, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsSoYoureSomethingSpecialAn)},
+     MSGNO(MsgGarohRoomsSoYoureSomethingSpecialAn)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_WHIRLWIND, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsYouLearnedRevealAtAirs)},
+     MSGNO(MsgGarohRoomsYouLearnedRevealAtAirs)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_WIND_STONE, CONDITION_ALWAYS,
-     MSGNO(MsgGarohInteriorsIJustCantBelieveThat)},
+     MSGNO(MsgGarohRoomsIJustCantBelieveThat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AIRS_ROCK_GUARDIAN,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsDidMahaMeanThatThey)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRoomsDidMahaMeanThatThey)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_WHIRLWIND,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsSoThesePeopleCanUse)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRoomsSoThesePeopleCanUse)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WIND_STONE,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsNormallyOutsidersNeverGetIn)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRoomsNormallyOutsidersNeverGetIn)},
     {TRIGGER_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToItemShopkeeper)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsIHeardThatOneThats)},
+     CONDITION_ALWAYS, MSGNO(MsgGarohRoomsIHeardThatOneThats)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_LOBSTER_STOVE,
-     CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgGarohInteriorsHuhWhatIsThatLobster))},
+     CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohRoomsHuhWhatIsThatLobster))},
     {TRIGGER_TABLE_END},
 };

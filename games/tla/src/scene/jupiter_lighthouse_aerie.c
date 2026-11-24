@@ -149,7 +149,7 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side);
 void LightSprites_InitB(void);
 void LightSprites_Add(s32 id, s32 value);
 
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -485,7 +485,7 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

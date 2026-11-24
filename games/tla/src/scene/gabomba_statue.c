@@ -1523,12 +1523,12 @@ void GabombaStatue_RestoreLadderTopBlocks(void) {
 
 /// The Bone Armlet chest's room, as it is set up: its one ladder-top block.
 DEFINE_GABOMBA_STATUE_HIDE_LADDER_TOP_BLOCKS(
-    GabombaStatue_HideBoneArmletChestHoleShadow,
+    GabombaStatue_HideBoneArmletChestLadderTopBlock,
     ACTOR_BONE_ARMLET_LADDER_TOP_BLOCK, 1)
 
 /// The Elixir chest's room, as it is set up: its two ladder-top blocks.
 DEFINE_GABOMBA_STATUE_HIDE_LADDER_TOP_BLOCKS(
-    GabombaStatue_HideElixirChestHoleShadows,
+    GabombaStatue_HideElixirChestLadderTopBlocks,
     ACTOR_ELIXIR_WEST_LADDER_TOP_BLOCK, 2)
 
 /// Each frame: while a menu or Psynergy is up, the cogs and the rope posts
@@ -2397,7 +2397,7 @@ s32 Scene_PrepareMap(void) {
 
 /// Sets up the Bone Armlet chest's room.
 void GabombaStatue_InitializeBoneArmletChest(void) {
-  GabombaStatue_HideBoneArmletChestHoleShadow();
+  GabombaStatue_HideBoneArmletChestLadderTopBlock();
 }
 
 /// Places rope index between two posts, tied when its flag is set, else coiled:
@@ -2427,7 +2427,7 @@ void GabombaStatue_InitializeElixirChest(void) {
                   ACTOR_FIRST_ROPE_POST_A, ACTOR_FIRST_ROPE_POST_B);
   FieldRope_Place(SECOND_ROPE, FLAG_GABOMBA_SECOND_ROPE_TIED,
                   ACTOR_SECOND_ROPE_POST_A, ACTOR_SECOND_ROPE_POST_B);
-  GabombaStatue_HideElixirChestHoleShadows();
+  GabombaStatue_HideElixirChestLadderTopBlocks();
 }
 
 /// Sets up Steel's room: its rope, and the fall in from the mouse's room.

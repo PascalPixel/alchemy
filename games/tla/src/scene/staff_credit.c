@@ -675,7 +675,7 @@ void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
   }
 }
 
-#include "shared/leader_search.h"
+#include "shared/ship_take_flight.h"
 
 /// Unused: the leader's ship lands, plain again.
 UNUSED void StaffCredit_EndFlight(void) {

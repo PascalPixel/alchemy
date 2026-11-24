@@ -279,7 +279,7 @@ void IncreaseItemAndLevel_SelectItem(void) {
         itemId = selectedItemId & INVENTORY_ITEM_ID_MASK;
         Item_GetDirect(itemId);
         Text_DrawMessageAsTiles(itemId + (s32)MsgItemName, window, 120, 0);
-        Text_DrawMessage(itemId + (s32)MsgItemPlainName, window, 0, 16);
+        Text_DrawMessage(itemId + (s32)MsgItemDescription, window, 0, 16);
         WindowSprite_RedrawSavedRect(details);
         ItemMenu_DrawItemDetails(details, selectedItemId);
       } else {

@@ -69,7 +69,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 void IconMenu_DrawIcons(void);
-void Link_DrawPageArrows(s32 destination);
+void PageArrows_Draw(s32 destination);
 s32 Link_CreateCountdownLabelWindow(void);
 /// Shows the advance cursor bobbing at (x, y) and waits for A, B, L or R.
 void BattleMessage_WaitForAdvanceAtFar(s32 x, s32 y);
@@ -170,7 +170,7 @@ enum FileMenuMode {
   FILE_LIST_COPY,     ///< copying: any file with data
   FILE_LIST_ERASE,    ///< erasing: any file with data
   /// The title's Battle: files that have found a Djinni.
-  FILE_LIST_EXTRA,
+  FILE_LIST_BATTLE,
   FILE_LIST_CLEARED, ///< the title's Send: cleared files only
   /// The title's Update: files saved before FLAG_REUNION was set.
   FILE_LIST_UPDATE
@@ -189,8 +189,8 @@ enum PasswordLevel {
 
 /// What IconMenu_ChooseSendOption offers.
 enum SendOptionMenu {
-  RESOURCE_LAYOUT_TRANSFER_METHOD = 0, ///< Password or Cable
-  RESOURCE_LAYOUT_PASSWORD_LEVEL = 1   ///< Gold, Silver or Bronze
+  SEND_OPTION_TRANSFER_METHOD = 0, ///< Password or Cable
+  SEND_OPTION_PASSWORD_LEVEL = 1   ///< Gold, Silver or Bronze
 };
 
 /// What YesNoMenu_Run and YesNoMenu_RunAt return.

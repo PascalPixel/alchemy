@@ -21,7 +21,7 @@ union MenuCursorRef {
 /// edited and how many values each takes, the page, and the cursor, markers
 /// and icons. The Pause menu and the debug menus use its cursor, page and
 /// icons too.
-struct OptionMenuState {
+struct SettingsMenuState {
   u8 unused[1024];
   u8 entries[7][52]; ///< unused: nothing in this game reads them
   u8 unusedAfterEntries[8];
@@ -50,10 +50,10 @@ struct OptionMenuState {
   struct WindowSprite *icon[6]; ///< the Pause menu's entries' icons
 };
 
-STATIC_ASSERT(sizeof(struct OptionMenuState) == 1576);
-STATIC_ASSERT(offsetof(struct OptionMenuState, page) == 1396);
-STATIC_ASSERT(offsetof(struct OptionMenuState, cursor) == 1444);
-STATIC_ASSERT(offsetof(struct OptionMenuState, icon) == 1552);
+STATIC_ASSERT(sizeof(struct SettingsMenuState) == 1576);
+STATIC_ASSERT(offsetof(struct SettingsMenuState, page) == 1396);
+STATIC_ASSERT(offsetof(struct SettingsMenuState, cursor) == 1444);
+STATIC_ASSERT(offsetof(struct SettingsMenuState, icon) == 1552);
 
 /// The sound test's four values: music, jingle, sound effect and sound preset.
 struct SoundTestValues {

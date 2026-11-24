@@ -3,8 +3,8 @@
 /// lead up to the aerie (later to the beacon's floor) and down to the rooms of
 /// the blue key and the red key. Standing on the button in the room of cracked
 /// tiles holds a stone door open; the pillar beside it, moved onto it
-/// (JupiterLighthouse_CheckBlockOnCell), keeps it open, a shortcut through the
-/// tower. The room's cracked tiles give way under a second step
+/// (JupiterLighthouse_CheckPillarOnButton), keeps it open, a shortcut through
+/// the tower. The room's cracked tiles give way under a second step
 /// (JupiterLighthouse_StepOnCrackedTile), dropping the party into the hall of
 /// the four winged statues below, where a single cracked tile in a ring of
 /// studs (JupiterLighthouse_StepOnSingleCrackedTile) drops it into the room of
@@ -80,7 +80,7 @@ enum {
 enum { DOOR_OPEN_AT_ONCE, DOOR_GRINDS_OPEN };
 
 void JupiterLighthouse_OpenDoor(s32 how);
-void JupiterLighthouse_CheckBlockOnCell(void);
+void JupiterLighthouse_CheckPillarOnButton(void);
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 s32 gWhirlwindRiding BSS_DATA;
 u16 gPaletteCycleColors[16] BSS_DATA;
@@ -98,7 +98,7 @@ struct CellTarget gCrackedTiles BSS_DATA;
 s32 Actor_GetSpritePriority(struct Actor *actor);
 void JupiterLighthouse_StepOffButton(void);
 void JupiterLighthouse_FinishMovingBlock(void);
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 
 void MapGrid_SetCellHeight();
 
@@ -155,7 +155,7 @@ void JupiterLighthouse_CloseDoor(void) {
 }
 
 /// The shortcut pillar moved onto the button holds the door open for good.
-void JupiterLighthouse_CheckBlockOnCell(void) {
+void JupiterLighthouse_CheckPillarOnButton(void) {
   struct Actor *actor = Actor_Get(ACTOR_SHORTCUT_PILLAR);
 
   if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED) &&
@@ -181,7 +181,7 @@ void JupiterLighthouse_StepOffButton(void) {
     Event_ClearFlag(FLAG_DOOR_BUTTON_HELD);
     JupiterLighthouse_CloseDoor();
   }
-  JupiterLighthouse_CheckBlockOnCell();
+  JupiterLighthouse_CheckPillarOnButton();
 }
 
 #include "shared/jupiter_lighthouse_finish_moving_block.c"
@@ -260,7 +260,7 @@ UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
   height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
   MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0,
                         CELL_HEIGHT_STEPS(height) + 6);
-  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
+  MapGrid_SetCellAttributesAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
 }
 
 #include "shared/whirlwind_carry_leader.h"
@@ -279,7 +279,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

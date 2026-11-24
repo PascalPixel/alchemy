@@ -97,7 +97,7 @@ void NaribweRooms_ReadOtherItem(void);
 /// "It costs 20 coins to hear what your future holds. Will you pay?"
 #define FORTUNE_PRICE 20
 
-/// The Trident's reading, as messages after MsgNaribweInteriorsAreYouPrepared.
+/// The Trident's reading, as messages after MsgNaribweRoomsAreYouPrepared.
 enum TridentReadingMessage {
   /// "That object you have placed before me... It is a fearsome weapon to a
   /// particular beast."
@@ -110,7 +110,7 @@ enum TridentReadingMessage {
 
 /// "From the garb you have placed before me, I sense the presence of the one
 /// you await.", which opens a Djinni's hint, as the message this many before
-/// MsgNaribweInteriorsInItemYouHavePlaced.
+/// MsgNaribweRoomsInItemYouHavePlaced.
 #define ARMOR_PRESENCE_SENSED_BEFORE 42
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -129,7 +129,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 s32 NaribweRooms_MindReadFortuneTeller(void) {
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
-  FieldEvent_SetMessageId((s32)MsgNaribweInteriorsItemsThatOneCarries);
+  FieldEvent_SetMessageId((s32)MsgNaribweRoomsItemsThatOneCarries);
   // "The items that one carries are filled with one's hopes and desires...."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   Event_End();
@@ -142,7 +142,7 @@ s32 NaribweRooms_MindReadFortuneTeller(void) {
 s32 NaribweRooms_MindReadFortuneTellerOnReturn(void) {
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
-  FieldEvent_SetMessageId((s32)MsgNaribweInteriorsItemsPlacedBeforeMe);
+  FieldEvent_SetMessageId((s32)MsgNaribweRoomsItemsPlacedBeforeMe);
   // "Items placed before me are filled with the desires of those who..."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   Event_End();
@@ -181,7 +181,7 @@ void NaribweRooms_TalkToWeaponMerchant(s32 speaker) {
   } else {
     Event_Start();
     FieldEvent_EndLastingPsynergy(0);
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsIfYouAreBurdened);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsIfYouAreBurdened);
     // "If you are burdened with many concerns, take a weapon to the..."
     Event_ShowMessage(speaker, 0);
     Event_End();
@@ -199,7 +199,7 @@ void NaribweRooms_TalkToWeaponMerchantOnReturn(s32 speaker) {
   } else {
     Event_Start();
     FieldEvent_EndLastingPsynergy(0);
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsWheneverIGetCustomers);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsWheneverIGetCustomers);
     // "Whenever I get customers from out of town, I always tell them the..."
     Event_ShowMessage(speaker, 0);
     Event_End();
@@ -217,8 +217,7 @@ void NaribweRooms_TalkToArmorMerchant(s32 speaker) {
   } else {
     Event_Start();
     FieldEvent_EndLastingPsynergy(0);
-    FieldEvent_SetMessageId(
-        (s32)MsgNaribweInteriorsYouShouldVisitFortuneTeller);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsYouShouldVisitFortuneTeller);
     // "You should visit the fortune- teller while you are in our village...."
     Event_ShowMessage(speaker, 0);
     Event_End();
@@ -236,7 +235,7 @@ void NaribweRooms_TalkToArmorMerchantOnReturn(s32 speaker) {
   } else {
     Event_Start();
     FieldEvent_EndLastingPsynergy(0);
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsIfYouWishToKnow);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsIfYouWishToKnow);
     // "If you wish to know anything, go to the fortune-teller. He's fast..."
     Event_ShowMessage(speaker, 0);
     Event_End();
@@ -253,7 +252,7 @@ void NaribweRooms_TalkToInnkeeper(s32 speaker) {
   } else {
     Event_Start();
     FieldEvent_EndLastingPsynergy(0);
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsOurCookingIsFamousAll);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsOurCookingIsFamousAll);
     // "Our cooking is famous all across Gondowan. If you find you like it..."
     Event_ShowMessage(speaker, 0);
     Event_End();
@@ -271,7 +270,7 @@ void NaribweRooms_TalkToInnkeeperOnReturn(s32 speaker) {
   } else {
     Event_Start();
     FieldEvent_EndLastingPsynergy(0);
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsISeeSoManyTravelers);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsISeeSoManyTravelers);
     // "I see so many travelers... How am I supposed to remember who Piers..."
     Event_ShowMessage(speaker, 0);
     Event_End();
@@ -286,7 +285,7 @@ void NaribweRooms_TalkToFortuneTeller(void) {
 
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
-  message = MsgNaribweInteriorsIAmTellerOfFortunes;
+  message = MsgNaribweRoomsIAmTellerOfFortunes;
   FieldEvent_SetMessageId((s32)message);
   // "I am a teller of fortunes. Would you have a reading?"
   Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -309,7 +308,7 @@ void NaribweRooms_TalkToFortuneTeller(void) {
       return;
     }
   }
-  FieldEvent_SetMessageId((s32)MsgNaribweInteriorsThenStandBack);
+  FieldEvent_SetMessageId((s32)MsgNaribweRoomsThenStandBack);
   // "Then stand back."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   Event_End();
@@ -342,7 +341,7 @@ void NaribweRooms_ReadFortune(void) {
   u8 type;
   s32 rawType;
 
-  FieldEvent_SetMessageId(MsgNaribweInteriorsVeryWellShowMeOne);
+  FieldEvent_SetMessageId(MsgNaribweRoomsVeryWellShowMeOne);
   // "Very well. Show me one of your items."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   FieldEvent_Wait(30);
@@ -356,7 +355,7 @@ void NaribweRooms_ReadFortune(void) {
     Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
     if (ItemPicker_RunToShow(&unit, &slot) == -1) {
 #endif
-      refuse = MsgNaribweInteriorsShallIGiveYouAnother;
+      refuse = MsgNaribweRoomsShallIGiveYouAnother;
       FieldEvent_SetMessageId(refuse);
       // "Shall I give you another reading for a different item?"
       Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -376,7 +375,7 @@ void NaribweRooms_ReadFortune(void) {
     MessageArgument_Push(unitData->inventory[slot], MESSAGE_ARGUMENT_ITEM);
     // "... placed on the table."
     Message_ShowCentered(MsgPlacedOnThe, 1);
-    message = MsgNaribweInteriorsAreYouPrepared;
+    message = MsgNaribweRoomsAreYouPrepared;
     FieldEvent_SetMessageId(message);
     // "Are you prepared?"
     Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -528,7 +527,7 @@ u8 *NaribweRooms_GetDjinniHint(void);
 
 /// A weapon: the foe that lies beyond it.
 void NaribweRooms_ReadWeapon(void) {
-  u8 *message = MsgNaribweInteriorsBeyondWeaponYouSetDown;
+  u8 *message = MsgNaribweRoomsBeyondWeaponYouSetDown;
 
   FieldEvent_SetMessageId((s32)message);
   // "Beyond the weapon you set down lies a terrible foe."
@@ -555,35 +554,35 @@ void NaribweRooms_ReadWeapon(void) {
 /// A Psynergy item: a power shining beyond it, and where the next power to gain
 /// waits.
 void NaribweRooms_ReadShiningItem(void) {
-  u8 *message = MsgNaribweInteriorsIFeelShiningPowerGlowing;
+  u8 *message = MsgNaribweRoomsIFeelShiningPowerGlowing;
 
   FieldEvent_SetMessageId((s32)message);
   // "I feel a shining power glowing beyond the item before me."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   switch (NaribweRooms_NextPowerToGain()) {
   case READING_SEEK_REVEAL:
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsYouAreLost);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsYouAreLost);
     // "You are lost in your way... Another continent needs your attention..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_SEEK_SAND:
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsDistantIsleLiesFar);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsDistantIsleLiesFar);
     // "A distant isle lies far to the northeast... Sail there. High atop a..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_SEEK_PARCH:
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsISeeParadiseAwaiting);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsISeeParadiseAwaiting);
     // "I see a paradise awaiting you... An island in the east. But even..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_SEEK_BURST_BROOCH:
     FieldEvent_SetMessageId(
-        (s32)MsgNaribweInteriorsTinyFigureStandsAgainstWasteland);
+        (s32)MsgNaribweRoomsTinyFigureStandsAgainstWasteland);
     // "A tiny figure stands against a wasteland wrought in snow... The..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_SEEK_GRINDSTONE:
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsISeeYouLost);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsISeeYouLost);
     // "I see you lost in mists, lost in time, lost in the seas... And..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
@@ -600,12 +599,12 @@ void NaribweRooms_ReadShiningItem(void) {
 void NaribweRooms_ReadArmor(void) {
   s32 message = NaribweRooms_GetDjinniHint();
 
-  if (message == (s32)MsgNaribweInteriorsInItemYouHavePlaced) {
+  if (message == (s32)MsgNaribweRoomsInItemYouHavePlaced) {
     FieldEvent_SetMessageId(message);
     // "In the item you have placed before me, I can see nothing of the..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   } else {
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsInItemYouHavePlaced -
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsInItemYouHavePlaced -
                             ARMOR_PRESENCE_SENSED_BEFORE);
     // "From the garb you have placed before me, I sense the presence of the..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -616,37 +615,37 @@ void NaribweRooms_ReadArmor(void) {
 
 /// Any other item: the path the party should follow.
 void NaribweRooms_ReadOtherItem(void) {
-  FieldEvent_SetMessageId((s32)MsgNaribweInteriorsBeyondItemBeforeMe);
+  FieldEvent_SetMessageId((s32)MsgNaribweRoomsBeyondItemBeforeMe);
   // "Beyond the item before me, I see a path for you to follow."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   switch (NaribweRooms_NextPath()) {
   case READING_BEFORE_GABOMBAS_MESSAGE:
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsISeeYouInsideSacred);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsISeeYouInsideSacred);
     // "I see you inside a sacred icon. By listening to the voices, you will..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_FORGE_WEAPON:
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsYouMustForgeWeapon);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsYouMustForgeWeapon);
     // "You must forge a weapon to defeat a mortal enemy. Seek out the pieces!"
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_RAISE_COLUMN:
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsYouWillRaiseMightyColumn);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsYouWillRaiseMightyColumn);
     // "You will raise a mighty column and gain assistance where it is least..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_EASTERN_VILLAGE:
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsYouWillGainTremendousHelp);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsYouWillGainTremendousHelp);
     // "You will gain tremendous help from a village on the eastern reaches..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_SEA_BEAST:
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsYouHaveWeaponYouNeed);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsYouHaveWeaponYouNeed);
     // "You have the weapon you need to defeat the sea beast. Go to the sea..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_WEST:
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsObjectThatYouSeekLies);
+    FieldEvent_SetMessageId((s32)MsgNaribweRoomsObjectThatYouSeekLies);
     // "The object that you seek lies somewhere in the west. Why do you..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
@@ -656,7 +655,7 @@ void NaribweRooms_ReadOtherItem(void) {
 /// A prong of the Trident: the power it holds over a foe, and where a prong
 /// still missing lies.
 void NaribweRooms_ReadProng(void) {
-  u8 *message = MsgNaribweInteriorsObjectYouHavePlacedBefore;
+  u8 *message = MsgNaribweRoomsObjectYouHavePlacedBefore;
 
   FieldEvent_SetMessageId((s32)message);
   // "The object you have placed before me wields a mighty power over a..."
@@ -819,7 +818,7 @@ s32 NaribweRooms_ListMissingDjinn(s32 limit, s32 group, s32 *out) {
 #define HINT_LIMIT_ABOVE_ALL 9999
 
 /// The message telling where a Djinni still to be found waits, or
-/// MsgNaribweInteriorsInItemYouHavePlaced when none is left to find.
+/// MsgNaribweRoomsInItemYouHavePlaced when none is left to find.
 ///
 /// A Djinni the party has passed by, one before the last of its element it has
 /// found, is picked at random; when it has passed none by, the first still to
@@ -854,7 +853,7 @@ u8 *NaribweRooms_GetDjinniHint(void) {
                                              group, hints + count);
     if (count == 0) {
       HeapSlot_Release(HEAP_SLOT_DJINNI_HINTS);
-      return MsgNaribweInteriorsInItemYouHavePlaced;
+      return MsgNaribweRoomsInItemYouHavePlaced;
     }
     NaribweRooms_ListMissingDjinn(DJINNI_INDEX(DJINNI_CRYSTAL) + 1, lowestGroup,
                                   hints);
@@ -864,94 +863,94 @@ u8 *NaribweRooms_GetDjinniHint(void) {
   }
   switch (hints[index]) {
   case FLAG_DJINNI(DJINNI_IRON):
-    message = MsgNaribweInteriorsToEastLiesContinentMoved;
+    message = MsgNaribweRoomsToEastLiesContinentMoved;
     break;
   case FLAG_DJINNI(DJINNI_STEEL):
-    message = MsgNaribweInteriorsToNorthInsideSacredIcon;
+    message = MsgNaribweRoomsToNorthInsideSacredIcon;
     break;
   case FLAG_DJINNI(DJINNI_MUD):
-    message = MsgNaribweInteriorsToNorthBeneathSacredIcon;
+    message = MsgNaribweRoomsToNorthBeneathSacredIcon;
     break;
   case FLAG_DJINNI(DJINNI_FLOWER):
-    message = MsgNaribweInteriorsHeadEastBySoutheast;
+    message = MsgNaribweRoomsHeadEastBySoutheast;
     break;
   case FLAG_DJINNI(DJINNI_MELD):
-    message = MsgNaribweInteriorsHeadEastByNortheast;
+    message = MsgNaribweRoomsHeadEastByNortheast;
     break;
   case FLAG_DJINNI(DJINNI_PETRA):
-    message = MsgNaribweInteriorsHeadNorthByNorthwest;
+    message = MsgNaribweRoomsHeadNorthByNorthwest;
     break;
   case FLAG_DJINNI(DJINNI_SALT):
-    message = MsgNaribweInteriorsToNorthwestInRuins;
+    message = MsgNaribweRoomsToNorthwestInRuins;
     break;
   case FLAG_DJINNI(DJINNI_GEODE):
-    message = MsgNaribweInteriorsHeadWestByNorthwest;
+    message = MsgNaribweRoomsHeadWestByNorthwest;
     break;
   case FLAG_DJINNI(DJINNI_MOLD):
-    message = MsgNaribweInteriorsToNorthInVillage;
+    message = MsgNaribweRoomsToNorthInVillage;
     break;
   case FLAG_DJINNI(DJINNI_CRYSTAL):
-    message = MsgNaribweInteriorsHeadEastBySoutheastInDesert;
+    message = MsgNaribweRoomsHeadEastBySoutheastInDesert;
     break;
   case FLAG_DJINNI(DJINNI_FOG):
-    message = MsgNaribweInteriorsHeadEastByNortheastInCave;
+    message = MsgNaribweRoomsHeadEastByNortheastInCave;
     break;
   case FLAG_DJINNI(DJINNI_SOUR):
-    message = MsgNaribweInteriorsToSoutheastInPlains;
+    message = MsgNaribweRoomsToSoutheastInPlains;
     break;
   case FLAG_DJINNI(DJINNI_CHILL):
-    message = MsgNaribweInteriorsToSouthInForestOne;
+    message = MsgNaribweRoomsToSouthInForestOne;
     break;
   case FLAG_DJINNI(DJINNI_STEAM):
-    message = MsgNaribweInteriorsToEastBesideBoulder;
+    message = MsgNaribweRoomsToEastBesideBoulder;
     break;
   case FLAG_DJINNI(DJINNI_RIME):
     message = MsgHeadEastByNortheastInThe;
     break;
   case FLAG_DJINNI(DJINNI_GEL):
-    message = MsgNaribweInteriorsToNorthSomewhereOnSmall;
+    message = MsgNaribweRoomsToNorthSomewhereOnSmall;
     break;
   case FLAG_DJINNI(DJINNI_EDDY):
-    message = MsgNaribweInteriorsHeadNorthByNorthwestInCave;
+    message = MsgNaribweRoomsHeadNorthByNorthwestInCave;
     break;
   case FLAG_DJINNI(DJINNI_BALM):
-    message = MsgNaribweInteriorsToNorthInRuinsChilled;
+    message = MsgNaribweRoomsToNorthInRuinsChilled;
     break;
   case FLAG_DJINNI(DJINNI_SERAC):
     message = MsgHeadEastByNortheastInA;
     break;
   case FLAG_DJINNI(DJINNI_CANNON):
-    message = MsgNaribweInteriorsToEastInMountainPaths;
+    message = MsgNaribweRoomsToEastInMountainPaths;
     break;
   case FLAG_DJINNI(DJINNI_SPARK):
-    message = MsgNaribweInteriorsToSoutheastInVillageLulled;
+    message = MsgNaribweRoomsToSoutheastInVillageLulled;
     break;
   case FLAG_DJINNI(DJINNI_KINDLE):
-    message = MsgNaribweInteriorsHeadSouthBySoutheast;
+    message = MsgNaribweRoomsHeadSouthBySoutheast;
     break;
   case FLAG_DJINNI(DJINNI_CHAR):
-    message = MsgNaribweInteriorsHeadEastBySoutheastInTown;
+    message = MsgNaribweRoomsHeadEastBySoutheastInTown;
     break;
   case FLAG_DJINNI(DJINNI_COAL):
-    message = MsgNaribweInteriorsHeadEastByNortheastOnIsland;
+    message = MsgNaribweRoomsHeadEastByNortheastOnIsland;
     break;
   case FLAG_DJINNI(DJINNI_REFLUX):
-    message = MsgNaribweInteriorsHeadSouthBySoutheastInRuins;
+    message = MsgNaribweRoomsHeadSouthBySoutheastInRuins;
     break;
   case FLAG_DJINNI(DJINNI_CORE):
-    message = MsgNaribweInteriorsToNorthwestInForest;
+    message = MsgNaribweRoomsToNorthwestInForest;
     break;
   case FLAG_DJINNI(DJINNI_TINDER):
-    message = MsgNaribweInteriorsToNorthwestAlongCoast;
+    message = MsgNaribweRoomsToNorthwestAlongCoast;
     break;
   case FLAG_DJINNI(DJINNI_SHINE):
-    message = MsgNaribweInteriorsToNorthwestBesideRuins;
+    message = MsgNaribweRoomsToNorthwestBesideRuins;
     break;
   case FLAG_DJINNI(DJINNI_FURY):
-    message = MsgNaribweInteriorsHeadNorthByNorthwestAtGreat;
+    message = MsgNaribweRoomsHeadNorthByNorthwestAtGreat;
     break;
   case FLAG_DJINNI(DJINNI_FUGUE):
-    message = MsgNaribweInteriorsToNorthInRuinsChilledByIcy;
+    message = MsgNaribweRoomsToNorthInRuinsChilledByIcy;
     break;
   case FLAG_DJINNI(DJINNI_BREATH):
     message = MsgHeadEastByNortheastInACave;
@@ -966,28 +965,28 @@ u8 *NaribweRooms_GetDjinniHint(void) {
     message = MsgToTheNorthInTheMountain;
     break;
   case FLAG_DJINNI(DJINNI_HAZE):
-    message = MsgNaribweInteriorsToEastSomewhereOnTiny;
+    message = MsgNaribweRoomsToEastSomewhereOnTiny;
     break;
   case FLAG_DJINNI(DJINNI_WHEEZE):
-    message = MsgNaribweInteriorsToEastInForest;
+    message = MsgNaribweRoomsToEastInForest;
     break;
   case FLAG_DJINNI(DJINNI_AROMA):
-    message = MsgNaribweInteriorsHeadNorthByNorthwestInVillage;
+    message = MsgNaribweRoomsHeadNorthByNorthwestInVillage;
     break;
   case FLAG_DJINNI(DJINNI_WHORL):
-    message = MsgNaribweInteriorsInNorthwestInRuins;
+    message = MsgNaribweRoomsInNorthwestInRuins;
     break;
   case FLAG_DJINNI(DJINNI_GASP):
-    message = MsgNaribweInteriorsHeadNorthByNorthwestNear;
+    message = MsgNaribweRoomsHeadNorthByNorthwestNear;
     break;
   case FLAG_DJINNI(DJINNI_LULL):
     message = MsgToTheNorthInTheRuins;
     break;
   case FLAG_DJINNI(DJINNI_GALE):
-    message = MsgNaribweInteriorsHeadNorthByNortheast;
+    message = MsgNaribweRoomsHeadNorthByNortheast;
     break;
   default:
-    message = MsgNaribweInteriorsInItemYouHavePlaced;
+    message = MsgNaribweRoomsInItemYouHavePlaced;
     break;
   }
   HeapSlot_Release(HEAP_SLOT_DJINNI_HINTS);
@@ -1122,44 +1121,44 @@ struct Trigger gNaribweRooms_Triggers[] = {
     {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NORTHWEST_HUT, CONDITION_ALWAYS,
      NARIBWE_ROOMS_TO_NORTHWEST_HUT},
     {TRIGGER_TALK, ACTOR_BOY_DIRECTING_TO_THE_FORTUNE_TELLER, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsFortuneTellerLivesAtHighest)},
+     MSGNO(MsgNaribweRoomsFortuneTellerLivesAtHighest)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_A_SMALL_VILLAGE, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsWereSmallVillage)},
+     MSGNO(MsgNaribweRoomsWereSmallVillage)},
     {TRIGGER_TALK, ACTOR_FORTUNE_TELLER, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsIfYouDesireReadingStand)},
+     MSGNO(MsgNaribweRoomsIfYouDesireReadingStand)},
     {TRIGGER_TALK, ACTOR_FORTUNE_TELLERS_CHILD, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsMyFatherIsFortuneTeller)},
+     MSGNO(MsgNaribweRoomsMyFatherIsFortuneTeller)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_BODY_PAINT, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsByPaintingOurBodies)},
+     MSGNO(MsgNaribweRoomsByPaintingOurBodies)},
     {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
      EVENT(NaribweRooms_TalkToWeaponMerchant)},
     {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
      EVENT(NaribweRooms_TalkToArmorMerchant)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_ADVENTURE, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsIfYouLikeAdventure)},
+     MSGNO(MsgNaribweRoomsIfYouLikeAdventure)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
      EVENT(NaribweRooms_TalkToInnkeeper)},
     {TRIGGER_TALK, ACTOR_FORTUNE_TABLE, CONDITION_ALWAYS,
      EVENT(NaribweRooms_TalkToFortuneTeller)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
      ACTOR_BOY_DIRECTING_TO_THE_FORTUNE_TELLER, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsFortuneTellerInNaribweHas)},
+     MSGNO(MsgNaribweRoomsFortuneTellerInNaribweHas)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_A_SMALL_VILLAGE,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsAsLongAsWeListen)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsAsLongAsWeListen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FORTUNE_TELLER,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsItemsThatOneCarries)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsItemsThatOneCarries)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FORTUNE_TELLERS_CHILD,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsMyFatherMayNot)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsMyFatherMayNot)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_BODY_PAINT,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsBodyPaintingAlsoProtectsUs)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsBodyPaintingAlsoProtectsUs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsICanLookAtAny)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsICanLookAtAny)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsWheneverIGetMyFortune)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsWheneverIGetMyFortune)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_ADVENTURE,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsRiverIsProbablyVeryDangerous)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsRiverIsProbablyVeryDangerous)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsOurSpicesAreOurSecret)},
+     MSGNO(MsgNaribweRoomsOurSpicesAreOurSecret)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FORTUNE_TABLE,
      CONDITION_ALWAYS, EVENT(NaribweRooms_MindReadFortuneTeller)},
     {TRIGGER_TABLE_END},
@@ -1182,15 +1181,15 @@ struct Trigger gNaribweRooms_TriggersOnReturn[] = {
     {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NORTHWEST_HUT, CONDITION_ALWAYS,
      NARIBWE_ROOMS_TO_NORTHWEST_HUT},
     {TRIGGER_TALK, ACTOR_BOY_DIRECTING_TO_THE_FORTUNE_TELLER, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsIGuessThoseWarriorsLearned)},
+     MSGNO(MsgNaribweRoomsIGuessThoseWarriorsLearned)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_A_SMALL_VILLAGE, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsOurFortuneTellerHasBeen)},
+     MSGNO(MsgNaribweRoomsOurFortuneTellerHasBeen)},
     {TRIGGER_TALK, ACTOR_FORTUNE_TELLER, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsIfYouDesireReadingStand)},
+     MSGNO(MsgNaribweRoomsIfYouDesireReadingStand)},
     {TRIGGER_TALK, ACTOR_FORTUNE_TELLERS_CHILD, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsIfTroubleResides)},
+     MSGNO(MsgNaribweRoomsIfTroubleResides)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_BODY_PAINT, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsReadingFortunesInPeoplesItems)},
+     MSGNO(MsgNaribweRoomsReadingFortunesInPeoplesItems)},
     {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
      EVENT(NaribweRooms_TalkToWeaponMerchantOnReturn)},
     {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
@@ -1203,21 +1202,21 @@ struct Trigger gNaribweRooms_TriggersOnReturn[] = {
      EVENT(NaribweRooms_TalkToFortuneTeller)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
      ACTOR_BOY_DIRECTING_TO_THE_FORTUNE_TELLER, CONDITION_ALWAYS,
-     MSGNO(MsgNaribweInteriorsPowerOfFortuneTeller)},
+     MSGNO(MsgNaribweRoomsPowerOfFortuneTeller)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_A_SMALL_VILLAGE,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsFortuneTellerSaidThatPower)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsFortuneTellerSaidThatPower)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FORTUNE_TELLER,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsItemsPlacedBeforeMe)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsItemsPlacedBeforeMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FORTUNE_TELLERS_CHILD,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsFatherShouldChargeMore)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsFatherShouldChargeMore)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_BODY_PAINT,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsAfterFathersBeenReadingAll)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsAfterFathersBeenReadingAll)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsWhenILookAtWeapons)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsWhenILookAtWeapons)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsILikeOfferingArmor)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsILikeOfferingArmor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_ADVENTURE,
-     CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsHePaidMeLot)},
+     CONDITION_ALWAYS, MSGNO(MsgNaribweRoomsHePaidMeLot)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
      MSGNO(MsgWhyWouldTravel)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FORTUNE_TABLE,

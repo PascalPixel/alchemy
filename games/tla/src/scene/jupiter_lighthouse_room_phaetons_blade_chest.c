@@ -114,7 +114,7 @@ struct CellTarget gCrackedTiles BSS_DATA;
 s32 Actor_GetSpritePriority(struct Actor *actor);
 void JupiterLighthouse_StopHovering(void);
 void MapGrid_SetCellHeight();
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -360,7 +360,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

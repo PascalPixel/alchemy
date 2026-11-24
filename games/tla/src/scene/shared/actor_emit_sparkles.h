@@ -1,7 +1,7 @@
 /// Sparkles rising about an actor, as about an Adept a tablet has taught
 /// Psynergy: every eighth frame a white sparkle starts within 16 pixels to
 /// either side of it, 8 to 39 pixels up, and rises half a pixel a frame.
-void Actor_EmitBubbles(struct Actor *actor) {
+void Actor_EmitSparkles(struct Actor *actor) {
   if ((gFrameCount & 7) == 0) {
     struct EffectOptions sparkle;
     FIXED position[3];

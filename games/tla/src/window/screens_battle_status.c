@@ -651,7 +651,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                      SUMMARY_HELP_CAPACITY);
           else
             BATTLE_MENU_MESSAGE_COPY((*entry & INVENTORY_ITEM_ID_MASK) +
-                                         (s32)MsgItemPlainName,
+                                         (s32)MsgItemDescription,
                                      itemText, SUMMARY_ITEM_HELP_CAPACITY);
         } else {
           BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleNoItems, itemText,
@@ -740,7 +740,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               Window_SetTilemapEntry(statusWindow, WINDOW_TILE_PP_LABEL_END, 12,
                                      j * 2 + 8, 0);
               iconSprites[j].oam.f.tile =
-                  Resource_LoadIndexedEntryToBuffer(id, iconSlots[j]);
+                  AbilityIcon_LoadIntoSlot(id, iconSlots[j]);
               if (!(ability->flags & ABILITY_USABLE_IN_BATTLE))
                 Text_SetColor(TEXT_COLOR_YELLOW);
               else if (ability->ppCost > unit->pp)

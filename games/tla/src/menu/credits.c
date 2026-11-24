@@ -162,10 +162,6 @@ enum CrawlStop {
   CRAWL_STOP_LONG = 3 ///< "----", which no crawl line has
 };
 
-/// Credits_Run's modes: the title's story crawl over the slideshow, or the
-/// staff credits from a page, CREDITS_MODE_FIRST_PAGE being their first.
-enum CreditsMode { CREDITS_MODE_STORY_CRAWL = 1, CREDITS_MODE_FIRST_PAGE = 2 };
-
 /// Where Credits_DrawLine places a line in its 192 pixels.
 enum CreditsAlignment {
   CREDITS_ALIGN_LEFT = 0,

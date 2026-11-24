@@ -1068,7 +1068,7 @@ void MagmaRock_IgniteStatue(void) {
 /// (BURST_STAGE_SMALL_BLAST) and eight at the last blast
 /// (BURST_STAGE_GREAT_BLAST), which moves the target out of the scene; the
 /// stump is the pillar's animation from PILLAR_CRUMBLE_FRAME.
-void MagmaRock_BurstStatue(s32 stage, s32 frame) {
+void MagmaRock_BurstCrackedPillar(s32 stage, s32 frame) {
   struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
 
   if (frame == 0)
@@ -1299,7 +1299,8 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
 }
 
 /// Burst at a cracked pillar on the slide or on the cliff: the pillar breaks
-/// (MagmaRock_BurstStatue) and its flag keeps it gone until the party leaves.
+/// (MagmaRock_BurstCrackedPillar) and its flag keeps it gone until the party
+/// leaves.
 #define DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(name, slidePillar, cliffPillar,     \
                                            flag)                               \
   void name(s32 stage, s32 frame) {                                            \
@@ -1313,7 +1314,7 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
         state->child = Actor_Get(slidePillar);                                 \
       else if (scene == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST)                \
         state->child = Actor_Get(cliffPillar);                                 \
-      MagmaRock_BurstStatue(stage, frame);                                     \
+      MagmaRock_BurstCrackedPillar(stage, frame);                              \
     }                                                                          \
     Event_SetFlag(flag);                                                       \
   }
@@ -1322,7 +1323,7 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
 /// slide's cave mouth (cell (15, 31)), or the cracked pillar on the cliff's
 /// high west level (cell (22, 34)). Either sets `FLAG_CRACKED_PILLAR_A_BURST`.
 /// The high west statue's fireball breaks that pillar through the statue's own
-/// rows instead (MagmaRock_BurstStatue), not this.
+/// rows instead (MagmaRock_BurstCrackedPillar), not this.
 DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRock_BurstCrackedPillarA,
                                    ACTOR_CRACKED_PILLAR_A,
                                    ACTOR_HIGH_WEST_CRACKED_PILLAR_A,
@@ -1338,13 +1339,13 @@ DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRock_BurstCrackedPillarB,
                                    FLAG_CRACKED_PILLAR_B_BURST)
 
 /// Defines what Burst does to a cracked pillar: it breaks the pillar actor
-/// (MagmaRock_BurstStatue) and sets its flag.
+/// (MagmaRock_BurstCrackedPillar) and sets its flag.
 #define DEFINE_BURST_CRACKED_PILLAR(name, pillar, flag)                        \
   void name(s32 stage, s32 frame) {                                            \
     struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;          \
                                                                                \
     state->child = Actor_Get(pillar);                                          \
-    MagmaRock_BurstStatue(stage, frame);                                       \
+    MagmaRock_BurstCrackedPillar(stage, frame);                                \
     Event_SetFlag(flag);                                                       \
   }
 
@@ -2813,7 +2814,7 @@ struct Trigger gMagmaRock_Triggers[] = {
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
      CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
-     EVENT(MagmaRock_BurstStatue)},
+     EVENT(MagmaRock_BurstCrackedPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
      CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_FireStatue)},
@@ -2862,7 +2863,7 @@ struct Trigger gMagmaRock_SalamanderTailHighWestTriggers[] = {
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
      CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
-     EVENT(MagmaRock_BurstStatue)},
+     EVENT(MagmaRock_BurstCrackedPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
      CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_FireStatue)},
@@ -2973,7 +2974,7 @@ struct Trigger gMagmaRock_SalamanderTailLowEastTriggers[] = {
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
      CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
-     EVENT(MagmaRock_BurstStatue)},
+     EVENT(MagmaRock_BurstCrackedPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
      CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_FireStatue)},
@@ -2985,7 +2986,7 @@ struct Trigger gMagmaRock_SalamanderTailLowEastTriggers[] = {
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
      CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE_B, CONDITION_ALWAYS,
-     EVENT(MagmaRock_BurstStatue)},
+     EVENT(MagmaRock_BurstCrackedPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
      CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE_B, CONDITION_ALWAYS,
      EVENT(MagmaRock_FireStatue)},

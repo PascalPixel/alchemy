@@ -115,7 +115,7 @@
 #define MESSAGE_COUNT 3
 #define MESSAGE_LINE_COUNT 4         ///< lines a page; spacing has one gap each
 #define TEXT_DEFAULT_LINE_SPACING 10 ///< a message's line spacing at start
-/// The glyph spacing text starts with (WindowState.glyphSpacing): a glyph
+/// The glyph spacing text starts with (WindowState.letterSpacing): a glyph
 /// sprite sits half of it right of its place in the line.
 #define TEXT_DEFAULT_GLYPH_SPACING 9
 /// The glyph tiles' size in sprite VRAM: the four tiles of a 16x16 glyph for
@@ -223,7 +223,7 @@ void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 /// numbers (PAGE_NUMBER_TILE and PAGE_NUMBER_LIT_TILE, window/window.h): the
 /// arrows.
 enum {
-  /// Left arrow, tile 820, which Link_DrawPageArrows slides.
+  /// Left arrow, tile 820, which PageArrows_Draw slides.
   LIST_TILE_PAGES_LEFT = WINDOW_TILE(820),
   LIST_TILE_PAGES_RIGHT = WINDOW_TILE(821), ///< Right arrow, tile 821
   /// The Status screen's own two arrows, tiles 822 and 823, which
@@ -232,7 +232,7 @@ enum {
   STATUS_TILE_PAGES_RIGHT = WINDOW_TILE(823)
 };
 
-/// The battle lists' two page arrow tiles in VRAM, which Link_DrawPageArrows
+/// The battle lists' two page arrow tiles in VRAM, which PageArrows_Draw
 /// draws each frame (LIST_TILE_PAGES_LEFT and LIST_TILE_PAGES_RIGHT).
 #define LIST_PAGE_ARROW_VRAM                                                   \
   ((s32)BG_CHAR_BLOCK(0) +                                                     \

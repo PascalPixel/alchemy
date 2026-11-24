@@ -331,7 +331,7 @@ AlchemyUncreditedEnd_080018b6:
 .L_080019d4:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-	.4byte	gOamBucketMasks + 32
+	.4byte	gOamDepthMasks + 32
 	.4byte	gOamMatrixCount
 	.4byte	gOamUsage
 	.4byte	gOamDepthLists

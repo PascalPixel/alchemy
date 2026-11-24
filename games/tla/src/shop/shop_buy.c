@@ -90,7 +90,7 @@ next_page:
                        selectionIndex % SHOP_STOCK_PAGE_ITEMS * 32 - 8, 8);
       shop->cursorFrames = 4;
       Shop_DrawStock(stockWindow, selectionIndex);
-      Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemPlainName);
+      Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemDescription);
       WindowSprite_RedrawSavedRectFar(priceWindow);
       Shop_DrawItemPrice(priceWindow, itemId, (u16)stockDefinition->price,
                          SHOP_PRICE_KIND_BUY);
@@ -458,14 +458,14 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
     if (first != 0) {
       icon = WindowSprite_CreateFar(shop->previousPageIcon,
                                     WINDOW_SPRITE_SIZE_16X16, window, 88, -12);
-      icon->kind = 0;
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
       icon->animationStep = 0;
     }
     if (first + SHOP_PARTY_PAGE_MEMBERS < count) {
       icon = WindowSprite_CreateFar(shop->nextPageIcon,
                                     WINDOW_SPRITE_SIZE_16X16, window, 88, 0);
-      icon->kind = 0;
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
       icon->animationStep = 0;
     }
@@ -549,11 +549,11 @@ void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
     if (baseStats[index] > previewStats[index])
       WindowSprite_CreateFar(shop->statDownIcon, WINDOW_SPRITE_SIZE_16X16,
                              window, 56, index * 16 - 4)
-          ->kind = 0;
+          ->kind = WINDOW_SPRITE_PLAIN;
     else if (baseStats[index] < previewStats[index])
       WindowSprite_CreateFar(shop->statUpIcon, WINDOW_SPRITE_SIZE_16X16, window,
                              56, index * 16 - 4)
-          ->kind = 0;
+          ->kind = WINDOW_SPRITE_PLAIN;
     Text_DrawNumberInWindowFar(baseStats[index], 3, window, 32, index * 16);
     if (baseStats[index] != previewStats[index])
       Text_DrawNumberInWindowFar(previewStats[index], 3, window, 72,

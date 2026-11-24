@@ -52,7 +52,7 @@ s32 PsynergyMenu_Run(void) {
   ItemMenu_Initialize(0, 3, 0, 7);
   menu->questionWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
-  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
+  PageArrows_DrawFar(PAGE_ARROW_VRAM);
 
   Menu_StartWatchingStart();
   result = PsynergyMenu_RunSteps(&member, &unused, &psynergy);
@@ -781,8 +781,8 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   for (i = 0; i < PSYNERGY_SLOTS; i++) {
     psynergyId = *p++;
     if (psynergyId != 0) {
-      Resource_LoadByModeIntoSlotFar(ICON_KIND_ABILITY, psynergyId,
-                                     (u8)(*icons)->index, 0);
+      SelectionIcon_LoadIntoSlotFar(ICON_KIND_ABILITY, psynergyId,
+                                    (u8)(*icons)->index, 0);
     }
     icons++;
   }

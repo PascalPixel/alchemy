@@ -15,7 +15,7 @@
 /// (BG_SCREEN_WIDTH tiles a row, DISPLAY_TILE_WIDTH shown), and returns the end
 /// of what it wrote. The left edge is the first border tile on the row, the
 /// right edge the last.
-u16 *Tile_BuildCellTiles(u16 *scanlineBounds, u16 *tilemap) {
+u16 *ScanlineWindow_BuildSpans(u16 *scanlineBounds, u16 *tilemap) {
   u32 tileRow;
   u32 tileColumn;
   s32 left;

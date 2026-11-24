@@ -271,7 +271,7 @@ extern const u8 gShop_PriceTiles[];
 /// (quantity.4bpp).
 extern const u8 gShop_QuantityTiles[];
 
-extern const u16 gShop_SelectorTileOffsets[30];
+extern const u16 gShop_QuantityBarSegmentOffsets[30];
 extern const u16 gShop_PriceDigitTileOffsets[5];
 extern const s16 gShop_GameTicketCreditCosts[30];
 extern const s16 gShop_StockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS];

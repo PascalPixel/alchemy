@@ -1,6 +1,6 @@
 /// The ship takes flight: it powers up for at most 20 frames, less over a place
 /// a step trigger answers, then glows in flight.
-void Leader_Search(void) {
+void Ship_TakeFlight(void) {
   struct Actor *ship = Actor_Get(FieldParty_GetLeaderActor());
   s32 i;
 

@@ -67,7 +67,7 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 /// 0), five to a page, each with its icon and name: plain when usable,
 /// TEXT_COLOR_YELLOW when Item_ClassifyUseAbility refuses it, TEXT_COLOR_RED
 /// when broken; the window above names the one under the cursor
-/// (MsgItemPlainName), or says it cannot be used in battle.
+/// (MsgItemDescription), or says it cannot be used in battle.
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   struct WindowState *state;
   s32 drawnFirstEntry;
@@ -159,7 +159,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
         else
           BATTLE_MENU_MESSAGE_COPY(
               (entries[firstEntry + selectedRow] & INVENTORY_ITEM_ID_MASK) +
-                  (s32)MsgItemPlainName,
+                  (s32)MsgItemDescription,
               messageText, BATTLE_MENU_MESSAGE_CAPACITY);
       } else {
         BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleNoItems, messageText,

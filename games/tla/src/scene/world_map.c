@@ -444,7 +444,7 @@ enum WorldMapEntrance {
 /// entrance where Idejima drifts; the story's other exits are scene_exits.h's.
 enum WorldMapExit { WORLD_MAP_TO_IDEJIMA_DRIFTING = 64 };
 
-void Leader_Search(void);
+void Ship_TakeFlight(void);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineState.entrance) {
@@ -476,7 +476,7 @@ void WorldMap_SetUpFlyingShip(void) {
   }
   if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
     Actor_StartMovementModeScript();
-  Leader_Search();
+  Ship_TakeFlight();
   if (Event_GetFlag(FLAG_SHIP_HOVERING))
     state->climbing = 0;
   else
@@ -2411,7 +2411,7 @@ void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
   }
 }
 
-#include "shared/leader_search.h"
+#include "shared/ship_take_flight.h"
 
 /// Brings the leader's ship down out of flight.
 void WorldMap_EndFlight(void) {

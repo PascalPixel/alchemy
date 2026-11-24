@@ -15,5 +15,5 @@ void Actor_RaiseFromCell(s32 id) {
   MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0,
                         CELL_HEIGHT_STEPS(height) +
                             CELL_HEIGHT_STEPS(toFIXED(48)));
-  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
+  MapGrid_SetCellAttributesAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
 }

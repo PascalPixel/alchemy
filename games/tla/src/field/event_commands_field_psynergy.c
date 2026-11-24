@@ -155,19 +155,19 @@ u8 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value) {
 }
 
 /// Returns the attribute byte of the map cell at x, z in layer.
-s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer) {
+s32 MapGrid_GetCellAttributesAt(s32 x, s32 z, s32 layer) {
   return MapGrid_GetCellAt(x, z, layer)->attributeB;
 }
 
 /// Sets the attribute byte of the map cell at x, z in layer.
-u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value) {
+u8 MapGrid_SetCellAttributesAt(s32 x, s32 z, s32 layer, s32 value) {
   MapGrid_GetCellAt(x, z, layer)->attributeB = value;
   return value;
 }
 
 /// Sets bits in the attribute byte of the map cell at x, z in layer.
-u8 MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
-  s32 flags = MapGrid_GetAttributeBAt(x, z, layer);
+u8 MapGrid_SetCellAttributeBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
+  s32 flags = MapGrid_GetCellAttributesAt(x, z, layer);
   struct MapCell *cell = MapGrid_GetCellAt(x, z, layer);
 
   flags |= bits;
@@ -177,7 +177,7 @@ u8 MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
 
 /// Clears bits in the attribute byte of the map cell at x, z in layer.
 u8 MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
-  s32 flags = MapGrid_GetAttributeBAt(x, z, layer);
+  s32 flags = MapGrid_GetCellAttributesAt(x, z, layer);
   struct MapCell *cell = MapGrid_GetCellAt(x, z, layer);
 
   flags &= ~bits;

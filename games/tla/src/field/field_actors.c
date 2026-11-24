@@ -646,8 +646,8 @@ void Actor_WaitForTrackEnd(struct Actor *actor) {
 void ActorSystem_SuspendProjectionAndShowSprites(void) {
   u16 dispcnt;
 
-  Task_SuspendAll(ActorSystem_PlaceSprites);
-  Task_SuspendAll(ActorSystem_ProjectSprites);
+  Task_Suspend(ActorSystem_PlaceSprites);
+  Task_Suspend(ActorSystem_ProjectSprites);
   PaletteFade_SetTargetFar(FIXED_ONE, 1);
   PaletteFade_StartInterpolationFar(1);
   wait(1);
@@ -659,8 +659,8 @@ void ActorSystem_SuspendProjectionAndShowSprites(void) {
 
 /// Resumes the actor camera updates and hides BG1-3 and the sprites.
 void ActorSystem_ResumeProjectionAndHideLayers(void) {
-  Task_ResumeAll(ActorSystem_PlaceSprites);
-  Task_ResumeAll(ActorSystem_ProjectSprites);
+  Task_Resume(ActorSystem_PlaceSprites);
+  Task_Resume(ActorSystem_ProjectSprites);
   REG_DISPCNT &=
       ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON);
 }

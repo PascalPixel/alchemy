@@ -58,7 +58,7 @@ struct Trigger;
 struct ActorPlacement;
 struct SceneRegion;
 
-extern u32 gDriftScene_SpawnScript[];
+extern u32 gEmote_PopTiltedScript[];
 extern u32 gSceneExits[];
 /// The actors ActorTable_Snapshot saved, up to 32, after their slot numbers.
 extern struct Actor gSnapshotObjects[];
@@ -94,7 +94,7 @@ void SuperLuckyDice_Run(void);
 void GameFlag_RefreshLureCapFar(void);
 void MapGrid_CenterOnFollowedPointFar(void);
 FIXED MapGrid_GetTerrainHeightFar(s32 layer, FIXED x, FIXED z);
-void Actor_RunRepeatedMotion(u32 objectId, s32 variant);
+void Actor_RunRepeatedMotion(u32 actorId, s32 count);
 s32 Actor_IsTargetUnset(struct Actor *actor);
 #ifndef OWN_Actor_SetPartAttribute
 void Actor_SetSpriteColor(struct Actor *actor, s32 attribute);

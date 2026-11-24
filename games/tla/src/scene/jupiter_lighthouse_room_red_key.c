@@ -148,7 +148,7 @@ extern u32 gFieldEffect_LongScript[];
 struct FieldEffect;
 
 void Actor_PlaceMovedBlock(void);
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 /// Queues an effect sprite for this frame at its depth, turned and scaled about
 /// its pivot (EffectSprite_Draw, through the overlay's own import row).
 void JupiterLighthouse_DrawSparkSprite(struct EffectSprite *sprite);
@@ -709,8 +709,8 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 #include "shared/whirlwind_spawn.h"
 
-// Unused: nothing in the hall sets Actor_EmitRisingSparks as an update.
-#include "shared/actor_emit_rising_sparks.h"
+// Unused: nothing in the hall sets Actor_EmitSmoke as an update.
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

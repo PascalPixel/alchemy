@@ -169,7 +169,7 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
+u8 MapGrid_SetCellAttributesAt(s32 x, s32 z, s32 layer, s32 value);
 void EffectSprite_InitWithFadeOverlayBlended(const void *script, s32 a, s32 b,
                                              s32 c);
 
@@ -672,7 +672,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

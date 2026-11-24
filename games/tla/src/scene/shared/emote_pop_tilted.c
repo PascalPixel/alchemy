@@ -14,7 +14,7 @@
 /// tilted by `rotation`, with the SE_LIGHT_APPEAR sound; its script keeps it 46
 /// frames and releases it. Idejima and the Shaman Village each pop a pair,
 /// tilted either way, in a conversation.
-void DriftScene_SpawnObject(x, y, z, rotation) s32 x, y, z;
+void Emote_PopTilted(x, y, z, rotation) s32 x, y, z;
 s16 rotation;
 {
   struct Actor *object;
@@ -25,7 +25,7 @@ s16 rotation;
     sprite = object->sprite;
     Sound_Play(SE_LIGHT_APPEAR);
     Import_ActorSelectAnimation(object, 1);
-    Import_ActorStartScript(object, gDriftScene_SpawnScript);
+    Import_ActorStartScript(object, gEmote_PopTiltedScript);
     object->motionFlags = 0;
     sprite->flags = 0;
     sprite->rotation = rotation;

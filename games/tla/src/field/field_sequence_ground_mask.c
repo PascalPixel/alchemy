@@ -117,10 +117,10 @@ void FieldEffect_StartFadeOverlay(void *actor) {
 }
 
 /// Stops drawing the fade overlay, keeping its state.
-void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
+void FadeOverlay_Suspend(void) { Task_Suspend(FadeOverlay_DrawMarks); }
 
 /// Draws the fade overlay again after FadeOverlay_Suspend.
-void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }
+void FadeOverlay_Resume(void) { Task_Resume(FadeOverlay_DrawMarks); }
 
 /// The blank overlay's task, which FieldEffect_StartBlankOverlay starts: each
 /// frame it draws a 16-pixel mark beside the actor where the map's third layer
@@ -197,10 +197,10 @@ void FieldEffect_StartBlankOverlay(s32 actor) {
 }
 
 /// Suspends the BlankOverlay_DrawMarks overlay task.
-void BlankOverlay_Suspend(void) { Task_SuspendAll(BlankOverlay_DrawMarks); }
+void BlankOverlay_Suspend(void) { Task_Suspend(BlankOverlay_DrawMarks); }
 
 /// Resumes the BlankOverlay_DrawMarks overlay task.
-void BlankOverlay_Resume(void) { Task_ResumeAll(BlankOverlay_DrawMarks); }
+void BlankOverlay_Resume(void) { Task_Resume(BlankOverlay_DrawMarks); }
 
 /// Fills the overlay's 512 bytes of sprite tiles
 /// (VRAM_CACHE_ENTRY_FADE_OVERLAY) with PIXELS_8BPP(1) when solid is set, which

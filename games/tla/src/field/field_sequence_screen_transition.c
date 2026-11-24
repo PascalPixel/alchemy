@@ -456,8 +456,8 @@ void ScreenTransition_StartWindowHeld(s32 mode) {
 /// Unused: suspends the window transition's two tasks. Nothing calls it,
 /// by name, far-call entry or table.
 UNUSED void ScreenTransition_SuspendCallbacks(void) {
-  Task_SuspendAll(&ScreenTransition_UpdateScanlineTable);
-  Task_SuspendAll(&FieldEffect_StartWindowHBlankDma);
+  Task_Suspend(&ScreenTransition_UpdateScanlineTable);
+  Task_Suspend(&FieldEffect_StartWindowHBlankDma);
 }
 
 /// Allocates the screen transition state (HEAP_SLOT_SCREEN_TRANSITION) and

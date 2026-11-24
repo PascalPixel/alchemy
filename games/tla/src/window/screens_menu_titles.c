@@ -255,7 +255,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
 /// corner tile (WINDOW_TILE_BORDER_TOP_RIGHT). The battle menus call it each
 /// frame for LIST_PAGE_ARROW_VRAM; the field menus (by far call) and the
 /// password pages of the title's Send call it for PAGE_ARROW_VRAM.
-void Link_DrawPageArrows(s32 offset) {
+void PageArrows_Draw(s32 offset) {
   s32 phase = (gFrameCount >> 2) & 3;
 
   if (phase > 2) {
@@ -277,7 +277,7 @@ void Link_DrawPageArrows(s32 offset) {
       (u32 *)(offset + TILE_SIZE_4BPP), phase);
 }
 
-/// Link_DrawPageArrows for the Status screen's own arrows: both slide over the
+/// PageArrows_Draw for the Status screen's own arrows: both slide over the
 /// window's fill tile (WINDOW_TILE_WINDOW_FILL) rather than the border's. The
 /// battle's status screen calls it each frame.
 void BattleStatus_DrawPageArrows(s32 offset) {
@@ -379,7 +379,7 @@ s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
 /// Builds the icon of ability `resource` in a transfer block taken from
 /// HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry `index` with it and
 /// returns the entry's first tile.
-s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
+s32 AbilityIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 tile;
   s32 slot;
   s32 result;

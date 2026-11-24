@@ -130,7 +130,7 @@ void LightSprites_InitA(void);
 void MapGrid_SetCellHeight();
 
 void Actor_ArriveInRing(s32 id);
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -429,7 +429,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "shared/whirlwind_spawn.h"
 
 // Unused here: nothing in the room sets it as an actor's update.
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 

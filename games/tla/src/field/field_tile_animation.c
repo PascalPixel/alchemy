@@ -233,7 +233,7 @@ void WorldMap_StartStillImage(void) {
   const u32 *resources;
 
   perspective->animationActive = 1;
-  Task_SuspendAll(TilesetAnim_Update);
+  Task_Suspend(TilesetAnim_Update);
   perspective->viewHeld = 1;
   resources = perspective->resources;
   Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_1]),
@@ -306,7 +306,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
                       buffer);
   WorldMap_UpdateCurrentTileBlock();
   perspective->animationActive = 0;
-  Task_ResumeAll(TilesetAnim_Update);
+  Task_Resume(TilesetAnim_Update);
   perspective->viewHeld = 0;
   perspective->stillImageShown = 0;
   WorldMap_UpdateRegionTint(perspective->tintRegion, 0);
@@ -326,7 +326,7 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_MAP_CELLS),
                       Ram_MapCellBuffer);
   WorldMap_UpdateCurrentTileBlock();
-  Task_ResumeAll(TilesetAnim_Update);
+  Task_Resume(TilesetAnim_Update);
   wait(1);
 }
 
@@ -466,14 +466,14 @@ void TilesetAnim_StartAll(const u16 *script) {
 /// shown.
 void TilesetAnim_SuspendAll(void) {
   if (((struct MapState *)Ram_HeapSlots->mapGrid)->animationActive == 0)
-    Task_SuspendAll(TilesetAnim_Update);
+    Task_Suspend(TilesetAnim_Update);
 }
 
 /// Resumes the tileset animations, unless the world map's still image is
 /// shown.
 void TilesetAnim_ResumeAll(void) {
   if (((struct MapState *)Ram_HeapSlots->mapGrid)->animationActive == 0)
-    Task_ResumeAll(TilesetAnim_Update);
+    Task_Resume(TilesetAnim_Update);
 }
 
 /// Each frame: runs the map's blend script.
@@ -562,10 +562,10 @@ void BlendScript_Start(u16 *script) {
 }
 
 /// Suspends the blend script; scenes reach it through BlendScript_SuspendFar.
-void BlendScript_Suspend(void) { Task_SuspendAll(BlendScript_Run); }
+void BlendScript_Suspend(void) { Task_Suspend(BlendScript_Run); }
 
 /// Resumes the blend script, through BlendScript_ResumeFar.
-void BlendScript_Resume(void) { Task_ResumeAll(BlendScript_Run); }
+void BlendScript_Resume(void) { Task_Resume(BlendScript_Run); }
 
 #include "palette_cycle_initialize.c"
 

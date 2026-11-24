@@ -1143,7 +1143,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-#include "shared/actor_emit_bubbles.h"
+#include "shared/actor_emit_sparkles.h"
 
 #include "text/msg_ids.h"
 
@@ -1276,7 +1276,7 @@ void GaiaRockInside_FelixLearnsSand(s32 tabletId, s32 adeptId) {
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(tabletId, gLesson_TabletSettleScript);
   Actor_SetMovementTypeById(adeptId, gLesson_AdeptSettleScript);
-  adept->update = Actor_EmitBubbles;
+  adept->update = Actor_EmitSparkles;
   wait(120);
   adept->update = 0;
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);

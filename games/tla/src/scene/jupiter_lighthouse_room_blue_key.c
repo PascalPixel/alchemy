@@ -85,7 +85,7 @@ enum JupiterLighthouseRoomBlueKeyCellBehavior {
 
 struct Actor;
 s32 CrackedTile_Step(void);
-void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
+void MapGrid_SetCellAttributesAt(s32 x, s32 z, s32 layer, s32 value);
 void Actor_DisableById(s32 id);
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_PushColumn(void);
@@ -177,7 +177,8 @@ void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
     }
     actor->motionFlags = 0;
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
+    MapGrid_SetCellAttributesAt(actor->x.fixed, actor->z.fixed, 0,
+                                MAP_CELL_JUMP);
   }
 }
 
@@ -236,7 +237,8 @@ s32 Scene_PrepareMap(void) {
     actor->y.fixed = toFIXED(-PILLAR_SINK_DEPTH);
     Actor_SetPosition(ACTOR_PILLAR, 104, 232);
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
+    MapGrid_SetCellAttributesAt(actor->x.fixed, actor->z.fixed, 0,
+                                MAP_CELL_JUMP);
   }
   return 0;
 }
@@ -280,7 +282,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

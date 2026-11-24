@@ -196,8 +196,8 @@ s32 DebugBrowser_Icons(void) {
 
 /// A debug browser of the portraits: left and right step through
 /// gPortrait_CharacterMap and then gPortrait_SpriteMap, L and R by
-/// DEBUG_LARGE_STEP, each drawn with its number and its name from MsgTestName;
-/// A or B leaves.
+/// DEBUG_LARGE_STEP, each drawn with its number and its name from
+/// MsgNamesMasterPoi; A or B leaves.
 s32 DebugBrowser_Portraits(void) {
   struct WindowState *state;
   struct Window *portrait;
@@ -263,7 +263,7 @@ s32 DebugBrowser_Portraits(void) {
       slot = *(u16 *)((u8 *)state + slotOffset);
       Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
       Text_DrawNumberInWindow(index, 2, window, 0, 0);
-      Text_DrawMessageAsTiles(index + (s32)MsgTestName, window, 24, 0);
+      Text_DrawMessageAsTiles(index + (s32)MsgNamesMasterPoi, window, 24, 0);
     }
     wait(1);
   }

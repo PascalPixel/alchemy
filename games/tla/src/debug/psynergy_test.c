@@ -861,7 +861,7 @@ struct Trigger gSceneEvents[] = {
 // worn out."
 #if !TLA_PATCH_1
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     5618},
+     MSGNO(MsgAnyTimeYouLike)},
 #endif
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
      MSGNO(MsgOooogOw)},

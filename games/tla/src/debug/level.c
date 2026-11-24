@@ -103,21 +103,20 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 #define LEVEL_EDITOR_SCALE (FIXED_ONE * 17 / 10)
 
 /// Shows the name of the person talked to in a room of names: actor `actorId`
-/// says the message its room's list of names gives it. Each base below is the
-/// message ACTOR_FIRST_PLACED lines before its room's first name: "Master Poi"
-/// in the first room, "Susa" in the second, "Alex" in the third and "Weapons
-/// Shop" in the fourth.
+/// says the message its room's list of names gives it, counted from the room's
+/// first name: "Master Poi" in the first room, "Susa" in the second, "Alex" in
+/// the third and "Weapons Shop" in the fourth.
 void IncreaseItemAndLevel_ShowName(s32 actorId) {
   Event_Start();
   Event_EndLastingPsynergy(0);
   if (gMainRoutineState.entrance == ENTRANCE_NAMES_FIRST)
-    Event_SetMessageId(actorId + (s32)MsgFixingThisWill);
+    Event_SetMessageId(actorId - ACTOR_FIRST_PLACED + (s32)MsgNamesMasterPoi);
   else if (gMainRoutineState.entrance == ENTRANCE_NAMES_SECOND)
-    Event_SetMessageId(actorId + (s32)MsgNamesFortuneTeller);
+    Event_SetMessageId(actorId - ACTOR_FIRST_PLACED + (s32)MsgNamesSusa);
   else if (gMainRoutineState.entrance == ENTRANCE_NAMES_THIRD)
-    Event_SetMessageId(actorId + (s32)MsgNamesConfirmGraphic);
+    Event_SetMessageId(actorId - ACTOR_FIRST_PLACED + (s32)MsgNamesAlex);
   else
-    Event_SetMessageId(actorId + (s32)MsgNamesPiers);
+    Event_SetMessageId(actorId - ACTOR_FIRST_PLACED + (s32)MsgNamesWeaponsShop);
   Event_ShowMessageAndWait(actorId, 0);
   Event_End();
 }

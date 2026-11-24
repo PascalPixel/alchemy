@@ -1088,7 +1088,7 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
 /// Reads map's camera bounds from its header, in 8-pixel tiles: bounds[0] its
 /// left, bounds[1] its right, bounds[2] its top and bounds[3] its bottom, a
 /// right or bottom of 0 standing for the map's whole MAPGRID_TILES.
-void Map_GetHeaderSize(s32 map, s32 *bounds) {
+void Map_GetCameraBounds(s32 map, s32 *bounds) {
   struct MapHeader *header;
 
   header = MAPGRID_RESOURCE((gMaps + map)->header);

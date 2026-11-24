@@ -7,7 +7,7 @@ void Leader_SinkAway(s32 entrance) {
   s32 *owner = &gMainRoutineState.leaderActorId;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_SPARKLING_PASSAGE);
   leader->update = (ObjectUpdate)Actor_EmitMist;
   leader->motionFlags = 0;

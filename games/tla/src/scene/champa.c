@@ -190,7 +190,7 @@ void Champa_OpenDoorAndEnter(const struct MapGridCellAnimation *opening,
   s32 id;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_DOOR_OPEN);
   Actor_Get(gMainRoutineState.leaderActorId)->motionFlags = ACTOR_FALLS;
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
@@ -252,7 +252,7 @@ void Champa_SailorsSpotFelix(void) {
 
   Event_SetFlag(FLAG_SAILORS_SPOTTED_FELIX);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgChampaWhoaYouYoureFelix);
   Actor_FaceDirection(ACTOR_SAILOR_WHO_SPOTS_FELIX, FACING_SOUTH_SOUTHEAST, 0);
   FieldActor_Jump(ACTOR_SAILOR_WHO_SPOTS_FELIX, 6, 20);
@@ -450,7 +450,7 @@ void Champa_AskIfSailorsAreWellLiked(s32 actor) {
 void Champa_TakeFeizhisGift(s32 actor) {
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (!Value3(Event_PickUpItem, actor, ITEM_GOLDEN_RING, -1)) {
     Event_ClearFlag(FLAG_FEIZHIS_GIFT_WAITING);
   }
@@ -489,7 +489,7 @@ void Champa_FeizhiArrives(void) {
     {
       Event_SetFlag(FLAG_FEIZHI_CAME);
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       FieldEvent_SetMessageId((s32)MsgChampaIsaac);
       {
         Actor_SetPositionAndFacing(ACTOR_FEIZHI, toFIXED(314), toFIXED(679),
@@ -836,7 +836,7 @@ void Champa_MeetAlex(void) {
   }
   Event_SetFlag(FLAG_CHAMPA_MET_ALEX);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgChampaISeeYouveCaughtUp);
   Actor_SetSpeed(ACTOR_ALEX, 0.8);
   Actor_SetSpeed(ACTOR_KARST, 1);

@@ -13,7 +13,7 @@ void Whirlwind_CarryLeader(void) {
   s32 frame;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   rise = 0;
   state->glowHeld = rise;
 

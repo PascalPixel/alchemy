@@ -440,7 +440,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
 
 /// Starts window transition mode at value 0, with no duration: the caller moves
 /// it.
-void ScreenTransition_InitializeBattleEffectState(s32 mode) {
+void ScreenTransition_StartWindowHeld(s32 mode) {
   struct ScreenTransitionState *state =
       HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
 
@@ -880,7 +880,7 @@ void ScreenTransition_FillTilemapAndColorTile(s32 color) {
 
 /// Starts a dissolve of the given mode, its value held at 0, and waits two
 /// seconds.
-void ScreenTransition_InitializeState(s32 mode) {
+void ScreenTransition_StartDissolveHeld(s32 mode) {
   struct ScreenTransitionState *state;
 
   state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));

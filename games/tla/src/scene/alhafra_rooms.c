@@ -148,7 +148,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void AlhafraRooms_MeetAlex(void) {
   Event_SetFlag(FLAG_ALHAFRA_MET_ALEX);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsSoYouveFinallyCome);
   FieldCamera_MoveToActorById(ACTOR_ALEX, 1);
   Actor_WalkToAndWait(ACTOR_FELIX, 452, 335);
@@ -249,7 +249,7 @@ void AlhafraRooms_TalkToHostess(s32 actor) {
 void AlhafraRooms_GuestsAskForTea(void) {
   Event_SetFlag(FLAG_GUESTS_ASKED_FOR_TEA);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 152, 328);
   Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsArentYouThirstyMyDear);
@@ -501,7 +501,7 @@ void AlhafraRooms_OverhearCrossboneIsleTale(void) {
     {
       Event_SetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE);
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       FieldEvent_SetMessageId(
           (s32)MsgAlhafraInteriorsLegendsSaidThatCrossboneIsle);
       Actor_WalkToAndWait(ACTOR_FELIX, 504, 328);

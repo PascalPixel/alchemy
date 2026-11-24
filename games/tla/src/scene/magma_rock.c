@@ -25,7 +25,7 @@
 #include "resource_ids.h"
 #include "../field/actor_set_sprite_priority.c"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 
 #include "types.h"
 #include "flags.h"
@@ -540,7 +540,7 @@ s32 MagmaRock_FinishPushingPillar(void) {
   s32 x, z;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_PlaceMovedBlock();
   if (gMainRoutineState.next == SCENE_MAGMA_ROCK_SLIDE) {
     MapGrid_CopyCellAttributes(98, 21, 4, 3, 78, 21);
@@ -922,7 +922,7 @@ s32 MagmaRock_FireFromStatue(struct Actor *source) {
   Actor_SelectAnimation(actor, 1);
   Actor_SetSpriteFlags(actor, 0);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   position[0] = actor->x.fixed;
   position[1] = actor->y.fixed;
   position[2] = actor->z.fixed;
@@ -1025,7 +1025,7 @@ void MagmaRock_FireStatue(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_Wait(10);
   actor = state->child;
   actor->update = NULL;
@@ -1047,7 +1047,7 @@ void MagmaRock_IgniteStatue(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   actor = state->child;
   actor->timer = 1024;
   actor->update = MagmaRock_WarnStatue;
@@ -1389,7 +1389,7 @@ void MagmaRock_EnterCave(void) {
 
   if (party->movementMode != LEADER_MOVEMENT_KEYS) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Actor_Get(party->leaderActorId)->motionFlags = 0;
     Actor_WalkTo(party->leaderActorId, 264, 440);
     FieldEvent_Wait(5);
@@ -1404,7 +1404,7 @@ void MagmaRock_EnterCave(void) {
 /// Nothing visible happens as Felix begins to cast Burst at one of the yellow
 /// statues; the game settles whatever the field has pending before the
 /// statue's own events run (MagmaRock_TargetStatue).
-void MagmaRock_ResolveBeforeBurst(void) { Event_ResolvePendingActions(0); }
+void MagmaRock_ResolveBeforeBurst(void) { Event_EndLastingPsynergy(0); }
 
 /// Felix comes down on one of the two dark pillars on the cliff's high west
 /// level (cells (15, 29) and (17, 29)) without hopping straight on: the first
@@ -1450,7 +1450,7 @@ void MagmaRock_KnockLeaderOffWall(void) {
   u32 phase;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetFlag(FLAG_LEADER_KNOCKED_DOWN);
   Event_PlaySound(SE_IMPACT);
   FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineState.leaderActorId),
@@ -1749,7 +1749,7 @@ void MagmaRock_LaunchLeader(void) {
   FIXED velocity[3];
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
@@ -2434,7 +2434,7 @@ void MagmaRock_SpawnDustRing(void) {
       effect->spin = (Random_Below(TRIG_TURN / 16)) - TRIG_TURN / 32;
       effect->scaleRateX = 0;
       effect->scaleRateY = 0;
-      effect->update = Effect_AdvanceMotionAtLeaderPriority;
+      effect->update = FieldEffect_AdvanceMotionAtLeaderPriority;
       effect->sprite->priority =
           ((struct FieldSprite *)leader->sprite)->priority;
     }

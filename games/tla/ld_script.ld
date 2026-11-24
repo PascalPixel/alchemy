@@ -243,7 +243,7 @@ SECTIONS
         "*/games/tla/src/field/burst_spark_palette.o"(.rodata)
         "*/games/tla/src/field/field_psynergy_tables.o"(.rodata)
         "*/games/tla/src/field/world_map_cursor_angles.o"(.rodata)
-        "*/games/tla/src/field/flag_entries.o"(.rodata)
+        "*/games/tla/src/field/world_map_places.o"(.rodata)
         "*/games/tla/src/field/scenes.o"(.rodata)
         "*/games/tla/src/field/actor_placement.o"(.rodata)
         "*/games/tla/src/field/scene_items.o"(.data)

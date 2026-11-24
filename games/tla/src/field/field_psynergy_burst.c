@@ -407,7 +407,7 @@ void FieldPsynergy_Burst(void) {
   canvas->y = (s16)FIXEDtoINT(pos[2]);
   canvas->priority =
       FieldPsynergy_GetCanvasPriority(scene->mainActor, scene->angle);
-  canvas->depth = BattleEffect_GetObjectDepth(scene->mainActor) + 2;
+  canvas->depth = Actor_GetSpriteDepth(scene->mainActor) + 2;
   canvas->mode = CANVAS_SPRITE_256_COLORS;
   canvas->scaleX = 0;
   canvas->scaleY = 0;

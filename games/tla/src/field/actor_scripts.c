@@ -12,8 +12,8 @@
 // script this frame. They take different views of the actor, so the
 // declarations leave the parameters unspecified.
 s32 Actor_StepAngle();
-s32 Actor_ClearChildAndCollisionFlags();
-s32 Actor_ClearChildFlags();
+s32 Actor_ClearSpriteAndCollisionFlags();
+s32 Actor_ClearSpriteFlags();
 s32 Actor_IgnoreRises();
 s32 Actor_MoveTowardTarget();
 s32 Actor_TurnTowardWatchedActor();
@@ -90,7 +90,7 @@ const u8 gMessageSpeed_VoiceRates[4] = {
 
 /// An emote bubble's script (Actor_ShowEmoteById): it pops up, squashing and
 /// stretching, stays 30 frames and is released.
-const s32 gFieldEffect_WatchedActorScript[] = {
+const s32 gEmote_BubbleScript[] = {
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 2),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 4),
     SC_WAIT(2),
@@ -159,13 +159,13 @@ const s32 gMovementType_StandScript[] = {
 /// MOVEMENT_TYPE_CLEAR_COLLISION: clears the actor's sprite and collision
 /// flags.
 const s32 gMovementType_ClearCollisionScript[] = {
-    SC_CALL(Actor_ClearChildAndCollisionFlags),
+    SC_CALL(Actor_ClearSpriteAndCollisionFlags),
     SC_END,
 };
 
-/// MOVEMENT_TYPE_CLEAR_CHILD: clears the actor's sprite flags.
-const s32 gMovementType_ClearChildScript[] = {
-    SC_CALL(Actor_ClearChildFlags),
+/// MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS: clears the actor's sprite flags.
+const s32 gMovementType_ClearSpriteFlagsScript[] = {
+    SC_CALL(Actor_ClearSpriteFlags),
     SC_END,
 };
 

@@ -328,7 +328,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
       FIELD_CELL(leader->z.fixed) != ACTIVATION_CELL_Z)
     return;
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED);
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_NORTH);
   FieldEvent_Wait(30);
   leader->update = JupiterLighthouse_FlashColors;
@@ -440,7 +440,7 @@ void JupiterLighthouse_HearTheVoice(void) {
   if (!Event_GetFlag(FLAG_VOICE_HEARD)) {
     Event_SetFlag(FLAG_VOICE_HEARD);
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
     PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
     PaletteFade_Interpolate(30);
@@ -546,7 +546,7 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
     return;
   Event_SetFlag(FLAG_ALEX_WAITING);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId(MsgFieldWaitingForCompanion);
   // "Ah, Felix... I've been waiting for you."
   FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
@@ -829,8 +829,8 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
                                       tile + (i & (ORB_PICTURES - 1)) * 2);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
-    sprite->oam.priority = BattleEffect_GetObjectPriority(leader);
-    sprite->depth = BattleEffect_GetObjectDepth(leader) - 1;
+    sprite->oam.priority = Actor_GetSpritePriority(leader);
+    sprite->depth = Actor_GetSpriteDepth(leader) - 1;
     spark->age = -1;
   }
   /* FAKEMATCH(dead): a block that only places firstSlot's declaration at the

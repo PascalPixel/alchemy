@@ -177,7 +177,7 @@ s32 Actor_CrossRope(struct Actor *actor) {
       goto done;
     }
     for (count = 0; count < ROPE_NODE_COUNT; count++, node++) {
-      if (node->kind == 1) {
+      if (node->kind == ROPE_NODE_CROSSABLE) {
         s32 dx = (position.x - node->x) >> 8;
         s32 dy = (position.y - node->y) >> 8;
         s32 dz = (position.z - node->z) >> 8;
@@ -298,7 +298,7 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
       Ram_HeapSlots->fieldState = Ram_HeapSlots->fieldState;
     } else {
       for (count = 0; count < ROPE_NODE_COUNT; count++, point++) {
-        if (point->kind == 1) {
+        if (point->kind == ROPE_NODE_CROSSABLE) {
           s32 dx = (position.x - point->x) >> 8;
           s32 dy = (position.y - point->y) >> 8;
           s32 dz = (position.z - point->z) >> 8;

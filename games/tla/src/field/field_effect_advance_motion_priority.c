@@ -9,7 +9,7 @@
 
 /// FieldEffect_AdvanceMotion, then gives the effect's sprite the leader's
 /// sprite priority, so the effect is drawn at the leader's depth.
-void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
+void FieldEffect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX = effect->velocity.x;
   s32 velocityZ;

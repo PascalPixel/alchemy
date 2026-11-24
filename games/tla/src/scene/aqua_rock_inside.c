@@ -199,7 +199,7 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "shared/tables.h"
 #include "../field/actor_set_sprite_priority.c"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 
 #include "shared/scene_create_actor.h"
 
@@ -529,7 +529,7 @@ void AquaRockInside_DouseWaterOfLifeChestEastMoai(s32 unused, s32 id) {
   column =
       FIELD_CELL(Actor_Get(ACTOR_WATER_OF_LIFE_CHEST_BLUE_ROCK)->x.fixed) - 42;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
   // AquaRockInside_SetPillarHeight, defined below, is called with no prototype
   // in scope.
@@ -559,7 +559,7 @@ void AquaRockInside_DouseWaterOfLifeChestWestMoai(s32 unused, s32 id) {
   Map_LoadCellsAndShapes();
   MapGrid_CenterOnFollowedPoint();
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
   for (i = 0; i <= WATER_LEVEL_STEP - 1; i++) {
     AquaRockInside_SetPillarsHeight(INTtoFIXED(i));
@@ -615,7 +615,7 @@ void AquaRockInside_PushPillarOffLedge(s32 unused, s32 id) {
       MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
 #else
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       AquaRockInside_WaitToLand(actor);
       Event_SetFlag(FLAG_AQUA_ROCK_STEAM_ROOM_PILLAR_DROPPED);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
@@ -656,7 +656,7 @@ void AquaRockInside_SteamRoomStreamDrains(void) {
   s32 priority;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
   priority = TASK_PASS_FRAME;
@@ -708,7 +708,7 @@ void AquaRockInside_UseAquariusStone(void) {
   s32 j;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
   AquaRockInside_ShowAquariusStone();
   Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -765,7 +765,7 @@ void AquaRockInside_OpenDoorToTablet(s32 exit) {
   s32 height = 2;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(107, 96, 19, 29, width, height);
   FieldEvent_Wait(8);
@@ -793,7 +793,7 @@ void AquaRockInside_CheckColumn(void) {
   const u8 *message;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   seen = Event_GetFlag(FLAG_AQUA_ROCK_AQUARIUS_STONE_SET);
   message = MsgCheckedTheColumn;
   if (!seen) {
@@ -917,7 +917,7 @@ void AquaRockInside_DouseRustySwordChestMoai(s32 unused, s32 id) {
   Map_LoadCellsAndShapes();
   MapGrid_CenterOnFollowedPoint();
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
   for (i = 0; i < WATER_LEVEL_STEP; i++) {
     layer->offsetY += toFIXED(1);
@@ -966,7 +966,7 @@ void AquaRockInside_StepIntoVentGust(s32 trigger) {
     return;
   actor = Actor_Get(gMainRoutineState.leaderActorId);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   for (;;) {
     target.x = actor->x.fixed;
     target.y = actor->y.fixed;
@@ -1027,7 +1027,7 @@ void AquaRockInside_RideFalls(s32 exit) {
   u8 *flags;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
   flags = &actor->motionFlags;
   speed = 0;
@@ -1069,7 +1069,7 @@ void AquaRockInside_BlockMoaiWithPillar(s32 unused, s32 id) {
     s32 fade;
 
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
     Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
     Actor_SetAnimation(ACTOR_VIAL_CHEST_MOAI, 2);
@@ -1165,7 +1165,7 @@ void AquaRockInside_WaitToRise(struct Actor *actor) {
 /// "Everyone's PP was replenished!"
 void AquaRockInside_CheckPsynergyStone(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Message_ShowCentered(MsgCheckedThePsynergy, 1);
   Event_PlaySound(SE_RECOVERY);
   Party_AddPp(PARTY_PP_REPLENISH, 0);
@@ -1225,7 +1225,7 @@ void AquaRockInside_DouseTearStoneMoai(s32 unused, s32 id) {
   Map_LoadCellsAndShapes();
   MapGrid_CenterOnFollowedPoint();
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
   for (i = 0; i < WATER_LEVEL_STEP; i++) {
     layer->offsetY += toFIXED(1);
@@ -1248,7 +1248,7 @@ void AquaRockInside_WaterSinks(void) {
   s32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   layer->offsetY -= toFIXED(WATER_LEVEL_STEP);
   MapGrid_CenterOnFollowedPoint();
   MapGrid_SetShake(1, 1, 1);
@@ -1449,7 +1449,7 @@ void AquaRockInside_ReadParchTablet(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   // "Felix checked the tablet. It looks like there are strange characters..."
   Message_ShowCentered((s32)&MsgCheckedTheTabletIt, 1);
   if (Event_GetFlag(FLAG_PIERS_LEARNED_PARCH)) {
@@ -1531,7 +1531,7 @@ void AquaRockInside_ReadParchTablet(void) {
 void AquaRockInside_WalkToParchTablet(void) {
   if (Event_GetFlag(FLAG_PIERS_LEARNED_PARCH)) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Message_ShowCentered(MsgCheckedTheTabletIt, 1);
     Event_End();
   } else {
@@ -1551,7 +1551,7 @@ void AquaRockInside_WalkToParchTablet(void) {
   void name(void) {                                                            \
     if (Event_GetFlag(FLAG_PIERS_LEARNED_PARCH)) {                             \
       Event_Start();                                                           \
-      FieldEvent_ResolvePendingActions(0);                                     \
+      FieldEvent_EndLastingPsynergy(0);                                        \
       Message_ShowCentered(MsgCheckedTheTabletIt, 1);                          \
       Event_End();                                                             \
     } else {                                                                   \
@@ -1660,7 +1660,7 @@ void AquaRockInside_FallThroughWater(void) {
   s32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_StartScreenTransition();
   Actor_SetSpriteColorMode(actor, SPRITE_COLOR_BLUE_TINT);
   *flags = 0;

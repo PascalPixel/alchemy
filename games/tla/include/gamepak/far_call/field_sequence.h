@@ -30,11 +30,11 @@ void FieldParticle_InitializeFar(struct FieldParticle *effect, s32 kind, s32 x,
 void FieldParticle_SetCallbackFar(struct FieldParticle *effect,
                                   void (*callback)(struct FieldParticle *));
 /// Sets the animation of a field effect sprite.
-void FieldParticle_SetActorModeFar(struct FieldParticle *effect, s32 mode);
+void FieldParticle_SetAnimationFar(struct FieldParticle *effect, s32 mode);
 /// Makes the event leave for entrance of scene.
 void Event_SetDestinationFar(s32 scene, s32 entrance);
 /// Ends every lasting Psynergy.
-void Event_ResolveAllPendingActionsFar(void);
+void Event_EndAllLastingPsynergyFar(void);
 /// Returns the voice of sprite id's messages, the first of its blip sounds, or
 /// 0 for none or with the Speech option off.
 s32 Speaker_GetVoiceFar(u16 id);

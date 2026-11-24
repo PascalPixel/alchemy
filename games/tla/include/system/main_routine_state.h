@@ -189,7 +189,7 @@ struct MainRoutineState {
   s16 retreatEntrance; ///< where Retreat goes; the group's first entrance
   FIXED avoidDistance; ///< distance left of Avoid, 16.16 pixels; 0 when off
   s8 avoidByItem;      ///< Avoid came from an item (FLAG_PSYNERGY_FROM_ITEM)
-  u8 pausedPose;       ///< the paused object's first animation param
+  u8 pausedColorMode;  ///< the paused object's first animation param
   s16 haltedActor;     ///< the object field Psynergy has stopped, -1 for none
   /// Nonzero while the leader is sand (FieldPsynergy_Sand): ending the
   /// pending actions ends Sand too, and the field's push and button handler

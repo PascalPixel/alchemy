@@ -10,7 +10,7 @@ void Whirlwind_CarryLeaderLower(void) {
   s32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   i = 0;
   state->glowHeld = 0;
   actor->motionFlags = ACTOR_FLOATS;

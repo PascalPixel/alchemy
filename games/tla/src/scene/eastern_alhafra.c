@@ -540,7 +540,7 @@ void EasternAlhafra_RollLog(void) {
     } else {
       Event_SetFlag(FLAG_LOG_ROLLED);
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
       PushTarget_Push(target);
       MapGrid_SetCellBehavior(log->x.fixed - toFIXED(24), log->z.fixed, 0, 0);
@@ -597,7 +597,7 @@ void EasternAlhafra_PushAhead(s32 mode) {
 void EasternAlhafra_TalkToSailor(void) {
   Event_SetFlag(FLAG_TALKED_TO_SAILOR);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId(MsgWhatSYour);
   Actor_ShowEmote(ACTOR_SAILOR_GIVING_UP, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceActor(ACTOR_SAILOR_GIVING_UP, gMainRoutineState.leaderActorId, 0);
@@ -709,7 +709,7 @@ void EasternAlhafra_GiveUpOnMastBlock(void) {
       return;
     Event_SetFlag(FLAG_GAVE_UP_ON_MAST_BLOCK);
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Actor_WalkToAndWait(ACTOR_FELIX, 488, 440);
     FieldActor_LaunchFromLeader(ACTOR_JENNA, -16, 0, FACING_EAST);
     Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_WEST);
@@ -975,7 +975,7 @@ void EasternAlhafra_OverhearWorkers(void) {
   struct Actor *leader;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgItSIt);
   FieldCamera_SetSpeed(4);
   // "It's... It's no use!"
@@ -1140,7 +1140,7 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0)
     return;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgYouDoPlan);
   Event_SetFlag(FLAG_ASKED_TO_HELP);
   Actor_WalkToAndWait(ACTOR_FELIX, 264, 448);
@@ -1226,7 +1226,7 @@ void EasternAlhafra_AskIfFinished(void) {
   struct Actor *leader;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgAreYouFinished);
   Actor_WalkToAndWait(ACTOR_FELIX, 232, 392);
   FieldActor_LaunchFromLeader(ACTOR_KRADEN, 0, -16, FACING_SOUTH);
@@ -1379,7 +1379,7 @@ void QuestionMark_Pop(FIXED x, FIXED y, FIXED z, u16 rotation, s32 frames) {
 /// it and goes to tell Briggs.
 void EasternAlhafra_WorkersSeeBlockGone(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgHeyThatBlock);
   Actor_SetSpeed(ACTOR_FIRST_WORKER, 2.8);
   Actor_SetSpeed(ACTOR_SECOND_WORKER, 2.8);
@@ -1500,7 +1500,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
     return;
   Event_SetFlag(FLAG_WORKERS_TOLD_MAYOR);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgIStillJust);
   FieldCamera_SetSpeed(4);
   Actor_SetPosition(ACTOR_ALHAFRAS_MAYOR, 56, 632);
@@ -1814,7 +1814,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Event_SetFlag(FLAG_ALHAFRA_SHIP_GONE);
   Event_SetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgEasternAlhafraBriggs);
   // "Briggs!!!"
   FieldEvent_ShowMessageThenWait(ACTOR_SECOND_WORKER, 0, 10);
@@ -2084,7 +2084,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
 /// Kraden thinks Briggs is heading back to Champa.
 void EasternAlhafra_MayorFindsShipGone(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgWhatYouLet);
   FieldCamera_MoveTo(152, CAMERA_KEEP, 272, 0);
   {

@@ -250,7 +250,7 @@ void Actor_StartScript(struct Actor *actor, const void *script);
 void FieldCamera_WaitForArrival(void);
 s32 Field_FindNearbyTalkTarget(s32 id);
 void Field_TryJumpForward(void);
-void ObjectTable_Snapshot(void);
+void ActorTable_Snapshot(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 void Leader_PushObjectAhead(void);
 void Actor_SetBlendMode(struct Actor *actor, u32 value);
@@ -320,7 +320,7 @@ extern u32 gMarsLighthouseRoomF_MercuryFlameThrowerRoute[];
 
 void Party_TakeFallDamage(void);
 
-s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
+s32 MapGrid_GetTerrainKindOrBumpAt(s32 terrain, s32 x, s32 z);
 
 void Leader_CenterInCell(void);
 
@@ -356,15 +356,15 @@ s32 Actor_HasArrived(struct Actor *actor);
 void Leader_StopIfPending(void);
 void Actor_SteerByPad(struct Actor *actor);
 /// Sets byte 2 of a rectangle of one layer's map cells.
-void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width,
-                                            u32 height, s32 value);
+void MapGrid_FillCollisionRectangle(s32 layer, s32 x, s32 z, u32 width,
+                                    u32 height, s32 value);
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 
 s32 MapGrid_CheckCollision(struct Actor *actor, s32 *position);
 
 void Actor_StopAtPushTarget(struct Actor *actor);
 
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 void MarsLighthouseRoomF_MeltIcebergs(void);
 
@@ -757,7 +757,7 @@ void MarsLighthouseRoomF_WatchFireballCrackWall(void) {
   Event_ClearFlag(FLAG_MENU_OPEN);
   Event_ClearFlag(FLAG_FIELD_HANDLING_REQUESTS);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(248, CAMERA_KEEP, 712, 1);
   FieldCamera_WaitForArrival();
@@ -978,7 +978,7 @@ void MarsLighthouseRoomF_RouteFireThroughPipeline(void) {
     FieldCamera_SetSpeed(2);
     FieldCamera_MoveTo(616, CAMERA_KEEP, 24, 1);
     FieldEvent_Wait(60);
-    ObjectTable_Snapshot();
+    ActorTable_Snapshot();
     FieldEvent_SetExitRequest(MERCURY_TOWER_PIPELINE_MENDED);
   }
 }
@@ -999,7 +999,7 @@ void MarsLighthouseRoomF_WatchFlameThrower(void) {
 
   Flag_Set(FLAG_MENU_OPEN);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   state->psynergy = 0;
   Flag_Clear(FLAG_MENU_OPEN);
   Flag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
@@ -1253,7 +1253,7 @@ s32 Scene_Initialize(void) {
     if (entrance == MERCURY_TOWER_PIPELINE_MENDED) {
       Flag_Set(FLAG_SAW_PIPELINE_MENDED);
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       Actor_SetPosition(state->leaderActorId, 0, 0);
       Actor_SetPosition(ACTOR_MERCURY_TORCH, 0, 0);
@@ -1584,14 +1584,14 @@ s32 Fireball_CarryLeader(void) {
   ride = RIDE_STATE;
   Flag_Set(FLAG_MENU_OPEN);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Flag_Clear(FLAG_MENU_OPEN);
   leader->update = (ObjectUpdate)Actor_Blink;
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {
-    if (MapGrid_GetCellAttributeLowNibbleOrBump(
-            0, leader->x.fixed, leader->z.fixed) != TERRAIN_ROUNDED_SQUARE) {
+    if (MapGrid_GetTerrainKindOrBumpAt(0, leader->x.fixed, leader->z.fixed) !=
+        TERRAIN_ROUNDED_SQUARE) {
       leader->x.fixed += ride->car->stepX;
       leader->z.fixed += ride->car->stepZ;
     } else {
@@ -1630,7 +1630,7 @@ extern u32 gEmbers_Script[];
 #undef position
 #undef STATE
 
-s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
+s32 MapGrid_GetTerrainKindOrBumpAt(s32 terrain, s32 x, s32 z);
 void Actor_ScatterCrumbs(struct Actor *actor);
 void Embers_Spawn(s32 x, s32 y, s32 z, s32 speed);
 extern u8 gInventorySnapshot[];
@@ -1725,8 +1725,8 @@ extern s8 gPushRectangles[][4];
 #include "shared/push_target_fill_rectangle.h"
 
 /// Sets the cell behavior of a rectangle of one layer's cells.
-void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width,
-                                            u32 height, s32 value) {
+void MapGrid_FillCollisionRectangle(s32 layer, s32 x, s32 z, u32 width,
+                                    u32 height, s32 value) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *cells = (u8 *)map->layers[layer].cells;
   u32 row;

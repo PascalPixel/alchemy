@@ -131,7 +131,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
     FieldParticle_Initialize(effect, SPRITE_DROPLET, position.x, position.z);
     FieldParticle_SetCallback(effect,
                               (void *)FieldEffect_UpdateRandomTargetParticle);
-    FieldParticle_SetActorMode(effect, 7);
+    FieldParticle_SetAnimation(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
     i--;
     wait(1);

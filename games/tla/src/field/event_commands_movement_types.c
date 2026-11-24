@@ -79,14 +79,14 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 
 /// The SC_CALL routine of MOVEMENT_TYPE_CLEAR_COLLISION: clears an actor's
 /// sprite flags and its collision flags, so nothing collides with it.
-s32 Actor_ClearChildAndCollisionFlags(void *obj) {
+s32 Actor_ClearSpriteAndCollisionFlags(void *obj) {
   Actor_SetSpriteFlagsFar(obj, 0);
   ((struct Actor *)obj)->collisionFlags = 0;
   return 0;
 }
 
 /// Actor script hook: clears the actor's sprite flags (outline and shadow).
-s32 Actor_ClearChildFlags(struct Actor *obj) {
+s32 Actor_ClearSpriteFlags(struct Actor *obj) {
   Actor_SetSpriteFlagsFar((struct Actor *)obj, 0);
   return 0;
 }
@@ -197,7 +197,7 @@ extern const u8 gMovementType_ClearCollisionScript[];
 extern const u8 gMovementType_SquashScript[];
 extern const u8 gMovementType_TakeLeaderLayerScript[];
 extern const u8 gMovementType_IgnoreRisesScript[];
-extern const u8 gMovementType_ClearChildScript[];
+extern const u8 gMovementType_ClearSpriteFlagsScript[];
 
 /// Starts an actor's movement type: an enum MovementType, or any other value as
 /// the actor script to run itself.
@@ -234,8 +234,8 @@ void Actor_SetMovementType(struct Actor *actor, s32 kind) {
   case MOVEMENT_TYPE_IGNORE_RISES:
     kind = (s32)gMovementType_IgnoreRisesScript;
     break;
-  case MOVEMENT_TYPE_CLEAR_CHILD:
-    kind = (s32)gMovementType_ClearChildScript;
+  case MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS:
+    kind = (s32)gMovementType_ClearSpriteFlagsScript;
     break;
   }
   Actor_StartScriptFar(actor, (const void *)kind);
@@ -738,7 +738,7 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
     node = state->nodes;
     best = ROPE_NODE_DISTANCE_NONE;
     for (i = 0; i < ROPE_NODE_COUNT; i++, node++) {
-      if (node->kind == 1) {
+      if (node->kind == ROPE_NODE_CROSSABLE) {
         // In pixels, squared.
         s32 dx = (position[0] - node->x) >> 8;
         s32 dy = (position[1] - node->y) >> 8;
@@ -806,8 +806,7 @@ s32 Leader_StepOffRope(void) {
   position[2] = leader->z.fixed;
   Vector_AddPolarOffset(toFIXED(16), angle, position);
   leader->groundHeight = leader->y.fixed - toFIXED(8);
-  if (MapGrid_GetCellAttributeLowNibbleFar(leader->layer, position[0],
-                                           position[2]) ||
+  if (MapGrid_GetTerrainKindAtFar(leader->layer, position[0], position[2]) ||
       MapGrid_CheckCollisionFar(leader, position))
     return 0;
   leader->facing = angle;
@@ -846,7 +845,7 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
     node = state->nodes;
     best = ROPE_NODE_DISTANCE_NONE;
     for (i = 0; i < ROPE_NODE_COUNT; i++, node++) {
-      if (node->kind == 1) {
+      if (node->kind == ROPE_NODE_CROSSABLE) {
         // In pixels, squared.
         s32 dx = (position[0] - node->x) >> 8;
         s32 dy = (position[1] - node->y) >> 8;
@@ -915,8 +914,7 @@ s32 Leader_StepOffTightrope(void) {
   position[2] = leader->z.fixed;
   Vector_AddPolarOffset(toFIXED(16), angle, position);
   leader->groundHeight = leader->y.fixed - toFIXED(8);
-  if (MapGrid_GetCellAttributeLowNibbleFar(leader->layer, position[0],
-                                           position[2]) ||
+  if (MapGrid_GetTerrainKindAtFar(leader->layer, position[0], position[2]) ||
       MapGrid_CheckCollisionFar(leader, position))
     return 0;
   leader->facing = angle;

@@ -426,7 +426,7 @@ struct MapBounds {
 };
 
 /// Writes a map's view bounds from its header, in 8-pixel units.
-void Map_GetHeaderSizeFar(s32 map, struct MapBounds *bounds);
+void Map_GetCameraBoundsFar(s32 map, struct MapBounds *bounds);
 
 /// Opens the whole map to the view: keeps the view centre's position and the
 /// map's view bounds for ViewMove_End to restore, notes which edges the view
@@ -475,7 +475,7 @@ void ViewMove_Start(s32 direction) {
     }
   }
 
-  Map_GetHeaderSizeFar(gMainRoutineState.mapId, &bounds);
+  Map_GetCameraBoundsFar(gMainRoutineState.mapId, &bounds);
   minX = bounds.minX;
   left = minX * 8;
   maxX = bounds.maxX;

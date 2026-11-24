@@ -152,7 +152,7 @@ void LemuriaRooms_TalkToPiersUncle(s32 actorId) {
     Actor_WatchAndSetScript(ACTOR_PIERS_UNCLE, ACTOR_FELIX);
   } else if (Event_GetFlag(FLAG_PIERS_VISITED_UNCLE) != 0) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgLemuriaInteriorsIAmSoRelieved);
     // "I am so relieved that Piers has returned to me alive. He is the last..."
     Event_ShowMessage(actorId, 0);
@@ -240,7 +240,7 @@ void LemuriaRooms_NoticeMindRead(s32 unused, s32 actorId) {
   facing = Actor_GetById(actorId)->facing;
   Event_SetFlag(FLAG_MIND_READ_NOTICED);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActor(actorId, ACTOR_FELIX, 20);
   Event_SetMessageId((s32)MsgLemuriaInteriorsWasThatSomeForm);
@@ -303,7 +303,7 @@ void LemuriaRooms_PiersVisitsUncle(void) {
   Event_SetFlag(FLAG_PIERS_VISITED_UNCLE);
   Party_RemoveMember(PIERS);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgLemuriaInteriorsIAmSorryItHas);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PIERS_UNCLE, FACING_SOUTH_SOUTHEAST, 0);
@@ -554,7 +554,7 @@ void LemuriaRooms_LeavePiersToMourn(void) {
     other->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   }
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgLemuriaInteriorsWait);
   Actor_SetSpeed(ACTOR_PIERS_UNCLE, 0.8);
   Actor_ShowEmote(ACTOR_PIERS_UNCLE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
@@ -843,7 +843,7 @@ void LemuriaRooms_MeetLunpa(void) {
 
   Event_SetFlag(FLAG_MET_LUNPA);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgLemuriaInteriorsHonestlyImAmazedThatAnyone);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_SetSpeed(ACTOR_LUNPA, 1);

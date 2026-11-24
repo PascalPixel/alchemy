@@ -128,7 +128,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// and desires..."
 s32 NaribweRooms_MindReadFortuneTeller(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgNaribweInteriorsItemsThatOneCarries);
   // "The items that one carries are filled with one's hopes and desires...."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -141,7 +141,7 @@ s32 NaribweRooms_MindReadFortuneTeller(void) {
 /// desires of those who..."
 s32 NaribweRooms_MindReadFortuneTellerOnReturn(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgNaribweInteriorsItemsPlacedBeforeMe);
   // "Items placed before me are filled with the desires of those who..."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -180,7 +180,7 @@ void NaribweRooms_TalkToWeaponMerchant(s32 speaker) {
     Shop_Run(SHOP_NARIBWE_WEAPONS, speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsIfYouAreBurdened);
     // "If you are burdened with many concerns, take a weapon to the..."
     Event_ShowMessage(speaker, 0);
@@ -198,7 +198,7 @@ void NaribweRooms_TalkToWeaponMerchantOnReturn(s32 speaker) {
     Shop_Run(SHOP_NARIBWE_WEAPONS, speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsWheneverIGetCustomers);
     // "Whenever I get customers from out of town, I always tell them the..."
     Event_ShowMessage(speaker, 0);
@@ -216,7 +216,7 @@ void NaribweRooms_TalkToArmorMerchant(s32 speaker) {
     Shop_Run(SHOP_NARIBWE_ARMOR, speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldEvent_SetMessageId(
         (s32)MsgNaribweInteriorsYouShouldVisitFortuneTeller);
     // "You should visit the fortune- teller while you are in our village...."
@@ -235,7 +235,7 @@ void NaribweRooms_TalkToArmorMerchantOnReturn(s32 speaker) {
     Shop_Run(SHOP_NARIBWE_ARMOR, speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsIfYouWishToKnow);
     // "If you wish to know anything, go to the fortune-teller. He's fast..."
     Event_ShowMessage(speaker, 0);
@@ -252,7 +252,7 @@ void NaribweRooms_TalkToInnkeeper(s32 speaker) {
     Inn_CheckIn(NARIBWE_INN, speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsOurCookingIsFamousAll);
     // "Our cooking is famous all across Gondowan. If you find you like it..."
     Event_ShowMessage(speaker, 0);
@@ -270,7 +270,7 @@ void NaribweRooms_TalkToInnkeeperOnReturn(s32 speaker) {
     Inn_CheckIn(NARIBWE_INN, speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsISeeSoManyTravelers);
     // "I see so many travelers... How am I supposed to remember who Piers..."
     Event_ShowMessage(speaker, 0);
@@ -285,7 +285,7 @@ void NaribweRooms_TalkToFortuneTeller(void) {
   u8 *message;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   message = MsgNaribweInteriorsIAmTellerOfFortunes;
   FieldEvent_SetMessageId((s32)message);
   // "I am a teller of fortunes. Would you have a reading?"

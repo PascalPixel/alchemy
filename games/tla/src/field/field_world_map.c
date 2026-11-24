@@ -444,7 +444,7 @@ static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
 
 /// Draws the cells of the world map's tile row tileRow into its tile maps: the
 /// lower layer's 32 cells, then the upper layer's.
-void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
+void WorldMap_DrawCellRow(u32 tileRow) {
   u8 *sourceCell;
   u8 *screenTile;
   u32 cellsCopied;
@@ -480,7 +480,7 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
 /// Draws the cells of the world map's tile column tileColumn into its tile
 /// maps: 64 cells down, the lower layer's 32 and then the upper layer's, which
 /// follow them in the tile maps and in the cells.
-void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
+void WorldMap_DrawCellColumn(u32 tileColumn) {
   u8 *sourceCell;
   u8 *screenTile;
   u32 cellsCopied;
@@ -555,15 +555,15 @@ void WorldMap_UpdateView(void) {
     // row 12 on when y grows and 18 back when it falls.
     if ((perspective->viewX ^ x) & toFIXED(16)) {
       if (perspective->viewX < x)
-        WorldMap_RenderPaletteMappedColumn(tileColumn + 16);
+        WorldMap_DrawCellColumn(tileColumn + 16);
       else
-        WorldMap_RenderPaletteMappedColumn(tileColumn - 16);
+        WorldMap_DrawCellColumn(tileColumn - 16);
     }
     if ((perspective->viewY ^ y) & toFIXED(16)) {
       if (perspective->viewY < y)
-        WorldMap_RenderPaletteMappedRow(tileRow + 12);
+        WorldMap_DrawCellRow(tileRow + 12);
       else
-        WorldMap_RenderPaletteMappedRow(tileRow - 18);
+        WorldMap_DrawCellRow(tileRow - 18);
     }
     perspective->viewX = x;
     perspective->viewY = y;

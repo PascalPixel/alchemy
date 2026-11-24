@@ -160,7 +160,7 @@ void NorthernReaches_SightIceWall(void) {
     return;
   Event_SetFlag(FLAG_ICE_WALL_SIGHTED);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallFirstApproach);
   FieldActor_WaitForMove(Actor_Get(ACTOR_SHIP));
   Actor_FaceDirectionAndWait(ACTOR_SHIP, FACING_NORTH);
@@ -181,7 +181,7 @@ void NorthernReaches_DiscussIceWall(void) {
     return;
   Event_SetFlag(FLAG_ICE_WALL_DISCUSSED);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallCrewReposition);
   FieldActor_WaitForMove(Actor_Get(ACTOR_SHIP));
   FieldEvent_Wait(5);
@@ -244,7 +244,7 @@ void NorthernReaches_FireMagmaBall(void) {
   if (count != 0)
     return;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgShipSafeFiringDistance);
   Actor_MoveToAndWait(ACTOR_SHIP, 464, 216);
   Actor_FaceDirectionAndWait(ACTOR_SHIP, FACING_NORTH);

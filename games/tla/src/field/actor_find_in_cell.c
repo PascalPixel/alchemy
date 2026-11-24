@@ -21,7 +21,7 @@ struct Actor *Actor_FindInCell(s32 *position, struct Actor *self) {
   objects = &state->actors[ACTOR_FIRST_PLACED];
   for (; i < FIELD_TREASURE_ACTOR; i++) {
     actor = *objects++;
-    // UB: ObjectTable_Clear leaves unused slots null.
+    // UB: ActorTable_Clear leaves unused slots null.
 #ifdef UBFIX
     if (actor == NULL)
       continue;

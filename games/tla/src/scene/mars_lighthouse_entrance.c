@@ -508,7 +508,7 @@ void MarsLighthouseEntrance_GrindIce(void) {
     System_Wait(10);
     x += 3;
   } while (count >= 0);
-  ObjectTable_Snapshot();
+  ActorTable_Snapshot();
   FieldEvent_SetExitRequest(
       MARS_LIGHTHOUSE_ENTRANCE_FUGUE_TO_MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS_EAST_B);
 }
@@ -535,7 +535,7 @@ void MarsLighthouseEntrance_TeleportFromLapisNorthCircle(void) {
   if (!Flag_IsSet(FLAG_TELEPORTED_ONCE)) {
     Teleport_StartShimmer();
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Teleport_PlaySparks();
     Actor_Get(gMainRoutineState.leaderActorId)->update = NULL;
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineState.leaderActorId),
@@ -607,7 +607,7 @@ void MarsLighthouseEntrance_WatchFireballCrackIce(void) {
   Flag_Clear(FLAG_MENU_OPEN);
   Flag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveWithinMapBounds_(toFIXED(168), 0, toFIXED(664), 1);
   FieldCamera_WaitForArrival();
@@ -754,7 +754,7 @@ void MarsLighthouseEntrance_WatchFireballCrackHiddenCircleIce(void) {
   Flag_Clear(FLAG_MENU_OPEN);
   Flag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(120);
   Event_End();
@@ -789,7 +789,7 @@ void MarsLighthouseEntrance_WatchFireballMeltIce(void) {
   Flag_Clear(FLAG_MENU_OPEN);
   Flag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveWithinMapBounds_(toFIXED(872), -1, toFIXED(168), 1);
   FieldCamera_WaitForArrival();
@@ -966,7 +966,7 @@ void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
 
   actor = Actor_Get(gMainRoutineState.leaderActorId);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineState.leaderActorId), 0);
   actor->update = NULL;
   {
@@ -1058,7 +1058,7 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
   GameFlag_SetByte(FLAG_BYTE_FALL_COLUMN, i);
   GameFlag_SetByte(FLAG_BYTE_FALL_ROW, FIELD_CELL(z));
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineState.leaderActorId), 0);
   leader->update = NULL;
   FieldActor_ShowEmote(gMainRoutineState.leaderActorId,
@@ -1319,7 +1319,7 @@ s32 Scene_Initialize(void) {
     if (entrance ==
         MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS_FROM_MARS_LIGHTHOUSE_ENTRANCE_FUGUE_EAST) {
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       MapGrid_SetShake(0, 2, 1);
       Actor_SetPosition(gMainRoutineState.leaderActorId, 0, 0);
@@ -1639,14 +1639,14 @@ int MarsLighthouseEntrance_RideFireball(void) {
   ride = RIDE_STATE;
   Flag_Set(FLAG_MENU_OPEN);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Flag_Clear(FLAG_MENU_OPEN);
   leader->update = (ObjectUpdate)Actor_Blink;
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {
-    if (MapGrid_GetCellAttributeLowNibbleOrBump(
-            0, leader->x.fixed, leader->z.fixed) != TERRAIN_ROUNDED_SQUARE) {
+    if (MapGrid_GetTerrainKindOrBumpAt(0, leader->x.fixed, leader->z.fixed) !=
+        TERRAIN_ROUNDED_SQUARE) {
       leader->x.fixed += ride->car->stepX;
       leader->z.fixed += ride->car->stepZ;
     } else {

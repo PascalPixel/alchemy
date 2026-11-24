@@ -196,7 +196,7 @@ s32 Sprite_ComposePicture(struct Sprite *sprite, u32 dir) {
       facing = FACING_TABLE_ENTRY(gAnimationFacing_ThreePictures, dir);
       break;
     case ANIM_FACING_FIVE_PICTURES:
-      facing = FACING_TABLE_ENTRY(gAnimationFacing_SixPictures, dir);
+      facing = FACING_TABLE_ENTRY(gAnimationFacing_FivePictures, dir);
       break;
     case ANIM_FACING_EIGHT_PICTURES:
       // Half a sector on, so each sector is centred on its direction.

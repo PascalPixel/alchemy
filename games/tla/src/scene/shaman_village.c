@@ -755,7 +755,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// entrance is closed. You probably shouldn't go in."
 void ShamanVillage_StopAtClosedEntrance(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   // "The entrance is closed. You probably shouldn't go in."
   FieldMessage_Show((s32)MsgShamanEntranceClosed, 1);
   Event_End();
@@ -765,7 +765,7 @@ void ShamanVillage_StopAtClosedEntrance(void) {
 /// "Trial Road. None may enter without permission from Moapa."
 void ShamanVillage_ReadTrialRoadSign(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   // "Trial Road None may enter without permission from Moapa."
   FieldMessage_Show((s32)MsgShamanTrialRoadPermissionSign, 1);
   Event_End();
@@ -776,7 +776,7 @@ void ShamanVillage_ReadTrialRoadSign(void) {
 /// again; no, and the Knight tells the party to forget the Hover Jade.
 void ShamanVillage_TalkToEastKnight(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgShamanKnightRepeatsRulesBeforeTrial);
   // "Do you need to hear Moapa's explanation again?" Yes: "Thick-witted
   // outsiders." No: "Then you must leave Shaman Village and forget..."
@@ -809,7 +809,7 @@ void ShamanVillage_TalkToEastKnight(void) {
 /// stays.
 void ShamanVillage_TalkToWestKnight(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgShamanOtherKnightRepeatsRulesBeforeTrial);
   // "Do you need to hear Moapa's explanation again?" Yes: "Thick-witted
   // outsiders." No: "As long as you remain in our village, my..."
@@ -841,7 +841,7 @@ void ShamanVillage_TellOutsidersToLeave(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgShamanOutsidersLeaveTown);
   // "What's wrong? Nothing to say? Then what are you standing around for?..."
   Event_ShowMessage(ACTOR_MOAPA, 0);
@@ -856,7 +856,7 @@ void ShamanVillage_WarnOfMoapasPower(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgShamanFearMoapaPower);
   // "If you anger Moapa, you'll be in for a little taste of his awesome..."
   Event_ShowMessage(ACTOR_EAST_KNIGHT, 0);
@@ -871,7 +871,7 @@ void ShamanVillage_SendToMoapa(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgShamanSpeakToMoapa);
   // "If there's something you want to say, say it to Moapa, not to us. We..."
   Event_ShowMessage(ACTOR_WEST_KNIGHT, 0);
@@ -915,14 +915,14 @@ void ShamanVillage_TalkToInnkeeper(void) {
       Inn_CheckIn(SHAMAN_VILLAGE_INN, ACTOR_INNKEEPER);
     } else {
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       Event_SetMessageId((s32)MsgShamanVisitorsHaveTraveledFar);
       Event_AskYesNo(ACTOR_INNKEEPER, 0);
       Event_End();
     }
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     if (ShamanVillage_IsFacingCounter()) {
       u32 price = Inn_QuoteRoomPrice(SHAMAN_VILLAGE_INN);
 
@@ -967,7 +967,7 @@ void ShamanVillage_TalkToPriest(void) {
     Sanctum_Run(ACTOR_PRIEST);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     if (Event_GetFlag(FLAG_MOAPA_BEATEN))
       Event_SetMessageId((s32)MsgShamanMoapaDefeatIncredible);
     else
@@ -982,7 +982,7 @@ void ShamanVillage_TalkToPriest(void) {
 /// other side, for the spring only Hoabna could find?
 void ShamanVillage_AskAboutOtherSide(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgShamanCheckOtherMountainSide);
   Event_AskYesNo(ACTOR_MOUNTAIN_SIDE_SHAMAN, 0);
   Event_End();
@@ -993,7 +993,7 @@ void ShamanVillage_AskAboutOtherSide(void) {
 /// that greets Felix as the hero of Contigo.
 void ShamanVillage_TalkToMoapa(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_MOAPA_KNOWS_NAMES)) {
     Event_SetMessageId((s32)MsgShamanMoapaNeverForgetsVictor);
     // "Felix, the hero of Contigo! I shall never forget you, the only one..."
@@ -1024,7 +1024,7 @@ void ShamanVillage_TalkToGeneralStorekeeper(void) {
     Shop_Run(SHOP_SHAMAN_VILLAGE, ACTOR_GENERAL_STOREKEEPER);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgShamanWelcomeContigoHero);
     // "Everyone is depressed that Moapa lost his big fight. They should be..."
     Event_ShowMessage(ACTOR_GENERAL_STOREKEEPER, 0);
@@ -1051,7 +1051,7 @@ void ShamanVillage_HopFortuneTeller(void) {
 /// after, she only repeats the warning.
 void ShamanVillage_TellFortune(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_FORTUNE_TOLD)) {
     if (Event_GetFlag(FLAG_JUPITER_BEACON_LIT))
       Event_SetMessageId((s32)MsgShamanFortuneAvoidNortheast);
@@ -1119,7 +1119,7 @@ void ShamanVillage_ExplainTrialRules(void) {
   } else {
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     FieldCamera_SetSpeed(1.6);
     FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 1);
     Actor_SetSpeed(gMainRoutineState.leaderActorId, 1.2);
@@ -1198,7 +1198,7 @@ void ShamanVillage_ExplainTrialRules(void) {
 /// told to choose a road.
 void ShamanVillage_OfferToGiveUp(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(3.2);
   FieldCamera_MoveTo(182, CAMERA_KEEP, 304, 1);
   FieldCamera_WaitForArrival();
@@ -1236,7 +1236,7 @@ void ShamanVillage_OfferToGiveUp(void) {
 /// and the equipment the trial needs. No, and Felix steps back.
 void ShamanVillage_ChallengeMoapa(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 1);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 1.8);
@@ -1286,7 +1286,7 @@ void ShamanVillage_TakeLeftPath(void) {
   owner = ((struct Actor *)Actor_GetById(gMainRoutineState.leaderActorId));
   shaman = ((struct Actor *)Actor_GetById(ACTOR_MOAPA));
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_Stop(ACTOR_WEST_KNIGHT);
   Actor_Stop(ACTOR_EAST_KNIGHT);
   Actor_Stop(ACTOR_MOAPA);
@@ -1359,7 +1359,7 @@ void ShamanVillage_TakeRightPath(void) {
   owner = ((struct Actor *)Actor_GetById(gMainRoutineState.leaderActorId));
   shaman = ((struct Actor *)Actor_GetById(ACTOR_MOAPA));
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_Stop(ACTOR_WEST_KNIGHT);
   Actor_Stop(ACTOR_EAST_KNIGHT);
   Actor_Stop(ACTOR_MOAPA);
@@ -1438,7 +1438,7 @@ void ShamanVillage_DropPillar(void) {
   if (FIELD_CELL(actor->x.fixed) == PILLAR_BRIDGE_CELL_X &&
       FIELD_CELL(actor->z.fixed) == PILLAR_BRIDGE_CELL_Z) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     do {
       wait(1);
@@ -1463,7 +1463,7 @@ void ShamanVillage_DropPillar(void) {
 /// you want to say, hurry up and say it."
 void ShamanVillage_MeetMoapa(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(43, 40, 7, 6, 1, 2);
   Event_Wait(20);
@@ -1572,7 +1572,7 @@ void ShamanVillage_ShowShamansRod(void) {
   s32 angle;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   angle = FACING_NORTH;
   ((struct Actor *)Actor_GetById(gMainRoutineState.leaderActorId))->facing =
@@ -1797,7 +1797,7 @@ void ShamanVillage_ShowShamansRod(void) {
 /// won't have it... Or did you want to show me something?"
 void ShamanVillage_ShowItemToMoapa(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgShamanShowMeSomething);
   // "If you're here offering charity, I won't have it... Or did you want..."
   Event_ShowMessage(ACTOR_MOAPA, 0);
@@ -1807,7 +1807,7 @@ void ShamanVillage_ShowItemToMoapa(void) {
 /// An item shown to the west Knight: "Did you want to sell it?"
 void ShamanVillage_ShowItemToWestKnight(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgShamanCannotBuyGift);
   // "Yes, yes. That's very nice. Did you want to sell it? Because I don't..."
   Event_ShowMessage(ACTOR_WEST_KNIGHT, 0);
@@ -1817,7 +1817,7 @@ void ShamanVillage_ShowItemToWestKnight(void) {
 /// An item shown to the east Knight: "Show it to Moapa if you must"
 void ShamanVillage_ShowItemToEastKnight(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgShamanShowItToMoapa);
   // "What makes you think I would be interested in this? Show it to Moapa..."
   Event_ShowMessage(ACTOR_EAST_KNIGHT, 0);
@@ -1831,7 +1831,7 @@ void ShamanVillage_FortuneTellerCallsOut(void) {
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     Event_PlaySound(MUS_SILENCE);
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgShamanFortuneGreeting);
     Actor_SetAnimation(ACTOR_FORTUNE_TELLER, 5);
     // "Hoolabaloo!"
@@ -2239,7 +2239,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   effect->visible = 0;
   effect->active = 0;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_PlaySound(MUS_SILENCE);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_SetSpeed(0.4);
@@ -2593,7 +2593,7 @@ void ShamanVillage_EnterDoor(s32 sourceX, s32 sourceY, s32 destinationX,
   s32 cell;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (width == 2)
     Event_PlaySound(SE_THUMP);
   else
@@ -2661,7 +2661,7 @@ void ShamanVillage_EnterRiversideHouse(void) {
 void ShamanVillage_EnterMoapasHouse(void) {
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_MOAPAS_DOOR_OPEN)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_PlaySound(SE_MAP_EXIT);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
@@ -2679,7 +2679,7 @@ void ShamanVillage_RestartTrial(void) {
 
   Event_ClearFlag(FLAG_KEEP_MUSIC_HELD);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetPosition(ACTOR_WEST_KNIGHT, 0, 0);
   Actor_SetPosition(ACTOR_EAST_KNIGHT, 0, 0);
   ((struct Actor *)Actor_GetById(ACTOR_MOAPA))->facing = FACING_NORTH;
@@ -2756,7 +2756,7 @@ void ShamanVillage_RestartTrial(void) {
 /// says it would be wise of the party to quit, and Felix steps back.
 void ShamanVillage_SuggestQuitting(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgShamanMoapaAdvisesLeaving);
   ((struct Actor *)Actor_GetById(ACTOR_MOAPA))->facing = FACING_WEST;
   ((struct Actor *)Actor_GetById(ACTOR_WEST_KNIGHT))->facing = FACING_WEST;
@@ -2993,7 +2993,7 @@ void ShamanVillage_SetUpHouses(void) {
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Party_RestoreHpPp(1);
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Actor_SetAnimation(gMainRoutineState.leaderActorId, 41);
     Actor_SetSpriteFlags(
         ((struct Actor *)Actor_GetById(gMainRoutineState.leaderActorId)), 0);

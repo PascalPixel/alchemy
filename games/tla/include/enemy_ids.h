@@ -196,7 +196,7 @@ enum EnemyId {
   /// Moapa at the Trial Road's peak. He and his two Knights come weaker, with
   /// less defense and fewer Bosca Hits or Strong Hits, the more stage doors
   /// the party reached before them in the race (TrialRoad_ChallengeMoapa,
-  /// ENCOUNTER_TABLE_MOAPA): this row while it reached two or fewer,
+  /// ENCOUNTER_ZONE_MOAPA): this row while it reached two or fewer,
   /// ENEMY_MOAPA_B at three and ENEMY_MOAPA_C at all four.
   ENEMY_MOAPA,
   ENEMY_MOAPA_B,
@@ -208,7 +208,7 @@ enum EnemyId {
   ENEMY_KNIGHT_B,
   ENEMY_KNIGHT_3,
   /// Agatio in the first two of the three battles on Jupiter Lighthouse's
-  /// aerie (ENCOUNTER_TABLE_MOAPA, slots 5 and 6), as ENEMY_KARST is Karst.
+  /// aerie (ENCOUNTER_ZONE_MOAPA, slots 5 and 6), as ENEMY_KARST is Karst.
   ENEMY_AGATIO,
   /// Agatio in the third battle (slot 7), the same stats as ENEMY_AGATIO, as
   /// ENEMY_KARST_B is Karst.
@@ -232,7 +232,7 @@ enum EnemyId {
   ENEMY_KOBOLD,
   ENEMY_WARGOLD,
   ENEMY_KOBOLD_KING,
-  /// The Mad Plant of the Gabomba Catacombs (ENCOUNTER_TABLE_MAD_PLANTS, slot
+  /// The Mad Plant of the Gabomba Catacombs (ENCOUNTER_ZONE_MAD_PLANTS, slot
   /// 0); each Mad Plant row is the one fought in one place.
   ENEMY_MAD_PLANT_GABOMBA_CATACOMBS,
   /// The Mad Plant of Taopo Swamp (slot 1).

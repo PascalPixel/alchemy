@@ -167,7 +167,7 @@ void Daila_EnterDoor(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetSpeedParameters(gMainRoutineState.leaderActorId, 0x8000, 0x4000);
   Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 2);
   Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = 0;

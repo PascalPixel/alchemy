@@ -139,7 +139,7 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 s32 Position_FlatDistance(FIXED *a, FIXED *b);
 
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 void Leader_CenterInCell(void);
 
@@ -224,7 +224,7 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
   s32 *target;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   target = gJupiterLighthouse_GlowPosition;
   if (kind == TRIGGER_CYCLONE_DOWN_WEST) {
     target[0] = toFIXED(136);
@@ -289,7 +289,7 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   s32 frame;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   target = gJupiterLighthouse_GlowPosition;
   if (kind == TRIGGER_CYCLONE_UP_WEST) {
     target[0] = toFIXED(136);

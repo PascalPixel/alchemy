@@ -63,9 +63,9 @@
 /// next or the previous marked place round from the one nearest it, and its
 /// point on the image is written to screenX and screenY.
 void MapScreen_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
-  const struct FlagEntry *places;
-  const struct FlagEntry *place;
-  const struct FlagEntry *next;
+  const struct WorldMapPlace *places;
+  const struct WorldMapPlace *place;
+  const struct WorldMapPlace *next;
   s32 best;
   s32 bestDistance;
   s32 cursorX;
@@ -78,7 +78,7 @@ void MapScreen_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
 
   // DEAD: the leader looked up and never used; the ROM keeps the call.
   Party_GetLeaderActor();
-  places = FlagEntries_GetTable();
+  places = WorldMapPlaces_GetTable();
   bestDistance = 8192 * 8192;
   best = -1;
   cursorX = FIXEDtoINT(worldMapState->x);
@@ -196,10 +196,10 @@ void MapScreen_UpdateMarkers(void) {
   s32 nearestName;
   s32 nearestEntrance;
   s32 entrance;
-  const struct FlagEntry *places;
+  const struct WorldMapPlace *places;
   s32 scrollX;
   s32 scrollY;
-  const struct FlagEntry *place;
+  const struct WorldMapPlace *place;
   s32 width;
   s32 height;
   s32 placeX;
@@ -228,7 +228,7 @@ void MapScreen_UpdateMarkers(void) {
   nearestDistance = WORLD_MAP_NAME_REACH * WORLD_MAP_NAME_REACH;
   nearestX = 0;
   nearestY = 0;
-  places = FlagEntries_GetTable();
+  places = WorldMapPlaces_GetTable();
   scrollX = state->scrollX & FIELD_PIXEL_MASK;
   scrollY = state->scrollZ & FIELD_PIXEL_MASK;
   blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) &
@@ -754,7 +754,7 @@ s32 MapScreen_Show(s32 mode) {
   s32 gliding = 0;
   struct WorldMapState *state = &gWorldMapState;
   struct MapAnimation *layer;
-  const struct FlagEntry *place;
+  const struct WorldMapPlace *place;
   u32 *tiles;
   u32 tile;
   s32 row;
@@ -774,7 +774,7 @@ s32 MapScreen_Show(s32 mode) {
 
   state->mode = mode;
   if (mode != MAP_SCREEN_LOOK || field->mode != ACTOR_SYSTEM_WORLD_MAP)
-    ObjectTable_Snapshot();
+    ActorTable_Snapshot();
   if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
     savedDelay = field->transitionFrames;
     field->transitionFrames = 6;
@@ -940,7 +940,7 @@ s32 MapScreen_Show(s32 mode) {
           goto done;
         if (state->shown == -1)
           continue;
-        place = FlagEntries_GetTable();
+        place = WorldMapPlaces_GetTable();
         place += state->shown;
         routine->teleportScene = SCENE_WORLD_MAP;
         choice->flag = place->flag;
@@ -989,7 +989,7 @@ done:
 }
 
 /// The World Map's places, ended by a zero flag.
-extern const struct FlagEntry gFlagEntries[];
+extern const struct WorldMapPlace gWorldMapPlaces[];
 
 /// On the world map, zooms the view out to eight thirteenths while L is held,
 /// then back, six frames each way (FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM).
@@ -1012,7 +1012,9 @@ void WorldMap_ZoomOutWhileLHeld(void) {
 }
 
 /// Returns the flag entry table, 20-byte entries ended by a zero flag.
-const struct FlagEntry *FlagEntries_GetTable(void) { return gFlagEntries; }
+const struct WorldMapPlace *WorldMapPlaces_GetTable(void) {
+  return gWorldMapPlaces;
+}
 #undef IMAGE_WIDTH
 #undef IMAGE_HEIGHT
 #undef IMAGE_TILES_ACROSS

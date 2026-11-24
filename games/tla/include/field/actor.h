@@ -345,7 +345,7 @@ void Actor_SelectAnimationFar(struct Actor *, s32);
 void Actor_WaitForScriptEndFar(struct Actor *);
 void Actor_SetMovementType(struct Actor *, s32);
 void Actor_SetSpritePriority(u32, s32);
-void OverlayObject_WaitUntilIdle(struct Actor *actor);
+void Actor_WaitUntilLanded(struct Actor *actor);
 void Actor_WaitForAnimationChange(u32);
 void Actor_SetAnimationById(u32, s32);
 void Actor_WaitForScriptEndById(u32);

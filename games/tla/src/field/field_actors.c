@@ -465,7 +465,7 @@ void Actor_StartApproachWatched(struct Actor *actor, s32 watchedActorHandle) {
 /// Starts the leader's control script for the way the party moves now
 /// (gMainRoutineState.movementMode), waiting a frame first for Sand on the
 /// World Map.
-void Actor_StartRenderModeScript(struct Actor *actor) {
+void Actor_StartMovementModeScript(struct Actor *actor) {
   const s32 *script;
   struct MainRoutineState *party = &gMainRoutineState;
 

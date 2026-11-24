@@ -409,7 +409,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 // statue that repels the leader, the reliefs and the paths Reveal shows.
 
 void Exit_PrepareActorAnimation(s32 id, s32 side);
-void Actor_VanishInSparks(s32 objectId);
+void Actor_AppearInSparks(s32 objectId);
 void VenusLighthouse_FelixLeaves(void);
 
 void VenusLighthouse_RepelLeader(void);
@@ -434,7 +434,7 @@ void VenusLighthouse_RepelLeader(void) {
   s32 z;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetMovementTypeById(leader, gVenusLeaderDazedScript);
   Actor_WaitForScriptEndById(leader);
   Actor_SetSpriteColor(Actor_GetById(leader), SPRITE_COLOR_GREY);
@@ -481,7 +481,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     leader->y.fixed = 0;
   } else if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_Wait(5);
     MapGrid_CopyCellTilesIndicesRect(52, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(52, 117, 41, 117, 3, 5);
@@ -504,7 +504,7 @@ void VenusLighthouse_SinkStatue(void) {
 
   statue = Actor_Get(ACTOR_FLOOR_SWITCH_STATUE);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (FIELD_CELL(statue->x.fixed) == 42) {
     FieldEvent_Wait(30);
     Event_PlaySound(SE_THUMP);
@@ -523,7 +523,7 @@ void VenusLighthouse_SinkStatue(void) {
 /// Searching the relief shows its words.
 void VenusLighthouse_ReadRelief(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetAnimation(FieldParty_GetLeaderActor(), ANIM_STAND);
   // "There are words carved into the relief... If ye seek to climb Venus..."
   Message_ShowCentered((s32)MsgVenusLighthouseReliefWords, 1);
@@ -533,7 +533,7 @@ void VenusLighthouse_ReadRelief(void) {
 /// Searching the other relief shows that only a true heart knows the road.
 void VenusLighthouse_ReadTrueHeart(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetAnimation(FieldParty_GetLeaderActor(), ANIM_STAND);
   // "The true road can only be known by he who bears a true heart."
   Message_ShowCentered((s32)MsgVenusLighthouseTrueHeart, 1);
@@ -611,7 +611,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineState.entrance == VENUS_LIGHTHOUSE_FROM_TITLE) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     VenusLighthouse_FelixLeaves();
     VenusLighthouse_DoubtLeaving();
     Event_End();
@@ -655,7 +655,7 @@ s32 Scene_Initialize(void) {
     state->restartScene = SCENE_VENUS_LIGHTHOUSE;
     state->restartEntrance = VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS;
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     VenusLighthouse_FelixLeaves();
     VenusLighthouse_DoubtLeaving();
     Event_End();
@@ -820,7 +820,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
   Actor_SetPosition(ACTOR_ALEX, 680, 920);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
-  Actor_VanishInSparks(ACTOR_ALEX);
+  Actor_AppearInSparks(ACTOR_ALEX);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);

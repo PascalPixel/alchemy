@@ -71,7 +71,7 @@ void SpriteViewer_Run(void) {
   gDecodeFillByte = 3;
   Dma_Fill32Cell(zero, 0, ring, 4);
   Dma_Fill32Cell(zero, 0, layers, sizeof(layers));
-  spriteId = SpriteViewer_FindNextSpriteWithPictures(-1, 1);
+  spriteId = SpriteViewer_StepSpriteId(-1, 1);
   for (i = 0; i < ANIM_LAYER_COUNT; i++) {
     layers[i].animationIndex = 1;
     layers[i].priority = 1;
@@ -110,10 +110,10 @@ restart:
   }
   for (i = 0; i < ANIM_LAYER_COUNT; i++) {
     if (layers[i].enabled != 0)
-      SpriteViewer_SetGridColumnPriority(i, layers[i].priority);
+      SpriteViewer_SetLayerPriority(i, layers[i].priority);
     else
-      SpriteViewer_SetGridColumnPriority(i, UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
-    SpriteViewer_SetGridColumnColorMode(i, layers[i].colorMode);
+      SpriteViewer_SetLayerPriority(i, UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
+    SpriteViewer_SetLayerColorMode(i, layers[i].colorMode);
     {
       s32 a;
 
@@ -125,7 +125,7 @@ restart:
       SpriteViewer_StartStaggeredAnimations(i, a);
     }
   }
-  SpriteViewer_BuildProbeRing(x, y, ring);
+  SpriteViewer_LayOutRing(x, y, ring);
   Task_Add(SpriteViewer_PlaceRing, TASK_PASS_FRAME);
 
 next:
@@ -140,7 +140,7 @@ next:
         y--;
       if (gInput.held & KEY_DOWN)
         y++;
-      SpriteViewer_BuildProbeRing(x, y, ring);
+      SpriteViewer_LayOutRing(x, y, ring);
     } else {
       // DEAD: a read of the repeated keys nothing uses; the ROM keeps the load.
       (void)gInput.repeat;
@@ -197,14 +197,12 @@ next:
         steps = UI_SPRITE_VIEWER_FAST_STEP;
       if (gInput.repeat & KEY_L) {
         layers[selectedLayer].spriteId =
-            SpriteViewer_FindNextSpriteWithPictures(
-                layers[selectedLayer].spriteId, -steps);
+            SpriteViewer_StepSpriteId(layers[selectedLayer].spriteId, -steps);
         changed = 1;
       }
       if (gInput.repeat & KEY_R) {
         layers[selectedLayer].spriteId =
-            SpriteViewer_FindNextSpriteWithPictures(
-                layers[selectedLayer].spriteId, steps);
+            SpriteViewer_StepSpriteId(layers[selectedLayer].spriteId, steps);
         changed = 1;
       }
       if (changed == 0)
@@ -212,12 +210,12 @@ next:
       if (selectedLayer == 0)
         goto restart;
       if (layers[selectedLayer].enabled != 0) {
-        SpriteViewer_SetGridColumnNumber(selectedLayer,
-                                         layers[selectedLayer].spriteId);
-        SpriteViewer_SetGridColumnPriority(selectedLayer,
-                                           layers[selectedLayer].priority);
-        SpriteViewer_SetGridColumnColorMode(selectedLayer,
-                                            layers[selectedLayer].colorMode);
+        SpriteViewer_SetLayerSprite(selectedLayer,
+                                    layers[selectedLayer].spriteId);
+        SpriteViewer_SetLayerPriority(selectedLayer,
+                                      layers[selectedLayer].priority);
+        SpriteViewer_SetLayerColorMode(selectedLayer,
+                                       layers[selectedLayer].colorMode);
         SpriteViewer_StartStaggeredAnimations(
             selectedLayer, layers[selectedLayer].animationIndex);
       }
@@ -241,8 +239,8 @@ next:
       if (changed == 0)
         break;
       if (layers[selectedLayer].enabled != 0)
-        SpriteViewer_SetGridColumnPriority(selectedLayer,
-                                           layers[selectedLayer].priority);
+        SpriteViewer_SetLayerPriority(selectedLayer,
+                                      layers[selectedLayer].priority);
       goto next;
 
     case UI_SPRITE_VIEWER_EDIT_COLOR:
@@ -262,8 +260,8 @@ next:
       if (changed == 0)
         break;
       if (layers[selectedLayer].enabled != 0)
-        SpriteViewer_SetGridColumnColorMode(selectedLayer,
-                                            layers[selectedLayer].colorMode);
+        SpriteViewer_SetLayerColorMode(selectedLayer,
+                                       layers[selectedLayer].colorMode);
       goto next;
     }
 
@@ -281,10 +279,10 @@ next:
         }
       } else if (selectedLayer != 0) {
         layers[selectedLayer].enabled ^= 1;
-        SpriteViewer_SetGridColumnPriority(
-            selectedLayer, layers[selectedLayer].enabled != 0
-                               ? layers[selectedLayer].priority
-                               : UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
+        SpriteViewer_SetLayerPriority(selectedLayer,
+                                      layers[selectedLayer].enabled != 0
+                                          ? layers[selectedLayer].priority
+                                          : UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
         goto next;
       }
     }
@@ -311,7 +309,7 @@ extern const u16 gSpriteViewer_SkipStops[];
 /// range, a larger step forward goes to the next stop above value and one back
 /// to the last stop below it (gSpriteViewer_SkipStops, ended by (u16)-1, from
 /// which a step forward wraps to 0). A delta of 0 returns value unchanged.
-s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
+s32 SpriteViewer_StepSpriteId(s32 value, s32 delta) {
   s32 step;
 
   if (delta != 0) {
@@ -361,8 +359,8 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
 /// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part
 /// sprite). B held turns the ring. Called by SpriteViewer_Run when it starts
 /// and while Start moves the ring.
-void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
-                                 struct SpritePlacement *positions) {
+void SpriteViewer_LayOutRing(s32 centerX, s32 centerY,
+                             struct SpritePlacement *positions) {
   struct SpritePlacement *pair;
   s32 angle;
   s32 i;
@@ -465,7 +463,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 
 /// Gives sprite animation slot of each of the viewer's ten sprites the colour
 /// mode value.
-void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
+void SpriteViewer_SetLayerColorMode(s32 slot, s32 value) {
   u8 *base = Ram_HeapSlots->sprites;
   s32 offset = (slot & 3) * sizeof(struct SpriteAnimation *) +
                offsetof(struct Sprite, entries);
@@ -482,7 +480,7 @@ void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
 
 /// Gives sprite animation slot of each of the viewer's ten sprites the drawing
 /// order value.
-void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value) {
+void SpriteViewer_SetLayerPriority(s32 slot, s32 value) {
   u8 *base = Ram_HeapSlots->sprites;
   s32 offset = (slot & 3) * sizeof(struct SpriteAnimation *) +
                offsetof(struct Sprite, entries);
@@ -536,7 +534,7 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
 
 /// Sets sprite no on sprite animation slot of each of the viewer's ten sprites,
 /// and resets each sprite animation from its new metadata.
-void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
+void SpriteViewer_SetLayerSprite(s32 slot, s32 no) {
   u8 *base = Ram_HeapSlots->sprites;
   s32 offset;
   s32 count;

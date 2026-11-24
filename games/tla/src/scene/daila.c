@@ -179,7 +179,7 @@ void Daila_EnterDoor(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
   Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 2);
   Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = 0;
@@ -215,7 +215,7 @@ void Daila_TalkBeenBefore(void) {
 
   if (GameFlag_Get(FLAG_DAILA_ASKED_IF_BEEN_BEFORE) == 0) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     msg = (s32)MsgDailaBeenBefore;
     Event_SetMessageId(msg);
     // "You don't look familiar. Have you been to Daila before?" Yes:
@@ -246,7 +246,7 @@ void Daila_TalkIndraMoved(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)MsgDailaIndraMoved;
   Event_SetMessageId(msg);
   // "Didn't it feel like all of Indra moved when that wave hit?" Yes: "I knew
@@ -279,7 +279,7 @@ void Daila_TalkBoat(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)MsgDailaWantBoat;
   Event_SetMessageId(msg);
   // "Hm? You want a boat?" Yes: "What kind of insensitive jerk are you?..."
@@ -306,7 +306,7 @@ void Daila_AskAfterTaviAndRiki(s32 keeper) {
     Shop_Run(SHOP_DAILA_ITEMS, keeper);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgDailaTaviRikiWorry);
     // "I haven't seen Tavi and Riki around lately... I like those little..."
     Event_ShowMessageAndWait(keeper, 0);
@@ -321,7 +321,7 @@ void Daila_TalkHip(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)MsgDailaHurtHip;
   Event_SetMessageId(msg);
   // "I bet you thought it was the wave that knocked me over and hurt my hip,
@@ -350,7 +350,7 @@ void Daila_TaviAndRikiAreHome(s32 keeper) {
     Shop_Run(SHOP_DAILA_ITEMS, keeper);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgDailaTaviRikiHome);
     // "Tavi and Riki are back home, safe and sound... They stopped by to..."
     Event_ShowMessageAndWait(keeper, 0);
@@ -398,7 +398,7 @@ void Daila_MeetAlex(void) {
   if (GameFlag_Get(FLAG_IN_PARTY(ACTOR_PIERS)))
     return;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)MsgDailaFelixCall;
   Event_SetMessageId(msg);
   Actor_SetPosition(ACTOR_ALEX, 472, 264);
@@ -576,7 +576,7 @@ void Daila_MeetAlex(void) {
 #define DEFINE_DAILA_PARCH_PUDDLE(name, fromX, y, toX, actor, flag)            \
   void name(void) {                                                            \
     Event_Start();                                                             \
-    Event_ResolvePendingActions(0);                                            \
+    Event_EndLastingPsynergy(0);                                               \
     MapGrid_CopyCellAttributes(fromX, y, 1, 1, toX, y);                        \
     Actor_SetPosition(actor, 0, 0);                                            \
     GameFlag_Set(flag);                                                        \

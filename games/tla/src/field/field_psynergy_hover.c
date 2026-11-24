@@ -144,8 +144,8 @@ void HoverGlow_Update(void) {
   scaleY = scaleX * 6 / 8;
   sprite = &state->sprite;
   sprite->oam.index = state->tile + ((gFrameCount >> 1) & 1) * 32;
-  sprite->oam.priority = BattleEffect_GetObjectPriority(player);
-  sprite->depth = BattleEffect_GetObjectDepth(player) - 1;
+  sprite->oam.priority = Actor_GetSpritePriority(player);
+  sprite->depth = Actor_GetSpriteDepth(player) - 1;
   position[0] = player->x.fixed;
   position[1] = player->y.fixed;
   position[2] = player->z.fixed;

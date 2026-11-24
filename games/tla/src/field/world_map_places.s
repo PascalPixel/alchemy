@@ -1,7 +1,7 @@
 	.include "enums/flags.inc"
 	.include "enums/sprite_ids.inc"
 
-@ The World Map's places (struct FlagEntry), which FlagEntries_GetTable
+@ The World Map's places (struct WorldMapPlace), which WorldMapPlaces_GetTable
 @ returns; a place number of 0 ends the list. Each row: the place number,
 @ whose flag is 0x180 + place; its markers (low nibble, and high nibble on
 @ the map screen); the actor the World Map shows there, its sprite, place
@@ -17,8 +17,8 @@
 	.endm
 
 	.section .rodata
-	.global gFlagEntries
-gFlagEntries:
+	.global gWorldMapPlaces
+gWorldMapPlaces:
 	place 2, 0x11, SPRITE_WORLD_MAP_DAILA, 10144, 8288, 90, -1, SceneId_DailaFlooded, -1, SceneId_DailaFlooded, -1
 	place 4, 0x01, SPRITE_WORLD_MAP_KANDOREAN_TEMPLE, 10136, 8570, 90, -1, SceneId_KandoreanTempleGate, -1, 0, -1
 	place 5, 0x00, SPRITE_WORLD_MAP_CAVE, 10424, 8336, 90, -1, -1, -2, 0, -1

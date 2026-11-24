@@ -252,7 +252,7 @@ void FieldPsynergy_Pound(void) {
 
     BattleEffect_StartCanvasSprite();
     canvas = Ram_HeapSlots->canvasSprite;
-    canvas->priority = BattleEffect_GetObjectPriority(scene->mainActor);
+    canvas->priority = Actor_GetSpritePriority(scene->mainActor);
     canvas->depth = 1;
     canvas->mode = CANVAS_SPRITE_256_COLORS;
     canvas->scaleX = 0;

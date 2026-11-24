@@ -327,7 +327,7 @@ void IsletCave_OpenDoorAndEnter(void) {
   u32 index;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   for (i = ACTOR_FIRST_PLACED; i <= LAST_PLACED_ACTOR; i++) {
     struct Actor *actor = Actor_GetById(i);
 
@@ -568,7 +568,7 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   leader = Actor_GetById(gMainRoutineState.leaderActorId);
   actor = Actor_GetById(actorId);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   x = ((leader->x.fixed + toFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
   z = ((leader->z.fixed + toFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
   leader->speedLimit = toFIXED(1);
@@ -780,7 +780,7 @@ void IsletCave_SentinelAwaits(void) {
   struct Actor *actor;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_StartRepeatedMotion(ACTOR_SENTINEL, 2);
   Event_Wait(20);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
@@ -800,7 +800,7 @@ void IsletCave_SentinelAwaits(void) {
   FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_SENTINEL,
                                        ENTRANCE_AFTER_SENTINEL_BATTLE);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_HIDDEN_BOSSES,
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_HIDDEN_BOSSES,
                                         HIDDEN_BOSS_SENTINEL);
   Event_End();
 }

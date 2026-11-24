@@ -390,7 +390,7 @@ s32 LemuriaPalace_MeetKingHydros(void) {
   struct Actor *target;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgLemuriaPalaceYouAreLordFelixCorrect);
   Actor_SetSpeed(ACTOR_PALACE_GUARD, 1.2);
   Actor_WalkByAndWait(ACTOR_PALACE_GUARD, -24, 0);

@@ -239,7 +239,7 @@ void Settlements_RestoreWallCells(void);
 void Settlements_DropCrate(void);
 void Leader_SlideOnIce(void);
 void Leader_StopMoving(void);
-void Event_ResolveAllPendingActions(void);
+void Event_EndAllLastingPsynergy(void);
 void Scene_QueueMusic(s32 soundId);
 #ifdef MODERN
 void Rope_Lash(s32 index, s32 fromId, s32 toId);
@@ -465,7 +465,7 @@ void Settlements_CatchApple(void) {
   s32 mode;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetPosition(ACTOR_APPLE, 0, 0);
   Event_SetFlag(FLAG_KALT_ISLAND_APPLE_TAKEN);
   ItemDisplay_ShowItem(ITEM_APPLE, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
@@ -547,7 +547,7 @@ void Settlements_ClimbDownLadder(void) {
 /// room with beds below, in Gondowan into the cave with the Star Dust.
 void Settlements_StepOntoLadderFromWest(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWait(ACTOR_FELIX, 16, 0);
   Settlements_ClimbDownLadder();
@@ -558,7 +558,7 @@ void Settlements_StepOntoLadderFromWest(void) {
 /// beds below.
 void Settlements_StepOntoLadderFromEast(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_WalkByAndWait(ACTOR_FELIX, -2, -6);
   Actor_WalkByAndWait(ACTOR_FELIX, -14, -8);
   Settlements_ClimbDownLadder();
@@ -569,7 +569,7 @@ void Settlements_StepOntoLadderFromEast(void) {
 /// in Gondowan Settlement (cell (5, 16)), turns to face north and climbs down.
 void Settlements_TurnAndClimbDownLadder(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Settlements_ClimbDownLadder();
 }
@@ -794,7 +794,7 @@ void Settlements_EnterHouse(void) {
   u32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
     struct Actor *actor = Actor_Get(i);
 
@@ -1134,7 +1134,7 @@ void Settlements_DropCrate(void) {
   s32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   EventCamera_FollowActor(ACTOR_WALL_CRATE, 1);
   actor = Actor_Get(ACTOR_WALL_CRATE);
   column = FIELD_CELL(actor->x.fixed);

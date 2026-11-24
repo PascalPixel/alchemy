@@ -439,7 +439,7 @@ void Actor_DepartInRing(s32 actorId) {
   z = actor->z.fixed;
   spin = 0;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_StartScreenTransition();
   for (i = 0; i < DEPART_FRAMES; i++) {
     position[0] = x;
@@ -478,7 +478,7 @@ void Actor_ArriveInRing(s32 actorId) {
   actor->update = Actor_UpdateSpin;
   actor->scaleX = 0;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetSpriteFlagsFar(Actor_GetById(actorId), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -575,9 +575,9 @@ void Blaze_UpdateSpray(void) {
       if (particle->timer == -1) {
         sprite = &state->drops[i];
         if (scene->child != NULL)
-          sprite->depth = BattleEffect_GetObjectDepth(scene->child);
+          sprite->depth = Actor_GetSpriteDepth(scene->child);
         else
-          sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
+          sprite->depth = Actor_GetSpriteDepth(scene->mainActor);
         if (state->mode == BLAZE_LONG_SPRAY) {
           state->speed = toFIXED(12) / 5;
           state->lifetime = BLAZE_LONG_DROP_FRAMES;

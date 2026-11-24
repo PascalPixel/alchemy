@@ -129,7 +129,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// and once the party has had him forge, of his joy at working.
 s32 YallamRooms_MindReadSunshine(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_SUNSHINE_FORGING)) {
     // "It's been a long time since I've been able to work. I'm so excited!..."
     Event_SetMessageId((s32)MsgYallamInteriorsItsBeenALong);
@@ -146,7 +146,7 @@ s32 YallamRooms_MindReadSunshine(void) {
 /// over him.
 s32 YallamRooms_MindReadSunshinesWife(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_SUNSHINE_FORGING)) {
     // "What happened to Sunshine? He's so happy, and he just talks about..."
     Event_SetMessageId((s32)MsgYallamInteriorsWhatHappenedToSunshine);
@@ -163,7 +163,7 @@ s32 YallamRooms_MindReadSunshinesWife(void) {
 /// work again.
 s32 YallamRooms_MindReadSunshinesChild(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_SUNSHINE_FORGING)) {
     // "Now that my dad's working again, I have to watch his every move..."
     Event_SetMessageId((s32)MsgYallamInteriorsNowThatMyDads);
@@ -180,7 +180,7 @@ s32 YallamRooms_MindReadSunshinesChild(void) {
 /// the villagers."
 s32 YallamRooms_TalkToSunshinesChild(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_SUNSHINE_FORGING)) {
     // "It's so weird, but something really inspired my father to work!..."
     Event_SetMessageId((s32)MsgYallamInteriorsItsSoWeirdBut);
@@ -197,7 +197,7 @@ s32 YallamRooms_TalkToSunshinesChild(void) {
 /// could make.
 s32 YallamRooms_MindReadWeaponMerchant(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgYallamInteriorsIfSunshineSetHis);
   // "If Sunshine set his mind to it, he could make a lot of money! What a..."
   Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
@@ -208,7 +208,7 @@ s32 YallamRooms_MindReadWeaponMerchant(void) {
 /// The armor merchant, read across the counter, finds his own stock boring.
 s32 YallamRooms_MindReadArmorMerchant(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgYallamInteriorsIShouldntTellHim);
   // "I shouldn't tell him how boring all this stuff is. I wish Sunshine..."
   Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
@@ -220,7 +220,7 @@ s32 YallamRooms_MindReadArmorMerchant(void) {
 /// Taopo Swamp.
 s32 YallamRooms_MindReadItemMerchant(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgYallamInteriorsWhatDoesSunshineWant);
   // "What does Sunshine want in Taopo Swamp? There's nothing up there but..."
   Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
@@ -246,7 +246,7 @@ void YallamRooms_AskLikeChildrensSongs(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)MsgYallamInteriorsDoYouLikeChildrens;
   Event_SetMessageId(msg);
   // "Do you like children's songs?"
@@ -281,7 +281,7 @@ void YallamRooms_TalkToWeaponMerchant(s32 actor) {
     Shop_Run(SHOP_YALLAM_WEAPONS, actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgYallamInteriorsIfTheBlacksmithIsnt);
     // "If the blacksmith isn't willing to work, then how am I supposed to..."
     Event_ShowMessage(actor, 0);
@@ -298,7 +298,7 @@ void YallamRooms_TalkToArmorMerchant(s32 actor) {
     Shop_Run(SHOP_YALLAM_ARMOR, actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgYallamInteriorsIfYouWantPlain);
     // "If you want plain old, boring armor, have a look around. If you're..."
     Event_ShowMessage(actor, 0);
@@ -315,7 +315,7 @@ void YallamRooms_TalkToItemMerchant(s32 actor) {
     Shop_Run(SHOP_YALLAM_ITEMS, actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgYallamInteriorsIfYoureLookingFor);
     // "If you're looking for Taopo Swamp, head west around the northern..."
     Event_ShowMessage(actor, 0);
@@ -333,7 +333,7 @@ void YallamRooms_TalkToInnkeeper(s32 actor) {
     Event_ClearFlag(FLAG_SUNSHINE_FORGING);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgYallamInteriorsItsABitStrange);
     // "It's a bit strange trying to run an inn in a city that never gets..."
     Event_ShowMessage(actor, 0);
@@ -352,7 +352,7 @@ UNUSED void YallamRooms_TalkToHealer(s32 actor) {
     Sanctum_Run(actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgEvenOutInFarOffShores);
     // "Even out in these far-off shores, people need the services and hope..."
     Event_ShowMessage(actor, 0);
@@ -367,7 +367,7 @@ UNUSED void YallamRooms_OfferToForge(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_StartRepeatedMotion(ACTOR_SUNSHINE, 2);
   msg = (s32)MsgYallamInteriorsAhSoYouWant;
   Event_SetMessageId(msg);

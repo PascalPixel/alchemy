@@ -37,7 +37,7 @@ struct MapGridCellAnimation {
 };
 
 void Event_ShowMessageAndWait(s32 actor, s32 flags);
-void Event_ResolvePendingActions(s32 skip);
+void Event_EndLastingPsynergy(s32 skip);
 s32 Party_GetLeaderActor(void);
 void Event_Wait(s32 frames);
 void Event_Start(void);

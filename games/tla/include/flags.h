@@ -33,7 +33,7 @@
 #define FLAG_CHILDHOOD 0x20
 /// Unused: The Broken Seal's flag for the tunic young Isaac wears. Nothing in
 /// this game sets it; were it set, World Map actor placements would keep their
-/// full size (Event_SpawnObjectTable).
+/// full size (Event_SpawnActorTable).
 #define FLAG_ISAAC_WEARS_TUNIC 0x21
 
 /// Set as Isaac's party joins Felix's (Party_AddIsaacsParty); a file saved
@@ -1082,7 +1082,7 @@
 #define FLAG_SHOP_ARTIFACTS_STOCKED 0x400
 
 /// The Mad Plants hidden in bushes, one flag each, set once it is beaten, in
-/// the order of their battles in ENCOUNTER_TABLE_MAD_PLANTS: the Gabomba
+/// the order of their battles in ENCOUNTER_ZONE_MAD_PLANTS: the Gabomba
 /// Catacombs' (0), Taopo Swamp's, Gaia Rock's, Jupiter Lighthouse's and
 /// Trial Road's (4).
 #define FLAG_MAD_PLANT_FIRST 0x9b5

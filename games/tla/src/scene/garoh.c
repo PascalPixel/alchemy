@@ -375,7 +375,7 @@ void Garoh_OpenDoorAndEnter(void) {
   s32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   for (i = ACTOR_FIRST_PLACED; (u32)i <= ACTOR_COUNT - 1; i++) {
     {
       struct Actor *actor = Actor_Get(i);
@@ -471,7 +471,7 @@ void Garoh_AskAboutSecret(s32 actor) {
 /// has to hide it.
 void Garoh_HowlOutLoud(s32 actor) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgGarohAwoooooh);
   // "Awoooooh!"
   FieldEvent_ShowMessageThenWait(actor, 0, 10);
@@ -490,7 +490,7 @@ void Garoh_HowlForDog(s32 actor) {
   s32 msg;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   flag = Event_GetFlag(FLAG_AREA_TEMP_00);
   msg = (s32)MsgGarohGaaarooooooForDog;
   if (flag) {
@@ -512,7 +512,7 @@ void Garoh_HowlForDog(s32 actor) {
 /// says he is the reason the village no longer needs its hoods.
 void Garoh_LittleWerewolfThanks(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldActor_Stop(ACTOR_LITTLE_WEREWOLF);
   Actor_SetAnimation(ACTOR_LITTLE_WEREWOLF, ANIM_STAND);
   FieldEvent_Wait(10);
@@ -569,7 +569,7 @@ void Garoh_WerewolfPeersFromCave(void) {
   if (flag == 0) {
     Event_SetFlag(FLAG_WEREWOLF_PEERED_OUT);
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_CAVE_ENTRANCE), 0);
     facing = FACING_SOUTH;
     Actor_SetPositionAndFacing(ACTOR_CAVE_ENTRANCE, toFIXED(360), toFIXED(199),
@@ -1211,7 +1211,7 @@ void Garoh_WerewolfRunsPast(void) {
 
   Event_SetFlag(FLAG_GAROH_SAW_WEREWOLF);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetPosition(ACTOR_WEREWOLF, 96, 8);
   FieldEvent_SetMessageId((s32)MsgGarohGaaaroooooo);
   // "Gaaaroooooo!"
@@ -1571,7 +1571,7 @@ void Garoh_WerewolfRunsPast(void) {
 void Garoh_FollowWerewolfIntoCave(void) {
   Event_SetFlag(FLAG_GAROH_FOLLOWED_WEREWOLF);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgGarohHaowooo);
   Actor_SetPosition(ACTOR_WEREWOLF, 144, 752);
   Actor_WalkToAndWait(ACTOR_FELIX, 280, 776);
@@ -1675,7 +1675,7 @@ void Garoh_FollowWerewolfIntoCave(void) {
 void Garoh_WerewolvesRevealThemselves(void) {
   Event_SetFlag(FLAG_GAROH_MET_WEREWOLVES);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgGarohWait);
   Actor_SetPosition(ACTOR_MAHA, 328, 40);
   Actor_SetPosition(ACTOR_WEREWOLF, 328, 40);
@@ -2168,7 +2168,7 @@ void Garoh_MahaTellsTheLegend(void) {
 
   Event_SetFlag(FLAG_GAROH_HEARD_MAHA);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgGarohAhYouCame);
   Actor_SetPosition(ACTOR_MAHA, 328, 40);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH, 0);

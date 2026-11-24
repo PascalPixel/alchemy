@@ -26,11 +26,11 @@ void FieldEffect_SpawnRevealMarkers(void);
 void HangingVine_Hang(s32 objectId, s32 grow);
 void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
                                                s32 magnitude, s32 angle);
-s32 BattleEffect_GetObjectDepth(struct Actor *actor);
+s32 Actor_GetSpriteDepth(struct Actor *actor);
 
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer);
 void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z);
@@ -59,7 +59,7 @@ extern const u8 gAnimationFacing_OnePicture[16];
 extern const u8 gAnimationFacing_FrontBackSwapped[8];
 extern const u8 gAnimationFacing_FrontBack[8];
 extern const u8 gAnimationFacing_ThreePictures[16];
-extern const u8 gAnimationFacing_SixPictures[64];
+extern const u8 gAnimationFacing_FivePictures[64];
 extern const u8 gAnimationFacing_EightPictures[8];
 
 extern const struct ActorPlacement gField_DefaultPlacements[];
@@ -125,7 +125,7 @@ void HangingVine_Draw(void);
 void HangingVine_Update(void);
 struct HangingVineSlot *HangingVine_FindSlot(s32 id);
 
-void BattleEffect_DrawSceneSprite(void);
+void FieldPsynergy_DrawCanvasSprite(void);
 
 void GroundParticles_Update(void);
 
@@ -179,7 +179,7 @@ extern const s32 gSand_GrainScript[];
 extern const s32 gActor_WakeScript[];
 extern const s32 gActor_SplashScript[];
 
-struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+struct Actor *Actor_CreateSilhouette(s32 x, s32 y, s32 z, s32 type);
 
 s32 Actor_GetSpriteById(s32 key);
 void Actor_CopyGraphics(u32 targetId, u32 sourceId);

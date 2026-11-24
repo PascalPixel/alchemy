@@ -274,7 +274,7 @@ void GarohRooms_AskWhatTheWanderersSeek(s32 actor) {
   s32 message;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   message = (s32)MsgGarohInteriorsGoodEveningWanderersAreYou;
   Event_SetMessageId(message);
   // "Good evening, wanderers! Are you looking for something?"
@@ -307,7 +307,7 @@ void GarohRooms_AskWhatTheWanderersSeek(s32 actor) {
 /// noisy again last night.
 void GarohRooms_TalkToDisappointedTraveler(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
     // "Those wolves were really noisy last night, too."
     Event_SetMessageId((s32)MsgGarohInteriorsThoseWolvesWereReallyNoisy);
@@ -323,7 +323,7 @@ void GarohRooms_TalkToDisappointedTraveler(void) {
 /// Stone?"; by day he wants to stay and try climbing Air's Rock once more.
 void GarohRooms_TalkToStubbornTraveler(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
     // "Maybe we should stay and try climbing Air's Rock one more time."
     Event_SetMessageId((s32)MsgGarohInteriorsMaybeWeShouldStayAnd);
@@ -339,7 +339,7 @@ void GarohRooms_TalkToStubbornTraveler(void) {
 /// scared of wolves and keeps indoors at night.
 void GarohRooms_ReadDisappointedTravelersMind(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
     // "I'm scared of wolves, so I don't go out much at night..."
     Event_SetMessageId((s32)MsgGarohInteriors64);
@@ -355,7 +355,7 @@ void GarohRooms_ReadDisappointedTravelersMind(void) {
 /// do it.
 void GarohRooms_ReadStubbornTravelersMind(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
     // "If I used a lever, I could probably make that rock spin..."
     Event_SetMessageId((s32)MsgGarohInteriorsIfIUsedALever);
@@ -481,7 +481,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 void GarohRooms_WakeAtInn(void) {
   GameFlag_Set(FLAG_GAROH_SECRET_SHARED);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_Wait(30);
   ActorSystem_SuspendProjectionAndShowSprites();
   Sound_Play(MUS_OVERNIGHT_AT_THE_INN);

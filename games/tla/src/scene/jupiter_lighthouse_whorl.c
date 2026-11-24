@@ -513,7 +513,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     Event_ClearFlag(FLAG_EAST_STAKE_SUNK);
     Event_Wait(10);
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldCamera_MoveTo(664, CAMERA_KEEP, 136, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(20);
@@ -557,8 +557,8 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
 
 /// Nothing visible happens as Felix starts to cast Pound on the east hall's
 /// stake; whatever the hall was still doing is settled first
-/// (`Event_ResolvePendingActions`).
-void JupiterLighthouse_StartPound(void) { Event_ResolvePendingActions(0); }
+/// (`Event_EndLastingPsynergy`).
+void JupiterLighthouse_StartPound(void) { Event_EndLastingPsynergy(0); }
 
 /// Pound hammers the cone-shaped stake in the east or the west hall down into
 /// the floor.
@@ -904,7 +904,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/actor_set_cell_open.h"
 
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16

@@ -17,7 +17,7 @@
 /// visitEntrance is `variant` (or any, for -1). The main routine calls it at
 /// every scene entry; MapScreen_Show offers the marked places.
 void WorldMap_MarkPlaceVisited(s32 id, s32 variant) {
-  const struct FlagEntry *entry = FlagEntries_GetTable();
+  const struct WorldMapPlace *entry = WorldMapPlaces_GetTable();
 
   for (; entry->flag != 0; entry++) {
     if (entry->visitScene != id)
@@ -32,7 +32,7 @@ void WorldMap_MarkPlaceVisited(s32 id, s32 variant) {
 /// Returns the value of the flag entry whose flag is flag, or 1 when there is
 /// none or its value is 0.
 s32 FlagEntries_GetValue(s32 flag) {
-  const struct FlagEntry *entry = FlagEntries_GetTable();
+  const struct WorldMapPlace *entry = WorldMapPlaces_GetTable();
 
   for (; entry->flag != 0; entry++) {
     if (entry->flag == flag && entry->value != 0)
@@ -299,7 +299,7 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
 
 /// Sets the scene the party returns to after a defeat
 /// (gMainRoutineState.restartScene and restartEntrance), from the first rule of
-/// gParty_PairResolveRules that matches the current scene and entrance: rows
+/// gScene_ReturnRules that matches the current scene and entrance: rows
 /// of eight halfwords that open {scene, entrance (-1 for any), return scene,
 /// return entrance}, ended by scene -1. Without a match the restart point stays
 /// as it was.
@@ -312,7 +312,7 @@ void Scene_SetRestartPoint(void) {
   sceneId = party->next;
   entrance = party->entrance;
 
-  for (rule = gParty_PairResolveRules; rule[0] != -1; rule += 8) {
+  for (rule = gScene_ReturnRules; rule[0] != -1; rule += 8) {
     if (rule[0] == sceneId && (rule[1] == -1 || rule[1] == entrance)) {
       party->restartScene = rule[2];
       party->restartEntrance = rule[3];
@@ -324,11 +324,11 @@ void Scene_SetRestartPoint(void) {
 /// Where the party comes out on the world map after reaching scene and
 /// entrance (Teleport's choice calls it). With FLAG_SHIP_CAN_SAIL set (the
 /// party has the ship, whose mooring the map screen marks), finds the
-/// first rule of gParty_PairResolveRules for scene and entrance (-1 on either
+/// first rule of gScene_ReturnRules for scene and entrance (-1 on either
 /// side matches any entrance) and copies its position, x and z in 16.16 and the
 /// third value as is, to gMainRoutineState.shipX, shipZ and shipFacing.
 void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
-  const s16 *rule = gParty_PairResolveRules;
+  const s16 *rule = gScene_ReturnRules;
 
   if (GameFlag_Get(FLAG_SHIP_CAN_SAIL) == 0)
     return;
@@ -347,7 +347,7 @@ void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
 /// (its third and fourth values): with FLAG_SHIP_CAN_SAIL set, clears
 /// ownerOverride and copies the rule's position to the party's saved position.
 void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance) {
-  const s16 *rule = gParty_PairResolveRules;
+  const s16 *rule = gScene_ReturnRules;
 
   if (GameFlag_Get(FLAG_SHIP_CAN_SAIL) == 0)
     return;

@@ -109,7 +109,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Shop" in the fourth.
 void IncreaseItemAndLevel_ShowName(s32 actorId) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (gMainRoutineState.entrance == ENTRANCE_NAMES_FIRST)
     Event_SetMessageId(actorId + (s32)MsgFixingThisWill);
   else if (gMainRoutineState.entrance == ENTRANCE_NAMES_SECOND)
@@ -129,7 +129,7 @@ void IncreaseItemAndLevel_ShowName(s32 actorId) {
 /// the next name: Jenna "Sheba", Sheba "Piers" and Piers "Alex".
 void IncreaseItemAndLevel_ShowCharacterName(s32 character) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId(character + (s32)MsgNamesIsaac);
   MessageArgument_Push(character, MESSAGE_ARGUMENT_ACTOR);
   Event_ShowMessageAndWait(character, 0);
@@ -691,7 +691,7 @@ s32 Scene_Initialize(void) {
 /// (312, 416).
 void IncreaseItemAndLevel_RunMotionTest(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetAnimationById(ACTOR_PORTRAIT_BROWSER, ANIM_WALK);
   Actor_SetAnimationById(ACTOR_LEVEL_EDITOR, ANIM_SHAKE_HEAD);
   Actor_WaitForAnimationChange(ACTOR_PORTRAIT_BROWSER);

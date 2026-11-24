@@ -746,9 +746,9 @@ void PsynergyTest_UpdateRings(struct Actor *actor) {
           sprite->scaleX = sine;
           sprite->scaleY = sine;
           if (j == 0) {
-            sprite->depth = BattleEffect_GetObjectDepth(actor) - 1;
+            sprite->depth = Actor_GetSpriteDepth(actor) - 1;
           } else {
-            sprite->depth = BattleEffect_GetObjectDepth(actor) + 1;
+            sprite->depth = Actor_GetSpriteDepth(actor) + 1;
             sprite->y -= toFIXED(1);
             sprite->scaleY = -sprite->scaleY;
           }
@@ -991,7 +991,7 @@ void PsynergyTest_StartRings(struct Actor *actor, struct SparkleState *state) {
       EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tile);
       sprite->oam.fullColor = 0;
       sprite->oam.palette = 0;
-      sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
+      sprite->oam.priority = Actor_GetSpritePriority(actor);
       sprite++;
     }
   }

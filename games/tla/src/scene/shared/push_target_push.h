@@ -37,8 +37,8 @@ void PushTarget_Push(struct PushTarget target) {
   height = (ABS(gPushRectangles[rectangle][1]) +
             ABS(gPushRectangles[rectangle][3])) >>
            4;
-  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_GROUND, cell[0], cell[2],
-                                         width, height, CELL_BEHAVIOR_NORMAL);
+  MapGrid_FillCollisionRectangle(MAPGRID_LAYER_GROUND, cell[0], cell[2], width,
+                                 height, CELL_BEHAVIOR_NORMAL);
   Actor_SetSpeedAndAcceleration(gMainRoutineState.leaderActorId, 0.5, 0.1);
   Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_PUSH);
   System_Wait(15);
@@ -98,19 +98,16 @@ void PushTarget_Push(struct PushTarget target) {
   originZ = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
   MapGrid_CopyCellAttributes(target.x, target.z, width, height,
                              originX + target.x, originZ + target.z);
-  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_GROUND, target.x,
-                                         target.z, width, height,
-                                         CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_OVERHEAD, target.x,
-                                         target.z, width, height,
-                                         CELL_BEHAVIOR_WALL);
+  MapGrid_FillCollisionRectangle(MAPGRID_LAYER_GROUND, target.x, target.z,
+                                 width, height, CELL_BEHAVIOR_WALL);
+  MapGrid_FillCollisionRectangle(MAPGRID_LAYER_OVERHEAD, target.x, target.z,
+                                 width, height, CELL_BEHAVIOR_WALL);
   cell[0] = FIELD_CELL(from[0] + toFIXED(gPushRectangles[rectangle][0]));
   cell[2] = FIELD_CELL(from[2] + toFIXED(gPushRectangles[rectangle][1]));
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
-  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_OVERHEAD, cell[0],
-                                         cell[2], width, height,
-                                         CELL_BEHAVIOR_NORMAL);
+  MapGrid_FillCollisionRectangle(MAPGRID_LAYER_OVERHEAD, cell[0], cell[2],
+                                 width, height, CELL_BEHAVIOR_NORMAL);
   Event_NoOp();
 }

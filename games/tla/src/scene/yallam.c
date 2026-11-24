@@ -348,7 +348,7 @@ void Yallam_EnterDoor(void) {
   s32 index;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
     struct Actor *actor = Actor_Get(i);
 
@@ -418,7 +418,7 @@ void Yallam_UncoverAntidote(void) {
     if (FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(ANTIDOTE_SPOT_X)) &&
         FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(ANTIDOTE_SPOT_Z))) {
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 16, 0);
@@ -450,7 +450,7 @@ void Yallam_UncoverNut(void) {
     if (FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(NUT_SPOT_X)) &&
         FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(NUT_SPOT_Z))) {
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 0, -16);
@@ -486,7 +486,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Felix talks to him facing any way but west, south-west or north-west.
 void Yallam_OfferYeppSong(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId(MsgDoYouWant);
   // "Do you want to hear one of the songs Yepp wrote?"
   Event_OpenMessage(ACTOR_SONG_LEADER, 0);
@@ -509,7 +509,7 @@ void Yallam_TalkAboutSongCircles(void) {
   s16 angle = actor->facing;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   actor->riseEnabled = 1;
   if (state->psynergy == 0) {
     Actor_FaceActor(ACTOR_CIRCLES_CHILD, gMainRoutineState.leaderActorId, 0);
@@ -538,7 +538,7 @@ void Yallam_TalkAboutSongGame(void) {
   s16 angle = actor->facing;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   actor->riseEnabled = 1;
   if (state->psynergy == 0) {
     Actor_FaceActor(ACTOR_GAME_CHILD, gMainRoutineState.leaderActorId, 0);

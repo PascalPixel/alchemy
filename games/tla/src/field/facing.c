@@ -47,7 +47,7 @@ const u8 gAnimationFacing_FivePicturesUnused[16] = {
 
 /// ANIM_FACING_FIVE_PICTURES's table: five pictures over 64 sectors, where
 /// The Broken Seal's has 16.
-const u8 gAnimationFacing_SixPictures[64] = {
+const u8 gAnimationFacing_FivePictures[64] = {
     1, 1, 1, 1, 0, 0, 0, 0,
     0, 0, 0, 0, 3, 3, 3, 3,
     3, 3, 3, MIRRORED(3), MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0),
@@ -99,7 +99,7 @@ const s32 gActorScript_CycleTable[32] = {
 
 /// The idle script an actor returns to when its own one ends: a lone SC_END,
 /// which reloads it. ActorScript_End (SC_END) points an actor here.
-const s32 gScript_MainScript[1] = {
+const s32 gActorScript_IdleScript[1] = {
     SC_END,
 };
 

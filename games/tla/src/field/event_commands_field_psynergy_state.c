@@ -324,7 +324,7 @@ void FieldPsynergy_StartMindReadWave(s32 casterId, s32 targetId) {
   state->delay = 8;
   state->counter = 0;
   FieldPsynergy_FadeToCastColor();
-  FieldEffect_AdvanceHueCycle();
+  MindRead_AdvanceTint();
   PaletteFade_SetTarget(RGB(state->red, state->green, state->blue) |
                             PALETTE_TINT_CUSTOM,
                         PALETTES_BG);
@@ -349,7 +349,7 @@ void FieldPsynergy_StopMindReadWave(void) {
 
 /// Greys the message window's white and most of its other colours
 /// (MIND_READ_GREY), so messages read as thoughts, and starts the BG0 line
-/// scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
+/// scroll (MindRead_StartRipple) at each VBlank.
 void FieldPsynergy_GreyMindReadPalette(void) {
   volatile u16 *p;
 
@@ -376,14 +376,14 @@ void FieldPsynergy_GreyMindReadPalette(void) {
   *p = MIND_READ_GREY;
   p += 1;
   *p = MIND_READ_GREY;
-  Task_Add((TaskFunc)FieldEffect_ArmBg0HBlankDma, TASK_PASS_VBLANK - 20);
+  Task_Add((TaskFunc)MindRead_StartRipple, TASK_PASS_VBLANK - 20);
 }
 
 /// Stops the BG0 line scroll and restores WINDOW_PALETTE.
 void FieldPsynergy_RestoreMindReadPalette(void) {
   struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
 
-  Task_Remove((TaskFunc)FieldEffect_ArmBg0HBlankDma);
+  Task_Remove((TaskFunc)MindRead_StartRipple);
   BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_WHITE) = RGB_WHITE;
   BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_BLACK) = RGB(0, 0, 0);
   BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_DARK_GREY) = RGB(10, 10, 10);

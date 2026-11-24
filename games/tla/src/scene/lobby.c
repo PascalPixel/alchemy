@@ -349,7 +349,7 @@ s32 LinkLobby_PromptToParticipate(void) {
     return set;
   }
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgLobbyIfYouWantToParticipate);
   // "If you want to participate, please step into the circle!"
   Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -366,7 +366,7 @@ s32 LinkLobby_ReportLinkDisconnected(void) {
   Event_ClearFlag(FLAG_LINK_LOBBY_ATTENDANT_ASKED);
   Event_ClearFlag(FLAG_LINK_LOBBY_ENTERING_BATTLE);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   state->raisedTrigger = LOBBY_EVENT_NONE;
   Event_SetMessageId((s32)MsgLobbyLinkWasDisconnected);
   // "The link was disconnected."
@@ -748,14 +748,14 @@ s32 LinkLobby_EnterBattle(void) {
   framesUnanswered = 0;
   if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
   } else {
     if (!Event_GetFlag(FLAG_LINK_LOBBY_ATTENDANT_ASKED))
       return;
     if (Event_GetFlag(FLAG_LINK_LOBBY_LINK_LOST_UNREPORTED))
       return;
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetFlag(FLAG_LINK_LOBBY_ENTERING_BATTLE);
     LinkLobby_WriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
     if (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
@@ -877,7 +877,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
 
   msg = (s32)MsgLobbyPleaseSpeakToMeWhen;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineState.leaderActorId, 0);
   if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0)
     wait(1);
@@ -975,7 +975,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
   s32 base;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceActor(actor, gMainRoutineState.leaderActorId, 0);
   if (facing > FACING_NORTHWEST && facing < FACING_NORTHEAST) {
     base = (s32)MsgLobbyItLooksLike;
@@ -1028,7 +1028,7 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
   s32 ok;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceActor(actorId, gMainRoutineState.leaderActorId, 0);
   Event_SetMessageId((s32)MsgLobbyChooseYourParametersHere);
   // "Choose your parameters here."
@@ -1088,7 +1088,7 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
 /// Sanctum's services.
 void LinkLobby_OpenSanctum(s32 actor) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sanctum_Run(actor);
   Event_End();
 }
@@ -1145,7 +1145,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   s32 all;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceActor(actor, gMainRoutineState.leaderActorId, 0);
   Event_SetMessageId((s32)MsgLobbyYouHaveSongRequest);
   // "You have a song request?"
@@ -1225,7 +1225,7 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
   s32 own = LinkLobby_PartyContains(actor);
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceActor(actor, gMainRoutineState.leaderActorId, 0);
   if (Event_GetFlag(FLAG_LINK_LOBBY_LINK_BATTLE_ENDED)) {
     // DEAD: Felix's own flag is read and dropped; the ROM keeps the call.
@@ -1285,7 +1285,7 @@ s32 LinkLobby_TalkToVisitor(s32 actor) {
     return;
   }
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_LINK_LOBBY_VISITOR_SPOKE)) {
     switch (actor) {
     case ACTOR_ROOTING_VISITOR:
@@ -1336,7 +1336,7 @@ s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   s32 message;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceActor(actor, gMainRoutineState.leaderActorId, 0);
   if (!Event_GetFlag(FLAG_LINK_LOBBY_PARTY_ORDER_NEXT)) {
     if (Party_CountMembers() == 8)
@@ -1363,7 +1363,7 @@ s32 LinkLobby_ReportMonsterRecord(s32 id) {
   struct MainRoutineState *gs;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   gs = &gMainRoutineState;
   Actor_FaceActor(id, gs->leaderActorId, 0);
   if (gs->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
@@ -1454,7 +1454,7 @@ s32 LinkLobby_Initialize(void) {
     s32 v;
 
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
@@ -1509,7 +1509,7 @@ s32 LinkLobby_Initialize(void) {
   } else if (gMainRoutineState.entrance == LOBBY_AFTER_MONSTER_LOSS) {
     gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
@@ -1539,7 +1539,7 @@ s32 LinkLobby_Initialize(void) {
     s32 v;
 
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
@@ -1570,7 +1570,7 @@ s32 LinkLobby_Initialize(void) {
     Event_End();
   } else if (gMainRoutineState.entrance == LOBBY_AFTER_LINK_LOSS) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
@@ -1589,7 +1589,7 @@ s32 LinkLobby_Initialize(void) {
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     if (gMainRoutineState.idleSleepEnabled != 0) {
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineState.leaderActorId, 0);

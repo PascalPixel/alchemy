@@ -206,7 +206,7 @@ enum AirsRockFujinShieldChestEntrance {
 };
 #include "../field/actor_set_sprite_priority.c"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 
 #include "shared/scene_create_actor.h"
 
@@ -227,7 +227,7 @@ s32 AirsRock_ClearScriptedActorSpriteFlags(s32 actorId) {
 
 #include "shared/map_cell_set.c"
 
-#include "../field/actor_wait_until_idle.c"
+#include "../field/actor_wait_until_landed.c"
 
 #undef EFFECT_SET_SCRIPT
 
@@ -288,7 +288,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// and its warning that the stones magnify the wind.
 void AirsRock_ExamineWindStone(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   // "Beware the Wind Stones." "The stones magnify the power of the wind. Use
   // caution when approaching Air's Rock."
   Message_ShowCentered((s32)MsgFieldWindStoneWarning, 1);
@@ -302,7 +302,7 @@ s32 TilesetAnim_Resume();
 /// screen wipes to the great hall inside Air's Rock.
 void AirsRock_EnterTheRock(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(64, 64, 83, 35, 1, 2);
   TilesetAnim_Resume(0);
@@ -327,7 +327,7 @@ void AirsRock_MoveFirstPillar(void) {
 
   actor = Actor_Get(ACTOR_FIRST_PILLAR);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (FIELD_CELL(actor->x.fixed) == 31) {
     Event_SetFlag(FLAG_FIRST_PILLAR_MOVED_WEST);
   } else {
@@ -356,7 +356,7 @@ void AirsRock_MoveSecondPillar(void) {
   actor = Actor_Get(ACTOR_SECOND_PILLAR);
   value = MapCell_GetAttributes(3, 70, 67);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (FIELD_CELL(actor->x.fixed) == 32) {
     Event_SetFlag(FLAG_SECOND_PILLAR_MOVED_WEST);
     value &= CELL_ATTRIBUTE_BITS;
@@ -382,7 +382,7 @@ void AirsRock_MoveThirdPillar(void) {
 
   actor = Actor_Get(ACTOR_THIRD_PILLAR);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (FIELD_HALF_CELL(actor->x.fixed) == 23) {
     Event_SetFlag(FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED);
   }
@@ -441,7 +441,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Wind Stone or a twister rock; the game clears what is pending so that the
 /// cast can go on to the stone's or rock's own whirlwind
 /// (AirsRock_TakeOverWhirlwind).
-void AirsRock_StartWhirlwind(void) { Event_ResolvePendingActions(0); }
+void AirsRock_StartWhirlwind(void) { Event_EndLastingPsynergy(0); }
 
 /// Nothing visible happens of its own as Felix casts Whirlwind on a Wind
 /// Stone or a twister rock; the game tells Whirlwind to leave out its usual
@@ -527,7 +527,7 @@ void AirsRock_BlowGust(void) {
   s32 newZ, newX, flag = 0, steps = 0, hit, angle, i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_RUSH);
   gust = FieldActor_Create(SPRITE_WHIRLWIND, leader->x.fixed, leader->y.fixed,
                            leader->z.fixed);
@@ -749,7 +749,7 @@ void AirsRock_WhirlwindClearsWall(void) {
   FIXED x;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_TILES), buffer);
   Dma_Set(buffer, BG_CHAR_BLOCK(3) + WHIRLWIND_TOP_TILE * TILE_SIZE_4BPP,
@@ -921,7 +921,7 @@ void AirsRock_RideWhirlwind(void) {
   u16 facing;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   leader->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(leader, 0);
   GameFlag_Set(FLAG_RIDING_WHIRLWIND);
@@ -1013,7 +1013,7 @@ void AirsRock_RideWhirlwind(void) {
     leader->layer = statue->riseCounter;
     FieldActor_SetMoveTargetFX(leader, leader->x.fixed + dx, leader->y.fixed,
                                leader->z.fixed + dz);
-    OverlayObject_WaitUntilIdle(leader);
+    Actor_WaitUntilLanded(leader);
     FieldActor_WaitForMove(leader);
     Actor_SetSpriteFlags(leader, 1);
     leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -1037,7 +1037,7 @@ void AirsRock_RideWhirlwind(void) {
         camera, leader->x.fixed,
         Map_GetTerrainHeight(0, leader->x.fixed, leader->z.fixed),
         leader->z.fixed);
-    OverlayObject_WaitUntilIdle(leader);
+    Actor_WaitUntilLanded(leader);
     FieldActor_WaitForMove(camera);
   }
   Actor_GetById(gMainRoutineState.leaderActorId)->priorityFlags |=
@@ -1212,15 +1212,15 @@ void AirsRock_PlacePillar(void) {
   s32 x, z;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_PlaceMovedBlock();
   Blocks_MarkCells(((u8 *)gAirsRock_EntrancePillars));
   if (Map_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed) !=
       actor->y.fixed) {
     actor->layer = 2;
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    OverlayObject_WaitUntilIdle(actor);
-    OverlayObject_WaitUntilIdle(actor);
+    Actor_WaitUntilLanded(actor);
+    Actor_WaitUntilLanded(actor);
     Event_PlaySound(SE_THUMP);
     actor->motionFlags = 0;
     actor->layer = 0;
@@ -1246,7 +1246,7 @@ s32 FlagBlock_ApplyFlags();
 /// of ice.
 void AirsRock_FreezePuddle(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FlagBlock_ApplyFlags((s32)((u8 *)gAirsRock_FrozenPuddle));
   Event_End();
 }
@@ -1321,7 +1321,7 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   u32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Io_Write16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
@@ -1564,7 +1564,7 @@ void AirsRock_WhirlwindClearsFog(void) {
   s32 z;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_TILES), buffer);
   Dma_Set(buffer, BG_CHAR_BLOCK(3) + WHIRLWIND_TOP_TILE * TILE_SIZE_4BPP,

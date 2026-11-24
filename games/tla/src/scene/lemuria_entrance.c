@@ -145,7 +145,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 UNUSED void LemuriaEntrance_BoardShip(void) {
   if (Event_GetFlag(FLAG_TRANSFERRED_DJINN_FIRST) != 0) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     {
@@ -263,7 +263,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   saved = gMainRoutineState.messageSpeed;
   gMainRoutineState.messageSpeed = 2;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetSpeed(ACTOR_SHIP, 0.27);
   Actor_SetScript(ACTOR_SHIP, gLemuriaEntrance_ShipSailsOut);
   FieldEvent_Wait(80);

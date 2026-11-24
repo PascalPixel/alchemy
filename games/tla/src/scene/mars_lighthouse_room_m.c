@@ -416,7 +416,7 @@ void MarsLighthouseRoomM_LightFlame(void) {
   struct FieldState *state;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(30);
@@ -743,7 +743,7 @@ s32 Scene_Initialize(void) {
         struct Actor *actor;
 
         Event_Start();
-        FieldEvent_ResolvePendingActions(0);
+        FieldEvent_EndLastingPsynergy(0);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -920,7 +920,7 @@ void MarsLighthouseRoomM_ReadEarthInscription(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
   PaletteFade_StartInterpolation(20);
@@ -942,7 +942,7 @@ void MarsLighthouseRoomM_ReadWaterInscription(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
   PaletteFade_StartInterpolation(20);
@@ -964,7 +964,7 @@ void MarsLighthouseRoomM_ReadFireInscription(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
   PaletteFade_StartInterpolation(20);
@@ -986,7 +986,7 @@ void MarsLighthouseRoomM_ReadWindInscription(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
   PaletteFade_StartInterpolation(20);
@@ -1055,7 +1055,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
       u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       FieldCamera_SetSpeed(2);
       FieldCamera_MoveTo(224, 64, 216, 1);
       FieldCamera_WaitForArrival();
@@ -1083,7 +1083,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     FieldCamera_SetSpeed(2);
     FieldCamera_MoveTo(224, 64, 216, 1);
     FieldCamera_WaitForArrival();
@@ -1285,7 +1285,7 @@ s32 Ride_GetCounter(void) { return RIDE_STATE->counter; }
 
 #include "shared/actor_blink.h"
 
-s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
+s32 MapGrid_GetTerrainKindOrBumpAt(s32 terrain, s32 x, s32 z);
 
 #include "shared/leader_knock_back.c"
 
@@ -1295,7 +1295,7 @@ void MarsLighthouseRoomM_KnockBackIfHit(void) {
     Leader_KnockBack();
 }
 
-s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainKindOrBumpAt(s32 layer, s32 x, s32 z);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
 /// Hit by a rolling fireball: the leader is hurt, blinks, and is carried along
@@ -1330,14 +1330,14 @@ s32 Fireball_CarryLeader(void) {
   ride = RIDE_STATE;
   Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_ClearFlag(FLAG_MENU_OPEN);
   leader->update = (ObjectUpdate)Actor_Blink;
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {
-    s32 kind = MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x.fixed,
-                                                       leader->z.fixed);
+    s32 kind =
+        MapGrid_GetTerrainKindOrBumpAt(0, leader->x.fixed, leader->z.fixed);
 
     if (kind != TERRAIN_ROUNDED_SQUARE) {
       leader->x.fixed += ride->car->stepX;

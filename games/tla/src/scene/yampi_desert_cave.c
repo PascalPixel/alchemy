@@ -220,10 +220,10 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   MapGrid_CopyCellAttributes(x, z, w, h, (u16)i + x, (u16)az + z);
   MapGrid_CopyCellAttributes((u16)FIELD_CELL(bx) + x, (u16)FIELD_CELL(bz) + z,
                              w, h, x + 64, z + 64);
-  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_GROUND, x, z, w, h,
-                                         CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_OVERHEAD, x, z, w, h,
-                                         CELL_BEHAVIOR_WALL);
+  MapGrid_FillCollisionRectangle(MAPGRID_LAYER_GROUND, x, z, w, h,
+                                 CELL_BEHAVIOR_WALL);
+  MapGrid_FillCollisionRectangle(MAPGRID_LAYER_OVERHEAD, x, z, w, h,
+                                 CELL_BEHAVIOR_WALL);
   return 1;
 }
 
@@ -401,8 +401,8 @@ void YampiDesertCave_PushLog(struct LogRoll roll) {
   cell[2] = FIELD_CELL(actor->z.fixed + toFIXED(gPushRectangles[kind][1]));
   w = (ABS(gPushRectangles[kind][0]) + ABS(gPushRectangles[kind][2])) >> 4;
   h = (ABS(gPushRectangles[kind][1]) + ABS(gPushRectangles[kind][3])) >> 4;
-  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_GROUND, cell[0], cell[2],
-                                         w, h, CELL_BEHAVIOR_NORMAL);
+  MapGrid_FillCollisionRectangle(MAPGRID_LAYER_GROUND, cell[0], cell[2], w, h,
+                                 CELL_BEHAVIOR_NORMAL);
   Actor_SetSpeedAndAcceleration(gMainRoutineState.leaderActorId, 0.5, 0.1);
   Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_PUSH);
   wait(15);
@@ -460,10 +460,10 @@ void YampiDesertCave_PushLog(struct LogRoll roll) {
   MapGrid_CopyCellAttributes(roll.x, roll.z, w, h, ax + roll.x, az + roll.z);
   MapGrid_CopyCellAttributes(roll.x + bx, roll.z + bz, w, h, roll.x + 64,
                              roll.z + 64);
-  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_GROUND, roll.x, roll.z,
-                                         w, h, CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_OVERHEAD, roll.x, roll.z,
-                                         w, h, CELL_BEHAVIOR_WALL);
+  MapGrid_FillCollisionRectangle(MAPGRID_LAYER_GROUND, roll.x, roll.z, w, h,
+                                 CELL_BEHAVIOR_WALL);
+  MapGrid_FillCollisionRectangle(MAPGRID_LAYER_OVERHEAD, roll.x, roll.z, w, h,
+                                 CELL_BEHAVIOR_WALL);
   cell[0] = FIELD_CELL(from[0] + toFIXED(gPushRectangles[kind][0]));
   cell[2] = FIELD_CELL(from[2] + toFIXED(gPushRectangles[kind][1]));
   MapGrid_CopyCellAttributes(ax + cell[0], az + cell[2], w, h, cell[0],
@@ -528,7 +528,7 @@ void YampiDesertCave_FightCrystal(void) {
 /// question mark over Felix's head.
 void YampiDesertCave_WonderAtRipple(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldActor_ShowEmote(gMainRoutineState.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_QUESTION, 32);
   Event_End();
@@ -787,7 +787,7 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   struct Actor *leader;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_StartRepeatedMotion(ACTOR_VALUKAR, 2);
   Event_Wait(20);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
@@ -808,7 +808,7 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   gMainRoutineState.pendingDjinni = IF_FLAG_SET(FLAG_VALUKAR_BEATEN);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   gMainRoutineState.battleBackground = (s32)&ResourceId_LavaCaveBackdrop;
-  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_HIDDEN_BOSSES,
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_HIDDEN_BOSSES,
                                         HIDDEN_BOSS_VALUKAR);
 }
 

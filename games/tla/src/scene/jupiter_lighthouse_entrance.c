@@ -150,7 +150,7 @@ void JupiterLighthouse_ScatterWeedsOverMint(void) {
     if (FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(MINT_SPOT_X)) &&
         FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(MINT_SPOT_Z))) {
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, -16, 0);

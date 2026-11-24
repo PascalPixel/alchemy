@@ -140,7 +140,7 @@ s16 gLightSpritePriority BSS_DATA;
 /// leader steps on.
 struct CellTarget gCrackedTiles BSS_DATA;
 
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
@@ -404,7 +404,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     actor->motionFlags = 0;
     Event_PlaySound(SE_HEAVY_IMPACT);
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldCamera_MoveTo(1016, CAMERA_KEEP, 232, 1);
     FieldCamera_WaitForArrival();
     Actor_SetSpeed(gMainRoutineState.leaderActorId, 1);
@@ -485,7 +485,7 @@ void JupiterLighthouse_OpenFloor(void) {
     return;
   GameFlag_Set(FLAG_TRAPDOOR_OPEN);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_CHEST_OPEN);
   FieldCamera_MoveTo(776, CAMERA_KEEP, 208, 1);
   FieldCamera_WaitForArrival();
@@ -579,7 +579,7 @@ void JupiterLighthouse_CloseFloor(void) {
     return;
   Event_ClearFlag(FLAG_TRAPDOOR_OPEN);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_CHEST_CLOSE);
   FieldCamera_MoveTo(776, CAMERA_KEEP, 208, 1);
   FieldCamera_WaitForArrival();
@@ -600,7 +600,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// fallen: each answers with a line of their own.
 void JupiterLighthouse_TalkAfterTheFight(s32 actor) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   switch (actor) {
   case ACTOR_ISAAC:
     Actor_RunRepeatedMotion(ACTOR_ISAAC, 2);
@@ -762,7 +762,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 west) {
   s32 angle;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId(MsgAhhhh);
@@ -1265,7 +1265,7 @@ static inline s32 FieldUnit_AddPp(s32 owner, s32 delta) {
 /// neither with PP.
 void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   PLACE(ACTOR_ISAAC, 776, 202, FACING_WEST);
   PLACE(ACTOR_IVAN, 731, 232, FACING_NORTHWEST);
   PLACE(ACTOR_KARST, 731, 213, FACING_SOUTH);
@@ -1346,7 +1346,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   s32 answer;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(737, 0, 209, 0);
   gMainRoutineState.leaderActorId = ACTOR_FELIX;
   Party_RemoveMember(ISAAC);

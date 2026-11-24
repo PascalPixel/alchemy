@@ -29,7 +29,7 @@
 #include "item_ids.h"
 #include "ability_ids.h"
 
-extern const s32 gBattleEffect_SharedParticleScript[];
+extern const s32 gFieldEffect_ReleaseScript[];
 
 /// Whirlwind: its leaves, their circling and wandering, the target's shrinking
 /// and the orb's flight, in frames.
@@ -99,7 +99,7 @@ void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
     effect->turnFrames = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
   }
   if (++effect->swirlFrames == WHIRLWIND_WANDER_FRAMES)
-    Actor_StartScriptFar(effect, gBattleEffect_SharedParticleScript);
+    Actor_StartScriptFar(effect, gFieldEffect_ReleaseScript);
 }
 
 /// Per-frame update of a Whirlwind particle: circles the anchor at 8 pixels,
@@ -445,9 +445,9 @@ void FieldPsynergy_Halt(void) {
 }
 
 /// Per-frame update of an actor held by Halt: its sprite flickers through the
-/// colour modes of gBattleEffect_RandomChildValues at random.
+/// colour modes of gHalt_FlickerColorModes at random.
 void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
-  const s8 *table = gBattleEffect_RandomChildValues;
+  const s8 *table = gHalt_FlickerColorModes;
   s32 random = Random16();
   Actor_SetSpriteColorModeFar(actor, table[(u32)(random * 8) >> 16]);
 }
@@ -462,11 +462,11 @@ void FieldPsynergy_HaltActor(s32 actorId) {
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
     gMainRoutineState.pausedUpdate = actor->update;
-    gMainRoutineState.pausedPose = 0;
+    gMainRoutineState.pausedColorMode = 0;
     if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
       entry = ((struct Sprite *)actor->sprite)->entries[0];
       if (entry != NULL) {
-        gMainRoutineState.pausedPose = entry->colorMode;
+        gMainRoutineState.pausedColorMode = entry->colorMode;
       }
     }
     actor->update = (ObjectUpdate)FieldPsynergy_UpdateHaltedActor;
@@ -484,7 +484,7 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
     if (actor->update == (ObjectUpdate)FieldPsynergy_UpdateHaltedActor) {
       actor->update = gMainRoutineState.pausedUpdate;
       gMainRoutineState.pausedUpdate = NULL;
-      Actor_SetSpriteColorModeFar(actor, (s8)gMainRoutineState.pausedPose);
+      Actor_SetSpriteColorModeFar(actor, (s8)gMainRoutineState.pausedColorMode);
     }
     actor->paused = 0;
     Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);
@@ -958,7 +958,7 @@ void FieldPsynergy_Retreat(void) {
 
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
-    FieldParticle_SetActorMode(effect, 7);
+    FieldParticle_SetAnimation(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, Random_Below(7));
     scale = (Random16() >> 1) + FIXED_ONE * 6 / 5; // 1.2 to 1.7
     effect->scaleY = scale;
@@ -1281,7 +1281,7 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
     EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tiles);
     sprite->oam.fullColor = 0;
     sprite->oam.palette = 0;
-    sprite->oam.priority = BattleEffect_GetObjectPriority(target);
+    sprite->oam.priority = Actor_GetSpritePriority(target);
   }
   state->age[group] = 0;
   state->target = target;
@@ -1321,9 +1321,9 @@ void BattleEffect_UpdateArcEffect(void) {
         sprite->scaleX = scale;
         sprite->scaleY = scale;
         if (i == 0) {
-          sprite->depth = BattleEffect_GetObjectDepth(state->target) - 1;
+          sprite->depth = Actor_GetSpriteDepth(state->target) - 1;
         } else {
-          sprite->depth = BattleEffect_GetObjectDepth(state->target) + 1;
+          sprite->depth = Actor_GetSpriteDepth(state->target) + 1;
           sprite->y -= toFIXED(1);
           sprite->scaleY = -sprite->scaleY;
         }
@@ -1691,8 +1691,8 @@ void FieldPsynergy_Arrow(void) {
   EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X32, tile);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
-  sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
-  sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor) + 1;
+  sprite->oam.priority = Actor_GetSpritePriority(scene->mainActor);
+  sprite->depth = Actor_GetSpriteDepth(scene->mainActor) + 1;
   sprite->scaleX = FIXED_ONE * 2 / 5;
   sprite->scaleY = FIXED_ONE * 2 / 5;
   sprite->angle = scene->angle8;
@@ -1710,8 +1710,8 @@ void FieldPsynergy_Arrow(void) {
   EffectSprite_Init(sprite, 12, 8, OBJ_SIZE_16X16, tile);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
-  sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
-  sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor) + 2;
+  sprite->oam.priority = Actor_GetSpritePriority(scene->mainActor);
+  sprite->depth = Actor_GetSpriteDepth(scene->mainActor) + 2;
   sprite->scaleX = 0;
   sprite->scaleY = 0;
   sprite->angle = scene->angle8;
@@ -1724,8 +1724,8 @@ void FieldPsynergy_Arrow(void) {
 
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->canvasSprite;
-  canvas->priority = BattleEffect_GetObjectPriority(scene->mainActor);
-  canvas->depth = BattleEffect_GetObjectDepth(scene->mainActor) + 3;
+  canvas->priority = Actor_GetSpritePriority(scene->mainActor);
+  canvas->depth = Actor_GetSpriteDepth(scene->mainActor) + 3;
   canvas->mode = CANVAS_SPRITE_256_COLORS;
   canvas->command = 0;
   canvas->angle = scene->angle8;

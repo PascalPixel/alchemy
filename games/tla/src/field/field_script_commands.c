@@ -332,12 +332,12 @@ s32 ActorScript_JumpIfFalse(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_END: hands the actor back to the idle script, gScript_MainScript,
+/// SC_END: hands the actor back to the idle script, gActorScript_IdleScript,
 /// whose lone SC_END runs again each frame. Returns 0.
 s32 ActorScript_End(struct Actor *interpreter) {
   s32 result;
 
-  interpreter->script = gScript_MainScript;
+  interpreter->script = gActorScript_IdleScript;
   interpreter->scriptCursor = (result = 0);
   return result;
 }
@@ -445,7 +445,7 @@ s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
 
 /// Returns the first solid actor that an actor at position values would
 /// overlap, as ActorScript_CheckOverlap tests, or NULL.
-struct Actor *ActorScript_FindOverlappingEntry(struct Actor *actor,
+struct Actor *ActorScript_FindOverlappingActor(struct Actor *actor,
                                                s32 *values) {
   s32 actorIndex;
   struct Actor *candidate = ((struct Actor *)Ram_HeapSlots->actors);
@@ -1112,7 +1112,7 @@ SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareAcceleration, acceleration)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetX, targetX)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetY, targetY)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetZ, targetZ)
-SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareVerticalMotion, bounce)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareBounce, bounce)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareGravity, gravity)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTerrainHeight, groundHeight)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareRiseBaseY, riseBaseY)

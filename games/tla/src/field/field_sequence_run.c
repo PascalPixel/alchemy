@@ -36,7 +36,7 @@ s32 Leader_StepOffTightrope(void);
 /// The hazard count's limit each scene starts with, in steps on hazard cells:
 /// the hazard deals its damage each time the count reaches it.
 #define HAZARD_LIMIT_DEFAULT 16
-/// A Teleport destination's map screen marker (FlagEntry.value's high
+/// A Teleport destination's map screen marker (WorldMapPlace.value's high
 /// nibble): 1 for a place the party walks to; 2 for Lemuria's, which it
 /// reaches aboard the ship.
 #define PLACE_MARKER_ON_FOOT (1 << 4)
@@ -383,7 +383,7 @@ s32 FieldSequence_Run(void) {
       } else if (state->encounter != 0) {
         // A random encounter: save the actors and go to the battle.
         Leader_StopMoving();
-        ObjectTable_Snapshot();
+        ActorTable_Snapshot();
         party->returnMusic = -1;
         party->next = SEQUENCE_BATTLE;
         *entrance = state->encounter;
@@ -479,7 +479,7 @@ s32 FieldSequence_Run(void) {
         } else if (GameFlag_Get(FLAG_MENUS_RAISE_TRIGGER)) {
           state->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
         } else {
-          Event_ResolveAllPendingActions();
+          Event_EndAllLastingPsynergy();
           AreaNameWindow_HideFar();
           party->returnMusic = Sound_GetCurrentBgmFar();
           if (!GameFlag_Get(FLAG_IN_BATTLE_ARENA)) {
@@ -517,7 +517,7 @@ s32 FieldSequence_Run(void) {
     // party moves, and run the walking update until the next request.
     GameFlag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
     if (Field_GetPartyActor() != NULL)
-      Actor_StartRenderModeScriptFar();
+      Actor_StartMovementModeScriptFar();
     pending = &gMainRoutineState.sandActive;
     do {
       wait(1);

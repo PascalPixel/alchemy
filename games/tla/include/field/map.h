@@ -72,7 +72,7 @@ extern const u8 Render_DrawMapCode[];
 /// The size of Render_DrawMapCode (draw_map.s).
 extern u8 Render_DrawMapCodeSize[];
 
-s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction);
+s32 SpriteViewer_StepSpriteId(s32 spriteId, s32 direction);
 void SpriteViewer_PlaceRing(void);
 
 void BlendScript_Start(u16 *script);

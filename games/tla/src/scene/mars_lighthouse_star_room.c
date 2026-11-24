@@ -419,7 +419,7 @@ void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 /// Free of the ice, the Flame Dragons rise and roar, and the battle begins.
 void MarsLighthouseStarRoom_WakeFlameDragons(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   MarsLighthouseStarRoom_ClearDragonIce();
   Event_PlaySound(MUS_SILENCE);
   FieldEvent_Wait(40);
@@ -480,7 +480,7 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   agatioLight = Actor_Get(ACTOR_AGATIO_LIGHT);
   karstLight = Actor_Get(ACTOR_KARST_LIGHT);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MarsLighthouseStarRoom_ClearDragonIce();
   Actor_SetSpriteFlags(Actor_Get(ACTOR_AGATIO), 0);
@@ -660,7 +660,7 @@ void Event_End(void);
 /// dragon fell: "Your hand...so warm... People have such warm hands..."
 void MarsLighthouseStarRoom_HoldWarmHand(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetAnimation(ACTOR_KARST, 5);
   FieldEvent_SetMessageId((s32)MsgMarsLighthouseStarRoomYourHandSoWarmPeople);
   // "Your hand...so warm... People have such warm hands... I had forgotten..."
@@ -687,7 +687,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetAnimation(ACTOR_AGATIO, 5);
   Event_SetMessageId((s32)MsgMarsLighthouseStarRoomItsTooLateForUs);
   // "It's too late for us now... Hurry, light the beacon."
@@ -777,7 +777,7 @@ void MarsLighthouseStarRoom_ExamineStatue(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   // "There's a space for you to place something."
   Message_ShowCentered((s32)MsgMarsLighthouseStarRoomTheresSpace, 1);
   state->fieldMenu = 1;
@@ -802,7 +802,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
 
   palette = (u16 *)Ram_HeapSlots->paletteFade;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   // "Felix used the Mars Star!"
   Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -935,7 +935,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   if (flag == 0) {
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     // "Felix used the Mars Star!"
     Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -1000,7 +1000,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   }
   palette = (u16 *)Ram_HeapSlots->paletteFade;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   // "Felix used the Mars Star!"
   Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -1394,14 +1394,14 @@ s32 Fireball_CarryLeader(void) {
   ride = RIDE_STATE;
   Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_ClearFlag(FLAG_MENU_OPEN);
   leader->update = (ObjectUpdate)Actor_Blink;
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {
-    if (MapGrid_GetCellAttributeLowNibbleOrBump(
-            0, leader->x.fixed, leader->z.fixed) != TERRAIN_ROUNDED_SQUARE) {
+    if (MapGrid_GetTerrainKindOrBumpAt(0, leader->x.fixed, leader->z.fixed) !=
+        TERRAIN_ROUNDED_SQUARE) {
       leader->x.fixed += ride->car->stepX;
       leader->z.fixed += ride->car->stepZ;
     } else {

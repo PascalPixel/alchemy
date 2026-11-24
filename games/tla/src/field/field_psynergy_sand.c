@@ -195,8 +195,8 @@ void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
   FIXED position[3];
 
   EffectSprite_Init(sprite, 16, 30, OBJ_SIZE_32X32, tiles);
-  sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
-  sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
+  sprite->depth = Actor_GetSpriteDepth(scene->mainActor);
+  sprite->oam.priority = Actor_GetSpritePriority(scene->mainActor);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
   if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -250,8 +250,8 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tiles);
   sprite->scaleX = FIXED_ONE / 5;
   sprite->scaleY = FIXED_ONE / 5;
-  sprite->oam.priority = BattleEffect_GetObjectPriority(mainActor);
-  sprite->depth = BattleEffect_GetObjectDepth(mainActor) + 2;
+  sprite->oam.priority = Actor_GetSpritePriority(mainActor);
+  sprite->depth = Actor_GetSpriteDepth(mainActor) + 2;
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
 }

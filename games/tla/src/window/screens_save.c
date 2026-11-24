@@ -540,7 +540,7 @@ s32 Save_ToFile(u32 slot) {
                                            FIELD_MESSAGE_KEEP_OPEN |
                                            FIELD_MESSAGE_LOWER);
     Save_BuildFileSummary();
-    ObjectTable_SnapshotFar();
+    ActorTable_SnapshotFar();
     error = Save_WritePartMasked(slot, gSaveBuffer);
     while (Message_AllTyped() == 0)
       wait(1);
@@ -591,7 +591,7 @@ s32 Save_ToChosenFile(void) {
       gSaveSlot = slot;
       progress = (s32)SaveProgress_Open(SAVE_PROGRESS_SAVING);
       Save_BuildFileSummary();
-      ObjectTable_SnapshotFar();
+      ActorTable_SnapshotFar();
       error = Save_WritePartMasked(slot, gSaveBuffer);
       SaveProgress_Close((struct Window *)progress);
       Message_CloseFinishedWindows();

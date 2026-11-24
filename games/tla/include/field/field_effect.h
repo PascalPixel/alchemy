@@ -28,6 +28,6 @@ extern const u32 gFieldEffect_TargetColors[PSYNERGY_TINT_COUNT];
 
 void FieldEffect_AdvanceMotion(union FieldObject *object);
 
-void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
+void FieldEffect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 #endif

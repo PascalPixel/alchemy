@@ -147,13 +147,11 @@ void FieldPsynergy_GrindOnTarget(void) {
       sprite = &state->sprites[next];
       particle = &state->particles[next];
       if (child != NULL) {
-        sprite->oam.priority = BattleEffect_GetObjectPriority(child);
+        sprite->oam.priority = Actor_GetSpritePriority(child);
         if (angle < TRIG_TURN / 2)
-          sprite->depth =
-              BattleEffect_GetObjectDepth(child) + GRIND_SPRAY_DEPTH;
+          sprite->depth = Actor_GetSpriteDepth(child) + GRIND_SPRAY_DEPTH;
         else
-          sprite->depth =
-              BattleEffect_GetObjectDepth(child) - GRIND_SPRAY_DEPTH;
+          sprite->depth = Actor_GetSpriteDepth(child) - GRIND_SPRAY_DEPTH;
       }
       particle->timer = 0;
       SET_POSITION(particle, scene->x, scene->y + toFIXED(5), scene->z);

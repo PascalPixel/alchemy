@@ -78,7 +78,7 @@ void Sound_SetBgmVolumeTargetFar(s32 target, s32 step);
 /// Plays the music Scene_QueueMusic remembered, if any.
 void Scene_PlayQueuedMusicFar(void);
 /// Saves up to 32 actors into gSnapshotObjects so that they can be put back.
-void ObjectTable_SnapshotFar(void);
+void ActorTable_SnapshotFar(void);
 /// Creates the four Djinn figures of the file list's top row.
 void DjinnFigures_InitializeTopRowFar(void);
 /// Destroys the four Djinn figures and stops placing them.

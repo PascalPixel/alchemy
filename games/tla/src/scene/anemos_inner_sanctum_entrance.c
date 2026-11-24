@@ -15,7 +15,7 @@
 #include "field/event_commands.h"
 #include "field/field_sequence.h"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 #include "flags.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -165,7 +165,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// one the party cannot run from.
 void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_StartRepeatedMotion(ACTOR_SHADOW, 2);
   Event_Wait(20);
   PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -177,7 +177,7 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
   FieldMessage_ShowCentered((s32)&MsgIAmTheShadow, 0, 6);
   gMainRoutineState.pendingDjinni = IF_FLAG_SET(FLAG_DULLAHAN_BEATEN);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_HIDDEN_BOSSES,
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_HIDDEN_BOSSES,
                                         HIDDEN_BOSS_ANEMOS);
   GameFlag_Set(FLAG_DULLAHAN_FOUGHT);
 }
@@ -191,7 +191,7 @@ void AnemosInnerSanctumEntrance_LightRises(void) {
   actor->scaleX = FIXED_ONE / 4;
   actor->scaleY = FIXED_ONE / 4;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_LIGHT_APPEAR);
   Actor_SetSpriteColor(Actor_GetById(ACTOR_SHADOW), SPRITE_COLOR_WHITE);
   Actor_SetSpriteColor(Actor_GetById(ACTOR_LIGHT), SPRITE_COLOR_WHITE);
@@ -304,7 +304,7 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
 
   if (FIELD_CELL(actor->z.fixed) <= 9)
     shift = -shift;
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (!GameFlag_Get(FLAG_SYMBOLS_LIT))
     return;
   if (MapGrid_GetCellBehaviorAt(actor->layer, actor->x.fixed, actor->z.fixed) !=
@@ -478,7 +478,7 @@ void LightSprites_Draw(void) {
                   OBJ_SIZE_16X16 | OBJ_256_COLORS;
         *word = (tile + picture + (frame & 7) * 8) | OBJ_PRIORITY(2);
         if (gLightSpritePriority == -1)
-          oam->priority = BattleEffect_GetObjectPriority(actor);
+          oam->priority = Actor_GetSpritePriority(actor);
         else
           oam->priority = gLightSpritePriority;
         Oam_AddSpriteAtDepthClamped(oam, depth);
@@ -498,7 +498,7 @@ void LightSprites_Draw(void) {
         *word++ = screenY | OBJ_X(screenX) | OBJ_SIZE_32X64 | OBJ_256_COLORS;
         *word = (tile + frame * 8) | OBJ_PRIORITY(2);
         if (gLightSpritePriority == -1)
-          oam->priority = BattleEffect_GetObjectPriority(actor);
+          oam->priority = Actor_GetSpritePriority(actor);
         else
           oam->priority = gLightSpritePriority;
         Oam_AddSpriteAtDepthClamped(oam, depth);

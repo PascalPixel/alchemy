@@ -93,7 +93,7 @@ enum {
 #define KNOCK_BACK_TAKE_DAMAGE Party_TakeFallDamage
 #define KNOCK_BACK_BLINK Actor_Blink
 #define KNOCK_BACK_SET_ANIMATION Actor_SelectAnimation
-#define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetCellAttributeLowNibbleOrBump
+#define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetTerrainKindOrBumpAt
 #define KNOCK_BACK_CHECK_COLLISION MapGrid_CheckCollision
 
 #endif

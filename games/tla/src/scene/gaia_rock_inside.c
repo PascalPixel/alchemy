@@ -77,7 +77,7 @@
 #include "field/actor_script.h"
 #include "../field/actor_set_sprite_priority.c"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 
 #include "shared/scene_create_actor.h"
 
@@ -393,8 +393,8 @@ static __inline__ void GaiaRockInside_JumpDownLedge(s32 id, s32 pose,
 /// empty pit the same way.
 void GaiaRockInside_JumpDownCobwebPit(void) {
   FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 3);
-  OverlayObject_PrepareObject(toFIXED(712), 0, toFIXED(468), SPRITE_CRATE);
-  OverlayObject_PrepareObject(toFIXED(712), 0, toFIXED(490), SPRITE_CRATE);
+  Actor_CreateSilhouette(toFIXED(712), 0, toFIXED(468), SPRITE_CRATE);
+  Actor_CreateSilhouette(toFIXED(712), 0, toFIXED(490), SPRITE_CRATE);
   // 0x800 is no colour the dust's byte keeps, and not the bit that skips the
   // wait for the landing, which Taopo Swamp's and Ankohl Ruins' drops like this
   // one pass: the jump goes as with 0.
@@ -425,7 +425,7 @@ void GaiaRockInside_RaiseDust(void) {
   struct EffectOptions options;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
@@ -635,7 +635,7 @@ s32 GaiaRockInside_CaskBursts(void) {
         dust->timer = ((Random16() << 9) >> 16) - 256;
         dust->speedLimit = 0;
         dust->acceleration = 0;
-        dust->update = Effect_AdvanceMotionAtLeaderPriority;
+        dust->update = FieldEffect_AdvanceMotionAtLeaderPriority;
       }
     }
   }
@@ -796,7 +796,7 @@ void GaiaRockInside_CycloneClearsTwinAltarsBushes(void) {
   if (FieldMapGrid_GetCellBehaviorAt(2, toFIXED(608), toFIXED(400)) == 0) {
     MapGrid_CopyCellAttributes(36, 23, 1, 1, 38, 25);
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     if (FIELD_CELL(leader->x.fixed) == 38 &&
         FIELD_CELL(leader->z.fixed) == 25) {
       Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
@@ -808,7 +808,7 @@ void GaiaRockInside_CycloneClearsTwinAltarsBushes(void) {
     if (!Event_GetFlag(FLAG_SERPENT_SLAIN)) {
       Event_SetFlag(FLAG_BUSHES_SUNBEAM_TO_SHOW);
       FieldEvent_Wait(30);
-      ObjectTable_Snapshot();
+      ActorTable_Snapshot();
       FieldEvent_SetExitRequest(
           GAIA_ROCK_INSIDE_TWIN_ALTARS_TO_GAIA_ROCK_INSIDE_MAZE);
     } else {
@@ -847,7 +847,7 @@ void GaiaRockInside_CycloneMadPlant(void) {
     GaiaRockInside_MadPlantLeaps(SPRITE_MAD_PLANT, 328, 344);
     gMainRoutineState.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(2));
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 2);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_MAD_PLANTS, 2);
   }
 }
 
@@ -898,7 +898,7 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   altar = Actor_Get(ACTOR_FALLING_ALTAR);
   leader = Actor_Get(gMainRoutineState.leaderActorId);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (FIELD_TILE(leader->z.fixed) > 53 && FIELD_TILE(leader->x.fixed) > 83 &&
       FIELD_TILE(leader->x.fixed) <= 91) {
     leader->speedLimit = toFIXED(2);
@@ -915,16 +915,16 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   MapGrid_CopyCellsLayered(111, 12, 1, 6, 111, 20);
   MapGrid_CopyCellAttributes(49, 84, 8, 8, 40, 84);
   FieldEvent_Wait(30);
-  OverlayObject_PrepareObject(toFIXED(700), 0, toFIXED(468), SPRITE_CRATE);
-  OverlayObject_PrepareObject(toFIXED(700), 0, toFIXED(490), SPRITE_CRATE);
-  OverlayObject_PrepareObject(toFIXED(724), 0, toFIXED(468), SPRITE_CRATE);
-  OverlayObject_PrepareObject(toFIXED(724), 0, toFIXED(490), SPRITE_CRATE);
+  Actor_CreateSilhouette(toFIXED(700), 0, toFIXED(468), SPRITE_CRATE);
+  Actor_CreateSilhouette(toFIXED(700), 0, toFIXED(490), SPRITE_CRATE);
+  Actor_CreateSilhouette(toFIXED(724), 0, toFIXED(468), SPRITE_CRATE);
+  Actor_CreateSilhouette(toFIXED(724), 0, toFIXED(490), SPRITE_CRATE);
   Event_PlaySound(SE_DUST_PUFF);
   altar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   ((struct FieldSprite *)altar->sprite)->priority = 3;
   FieldEvent_Wait(10);
   Actor_SetPosition(ACTOR_FALLING_ALTAR, 0, 0);
-  ObjectTable_Snapshot();
+  ActorTable_Snapshot();
   Event_SetFlag(FLAG_ALTAR_FELL);
   FieldEvent_SetExitRequest(
       GAIA_ROCK_INSIDE_ALTAR_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_SOUTHEAST_B);
@@ -934,7 +934,7 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
 /// half a second, and Susa says "Move out of the way there."
 void GaiaRockInside_SusaSaysMoveAside(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgGaiaRockInsideMoveOutOfTheWay);
   // "Move out of the way there."
   Event_ShowMessage(ACTOR_SUSA, 0);
@@ -1009,7 +1009,7 @@ void GaiaRockInside_MeetSusa(void) {
   struct Actor *actor = Actor_Get(ACTOR_CASK);
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgGaiaRockInsideWhoAreYouHowDid);
   EventCamera_FollowActor(ACTOR_SUSA, 1);
   if (actor->script == gGaiaRockInside_CaskEmptiesScript ||
@@ -1068,7 +1068,7 @@ void GaiaRockInside_TalkToSusa(void) {
   if (Actor_Get(ACTOR_SUSA)->refused > 2)
     return;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_SUSA_ATTACKED_SERPENT)) {
     if (Event_GetFlag(FLAG_ALTAR_ROOM_SUNBEAM) ||
         Event_GetFlag(FLAG_WEST_ALTAR_SUNBEAM) ||
@@ -1106,7 +1106,7 @@ void GaiaRockInside_ReadSusasMind(void) {
   s32 holder;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   holder = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
   if (holder != -1) {
     FieldEvent_SetMessageId((s32)MsgGaiaRockInsideWhoDoTheyThinkThey);
@@ -1299,7 +1299,7 @@ void GaiaRockInside_ReadSandTablet(void) {
   s32 message;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   message = (s32)MsgGaiaRockInsideSearchedTheSlateThereIs;
   ((s32 (*)())FieldMessage_Show)(message, 1);
   Actor_ShowEmote(gMainRoutineState.leaderActorId,
@@ -1450,7 +1450,7 @@ void GaiaRockInside_RaiseSandTablet(void) {
   tablet = Actor_Get(ACTOR_SAND_TABLET);
   Io_Read16(&REG_BLDALPHA, &level);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   MapGrid_SetShake(10, 10, 1);
   Event_PlaySound(SE_TREMOR);
   BlendScript_Suspend();
@@ -1462,8 +1462,8 @@ void GaiaRockInside_RaiseSandTablet(void) {
   }
   REG_DISPCNT &= ~DISPCNT_BG1_ON;
   FieldEvent_Wait(30);
-  actor = OverlayObject_PrepareObject(toFIXED(464), -toFIXED(32), toFIXED(348),
-                                      SPRITE_SLATE);
+  actor = Actor_CreateSilhouette(toFIXED(464), -toFIXED(32), toFIXED(348),
+                                 SPRITE_SLATE);
   Actor_SetPosition(ACTOR_SAND_TABLET, 464, 348);
   GaiaRockInside_RingOfDust();
   for (i = 0; i < TABLET_RISE_PIXELS; i++) {
@@ -1527,7 +1527,7 @@ void GaiaRockInside_ChallengeSerpent(void) {
     } else {
       Event_SetDefeatDestination(scene, ENTRANCE_BEATEN_BY_SERPENT);
     }
-    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_SERPENT, count);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SERPENT, count);
   }
 }
 
@@ -1611,7 +1611,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   s32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   // "Felix placed a doll on the altar."
   Message_ShowCentered((s32)&MsgGaiaRockInsidePlacedADollOnThe, 1);
   Event_PlaySound(SE_DOLL_PLACED);
@@ -1696,7 +1696,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   face = Actor_GetById(ACTOR_WEST_FACE);
   doll = Actor_GetById(ACTOR_TWIN_ALTARS_DOLL);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   // "Felix placed a doll on the altar."
   FieldMessage_Show((s32)MsgGaiaRockInsidePlacedADollOnThe, 1);
   Sound_Play(SE_DOLL_PLACED);
@@ -1752,7 +1752,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
       GameFlag_Set(FLAG_WEST_ALTAR_SUNBEAM_TO_SHOW);
       Event_Wait(30);
-      ObjectTable_Snapshot();
+      ActorTable_Snapshot();
       Import_EventSetExitRequest(
           GAIA_ROCK_INSIDE_TWIN_ALTARS_TO_GAIA_ROCK_INSIDE_MAZE);
     } else {
@@ -1792,7 +1792,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   face = Actor_GetById(ACTOR_EAST_FACE);
   doll = Actor_GetById(ACTOR_TWIN_ALTARS_DOLL);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   // "Felix placed a doll on the altar."
   FieldMessage_Show((s32)MsgGaiaRockInsidePlacedADollOnThe, 1);
   Sound_Play(SE_DOLL_PLACED);
@@ -1848,7 +1848,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
       GameFlag_Set(FLAG_EAST_ALTAR_SUNBEAM_TO_SHOW);
       Event_Wait(30);
-      ObjectTable_Snapshot();
+      ActorTable_Snapshot();
       Import_EventSetExitRequest(
           GAIA_ROCK_INSIDE_TWIN_ALTARS_TO_GAIA_ROCK_INSIDE_MAZE);
     } else {
@@ -1889,7 +1889,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   face = Actor_GetById(ACTOR_ALTAR_FACE);
   doll = Actor_GetById(ACTOR_ALTAR_DOLL);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   // "Felix placed a doll on the altar."
   FieldMessage_Show((s32)MsgGaiaRockInsidePlacedADollOnThe, 1);
   Sound_Play(SE_DOLL_PLACED);
@@ -1944,7 +1944,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
       GameFlag_Set(FLAG_ALTAR_ROOM_SUNBEAM_TO_SHOW);
       Event_Wait(30);
-      ObjectTable_Snapshot();
+      ActorTable_Snapshot();
       Import_EventSetExitRequest(
           GAIA_ROCK_INSIDE_ALTAR_TO_GAIA_ROCK_INSIDE_MAZE_B);
     } else {
@@ -2254,7 +2254,7 @@ extern u32 gGaiaRockInside_SerpentSmokeScript[];
 extern u32 gGaiaRockInside_AltarShadowScript[];
 extern s32 gGaiaRockInside_SusaFeedsSerpentScript[];
 
-struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
+struct Actor *Actor_CreateSilhouette(s32 x, s32 y, s32 z, s32 kind);
 s32 __modsi3(s32 numerator, s32 denominator);
 void GaiaRockInside_TurnFaceToAltar();
 void GaiaRockInside_RingOfDust(void);
@@ -2305,7 +2305,7 @@ s32 Scene_Initialize(void) {
     }
     if (*early == GAIA_ROCK_INSIDE_MAZE_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_A) {
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       Actor_SetPosition(state->leaderActorId, 0, 0);
       Actor_SetPosition(ACTOR_CASK, 0, 0);
@@ -2401,7 +2401,7 @@ s32 Scene_Initialize(void) {
             GameFlag_Set(FLAG_SUSA_ATTACKED_SERPENT);
             GameFlag_Set(FLAG_MET_SUSA);
             Event_Start();
-            Event_ResolvePendingActions(0);
+            Event_EndLastingPsynergy(0);
             Actor_SetPosition(ACTOR_CASK, 0, 0);
             Actor_SetMovementTypeById(ACTOR_CASK, MOVEMENT_TYPE_STAND);
             Actor_SetPosition(ACTOR_SUSA, 456, 360);
@@ -2584,7 +2584,7 @@ s32 Scene_Initialize(void) {
       flag = Test(FLAG_SERPENT_SLAIN);
       if (flag == 0) {
         Event_Start();
-        Event_ResolvePendingActions(0);
+        Event_EndLastingPsynergy(0);
         GameFlag_Set(FLAG_SERPENT_SLAIN);
         Event_SetMessageId((s32)MsgFieldItLooksLikeTheDragon);
         Actor_SetPosition(ACTOR_CASK, 0, 0);
@@ -2730,8 +2730,8 @@ s32 Scene_Initialize(void) {
         }
         REG_DISPCNT &= (u16)~DISPCNT_BG1_ON;
         Event_Wait(30);
-        actor = OverlayObject_PrepareObject(toFIXED(464), -toFIXED(32),
-                                            toFIXED(348), SPRITE_SLATE);
+        actor = Actor_CreateSilhouette(toFIXED(464), -toFIXED(32), toFIXED(348),
+                                       SPRITE_SLATE);
         Actor_SetPosition(ACTOR_SAND_TABLET, 464, 348);
         for (i = 0; i < TABLET_RISE_PIXELS; i++) {
           if (i % 5 == 0)
@@ -2761,7 +2761,7 @@ s32 Scene_Initialize(void) {
       }
     } else if (*entrance == ENTRANCE_BEATEN_BY_SERPENT) {
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       Actor_SetPosition(ACTOR_CASK, 0, 0);
       Actor_SetPosition(ACTOR_SUSA, 448, 344);
       {
@@ -2784,7 +2784,7 @@ s32 Scene_Initialize(void) {
       Event_End();
     } else if (*entrance == ENTRANCE_BEATEN_HOLDING_IDOL) {
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       Actor_SetPosition(ACTOR_CASK, 0, 0);
       Actor_SetPosition(ACTOR_SUSA, 430, 320);
       Actor_SetAnimationById(ACTOR_SUSA, 5);
@@ -2884,7 +2884,7 @@ s32 Scene_Initialize(void) {
       s32 frames = 60;
 
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       Actor_SetPosition(ACTOR_EAST_ALTAR, 0, 0);
       Actor_SetPosition(state->leaderActorId, 0, 0);

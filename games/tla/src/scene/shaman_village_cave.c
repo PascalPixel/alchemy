@@ -291,7 +291,7 @@ void ShamanVillageCave_EddyFlees(void) {
     if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_EDDY_CORNERED) != 0)
       return;
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldActor_Jump(ACTOR_EDDY, 4, 20);
     Actor_SetDestinationOffset(ACTOR_EDDY, 0, 32);
     FieldActor_WaitForMoveById(ACTOR_EDDY);
@@ -315,7 +315,7 @@ void ShamanVillageCave_EddyFlees(void) {
     return;
   }
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   dz *= 32;
   FieldActor_Jump(ACTOR_EDDY, 4, 20);
   Actor_SetDestinationOffset(ACTOR_EDDY, 0, dz);
@@ -388,7 +388,7 @@ void ShamanVillageCave_TakeGoldenShirt(void) {
   s32 result;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   result = Value3((s32 (*)())Event_PickUpItem, ACTOR_GOLDEN_SHIRT,
                   ITEM_GOLDEN_SHIRT, -1);
   if (result == 0)
@@ -431,7 +431,7 @@ void ShamanVillageCave_MeetGladiators(void) {
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_ISAAC)) == 0)
     return;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_FOUND_BY_GLADIATORS);
   FieldEvent_SetMessageId((s32)MsgIFoundName);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_STAND);
@@ -558,7 +558,7 @@ void ShamanVillageCave_MeetGladiators(void) {
 /// beating the party, starts the rematch.
 void ShamanVillageCave_FightGladiators(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   FieldEvent_SetAfterBattleDestination(SCENE_SHAMAN_VILLAGE_CAVE,
                                        ENTRANCE_AFTER_BEATING_GLADIATORS);
@@ -571,7 +571,7 @@ void ShamanVillageCave_FightGladiators(void) {
 /// party: "Hey, these guys aren't very strong at all!"
 void ShamanVillageCave_LoseToGladiators(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgHeyTheseGuys);
   Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(184), toFIXED(229),
@@ -632,7 +632,7 @@ void ShamanVillageCave_BeatGladiators(void) {
   Event_ClearFlag(FLAG_SHAMAN_VILLAGE_CAVE_LOST_TO_GLADIATORS);
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_BEAT_GLADIATORS);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgTheseGuysWere);
   Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(184), toFIXED(229),
@@ -757,7 +757,7 @@ void ShamanVillageCave_EnterPassage(void) {
   u32 id;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   for (id = ACTOR_FIRST_PLACED; id < FIELD_TREASURE_ACTOR; id++) {
     actor = Actor_Get(id);
     if (actor)

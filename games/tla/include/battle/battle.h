@@ -45,7 +45,7 @@ struct MotionObject;
 struct FieldParticle;
 struct AreaNameRule;
 
-extern const s8 gBattleEffect_RandomChildValues[];
+extern const s8 gHalt_FlickerColorModes[];
 extern const s8 gBattlePlacement_StepPairs[];
 extern u8 gEncounter_AreaEntryTable[];
 extern u16 gBattleUnit_WeaponKinds[];
@@ -123,9 +123,9 @@ struct WorldMapState;
 /// The 32x16 spark the swelling arcs over a caster are drawn with
 /// (field_effects.s).
 extern const u8 gFieldEffect_SparkTiles[];
-extern const u16 gBattleEffect_EightWayHeadingWords[];
-extern const s32 gBattleEffect_ParticleScript[];
-extern const u8 gBattleEffect_UntargetedObjectScript[];
+extern const u16 gInput_DpadAnglesEightWay[];
+extern const s32 gItemDisplay_SparkleScript[];
+extern const u8 gMindRead_CrescentEndScript[];
 extern const u8 gColorBuffer_DarkenOneLevelMap[32];
 extern const u8 gColorBuffer_DarkenTwoLevelsMap[32];
 extern const u8 gColorBuffer_DarkenFourLevelsMap[32];
@@ -176,7 +176,7 @@ void BattleCamera_SetCommandView(s32 scene);
 #define HEALING_BASE_POWER 100
 s32 Battle_GetElementMultiplier(s32 selector, s32 mode);
 s32 Djinn_SetFar(s32 unitId, s32 element, s32 index);
-s32 Field_MeasurePsynergyReach(s32 effect, s32 from, s32 to);
+s32 Field_MeasurePsynergyReach(s32 kind, s32 selfId, s32 otherId);
 s32 Scene_SelectPsynergyTarget(s32 kind);
 struct TriggerEvent;
 struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,

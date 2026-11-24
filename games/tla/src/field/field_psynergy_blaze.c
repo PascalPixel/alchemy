@@ -189,8 +189,8 @@ void FieldPsynergy_Blaze(void) {
       sprite = &state->drops[j];
 
       EffectSprite_Init(sprite, 15, 24, OBJ_SIZE_32X32, tile);
-      sprite->depth = BattleEffect_GetObjectDepth(caster) + BLAZE_DROP_DEPTH;
-      sprite->oam.priority = BattleEffect_GetObjectPriority(caster);
+      sprite->depth = Actor_GetSpriteDepth(caster) + BLAZE_DROP_DEPTH;
+      sprite->oam.priority = Actor_GetSpritePriority(caster);
       sprite->oam.fullColor = 1;
       sprite->oam.palette = 0;
       cursor.particle->timer = -1;

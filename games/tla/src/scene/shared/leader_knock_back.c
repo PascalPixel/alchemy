@@ -28,7 +28,7 @@ s32 KNOCK_BACK(void) {
     actor = Actor_Get(main->leaderActorId);
     state = RIDE_STATE;
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     actor->update = KNOCK_BACK_BLINK;
     actor->facing = DEGtoANG(90);
     KNOCK_BACK_SET_ANIMATION(actor, ANIM_LEADER_SIT);

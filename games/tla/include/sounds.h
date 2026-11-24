@@ -126,7 +126,7 @@ enum SoundId {
   MUS_BATTLE_THE_LOST_AGE,
   /// Battle music gEncounter_BattleMusic gives Briggs's battle on his ship at
   /// Eastern Alhafra (ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA, slot 1) and
-  /// ENCOUNTER_TABLE_MOAPA's slots 0 to 4.
+  /// ENCOUNTER_ZONE_MOAPA's slots 0 to 4.
   MUS_BRIGGS_BATTLE,
   /// Plays as the Aqua Hydra rises before the Lemurian Ship
   /// (LemurianShip_FightAquaHydra).
@@ -144,7 +144,7 @@ enum SoundId {
   /// (ownerOverride) and it does not fly.
   MUS_BATTLE_ON_THE_SEA,
   /// Battle music of Karst and Agatio's three battles at Jupiter Lighthouse's
-  /// beacon (ENCOUNTER_TABLE_MOAPA, slots 5 to 7); its tune is
+  /// beacon (ENCOUNTER_ZONE_MOAPA, slots 5 to 7); its tune is
   /// MUS_KARST_AND_AGATIO's.
   MUS_BATTLE_WITH_KARST_AND_AGATIO,
   /// The battle is won.
@@ -804,16 +804,16 @@ enum SoundId {
   /// The battle music when Isaac is in the front row and Felix is not.
   MUS_BATTLE_THE_BROKEN_SEAL = 750,
   /// The Broken Seal's MUS_SWORN_ENEMIES_STAND_IN_YOUR_WAY, the battle music
-  /// gEncounter_BattleMusic gives ENCOUNTER_TABLE_HIDDEN_BOSSES's slot 0.
+  /// gEncounter_BattleMusic gives ENCOUNTER_ZONE_HIDDEN_BOSSES's slot 0.
   MUS_BATTLE_WITH_STAR_MAGICIAN,
   /// The Broken Seal's MUS_BATTLING_A_POWERFUL_FOE, note for note.
   MUS_BATTLE_WITH_VALUKAR,
   /// The Broken Seal's MUS_BATTLE_WITH_SATUROS_AND_MENARDI, the battle music
-  /// gEncounter_BattleMusic gives ENCOUNTER_TABLE_HIDDEN_BOSSES's slot 2.
+  /// gEncounter_BattleMusic gives ENCOUNTER_ZONE_HIDDEN_BOSSES's slot 2.
   MUS_BATTLE_WITH_SENTINEL,
   /// The Broken Seal's MUS_BATTLE_WITH_THE_FUSION_DRAGON, the battle music
   /// gEncounter_BattleMusic gives the Shadow's battle at the Anemos Inner
-  /// Sanctum's entrance (ENCOUNTER_TABLE_HIDDEN_BOSSES, slot 3).
+  /// Sanctum's entrance (ENCOUNTER_ZONE_HIDDEN_BOSSES, slot 3).
   MUS_BATTLE_WITH_DULLAHAN,
   /// The Broken Seal's MUS_TO_BE_CONTINUED, note for note, on the song
   /// table's last row; nothing in this game plays it.

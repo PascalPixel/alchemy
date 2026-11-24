@@ -24,7 +24,7 @@
 #include "fixed_math.h"
 #include "../field/actor_set_sprite_priority.c"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 #include "flags.h"
 #include "types.h"
 #include "macros.h"
@@ -497,7 +497,7 @@ void SeaOfTime_FollowChannel(void) {
   actor = Actor_GetById(ACTOR_SHIP);
   angle = QUARTER_TURNS(state->stepTrigger - CELL_BEHAVIOR_CHANNEL_EAST);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   x = FIELD_CELL(actor->x.fixed);
   z = FIELD_CELL(actor->z.fixed);
   dx = FIXEDtoINT(Trig_Cos(angle));
@@ -722,7 +722,7 @@ void SeaOfTime_StartWaves(void) {
   s32 frame;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetFlag(FLAG_WAVES_RUNNING);
   Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
   do {
@@ -786,7 +786,7 @@ void SeaOfTime_StopWaves(void) {
 
   Task_Remove(SeaOfTime_TimeWaves);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_RISE_WITH_SPARKS_HIGH);
   gSeaOfTime_WaveState = 1;
   // Each of the sea's colours steps one unit per channel toward its saved
@@ -858,7 +858,7 @@ void SeaOfTime_PushBackInRoughWater(void) {
 
   actor = Actor_GetById(ACTOR_SHIP);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed,
                       actor->z.fixed + toFIXED(8));
   while (Actor_HasArrived(actor) == 0) {
@@ -920,7 +920,7 @@ void SeaOfTime_PushBackInRoughWater(void) {
 /// world map.
 void SeaOfTime_SweptBack(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (!Event_GetFlag(FLAG_SWEPT_BACK_ONCE)) {
     Import_EventSetExitRequest(SEA_OF_TIME_SWIRLS_TO_LEMURIAN_SHIP_TILLER);
     Event_SetFlag(FLAG_SWEPT_BACK_ONCE);
@@ -973,7 +973,7 @@ void SeaOfTime_FacePoseidon(void) {
   u32 j;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   GameFlag_Set(FLAG_SWEPT_BACK_ONCE);
   Actor_SetSpeed(ACTOR_SHIP, 1);
   Actor_GetById(ACTOR_SHIP)->facing = FACING_NORTH;
@@ -1087,7 +1087,7 @@ void SeaOfTime_FacePoseidon(void) {
   gMainRoutineState.battleType = BATTLE_TYPE_NO_ESCAPE;
   Event_SetAfterBattleDestination(SCENE_SEA_OF_TIME_TO_LEMURIA,
                                   ENTRANCE_AFTER_POSEIDON);
-  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_SERPENT,
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SERPENT,
                                         ENCOUNTER_SLOT_POSEIDON);
   Event_End();
 }
@@ -1112,7 +1112,7 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
     struct Actor *actor;                                                       \
                                                                                \
     Event_Start();                                                             \
-    Event_ResolvePendingActions(0);                                            \
+    Event_EndLastingPsynergy(0);                                               \
     actor = Actor_GetById(rock);                                               \
     SeaOfTime_RemoveRock(actor->x.fixed, Actor_GetById(rock)->z.fixed, rock);  \
     GameFlag_Set(flag);                                                        \
@@ -1147,7 +1147,7 @@ DEFINE_GRIND_ROCK(SeaOfTime_GrindSouthRock, ACTOR_ROCK_A,
 #define DEFINE_LEAVE_BY_EXIT(name, exit)                                       \
   void name(void) {                                                            \
     Event_Start();                                                             \
-    Event_ResolvePendingActions(0);                                            \
+    Event_EndLastingPsynergy(0);                                               \
     Import_EventSetExitRequest(exit);                                          \
     Event_FinishScreenTransition();                                            \
     Event_WaitTransitionFrames();                                              \
@@ -1330,7 +1330,7 @@ void SeaOfTime_Open(void) {
   struct EffectOptions burst;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_PlaySound(MUS_SILENCE);
   MapGrid_CopyCellsTo(49, 70, 19, 73, 6, 6);
   actor = FieldActor_Create(SPRITE_POSEIDON, toFIXED(348), 0, toFIXED(184));

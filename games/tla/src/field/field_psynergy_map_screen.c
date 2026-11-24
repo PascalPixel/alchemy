@@ -203,7 +203,7 @@ void MapScreen_GetLeaderPoint(s32 *screenX, s32 *screenY) {
 /// Returns a World Map place's marker: the high nibble of its value when
 /// gMapScreen_FirstListOnly is set, else the low nibble (0 and 15 show
 /// none).
-u32 WorldMapPlace_GetMarker(const struct FlagEntry *place) {
+u32 WorldMapPlace_GetMarker(const struct WorldMapPlace *place) {
   if (gMapScreen_FirstListOnly != 0)
     return place->value >> 4;
   return place->value & 0xf;

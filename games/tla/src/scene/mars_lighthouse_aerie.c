@@ -366,7 +366,7 @@ s32 Scene_Initialize(void) {
     MarsLighthouseAerie_WatchGoldenSunRise();
   } else if (gMainRoutineState.entrance == ENTRANCE_LIGHT_BEACON) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Actor_SetAnimation(ACTOR_JENNAS_MOTHER, 8);
     Actor_SetAnimation(ACTOR_JENNAS_FATHER, 8);
     Actor_SetAnimation(ACTOR_KYLE, 7);
@@ -518,7 +518,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   actor = Actor_Get(gMainRoutineState.leaderActorId);
   textColor = (u16 *)&CENTERED_TEXT_COLOR;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_WISE_ONE), SPRITE_COLOR_HIDDEN);
   Actor_SetPosition(ACTOR_WISE_ONE, 512, 276);
   System_Wait(1);
@@ -1307,7 +1307,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   father = Actor_Get(ACTOR_FREED_JENNAS_FATHER);
   kyle = Actor_Get(ACTOR_FREED_KYLE);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetAnimation(ACTOR_DOOM_DRAGON, 2);
   actor->motionFlags = 0;
   actor->x.fixed -= toFIXED(4);
@@ -1637,7 +1637,7 @@ void MarsLighthouseAerie_StandAside(s32 id) {
 /// beacon.
 void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
   Actor_SetPosition(gMainRoutineState.leaderActorId, 506, 280);
@@ -1944,7 +1944,7 @@ void Orb_SpawnRising(void) {
   }
 }
 
-#include "../field/actor_park_record.c"
+#include "../field/actor_stop_where_it_stands.c"
 
 void FieldCamera_WaitForArrival();
 void Teleport_PlayWhirl(void);
@@ -1984,7 +1984,7 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
     anchor->z.fixed = toFIXED(204);
     anchor->scaleX = FIXED_ONE;
     anchor->scaleY = FIXED_ONE;
-    SceneActor_ParkRecord(anchor);
+    Actor_StopWhereItStands(anchor);
     Actor_SetScript(ACTOR_BEACON_FIRE, gMarsLighthouseAerie_BeaconFireScript);
     break;
   case 25:
@@ -2103,7 +2103,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   MarsLighthouseAerie_HoldStill(ACTOR_MIA);
   MarsLighthouseAerie_HoldStill(ACTOR_IVAN);
   MarsLighthouseAerie_HoldStill(ACTOR_GARET);
-  Event_PrepareActorAndApplyValue(0, 0);
+  FieldEvent_AddPartyMember(0, 0);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
   Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 512, 280);
   Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_NORTH);
@@ -2373,7 +2373,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_Get(gMainRoutineState.leaderActorId)->facing = FACING_SOUTH;
   Actor_Get(ACTOR_PIERS)->facing = FACING_SOUTH;
   Actor_Get(ACTOR_JENNA)->facing = FACING_SOUTH;
@@ -2746,7 +2746,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
 /// (480, 348), south-west of them.
 void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   FieldEvent_SetMessageId(MsgMarsLighthouseAerieDoNotLetYourSadness);
   // "Do not let your sadness overwhelm you, Felix! Go! Once the beacon..."
@@ -2764,7 +2764,7 @@ void MarsLighthouseAerie_HoldBackFromParents(void) {
 /// Felix walks back up onto the platform, to (544, 348), south-east of them.
 void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
   FieldEvent_SetMessageId(MsgMarsLighthouseAerieDoNotLetYourSadness);
   // "Do not let your sadness overwhelm you, Felix! Go! Once the beacon..."
@@ -2780,7 +2780,7 @@ void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
 /// it to be asked again once he steps back.
 void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetPosition(ACTOR_VOICE, 512, 232);
   System_Wait(1);
   FieldEvent_SetMessageId(MsgMarsLighthouseAerieWillYouCastInMars);
@@ -2837,7 +2837,7 @@ void MarsLighthouseAerie_EndTalkWhileHalted(s32 id) {
 /// loss..." From patch 1, if Halt holds him, he speaks haltingly.
 void MarsLighthouseAerie_TalkToIvan(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
 #if TLA_PATCH_1
   MarsLighthouseAerie_StartTalkWhileHalted(ACTOR_IVAN);
 #endif
@@ -2858,7 +2858,7 @@ void MarsLighthouseAerie_TalkToIvan(void) {
 /// I...can't see you, but I sense that you're..."
 void MarsLighthouseAerie_TalkToJennasMother(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
 #if TLA_PATCH_1
   MarsLighthouseAerie_StartTalkWhileHalted(ACTOR_JENNAS_MOTHER);
 #endif
@@ -2875,7 +2875,7 @@ void MarsLighthouseAerie_TalkToJennasMother(void) {
 /// Felix... You made it back...alive..."
 void MarsLighthouseAerie_TalkToKyle(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
 #if TLA_PATCH_1
   MarsLighthouseAerie_StartTalkWhileHalted(ACTOR_KYLE);
 #endif
@@ -2892,7 +2892,7 @@ void MarsLighthouseAerie_TalkToKyle(void) {
 /// ...Jenna? I am so happy...to have one last chance..."
 void MarsLighthouseAerie_TalkToJennasFather(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
 #if TLA_PATCH_1
   MarsLighthouseAerie_StartTalkWhileHalted(ACTOR_JENNAS_FATHER);
 #endif
@@ -2914,7 +2914,7 @@ void MarsLighthouseAerie_HaltSpeaker(s32 spot, s32 speaker) {
   struct Actor *target;
   struct MainRoutineState *party = &gMainRoutineState;
 
-  party->pausedPose = 0;
+  party->pausedColorMode = 0;
   actor = found;
   party->haltedActor = speaker;
   target = Actor_Get(speaker);
@@ -3005,9 +3005,9 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *actor) {
           sprite->scaleX = sine;
           sprite->scaleY = sine;
           if (j == 0) {
-            sprite->depth = BattleEffect_GetObjectDepth(actor) - 1;
+            sprite->depth = Actor_GetSpriteDepth(actor) - 1;
           } else {
-            sprite->depth = BattleEffect_GetObjectDepth(actor) + 1;
+            sprite->depth = Actor_GetSpriteDepth(actor) + 1;
             sprite->y -= toFIXED(1);
             sprite->scaleY = -sprite->scaleY;
           }
@@ -3050,7 +3050,7 @@ void MarsLighthouseAerie_StartRisingRings(struct Actor *actor,
       EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tile);
       sprite->oam.fullColor = 0;
       sprite->oam.palette = 0;
-      sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
+      sprite->oam.priority = Actor_GetSpritePriority(actor);
       sprite++;
     }
   }

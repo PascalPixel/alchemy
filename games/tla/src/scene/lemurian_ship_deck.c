@@ -121,7 +121,7 @@ void LemurianShipDeck_EnterCabin(void) {
     u32 i;
 
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
       struct Actor *actor = Actor_Get(i);
 
@@ -161,7 +161,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// has come aboard: "The door is held closed by a powerful force."
 void LemurianShipDeck_TryHeldDoor(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Message_ShowCentered(MsgLemurianShipDeckDoorIsHeldClosed, 1);
   Event_End();
 }
@@ -208,7 +208,7 @@ enum {
 /// arrival is reached by none of them.
 void LemurianShipDeck_ShowArrival(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_StartScreenTransition();
   FieldTask_AddFrame(LemurianShipDeck_RotateHullBandColors, TASK_PASS_FRAME);
   Event_WaitTransitionFrames();
@@ -285,7 +285,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
   s32 turn;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(342, 48, 408, 0);
@@ -446,7 +446,7 @@ void LemurianShipDeck_HoldOnToTiller(void) {
     Task_AddFrame(LemurianShipDeck_BobDeck, TASK_PASS_FRAME);
 #endif
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(458, 48, 408, 0);
@@ -629,7 +629,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
     return;
   }
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetSpeed(ACTOR_FELIX, 0.8);
   Actor_WalkToAndWait(ACTOR_FELIX, 264, 136);
   FieldEvent_SetMessageId(MsgLemurianShipDeckLookItsMenardisShip);
@@ -764,7 +764,7 @@ void LemurianShipDeck_KradenGoesToFindShip(void) {
   Event_SetFlag(FLAG_STANDING_EAST_OF_DOOR);
   if (Event_GetFlag(FLAG_SECOND_STEP_EAST_OF_DOOR)) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineState.leaderActorId);
     System_Wait(1);
     Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_EAST, 0);
@@ -861,7 +861,7 @@ void LemurianShipDeck_ReturnToShip(void) {
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)) == 0)
     return;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineState.leaderActorId);
   System_Wait(1);
   Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_EAST, 0);
@@ -941,7 +941,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   if (Event_GetFlag(FLAG_MADRA_FAREWELL_SAID) != 0)
     return;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId(MsgLemurianShipDeckMyShipAtLongLast);
   Actor_WalkTo(ACTOR_FELIX, 264, 176);
   FieldActor_WaitForMoveById(ACTOR_FELIX);
@@ -1231,7 +1231,7 @@ void LemurianShipDeck_SetOutForMadra(void) {
     struct Actor *actor;
 
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Actor_SetSpeed(ACTOR_FELIX, 0.8);
     Actor_Get(ACTOR_PIERS)->update = (ObjectUpdate)LemurianShipDeck_EmitSplash;
     FieldActor_LaunchFromLeader(ACTOR_PIERS, 16, 0, FACING_WEST);

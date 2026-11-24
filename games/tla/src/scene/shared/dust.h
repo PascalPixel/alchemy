@@ -38,7 +38,7 @@ void Dust_Scatter(s32 spread) {
       effect->spin = Random_Below(TRIG_TURN / 128) - TRIG_TURN / 256;
       effect->scaleRateX = -(FIXED_ONE / 32);
       effect->scaleRateY = -(FIXED_ONE * 3 / 128);
-      effect->update = Effect_AdvanceMotionAtLeaderPriority;
+      effect->update = FieldEffect_AdvanceMotionAtLeaderPriority;
     }
   }
 }
@@ -75,7 +75,7 @@ void Dust_Burst(void) {
       effect->spin = Random_Below(TRIG_TURN / 16) - TRIG_TURN / 32;
       effect->scaleRateX = 0;
       effect->scaleRateY = 0;
-      effect->update = Effect_AdvanceMotionAtLeaderPriority;
+      effect->update = FieldEffect_AdvanceMotionAtLeaderPriority;
       effect->sprite->priority =
           ((struct FieldSprite *)leader->sprite)->priority;
     }

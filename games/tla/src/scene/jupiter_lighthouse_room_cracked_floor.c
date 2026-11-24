@@ -95,7 +95,7 @@ struct LightOam gLightSpriteOams[16] BSS_DATA;
 s16 gLightSpritesLarge BSS_DATA;
 s16 gLightSpritePriority BSS_DATA;
 struct CellTarget gCrackedTiles BSS_DATA;
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 void JupiterLighthouse_StepOffButton(void);
 void JupiterLighthouse_FinishMovingBlock(void);
 void MapGrid_SetAttributeBAt();

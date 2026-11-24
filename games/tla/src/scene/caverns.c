@@ -100,7 +100,7 @@ s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position);
 
 #include "../field/actor_set_sprite_priority.c"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 
 #include "shared/scene_create_imported_actor.h"
 
@@ -144,7 +144,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 #include "shared/map_cell_set.c"
 
-#include "../field/actor_wait_until_idle.c"
+#include "../field/actor_wait_until_landed.c"
 
 #include "text/msg_ids.h"
 
@@ -371,19 +371,19 @@ void Caverns_FinishMovingAngaraBlock(void) {
       /* FAKEMATCH(temporary): sum holds kind + 2 for the one call; as
        * kind + 2 at its use. */
       sum = kind + 2;
-      spawned = OverlayObject_PrepareObject(
-          actor->x.fixed, 0, actor->z.fixed + FIELD_CELL_ORIGIN(sum),
-          SPRITE_YELLOW_BLOCK);
+      spawned = Actor_CreateSilhouette(actor->x.fixed, 0,
+                                       actor->z.fixed + FIELD_CELL_ORIGIN(sum),
+                                       SPRITE_YELLOW_BLOCK);
       Sound_Play(SE_DUST_PUFF);
-      OverlayObject_WaitUntilIdle(actor);
-      OverlayObject_WaitUntilIdle(actor);
+      Actor_WaitUntilLanded(actor);
+      Actor_WaitUntilLanded(actor);
       actor->x.fixed = actor->y.fixed = actor->z.fixed = 0;
       Actor_Release(spawned);
       wait(1);
       REG_BLDCNT = 0;
     } else {
-      OverlayObject_WaitUntilIdle(actor);
-      OverlayObject_WaitUntilIdle(actor);
+      Actor_WaitUntilLanded(actor);
+      Actor_WaitUntilLanded(actor);
       Sound_Play(SE_THUMP);
       options.palette = SPRITE_COLOR_WHITE;
       options.priority = 2;
@@ -522,7 +522,7 @@ s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position) {
 
   if (blocked == 0) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     wait(6);
     Sound_Play(SE_JUMP);
@@ -679,7 +679,7 @@ void Caverns_PrepareAtteka(void) {
 /// tablet.
 void Caverns_ParchAttekaWater(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   MapGrid_CopyCellAttributes(31, 43, 9, 11, 48, 47);
   MapGrid_CopyCellsTo(30, 110, 48, 110, 9, 13);
   MapGrid_CopyCellAttributes(52, 110, 1, 1, 52, 111);
@@ -729,7 +729,7 @@ void Caverns_InitializeAngara(void) {
 /// Haurus's chamber beyond.
 void Caverns_OpenAngaraDoor(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_DOOR_OPEN);
   Event_Wait(10);
   MapGrid_CopyCellsTo(7, 94, 6, 94, 1, 2);

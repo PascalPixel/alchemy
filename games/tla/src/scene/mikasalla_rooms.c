@@ -115,7 +115,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Garoh..."
 s32 MikasallaRooms_ReadHealersMind(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsIWonderIfThere);
   // "I wonder if there are werewolves beyond those in Garoh... I also..."
   Event_ShowMessage(ACTOR_MIKASALLA_HEALER, 0);
@@ -128,7 +128,7 @@ s32 MikasallaRooms_ReadHealersMind(void) {
 /// to complain..."
 s32 MikasallaRooms_ReadApojiiHealersMind(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId(
       (s32)MsgMikasallaInteriorsWheneverVisitorsComeOutIslanders);
   // "Whenever visitors come out, the islanders start to complain about..."
@@ -151,7 +151,7 @@ void Sanctum_Run();
 /// travelled the whole world.
 void MikasallaRooms_AskAreYouExplorer(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsHeyMisterAreYouExplorer);
   // "Hey, mister! Are you an explorer?"
   Event_OpenMessage(ACTOR_EXPLORERS_GRANDSON, 0);
@@ -198,7 +198,7 @@ void MikasallaRooms_TalkToInnkeeper(s32 speaker) {
     Inn_CheckIn(MIKASALLA_INN, speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsYouveComeLongWayFriends);
     // "You've come a long way, friends. Stay a while, and rest your feet."
     Event_ShowMessage(speaker, 0);
@@ -218,7 +218,7 @@ void MikasallaRooms_TalkToHealer(s32 speaker) {
     Sanctum_Run(speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsHaveYouBeenToGaroh);
     // "Have you been to Garoh?"
     Event_OpenMessage(speaker, 0);
@@ -247,7 +247,7 @@ void MikasallaRooms_TalkToApojiiHealer(s32 speaker) {
     Sanctum_Run(speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsThisLittleIslandMustSeem);
     // "This little island must seem quite boring to you sophisticated..."
     Event_ShowMessage(speaker, 0);
@@ -266,7 +266,7 @@ void MikasallaRooms_TalkToYallamHealer(s32 speaker) {
     Sanctum_Run(speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldEvent_SetMessageId((s32)MsgEvenOutInFarOffShores);
     // "Even out in these far-off shores, people need the services and hope..."
     Event_ShowMessage(speaker, 0);
@@ -358,7 +358,7 @@ void MikasallaRooms_MindReadGalahad(void) {
 /// that the three gladiators Isaac beat are seeking revenge.
 void MikasallaRooms_MeetGalahad(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsForgiveMyManners);
   Actor_ShowEmote(ACTOR_GALAHAD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActor(ACTOR_GALAHAD, gMainRoutineState.leaderActorId, 0);

@@ -70,7 +70,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
   state->phase += 4;
   state->page ^= 1;
   if (state->page != 0) {
-    FieldEffect_AdvanceHueCycle();
+    MindRead_AdvanceTint();
     PaletteFade_SetTarget(
         RGB(state->red, state->green, state->blue) | PALETTE_TINT_CUSTOM, 1);
     PaletteFade_StartInterpolation(1);
@@ -119,7 +119,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
         actor->speedLimit = toFIXED(16) / 25; // 0.64 pixels a frame
         actor->acceleration = toFIXED(16) / 25;
         actor->facing = Trig_Atan(from.z - to.z, from.x - to.x);
-        actor->update = (ObjectUpdate)FieldEffect_ReleaseOnArrival;
+        actor->update = (ObjectUpdate)MindRead_UpdateCrescent;
         sprite->flags = 0;
         sprite->priority = 1;
         Actor_SetMoveTargetFar(actor, from.x, from.y, from.z);
@@ -137,7 +137,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
 
 /// Sets Mind Read's ripple going at each VBlank: HBlank DMA 0 gives BG0 the
 /// page of line offsets last written, a line at a time.
-void FieldEffect_ArmBg0HBlankDma(void) {
+void MindRead_StartRipple(void) {
   struct MindReadState *state = Ram_HeapSlots->mindRead;
   if (!state->delay) {
     u16 *line = state->lines[state->page];
@@ -169,7 +169,7 @@ s32 FieldEffect_HueChannelRamp(s16 hue) {
 
 /// Turns Mind Read's tint four degrees round the colour wheel, and takes the
 /// tint's colour, each channel dimmed to 4 to 11, from the hue before.
-void FieldEffect_AdvanceHueCycle(void) {
+void MindRead_AdvanceTint(void) {
   struct MindReadState *state = Ram_HeapSlots->mindRead;
   s16 r;
   s16 g;
@@ -189,7 +189,7 @@ void FieldEffect_AdvanceHueCycle(void) {
 }
 
 /// A Mind Read crescent's update: once it has reached the caster, it goes.
-void FieldEffect_ReleaseOnArrival(struct Actor *target) {
+void MindRead_UpdateCrescent(struct Actor *target) {
   s32 tx;
   s32 ty;
 
@@ -198,7 +198,7 @@ void FieldEffect_ReleaseOnArrival(struct Actor *target) {
     ty = target->targetY;
     if ((ty == tx) && (target->targetZ == ty)) {
       Actor_StartScriptFar((struct Actor *)target,
-                           (u32)gBattleEffect_UntargetedObjectScript);
+                           (u32)gMindRead_CrescentEndScript);
     }
   }
 }
@@ -217,13 +217,13 @@ void Actor_SetSpritePalette(void *object, s32 value) {
 /// or DPAD_ANGLE_NONE when none or a diagonal is held.
 s32 Input_GetDpadAngle(u32 unused) {
   // Indexed by the right, left, up and down bits.
-  return gFieldEffect_CyclePatternWords[DPAD_INDEX(gInput.held)];
+  return gInput_DpadAngles[DPAD_INDEX(gInput.held)];
 }
 
 /// The way the +Control Pad points, in eight ways, or DPAD_ANGLE_NONE.
-u16 BattleEffect_GetEightWayHeadingWord(void) {
+u16 Input_GetDpadAngleEightWay(void) {
   struct InputState *input = &gInput;
-  const u16 *words = gBattleEffect_EightWayHeadingWords;
+  const u16 *words = gInput_DpadAnglesEightWay;
 
   return *(u16 *)((u8 *)words + (DPAD_INDEX(input->held) << 1));
 }
@@ -363,7 +363,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
         Sound_PlayFar(SE_MENU_ERROR);
       continue;
     }
-    hit = ActorScript_FindOverlappingEntryFar(target, &position);
+    hit = ActorScript_FindOverlappingActorFar(target, &position);
     if (hit != NULL) {
       if (hit != user) {
         Actor_SelectAnimationFar(pusher, 4);
@@ -396,7 +396,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
     pushed = 1;
     x = position.x;
     z = position.z;
-    modes = gUnused_BattleEffectBytes;
+    modes = gMoveHand_PushPoses;
     // The hand's pose for the quarter turn between its side and the push.
     Actor_SelectAnimationFar(pusher,
                              modes[(u16)(angle - direction) / (TRIG_TURN / 4)]);
@@ -704,7 +704,7 @@ void FieldPsynergy_Reveal(void) {
 
   Actor_SetRevealSpriteColor(6);
   event = Ram_HeapSlots->fieldState;
-  ScreenTransition_InitializeBattleEffectState(FIELD_PSYNERGY_REVEAL);
+  ScreenTransition_StartWindowHeld(FIELD_PSYNERGY_REVEAL);
   state = Ram_HeapSlots->screenTransition;
   caster = scene->mainActor;
   state->centreX = caster->x.fixed;
@@ -821,7 +821,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
       piece = Actor_Spawn(SPRITE_VINE, position.values[0], position.values[1],
                           position.values[2]);
       if (piece != 0) {
-        Actor_StartScriptFar(piece, gFieldEffect_HeavyImpactScript);
+        Actor_StartScriptFar(piece, gGrowth_LeafScript);
         piece->motionFlags = ACTOR_FALLS;
       }
       wait((Random_Below(2)) + 2);
@@ -856,7 +856,7 @@ void FieldPsynergy_Growth(void) {
     object = Actor_Spawn(SPRITE_VINE, position.values[0], position.values[1],
                          position.values[2]);
     if (object != 0) {
-      Actor_StartScriptFar(object, gFieldEffect_HeavyImpactScript);
+      Actor_StartScriptFar(object, gGrowth_LeafScript);
       ((struct Actor *)object)->motionFlags = ACTOR_FALLS;
     }
     wait((Random_Below(2)) + 2);
@@ -919,7 +919,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       obj->motionFlags = 0;
       Actor_SetSpriteColorModeFar(obj, SPRITE_COLOR_GREEN_TINT);
       Actor_SelectAnimationFar(obj, 7);
-      Actor_StartScriptFar(obj, gBattleEffect_SharedParticleScript + 1);
+      Actor_StartScriptFar(obj, gFieldEffect_ReleaseScript + 1);
 
       Actor_SetSpriteFlagsFar(obj, SPRITE_FLAG_SHADOW);
 
@@ -1140,7 +1140,7 @@ again:
 
 /// A heavy impact, as The Broken Seal's: an actor placed below the source
 /// for a moment, scattering IMPACT_SHARDS shards from it.
-s32 SpawnHeavyImpactEffect(struct Actor *source) {
+s32 FieldEffect_SpawnHeavyImpact(struct Actor *source) {
   struct Vector3 pos;
   struct Actor *impact;
   struct Actor *fragment;
@@ -1154,7 +1154,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *source) {
   if (impact != NULL) {
     impact->motionFlags = 0;
     impact->wait = 20;
-    Actor_StartScriptFar(impact, gBattleEffect_SharedParticleScript);
+    Actor_StartScriptFar(impact, gFieldEffect_ReleaseScript);
   }
 
   // Shards: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction.
@@ -1212,7 +1212,7 @@ void FieldPsynergy_Force(void) {
     Camera_WorldToScreen(&pos);
     FieldParticle_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(slot, FieldEffect_UpdateRadialBurst);
-    FieldParticle_SetActorMode(slot, 7);
+    FieldParticle_SetAnimation(slot, 7);
     Sprite_SetAnimationColorModesFar(slot->actor, SPRITE_COLOR_BLUE_TINT);
     slot->scaleY = FIXED_ONE * 7 / 10;
     slot->scaleX = FIXED_ONE * 7 / 10;
@@ -1276,13 +1276,13 @@ void FieldPsynergy_Force(void) {
     SET_POSITION(&pos, scene->x, scene->y + toFIXED(16), scene->z);
   }
   Actor_SetMoveTargetFar(actor, pos.x, pos.y, pos.z);
-  Actor_StartScriptFar(actor, gBattleEffect_HeavyImpactScript);
+  Actor_StartScriptFar(actor, gForce_FistScript);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
       wait(3);
       Actor_SetMoveTargetFar(copy, pos.x, pos.y, pos.z);
-      Actor_StartScriptFar(copy, gBattleEffect_SharedParticleScript + 1);
+      Actor_StartScriptFar(copy, gFieldEffect_ReleaseScript + 1);
     }
   }
 
@@ -1339,7 +1339,7 @@ void FieldEffect_UpdateOrbitingParticleFade(struct Actor *particle) {
     particle->scaleY -= FIXED_ONE / 16;
     particle->scaleX = scale;
     if (scale <= FIXED_ONE / 16)
-      Actor_StartScriptFar(particle, gBattleEffect_SharedParticleScript);
+      Actor_StartScriptFar(particle, gFieldEffect_ReleaseScript);
   }
 }
 
@@ -1521,7 +1521,7 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
       particle->y.fixed = pos.y;
       particle->z.fixed = pos.z;
     } else {
-      Actor_StartScriptFar(particle, gBattleEffect_SharedParticleScript);
+      Actor_StartScriptFar(particle, gFieldEffect_ReleaseScript);
     }
   }
 }
@@ -1563,7 +1563,7 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
       spark->targetX = spark->x.fixed;
       Actor_SetSpriteColorModeFar(spark, SPRITE_COLOR_BLUE_TINT);
       spark->wait = 72;
-      Actor_StartScriptFar(spark, gBattleEffect_SharedParticleScript);
+      Actor_StartScriptFar(spark, gFieldEffect_ReleaseScript);
     }
   }
 }

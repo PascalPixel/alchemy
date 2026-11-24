@@ -11,13 +11,13 @@
 #include "macros.h"
 
 /// If the scene's sprite is active, stops its update callback
-/// (BattleEffect_DrawSceneSprite) and frees its VRAM cache entry.
+/// (FieldPsynergy_DrawCanvasSprite) and frees its VRAM cache entry.
 void FieldPsynergy_ReleaseSceneSprite(void) {
   struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
 
   if (effectState->spriteActive != 0) {
     effectState->spriteActive = 0;
-    Task_Remove(BattleEffect_DrawSceneSprite);
+    Task_Remove(FieldPsynergy_DrawCanvasSprite);
     VramCache_FreeEntry(effectState->spriteVramSlot);
   }
 }
@@ -53,7 +53,7 @@ s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
     return MapGrid_IsSandCell(x, z, layer);
   if (MapGrid_GetCycloneCellKind(x, z, layer) != CYCLONE_CELL_NONE ||
       MapGrid_IsWaterCell(x, z, layer) != 0 ||
-      MapGrid_GetCellAttributeLowNibbleFar(layer, x, z) != 0)
+      MapGrid_GetTerrainKindAtFar(layer, x, z) != 0)
     return 0;
   if (MapGrid_IsSandCell(x, z, layer) != 0)
     return 1;

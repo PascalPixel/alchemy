@@ -460,7 +460,7 @@ UNUSED void Pillar_Place(s16 *list) {
 
 #include "../field/actor_set_sprite_priority.c"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 
 #include "shared/scene_create_imported_actor.h"
 
@@ -532,7 +532,7 @@ void AirsRockInside_DriftMote(struct Actor *actor) {
 /// twister rock or a Wind Stone inside the rock; the game clears what is
 /// pending so that the cast can go on to the rock's or stone's own whirlwind
 /// (AirsRockInside_TakeOverWhirlwind).
-void AirsRockInside_StartWhirlwind(void) { Event_ResolvePendingActions(0); }
+void AirsRockInside_StartWhirlwind(void) { Event_EndLastingPsynergy(0); }
 
 /// Nothing visible happens of its own as Felix casts Whirlwind on a twister
 /// rock or a Wind Stone inside the rock; the game tells Whirlwind to leave out
@@ -545,7 +545,7 @@ void AirsRockInside_TakeOverWhirlwind(void) {
 
 #include "shared/map_cell_set.c"
 
-#include "../field/actor_wait_until_idle.c"
+#include "../field/actor_wait_until_landed.c"
 
 #include "../field/map_cell_get.c"
 
@@ -695,7 +695,7 @@ void AirsRockInside_RideWhirlwind(void) {
   s32 angle;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   leader->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(leader, 0);
   GameFlag_Set(FLAG_RIDING_WHIRLWIND);
@@ -796,7 +796,7 @@ void AirsRockInside_RideWhirlwind(void) {
     leader->layer = statue->riseCounter;
     Actor_SetMoveTarget(leader, leader->x.fixed + dx, leader->y.fixed,
                         leader->z.fixed + dz);
-    OverlayObject_WaitUntilIdle(leader);
+    Actor_WaitUntilLanded(leader);
     Actor_WaitForMove(leader);
     Actor_SetSpriteFlags(leader, 1);
     leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -822,7 +822,7 @@ void AirsRockInside_RideWhirlwind(void) {
         dust, leader->x.fixed,
         Map_GetTerrainHeight(0, leader->x.fixed, leader->z.fixed),
         leader->z.fixed);
-    OverlayObject_WaitUntilIdle(leader);
+    Actor_WaitUntilLanded(leader);
     Actor_WaitForMove(dust);
     break;
   }
@@ -1305,7 +1305,7 @@ void AirsRockInside_BlowGust(void) {
   s32 hit = 0;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_RUSH);
   gust = Import_ActorCreate(SPRITE_WHIRLWIND, leader->x.fixed, leader->y.fixed,
                             leader->z.fixed);
@@ -1449,17 +1449,17 @@ void AirsRockInside_BlowGust(void) {
       GameFlag_Set(FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED);
     } else if (gMainRoutineState.next == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS) {
       MapGrid_CopyCellAttributes(19, 38, 1, 1, 20, 38);
-      OverlayObject_WaitUntilIdle(actor);
+      Actor_WaitUntilLanded(actor);
       wait(1);
-      OverlayObject_WaitUntilIdle(actor);
+      Actor_WaitUntilLanded(actor);
       actor->motionFlags = 0;
       actor->groundHeight = 0;
       actor->y.fixed = 0;
       MapGrid_SetCellHeight(toFIXED(320), toFIXED(832), 0, 4);
     } else if (gMainRoutineState.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
-      OverlayObject_WaitUntilIdle(actor);
+      Actor_WaitUntilLanded(actor);
       wait(1);
-      OverlayObject_WaitUntilIdle(actor);
+      Actor_WaitUntilLanded(actor);
       Actor_SetSpriteFlags(actor, 0);
       actor->motionFlags = 0;
       actor->groundHeight = 0;
@@ -1937,7 +1937,7 @@ void AirsRockInside_WakeHallStatue(void) {
   u32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Io_Write16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
@@ -2075,7 +2075,7 @@ void AirsRockInside_OpenTabletRoomDoor(void) {
       CELL_BEHAVIOR_AIRS_ROCK_INSIDE_TOWER_DOOR)
     return;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_THUMP);
   width = 1;
   height = 2;
@@ -2139,15 +2139,15 @@ void AirsRockInside_FinishPushingPillar(void) {
   s32 x, z;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_PlaceMovedBlock();
   if (Map_GetTerrainHeight(2, pushed->x.fixed, pushed->z.fixed) !=
       pushed->y.fixed) {
     pushed->layer = 2;
     pushed->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    OverlayObject_WaitUntilIdle(pushed);
+    Actor_WaitUntilLanded(pushed);
     Sound_Play(SE_THUMP);
-    OverlayObject_WaitUntilIdle(pushed);
+    Actor_WaitUntilLanded(pushed);
     pushed->motionFlags = 0;
     pushed->layer = 0;
   }
@@ -2245,7 +2245,7 @@ void AirsRockInside_WakeVialChestStatue(void) {
   u32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Io_Write16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
@@ -2374,9 +2374,9 @@ void AirsRockInside_WakeVialChestStatue(void) {
 /// land in the hall below (AirsRockInside_LandInHall).
 void AirsRockInside_JumpDownLedge(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
-  OverlayObject_PrepareObject(toFIXED(216), -toFIXED(32), toFIXED(544),
-                              SPRITE_CRATE);
+  Event_EndLastingPsynergy(0);
+  Actor_CreateSilhouette(toFIXED(216), -toFIXED(32), toFIXED(544),
+                         SPRITE_CRATE);
   Actor_JumpDownLedge(gMainRoutineState.leaderActorId, ANIM_LEADER_SPRING, 0);
   Event_SetExitRequest(
       AIRS_ROCK_INSIDE_VIAL_CHEST_TO_AIRS_ROCK_INSIDE_HALL_SOUTH);
@@ -2392,7 +2392,7 @@ void AirsRockInside_RideClarityCircletVent(void) {
   if (Actor_GetById(gMainRoutineState.leaderActorId)->z.part[0].integer > 653)
     return;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
   Actor_GetById(gMainRoutineState.leaderActorId)->steeringFlags &=
       ~ACTOR_FACES_MOTION;
@@ -2419,7 +2419,7 @@ void AirsRockInside_VanishStone(s32 x, s32 y) {
   sprite = marker->sprite;
   sprite->blendMode = OBJ_MODE_WINDOW;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
                WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_ALL;
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
@@ -2719,7 +2719,7 @@ void AirsRockInside_ReadRevealTablet(void) {
   struct Actor *actor;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   // "Felix checked the tablet. It has strange characters written on it."
   // "Wielder of Wind's might... Lay your hands upon this stone."
   // "We bestow upon thee the power to see the truth unclouded..."
@@ -2789,7 +2789,7 @@ void AirsRockInside_ReadRevealTablet(void) {
 void AirsRockInside_WalkToRevealTablet(void) {
   if (GameFlag_Get(FLAG_REVEAL_TABLET_READ)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     FieldMessage_Show(MsgCheckedTheTablet, FIELD_MESSAGE_ZOOM);
     Event_End();
   } else {
@@ -2809,7 +2809,7 @@ void AirsRockInside_WalkToRevealTablet(void) {
   void name(void) {                                                            \
     if (GameFlag_Get(FLAG_REVEAL_TABLET_READ)) {                               \
       Event_Start();                                                           \
-      Event_ResolvePendingActions(0);                                          \
+      Event_EndLastingPsynergy(0);                                             \
       FieldMessage_Show(MsgCheckedTheTablet, FIELD_MESSAGE_ZOOM);              \
       Event_End();                                                             \
     } else {                                                                   \
@@ -2839,7 +2839,7 @@ void AirsRockInside_IgnoreStep(void) {}
 /// turning bridge, which then cannot turn under a gust.
 void AirsRockInside_MoveElixirChestPillar(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (FIELD_HALF_CELL(Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed) ==
       ELIXIR_CHEST_PILLAR_ON_BRIDGE_X)
     GameFlag_Set(FLAG_ELIXIR_CHEST_PILLAR_ON_BRIDGE);
@@ -2887,7 +2887,7 @@ void AirsRockInside_StepOntoStake(void) {
   if (busy != 0)
     return;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   firstSprite = first->sprite;
   secondSprite = second->sprite;
   second->motionFlags = busy;
@@ -2947,7 +2947,7 @@ void AirsRockInside_RideFaceVent(void) {
   if (*vent == 0)
     return;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
   Actor_GetById(gMainRoutineState.leaderActorId)->steeringFlags &=
       ~ACTOR_FACES_MOTION;
@@ -2994,7 +2994,7 @@ void AirsRockInside_CheckPsynergyStone(void) {
   const u8 *message;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   message = MsgCheckedThePsynergy;
   // "Felix checked the Psynergy Stone."
   FieldMessage_Show(message, FIELD_MESSAGE_ZOOM);
@@ -3044,12 +3044,12 @@ void AirsRockInside_RiseOnLift(void) {
   s32 height;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
 #if TLA_PATCH_1
   priorityFlags = leader->priorityFlags;
 #endif
-  prepared = OverlayObject_PrepareObject(toFIXED(216), -toFIXED(32),
-                                         toFIXED(544), SPRITE_CRATE);
+  prepared = Actor_CreateSilhouette(toFIXED(216), -toFIXED(32), toFIXED(544),
+                                    SPRITE_CRATE);
   leader->motionFlags = 0;
   Actor_SetSpriteFlags(leader, 0);
   leader->speedLimit = toFIXED(3) / 2;
@@ -3089,7 +3089,7 @@ void AirsRockInside_RiseOnLift(void) {
   leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
                       leader->z.fixed - toFIXED(16));
-  OverlayObject_WaitUntilIdle(leader);
+  Actor_WaitUntilLanded(leader);
   Actor_WaitForMove(leader);
   Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_STAND);
   Actor_SelectAnimation(lift, 5);
@@ -3198,7 +3198,7 @@ void AirsRockInside_LandInHall(void) {
   u32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_MoveToFX(-1, -1, -1, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);

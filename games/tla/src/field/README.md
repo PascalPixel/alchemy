@@ -151,7 +151,7 @@ The Lost Age has many of those control orders, one for each way the party
 gets about: walking, crossing a rope or a tightrope, moving as Sand,
 hovering, walking the World Map, and the ship sailing or flying. The field
 picks the script by how the party is moving just then
-(`Actor_StartRenderModeScript`).
+(`Actor_StartMovementModeScript`).
 
 An order to face someone or to walk up to someone does not say whom. It
 means the actor's [watched actor](../../glossary.md#watched-actor), which

@@ -280,7 +280,7 @@ void IzumoRuins_FreezePuddle(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FlagBlock_ApplyFlags(gIzumoRuins_Puddles);
   actor = state->movedBlock;
   actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -332,7 +332,7 @@ void IzumoRuins_StartMovingPillar(void) {
 /// south is open floor again.
 void IzumoRuins_FinishMovingPillar(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_PlaceMovedBlock();
   if (gMainRoutineState.next == SCENE_IZUMO_RUINS_SECOND_ROOM)
     MapCell_SetAttributes(

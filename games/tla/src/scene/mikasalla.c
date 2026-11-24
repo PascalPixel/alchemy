@@ -137,7 +137,7 @@ void Mikasalla_EnterDoor(void) {
   s32 index;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   for (id = ACTOR_FIRST_PLACED; id < FIELD_TREASURE_ACTOR; id++) {
     struct Actor *actor = Actor_GetById(id);
 
@@ -185,7 +185,7 @@ void Mikasalla_AskLookingForSomeone(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)&MsgFieldAreYouLookingForSomeone;
   Event_SetMessageId(msg);
   // "Are you looking for someone?"
@@ -300,7 +300,7 @@ void Mikasalla_ClimbDownLadder(void) {
 /// the tunnels.
 void Mikasalla_StepOntoLadderFacingEast(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWait(ACTOR_FELIX, 16, 0);
   Mikasalla_ClimbDownLadder();
@@ -311,7 +311,7 @@ void Mikasalla_StepOntoLadderFacingEast(void) {
 /// the tunnels.
 void Mikasalla_StepOntoLadderFacingWest(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_WalkByAndWait(ACTOR_FELIX, -2, -6);
   Actor_WalkByAndWait(ACTOR_FELIX, -14, -8);
   Mikasalla_ClimbDownLadder();
@@ -321,7 +321,7 @@ void Mikasalla_StepOntoLadderFacingWest(void) {
 /// (5, 40): he turns round and climbs down into the tunnels.
 void Mikasalla_TurnAndClimbDownLadder(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Mikasalla_ClimbDownLadder();
 }
@@ -333,7 +333,7 @@ void Mikasalla_StepOntoLadderFacingNorth(void) {
   s32 x = Actor_GetById(ACTOR_FELIX)->x.part[0].integer;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (x % 16 <= 7) {
     Actor_WalkByAndWait(ACTOR_FELIX, -4, -4);
     Actor_WalkByAndWait(ACTOR_FELIX, -4, -8);
@@ -350,7 +350,7 @@ void Mikasalla_StepOntoLadderFacingNorth(void) {
 /// onto the ladder and climbs down into the cave below.
 void Mikasalla_StepOntoLadderAhead(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -4);
   Actor_WalkToAndWait(ACTOR_FELIX, 424, 99);
   Mikasalla_ClimbDownLadder();

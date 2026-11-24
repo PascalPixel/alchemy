@@ -530,7 +530,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
     return;
   Event_SetFlag(FLAG_FAMILY_VISITED_BRIGGS);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetSpeed(ACTOR_CHAUCHA, 1);
   Actor_SetSpeed(ACTOR_EOLEO, 1);
   Actor_SetSpeed(ACTOR_PIRATE_ON_THE_BOAT, 1);

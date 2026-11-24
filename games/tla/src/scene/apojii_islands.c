@@ -301,7 +301,7 @@ enum {
 
 #include "../field/actor_set_sprite_priority.c"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 
 #include "shared/scene_create_actor.h"
 
@@ -507,7 +507,7 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   s32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   actor->update = Actor_FlickerChild;
   Sound_Play(SOUND_FADE_OUT_BGM);
   wait(30);
@@ -525,7 +525,7 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
     i--;
     wait(10);
   } while (i >= 0);
-  ObjectTable_Snapshot();
+  ActorTable_Snapshot();
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
                           BLDCNT_TGT2_BG3,
@@ -558,7 +558,7 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
 /// looks about him and wonders whether it heard his wishes.
 void ApojiiIslands_FatherSeesTheStone(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_Get(ACTOR_AQUA_STONE)->update =
       (ObjectUpdate)ApojiiIslands_StopFlashing;
   FieldEvent_SetMessageId((s32)&MsgWhatWhatJust);
@@ -609,7 +609,7 @@ void ApojiiIslands_ScatterWeeds(void) { SCATTER_WEEDS(68, 4, 39, 24); }
       if (FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(spotX)) &&         \
           FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(spotZ))) {         \
         Event_Start();                                                         \
-        FieldEvent_ResolvePendingActions(0);                                   \
+        FieldEvent_EndLastingPsynergy(0);                                      \
         Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,               \
                                 ATTACHED_EFFECT_IN_FRONT |                     \
                                     ATTACHED_EFFECT_ONCE);                     \
@@ -654,7 +654,7 @@ void ApojiiIslands_EnterDoor(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
   FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 2);
   Actor_Get(gMainRoutineState.leaderActorId)->motionFlags = 0;
@@ -676,7 +676,7 @@ s32 ApojiiIslands_TalkToSon(void) {
   facing = FACING_NEAREST_CARDINAL(
       Actor_Get(gMainRoutineState.leaderActorId)->facing);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (facing != FACING_EAST) {
     Actor_FaceActor(ACTOR_SON, gMainRoutineState.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)&MsgWhyDoesMy);
@@ -696,7 +696,7 @@ s32 ApojiiIslands_MindReadSon(void) {
   facing = FACING_NEAREST_CARDINAL(
       Actor_Get(gMainRoutineState.leaderActorId)->facing);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (facing != FACING_EAST) {
     FieldEvent_SetMessageId((s32)&MsgICanTEver);
     // "I can't ever tell what kind of mood Mom and Dad are in. At least..."
@@ -738,7 +738,7 @@ void ApojiiIslands_TalkToInnkeeper(s32 actor) {
     return;
   }
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)&MsgWowYouLook);
   // "Wow! You look just like the guy who showed up in the fancy boat. He..."
   Event_ShowMessage(actor, 0);
@@ -751,7 +751,7 @@ void ApojiiIslands_AskAboutWarriors(s32 actor) {
   s32 msg;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   msg = (s32)&MsgYouGuysAren;
   FieldEvent_SetMessageId(msg);
   // "You guys aren't the warriors who came in that boat, are you?"
@@ -780,7 +780,7 @@ void ApojiiIslands_TalkToGeneralStorekeeper(s32 actor) {
     return;
   }
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)&MsgItDBe);
   // "It'd be nice if we could import some items that our visitors would like."
   Event_ShowMessage(actor, 0);

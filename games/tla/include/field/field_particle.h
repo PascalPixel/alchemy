@@ -58,7 +58,7 @@ STATIC_ASSERT(offsetof(struct FieldParticle, state) == 64);
 
 u32 FieldParticle_HasPendingTarget(struct FieldParticle *);
 void FieldParticle_SetPosition(struct FieldParticle *, s32, s32);
-void FieldParticle_SetActorMode(struct FieldParticle *, s32);
+void FieldParticle_SetAnimation(struct FieldParticle *, s32);
 void FieldParticle_SetCallback(struct FieldParticle *, EffectCallback);
 void FieldParticle_Update(struct FieldParticle *);
 

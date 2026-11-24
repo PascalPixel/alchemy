@@ -604,7 +604,7 @@ extern char ResourceId_LeafWarriorTiles;
 /// Loaded by ParticleBurst_Start.
 extern char ResourceId_Leaves;
 #define RESOURCE_LEAVES ((s32)&ResourceId_Leaves)
-/// Loaded by Actor_VanishInSparks, FieldPsynergy_EndRing and
+/// Loaded by Actor_AppearInSparks, FieldPsynergy_EndRing and
 /// FieldPsynergy_Lash.
 extern char ResourceId_SparkleFade;
 #define RESOURCE_SPARKLE_FADE ((s32)&ResourceId_SparkleFade)

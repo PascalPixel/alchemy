@@ -154,9 +154,9 @@ static inline void FieldActor_WaitForMoveById(s32 actorId) {
   Actor_WaitForMoveById(actorId);
 }
 
-/// Event_ResolvePendingActions, from an event.
-static inline void FieldEvent_ResolvePendingActions(s32 skip) {
-  Event_ResolvePendingActions(skip);
+/// Event_EndLastingPsynergy, from an event.
+static inline void FieldEvent_EndLastingPsynergy(s32 skip) {
+  Event_EndLastingPsynergy(skip);
 }
 
 /// Event_SetMessageId, from an event.
@@ -247,7 +247,7 @@ static inline s32 EventYesNo_Ask(s32 atBottom) {
 }
 
 /// Schedules a zoom of the field (WorldMap_StartZoom).
-static inline void FieldEffect_ScheduleRatioTransition(FIXED zoom, s32 frames) {
+static inline void FieldWorldMap_StartZoom(FIXED zoom, s32 frames) {
   WorldMap_StartZoom(zoom, frames);
 }
 
@@ -262,7 +262,7 @@ static inline void Event_RequestDjinnBattle(s32 actorId, s32 djinni) {
 }
 
 /// Event_AddPartyMember, from an event.
-static inline void Event_PrepareActorAndApplyValue(s32 unit, s32 announce) {
+static inline void FieldEvent_AddPartyMember(s32 unit, s32 announce) {
   Event_AddPartyMember(unit, announce);
 }
 

@@ -77,7 +77,7 @@
 	export Actor_SetAnimationSpeed, Actor_SetAnimationSpeedFar
 	export TundariaTower_StartEffectScript, Actor_StartScriptFar
 	export Actor_StartScript, Actor_StartScriptFar
-	export Actor_StartRenderModeScript, Actor_StartRenderModeScriptFar
+	export Actor_StartMovementModeScript, Actor_StartMovementModeScriptFar
 	export Import_ActorCreate, Actor_CreateFar
 	export Actor_Release, Actor_ReleaseFar
 	export WorldMap_UpdateCurrentTileBlock, WorldMap_UpdateCurrentTileBlockFar
@@ -97,7 +97,7 @@
 	export BlendScript_Start, BlendScript_StartFar
 	export Map_GetTerrainHeight, MapGrid_GetTerrainHeightFar
 	export MapGrid_GetCellBehaviorAt, MapGrid_GetCellBehaviorAtFar
-	export MapGrid_GetCellAttributeLowNibbleOrBump, MapGrid_GetCellAttributeLowNibbleOrBumpFar
+	export MapGrid_GetTerrainKindOrBumpAt, MapGrid_GetTerrainKindOrBumpAtFar
 	export Map_CopyCellsRect, Map_CopyCellsRectFar
 	export Map_CopyCellAttributeRect, Map_CopyCellAttributeRectFar
 	export MapGrid_CopyCellTilesCellsRect, MapGrid_CopyCellTilesCellsRectFar
@@ -335,7 +335,7 @@
 	export TitleIntro_Run, TitleIntro_RunFar
 	export FieldPsynergy_FadeFromCastColor, FieldPsynergy_FadeFromCastColorFar
 	export FieldPsynergy_RunHandler, FieldPsynergy_RunHandlerFar
-	export Event_ResolveAllPendingActions, Event_ResolveAllPendingActionsFar
+	export Event_EndAllLastingPsynergy, Event_EndAllLastingPsynergyFar
 	export FieldPsynergy_LoadResources, FieldPsynergy_LoadResourcesFar
 	export Import_FieldPsynergySetupActorPair, FieldPsynergy_SetupActorPairFar
 	export FieldPsynergy_SetupActorPair, FieldPsynergy_SetupActorPairFar
@@ -343,7 +343,7 @@
 	export BattleEffect_StopMainActor, BattleEffect_StopMainActorFar
 	export FieldPsynergy_End, FieldPsynergy_EndFar
 	export FieldPsynergy_StartCast, FieldPsynergy_StartCastFar
-	export Event_ResolvePendingActions, Event_ResolvePendingActionsFar
+	export Event_EndLastingPsynergy, Event_EndLastingPsynergyFar
 	export SummonTablet_PlayRunes, SummonTablet_PlayRunesFar
 	export Sprite_ShareVramCacheEntry, Sprite_ShareVramCacheEntryFar
 	export Speaker_GetVoice, Speaker_GetVoiceFar
@@ -372,13 +372,13 @@
 	export Prox_InitRockSprite, EffectSprite_InitFar
 	export DehkanPlateau_InitializeRopes, Rope_InitializeFar
 	export Idejima_CountAnswer, Event_CountAnswerFar
-	export ObjectTable_Snapshot, ObjectTable_SnapshotFar
+	export ActorTable_Snapshot, ActorTable_SnapshotFar
 	export Actor_Spawn, Actor_SpawnFar
 	export Actor_SetMovementType, Actor_SetMovementTypeFar
 	export Event_WaitForZoomTransition, Event_WaitForZoomTransitionFar
 	export Scene_QueueMusic, Scene_QueueMusicFar
 	export Event_NoOp, Event_NoOpFar
-	export FlagEntries_GetTable, FlagEntries_GetTableFar
+	export WorldMapPlaces_GetTable, WorldMapPlaces_GetTableFar
 	export Rope_Initialize, Rope_InitializeFar
 	export Rope_Tie, Rope_TieFar
 	export Rope_Coil, Rope_CoilFar
@@ -415,7 +415,7 @@
 	export GabombaStatueChamber_CountAnswer, Event_CountAnswerFar
 	export Exit_PrepareActorAnimation, Exit_PrepareActorAnimationFar
 	export ItemMenu_DrawItemDetails, ItemMenu_DrawItemDetailsFar
-	export Actor_VanishInSparks, Actor_VanishInSparksFar
+	export Actor_AppearInSparks, Actor_AppearInSparksFar
 	export Actor_SetSpriteRotationById, Actor_SetSpriteRotationByIdFar
 	export Kibombo_CountAnswer, Event_CountAnswerFar
 	export Actor_FallOverWithAnimationById, Actor_FallOverWithAnimationByIdFar
@@ -428,12 +428,12 @@
 	export EffectSprite_DrawAtWorldPosition, EffectSprite_DrawAtWorldPositionFar
 	export EffectSprite_Draw, EffectSprite_DrawFar
 	export BattleEffect_StepVector3, BattleEffect_StepVector3Far
-	export BattleEffect_GetObjectPriority, BattleEffect_GetObjectPriorityFar
+	export Actor_GetSpritePriority, Actor_GetSpritePriorityFar
 	export Import_MadPlantLeapAtLeader, MadPlant_LeapAtLeaderFar
 	export EndingImage_Start, EndingImage_StartFar
 	export Actor_PlaySoundInView, Actor_PlaySoundInViewFar
 	export MapGrid_GetAttributeBAt, MapGrid_GetAttributeBAtFar
-	export BattleEffect_GetObjectDepth, BattleEffect_GetObjectDepthFar
+	export Actor_GetSpriteDepth, Actor_GetSpriteDepthFar
 	export Field_StartColorTransition, Field_StartColorTransitionFar
 	export Field_StartPaletteTransition, Field_StartPaletteTransitionFar
 	export EndingImage_Show, EndingImage_ShowFar

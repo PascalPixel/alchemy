@@ -49,7 +49,7 @@
 void Field_StartColorTransition(s32 frames, s32 color);
 void VenusLighthouseEntrance_BlastActorSkyward(s32 id);
 void Party_RestoreHpPp(s32 cureConditions);
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 void Actor_Release(struct Actor *actor);
 
 /// Set as Tolbi's soldiers ambush the party; the soldiers and workmen are gone
@@ -254,7 +254,7 @@ s32 Scene_Initialize(void) {
       VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE) {
     if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_LANDED)) {
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       VenusLighthouseEntrance_BirdsLand();
       Event_End();
     }
@@ -347,7 +347,7 @@ void VenusLighthouseEntrance_BirdsFlyOff(void) {
 
   Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_FLEW_OFF);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_BIRD_WINGS);
   Actor_SetAnimation(ACTOR_WEST_BIRD, 3);
   FieldActor_SetAnimation(ACTOR_EAST_BIRD, 3);
@@ -381,7 +381,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
 
   Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_AMBUSH_SEEN);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgThereTheyAre);
   Actor_SetSpeed(ACTOR_SHOUTING_SOLDIER, 1);
   Actor_SetSpeed(ACTOR_SURPRISED_SOLDIER, 1);
@@ -1052,7 +1052,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
 /// backup sees that Alex is not with Jenna and Kraden, and fights them.
 void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgWhyDoI);
   Actor_WalkToAndWait(ACTOR_JENNA, 72, 266);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
@@ -1109,7 +1109,7 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgNotThatWayThe);
   FieldActor_LaunchFromLeader(ACTOR_KRADEN, 16, 0, FACING_WEST);
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
@@ -1134,7 +1134,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetPosition(ACTOR_JENNA, 364, 156);
   Actor_SetPosition(ACTOR_KRADEN, 362, 142);
   Actor_SetPosition(ACTOR_ALEX, 390, 144);
@@ -1417,7 +1417,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
   blastColumnState->timer++;
 }
 
-s32 BattleEffect_GetObjectDepth(struct Actor *actor);
+s32 Actor_GetSpriteDepth(struct Actor *actor);
 
 /// A column of water rises under a soldier, holds him up, then hurls him off
 /// the top of the screen, and the ground shakes as the column sinks.
@@ -1446,8 +1446,8 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   sprite = blastColumnState->sprites;
   for (i = BLAST_COLUMN_PIECES - 1; i >= 0;) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
-    sprite->depth = BattleEffect_GetObjectDepth(actor) - 2;
-    sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
+    sprite->depth = Actor_GetSpriteDepth(actor) - 2;
+    sprite->oam.priority = Actor_GetSpritePriority(actor);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     state->frame = -1;
@@ -1509,8 +1509,8 @@ void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
   struct EffectSprite *sprite = &dustPuffState->sprites[*next];
   struct SparkState *state = &dustPuffState->states[*next];
 
-  sprite->oam.priority = BattleEffect_GetObjectPriority(source);
-  sprite->depth = BattleEffect_GetObjectDepth(source);
+  sprite->oam.priority = Actor_GetSpritePriority(source);
+  sprite->depth = Actor_GetSpriteDepth(source);
   state->frame = 0;
   state->x = x;
   state->y = y;

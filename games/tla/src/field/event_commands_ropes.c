@@ -17,15 +17,6 @@
 #include "macros.h"
 #include "window/item_icon.h"
 
-/// RopeNode.kind and TightropeNode.kind.
-enum RopeNodeKind {
-  ROPE_NODE_FREE,      ///< in the pool, on no rope
-  ROPE_NODE_CROSSABLE, ///< laid along a rope, for the leader to step onto
-  /// Laid but not to be crossed: a coil, a tied rope's end wound round its far
-  /// post, every node of a settled tightrope.
-  ROPE_NODE_UNCROSSABLE
-};
-
 /// The animations of a rope's or tightrope's post (SPRITE_TIGHTROPE_POST).
 enum PostAnimation {
   ANIM_POST_TIE = 2,   ///< the rope winding round the post, then ANIM_POST_TIED

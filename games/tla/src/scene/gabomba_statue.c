@@ -765,7 +765,7 @@ void GabombaStatue_EndRide(struct Actor *actor) {
   struct MainRoutineState *routine;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetSpriteFlags(actor, 0);
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(6);
@@ -918,7 +918,7 @@ void GabombaStatue_HopAcrossNorthOrSouth(void) {
 /// across. It does so once.
 void GabombaStatue_MouseShowsTheWay(struct Actor *actor) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(1);
   Actor_SetPosition(ACTOR_MOUSE, 328, 296);
   FieldEvent_Wait(30);
@@ -985,7 +985,7 @@ void GabombaStatue_MouseShowsTheWay(struct Actor *actor) {
 }
 
 void GabombaStatue_SendCharge(s32 id, s32 colorMode, s32 statueId, s32 angle);
-void ObjectTable_Snapshot(void);
+void ActorTable_Snapshot(void);
 
 /// How the charges reached the statue in the middle (GabombaStatue_RunCharges),
 /// which decides how the ceremony outside goes on.
@@ -1029,7 +1029,7 @@ void GabombaStatue_HearTheOffering(void) {
 
   Event_SetFlag(FLAG_OFFERING_HEARD);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   GabombaStatue_StopClock();
   FieldEvent_Wait(40);
@@ -1064,7 +1064,7 @@ void GabombaStatue_HearTheOffering(void) {
   System_Wait(8);
   Event_PlaySound(MUS_RITUALS);
   result = GabombaStatue_RunCharges(ACTOR_CHARGE_A, 1);
-  ObjectTable_Snapshot();
+  ActorTable_Snapshot();
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();
@@ -1127,7 +1127,7 @@ void GabombaStatue_ClimbDownLadder(s32 x, s32 z) {
   struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   actor->motionFlags = 0;
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 1);
   Actor_WalkToAndWait(gMainRoutineState.leaderActorId, x, z);
@@ -1319,7 +1319,7 @@ void GabombaStatue_ClimbDownArrowsLadder(void) {
   state = Ram_HeapSlots->fieldState;
   leader = Actor_Get(gMainRoutineState.leaderActorId);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   leader->motionFlags = 0;
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 1);
   Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 472, 144);
@@ -1342,7 +1342,7 @@ void GabombaStatue_ClimbDownArrowsLadder(void) {
 #define DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(name, x, z)                       \
   void name(struct Actor *actor) {                                             \
     Event_Start();                                                             \
-    FieldEvent_ResolvePendingActions(0);                                       \
+    FieldEvent_EndLastingPsynergy(0);                                          \
     Event_PlaySound(SE_GABOMBA_STATUE_HOLE);                                   \
     Actor_SetSpeedAndAcceleration(gMainRoutineState.leaderActorId, 1.6, 1.6);  \
     Actor_MoveToAndWait(gMainRoutineState.leaderActorId, x, z);                \
@@ -1361,7 +1361,7 @@ void GabombaStatue_PinionsThrowLeaderSouth(void) {
   struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_GABOMBA_STATUE_HOLE);
   actor->motionFlags = 0;
   Actor_SetSpeedAndAcceleration(gMainRoutineState.leaderActorId, 1.6, 1.6);
@@ -1436,7 +1436,7 @@ void GabombaStatue_CogsTurnBack(void) {
   struct Actor *actor = Actor_Get(ACTOR_FLASHING_COG);
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0.6);
   FieldCamera_MoveTo(360, 0, 496, 1);
@@ -1470,7 +1470,7 @@ void GabombaStatue_StakeStandsUp(void) {
   struct Actor *actor = Actor_Get(ACTOR_ARROWS_STAKE);
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_Wait(20);
   Event_PlaySound(SE_RISING_CHIMES);
   Actor_SelectAnimation(actor, 5);
@@ -1840,7 +1840,7 @@ void GabombaStatue_LandFromFall(void) {
   struct EffectOptions options;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
@@ -1901,7 +1901,7 @@ void Actor_PlaceOnActor(s32 id, s32 target);
 /// watch.
 void GabombaStatue_FocusEnergies(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   EventCamera_GetActor()->motionFlags = 0;
   Event_StartScreenTransition();
@@ -1972,7 +1972,7 @@ void GabombaStatue_WatchTheChargesStick(void) {
   s32 south = FACING_SOUTH;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_SetPositionAndFacing(gMainRoutineState.leaderActorId, toFIXED(348),
@@ -2050,7 +2050,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   s32 piers = SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_PIERS;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetPositionAndFacing(gMainRoutineState.leaderActorId, toFIXED(348),
                              toFIXED(312), FACING_NORTH);
@@ -2199,7 +2199,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Event_SetFlag(FLAG_GABOMBA_SAW_HOW_IT_WORKS);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  ObjectTable_Snapshot();
+  ActorTable_Snapshot();
   FieldEvent_SetExitRequest(
       GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_SOUTH);
 }
@@ -2214,7 +2214,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   GabombaStatue_SetUpChannelPuzzle(CHANNEL_ORIGIN_COLUMN, CHANNEL_ORIGIN_ROW,
                                    gGabombaStatue_ChannelSeeds[index],
@@ -2499,7 +2499,7 @@ void GabombaStatue_InitializeArrows(void) {
     Actor_SetPosition(ACTOR_CHARGE_D, 0, 0);
     GabombaStatue_ResetClock();
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldCamera_MoveToFX(leader->x.fixed, -1, leader->z.fixed, 0);
     MapGrid_CenterOnFollowedPoint();
     System_Wait(1);
@@ -2531,7 +2531,7 @@ void GabombaStatue_InitializeArrows(void) {
   }
   if (Event_GetFlag(FLAG_GABOMBA_BACK_FROM_CEREMONY)) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
     Event_StartScreenTransition();
@@ -3161,7 +3161,7 @@ void GabombaStatue_PressLeftArrowPanel(void) {
     if (state->blocksRaised != 0) {
       Event_PlaySound(SE_GABOMBA_STATUE_ARROW);
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       GabombaStatue_SetBlockAnimation(3);
       for (i = 0; i < BLOCK_TURN_FRAMES; i++) {
         s32 *offset = &state->blocksAngle;
@@ -3197,7 +3197,7 @@ void GabombaStatue_PressRightArrowPanel(void) {
     if (state->blocksRaised != 0) {
       Event_PlaySound(SE_GABOMBA_STATUE_ARROW);
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       GabombaStatue_SetBlockAnimation(2);
       for (i = 0; i < BLOCK_TURN_FRAMES; i++) {
         s32 *offset = &state->blocksAngle;

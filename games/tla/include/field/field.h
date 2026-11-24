@@ -60,13 +60,13 @@ struct SceneRegion;
 
 extern u32 gDriftScene_SpawnScript[];
 extern u32 gSceneExits[];
-/// The actors ObjectTable_Snapshot saved, up to 32, after their slot numbers.
+/// The actors ActorTable_Snapshot saved, up to 32, after their slot numbers.
 extern struct Actor gSnapshotObjects[];
 extern u8 gLinkLobby_SlotColumns[];
 extern s32 gLinkLobby_SlotValues[];
 extern const u8 gActor_BlinkSpriteColors[4];
 extern const u8 gActor_StepAngleScript[];
-extern u16 gScript_MainScript[];
+extern u16 gActorScript_IdleScript[];
 void Actor_SetBlendMode(struct Actor *actor, u32 value);
 s32 PaletteFade_SetTargetFar(s32, s32);
 void FieldPsynergy_FinishMindRead(void);
@@ -80,7 +80,7 @@ s32 BattleMotion_ProjectScaledPositionFar(s32, s32 *);
 struct BattleEffectParams;
 void BattleEffect_RunFlurry(struct BattleEffectParams *effect, s32 variant);
 void BattleEffect_StopMainActor(void);
-void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot);
+void Event_SpawnActorTable(struct ActorPlacement *entry, s32 slot);
 void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second);
 void Field_StartPaletteTransition(s32 frames);
 void FieldPsynergy_RunHandler(s32 kind);
@@ -89,7 +89,7 @@ void FieldPsynergy_RunExtraHandler(void);
 s32 Actor_PlaySoundInViewFar(struct Actor *interpreter, s32 value);
 void Actor_ReleaseAtIndex(u32 actorIndex);
 void Actor_SetSquareSprite(u32 objectId);
-void BattleEffect_DropObjectAtAnchor(s32 actorId);
+void Scoop_DropFromHand(s32 actorId);
 void SuperLuckyDice_Run(void);
 void GameFlag_RefreshLureCapFar(void);
 void MapGrid_CenterOnFollowedPointFar(void);
@@ -370,7 +370,7 @@ enum TerrainKind {
   /// right of it.
   TERRAIN_SPLIT_BOTTOM_STEP = 15,
   TERRAIN_KIND_COUNT = 16,
-  /// Not a shape's kind: what MapGrid_GetCellAttributeLowNibbleOrBump gives
+  /// Not a shape's kind: what MapGrid_GetTerrainKindOrBumpAt gives
   /// for a TERRAIN_ROUNDED_SQUARE whose two samples differ, a bump or a hollow.
   TERRAIN_BUMP = 99
 };
@@ -441,7 +441,7 @@ struct DepthScroll {
   FIXED z; ///< 16.16 fixed-point pixels
 };
 
-/// MapState as BattleEffect_GetObjectDepth reads it: its followed point and its
+/// MapState as Actor_GetSpriteDepth reads it: its followed point and its
 /// view, through a pointer to the pair.
 struct DepthMap {
   struct DepthOrigin *origin;
@@ -514,6 +514,15 @@ struct LineScrollState {
   FIXED ampY;   ///< 16.16 scale on the sine entry, which is then divided by 256
 };
 
+/// RopeNode.kind and TightropeNode.kind.
+enum RopeNodeKind {
+  ROPE_NODE_FREE,      ///< in the pool, on no rope
+  ROPE_NODE_CROSSABLE, ///< laid along a rope, for the leader to step onto
+  /// Laid but not to be crossed: a coil, a tied rope's end wound round its far
+  /// post, every node of a settled tightrope.
+  ROPE_NODE_UNCROSSABLE
+};
+
 /// One node of a rope Lash throws and ties (Rope_Initialize's state): a point
 /// on the rope, and the sprite Rope_Draw puts between it and the next node.
 struct RopeNode {
@@ -522,7 +531,7 @@ struct RopeNode {
   s32 y;
   s32 z;
   u16 angle; ///< the sprite's turn, along the rope
-  s8 kind;   ///< 0 while free; 1 a node the leader can step onto; 2 coiled
+  s8 kind;   ///< enum RopeNodeKind
   s8 slot;   ///< the rope's index plus one while it is thrown, else 0
   struct AnimationSpritePart sprite;
 };
@@ -568,7 +577,7 @@ void Actor_ResetForLeader(s32 table);
 
 void Portrait_CloseWindowFar(s32 sprite);
 
-extern const s32 gFieldEffect_HeavyImpactScript[];
+extern const s32 gGrowth_LeafScript[];
 extern const s32 gFieldEffect_ShortEffectScript[];
 extern const s32 gFieldEffect_MediumEffectScript[];
 extern const s32 gFieldEffect_LongEffectScript[];
@@ -638,7 +647,7 @@ void Party_ClearUnusableShortcuts(void);
 void BattleBackground_SelectForMap(void);
 
 s32 ScenePoint_GetPosition(s32 id, FIXED *position);
-void ObjectTable_Clear(void);
+void ActorTable_Clear(void);
 
 /// Party_AddPp's amount that fills every member's PP: "Everyone's PP was
 /// replenished!"
@@ -674,9 +683,9 @@ void TreasureSpot_CloseChest(u32 objectId);
 void TreasureSpot_LaunchMimic(u32 objectId);
 void TreasureSpot_OpenChest(u32 objectId);
 void TreasureSpot_ShowOpened(u32 objectId);
-void ObjectEvent_SetMode6WithCue(u32 objectId);
+void TreasureSpot_OpenEmptyChest(u32 objectId);
 struct Actor *TreasureSpot_GetActor(u32 objectId);
-void ObjectEvent_Remove(u32 objectId);
+void TreasureSpot_Remove(u32 objectId);
 
 void Camera_ResetViewDefaults(void);
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
@@ -718,11 +727,11 @@ void ActorSystem_Initialize(s32 mode);
 
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
 
-void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
-void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value);
+void SpriteViewer_SetLayerPriority(s32 slot, s32 value);
+void SpriteViewer_SetLayerColorMode(s32 slot, s32 value);
 void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value);
-void SpriteViewer_SetGridColumnNumber(s32 slot, s32 value);
-void SpriteViewer_BuildProbeRing(s32 x, s32 z, struct SpritePlacement *out);
+void SpriteViewer_SetLayerSprite(s32 slot, s32 value);
+void SpriteViewer_LayOutRing(s32 x, s32 z, struct SpritePlacement *out);
 
 /// The work value handlers of gActorScript_OperandHandlerTable, one an SW_
 /// value: each sets, adds to or compares (into conditionResult) the actor field
@@ -761,8 +770,8 @@ void ActorScript_SetOrCompareTargetY(struct ScriptOperands *state,
                                      s32 operation, s32 value);
 void ActorScript_SetOrCompareTargetZ(struct ScriptOperands *state,
                                      s32 operation, s32 value);
-void ActorScript_SetOrCompareVerticalMotion(struct ScriptOperands *state,
-                                            s32 operation, s32 value);
+void ActorScript_SetOrCompareBounce(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
 void ActorScript_SetOrCompareGravity(struct ScriptOperands *state,
                                      s32 operation, s32 value);
 void ActorScript_SetOrCompareTerrainHeight(struct ScriptOperands *state,
@@ -819,9 +828,9 @@ extern const u8 gRope_Tiles[];
 /// The bottom link of a hanging vine's chain, tagged LZ (rope_vine_pictures.s).
 extern const u8 gHangingVine_ChainBottomPicture[];
 
-s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect);
+s32 Field_FindNearbyPsynergyTarget(s32 self, s32 kind);
 
-s32 MapGrid_GetCellAttributeLowNibbleFar(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainKindAtFar(s32 layer, s32 x, s32 z);
 
 /// The ground particles' tiles, byte LZ (field_effect_particles.s).
 extern const u8 gFieldEffect_GroundParticleTiles[];
@@ -849,7 +858,7 @@ s32 MapGrid_GetCellBehaviorAtFar(s32 layer, s32 x, s32 z);
 s32 MapGrid_IsWallAtFar(s32 *position);
 
 extern const u16 gRope_KeyHeadings[];
-extern const u16 gFieldEffect_CyclePatternWords[];
+extern const u16 gInput_DpadAngles[];
 
 /// The world map camera's pitch the scanline parameters were built for.
 extern u32 gScanlinePitch;
@@ -901,7 +910,7 @@ s32 MapGrid_IsWallAt(s32 *position);
 
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 value);
 
-void ObjectTable_Snapshot(void);
+void ActorTable_Snapshot(void);
 
 void Actor_ResetTargetsAndVelocity(u32 objectId);
 

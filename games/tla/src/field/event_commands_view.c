@@ -115,7 +115,7 @@ s32 FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
   return 0;
 }
 
-extern const u8 gFieldEffect_WatchedActorScript[];
+extern const u8 gEmote_BubbleScript[];
 
 /// The event command "actor show emote": shows an emote bubble (SPRITE_EMOTE)
 /// over an actor, then waits the given number of frames. Returns the bubble.
@@ -134,8 +134,7 @@ struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
     if (bubble != 0) {
       struct Sprite *sprite;
 
-      Actor_StartScriptFar(bubble,
-                           (const s32 *)gFieldEffect_WatchedActorScript);
+      Actor_StartScriptFar(bubble, (const s32 *)gEmote_BubbleScript);
       Actor_SelectAnimationFar(bubble, emote & EMOTE_ANIMATION_MASK);
       bubble->motionFlags = 0;
       bubble->timer = 0;

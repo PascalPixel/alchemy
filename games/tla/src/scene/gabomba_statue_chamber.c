@@ -245,7 +245,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   u32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(MUS_JUPITER_LIGHTHOUSE);
   Sound_Play(SE_POWER_UP);
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 3);
@@ -583,7 +583,7 @@ void GabombaStatueChamber_DropIntoHole(s32 x, s32 z) {
   struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   actor->motionFlags = 0;
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 1);
   Actor_WalkToAndWaitById(gMainRoutineState.leaderActorId, x, z);
@@ -648,7 +648,7 @@ void GabombaStatueChamber_RideLiftBackUp(void) {
   s32 i, step;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   BlendScript_Suspend();
   step = 1;
   for (i = 0; i < LIFT_TRAVEL; i++) {
@@ -709,7 +709,7 @@ void GabombaStatueChamber_RideLiftDown(void) {
   s32 i, step;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   BlendScript_Suspend();
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
   Actor_SetDestinationOffsetById(gMainRoutineState.leaderActorId, 0, -8);
@@ -755,7 +755,7 @@ void GabombaStatueChamber_StepOffLift(void) {
 /// know what he must do here to become witch doctor. It plays once.
 void GabombaStatueChamber_AkafubuReachesChamber(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_MoveTo(392, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
@@ -894,7 +894,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   s32 leader;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldActor_SetPositionAndResetMotion(
       ((s32)Actor_GetById(ACTOR_BLACK_CRYSTAL)), toFIXED(392), 0, toFIXED(268));
@@ -1105,7 +1105,7 @@ extern u32 gGabombaStatueChamber_RejoinLeaderScript[];
 void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   struct HeapSlots *heap;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
   GabombaStatueChamber_UnrollTongue();

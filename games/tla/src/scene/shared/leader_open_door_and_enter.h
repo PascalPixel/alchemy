@@ -4,7 +4,7 @@
 void Leader_OpenDoorAndEnter(const struct MapGridCellAnimation *door, s32 exit,
                              s32 unused) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(door->steps, door->x, door->y);
   Actor_Get(gMainRoutineState.leaderActorId)->motionFlags = ACTOR_FALLS;

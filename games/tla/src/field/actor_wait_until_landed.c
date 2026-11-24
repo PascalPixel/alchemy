@@ -6,7 +6,7 @@
 #include "field/actor.h"
 
 /// Waits until the actor stops rising or falling, sixty frames at most.
-void OverlayObject_WaitUntilIdle(struct Actor *actor) {
+void Actor_WaitUntilLanded(struct Actor *actor) {
   s32 remainingFrames = 60;
   s32 busy;
 

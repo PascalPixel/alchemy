@@ -14,7 +14,7 @@
 /// The heading the +Control Pad points, by its right, left, up and down bits
 /// (DPAD_INDEX), where Leader_StepOffRope and Leader_StepOffTightrope step;
 /// DPAD_ANGLE_NONE for none or opposed keys. The same table as
-/// gFieldEffect_CyclePatternWords.
+/// gInput_DpadAngles.
 const u16 gRope_KeyHeadings[16] = {
     DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,
     FACING_NORTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_NORTH,

@@ -310,7 +310,7 @@ s32 FieldPsynergy_GetCanvasPriority(struct Actor *actor, s32 facing) {
 }
 
 /// Returns the OBJ priority of the actor's sprite.
-s32 BattleEffect_GetObjectPriority(struct Actor *actor) {
+s32 Actor_GetSpritePriority(struct Actor *actor) {
   return ((struct PlacedSprite *)actor->sprite)->priority;
 }
 
@@ -324,7 +324,7 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor) {
 /// Returns the depth slot the actor's sprite takes, so that a sprite drawn
 /// with it sorts with it: from its projected depth on the world map, otherwise
 /// from its screen row.
-s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
+s32 Actor_GetSpriteDepth(struct Actor *actor) {
   FIXED point[3];
   s32 screen[3];
   s32 depth;
@@ -350,7 +350,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
 }
 
 /// Draws the Psynergy's canvas sprite (FieldEffectState.sprite) each frame.
-void BattleEffect_DrawSceneSprite(void) {
+void FieldPsynergy_DrawCanvasSprite(void) {
   EffectSprite_Draw(
       &((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->sprite);
 }
@@ -358,7 +358,7 @@ void BattleEffect_DrawSceneSprite(void) {
 /// When the caster faces away (FACING_NORTH), starts the Psynergy's canvas
 /// sprite (FieldEffectState.sprite): a blank 32x32 sprite of its own VRAM cache
 /// entry, twice as tall, 28 pixels above the caster in front of everything,
-/// drawn each frame by BattleEffect_DrawSceneSprite until
+/// drawn each frame by FieldPsynergy_DrawCanvasSprite until
 /// FieldPsynergy_ReleaseSceneSprite.
 void FieldPsynergy_StartSceneSprite(void) {
   struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
@@ -391,7 +391,7 @@ void FieldPsynergy_StartSceneSprite(void) {
     Camera_WorldToScreen(position);
     sprite->x = position[0];
     sprite->y = position[2];
-    Task_Add(BattleEffect_DrawSceneSprite, TASK_PASS_FRAME);
+    Task_Add(FieldPsynergy_DrawCanvasSprite, TASK_PASS_FRAME);
   }
 }
 #undef WORLD_MAP_GROUND_DEPTH

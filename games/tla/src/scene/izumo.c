@@ -200,7 +200,7 @@ void Izumo_FinishMovingStone(void) {
     }
     if (!Flag_IsSet(FLAG_GUARD_SAW_STONE_MOVED)) {
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       FieldCamera_FollowActor(ACTOR_STONE_CIRCLE_GUARD, 1);
       FieldCamera_WaitForArrival();
       Actor_ShowEmoteById(ACTOR_STONE_CIRCLE_GUARD,
@@ -269,7 +269,7 @@ void Izumo_ScatterWeedsOverFirstAntidote(void) {
         FIELD_CELL(actor->z.fixed) ==
             FIELD_CELL(toFIXED(FIRST_ANTIDOTE_SPOT_Z))) {
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       FieldEffect_SetAttached(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffsetById(gMainRoutineState.leaderActorId, -16, 0);
@@ -296,7 +296,7 @@ void Izumo_ScatterWeedsOverSecondAntidote(void) {
         FIELD_CELL(actor->z.fixed) ==
             FIELD_CELL(toFIXED(SECOND_ANTIDOTE_SPOT_Z))) {
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       FieldEffect_SetAttached(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Call3((void (*)())Actor_SetDestinationOffsetById,
@@ -345,7 +345,7 @@ void Izumo_ScatterWeedsOverLuckyMedal(void) {
     if (FIELD_CELL(actor->x.fixed) == FIELD_CELL(toFIXED(LUCKY_MEDAL_SPOT_X)) &&
         FIELD_CELL(actor->z.fixed) == FIELD_CELL(toFIXED(LUCKY_MEDAL_SPOT_Z))) {
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       FieldEffect_SetAttached(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffsetById(gMainRoutineState.leaderActorId, 16, 0);
@@ -377,7 +377,7 @@ void Izumo_EnterDoor(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetSpeedParameters(gMainRoutineState.leaderActorId, toFIXED(1) / 2,
                            toFIXED(1) / 4);
   Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
@@ -402,7 +402,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// that moves stones without touching them.
 void Izumo_TalkToStoneCircleGuard(s32 actor) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (Flag_IsSet(FLAG_GUARD_SAW_STONE_MOVED)) {
     Event_SetMessageId(MsgCanYouImagine);
     // "Can you imagine what it must be like to have the power to move..."
@@ -429,7 +429,7 @@ void Izumo_TalkToStoneCircleGuard(s32 actor) {
 /// I have to keep guarding the stone circle?"
 void Izumo_TalkToFestivalStoneCircleGuard(s32 actor) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (Flag_IsSet(FLAG_GUARD_SAW_STONE_MOVED)) {
     Event_SetMessageId(MsgButItS);
     // "But it's a festival! Why do I have to keep guarding the stone circle?"
@@ -459,7 +459,7 @@ void Izumo_TellOfUzumesFamily(s32 actor) {
   const u8 *message;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   message = MsgLadyUzumeAnd;
   Event_SetMessageId(message);
   FieldMessage_ShowAtActor(actor, 0);
@@ -509,7 +509,7 @@ void Izumo_RotateWaterColors(void) {
 void Izumo_StopThePartyToThankThem(void) {
   GameFlag_Set(FLAG_STOPPED_TO_THANK_THE_PARTY);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId(MsgFelixWait);
   Actor_WalkToById(gMainRoutineState.leaderActorId, 200, 264);
   Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
@@ -619,7 +619,7 @@ void Izumo_OfferATokenOfGratitude(void) {
     const u8 *message;
 
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     message = MsgWouldYouBe;
     Event_SetMessageId(message);

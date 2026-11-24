@@ -57,7 +57,7 @@ void Shop_InitializeState(void) {
   s32 resourceSlot;
 
   shop = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ShopState));
-  Event_ResolveAllPendingActionsFar();
+  Event_EndAllLastingPsynergyFar();
   Dma_Fill32(0, shop, sizeof(struct ShopState));
   // The hand cursor's glides take SHOP_CURSOR_ENTER_FRAMES until a screen
   // changes it.

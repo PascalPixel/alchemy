@@ -237,7 +237,7 @@ UNUSED void DailaRooms_StartleAtTheLeader(s32 unused, s32 actor) {
 /// before Tavi is rescued: he thinks of the two scamps.
 s32 DailaRooms_ReadArmorMerchantsMind(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgDailaInteriorsScamps);
   // "If those two scamps knew there were travelers in town, they'd have a..."
   Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
@@ -249,7 +249,7 @@ s32 DailaRooms_ReadArmorMerchantsMind(void) {
 /// treasure.
 s32 DailaRooms_ReadArmorMerchantsMindAfterRescue(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgDailaInteriorsMazeTreasure);
   // "Maybe they hid treasure here because this town is so mazelike..."
   Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
@@ -260,7 +260,7 @@ s32 DailaRooms_ReadArmorMerchantsMindAfterRescue(void) {
 /// Unused: starts an event and draws the leader in front of the counters.
 UNUSED void DailaRooms_StartLeaderEvent(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
 }
 
@@ -293,7 +293,7 @@ void DailaRooms_TalkToWeaponMerchant(s32 actor) {
     Shop_Run(SHOP_DAILA_WEAPONS, actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgDailaInteriorsSouthRoadDanger);
     // "You folks ain't thinkin' 'bout goin' south, are ya? The roads to the..."
     Event_ShowMessageAndWait(actor, 0);
@@ -311,7 +311,7 @@ void DailaRooms_TalkToArmorMerchant(s32 actor) {
     Shop_Run(SHOP_DAILA_ARMOR, actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgDailaInteriorsNewTravelers);
     // "You guys look new 'round these parts! What brings you to here?..."
     Event_ShowMessageAndWait(actor, 0);
@@ -328,7 +328,7 @@ void DailaRooms_TalkToInnkeeper(s32 actor) {
     Inn_CheckIn(DAILA_INN, actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgDailaInteriorsDinnerChoice);
     // "What should I cook for our guests tonight? I just can't decide."
     Event_ShowMessageAndWait(actor, 0);
@@ -347,7 +347,7 @@ void DailaRooms_TalkToHealer(s32 actor) {
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     if (GameFlag_Get(FLAG_DAILA_HEALER_SENT_TO_POI) == 0) {
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       msg = (s32)MsgDailaInteriorsTravelersFreeTime;
       Event_SetMessageId(msg);
       // "Travelers! Well, I'll be! Do you have a lot of time and nowhere to..."
@@ -367,7 +367,7 @@ void DailaRooms_TalkToHealer(s32 actor) {
     }
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     msg = (s32)MsgDailaInteriorsTravelersFreeTime;
     Event_SetMessageId(msg);
     // "Travelers! Well, I'll be! Do you have a lot of time and nowhere to go?"
@@ -395,7 +395,7 @@ void DailaRooms_TalkToHealerOnceTaviIsRescued(s32 actor) {
     Sanctum_Run(actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgDailaInteriorsLeaveForMadra);
     // "There is nothing left for you in Daila... Please be careful on your..."
     Event_ShowMessageAndWait(actor, 0);
@@ -412,7 +412,7 @@ void DailaRooms_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
     Shop_Run(SHOP_DAILA_WEAPONS, actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgDailaInteriorsPirateTreasure);
     // "Way back when, Daila used to be a hideout for a band of pirates......"
     Event_ShowMessageAndWait(actor, 0);
@@ -429,7 +429,7 @@ void DailaRooms_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
     Shop_Run(SHOP_DAILA_ARMOR, actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgDailaInteriorsSpaciousVillage);
     // "We don't have a lot of people in Daila, but it's a very spacious..."
     Event_ShowMessageAndWait(actor, 0);
@@ -447,7 +447,7 @@ void DailaRooms_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
     Inn_CheckIn(DAILA_INN, actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgDailaInteriorsFishermenWaiting);
     // "Our fishermen still can't head out to sea... When will they start..."
     Event_ShowMessageAndWait(actor, 0);
@@ -461,7 +461,7 @@ void DailaRooms_AskGoingToMadra(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)MsgDailaInteriorsGoingToMadra;
   Event_SetMessageId(msg);
   // "Are you going to Madra?"
@@ -483,7 +483,7 @@ void DailaRooms_AskLookingForBoat(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)MsgDailaInteriorsLookingForBoat;
   Event_SetMessageId(msg);
   // "Don't tell me you're all looking for a boat, too!"
@@ -503,7 +503,7 @@ void DailaRooms_AskLookingForBoat(void) {
 /// show hopes Felix was not watching, then explains.
 void DailaRooms_TalkCaughtPracticing(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgDailaInteriorsWatchingPractice);
   // "Er... Aheh heh... You... weren't watching, were you?"
   Event_ShowMessageAndWait(ACTOR_PRACTICING_PERFORMER, 0);
@@ -535,7 +535,7 @@ void DailaRooms_TakeSeaGodsTear(void) {
   savedVelocityY = Actor_GetById(ACTOR_SEA_GODS_TEAR)->velocityY;
   savedY = Actor_GetById(ACTOR_SEA_GODS_TEAR)->y.fixed;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (PartyInventory_FindRoom(item) >= 0) {
     ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR),
                             ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
@@ -705,7 +705,7 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineState.next == SCENE_DAILA_ROOMS_SANCTUM) {
     map = (struct MapStateGroundEffects *)Ram_HeapSlots->mapGrid;
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_TEAR_SPOT), 0);
     FieldEffect_StartBlankOverlay(0);
     if (!GameFlag_Get(FLAG_SEA_GODS_TEAR_TAKEN)) {

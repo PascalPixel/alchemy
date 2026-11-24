@@ -169,7 +169,7 @@ void IzumoRooms_TalkToPriest(s32 actor) {
     Sanctum_Run(actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
       Event_SetMessageId((s32)MsgNowThatPeace);
       // "Now that peace has been restored, our island is flourishing once..."
@@ -202,7 +202,7 @@ void IzumoRooms_TalkToInnkeeper(s32 actor) {
     Inn_CheckIn(IZUMO_INN, actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     if (GameFlag_Get(FLAG_SERPENT_SLAIN))
       Event_SetMessageId((s32)MsgBriggsFromChampa);
     else
@@ -223,7 +223,7 @@ void IzumoRooms_TalkToMerchant(s32 actor) {
     Shop_Run(SHOP_IZUMO, actor);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     if (GameFlag_Get(FLAG_SERPENT_SLAIN))
       Event_SetMessageId((s32)MsgYouMustSee);
     else
@@ -240,7 +240,7 @@ void IzumoRooms_TalkToMerchant(s32 actor) {
 /// she will be alone if it defeats him.
 void IzumoRooms_AskAfterSusa(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (!Event_GetFlag(FLAG_UZUME_SPOKE_OF_SUSA)) {
     Event_SetMessageId((s32)MsgSusaSNot);
     // "Susa's not here. I believe he went to Mt. Mikage."
@@ -290,7 +290,7 @@ void IzumoRooms_TalkToUzume(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceActorById(ACTOR_UZUME, gMainRoutineState.leaderActorId, 0);
   if (GameFlag_Get(FLAG_UZUME_HAS_THE_DOLL)) {
     Event_SetMessageId((s32)MsgWithThisDancing);
@@ -315,7 +315,7 @@ void IzumoRooms_AskAboutMtMikage(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)MsgTheyVeBeen;
   Event_SetMessageId(msg);
   // "They've been saying that you went into Mt. Mikage, too... Is that true?"
@@ -337,7 +337,7 @@ void IzumoRooms_AskAboutMtMikage(void) {
 /// her mind but not her heart.
 void IzumoRooms_ReadUzumesMind(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceActorById(ACTOR_UZUME, gMainRoutineState.leaderActorId, 0);
   if (Event_GetFlag(FLAG_UZUME_MIND_READ)) {
     Event_SetMessageId((s32)MsgTryingAgainWhat);
@@ -371,7 +371,7 @@ void IzumoRooms_ReadUzumesMind(void) {
 /// me." Each time Felix steps back from her.
 s32 IzumoRooms_KushinadaAsksSusaNotToCome(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (!Event_GetFlag(FLAG_KUSHINADA_ASKED_SUSA_NOT_TO_COME)) {
     Event_SetMessageId((s32)MsgSusaDonT);
     // "Susa, don't come for me..."
@@ -464,7 +464,7 @@ void IzumoRooms_RecognizeTheHeroes(s32 side) {
   s32 answer, message;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(143, CAMERA_KEEP, 560, 1);
   if (side == HEROES_FROM_THE_EAST) {
     Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 184, 568);
@@ -1277,7 +1277,7 @@ void IzumoRooms_ShowMove(void) {
 /// thanks gives the party her pet, Coal, the Mars Djinni.
 void IzumoRooms_GiveUzumeTheDoll(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)&MsgAhCouldIt);
   Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 144, 536);
   Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
@@ -1346,7 +1346,7 @@ void IzumoRooms_GiveUzumeTheDoll(void) {
                   DJINNI_INDEX(DJINNI_COAL));
   Event_End();
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceActorById(gMainRoutineState.leaderActorId, ACTOR_UZUME, 0);
   Event_Wait(60);
   Actor_StartRepeatedMotion(ACTOR_UZUME, 2);

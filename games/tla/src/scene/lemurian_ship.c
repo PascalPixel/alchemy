@@ -148,7 +148,7 @@ enum LemurianShipJelly {
   JELLY_COUNT
 };
 
-/// The battles below deck by their slot of ENCOUNTER_TABLE_AQUA_JELLIES: an
+/// The battles below deck by their slot of ENCOUNTER_ZONE_AQUA_JELLIES: an
 /// Aqua Jelly, or the Aqua Hydra.
 enum LemurianShipEncounter { ENCOUNTER_AQUA_JELLY, ENCOUNTER_AQUA_HYDRA };
 
@@ -416,7 +416,7 @@ void LemurianShip_OpenDoor(void) {
   u32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   found = 0;
   for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
     actor = ((struct Actor *)Actor_GetById(i));
@@ -462,7 +462,7 @@ void LemurianShip_OpenLowerDoor(void) {
   u32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   found = 0;
   for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
     actor = ((struct Actor *)Actor_GetById(i));
@@ -503,7 +503,7 @@ void LemurianShip_WalkIntoPassage(void) {
 
     leader = ((struct Actor *)Actor_GetById(party->leaderActorId));
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
     Actor_SetSpeed(party->leaderActorId, 0.5);
@@ -581,7 +581,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// crunch, or does nothing while the frozen puddle holds it up.
 void LemurianShip_ExamineLiftSwitch(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_SHIP_ENGINE_RUNNING)) {
     if (Event_GetFlag(FLAG_LIFT_LOWERED)) {
       Event_PlaySound(SE_CRUNCH);
@@ -642,7 +642,7 @@ void LemurianShip_PushCrateOffLedge(void) {
   x = FIELD_CELL(actor->x.fixed);
   if (x == 16) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     MapGrid_CopyCellAttributes(16, 47, 1, 1, x, 46);
     wait(1);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -699,7 +699,7 @@ void LemurianShip_StepOnLift(void) {
   if (!Event_GetFlag(FLAG_SHIP_ENGINE_RUNNING)) {
     leader = ((struct Actor *)Actor_GetById(gMainRoutineState.leaderActorId));
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
     Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 840, 72);
     jellyBeaten = Event_GetFlag((FLAG_JELLIES_BEATEN + JELLY_SIX_JELLY_ROOM_A));
@@ -782,7 +782,7 @@ void LemurianShip_StepOnLiftWestSide(void) {
   if (!Event_GetFlag(FLAG_SHIP_ENGINE_RUNNING)) {
     leader = ((struct Actor *)Actor_GetById(gMainRoutineState.leaderActorId));
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
     Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 812, 72);
     Event_PlaySound(SE_LEMURIAN_SHIP_LIFT);
@@ -811,14 +811,14 @@ void LemurianShip_StepOnLiftWestSide(void) {
 #define DEFINE_JELLY_BATTLE(name, firstJelly, firstActor)                      \
   void name(s32 id) {                                                          \
     Event_Start();                                                             \
-    Event_ResolvePendingActions(0);                                            \
+    Event_EndLastingPsynergy(0);                                               \
     Actor_FaceActorById(id, gMainRoutineState.leaderActorId, 0);               \
     Actor_StartRepeatedMotion(id, 2);                                          \
     Actor_SetAttachedEffect(id,                                                \
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
     Event_Wait(20);                                                            \
     gMainRoutineState.battleType = BATTLE_TYPE_NO_ESCAPE;                      \
-    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_AQUA_JELLIES,        \
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_AQUA_JELLIES,         \
                                           ENCOUNTER_AQUA_JELLY);               \
     GameFlag_Set(id + (FLAG_FIGHTING_JELLY + (firstJelly) - (firstActor)));    \
   }
@@ -857,7 +857,7 @@ void LemurianShip_LeapIntoHydra(s32 id) {
 /// battle cannot be run from.
 void LemurianShip_FightAquaHydra(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_PlaySound(MUS_SILENCE);
   Actor_StartRepeatedMotion(ACTOR_HOLD_JELLY_B, 2);
   Actor_StartRepeatedMotion(ACTOR_HOLD_JELLY_C, 2);
@@ -884,7 +884,7 @@ void LemurianShip_FightAquaHydra(void) {
   gMainRoutineState.battleType = BATTLE_TYPE_NO_ESCAPE;
   Event_SetAfterBattleDestination(SCENE_LEMURIAN_SHIP_AQUA_HYDRA,
                                   ENTRANCE_HOLD_AFTER_AQUA_HYDRA_BATTLE);
-  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_AQUA_JELLIES,
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_AQUA_JELLIES,
                                         ENCOUNTER_AQUA_HYDRA);
   Event_SetFlag((FLAG_FIGHTING_JELLY + JELLY_AQUA_HYDRA));
 }
@@ -911,7 +911,7 @@ void LemurianShip_CheckPillarsOnDropTiles(void) {
         leader =
             ((struct Actor *)Actor_GetById(gMainRoutineState.leaderActorId));
         Event_Start();
-        Event_ResolvePendingActions(0);
+        Event_EndLastingPsynergy(0);
         Event_Wait(20);
         Event_PlaySound(SE_STONE_RUMBLE);
         MapGrid_CopyCellsTo(35, 68, 35, 69, 1, 1);
@@ -947,7 +947,7 @@ void LemurianShip_CheckPillarsOnDropTiles(void) {
         leader =
             ((struct Actor *)Actor_GetById(gMainRoutineState.leaderActorId));
         Event_Start();
-        Event_ResolvePendingActions(0);
+        Event_EndLastingPsynergy(0);
         Event_Wait(20);
         Event_PlaySound(SE_STONE_RUMBLE);
         MapGrid_CopyCellsTo(29, 68, 29, 69, 1, 1);
@@ -976,7 +976,7 @@ void LemurianShip_CheckPillarsOnDropTiles(void) {
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_SUNK) &&
       Event_GetFlag(FLAG_LEFT_PILLAR_SUNK)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_PlaySound(SE_THUMP);
     MapGrid_CopyCellsTo(4, 124, 31, 64, 3, 2);
     Event_Wait(20);
@@ -1045,7 +1045,7 @@ void LemurianShip_ShowLeftPillarPuddle(void) {
     u32 frame;                                                                 \
                                                                                \
     Event_Start();                                                             \
-    Event_ResolvePendingActions(0);                                            \
+    Event_EndLastingPsynergy(0);                                               \
     state->raisedTrigger = 0;                                                  \
     GameFlag_Clear(loweredFlag);                                               \
     GameFlag_Clear(fullFlag);                                                  \
@@ -1095,7 +1095,7 @@ void LemurianShip_ParchHold(void) {
   struct Actor *actor;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Field_SetCameraBounds(toFIXED(8), toFIXED(16), toFIXED(248), toFIXED(256));
   Actor_SetPositionFX(gMainRoutineState.leaderActorId, leader->x.fixed,
                       leader->z.fixed - toFIXED(304));
@@ -1120,8 +1120,8 @@ void LemurianShip_ParchHold(void) {
 /// dries it.
 void LemurianShip_StartParch(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
+  Event_EndLastingPsynergy(0);
   Event_End();
 }
 
@@ -1262,7 +1262,7 @@ void LemurianShip_DrawLightToOrb(void) {
 /// sea with every monster aboard gone.
 void LemurianShip_SetBlackCrystal(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgLemurianShipHowDidAllTheseMonsters);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_StartScreenTransition();
@@ -1345,7 +1345,7 @@ void LemurianShip_MeltJellyIntoPuddle(s32 jelly, s32 puddle) {
   struct Actor *actor = ((struct Actor *)Actor_GetById(puddle));
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   actor->scaleX = FIXED_ONE / 16;
   actor->scaleY = FIXED_ONE / 16;
   wait(1);
@@ -1364,7 +1364,7 @@ void LemurianShip_MeltJellyIntoPuddle(s32 jelly, s32 puddle) {
 void LemurianShip_ScareJellyOnArrival(void) {
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + JELLY_SIX_JELLY_ROOM_A)) == 0) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(20);
@@ -1378,7 +1378,7 @@ void LemurianShip_ScareJellyOnArrival(void) {
 void LemurianShip_ScareJelly(void) {
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + JELLY_SIX_JELLY_ROOM_A)) == 0) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     LemurianShip_JellyFlees();
     Event_End();
   }
@@ -1409,7 +1409,7 @@ void LemurianShip_JellyFlees(void) {
 /// sound plays and the game waits two seconds before Felix can move.
 void LemurianShip_FloodHold(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_PlaySound(SE_SCATTER);
   Event_Wait(120);
   Event_End();

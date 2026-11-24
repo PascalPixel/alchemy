@@ -968,7 +968,7 @@ FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED z) {
 
 /// Returns the terrain kind of a layer's cell at (x, z) in 16.16 pixels, as
 /// The Broken Seal's.
-s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED z) {
+s32 MapGrid_GetTerrainKindAt(s32 layer, FIXED x, FIXED z) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
 
@@ -984,9 +984,9 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED z) {
          MAPGRID_SHAPE_KIND_MASK;
 }
 
-/// As MapGrid_GetCellAttributeLowNibble, but a rounded square whose two
+/// As MapGrid_GetTerrainKindAt, but a rounded square whose two
 /// samples differ reads as TERRAIN_BUMP.
-s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z) {
+s32 MapGrid_GetTerrainKindOrBumpAt(s32 layer, s32 x, s32 z) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
   u8 *code;
@@ -1047,7 +1047,7 @@ s32 MapGrid_GetCellHeight(FIXED x, FIXED z, s32 layer) {
   return MapGrid_GetTerrainHeight(layer, x, z) >> CURVE_VALUE_SHIFT;
 }
 
-/// As MapGrid_GetCellAttributeLowNibble, a second copy.
+/// As MapGrid_GetTerrainKindAt, a second copy.
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *grid;

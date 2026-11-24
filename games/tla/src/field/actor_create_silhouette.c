@@ -16,7 +16,7 @@
 /// Creates an actor of sprite type at a 16.16 position to stand as a
 /// silhouette: at drawing priority 0, still, skipped by target searches, with
 /// no outline or shadow, all black and translucent.
-struct Actor *OverlayObject_PrepareObject(FIXED x, FIXED y, FIXED z, s32 type) {
+struct Actor *Actor_CreateSilhouette(FIXED x, FIXED y, FIXED z, s32 type) {
   struct Actor *actor = Import_ActorCreate(type, x, y, z);
 
   if (actor != NULL) {

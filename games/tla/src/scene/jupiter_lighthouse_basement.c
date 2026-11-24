@@ -117,7 +117,7 @@ extern u32 gFieldEffect_LongScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -155,7 +155,7 @@ void JupiterLighthouse_UncoverMadPlant(void) {
     FieldMadPlant_LeapAtLeader(SPRITE_MAD_PLANT, 424, 488);
     gMainRoutineState.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(3));
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 3);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_MAD_PLANTS, 3);
   }
 }
 

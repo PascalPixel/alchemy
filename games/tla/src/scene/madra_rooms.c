@@ -202,7 +202,7 @@ void MadraRooms_AskWillWeBeSafe(void) {
   s32 msg;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   msg = (s32)MsgMadraInteriorsIndraIsInDirectContact;
   FieldEvent_SetMessageId(msg);
   // "Indra is in direct contact with southern Gondowan... Will we be safe?"
@@ -296,7 +296,7 @@ void MadraRooms_TalkToHealer(s32 actor) {
 /// touch that gem! The elder gave us strict orders to protect it!"
 void MadraRooms_GuardElderGem(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_FaceActor(ACTOR_JEWEL_KEEPER, ACTOR_FELIX, 0);
   FieldActor_Jump(ACTOR_JEWEL_KEEPER, 6, 20);
   Actor_FaceActor(ACTOR_FELIX, ACTOR_JEWEL_KEEPER, 0);
@@ -592,7 +592,7 @@ void MadraRooms_ShinAngersPiers(void) {
   struct Actor *felix;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetAnimation(ACTOR_JAIL_PUDDLE, 1);
   Actor_SetPosition(ACTOR_FELIX, 400, 888);
   FieldCamera_MoveTo(408, CAMERA_KEEP, 848, 1);
@@ -824,7 +824,7 @@ void MadraRooms_ShinAngersPiers(void) {
 /// want to have to hurt anyone..."
 void MadraRooms_TalkToPiers(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriorsAhWhenWillThatKindly);
   Actor_FaceDirection(ACTOR_JAIL_KRADEN, FACING_SOUTH, 0);
   // "Ah... When will that kindly elder return and end my imprisonment? I..."
@@ -837,7 +837,7 @@ void MadraRooms_TalkToPiers(void) {
 /// wonders when he will be freed.
 void MadraRooms_MindReadPiers(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriorsWhyDidIUse);
   // "Why did I use my Psynergy in anger? I must maintain control... My..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
@@ -891,7 +891,7 @@ void MadraRooms_GiveHealingFungus(void) {
   Event_SetFlag(FLAG_MADRA_FUNGUS_FOR_DINNER);
   PartyInventory_Remove(ITEM_HEALING_FUNGUS);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetSpeed(ACTOR_MUSHROOM_COOK, 0.4);
   Actor_WalkTo(ACTOR_MUSHROOM_COOK, 410, 109);
   actor = Actor_Get(ACTOR_FELIX);
@@ -990,7 +990,7 @@ void MadraRooms_GiveLaughingFungus(void) {
 
   Event_SetFlag(FLAG_MADRA_LAUGHING_FUNGUS_OFFERED);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   felix = Actor_Get(ACTOR_FELIX);
   if (felix->z.fixed > toFIXED(95))
     Actor_WalkToAndWait(ACTOR_FELIX, felix->x.fixed / FIXED_ONE, 95);
@@ -1051,7 +1051,7 @@ static inline void MadraRooms_WalkIntoLeader(s32 actorId) {
 /// apologising for his imprisonment.
 void MadraRooms_WelcomePiersHome(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriorsFelixYoureBack);
   Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(ACTOR_MAYOR, ACTOR_FELIX, 0);

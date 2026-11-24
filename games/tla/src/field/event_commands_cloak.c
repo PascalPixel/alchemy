@@ -95,7 +95,7 @@ void FieldPsynergy_StartCloak(void) {
 void BattleEffect_LandFallingObject(struct Actor *actor) {
   if (actor->y.fixed <= actor->groundHeight) {
     actor->wait = 2;
-    Actor_StartScriptFar(actor, (u32)gBattleEffect_SharedParticleScript);
+    Actor_StartScriptFar(actor, (u32)gFieldEffect_ReleaseScript);
     actor->update = 0;
   }
 }
@@ -109,7 +109,7 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *particle) {
   drift = Random16();
   particle->x.fixed += drift - Random16();
   if (particle->y.fixed <= particle->groundHeight) {
-    Actor_StartScriptFar(particle, gBattleEffect_SharedParticleScript);
+    Actor_StartScriptFar(particle, gFieldEffect_ReleaseScript);
   }
 }
 

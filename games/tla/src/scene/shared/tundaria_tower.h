@@ -33,7 +33,7 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
 /// Stops the leader where it stands (Leader_StopMoving, through the overlay's
 /// own import row).
 void Import_LeaderStopMoving(void);
-void Event_ResolvePendingActions(s32 skip);
+void Event_EndLastingPsynergy(s32 skip);
 
 void Rock_Spawn(s32 x, s32 y, s32 z, s32 frames);
 

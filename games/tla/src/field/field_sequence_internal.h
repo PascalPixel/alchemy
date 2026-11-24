@@ -194,7 +194,7 @@ extern const struct MapMusicRule gScene_MusicRules[];
 /// Each scene's area name by scene or group and entrance (area_name_rules.s).
 extern const struct AreaNameRule gArea_NameRules[];
 
-extern const s16 gParty_PairResolveRules[];
+extern const s16 gScene_ReturnRules[];
 
 extern const s32 gScene_BattleBackgroundRules[];
 

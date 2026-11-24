@@ -325,7 +325,7 @@ s32 Scene_Initialize(void) {
     leader = Actor_Get(gMainRoutineState.leaderActorId);
     leader->priorityFlags &= ~ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
     Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
     Actor_SetAnimationSpeed(leader, ANIM_STEP_NORMAL * 4);
@@ -436,7 +436,7 @@ void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 // Unused here: the aerie's angels and lid are not in this room.
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 #include "shared/light_sprites_draw.h"
 

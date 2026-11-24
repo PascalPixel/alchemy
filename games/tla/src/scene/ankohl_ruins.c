@@ -29,7 +29,7 @@
 #include "scene/dehkan_plateau.h"
 #include "macros.h"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 #include "types.h"
 #include "system/io_write.h"
 #include "system/system.h"
@@ -370,7 +370,7 @@ void AnkohlRuins_LandFromFall(void) {
   FIXED velocity[3];
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
@@ -680,7 +680,7 @@ void AnkohlRuins_PlaceFaceHalves(s32 unused, s32 id) {
       !GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED))
     return;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   MapGrid_SetShake(2, 2, 1);
   FieldCamera_MoveTo(216, CAMERA_KEEP, 770, 1);
   FieldEvent_Wait(15);
@@ -728,7 +728,7 @@ void AnkohlRuins_PlaceThanatosFaceHalf(s32 unused, s32 id) {
   Event_SetFlag(FLAG_THANATOS_FACE_HALF_PLACED);
   Actor_WaitToLandWithCue(ACTOR_THANATOS_FACE_HALF, SE_BOOM);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_FLAME_FLARE);
   MapGrid_CopyCells(29, 70, 3, 1, 12, 71);
@@ -839,7 +839,7 @@ void AnkohlRuins_CarriedOffLedge(void) {
   struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STILL);
   Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1255,7 +1255,7 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
   s32 done = AnkohlRuins_FlagCheck(FLAG_FIRST_SAND_SWITCH_PRESSED);
 
   if (done == 0) {
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Event_PlaySound(SE_BUTTON_PRESS);
     FieldEvent_Wait(15);
     Event_PlaySound(SE_FLAME_FLARE);
@@ -1282,7 +1282,7 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
       Event_SetFlag(n1);                                                       \
       Event_PlaySound(SE_BUTTON_PRESS);                                        \
       Event_Start();                                                           \
-      FieldEvent_ResolvePendingActions(0);                                     \
+      FieldEvent_EndLastingPsynergy(0);                                        \
       MapGrid_CopyCells(26, 70, 1, 3, n2, n3);                                 \
       FieldEvent_Wait(20);                                                     \
       Event_PlaySound(SE_BOOM);                                                \
@@ -1308,7 +1308,7 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
   s32 done = AnkohlRuins_FlagCheck(FLAG_SECOND_SAND_SWITCH_PRESSED);
 
   if (done == 0) {
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Event_PlaySound(SE_BUTTON_PRESS);
     FieldEvent_Wait(15);
     Event_PlaySound(SE_FLAME_FLARE);
@@ -1404,7 +1404,7 @@ void AnkohlRuins_StartGreatFaceSliding(void) {
 
     if (found == -1) {
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       Event_PlaySound(SE_RUSH);
       MapGrid_SetShake(2, 2, 1);
       FieldEvent_Wait(10);
@@ -1466,7 +1466,7 @@ void AnkohlRuins_PushFaceHalfIntoGap(void) {
     Event_PlaySound(SE_DUST_PUFF);
     Actor_WaitToLandWithCue(ACTOR_FACE_HALF_FOR_THE_GAP, 0);
     Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
-    ObjectTable_Snapshot();
+    ActorTable_Snapshot();
     FieldEvent_SetExitRequest(
         ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_TO_ANKOHL_RUINS_FACE_HALVES_SOUTH_C);
   }
@@ -1737,7 +1737,7 @@ s32 Scene_Initialize(s32 unused) {
         s32 frames;
 
         Event_Start();
-        FieldEvent_ResolvePendingActions(0);
+        FieldEvent_EndLastingPsynergy(0);
         FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
         Actor_SetPosition(late->leaderActorId, 0, 0);
         Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 0, 0);
@@ -2035,7 +2035,7 @@ s32 Scene_Initialize(s32 unused) {
         s32 frames;
 
         Event_Start();
-        FieldEvent_ResolvePendingActions(0);
+        FieldEvent_EndLastingPsynergy(0);
         FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
         Actor_SetPosition(late->leaderActorId, 0, 0);
         Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 0, 0);

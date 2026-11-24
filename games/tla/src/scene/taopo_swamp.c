@@ -499,7 +499,7 @@ void TaopoSwamp_SinkStump(s32 unused, s32 id) {
   if (FIELD_CELL(actor->x.fixed) != 12)
     return;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   System_Wait(5);
   actor->motionFlags = 0;
@@ -589,7 +589,7 @@ void TaopoSwamp_UncoverBrambleSeed(void) {
     if (FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(BRAMBLE_SEED_X)) &&
         FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(BRAMBLE_SEED_Z))) {
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 0, -16);
@@ -610,7 +610,7 @@ void TaopoSwamp_StartMadPlantBattle(void) {
     gMainRoutineState.pendingDjinni =
         IF_FLAG_SET(FLAG_TAOPO_SWAMP_MAD_PLANT_BEATEN);
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 1);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_MAD_PLANTS, 1);
   }
 }
 
@@ -697,7 +697,7 @@ void TaopoSwamp_StepIntoGust(s32 gust) {
     return;
   leader = Actor_Get(gMainRoutineState.leaderActorId);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   // The gust carries the leader south 2 pixels a frame, spinning, and draws
   // them to the middle of their column of cells.
   for (;;) {
@@ -735,7 +735,7 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
   s32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_FaceActor(gMainRoutineState.leaderActorId, ACTOR_FLOWER, 0);
   FieldActor_ShowEmote(gMainRoutineState.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
@@ -1030,7 +1030,7 @@ void TaopoSwamp_TremorPillar(void) {
   u32 angle, speed, scale;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   for (i = 0; i < 10; i++) {
     System_Wait(1);
     ((struct FieldSprite *)rock->sprite)->rotation -= TRIG_TURN / 256;
@@ -2087,7 +2087,7 @@ void TaopoSwamp_SinkInMud(void) {
   if (state->depth < LEADER_SINK_ROWS * MUD_DEPTH_ROW)
     return;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   actor->spriteStorageKind = 0;
   for (i = 0; i < 2; i++) {
     spark = (FieldActor_Create(SPRITE_SPLASH_RING, actor->x.fixed,
@@ -2127,7 +2127,7 @@ void TaopoSwamp_RiseOnBubble(void) {
     actor = Actor_Get(FieldParty_GetLeaderActor());
     sprite = actor->sprite;
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldActor_SetMoveTargetFX(
         actor, (actor->x.fixed & -toFIXED(16)) + toFIXED(8), actor->y.fixed,
         (actor->z.fixed & -toFIXED(16)) + toFIXED(8));

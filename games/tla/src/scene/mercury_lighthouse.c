@@ -159,7 +159,7 @@ void MercuryLighthouse_HearVoices(void) {
   u8 delay;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineState.leaderActorId),
                             SPRITE_COLOR_HIDDEN);
   wait(1);
@@ -277,7 +277,7 @@ void MercuryLighthouse_HearVoices(void) {
 s32 Scene_Initialize(void) {
   if (gMainRoutineState.entrance == ENTRANCE_UNUSED_WHITE_FADE) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_PlaySound(SE_ASCEND);

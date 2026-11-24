@@ -66,17 +66,17 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {55, 56},
         .weights = {10, 10},
     },
-    // ENCOUNTER_TABLE_AQUA_JELLIES
+    // ENCOUNTER_ZONE_AQUA_JELLIES
     {
         .formations = {58, 59},
         .weights = {50, 10},
     },
-    // ENCOUNTER_TABLE_SERPENT
+    // ENCOUNTER_ZONE_SERPENT
     {
         .formations = {61, 62, 63, 64, 65, 66, 67},
         .weights = {10, 10, 10, 10, 10, 10, 10},
     },
-    // ENCOUNTER_TABLE_MOAPA
+    // ENCOUNTER_ZONE_MOAPA
     {
         .formations = {69, 70, 71, 72, 73, FORMATION_KARST_AND_AGATIO_A,
                        FORMATION_KARST_AND_AGATIO_B,
@@ -705,7 +705,7 @@ const struct EncounterZone gEncounterZones[] = {
                        FORMATION_KARST_AND_AGATIO_VS_ISAAC},
         .weights = {10, 10, 10, 10, 10},
     },
-    // ENCOUNTER_TABLE_HIDDEN_BOSSES
+    // ENCOUNTER_ZONE_HIDDEN_BOSSES
     {
         .formations = {631, 632, 633, 634},
         .weights = {10, 10, 10, 10},
@@ -720,7 +720,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {659},
         .weights = {10},
     },
-    // ENCOUNTER_TABLE_MAD_PLANTS
+    // ENCOUNTER_ZONE_MAD_PLANTS
     {
         .formations = {641, 642, 643, 644, 645},
         .weights = {10, 10, 10, 10, 10},

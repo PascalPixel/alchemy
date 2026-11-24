@@ -256,7 +256,7 @@ void LemuriaSpring_TossCoinOrMedal(void) {
     LemuriaSpring_DrainSpring();
   }
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_WalkToAndWait(actor, 120, 152);
   Actor_FaceDirection(actor, FACING_SOUTH, 0);
   LemuriaSpring_RunSpringGame();
@@ -351,7 +351,7 @@ s32 LemuriaSpring_RunSpringGame(void) {
 #if TLA_PATCH_1
   Event_Start();
   choice = 0;
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   for (;;) {
     coins = gMainRoutineState.coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
@@ -425,7 +425,7 @@ s32 LemuriaSpring_RunSpringGame(void) {
   // toss is confirmed.
   choice = 0;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   for (;;) {
     coins = gMainRoutineState.coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
@@ -573,7 +573,7 @@ void LemuriaSpring_GivePrize(s32 item) {
   struct Actor *prize;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_BOSS_ROAR);
   FieldEvent_Wait(100);

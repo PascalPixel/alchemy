@@ -198,8 +198,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 self, s32 kind) {
 /// Unused: only the far-call table refers to it. Opens a chest: if actor target
 /// exists, plays SE_CHEST_OPEN, gives it its animation 4 and, 12 frames later,
 /// shows itemId in front of actor actorId with sparkles.
-s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
-                                               s32 itemId) {
+s32 Chest_OpenAndShowItem(s32 actorId, s32 target, s32 itemId) {
   void *targetActor;
   s32 emitter;
 

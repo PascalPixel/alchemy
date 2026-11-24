@@ -66,13 +66,13 @@ extern s32 gWorldMap_PlacedActorScript[];
 void Actor_StartScript(struct Actor *actor, const s32 *script);
 void Actor_Release(struct Actor *actor);
 
-/// Each frame: creates the actor of each place (FlagEntries_GetTable) whose
+/// Each frame: creates the actor of each place (WorldMapPlaces_GetTable) whose
 /// flag shows it as it comes within reach of the camera, releases those that
 /// leave it, and raises a place's step trigger when the leader touches its
 /// actor; in Sand's form on the World Map it asks for Sand again, at no PP,
 /// instead.
 void WorldMap_UpdatePlacedActors(void) {
-  const struct FlagEntry *placement = FlagEntries_GetTable();
+  const struct WorldMapPlace *placement = WorldMapPlaces_GetTable();
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
   s32 leaderReach = ((struct Sprite *)leader->sprite)->scale * leader->radius;
   u32 i;

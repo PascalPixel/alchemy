@@ -175,7 +175,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   s32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgGooGooGa);
   // "Goo goo ga ga!"
   Event_ShowMessageAndWait(ACTOR_EOLEO, 0);
@@ -290,7 +290,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   s32 result;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgTheMayorOf);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   map = Ram_HeapSlots->mapGrid;
@@ -548,7 +548,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   struct Actor *leader;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgWellThatTakes);
   Actor_SetPosition(ACTOR_BRIGGS, 436, 416);
   FieldActor_SetSpriteRotationById(ACTOR_BRIGGS, DEGtoANG(90));

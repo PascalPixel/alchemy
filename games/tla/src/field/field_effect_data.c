@@ -33,7 +33,7 @@ const u32 gFieldEffect_TargetColors[8] = {
 
 /// A script that releases its actor at once: a Mind Read sign's end, once it
 /// has come to rest.
-const s32 gBattleEffect_UntargetedObjectScript[] = {
+const s32 gMindRead_CrescentEndScript[] = {
     SC_RELEASE,
 };
 

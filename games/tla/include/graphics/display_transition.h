@@ -82,7 +82,7 @@ STATIC_ASSERT(offsetof(struct ScreenTransitionState, nextMode) == 1342);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, duration) == 1340);
 STATIC_ASSERT(sizeof(struct ScreenTransitionState) == 1344);
 
-void ScreenTransition_InitializeBattleEffectState(s32 mode);
+void ScreenTransition_StartWindowHeld(s32 mode);
 void ScreenTransition_SuspendCallbacks(void);
 struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void);
 void ScreenTransition_Start(s32 mode, s32 frames);
@@ -92,7 +92,7 @@ void ScreenTransition_UpdateFromCenter(void);
 void ScreenTransition_UpdateScanline(void);
 void ScreenTransition_UpdateDissolve(void);
 void ScreenTransition_FillTilemapAndColorTile(s32 color);
-void ScreenTransition_InitializeState(s32 mode);
+void ScreenTransition_StartDissolveHeld(s32 mode);
 void ScreenTransition_UpdateScanlineTable(void);
 void FieldEffect_StartWindowHBlankDma(void);
 

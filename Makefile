@@ -484,7 +484,7 @@ $(LIBGCC_WORK)/_lshrdi3.o: alchemy-gcc/gcc/libgcc2.c $(LIBGCC_TOOLS)
 # --- Lists -----------------------------------------------------------------
 # A folder of pictures placed in order has a list.tsv beside them; ags-list
 # writes its list.s, in every edition the same, before an edition is built.
-LISTS := $(patsubst %.tsv,%.s,$(wildcard games/*/src/*/*/list.tsv games/*/src/*/*/*/list.tsv))
+LISTS := $(patsubst %.tsv,%.s,$(shell find games -name list.tsv -o -name '*.list.tsv'))
 .PHONY: lists
 lists: $(LISTS)
 $(LISTS): %.s: %.tsv | tools

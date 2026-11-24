@@ -1,0 +1,8 @@
+name	file	section	align	left	pad	edition
+Slots_DomePicture	dome.gbapal					
+	dome.8bpp.lz			9b65		ja
+	dome.8bpp.lz			4b5a		en
+	dome.8bpp.lz			0000		de
+	dome.8bpp.lz			71a4		es
+	dome.8bpp.lz			71a4		fr
+	dome.8bpp.lz			d3d3		it

@@ -1,0 +1,6 @@
+name	file	section	align	left	pad
+gStaffCredit_BeaconPalettes	pal_a.gbapal				
+gStaffCredit_BeamsPalette	pal_b.gbapal				
+gStaffCredit_BeamsLightPalette	pal_c.gbapal				
+gStaffCredit_BeamsMaps	beams_map.table.lz				
+gStaffCredit_BeamsTiles	beams.parts.lz				

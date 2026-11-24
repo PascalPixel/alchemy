@@ -1,0 +1,13 @@
+name	file	section	align	left	pad
+gMenuCursor_HandTiles	menu_sprites/hand.4bpp16x16		4		
+gShop_GemTiles	menu_sprites/gem.4bpp16x16				
+gShop_SmallDownArrowTiles	menu_sprites/sdown.4bpp16x16				
+gShop_SmallUpArrowTiles	menu_sprites/sup.4bpp16x16				
+gShop_UpArrowTiles	menu_sprites/up.4bpp16x16				
+gShop_DownArrowTiles	menu_sprites/down.4bpp16x16				
+	djinn_arrow_up.4bpp16x16				
+	djinn_arrow_down.4bpp16x16				
+gShop_GlyphBytes	menu_sprites/digits.4bpp				
+gShop_PriceTiles	menu_sprites/price.4bpp				
+gShop_QuantityTiles	menu_sprites/quantity.4bpp				
+	menu_sprites/sprite_c.4bpp16x16				

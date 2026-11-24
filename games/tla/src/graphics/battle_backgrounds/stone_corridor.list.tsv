@@ -1,0 +1,8 @@
+name	file	section	align	left	pad	edition
+Battle_StoneCorridorBackdrop	stone_corridor.gbapal					
+	stone_corridor.bitmap.d7			5544		ja
+	stone_corridor.bitmap.d7				4	en
+	stone_corridor.bitmap.d7				4	de
+	stone_corridor.bitmap.d7				4	es
+	stone_corridor.bitmap.d7				4	fr
+	stone_corridor.bitmap.d7				4	it

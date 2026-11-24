@@ -1,0 +1,53 @@
+name	file	section	align	left	pad	edition
+Summon_GreenHairedMaidenTiles	green_haired_maiden.gbapal					
+	green_haired_maiden.parts.lz					
+Summon_SeaSerpentTiles	sea_serpent.gbapal					
+	sea_serpent.parts.lz			01		
+Summon_PinkPetalsTiles	pink_petals.gbapal					
+	pink_petals.parts.lz			e1b1		
+Summon_RedDomeTiles	red_dome.gbapal	a				
+	red_dome.parts.lz	a		b26aeb		
+Summon_RedOrbTiles	red_orb.gbapal	a				
+	red_orb.parts.lz	a				
+Summon_TumblingShardTiles	tumbling_shard.gbapal	a				
+	tumbling_shard.parts.lz	a		3488		
+Summon_WhiteWispsTiles	white_wisps.gbapal	a				
+	white_wisps.parts.lz	a		fc		
+Summon_MissileTiles	missile.gbapal	b				
+	missile.parts.lz	b		79108d		
+Summon_GoldenDragonHeadTiles	golden_dragon_head.gbapal	b				
+	golden_dragon_head.parts.lz	b		1e		
+Summon_RobedGoddessTiles	robed_goddess.gbapal	c				
+	robed_goddess.parts.lz	c				
+Summon_LeafWarriorTiles	leaf_warrior.gbapal	c				
+	leaf_warrior.parts.lz	c		e3f614		
+Summon_CoatlicueTiles	coatlicue.gbapal	c				
+	coatlicue.parts.lz	c		4e39		
+Summon_WingedKnightATiles	winged_knight_a.gbapal	c				
+	winged_knight_a.parts.lz	c		45b97f		
+Summon_WingedKnightBTiles	winged_knight_b.gbapal	c				
+	winged_knight_b.parts.lz	c		83		
+Summon_WingedKnightCTiles	winged_knight_c.gbapal	c				
+	winged_knight_c.parts.lz	c		db		
+Summon_ChainedDemonTiles	chained_demon.gbapal	c				
+	chained_demon.parts.lz	c				
+Summon_PurpleArmourTiles	purple_armour.gbapal	c				
+	purple_armour.parts.lz	c		7572		
+Summon_WhiteSpikesTiles	white_spikes.gbapal	c				
+	white_spikes.parts.lz	c				
+Summon_GoldenScalesTiles	golden_scales.gbapal	c				
+	golden_scales.parts.lz	c				
+Summon_ForestCanopyTiles	forest_canopy.gbapal	d				
+	forest_canopy.parts.lz	d		394a		ja
+	forest_canopy.parts.lz	d		5e5f		en
+	forest_canopy.parts.lz	d		d93c		de
+	forest_canopy.parts.lz	d		789c		es
+	forest_canopy.parts.lz	d		f984		fr
+	forest_canopy.parts.lz	d		437c		it
+Summon_BronzeAutomatonTiles	bronze_automaton.gbapal	d				
+	bronze_automaton.parts.lz	d		be		ja
+	bronze_automaton.parts.lz	d		ff		en
+	bronze_automaton.parts.lz	d		46		de
+	bronze_automaton.parts.lz	d		37		es
+	bronze_automaton.parts.lz	d		81		fr
+	bronze_automaton.parts.lz	d		1d		it

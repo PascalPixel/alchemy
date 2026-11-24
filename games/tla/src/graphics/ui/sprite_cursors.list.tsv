@@ -1,0 +1,4 @@
+name	file	section	align	left	pad
+gMenu_CursorLeftActorTiles	sprite_cursors/left.8bpp8x16		4		
+gMenu_CursorActorTiles	sprite_cursors/right.8bpp8x16				
+gMenu_AnimatedCursorTiles	sprite_cursors/spin.8bpp16x16				

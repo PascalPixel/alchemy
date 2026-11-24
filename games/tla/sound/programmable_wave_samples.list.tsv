@@ -1,0 +1,10 @@
+name	file	section	align	left	pad
+Sound_CgbWaveSine	programmable_wave_samples/sine.bin		4		
+Sound_CgbWaveTriangle	programmable_wave_samples/triangle.bin				
+Sound_CgbWaveSawtooth	programmable_wave_samples/sawtooth.bin				
+Sound_CgbWaveRampWithPlateau	programmable_wave_samples/ramp_with_plateau.bin				
+Sound_CgbWavePulseEighth	programmable_wave_samples/pulse_eighth.bin				
+Sound_CgbWavePulseQuarter	programmable_wave_samples/pulse_quarter.bin				
+Sound_CgbWavePulseThreeEighths	programmable_wave_samples/pulse_three_eighths.bin				
+Sound_CgbWaveSquare	programmable_wave_samples/square.bin				
+Sound_CgbWavePickBass	programmable_wave_samples/pick_bass.bin				

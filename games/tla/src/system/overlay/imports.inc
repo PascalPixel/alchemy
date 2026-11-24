@@ -398,7 +398,7 @@
 	export Actor_PlaceBlocks, Actor_PlaceBlocksFar
 	export Actor_LiftTargetBlock, Actor_LiftTargetBlockFar
 	export Actor_PlaceMovedBlock, Actor_PlaceMovedBlockFar
-	export MapCollision_FindOrAddTag, MapCollision_FindOrAddTagFar
+	export MapShape_FindOrAdd, MapShape_FindOrAddFar
 	export Actor_FindAtCell, Actor_FindAtCellFar
 	export JupiterLighthouse_InitSparkSprite, EffectSprite_InitFar
 	export Leader_CanPushObjectAhead, Leader_CanPushObjectAheadFar

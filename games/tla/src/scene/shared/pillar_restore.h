@@ -57,8 +57,8 @@ UNUSED void MagmaRockInside_RestorePillars(u16 *list) {
           Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
       Actor_DisableById(id);
       cell->attributeB = MAP_CELL_JUMP;
-      *slot = MapCollision_FindOrAddTag(actor->layer, shape,
-                                        CELL_HEIGHT_STEPS(height) + 4);
+      *slot = MapShape_FindOrAdd(actor->layer, shape,
+                                 CELL_HEIGHT_STEPS(height) + 4);
       if (Event_GetFlag(flag))
         Actor_CopyGraphics(id, ACTOR_CRACKED_PILLAR_SPRITE);
     }

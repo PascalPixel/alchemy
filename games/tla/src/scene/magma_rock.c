@@ -372,7 +372,7 @@ extern u8 gMapShapeGrid[];
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
+s32 MapShape_FindOrAdd(s32 layer, s32 shape, s32 height);
 
 #include "shared/map_cell_set_shape.h"
 
@@ -2167,8 +2167,8 @@ void MagmaRock_RestoreCrumblingPillars(const u16 *table) {
           Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
       Actor_DisableById(id);
       cell->attributeB = MAP_CELL_JUMP;
-      *slot = MapCollision_FindOrAddTag(actor->layer, shape,
-                                        CELL_HEIGHT_STEPS(height) + 4);
+      *slot = MapShape_FindOrAdd(actor->layer, shape,
+                                 CELL_HEIGHT_STEPS(height) + 4);
       if (Event_GetFlag(flag))
         Actor_SelectAnimation(actor, 0);
     }

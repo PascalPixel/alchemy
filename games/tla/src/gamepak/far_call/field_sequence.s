@@ -234,7 +234,7 @@ FarCall_OverworldTable:
 	export Actor_PlaceBlocksFar, Actor_PlaceBlocks
 	export Actor_LiftTargetBlockFar, Actor_LiftTargetBlock
 	export Actor_PlaceMovedBlockFar, Actor_PlaceMovedBlock
-	export MapCollision_FindOrAddTagFar, MapCollision_FindOrAddTag
+	export MapShape_FindOrAddFar, MapShape_FindOrAdd
 	export Actor_FindAtCellFar, Actor_FindAtCell
 	export Leader_CanPushObjectAheadFar, Leader_CanPushObjectAhead
 	export Leader_PushObjectAheadFar, Leader_PushObjectAhead

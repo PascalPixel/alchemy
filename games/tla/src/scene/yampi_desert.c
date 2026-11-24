@@ -656,7 +656,7 @@ void YampiDesert_StepOntoStakeTops(void) {
       actor->motionFlags = 0;
       cells->collisionCode = CELL_BEHAVIOR_NORMAL;
       cells->attributeB |= MAP_CELL_JUMP;
-      *shapes = MapCollision_FindOrAddTag(layer, shape, height + 4);
+      *shapes = MapShape_FindOrAdd(layer, shape, height + 4);
     }
     list++;
   }
@@ -697,7 +697,7 @@ void YampiDesert_StepOffStakeTops(void) {
       actor->motionFlags = 0;
       cells->collisionCode = CELL_BEHAVIOR_WALL;
       cells->attributeB &= ~MAP_CELL_JUMP;
-      *shapes = MapCollision_FindOrAddTag(layer, shape, height - 4);
+      *shapes = MapShape_FindOrAdd(layer, shape, height - 4);
     }
   }
   GameFlag_Clear(FLAG_YAMPI_DESERT_ON_STAKE_TOPS);

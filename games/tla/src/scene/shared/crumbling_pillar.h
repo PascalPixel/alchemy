@@ -11,7 +11,7 @@
 
 #include "pillar_stand_in.h"
 
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
+s32 MapShape_FindOrAdd(s32 layer, s32 shape, s32 height);
 
 /// Places each crumbling pillar of an (actor, flag) list: one that has given
 /// way is moved out of sight; the others stand as their cell's ground, 32
@@ -48,8 +48,8 @@ void CrumblingPillar_Place(u16 *list) {
 
       Actor_DisableById(id);
       cell->attributeB = MAP_CELL_JUMP;
-      *slot = MapCollision_FindOrAddTag(actor->layer, shape,
-                                        CELL_HEIGHT_STEPS(ground) + 4);
+      *slot = MapShape_FindOrAdd(actor->layer, shape,
+                                 CELL_HEIGHT_STEPS(ground) + 4);
       if (Event_GetFlag(flag))
         Actor_SelectAnimation(actor, 0);
     }
@@ -233,8 +233,8 @@ void CrumblingPillar_PlaceWithStandIn(u16 *list) {
 
       Actor_DisableById(id);
       cell->attributeB = MAP_CELL_JUMP;
-      *shape = MapCollision_FindOrAddTag(actor->layer, kind,
-                                         CELL_HEIGHT_STEPS(ground) + 4);
+      *shape =
+          MapShape_FindOrAdd(actor->layer, kind, CELL_HEIGHT_STEPS(ground) + 4);
       if (Event_GetFlag(flag))
         Actor_CopyGraphics(id, ACTOR_CRACKED_PILLAR_SPRITE);
     }

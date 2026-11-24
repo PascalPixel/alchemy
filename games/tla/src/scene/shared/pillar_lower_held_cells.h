@@ -27,9 +27,9 @@ void Pillar_LowerHeldCells(u16 *list) {
       s32 height =
           Map_GetTerrainHeight(held->layer, held->x.fixed, held->z.fixed);
       s32 index = Actor_GetCellIndex(held);
-      s32 result = MapCollision_FindOrAddTag(
-          held->layer, kind,
-          CELL_HEIGHT_STEPS(height) - CELL_HEIGHT_STEPS(toFIXED(32)));
+      s32 result = MapShape_FindOrAdd(held->layer, kind,
+                                      CELL_HEIGHT_STEPS(height) -
+                                          CELL_HEIGHT_STEPS(toFIXED(32)));
 
       slot += index;
       // The index goes on as the cell offset, four bytes a cell.

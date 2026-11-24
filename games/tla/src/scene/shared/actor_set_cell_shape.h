@@ -16,5 +16,5 @@ void Actor_SetCellShape(s32 level, s32 layer, s32 id) {
 
   shape += actor->x.fixed / toFIXED(MAPGRID_CELL_PIXELS) +
            actor->z.fixed / toFIXED(MAPGRID_CELL_PIXELS) * MAPGRID_SIZE;
-  *shape = MapCollision_FindOrAddTag(actor->layer, kind, height);
+  *shape = MapShape_FindOrAdd(actor->layer, kind, height);
 }

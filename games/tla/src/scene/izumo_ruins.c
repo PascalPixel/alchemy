@@ -92,7 +92,7 @@ void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 #include "shared/dust.h"
 
-s32 MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
+s32 MapShape_FindOrAdd(s32 terrainId, s32 value, s32 height);
 
 #include "shared/actor_set_cell_shape.h"
 

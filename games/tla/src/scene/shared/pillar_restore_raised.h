@@ -39,9 +39,9 @@ void MagmaRockInside_RestoreCrumblingPillars(const u16 *table) {
           Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
       Actor_DisableById(id);
       cell->attributeB = MAP_CELL_JUMP;
-      *slot = MapCollision_FindOrAddTag(actor->layer, shape,
-                                        CELL_HEIGHT_STEPS(height) +
-                                            CELL_HEIGHT_STEPS(toFIXED(32)));
+      *slot = MapShape_FindOrAdd(actor->layer, shape,
+                                 CELL_HEIGHT_STEPS(height) +
+                                     CELL_HEIGHT_STEPS(toFIXED(32)));
       if (Event_GetFlag(flag))
         Actor_SelectAnimation(actor, 0);
     }

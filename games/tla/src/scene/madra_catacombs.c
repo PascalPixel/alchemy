@@ -137,7 +137,7 @@ enum MadraCatacombsBookshelfActorId {
 
 struct Actor;
 
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
+s32 MapShape_FindOrAdd(s32 layer, s32 shape, s32 height);
 
 extern struct SceneEntrance gSceneEntrances[];
 extern struct SceneEntrance gMadraCatacombs_StoneDoorEntrances[];

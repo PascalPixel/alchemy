@@ -53,9 +53,9 @@
 #include "field/map_grid.h"
 #include "field/field_sequence.h"
 
-/// The key of a free entry in the map collision's tags
-/// (MapCollision_FindOrAddTag).
-#define COLLISION_TAG_FREE 255
+/// The shape of a free entry among the map's shape entries
+/// (MapShape_FindOrAdd).
+#define MAP_SHAPE_FREE 255
 
 void FieldEffect_AdvanceMotion(union FieldObject *object);
 

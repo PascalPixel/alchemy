@@ -1253,8 +1253,8 @@ UNUSED void TundariaTower_RestoreCrumblingPillars(const u16 *table) {
             Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
         Actor_DisableById(id);
         cell->attributeB = MAP_CELL_JUMP;
-        *slot = MapCollision_FindOrAddTag(actor->layer, shape,
-                                          FIELD_HALF_CELL(height) + 4);
+        *slot = MapShape_FindOrAdd(actor->layer, shape,
+                                   FIELD_HALF_CELL(height) + 4);
         if (GameFlag_Get(flag))
           Actor_SelectAnimation(actor, 0);
       }
@@ -1442,8 +1442,8 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
             Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
         Actor_DisableById(id);
         cell->attributeB = MAP_CELL_JUMP;
-        *slot = MapCollision_FindOrAddTag(actor->layer, shape,
-                                          FIELD_HALF_CELL(height) + 4);
+        *slot = MapShape_FindOrAdd(actor->layer, shape,
+                                   FIELD_HALF_CELL(height) + 4);
         if (GameFlag_Get(flag))
           Actor_CopyGraphics(id, ACTOR_FIRST_PLACED + 1);
       }

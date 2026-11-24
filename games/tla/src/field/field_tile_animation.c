@@ -1032,7 +1032,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height) {
   shape = gMapShapeGrid +
           (map->layers[layer & 3].cells - (struct MapCell *)Ram_MapCellBuffer);
   shape += (FIELD_CELL(x)) + FIELD_CELL(z) * MAPGRID_SIZE;
-  *shape = MapCollision_FindOrAddTagFar(layer, 0, height);
+  *shape = MapShape_FindOrAddFar(layer, 0, height);
 }
 
 /// The ground height at (x, z) of layer, in 8-pixel steps.

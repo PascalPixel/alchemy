@@ -101,7 +101,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
 
         cells += slot;
         shapes += slot;
-        *shapes = MapCollision_FindOrAddTag(actor->layer, kind, height);
+        *shapes = MapShape_FindOrAdd(actor->layer, kind, height);
         if (GameFlag_Get(flag)) {
           s32 bits;
 
@@ -125,9 +125,9 @@ s32 Actor_GetCellIndex(struct Actor *actor) {
 
 /// Returns the index of the map's shape entry (gMapGridShapes, MAP_SHAPE) of
 /// shape whose first height is height, in 8-pixel steps, writing it into the
-/// first free entry (COLLISION_TAG_FREE) when there is none: the entry a raised
+/// first free entry (MAP_SHAPE_FREE) when there is none: the entry a raised
 /// or lowered cell's shape grid byte takes. The layer goes unread.
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height) {
+s32 MapShape_FindOrAdd(s32 layer, s32 shape, s32 height) {
   u8 *entry = gMapGridShapes;
   s8 entryHeight;
   s32 i = 0;
@@ -138,7 +138,7 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height) {
       if (*(s8 *)++entry == entryHeight)
         return i;
       entry--;
-    } else if (entry[0] == COLLISION_TAG_FREE) {
+    } else if (entry[0] == MAP_SHAPE_FREE) {
       entry[0] = shape;
       entry[1] = entryHeight;
       return i;

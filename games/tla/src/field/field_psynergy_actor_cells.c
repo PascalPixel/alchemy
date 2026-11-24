@@ -6,7 +6,7 @@
 #include "field_psynergy_internal.h"
 #include "stddef.h"
 
-/// A 16.16 height in the 8-pixel steps a collision tag's height counts.
+/// A 16.16 height in the 8-pixel steps a shape entry's height counts.
 #define HEIGHT_STEPS(height) (FIXEDtoINT(height) >> 3)
 /// A block's height, 32 pixels, in those steps.
 #define BLOCK_HEIGHT_STEPS 4
@@ -45,8 +45,7 @@ void Actor_PlaceBlocks(u16 *actors) {
     actor->collisionFlags = 0;
     Actor_SetSpriteFlagsFar(actor, 0);
     shapes += slot;
-    tag = MapCollision_FindOrAddTag(actor->layer, key,
-                                    level + BLOCK_HEIGHT_STEPS);
+    tag = MapShape_FindOrAdd(actor->layer, key, level + BLOCK_HEIGHT_STEPS);
     cell = &cells[slot];
     flags = cell->attributeB;
     actor->sceneWord = flags;
@@ -94,8 +93,8 @@ void Actor_LiftTargetBlock(u16 *actors) {
       s32 tag;
 
       shapes += slot;
-      tag = MapCollision_FindOrAddTag(target->layer, key,
-                                      HEIGHT_STEPS(level) - BLOCK_HEIGHT_STEPS);
+      tag = MapShape_FindOrAdd(target->layer, key,
+                               HEIGHT_STEPS(level) - BLOCK_HEIGHT_STEPS);
       cells += slot;
       blocks += slot;
       ((struct ShapeCell *)shapes)->shape = tag;
@@ -125,8 +124,8 @@ void Actor_PlaceMovedBlock(void) {
     s32 tag;
 
     shapes += slot;
-    tag = MapCollision_FindOrAddTag(target->layer, key,
-                                    HEIGHT_STEPS(level) + BLOCK_HEIGHT_STEPS);
+    tag = MapShape_FindOrAdd(target->layer, key,
+                             HEIGHT_STEPS(level) + BLOCK_HEIGHT_STEPS);
     ((struct ShapeCell *)shapes)->shape = tag;
     cells += slot;
     target->sceneWord = cells->attributeB;

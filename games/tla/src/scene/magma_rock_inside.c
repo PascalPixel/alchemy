@@ -418,7 +418,7 @@ void MagmaRockInside_MeetDjinni(void) {
 #include "shared/position_flat_distance.h"
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
+s32 MapShape_FindOrAdd(s32 layer, s32 shape, s32 height);
 
 #include "shared/map_cell_set_shape.h"
 
@@ -2718,7 +2718,7 @@ s32 Scene_PrepareMap(void) {
 }
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
+s32 MapShape_FindOrAdd(s32 unused, s32 key, s32 value);
 
 // On entering, sets each listed pillar from its two flags, then lifts the
 // leader onto the ground under it.
@@ -2904,7 +2904,7 @@ void MagmaRockInside_SpawnDustRing(void) {
 }
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
+s32 MapShape_FindOrAdd(s32 layer, s32 shape, s32 height);
 
 #include "shared/actor_set_cell_shape.h"
 

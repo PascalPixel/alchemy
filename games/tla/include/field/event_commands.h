@@ -409,7 +409,7 @@ void Actor_SetLayersColorMode(void *actor, s32 value);
 void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);
 void Camera_WorldToScreen(struct Vector3 *position);
-s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
+s32 MapShape_FindOrAdd(s32 unused, s32 key, s32 value);
 void *Sprite_ShareVramCacheEntry(void *sprite, void *last);
 void Scene_QueueMusic(s32 soundId);
 void Weather_UpdateLightning(void);

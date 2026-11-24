@@ -8,6 +8,9 @@
 #include "system/input.h"
 #include "graphics/render_placement.h"
 
+s32 SpriteViewer_StepSpriteId(s32 value, s32 delta);
+void SpriteViewer_PlaceRing(void);
+
 enum {
   /// The sprite copies and their ring positions; a facing kind places 4, 6, 8
   /// or 10 of them.

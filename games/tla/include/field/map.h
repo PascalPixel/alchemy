@@ -77,8 +77,4 @@ s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height);
 s32 MapCollision_FindOrAddTagFar(s32 layer, s32 unused, s32 value);
 s32 Actor_LiftTargetBlockFar(s32 layer, s32 unused, s32 value);
 
-/// The debug sprite viewer's next sprite id in a direction, and its ring.
-s32 SpriteViewer_StepSpriteId(s32 spriteId, s32 direction);
-void SpriteViewer_PlaceRing(void);
-
 #endif

@@ -303,7 +303,9 @@ enum {
   IDEJIMA_FROM_WORLD_MAP_SOUTH = 2,
   IDEJIMA_FROM_WORLD_MAP_SOUTHWEST = 4,
   IDEJIMA_FROM_WORLD_MAP_NORTH_A = 11,
-  IDEJIMA_FROM_TITLE = 12,
+  /// Where the World Map leaves Idejima after its drift
+  /// (WorldMap_ShowIdejimaDrifting).
+  IDEJIMA_AFTER_DRIFT = 12,
   /// Where the title sends Felix after the prologue: Idejima rides the tidal
   /// wave.
   IDEJIMA_RIDE_THE_TIDAL_WAVE = 13,

@@ -15,13 +15,12 @@ u32 gPushedActor_RectangleKinds[] PUSHED_ACTOR_TABLE_SECTION = {
 
 /// Each rectangle's left, top, right and bottom edges, in pixels from the
 /// thing's position: four cells by one, or a pipe's four by one north of it.
-// clang-format off
-s32 gPushedActor_Rectangles[] PUSHED_ACTOR_TABLE_SECTION = {
-    -32, -8, 32, 8,   // log, west to east
-    -8, -32, 8, 32,   // log, north to south
-    -32, -16, 32, 0,  // pipe, west to east
-    -8, -32, 8, 32,   // pipe, north to south
-    -32, -8, 32, 8,   // fallen column, west to east
-    -8, -32, 8, 32,   // fallen column, north to south
+struct PushedActorRectangle
+    gPushedActor_Rectangles[] PUSHED_ACTOR_TABLE_SECTION = {
+        {-32, -8, 32, 8},  // log, west to east
+        {-8, -32, 8, 32},  // log, north to south
+        {-32, -16, 32, 0}, // pipe, west to east
+        {-8, -32, 8, 32},  // pipe, north to south
+        {-32, -8, 32, 8},  // fallen column, west to east
+        {-8, -32, 8, 32},  // fallen column, north to south
 };
-// clang-format on

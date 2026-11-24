@@ -21,6 +21,10 @@
 /// A DIRECTION_STEP's Z as a 16.16 offset: its lower halfword, shifted up.
 #define DIRECTION_STEP_Z_FIXED(step) INTtoFIXED(step)
 
+/// PushedActorProbe.rectangleIndex of an actor whose sprite is none of the six
+/// large things, past their rows.
+#define PUSHED_ACTOR_NO_RECTANGLE 7
+
 /// Where a pushed actor ahead of the leader would roll to: its rectangle, its
 /// actor, that position, and a routine run during the leader's
 /// follow-through.
@@ -36,8 +40,7 @@ struct PushedActorProbe {
   void (*callback)(void);
 };
 
-/// A rectangle's edges, as gPushedActor_Rectangles holds four words
-/// a rectangle; no code names this struct.
+/// A large thing's edges, a row of gPushedActor_Rectangles.
 struct PushedActorRectangle {
   s32 x0; ///< left edge, pixels from the thing's position
   s32 z0; ///< top edge, pixels from the thing's position

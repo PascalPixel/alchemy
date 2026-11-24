@@ -316,10 +316,9 @@ CrossboneIsleSteppingStones_StopAtGroundOrHeight(struct Actor *actor,
 /// Finds the cells the actor covers: their width and depth, the top-left one,
 /// and the cell where the map grid's layer 1 starts.
 ///
-/// The actor's row of gPushedActor_Rectangles is read as the four words of a
-/// struct PushedActorRectangle: [0] x0, [1] z0, [2] x1 and [3] z1. An actor
-/// whose animation is none of the six kinds gets row 7, past them, and is
-/// refused.
+/// The actor's edges are its row of gPushedActor_Rectangles. An actor whose
+/// animation is none of the six kinds gets PUSHED_ACTOR_NO_RECTANGLE, past
+/// them, and is refused.
 static s32 CrossboneIsleSteppingStones_QueryCoveredCells(
     s32 id, u32 *width, u32 *depth, struct PushedActorProbe *probe,
     s32 *layerOriginX, s32 *layerOriginZ) {
@@ -335,7 +334,7 @@ static s32 CrossboneIsleSteppingStones_QueryCoveredCells(
       probe->rectangleIndex = i;
       break;
     }
-    probe->rectangleIndex = 7;
+    probe->rectangleIndex = PUSHED_ACTOR_NO_RECTANGLE;
   }
   if (probe->rectangleIndex < 0 || probe->rectangleIndex > 6) {
     return 0;
@@ -344,30 +343,29 @@ static s32 CrossboneIsleSteppingStones_QueryCoveredCells(
   probe->position.x = actor->x.fixed;
   probe->position.y = actor->y.fixed;
   probe->position.z = actor->z.fixed;
-  coordinate = gPushedActor_Rectangles[probe->rectangleIndex * 4 + 1];
+  coordinate = gPushedActor_Rectangles[probe->rectangleIndex].z0;
   if (coordinate < 0) {
     coordinate = -coordinate;
   }
-  farExtent = gPushedActor_Rectangles[probe->rectangleIndex * 4 + 3];
+  farExtent = gPushedActor_Rectangles[probe->rectangleIndex].z1;
   if (farExtent < 0) {
     farExtent = -farExtent;
   }
   *depth = (coordinate + farExtent) >> 4;
-  coordinate = gPushedActor_Rectangles[probe->rectangleIndex * 4];
+  coordinate = gPushedActor_Rectangles[probe->rectangleIndex].x0;
   if (coordinate < 0) {
     coordinate = -coordinate;
   }
-  farExtent = gPushedActor_Rectangles[probe->rectangleIndex * 4 + 2];
+  farExtent = gPushedActor_Rectangles[probe->rectangleIndex].x1;
   if (farExtent < 0) {
     farExtent = -farExtent;
   }
   *width = (coordinate + farExtent) >> 4;
   // Move from the actor's center to the top-left cell it covers.
   probe->position.x +=
-      INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex * 4]);
+      INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex].x0);
   {
-    s32 offsetZ =
-        INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex * 4 + 1]);
+    s32 offsetZ = INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex].z0);
 
     coordinate = probe->position.z;
     coordinate += offsetZ;

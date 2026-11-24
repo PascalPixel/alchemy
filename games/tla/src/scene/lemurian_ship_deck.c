@@ -67,9 +67,6 @@ enum {
   ACTOR_KRADEN
 };
 
-/// The puddle sprite sheet's animation of the water lying unfrozen, glinting.
-enum { PUDDLE_GLINTING = 1 };
-
 /// The shore's cells, as map.txt has them; the cabin door's step cells are the
 /// exit to the cabins and leave by it.
 enum LemurianShipDeckCellBehavior {
@@ -598,7 +595,7 @@ s32 Scene_Initialize(void) {
     gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
-    Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_GLINTING);
+    Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
     FlagBlock_PlaceAll(gLemurianShipDeck_Puddles);
     FieldTask_AddFrame(LemurianShipDeck_RotateSurfColors, TASK_PASS_FRAME);
     if (gMainRoutineState.entrance == MAIN_DECK_ARRIVAL_ENTRANCE)

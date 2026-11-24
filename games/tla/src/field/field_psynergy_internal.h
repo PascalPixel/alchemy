@@ -123,11 +123,6 @@ struct CycloneState {
 #define CANVAS_SHINE_MIDDLE 16
 #define CANVAS_SHINE_SWING 12
 
-/// SPRITE_PUDDLE's animations (puddle.tsv) that a flag block shows: the ice
-/// pillar, held, and the puddle.
-#define PUDDLE_ANIMATION_FROZEN 0
-#define PUDDLE_ANIMATION_PUDDLE 1
-
 /// The map screen's marker tiles (MapScreen_Initialize draws them).
 enum WorldMarkerTile {
   WORLD_MARKER_TILE_PARTY = 0, ///< where the party is

@@ -595,7 +595,7 @@ void MadraRooms_ShinAngersPiers(void) {
 
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
-  Actor_SetAnimation(ACTOR_JAIL_PUDDLE, 1);
+  Actor_SetAnimation(ACTOR_JAIL_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   Actor_SetPosition(ACTOR_FELIX, 400, 888);
   FieldCamera_MoveTo(408, CAMERA_KEEP, 848, 1);
   Event_StartScreenTransition();

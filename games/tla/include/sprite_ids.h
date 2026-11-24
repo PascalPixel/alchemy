@@ -809,6 +809,11 @@ enum FloatingLogAnimation {
 /// SPRITE_ARROW_PANEL's animation with its arrow pointing up: a lift ready.
 #define ARROW_PANEL_ANIMATION_UP 2
 
+/// SPRITE_PUDDLE's animations (puddle.tsv) that a flag block shows: the ice
+/// pillar, held, and the puddle, the unfrozen water glinting.
+#define PUDDLE_ANIMATION_FROZEN 0
+#define PUDDLE_ANIMATION_PUDDLE 1
+
 /// SPRITE_MOVE_HAND's animations (move_hand.tsv), The Broken Seal's sheet and
 /// numbers.
 enum MoveHandAnimation {

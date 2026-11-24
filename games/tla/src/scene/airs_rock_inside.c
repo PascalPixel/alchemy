@@ -338,7 +338,6 @@ s32 gAirsRockInside_StampedZ BSS_DATA;
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/task.h"
-#include "field/flag_call.h"
 #include "field/event_commands.h"
 #include "field/object.h"
 #include "graphics/resource.h"

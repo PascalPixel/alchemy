@@ -32,7 +32,6 @@
 #include "macros.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "field/flag_call.h"
 
 #ifdef MODERN
 void Rope_Lash(s32 a, s32 b, s32 c);
@@ -364,7 +363,7 @@ const void *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_GAROH) {
-    if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
+    if (Event_GetFlag(FLAG_GAROH_SECRET_SHARED))
       return gGaroh_VillageDayActorPlacements;
     return gGaroh_VillageActorPlacements;
   }
@@ -648,7 +647,7 @@ void Garoh_EnterOpening(void) {
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Flag_Set(FLAG_ARRIVAL_STAIRS_DOWN);
+  Event_SetFlag(FLAG_ARRIVAL_STAIRS_DOWN);
   FieldEvent_SetExitRequest(event->stepTrigger);
 }
 
@@ -656,11 +655,11 @@ void Garoh_EnterOpening(void) {
 /// Maha stands: the first night the werewolves surround the party, and by day
 /// Maha is waiting there to tell the legend.
 void Garoh_MeetInTheCave(void) {
-  if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
-    if (!Flag_IsSet(FLAG_GAROH_MET_WEREWOLVES))
+  if (!Event_GetFlag(FLAG_GAROH_SECRET_SHARED)) {
+    if (!Event_GetFlag(FLAG_GAROH_MET_WEREWOLVES))
       Garoh_WerewolvesRevealThemselves();
   } else {
-    if (!Flag_IsSet(FLAG_GAROH_HEARD_MAHA))
+    if (!Event_GetFlag(FLAG_GAROH_HEARD_MAHA))
       Garoh_MahaTellsTheLegend();
   }
 }
@@ -671,7 +670,7 @@ const void *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_GAROH) {
-    if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
+    if (Event_GetFlag(FLAG_GAROH_SECRET_SHARED))
       return gGaroh_VillageDayTriggers;
     return gGaroh_VillageTriggers;
   }
@@ -691,7 +690,8 @@ const void *Scene_GetTriggers(void) {
 
 /// A wolf howls in the distance every 1,024 frames while it is night.
 void Garoh_HowlAtNight(void) {
-  if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED) && Flag_IsSet(FLAG_GAROH_NIGHT)) {
+  if (!Event_GetFlag(FLAG_GAROH_SECRET_SHARED) &&
+      Event_GetFlag(FLAG_GAROH_NIGHT)) {
     gGaroh_HowlFrames++;
     if ((gGaroh_HowlFrames & HOWL_PERIOD_MASK) == 0)
       Event_PlaySound(SE_HOWL);
@@ -831,8 +831,8 @@ extern s16 gGaroh_Pillars[];
 /// into it.
 void Garoh_InitializeWayUp(void) {
   FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_FRAME);
-  if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
-    if (Flag_IsSet(FLAG_EVENING))
+  if (Event_GetFlag(FLAG_GAROH_NIGHT)) {
+    if (Event_GetFlag(FLAG_EVENING))
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
     else
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM_DARK, 1);
@@ -879,9 +879,9 @@ void Garoh_SinkPillar(s32 id, struct Actor *actor) {
                                                                                \
     raw = actor->z.fixed;                                                      \
     z = FIELD_CELL(raw);                                                       \
-    if (!Flag_IsSet(flag) && x == cellX && z == cellZ) {                       \
+    if (!Event_GetFlag(flag) && x == cellX && z == cellZ) {                    \
       Garoh_SinkPillar(actorId, actor);                                        \
-      Flag_Set(flag);                                                          \
+      Event_SetFlag(flag);                                                     \
     }                                                                          \
   }
 
@@ -899,7 +899,7 @@ DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_SinkSecondPillarOnCell, ACTOR_SECOND_PILLAR,
 /// the rope's flag and does nothing.
 void Garoh_CheckThirdPillar(void) {
   Actor_Get(ACTOR_THIRD_PILLAR);
-  Flag_IsSet(FLAG_GAROH_ROPE_LASHED);
+  Event_GetFlag(FLAG_GAROH_ROPE_LASHED);
 }
 
 /// The fourth pillar sinks once it stands on cell (15, 25), one south of where
@@ -909,9 +909,9 @@ void Garoh_SinkFourthPillarOnCell(void) {
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
 
-  if (!Flag_IsSet(FLAG_FOURTH_PILLAR_SUNK) && x == 15 && z == 25) {
+  if (!Event_GetFlag(FLAG_FOURTH_PILLAR_SUNK) && x == 15 && z == 25) {
     Garoh_SinkPillar(ACTOR_FOURTH_PILLAR, actor);
-    Flag_Set(FLAG_FOURTH_PILLAR_SUNK);
+    Event_SetFlag(FLAG_FOURTH_PILLAR_SUNK);
   }
 }
 
@@ -1000,13 +1000,13 @@ void Garoh_HideCaveEntrance(void) {
 /// colours, there before the cast, come back exactly as they were. This row
 /// plays no part in it: it only checks whether it is night in Garoh, and does
 /// nothing with the answer.
-s32 Garoh_IsNight(void) { return Flag_IsSet(FLAG_GAROH_NIGHT); }
+s32 Garoh_IsNight(void) { return Event_GetFlag(FLAG_GAROH_NIGHT); }
 
 /// Reveal wearing off on the way up brings back the evening's or the night's
 /// light.
 void Garoh_RestoreWayUpLight(void) {
-  if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
-    if (Flag_IsSet(FLAG_EVENING))
+  if (Event_GetFlag(FLAG_GAROH_NIGHT)) {
+    if (Event_GetFlag(FLAG_EVENING))
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
     else
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM_DARK, 1);
@@ -1035,16 +1035,16 @@ void Garoh_HideCavePassage(void) {
 void Garoh_CrossLowerTwilightLine(void) {
   struct FieldState *state;
 
-  if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
-    Flag_Set(FLAG_CROSSED_LOWER_TWILIGHT_LINE);
+  if (!Event_GetFlag(FLAG_GAROH_SECRET_SHARED)) {
+    Event_SetFlag(FLAG_CROSSED_LOWER_TWILIGHT_LINE);
     if (gMainRoutineState.entrance == GAROH_WAY_UP_FROM_WORLD_MAP) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
-      Flag_Set(FLAG_GAROH_NIGHT);
-      Flag_Set(FLAG_EVENING);
+      Event_SetFlag(FLAG_GAROH_NIGHT);
+      Event_SetFlag(FLAG_EVENING);
     } else {
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
-      Flag_Clear(FLAG_GAROH_NIGHT);
-      Flag_Clear(FLAG_EVENING);
+      Event_ClearFlag(FLAG_GAROH_NIGHT);
+      Event_ClearFlag(FLAG_EVENING);
     }
     state = Ram_HeapSlots->fieldState;
     if (state->revealActive == 0)
@@ -1059,16 +1059,16 @@ void Garoh_CrossLowerTwilightLine(void) {
 void Garoh_CrossUpperTwilightLine(void) {
   struct FieldState *state;
 
-  if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
-    Flag_Set(FLAG_CROSSED_UPPER_TWILIGHT_LINE);
+  if (!Event_GetFlag(FLAG_GAROH_SECRET_SHARED)) {
+    Event_SetFlag(FLAG_CROSSED_UPPER_TWILIGHT_LINE);
     if (gMainRoutineState.entrance == GAROH_WAY_UP_FROM_GAROH_PATH) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
-      Flag_Set(FLAG_GAROH_NIGHT);
-      Flag_Set(FLAG_EVENING);
+      Event_SetFlag(FLAG_GAROH_NIGHT);
+      Event_SetFlag(FLAG_EVENING);
     } else {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM_DARK, 1);
-      Flag_Set(FLAG_GAROH_NIGHT);
-      Flag_Clear(FLAG_EVENING);
+      Event_SetFlag(FLAG_GAROH_NIGHT);
+      Event_ClearFlag(FLAG_EVENING);
     }
     state = Ram_HeapSlots->fieldState;
     if (state->revealActive == 0)
@@ -1121,13 +1121,13 @@ extern u32 gGaroh_QuestionMarkScript[];
 /// way up; no trigger runs it.
 void Garoh_LashRope(void) {
   Rope_Lash(1, ACTOR_THIRD_PILLAR, ACTOR_FOURTH_PILLAR);
-  Flag_Set(FLAG_GAROH_ROPE_LASHED);
+  Event_SetFlag(FLAG_GAROH_ROPE_LASHED);
 }
 
 /// Until the secret is shared, whether the party has met the werewolves.
 s32 Garoh_MetWerewolves(void) {
-  if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
-    return Flag_IsSet(FLAG_GAROH_MET_WEREWOLVES);
+  if (!Event_GetFlag(FLAG_GAROH_SECRET_SHARED))
+    return Event_GetFlag(FLAG_GAROH_MET_WEREWOLVES);
 }
 
 /// Pops a "?" bubble up at (x, y, z), tilted by rotation, for the given

@@ -534,7 +534,7 @@ void MarsLighthouseEntrance_CheckIce(void) {
 /// moves him and the camera there itself; after that it takes the exit
 /// between the two circles.
 void MarsLighthouseEntrance_TeleportFromLapisNorthCircle(void) {
-  if (!Flag_IsSet(FLAG_TELEPORTED_ONCE)) {
+  if (!Event_GetFlag(FLAG_TELEPORTED_ONCE)) {
     Teleport_StartShimmer();
     Event_Start();
     FieldEvent_EndLastingPsynergy(0);
@@ -552,7 +552,7 @@ void MarsLighthouseEntrance_TeleportFromLapisNorthCircle(void) {
     FieldPsynergy_FadeFromCastColor();
     System_Wait(10);
     Event_End();
-    Flag_Set(FLAG_TELEPORTED_ONCE);
+    Event_SetFlag(FLAG_TELEPORTED_ONCE);
   } else {
     Teleport_StartShimmer();
     Teleport_PlaySparks();
@@ -586,7 +586,7 @@ void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
     MapGrid_CopyCellsLayered(47, 94, 10, 6, 47, 100);
     MapGrid_CopyCellAttributes(110, 40, 12, 4, 46, 40);
     Actor_SetPosition(ACTOR_ICE_SHEET, 0, 0);
-    Flag_Set(FLAG_LAPIS_SHEET_BURST);
+    Event_SetFlag(FLAG_LAPIS_SHEET_BURST);
   }
   if (frame > 96 && frame < 272 && frame % 30 == 0)
     MarsLighthouseEntrance_ScatterIceChips(ACTOR_ICE_SHEET);
@@ -606,8 +606,8 @@ void MarsLighthouseEntrance_BlazeLapisTorch(void) {
 /// follows it along the hall to the sheet of ice it cracks and holds there.
 void MarsLighthouseEntrance_WatchFireballCrackIce(void) {
   gFieldState->psynergy = 0;
-  Flag_Clear(FLAG_MENU_OPEN);
-  Flag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
+  Event_ClearFlag(FLAG_MENU_OPEN);
+  Event_ClearFlag(FLAG_FIELD_HANDLING_REQUESTS);
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(1);
@@ -635,12 +635,12 @@ void MarsLighthouseEntrance_DrawLapisCrackedSheet(void) {
 void MarsLighthouseEntrance_CrackLapisIceSheet(void) {
   struct Actor *actor = Actor_Get(ACTOR_SECOND_ICE_SHEET);
 
-  if (!Flag_IsSet(FLAG_LAPIS_SECOND_SHEET_BURST)) {
+  if (!Event_GetFlag(FLAG_LAPIS_SECOND_SHEET_BURST)) {
     Event_PlaySound(SE_ICE_CRACK);
-    Flag_Set(FLAG_LAPIS_SECOND_SHEET_SHOWN);
+    Event_SetFlag(FLAG_LAPIS_SECOND_SHEET_SHOWN);
     actor->x.fixed = INTtoFIXED(actor->homeX);
     actor->z.fixed = INTtoFIXED(actor->homeZ);
-    Flag_Set(FLAG_LAPIS_SECOND_SHEET_CRACKED);
+    Event_SetFlag(FLAG_LAPIS_SECOND_SHEET_CRACKED);
     MarsLighthouseEntrance_DrawLapisCrackedSheet();
   }
 }
@@ -662,7 +662,7 @@ void MarsLighthouseEntrance_CrackLapisIceSheet(void) {
       MapGrid_CopyCellAttributes(groundSourceX, groundZ, 8, groundRows, x,     \
                                  groundZ);                                     \
       Actor_SetPosition(sheet, 0, 0);                                          \
-      Flag_Set(flag);                                                          \
+      Event_SetFlag(flag);                                                     \
     }                                                                          \
     if (frame > 96 && frame < 272 && frame % 30 == 0)                          \
       MarsLighthouseEntrance_ScatterIceChips(sheet);                           \
@@ -692,7 +692,7 @@ void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
       FieldEvent_Wait(5);
       actor->z.fixed += toFIXED(1);
       *(u8 *)&actor->sceneCounter = 1;
-      Flag_Set(FLAG_LAPIS_STATUE_BLOCKS_FLAMES);
+      Event_SetFlag(FLAG_LAPIS_STATUE_BLOCKS_FLAMES);
     }
   }
 }
@@ -753,8 +753,8 @@ void MarsLighthouseEntrance_BlazeHiddenCircleWestTorch(void) {
 /// fireball cracks.
 void MarsLighthouseEntrance_WatchFireballCrackHiddenCircleIce(void) {
   gFieldState->psynergy = 0;
-  Flag_Clear(FLAG_MENU_OPEN);
-  Flag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
+  Event_ClearFlag(FLAG_MENU_OPEN);
+  Event_ClearFlag(FLAG_FIELD_HANDLING_REQUESTS);
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
   FieldCamera_WaitForArrival();
@@ -768,12 +768,12 @@ void MarsLighthouseEntrance_WatchFireballCrackHiddenCircleIce(void) {
 void MarsLighthouseEntrance_CrackHiddenCircleIceSheet(void) {
   struct Actor *actor = Actor_Get(ACTOR_HIDDEN_CIRCLE_ICE_SHEET);
 
-  if (!Flag_IsSet(FLAG_HIDDEN_CIRCLE_SHEET_BURST)) {
+  if (!Event_GetFlag(FLAG_HIDDEN_CIRCLE_SHEET_BURST)) {
     Event_PlaySound(SE_ICE_CRACK);
-    Flag_Set(FLAG_HIDDEN_CIRCLE_SHEET_SHOWN);
+    Event_SetFlag(FLAG_HIDDEN_CIRCLE_SHEET_SHOWN);
     actor->x.fixed = INTtoFIXED(actor->homeX);
     actor->z.fixed = INTtoFIXED(actor->homeZ);
-    Flag_Set(FLAG_HIDDEN_CIRCLE_SHEET_CRACKED);
+    Event_SetFlag(FLAG_HIDDEN_CIRCLE_SHEET_CRACKED);
   }
 }
 
@@ -788,8 +788,8 @@ void MarsLighthouseEntrance_BlazeHiddenCircleEastTorch(void) {
 /// its path, and holds on the cleared way.
 void MarsLighthouseEntrance_WatchFireballMeltIce(void) {
   gFieldState->psynergy = 0;
-  Flag_Clear(FLAG_MENU_OPEN);
-  Flag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
+  Event_ClearFlag(FLAG_MENU_OPEN);
+  Event_ClearFlag(FLAG_FIELD_HANDLING_REQUESTS);
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(1);
@@ -842,7 +842,7 @@ void MarsLighthouseEntrance_MeltIceInPath(void) {
   MapGrid_CopyCellAttributes(35, 11, 3, 6, 53, 11);
   MapGrid_CopyCellsLayered(35, 75, 3, 6, 117, 11);
   MapGrid_CopyCellsLayered(35, 75, 3, 6, 53, 75);
-  Flag_Set(FLAG_HIDDEN_CIRCLE_ICE_MELTED);
+  Event_SetFlag(FLAG_HIDDEN_CIRCLE_ICE_MELTED);
 }
 
 /// The fireball in the Valkyrie Mail rooms' long hall has passed: the cells
@@ -886,7 +886,7 @@ void MarsLighthouseEntrance_PushStatueIntoValkyrieFlames(s32 unused, s32 id) {
     if (FIELD_CELL(actor->x.fixed) == VALKYRIE_STATUE_BLOCKING_COLUMN) {
       FieldEvent_Wait(5);
       actor->z.fixed += toFIXED(1);
-      Flag_Set(FLAG_VALKYRIE_STATUE_BLOCKS_FLAMES);
+      Event_SetFlag(FLAG_VALKYRIE_STATUE_BLOCKS_FLAMES);
     }
   }
 }
@@ -1033,11 +1033,11 @@ extern struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[];
 /// While he stays at the head of the slide nothing else happens to him.
 void MarsLighthouseEntrance_WakeDragonFace(void) {
   Event_PlaySound(SE_BUTTON_PRESS);
-  Flag_Set(FLAG_NO_PLACE_TO_SAVE);
+  Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
   Actor_SetScript(ACTOR_DRAGON_FACE,
                   gMarsLighthouseEntrance_DragonFaceGoesLeft);
   FlameThrower_Set(0, FLAME_FORWARD | 3);
-  Flag_Set(FLAG_DRAGON_FACE_AWAKE);
+  Event_SetFlag(FLAG_DRAGON_FACE_AWAKE);
 }
 
 /// Stepping onto the black ice in the Valkyrie Mail rooms' long hall, Felix
@@ -1454,7 +1454,7 @@ extern s32 gMarsLighthouseEntrance_FireballThroughIce[];
 extern s32 gMarsLighthouseEntrance_FireballToLapisIceSheet[];
 
 s32 Scene_PrepareMap(void) {
-  if (Flag_IsSet(FLAG_MARS_LIGHTHOUSE_THAWED))
+  if (Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED))
     Map_CopyPalette(gMainRoutineState.mapId + MARS_LIGHTHOUSE_THAWED_MAPS,
                     (s32)BG_PLTT);
   return 0;
@@ -1622,7 +1622,7 @@ int MarsLighthouseEntrance_RideFireball(void) {
     ScreenTransition_Start(event->transition, event->transitionFrames);
     event->transitionActive = 1;
   }
-  Flag_Clear(FLAG_MENU_OPEN);
+  Event_ClearFlag(FLAG_MENU_OPEN);
   event->psynergy = 0;
   event->fieldMenu = 0;
   event->pauseMenu = 0;
@@ -1638,10 +1638,10 @@ int MarsLighthouseEntrance_RideFireball(void) {
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineState.leaderActorId);
   ride = FLAME_THROWERS_STATE;
-  Flag_Set(FLAG_MENU_OPEN);
+  Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
-  Flag_Clear(FLAG_MENU_OPEN);
+  Event_ClearFlag(FLAG_MENU_OPEN);
   leader->update = (ObjectUpdate)Actor_Blink;
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);

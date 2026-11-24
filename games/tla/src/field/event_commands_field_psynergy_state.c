@@ -17,7 +17,6 @@
 #include "field/event.h"
 #include "field/field.h"
 #include "field/perspective.h"
-#include "field/flag_call.h"
 #include "gamepak/far_call/window.h"
 #include "system/heap_release.h"
 #include "field/event_commands.h"

@@ -4,7 +4,6 @@
 
 #include "battle_internal.h"
 #include "flags.h"
-#include "field/flag_call.h"
 #include "gamepak/far_call/game.h"
 #include "battle/battle.h"
 #include "battle/presentation.h"

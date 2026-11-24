@@ -11,7 +11,6 @@
 #include "field/resource_slot.h"
 #include "macros.h"
 #include "field/hanging_vine.h"
-#include "field/flag_call.h"
 #include "field/map.h"
 #include "field/object.h"
 #include "system/ram_buffer.h"

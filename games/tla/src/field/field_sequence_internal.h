@@ -50,7 +50,6 @@
 #include "edition.h"
 #include "field/objdisp.h"
 #include "system/heap_release.h"
-#include "field/flag_call.h"
 #include "graphics/display_transition.h"
 #include "system/task.h"
 #include "system/io_write_queue.h"

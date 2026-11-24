@@ -7,7 +7,6 @@
 #include "flags.h"
 #include "fixed_math.h"
 #include "sounds.h"
-#include "field/flag_call.h"
 #include "system/frame.h"
 #include "gamepak/far_call/window.h"
 #include "battle/battle.h"

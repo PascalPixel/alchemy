@@ -53,7 +53,6 @@
 #include "field/scene_tables.h"
 #include "scene_ids.h"
 #include "field/event.h"
-#include "field/flag_call.h"
 #include "field/scene_call.h"
 #include "fixed_math.h"
 #include "field/actor_script.h"

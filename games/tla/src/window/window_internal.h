@@ -56,7 +56,6 @@
 #include "static_assert.h"
 #include "macros.h"
 #include "graphics/oam.h"
-#include "field/flag_call.h"
 #include "graphics/vram_tab.h"
 #include "stddef.h"
 #include "battle/battle_state.h"

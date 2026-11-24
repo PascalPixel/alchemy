@@ -23,7 +23,6 @@
 #include "field/actor.h"
 #include "field/map_grid.h"
 #include "field/sprite.h"
-#include "field/flag_call.h"
 
 /// The map screen's image on BG1, in 256 colours. The large image
 /// (RESOURCE_WORLD_MAP_PICTURE_LARGE) is 64 by 48 tiles, each row of tiles

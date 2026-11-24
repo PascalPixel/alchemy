@@ -21,7 +21,6 @@
 #include "system/ram_buffer.h"
 #include "system/main_routine_state.h"
 #include "field/actor.h"
-#include "field/flag_call.h"
 #include "field/event_inline.h"
 #include "system/frame.h"
 #include "version.h"
@@ -212,9 +211,9 @@ s32 Scene_Initialize(void) {
   Actor_GetById(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   Task_Add(LemuriaDock_CyclePalette, TASK_PASS_FRAME);
-  Flag_Clear(FLAG_SHOW_AREA_NAME);
+  Event_ClearFlag(FLAG_SHOW_AREA_NAME);
 #if TLA_PATCH_1 /* From patch 1. */
-  if (Flag_IsSet(FLAG_SHIP_CARRIES_CANNON))
+  if (Event_GetFlag(FLAG_SHIP_CARRIES_CANNON))
     Actor_SetSpritePriority(ACTOR_CANNON, 1);
   else
     Actor_SetPosition(ACTOR_CANNON, 0, 0);
@@ -225,7 +224,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   // Until the ship can fly, its wings are not out: plain hull and sea are
   // drawn where they would show.
-  if (!Flag_IsSet(FLAG_SHIP_FLIES)) {
+  if (!Event_GetFlag(FLAG_SHIP_FLIES)) {
     MapGrid_CopyCellsTo(57, 52, 64, 15, 1, 1);
     MapGrid_CopyCellsTo(60, 53, 67, 16, 6, 3);
     MapGrid_CopyCellsTo(50, 52, 16, 16, 6, 3);

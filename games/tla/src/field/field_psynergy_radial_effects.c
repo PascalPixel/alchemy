@@ -21,7 +21,6 @@
 #include "field/event.h"
 #include "field/field_sequence_event.h"
 #include "field/scene_call.h"
-#include "field/flag_call.h"
 #include "field/screen_transition.h"
 #include "gamepak/far_call/window.h"
 #include "text/msg_ids.h"

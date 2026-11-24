@@ -47,7 +47,6 @@
 #include "system/ram_buffer.h"
 #include "system/main_routine_state.h"
 #include "field/actor.h"
-#include "field/flag_call.h"
 #include "field/event_inline.h"
 #include "field/map_grid.h"
 #include "version.h"
@@ -799,12 +798,12 @@ void MarsLighthouseRoomF_WatchFireballCrackWall(void) {
 /// The fireball cracks the Mars tower's centre wall, ready for Burst, with
 /// pieces of wall flying, unless Burst has broken it already.
 void MarsLighthouseRoomF_CrackCenterWall(s32 burst) {
-  if (!Flag_IsSet(FLAG_CENTER_WALL_BURST)) {
+  if (!Event_GetFlag(FLAG_CENTER_WALL_BURST)) {
     MapGrid_CopyCells(29, 60, 3, 4, 14, 50);
     MapGrid_CopyCellsLayered(93, 60, 3, 4, 78, 50);
-    if (burst && !Flag_IsSet(FLAG_CENTER_WALL_CRACKED))
+    if (burst && !Event_GetFlag(FLAG_CENTER_WALL_CRACKED))
       MarsLighthouseRoomF_ScatterRubble(ACTOR_CENTER_WALL);
-    Flag_Set(FLAG_CENTER_WALL_CRACKED);
+    Event_SetFlag(FLAG_CENTER_WALL_CRACKED);
   }
 }
 
@@ -922,7 +921,7 @@ void MarsLighthouseRoomF_DropBlock(s32 unused, s32 id) {
     MapGrid_CopyCellAttributes(7, 88, 7, 1, 7, 71);
     Event_PlaySound(SE_MAP_TRANSITION);
     Actor_SetPosition(id, 0, 0);
-    Flag_Set(FLAG_BLOCK_DROPPED);
+    Event_SetFlag(FLAG_BLOCK_DROPPED);
   }
 }
 
@@ -931,7 +930,7 @@ void MarsLighthouseRoomF_DropBlock(s32 unused, s32 id) {
 /// and stays there.
 void MarsLighthouseRoomF_MoveJupiterStatueIntoFlames(s32 unused, s32 id) {
   if (FIELD_CELL(Actor_Get(id)->x.fixed) == 7)
-    Flag_Set(FLAG_JUPITER_STATUE_BLOCKS_FLAMES);
+    Event_SetFlag(FLAG_JUPITER_STATUE_BLOCKS_FLAMES);
 }
 
 /// While Felix's Reveal lasts in the Jupiter tower, the hidden stepping
@@ -986,7 +985,7 @@ void MarsLighthouseRoomF_RouteFireThroughPipeline(void) {
   FlameThrower_Set(2, FLAME_THROWER_DRY | 1);
   FlameThrower_Set(1, FLAME_THROWER_DRY | 1);
   FlameThrower_Set(0, FLAME_THROWER_DRY | 1);
-  Flag_Clear(FLAG_PIPELINE_MENDED);
+  Event_ClearFlag(FLAG_PIPELINE_MENDED);
   if (FIELD_CELL(Actor_Get(ACTOR_MERCURY_PIPE_C)->z.fixed) != 15 &&
       FIELD_CELL(Actor_Get(ACTOR_MERCURY_PIPE_B)->z.fixed) != 15) {
     FlameThrower_Set(1, FLAME_WEST | 1);
@@ -1000,8 +999,8 @@ void MarsLighthouseRoomF_RouteFireThroughPipeline(void) {
     FlameThrower_Set(2, FLAME_BACKWARD | 1);
     return;
   }
-  Flag_Set(FLAG_PIPELINE_MENDED);
-  if (!Flag_IsSet(FLAG_SAW_PIPELINE_MENDED)) {
+  Event_SetFlag(FLAG_PIPELINE_MENDED);
+  if (!Event_GetFlag(FLAG_SAW_PIPELINE_MENDED)) {
     FieldCamera_SetSpeed(2);
     FieldCamera_MoveTo(616, CAMERA_KEEP, 24, 1);
     FieldEvent_Wait(60);
@@ -1024,12 +1023,12 @@ void MarsLighthouseRoomF_LightFlameThrower(void) {
 void MarsLighthouseRoomF_WatchFlameThrower(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  Flag_Set(FLAG_MENU_OPEN);
+  Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
   state->psynergy = 0;
-  Flag_Clear(FLAG_MENU_OPEN);
-  Flag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
+  Event_ClearFlag(FLAG_MENU_OPEN);
+  Event_ClearFlag(FLAG_FIELD_HANDLING_REQUESTS);
   FieldEvent_Wait(60);
   FieldCamera_SetSpeed(3);
   FieldCamera_MoveTo(184, CAMERA_KEEP, 744, 1);
@@ -1049,23 +1048,23 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
     PushTarget_Push(box);
     MarsLighthouseRoomF_RouteFireThroughPipeline();
     if (FlameThrower_GetFlags(0) != FLAME_THROWER_DRY &&
-        Flag_IsSet(FLAG_CENTER_PUDDLE_FROZEN)) {
+        Event_GetFlag(FLAG_CENTER_PUDDLE_FROZEN)) {
       struct Actor *actor = Actor_Get(ACTOR_CENTER_PUDDLE);
 
       actor->update = NULL;
       Actor_SetSpriteColorMode(actor, 0);
       Actor_SetAnimation(ACTOR_CENTER_PUDDLE, 6);
-      Flag_Clear(FLAG_CENTER_PUDDLE_FROZEN);
+      Event_ClearFlag(FLAG_CENTER_PUDDLE_FROZEN);
       MarsLighthouseRoomF_MeltPuddle(ACTOR_CENTER_PUDDLE);
     }
     if (FlameThrower_GetFlags(2) != FLAME_THROWER_DRY &&
-        Flag_IsSet(FLAG_UPPER_PUDDLE_FROZEN)) {
+        Event_GetFlag(FLAG_UPPER_PUDDLE_FROZEN)) {
       struct Actor *actor = Actor_Get(ACTOR_UPPER_PUDDLE);
 
       actor->update = NULL;
       Actor_SetSpriteColorMode(actor, 0);
       Actor_SetAnimation(ACTOR_UPPER_PUDDLE, 6);
-      Flag_Clear(FLAG_UPPER_PUDDLE_FROZEN);
+      Event_ClearFlag(FLAG_UPPER_PUDDLE_FROZEN);
       MarsLighthouseRoomF_MeltPuddle(ACTOR_UPPER_PUDDLE);
     }
   } else {
@@ -1142,14 +1141,14 @@ void MarsLighthouseRoomF_MeltPuddle(s32 id) {
 #define DEFINE_FROST_PUDDLE(name, flag, flameThrower)                          \
   void name(s32 unused, s32 id) {                                              \
     MarsLighthouseRoomF_FreezePuddle(id);                                      \
-    Flag_Set(flag);                                                            \
+    Event_SetFlag(flag);                                                       \
     if (FlameThrower_GetFlags(flameThrower) != FLAME_THROWER_DRY) {            \
       struct Actor *actor = Actor_Get(id);                                     \
                                                                                \
       actor->update = NULL;                                                    \
       Actor_SetSpriteColorMode(actor, 0);                                      \
       Actor_SetAnimation(id, 6);                                               \
-      Flag_Clear(flag);                                                        \
+      Event_ClearFlag(flag);                                                   \
       MarsLighthouseRoomF_MeltPuddle(id);                                      \
     }                                                                          \
   }
@@ -1169,7 +1168,7 @@ DEFINE_FROST_PUDDLE(MarsLighthouseRoomF_FrostCenterPuddle,
 /// The fireball from the Mercury tower's lower urn torch melts the icebergs
 /// in its way, opening the path over the black ice.
 void MarsLighthouseRoomF_MeltIcebergs(void) {
-  Flag_Set(FLAG_ICEBERGS_MELTED);
+  Event_SetFlag(FLAG_ICEBERGS_MELTED);
   MapGrid_CopyCellAttributes(24, 38, 3, 9, 10, 38);
   MapGrid_CopyCellsLayered(64, 64, 3, 9, 74, 36);
   MapGrid_CopyCellsLayered(64, 64, 3, 9, 10, 100);
@@ -1232,7 +1231,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   value =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  Flag_Set(FLAG_IN_MARS_LIGHTHOUSE);
+  Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
   FlameThrowers_Create();
   if (scene == SCENE_MARS_LIGHTHOUSE_MARS_TOWER) {
     FieldEffect_StartBlankOverlay(0);
@@ -1244,17 +1243,17 @@ s32 Scene_Initialize(void) {
                           gMarsLighthouseRoomF_MarsButtonFlameStops,
                           MarsLighthouseRoomF_LightTorch,
                           STEP_TRIGGER_FLAME_HIT);
-      if (Flag_IsSet(FLAG_MARS_TORCH_LIT))
+      if (Event_GetFlag(FLAG_MARS_TORCH_LIT))
         Actor_SetPosition(ACTOR_UNLIT_MARS_TORCH, 0, 0);
       else
         Actor_SetPosition(ACTOR_MARS_TORCH, 0, 0);
-      if (Flag_IsSet(FLAG_CENTER_WALL_CRACKED))
+      if (Event_GetFlag(FLAG_CENTER_WALL_CRACKED))
         MarsLighthouseRoomF_CrackCenterWall(0);
-      if (Flag_IsSet(FLAG_WEST_WALL_BURST))
+      if (Event_GetFlag(FLAG_WEST_WALL_BURST))
         MarsLighthouseRoomF_BurstWestWall(1, 0);
-      if (Flag_IsSet(FLAG_EAST_WALL_BURST))
+      if (Event_GetFlag(FLAG_EAST_WALL_BURST))
         MarsLighthouseRoomF_BurstEastWall(1, 0);
-      if (Flag_IsSet(FLAG_CENTER_WALL_BURST))
+      if (Event_GetFlag(FLAG_CENTER_WALL_BURST))
         MarsLighthouseRoomF_BurstCenterWall(1, 0);
     } else {
       FlameThrowers_Start(gMarsLighthouseRoomF_MarsPipeFlameThrowers,
@@ -1277,7 +1276,7 @@ s32 Scene_Initialize(void) {
     if (entrance == MERCURY_TOWER_PIPE_HALL_DOORWAY)
       FlameThrowers_ReleaseFlame();
     if (entrance == MERCURY_TOWER_PIPELINE_MENDED) {
-      Flag_Set(FLAG_SAW_PIPELINE_MENDED);
+      Event_SetFlag(FLAG_SAW_PIPELINE_MENDED);
       Event_Start();
       Event_EndLastingPsynergy(0);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1290,16 +1289,16 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_MERCURY_TORCH, 264, 520);
       Event_PlaySound(SE_WHOOSH);
       Event_Wait(60);
-      Flag_Set(FLAG_KEEP_PARTY_POSITION);
+      Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
       return Value1((s32 (*)())Import_EventSetExitRequest,
                     MERCURY_TOWER_DRAGON_HEAD_ROOM_DOORWAY);
     }
-    if (Flag_IsSet(FLAG_PIPELINE_MENDED)) {
+    if (Event_GetFlag(FLAG_PIPELINE_MENDED)) {
       Actor_SetPosition(ACTOR_MERCURY_PIPE_A, 600, 144);
       Actor_SetPosition(ACTOR_MERCURY_PIPE_B, 544, 208);
       Actor_SetPosition(ACTOR_MERCURY_PIPE_C, 544, 240);
-      Flag_Set(FLAG_UPPER_PUDDLE_FROZEN);
-      Flag_Set(FLAG_CENTER_PUDDLE_FROZEN);
+      Event_SetFlag(FLAG_UPPER_PUDDLE_FROZEN);
+      Event_SetFlag(FLAG_CENTER_PUDDLE_FROZEN);
     }
     Actor_DisableById(ACTOR_MERCURY_PIPE_A);
     Actor_DisableById(ACTOR_MERCURY_PIPE_B);
@@ -1311,16 +1310,16 @@ s32 Scene_Initialize(void) {
         ACTOR_PRIORITY_UNDERFOOT;
     Actor_GetById(ACTOR_CENTER_PUDDLE)->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT;
-    if (Flag_IsSet(FLAG_UPPER_PUDDLE_FROZEN))
+    if (Event_GetFlag(FLAG_UPPER_PUDDLE_FROZEN))
       MarsLighthouseRoomF_FreezePuddle(ACTOR_UPPER_PUDDLE);
-    if (Flag_IsSet(FLAG_CENTER_PUDDLE_FROZEN))
+    if (Event_GetFlag(FLAG_CENTER_PUDDLE_FROZEN))
       MarsLighthouseRoomF_FreezePuddle(ACTOR_CENTER_PUDDLE);
     MarsLighthouseRoomF_RouteFireThroughPipeline();
-    if (Flag_IsSet(FLAG_PIPELINE_MENDED))
+    if (Event_GetFlag(FLAG_PIPELINE_MENDED))
       Actor_SetPosition(ACTOR_UNLIT_MERCURY_TORCH, 0, 0);
     else
       Actor_SetPosition(ACTOR_MERCURY_TORCH, 0, 0);
-    if (Flag_IsSet(FLAG_ICEBERGS_MELTED))
+    if (Event_GetFlag(FLAG_ICEBERGS_MELTED))
       MarsLighthouseRoomF_MeltIcebergs();
     Task_Add(MarsLighthouseRoomF_StopSlideWhileHit, TASK_PASS_FRAME);
   } else if (scene == SCENE_MARS_LIGHTHOUSE_JUPITER_TOWER) {
@@ -1330,13 +1329,13 @@ s32 Scene_Initialize(void) {
     LightSprites_InitB();
     LightSprites_SetPriority(2);
     LightSprites_Add(ACTOR_DROPPING_BLOCK, 6);
-    if (Flag_IsSet(FLAG_BLOCK_DROPPED)) {
+    if (Event_GetFlag(FLAG_BLOCK_DROPPED)) {
       MapGrid_CopyCellsLayered(71, 24, 7, 1, 71, 5);
       MapGrid_CopyCellAttributes(7, 24, 7, 1, 7, 7);
       MapGrid_CopyCellAttributes(7, 88, 7, 1, 7, 71);
       Actor_SetPosition(ACTOR_DROPPING_BLOCK, 0, 0);
     }
-    if (Flag_IsSet(FLAG_JUPITER_STATUE_BLOCKS_FLAMES))
+    if (Event_GetFlag(FLAG_JUPITER_STATUE_BLOCKS_FLAMES))
       Actor_SetPosition(ACTOR_JUPITER_STATUE, 120, 296);
     if (entrance == JUPITER_TOWER_CARVED_DRAGON_CIRCLE ||
         entrance ==
@@ -1354,7 +1353,7 @@ s32 Scene_Initialize(void) {
     // On some of Cyclone's landings the party spins down from above
     // (Actor_DepartInRing), on the others it shows in a widening whirlwind
     // (Actor_ArriveInRing).
-    if (!Flag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
+    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       if (entrance == JUPITER_TOWER_FIRST_HALL_WEST_CIRCLE ||
           entrance == JUPITER_TOWER_FIRST_HALL_EAST_CIRCLE ||
           entrance == JUPITER_TOWER_BIG_ROOM_SOUTHWEST ||
@@ -1371,7 +1370,7 @@ s32 Scene_Initialize(void) {
           entrance == JUPITER_TOWER_CARVED_DRAGON_CIRCLE)
         Actor_ArriveInRing(gMainRoutineState.leaderActorId);
       if (entrance == JUPITER_TOWER_THROUGH_HOLE &&
-          !Flag_IsSet(FLAG_KEEP_PARTY_POSITION))
+          !Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
         CrackedTile_DropIn();
     }
   } else if (scene == SCENE_MARS_LIGHTHOUSE_VENUS_TOWER) {
@@ -1402,14 +1401,14 @@ s32 Scene_Initialize(void) {
                           gMarsLighthouseRoomF_VenusStatueFlameStops, 0,
                           STEP_TRIGGER_FLAME_HIT);
     }
-    if (!Flag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
+    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       if (entrance == VENUS_TOWER_LOWER_DOORWAY)
         Actor_SetPosition(ACTOR_LOWER_DOORWAY_STATUE, 664, 712);
       if (entrance == VENUS_TOWER_UPPER_DOORWAY)
         Actor_SetPosition(ACTOR_UPPER_DOORWAY_STATUE, 536, 552);
     }
     Actor_GetById(ACTOR_PUSHED_STATUE)->motionFlags = 0;
-    if (Flag_IsSet(FLAG_VENUS_STATUE_PUSHED_OFF_LEDGE)) {
+    if (Event_GetFlag(FLAG_VENUS_STATUE_PUSHED_OFF_LEDGE)) {
       Actor_SetPosition(ACTOR_PUSHED_STATUE, 808, 312);
       Actor_GetById(ACTOR_PUSHED_STATUE)->y.fixed = 0;
       Actor_GetById(ACTOR_PUSHED_STATUE)->groundHeight = 0;
@@ -1593,7 +1592,7 @@ s32 Fireball_CarryLeader(void) {
     ScreenTransition_Start(event->transition, event->transitionFrames);
     event->transitionActive = 1;
   }
-  Flag_Clear(FLAG_MENU_OPEN);
+  Event_ClearFlag(FLAG_MENU_OPEN);
   event->psynergy = 0;
   event->fieldMenu = 0;
   event->pauseMenu = 0;
@@ -1609,10 +1608,10 @@ s32 Fireball_CarryLeader(void) {
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineState.leaderActorId);
   ride = FLAME_THROWERS_STATE;
-  Flag_Set(FLAG_MENU_OPEN);
+  Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
-  Flag_Clear(FLAG_MENU_OPEN);
+  Event_ClearFlag(FLAG_MENU_OPEN);
   leader->update = (ObjectUpdate)Actor_Blink;
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);

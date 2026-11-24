@@ -5,7 +5,6 @@
 #include "field_sequence_internal.h"
 #include "djinn_ids.h"
 #include "sounds.h"
-#include "field/flag_call.h"
 #include "field/event_commands.h"
 #include "field/object.h"
 

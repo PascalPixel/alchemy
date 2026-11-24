@@ -37,7 +37,6 @@
 #include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
-#include "field/flag_call.h"
 #include "field/map.h"
 #include "field/map_grid.h"
 #include "field/object.h"

@@ -14,7 +14,6 @@
 #include "system/ram_buffer.h"
 #include "macros.h"
 #include "system/io_write.h"
-#include "field/flag_call.h"
 #include "system/system.h"
 #include "system/bg_scroll.h"
 #include "field/mapcopy.h"

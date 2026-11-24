@@ -40,7 +40,6 @@
 #include "window/window.h"
 #include "flags.h"
 #include "resource_ids.h"
-#include "field/flag_call.h"
 
 struct QueuedSprite;
 

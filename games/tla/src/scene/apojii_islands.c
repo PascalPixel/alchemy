@@ -231,7 +231,6 @@ extern u32 gWaterDropScript[];
 #include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "field/field_event.h"
-#include "field/flag_call.h"
 #include "field/ground_mask.h"
 #include "scene/scene.h"
 #include "scene/ground_effects.h"

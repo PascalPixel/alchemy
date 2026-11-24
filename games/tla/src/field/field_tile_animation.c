@@ -17,7 +17,6 @@
 #include "graphics/palette_cycles.h"
 #include "graphics/palette_buffers.h"
 #include "system/io_write_queue.h"
-#include "field/flag_call.h"
 #include "field/curve.h"
 #include "edition.h"
 

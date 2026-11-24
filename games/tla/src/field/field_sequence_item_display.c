@@ -20,7 +20,6 @@
 #include "fixed_math.h"
 #include "field/actor_view.h"
 #include "field/field_sprite.h"
-#include "field/flag_call.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "graphics/display_transition.h"

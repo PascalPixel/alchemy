@@ -54,7 +54,6 @@
 #include "system/frame.h"
 #include "field/event.h"
 #include "field/field_sequence_event.h"
-#include "field/flag_call.h"
 #include "system/field_effect.h"
 #include "macros.h"
 #include "field/call.h"

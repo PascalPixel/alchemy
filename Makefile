@@ -125,13 +125,13 @@ PATCH := $$$$(wildcard $$$$(basename $$$$(basename $$$$@))_patch.tsv)
 $(foreach form,$(PICTURE_FORMS),$(eval %.$(form): %.png $$(AGSGFX) ; $$(AGSGFX) $$< $$@))
 $(foreach form,$(PICTURE_FORMS),$(foreach codec,$(CODECS),$(eval %.$(form).$(codec): %.png $(PATCH) $$(AGSGFX) ; $$(AGSGFX) $$< $$@)))
 # A map's grid is three tables, one number a square: picture, behavior, shape.
-%/map.grid.lz: %/grid_picture.tsv %/grid_behavior.tsv %/grid_shape.tsv $$(wildcard $$*/grid_picture_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
-%/map_ja.grid.lz: %/grid_picture_ja.tsv %/grid_behavior_ja.tsv %/grid_shape_ja.tsv $$(wildcard $$*/grid_picture_ja_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
-%/map_en.grid.lz: %/grid_picture_en.tsv %/grid_behavior_en.tsv %/grid_shape_en.tsv $$(wildcard $$*/grid_picture_en_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
-%/map_de.grid.lz: %/grid_picture_de.tsv %/grid_behavior_de.tsv %/grid_shape_de.tsv $$(wildcard $$*/grid_picture_de_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
-%/map_es.grid.lz: %/grid_picture_es.tsv %/grid_behavior_es.tsv %/grid_shape_es.tsv $$(wildcard $$*/grid_picture_es_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
-%/map_fr.grid.lz: %/grid_picture_fr.tsv %/grid_behavior_fr.tsv %/grid_shape_fr.tsv $$(wildcard $$*/grid_picture_fr_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
-%/map_it.grid.lz: %/grid_picture_it.tsv %/grid_behavior_it.tsv %/grid_shape_it.tsv $$(wildcard $$*/grid_picture_it_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
+%/map.grid.lz: %/grid_picture.tsv %/grid_behavior.tsv %/grid_shape.tsv $$(wildcard $$*/grid_picture_patch.tsv $$*/grid_actors.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
+%/map_ja.grid.lz: %/grid_picture_ja.tsv %/grid_behavior_ja.tsv %/grid_shape_ja.tsv $$(wildcard $$*/grid_picture_ja_patch.tsv $$*/grid_actors_ja.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
+%/map_en.grid.lz: %/grid_picture_en.tsv %/grid_behavior_en.tsv %/grid_shape_en.tsv $$(wildcard $$*/grid_picture_en_patch.tsv $$*/grid_actors_en.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
+%/map_de.grid.lz: %/grid_picture_de.tsv %/grid_behavior_de.tsv %/grid_shape_de.tsv $$(wildcard $$*/grid_picture_de_patch.tsv $$*/grid_actors_de.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
+%/map_es.grid.lz: %/grid_picture_es.tsv %/grid_behavior_es.tsv %/grid_shape_es.tsv $$(wildcard $$*/grid_picture_es_patch.tsv $$*/grid_actors_es.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
+%/map_fr.grid.lz: %/grid_picture_fr.tsv %/grid_behavior_fr.tsv %/grid_shape_fr.tsv $$(wildcard $$*/grid_picture_fr_patch.tsv $$*/grid_actors_fr.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
+%/map_it.grid.lz: %/grid_picture_it.tsv %/grid_behavior_it.tsv %/grid_shape_it.tsv $$(wildcard $$*/grid_picture_it_patch.tsv $$*/grid_actors_it.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
 # A map's scene is three tables: its points, entrances and bounds.
 %/scene.scene.lz: %/points.tsv %/entrances.tsv %/bounds.tsv $(AGSGFX) ; $(AGSGFX) $< $@
 %/scene_ja.scene.lz: %/points_ja.tsv %/entrances_ja.tsv %/bounds_ja.tsv $(AGSGFX) ; $(AGSGFX) $< $@
@@ -515,6 +515,7 @@ tools:
 
 test: tools format-check
 	$(MAKE) -f tools/Makefile test
+	git ls-files games tools | tools/out/ags-check
 
 # Both games' C is as clang-format writes it (AGENTS.md S3). Without
 # clang-format installed the check says so

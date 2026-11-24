@@ -5,7 +5,7 @@ HOST_LDFLAGS ?=
 LIBPNG_CONFIG ?= libpng-config
 OUT := tools/out
 OBJ := $(OUT)/obj
-NAMES := graphics audio music text deps overlays header enums list maps
+NAMES := graphics audio music text deps overlays header enums list maps check
 BINARIES := $(addprefix $(OUT)/ags-,$(NAMES))
 # Shared runtime, codecs, and assembly output are linked only where needed.
 SHARED := $(addprefix $(OBJ)/shared/,shared.o files.o strings.o)
@@ -40,7 +40,9 @@ $(OUT)/ags-list: $(OBJ)/ags-list/ags-list.o
 	$(HOST_CC) $^ $(HOST_LDFLAGS) -o $@
 $(OUT)/ags-maps: $(OBJ)/ags-maps/ags-maps.o
 	$(HOST_CC) $^ $(HOST_LDFLAGS) -o $@
-$(OUT)/ags-overlays: $(OBJ)/ags-overlays/ags-overlays.o $(SHARED) $(COMPRESS)
+$(OUT)/ags-check: $(OBJ)/ags-check/ags-check.o
+	$(HOST_CC) $^ $(HOST_LDFLAGS) -o $@
+$(OUT)/ags-overlays:$(OBJ)/ags-overlays/ags-overlays.o $(SHARED) $(COMPRESS)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) -o $@
 $(OUT)/ags-header: $(OBJ)/ags-header/ags-header.o $(SHARED)
 	$(HOST_CC) $^ $(HOST_LDFLAGS) -o $@

@@ -1,6 +1,6 @@
 name	file	left	pad	fill	edition
-Resource_Data63E	../graphics/tileset/blank/palette.gbapal.lz	00
-Resource_Data63F	../graphics/tileset/blank/tiles_a.4bpp.mtf	0001
-Resource_Data640	../graphics/tileset/blank/tiles_b.4bpp.mtf	07
-Resource_Data641	../graphics/tileset/blank/tiles_b.4bpp.mtf	07
-Resource_Data642	../graphics/tileset/blank/tiles_b.4bpp.mtf	07
+Tileset_Test6Palette	../graphics/tileset/blank/palette.gbapal.lz	00
+Tileset_Test6TilesA	../graphics/tileset/blank/tiles_a.4bpp.mtf	0001
+Tileset_Test6TilesB	../graphics/tileset/blank/tiles_b.4bpp.mtf	07
+Tileset_Test6TilesC	../graphics/tileset/blank/tiles_b.4bpp.mtf	07
+Tileset_Test6TilesD	../graphics/tileset/blank/tiles_b.4bpp.mtf	07

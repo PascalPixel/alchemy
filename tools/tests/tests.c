@@ -295,6 +295,11 @@ graphics(void)
 	RUN("graphics", false, "points_ja.tsv", "twoscene.scene");
 	RUN("graphics", false, "entrances.tsv", "named.scene");
 	textFile("grid_picture_ja.tsv", "0\n36863\n");
+	RUN("graphics", false, "grid_picture_ja.tsv", "widepicture.grid");
+	textFile("grid_picture_ja.tsv", "0\n4095\n");
+	textFile("grid_actors_ja.tsv", "column\trow\tlayer\tpriority\n0\t0\t0\t0\n");
+	RUN("graphics", false, "grid_picture_ja.tsv", "noactor.grid");
+	textFile("grid_actors_ja.tsv", "column\trow\tlayer\tpriority\n0\t0\t0\t2\n");
 	textFile("grid_behavior_ja.tsv", "0\n255\n");
 	textFile("grid_shape_ja.tsv", "0\n12\n");
 	RUN("graphics", true, "grid_picture_ja.tsv", "bases.grid");
@@ -302,7 +307,7 @@ graphics(void)
 	uint8_t basesBytes[] = {255, 12, 0xff, 0x8f};
 	Buffer basesReference = {basesBytes, sizeof(basesBytes), 0};
 	equal(&bases, &basesReference,
-		  "an edition's grid is its own three tables, every number decimal");
+		  "an edition's grid is its own tables, its actors above the picture");
 	free(bases.data);
 	textFile("grid_behavior_ja.tsv", "0\nff\n");
 	RUN("graphics", false, "grid_picture_ja.tsv", "hexbehavior.grid");
@@ -950,6 +955,46 @@ removeTree(const char *path)
 	check(!rmdir(path), "remove test directory");
 }
 
+/* The file standard: a tree that meets it passes, and each fault is named. */
+static void
+standard(void)
+{
+	check(!mkdir("games", 0777) && !mkdir("games/x", 0777),
+		  "create a game folder");
+	textFile("games/x/frame_0.png", "");
+	textFile("games/x/frame_1.png", "");
+	textFile("games/x/good.tsv", "name\tcount\nsword\t3\nshield\n");
+	textFile("good.list", "games/x/frame_0.png\ngames/x/frame_1.png\n"
+						  "games/x/good.tsv\n");
+	RUN("check", true, "good.list");
+
+	textFile("games/x/notes.txt", "");
+	textFile("games/x/wave_52.png", "");
+	textFile("games/x/bad.tsv", "name\tcount:u8\tname\nsword\t0x10\n\n# note\n"
+								"a, b\t1 2\tc\td\nlast");
+	textFile("bad.list", "games/x/notes.txt\ngames/x/wave_52.png\n"
+						 "games/x/bad.tsv\n");
+	RUN("check", false, "bad.list");
+	Buffer log = readFile("command.log");
+	byte(&log, 0);
+	static const char *const faults[] = {
+		"notes.txt: .txt is not a kind of source file",
+		"wave_52.png: a numbered name that is not one of a series",
+		"bad.tsv: does not end with a newline",
+		"column name \"count:u8\" is not a plain word",
+		"column name \"name\" is given twice",
+		"line 2, count:u8: a hexadecimal number",
+		"line 3 is blank",
+		"line 4 is a comment",
+		"line 5, name: a list in one cell",
+		"line 5, count:u8: a list in one cell",
+		"line 5 is longer than the first line",
+	};
+	for (size_t i = 0; i < sizeof(faults) / sizeof(*faults); i++)
+		check(strstr((char *) log.data, faults[i]) != NULL, faults[i]);
+	free(log.data);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -974,6 +1019,7 @@ main(int argc, char **argv)
 	header();
 	overlays();
 	enums();
+	standard();
 	check(!chdir("/"), "leave test directory");
 	removeTree(scratch);
 	free(tools);

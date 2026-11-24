@@ -305,10 +305,12 @@ blocks(const Buffer *input)
  * grid_picture.tsv, which is the one named, grid_behavior.tsv and
  * grid_shape.tsv, or grid_picture_es.tsv and its two for an edition's own.
  * Each has a header line naming its columns and a row for every row of the
- * map. A picture's top four bits are the layer and priority flags over a
- * 12-bit cell picture; a behavior is a cell behavior and a shape an index
- * into the shape table. The game reads three planes, behaviors (u8), shapes
- * (u8) and cell pictures (u16), one after another.
+ * map. A picture is a 12-bit cell picture; a behavior is a cell behavior and
+ * a shape an index into the shape table. A fourth, grid_actors.tsv, lists
+ * the few squares that give an actor standing there a layer or a priority, a
+ * row a square by row and then column; a grid without one has none. The
+ * game reads three planes, behaviors (u8), shapes (u8) and cell pictures
+ * (u16), one after another, the layer and the priority above each picture.
  */
 Buffer
 grid(const char *pictures)
@@ -320,7 +322,7 @@ grid(const char *pictures)
 	if (strncmp(base, "grid_picture", 12))
 		fail("a grid is built from its grid_picture.tsv");
 	Buffer out = {0};
-	size_t squares = 0;
+	size_t squares = 0, wide = 0;
 	for (size_t k = 0; k < 3; k++)
 	{
 		char path[1024];
@@ -332,7 +334,7 @@ grid(const char *pictures)
 			fail("a grid needs its header and a row");
 		Strings header = split(lines.items[0], '\t');
 		if (!k)
-			squares = header.len * (lines.len - 1);
+			squares = (wide = header.len) * (lines.len - 1);
 		else if (squares != header.len * (lines.len - 1))
 			fail("a map's three grids differ in size");
 		for (size_t y = 1; y < lines.len; y++)
@@ -344,13 +346,44 @@ grid(const char *pictures)
 				if (k < 2)
 					byte(&out, number(trim(row.items[x]), 10, 255));
 				else
-					half(&out, number(trim(row.items[x]), 10, 0xffff));
+					half(&out, number(trim(row.items[x]), 10, 4095));
 			freeStrings(&row);
 		}
 		freeStrings(&header);
 		freeStrings(&lines);
 		free(text.data);
 	}
+	char path[1024];
+	snprintf(path, sizeof path, "%.*sgrid_actors%s", (int) (base - pictures),
+			 pictures, base + 12);
+	if (!exists(path))
+		return out;
+	Buffer text = readFile(path);
+	Strings lines = linesOf(&text);
+	if (lines.len < 2 ||
+		strcmp(lines.items[0], "column\trow\tlayer\tpriority"))
+		fail("grid actors need their header and a row");
+	size_t last = 0;
+	for (size_t i = 1; i < lines.len; i++)
+	{
+		Strings f = split(lines.items[i], '\t');
+		if (f.len != 4)
+			fail("a grid actor is a column, row, layer and priority");
+		size_t x = number(f.items[0], 10, wide - 1),
+			   y = number(f.items[1], 10, squares / wide - 1),
+			   square = y * wide + x;
+		unsigned layer = number(f.items[2], 10, 3),
+				 priority = number(f.items[3], 10, 3);
+		if (!layer && !priority)
+			fail("a grid actor sets a layer or a priority");
+		if (i > 1 && square <= last)
+			fail("grid actors run by row, then column, a square once");
+		last = square;
+		out.data[2 * squares + 2 * square + 1] |= layer << 4 | priority << 6;
+		freeStrings(&f);
+	}
+	freeStrings(&lines);
+	free(text.data);
 	return out;
 }
 

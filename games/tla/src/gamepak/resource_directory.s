@@ -83,42 +83,42 @@ Resource_DirectoryTable:
 	resource GrasslandBBackdrop, Battle_GrasslandBBackdrop
 	resource RockyBeachBackdrop, Battle_RockyBeachBackdrop
 	resource DenseForestBackdrop, Battle_DenseForestBackdrop
-	resource , Battle_FireCavePoolBackdrop
-	resource , Battle_CanyonMeadowBackdrop
-	resource , Battle_BlueCaveBackdrop
-	resource , Battle_RedMesaBackdrop
-	resource , Battle_PinkRocksBackdrop
-	resource , Battle_PinkTotemBackdrop
-	resource , Battle_StoneTownBackdrop
-	resource , Battle_PalmCliffBackdrop
-	resource , Battle_ToyRoomBackdrop
-	resource , Battle_ShipCabinBackdrop
+	resource FireCavePoolBackdrop, Battle_FireCavePoolBackdrop
+	resource CanyonMeadowBackdrop, Battle_CanyonMeadowBackdrop
+	resource BlueCaveBackdrop, Battle_BlueCaveBackdrop
+	resource RedMesaBackdrop, Battle_RedMesaBackdrop
+	resource PinkRocksBackdrop, Battle_PinkRocksBackdrop
+	resource PinkTotemBackdrop, Battle_PinkTotemBackdrop
+	resource StoneTownBackdrop, Battle_StoneTownBackdrop
+	resource PalmCliffBackdrop, Battle_PalmCliffBackdrop
+	resource ToyRoomBackdrop, Battle_ToyRoomBackdrop
+	resource ShipCabinBackdrop, Battle_ShipCabinBackdrop
 	resource ShipDeckBackdrop, Battle_ShipDeckBackdrop
-	resource , Battle_GoldRocksBackdrop
-	resource , Battle_StoneCorridorBackdrop
-	resource , Battle_FaceTempleBackdrop
-	resource , Battle_MistyHillsBackdrop
+	resource GoldRocksBackdrop, Battle_GoldRocksBackdrop
+	resource StoneCorridorBackdrop, Battle_StoneCorridorBackdrop
+	resource FaceTempleBackdrop, Battle_FaceTempleBackdrop
+	resource MistyHillsBackdrop, Battle_MistyHillsBackdrop
 	resource LavaCaveBackdrop, Battle_LavaCaveBackdrop
-	resource , Battle_WaterfallGorgeBackdrop
+	resource WaterfallGorgeBackdrop, Battle_WaterfallGorgeBackdrop
 	resource MossCaveBackdrop, Battle_MossCaveBackdrop
-	resource , Battle_BlueRuinsBackdrop
-	resource , Battle_GreenRuinsBackdrop
-	resource , Battle_StatueCliffBackdrop
-	resource , Battle_LavaTempleBackdrop
-	resource , Battle_ArrowBeachBackdrop
-	resource , Battle_StormySeaBackdrop
-	resource , Battle_AngelHallBackdrop
-	resource , Battle_PurpleLighthouseBackdrop
-	resource , Battle_StormyLighthouseBackdrop
+	resource BlueRuinsBackdrop, Battle_BlueRuinsBackdrop
+	resource GreenRuinsBackdrop, Battle_GreenRuinsBackdrop
+	resource StatueCliffBackdrop, Battle_StatueCliffBackdrop
+	resource LavaTempleBackdrop, Battle_LavaTempleBackdrop
+	resource ArrowBeachBackdrop, Battle_ArrowBeachBackdrop
+	resource StormySeaBackdrop, Battle_StormySeaBackdrop
+	resource AngelHallBackdrop, Battle_AngelHallBackdrop
+	resource PurpleLighthouseBackdrop, Battle_PurpleLighthouseBackdrop
+	resource StormyLighthouseBackdrop, Battle_StormyLighthouseBackdrop
 	resource SerpentStarsBackdrop, Battle_SerpentStarsBackdrop
-	resource , Battle_IceHallBackdrop
-	resource , Battle_OrbAltarBackdrop
-	resource , Battle_PurpleCaveBackdrop
+	resource IceHallBackdrop, Battle_IceHallBackdrop
+	resource OrbAltarBackdrop, Battle_OrbAltarBackdrop
+	resource PurpleCaveBackdrop, Battle_PurpleCaveBackdrop
 	resource BeastWallBackdrop, Battle_BeastWallBackdrop
 	resource DragonHallABackdrop, Battle_DragonHallABackdrop
 	resource DragonHallBBackdrop, Battle_DragonHallBBackdrop
-	resource , Battle_GorgePoolBackdrop
-	resource , Battle_SpikeHallBackdrop
+	resource GorgePoolBackdrop, Battle_GorgePoolBackdrop
+	resource SpikeHallBackdrop, Battle_SpikeHallBackdrop
 	resource SnowfieldBBackdrop, Battle_SnowfieldBBackdrop
 	resource BlizzardBackdrop, Battle_BlizzardBackdrop
 	resource , Battle_SnowfieldCBackdrop

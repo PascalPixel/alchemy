@@ -57,7 +57,7 @@ shares; another takes the name The Broken Seal gives the same picture,
 or is named for who wears it or what it shows. An enemy's battle
 sprite, which has animations and no sprite sheet of its own, is named for the
 first class that uses it (`battle_dread_hound.tsv`). One that nothing
-names yet keeps its row's number, as `spr_013.png` does.
+names yet keeps its row's number, as `SPR_207` does.
 `include/sprite_ids.h` gives each named row its `SPRITE_` id.
 
 Every figure the field or a battle can draw has a row in the sprite table,
@@ -75,7 +75,7 @@ each. They are six poses, each drawn twice: once from the front and once
 from behind, because the battle's camera swings round. An animation names
 the first of a pair and the battle shows whichever side the camera is on.
 
-Three things worth knowing if you want to make one:
+Three things worth knowing about them:
 
 - **Size.** 64 by 64 is the most one sprite can be. A bigger monster is two
   sprites, a left half and a right half drawn side by side, each with a
@@ -99,7 +99,7 @@ says which tile goes where ([Maps](../map/README.md#cells)).
 
 A map does not name a tileset as a whole. Each palette and each tile sheet is a
 resource of its own, so maps borrow freely. The cheapest borrowing is the
-same tiles under new colours: `tileset/palettes/` holds 72 palettes with no
+same tiles under new colours: `tileset/palette/` holds 72 palettes with no
 tiles of their own.
 
 ## Battle backgrounds

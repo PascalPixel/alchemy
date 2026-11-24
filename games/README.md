@@ -61,5 +61,5 @@ cd alchemy
 make
 ```
 
-The [README](https://github.com/PascalPixel/alchemy#build) lists what to
+The [README](../README.md#build) lists what to
 install first on macOS, Linux and Windows.

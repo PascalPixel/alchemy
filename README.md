@@ -1,10 +1,14 @@
 # 🌋 The Alchemy Project
 
-The Alchemy project reconstructs the source code of both Golden Sun games on Game Boy Advance, ☀️ [The Broken Seal](https://alchemy.pascalpixel.com/tbs) and ⚓️ [The Lost Age](https://alchemy.pascalpixel.com/tla), for video game preservation. It is a 100% [matching decompilation](https://alchemy.pascalpixel.com/tbs/glossary#matching-decompilation): readable code, images, music and text that build the same ROMs as the originals, byte for byte.
+The Alchemy project reconstructs the source code of both Golden Sun games on Game Boy Advance, ☀️ The Broken Seal and ⚓️ The Lost Age, for video game preservation. It is a 100% matching decompilation: readable code, images, music and text that build the same ROMs as the originals, byte for byte.
+
+## Documentation
 
 <a href="https://alchemy.pascalpixel.com"><img src="https://alchemy.pascalpixel.com/docs.png" align="right" width="400" alt="Alchemy's documentation on the interface: Isaac talks to Garet's sister in Vale, beside the guide's sidebar" /></a>
 
-[alchemy.pascalpixel.com](https://alchemy.pascalpixel.com) explains how both games work, written from this source, with recordings from the games themselves.
+The documentation is hosted at [alchemy.pascalpixel.com](https://alchemy.pascalpixel.com), where you can search it. It explains how both games work, written from this source, with recordings from the games themselves.
+
+You can also browse it in this repository: start at [`games/README.md`](games/README.md). Each folder has a `README.md` for what’s in it, and the longer pages are in [`docs/`](docs).
 
 <br clear="right" />
 
@@ -37,11 +41,7 @@ make
 
 ## Contributing
 
-Issues and pull requests are welcome. If something is wrong, badly named or hard to find, [open an issue](https://github.com/PascalPixel/alchemy/issues); if you know the fix, send it.
-
-A pull request keeps every ROM identical to the original: `make` prints OK for all twelve, and `make modern` and `make test` pass. Work from your own ROMs, this repository and public documentation, and from nothing else: no other project’s Golden Sun work and no leaked code. Please don’t attach ROMs, original or modified.
-
-Mods and new features live in your own repository, built on Alchemy. This one stays the original games, so that everything made from it starts from the same known place.
+Issues and pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) lists what you can help with and how to check that your change still builds every ROM identical to the original.
 
 ## Acknowledgements
 

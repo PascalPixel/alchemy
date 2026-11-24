@@ -58,7 +58,7 @@ game writes down what everyone will do, sorts the list by Agility, and
 plays it from the top. After every single action it checks for a winner, so
 a battle can end in the middle of a turn.
 
-One thing is easy to miss. An enemy chooses twice. Its first choice counts
+One thing is easy to miss: an enemy chooses twice. Its first choice counts
 only if it is to guard or to run, which have to be in place before the
 first blow. Otherwise it chooses again at the moment it acts, so it never
 wastes a blow on someone who has just gone down.

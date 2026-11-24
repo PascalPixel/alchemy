@@ -5,18 +5,16 @@ villager's line, the field menu, the Pause menu, a shop's counter, a
 battle's commands. The Interface is the code that draws those boxes and
 runs the screens built from them.
 
-It rests on two ideas. One task draws every box. And every screen is plain
+It rests on two ideas: one task draws every box, and every screen is plain
 code that waits.
 
 ## Windows
 
 ![A close look at a villager's box in Vale, slowed down. Watch it grow out of its own centre to full size before any text appears, and shrink back into its centre after A is pressed.](https://alchemy.pascalpixel.com/guides/window/window-zoom.gif)
 
-A box is a [window](glossary.md#window). Whoever wants one asks for it
-once, then carries on or waits. It never draws it.
-
-The drawing is done by the windows' own [task](glossary.md#task), which
-runs once in every frame from inside whatever code is waiting. Each frame
+A box is a [window](glossary.md#window). The code that wants one only
+asks for it, because the drawing is done by the windows' own
+[task](glossary.md#task), which runs once in every frame from inside whatever code is waiting. Each frame
 it grows every opening window a little, shrinks every closing one, and
 types the next letters into any that have text coming. That is why a line
 and the portrait beside it can both be on the move while the conversation
@@ -89,9 +87,9 @@ A visit to a counter starts as an ordinary conversation. The shopkeeper's
 when it returns, exactly as the field calls a menu. So a whole shop visit
 can sit in the middle of a conversation.
 
-There are three kinds. A shop buys, sells and repairs. A sanctum revives
-and cures. An inn restores HP and PP, and charges only for the party
-members still standing. What each shop stocks is a table.
+There are three kinds: a shop buys, sells and repairs, a sanctum revives and
+cures, and an inn restores HP and PP, charging only for the party members
+still standing. What each shop stocks is a table.
 
 ## Saving and the Pause menu
 

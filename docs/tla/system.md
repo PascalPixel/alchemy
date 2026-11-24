@@ -73,8 +73,8 @@ Take Obaba in the caverns above Champa. She gives the party one chance to
 back out, and if they stay, she sends a monster out of the forging well. The
 event that ends in that fight writes two destinations into the state, one
 for a win and one for a loss, asks for a battle, and lets the field
-sequence end. The battle knows nothing about Champa. It runs, and writes
-its result. The main routine reads the result, picks the matching
+sequence end. The battle knows nothing about Champa: it runs, and writes its
+result. The main routine reads the result, picks the matching
 destination, and starts a fresh field sequence at the top of the caverns.
 
 That is why any sequence can follow any other, and why Camelot's own debug
@@ -254,8 +254,8 @@ up after 600 frames, ten seconds, and goes on with the actor still walking.
 Felix walks up to the man by the pond in Daila and the player presses A.
 This is who runs what.
 
-1. The field's routine is in its walking loop, which calls `wait(1)` over
-   and over. It is the only code waiting.
+1. The field's routine is in its walking loop, which calls `wait(1)` over and over, and is the only code
+   waiting.
 2. Inside one `wait(1)` the actors' task comes to Felix. His script is on
    the order that reads the D-pad and the buttons, `SC_PLAYER`. It sees the
    A Button and sets a request in the field's state. The task goes on to the
@@ -331,8 +331,8 @@ scene stand. Nothing else needs saving, because everything else is rebuilt
 from those.
 
 That gives a simple rule for new state: if the game should remember it, it
-has to live in a flag or in the state. A yes-or-no fact is a flag. Anything
-larger goes in the state.
+has to live in a flag or in the state. A yes-or-no fact is a flag, and
+anything larger goes in the state.
 
 The save lives in a [flash chip](glossary.md#flash-chip) on the cartridge.
 Each of the three files is one part of 12 KB, three sectors of the chip,

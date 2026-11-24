@@ -1,30 +1,29 @@
 # Maps
 
 A map is the ground a place is drawn on and walked over. Each is a folder
-here, such as `alhafra/` for Alhafra, and the heart of it is a text grid
-you can open, `map.txt`, one cell per square.
+here, such as `alhafra/` for Alhafra, and the heart of it is four grids
+you can open, one number a cell.
 
 ## Cells
 
 ![Felix walks east along the grass above the house on Daila's rise: the top of its roof hides him to the shoulders, and he walks back out to the west](https://alchemy.pascalpixel.com/tla/guides/world/behind-roof.gif)
 
 A map is a grid of [cells](../../../../docs/tla/glossary.md#cell), 16 pixels square, 128
-by 128 of them. Each cell says four things. The first three are written
-together in `map.txt`, as `picture:behavior:flags`, and the fourth has a
-grid of its own:
+by 128 of them. Each cell says four things, each in a grid of its own:
 
-- **What is drawn.** The picture names the cell's
+- **What is drawn.** `grid_picture.tsv` names the cell's
   [cell tiles](../../../../docs/tla/glossary.md#cell-tiles), four tiles two by two,
-  from the map's own list in `cell_tiles.tsv`. It is written in hex, and
-  its top digit holds the cell's layer and drawing priority, which is how
-  Felix goes behind a roof by walking, with no code involved.
-- **What standing there does.** The behavior is the
+  from the map's own list in `cell_tiles.tsv`. `grid_actors.tsv` lists the
+  cells that change the layer or the drawing priority of whoever stands
+  there, which is how Felix goes behind a roof by walking, with no code
+  involved.
+- **What standing there does.** `grid_behavior.tsv` holds the
   [cell behavior](../../../../docs/tla/glossary.md#cell-behavior). Zero is plain ground.
   A few numbers mean the same everywhere: 255 is a wall, and 242 to 247
   are a jar, a barrel or the like to search. The numbers from 1 to 230 mean
   whatever the scene's trigger table says
   ([Scenes](../scene/README.md#which-triggers-a-cell-starts)).
-- **What else is true of it.** The flags are a byte: water
+- **What else is true of it.** `grid_shape.tsv` holds the flags, a byte: water
   to wade through, a ledge to hop down, a ladder to climb, the second of
   the scene's two battle zones.
 - **How the ground is shaped.** `shape_grid.tsv` picks a shape from
@@ -37,17 +36,16 @@ grid of its own:
 ![Daila's screen taken apart: the ground, the walls and roofs, the people and the window layer spread one behind another, then closed up](https://alchemy.pascalpixel.com/tla/guides/field/layers-3d.gif)
 
 On screen a town is three layers, one over another. In the file they lie
-side by side in the same grid, each in a block of its own. The map's
-`map.inc` opens with a header and one `map_layer` line for each layer, which
-says where it begins.
+side by side in the same grid, each in a block of its own. `layers.tsv`
+has a row for each layer, which says where it begins.
 
 A layer can also drift by itself and scroll at its own rate, and the same
-line says by how much.
+row says by how much.
 
 ## Chests and Psynergy Stones
 
 A chest is not painted into the map, or every scene sharing the map would
-have it. The map only lists numbered points, in `scene.tsv`. The
+have it. The map only lists numbered points, in `points.tsv`. The
 scene item table in [the field's folder](../field/README.md) gives each
 scene its treasure: what kind it is, which point it stands on, the flag
 that says it has been opened, and what is inside. When a scene starts, the
@@ -100,13 +98,14 @@ and the tiles come too, unless they are already there.
 
 ## Where the files are
 
-Each folder holds `map.inc`, which puts the map together and
-which [`maps.s`](maps.s) includes in the Game Pak's order, and its grids
-and tables: `map.txt`, `cell_tiles.tsv`, `shape_grid.tsv`,
-`shapes.tsv`, `animation.tsv` and `blend.tsv` where it has them. The
-scene's part is `scene.tsv`, three tables one after another: the points,
-where the party comes in, and the camera's bounds. Where the Japanese
-edition's map differs, its own file sits beside it, such as `map_ja.txt`.
+Each folder holds the four grids, `grid_actors.tsv`, `cell_tiles.tsv` and
+`shapes.tsv`, with `animation.tsv` and `blend.tsv` where it has them. The
+scene's part is three tables: `points.tsv`, `entrances.tsv` for where the
+party comes in, and `bounds.tsv` for the camera's bounds. `header.tsv`,
+`layers.tsv`, `contents.tsv` and `tilesets.tsv` put the map together, and
+[`maps.tsv`](maps.tsv) lists the folders in the Game Pak's order. Where
+the Japanese edition's map differs, its own table sits beside it, such as
+`grid_picture_ja.tsv`.
 `world/` is the World Map's ground, and `default/` holds the cells the
 World Map starts from and a few other tables. The code that reads them is in
 [Field code](../field/README.md).

@@ -26,9 +26,9 @@ A sound whose notes are The Broken Seal's own takes that game's name (the
 message voices, `SE_BELL`, `MUS_VILLAGE_THEME`), a tune takes the title of
 its track where the two are matched
 (`MUS_TO_THE_OPEN_SEA`) and otherwise the place it is the music of
-(`MUS_PROX`) or the moment it marks (`MUS_SAVED`), an effect
-for what it plays with (`SE_DOLL_PLACED`), and the rest keep their number,
-`SE_120`, until something names them. A sound that repeats another's
+(`MUS_PROX`) or the moment it marks (`MUS_SAVED`), and an effect
+for what it plays with (`SE_DOLL_PLACED`) or what it sounds like
+(`SE_LANDING_THUD`). A sound that repeats another's
 notes higher, lower or on another voice is named for it
 (`SE_RISE_WITH_SPARKS_HIGH`), and one nothing plays says so
 (`SE_UNUSED_WHIRLWIND_LOW_A`). The one routine that takes them all is

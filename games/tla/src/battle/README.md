@@ -180,4 +180,4 @@ is switched from one to the other partway down the screen as it is drawn.
   and listed in the linker script in ROM order: `battle_tables.c`,
   `ability_staging.c`, `debug_parameter_sets.c`, `formations.c`,
   `battle_sprites.c` and the rest. The curtain's pictures are
-  `transition/curtain.s`.
+  `transition/curtain.png` and `transition/curtain_variants.png`.

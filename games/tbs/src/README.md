@@ -29,7 +29,7 @@ For the rest:
 | how an ability looks | its `battle_effect_*.c` file in `src/battle_effect/`, whose opening comment lists the abilities it draws |
 | a picture | a PNG under `src/graphics/` |
 | a tune | a MIDI file under [`sound/songs`](../sound/songs) |
-| a map | `src/map/<place>/map.txt`, named for the scene or place that uses it ([Maps](map/README.md#finding-a-scenes-map)) |
+| a map | `src/map/<place>/`, a folder of tables named for the scene or place that uses it ([Maps](map/README.md#finding-a-scenes-map)) |
 | the name of a flag, sound, scene, item or sprite | a header in `include/`: `flags.h`, `sounds.h`, `scene_ids.h`, `item_ids.h`, `sprite_ids.h` |
 
 To read the game in the order it runs, start at `System_Initialize` in
@@ -91,7 +91,7 @@ with: the credits and the title intro are banks of their own and live in
 Inside a file, functions keep the order they have on the cartridge, so
 neighbours in a file are neighbours in the ROM.
 
-Some files would be far too long to read. The battle's runs to about
+Some files would be far too long to read: the battle's runs to about
 13,000 lines. Such a file is written as parts, each holding one family of
 functions, named for the file they belong to: `battle/battle.c` is a guide
 to its parts followed by a list of them, and the code is in

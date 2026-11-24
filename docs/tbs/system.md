@@ -66,11 +66,11 @@ how a puzzle resets
 ([State that cleans itself up](../../games/tbs/src/scene/README.md#state-that-cleans-itself-up)).
 
 Take the three thieves in Vault's inn. The event that ends in their attack
-writes two destinations into the main routine's state, one for a win and
-one for a loss, asks for a battle, and lets the field sequence end. The
-battle knows nothing about Vault. It runs, and writes its result. The main
-routine reads the result, picks the matching destination, and starts a
-fresh field sequence in the loft.
+writes two destinations into the main routine's state, one for a win and one
+for a loss, asks for a battle, and lets the field sequence end. The battle
+knows nothing about Vault: it runs, and writes its result. The main routine
+reads the result, picks the matching destination, and starts a fresh field
+sequence in the loft.
 
 That is why any sequence can follow any other, and why Camelot's own debug
 menu can drop the party into any scene in the game.
@@ -250,8 +250,8 @@ up after 600 frames, ten seconds, and goes on with the actor still walking.
 Isaac walks up to a man in Vault's street and the player presses A. This
 is who runs what.
 
-1. The field's routine is in its walking loop, which calls `wait(1)` over
-   and over. It is the only code waiting.
+1. The field's routine is in its walking loop, which calls `wait(1)` over and over, and is the only code
+   waiting.
 2. Inside one `wait(1)` the actors' task comes to Isaac. His script is on
    the order that reads the D-pad and the buttons, `SC_PLAYER`. It sees the
    A Button and sets a request in the field's state. The task goes on to the

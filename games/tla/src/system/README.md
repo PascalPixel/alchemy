@@ -166,7 +166,7 @@ Whatever wants a sprite shown drops it into one of 256 depth slots
 down.
 
 Because the slots are emptied every frame, a sprite shows only while
-something keeps asking for it. Nothing ever has to take one down.
+something keeps asking for it, so nothing ever has to take one down.
 
 Screen settings follow the same rule as sprites. A change to a hardware
 register is queued, and the VBlank handler carries the queue out with the

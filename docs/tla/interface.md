@@ -5,18 +5,16 @@ villager's line, the field menu, the Pause menu, a shop's counter, a
 battle's commands. The Interface is the code that draws those boxes and
 runs the screens built from them.
 
-It rests on two ideas. One task draws every box. And every screen is plain
+It rests on two ideas: one task draws every box, and every screen is plain
 code that waits.
 
 ## Windows
 
 ![A close look at a guest's window in Daila's inn, slowed while it zooms: it grows from its centre, `I hear the seafood in Madra is wonderful!` and a second page are typed, and it shrinks back into its centre](https://alchemy.pascalpixel.com/tla/guides/window/window-zoom.gif)
 
-A box is a [window](glossary.md#window). Whoever wants one asks for it
-once, then carries on or waits. It never draws it.
-
-The drawing is done by the windows' own [task](glossary.md#task), which
-runs once in every frame from inside whatever code is waiting. Each frame
+A box is a [window](glossary.md#window). The code that wants one only
+asks for it, because the drawing is done by the windows' own
+[task](glossary.md#task), which runs once in every frame from inside whatever code is waiting. Each frame
 it grows every opening window a little, shrinks every closing one, and
 types the next letters into any that have text coming. That is why a line
 and the portrait beside it can both be on the move while the conversation
@@ -94,10 +92,10 @@ when it returns, exactly as the field calls a menu. So a whole shop visit
 can sit in the middle of a conversation.
 
 There are three kinds, and The Lost Age adds a fourth. A shop buys, sells
-and repairs. A sanctum revives and cures. An inn restores HP and PP, and
-charges only for the party members still standing. And in Yallam, Sunshine
-the blacksmith forges the materials the party brings him into equipment,
-ready by the time they visit the inn. What each shop stocks, and what each
+and repairs, a sanctum revives and cures, and an inn restores HP and PP,
+charging only for the party members still standing. In Yallam, Sunshine the
+blacksmith forges the materials the party brings him into equipment, ready
+by the time they visit the inn. What each shop stocks, and what each
 material can become, is a table.
 
 ## Saving and the Pause menu

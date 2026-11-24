@@ -707,8 +707,8 @@ Sources: the game: none. SGL: none. GBATEK: none.
 ### Sound
 
 Every sound the game plays is asked for by a number, and the number's range
-says what kind it is. Below 80 it is music. From 80 it is a jingle. From 100
-it is a sound effect, an SE
+says what kind it is. Below 80 it is music, from 80 a jingle, and from 100 a
+sound effect, an SE
 ([Sound](../../games/tla/src/sound/README.md#what-a-sound-number-means)).
 
 Sources: the game: the credits' "Music" and "Sound Effects"; the sound test's

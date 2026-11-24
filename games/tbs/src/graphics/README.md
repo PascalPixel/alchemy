@@ -66,7 +66,7 @@ are six poses, each drawn twice: once from the front and once from behind,
 because the battle's camera swings round. An animation names the first of
 a pair and the battle shows whichever side the camera is on.
 
-Three things worth knowing if you want to make one:
+Three things worth knowing about them:
 
 - **Size.** 64 by 64 is the most one sprite can be. The Fusion Dragon is
   bigger because it is two sprites, a left half and a right half drawn 64

@@ -159,7 +159,7 @@ Whatever wants a sprite shown drops it into one of 256 depth slots, and the
 list is written from the highest slot down.
 
 Because the slots are emptied every frame, a sprite shows only while
-something keeps asking for it. Nothing ever has to take one down. It is
+something keeps asking for it, so nothing ever has to take one down. It is
 `system_oam.c`.
 
 Screen settings follow the same rule as sprites. A change to a hardware

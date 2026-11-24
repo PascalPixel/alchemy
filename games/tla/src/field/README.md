@@ -45,8 +45,8 @@ whatever only it has. One more runs from the VBlank handler,
 The Broken Seal has no task for riders: `Actor_MoveWithCarriers` is The
 Lost Age's own, and its actors' task ranks one higher to run before it.
 
-None of these is a villager or a door. `Actor_UpdateAllOnField` is the one
-task for all 64 actors.
+None of these is a villager or a door, because `Actor_UpdateAllOnField` is
+the one task for all 64 actors.
 
 ### The twelve requests
 
@@ -133,7 +133,7 @@ loses the same acceleration each frame until it stands still.
 
 ### Who runs which script
 
-The actors' task runs every script. What differs is where a script comes
+The actors' task runs every script, and what differs is where a script comes
 from.
 
 Most townspeople never get one written for them. The scene lists each

@@ -61,7 +61,7 @@ copy, and which thing is the effect's choice:
 | cut every level to half | a short trail |
 | leave it | the drawing builds up |
 
-That is how Fire's fireballs have tails nobody draws. The tail is last
+That is how Fire's fireballs have tails nobody draws: the tail is last
 frame's fireball, a little dimmer.
 
 ## Blitters

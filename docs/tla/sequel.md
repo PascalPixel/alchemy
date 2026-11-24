@@ -97,7 +97,7 @@ The differences are small, and each can be read in
 [system_frame.c](../../games/tla/src/system/system_frame.c) beside
 [The Broken Seal's](../../games/tbs/src/system/system_frame.c).
 
-- The list holds 24 tasks. The Broken Seal's holds 20.
+- The list holds 24 tasks, where The Broken Seal's holds 20.
 - The Broken Seal's `wait()` moves the stack to a fixed spot before it runs
   the tasks and puts it back after. The Lost Age's runs them on the
   caller's stack.

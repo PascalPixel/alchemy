@@ -1,32 +1,32 @@
 # Maps
 
 A map is the ground a place is drawn on and walked over. Each is a folder
-here, such as `vale/` for Vale, and the heart of it is one text file
-you can open, `map.txt`.
+here, such as `vale/` for Vale, and the heart of it is three grids you
+can open, one number a cell.
 
 ## Cells
 
 ![Isaac walks behind a house in Vale: the roof hides him, and he comes out on its other side](https://alchemy.pascalpixel.com/guides/world/behind-roof.gif)
 
-A map is a grid of [cells](../../../../docs/tbs/glossary.md#cell), 16 pixels square. In
-`map.txt` a cell is up to three numbers, written `2e:100:3`:
+A map is a grid of [cells](../../../../docs/tbs/glossary.md#cell), 16 pixels square. A
+cell is three numbers, each in a grid of its own:
 
-- **What is drawn.** The first number names a
+- **What is drawn.** `grid_picture.tsv` names a
   [cell tiles](../../../../docs/tbs/glossary.md#cell-tiles), four tiles two by two,
   from the map's own list in `cell_tiles.tsv`.
-- **What standing there does.** The second is the
+- **What standing there does.** `grid_behavior.tsv` holds the
   [cell behavior](../../../../docs/tbs/glossary.md#cell-behavior). Zero is plain ground.
   The numbers from 240 up mean the same everywhere: a wall, a ledge, a
   ladder, a jar to search. The rest mean whatever the scene's trigger
   table says ([Scenes](../scene/README.md#which-triggers-a-cell-starts)).
-- **How the ground is shaped.** The third picks a shape from
+- **How the ground is shaped.** `grid_shape.tsv` picks a shape from
   `shapes.tsv`: how high the ground is at each pixel of the cell. Flat
   ground, slopes, steps and bumps are all shapes, and walking is decided by
   comparing heights.
 
-A cell can also say who is in front. A digit before the cell tiles number
-changes the drawing priority of whoever stands there, which is how Isaac
-goes behind a roof by walking, with no code involved.
+A cell can also say who is in front. `grid_actors.tsv` lists the cells
+that change the layer or the drawing priority of whoever stands there,
+which is how Isaac goes behind a roof by walking, with no code involved.
 
 ## One grid, three layers
 
@@ -34,8 +34,8 @@ goes behind a roof by walking, with no code involved.
 
 On screen a town is three layers, one over another. In the file they lie
 side by side in the same grid: the ground in one block of columns, the
-walls in the next, the roofs in a third. The map's first line says where
-each begins.
+walls in the next, the roofs in a third. `layers.tsv` has a row for each,
+which says where it begins.
 
 A layer can also drift by itself and scroll at its own rate, which is how
 a haze of sand hangs in the air in front of a desert.
@@ -43,7 +43,8 @@ a haze of sand hangs in the air in front of a desert.
 ## Chests and Psynergy Stones
 
 A chest is not painted into the map, or every scene sharing the map would
-have it. The map only lists the cells where treasure could stand. When a
+have it. The map only lists the cells where treasure could stand, in
+`spots.tsv`. When a
 scene starts, the field looks in the scene's triggers for each spot's
 behavior number and puts a chest there only if it finds a row.
 
@@ -91,10 +92,12 @@ behavior and shape in the high.
 
 ## Where the files are
 
-Each folder holds `map.txt` (the grid), `cell_tiles.tsv`,
-`shapes.tsv` and `tileset_anims.tsv`. Where a language changes a map,
-its own grid sits beside it, such as `map_es.txt`. A folder's `map.inc`
-writes the map's header and the pictures it reads, and `maps.s` gathers
-them in the order the Game Pak holds them; `resources.c` lists each
-layout's resources by map number. The code that reads them is in
+Each folder holds the three grids, `grid_actors.tsv` and
+`cell_tiles.tsv`, with `shapes.tsv`, `spots.tsv`, `tileset_anims.tsv` and
+`blend.tsv` where it has them. Where a language changes a map, its own
+tables sit beside them, such as `grid_picture_es.tsv`. `header.tsv`,
+`layers.tsv`, `contents.tsv` and `tilesets.tsv` put the map together and
+name the pictures it reads. [`maps.tsv`](maps.tsv) lists the folders in
+the order the Game Pak holds them, and [`resources.s`](resources.s) is the
+map table, what each map loads. The code that reads them is in
 [Field code](../field/README.md).

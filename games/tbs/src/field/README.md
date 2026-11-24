@@ -41,8 +41,8 @@ On the World Map the tasks at ranks 5 and 0 are `WorldMap_UpdateView` and
 whatever only it has. One more runs from the VBlank handler,
 `WindowSystem_UploadTilemap`, which copies the windows to the screen.
 
-None of these is a villager or a door. `Actor_UpdateAllOnField` is the one
-task for all 64 actors.
+None of these is a villager or a door, because `Actor_UpdateAllOnField` is
+the one task for all 64 actors.
 
 ### The twelve requests
 
@@ -122,7 +122,7 @@ the spot.
 
 ### Who runs which script
 
-The actors' task runs every script. What differs is where a script comes
+The actors' task runs every script, and what differs is where a script comes
 from.
 
 Most townspeople never get one written for them. The scene lists each

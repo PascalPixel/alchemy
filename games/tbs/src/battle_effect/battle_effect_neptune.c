@@ -307,6 +307,12 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       }
     }
 
+    // The burst's sparks, one more every two frames. Each keeps its start in z
+    // and velocityY, to start again from there once it rises past the top, but
+    // velocityY is also its fall: it drops by its start height a frame, so it
+    // shows at its start and once or twice lower and is off the canvas's foot
+    // within three frames, never to start again. In a recording they are too
+    // brief to pick out under the burst's flash.
     if (frame == NEPTUNE_BURST_FRAME) {
       for (i = 0; i != NEPTUNE_BURST_SPARKS; i++) {
         burstSeed = &state->particles[i];

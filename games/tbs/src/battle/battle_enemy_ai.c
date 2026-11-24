@@ -246,7 +246,7 @@ select_again:
         needsChoice = 0;
       }
       break;
-    case 3: // No ability has this mode.
+    case ABILITY_TARGET_UNUSED:
       request->target = Battle_FindUnitPlace(request->unitId);
       break;
     default:

@@ -180,9 +180,9 @@ enum AbilityEffect {
 /// AbilityDefinition.targetMode: whom an ability may target, from its user's
 /// view. The party's cursor (BattleTarget_RunSelection) shows the enemies for
 /// every mode but ABILITY_TARGET_ALLIES and ABILITY_TARGET_SELF. No row of
-/// ability_table.c has a mode between ABILITY_TARGET_ALLIES and
-/// ABILITY_TARGET_SELF or above it; BattleActionRun_SetTargets would walk such
-/// a mode's range as it does ABILITY_TARGET_FOES'.
+/// ability_table.c has a mode above ABILITY_TARGET_SELF;
+/// BattleActionRun_SetTargets would walk such a mode's range as it does
+/// ABILITY_TARGET_FOES'.
 enum AbilityTarget {
   /// The ability takes one target, the aimed unit, whatever its range
   /// (BattleActionRun_SetTargets), and an enemy aims it at itself. The field
@@ -191,7 +191,11 @@ enum AbilityTarget {
   ABILITY_TARGET_ONE = 0,
   ABILITY_TARGET_FOES = 1,
   ABILITY_TARGET_ALLIES = 2, ///< the user's side, the user included
-  ABILITY_TARGET_SELF = 4    ///< the user alone, whatever the range
+  /// Unused: no ability has it. An enemy that draws it aims at itself and
+  /// picks again (BattleAI_ChooseAction); the party's cursor and
+  /// BattleActionRun_SetTargets take it as ABILITY_TARGET_FOES.
+  ABILITY_TARGET_UNUSED = 3,
+  ABILITY_TARGET_SELF = 4 ///< the user alone, whatever the range
 };
 
 /// Unit.curse bits, the curse.

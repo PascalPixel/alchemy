@@ -80,12 +80,15 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   for (sparkIndex = 0; sparkIndex < STAR_FIELD_SPARKS; sparkIndex++) {
     spark = &state->sparks[sparkIndex];
     life = spark->life;
-    // A spark ends near the centre; until then it is pulled towards it.
+    // A spark ends within 4 pixels of the centre (the distance is in
+    // STAR_FIELD_PIXEL units). Until then it is pulled straight at the centre,
+    // 19/64 of a pixel a frame faster each frame, and its speed loses a 128th
+    // a frame.
     if (life != 0) {
       distance = Math_SqrtFX((spark->motion[0] >> 8) * (spark->motion[0] >> 8) +
                              (spark->motion[1] >> 8) * (spark->motion[1] >> 8) +
                              (spark->motion[2] >> 8) * (spark->motion[2] >> 8));
-      if (distance <= toFIXED(1) / 16 - 1) {
+      if (distance <= 4 * STAR_FIELD_PIXEL - 1) {
         spark->life = 0;
       } else {
         scale = Iwram_DivFX(distance, FIXED_ONE);
@@ -121,8 +124,8 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
       spark->motion[5] = 0;
       life = spark->life = radius / (8 * STAR_FIELD_PIXEL) + 1;
     }
-    // Drawn about the canvas's centre, 1 to 4 pixels square by its
-    // life left, 4 from three frames left.
+    // Drawn about the canvas's centre by its life left: 2 pixels square on
+    // its last frame, 3 on the one before, 4 until then.
     if (life != 0) {
       x = (spark->motion[0] >> STAR_FIELD_PIXEL_SHIFT) + STAR_FIELD_CENTER;
       y = (spark->motion[1] >> STAR_FIELD_PIXEL_SHIFT) + STAR_FIELD_CENTER;
@@ -158,7 +161,8 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   state->ready = 1;
 }
 
-/// Copies the drawn canvas to BG2's tiles.
+/// Copies the drawn canvas to BG2's tiles and dims the canvas to three
+/// quarters, so the next frame draws over fading trails.
 // UB: the task runner invokes a void task.
 #ifdef UBFIX
 void ElementGlow_UploadStarField(void) {

@@ -4,6 +4,11 @@
 
 #include "battle_internal.h"
 
+/// A stat stage changes the stat by an eighth of it (Unit_Calculate), from half
+/// at the lowest to one and a half at the highest.
+#define STAT_STAGE_MIN -4
+#define STAT_STAGE_MAX 4
+
 #ifndef UBFIX
 /// BattleState's unit lists, read as one array of halfwords.
 struct BattleStateUnitListView {
@@ -167,42 +172,42 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
     switch ((action)->effect) {                                                \
     case ABILITY_EFFECT_ATTACK_UP_SHARPLY:                                     \
     case ABILITY_EFFECT_ATTACK_UP:                                             \
-      if ((unit)->attackStage + 1 <= 4)                                        \
+      if ((unit)->attackStage + 1 <= STAT_STAGE_MAX)                           \
         (applies) = 1;                                                         \
       if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
     case ABILITY_EFFECT_ATTACK_DOWN_SHARPLY:                                   \
     case ABILITY_EFFECT_ATTACK_DOWN:                                           \
-      if ((unit)->attackStage - 1 >= -4)                                       \
+      if ((unit)->attackStage - 1 >= STAT_STAGE_MIN)                           \
         (applies) = 1;                                                         \
       if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
     case ABILITY_EFFECT_DEFENSE_UP_SHARPLY:                                    \
     case ABILITY_EFFECT_DEFENSE_UP:                                            \
-      if ((unit)->defenseStage + 1 <= 4)                                       \
+      if ((unit)->defenseStage + 1 <= STAT_STAGE_MAX)                          \
         (applies) = 1;                                                         \
       if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
     case ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY:                                  \
     case ABILITY_EFFECT_DEFENSE_DOWN:                                          \
-      if ((unit)->defenseStage - 1 >= -4)                                      \
+      if ((unit)->defenseStage - 1 >= STAT_STAGE_MIN)                          \
         (applies) = 1;                                                         \
       if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
     case ABILITY_EFFECT_RESISTANCE_UP_SHARPLY:                                 \
     case ABILITY_EFFECT_RESISTANCE_UP:                                         \
-      if ((unit)->resistanceStage + 1 <= 4)                                    \
+      if ((unit)->resistanceStage + 1 <= STAT_STAGE_MAX)                       \
         (applies) = 1;                                                         \
       if ((unit)->resistanceTurns == 1)                                        \
         (applies)++;                                                           \
       break;                                                                   \
     case ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY:                               \
     case ABILITY_EFFECT_RESISTANCE_DOWN:                                       \
-      if ((unit)->resistanceStage - 1 >= -4)                                   \
+      if ((unit)->resistanceStage - 1 >= STAT_STAGE_MIN)                       \
         (applies) = 1;                                                         \
       if ((unit)->resistanceTurns == 1)                                        \
         (applies)++;                                                           \

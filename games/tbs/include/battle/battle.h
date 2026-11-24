@@ -92,7 +92,8 @@ extern const FIXED gBattleCamera_CommandMatrix[];
 /// Where SparkState.sheet holds the spark's square picture for each frame of
 /// life left, 0 to 6: byte offsets, a byte a pixel.
 extern s32 gElementGlow_SparkPictures[];
-/// The spark's width and height in pixels by life left: 1 to 4, 4 from three.
+/// The spark's width and height in pixels by frames of life left: 2 to 4, 4
+/// from three; a spark with no life left is not drawn.
 extern u8 gElementGlow_SparkSizes[];
 /// Where SparkState.sheet holds the ring's four 32 by 32 frames: byte offsets,
 /// 1,024 apart.
@@ -471,7 +472,7 @@ void ElementGlow_UploadStarField(void);
 #else
 u32 ElementGlow_UploadStarField(void);
 #endif
-s32 ElementGlow_InitializeStarField(s32 mode);
+s32 ElementGlow_InitializeStarField(s32 element);
 s32 ElementGlow_End(s32 unused);
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, FIXED scale,
                                 s32 count);

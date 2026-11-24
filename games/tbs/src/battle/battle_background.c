@@ -47,6 +47,11 @@
 /// party's actions (YAW_PARTY_ACTION).
 #define BACKGROUND_PAN_X Q_8_8(8)
 
+/// BattleBackground_ShowZoomedPage runs first of the VBlank tasks (the highest
+/// rank in the pass), so the page's first line and its HBlank DMA are set
+/// before the frame's first line is drawn.
+#define ZOOMED_PAGE_PRIORITY (TASK_PASS_VBLANK + 127)
+
 /// The steps of each half of gBattleHighlight_BlendRamp: the first half plays
 /// once, then the second over and over.
 #define HIGHLIGHT_RAMP_HALF 16
@@ -77,7 +82,7 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   struct BattleBackgroundState *view = gBattleBackgroundState;
 
   if (view->mode == BATTLE_BACKGROUND_NONE) {
-    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
+    Task_Add(BattleBackground_ShowZoomedPage, ZOOMED_PAGE_PRIORITY);
   }
   view->mode = mode;
 
@@ -181,7 +186,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
                     BG_SCREEN_WIDTH * 2),
                    BG_SCREEN_WIDTH * 2);
   if (view->mode == BATTLE_BACKGROUND_NONE)
-    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
+    Task_Add(BattleBackground_ShowZoomedPage, ZOOMED_PAGE_PRIORITY);
   view->mode = mode;
   if (mode == BATTLE_BACKGROUND_FIXED)
     REG_BG1CNT = BATTLE_BG1CNT;
@@ -262,7 +267,9 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   scanlines->page ^= 1;
 }
 
-/// Unused: sets the camera's eye at its stored distance without taking a zoom.
+/// Unused: BattleCamera_SetView with the eye at the camera's own distance
+/// rather than BATTLE_CAMERA_DISTANCE, and no zoom taken; written as a call to
+/// it, the eye would stay at BATTLE_CAMERA_DISTANCE.
 #ifdef UBFIX
 UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
@@ -593,5 +600,6 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
 #undef BACKGROUND_PALETTE_BYTES
 #undef BACKGROUND_PAN_X
 #undef HIGHLIGHT_RAMP_HALF
+#undef ZOOMED_PAGE_PRIORITY
 #undef DEBUG_VALUE_SELECT
 #undef DEBUG_VALUE_COARSE_STEP

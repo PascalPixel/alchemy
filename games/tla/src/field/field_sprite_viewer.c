@@ -20,7 +20,13 @@ enum {
   /// goes to the next stop of gSpriteViewer_SkipStops.
   UI_SPRITE_VIEWER_FAST_STEP = 10,
   /// gSpriteViewer_SkipStops' entries, its end marker the last.
-  UI_SPRITE_VIEWER_SKIP_STOPS = 10
+  UI_SPRITE_VIEWER_SKIP_STOPS = 10,
+  /// The colour SPRITE_COLOR_FILL paints in the viewer (gDecodeFillByte):
+  /// colour 3 of the basic sprite palette, orange.
+  UI_SPRITE_VIEWER_FILL_COLOR = 3,
+  /// gDebugMode while the viewer runs. Every reader tests it only for
+  /// nonzero, so 2 turns on the same debug keys any other value would.
+  UI_SPRITE_VIEWER_DEBUG_MODE = 2
 };
 
 /// An angle's bits: shifted up and back down, a value keeps only them.
@@ -68,7 +74,7 @@ void SpriteViewer_Run(void) {
   shadowsEnabled = 1;
   backdrop = 0;
   ring = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, 160);
-  gDecodeFillByte = 3;
+  gDecodeFillByte = UI_SPRITE_VIEWER_FILL_COLOR;
   Dma_Fill32Cell(zero, 0, ring, 4);
   Dma_Fill32Cell(zero, 0, layers, sizeof(layers));
   spriteId = SpriteViewer_StepSpriteId(-1, 1);
@@ -78,7 +84,7 @@ void SpriteViewer_Run(void) {
     layers[i].spriteId = spriteId;
   }
   layers[0].enabled = 1;
-  gDebugMode = 2;
+  gDebugMode = UI_SPRITE_VIEWER_DEBUG_MODE;
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   *(volatile u16 *)BG_PLTT = RGB(0, 0, 31);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_OBJ_ON;

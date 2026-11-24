@@ -164,8 +164,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
                 x += (Random16() & 7) - 4;
                 y += (Random16() & 7) - 4;
               }
-              Canvas_BlitAtFoot((u8 *)((s16)discOffsets[disc] + (s32)cells), x,
-                                y, width);
+              Canvas_BlitMirroredQuarters(
+                  (u8 *)((s16)discOffsets[disc] + (s32)cells), x, y, width);
             }
             orb->y += orb->velocityY;
           }

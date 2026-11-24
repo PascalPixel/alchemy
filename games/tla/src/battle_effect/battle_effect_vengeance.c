@@ -1473,7 +1473,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
-  RagingHeat_FillGradientCanvas();
+  BattleEffect_FillWhiteBand();
   state->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   y = -80;

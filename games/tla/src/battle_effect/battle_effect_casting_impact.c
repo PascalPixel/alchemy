@@ -1653,48 +1653,46 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         y = (FIXEDtoINT(targetPos.y)) +
             (FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 128)) << 2)) + 16;
         if (frame < 4) {
-          blitters[0](canvas, state->sheet,
-                      gCastingImpact_PictureX[action->side * 7],
-                      y + gCastingImpact_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
+          blitters[0](canvas, state->sheet, gReaper_PictureX[action->side * 7],
+                      y + gReaper_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
                       REAPER_SHEET_RAISED_HEIGHT);
         } else {
           if (frame < 8)
             blitters[0](canvas, state->sheet,
-                        gCastingImpact_PictureX[action->side * 7],
-                        y + gCastingImpact_PictureY[0],
-                        REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
-          EFFECT_DRAW_PICTURE(blitters[0], canvas, state->sheet,
-                              REAPER_SHEET_SWUNG,
-                              gCastingImpact_PictureX[action->side * 7 + 1],
-                              y + gCastingImpact_PictureY[1]);
+                        gReaper_PictureX[action->side * 7],
+                        y + gReaper_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
+                        REAPER_SHEET_RAISED_HEIGHT);
+          EFFECT_DRAW_PICTURE(
+              blitters[0], canvas, state->sheet, REAPER_SHEET_SWUNG,
+              gReaper_PictureX[action->side * 7 + 1], y + gReaper_PictureY[1]);
           if (frame >= 4 && frame < 6)
             Iwram_FillWords(canvas, CANVAS_BYTES,
                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           if (frame >= 6 && frame < 8)
             EFFECT_DRAW_PICTURE(blitters[0], canvas, state->sheet,
                                 REAPER_SHEET_CRESCENT,
-                                gCastingImpact_PictureX[action->side * 7 + 2],
-                                y + gCastingImpact_PictureY[2]);
+                                gReaper_PictureX[action->side * 7 + 2],
+                                y + gReaper_PictureY[2]);
           if (frame >= 8 && frame < 10)
             EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
                                 RED_CRESCENT_FADE_A,
-                                gCastingImpact_PictureX[action->side * 7 + 3],
-                                y + gCastingImpact_PictureY[3]);
+                                gReaper_PictureX[action->side * 7 + 3],
+                                y + gReaper_PictureY[3]);
           if (frame >= 10 && frame < 12)
             EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
                                 RED_CRESCENT_FADE_B,
-                                gCastingImpact_PictureX[action->side * 7 + 4],
-                                y + gCastingImpact_PictureY[4]);
+                                gReaper_PictureX[action->side * 7 + 4],
+                                y + gReaper_PictureY[4]);
           if (frame >= 12 && frame < 14)
             EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
                                 RED_CRESCENT_FADE_C,
-                                gCastingImpact_PictureX[action->side * 7 + 5],
-                                y + gCastingImpact_PictureY[5]);
+                                gReaper_PictureX[action->side * 7 + 5],
+                                y + gReaper_PictureY[5]);
           if (frame >= 14 && frame < 16)
             EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
                                 RED_CRESCENT_FADE_D,
-                                gCastingImpact_PictureX[action->side * 7 + 6],
-                                y + gCastingImpact_PictureY[6]);
+                                gReaper_PictureX[action->side * 7 + 6],
+                                y + gReaper_PictureY[6]);
         }
       } else if (kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS) {
         // The coffin drops over the target and crumbles from the bottom as the
@@ -2435,8 +2433,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           if (halfSize > 1 && fade > 0) {
             BattleEffect_DrawShadedCircles(state->sheet, m * 4, fade);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-            Canvas_BlitAtFoot(state->sheet, targetPos.x / 2, targetPos.y,
-                              m * 4);
+            Canvas_BlitMirroredQuarters(state->sheet, targetPos.x / 2,
+                                        targetPos.y, m * 4);
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                 BLITTER_ADDITIVE);

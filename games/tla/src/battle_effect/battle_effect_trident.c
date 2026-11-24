@@ -265,7 +265,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
             u8 *disc = state->sheet + TRIDENT_GROUND_DISC;
 
             BattleEffect_DrawShadedCircles(disc, grow, FIXED_ONE);
-            Canvas_BlitAtFoot(disc, centerX, 100, grow);
+            Canvas_BlitMirroredQuarters(disc, centerX, 100, grow);
           }
           continue;
         }
@@ -298,8 +298,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
 
             Particle_AdvanceWithGravity2D(p, PARTICLE_DAMPING_NONE, 0);
             // As an integer sum, the offset first.
-            Canvas_BlitAtFoot((u8 *)(circles[tier] + (s32)cells), discX, discY,
-                              diameter);
+            Canvas_BlitMirroredQuarters((u8 *)(circles[tier] + (s32)cells),
+                                        discX, discY, diameter);
           }
         }
       }

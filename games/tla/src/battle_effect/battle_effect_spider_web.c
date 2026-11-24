@@ -192,7 +192,7 @@ void Ulysses_FlutterFlake(void) {
 }
 
 /// The mage's sprite scale, one to one.
-extern const struct Scale gUlysses_ShipScale;
+extern const struct Scale gUlysses_MageScale;
 
 /// Where UlyssesSilhouette, then FlutteringFlakeSheet's cels, are decoded in
 /// the effect's pictures, and the silhouette's size.
@@ -851,7 +851,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     // The mage stands from ULYSSES_APPEAR_FRAME, swaying once the strikes
     // begin.
     if (frame >= ULYSSES_APPEAR_FRAME && frame < ULYSSES_FLAKE_FRAME) {
-      mageScale = gUlysses_ShipScale;
+      mageScale = gUlysses_MageScale;
       if (frame > ULYSSES_STRIKES_FRAME - 1) {
         s32 u = frame - ULYSSES_STRIKES_FRAME;
 
@@ -1131,17 +1131,17 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
     picture = frame / 4;
     if (picture <= 5) {
       if (picture <= 3)
-        draw[0](canvas, state->sheet + gSpiderWeb_Pictures[picture],
-                gSpiderWeb_PictureX[picture + args->side * 6],
-                gSpiderWeb_PictureBiasY[picture] + 32,
-                gSpiderWeb_PictureWidths[picture],
-                gSpiderWeb_PictureHeights[picture]);
+        draw[0](canvas, state->sheet + gSwirlSwipe_Pictures[picture],
+                gSwirlSwipe_PictureX[picture + args->side * 6],
+                gSwirlSwipe_PictureBiasY[picture] + 32,
+                gSwirlSwipe_PictureWidths[picture],
+                gSwirlSwipe_PictureHeights[picture]);
       else
-        draw[0](canvas, Ram_MapCellBuffer + gSpiderWeb_Pictures[picture],
-                gSpiderWeb_PictureX[picture + args->side * 6],
-                gSpiderWeb_PictureBiasY[picture] + 32,
-                gSpiderWeb_PictureWidths[picture],
-                gSpiderWeb_PictureHeights[picture]);
+        draw[0](canvas, Ram_MapCellBuffer + gSwirlSwipe_Pictures[picture],
+                gSwirlSwipe_PictureX[picture + args->side * 6],
+                gSwirlSwipe_PictureBiasY[picture] + 32,
+                gSwirlSwipe_PictureWidths[picture],
+                gSwirlSwipe_PictureHeights[picture]);
     }
     if (frame == 8) {
       if (mode == SWIRL_SWIPE_POISON_BEAT) {

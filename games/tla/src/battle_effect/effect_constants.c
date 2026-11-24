@@ -17,7 +17,7 @@ const struct Scale gCruelRuin_UnitScale = UNIT_SCALE;
 
 /// Eclipse's scale for the dragon's sprites, copied each frame before they are
 /// placed.
-const struct Scale gEclipse_Scales = UNIT_SCALE;
+const struct Scale gEclipse_DragonScale = UNIT_SCALE;
 
 /// Unused: two more scales after Eclipse's, each word 0x55555556 (2^32 / 3
 /// rounded up); nothing reads them.
@@ -54,13 +54,13 @@ const struct Scale gGaia_UnitScale = UNIT_SCALE;
 const struct SpriteScale gUlysses_ParticleScale = {{UNIT_SCALE}};
 
 /// The ship's scale in Ulysses, copied each frame it sails.
-const struct Scale gUlysses_ShipScale = UNIT_SCALE;
+const struct Scale gUlysses_MageScale = UNIT_SCALE;
 
 /// The scale of the formation's objects that are drawn at their size.
-const struct Scale gFormationObjects_Scale = UNIT_SCALE;
+const struct Scale gSummonFormation_Scale = UNIT_SCALE;
 
 /// The scale of the formation's objects drawn a quarter larger.
-const struct Scale gFormationObjects_LargeScale = {
+const struct Scale gSummonFormation_LargeScale = {
     FIXED_ONE * 5 / 4,
     FIXED_ONE * 5 / 4,
 };

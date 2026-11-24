@@ -338,8 +338,8 @@ gMapGridCellBuffer:
 	.space 0x00000068
 	.space 0x00000080
 	.space 0x000000f0
-	.global gHaures_WingCorners
-gHaures_WingCorners:
+	.global gHaures_MoundCorners
+gHaures_MoundCorners:
 	.space 0x00000088
 	.global gIris_TileBuffer
 gIris_TileBuffer:
@@ -348,12 +348,12 @@ gIris_TileBuffer:
 	.space 0x0000002f
 	.space 0x0000000d
 	.space 0x000002ac
-	.global gHaures_WingStrip
-gHaures_WingStrip:
+	.global gHaures_MoundStrip
+gHaures_MoundStrip:
 	.space 0x00000008
 	.space 0x000000f0
-	.global gHaures_WingStripEnd
-gHaures_WingStripEnd:
+	.global gHaures_MoundStripEnd
+gHaures_MoundStripEnd:
 	.space 0x00000076
 	.space 0x00000002
 	.space 0x00000002
@@ -361,8 +361,8 @@ gHaures_WingStripEnd:
 	.space 0x00000110
 	.space 0x00000080
 	.space 0x000001a0
-	.global gHaures_WingShades
-gHaures_WingShades:
+	.global gHaures_MoundShades
+gHaures_MoundShades:
 	.space 0x00000060
 	.space 0x00000156
 	.space 0x00000192

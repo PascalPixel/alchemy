@@ -884,7 +884,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
               EFFECT_RELEASE_BLITTERS();
               flip = Random16();
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-                                  gProjectileVolleyB_GlintFlips[flip & 3] |
+                                  gBurstShower_GlintFlips[flip & 3] |
                                       EFFECT_CLIP_BOUNDS,
                                   BLITTER_ADDITIVE);
               ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(

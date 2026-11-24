@@ -456,7 +456,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   battle = Ram_HeapSlots->battleState;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  RagingHeat_FillGradientCanvas();
+  BattleEffect_FillWhiteBand();
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit[0] = Ram_HeapSlots->ramCode;
   state->transferMode = CANVAS_COPY;
@@ -1868,7 +1868,8 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
         BattleEffect_DrawShadedCircles(cells, size, FIXED_ONE);
       }
       cells = gMapGridCellBuffer;
-      Canvas_BlitAtFoot(cells, FIXEDtoINT(i), FIXEDtoINT(discY), size);
+      Canvas_BlitMirroredQuarters(cells, FIXEDtoINT(i), FIXEDtoINT(discY),
+                                  size);
       // Each ray at a random angle, turning a random way, a little after
       // the one before.
       if (frame == DAEDALUS_STRIKE_GLOW_START) {

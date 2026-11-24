@@ -373,7 +373,8 @@ enum SoundId {
   /// down; The Broken Seal's row 197 note for note.
   SE_GABOMBA_VOICE,
   SE_KOLIMA_BRIDGE_POST,
-  /// A water column rising (BattleEffect_RunWaterColumn); The Broken Seal's row
+  /// A water column rising (BattleEffect_RunTwistingColumn); The Broken Seal's
+  /// row
   /// 199 note for note.
   SE_WATER_COLUMN,
   SE_SPARKLE_FALL,

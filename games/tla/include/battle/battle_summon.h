@@ -24,7 +24,7 @@ enum AttackEffect {
   ATTACK_EFFECT_HURL,  ///< no beam; the target is hurled (KNOCKBACK_HURL)
   ATTACK_EFFECT_SHOVE, ///< no beam; the target is pushed to 150 percent
   ATTACK_EFFECT_BLOW,  ///< no beam; the target is nudged
-  ATTACK_EFFECT_BURST  ///< BattleEffect_RunCanvasModeByCount's small ball
+  ATTACK_EFFECT_BURST  ///< BattleEffect_RunBallAttack's small ball
 };
 
 /// A fallen class's cry (BattleSpriteDefinition.defeatSound): BattlePlayback

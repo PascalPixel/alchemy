@@ -1091,8 +1091,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           radius = 104;
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-        Canvas_BlitAtFoot(state->sheet + CHARON_ACT_PICTURES, centerX, 58,
-                          radius);
+        Canvas_BlitMirroredQuarters(state->sheet + CHARON_ACT_PICTURES, centerX,
+                                    58, radius);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
         blit[1] = Ram_HeapSlots->ramCodePaired;
@@ -1660,7 +1660,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         WAVE_RADIUS = wave - step;
         if (wave > 0) {
           BattleEffect_DrawShadedCircles(state->sheet, wave, FIXED_ONE);
-          Canvas_BlitAtFoot(state->sheet, 60, 60, wave);
+          Canvas_BlitMirroredQuarters(state->sheet, 60, 60, wave);
         }
       }
     } else {
@@ -1769,9 +1769,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             drop->velocityY = -toFIXED(1);
           }
           if (drop->variant >= 0) {
-            Canvas_BlitAtFoot(state->sheet + CHARON_ACT_PICTURES,
-                              FIXEDtoINT(drop->x), FIXEDtoINT(drop->y),
-                              CHARON_DROP_RADIUS);
+            Canvas_BlitMirroredQuarters(
+                state->sheet + CHARON_ACT_PICTURES, FIXEDtoINT(drop->x),
+                FIXEDtoINT(drop->y), CHARON_DROP_RADIUS);
             drop->x += drop->velocityX;
             drop->y += drop->velocityY;
           }

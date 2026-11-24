@@ -655,7 +655,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
 /// Draws a quarter picture, `size` pixels tall and half as wide, four times
 /// into the canvas, mirrored about (x, y) and keeping the brighter pixel: a
 /// whole glow or disc centred there, round at the canvas's double width.
-void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size) {
+void Canvas_BlitMirroredQuarters(void *source, s32 x, s32 y, s32 size) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 half;
 

@@ -1341,7 +1341,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s32 size = scene->radiusPixels * 2;
 
         BattleEffect_DrawShadedCircles(state->sheet, size, FIXED_ONE);
-        Canvas_BlitAtFoot(state->sheet, scene->xPixels, scene->yPixels, size);
+        Canvas_BlitMirroredQuarters(state->sheet, scene->xPixels,
+                                    scene->yPixels, size);
       }
       if (frame == 175) {
         REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |

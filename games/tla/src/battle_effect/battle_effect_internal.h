@@ -120,7 +120,7 @@ struct DropletBuffer {
   struct Particle droplets[512];
 };
 
-extern const struct Scale gEclipse_Scales;
+extern const struct Scale gEclipse_DragonScale;
 
 extern const struct Scale gCruelRuin_UnitScale;
 
@@ -801,18 +801,21 @@ enum GaspMode {
   GASP_MODE_PSY_BOOST
 };
 
-/// The water column's modes (BattleEffect_RunWaterColumn), each named for the
-/// effect that plays it.
-enum WaterColumnMode {
-  WATER_COLUMN_WHORL,
-  WATER_COLUMN_GALE,
-  WATER_COLUMN_LETHE_ALBION,
-  WATER_COLUMN_POISON_FLOW,
-  WATER_COLUMN_RAGING_FLOOD
+/// The twisting column's modes (BattleEffect_RunTwistingColumn), each named for
+/// the effect that plays it.
+enum TwistingColumnMode {
+  TWISTING_COLUMN_WHORL,
+  TWISTING_COLUMN_GALE,
+  TWISTING_COLUMN_LETHE_ALBION,
+  TWISTING_COLUMN_POISON_FLOW,
+  TWISTING_COLUMN_RAGING_FLOOD
 };
 
-/// The bolt trail's modes (BattleEffect_RunBoltTrail).
-enum BoltTrailMode { BOLT_TRAIL_THUNDER_MINE, BOLT_TRAIL_EARTH_FORCE };
+/// The ball lightning's modes (BattleEffect_RunBallLightning).
+enum BallLightningMode {
+  BALL_LIGHTNING_THUNDER_MINE,
+  BALL_LIGHTNING_EARTH_FORCE
+};
 
 /// The Djinni charge's modes (BattleEffect_RunDjinniCharge).
 enum DjinniChargeMode { DJINNI_CHARGE_CORE, DJINNI_CHARGE_CANNON };
@@ -1052,7 +1055,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *effect);
 /// Steps the background colours one shade toward a resource's palette.
 void BattleEffect_StepPaletteToResource(s32 resource);
 
-// canvas_routine.c
+// canvas_wipe.c
 void BattleEffect_WipeCanvas(s32 direction, s32 fill);
 
 // particle_streams.c
@@ -1082,10 +1085,11 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunHeavyBlow(struct BattleEffectParams *effect, s32 mode);
 
 // thunder_mine.c
-void BattleEffect_RunBoltTrail(struct BattleEffectParams *effect, s32 mode);
+void BattleEffect_RunBallLightning(struct BattleEffectParams *effect, s32 mode);
 
 // whorl.c
-void BattleEffect_RunWaterColumn(struct BattleEffectParams *effect, u32 mode);
+void BattleEffect_RunTwistingColumn(struct BattleEffectParams *effect,
+                                    u32 mode);
 void BattleEffect_RunDjinniCharge(struct BattleEffectParams *effect, s32 mode);
 
 // rime.c
@@ -1095,13 +1099,13 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunGaspFamily(struct BattleEffectParams *effect, s32 mode);
 
 // raging_heat.c
-void RagingHeat_FillGradientCanvas(void);
+void BattleEffect_FillWhiteBand(void);
+
+// star_mine.c
+void BattleEffect_BuildRepeatingTilemap(void);
 
 // rushing_strike.c
 void BattleEffect_RunRushingStrike(struct BattleEffectParams *effect, s32 mode);
-void BattleEffect_BuildRepeatingTilemap(void);
-
-// glowing_lunge.c
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *effect, s32 mode);
 
 // vengeance.c
@@ -1116,7 +1120,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunCards(struct BattleEffectParams *effect, s32 mode);
 
 // breaths.c
-void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size);
+void Canvas_BlitMirroredQuarters(void *source, s32 x, s32 y, s32 size);
 void BattleEffect_RunBreaths(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunCrescentSlash(struct BattleEffectParams *effect, s32 mode);
 
@@ -1125,7 +1129,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_ArmMeteorBlowPaletteDma(void);
 
 // liquifier.c
-void BattleEffect_RunCanvasModeByCount(struct BattleEffectParams *effect);
+void BattleEffect_RunBallAttack(struct BattleEffectParams *effect);
 
 // odyssey.c
 /// The five-argument blitter builder's far call, which only a call in
@@ -1214,8 +1218,8 @@ extern u16 gSpire_ShardPictures[];
 extern u16 gStatChange_ShardPictures[];
 extern u8 gStatChange_ShardWidths[];
 extern u8 gStatChange_ShardHeights[];
-extern u8 gCastingImpact_PictureX[];
-extern u8 gCastingImpact_PictureY[];
+extern u8 gReaper_PictureX[];
+extern u8 gReaper_PictureY[];
 extern u8 gFalling_IceCounts[];
 extern u8 gFalling_Counts[];
 extern s8 gStreak_Styles[];
@@ -1268,7 +1272,7 @@ extern u8 gPrism_ShardHeights[];
 extern s32 gPrism_ShardPictures[];
 extern u8 gGatheringLights_Counts[];
 extern u8 gDjinnBeams_MotePictures[];
-extern u16 gMirroredWall_Pictures[];
+extern u16 gDjinnBeams_HeadPictures[];
 extern u8 gDjinnBeams_HeadWidths[];
 extern u8 gDjinnBeams_HeadHeights[];
 extern s8 gLobbedShells_Styles[];
@@ -1303,7 +1307,7 @@ extern u8 gPrism_Counts[];
 extern u16 gPlasma_Sparks[];
 extern u8 gPlasma_Columns[];
 extern u8 gPlasma_Counts[];
-extern u16 gPlasma_Shapes[][5];
+extern u16 gSparkGroups_Shapes[][5];
 extern u8 gPlasma_FlashPictures[];
 extern u8 gVolcano_Counts[];
 extern s8 gVolcano_Depths[][4];
@@ -1367,7 +1371,7 @@ extern u8 gRay_Sparks[][2];
 extern u8 gEruption_Counts[][3];
 extern u16 gEruption_PuffPictures[];
 extern u16 gEruption_PuffSizes[];
-extern u8 gProjectileVolleyB_GlintFlips[];
+extern u8 gBurstShower_GlintFlips[];
 extern s32 gAtalanta_UnitScale[];
 extern u8 gGrowth_VineWidths[];
 extern u8 gGrowth_HeightLimits[];
@@ -1433,11 +1437,11 @@ extern const u8 gUlysses_PictureWidths[];
 extern const u8 gUlysses_PictureHeights[];
 extern const u16 gUlysses_Pictures[];
 extern const s8 gUlysses_ParticleStarts[][5];
-extern const u8 gSpiderWeb_PictureWidths[];
-extern const u8 gSpiderWeb_PictureHeights[];
-extern const u16 gSpiderWeb_Pictures[];
-extern const u8 gSpiderWeb_PictureX[];
-extern const s8 gSpiderWeb_PictureBiasY[];
+extern const u8 gSwirlSwipe_PictureWidths[];
+extern const u8 gSwirlSwipe_PictureHeights[];
+extern const u16 gSwirlSwipe_Pictures[];
+extern const u8 gSwirlSwipe_PictureX[];
+extern const s8 gSwirlSwipe_PictureBiasY[];
 extern const u8 gAzul_PartPoints[][2];
 extern const struct Scale gAzul_UnitScale;
 extern const u8 gAzul_ObjectX[];
@@ -1476,19 +1480,19 @@ extern const u8 gCastingImpact_ArmorCrushWaveGrowth[];
 extern const u8 gCastingImpact_ArmorCrushWaveStretch[];
 extern u8 gNereidCopy_Columns[];
 extern const s32 gNereidCopy_Gravity[];
-extern const u8 gHelmSplitter_TwelveX[];
-extern const u8 gHelmSplitter_TwelveZ[];
-extern const u8 gHelmSplitter_RightEightX[];
-extern const u8 gHelmSplitter_RightEightZ[];
-extern const u8 gFormationObjects_X[];
-extern const u8 gFormationObjects_Z[];
-extern const u8 gHelmSplitter_SmallEightX[];
-extern const u8 gHelmSplitter_SmallEightZ[];
-extern const s8 gFormationObjects_WideX[];
-extern const u8 gFormationObjects_WideZ[];
-extern u8 gHelmSplitter_ImpactBurstPictureWidths[];
-extern u8 gHelmSplitter_ImpactBurstPictureHeights[];
-extern u16 gHelmSplitter_ImpactBurstPictures[];
+extern const u8 gSummonFormation_NereidX[];
+extern const u8 gSummonFormation_NereidZ[];
+extern const u8 gSummonFormation_CybeleX[];
+extern const u8 gSummonFormation_CybeleZ[];
+extern const u8 gSummonFormation_TiamatAlternateX[];
+extern const u8 gSummonFormation_TiamatAlternateZ[];
+extern const u8 gSummonFormation_TiamatX[];
+extern const u8 gSummonFormation_TiamatZ[];
+extern const s8 gSummonFormation_MegaeraX[];
+extern const u8 gSummonFormation_MegaeraZ[];
+extern u8 gImpactBurst_PictureWidths[];
+extern u8 gImpactBurst_PictureHeights[];
+extern u16 gImpactBurst_Pictures[];
 extern s16 gParticleStreams_OrbitPoints[][3];
 extern s16 gParticleStreams_FireballPoints[][2];
 extern u16 gParticleStreams_FlashPictures[];
@@ -1501,7 +1505,7 @@ extern u8 gRagnarok_StrikeColumns[];
 extern u8 gRagnarok_FlashPictures[];
 extern u8 gTitanBlade_FlashPictures[];
 extern s32 gTitanBlade_DustGravity[];
-extern const u8 gJudgment_BurstPictures[];
+extern const u8 gJudgment_ShieldSprites[];
 extern const u16 gJudgment_ShardPictures[];
 extern const u8 gJudgment_ShardWidths[];
 extern const u8 gJudgment_ShardHeights[];
@@ -1539,9 +1543,9 @@ extern const s8 gWyrdCurse_DropBounces[];
 extern const u8 gBoltTrail_GlintFlips[];
 extern const u8 gMegaera_GlintFlips[];
 extern const u8 gMegaera_GlintModes[];
-extern const s32 gLightSurge_PillarSizes[4];
-extern const s8 gLightSurge_PillarShades[4];
-extern s8 gLightSurge_PillarOffsets[4];
+extern const s32 gLightSurge_RingSizes[4];
+extern const s8 gLightSurge_RingShades[4];
+extern s8 gLightSurge_RingSways[4];
 extern const u8 gDjinniCharge_EntranceFlags[];
 extern const s32 gDjinniCharge_DebrisGravity[4];
 extern const s8 gGaspFamily_StreakSteps[];
@@ -1563,7 +1567,7 @@ extern const struct ModelVertex gBattleEffect_BeamCorners[];
 extern const struct ModelVertex gBattleEffect_LongBeamCorners[];
 extern const struct ModelVertex gBattleEffect_SquareCorners[];
 extern const struct ModelVertex gBattleEffect_StandingSquareCorners[];
-extern struct ModelVertex gLegend_WingCorners[];
+extern struct ModelVertex gLegend_FanFlameCorners[];
 extern const struct ModelVertex gBattleEffect_GroundSquareCorners[];
 extern const u16 gBattleEffect_SmallSquareMesh[];
 extern const u16 gBattleEffect_SmallSquareMeshReversed[];
@@ -1575,12 +1579,12 @@ extern const u16 gCatastrophe_ForkMesh[];
 extern const u16 gBattleEffect_SquareMesh[];
 extern const u16 gBattleEffect_LargeSquareMesh[];
 extern const u16 gHaures_BurstMesh[];
-extern u8 gHeartbreak_SwingWidths[];
-extern u8 gHeartbreak_SwingHeights[];
-extern u16 gHeartbreak_SwingPictures[];
-extern u8 gHeartbreak_FistHeights[];
-extern u8 gHeartbreak_FistY[];
-extern u16 gHeartbreak_FistPictures[];
+extern u8 gHeartbreak_SparkBurstWidths[];
+extern u8 gHeartbreak_SparkBurstHeights[];
+extern u16 gHeartbreak_SparkBurstPictures[];
+extern u8 gHeartbreak_HeartBurnHeights[];
+extern u8 gHeartbreak_HeartBurnY[];
+extern u16 gHeartbreak_HeartBurnPictures[];
 extern const u8 gRagingHeat_Styles[][4];
 extern u8 gJuggle_Styles[][7];
 extern const u8 gFlora_PetalSizes[];
@@ -1663,8 +1667,8 @@ extern const u8 gCatastrophe_GlintFlips[];
 extern const s16 gCatastrophe_BoltRolls[];
 extern const u8 gHaures_ParticleX[];
 extern s32 gHaures_UnitScale[];
-extern const u8 gHaures_WingShapes[];
-extern u8 gHaures_WingMorphSteps[];
+extern const u8 gHaures_MoundShapes[];
+extern u8 gHaures_MoundMorphSteps[];
 extern const u8 gHaures_PartPoints[];
 extern const u8 gHaures_BandStarts[];
 extern u8 gHelmSplitter_PictureWidths[];
@@ -1832,11 +1836,11 @@ extern const struct Scale gCatastrophe_UnitScale;
 
 // haures.c
 /// In the map cell buffer: the mound's faces, eight bytes a quad.
-extern u8 gHaures_WingStrip[];
+extern u8 gHaures_MoundStrip[];
 /// The face after the mound's last, which ends the strip.
-extern u8 gHaures_WingStripEnd[];
+extern u8 gHaures_MoundStripEnd[];
 /// In the map cell buffer: each mound corner's shade.
-extern u8 gHaures_WingShades[];
+extern u8 gHaures_MoundShades[];
 extern const struct Scale gHaures_ChargeScale;
 extern const struct Scale gHaures_OrbitScale;
 extern const struct Scale gHaures_OpeningScale;

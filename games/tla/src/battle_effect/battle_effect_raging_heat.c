@@ -462,7 +462,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
 /// Loads the grey ramp and fills the canvas with a white band, its left and
 /// right 32 columns fading out, stretched across the screen on BG2: the
 /// summons sweep it in from the right to white the battle out.
-void RagingHeat_FillGradientCanvas(void) {
+void BattleEffect_FillWhiteBand(void) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 x;
   s32 y;

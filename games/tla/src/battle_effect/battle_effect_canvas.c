@@ -171,7 +171,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   battle = Ram_HeapSlots->battleState;
   BattleEffect_StartCanvasLayer(0);
-  RagingHeat_FillGradientCanvas();
+  BattleEffect_FillWhiteBand();
   state->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // The battle flashes away; then the sky and the dragon's sprites load.
@@ -281,7 +281,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           Iwram_FillWords(canvas, CANVAS_VIEW_BYTES, gEclipse_FillLevels[i]);
         }
       }
-      req = gEclipse_Scales;
+      req = gEclipse_DragonScale;
       place[3] = 0;
       place[1] = toFIXED(255);
       baseX += velocityX;
@@ -367,8 +367,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         {
           s32 size = ECLIPSE_ORB.variant;
 
-          Canvas_BlitAtFoot(state->sheet, FIXEDtoINT(cx), FIXEDtoINT(cy),
-                            size * 2);
+          Canvas_BlitMirroredQuarters(state->sheet, FIXEDtoINT(cx),
+                                      FIXEDtoINT(cy), size * 2);
         }
       }
       if (frame >= ECLIPSE_RAYS_START) {
@@ -611,7 +611,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         if (frame <= 27) {
           cells = state->sheet + ECLIPSE_BLAST_GLOW;
           BattleEffect_DrawShadedCircles(cells, 96, FIXED_ONE);
-          Canvas_BlitAtFoot(cells, FIXEDtoINT(q->x), FIXEDtoINT(q->y), 96);
+          Canvas_BlitMirroredQuarters(cells, FIXEDtoINT(q->x), FIXEDtoINT(q->y),
+                                      96);
         }
         Matrix_Initialize();
         Matrix_Translate(q->x - toFIXED(63), q->y - toFIXED(64), 0);
@@ -798,7 +799,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         model->vertices = vertices;
         model->texture = &landingTexture;
         model->shade = shade;
-        model->flags = 3;
+        model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
       }
       // The dome swells from half its size, turning.
       {
@@ -1089,8 +1090,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
           size = radius * 2;
           BattleEffect_DrawShadedCircles(Ram_MapCellBuffer, size, FIXED_ONE);
         }
-        Canvas_BlitAtFoot(Ram_MapCellBuffer, FIXEDtoINT(cx), FIXEDtoINT(cy),
-                          size);
+        Canvas_BlitMirroredQuarters(Ram_MapCellBuffer, FIXEDtoINT(cx),
+                                    FIXEDtoINT(cy), size);
       }
 
       // Each ray has an angle (x), a spin (y) and an age (variant), each

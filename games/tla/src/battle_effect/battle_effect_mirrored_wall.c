@@ -254,11 +254,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
           if (pic > 2)
             pic = (pic & 1) + 1;
           if (frame < start + 100) {
-            draw[0](canvas, state->sheet + gMirroredWall_Pictures[pic],
+            draw[0](canvas, state->sheet + gDjinnBeams_HeadPictures[pic],
                     screenPosition.x - gDjinnBeams_HeadWidths[pic],
                     screenPosition.y - gDjinnBeams_HeadHeights[pic] + 8,
                     gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
-            draw[1](canvas, state->sheet + gMirroredWall_Pictures[pic],
+            draw[1](canvas, state->sheet + gDjinnBeams_HeadPictures[pic],
                     screenPosition.x,
                     screenPosition.y - gDjinnBeams_HeadHeights[pic] + 8,
                     gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);

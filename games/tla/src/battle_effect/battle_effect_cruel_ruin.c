@@ -909,7 +909,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
       size = CRUEL_RUIN_GLOW_SIZE;
     }
     BattleEffect_DrawShadedCircles(state->sheet, size, FIXED_ONE);
-    Canvas_BlitAtFoot(state->sheet, pos.x / 2, pos.y - 16, size);
+    Canvas_BlitMirroredQuarters(state->sheet, pos.x / 2, pos.y - 16, size);
     if (frame > 15) {
       actor->y += toFIXED(16);
     }
@@ -1096,7 +1096,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             size += (frame - 68) / 6;
           }
           BattleEffect_DrawShadedCircles(state->sheet, size, scale);
-          Canvas_BlitAtFoot(state->sheet, 60, y, size);
+          Canvas_BlitMirroredQuarters(state->sheet, 60, y, size);
         }
         if (frame > 127) {
           for (i = 0; i != CRUEL_RUIN_MOTES; i++) {
@@ -1254,8 +1254,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               q->x += -toFIXED(8);
               q->y += toFIXED(16);
               BattleEffect_DrawShadedCircles(state->sheet, r, FIXED_ONE);
-              Canvas_BlitAtFoot(state->sheet, FIXED_INTEGER_PART(q->x),
-                                FIXED_INTEGER_PART(q->y), r);
+              Canvas_BlitMirroredQuarters(state->sheet,
+                                          FIXED_INTEGER_PART(q->x),
+                                          FIXED_INTEGER_PART(q->y), r);
             }
             model->kind = MODEL_SHADED_MAX;
             shade = 0;
@@ -1543,8 +1544,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           Matrix_Scale(scale, FIXED_ONE * 2, FIXED_ONE / 2);
           Render_TransformVertices(gCruelRuin_StreakCorners, verts, 4);
           BattleEffect_DrawShadedCircles(state->sheet, size, FIXED_ONE);
-          Canvas_BlitAtFoot(state->sheet, FIXED_INTEGER_PART(p->x) - 1,
-                            FIXED_INTEGER_PART(p->y), size);
+          Canvas_BlitMirroredQuarters(state->sheet,
+                                      FIXED_INTEGER_PART(p->x) - 1,
+                                      FIXED_INTEGER_PART(p->y), size);
           Render_DrawModelList(model);
         }
       }
@@ -1854,9 +1856,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             q->y += toFIXED(16);
             BattleEffect_DrawShadedCircles(
                 state->sheet + CRUEL_RUIN_BURST_CIRCLE, r, FIXED_ONE);
-            Canvas_BlitAtFoot(state->sheet + CRUEL_RUIN_BURST_CIRCLE,
-                              FIXED_INTEGER_PART(q->x),
-                              FIXED_INTEGER_PART(q->y), r);
+            Canvas_BlitMirroredQuarters(state->sheet + CRUEL_RUIN_BURST_CIRCLE,
+                                        FIXED_INTEGER_PART(q->x),
+                                        FIXED_INTEGER_PART(q->y), r);
           }
           Matrix_Initialize();
           Matrix_Translate(q->x - toFIXED(63), q->y - toFIXED(64), 0);

@@ -348,7 +348,7 @@ enum CanvasBurstMode {
 
 /// An enemy class's plain attack that throws a glowing ball
 /// (ATTACK_EFFECT_BURST): a small ball, or a large one for its critical hit.
-void BattleEffect_RunCanvasModeByCount(struct BattleEffectParams *args) {
+void BattleEffect_RunBallAttack(struct BattleEffectParams *args) {
   if (args->kind >= EFFECT_ID_CRITICAL_OFFSET)
     BattleEffect_RunCanvasBurst(args, CANVAS_BURST_LARGE_BALL);
   else

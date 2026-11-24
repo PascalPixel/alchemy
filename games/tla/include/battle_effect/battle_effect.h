@@ -116,7 +116,7 @@ void BattleEffect_DrawShadedCircles(u8 *map, s32 size, FIXED scale);
 void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size);
+void Canvas_BlitMirroredQuarters(void *source, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct ScreenPoint *position);
@@ -138,7 +138,7 @@ void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
                                    s32 gravity);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-void RagingHeat_FillGradientCanvas(void);
+void BattleEffect_FillWhiteBand(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
@@ -254,9 +254,9 @@ enum DjinniEntranceAnchor {
 
 /// A row of gQuake_Timings, one for each variant.
 enum {
-  TIMING_FRAMES,      ///< the whole effect
-  TIMING_RISE_FRAMES, ///< how long each pillar stands
-  TIMING_SHAKE        ///< the camera shake
+  QUAKE_TIMING_FRAMES,      ///< the whole effect
+  QUAKE_TIMING_RISE_FRAMES, ///< how long each pillar stands
+  QUAKE_TIMING_SHAKE        ///< the camera shake
 };
 
 /// The four rock pillars' heights, in pixels.
@@ -285,13 +285,13 @@ struct FourSpans {
 
 /// A row of gFrost_Timings, one for each variant.
 enum {
-  RISE_MOTES,   ///< the rising motes
-  RISE_COLUMNS, ///< the pillars
-  RISE_FRAME    ///< the frame they burst
+  FROST_TIMING_MOTES,      ///< the rising motes
+  FROST_TIMING_COLUMNS,    ///< the pillars
+  FROST_TIMING_BURST_FRAME ///< the frame they burst
 };
 
 /// A row of gEruption_Counts, one for each variant.
-enum { FIELD_MOTES, FIELD_PUFFS, FIELD_FRAMES };
+enum { ERUPTION_COUNT_MOTES, ERUPTION_COUNT_PUFFS, ERUPTION_COUNT_FRAMES };
 
 /// A growing column, laid over struct Particle in state->particles.
 struct DualColumn {

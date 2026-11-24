@@ -29,7 +29,7 @@ void BattleEffect_RunBlast(struct BattleEffectParams *args) {
 }
 
 /// The mote pictures in the sprite sheet: two sets, MOTE_SET_BYTES apart.
-#define ERUPTION_FIELD_MOTE_PICTURES 12800
+#define ERUPTION_MOTE_PICTURES 12800
 
 /// The puffs of smoke given a start, of which the variant's count in
 /// gEruption_Counts are thrown.
@@ -112,18 +112,19 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
 
-  for (frame = 0; frame != gEruption_Counts[variant][FIELD_FRAMES]; frame++) {
+  for (frame = 0; frame != gEruption_Counts[variant][ERUPTION_COUNT_FRAMES];
+       frame++) {
     struct BattleCamera *camera;
 
     camera = Ram_HeapSlots->cameraState;
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 2)
       Sound_PlayFar(SE_CLATTER);
-    if (frame == gEruption_Counts[variant][FIELD_FRAMES] - 48)
+    if (frame == gEruption_Counts[variant][ERUPTION_COUNT_FRAMES] - 48)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The motes fall.
-    for (i = 0; i != gEruption_Counts[variant][FIELD_MOTES]; i++) {
+    for (i = 0; i != gEruption_Counts[variant][ERUPTION_COUNT_MOTES]; i++) {
       struct Particle *mote = &PARTICLES[i];
 
       if (mote->y >= 0) {
@@ -140,7 +141,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
                 state->sheet +
                     (gBattleEffect_MotePictures[size - 1] +
                      (i & 1) * MOTE_SET_BYTES) +
-                    ERUPTION_FIELD_MOTE_PICTURES,
+                    ERUPTION_MOTE_PICTURES,
                 screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(mote, PARTICLE_DAMPING_NONE,
                                       -toFIXED(1) / 8);
@@ -149,7 +150,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
 
     // The puffs, one more set out each frame.
     if (frame > 2) {
-      for (i = 0; i != gEruption_Counts[variant][FIELD_PUFFS]; i++) {
+      for (i = 0; i != gEruption_Counts[variant][ERUPTION_COUNT_PUFFS]; i++) {
         struct Particle *puff = &state->particles[i];
 
         if (i < frame && puff->y >= 0) {
@@ -227,7 +228,7 @@ void BattleEffect_CreateSprites(s32 count, s32 spriteId, u32 priority) {
 /// Does nothing; BattleEffect_CallDoNothing calls it in a busy wait.
 void BattleEffect_DoNothing(void) {}
 
-#undef ERUPTION_FIELD_MOTE_PICTURES
+#undef ERUPTION_MOTE_PICTURES
 #undef ERUPTION_PUFFS
 #undef ERUPTION_PUFF_FRAMES
 #undef ERUPTION_MOTE_LARGEST

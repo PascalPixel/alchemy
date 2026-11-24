@@ -279,7 +279,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
             scale = FIXED_ONE * 3 - frame * (FIXED_ONE / 16);
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE,
                        (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
-          Render_TransformVertices(gLegend_WingCorners, vertices, 4);
+          Render_TransformVertices(gLegend_FanFlameCorners, vertices, 4);
           Render_DrawModelList(model);
         }
       }

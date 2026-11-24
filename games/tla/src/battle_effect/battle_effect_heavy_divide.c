@@ -904,8 +904,9 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
           // frame.
           index = diameter - 2;
           if ((u32)index < 2 * RADIANT_FIRE_DISCS - 2)
-            Canvas_BlitAtFoot((void *)(*(s16 *)(index + (s32)discs) + cells),
-                              burst->x, burst->y, diameter);
+            Canvas_BlitMirroredQuarters(
+                (void *)(*(s16 *)(index + (s32)discs) + cells), burst->x,
+                burst->y, diameter);
         }
       }
 
@@ -1119,12 +1120,12 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
 
 /// Abilities: Earth Force.
 void BattleEffect_RunEarthForce(struct BattleEffectParams *args) {
-  BattleEffect_RunBoltTrail(args, BOLT_TRAIL_EARTH_FORCE);
+  BattleEffect_RunBallLightning(args, BALL_LIGHTNING_EARTH_FORCE);
 }
 
 /// Abilities: Thunder Mine.
 void BattleEffect_RunThunderMine(struct BattleEffectParams *args) {
-  BattleEffect_RunBoltTrail(args, BOLT_TRAIL_THUNDER_MINE);
+  BattleEffect_RunBallLightning(args, BALL_LIGHTNING_THUNDER_MINE);
 }
 
 #undef BURNING_SKULL_WIDTH

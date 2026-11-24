@@ -1310,7 +1310,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
 /// Unused: nothing calls it. Sends a unit back to its place (its anchor) with a
 /// hop.
-UNUSED void BattleEffect_InitializeRisingObject(s32 slot) {
+UNUSED void BattleEffect_HopBackToSpot(s32 slot) {
   struct BattleObject *context = BattleObject_GetFar(slot);
   struct Actor *actor = context->object;
 

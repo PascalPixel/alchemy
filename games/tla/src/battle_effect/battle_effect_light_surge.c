@@ -342,9 +342,9 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         // across the screen, and into it drawn as up and down.
         FIXED sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);
         s32 x = INTtoFIXED(center.x / 2 - CANVAS_SIZE / 2) -
-                (gLightSurge_PillarOffsets[i] * sway / FIXED_ONE) *
+                (gLightSurge_RingSways[i] * sway / FIXED_ONE) *
                     Trig_Sin((s16)camera->yaw);
-        s32 z = -((gLightSurge_PillarOffsets[i] * sway / FIXED_ONE) *
+        s32 z = -((gLightSurge_RingSways[i] * sway / FIXED_ONE) *
                   Trig_Cos((s16)camera->yaw));
 
         /* FAKEMATCH(dead): a store both arms below overwrite. */
@@ -357,14 +357,13 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         } else {
           growth = FIXED_ONE;
         }
-        scale = (u32)(gLightSurge_PillarSizes[i] * growth) / FIXED_ONE;
+        scale = (u32)(gLightSurge_RingSizes[i] * growth) / FIXED_ONE;
         if (frame >= SURGE_RINGS_DIMMING) {
-          shade =
-              gLightSurge_PillarShades[i] - (frame - SURGE_RINGS_DIMMING) * 8;
+          shade = gLightSurge_RingShades[i] - (frame - SURGE_RINGS_DIMMING) * 8;
         } else if (frame < SURGE_RINGS_SHOWN) {
-          shade = gLightSurge_PillarShades[i] + (frame - SURGE_RINGS_SHOWN) * 8;
+          shade = gLightSurge_RingShades[i] + (frame - SURGE_RINGS_SHOWN) * 8;
         } else {
-          shade = gLightSurge_PillarShades[i];
+          shade = gLightSurge_RingShades[i];
         }
         model->shade = shade;
         Matrix_Initialize();
@@ -385,27 +384,27 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
 
 /// Abilities: Whorl.
 void BattleEffect_RunWhorl(struct BattleEffectParams *args) {
-  BattleEffect_RunWaterColumn(args, WATER_COLUMN_WHORL);
+  BattleEffect_RunTwistingColumn(args, TWISTING_COLUMN_WHORL);
 }
 
 /// Abilities: Gale.
 void BattleEffect_RunGale(struct BattleEffectParams *args) {
-  BattleEffect_RunWaterColumn(args, WATER_COLUMN_GALE);
+  BattleEffect_RunTwistingColumn(args, TWISTING_COLUMN_GALE);
 }
 
 /// Abilities: Lethe Albion.
 void BattleEffect_RunLetheAlbion(struct BattleEffectParams *args) {
-  BattleEffect_RunWaterColumn(args, WATER_COLUMN_LETHE_ALBION);
+  BattleEffect_RunTwistingColumn(args, TWISTING_COLUMN_LETHE_ALBION);
 }
 
 /// Abilities: Poison Flow.
 void BattleEffect_RunPoisonFlow(struct BattleEffectParams *args) {
-  BattleEffect_RunWaterColumn(args, WATER_COLUMN_POISON_FLOW);
+  BattleEffect_RunTwistingColumn(args, TWISTING_COLUMN_POISON_FLOW);
 }
 
 /// Abilities: Raging Flood.
 void BattleEffect_RunRagingFlood(struct BattleEffectParams *args) {
-  BattleEffect_RunWaterColumn(args, WATER_COLUMN_RAGING_FLOOD);
+  BattleEffect_RunTwistingColumn(args, TWISTING_COLUMN_RAGING_FLOOD);
 }
 #undef LIGHT_SURGE_FRAMES
 #undef LIGHT_SURGE_DAMAGE_FRAME

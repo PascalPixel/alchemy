@@ -323,7 +323,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       for (i = 0; i != JUDGMENT_SHIELD_FORWARD_OBJECTS; i++) {
         IO_WRITE_QUEUE_PUSH(
             OBJ_TILES(
-                (struct Sprite *)state->sprites[gJudgment_BurstPictures[i]]),
+                (struct Sprite *)state->sprites[gJudgment_ShieldSprites[i]]),
             (u32)(cells + i * OBJ_32X32_8BPP_BYTES),
             DMA_COPY_WORDS(OBJ_32X32_8BPP_BYTES / 4));
       }
@@ -339,8 +339,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         BattleEffect_DrawShadedCircles(state->sheet + JUDGMENT_SHEET_GLOW, size,
                                        FIXED_ONE);
       }
-      Canvas_BlitAtFoot(state->sheet + JUDGMENT_SHEET_GLOW, JUDGMENT_BURST_X,
-                        JUDGMENT_BURST_Y, size);
+      Canvas_BlitMirroredQuarters(state->sheet + JUDGMENT_SHEET_GLOW,
+                                  JUDGMENT_BURST_X, JUDGMENT_BURST_Y, size);
     }
     // Shards flicker about it, ever further out.
     if (frame >= 116 && frame < JUDGMENT_BEAM_FRAME) {

@@ -468,52 +468,51 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       if (frame >= REAPER_RISE_FRAME) {
         if (frame < REAPER_SWING_FRAME) {
           draw[0](canvas, state->sheet,
-                  overflow + gCastingImpact_PictureX[args->side * 7],
-                  gCastingImpact_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
+                  overflow + gReaper_PictureX[args->side * 7],
+                  gReaper_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
                   REAPER_SHEET_RAISED_HEIGHT);
         } else {
           if (frame <= REAPER_SWING_FRAME + 3)
             draw[0](canvas, state->sheet,
-                    overflow + gCastingImpact_PictureX[args->side * 7],
-                    gCastingImpact_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
+                    overflow + gReaper_PictureX[args->side * 7],
+                    gReaper_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
                     REAPER_SHEET_RAISED_HEIGHT);
           EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet, REAPER_SHEET_SWUNG,
-                              overflow +
-                                  gCastingImpact_PictureX[args->side * 7 + 1],
-                              gCastingImpact_PictureY[1]);
+                              overflow + gReaper_PictureX[args->side * 7 + 1],
+                              gReaper_PictureY[1]);
           if (frame >= REAPER_SWING_FRAME && frame <= REAPER_SWING_FRAME + 1)
             Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                                  CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           if (frame >= REAPER_SWING_FRAME + 2 &&
               frame <= REAPER_SWING_FRAME + 3)
-            EFFECT_DRAW_PICTURE(
-                draw[0], canvas, state->sheet, REAPER_SHEET_CRESCENT,
-                overflow + gCastingImpact_PictureX[args->side * 7 + 2],
-                gCastingImpact_PictureY[2]);
+            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
+                                REAPER_SHEET_CRESCENT,
+                                overflow + gReaper_PictureX[args->side * 7 + 2],
+                                gReaper_PictureY[2]);
           if (frame >= REAPER_SWING_FRAME + 4 &&
               frame <= REAPER_SWING_FRAME + 5)
-            EFFECT_DRAW_PICTURE(
-                draw[0], canvas, Ram_MapCellBuffer, RED_CRESCENT_FADE_A,
-                overflow + gCastingImpact_PictureX[args->side * 7 + 3],
-                gCastingImpact_PictureY[3]);
+            EFFECT_DRAW_PICTURE(draw[0], canvas, Ram_MapCellBuffer,
+                                RED_CRESCENT_FADE_A,
+                                overflow + gReaper_PictureX[args->side * 7 + 3],
+                                gReaper_PictureY[3]);
           if (frame >= REAPER_SWING_FRAME + 6 &&
               frame <= REAPER_SWING_FRAME + 7)
-            EFFECT_DRAW_PICTURE(
-                draw[0], canvas, Ram_MapCellBuffer, RED_CRESCENT_FADE_B,
-                overflow + gCastingImpact_PictureX[args->side * 7 + 4],
-                gCastingImpact_PictureY[4]);
+            EFFECT_DRAW_PICTURE(draw[0], canvas, Ram_MapCellBuffer,
+                                RED_CRESCENT_FADE_B,
+                                overflow + gReaper_PictureX[args->side * 7 + 4],
+                                gReaper_PictureY[4]);
           if (frame >= REAPER_SWING_FRAME + 8 &&
               frame <= REAPER_SWING_FRAME + 9)
-            EFFECT_DRAW_PICTURE(
-                draw[0], canvas, Ram_MapCellBuffer, RED_CRESCENT_FADE_C,
-                overflow + gCastingImpact_PictureX[args->side * 7 + 5],
-                gCastingImpact_PictureY[5]);
+            EFFECT_DRAW_PICTURE(draw[0], canvas, Ram_MapCellBuffer,
+                                RED_CRESCENT_FADE_C,
+                                overflow + gReaper_PictureX[args->side * 7 + 5],
+                                gReaper_PictureY[5]);
           if (frame >= REAPER_SWING_FRAME + 10 &&
               frame <= REAPER_SWING_FRAME + 11)
-            EFFECT_DRAW_PICTURE(
-                draw[0], canvas, Ram_MapCellBuffer, RED_CRESCENT_FADE_D,
-                overflow + gCastingImpact_PictureX[args->side * 7 + 6],
-                gCastingImpact_PictureY[6]);
+            EFFECT_DRAW_PICTURE(draw[0], canvas, Ram_MapCellBuffer,
+                                RED_CRESCENT_FADE_D,
+                                overflow + gReaper_PictureX[args->side * 7 + 6],
+                                gReaper_PictureY[6]);
         }
       }
     }

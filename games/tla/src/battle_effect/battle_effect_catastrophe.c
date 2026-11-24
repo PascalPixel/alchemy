@@ -1120,7 +1120,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       } else {
         radius = 38;
       }
-      Canvas_BlitAtFoot(cellBuffer, 62, y, radius);
+      Canvas_BlitMirroredQuarters(cellBuffer, 62, y, radius);
     }
     EFFECT_PRESENT_CANVAS(state);
     frame++;
@@ -1269,7 +1269,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           radius = 64;
         }
         top = ry - radius / 2 + CATASTROPHE_ORB_CENTER;
-        Canvas_BlitAtFoot(state->sheet, CATASTROPHE_ORB_CENTER, top, radius);
+        Canvas_BlitMirroredQuarters(state->sheet, CATASTROPHE_ORB_CENTER, top,
+                                    radius);
         // From frame 96 glints sparkle around the orb.
         if (frame > 95) {
           {

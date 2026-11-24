@@ -448,7 +448,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           model->scrollU = (frame / 4) & 63;
           model->scrollV = frame & 63;
           model->shade = shade;
-          model->flags = 3;
+          model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
           Render_ProjectVertices(cells, projected,
                                  DJINNI_CHARGE_FIREBALL_VERTICES);
           Render_DrawModelList(model);

@@ -270,8 +270,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-extern const struct Scale gFormationObjects_Scale;
-extern const struct Scale gFormationObjects_LargeScale;
+extern const struct Scale gSummonFormation_Scale;
+extern const struct Scale gSummonFormation_LargeScale;
 
 /// The grid formations' sprites stand this many pixels apart.
 #define FORMATION_SPACING 32
@@ -280,8 +280,8 @@ extern const struct Scale gFormationObjects_LargeScale;
 /// its origin in 16.16 pixels.
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
-  struct Scale normal = gFormationObjects_Scale;
-  struct Scale big = gFormationObjects_LargeScale;
+  struct Scale normal = gSummonFormation_Scale;
+  struct Scale big = gSummonFormation_LargeScale;
   FIXED pos[4];
   s32 i;
   void **objects;
@@ -306,36 +306,36 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     break;
   case SUMMON_FORMATION_NEREID:
     for (i = 0; i != NEREID_OBJECTS; i++) {
-      pos[0] = INTtoFIXED(gHelmSplitter_TwelveX[i]) + x - toFIXED(16);
-      pos[2] = INTtoFIXED(gHelmSplitter_TwelveZ[i]) + z - toFIXED(32);
+      pos[0] = INTtoFIXED(gSummonFormation_NereidX[i]) + x - toFIXED(16);
+      pos[2] = INTtoFIXED(gSummonFormation_NereidZ[i]) + z - toFIXED(32);
       Render_ApplyProjectedPlacementFar(state->sprites[i], pos, &normal.x, 0);
     }
     break;
   case SUMMON_FORMATION_CYBELE:
     for (i = 0; i != 8; i++) {
-      pos[0] = INTtoFIXED(gHelmSplitter_RightEightX[i]) + x + toFIXED(16);
-      pos[2] = INTtoFIXED(gHelmSplitter_RightEightZ[i]) + z;
+      pos[0] = INTtoFIXED(gSummonFormation_CybeleX[i]) + x + toFIXED(16);
+      pos[2] = INTtoFIXED(gSummonFormation_CybeleZ[i]) + z;
       Render_ApplyProjectedPlacementFar(state->sprites[i], pos, &normal.x, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT_ALTERNATE:
     for (i = 0; i != 8; i++) {
-      pos[0] = INTtoFIXED(gFormationObjects_X[i]) + x;
-      pos[2] = INTtoFIXED(gFormationObjects_Z[i]) + z;
+      pos[0] = INTtoFIXED(gSummonFormation_TiamatAlternateX[i]) + x;
+      pos[2] = INTtoFIXED(gSummonFormation_TiamatAlternateZ[i]) + z;
       Render_ApplyProjectedPlacementFar(state->sprites[i], pos, &normal.x, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT:
     for (i = 0; i != 8; i++) {
-      pos[0] = INTtoFIXED(gHelmSplitter_SmallEightX[i]) + x;
-      pos[2] = INTtoFIXED(gHelmSplitter_SmallEightZ[i]) + z;
+      pos[0] = INTtoFIXED(gSummonFormation_TiamatX[i]) + x;
+      pos[2] = INTtoFIXED(gSummonFormation_TiamatZ[i]) + z;
       Render_ApplyProjectedPlacementFar(state->sprites[i], pos, &big.x, 0);
     }
     break;
   case SUMMON_FORMATION_MEGAERA:
     for (i = 0; i != MEGAERA_OBJECTS; i++) {
-      pos[0] = INTtoFIXED(gFormationObjects_WideX[i]) + x;
-      pos[2] = INTtoFIXED(gFormationObjects_WideZ[i]) + z;
+      pos[0] = INTtoFIXED(gSummonFormation_MegaeraX[i]) + x;
+      pos[2] = INTtoFIXED(gSummonFormation_MegaeraZ[i]) + z;
       Render_ApplyProjectedPlacementFar(state->sprites[i], pos, &normal.x, 0);
     }
     break;
@@ -443,21 +443,18 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
         picture = 0;
       // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-      width = gHelmSplitter_ImpactBurstPictureWidths[picture];
-      height = gHelmSplitter_ImpactBurstPictureHeights[picture];
-      maxBlend(canvas,
-               state->sheet + gHelmSplitter_ImpactBurstPictures[picture],
+      width = gImpactBurst_PictureWidths[picture];
+      height = gImpactBurst_PictureHeights[picture];
+      maxBlend(canvas, state->sheet + gImpactBurst_Pictures[picture],
                FIXEDtoINT(x) - (width >> 1), FIXEDtoINT(y) - (height >> 1),
                width, height);
 #else
-      maxBlend(
-          canvas, state->sheet + gHelmSplitter_ImpactBurstPictures[picture],
-          (FIXEDtoINT(x)) -
-              ((width = gHelmSplitter_ImpactBurstPictureWidths[picture]) >> 1),
-          (FIXEDtoINT(y)) -
-              ((height = gHelmSplitter_ImpactBurstPictureHeights[picture]) >>
-               1),
-          width, height);
+      maxBlend(canvas, state->sheet + gImpactBurst_Pictures[picture],
+               (FIXEDtoINT(x)) -
+                   ((width = gImpactBurst_PictureWidths[picture]) >> 1),
+               (FIXEDtoINT(y)) -
+                   ((height = gImpactBurst_PictureHeights[picture]) >> 1),
+               width, height);
 #endif
     }
 

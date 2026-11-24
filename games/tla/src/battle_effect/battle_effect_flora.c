@@ -180,7 +180,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   motes = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  RagingHeat_FillGradientCanvas();
+  BattleEffect_FillWhiteBand();
   state->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // The battle flashes away; then the sky, the petals and Flora load.
@@ -343,8 +343,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       s32 k = Random16() & 3;
       s32 n = gFlora_PetalSizes[k] * 2;
 
-      Canvas_BlitAtFoot(source + gFlora_PetalPictures[k], FLORA_GLOW_X,
-                        FLORA_GLOW_Y, n);
+      Canvas_BlitMirroredQuarters(source + gFlora_PetalPictures[k],
+                                  FLORA_GLOW_X, FLORA_GLOW_Y, n);
     }
     // Flora fades in from white, a level a frame.
     shown = frame - FLORA_APPEAR_FRAME;

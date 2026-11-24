@@ -521,8 +521,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           glowX = FIXEDtoINT(Trig_Sin(angle) * radius) + 72;
           glowY = 32 - FIXEDtoINT(Trig_Cos(angle) * radius);
         }
-        Canvas_BlitAtFoot(state->sheet + THOR_HAMMER_GLOW_PICTURE, glowX, glowY,
-                          THOR_HAMMER_GLOW_PICTURE_HEIGHT);
+        Canvas_BlitMirroredQuarters(state->sheet + THOR_HAMMER_GLOW_PICTURE,
+                                    glowX, glowY,
+                                    THOR_HAMMER_GLOW_PICTURE_HEIGHT);
         // Sparks fly off the glow.
         spawned = 0;
         for (i = 0, spark = THOR_PARTICLES; i != THOR_SPARK_COUNT;

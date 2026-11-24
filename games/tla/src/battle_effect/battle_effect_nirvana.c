@@ -909,7 +909,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           texture.logHeight = 5;
           texture.pixels = (const u8 *)state->sheet;
           model->kind = MODEL_SHADED_MAX;
-          model->flags = 3;
+          model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
           model->vertices = vertices;
           model->scrollU = 0;
           model->texture = &texture;
@@ -933,7 +933,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           model->kind = MODEL_SHADED_ADDITIVE;
           model->scrollU = 0;
           model->scrollV = (frame / 2) & 31;
-          model->flags = 2;
+          model->flags = MODEL_ONE_SIDED;
           Render_DrawModelList(model);
           Matrix_Pop();
 

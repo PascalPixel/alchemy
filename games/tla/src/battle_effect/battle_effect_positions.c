@@ -30,7 +30,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 
 /// Unused: reads the held keys when the first target is an enemy and does
 /// nothing with them.
-UNUSED void BattleEffect_ProbeKeysForExtendedActor(void) {
+UNUSED void BattleEffect_ReadKeysForEnemyTarget(void) {
   struct BattleEffectState *state;
   struct BattleEffectParams *args;
 
@@ -69,7 +69,7 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
     BattleEffect_RunCastingImpact(args, impact);
   } else if (kind == EFFECT_ID_CRITICAL_OFFSET + ATTACK_EFFECT_BURST ||
              kind == ATTACK_EFFECT_BURST) {
-    BattleEffect_RunCanvasModeByCount(args);
+    BattleEffect_RunBallAttack(args);
   } else if (kind >= EFFECT_ID_CRITICAL_OFFSET) {
     BattleEffect_RunCriticalHit(args);
   } else {

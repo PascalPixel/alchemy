@@ -225,6 +225,7 @@ enum {
 #include "field/field_effect.h"
 #include "graphics/resource.h"
 #include "system/affine.h"
+#include "field/object.h"
 #include "graphics/vram_tab.h"
 #include "field/call.h"
 #include "field/map_grid.h"
@@ -568,7 +569,7 @@ void GabombaStatue_LashRope(void) {
   s32 direction;
   s32 i;
 
-  if (Rope_GetState(FIRST_ROPE) == 1) { // tied from post to post
+  if (Rope_GetState(FIRST_ROPE) == ROPE_THROWN) {
     direction = gGabombaStatue_CogDirection;
     GabombaStatue_TurnCogs(0);
     Event_SetFlag(FLAG_COGS_STOPPED);

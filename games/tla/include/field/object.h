@@ -91,6 +91,11 @@ s32 Field_ClimbUp(void);
 /// tying, coiling and swinging them, laying their nodes and drawing them.
 void Rope_Initialize(void);
 void Rope_Place(s32 index, s32 flag, s32 firstId, s32 secondId);
+/// A rope's state (RopeSlot.state), which Rope_GetState returns.
+enum RopeSlotState {
+  ROPE_COILED, ///< at its first post, or pulled back there
+  ROPE_THROWN  ///< thrown or laid tied from post to post
+};
 s32 Rope_GetState(s32 index);
 s32 Rope_FindById(s32 id, s32 *value, s32 *index);
 void Rope_Lash(s32 index, s32 fromId, s32 toId);

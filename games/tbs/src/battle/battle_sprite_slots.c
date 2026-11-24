@@ -25,9 +25,6 @@ void BattleObject_PutKeepingPoses(void) {
 /// Returns the palette of unit id's battle object.
 s32 BattleObject_GetPalette(s32 id) { return BattleObject_Get(id)->palette; }
 
-/// The battle has six enemy sprite slots; a large enemy takes two side by
-/// side, a small one (BattleSprite_IsSmall) one.
-#define ENEMY_SPRITE_SLOTS 6
 /// Each enemy sprite slot owns 16 KB of Ram_EnemySpriteSlots.
 #define ENEMY_SPRITE_SLOT_SIZE (16 * 1024)
 
@@ -188,5 +185,4 @@ s32 BattleUnit_GetWeaponSprite(s32 unitId) {
   return weaponSprite;
 }
 
-#undef ENEMY_SPRITE_SLOTS
 #undef ENEMY_SPRITE_SLOT_SIZE

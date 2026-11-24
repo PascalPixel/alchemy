@@ -465,6 +465,8 @@ enum SpriteId {
   SPRITE_METAL_FEATHER,
   SPRITE_SEA_ROCK,
   SPRITE_STONE_BASIN,
+  /// A white quarter disc, 32 pixels across, held (white_quarter_disc.png).
+  SPRITE_WHITE_QUARTER_DISC,
   SPRITE_STONE_BLOCK = 428,
   SPRITE_COILED_DRAGON_STATUE,
   /// A grey stone block, concentric squares on its face, that carries a

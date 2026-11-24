@@ -37,7 +37,7 @@
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "game/item.h"
-#include "graphics/output.h"
+#include "graphics/window_sprite_list.h"
 #include "graphics/glyph.h"
 #include "graphics/graphics.h"
 #include "graphics/resource.h"

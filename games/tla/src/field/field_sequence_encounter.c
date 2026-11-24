@@ -224,7 +224,7 @@ u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot) {
 /// Returns the formation of Djinni battle djinni, which the table gives as a
 /// zone and slot.
 u16 Encounter_GetDjinnFormation(s32 djinni) {
-  u16 *zoneAndSlot = (u16 *)(gEncounter_AreaEntryTable + djinni * 4);
+  u16 *zoneAndSlot = (u16 *)(gEncounter_DjinnBattles + djinni * 4);
 
 #ifdef UBFIX
   return Encounter_GetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);

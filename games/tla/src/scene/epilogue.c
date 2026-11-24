@@ -25,7 +25,7 @@
 #include "window/window.h"
 #include "graphics/resource.h"
 #include "scene_ids.h"
-#include "graphics/uiflow.h"
+#include "graphics/window_close.h"
 #include "field/call.h"
 #include "system/dma.h"
 #include "system/io_reg.h"

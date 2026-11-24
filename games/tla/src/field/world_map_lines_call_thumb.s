@@ -1,4 +1,4 @@
-@ Why assembly: Matrix_UpdateVertices (world_map_lines.c) calls its target in ip through this
+@ Why assembly: WorldMap_UpdateAffineLines (world_map_lines.c) calls its target in ip through this
 @ stub. The return address it sets has the Thumb bit, so a target that returns
 @ by pop {pc} comes back in Thumb, to the bx pc that switches to ARM again: a
 @ mode switch inside a function, in a linkage no procedure-call standard

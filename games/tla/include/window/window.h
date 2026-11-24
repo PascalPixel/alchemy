@@ -16,7 +16,7 @@
 #include "tla_edition.h"
 #include "graphics/oam.h"
 #include "graphics/render_input.h"
-#include "graphics/uiflow.h"
+#include "graphics/window_close.h"
 #include "static_assert.h"
 
 /// The window sprites WindowState keeps, free or in a window.

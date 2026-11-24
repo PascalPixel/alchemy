@@ -73,7 +73,7 @@ void Message_UpdateAll(void) {
             // pending is 0 here: it clears the message.
             message->x = pending;
             message->y = pending;
-            message->entry = pending;
+            message->textIndex = pending;
             message->countdown = pending;
             message->colour = pending;
             message->outline = pending;
@@ -138,9 +138,9 @@ s32 Message_Type(struct Message *message) {
     glyphsLeft = frameVBlanks * 5 + 3;
   }
 
-  if (message->transition != 0) {
+  if (message->scrollFrames != 0) {
     Text_ScrollCanvasUp(1);
-    message->transition = (s16)message->transition - 1;
+    message->scrollFrames = (s16)message->scrollFrames - 1;
     return MESSAGE_STEP_RUNNING;
   }
   if (gInput.held == 0 && message->glyphDelay != 0) {
@@ -151,7 +151,7 @@ s32 Message_Type(struct Message *message) {
   do {
     code = TEXT_END;
     if (message->ended == 0)
-      code = state->textBuffer[message->entry];
+      code = state->textBuffer[message->textIndex];
 
 #if LANGUAGE != LANGUAGE_JAPANESE
     if (code < TEXT_COMMANDS || code == TEXT_EM_DASH) {
@@ -193,7 +193,7 @@ s32 Message_Type(struct Message *message) {
           break;
         }
         window = message->window;
-        entryIndex = message->entry;
+        entryIndex = message->textIndex;
         x = (s16)window->x;
         y = (s16)window->y;
         oldWidth = window->width;
@@ -273,20 +273,20 @@ s32 Message_Type(struct Message *message) {
         break;
 
       case TEXT_COLOR:
-        message->entry = (message->entry + 1) & TEXT_BUFFER_MASK;
-        message->colour = state->textBuffer[message->entry];
+        message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
+        message->colour = state->textBuffer[message->textIndex];
         Message_ApplyStyle(message);
         break;
 
       case TEXT_OUTLINE:
-        message->entry = (message->entry + 1) & TEXT_BUFFER_MASK;
-        message->outline = state->textBuffer[message->entry];
+        message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
+        message->outline = state->textBuffer[message->textIndex];
         Message_ApplyStyle(message);
         break;
 
       case TEXT_LINE_SPACING:
-        message->entry = (message->entry + 1) & TEXT_BUFFER_MASK;
-        message->lineSpacing = state->textBuffer[message->entry];
+        message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
+        message->lineSpacing = state->textBuffer[message->textIndex];
         Message_ApplyStyle(message);
         break;
 
@@ -298,10 +298,10 @@ s32 Message_Type(struct Message *message) {
         break;
 
       case TEXT_WINDOW_STATE:
-        message->entry = (message->entry + 1) & TEXT_BUFFER_MASK;
-        message->window->animation = state->textBuffer[message->entry];
+        message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
+        message->window->animation = state->textBuffer[message->textIndex];
         message->countdown = 11;
-        message->entry = (message->entry + 1) & TEXT_BUFFER_MASK;
+        message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
         break;
 
       case TEXT_END:
@@ -316,7 +316,7 @@ s32 Message_Type(struct Message *message) {
       pixelX = (message->x + 128) / 256;
       pixelY = (message->y + 128) / 256;
       voiceGap = gMessageSpeed_VoiceGaps[TEXT_SPEED];
-      nextEntryIndex = message->entry;
+      nextEntryIndex = message->textIndex;
 #if !TLA_PATCH_2
       if (state->mindRead != 0)
         pixelX += 8;
@@ -326,10 +326,10 @@ s32 Message_Type(struct Message *message) {
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
       if (nextCode == TEXT_MARK_VOICED) {
         code |= TEXT_CODE_VOICED;
-        message->entry = (message->entry + 1) & TEXT_BUFFER_MASK;
+        message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
       } else if (nextCode == TEXT_MARK_SEMIVOICED) {
         code |= TEXT_CODE_SEMIVOICED;
-        message->entry = (message->entry + 1) & TEXT_BUFFER_MASK;
+        message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
       }
 #endif
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -342,11 +342,11 @@ s32 Message_Type(struct Message *message) {
         if (state->outline == TEXT_STYLE_OUTLINED) {
           if ((u16)pairWidth <= 14) {
             code |= nextCode << 8;
-            message->entry = (message->entry + 1) & TEXT_BUFFER_MASK;
+            message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
           }
         } else if ((u16)pairWidth <= 15) {
           code |= nextCode << 8;
-          message->entry = (message->entry + 1) & TEXT_BUFFER_MASK;
+          message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
         }
       }
 #else
@@ -355,7 +355,7 @@ s32 Message_Type(struct Message *message) {
           (u16)(gFont_Glyphs[code - TEXT_SPACE].width +
                 gFont_Glyphs[nextCode - TEXT_SPACE].width) <= 15) {
         code |= nextCode << 8;
-        message->entry = (message->entry + 1) & TEXT_BUFFER_MASK;
+        message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
       }
 #endif
 #endif
@@ -393,7 +393,7 @@ s32 Message_Type(struct Message *message) {
       if (message->countdown != 0)
         continue;
     }
-    message->entry = (message->entry + 1) & TEXT_BUFFER_MASK;
+    message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
   } while (--glyphsLeft != 0);
 
   return MESSAGE_STEP_RUNNING;

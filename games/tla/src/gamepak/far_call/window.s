@@ -100,8 +100,8 @@ FarCall_WindowTable:
 	export Save_WriteFileFar, Save_WriteFile
 	export Save_ScanFileSummariesFar, Save_ScanFileSummaries
 	export NameEntry_EditMemberNameFar, NameEntry_EditMemberName
-	export Resource_CopyFixedBlockBFar, Resource_CopyFixedBlockB
-	export Resource_CopyFixedBlockAFar, Resource_CopyFixedBlockA
+	export PointingHand_LoadIntoSlotFar, PointingHand_LoadIntoSlot
+	export NameCaret_LoadIntoSlotFar, NameCaret_LoadIntoSlot
 	export SelectionMenu_SetPositionFar, SelectionMenu_SetPosition
 	export DebugBrowser_IconsFar, DebugBrowser_Icons
 	export DebugBrowser_PortraitsFar, DebugBrowser_Portraits
@@ -119,7 +119,7 @@ FarCall_WindowTable:
 	export Menu_SelectCoinsOrMedalsFar, Menu_SelectCoinsOrMedals
 	export Screens_ReturnZeroFar, Screens_ReturnZero
 	export YesNoMenu_RunAtFar, YesNoMenu_RunAt
-	export Resource_LoadFixedBlockBIntoFreeSlotFar, Resource_LoadFixedBlockBIntoFreeSlot
+	export PointingHand_LoadIntoFreeSlotFar, PointingHand_LoadIntoFreeSlot
 	export Text_MeasureMessageFar, Text_MeasureMessage
 	export Window_HighlightRectFar, Window_HighlightRect
 	export Ability_LoadGlyphFar, Ability_LoadGlyph

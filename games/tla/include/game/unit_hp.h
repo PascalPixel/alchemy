@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_OWNER_VALUE_H
-#define ALCHEMY_OWNER_VALUE_H
+#ifndef ALCHEMY_UNIT_HP_H
+#define ALCHEMY_UNIT_HP_H
 
 /// @file
 /// Adding to or taking from a unit's HP.

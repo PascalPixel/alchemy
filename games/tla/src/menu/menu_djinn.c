@@ -529,11 +529,13 @@ void Menu_OpenBackdropScreen(void) {
   entry = VramCache_FindFreeEntry();
   if (entry < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(entry, ICON_TILE_BYTES, RESOURCE_SHOP_GEM_TILES);
-    icon = WindowSprite_CreateFar(entry, OUTPUT_SIZE_16X16, window, 0, 0);
+    icon =
+        WindowSprite_CreateFar(entry, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
     icon->motion = ICON_HIDDEN;
     menu->pageArrows[0] = icon;
     icon->sprite.oam.matrix |= 8;
-    icon = WindowSprite_CreateFar(entry, OUTPUT_SIZE_16X16, window, 0, 0);
+    icon =
+        WindowSprite_CreateFar(entry, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
     icon->motion = ICON_HIDDEN;
     menu->pageArrows[1] = icon;
   }
@@ -808,7 +810,7 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
           entry++;
         } while (column != 0);
       }
-      UiRender_MarkRow(tiles, y);
+      WINDOW_MARK_TILEMAP_ROW(tiles, y);
 
       height--;
       y++;

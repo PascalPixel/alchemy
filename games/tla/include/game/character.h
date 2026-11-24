@@ -137,7 +137,7 @@ STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 72);
 /// attacks with, its level in each element, and its base power and resistance
 /// in each.
 struct EnemyElementPreset {
-  s32 first; ///< the element it attacks with (Enemy_GetAttackElement)
+  s32 attackElement; ///< the element it attacks with (Enemy_GetAttackElement)
   /// Its level in each element; Unit_GetElementLevels returns ten times each.
   u8 elementLevels[4];
   /// Its base power and resistance in each element, as

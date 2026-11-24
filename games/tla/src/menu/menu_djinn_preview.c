@@ -383,7 +383,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
                                   list->width - pageCounts[page] - 3, -1, 0);
         Window_SetTilemapEntryFar((s32)list, PAGE_ARROW_RIGHT, list->width - 2,
                                   -1, 0);
-        UiRender_MarkRow(state, list->y);
+        WINDOW_MARK_TILEMAP_ROW(state, list->y);
       }
     }
 
@@ -594,7 +594,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
                                 window->width - pageCounts[side] - 3, -1, 0);
       Window_SetTilemapEntryFar((s32)window, PAGE_ARROW_RIGHT,
                                 window->width - 2, -1, 0);
-      UiRender_MarkRow(render, window->y);
+      WINDOW_MARK_TILEMAP_ROW(render, window->y);
     }
     frame++;
     // The preview's hop step, which no figure on this page uses.

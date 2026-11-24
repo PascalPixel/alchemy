@@ -415,8 +415,8 @@ Resource_DirectoryTable:
 	resource TornadoSheet, BattleEffect_TornadoSheet
 	resource CrystalSheet, BattleEffect_CrystalSheet
 	resource LightningPillarSheet, BattleEffect_LightningPillarSheet
-	resource StagedParticlePath, BattleEffect_StagedParticlePath
-	resource DualStreamPath, BattleEffect_DualStreamPath
+	resource AtalantaPath, BattleEffect_AtalantaPath
+	resource DragonCloudFlamePath, BattleEffect_DragonCloudFlamePath
 	resource PerspectiveDataA, Field_PerspectiveDataA
 	resource DefaultMapCells, Field_DefaultMapCells
 	resource DefaultMapEntrances, Field_DefaultMapEntrances
@@ -524,7 +524,7 @@ Resource_DirectoryTable:
 	resource ShopDownArrowTiles, MenuSprites_ShopDownArrowTiles
 	resource ItemMenuTilesA, MenuSprites_ItemMenuTilesA
 	resource ItemMenuTilesB, MenuSprites_ItemMenuTilesB
-	resource UiFixedBlockATiles, MenuSprites_UiFixedBlockATiles
+	resource NameCaretTiles, MenuSprites_NameCaretTiles
 	resource BlueDevilSprites, Monster_BlueDevilSprites
 	resource PinkBruteSprites, Monster_PinkBruteSprites
 	resource ClubTrollSprites, Monster_ClubTrollSprites

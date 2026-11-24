@@ -10,7 +10,7 @@
 /// object, and these parts are ours, cut where The Broken Seal's are.
 
 #include "field_internal.h"
-#include "graphics/output.h"
+#include "graphics/window_sprite_list.h"
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").

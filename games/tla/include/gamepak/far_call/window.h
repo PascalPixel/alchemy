@@ -41,7 +41,7 @@ void Message_CloseFinishedWindowsFar(void);
 s32 YesNoMenu_RunFar(s32 bottom, s32 message, s32 labelWidth, s32 selection);
 /// Loads the pointing hand cursor's tiles into a free VRAM slot and returns the
 /// slot.
-s32 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
+s32 PointingHand_LoadIntoFreeSlotFar(void);
 /// Clears a window's contents: redraws it empty and releases its sprites.
 void WindowSprite_PrepareForRedrawFar(void *window);
 /// Shows a message in a window centred on the screen, waits until it is typed

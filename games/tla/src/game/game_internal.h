@@ -29,8 +29,8 @@
 #include "system/scene.h"
 #include "system/main_routine_state.h"
 #include "game/game_flags.h"
-#include "game/owner_state.h"
-#include "game/owner_value.h"
+#include "game/class_djinn.h"
+#include "game/unit_hp.h"
 #include "game/item.h"
 #include "game/inventory.h"
 #include "battle/battle_type.h"
@@ -108,7 +108,7 @@ struct StatState {
 };
 
 /// How many of each rare item the shops may still sell, 0 to 99, by counter
-/// number (gItem_ArtifactSlotTable; RareItemStock_Adjust).
+/// number (gItem_RareItemCounters; RareItemStock_Adjust).
 extern u8 gRareItemStock[ITEM_COUNTER_COUNT];
 
 #endif

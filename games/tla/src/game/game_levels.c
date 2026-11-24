@@ -69,7 +69,7 @@ s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
 /// Rebuilds a character's Psynergy list: what it learned for good stays, in
 /// order, then come its class's Psynergy up to its level and its equipped
 /// items' Psynergy, while the list has room.
-s32 Owner_UpdateClassActions(s32 owner) {
+s32 Unit_RebuildPsynergyList(s32 owner) {
   struct Unit *unit;
   struct PsynergyEntry *abilities;
   struct ClassDefinition *classDefinition;
@@ -255,7 +255,7 @@ void Party_InitializeCharacters(void) {
   }
 
   // gCharacter_StartingEquipUnitIds lists the characters given starting
-  // equipment, ended by -1 (artifact_slots.c).
+  // equipment, ended by -1 (rare_item_counters.c).
   if (*startingUnitId != -1) {
     for (; *startingUnitId != -1; startingUnitId++) {
       unit = Unit_Get(*startingUnitId);

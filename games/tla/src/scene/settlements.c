@@ -33,7 +33,7 @@
 #include "system/frame.h"
 #include "field/field_event.h"
 #include "field/field.h"
-#include "graphics/palette_snapshots.h"
+#include "graphics/palette_cycles.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

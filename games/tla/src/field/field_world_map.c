@@ -66,7 +66,7 @@ enum WorldMapGraphicsResource {
 
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
 /// camera state, the projection, the per-scanline ground plane routine in RAM
-/// (Matrix_UpdateVertices) and its first frame, and the per-frame view and
+/// (WorldMap_UpdateAffineLines) and its first frame, and the per-frame view and
 /// HBlank updates.
 UNREAD_RESULT WorldMap_InitializePerspective(void) {
   struct WorldMapView *perspective;
@@ -154,8 +154,8 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     Iwram_TransformVector(&eyeOffset, camera->eye);
     Matrix_Initialize();
     Matrix_SetLookAt(camera->eye, cameraPosition);
-    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, Matrix_UpdateVerticesCode,
-                     Matrix_UpdateVerticesCodeSize);
+    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, WorldMap_UpdateAffineLinesCode,
+                     WorldMap_UpdateAffineLinesCodeSize);
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(perspective->pitch),
                                                   Trig_Sin(perspective->pitch)),
                                 cameraPosition, affineState->scanlines);

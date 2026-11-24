@@ -47,7 +47,7 @@
 #include "fixed_math.h"
 #include "system/heap_release.h"
 #include "battle/battle_unit.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "macros.h"
 #include "system/system_call.h"
 #include "window/cursor.h"
@@ -987,8 +987,8 @@ extern u8 MsgFieldPasswordKana[];
 void Text_DrawMessageAsTiles(s32 character, struct Window *position,
                              u32 offsetX, u32 offsetY);
 u16 Clear_CalculatePasswordCrc16(u32 length, u8 *p);
-void Resource_CopyFixedBlockB(void);
-void Resource_CopyFixedBlockA(void);
+void PointingHand_LoadIntoSlot(void);
+void NameCaret_LoadIntoSlot(void);
 void Graphics_ExpandVramTilesByColorTable(void *vram);
 void MenuCursor_Advance(struct MenuCursor *cursor);
 void MenuCursor_Set(struct MenuCursor *cursor, s32 x, s32 y, s32 frames);
@@ -1182,16 +1182,16 @@ s32 Clear_EnterPassword(void) {
   }
   entry = VramCache_FindFreeEntry();
   if (entry < VRAM_CACHE_ENTRY_COUNT) {
-    Resource_CopyFixedBlockB();
-    sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
+    PointingHand_LoadIntoSlot();
+    sprite = WindowSprite_Create(entry, WINDOW_SPRITE_SIZE_16X16,
                                  (struct Window *)window, 0, 0);
     Cursor_Attach(&cursorStore, sprite);
     Cursor_Place(&cursorStore, (s16)window->x * 8 - 2, (s16)window->y * 8 + 12);
   }
   entry = VramCache_FindFreeEntry();
   if (entry < VRAM_CACHE_ENTRY_COUNT) {
-    Resource_CopyFixedBlockA();
-    sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
+    NameCaret_LoadIntoSlot();
+    sprite = WindowSprite_Create(entry, WINDOW_SPRITE_SIZE_16X16,
                                  (struct Window *)window, 0, 0);
     Cursor_Attach(&gridStore, sprite);
     sprite->depth = OAM_DEPTH_FRONT;

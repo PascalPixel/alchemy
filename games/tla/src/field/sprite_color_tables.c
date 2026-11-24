@@ -10,7 +10,7 @@
 // clang-format off
 /// The five channel swaps, in the order SPRITE_COLOR_GRB to SPRITE_COLOR_BRG
 /// name them; a sprite loaded in a colour variant, 1 to 5, takes its variant's.
-const u8 gResourceSlot_ConversionTables[5][256] = {
+const u8 gSpriteColorTables[5][256] = {
     { // Red and green swapped
         0, 1, 5, 33, 4, 2, 45, 186, 8, 135, 106, 21, 50, 13, 14, 15,
         32, 27, 181, 31, 125, 11, 22, 28, 34, 44, 96, 17, 23, 29, 35, 19,
@@ -105,7 +105,7 @@ const u8 gResourceSlot_ConversionTables[5][256] = {
 
 /// Greyscale: each colour to the grey of its brightness. CommandIcon_Load
 /// draws a command icon's top three rows of tiles through it when asked.
-const u8 gSpriteColorRemapTables[256] = {
+const u8 gSpriteColorGreyTable[256] = {
     0, 1, 219, 87, 14, 219, 219, 14, 219, 130, 130, 220, 217, 13, 14, 15,
     220, 87, 217, 13, 219, 220, 87, 222, 222, 219, 219, 87, 222, 222, 14, 13,
     220, 87, 222, 14, 217, 217, 217, 13, 219, 219, 220, 217, 219, 219, 220, 87,
@@ -127,7 +127,7 @@ const u8 gSpriteColorRemapTables[256] = {
 /// Three tints, each raising one channel to full, then a negative. The bottom
 /// rows of a wading sprite (SPRITE_FLAG_SHADED) are drawn through the first,
 /// the blue.
-const u8 gSpriteColorShadeTables[4][256] = {
+const u8 gSpriteColorTintTables[4][256] = {
     { // Blue raised to full
         0, 8, 186, 198, 15, 7, 194, 7, 8, 197, 204, 196, 183, 188, 166, 15,
         192, 197, 182, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 184,

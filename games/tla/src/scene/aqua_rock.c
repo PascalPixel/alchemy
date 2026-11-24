@@ -19,7 +19,7 @@
 #include "../field/actor_create_silhouette.c"
 
 #include "types.h"
-#include "graphics/output.h"
+#include "graphics/window_sprite_list.h"
 #include "system/system.h"
 #include "system/task.h"
 #include "system/ram_buffer.h"

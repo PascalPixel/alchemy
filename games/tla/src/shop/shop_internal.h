@@ -41,7 +41,7 @@
 #include "flags.h"
 #include "battle/battle_system.h"
 #include "game/game_flags.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "fixed_math.h"
 #include "field/field_event.h"
 #include "field/field_sequence.h"

@@ -69,7 +69,7 @@ Credits_DecodeBackgroundCodeSize = EndingImage_InnerProduct - Credits_DecodeBack
 EndingImage_DecodeCodeSize = EndingImage_DecodeEnd - EndingImage_DecodeCode;
 Model_DecodeCodeSize = Model_DecodeEnd - Model_DecodeCode;
 Grid_DrawOutlineCodeSize = Resource_GetMetadataRecordFar - Grid_DrawOutlineCode;
-Matrix_UpdateVerticesCodeSize = Render_ConvertMapCode - Matrix_UpdateVerticesCode;
+WorldMap_UpdateAffineLinesCodeSize = Render_ConvertMapCode - WorldMap_UpdateAffineLinesCode;
 
 MEMORY
 {

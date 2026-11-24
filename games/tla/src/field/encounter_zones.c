@@ -4,7 +4,7 @@
 /// (gArea_NameRules) and the scenes and entrances that take it
 /// (gScene_EncounterRules); a World Map zone's, its encounter regions and
 /// the battle environments that take it (gWorldMap_EncounterRules); a Djinni
-/// zone's, the Djinn whose battles it holds (gEncounter_AreaEntryTable).
+/// zone's, the Djinn whose battles it holds (gEncounter_DjinnBattles).
 
 #include "battle/formations.h"
 #include "field/encounter_zone.h"

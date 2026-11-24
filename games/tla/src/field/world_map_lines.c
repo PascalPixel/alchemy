@@ -1,10 +1,11 @@
 /// @file
 /// The World Map's tilt: each line of the screen draws the flat map at its
 /// own scale and turn, so the ground seems to stretch away to a horizon. An
-/// ARM routine, as The Broken Seal's Matrix_UpdateVertices: its caller copies
-/// the routine from Matrix_UpdateVerticesCode (world_map_lines_entry.s) into a
-/// heap slot and enters it in Thumb from there, so its stub Matrix_CallInThumb
-/// (world_map_lines_call_thumb.s) travels with it.
+/// ARM routine, as The Broken Seal's WorldMap_UpdateAffineLines: its caller
+/// copies the routine from WorldMap_UpdateAffineLinesCode
+/// (world_map_lines_entry.s) into a heap slot and enters it in Thumb from
+/// there, so its stub Matrix_CallInThumb (world_map_lines_call_thumb.s) travels
+/// with it.
 
 #include "types.h"
 #include "fixed_math.h"
@@ -83,8 +84,9 @@ s32 Matrix_CallInThumb(s32 x, s32 y);
 /// terms, whose rotation terms stay cached while the yaw
 /// (gScanlineAngle) is unchanged; affine receives each line's parameters twice,
 /// for BG2 and then BG3, as the HBlank DMA writes both.
-void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
-                           struct ScanVertex *line, struct BgAffine *affine) {
+void WorldMap_UpdateAffineLines(struct Vector3 *eye, struct Vector3 *target,
+                                struct ScanVertex *line,
+                                struct BgAffine *affine) {
   u32 angle;
   FIXED originX;
   FIXED originZ;

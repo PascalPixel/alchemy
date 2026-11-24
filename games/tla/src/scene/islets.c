@@ -74,7 +74,7 @@
 #include "system/io_reg.h"
 #include "system/io_write.h"
 #include "system/heap_release.h"
-#include "graphics/palette_snapshots.h"
+#include "graphics/palette_cycles.h"
 #include "scene/scene.h"
 #include "system/vector3.h"
 #include "shared/tables.h"
@@ -2400,7 +2400,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #include "../field/palette_cycle_initialize.c"
 
-#include "../field/palqueue_add.c"
+#include "../field/palette_cycle_add.c"
 
 /// Starts the palette cycles' task, as the surf moves while the party is on the
 /// Sea of Time Islet.

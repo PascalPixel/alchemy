@@ -14,7 +14,7 @@
 #include "field/map.h"
 #include "system/system.h"
 #include "system/frame.h"
-#include "graphics/palette_snapshots.h"
+#include "graphics/palette_cycles.h"
 #include "graphics/palette_buffers.h"
 #include "system/io_write_queue.h"
 #include "field/flag_call.h"
@@ -569,7 +569,7 @@ void BlendScript_Resume(void) { Task_ResumeAll(BlendScript_Run); }
 
 #include "palette_cycle_initialize.c"
 
-#include "palqueue_add.c"
+#include "palette_cycle_add.c"
 
 /// Unused: stops the palette cycles and frees their queue
 /// (HEAP_SLOT_PALETTE_CYCLES).
@@ -826,7 +826,7 @@ FIXED Terrain_GetBendDifferenceDiagonalHeight(const s8 *samples, s32 x, s32 y) {
   }
 }
 
-/// A raised or sunken rounded square: sample 1 where gTerrain_LerpWeightTable
+/// A raised or sunken rounded square: sample 1 where gTerrain_RoundedSquareMask
 /// is 1, sample 0 in the corners.
 FIXED Terrain_GetRoundedSquareHeight(const s8 *samples, s32 position, s32 row) {
   s32 start;
@@ -836,7 +836,7 @@ FIXED Terrain_GetRoundedSquareHeight(const s8 *samples, s32 position, s32 row) {
   // between.
   return start +
          (((samples[1] << CURVE_VALUE_SHIFT) - start) *
-          gTerrain_LerpWeightTable[position + (row * CURVE_FULL_STEPS)]);
+          gTerrain_RoundedSquareMask[position + (row * CURVE_FULL_STEPS)]);
 }
 
 /// The height of a step across x at position (0 to 15 of the cell):

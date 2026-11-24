@@ -12,7 +12,7 @@
 #include "character_ids.h"
 #include "character.h"
 #include "battle/battle_type.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "flags.h"
 
 struct ItemDefinition;
@@ -69,8 +69,8 @@ enum FieldPsynergyHandler {
 /// The elemental power and resistance of one element level, in
 /// gElement_PowerResistByLevel.
 struct ElementLevelBonus {
-  u16 power; ///< base power, before the tenths of a level
-  u16 res;   ///< base resistance, likewise
+  u16 power;      ///< base power, before the tenths of a level
+  u16 resistance; ///< base resistance, likewise
 };
 
 extern const struct ItemDefinition gItem_DefinitionTable[];
@@ -108,7 +108,7 @@ void Unit_CalculateBaseElements(s32 unitId,
 s32 Class_Determine(s32 character, u32 *djinn, s32 item);
 s32 Unit_GetElementLevels(s32 enemyId, const u8 *source, s32 *output);
 void Unit_RefreshPsynergy(s32 unitId);
-s32 Owner_UpdateClassActions(s32 owner);
+s32 Unit_RebuildPsynergyList(s32 owner);
 /// Decodes message into text with no length limit (Message_DecodeRawUnbounded).
 void Message_DecodeRawUnboundedFar(s32 message, u16 *text);
 
@@ -161,7 +161,7 @@ extern const struct EnemyElementPreset gEnemy_ElementPresetTable[];
 extern const struct CharacterDefinition gCharacter_DefinitionTable[];
 const struct CharacterDefinition *Character_GetDefinition(s32 character);
 extern const s32 gCharacter_StartingEquipUnitIds[];
-extern const u16 gItem_ArtifactSlotTable[512];
+extern const u16 gItem_RareItemCounters[512];
 
 extern const u8 gCharacter_ElementGroupTable[];
 
@@ -186,7 +186,7 @@ void Party_InitializeCharacters(void);
 s32 Party_AddMember(s32 owner);
 s32 Unit_LearnPsynergy(s32 owner, s32 ability);
 s32 Party_RemoveMember(s32 owner);
-void Djinn_ActivateOfferedForParty(void);
+void Djinn_SetAllForParty(void);
 extern const u16 gDataTransfer_Flags[TRANSFERRED_FLAG_COUNT];
 extern const s16 gDataTransfer_DjinnChances[ELEMENT_COUNT]
                                            [TRANSFERRED_DJINN_PER_ELEMENT];

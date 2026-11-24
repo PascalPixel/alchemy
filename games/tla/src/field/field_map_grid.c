@@ -70,9 +70,9 @@
 #define WORLD_MAP_VIEW_LAYER_BYTES                                             \
   (WORLD_MAP_VIEW_CELLS * WORLD_MAP_VIEW_CELLS * sizeof(struct WorldMapCell))
 
-/// Remaps byteCount bytes in place through gSpriteColorRemapTables.
+/// Remaps byteCount bytes in place through gSpriteColorGreyTable.
 void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
-  u8 *remapTable = (u8 *)gSpriteColorRemapTables;
+  u8 *remapTable = (u8 *)gSpriteColorGreyTable;
 
   while (byteCount-- != 0) {
     *bytes = remapTable[*bytes];

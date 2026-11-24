@@ -20,11 +20,11 @@ STATIC_ASSERT(offsetof(struct OamUsage, limit) == 2);
 /// The OAM shape and size a window sprite is created with
 /// (WindowSprite_Create): attribute 0's shape in the low half, attribute 1's
 /// size in the high half, as the hardware reads them.
-#define OUTPUT_SIZE_16X16 0x40000000
-#define OUTPUT_SIZE_32X32 0x80000000
-#define OUTPUT_SIZE_32X8 0x40004000
-#define OUTPUT_SIZE_32X16 0x80004000
-#define OUTPUT_SIZE_16X32 0x80008000
+#define WINDOW_SPRITE_SIZE_16X16 0x40000000
+#define WINDOW_SPRITE_SIZE_32X32 0x80000000
+#define WINDOW_SPRITE_SIZE_32X8 0x40004000
+#define WINDOW_SPRITE_SIZE_32X16 0x80004000
+#define WINDOW_SPRITE_SIZE_16X32 0x80008000
 
 /// The OAM entries the frame's list holds and the most it may; wait() empties
 /// it each frame.

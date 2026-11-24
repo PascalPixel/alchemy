@@ -146,8 +146,8 @@ void Unit_Calculate(s32 unitId) {
       stats->item = Item_GetDirect(unit->inventory[index]);
       if (stats->item->flags & ITEM_CURSED)
         unit->curse |= CURSE_BOUND | CURSE_ITEM;
-      stats->attack += stats->item->primaryBonus;
-      stats->defense += stats->item->secondaryBonus;
+      stats->attack += stats->item->attack;
+      stats->defense += stats->item->defense;
       for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
         effectKind = stats->item->effects[effectIndex].kind;
         effectAmount = stats->item->effects[effectIndex].amount;
@@ -904,7 +904,7 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
     }
     Unit_Calculate(i);
   }
-  Djinn_ActivateOfferedForParty();
+  Djinn_SetAllForParty();
   Party_RestoreHpPp(1);
   GameFlag_Set((byPassword & 1) + FLAG_TRANSFERRED_BY_LINK);
   GameFlag_Set(FLAG_DATA_TRANSFERRED);
@@ -982,7 +982,7 @@ void Party_AddIsaacsParty(void) {
   Party_AddMember(MIA);
   // Called with an argument it does not take.
   ((void (*)(s32))Party_BalanceDjinn)(0);
-  Djinn_ActivateOfferedForParty();
+  Djinn_SetAllForParty();
   for (i = 0; i <= PIERS; i++)
     Unit_Calculate(i);
   Party_RestoreHpPp(1);
@@ -1097,7 +1097,7 @@ void DataTransfer_GiveDefaultDjinn(void) {
       }
     }
   } while (remaining != 0);
-  Djinn_ActivateOfferedForParty();
+  Djinn_SetAllForParty();
 
   for (i = 0, k = 0; i < ELEMENT_COUNT;
        i++, k += TRANSFERRED_DJINN_PER_ELEMENT) {

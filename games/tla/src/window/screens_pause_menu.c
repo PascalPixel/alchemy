@@ -176,14 +176,14 @@ s32 DebugBrowser_Icons(void) {
         y = row * 16 + 16;
         if (kind == 0) {
           Icon_BuildItemIconTiles(base + i, 1, &slot, &tile, kind);
-          WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+          WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
         } else if (kind == 1) {
           Icon_BuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
-          WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+          WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
         } else {
           slot = VramCache_FindFreeEntry();
           Icon_BuildMiscIconTiles(i, 0, slot);
-          WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+          WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
         }
       }
     }

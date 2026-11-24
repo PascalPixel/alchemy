@@ -37,23 +37,6 @@ struct OamData {
   u16 high;
 };
 
-/// The attributes of OamData, under the name the field's effect sprites use.
-struct RenderOam {
-  u16 y : 8;
-  u16 affineMode : 2;
-  u16 objectMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 matrix : 5;
-  u16 size : 2;
-  u16 index : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 high;
-};
-
 /// A sprite as the depth queue takes it: Oam_AddSpriteAtDepth writes the link
 /// to the next sprite queued at the same depth, and the OAM attributes follow.
 struct QueuedSprite {

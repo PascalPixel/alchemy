@@ -431,7 +431,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
         *cell = tile;
         cell++;
       }
-      UiRender_MarkRow(state, y);
+      WINDOW_MARK_TILEMAP_ROW(state, y);
       height--;
       y++;
     } while (height != 0);

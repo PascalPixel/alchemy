@@ -24,7 +24,7 @@ English release (`item_ids.h`), so a row reads like this:
         .type = ITEM_TYPE_WEAPON,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(PIERS),
         .icon = 1,
-        .primaryBonus = 14,
+        .attack = 14,
         .element = ELEMENT_NONE,
     },
 ```

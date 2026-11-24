@@ -69,7 +69,7 @@ s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
   slot = VramCache_FindFreeEntry();
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     Icon_LoadResourceIntoSlot(resourceId, slot);
-    WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
+    WindowSprite_CreateFar(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   }
 }
 
@@ -85,7 +85,8 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
     resource = (u16)data->resourceSlots[0];
   else
     resource = (u16)data->resourceSlots[1];
-  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);
+  object =
+      WindowSprite_CreateFar(resource, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms are alike. */
     if (variant || x)
@@ -114,7 +115,8 @@ s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
     resource = (u16)data->resourceSlots[1];
     y -= 4;
   }
-  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);
+  object =
+      WindowSprite_CreateFar(resource, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms are alike. */
     if (variant || x)
@@ -544,7 +546,7 @@ void MenuIcon_LoadSlots(void) {
       Resource_LoadByModeIntoSlotFar(ICON_KIND_PATTERN,
                                      *(u16 *)(offset + (u32)ids), entry, 0);
       attributes = (u32 *)&slot->attr;
-      *attributes++ = OUTPUT_SIZE_16X16;
+      *attributes++ = WINDOW_SPRITE_SIZE_16X16;
       *attributes = 0;
       slot->attr.tile = gVramCacheEntries[entry].offset >> 5;
     }

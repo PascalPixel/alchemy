@@ -38,7 +38,7 @@ extern u8 gScreenFadeStartLevel;
 extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
 /// The two tiles of the link screen's page arrows, which Link_DrawPageArrows
 /// shifts and merges into the window border each frame.
-extern u8 gRomShiftedTilePair[];
+extern u8 gPageArrowTiles[];
 /// Matrix_BuildLookAt's dot product, a Thumb entry and its ARM code: eight
 /// words it copies onto its stack to run.
 extern const u32 RelocatedInnerProduct[];
@@ -170,7 +170,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 /// it to the frame and divider tiles already on the tilemap.
 void Window_DrawDividerLineFar(s32 window, s32 x1, s32 y1, s32 x2, s32 y2);
 void WindowSprite_UpdateAll(void);
-void WindowSystem_StartBattleUpdate(s32 kind);
+void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles);
 /// Sets the text colour (0 to 15) of drawn text.
 s32 Text_SetColorFar(s32 color);
 /// Decompresses resource `resourceId` and loads its first `size` bytes into

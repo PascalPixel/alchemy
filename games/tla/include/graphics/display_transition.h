@@ -15,7 +15,7 @@ struct ScreenTransitionDissolveState {
   u16 pages[2][322]; ///< as ScreenTransitionState's; the dissolve leaves them
   /// ScreenTransitionState's solidTile and mode: the dissolve sets two more of
   /// the tile's pixels each frame and copies the tile to BG character block 0.
-  u8 paletteNibbles[34];
+  u8 solidTilePixels[34];
   /// The progress, moved from start to end over duration frames: bit 5 says
   /// whether the dissolve fills or clears, the low 5 bits how far it is.
   u16 value;
@@ -23,13 +23,13 @@ struct ScreenTransitionDissolveState {
   ///@{
   s32 centreX;
   s32 centreY;
-  s16 mask;
-  s16 active;
+  s16 winIn;
+  s16 winOut;
   u8 unused;
   ///@}
   /// ScreenTransitionState's page: the dissolve flips it each frame, though
   /// nothing reads it while the dissolve runs.
-  u8 ditherToggle;
+  u8 page;
   s8 start;    ///< the value's first step
   s8 end;      ///< the value's last step
   s8 duration; ///< frames; 0 when the value is not moving
@@ -52,10 +52,10 @@ struct ScreenTransitionState {
   FIXED centreX;
   FIXED centreY; ///< as centreX: the target's z less its y
   /// WININ for the inside of the shape: both windows show every layer.
-  s16 mask;
+  s16 winIn;
   /// WINOUT for the outside: BG0 alone, with the sprite window's layers kept.
   /// A mode that inverts its shape writes the two the other way round.
-  s16 active;
+  s16 winOut;
   u8 unused;
   u8 page;     ///< the pages entry the HBlank DMA copies from
   s8 start;    ///< the value's first step
@@ -77,7 +77,7 @@ STATIC_ASSERT(offsetof(struct ScreenTransitionState, solidTile) == 1288);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, page) == 1337);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, mode) == 1320);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, centreX) == 1324);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, mask) == 1332);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, winIn) == 1332);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, nextMode) == 1342);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, duration) == 1340);
 STATIC_ASSERT(sizeof(struct ScreenTransitionState) == 1344);

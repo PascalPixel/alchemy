@@ -477,7 +477,7 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   itemId &= INVENTORY_ITEM_ID_MASK;
   // The table holds a rare item's counter number plus one, and 0 for an
   // ordinary item.
-  counter = gItem_ArtifactSlotTable[itemId];
+  counter = gItem_RareItemCounters[itemId];
   result = 0;
 
   if (counter)

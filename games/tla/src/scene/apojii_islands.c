@@ -43,7 +43,7 @@ enum {
 };
 #include "types.h"
 #include "macros.h"
-#include "graphics/output.h"
+#include "graphics/window_sprite_list.h"
 #include "system/io_write.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"

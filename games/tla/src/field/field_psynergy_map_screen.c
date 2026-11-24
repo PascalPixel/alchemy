@@ -114,7 +114,7 @@ void MapScreen_Initialize(void) {
     screenY = bottom;
   Ram_WorldMapCursorStart[0] = state->x;
   Ram_WorldMapCursorStart[1] = state->z;
-  state->windowSlot = Resource_LoadFixedBlockBIntoFreeSlotFar();
+  state->windowSlot = PointingHand_LoadIntoFreeSlotFar();
   tile = gVramCacheEntries[state->windowSlot].offset;
   state->window = Window_CreateFar(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
   state->shown = -1;

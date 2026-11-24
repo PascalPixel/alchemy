@@ -25,7 +25,7 @@ struct ScreenPoint;
 extern const FIXED gCamera_FixedViewMatrix[];
 extern u8 gSpriteDissolve_PixelOrder[];
 extern const u8 gWorldMap_TerrainBehaviorTable[];
-extern u8 gSpriteColorRemapTables[];
+extern u8 gSpriteColorGreyTable[];
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 s32 Party_CheckShortcut(u32 packed_id);
 void SpriteDissolve_Step(u8 *object, u32 position);
@@ -628,7 +628,7 @@ extern const u8 Grid_DrawOutlineCode[];
 /// (ld_script.ld).
 extern u8 Grid_DrawOutlineCodeSize[];
 
-extern const u8 gSpriteColorShadeTables[];
+extern const u8 gSpriteColorTintTables[];
 
 void SpriteAnimation_Start(struct SpriteAnimation *state, s32 no);
 

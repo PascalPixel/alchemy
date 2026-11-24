@@ -22,7 +22,7 @@ const u8 gNewGame_SceneStateTable[4][5] = {
 // clang-format off
 /// Each item's rare item counter number plus one, 0 for an ordinary item; the
 /// shops' stock of a rare item is counted by it (Item_AdjustCounter).
-const u16 gItem_ArtifactSlotTable[512] = {
+const u16 gItem_RareItemCounters[512] = {
     0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 0, 0, 0, 0,
     0, 0, 0, 0, 8, 9, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0,
     0, 0, 16, 17, 18, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 21,

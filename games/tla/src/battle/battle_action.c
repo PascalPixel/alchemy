@@ -292,7 +292,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
   case COMMAND_ATTACK:
     // A weapon unleash replaces the action with its ability.
-    abilityId = RollWeaponUnleashFar(actor);
+    abilityId = Equipment_RollUnleashFar(actor);
     if (BattleActionRun_SetTargets(abilityId) == ACTION_REPORTED)
       return ACTION_REPORTED;
     if (abilityId != ABILITY_ATTACK) {

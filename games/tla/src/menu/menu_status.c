@@ -138,9 +138,9 @@ s32 StatusScreen_Run(void) {
   heap->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  saved = (u16)transition->active;
+  saved = (u16)transition->winOut;
   // Window 0 shows only the windows' layer and the sprites.
-  transition->active = WININ_WIN0_BG0 | WININ_WIN0_OBJ;
+  transition->winOut = WININ_WIN0_BG0 | WININ_WIN0_OBJ;
   Menu_SuspendFieldTasks();
   Window_InitializeState(0);
   page = &state->page;
@@ -188,7 +188,7 @@ s32 StatusScreen_Run(void) {
   Window_DrawBorderFar(0, 0, 30, 20);
   HeapSlot_Release(HEAP_SLOT_MENU);
   heap->actorSystem->suspended = 0;
-  transition->active = saved;
+  transition->winOut = saved;
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
   ((struct WindowState *)heap->windowState)->holdTilemapUpload = 0;

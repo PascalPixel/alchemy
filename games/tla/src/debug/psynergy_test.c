@@ -36,7 +36,7 @@
 #include "fixed_math.h"
 #include "system/vector3.h"
 #include "game/inventory.h"
-#include "graphics/uiflow.h"
+#include "graphics/window_close.h"
 #include "macros.h"
 #include "edition.h"
 #include "window/item_icon.h"

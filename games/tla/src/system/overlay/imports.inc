@@ -169,9 +169,9 @@
 	export Save_ScanFileSummaries, Save_ScanFileSummariesFar
 	export NameEntry_EditMemberName, NameEntry_EditMemberNameFar
 	export DebugBrowser_Icons, DebugBrowser_IconsFar
-	export Resource_CopyFixedBlockB, Resource_CopyFixedBlockBFar
+	export PointingHand_LoadIntoSlot, PointingHand_LoadIntoSlotFar
 	export DebugBrowser_Portraits, DebugBrowser_PortraitsFar
-	export Resource_CopyFixedBlockA, Resource_CopyFixedBlockAFar
+	export NameCaret_LoadIntoSlot, NameCaret_LoadIntoSlotFar
 	export WindowColor_Apply, WindowColor_ApplyFar
 	export Summon_ShowLearnedMessage, Summon_ShowLearnedMessageFar
 	export YesNoMenu_Run, YesNoMenu_RunFar

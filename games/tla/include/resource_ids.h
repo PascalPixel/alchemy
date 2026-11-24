@@ -534,8 +534,8 @@ extern char ResourceId_TargetBurstImage;
 extern char ResourceId_SlashSheet;
 #define RESOURCE_SLASH_SHEET ((s32)&ResourceId_SlashSheet)
 /// The path Atalanta's particles follow.
-extern char ResourceId_StagedParticlePath;
-#define RESOURCE_STAGED_PARTICLE_PATH ((s32)&ResourceId_StagedParticlePath)
+extern char ResourceId_AtalantaPath;
+#define RESOURCE_ATALANTA_PATH ((s32)&ResourceId_AtalantaPath)
 /// Drawn by the growing columns.
 extern char ResourceId_GreenPillarSheet;
 #define RESOURCE_GREEN_PILLAR_SHEET ((s32)&ResourceId_GreenPillarSheet)
@@ -742,11 +742,11 @@ extern char ResourceId_EmptyMap;
 /// Loaded by Heading_Show.
 extern char ResourceId_Headings;
 #define RESOURCE_HEADINGS ((s32)&ResourceId_Headings)
-/// Loaded by NameEntry_EditMemberName and Resource_CopyFixedBlockA.
-extern char ResourceId_UiFixedBlockATiles;
-#define RESOURCE_UI_FIXED_BLOCK_A_TILES ((s32)&ResourceId_UiFixedBlockATiles)
+/// Loaded by NameEntry_EditMemberName and NameCaret_LoadIntoSlot.
+extern char ResourceId_NameCaretTiles;
+#define RESOURCE_NAME_CARET_TILES ((s32)&ResourceId_NameCaretTiles)
 /// Loaded by Icon_CreateWithResource, NameEntry_EditMemberName,
-/// Resource_CopyFixedBlockB, Resource_LoadFixedBlockBIntoFreeSlot and
+/// PointingHand_LoadIntoSlot, PointingHand_LoadIntoFreeSlot and
 /// Shop_InitializeState.
 extern char ResourceId_UiIconTiles;
 #define RESOURCE_UI_ICON_TILES ((s32)&ResourceId_UiIconTiles)
@@ -1250,8 +1250,8 @@ extern char ResourceId_MossCaveBackdrop;
 extern char ResourceId_FireSwirlSheet;
 #define RESOURCE_FIRE_SWIRL_SHEET ((s32)&ResourceId_FireSwirlSheet)
 /// Drawn by Dragon Cloud.
-extern char ResourceId_DualStreamPath;
-#define RESOURCE_DUAL_STREAM_PATH ((s32)&ResourceId_DualStreamPath)
+extern char ResourceId_DragonCloudFlamePath;
+#define RESOURCE_DRAGON_CLOUD_FLAME_PATH ((s32)&ResourceId_DragonCloudFlamePath)
 /// Drawn by Legend.
 extern char ResourceId_BladeSheet;
 #define RESOURCE_BLADE_SHEET ((s32)&ResourceId_BladeSheet)

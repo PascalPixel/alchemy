@@ -177,7 +177,7 @@ enum DjinnCompareOperation {
 #include "static_assert.h"
 #include "text/msg_ids.h"
 #include "system/irq.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "game/inventory.h"
 #include "system/heap_release.h"
 #include "menu/paged_list.h"

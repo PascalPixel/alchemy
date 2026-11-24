@@ -37,7 +37,7 @@ FarCall_GameTable:
 	export Party_CountMembersFar, Party_CountMembers
 	export Party_AddMemberFar, Party_AddMember
 	export Party_ListMembersFar, Party_ListMembers
-	export RollWeaponUnleashFar, RollWeaponUnleash
+	export Equipment_RollUnleashFar, Equipment_RollUnleash
 	export Party_RemoveMemberFar, Party_RemoveMember
 	export Item_GetEquippedElementFar, Item_GetEquippedElement
 	export Battle_RollEffectSuccessFar, Battle_RollEffectSuccess
@@ -100,7 +100,7 @@ FarCall_GameTable:
 	export Party_FindOwnerWithActionFar, Party_FindOwnerWithAction
 	export PartyInventory_FindRoomFar, PartyInventory_FindRoom
 	export Summon_LearnFar, Summon_Learn
-	export Djinn_ActivateOfferedForPartyFar, Djinn_ActivateOfferedForParty
+	export Djinn_SetAllForPartyFar, Djinn_SetAllForParty
 	export Inventory_ClearSlotFar, Inventory_ClearSlot
 	export Party_DrainPpFar, Party_DrainPp
 	export Party_GetPpRatioFar, Party_GetPpRatio

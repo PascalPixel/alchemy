@@ -32,7 +32,7 @@
 #include "window/screens.h"
 #include "window/window.h"
 #include "graphics/text_render.h"
-#include "graphics/uiflow.h"
+#include "graphics/window_close.h"
 #include "fixed_math.h"
 #include "field/field_psynergy_state.h"
 #include "field/sprite.h"

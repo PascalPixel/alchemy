@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_OWNER_STATE_H
-#define ALCHEMY_OWNER_STATE_H
+#ifndef ALCHEMY_CLASS_DJINN_H
+#define ALCHEMY_CLASS_DJINN_H
 
 /// @file
 /// Classes and Djinn as a unit holds them: the class definitions, the caps on

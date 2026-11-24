@@ -55,7 +55,7 @@
 #include "battle/battle_unit.h"
 #include "system/irq.h"
 #include "system/scene.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "version.h"
 #include "field/field_sprite.h"
 #include "system/vector3.h"

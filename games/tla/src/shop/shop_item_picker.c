@@ -27,8 +27,8 @@ s32 Forge_Run(s32 actorId) {
                              ->entries[0]
                              ->animationId;
   window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
-  icon =
-      WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
+  icon = WindowSprite_CreateFar(shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16,
+                                window, 0, 0);
   icon->depth = OAM_DEPTH_FRONT;
   icon->motion = WINDOW_SPRITE_MOTION_STILL;
   icon->kind = 0;
@@ -133,8 +133,8 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
   shop->listWindow = partyWindow;
   cursorWindow = Window_CreateFar(30, 0, 1, 1, WINDOW_FLAG_INSTANT);
   result = 0;
-  cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
-                                        cursorWindow, 0, result);
+  cursorAnchor = WindowSprite_CreateFar(
+      shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, cursorWindow, 0, result);
   cursorAnchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   cursorAnchor->kind = result;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
@@ -503,7 +503,7 @@ void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode) {
 
         Icon_CopyResourceToSlotFar(items[i], mode, entry);
         attr = (u32 *)&sprite->attr;
-        *attr++ = OUTPUT_SIZE_16X16;
+        *attr++ = WINDOW_SPRITE_SIZE_16X16;
         *attr = 0;
         sprite->attr.tile = gVramCacheEntries[entry].offset >> 5;
       }

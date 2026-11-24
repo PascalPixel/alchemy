@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_OUTPUT_H
-#define ALCHEMY_OUTPUT_H
+#ifndef ALCHEMY_WINDOW_SPRITE_LIST_H
+#define ALCHEMY_WINDOW_SPRITE_LIST_H
 
 /// @file
 /// Taking, freeing and listing window sprites, and queueing a sprite for OAM.

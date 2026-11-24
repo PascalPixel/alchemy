@@ -20,7 +20,7 @@
 #include "system/input.h"
 #include "system/frame.h"
 #include "field/field_sequence_event.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 
 /// The actor script commands' limits, angles and distances.
 enum {

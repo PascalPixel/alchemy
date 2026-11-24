@@ -27,7 +27,7 @@
 
 #include "game/inventory.h"
 #include "item_ids.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "version.h"
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"

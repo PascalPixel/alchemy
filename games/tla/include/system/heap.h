@@ -69,7 +69,7 @@ struct HeapSlots {
   void *battleSheet;  ///< the running battle effect's tile sheet
   /// A routine run from RAM: the canvas drawing routine
   /// BattleEffect_BuildBlitter writes, or the world map's copy of
-  /// Matrix_UpdateVertices.
+  /// WorldMap_UpdateAffineLines.
   void *ramCode;
   void *fieldState;    ///< a field scene's struct FieldState
   void *paletteCycles; ///< the palette cycles

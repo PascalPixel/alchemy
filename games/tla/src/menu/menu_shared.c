@@ -491,7 +491,8 @@ s32 Icon_CreateWithResource(struct Window *window, s32 x, s32 y) {
   slot = VramCache_FindFreeEntry();
   if (slot != 0) {
     VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES, RESOURCE_UI_ICON_TILES);
-    icon = (s32)WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
+    icon = (s32)WindowSprite_CreateFar(slot, WINDOW_SPRITE_SIZE_16X16, window,
+                                       x, y);
   }
   return icon;
 }
@@ -538,7 +539,8 @@ struct Window *MenuCursor_Create(void *source) {
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES,
                               RESOURCE_SHOP_UP_ARROW_TILES);
-    icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
+    icon =
+        WindowSprite_CreateFar(slot, WINDOW_SPRITE_SIZE_16X16, window, 84, -4);
     icon->motion = ICON_HIDDEN;
     menu->pageArrows[0] = icon;
   }
@@ -546,7 +548,8 @@ struct Window *MenuCursor_Create(void *source) {
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES,
                               RESOURCE_SHOP_DOWN_ARROW_TILES);
-    icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
+    icon =
+        WindowSprite_CreateFar(slot, WINDOW_SPRITE_SIZE_16X16, window, 84, 8);
     icon->motion = ICON_HIDDEN;
     menu->pageArrows[1] = icon;
   }

@@ -49,7 +49,7 @@ void DebugSoundTest_Release(void) {
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
-s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
+s32 PointingHand_LoadIntoFreeSlot(void);
 
 /// Opens the sound test's window and places the cursor on its first row.
 struct Window *DebugSoundTest_Open(void) {
@@ -58,7 +58,7 @@ struct Window *DebugSoundTest_Open(void) {
 
   window = Window_Create(7, 3, 15, 9, WINDOW_FLAG_INSTANT);
   state->cursor.sprite = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
+      PointingHand_LoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
   MenuCursor_SetPositionImmediateFar(&state->cursor, ((s16)window->x << 3) - 4,
                                      ((s16)window->y << 3) + 12);
   return window;
@@ -193,7 +193,7 @@ struct Window *DebugMenu_Open(void) {
   Text_DrawMessage((s32)MsgFullPpAndMoney + 3, (s32)window, 8, 76);
   Text_DrawMessage((s32)MsgFullPpAndMoney + 4, (s32)window, 8, 100);
   state->cursor.sprite = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
+      PointingHand_LoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
   return window;
 }
 
@@ -397,7 +397,7 @@ struct Window *DebugWarp_Open(void) {
     i++;
   }
   state->cursor.sprite = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
+      PointingHand_LoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
   return window;
 }
 
@@ -518,7 +518,7 @@ struct Window *DebugShortcut_Open(void) {
                               y);
   }
   state->cursor.sprite = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
+      PointingHand_LoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
   return window;
 }
 

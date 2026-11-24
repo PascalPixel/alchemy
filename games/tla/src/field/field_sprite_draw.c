@@ -320,7 +320,7 @@ s32 Sprite_ComposePicture(struct Sprite *sprite, u32 dir) {
         u32 rows = sprite->sunkRows;
         u32 height = sprite->height;
         u32 width = sprite->width;
-        const u8 *shade = gSpriteColorShadeTables;
+        const u8 *shade = gSpriteColorTintTables;
         u8 *p;
         s32 n;
 

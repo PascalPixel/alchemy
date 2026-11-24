@@ -62,7 +62,7 @@ extern void *Resource_DirectoryTable[];
 extern u8 Resource_PatchThumbBranchCodeSize[];
 /// Five tables that map a picture's 256 colour indices onto a sprite's palette,
 /// one for each palette a field sprite can take (field/sprite_color_tables.c).
-extern u8 gResourceSlot_ConversionTables[][256];
+extern u8 gSpriteColorTables[][256];
 /// The window font's 16 colours, loaded as BG palette 15
 /// (Window_LoadGraphics).
 extern const u16 gWindow_Palette[];

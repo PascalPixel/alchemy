@@ -28,7 +28,7 @@
 #include "field/call.h"
 #include "scene/scene.h"
 #include "window/window.h"
-#include "graphics/uiflow.h"
+#include "graphics/window_close.h"
 #include "field/actor_script.h"
 #include "text/msg_ids.h"
 #include "scene_exits.h"

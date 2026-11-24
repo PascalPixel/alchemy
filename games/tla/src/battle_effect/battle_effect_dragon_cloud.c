@@ -166,7 +166,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
                &particle->y);
     particle->variant = -(i * 2);
   }
-  path = Resource_GetTableEntry(RESOURCE_DUAL_STREAM_PATH);
+  path = Resource_GetTableEntry(RESOURCE_DRAGON_CLOUD_FLAME_PATH);
 
   for (frame = 0; frame != DRAGON_CLOUD_FRAMES; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraState;

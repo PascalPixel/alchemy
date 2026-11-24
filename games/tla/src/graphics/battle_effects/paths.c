@@ -3,15 +3,15 @@
 /// the flame of Dragon Cloud and Epicenter. Each opens with its start, x and
 /// then y as 16-bit pixels written a byte to a row (high byte, low byte), and
 /// goes on with a change of x and y in pixels for each frame. Both are
-/// resources (ResourceId_StagedParticlePath, ResourceId_DualStreamPath), as
+/// resources (ResourceId_AtalantaPath, ResourceId_DragonCloudFlamePath), as
 /// The Broken Seal's are.
 
 #include "types.h"
 
 // clang-format off
 /// Atalanta's flight while she gathers her shafts, a step a frame
-/// (RESOURCE_STAGED_PARTICLE_PATH).
-const s8 BattleEffect_StagedParticlePath[][2] = {
+/// (RESOURCE_ATALANTA_PATH).
+const s8 BattleEffect_AtalantaPath[][2] = {
     {0, -96}, // starts at x 160
     {0, 95},  // and y 95
     {-5, -3},
@@ -227,8 +227,8 @@ const s8 BattleEffect_StagedParticlePath[][2] = {
 };
 
 /// The flame's flight from the user, from frame 18 to 58 of Dragon Cloud and
-/// Epicenter (RESOURCE_DUAL_STREAM_PATH).
-const s8 BattleEffect_DualStreamPath[][2] = {
+/// Epicenter (RESOURCE_DRAGON_CLOUD_FLAME_PATH).
+const s8 BattleEffect_DragonCloudFlamePath[][2] = {
     {0, 17},   // starts at x 17
     {-1, -39}, // and y -39, which the effect moves 16 pixels down
     {6, 5},

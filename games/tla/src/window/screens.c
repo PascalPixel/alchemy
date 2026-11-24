@@ -36,7 +36,7 @@ extern const s16 gPortrait_SpriteMap[];
 // The screens object calls the window sprite list's routines and
 // Oam_AddSpriteAtDepth with no declaration in scope, as its bytes need; a
 // current GCC gets them here.
-#include "graphics/output.h"
+#include "graphics/window_sprite_list.h"
 #endif
 
 /// One icon of the command row (struct BattleCommandRowState): its sprite,

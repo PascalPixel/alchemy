@@ -169,7 +169,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   picture = Resource_GetTableEntry(RESOURCE_LIME_PALETTE);
   Iwram_CopyWordsEntry((void *)BG_PLTT, picture, SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  path = Resource_GetTableEntry(RESOURCE_STAGED_PARTICLE_PATH);
+  path = Resource_GetTableEntry(RESOURCE_ATALANTA_PATH);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);

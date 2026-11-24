@@ -44,9 +44,10 @@ struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
 
   // Neither sprite is checked for NULL.
   MenuTitle_Load(picture, slot);
-  first = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x, y);
+  first = WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_32X16, window, x, y);
   first->depth = OAM_DEPTH_FRONT - 2;
-  second = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x + 32, y);
+  second =
+      WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_32X16, window, x + 32, y);
   second->depth = OAM_DEPTH_FRONT - 2;
   // The right half's tiles, after the left half's.
   second->sprite.oam.index += MENU_TITLE_HALF_TILES;
@@ -102,7 +103,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
   sprite = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     CommandIcon_Load(icon, slot, remap);
-    sprite = WindowSprite_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
+    sprite = WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_32X32, window, x, y);
     sprite->sprite.oam.fullColor = 1;
     sprite->depth = OAM_DEPTH_FRONT - 4;
   }
@@ -247,7 +248,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
   }
 }
 
-/// Draws the two page arrows (gRomShiftedTilePair) into the two tiles at
+/// Draws the two page arrows (gPageArrowTiles) into the two tiles at
 /// VRAM address `offset`, sliding outward: the left arrow 2 or 3 pixels to
 /// the left, the right one as far to the right, eight frames each. They are
 /// drawn over the border's top edge tile (WINDOW_TILE_BORDER_TOP) and top-right
@@ -267,12 +268,12 @@ void Link_DrawPageArrows(s32 offset) {
   Graphics_MergeShiftedTileRows(
       (u32 *)(BG_CHAR_BLOCK(0) +
               (WINDOW_TILE_BORDER_TOP & TILE_NUMBER_MASK) * TILE_SIZE_4BPP),
-      (u32 *)gRomShiftedTilePair, (u32 *)offset, -phase);
+      (u32 *)gPageArrowTiles, (u32 *)offset, -phase);
   Graphics_MergeShiftedTileRows(
       (u32 *)(BG_CHAR_BLOCK(0) +
               (WINDOW_TILE_BORDER_TOP_RIGHT & TILE_NUMBER_MASK) *
                   TILE_SIZE_4BPP),
-      (u32 *)(gRomShiftedTilePair + TILE_SIZE_4BPP),
+      (u32 *)(gPageArrowTiles + TILE_SIZE_4BPP),
       (u32 *)(offset + TILE_SIZE_4BPP), phase);
 }
 
@@ -292,11 +293,11 @@ void BattleStatus_DrawPageArrows(s32 offset) {
   Graphics_MergeShiftedTileRows(
       (u32 *)(BG_CHAR_BLOCK(0) +
               (WINDOW_TILE_WINDOW_FILL & TILE_NUMBER_MASK) * TILE_SIZE_4BPP),
-      (u32 *)gRomShiftedTilePair, (u32 *)offset, -phase);
+      (u32 *)gPageArrowTiles, (u32 *)offset, -phase);
   Graphics_MergeShiftedTileRows(
       (u32 *)(BG_CHAR_BLOCK(0) +
               (WINDOW_TILE_WINDOW_FILL & TILE_NUMBER_MASK) * TILE_SIZE_4BPP),
-      (u32 *)(gRomShiftedTilePair + TILE_SIZE_4BPP),
+      (u32 *)(gPageArrowTiles + TILE_SIZE_4BPP),
       (u32 *)(offset + TILE_SIZE_4BPP), phase);
 }
 

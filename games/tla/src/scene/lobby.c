@@ -36,7 +36,7 @@
 #include "system/iwram_call.h"
 #include "field/actor.h"
 #include "edition.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "system/main_routine_state.h"
 #include "system/heap_release.h"
 #include "system/task.h"
@@ -1126,7 +1126,7 @@ s32 SoundFlag_Test(s32 song);
 s32 Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void WindowSprite_PrepareForRedraw(s32 window);
 void Text_DrawNumber(s32 value, s32 digits, s32 window, s32 x, s32 y);
-void Window_Close(s32 window, s32 release);
+void Window_Close(s32 window, s32 instant);
 
 /// "You have a song request?": the player picks a piece of music or a sound by
 /// number with Left and Right and hears it with A, until B ends it with "Come

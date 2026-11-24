@@ -212,7 +212,7 @@ extern u8 MsgAutoSleepLabel[];
 
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
                                         struct Window *window, s32 x, s32 y);
-s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
+s32 PointingHand_LoadIntoFreeSlot(void);
 
 /// Opens the settings menu's window: the labels, the hue and brightness
 /// sliders with their markers, the cursor and the setting icons. Returns the
@@ -249,8 +249,8 @@ struct Window *SettingsMenu_Open(void) {
   Text_DrawMessageAsTiles((s32)MsgSpeechLabel, win, 8, 64);
   Text_DrawMessageAsTiles((s32)MsgAutoSleepLabel, win, 8, 88);
 
-  out = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
-                            OUTPUT_SIZE_16X16, win, 0, 0);
+  out = WindowSprite_Create(PointingHand_LoadIntoFreeSlot(),
+                            WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
   state->cursor.sprite = out;
   x = (s16)win->x * 8;
   y = (s16)win->y * 8 + 12;
@@ -263,17 +263,19 @@ struct Window *SettingsMenu_Open(void) {
             REG_DMA3);
     VramCache_Load(x, 256, gSettingsMenu_SliderTiles);
     y = 0;
-    out = WindowSprite_Create(x, OUTPUT_SIZE_32X8, win, OPTION_SLIDER_X - 6, y);
+    out = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_32X8, win,
+                              OPTION_SLIDER_X - 6, y);
     out->sprite.oam.palette = SLIDER_PALETTE;
-    out =
-        WindowSprite_Create(x, OUTPUT_SIZE_32X8, win, OPTION_SLIDER_X + 26, y);
+    out = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_32X8, win,
+                              OPTION_SLIDER_X + 26, y);
     out->sprite.oam.index += 4;
     out->sprite.oam.palette = SLIDER_PALETTE;
     y = 16;
-    out = WindowSprite_Create(x, OUTPUT_SIZE_32X8, win, OPTION_SLIDER_X - 6, y);
+    out = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_32X8, win,
+                              OPTION_SLIDER_X - 6, y);
     out->sprite.oam.palette = BRIGHTNESS_SLIDER_PALETTE;
-    out =
-        WindowSprite_Create(x, OUTPUT_SIZE_32X8, win, OPTION_SLIDER_X + 26, y);
+    out = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_32X8, win,
+                              OPTION_SLIDER_X + 26, y);
     out->sprite.oam.index += 4;
     out->sprite.oam.palette = BRIGHTNESS_SLIDER_PALETTE;
   }
@@ -281,7 +283,7 @@ struct Window *SettingsMenu_Open(void) {
   x = VramCache_FindFreeEntry();
   if (x < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(x, 256, 0);
-    out = WindowSprite_Create(x, OUTPUT_SIZE_16X16, win, 0, 0);
+    out = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
     out->sprite.oam.fullColor = 1;
     state->marker[0].sprite = out;
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
@@ -294,7 +296,7 @@ struct Window *SettingsMenu_Open(void) {
   x = VramCache_FindFreeEntry();
   if (x < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(x, 256, 0);
-    out = WindowSprite_Create(x, OUTPUT_SIZE_16X16, win, 0, 0);
+    out = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
     out->sprite.oam.fullColor = 1;
     state->marker[1].sprite = out;
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
@@ -649,7 +651,7 @@ struct Window *PauseMenu_Open(void) {
     Text_DrawMessage(msg, (s32)win, PAUSE_MENU_TEXT_X, y);
   }
   state->cursor.sprite = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, win, 0, 0);
+      PointingHand_LoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
   y = -4;
   for (i = 0; i < rows; i++) {
     state->icon[i] =

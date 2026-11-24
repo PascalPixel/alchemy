@@ -2129,7 +2129,7 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
   def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
   if (def->type != ITEM_TYPE_NONE) {
     found = 0;
-    if (def->primaryBonus == 0 && def->secondaryBonus == 0) {
+    if (def->attack == 0 && def->defense == 0) {
       for (i = 0; i < EQUIP_EFFECT_SLOTS; i++) {
         if (def->effects[i].kind != 0 || def->useType == ITEM_USE_TEACHES) {
           found = 1;
@@ -2144,15 +2144,15 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
                                  ITEM_DETAILS_HEADING_X, 0);
       row = 1;
     }
-    if (def->primaryBonus != 0) {
+    if (def->attack != 0) {
       Text_DrawMessageAsTilesFar((s32)MsgStatLabel, window, 0, row * 8);
-      amount = def->primaryBonus;
+      amount = def->attack;
       ItemMenu_DrawStat(amount, 3, window, ITEM_DETAILS_VALUE_X, row * 8);
       row++;
     }
-    if (def->secondaryBonus != 0) {
+    if (def->defense != 0) {
       Text_DrawMessageAsTilesFar((s32)MsgDefenseLabel, window, 0, row * 8);
-      amount = def->secondaryBonus;
+      amount = def->defense;
       ItemMenu_DrawStat(amount, 3, window, ITEM_DETAILS_VALUE_X, row * 8);
       row++;
     }
@@ -2489,8 +2489,9 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   entry = VramCache_FindFreeEntry();
   if (entry != VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(entry, 256, 0);
-    WindowSprite_CreateFar(entry, OUTPUT_SIZE_32X8, window, 48, 32);
-    arrow = WindowSprite_CreateFar(entry, OUTPUT_SIZE_32X8, window, 80, 32);
+    WindowSprite_CreateFar(entry, WINDOW_SPRITE_SIZE_32X8, window, 48, 32);
+    arrow =
+        WindowSprite_CreateFar(entry, WINDOW_SPRITE_SIZE_32X8, window, 80, 32);
     arrow->sprite.oam.index = arrow->sprite.oam.index + 4;
     MenuCursor_Slide(HOW_MANY_CURSOR_X, 40);
     while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {

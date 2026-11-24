@@ -18,7 +18,7 @@
 /// the Dullahan, is anemos_inner_sanctum_entrance.c.
 #include "field/field_sequence.h"
 #include "field/map_grid.h"
-#include "graphics/output.h"
+#include "graphics/window_sprite_list.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "field/event_inline.h"

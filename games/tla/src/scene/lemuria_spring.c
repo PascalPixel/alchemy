@@ -29,7 +29,7 @@
 #include "scene/scene.h"
 #include "window/window.h"
 #include "graphics/text_render.h"
-#include "graphics/uiflow.h"
+#include "graphics/window_close.h"
 #include "system/main_routine_state.h"
 #include "version.h"
 #include "edition.h"

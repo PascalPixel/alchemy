@@ -512,7 +512,7 @@ struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
     found->startX = x << 8;
     found->x = x << 8;
     found->y = y << 8;
-    found->entry = entry;
+    found->textIndex = entry;
     found->colour = TEXT_COLOR_WHITE;
     found->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
     found->countdown = 0;
@@ -579,7 +579,7 @@ struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
     selected->window->state = 0;
     // Start the next text run without retaining the previous run's style.
     selected->colour = TEXT_COLOR_WHITE;
-    selected->entry = entry;
+    selected->textIndex = entry;
     lineSpacing = TEXT_DEFAULT_LINE_SPACING;
     selected->countdown = 0;
     selected->outline = 0;
@@ -646,5 +646,5 @@ void Message_ApplyStyle(struct Message *message) {
 /// frame over two frames (Message_Type, Text_ScrollCanvasUp), during which
 /// the message types nothing.
 void Text_StartCanvasScroll(struct Message *message) {
-  message->transition = 2;
+  message->scrollFrames = 2;
 }

@@ -39,7 +39,7 @@
 
 // The tables, in ROM order.
 #include "experience_table.c"
-#include "artifact_slots.c"
+#include "rare_item_counters.c"
 #include "item_table.c"
 #include "ability_table.c"
 #include "enemy_table.c"

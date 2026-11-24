@@ -1686,7 +1686,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-    // The sunset darkens a step every 16 frames, eight times.
+    // The sunset steps darker every 16 frames, to seven levels below its own
+    // colours.
     if (IRIS_DURING(frame, IRIS_DARKEN_FRAME, IRIS_DARKEN_FRAME + 127) &&
         !(frame & 15)) {
       s32 v = (IRIS_DARKEN_FRAME - frame) / 16;

@@ -62,7 +62,7 @@
 #include "menu/menu.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
-#include "scene/sol_sanctum_elemental_star_ring_setup.h"
+#include "scene/sol_sanctum_elemental_star_lights.h"
 #include "scene/sparkle_warp.h"
 #include "scene/walk_into_leader.h"
 #include "sound/sound.h"
@@ -2370,7 +2370,7 @@ static void SolSanctumElementalStarRoom_AlexWarpsIn(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
 }
 
-#include "shared/sol_sanctum_elemental_star_ring_setup.c"
+#include "shared/sol_sanctum_elemental_star_lights.c"
 
 #include "shared/field_effect_duration_scripts.c"
 
@@ -2464,5 +2464,5 @@ struct Trigger gSolSanctumElementalStarRoom_Triggers[] = {
 
 #include "shared/sol_sanctum_star_cells.c"
 
-#include "shared/sol_sanctum_elemental_star_ring_tables.c"
+#include "shared/sol_sanctum_elemental_star_light_tables.c"
 // clang-format on

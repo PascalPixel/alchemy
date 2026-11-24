@@ -55,7 +55,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/event_psynergy.h"
-#include "scene/sol_sanctum_elemental_star_ring_setup.h"
+#include "scene/sol_sanctum_elemental_star_lights.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
@@ -1874,7 +1874,7 @@ static void SolSanctumEruption_UpdateWiseOnePalette(void) {
   SolSanctumEruption_CycleActorPalette(Actor_Get(ACTOR_WISE_ONE));
 }
 
-#include "shared/sol_sanctum_elemental_star_ring_setup.c"
+#include "shared/sol_sanctum_elemental_star_lights.c"
 
 /// Unused: an actor script nothing starts. It sends an actor up at 6 pixels a
 /// frame, growing it by a 25th each frame of its loop, then sets it back to
@@ -1982,5 +1982,5 @@ s32 gEruption_EmberScript[] = {
     SC_END,
 };
 
-#include "shared/sol_sanctum_elemental_star_ring_tables.c"
+#include "shared/sol_sanctum_elemental_star_light_tables.c"
 // clang-format on

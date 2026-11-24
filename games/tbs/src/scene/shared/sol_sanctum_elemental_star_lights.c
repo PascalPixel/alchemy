@@ -2,7 +2,7 @@
 /// Sol Sanctum's Elemental Star room and its eruption: the ten lights that
 /// float in the room, actors in a row from the first the map passes, each
 /// pulsing and drifting on its own path from the tables gSolSanctum_Light*
-/// (sol_sanctum_elemental_star_ring_tables.c), by its index.
+/// (sol_sanctum_elemental_star_light_tables.c), by its index.
 
 #include "system/dma.h"
 

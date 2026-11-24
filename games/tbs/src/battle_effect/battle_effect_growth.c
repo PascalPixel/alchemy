@@ -169,9 +169,9 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
             {
               s32 side = 1 & i;
               s32 picture = gGrowth_VinePictures[shape];
-              shape = gGrowth_VineWidths[shape];
+              u32 width = gGrowth_VineWidths[shape];
               draw[side](canvas, state->sheet + picture,
-                         column->x - (shape >> 1), column->y - length, shape,
+                         column->x - (width >> 1), column->y - length, width,
                          length);
             }
           } else {
@@ -182,9 +182,9 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
             {
               s32 side = 1 & i;
               s32 picture = gGrowth_PillarPictures[shape];
-              shape = gGrowth_PillarWidths[shape];
+              u32 width = gGrowth_PillarWidths[shape];
               draw[side](canvas, state->sheet + picture,
-                         column->x - (shape >> 1), column->y - length, shape,
+                         column->x - (width >> 1), column->y - length, width,
                          length);
             }
           }

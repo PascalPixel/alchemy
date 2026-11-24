@@ -2,8 +2,9 @@
 #define ALCHEMY_GROUND_MASK_H
 
 /// @file
-/// The fade overlay's marks beside an actor, and the state of the weather's
-/// ground particles, motes of light and sparkles.
+/// The fade overlay, which hides the parts of an actor that raised ground in
+/// front of it should cover, and the state of the weather's ground particles,
+/// motes of light and sparkles.
 
 #include "edition.h"
 #include "fixed_math.h"
@@ -13,7 +14,10 @@
 
 struct Actor;
 
-/// The fade overlay draws one mark on each side of its tracked actor.
+/// The fade overlay: where the ground just south of an actor rises above its
+/// floor (a ledge, the rim of a sunken floor), a 16-pixel square on each side
+/// of it is drawn over what of it the ground should stand in front of: beside
+/// a ledge in the Kalay Tunnel's treasure room, Isaac shows from the waist up.
 struct FadeOverlayState {
   /// The left and right marks: 16-pixel-wide semi-transparent sprites drawn
   /// where the ground beside the actor rises above its floor.

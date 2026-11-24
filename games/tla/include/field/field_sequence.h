@@ -93,6 +93,15 @@ struct ActionDescriptor {
   u8 flags;
 };
 
+/// What the map screen is shown for (MapScreen_Show).
+enum MapScreenMode {
+  /// The player looks (FIELD_RAISED_TRIGGER_MAP_SCREEN).
+  MAP_SCREEN_LOOK = 0,
+  /// Teleport (FIELD_RAISED_TRIGGER_TELEPORT): A chooses the place whose
+  /// name shows and B cancels.
+  MAP_SCREEN_TELEPORT = 1
+};
+
 s32 MapScreen_Show(s32 mode);
 void WorldMap_ZoomOutWhileLHeld(void);
 void BattleBackground_SelectForEnvironment(s32 terrain);

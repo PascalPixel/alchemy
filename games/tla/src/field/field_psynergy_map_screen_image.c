@@ -736,15 +736,6 @@ extern s32 gMapScreen_ScrollY; ///< as gMapScreen_ScrollX
 
 void WorldMap_SetReturnForScene(s32 scene, s32 entrance);
 
-/// What the map screen is shown for (MapScreen_Show).
-enum MapScreenMode {
-  /// The player looks (FIELD_RAISED_TRIGGER_MAP_SCREEN).
-  MAP_SCREEN_LOOK = 0,
-  /// Teleport (FIELD_RAISED_TRIGGER_TELEPORT): A chooses the place whose
-  /// name shows and B cancels.
-  MAP_SCREEN_TELEPORT = 1
-};
-
 /// The map screen, over the map-cell buffer, until A or B closes it, to
 /// look or to choose where to Teleport (enum MapScreenMode). While Start is
 /// held the cursor glides to the party, and back when it is let go; R and L

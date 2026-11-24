@@ -311,14 +311,14 @@ s32 FieldSequence_Run(void) {
           WorldMap_ReloadPendingAreaGraphics();
         } else if (state->raisedTrigger == FIELD_RAISED_TRIGGER_TELEPORT) {
           Leader_StopMoving();
-          MapScreen_Show(1); // MAP_SCREEN_TELEPORT
+          MapScreen_Show(MAP_SCREEN_TELEPORT);
           if (gMainRoutineState.teleportScene != -1)
             gMainRoutineState.teleportState = TELEPORT_CHOSEN;
         } else if (state->raisedTrigger == FIELD_RAISED_TRIGGER_MAP_SCREEN) {
           Leader_StopMoving();
-          // Shown once, to look (MAP_SCREEN_LOOK): MapScreen_Show always
-          // returns 0, so the mode is never flipped to Teleport's.
-          value = 0;
+          // Shown once, to look: MapScreen_Show always returns 0, so the mode
+          // is never flipped to Teleport's.
+          value = MAP_SCREEN_LOOK;
           while (MapScreen_Show(value))
             value ^= 1;
         } else if (state->raisedTrigger ==

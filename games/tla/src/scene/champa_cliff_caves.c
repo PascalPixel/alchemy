@@ -182,7 +182,6 @@ enum ChampaCliffCavesHomesActorId {
 #include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "field/field_event.h"
-#include "field/scene_call.h"
 #include "field/event.h"
 #include "field/field_sequence_event.h"
 #include "field/field.h"

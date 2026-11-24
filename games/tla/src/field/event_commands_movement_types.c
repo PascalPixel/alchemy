@@ -9,7 +9,7 @@
 #include "sounds.h"
 #include "field/field.h"
 #include "system/system.h"
-#include "field/scene_call.h"
+#include "field/event.h"
 #include "field/field_sequence.h"
 
 extern const u8 gActor_WaitScript[];

@@ -62,7 +62,6 @@ void Field_TryJumpForward(void);
 #include "field/field_sequence_event.h"
 #include "window/item_icon.h"
 #include "scene/scene.h"
-#include "field/scene_call.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

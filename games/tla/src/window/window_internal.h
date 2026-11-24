@@ -74,7 +74,6 @@
 #include "battle/battle_action.h"
 #include "window/icon_menu.h"
 #include "graphics/display_transition.h"
-#include "field/scene_call.h"
 #include "field/sprite.h"
 
 /// The window animation a message can start (its window-state code): the

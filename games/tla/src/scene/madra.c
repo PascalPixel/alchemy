@@ -33,7 +33,6 @@
 #include "field/field_sequence_event.h"
 #include "field/field_event.h"
 #include "scene/scene.h"
-#include "field/scene_call.h"
 #include "window/window.h"
 #include "field/field_sprite.h"
 #include "field/field_sequence.h"

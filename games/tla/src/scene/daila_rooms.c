@@ -36,7 +36,6 @@
 #include "scene_ids.h"
 #include "field/field_event.h"
 #include "system/main_routine_state.h"
-#include "field/scene_call.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "field/actor_script.h"

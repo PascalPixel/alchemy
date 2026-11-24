@@ -31,7 +31,6 @@
 #include "system/frame.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
-#include "field/scene_call.h"
 #include "scene/airs_rock.h"
 #include "scene/dehkan_plateau.h"
 #include "scene/gabomba_statue.h"

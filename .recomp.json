@@ -1,0 +1,31 @@
+{
+  "$schema": "https://recomp.fyi/schema/v1.json",
+  "game": "Golden Sun",
+  "wikidata": "Q1545555",
+  "system": "GBA",
+  "type": "decomp",
+  "original": [
+    { "region": "Japan", "serial": "AGSJ", "sha1": "35ef9e4c9f38183ebd6a3e3923a11ce9a4333718" },
+    { "region": "USA", "serial": "AGSE", "sha1": "5c4695205413df7db52b9a184815a07783999971" },
+    { "region": "Germany", "serial": "AGSD", "sha1": "c23ab91a39434623cf1a999f387d743ade1a22a6" },
+    { "region": "Spain", "serial": "AGSS", "sha1": "de0bdc889594b012cad213ca83707feb81ada28b" },
+    { "region": "France", "serial": "AGSF", "sha1": "42f3b262c16cfc5bde1fa2b25016fb74046de1b3" },
+    { "region": "Italy", "serial": "AGSI", "sha1": "ca45e04b26b2f040ac63e679a459d21869f5f28d" }
+  ],
+  "project": "Alchemy",
+  "status": "complete",
+  "targets": ["GBA"],
+  "toolchain": ["Alchemy Devtools", "agbcc"],
+  "approach": "Matching decompilation: readable C, assembly and editable assets rebuild each edition byte for byte.",
+  "started": "2026-07-16",
+  "x-completed": "2026-10-08",
+  "maintainers": [{ "name": "Pascal Pixel", "link": "https://github.com/PascalPixel" }],
+  "links": [
+    { "label": "Documentation", "url": "https://alchemy.pascalpixel.com/tbs" },
+    { "label": "Source on GitHub", "url": "https://github.com/PascalPixel/alchemy" },
+    { "label": "Alchemy Devtools", "url": "https://github.com/PascalPixel/alchemy-devtools" },
+    { "label": "Pascal Pixel", "url": "https://pascalpixel.com" }
+  ],
+  "tags": ["Japanese", "English", "German", "Spanish", "French", "Italian"],
+  "notes": "All six editions rebuild byte for byte from this repository's source and assets alone. The documentation explains how the game works, written from that source, with recordings from the game itself."
+}

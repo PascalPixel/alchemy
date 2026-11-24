@@ -842,7 +842,7 @@ extern const u8 gWeather_ParticleTiles[];
 /// The motes' tiles, byte LZ (field_effect_particles.s).
 extern const u8 gFieldEffect_MoteTiles[];
 
-extern const u32 gBattleEffect_PulseScales[];
+extern const u32 gFieldEffect_PulseScales[];
 
 extern const s16 gLineScroll_WaveSine[];
 

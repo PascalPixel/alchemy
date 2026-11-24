@@ -868,8 +868,8 @@ void WorldMap_EnterProx(s32 id) {
 /// Walking onto Yallam from the World Map: coming from the north, the party
 /// enters by its north side, and from the south by its south side.
 void WorldMap_EnterYallam(s32 id) {
-  WorldMap_SelectExitByZ(id, WORLD_MAP_TO_YALLAM_SOUTH_B,
-                         WORLD_MAP_TO_YALLAM_SOUTH_A);
+  WorldMap_SelectExitByZ(id, WORLD_MAP_TO_YALLAM_NORTH,
+                         WORLD_MAP_TO_YALLAM_SOUTH);
 }
 
 /// Walking onto Daila from the World Map: coming from the north, the party
@@ -2828,9 +2828,9 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_SEA_OF_TIME_ISLET, CONDITION_ALWAYS, 13486, 0, 7482,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_YALLAM_SOUTH_A, CONDITION_ALWAYS, 12923, 0, 9681,
+    {WORLD_MAP_FROM_YALLAM_NORTH, CONDITION_ALWAYS, 12923, 0, 9681,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_YALLAM_SOUTH_B, CONDITION_ALWAYS, 12921, 0, 9752,
+    {WORLD_MAP_FROM_YALLAM_SOUTH, CONDITION_ALWAYS, 12921, 0, 9752,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_TAOPO_SWAMP_ENTRANCE, CONDITION_ALWAYS, 12680, 0, 10297,
      FACING_WEST, 0, -1, -1, -1, -1, 0},
@@ -3020,10 +3020,8 @@ LATE_DATA u32 gSceneExits[] = {
                SOUTHEAST_ANGARA_ISLET_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_SEA_OF_TIME_ISLET, SeaOfTimeIslet,
                SEA_OF_TIME_ISLET_FROM_WORLD_MAP),
-    SCENE_EXIT(WORLD_MAP_TO_YALLAM_SOUTH_A, Yallam,
-               YALLAM_FROM_WORLD_MAP_SOUTH),
-    SCENE_EXIT(WORLD_MAP_TO_YALLAM_SOUTH_B, Yallam,
-               YALLAM_FROM_WORLD_MAP_NORTH),
+    SCENE_EXIT(WORLD_MAP_TO_YALLAM_SOUTH, Yallam, YALLAM_FROM_WORLD_MAP_SOUTH),
+    SCENE_EXIT(WORLD_MAP_TO_YALLAM_NORTH, Yallam, YALLAM_FROM_WORLD_MAP_NORTH),
     SCENE_EXIT(WORLD_MAP_TO_TAOPO_SWAMP_ENTRANCE, TaopoSwampEntrance,
                TAOPO_SWAMP_ENTRANCE_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_APOJII_ISLANDS, ApojiiIslands,

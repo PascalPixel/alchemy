@@ -64,7 +64,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   s32 mode;
   FIXED radius;
   s32 selector;
-  struct TriggerEvent *pending;
+  struct Trigger *pending;
   u8 *picture;
   s32 counter;
   FIXED amplitude;

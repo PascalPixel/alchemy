@@ -74,16 +74,6 @@ struct AreaNameRule {
   s32 areaNameIndex;
 };
 
-/// struct Trigger (scene_tables.h), a row of the scene's trigger table, as
-/// the item and Psynergy trigger searches read it: its control word signed,
-/// so that -1 ends the table, and its subject named trigger.
-struct TriggerEvent {
-  s32 control;
-  s16 trigger;
-  s16 condition;
-  u32 value;
-};
-
 /// A distance beyond any field Psynergy's reach, where the search for its
 /// nearest target starts.
 #define BEYOND_REACH 9999

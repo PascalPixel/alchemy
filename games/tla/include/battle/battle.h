@@ -27,7 +27,7 @@ struct MotionObject;
 struct PaletteFade;
 struct PendingEvent;
 struct Sprite;
-struct TriggerEvent;
+struct Trigger;
 struct Unit;
 struct WorldMapState;
 
@@ -240,8 +240,7 @@ s32 Scene_GetArea(s32 sceneId);
 struct ActionDescriptor *Scene_FindActorPlacement(s32 id);
 s32 Scene_HasPsynergyTrigger(s32 effectId);
 s32 Scene_SelectPsynergyTarget(s32 kind);
-struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
-                                               s32 selector);
+struct Trigger *Scene_FindPsynergyTrigger(s32 filter, s32 kind, s32 selector);
 s32 Field_MeasurePsynergyReach(s32 kind, s32 selfId, s32 otherId);
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position);

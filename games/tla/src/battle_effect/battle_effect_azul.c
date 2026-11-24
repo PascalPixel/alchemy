@@ -119,27 +119,27 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   struct Point2D base;
   struct Point2D pos;
   struct Point2D vel;
-  struct ModelVertex *verts;
+  struct ModelVertex *meshVertices;
   struct AzulFace *faces;
   u8 *sphere;
   u8 *grid;
   s32 i;
   s32 j;
   s32 k;
-  s32 n;
+  s32 n; // a byte along a line of the background, then a shard
   u32 shatterFrame;
   u32 sphereFrame;
   FIXED place[4];
   struct ModelTexture texture;
   struct ModelTexture scratchTexture;
-  struct Particle *p;
+  struct Particle *particle;
   struct RenderModel *model;
   void *vertices;
-  struct Sprite *obj;
-  const u8 *xs;
+  struct Sprite *sprite;
+  const u8 *objectX;
   u8 *mapCells;
   u8 *planes;
-  s32 stripEnd;
+  s32 wispBottom;
 
   canvas = Ram_HeapSlots->battleCanvas;
   state = Ram_HeapSlots->battleEffect;
@@ -152,10 +152,12 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   BattleEffect_ShowLivingTargets(state->args);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
+  // The water's colour for each line streams in by DMA, armed early in each
+  // VBlank ahead of the canvas transfer: in a pass the higher rank runs first.
   Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);
   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   battle = Ram_HeapSlots->battleState;
-  verts = (struct ModelVertex *)state->sheet;
+  meshVertices = (struct ModelVertex *)state->sheet;
   faces = (struct AzulFace *)(state->sheet + AZUL_FACES);
   sphere = state->sheet + AZUL_SPHERE;
   grid = state->sheet + AZUL_GRID;
@@ -192,16 +194,17 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   wait(1);
   BattleEffect_CreateSprites(AZUL_SERPENT_OBJECTS, SPRITE_AZUL, 1);
   for (i = 0; i != AZUL_BODY_COPIES; i++) {
-    obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-    state->sprites[i + AZUL_SERPENT_OBJECTS] = obj;
-    Iwram_CopyWordsEntry(obj, state->sprites[AZUL_BODY_SEGMENT + (i & 3)],
+    sprite = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
+    state->sprites[i + AZUL_SERPENT_OBJECTS] = sprite;
+    Iwram_CopyWordsEntry(sprite, state->sprites[AZUL_BODY_SEGMENT + (i & 3)],
                          offsetof(struct Sprite, lastNo));
     ((struct Sprite *)state->sprites[i])->image.priority = 1;
   }
   mapCells = gMapGridCellBuffer;
   planes = Ram_MapCellBuffer + AZUL_TEXTURES;
-  stripEnd = offsetof(struct BattleEffectState, sheet) + AZUL_WISPS +
-             (AZUL_WISP_HEIGHT - 1) * AZUL_WISP_WIDTH;
+  // The wisps are turned a quarter as they are copied: each row of a picture
+  // in WispSheet becomes a column of its wisp, from the bottom up.
+  wispBottom = AZUL_WISPS + (AZUL_WISP_HEIGHT - 1) * AZUL_WISP_WIDTH;
   for (frame = 0; frame != AZUL_FRAMES; frame++) {
     // A or B skips to the burst in a white flash.
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame >= AZUL_BUBBLES_FRAME &&
@@ -242,13 +245,13 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
       for (n = 0; n != AZUL_PARTS; n++) {
         for (i = 0; i != 4; i++) {
-          verts[n * 4 + i].x =
+          meshVertices[n * 4 + i].x =
               gAzul_PartPoints[n * AZUL_PART_POINTS + i + 1][0] -
               gAzul_PartPoints[n * AZUL_PART_POINTS][0];
-          verts[n * 4 + i].y =
+          meshVertices[n * 4 + i].y =
               gAzul_PartPoints[n * AZUL_PART_POINTS + i + 1][1] -
               gAzul_PartPoints[n * AZUL_PART_POINTS][1];
-          verts[n * 4 + i].z = 0;
+          meshVertices[n * 4 + i].z = 0;
         }
         faces[n * 3].corner[1] = 1;
         faces[n * 3].corner[2] = 2;
@@ -292,31 +295,31 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
 
         i = 0;
         mask = 31;
-        p = &state->particles[AZUL_PARTS];
-        for (; i != AZUL_BUBBLE_COUNT; i++, p++) {
-          p->x = INTtoFIXED((Random16() & 63) + 32);
-          p->y = INTtoFIXED((Random16() & 15) + 120);
-          p->velocityX = ((Random16() & mask) - 16) << 13;
-          p->velocityY = ((Random16() & mask) - 63) << 12;
-          p->variant =
+        particle = &state->particles[AZUL_PARTS];
+        for (; i != AZUL_BUBBLE_COUNT; i++, particle++) {
+          particle->x = INTtoFIXED((Random16() & 63) + 32);
+          particle->y = INTtoFIXED((Random16() & 15) + 120);
+          particle->velocityX = ((Random16() & mask) - 16) << 13;
+          particle->velocityY = ((Random16() & mask) - 63) << 12;
+          particle->variant =
               FIXEDtoINT(Trig_Cos(i * (TRIG_TURN / 128)) * AZUL_BUBBLE_DELAY) -
               AZUL_BUBBLE_DELAY;
         }
       }
       i = 0;
-      p = &state->particles[AZUL_PARTS];
-      for (; i != AZUL_BUBBLE_COUNT; i++, p++) {
-        if (p->variant >= 0) {
-          FIXED s =
+      particle = &state->particles[AZUL_PARTS];
+      for (; i != AZUL_BUBBLE_COUNT; i++, particle++) {
+        if (particle->variant >= 0) {
+          FIXED sway =
               Trig_Sin(frame * (TRIG_TURN / 64) + i * AZUL_BUBBLE_PHASE_STEP);
 
           blit(canvas, state->sheet + AZUL_BUBBLE,
-               (FIXEDtoINT(p->x + (s << 4))) - AZUL_BUBBLE_WIDTH / 2,
-               FIXED_INTEGER_PART(p->y) - AZUL_BUBBLE_HEIGHT / 2,
+               (FIXEDtoINT(particle->x + (sway << 4))) - AZUL_BUBBLE_WIDTH / 2,
+               FIXED_INTEGER_PART(particle->y) - AZUL_BUBBLE_HEIGHT / 2,
                AZUL_BUBBLE_WIDTH, AZUL_BUBBLE_HEIGHT);
-          Particle_AdvanceWithGravity2D(p, 63, -toFIXED(1) / 4);
+          Particle_AdvanceWithGravity2D(particle, 63, -toFIXED(1) / 4);
         }
-        p->variant++;
+        particle->variant++;
       }
     }
     // The water behind the foes deepens.
@@ -336,10 +339,10 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         *c++ = 0;
       }
       for (; i != BATTLE_VIEW_BOTTOM - 1; i++) {
-        s32 d = i - (BATTLE_VIEW_TOP - 1);
-        s32 b = -(d / GRADIENT_BLUE_LINES) - level + AZUL_WATER_BLUE;
-        s32 g = -(d / GRADIENT_GREEN_LINES) - level + AZUL_WATER_GREEN;
-        s32 r = -(d / GRADIENT_RED_LINES) - level + AZUL_WATER_RED;
+        s32 depth = i - (BATTLE_VIEW_TOP - 1);
+        s32 b = -(depth / GRADIENT_BLUE_LINES) - level + AZUL_WATER_BLUE;
+        s32 g = -(depth / GRADIENT_GREEN_LINES) - level + AZUL_WATER_GREEN;
+        s32 r = -(depth / GRADIENT_RED_LINES) - level + AZUL_WATER_RED;
 
         if (b < 0) {
           b = 0;
@@ -419,12 +422,12 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
                                 i / 4 * 60) +
                      base.y + toFIXED(66);
           CLAMP_Y(place);
-          obj = state->sprites[i + AZUL_SERPENT_OBJECTS];
-          obj->image.tile =
+          sprite = state->sprites[i + AZUL_SERPENT_OBJECTS];
+          sprite->image.tile =
               ((struct Sprite *)state->sprites[(i & 3) + AZUL_BODY_SEGMENT])
                   ->image.tile;
-          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)&gAzul_UnitScale,
-                                            0);
+          Render_ApplyProjectedPlacementFar(sprite, place,
+                                            (s32 *)&gAzul_UnitScale, 0);
         }
       } else {
         for (i = 0; i != AZUL_SERPENT_OBJECTS; i++) {
@@ -438,21 +441,21 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
                                             (s32 *)&gAzul_UnitScale, 0);
         }
         i = 0;
-        xs = gAzul_ObjectX;
+        objectX = gAzul_ObjectX;
         for (; i != AZUL_BODY_COPIES; i++) {
-          s32 m = i & 3;
-          s32 row = m + AZUL_BODY_SEGMENT;
+          s32 segment = i & 3;
+          s32 row = segment + AZUL_BODY_SEGMENT;
 
-          place[0] = INTtoFIXED(xs[row]) + base.x - toFIXED(1);
+          place[0] = INTtoFIXED(objectX[row]) + base.x - toFIXED(1);
           place[2] = INTtoFIXED(gAzul_ObjectZ[row] + i / 4 * 64) + base.y +
                      toFIXED(64);
           CLAMP_Y(place);
-          obj = state->sprites[i + AZUL_SERPENT_OBJECTS];
-          obj->image.tile =
-              ((struct Sprite *)state->sprites[m + AZUL_BODY_SEGMENT])
+          sprite = state->sprites[i + AZUL_SERPENT_OBJECTS];
+          sprite->image.tile =
+              ((struct Sprite *)state->sprites[segment + AZUL_BODY_SEGMENT])
                   ->image.tile;
-          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)&gAzul_UnitScale,
-                                            0);
+          Render_ApplyProjectedPlacementFar(sprite, place,
+                                            (s32 *)&gAzul_UnitScale, 0);
         }
       }
     } else if (frame >= AZUL_SWIM_FRAME && frame < AZUL_RISE_FRAME) {
@@ -494,12 +497,12 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     }
     // The sphere drifts left as the serpent darts off, then back.
     if ((u32)(frame - AZUL_DART_FRAME) <= 29) {
-      s32 d = -toFIXED(2);
+      s32 drift = -toFIXED(2);
 
       if (frame >= AZUL_SWIRL_FRAME) {
-        d = frame * (toFIXED(1) / 8) - toFIXED(21);
+        drift = frame * (toFIXED(1) / 8) - toFIXED(21);
       }
-      pos.x = pos.x + d;
+      pos.x = pos.x + drift;
     }
     if (frame == AZUL_SPHERE_FRAME) {
       Sound_PlayFar(SE_SPIN);
@@ -519,24 +522,24 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
 
       Sound_PlayFar(SE_CLATTER);
       i = 0;
-      p = state->particles;
+      particle = state->particles;
       piece = gAzul_PartPoints[0];
-      for (; i != AZUL_PARTS; i++, piece += AZUL_PART_POINTS * 2, p++) {
+      for (; i != AZUL_PARTS; i++, piece += AZUL_PART_POINTS * 2, particle++) {
         s32 cx = piece[0] >> 1;
         s32 cy = piece[1];
         s32 dx;
         s32 dy;
 
-        SET_POSITION(p, INTtoFIXED(cx), INTtoFIXED(cy), 0);
+        SET_POSITION(particle, INTtoFIXED(cx), INTtoFIXED(cy), 0);
         // A shard flies out a 16th of a pixel a frame across, and a 64th
         // down, for each pixel it lies from the centre.
         dx = cx - AZUL_SHATTER_CENTER;
         dy = cy - AZUL_SHATTER_CENTER;
-        p->velocityX = dx * (toFIXED(1) / 16);
-        p->velocityY = dy * (toFIXED(1) / 64);
-        p->velocityZ = ((Random16() & 127) << 2) + 512;
+        particle->velocityX = dx * (toFIXED(1) / 16);
+        particle->velocityY = dy * (toFIXED(1) / 64);
+        particle->velocityZ = ((Random16() & 127) << 2) + 512;
         if (Random16() & 1) {
-          p->velocityZ = -p->velocityZ;
+          particle->velocityZ = -particle->velocityZ;
         }
       }
       IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -593,33 +596,34 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       model->vertices = vertices;
       model->scrollU = gBgScroll[1].x;
       for (i = 0; i != AZUL_PARTS; i++) {
-        p = &state->particles[i];
+        particle = &state->particles[i];
         model->mesh = &faces[i * 3];
         Matrix_Initialize();
-        Matrix_Translate(p->x - toFIXED(64), p->y - toFIXED(64), 0);
+        Matrix_Translate(particle->x - toFIXED(64), particle->y - toFIXED(64),
+                         0);
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         switch (i & 3) {
         case 0:
-          Matrix_RotateX(p->z);
-          Matrix_RotateZ(p->z);
+          Matrix_RotateX(particle->z);
+          Matrix_RotateZ(particle->z);
           break;
         case 1:
-          Matrix_RotateX(p->z);
-          Matrix_RotateZ(-p->z);
+          Matrix_RotateX(particle->z);
+          Matrix_RotateZ(-particle->z);
           break;
         case 2:
-          Matrix_RotateX(p->z);
-          Matrix_RotateY(p->z);
+          Matrix_RotateX(particle->z);
+          Matrix_RotateY(particle->z);
           break;
         case 3:
-          Matrix_RotateZ(p->z);
-          Matrix_RotateY(-p->z);
+          Matrix_RotateZ(particle->z);
+          Matrix_RotateY(-particle->z);
           break;
         }
-        Render_TransformVertices(&verts[i * 4], vertices, 4);
-        Particle_AdvanceWithGravity3D(p, 62, 0);
+        Render_TransformVertices(&meshVertices[i * 4], vertices, 4);
+        Particle_AdvanceWithGravity3D(particle, 62, 0);
         if (frame >= (8 - i) * 2 + 16) {
-          p->velocityY += -toFIXED(1) / 2;
+          particle->velocityY += -toFIXED(1) / 2;
         }
         Render_DrawModelList(model);
       }
@@ -661,8 +665,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       for (i = 0; i != AZUL_WISP_PICTURES; i++) {
         for (k = 0; k != AZUL_WISP_WIDTH; k++) {
           for (j = 0; j != AZUL_WISP_HEIGHT; j++) {
-            ((u8 *)state)[stripEnd +
-                          (i * AZUL_WISP_HEIGHT - j) * AZUL_WISP_WIDTH + k] =
+            state->sheet[wispBottom +
+                         (i * AZUL_WISP_HEIGHT - j) * AZUL_WISP_WIDTH + k] =
                 (planes + i * PICTURE_BYTES(WISP) + k * (WISP_WIDTH * 2))[j];
           }
         }
@@ -690,7 +694,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       // Foam streams up beside the rising serpent.
       if ((u32)(frame - AZUL_RISE_FRAME) <= 17) {
         s32 y;
-        s32 f;
+        s32 wisp;
         s32 width;
         s32 height;
 
@@ -702,10 +706,10 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         y = (FIXEDtoINT(base.y)) - 32;
         width = AZUL_WISP_WIDTH;
         height = AZUL_WISP_HEIGHT;
-        f = frame;
-        for (; i != 2; i++, f += 3) {
+        wisp = frame;
+        for (; i != 2; i++, wisp += 3) {
           u8 *cells = state->sheet + AZUL_WISPS +
-                      f % AZUL_WISP_PICTURES * PICTURE_BYTES(AZUL_WISP);
+                      wisp % AZUL_WISP_PICTURES * PICTURE_BYTES(AZUL_WISP);
 
           blit(canvas, cells, 30, y, width, height);
           alternateBlit(canvas, cells, 46, y, width, height);
@@ -725,7 +729,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         model->kind = MODEL_SHADED_ADDITIVE;
         model->texture = &scratchTexture;
         model->mesh = grid;
-        model->vertices = verts;
+        model->vertices = meshVertices;
         model->shade = shade;
         model->scrollU = shade;
         model->scrollV = shade;
@@ -735,7 +739,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         Matrix_Translate(-toFIXED(40), 0, 0);
         Matrix_RotateX(frame * (TRIG_TURN / 64));
         Matrix_RotateY(frame * (TRIG_TURN / 64));
-        Render_TransformVertices(sphere, verts, 256);
+        Render_TransformVertices(sphere, meshVertices, 256);
         Render_DrawModelList(model);
         if (frame >= AZUL_DART_FRAME) {
           shade = 1444 - frame * 10;
@@ -754,7 +758,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
             Matrix_Translate(toFIXED(44), 0, 0);
             Matrix_RotateY(AZUL_RING_TURN);
             Matrix_ScaleUniform(size);
-            Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
+            Render_TransformVertices(gBattleEffect_SquareCorners, meshVertices,
+                                     4);
             Render_DrawModelList(model);
           }
         }
@@ -771,7 +776,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           Matrix_Translate(-toFIXED(16), pos.y - toFIXED(80), 0);
           Matrix_Scale(size >> 1, size, size >> 1);
           Matrix_RotateZ(frame * (TRIG_TURN / 32));
-          Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, meshVertices,
+                                   4);
           Render_DrawModelList(model);
         }
         Heap_Release(model);
@@ -795,21 +801,21 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           drop->variant = (Random16() & 31) + 32;
         }
       }
-      p = (struct Particle *)gMapGridCellBuffer;
-      for (i = 0; i != AZUL_DROPS; i++, p++) {
-        if (p->variant >= 0) {
+      particle = (struct Particle *)gMapGridCellBuffer;
+      for (i = 0; i != AZUL_DROPS; i++, particle++) {
+        if (particle->variant >= 0) {
           blit(canvas, state->sheet + AZUL_BUBBLE,
-               FIXED_INTEGER_PART(p->x) - AZUL_BUBBLE_WIDTH / 2,
-               FIXED_INTEGER_PART(p->y) - AZUL_BUBBLE_HEIGHT / 2,
+               FIXED_INTEGER_PART(particle->x) - AZUL_BUBBLE_WIDTH / 2,
+               FIXED_INTEGER_PART(particle->y) - AZUL_BUBBLE_HEIGHT / 2,
                AZUL_BUBBLE_WIDTH, AZUL_BUBBLE_HEIGHT);
-          Particle_AdvanceWithGravity2D(p, 63, toFIXED(1));
-          if (p->y > toFIXED(96)) {
-            p->velocityY = -p->velocityY / 2;
-            p->velocityX <<= 2;
-            p->variant -= 8;
+          Particle_AdvanceWithGravity2D(particle, 63, toFIXED(1));
+          if (particle->y > toFIXED(96)) {
+            particle->velocityY = -particle->velocityY / 2;
+            particle->velocityX <<= 2;
+            particle->variant -= 8;
           }
         }
-        p->variant--;
+        particle->variant--;
       }
     }
     if (frame == AZUL_BURST_FRAME) {

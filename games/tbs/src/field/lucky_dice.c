@@ -465,14 +465,14 @@ void LuckyDice_Run(void) {
 
   // Open the coins window and the Throw / Quit help.
   WindowSystem_InitFieldFar();
-  window =
-      Window_CreateFar(DICE_COINS_WINDOW_X, 0, DICE_COINS_WINDOW_WIDTH, 3, 6);
+  window = Window_CreateFar(DICE_COINS_WINDOW_X, 0, DICE_COINS_WINDOW_WIDTH, 3,
+                            WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   sprites->coinsWindow = window;
   Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins, window, DICE_COINS_LABEL_X, 0);
   Text_DrawNumberInWindowFar(gMainRoutineState.holdings.coins, DICE_COIN_DIGITS,
                              sprites->coinsWindow, 0, 0);
-  window =
-      Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4, 6);
+  window = Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4,
+                            WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   sprites->helpWindow = window;
   // ":Throw" and ":Quit" after their buttons.
   Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins + DICE_LABEL_THROW, window, 0,
@@ -577,7 +577,8 @@ void LuckyDice_Run(void) {
           digits = 5;
         }
         window = Window_CreateFar(DICE_WINNINGS_WINDOW_X - digits / 2, 16,
-                                  digits + DICE_WINNINGS_WINDOW_WIDTH, 3, 6);
+                                  digits + DICE_WINNINGS_WINDOW_WIDTH, 3,
+                                  WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         sprites->winningsWindow = window;
         Text_DrawMessageAsTilesFar(MsgLuckyDiceWinnings, window, 0, 0);
         // "Coins" after the number (MsgLuckyDiceCoins, one before).
@@ -603,8 +604,9 @@ void LuckyDice_Run(void) {
           state = LUCKY_DICE_AIM;
 #if TBS_PATCH_1
           // From patch 1 a lost throw reopens the Throw / Quit help.
-          window = Window_CreateFar(DICE_HELP_WINDOW_X, 16,
-                                    DICE_HELP_WINDOW_WIDTH, 4, 6);
+          window =
+              Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH,
+                               4, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
           sprites->helpWindow = window;
           Text_DrawMessageAsTilesFar(MsgLuckyDiceThrow, window, 0, 0);
           Text_DrawMessageAsTilesFar(MsgLuckyDiceThrow + 1, sprites->helpWindow,
@@ -629,8 +631,9 @@ void LuckyDice_Run(void) {
       if (payoutTimer == DICE_PAYOUT_FRAMES) {
         state = LUCKY_DICE_AIM;
         Window_CloseFar(sprites->winningsWindow, 1);
-        window = Window_CreateFar(DICE_HELP_WINDOW_X, 16,
-                                  DICE_HELP_WINDOW_WIDTH, 4, 6);
+        window =
+            Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4,
+                             WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         sprites->helpWindow = window;
         Text_DrawMessageAsTilesFar(MsgLuckyDiceThrow, window, 0, 0);
         Text_DrawMessageAsTilesFar(MsgLuckyDiceThrow + 1, sprites->helpWindow,

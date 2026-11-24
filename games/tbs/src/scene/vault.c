@@ -859,6 +859,8 @@ s32 Scene_Initialize(void) {
   }
   suspectsMindRead = GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    // DEAD: GameFlag_Get answers 0 or 1, so the mask changes nothing; the ROM
+    // keeps it.
     if ((suspectsMindRead & 1) != 0) {
       Actor_Get(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED)->update =
           (void (*)(struct Actor *))Vault_UpdateWomanWantingRoofFixed;
@@ -866,6 +868,14 @@ s32 Scene_Initialize(void) {
   }
   // Back through the gates while Ivan waits in Vault: "Welcome back, you two!
   // Let's go find the rod!"
+  // The entrances up to VAULT_NORTH_UNUSED are the gates': the default one
+  // inside the north gate, the south gate's and the unused one inside the
+  // north gate.
+  // XXX: the World Map's north exit leads to VAULT_FROM_WORLD_MAP_NORTH (3),
+  // which gVault_Entrances lacks, so the party stands at the default row's
+  // place but keeps entrance 3 and fails this test, and Ivan's welcome back
+  // would not play there; a recording of that exit into Vault with
+  // FLAG_VAULT_IVAN_JOINED_ROD_SEARCH set, Ivan out of the party, settles it.
   if (gMainRoutineState.entrance <= VAULT_NORTH_UNUSED) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);

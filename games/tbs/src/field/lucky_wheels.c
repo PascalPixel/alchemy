@@ -97,10 +97,10 @@ void LuckyWheels_TransferCanvas(void) {
     case CANVAS_COPY_AND_FADE:
       // Trails: nonzero colour numbers drop to 1/2 or 3/4.
       if (effect->transferValue == CANVAS_FADE_HALF)
-        PaletteFade_BackupAndHalveNonzero(canvas, LUCKY_WHEELS_CANVAS_TILES,
-                                          LUCKY_WHEELS_CANVAS_SIZE);
+        Canvas_CopyAndHalveNonzero(canvas, LUCKY_WHEELS_CANVAS_TILES,
+                                   LUCKY_WHEELS_CANVAS_SIZE);
       else
-        PaletteFade_BackupAndScaleNonzeroThreeQuarters(
+        Canvas_CopyAndScaleNonzeroThreeQuarters(
             canvas, LUCKY_WHEELS_CANVAS_TILES, LUCKY_WHEELS_CANVAS_SIZE);
       break;
     }

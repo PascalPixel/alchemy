@@ -175,8 +175,7 @@ u32 ElementGlow_UploadStarField(void) {
   if (source != 0) {
     if (state->ready != 0) {
       state->ready = 0;
-      PaletteFade_BackupAndScaleThreeQuarters(source, BG_CHAR_BLOCK(1),
-                                              BG_CHAR_SIZE);
+      Canvas_CopyAndScaleThreeQuarters(source, BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
     }
   }
 }

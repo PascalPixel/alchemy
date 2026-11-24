@@ -76,49 +76,49 @@ struct PaletteCycleState;
 struct MenuCursor;
 struct TileMask;
 
-// The pixel shading kernels and their sizes: each
-// PaletteFade_BackupAnd... function in system/system_decompress.c copies its
-// kernel onto its own stack and runs it there.
-/// PaletteFade_BrightenKernel, for PaletteFade_BackupAndBrighten.
-extern u8 PaletteFade_BackupAndBrightenCodeSize[];
-/// PaletteFade_BrightenPartialKernel, for
-/// PaletteFade_BackupAndBrightenPartial.
-extern u8 PaletteFade_BackupAndBrightenPartialCodeSize[];
-/// PaletteFade_DarkenKernel, for PaletteFade_BackupAndDarken.
-extern u8 PaletteFade_BackupAndDarkenCodeSize[];
-/// PaletteFade_DarkenPartialKernel, for PaletteFade_BackupAndDarkenPartial.
-extern u8 PaletteFade_BackupAndDarkenPartialCodeSize[];
-/// PaletteFade_HalveKernel, for PaletteFade_BackupAndHalve.
-extern u8 PaletteFade_BackupAndHalveCodeSize[];
-/// PaletteFade_HalveNonzeroKernel, for PaletteFade_BackupAndHalveNonzero.
-extern u8 PaletteFade_BackupAndHalveNonzeroCodeSize[];
-/// PaletteFade_ScaleNonzeroThreeQuartersKernel, for
-/// PaletteFade_BackupAndScaleNonzeroThreeQuarters.
-extern u8 PaletteFade_BackupAndScaleNonzeroThreeQuartersCodeSize[];
-/// PaletteFade_ScaleThreeQuartersKernel, for
-/// PaletteFade_BackupAndScaleThreeQuarters.
-extern u8 PaletteFade_BackupAndScaleThreeQuartersCodeSize[];
+// The canvas fades' ARM routines and their sizes: each Canvas_CopyAnd...
+// function in system/system_decompress.c copies its routine onto its own
+// stack and runs it there.
+/// Canvas_BrightenArm, for Canvas_CopyAndBrighten.
+extern u8 Canvas_CopyAndBrightenCodeSize[];
+/// Canvas_BrightenPartialArm, for
+/// Canvas_CopyAndBrightenPartial.
+extern u8 Canvas_CopyAndBrightenPartialCodeSize[];
+/// Canvas_DarkenArm, for Canvas_CopyAndDarken.
+extern u8 Canvas_CopyAndDarkenCodeSize[];
+/// Canvas_DarkenPartialArm, for Canvas_CopyAndDarkenPartial.
+extern u8 Canvas_CopyAndDarkenPartialCodeSize[];
+/// Canvas_HalveArm, for Canvas_CopyAndHalve.
+extern u8 Canvas_CopyAndHalveCodeSize[];
+/// Canvas_HalveNonzeroArm, for Canvas_CopyAndHalveNonzero.
+extern u8 Canvas_CopyAndHalveNonzeroCodeSize[];
+/// Canvas_ScaleNonzeroThreeQuartersArm, for
+/// Canvas_CopyAndScaleNonzeroThreeQuarters.
+extern u8 Canvas_CopyAndScaleNonzeroThreeQuartersCodeSize[];
+/// Canvas_ScaleThreeQuartersArm, for
+/// Canvas_CopyAndScaleThreeQuarters.
+extern u8 Canvas_CopyAndScaleThreeQuartersCodeSize[];
 /// Raises each pixel step by an amount, capped at 63, after backing the
 /// buffer up.
-extern const u8 PaletteFade_BrightenKernel[];
-/// Brightens as PaletteFade_BrightenKernel, writing back only groups of four
+extern const u8 Canvas_BrightenArm[];
+/// Brightens as Canvas_BrightenArm, writing back only groups of four
 /// pixels not all at 63 already.
-extern const u8 PaletteFade_BrightenPartialKernel[];
+extern const u8 Canvas_BrightenPartialArm[];
 /// Lowers each pixel step by an amount, stopping at 0, after backing the
 /// buffer up.
-extern const u8 PaletteFade_DarkenKernel[];
-/// Darkens as PaletteFade_DarkenKernel, writing back only groups of four
+extern const u8 Canvas_DarkenArm[];
+/// Darkens as Canvas_DarkenArm, writing back only groups of four
 /// pixels not all 0 already.
-extern const u8 PaletteFade_DarkenPartialKernel[];
+extern const u8 Canvas_DarkenPartialArm[];
 /// Halves each pixel step; the battle effect canvas's transfers use it.
-extern const u8 PaletteFade_HalveKernel[];
+extern const u8 Canvas_HalveArm[];
 /// Halves each pixel step, skipping all-zero groups; Lucky Wheels' canvas uses
 /// it.
-extern const u8 PaletteFade_HalveNonzeroKernel[];
+extern const u8 Canvas_HalveNonzeroArm[];
 /// Scales each pixel step to three quarters, skipping all-zero groups.
-extern const u8 PaletteFade_ScaleNonzeroThreeQuartersKernel[];
+extern const u8 Canvas_ScaleNonzeroThreeQuartersArm[];
 /// Scales each pixel step to three quarters.
-extern const u8 PaletteFade_ScaleThreeQuartersKernel[];
+extern const u8 Canvas_ScaleThreeQuartersArm[];
 /// The 256 depth slots' list heads that every drawn sprite is linked into
 /// (Oam_AddSpriteAtDepth); Oam_ResetFrame empties them each frame.
 extern void *gOamDepthLists[];

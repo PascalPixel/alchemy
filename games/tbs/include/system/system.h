@@ -233,18 +233,17 @@ void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth);
 s32 Matrix_ProjectPoint(const void *point, s32 *screen);
 
 void Decompress_Halfwords(const void *source, void *destination);
-void PaletteFade_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup,
+void Canvas_CopyAndBrighten(u8 *buffer, u32 amount, u8 *destination, u32 bytes);
+void Canvas_CopyAndDarken(u8 *buffer, u32 amount, u8 *destination, u32 bytes);
+void Canvas_CopyAndScaleThreeQuarters(u8 *buffer, u8 *destination, u32 bytes);
+void Canvas_CopyAndHalve(u8 *buffer, u8 *destination, u32 bytes);
+void Canvas_CopyAndBrightenPartial(u8 *buffer, u32 amount, u8 *destination,
                                    u32 bytes);
-void PaletteFade_BackupAndDarken(u8 *buffer, u32 amount, u8 *backup, u32 bytes);
-void PaletteFade_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup, u32 bytes);
-void PaletteFade_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes);
-void PaletteFade_BackupAndBrightenPartial(u8 *buffer, u32 amount, u8 *backup,
-                                          u32 bytes);
-void PaletteFade_BackupAndDarkenPartial(u8 *buffer, u32 amount, u8 *backup,
-                                        u32 bytes);
-void PaletteFade_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup,
-                                                    u32 bytes);
-void PaletteFade_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes);
+void Canvas_CopyAndDarkenPartial(u8 *buffer, u32 amount, u8 *destination,
+                                 u32 bytes);
+void Canvas_CopyAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *destination,
+                                             u32 bytes);
+void Canvas_CopyAndHalveNonzero(u8 *buffer, u8 *destination, u32 bytes);
 s32 Save_InitializeState(void);
 u32 Save_SelectWriteSector(s32 partId);
 u32 Save_WriteSector(s32 sector);

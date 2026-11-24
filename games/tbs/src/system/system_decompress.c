@@ -45,55 +45,49 @@ RESOURCE_DEFINE_DECODE(Decompress_ByteLz, Decompress_ByteLzArm,
 /// bytes at a time, and shades each group in the canvas as it goes, so what is
 /// drawn next lands on a dimmer copy of this frame. `amount` holds the step in
 /// each of its four bytes (CANVAS_FILL_WORD).
-#define PALETTE_FADE_DEFINE_SHADE_BY(name, kernel, size)                       \
+#define CANVAS_DEFINE_FADE_BY(name, code, size)                                \
   void name(u8 *buffer, u32 amount, u8 *destination, u32 bytes) {              \
     u32 words = (u32)size >> 2;                                                \
     u32 routine[words];                                                        \
-    Dma_Set(kernel, routine, DMA_COPY_WORDS(words), REG_DMA3);                 \
+    Dma_Set(code, routine, DMA_COPY_WORDS(words), REG_DMA3);                   \
     ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, destination,     \
                                               bytes);                          \
   }
-#define PALETTE_FADE_DEFINE_SHADE(name, kernel, size)                          \
+#define CANVAS_DEFINE_FADE(name, code, size)                                   \
   void name(u8 *buffer, u8 *destination, u32 bytes) {                          \
     u32 words = (u32)size >> 2;                                                \
     u32 routine[words];                                                        \
-    Dma_Set(kernel, routine, DMA_COPY_WORDS(words), REG_DMA3);                 \
+    Dma_Set(code, routine, DMA_COPY_WORDS(words), REG_DMA3);                   \
     ((void (*)(u8 *, u8 *, u32))routine)(buffer, destination, bytes);          \
   }
 
 /// Raises every pixel in the canvas by `amount`, stopping at 63.
-PALETTE_FADE_DEFINE_SHADE_BY(PaletteFade_BackupAndBrighten,
-                             PaletteFade_BrightenKernel,
-                             PaletteFade_BackupAndBrightenCodeSize)
+CANVAS_DEFINE_FADE_BY(Canvas_CopyAndBrighten, Canvas_BrightenArm,
+                      Canvas_CopyAndBrightenCodeSize)
 /// Lowers every pixel in the canvas by `amount`, stopping at 0.
-PALETTE_FADE_DEFINE_SHADE_BY(PaletteFade_BackupAndDarken,
-                             PaletteFade_DarkenKernel,
-                             PaletteFade_BackupAndDarkenCodeSize)
+CANVAS_DEFINE_FADE_BY(Canvas_CopyAndDarken, Canvas_DarkenArm,
+                      Canvas_CopyAndDarkenCodeSize)
 /// Scales every pixel to three quarters.
-PALETTE_FADE_DEFINE_SHADE(PaletteFade_BackupAndScaleThreeQuarters,
-                          PaletteFade_ScaleThreeQuartersKernel,
-                          PaletteFade_BackupAndScaleThreeQuartersCodeSize)
+CANVAS_DEFINE_FADE(Canvas_CopyAndScaleThreeQuarters,
+                   Canvas_ScaleThreeQuartersArm,
+                   Canvas_CopyAndScaleThreeQuartersCodeSize)
 /// Halves every pixel.
-PALETTE_FADE_DEFINE_SHADE(PaletteFade_BackupAndHalve, PaletteFade_HalveKernel,
-                          PaletteFade_BackupAndHalveCodeSize)
-/// As PaletteFade_BackupAndBrighten, skipping groups already all at 63.
-PALETTE_FADE_DEFINE_SHADE_BY(PaletteFade_BackupAndBrightenPartial,
-                             PaletteFade_BrightenPartialKernel,
-                             PaletteFade_BackupAndBrightenPartialCodeSize)
-/// As PaletteFade_BackupAndDarken, skipping groups already all at 0.
-PALETTE_FADE_DEFINE_SHADE_BY(PaletteFade_BackupAndDarkenPartial,
-                             PaletteFade_DarkenPartialKernel,
-                             PaletteFade_BackupAndDarkenPartialCodeSize)
+CANVAS_DEFINE_FADE(Canvas_CopyAndHalve, Canvas_HalveArm,
+                   Canvas_CopyAndHalveCodeSize)
+/// As Canvas_CopyAndBrighten, skipping groups already all at 63.
+CANVAS_DEFINE_FADE_BY(Canvas_CopyAndBrightenPartial, Canvas_BrightenPartialArm,
+                      Canvas_CopyAndBrightenPartialCodeSize)
+/// As Canvas_CopyAndDarken, skipping groups already all at 0.
+CANVAS_DEFINE_FADE_BY(Canvas_CopyAndDarkenPartial, Canvas_DarkenPartialArm,
+                      Canvas_CopyAndDarkenPartialCodeSize)
 /// Scales every pixel to three quarters, skipping all-zero groups.
-PALETTE_FADE_DEFINE_SHADE(
-    PaletteFade_BackupAndScaleNonzeroThreeQuarters,
-    PaletteFade_ScaleNonzeroThreeQuartersKernel,
-    PaletteFade_BackupAndScaleNonzeroThreeQuartersCodeSize)
+CANVAS_DEFINE_FADE(Canvas_CopyAndScaleNonzeroThreeQuarters,
+                   Canvas_ScaleNonzeroThreeQuartersArm,
+                   Canvas_CopyAndScaleNonzeroThreeQuartersCodeSize)
 /// Halves every pixel, skipping all-zero groups.
-PALETTE_FADE_DEFINE_SHADE(PaletteFade_BackupAndHalveNonzero,
-                          PaletteFade_HalveNonzeroKernel,
-                          PaletteFade_BackupAndHalveNonzeroCodeSize)
+CANVAS_DEFINE_FADE(Canvas_CopyAndHalveNonzero, Canvas_HalveNonzeroArm,
+                   Canvas_CopyAndHalveNonzeroCodeSize)
 
 #undef RESOURCE_DEFINE_DECODE
-#undef PALETTE_FADE_DEFINE_SHADE_BY
-#undef PALETTE_FADE_DEFINE_SHADE
+#undef CANVAS_DEFINE_FADE_BY
+#undef CANVAS_DEFINE_FADE

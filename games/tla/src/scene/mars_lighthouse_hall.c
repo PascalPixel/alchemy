@@ -1139,7 +1139,7 @@ void FlameThrower_SendForward(struct Vector3 *position, s32 value, s32 flag) {
     Actor_ResetScriptedFor(actor, 2);
     actor->update = Flame_UpdateForward;
     if (flag != 0)
-      actor->retainSpriteCache = 2;
+      actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     Actor_SelectAnimation(actor, 2);
   }
 }
@@ -1165,7 +1165,7 @@ void FlameThrower_SendBackward(struct Vector3 *position, s32 value, s32 flag) {
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateForward;
     if (flag != 0)
-      actor->retainSpriteCache = 2;
+      actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     Actor_SelectAnimation(actor, 2);
   }
 }
@@ -1182,7 +1182,7 @@ void FlameThrower_SendEast(struct Vector3 *position, s32 value, s32 flag) {
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateSideways;
     if (flag != 0)
-      actor->retainSpriteCache = 2;
+      actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     Actor_SelectAnimation(actor, 2);
   }
 }
@@ -1199,7 +1199,7 @@ void FlameThrower_SendWest(struct Vector3 *position, s32 value, s32 flag) {
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateSideways;
     if (flag != 0)
-      actor->retainSpriteCache = 2;
+      actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     Actor_SelectAnimation(actor, 2);
   }
 }

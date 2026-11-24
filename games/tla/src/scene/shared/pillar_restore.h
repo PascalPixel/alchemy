@@ -39,7 +39,8 @@ UNUSED void MagmaRockInside_RestorePillars(u16 *list) {
     nextFlag = flag + 1;
     cells = map->layers[actor->layer].cells;
     shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-    actor->retainSpriteCache = 3;
+    actor->retainSpriteCache =
+        ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
     if (Event_GetFlag(nextFlag)) {
       Actor_SetPosition(id, 0, 0);
     } else {

@@ -1753,7 +1753,7 @@ void GabombaStatue_SetCogTurn(s32 id, s32 direction, s32 value) {
 
   Actor_SelectAnimation(actor,
                         gGabombaStatue_CogAnimations[(direction + 1) & 3]);
-  actor->retainSpriteCache = 2;
+  actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
   Sprite_SetAnimationTimers(animation, value);
 }
 
@@ -3325,7 +3325,7 @@ s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 seed, s32 id) {
     GabombaStatue_SetBlocksRaised(id, 0);
     Task_AddFrame(GabombaStatue_DrawRaisedBlocks, TASK_PASS_FRAME);
   }
-  Actor_Get(id)->retainSpriteCache = 2;
+  Actor_Get(id)->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
   return laidSeed;
 }
 

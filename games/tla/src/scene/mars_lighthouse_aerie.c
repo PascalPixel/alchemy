@@ -2119,7 +2119,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
     sprite->priority = 2;
     star->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     star->motionFlags = 0;
-    star->retainSpriteCache = 1;
+    star->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     star->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpriteFlags(star, 0);
     star->speedLimit = toFIXED(2) / 5;

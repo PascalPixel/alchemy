@@ -2166,7 +2166,7 @@ void Kibombo_CreateBlackCrystal(void) {
     sprite->palette = 0;
     sprite->priority = 1;
     actor->motionFlags = clear;
-    actor->retainSpriteCache = 1;
+    actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     sprite->flags = clear;
     sprite->countAndShadow[0] = clear;
     glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
@@ -2248,7 +2248,7 @@ void Kibombo_RaiseSmoke(void) {
                                              toFIXED(16), toFIXED(314));
 
     if (actor != 0) {
-      actor->retainSpriteCache = 2;
+      actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
       actor->motionFlags = 0;
       actor->timer = 0;
       actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;

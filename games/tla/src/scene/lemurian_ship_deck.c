@@ -845,7 +845,7 @@ struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   sprite->palette = 0;
   sprite->priority = 1;
   actor->motionFlags = 0;
-  actor->retainSpriteCache = 1;
+  actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
   sprite->flags = 0;
   sprite->countAndShadow[0] = 0;
   buffer = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));

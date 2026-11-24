@@ -2118,7 +2118,7 @@ void DehkanPlateau_CreatePoundCube(void) {
     sprite->fullColor = 0;
     sprite->palette = 0;
     actor->motionFlags = clear;
-    actor->retainSpriteCache = 1;
+    actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     sprite->flags = clear;
     sprite->countAndShadow[0] = clear;
     glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));

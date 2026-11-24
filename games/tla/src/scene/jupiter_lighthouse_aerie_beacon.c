@@ -535,7 +535,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         sprite->priority = 0;
         star->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         star->motionFlags = 0;
-        star->retainSpriteCache = 1;
+        star->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
         star->speedLimit = toFIXED(2) / 5;
         star->acceleration = toFIXED(1) / 20;
         glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));

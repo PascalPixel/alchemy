@@ -1383,7 +1383,8 @@ UNUSED void TundariaTower_CrumblePillar(u16 *row, s32 id) {
 
 /// Keeps the pillar's sprite cached and stops it.
 void TundariaTower_FreezePillar(s32 id) {
-  Actor_GetById(id)->retainSpriteCache = 3;
+  Actor_GetById(id)->retainSpriteCache =
+      ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
   Actor_DisableById(id);
 }
 
@@ -1424,7 +1425,8 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
       nextFlag = flag + 1;
       cells = map->layers[actor->layer].cells;
       shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-      actor->retainSpriteCache = 3;
+      actor->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
       if (GameFlag_Get(nextFlag)) {
         Actor_SetPosition(id, 0, 0);
       } else {

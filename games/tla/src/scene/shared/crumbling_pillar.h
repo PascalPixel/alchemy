@@ -177,7 +177,8 @@ void CrumblingPillar_Collapse(const void *data, s32 id) {
 /// Keeps an actor's sprite picture loaded even out of sight, and stops it
 /// moving, colliding and showing (Actor_DisableById).
 void CrumblingPillar_Prepare(s32 id) {
-  Actor_Get(id)->retainSpriteCache = 3;
+  Actor_Get(id)->retainSpriteCache =
+      ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
   Actor_DisableById(id);
 }
 
@@ -215,7 +216,8 @@ void CrumblingPillar_PlaceWithStandIn(u16 *list) {
     struct MapCell *cells = map->layers[actor->layer].cells;
     u8 *shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
-    actor->retainSpriteCache = 3;
+    actor->retainSpriteCache =
+        ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
     if (Event_GetFlag(next)) {
       Actor_SetPosition(id, 0, 0);
     } else {

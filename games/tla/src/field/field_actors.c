@@ -609,7 +609,7 @@ void Actor_SetItemIcon(struct Actor *owner, s32 id) {
 
   if (owner == 0)
     return;
-  owner->retainSpriteCache = 1;
+  owner->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
   owner->iconItem = id;
   sprite = owner->sprite;
   if (sprite == 0)
@@ -742,7 +742,8 @@ void ActorSystem_PlaceSprites(void) {
         continue;
       if (kind != ACTOR_SPRITE_ONE)
         continue;
-      if (system->suspended != 0 && !(actor->retainSpriteCache & 1)) {
+      if (system->suspended != 0 &&
+          !(actor->retainSpriteCache & ACTOR_KEEP_SPRITE_VRAM)) {
         struct PlacedSprite *frozen = actor->sprite;
 
         VramCache_ReleaseVram(frozen->slot);
@@ -881,9 +882,9 @@ void ActorSystem_PlaceSprites(void) {
                                          scale.values, actor->facing);
         continue;
       }
-      if (actor->retainSpriteCache & 2) {
+      if (actor->retainSpriteCache & ACTOR_COMPOSE_OFF_SCREEN) {
         Sprite_ComposePicture(sprite, actor->facing);
-      } else if (!(actor->retainSpriteCache & 1) &&
+      } else if (!(actor->retainSpriteCache & ACTOR_KEEP_SPRITE_VRAM) &&
                  !(sprite->retainCacheEntry & 1)) {
         VramCache_ReleaseVram(sprite->slot);
         sprite->dirty = 1;

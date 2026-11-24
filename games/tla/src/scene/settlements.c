@@ -640,7 +640,7 @@ void Settlements_SetUpKaltIsland(void) {
   actor->targetX = actor->x.fixed;
   actor->speedLimit = 0;
   actor->targetY = actor->y.fixed;
-  actor->retainSpriteCache = 1;
+  actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
   actor->update = (ObjectUpdate)Settlements_FloatApple;
   actor->arrivalAxis = 0;
 }

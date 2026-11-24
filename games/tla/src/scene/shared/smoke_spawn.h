@@ -4,7 +4,7 @@ void Smoke_Spawn(s32 x, s32 y, s32 z) {
   struct Actor *actor = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
 
   if (actor != NULL) {
-    actor->retainSpriteCache = 2;
+    actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     actor->motionFlags = 0;
     actor->timer = 0;
     actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;

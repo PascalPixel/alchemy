@@ -1552,7 +1552,7 @@ struct Actor *ShamanVillage_CreateRodIcon(void) {
     sprite->palette = 0;
     sprite->priority = 1;
     actor->motionFlags = 0;
-    actor->retainSpriteCache = 1;
+    actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     sprite->flags = 0;
     sprite->countAndShadow[0] = 0;
     transfer = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
@@ -2892,7 +2892,7 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
       ((struct Actor *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
 
   if (actor != NULL) {
-    actor->retainSpriteCache = 2; // its picture stays composed off screen
+    actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     actor->motionFlags = 0;
     actor->timer = 0;
     actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;

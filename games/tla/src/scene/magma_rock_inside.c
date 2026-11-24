@@ -2536,16 +2536,24 @@ s32 Scene_Initialize(void) {
       Actor_PlaceBlocks(gMagmaRockInside_CrackedPillarsPillars);
       Lower(ACTOR_LOWER_COLUMN, 0);
       // The platforms ride in and out of view: each keeps its sprite's tiles
-      // in VRAM (bit 0) and its picture drawn (bit 1) while off screen, so it
-      // shows at once as it comes back (ActorSystem_PlaceSprites).
-      Actor_GetById(ACTOR_LAVA_PLATFORM_A)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_B)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_C)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_D)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_E)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_F)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_G)->retainSpriteCache = 3;
-      Actor_GetById(ACTOR_LAVA_PLATFORM_H)->retainSpriteCache = 3;
+      // in VRAM and its picture composed while off screen, so it shows at
+      // once as it comes back.
+      Actor_GetById(ACTOR_LAVA_PLATFORM_A)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_B)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_C)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_D)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_E)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_F)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_G)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+      Actor_GetById(ACTOR_LAVA_PLATFORM_H)->retainSpriteCache =
+          ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
       MagmaRockInside_StartLavaPlatform(
           ACTOR_LAVA_PLATFORM_A, gMagmaRockInside_CrackedPillarsFirstPairPath,
           FLAG_LOWER_ROOMS_FLOODED);

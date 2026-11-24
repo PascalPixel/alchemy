@@ -12,7 +12,7 @@ void FlameThrower_SendForward(s32 *position, s32 speed, s32 offScreen) {
     Actor_ResetScriptedFor(actor, 2);
     actor->update = Flame_UpdateForward;
     if (offScreen)
-      actor->retainSpriteCache = 2;
+      actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
     Actor_SelectAnimation(actor, 2);
   }
 }

@@ -1436,7 +1436,7 @@ struct Actor *YampiDesert_CreateScoopGem(void) {
     mask |= OBJ_PRIORITY(1) >> 8;
     visual->attr2High = mask;
     actor->motionFlags = 0;
-    actor->retainSpriteCache = 1;
+    actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     visual->flags = 0;
     visual->layerCount = 0;
     icon = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));

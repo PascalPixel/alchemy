@@ -1245,7 +1245,8 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(id, 3);
     for (id = ACTOR_FIRST_BOTTOM_MOAI; id <= ACTOR_LAST_MOAI; id++)
       Actor_SetSpritePriority(id, 1);
-    Actor_GetById(ACTOR_FIRST_BOTTOM_MOAI)->retainSpriteCache = 2;
+    Actor_GetById(ACTOR_FIRST_BOTTOM_MOAI)->retainSpriteCache =
+        ACTOR_COMPOSE_OFF_SCREEN;
     Actor_SetAnimationById(ACTOR_FIRST_BOTTOM_MOAI, 3);
     for (id = ACTOR_FIRST_BOTTOM_MOAI + 1; id <= ACTOR_LAST_MOAI; id++) {
       Actor_SetAnimationById(id, 1);

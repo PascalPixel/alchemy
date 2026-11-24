@@ -8,7 +8,7 @@ void FlameThrowers_Create(void) {
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(state, sizeof(*state));
   actor = (struct Actor *)FieldActor_Create(SPRITE_SMALL_FLAME, 1, 0, 0);
-  actor->retainSpriteCache = 2;
+  actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
   Actor_SelectAnimation(actor, 1);
   animation = actor->sprite;
   state->handle = actor;

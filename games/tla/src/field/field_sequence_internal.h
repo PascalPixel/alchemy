@@ -169,17 +169,17 @@ struct MapRegion {
 };
 
 /// Each scene's encounters by scene, entrance and flag, ended by scene -1
-/// (encounter_rules.c).
+/// (encounter_rules.s).
 extern const struct SceneEncounterRule gScene_EncounterRules[];
 
 extern const struct EncounterZone gEncounterZones[];
 
 /// Each scene's music by scene or group, entrance and flag
-/// (music_rules.c).
+/// (music_rules.s).
 extern const struct MapMusicRule gScene_MusicRules[];
 
 /// Each scene's area name by scene or group and entrance
-/// (area_name_rules.c).
+/// (area_name_rules.s).
 extern const struct AreaNameRule gArea_NameRules[];
 
 extern const s16 gScene_ReturnRules[];

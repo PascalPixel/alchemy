@@ -4,13 +4,21 @@
 @ A row's number is its place, so a row added or moved renumbers every row
 @ after it. Code naming a resource by its symbol follows, but some numbers
 @ travel bare: the scene table (field/scenes.s) names each scene's overlay by
-@ number, overlay.ld numbers each overlay's objects, and tables in C that hold
-@ a resource in a halfword write its number.
+@ number, and overlay.ld numbers each overlay's objects.
 	.macro resource name, place:req
 	.ifnb \name
 	.global ResourceId_\name
 	.equiv ResourceId_\name, (. - Resource_DirectoryTable) / 4
 	.endif
+	.4byte \place
+	.endm
+
+@ A map's resource: a row that gives its place the number the map table
+@ (field/map_resources.s) names it by, MapResource_PLACE, counted from the empty
+@ map's row.
+	.macro map_resource place:req
+	.global MapResource_\place
+	.equiv MapResource_\place, (. - Resource_DirectoryTable) / 4 - ResourceId_EmptyMap
 	.4byte \place
 	.endm
 
@@ -639,994 +647,996 @@ Resource_DirectoryTable:
 	resource RedWarriorSprites, Monster_RedWarrior
 	resource SwordGirlSprites, Monster_SwordGirl
 	resource EmptyMap, Field_EmptyMap
-	resource , Tileset_BlankPalette
-	resource , Tileset_BlankTilesA
-	resource , Tileset_BlankTilesB
-	resource , Tileset_BlankTilesC
-	resource , Tileset_BlankTilesD
-	resource , Field_Lobby
-	resource , Tileset_LobbyPalette
-	resource , Tileset_LobbyTilesA
-	resource , Tileset_LobbyTilesB
-	resource , Tileset_LobbyTilesC
-	resource , Tileset_LobbyTilesD
-	resource , Field_VenusLighthouseEntrance
-	resource , Tileset_VenusLighthouseEntrancePalette
-	resource , Tileset_VenusLighthouseEntranceTilesA
-	resource , Tileset_VenusLighthouseEntranceTilesB
-	resource , Tileset_VenusLighthouseEntranceTilesC
-	resource , Tileset_VenusLighthouseEntranceTilesD
-	resource , Field_VenusLighthouse
-	resource , Tileset_VenusLighthousePalette
-	resource , Tileset_VenusLighthouseTilesA
-	resource , Tileset_VenusLighthouseTilesB
-	resource , Tileset_VenusLighthouseTilesC
-	resource , Tileset_VenusLighthouseTilesD
-	resource , Field_SuhallaGateRoad
-	resource , Tileset_SuhallaGateRoadPalette
-	resource , Tileset_SuhallaGateRoadTilesA
-	resource , Tileset_SuhallaGateRoadTilesB
-	resource , Tileset_SuhallaGateRoadTilesC
-	resource , Tileset_SuhallaGateRoadTilesD
-	resource , Field_SuhallaGateAmbush
-	resource , Field_SuhallaGatePsynergyStone
-	resource , Tileset_SuhallaGatePsynergyStonePalette
-	resource , Tileset_SuhallaGatePsynergyStoneTilesA
-	resource , Tileset_SuhallaGatePsynergyStoneTilesB
-	resource , Tileset_SuhallaGatePsynergyStoneTilesC
-	resource , Tileset_SuhallaGatePsynergyStoneTilesD
-	resource , Field_Idejima
-	resource , Tileset_IdejimaPalette
-	resource , Tileset_IdejimaTilesA
-	resource , Tileset_IdejimaTilesB
-	resource , Tileset_IdejimaTilesC
-	resource , Tileset_IdejimaTilesD
-	resource , Field_DailaFlooded
-	resource , Tileset_DailaFloodedPalette
-	resource , Tileset_DailaFloodedTilesA
-	resource , Tileset_DailaFloodedTilesB
-	resource , Tileset_DailaFloodedTilesC
-	resource , Tileset_DailaFloodedTilesD
-	resource , Field_Daila
-	resource , Field_DailaRoomsHouses
-	resource , Tileset_DailaRoomsHousesPalette
-	resource , Tileset_DailaRoomsHousesTilesA
-	resource , Tileset_DailaRoomsHousesTilesB
-	resource , Tileset_DailaRoomsHousesTilesC
-	resource , Tileset_DailaRoomsHousesTilesD
-	resource , Field_DailaRoomsSanctum
-	resource , Tileset_DailaRoomsSanctumPalette
-	resource , Tileset_DailaRoomsSanctumTilesA
-	resource , Tileset_DailaRoomsSanctumTilesB
-	resource , Tileset_DailaRoomsSanctumTilesC
-	resource , Tileset_DailaRoomsSanctumTilesD
-	resource , Field_KandoreanTempleMimic
-	resource , Tileset_KandoreanTempleMimicPalette
-	resource , Tileset_KandoreanTempleMimicTilesA
-	resource , Tileset_KandoreanTempleMimicTilesB
-	resource , Tileset_KandoreanTempleMimicTilesC
-	resource , Tileset_KandoreanTempleMimicTilesD
-	resource , Field_KandoreanTempleLifts
-	resource , Field_KandoreanTempleChestbeaters
-	resource , Field_KandoreanTemplePillar
-	resource , Field_KandoreanTempleStream
-	resource , Field_KandoreanTempleCurrent
-	resource , Field_KandoreanTempleFog
-	resource , Field_KandoreanTempleGate
-	resource , Tileset_KandoreanTempleGatePalette
-	resource , Tileset_KandoreanTempleGateTilesA
-	resource , Field_KandoreanTemplePoi
-	resource , Tileset_KandoreanTemplePoiPalette
-	resource , Tileset_KandoreanTemplePoiTilesA
-	resource , Tileset_KandoreanTemplePoiTilesB
-	resource , Tileset_KandoreanTemplePoiTilesC
-	resource , Tileset_KandoreanTemplePoiTilesD
-	resource , Field_ShrineOfTheSeaGodSeaGodsTear
-	resource , Tileset_ShrineOfTheSeaGodSeaGodsTearPalette
-	resource , Tileset_ShrineOfTheSeaGodSeaGodsTearTilesA
-	resource , Field_ShrineOfTheSeaGodRope
-	resource , Field_ShrineOfTheSeaGodPlankBridge
-	resource , Field_ShrineOfTheSeaGodCrossroads
-	resource , Field_ShrineOfTheSeaGodFootprints
-	resource , Field_ShrineOfTheSeaGodBreath
-	resource , Field_ShrineOfTheSeaGodPillarHole
-	resource , Tileset_PaletteShrineOfTheSeaGod6
-	resource , Field_ShrineOfTheSeaGodPillars
-	resource , Field_ShrineOfTheSeaGodStatue
-	resource , Field_ShrineOfTheSeaGodLadders
-	resource , Tileset_ShrineOfTheSeaGodLaddersPalette
-	resource , Tileset_ShrineOfTheSeaGodLaddersTilesA
-	resource , Tileset_ShrineOfTheSeaGodLaddersTilesB
-	resource , Tileset_ShrineOfTheSeaGodLaddersTilesC
-	resource , Tileset_ShrineOfTheSeaGodLaddersTilesD
-	resource , Field_ShrineOfTheSeaGodRightProng
-	resource , Tileset_ShrineOfTheSeaGodRightProngPalette
-	resource , Tileset_ShrineOfTheSeaGodRightProngTilesA
-	resource , Tileset_ShrineOfTheSeaGodRightProngTilesB
-	resource , Tileset_ShrineOfTheSeaGodRightProngTilesC
-	resource , Tileset_ShrineOfTheSeaGodRightProngTilesD
-	resource , Field_DehkanPlateauFullMetalVestChest
-	resource , Tileset_DehkanPlateauFullMetalVestChestPalette
-	resource , Tileset_DehkanPlateauFullMetalVestChestTilesA
-	resource , Tileset_DehkanPlateauFullMetalVestChestTilesB
-	resource , Tileset_DehkanPlateauFullMetalVestChestTilesC
-	resource , Tileset_DehkanPlateauFullMetalVestChestTilesD
-	resource , Field_DehkanPlateauThemisAxeChest
-	resource , Tileset_DehkanPlateauThemisAxeChestPalette
-	resource , Tileset_DehkanPlateauThemisAxeChestTilesA
-	resource , Tileset_DehkanPlateauThemisAxeChestTilesB
-	resource , Tileset_DehkanPlateauThemisAxeChestTilesC
-	resource , Tileset_DehkanPlateauThemisAxeChestTilesD
-	resource , Field_DehkanPlateauTightropes
-	resource , Tileset_DehkanPlateauTightropesPalette
-	resource , Tileset_DehkanPlateauTightropesTilesA
-	resource , Tileset_DehkanPlateauTightropesTilesB
-	resource , Tileset_DehkanPlateauTightropesTilesC
-	resource , Tileset_DehkanPlateauTightropesTilesD
-	resource , Field_DehkanPlateauMintChest
-	resource , Tileset_DehkanPlateauMintChestPalette
-	resource , Tileset_DehkanPlateauMintChestTilesA
-	resource , Tileset_DehkanPlateauMintChestTilesB
-	resource , Tileset_DehkanPlateauMintChestTilesC
-	resource , Tileset_DehkanPlateauMintChestTilesD
-	resource , Field_DehkanPlateauPoundCube
-	resource , Tileset_DehkanPlateauPoundCubePalette
-	resource , Tileset_DehkanPlateauPoundCubeTilesA
-	resource , Tileset_DehkanPlateauPoundCubeTilesB
-	resource , Tileset_DehkanPlateauPoundCubeTilesC
-	resource , Tileset_DehkanPlateauPoundCubeTilesD
-	resource , Field_DehkanPlateauCannon
-	resource , Tileset_DehkanPlateauCannonPalette
-	resource , Tileset_DehkanPlateauCannonTilesA
-	resource , Tileset_DehkanPlateauCannonTilesB
-	resource , Tileset_DehkanPlateauCannonTilesC
-	resource , Tileset_DehkanPlateauCannonTilesD
-	resource , Field_GondowanCliffsHideout
-	resource , Tileset_GondowanCliffsHideoutPalette
-	resource , Tileset_GondowanCliffsHideoutTilesA
-	resource , Tileset_GondowanCliffsHideoutTilesB
-	resource , Tileset_GondowanCliffsHideoutTilesC
-	resource , Tileset_GondowanCliffsHideoutTilesD
-	resource , Field_Madra
-	resource , Tileset_MadraPalette
-	resource , Tileset_MadraTilesA
-	resource , Tileset_MadraTilesB
-	resource , Tileset_MadraTilesC
-	resource , Tileset_MadraTilesD
-	resource , Field_MadraRooms
-	resource , Tileset_MadraRoomsPalette
-	resource , Tileset_MadraRoomsTilesA
-	resource , Tileset_MadraRoomsTilesB
-	resource , Tileset_MadraRoomsTilesC
-	resource , Tileset_MadraRoomsTilesD
-	resource , Field_MadraRoomsCavernHomes
-	resource , Tileset_MadraRoomsCavernHomesPalette
-	resource , Tileset_MadraRoomsCavernHomesTilesA
-	resource , Tileset_MadraRoomsCavernHomesTilesB
-	resource , Tileset_MadraRoomsCavernHomesTilesC
-	resource , Tileset_MadraRoomsCavernHomesTilesD
-	resource , Field_MadraCatacombsEntrance
-	resource , Tileset_MadraCatacombsEntrancePalette
-	resource , Tileset_MadraCatacombsEntranceTilesA
-	resource , Tileset_MadraCatacombsEntranceTilesB
-	resource , Tileset_MadraCatacombsEntranceTilesC
-	resource , Tileset_MadraCatacombsEntranceTilesD
-	resource , Field_MadraCatacombsLadders
-	resource , Tileset_MadraCatacombsLaddersPalette
-	resource , Tileset_MadraCatacombsLaddersTilesA
-	resource , Tileset_MadraCatacombsLaddersTilesB
-	resource , Tileset_MadraCatacombsLaddersTilesC
-	resource , Tileset_MadraCatacombsLaddersTilesD
-	resource , Field_MadraCatacombsChampaTunnel
-	resource , Tileset_MadraCatacombsChampaTunnelPalette
-	resource , Tileset_MadraCatacombsChampaTunnelTilesA
-	resource , Tileset_MadraCatacombsChampaTunnelTilesB
-	resource , Tileset_MadraCatacombsChampaTunnelTilesC
-	resource , Tileset_MadraCatacombsChampaTunnelTilesD
-	resource , Field_MadraCatacombsTablet
-	resource , Tileset_MadraCatacombsTabletPalette
-	resource , Tileset_MadraCatacombsTabletTilesA
-	resource , Tileset_MadraCatacombsTabletTilesB
-	resource , Tileset_MadraCatacombsTabletTilesC
-	resource , Tileset_MadraCatacombsTabletTilesD
-	resource , Field_MadraCatacombsBookshelf
-	resource , Tileset_PaletteMadraCatacombsBookshelf
-	resource , Field_MadraCatacombsStoneDoor
-	resource , Tileset_PaletteMadraCatacombsStoneDoor
-	resource , Field_MadraDrawbridge
-	resource , Tileset_MadraDrawbridgePalette
-	resource , Tileset_MadraDrawbridgeTilesA
-	resource , Tileset_MadraDrawbridgeTilesB
-	resource , Tileset_MadraDrawbridgeTilesC
-	resource , Tileset_MadraDrawbridgeTilesD
-	resource , Field_OseniaCliffs
-	resource , Tileset_OseniaCliffsPalette
-	resource , Tileset_OseniaCliffsTilesA
-	resource , Tileset_OseniaCliffsTilesB
-	resource , Tileset_OseniaCliffsTilesC
-	resource , Tileset_OseniaCliffsTilesD
-	resource , Field_Mikasalla
-	resource , Tileset_MikasallaPalette
-	resource , Tileset_MikasallaTilesA
-	resource , Tileset_MikasallaTilesB
-	resource , Field_MikasallaNorth
-	resource , Tileset_MikasallaNorthPalette
-	resource , Tileset_MikasallaNorthTilesA
-	resource , Tileset_MikasallaNorthTilesB
-	resource , Tileset_MikasallaNorthTilesC
-	resource , Tileset_MikasallaNorthTilesD
-	resource , Field_MikasallaRooms
-	resource , Tileset_MikasallaRoomsPalette
-	resource , Tileset_MikasallaRoomsTilesA
-	resource , Tileset_MikasallaRoomsTilesB
-	resource , Tileset_MikasallaRoomsTilesC
-	resource , Tileset_MikasallaRoomsTilesD
-	resource , Field_MikasallaRoomsSanctum
-	resource , Tileset_MikasallaRoomsSanctumPalette
-	resource , Tileset_MikasallaRoomsSanctumTilesA
-	resource , Tileset_MikasallaRoomsSanctumTilesB
-	resource , Tileset_MikasallaRoomsSanctumTilesC
-	resource , Tileset_MikasallaRoomsSanctumTilesD
-	resource , Field_Garoh
-	resource , Tileset_PaletteGaroh
-	resource , Field_GarohPath
-	resource , Tileset_PaletteGarohPath
-	resource , Field_GarohWayUp
-	resource , Field_GarohTunnels
-	resource , Tileset_PaletteGaroh4
-	resource , Field_GarohWerewolfCave
-	resource , Tileset_PaletteGarohWerewolfCaveA
-	resource , Tileset_PaletteGarohWerewolfCaveB
-	resource , Field_GarohRooms
-	resource , Tileset_PaletteGarohRooms
-	resource , Tileset_PaletteGarohRoomsB
-	resource , Field_YampiDesertGuardianRingChest
-	resource , Tileset_YampiDesertGuardianRingChestPalette
-	resource , Tileset_YampiDesertGuardianRingChestTilesA
-	resource , Tileset_YampiDesertGuardianRingChestTilesB
-	resource , Tileset_YampiDesertGuardianRingChestTilesC
-	resource , Tileset_YampiDesertGuardianRingChestTilesD
-	resource , Field_YampiDesertSpring
-	resource , Field_YampiDesertBlitz
-	resource , Field_YampiDesertPsynergyStone
-	resource , Field_YampiDesertKingScorpion
-	resource , Field_YampiDesertCoinsPuddle
-	resource , Field_YampiDesertSandPass
-	resource , Field_YampiDesertTrainersWhipChest
-	resource , Field_YampiDesertHiddenPsynergyStone
-	resource , Field_YampiDesertScorpionPit
-	resource , Field_YampiDesertSpringCave
-	resource , Field_YampiDesertBlowMaceChest
-	resource , Field_YampiDesertCaveWaterOfLifeChest
-	resource , Tileset_YampiDesertCaveWaterOfLifeChestPalette
-	resource , Tileset_YampiDesertCaveWaterOfLifeChestTilesA
-	resource , Field_YampiDesertCaveGuardian
-	resource , Tileset_YampiDesertCaveGuardianPalette
-	resource , Tileset_YampiDesertCaveGuardianTilesA
-	resource , Field_YampiDesertCaveCrystal
-	resource , Tileset_YampiDesertCaveCrystalPalette
-	resource , Tileset_YampiDesertCaveCrystalTilesA
-	resource , Field_AirsRockStormBrandChest
-	resource , Tileset_AirsRockStormBrandChestPalette
-	resource , Tileset_AirsRockStormBrandChestTilesA
-	resource , Tileset_AirsRockStormBrandChestTilesB
-	resource , Tileset_AirsRockStormBrandChestTilesC
-	resource , Tileset_AirsRockStormBrandChestTilesD
-	resource , Field_AirsRockEntrance
-	resource , Field_AirsRockFujinShieldChest
-	resource , Field_AirsRockInsideHall
-	resource , Tileset_AirsRockInsideHallPalette
-	resource , Tileset_AirsRockInsideHallTilesA
-	resource , Tileset_AirsRockInsideHallTilesB
-	resource , Tileset_AirsRockInsideHallTilesC
-	resource , Tileset_AirsRockInsideHallTilesD
-	resource , Field_AirsRockInsideVialChest
-	resource , Field_AirsRockInsideClarityCircletChest
-	resource , Field_AirsRockInsideTightropes
-	resource , Field_AirsRockInsideRevealTablet
-	resource , Field_AirsRockInsideElixirChest
-	resource , Field_AirsRockInsidePairedStakes
-	resource , Field_AirsRockInsideFaceVents
-	resource , Field_AirsRockInsideCoinsChest
-	resource , Field_AirsRockInsidePsynergyStone
-	resource , Tileset_AirsRockInsidePsynergyStonePalette
-	resource , Tileset_AirsRockInsidePsynergyStoneTilesA
-	resource , Tileset_AirsRockInsidePsynergyStoneTilesB
-	resource , Tileset_AirsRockInsidePsynergyStoneTilesC
-	resource , Tileset_AirsRockInsidePsynergyStoneTilesD
-	resource , Field_Alhafra
-	resource , Tileset_PaletteAlhafra
-	resource , Field_AlhafraRooms
-	resource , Tileset_AlhafraPalette
-	resource , Tileset_AlhafraTilesA
-	resource , Field_AlhafraManor
-	resource , Field_EasternAlhafra
-	resource , Tileset_EasternAlhafraPalette
-	resource , Tileset_EasternAlhafraTilesA
-	resource , Tileset_EasternAlhafraTilesB
-	resource , Tileset_EasternAlhafraTilesC
-	resource , Tileset_EasternAlhafraTilesD
-	resource , Field_EasternAlhafraShip
-	resource , Tileset_EasternAlhafraShipPalette
-	resource , Tileset_EasternAlhafraShipTilesA
-	resource , Tileset_EasternAlhafraShipTilesB
-	resource , Tileset_EasternAlhafraShipTilesC
-	resource , Tileset_EasternAlhafraShipTilesD
-	resource , Field_AlhafranCave
-	resource , Tileset_AlhafranCavePalette
-	resource , Tileset_AlhafranCaveTilesA
-	resource , Tileset_AlhafranCaveTilesB
-	resource , Tileset_AlhafranCaveTilesC
-	resource , Tileset_AlhafranCaveTilesD
-	resource , Field_AlhafraJail
-	resource , Tileset_PaletteAlhafraJail
-	resource , Field_Naribwe
-	resource , Tileset_NaribwePalette
-	resource , Tileset_NaribweTilesA
-	resource , Tileset_NaribweTilesB
-	resource , Tileset_NaribweTilesC
-	resource , Tileset_NaribweTilesD
-	resource , Field_NaribweRooms
-	resource , Tileset_NaribweRoomsPalette
-	resource , Tileset_NaribweRoomsTilesA
-	resource , Tileset_NaribweRoomsTilesB
-	resource , Tileset_NaribweRoomsTilesC
-	resource , Tileset_NaribweRoomsTilesD
-	resource , Field_GondowanCliffs
-	resource , Tileset_GondowanCliffsPalette
-	resource , Tileset_GondowanCliffsTilesA
-	resource , Tileset_GondowanCliffsTilesB
-	resource , Tileset_GondowanCliffsTilesC
-	resource , Tileset_GondowanCliffsTilesD
-	resource , Field_GondowanCliffsPass
-	resource , Field_KibomboMountainsWaft
-	resource , Tileset_KibomboMountainsWaftPalette
-	resource , Tileset_KibomboMountainsWaftTilesA
-	resource , Tileset_KibomboMountainsWaftTilesB
-	resource , Tileset_KibomboMountainsWaftTilesC
-	resource , Tileset_KibomboMountainsWaftTilesD
-	resource , Field_KibomboMountainsDiskAxeChest
-	resource , Tileset_PaletteKibomboMountainsDiskAxeChest
-	resource , Field_KibomboMountainsCavern
-	resource , Tileset_KibomboMountainsCavernPalette
-	resource , Tileset_KibomboMountainsCavernTilesA
-	resource , Tileset_KibomboMountainsCavernTilesB
-	resource , Tileset_KibomboMountainsCavernTilesC
-	resource , Tileset_KibomboMountainsCavernTilesD
-	resource , Field_Kibombo
-	resource , Tileset_KibomboPalette
-	resource , Tileset_KibomboTilesA
-	resource , Tileset_KibomboTilesB
-	resource , Tileset_KibomboTilesC
-	resource , Tileset_KibomboTilesD
-	resource , Field_KibomboStatueGrounds
-	resource , Tileset_KibomboStatueGroundsPalette
-	resource , Tileset_KibomboStatueGroundsTilesA
-	resource , Tileset_KibomboStatueGroundsTilesB
-	resource , Tileset_KibomboStatueGroundsTilesC
-	resource , Tileset_KibomboStatueGroundsTilesD
-	resource , Field_KibomboCeremony
-	resource , Tileset_KibomboCeremonyPalette
-	resource , Tileset_KibomboCeremonyTilesA
-	resource , Tileset_KibomboCeremonyTilesB
-	resource , Tileset_KibomboCeremonyTilesC
-	resource , Tileset_KibomboCeremonyTilesD
-	resource , Field_KibomboStatueGroundsCeremony
-	resource , Tileset_KibomboStatueGroundsCeremonyPalette
-	resource , Tileset_KibomboStatueGroundsCeremonyTilesA
-	resource , Tileset_KibomboStatueGroundsCeremonyTilesB
-	resource , Tileset_KibomboStatueGroundsCeremonyTilesC
-	resource , Tileset_KibomboStatueGroundsCeremonyTilesD
-	resource , Field_KibomboHouses
-	resource , Tileset_PaletteKibombo3
-	resource , Field_GabombaStatueBoneArmletChest
-	resource , Tileset_GabombaStatueBoneArmletChestPalette
-	resource , Tileset_GabombaStatueBoneArmletChestTilesA
-	resource , Tileset_GabombaStatueBoneArmletChestTilesB
-	resource , Tileset_GabombaStatueBoneArmletChestTilesC
-	resource , Tileset_GabombaStatueBoneArmletChestTilesD
-	resource , Field_GabombaStatueElixirChest
-	resource , Tileset_PaletteGabombaStatueElixirChest
-	resource , Field_GabombaStatueSteel
-	resource , Tileset_PaletteGabombaStatueSteel
-	resource , Field_GabombaStatueMouse
-	resource , Tileset_PaletteGabombaStatueMouse
-	resource , Field_GabombaStatueCogs
-	resource , Tileset_PaletteGabombaStatueCogs
-	resource , Field_GabombaStatueChamberIdol
-	resource , Tileset_PaletteGabombaStatueChamber1
-	resource , Field_GabombaStatueArrows
-	resource , Tileset_GabombaStatueArrowsPalette
-	resource , Tileset_GabombaStatueArrowsTilesA
-	resource , Tileset_GabombaStatueArrowsTilesB
-	resource , Tileset_GabombaStatueArrowsTilesC
-	resource , Tileset_GabombaStatueArrowsTilesD
-	resource , Field_GabombaStatueChamberLift
-	resource , Tileset_PaletteGabombaStatueChamberLift
-	resource , Field_GabombaStatuePinion
-	resource , Tileset_GabombaStatuePinionPalette
-	resource , Tileset_GabombaStatuePinionTilesA
-	resource , Tileset_GabombaStatuePinionTilesB
-	resource , Tileset_GabombaStatuePinionTilesC
-	resource , Tileset_GabombaStatuePinionTilesD
-	resource , Field_GabombaStatueChamberWitchDoctor
-	resource , Tileset_PaletteGabombaStatueChamberWitchDoctor
-	resource , Field_KibomboStatueFace
-	resource , Tileset_KibomboStatueFacePalette
-	resource , Tileset_KibomboStatueFaceTilesA
-	resource , Tileset_KibomboStatueFaceTilesB
-	resource , Tileset_KibomboStatueFaceTilesC
-	resource , Tileset_KibomboStatueFaceTilesD
-	resource , Field_GabombaCatacombsTeleporters
-	resource , Tileset_GabombaCatacombsTeleportersPalette
-	resource , Tileset_GabombaCatacombsTeleportersTilesA
-	resource , Tileset_GabombaCatacombsTeleportersTilesB
-	resource , Tileset_GabombaCatacombsTeleportersTilesC
-	resource , Tileset_GabombaCatacombsTeleportersTilesD
-	resource , Field_GabombaCatacombsMud
-	resource , Field_GabombaCatacombsHiddenWall
-	resource , Field_GabombaCatacombsTomegathericon
-	resource , Field_GabombaCatacombsStream
-	resource , Field_LemurianShipDeck
-	resource , Tileset_LemurianShipDeckPalette
-	resource , Tileset_LemurianShipDeckTilesA
-	resource , Tileset_LemurianShipDeckTilesB
-	resource , Tileset_LemurianShipDeckTilesC
-	resource , Tileset_LemurianShipDeckTilesD
-	resource , Field_LemurianShipCabins
-	resource , Tileset_PaletteLemurianShip1
-	resource , Field_LemurianShipAquaHydra
-	resource , Field_IsletsDog
-	resource , Tileset_IsletsDogPalette
-	resource , Tileset_IsletsDogTilesA
-	resource , Tileset_IsletsDogTilesB
-	resource , Tileset_IsletsDogTilesC
-	resource , Tileset_IsletsDogTilesD
-	resource , Field_IsletsPrettyStone
-	resource , Tileset_PaletteIsletsPrettyStone
-	resource , Field_IsletsCow
-	resource , Tileset_PaletteIsletsCow
-	resource , Field_IsletsTurtle
-	resource , Tileset_IsletsTurtlePalette
-	resource , Tileset_IsletsTurtleTilesA
-	resource , Tileset_IsletsTurtleTilesB
-	resource , Tileset_IsletsTurtleTilesC
-	resource , Tileset_IsletsTurtleTilesD
-	resource , Field_Yallam
-	resource , Tileset_PaletteYallam
-	resource , Field_YallamRooms
-	resource , Tileset_YallamRoomsPalette
-	resource , Tileset_YallamRoomsTilesA
-	resource , Tileset_YallamRoomsTilesB
-	resource , Tileset_YallamRoomsTilesC
-	resource , Tileset_YallamRoomsTilesD
-	resource , Field_YallamRoomsShops
-	resource , Tileset_PaletteYallamRoomsShopsA
-	resource , Tileset_PaletteYallamRoomsShopsB
-	resource , Field_TaopoSwampEntrance
-	resource , Tileset_TaopoSwampEntrancePalette
-	resource , Tileset_TaopoSwampEntranceTilesA
-	resource , Tileset_TaopoSwampEntranceTilesB
-	resource , Tileset_TaopoSwampEntranceTilesC
-	resource , Tileset_TaopoSwampEntranceTilesD
-	resource , Field_TaopoSwampMud
-	resource , Tileset_TaopoSwampMudPalette
-	resource , Tileset_TaopoSwampMudTilesA
-	resource , Tileset_TaopoSwampMudTilesB
-	resource , Tileset_TaopoSwampMudTilesC
-	resource , Tileset_TaopoSwampMudTilesD
-	resource , Field_TaopoSwampPool
-	resource , Tileset_TaopoSwampPoolPalette
-	resource , Tileset_TaopoSwampPoolTilesA
-	resource , Tileset_TaopoSwampPoolTilesB
-	resource , Tileset_TaopoSwampPoolTilesC
-	resource , Tileset_TaopoSwampPoolTilesD
-	resource , Field_TaopoSwampTearStones
-	resource , Field_TaopoSwampFlower
-	resource , Field_TaopoSwampVents
-	resource , Field_TaopoSwampPillarGap
-	resource , Field_TaopoSwampDrips
-	resource , Field_TaopoSwampLavaRocks
-	resource , Tileset_PaletteTaopoSwamp9
-	resource , Field_TaopoSwampTremor
-	resource , Field_TaopoSwampStarDust
-	resource , Field_ApojiiIslands
-	resource , Tileset_ApojiiIslandsPalette
-	resource , Tileset_ApojiiIslandsTilesA
-	resource , Tileset_ApojiiIslandsTilesB
-	resource , Tileset_ApojiiIslandsTilesC
-	resource , Tileset_ApojiiIslandsTilesD
-	resource , Field_ApojiiIslandsHaze
-	resource , Tileset_ApojiiIslandsHazePalette
-	resource , Tileset_ApojiiIslandsHazeTilesA
-	resource , Tileset_ApojiiIslandsHazeTilesB
-	resource , Tileset_ApojiiIslandsHazeTilesC
-	resource , Tileset_ApojiiIslandsHazeTilesD
-	resource , Field_ApojiiIslandsShops
-	resource , Tileset_ApojiiIslandsShopsPalette
-	resource , Tileset_ApojiiIslandsShopsTilesA
-	resource , Tileset_ApojiiIslandsShopsTilesB
-	resource , Tileset_ApojiiIslandsShopsTilesC
-	resource , Tileset_ApojiiIslandsShopsTilesD
-	resource , Field_ApojiiIslandsCave
-	resource , Tileset_ApojiiIslandsCavePalette
-	resource , Tileset_ApojiiIslandsCaveTilesA
-	resource , Tileset_ApojiiIslandsCaveTilesB
-	resource , Tileset_ApojiiIslandsCaveTilesC
-	resource , Tileset_ApojiiIslandsCaveTilesD
-	resource , Field_AquaRockMoai
-	resource , Tileset_AquaRockMoaiPalette
-	resource , Tileset_AquaRockMoaiTilesA
-	resource , Tileset_AquaRockMoaiTilesB
-	resource , Tileset_AquaRockMoaiTilesC
-	resource , Tileset_AquaRockMoaiTilesD
-	resource , Field_AquaRockMistSabreChest
-	resource , Field_AquaRockInsideWaterOfLifeChest
-	resource , Tileset_AquaRockInsideWaterOfLifeChestPalette
-	resource , Tileset_AquaRockInsideWaterOfLifeChestTilesA
-	resource , Tileset_AquaRockInsideWaterOfLifeChestTilesB
-	resource , Tileset_AquaRockInsideWaterOfLifeChestTilesC
-	resource , Tileset_AquaRockInsideWaterOfLifeChestTilesD
-	resource , Field_AquaRockInsideSteam
-	resource , Field_AquaRockInsideAquariusStone
-	resource , Field_AquaRockInsideRustySwordChest
-	resource , Field_AquaRockInsideCrystalPowderChest
-	resource , Field_AquaRockInsideVialChest
-	resource , Field_AquaRockInsidePsynergyStone
-	resource , Field_AquaRockInsideTightrope
-	resource , Field_AquaRockInsideTearStone
-	resource , Field_AquaRockInsideParchTablet
-	resource , Tileset_PaletteAquaRockInsideParchTablet
-	resource , Field_Izumo
-	resource , Tileset_IzumoPalette
-	resource , Tileset_IzumoTilesA
-	resource , Tileset_IzumoTilesB
-	resource , Tileset_IzumoTilesC
-	resource , Tileset_IzumoTilesD
-	resource , Field_IzumoRooms
-	resource , Tileset_IzumoRoomsPalette
-	resource , Tileset_IzumoRoomsTilesA
-	resource , Tileset_IzumoRoomsTilesB
-	resource , Tileset_IzumoRoomsTilesC
-	resource , Tileset_IzumoRoomsTilesD
-	resource , Field_IzumoRuinsFirstRoom
-	resource , Tileset_IzumoRuinsFirstRoomPalette
-	resource , Tileset_IzumoRuinsFirstRoomTilesA
-	resource , Field_IzumoRuinsSecondRoom
-	resource , Tileset_IzumoRuinsSecondRoomPalette
-	resource , Tileset_IzumoRuinsSecondRoomTilesA
-	resource , Field_GaiaRockSusa
-	resource , Tileset_PaletteGaiaRockSusa
-	resource , Field_GaiaRockStatueSpots
-	resource , Field_GaiaRockDancingIdol
-	resource , Field_GaiaRockInsideMaze
-	resource , Tileset_GaiaRockInsideMazePalette
-	resource , Tileset_GaiaRockInsideMazeTilesA
-	resource , Tileset_GaiaRockInsideMazeTilesB
-	resource , Tileset_GaiaRockInsideMazeTilesC
-	resource , Tileset_GaiaRockInsideMazeTilesD
-	resource , Field_GaiaRockInsideFirstAltar
-	resource , Tileset_GaiaRockInsideFirstAltarPalette
-	resource , Tileset_GaiaRockInsideFirstAltarTilesA
-	resource , Tileset_GaiaRockInsideFirstAltarTilesB
-	resource , Tileset_GaiaRockInsideFirstAltarTilesC
-	resource , Tileset_GaiaRockInsideFirstAltarTilesD
-	resource , Field_GaiaRockInsideTwinAltars
-	resource , Field_GaiaRockInsidePlatforms
-	resource , Field_GaiaRockInsideAltar
-	resource , Field_Champa
-	resource , Tileset_PaletteChampa
-	resource , Field_ChampaRooms
-	resource , Tileset_PaletteChampaRooms
-	resource , Field_ChampaCliffCavesBriggs
-	resource , Tileset_ChampaCliffCavesBriggsPalette
-	resource , Tileset_ChampaCliffCavesBriggsTilesA
-	resource , Tileset_ChampaCliffCavesBriggsTilesB
-	resource , Tileset_ChampaCliffCavesBriggsTilesC
-	resource , Tileset_ChampaCliffCavesBriggsTilesD
-	resource , Field_ChampaCliffCavesHouses
-	resource , Field_ChampaCliffCavesObaba
-	resource , Field_ChampaCliffCavesAvimander
-	resource , Field_ChampaSanctum
-	resource , Tileset_PaletteChampaSanctum
-	resource , Field_SeaOfTimeSwirls
-	resource , Tileset_SeaOfTimeSwirlsPalette
-	resource , Tileset_SeaOfTimeSwirlsTilesA
-	resource , Tileset_SeaOfTimeSwirlsTilesB
-	resource , Tileset_SeaOfTimeSwirlsTilesC
-	resource , Tileset_SeaOfTimeSwirlsTilesD
-	resource , Field_SeaOfTimeToLemuria
-	resource , Tileset_SeaOfTimeToLemuriaPalette
-	resource , Tileset_SeaOfTimeToLemuriaTilesA
-	resource , Tileset_SeaOfTimeToLemuriaTilesB
-	resource , Tileset_SeaOfTimeToLemuriaTilesC
-	resource , Tileset_SeaOfTimeToLemuriaTilesD
-	resource , Field_LemurianShipTiller
-	resource , Tileset_LemurianShipTillerTilesA
-	resource , Tileset_LemurianShipTillerTilesB
-	resource , Tileset_LemurianShipTillerTilesC
-	resource , Tileset_LemurianShipTillerTilesD
-	resource , Field_AnkohlRuinsStoneFaces
-	resource , Tileset_PaletteAnkohlRuins1
-	resource , Field_AnkohlRuinsThanatosMaceChest
-	resource , Field_AnkohlRuinsGreatFace
-	resource , Field_AnkohlRuinsFaceHalves
-	resource , Field_AnkohlRuinsSandDoors
-	resource , Field_AnkohlRuinsEntrance
-	resource , Tileset_PaletteAnkohlRuinsEntrance
-	resource , Tileset_PaletteShrineOfTheSeaGodRightProng
-	resource , Tileset_PaletteLemurianShipTiller
-	resource , Field_LemuriaEntrance
-	resource , Tileset_PaletteLemuriaEntrance
-	resource , Field_Lemuria
-	resource , Tileset_LemuriaPalette
-	resource , Tileset_LemuriaTilesA
-	resource , Tileset_LemuriaTilesB
-	resource , Tileset_LemuriaTilesC
-	resource , Tileset_LemuriaTilesD
-	resource , Field_AncientLemuria
-	resource , Tileset_PaletteAncientLemuria
-	resource , Field_LemuriaPalace
-	resource , Tileset_LemuriaPalacePalette
-	resource , Tileset_LemuriaPalaceTilesA
-	resource , Tileset_LemuriaPalaceTilesB
-	resource , Tileset_LemuriaPalaceTilesC
-	resource , Tileset_LemuriaPalaceTilesD
-	resource , Field_LemuriaRooms
-	resource , Tileset_LemuriaRoomsPalette
-	resource , Tileset_LemuriaRoomsTilesA
-	resource , Tileset_LemuriaRoomsTilesB
-	resource , Tileset_LemuriaRoomsTilesC
-	resource , Tileset_LemuriaRoomsTilesD
-	resource , Field_LemuriaSpring
-	resource , Tileset_LemuriaSpringPalette
-	resource , Tileset_LemuriaSpringTilesA
-	resource , Tileset_LemuriaSpringTilesB
-	resource , Tileset_LemuriaSpringTilesC
-	resource , Tileset_LemuriaSpringTilesD
-	resource , Field_TundariaTowerCenterProng
-	resource , Tileset_PaletteTundariaTowerCenterProng
-	resource , Field_TundariaTowerIceSlide
-	resource , Tileset_PaletteTundariaTower3
-	resource , Field_TundariaTowerReflux
-	resource , Tileset_PaletteTundariaTowerReflux
-	resource , Field_TundariaTowerIceColumns
-	resource , Tileset_PaletteTundariaTower5
-	resource , Field_TundariaTowerPillarPuzzle
-	resource , Tileset_PaletteTundariaTower6
-	resource , Field_TundariaTowerEntrance
-	resource , Tileset_TundariaTowerEntrancePalette
-	resource , Tileset_TundariaTowerEntranceTilesA
-	resource , Field_TundariaTowerBurstBrooch
-	resource , Tileset_PaletteTundariaTowerBurstBrooch
-	resource , Field_GondowanSettlementCave
-	resource , Tileset_GondowanSettlementCavePalette
-	resource , Tileset_GondowanSettlementCaveTilesA
-	resource , Tileset_GondowanSettlementCaveTilesB
-	resource , Tileset_GondowanSettlementCaveTilesC
-	resource , Tileset_GondowanSettlementCaveTilesD
-	resource , Field_SouthwestAttekaIslet
-	resource , Tileset_SouthwestAttekaIsletPalette
-	resource , Tileset_SouthwestAttekaIsletTilesA
-	resource , Tileset_SouthwestAttekaIsletTilesB
-	resource , Tileset_SouthwestAttekaIsletTilesC
-	resource , Tileset_SouthwestAttekaIsletTilesD
-	resource , Field_GondowanSettlement
-	resource , Tileset_PaletteSettlements1
-	resource , Field_HesperiaSettlement
-	resource , Tileset_HesperiaSettlementPalette
-	resource , Tileset_HesperiaSettlementTilesA
-	resource , Tileset_HesperiaSettlementTilesB
-	resource , Tileset_HesperiaSettlementTilesC
-	resource , Tileset_HesperiaSettlementTilesD
-	resource , Field_KaltIsland
-	resource , Tileset_KaltIslandPalette
-	resource , Tileset_KaltIslandTilesA
-	resource , Tileset_KaltIslandTilesB
-	resource , Tileset_KaltIslandTilesC
-	resource , Tileset_KaltIslandTilesD
-	resource , Field_KaltIslandHouses
-	resource , Tileset_KaltIslandHousesPalette
-	resource , Tileset_KaltIslandHousesTilesA
-	resource , Tileset_KaltIslandHousesTilesB
-	resource , Tileset_KaltIslandHousesTilesC
-	resource , Tileset_KaltIslandHousesTilesD
-	resource , Field_MagmaRockSlide
-	resource , Tileset_PaletteMagmaRockSlide
-	resource , Field_MagmaRockSalamanderTailChest
-	resource , Field_MagmaRockStatue
-	resource , Field_MagmaRockInsideLuckyMedalChest
-	resource , Tileset_PaletteMagmaRockInsideLuckyMedalChest
-	resource , Field_MagmaRockInsideEntrance
-	resource , Field_MagmaRockInsideFury
-	resource , Field_MagmaRockInsideCrackedPillars
-	resource , Field_MagmaRockInsideGolemCoreChest
-	resource , Field_MagmaRockInsideSalamanderTailChest
-	resource , Field_MagmaRockInsideEmberStone
-	resource , Field_MagmaRockInsideBlazeTablet
-	resource , Tileset_PaletteMagmaRockInsideBlazeTablet
-	resource , Field_AttekaInlet
-	resource , Tileset_AttekaInletPalette
-	resource , Tileset_AttekaInletTilesA
-	resource , Field_AttekaInletGeode
-	resource , Tileset_AttekaInletGeodePalette
-	resource , Tileset_AttekaInletGeodeTilesA
-	resource , Tileset_AttekaInletGeodeTilesB
-	resource , Tileset_AttekaInletGeodeTilesC
-	resource , Tileset_AttekaInletGeodeTilesD
-	resource , Field_Contigo
-	resource , Tileset_ContigoPalette
-	resource , Tileset_ContigoTilesA
-	resource , Field_ContigoShops
-	resource , Tileset_ContigoShopsPalette
-	resource , Tileset_ContigoShopsTilesA
-	resource , Tileset_ContigoShopsTilesB
-	resource , Tileset_ContigoShopsTilesC
-	resource , Tileset_ContigoShopsTilesD
-	resource , Tileset_PaletteContigoShops
-	resource , Field_ShamanVillageCave
-	resource , Tileset_PaletteShamanVillageCave
-	resource , Field_ShamanVillageTrialGrounds
-	resource , Tileset_ShamanVillageTrialGroundsPalette
-	resource , Tileset_ShamanVillageTrialGroundsTilesA
-	resource , Tileset_ShamanVillageTrialGroundsTilesB
-	resource , Tileset_ShamanVillageTrialGroundsTilesC
-	resource , Tileset_ShamanVillageTrialGroundsTilesD
-	resource , Field_ShamanVillage
-	resource , Tileset_ShamanVillagePalette
-	resource , Tileset_ShamanVillageTilesA
-	resource , Tileset_ShamanVillageTilesB
-	resource , Tileset_ShamanVillageTilesC
-	resource , Tileset_ShamanVillageTilesD
-	resource , Field_ShamanVillageNorthEnd
-	resource , Tileset_PaletteShamanVillageNorthEnd
-	resource , Field_ShamanVillageHouses
-	resource , Tileset_ShamanVillageHousesPalette
-	resource , Tileset_ShamanVillageHousesTilesA
-	resource , Tileset_ShamanVillageHousesTilesB
-	resource , Tileset_ShamanVillageHousesTilesC
-	resource , Tileset_ShamanVillageHousesTilesD
-	resource , Tileset_PaletteShamanVillageHousesA
-	resource , Tileset_PaletteShamanVillageHousesB
-	resource , Field_AnemosInnerSanctumDragonSkinChest
-	resource , Tileset_AnemosInnerSanctumDragonSkinChestPalette
-	resource , Tileset_AnemosInnerSanctumDragonSkinChestTilesA
-	resource , Field_AnemosInnerSanctumElevator
-	resource , Field_AnemosInnerSanctumSwitches
-	resource , Field_AnemosInnerSanctumOrihalconChest
-	resource , Field_AnemosInnerSanctumGuardian
-	resource , Field_AnemosInnerSanctumEntrance
-	resource , Field_TrialRoadStages
-	resource , Tileset_TrialRoadStagesPalette
-	resource , Tileset_TrialRoadStagesTilesA
-	resource , Tileset_TrialRoadStagesTilesB
-	resource , Tileset_TrialRoadStagesTilesC
-	resource , Tileset_TrialRoadStagesTilesD
-	resource , Field_TrialRoadCaveRock
-	resource , Field_TrialRoadGasp
-	resource , Tileset_TrialRoadGaspPalette
-	resource , Tileset_TrialRoadGaspTilesA
-	resource , Tileset_TrialRoadGaspTilesB
-	resource , Tileset_TrialRoadGaspTilesC
-	resource , Tileset_TrialRoadGaspTilesD
-	resource , Field_TrialRoadSummit
-	resource , Tileset_TrialRoadSummitPalette
-	resource , Tileset_TrialRoadSummitTilesA
-	resource , Tileset_TrialRoadSummitTilesB
-	resource , Tileset_TrialRoadSummitTilesC
-	resource , Tileset_TrialRoadSummitTilesD
-	resource , Field_JupiterLighthouseEntrance
-	resource , Tileset_JupiterLighthouseEntrancePalette
-	resource , Tileset_JupiterLighthouseEntranceTilesA
-	resource , Tileset_JupiterLighthouseEntranceTilesB
-	resource , Tileset_JupiterLighthouseEntranceTilesC
-	resource , Tileset_JupiterLighthouseEntranceTilesD
-	resource , Field_JupiterLighthouseBasementTeleporters
-	resource , Tileset_PaletteJupiterLighthouseBasement1
-	resource , Field_JupiterLighthouseBasementPsynergyStone
-	resource , Field_JupiterLighthouseRoomGateButton
-	resource , Tileset_JupiterLighthouseRoomPalette
-	resource , Tileset_JupiterLighthouseRoomTilesA
-	resource , Tileset_JupiterLighthouseRoomTilesB
-	resource , Tileset_JupiterLighthouseRoomTilesC
-	resource , Tileset_JupiterLighthouseRoomTilesD
-	resource , Field_JupiterLighthouseRoomBeam
-	resource , Field_JupiterLighthouseRoomErinyesTunicChest
-	resource , Field_JupiterLighthouseRoomLockedDoors
-	resource , Field_JupiterLighthouseRoomRedKey
-	resource , Field_JupiterLighthouseRoomCrackedFloor
-	resource , Field_JupiterLighthouseWhorl
-	resource , Field_JupiterLighthouseRoomBlueKey
-	resource , Field_JupiterLighthouseRoomPhaetonsBladeChest
-	resource , Field_JupiterLighthouseTerraces
-	resource , Tileset_PaletteJupiterLighthouseTerraces
-	resource , Field_JupiterLighthouseAerie
-	resource , Tileset_PaletteJupiterLighthouseAerie
-	resource , Field_Loho
-	resource , Tileset_LohoPalette
-	resource , Tileset_LohoTilesA
-	resource , Tileset_LohoTilesB
-	resource , Tileset_LohoTilesC
-	resource , Tileset_LohoTilesD
-	resource , Field_LohoRooms
-	resource , Tileset_LohoRoomsPalette
-	resource , Tileset_LohoRoomsTilesA
-	resource , Tileset_LohoRoomsTilesB
-	resource , Tileset_LohoRoomsTilesC
-	resource , Tileset_LohoRoomsTilesD
-	resource , Field_NorthernReaches
-	resource , Tileset_PaletteNorthernReaches
-	resource , Field_ProxSouthGate
-	resource , Tileset_ProxSouthGatePalette
-	resource , Tileset_ProxSouthGateTilesA
-	resource , Tileset_ProxSouthGateTilesB
-	resource , Tileset_ProxSouthGateTilesC
-	resource , Tileset_ProxSouthGateTilesD
-	resource , Field_Prox
-	resource , Tileset_PaletteProx
-	resource , Field_ProxMold
-	resource , Tileset_PaletteProxMold
-	resource , Field_ProxHouses
-	resource , Tileset_PaletteMadraRoomsCavernHomes
-	resource , Tileset_PaletteMikasallaRoomsSanctum
-	resource , Field_MarsLighthouseOutside
-	resource , Tileset_MarsLighthouseOutsidePalette
-	resource , Tileset_MarsLighthouseOutsideTilesA
-	resource , Field_MarsLighthouseMarsTower
-	resource , Tileset_MarsLighthouseMarsTowerPalette
-	resource , Tileset_MarsLighthouseMarsTowerTilesA
-	resource , Tileset_MarsLighthouseMarsTowerTilesB
-	resource , Tileset_MarsLighthouseMarsTowerTilesC
-	resource , Tileset_MarsLighthouseMarsTowerTilesD
-	resource , Field_MarsLighthouseMercuryTower
-	resource , Field_MarsLighthouseJupiterTower
-	resource , Field_MarsLighthouseVenusTower
-	resource , Field_MarsLighthouseAerie
-	resource , Tileset_MarsLighthouseAeriePalette
-	resource , Tileset_MarsLighthouseAerieTilesA
-	resource , Tileset_MarsLighthouseAerieTilesB
-	resource , Field_MarsLighthouseBeaconLedge
-	resource , Tileset_MarsLighthouseBeaconLedgeTilesD
-	resource , Field_MarsLighthouseHall
-	resource , Tileset_MarsLighthouseHallPalette
-	resource , Tileset_MarsLighthouseHallTilesA
-	resource , Tileset_MarsLighthouseHallTilesB
-	resource , Field_MarsLighthouseEntranceFugue
-	resource , Field_MarsLighthouseEntranceTeleportLapis
-	resource , Field_MarsLighthouseEntranceBalm
-	resource , Field_MarsLighthouseEntranceHiddenCircle
-	resource , Field_MarsLighthouseEntranceValkyrieMailChest
-	resource , Field_MarsLighthouseEntranceSolBladeChest
-	resource , Field_MarsLighthouseStarRoom
-	resource , Field_MarsLighthouseMercuryLedge
-	resource , Tileset_MarsLighthouseMercuryLedgeTilesD
-	resource , Field_MarsLighthouseJupiterLedge
-	resource , Field_MarsLighthouseMarsLedge
-	resource , Field_MarsLighthouseVenusLedge
-	resource , Tileset_PaletteMarsLighthouseOutsideThawed
-	resource , Tileset_PaletteMarsLighthouseMarsTowerThawed
-	resource , Tileset_PaletteMarsLighthouseAerieThawed
-	resource , Tileset_PaletteMarsLighthouseBeaconLedgeThawed
-	resource , Tileset_PaletteMarsLighthouseHallThawed
-	resource , Field_MercuryLighthouse
-	resource , Tileset_MercuryLighthousePalette
-	resource , Tileset_MercuryLighthouseTilesA
-	resource , Tileset_MercuryLighthouseTilesB
-	resource , Tileset_MercuryLighthouseTilesC
-	resource , Tileset_MercuryLighthouseTilesD
-	resource , Field_TreasureIsleEntrance
-	resource , Tileset_TreasureIsleEntrancePalette
-	resource , Tileset_TreasureIsleEntranceTilesA
-	resource , Tileset_TreasureIsleEntranceTilesB
-	resource , Tileset_TreasureIsleEntranceTilesC
-	resource , Tileset_TreasureIsleEntranceTilesD
-	resource , Field_TreasureIsleChests
-	resource , Tileset_TreasureIsleChestsPalette
-	resource , Tileset_TreasureIsleChestsTilesA
-	resource , Tileset_TreasureIsleChestsTilesB
-	resource , Tileset_TreasureIsleChestsTilesC
-	resource , Tileset_TreasureIsleChestsTilesD
-	resource , Field_TreasureIsleJestersArmletChest
-	resource , Tileset_TreasureIsleJestersArmletChestPalette
-	resource , Tileset_TreasureIsleJestersArmletChestTilesA
-	resource , Tileset_TreasureIsleJestersArmletChestTilesB
-	resource , Tileset_TreasureIsleJestersArmletChestTilesC
-	resource , Tileset_TreasureIsleJestersArmletChestTilesD
-	resource , Field_TreasureIsleGale
-	resource , Tileset_PaletteTreasureIsleGale
-	resource , Field_TreasureIsleGuardian
-	resource , Field_IsletCaveHalls
-	resource , Tileset_IsletCaveHallsPalette
-	resource , Tileset_IsletCaveHallsTilesA
-	resource , Tileset_IsletCaveHallsTilesB
-	resource , Tileset_IsletCaveHallsTilesC
-	resource , Tileset_IsletCaveHallsTilesD
-	resource , Field_IsletCaveCorridors
-	resource , Tileset_PaletteIsletCaveCorridors
-	resource , Field_IsletCaveSentinel
-	resource , Tileset_PaletteIsletCaveSentinel
-	resource , Field_CavernsIndra
-	resource , Tileset_PaletteCavernsIndra
-	resource , Field_CavernsOsenia
-	resource , Tileset_CavernsOseniaPalette
-	resource , Tileset_CavernsOseniaTilesA
-	resource , Tileset_CavernsOseniaTilesB
-	resource , Tileset_CavernsOseniaTilesC
-	resource , Tileset_CavernsOseniaTilesD
-	resource , Field_CavernsAngara
-	resource , Tileset_PaletteCavernsAngara
-	resource , Field_MtAlephSummit
-	resource , Tileset_MtAlephSummitPalette
-	resource , Tileset_MtAlephSummitTilesA
-	resource , Tileset_MtAlephSummitTilesB
-	resource , Tileset_MtAlephSummitTilesC
-	resource , Tileset_MtAlephSummitTilesD
-	resource , Field_UnusedTestRoom
-	resource , Tileset_UnusedTestRoomPalette
-	resource , Tileset_UnusedTestRoomTilesA
-	resource , Tileset_UnusedTestRoomTilesB
-	resource , Tileset_UnusedTestRoomTilesC
-	resource , Tileset_UnusedTestRoomTilesD
-	resource , Field_PsynergyTest
-	resource , Tileset_PsynergyTestPalette
-	resource , Tileset_PsynergyTestTilesA
-	resource , Tileset_PsynergyTestTilesB
-	resource , Tileset_PsynergyTestTilesC
-	resource , Tileset_PsynergyTestTilesD
-	resource , Field_ShopTest
-	resource , Tileset_ShopTestPalette
-	resource , Tileset_ShopTestTilesA
-	resource , Tileset_ShopTestTilesB
-	resource , Tileset_ShopTestTilesC
-	resource , Tileset_ShopTestTilesD
-	resource , Field_Test0
-	resource , Tileset_Test0Palette
-	resource , Tileset_Test0TilesA
-	resource , Tileset_Test0TilesB
-	resource , Tileset_Test0TilesC
-	resource , Tileset_Test0TilesD
-	resource , Field_Test1
-	resource , Tileset_Test1Palette
-	resource , Tileset_Test1TilesA
-	resource , Tileset_Test1TilesB
-	resource , Tileset_Test1TilesC
-	resource , Tileset_Test1TilesD
-	resource , Field_Test2
-	resource , Tileset_Test2Palette
-	resource , Tileset_Test2TilesA
-	resource , Tileset_Test2TilesB
-	resource , Tileset_Test2TilesC
-	resource , Tileset_Test2TilesD
-	resource , Field_Test3
-	resource , Tileset_Test3Palette
-	resource , Tileset_Test3TilesA
-	resource , Tileset_Test3TilesB
-	resource , Tileset_Test3TilesC
-	resource , Tileset_Test3TilesD
-	resource , Field_Test4
-	resource , Tileset_Test4Palette
-	resource , Tileset_Test4TilesA
-	resource , Tileset_Test4TilesB
-	resource , Tileset_Test4TilesC
-	resource , Tileset_Test4TilesD
-	resource , Field_Test5
-	resource , Tileset_Test5Palette
-	resource , Tileset_Test5TilesA
-	resource , Tileset_Test5TilesB
-	resource , Tileset_Test5TilesC
-	resource , Tileset_Test5TilesD
-	resource , Field_Test6
-	resource , Tileset_Test6Palette
-	resource , Tileset_Test6TilesA
-	resource , Tileset_Test6TilesB
-	resource , Tileset_Test6TilesC
-	resource , Tileset_Test6TilesD
-	resource , Field_Test7
-	resource , Tileset_Test7Palette
-	resource , Tileset_Test7TilesA
-	resource , Tileset_Test7TilesB
-	resource , Tileset_Test7TilesC
-	resource , Tileset_Test7TilesD
+	.global MapResource_Field_EmptyMap
+	.equiv MapResource_Field_EmptyMap, 0
+	map_resource Tileset_BlankPalette
+	map_resource Tileset_BlankTilesA
+	map_resource Tileset_BlankTilesB
+	map_resource Tileset_BlankTilesC
+	map_resource Tileset_BlankTilesD
+	map_resource Field_Lobby
+	map_resource Tileset_LobbyPalette
+	map_resource Tileset_LobbyTilesA
+	map_resource Tileset_LobbyTilesB
+	map_resource Tileset_LobbyTilesC
+	map_resource Tileset_LobbyTilesD
+	map_resource Field_VenusLighthouseEntrance
+	map_resource Tileset_VenusLighthouseEntrancePalette
+	map_resource Tileset_VenusLighthouseEntranceTilesA
+	map_resource Tileset_VenusLighthouseEntranceTilesB
+	map_resource Tileset_VenusLighthouseEntranceTilesC
+	map_resource Tileset_VenusLighthouseEntranceTilesD
+	map_resource Field_VenusLighthouse
+	map_resource Tileset_VenusLighthousePalette
+	map_resource Tileset_VenusLighthouseTilesA
+	map_resource Tileset_VenusLighthouseTilesB
+	map_resource Tileset_VenusLighthouseTilesC
+	map_resource Tileset_VenusLighthouseTilesD
+	map_resource Field_SuhallaGateRoad
+	map_resource Tileset_SuhallaGateRoadPalette
+	map_resource Tileset_SuhallaGateRoadTilesA
+	map_resource Tileset_SuhallaGateRoadTilesB
+	map_resource Tileset_SuhallaGateRoadTilesC
+	map_resource Tileset_SuhallaGateRoadTilesD
+	map_resource Field_SuhallaGateAmbush
+	map_resource Field_SuhallaGatePsynergyStone
+	map_resource Tileset_SuhallaGatePsynergyStonePalette
+	map_resource Tileset_SuhallaGatePsynergyStoneTilesA
+	map_resource Tileset_SuhallaGatePsynergyStoneTilesB
+	map_resource Tileset_SuhallaGatePsynergyStoneTilesC
+	map_resource Tileset_SuhallaGatePsynergyStoneTilesD
+	map_resource Field_Idejima
+	map_resource Tileset_IdejimaPalette
+	map_resource Tileset_IdejimaTilesA
+	map_resource Tileset_IdejimaTilesB
+	map_resource Tileset_IdejimaTilesC
+	map_resource Tileset_IdejimaTilesD
+	map_resource Field_DailaFlooded
+	map_resource Tileset_DailaFloodedPalette
+	map_resource Tileset_DailaFloodedTilesA
+	map_resource Tileset_DailaFloodedTilesB
+	map_resource Tileset_DailaFloodedTilesC
+	map_resource Tileset_DailaFloodedTilesD
+	map_resource Field_Daila
+	map_resource Field_DailaRoomsHouses
+	map_resource Tileset_DailaRoomsHousesPalette
+	map_resource Tileset_DailaRoomsHousesTilesA
+	map_resource Tileset_DailaRoomsHousesTilesB
+	map_resource Tileset_DailaRoomsHousesTilesC
+	map_resource Tileset_DailaRoomsHousesTilesD
+	map_resource Field_DailaRoomsSanctum
+	map_resource Tileset_DailaRoomsSanctumPalette
+	map_resource Tileset_DailaRoomsSanctumTilesA
+	map_resource Tileset_DailaRoomsSanctumTilesB
+	map_resource Tileset_DailaRoomsSanctumTilesC
+	map_resource Tileset_DailaRoomsSanctumTilesD
+	map_resource Field_KandoreanTempleMimic
+	map_resource Tileset_KandoreanTempleMimicPalette
+	map_resource Tileset_KandoreanTempleMimicTilesA
+	map_resource Tileset_KandoreanTempleMimicTilesB
+	map_resource Tileset_KandoreanTempleMimicTilesC
+	map_resource Tileset_KandoreanTempleMimicTilesD
+	map_resource Field_KandoreanTempleLifts
+	map_resource Field_KandoreanTempleChestbeaters
+	map_resource Field_KandoreanTemplePillar
+	map_resource Field_KandoreanTempleStream
+	map_resource Field_KandoreanTempleCurrent
+	map_resource Field_KandoreanTempleFog
+	map_resource Field_KandoreanTempleGate
+	map_resource Tileset_KandoreanTempleGatePalette
+	map_resource Tileset_KandoreanTempleGateTilesA
+	map_resource Field_KandoreanTemplePoi
+	map_resource Tileset_KandoreanTemplePoiPalette
+	map_resource Tileset_KandoreanTemplePoiTilesA
+	map_resource Tileset_KandoreanTemplePoiTilesB
+	map_resource Tileset_KandoreanTemplePoiTilesC
+	map_resource Tileset_KandoreanTemplePoiTilesD
+	map_resource Field_ShrineOfTheSeaGodSeaGodsTear
+	map_resource Tileset_ShrineOfTheSeaGodSeaGodsTearPalette
+	map_resource Tileset_ShrineOfTheSeaGodSeaGodsTearTilesA
+	map_resource Field_ShrineOfTheSeaGodRope
+	map_resource Field_ShrineOfTheSeaGodPlankBridge
+	map_resource Field_ShrineOfTheSeaGodCrossroads
+	map_resource Field_ShrineOfTheSeaGodFootprints
+	map_resource Field_ShrineOfTheSeaGodBreath
+	map_resource Field_ShrineOfTheSeaGodPillarHole
+	map_resource Tileset_PaletteShrineOfTheSeaGod6
+	map_resource Field_ShrineOfTheSeaGodPillars
+	map_resource Field_ShrineOfTheSeaGodStatue
+	map_resource Field_ShrineOfTheSeaGodLadders
+	map_resource Tileset_ShrineOfTheSeaGodLaddersPalette
+	map_resource Tileset_ShrineOfTheSeaGodLaddersTilesA
+	map_resource Tileset_ShrineOfTheSeaGodLaddersTilesB
+	map_resource Tileset_ShrineOfTheSeaGodLaddersTilesC
+	map_resource Tileset_ShrineOfTheSeaGodLaddersTilesD
+	map_resource Field_ShrineOfTheSeaGodRightProng
+	map_resource Tileset_ShrineOfTheSeaGodRightProngPalette
+	map_resource Tileset_ShrineOfTheSeaGodRightProngTilesA
+	map_resource Tileset_ShrineOfTheSeaGodRightProngTilesB
+	map_resource Tileset_ShrineOfTheSeaGodRightProngTilesC
+	map_resource Tileset_ShrineOfTheSeaGodRightProngTilesD
+	map_resource Field_DehkanPlateauFullMetalVestChest
+	map_resource Tileset_DehkanPlateauFullMetalVestChestPalette
+	map_resource Tileset_DehkanPlateauFullMetalVestChestTilesA
+	map_resource Tileset_DehkanPlateauFullMetalVestChestTilesB
+	map_resource Tileset_DehkanPlateauFullMetalVestChestTilesC
+	map_resource Tileset_DehkanPlateauFullMetalVestChestTilesD
+	map_resource Field_DehkanPlateauThemisAxeChest
+	map_resource Tileset_DehkanPlateauThemisAxeChestPalette
+	map_resource Tileset_DehkanPlateauThemisAxeChestTilesA
+	map_resource Tileset_DehkanPlateauThemisAxeChestTilesB
+	map_resource Tileset_DehkanPlateauThemisAxeChestTilesC
+	map_resource Tileset_DehkanPlateauThemisAxeChestTilesD
+	map_resource Field_DehkanPlateauTightropes
+	map_resource Tileset_DehkanPlateauTightropesPalette
+	map_resource Tileset_DehkanPlateauTightropesTilesA
+	map_resource Tileset_DehkanPlateauTightropesTilesB
+	map_resource Tileset_DehkanPlateauTightropesTilesC
+	map_resource Tileset_DehkanPlateauTightropesTilesD
+	map_resource Field_DehkanPlateauMintChest
+	map_resource Tileset_DehkanPlateauMintChestPalette
+	map_resource Tileset_DehkanPlateauMintChestTilesA
+	map_resource Tileset_DehkanPlateauMintChestTilesB
+	map_resource Tileset_DehkanPlateauMintChestTilesC
+	map_resource Tileset_DehkanPlateauMintChestTilesD
+	map_resource Field_DehkanPlateauPoundCube
+	map_resource Tileset_DehkanPlateauPoundCubePalette
+	map_resource Tileset_DehkanPlateauPoundCubeTilesA
+	map_resource Tileset_DehkanPlateauPoundCubeTilesB
+	map_resource Tileset_DehkanPlateauPoundCubeTilesC
+	map_resource Tileset_DehkanPlateauPoundCubeTilesD
+	map_resource Field_DehkanPlateauCannon
+	map_resource Tileset_DehkanPlateauCannonPalette
+	map_resource Tileset_DehkanPlateauCannonTilesA
+	map_resource Tileset_DehkanPlateauCannonTilesB
+	map_resource Tileset_DehkanPlateauCannonTilesC
+	map_resource Tileset_DehkanPlateauCannonTilesD
+	map_resource Field_GondowanCliffsHideout
+	map_resource Tileset_GondowanCliffsHideoutPalette
+	map_resource Tileset_GondowanCliffsHideoutTilesA
+	map_resource Tileset_GondowanCliffsHideoutTilesB
+	map_resource Tileset_GondowanCliffsHideoutTilesC
+	map_resource Tileset_GondowanCliffsHideoutTilesD
+	map_resource Field_Madra
+	map_resource Tileset_MadraPalette
+	map_resource Tileset_MadraTilesA
+	map_resource Tileset_MadraTilesB
+	map_resource Tileset_MadraTilesC
+	map_resource Tileset_MadraTilesD
+	map_resource Field_MadraRooms
+	map_resource Tileset_MadraRoomsPalette
+	map_resource Tileset_MadraRoomsTilesA
+	map_resource Tileset_MadraRoomsTilesB
+	map_resource Tileset_MadraRoomsTilesC
+	map_resource Tileset_MadraRoomsTilesD
+	map_resource Field_MadraRoomsCavernHomes
+	map_resource Tileset_MadraRoomsCavernHomesPalette
+	map_resource Tileset_MadraRoomsCavernHomesTilesA
+	map_resource Tileset_MadraRoomsCavernHomesTilesB
+	map_resource Tileset_MadraRoomsCavernHomesTilesC
+	map_resource Tileset_MadraRoomsCavernHomesTilesD
+	map_resource Field_MadraCatacombsEntrance
+	map_resource Tileset_MadraCatacombsEntrancePalette
+	map_resource Tileset_MadraCatacombsEntranceTilesA
+	map_resource Tileset_MadraCatacombsEntranceTilesB
+	map_resource Tileset_MadraCatacombsEntranceTilesC
+	map_resource Tileset_MadraCatacombsEntranceTilesD
+	map_resource Field_MadraCatacombsLadders
+	map_resource Tileset_MadraCatacombsLaddersPalette
+	map_resource Tileset_MadraCatacombsLaddersTilesA
+	map_resource Tileset_MadraCatacombsLaddersTilesB
+	map_resource Tileset_MadraCatacombsLaddersTilesC
+	map_resource Tileset_MadraCatacombsLaddersTilesD
+	map_resource Field_MadraCatacombsChampaTunnel
+	map_resource Tileset_MadraCatacombsChampaTunnelPalette
+	map_resource Tileset_MadraCatacombsChampaTunnelTilesA
+	map_resource Tileset_MadraCatacombsChampaTunnelTilesB
+	map_resource Tileset_MadraCatacombsChampaTunnelTilesC
+	map_resource Tileset_MadraCatacombsChampaTunnelTilesD
+	map_resource Field_MadraCatacombsTablet
+	map_resource Tileset_MadraCatacombsTabletPalette
+	map_resource Tileset_MadraCatacombsTabletTilesA
+	map_resource Tileset_MadraCatacombsTabletTilesB
+	map_resource Tileset_MadraCatacombsTabletTilesC
+	map_resource Tileset_MadraCatacombsTabletTilesD
+	map_resource Field_MadraCatacombsBookshelf
+	map_resource Tileset_PaletteMadraCatacombsBookshelf
+	map_resource Field_MadraCatacombsStoneDoor
+	map_resource Tileset_PaletteMadraCatacombsStoneDoor
+	map_resource Field_MadraDrawbridge
+	map_resource Tileset_MadraDrawbridgePalette
+	map_resource Tileset_MadraDrawbridgeTilesA
+	map_resource Tileset_MadraDrawbridgeTilesB
+	map_resource Tileset_MadraDrawbridgeTilesC
+	map_resource Tileset_MadraDrawbridgeTilesD
+	map_resource Field_OseniaCliffs
+	map_resource Tileset_OseniaCliffsPalette
+	map_resource Tileset_OseniaCliffsTilesA
+	map_resource Tileset_OseniaCliffsTilesB
+	map_resource Tileset_OseniaCliffsTilesC
+	map_resource Tileset_OseniaCliffsTilesD
+	map_resource Field_Mikasalla
+	map_resource Tileset_MikasallaPalette
+	map_resource Tileset_MikasallaTilesA
+	map_resource Tileset_MikasallaTilesB
+	map_resource Field_MikasallaNorth
+	map_resource Tileset_MikasallaNorthPalette
+	map_resource Tileset_MikasallaNorthTilesA
+	map_resource Tileset_MikasallaNorthTilesB
+	map_resource Tileset_MikasallaNorthTilesC
+	map_resource Tileset_MikasallaNorthTilesD
+	map_resource Field_MikasallaRooms
+	map_resource Tileset_MikasallaRoomsPalette
+	map_resource Tileset_MikasallaRoomsTilesA
+	map_resource Tileset_MikasallaRoomsTilesB
+	map_resource Tileset_MikasallaRoomsTilesC
+	map_resource Tileset_MikasallaRoomsTilesD
+	map_resource Field_MikasallaRoomsSanctum
+	map_resource Tileset_MikasallaRoomsSanctumPalette
+	map_resource Tileset_MikasallaRoomsSanctumTilesA
+	map_resource Tileset_MikasallaRoomsSanctumTilesB
+	map_resource Tileset_MikasallaRoomsSanctumTilesC
+	map_resource Tileset_MikasallaRoomsSanctumTilesD
+	map_resource Field_Garoh
+	map_resource Tileset_PaletteGaroh
+	map_resource Field_GarohPath
+	map_resource Tileset_PaletteGarohPath
+	map_resource Field_GarohWayUp
+	map_resource Field_GarohTunnels
+	map_resource Tileset_PaletteGaroh4
+	map_resource Field_GarohWerewolfCave
+	map_resource Tileset_PaletteGarohWerewolfCaveA
+	map_resource Tileset_PaletteGarohWerewolfCaveB
+	map_resource Field_GarohRooms
+	map_resource Tileset_PaletteGarohRooms
+	map_resource Tileset_PaletteGarohRoomsB
+	map_resource Field_YampiDesertGuardianRingChest
+	map_resource Tileset_YampiDesertGuardianRingChestPalette
+	map_resource Tileset_YampiDesertGuardianRingChestTilesA
+	map_resource Tileset_YampiDesertGuardianRingChestTilesB
+	map_resource Tileset_YampiDesertGuardianRingChestTilesC
+	map_resource Tileset_YampiDesertGuardianRingChestTilesD
+	map_resource Field_YampiDesertSpring
+	map_resource Field_YampiDesertBlitz
+	map_resource Field_YampiDesertPsynergyStone
+	map_resource Field_YampiDesertKingScorpion
+	map_resource Field_YampiDesertCoinsPuddle
+	map_resource Field_YampiDesertSandPass
+	map_resource Field_YampiDesertTrainersWhipChest
+	map_resource Field_YampiDesertHiddenPsynergyStone
+	map_resource Field_YampiDesertScorpionPit
+	map_resource Field_YampiDesertSpringCave
+	map_resource Field_YampiDesertBlowMaceChest
+	map_resource Field_YampiDesertCaveWaterOfLifeChest
+	map_resource Tileset_YampiDesertCaveWaterOfLifeChestPalette
+	map_resource Tileset_YampiDesertCaveWaterOfLifeChestTilesA
+	map_resource Field_YampiDesertCaveGuardian
+	map_resource Tileset_YampiDesertCaveGuardianPalette
+	map_resource Tileset_YampiDesertCaveGuardianTilesA
+	map_resource Field_YampiDesertCaveCrystal
+	map_resource Tileset_YampiDesertCaveCrystalPalette
+	map_resource Tileset_YampiDesertCaveCrystalTilesA
+	map_resource Field_AirsRockStormBrandChest
+	map_resource Tileset_AirsRockStormBrandChestPalette
+	map_resource Tileset_AirsRockStormBrandChestTilesA
+	map_resource Tileset_AirsRockStormBrandChestTilesB
+	map_resource Tileset_AirsRockStormBrandChestTilesC
+	map_resource Tileset_AirsRockStormBrandChestTilesD
+	map_resource Field_AirsRockEntrance
+	map_resource Field_AirsRockFujinShieldChest
+	map_resource Field_AirsRockInsideHall
+	map_resource Tileset_AirsRockInsideHallPalette
+	map_resource Tileset_AirsRockInsideHallTilesA
+	map_resource Tileset_AirsRockInsideHallTilesB
+	map_resource Tileset_AirsRockInsideHallTilesC
+	map_resource Tileset_AirsRockInsideHallTilesD
+	map_resource Field_AirsRockInsideVialChest
+	map_resource Field_AirsRockInsideClarityCircletChest
+	map_resource Field_AirsRockInsideTightropes
+	map_resource Field_AirsRockInsideRevealTablet
+	map_resource Field_AirsRockInsideElixirChest
+	map_resource Field_AirsRockInsidePairedStakes
+	map_resource Field_AirsRockInsideFaceVents
+	map_resource Field_AirsRockInsideCoinsChest
+	map_resource Field_AirsRockInsidePsynergyStone
+	map_resource Tileset_AirsRockInsidePsynergyStonePalette
+	map_resource Tileset_AirsRockInsidePsynergyStoneTilesA
+	map_resource Tileset_AirsRockInsidePsynergyStoneTilesB
+	map_resource Tileset_AirsRockInsidePsynergyStoneTilesC
+	map_resource Tileset_AirsRockInsidePsynergyStoneTilesD
+	map_resource Field_Alhafra
+	map_resource Tileset_PaletteAlhafra
+	map_resource Field_AlhafraRooms
+	map_resource Tileset_AlhafraPalette
+	map_resource Tileset_AlhafraTilesA
+	map_resource Field_AlhafraManor
+	map_resource Field_EasternAlhafra
+	map_resource Tileset_EasternAlhafraPalette
+	map_resource Tileset_EasternAlhafraTilesA
+	map_resource Tileset_EasternAlhafraTilesB
+	map_resource Tileset_EasternAlhafraTilesC
+	map_resource Tileset_EasternAlhafraTilesD
+	map_resource Field_EasternAlhafraShip
+	map_resource Tileset_EasternAlhafraShipPalette
+	map_resource Tileset_EasternAlhafraShipTilesA
+	map_resource Tileset_EasternAlhafraShipTilesB
+	map_resource Tileset_EasternAlhafraShipTilesC
+	map_resource Tileset_EasternAlhafraShipTilesD
+	map_resource Field_AlhafranCave
+	map_resource Tileset_AlhafranCavePalette
+	map_resource Tileset_AlhafranCaveTilesA
+	map_resource Tileset_AlhafranCaveTilesB
+	map_resource Tileset_AlhafranCaveTilesC
+	map_resource Tileset_AlhafranCaveTilesD
+	map_resource Field_AlhafraJail
+	map_resource Tileset_PaletteAlhafraJail
+	map_resource Field_Naribwe
+	map_resource Tileset_NaribwePalette
+	map_resource Tileset_NaribweTilesA
+	map_resource Tileset_NaribweTilesB
+	map_resource Tileset_NaribweTilesC
+	map_resource Tileset_NaribweTilesD
+	map_resource Field_NaribweRooms
+	map_resource Tileset_NaribweRoomsPalette
+	map_resource Tileset_NaribweRoomsTilesA
+	map_resource Tileset_NaribweRoomsTilesB
+	map_resource Tileset_NaribweRoomsTilesC
+	map_resource Tileset_NaribweRoomsTilesD
+	map_resource Field_GondowanCliffs
+	map_resource Tileset_GondowanCliffsPalette
+	map_resource Tileset_GondowanCliffsTilesA
+	map_resource Tileset_GondowanCliffsTilesB
+	map_resource Tileset_GondowanCliffsTilesC
+	map_resource Tileset_GondowanCliffsTilesD
+	map_resource Field_GondowanCliffsPass
+	map_resource Field_KibomboMountainsWaft
+	map_resource Tileset_KibomboMountainsWaftPalette
+	map_resource Tileset_KibomboMountainsWaftTilesA
+	map_resource Tileset_KibomboMountainsWaftTilesB
+	map_resource Tileset_KibomboMountainsWaftTilesC
+	map_resource Tileset_KibomboMountainsWaftTilesD
+	map_resource Field_KibomboMountainsDiskAxeChest
+	map_resource Tileset_PaletteKibomboMountainsDiskAxeChest
+	map_resource Field_KibomboMountainsCavern
+	map_resource Tileset_KibomboMountainsCavernPalette
+	map_resource Tileset_KibomboMountainsCavernTilesA
+	map_resource Tileset_KibomboMountainsCavernTilesB
+	map_resource Tileset_KibomboMountainsCavernTilesC
+	map_resource Tileset_KibomboMountainsCavernTilesD
+	map_resource Field_Kibombo
+	map_resource Tileset_KibomboPalette
+	map_resource Tileset_KibomboTilesA
+	map_resource Tileset_KibomboTilesB
+	map_resource Tileset_KibomboTilesC
+	map_resource Tileset_KibomboTilesD
+	map_resource Field_KibomboStatueGrounds
+	map_resource Tileset_KibomboStatueGroundsPalette
+	map_resource Tileset_KibomboStatueGroundsTilesA
+	map_resource Tileset_KibomboStatueGroundsTilesB
+	map_resource Tileset_KibomboStatueGroundsTilesC
+	map_resource Tileset_KibomboStatueGroundsTilesD
+	map_resource Field_KibomboCeremony
+	map_resource Tileset_KibomboCeremonyPalette
+	map_resource Tileset_KibomboCeremonyTilesA
+	map_resource Tileset_KibomboCeremonyTilesB
+	map_resource Tileset_KibomboCeremonyTilesC
+	map_resource Tileset_KibomboCeremonyTilesD
+	map_resource Field_KibomboStatueGroundsCeremony
+	map_resource Tileset_KibomboStatueGroundsCeremonyPalette
+	map_resource Tileset_KibomboStatueGroundsCeremonyTilesA
+	map_resource Tileset_KibomboStatueGroundsCeremonyTilesB
+	map_resource Tileset_KibomboStatueGroundsCeremonyTilesC
+	map_resource Tileset_KibomboStatueGroundsCeremonyTilesD
+	map_resource Field_KibomboHouses
+	map_resource Tileset_PaletteKibombo3
+	map_resource Field_GabombaStatueBoneArmletChest
+	map_resource Tileset_GabombaStatueBoneArmletChestPalette
+	map_resource Tileset_GabombaStatueBoneArmletChestTilesA
+	map_resource Tileset_GabombaStatueBoneArmletChestTilesB
+	map_resource Tileset_GabombaStatueBoneArmletChestTilesC
+	map_resource Tileset_GabombaStatueBoneArmletChestTilesD
+	map_resource Field_GabombaStatueElixirChest
+	map_resource Tileset_PaletteGabombaStatueElixirChest
+	map_resource Field_GabombaStatueSteel
+	map_resource Tileset_PaletteGabombaStatueSteel
+	map_resource Field_GabombaStatueMouse
+	map_resource Tileset_PaletteGabombaStatueMouse
+	map_resource Field_GabombaStatueCogs
+	map_resource Tileset_PaletteGabombaStatueCogs
+	map_resource Field_GabombaStatueChamberIdol
+	map_resource Tileset_PaletteGabombaStatueChamber1
+	map_resource Field_GabombaStatueArrows
+	map_resource Tileset_GabombaStatueArrowsPalette
+	map_resource Tileset_GabombaStatueArrowsTilesA
+	map_resource Tileset_GabombaStatueArrowsTilesB
+	map_resource Tileset_GabombaStatueArrowsTilesC
+	map_resource Tileset_GabombaStatueArrowsTilesD
+	map_resource Field_GabombaStatueChamberLift
+	map_resource Tileset_PaletteGabombaStatueChamberLift
+	map_resource Field_GabombaStatuePinion
+	map_resource Tileset_GabombaStatuePinionPalette
+	map_resource Tileset_GabombaStatuePinionTilesA
+	map_resource Tileset_GabombaStatuePinionTilesB
+	map_resource Tileset_GabombaStatuePinionTilesC
+	map_resource Tileset_GabombaStatuePinionTilesD
+	map_resource Field_GabombaStatueChamberWitchDoctor
+	map_resource Tileset_PaletteGabombaStatueChamberWitchDoctor
+	map_resource Field_KibomboStatueFace
+	map_resource Tileset_KibomboStatueFacePalette
+	map_resource Tileset_KibomboStatueFaceTilesA
+	map_resource Tileset_KibomboStatueFaceTilesB
+	map_resource Tileset_KibomboStatueFaceTilesC
+	map_resource Tileset_KibomboStatueFaceTilesD
+	map_resource Field_GabombaCatacombsTeleporters
+	map_resource Tileset_GabombaCatacombsTeleportersPalette
+	map_resource Tileset_GabombaCatacombsTeleportersTilesA
+	map_resource Tileset_GabombaCatacombsTeleportersTilesB
+	map_resource Tileset_GabombaCatacombsTeleportersTilesC
+	map_resource Tileset_GabombaCatacombsTeleportersTilesD
+	map_resource Field_GabombaCatacombsMud
+	map_resource Field_GabombaCatacombsHiddenWall
+	map_resource Field_GabombaCatacombsTomegathericon
+	map_resource Field_GabombaCatacombsStream
+	map_resource Field_LemurianShipDeck
+	map_resource Tileset_LemurianShipDeckPalette
+	map_resource Tileset_LemurianShipDeckTilesA
+	map_resource Tileset_LemurianShipDeckTilesB
+	map_resource Tileset_LemurianShipDeckTilesC
+	map_resource Tileset_LemurianShipDeckTilesD
+	map_resource Field_LemurianShipCabins
+	map_resource Tileset_PaletteLemurianShip1
+	map_resource Field_LemurianShipAquaHydra
+	map_resource Field_IsletsDog
+	map_resource Tileset_IsletsDogPalette
+	map_resource Tileset_IsletsDogTilesA
+	map_resource Tileset_IsletsDogTilesB
+	map_resource Tileset_IsletsDogTilesC
+	map_resource Tileset_IsletsDogTilesD
+	map_resource Field_IsletsPrettyStone
+	map_resource Tileset_PaletteIsletsPrettyStone
+	map_resource Field_IsletsCow
+	map_resource Tileset_PaletteIsletsCow
+	map_resource Field_IsletsTurtle
+	map_resource Tileset_IsletsTurtlePalette
+	map_resource Tileset_IsletsTurtleTilesA
+	map_resource Tileset_IsletsTurtleTilesB
+	map_resource Tileset_IsletsTurtleTilesC
+	map_resource Tileset_IsletsTurtleTilesD
+	map_resource Field_Yallam
+	map_resource Tileset_PaletteYallam
+	map_resource Field_YallamRooms
+	map_resource Tileset_YallamRoomsPalette
+	map_resource Tileset_YallamRoomsTilesA
+	map_resource Tileset_YallamRoomsTilesB
+	map_resource Tileset_YallamRoomsTilesC
+	map_resource Tileset_YallamRoomsTilesD
+	map_resource Field_YallamRoomsShops
+	map_resource Tileset_PaletteYallamRoomsShopsA
+	map_resource Tileset_PaletteYallamRoomsShopsB
+	map_resource Field_TaopoSwampEntrance
+	map_resource Tileset_TaopoSwampEntrancePalette
+	map_resource Tileset_TaopoSwampEntranceTilesA
+	map_resource Tileset_TaopoSwampEntranceTilesB
+	map_resource Tileset_TaopoSwampEntranceTilesC
+	map_resource Tileset_TaopoSwampEntranceTilesD
+	map_resource Field_TaopoSwampMud
+	map_resource Tileset_TaopoSwampMudPalette
+	map_resource Tileset_TaopoSwampMudTilesA
+	map_resource Tileset_TaopoSwampMudTilesB
+	map_resource Tileset_TaopoSwampMudTilesC
+	map_resource Tileset_TaopoSwampMudTilesD
+	map_resource Field_TaopoSwampPool
+	map_resource Tileset_TaopoSwampPoolPalette
+	map_resource Tileset_TaopoSwampPoolTilesA
+	map_resource Tileset_TaopoSwampPoolTilesB
+	map_resource Tileset_TaopoSwampPoolTilesC
+	map_resource Tileset_TaopoSwampPoolTilesD
+	map_resource Field_TaopoSwampTearStones
+	map_resource Field_TaopoSwampFlower
+	map_resource Field_TaopoSwampVents
+	map_resource Field_TaopoSwampPillarGap
+	map_resource Field_TaopoSwampDrips
+	map_resource Field_TaopoSwampLavaRocks
+	map_resource Tileset_PaletteTaopoSwamp9
+	map_resource Field_TaopoSwampTremor
+	map_resource Field_TaopoSwampStarDust
+	map_resource Field_ApojiiIslands
+	map_resource Tileset_ApojiiIslandsPalette
+	map_resource Tileset_ApojiiIslandsTilesA
+	map_resource Tileset_ApojiiIslandsTilesB
+	map_resource Tileset_ApojiiIslandsTilesC
+	map_resource Tileset_ApojiiIslandsTilesD
+	map_resource Field_ApojiiIslandsHaze
+	map_resource Tileset_ApojiiIslandsHazePalette
+	map_resource Tileset_ApojiiIslandsHazeTilesA
+	map_resource Tileset_ApojiiIslandsHazeTilesB
+	map_resource Tileset_ApojiiIslandsHazeTilesC
+	map_resource Tileset_ApojiiIslandsHazeTilesD
+	map_resource Field_ApojiiIslandsShops
+	map_resource Tileset_ApojiiIslandsShopsPalette
+	map_resource Tileset_ApojiiIslandsShopsTilesA
+	map_resource Tileset_ApojiiIslandsShopsTilesB
+	map_resource Tileset_ApojiiIslandsShopsTilesC
+	map_resource Tileset_ApojiiIslandsShopsTilesD
+	map_resource Field_ApojiiIslandsCave
+	map_resource Tileset_ApojiiIslandsCavePalette
+	map_resource Tileset_ApojiiIslandsCaveTilesA
+	map_resource Tileset_ApojiiIslandsCaveTilesB
+	map_resource Tileset_ApojiiIslandsCaveTilesC
+	map_resource Tileset_ApojiiIslandsCaveTilesD
+	map_resource Field_AquaRockMoai
+	map_resource Tileset_AquaRockMoaiPalette
+	map_resource Tileset_AquaRockMoaiTilesA
+	map_resource Tileset_AquaRockMoaiTilesB
+	map_resource Tileset_AquaRockMoaiTilesC
+	map_resource Tileset_AquaRockMoaiTilesD
+	map_resource Field_AquaRockMistSabreChest
+	map_resource Field_AquaRockInsideWaterOfLifeChest
+	map_resource Tileset_AquaRockInsideWaterOfLifeChestPalette
+	map_resource Tileset_AquaRockInsideWaterOfLifeChestTilesA
+	map_resource Tileset_AquaRockInsideWaterOfLifeChestTilesB
+	map_resource Tileset_AquaRockInsideWaterOfLifeChestTilesC
+	map_resource Tileset_AquaRockInsideWaterOfLifeChestTilesD
+	map_resource Field_AquaRockInsideSteam
+	map_resource Field_AquaRockInsideAquariusStone
+	map_resource Field_AquaRockInsideRustySwordChest
+	map_resource Field_AquaRockInsideCrystalPowderChest
+	map_resource Field_AquaRockInsideVialChest
+	map_resource Field_AquaRockInsidePsynergyStone
+	map_resource Field_AquaRockInsideTightrope
+	map_resource Field_AquaRockInsideTearStone
+	map_resource Field_AquaRockInsideParchTablet
+	map_resource Tileset_PaletteAquaRockInsideParchTablet
+	map_resource Field_Izumo
+	map_resource Tileset_IzumoPalette
+	map_resource Tileset_IzumoTilesA
+	map_resource Tileset_IzumoTilesB
+	map_resource Tileset_IzumoTilesC
+	map_resource Tileset_IzumoTilesD
+	map_resource Field_IzumoRooms
+	map_resource Tileset_IzumoRoomsPalette
+	map_resource Tileset_IzumoRoomsTilesA
+	map_resource Tileset_IzumoRoomsTilesB
+	map_resource Tileset_IzumoRoomsTilesC
+	map_resource Tileset_IzumoRoomsTilesD
+	map_resource Field_IzumoRuinsFirstRoom
+	map_resource Tileset_IzumoRuinsFirstRoomPalette
+	map_resource Tileset_IzumoRuinsFirstRoomTilesA
+	map_resource Field_IzumoRuinsSecondRoom
+	map_resource Tileset_IzumoRuinsSecondRoomPalette
+	map_resource Tileset_IzumoRuinsSecondRoomTilesA
+	map_resource Field_GaiaRockSusa
+	map_resource Tileset_PaletteGaiaRockSusa
+	map_resource Field_GaiaRockStatueSpots
+	map_resource Field_GaiaRockDancingIdol
+	map_resource Field_GaiaRockInsideMaze
+	map_resource Tileset_GaiaRockInsideMazePalette
+	map_resource Tileset_GaiaRockInsideMazeTilesA
+	map_resource Tileset_GaiaRockInsideMazeTilesB
+	map_resource Tileset_GaiaRockInsideMazeTilesC
+	map_resource Tileset_GaiaRockInsideMazeTilesD
+	map_resource Field_GaiaRockInsideFirstAltar
+	map_resource Tileset_GaiaRockInsideFirstAltarPalette
+	map_resource Tileset_GaiaRockInsideFirstAltarTilesA
+	map_resource Tileset_GaiaRockInsideFirstAltarTilesB
+	map_resource Tileset_GaiaRockInsideFirstAltarTilesC
+	map_resource Tileset_GaiaRockInsideFirstAltarTilesD
+	map_resource Field_GaiaRockInsideTwinAltars
+	map_resource Field_GaiaRockInsidePlatforms
+	map_resource Field_GaiaRockInsideAltar
+	map_resource Field_Champa
+	map_resource Tileset_PaletteChampa
+	map_resource Field_ChampaRooms
+	map_resource Tileset_PaletteChampaRooms
+	map_resource Field_ChampaCliffCavesBriggs
+	map_resource Tileset_ChampaCliffCavesBriggsPalette
+	map_resource Tileset_ChampaCliffCavesBriggsTilesA
+	map_resource Tileset_ChampaCliffCavesBriggsTilesB
+	map_resource Tileset_ChampaCliffCavesBriggsTilesC
+	map_resource Tileset_ChampaCliffCavesBriggsTilesD
+	map_resource Field_ChampaCliffCavesHouses
+	map_resource Field_ChampaCliffCavesObaba
+	map_resource Field_ChampaCliffCavesAvimander
+	map_resource Field_ChampaSanctum
+	map_resource Tileset_PaletteChampaSanctum
+	map_resource Field_SeaOfTimeSwirls
+	map_resource Tileset_SeaOfTimeSwirlsPalette
+	map_resource Tileset_SeaOfTimeSwirlsTilesA
+	map_resource Tileset_SeaOfTimeSwirlsTilesB
+	map_resource Tileset_SeaOfTimeSwirlsTilesC
+	map_resource Tileset_SeaOfTimeSwirlsTilesD
+	map_resource Field_SeaOfTimeToLemuria
+	map_resource Tileset_SeaOfTimeToLemuriaPalette
+	map_resource Tileset_SeaOfTimeToLemuriaTilesA
+	map_resource Tileset_SeaOfTimeToLemuriaTilesB
+	map_resource Tileset_SeaOfTimeToLemuriaTilesC
+	map_resource Tileset_SeaOfTimeToLemuriaTilesD
+	map_resource Field_LemurianShipTiller
+	map_resource Tileset_LemurianShipTillerTilesA
+	map_resource Tileset_LemurianShipTillerTilesB
+	map_resource Tileset_LemurianShipTillerTilesC
+	map_resource Tileset_LemurianShipTillerTilesD
+	map_resource Field_AnkohlRuinsStoneFaces
+	map_resource Tileset_PaletteAnkohlRuins1
+	map_resource Field_AnkohlRuinsThanatosMaceChest
+	map_resource Field_AnkohlRuinsGreatFace
+	map_resource Field_AnkohlRuinsFaceHalves
+	map_resource Field_AnkohlRuinsSandDoors
+	map_resource Field_AnkohlRuinsEntrance
+	map_resource Tileset_PaletteAnkohlRuinsEntrance
+	map_resource Tileset_PaletteShrineOfTheSeaGodRightProng
+	map_resource Tileset_PaletteLemurianShipTiller
+	map_resource Field_LemuriaEntrance
+	map_resource Tileset_PaletteLemuriaEntrance
+	map_resource Field_Lemuria
+	map_resource Tileset_LemuriaPalette
+	map_resource Tileset_LemuriaTilesA
+	map_resource Tileset_LemuriaTilesB
+	map_resource Tileset_LemuriaTilesC
+	map_resource Tileset_LemuriaTilesD
+	map_resource Field_AncientLemuria
+	map_resource Tileset_PaletteAncientLemuria
+	map_resource Field_LemuriaPalace
+	map_resource Tileset_LemuriaPalacePalette
+	map_resource Tileset_LemuriaPalaceTilesA
+	map_resource Tileset_LemuriaPalaceTilesB
+	map_resource Tileset_LemuriaPalaceTilesC
+	map_resource Tileset_LemuriaPalaceTilesD
+	map_resource Field_LemuriaRooms
+	map_resource Tileset_LemuriaRoomsPalette
+	map_resource Tileset_LemuriaRoomsTilesA
+	map_resource Tileset_LemuriaRoomsTilesB
+	map_resource Tileset_LemuriaRoomsTilesC
+	map_resource Tileset_LemuriaRoomsTilesD
+	map_resource Field_LemuriaSpring
+	map_resource Tileset_LemuriaSpringPalette
+	map_resource Tileset_LemuriaSpringTilesA
+	map_resource Tileset_LemuriaSpringTilesB
+	map_resource Tileset_LemuriaSpringTilesC
+	map_resource Tileset_LemuriaSpringTilesD
+	map_resource Field_TundariaTowerCenterProng
+	map_resource Tileset_PaletteTundariaTowerCenterProng
+	map_resource Field_TundariaTowerIceSlide
+	map_resource Tileset_PaletteTundariaTower3
+	map_resource Field_TundariaTowerReflux
+	map_resource Tileset_PaletteTundariaTowerReflux
+	map_resource Field_TundariaTowerIceColumns
+	map_resource Tileset_PaletteTundariaTower5
+	map_resource Field_TundariaTowerPillarPuzzle
+	map_resource Tileset_PaletteTundariaTower6
+	map_resource Field_TundariaTowerEntrance
+	map_resource Tileset_TundariaTowerEntrancePalette
+	map_resource Tileset_TundariaTowerEntranceTilesA
+	map_resource Field_TundariaTowerBurstBrooch
+	map_resource Tileset_PaletteTundariaTowerBurstBrooch
+	map_resource Field_GondowanSettlementCave
+	map_resource Tileset_GondowanSettlementCavePalette
+	map_resource Tileset_GondowanSettlementCaveTilesA
+	map_resource Tileset_GondowanSettlementCaveTilesB
+	map_resource Tileset_GondowanSettlementCaveTilesC
+	map_resource Tileset_GondowanSettlementCaveTilesD
+	map_resource Field_SouthwestAttekaIslet
+	map_resource Tileset_SouthwestAttekaIsletPalette
+	map_resource Tileset_SouthwestAttekaIsletTilesA
+	map_resource Tileset_SouthwestAttekaIsletTilesB
+	map_resource Tileset_SouthwestAttekaIsletTilesC
+	map_resource Tileset_SouthwestAttekaIsletTilesD
+	map_resource Field_GondowanSettlement
+	map_resource Tileset_PaletteSettlements1
+	map_resource Field_HesperiaSettlement
+	map_resource Tileset_HesperiaSettlementPalette
+	map_resource Tileset_HesperiaSettlementTilesA
+	map_resource Tileset_HesperiaSettlementTilesB
+	map_resource Tileset_HesperiaSettlementTilesC
+	map_resource Tileset_HesperiaSettlementTilesD
+	map_resource Field_KaltIsland
+	map_resource Tileset_KaltIslandPalette
+	map_resource Tileset_KaltIslandTilesA
+	map_resource Tileset_KaltIslandTilesB
+	map_resource Tileset_KaltIslandTilesC
+	map_resource Tileset_KaltIslandTilesD
+	map_resource Field_KaltIslandHouses
+	map_resource Tileset_KaltIslandHousesPalette
+	map_resource Tileset_KaltIslandHousesTilesA
+	map_resource Tileset_KaltIslandHousesTilesB
+	map_resource Tileset_KaltIslandHousesTilesC
+	map_resource Tileset_KaltIslandHousesTilesD
+	map_resource Field_MagmaRockSlide
+	map_resource Tileset_PaletteMagmaRockSlide
+	map_resource Field_MagmaRockSalamanderTailChest
+	map_resource Field_MagmaRockStatue
+	map_resource Field_MagmaRockInsideLuckyMedalChest
+	map_resource Tileset_PaletteMagmaRockInsideLuckyMedalChest
+	map_resource Field_MagmaRockInsideEntrance
+	map_resource Field_MagmaRockInsideFury
+	map_resource Field_MagmaRockInsideCrackedPillars
+	map_resource Field_MagmaRockInsideGolemCoreChest
+	map_resource Field_MagmaRockInsideSalamanderTailChest
+	map_resource Field_MagmaRockInsideEmberStone
+	map_resource Field_MagmaRockInsideBlazeTablet
+	map_resource Tileset_PaletteMagmaRockInsideBlazeTablet
+	map_resource Field_AttekaInlet
+	map_resource Tileset_AttekaInletPalette
+	map_resource Tileset_AttekaInletTilesA
+	map_resource Field_AttekaInletGeode
+	map_resource Tileset_AttekaInletGeodePalette
+	map_resource Tileset_AttekaInletGeodeTilesA
+	map_resource Tileset_AttekaInletGeodeTilesB
+	map_resource Tileset_AttekaInletGeodeTilesC
+	map_resource Tileset_AttekaInletGeodeTilesD
+	map_resource Field_Contigo
+	map_resource Tileset_ContigoPalette
+	map_resource Tileset_ContigoTilesA
+	map_resource Field_ContigoShops
+	map_resource Tileset_ContigoShopsPalette
+	map_resource Tileset_ContigoShopsTilesA
+	map_resource Tileset_ContigoShopsTilesB
+	map_resource Tileset_ContigoShopsTilesC
+	map_resource Tileset_ContigoShopsTilesD
+	map_resource Tileset_PaletteContigoShops
+	map_resource Field_ShamanVillageCave
+	map_resource Tileset_PaletteShamanVillageCave
+	map_resource Field_ShamanVillageTrialGrounds
+	map_resource Tileset_ShamanVillageTrialGroundsPalette
+	map_resource Tileset_ShamanVillageTrialGroundsTilesA
+	map_resource Tileset_ShamanVillageTrialGroundsTilesB
+	map_resource Tileset_ShamanVillageTrialGroundsTilesC
+	map_resource Tileset_ShamanVillageTrialGroundsTilesD
+	map_resource Field_ShamanVillage
+	map_resource Tileset_ShamanVillagePalette
+	map_resource Tileset_ShamanVillageTilesA
+	map_resource Tileset_ShamanVillageTilesB
+	map_resource Tileset_ShamanVillageTilesC
+	map_resource Tileset_ShamanVillageTilesD
+	map_resource Field_ShamanVillageNorthEnd
+	map_resource Tileset_PaletteShamanVillageNorthEnd
+	map_resource Field_ShamanVillageHouses
+	map_resource Tileset_ShamanVillageHousesPalette
+	map_resource Tileset_ShamanVillageHousesTilesA
+	map_resource Tileset_ShamanVillageHousesTilesB
+	map_resource Tileset_ShamanVillageHousesTilesC
+	map_resource Tileset_ShamanVillageHousesTilesD
+	map_resource Tileset_PaletteShamanVillageHousesA
+	map_resource Tileset_PaletteShamanVillageHousesB
+	map_resource Field_AnemosInnerSanctumDragonSkinChest
+	map_resource Tileset_AnemosInnerSanctumDragonSkinChestPalette
+	map_resource Tileset_AnemosInnerSanctumDragonSkinChestTilesA
+	map_resource Field_AnemosInnerSanctumElevator
+	map_resource Field_AnemosInnerSanctumSwitches
+	map_resource Field_AnemosInnerSanctumOrihalconChest
+	map_resource Field_AnemosInnerSanctumGuardian
+	map_resource Field_AnemosInnerSanctumEntrance
+	map_resource Field_TrialRoadStages
+	map_resource Tileset_TrialRoadStagesPalette
+	map_resource Tileset_TrialRoadStagesTilesA
+	map_resource Tileset_TrialRoadStagesTilesB
+	map_resource Tileset_TrialRoadStagesTilesC
+	map_resource Tileset_TrialRoadStagesTilesD
+	map_resource Field_TrialRoadCaveRock
+	map_resource Field_TrialRoadGasp
+	map_resource Tileset_TrialRoadGaspPalette
+	map_resource Tileset_TrialRoadGaspTilesA
+	map_resource Tileset_TrialRoadGaspTilesB
+	map_resource Tileset_TrialRoadGaspTilesC
+	map_resource Tileset_TrialRoadGaspTilesD
+	map_resource Field_TrialRoadSummit
+	map_resource Tileset_TrialRoadSummitPalette
+	map_resource Tileset_TrialRoadSummitTilesA
+	map_resource Tileset_TrialRoadSummitTilesB
+	map_resource Tileset_TrialRoadSummitTilesC
+	map_resource Tileset_TrialRoadSummitTilesD
+	map_resource Field_JupiterLighthouseEntrance
+	map_resource Tileset_JupiterLighthouseEntrancePalette
+	map_resource Tileset_JupiterLighthouseEntranceTilesA
+	map_resource Tileset_JupiterLighthouseEntranceTilesB
+	map_resource Tileset_JupiterLighthouseEntranceTilesC
+	map_resource Tileset_JupiterLighthouseEntranceTilesD
+	map_resource Field_JupiterLighthouseBasementTeleporters
+	map_resource Tileset_PaletteJupiterLighthouseBasement1
+	map_resource Field_JupiterLighthouseBasementPsynergyStone
+	map_resource Field_JupiterLighthouseRoomGateButton
+	map_resource Tileset_JupiterLighthouseRoomPalette
+	map_resource Tileset_JupiterLighthouseRoomTilesA
+	map_resource Tileset_JupiterLighthouseRoomTilesB
+	map_resource Tileset_JupiterLighthouseRoomTilesC
+	map_resource Tileset_JupiterLighthouseRoomTilesD
+	map_resource Field_JupiterLighthouseRoomBeam
+	map_resource Field_JupiterLighthouseRoomErinyesTunicChest
+	map_resource Field_JupiterLighthouseRoomLockedDoors
+	map_resource Field_JupiterLighthouseRoomRedKey
+	map_resource Field_JupiterLighthouseRoomCrackedFloor
+	map_resource Field_JupiterLighthouseWhorl
+	map_resource Field_JupiterLighthouseRoomBlueKey
+	map_resource Field_JupiterLighthouseRoomPhaetonsBladeChest
+	map_resource Field_JupiterLighthouseTerraces
+	map_resource Tileset_PaletteJupiterLighthouseTerraces
+	map_resource Field_JupiterLighthouseAerie
+	map_resource Tileset_PaletteJupiterLighthouseAerie
+	map_resource Field_Loho
+	map_resource Tileset_LohoPalette
+	map_resource Tileset_LohoTilesA
+	map_resource Tileset_LohoTilesB
+	map_resource Tileset_LohoTilesC
+	map_resource Tileset_LohoTilesD
+	map_resource Field_LohoRooms
+	map_resource Tileset_LohoRoomsPalette
+	map_resource Tileset_LohoRoomsTilesA
+	map_resource Tileset_LohoRoomsTilesB
+	map_resource Tileset_LohoRoomsTilesC
+	map_resource Tileset_LohoRoomsTilesD
+	map_resource Field_NorthernReaches
+	map_resource Tileset_PaletteNorthernReaches
+	map_resource Field_ProxSouthGate
+	map_resource Tileset_ProxSouthGatePalette
+	map_resource Tileset_ProxSouthGateTilesA
+	map_resource Tileset_ProxSouthGateTilesB
+	map_resource Tileset_ProxSouthGateTilesC
+	map_resource Tileset_ProxSouthGateTilesD
+	map_resource Field_Prox
+	map_resource Tileset_PaletteProx
+	map_resource Field_ProxMold
+	map_resource Tileset_PaletteProxMold
+	map_resource Field_ProxHouses
+	map_resource Tileset_PaletteMadraRoomsCavernHomes
+	map_resource Tileset_PaletteMikasallaRoomsSanctum
+	map_resource Field_MarsLighthouseOutside
+	map_resource Tileset_MarsLighthouseOutsidePalette
+	map_resource Tileset_MarsLighthouseOutsideTilesA
+	map_resource Field_MarsLighthouseMarsTower
+	map_resource Tileset_MarsLighthouseMarsTowerPalette
+	map_resource Tileset_MarsLighthouseMarsTowerTilesA
+	map_resource Tileset_MarsLighthouseMarsTowerTilesB
+	map_resource Tileset_MarsLighthouseMarsTowerTilesC
+	map_resource Tileset_MarsLighthouseMarsTowerTilesD
+	map_resource Field_MarsLighthouseMercuryTower
+	map_resource Field_MarsLighthouseJupiterTower
+	map_resource Field_MarsLighthouseVenusTower
+	map_resource Field_MarsLighthouseAerie
+	map_resource Tileset_MarsLighthouseAeriePalette
+	map_resource Tileset_MarsLighthouseAerieTilesA
+	map_resource Tileset_MarsLighthouseAerieTilesB
+	map_resource Field_MarsLighthouseBeaconLedge
+	map_resource Tileset_MarsLighthouseBeaconLedgeTilesD
+	map_resource Field_MarsLighthouseHall
+	map_resource Tileset_MarsLighthouseHallPalette
+	map_resource Tileset_MarsLighthouseHallTilesA
+	map_resource Tileset_MarsLighthouseHallTilesB
+	map_resource Field_MarsLighthouseEntranceFugue
+	map_resource Field_MarsLighthouseEntranceTeleportLapis
+	map_resource Field_MarsLighthouseEntranceBalm
+	map_resource Field_MarsLighthouseEntranceHiddenCircle
+	map_resource Field_MarsLighthouseEntranceValkyrieMailChest
+	map_resource Field_MarsLighthouseEntranceSolBladeChest
+	map_resource Field_MarsLighthouseStarRoom
+	map_resource Field_MarsLighthouseMercuryLedge
+	map_resource Tileset_MarsLighthouseMercuryLedgeTilesD
+	map_resource Field_MarsLighthouseJupiterLedge
+	map_resource Field_MarsLighthouseMarsLedge
+	map_resource Field_MarsLighthouseVenusLedge
+	map_resource Tileset_PaletteMarsLighthouseOutsideThawed
+	map_resource Tileset_PaletteMarsLighthouseMarsTowerThawed
+	map_resource Tileset_PaletteMarsLighthouseAerieThawed
+	map_resource Tileset_PaletteMarsLighthouseBeaconLedgeThawed
+	map_resource Tileset_PaletteMarsLighthouseHallThawed
+	map_resource Field_MercuryLighthouse
+	map_resource Tileset_MercuryLighthousePalette
+	map_resource Tileset_MercuryLighthouseTilesA
+	map_resource Tileset_MercuryLighthouseTilesB
+	map_resource Tileset_MercuryLighthouseTilesC
+	map_resource Tileset_MercuryLighthouseTilesD
+	map_resource Field_TreasureIsleEntrance
+	map_resource Tileset_TreasureIsleEntrancePalette
+	map_resource Tileset_TreasureIsleEntranceTilesA
+	map_resource Tileset_TreasureIsleEntranceTilesB
+	map_resource Tileset_TreasureIsleEntranceTilesC
+	map_resource Tileset_TreasureIsleEntranceTilesD
+	map_resource Field_TreasureIsleChests
+	map_resource Tileset_TreasureIsleChestsPalette
+	map_resource Tileset_TreasureIsleChestsTilesA
+	map_resource Tileset_TreasureIsleChestsTilesB
+	map_resource Tileset_TreasureIsleChestsTilesC
+	map_resource Tileset_TreasureIsleChestsTilesD
+	map_resource Field_TreasureIsleJestersArmletChest
+	map_resource Tileset_TreasureIsleJestersArmletChestPalette
+	map_resource Tileset_TreasureIsleJestersArmletChestTilesA
+	map_resource Tileset_TreasureIsleJestersArmletChestTilesB
+	map_resource Tileset_TreasureIsleJestersArmletChestTilesC
+	map_resource Tileset_TreasureIsleJestersArmletChestTilesD
+	map_resource Field_TreasureIsleGale
+	map_resource Tileset_PaletteTreasureIsleGale
+	map_resource Field_TreasureIsleGuardian
+	map_resource Field_IsletCaveHalls
+	map_resource Tileset_IsletCaveHallsPalette
+	map_resource Tileset_IsletCaveHallsTilesA
+	map_resource Tileset_IsletCaveHallsTilesB
+	map_resource Tileset_IsletCaveHallsTilesC
+	map_resource Tileset_IsletCaveHallsTilesD
+	map_resource Field_IsletCaveCorridors
+	map_resource Tileset_PaletteIsletCaveCorridors
+	map_resource Field_IsletCaveSentinel
+	map_resource Tileset_PaletteIsletCaveSentinel
+	map_resource Field_CavernsIndra
+	map_resource Tileset_PaletteCavernsIndra
+	map_resource Field_CavernsOsenia
+	map_resource Tileset_CavernsOseniaPalette
+	map_resource Tileset_CavernsOseniaTilesA
+	map_resource Tileset_CavernsOseniaTilesB
+	map_resource Tileset_CavernsOseniaTilesC
+	map_resource Tileset_CavernsOseniaTilesD
+	map_resource Field_CavernsAngara
+	map_resource Tileset_PaletteCavernsAngara
+	map_resource Field_MtAlephSummit
+	map_resource Tileset_MtAlephSummitPalette
+	map_resource Tileset_MtAlephSummitTilesA
+	map_resource Tileset_MtAlephSummitTilesB
+	map_resource Tileset_MtAlephSummitTilesC
+	map_resource Tileset_MtAlephSummitTilesD
+	map_resource Field_UnusedTestRoom
+	map_resource Tileset_UnusedTestRoomPalette
+	map_resource Tileset_UnusedTestRoomTilesA
+	map_resource Tileset_UnusedTestRoomTilesB
+	map_resource Tileset_UnusedTestRoomTilesC
+	map_resource Tileset_UnusedTestRoomTilesD
+	map_resource Field_PsynergyTest
+	map_resource Tileset_PsynergyTestPalette
+	map_resource Tileset_PsynergyTestTilesA
+	map_resource Tileset_PsynergyTestTilesB
+	map_resource Tileset_PsynergyTestTilesC
+	map_resource Tileset_PsynergyTestTilesD
+	map_resource Field_ShopTest
+	map_resource Tileset_ShopTestPalette
+	map_resource Tileset_ShopTestTilesA
+	map_resource Tileset_ShopTestTilesB
+	map_resource Tileset_ShopTestTilesC
+	map_resource Tileset_ShopTestTilesD
+	map_resource Field_Test0
+	map_resource Tileset_Test0Palette
+	map_resource Tileset_Test0TilesA
+	map_resource Tileset_Test0TilesB
+	map_resource Tileset_Test0TilesC
+	map_resource Tileset_Test0TilesD
+	map_resource Field_Test1
+	map_resource Tileset_Test1Palette
+	map_resource Tileset_Test1TilesA
+	map_resource Tileset_Test1TilesB
+	map_resource Tileset_Test1TilesC
+	map_resource Tileset_Test1TilesD
+	map_resource Field_Test2
+	map_resource Tileset_Test2Palette
+	map_resource Tileset_Test2TilesA
+	map_resource Tileset_Test2TilesB
+	map_resource Tileset_Test2TilesC
+	map_resource Tileset_Test2TilesD
+	map_resource Field_Test3
+	map_resource Tileset_Test3Palette
+	map_resource Tileset_Test3TilesA
+	map_resource Tileset_Test3TilesB
+	map_resource Tileset_Test3TilesC
+	map_resource Tileset_Test3TilesD
+	map_resource Field_Test4
+	map_resource Tileset_Test4Palette
+	map_resource Tileset_Test4TilesA
+	map_resource Tileset_Test4TilesB
+	map_resource Tileset_Test4TilesC
+	map_resource Tileset_Test4TilesD
+	map_resource Field_Test5
+	map_resource Tileset_Test5Palette
+	map_resource Tileset_Test5TilesA
+	map_resource Tileset_Test5TilesB
+	map_resource Tileset_Test5TilesC
+	map_resource Tileset_Test5TilesD
+	map_resource Field_Test6
+	map_resource Tileset_Test6Palette
+	map_resource Tileset_Test6TilesA
+	map_resource Tileset_Test6TilesB
+	map_resource Tileset_Test6TilesC
+	map_resource Tileset_Test6TilesD
+	map_resource Field_Test7
+	map_resource Tileset_Test7Palette
+	map_resource Tileset_Test7TilesA
+	map_resource Tileset_Test7TilesB
+	map_resource Tileset_Test7TilesC
+	map_resource Tileset_Test7TilesD
 	resource , Resource_Overlay649
 	resource , Resource_Overlay64a
 	resource , Resource_Overlay64b

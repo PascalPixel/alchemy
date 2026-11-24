@@ -42,6 +42,7 @@ help:
 	  'make compare-editions   all twelve editions' \
 	  'make modern             all twelve editions'\'' C through a current GCC (MODERN_CC)' \
 	  'make test               test the C build tools and the format' \
+	  'make test-linking       add a row to the scene and resource lists and link: every name follows' \
 	  'make SHIFT=4 tbs-en     the shift test: everything after the header moves 4 bytes'
 
 # Each edition builds in its own make, so its variables below are set once;
@@ -163,7 +164,9 @@ GAME  := $(word 1,$(subst -, ,$(EDITION)))
 LANG  := $(word 2,$(subst -, ,$(EDITION)))
 # make SHIFT=n tbs-en is the shift test: everything after the header moves n
 # bytes (a multiple of 4), built into out/shift-n/ so out/<edition> is untouched.
-BUILD := out/$(if $(SHIFT),shift-$(SHIFT)/)$(EDITION)
+# make test-linking builds with LINKING=1, into out/linking/, as the shift test
+# builds into its own folder.
+BUILD := out/$(if $(SHIFT),shift-$(SHIFT)/)$(if $(LINKING),linking/)$(EDITION)
 ROM   := $(BUILD)/$(EDITION).gba
 ELF   := $(BUILD)/$(EDITION).elf
 
@@ -276,8 +279,9 @@ include $(BUILD)/deps.mk
 -include $(wildcard $(addsuffix .d,$(filter $(addprefix %.,$(ASSET_SUFFIXES)),$(DEPENDENCIES))))
 endif
 
-.PHONY: rom
+.PHONY: rom elf
 rom: $(ROM)
+elf: $(ELF)
 
 $(ROM): $(ELF) $(GBAFIX)
 	$(OBJCOPY) -O binary --pad-to $(ROM_END_$(GAME)) $< $@
@@ -365,6 +369,24 @@ $(addprefix $(BUILD)/obj/,$(ARM_C:.c=.o)): $(BUILD)/obj/%.o: %.c
 $(BUILD)/obj/%.o: %.s
 	@mkdir -p $(@D)
 	$(AS) $(EDITION_ASFLAGS) -o $@ $<
+
+# The linking test (make test-linking) assembles the two lists that number the
+# scenes and the resources from copies with one row more in the middle: the
+# middle scene's row again under the name LinkingTest, and an unused resource
+# of that name. Nothing else differs from the edition's build, so an image that
+# links has taken every number from the lists.
+ifdef LINKING
+$(BUILD)/obj/games/$(GAME)/src/field/scenes.o: games/$(GAME)/src/field/scenes.s
+	@mkdir -p $(@D)
+	awk 'NR == FNR { if ($$1 == "scene") rows++; next } { print } \
+	     $$1 == "scene" && ++row == int(rows / 2) { sub(/scene [A-Za-z0-9_]*,/, "scene LinkingTest,"); print }' $< $< > $(@:.o=.s)
+	$(AS) $(EDITION_ASFLAGS) -o $@ $(@:.o=.s)
+$(BUILD)/obj/games/$(GAME)/src/gamepak/resource_directory.o: games/$(GAME)/src/gamepak/resource_directory.s
+	@mkdir -p $(@D)
+	awk 'NR == FNR { if ($$1 ~ /resource$$/) rows++; next } { print } \
+	     $$1 ~ /resource$$/ && ++row == int(rows / 2) { print "\tresource LinkingTest, 0" }' $< $< > $(@:.o=.s)
+	$(AS) $(EDITION_ASFLAGS) -o $@ $(@:.o=.s)
+endif
 
 $(BUILD)/obj/%.o: %.S
 	@mkdir -p $(@D)
@@ -518,6 +540,38 @@ tools:
 test: tools format-check
 	$(MAKE) -f tools/Makefile test
 	git ls-files games tools | tools/out/ags-check
+
+# make test-linking: the tree links itself. A scene's or a resource's number is
+# its row in games/<game>/src/field/scenes.s or src/gamepak/resource_directory.s,
+# and everything that refers to one names it, so the linker fills the number
+# in. The test builds LINKING_EDITION again into out/linking/ with one row more
+# in the middle of each list and no other change, and reads both images'
+# symbols: the image links, every SceneId_, ResourceId_ and MapResource_ name
+# is still there, each one after a new row is one more than it was and each
+# one before it is what it was. It edits no tracked file, and the ROM
+# comparison does not run it. What it cannot see is a number written bare.
+LINKING_EDITION ?= tla-en
+.PHONY: test-linking
+test-linking: $(LINKING_EDITION)
+	@$(MAKE) $(SERIAL) -f Makefile EDITION=$(LINKING_EDITION) LINKING=1 elf
+	@{ $(NM) -t d out/$(LINKING_EDITION)/$(LINKING_EDITION).elf | sed "s/^/was /"; \
+	   $(NM) -t d out/linking/$(LINKING_EDITION)/$(LINKING_EDITION).elf | sed "s/^/now /"; } | \
+	awk '$$3 != "A" || $$4 !~ /^(SceneId|ResourceId|MapResource)_/ { next } \
+	     $$1 == "was" { was[$$4] = $$2 + 0; next } { now[$$4] = $$2 + 0 } \
+	     END { if (!("SceneId_LinkingTest" in now) || !("ResourceId_LinkingTest" in now)) { \
+	             print "test-linking: the new rows have no numbers"; exit 1 } \
+	           scene = now["SceneId_LinkingTest"]; resource = now["ResourceId_LinkingTest"]; \
+	           empty = was["ResourceId_EmptyMap"]; \
+	           for (name in was) { \
+	             if (name ~ /^SceneId_/) step = was[name] >= scene; \
+	             else if (name ~ /^ResourceId_/) step = was[name] >= resource; \
+	             else step = (was[name] + empty >= resource) - (empty >= resource); \
+	             if (!(name in now)) { print "test-linking: " name " is gone"; bad++ } \
+	             else if (now[name] != was[name] + step) { bad++; \
+	               print "test-linking: " name " was " was[name] ", is " now[name] ", should be " was[name] + step } \
+	             else if (step) moved++; else stayed++ } \
+	           if (bad || !moved) { print "test-linking: FAILED"; exit 1 } \
+	           print "test-linking: scene " scene " and resource " resource " added, " moved " names moved by one, " stayed " stayed: OK" }'
 
 # Both games' C is as clang-format writes it (AGENTS.md S3). Without
 # clang-format installed the check says so

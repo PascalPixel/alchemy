@@ -151,7 +151,7 @@ struct MapResources {
   u16 tiles[3];       ///< for char blocks 1, 2 and 3
   u16 animationTiles; ///< into gMapGridAnimTiles
 };
-/// Every layout's resources, by map number (field/map_grid_data.c).
+/// Every layout's resources, by map number (field/map_resources.s).
 extern const struct MapResources gMaps[];
 
 /// One background layer of the field map: its scroll position, origin,

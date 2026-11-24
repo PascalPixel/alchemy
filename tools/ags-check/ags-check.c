@@ -20,6 +20,15 @@
  * .ts, .rs), no binary dumps (.bin, .gba), and no assembler include (.inc)
  * but the few in INCLUDES below, each named with its reason.
  *
+ * LINKING. A scene, a resource or anything else whose number is its row in a
+ * list is a symbol the linker fills in, and a reference to one is written as
+ * its name, never as its number: C names the symbol in a word, and a table
+ * that holds one in a narrower field is assembly whose row macro pastes the
+ * name onto the symbol (.2byte SceneId_\scene), so that a number in a
+ * name's place links to nothing. No rule of this file can tell a number
+ * written bare from any other number, so none here tries; the row macros
+ * hold it, and "make test-linking" adds a row to each list and links.
+ *
  * LIMITS. A .c file has at most 2,000 lines, a .h file 500, a .s file 1,500.
  * The limit is for code. A file that is a table has none. In C that is an
  * array of rows, or a list of enum values, #defines and extern data, as the
@@ -90,6 +99,8 @@ static const char *const INCLUDES[] = {
     "src/system/overlay/imports.inc",
     /* Glyph widths, placed inside the font's own assembly. */
     "src/graphics/font/glyph_widths.inc",
+    /* The headings a C enum computes, for the tables that name one. */
+    "src/field/facing.inc",
 };
 
 /* PENDING: a column name that is a file form, in monster/list.tsv. */

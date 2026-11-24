@@ -1,7 +1,7 @@
 /// @file
-/// The rules the field looks a scene up in: where the party restarts after a
-/// defeat and where the ship waits, each scene's battle background, and each
-/// encounter's battle music.
+/// The rules the field looks a scene up in: each scene's battle background and
+/// each encounter's battle music. Where the party restarts after a defeat and
+/// where the ship waits is return_rules.s, linked before this.
 
 #include "resource_ids.h"
 #include "scene_ids.h"
@@ -10,48 +10,11 @@
 #include "field/scene_tables.h"
 #include "field/event_commands.h"
 
-/// A row of gScene_ReturnRules, eight halfwords as Scene_SetRestartPoint
-/// and the World Map's return reads them: the scene and entrance (-1 for any)
-/// it matches, the scene and entrance the party restarts at after a defeat,
-/// the ship's position in pixels (x, z) and its facing, a word whose halves are
-/// the last two. A scene number cannot be a symbol in a halfword, so each row
-/// names its scenes in a comment.
-#define RESTART_RULE(scene, entrance, restartScene, restartEntrance, x, z,     \
-                     facing)                                                   \
-  (scene), (entrance), (restartScene), (restartEntrance), (x), (z),            \
-      (s16)(facing), (s16)((u32)(facing) >> 16)
-
 /// A backdrop's row in gScene_BattleBackgroundRules: its resource number with
 /// bit 31 set, before the scenes that take it.
 #define BATTLE_BACKGROUND(resource) (s32)(0x80000000 + (resource))
 
 // clang-format off
-
-/// The restart point and the ship's mooring by scene, ended by a row of -1.
-const s16 gScene_ReturnRules[] = {
-    RESTART_RULE(9, -1, 9, 2, 0, 0, FACING_NORTH), // SCENE_IDEJIMA to SCENE_IDEJIMA
-    RESTART_RULE(10, -1, 12, 1, 10085, 8126, FACING_SOUTH), // SCENE_DAILA_FLOODED to SCENE_DAILA_ROOMS_SANCTUM
-    RESTART_RULE(13, -1, 12, 1, 10085, 8126, FACING_SOUTH), // SCENE_DAILA to SCENE_DAILA_ROOMS_SANCTUM
-    RESTART_RULE(44, -1, 45, 9, 10591, 9119, FACING_SOUTH), // SCENE_MADRA to SCENE_MADRA_ROOMS_HOUSES
-    RESTART_RULE(55, -1, 58, 1, 12226, 11002, FACING_SOUTH), // SCENE_MIKASALLA to SCENE_MIKASALLA_ROOMS_SANCTUM
-    RESTART_RULE(61, -1, 66, 2, 12226, 11002, FACING_SOUTH), // SCENE_GAROH_WAY_UP to SCENE_GAROH_ROOMS_SANCTUM
-    RESTART_RULE(95, -1, 96, 7, 11051, 9317, FACING_SOUTHWEST), // SCENE_ALHAFRA to SCENE_ALHAFRA_ROOMS
-    RESTART_RULE(105, -1, 105, 6, 9282, 9162, FACING_SOUTH), // SCENE_NARIBWE to SCENE_NARIBWE
-    RESTART_RULE(113, -1, 113, 19, 9386, 7896, FACING_WEST), // SCENE_KIBOMBO_CEREMONY to SCENE_KIBOMBO_CEREMONY
-    RESTART_RULE(110, -1, 112, 20, 9386, 7896, FACING_WEST), // SCENE_KIBOMBO to SCENE_KIBOMBO_HOUSES
-    RESTART_RULE(139, -1, 58, 4, 12882, 9865, FACING_SOUTH), // SCENE_YALLAM to SCENE_MIKASALLA_ROOMS_SANCTUM
-    RESTART_RULE(154, -1, 58, 5, 14401, 8348, FACING_NORTHEAST), // SCENE_APOJII_ISLANDS to SCENE_MIKASALLA_ROOMS_SANCTUM
-    RESTART_RULE(171, -1, 170, 6, 13313, 6018, FACING_NORTHEAST), // SCENE_IZUMO to SCENE_IZUMO_ROOMS
-    RESTART_RULE(182, -1, 184, 1, 10888, 6375, FACING_NORTHEAST), // SCENE_CHAMPA to SCENE_CHAMPA_SANCTUM
-    RESTART_RULE(202, -1, 202, 18, 13074, 1176, FACING_SOUTH), // SCENE_LEMURIA to SCENE_LEMURIA
-    RESTART_RULE(236, -1, 237, 6, 7271, 8269, FACING_EAST), // SCENE_CONTIGO to SCENE_CONTIGO_SHOPS
-    RESTART_RULE(242, -1, 246, 6, 7262, 5678, FACING_WEST), // SCENE_SHAMAN_VILLAGE to SCENE_SHAMAN_VILLAGE_SANCTUM
-    RESTART_RULE(266, -1, 267, 5, 8830, 5957, FACING_SOUTHWEST), // SCENE_LOHO to SCENE_LOHO_ROOMS
-    RESTART_RULE(270, -1, 274, 7, 8975, 1543, FACING_NORTH), // SCENE_PROX to SCENE_PROX_CAVES
-    RESTART_RULE(132, -1, 132, 7, 12844, 11740, FACING_WEST), // SCENE_EAST_TUNDARIA_ISLET to SCENE_EAST_TUNDARIA_ISLET
-    RESTART_RULE(312, -1, 312, 1, 0, 0, FACING_NORTH), // SCENE_LOBBY to SCENE_LOBBY
-    RESTART_RULE(-1, -1, -1, -1, -1, -1, -1), // end
-};
 
 /// The battle background by scene (BattleBackground_SelectForMap): a scene
 /// takes the last backdrop listed before it, and one not listed the last

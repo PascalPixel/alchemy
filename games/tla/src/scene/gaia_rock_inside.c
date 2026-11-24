@@ -160,7 +160,7 @@ enum GaiaRockInsideCellBehavior {
 };
 
 /// The maze's one actor, in the middle of each of its rooms, and its
-/// treasures in scene_items.c's order: the Mimic's chest in the third room,
+/// treasures in scene_items.s's order: the Mimic's chest in the third room,
 /// the Rusty Mace's in the ninth, and the Cloud Brand hidden behind the stone
 /// Serpent in the lair.
 enum {

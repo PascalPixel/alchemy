@@ -291,7 +291,7 @@
 /// chests"); the Trial Road's music rule and its triggers test it.
 #define FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT 0x9ff
 /// The ten items of the Trial Road's stages (SCENE_TRIAL_ROAD_STAGES in
-/// scene_items.c), set as each is taken; InventorySnapshot_Save clears them as
+/// scene_items.s), set as each is taken; InventorySnapshot_Save clears them as
 /// a race starts, so that every race finds them again.
 #define FLAG_TRIAL_ROAD_STAGE_ITEM_FIRST 0xe50
 #define FLAG_TRIAL_ROAD_STAGE_ITEM_LAST 0xe59
@@ -426,7 +426,7 @@
 #define FLAG_KIBOMBO_PIERS_MET 0x8f3
 /// Set as the Gabomba's charges drive the party back from the statue, cleared
 /// as Akafubu ends the ceremony; while it is set the music rules
-/// choose silence for their groups 31 and 32 (music_rules.c).
+/// choose silence for their groups 31 and 32 (music_rules.s).
 #define FLAG_GABOMBA_MUSIC_SILENCED 0x8f7
 /// Set as the ceremony sends the party back to Kibombo; the Gabomba Statue's
 /// arrow room reads it once and clears it.

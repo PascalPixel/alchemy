@@ -4,6 +4,8 @@
 
 #include "battle_internal.h"
 
+void _call_via_r0(u32 routine);
+
 /// Unused: stops DMA3, then calls a routine that is not one.
 void Dma_StopDma3(void) {
   // XXX (no evidence): what the call was meant to run; it calls the word of the

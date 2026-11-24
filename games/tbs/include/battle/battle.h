@@ -41,6 +41,8 @@ struct Ring {
   s32 velocityY; ///< 1/1024 canvas pixels per frame
   s32 age;       ///< frames
 };
+/// Mind Read's caster's palette cycle, two frames a step
+/// (field_sequence_tables.c).
 extern const u8 gMindRead_CasterPaletteCycle[];
 /// The weights an enemy picks among its eight actions by, one table for each
 /// weighted action strategy (enum EnemyActionStrategy, battle_internal.h):
@@ -144,14 +146,14 @@ extern const u32 gBlitterTemplate[];
 /// (Message_SetVoiceFromActor). The same values as
 /// gMessageSpeed_VoiceGaps, which the message reads, in a copy of its own.
 extern const u8 gMessageSpeed_VoiceRates[];
+/// The World Map cursor's angle for each +Control Pad direction, and its
+/// markers' blend cycle (field_sequence_tables.c).
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];
 /// The World Map's area markers, {tile << 16 | flag, area} for
 /// each area's actor id from 11, ended by -1; a zero row reserves an
 /// actor id with no marker.
 extern const s32 gMapScreen_AreaMarkers[];
-u32 __udivsi3(u32 numerator, u32 denominator);
-void _call_via_r0(u32 routine);
 /// The ARM decoder for a battle background's image, which
 /// BattleBackground_Load copies to RAM and runs as a BitDecoder.
 void BitDecoder_DecodeImage(void);

@@ -244,24 +244,14 @@ void MenuCursor_Set(struct MenuCursor *cursor, s32 targetX, s32 targetY,
 /// Places the cursor and its sprite at (x, y) at once, with a one-frame glide
 /// that has already arrived.
 void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
-
-  {
-    struct WindowSprite *sprite = cursor->anchor;
-
-    cursor->targetX = x;
-    cursor->frames = 1;
-    cursor->frame = 0;
-    cursor->x = x;
-    sprite->oam.x = sprite->x = x;
-  }
-  {
-    struct WindowSprite *sprite;
-
-    cursor->targetY = y;
-    cursor->y = y;
-    sprite = cursor->anchor;
-    sprite->oam.y = sprite->y = y;
-  }
+  cursor->targetX = x;
+  cursor->frames = 1;
+  cursor->frame = 0;
+  cursor->x = x;
+  cursor->anchor->oam.x = cursor->anchor->x = x;
+  cursor->targetY = y;
+  cursor->y = y;
+  cursor->anchor->oam.y = cursor->anchor->y = y;
 }
 
 /// Starts the hand cursor's glide to (x, y) pixels inside `window` (the screen

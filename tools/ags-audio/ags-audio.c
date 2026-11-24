@@ -134,7 +134,7 @@ encodeWave(const Wave *wave)
 int
 main(int argc, char **argv)
 {
-	const char *usage = "usage: ags-audio INPUT.pcm8.wav|INPUT.pcm4 OUTPUT.bin";
+	const char *usage = "usage: ags-audio INPUT.pcm8.wav OUTPUT.bin";
 	startTool(argc, argv, usage);
 	if (argc != 3)
 		fail("%s", usage);
@@ -144,12 +144,6 @@ main(int argc, char **argv)
 		Wave wave = readWave(&input);
 		out = encodeWave(&wave);
 		free(wave.samples.data);
-	}
-	else if (!strcasecmp(extension(argv[1]), "pcm4"))
-	{
-		if (input.len != 16)
-			fail("a wave RAM pattern is sixteen bytes");
-		append(&out, input.data, input.len);
 	}
 	else
 		fail("not a sound input: %s", argv[1]);

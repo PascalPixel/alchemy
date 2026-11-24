@@ -153,9 +153,8 @@ $(foreach codec,$(CODECS),$(eval %.bitmaps.$(codec): %_00.png $(PICTURE_RUN) $(P
 %.tilemap.lz: %.tsv $$(wildcard $$*.flip.tsv $$*.palette.tsv $$*_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
 %.collision.lz: %.tsv $$(wildcard $$(basename $$(basename $$@))_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
 
-# Sound samples: NAME.pcm8.bin from NAME.pcm8.wav, NAME.bin from NAME.pcm4.
+# Sound samples: NAME.pcm8.bin from NAME.pcm8.wav.
 %.pcm8.bin: %.pcm8.wav $(WAV2AGS) ; $(WAV2AGS) $< $@
-%.bin: %.pcm4 $(WAV2AGS) ; $(WAV2AGS) $< $@
 
 # --- One edition ---------------------------------------------------------
 

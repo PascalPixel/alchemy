@@ -1,10 +1,33 @@
-name	file	section	align	left	pad
-Sound_CgbWaveSine	programmable_wave_samples/sine.bin		4		
-Sound_CgbWaveTriangle	programmable_wave_samples/triangle.bin				
-Sound_CgbWaveSawtooth	programmable_wave_samples/sawtooth.bin				
-Sound_CgbWaveRampWithPlateau	programmable_wave_samples/ramp_with_plateau.bin				
-Sound_CgbWavePulseEighth	programmable_wave_samples/pulse_eighth.bin				
-Sound_CgbWavePulseQuarter	programmable_wave_samples/pulse_quarter.bin				
-Sound_CgbWavePulseThreeEighths	programmable_wave_samples/pulse_three_eighths.bin				
-Sound_CgbWaveSquare	programmable_wave_samples/square.bin				
-Sound_CgbWavePickBass	programmable_wave_samples/pick_bass.bin				
+step	sine	triangle	sawtooth	ramp_with_plateau	pulse_eighth	pulse_quarter	pulse_three_eighths	square	pick_bass
+0	8	8	8	15	15	15	15	15	8
+1	9	9	8	14	15	15	15	15	4
+2	10	10	7	13	15	15	15	15	1
+3	12	11	7	12	15	15	15	15	0
+4	13	12	6	11	0	15	15	15	0
+5	14	13	6	10	0	15	15	15	1
+6	14	14	5	9	0	15	15	15	2
+7	15	15	5	9	0	15	15	15	2
+8	15	15	4	8	0	0	15	15	3
+9	15	14	4	8	0	0	15	15	4
+10	14	13	3	8	0	0	15	15	5
+11	14	12	3	8	0	0	15	15	7
+12	13	11	2	8	0	0	0	15	8
+13	12	10	2	8	0	0	0	15	9
+14	10	9	1	8	0	0	0	15	10
+15	9	8	1	8	0	0	0	15	11
+16	8	7	0	7	0	0	0	0	12
+17	6	6	0	7	0	0	0	0	11
+18	5	5	15	7	0	0	0	0	12
+19	3	4	15	7	0	0	0	0	11
+20	2	3	14	7	0	0	0	0	10
+21	1	2	14	7	0	0	0	0	12
+22	1	1	13	7	0	0	0	0	10
+23	0	0	13	7	0	0	0	0	10
+24	0	0	12	6	0	0	0	0	9
+25	0	1	12	6	0	0	0	0	11
+26	1	2	11	5	0	0	0	0	8
+27	1	3	11	4	0	0	0	0	10
+28	2	4	10	3	0	0	0	0	11
+29	3	5	10	2	0	0	0	0	14
+30	5	6	9	1	0	0	0	0	14
+31	6	7	9	0	0	0	0	0	10

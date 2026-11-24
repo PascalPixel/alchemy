@@ -465,6 +465,54 @@ main(int argc, char **argv)
 			fail(argv[2], "cannot write");
 		return 0;
 	}
+	if (!strncmp(line, "step\t", 5))
+	{
+		/* The wave channel's patterns: a column a wave, a row a step, each a
+		 * level from 0 to 15. A wave is 32 steps, packed two to a byte. */
+		static char waves[16][MAX_TEXT];
+		static int levels[16][32];
+		int count = 0, steps = 0;
+
+		line[strcspn(line, "\n")] = 0;
+		for (char *name = strtok(line + 5, "\t"); name && count < 16; name = strtok(NULL, "\t"))
+			snprintf(waves[count++], MAX_TEXT, "%s", name);
+		while (fgets(line, sizeof line, in))
+		{
+			char *cell = strtok(line, "\t\n");
+
+			if (!cell)
+				continue;
+			if (steps == 32)
+				fail(argv[1], "a wave has 32 steps");
+			for (int wave = 0; wave < count; wave++)
+			{
+				cell = strtok(NULL, "\t\n");
+				if (!cell || atoi(cell) < 0 || atoi(cell) > 15)
+					fail(argv[1], "a level is a number from 0 to 15");
+				levels[wave][steps] = atoi(cell);
+			}
+			steps++;
+		}
+		fclose(in);
+		if (steps != 32)
+			fail(argv[1], "a wave has 32 steps");
+		out = fopen(argv[2], "w");
+		if (!out)
+			fail(argv[2], "cannot write");
+		fprintf(out, "@ Written by ags-list from its table: do not edit.\n\t.section .rodata\n\t.balign 4\n");
+		for (int wave = 0; wave < count; wave++)
+		{
+			char text[MAX_TEXT];
+
+			label(waves[wave], text);
+			fprintf(out, "\t.global Sound_CgbWave%s\nSound_CgbWave%s:\n", text, text);
+			for (int step = 0; step < 32; step += 2)
+				fprintf(out, "\t.byte %d\n", levels[wave][step] << 4 | levels[wave][step + 1]);
+		}
+		if (fclose(out))
+			fail(argv[2], "cannot write");
+		return 0;
+	}
 	if (!strncmp(line, "name\tfile\t", 10))
 	{
 		char section[MAX_TEXT] = "\1";

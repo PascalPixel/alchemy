@@ -1332,6 +1332,8 @@ void TaopoSwamp_CycleDjinniVents(void) {
     Scene_QueueMusic(-1);
     break;
   }
+  // Frames 251 to 429: from 11 frames after the second set starts blowing to
+  // 9 after it stops.
   if ((u32)(timer - 251) <= 178 &&
       Event_GetFlag(FLAG_TAOPO_SWAMP_EAST_PILLAR_OVER_VENT) &&
       !Event_GetFlag(FLAG_DJINNI(DJINNI_FLOWER)) &&
@@ -2367,6 +2369,9 @@ u32 gSceneExits[] = {
     SCENE_EXIT(TAOPO_SWAMP_DRIPS_TO_TAOPO_SWAMP_TREMOR, TaopoSwampTremor, TAOPO_SWAMP_TREMOR_FROM_TAOPO_SWAMP_DRIPS),
     SCENE_EXIT(TAOPO_SWAMP_DRIPS_TO_TAOPO_SWAMP_PILLAR_GAP_SOUTH, TaopoSwampPillarGap, TAOPO_SWAMP_PILLAR_GAP_FROM_TAOPO_SWAMP_DRIPS_SOUTH),
     SCENE_EXIT(TAOPO_SWAMP_DRIPS_TO_TAOPO_SWAMP_PILLAR_GAP_NORTHWEST, TaopoSwampPillarGap, TAOPO_SWAMP_PILLAR_GAP_FROM_TAOPO_SWAMP_DRIPS_NORTHWEST),
+    // The passage inside the drips room: the doorway in the north wall of the
+    // round spot's part (exit and entrance 4) and the south end of the rope
+    // posts' part (5).
     SCENE_EXIT(4, TaopoSwampDrips, 5),
     SCENE_EXIT(5, TaopoSwampDrips, 4),
     SCENE_EXITS(TaopoSwampTremor),

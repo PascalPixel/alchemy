@@ -517,11 +517,11 @@ enum BlazeMode {
   BLAZE_LONG_SPRAY = 3
 };
 
-/// The drops of Blaze's spray, and the smoke puffs they leave.
+/// The flames of Blaze's jet, and the smoke puffs they leave.
 #define BLAZE_DROPS 16
-/// The frames a drop of the spray lives, in BLAZE_LONG_SPRAY and otherwise.
-#define BLAZE_LONG_DROP_FRAMES 33
-#define BLAZE_DROP_FRAMES 25
+/// The frames a flame of the jet lives, in BLAZE_LONG_SPRAY and otherwise.
+#define BLAZE_LONG_FLAME_FRAMES 33
+#define BLAZE_FLAME_FRAMES 25
 
 /// Blaze's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the flame tiles, 16
 /// flames and 16 smoke puffs with their motion, where the jet starts and where
@@ -547,13 +547,13 @@ struct BlazeState {
 };
 
 /// The frame callback of FieldPsynergy_Blaze's spray. Every fourth frame while
-/// it is emitting, a free one of sixteen drops starts at the origin with the
+/// it is emitting, a free one of sixteen flames starts at the origin with the
 /// mode's speed (BLAZE_LONG_SPRAY faster, longer and lighter) along the
 /// spray's angle.
-/// Each live drop grows, cycles its four tiles, is drawn at its position, and
+/// Each live flame grows, cycles its four tiles, is drawn at its position, and
 /// dies after the mode's lifetime, on reaching an object of the event state's
 /// list (whose index is kept and which stops the spray for the frame) or on
-/// something solid; an odd drop that dies leaves one of sixteen puffs of smoke
+/// something solid; an odd flame that dies leaves one of sixteen puffs of smoke
 /// that rise for 32 frames. The angle then turns toward the scene's facing by
 /// at most 1/64 turn a frame.
 void Blaze_UpdateSpray(void) {
@@ -580,11 +580,11 @@ void Blaze_UpdateSpray(void) {
           sprite->depth = Actor_GetSpriteDepth(scene->caster);
         if (state->mode == BLAZE_LONG_SPRAY) {
           state->speed = toFIXED(12) / 5;
-          state->lifetime = BLAZE_LONG_DROP_FRAMES;
+          state->lifetime = BLAZE_LONG_FLAME_FRAMES;
           state->gravity = toFIXED(3) / 32;
         } else {
           state->speed = toFIXED(9) / 5;
-          state->lifetime = BLAZE_DROP_FRAMES;
+          state->lifetime = BLAZE_FLAME_FRAMES;
           state->gravity = toFIXED(1) / 8;
         }
         SET_POSITION(particle, state->origin[0], state->origin[1],
@@ -693,10 +693,8 @@ void Blaze_UpdateSpray(void) {
 #undef DEPART_FRAMES
 #undef CYCLONE_SPREAD_KEPT
 #undef CYCLONE_SPREAD_SCALE
-#undef BLAZE_LONG_DROP_FRAMES
-#undef BLAZE_DROP_FRAMES
-
-void Teleport_PlaySparks(void);
+#undef BLAZE_LONG_FLAME_FRAMES
+#undef BLAZE_FLAME_FRAMES
 
 /// Blaze cast on a target: runs FieldPsynergy_Blaze.
 void FieldPsynergy_BlazeOnTarget(void) { FieldPsynergy_Blaze(); }

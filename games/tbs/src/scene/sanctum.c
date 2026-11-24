@@ -529,7 +529,7 @@ static void Sanctum_LeaveAfterRefusing(void) {
   paletteState->duration = 1;
   paletteState->step = 1;
   // DEAD: a byte nothing reads set to 1; the ROM keeps its store.
-  paletteState->padding = 1;
+  paletteState->unusedAfterStep = 1;
   Event_Wait(1);
   FieldMessage_ShowCentered(MsgSanctumWorldBeganDrifting, 1, 0);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);

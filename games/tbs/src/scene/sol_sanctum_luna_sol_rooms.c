@@ -1511,7 +1511,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   palette->duration = 1;
   palette->step = 1;
   // DEAD: nothing reads the fade's last byte; the ROM keeps its store.
-  palette->padding = 1;
+  palette->unusedAfterStep = 1;
   Io_Write16(0, &PLTT_BACKDROP);
   gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);

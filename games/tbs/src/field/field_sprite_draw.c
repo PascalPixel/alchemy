@@ -375,6 +375,11 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
   shadow->y = y;
 }
 
+/// The two rearmost depth slots: shadows drawn under everything, and the
+/// sprites drawn behind every other sprite, just in front of those shadows.
+#define DEPTH_SLOT_BACK_SHADOWS 0
+#define DEPTH_SLOT_BACK 1
+
 /// Render_ApplyProjectedPlacement's draw slots: a sprite one slot further in
 /// front for every two screen rows lower, on from PLACEMENT_IMAGE_SLOT, and
 /// its shadow in PLACEMENT_SHADOW_SLOT, behind them.
@@ -400,7 +405,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
   s32 height = *pos++;
   s32 screenY = *pos++;
   s32 groundHeight = *pos;
-  s32 slot;
+  s32 imageSlot;
   /* LEFTOVER(frame): two unused locals the ROM's frame reserves and never
    * touches. */
   UNUSED s32 ground[3];
@@ -409,7 +414,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
   s32 flip;
   s32 x;
   s32 y;
-  s32 depth;
+  s32 shadowSlot;
   struct AnimationSpritePart *part;
 
   // Reuse an untransformed sprite when mirroring, scale and rotation allow it.
@@ -436,11 +441,11 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
   }
   // A sprite sunk 100 pixels or more draws behind the rest.
   if (height <= -toFIXED(100)) {
-    slot = 1;
-    depth = 0;
+    imageSlot = DEPTH_SLOT_BACK;
+    shadowSlot = DEPTH_SLOT_BACK_SHADOWS;
   } else {
-    slot = (FIXEDtoINT(screenY) >> 1) + PLACEMENT_IMAGE_SLOT;
-    depth = PLACEMENT_SHADOW_SLOT;
+    imageSlot = (FIXEDtoINT(screenY) >> 1) + PLACEMENT_IMAGE_SLOT;
+    shadowSlot = PLACEMENT_SHADOW_SLOT;
   }
   // Queue the shadow at ground height before the raised image.
   y = FIXEDtoINT(screenY - groundHeight) - shadowHalfHeight;
@@ -451,7 +456,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
       part->affineIndex = matrix;
       part->x = FIXEDtoINT(screenX) - shadowHalfWidth;
       part->y = y;
-      Oam_AddSpriteAtDepth(part, depth);
+      Oam_AddSpriteAtDepth(part, shadowSlot);
     }
   }
   x = FIXEDtoINT(screenX) - halfWidth +
@@ -467,7 +472,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
     part->y = y;
     part->affine = affine;
     part->affineIndex = matrix;
-    Oam_AddSpriteAtDepth(part, slot);
+    Oam_AddSpriteAtDepth(part, imageSlot);
   }
 }
 
@@ -495,7 +500,8 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
   s32 ground[3];
   s32 screen[3];
   struct AffineTransform effect;
-  s32 z;
+  FIXED z;
+  s32 matrix;
   s32 roundedScale;
   FIXED scaleX;
   FIXED scaleY;
@@ -551,12 +557,12 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
           offsetX = -offsetX;
         }
         effect.scaleY = scaleY >> 8;
-        z = OamMatrix_AllocFromTransform(&effect);
+        matrix = OamMatrix_AllocFromTransform(&effect);
       } else if (flip != 0) {
-        z = SPRITE_PART_MIRRORED;
+        matrix = SPRITE_PART_MIRRORED;
         offsetX = -offsetX;
       } else {
-        z = 0;
+        matrix = 0;
       }
       {
         struct AnimationSpritePart *image = &sprite->image;
@@ -564,14 +570,14 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
         image->x = screen[0] - halfWidth + offsetX;
         image->y = screen[1] - halfHeight + offsetY;
         image->affine = affine;
-        image->affineIndex = z;
+        image->affineIndex = matrix;
       }
-      // The slot falls as the projected depth screen[2] rises, and stays at
-      // 1 or above: slot 0 is the shadows'.
+      // The slot falls as the projected depth screen[2] rises, and stays in
+      // front of the shadows' slot.
       if (depth == 0) {
         slot = (PROJECTED_MIDDLE_DEPTH - screen[2]) / 2 + PROJECTED_MIDDLE_SLOT;
         if (slot <= 0)
-          slot = 1;
+          slot = DEPTH_SLOT_BACK;
         Oam_AddSpriteAtDepth(sprite, slot);
       } else {
         Oam_AddSpriteAtDepth(sprite, depth);
@@ -585,11 +591,14 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
         Matrix_ProjectPoint(ground, screen);
         shadow = &sprite->shadow;
         shadow->x = screen[0] - size;
+        // Centred 2 pixels below the ground point, so the feet stand on the
+        // shadow's upper half (the World Map's leader, render probe
+        // --scene WorldMap).
         shadow->y = screen[1] - (size >> 1) + 2;
         shadow->affine = affine;
-        shadow->affineIndex = z;
+        shadow->affineIndex = matrix;
         if (depth == 0)
-          Oam_AddSpriteAtDepth(shadow, 0);
+          Oam_AddSpriteAtDepth(shadow, DEPTH_SLOT_BACK_SHADOWS);
         else
           Oam_AddSpriteAtDepth(shadow, depth);
       }

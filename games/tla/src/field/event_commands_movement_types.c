@@ -304,14 +304,16 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
   return found;
 }
 
-/// Whether the ground at position stops a jump: terrain kind above 2 on a
-/// layered map; never on the world map or with no map.
+/// Whether the ground at position stops a jump: anything but flat ground or a
+/// plain slope (TERRAIN_FLAT to TERRAIN_SLOPE_Y) on a field map; never on the
+/// world map or with no map.
 s32 MapGrid_BlocksJump(struct Actor *actor, s32 *position) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   struct FieldState *event = Ram_HeapSlots->fieldState;
 
   if (map == 0 || event->mode == ACTOR_SYSTEM_WORLD_MAP ||
-      MapGrid_GetTerrainKindFar(actor->layer, position[0], position[2]) <= 2)
+      MapGrid_GetTerrainKindFar(actor->layer, position[0], position[2]) <=
+          TERRAIN_SLOPE_Y)
     return 0;
   return 1;
 }

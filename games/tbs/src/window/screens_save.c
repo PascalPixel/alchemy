@@ -316,9 +316,9 @@ s32 Save_WriteFile(s32 file) {
   return result;
 }
 
-/// Writes the 64-byte save stamp (gBattleArenaRecord, which lies in the first
-/// half of the save buffer) into the current file's first part, leaving the
-/// rest of the part as it was saved.
+/// Writes the 64-byte save stamp (gBattleArenaSaveStamp, which lies in the
+/// first half of the save buffer) into the current file's first part, leaving
+/// the rest of the part as it was saved.
 s32 Save_WriteLinkTallies(void) {
   void *part;
   s32 result;
@@ -343,9 +343,9 @@ s32 Save_WriteLinkTallies(void) {
       result = SAVE_ERROR_READ;
     }
     // The stamp's place in the part is its place in the save buffer.
-    stamp = (u8 *)part + (s32)gBattleArenaRecord;
+    stamp = (u8 *)part + (s32)gBattleArenaSaveStamp;
     stamp -= (s32)gSaveBuffer;
-    Iwram_CopyWords(stamp, gBattleArenaRecord, 16);
+    Iwram_CopyWords(stamp, gBattleArenaSaveStamp, 16);
     error = Save_WritePart(gSaveSlot, part);
     if (error != 0) {
       FieldMessage_Show(MsgSaveFailed, FIELD_MESSAGE_ZOOM);

@@ -128,7 +128,8 @@ struct AnimationSpritePart {
   u16 priority : 2;    ///< 2 when created
   u16 palette : 4;     ///< 16-colour palette; unused at 256 colours
   ///@}
-  u8 attr3[2]; ///< OAM attribute 3; zero when created, not named
+  u8 attr3[2]; ///< the OAM entry's fourth halfword, an affine parameter's
+               ///< place; zero when created, not named
 };
 
 /// An animated sprite: its image and shadow, scale, rotation, size and up to

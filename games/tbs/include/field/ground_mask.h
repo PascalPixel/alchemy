@@ -51,7 +51,7 @@ struct GroundParticle {
   u16 priority : 2;    ///< 1.
   u16 palette : 4;     ///< 13; not named by the effects.
   ///@}
-  u8 attr3[2];     ///< OAM attribute 3, cleared with the others.
+  u8 attr3[2]; ///< The OAM entry's fourth halfword, cleared with the others.
   FIXED positionX; ///< World position, in 16.16 pixels.
   s32 positionY;   ///< The ground's height there.
   FIXED positionZ; ///< World position, in 16.16 pixels.

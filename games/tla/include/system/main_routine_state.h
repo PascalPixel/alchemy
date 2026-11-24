@@ -82,6 +82,19 @@ enum LuckyWheelsPrizesMark {
 /// the scene it lands in is loading, then the party arrives in it.
 enum TeleportState { TELEPORT_NONE, TELEPORT_CHOSEN, TELEPORT_ARRIVING };
 
+/// MainRoutineState.linkTallies, as the Link Lobby keeps them.
+enum LinkTally {
+  LINK_TALLY_MONSTER_WINS = 0,
+  LINK_TALLY_MONSTER_LOSSES = 1,
+  LINK_TALLY_MONSTER_BEST_STREAK = 2, ///< the most won in a row
+  LINK_TALLY_MONSTER_STREAK = 3,      ///< those won in the current series
+  LINK_TALLY_LINKED_WINS = 4,
+  LINK_TALLY_LINKED_LOSSES = 5,
+  /// The most linked battles won in a row, on the wall board.
+  LINK_TALLY_LINKED_BEST_STREAK = 6,
+  LINK_TALLY_LINKED_STREAK = 7 ///< those won in a row now
+};
+
 /// gMainRoutineState, the state a save file keeps: play time, coins, the scene
 /// and the leader's position, the active party and the options.
 struct MainRoutineState {
@@ -252,7 +265,7 @@ struct MainRoutineState {
   /// Set while the leader stands on the upper level of the Alhafran Cave,
   /// where Sand ends; cleared on entering a scene.
   s8 onUpperLevel;
-  /// The Link Lobby's records (lobby.c's enum LinkTally): the wins, losses,
+  /// The Link Lobby's records (enum LinkTally): the wins, losses,
   /// best streak and current streak of its monster battles, then the same four
   /// of its battles against another player.
   u16 linkTallies[8];

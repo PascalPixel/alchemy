@@ -405,19 +405,6 @@ s32 LinkLobby_ReportLinkDisconnected(void) {
 /// Frames, about fifteen seconds, for all four records received.
 #define LOBBY_RECEIVE_TIMEOUT_FRAMES 900
 
-/// gMainRoutineState.linkTallies, as the lobby keeps them.
-enum LinkTally {
-  LINK_TALLY_MONSTER_WINS = 0,
-  LINK_TALLY_MONSTER_LOSSES = 1,
-  LINK_TALLY_MONSTER_BEST_STREAK = 2, ///< the most won in a row
-  LINK_TALLY_MONSTER_STREAK = 3,      ///< those won in the current series
-  LINK_TALLY_LINKED_WINS = 4,
-  LINK_TALLY_LINKED_LOSSES = 5,
-  /// The most linked battles won in a row, on the wall board.
-  LINK_TALLY_LINKED_BEST_STREAK = 6,
-  LINK_TALLY_LINKED_STREAK = 7 ///< those won in a row now
-};
-
 /// The Broken Seal's BattleArena_ReceivePartyRecords: takes the other player's
 /// party records over the link.
 s32 LinkLobby_ReceivePartyRecords(void) {

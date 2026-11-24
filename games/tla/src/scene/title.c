@@ -41,6 +41,8 @@ s32 Credits_Run(s32 mode);
 
 s32 Title_ShowTitleScreen(s32 prompt);
 
+/// The intro (menu/title_intro.c), declared with the argument each call here
+/// passes, which it does not take.
 void TitleIntro_Run(s32 unused);
 
 static void Title_RevealScreen(s32 unused);
@@ -117,6 +119,8 @@ s32 Scene_Initialize(void) {
       // out and the logos play again after two seconds, or a key press.
       if (Save_ScanFileSummaries() > 0) {
         Event_PlaySound(MUS_MAIN_THEME_TITLE);
+        /* FAKEMATCH(signature): the intro called with an argument it does
+           not take, 1 here and 0 before the prologue. */
         TitleIntro_Run(1);
         if (Title_ShowTitleScreen(1) == 0) {
           Event_PlaySound(SOUND_FADE_OUT_BGM);

@@ -631,7 +631,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
   u32 leafNibble;
 
   code = reader->previousCode;
-  text = (const u8 *)reader->bytes;
+  text = reader->bytes;
   textBits = reader->bits;
   treeBits = 1;
   // The previous code's high bits pick the bank, its low byte the tree. The
@@ -701,7 +701,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
   }
   reader->bits = textBits;
   reader->previousCode = code;
-  reader->bytes = (const u32 *)text;
+  reader->bytes = text;
   return code;
 }
 

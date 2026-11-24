@@ -14,19 +14,10 @@
 #define SHORTCUT_MEMBER_SHIFT 10
 #define SHORTCUT_ABILITY_MASK 0x3ff
 
-/// The area name notice's fields, which live in the field state block
-/// (gFieldState, a scene's state), for as long as the scene runs: the six bytes
-/// struct FieldState leaves as unusedAfterPlacements.
-struct TimedNoticeState {
-  u8 fieldState[560];    ///< FieldState's fields before them
-  struct Window *window; ///< the notice's window; it may since have closed
-  u16 countdown;         ///< frames left to show it
-};
-
 /// Shows the area's name in a window centred in the screen's top ten rows, for
 /// AREA_NAME_WINDOW_FRAMES; a per-frame task closes it.
 void AreaNameWindow_Show(void) {
-  struct TimedNoticeState *notice;
+  struct FieldState *notice;
   s32 height;
   s32 width;
   s32 y;
@@ -34,7 +25,7 @@ void AreaNameWindow_Show(void) {
   s32 areaMessage;
   struct Window *nameWindow;
 
-  notice = (struct TimedNoticeState *)gFieldState;
+  notice = gFieldState;
   x = 8;
   y = 8;
   areaMessage =
@@ -44,22 +35,23 @@ void AreaNameWindow_Show(void) {
   x = (DISPLAY_TILE_WIDTH - width) >> 1;
   y = (10 - height) >> 1;
   nameWindow = Window_Create(x, y, width, height, WINDOW_FLAG_INSTANT);
-  notice->window = nameWindow;
+  notice->areaNameWindow = nameWindow;
   Text_DrawMessage(areaMessage, nameWindow, 0, 0);
-  notice->countdown = AREA_NAME_WINDOW_FRAMES;
+  notice->areaNameCountdown = AREA_NAME_WINDOW_FRAMES;
   Task_Add(AreaNameWindow_Update, TASK_PASS_FRAME);
 }
 
 /// Counts the area name down, and closes it at 0.
 void AreaNameWindow_Update(void) {
-  struct TimedNoticeState *notice;
+  struct FieldState *notice;
   u16 framesLeft;
 
-  notice = (struct TimedNoticeState *)gFieldState;
+  notice = gFieldState;
   // Adding (u16)-1 takes one off in 16 bits.
-  notice->countdown = (framesLeft = notice->countdown + (u16)-1);
+  notice->areaNameCountdown =
+      (framesLeft = notice->areaNameCountdown + (u16)-1);
   if (framesLeft == 0) {
-    Window_Close(notice->window, WINDOW_FLAG_INSTANT);
+    Window_Close(notice->areaNameWindow, WINDOW_FLAG_INSTANT);
     Task_Remove(AreaNameWindow_Update);
   }
 }
@@ -68,7 +60,7 @@ void AreaNameWindow_Update(void) {
 void AreaNameWindow_Hide(void) {
   struct Window *window;
 
-  window = ((struct TimedNoticeState *)gFieldState)->window;
+  window = gFieldState->areaNameWindow;
   if (window != NULL && window->flags != 0) {
     Window_Close(window, WINDOW_FLAG_INSTANT);
     Task_Remove(AreaNameWindow_Update);

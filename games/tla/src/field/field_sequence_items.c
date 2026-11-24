@@ -255,7 +255,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// PSYNERGY_TARGET_ANYWHERE for a trigger that applies anywhere, or -1.
 s32 Scene_SelectPsynergyTarget(s32 kind) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
-  struct TriggerEvent *event = state->triggers;
+  const struct Trigger *event = (const struct Trigger *)state->triggers;
   u32 facing = Actor_Lookup(Party_GetLeaderActor())->facing;
   s32 tileAhead = Field_GetCollisionAheadOfLeader();
   s32 tileUnder = Field_GetCollisionUnderLeader();
@@ -266,10 +266,10 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
   s32 nearby = -1;
   s32 fallback = -1;
 
-  for (; event->control != -1; event++) {
-    s32 eventFacing = event->trigger & TRIGGER_SUBJECT_FACING;
-    s16 requiresFacing = (u16)event->trigger & TRIGGER_SUBJECT_NEEDS_FACING;
-    s32 eventTarget = (u16)event->trigger & TRIGGER_SUBJECT_TARGET;
+  for (; event->control != TRIGGER_TABLE_END; event++) {
+    s32 eventFacing = event->subject & TRIGGER_SUBJECT_FACING;
+    s16 requiresFacing = (u16)event->subject & TRIGGER_SUBJECT_NEEDS_FACING;
+    s32 eventTarget = (u16)event->subject & TRIGGER_SUBJECT_TARGET;
     s32 eventKind = Ability_Get((u16)event->control >> 8)->fieldPsynergy;
 
     if ((event->control & TRIGGER_KIND_MASK) == TRIGGER_PSYNERGY &&

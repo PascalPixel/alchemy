@@ -32,11 +32,6 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// The Grim Reaper's countdown.
 #define CURSE_TURNS 7
 
-/// Unit.psySeal: Bind's seal lasts seven turns and may end sooner; Luff's lasts
-/// two and never ends early.
-#define PSY_SEAL_BIND 7
-#define PSY_SEAL_LUFF 16
-
 /// The rate Battle_CalculatePsynergyPowerFar and Battle_CalculateRecoveryFar
 /// scale by: 256 is 1.
 #define FULL_RATE 256

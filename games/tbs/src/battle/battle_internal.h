@@ -202,4 +202,18 @@ enum BattleCastKind {
 /// The keys that take the player on past a message: A, B, L and R.
 #define KEY_ADVANCE (KEY_A | KEY_B | KEYS_SHOULDERS)
 
+/// A stat stage changes the stat by an eighth of it (Unit_Calculate), from half
+/// at the lowest to one and a half at the highest.
+#define STAT_STAGE_MIN -4
+#define STAT_STAGE_MAX 4
+
+/// Unit.psySeal's low three bits, Bind's turns left; Luff's seal above them
+/// loses PSY_SEAL_LUFF_TURN a turn.
+#define PSY_SEAL_BIND_MASK 7
+#define PSY_SEAL_LUFF_TURN 8
+/// Unit.psySeal as a seal starts: Bind's lasts seven turns and may end sooner;
+/// Luff's lasts two and never ends early.
+#define PSY_SEAL_BIND 7
+#define PSY_SEAL_LUFF (2 * PSY_SEAL_LUFF_TURN)
+
 #endif

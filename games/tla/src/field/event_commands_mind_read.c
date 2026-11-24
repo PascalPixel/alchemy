@@ -36,16 +36,6 @@
 /// Actor_SetLayersColorMode's value that cycles the actor's colours.
 #define LAYERS_COLOR_CYCLING 0
 
-/// SPRITE_MOVE_HAND's animations, The Broken Seal's sheet and numbers.
-enum MoveHandAnimation {
-  MOVE_HAND_ANIMATION_OPEN = 1, ///< open, its fingers spread
-  MOVE_HAND_ANIMATION_GRIP = 3, ///< its fingers bent as if gripping
-  /// MOVE_HAND_ANIMATION_OPEN and MOVE_HAND_ANIMATION_GRIP in turn, as it
-  /// strains against what it pushes.
-  MOVE_HAND_ANIMATION_FLEX = 4,
-  MOVE_HAND_ANIMATION_FIST = 5
-};
-
 /// A line's offset in Mind Read's wave at a phase: a sine 4 pixels either way,
 /// a turn every 160 phase steps.
 #define MIND_READ_WAVE_OFFSET(phase) (Trig_Sin(((phase) << 16) / 160) >> 14)

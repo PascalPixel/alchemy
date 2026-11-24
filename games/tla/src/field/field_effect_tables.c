@@ -30,10 +30,14 @@ const u16 gInput_DpadAnglesEightWay[16] = {
 
 /// Move's hand animation by the quarter turns from its side of the target to
 /// the push (FieldPsynergy_SteerPushedTarget): pulling the target toward its
-/// side, it grips (MOVE_HAND_ANIMATION_GRIP, 3); pushing it away (2) or across
-/// (MOVE_HAND_ANIMATION_OPEN, 1), it is open, both animations holding the open
-/// hand's picture; The Broken Seal's gFieldEffect_QuadrantModes.
-const u8 gMoveHand_PushPoses[4] = {3, 1, 2, 1};
+/// side, it grips; pushing it away, it shows its palm; pushing it across, it
+/// is open; The Broken Seal's gFieldEffect_QuadrantModes.
+const u8 gMoveHand_PushPoses[4] = {
+    MOVE_HAND_ANIMATION_GRIP,
+    MOVE_HAND_ANIMATION_OPEN,
+    MOVE_HAND_ANIMATION_PALM,
+    MOVE_HAND_ANIMATION_OPEN,
+};
 
 /// Waits 60 frames and releases the actor; The Broken Seal's
 /// gFieldEffect_BurstParticleActorScript.

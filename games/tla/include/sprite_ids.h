@@ -807,4 +807,18 @@ enum FloatingLogAnimation {
 /// SPRITE_ARROW_PANEL's animation with its arrow pointing up: a lift ready.
 #define ARROW_PANEL_ANIMATION_UP 2
 
+/// SPRITE_MOVE_HAND's animations (move_hand.tsv), The Broken Seal's sheet and
+/// numbers.
+enum MoveHandAnimation {
+  MOVE_HAND_ANIMATION_OPEN = 1, ///< open, its fingers spread, tilted
+  MOVE_HAND_ANIMATION_PALM = 2, ///< open, its palm flat toward the viewer
+  MOVE_HAND_ANIMATION_GRIP = 3, ///< its fingers bent as if gripping
+  /// MOVE_HAND_ANIMATION_OPEN and MOVE_HAND_ANIMATION_GRIP in turn, as it
+  /// strains against what it pushes.
+  MOVE_HAND_ANIMATION_FLEX = 4,
+  MOVE_HAND_ANIMATION_FIST = 5,
+  /// Open, gripping, then a fist held, in turn: the hand clenching.
+  MOVE_HAND_ANIMATION_CLENCH = 6
+};
+
 #endif

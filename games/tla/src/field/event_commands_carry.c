@@ -83,7 +83,7 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
     actor->speedLimit = toFIXED(3);
     actor->acceleration = toFIXED(3);
     actor->steeringFlags = 0;
-    Actor_SelectAnimationFar(actor, 1);
+    Actor_SelectAnimationFar(actor, MOVE_HAND_ANIMATION_OPEN);
     scale = actor->scaleX;
     if (scale < FIXED_ONE) {
       do {

@@ -545,7 +545,7 @@ void FieldPsynergy_Catch(void) {
   actor->facing = mainActor->facing;
   actor->speedLimit = toFIXED(13) / 10;
   actor->motionFlags = 0;
-  Actor_SelectAnimationFar(actor, 5);
+  Actor_SelectAnimationFar(actor, MOVE_HAND_ANIMATION_FIST);
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_GRB);
   step = 0;
   do {
@@ -562,13 +562,13 @@ void FieldPsynergy_Catch(void) {
     step++;
   } while (step < steps);
   wait(10);
-  Actor_SelectAnimationFar(actor, 6);
+  Actor_SelectAnimationFar(actor, MOVE_HAND_ANIMATION_CLENCH);
   wait(15);
   for (index = 0; index < CATCH_PRESS_FRAMES; index++) {
     actor->y.fixed -= toFIXED(2);
     wait(1);
   }
-  Actor_SelectAnimationFar(actor, 5);
+  Actor_SelectAnimationFar(actor, MOVE_HAND_ANIMATION_FIST);
   Sound_PlayFar(SE_WATER);
   if (secondary != 0)
     Actor_SetPositionAndResetMotionFar(secondary, -toFIXED(9),

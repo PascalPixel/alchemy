@@ -215,7 +215,9 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     }
 
     scale = unitScale;
-    if (frame == 174) {
+    // Just before the block lands, Boreas comes in front of the canvas: the
+    // block settles behind its head and sinks out of sight into it.
+    if (frame == BOREAS_BLOCK_LAND_FRAME - 2) {
       for (i = 0; i != BOREAS_SPRITES; i++) {
         state->sprites[i]->image.priority = 0;
       }
@@ -268,7 +270,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     if (frame == BOREAS_BLOCK_LAND_FRAME) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
     }
-    if (frame == 226) {
+    if (frame == BOREAS_SPRAY_FRAME + 2) { // the spray bursts out
       Sound_PlayFar(SE_CRASH);
     }
     Matrix_Initialize();
@@ -336,7 +338,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != BOREAS_SPRAY; i++) {
-        if (frame >= i / 4 + 224) {
+        if (frame >= i / 4 + BOREAS_SPRAY_FRAME) {
           s32 picture = i % 3;
           if ((i & 1) == 0) {
             draw(canvas, state->sheet + gBoreas_SprayPictures[picture],

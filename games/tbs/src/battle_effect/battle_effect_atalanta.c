@@ -316,9 +316,11 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   REG_DISPCNT = EFFECT_DISPCNT;
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, Ram_MapGridCellBuffer,
                              1, 0);
+  // The shafts are dealt round the targets as if to a full enemy group of six;
+  // a shaft dealt to a missing target falls at random across the field.
   for (i = 0; i != ATALANTA_FALLING_SHAFT_SLOTS; i++) {
     struct Particle *shaft = &state->particles[i];
-    s32 member = i % 6;
+    s32 member = i % ENEMY_BATTLE_SIZE;
 
     if (member < state->args->targetCount) {
       Projection_ScaledUnit(state->args->targets[member], &target);
@@ -394,7 +396,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
             shaft->variant = 0;
             state->shakeFrames = 2;
             Sound_PlayFar(SE_HEAVY_IMPACT);
-            member = i % 6;
+            member = i % ENEMY_BATTLE_SIZE;
             if (member < state->args->targetCount) {
               BattleEffect_TintBattler(state->args->targets[member],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, member,

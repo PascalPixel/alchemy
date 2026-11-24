@@ -40,6 +40,36 @@
 #include "scene_ids.h"
 #include "field/field_sprite.h"
 #include "field/event_inline.h"
+#include "field/field.h"
+#include "flags.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "types.h"
+#include "field/scene_tables.h"
+#include "field/event_commands.h"
+#include "field/field_sequence.h"
+#include "scene/scene.h"
+#include "version.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_state.h"
+#include "field/actor.h"
+#include "field/event_inline.h"
+#include "field/call.h"
+#include "system/field_effect.h"
+#include "field/map_grid.h"
+#include "scene_ids.h"
+#include "graphics/vram_tab.h"
+#include "system/iwram_call.h"
+#include "graphics/resource.h"
+#include "system/heap_release.h"
+#include "system/io_reg.h"
+#include "system/task.h"
+#include "system/frame.h"
 
 /// The seven stone faces Move pushes off their ledge in the halls of the stone
 /// faces, one flag a face; the macro takes the face's actor.
@@ -150,6 +180,15 @@ enum {
 /// the sand flows; the hall's entrances are numbered on from it.
 #define FACE_HALVES_HALL_FIRST_ENTRANCE                                        \
   ANKOHL_RUINS_FACE_HALVES_FROM_ANKOHL_RUINS_THANATOS_MACE_CHEST_WEST
+/// The hall's last entrance where the placed halves sound as the party
+/// arrives: from patch 1 the way down from the Crystal Powder chest's pit too.
+#if TLA_PATCH_1
+#define FACE_HALVES_HALL_SOUND_LAST_ENTRANCE                                   \
+  ANKOHL_RUINS_FACE_HALVES_FROM_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTHWEST
+#else
+#define FACE_HALVES_HALL_SOUND_LAST_ENTRANCE                                   \
+  ANKOHL_RUINS_FACE_HALVES_FROM_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTH_B
+#endif
 
 /// The moves a rise of the sand takes, and the sand rows' end marker.
 #define SAND_RISE_MOVES 16
@@ -266,37 +305,6 @@ void AnkohlRuins_SlideGreatFace(void);
 
 /// Whether the game flag is set.
 static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
-
-#include "field/field.h"
-#include "flags.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "field/scene_tables.h"
-#include "field/event_commands.h"
-#include "field/field_sequence.h"
-#include "scene/scene.h"
-#include "version.h"
-#include "system/ram_buffer.h"
-#include "system/main_routine_state.h"
-#include "field/actor.h"
-#include "field/event_inline.h"
-#include "field/call.h"
-#include "system/field_effect.h"
-#include "field/map_grid.h"
-#include "scene_ids.h"
-#include "graphics/vram_tab.h"
-#include "system/iwram_call.h"
-#include "graphics/resource.h"
-#include "system/heap_release.h"
-#include "system/io_reg.h"
-#include "system/task.h"
-#include "system/frame.h"
 
 #include "shared/scene_create_imported_actor.h"
 
@@ -1548,16 +1556,6 @@ extern u32 gAnkohlRuins_GreatFaceScript[];
 
 struct AnkohlRuinsSpriteState;
 
-#if TLA_PATCH_1
-
-#include "types.h"
-#include "field/call.h"
-#include "field/actor.h"
-#include "system/main_routine_state.h"
-#include "scene_ids.h"
-#include "system/ram_buffer.h"
-#include "text/msg_ids.h"
-
 void AnkohlRuins_FlowWithSand(void);
 void FieldEffect_StartBlankOverlay();
 void AnkohlRuins_LandFromFall(void);
@@ -1715,12 +1713,14 @@ s32 Scene_Initialize(s32 unused) {
       s32 width;
 
       if ((u16)(gMainRoutineState.entrance - FACE_HALVES_HALL_FIRST_ENTRANCE) <=
-          4)
+          FACE_HALVES_HALL_SOUND_LAST_ENTRANCE -
+              FACE_HALVES_HALL_FIRST_ENTRANCE)
         Event_PlaySound(SE_ANKOHL_RUINS_PIECE);
       width = 12;
       MapGrid_CopyCells(16, 27, 3, 13, width, 47);
       MapGrid_CopyCells(16, 91, 3, 13, width, 111);
     }
+#if TLA_PATCH_1
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
         gMainRoutineState.entrance ==
             ANKOHL_RUINS_FACE_HALVES_FROM_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTHWEST) {
@@ -1729,429 +1729,131 @@ s32 Scene_Initialize(s32 unused) {
       Event_ClearFlag(FLAG_ARRIVE_FALLING);
 #endif
     }
-    {
-      struct MainRoutineState *late = &gMainRoutineState;
-
-      if (late->entrance ==
-          ANKOHL_RUINS_FACE_HALVES_FROM_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTH_C) {
-        s32 frames;
-
-        Event_Start();
-        FieldEvent_EndLastingPsynergy(0);
-        FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-        Actor_SetPosition(late->leaderActorId, 0, 0);
-        Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 0, 0);
-        Event_StartScreenTransition();
-        FieldEvent_Wait(15);
-        actor = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
-        Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
-        actor->y.fixed += toFIXED(128);
-        frames = 60;
-        actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-        for (; frames != 0; frames--) {
-          System_Wait(1);
-          if (actor->velocityY > -1)
-            break;
-        }
-        Event_PlaySound(SE_THUMP);
-        FieldEvent_Wait(60);
-        Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
-        FieldEvent_SetExitRequest(
-            ANKOHL_RUINS_FACE_HALVES_TO_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTH_C);
-      }
-    }
-    if ((u16)(gMainRoutineState.entrance - FACE_HALVES_HALL_FIRST_ENTRANCE) <=
-        3)
-      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
-  } else if (scene == SCENE_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
-    if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP))
-      Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
-    if (GameFlag_Get(FLAG_CRYSTAL_POWDER_PILLAR_MOVED)) {
-      Actor_SetPosition(ACTOR_CRYSTAL_POWDER_PILLAR, 280, 312);
-      MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
-    }
-    if (state->entrance == 1 ||
-        state->entrance ==
-            ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_FROM_ANKOHL_RUINS_LEFT_PRONG) {
-      Event_PlaySound(SE_ANKOHL_RUINS_PIECE);
-      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
-    }
-  } else if (scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {
-    // Coming into either sand room from outside.
-    if (state->entrance <=
-        ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_FACE_HALVES_NORTH)
-      AnkohlRuins_InitSand(unused);
-    if (GameFlag_Get(FLAG_FIRST_SAND_DOOR_OPENED)) {
-      s32 x = 14;
-
-      MapGrid_CopyCells(26, 67, 1, 3, x, 65);
-      MapGrid_CopyCellAttributes(15, 5, 1, 1, x, 5);
-    }
-    if (GameFlag_Get(FLAG_SECOND_SAND_DOOR_OPENED)) {
-      s32 x = 2;
-
-      MapGrid_CopyCells(26, 67, 1, 3, x, 83);
-      MapGrid_CopyCellAttributes(1, 23, 1, 1, x, 23);
-    }
-    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
-        GameFlag_Get(FLAG_SAND_ROOM_FULL)) {
-      FIXED level = toFIXED(32);
-
-      gAnkohlRuins_Sand.level = level;
-      // The first sand room's two entrances.
-      if ((u16)(state->entrance -
-                ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_GREAT_FACE) <= 1) {
-        s32 z;
-        s32 x;
-
-        x = 4;
-        z = 5;
-        MapGrid_CopyCellAttributes(25, 22, 9, 2, x, z);
-        MapGrid_CopyCellAttributes(25, 86, 9, 2, x, 69);
-        {
-          s32 x = 1;
-
-          MapGrid_CopyCellAttributes(22, 24, 15, 7, x, 7);
-          MapGrid_CopyCellAttributes(22, 88, 15, 7, x, 71);
-        }
-        MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, z);
-      }
-      // The second sand room's two entrances.
-      if ((u16)(state->entrance -
-                ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_FACE_HALVES_SOUTH) <=
-          1) {
-        s32 z;
-        s32 x;
-
-        x = 4;
-        z = 23;
-        MapGrid_CopyCellAttributes(25, 22, 9, 2, x, z);
-        MapGrid_CopyCellAttributes(25, 86, 9, 2, x, 87);
-        {
-          s32 x = 1;
-
-          MapGrid_CopyCellAttributes(22, 24, 15, 7, x, 25);
-          MapGrid_CopyCellAttributes(22, 88, 15, 7, x, 89);
-        }
-        MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, z);
-      }
-      actor = Actor_GetById(state->leaderActorId);
-      actor->groundHeight = level;
-      actor->y.fixed = level;
-      FieldEvent_Wait(1);
-      MapGrid_CenterOnFollowedPoint();
-    }
-  } else if (scene == SCENE_ANKOHL_RUINS_LEFT_PRONG) {
-    actor = Actor_GetById(ACTOR_LEFT_PRONG_CHEST);
-    if (actor != NULL) {
-      actor->motionFlags = 0;
-      actor->groundHeight = toFIXED(72);
-      actor->y.fixed = toFIXED(72);
-      actor->update = (ObjectUpdate)Prong_Sparkle;
-    }
-  }
-  return 0;
-}
-
-#else
-
-// The Japanese release's older form.
-
-#include "types.h"
-#include "field/call.h"
-#include "field/actor.h"
-#include "system/main_routine_state.h"
-#include "scene_ids.h"
-#include "system/ram_buffer.h"
-#include "text/msg_ids.h"
-
-void AnkohlRuins_FlowWithSand(void);
-void FieldEffect_StartBlankOverlay();
-
-s32 Scene_Initialize(s32 unused) {
-  struct MainRoutineState *state = &gMainRoutineState;
-  s32 scene = state->next;
-  struct Actor *actor;
-
-  if (scene == SCENE_ANKOHL_RUINS_STONE_FACES) {
-    FieldEffect_StartBlankOverlay(0);
-    if (GameFlag_Get(FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_A)))
-      Actor_SetPosition(ACTOR_STONE_FACE_A, 0, 0);
-    if (GameFlag_Get(FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_B)))
-      Actor_SetPosition(ACTOR_STONE_FACE_B, 0, 0);
-    if (GameFlag_Get(FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_C)))
-      Actor_SetPosition(ACTOR_STONE_FACE_C, 0, 0);
-    if (GameFlag_Get(FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_D)))
-      Actor_SetPosition(ACTOR_STONE_FACE_D, 0, 0);
-    if (GameFlag_Get(FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_E)))
-      Actor_SetPosition(ACTOR_STONE_FACE_E, 0, 0);
-    if (GameFlag_Get(FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_F)))
-      Actor_SetPosition(ACTOR_STONE_FACE_F, 0, 0);
-    if (GameFlag_Get(FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_G)))
-      Actor_SetPosition(ACTOR_STONE_FACE_G, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_A)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_A, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_B)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_B, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_C)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_C, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_D)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_D, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_E)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_E, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_F)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_F, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_G)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_G, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_H)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_H, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_I)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_I, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_J)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_J, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_K)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_K, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_L)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_L, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_M)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_M, 0, 0);
-    if (GameFlag_Get(
-            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_N)))
-      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_N, 0, 0);
-    if (GameFlag_Get(FLAG_NUT_CHEST_PILLAR_MOVED)) {
-      Actor_SetPosition(ACTOR_NUT_CHEST_PILLAR, 72, 88);
-      MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
-    }
-  } else if (scene == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST) {
-    if (GameFlag_Get(FLAG_THANATOS_WEEDS_SCATTERED(ACTOR_THANATOS_WEEDS_A)))
-      Actor_SetPosition(ACTOR_THANATOS_WEEDS_A, 0, 0);
-    if (GameFlag_Get(FLAG_THANATOS_WEEDS_SCATTERED(ACTOR_THANATOS_WEEDS_B)))
-      Actor_SetPosition(ACTOR_THANATOS_WEEDS_B, 0, 0);
-    if (GameFlag_Get(FLAG_THANATOS_WEEDS_SCATTERED(ACTOR_THANATOS_WEEDS_C)))
-      Actor_SetPosition(ACTOR_THANATOS_WEEDS_C, 0, 0);
-    if (GameFlag_Get(FLAG_THANATOS_FACE_HALF_PLACED)) {
-      s32 width;
-
-      actor = Actor_GetById(ACTOR_THANATOS_FACE_HALF);
-      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-      Actor_SetPosition(ACTOR_THANATOS_FACE_HALF, 200, 88);
-      width = 10;
-      MapGrid_CopyCells(35, 6, 7, 16, width, 7);
-      MapGrid_CopyCells(35, 70, 7, 16, width, 71);
-      if (state->entrance ==
-              ANKOHL_RUINS_THANATOS_MACE_CHEST_FROM_ANKOHL_RUINS_GREAT_FACE_EAST ||
-          state->entrance == THANATOS_FACE_HALL_FROM_WEST_STAIRS ||
-          state->entrance == THANATOS_FACE_HALL_FROM_EAST_STAIRS)
-        Event_PlaySound(SE_ANKOHL_RUINS_PIECE);
-    }
-  } else if (scene == SCENE_ANKOHL_RUINS_GREAT_FACE) {
-    if (GameFlag_Get(FLAG_GREAT_FACE_ROOMS_PILLAR_MOVED)) {
-      Actor_SetPosition(ACTOR_GREAT_FACE_ROOMS_PILLAR, 520, 104);
-      MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
-    }
-    if (GameFlag_Get(FLAG_GREAT_FACE_HALF_PLACED)) {
-      Actor_SetPosition(ACTOR_GREAT_FACE_HALF, 0, 0);
-      Actor_SetAnimation(ACTOR_GREAT_FACE, 4);
-    }
-    if (GameFlag_Get(FLAG_GREAT_FACE_AT_REST)) {
-      s32 width = 13;
-
-      MapGrid_CopyCellAttributes(13, 30, 3, 2, width, 24);
-      MapGrid_CopyCellAttributes(14, 87, 1, 1, 14, 88);
-      MapGrid_CopyCellAttributes(41, 48, 3, 2, width, 41);
-    }
-  } else if (scene == SCENE_ANKOHL_RUINS_FACE_HALVES) {
-    if (GameFlag_Get(
-            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_A)))
-      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_A, 0, 0);
-    if (GameFlag_Get(
-            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_B)))
-      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_B, 0, 0);
-    if (GameFlag_Get(
-            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_C)))
-      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_C, 0, 0);
-    if (GameFlag_Get(
-            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_D)))
-      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_D, 0, 0);
-    if (GameFlag_Get(
-            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_E)))
-      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_E, 0, 0);
-    if (GameFlag_Get(
-            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_F)))
-      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_F, 0, 0);
-    if (GameFlag_Get(
-            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_G)))
-      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_G, 0, 0);
-    if (GameFlag_Get(FLAG_FACE_HALVES_PILLAR_MOVED))
-      Actor_SetPosition(ACTOR_FACE_HALVES_PILLAR, 40, 776);
-    if (GameFlag_Get(FLAG_FACE_HALVES_SECOND_PILLAR_MOVED))
-      Actor_SetPosition(ACTOR_FACE_HALVES_SECOND_PILLAR, 632, 456);
-    if (GameFlag_Get(FLAG_FACE_HALVES_THIRD_PILLAR_MOVED)) {
-      Actor_SetPosition(ACTOR_FACE_HALVES_THIRD_PILLAR, 616, 136);
-      MapGrid_CopyCells(37, 70, 1, 1, 37, 71);
-    }
-    if (GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED)) {
-      actor = Actor_GetById(ACTOR_LEFT_FACE_HALF);
-      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-      Actor_SetPosition(ACTOR_LEFT_FACE_HALF, 200, 728);
-    }
-    if (GameFlag_Get(FLAG_RIGHT_FACE_HALF_PLACED)) {
-      actor = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
-      Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 232, 728);
-      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    } else if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP) &&
-               !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
-    }
-    if (GameFlag_Get(FLAG_RIGHT_FACE_HALF_PLACED) &&
-        GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED)) {
-      s32 width;
-
-      if ((u16)(gMainRoutineState.entrance - FACE_HALVES_HALL_FIRST_ENTRANCE) <=
-          3)
-        Event_PlaySound(SE_ANKOHL_RUINS_PIECE);
-      width = 12;
-      MapGrid_CopyCells(16, 27, 3, 13, width, 47);
-      MapGrid_CopyCells(16, 91, 3, 13, width, 111);
-    }
-    {
-      struct MainRoutineState *late = &gMainRoutineState;
-
-      if (late->entrance ==
-          ANKOHL_RUINS_FACE_HALVES_FROM_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTH_C) {
-        s32 frames;
-
-        Event_Start();
-        FieldEvent_EndLastingPsynergy(0);
-        FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-        Actor_SetPosition(late->leaderActorId, 0, 0);
-        Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 0, 0);
-        Event_StartScreenTransition();
-        FieldEvent_Wait(15);
-        actor = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
-        Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
-        actor->y.fixed += toFIXED(128);
-        frames = 60;
-        actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-        for (; frames != 0; frames--) {
-          System_Wait(1);
-          if (actor->velocityY > -1)
-            break;
-        }
-        Event_PlaySound(SE_THUMP);
-        FieldEvent_Wait(60);
-        Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
-        FieldEvent_SetExitRequest(
-            ANKOHL_RUINS_FACE_HALVES_TO_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTH_C);
-      }
-    }
-    if ((u16)(gMainRoutineState.entrance - FACE_HALVES_HALL_FIRST_ENTRANCE) <=
-        3)
-      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
-  } else if (scene == SCENE_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
-    if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP))
-      Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
-    if (GameFlag_Get(FLAG_CRYSTAL_POWDER_PILLAR_MOVED)) {
-      Actor_SetPosition(ACTOR_CRYSTAL_POWDER_PILLAR, 280, 312);
-      MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
-    }
-    if (state->entrance == 1 ||
-        state->entrance ==
-            ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_FROM_ANKOHL_RUINS_LEFT_PRONG) {
-      Event_PlaySound(SE_ANKOHL_RUINS_PIECE);
-      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
-    }
-  } else if (scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {
-    // Coming into either sand room from outside.
-    if (state->entrance <=
-        ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_FACE_HALVES_NORTH)
-      AnkohlRuins_InitSand(unused);
-    if (GameFlag_Get(FLAG_FIRST_SAND_DOOR_OPENED)) {
-      s32 x = 14;
-
-      MapGrid_CopyCells(26, 67, 1, 3, x, 65);
-      MapGrid_CopyCellAttributes(15, 5, 1, 1, x, 5);
-    }
-    if (GameFlag_Get(FLAG_SECOND_SAND_DOOR_OPENED)) {
-      s32 x = 2;
-
-      MapGrid_CopyCells(26, 67, 1, 3, x, 83);
-      MapGrid_CopyCellAttributes(1, 23, 1, 1, x, 23);
-    }
-    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
-        GameFlag_Get(FLAG_SAND_ROOM_FULL)) {
-      FIXED level = toFIXED(32);
-
-      gAnkohlRuins_Sand.level = level;
-      // The first sand room's two entrances.
-      if ((u16)(state->entrance -
-                ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_GREAT_FACE) <= 1) {
-        s32 z;
-        s32 x;
-
-        x = 4;
-        z = 5;
-        MapGrid_CopyCellAttributes(25, 22, 9, 2, x, z);
-        MapGrid_CopyCellAttributes(25, 86, 9, 2, x, 69);
-        {
-          s32 x = 1;
-
-          MapGrid_CopyCellAttributes(22, 24, 15, 7, x, 7);
-          MapGrid_CopyCellAttributes(22, 88, 15, 7, x, 71);
-        }
-        MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, z);
-      }
-      // The second sand room's two entrances.
-      if ((u16)(state->entrance -
-                ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_FACE_HALVES_SOUTH) <=
-          1) {
-        s32 z;
-        s32 x;
-
-        x = 4;
-        z = 23;
-        MapGrid_CopyCellAttributes(25, 22, 9, 2, x, z);
-        MapGrid_CopyCellAttributes(25, 86, 9, 2, x, 87);
-        {
-          s32 x = 1;
-
-          MapGrid_CopyCellAttributes(22, 24, 15, 7, x, 25);
-          MapGrid_CopyCellAttributes(22, 88, 15, 7, x, 89);
-        }
-        MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, z);
-      }
-      actor = Actor_GetById(state->leaderActorId);
-      actor->groundHeight = level;
-      actor->y.fixed = level;
-      FieldEvent_Wait(1);
-      MapGrid_CenterOnFollowedPoint();
-    }
-  } else if (scene == SCENE_ANKOHL_RUINS_LEFT_PRONG) {
-    actor = Actor_GetById(ACTOR_LEFT_PRONG_CHEST);
-    if (actor != NULL) {
-      actor->motionFlags = 0;
-      actor->groundHeight = toFIXED(72);
-      actor->y.fixed = toFIXED(72);
-      actor->update = (ObjectUpdate)Prong_Sparkle;
-    }
-  }
-  return 0;
-}
-
 #endif
+    {
+      struct MainRoutineState *state = &gMainRoutineState;
+
+      if (state->entrance ==
+          ANKOHL_RUINS_FACE_HALVES_FROM_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTH_C) {
+        s32 frames;
+
+        Event_Start();
+        FieldEvent_EndLastingPsynergy(0);
+        FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+        Actor_SetPosition(state->leaderActorId, 0, 0);
+        Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 0, 0);
+        Event_StartScreenTransition();
+        FieldEvent_Wait(15);
+        actor = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
+        Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
+        actor->y.fixed += toFIXED(128);
+        frames = 60;
+        actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+        for (; frames != 0; frames--) {
+          System_Wait(1);
+          if (actor->velocityY > -1)
+            break;
+        }
+        Event_PlaySound(SE_THUMP);
+        FieldEvent_Wait(60);
+        Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
+        FieldEvent_SetExitRequest(
+            ANKOHL_RUINS_FACE_HALVES_TO_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTH_C);
+      }
+    }
+    if ((u16)(gMainRoutineState.entrance - FACE_HALVES_HALL_FIRST_ENTRANCE) <=
+        ANKOHL_RUINS_FACE_HALVES_FROM_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_SOUTH_B -
+            FACE_HALVES_HALL_FIRST_ENTRANCE)
+      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
+  } else if (scene == SCENE_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
+    if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP))
+      Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
+    if (GameFlag_Get(FLAG_CRYSTAL_POWDER_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_CRYSTAL_POWDER_PILLAR, 280, 312);
+      MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
+    }
+    if (state->entrance == 1 ||
+        state->entrance ==
+            ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_FROM_ANKOHL_RUINS_LEFT_PRONG) {
+      Event_PlaySound(SE_ANKOHL_RUINS_PIECE);
+      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
+    }
+  } else if (scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {
+    // Coming into either sand room from outside.
+    if (state->entrance <=
+        ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_FACE_HALVES_NORTH)
+      AnkohlRuins_InitSand(unused);
+    if (GameFlag_Get(FLAG_FIRST_SAND_DOOR_OPENED)) {
+      s32 x = 14;
+
+      MapGrid_CopyCells(26, 67, 1, 3, x, 65);
+      MapGrid_CopyCellAttributes(15, 5, 1, 1, x, 5);
+    }
+    if (GameFlag_Get(FLAG_SECOND_SAND_DOOR_OPENED)) {
+      s32 x = 2;
+
+      MapGrid_CopyCells(26, 67, 1, 3, x, 83);
+      MapGrid_CopyCellAttributes(1, 23, 1, 1, x, 23);
+    }
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
+        GameFlag_Get(FLAG_SAND_ROOM_FULL)) {
+      FIXED level = toFIXED(32);
+
+      gAnkohlRuins_Sand.level = level;
+      // The first sand room's two entrances.
+      if ((u16)(state->entrance -
+                ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_GREAT_FACE) <= 1) {
+        s32 z;
+        s32 x;
+
+        x = 4;
+        z = 5;
+        MapGrid_CopyCellAttributes(25, 22, 9, 2, x, z);
+        MapGrid_CopyCellAttributes(25, 86, 9, 2, x, 69);
+        {
+          s32 x = 1;
+
+          MapGrid_CopyCellAttributes(22, 24, 15, 7, x, 7);
+          MapGrid_CopyCellAttributes(22, 88, 15, 7, x, 71);
+        }
+        MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, z);
+      }
+      // The second sand room's two entrances.
+      if ((u16)(state->entrance -
+                ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_FACE_HALVES_SOUTH) <=
+          1) {
+        s32 z;
+        s32 x;
+
+        x = 4;
+        z = 23;
+        MapGrid_CopyCellAttributes(25, 22, 9, 2, x, z);
+        MapGrid_CopyCellAttributes(25, 86, 9, 2, x, 87);
+        {
+          s32 x = 1;
+
+          MapGrid_CopyCellAttributes(22, 24, 15, 7, x, 25);
+          MapGrid_CopyCellAttributes(22, 88, 15, 7, x, 89);
+        }
+        MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, z);
+      }
+      actor = Actor_GetById(state->leaderActorId);
+      actor->groundHeight = level;
+      actor->y.fixed = level;
+      FieldEvent_Wait(1);
+      MapGrid_CenterOnFollowedPoint();
+    }
+  } else if (scene == SCENE_ANKOHL_RUINS_LEFT_PRONG) {
+    actor = Actor_GetById(ACTOR_LEFT_PRONG_CHEST);
+    if (actor != NULL) {
+      actor->motionFlags = 0;
+      actor->groundHeight = toFIXED(72);
+      actor->y.fixed = toFIXED(72);
+      actor->update = (ObjectUpdate)Prong_Sparkle;
+    }
+  }
+  return 0;
+}
 
 s32 Scene_PrepareMap(void) { return 0; }
 

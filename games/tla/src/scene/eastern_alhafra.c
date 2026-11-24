@@ -352,7 +352,7 @@ void EasternAlhafra_PoundStake(s32 mode, s32 frame) {
   s32 frames;
 
   Pound_SinkTarget(gEasternAlhafra_PoundStakes, mode, frame);
-  if (mode == 1) {
+  if (mode == POUND_STAGE_LANDED) {
     firstEnd = Actor_Get(ACTOR_FIRST_STAKE_ROPE_END);
     secondEnd = Actor_Get(ACTOR_SECOND_STAKE_ROPE_END);
     firstEnd->speedLimit = toFIXED(4);

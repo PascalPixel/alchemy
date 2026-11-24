@@ -1192,7 +1192,7 @@ void TrialRoad_PoundStake(s32 id, s32 phase, s32 frame) {
     actor->scaleY = FIXED_ONE - frame * (FIXED_ONE / 16);
   else
     actor->scaleY = FIXED_ONE;
-  if (phase == 1) {
+  if (phase == POUND_STAGE_LANDED) {
     TrialRoad_LowerStake(id);
     TrialRoad_RaiseStake(other);
     switch (id) {

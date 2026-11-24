@@ -450,9 +450,9 @@ void FieldPsynergy_Scoop(void) {
             stage = 0;
             wait(1);
             if (frame == SCOOP_DUG_FRAME)
-              stage = 1;
+              stage = SCOOP_STAGE_DUG;
             if (frame == 50)
-              stage = 2;
+              stage = SCOOP_STAGE_DUG_UP;
             scene->stage = stage;
             scene->frame = frame;
             Field_RunPsynergyEvent(pending, stage, frame);

@@ -268,7 +268,7 @@ void IzumoRuins_PoundStake(s32 mode, s32 frame) {
     Pound_SinkTarget(gIzumoRuins_FirstRoomStakes, mode, frame);
   else
     Pound_SinkTarget(gIzumoRuins_SecondRoomStakes, mode, frame);
-  if (mode == 1)
+  if (mode == POUND_STAGE_LANDED)
     IzumoRuins_ShowStakeState(Actor_Get(state->targetId));
 }
 

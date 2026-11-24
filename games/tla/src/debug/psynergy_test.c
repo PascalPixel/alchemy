@@ -84,12 +84,6 @@ enum PsynergyTestCellBehavior {
   CELL_BEHAVIOR_CHEST = 100 ///< the chest, cell (14, 9)
 };
 
-/// The stage Scoop passes its spot's event each frame of the dig.
-enum { SCOOP_STAGE_DUG = 1, SCOOP_STAGE_AFTER_DIG };
-
-/// The stage Pound passes on the frame its fist lands.
-enum { POUND_STAGE_LANDS = 1 };
-
 /// The entrances Cyclone's spots bring the party back in by: there the leader
 /// leaves in a ring of light, or arrives in one (Scene_Initialize).
 enum { ENTRANCE_DEPART_IN_RING = 6, ENTRANCE_ARRIVE_IN_RING = 8 };
@@ -442,7 +436,7 @@ void PsynergyTest_PoundTorch(s32 stage) {
   s32 destinationX;
   s32 destinationY;
 
-  if (stage == POUND_STAGE_LANDS) {
+  if (stage == POUND_STAGE_LANDED) {
     Actor_SetAnimation(ACTOR_TORCH, 2);
     destinationX = 25;
     destinationY = 0;
@@ -625,7 +619,7 @@ void PsynergyTest_GrowActor(s32 stage, s32 id, s32 x, s32 z) {
     actor->scaleX = 0;
     actor->scaleY = 0;
   }
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     while (actor->scaleX < FIXED_ONE) {
       wait(1);
       scale = actor->scaleX;
@@ -644,7 +638,7 @@ void PsynergyTest_DropActor(s32 stage, s32 id, s32 x, s32 z) {
   struct Actor *actor;
 
   actor = Actor_Get(id);
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     Actor_SetPosition(id, x, z);
     actor->y.fixed = toFIXED(32);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -667,7 +661,7 @@ void PsynergyTest_RaiseStatue(s32 stage, s32 x, s32 z, s32 row, s32 column) {
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     }
   }
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     actor =
         (FieldActor_Create(SPRITE_WINGED_STATUE, toFIXED(x), 0, toFIXED(z)));
     if (actor != NULL) {

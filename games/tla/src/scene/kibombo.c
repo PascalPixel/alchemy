@@ -792,10 +792,6 @@ void Kibombo_HideBlocks(void) {
 /// onto.
 void Kibombo_FreezePuddle(void) { FlagBlock_ApplyFlags(gKibombo_FrozenPuddle); }
 
-/// Scoop runs its event every frame of the dig, passing this stage on the
-/// frame the ground opens.
-enum { SCOOP_STAGE_DUG = 1 };
-
 /// Shows the vent by the statue uncovered, cell (23, 18), and lets the party
 /// climb down into it.
 void Kibombo_UncoverVent(void) {

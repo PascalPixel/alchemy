@@ -50,9 +50,6 @@
 /// FLAG_SUNSHINE_FORGING is; here only leaving the room clears it.
 #define FLAG_SHOP_TEST_SUNSHINE_FORGING FLAG_SCENE_TEMP_00
 
-/// The stage Scoop passes its spot's event each frame of the dig.
-enum { SCOOP_STAGE_DUG = 1, SCOOP_STAGE_AFTER_DIG };
-
 /// The room's people, numbered in the order of gActorPlacements: the shops'
 /// people, then the testers, each named for what talking to it opens
 /// (gSceneEvents).
@@ -861,7 +858,7 @@ UNUSED void ShopTest_GrowActor(s32 stage, s32 id, s32 x, s32 z) {
     actor->scaleX = 0;
     actor->scaleY = 0;
   }
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     while (actor->scaleX < FIXED_ONE) {
       wait(1);
       scale = actor->scaleX;
@@ -879,7 +876,7 @@ UNUSED void ShopTest_DropActor(s32 stage, s32 id, s32 x, s32 z) {
   struct Actor *actor;
 
   actor = Actor_GetById(id);
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     Actor_SetPosition(id, x, z);
     actor->y.fixed = toFIXED(32);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -900,7 +897,7 @@ UNUSED void ShopTest_RaiseStatue(s32 stage, s32 x, s32 z, s32 zone, s32 slot) {
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     }
   }
-  if (stage == SCOOP_STAGE_AFTER_DIG) {
+  if (stage == SCOOP_STAGE_DUG_UP) {
     actor = ((struct Actor *)Import_ActorCreate(SPRITE_WINGED_STATUE,
                                                 toFIXED(x), 0, toFIXED(z)));
     if (actor != NULL) {

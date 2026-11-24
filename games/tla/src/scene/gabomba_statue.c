@@ -1474,7 +1474,7 @@ void Actor_SetAnimationSpeed(struct Actor *actor, s32 value);
 /// fist lands is left to whatever that argument holds.
 void GabombaStatue_PoundArrowsStake(s32 landed) {
   GabombaStatue_RaiseBlocks(landed);
-  if (landed == 1)
+  if (landed == POUND_STAGE_LANDED)
     gFieldState->raisedTrigger = RAISED_STAKE_STANDS_UP;
 }
 
@@ -3097,7 +3097,7 @@ void GabombaStatue_RaiseBlocks(s32 landed, s32 frame) {
 
   if (frame < POUND_LAND_FRAME)
     actor->scaleY += -FIXED_ONE * 31 / 256;
-  if (landed == 1) {
+  if (landed == POUND_STAGE_LANDED) {
     GabombaStatue_SetBlocksRaised(gSceneState.firstBlock, 1);
     Actor_SelectAnimation(actor, 6);
     actor->scaleY = FIXED_ONE;
@@ -3114,7 +3114,7 @@ void GabombaStatue_PoundBlock(s32 landed) {
   u32 row, col;
   s32 found;
 
-  if (landed != 1)
+  if (landed != POUND_STAGE_LANDED)
     return;
   state = &gSceneState;
   actor = Actor_Get(

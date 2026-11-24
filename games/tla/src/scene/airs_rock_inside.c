@@ -596,10 +596,10 @@ enum { STAKE_ROW_TILES = 4, STAKE_DRAWN_TILES = 3, STAKE_TOP_ROWS = 3 };
 /// One step of Pound on a stake: the target sinks and its partner, the other
 /// of its pair, rises. On step 0 the partner's picture is cleared and the top
 /// of the target's drawn over it, 28 pixels up; on steps 1 to 5 a row more of
-/// it is drawn as it comes down; through step 7 the target flattens. In mode 1
-/// both settle, the target's flag is set and the partner's cleared, they take
-/// their next poses and their cells are set again
-/// (AirsRockInside_SetStakeCells).
+/// it is drawn as it comes down; through step 7 the target flattens. Once the
+/// fist has landed (POUND_STAGE_LANDED) both settle, the target's flag is set
+/// and the partner's cleared, they take their next poses and their cells are
+/// set again (AirsRockInside_SetStakeCells).
 void AirsRockInside_PoundStake(s32 mode, s32 step) {
   s16 *pair =
       &((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->targetId;
@@ -636,7 +636,7 @@ void AirsRockInside_PoundStake(s32 mode, s32 step) {
   }
   if (step <= 7)
     first->scaleY += -(FIXED_ONE * 31 / 256);
-  if (mode == 1) {
+  if (mode == POUND_STAGE_LANDED) {
     first->scaleY = FIXED_ONE;
     second->y.fixed = second->groundHeight;
     GameFlag_Set(first->timer);

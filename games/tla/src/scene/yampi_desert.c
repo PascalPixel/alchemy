@@ -591,7 +591,7 @@ void YampiDesert_PoundBlitzStake(s32 mode, s32 count) {
 #define DEFINE_POUND_STAKE_STOPPING_SCORPION(name, stakes)                     \
   void name(s32 mode, s32 count) {                                             \
     Pound_SinkTarget(stakes, mode, count);                                     \
-    if (mode == 1) {                                                           \
+    if (mode == POUND_STAGE_LANDED) {                                          \
       if (gYampiDesert_RaisedEvent == 0)                                       \
         gYampiDesert_RaisedEvent = RAISED_WATCH_SCORPION_STOP;                 \
     }                                                                          \
@@ -1066,7 +1066,7 @@ void YampiDesert_OpenGeyser(s32 mode) {
   struct Actor *actor;
   s32 height;
 
-  if (mode == 1) {
+  if (mode == SCOOP_STAGE_DUG) {
     actor = Actor_GetById(ACTOR_GEYSER);
     MapGrid_CopyCellTilesIndicesRect(35, 39, 13, 11, 3, 3);
     Actor_SetPosition(ACTOR_GEYSER, 232, 200);
@@ -1203,7 +1203,7 @@ void YampiDesert_OpenLadderPit(void) {
 /// Scoop on the oddly shaped sand puddle at the south of the travelers'
 /// spring's room (cell (8, 32)) digs it out to show a ladder going down.
 void YampiDesert_ScoopLadderPit(s32 mode) {
-  if (mode == 1) {
+  if (mode == SCOOP_STAGE_DUG) {
     YampiDesert_OpenLadderPit();
     GameFlag_Set(FLAG_YAMPI_DESERT_LADDER_DUG_UP);
   }

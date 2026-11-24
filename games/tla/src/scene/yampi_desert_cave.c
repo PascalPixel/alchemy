@@ -757,8 +757,8 @@ void YampiDesertCave_MoveSandRipple(void) {
 /// Scoop cast right beside the ripple racing through the sand of Crystal's
 /// room stops it and digs up Crystal, the Venus Djinni, who drops to the
 /// ground.
-/// The ripple is stopped as Scoop acts (mode 1) and Crystal set down as it
-/// ends (mode 2).
+/// The ripple is stopped as the ground is dug (SCOOP_STAGE_DUG) and Crystal set
+/// down as she comes up (SCOOP_STAGE_DUG_UP).
 void YampiDesertCave_ScoopDjinni(s32 mode) {
   s32 index =
       (((s32)GameFlag_GetByte(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP)) /
@@ -780,11 +780,11 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   }
   if (px / MAPGRID_CELL_PIXELS != x || pz / MAPGRID_CELL_PIXELS != z)
     return;
-  if (mode == 1) {
+  if (mode == SCOOP_STAGE_DUG) {
     Task_Remove(YampiDesertCave_MoveSandRipple);
     Actor_SetPosition(ACTOR_SAND_RIPPLE, 0, 0);
   }
-  if (mode == 2) {
+  if (mode == SCOOP_STAGE_DUG_UP) {
     struct Actor *crystal = Actor_GetById(ACTOR_CRYSTAL);
 
     Actor_SetPositionFX(ACTOR_CRYSTAL, FIELD_HALF_CELL_ORIGIN(column),

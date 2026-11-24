@@ -401,6 +401,14 @@ enum PsynergyPhase {
 /// the cast waits for; its acting events get it as their stage the last time
 /// they run.
 #define FIELD_PSYNERGY_FINISHED 999
+/// The stage Pound's acting events get: 0 until the fist lands, then
+/// POUND_STAGE_LANDED.
+#define POUND_STAGE_LANDED 1
+/// The stages Scoop's acting events get on a frame of the dig, 0 on the rest:
+/// SCOOP_STAGE_DUG on the frame the ground is dug (SCOOP_DUG_FRAME), and
+/// SCOOP_STAGE_DUG_UP on frame 50, as what was buried comes up.
+#define SCOOP_STAGE_DUG 1
+#define SCOOP_STAGE_DUG_UP 2
 
 /// A Psynergy trigger's phase bits, 31..28.
 #define PSYNERGY_PHASE_SHIFT 28

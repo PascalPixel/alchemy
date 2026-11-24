@@ -654,7 +654,7 @@ void Caverns_WalkSouthIntoPassage(void) {
 /// (cell (19, 13)) digs a second hole there for good, the tunnel's way up to
 /// Megaera's side of the rocks.
 void Caverns_ScoopOseniaPassage(s32 mode) {
-  if (mode == 1) {
+  if (mode == SCOOP_STAGE_DUG) {
     Caverns_OpenOseniaPassage();
     GameFlag_Set(FLAG_OSENIA_CAVERN_SCOOPED);
   }

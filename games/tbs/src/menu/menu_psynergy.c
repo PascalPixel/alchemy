@@ -988,7 +988,8 @@ s32 PsynergyMenu_DrawPage(struct Window *window, s32 unused,
   if (PSYNERGY_MENU_SHORTCUT_HELP & menu->flags) {
     Text_DrawMessageAsTilesFar(MsgShortcutHelp, window, 0, 88);
   } else {
-    Text_DrawMessageAsTilesFar(MsgChangeCharacterHelp, window, HELP_TEXT_X, 88);
+    Text_DrawMessageAsTilesFar(MsgChangeCharacterHelp, window,
+                               CHANGE_CHARACTER_HELP_X, 88);
   }
 
   firstEntry = pageState->page * LIST_PAGE_SIZE;
@@ -1146,7 +1147,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
           menu->flags &= ~PSYNERGY_MENU_SHORTCUT_HELP;
           Window_ClearInteriorTilesFar((void *)window, 0, 88, 120, 96);
           Text_DrawMessageAsTilesFar(MsgChangeCharacterHelp, window,
-                                     HELP_TEXT_X, 88);
+                                     CHANGE_CHARACTER_HELP_X, 88);
         }
       }
 

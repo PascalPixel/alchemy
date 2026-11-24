@@ -2817,7 +2817,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
           ItemMenu_DrawListPage(window, 0, &state);
           if (sideIndex == 0) {
             Text_DrawMessageAsTilesFar(MsgChangeCharacterHelp, window,
-                                       HELP_TEXT_X, 88);
+                                       CHANGE_CHARACTER_HELP_X, 88);
           }
           redraw = 0;
         }

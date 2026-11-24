@@ -300,7 +300,10 @@ s32 TitleIntro_ScrollClouds(s32 pass) {
     TitlePaletteFade_Start(10);
   }
 
+  // A positive dy carries a layer up the screen, a positive dx to the left.
   if (pass == CLOUD_BEFORE_CARDS) {
+    // The far clouds rise and the near ones sink past them, slowing almost to
+    // a stop over 80 frames...
     if (!TITLE_STEP(30, 2, 0, -3, 0, 0, 0, 0, 0))
       return 0;
     if (!TITLE_STEP(10, 2, 0, -2, 0, 0, 0, 0, 0))
@@ -313,17 +316,21 @@ s32 TitleIntro_ScrollClouds(s32 pass) {
       return 0;
     if (!TITLE_STEP(10, 0, 0, -1, 0, 0, 0, 1, 0))
       return 0;
+    // ...then drift slowly back the other way...
     if (!TITLE_STEP(20, -1, 0, 0, 0, 1, 0, 0, 0))
       return 0;
     if (!TITLE_STEP(20, -1, 0, 1, 0, 3, 0, 1, 0))
       return 0;
     if (!TITLE_STEP(20, -1, 0, 1, 0, 3, 0, 1, 0))
       return 0;
+    // ...and darken to red as they go, before "Camelot presents".
     TitlePaletteFade_SetTarget(RGB(2, 0, 0), PALETTES_ALL);
     TitlePaletteFade_Start(60);
     if (!TITLE_STEP(60, -1, 0, 1, 0, 3, 0, 1, 0))
       return 0;
   } else if (pass == CLOUD_BETWEEN_CARDS) {
+    // The layers slide apart on a slant, the far clouds up and left, slowing
+    // over 80 frames...
     if (!TITLE_STEP(40, 1, 1, -1, -1, 1, 0, 1, 0))
       return 0;
     if (!TITLE_STEP(20, 1, 1, -1, -1, 3, 0, 1, 0))
@@ -332,17 +339,21 @@ s32 TitleIntro_ScrollClouds(s32 pass) {
       return 0;
     if (!TITLE_STEP(10, 0, 1, 0, -1, 0, 3, 0, 0))
       return 0;
+    // ...then turn, the far clouds sinking and the near ones going right...
     if (!TITLE_STEP(30, -1, 0, 0, -1, 15, 1, 0, 0))
       return 0;
     if (!TITLE_STEP(20, -1, -1, 0, -1, 15, 1, 0, 0))
       return 0;
     if (!TITLE_STEP(60, -1, -1, 0, -2, 15, 1, 0, 0))
       return 0;
+    // ...and darken to red, before "Golden Sun Book Two".
     TitlePaletteFade_SetTarget(RGB(2, 0, 0), PALETTES_ALL);
     TitlePaletteFade_Start(60);
     if (!TITLE_STEP(60, -1, -1, 0, -2, 15, 1, 0, 0))
       return 0;
   } else {
+    // The layers drift crosswise for a second, then rush apart for 16 frames,
+    // opening a gap of white sky.
     if (!TITLE_STEP(60, 0, -1, -1, 1, 0, 0, 0, 0))
       return 0;
     if (!TITLE_STEP(16, 8, -8, 8, 8, 0, 0, 0, 0))
@@ -640,7 +651,13 @@ enum GullStepField {
   GULL_STEP_DURATION,
   GULL_STEP_FIELDS
 };
+/// The gull's frames are 64 pixels wide, eight 8x8 sprites to a row, and the
+/// path places the middle of its first frame, 28 pixels in.
 #define GULL_COLUMNS 8
+#define GULL_CENTER_X 28
+/// The tiles the gull's frames draw from: 108 rows of eight. Its sheet's 109th
+/// row is blank and is not copied.
+#define GULL_TILES (108 * GULL_COLUMNS)
 
 extern s16 gTitleIntro_GullFrames[];
 extern s16 gTitleIntro_GullPath[];
@@ -708,7 +725,7 @@ void TitleIntro_UpdateLogo(void) {
     rows = gTitleIntro_GullFrames[logo->frame + GULL_FRAME_ROWS];
     offsetX = gTitleIntro_GullFrames[logo->frame + GULL_FRAME_OFFSET_X];
     offsetY = gTitleIntro_GullFrames[logo->frame + GULL_FRAME_OFFSET_Y];
-    left = x + offsetX - 28;
+    left = x + offsetX - GULL_CENTER_X;
     top = gTitleIntro_GullPath[logo->step + GULL_STEP_Y] + offsetY;
     for (row = 0; row < rows; row++) {
       for (column = 0; column < GULL_COLUMNS; column++) {
@@ -776,14 +793,17 @@ s32 TitleIntro_ShowLighthouse(void) {
   s32 i;
   u8 *buffer;
 
-  logo = HeapSlot_Alloc(HEAP_SLOT_TITLE_INTRO, 112);
+  // The slot is given the title screen's size, though the logo's state needs
+  // far less.
+  logo = HeapSlot_Alloc(HEAP_SLOT_TITLE_INTRO, sizeof(struct TitleScreenState));
   REG_DISPCNT = 0;
   Dma_Fill32Cell(fill, 0, (void *)OAM, OAM_SIZE);
   source = Resource_GetTableEntry(RESOURCE_INTRO_GULL_SPRITES);
   buffer = Ram_MapCellBuffer;
   source += GULL_PALETTE_BYTES;
   Decompress_ByteLz(source, buffer);
-  Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(6912), REG_DMA3);
+  Dma_Set(buffer, (void *)OBJ_VRAM0,
+          DMA_COPY_WORDS(GULL_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
   wait(1);
   source = Resource_GetTableEntry(RESOURCE_INTRO_LIGHTHOUSE_PICTURE);
   Dma_Set(source, (void *)BG_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);

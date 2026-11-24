@@ -1210,10 +1210,10 @@ extern const u16 gCruelRuin_CirclePictures[];
 /// in six pictures, and the six glints, with their sizes and offsets.
 extern u16 gBattleEffect_SparklePictures[];
 extern u8 gBattleEffect_SparkleSizes[];
-extern u8 gBattleEffect_PuffArcPictureWidths[];
-extern u8 gBattleEffect_PuffArcPictureHeights[];
-extern u8 gBattleEffect_PuffArcPictureBiasY[];
-extern u16 gBattleEffect_PuffArcPictures[];
+extern u8 gBattleEffect_EmberStreakPictureWidths[];
+extern u8 gBattleEffect_EmberStreakPictureHeights[];
+extern u8 gBattleEffect_EmberStreakPictureBiasY[];
+extern u16 gBattleEffect_EmberStreakPictures[];
 extern u16 gBattleEffect_GlintPictures[];
 extern u8 gBattleEffect_GlintPictureWidths[];
 extern u8 gBattleEffect_GlintPictureHeights[];
@@ -1331,10 +1331,10 @@ extern u16 gProcne_Pictures[];
 extern u8 gTiamat_EmberSpeeds[];
 extern u8 gTiamat_SparkPixels[];
 extern u8 gTiamat_EmberSizes[];
-extern u8 gTiamat_FlameWidths[];
-extern u8 gTiamat_FlameHeights[];
-extern u8 gTiamat_FlameDrops[];
-extern u16 gTiamat_FlamePictures[];
+extern u8 gTiamat_EmberStreakWidths[];
+extern u8 gTiamat_EmberStreakHeights[];
+extern u8 gTiamat_EmberStreakBiasY[];
+extern u16 gTiamat_EmberStreakPictures[];
 /// Nereid: the three water columns' feet and the falling sparks' gravity.
 extern u8 gNereid_Columns[];
 extern s32 gNereid_Gravity[];
@@ -1409,10 +1409,10 @@ extern u8 gDrainMotes_Sizes[];
 extern u8 gQuake_Timings[][3];
 /// Fire's counts by variant, and its flare pictures.
 extern u8 gFire_Counts[];
-extern u8 gFire_FlareWidths[];
-extern u8 gFire_FlareHeights[];
-extern u8 gFire_FlareBiasY[];
-extern u16 gFire_FlarePictures[];
+extern u8 gFire_EmberStreakWidths[];
+extern u8 gFire_EmberStreakHeights[];
+extern u8 gFire_EmberStreakBiasY[];
+extern u16 gFire_EmberStreakPictures[];
 /// Frost: where the mounds rise, its timings by variant, and the pictures of
 /// its motes, mounds and ice chips.
 extern u8 gFrost_MoundSpots[];

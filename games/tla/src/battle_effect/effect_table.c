@@ -51,17 +51,18 @@ const u8 gBattleEffect_SparkleSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
 
 /// EmberStreakSheet's six pictures, a puff of flame drawing out into a trail of
 /// embers as it rises: each one's width, in pixels.
-const u8 gBattleEffect_PuffArcPictureWidths[] = {24, 29, 30, 27, 24, 16};
+const u8 gBattleEffect_EmberStreakPictureWidths[] = {24, 29, 30, 27, 24, 16};
 
 /// Each ember streak picture's height, in pixels.
-const u8 gBattleEffect_PuffArcPictureHeights[] = {23, 32, 37, 49, 53, 52};
+const u8 gBattleEffect_EmberStreakPictureHeights[] = {23, 32, 37, 49, 53, 52};
 
 /// How far below its anchor each ember streak picture's top goes, in pixels:
 /// the bottoms stay within ten pixels of 64 below.
-const u8 gBattleEffect_PuffArcPictureBiasY[] = {41, 32, 26, 11, 4, 2};
+const u8 gBattleEffect_EmberStreakPictureBiasY[] = {41, 32, 26, 11, 4, 2};
 
 /// Each ember streak picture's byte offset in the sheet.
-const u16 gBattleEffect_PuffArcPictures[] = {0, 552, 1480, 2590, 3913, 5185};
+const u16 gBattleEffect_EmberStreakPictures[] = {0,    552,  1480,
+                                                 2590, 3913, 5185};
 
 /// Each glint picture's byte offset in the sprite sheet.
 const u16 gBattleEffect_GlintPictures[] = {0, 589, 1302, 2015, 2414, 2750};
@@ -400,18 +401,19 @@ const u8 gTiamat_SparkPixels[] = {32, 32};
 const u8 gTiamat_EmberSizes[] = {1, 1, 2, 3};
 
 /// The ember streak's pictures again, as Tiamat's fireballs read them: the same
-/// as gBattleEffect_PuffArcPictureWidths and the three tables after it, Tiamat
-/// keeping its own copy among its tables. Each picture's width, in pixels.
-const u8 gTiamat_FlameWidths[] = {24, 29, 30, 27, 24, 16};
+/// as gBattleEffect_EmberStreakPictureWidths and the three tables after it,
+/// Tiamat keeping its own copy among its tables. Each picture's width, in
+/// pixels.
+const u8 gTiamat_EmberStreakWidths[] = {24, 29, 30, 27, 24, 16};
 
 /// Each ember streak picture's height, in pixels.
-const u8 gTiamat_FlameHeights[] = {23, 32, 37, 49, 53, 52};
+const u8 gTiamat_EmberStreakHeights[] = {23, 32, 37, 49, 53, 52};
 
 /// How far below its anchor each ember streak picture's top goes, in pixels.
-const u8 gTiamat_FlameDrops[] = {41, 32, 26, 11, 4, 2};
+const u8 gTiamat_EmberStreakBiasY[] = {41, 32, 26, 11, 4, 2};
 
 /// Each ember streak picture's byte offset in the sheet.
-const u16 gTiamat_FlamePictures[] = {0, 552, 1480, 2590, 3913, 5185};
+const u16 gTiamat_EmberStreakPictures[] = {0, 552, 1480, 2590, 3913, 5185};
 
 /// The water columns' feet, x and y, in pixels; NEREID_COLUMNS of the four
 /// pairs are read.
@@ -951,18 +953,18 @@ const u8 gQuake_Timings[][3] = {{80, 32, 2}, {112, 64, 4}, {144, 96, 8}};
 const u8 gFire_Counts[] = {16, 32, 64};
 
 /// The ember streak's pictures again, as Fire's embers read them: the same as
-/// gBattleEffect_PuffArcPictureWidths and the three tables after it, Fire
+/// gBattleEffect_EmberStreakPictureWidths and the three tables after it, Fire
 /// keeping its own copy among its tables. Each picture's width, in pixels.
-const u8 gFire_FlareWidths[] = {24, 29, 30, 27, 24, 16};
+const u8 gFire_EmberStreakWidths[] = {24, 29, 30, 27, 24, 16};
 
 /// Each ember streak picture's height, in pixels.
-const u8 gFire_FlareHeights[] = {23, 32, 37, 49, 53, 52};
+const u8 gFire_EmberStreakHeights[] = {23, 32, 37, 49, 53, 52};
 
 /// How far below its anchor each ember streak picture's top goes, in pixels.
-const u8 gFire_FlareBiasY[] = {41, 32, 26, 11, 4, 2};
+const u8 gFire_EmberStreakBiasY[] = {41, 32, 26, 11, 4, 2};
 
 /// Each ember streak picture's byte offset in the sheet.
-const u16 gFire_FlarePictures[] = {0, 552, 1480, 2590, 3913, 5185};
+const u16 gFire_EmberStreakPictures[] = {0, 552, 1480, 2590, 3913, 5185};
 
 /// Where each frost mound rises, x and its foot's y, in pixels.
 const u8 gFrost_MoundSpots[] = {53, 108, 73, 110, 29, 110, 73, 108, 33, 104,

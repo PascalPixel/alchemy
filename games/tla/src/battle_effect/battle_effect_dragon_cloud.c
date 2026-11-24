@@ -53,10 +53,10 @@
 /// Draws one puff picture sized by the puff tables.
 #define DRAGON_CLOUD_DRAW_PUFF(blit, canvas, sheet, picture, x, y)             \
   blit(canvas,                                                                 \
-       &(sheet)[gBattleEffect_PuffArcPictures[picture] +                       \
+       &(sheet)[gBattleEffect_EmberStreakPictures[picture] +                   \
                 DRAGON_CLOUD_PUFF_PICTURES],                                   \
-       x, y, gBattleEffect_PuffArcPictureWidths[picture],                      \
-       gBattleEffect_PuffArcPictureHeights[picture])
+       x, y, gBattleEffect_EmberStreakPictureWidths[picture],                  \
+       gBattleEffect_EmberStreakPictureHeights[picture])
 
 /// A flame leaves the user along a stored path with a fading trail behind it,
 /// strikes the first target and bursts into embers and flashes. Epicenter's
@@ -201,20 +201,20 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       s32 width;
       s32 offset;
 
-      offset = gBattleEffect_PuffArcPictures[picture];
+      offset = gBattleEffect_EmberStreakPictures[picture];
       /* LEFTOVER(template): width, read from the puff table as
        * BattleEffect_RunHaures and BattleEffect_RunUlysses read it to draw
        * with, and unused here; as no width at all. */
-      width = gBattleEffect_PuffArcPictureWidths[picture];
+      width = gBattleEffect_EmberStreakPictureWidths[picture];
       draw[0](canvas, &state->sheet[offset + DRAGON_CLOUD_PUFF_PICTURES],
-              56 - gBattleEffect_PuffArcPictureWidths[picture] / 2,
-              gBattleEffect_PuffArcPictureBiasY[picture] + 60,
-              gBattleEffect_PuffArcPictureWidths[picture],
-              gBattleEffect_PuffArcPictureHeights[picture]);
-      DRAGON_CLOUD_DRAW_PUFF(draw[1], canvas, state->sheet, picture,
-                             64 - gBattleEffect_PuffArcPictureWidths[picture] /
-                                      2,
-                             gBattleEffect_PuffArcPictureBiasY[picture] + 60);
+              56 - gBattleEffect_EmberStreakPictureWidths[picture] / 2,
+              gBattleEffect_EmberStreakPictureBiasY[picture] + 60,
+              gBattleEffect_EmberStreakPictureWidths[picture],
+              gBattleEffect_EmberStreakPictureHeights[picture]);
+      DRAGON_CLOUD_DRAW_PUFF(
+          draw[1], canvas, state->sheet, picture,
+          64 - gBattleEffect_EmberStreakPictureWidths[picture] / 2,
+          gBattleEffect_EmberStreakPictureBiasY[picture] + 60);
     }
 
     // Epicenter: a batch of sparks thrown up from the user's side at the start.
@@ -443,8 +443,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
           DRAGON_CLOUD_DRAW_PUFF(
               draw[1], canvas, state->sheet, picture,
-              particle->x - gBattleEffect_PuffArcPictureWidths[picture] / 2,
-              particle->y + gBattleEffect_PuffArcPictureBiasY[picture]);
+              particle->x - gBattleEffect_EmberStreakPictureWidths[picture] / 2,
+              particle->y + gBattleEffect_EmberStreakPictureBiasY[picture]);
         }
         particle->variant++;
       }

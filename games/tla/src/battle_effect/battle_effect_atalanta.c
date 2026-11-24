@@ -378,22 +378,23 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
 
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-            width = gBattleEffect_PuffArcPictureWidths[flame];
+            width = gBattleEffect_EmberStreakPictureWidths[flame];
             ((DrawRectangle)draw[i & 1])(
                 canvas,
-                Ram_MapCellBuffer + gBattleEffect_PuffArcPictures[flame],
+                Ram_MapCellBuffer + gBattleEffect_EmberStreakPictures[flame],
                 shaft->x - (width >> 1) - 8,
-                shaft->y + gBattleEffect_PuffArcPictureBiasY[flame] - 40, width,
-                gBattleEffect_PuffArcPictureHeights[flame]);
+                shaft->y + gBattleEffect_EmberStreakPictureBiasY[flame] - 40,
+                width, gBattleEffect_EmberStreakPictureHeights[flame]);
 #else
             ((DrawRectangle)draw[i & 1])(
                 canvas,
-                Ram_MapCellBuffer + gBattleEffect_PuffArcPictures[flame],
+                Ram_MapCellBuffer + gBattleEffect_EmberStreakPictures[flame],
                 shaft->x -
-                    ((width = gBattleEffect_PuffArcPictureWidths[flame]) >> 1) -
+                    ((width = gBattleEffect_EmberStreakPictureWidths[flame]) >>
+                     1) -
                     8,
-                shaft->y + gBattleEffect_PuffArcPictureBiasY[flame] - 40, width,
-                gBattleEffect_PuffArcPictureHeights[flame]);
+                shaft->y + gBattleEffect_EmberStreakPictureBiasY[flame] - 40,
+                width, gBattleEffect_EmberStreakPictureHeights[flame]);
 #endif
             if (shaft->variant < ATALANTA_BURST_SHAFT_FRAMES) {
               EFFECT_DRAW_PICTURE((DrawRectangle)draw[0], canvas, state->sheet,

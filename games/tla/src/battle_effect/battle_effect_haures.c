@@ -622,12 +622,12 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                 struct Particle *p = &state->particles[i + HAURES_DROPS];
                 s32 n = (p->variant / HAURES_PUFF_PICTURE_FRAMES) %
                         HAURES_PUFF_PICTURE_COUNT;
-                u8 *src = state->sheet + gBattleEffect_PuffArcPictures[n];
-                u32 w = gBattleEffect_PuffArcPictureWidths[n];
+                u8 *src = state->sheet + gBattleEffect_EmberStreakPictures[n];
+                u32 w = gBattleEffect_EmberStreakPictureWidths[n];
 
                 draw[1](STAMP_CANVAS(state), src, p->x - (w >> 1),
-                        p->y + gBattleEffect_PuffArcPictureBiasY[n], w,
-                        gBattleEffect_PuffArcPictureHeights[n]);
+                        p->y + gBattleEffect_EmberStreakPictureBiasY[n], w,
+                        gBattleEffect_EmberStreakPictureHeights[n]);
                 if (++p->variant == HAURES_PUFF_FRAMES) {
                   p->variant = 0;
                   p->x = (Random16() & 15) + 24;

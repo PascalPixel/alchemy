@@ -1026,12 +1026,12 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
               s32 picture = fireball->variant / DRAGON_FIRE_BURN_FRAMES;
 
               draw[0](canvas,
-                      state->sheet + gTiamat_FlamePictures[picture] +
+                      state->sheet + gTiamat_EmberStreakPictures[picture] +
                           DRAGON_FIRE_FLAME_PICTURES,
-                      fireball->x - gTiamat_FlameWidths[picture] / 2,
-                      fireball->y + gTiamat_FlameDrops[picture],
-                      gTiamat_FlameWidths[picture],
-                      gTiamat_FlameHeights[picture]);
+                      fireball->x - gTiamat_EmberStreakWidths[picture] / 2,
+                      fireball->y + gTiamat_EmberStreakBiasY[picture],
+                      gTiamat_EmberStreakWidths[picture],
+                      gTiamat_EmberStreakHeights[picture]);
             }
             fireball->variant++;
             if (fireball->variant ==

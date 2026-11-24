@@ -83,6 +83,10 @@ extern s32 gGaretBoardsShip[];
 extern s32 gIvanBoardsShip[];
 extern s32 gMiaBoardsShip[];
 
+/// DMA 0's control, DMA0CNT_H, as a halfword after REG_DMA0's source,
+/// destination and count (GBATEK "GBA DMA Transfers").
+#define DMA_CNT_H_INDEX 5
+
 /// The ship's glow (ShipGlow_CyclePalette): SHIP_GLOW_COLORS of
 /// gShipGlowPalettes at a time, from a start that moves one colour every
 /// SHIP_GLOW_STEP_FRAMES frames, through as many starts as colours shown.
@@ -219,8 +223,8 @@ static void Ship_UpdateSwell(void) {
 
   grid = gMapGridState[0];
   if (gOrbGlowActive != 0) {
-    // The blend is stored through its address, so it stays in the frame and
-    // is read back from it.
+    /* FAKEMATCH(temporary): blend, stored through its address; plainly,
+       blend = .... */
     u16 blend;
 
     swell = Iwram_MulFX(Trig_Sin(gOrbGlowPhase << 9), 3);
@@ -618,6 +622,8 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 dark;
   FIXED risen;
   // Each control is stored through its address, so it stays in the frame.
+  /* FAKEMATCH(temporary): cnt, each register's new value stored through its
+     address; plainly, cnt = .... */
   u16 cnt;
 
   grid = gMapGridState[0];
@@ -710,6 +716,8 @@ static void LemurianShip_RaiseTheShip(void) {
 s32 Scene_Initialize(void) {
   struct MapGridScrollState *grid;
   // Each control is stored through its address, so it stays in the frame.
+  /* FAKEMATCH(temporary): cnt, each register's new value stored through its
+     address; plainly, cnt = .... */
   u16 cnt;
 
   grid = gMapGridState[0];
@@ -790,9 +798,9 @@ void LineScroll_ArmDma(void) {
 
   dma0 = REG_DMA0;
   destination = (volatile u32 *)&REG_BG3HOFS;
-  dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-  dma0[5] &= ~DMA_ENABLE;
-  dma0[5];
+  dma0[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
+  dma0[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
+  dma0[DMA_CNT_H_INDEX];
 
   *destination = *source++;
   Dma_Set(source, (void *)destination, DMA_HBLANK_WORD_PER_LINE,
@@ -844,9 +852,9 @@ static void Ripple_Stop(void) {
   Task_Remove(LineScroll_ArmDma);
   Task_Remove(LineScroll_BuildPage);
   reg = REG_DMA0;
-  reg[5] = ~DMA_START_TIMING_DRQ_REPEAT & reg[5];
-  reg[5] = ~DMA_ENABLE & reg[5];
-  reg[5];
+  reg[DMA_CNT_H_INDEX] = ~DMA_START_TIMING_DRQ_REPEAT & reg[DMA_CNT_H_INDEX];
+  reg[DMA_CNT_H_INDEX] = ~DMA_ENABLE & reg[DMA_CNT_H_INDEX];
+  reg[DMA_CNT_H_INDEX];
 }
 
 /// The curtains' sprites, which close in from above and below as the ship

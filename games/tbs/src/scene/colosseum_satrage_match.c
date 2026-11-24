@@ -98,6 +98,34 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
+/// The match held here, as the lettering `The 2nd Match` reads; the friends'
+/// turns open with `Lend a Hand!` instead (Colosso_ShowOpeningLettering).
+enum { LETTERING_LEND_A_HAND = 0, FINALS_MATCH = 2 };
+
+/// The stages, as their attendants number them: "This is stage 1 of the second
+/// finals".
+enum ColosseumSatrageMatchStage {
+  STAGE_MINI_MAZE = 1,
+  STAGE_SHIFTING_FLOOR = 2,
+  STAGE_LOG_ROLLING = 3,
+  STAGE_WALL = 4,
+  STAGE_BOARD_WALK = 5
+};
+
+/// Where Scene_Initialize keeps a copy of the cells under the logs, off the
+/// stages, to put back before the logs' cells are walled again where they
+/// lie: the Board Walk's (14..25, 11..14) at column 100, and the Log-Rolling
+/// Stage's (48..52, 10..15) at column 120, each in the same rows.
+enum { BOARD_WALK_STORE_COLUMN = 100, LOG_ROLLING_STORE_COLUMN = 120 };
+
+/// SPRITE_WHITE_PLATFORM's flat slab at the waterline (white_platform.tsv's
+/// picture 1), as the lifts and the Board Walk's platforms are drawn.
+#define PLATFORM_ANIMATION_AT_WATERLINE 4
+
+// The shared Colosso code's state, in the order the scene's memory lays it
+// out; the shared files that use it say what each holds: the guide's pointer
+// (colosso_guide.c), the lettering (colosso_task.c) and where Isaac stood
+// before he was shown on a stage (colosso_guide.c).
 s16 gColosso_PointerStep BSS_DATA;
 s16 gColosso_LetteringScaleDuration BSS_DATA ALIGNED(4);
 s16 gColosso_PointerFlip BSS_DATA ALIGNED(4);
@@ -326,7 +354,7 @@ enum LiftOperatorAnimation {
 
 /// SPRITE_LOG_NORTH_SOUTH lying still after a roll (log_north_south.tsv's
 /// first rolling picture, held), beside its LogAnimation.
-#define ROLLED_LOG_ANIMATION_AT_REST 1
+#define LOG_ANIMATION_AT_REST 1
 
 /// The cell behaviours the stages' step triggers answer.
 enum ColosseumSatrageMatchCellBehavior {
@@ -457,7 +485,7 @@ static void ColosseumSatrageMatch_PushWallPillar(void) {
 static void ColosseumSatrageMatch_MoveMiniMazePillar(void) {
   s32 column;
 
-  MapGrid_CopyCellAttributes(100, 11, 12, 4, 14, 11);
+  MapGrid_CopyCellAttributes(BOARD_WALK_STORE_COLUMN, 11, 12, 4, 14, 11);
 
   column = FIELD_CELL(Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR)->x.fixed);
   FieldGameFlag_SetByte(FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN, column);
@@ -643,7 +671,7 @@ static void ColosseumSatrageMatch_RideLog(void) {
   }
   if (offsetX != 0) {
     ColosseumSatrageMatch_MoveRidingLog(logId, offsetX, 0);
-    MapGrid_CopyCellAttributes(120, 10, 5, 6, 48, 10);
+    MapGrid_CopyCellAttributes(LOG_ROLLING_STORE_COLUMN, 10, 5, 6, 48, 10);
     column = FIELD_CELL(Actor_Get(ACTOR_RIDING_LOG_NORTH)->x.fixed);
     MapGrid_CopyCellAttributes(52, 28, 1, 3, column, RIDING_LOG_NORTH_ROW);
     column = FIELD_CELL(Actor_Get(ACTOR_RIDING_LOG_SOUTH)->x.fixed);
@@ -697,7 +725,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Actor_WaitForMove(log);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
-  Actor_SelectAnimation(log, ROLLED_LOG_ANIMATION_AT_REST);
+  Actor_SelectAnimation(log, LOG_ANIMATION_AT_REST);
   Event_Wait(15);
   Event_End();
 }
@@ -707,7 +735,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
 static void ColosseumSatrageMatch_UpdateRollingLogCollision(void) {
   s32 cell;
 
-  MapGrid_CopyCellAttributes(100, 11, 12, 4, 14, 11);
+  MapGrid_CopyCellAttributes(BOARD_WALK_STORE_COLUMN, 11, 12, 4, 14, 11);
 
   cell = FIELD_CELL(Actor_Get(ACTOR_ROLLING_LOG_WEST)->x.fixed);
   MapGrid_CopyCellAttributes(13, 28, 1, 4, cell, 11);
@@ -1023,15 +1051,14 @@ s32 Scene_Initialize(void) {
 
   gFieldState->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  // Keep a copy of the Board Walk's cells at column 100 and the Log-Rolling
-  // Stage's at column 120, off the stages, to put back before the logs' cells
-  // are walled again where they lie.
-  MapGrid_CopyCellAttributes(14, 11, 12, 4, 100, 11);
-  MapGrid_CopyCellAttributes(48, 10, 5, 6, 120, 10);
+  MapGrid_CopyCellAttributes(14, 11, 12, 4, BOARD_WALK_STORE_COLUMN, 11);
+  MapGrid_CopyCellAttributes(48, 10, 5, 6, LOG_ROLLING_STORE_COLUMN, 10);
   for (obstacleId = ACTOR_BOARD_WALK_FIRST_PLATFORM;
        obstacleId <= ACTOR_FALLING_LOG; obstacleId++) {
     actor = Actor_Get(obstacleId);
-    Actor_SelectAnimation(actor, 4);
+    // The falling log, last of these, takes the same number, its
+    // FALLING_LOG_ANIMATION_FALLEN, until the lines below stand it up.
+    Actor_SelectAnimation(actor, PLATFORM_ANIMATION_AT_WATERLINE);
     actor->motionFlags = 0;
     actor->y.fixed = 0;
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -1124,7 +1151,7 @@ s32 Scene_Initialize(void) {
          liftId++, columnOffset += 2) {
       actor = Actor_Get(liftId);
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      Actor_SelectAnimation(actor, 4);
+      Actor_SelectAnimation(actor, PLATFORM_ANIMATION_AT_WATERLINE);
       MapGrid_CopyCellAttributes(56, 13, 1, 1, columnOffset, row);
     }
     Actor_SetAnimation(ACTOR_LIFT_OPERATOR,
@@ -1135,7 +1162,7 @@ s32 Scene_Initialize(void) {
          liftId <= ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT; liftId++) {
       actor = Actor_Get(liftId);
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      Actor_SelectAnimation(actor, 4);
+      Actor_SelectAnimation(actor, PLATFORM_ANIMATION_AT_WATERLINE);
       actor->speedLimit = toFIXED(1) / 2;
       actor->acceleration = toFIXED(1) / 5;
     }
@@ -1164,7 +1191,7 @@ s32 Scene_Initialize(void) {
       Sound_Play(SOUND_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
-      Colosso_ShowOpeningLettering(2);
+      Colosso_ShowOpeningLettering(FINALS_MATCH);
     }
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
@@ -1178,7 +1205,7 @@ s32 Scene_Initialize(void) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Colosso_PlaceFriendsAtCheeringSpots();
       Colosso_ControlCharacterAlone(GARET);
-      Colosso_ShowOpeningLettering(0);
+      Colosso_ShowOpeningLettering(LETTERING_LEND_A_HAND);
     }
     break;
   case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST:
@@ -1284,7 +1311,7 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
     Colosso_AskDoneCheering(attendant);
   } else {
     Event_Start();
-    result = Colosso_GreetAtStage(attendant, 1);
+    result = Colosso_GreetAtStage(attendant, STAGE_MINI_MAZE);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoStageDubbedMini);
       FieldCamera_SetSpeed(3);
@@ -1309,13 +1336,13 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
       Event_ShowMessage(attendant, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
-      Colosso_RepeatStageNumber(attendant, 1);
+      Colosso_RepeatStageNumber(attendant, STAGE_MINI_MAZE);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoMainThingStage);
       // "The main thing with this stage is to proceed through the..."
       Event_ShowMessage(attendant, 0);
     }
-    Colosso_OfferCheeringSpot(result, attendant, 1);
+    Colosso_OfferCheeringSpot(result, attendant, STAGE_MINI_MAZE);
     Event_End();
   }
 }
@@ -1329,7 +1356,7 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
     Colosso_AskDoneCheering(attendant);
   } else {
     Event_Start();
-    result = Colosso_GreetAtStage(attendant, 2);
+    result = Colosso_GreetAtStage(attendant, STAGE_SHIFTING_FLOOR);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoShiftingFloorStage);
       ColosseumSatrageMatch_ResetLifts();
@@ -1350,7 +1377,7 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
       Event_ShowMessage(attendant, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
-      Colosso_RepeatStageNumber(attendant, 2);
+      Colosso_RepeatStageNumber(attendant, STAGE_SHIFTING_FLOOR);
     } else {
       if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
         Event_SetMessageId(MsgColossoOperatorLiftsWillCheerFor);
@@ -1358,7 +1385,7 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
         Event_ShowMessage(attendant, 0);
       }
     }
-    Colosso_OfferCheeringSpot(result, attendant, 2);
+    Colosso_OfferCheeringSpot(result, attendant, STAGE_SHIFTING_FLOOR);
     Event_End();
   }
 }
@@ -1372,7 +1399,7 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
     Colosso_AskDoneCheering(attendant);
   } else {
     Event_Start();
-    result = Colosso_GreetAtStage(attendant, 3);
+    result = Colosso_GreetAtStage(attendant, STAGE_LOG_ROLLING);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoLogRollingStage);
       FieldCamera_SetSpeed(3);
@@ -1406,13 +1433,13 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Actor_SetPosition(ACTOR_RIDING_LOG_SOUTH, 840, 232);
-      Colosso_RepeatStageNumber(attendant, 3);
+      Colosso_RepeatStageNumber(attendant, STAGE_LOG_ROLLING);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoHereYourObjectiveRideLogs);
       // "Here, your objective is to ride the logs as quickly as possible."
       Event_ShowMessage(attendant, 0);
     }
-    Colosso_OfferCheeringSpot(result, attendant, 3);
+    Colosso_OfferCheeringSpot(result, attendant, STAGE_LOG_ROLLING);
     Event_End();
   }
 }
@@ -1428,7 +1455,7 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     return;
   }
   Event_Start();
-  result = Colosso_GreetAtStage(attendant, 4);
+  result = Colosso_GreetAtStage(attendant, STAGE_WALL);
   if (result == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoFansJustCallWall);
     FieldCamera_SetSpeed(3);
@@ -1465,14 +1492,14 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
       Event_ShowMessage(attendant, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
-      Colosso_RepeatStageNumber(attendant, 4);
+      Colosso_RepeatStageNumber(attendant, STAGE_WALL);
     }
   } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
     Event_SetMessageId(MsgColossoScalingWallQuickly);
     // "Scaling the wall quickly is priority one in this stage."
     Event_ShowMessage(attendant, 0);
   }
-  Colosso_OfferCheeringSpot(result, attendant, 4);
+  Colosso_OfferCheeringSpot(result, attendant, STAGE_WALL);
   Event_End();
 }
 
@@ -1514,7 +1541,7 @@ static void ColosseumSatrageMatch_DemonstrateLogPush(s32 obstacleId, s32 x,
   Actor_WaitForMove(pusherActor);
   Actor_SelectAnimation(pusherActor, ANIM_STAND);
   Actor_WaitForMove(obstacle);
-  Actor_SelectAnimation(obstacle, ROLLED_LOG_ANIMATION_AT_REST);
+  Actor_SelectAnimation(obstacle, LOG_ANIMATION_AT_REST);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
   Event_Wait(15);
@@ -1530,7 +1557,7 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
     return;
   }
   Event_Start();
-  result = Colosso_GreetAtStage(attendant, 5);
+  result = Colosso_GreetAtStage(attendant, STAGE_BOARD_WALK);
   if (result == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoPlaceCalledBoard);
     FieldCamera_SetSpeed(2);
@@ -1557,13 +1584,13 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
     Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
     Actor_SetPosition(ACTOR_ROLLING_LOG_EAST, 392, 208);
-    Colosso_RepeatStageNumber(attendant, 5);
+    Colosso_RepeatStageNumber(attendant, STAGE_BOARD_WALK);
   } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
     Event_SetMessageId(MsgColossoFocusRollingLogs);
     // "Your focus here will be rolling the logs to form a path."
     Event_ShowMessage(attendant, 0);
   }
-  Colosso_OfferCheeringSpot(result, attendant, 5);
+  Colosso_OfferCheeringSpot(result, attendant, STAGE_BOARD_WALK);
   Event_End();
 }
 
@@ -1650,8 +1677,21 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
 
 #include "shared/colosso_push.c"
 
-/// The chest holding a Smoke Bomb has been opened.
+/// The chests have been opened: a Nut on the Board Walk, in the narrow channel
+/// north of its pool, cell (23, 7); a Smoke Bomb at the foot of The Wall, cell
+/// (34, 16); and a Nut on the shifting floor stage, cell (56, 7).
+#define FLAG_COLOSSEUM_SATRAGE_MATCH_BOARD_WALK_NUT_CHEST_OPENED               \
+  FLAG_AREA_TEMP_38
 #define FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_AREA_TEMP_39
+#define FLAG_COLOSSEUM_SATRAGE_MATCH_SHIFTING_FLOOR_NUT_CHEST_OPENED           \
+  FLAG_AREA_TEMP_3B
+
+/// The chests' cells, as the flags above.
+enum {
+  CELL_BEHAVIOR_BOARD_WALK_NUT_CHEST = 101,
+  CELL_BEHAVIOR_SMOKE_BOMB_CHEST = 102,
+  CELL_BEHAVIOR_SHIFTING_FLOOR_NUT_CHEST = 104
+};
 
 /// The rolling log's animation for each quarter turn of the way it is pushed.
 const u8 gColosseumSatrageMatch_RollLogScript[] = {2, 2, 3, 3};
@@ -1780,9 +1820,9 @@ struct Trigger gColosseumSatrageMatchTriggers[] = {
     { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_WALL_LEDGE, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_PushWallPillar) },
     { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_WALL_LEDGE_UNUSED, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_PushWallPillar) },
     { TRIGGER_STEP, CELL_BEHAVIOR_ARENA, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT(ColosseumSatrageMatch_ReachArena) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_AREA_TEMP_38, FIND_ITEM(ITEM_NUT) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, 102, FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 104, FLAG_AREA_TEMP_3B, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_BOARD_WALK_NUT_CHEST, FLAG_COLOSSEUM_SATRAGE_MATCH_BOARD_WALK_NUT_CHEST_OPENED, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, CELL_BEHAVIOR_SMOKE_BOMB_CHEST, FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_SHIFTING_FLOOR_NUT_CHEST, FLAG_COLOSSEUM_SATRAGE_MATCH_SHIFTING_FLOOR_NUT_CHEST_OPENED, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_PUDDLE_WEST, FLAG_WEST_PUDDLE_FROZEN, EVENT(ColosseumSatrageMatch_FreezeWestPuddle) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_PUDDLE_EAST, FLAG_EAST_PUDDLE_FROZEN, EVENT(ColosseumSatrageMatch_FreezeEastPuddle) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FORCE_TARGET, FLAG_LOG_KNOCKED_DOWN, EVENT(ColosseumSatrageMatch_KeepLogStillForForce) },

@@ -1093,30 +1093,120 @@ const u8 gBolt_GlintModes[] = {1, 1, 0};
 const u8 gProjectileVolley_CometHeights[] = {24, 36, 48};
 
 /// The projectile volley's modes, one row a mode (enum ProjectileVolleyMode),
-/// one byte a column (enum VolleyField in battle_effect_projectiles.c): the
-/// shots at each target, the frames a shot takes to reach it, the frames
-/// between shots and between targets, and the sparks each hit throws.
-const u8 gProjectileVolley_Modes[][5] = {
-    // shots, flight, between shots, between targets, sparks
-    {6, 10, 3, 32, 4},   // Slash
-    {4, 10, 5, 32, 8},   // Shuriken
-    {10, 32, 3, 32, 4},  // Crazy Voice
-    {5, 10, 5, 32, 4},   // Wing Flutter
-    {10, 10, 1, 32, 4},  // Wing Beat
-    {1, 5, 0, 32, 80},   // Cutting Edge
-    {7, 8, 2, 32, 40},   // Heat Wave
-    {30, 24, 1, 32, 4},  // Sleet
-    {6, 2, 3, 32, 4},    // a casting impact's comets
-    {60, 10, 1, 32, 4},  // Blizzard
-    {60, 12, 1, 32, 4},  // Ice Blessing
-    {10, 10, 1, 32, 4},  // Wing Stroke
-    {7, 8, 2, 32, 40},   // Blaze Rush
-    {20, 12, 1, 32, 40}, // Hydro Slash
-    {30, 24, 2, 32, 8},  // Diamond Dust
-    {30, 16, 1, 32, 8},  // Beast Needle
-    {30, 16, 1, 32, 8},  // Poison Sting
-    {30, 16, 1, 32, 8},  // Stun Sting
-    {60, 12, 1, 32, 4},  // Chill Breath
+/// one byte a column (enum VolleyField): the shots at each target, the frames
+/// a shot takes to reach it, the frames between shots and between targets, and
+/// the sparks each hit throws.
+const u8 gProjectileVolley_Modes[][PROJECTILE_VOLLEY_COLUMNS] = {
+    [PROJECTILE_VOLLEY_SLASH] = {[PROJECTILE_VOLLEY_SHOTS] = 6,
+                                 [PROJECTILE_VOLLEY_STEPS] = 10,
+                                 [PROJECTILE_VOLLEY_STAGGER] = 3,
+                                 [PROJECTILE_VOLLEY_DELAY] = 32,
+                                 [PROJECTILE_VOLLEY_SPARKS] = 4}, // Slash
+    [PROJECTILE_VOLLEY_SHURIKEN] = {[PROJECTILE_VOLLEY_SHOTS] = 4,
+                                    [PROJECTILE_VOLLEY_STEPS] = 10,
+                                    [PROJECTILE_VOLLEY_STAGGER] = 5,
+                                    [PROJECTILE_VOLLEY_DELAY] = 32,
+                                    [PROJECTILE_VOLLEY_SPARKS] = 8}, // Shuriken
+    [PROJECTILE_VOLLEY_CRAZY_VOICE] = {[PROJECTILE_VOLLEY_SHOTS] = 10,
+                                       [PROJECTILE_VOLLEY_STEPS] = 32,
+                                       [PROJECTILE_VOLLEY_STAGGER] = 3,
+                                       [PROJECTILE_VOLLEY_DELAY] = 32,
+                                       [PROJECTILE_VOLLEY_SPARKS] =
+                                           4}, // Crazy Voice
+    [PROJECTILE_VOLLEY_WING_FLUTTER] = {[PROJECTILE_VOLLEY_SHOTS] = 5,
+                                        [PROJECTILE_VOLLEY_STEPS] = 10,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 5,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            4}, // Wing Flutter
+    [PROJECTILE_VOLLEY_WING_BEAT] = {[PROJECTILE_VOLLEY_SHOTS] = 10,
+                                     [PROJECTILE_VOLLEY_STEPS] = 10,
+                                     [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                     [PROJECTILE_VOLLEY_DELAY] = 32,
+                                     [PROJECTILE_VOLLEY_SPARKS] =
+                                         4}, // Wing Beat
+    [PROJECTILE_VOLLEY_CUTTING_EDGE] = {[PROJECTILE_VOLLEY_SHOTS] = 1,
+                                        [PROJECTILE_VOLLEY_STEPS] = 5,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 0,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            80}, // Cutting Edge
+    [PROJECTILE_VOLLEY_HEAT_WAVE] = {[PROJECTILE_VOLLEY_SHOTS] = 7,
+                                     [PROJECTILE_VOLLEY_STEPS] = 8,
+                                     [PROJECTILE_VOLLEY_STAGGER] = 2,
+                                     [PROJECTILE_VOLLEY_DELAY] = 32,
+                                     [PROJECTILE_VOLLEY_SPARKS] =
+                                         40}, // Heat Wave
+    [PROJECTILE_VOLLEY_SLEET] = {[PROJECTILE_VOLLEY_SHOTS] = 30,
+                                 [PROJECTILE_VOLLEY_STEPS] = 24,
+                                 [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                 [PROJECTILE_VOLLEY_DELAY] = 32,
+                                 [PROJECTILE_VOLLEY_SPARKS] = 4}, // Sleet
+    [PROJECTILE_VOLLEY_IMPACT_COMETS] = {[PROJECTILE_VOLLEY_SHOTS] = 6,
+                                         [PROJECTILE_VOLLEY_STEPS] = 2,
+                                         [PROJECTILE_VOLLEY_STAGGER] = 3,
+                                         [PROJECTILE_VOLLEY_DELAY] = 32,
+                                         [PROJECTILE_VOLLEY_SPARKS] =
+                                             4}, // a casting impact's comets
+    [PROJECTILE_VOLLEY_BLIZZARD] = {[PROJECTILE_VOLLEY_SHOTS] = 60,
+                                    [PROJECTILE_VOLLEY_STEPS] = 10,
+                                    [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                    [PROJECTILE_VOLLEY_DELAY] = 32,
+                                    [PROJECTILE_VOLLEY_SPARKS] = 4}, // Blizzard
+    [PROJECTILE_VOLLEY_ICE_BLESSING] = {[PROJECTILE_VOLLEY_SHOTS] = 60,
+                                        [PROJECTILE_VOLLEY_STEPS] = 12,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            4}, // Ice Blessing
+    [PROJECTILE_VOLLEY_WING_STROKE] = {[PROJECTILE_VOLLEY_SHOTS] = 10,
+                                       [PROJECTILE_VOLLEY_STEPS] = 10,
+                                       [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                       [PROJECTILE_VOLLEY_DELAY] = 32,
+                                       [PROJECTILE_VOLLEY_SPARKS] =
+                                           4}, // Wing Stroke
+    [PROJECTILE_VOLLEY_BLAZE_RUSH] = {[PROJECTILE_VOLLEY_SHOTS] = 7,
+                                      [PROJECTILE_VOLLEY_STEPS] = 8,
+                                      [PROJECTILE_VOLLEY_STAGGER] = 2,
+                                      [PROJECTILE_VOLLEY_DELAY] = 32,
+                                      [PROJECTILE_VOLLEY_SPARKS] =
+                                          40}, // Blaze Rush
+    [PROJECTILE_VOLLEY_HYDRO_SLASH] = {[PROJECTILE_VOLLEY_SHOTS] = 20,
+                                       [PROJECTILE_VOLLEY_STEPS] = 12,
+                                       [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                       [PROJECTILE_VOLLEY_DELAY] = 32,
+                                       [PROJECTILE_VOLLEY_SPARKS] =
+                                           40}, // Hydro Slash
+    [PROJECTILE_VOLLEY_DIAMOND_DUST] = {[PROJECTILE_VOLLEY_SHOTS] = 30,
+                                        [PROJECTILE_VOLLEY_STEPS] = 24,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 2,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            8}, // Diamond Dust
+    [PROJECTILE_VOLLEY_BEAST_NEEDLE] = {[PROJECTILE_VOLLEY_SHOTS] = 30,
+                                        [PROJECTILE_VOLLEY_STEPS] = 16,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            8}, // Beast Needle
+    [PROJECTILE_VOLLEY_POISON_STING] = {[PROJECTILE_VOLLEY_SHOTS] = 30,
+                                        [PROJECTILE_VOLLEY_STEPS] = 16,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            8}, // Poison Sting
+    [PROJECTILE_VOLLEY_STUN_STING] = {[PROJECTILE_VOLLEY_SHOTS] = 30,
+                                      [PROJECTILE_VOLLEY_STEPS] = 16,
+                                      [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                      [PROJECTILE_VOLLEY_DELAY] = 32,
+                                      [PROJECTILE_VOLLEY_SPARKS] =
+                                          8}, // Stun Sting
+    [PROJECTILE_VOLLEY_CHILL_BREATH] = {[PROJECTILE_VOLLEY_SHOTS] = 60,
+                                        [PROJECTILE_VOLLEY_STEPS] = 12,
+                                        [PROJECTILE_VOLLEY_STAGGER] = 1,
+                                        [PROJECTILE_VOLLEY_DELAY] = 32,
+                                        [PROJECTILE_VOLLEY_SPARKS] =
+                                            4}, // Chill Breath
 };
 
 /// Each flash picture's width, in pixels.

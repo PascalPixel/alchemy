@@ -884,30 +884,6 @@ enum SparkGroupsMode {
                          ///< sparks rising
 };
 
-/// The projectile volley's modes (BattleEffect_RunProjectileVolley), each named
-/// for the effect that fires it; the casting impacts fire some of them.
-enum ProjectileVolleyMode {
-  PROJECTILE_VOLLEY_SLASH,         ///< comets, picked by the variant
-  PROJECTILE_VOLLEY_SHURIKEN,      ///< spinning shurikens
-  PROJECTILE_VOLLEY_CRAZY_VOICE,   ///< bouncing musical notes
-  PROJECTILE_VOLLEY_WING_FLUTTER,  ///< yellow sparks
-  PROJECTILE_VOLLEY_WING_BEAT,     ///< small yellow sparks
-  PROJECTILE_VOLLEY_CUTTING_EDGE,  ///< one large comet in ice colours
-  PROJECTILE_VOLLEY_HEAT_WAVE,     ///< fireballs trailing embers
-  PROJECTILE_VOLLEY_SLEET,         ///< ice chips falling from high above
-  PROJECTILE_VOLLEY_IMPACT_COMETS, ///< comets, after a casting impact
-  PROJECTILE_VOLLEY_BLIZZARD,      ///< scattered ice chips
-  PROJECTILE_VOLLEY_ICE_BLESSING,  ///< ice chips streaming one a frame
-  PROJECTILE_VOLLEY_WING_STROKE,   ///< large yellow sparks, spread up and down
-  PROJECTILE_VOLLEY_BLAZE_RUSH,
-  PROJECTILE_VOLLEY_HYDRO_SLASH,
-  PROJECTILE_VOLLEY_DIAMOND_DUST,
-  PROJECTILE_VOLLEY_BEAST_NEEDLE,
-  PROJECTILE_VOLLEY_POISON_STING,
-  PROJECTILE_VOLLEY_STUN_STING,
-  PROJECTILE_VOLLEY_CHILL_BREATH
-};
-
 // The declarations the parts share.
 
 struct SpriteAnimation;
@@ -1471,7 +1447,7 @@ extern u8 gBolt_GlintModes[];
 /// VolleyField), the hit flash's pictures and spread, the pellets' pictures and
 /// the glints' flips.
 extern u8 gProjectileVolley_CometHeights[];
-extern u8 gProjectileVolley_Modes[][5];
+extern u8 gProjectileVolley_Modes[][PROJECTILE_VOLLEY_COLUMNS];
 extern u8 gProjectileVolley_FlashWidths[];
 extern u8 gProjectileVolley_FlashHeights[];
 extern u8 gProjectileVolley_FlashSteps[];

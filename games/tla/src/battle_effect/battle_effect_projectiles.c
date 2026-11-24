@@ -513,15 +513,6 @@ enum ProjectileVolleyComet {
   PROJECTILE_VOLLEY_COMET_C  ///< CometSheetC, also Cutting Edge's
 };
 
-/// The bytes of a gProjectileVolley_Modes row.
-enum VolleyField {
-  PROJECTILE_VOLLEY_SHOTS,   ///< shots at each target
-  PROJECTILE_VOLLEY_STEPS,   ///< frames a shot takes to reach its target
-  PROJECTILE_VOLLEY_STAGGER, ///< frames between shots
-  PROJECTILE_VOLLEY_DELAY,   ///< frames between targets
-  PROJECTILE_VOLLEY_SPARKS   ///< sparks thrown on each hit
-};
-
 /// The second blitter, loaded again for each draw that needs its own.
 #define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 

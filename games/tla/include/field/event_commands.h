@@ -231,7 +231,7 @@ extern const s32 gDustPuff_LongScript[];
 extern const s32 gDustPuff_ShortScript[];
 extern const s32 gFieldEffect_SourceHoldScript[];
 extern const s32 gForce_FistScript[];
-extern const u8 gAnim_ChildPaletteCycle[];
+extern const u8 gMindRead_CasterColorCycle[];
 extern const u8 gMoveHand_PushPoses[];
 
 /// Three coordinates of a burst piece's place, x, y and z, filled in turn as
@@ -382,6 +382,9 @@ enum HiddenBoss {
 /// party.
 s32 Actor_GetCellIndex(struct Actor *actor);
 s32 Actor_GetScreenPosition(s32 objectId, s32 *position);
+/// Actor_SetLayersColorMode's value that cycles the actor's colours
+/// (gMindRead_CasterColorCycle); any other is a colour mode plus one.
+#define LAYERS_COLOR_CYCLING 0
 void Actor_SetLayersColorMode(void *actor, s32 value);
 void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);

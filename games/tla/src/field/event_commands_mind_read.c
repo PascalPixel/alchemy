@@ -33,9 +33,6 @@
 #include "field/object.h"
 #include "window/item_icon.h"
 
-/// Actor_SetLayersColorMode's value that cycles the actor's colours.
-#define LAYERS_COLOR_CYCLING 0
-
 /// A line's offset in Mind Read's wave at a phase: a sine 4 pixels either way,
 /// a turn every 160 phase steps.
 #define MIND_READ_WAVE_OFFSET(phase) (Trig_Sin(((phase) << 16) / 160) >> 14)
@@ -209,13 +206,13 @@ void MindRead_UpdateCrescent(struct Actor *target) {
 }
 
 /// Gives an actor's sprite colour mode value - 1 (enum SpriteColorMode), or for
-/// LAYERS_COLOR_CYCLING the next of gAnim_ChildPaletteCycle's swapped colours,
-/// a step every 2 frames, as Mind Read's wave does to its caster.
+/// LAYERS_COLOR_CYCLING the next of gMindRead_CasterColorCycle's swapped
+/// colours, a step every 2 frames, as Mind Read's wave does to its caster.
 void Actor_SetLayersColorMode(void *object, s32 value) {
   s32 child = value - 1;
 
-  if (value == 0)
-    child = gAnim_ChildPaletteCycle[(gFrameCount >> 1) & 7];
+  if (value == LAYERS_COLOR_CYCLING)
+    child = gMindRead_CasterColorCycle[(gFrameCount >> 1) & 7];
   Actor_SetSpriteColorModeFar(object, child);
 }
 

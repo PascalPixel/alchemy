@@ -67,6 +67,7 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 void WorldMap_LoadTidalWave(void);
 
 #include "shared/tables.h"
+#include "shared/ship_flight.h"
 
 struct Actor;
 
@@ -2391,13 +2392,13 @@ void WorldMap_GlowInFlight(struct Actor *actor) {
   }
 }
 
-/// Sets the ship's look by flight mode: 0 plain, 1 powering up, 2 in flight.
+/// Sets the ship's look by flight mode (enum ShipFlightMode).
 void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
-  if (mode == 0) {
+  if (mode == SHIP_LANDED) {
     actor->update = 0;
     Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  } else if (mode == 1) {
+  } else if (mode == SHIP_POWERING_UP) {
     actor->update = (ObjectUpdate)WorldMap_FlashPoweringUp;
   } else {
     actor->update = (ObjectUpdate)WorldMap_GlowInFlight;
@@ -2409,7 +2410,7 @@ void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
 
 /// Brings the leader's ship down out of flight.
 void WorldMap_EndFlight(void) {
-  Actor_SetFlightMode(Actor_GetById(Party_GetLeaderActor()), 0);
+  Actor_SetFlightMode(Actor_GetById(Party_GetLeaderActor()), SHIP_LANDED);
 }
 
 /// Run each frame of the lighthouse transition: every other two frames the

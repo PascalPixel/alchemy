@@ -49,6 +49,7 @@ void Party_DrainPp(s32 count);
 FIXED Party_GetPpRatio(void);
 
 #include "shared/tables.h"
+#include "shared/ship_flight.h"
 
 /// The beacon's buffer: the glow's or the beams' tiles, then from
 /// BEACON_MAPS their maps.
@@ -664,13 +665,13 @@ void StaffCredit_GlowInFlight(struct Actor *actor) {
   }
 }
 
-/// Sets the ship's look by flight mode: 0 plain, 1 powering up, 2 in flight.
+/// Sets the ship's look by flight mode (enum ShipFlightMode).
 void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
-  if (mode == 0) {
+  if (mode == SHIP_LANDED) {
     actor->update = 0;
     Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  } else if (mode == 1) {
+  } else if (mode == SHIP_POWERING_UP) {
     actor->update = (ObjectUpdate)StaffCredit_FlashPoweringUp;
   } else {
     actor->update = (ObjectUpdate)StaffCredit_GlowInFlight;
@@ -682,7 +683,7 @@ void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
 
 /// Unused: the leader's ship lands, plain again.
 UNUSED void StaffCredit_EndFlight(void) {
-  Actor_SetFlightMode(Actor_Get(FieldParty_GetLeaderActor()), 0);
+  Actor_SetFlightMode(Actor_Get(FieldParty_GetLeaderActor()), SHIP_LANDED);
 }
 
 /// The copy of the world map's WorldMap_UpdateTransitionBlend, which

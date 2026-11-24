@@ -41,6 +41,11 @@ extern const u16 gHaures_BodyPiecePoints[][2];
 /// ember puffs are drawn in, each puff level a quarter of its own.
 #define HAURES_STAMP_PALETTE 14
 #define HAURES_STAMP_FIRST_COLOR (HAURES_STAMP_PALETTE * PALETTE_COLORS)
+/// From HAURES_CLAW_RISE_FRAME the claw rises out of the mound, and the stamp
+/// grows from its own size by HAURES_STAMP_GROWTH a frame in height and twice
+/// that across, to twice its height and four times its width.
+#define HAURES_CLAW_RISE_FRAME 150
+#define HAURES_STAMP_GROWTH 564
 /// The ember puffs that rise in the stamp: EmberStreakSheet's six pictures,
 /// which take HAURES_PUFF_BYTES at the start of the effect's pictures, four
 /// frames each.
@@ -585,7 +590,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         riseScale = gHaures_ChargeScale;
         bodyPlace[3] = 0;
         // The claw rises out of the mound amid violet puffs of embers.
-        if (frame > 149) {
+        if (frame > HAURES_CLAW_RISE_FRAME - 1) {
           position.x += velocity.x;
           position.y += velocity.y;
           if (frame <= 159) {
@@ -608,7 +613,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             Render_ApplyProjectedPlacementFar(state->sprites[i], bodyPlace,
                                               (s32 *)&riseScale, 0);
           }
-          if ((u32)(frame - 150) <= 116) {
+          if ((u32)(frame - HAURES_CLAW_RISE_FRAME) <= 116) {
             BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 6, 6,
                                       EFFECT_CLIP_BOUNDS, BLITTER_MAX);
             draw[1] = Ram_HeapSlots->ramCodePaired;
@@ -632,11 +637,14 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             }
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
           }
-          riseScale.x = frame * 1128 - 103664;
+          riseScale.x =
+              (frame - HAURES_CLAW_RISE_FRAME) * (HAURES_STAMP_GROWTH * 2) +
+              FIXED_ONE;
           if (riseScale.x > toFIXED(4)) {
             riseScale.x = toFIXED(4);
           }
-          riseScale.y = frame * 564 - 19064;
+          riseScale.y = (frame - HAURES_CLAW_RISE_FRAME) * HAURES_STAMP_GROWTH +
+                        FIXED_ONE;
           if (riseScale.y > toFIXED(2)) {
             riseScale.y = toFIXED(2);
           }

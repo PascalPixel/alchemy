@@ -20,6 +20,14 @@
 /// A face of no corners ends a textured mesh.
 #define MESH_END 0, 0, 0, 0, 0, 0
 
+/// A row of gLobbedShells_Styles, the four bytes battle_effect_mirrored_wall.c
+/// reads through its LOBBED_SHELLS_ macros: whether the shells burst into
+/// shards rather than smoke; the blitter they are drawn with, 0 keeping the
+/// brighter level and 1 adding; the shells lobbed at each target; and the
+/// frames the effect runs past the targets' share.
+#define LOBBED_SHELLS_STYLE(shatter, blitter, shells, frames)                  \
+  (shatter), (blitter), (shells), (frames)
+
 /// Each mote size's picture: its byte offset in the particle sheet, by size.
 const u16 gBattleEffect_MotePictures[] = {0,   2,   10,  28,  60,
                                           110, 182, 280, 408, 570};
@@ -41,17 +49,18 @@ const u16 gBattleEffect_SparklePictures[] = {0,   25,  74,  123, 172,
 /// Each sparkle picture's side, in pixels.
 const u8 gBattleEffect_SparkleSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
 
-/// The ember puff's six pictures, one after another as it rises: their widths,
-/// heights, how far below its anchor each top goes, and their offsets.
+/// EmberStreakSheet's six pictures, a puff of flame drawing out into a trail of
+/// embers as it rises: each one's width, in pixels.
 const u8 gBattleEffect_PuffArcPictureWidths[] = {24, 29, 30, 27, 24, 16};
 
-/// Each puff arc picture's height, in pixels.
+/// Each ember streak picture's height, in pixels.
 const u8 gBattleEffect_PuffArcPictureHeights[] = {23, 32, 37, 49, 53, 52};
 
-/// How far below its anchor each puff arc picture's top goes.
+/// How far below its anchor each ember streak picture's top goes, in pixels:
+/// the bottoms stay within ten pixels of 64 below.
 const u8 gBattleEffect_PuffArcPictureBiasY[] = {41, 32, 26, 11, 4, 2};
 
-/// Each puff arc picture's byte offset in the sprite sheet.
+/// Each ember streak picture's byte offset in the sheet.
 const u16 gBattleEffect_PuffArcPictures[] = {0, 552, 1480, 2590, 3913, 5185};
 
 /// Each glint picture's byte offset in the sprite sheet.
@@ -87,10 +96,11 @@ const u8 gStatChange_ShardWidths[] = {10, 5, 6, 5, 6, 7, 9, 8, 4, 6, 6, 7};
 /// Each shard picture's height, in pixels.
 const u8 gStatChange_ShardHeights[] = {12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5};
 
-/// The reaper's seven panels: their x, seven for each side.
+/// The reaper's seven panels: their x in the canvas, in pixels, seven for each
+/// side.
 const u8 gReaper_PictureX[] = {10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0};
 
-/// The reaper's seven panels: their y.
+/// The reaper's seven panels: their y in the canvas, in pixels.
 const u8 gReaper_PictureY[] = {0, 20, 2, 2, 34, 64, 68};
 
 /// Ice's shards and frames, a pair for each variant (ICE_SHARDS, ICE_FRAMES).
@@ -123,7 +133,7 @@ const u8 gTargetStrike_Styles[][7] = {
 /// Each slash picture's width, in pixels.
 const u8 gTargetStrike_Widths[] = {38, 54, 71, 74, 77, 65};
 
-/// Each Target Strike picture's height, in pixels.
+/// Each slash picture's height, in pixels.
 const u8 gTargetStrike_Heights[] = {7, 9, 11, 13, 13, 11};
 
 /// Each Target Strike picture's byte offset in Target Strike's sprite sheet.
@@ -156,20 +166,20 @@ const u16 gShatteringOpening_PiecePictures[] = {
     13538, 14678, 15703, 18103, 19292, 19442, 20702, 21528, 21733,
     22565, 23715, 24114, 25234, 25330, 27781, 27946};
 
-/// Each piece's starting x.
+/// Each piece's starting x, in pixels.
 const u8 gShatteringOpening_PieceStartX[] = {
     0,  21, 28, 46, 70, 51, 0,  13, 37, 77, 87, 19, 25, 35, 44, 45, 48,
     65, 0,  0,  0,  5,  33, 15, 36, 46, 47, 50, 53, 65, 72, 77, 105};
 
-/// Each piece's starting y.
+/// Each piece's starting y, in pixels.
 const u8 gShatteringOpening_PieceStartY[] = {
     0,  0,  0,  0,  0,  0,  19, 17, 23, 28, 8,  36, 43, 43,  40, 47, 48,
     37, 42, 67, 60, 79, 62, 75, 61, 62, 60, 70, 74, 85, 108, 63, 74};
 
-/// The four corner sparks: their x about the target.
+/// The four corner sparks: their x about the target, in pixels.
 const s8 gElementBurst_SparkX[] = {0, 32, 0, 32};
 
-/// The four corner sparks: their y about the target.
+/// The four corner sparks: their y about the target, in pixels.
 const s8 gElementBurst_SparkY[] = {0, 0, 32, 32};
 
 /// The four corner sparks' flips.
@@ -179,10 +189,10 @@ const u8 gElementBurst_GlintFlips[] = {0, 4, 8, 12};
 const struct ModelVertex gCruelRuin_StreakCorners[] = {
     {-4, 127, 0}, {4, 127, 0}, {-6, 0, 0}, {6, 0, 0}};
 
-/// Each disc's pitch.
+/// Each disc's pitch, in 65,536ths of a turn.
 const u16 gCruelRuin_DiscPitches[] = {10240, 56579, 56579, 58880};
 
-/// Each disc's yaw.
+/// Each disc's yaw, in 65,536ths of a turn.
 const u16 gCruelRuin_DiscYaws[] = {39680, 42496, 32768, 22016};
 
 /// How far each pillar sways, in pixels.
@@ -191,7 +201,7 @@ const u8 gCruelRuin_PillarSways[] = {24, 48};
 /// Each pillar picture's width, in pixels.
 const u8 gCruelRuin_PillarWidths[] = {24, 32};
 
-/// The blast frames.
+/// The frame each blast goes off on.
 const u8 gCruelRuin_BlastFrames[] = {7, 37, 45, 58, 74, 80};
 
 /// Each blast's size, in pixels.
@@ -221,7 +231,7 @@ const u8 gCruelRuin_StreakStepY[] = {16, 4, 16, 24};
 /// Each streak end's y, in pixels.
 const u8 gCruelRuin_StreakEndY[] = {96, 96, 96, 120};
 
-/// Each streak's roll.
+/// Each streak's roll as it falls.
 const s32 gCruelRuin_StreakRolls[] = {DEGtoANG(202.5), DEGtoANG(225),
                                       DEGtoANG(202.5), DEGtoANG(202.5)};
 
@@ -231,7 +241,8 @@ const u8 gEclipse_GlintFlips[] = {0, 4, 8, 12};
 /// The dragon's sprites that take their tiles anew as it turns.
 const u8 gEclipse_TileObjects[] = {8, 9, 25, 14, 15, 20, 21};
 
-/// The fill frames.
+/// The frames the canvas is filled anew on, a level from gEclipse_FillLevels
+/// each time.
 const u8 gEclipse_FillFrames[] = {148, 160, 162, 164, 170, 174, 178, 182, 188,
                                   194, 196, 200, 202, 206, 208, 210, 220};
 
@@ -255,23 +266,26 @@ const u8 gEclipse_ObjectZ[] = {0,  0,  0,  0,  0,   0,   32,  32,  32,  32, 32,
                                32, 32, 32, 64, 64,  64,  64,  64,  64,  96, 96,
                                96, 96, 96, 96, 128, 128, 128, 128, 128, 128};
 
-/// How fast each ring grows.
+/// How fast each ring grows: its scale gains this many 64ths a frame, from a
+/// quarter.
 const u8 gEclipse_RingGrowth[] = {4, 3, 5, 3};
 
-/// Each ring's height.
+/// How far each ring sits along its band's axis, in the band's own pixels
+/// before the ring is scaled and stretched.
 const s8 gEclipse_RingHeights[] = {16, 12, 4, -8};
 
 /// The four crystals: the frame each starts after 48; the tables after it give
 /// how fast each grows and how tall.
 const u8 gFormChange_WaveStarts[] = {0, 4, 9, 10};
 
-/// How fast each wave grows.
+/// How fast each wave grows: its scale gains this many times 2000/65536 a
+/// frame, from a quarter.
 const u8 gFormChange_WaveGrowth[] = {3, 4, 3, 5};
 
-/// How far each wave is stretched.
+/// How much taller than wide each wave is drawn, multiplying its scale.
 const u8 gFormChange_WaveStretch[] = {3, 4, 5, 6};
 
-/// Each shard's place in the crystal, x and y.
+/// Each shard's place in the crystal, x and y, in pixels.
 const u8 gPrism_ShardStarts[] = {32, 60, 33, 82, 49, 94, 41, 89, 49, 76, 32, 99,
                                  54, 69, 34, 82, 45, 71, 31, 91, 32, 69, 26, 80,
                                  40, 68, 41, 60, 46, 60, 36, 63, 0,  0};
@@ -294,7 +308,8 @@ const u8 gGatheringLights_Counts[] = {16, 88, 8, 72, 12, 80, 16, 88};
 /// The mote's picture for each step of its sway.
 const u8 gDjinnBeams_MotePictures[] = {2, 1, 0, 1, 2, 3, 4, 3};
 
-/// The beam's head: its three pictures' byte offsets in the sprite sheet.
+/// The beam's head, EarthWallSheet's three half walls of flame (the mirrored
+/// wall's EARTH_WALL_ pictures): their byte offsets in the sheet.
 const u16 gDjinnBeams_HeadPictures[] = {2702, 3535, 4580};
 
 /// Each head picture's width, in pixels.
@@ -303,11 +318,20 @@ const u8 gDjinnBeams_HeadWidths[] = {17, 19, 20};
 /// Each head picture's height, in pixels.
 const u8 gDjinnBeams_HeadHeights[] = {49, 55, 64};
 
-/// Each mode's record: whether its shots burst into shards (else into smoke),
-/// the shots' blitter, shots per target, and frames before the targets' share.
+/// The lobbed shells' styles, one LOBBED_SHELLS_STYLE row a mode (enum
+/// LobbedShellsMode).
 const s8 gLobbedShells_Styles[] = {
-    0, 0, 1, 72, 0, 0, 1, 72, 0, 0, 1, 72, 1, 0, 1, 40, 1, 0, 1, 56,
-    0, 0, 1, 56, 0, 0, 1, 72, 1, 0, 4, 52, 0, 1, 1, 72, 0, 0, 1, 72};
+    LOBBED_SHELLS_STYLE(0, 0, 1, 72), // Bone Chiller
+    LOBBED_SHELLS_STYLE(0, 0, 1, 72), // Sticky Goo
+    LOBBED_SHELLS_STYLE(0, 0, 1, 72), // Sticky Poison
+    LOBBED_SHELLS_STYLE(1, 0, 1, 40), // Rotten Blood
+    LOBBED_SHELLS_STYLE(1, 0, 1, 56), // Mad Spatter
+    LOBBED_SHELLS_STYLE(0, 0, 1, 56), // Decompose
+    LOBBED_SHELLS_STYLE(0, 0, 1, 72), // Poison Ink
+    LOBBED_SHELLS_STYLE(1, 0, 4, 52), // Mud
+    LOBBED_SHELLS_STYLE(0, 1, 1, 72), // Rising Venom
+    LOBBED_SHELLS_STYLE(0, 0, 1, 72), // Formic Acid
+};
 
 /// Each shard picture's width, in pixels.
 const u8 gLobbedShells_ShardWidths[] = {9, 10, 9, 9, 9, 11, 11, 11, 12,
@@ -322,70 +346,78 @@ const u16 gLobbedShells_ShardPictures[] = {0,    108,  228,  336,  444,  552,
                                            684,  816,  948,  1092, 1140, 1189,
                                            1231, 1273, 1321, 1357, 1389, 1413};
 
-/// Each panel's x, seven for each side.
+/// The reaper's seven panels as Condemn draws them: their x in the canvas, in
+/// pixels, seven for each side; the same as gReaper_PictureX, Condemn keeping
+/// its own copy.
 const u8 gCondemn_PictureX[] = {10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0};
 
-/// Each panel's y.
+/// The reaper's panels: their y in the canvas, in pixels, seven for each side.
 const u8 gCondemn_PictureY[] = {0, 20, 2, 2, 34, 64, 68, 0, 9, 4, 4, 4, 4, 4};
 
-/// The triangle's first corner, (0, 24, 0).
+/// The triangle's first corner, (0, 24, 0), in pixels.
 const s32 gBind_Vertex[] = {0, 24, 0};
 
-/// The striking triangle's first corner, (0, 24, 0).
+/// The striking triangle's first corner, (0, 24, 0), in pixels; the same as
+/// gBind_Vertex, read by the strike's own code.
 const s32 gBind_TriangleStrikeVertex[] = {0, 24, 0};
 
-/// The two ring points, alternating.
+/// The two ring points, alternating, x, y and z in 16.16 pixels.
 const s32 gStar_Points[] = {0, toFIXED(48), 0, 0, toFIXED(28), 0};
 
-/// The ring radii, alternating: 32 and 16.
+/// The ring radii, alternating, in pixels.
 const u8 gStar_Radii[] = {32, 16};
 
-/// The nine comets' grid: each comet's x.
+/// The nine comets' grid: each comet's x, in pixels.
 const u8 gProcne_GridX[] = {0, 32, 64, 0, 32, 64, 0, 32, 64};
 
-/// The nine comets' grid: each comet's depth.
+/// The nine comets' grid: each comet's depth, in pixels.
 const u8 gProcne_GridY[] = {0, 0, 0, 32, 32, 32, 64, 64, 64};
 
 /// The frames of the four comet strikes.
 const u16 gProcne_Frames[] = {334, 347, 359, 372};
 
-/// A strike's three pictures: their widths.
+/// A strike's three pictures: their widths, in pixels.
 const u8 gProcne_PictureWidths[] = {14, 24, 48};
 
-/// A strike's three pictures: their heights.
+/// A strike's three pictures: their heights, in pixels.
 const u8 gProcne_PictureHeights[] = {14, 19, 24};
 
-/// A strike's three pictures: how far each is raised above its mark.
+/// A strike's three pictures: how far each is raised above its mark, in pixels.
 const u8 gProcne_PictureBiasY[] = {8, 12, 17};
 
 /// A strike's three pictures: their byte offsets in the sprite sheet.
 const u16 gProcne_Pictures[] = {13824, 14020, 14476};
 
-/// Each grain's added speed.
+/// What each grain adds to its random speed of 0 to 127, in 32nds of a pixel a
+/// frame.
 const u8 gTiamat_EmberSpeeds[] = {0, 8, 12, 16};
 
-/// A spark's two pixels.
+/// A spark's picture: one pixel wide and two tall, both at level 32.
 const u8 gTiamat_SparkPixels[] = {32, 32};
 
-/// Each grain's size.
+/// Each grain's size: the width of its mote picture, in pixels, which is twice
+/// as tall.
 const u8 gTiamat_EmberSizes[] = {1, 1, 2, 3};
 
-/// The streak's six pictures: their widths.
+/// The ember streak's pictures again, as Tiamat's fireballs read them: the same
+/// as gBattleEffect_PuffArcPictureWidths and the three tables after it, Tiamat
+/// keeping its own copy among its tables. Each picture's width, in pixels.
 const u8 gTiamat_FlameWidths[] = {24, 29, 30, 27, 24, 16};
 
-/// The streak's six pictures: their heights.
+/// Each ember streak picture's height, in pixels.
 const u8 gTiamat_FlameHeights[] = {23, 32, 37, 49, 53, 52};
 
-/// The streak's six pictures: how far below the streak each is drawn.
+/// How far below its anchor each ember streak picture's top goes, in pixels.
 const u8 gTiamat_FlameDrops[] = {41, 32, 26, 11, 4, 2};
 
-/// The streak's six pictures: their byte offsets in the sprite sheet.
+/// Each ember streak picture's byte offset in the sheet.
 const u16 gTiamat_FlamePictures[] = {0, 552, 1480, 2590, 3913, 5185};
 
-/// The three water columns' feet, x and y.
+/// The water columns' feet, x and y, in pixels; NEREID_COLUMNS of the four
+/// pairs are read.
 const u8 gNereid_Columns[] = {16, 104, 32, 104, 48, 104, 64, 104};
 
-/// Each falling spark's gravity.
+/// Each falling spark's gravity, in pixels a frame each frame.
 const s32 gNereid_Gravity[] = {toFIXED(0.5), toFIXED(0.25), toFIXED(0.25),
                                toFIXED(0.125)};
 
@@ -415,11 +447,11 @@ const u8 gPrism_Counts[] = {1, 85, 30, 4, 124, 54, 12, 166, 86};
 /// each strike, a pair for each variant (PLASMA_SPARKS, PLASMA_SHAKE_FRAMES).
 const u16 gPlasma_Sparks[] = {384, 2, 256, 3, 192, 4};
 
-/// The columns' x, seven for each side.
+/// The columns' x, in pixels, seven for each side.
 const u8 gPlasma_Columns[] = {32, 64, 16,  48, 72, 96, 64,
                               88, 56, 104, 72, 48, 24, 56};
 
-/// Plasma's counts, by variant.
+/// The lightning pillars, by variant.
 const u8 gPlasma_Counts[] = {1, 3, 7};
 
 /// Five halfwords for each variant: the sparks in each group, the groups, and
@@ -444,23 +476,24 @@ const u8 gVolcano_StartFrames[] = {8, 18, 24, 30, 34};
 /// The flips a glint may be drawn with, one picked at random.
 const u8 gTargetMotes_GlintFlips[] = {0, 4, 8, 12};
 
-/// Where each sprite of the charging Zagan sits, x and y.
+/// Where each sprite of the charging Zagan sits, x and y, in pixels.
 const u16 gZagan_ChargePoints[][2] = {{0, 0},   {0, 32},  {32, 0},  {32, 32},
                                       {32, 64}, {64, 0},  {64, 32}, {64, 64},
                                       {96, 0},  {96, 32}, {96, 64}};
 
-/// Where each sprite of the galloping Zagan sits, x and y.
+/// Where each sprite of the galloping Zagan sits, x and y, in pixels.
 const u16 gZagan_GallopPoints[][2] = {{0, 16},  {0, 48}, {32, 0},  {32, 32},
                                       {32, 64}, {64, 0}, {64, 32}, {64, 64},
                                       {64, 96}, {96, 0}, {96, 64}, {96, 96}};
 
-/// The frame each dust ring starts on.
+/// The frame each dust ring starts on, counted from the blow.
 const u8 gZagan_RingStarts[] = {0, 6, 8, 9};
 
-/// How fast each dust ring grows.
+/// How fast each dust ring grows: its scale gains this many times 2000/65536 a
+/// frame.
 const u8 gZagan_RingGrowth[] = {5, 8, 7, 3};
 
-/// Each dust ring's height.
+/// Each dust ring's height, in pixels.
 const s8 gZagan_RingHeights[] = {32, 12, -24, 0};
 
 /// One handler for each battle effect, by its kind less one; the kinds with
@@ -813,7 +846,9 @@ const u16 gCybele_FlowerPictures[] = {3456, 3712, 3856};
 /// Each flower's size, in pixels.
 const u8 gCybele_FlowerSizes[] = {16, 12, 8};
 
-/// Each chip picture's byte offset in Cybele's sprite sheet.
+/// The same five pictures as gCybele_ThornPictures and the two tables after it,
+/// as the falling chips read them: each one's byte offset in Cybele's sprite
+/// sheet.
 const u16 gCybele_ChipPictures[] = {3920, 3932, 3947, 3955, 3970};
 
 /// Each chip picture's width, in pixels.
@@ -828,20 +863,23 @@ const u16 gCybele_SparkPictures[] = {3979, 4043, 4268, 4389, 4470};
 /// Each spark's size, in pixels.
 const u8 gCybele_SparkSizes[] = {8, 15, 11, 9, 5};
 
-/// Each blast picture's byte offset in Cybele's sprite sheet.
+/// BlastSheet's seven pictures, decoded behind YellowRingSheet at
+/// CYBELE_BLAST_PICTURES: each one's byte offset from the start of Cybele's
+/// pictures.
 const u16 gCybele_BlastPictures[] = {5760,  6016,  7040, 9344,
                                      11648, 13952, 16256};
 
-/// Each blast's size, in pixels.
+/// Each blast picture's side, in pixels.
 const u16 gCybele_BlastSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
-/// Each crystal's point, x and y.
+/// Each crystal's point, x and y, in pixels.
 const u8 gBoreas_Points[][2] = {{57, 130}, {75, 128}, {71, 104}, {101, 130},
                                 {86, 126}, {85, 98},  {64, 98},  {98, 96},
                                 {77, 87},  {84, 88},  {68, 67},  {81, 49},
                                 {94, 70},  {70, 51},  {93, 36},  {81, 50}};
 
-/// Each shake's offset.
+/// The shake after the block lands, in pixels, one a frame: y moves by it and x
+/// by as much the other way.
 const s8 gBoreas_ShakeOffsets[] = {-4, -3, -2, 0};
 
 /// Each crystal picture's byte offset in Boreas's sprite sheet.
@@ -875,47 +913,54 @@ const u8 gBoreas_SprayHeights[] = {16, 16, 16};
 /// Each spray picture's byte offset in Boreas's sprite sheet.
 const u16 gBoreas_SprayPictures[] = {4294, 4550, 4806};
 
-/// Each rising crystal picture's byte offset in Boreas's sprite sheet.
+/// The same three ice block pictures as gBoreas_CrystalPictures and the two
+/// tables after it, as the rising crystals read them: each one's byte offset in
+/// Boreas's sprite sheet.
 const u16 gBoreas_RisingCrystalPictures[] = {0, 1152, 2064};
 
-/// Each rising crystal picture's width, in pixels.
+/// Each ice block picture's width, in pixels.
 const u8 gBoreas_RisingCrystalWidths[] = {24, 24, 20};
 
-/// Each rising crystal picture's height, in pixels.
+/// Each ice block picture's height, in pixels.
 const u8 gBoreas_RisingCrystalHeights[] = {48, 38, 26};
 
-/// Each fall picture's width, in pixels.
+/// The same three ice block pictures as gBoreas_CrystalPictures and the two
+/// tables after it, as the falling crystals read them: each one's width, in
+/// pixels.
 const u8 gBoreas_FallWidths[] = {24, 24, 20};
 
-/// Each fall picture's height, in pixels.
+/// Each ice block picture's height, in pixels.
 const u8 gBoreas_FallHeights[] = {48, 38, 26};
 
-/// Each fall picture's byte offset in Boreas's sprite sheet.
+/// Each ice block picture's byte offset in Boreas's sprite sheet.
 const u16 gBoreas_FallPictures[] = {0, 1152, 2064};
 
-/// The gravities Drain's motes fall with.
+/// The gravities Drain's motes fall with, in pixels a frame each frame.
 const s32 gDrain_Gravities[] = {toFIXED(0.25), toFIXED(0.125), toFIXED(0.25),
                                 toFIXED(0.5)};
 
-/// The mote's size, by mode.
+/// The mote's width, in pixels, by mode; it is drawn twice as tall.
 const u8 gDrainMotes_Sizes[] = {6, 6, 10};
 
 /// Each variant's timing: its frames, its rise and its shake.
 const u8 gQuake_Timings[][3] = {{80, 32, 2}, {112, 64, 4}, {144, 96, 8}};
 
-/// Fire's counts, by variant.
+/// Fire's embers, by variant; the effect lasts 132 frames and half this many
+/// more.
 const u8 gFire_Counts[] = {16, 32, 64};
 
-/// Each flare picture's width, in pixels.
+/// The ember streak's pictures again, as Fire's embers read them: the same as
+/// gBattleEffect_PuffArcPictureWidths and the three tables after it, Fire
+/// keeping its own copy among its tables. Each picture's width, in pixels.
 const u8 gFire_FlareWidths[] = {24, 29, 30, 27, 24, 16};
 
-/// Each flare picture's height, in pixels.
+/// Each ember streak picture's height, in pixels.
 const u8 gFire_FlareHeights[] = {23, 32, 37, 49, 53, 52};
 
-/// How far below its anchor each flare picture's top goes.
+/// How far below its anchor each ember streak picture's top goes, in pixels.
 const u8 gFire_FlareBiasY[] = {41, 32, 26, 11, 4, 2};
 
-/// Each flare picture's byte offset in Fire's sprite sheet.
+/// Each ember streak picture's byte offset in the sheet.
 const u16 gFire_FlarePictures[] = {0, 552, 1480, 2590, 3913, 5185};
 
 /// Where each frost mound rises, x and y.
@@ -928,13 +973,14 @@ const u8 gFrost_MoundSpots[] = {53, 108, 73, 110, 29, 110, 73, 108, 33, 104,
 /// FROST_TIMING_COLUMNS, FROST_TIMING_BURST_FRAME).
 const u8 gFrost_Timings[] = {32, 8, 85, 48, 12, 97, 64, 19, 109};
 
-/// Each mote picture's width, in pixels.
+/// IceChipSheet's eight chips, after its three mounds, as Frost's motes read
+/// them: each one's width, in pixels.
 const u8 gFrost_MoteWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
 
-/// Each mote picture's height, in pixels.
+/// Each ice chip picture's height, in pixels.
 const u8 gFrost_MoteHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
 
-/// Each mote picture's byte offset in Frost's sprite sheet.
+/// Each ice chip picture's byte offset in the sheet.
 const u16 gFrost_MoteCells[] = {1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
 
 /// Each mound picture's byte offset in Frost's sprite sheet.
@@ -943,13 +989,14 @@ const u16 gFrost_MoundPictures[] = {0, 768, 1280};
 /// Each mound picture's height, in pixels.
 const u8 gFrost_MoundHeights[] = {24, 16, 16};
 
-/// Each chip picture's width, in pixels.
+/// The same eight ice chip pictures as gFrost_MoteWidths and the two tables
+/// after it, as Frost's chips read them: each one's width, in pixels.
 const u8 gFrost_ChipWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
 
-/// Each chip picture's height, in pixels.
+/// Each ice chip picture's height, in pixels.
 const u8 gFrost_ChipHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
 
-/// Each ice chip picture's byte offset in Frost's sprite sheet.
+/// Each ice chip picture's byte offset in the sheet.
 const u16 gFrost_ChipCells[] = {1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
 
 /// Each variant's sparks: a byte nothing reads, then the sparks each bolt
@@ -959,10 +1006,11 @@ const u8 gRay_Sparks[][2] = {{2, 4}, {2, 6}, {4, 8}};
 /// Eruption's counts, by variant.
 const u8 gEruption_Counts[][3] = {{16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
 
-/// Each puff picture's byte offset in Eruption's sprite sheet.
+/// BlastSheet's seven pictures, an explosion flaring up and fading to smoke:
+/// each one's byte offset in the sheet.
 const u16 gEruption_PuffPictures[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 
-/// Each puff's size, in pixels.
+/// Each blast picture's side, in pixels; each is square.
 const u16 gEruption_PuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
 /// The flips a glint may be drawn with, one picked at random.
@@ -974,7 +1022,7 @@ const s32 gAtalanta_UnitScale[] = {toFIXED(1), toFIXED(1)};
 /// Each vine picture's width, in pixels.
 const u8 gGrowth_VineWidths[] = {21, 28, 19};
 
-/// The tallest a column grows, by column in threes.
+/// The tallest a column grows, in pixels, by column in threes.
 const u8 gGrowth_HeightLimits[] = {119, 119, 102};
 
 /// Each vine picture's byte offset in Growth's sprite sheet.
@@ -989,7 +1037,7 @@ const u16 gGrowth_PillarPictures[] = {0, 1080, 1888};
 /// The columns, by strength.
 const u8 gGrowth_ColumnCounts[] = {4, 8, 12};
 
-/// Each column's root, its x.
+/// Each column's root, its x in the canvas, in pixels.
 const u8 gGrowth_ColumnX[] = {64, 72,  56, 80, 48, 88, 40, 96,
                               32, 104, 24, 72, 56, 80, 48, 88};
 
@@ -1005,7 +1053,7 @@ const u8 gGrowth_PuffHeights[] = {10, 14, 21, 32, 45, 50, 32};
 /// Each dust puff picture's byte offset in Growth's sprite sheet.
 const u16 gGrowth_PuffPictures[] = {0, 50, 148, 379, 891, 1926, 3276};
 
-/// Each vine's x about the middle of the targets.
+/// Each vine's x about the middle of the targets, in pixels.
 const s8 gVine_ColumnOffsets[] = {0,   14, -32, 8,   32, -48, 4,   12,
                                   -24, 24, -12, -40, -4, -16, -32, 12};
 
@@ -1013,7 +1061,7 @@ const s8 gVine_ColumnOffsets[] = {0,   14, -32, 8,   32, -48, 4,   12,
 /// left.
 const u8 gThorn_Kinds[] = {0, 3, 2, 1, 2, 3, 2, 1};
 
-/// Each thorn's root, its x.
+/// Each thorn's root, its x in the canvas, in pixels.
 const s8 gThorn_X[] = {24, 80, 24, 48, 88, 40, 8, 96};
 
 /// The thorns, by strength.
@@ -1038,18 +1086,35 @@ const u8 gBolt_GlintFlips[] = {0, 4, 8, 12};
 /// How the glints are blended, by variant.
 const u8 gBolt_GlintModes[] = {1, 1, 0};
 
-/// How high each kind of comet flies.
+/// How tall each kind of comet is drawn above its point, in pixels.
 const u8 gProjectileVolley_CometHeights[] = {24, 36, 48};
 
-/// Each volley mode's record, five bytes.
+/// The projectile volley's modes, one row a mode (enum ProjectileVolleyMode),
+/// one byte a column (enum VolleyField in battle_effect_projectiles.c): the
+/// shots at each target, the frames a shot takes to reach it, the frames
+/// between shots and between targets, and the sparks each hit throws.
 const u8 gProjectileVolley_Modes[][5] = {
-    {6, 10, 3, 32, 4},  {4, 10, 5, 32, 8},   {10, 32, 3, 32, 4},
-    {5, 10, 5, 32, 4},  {10, 10, 1, 32, 4},  {1, 5, 0, 32, 80},
-    {7, 8, 2, 32, 40},  {30, 24, 1, 32, 4},  {6, 2, 3, 32, 4},
-    {60, 10, 1, 32, 4}, {60, 12, 1, 32, 4},  {10, 10, 1, 32, 4},
-    {7, 8, 2, 32, 40},  {20, 12, 1, 32, 40}, {30, 24, 2, 32, 8},
-    {30, 16, 1, 32, 8}, {30, 16, 1, 32, 8},  {30, 16, 1, 32, 8},
-    {60, 12, 1, 32, 4}};
+    // shots, flight, between shots, between targets, sparks
+    {6, 10, 3, 32, 4},   // Slash
+    {4, 10, 5, 32, 8},   // Shuriken
+    {10, 32, 3, 32, 4},  // Crazy Voice
+    {5, 10, 5, 32, 4},   // Wing Flutter
+    {10, 10, 1, 32, 4},  // Wing Beat
+    {1, 5, 0, 32, 80},   // Cutting Edge
+    {7, 8, 2, 32, 40},   // Heat Wave
+    {30, 24, 1, 32, 4},  // Sleet
+    {6, 2, 3, 32, 4},    // a casting impact's comets
+    {60, 10, 1, 32, 4},  // Blizzard
+    {60, 12, 1, 32, 4},  // Ice Blessing
+    {10, 10, 1, 32, 4},  // Wing Stroke
+    {7, 8, 2, 32, 40},   // Blaze Rush
+    {20, 12, 1, 32, 40}, // Hydro Slash
+    {30, 24, 2, 32, 8},  // Diamond Dust
+    {30, 16, 1, 32, 8},  // Beast Needle
+    {30, 16, 1, 32, 8},  // Poison Sting
+    {30, 16, 1, 32, 8},  // Stun Sting
+    {60, 12, 1, 32, 4},  // Chill Breath
+};
 
 /// Each flash picture's width, in pixels.
 const u8 gProjectileVolley_FlashWidths[] = {12, 18, 24, 30, 36, 39, 40};
@@ -1057,17 +1122,18 @@ const u8 gProjectileVolley_FlashWidths[] = {12, 18, 24, 30, 36, 39, 40};
 /// Each flash picture's height, in pixels.
 const u8 gProjectileVolley_FlashHeights[] = {10, 15, 18, 22, 27, 28, 30};
 
-/// How far each step of the flash spreads.
+/// How far each step of the flash spreads, in pixels.
 const u8 gProjectileVolley_FlashSteps[] = {2, 3, 4, 4, 5, 6, 6};
 
-/// How far each step of the flash rises.
+/// How far each step of the flash rises, in pixels.
 const u8 gProjectileVolley_FlashRises[] = {0, 3, 5, 7, 10, 12, 12, 0};
 
 /// Each flash picture's byte offset in Projectile Volley's sprite sheet.
 const u16 gProjectileVolley_FlashPictures[] = {8192, 8312,  8582, 9014,
                                                9674, 10646, 11738};
 
-/// Each pellet picture's byte offset in Projectile Volley's sprite sheet.
+/// The four small ice chip pictures, as gHail_Pictures gives them, the volley
+/// keeping its own copy: their byte offsets in the sheet.
 const u16 gProjectileVolley_PelletPictures[] = {2308, 2372, 2436, 2500};
 
 /// The glints' flips, one picked at random.
@@ -1076,14 +1142,16 @@ const u8 gProjectileVolley_GlintFlips[] = {0, 4, 8, 12};
 /// The frames the Djinni throws its five flames on.
 const u8 gDjinnAttacks_LaunchFrames[] = {4, 7, 10, 21, 34};
 
-/// Each Hail picture's width, in pixels.
+/// IceChipSheet's last four pictures, the small 8x8 ice chips, as Hail reads
+/// them: their widths, in pixels; the tables after it give their heights and
+/// offsets.
 const u8 gHail_PictureWidths[] = {8, 8, 8, 8};
 
-/// Each Hail picture's height, in pixels.
+/// Each ice chip picture's height, in pixels.
 const u8 gHail_PictureHeights[] = {8, 8, 8, 8};
 
-/// The ice chip's four pictures: their byte offsets; the tables after it give
-/// their widths and heights.
+/// Each ice chip picture's byte offset in the sheet, as gFrost_MoteCells' last
+/// four give them.
 const u16 gHail_Pictures[] = {2308, 2372, 2436, 2500};
 
 /// The chips' flips, a blitter's flags; the tables after it give, by shape,
@@ -1112,17 +1180,17 @@ const u8 gThor_TargetPalettes[] = {7, 14, 10, 4};
 /// The flips a crackle may be drawn with, one picked at random.
 const u8 gThor_CrackleFlips[] = {0, 4, 8, 12};
 
-/// Each shard's place in the boulder, x and y.
+/// Each shard's place in the boulder, x and y, in pixels.
 const u8 gSpire_ShardOffsets[] = {
     65, 104, 68, 95, 64, 93, 61, 93, 64, 87, 72, 85, 56, 88, 51, 80,
     61, 75,  72, 81, 69, 71, 66, 70, 71, 64, 49, 71, 59, 69, 53, 68,
     78, 73,  55, 67, 75, 62, 61, 65, 53, 61, 0,  0,  0,  0,  0,  0,
     0,  0,   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0};
 
-/// Each boulder's x.
+/// Each boulder's x about the middle of the canvas, in pixels.
 const s8 gSpire_RockX[] = {0, -12, 12, -8, 16};
 
-/// The drop frames.
+/// The frame each boulder is dropped on; it lands SPIRE_FALL_FRAMES later.
 const u8 gSpire_DropFrames[] = {8, 16, 20, 24, 32};
 
 /// The boulders, by variant.
@@ -1146,22 +1214,24 @@ const u8 gFlurry_GlintFlips[] = {0, 4, 8, 12, 0};
 const u16 gGaia_RowPictures[] = {0,    160,  352,  640, 1024,
                                  1504, 2080, 2752, 3776};
 
-/// The growing wall's nine rows: their widths.
+/// The growing wall's nine rows: their widths, in pixels.
 const u8 gGaia_RowWidths[] = {5, 6, 9, 12, 15, 18, 21, 32, 40};
 
-/// Each flame picture's byte offset in Gaia's sprite sheet.
+/// The flame, EarthWallSheet's three half walls of flame as
+/// gDjinnBeams_HeadPictures has them: their byte offsets where Gaia decodes the
+/// sheet.
 const u16 gGaia_FlamePictures[] = {10672, 11505, 12550};
 
-/// The flame's three pictures: their widths.
+/// The flame's three pictures: their widths, in pixels.
 const u8 gGaia_FlameWidths[] = {17, 19, 20};
 
-/// Each flame picture's height, in pixels.
+/// The flame's three pictures: their heights, in pixels.
 const u8 gGaia_FlameHeights[] = {49, 55, 64};
 
-/// The wall layer's shift, by side and variant.
+/// The wall layer's shift, in pixels, by side and variant.
 const s8 gGaia_Bg2Shifts[][3] = {{-8, 0, 12}, {-72, -40, -16}};
 
-/// The x of each rock that falls late.
+/// The x of each rock that falls late, in pixels.
 const u8 gGaia_LateRockColumns[] = {136, 40, 120, 56, 104, 72};
 
 /// Each sprite's x, in pixels.
@@ -1202,10 +1272,10 @@ const u16 gSwirlSwipe_Pictures[] = {0, 2240, 11200, 18368, 0, 7040};
 /// Each picture's x, in pixels.
 const u8 gSwirlSwipe_PictureX[] = {72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0};
 
-/// How far below its anchor each picture's top goes.
+/// How far below its anchor each picture's top goes, in pixels.
 const s8 gSwirlSwipe_PictureBiasY[] = {0, 4, 24, -6, -20, -28};
 
-/// Each part's point, x and y.
+/// Each part's point, x and y, in pixels.
 const u8 gAzul_PartPoints[][2] = {
     {23, 13},   {0, 0},     {42, 0},    {28, 41},   {28, 41},   {48, 28},
     {42, 0},    {78, 31},   {28, 41},   {28, 41},   {66, 7},    {42, 0},
@@ -1252,17 +1322,17 @@ const s8 gAzul_LateObjectX[] = {0, 32, 32, 64, 96, 50, 51, 82};
 /// Each late sprite's depth, in pixels.
 const s8 gAzul_LateObjectZ[] = {10, 0, 32, 45, 45, 5, 36, 5};
 
-/// Each Beam picture's width, in pixels.
+/// The same six slash pictures as gTargetStrike_Widths and the tables after it,
+/// where the beam decodes BeamImage: each one's width, in pixels.
 const u8 gBeam_PictureWidths[] = {38, 54, 71, 74, 77, 65};
 
-/// Each Beam picture's height, in pixels.
+/// Each slash picture's height, in pixels.
 const u8 gBeam_PictureHeights[] = {7, 9, 11, 13, 13, 11};
 
-/// The strike's six pictures: their byte offsets; the tables after it give
-/// their reach, widths and heights.
+/// Each slash picture's byte offset in the beam's pictures.
 const u16 gBeam_Pictures[] = {0, 266, 752, 1533, 2495, 3496};
 
-/// How far each strike picture reaches past its middle, in pixels.
+/// How far each slash picture reaches past its middle, in pixels.
 const u8 gBeam_PictureReaches[] = {58, 42, 25, 13, 5, 0};
 
 /// The flips a glint may be drawn with, one picked at random.
@@ -1321,72 +1391,81 @@ const u8 gCastingImpact_ApocalypseBurstWidths[] = {26, 35, 52};
 /// Each Apocalypse burst picture's height, in pixels.
 const u8 gCastingImpact_ApocalypseBurstHeights[] = {26, 36, 48};
 
-/// Each Apocalypse burst's point, x and y.
+/// Each Apocalypse burst's point, x and y, in pixels.
 const u8 gCastingImpact_ApocalypseBurstPoints[][2] = {
     {37, 104}, {19, 81}, {20, 47}};
 
-/// Each ice chip picture's byte offset in the casting impacts' sprite sheet.
+/// The four small ice chip pictures, as gHail_Pictures gives them, the casting
+/// impacts keeping their own copy: their byte offsets in the sheet.
 const u16 gCastingImpact_IceChipPictures[] = {2308, 2372, 2436, 2500};
 
 /// The flips a glint may be drawn with, one picked at random.
 const u8 gCastingImpact_StunBoltGlintFlips[] = {0, 4, 8, 12};
 
-/// The frame each Stun Jip band starts on.
+/// The frame each Stun Jip band starts on, counted from the impact's fourth
+/// frame.
 const u8 gCastingImpact_StunJipBandStarts[] = {0, 2, 9, 10};
 
-/// How fast each Stun Jip band grows.
+/// How fast each Stun Jip band grows: its scale gains this many times
+/// 1500/65536 a frame.
 const u8 gCastingImpact_StunJipBandGrowth[] = {5, 8, 10, 8};
 
-/// Each Stun Jip band's height.
+/// Each Stun Jip band's height, in pixels.
 const s8 gCastingImpact_StunJipBandHeights[] = {32, 16, 24, 32};
 
-/// The frame each Armor Crush wave starts on.
+/// The frame each Armor Crush wave starts on, counted from the impact's fourth
+/// frame.
 const u8 gCastingImpact_ArmorCrushWaveStarts[] = {0, 4, 9, 10};
 
-/// How fast each Armor Crush wave grows.
+/// How fast each Armor Crush wave grows: its scale gains this many times
+/// 2000/65536 a frame, from a quarter.
 const u8 gCastingImpact_ArmorCrushWaveGrowth[] = {3, 4, 3, 5};
 
-/// How far each Armor Crush wave is stretched.
+/// How much taller than wide each Armor Crush wave is drawn, multiplying its
+/// scale.
 const u8 gCastingImpact_ArmorCrushWaveStretch[] = {3, 4, 5, 6};
 
-/// The water columns' feet, x and y.
+/// The water columns' feet, x and y, in pixels: gNereid_Columns' pairs and a
+/// pair of zeros, the particle streams keeping their own copy; the first three
+/// are read.
 const u8 gNereidCopy_Columns[] = {16, 104, 32, 104, 48, 104, 64, 104, 0, 0};
 
-/// Each falling spark's gravity.
+/// Each falling spark's gravity, in pixels a frame each frame; the same as
+/// gNereid_Gravity, the particle streams keeping their own copy.
 const s32 gNereidCopy_Gravity[] = {toFIXED(0.5), toFIXED(0.25), toFIXED(0.25),
                                    toFIXED(0.125)};
 
-/// The twelve-sprite formation: each sprite's x.
+/// The twelve-sprite formation: each sprite's x, in pixels.
 const u8 gSummonFormation_NereidX[] = {52, 25,  57, 89, 7,  39,
                                        71, 103, 21, 53, 85, 117};
 
-/// The twelve-sprite formation: each sprite's depth.
+/// The twelve-sprite formation: each sprite's depth, in pixels.
 const u8 gSummonFormation_NereidZ[] = {0,  32, 32, 32, 64, 64,
                                        64, 64, 96, 96, 96, 96};
 
-/// The eight-sprite formation facing right: each sprite's x.
+/// The eight-sprite formation facing right: each sprite's x, in pixels.
 const u8 gSummonFormation_CybeleX[] = {0, 32, 64, 16, 48, 0, 32, 64};
 
-/// The eight-sprite formation facing right: each sprite's depth.
+/// The eight-sprite formation facing right: each sprite's depth, in pixels.
 const u8 gSummonFormation_CybeleZ[] = {0, 0, 0, 32, 32, 64, 64, 64};
 
-/// Each formation sprite's x.
+/// The other eight-sprite formation: each sprite's x, in pixels.
 const u8 gSummonFormation_TiamatAlternateX[] = {0, 32, 64, 0, 32, 64, 32, 64};
 
-/// Each formation sprite's depth.
+/// The other eight-sprite formation: each sprite's depth, in pixels.
 const u8 gSummonFormation_TiamatAlternateZ[] = {10, 0, 0, 42, 32, 32, 64, 64};
 
-/// The small eight-sprite formation: each sprite's x.
+/// The small eight-sprite formation: each sprite's x, in pixels.
 const u8 gSummonFormation_TiamatX[] = {0, 40, 80, 0, 40, 80, 40, 80};
 
-/// The small eight-sprite formation: each sprite's depth.
+/// The small eight-sprite formation: each sprite's depth, in pixels.
 const u8 gSummonFormation_TiamatZ[] = {13, 0, 0, 53, 40, 40, 80, 80};
 
-/// The wide formation: each sprite's x.
+/// The wide formation: each sprite's x, in pixels.
 const s8 gSummonFormation_MegaeraX[] = {16,  48, 80, 16, 48, 80,
                                         -16, 16, 48, 80, 42};
 
-/// The wide formation: each sprite's depth.
+/// The wide formation: each sprite's depth, in pixels.
 const u8 gSummonFormation_MegaeraZ[] = {0,  0,  0,  32, 32, 32,
                                         50, 64, 64, 64, 96};
 
@@ -1405,30 +1484,33 @@ const s16 gStarfieldFall_OrbitPoints[][3] = {
     {-64, -96, 24}, {-48, -120, 32}, {-32, -80, -48}, {-16, -72, -24},
     {16, -80, 16},  {32, -112, -32}, {48, -96, 56}};
 
-/// Each fireball's point, x and y.
+/// Each fireball's point, x and y, in pixels.
 const s16 gStarfieldFall_FireballPoints[][2] = {
     {32, 32}, {48, 96}, {80, 80}, {112, 100}, {176, 80}, {196, 64}, {204, 96}};
 
-/// Each flash picture's byte offset in Particle Streams's sprite sheet.
+/// BlastSheet's seven pictures, as gEruption_PuffPictures gives them, the
+/// particle streams keeping their own copy: each one's byte offset in the
+/// sheet.
 const u16 gStarfieldFall_FlashPictures[] = {0,    256,  1280, 3584,
                                             5888, 8192, 10496};
 
-/// Each flash's size, in pixels.
+/// Each blast picture's side, in pixels.
 const u16 gStarfieldFall_FlashSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
-/// Each of the statue's sprites: its x in the statue.
+/// Each of the statue's sprites: its x in the statue, in pixels.
 const u8 gRamses_StatueColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
 
-/// Each of the statue's sprites: its y in the statue.
+/// Each of the statue's sprites: its y in the statue, in pixels.
 const u8 gRamses_StatueRows[] = {0, 0, 32, 32, 64, 64, 64, 32, 32};
 
-/// Each puff picture's byte offset in Ramses's sprite sheet.
+/// BlastSheet's seven pictures, as gEruption_PuffPictures gives them, Ramses
+/// keeping its own copy: each one's byte offset in the sheet.
 const u16 gRamses_PuffPictures[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 
-/// Each puff's size, in pixels.
+/// Each blast picture's side, in pixels.
 const u16 gRamses_PuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
-/// The strike columns' x, three for each side.
+/// The strike columns' x, in pixels, three for each side.
 const u8 gRagnarok_StrikeColumns[] = {32, 24, 0, 96, 104, 128};
 
 /// The flash burst's picture for each three frames of a flash, by number.
@@ -1437,7 +1519,7 @@ const u8 gRagnarok_FlashPictures[] = {5, 5, 4, 3, 2, 1};
 /// The flash burst's picture for each three frames of a flash, by number.
 const u8 gTitanBlade_FlashPictures[] = {5, 5, 4, 3, 2, 1};
 
-/// The dust's four gravities.
+/// The dust's four gravities, in pixels a frame each frame.
 const s32 gTitanBlade_DustGravity[] = {toFIXED(0.5), toFIXED(0.25),
                                        toFIXED(0.25), toFIXED(0.125)};
 
@@ -1454,20 +1536,21 @@ const u8 gJudgment_ShardWidths[] = {19, 23, 23, 19, 16, 17};
 /// Each shard picture's height, in pixels.
 const u8 gJudgment_ShardHeights[] = {31, 31, 31, 21, 21, 24};
 
-/// The row's x offsets.
+/// Each of Kirin's sprites: its x, in pixels.
 const u8 gKirin_Columns[] = {8, 40, 72, 104, 8, 40, 72, 104, 0};
 
-/// The row's heights.
+/// Each of Kirin's sprites: its y, in pixels.
 const u8 gKirin_Rows[] = {0, 0, 0, 24, 32, 32, 32, 56, 64};
 
-/// The spray's four gravities.
+/// The spray's four gravities, in pixels a frame each frame.
 const s32 gNeptune_Gravity[] = {toFIXED(0.5), toFIXED(0.25), toFIXED(0.25),
                                 toFIXED(0.125)};
 
-/// Each spark picture's byte offset in Undead Sword's sprite sheet.
+/// BlastSheet's seven pictures, as gEruption_PuffPictures gives them, Undead
+/// Sword keeping its own copy: each one's byte offset in the sheet.
 const u16 gUndeadSword_PuffPictures[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 
-/// Each spark picture's size, in pixels; the six words after the seventh are
+/// Each blast picture's side, in pixels; the six words after the seventh are
 /// never read.
 const u16 gUndeadSword_PuffSizes[] = {16,   32,   48,   48,  48,   48,  48,
                                       1536, 2312, 2053, 775, 8224, 8224};
@@ -1475,13 +1558,14 @@ const u16 gUndeadSword_PuffSizes[] = {16,   32,   48,   48,  48,   48,  48,
 /// The funnels, by mode.
 const u8 gWindFunnel_Counts[] = {3, 3};
 
-/// The frame each ripple starts on.
+/// The frame each ripple starts on, counted from the sixth.
 const u8 gDiamondBerg_RingStarts[4] = {0, 2, 4, 5};
 
-/// How fast each ripple grows.
+/// How fast each ripple grows: its scale gains this many times
+/// DIAMOND_BERG_RIPPLE_GROWTH a frame.
 const u8 gDiamondBerg_RingGrowth[4] = {6, 7, 6, 8};
 
-/// Each ripple's height.
+/// Each ripple's height, in pixels.
 const s8 gDiamondBerg_RingHeights[4] = {32, 16, -8, -24};
 
 /// Each flash's roll.
@@ -1494,35 +1578,38 @@ const s16 gDiamondBerg_ShardPitches[8] = {
     -DEGtoANG(11.25), -DEGtoANG(11.25), -DEGtoANG(11.25), -DEGtoANG(11.25),
     -DEGtoANG(11.25), -DEGtoANG(11.25), -DEGtoANG(11.25), -DEGtoANG(11.25)};
 
-/// The frame each ring starts on.
+/// The frame each wave starts on, counted from the crash.
 const u8 gGeode_WaveStarts[] = {0, 6, 8, 9};
 
-/// How fast each wave grows.
+/// How fast each wave grows: its scale gains this many times 2000/65536 a
+/// frame, from a half.
 const u8 gGeode_WaveGrowth[] = {5, 8, 7, 3};
 
-/// Each wave's height.
+/// Each wave's height, in pixels.
 const s8 gGeode_WaveHeights[] = {32, 32, 32, 32};
 
-/// The spark picture for each stage.
+/// BlastSheet's seven pictures, as gEruption_PuffPictures gives them, Soul
+/// Shatter keeping its own copy: each one's byte offset in the sheet.
 const u16 gSoulShatter_SparkPictures[] = {0,    256,  1280, 3584,
                                           5888, 8192, 10496};
 
-/// Each spark's size, in pixels.
+/// Each blast picture's side, in pixels.
 const u16 gSoulShatter_SparkSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
-/// The heights of the cone's rings.
+/// The heights of the cone's rings, in pixels, the tip first.
 const s8 gSerac_RowHeights[] = {-96, -88, -72, -64, -48, -32, -8, 0};
 
-/// The radii of the cone's rings.
+/// The radii of the cone's rings, in pixels.
 const s8 gSerac_RowRadii[] = {1, 6, 10, 12, 16, 24, 30, 32};
 
 /// Each ripple's delay, in frames.
 const u8 gSerac_RingStarts[] = {6, 8, 10, 11};
 
-/// How fast each ripple grows.
+/// How fast each ripple grows: its scale gains this many times
+/// SERAC_RING_GROWTH a frame.
 const u8 gSerac_RingGrowth[] = {8, 7, 6, 3};
 
-/// Each ripple's height.
+/// Each ripple's height, in pixels.
 const s8 gSerac_RingHeights[] = {16, 32, 56, 72};
 
 /// The frame of the strike, by mode.
@@ -1541,19 +1628,20 @@ const s16 gCool_ColumnX[] = {92, 72, 32, 48, 88, 56, 80, 88, -8, 132};
 /// The frame each column starts on.
 const u8 gCool_ColumnStarts[] = {0, 4, 7, 10, 13, 16, 20, 23, 25, 27};
 
-/// Each column's height.
+/// Each column's full height, in pixels.
 const u8 gCool_ColumnHeights[] = {64, 64, 48, 64, 64, 56, 62, 64, 46, 52};
 
 /// Each column's lean.
 const u8 gCool_ColumnLeans[] = {0, 3, 1, 2, 3, 0, 1, 2, 1, 0};
 
-/// The spark picture for each stage.
+/// BlastSheet's seven pictures, as gEruption_PuffPictures gives them, Cool
+/// keeping its own copy: each one's byte offset in the sheet.
 const u16 gCool_SparkPictures[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 
-/// Each spark's size, in pixels.
+/// Each blast picture's side, in pixels.
 const u16 gCool_SparkSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
-/// The drops' bounce speeds.
+/// The drops' sideways speeds as they bounce, in eighths of a pixel a frame.
 const s8 gWyrdCurse_DropBounces[] = {-12, 4, -8, 14};
 
 /// The flips a glint may be drawn with, one picked at random.
@@ -1568,16 +1656,16 @@ const u8 gMegaera_GlintModes[] = {1, 1, 0, 0};
 /// Each pillar's full scale, in 65536ths, which its growth multiplies.
 const s32 gLightSurge_RingSizes[4] = {18000, 12000, 30000, 40000};
 
-/// Each pillar's shade.
+/// Each pillar's shade, before it dims.
 const s8 gLightSurge_RingShades[4] = {-2, -8, -4, 0};
 
-/// Each pillar's offset.
+/// How far each pillar sways, in pixels at the sway's widest.
 const s8 gLightSurge_RingSways[4] = {-24, -8, 24, 48};
 
 /// Each mode's flags for the Djinni's entrance.
 const u8 gDjinniCharge_EntranceFlags[] = {2, 10, 0, 0};
 
-/// The debris's gravities.
+/// The debris's gravities, in pixels a frame each frame: negative, so it rises.
 const s32 gDjinniCharge_DebrisGravity[4] = {-toFIXED(1) / 8, -toFIXED(1) / 16,
                                             -toFIXED(1) / 32, -toFIXED(1) / 64};
 
@@ -1592,7 +1680,7 @@ const u16 gGaspFamily_StreakMesh[] = {MESH_FACE(1, 3, 2, 31, 0, 31, 31, 0, 31),
 /// Gasp Family's counts, by variant.
 const u8 gGaspFamily_Counts[] = {32, 64, 255};
 
-/// The flash frames.
+/// The frames the backdrop flashes on.
 const u8 gCharon_FlashFrames[] = {16, 60, 108, 0, 0};
 
 /// A band of sixteen corners: an octagon below and one above.
@@ -1850,14 +1938,16 @@ const u8 gFlora_PetalSizes[] = {4, 8, 16, 24, 0};
 /// Each petal picture's byte offset in Flora's sprite sheet.
 const u16 gFlora_PetalPictures[] = {0, 32, 160, 672};
 
-/// The bloom frames.
+/// The frame each ring of light starts on.
 const u16 gFlora_BloomFrames[] = {114, 117, 120, 250};
 
-/// Each bloom's roll.
-const s16 gFlora_BloomRolls[] = {0, 24576, -28576, 11008};
+/// Each ring of light's roll; the third, off the 256ths of a turn the others
+/// keep, is in 65,536ths.
+const s16 gFlora_BloomRolls[] = {0, DEGtoANG(135), -28576, DEGtoANG(60.46875)};
 
-/// Each bloom's pitch.
-const s16 gFlora_BloomPitches[] = {16384, 4096, 2096, -7168};
+/// Each ring of light's pitch; the third is in 65,536ths of a turn.
+const s16 gFlora_BloomPitches[] = {DEGtoANG(90), DEGtoANG(22.5), 2096,
+                                   -DEGtoANG(39.375)};
 
 /// Each bloom's x, in pixels.
 const s8 gFlora_BloomX[] = {16, 16, 16, -16};
@@ -1880,21 +1970,29 @@ const u16 gFume_Levels[][FUME_COLUMNS] = {{16384, 16, 24, 96, 8, 4096},
                                           {24576, 16, 48, 192, 16, 8192},
                                           {40768, 32, 38, 256, 32, 16384}};
 
-/// The early drops' gravities.
+/// The early drops' gravities, in pixels a frame each frame: negative, so they
+/// rise.
 const s32 gOceanFist_DropGravity[4] = {-toFIXED(1) / 8, -toFIXED(1) / 4,
                                        -toFIXED(1) / 4, -toFIXED(1) / 2};
 
-/// The streak's scale, 16.16, by mode.
-const s32 gRushingStrike_Scales[] = {toFIXED(0.5), toFIXED(0.5), toFIXED(0.5),
-                                     toFIXED(0.5), 55536,        52768};
+/// The size of the burst at the user, by mode (enum RushingStrikeMode): it is
+/// drawn twice this wide and tall. Stun Muscle's and Living Armor's are the
+/// largest.
+const s32 gRushingStrike_Scales[] = {toFIXED(0.5),     toFIXED(0.5),
+                                     toFIXED(0.5),     toFIXED(0.5),
+                                     toFIXED(0.84742), toFIXED(0.80518)};
 
-/// By mode: the quad's scale (16.16, doubled when used) and a second word.
-const s32 gMirroredWall_Scales[] = {39768, 44152, 44152, 55536};
+/// The wall's size, by mode (enum MirroredWallMode): it is drawn at twice
+/// this, Spasm's the smallest, Berserk's and Recovery's a ninth larger, and
+/// Sack's two fifths larger.
+const s32 gMirroredWall_Scales[] = {toFIXED(0.60682), toFIXED(0.67371),
+                                    toFIXED(0.67371), toFIXED(0.84742)};
 
-/// Each burst's shade.
+/// The wall's shade, by mode.
 const s32 gMirroredWall_Shades[] = {-8, -8, -8, 0};
 
-/// Each shake's offset.
+/// The shake, in pixels, one a frame of state->shakeFrames: what it moves rises
+/// by it.
 const s8 gDaedalus_ShakeOffsets[] = {0,  -1, 1,  -1, 0,  2,  1,  0,
                                      -1, -1, -2, -2, -3, -3, -4, -4,
                                      -4, -3, -3, -3, -2, -2, -1, -1};
@@ -1902,21 +2000,22 @@ const s8 gDaedalus_ShakeOffsets[] = {0,  -1, 1,  -1, 0,  2,  1,  0,
 /// A bird's picture for each four frames of its wing beat, by number.
 const u8 gDaedalus_WingBeatPictures[] = {0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1};
 
-/// The frame each drift starts on.
+/// Where each bird starts, x and y in the canvas, in pixels.
 const u8 gDaedalus_BirdStarts[][2] = {
     {112, 128}, {128, 112}, {112, 128}, {128, 112}, {128, 112},
     {112, 112}, {180, 120}, {140, 120}, {140, 120}, {136, 120}};
 
-/// Each drift's speed.
+/// Each bird's speed, x and y, in 65,536ths of a pixel a frame: up and to the
+/// left.
 const s32 gDaedalus_BirdSpeeds[][2] = {
     {-120000, -70000}, {-117000, -68000}, {-120000, -70000}, {-117000, -68000},
     {-80000, -80000},  {-80000, -95000},  {-100000, -80000}, {-100000, -90000},
     {-120000, -95000}, {-100000, -95000}};
 
-/// The drift frames.
+/// The frame each bird appears on.
 const u8 gDaedalus_BirdFrames[] = {16, 16, 40, 40, 40, 68, 40, 72, 72, 96};
 
-/// The clatter frames.
+/// The frames the machine clatters on.
 const u16 gDaedalus_ClatterFrames[] = {16, 115, 243, 371, 499};
 
 /// The frame each ring starts on.
@@ -1925,11 +2024,11 @@ const u16 gDaedalus_RingStarts[] = {568, 5};
 /// Each ring's x, in pixels.
 const s8 gDaedalus_RingX[] = {66, 64};
 
-/// Each sprite's point, x and y.
+/// Each sprite of the right leg: its point, x and y, in pixels.
 const u8 gDaedalus_RightLegPoints[][2] = {
     {0, 0}, {32, 0}, {0, 32}, {32, 32}, {32, 64}};
 
-/// Each splash's point, x and y.
+/// Each splash's point, x and y, in pixels.
 const u8 gDaedalus_SplashPoints[][6][2] = {
     {{60, 64}, {58, 72}, {56, 80}, {54, 88}, {54, 96}, {56, 104}},
     {{78, 56}, {78, 64}, {80, 72}, {82, 80}, {84, 88}, {84, 96}},
@@ -1940,7 +2039,7 @@ const u8 gDaedalus_SplashPoints[][6][2] = {
 const u16 gDaedalus_DiveStarts[] = {0,  24, 8,  52, 16, 40, 36, 28,
                                     32, 4,  20, 56, 60, 12, 44, 48};
 
-/// The seven strike frames.
+/// The frames of the seven strikes.
 const u8 gDaedalusStrike_HitFrames[] = {80, 84, 86, 88, 90, 92, 94};
 
 /// By level: which of the seven arrows strike.
@@ -1995,7 +2094,7 @@ const u16 gCoatlicue_Pictures[] = {0,    512,  962,  1354, 1692,
                                    1980, 2222, 2422, 2584, 2712,
                                    2810, 2882, 2932, 2964, 2988};
 
-/// The burst frames.
+/// The frame each burst of bubbles starts on.
 const u16 gCoatlicue_BurstFrames[] = {0, 0, 10, 78, 82, 112, 250, 254, 284};
 
 /// Each burst's x, in pixels.
@@ -2004,53 +2103,53 @@ const u8 gCoatlicue_BurstX[] = {32, 64, 80, 32, 16, 88, 32, 16, 88};
 /// Each burst's y, in pixels.
 const u8 gCoatlicue_BurstY[] = {80, 96, 120, 120, 120, 120, 120, 120, 120};
 
-/// Each burst's spread in x.
+/// How widely each burst scatters in x, in pixels.
 const u8 gCoatlicue_BurstSpreadX[] = {32, 8, 32, 8, 16, 16, 8, 16, 16};
 
-/// Each burst's spacing in y.
+/// How far apart each burst's bubbles start in y, in pixels.
 const u8 gCoatlicue_BurstSpacingY[] = {16, 8, 16, 8, 12, 12, 8, 12, 12};
 
-/// Each burst's speed in x.
+/// Each burst's speed in x, in 16ths of a pixel a frame.
 const s8 gCoatlicue_BurstVelocityX[] = {-24, 4, 20, 0, -2, 2, 0, -2, 2};
 
-/// Each burst's speed in y.
+/// Each burst's speed in y, in 16ths of a pixel a frame.
 const s8 gCoatlicue_BurstVelocityY[] = {-64, -32, -64, -16, -32,
                                         -32, -16, -32, -32};
 
 /// Each burst's depth, in pixels.
 const s8 gCoatlicue_BurstZ[] = {1, 0, 4, -2, 1, 0, -2, 1, 0};
 
-/// Each burst's speed in depth.
+/// Each burst's speed in depth, in 64ths of a pixel a frame.
 const s8 gCoatlicue_BurstVelocityZ[] = {16, 1, 12, 0, 0, 0, 0, 0, 0};
 
 /// The smallest bubble picture for each kind of bubble.
 const u8 gCoatlicue_PictureBias[] = {3, 5, 7, 9};
 
-/// The ring frames.
+/// The frame each flash of the fire ring starts on.
 const u16 gCoatlicue_RingFrames[] = {81, 209, 518, 540};
 
-/// The flash frames.
+/// The frames the screen flashes on.
 const u16 gCoatlicue_FlashFrames[] = {498, 503, 508};
 
-/// The glow frames.
+/// The frame the cog's glow starts on.
 const u16 gCoatlicue_GlowFrames[] = {518};
 
-/// The frame each coil starts on.
+/// The frame each coil starts to grow on.
 const u8 gCoatlicue_CoilStarts[] = {0, 82};
 
-/// Each ring's first scale.
+/// Each coil's first scale, in 65,536ths.
 const u16 gCoatlicue_CoilScales[] = {4096, 18384};
 
-/// Each coil's roll.
-const u16 gCoatlicue_CoilRolls[] = {8192, 40960};
+/// Each coil's roll as it starts; it turns a 256th of a turn a frame.
+const u16 gCoatlicue_CoilRolls[] = {DEGtoANG(45), DEGtoANG(225)};
 
-/// How fast each coil grows.
+/// How fast each coil grows, in 65,536ths of its scale a frame.
 const u16 gCoatlicue_CoilGrowth[] = {256, 572};
 
-/// Each ring's largest scale.
+/// Each coil's largest scale, in 65,536ths.
 const u16 gCoatlicue_CoilMaxScales[] = {44160, 52720};
 
-/// The flash frames.
+/// The frame each flash of the first act starts on.
 const u16 gCatastrophe_FlashFrames[] = {4,   26,  30,  34,  104, 112,
                                         116, 120, 150, 154, 202, 214,
                                         244, 278, 400, 402, 404, 420};
@@ -2059,52 +2158,52 @@ const u16 gCatastrophe_FlashFrames[] = {4,   26,  30,  34,  104, 112,
 const u16 gCatastrophe_FlashLengths[] = {8,  2, 2, 16, 2,  2, 2, 10, 2,
                                          16, 4, 8, 10, 12, 2, 2, 10, 4};
 
-/// Each of the demon's sprites: its x.
+/// Each of the demon's sprites: its x, in pixels.
 const u8 gCatastrophe_DemonX[] = {0,   32,  64, 96, 32,  64,  96, 128, 64, 96,
                                   128, 160, 32, 64, 96,  128, 25, 57,  89, 121,
                                   153, 32,  64, 96, 128, 160, 48, 96};
 
-/// Each of the demon's sprites: its depth.
+/// Each of the demon's sprites: its depth, in pixels.
 const u8 gCatastrophe_DemonZ[] = {
     0,  0,  0,   0,   32,  32,  32,  32,  64,  64,  64,  64,  96,  96,
     96, 96, 128, 128, 128, 128, 128, 160, 160, 160, 160, 160, 192, 192};
 
-/// Each of the armour's sprites: its x.
+/// Each of the armour's sprites: its x, in pixels.
 const u8 gCatastrophe_ArmourX[] = {16, 0, 32, 0, 32, 16, 16, 16, 16, 16, 16, 0};
 
-/// Each of the armour's sprites: its depth.
+/// Each of the armour's sprites: its depth, in pixels.
 const u16 gCatastrophe_ArmourZ[] = {0,   32,  32,  64,  64, 96,
                                     128, 160, 192, 224, 256};
 
-/// Each of the mirrored demon's sprites: its x.
+/// Each of the mirrored demon's sprites: its x, in pixels.
 const u8 gCatastrophe_MirroredDemonX[] = {224, 192, 160, 128, 192, 160};
 
-/// Each of the mirrored demon's sprites: its depth.
+/// Each of the mirrored demon's sprites: its depth, in pixels.
 const u8 gCatastrophe_MirroredDemonZ[] = {0, 0, 0, 0, 32, 32};
 
-/// The frame each burst starts on.
+/// The frame each fork of lightning strikes on.
 const u16 gCatastrophe_ForkStarts[] = {26, 104, 116, 216, 278, 402, 416};
 
-/// Each burst's x, in pixels.
+/// Each fork's x, in pixels.
 const u8 gCatastrophe_ForkX[] = {16, 96, 20, 40, 50, 10, 96};
 
-/// Each burst's y, in pixels.
+/// Each fork's y, in pixels.
 const u8 gCatastrophe_ForkY[] = {64, 80, 30, 40, 80, 60, 20};
 
 /// Each fork's picture of lightning, by number.
 const u8 gCatastrophe_ForkPictures[] = {0, 1, 0, 1, 0, 0, 1, 0};
 
-/// The canvas flash frames.
+/// The frames the canvas flashes on.
 const u16 gCatastrophe_CanvasFlashFrames[] = {246, 249, 254, 258, 260, 264,
                                               266, 269, 272, 275, 278, 280,
                                               282, 284, 287, 290, 292};
 
-/// Each strike's x, in pixels.
+/// Each step's x, in pixels, a row of twelve for each strike.
 const u8 gCatastrophe_StrikeX[] = {
     71, 71, 71, 70, 70, 70, 70, 70, 70, 69, 69, 0,  67, 67, 67, 70, 67, 68,
     70, 69, 70, 69, 67, 0,  69, 69, 69, 68, 67, 68, 70, 69, 69, 69, 0,  0};
 
-/// Each strike's y, in pixels.
+/// Each step's y, in pixels, a row of twelve for each strike.
 const u8 gCatastrophe_StrikeY[] = {92,  92,  92,  120, 120, 120, 154, 154, 154,
                                    220, 200, 0,   100, 100, 100, 120, 120, 154,
                                    154, 154, 154, 220, 240, 0,   120, 100, 100,
@@ -2117,23 +2216,24 @@ const u16 gCatastrophe_StrikeFrames[] = {
     504, 518, 526, 546, 548, 554, 562, 564, 570, 590, 594, 596,   65535,
     510, 524, 544, 546, 548, 558, 560, 580, 582, 596, 616, 65535, 0};
 
-/// Each falling shard's speed in y.
+/// How fast each step's bolt falls, in quarters of a pixel a frame.
 const u8 gCatastrophe_StrikeSpeedsY[] = {
     6,  4,  0, 8,  8, 0, 10, 20, 0, 20, 0, 0,  6, 4, 0,  8,  8, 0,
     10, 20, 8, 20, 0, 0, 6,  4,  0, 8,  8, 20, 0, 0, 20, 20, 0, 0};
 
-/// Each strike's roll.
+/// Each step's roll, in 256ths of a turn (the code shifts it into 65,536ths); 0
+/// leaves the bolt where the step before put it.
 const s16 gCatastrophe_StrikeRolls[] = {
     144, 0,  0, 128, 0,   0, 180, 0, 0, 150, 0, 0,   112, 0, 0,   0, 112, 48,
     0,   86, 0, 0,   112, 0, 96,  0, 0, 96,  0, 112, 128, 0, 104, 0, 0,   0};
 
-/// How fast each of the falling shards turns.
+/// How fast each step's bolt turns, in 32,768ths of a turn a frame.
 const s16 gCatastrophe_StrikeTurns[] = {
     256,  64,   0,    712, 500, 0,   0,   0, 0,    356,  0, 0,
     -356, -124, -256, 712, -64, 256, 0,   0, -228, 356,  0, 0,
     406,  64,   -256, 0,   -64, 0,   128, 0, 328,  -356, 0, 0};
 
-/// Each strike picture's byte offset in Catastrophe's sprite sheet.
+/// Which of the three jagged streak pictures each step draws; -1 draws none.
 const s16 gCatastrophe_StrikePictures[] = {
     0,  1, -1, 0,  1, -1, 0, 1, -1, 0, -1, 0, 2, 1,  0, -1, 2,  2,
     -1, 0, 1,  -1, 2, -1, 0, 1, -1, 0, -1, 0, 1, -1, 0, 1,  -1, 0};
@@ -2141,7 +2241,8 @@ const s16 gCatastrophe_StrikePictures[] = {
 /// The flips a glint may be drawn with, one picked at random.
 const u8 gCatastrophe_GlintFlips[] = {0, 4, 8, 12};
 
-/// Each shard's roll.
+/// Each bolt's roll as it shoots out, in 65,536ths of a turn: scattered, all
+/// within a quarter turn of 0 either way.
 const s16 gCatastrophe_BoltRolls[] = {
     14797, -1097, -8198, 4962,  15494,  -5489, -9298,  3744,
     11252, -9996, 15443, -4373, -15930, 15898, -13623, 3906};
@@ -2157,7 +2258,8 @@ const u8 gHaures_ParticleX[] = {120, 88, 144, 112, 0, 0};
 /// Haures's sprites' scale, one to one.
 const s32 gHaures_UnitScale[] = {toFIXED(1), toFIXED(1)};
 
-/// The wings' shapes, 32 heights a shape; the wings morph from one to the next.
+/// The wings' shapes, 32 heights a shape, in pixels; the wings morph from one
+/// to the next.
 const u8 gHaures_MoundShapes[] = {
     0,   0,   0,   2,   6,   9,   10,  11,  13,  14,  15,  16,  17,  18,  18,
     16,  16,  16,  17,  16,  15,  14,  13,  12,  11,  9,   8,   5,   0,   0,
@@ -2228,11 +2330,11 @@ const u8 gHelmSplitter_PictureHeights[] = {11, 20, 37, 65, 65, 54, 39, 0};
 /// Each Helm Splitter picture's byte offset in Helm Splitter's sprite sheet.
 const u16 gHelmSplitter_Pictures[] = {0, 286, 1206, 3537, 8542, 12442, 14548};
 
-/// How far right of its anchor each picture is drawn, mirrored on the other
-/// side.
+/// How far right of its anchor each picture is drawn, in pixels, mirrored on
+/// the other side.
 const s8 gHelmSplitter_PictureBiasX[] = {53, 36, 16, 2, 2, 2, 2};
 
-/// How far below its anchor each picture's top goes.
+/// How far below its anchor each picture's top goes, in pixels.
 const s8 gHelmSplitter_PictureBiasY[] = {2, 3, 3, 3, 4, 14, 29};
 
 /// How many of the 56 embers are sparks, by variant; the rest are flashes.
@@ -2255,20 +2357,21 @@ const u8 gTripleChomp_BiteFrames[] = {0, 12, 24};
 /// by variant.
 const u8 gBreath_Frames[] = {90, 38, 32, 48};
 
-/// The burst frames.
+/// The frame the burst starts on, by breath.
 const u8 gBreath_BurstFrames[] = {56, 0, 0, 0};
 
-/// The glow's widest size, by variant.
+/// The glow's widest size, in pixels, by variant.
 const u8 gBreath_MaxSizes[] = {24, 32, 32, 24};
 
 /// The four jaws of variant 2, by breath: their start frames; the tables after
 /// it give their growth and their x from the mouth.
 const u8 gBreath_RingStarts[] = {56, 58, 60, 61, 8, 12, 16, 20, 0, 2, 4, 5};
 
-/// How fast each ring grows.
+/// How fast each jaw grows: its scale gains this many times BREATH_RING_GROWTH
+/// a frame.
 const u8 gBreath_RingGrowth[] = {5, 6, 7, 6, 10, 9, 11, 10, 5, 6, 7, 6};
 
-/// Each ring's x, in pixels.
+/// Each jaw's x from the mouth, in pixels.
 const s8 gBreath_RingX[] = {-32, -48, -56, -72, -16, -32,
                             -64, -72, -32, -48, -56, -72};
 
@@ -2278,13 +2381,15 @@ const u8 gBreath_FlashFrames[] = {56, 14, 6, 56};
 /// The frame each ring starts on.
 const u8 gTrident_RingStarts[] = {8, 10, 12, 13, 64, 67, 70, 72};
 
-/// How fast each ring grows.
+/// How fast each ring grows: its scale gains this many times
+/// CYLINDER_RING_GROWTH a frame.
 const u8 gTrident_RingGrowth[] = {8, 7, 6, 7, 8, 8, 9, 8};
 
-/// Each ring's height.
+/// Each ring's height, in pixels.
 const s8 gTrident_RingHeights[] = {16, 0, -24, -40, 16, 0, -24, -40, 0};
 
-/// Each trident's yaw and turn.
+/// Each bolt's roll as it spins in, then how far it rolls each frame, both in
+/// 65,536ths of a turn: scattered round the circle.
 const s32 gTrident_Spins[] = {5528,  488, 62272, 308, 52392, -698, 34584, 634,
                               19692, 736, 28062, 746, 48958, -694, 1508,  -576};
 
@@ -2297,22 +2402,24 @@ const struct ModelVertex gTrident_ProngCorners[] = {
 /// The flips a glint may be drawn with, one picked at random.
 const u8 gTrident_GlintFlips[] = {0, 4, 8, 12};
 
-/// The frame each wave starts on.
+/// The frame each wave starts on, counted from LEAPING_STRIKE_WAVE_FRAME.
 const u8 gLeapingStrike_WaveStarts[] = {0, 4, 8, 9};
 
-/// How fast each wave grows.
+/// How fast each wave grows: its scale gains this many times
+/// LEAPING_STRIKE_WAVE_GROWTH a frame, from a half.
 const u8 gLeapingStrike_WaveGrowth[] = {9, 8, 9, 3};
 
-/// Each wave's height.
+/// Each wave's height, in pixels.
 const s8 gLeapingStrike_WaveHeights[] = {32, 32, 32, 32};
 
-/// The frame each ring starts on.
+/// The frame each ring starts on, counted from LEAPING_STRIKE_PILLAR_FRAME.
 const u8 gLeapingStrike_RingStarts[] = {0, 4, 12, 19};
 
-/// How fast each ring grows.
+/// How fast each ring grows: its scale gains this many times
+/// CYLINDER_RING_GROWTH a frame.
 const u8 gLeapingStrike_RingGrowth[] = {7, 8, 7, 8};
 
-/// Each ring's height.
+/// Each ring's height, in pixels.
 const s8 gLeapingStrike_RingHeights[] = {32, 16, 16, 24};
 
 /// Each Meteor Blow picture's width, in pixels.
@@ -2324,22 +2431,24 @@ const u8 gMeteorBlow_PictureHeights[] = {30, 16, 16, 16, 16, 8, 8};
 /// Each Meteor Blow picture's byte offset in Meteor Blow's sprite sheet.
 const u16 gMeteorBlow_Pictures[] = {0, 900, 1156, 1412, 1668, 1828, 1892};
 
-/// The frame each wave starts on.
+/// The frame each wave starts on, counted from METEOR_BLOW_BURST_FRAME.
 const u8 gMeteorBlow_WaveStarts[] = {0, 4, 9, 10};
 
-/// How fast each wave grows.
+/// How fast each wave grows: its scale gains this many times 2000/65536 a
+/// frame.
 const u8 gMeteorBlow_WaveGrowth[] = {3, 4, 3, 5};
 
-/// How far each wave is stretched.
+/// How much taller than wide each wave is drawn, multiplying its scale.
 const u8 gMeteorBlow_WaveStretch[] = {3, 4, 5, 6};
 
-/// The frame each ring starts on.
+/// The frame each ring starts on, counted from the eighth.
 const u8 gMeteorBlow_RingStarts[] = {0, 3, 16, 7};
 
-/// How fast each ring grows.
+/// How fast each ring grows: its scale gains this many times 1500/65536 a
+/// frame.
 const u8 gMeteorBlow_RingGrowth[] = {5, 8, 10, 8};
 
-/// Each ring's height.
+/// Each ring's height, in pixels.
 const s8 gMeteorBlow_RingHeights[] = {-40, 24, 24, 24};
 
 /// The splash's corners, as signed x, y and z.
@@ -2349,32 +2458,45 @@ const struct ModelVertex gLiquifier_SplashCorners[] = {
 /// The frame each splash starts on.
 const u8 gLiquifier_SplashStarts[] = {18, 21, 16, 17, 22, 19, 23, 18};
 
-/// Each splash's height.
+/// How tall each splash leaps, as a scale in 32nds.
 const u8 gLiquifier_SplashHeights[] = {40, 56, 70, 48, 64, 80, 58, 64, 72};
 
 /// The flame's picture for each three frames of its life, by number.
 const u8 gCanvasBurst_FlamePictures[] = {5, 5, 4, 3, 2, 1, 0};
 
-/// Each flash's pitch.
-const s16 gMegiddo_FlashPitches[] = {0, -10240, 0, -10240, 10240};
+/// Each ring's pitch.
+const s16 gMegiddo_FlashPitches[] = {0, -DEGtoANG(56.25), 0, -DEGtoANG(56.25),
+                                     DEGtoANG(56.25)};
 
-/// Each flash's yaw.
-const s16 gMegiddo_FlashYaws[] = {0, -4864, 0, -4864, -4864};
+/// Each ring's yaw.
+const s16 gMegiddo_FlashYaws[] = {0, -DEGtoANG(26.71875), 0,
+                                  -DEGtoANG(26.71875), -DEGtoANG(26.71875)};
 
-/// The frames the five rings start on.
+/// The frame each of the five rings starts on.
 const u16 gMegiddo_FlashStarts[] = {4, 8, 171, 175, 176};
 
 /// Each ray's pitch.
-const s16 gMegiddo_RayPitches[] = {-12544, -10496, -8704, 8704,
-                                   -8448,  12800,  10752, 11264};
+const s16 gMegiddo_RayPitches[] = {-DEGtoANG(68.90625), -DEGtoANG(57.65625),
+                                   -DEGtoANG(47.8125),  DEGtoANG(47.8125),
+                                   -DEGtoANG(46.40625), DEGtoANG(70.3125),
+                                   DEGtoANG(59.0625),   DEGtoANG(61.875)};
 
 /// Each ray's yaw.
-const s16 gMegiddo_RayYaws[] = {0,     11776,  0,      -14336,
-                                11264, -19968, -22016, -22272};
+const s16 gMegiddo_RayYaws[] = {0,
+                                DEGtoANG(64.6875),
+                                0,
+                                -DEGtoANG(78.75),
+                                DEGtoANG(61.875),
+                                -DEGtoANG(109.6875),
+                                -DEGtoANG(120.9375),
+                                -DEGtoANG(122.34375)};
 
-/// Each ray's roll.
-const s16 gMegiddo_RayRolls[] = {-21504, 13312, 22224, -18944,
-                                 -32768, 8448,  25600, -28928};
+/// Each ray's roll, mirrored on the other side; the third ray's, a little off
+/// its neighbours' 256ths of a turn, is in 65,536ths.
+const s16 gMegiddo_RayRolls[] = {
+    -DEGtoANG(118.125),  DEGtoANG(73.125),    22224,
+    -DEGtoANG(104.0625), -DEGtoANG(180),      DEGtoANG(46.40625),
+    DEGtoANG(140.625),   -DEGtoANG(158.90625)};
 
 /// Each ray's x, in pixels.
 const s8 gMegiddo_RayX[] = {6, 9, 6, 2, 6, 3, 6, 7};
@@ -2382,25 +2504,29 @@ const s8 gMegiddo_RayX[] = {6, 9, 6, 2, 6, 3, 6, 7};
 /// Each ray's y, in pixels.
 const s8 gMegiddo_RayY[] = {-6, -4, -7, -9, -6, -7, -9, -7};
 
-/// Each flash's pitch.
-const s16 gOdyssey_FlashPitches[] = {0, -10240};
+/// Each flash's pitch: Megiddo's first two rings'.
+const s16 gOdyssey_FlashPitches[] = {0, -DEGtoANG(56.25)};
 
-/// Each flash's yaw.
-const s16 gOdyssey_FlashYaws[] = {0, -4864, 0};
+/// Each flash's yaw: Megiddo's first two rings', and a third nothing reads.
+const s16 gOdyssey_FlashYaws[] = {0, -DEGtoANG(26.71875), 0};
 
-/// The frame each ring starts on.
+/// The frame each ring starts on, counted from MOLOCH_SPREAD_FRAME.
 const u8 gMoloch_RingStarts[] = {0, 6, 8, 9};
 
-/// How fast each ring grows.
+/// How fast each ring grows: its scale gains this many times 2000/65536 a
+/// frame, from a half.
 const u8 gMoloch_RingGrowth[] = {7, 8, 7, 8};
 
-/// Each ring's height.
+/// Each ring's height, in pixels.
 const s8 gMoloch_RingHeights[] = {24, 12, -24, 0};
 
-/// Each splash's radius.
+/// A splash's size, a large one's then a small one's: its ring starts twice
+/// this many pixels out and closes a pixel a frame, then its drops spread out
+/// for this many frames.
 const s32 gIris_SplashRadii[] = {24, 16};
 
-/// Each splash's offset in y.
+/// How far below the splash's point its wider ring of drops is centred, in
+/// steps of two pixels: a large one's, then a small one's.
 const u8 gIris_SplashOffsetsY[] = {7, 5, 0, 0};
 
 /// The pillar's mesh.
@@ -2419,43 +2545,60 @@ const u16 gIris_ParticleMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 63),
                                   MESH_FACE(2, 1, 3, 0, 63, 31, 0, 31, 63),
                                   MESH_END};
 
-/// The psynergy sound frames.
+/// The frames the Psynergy sound plays on.
 const u8 gIris_PsynergySoundFrames[] = {84,  93,  108, 111, 116, 132,
                                         135, 141, 153, 158, 171, 0};
 
-/// The door sound frames.
+/// The frames the door sound plays on.
 const u16 gIris_DoorSoundFrames[] = {231, 244, 259, 265, 270};
 
-/// The power up sound frames.
+/// The frames the power up sound plays on.
 const u16 gIris_PowerUpSoundFrames[] = {279, 287, 293, 298, 302, 307};
 
-/// Each streak's x, in pixels.
+/// Each streak's x as it sets out, in pixels.
 const s8 gIris_StreakX[] = {-10, 80, 110, -10, 76, 50, 110, 80,
                             40,  30, 80,  20,  50, 80, 20};
 
-/// Each streak's y, in pixels.
+/// Each streak's y as it sets out, in pixels.
 const u8 gIris_StreakY[] = {116, 136, 128, 112, 136, 136, 128, 136,
                             136, 136, 136, 136, 136, 136, 136};
 
-/// Each streak's starting angle.
-const u16 gIris_StreakAngles[] = {18384, 62488, 51152, 16384, 62488,
-                                  3048,  51152, 62488, 4048,  6048,
-                                  60488, 7048,  3048,  62488, 6048};
+/// Each streak's heading as it sets out, 0 straight up and DEGtoANG(90) to
+/// the right: each a little off one of those, by a number of 65,536ths of a
+/// turn.
+const u16 gIris_StreakAngles[] = {DEGtoANG(90) + 2000,
+                                  TRIG_TURN - 3048,
+                                  DEGtoANG(270) + 2000,
+                                  DEGtoANG(90),
+                                  TRIG_TURN - 3048,
+                                  3048,
+                                  DEGtoANG(270) + 2000,
+                                  TRIG_TURN - 3048,
+                                  4048,
+                                  6048,
+                                  TRIG_TURN - 5048,
+                                  7048,
+                                  3048,
+                                  TRIG_TURN - 3048,
+                                  6048};
 
-/// Each streak's speed.
+/// How far each streak's heading turns, in 65,536ths of a turn, two thirds of
+/// this a frame.
 const s16 gIris_StreakSpeeds[] = {-406, 64,  380, -326, 64,  -64, 380, 64,
                                   -84,  -64, 94,  -94,  -64, 64,  -64};
 
-/// Each line's shade.
+/// The spray picture's columns, left to right: the level each is filled with,
+/// dimmest at the edges.
 const u8 gIris_LineShades[] = {23, 47, 56, 63, 63, 56, 47, 23};
 
-/// Each mote's size, in pixels.
+/// Each mote's size: the width of its mote picture, in pixels, which is twice
+/// as tall.
 const s32 gIris_MoteSizes[] = {7, 5};
 
 /// The frame each splash starts on.
 const u16 gIris_SplashStarts[] = {230, 238, 260, 265, 253, 258};
 
-/// The frame each drop stops falling and splashes.
+/// The frame each splash ends on.
 const u16 gIris_SplashEnds[] = {320, 328, 330, 335, 326, 332};
 
 /// Each splash's x, in pixels.
@@ -2467,10 +2610,10 @@ const u8 gIris_SplashY[] = {64, 62, 32, 32, 80, 80};
 /// Whether each splash is a small one.
 const u8 gIris_SplashSmall[] = {0, 0, 1, 1, 0, 0};
 
-/// Each drop's speed.
+/// How fast each drop rises, in half pixels a frame.
 const u8 gIris_DropSpeeds[] = {8, 4, 1, 2, 4, 8};
 
-/// The drop frames.
+/// How long each drop rises, in frames, from its splash's end.
 const u8 gIris_DropFrames[] = {16, 16, 16, 16, 32, 32};
 
 /// How many frames each drop shows each picture.

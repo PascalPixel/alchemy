@@ -54,7 +54,7 @@ struct SaveFileSummary {
   ///@}
   /// Low half of MainRoutineState.buildStamp; a file below the current stamp
   /// is listed as from an older build.
-  u16 frames;
+  u16 buildStamp;
   /// Filled on reading: the play time from the file's second part. A file
   /// whose playTime differs is listed as corrupted.
   u32 secondPartPlayTime;

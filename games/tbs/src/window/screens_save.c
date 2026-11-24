@@ -254,7 +254,7 @@ u32 Save_BuildFileSummary(void) {
     i = 0;
     n <<= 2;
     word = (u32 *)gGameFlagBytes;
-    Io_Write32(frames, &summary->frames);
+    Io_Write32(frames, &summary->buildStamp);
     // A while loop, entered at its test.
     goto test;
     do {
@@ -927,7 +927,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   for (i = 0; i < SAVE_FILE_COUNT; i++, y += 16, summary++) {
     if (summary->level == 0) {
       Text_DrawMessage(MsgSaveNoData, fileList, 10, y);
-    } else if (summary->frames < buildStamp) {
+    } else if (summary->buildStamp < buildStamp) {
       // Saved by an older build: "(Continue from a Sanctum)", since such a
       // file resumes at MainRoutineState.restartScene, not where it was saved
       // (scene/file_screen.c).
@@ -1004,7 +1004,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   for (i = 0, summary = save->summary; i < SAVE_FILE_COUNT; i++, summary++) {
     if (save->summary[i].level == 0) {
       Text_DrawMessage(MsgSaveNoData, fileList, 10, i * 16);
-    } else if (save->summary[i].frames < buildStamp) {
+    } else if (save->summary[i].buildStamp < buildStamp) {
       // Saved by an older build: see the other editions' list above.
       Text_DrawMessage(MsgSaveContinue, fileList, 10, i * 16);
     } else if (save->summary[i].playTime !=

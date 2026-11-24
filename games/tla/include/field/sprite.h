@@ -325,4 +325,18 @@ enum ActorAnimation {
   ANIM_LEADER_SIT = 49
 };
 
+/// SPRITE_PARTICLE's animations.
+enum ParticleAnimation {
+  ANIM_PARTICLE_FADE = 2, ///< its glow shrinking to a speck and gone
+  /// Its full glow and the next size down in turn, 3 frames each.
+  ANIM_PARTICLE_TWINKLE = 7,
+  /// Its swells, from a speck to its full glow, held 32 frames, and back:
+  /// slowly, 12 frames a step, or quickly, 6. Jupiter Lighthouse's sparks and
+  /// the motes of light inside Air's Rock take turns at them.
+  ///@{
+  ANIM_PARTICLE_SLOW_SWELL = 9,
+  ANIM_PARTICLE_QUICK_SWELL = 10
+  ///@}
+};
+
 #endif

@@ -639,7 +639,7 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   actor->update = MarsLighthouseStarRoom_DrawStarWithLeader;
   size = sizeof(IconTransfer);
   sprite->flags = clear;
-  sprite->countAndShadow[0] = clear;
+  sprite->count = clear;
   glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, size);
   Item_LoadIcon(ITEM_MARS_STAR);
   Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
@@ -820,7 +820,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     sprite->priority = 2;
     actor->motionFlags = 0;
     actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
-    sprite->countAndShadow[0] = 0;
+    sprite->count = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Item_LoadIcon(ITEM_MARS_STAR);
@@ -952,7 +952,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       sprite->priority = 2;
       actor->motionFlags = 0;
       actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
-      sprite->countAndShadow[0] = 0;
+      sprite->count = 0;
       actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
       Item_LoadIcon(ITEM_MARS_STAR);
@@ -1012,7 +1012,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   if (placedStar != 0) {
     placedStarSprite = placedStar->sprite;
     placedStarSprite->flags = 0;
-    placedStarSprite->countAndShadow[0] = 0;
+    placedStarSprite->count = 0;
     placedStarSprite->fullColor = 0;
     placedStarSprite->palette = 0;
     placedStarSprite->priority = 2;

@@ -3271,7 +3271,7 @@ void KandoreanTemple_CreateLashPebble(void) {
     actor->motionFlags = clear;
     actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
     sprite->flags = clear;
-    sprite->countAndShadow[0] = clear;
+    sprite->count = clear;
     glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_LASH_PEBBLE);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);

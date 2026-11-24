@@ -550,7 +550,7 @@ s32 Scene_Initialize(void) {
       ((struct FieldSprite *)Actor_Get(ACTOR_SISTER_IN_BED)->sprite)->flags |=
           SPRITE_FLAG_SUNK;
       sprite = Actor_Get(ACTOR_SISTER_IN_BED)->sprite;
-      sprite->cacheBits = (sprite->cacheBits & 3) | 8 << 2;
+      sprite->sunkRows = 8;
       ((struct FieldSprite *)Actor_Get(ACTOR_SISTER_IN_BED)->sprite)->dirty = 1;
     }
   }

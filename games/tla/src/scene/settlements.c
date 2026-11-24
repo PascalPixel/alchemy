@@ -625,7 +625,7 @@ void Settlements_SetUpKaltIsland(void) {
   sprite->priority = 1;
   sprite->fullColor = 0;
   sprite->palette = 0;
-  sprite->countAndShadow[0] = 0;
+  sprite->count = 0;
   Actor_SetSpriteFlags(actor, 0);
   actor->retainSpriteCache = 0;
   actor->motionFlags = 0;

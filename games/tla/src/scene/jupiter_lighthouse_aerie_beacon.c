@@ -529,7 +529,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
                                felix->y.fixed + toFIXED(8), felix->z.fixed);
       if (star != 0) {
         sprite = star->sprite;
-        sprite->countAndShadow[0] = 0;
+        sprite->count = 0;
         sprite->fullColor = 0;
         sprite->palette = 0;
         sprite->priority = 0;

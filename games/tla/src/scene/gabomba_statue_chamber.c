@@ -911,7 +911,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   if (crystal != 0) {
     sprite = crystal->sprite;
     sprite->flags = 0;
-    sprite->countAndShadow[0] = 0;
+    sprite->count = 0;
     sprite->fullColor = 0;
     sprite->palette = 0;
     sprite->priority = 1;

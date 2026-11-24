@@ -70,11 +70,6 @@ void WorldMap_LoadTidalWave(void);
 
 struct Actor;
 
-/// FieldSprite's byte 0x11 read as its bits.
-struct SpriteCacheBits {
-  u8 retainCacheEntry : 1; ///< keeps the VRAM cache entry when it is released
-};
-
 /// A FieldSprite read as its sprite attribute 1, whose top two bits are the
 /// sprite size where FieldSprite names them its flips.
 struct WorldMapOam {
@@ -856,7 +851,7 @@ void WorldMap_ShowGoldenBoots(void) {
   FieldActor_ShowItemIconById(ACTOR_GOLDEN_BOOTS, ITEM_GOLDEN_BOOTS);
   actor = Actor_Get(ACTOR_GOLDEN_BOOTS);
   sprite = actor->sprite;
-  ((struct SpriteCacheBits *)&sprite->cacheBits)->retainCacheEntry = 1;
+  sprite->retainCacheEntry = 1;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GOLDEN_BOOTS), 0);
   a = FACING_SOUTH;
   id = ACTOR_GOLDEN_BOOTS;
@@ -2660,7 +2655,7 @@ void WorldMap_SpawnTwinSparks(struct Actor *parent) {
         sprite->flags = 0;
         VramCache_FreeEntry(sprite->slot);
         sprite->slot = state->vramBlock;
-        ((struct SpriteCacheBits *)&sprite->cacheBits)->retainCacheEntry = 1;
+        sprite->retainCacheEntry = 1;
         sprite->tile =
             (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;
         sprite->fullColor = 0;

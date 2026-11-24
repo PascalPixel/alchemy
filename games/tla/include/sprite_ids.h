@@ -282,7 +282,7 @@ enum SpriteId {
   SPRITE_EXPLOSION,
   SPRITE_RAY_ARC,
   SPRITE_PSYNERGY_STONE,
-  SPRITE_BLANK_32,
+  SPRITE_WORLD_MAP_FOREST_COVER,
   SPRITE_DOORWAY,
   /// The band an EXIT_STYLE_HIDDEN_LAYER exit adds over the top of the leader's
   /// sprite (Exit_AddHiddenLeaderLayer).

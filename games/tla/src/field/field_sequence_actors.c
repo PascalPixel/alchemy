@@ -312,8 +312,8 @@ void Actor_ResetForLeader(s32 table) {
   // Actor_MoveOnWorldMap draws it in a forest.
   if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     struct SpriteAnimation *secondLayer =
-        (struct SpriteAnimation *)Sprite_AddAnimationFar(actor->sprite,
-                                                         SPRITE_BLANK_32);
+        (struct SpriteAnimation *)Sprite_AddAnimationFar(
+            actor->sprite, SPRITE_WORLD_MAP_FOREST_COVER);
 
     secondLayer->colorMode = SPRITE_COLOR_HIDDEN;
     secondLayer->priority = SPRITE_LAYER_NOT_DRAWN;

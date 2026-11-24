@@ -1794,7 +1794,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#include "../field/actor_set_sprite_priority_b.c"
+#include "../field/field_effect_set_sprite_priority.c"
 
 /// An effect's update: moves it by its velocity, grows it by its scale rates
 /// and spins its sprite.
@@ -1816,7 +1816,7 @@ void Effect_MoveLocal(union FieldObject *object) {
 }
 
 extern s32 gFieldEffect_DurationScripts[];
-void Actor_SetSpritePriorityB(struct Actor *actor, s32 priority);
+void FieldEffect_SetSpritePriority(struct Actor *actor, s32 priority);
 /// As FieldEffect_Spawn, the effect taking the leader's sprite priority and
 /// moved by Effect_MoveLocal: the shared spawner's update and priority setter
 /// are fixed, so this copy is written out too.
@@ -1848,7 +1848,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Actor_SetSpritePriorityB(effect, party->sprite->priority);
+  FieldEffect_SetSpritePriority(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -1859,7 +1859,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    Actor_SetSpritePriorityB(effect, options->priority);
+    FieldEffect_SetSpritePriority(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
   if (start != 0) {

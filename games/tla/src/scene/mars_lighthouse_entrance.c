@@ -1753,7 +1753,7 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
 
-#include "../field/actor_set_sprite_priority_b.c"
+#include "../field/field_effect_set_sprite_priority.c"
 
 #include "../field/field_effect_move.c"
 
@@ -1791,8 +1791,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Actor_SetSpritePriorityB(effect,
-                           ((struct FieldSprite *)party->sprite)->priority);
+  FieldEffect_SetSpritePriority(
+      effect, ((struct FieldSprite *)party->sprite)->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -1803,7 +1803,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    Actor_SetSpritePriorityB(effect, options->priority);
+    FieldEffect_SetSpritePriority(effect, options->priority);
   }
   if ((flags & EFFECT_USE_START_SCALE) != 0) {
     effect->scaleX = options->startScaleX;

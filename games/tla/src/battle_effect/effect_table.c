@@ -454,8 +454,8 @@ const u8 gPlasma_Columns[] = {32, 64, 16,  48, 72, 96, 64,
 /// The lightning pillars, by variant.
 const u8 gPlasma_Counts[] = {1, 3, 7};
 
-/// Five halfwords for each variant: the sparks in each group, the groups, and
-/// each group's x offset.
+/// Five halfwords for each variant: the sparks in each burst, the bursts, and
+/// each burst's x offset in pixels.
 const u16 gSparkGroups_Shapes[][5] = {
     {128, 1, 16, 0, 0},   {255, 1, 16, 0, 0}, {192, 3, 0, 24, 48},
     {340, 1, 16, 24, 48}, {32, 1, 16, 0, 0},  {200, 1, 16, 24, 48}};
@@ -942,7 +942,8 @@ const s32 gDrain_Gravities[] = {toFIXED(0.25), toFIXED(0.125), toFIXED(0.25),
 /// The mote's width, in pixels, by mode; it is drawn twice as tall.
 const u8 gDrainMotes_Sizes[] = {6, 6, 10};
 
-/// Each variant's timing: its frames, its rise and its shake.
+/// Each variant's timing: its frames, the frames each rock pillar rises, and
+/// the screen shake's range.
 const u8 gQuake_Timings[][3] = {{80, 32, 2}, {112, 64, 4}, {144, 96, 8}};
 
 /// Fire's embers, by variant; the effect lasts 132 frames and half this many
@@ -963,7 +964,7 @@ const u8 gFire_FlareBiasY[] = {41, 32, 26, 11, 4, 2};
 /// Each ember streak picture's byte offset in the sheet.
 const u16 gFire_FlarePictures[] = {0, 552, 1480, 2590, 3913, 5185};
 
-/// Where each frost mound rises, x and y.
+/// Where each frost mound rises, x and its foot's y, in pixels.
 const u8 gFrost_MoundSpots[] = {53, 108, 73, 110, 29, 110, 73, 108, 33, 104,
                                 96, 106, 8,  109, 62, 98,  33, 100, 87, 100,
                                 21, 95,  53, 90,  33, 90,  72, 91,  82, 91,
@@ -1621,8 +1622,8 @@ const u8 gHeavyBlow_ChipCounts[] = {128, 32};
 /// A chip's two pixels.
 const u8 gHeavyBlow_ChipPixels[] = {58, 58};
 
-/// The columns, by number: their x; the tables after it give their start
-/// frames, full heights and leans.
+/// The columns, by number: their x, in pixels; the tables after it give their
+/// start frames, full heights and leans.
 const s16 gCool_ColumnX[] = {92, 72, 32, 48, 88, 56, 80, 88, -8, 132};
 
 /// The frame each column starts on.
@@ -2068,11 +2069,11 @@ const s32 gGeyser_DropGravity[] = {-toFIXED(1) / 4, -toFIXED(1) / 2,
 const s8 gGeyser_DropMinSizes[] = {1, 4, 5};
 
 /// The fifteen pictures of a glowing oval, from 16 by 32 down to 3 by 4: their
-/// widths.
+/// widths, in pixels.
 const u8 gBubbleColumn_PictureWidths[] = {16, 15, 14, 13, 12, 11, 10, 9,
                                           8,  7,  6,  5,  4,  4,  3};
 
-/// The glowing oval's fifteen pictures: their heights.
+/// The glowing oval's fifteen pictures: their heights, in pixels.
 const u8 gBubbleColumn_PictureHeights[] = {32, 30, 28, 26, 24, 22, 20, 18,
                                            16, 14, 12, 10, 8,  6,  4,  0};
 
@@ -2294,7 +2295,8 @@ const u8 gHaures_MoundShapes[] = {
 const u8 gHaures_MoundMorphSteps[] = {27, 15, 13, 5,  14, 16, 11,
                                       13, 8,  18, 24, 26, 100};
 
-/// Each part's point, x and y.
+/// Each shard's points, its middle then its four corners, x and y in screen
+/// pixels.
 const u8 gHaures_PartPoints[] = {
     23,  13,  0,   0,   42,  0,   28,  41,  28,  41,  48,  28,  42,  0,   78,
     31,  28,  41,  28,  41,  66,  7,   42,  0,   79,  0,   78,  31,  78,  31,

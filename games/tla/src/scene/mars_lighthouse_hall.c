@@ -271,7 +271,6 @@ s32 MarsLighthouseHall_ShowFlame(s32 id, s32 animation) {
 void Actor_StartScript(struct Actor *actor, const void *script);
 
 void Flame_UpdateForward(struct Actor *actor);
-void Actor_ResetScripted(struct Actor *actor);
 void Actor_SetupScriptedPart(struct Actor *actor, s32 layer);
 void Flame_UpdateSideways(struct Actor *actor);
 
@@ -751,8 +750,8 @@ s32 Scene_Initialize(void) {
         PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
         PaletteFade_Interpolate(20);
         System_Wait(20);
-        // entrance, read for the last time above, now holds the colour's
-        // address.
+        /* FAKEMATCH(temporary): entrance, read for the last time above, holds
+           the text colour's address. */
         entrance = (s32)&CENTERED_TEXT_COLOR;
         *(u16 *)entrance = RGB_WHITE;
         System_Wait(1);
@@ -895,20 +894,15 @@ s32 Scene_PrepareMap(void) {
     }
   }
   if (Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED)) {
-    extern char SceneId_MarsLighthouseJupiterLedgeSecond __asm__(
-        "SceneId_MarsLighthouseJupiterLedge");
-
-    Map_CopyPalette(
-        gMainRoutineState.mapId +
-            ((s32)&SceneId_MarsLighthouseJupiterLedgeSecond - SCENE_PROX),
-        (s32)BG_PLTT);
+    Map_CopyPalette(gMainRoutineState.mapId + MARS_LIGHTHOUSE_THAWED_MAPS,
+                    (s32)BG_PLTT);
   }
   return 0;
 }
 
 /// Felix reads the inscription on the hall's gallery east of the dragon
-/// statue's head: the screen dims to green and "Mankind... With the power of
-/// wisdom, they ruled the earth." appears across it.
+/// statue's head: the screen turns yellow-green and "Mankind... With the power
+/// of wisdom, they ruled the earth." appears across it.
 void MarsLighthouseHall_ReadEarthInscription(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
@@ -929,8 +923,8 @@ void MarsLighthouseHall_ReadEarthInscription(void) {
 }
 
 /// Felix reads the inscription on the hall's floor west of the dragon statue's
-/// chin: the screen dims to green and "Fish... With cold courage, they ruled
-/// the water." appears across it.
+/// chin: the screen turns yellow-green and "Fish... With cold courage, they
+/// ruled the water." appears across it.
 void MarsLighthouseHall_ReadWaterInscription(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
@@ -951,7 +945,7 @@ void MarsLighthouseHall_ReadWaterInscription(void) {
 }
 
 /// Felix reads the inscription on the hall's floor east of the dragon statue's
-/// chin: the screen dims to green and "Dragons... Burning with might, they
+/// chin: the screen turns yellow-green and "Dragons... Burning with might, they
 /// ruled the fires." appears across it.
 void MarsLighthouseHall_ReadFireInscription(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
@@ -973,8 +967,8 @@ void MarsLighthouseHall_ReadFireInscription(void) {
 }
 
 /// Felix reads the inscription on the hall's gallery west of the dragon
-/// statue's head: the screen dims to green and "Bird... On the wings of truth,
-/// they ruled the winds." appears across it.
+/// statue's head: the screen turns yellow-green and "Bird... On the wings of
+/// truth, they ruled the winds." appears across it.
 void MarsLighthouseHall_ReadWindInscription(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
@@ -1036,11 +1030,11 @@ void MarsLighthouseHall_BreakFloorTile(s32 x, s32 z, s32 sourceX, s32 sourceY,
 
 /// The great dragon statue at the head of the hall speaks as Felix steps in
 /// from the stairs (cells (11, 16) to (16, 16)): the camera rises to it and
-/// the screen dims to green. Without the Mars Star it says "If you do not hold
-/// the star, you shall not ascend to the heavens... Begone!", once. With the
-/// star it bids the party set the four spirits aflame and the gallery's four
-/// doorways flash, after which it speaks no more; from patch 1 it waits for
-/// the lighthouse to have thawed as well.
+/// the screen turns yellow-green. Without the Mars Star it says "If you do not
+/// hold the star, you shall not ascend to the heavens... Begone!", once. With
+/// the star it bids the party set the four spirits aflame and the gallery's
+/// four doorways flash, after which it speaks no more; from patch 1 it waits
+/// for the lighthouse to have thawed as well.
 void MarsLighthouseHall_HearDragonStatue(void) {
   if (PartyInventory_FindMember(ITEM_MYTHRIL_BAG_MARS_STAR) == -1) {
     if (!Event_GetFlag(FLAG_TOLD_TO_BEGONE)) {
@@ -1130,7 +1124,7 @@ s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
 
 void Actor_SetSpriteFlags(struct Actor *actor, u32 flags);
 
-#include "shared/actor_reset_scripted.h"
+#include "shared/actor_reset_scripted_for.h"
 
 /// A flame thrower's flame sent forward from `position` at speed `value`;
 /// `flag` keeps its sprite when off screen.
@@ -1142,7 +1136,7 @@ void FlameThrower_SendForward(struct Vector3 *position, s32 value, s32 flag) {
     actor->bounce = 0;
     actor->gravity = 0;
     actor->sceneWord = value;
-    ((void (*)())Actor_ResetScripted)(actor, 2);
+    Actor_ResetScriptedFor(actor, 2);
     actor->update = Flame_UpdateForward;
     if (flag != 0)
       actor->retainSpriteCache = 2;
@@ -1234,8 +1228,6 @@ void FlameThrower_SendSpark(struct Vector3 *position, s32 value, s32 mode) {
     Actor_SetBlendMode(actor, 1);
   }
 }
-
-typedef struct Actor Actor;
 
 #include "shared/flame_throwers_puff.c"
 

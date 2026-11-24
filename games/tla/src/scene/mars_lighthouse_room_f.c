@@ -107,6 +107,37 @@
 /// torch the pipeline feeds flares up.
 #define MERCURY_TOWER_PIPELINE_MENDED 9
 
+/// The doorways inside the Mars and Mercury towers between two of their parts:
+/// each is an entrance, and the exit of its number goes through it to the
+/// other. The Mars tower's join its first rooms, by the lava and the button,
+/// to its pipe room; the Mercury tower's join its hall of pipes to the room of
+/// the dragon head Blaze lights.
+enum {
+  MARS_TOWER_FIRST_ROOMS_DOORWAY = 2,
+  MARS_TOWER_PIPE_ROOM_DOORWAY = 3,
+  MERCURY_TOWER_PIPE_HALL_DOORWAY = 2,
+  MERCURY_TOWER_DRAGON_HEAD_ROOM_DOORWAY = 3
+};
+
+/// The Jupiter tower's Cyclone circles, by the exit each one's whirlwind
+/// takes, the number its cells carry. A circle the party also lands on shares
+/// its number with that landing (below).
+enum {
+  CYCLONE_FROM_FIRST_HALL_WEST_CIRCLE = 2,
+  CYCLONE_FROM_CORRIDOR_FOOT_CIRCLE = 3,
+  CYCLONE_FROM_FIRST_HALL_EAST_CIRCLE = 4,
+  CYCLONE_FROM_NARROW_ROOM_FIRST_CIRCLE = 5,
+  CYCLONE_FROM_CORRIDOR_HEAD_EAST_CIRCLE = 6,
+  CYCLONE_FROM_CORRIDOR_HEAD_WEST_CIRCLE = 7,
+  CYCLONE_FROM_BIG_ROOM_RAISED_CIRCLE = 8,
+  CYCLONE_FROM_TWO_CIRCLE_ROOM_FIRST_CIRCLE = 9,
+  CYCLONE_FROM_TWO_CIRCLE_ROOM_SECOND_CIRCLE = 10,
+  CYCLONE_FROM_BIG_ROOM_EAST_CIRCLE = 11,
+  CYCLONE_FROM_NARROW_ROOM_SECOND_CIRCLE = 12,
+  CYCLONE_FROM_BIG_ROOM_WEST_CIRCLE = 13,
+  CYCLONE_FROM_CARVED_DRAGON_CIRCLE = 14
+};
+
 /// The Jupiter tower's landings from Cyclone's whirlwinds, each where an exit
 /// of a Cyclone circle sets the party down: most on the circle that takes it
 /// back, the rest in the big room of the white dragon statue.
@@ -309,12 +340,10 @@ void Flame_UpdateForward(struct Actor *actor);
 
 void Flame_UpdateSideways(struct Actor *actor);
 
-void FlameThrower_SendForward();
-void FlameThrower_SendBackward();
-
-void FlameThrower_SendEast();
-
-void FlameThrower_SendWest();
+void FlameThrower_SendForward(s32 *position, s32 speed, s32 offScreen);
+void FlameThrower_SendBackward(s32 *position, s32 speed, s32 offScreen);
+void FlameThrower_SendEast(s32 *position, s32 speed, s32 offScreen);
+void FlameThrower_SendWest(s32 *position, s32 speed, s32 offScreen);
 void FlameThrowers_Puff(void);
 
 extern u32 gMarsLighthouseRoomF_MercuryFlameThrowerRoute[];
@@ -564,15 +593,12 @@ void MarsLighthouseRoomF_UncoverFlameThrower(s32 unused, s32 id) {
 /// Moved back to where it stood, a trap statue hides its dragon head again.
 void MarsLighthouseRoomF_CoverFlameThrower(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
-  const s16 *table;
-  s32 offset;
   FIXED x;
   s32 flameThrower;
 
-  table = gMarsLighthouseRoomF_StatueFlameThrowers;
   x = actor->x.fixed;
-  offset = (id - ACTOR_TRAP_STATUE_A) * 2;
-  flameThrower = *(s16 *)((u8 *)table + offset);
+  flameThrower =
+      gMarsLighthouseRoomF_StatueFlameThrowers[id - ACTOR_TRAP_STATUE_A];
   if (FIELD_CELL(x) == actor->timer >> 4)
     Actor_SetPosition(flameThrower, 0, 0);
 }
@@ -787,91 +813,91 @@ void MarsLighthouseRoomF_CrackCenterWall(s32 burst) {
 /// the circle of the small room at the foot of the long corridor. Each circle
 /// of the Jupiter tower has its own exit, of the number its cells carry.
 void MarsLighthouseRoomF_CycloneOnFirstHallWestCircle(void) {
-  Import_EventSetExitRequest(2);
+  Import_EventSetExitRequest(CYCLONE_FROM_FIRST_HALL_WEST_CIRCLE);
 }
 
 /// Felix casts Cyclone on the circle of the small room at the foot of the long
 /// corridor (cell (34, 16)): a whirlwind lifts the party spinning and sets them
 /// down on the west circle of the first hall.
 void MarsLighthouseRoomF_CycloneOnCorridorFootCircle(void) {
-  Import_EventSetExitRequest(3);
+  Import_EventSetExitRequest(CYCLONE_FROM_CORRIDOR_FOOT_CIRCLE);
 }
 
 /// Felix casts Cyclone on the east circle of the Jupiter tower's first hall
 /// (cell (21, 57)): a whirlwind lifts the party spinning and sets them down on
 /// the first circle of the narrow room.
 void MarsLighthouseRoomF_CycloneOnFirstHallEastCircle(void) {
-  Import_EventSetExitRequest(4);
+  Import_EventSetExitRequest(CYCLONE_FROM_FIRST_HALL_EAST_CIRCLE);
 }
 
 /// Felix casts Cyclone on the first circle of the narrow room (cell (41, 40)):
 /// a whirlwind lifts the party spinning and sets them down on the east circle
 /// of the first hall.
 void MarsLighthouseRoomF_CycloneOnNarrowRoomFirstCircle(void) {
-  Import_EventSetExitRequest(5);
+  Import_EventSetExitRequest(CYCLONE_FROM_NARROW_ROOM_FIRST_CIRCLE);
 }
 
 /// Felix casts Cyclone on the east circle at the head of the long corridor
 /// (cell (37, 5)): a whirlwind lifts the party spinning and sets them down in
 /// the south-west of the big room of the white dragon statue.
 void MarsLighthouseRoomF_CycloneOnCorridorHeadEastCircle(void) {
-  Import_EventSetExitRequest(6);
+  Import_EventSetExitRequest(CYCLONE_FROM_CORRIDOR_HEAD_EAST_CIRCLE);
 }
 
 /// Felix casts Cyclone on the west circle at the head of the long corridor
 /// (cell (32, 5)): a whirlwind lifts the party spinning and sets them down in
 /// the far west of the big room.
 void MarsLighthouseRoomF_CycloneOnCorridorHeadWestCircle(void) {
-  Import_EventSetExitRequest(7);
+  Import_EventSetExitRequest(CYCLONE_FROM_CORRIDOR_HEAD_WEST_CIRCLE);
 }
 
 /// Felix casts Cyclone on the raised circle in the middle of the big room
 /// (cell (18, 24)): a whirlwind lifts the party spinning and
 /// sets them down on the first circle of the room with two circles.
 void MarsLighthouseRoomF_CycloneOnBigRoomRaisedCircle(void) {
-  Import_EventSetExitRequest(8);
+  Import_EventSetExitRequest(CYCLONE_FROM_BIG_ROOM_RAISED_CIRCLE);
 }
 
 /// Felix casts Cyclone on the first circle of the room with two circles (cell
 /// (31, 60)): a whirlwind lifts the party spinning and sets them down on the
 /// raised circle in the middle of the big room.
 void MarsLighthouseRoomF_CycloneOnTwoCircleRoomFirstCircle(void) {
-  Import_EventSetExitRequest(9);
+  Import_EventSetExitRequest(CYCLONE_FROM_TWO_CIRCLE_ROOM_FIRST_CIRCLE);
 }
 
 /// Felix casts Cyclone on the second circle of the room with two circles (cell
 /// (36, 57)): a whirlwind lifts the party spinning and sets them down on a
 /// ledge in the north-east of the big room.
 void MarsLighthouseRoomF_CycloneOnTwoCircleRoomSecondCircle(void) {
-  Import_EventSetExitRequest(10);
+  Import_EventSetExitRequest(CYCLONE_FROM_TWO_CIRCLE_ROOM_SECOND_CIRCLE);
 }
 
 /// Felix casts Cyclone on the circle at the east of the big room (cell (24,
 /// 19)): a whirlwind lifts the party spinning and sets them down on the second
 /// circle of the narrow room.
 void MarsLighthouseRoomF_CycloneOnBigRoomEastCircle(void) {
-  Import_EventSetExitRequest(11);
+  Import_EventSetExitRequest(CYCLONE_FROM_BIG_ROOM_EAST_CIRCLE);
 }
 
 /// Felix casts Cyclone on the second circle of the narrow room (cell (43, 29)):
 /// a whirlwind lifts the party spinning and sets them down on the circle at the
 /// east of the big room.
 void MarsLighthouseRoomF_CycloneOnNarrowRoomSecondCircle(void) {
-  Import_EventSetExitRequest(12);
+  Import_EventSetExitRequest(CYCLONE_FROM_NARROW_ROOM_SECOND_CIRCLE);
 }
 
 /// Felix casts Cyclone on the circle west of the big room's middle (cell
 /// (13, 14)): a whirlwind lifts the party spinning and
 /// sets them down on the circle under the great carved dragon.
 void MarsLighthouseRoomF_CycloneOnBigRoomWestCircle(void) {
-  Import_EventSetExitRequest(13);
+  Import_EventSetExitRequest(CYCLONE_FROM_BIG_ROOM_WEST_CIRCLE);
 }
 
 /// Felix casts Cyclone on the circle under the great carved dragon (cell (54,
 /// 12)): a whirlwind lifts the party spinning and sets them down on the circle
 /// west of the big room's middle.
 void MarsLighthouseRoomF_CycloneOnCarvedDragonCircle(void) {
-  Import_EventSetExitRequest(14);
+  Import_EventSetExitRequest(CYCLONE_FROM_CARVED_DRAGON_CIRCLE);
 }
 
 /// Felix Moves the purple block in the Jupiter tower: once it reaches cell
@@ -1213,7 +1239,7 @@ s32 Scene_Initialize(void) {
     ((struct FieldState *)heap->fieldState)->transition = value;
     if (entrance ==
             MARS_LIGHTHOUSE_MARS_TOWER_FROM_MARS_LIGHTHOUSE_MARS_LEDGE ||
-        entrance == 2) {
+        entrance == MARS_TOWER_FIRST_ROOMS_DOORWAY) {
       FlameThrowers_Start(gMarsLighthouseRoomF_MarsButtonFlameThrowers,
                           gMarsLighthouseRoomF_MarsButtonFlameStops,
                           MarsLighthouseRoomF_LightTorch,
@@ -1248,7 +1274,7 @@ s32 Scene_Initialize(void) {
                         MarsLighthouseRoomF_ShootFireballAtIcebergs,
                         STEP_TRIGGER_FLAME_HIT);
     FlameThrower_SetPuffsOffScreen(3, 1);
-    if (entrance == 2)
+    if (entrance == MERCURY_TOWER_PIPE_HALL_DOORWAY)
       FlameThrowers_ReleaseFlame();
     if (entrance == MERCURY_TOWER_PIPELINE_MENDED) {
       Flag_Set(FLAG_SAW_PIPELINE_MENDED);
@@ -1265,7 +1291,8 @@ s32 Scene_Initialize(void) {
       Event_PlaySound(SE_WHOOSH);
       Event_Wait(60);
       Flag_Set(FLAG_KEEP_PARTY_POSITION);
-      return Value1((s32 (*)())Import_EventSetExitRequest, 3);
+      return Value1((s32 (*)())Import_EventSetExitRequest,
+                    MERCURY_TOWER_DRAGON_HEAD_ROOM_DOORWAY);
     }
     if (Flag_IsSet(FLAG_PIPELINE_MENDED)) {
       Actor_SetPosition(ACTOR_MERCURY_PIPE_A, 600, 144);
@@ -1407,9 +1434,7 @@ s32 Scene_PrepareMap(void) {
 
   party = &gMainRoutineState;
   if (Event_GetFlag(flag))
-    Map_CopyPalette(party->mapId +
-                        (SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE - SCENE_PROX),
-                    (s32)BG_PLTT);
+    Map_CopyPalette(party->mapId + MARS_LIGHTHOUSE_THAWED_MAPS, (s32)BG_PLTT);
   return 0;
 }
 
@@ -1502,8 +1527,6 @@ void FlameThrower_UpdateSpark(struct Actor *actor);
 #include "shared/actor_setup_scripted_for.h"
 
 #include "shared/flame_thrower_send_spark.c"
-
-typedef struct Actor Actor;
 
 #include "shared/flame_throwers_puff.c"
 
@@ -2084,8 +2107,10 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(MARS_LIGHTHOUSE_MARS_TOWER_TO_MARS_LIGHTHOUSE_MARS_LEDGE,
                MarsLighthouseMarsLedge,
                MARS_LIGHTHOUSE_MARS_LEDGE_FROM_MARS_LIGHTHOUSE_MARS_TOWER),
-    SCENE_EXIT(2, MarsLighthouseMarsTower, 3),
-    SCENE_EXIT(3, MarsLighthouseMarsTower, 2),
+    SCENE_EXIT(MARS_TOWER_FIRST_ROOMS_DOORWAY, MarsLighthouseMarsTower,
+               MARS_TOWER_PIPE_ROOM_DOORWAY),
+    SCENE_EXIT(MARS_TOWER_PIPE_ROOM_DOORWAY, MarsLighthouseMarsTower,
+               MARS_TOWER_FIRST_ROOMS_DOORWAY),
     SCENE_EXIT(MARS_LIGHTHOUSE_MARS_TOWER_TO_MARS_LIGHTHOUSE_BEACON_LEDGE,
                MarsLighthouseBeaconLedge,
                MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_MARS_TOWER),
@@ -2094,8 +2119,10 @@ LATE_DATA u32 gSceneExits[] = {
         MARS_LIGHTHOUSE_MERCURY_TOWER_TO_MARS_LIGHTHOUSE_MERCURY_LEDGE,
         MarsLighthouseMercuryLedge,
         MARS_LIGHTHOUSE_MERCURY_LEDGE_FROM_MARS_LIGHTHOUSE_MERCURY_TOWER),
-    SCENE_EXIT(2, MarsLighthouseMercuryTower, 3),
-    SCENE_EXIT(3, MarsLighthouseMercuryTower, 2),
+    SCENE_EXIT(MERCURY_TOWER_PIPE_HALL_DOORWAY, MarsLighthouseMercuryTower,
+               MERCURY_TOWER_DRAGON_HEAD_ROOM_DOORWAY),
+    SCENE_EXIT(MERCURY_TOWER_DRAGON_HEAD_ROOM_DOORWAY,
+               MarsLighthouseMercuryTower, MERCURY_TOWER_PIPE_HALL_DOORWAY),
     SCENE_EXIT(4, MarsLighthouseMercuryTower, 5),
     SCENE_EXIT(5, MarsLighthouseMercuryTower, 4),
     SCENE_EXIT(6, MarsLighthouseMercuryTower, 7),
@@ -2110,29 +2137,34 @@ LATE_DATA u32 gSceneExits[] = {
         MARS_LIGHTHOUSE_JUPITER_TOWER_TO_MARS_LIGHTHOUSE_JUPITER_LEDGE,
         MarsLighthouseJupiterLedge,
         MARS_LIGHTHOUSE_JUPITER_LEDGE_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER),
-    SCENE_EXIT(2, MarsLighthouseJupiterTower,
+    SCENE_EXIT(CYCLONE_FROM_FIRST_HALL_WEST_CIRCLE, MarsLighthouseJupiterTower,
                JUPITER_TOWER_CORRIDOR_FOOT_CIRCLE),
-    SCENE_EXIT(3, MarsLighthouseJupiterTower,
+    SCENE_EXIT(CYCLONE_FROM_CORRIDOR_FOOT_CIRCLE, MarsLighthouseJupiterTower,
                JUPITER_TOWER_FIRST_HALL_WEST_CIRCLE),
-    SCENE_EXIT(4, MarsLighthouseJupiterTower,
+    SCENE_EXIT(CYCLONE_FROM_FIRST_HALL_EAST_CIRCLE, MarsLighthouseJupiterTower,
                JUPITER_TOWER_NARROW_ROOM_FIRST_CIRCLE),
-    SCENE_EXIT(5, MarsLighthouseJupiterTower,
+    SCENE_EXIT(CYCLONE_FROM_NARROW_ROOM_FIRST_CIRCLE,
+               MarsLighthouseJupiterTower,
                JUPITER_TOWER_FIRST_HALL_EAST_CIRCLE),
-    SCENE_EXIT(6, MarsLighthouseJupiterTower, JUPITER_TOWER_BIG_ROOM_SOUTHWEST),
-    SCENE_EXIT(7, MarsLighthouseJupiterTower, JUPITER_TOWER_BIG_ROOM_FAR_WEST),
-    SCENE_EXIT(8, MarsLighthouseJupiterTower,
+    SCENE_EXIT(CYCLONE_FROM_CORRIDOR_HEAD_EAST_CIRCLE,
+               MarsLighthouseJupiterTower, JUPITER_TOWER_BIG_ROOM_SOUTHWEST),
+    SCENE_EXIT(CYCLONE_FROM_CORRIDOR_HEAD_WEST_CIRCLE,
+               MarsLighthouseJupiterTower, JUPITER_TOWER_BIG_ROOM_FAR_WEST),
+    SCENE_EXIT(CYCLONE_FROM_BIG_ROOM_RAISED_CIRCLE, MarsLighthouseJupiterTower,
                JUPITER_TOWER_TWO_CIRCLE_ROOM_FIRST_CIRCLE),
-    SCENE_EXIT(9, MarsLighthouseJupiterTower,
+    SCENE_EXIT(CYCLONE_FROM_TWO_CIRCLE_ROOM_FIRST_CIRCLE,
+               MarsLighthouseJupiterTower,
                JUPITER_TOWER_BIG_ROOM_RAISED_CIRCLE),
-    SCENE_EXIT(10, MarsLighthouseJupiterTower,
+    SCENE_EXIT(CYCLONE_FROM_TWO_CIRCLE_ROOM_SECOND_CIRCLE,
+               MarsLighthouseJupiterTower,
                JUPITER_TOWER_BIG_ROOM_NORTHEAST_LEDGE),
-    SCENE_EXIT(11, MarsLighthouseJupiterTower,
+    SCENE_EXIT(CYCLONE_FROM_BIG_ROOM_EAST_CIRCLE, MarsLighthouseJupiterTower,
                JUPITER_TOWER_NARROW_ROOM_SECOND_CIRCLE),
-    SCENE_EXIT(12, MarsLighthouseJupiterTower,
-               JUPITER_TOWER_BIG_ROOM_EAST_CIRCLE),
-    SCENE_EXIT(13, MarsLighthouseJupiterTower,
+    SCENE_EXIT(CYCLONE_FROM_NARROW_ROOM_SECOND_CIRCLE,
+               MarsLighthouseJupiterTower, JUPITER_TOWER_BIG_ROOM_EAST_CIRCLE),
+    SCENE_EXIT(CYCLONE_FROM_BIG_ROOM_WEST_CIRCLE, MarsLighthouseJupiterTower,
                JUPITER_TOWER_CARVED_DRAGON_CIRCLE),
-    SCENE_EXIT(14, MarsLighthouseJupiterTower,
+    SCENE_EXIT(CYCLONE_FROM_CARVED_DRAGON_CIRCLE, MarsLighthouseJupiterTower,
                JUPITER_TOWER_BIG_ROOM_WEST_CIRCLE),
     SCENE_EXIT(MARS_LIGHTHOUSE_JUPITER_TOWER_TO_MARS_LIGHTHOUSE_BEACON_LEDGE,
                MarsLighthouseBeaconLedge,

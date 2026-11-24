@@ -323,36 +323,6 @@ struct LemurianShipWarp {
   u16 z;
 };
 
-/// A field sprite (struct FieldSprite) read a byte at a time, as the Mars
-/// Lighthouse aerie's flames take the beacon fire's priority.
-struct MarsLighthouseAerieSprite {
-  u8 link[4];
-  u8 y;         ///< attribute 0's y
-  u8 attr0High; ///< attribute 0's high byte
-  u8 attr1[2];
-  u8 tileLow; ///< attribute 2's low byte
-  /// Attribute 2's high byte.
-  ///@{
-  u8 tileHigh : 2; ///< tile number bits 9..8
-  u8 priority : 2;
-  u8 palette : 4;
-  ///@}
-  u8 attr3[2];
-  u8 scale[4];
-  u8 vramBlock; ///< VRAM cache entry holding its tiles
-  u8 cacheFlags;
-  u8 rotation[2];
-  u8 size[4];       ///< width, height and the x and y offsets
-  u8 lastAnimation; ///< the animation number last selected
-  u8 dirty;         ///< nonzero redraws its pixels
-  u8 flags;         ///< the sprite flags (enum SpriteFlag)
-};
-
-/// One halfword read as a struct's field.
-struct HalfwordField {
-  s16 value;
-};
-
 /// The sprite words as one stored pair, or the attributes field by field.
 union SparkOam {
   struct {
@@ -578,6 +548,19 @@ struct Window;
     Actor_SetAnimation(id, animation);                                         \
     FieldEvent_Wait(frames);                                                   \
   } while (0)
+
+/// gMaps holds Mars Lighthouse's nineteen maps twice, from its outside to its
+/// Venus ledge: frozen from row 270, then again from row 289 in the colours the
+/// lighthouse takes once it is thawed (FLAG_MARS_LIGHTHOUSE_THAWED). A frozen
+/// map's thawed copy is MARS_LIGHTHOUSE_THAWED_MAPS rows on, the distance the
+/// linker gives between the two first rows: they are named here for the scene
+/// ids that share their numbers, Prox (270) and Jupiter Ledge (289).
+extern char MapRow_MarsLighthouseOutside __asm__("SceneId_Prox");
+extern char MapRow_MarsLighthouseOutsideThawed __asm__(
+    "SceneId_MarsLighthouseJupiterLedge");
+#define MARS_LIGHTHOUSE_THAWED_MAPS                                            \
+  ((s32)&MapRow_MarsLighthouseOutsideThawed -                                  \
+   (s32)&MapRow_MarsLighthouseOutside)
 
 /// The Lemurian Ship's background palette, the blues of the band along its hull
 /// and the surf, in the scenes that show the ship: Atteka Inlet, Lemuria's dock

@@ -276,14 +276,14 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct Trigger *Scene_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineState.entrance == ENTRANCE_DRAGON_BEATEN)
-    return (const struct Trigger *)gMarsLighthouseAerie_AfterBattlePlacements;
+    return gMarsLighthouseAerie_AfterBattlePlacements;
   // From the fallen dragon, for the beacon's lighting, or back from Mercury
   // Lighthouse: the three entrances that arrive at the beacon.
   if ((u16)(gMainRoutineState.entrance - 3) <= 2)
-    return (const struct Trigger *)gMarsLighthouseAerie_BeaconPlacements;
-  return (const struct Trigger *)gMarsLighthouseAerie_Placements;
+    return gMarsLighthouseAerie_BeaconPlacements;
+  return gMarsLighthouseAerie_Placements;
 }
 
 /// Teleport takes the party back down to the inscriptions room, in a shimmer of
@@ -401,8 +401,7 @@ s32 Scene_PrepareMap(void) {
           MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_HALL &&
       Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0)
     Weather_StartRain(1);
-  Map_CopyPalette(gMainRoutineState.mapId +
-                      (SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE - SCENE_PROX),
+  Map_CopyPalette(gMainRoutineState.mapId + MARS_LIGHTHOUSE_THAWED_MAPS,
                   (s32)BG_PLTT);
   return 0;
 }
@@ -445,7 +444,7 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
       actor->watchedActor = anchor;
       actor->speedLimit = FIXEDtoINT(Math_Sin((offset & 0xfffff) >> 4) *
                                      BEACON_FLAME_SWING_SPREAD);
-      // The same byte, written through its address.
+      /* FAKEMATCH(dead): the flags written through their own address. */
       *(u8 *)&sprite->flags = 0;
       sprite->priority =
           ((struct MarsLighthouseAerieSprite *)anchor->sprite)->priority;
@@ -2073,7 +2072,7 @@ extern s32 gMarsLighthouseAerie_BeamNarrowScript[];
 /// into it and the beacon is lit.
 void MarsLighthouseAerie_LightBeacon(void) {
   struct FieldState *later;
-  struct OverlaySprite *sprite;
+  struct MarsLighthouseAerieSprite *sprite;
   struct Actor *star;
   struct Actor *anchor;
   IconTransfer *icon;
@@ -2113,7 +2112,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   star = FieldActor_Create(SPRITE_UNSEEN_MARKER, anchor->x.fixed,
                            anchor->y.fixed + toFIXED(8), anchor->z.fixed);
   if (star != NULL) {
-    sprite = (struct OverlaySprite *)star->sprite;
+    sprite = (struct MarsLighthouseAerieSprite *)star->sprite;
     sprite->fullColor = 0;
     sprite->layerCount = 0;
     sprite->palette = 0;
@@ -2349,8 +2348,9 @@ void MarsLighthouseAerie_LightBeacon(void) {
   MarsLighthouseAerie_StopLookingAround(ACTOR_MIA);
   Actor_FaceDirectionAndWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, FACING_SOUTH);
-  ((struct OverlayActor *)Actor_Get(ACTOR_MIA))->update = NULL;
-  // Read as a word, so the store to the actor before it may alias.
+  /* FAKEMATCH(signature): Mia's hook cleared as a plain word, and the field
+     state's address read as one. */
+  *(s32 *)&Actor_Get(ACTOR_MIA)->update = 0;
   later = (struct FieldState *)((struct HeapWords *)Ram_HeapSlots)->fieldState;
   later->message++;
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);

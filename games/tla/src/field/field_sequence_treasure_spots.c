@@ -165,7 +165,7 @@ void Field_PlaceTreasureSpots(void) {
   } while (!(type & SCENE_ITEMS_HEADER));
 }
 
-/// Mode 0 moves the actor to x and z 0 and marks it with riseBaseY
+/// Mode 0 moves the actor to x and z 0 and marks it with sceneWord
 /// TREASURE_SPOT_ON_CELL; any other mode draws its sprite wide (shape 1), 4
 /// pixels lower.
 void Actor_SetWideSprite(u32 actorId, s32 mode) {
@@ -178,7 +178,7 @@ void Actor_SetWideSprite(u32 actorId, s32 mode) {
   if (mode == 0) {
     actor->x.fixed = 0;
     actor->z.fixed = 0;
-    actor->riseBaseY = TREASURE_SPOT_ON_CELL;
+    actor->sceneWord = TREASURE_SPOT_ON_CELL;
     return;
   }
   sprite = actor->sprite;
@@ -237,7 +237,7 @@ void Actor_ReturnHome(s32 mode, u32 actorId, s32 flag) {
       Actor_SetSquareSprite(actorId);
     actor->x.fixed = toFIXED(actor->homeX);
     actor->z.fixed = toFIXED(actor->homeZ);
-    BattleEffect_DropObjectAtAnchor(actorId);
+    Scoop_DropFromHand(actorId);
   }
 }
 
@@ -302,7 +302,7 @@ void TreasureSpot_ShowOpened(u32 actorId) {
 }
 
 /// Opens the empty chest of the actor with SE_CHEST_OPEN, and waits 12 frames.
-void ObjectEvent_SetMode6WithCue(u32 actorId) {
+void TreasureSpot_OpenEmptyChest(u32 actorId) {
   Actor_SelectAnimationFar(Actor_Lookup(actorId),
                            TREASURE_SPOT_CHEST_OPENING_EMPTY);
   Sound_PlayFar(SE_CHEST_OPEN);
@@ -315,7 +315,7 @@ struct Actor *TreasureSpot_GetActor(u32 actorId) {
 }
 
 /// Releases the actor and empties its slot.
-void ObjectEvent_Remove(u32 actorId) { Actor_ReleaseAtIndex(actorId); }
+void TreasureSpot_Remove(u32 actorId) { Actor_ReleaseAtIndex(actorId); }
 
 /// Moves the actor to (x, z) on the ground, 16.16 pixels; -1 keeps its home
 /// (homeX, homeZ) on that axis.

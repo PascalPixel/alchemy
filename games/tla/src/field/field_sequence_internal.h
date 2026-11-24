@@ -34,9 +34,9 @@
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "system/vector3.h"
-#include "game/owner_value.h"
+#include "game/unit_hp.h"
 #include "battle/battle_unit.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "fixed_math.h"
 #include "battle/range_falloff.h"
 #include "field/field_event.h"
@@ -158,7 +158,7 @@ struct ContainerRow {
 /// The most treasure spots a scene places, each an actor from
 /// FIELD_TREASURE_ACTOR on.
 #define TREASURE_SPOT_MAX 16
-/// Actor.riseBaseY of a treasure spot that stands for a map cell rather than an
+/// Actor.sceneWord of a treasure spot that stands for a map cell rather than an
 /// actor: its cell is in timer and userValue, and it stands at x and z 0.
 #define TREASURE_SPOT_ON_CELL 0x31415927
 /// gSceneItems: bit 14 marks a scene's header (SCENE_ITEMS), its scene number
@@ -194,7 +194,7 @@ extern const struct MapMusicRule gScene_MusicRules[];
 /// Each scene's area name by scene or group and entrance (area_name_rules.s).
 extern const struct AreaNameRule gArea_NameRules[];
 
-extern const s16 gParty_PairResolveRules[];
+extern const s16 gScene_ReturnRules[];
 
 extern const s32 gScene_BattleBackgroundRules[];
 

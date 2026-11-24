@@ -48,7 +48,7 @@ struct BattlePlaybackState {
   s16 keepPendingSound; ///< while nonzero, a resumed phase keeps pendingSound
   /// Set by PLAYBACK_DJINN_BONUS: enemies felled from then on give the Djinn
   /// bonus, cycling their colours and crying as they fall.
-  s32 flags;
+  s32 djinnBonus;
 };
 
 STATIC_ASSERT(sizeof(struct BattlePlaybackState) == 368);

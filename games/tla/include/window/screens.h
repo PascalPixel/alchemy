@@ -34,20 +34,20 @@ struct BattleSummaryCursor {
 };
 
 /// A row of gMenu_BarPatternRows: the two words a menu bar's tile pair is
-/// XORed with (Menu_BuildLocalizedPatternTiles).
+/// XORed with (RangeIcon_BuildTiles).
 struct BarPatternRow {
   u32 firstTile;
   u32 secondTile;
 };
 
 /// One word of a tile XORed with a row's mask: the marks
-/// Menu_BuildPatternTiles and Menu_BuildLocalizedPatternTiles make on a range
+/// Menu_BuildPatternTiles and RangeIcon_BuildTiles make on a range
 /// icon's two tiles.
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
 /// The twelve Psynergy range icons, built in two sets of six
 /// (Menu_BuildPatternTiles for the Status menu,
-/// Menu_BuildLocalizedPatternTiles for the battle menu): range n takes icon
+/// RangeIcon_BuildTiles for the battle menu): range n takes icon
 /// n - 1, and ABILITY_RANGE_ALL the last, RANGE_ICON_ALL.
 #define RANGE_PATTERN_SET_COUNT 2
 #define RANGE_PATTERN_COUNT 6
@@ -66,10 +66,10 @@ s32 Battle_RefuseFlee(void);
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count);
 s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby);
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count);
-s32 Item_ClassifyUseAbility(s32 member, s32 item);
+s32 Item_CheckBattleUse(s32 member, s32 item);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 void IconMenu_DrawIcons(void);
-void Link_DrawPageArrows(s32 destination);
+void PageArrows_Draw(s32 destination);
 s32 Link_CreateCountdownLabelWindow(void);
 /// Shows the advance cursor bobbing at (x, y) and waits for A, B, L or R.
 void BattleMessage_WaitForAdvanceAtFar(s32 x, s32 y);
@@ -78,7 +78,7 @@ void Sound_SetBgmVolumeTargetFar(s32 target, s32 step);
 /// Plays the music Scene_QueueMusic remembered, if any.
 void Scene_PlayQueuedMusicFar(void);
 /// Saves up to 32 actors into gSnapshotObjects so that they can be put back.
-void ObjectTable_SnapshotFar(void);
+void ActorTable_SnapshotFar(void);
 /// Creates the four Djinn figures of the file list's top row.
 void DjinnFigures_InitializeTopRowFar(void);
 /// Destroys the four Djinn figures and stops placing them.
@@ -170,7 +170,7 @@ enum FileMenuMode {
   FILE_LIST_COPY,     ///< copying: any file with data
   FILE_LIST_ERASE,    ///< erasing: any file with data
   /// The title's Battle: files that have found a Djinni.
-  FILE_LIST_EXTRA,
+  FILE_LIST_BATTLE,
   FILE_LIST_CLEARED, ///< the title's Send: cleared files only
   /// The title's Update: files saved before FLAG_REUNION was set.
   FILE_LIST_UPDATE
@@ -189,8 +189,8 @@ enum PasswordLevel {
 
 /// What IconMenu_ChooseSendOption offers.
 enum SendOptionMenu {
-  RESOURCE_LAYOUT_TRANSFER_METHOD = 0, ///< Password or Cable
-  RESOURCE_LAYOUT_PASSWORD_LEVEL = 1   ///< Gold, Silver or Bronze
+  SEND_OPTION_TRANSFER_METHOD = 0, ///< Password or Cable
+  SEND_OPTION_PASSWORD_LEVEL = 1   ///< Gold, Silver or Bronze
 };
 
 /// What YesNoMenu_Run and YesNoMenu_RunAt return.

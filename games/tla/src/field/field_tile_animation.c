@@ -14,7 +14,7 @@
 #include "field/map.h"
 #include "system/system.h"
 #include "system/frame.h"
-#include "graphics/palette_snapshots.h"
+#include "graphics/palette_cycles.h"
 #include "graphics/palette_buffers.h"
 #include "system/io_write_queue.h"
 #include "field/flag_call.h"
@@ -233,7 +233,7 @@ void WorldMap_StartStillImage(void) {
   const u32 *resources;
 
   perspective->animationActive = 1;
-  Task_SuspendAll(TilesetAnim_Update);
+  Task_Suspend(TilesetAnim_Update);
   perspective->viewHeld = 1;
   resources = perspective->resources;
   Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_1]),
@@ -255,7 +255,7 @@ void WorldMap_StartStillImage(void) {
 }
 
 /// VBlank: shows BG1 and copies the area's tiles back into VRAM.
-void WorldMap_ShowBg1FromBuffer(void) {
+void WorldMap_EndStillImage(void) {
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
                  BGCNT_WRAP | BGCNT_SIZE(2),
              &REG_BG3CNT);
@@ -298,7 +298,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
                       &gWorldMapState);
   // The VBlank copies the tiles back and the next frame shows the ground;
   // only then is the still image's buffer refilled with the cells.
-  gVBlankCallback = WorldMap_ShowBg1FromBuffer;
+  gVBlankCallback = WorldMap_EndStillImage;
   perspective->windowTop = 0;
   perspective->windowBottom = DISPLAY_HEIGHT - 1;
   wait(1);
@@ -306,7 +306,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
                       buffer);
   WorldMap_UpdateCurrentTileBlock();
   perspective->animationActive = 0;
-  Task_ResumeAll(TilesetAnim_Update);
+  Task_Resume(TilesetAnim_Update);
   perspective->viewHeld = 0;
   perspective->stillImageShown = 0;
   WorldMap_UpdateRegionTint(perspective->tintRegion, 0);
@@ -319,14 +319,14 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
 
-  gVBlankCallback = WorldMap_ShowBg1FromBuffer;
+  gVBlankCallback = WorldMap_EndStillImage;
   perspective->windowTop = 0;
   perspective->windowBottom = DISPLAY_HEIGHT - 1;
   wait(1);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_MAP_CELLS),
                       Ram_MapCellBuffer);
   WorldMap_UpdateCurrentTileBlock();
-  Task_ResumeAll(TilesetAnim_Update);
+  Task_Resume(TilesetAnim_Update);
   wait(1);
 }
 
@@ -466,14 +466,14 @@ void TilesetAnim_StartAll(const u16 *script) {
 /// shown.
 void TilesetAnim_SuspendAll(void) {
   if (((struct MapState *)Ram_HeapSlots->mapGrid)->animationActive == 0)
-    Task_SuspendAll(TilesetAnim_Update);
+    Task_Suspend(TilesetAnim_Update);
 }
 
 /// Resumes the tileset animations, unless the world map's still image is
 /// shown.
 void TilesetAnim_ResumeAll(void) {
   if (((struct MapState *)Ram_HeapSlots->mapGrid)->animationActive == 0)
-    Task_ResumeAll(TilesetAnim_Update);
+    Task_Resume(TilesetAnim_Update);
 }
 
 /// Each frame: runs the map's blend script.
@@ -562,14 +562,14 @@ void BlendScript_Start(u16 *script) {
 }
 
 /// Suspends the blend script; scenes reach it through BlendScript_SuspendFar.
-void BlendScript_Suspend(void) { Task_SuspendAll(BlendScript_Run); }
+void BlendScript_Suspend(void) { Task_Suspend(BlendScript_Run); }
 
 /// Resumes the blend script, through BlendScript_ResumeFar.
-void BlendScript_Resume(void) { Task_ResumeAll(BlendScript_Run); }
+void BlendScript_Resume(void) { Task_Resume(BlendScript_Run); }
 
 #include "palette_cycle_initialize.c"
 
-#include "palqueue_add.c"
+#include "palette_cycle_add.c"
 
 /// Unused: stops the palette cycles and frees their queue
 /// (HEAP_SLOT_PALETTE_CYCLES).
@@ -826,7 +826,7 @@ FIXED Terrain_GetBendDifferenceDiagonalHeight(const s8 *samples, s32 x, s32 y) {
   }
 }
 
-/// A raised or sunken rounded square: sample 1 where gTerrain_LerpWeightTable
+/// A raised or sunken rounded square: sample 1 where gTerrain_RoundedSquareMask
 /// is 1, sample 0 in the corners.
 FIXED Terrain_GetRoundedSquareHeight(const s8 *samples, s32 position, s32 row) {
   s32 start;
@@ -836,7 +836,7 @@ FIXED Terrain_GetRoundedSquareHeight(const s8 *samples, s32 position, s32 row) {
   // between.
   return start +
          (((samples[1] << CURVE_VALUE_SHIFT) - start) *
-          gTerrain_LerpWeightTable[position + (row * CURVE_FULL_STEPS)]);
+          gTerrain_RoundedSquareMask[position + (row * CURVE_FULL_STEPS)]);
 }
 
 /// The height of a step across x at position (0 to 15 of the cell):
@@ -968,7 +968,7 @@ FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED z) {
 
 /// Returns the terrain kind of a layer's cell at (x, z) in 16.16 pixels, as
 /// The Broken Seal's.
-s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED z) {
+s32 MapGrid_GetTerrainKindAt(s32 layer, FIXED x, FIXED z) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
 
@@ -984,9 +984,9 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED z) {
          MAPGRID_SHAPE_KIND_MASK;
 }
 
-/// As MapGrid_GetCellAttributeLowNibble, but a rounded square whose two
+/// As MapGrid_GetTerrainKindAt, but a rounded square whose two
 /// samples differ reads as TERRAIN_BUMP.
-s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z) {
+s32 MapGrid_GetTerrainKindOrBumpAt(s32 layer, s32 x, s32 z) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
   u8 *code;
@@ -1047,7 +1047,7 @@ s32 MapGrid_GetCellHeight(FIXED x, FIXED z, s32 layer) {
   return MapGrid_GetTerrainHeight(layer, x, z) >> CURVE_VALUE_SHIFT;
 }
 
-/// As MapGrid_GetCellAttributeLowNibble, a second copy.
+/// As MapGrid_GetTerrainKindAt, a second copy.
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *grid;

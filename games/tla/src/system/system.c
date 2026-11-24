@@ -18,7 +18,7 @@
 /// - the link cable: Serial_Initialize (system_serial.c).
 
 #include "system_internal.h"
-#include "graphics/output.h"
+#include "graphics/window_sprite_list.h"
 
 // The parts, in ROM order.
 #include "system_start_up.c"

@@ -565,7 +565,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     if (shownMember != member) {
       spawnList[0] = member;
       spawnList[1] = BATTLE_UNIT_LIST_END;
-      ReleaseBattleObjectRecordsFar(shownMember);
+      BattleObject_DestroySpritesFar(shownMember);
       shownMember = member;
       BattleObject_SpawnObjectsForListFar(spawnList, 1, 0);
       figureShown = 0;
@@ -627,14 +627,14 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
              index != INVENTORY_SLOTS && (item = unit->inventory[index]) != 0;
              index++) {
           Item_GetDirectFar(item);
-          if (Item_ClassifyUseAbility(member, item) == 0)
+          if (Item_CheckBattleUse(member, item) == 0)
             entries[count++] = item;
         }
         for (index = 0;
              index != INVENTORY_SLOTS && (item = unit->inventory[index]) != 0;
              index++) {
           Item_GetDirectFar(item);
-          if (Item_ClassifyUseAbility(member, item) != 0)
+          if (Item_CheckBattleUse(member, item) != 0)
             entries[count++] = item;
         }
         entries[count] = 0;
@@ -646,12 +646,12 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         if (count != 0) {
           u16 *entry = entries + rowBase + row;
 
-          if (Item_ClassifyUseAbility(member, *entry) == 2)
+          if (Item_CheckBattleUse(member, *entry) == 2)
             BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleItemUnavailable, itemText,
                                      SUMMARY_HELP_CAPACITY);
           else
             BATTLE_MENU_MESSAGE_COPY((*entry & INVENTORY_ITEM_ID_MASK) +
-                                         (s32)MsgItemPlainName,
+                                         (s32)MsgItemDescription,
                                      itemText, SUMMARY_ITEM_HELP_CAPACITY);
         } else {
           BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleNoItems, itemText,
@@ -667,7 +667,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           for (j = 0; j <= 3 && (item = entries[rowBase + j]) != 0; j++) {
             Item_GetDirectFar(item);
             Text_SetColor(TEXT_COLOR_WHITE);
-            if (Item_ClassifyUseAbility(member, item) != 0)
+            if (Item_CheckBattleUse(member, item) != 0)
               Text_SetColor(TEXT_COLOR_YELLOW);
             else if (item & INVENTORY_BROKEN)
               Text_SetColor(TEXT_COLOR_RED);
@@ -740,7 +740,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               Window_SetTilemapEntry(statusWindow, WINDOW_TILE_PP_LABEL_END, 12,
                                      j * 2 + 8, 0);
               iconSprites[j].oam.f.tile =
-                  Resource_LoadIndexedEntryToBuffer(id, iconSlots[j]);
+                  AbilityIcon_LoadIntoSlot(id, iconSlots[j]);
               if (!(ability->flags & ABILITY_USABLE_IN_BATTLE))
                 Text_SetColor(TEXT_COLOR_YELLOW);
               else if (ability->ppCost > unit->pp)
@@ -764,7 +764,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                 range = RANGE_ICON_ALL;
               else
                 range--;
-              Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
+              RangeIcon_Draw(statusWindow, 16, j * 2 + 8, range, 0);
             }
             /* FAKEMATCH(dead): a store nothing reads, which keeps the list
              * loop's exit on the fill loop's test. */
@@ -957,15 +957,15 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         Text_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
         Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_ATTACK),
                                 statusWindow, 136, 16);
-        Text_DrawNumberInWindow(unit->atk, 3, statusWindow,
+        Text_DrawNumberInWindow(unit->attack, 3, statusWindow,
                                 SUMMARY_STAT_VALUE_X, 16);
         Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DEFENSE),
                                 statusWindow, 136, 24);
-        Text_DrawNumberInWindow(unit->def, 3, statusWindow,
+        Text_DrawNumberInWindow(unit->defense, 3, statusWindow,
                                 SUMMARY_STAT_VALUE_X, 24);
         Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_AGILITY),
                                 statusWindow, 136, 32);
-        Text_DrawNumberInWindow(unit->agi, 3, statusWindow,
+        Text_DrawNumberInWindow(unit->agility, 3, statusWindow,
                                 SUMMARY_STAT_VALUE_X, 32);
         Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_LUCK),
                                 statusWindow, 136, 40);
@@ -1132,17 +1132,17 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             statusKind = OWNER_CONDITION_DOWNED;
           savedUnit = Heap_Alloc(sizeof(*savedUnit));
           Iwram_CopyWordsEntry(savedUnit, unit, sizeof(*savedUnit));
-          attackDelta = unit->atk;
-          defenseDelta = unit->def;
+          attackDelta = unit->attack;
+          defenseDelta = unit->defense;
           helpValue = 0;
-          agilityDelta = unit->agi;
+          agilityDelta = unit->agility;
           unit->attackStage = 0;
           unit->defenseStage = 0;
           unit->agilityStage = 0;
           Unit_CalculateFar(member);
-          attackDelta -= unit->atk;
-          defenseDelta -= unit->def;
-          agilityDelta -= unit->agi;
+          attackDelta -= unit->attack;
+          defenseDelta -= unit->defense;
+          agilityDelta -= unit->agility;
           Iwram_CopyWordsEntry(unit, savedUnit, sizeof(*savedUnit));
           Heap_Release(savedUnit);
           switch (statusKind) {
@@ -1280,7 +1280,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   Window_Close(helpWindow, 1);
   PartyStatus_Draw(Ram_HeapSlots->battleState->partyStatus);
   BATTLE_MENU_STATE->timerHidden = 0;
-  ReleaseBattleObjectRecordsFar(shownMember);
+  BattleObject_DestroySpritesFar(shownMember);
   BattleObject_PutFar();
   wait(1);
   Heap_Release(djinnList);

@@ -65,7 +65,7 @@ void FieldPsynergy_TremorOnTarget(void) {
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*tremorState));
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct FieldState *field = Ram_HeapSlots->fieldState;
-  struct Actor *target = scene->child;
+  struct Actor *target = scene->target;
   struct Sprite *targetSprite = target->sprite;
   s32 tiles;
   s32 shown;
@@ -98,7 +98,7 @@ void FieldPsynergy_TremorOnTarget(void) {
       sprite->depth = OAM_DEPTH_WINDOW;
       particle->timer = -1;
     }
-    BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
+    BattleEffect_SetObjectUpdateMode(scene->caster, 0);
     if (target != NULL && targetSprite != NULL) {
       Sprite_SetAnimationSpeedFar(targetSprite, 0);
       FieldPsynergy_DecodePicture(
@@ -124,7 +124,7 @@ void FieldPsynergy_TremorOnTarget(void) {
       // Shake the gathered objects' sprites with the view.
       if (field->mode == ACTOR_SYSTEM_MAP) {
         for (i = 0; i < tremorState->view.count; i++) {
-          struct Sprite *sprite = tremorState->view.objects[i]->sprite;
+          struct Sprite *sprite = tremorState->view.actors[i]->sprite;
           s32 rotation = tremorState->view.spriteRotations[i];
 
           if (amplitude > SWAY_SHAKE)
@@ -226,7 +226,7 @@ void FieldPsynergy_Tremor(void) {
   s32 frames;
 
   FieldPsynergy_FadeToCastColor();
-  BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
+  BattleEffect_SetObjectUpdateMode(scene->caster, 0);
   ViewMove_Start(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
   wait(10);
@@ -243,7 +243,7 @@ void FieldPsynergy_Tremor(void) {
     // Shake the gathered objects' sprites with the view.
     if (field->mode == ACTOR_SYSTEM_MAP) {
       for (i = 0; i < viewMoveState->count; i++) {
-        struct Sprite *sprite = viewMoveState->objects[i]->sprite;
+        struct Sprite *sprite = viewMoveState->actors[i]->sprite;
         s32 rotation = viewMoveState->spriteRotations[i];
 
         if (amplitude > 0)

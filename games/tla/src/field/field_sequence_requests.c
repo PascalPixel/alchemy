@@ -117,7 +117,7 @@ void Scene_PlayQueuedMusic(void) {
 /// the party has Scoop, the field menu then opens.
 void Event_ShowMessageAndOfferScoop(s32 message) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldMessage_ShowFar(message, FIELD_MESSAGE_ZOOM);
   GameFlag_Clear(FLAG_NOTHING_HAPPENS);
   Event_End();

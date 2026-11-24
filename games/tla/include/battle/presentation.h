@@ -124,7 +124,7 @@ void BattleEffect_RunShatteringOpeningFar(
 
 /// The party, then the enemies: the order the sides take their turn-end
 /// effects in.
-extern const struct BattleSideOrder gBattleParty_TurnEndSideOrder;
+extern const struct BattleSideOrder gBattle_TurnEndSideOrder;
 
 void BattleUnit_DrainDjinn(s32 unitId, s32 all, s32 announce);
 

@@ -87,7 +87,7 @@ const s16 gWorldMap_ShipEncounterRules[][4] = {
 
 /// The encounter of each Djinni battle (Encounter_GetDjinnFormation): {zone,
 /// slot}, by Djinni number, as The Broken Seal's gEncounter_DjinnBattles.
-const u16 gEncounter_AreaEntryTable[][2] = {
+const u16 gEncounter_DjinnBattles[][2] = {
     [DJINNI_FLINT] = {ENCOUNTER_ZONE_VENUS_DJINN, 1},
     [DJINNI_GRANITE] = {ENCOUNTER_ZONE_VENUS_DJINN, 2},
     [DJINNI_QUARTZ] = {ENCOUNTER_ZONE_VENUS_DJINN, 3},

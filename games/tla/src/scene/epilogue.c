@@ -25,7 +25,7 @@
 #include "window/window.h"
 #include "graphics/resource.h"
 #include "scene_ids.h"
-#include "graphics/uiflow.h"
+#include "graphics/window_close.h"
 #include "field/call.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
@@ -251,7 +251,7 @@ void Epilogue_ShowLine(s32 speaker, s32 position, s32 frames) {
   Epilogue_ShowLineAt(speaker, x, y, portraitX, portraitY, frames, mode);
 }
 
-void SceneState_SetScrollTarget(u16 row);
+void EndingImage_SetTargetRow(u16 row);
 void EndingImage_WaitForScroll(void);
 void WindowSystem_InitField(void);
 
@@ -314,7 +314,7 @@ s32 Scene_Initialize(void) {
 #endif
   Epilogue_ShowLine(SPRITE_JENNA, LINE_AT_FOOT, 40);
   // The image pans 120 pixels right, to the three on the cliff.
-  SceneState_SetScrollTarget(120);
+  EndingImage_SetTargetRow(120);
   System_Wait(1);
   EndingImage_WaitForScroll();
   FieldEvent_Wait(30);
@@ -375,7 +375,7 @@ s32 Scene_Initialize(void) {
   Epilogue_ShowLine(SPRITE_GARET, LINE_AT_FOOT, 40);
   Epilogue_ShowLine(SPRITE_KRADEN, LINE_AT_FOOT, 40);
   // The villagers' image pans 200 pixels right, to Dora by the trees.
-  SceneState_SetScrollTarget(200);
+  EndingImage_SetTargetRow(200);
   System_Wait(1);
   EndingImage_WaitForScroll();
   FieldEvent_Wait(30);
@@ -399,7 +399,7 @@ s32 Scene_Initialize(void) {
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(120);
   // The reunion pans 120 pixels right, along the party.
-  SceneState_SetScrollTarget(120);
+  EndingImage_SetTargetRow(120);
   System_Wait(1);
   EndingImage_WaitForScroll();
   FieldEvent_Wait(180);

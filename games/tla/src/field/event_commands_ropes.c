@@ -17,15 +17,6 @@
 #include "macros.h"
 #include "window/item_icon.h"
 
-/// RopeNode.kind and TightropeNode.kind.
-enum RopeNodeKind {
-  ROPE_NODE_FREE,      ///< in the pool, on no rope
-  ROPE_NODE_CROSSABLE, ///< laid along a rope, for the leader to step onto
-  /// Laid but not to be crossed: a coil, a tied rope's end wound round its far
-  /// post, every node of a settled tightrope.
-  ROPE_NODE_UNCROSSABLE
-};
-
 /// The animations of a rope's or tightrope's post (SPRITE_TIGHTROPE_POST).
 enum PostAnimation {
   ANIM_POST_TIE = 2,   ///< the rope winding round the post, then ANIM_POST_TIED
@@ -61,7 +52,7 @@ enum RopeSlotState {
 /// post (FieldState.blockedSteps) for more than this many frames.
 #define ROPE_PUSH_STEPS 12
 
-/// A post whose riseEnabled byte holds this keeps in watchedActor a hook giving
+/// A post whose sceneByte byte holds this keeps in watchedActor a hook giving
 /// the point Lash throws the rope to (Rope_Lash); no scene marks a post so.
 #define ROPE_POST_HOOKED 99
 
@@ -453,7 +444,7 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
     s32 xx, yy, length, segments, count;
     s32 (*mul)(s32, s32);
 
-    if (to->riseEnabled == ROPE_POST_HOOKED)
+    if (to->sceneByte == ROPE_POST_HOOKED)
       ((TargetHook)to->watchedActor)(to, &toX, &toZ);
     x = (toX - from->x.fixed) >> 8;
     y = (toY - from->y.fixed) >> 8;

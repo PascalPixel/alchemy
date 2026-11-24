@@ -186,7 +186,7 @@ void Madra_EnterDoor(void) {
 
   state = Ram_HeapSlots->fieldState;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   for (id = ACTOR_FIRST_PLACED; id < FIELD_TREASURE_ACTOR; id++) {
     actor = Actor_GetById(id);
     if (actor != NULL) {
@@ -347,7 +347,7 @@ void Madra_MindReadKarst(void) {
 void Madra_KarstCallsForMenardi(void) {
   if (Event_GetFlag(FLAG_MADRA_KARST_CALLED_FOR_MENARDI) == 0) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
     Event_SetMessageId((s32)&MsgMadraWhereCouldMenardiHaveGone);
     // "Where could Menardi have gone? Where are you, my sister?"
@@ -451,7 +451,7 @@ void Madra_WorkerBlocksHole(void) {
     Import_EventSetExitRequest(MADRA_TO_MADRA_CATACOMBS_LADDERS_EAST);
   } else if (!Event_GetFlag(FLAG_MADRA_WORKER_SEEN_AT_HOLE)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Madra_PlaceFacing(ACTOR_HOLE_WORKER, toFIXED(744), toFIXED(257),
                       FACING_SOUTH);
     Actor_GetById(ACTOR_FELIX)->velocityY = toFIXED(5);
@@ -474,7 +474,7 @@ void Madra_WorkerBlocksHole(void) {
 void Madra_WorkerBlocksSealedHole(void) {
   if (!Event_GetFlag(FLAG_MADRA_WORKER_SEEN_AT_HOLE)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Madra_PlaceFacing(ACTOR_HOLE_WORKER, toFIXED(744), toFIXED(256),
                       FACING_SOUTH);
     Actor_GetById(ACTOR_FELIX)->velocityY = toFIXED(5);
@@ -573,7 +573,7 @@ void Madra_AskAboutIceShaft(s32 actor) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)&MsgMadraWasIJustDreamingWhen;
   Event_SetMessageId(msg);
   // "Was I just dreaming when that shaft of ice appeared?"
@@ -609,7 +609,7 @@ void Madra_AskAboutBriggs(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     msg = (s32)&MsgMadraHeyMisterAreYouGuy;
     Event_SetMessageId(msg);
@@ -652,7 +652,7 @@ void Madra_MindReadBriggsFan(void) {
   s32 msg, x, z;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     msg = (s32)&MsgMadraHeyMisterAreYouGuy;
     Event_SetMessageId(msg);
@@ -700,7 +700,7 @@ void Madra_AskAboutJenna(void) {
   s32 flags;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceActor(ACTOR_BOAT_OWNER, ACTOR_FELIX, 0);
   Event_SetMessageId((s32)&MsgMadraIsThereByAnyChance);
   flags = 0;
@@ -746,7 +746,7 @@ void Madra_InspectPartyAtGate(void) {
   struct Actor *actor;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgMadraYouThereHoldYourGround);
   // "You there! Hold your ground!"
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 2);
@@ -901,7 +901,7 @@ void Madra_GrantPassageToOsenia(void) {
   if (!GameFlag_Get(FLAG_PIERS_INTERROGATED))
     return;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_MoveTo(124, CAMERA_KEEP, 420, 1);
   FieldCamera_WaitForArrival();
   Actor_SetSpeed(ACTOR_LADY, 0.8);
@@ -1086,7 +1086,7 @@ void Madra_StopPartyAfterRaid(void) {
   struct Actor *actor;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgMadraHeyYouLotHold);
   // "Hey! You lot! Hold it right there!"
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 2);
@@ -1268,7 +1268,7 @@ void Madra_MeetKarst(void) {
 
   z = toFIXED(259);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_StartScreenTransition();
   // The second flag is the one after the six DataTransfer_Apply copies from
   // The Broken Seal's save, which no code sets.
@@ -1863,7 +1863,7 @@ void Madra_ClimbDownLadder(void) {
 /// no trigger runs it.
 UNUSED void Madra_StepOntoLadderFacingEast(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWait(ACTOR_FELIX, 16, 0);
   Madra_ClimbDownLadder();
@@ -1873,7 +1873,7 @@ UNUSED void Madra_StepOntoLadderFacingEast(void) {
 /// no trigger runs it.
 UNUSED void Madra_StepOntoLadderFacingWest(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_WalkByAndWait(ACTOR_FELIX, -2, -6);
   Actor_WalkByAndWait(ACTOR_FELIX, -14, -8);
   Madra_ClimbDownLadder();
@@ -1882,7 +1882,7 @@ UNUSED void Madra_StepOntoLadderFacingWest(void) {
 /// Unused: Felix turns north on the spot and climbs down; no trigger runs it.
 UNUSED void Madra_TurnAndClimbDownLadder(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Madra_ClimbDownLadder();
 }

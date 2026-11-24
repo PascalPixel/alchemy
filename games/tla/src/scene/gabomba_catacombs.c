@@ -92,7 +92,7 @@ void Actor_DepartInRing(s32 id);
 #define LEADER_HOP()                                                           \
   do {                                                                         \
     Event_Start();                                                             \
-    Event_ResolvePendingActions(0);                                            \
+    Event_EndLastingPsynergy(0);                                               \
     FieldEffect_SetAttached(gMainRoutineState.leaderActorId,                   \
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
   } while (0)
@@ -301,7 +301,7 @@ void GabombaCatacombs_UncoverThirdPuddle(void) {
   Actor_SetPosition(ACTOR_THIRD_PUDDLE, 152, 264);
   if (LEADER_ON_CELL(leader, 9, 16)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     FieldEffect_SetAttached(gMainRoutineState.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetDestinationOffsetById(gMainRoutineState.leaderActorId, -16, 0);
@@ -389,7 +389,7 @@ void GabombaCatacombs_UncoverStreamPuddle(void) {
   Actor_SetPosition(ACTOR_STREAM_PUDDLE, 280, 296);
   if (LEADER_ON_CELL(leader, 17, 18)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     FieldEffect_SetAttached(gMainRoutineState.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 0, -16);
@@ -413,7 +413,7 @@ void GabombaCatacombs_UncoverMadPlant(void) {
     GabombaCatacombs_MadPlantLeaps(SPRITE_MAD_PLANT, 168, 424);
     gMainRoutineState.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(0));
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 0);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_MAD_PLANTS, 0);
   }
 }
 
@@ -612,7 +612,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   s32 speed;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(8, 8, 12), 1);
   PaletteFade_StartInterpolation(60);

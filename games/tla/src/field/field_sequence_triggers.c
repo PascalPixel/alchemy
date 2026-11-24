@@ -261,7 +261,7 @@ s32 Scene_TalkToActor(s32 id) {
         goto empty;
       if (type == CONTAINER_CHEST) {
         if (contents == 0)
-          ObjectEvent_SetMode6WithCue(index);
+          TreasureSpot_OpenEmptyChest(index);
         else
           TreasureSpot_OpenChest(index);
       }
@@ -295,16 +295,16 @@ s32 Scene_TalkToActor(s32 id) {
         Event_Wait(30);
         FieldMessage_ShowFar((s32)&MsgPsynergyStoneDisappeared,
                              FIELD_MESSAGE_ZOOM);
-        ObjectEvent_Remove(index);
+        TreasureSpot_Remove(index);
         if (flag != -1)
           GameFlag_Set(flag);
       } else if (type == CONTAINER_STONE_TABLET) {
         Event_Start();
-        Event_ResolvePendingActions(0);
+        Event_EndLastingPsynergy(0);
         SummonTablet_PlayRunes(index);
         Summon_ShowLearnedMessageFar(contents);
         Summon_LearnFar(contents);
-        ObjectEvent_Remove(index);
+        TreasureSpot_Remove(index);
         if (flag != -1)
           GameFlag_Set(flag);
         Event_End();
@@ -406,7 +406,7 @@ s32 Scene_TalkToActor(s32 id) {
               Actor_ReleaseFar(shown);
             }
             if (type == CONTAINER_POND)
-              ObjectEvent_Remove(index);
+              TreasureSpot_Remove(index);
             result = 0;
           }
         }

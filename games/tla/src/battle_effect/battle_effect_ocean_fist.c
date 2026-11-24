@@ -73,10 +73,10 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
+  BattleEffect_BuildCanvasBlitters(0, (void **)blitters);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, spraySheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, state->sheet, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_BLUE_FLAME_SHEET);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->targets[0], &target);

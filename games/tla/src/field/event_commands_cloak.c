@@ -55,7 +55,7 @@
 void FieldPsynergy_StartCloak(void) {
   struct FieldState *event = Ram_HeapSlots->fieldState;
   struct Actor *caster =
-      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->mainActor;
+      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->caster;
   struct Sprite *sprite = caster->sprite;
   struct SpriteAnimation *entry = sprite->entries[0];
   u32 n;
@@ -95,7 +95,7 @@ void FieldPsynergy_StartCloak(void) {
 void BattleEffect_LandFallingObject(struct Actor *actor) {
   if (actor->y.fixed <= actor->groundHeight) {
     actor->wait = 2;
-    Actor_StartScriptFar(actor, (u32)gBattleEffect_SharedParticleScript);
+    Actor_StartScriptFar(actor, (u32)gFieldEffect_ReleaseScript);
     actor->update = 0;
   }
 }
@@ -109,7 +109,7 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *particle) {
   drift = Random16();
   particle->x.fixed += drift - Random16();
   if (particle->y.fixed <= particle->groundHeight) {
-    Actor_StartScriptFar(particle, gBattleEffect_SharedParticleScript);
+    Actor_StartScriptFar(particle, gFieldEffect_ReleaseScript);
   }
 }
 
@@ -124,8 +124,8 @@ void FieldPsynergy_Douse(void) {
   struct Vector3 start;
   struct Vector3 end;
   struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
-  struct Actor *target = state->child;
-  struct Actor *caster = state->mainActor;
+  struct Actor *target = state->target;
+  struct Actor *caster = state->caster;
   s32 count;
   struct Actor *cloud;
   s32 raised;
@@ -141,7 +141,7 @@ void FieldPsynergy_Douse(void) {
     return;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
-  if (state->child == 0) {
+  if (state->target == 0) {
     state->x = caster->x.fixed;
     state->z = caster->z.fixed;
     Vector_AddPolarOffset(toFIXED(16), state->angle,
@@ -153,7 +153,7 @@ void FieldPsynergy_Douse(void) {
   y = state->y;
   end.y = y + toFIXED(32);
   end.z = state->z;
-  if ((s8)state->childOption != 0)
+  if ((s8)state->sceneVariant != 0)
     end.y = y + toFIXED(80);
   if (Actor_GetSpriteIdFar(target) == SPRITE_MOAI) {
     end.y += toFIXED(32);
@@ -175,7 +175,7 @@ void FieldPsynergy_Douse(void) {
 
   if ((s8)state->lit == 0) {
     count = DOUSE_DROPS_AT_NOTHING;
-    if ((s8)state->enabled == 0)
+    if ((s8)state->aimAhead == 0)
       count = DOUSE_DROPS_ON_TARGET;
     for (n = 0; n < count; n++) {
       SET_POSITION(&pos, cloud->x.fixed, cloud->y.fixed, cloud->z.fixed);
@@ -186,7 +186,7 @@ void FieldPsynergy_Douse(void) {
       }
       particle = Actor_Spawn(SPRITE_DROPLET, pos.x, pos.y, pos.z);
       if (particle != 0) {
-        struct Actor *ground = state->child;
+        struct Actor *ground = state->target;
 
         if (ground != 0) {
           particle->groundHeight = ground->y.fixed;
@@ -207,13 +207,12 @@ void FieldPsynergy_Douse(void) {
             PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_DOUSE,
             Scene_SelectPsynergyTarget(FIELD_PSYNERGY_DOUSE));
         if (trigger != 0)
-          Field_RunPsynergyEvent(trigger, state->firstActorId,
-                                 state->secondActorId);
+          Field_RunPsynergyEvent(trigger, state->casterId, state->targetId);
       }
     }
     wait(10);
   } else {
-    if ((s8)state->enabled != 0)
+    if ((s8)state->aimAhead != 0)
       count = DOUSE_DROPS_AT_NOTHING;
     else
       count = DOUSE_SWAYING_DROPS_ON_TARGET;
@@ -261,7 +260,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   u32 radius;
 
   liftedActor =
-      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->child;
+      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->target;
   position.x = liftedActor->x.fixed;
   position.y = liftedActor->y.fixed - Random16() * 16 + toFIXED(24);
   position.z = liftedActor->z.fixed;
@@ -303,8 +302,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   s32 magnitude;
 
   state = Ram_HeapSlots->fieldEffectState;
-  source = state->mainActor;
-  target = state->child;
+  source = state->caster;
+  target = state->target;
   if (target == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
@@ -463,7 +462,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->layer = MAPGRID_LAYER_GROUND;
   source->update = NULL;
   Actor_SetSpriteColorModeFar(source, SPRITE_COLOR_NORMAL);
-  if ((s8)state->childOption != 0) {
+  if ((s8)state->sceneVariant != 0) {
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
       wait(1);
     wait(1);

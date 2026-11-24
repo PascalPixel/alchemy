@@ -240,7 +240,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   }
 
   // The pictures, Eddy's bubble narrowed, and the colours.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, state->sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET,
                              state->sheet + HEALING_BUBBLE_SHEET, 1, 0);
@@ -289,7 +289,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   resource += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(resource, state->sheet + HEALING_DJINNI_PICTURE);
   // blit[0] keeps the brighter pixel and blit[1] adds; draw points at them.
-  BattleEffect_FetchRectangleBlitters(args->side, draw = blit);
+  BattleEffect_BuildCanvasBlitters(args->side, draw = blit);
 
   // Scatter the motes; the mode decides how, and how long the effect is.
   if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL ||

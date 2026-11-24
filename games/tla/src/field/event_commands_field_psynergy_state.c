@@ -109,16 +109,16 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   } else {
     state = Ram_HeapSlots->fieldEffectState;
   }
-  state->action = abilityId;
+  state->ability = abilityId;
   state->fieldPsynergy = Ability_Get(abilityId)->fieldPsynergy;
   running = event->psynergyActing;
   if (running != 0)
     return;
   state->freeBlocks = VRAM_BLOCK_COUNT - ResourceTable_CountFreeBlocks();
   state->mode = mode;
-  state->visible = 1;
-  state->enabled = 1;
-  state->active = 1;
+  state->flashCaster = 1;
+  state->aimAhead = 1;
+  state->announceName = 1;
   state->messageMode = 1;
   state->messageShown = 0;
   state->stage = running;
@@ -162,15 +162,15 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   struct FieldEffectState *scene;
 
   scene = Ram_HeapSlots->fieldEffectState;
-  scene->firstActorId = userId;
+  scene->casterId = userId;
   user = Actor_Lookup((s16)userId);
-  scene->secondActorId = targetId;
-  scene->mainActor = user;
+  scene->targetId = targetId;
+  scene->caster = user;
   target = Actor_Lookup((s16)targetId);
   // The facing rounded to four directions, and to eight.
   scene->angle = (user->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
   scene->angle8 = (user->facing + FACING_STEP) & TRIG_TURN * 7 / 8;
-  scene->child = target;
+  scene->target = target;
   if (user != NULL) {
     u8 priorityFlags;
 
@@ -204,8 +204,8 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
 void FieldPsynergy_StartCast(void) {
   struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
   struct FieldState *event = Ram_HeapSlots->fieldState;
-  struct Actor *actor = state->mainActor;
-  s32 ability = state->action;
+  struct Actor *actor = state->caster;
+  s32 ability = state->ability;
 
   Actor_SelectAnimationFar(actor, ANIM_CAST_PSYNERGY_START);
   actor->targetX = actor->x.fixed;
@@ -214,11 +214,11 @@ void FieldPsynergy_StartCast(void) {
   actor->velocityY = 0;
   actor->targetZ = actor->z.fixed;
   actor->velocityZ = 0;
-  if (state->visible != 0) {
+  if (state->flashCaster != 0) {
     Sound_PlayFar(SE_POWER_UP);
     BattleEffect_SetObjectUpdateMode(actor, 1);
   }
-  if (state->active != 0) {
+  if (state->announceName != 0) {
     state->messageShown = 1;
     Actor_SetOthersPaused(actor, 1, 0);
     MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
@@ -227,7 +227,7 @@ void FieldPsynergy_StartCast(void) {
     state->messageShown = 0;
   }
   if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST)) {
-    if (state->visible != 0)
+    if (state->flashCaster != 0)
       BattleEffect_SetObjectUpdateMode(actor, 2);
     Actor_SelectAnimationFar(actor, ANIM_CAST_PSYNERGY_END);
   } else {
@@ -240,7 +240,7 @@ void FieldPsynergy_StartCast(void) {
 void BattleEffect_StopMainActor(void) {
   struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
 
-  BattleEffect_SetObjectUpdateMode(state->mainActor, 0);
+  BattleEffect_SetObjectUpdateMode(state->caster, 0);
   wait(1);
 }
 
@@ -252,7 +252,7 @@ void FieldPsynergy_End(void) {
   struct FieldState *event = Ram_HeapSlots->fieldState;
   struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
   struct MapState *map = Ram_HeapSlots->mapGrid;
-  struct Actor *owner = state->mainActor;
+  struct Actor *owner = state->caster;
   s32 i;
   s16 first;
 
@@ -324,7 +324,7 @@ void FieldPsynergy_StartMindReadWave(s32 casterId, s32 targetId) {
   state->delay = 8;
   state->counter = 0;
   FieldPsynergy_FadeToCastColor();
-  FieldEffect_AdvanceHueCycle();
+  MindRead_AdvanceTint();
   PaletteFade_SetTarget(RGB(state->red, state->green, state->blue) |
                             PALETTE_TINT_CUSTOM,
                         PALETTES_BG);
@@ -340,7 +340,7 @@ void FieldPsynergy_StopMindReadWave(void) {
 
   FieldPsynergy_RestoreMindReadPalette();
   Task_Remove(FieldPsynergy_UpdateMindReadWave);
-  Actor_SetSpritePalette(Actor_GetById(state->sourceId), 1);
+  Actor_SetLayersColorMode(Actor_GetById(state->sourceId), 1);
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_MIND_READ);
 }
@@ -349,7 +349,7 @@ void FieldPsynergy_StopMindReadWave(void) {
 
 /// Greys the message window's white and most of its other colours
 /// (MIND_READ_GREY), so messages read as thoughts, and starts the BG0 line
-/// scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
+/// scroll (MindRead_StartRipple) at each VBlank.
 void FieldPsynergy_GreyMindReadPalette(void) {
   volatile u16 *p;
 
@@ -376,14 +376,14 @@ void FieldPsynergy_GreyMindReadPalette(void) {
   *p = MIND_READ_GREY;
   p += 1;
   *p = MIND_READ_GREY;
-  Task_Add((TaskFunc)FieldEffect_ArmBg0HBlankDma, TASK_PASS_VBLANK - 20);
+  Task_Add((TaskFunc)MindRead_StartRipple, TASK_PASS_VBLANK - 20);
 }
 
 /// Stops the BG0 line scroll and restores WINDOW_PALETTE.
 void FieldPsynergy_RestoreMindReadPalette(void) {
   struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
 
-  Task_Remove((TaskFunc)FieldEffect_ArmBg0HBlankDma);
+  Task_Remove((TaskFunc)MindRead_StartRipple);
   BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_WHITE) = RGB_WHITE;
   BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_BLACK) = RGB(0, 0, 0);
   BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_DARK_GREY) = RGB(10, 10, 10);

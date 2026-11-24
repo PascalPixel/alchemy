@@ -124,9 +124,9 @@ s32 PartyInventory_FindRoomFar(s32 item);
 /// drop, which sets the member and slot chosen.
 s32 ItemPicker_RunToDropFar(s32 *member, s32 *slot);
 
-void FieldEffect_AdvanceHueCycle(void);
-void FieldEffect_ReleaseOnArrival(struct Actor *actor);
-void Actor_SetSpritePalette(void *actor, s32 value);
+void MindRead_AdvanceTint(void);
+void MindRead_UpdateCrescent(struct Actor *actor);
+void Actor_SetLayersColorMode(void *actor, s32 value);
 
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z);
@@ -202,7 +202,7 @@ extern s16 gMapScreen_FirstListOnly;
 
 void FieldPsynergy_Lash(void);
 
-void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor);
+void Whirlwind_UpdateTarget(struct Actor *actor);
 
 void Camera_WorldToScreen(struct Vector3 *position);
 
@@ -214,7 +214,7 @@ void FieldPsynergy_Arrow(void);
 void FieldPsynergy_Halt(void);
 
 void FieldPsynergy_Catch(void);
-void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot);
+void Retreat_UpdateSpark(struct FieldParticle *slot);
 
 void FieldPsynergy_Whirlwind(void);
 
@@ -315,7 +315,7 @@ void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 
 /// The encounter zone of the hidden Mad Plants' battles, one slot each, in
 /// FLAG_MAD_PLANT's order.
-#define ENCOUNTER_TABLE_MAD_PLANTS 106
+#define ENCOUNTER_ZONE_MAD_PLANTS 106
 
 /// The encounter zone of two story battles: the King Scorpion's in the Yampi
 /// Desert (slot 0), then Briggs and his crew's on his ship at Alhafra (slot
@@ -323,16 +323,16 @@ void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 #define ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA 10
 /// The encounter zone of the battles below deck of the Lemurian Ship: slot 0
 /// an Aqua Jelly, slot 1 the Aqua Hydra.
-#define ENCOUNTER_TABLE_AQUA_JELLIES 11
+#define ENCOUNTER_ZONE_AQUA_JELLIES 11
 /// The encounter zone of three story battles: the Serpent's in Gaia Rock, one
 /// slot for each beam of sunlight let into its lair (ENEMY_SERPENT to
 /// ENEMY_SERPENT_FOUR_BEAMS, slots 0 to 4), then Avimander's in Champa (slot
 /// 5) and Poseidon's at the Sea of Time (slot 6).
-#define ENCOUNTER_TABLE_SERPENT 12
+#define ENCOUNTER_ZONE_SERPENT 12
 /// The encounter zone of Moapa and his two Knights at the Trial Road's peak,
 /// one slot per stage door the party reached first (slots 0 to 4), then Karst
 /// and Agatio's three battles on Jupiter Lighthouse's aerie (slots 5 to 7).
-#define ENCOUNTER_TABLE_MOAPA 13
+#define ENCOUNTER_ZONE_MOAPA 13
 /// The World Map's encounter zone of region 1's beach, shallows and grassland,
 /// which the Psynergy test room's battles also take (slot 0, one or two Giant
 /// Bats).
@@ -346,9 +346,9 @@ void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 
 /// The encounter zone of the battles with four guardians of hidden places, one
 /// slot each (HiddenBoss).
-#define ENCOUNTER_TABLE_HIDDEN_BOSSES 103
+#define ENCOUNTER_ZONE_HIDDEN_BOSSES 103
 
-/// The slots of ENCOUNTER_TABLE_HIDDEN_BOSSES.
+/// The slots of ENCOUNTER_ZONE_HIDDEN_BOSSES.
 enum HiddenBoss {
   HIDDEN_BOSS_TREASURE_ISLE, ///< the Star Magician, at the end of Treasure Isle
   HIDDEN_BOSS_VALUKAR,       ///< Valukar, in the Yampi Desert Cave
@@ -393,7 +393,7 @@ void FieldPsynergy_UpdateMindReadWave(void);
 
 void FieldPsynergy_RestoreMindReadPalette(void);
 
-void FieldEffect_ArmBg0HBlankDma(void);
+void MindRead_StartRipple(void);
 
 /// Three coordinates of a burst piece's place, x, y and z, filled in turn as
 /// Vector_AddPolarOffset reads them.
@@ -445,21 +445,21 @@ struct EffectChild {
   void (*callback)(void);
 };
 
-extern const s32 gBattleEffect_HeavyImpactScript[];
-s32 SpawnHeavyImpactEffect(struct Actor *source);
+extern const s32 gForce_FistScript[];
+s32 FieldEffect_SpawnHeavyImpact(struct Actor *source);
 
-/// What BattleEffect_GetEightWayHeadingWord returns when no direction is held,
+/// What Input_GetDpadAngleEightWay returns when no direction is held,
 /// or right and left or up and down together: the blank entries of
-/// gBattleEffect_EightWayHeadingWords.
+/// gInput_DpadAnglesEightWay.
 #define DPAD_ANGLE_NONE 65535
 
 extern const u8 gAnim_ChildPaletteCycle[];
 
-/// ActorScript_FindOverlappingEntry through its far call: the first solid actor
+/// ActorScript_FindOverlappingActor through its far call: the first solid actor
 /// the actor at position would overlap, or NULL.
-struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *actor,
+struct Actor *ActorScript_FindOverlappingActorFar(struct Actor *actor,
                                                   struct Vector3 *position);
 
-extern const u8 gUnused_BattleEffectBytes[];
+extern const u8 gMoveHand_PushPoses[];
 
 #endif

@@ -31,13 +31,13 @@ struct ViewMoveState {
   s32 savedMaxZ;
   s16 edgeX; ///< -1 beside the low edge, 1 beside the high edge, else 0
   s16 edgeZ;
-  struct Actor *objects[8]; ///< the actors near the caster it rocks
-  u16 spriteRotations[8];   ///< each one's sprite rotation, given back after
+  struct Actor *actors[8]; ///< the actors near the caster it rocks
+  u16 spriteRotations[8];  ///< each one's sprite rotation, given back after
   s32 count;
 };
 
 STATIC_ASSERT(offsetof(struct ViewMoveState, edgeX) == 28);
-STATIC_ASSERT(offsetof(struct ViewMoveState, objects) == 32);
+STATIC_ASSERT(offsetof(struct ViewMoveState, actors) == 32);
 STATIC_ASSERT(offsetof(struct ViewMoveState, count) == 80);
 
 void ViewMove_Start(s32 direction);

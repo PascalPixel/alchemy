@@ -47,33 +47,34 @@ struct Message {
   /// character in Japanese, after a space in the other editions but German,
   /// which takes none.
   u16 spacing[4];
-  u16 line;        ///< line of the page, indexes spacing; at most 3
-  u16 entry;       ///< next code in WindowState.textBuffer
-  u16 countdown;   ///< frames left of a pause, a page wait or a swell
-  u16 colour;      ///< text colour; TEXT_COLOR_WHITE at start
-  u16 outline;     ///< an enum TextStyle; TEXT_STYLE_PLAIN at start
-  u16 lineSpacing; ///< TEXT_DEFAULT_LINE_SPACING at start
-  u16 transition;  ///< frames left of the canvas scrolling up a line
-  u16 startX;      ///< pen x each new line returns to, 8.8 fixed-point pixels
-  u16 ended;       ///< 1 once a TEXT_END code is reached
-  u16 glyphDelay;  ///< frames to wait after a glyph while no button is held
-  u16 flags;       ///< nonzero keeps the window's size from page to page
+  u16 line;         ///< line of the page, indexes spacing; at most 3
+  u16 textIndex;    ///< next code in WindowState.textBuffer
+  u16 countdown;    ///< frames left of a pause, a page wait or a swell
+  u16 colour;       ///< text colour; TEXT_COLOR_WHITE at start
+  u16 outline;      ///< an enum TextStyle; TEXT_STYLE_PLAIN at start
+  u16 lineSpacing;  ///< TEXT_DEFAULT_LINE_SPACING at start
+  u16 scrollFrames; ///< frames left of the canvas scrolling up a line
+  u16 startX;       ///< pen x each new line returns to, 8.8 fixed-point pixels
+  u16 ended;        ///< 1 once a TEXT_END code is reached
+  u16 glyphDelay;   ///< frames to wait after a glyph while no button is held
+  u16 flags;        ///< nonzero keeps the window's size from page to page
   /// Copied from spacing[3] when the message starts; with WindowState.textMode
   /// set it places the glyphs by y / 320.
   u16 compressLines;
 };
 
 STATIC_ASSERT(sizeof(struct Message) == 40);
-STATIC_ASSERT(offsetof(struct Message, entry) == 18);
+STATIC_ASSERT(offsetof(struct Message, textIndex) == 18);
 STATIC_ASSERT(offsetof(struct Message, countdown) == 20);
-STATIC_ASSERT(offsetof(struct Message, transition) == 28);
+STATIC_ASSERT(offsetof(struct Message, scrollFrames) == 28);
 STATIC_ASSERT(offsetof(struct Message, flags) == 36);
 
-/// Marks the 4-row band of the window tilemap that holds row y for upload
-/// (WindowState.dirty), as WINDOW_MARK_TILEMAP_ROW does.
-#define UiRender_MarkRow(render, y)                                            \
+/// Marks the 4-row band of the window tilemap that holds `row` for upload
+/// (WindowState.dirty): the battle lists mark their top border's row so, and
+/// the Djinn list its preview's.
+#define WINDOW_MARK_TILEMAP_ROW(state, row)                                    \
   do {                                                                         \
-    (render)->dirty |= 2 << ((u32)(y) >> 2);                                   \
+    (state)->dirty |= 2 << ((u32)(row) >> 2);                                  \
   } while (0)
 
 #endif

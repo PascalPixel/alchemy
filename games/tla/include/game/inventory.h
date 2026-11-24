@@ -7,7 +7,7 @@
 
 #include "game/item.h"
 
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "system/main_routine_state.h"
 
 s32 Inventory_Count(s32 owner);

@@ -57,7 +57,7 @@ UNUSED void Actor_ReservedNoOp(void) {}
 
 /// Creates the actors of a scene's actor placement table (ended by sprite -1),
 /// and records the table among the scene's tables.
-void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
+void Event_SpawnActorTable(struct ActorPlacement *entry, s32 slot) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 actorIndex = 0;
   s32 i;
@@ -243,12 +243,12 @@ void Actor_ResetForLeader(s32 table) {
   entry[1] = gField_DefaultPlacements[1];
   for (i = 0; i < 4; i++)
     state->tables[i] = 0;
-  ObjectTable_Clear();
+  ActorTable_Clear();
   entry->condition = -1;
   entry->sprite = leader;
   SET_POSITION(entry, gMainRoutineState.x, 0, gMainRoutineState.z);
   entry->facing = gMainRoutineState.heading;
-  Event_SpawnObjectTable(entry, leader);
+  Event_SpawnActorTable(entry, leader);
   {
     FIXED y = gMainRoutineState.y;
 
@@ -258,7 +258,7 @@ void Actor_ResetForLeader(s32 table) {
       actor->groundHeight = y;
     }
   }
-  Event_SpawnObjectTable((struct ActorPlacement *)table, ACTOR_FIRST_PLACED);
+  Event_SpawnActorTable((struct ActorPlacement *)table, ACTOR_FIRST_PLACED);
 
   actor = state->actors[leader];
   actor->layer = gMainRoutineState.layer;
@@ -368,7 +368,7 @@ void Scene_AssignViewFlags(struct ViewedPlacement *entry) {
 }
 
 /// Empties all the actor slots, without releasing the actors.
-void ObjectTable_Clear(void) {
+void ActorTable_Clear(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 i;
 
@@ -393,7 +393,7 @@ struct Actor *Actor_Lookup(u32 actorId) {
 
 /// Saves up to 32 actors into gSnapshotObjects, with each one's slot,
 /// animation, sprite flags and priority, so that they can be put back.
-void ObjectTable_Snapshot(void) {
+void ActorTable_Snapshot(void) {
   struct Actor *copy = gSnapshotObjects;
   u8 *indices = (u8 *)gSnapshotObjects - ACTOR_SNAPSHOT_CAPACITY;
   u8 *animations = (u8 *)&gSnapshotObjects[ACTOR_SNAPSHOT_CAPACITY];

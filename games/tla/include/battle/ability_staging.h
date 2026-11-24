@@ -63,8 +63,8 @@ enum BattleStaging {
 #define EFFECT_SUMMON 0x8000 ///< BattleEffect_RunSummonFar, acting unit's view
 #define EFFECT_ON_DOWNED 0x10000 ///< shown on downed targets too (revivals)
 /// Unused: no entry of gAbilityBattleEffects sets it and no code adds it, so
-/// BattleStaging_HideField's flip never happens. It would play the effect on
-/// the side opposite its targets.
+/// BattleStaging_RunFullScreen's flip never happens. It would play the effect
+/// on the side opposite its targets.
 #define EFFECT_OTHER_SIDE 0x20000
 /// The camera takes the other side's view (an enemy's cast a view of its
 /// own), or turns right round.

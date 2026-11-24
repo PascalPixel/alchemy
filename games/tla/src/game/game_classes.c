@@ -76,7 +76,7 @@ s32 Enemy_GetAttackElement(void *state) {
   table = gEnemy_ElementPresetTable;
   offset = preset * sizeof(struct EnemyElementPreset);
   return ((const struct EnemyElementPreset *)((const u8 *)table + offset))
-      ->first;
+      ->attackElement;
 }
 
 /// Writes a unit's base power and resistance in each element: an enemy's from
@@ -123,13 +123,14 @@ void Unit_CalculateBaseElements(s32 unitId,
 
 #ifdef UBFIX
     destination[i].power = gElement_PowerResistByLevel[level].power + tenths;
-    destination[i].resistance = gElement_PowerResistByLevel[level].res + tenths;
+    destination[i].resistance =
+        gElement_PowerResistByLevel[level].resistance + tenths;
 #else
     // UB: the stats are stored through an s16 [4][2] view of the four structs.
     ((s16 (*)[2])destination)[i][0] =
         gElement_PowerResistByLevel[level].power + tenths;
     ((s16 (*)[2])destination)[i][1] =
-        (gElement_PowerResistByLevel + level)->res + tenths;
+        (gElement_PowerResistByLevel + level)->resistance + tenths;
 #endif
   }
 }
@@ -226,7 +227,7 @@ void Unit_UpdateClass(s32 unitId) {
   unit->classId =
       Class_Determine(unit->enemyId, unit->djinnHeld,
                       Inventory_GetEquippedItem(unit, ITEM_TYPE_CLASS_CHANGE));
-  Owner_UpdateClassActions(unitId);
+  Unit_RebuildPsynergyList(unitId);
   Unit_CalculateBaseElements(unitId, unit->baseElement);
 }
 

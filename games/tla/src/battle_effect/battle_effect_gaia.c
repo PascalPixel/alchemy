@@ -139,7 +139,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     for (k = 0; k != gGaia_FlameWidths[i] * gGaia_FlameHeights[i]; k++)
       state->sheet[sheetIndex++] = *src++;
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 
   for (i = 0; i != GAIA_ROCKS; i++) {
     struct Sprite *rock = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
@@ -358,7 +358,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   for (i = 0; i != GAIA_ROCKS; i++)
     Sprite_DestroyFar(state->sprites[i]);

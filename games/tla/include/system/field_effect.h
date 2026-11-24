@@ -58,7 +58,7 @@ struct FieldEffect {
   u8 snapToTarget;
   ///@}
   u8 collisionFlags; ///< Actor's
-  /// Actor's steeringFlags to riseEnabled.
+  /// Actor's steeringFlags to sceneByte.
   ///@{
   u8 steeringFlags;
   u8 paused;
@@ -67,8 +67,8 @@ struct FieldEffect {
   s16 wait;
   u8 refused;
   u8 frozen;
-  u8 riseCounter;
-  u8 riseEnabled;
+  u8 sceneCounter;
+  u8 sceneByte;
   ///@}
   /// Added to the sprite's rotation each frame by the update hooks, in
   /// 1/65536 turns per frame; zeroed by the spawner.

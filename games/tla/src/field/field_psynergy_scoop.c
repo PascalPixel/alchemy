@@ -215,7 +215,7 @@ void FieldPsynergy_Scoop(void) {
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*state));
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct FieldState *field = Ram_HeapSlots->fieldState;
-  struct Actor *caster = scene->mainActor;
+  struct Actor *caster = scene->caster;
   struct Actor *boulder = NULL;
   struct Actor *hand;
   struct Actor *target;
@@ -290,7 +290,7 @@ void FieldPsynergy_Scoop(void) {
         if (target != NULL && target->script != NULL &&
             (Actor_GetSpriteIdFar(target) == SPRITE_STAKE ||
              (target->collisionFlags & ACTOR_SOLID)) &&
-            target != scene->mainActor &&
+            target != scene->caster &&
             ((struct Sprite *)target->sprite)->count != 0 &&
             FieldPsynergy_CheckOverlap(&scene->x, 4, &target->x.fixed,
                                        target->radius - 2) >= 0) {
@@ -315,7 +315,7 @@ void FieldPsynergy_Scoop(void) {
         wait(1);
       } else {
 
-        if (scene->enabled != 0) {
+        if (scene->aimAhead != 0) {
           if (Random16() < SCOOP_FIND_CHANCE)
             state->mode = SCOOP_FINDS;
           else if (*lit == 0)
@@ -339,8 +339,8 @@ void FieldPsynergy_Scoop(void) {
             EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
             sprite->oam.fullColor = 1;
             sprite->oam.palette = 0;
-            sprite->oam.priority = BattleEffect_GetObjectPriority(boulder);
-            sprite->depth = BattleEffect_GetObjectDepth(boulder) + 1;
+            sprite->oam.priority = Actor_GetSpritePriority(boulder);
+            sprite->depth = Actor_GetSpriteDepth(boulder) + 1;
             sprite->scaleY = sprite->scaleX = FIXED_ONE / 5;
             SET_POSITION(particle, scene->x, scene->y, scene->z);
             Vector_AddPolarOffset(toFIXED(2), Random16(), &particle->x);
@@ -367,8 +367,8 @@ void FieldPsynergy_Scoop(void) {
             EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
             sprite->oam.fullColor = 1;
             sprite->oam.palette = 0;
-            sprite->oam.priority = BattleEffect_GetObjectPriority(boulder);
-            sprite->depth = BattleEffect_GetObjectDepth(boulder) + 1;
+            sprite->oam.priority = Actor_GetSpritePriority(boulder);
+            sprite->depth = Actor_GetSpriteDepth(boulder) + 1;
             SET_POSITION(particle, scene->x, scene->y, scene->z);
             Vector_AddPolarOffset(toFIXED(2), Random16(), &particle->x);
             particle->velocityX = 0;
@@ -390,8 +390,8 @@ void FieldPsynergy_Scoop(void) {
             EffectSprite_Init(sprite, 4, 4, 0, particleTile + (i & 1) * 2);
             sprite->oam.fullColor = 1;
             sprite->oam.palette = 0;
-            sprite->oam.priority = BattleEffect_GetObjectPriority(hand);
-            sprite->depth = BattleEffect_GetObjectDepth(hand) - 1;
+            sprite->oam.priority = Actor_GetSpritePriority(hand);
+            sprite->depth = Actor_GetSpriteDepth(hand) - 1;
             SET_POSITION(particle, scene->x, scene->y + toFIXED(40), scene->z);
             Vector_AddPolarOffset(Random16() * 4 + toFIXED(3), Random16(),
                                   &particle->x);
@@ -409,9 +409,8 @@ void FieldPsynergy_Scoop(void) {
           state->pictureTile = pictureTile;
           sprite = &state->pictureSprite;
           EffectSprite_Init(sprite, 16, 0, OBJ_SIZE_32X32, pictureTile);
-          sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
-          sprite->oam.priority =
-              BattleEffect_GetObjectPriority(scene->mainActor);
+          sprite->depth = Actor_GetSpriteDepth(scene->caster);
+          sprite->oam.priority = Actor_GetSpritePriority(scene->caster);
           sprite->oam.fullColor = 1;
           sprite->oam.palette = 0;
           pos[0] = hand->x.fixed;
@@ -483,7 +482,7 @@ void FieldPsynergy_Scoop(void) {
 /// Drops an actor from Scoop's hand (if there is one) to fall to the ground,
 /// waits 50 frames, then asks for its talk, which opens it without its
 /// "checked the ..." message (FIELD_TALK_SILENT).
-void BattleEffect_DropObjectAtAnchor(s32 id) {
+void Scoop_DropFromHand(s32 id) {
   struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *hand;
   struct Actor *actor;
@@ -510,7 +509,7 @@ extern const u16 gScoop_DugItems[16];
 /// SCOOPED_ITEM_ACTOR at the hand, fetched or spawned (SPRITE_UNSEEN_MARKER),
 /// shows what Scoop dug up: three times in four one of gScoop_DugItems's
 /// sixteen items (a coin when there is no room for it), else coins up to twice
-/// the leader's level; it then drops (BattleEffect_DropObjectAtAnchor).
+/// the leader's level; it then drops (Scoop_DropFromHand).
 void Scoop_DigUpItem(void) {
   struct ScoopState *state = Ram_HeapSlots->battleEffect;
   struct Actor *hand;
@@ -542,7 +541,7 @@ void Scoop_DigUpItem(void) {
   SET_ACTOR_POSITION(actor, hand->x.fixed, hand->y.fixed, hand->z.fixed);
   Actor_ShowItemIconById(id, item);
   field->scoopedItem = item;
-  BattleEffect_DropObjectAtAnchor(id);
+  Scoop_DropFromHand(id);
 }
 #undef NEXT_PHASE
 #undef SCOOP_DRAWN_DUST

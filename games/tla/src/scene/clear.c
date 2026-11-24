@@ -47,7 +47,7 @@
 #include "fixed_math.h"
 #include "system/heap_release.h"
 #include "battle/battle_unit.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "macros.h"
 #include "system/system_call.h"
 #include "window/cursor.h"
@@ -389,7 +389,7 @@ top:
     Message_CloseFinishedWindows();
     if (result == YES) {
       for (;;) {
-        result = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_TRANSFER_METHOD);
+        result = IconMenu_ChooseSendOption(SEND_OPTION_TRANSFER_METHOD);
         if (result == -1) {
           goto top;
         }
@@ -544,7 +544,7 @@ top:
     goto top;
   }
   if (result == SAVE_ACTION_BATTLE) {
-    result = Save_ChooseAndLoadFile(FILE_LIST_EXTRA);
+    result = Save_ChooseAndLoadFile(FILE_LIST_BATTLE);
     if (result == -1)
       goto top;
     {
@@ -987,8 +987,8 @@ extern u8 MsgFieldPasswordKana[];
 void Text_DrawMessageAsTiles(s32 character, struct Window *position,
                              u32 offsetX, u32 offsetY);
 u16 Clear_CalculatePasswordCrc16(u32 length, u8 *p);
-void Resource_CopyFixedBlockB(void);
-void Resource_CopyFixedBlockA(void);
+void PointingHand_LoadIntoSlot(void);
+void NameCaret_LoadIntoSlot(void);
 void Graphics_ExpandVramTilesByColorTable(void *vram);
 void MenuCursor_Advance(struct MenuCursor *cursor);
 void MenuCursor_Set(struct MenuCursor *cursor, s32 x, s32 y, s32 frames);
@@ -1139,7 +1139,7 @@ s32 Clear_EnterPassword(void) {
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
           DMA_COPY_WORDS(8), REG_DMA3);
   palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
-  mode = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_PASSWORD_LEVEL);
+  mode = IconMenu_ChooseSendOption(SEND_OPTION_PASSWORD_LEVEL);
   if (mode == -1)
     return -1;
   Sound_Play(MUS_PASSWORD_ENTRY);
@@ -1182,16 +1182,16 @@ s32 Clear_EnterPassword(void) {
   }
   entry = VramCache_FindFreeEntry();
   if (entry < VRAM_CACHE_ENTRY_COUNT) {
-    Resource_CopyFixedBlockB();
-    sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
+    PointingHand_LoadIntoSlot();
+    sprite = WindowSprite_Create(entry, WINDOW_SPRITE_SIZE_16X16,
                                  (struct Window *)window, 0, 0);
     Cursor_Attach(&cursorStore, sprite);
     Cursor_Place(&cursorStore, (s16)window->x * 8 - 2, (s16)window->y * 8 + 12);
   }
   entry = VramCache_FindFreeEntry();
   if (entry < VRAM_CACHE_ENTRY_COUNT) {
-    Resource_CopyFixedBlockA();
-    sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
+    NameCaret_LoadIntoSlot();
+    sprite = WindowSprite_Create(entry, WINDOW_SPRITE_SIZE_16X16,
                                  (struct Window *)window, 0, 0);
     Cursor_Attach(&gridStore, sprite);
     sprite->depth = OAM_DEPTH_FRONT;

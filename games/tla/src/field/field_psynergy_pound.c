@@ -172,8 +172,8 @@ void FieldPsynergy_Pound(void) {
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct PoundState));
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct FieldState *field = Ram_HeapSlots->fieldState;
-  struct Actor *child = scene->child;
-  struct Actor *caster = scene->mainActor;
+  struct Actor *child = scene->target;
+  struct Actor *caster = scene->caster;
   struct Actor *actor;
   struct Actor *fist;
   struct CanvasSpriteState *canvas;
@@ -207,7 +207,7 @@ void FieldPsynergy_Pound(void) {
     scene->y = child->groundHeight;
     lift = child->y.fixed - child->groundHeight + toFIXED(32);
   }
-  if (scene->enabled != 0) {
+  if (scene->aimAhead != 0) {
     // Field_MeasurePsynergyHeight returns -1 where the spot is out of reach.
     spot =
         ~Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, &scene->x);
@@ -224,7 +224,7 @@ void FieldPsynergy_Pound(void) {
     }
   } else {
     inReach = 1;
-    if (child != NULL && child->riseEnabled != 0) {
+    if (child != NULL && child->sceneByte != 0) {
     outOfReach:
       inReach = 0;
     }
@@ -252,7 +252,7 @@ void FieldPsynergy_Pound(void) {
 
     BattleEffect_StartCanvasSprite();
     canvas = Ram_HeapSlots->canvasSprite;
-    canvas->priority = BattleEffect_GetObjectPriority(scene->mainActor);
+    canvas->priority = Actor_GetSpritePriority(scene->caster);
     canvas->depth = 1;
     canvas->mode = CANVAS_SPRITE_256_COLORS;
     canvas->scaleX = 0;

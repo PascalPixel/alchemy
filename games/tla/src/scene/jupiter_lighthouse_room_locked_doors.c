@@ -56,6 +56,7 @@
 #include "system/io_write.h"
 #include "field/field_effect.h"
 #include "text/msg_ids.h"
+#include "scene/lighthouse_palettes.h"
 
 /// Set as each locked door opens to its key.
 #define FLAG_RED_DOOR_OPENED 0xa07
@@ -130,7 +131,7 @@ void LightSprites_InitA(void);
 void MapGrid_SetCellHeight();
 
 void Actor_ArriveInRing(s32 id);
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -325,7 +326,7 @@ s32 Scene_Initialize(void) {
     leader = Actor_Get(gMainRoutineState.leaderActorId);
     leader->priorityFlags &= ~ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
     Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
     Actor_SetAnimationSpeed(leader, ANIM_STEP_NORMAL * 4);
@@ -358,14 +359,12 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void JupiterLighthouse_LoadPalettes(s32 mode);
-
 /// Sets the scene's arrival flags and loads the lighthouse's palettes; lets
 /// Felix walk onto the blocks, raises them once the lighthouse is activated,
 /// and puts the bridge block back in line. Returns 0.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  JupiterLighthouse_LoadPalettes(0);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
   Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
@@ -429,14 +428,14 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "shared/whirlwind_spawn.h"
 
 // Unused here: nothing in the room sets it as an actor's update.
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
 // Unused here: the aerie's angels and lid are not in this room.
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 #include "shared/light_sprites_draw.h"
 
@@ -473,8 +472,8 @@ u32 gSceneExits[] = {
     SCENE_EXIT(6, JupiterLighthouseRoomLockedDoors, 5),
     SCENE_EXIT(7, JupiterLighthouseRoomLockedDoors, 8),
     SCENE_EXIT(8, JupiterLighthouseRoomLockedDoors, 7),
-    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_M_WEST, JupiterLighthouseRoomM, JUPITER_LIGHTHOUSE_ROOM_M_FROM_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_WEST),
-    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_M_EAST, JupiterLighthouseRoomM, JUPITER_LIGHTHOUSE_ROOM_M_FROM_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_EAST),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_TERRACES_WEST, JupiterLighthouseTerraces, JUPITER_LIGHTHOUSE_TERRACES_FROM_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_WEST),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_TERRACES_EAST, JupiterLighthouseTerraces, JUPITER_LIGHTHOUSE_TERRACES_FROM_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_EAST),
     SCENE_EXIT(11, JupiterLighthouseRoomLockedDoors, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_BEAM),
     SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST, JupiterLighthouseRoomErinyesTunicChest, JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_FROM_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_SOUTHWEST),
     SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHEAST, JupiterLighthouseRoomErinyesTunicChest, JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_FROM_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_SOUTHEAST),
@@ -506,8 +505,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_M_WEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_M_WEST},
-    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_M_EAST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_M_EAST},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_TERRACES_WEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_TERRACES_WEST},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_TERRACES_EAST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_TERRACES_EAST},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST},
     {TRIGGER_EXAMINE, CELL_BEHAVIOR_RED_DOOR, FLAG_RED_DOOR_OPENED, EVENT(JupiterLighthouse_TryLockedDoor)},

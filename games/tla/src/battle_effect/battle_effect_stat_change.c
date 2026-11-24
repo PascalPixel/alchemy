@@ -133,7 +133,7 @@ void BattleEffect_RunCrucibleFire(struct BattleEffectParams *args) {
 
 /// Where each picture sits in the sprite sheet.
 enum StatBoostSheet {
-  STAT_BOOST_FLARES = 0,      ///< flares (ParticleSpritesD)
+  STAT_BOOST_FLARES = 0,      ///< flares (BlueGlowSheet)
   STAT_BOOST_BURST = 1550,    ///< six bursts of light (GlowOrb)
   STAT_BOOST_PICTURE = 11150, ///< the picture the mode picks
   STAT_BOOST_DJINNI = 26048   ///< the Djinni
@@ -238,7 +238,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   REG_BG2PA = Q_8_8(0.8); // 1.25 times the width
 
   // The pictures and the colours.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET,
                              state->sheet + STAT_BOOST_FLARES, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,
                              state->sheet + STAT_BOOST_BURST, 1, 1);
@@ -326,7 +326,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   REG_BG2X = canvasShiftX << 8;
   state->transferMode = CANVAS_COPY_AND_FADE;
   state->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   if (args->side == EFFECT_SIDE_PARTY)
     drawFlags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
   else
@@ -563,7 +563,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -694,7 +694,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     shard->variant = Random16() & 0xff;
   }
 
-  BattleEffect_FetchRectangleBlitters(args->side, draw);
+  BattleEffect_BuildCanvasBlitters(args->side, draw);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != args->targetCount * STAT_REDUCTION_TARGET_DELAY + 64;

@@ -211,7 +211,7 @@ void AttekaInlet_AskKradenToSetSail(void) {
   // stage only by AttekaInlet_KradenAsksToSetSail, and answered No there he
   // walks back into Felix and is gone from the deck.
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId(MsgAreWeSetting);
   // "Felix, are we setting off now?" Yes: "Then, to sea we go!" No: "Please
   // don't rush on my account. Let's enjoy..."
@@ -254,7 +254,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
   if (GameFlag_Get(FLAG_REUNION_AT_CONTIGO) &&
       !GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     FieldCamera_MoveTo(96, CAMERA_KEEP, 308, 1);
     Actor_SetPositionAndFacing(ACTOR_SHIPWRIGHT, toFIXED(60), toFIXED(362),
                                FACING_NORTH_NORTHEAST);
@@ -311,7 +311,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
 void AttekaInlet_HammaShowsTheWings(void) {
   if (GameFlag_Get(FLAG_REUNION_AT_CONTIGO)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     FieldCamera_SetSpeed(2.4);
     FieldCamera_MoveTo(520, CAMERA_KEEP, 372, 1);
@@ -396,7 +396,7 @@ void AttekaInlet_KradenAsksToSetSail(void) {
   struct Actor *actor;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineState.leaderActorId);
   wait(1);
   Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_NORTHWEST, 0);
@@ -458,7 +458,7 @@ void AttekaInlet_CycloneUncoversGeode(void) {
   if (!GameFlag_Get(FLAG_DJINNI(DJINNI_GEODE))) {
     actor = Actor_GetById(gMainRoutineState.leaderActorId);
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     moved = 0;
     if (FIELD_CELL(actor->x.fixed) == 7 && FIELD_CELL(actor->z.fixed) == 23) {
       Actor_Jump(gMainRoutineState.leaderActorId, 6, 0);
@@ -541,7 +541,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   s32 angle;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   angle = FACING_NORTH_NORTHEAST;
   Actor_SetHorizontalPositionAndAngleWithTerrain(
       ACTOR_HAMMETS_MESSENGER, toFIXED(504), toFIXED(460), angle);
@@ -662,7 +662,7 @@ void AttekaInlet_OpenDoorAndEnter(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
   Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_WALK);

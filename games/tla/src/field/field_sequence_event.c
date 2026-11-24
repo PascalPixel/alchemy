@@ -76,7 +76,7 @@ void Event_Start(void) {
   AreaNameWindow_HideFar();
   Leader_StopMoving();
   if (field->busy != 0)
-    Event_ResolveAllPendingActions();
+    Event_EndAllLastingPsynergy();
   field->choiceMessage = 0;
   field->choiceWidth = 0;
   field->choiceSelection = 0;
@@ -117,12 +117,12 @@ void Event_End(void) {
 UNUSED void Event_EmptyCallback(void) {}
 
 /// An empty hook; it does nothing in the released game. Only
-/// Event_RunObjectHookAndWait calls it.
+/// Event_ResetLeaderAndWait calls it.
 void Event_EmptyHook(void) {}
 
 /// Rebuilds the leader's actor from its placement row (Actor_ResetForLeader),
 /// waits a frame and returns the leader's actor.
-struct Actor *Event_RunObjectHookAndWait(s32 table) {
+struct Actor *Event_ResetLeaderAndWait(s32 table) {
   Event_EmptyHook();
   Actor_ResetForLeader(table);
   wait(1);
@@ -130,9 +130,9 @@ struct Actor *Event_RunObjectHookAndWait(s32 table) {
 }
 
 /// Spawns the actors of an actor placement table after the last actor in use.
-void Event_CallWithLastActiveObjectId(s32 table) {
-  Event_SpawnObjectTable((struct ActorPlacement *)table,
-                         Actor_FindLastActiveId());
+void Event_SpawnActorsAfterLast(s32 table) {
+  Event_SpawnActorTable((struct ActorPlacement *)table,
+                        Actor_FindLastActiveId());
 }
 
 /// Replaces the scene's trigger table with events.
@@ -151,7 +151,7 @@ void Event_AddPartyMember(s32 unit, s32 announce) {
 
 /// Adds two units to the party and announces them together ("<a> and <b>
 /// joined your party.", Party_ShowPairJoinedMessage).
-void Event_PrepareTwoObjectsAndApply(s32 first, s32 second) {
+void Event_AddTwoPartyMembers(s32 first, s32 second) {
   Party_AddMemberFar(first);
   Party_AddMemberFar(second);
   Party_ShowPairJoinedMessageFar(first, second);
@@ -275,7 +275,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         Message_CloseFinishedWindowsFar();
         if (result != 0)
           goto retry;
-        Item_AdjustCounterFar(item, 1);
+        Item_AdjustRareItemStockFar(item, 1);
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
         // "Felix drops the <item>."
         FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 2, FIELD_MESSAGE_ZOOM);
@@ -501,9 +501,9 @@ void Event_SetRestartPoint(s32 sceneId, s32 entrance) {
 
 /// The event command "request exit": sets the field's exit request
 /// (EXIT_KEEP_DESTINATION leaves for gMainRoutineState's next and entrance).
-void Event_SetExitRequest(u16 request) {
+void Event_SetExitRequest(u16 exit) {
   struct FieldState *field = gFieldState;
-  field->exit = request;
+  field->exit = exit;
 }
 
 #undef GIFT_RECEIVED_MESSAGE_MODE

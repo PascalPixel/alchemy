@@ -221,7 +221,7 @@ enum TabletStage {
   TABLET_LEADER_SQUASHED = 7
 };
 
-extern const s32 gFieldEffect_TargetColors[];
+extern const s32 gFieldPsynergy_CastColors[];
 extern const s32 gSummonTablet_SquashScript[];
 extern const u8 gMovementType_SquashScript[];
 
@@ -257,7 +257,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   FIXED startX = toFIXED(130);
   FIXED startZ = toFIXED(30);
 
-  Field_StartColorTransition(8, gFieldEffect_TargetColors[gFrameCount & 7]);
+  Field_StartColorTransition(8, gFieldPsynergy_CastColors[gFrameCount & 7]);
   pos[0] = owner->x.fixed;
   pos[1] = owner->y.fixed + toFIXED(24);
   pos[2] = owner->z.fixed;
@@ -537,6 +537,6 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
 /// no ground lies above height base.
 void MapGrid_MarkJumpIfOpen(FIXED x, FIXED z, s32 layer, FIXED base) {
   if (MapGrid_GetTerrainHeightAboveFar(x, z, layer, base) == 0)
-    MapGrid_SetAttributeBAt(
-        x, z, layer, MapGrid_GetAttributeBAt(x, z, layer) | MAP_CELL_JUMP);
+    MapGrid_SetCellAttributesAt(
+        x, z, layer, MapGrid_GetCellAttributesAt(x, z, layer) | MAP_CELL_JUMP);
 }

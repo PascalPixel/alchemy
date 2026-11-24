@@ -121,8 +121,8 @@ void BattleBackground_SetMode(s32 mode, s32 backgroundId, s32 fade) {
       destination[i] = RGB(red, green, blue);
     }
   }
-  Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
-  BattleTransition_BuildTilemap(
+  BattleTransition_BuildAffineTilemap((void *)BG_SCREEN_BLOCK(7));
+  BattleTransition_BuildFlatTilemap(
       (void *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK));
 }
 
@@ -168,8 +168,8 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
     BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
         BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   }
-  Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
-  BattleTransition_BuildTilemap(
+  BattleTransition_BuildAffineTilemap((void *)BG_SCREEN_BLOCK(7));
+  BattleTransition_BuildFlatTilemap(
       (void *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK));
   // BG1's last row is left clear.
   Iwram_ClearWordsEntry((void *)(BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK) +
@@ -221,7 +221,7 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   // centre stays put and the picture's top row is the first line below the
   // plane's hidden lines.
   line = scanlines->lines[scanlines->page ^ 1];
-  ratio = Iwram_RatioMulQ14(scale, ratio);
+  ratio = Iwram_DivFX(scale, ratio);
   step = ratio >> 8;
   affine = &scanlines->affine;
   affine->pa = step;
@@ -235,8 +235,8 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
               Q_8_8(BACKGROUND_PLANE_HIDDEN_LINES);
   // The first line that reaches the picture's lower half at this zoom.
   lowerHalfLine =
-      FIXEDtoINT(Iwram_RatioMulQ14(
-          (s16)affine->pd, (BACKGROUND_UPPER_HALF_LINES << 8) - affine->y)) +
+      FIXEDtoINT(Iwram_DivFX((s16)affine->pd,
+                             (BACKGROUND_UPPER_HALF_LINES << 8) - affine->y)) +
       1;
   scanline = 0;
   if (!GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
@@ -285,7 +285,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   origin[1] = 0;
   origin[2] = 0;
 
-  nearDepth = Iwram_RatioMulQ14(focal, nearShare);
+  nearDepth = Iwram_DivFX(focal, nearShare);
   Projection_Set(focal, nearDepth, focal * 2);
   Matrix_Initialize();
   Matrix_TranslateVector(focus);
@@ -307,7 +307,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
       (BATTLE_PROJECTION_CENTER_Y - originOnScreen[1]) << 8, scale);
   halfFocal = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
   zoomedFocal = halfFocal * 2;
-  nearDepth = Iwram_RatioMulQ14(zoomedFocal, nearShare);
+  nearDepth = Iwram_DivFX(zoomedFocal, nearShare);
   Projection_Set(zoomedFocal, nearDepth, halfFocal * 4);
 }
 
@@ -336,7 +336,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   origin[1] = 0;
   origin[2] = 0;
 
-  nearDepth = Iwram_RatioMulQ14(focal, nearShare);
+  nearDepth = Iwram_DivFX(focal, nearShare);
   Projection_Set(focal, nearDepth, focal * 2);
   Matrix_Initialize();
   Matrix_TranslateVector(focus);
@@ -358,7 +358,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
       (BATTLE_PROJECTION_CENTER_Y - originOnScreen[1]) << 8, scale);
   halfFocal = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
   zoomedFocal = halfFocal * 2;
-  nearDepth = Iwram_RatioMulQ14(zoomedFocal, nearShare);
+  nearDepth = Iwram_DivFX(zoomedFocal, nearShare);
   Projection_Set(zoomedFocal, nearDepth, halfFocal * 4);
 }
 
@@ -696,8 +696,8 @@ typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
 
 // The star tables: each picture's size and sprite sheet offset, and the ring's
 // four pictures.
-extern const u8 gElementGlow_StarSizes[];
-extern const s32 gElementGlow_StarPictures[];
+extern const u8 gElementGlow_SparkSizes[];
+extern const s32 gElementGlow_SparkPictures[];
 extern const s32 gElementGlow_RingPictures[];
 
 /// Draws the star field's next frame: each spark falls towards the centre and
@@ -743,7 +743,7 @@ void ElementGlow_UpdateStarField(void) {
       if (dist <= toFIXED(1) / 16 - 1) {
         spark->life = 0;
       } else {
-        scale = Iwram_RatioMulQ14(dist, FIXED_ONE);
+        scale = Iwram_DivFX(dist, FIXED_ONE);
         spark->life--;
         mul = Iwram_MulFX;
         pos = spark->motion;
@@ -780,8 +780,8 @@ void ElementGlow_UpdateStarField(void) {
         frame = 0;
       else if (frame > 6)
         frame = 6;
-      size = gElementGlow_StarSizes[frame];
-      draw(dest, (u8 *)state + gElementGlow_StarPictures[frame],
+      size = gElementGlow_SparkSizes[frame];
+      draw(dest, (u8 *)state + gElementGlow_SparkPictures[frame],
            x - (size >> 1), y - (size >> 1), size, size);
     }
   }

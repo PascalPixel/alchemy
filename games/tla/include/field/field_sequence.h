@@ -13,7 +13,7 @@
 struct Actor;
 
 /// How the leader moves (MainRoutineState.movementMode): which actor script
-/// Actor_StartRenderModeScript runs for it.
+/// Actor_StartMovementModeScript runs for it.
 enum LeaderMovementMode {
   /// Walking: the pad moves the leader on a layered map.
   LEADER_MOVEMENT_WALK = 0,

@@ -45,7 +45,7 @@ struct MotionObject {
   /// Gravity: taken from velocityY each frame above the ground with
   /// motionFlags bit 1, in 16.16 fixed-point pixels per frame.
   FIXED verticalMotionStrength;
-  s32 riseBaseY;
+  s32 sceneWord;
   void *records; ///< one sprite, or a table of them (recordStorageKind)
   /// bits: 3..0 how records holds the sprites
   u8 recordStorageKind;
@@ -72,9 +72,9 @@ struct MotionObject {
 /// gravity for a leap or a lift give it this one back.
 #define BATTLE_UNIT_GRAVITY (toFIXED(67) / 100)
 
-void ReleaseBattleObjectRecords(s32 objectId);
-void ResetMotionRecordGroup(void *recordGroup);
-void ResetBattleObjectRecordGroups(struct MotionObject *object);
+void BattleObject_DestroySprites(s32 objectId);
+void Sprite_DetachScripts(void *recordGroup);
+void Actor_DetachSpriteScripts(struct MotionObject *object);
 
 STATIC_ASSERT(sizeof(struct MotionObject) == 112);
 STATIC_ASSERT(offsetof(struct MotionObject, scaleX) == 24);
@@ -91,6 +91,6 @@ struct BattleObject *BattleObject_Get(s32 objectId);
 /// Returns a unit's battle object, or null for a unit with no place
 /// (BattleObject_Get).
 struct BattleObject *BattleObject_GetFar(s32 objectId);
-void *GetMotionRecord(struct MotionObject *object, s32 recordIndex);
+void *Actor_GetSprite(struct MotionObject *object, s32 recordIndex);
 
 #endif

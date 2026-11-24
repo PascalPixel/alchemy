@@ -20,36 +20,37 @@
 /// Djinn, Item, Status) and the File Screen's (New Game, Continue, Copy, Erase,
 /// and Battle and Update when they are offered).
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define SELECT_MENU_WIDTH 7
-#define TYPE_MENU_WIDTH 7
+#define FIELD_MENU_ICON_ROW_WIDTH 7
+#define FILE_SCREEN_ICON_ROW_WIDTH 7
 #else
-#define SELECT_MENU_WIDTH 5
-#define TYPE_MENU_WIDTH 4
+#define FIELD_MENU_ICON_ROW_WIDTH 5
+#define FILE_SCREEN_ICON_ROW_WIDTH 4
 #endif
 
-/// Where the debug destination list's cursor sits; further right in Japanese.
+/// The debug scene selector's colons, where its arrow points, and the y of its
+/// first row; further right in Japanese.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define MENU_TEXT_X 74
+#define DEBUG_SCENE_SELECTOR_COLON_X 74
 #else
-#define MENU_TEXT_X 100
+#define DEBUG_SCENE_SELECTOR_COLON_X 100
 #endif
-#define MENU_TEXT_Y 60
+#define DEBUG_SCENE_SELECTOR_FIRST_ROW_Y 60
 
 /// A link battle's opponent names take up to 8 letters of prefix, then a space,
 /// in the European editions, instead of 5.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-#define LOBBY_PREFIX_LIMIT 7
+#define BATTLE_ARENA_PREFIX_LAST 7
 #else
-#define LOBBY_PREFIX_LIMIT 4
+#define BATTLE_ARENA_PREFIX_LAST 4
 #endif
 
 /// The first of the letters that tell enemies of one kind apart in battle: the
 /// alphabet from 'A' in Japanese, the digits from '1' in the others.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define LIST_MARKER_CHAR 'A'
+#define ENEMY_NAME_LETTER_FIRST 'A'
 #else
-#define LIST_MARKER_CHAR '1'
+#define ENEMY_NAME_LETTER_FIRST '1'
 #endif
 
 /// The letters of Lucky Wheels' title.

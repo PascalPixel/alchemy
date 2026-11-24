@@ -334,7 +334,7 @@ void AncientLemuria_HeadForTheDock(void) {
     Import_EventSetExitRequest(ANCIENT_LEMURIA_TO_LEMURIA_DOCK_EAST_A);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     FieldActor_LaunchFromLeader(ACTOR_KRADEN, 0, -16, FACING_SOUTH_SOUTHWEST);
     Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
     Actor_WaitForMoveById(ACTOR_KRADEN);
@@ -460,7 +460,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   s32 result;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgLemuriaRecognizePsynergy);
   // "Why, that was Psynergy, wasn't it?"
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
@@ -469,7 +469,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Field_TryJumpForward();
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_Wait(20);
   Actor_SetAnimationById(ACTOR_FELIX, ANIM_STAND);
   Event_Wait(20);

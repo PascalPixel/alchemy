@@ -223,7 +223,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit[0] = Ram_HeapSlots->ramCode;
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   list[0] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(list, 0);
@@ -367,7 +367,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
                   SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
                              Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
   camZ = 0;
@@ -1120,7 +1120,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       } else {
         radius = 38;
       }
-      Canvas_BlitAtFoot(cellBuffer, 62, y, radius);
+      Canvas_BlitMirroredQuarters(cellBuffer, 62, y, radius);
     }
     EFFECT_PRESENT_CANVAS(state);
     frame++;
@@ -1130,7 +1130,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   }
   ActorShadow_LoadTilesFar();
   battle->arrowTiles = VramCache_AllocEntry(128);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   for (i = 0; i != args->targetCount; i++) {
     BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_GRB, TINT_KEEP,
                              TINT_KEEP, 0);
@@ -1269,7 +1269,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           radius = 64;
         }
         top = ry - radius / 2 + CATASTROPHE_ORB_CENTER;
-        Canvas_BlitAtFoot(state->sheet, CATASTROPHE_ORB_CENTER, top, radius);
+        Canvas_BlitMirroredQuarters(state->sheet, CATASTROPHE_ORB_CENTER, top,
+                                    radius);
         // From frame 96 glints sparkle around the orb.
         if (frame > 95) {
           {
@@ -1528,7 +1529,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
                                state->sheet + CATASTROPHE_SWEEP_PICTURES, 1, 0);
-    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
     Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                state->sheet + CATASTROPHE_FLASH_BURST_PICTURES,
                                1, 0);

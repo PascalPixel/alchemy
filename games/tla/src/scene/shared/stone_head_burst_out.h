@@ -10,7 +10,7 @@ void StoneHead_BurstOut(s32 id, s32 flag) {
   s32 frame;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   head = Actor_Get(id);
   StoneHead_Place(id, leader->x.fixed, leader->y.fixed, leader->z.fixed);

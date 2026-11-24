@@ -4,7 +4,7 @@
 
 #include "system_internal.h"
 #include "battle/battle_unit.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "system/ram_buffer.h"
 #include "game/game_flags.h"
 

@@ -37,9 +37,9 @@ FarCall_GameTable:
 	export Party_CountMembersFar, Party_CountMembers
 	export Party_AddMemberFar, Party_AddMember
 	export Party_ListMembersFar, Party_ListMembers
-	export RollWeaponUnleashFar, RollWeaponUnleash
+	export Equipment_RollUnleashFar, Equipment_RollUnleash
 	export Party_RemoveMemberFar, Party_RemoveMember
-	export Item_GetEquippedElementFar, Item_GetEquippedElement
+	export Unit_GetAttackElementFar, Unit_GetAttackElement
 	export Battle_RollEffectSuccessFar, Battle_RollEffectSuccess
 	export Battle_CalculateAttackDamageFar, Battle_CalculateAttackDamage
 	export Battle_CalculatePsynergyPowerFar, Battle_CalculatePsynergyPower
@@ -65,12 +65,12 @@ FarCall_GameTable:
 	export Inventory_FindEquippedFar, Inventory_FindEquipped
 	export Party_AdjustCoinsFar, Party_AdjustCoins
 	export Item_GetEquipmentGroupFar, Item_GetEquipmentGroup
-	export Item_AdjustCounterFar, Item_AdjustCounter
+	export Item_AdjustRareItemStockFar, Item_AdjustRareItemStock
 	export Inventory_CountFar, Inventory_Count
 	export PartyInventory_HasSpaceFar, PartyInventory_HasSpace
 	export Unit_GetExperienceForLevelFar, Unit_GetExperienceForLevel
 	export Party_RestoreHpPpFar, Party_RestoreHpPp
-	export Party_RestorePpOfLitElementsFar, Party_RestorePpOfLitElements
+	export Party_RestorePpInLighthouseFar, Party_RestorePpInLighthouse
 	export Party_SetLeaderJennaFar, Party_SetLeaderJenna
 	export Party_SetLeaderFelixFar, Party_SetLeaderFelix
 	export Party_GivePiersDjinnFar, Party_GivePiersDjinn
@@ -100,7 +100,7 @@ FarCall_GameTable:
 	export Party_FindOwnerWithActionFar, Party_FindOwnerWithAction
 	export PartyInventory_FindRoomFar, PartyInventory_FindRoom
 	export Summon_LearnFar, Summon_Learn
-	export Djinn_ActivateOfferedForPartyFar, Djinn_ActivateOfferedForParty
+	export Djinn_SetAllForPartyFar, Djinn_SetAllForParty
 	export Inventory_ClearSlotFar, Inventory_ClearSlot
 	export Party_DrainPpFar, Party_DrainPp
 	export Party_GetPpRatioFar, Party_GetPpRatio

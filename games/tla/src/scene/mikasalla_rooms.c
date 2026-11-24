@@ -115,8 +115,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Garoh..."
 s32 MikasallaRooms_ReadHealersMind(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsIWonderIfThere);
+  FieldEvent_EndLastingPsynergy(0);
+  FieldEvent_SetMessageId((s32)MsgMikasallaRoomsIWonderIfThere);
   // "I wonder if there are werewolves beyond those in Garoh... I also..."
   Event_ShowMessage(ACTOR_MIKASALLA_HEALER, 0);
   Event_End();
@@ -128,9 +128,9 @@ s32 MikasallaRooms_ReadHealersMind(void) {
 /// to complain..."
 s32 MikasallaRooms_ReadApojiiHealersMind(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId(
-      (s32)MsgMikasallaInteriorsWheneverVisitorsComeOutIslanders);
+      (s32)MsgMikasallaRoomsWheneverVisitorsComeOutIslanders);
   // "Whenever visitors come out, the islanders start to complain about..."
   Event_ShowMessage(ACTOR_APOJII_HEALER, 0);
   Event_End();
@@ -151,19 +151,17 @@ void Sanctum_Run();
 /// travelled the whole world.
 void MikasallaRooms_AskAreYouExplorer(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsHeyMisterAreYouExplorer);
+  FieldEvent_EndLastingPsynergy(0);
+  FieldEvent_SetMessageId((s32)MsgMikasallaRoomsHeyMisterAreYouExplorer);
   // "Hey, mister! Are you an explorer?"
   Event_OpenMessage(ACTOR_EXPLORERS_GRANDSON, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {
     FieldEvent_Wait(10);
-    FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsHeyMisterAreYouExplorer +
-                            1);
+    FieldEvent_SetMessageId((s32)MsgMikasallaRoomsHeyMisterAreYouExplorer + 1);
   } else {
     FieldEvent_Wait(20);
-    FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsHeyMisterAreYouExplorer +
-                            2);
+    FieldEvent_SetMessageId((s32)MsgMikasallaRoomsHeyMisterAreYouExplorer + 2);
   }
   Event_ShowMessage(ACTOR_EXPLORERS_GRANDSON, 0);
   Event_End();
@@ -180,7 +178,7 @@ void MikasallaRooms_TalkToGeneralStorekeeper(s32 speaker) {
   if (facing == FACING_NORTH) {
     Shop_Run(SHOP_MIKASALLA, speaker);
   } else {
-    FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsWeOnlyHaveSmallShop);
+    FieldEvent_SetMessageId((s32)MsgMikasallaRoomsWeOnlyHaveSmallShop);
     // "We only have a small shop here. I used to specialize in items... But..."
     Event_ShowMessage(speaker, 0);
   }
@@ -198,8 +196,8 @@ void MikasallaRooms_TalkToInnkeeper(s32 speaker) {
     Inn_CheckIn(MIKASALLA_INN, speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
-    FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsYouveComeLongWayFriends);
+    FieldEvent_EndLastingPsynergy(0);
+    FieldEvent_SetMessageId((s32)MsgMikasallaRoomsYouveComeLongWayFriends);
     // "You've come a long way, friends. Stay a while, and rest your feet."
     Event_ShowMessage(speaker, 0);
     Event_End();
@@ -218,17 +216,17 @@ void MikasallaRooms_TalkToHealer(s32 speaker) {
     Sanctum_Run(speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
-    FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsHaveYouBeenToGaroh);
+    FieldEvent_EndLastingPsynergy(0);
+    FieldEvent_SetMessageId((s32)MsgMikasallaRoomsHaveYouBeenToGaroh);
     // "Have you been to Garoh?"
     Event_OpenMessage(speaker, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
       FieldEvent_Wait(10);
-      FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsHaveYouBeenToGaroh + 1);
+      FieldEvent_SetMessageId((s32)MsgMikasallaRoomsHaveYouBeenToGaroh + 1);
     } else {
       FieldEvent_Wait(20);
-      FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsHaveYouBeenToGaroh + 2);
+      FieldEvent_SetMessageId((s32)MsgMikasallaRoomsHaveYouBeenToGaroh + 2);
     }
     Event_ShowMessage(speaker, 0);
     Event_End();
@@ -247,8 +245,8 @@ void MikasallaRooms_TalkToApojiiHealer(s32 speaker) {
     Sanctum_Run(speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
-    FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsThisLittleIslandMustSeem);
+    FieldEvent_EndLastingPsynergy(0);
+    FieldEvent_SetMessageId((s32)MsgMikasallaRoomsThisLittleIslandMustSeem);
     // "This little island must seem quite boring to you sophisticated..."
     Event_ShowMessage(speaker, 0);
     Event_End();
@@ -266,7 +264,7 @@ void MikasallaRooms_TalkToYallamHealer(s32 speaker) {
     Sanctum_Run(speaker);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldEvent_SetMessageId((s32)MsgEvenOutInFarOffShores);
     // "Even out in these far-off shores, people need the services and hope..."
     Event_ShowMessage(speaker, 0);
@@ -334,8 +332,8 @@ void MikasallaRooms_TalkToGalahad(void) {
     // shame."
     FieldEvent_SetMessageId(
         Event_GetFlag(FLAG_MIKASALLA_TOLD_GALAHAD_OF_ISAAC)
-            ? (s32)MsgMikasallaInteriorsIThinkIsaacMust
-            : (s32)MsgMikasallaInteriorsIsaacsEnemiesAreGatheringNow);
+            ? (s32)MsgMikasallaRoomsIThinkIsaacMust
+            : (s32)MsgMikasallaRoomsIsaacsEnemiesAreGatheringNow);
     Event_ShowMessage(ACTOR_GALAHAD, 0);
   } else {
     MikasallaRooms_MeetGalahad();
@@ -348,7 +346,7 @@ void MikasallaRooms_MindReadGalahad(void) {
   if (!Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET)) {
     MikasallaRooms_MeetGalahad();
   } else {
-    FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsIFearWhatMightHappen);
+    FieldEvent_SetMessageId((s32)MsgMikasallaRoomsIFearWhatMightHappen);
     // "I fear what might happen if the three find Isaac before I can warn..."
     Event_ShowMessage(ACTOR_GALAHAD, 0);
   }
@@ -358,8 +356,8 @@ void MikasallaRooms_MindReadGalahad(void) {
 /// that the three gladiators Isaac beat are seeking revenge.
 void MikasallaRooms_MeetGalahad(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsForgiveMyManners);
+  FieldEvent_EndLastingPsynergy(0);
+  FieldEvent_SetMessageId((s32)MsgMikasallaRoomsForgiveMyManners);
   Actor_ShowEmote(ACTOR_GALAHAD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActor(ACTOR_GALAHAD, gMainRoutineState.leaderActorId, 0);
   // "Forgive my manners..."
@@ -506,32 +504,32 @@ struct Trigger gMikasallaRooms_HousesTriggers[] = {
     {TRIGGER_EXIT, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_SOUTHWEST, CONDITION_ALWAYS, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_SOUTHWEST},
     {TRIGGER_EXIT, MIKASALLA_ROOMS_HOUSES_TO_EAST_TUNDARIA_ISLET, CONDITION_ALWAYS, MIKASALLA_ROOMS_HOUSES_TO_EAST_TUNDARIA_ISLET},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_TALK, ACTOR_EXPLORERS_SON, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsIHeardSomeoneSayTheres)},
-    {TRIGGER_TALK, ACTOR_EXPLORERS_DAUGHTER_IN_LAW, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsMyFatherInLaw)},
+    {TRIGGER_TALK, ACTOR_EXPLORERS_SON, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsIHeardSomeoneSayTheres)},
+    {TRIGGER_TALK, ACTOR_EXPLORERS_DAUGHTER_IN_LAW, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsMyFatherInLaw)},
     {TRIGGER_TALK, ACTOR_EXPLORERS_GRANDSON, CONDITION_ALWAYS, EVENT(MikasallaRooms_AskAreYouExplorer)},
-    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_AIRS_ROCK, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsThoseWhoHaveClimbedAirs)},
-    {TRIGGER_TALK, ACTOR_WORRIED_WIFE, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsMyHusbandHasTried)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_AIRS_ROCK, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsThoseWhoHaveClimbedAirs)},
+    {TRIGGER_TALK, ACTOR_WORRIED_WIFE, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsMyHusbandHasTried)},
     {TRIGGER_TALK, ACTOR_GENERAL_STOREKEEPER, CONDITION_ALWAYS, EVENT(MikasallaRooms_TalkToGeneralStorekeeper)},
-    {TRIGGER_TALK, ACTOR_MAN_ON_THE_ROAD_TO_GAROH, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsThereArentAnyTownsBetween)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_ROAD_TO_GAROH, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsThereArentAnyTownsBetween)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(MikasallaRooms_TalkToInnkeeper)},
-    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_TUNDARIA, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsUsedToBeYouCould)},
-    {TRIGGER_TALK, ACTOR_OLD_WOMAN_BY_THE_FIRE, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsYouMustBeColdDressed)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_TUNDARIA, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsUsedToBeYouCould)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_BY_THE_FIRE, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsYouMustBeColdDressed)},
     {TRIGGER_TALK, ACTOR_GALAHAD, CONDITION_ALWAYS, EVENT(MikasallaRooms_TalkToGalahad)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EXPLORERS_SON, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsItMustBeNice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EXPLORERS_DAUGHTER_IN_LAW, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsThatBoySureAdmiresHis)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EXPLORERS_GRANDSON, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsILoveExploringOutBehind)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_AIRS_ROCK, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsWhatDoesUnseeableEvenLook)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_WIFE, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsICantLetHimTry)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GENERAL_STOREKEEPER, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsIDontKnowMuchAbout)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_ROAD_TO_GAROH, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsTheresNoReasonToGo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsWhyAreTravelersAlways)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_TUNDARIA, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsTundariaIsSouthernmostContinent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_BY_THE_FIRE, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsAroundHereItDoesntMatter)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EXPLORERS_SON, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsItMustBeNice)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EXPLORERS_DAUGHTER_IN_LAW, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsThatBoySureAdmiresHis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EXPLORERS_GRANDSON, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsILoveExploringOutBehind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_AIRS_ROCK, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsWhatDoesUnseeableEvenLook)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_WIFE, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsICantLetHimTry)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GENERAL_STOREKEEPER, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsIDontKnowMuchAbout)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_ROAD_TO_GAROH, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsTheresNoReasonToGo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsWhyAreTravelersAlways)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_TUNDARIA, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsTundariaIsSouthernmostContinent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_BY_THE_FIRE, CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsAroundHereItDoesntMatter)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GALAHAD, CONDITION_ALWAYS, EVENT(MikasallaRooms_MindReadGalahad)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriorsItsRoastChickenSoBig))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriorsFreshEggsOverEasySome))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriorsThatCheeseLooksFabulous))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriorsTheresFishIveNeverSeen))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaRoomsItsRoastChickenSoBig))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaRoomsFreshEggsOverEasySome))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaRoomsThatCheeseLooksFabulous))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaRoomsTheresFishIveNeverSeen))},
     {TRIGGER_TABLE_END},
 };
 // clang-format on
@@ -552,24 +550,24 @@ struct Trigger gMikasallaRooms_SanctumTriggers[] = {
     {TRIGGER_TALK, ACTOR_APOJII_HEALER, CONDITION_ALWAYS,
      EVENT(MikasallaRooms_TalkToApojiiHealer)},
     {TRIGGER_TALK, ACTOR_ISLANDER_SICK_OF_PARADISE, CONDITION_ALWAYS,
-     MSGNO(MsgMikasallaInteriorsImSickOfLiving)},
+     MSGNO(MsgMikasallaRoomsImSickOfLiving)},
     {TRIGGER_TALK, ACTOR_ISLANDER_LONGING_FOR_LAND, CONDITION_ALWAYS,
-     MSGNO(MsgMikasallaInteriorsIdLoveToGo)},
+     MSGNO(MsgMikasallaRoomsIdLoveToGo)},
     {TRIGGER_TALK, ACTOR_YALLAM_HEALER, CONDITION_ALWAYS,
      EVENT(MikasallaRooms_TalkToYallamHealer)},
     {TRIGGER_TALK, ACTOR_MIKASALLA_COUNTER, CONDITION_ALWAYS,
      EVENT(MikasallaRooms_TalkToHealer)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MIKASALLA_HEALER,
-     CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsIWonderIfThere)},
+     CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsIWonderIfThere)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_APOJII_HEALER,
      CONDITION_ALWAYS,
-     MSGNO(MsgMikasallaInteriorsWheneverVisitorsComeOutIslanders)},
+     MSGNO(MsgMikasallaRoomsWheneverVisitorsComeOutIslanders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ISLANDER_SICK_OF_PARADISE,
-     CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsMaybeTheyllTakeMe)},
+     CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsMaybeTheyllTakeMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ISLANDER_LONGING_FOR_LAND,
-     CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsIWonderWhatItsLike)},
+     CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsIWonderWhatItsLike)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YALLAM_HEALER,
-     CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsOnceThisWasThrivingVillage)},
+     CONDITION_ALWAYS, MSGNO(MsgMikasallaRoomsOnceThisWasThrivingVillage)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MIKASALLA_COUNTER,
      CONDITION_ALWAYS, EVENT(MikasallaRooms_ReadHealersMind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_APOJII_COUNTER,

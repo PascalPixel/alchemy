@@ -8,8 +8,8 @@
 /// own still resolves.
 
 /// The window object defines these with its own types.
-#define OWN_UiTextResource_Initialize
-#define OWN_UiTextResource_SetPosition
+#define OWN_MenuArrow_Create
+#define OWN_MenuArrow_SetPosition
 
 #include "battle/battle.h"
 #include "debug/debug.h"
@@ -32,7 +32,7 @@
 #include "system/iwram_call.h"
 #include "system/io_reg.h"
 #include "system/ram_buffer.h"
-#include "graphics/uiflow.h"
+#include "graphics/window_close.h"
 #include "graphics/render_input.h"
 #include "graphics/resource.h"
 #include "graphics/glyph.h"
@@ -52,7 +52,7 @@
 #include "system/scene.h"
 #include "menu/select.h"
 #include "text/msg_ids.h"
-#include "menu/node_chain.h"
+#include "menu/selection_cursor.h"
 #include "static_assert.h"
 #include "macros.h"
 #include "graphics/oam.h"
@@ -63,7 +63,7 @@
 #include "system/irq_lock.h"
 #include "battle/battle_side.h"
 #include "system/save.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "field/field_sprite.h"
 #include "battle/battle_summon.h"
 #include "system/irq.h"
@@ -115,7 +115,7 @@
 #define MESSAGE_COUNT 3
 #define MESSAGE_LINE_COUNT 4         ///< lines a page; spacing has one gap each
 #define TEXT_DEFAULT_LINE_SPACING 10 ///< a message's line spacing at start
-/// The glyph spacing text starts with (WindowState.glyphSpacing): a glyph
+/// The glyph spacing text starts with (WindowState.letterSpacing): a glyph
 /// sprite sits half of it right of its place in the line.
 #define TEXT_DEFAULT_GLYPH_SPACING 9
 /// The glyph tiles' size in sprite VRAM: the four tiles of a 16x16 glyph for
@@ -140,7 +140,7 @@ enum {
   /// The next entry is the line spacing; a glyph sprite sits half of it below
   /// its line's top.
   TEXT_LINE_SPACING = 10,
-  TEXT_WINDOW_STATE = 15, ///< the next entry is the window animation to run
+  TEXT_WINDOW_ANIMATION = 15, ///< the next entry is the window animation to run
   /// MESSAGE_ACTOR_NAME as Message_DecodeRaw keeps it, unexpanded: the next
   /// entry names the unit, and drawing and measuring skip both.
   TEXT_ACTOR_NAME = 17,
@@ -223,7 +223,7 @@ void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 /// numbers (PAGE_NUMBER_TILE and PAGE_NUMBER_LIT_TILE, window/window.h): the
 /// arrows.
 enum {
-  /// Left arrow, tile 820, which Link_DrawPageArrows slides.
+  /// Left arrow, tile 820, which PageArrows_Draw slides.
   LIST_TILE_PAGES_LEFT = WINDOW_TILE(820),
   LIST_TILE_PAGES_RIGHT = WINDOW_TILE(821), ///< Right arrow, tile 821
   /// The Status screen's own two arrows, tiles 822 and 823, which
@@ -232,7 +232,7 @@ enum {
   STATUS_TILE_PAGES_RIGHT = WINDOW_TILE(823)
 };
 
-/// The battle lists' two page arrow tiles in VRAM, which Link_DrawPageArrows
+/// The battle lists' two page arrow tiles in VRAM, which PageArrows_Draw
 /// draws each frame (LIST_TILE_PAGES_LEFT and LIST_TILE_PAGES_RIGHT).
 #define LIST_PAGE_ARROW_VRAM                                                   \
   ((s32)BG_CHAR_BLOCK(0) +                                                     \

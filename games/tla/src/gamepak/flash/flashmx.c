@@ -5,7 +5,7 @@
 #include "gamepak/flash.h"
 #include "gamepak/flash_data.h"
 
-/// The id a Panasonic chip answers with (Flash_ChipPanasonic's): its device id
+/// The id a Panasonic chip answers with (gFlash_ChipPanasonic's): its device id
 /// 0x1b above the maker id 0x32.
 #define FLASH_ID_PANASONIC (0x1b << 8 | 0x32)
 
@@ -13,7 +13,7 @@
 /// The Macronix chip's time limits in milliseconds, by enum FlashPhase (see
 /// FlashSetupInfo.maxTime): 10 to program a byte, 2 seconds to erase a sector
 /// or the whole chip.
-const u16 Flash_MaxTimeMacronix[] = {
+const u16 gFlash_MaxTimeMacronix[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     2000, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
@@ -22,9 +22,9 @@ const u16 Flash_MaxTimeMacronix[] = {
 // clang-format on
 
 // clang-format off
-/// The Panasonic chip's time limits, as Flash_MaxTimeMacronix's: half a second
+/// The Panasonic chip's time limits, as gFlash_MaxTimeMacronix's: half a second
 /// to erase.
-const u16 Flash_MaxTimePanasonic[] = {
+const u16 gFlash_MaxTimePanasonic[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     500, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
@@ -32,24 +32,24 @@ const u16 Flash_MaxTimePanasonic[] = {
 };
 // clang-format on
 
-const struct FlashSetupInfo Flash_ChipMacronix = {
+const struct FlashSetupInfo gFlash_ChipMacronix = {
     .program = ProgramFlashSector,
     .eraseChip = EraseFlashChip,
     .eraseSector = EraseFlashSector,
     .wait = WaitForFlashWrite,
-    .maxTime = (u16 *)Flash_MaxTimeMacronix,
+    .maxTime = (u16 *)gFlash_MaxTimeMacronix,
     .type = {.romSize = 65536,
              .sector = {.size = 4096, .shift = 12, .count = 16, .top = 0},
              .wait = {3, 1},
              .id = {.joined = FLASH_ID_MACRONIX}},
 };
 
-const struct FlashSetupInfo Flash_ChipPanasonic = {
+const struct FlashSetupInfo gFlash_ChipPanasonic = {
     .program = ProgramFlashSector,
     .eraseChip = EraseFlashChip,
     .eraseSector = EraseFlashSector,
     .wait = WaitForFlashWrite,
-    .maxTime = (u16 *)Flash_MaxTimePanasonic,
+    .maxTime = (u16 *)gFlash_MaxTimePanasonic,
     .type = {.romSize = 65536,
              .sector = {.size = 4096, .shift = 12, .count = 16, .top = 0},
              .wait = {0, 2},

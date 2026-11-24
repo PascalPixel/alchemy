@@ -106,7 +106,7 @@ enum {
   CHILD_CHASES_GAME_CHILD = 1,
   /// Stops the child for the leader, whatever its heading, while a talk or
   /// Mind Read is open; nothing here sets it, since a talk stops a child by its
-  /// riseEnabled.
+  /// sceneByte.
   CHILD_TALKING = 2
 };
 
@@ -189,15 +189,15 @@ void Yallam_ShowSongGame(void);
 struct SongRunnerState {
   s32 timer;
   s32 userValue;
-  s32 riseCounter;
-  s32 riseEnabled;
+  s32 sceneCounter;
+  s32 sceneByte;
 };
 
 /// The song leader's userValue in the song game: a command to every runner,
 /// which Yallam_UpdateSongGame passes on and clears.
 enum { SONG_GAME_GO = 1, SONG_GAME_HALT = 2, SONG_GAME_HALT_AND_STAND = 3 };
 
-/// A runner's riseCounter in the song game: where it stands on its path.
+/// A runner's sceneCounter in the song game: where it stands on its path.
 enum {
   RUNNER_GOING = 0,            ///< walks on along its path
   RUNNER_HALTED = 1,           ///< waits where it stopped
@@ -216,7 +216,7 @@ void Yallam_UpdateSongGame(void);
 /// Stops the actor (paused, standing) when the target is nearer than range
 /// pixels and lies ahead of it, within a sixteenth of a turn either side of its
 /// heading; force stops it regardless, and so does a talk with it (its
-/// riseEnabled set). Returns 1 when it stopped. A target out of range sets it
+/// sceneByte set). Returns 1 when it stopped. A target out of range sets it
 /// walking again.
 s32 Yallam_StopIfFacingNear(struct Actor *actor, struct Actor *target,
                             s32 range, s32 force) {
@@ -224,7 +224,7 @@ s32 Yallam_StopIfFacingNear(struct Actor *actor, struct Actor *target,
   s32 *targetPos;
   s32 *actorPos;
 
-  if (actor->riseEnabled != 0) {
+  if (actor->sceneByte != 0) {
     actor->paused = 1;
     return 1;
   }
@@ -348,7 +348,7 @@ void Yallam_EnterDoor(void) {
   s32 index;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
     struct Actor *actor = Actor_Get(i);
 
@@ -418,7 +418,7 @@ void Yallam_UncoverAntidote(void) {
     if (FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(ANTIDOTE_SPOT_X)) &&
         FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(ANTIDOTE_SPOT_Z))) {
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 16, 0);
@@ -450,7 +450,7 @@ void Yallam_UncoverNut(void) {
     if (FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(NUT_SPOT_X)) &&
         FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(NUT_SPOT_Z))) {
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 0, -16);
@@ -486,7 +486,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Felix talks to him facing any way but west, south-west or north-west.
 void Yallam_OfferYeppSong(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId(MsgDoYouWant);
   // "Do you want to hear one of the songs Yepp wrote?"
   Event_OpenMessage(ACTOR_SONG_LEADER, 0);
@@ -509,8 +509,8 @@ void Yallam_TalkAboutSongCircles(void) {
   s16 angle = actor->facing;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  actor->riseEnabled = 1;
+  FieldEvent_EndLastingPsynergy(0);
+  actor->sceneByte = 1;
   if (state->psynergy == 0) {
     Actor_FaceActor(ACTOR_CIRCLES_CHILD, gMainRoutineState.leaderActorId, 0);
     // "Running around in circles here while singing one of Yepp's songs is
@@ -524,7 +524,7 @@ void Yallam_TalkAboutSongCircles(void) {
   Event_ShowMessage(ACTOR_CIRCLES_CHILD, 0);
   if (state->psynergy == 0)
     actor->facing = angle;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   Event_End();
 }
 
@@ -538,8 +538,8 @@ void Yallam_TalkAboutSongGame(void) {
   s16 angle = actor->facing;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  actor->riseEnabled = 1;
+  FieldEvent_EndLastingPsynergy(0);
+  actor->sceneByte = 1;
   if (state->psynergy == 0) {
     Actor_FaceActor(ACTOR_GAME_CHILD, gMainRoutineState.leaderActorId, 0);
     // "There's a game that goes along with the song, but it's tough. I want to
@@ -552,7 +552,7 @@ void Yallam_TalkAboutSongGame(void) {
   Event_ShowMessage(ACTOR_GAME_CHILD, 0);
   if (state->psynergy == 0)
     actor->facing = angle;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   Event_End();
 }
 
@@ -570,7 +570,7 @@ s32 Yallam_HasArrived(struct Actor *actor) {
 /// the songs ends at a step the singing waits for (Yallam_ShowSongGame).
 void Yallam_RunSongPath(s32 actorId) {
   struct Actor *actor = Actor_GetById(actorId);
-  u8 state = actor->riseCounter;
+  u8 state = actor->sceneCounter;
   s16 *timer;
 
   if (state == RUNNER_HALTED)
@@ -587,7 +587,7 @@ void Yallam_RunSongPath(s32 actorId) {
   case RUNNER_HALTING:
     Actor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     *timer &= ~1;
-    actor->riseCounter = RUNNER_HALTED;
+    actor->sceneCounter = RUNNER_HALTED;
     return;
   }
   switch (*timer) {
@@ -1439,25 +1439,25 @@ void Yallam_UpdateSongGame(void) {
 
   switch (command) {
   case SONG_GAME_GO:
-    songLeader->riseCounter = RUNNER_GOING;
-    gameChild->riseCounter = RUNNER_GOING;
-    circlesChild->riseCounter = RUNNER_GOING;
-    storyChild->riseCounter = RUNNER_GOING;
-    leader->riseCounter = RUNNER_GOING;
+    songLeader->sceneCounter = RUNNER_GOING;
+    gameChild->sceneCounter = RUNNER_GOING;
+    circlesChild->sceneCounter = RUNNER_GOING;
+    storyChild->sceneCounter = RUNNER_GOING;
+    leader->sceneCounter = RUNNER_GOING;
     break;
   case SONG_GAME_HALT:
-    songLeader->riseCounter = RUNNER_HALTING;
-    gameChild->riseCounter = RUNNER_HALTING;
-    circlesChild->riseCounter = RUNNER_HALTING;
-    storyChild->riseCounter = RUNNER_HALTING;
-    leader->riseCounter = RUNNER_HALTING;
+    songLeader->sceneCounter = RUNNER_HALTING;
+    gameChild->sceneCounter = RUNNER_HALTING;
+    circlesChild->sceneCounter = RUNNER_HALTING;
+    storyChild->sceneCounter = RUNNER_HALTING;
+    leader->sceneCounter = RUNNER_HALTING;
     break;
   case SONG_GAME_HALT_AND_STAND:
-    songLeader->riseCounter = RUNNER_HALTING_TO_STAND;
-    gameChild->riseCounter = RUNNER_HALTING_TO_STAND;
-    circlesChild->riseCounter = RUNNER_HALTING_TO_STAND;
-    storyChild->riseCounter = RUNNER_HALTING_TO_STAND;
-    leader->riseCounter = RUNNER_HALTING_TO_STAND;
+    songLeader->sceneCounter = RUNNER_HALTING_TO_STAND;
+    gameChild->sceneCounter = RUNNER_HALTING_TO_STAND;
+    circlesChild->sceneCounter = RUNNER_HALTING_TO_STAND;
+    storyChild->sceneCounter = RUNNER_HALTING_TO_STAND;
+    leader->sceneCounter = RUNNER_HALTING_TO_STAND;
     break;
   }
   songLeader->userValue = 0;
@@ -1475,28 +1475,28 @@ void Yallam_PauseSongGame(void) {
   actor = Actor_Get(ACTOR_SONG_LEADER);
   gYallam_SavedSongGame[0].timer = actor->timer;
   gYallam_SavedSongGame[0].userValue = (s16)actor->userValue;
-  gYallam_SavedSongGame[0].riseCounter = actor->riseCounter;
-  gYallam_SavedSongGame[0].riseEnabled = actor->riseEnabled;
+  gYallam_SavedSongGame[0].sceneCounter = actor->sceneCounter;
+  gYallam_SavedSongGame[0].sceneByte = actor->sceneByte;
   actor = Actor_Get(ACTOR_GAME_CHILD);
   gYallam_SavedSongGame[1].timer = actor->timer;
   gYallam_SavedSongGame[1].userValue = (s16)actor->userValue;
-  gYallam_SavedSongGame[1].riseCounter = actor->riseCounter;
-  gYallam_SavedSongGame[1].riseEnabled = actor->riseEnabled;
+  gYallam_SavedSongGame[1].sceneCounter = actor->sceneCounter;
+  gYallam_SavedSongGame[1].sceneByte = actor->sceneByte;
   actor = Actor_Get(ACTOR_CIRCLES_CHILD);
   gYallam_SavedSongGame[2].timer = actor->timer;
   gYallam_SavedSongGame[2].userValue = (s16)actor->userValue;
-  gYallam_SavedSongGame[2].riseCounter = actor->riseCounter;
-  gYallam_SavedSongGame[2].riseEnabled = actor->riseEnabled;
+  gYallam_SavedSongGame[2].sceneCounter = actor->sceneCounter;
+  gYallam_SavedSongGame[2].sceneByte = actor->sceneByte;
   actor = Actor_Get(ACTOR_STORY_CHILD);
   gYallam_SavedSongGame[3].timer = actor->timer;
   gYallam_SavedSongGame[3].userValue = (s16)actor->userValue;
-  gYallam_SavedSongGame[3].riseCounter = actor->riseCounter;
-  gYallam_SavedSongGame[3].riseEnabled = actor->riseEnabled;
+  gYallam_SavedSongGame[3].sceneCounter = actor->sceneCounter;
+  gYallam_SavedSongGame[3].sceneByte = actor->sceneByte;
   actor = Actor_Get(gMainRoutineState.leaderActorId);
   gYallam_SavedSongGame[4].timer = actor->timer;
   gYallam_SavedSongGame[4].userValue = (s16)actor->userValue;
-  gYallam_SavedSongGame[4].riseCounter = actor->riseCounter;
-  gYallam_SavedSongGame[4].riseEnabled = actor->riseEnabled;
+  gYallam_SavedSongGame[4].sceneCounter = actor->sceneCounter;
+  gYallam_SavedSongGame[4].sceneByte = actor->sceneByte;
   FieldTask_Remove(Yallam_UpdateSongGame);
 }
 
@@ -1507,28 +1507,28 @@ void Yallam_ResumeSongGame(void) {
   actor = Actor_Get(ACTOR_SONG_LEADER);
   actor->timer = gYallam_SavedSongGame[0].timer;
   actor->userValue = gYallam_SavedSongGame[0].userValue;
-  actor->riseCounter = gYallam_SavedSongGame[0].riseCounter;
-  actor->riseEnabled = gYallam_SavedSongGame[0].riseEnabled;
+  actor->sceneCounter = gYallam_SavedSongGame[0].sceneCounter;
+  actor->sceneByte = gYallam_SavedSongGame[0].sceneByte;
   actor = Actor_Get(ACTOR_GAME_CHILD);
   actor->timer = gYallam_SavedSongGame[1].timer;
   actor->userValue = gYallam_SavedSongGame[1].userValue;
-  actor->riseCounter = gYallam_SavedSongGame[1].riseCounter;
-  actor->riseEnabled = gYallam_SavedSongGame[1].riseEnabled;
+  actor->sceneCounter = gYallam_SavedSongGame[1].sceneCounter;
+  actor->sceneByte = gYallam_SavedSongGame[1].sceneByte;
   actor = Actor_Get(ACTOR_CIRCLES_CHILD);
   actor->timer = gYallam_SavedSongGame[2].timer;
   actor->userValue = gYallam_SavedSongGame[2].userValue;
-  actor->riseCounter = gYallam_SavedSongGame[2].riseCounter;
-  actor->riseEnabled = gYallam_SavedSongGame[2].riseEnabled;
+  actor->sceneCounter = gYallam_SavedSongGame[2].sceneCounter;
+  actor->sceneByte = gYallam_SavedSongGame[2].sceneByte;
   actor = Actor_Get(ACTOR_STORY_CHILD);
   actor->timer = gYallam_SavedSongGame[3].timer;
   actor->userValue = gYallam_SavedSongGame[3].userValue;
-  actor->riseCounter = gYallam_SavedSongGame[3].riseCounter;
-  actor->riseEnabled = gYallam_SavedSongGame[3].riseEnabled;
+  actor->sceneCounter = gYallam_SavedSongGame[3].sceneCounter;
+  actor->sceneByte = gYallam_SavedSongGame[3].sceneByte;
   actor = Actor_Get(gMainRoutineState.leaderActorId);
   actor->timer = gYallam_SavedSongGame[4].timer;
   actor->userValue = gYallam_SavedSongGame[4].userValue;
-  actor->riseCounter = gYallam_SavedSongGame[4].riseCounter;
-  actor->riseEnabled = gYallam_SavedSongGame[4].riseEnabled;
+  actor->sceneCounter = gYallam_SavedSongGame[4].sceneCounter;
+  actor->sceneByte = gYallam_SavedSongGame[4].sceneByte;
   Task_AddFrame(Yallam_UpdateSongGame, TASK_PASS_FRAME);
 }
 
@@ -1540,8 +1540,8 @@ void Yallam_StartRunner(s32 id) {
   Actor_SetAnimation(id, ANIM_WALK);
   actor->timer = 0;
   actor->userValue = 0;
-  actor->riseCounter = RUNNER_HALTED;
-  actor->riseEnabled = 0;
+  actor->sceneCounter = RUNNER_HALTED;
+  actor->sceneByte = 0;
 }
 
 extern u32 gYallam_CirclesChildGathers[];
@@ -1960,11 +1960,11 @@ void Yallam_StartRunningChildren(void) {
   struct Actor *other;
 
   actor->timer = CHILD_CHASES_GAME_CHILD;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   actor->update = Yallam_UpdateRunningChild;
   other = Actor_Get(ACTOR_GAME_CHILD);
   other->timer = 0;
-  other->riseEnabled = 0;
+  other->sceneByte = 0;
   other->update = Yallam_UpdateRunningChild;
 }
 

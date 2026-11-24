@@ -139,7 +139,7 @@ void AlhafraManor_PointOutAirsRock(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManorLookeeHereCantYouSee;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId(msg);
   // "Lookee here! Can't you see Air's Rock out there?"
   FieldMessage_ShowAtActor(actor, 0);
@@ -189,7 +189,7 @@ void AlhafraManor_ComplainAboutTheMayor(void) {
 
   GameFlag_Set(FLAG_COMPLAINED_ABOUT_THE_MAYOR);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)&MsgAlhafraManorDarnThatMayor);
   if (state->psynergy != 0)
     Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
@@ -214,7 +214,7 @@ void AlhafraManor_DefendTheMayor(void) {
 
   GameFlag_Set(FLAG_DEFENDED_THE_MAYOR);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)&MsgAlhafraManorImSureTheMayorHas);
   if (state->psynergy != 0)
     Actor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
@@ -262,7 +262,7 @@ void AlhafraManor_TellOfTheEasternSea(void) {
   }
   GameFlag_Set(FLAG_TOLD_OF_THE_EASTERN_SEA);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)&MsgAlhafraManorBriggsTellsMeThereAre);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_MAYOR, 2);
@@ -394,7 +394,7 @@ void AlhafraManor_CountAnswer(void);
 /// his weird answers.
 void AlhafraManor_BriggsEscapes(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgAlhafraManorThankYouAgainMayorYou);
   Actor_SetPosition(ACTOR_MAYOR, 344, 96);
   Actor_SetPosition(ACTOR_JIYA, 408, 136);
@@ -988,6 +988,6 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JIYA, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraManorTheMayorHatesSeeingAnyone)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsThatSeafoodStewHasAn))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsThatSeafoodStewHasAn))},
     {TRIGGER_TABLE_END},
 };

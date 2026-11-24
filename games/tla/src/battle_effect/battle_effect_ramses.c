@@ -54,11 +54,11 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   // The statue, its fist and wrist, then six rocks.
-  BattleEffect_SpawnObjects(RAMSES_FIRST_ROCK_SPRITE, SPRITE_RAMSES, 2);
+  BattleEffect_CreateSprites(RAMSES_FIRST_ROCK_SPRITE, SPRITE_RAMSES, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
@@ -83,7 +83,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, RESOURCE_DESERT_BACKDROP,
                            0);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, state->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);

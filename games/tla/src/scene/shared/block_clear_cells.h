@@ -7,7 +7,7 @@ void MagmaRockInside_ClearBlockCells(struct Actor *actor) {
   s32 x;
   s32 z;
 
-  if (actor->riseEnabled == 0)
+  if (actor->sceneByte == 0)
     return;
   map = Ram_HeapSlots->mapGrid;
   if (map == NULL)
@@ -21,5 +21,5 @@ void MagmaRockInside_ClearBlockCells(struct Actor *actor) {
   cell = *cells;
   cell += x + ((z - 1) << 7);
   cell->collisionCode = CELL_BEHAVIOR_NORMAL;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
 }

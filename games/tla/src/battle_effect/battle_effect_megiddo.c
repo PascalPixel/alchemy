@@ -147,7 +147,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->user, 150, toFIXED(5));
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -241,7 +241,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       BattleEffect_BuildRepeatingTilemap();
       Palette_BrightenBattleBg(MEGIDDO_HAZE_FADE_RED, MEGIDDO_HAZE_FADE,
                                MEGIDDO_HAZE_FADE);
-      BattleEffect_SpawnObjects(1, SPRITE_SUN, 2);
+      BattleEffect_CreateSprites(1, SPRITE_SUN, 2);
     }
     EffectPosition_ProjectScaledBattler(args->user, &pos);
     if (frame == 3) {

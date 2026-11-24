@@ -75,7 +75,7 @@ void LemuriaDock_MoveKraden(void) {
 
   if (party->entrance == LEMURIA_DOCK_FROM_ANCIENT_LEMURIA_EAST_A) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     if (Actor_GetById(ACTOR_KRADEN)->x.fixed == 0) {
       Actor_WalkByAndWait(ACTOR_FELIX, 0, -16);
       FieldActor_LaunchFromLeader(ACTOR_KRADEN, 0, -16, FACING_SOUTH_SOUTHEAST);
@@ -154,7 +154,7 @@ void LemuriaDock_EnterDoor(const struct MapGridCellAnimation *door, s32 exit,
   s32 id;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(door->steps, door->x, door->y);
   Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = ACTOR_FALLS;

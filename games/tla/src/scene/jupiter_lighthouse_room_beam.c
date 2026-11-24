@@ -57,6 +57,7 @@
 #include "shared/tables.h"
 #include "field/field_effect.h"
 #include "field/actor_script.h"
+#include "scene/lighthouse_palettes.h"
 #include "fixed_math.h"
 
 /// The energy block lies in its gap, lighting the path.
@@ -115,8 +116,6 @@ void LightSprites_Add(s32 id, s32 value);
 
 void FadeOverlay_FillTiles(s32 a);
 
-void JupiterLighthouse_LoadPalettes(s32 mode);
-
 struct EffectSprite gJupiterLighthouse_GlowSprite BSS_DATA ALIGNED(16);
 /// Where the glow over the Cyclone pad in use stands.
 s32 gJupiterLighthouse_GlowPosition[3] BSS_DATA;
@@ -139,7 +138,7 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 s32 Position_FlatDistance(FIXED *a, FIXED *b);
 
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 void Leader_CenterInCell(void);
 
@@ -169,7 +168,7 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
+u8 MapGrid_SetCellAttributesAt(s32 x, s32 z, s32 layer, s32 value);
 void EffectSprite_InitWithFadeOverlayBlended(const void *script, s32 a, s32 b,
                                              s32 c);
 
@@ -224,7 +223,7 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
   s32 *target;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   target = gJupiterLighthouse_GlowPosition;
   if (kind == TRIGGER_CYCLONE_DOWN_WEST) {
     target[0] = toFIXED(136);
@@ -289,7 +288,7 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   s32 frame;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   target = gJupiterLighthouse_GlowPosition;
   if (kind == TRIGGER_CYCLONE_UP_WEST) {
     target[0] = toFIXED(136);
@@ -367,7 +366,7 @@ void JupiterLighthouse_CycloneUpOnWestPad(void) {
   struct FieldEffectState *effect = Ram_HeapSlots->fieldEffectState;
 
   event->raisedTrigger = TRIGGER_CYCLONE_UP_WEST;
-  effect->childOption = 1;
+  effect->sceneVariant = 1;
 }
 
 /// Felix casts Cyclone on the east pad below the ledge, cell (16, 35). Nothing
@@ -377,7 +376,7 @@ void JupiterLighthouse_CycloneUpOnEastPad(void) {
   struct FieldEffectState *effect = Ram_HeapSlots->fieldEffectState;
 
   event->raisedTrigger = TRIGGER_CYCLONE_UP_EAST;
-  effect->childOption = 1;
+  effect->sceneVariant = 1;
 }
 
 /// Felix casts Cyclone on the west pad up on the ledge. Nothing is seen yet;
@@ -631,7 +630,7 @@ s32 Scene_Initialize(void) {
 /// the map is built. Returns 0.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  JupiterLighthouse_LoadPalettes(0);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
   return 0;
 }
 
@@ -672,7 +671,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

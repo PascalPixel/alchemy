@@ -69,7 +69,7 @@ struct HeapSlots {
   void *battleSheet;  ///< the running battle effect's tile sheet
   /// A routine run from RAM: the canvas drawing routine
   /// BattleEffect_BuildBlitter writes, or the world map's copy of
-  /// Matrix_UpdateVertices.
+  /// WorldMap_UpdateAffineLines.
   void *ramCode;
   void *fieldState;    ///< a field scene's struct FieldState
   void *paletteCycles; ///< the palette cycles
@@ -144,7 +144,7 @@ enum HeapSlot {
   HEAP_SLOT_TILE_SCRATCH = offsetof(struct HeapSlots, tileScratch),
   HEAP_SLOT_WINDOW = offsetof(struct HeapSlots, windowState),
   HEAP_SLOT_PARTY_STATUS = offsetof(struct HeapSlots, partyStatus),
-  HEAP_SLOT_GLYPH_TRANSFER = offsetof(struct HeapSlots, glyphTransfer),
+  HEAP_SLOT_ICON_TRANSFER = offsetof(struct HeapSlots, glyphTransfer),
   HEAP_SLOT_SELECTION_MENU = offsetof(struct HeapSlots, selectionMenu),
   HEAP_SLOT_FRAME_SCRATCH = offsetof(struct HeapSlots, frameScratch),
   HEAP_SLOT_PICTURE_UPLOADER = offsetof(struct HeapSlots, pictureUploader),

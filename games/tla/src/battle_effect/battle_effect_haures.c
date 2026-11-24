@@ -15,7 +15,7 @@ struct MoundVertex {
 /// then the charge's sparks, which are EXTRA_PARTICLES.
 #define SCRATCH (Ram_MapCellBuffer + 16384)
 /// The mound strip's corners, rebuilt each frame from the morphing shapes.
-extern struct MoundVertex gHaures_WingCorners[];
+extern struct MoundVertex gHaures_MoundCorners[];
 extern const u16 gHaures_BodyPiecePoints[][2];
 
 #define HAURES_COMING_FRAMES 440 ///< frames of Haures's coming, unless skipped
@@ -186,7 +186,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   u16 *dst;
 
   buffer = gMapGridCellBuffer;
-  shades = gHaures_WingShades;
+  shades = gHaures_MoundShades;
   battle = Ram_HeapSlots->battleState;
   canvas = Ram_HeapSlots->battleCanvas;
   state = Ram_HeapSlots->battleEffect;
@@ -197,12 +197,12 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = Q_8_8(4);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   background->busy = 1;
   gBgScroll[1].x = 0;
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
@@ -210,7 +210,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   morph = 0;
   morphStep = 0;
   dived = 0;
-  BattleEffect_SpawnObjects(HAURES_CLAW_PIECES, SPRITE_HAURES, 2);
+  BattleEffect_CreateSprites(HAURES_CLAW_PIECES, SPRITE_HAURES, 2);
   for (i = 0; i != HAURES_FLAME_COUNT; i++) {
     sprite = Sprite_CreateFar(SPRITE_HAURES_FLAME);
     state->sprites[HAURES_FIRST_FLAME + i] = sprite;
@@ -273,18 +273,18 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     }
   }
   for (i = 0; i != HAURES_MOUND_QUADS; i++) {
-    gHaures_WingStrip[i * 8 + 0] = i * 2;
-    gHaures_WingStrip[i * 8 + 1] = i * 2 + 1;
-    gHaures_WingStrip[i * 8 + 2] = i * 2 + 2;
-    gHaures_WingStrip[i * 8 + 4] = i * 2 + 1;
-    gHaures_WingStrip[i * 8 + 5] = i * 2 + 3;
-    gHaures_WingStrip[i * 8 + 6] = i * 2 + 2;
+    gHaures_MoundStrip[i * 8 + 0] = i * 2;
+    gHaures_MoundStrip[i * 8 + 1] = i * 2 + 1;
+    gHaures_MoundStrip[i * 8 + 2] = i * 2 + 2;
+    gHaures_MoundStrip[i * 8 + 4] = i * 2 + 1;
+    gHaures_MoundStrip[i * 8 + 5] = i * 2 + 3;
+    gHaures_MoundStrip[i * 8 + 6] = i * 2 + 2;
   }
   // The strip ends with a face of no corners, cleared through the end's own
   // name.
-  gHaures_WingStripEnd[0] = 0;
-  gHaures_WingStripEnd[1] = 0;
-  gHaures_WingStripEnd[2] = 0;
+  gHaures_MoundStripEnd[0] = 0;
+  gHaures_MoundStripEnd[1] = 0;
+  gHaures_MoundStripEnd[2] = 0;
   {
     dst = &BG_PLTT_COLOR(0, 1);
 
@@ -390,20 +390,20 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           p->variant = 0;
         }
         for (i = 0; i != HAURES_MOUND_POINTS; i++) {
-          gHaures_WingCorners[i].upper.x = FIXEDtoINT(
+          gHaures_MoundCorners[i].upper.x = FIXEDtoINT(
               -(Trig_Cos(i * HAURES_POOL_STEP) * (HAURES_POOL_WIDTH / 2)));
-          gHaures_WingCorners[i].upper.y =
+          gHaures_MoundCorners[i].upper.y =
               FIXEDtoINT(-(Trig_Sin(i * HAURES_POOL_STEP) * HAURES_POOL_DEPTH));
           // DEAD: lower.x is set again two lines on; the ROM keeps this
           // store.
-          gHaures_WingCorners[i].lower.x = i * 4 - 64;
-          gHaures_WingCorners[i].upper.z = 0;
-          gHaures_WingCorners[i].lower.x = FIXEDtoINT(
+          gHaures_MoundCorners[i].lower.x = i * 4 - 64;
+          gHaures_MoundCorners[i].upper.z = 0;
+          gHaures_MoundCorners[i].lower.x = FIXEDtoINT(
               -(Trig_Cos(i * HAURES_POOL_STEP) * (HAURES_POOL_WIDTH / 2)));
-          gHaures_WingCorners[i].lower.y =
+          gHaures_MoundCorners[i].lower.y =
               (u32)(Trig_Sin(i * HAURES_POOL_STEP) * (HAURES_POOL_DEPTH / 2)) /
               (FIXED_ONE / 2);
-          gHaures_WingCorners[i].lower.z = 0;
+          gHaures_MoundCorners[i].lower.z = 0;
         }
       }
       if ((u32)frame <= 31) {
@@ -485,7 +485,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           s32 t;
           s32 sh;
           s32 s;
-          u8 *strip = gHaures_WingStrip;
+          u8 *strip = gHaures_MoundStrip;
 
           verts = Heap_AllocEwram(32);
           model = Render_AllocateModelList(1);
@@ -536,7 +536,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             s32 b;
             s32 n;
             s32 next;
-            struct MoundVertex *mound = gHaures_WingCorners;
+            struct MoundVertex *mound = gHaures_MoundCorners;
 
             if (frame == 74) {
               morph = 0;
@@ -547,20 +547,20 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             b = next % HAURES_MOUND_SHAPES;
             n = morphStep;
             morphStep = n + 1;
-            if (morphStep == gHaures_WingMorphSteps[a]) {
+            if (morphStep == gHaures_MoundMorphSteps[a]) {
               morphStep = 0;
               morph = next;
             }
             for (i = 0; i != HAURES_MOUND_POINTS; i++) {
               mound[i].upper.y =
-                  -(gHaures_WingShapes[i + a * HAURES_MOUND_POINTS] +
+                  -(gHaures_MoundShapes[i + a * HAURES_MOUND_POINTS] +
                     n *
-                        (gHaures_WingShapes[i + b * HAURES_MOUND_POINTS] -
-                         gHaures_WingShapes[i + a * HAURES_MOUND_POINTS]) /
-                        gHaures_WingMorphSteps[a]);
+                        (gHaures_MoundShapes[i + b * HAURES_MOUND_POINTS] -
+                         gHaures_MoundShapes[i + a * HAURES_MOUND_POINTS]) /
+                        gHaures_MoundMorphSteps[a]);
             }
             for (i = 0; i != HAURES_MOUND_POINTS; i++) {
-              gHaures_WingCorners[i].upper.x = i * 4 - 64;
+              gHaures_MoundCorners[i].upper.x = i * 4 - 64;
             }
           }
           model->flags = 0;
@@ -571,12 +571,12 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             s32 v = frame - 235;
 
             for (i = 0; i != HAURES_MOUND_QUADS; i++) {
-              gHaures_WingShades[i * 2] = v;
-              gHaures_WingShades[i * 2 + 1] = v;
+              gHaures_MoundShades[i * 2] = v;
+              gHaures_MoundShades[i * 2 + 1] = v;
             }
           }
           model->shade = (long)shades;
-          Render_TransformVertices(gHaures_WingCorners, buffer,
+          Render_TransformVertices(gHaures_MoundCorners, buffer,
                                    HAURES_MOUND_POINTS * 2);
           Render_DrawModelList(model);
           Heap_Release(model);
@@ -754,7 +754,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             Sprite_DestroyFar(state->sprites[HAURES_FIRST_DROP_SPRITE + i]);
           }
           Sprite_DestroyFar(state->sprites[HAURES_STAMP]);
-          BattleEffect_SpawnObjects(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
+          BattleEffect_CreateSprites(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
           q = gHaures_PartPoints;
           {
             struct Particle *p = state->particles;
@@ -855,7 +855,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           }
         }
         for (i = 0; i != HAURES_SHARDS; i++) {
-          gHaures_WingShades[i] = 1;
+          gHaures_MoundShades[i] = 1;
         }
         {
           for (i = 0; i != HAURES_SHARDS; i++) {
@@ -926,7 +926,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingStampTransfer);
   BattleEffect_SetupBlendedDisplay();
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-  BattleEffect_SpawnObjects(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
+  BattleEffect_CreateSprites(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                        SHEET_PALETTE_BYTES);
@@ -951,7 +951,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     }
   }
   Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);

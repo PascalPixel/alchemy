@@ -90,7 +90,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GIANT_SWORD_SHEET, state->sheet, 0, 0);
   // DEAD: DustBlobSheet, which Megiddo draws, is decoded and never drawn; the
   // ROM keeps the load.
@@ -539,10 +539,10 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, SHEET_PALETTE_BYTES);
   for (i = 0; i != CANVAS_BYTES; i++)
     state->sheet[i] += SWIRL_FIRST_COLOR;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   sheetDraw[0](canvas, state->sheet, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
   EFFECT_PRESENT_CANVAS(state);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
   // The swirl itself in the canvas (colour 0 made 1, so none is clear),
@@ -562,7 +562,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
                               clipAndCopy);
   }
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferFullScreenImage, TASK_PASS_VBLANK);
   transition->busy = enabled;
   draw(cells, canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
   draw(cells, canvas, CANVAS_SIZE, 0, CANVAS_SIZE, CANVAS_SIZE);
@@ -611,7 +611,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
 
   gBgScroll[1].x = savedScrollX;
   transition->busy = 0;
-  Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferFullScreenImage);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

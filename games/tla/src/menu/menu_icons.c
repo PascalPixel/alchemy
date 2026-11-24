@@ -11,8 +11,8 @@
 
 /// Loads the Djinn menu's up and down arrows (djinn_arrow_up and
 /// djinn_arrow_down) into free VRAM cache slots, the state's resourceSlots,
-/// for Icon_DrawVariantWithTileOffset.
-void Resource_LoadPairedBlocksIfAvailable(void) {
+/// for Icon_CreateDjinnArrow.
+void Menu_LoadDjinnArrows(void) {
   s32 firstSlot;
   s32 secondSlot;
   struct ItemMenuState *activeState;
@@ -33,7 +33,7 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
 }
 
 /// Frees the VRAM cache slots of the two arrows the menu loaded
-/// (Resource_LoadPairedBlocks or Resource_LoadPairedBlocksIfAvailable).
+/// (Menu_LoadStatArrows or Menu_LoadDjinnArrows).
 void Menu_FreeArrows(void) {
   struct ItemMenuState *state = Ram_HeapSlots->menuState;
 
@@ -42,34 +42,34 @@ void Menu_FreeArrows(void) {
 }
 
 /// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
-/// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in a
-/// GlyphTransfer in HEAP_SLOT_GLYPH_TRANSFER, which is released again.
+/// Psynergy icon of ability resourceId (Ability_BuildIconTilesFar), built in a
+/// IconTransfer in HEAP_SLOT_ICON_TRANSFER, which is released again.
 s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 resourceInfo;
   s32 selectedSlot;
   s32 buffer;
-  GlyphTransfer *allocation;
+  IconTransfer *allocation;
 
   allocation =
-      HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+      HeapSlot_AllocEwram(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   selectedSlot = slot;
-  Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &resourceInfo, 1);
+  Ability_BuildIconTilesFar(resourceId, 0, &selectedSlot, &resourceInfo, 1);
   buffer = VramCache_Reload(slot, (s32)allocation->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   return buffer;
 }
 
 /// Loads an icon into a free cache slot and creates its sprite when possible:
 /// ability resourceId's Psynergy icon at (x, y) of window, for the Djinn
 /// preview's Psynergy lists. Returns no value; callers ignore it.
-s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
-                                  s32 resourceId) {
+s32 Icon_CreatePsynergyIcon(struct Window *window, s32 x, s32 y,
+                            s32 resourceId) {
   s32 slot;
 
   slot = VramCache_FindFreeEntry();
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     Icon_LoadResourceIntoSlot(resourceId, slot);
-    WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
+    WindowSprite_CreateFar(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   }
 }
 
@@ -85,7 +85,8 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
     resource = (u16)data->resourceSlots[0];
   else
     resource = (u16)data->resourceSlots[1];
-  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);
+  object =
+      WindowSprite_CreateFar(resource, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms are alike. */
     if (variant || x)
@@ -101,8 +102,7 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
 
 /// As Icon_CreateStatChangeArrow, with the arrow raised 3 pixels for variant
 /// 0 and 4 for any other. Returns 1, or -1 when no window sprite is free.
-s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
-                                   s32 variant) {
+s32 Icon_CreateDjinnArrow(struct Window *window, s32 x, s32 y, s32 variant) {
   struct WindowSprite *object;
   u32 resource;
   struct ItemMenuState *data = Ram_HeapSlots->menuState;
@@ -114,7 +114,8 @@ s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
     resource = (u16)data->resourceSlots[1];
     y -= 4;
   }
-  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);
+  object =
+      WindowSprite_CreateFar(resource, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms are alike. */
     if (variant || x)
@@ -231,7 +232,7 @@ void Menu_MarkChosenMember(s32 unused, s32 index, s32 count) {
 
 /// A task while the party figures show: places each party member's
 /// figure at its menu position and scale through the projected placement.
-void Menu_UpdateEntryObjectTransforms(void) {
+void Menu_UpdatePartyFigures(void) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   s32 scale[2];
   FIXED transform[4];
@@ -260,7 +261,7 @@ void Menu_UpdateEntryObjectTransforms(void) {
 /// Returns the sprite party member id's figure shows.
 s32 Party_GetCharacterSpriteFar(s32 id);
 
-/// Menu_CreateOwnerEntryObjects for two characters (-1 for none): their
+/// Menu_CreatePartyFigures for two characters (-1 for none): their
 /// figures in entries 0 and 1, as the Djinn preview shows the pair a Djinni
 /// passes between.
 void Menu_CreatePairFigures(s32 first, s32 second) {
@@ -296,7 +297,7 @@ void Menu_CreatePairFigures(s32 first, s32 second) {
 
 /// Replaces the menu's party figures with up to four party members' figures,
 /// from party place first on, standing (ANIM_STAND), and counts the party.
-void Menu_CreateOwnerEntryObjects(s32 first) {
+void Menu_CreatePartyFigures(s32 first) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   u16 owners[14];
   struct Sprite *object;
@@ -325,15 +326,14 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
 
 /// Creates the first four party members' figures in a row from tile (originX,
 /// originY) inside window, three tiles apart, and starts placing them each
-/// frame (Menu_UpdateEntryObjectTransforms).
-void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
-                                 s32 originY) {
+/// frame (Menu_UpdatePartyFigures).
+void Menu_ShowPartyFigures(struct Window *window, s32 originX, s32 originY) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   s32 i;
 
   for (i = 0; i < 8; i++)
     menu->memberSprites[i] = NULL;
-  Menu_CreateOwnerEntryObjects(0);
+  Menu_CreatePartyFigures(0);
   for (i = 0; i <= 3; i++) {
     if (menu->memberSprites[i] != NULL) {
       menu->memberX[i] = (i * 3 + ((s16)window->x + originX)) * 8;
@@ -342,11 +342,11 @@ void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
     }
   }
   menu->memberSpritesShown = ICON_SHOWN;
-  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
+  Task_Add(Menu_UpdatePartyFigures, TASK_PASS_FRAME);
 }
 
 /// Destroys the menu's party figures and stops placing them.
-void Menu_ReleaseEntryObjects(void) {
+void Menu_ReleasePartyFigures(void) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   void **objects = menu->memberSprites;
   s32 i;
@@ -357,7 +357,7 @@ void Menu_ReleaseEntryObjects(void) {
     if (object != NULL)
       Sprite_DestroyFar(object);
   }
-  Task_Remove(Menu_UpdateEntryObjectTransforms);
+  Task_Remove(Menu_UpdatePartyFigures);
 }
 
 /// Shows the Djinn figures of the top row (nonzero) or hides them (0).
@@ -520,15 +520,15 @@ void MenuIcon_PushSlots(void) {
   }
 }
 
-extern u16 gStatusScreen_CommandIcons[5];
+extern u16 gStatusScreen_StatusIcons[5];
 
-/// Loads the five status icons (gStatusScreen_CommandIcons), one for each
+/// Loads the five status icons (gStatusScreen_StatusIcons), one for each
 /// status MenuPanel_DrawEntryList lists, into free VRAM cache slots, and starts
 /// drawing them (MenuIcon_PushSlots).
 void MenuIcon_LoadSlots(void) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   struct IconSprite *slot = menu->menuIcons;
-  u16 *ids = gStatusScreen_CommandIcons;
+  u16 *ids = gStatusScreen_StatusIcons;
   u16 *resource = menu->menuIconSlots;
   s32 entry;
   s32 i;
@@ -541,10 +541,10 @@ void MenuIcon_LoadSlots(void) {
 
       /* FAKEMATCH(temporary): the table read at a byte offset of its own; as
        * ids[i]. */
-      Resource_LoadByModeIntoSlotFar(ICON_KIND_PATTERN,
-                                     *(u16 *)(offset + (u32)ids), entry, 0);
+      SelectionIcon_LoadIntoSlotFar(ICON_KIND_PATTERN,
+                                    *(u16 *)(offset + (u32)ids), entry, 0);
       attributes = (u32 *)&slot->attr;
-      *attributes++ = OUTPUT_SIZE_16X16;
+      *attributes++ = WINDOW_SPRITE_SIZE_16X16;
       *attributes = 0;
       slot->attr.tile = gVramCacheEntries[entry].offset >> 5;
     }
@@ -610,7 +610,7 @@ void MenuPanel_DrawEntryList(struct Window *panel, s32 x, s32 y,
 
 /// Fills ailments (enum UnitStatus) with party member memberId's statuses,
 /// down only when requested is 1, and returns how many they have.
-s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
+s32 StatusScreen_ListStatuses(u8 *ailments, s32 requested, s32 memberId) {
   struct Unit *unit;
   s32 ailmentIndex;
   s32 count;

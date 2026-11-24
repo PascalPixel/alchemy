@@ -14,7 +14,7 @@
 #define NEPTUNE_FLARES_FRAME 152
 #define NEPTUNE_BURST_FRAME 222
 
-/// ParticleSpritesD's flare pictures, after the spray.
+/// BlueGlowSheet's flare pictures, after the spray.
 #define NEPTUNE_FLARE_SHEET 20000
 /// The splash where the beam meets the head, growing and curling.
 #define NEPTUNE_SPLASH PICTURE_BYTES(WATER_WAVE)
@@ -112,13 +112,13 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ResetBg2Pa, TASK_PASS_VBLANK);
   Irq_SetHandler(IRQ_VCOUNT, 0, BattleEffect_SetBg2AffineScaleHalf);
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   // Setup: wipe the battle away, swap in the storm clouds and load the
   // pictures.
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(DISPLAY_WIDTH, DISPLAY_WIDTH);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   // Neptune: its colours over the sprites', its tiles, and its sprites.
   Ram_HeapSlots->battleState->keepBackdropPalette = 1;
   {
@@ -141,9 +141,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            RESOURCE_DUSK_CLOUDS_BACKDROP, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, particleSheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, particleSheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET,
                              state->sheet + NEPTUNE_FLARE_SHEET, 0, 0);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   windowEdgeStep = 1;

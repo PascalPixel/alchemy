@@ -45,9 +45,9 @@ struct MotionObject;
 struct FieldParticle;
 struct AreaNameRule;
 
-extern const s8 gBattleEffect_RandomChildValues[];
-extern const s8 gBattlePlacement_StepPairs[];
-extern u8 gEncounter_AreaEntryTable[];
+extern const s8 gHalt_FlickerColorModes[];
+extern const s8 gBattlePlacement_Spots[];
+extern u8 gEncounter_DjinnBattles[];
 extern u16 gBattleUnit_WeaponKinds[];
 s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot);
 struct BattleObject;
@@ -112,7 +112,7 @@ void Actor_SetAnimationSpeedFar(struct Actor *actor, s32 value);
 void Unit_SetHpFar(struct Unit *unit, s32 hp);
 void MessageArgument_ClearAllFar(void);
 void BattleMessage_CloseFar(void);
-void UpdateRisingParticleBurst(void *object);
+void FieldEffect_BurstHand(void *object);
 
 struct Sprite;
 struct PaletteFade;
@@ -123,9 +123,9 @@ struct WorldMapState;
 /// The 32x16 spark the swelling arcs over a caster are drawn with
 /// (field_effects.s).
 extern const u8 gFieldEffect_SparkTiles[];
-extern const u16 gBattleEffect_EightWayHeadingWords[];
-extern const s32 gBattleEffect_ParticleScript[];
-extern const u8 gBattleEffect_UntargetedObjectScript[];
+extern const u16 gInput_DpadAnglesEightWay[];
+extern const s32 gItemDisplay_SparkleScript[];
+extern const u8 gMindRead_CrescentEndScript[];
 extern const u8 gColorBuffer_DarkenOneLevelMap[32];
 extern const u8 gColorBuffer_DarkenTwoLevelsMap[32];
 extern const u8 gColorBuffer_DarkenFourLevelsMap[32];
@@ -149,7 +149,7 @@ void Field_AdvanceWithGravity3D(s32 *vector, s32 damping, s32 gravity);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position);
 void BattleEffect_RunBurstShower(struct BattleEffectParams *effect, u32 mode);
 void BattleEffect_RunSparkGroups(struct BattleEffectParams *effect, s32 kind);
-void FieldEffect_SnapScaleToFull(struct Actor *actor);
+void FieldEffect_GrowHandAndWait(struct Actor *actor);
 void PaletteFade_StartInterpolation(s32 frames);
 struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item);
 void BattleEffect_UpdateArcEffect(void);
@@ -176,7 +176,7 @@ void BattleCamera_SetCommandView(s32 scene);
 #define HEALING_BASE_POWER 100
 s32 Battle_GetElementMultiplier(s32 selector, s32 mode);
 s32 Djinn_SetFar(s32 unitId, s32 element, s32 index);
-s32 Field_MeasurePsynergyReach(s32 effect, s32 from, s32 to);
+s32 Field_MeasurePsynergyReach(s32 kind, s32 selfId, s32 otherId);
 s32 Scene_SelectPsynergyTarget(s32 kind);
 struct TriggerEvent;
 struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
@@ -238,7 +238,7 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action);
 s32 Battle_FindUnitPlace(u32 id);
 void Battle_ProcessTurnEnd(void);
 void Battle_AwardSpoils(void);
-s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode);
+s32 BattleStaging_RunFullScreen(struct BattlePlan *plan, s32 mode);
 s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode);
 s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
                           struct BattleActionRecord *selection);
@@ -249,7 +249,7 @@ void BattleBackground_RestorePalette(void);
 s32 BattleUnit_GetPartyAttackEffect(s32 kind);
 s32 EnemySprite_LoadIntoSlots(s32 unit);
 void BattleCamera_SetViewAtPairMidpoint(s32 first, s32 second, s32 scale);
-void BattleUnit_ListAllAndSubmit(void);
+void BattleObject_PutKeepingPoses(void);
 s32 BattlePlayback_WaitForReady(void);
 void BattleStaging_BuildTargetList(struct BattlePlan *plan,
                                    struct BattlePresentationState *effect);

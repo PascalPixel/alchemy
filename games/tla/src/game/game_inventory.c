@@ -352,7 +352,7 @@ s32 Inventory_Discard(s32 unitId, s32 slot) {
   s32 removalResult = Inventory_Remove(unitId, slot);
 
   if (removalResult != INVENTORY_REMOVE_EMPTY_SLOT) {
-    Item_AdjustCounter(item, 1);
+    Item_AdjustRareItemStock(item, 1);
     Party_ClearUnusableShortcutsFar();
   }
   return removalResult;
@@ -470,14 +470,14 @@ s32 RareItemStock_Adjust(s32 index, s32 delta) {
 
 /// Adds `delta` to how many of a rare item the shops may sell, and returns the
 /// new count; ordinary items have none.
-s32 Item_AdjustCounter(s32 itemId, s32 delta) {
+s32 Item_AdjustRareItemStock(s32 itemId, s32 delta) {
   s32 result;
   u16 counter;
 
   itemId &= INVENTORY_ITEM_ID_MASK;
   // The table holds a rare item's counter number plus one, and 0 for an
   // ordinary item.
-  counter = gItem_ArtifactSlotTable[itemId];
+  counter = gItem_RareItemCounters[itemId];
   result = 0;
 
   if (counter)

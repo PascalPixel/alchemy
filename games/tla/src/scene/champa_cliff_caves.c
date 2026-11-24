@@ -57,7 +57,7 @@ enum ChampaCliffCavesCellBehavior {
   CELL_BEHAVIOR_KNOCK_AT_OBABAS_DOOR = 40
 };
 
-/// Avimander's battle: slot 5 of ENCOUNTER_TABLE_SERPENT, between the
+/// Avimander's battle: slot 5 of ENCOUNTER_ZONE_SERPENT, between the
 /// Serpent's and Poseidon's.
 enum { ENCOUNTER_SLOT_AVIMANDER = 5 };
 
@@ -372,7 +372,7 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct DoorEdit *edit, s32 door,
   s32 id;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(edit->frames, edit->x, edit->z);
   Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = ACTOR_FALLS;
@@ -657,7 +657,7 @@ void ChampaCliffCaves_FadeColors(u16 *from, u16 *to, s32 frames) {
 /// Ankohl and offers to keep it until the party brings the other two.
 void ChampaCliffCaves_ObabaSeesAWeapon(s32 actor) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgThisLooksLike);
   ChampaCliffCaves_HandPieceToObaba(actor);
   Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHEAST);
@@ -714,7 +714,7 @@ void ChampaCliffCaves_ObabaSeesAWeapon(s32 actor) {
 /// Obaba is handed the second prong and keeps it with the first.
 void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 actor) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgAhHaveYou);
   ChampaCliffCaves_HandPieceToObaba(actor);
   Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHEAST);
@@ -778,7 +778,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   pale[3] = *palette++;
   pale[4] = *palette;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgWellDoneYou);
   ChampaCliffCaves_HandPieceToObaba(value);
   Actor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
@@ -1021,7 +1021,7 @@ void ChampaCliffCaves_FightAvimander(void) {
   if (Flag_IsSet(FLAG_CHAMPA_AVIMANDER_BEATEN))
     return;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_WalkToAndWaitById(gMainRoutineState.leaderActorId, 584, 248);
   if (Flag_IsSet(FLAG_CHAMPA_BRIGGS_STOPPED_PARTY)) {
     Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_EAST);
@@ -1214,7 +1214,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     Event_SetAfterBattleDestination(SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER,
                                     ENTRANCE_AFTER_AVIMANDER_BATTLE);
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_SERPENT,
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SERPENT,
                                           ENCOUNTER_SLOT_AVIMANDER);
   }
   Event_End();
@@ -1227,7 +1227,7 @@ void ChampaCliffCaves_AskIfBriggsLearned(void) {
   struct FieldState *state;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgHaveYouLearned);
   Actor_SetPosition(gMainRoutineState.leaderActorId, 568, 248);
   Actor_SetPosition(ACTOR_OBABA, 584, 224);
@@ -1271,7 +1271,7 @@ void ChampaCliffCaves_ObabaMournsSalamander(void) {
   struct Actor *leader;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgMySalamanderYou);
   Actor_SetPosition(gMainRoutineState.leaderActorId, 568, 256);
   Actor_SetPosition(ACTOR_AVIMANDER, 592, 240);

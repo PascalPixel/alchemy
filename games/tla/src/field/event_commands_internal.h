@@ -78,7 +78,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     fragment->gravity = toFIXED(1) / 10;
     Actor_SelectAnimationFar(fragment, 0);
     fragment->wait = 12;
-    Actor_StartScriptFar(fragment, gBattleEffect_SharedParticleScript);
+    Actor_StartScriptFar(fragment, gFieldEffect_ReleaseScript);
   }
 }
 

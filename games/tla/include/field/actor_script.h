@@ -203,8 +203,8 @@ enum ActorScriptValue {
   /// fireball calls when it crashes (Actor_RollAndCrumble).
   SW_WATCHED_ACTOR = 37,
   SW_HOOK = 38,
-  SW_RISE_COUNTER = 39, ///< Actor.riseCounter, scene code's own byte
-  SW_RISE_ENABLED = 40  ///< Actor.riseEnabled, scene code's own byte
+  SW_SCENE_COUNTER = 39, ///< Actor.sceneCounter, scene code's own byte
+  SW_SCENE_BYTE = 40     ///< Actor.sceneByte, scene code's own byte
 };
 
 #endif

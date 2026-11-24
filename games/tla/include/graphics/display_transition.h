@@ -15,21 +15,21 @@ struct ScreenTransitionDissolveState {
   u16 pages[2][322]; ///< as ScreenTransitionState's; the dissolve leaves them
   /// ScreenTransitionState's solidTile and mode: the dissolve sets two more of
   /// the tile's pixels each frame and copies the tile to BG character block 0.
-  u8 paletteNibbles[34];
+  u8 solidTilePixels[34];
   /// The progress, moved from start to end over duration frames: bit 5 says
   /// whether the dissolve fills or clears, the low 5 bits how far it is.
   u16 value;
   /// As ScreenTransitionState's; the dissolve leaves them.
   ///@{
-  s32 centreX;
-  s32 centreY;
-  s16 mask;
-  s16 active;
+  s32 centerX;
+  s32 centerY;
+  s16 insideLayers;
+  s16 outsideLayers;
   u8 unused;
   ///@}
   /// ScreenTransitionState's page: the dissolve flips it each frame, though
   /// nothing reads it while the dissolve runs.
-  u8 ditherToggle;
+  u8 page;
   s8 start;    ///< the value's first step
   s8 end;      ///< the value's last step
   s8 duration; ///< frames; 0 when the value is not moving
@@ -49,13 +49,13 @@ struct ScreenTransitionState {
   u16 value;
   /// 16.16 fixed-point pixels: the centre of the ellipse around a point, set
   /// by the Reveal effect.
-  FIXED centreX;
-  FIXED centreY; ///< as centreX: the target's z less its y
+  FIXED centerX;
+  FIXED centerY; ///< as centerX: the target's z less its y
   /// WININ for the inside of the shape: both windows show every layer.
-  s16 mask;
+  s16 insideLayers;
   /// WINOUT for the outside: BG0 alone, with the sprite window's layers kept.
   /// A mode that inverts its shape writes the two the other way round.
-  s16 active;
+  s16 outsideLayers;
   u8 unused;
   u8 page;     ///< the pages entry the HBlank DMA copies from
   s8 start;    ///< the value's first step
@@ -76,13 +76,13 @@ STATIC_ASSERT(offsetof(struct ScreenTransitionState, pages) == 0);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, solidTile) == 1288);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, page) == 1337);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, mode) == 1320);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, centreX) == 1324);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, mask) == 1332);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, centerX) == 1324);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, insideLayers) == 1332);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, nextMode) == 1342);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, duration) == 1340);
 STATIC_ASSERT(sizeof(struct ScreenTransitionState) == 1344);
 
-void ScreenTransition_InitializeBattleEffectState(s32 mode);
+void ScreenTransition_StartWindowHeld(s32 mode);
 void ScreenTransition_SuspendCallbacks(void);
 struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void);
 void ScreenTransition_Start(s32 mode, s32 frames);
@@ -92,7 +92,7 @@ void ScreenTransition_UpdateFromCenter(void);
 void ScreenTransition_UpdateScanline(void);
 void ScreenTransition_UpdateDissolve(void);
 void ScreenTransition_FillTilemapAndColorTile(s32 color);
-void ScreenTransition_InitializeState(s32 mode);
+void ScreenTransition_StartDissolveHeld(s32 mode);
 void ScreenTransition_UpdateScanlineTable(void);
 void FieldEffect_StartWindowHBlankDma(void);
 

@@ -28,7 +28,7 @@
 #include "field/call.h"
 #include "scene/scene.h"
 #include "window/window.h"
-#include "graphics/uiflow.h"
+#include "graphics/window_close.h"
 #include "field/actor_script.h"
 #include "text/msg_ids.h"
 #include "scene_exits.h"
@@ -145,7 +145,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 UNUSED void LemuriaEntrance_BoardShip(void) {
   if (Event_GetFlag(FLAG_TRANSFERRED_DJINN_FIRST) != 0) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     {
@@ -263,7 +263,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   saved = gMainRoutineState.messageSpeed;
   gMainRoutineState.messageSpeed = 2;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetSpeed(ACTOR_SHIP, 0.27);
   Actor_SetScript(ACTOR_SHIP, gLemuriaEntrance_ShipSailsOut);
   FieldEvent_Wait(80);
@@ -359,11 +359,11 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(CHANNEL_NORTH_END, LemuriaEntrance, CHANNEL_SOUTH_END,
                       EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(LEMURIA_ENTRANCE_TO_LEMURIA_DOCK_NORTH, LemuriaDock,
-                      LEMURIA_DOCK_FROM_LEMURIA_ENTRANCE_NORTH, EXIT_FLAG_NONE),
+                      LEMURIA_DOCK_FROM_LEMURIA_ENTRANCE, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(CHANNEL_SOUTH_END, LemuriaEntrance, CHANNEL_NORTH_END,
                       EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(LEMURIA_ENTRANCE_TO_LEMURIA_DOCK_SOUTH, LemuriaDock,
-                      LEMURIA_DOCK_FROM_LEMURIA_ENTRANCE_NORTH, EXIT_FLAG_NONE),
+                      LEMURIA_DOCK_FROM_LEMURIA_ENTRANCE, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

@@ -60,8 +60,8 @@ Decompress_MoveToFrontLzCommandsCodeSize = Decompress_MoveToFrontLzCommandsEnd -
 Tile_Decompress4bppCodeSize = Tile_Decompress4bppEnd - Tile_Decompress4bppCode;
 Tile_ExpandMaskedCodeSize = Tile_ExpandMaskedEnd - Tile_ExpandMaskedCode;
 Tile_ExpandOpaqueCodeSize = Tile_ExpandOpaqueEnd - Tile_ExpandOpaqueCode;
-Tile_BuildCellTilesCodeSize = Tile_Decompress4bppCode - Tile_BuildCellTilesCode;
-Glyph_DrawCodeSize = Tile_BuildCellTilesCode - Glyph_DrawCode;
+ScanlineWindow_BuildSpansCodeSize = Tile_Decompress4bppCode - ScanlineWindow_BuildSpansCode;
+Glyph_DrawCodeSize = ScanlineWindow_BuildSpansCode - Glyph_DrawCode;
 BattleEffect_DecodePictureBlockSize = BattleEffect_DecodePictureEnd - BattleEffect_DecodePictureCode;
 Render_DecodePictureBlockSize = Render_DecodePictureEnd - Render_DecodePictureCode;
 Text_DecodeSymbolCodeSize = Text_DecodeSymbolEnd - Text_DecodeSymbolCode;
@@ -69,7 +69,7 @@ Credits_DecodeBackgroundCodeSize = EndingImage_InnerProduct - Credits_DecodeBack
 EndingImage_DecodeCodeSize = EndingImage_DecodeEnd - EndingImage_DecodeCode;
 Model_DecodeCodeSize = Model_DecodeEnd - Model_DecodeCode;
 Grid_DrawOutlineCodeSize = Resource_GetMetadataRecordFar - Grid_DrawOutlineCode;
-Matrix_UpdateVerticesCodeSize = Render_ConvertMapCode - Matrix_UpdateVerticesCode;
+WorldMap_UpdateAffineLinesCodeSize = Render_ConvertMapCode - WorldMap_UpdateAffineLinesCode;
 
 MEMORY
 {
@@ -160,8 +160,8 @@ SECTIONS
         "*/games/tla/src/window/lookup_symbol.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/glyph_arm_entries.o"(.text)
         "*/games/tla/src/window/glyph_arm.o"(.text)
-        "*/games/tla/src/window/cell_tiles_entries.o"(.text)
-        "*/games/tla/src/window/cell_tiles.o"(.text)
+        "*/games/tla/src/window/window_spans_entries.o"(.text)
+        "*/games/tla/src/window/window_spans.o"(.text)
         "*/games/tla/src/window/decompress_4bpp.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/decompress_4bpp_loop.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/expand_masked.o"(.text .rodata .data .padding)
@@ -243,7 +243,7 @@ SECTIONS
         "*/games/tla/src/field/burst_spark_palette.o"(.rodata)
         "*/games/tla/src/field/field_psynergy_tables.o"(.rodata)
         "*/games/tla/src/field/world_map_cursor_angles.o"(.rodata)
-        "*/games/tla/src/field/flag_entries.o"(.rodata)
+        "*/games/tla/src/field/world_map_places.o"(.rodata)
         "*/games/tla/src/field/scenes.o"(.rodata)
         "*/games/tla/src/field/actor_placement.o"(.rodata)
         "*/games/tla/src/field/scene_items.o"(.data)

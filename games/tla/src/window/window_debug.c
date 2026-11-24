@@ -29,7 +29,7 @@ enum SoundTestRow {
 
 /// The sound test's per-frame task: moves the cursor.
 void DebugSoundTest_StepCursor(void) {
-  struct OptionMenuState *state = Ram_HeapSlots->settingsMenu;
+  struct SettingsMenuState *state = Ram_HeapSlots->settingsMenu;
 
   MenuCursor_AdvanceFar(&state->cursor);
 }
@@ -37,9 +37,9 @@ void DebugSoundTest_StepCursor(void) {
 /// Allocates the sound test's state and starts its cursor task.
 void DebugSoundTest_Initialize(void) {
   void *state = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
-                                    sizeof(struct OptionMenuState));
+                                    sizeof(struct SettingsMenuState));
 
-  Dma_Fill32(0, state, sizeof(struct OptionMenuState));
+  Dma_Fill32(0, state, sizeof(struct SettingsMenuState));
   Task_Add(DebugSoundTest_StepCursor, TASK_PASS_FRAME);
 }
 
@@ -49,16 +49,16 @@ void DebugSoundTest_Release(void) {
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
-s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
+s32 PointingHand_LoadIntoFreeSlot(void);
 
 /// Opens the sound test's window and places the cursor on its first row.
 struct Window *DebugSoundTest_Open(void) {
-  struct OptionMenuState *state = Ram_HeapSlots->settingsMenu;
+  struct SettingsMenuState *state = Ram_HeapSlots->settingsMenu;
   struct Window *window;
 
   window = Window_Create(7, 3, 15, 9, WINDOW_FLAG_INSTANT);
   state->cursor.sprite = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
+      PointingHand_LoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
   MenuCursor_SetPositionImmediateFar(&state->cursor, ((s16)window->x << 3) - 4,
                                      ((s16)window->y << 3) + 12);
   return window;
@@ -79,7 +79,7 @@ UNUSED s32 DebugSoundTest_Run(void) {
   struct SoundTestValues test;
   s32 redraw = 1;
   s32 cursor = 0;
-  struct OptionMenuState *state;
+  struct SettingsMenuState *state;
   struct Window *window;
   s32 rows = SOUND_TEST_ROWS;
   s32 i;
@@ -156,7 +156,7 @@ UNUSED s32 DebugSoundTest_Run(void) {
 
 /// The debug menu's per-frame task: moves the cursor.
 void DebugMenu_StepCursor(void) {
-  struct OptionMenuState *state = Ram_HeapSlots->settingsMenu;
+  struct SettingsMenuState *state = Ram_HeapSlots->settingsMenu;
 
   MenuCursor_AdvanceFar(&state->cursor);
 }
@@ -164,9 +164,9 @@ void DebugMenu_StepCursor(void) {
 /// Allocates the debug menu's state and starts its cursor task.
 void DebugMenu_Initialize(void) {
   void *state = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
-                                    sizeof(struct OptionMenuState));
+                                    sizeof(struct SettingsMenuState));
 
-  Dma_Fill32(0, state, sizeof(struct OptionMenuState));
+  Dma_Fill32(0, state, sizeof(struct SettingsMenuState));
   Task_Add(DebugMenu_StepCursor, TASK_PASS_FRAME);
 }
 
@@ -181,7 +181,7 @@ extern u8 MsgFullPpAndMoney[];
 /// Opens the debug menu's window: its five rows, from "Full PP and Money"
 /// (MsgFullPpAndMoney) to "Change of hero", with a divider under each.
 struct Window *DebugMenu_Open(void) {
-  struct OptionMenuState *state = Ram_HeapSlots->settingsMenu;
+  struct SettingsMenuState *state = Ram_HeapSlots->settingsMenu;
   struct Window *window = Window_Create(6, 2, 18, 16, WINDOW_FLAG_INSTANT);
   s32 i;
 
@@ -193,7 +193,7 @@ struct Window *DebugMenu_Open(void) {
   Text_DrawMessage((s32)MsgFullPpAndMoney + 3, (s32)window, 8, 76);
   Text_DrawMessage((s32)MsgFullPpAndMoney + 4, (s32)window, 8, 100);
   state->cursor.sprite = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
+      PointingHand_LoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
   return window;
 }
 
@@ -201,7 +201,7 @@ struct Window *DebugMenu_Open(void) {
 /// index, lets Up and Down move it (wrapping), and returns the row A chooses,
 /// or -1 for B.
 UNUSED s32 DebugMenu_Run(s32 index) {
-  struct OptionMenuState *state;
+  struct SettingsMenuState *state;
   struct Window *window;
   s32 moved;
 
@@ -337,9 +337,8 @@ void DebugWarp_KaoruSpecial3(void) {
 
 /// Preset 7, "Kaoru Special2": to the Mars Lighthouse aerie.
 void DebugWarp_KaoruSpecial2(void) {
-  Event_SetDestinationFar(
-      SCENE_MARS_LIGHTHOUSE_AERIE,
-      MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS);
+  Event_SetDestinationFar(SCENE_MARS_LIGHTHOUSE_AERIE,
+                          MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_HALL);
 }
 
 /// Preset 8, "Kaoru Special1": to the Mars Lighthouse's star room, where the
@@ -351,7 +350,7 @@ void DebugWarp_KaoruSpecial1(void) {
 
 /// The debug warp menu's per-frame task: moves the cursor.
 void DebugWarp_StepCursor(void) {
-  struct OptionMenuState *state = Ram_HeapSlots->settingsMenu;
+  struct SettingsMenuState *state = Ram_HeapSlots->settingsMenu;
 
   MenuCursor_AdvanceFar(&state->cursor);
 }
@@ -359,9 +358,9 @@ void DebugWarp_StepCursor(void) {
 /// Allocates the debug warp menu's state and starts its cursor task.
 void DebugWarp_Initialize(void) {
   void *state = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
-                                    sizeof(struct OptionMenuState));
+                                    sizeof(struct SettingsMenuState));
 
-  Dma_Fill32(0, state, sizeof(struct OptionMenuState));
+  Dma_Fill32(0, state, sizeof(struct SettingsMenuState));
   Task_Add(DebugWarp_StepCursor, TASK_PASS_FRAME);
 }
 
@@ -374,7 +373,7 @@ void DebugWarp_Release(void) {
 /// Opens the debug warp menu's window: nine preset names 16 pixels apart,
 /// with a divider under each but the last.
 struct Window *DebugWarp_Open(void) {
-  struct OptionMenuState *state = Ram_HeapSlots->settingsMenu;
+  struct SettingsMenuState *state = Ram_HeapSlots->settingsMenu;
   struct Window *window;
   const struct DebugWarpPreset *line;
   s32 i;
@@ -397,7 +396,7 @@ struct Window *DebugWarp_Open(void) {
     i++;
   }
   state->cursor.sprite = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
+      PointingHand_LoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
   return window;
 }
 
@@ -405,7 +404,7 @@ struct Window *DebugWarp_Open(void) {
 /// on row index, lets Up and Down move it (wrapping), and returns the row A
 /// chooses after running its handler, or -1 for B.
 UNUSED s32 DebugWarp_Run(s32 index) {
-  struct OptionMenuState *state;
+  struct SettingsMenuState *state;
   struct Window *window;
   s32 moved;
   u32 down;
@@ -462,7 +461,7 @@ UNUSED s32 DebugWarp_Run(s32 index) {
 
 /// The shortcut grid's per-frame task: moves the cursor.
 void DebugShortcut_StepCursor(void) {
-  struct OptionMenuState *state = Ram_HeapSlots->settingsMenu;
+  struct SettingsMenuState *state = Ram_HeapSlots->settingsMenu;
 
   MenuCursor_AdvanceFar(&state->cursor);
 }
@@ -470,9 +469,9 @@ void DebugShortcut_StepCursor(void) {
 /// Allocates the shortcut grid's state and starts its cursor task.
 void DebugShortcut_Initialize(void) {
   void *state = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
-                                    sizeof(struct OptionMenuState));
+                                    sizeof(struct SettingsMenuState));
 
-  Dma_Fill32(0, state, sizeof(struct OptionMenuState));
+  Dma_Fill32(0, state, sizeof(struct SettingsMenuState));
   Task_Add(DebugShortcut_StepCursor, TASK_PASS_FRAME);
 }
 
@@ -498,7 +497,7 @@ void DebugShortcut_DrawAbility(s32 ability, s32 window, s32 x, s32 y) {
 /// gDebugShortcut_Abilities in nine rows, a divider under each row but the
 /// last.
 struct Window *DebugShortcut_Open(void) {
-  struct OptionMenuState *state = Ram_HeapSlots->settingsMenu;
+  struct SettingsMenuState *state = Ram_HeapSlots->settingsMenu;
   struct Window *window = Window_Create(0, 0, 30, 19, WINDOW_FLAG_INSTANT);
   const s16 *abilities;
   s32 i;
@@ -518,7 +517,7 @@ struct Window *DebugShortcut_Open(void) {
                               y);
   }
   state->cursor.sprite = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
+      PointingHand_LoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
   return window;
 }
 
@@ -535,7 +534,7 @@ s32 Party_FindOwnerWithActionFar(s32 action);
 /// Returns 0, 1 or 2 for A, L or R, or -1.
 UNUSED s32 DebugShortcut_Run(void) {
   s32 row = 0;
-  struct OptionMenuState *state;
+  struct SettingsMenuState *state;
   struct MainRoutineState *party;
   struct Window *window;
   s32 result;

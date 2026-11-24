@@ -13,14 +13,14 @@ void Whirlwind_CarryLeader(void) {
   s32 frame;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   rise = 0;
   state->glowHeld = rise;
 
   actor->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(actor, 0);
 
-  while (*(u8 *)&linked->riseEnabled != 0) {
+  while (*(u8 *)&linked->sceneByte != 0) {
     actor->x.fixed = linked->x.fixed;
     actor->y.fixed = linked->y.fixed + rise;
     actor->z.fixed = linked->z.fixed;

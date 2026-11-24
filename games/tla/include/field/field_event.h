@@ -27,7 +27,7 @@ struct FieldActor {
 struct Actor *Actor_Create(s32 type, FIXED x, FIXED y, FIXED z);
 void Sound_PlayFar(s32 cue);
 
-void Import_EventSetExitRequest(s32 countdown);
+void Import_EventSetExitRequest(s32 exit);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 /// Starts an animation on an actor's sprite (Actor_SelectAnimation, through the
 /// overlay's own import row).

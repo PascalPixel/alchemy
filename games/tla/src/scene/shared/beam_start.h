@@ -5,8 +5,8 @@
 /// starts their puffs.
 void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onBlocked,
                          s32 hitTrigger) {
-  struct FlameHitState *state = RIDE_STATE;
-  struct RideEntry *entry = state->entries;
+  struct FlameHitState *state = FLAME_THROWERS_STATE;
+  struct FlameThrower *entry = state->entries;
   s32 id;
   s32 i;
   s32 value;
@@ -26,7 +26,7 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onBlocked,
       targets++;
       if (actor != NULL) {
         Actor_SetSpriteFlags(actor, 0);
-        *(u8 *)&actor->riseCounter = one = 1;
+        *(u8 *)&actor->sceneCounter = one = 1;
         if ((flags & FLAME_SPARK) == 0)
           actor->collisionFlags = 0;
         entry->active = one;

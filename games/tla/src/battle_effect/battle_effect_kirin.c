@@ -75,12 +75,12 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = RGB(24, 0, 0);
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   // Setup: wipe the battle away in dark red, swap in the forest and wipe back.
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleEffect_SpawnObjects(KIRIN_SPRITES, SPRITE_KIRIN, 1);
+  BattleEffect_CreateSprites(KIRIN_SPRITES, SPRITE_KIRIN, 1);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 202);
@@ -88,7 +88,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, RESOURCE_FOREST_BACKDROP,
                            0);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_BLOB_SHEET, state->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(CANVAS_BLEND_LEVEL);
 

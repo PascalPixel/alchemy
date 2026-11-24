@@ -49,7 +49,7 @@ enum ActorPriorityFlag {
   ACTOR_PRIORITY_UNDERFOOT = 0x02,
   /// The depth sort treats it as 320 pixels lower on the screen.
   ACTOR_PRIORITY_OVERHEAD = 0x04,
-  /// Drawn at the depth its riseCounter byte holds, not its own place
+  /// Drawn at the depth its sceneCounter byte holds, not its own place
   /// (Render_ApplyProjectedPlacementAtDepth).
   ACTOR_PRIORITY_OWN_DEPTH = 0x08,
   ACTOR_PRIORITY_NOT_DRAWN = 0x10, ///< placed nowhere, as if off screen
@@ -114,7 +114,7 @@ enum ArrivalAxis {
 
 union FieldObject;
 
-/// An actor's per-frame hook, called with the actor (Actor_UpdateAllThumb).
+/// An actor's per-frame hook, called with the actor (Actor_UpdateAllOnField).
 typedef void (*ObjectUpdate)(union FieldObject *object);
 
 /// An actor on the field: its script, position, motion toward a target,
@@ -153,7 +153,7 @@ struct Actor {
   /// Not read by the motion update; field code keeps its own values here (a
   /// drifting speed, or the mark of a treasure spot that stands for a map
   /// cell), and scene code a resting height.
-  s32 riseBaseY;
+  s32 sceneWord;
   /// Its sprite (a struct FieldSprite) for ACTOR_SPRITE_ONE, or its list of
   /// sprites for ACTOR_SPRITE_GROUP. Code that reads one kind converts it.
   void *sprite;
@@ -180,9 +180,9 @@ struct Actor {
     struct {
       u8 refused; ///< frames in a row a solid actor has refused its move
       u8 frozen;
-      u8 riseCounter; ///< frames into the bob, its low six bits a cycle
+      u8 sceneCounter; ///< frames into the bob, its low six bits a cycle
       /// A block's: nonzero while it blocks the cells ahead of and behind it.
-      u8 riseEnabled;
+      u8 sceneByte;
     };
     /// The ship on the World Map (FieldMoveByKeys): frames to its next wake,
     /// and a wake's own frames.
@@ -252,7 +252,7 @@ struct Actor {
     /// An actor that blinks, as Magma Rock's statues and blasted wall do
     /// (Statue_FlashUnderBurst).
     struct {
-      u8 unusedBeforeFlashMask[3]; ///< refused, frozen and riseCounter
+      u8 unusedBeforeFlashMask[3]; ///< refused, frozen and sceneCounter
       u8 flashMask; ///< its sprite flashes while gFrameCount & this is set
     };
     /// A statue that launches a fireball (Actor_LaunchAhead), or the fireball
@@ -345,7 +345,7 @@ void Actor_SelectAnimationFar(struct Actor *, s32);
 void Actor_WaitForScriptEndFar(struct Actor *);
 void Actor_SetMovementType(struct Actor *, s32);
 void Actor_SetSpritePriority(u32, s32);
-void OverlayObject_WaitUntilIdle(struct Actor *actor);
+void Actor_WaitUntilLanded(struct Actor *actor);
 void Actor_WaitForAnimationChange(u32);
 void Actor_SetAnimationById(u32, s32);
 void Actor_WaitForScriptEndById(u32);

@@ -5,7 +5,7 @@
 void GroundParticles_Start(void) {
   struct GroundParticleState *state = HeapSlot_AllocEwram(
       HEAP_SLOT_WEATHER, sizeof(struct GroundParticleState));
-  struct GroundParticle *p = state->particles;
+  struct WeatherParticle *p = state->particles;
   u8 *buf;
   u32 i;
   u32 size;
@@ -32,7 +32,7 @@ void GroundParticles_Start(void) {
     p->posX = 0;
     p->posZ = 0;
     p->posY = toFIXED(Map_GetTerrainHeight(0, 0, 0));
-    p->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
+    p->timer = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
     i++;
     p++;
   } while (i < ARRAY_COUNT(state->particles));

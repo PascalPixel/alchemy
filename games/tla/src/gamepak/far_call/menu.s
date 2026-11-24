@@ -8,16 +8,16 @@ FarCall_MenuTable:
 	export PsynergyMenu_RunFar, PsynergyMenu_Run
 	export StatusScreen_RunFar, StatusScreen_Run
 	export PartyMemberChooser_OpenFar, PartyMemberChooser_Open
-	export Icon_CreateWithResourceFar, Icon_CreateWithResource
-	export Icon_PrepareActorFar, Icon_PrepareActor
+	export Icon_CreateHandCursorFar, Icon_CreateHandCursor
+	export Icon_ShowFar, Icon_Show
 	export DjinnMenu_RunFar, DjinnMenu_Run
 	export ItemMenu_DrawItemDetailsFar, ItemMenu_DrawItemDetails
 	export ItemMenu_DrawItemDetailsWithCountFar, ItemMenu_DrawItemDetailsWithCount
 	export Palette_LoadIconsIntoHighlightFar, Palette_LoadIconsIntoHighlight
-	export Menu_UpdateEntryObjectTransformsFar, Menu_UpdateEntryObjectTransforms
-	export Menu_CreateOwnerEntryObjectsFar, Menu_CreateOwnerEntryObjects
-	export Menu_PlaceOwnerEntryObjectsFar, Menu_PlaceOwnerEntryObjects
-	export Menu_ReleaseEntryObjectsFar, Menu_ReleaseEntryObjects
+	export Menu_UpdatePartyFiguresFar, Menu_UpdatePartyFigures
+	export Menu_CreatePartyFiguresFar, Menu_CreatePartyFigures
+	export Menu_ShowPartyFiguresFar, Menu_ShowPartyFigures
+	export Menu_ReleasePartyFiguresFar, Menu_ReleasePartyFigures
 	export DjinnFigures_InitializeTopRowFar, DjinnFigures_InitializeTopRow
 	export DjinnFigures_ReleaseTopRowFar, DjinnFigures_ReleaseTopRow
 	export DjinnFigures_SetShownFar, DjinnFigures_SetShown

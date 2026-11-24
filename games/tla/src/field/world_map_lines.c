@@ -1,10 +1,11 @@
 /// @file
 /// The World Map's tilt: each line of the screen draws the flat map at its
 /// own scale and turn, so the ground seems to stretch away to a horizon. An
-/// ARM routine, as The Broken Seal's Matrix_UpdateVertices: its caller copies
-/// the routine from Matrix_UpdateVerticesCode (world_map_lines_entry.s) into a
-/// heap slot and enters it in Thumb from there, so its stub Matrix_CallInThumb
-/// (world_map_lines_call_thumb.s) travels with it.
+/// ARM routine, as The Broken Seal's WorldMap_UpdateAffineLines: its caller
+/// copies the routine from WorldMap_UpdateAffineLinesCode
+/// (world_map_lines_entry.s) into a heap slot and enters it in Thumb from
+/// there, so its stub Matrix_CallInThumb (world_map_lines_call_thumb.s) travels
+/// with it.
 
 #include "types.h"
 #include "fixed_math.h"
@@ -13,6 +14,7 @@
 #include "system/vector3.h"
 #include "system/projection.h"
 #include "system/io_reg.h"
+#include "field/world_map_affine.h"
 
 /// A 16.16 value in the 8.8 fixed point of the affine registers, rounded
 /// toward zero, and an 8.8 value back in 16.16.
@@ -49,26 +51,6 @@ struct FarCallSystemTable {
   struct FarCallTrigVeneer cos;
 };
 
-/// One scanline of the world map's ground plane.
-struct ScanVertex {
-  s32 x;  ///< the line's width scale
-  s32 z;  ///< the line's depth
-  s32 dx; ///< the texture x offset from the origin, before >> 8
-  s32 dz; ///< the texture y offset from the origin, before >> 8
-  s16 u;  ///< the cached BG2PA
-  s16 v;  ///< the cached BG2PC
-};
-
-/// One background's affine registers, BG2PA to BG2Y.
-struct BgAffine {
-  s16 pa;
-  s16 pb; ///< not written by this routine
-  s16 pc;
-  s16 pd; ///< not written by this routine
-  s32 x;
-  s32 y;
-};
-
 /// The far-call table of system routines, read here for its arctangent.
 extern const struct FarCallSystemTable FarCall_RuntimeTable;
 extern u32 gScanlineAngle;
@@ -83,8 +65,9 @@ s32 Matrix_CallInThumb(s32 x, s32 y);
 /// terms, whose rotation terms stay cached while the yaw
 /// (gScanlineAngle) is unchanged; affine receives each line's parameters twice,
 /// for BG2 and then BG3, as the HBlank DMA writes both.
-void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
-                           struct ScanVertex *line, struct BgAffine *affine) {
+void WorldMap_UpdateAffineLines(struct Vector3 *eye, struct Vector3 *target,
+                                struct WorldMapScanline *line,
+                                struct WorldMapAffineLine *affine) {
   u32 angle;
   FIXED originX;
   FIXED originZ;
@@ -129,20 +112,20 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
     cosYaw = table->cos.target(angle);
     negativeSinYaw = -sinYaw;
     for (scanline = 0; scanline < DISPLAY_HEIGHT; scanline++) {
-      FIXED widthScale = line->x;
+      FIXED widthScale = line->scale;
       s32 centerX;
       s32 horizontalOffset;
       s32 depthOffset;
       s32 affinePa;
       s32 affinePc;
 
-      depth = line->z;
+      depth = line->depth;
       affinePa = -FIXEDtoQ_8_8(MulFX(widthScale, cosYaw));
       horizontalOffset = (s16)affinePa;
-      line->u = affinePa;
+      line->pa = affinePa;
       affine->pa = affinePa;
       affinePc = FIXEDtoQ_8_8(MulFX(widthScale, sinYaw));
-      line->v = affinePc;
+      line->pc = affinePc;
       affine->pc = affinePc;
       /* FAKEMATCH(dead): the projection's centre read through its taken
        * address. */
@@ -158,10 +141,10 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
 #endif
       // The line's start: back from its centre by centerX pixels of the line's
       // step, then along the view by its depth.
-      line->dx = -(horizontalOffset + MulFX(negativeSinYaw, depth));
-      line->dz = depthOffset + MulFX(cosYaw, depth);
-      affine->x = (originX + line->dx) >> 8;
-      affine->y = (originZ + line->dz) >> 8;
+      line->offsetX = -(horizontalOffset + MulFX(negativeSinYaw, depth));
+      line->offsetY = depthOffset + MulFX(cosYaw, depth);
+      affine->x = (originX + line->offsetX) >> 8;
+      affine->y = (originZ + line->offsetY) >> 8;
       affine[1] = affine[0];
       line++;
       affine += 2;
@@ -175,17 +158,19 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
         // between each other's texels.
         s32 sampleOffset;
 
-        sampleOffset = ((originX + line->dx) >> 8) + line->v / 4 + line->u / 2;
+        sampleOffset =
+            ((originX + line->offsetX) >> 8) + line->pc / 4 + line->pa / 2;
         affine->x = sampleOffset;
-        /* FAKEMATCH(dead): sampleOffset set to line->u, never read. */
-        sampleOffset = line->u;
-        affine->y = ((originZ + line->dz) >> 8) + line->u / 4 + line->v / 2;
+        /* FAKEMATCH(dead): sampleOffset set to line->pa, never read. */
+        sampleOffset = line->pa;
+        affine->y =
+            ((originZ + line->offsetY) >> 8) + line->pa / 4 + line->pc / 2;
       } else {
-        affine->x = (originX + line->dx) >> 8;
-        affine->y = (originZ + line->dz) >> 8;
+        affine->x = (originX + line->offsetX) >> 8;
+        affine->y = (originZ + line->offsetY) >> 8;
       }
-      affine->pa = line->u;
-      affine->pc = line->v;
+      affine->pa = line->pa;
+      affine->pc = line->pc;
       affine[1] = affine[0];
       line++;
       affine += 2;

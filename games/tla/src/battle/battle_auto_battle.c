@@ -33,7 +33,7 @@ s32 AutoBattle_BuildActions(struct BattleActionRecord *entries) {
     unit = Unit_Get(unitId);
     entry = &entries[index];
     entry->unitId = unitId;
-    entry->priority = unit->agi;
+    entry->priority = unit->agility;
     entry->command = COMMAND_ATTACK;
     entry->parameter = 0;
     entry->target = FIRST_ENEMY_UNIT;
@@ -49,9 +49,9 @@ s32 AutoBattle_BuildActions(struct BattleActionRecord *entries) {
 
     unit = Unit_Get(unitId);
     entry->unitId = unitId;
-    entry->priority = unit->agi >> 1;
+    entry->priority = unit->agility >> 1;
     if (entry->priority != 0)
-      entry->priority += (u32)(Random16() * unit->agi) >> 16;
+      entry->priority += (u32)(Random16() * unit->agility) >> 16;
     entry->command = COMMAND_ATTACK;
     entry->parameter = 0;
     entry->target = Random_Below(targetRange);
@@ -90,7 +90,7 @@ UNUSED void BattleCamera_AdjustByShoulderKeys(void) {
   if ((gInput.held & KEY_R) != 0) {
     camera->yaw -= TRIG_TURN / 128;
   }
-  if (background->flag == 0) {
+  if (background->keepRange == 0) {
     BattleCamera_SetRange(toFIXED(120), toFIXED(120), 0, 0, FIXED_ONE);
   }
 }
@@ -137,9 +137,9 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
   case COMMAND_ATTACK:
   default: {
     struct BattleBackgroundState *view = Ram_HeapSlots->battleBackground;
-    view->flag = 0;
+    view->keepRange = 0;
     AutoBattle_RunAttackOrItem(action);
-    view->flag = 0;
+    view->keepRange = 0;
     break;
   }
   case COMMAND_PSYNERGY:

@@ -2,17 +2,11 @@
 /// The Jupiter Lighthouse rooms' palettes, which most of them keep a copy of.
 
 #include "palette_cycle_places.h"
+#include "scene/lighthouse_palettes.h"
 
 /// The BG palette after the cycle's, which holds its colours as they are while
 /// the lighthouse is unlit.
 #define UNLIT_PALETTE (CYCLE_PALETTE + 1)
-
-/// How JupiterLighthouse_LoadPalettes treats a room.
-enum LighthousePalettes {
-  LIGHTHOUSE_PALETTES_BY_FLAG,    ///< lit once the lighthouse is
-  LIGHTHOUSE_PALETTES_LIT,        ///< lit whatever the flag
-  LIGHTHOUSE_PALETTES_KEEP_COPIES ///< by the flag, keeping the copies it has
-};
 
 /// Keeps a copy of the room's cycling palette and of UNLIT_PALETTE, then starts
 /// the cycle once the lighthouse is lit (FLAG_JUPITER_LIGHTHOUSE_ACTIVATED);

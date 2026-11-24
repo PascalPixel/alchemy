@@ -12,12 +12,12 @@
 /// gWorldMapState, the map screen's state while it is open: its
 /// resources, the cursor and the marker sprites.
 struct WorldMapState {
-  u16 vramBlock;          ///< owns the marker tiles
-  u16 windowSlot;         ///< the resource slot of the name window's tiles
-  FIXED x;                ///< the cursor's screen column, 16.16 pixels
-  FIXED z;                ///< the cursor's screen row, 16.16 pixels
-  u8 unusedAfterZ[6];     ///< no code names them
-  s16 shown;              ///< the FlagEntry whose name is drawn; -1 for none
+  u16 vramBlock;      ///< owns the marker tiles
+  u16 windowSlot;     ///< the resource slot of the name window's tiles
+  FIXED x;            ///< the cursor's screen column, 16.16 pixels
+  FIXED z;            ///< the cursor's screen row, 16.16 pixels
+  u8 unusedAfterZ[6]; ///< no code names them
+  s16 shown;          ///< the WorldMapPlace whose name is drawn; -1 for none
   u8 unusedAfterShown[4]; ///< no code names them
   FIXED speed;            ///< the cursor's speed, 16.16 pixels per frame
   void *window;           ///< the name window
@@ -47,11 +47,12 @@ STATIC_ASSERT(offsetof(struct WorldMapState, cursor) == 1580);
 STATIC_ASSERT(offsetof(struct WorldMapState, mode) == 1602);
 STATIC_ASSERT(offsetof(struct WorldMapState, searchZ) == 1608);
 
-/// The game flag that marks a World Map place visited, from its FlagEntry.flag.
-/// The first of those flags, a place's FlagEntry.flag being added to it.
+/// The game flag that marks a World Map place visited, from its
+/// WorldMapPlace.flag. The first of those flags, a place's WorldMapPlace.flag
+/// being added to it.
 #define FLAG_PLACE_VISITED_FIRST 0x180
 #define FLAG_PLACE_VISITED(place) ((place) + FLAG_PLACE_VISITED_FIRST)
-/// FlagEntry.value's markers, besides the marker pictures 1 to 14.
+/// WorldMapPlace.value's markers, besides the marker pictures 1 to 14.
 enum WorldMapMarkerKind {
   WORLD_MAP_MARKER_NONE = 0, ///< the place is not drawn
   /// The ship's marker, drawn at the ship once it sails and the party is
@@ -60,9 +61,9 @@ enum WorldMapMarkerKind {
 };
 
 /// A world map destination, keyed by its flag (WorldMap_MarkPlaceVisited sets
-/// FLAG_PLACE_VISITED(flag)); FlagEntries_GetTable returns them, ended by a
+/// FLAG_PLACE_VISITED(flag)); WorldMapPlaces_GetTable returns them, ended by a
 /// zero flag.
-struct FlagEntry {
+struct WorldMapPlace {
   u8 flag;
   u8 value; ///< its markers: low nibble, high nibble on the map screen
   /// The actor the World Map places there (WorldMap_UpdatePlacedActors): its
@@ -84,23 +85,23 @@ struct FlagEntry {
   s16 entrance; ///< that scene's entrance
 };
 
-STATIC_ASSERT(offsetof(struct FlagEntry, visitScene) == 12);
-STATIC_ASSERT(offsetof(struct FlagEntry, scene) == 16);
-STATIC_ASSERT(sizeof(struct FlagEntry) == 20);
+STATIC_ASSERT(offsetof(struct WorldMapPlace, visitScene) == 12);
+STATIC_ASSERT(offsetof(struct WorldMapPlace, scene) == 16);
+STATIC_ASSERT(sizeof(struct WorldMapPlace) == 20);
 
 /// gMainRoutineState.mapScreenFlag under a label of its own,
 /// gMapScreenChoice: the destination last chosen on the map screen. Written
 /// through the member, MapScreen_Show compiles otherwise.
 struct WorldMapChoice {
-  s16 flag; ///< the chosen FlagEntry's flag; -1 when cancelled
+  s16 flag; ///< the chosen WorldMapPlace's flag; -1 when cancelled
 };
 
 extern struct WorldMapState gWorldMapState;
 /// The destination last chosen on the world map (struct WorldMapChoice).
 extern struct WorldMapChoice gMapScreenChoice;
-const struct FlagEntry *FlagEntries_GetTable(void);
+const struct WorldMapPlace *WorldMapPlaces_GetTable(void);
 
-/// The most places FlagEntries_GetTable lists.
+/// The most places WorldMapPlaces_GetTable lists.
 #define MAP_SCREEN_PLACE_COUNT 128
 /// The step trigger the actor of gWorldMap_PlacedActors' first place raises
 /// when touched; each next place's actor raises the next.
@@ -119,6 +120,6 @@ const struct FlagEntry *FlagEntries_GetTable(void);
 
 /// The depth the map screen's markers and cursor are drawn at.
 #define MAP_SCREEN_MARKER_DEPTH 246
-u32 WorldMapPlace_GetMarker(const struct FlagEntry *place);
+u32 WorldMapPlace_GetMarker(const struct WorldMapPlace *place);
 
 #endif

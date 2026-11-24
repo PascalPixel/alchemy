@@ -110,8 +110,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_SelectLivingTargets(state->args);
-  BattleEffect_SpawnObjects(TRIDENT_SPRITES, SPRITE_TRIDENT, 1);
+  BattleEffect_ShowLivingTargets(state->args);
+  BattleEffect_CreateSprites(TRIDENT_SPRITES, SPRITE_TRIDENT, 1);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WINOUT = EFFECT_WINOUT;
@@ -123,7 +123,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   blit[0] = draw;
   /* FAKEMATCH(temporary): the orange palette's id in a local. */
   orangeBase = RESOURCE_ORANGE_PALETTE_B - 4;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   circles = (s16 *)(state->sheet + TRIDENT_DISC_TABLE);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
   /* FAKEMATCH(dead): offset set to the cell buffer's address, which the disc
@@ -157,7 +157,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
                              Ram_MapCellBuffer + TRIDENT_FLAME_ZIGZAG, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
                              Ram_MapCellBuffer + TRIDENT_BILLOW, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_F),
                        SHEET_PALETTE_BYTES);
@@ -265,7 +265,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
             u8 *disc = state->sheet + TRIDENT_GROUND_DISC;
 
             BattleEffect_DrawShadedCircles(disc, grow, FIXED_ONE);
-            Canvas_BlitAtFoot(disc, centerX, 100, grow);
+            Canvas_BlitMirroredQuarters(disc, centerX, 100, grow);
           }
           continue;
         }
@@ -298,8 +298,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
 
             Particle_AdvanceWithGravity2D(p, PARTICLE_DAMPING_NONE, 0);
             // As an integer sum, the offset first.
-            Canvas_BlitAtFoot((u8 *)(circles[tier] + (s32)cells), discX, discY,
-                              diameter);
+            Canvas_BlitMirroredQuarters((u8 *)(circles[tier] + (s32)cells),
+                                        discX, discY, diameter);
           }
         }
       }
@@ -500,7 +500,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   for (i = 0; i != TRIDENT_SPRITES; i++) {
     Sprite_DestroyFar(state->sprites[i]);
@@ -611,7 +611,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
   if (mode == LEAPING_STRIKE_PLANET_DIVER) {
     Resource_LoadAndDecompress(RESOURCE_FLAMEBALL_SHEET,
@@ -639,7 +639,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
     state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
     state->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   for (i = 0; i != LEAPING_STRIKE_SPARK_COUNT; i++)
     LEAPING_STRIKE_SPARKS[i].variant = 0;
 

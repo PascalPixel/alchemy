@@ -67,8 +67,8 @@ extern u32 gGabombaStatue_AkafubuComesUpScript[];
 
 void GabombaStatue_RestartClock(void);
 
-void GabombaStatue_HideBoneArmletChestHoleShadow(void);
-void GabombaStatue_HideElixirChestHoleShadows(void);
+void GabombaStatue_HideBoneArmletChestLadderTopBlock(void);
+void GabombaStatue_HideElixirChestLadderTopBlocks(void);
 
 s32 GabombaStatue_GetPuzzleSeed(void);
 s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id);

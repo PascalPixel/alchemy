@@ -9,12 +9,12 @@ FarCall_OverworldTable:
 	export Event_WaitFar, Event_Wait
 	export Event_StartFar, Event_Start
 	export Event_EndFar, Event_End
-	export Event_RunObjectHookAndWaitFar, Event_RunObjectHookAndWait
-	export Event_CallWithLastActiveObjectIdFar, Event_CallWithLastActiveObjectId
+	export Event_ResetLeaderAndWaitFar, Event_ResetLeaderAndWait
+	export Event_SpawnActorsAfterLastFar, Event_SpawnActorsAfterLast
 	export Scene_AssignViewFlagsFar, Scene_AssignViewFlags
 	export Event_SetSceneEventsFar, Event_SetSceneEvents
 	export Event_AddPartyMemberFar, Event_AddPartyMember
-	export Event_PrepareTwoObjectsAndApplyFar, Event_PrepareTwoObjectsAndApply
+	export Event_AddTwoPartyMembersFar, Event_AddTwoPartyMembers
 	export Party_RemoveMemberRestoredFar, Party_RemoveMemberRestored
 	export PartyInventory_GiveItemFar, PartyInventory_GiveItem
 	export Inventory_TryAddAndReturnMemberFar, Inventory_TryAddAndReturnMember
@@ -108,8 +108,8 @@ FarCall_OverworldTable:
 	export Weather_StartLightningFlashFar, Weather_StartLightningFlash
 	export RisingParticles_StartFar, RisingParticles_Start
 	export FieldEffect_InitializeSparklesFar, FieldEffect_InitializeSparkles
-	export ScreenTransition_InitializeBattleEffectStateFar, ScreenTransition_InitializeBattleEffectState
-	export ScreenTransition_InitializeStateFar, ScreenTransition_InitializeState
+	export ScreenTransition_StartWindowHeldFar, ScreenTransition_StartWindowHeld
+	export ScreenTransition_StartDissolveHeldFar, ScreenTransition_StartDissolveHeld
 	export ScreenTransition_StartFar, ScreenTransition_Start
 	export ScreenTransition_FinishFar, ScreenTransition_Finish
 	export ScreenTransition_HideBackgroundsFar, ScreenTransition_HideBackgrounds
@@ -126,7 +126,7 @@ FarCall_OverworldTable:
 	export Event_WaitTransitionFramesFar, Event_WaitTransitionFrames
 	export LineScroll_InitWaveFar, LineScroll_InitWave
 	export LineScroll_StopFar, LineScroll_Stop
-	export FieldEffect_PlayCueAndStartEmitterOnTargetFar, FieldEffect_PlayCueAndStartEmitterOnTarget
+	export Chest_OpenAndShowItemFar, Chest_OpenAndShowItem
 	export ItemDisplay_ShowPictureFar, ItemDisplay_ShowPicture
 	export ItemDisplay_ShowItemFar, ItemDisplay_ShowItem
 	export TreasureSpot_GetActorFar, TreasureSpot_GetActor
@@ -134,14 +134,14 @@ FarCall_OverworldTable:
 	export TreasureSpot_CloseChestFar, TreasureSpot_CloseChest
 	export TreasureSpot_ShowOpenedFar, TreasureSpot_ShowOpened
 	export TreasureSpot_SetActorPositionFar, TreasureSpot_SetActorPosition
-	export ObjectEvent_RemoveFar, ObjectEvent_Remove
+	export TreasureSpot_RemoveFar, TreasureSpot_Remove
 	export TreasureSpot_MoveLeaderAwayFar, TreasureSpot_MoveLeaderAway
 	export Actor_SetWideSpriteFar, Actor_SetWideSprite
 	export Actor_ReturnHomeFar, Actor_ReturnHome
 	export WorldMap_FreezeFar, WorldMap_Freeze
 	export WorldMap_ReloadPendingAreaGraphicsFar, WorldMap_ReloadPendingAreaGraphics
 	export Actor_ResetForLeaderFar, Actor_ResetForLeader
-	export Event_SpawnObjectTableFar, Event_SpawnObjectTable
+	export Event_SpawnActorTableFar, Event_SpawnActorTable
 	export Actor_ReleaseAtIndexFar, Actor_ReleaseAtIndex
 	export Actor_LookupFar, Actor_Lookup
 	export ScenePoint_GetPositionFar, ScenePoint_GetPosition
@@ -159,8 +159,8 @@ FarCall_OverworldTable:
 	export FieldPsynergy_StartCastFar, FieldPsynergy_StartCast
 	export FieldPsynergy_FadeToCastColorFar, FieldPsynergy_FadeToCastColor
 	export FieldPsynergy_FadeFromCastColorFar, FieldPsynergy_FadeFromCastColor
-	export Event_ResolveAllPendingActionsFar, Event_ResolveAllPendingActions
-	export Event_ResolvePendingActionsFar, Event_ResolvePendingActions
+	export Event_EndAllLastingPsynergyFar, Event_EndAllLastingPsynergy
+	export Event_EndLastingPsynergyFar, Event_EndLastingPsynergy
 	export FieldPsynergy_StartMindReadWaveFar, FieldPsynergy_StartMindReadWave
 	export FieldPsynergy_StopMindReadWaveFar, FieldPsynergy_StopMindReadWave
 	export FieldPsynergy_GreyMindReadPaletteFar, FieldPsynergy_GreyMindReadPalette
@@ -170,8 +170,8 @@ FarCall_OverworldTable:
 	export Sprite_ShareVramCacheEntryFar, Sprite_ShareVramCacheEntry
 	export BattleBackground_GetSelectedFar, BattleBackground_GetSelected
 	export FieldEffect_SpawnMoveHandFar, FieldEffect_SpawnMoveHand
-	export FieldEffect_SnapScaleToFullFar, FieldEffect_SnapScaleToFull
-	export UpdateRisingParticleBurstFar, UpdateRisingParticleBurst
+	export FieldEffect_GrowHandAndWaitFar, FieldEffect_GrowHandAndWait
+	export FieldEffect_BurstHandFar, FieldEffect_BurstHand
 	export Party_AddPpFar, Party_AddPp
 	export Party_AddHpFar, Party_AddHp
 	export ResourceTable_CountFreeBlocksFar, ResourceTable_CountFreeBlocks
@@ -184,7 +184,7 @@ FarCall_OverworldTable:
 	export FieldParticle_UpdateFar, FieldParticle_Update
 	export FieldParticle_HasPendingTargetFar, FieldParticle_HasPendingTarget
 	export FieldParticle_SetPositionFar, FieldParticle_SetPosition
-	export FieldParticle_SetActorModeFar, FieldParticle_SetActorMode
+	export FieldParticle_SetAnimationFar, FieldParticle_SetAnimation
 	export FieldParticle_SetCallbackFar, FieldParticle_SetCallback
 	export FieldParticle_InitializeFar, FieldParticle_Initialize
 	export FieldEffect_ClearOwnedSlotFar, FieldEffect_ClearOwnedSlot
@@ -201,7 +201,7 @@ FarCall_OverworldTable:
 	export FieldPsynergy_ResumeHaltedActorFar, FieldPsynergy_ResumeHaltedActor
 	export Actor_FindBySpriteFar, Actor_FindBySprite
 	export Actor_GetSpriteByIdFar, Actor_GetSpriteById
-	export ObjectTable_SnapshotFar, ObjectTable_Snapshot
+	export ActorTable_SnapshotFar, ActorTable_Snapshot
 	export Actor_RestoreFar, Actor_Restore
 	export WorldMap_StartZoomFar, WorldMap_StartZoom
 	export Event_WaitForZoomTransitionFar, Event_WaitForZoomTransition
@@ -226,7 +226,7 @@ FarCall_OverworldTable:
 	export Tightrope_PlaceFar, Tightrope_Place
 	export Rope_GetStateFar, Rope_GetState
 	export Rope_PlaceFar, Rope_Place
-	export FlagEntries_GetTableFar, FlagEntries_GetTable
+	export WorldMapPlaces_GetTableFar, WorldMapPlaces_GetTable
 	export FlagBlock_PlaceAllFar, FlagBlock_PlaceAll
 	export FlagBlock_PlaceAllMarkingEdgesFar, FlagBlock_PlaceAllMarkingEdges
 	export FlagBlock_ApplyFlagsFar, FlagBlock_ApplyFlags
@@ -248,7 +248,7 @@ FarCall_OverworldTable:
 	export HangingVine_HangFar, HangingVine_Hang
 	export HangingVine_SwingFar, HangingVine_Swing
 	export Exit_PrepareActorAnimationFar, Exit_PrepareActorAnimation
-	export Actor_VanishInSparksFar, Actor_VanishInSparks
+	export Actor_AppearInSparksFar, Actor_AppearInSparks
 	export Actor_SetSpriteRotationByIdFar, Actor_SetSpriteRotationById
 	export Actor_FallOverByIdFar, Actor_FallOverById
 	export Actor_FallOverWithAnimationByIdFar, Actor_FallOverWithAnimationById
@@ -257,8 +257,8 @@ FarCall_OverworldTable:
 	export EffectSprite_DrawAtWorldPositionFar, EffectSprite_DrawAtWorldPosition
 	export BattleEffect_StepVector2Far, BattleEffect_StepVector2
 	export BattleEffect_StepVector3Far, BattleEffect_StepVector3
-	export BattleEffect_GetObjectPriorityFar, BattleEffect_GetObjectPriority
-	export BattleEffect_GetObjectDepthFar, BattleEffect_GetObjectDepth
+	export Actor_GetSpritePriorityFar, Actor_GetSpritePriority
+	export Actor_GetSpriteDepthFar, Actor_GetSpriteDepth
 	export Field_StartColorTransitionFar, Field_StartColorTransition
 	export Field_StartPaletteTransitionFar, Field_StartPaletteTransition
 	export BattleEffect_StartArcEffectFar, BattleEffect_StartArcEffect
@@ -268,10 +268,10 @@ FarCall_OverworldTable:
 @ Why assembly: 8-byte far-call veneers: ldr r4, the target's word, bx r4.
 	export Actor_CheckBlockedFar, Actor_CheckBlocked
 	export MapGrid_GetCellBehaviorFar, MapGrid_GetCellBehavior
-	export MapGrid_GetAttributeBAtFar, MapGrid_GetAttributeBAt
+	export MapGrid_GetCellAttributesAtFar, MapGrid_GetCellAttributesAt
 	export MapGrid_SetCellBehaviorFar, MapGrid_SetCellBehavior
-	export MapGrid_SetAttributeBAtFar, MapGrid_SetAttributeBAt
-	export MapGrid_SetAttributeBBitsAtFar, MapGrid_SetAttributeBBitsAt
+	export MapGrid_SetCellAttributesAtFar, MapGrid_SetCellAttributesAt
+	export MapGrid_SetCellAttributeBitsAtFar, MapGrid_SetCellAttributeBitsAt
 	export MapGrid_ClearAttributeBBitsAtFar, MapGrid_ClearAttributeBBitsAt
 	export Actor_ShowItemIconByIdFar, Actor_ShowItemIconById
 	export Tightrope_ReleaseFar, Tightrope_Release
@@ -279,7 +279,7 @@ FarCall_OverworldTable:
 	export Actor_TakeLeaderLayerFar, Actor_TakeLeaderLayer
 	export Actor_DepartInRingFar, Actor_DepartInRing
 	export Actor_ArriveInRingFar, Actor_ArriveInRing
-	export BattleEffect_DropObjectAtAnchorFar, BattleEffect_DropObjectAtAnchor
+	export Scoop_DropFromHandFar, Scoop_DropFromHand
 	export Event_ShowMessageAndOfferScoopFar, Event_ShowMessageAndOfferScoop
 	export FadeOverlay_FillTilesFar, FadeOverlay_FillTiles
 	export EffectSprite_InitWithFadeOverlayFar, EffectSprite_InitWithFadeOverlay

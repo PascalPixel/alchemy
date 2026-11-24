@@ -10,8 +10,7 @@
 #include "types.h"
 
 struct BattleEffectParams;
-void BattleEffect_RunParticleStreams(struct BattleEffectParams *effect,
-                                     s32 mode);
+void BattleEffect_RunStarfieldFall(struct BattleEffectParams *effect, s32 mode);
 /// The battle dissolves into darkness and a sun climbs over a ring of orbs
 /// while burning drops rain, then the scene bursts in embers and flashes.
 void BattleEffect_RunMeteor(struct BattleEffectParams *effect);
@@ -47,9 +46,7 @@ enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
 
-typedef s32 (*BattleEffectDrawRectangle)(void *destination, const void *source,
-                                         s32 x, s32 y, s32 width, s32 height);
-typedef BattleEffectDrawRectangle DrawRectangle;
-typedef BattleEffectDrawRectangle DrawRectangleFn;
+typedef s32 (*DrawRectangle)(void *destination, const void *source, s32 x,
+                             s32 y, s32 width, s32 height);
 
 #endif

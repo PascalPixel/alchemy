@@ -20,7 +20,7 @@ void BattleObject_Put(void) {
 
 /// Readies every unit's sprites, destroying those of units no longer in the
 /// battle, and leaves the poses of units that have sprites as they are.
-void BattleUnit_ListAllAndSubmit(void) {
+void BattleObject_PutKeepingPoses(void) {
   s16 list[UNIT_MAX];
 
   BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);

@@ -337,11 +337,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                                1, 1);
     LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   if (mode == GASP_MODE_GASP || mode == GASP_MODE_LULL)
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   if (mode == GASP_MODE_REFLUX || mode == GASP_MODE_COUNTER_RUSH ||
       mode == GASP_MODE_MOLD) {
     if (args->side == EFFECT_SIDE_ENEMIES)
@@ -1485,7 +1485,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (mode == GASP_MODE_GASP || mode == GASP_MODE_LULL)
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 #undef FIGURE

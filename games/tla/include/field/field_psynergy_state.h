@@ -69,25 +69,25 @@ struct FieldEffectState {
   u16 angle;
   /// The caster's facing, rounded to eight directions, 1/65536 turns.
   u16 angle8;
-  FIXED x;                 ///< 16.16 fixed-point pixels
-  FIXED y;                 ///< 16.16 fixed-point pixels
-  FIXED z;                 ///< 16.16 fixed-point pixels
-  struct Actor *mainActor; ///< the caster's actor
-  struct Actor *child;     ///< the target's actor, or NULL
-  s16 firstActorId;        ///< the caster's actor id
-  s16 secondActorId;       ///< the target's actor id, -1 for none
-  s16 action;              ///< the ability id
-  s16 fieldPsynergy;       ///< the ability's field Psynergy kind
+  FIXED x;              ///< 16.16 fixed-point pixels
+  FIXED y;              ///< 16.16 fixed-point pixels
+  FIXED z;              ///< 16.16 fixed-point pixels
+  struct Actor *caster; ///< the caster's actor
+  struct Actor *target; ///< the target's actor, or NULL
+  s16 casterId;         ///< the caster's actor id
+  s16 targetId;         ///< the target's actor id, -1 for none
+  s16 ability;          ///< the ability id
+  s16 fieldPsynergy;    ///< the ability's field Psynergy kind
   /// Set at the start; cleared once the target has been dispatched.
-  s8 enabled;
-  u8 mode;    ///< where it runs; ACTOR_SYSTEM_WORLD_MAP on the World Map
-  s8 visible; ///< set at the start: the caster flashes with a sound
-  s8 active;  ///< set at the start: the ability's name is announced
+  s8 aimAhead;
+  u8 mode;         ///< where it runs; ACTOR_SYSTEM_WORLD_MAP on the World Map
+  s8 flashCaster;  ///< set at the start: the caster flashes with a sound
+  s8 announceName; ///< set at the start: the ability's name is announced
   void (*finishCallback)(void); ///< run, when set, as the Psynergy ends
   u8 unusedAfterFinish[12];
   /// Set by some scenes before a field Psynergy; it treats the target
   /// differently with it.
-  s8 childOption;
+  s8 sceneVariant;
   s8 childMode; ///< set by some scenes: the Psynergy leaves the target be
   u8 paddingAfterChildMode[2];
   /// The target's update routine and script, saved at the start and restored
@@ -131,9 +131,9 @@ struct FieldEffectState {
 };
 
 STATIC_ASSERT(sizeof(struct FieldEffectState) == 2036);
-STATIC_ASSERT(offsetof(struct FieldEffectState, mainActor) == 16);
-STATIC_ASSERT(offsetof(struct FieldEffectState, action) == 28);
-STATIC_ASSERT(offsetof(struct FieldEffectState, childOption) == 52);
+STATIC_ASSERT(offsetof(struct FieldEffectState, caster) == 16);
+STATIC_ASSERT(offsetof(struct FieldEffectState, ability) == 28);
+STATIC_ASSERT(offsetof(struct FieldEffectState, sceneVariant) == 52);
 STATIC_ASSERT(offsetof(struct FieldEffectState, savedCallback) == 56);
 STATIC_ASSERT(offsetof(struct FieldEffectState, lit) == 65);
 STATIC_ASSERT(offsetof(struct FieldEffectState, savedShakeX) == 68);

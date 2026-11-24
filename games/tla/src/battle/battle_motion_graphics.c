@@ -196,11 +196,11 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   battleObject = BattleObject_Get(saved->unitId);
   object = battleObject->object;
   if (single) {
-    ReleaseBattleObjectRecords(saved->unitId);
+    BattleObject_DestroySprites(saved->unitId);
   } else {
     count = BattleUnit_ListIds((saved->unitId != 0) + 1, ids);
     for (i = 0; i < count; i++) {
-      ReleaseBattleObjectRecords(ids[i]);
+      BattleObject_DestroySprites(ids[i]);
       BattleObject_ReleaseSpriteSlots(ids[i]);
     }
   }
@@ -250,16 +250,16 @@ void BattleMotion_ReleaseBuffer(struct SavedBattleObject *saved) {
   struct MotionObject *object = BattleObject_Get(saved->unitId)->object;
 
   if (saved->buffer != NULL) {
-    Sprite_SkipToStopFar(GetMotionRecord(object, 0));
+    Sprite_SkipToStopFar(Actor_GetSprite(object, 0));
     wait(1);
     Heap_Release(saved->buffer);
     saved->buffer = NULL;
     {
-      struct Sprite *record = GetMotionRecord(object, 0);
+      struct Sprite *record = Actor_GetSprite(object, 0);
 
       record->flags = SPRITE_FLAG_KEEP_PICTURE | record->flags;
     }
-    Sprite_RemoveAnimationAtFar(GetMotionRecord(object, 0), 0);
+    Sprite_RemoveAnimationAtFar(Actor_GetSprite(object, 0), 0);
   }
 }
 
@@ -289,7 +289,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObject *saved) {
       REG_BLDALPHA = (fade << 8) | (BLEND_WEIGHT_MAX - fade);
     wait(1);
   }
-  ReleaseBattleObjectRecords(unitId);
+  BattleObject_DestroySprites(unitId);
   Iwram_CopyWordsEntry(BattleObject_Get(saved->unitId), saved,
                        sizeof(struct BattleObject));
   if (saved->reactivate) {
@@ -391,7 +391,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   missed = plan->targetMultiplier[0] == 0;
 
   object = BattleObject_Get(plan->unitId)->object;
-  animation = GetMotionRecord(object, 0);
+  animation = Actor_GetSprite(object, 0);
   frames = SpriteAnimation_SumCommandLengthsFar(
       animation->entries[0]->animationId, 2, 1);
   // A class whose attack is the burst leaps where it stands.
@@ -405,7 +405,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
       plan->partnerId != (state.actors[0] & UNIT_ID_ENEMY_BIT)) {
     object = BattleObject_Get(plan->partnerId);
 
-    animation = GetMotionRecord(((struct BattleObject *)object)->object, 0);
+    animation = Actor_GetSprite(((struct BattleObject *)object)->object, 0);
     frames = SpriteAnimation_SumCommandLengthsFar(
         animation->entries[0]->animationId, 2, 1);
     BattleMotion_ApproachTarget(plan->partnerId, state.actors[0], frames,
@@ -453,7 +453,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     if (state.kind != EFFECT_ID_CRITICAL_OFFSET + ATTACK_EFFECT_BURST &&
         critical != 0) {
       zoomOnCritical = 1;
-      background->flag = 1;
+      background->keepRange = 1;
       criticalPair[0] = state.actor;
       criticalPair[1] = state.firstTarget;
       criticalPair[2] = BATTLE_UNIT_LIST_END;
@@ -494,8 +494,8 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     }
     BattlePlayback_WaitForReady();
     if (critical != 0) {
-      background->flag = 0;
-      BattleUnit_ListAllAndSubmit();
+      background->keepRange = 0;
+      BattleObject_PutKeepingPoses();
       BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
     }
     BattleMotion_ReturnToSpot(state.actors[0]);
@@ -552,7 +552,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
 
   for (i = 0; i != state.count; i++) {
     struct Sprite *animation =
-        GetMotionRecord(BattleObject_Get(state.actors[i])->object, 0);
+        Actor_GetSprite(BattleObject_Get(state.actors[i])->object, 0);
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
@@ -642,7 +642,7 @@ void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
   u8 mask = SPRITE_PICTURE_NONE;
   u8 frame;
 
-  for (; (record = GetMotionRecord(object, index)) != NULL; index++) {
+  for (; (record = Actor_GetSprite(object, index)) != NULL; index++) {
     children = &record->entries[1];
     child = record->entries[0];
     frame = child->picture;
@@ -734,7 +734,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
 
   for (targetIndex = 0; targetIndex != state.count; targetIndex++) {
     struct Sprite *animation =
-        GetMotionRecord(BattleObject_Get(state.actors[targetIndex])->object, 0);
+        Actor_GetSprite(BattleObject_Get(state.actors[targetIndex])->object, 0);
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
@@ -857,7 +857,7 @@ void BattleMotion_ShowDowned(s32 id) {
 
   unit = Unit_Get(id);
   for (count = 0;
-       (sprite = GetMotionRecord(BattleObject_Get(id)->object, count)) != 0;
+       (sprite = Actor_GetSprite(BattleObject_Get(id)->object, count)) != 0;
        count++) {
     if (unit->side != BATTLE_SIDE_ENEMY)
       Sprite_StartAnimationFar(sprite, POSE_PARTY_HELD);
@@ -867,7 +867,7 @@ void BattleMotion_ShowDowned(s32 id) {
 
   if (unit->side == BATTLE_SIDE_ENEMY) {
     for (count = 0;
-         (sprite = GetMotionRecord(BattleObject_Get(id)->object, count)) != 0;
+         (sprite = Actor_GetSprite(BattleObject_Get(id)->object, count)) != 0;
          count++) {
       entry = sprite->entries[0];
       sprites[count] = sprite;

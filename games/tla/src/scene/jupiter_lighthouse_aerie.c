@@ -51,6 +51,7 @@
 #include "shared/tables.h"
 #include "field/field_effect.h"
 #include "field/actor_script.h"
+#include "scene/lighthouse_palettes.h"
 #include "fixed_math.h"
 
 /// The placed actors between the archers and the lid (ACTOR_RIGHT_ARCHER and
@@ -149,7 +150,7 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side);
 void LightSprites_InitB(void);
 void LightSprites_Add(s32 id, s32 value);
 
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -160,15 +161,13 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 
 void JupiterLighthouse_UpdateBeam(void);
 
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
 struct CellTarget;
 struct CellTargetEntry;
-
-void JupiterLighthouse_LoadPalettes(s32 mode);
 
 void JupiterLighthouse_PlaceRaisedActors(void);
 
@@ -257,7 +256,7 @@ void JupiterLighthouse_RaiseAngels(s32 mode) {
 void JupiterLighthouse_ShootAtLeftAngel(void) {
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
   Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_EAST, 0);
   JupiterLighthouse_StartBeam(ACTOR_LEFT_ARCHER, ACTOR_LEFT_ANGEL, BEAM_LEFT);
@@ -283,7 +282,7 @@ void JupiterLighthouse_ShootAtLeftAngel(void) {
 void JupiterLighthouse_ShootAtRightAngel(void) {
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
   Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_WEST, 0);
   JupiterLighthouse_StartBeam(ACTOR_RIGHT_ARCHER, ACTOR_RIGHT_ANGEL,
@@ -403,7 +402,7 @@ s32 Scene_Initialize(void) {
           JUPITER_LIGHTHOUSE_AERIE_FROM_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST)
     Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
-  JupiterLighthouse_LoadPalettes(0);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
   Import_HangingVinePlace(ACTOR_WEST_CHAIN, 1);
   Import_HangingVinePlace(ACTOR_EAST_CHAIN, 1);
   Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
@@ -457,8 +456,8 @@ s32 Scene_PrepareMap(void) {
   actor->motionFlags = 0;
   MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0,
                         PATH_BLOCK_TOP_HEIGHT);
-  Actor_Get(ACTOR_LEFT_ARCHER)->riseCounter = 1;
-  Actor_Get(ACTOR_RIGHT_ARCHER)->riseCounter = 1;
+  Actor_Get(ACTOR_LEFT_ARCHER)->sceneCounter = 1;
+  Actor_Get(ACTOR_RIGHT_ARCHER)->sceneCounter = 1;
   return 0;
 }
 
@@ -485,7 +484,7 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
@@ -493,7 +492,7 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 /// colours, a step a frame.
 void JupiterLighthouse_FlickerBeam(struct Actor *actor) {
   u8 *fill = &gDecodeFillByte;
-  u8 *step = &actor->riseEnabled;
+  u8 *step = &actor->sceneByte;
   s32 phase = *step & 3;
 
   *fill = 2;
@@ -514,7 +513,7 @@ void JupiterLighthouse_FlickerBeam(struct Actor *actor) {
 
 /// Starts an actor's flicker (JupiterLighthouse_FlickerBeam).
 void JupiterLighthouse_StartBeamFlicker(struct Actor *actor) {
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   actor->update = (ObjectUpdate)JupiterLighthouse_FlickerBeam;
 }
 
@@ -941,8 +940,8 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 648, 16, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 680, 16, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 712, 16, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_STONE_BASIN, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_CHILD, 512, 0, 248, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STONE_BASIN, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_CHILD, 512, 0, 248, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_STONE_BASIN, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 512, 0, 248, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_BASIN, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS, 512, 0, 248, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 

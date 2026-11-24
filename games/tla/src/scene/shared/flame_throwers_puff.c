@@ -21,7 +21,7 @@ typedef struct State {
   s16 stopped;
   s16 wasStopped;
   u8 unusedAfterWasStopped[4];
-  s16 runsDuringPsynergy; ///< Ride_SetMode: not paused by Psynergy
+  s16 runsDuringPsynergy; ///< FlameThrowers_SetMode: not paused by Psynergy
   void (*onStopped)();
   Entry entries[4];
 } State;
@@ -52,7 +52,7 @@ void FlameThrowers_Puff(void) {
   s32 v;
   s32 i;
 
-  state = (State *)RIDE_STATE;
+  state = (State *)FLAME_THROWERS_STATE;
   map = ((HeapSlotsView *)Ram_HeapSlots)->mapGrid;
   entry = state->entries;
   view = &map->viewX;
@@ -107,21 +107,22 @@ void FlameThrowers_Puff(void) {
       y = entry->flags & FLAME_THROWER_FLAG_BITS;
       switch (y) {
       case FLAME_SPARK:
-        Ride_SpawnSpark((void *)&entry->actor->x, entry->reach, offScreen);
+        FlameThrower_SendSpark((void *)&entry->actor->x, entry->reach,
+                               offScreen);
         break;
       case FLAME_BACKWARD:
-        Ride_SpawnBackward(&entry->actor->x.fixed, entry->reach, offScreen);
-        break;
-      case FLAME_LANDING_BACKWARD:
-        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->reach,
+        FlameThrower_SendBackward(&entry->actor->x.fixed, entry->reach,
                                   offScreen);
         break;
-      case FLAME_LANDING_FORWARD:
-        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->reach,
-                                 offScreen);
+      case FLAME_WEST:
+        FlameThrower_SendWest(&entry->actor->x.fixed, entry->reach, offScreen);
+        break;
+      case FLAME_EAST:
+        FlameThrower_SendEast(&entry->actor->x.fixed, entry->reach, offScreen);
         break;
       case FLAME_FORWARD:
-        Ride_SpawnForward(&entry->actor->x.fixed, entry->reach, offScreen);
+        FlameThrower_SendForward(&entry->actor->x.fixed, entry->reach,
+                                 offScreen);
         break;
       }
       value = 8; // the next in nine frames

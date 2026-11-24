@@ -25,7 +25,7 @@ const s32 gTightrope_DebugSwinging = 0;
 /// picked by the Psynergy, by a FLAG_PSYNERGY_TINT flag, or at a summon tablet
 /// by the frame counter.
 // clang-format off
-const u32 gFieldEffect_TargetColors[8] = {
+const u32 gFieldPsynergy_CastColors[8] = {
     RGB(4, 4, 16),  RGB(4, 16, 4),  RGB(16, 4, 4), RGB(2, 10, 10),
     RGB(12, 2, 12), RGB(12, 12, 2), RGB(8, 8, 8),  RGB(16, 16, 16),
 };
@@ -33,7 +33,7 @@ const u32 gFieldEffect_TargetColors[8] = {
 
 /// A script that releases its actor at once: a Mind Read sign's end, once it
 /// has come to rest.
-const s32 gBattleEffect_UntargetedObjectScript[] = {
+const s32 gMindRead_CrescentEndScript[] = {
     SC_RELEASE,
 };
 

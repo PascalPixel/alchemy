@@ -53,11 +53,11 @@ struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
                                                      s32 x, s32 y) {
   s32 slot;
 
-  slot = Resource_LoadByMode(mode, resource);
+  slot = SelectionIcon_Load(mode, resource);
   if (slot < 0) {
     return NULL;
   }
-  return WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+  return WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
 }
 
 /// Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
@@ -71,8 +71,8 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
   slot = VramCache_FindFreeEntry();
   sprite = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
-    Icon_CopyResourceToSlot(icon, layers, slot);
-    sprite = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+    ItemIcon_LoadLayersIntoSlot(icon, layers, slot);
+    sprite = WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   }
   return sprite;
 }
@@ -91,7 +91,7 @@ WindowSprite_CreateCommandIcon(s32 icon, struct Window *window, s32 x, s32 y) {
     return NULL;
   }
   Icon_BuildCommandIconTiles(icon, 1, &slot, &unusedTile, 1);
-  sprite = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+  sprite = WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   // Not checked: with every sprite in use, this stores through NULL.
   sprite->depth = OAM_DEPTH_FRONT - 4;
   return sprite;
@@ -128,7 +128,7 @@ struct WindowSprite *Portrait_Create(s32 character, s32 position, s32 side,
 
   palette = PORTRAIT_PALETTE + side;
   Icon_LoadWithPalette(icon, position, &slot, &tile, palette, 0);
-  portrait = WindowSprite_Create(slot, OUTPUT_SIZE_32X32,
+  portrait = WindowSprite_Create(slot, WINDOW_SPRITE_SIZE_32X32,
                                  (struct Window *)window, x, y);
   if (portrait != 0) {
     portrait->sprite.oam.palette = palette;
@@ -178,7 +178,7 @@ void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
 /// Sets the depth of the window sprite `sprite` to ~priority, which is
 /// OAM_DEPTH_FRONT - `priority`: a higher priority draws further back. Does
 /// nothing when `sprite` is NULL.
-void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority) {
+void WindowSprite_SetPriority(void *sprite, s32 priority) {
   if (sprite != NULL)
     ((struct WindowSprite *)sprite)->depth = ~priority;
 }
@@ -193,8 +193,8 @@ typedef u16 *(*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 /// Fills `spans`, a page of the screen transition's window edges past its WININ
 /// and WINOUT, with the windows' horizontal extent on each of the 160 scan
 /// lines: (left << 8) | right in the second halfword (WIN1H) of each line's
-/// pair, read from the UI tilemap by the ARM routine Tile_BuildCellTiles
-/// (cell_tiles.c), copied into RAM for the call. With no window state, every
+/// pair, read from the UI tilemap by the ARM routine ScanlineWindow_BuildSpans
+/// (window_spans.c), copied into RAM for the call. With no window state, every
 /// line gets an empty span.
 void ScanlineWindow_FillSpans(void *spans) {
   struct WindowState *state = Ram_HeapSlots->windowState;
@@ -211,7 +211,8 @@ void ScanlineWindow_FillSpans(void *spans) {
   } else {
     WindowSpanRoutine routine;
 
-    RamCode_Load(routine, Tile_BuildCellTilesCode, Tile_BuildCellTilesCodeSize);
+    RamCode_Load(routine, ScanlineWindow_BuildSpansCode,
+                 ScanlineWindow_BuildSpansCodeSize);
     routine(spans, state->tilemap);
     Heap_Release(routine);
   }

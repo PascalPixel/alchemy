@@ -149,9 +149,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   Resource_LoadAndDecompress(RESOURCE_LIGHT_FAN_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_C,
+  Resource_LoadAndDecompress(RESOURCE_BLUE_TALL_GLOW_SHEET,
                              state->sheet + THOR_SPRITE_PICTURES, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 
   {
     s32 offset;
@@ -178,7 +178,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   state->scrollStepY = 0;
   view->busy = 1;
   Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   state->transferMode = CANVAS_COPY;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
@@ -244,7 +244,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                           CANVAS_FADE_THREE_QUARTERS);
     }
     Projection_Set(BATTLE_CAMERA_DISTANCE,
-                   Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, FIXED_ONE * 3 / 4),
+                   Iwram_DivFX(BATTLE_CAMERA_DISTANCE, FIXED_ONE * 3 / 4),
                    BATTLE_FAR_DEPTH);
     Matrix_Initialize();
     if (frame > 128) {
@@ -401,8 +401,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   view->busy = 0;
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   BattleEffect_SetupBlendedDisplay();
-  BattleEffect_SelectLivingTargets(state->args);
-  BattleEffect_SpawnObjects(THOR_SPRITES, SPRITE_THOR, 1);
+  BattleEffect_ShowLivingTargets(state->args);
+  BattleEffect_CreateSprites(THOR_SPRITES, SPRITE_THOR, 1);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, Ram_MapCellBuffer, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_PILLAR_SHEET, state->sheet, 1,
                              1);
@@ -411,7 +411,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_CRYSTAL_SHEET),
                        SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_B, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PALE_BLUE_GLOW_SHEET, sprites, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   {
     FIXED thorX = toFIXED(80);
@@ -521,8 +521,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           glowX = FIXEDtoINT(Trig_Sin(angle) * radius) + 72;
           glowY = 32 - FIXEDtoINT(Trig_Cos(angle) * radius);
         }
-        Canvas_BlitAtFoot(state->sheet + THOR_HAMMER_GLOW_PICTURE, glowX, glowY,
-                          THOR_HAMMER_GLOW_PICTURE_HEIGHT);
+        Canvas_BlitMirroredQuarters(state->sheet + THOR_HAMMER_GLOW_PICTURE,
+                                    glowX, glowY,
+                                    THOR_HAMMER_GLOW_PICTURE_HEIGHT);
         // Sparks fly off the glow.
         spawned = 0;
         for (i = 0, spark = THOR_PARTICLES; i != THOR_SPARK_COUNT;
@@ -578,7 +579,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           thorSpeedX = thorSpeedX * 60 / DAMPING_SCALE;
           thorSpeedY = thorSpeedY * 60 / DAMPING_SCALE;
         }
-        BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_THOR, thorX, thorY);
+        BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_THOR, thorX, thorY);
       }
       // Lightning crackles about him.
       if (frame >= 16 && frame <= 143) {
@@ -615,7 +616,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     }
 
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferCanvas);
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_THOR, thorX, thorY);
   }
   for (i = 0; i != THOR_SPRITES; i++) {

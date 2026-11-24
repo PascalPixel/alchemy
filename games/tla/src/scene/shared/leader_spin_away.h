@@ -5,7 +5,7 @@ UNUSED void Leader_SpinAway(s32 entrance) {
   s32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
   leader->motionFlags = 0;
   leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;

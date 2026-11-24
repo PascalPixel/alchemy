@@ -22,7 +22,7 @@
 #include "scene/falling_rocks.h"
 #include "../field/actor_set_sprite_priority.c"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 
 #include "types.h"
 #include "item_ids.h"
@@ -568,7 +568,7 @@ void MagmaRockInside_FinishPushingPillar(void) {
   s32 z;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_PlaceMovedBlock();
   scene = gMainRoutineState.next;
   if (scene == SCENE_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST) {
@@ -585,9 +585,9 @@ void MagmaRockInside_FinishPushingPillar(void) {
         actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
         REG_BLDALPHA = BLEND_ALPHA(0, 16);
         REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-        copy = OverlayObject_PrepareObject(actor->x.fixed, actor->groundHeight,
-                                           actor->z.fixed + toFIXED(16),
-                                           SPRITE_YELLOW_BLOCK);
+        copy = Actor_CreateSilhouette(actor->x.fixed, actor->groundHeight,
+                                      actor->z.fixed + toFIXED(16),
+                                      SPRITE_YELLOW_BLOCK);
         MagmaRockInside_WaitForLanding(actor);
         Event_PlaySound(SE_HEAVY_STOP);
         Actor_Release(copy);
@@ -614,9 +614,9 @@ void MagmaRockInside_FinishPushingPillar(void) {
       actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       REG_BLDALPHA = BLEND_ALPHA(0, 16);
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-      copy = OverlayObject_PrepareObject(actor->x.fixed, actor->groundHeight,
-                                         actor->z.fixed + toFIXED(16),
-                                         SPRITE_YELLOW_BLOCK);
+      copy = Actor_CreateSilhouette(actor->x.fixed, actor->groundHeight,
+                                    actor->z.fixed + toFIXED(16),
+                                    SPRITE_YELLOW_BLOCK);
       MagmaRockInside_WaitForLanding(actor);
       Event_PlaySound(SE_HEAVY_STOP);
       Actor_Release(copy);
@@ -713,9 +713,7 @@ void MagmaRockInside_TrailEmbers(struct Actor *actor) {
 /// Nothing visible happens as Felix starts casting Burst at a fire-spitting
 /// statue; the game finishes what the field still had pending, so that the
 /// cast and the statue's fire play undisturbed.
-void MagmaRockInside_ResolveBeforeBurst(void) {
-  Event_ResolvePendingActions(0);
-}
+void MagmaRockInside_ResolveBeforeBurst(void) { Event_EndLastingPsynergy(0); }
 
 extern s16 gMagmaRockInside_Statues[];
 extern s16 gMagmaRockInside_CrackedPillarsStatues[];
@@ -733,7 +731,7 @@ void MagmaRockInside_TargetStatue(s32 stage) {
   s32 scene;
 
   table = gMagmaRockInside_Statues;
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   scene = gMainRoutineState.next;
   if (scene == SCENE_MAGMA_ROCK_INSIDE_ENTRANCE) {
   } else if (scene == SCENE_MAGMA_ROCK_INSIDE_FURY) {
@@ -744,7 +742,7 @@ void MagmaRockInside_TargetStatue(s32 stage) {
     struct Actor *actor;
 
     Statue_FindUnderBurst(table);
-    actor = watch->child;
+    actor = watch->target;
     actor->flashMask = 4;
     actor->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
@@ -752,26 +750,26 @@ void MagmaRockInside_TargetStatue(s32 stage) {
     struct Actor *actor;
 
     Statue_FindUnderBurst(table);
-    actor = watch->child;
+    actor = watch->target;
     actor->flashMask = 2;
     actor->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
 }
 
 /// An ember's update as a statue's fireball bursts: moves it by its velocity,
-/// kept in bounce, gravity and riseBaseY, and slows it by an eighth.
+/// kept in bounce, gravity and sceneWord, and slows it by an eighth.
 void MagmaRockInside_DriftAndSlow(struct Actor *actor) {
   s32 dx, dy, dz;
 
   actor->x.fixed += dx = actor->bounce;
   actor->y.fixed += dy = actor->gravity;
-  actor->z.fixed += dz = actor->riseBaseY;
+  actor->z.fixed += dz = actor->sceneWord;
   dx -= dx >> 3;
   dy -= dy >> 3;
   dz -= dz >> 3;
   actor->bounce = dx;
   actor->gravity = dy;
-  actor->riseBaseY = dz;
+  actor->sceneWord = dz;
 }
 
 /// The frames a statue's fireball bursts where it lands, throwing out an ember
@@ -798,7 +796,7 @@ void MagmaRockInside_FireFromStatue(struct Actor *source) {
   Actor_SelectAnimation(flame, 1);
   Actor_SetSpriteFlags(flame, 0);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   position[0] = flame->x.fixed;
   position[1] = flame->y.fixed;
   position[2] = flame->z.fixed;
@@ -898,15 +896,15 @@ void MagmaRockInside_FireStatue(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_Wait(10);
-  actor = state->child;
+  actor = state->target;
   actor->update = NULL;
   FieldActor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   FieldEvent_Wait(3);
-  FieldActor_SetSpriteColor(state->child, SPRITE_COLOR_NORMAL);
+  FieldActor_SetSpriteColor(state->target, SPRITE_COLOR_NORMAL);
   FieldEvent_Wait(1);
-  MagmaRockInside_FireFromStatue(state->child);
+  MagmaRockInside_FireFromStatue(state->target);
   Event_End();
 }
 
@@ -929,24 +927,24 @@ void MagmaRockInside_BurstCrackedPillar(s32 stage, s32 cue) {
   if (cue == 0)
     MagmaRockInside_StartFallingRocks();
   if (stage == BURST_STAGE_SMALL_BLAST) {
-    struct Actor *actor = state->child;
+    struct Actor *actor = state->target;
 
     MagmaRockInside_DropRocks(actor->x.fixed, actor->y.fixed + toFIXED(15),
                               actor->z.fixed, 1);
   }
   if (stage == BURST_STAGE_GREAT_BLAST) {
-    struct Actor *actor = state->child;
+    struct Actor *actor = state->target;
     struct Actor *target;
 
     MagmaRockInside_DropRocks(actor->x.fixed, actor->y.fixed + toFIXED(15),
                               actor->z.fixed, 8);
-    target = state->child;
+    target = state->target;
     SET_ACTOR_POSITION(target, 0, 0, 0);
   }
   if (cue == PSYNERGY_EVENT_LAST_FRAME)
     Rock_EndFalling();
   if (cue == CRACKED_PILLAR_CRUMBLE_FRAME)
-    Actor_SelectAnimation(state->child, CRACKED_PILLAR_ANIMATION_CRUMBLE);
+    Actor_SelectAnimation(state->target, CRACKED_PILLAR_ANIMATION_CRUMBLE);
 }
 
 /// Felix walks to the lava's edge where something stands in the lava two cells
@@ -973,7 +971,7 @@ void MagmaRockInside_LeapOverLava(void) {
   if (target == NULL)
     return;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
   System_Wait(6);
   Event_PlaySound(SE_JUMP);
@@ -1195,7 +1193,7 @@ void MagmaRockInside_DrainLava(void) {
   s32 rowAbove;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   position[0] = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   position[2] = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   Actor_WalkToAndWait(gMainRoutineState.leaderActorId, FIXEDtoINT(position[0]),
@@ -1331,7 +1329,7 @@ void MagmaRockInside_DrainLava(void) {
   void name(s32 stage, s32 cue) {                                              \
     struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;          \
                                                                                \
-    state->child = Actor_Get(pillar);                                          \
+    state->target = Actor_Get(pillar);                                         \
     MagmaRockInside_BurstCrackedPillar(stage, cue);                            \
     Event_SetFlag(flag);                                                       \
   }
@@ -1397,7 +1395,7 @@ void MagmaRockInside_ReleaseRocks(void) {
   s32 beat;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_PlaySound(SE_TREMOR);
   MapGrid_SetShake(3, 3, 1);
   Event_Wait(30);
@@ -1525,7 +1523,7 @@ void MagmaRockInside_GrowFlame(void) {
       Event_GetFlag(FLAG_EAST_TORCH_LIT)) {
     other = Actor_GetById(ACTOR_BLOCKING_PILLAR);
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     MapGrid_SetShake(2, 1, 1);
     Event_PlaySound(SE_RUMBLE);
     FieldEvent_Wait(30);
@@ -1536,7 +1534,7 @@ void MagmaRockInside_GrowFlame(void) {
     REG_BLDALPHA = BLEND_ALPHA(0, 16);
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     {
-      struct Actor *prepared = OverlayObject_PrepareObject(
+      struct Actor *prepared = Actor_CreateSilhouette(
           other->x.fixed, other->groundHeight, other->z.fixed + toFIXED(48),
           SPRITE_YELLOW_BLOCK);
 
@@ -1579,7 +1577,7 @@ void MagmaRockInside_ExamineEmberStone(void) {
   const u8 *message;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   message = MsgBlazeStoneEmber;
   Message_ShowCentered(message, 1);
   FieldEvent_SetMessageId(message + 1);
@@ -1608,7 +1606,7 @@ void MagmaRockInside_OpenStairs(void) {
   s32 height = 2;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(72, 67, 15, 19, width, height);
   FieldEvent_Wait(8);
@@ -1738,7 +1736,7 @@ void MagmaRockInside_FadeStoneAway(s32 x, s32 z) {
   Actor_SetSpriteFlags(actor, 0);
   ((struct FieldSprite *)actor->sprite)->blendMode = 2;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
                WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_ALL;
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
@@ -1826,7 +1824,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
   Event_SetFlag(FLAG_TABLET_TORCH_LIT);
   other = Actor_Get(ACTOR_TORCH_PILLAR);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   MapGrid_SetShake(2, 1, 1);
   Event_PlaySound(SE_RUMBLE);
   FieldEvent_Wait(30);
@@ -1837,7 +1835,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   {
-    struct Actor *prepared = OverlayObject_PrepareObject(
+    struct Actor *prepared = Actor_CreateSilhouette(
         other->x.fixed, other->groundHeight, other->z.fixed + toFIXED(48),
         SPRITE_YELLOW_BLOCK);
 
@@ -2061,7 +2059,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
     spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
     noMotion = 0;
     spark->motionFlags = noMotion;
-    spark->riseBaseY = toFIXED(122);
+    spark->sceneWord = toFIXED(122);
     spark->watchedActor = learner;
     spark->stepsLeft =
         (LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
@@ -2070,7 +2068,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
-    FieldVector_AddPolarOffsetFX(spark->riseBaseY, spark->timer,
+    FieldVector_AddPolarOffsetFX(spark->sceneWord, spark->timer,
                                  &spark->x.fixed);
     Actor_StartScript(spark, gMagmaRockInside_CirclingSparkScript);
     if (i == 3) {
@@ -2094,7 +2092,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
     ((struct Orbit *)riser)->phase = i;
     ((struct Orbit *)riser)->growth = 1;
     riser->bounce = riser->x.fixed;
-    riser->riseBaseY = 0;
+    riser->sceneWord = 0;
     riser->gravity = riser->z.fixed;
     riser->watchedActor = learner;
     riser->motionFlags = (u16)0;
@@ -2139,7 +2137,7 @@ void MagmaRockInside_ReadBlazeTablet(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Message_ShowCentered(MsgBlazeTabletInscription, 1);
   if (Event_GetFlag(FLAG_BLAZE_LEARNED) != 0) {
     Event_End();
@@ -2210,7 +2208,7 @@ void MagmaRockInside_ReadBlazeTablet(void) {
 void MagmaRockInside_ReadBlazeTabletFromNorth(void) {
   if (Event_GetFlag(FLAG_BLAZE_LEARNED)) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Message_ShowCentered(MsgBlazeTabletInscription, 1);
     Event_End();
   } else {
@@ -2230,7 +2228,7 @@ void MagmaRockInside_ReadBlazeTabletFromNorth(void) {
   void name(void) {                                                            \
     if (Event_GetFlag(FLAG_BLAZE_LEARNED)) {                                   \
       Event_Start();                                                           \
-      FieldEvent_ResolvePendingActions(0);                                     \
+      FieldEvent_EndLastingPsynergy(0);                                        \
       Message_ShowCentered(MsgBlazeTabletInscription, 1);                      \
       Event_End();                                                             \
     } else {                                                                   \
@@ -2879,7 +2877,7 @@ void MagmaRockInside_SpawnDustRing(void) {
       effect->spin = ((Random16() << 12) >> 16) - TRIG_TURN / 32;
       effect->scaleRateX = 0;
       effect->scaleRateY = 0;
-      effect->update = Effect_AdvanceMotionAtLeaderPriority;
+      effect->update = FieldEffect_AdvanceMotionAtLeaderPriority;
       effect->sprite->priority =
           ((struct FieldSprite *)leader->sprite)->priority;
     }

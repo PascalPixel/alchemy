@@ -82,7 +82,7 @@ void TreasureSpot_MoveLeaderAway(void) {
 /// spawn succeeded. Allocation failure leaves the sparkle absent.
 static inline void Actor_InitializeSparkle(struct Actor *actor) {
   if (actor != 0) {
-    Actor_StartScriptFar(actor, (const s32 *)gBattleEffect_ParticleScript);
+    Actor_StartScriptFar(actor, (const s32 *)gItemDisplay_SparkleScript);
     Actor_SelectAnimationFar(actor, 0);
     ((struct Sprite *)actor->sprite)->image.priority = 1;
   }
@@ -140,7 +140,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   struct Actor *actor;
   struct Sprite *sprite;
   FIXED position[3];
-  GlyphTransfer *transfer;
+  IconTransfer *transfer;
   s32 tile;
   s32 i;
 
@@ -162,7 +162,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
       if (actor->script != NULL) {
         if (actor->update == Reveal_EmitSparkles)
           Actor_ReleaseFar(actor);
-        if (actor->script == (s32 *)gBattleEffect_ParticleScript)
+        if (actor->script == (s32 *)gItemDisplay_SparkleScript)
           Actor_ReleaseFar(actor);
       }
       i--;
@@ -174,7 +174,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
                             position[1] + toFIXED(16), position[2]);
   if (picture == NULL)
     return NULL;
-  Actor_StartScriptFar(picture, gFieldEffect_ParticleEmitterScript);
+  Actor_StartScriptFar(picture, gItemDisplay_GrowInScript);
   sprite = picture->sprite;
   // No shadow, outline or sprite animations: a 16-colour sprite in OBJ
   // palette 0 whose tiles are the item's icon.
@@ -187,11 +187,11 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   picture->groundHeight = position[1];
   picture->velocityY = toFIXED(2);
   picture->gravity = toFIXED(1) / 4;
-  transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  transfer = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   Icon_DrawItemFar(item);
   tile = VramCache_Load(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
   sprite->image.tile = tile;
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   picture->update = ItemDisplay_EmitSparkles;
   if (state->revealActive != 0) {
     struct Actor *marker = Ram_HeapSlots->actors;
@@ -199,7 +199,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
 
     for (j = 0; j < ACTOR_COUNT; j++, marker++) {
       if (marker->script != NULL &&
-          marker->script == (s32 *)gBattleEffect_MarkerParticleScript &&
+          marker->script == (s32 *)gReveal_MarkerScript &&
           FIELD_CELL(marker->x.fixed) == FIELD_CELL(picture->x.fixed) &&
           FIELD_CELL(marker->z.fixed) == FIELD_CELL(picture->z.fixed)) {
         Actor_ReleaseFar(marker);
@@ -241,7 +241,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   Actor_SetSpritePriorityDirectFar(actor, 1);
   wait(3);
   Actor_SelectAnimationFar(leader, ANIM_LEADER_ARMS_RAISED);
-  Actor_StartScriptFar(actor, gFieldEffect_RisingPulseScript);
+  Actor_StartScriptFar(actor, gItemDisplay_PulseScript);
   // FACING_SOUTH, a quarter turn, faces the screen.
   leader->facing = FACING_SOUTH;
 }
@@ -255,7 +255,7 @@ void ItemDisplay_ShowPicture(struct Actor *actor, s32 flags) {
     leader = Actor_Lookup(Party_GetLeaderActor());
     if (flags & ITEM_DISPLAY_SPARKLES) {
       Actor_SetSpriteFlagsFar(actor, 0);
-      Actor_StartScriptFar(actor, gFieldEffect_ParticleEmitterScript);
+      Actor_StartScriptFar(actor, gItemDisplay_GrowInScript);
       ((struct Actor *)actor)->velocityY = toFIXED(2);
       ((struct Actor *)actor)->gravity = toFIXED(1) / 4;
       ((struct Actor *)actor)->update = ItemDisplay_EmitSparkles;
@@ -274,8 +274,8 @@ void ItemDisplay_ShowPicture(struct Actor *actor, s32 flags) {
 /// as flags choose (ItemDisplayFlag).
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *leader = Actor_Lookup(Party_GetLeaderActor());
-  GlyphTransfer *transfer =
-      HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  IconTransfer *transfer =
+      HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   struct Actor *actor =
       Actor_CreateFar(SPRITE_UNSEEN_MARKER, leader->x.fixed,
                       leader->y.fixed + toFIXED(36), leader->z.fixed);
@@ -291,7 +291,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 
     Icon_DrawItemFar(item);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
 
     if (flags & ITEM_DISPLAY_SPARKLES)
       actor->update = ItemDisplay_EmitSparkles;
@@ -372,7 +372,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
     if (actor == NULL)
       continue;
     // A tile event's actor holds its map cell, marked by this value.
-    if (actor->riseBaseY == TREASURE_SPOT_ON_CELL) {
+    if (actor->sceneWord == TREASURE_SPOT_ON_CELL) {
       x = toFIXED(actor->timer);
       z = toFIXED((s16)actor->userValue);
       y = MapGrid_GetTerrainHeightFar(0, x, z);
@@ -399,8 +399,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
     actor = Actor_CreateFar(SPRITE_SPARKLE, x, y, z);
     if (actor != NULL) {
       actor->motionFlags = 0;
-      Actor_StartScriptFar((struct Actor *)actor,
-                           gBattleEffect_MarkerParticleScript);
+      Actor_StartScriptFar((struct Actor *)actor, gReveal_MarkerScript);
       Actor_SetSpriteFlagsFar((struct Actor *)actor, 0);
       Actor_SelectAnimationFar(actor, ANIM_STAND);
       ((struct Sprite *)actor->sprite)->image.priority = 1;

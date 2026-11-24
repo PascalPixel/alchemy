@@ -16,10 +16,10 @@
 #include "field/event_commands.h"
 #include "field/objdisp.h"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 
 #include "types.h"
-#include "graphics/output.h"
+#include "graphics/window_sprite_list.h"
 #include "system/system.h"
 #include "system/task.h"
 #include "system/ram_buffer.h"
@@ -75,7 +75,7 @@ void AquaRock_DrawBubbles(void);
 extern u32 gWadingSplash_Script[];
 extern u32 gWaterDropScript[];
 /// The bubbles' four frames, compressed (graphics/aqua_rock/tiles.s).
-extern const u8 gAquaRock_MarkerTiles[];
+extern const u8 gAquaRock_BubbleTiles[];
 extern struct SceneRegion gAquaRock_SlopesRegions[];
 extern struct SceneRegion gAquaRock_MistSabreChestRegions[];
 extern struct ActorPlacement gAquaRock_Placements[];
@@ -616,7 +616,7 @@ void AquaRock_SetUpStreams(void) {
   Task_Add(AquaRock_UpdateStreams, TASK_PASS_FRAME);
 }
 
-#include "shared/actor_flicker_child.h"
+#include "shared/actor_flash_white.h"
 
 /// Unused: a moai's update while it flashes, grey every other two frames.
 UNUSED void AquaRock_FlashMoai(struct Actor *actor) {
@@ -642,8 +642,8 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
   s32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
-  actor->update = (ObjectUpdate)Actor_FlickerChild;
+  Event_EndLastingPsynergy(0);
+  actor->update = (ObjectUpdate)Actor_FlashWhite;
   wait(30);
   if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK) == 0)
     GroundParticles_SetAnchor(ACTOR_WATER_STONE);
@@ -785,7 +785,7 @@ void AquaRock_RideStreamUp(void) {
       if (gMainRoutineState.next != SCENE_AQUA_ROCK_MOAI)
         return;
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       leader->motionFlags = 0;
       Actor_SetSpriteFlags(leader, 0);
       gMainRoutineState.movementMode = LEADER_MOVEMENT_KEYS;
@@ -874,7 +874,7 @@ void AquaRock_DropDownFalls(void) {
   struct MainRoutineState *state;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldEffect_SetAttached(gMainRoutineState.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SelectAnimation(actor, ANIM_LEADER_FLAIL);
@@ -950,8 +950,8 @@ void AquaRock_DouseMistSabreChestWaterStone(s32 unused, s32 id) {
   s32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
-  actor->update = (ObjectUpdate)Actor_FlickerChild;
+  Event_EndLastingPsynergy(0);
+  actor->update = (ObjectUpdate)Actor_FlashWhite;
   wait(30);
   GroundParticles_SetAnchor(ACTOR_MIST_SABRE_WATER_STONE);
   Sound_Play(SE_SHIMMER);
@@ -1036,7 +1036,7 @@ void AquaRock_ArriveFromInside(void) {
 
   Sound_Play(SE_SPIN_AWAY);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_StartScreenTransition();
   Actor_SetSpriteFlags(actor, 0);
   actor->motionFlags = 0;
@@ -1071,7 +1071,7 @@ void AquaRock_ArriveUpStream(void) {
   s32 angle;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_StartScreenTransition();
   Actor_SetSpriteFlags(actor, 0);
   actor->motionFlags = 0;
@@ -1146,7 +1146,7 @@ void AquaRock_MoaiStepAside(void) {
   s32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetPosition(gMainRoutineState.leaderActorId, 0, 0);
   Event_StartScreenTransition();
@@ -1382,7 +1382,7 @@ void AquaRock_SinkInside(s32 exit) {
   s32 angle;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
   actor->motionFlags = 0;
   actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
@@ -1413,7 +1413,7 @@ void AquaRock_EnterSparklingPassage(s32 entrance) {
   s32 *owner = &gMainRoutineState.leaderActorId;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_SPARKLING_PASSAGE);
   leader->update = (ObjectUpdate)Actor_EmitMist;
   leader->motionFlags = 0;
@@ -1439,7 +1439,7 @@ void AquaRock_ArriveFromPassage(void) {
 
   if (flag == 0) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     leader->motionFlags = flag;
     Actor_SetHorizontalPositionWithTerrain(
@@ -1615,7 +1615,7 @@ void AquaRock_StartBubbles(void) {
 
   Iwram_ClearWordsEntry(state, sizeof(struct AquaRockBubbles));
   buffer = MemAlloc_(256);
-  Decompress_TaggedLz(gAquaRock_MarkerTiles, buffer);
+  Decompress_TaggedLz(gAquaRock_BubbleTiles, buffer);
   state->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(state->vramEntry, 256, buffer);
   Heap_Release(buffer);

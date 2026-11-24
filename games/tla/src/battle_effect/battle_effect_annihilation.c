@@ -49,7 +49,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FIRE_BURST_SHEET, burstPixels, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, particleSheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, particleSheet, 0, 0);
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 4, 0);
   wait(1);
   targetActor = BattleObject_GetFar(args->targets[0])->object;
@@ -68,7 +68,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   }
 
   EffectPosition_ProjectScaledBattler(args->targets[0], &origin);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {
@@ -131,7 +131,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
     EFFECT_VIEW_FROM_CAMERA(camera);
     // Shards shrink and fall.
     if (frame > 3) {
-      BattleEffect_FetchRectangleBlitters(args->side, blitters);
+      BattleEffect_BuildCanvasBlitters(args->side, blitters);
       for (i = 0; i != SHARD_COUNT; i++) {
         s32 life;
 
@@ -165,7 +165,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

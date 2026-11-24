@@ -76,7 +76,7 @@ void JupiterLighthouse_ScatterEastWeeds(void);
 void JupiterLighthouse_ScatterWeedsOverMint(void);
 void JupiterLighthouse_TeleportToBasement(void);
 
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 
 /// The grounds' map cells that answer Cyclone: the weeds round the teleporter
 /// pad and under the front wall, the pad itself, and the weeds over the Mint.
@@ -150,7 +150,7 @@ void JupiterLighthouse_ScatterWeedsOverMint(void) {
     if (FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(MINT_SPOT_X)) &&
         FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(MINT_SPOT_Z))) {
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, -16, 0);
@@ -232,8 +232,8 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_spawn.h"
 
-// Unused: nothing in the entrance sets Actor_EmitRisingSparks as an update.
-#include "shared/actor_emit_rising_sparks.h"
+// Unused: nothing in the entrance sets Actor_EmitSmoke as an update.
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

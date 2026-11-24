@@ -43,7 +43,7 @@
 /// the caster onto the target. As it arrives the screen flashes white and the
 /// target is hurled away, and Thunder Mine's ball bursts into sparks that
 /// bounce.
-void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
+void BattleEffect_RunBallLightning(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectState *state;
   void *canvas;
   s32 frame;
@@ -74,7 +74,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   sprites = Ram_HeapSlots->battleSheet;
   buffer = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  if (mode == BOLT_TRAIL_THUNDER_MINE) {
+  if (mode == BALL_LIGHTNING_THUNDER_MINE) {
     REG_BLDALPHA = EFFECT_BLEND_ADD;
   } else {
     REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX / 2);
@@ -85,9 +85,9 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                              state->sheet + BALL_LIGHTNING_TORNADO_PICTURES, 1,
                              0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, buffer, 1, 1);
-  if (mode == BOLT_TRAIL_EARTH_FORCE) {
+  if (mode == BALL_LIGHTNING_EARTH_FORCE) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_C),
                     SHEET_PALETTE_BYTES);
@@ -109,13 +109,13 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       }
     }
   }
-  if (mode == BOLT_TRAIL_THUNDER_MINE) {
+  if (mode == BALL_LIGHTNING_THUNDER_MINE) {
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  if (mode == BOLT_TRAIL_THUNDER_MINE) {
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
+  if (mode == BALL_LIGHTNING_THUNDER_MINE) {
     frames = 24;
     /* FAKEMATCH(dead): the row Thunder Mine's sparks bounce at, stored again in
      * its arm, the value it holds; as the arm without it. */
@@ -129,7 +129,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
     if (frame == 0) {
       EffectPosition_ProjectBattler(args->user, &source);
       EffectPosition_ProjectBattler(args->targets[0], &target);
-      if (mode == BOLT_TRAIL_THUNDER_MINE) {
+      if (mode == BALL_LIGHTNING_THUNDER_MINE) {
         ball->x = INTtoFIXED(source.x);
         ball->y = INTtoFIXED(source.y - 32);
         ball->velocityX = (INTtoFIXED(target.x) - ball->x) / frames;
@@ -193,7 +193,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
-      if (mode == BOLT_TRAIL_THUNDER_MINE) {
+      if (mode == BALL_LIGHTNING_THUNDER_MINE) {
         EFFECT_SHOW_DAMAGE(SE_CRASH);
       } else {
         EFFECT_SHOW_DAMAGE(-1);
@@ -209,7 +209,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       ball->variant++;
       x = FIXEDtoINT(ball->x) >> 1;
       y = FIXEDtoINT(ball->y);
-      if (mode == BOLT_TRAIL_THUNDER_MINE) {
+      if (mode == BALL_LIGHTNING_THUNDER_MINE) {
         ballSize = frame * 2 + 16;
         largest = BALL_LIGHTNING_SIZE;
       } else {
@@ -221,7 +221,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       } else {
         BattleEffect_DrawShadedCircles(buffer, ballSize,
                                        FIXED_ONE * 2673 / 2048);
-        if (mode == BOLT_TRAIL_EARTH_FORCE) {
+        if (mode == BALL_LIGHTNING_EARTH_FORCE) {
           for (i = 0; i != ballSize * ballSize / 2; i++) {
             if (buffer[i] != 0) {
               buffer[i] = CANVAS_LEVEL_BRIGHTEST + 1 - buffer[i];
@@ -229,7 +229,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
           }
         }
       }
-      Canvas_BlitAtFoot(buffer, x, y, ballSize);
+      Canvas_BlitMirroredQuarters(buffer, x, y, ballSize);
       for (i = 0; i != 4; i++) {
         // DEAD: i runs 0 to 3, so the mask changes nothing; the ROM keeps the
         // and.
@@ -255,7 +255,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
 
     // Thunder Mine's sparks bounce, each drawn at eight steps of its flight a
     // frame, so that it streaks.
-    if (mode == BOLT_TRAIL_THUNDER_MINE && frame >= frames) {
+    if (mode == BALL_LIGHTNING_THUNDER_MINE && frame >= frames) {
       for (i = 0, dot = EXTRA_PARTICLES; i != BALL_LIGHTNING_SPARKS_CLEARED;
            i++, dot++) {
         if (dot->variant >= 0) {
@@ -285,7 +285,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       texture.logHeight = 7;
       // DEAD: both kinds are overwritten by the MODEL_SHADED_MAX below; the ROM
       // keeps the test and both stores.
-      if (mode == BOLT_TRAIL_THUNDER_MINE) {
+      if (mode == BALL_LIGHTNING_THUNDER_MINE) {
         model->kind = MODEL_SHADED_MAX;
       } else {
         model->kind = MODEL_SHADED;
@@ -316,7 +316,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         Matrix_Translate(ball->x / 2 - toFIXED(64), ball->y - toFIXED(64), 0);
         Matrix_RotateZ(bolt->z);
         bolt->z += bolt->velocityZ;
-        if (mode == BOLT_TRAIL_THUNDER_MINE) {
+        if (mode == BALL_LIGHTNING_THUNDER_MINE) {
           Matrix_Scale(FIXED_ONE * 4, FIXED_ONE, FIXED_ONE);
           Render_TransformVertices(gBattleEffect_TaperedBeamCorners, vertices,
                                    4);
@@ -409,11 +409,11 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   rects = blitters;
-  BattleEffect_FetchRectangleBlitters(0, (void **)rects);
+  BattleEffect_BuildCanvasBlitters(0, (void **)rects);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              state->sheet + MEGAERA_FLASH_BURST_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, pictures, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              pictures + MEGAERA_LIGHTNING_BOLT_PICTURES, 1, 0);
@@ -445,7 +445,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
                        SHEET_PALETTE_BYTES);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   wait(1);
 
   for (frame = 0; frame != MEGAERA_FRAMES; frame++) {
@@ -465,12 +465,12 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
       position.y = toFIXED(72);
       velocity.x = toFIXED(9);
       velocity.y = -toFIXED(2);
-      BattleEffect_SpawnObjects(MEGAERA_SWORDS, SPRITE_MEGAERA_SWORD, 2);
+      BattleEffect_CreateSprites(MEGAERA_SWORDS, SPRITE_MEGAERA_SWORD, 2);
     }
     if (frame == MEGAERA_SWOOP_FRAME) {
       Sprite_DestroyFar(state->sprites[0]);
       Sprite_DestroyFar(state->sprites[1]);
-      BattleEffect_SpawnObjects(MEGAERA_OBJECTS, SPRITE_MEGAERA, 2);
+      BattleEffect_CreateSprites(MEGAERA_OBJECTS, SPRITE_MEGAERA, 2);
     }
 
     // Megaera swoops, trailing sparkles.
@@ -479,7 +479,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
       position.y += velocity.y;
       velocity.x = velocity.x * 59 / DAMPING_SCALE;
       velocity.y = velocity.y * 59 / DAMPING_SCALE;
-      BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_MEGAERA, position.x,
+      BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_MEGAERA, position.x,
                                          position.y);
       if (frame == MEGAERA_SWOOP_FRAME) {
         for (i = 0; i != MEGAERA_SPARK_COUNT; i++) {
@@ -748,7 +748,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_RunImpactBurst(SUMMON_FORMATION_MEGAERA, position.x, position.y);
   for (i = 0; i != MEGAERA_OBJECTS; i++) {
@@ -813,7 +813,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_COMET_SHEET_B,
                              state->sheet + VOID_BEAM_COMET_B_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 
   // The motes, one shade dimmer.
   for (i = 0; i != MOTE_SET_BYTES; i++) {
@@ -1037,7 +1037,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Task_Remove(BattleCamera_ApplyPhasedDelta);
   BattleEffect_EndCanvasLayer();
 }

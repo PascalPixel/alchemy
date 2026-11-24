@@ -49,7 +49,7 @@ void LightSprites_Draw(void) {
         *word++ = screenY | OBJ_X(screenX) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
         *word = (tile + frame * 8) | OBJ_PRIORITY(2);
         if (gLightSpritePriority == -1)
-          oam->priority = BattleEffect_GetObjectPriority(actor);
+          oam->priority = Actor_GetSpritePriority(actor);
         else
           oam->priority = gLightSpritePriority;
         Oam_AddSpriteAtDepthClamped(oam, depth);
@@ -71,7 +71,7 @@ void LightSprites_Draw(void) {
         *word++ = screenY | OBJ_X(screenX) | OBJ_SIZE_32X64 | OBJ_256_COLORS;
         *word = (tile + frame * 8) | OBJ_PRIORITY(2);
         if (gLightSpritePriority == -1)
-          oam->priority = BattleEffect_GetObjectPriority(actor);
+          oam->priority = Actor_GetSpritePriority(actor);
         else
           oam->priority = gLightSpritePriority;
         Oam_AddSpriteAtDepthClamped(oam, depth);

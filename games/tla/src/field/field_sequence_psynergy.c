@@ -37,20 +37,20 @@ s32 Field_UsePsynergy(u32 code) {
   Leader_StopMoving();
   fieldState->psynergyHitObject = -1;
   fieldState->standing = retreat;
-  GameFlag_Clear(FLAG_ITEM_USE);
+  GameFlag_Clear(FLAG_PSYNERGY_FROM_ITEM);
   if (userId == UNIT_NONE)
     userId = 0;
 
   // Where Psynergy has no effect.
   if (GameFlag_Get(FLAG_IN_BATTLE_ARENA)) {
     // "<Psynergy>!!! ...Nothing happened."
-    PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
+    PSYNERGY_MESSAGE(userId, abilityId, MsgPsynergyNothingHappened);
     return 0;
   }
   if (fieldState->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (abilityId == ABILITY_REVEAL || abilityId == ABILITY_MAGNET) {
       // "<Psynergy>!!! ...Nothing happened."
-      PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
+      PSYNERGY_MESSAGE(userId, abilityId, MsgPsynergyNothingHappened);
       return 0;
     }
     if (abilityId == ABILITY_HOVER) {
@@ -61,13 +61,13 @@ s32 Field_UsePsynergy(u32 code) {
         return 0;
       }
       // "<Psynergy>!!! ...Nothing happened."
-      PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
+      PSYNERGY_MESSAGE(userId, abilityId, MsgPsynergyNothingHappened);
       return 0;
     }
   }
   if (gMainRoutineState.ownerOverride != 0 && abilityId == ABILITY_SAND) {
     // "Sand!!! ...Nothing happened."
-    PSYNERGY_MESSAGE(userId, ABILITY_SAND, MsgKey0dbb);
+    PSYNERGY_MESSAGE(userId, ABILITY_SAND, MsgPsynergyNothingHappened);
     return 0;
   }
 
@@ -75,14 +75,14 @@ s32 Field_UsePsynergy(u32 code) {
   if (abilityId == ABILITY_RETREAT) {
     if (GameFlag_Get(FLAG_RETREAT_BLOCKED)) {
       // "Retreat... It doesn't work here."
-      PSYNERGY_MESSAGE(userId, ABILITY_RETREAT, MsgKey0dbd);
+      PSYNERGY_MESSAGE(userId, ABILITY_RETREAT, MsgPsynergyDoesntWorkHere);
       return 0;
     }
     MessageArgument_PushFar(ABILITY_RETREAT, MESSAGE_ARGUMENT_ABILITY);
     // "Use Retreat?" Yes: retreat; No: nothing more.
-    FieldMessage_ShowFar((s32)&MsgKey0dbc, FIELD_MESSAGE_ZOOM |
-                                               FIELD_MESSAGE_KEEP_OPEN |
-                                               FIELD_MESSAGE_LOWER);
+    FieldMessage_ShowFar((s32)&MsgPsynergyUseQuestion,
+                         FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN |
+                             FIELD_MESSAGE_LOWER);
     declined = FieldYesNo_Ask(TRUE); // 0 is yes
     Message_CloseFinishedWindowsFar();
     if (declined != 0)
@@ -125,7 +125,7 @@ s32 Field_UsePsynergy(u32 code) {
       gMainRoutineState.next != SCENE_WORLD_MAP && before == NULL &&
       after == NULL && during == NULL) {
     // "Teleport... It doesn't work here."
-    PSYNERGY_MESSAGE(userId, ABILITY_TELEPORT, MsgKey0dbd);
+    PSYNERGY_MESSAGE(userId, ABILITY_TELEPORT, MsgPsynergyDoesntWorkHere);
     return 0;
   }
 
@@ -141,7 +141,7 @@ s32 Field_UsePsynergy(u32 code) {
       if (retreat)
         fieldState->exit = 0;
       // "<Psynergy>... Not enough PP."
-      PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dba);
+      PSYNERGY_MESSAGE(userId, abilityId, MsgPsynergyNotEnoughPp);
       return 0;
     }
     Unit_AddPpFar(userId, -ppCost);
@@ -176,18 +176,18 @@ s32 Field_UsePsynergy(u32 code) {
   fieldState->psynergyActing = 1;
   if (before != NULL && (before->flags & TRIGGER_SUBJECT_QUIET)) {
     effect = Ram_HeapSlots->fieldEffectState;
-    effect->visible = 0;
-    effect->active = 0;
+    effect->flashCaster = 0;
+    effect->announceName = 0;
   }
   if (after != NULL && (after->flags & TRIGGER_SUBJECT_QUIET)) {
     effect = Ram_HeapSlots->fieldEffectState;
-    effect->visible = 0;
-    effect->active = 0;
+    effect->flashCaster = 0;
+    effect->announceName = 0;
   }
   if (during != NULL && (during->flags & TRIGGER_SUBJECT_QUIET)) {
     effect = Ram_HeapSlots->fieldEffectState;
-    effect->visible = 0;
-    effect->active = 0;
+    effect->flashCaster = 0;
+    effect->announceName = 0;
   }
   FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);
   FieldPsynergy_StartCast();
@@ -220,9 +220,10 @@ s32 Field_UsePsynergy(u32 code) {
 
 /// Runs the event tied to a field Psynergy: an action below
 /// TRIGGER_RESULT_MESSAGE_END is a message, shown at target; any other is a
-/// routine, called with mode (the user, when a cast runs it) and target. With
-/// FLAG_NOTHING_HAPPENS set it then says "But nothing happens."
-s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
+/// routine, called with argument (the user, when a cast runs it) and target.
+/// With FLAG_NOTHING_HAPPENS set it then says "But nothing happens."
+s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 argument,
+                           s32 target) {
   if (event != NULL) {
     if (event->action != 0) {
       if (event->action < TRIGGER_RESULT_MESSAGE_END) {
@@ -231,7 +232,7 @@ s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
         Event_ShowMessageAndWait(target, 0);
         Event_End();
       } else {
-        ((void (*)(s32, s32))event->action)(mode, target);
+        ((void (*)(s32, s32))event->action)(argument, target);
       }
     }
     if (GameFlag_Get(FLAG_NOTHING_HAPPENS)) {

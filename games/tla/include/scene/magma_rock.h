@@ -59,7 +59,7 @@ void Statue_FlashUnderBurst(struct Actor *actor);
 void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count);
 void MagmaRock_StartFallingRocks(void);
 
-void MagmaRock_BurstStatue(s32 mode, s32 cue);
+void MagmaRock_BurstCrackedPillar(s32 mode, s32 cue);
 
 void Actor_SetCellShape(s32 level, s32 layer, s32 id);
 

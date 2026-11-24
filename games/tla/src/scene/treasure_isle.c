@@ -53,7 +53,7 @@
 #include "shared/tables.h"
 #include "../field/actor_set_sprite_priority.c"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 
 #include "shared/scene_create_actor.h"
 
@@ -310,7 +310,7 @@ void TreasureIsle_PressChestsRoomButton(void) {
 
   if (!Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(0))) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsleChestsSpikyRocks, 0);
     Event_SetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(0));
     count = 1;
@@ -318,7 +318,7 @@ void TreasureIsle_PressChestsRoomButton(void) {
   if (!Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(1))) {
     if (count == 0)
       Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsleChestsSpikyRocks, 1);
     Event_SetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(1));
     count++;
@@ -326,7 +326,7 @@ void TreasureIsle_PressChestsRoomButton(void) {
   if (!Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(2))) {
     if (count == 0)
       Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsleChestsSpikyRocks, 2);
     Event_SetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(2));
     count++;
@@ -334,7 +334,7 @@ void TreasureIsle_PressChestsRoomButton(void) {
   if (!Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(3))) {
     if (count == 0)
       Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsleChestsSpikyRocks, 3);
     Event_SetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(3));
     count++;
@@ -352,7 +352,7 @@ void TreasureIsle_PressArmletRoomButton(void) {
 
   if (!Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(0))) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsleArmletSpikyRocks, 0);
     Event_SetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(0));
     count = 1;
@@ -360,7 +360,7 @@ void TreasureIsle_PressArmletRoomButton(void) {
   if (!Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(1))) {
     if (count == 0)
       Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsleArmletSpikyRocks, 1);
     Event_SetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(1));
     count++;
@@ -368,7 +368,7 @@ void TreasureIsle_PressArmletRoomButton(void) {
   if (!Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(2))) {
     if (count == 0)
       Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsleArmletSpikyRocks, 2);
     Event_SetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(2));
     count++;
@@ -383,7 +383,7 @@ void TreasureIsle_PressArmletRoomButton(void) {
 void TreasureIsle_RaiseLastSpikyRock(void) {
   if (!Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(4))) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsleChestsSpikyRocks, 4);
     Event_SetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(4));
     Event_End();
@@ -535,7 +535,7 @@ void TreasureIsle_MeetStarMagician(void) {
   struct Actor *leader;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldActor_StartRepeatedMotion(ACTOR_STAR_MAGICIAN, 2);
   FieldEvent_Wait(20);
   PaletteFade_ApplySource(FIXED_ONE, 0);
@@ -554,7 +554,7 @@ void TreasureIsle_MeetStarMagician(void) {
   FieldEvent_Wait(20);
   gMainRoutineState.pendingDjinni = IF_FLAG_SET(FLAG_STAR_MAGICIAN_BEATEN);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_HIDDEN_BOSSES,
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_HIDDEN_BOSSES,
                                         HIDDEN_BOSS_TREASURE_ISLE);
 }
 

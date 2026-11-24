@@ -2,5 +2,5 @@
 /// open.
 void JupiterLighthouse_FinishMovingBlock(void) {
   System_Wait(10);
-  JupiterLighthouse_CheckBlockOnCell();
+  JupiterLighthouse_CheckPillarOnButton();
 }

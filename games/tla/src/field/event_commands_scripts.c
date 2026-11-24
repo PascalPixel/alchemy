@@ -14,7 +14,7 @@
 const s32 gFieldEffect_UnusedWord[1] = {17};
 
 /// [0] only releases the actor, +1 waits for it to arrive and releases it.
-const s32 gBattleEffect_SharedParticleScript[] = {
+const s32 gFieldEffect_ReleaseScript[] = {
     SC_RELEASE,
     SC_SYNC,
     SC_RELEASE,
@@ -35,7 +35,7 @@ const s32 gFieldEffect_FragmentScript[] = {
     SC_SYNC, SC_SPEED(0.0625), SC_ANIMATION(0), SC_WAIT(10), SC_RELEASE,
 };
 
-/// The sprite palettes Actor_SetSpritePalette cycles through for value 0
+/// The sprite palettes Actor_SetLayersColorMode cycles through for value 0
 /// ((gFrameCount >> 1) & 7): 1 to 4 and back to 0, two frames each; The Broken
 /// Seal's gMindRead_CasterPaletteCycle.
 const u8 gAnim_ChildPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
@@ -44,7 +44,7 @@ const u8 gAnim_ChildPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
 
 /// An angle for each value of the right, left, up and down bits of the +Control
 /// Pad; DPAD_ANGLE_NONE for none (Input_GetDpadAngle, event_commands_mind_read.c).
-const u16 gFieldEffect_CyclePatternWords[16] = {
+const u16 gInput_DpadAngles[16] = {
     DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,
     FACING_NORTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_NORTH,
     FACING_SOUTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_SOUTH,

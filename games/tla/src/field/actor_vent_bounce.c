@@ -29,10 +29,10 @@ void VENT_BOUNCE(struct Actor *actor) {
 
   actor->x.fixed += dx;
   actor->y.fixed += actor->gravity;
-  dz = actor->riseBaseY;
+  dz = actor->sceneWord;
   actor->z.fixed += dz;
   actor->bounce = dx - dx / 18;
-  actor->riseBaseY = dz - dz / 16;
+  actor->sceneWord = dz - dz / 16;
   actor->scaleX += actor->speedLimit;
   sprite = actor->sprite;
   {
@@ -42,9 +42,9 @@ void VENT_BOUNCE(struct Actor *actor) {
   }
   sprite->rotation += actor->timer;
   if (other->y.fixed == other->groundHeight && VENT_TOUCHING(actor, other)) {
-    actor->z.fixed -= actor->riseBaseY;
-    actor->gravity += actor->riseBaseY >> 2;
-    actor->riseBaseY = 0;
+    actor->z.fixed -= actor->sceneWord;
+    actor->gravity += actor->sceneWord >> 2;
+    actor->sceneWord = 0;
   }
   for (i = 0; i < 4; i++) {
     s32 id = state->ids[i];
@@ -53,9 +53,9 @@ void VENT_BOUNCE(struct Actor *actor) {
       break;
     other = Actor_GetById(id);
     if (other->y.fixed == other->groundHeight && VENT_TOUCHING(actor, other)) {
-      actor->z.fixed -= actor->riseBaseY;
-      actor->gravity += actor->riseBaseY >> 2;
-      actor->riseBaseY = 0;
+      actor->z.fixed -= actor->sceneWord;
+      actor->gravity += actor->sceneWord >> 2;
+      actor->sceneWord = 0;
     }
   }
 }

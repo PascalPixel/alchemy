@@ -136,8 +136,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
                                  i * 2, 0);
           Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL_END,
                                  COST_COLUMN + 1, i * 2, 0);
-          Ability_LoadGlyph(encodedAction & PSYNERGY_ABILITY_MASK, 0,
-                            &iconSlots[i], &glyph, 1);
+          Ability_BuildIconTiles(encodedAction & PSYNERGY_ABILITY_MASK, 0,
+                                 &iconSlots[i], &glyph, 1);
           sprites[i].oam.f.tile = glyph;
           if ((action->flags & ABILITY_USABLE_IN_BATTLE) == 0)
             Text_SetColor(TEXT_COLOR_YELLOW);
@@ -159,8 +159,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
             rangePattern = RANGE_ICON_ALL;
           else
             rangePattern--;
-          Window_DrawThreeTileColumn(window, RANGE_COLUMN + 1, i * 2,
-                                     rangePattern, 0);
+          RangeIcon_Draw(window, RANGE_COLUMN + 1, i * 2, rangePattern, 0);
         }
         iconCount = i;
         drawnFirstEntry = firstEntry;

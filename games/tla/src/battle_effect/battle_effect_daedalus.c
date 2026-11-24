@@ -82,7 +82,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   REG_BG2X = (CANVAS_SIZE / 2 - target.x) << 8;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add((s32)BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   if (mode == MIRRORED_WALL_RECOVERY) {
     state->shakeFrames = 0;
     Sound_PlayFar(SE_POWER_UP);
@@ -141,7 +141,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_TransferCanvas);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
@@ -149,7 +149,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
 /// Packs YellowOrbSheet's six pictures to half width, keeping every second
 /// byte, the odd column's. stride: the source's bytes a row; the packed rows
 /// are half as long.
-void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride) {
+void BattleEffect_PackYellowOrbs(u8 *src, u8 *dst, s32 stride) {
   s32 row = 0;
   s32 rows = YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT;
   s32 offset = 0;
@@ -208,7 +208,7 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define DAEDALUS_PARTICLE_COUNT (DAEDALUS_MISSILE_COUNT * DAEDALUS_TRAIL_LENGTH)
 
 /// The opening's mote copies: DAEDALUS_MOTE_COPIES copies of
-/// ParticleSpritesA's mote DAEDALUS_MOTE, 4 pixels wide and 8 tall, in the
+/// YellowGlowSheet's mote DAEDALUS_MOTE, 4 pixels wide and 8 tall, in the
 /// battle sprite sheet's heap slot, the first DAEDALUS_MOTE_DIM_FIRST levels
 /// dimmer than the mote and each next DAEDALUS_MOTE_DIM_STEP more. Nothing in
 /// Daedalus draws them.
@@ -456,11 +456,11 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   battle = Ram_HeapSlots->battleState;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  RagingHeat_FillGradientCanvas();
+  BattleEffect_FillWhiteBand();
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit[0] = Ram_HeapSlots->ramCode;
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   camera = 0;
   canopyScroll = 0;
   climb = -toFIXED(DAEDALUS_CLIMB);
@@ -517,7 +517,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       state->scrollStepY = 0;
       Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
       view->busy = 1;
-      Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, state->sheet, 0,
+      Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, state->sheet, 0,
                                  0);
       // The dimmed mote copies, from the state's sprite sheet.
       off = offsetof(struct BattleEffectState, sheet);
@@ -699,7 +699,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     REG_BG2PA = Q_8_8(0.5);
     REG_BG2X = 0;
     blits = blit;
-    BattleEffect_FetchRectangleBlitters(0, blits);
+    BattleEffect_BuildCanvasBlitters(0, blits);
     state->scrollTimer = 0;
     state->scrollInterval = 5;
     state->scrollStepX = -1;
@@ -1496,7 +1496,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     args->targets[args->targetCount] = BATTLE_UNIT_LIST_END;
     BattleActor_SpawnObjectsForListFar(args->targets, 0);
     // The fall: sixteen missiles dive onto the foes.
-    BattleEffect_SpawnObjects(1, SPRITE_DAEDALUS_MISSILE, 1);
+    BattleEffect_CreateSprites(1, SPRITE_DAEDALUS_MISSILE, 1);
     for (i = 0; i != DAEDALUS_MISSILE_COPIES; i++) {
       state->sprites[1 + i] =
           EffectSprite_Acquire(32, 16, OBJ_SIZE_32X16 | OBJ_256_COLORS, 0);
@@ -1724,8 +1724,8 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_SpawnObjects(1, SPRITE_DAEDALUS_ROCKET, 3);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_CreateSprites(1, SPRITE_DAEDALUS_ROCKET, 3);
+  BattleEffect_ShowLivingTargets(state->args);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
@@ -1868,7 +1868,8 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
         BattleEffect_DrawShadedCircles(cells, size, FIXED_ONE);
       }
       cells = gMapGridCellBuffer;
-      Canvas_BlitAtFoot(cells, FIXEDtoINT(i), FIXEDtoINT(discY), size);
+      Canvas_BlitMirroredQuarters(cells, FIXEDtoINT(i), FIXEDtoINT(discY),
+                                  size);
       // Each ray at a random angle, turning a random way, a little after
       // the one before.
       if (frame == DAEDALUS_STRIKE_GLOW_START) {
@@ -1932,7 +1933,7 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
     burst += SPARKS_PER_BURST;
     frame++;
   } while (frame != DAEDALUS_STRIKE_FRAMES);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Sprite_DestroyFar(state->sprites[0]);
   BattleEffect_EndCanvasLayer();

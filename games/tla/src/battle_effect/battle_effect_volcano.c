@@ -51,7 +51,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   if (args->variant == EFFECT_VARIANT_BASIC) {
     LOAD_BG_PALETTE(RESOURCE_RED_PALETTE_B);
   } else if (args->variant == EFFECT_VARIANT_STRONGEST) {
@@ -210,7 +210,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

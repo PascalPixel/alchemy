@@ -200,7 +200,7 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 animation) {
 void Actor_ShowItemIconById(s32 id, s32 item) {
   struct Actor *actor = Actor_GetById(id);
   struct Sprite *sprite;
-  GlyphTransfer *icon;
+  IconTransfer *icon;
   s32 tile;
   u8 kind;
 
@@ -210,7 +210,7 @@ void Actor_ShowItemIconById(s32 id, s32 item) {
       sprite = actor->sprite;
       if (item & SCOOPED_COINS)
         item = COIN_ICON_ITEM;
-      icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+      icon = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
       Dma_Fill32(0, icon->tiles, ICON_TILE_BYTES);
 #ifdef UBFIX
       Icon_DrawItemFar(item);
@@ -219,7 +219,7 @@ void Actor_ShowItemIconById(s32 id, s32 item) {
       ((void (*)(s32, u8 *))Icon_DrawItemFar)(item, icon->tiles);
 #endif
       tile = VramCache_Load(sprite->slot, ICON_TILE_BYTES, icon->tiles);
-      HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+      HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
       actor->retainSpriteCache = kind;
       SpriteAnimation_ClearFar(sprite->entries[0]);
       sprite->entries[0] = NULL;

@@ -71,9 +71,9 @@ void FieldPsynergy_Blaze(void) {
   state = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BlazeState));
   scene = Ram_HeapSlots->fieldEffectState;
   event = Ram_HeapSlots->fieldState;
-  caster = scene->mainActor;
+  caster = scene->caster;
   look = BLAZE_RED;
-  actor = scene->child;
+  actor = scene->target;
   if (Actor_GetSpriteIdFar(actor) == SPRITE_MARS_TORCH_LIT) {
     kind = ACTOR_FIRST_LAYER(actor)->colorMode;
     if (kind == SPRITE_COLOR_GBR)
@@ -85,7 +85,7 @@ void FieldPsynergy_Blaze(void) {
   }
   Field_StartColorTransition(8, gBlaze_TintColors[look]);
   state->mode = BLAZE_FLICKER;
-  if (scene->enabled != 0) {
+  if (scene->aimAhead != 0) {
     state->origin[0] = scene->x;
     state->origin[1] = scene->y + toFIXED(16);
     state->origin[2] = scene->z;
@@ -97,17 +97,17 @@ void FieldPsynergy_Blaze(void) {
           (id == SPRITE_EXCLAMATION_BUBBLE || id == SPRITE_BRAZIER ||
            id == SPRITE_LIT_CANDLESTICK || id == SPRITE_MARS_TORCH_LIT)) {
         distance = Field_MeasurePsynergyReach(scene->fieldPsynergy,
-                                              scene->firstActorId, i);
+                                              scene->casterId, i);
         if (distance != -1 && best > distance) {
           height = toFIXED((s8)Resource_GetMetadataRecordFarFar(
                                ACTOR_FIRST_LAYER(cursor.actor)->animationId)
-                               ->boxX);
+                               ->spriteTop);
           state->mode = BLAZE_LIGHT_TORCH;
           state->origin[0] = cursor.actor->x.fixed;
           state->origin[1] = cursor.actor->y.fixed + height;
           state->origin[2] = cursor.actor->z.fixed;
-          scene->secondActorId = i;
-          scene->child = cursor.actor;
+          scene->targetId = i;
+          scene->target = cursor.actor;
           best = distance;
         }
       }
@@ -117,10 +117,10 @@ void FieldPsynergy_Blaze(void) {
       state->mode = BLAZE_SPRAY;
     else
       state->mode = BLAZE_LONG_SPRAY;
-    if (scene->child != NULL)
+    if (scene->target != NULL)
       height = toFIXED((s8)Resource_GetMetadataRecordFarFar(
-                           ACTOR_FIRST_LAYER(scene->child)->animationId)
-                           ->boxX);
+                           ACTOR_FIRST_LAYER(scene->target)->animationId)
+                           ->spriteTop);
     else
       height = toFIXED(20);
     state->origin[0] = scene->x;
@@ -160,7 +160,7 @@ void FieldPsynergy_Blaze(void) {
   } else {
 
     Sound_PlayFar(SE_RUSH);
-    BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
+    BattleEffect_SetObjectUpdateMode(scene->caster, 0);
     state->angle = scene->angle8;
     state->targetAngle = scene->angle8;
     switch (look) {
@@ -189,8 +189,8 @@ void FieldPsynergy_Blaze(void) {
       sprite = &state->drops[j];
 
       EffectSprite_Init(sprite, 15, 24, OBJ_SIZE_32X32, tile);
-      sprite->depth = BattleEffect_GetObjectDepth(caster) + BLAZE_DROP_DEPTH;
-      sprite->oam.priority = BattleEffect_GetObjectPriority(caster);
+      sprite->depth = Actor_GetSpriteDepth(caster) + BLAZE_DROP_DEPTH;
+      sprite->oam.priority = Actor_GetSpritePriority(caster);
       sprite->oam.fullColor = 1;
       sprite->oam.palette = 0;
       cursor.particle->timer = -1;
@@ -223,8 +223,7 @@ void FieldPsynergy_Blaze(void) {
             PSYNERGY_TRIGGER(PSYNERGY_PHASE_HITS), scene->fieldPsynergy,
             (s16)(state->hitObject | PSYNERGY_TARGET_ACTOR));
         if (pending != NULL)
-          Field_RunPsynergyEvent(pending, scene->firstActorId,
-                                 state->hitObject);
+          Field_RunPsynergyEvent(pending, scene->casterId, state->hitObject);
         if (Scene_FindPsynergyTrigger(
                 PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END),
                 scene->fieldPsynergy,

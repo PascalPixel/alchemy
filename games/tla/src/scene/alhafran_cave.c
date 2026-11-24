@@ -530,7 +530,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
     return;
   Event_SetFlag(FLAG_FAMILY_VISITED_BRIGGS);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetSpeed(ACTOR_CHAUCHA, 1);
   Actor_SetSpeed(ACTOR_EOLEO, 1);
   Actor_SetSpeed(ACTOR_PIRATE_ON_THE_BOAT, 1);
@@ -618,7 +618,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   position[2] = key->z.fixed;
   FieldVector_AddPolarOffset(16, FACING_NORTH, position);
   FieldActor_SetMoveTargetFX(effect, position[0], position[1], position[2]);
-  FieldEffect_SnapScaleToFull(effect);
+  FieldEffect_GrowHandAndWait(effect);
   Actor_SelectAnimation(effect, 4);
   key->update = AlhafranCave_CycleKeyColors;
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHWEST, 0);
@@ -661,7 +661,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_ShowEmote(ACTOR_EOLEO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   key->update = 0;
   Actor_SetSpriteColorMode(key, 0);
-  UpdateRisingParticleBurst(effect);
+  FieldEffect_BurstHand(effect);
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();

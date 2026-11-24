@@ -12,7 +12,7 @@ s32 Statue_FindUnderBurst(u16 *table) {
   for (; *table != ACTOR_LIST_END; result = *table++) {
     id = *table++;
     if (cell == *table++) {
-      watch->child = Actor_Get(id);
+      watch->target = Actor_Get(id);
       result = *table;
       break;
     }

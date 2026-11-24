@@ -55,7 +55,7 @@
 #include "battle/battle_unit.h"
 #include "system/irq.h"
 #include "system/scene.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "version.h"
 #include "field/field_sprite.h"
 #include "system/vector3.h"
@@ -120,7 +120,7 @@ struct DropletBuffer {
   struct Particle droplets[512];
 };
 
-extern const struct Scale gEclipse_Scales;
+extern const struct Scale gEclipse_DragonScale;
 
 extern const struct Scale gCruelRuin_UnitScale;
 
@@ -274,7 +274,7 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define SUMMON_PROJECTION_CENTER_Y 240
 
 /// The frames the battle background darkens behind an effect's canvas
-/// (state->fadeFrames, Palette_StepFadeTransfer).
+/// (state->fadeFrames, BattleEffect_DarkenBackgroundStep).
 #define BACKGROUND_DARKEN_FRAMES 24
 /// The level BattleBackground_LoadFar darkens the battle's own background to
 /// as it comes back after an effect: as dark as the canvas's fade left it.
@@ -305,7 +305,7 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define EFFECT_DRAW_PICTURE(draw, canvas, sheet, name, x, y)                   \
   (draw)(canvas, (sheet) + (name), x, y, name##_WIDTH, name##_HEIGHT)
 
-/// A bite's half pictures (TwelveModeImage's closing fangs, each drawn beside
+/// A bite's half pictures (BlueDropletSheet's closing fangs, each drawn beside
 /// its mirror): the canvas row they start at, and their size.
 #define TARGET_STRIKE_BITE_Y 56
 #define TARGET_STRIKE_BITE_WIDTH 18
@@ -439,7 +439,7 @@ enum RedCrescentPicture {
 #define BLUE_ARC_HEIGHT 72
 #define YELLOW_ORB_WIDTH 40
 #define YELLOW_ORB_HEIGHT 48
-/// The yellow orb as BattleEffect_PackTileRows packs it, every second byte.
+/// The yellow orb as BattleEffect_PackYellowOrbs packs it, every second byte.
 #define YELLOW_ORB_PACKED_WIDTH (YELLOW_ORB_WIDTH / 2)
 #define YELLOW_ORB_PACKED_HEIGHT YELLOW_ORB_HEIGHT
 #define YELLOW_ORB_PICTURES 6
@@ -585,7 +585,7 @@ enum RedCrescentPicture {
     if ((level) < 0)                                                           \
       (level) = 0;                                                             \
   }
-/// The bytes of ParticleSpritesD's ten flare pictures, 2 to 20 pixels square:
+/// The bytes of BlueGlowSheet's ten flare pictures, 2 to 20 pixels square:
 /// 4 * (1 + 4 + ... + 100).
 #define FLARE_SET_BYTES 1540
 #define MOTE_PICTURES 10
@@ -693,7 +693,7 @@ enum TargetStrikeStyle {
 /// Sets the transfer, then starts copying the canvas to VRAM once a frame.
 #define EFFECT_START_TRANSFER(state, mode, value)                              \
   (EFFECT_SET_TRANSFER(state, mode, value),                                    \
-   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK))
+   Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK))
 
 /// Presents the canvas and waits for the next frame.
 #define EFFECT_PRESENT_CANVAS(state) ((state)->transferPending = 1, wait(1))
@@ -717,12 +717,12 @@ enum TargetStrikeStyle {
 /// The usual end of a canvas effect: the transfer, the blitters, then the
 /// canvas layer.
 #define EFFECT_FINISH_CANVAS()                                                 \
-  (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
-   EFFECT_RELEASE_BLITTERS(), BattleEffect_EndCanvasLayer())
+  (Task_Remove(BattleEffect_TransferCanvas), EFFECT_RELEASE_BLITTERS(),        \
+   BattleEffect_EndCanvasLayer())
 
 /// The same for an effect that drew through one blitter.
 #define EFFECT_FINISH_CANVAS_ONE_BLITTER()                                     \
-  (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
+  (Task_Remove(BattleEffect_TransferCanvas),                                   \
    HeapSlot_Release(HEAP_SLOT_RAM_CODE), BattleEffect_EndCanvasLayer())
 
 /// The largest of the ten mote pictures.
@@ -801,18 +801,21 @@ enum GaspMode {
   GASP_MODE_PSY_BOOST
 };
 
-/// The water column's modes (BattleEffect_RunWaterColumn), each named for the
-/// effect that plays it.
-enum WaterColumnMode {
-  WATER_COLUMN_WHORL,
-  WATER_COLUMN_GALE,
-  WATER_COLUMN_LETHE_ALBION,
-  WATER_COLUMN_POISON_FLOW,
-  WATER_COLUMN_RAGING_FLOOD
+/// The twisting column's modes (BattleEffect_RunTwistingColumn), each named for
+/// the effect that plays it.
+enum TwistingColumnMode {
+  TWISTING_COLUMN_WHORL,
+  TWISTING_COLUMN_GALE,
+  TWISTING_COLUMN_LETHE_ALBION,
+  TWISTING_COLUMN_POISON_FLOW,
+  TWISTING_COLUMN_RAGING_FLOOD
 };
 
-/// The bolt trail's modes (BattleEffect_RunBoltTrail).
-enum BoltTrailMode { BOLT_TRAIL_THUNDER_MINE, BOLT_TRAIL_EARTH_FORCE };
+/// The ball lightning's modes (BattleEffect_RunBallLightning).
+enum BallLightningMode {
+  BALL_LIGHTNING_THUNDER_MINE,
+  BALL_LIGHTNING_EARTH_FORCE
+};
 
 /// The Djinni charge's modes (BattleEffect_RunDjinniCharge).
 enum DjinniChargeMode { DJINNI_CHARGE_CORE, DJINNI_CHARGE_CANNON };
@@ -944,7 +947,7 @@ void Display_ApplyBg2Affine(void);
 void BattleEffect_SetupCanvasTileMap(void);
 /// Marks the transition done and shows the battle view again.
 void BattleEffect_HideBg1AndRestoreBackdrop(void);
-void BattleEffect_FlushPendingGraphicsTransfer(void);
+void BattleEffect_TransferFullScreenImage(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
 void BattleEffect_BuildCanvasTilemap(void);
@@ -961,7 +964,7 @@ void BattleEffect_ProcessPendingStampTransfer(void);
 
 // mirrored_wall.c
 /// Fetches the max and additive blitters, flipped or not.
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_BuildCanvasBlitters(s32 flip, void **out);
 
 // prism.c
 void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
@@ -979,7 +982,7 @@ enum CameraPhase {
 void BattleCamera_ApplyPhasedDelta(void);
 
 // dispatch.c
-void BattleEffect_SelectLivingTargets(struct BattleEffectParams *party);
+void BattleEffect_ShowLivingTargets(struct BattleEffectParams *args);
 void BattleEffect_CallDoNothing(s32 cnt);
 void BattleEffect_BuildWindowEdgeTable(void);
 
@@ -996,7 +999,7 @@ void BattleEffect_RunDull(struct BattleEffectParams *args);
 void BattleEffect_RunWeaken(struct BattleEffectParams *args);
 
 // eruption.c
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
+void BattleEffect_CreateSprites(s32 count, s32 spriteId, u32 priority);
 
 // projectiles.c
 void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
@@ -1052,11 +1055,11 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *effect);
 /// Steps the background colours one shade toward a resource's palette.
 void BattleEffect_StepPaletteToResource(s32 resource);
 
-// canvas_routine.c
+// canvas_wipe.c
 void BattleEffect_WipeCanvas(s32 direction, s32 fill);
 
 // particle_streams.c
-void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z);
+void BattleEffect_PlaceFormationSprites(s32 formation, s32 x, s32 z);
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y);
 void BattleEffect_ArmPaletteHBlankDma(void);
 void Render_ApplyProjectedPlacementFar(struct Sprite *sprite, s32 *position,
@@ -1082,10 +1085,11 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunHeavyBlow(struct BattleEffectParams *effect, s32 mode);
 
 // thunder_mine.c
-void BattleEffect_RunBoltTrail(struct BattleEffectParams *effect, s32 mode);
+void BattleEffect_RunBallLightning(struct BattleEffectParams *effect, s32 mode);
 
 // whorl.c
-void BattleEffect_RunWaterColumn(struct BattleEffectParams *effect, u32 mode);
+void BattleEffect_RunTwistingColumn(struct BattleEffectParams *effect,
+                                    u32 mode);
 void BattleEffect_RunDjinniCharge(struct BattleEffectParams *effect, s32 mode);
 
 // rime.c
@@ -1095,13 +1099,13 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunGaspFamily(struct BattleEffectParams *effect, s32 mode);
 
 // raging_heat.c
-void RagingHeat_FillGradientCanvas(void);
+void BattleEffect_FillWhiteBand(void);
+
+// star_mine.c
+void BattleEffect_BuildRepeatingTilemap(void);
 
 // rushing_strike.c
 void BattleEffect_RunRushingStrike(struct BattleEffectParams *effect, s32 mode);
-void BattleEffect_BuildRepeatingTilemap(void);
-
-// glowing_lunge.c
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *effect, s32 mode);
 
 // vengeance.c
@@ -1116,7 +1120,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunCards(struct BattleEffectParams *effect, s32 mode);
 
 // breaths.c
-void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size);
+void Canvas_BlitMirroredQuarters(void *source, s32 x, s32 y, s32 size);
 void BattleEffect_RunBreaths(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunCrescentSlash(struct BattleEffectParams *effect, s32 mode);
 
@@ -1125,7 +1129,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_ArmMeteorBlowPaletteDma(void);
 
 // liquifier.c
-void BattleEffect_RunCanvasModeByCount(struct BattleEffectParams *effect);
+void BattleEffect_RunBallAttack(struct BattleEffectParams *effect);
 
 // odyssey.c
 /// The five-argument blitter builder's far call, which only a call in
@@ -1166,12 +1170,12 @@ void BattlePlayback_StartFar(s32 phase);
 /// Whether an enemy's sprite takes the heavy impact, through its far call.
 s32 BattleSprite_HasHeavyImpactFar(s32 enemyId);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void *GetMotionRecordFar(void *object, s32 index);
+void *Actor_GetSpriteFar(void *object, s32 index);
 u32 Heap_GetRemainingIwram(void);
 s32 Inn_RoomPrice(s32 innId);
 void Palette_LoadBasicSpriteColors(void);
 u32 Random16(void);
-void ReleaseBattleObjectRecordsFar(s32 actor);
+void BattleObject_DestroySpritesFar(s32 actor);
 s32 Matrix_ProjectPoint(const void *point, s32 *screen);
 void Matrix_TranslateVector(const FIXED *pos);
 void Matrix_Translate(FIXED x, FIXED y, FIXED z);
@@ -1214,10 +1218,10 @@ extern u16 gSpire_ShardPictures[];
 extern u16 gStatChange_ShardPictures[];
 extern u8 gStatChange_ShardWidths[];
 extern u8 gStatChange_ShardHeights[];
-extern u8 gCastingImpact_PictureX[];
-extern u8 gCastingImpact_PictureY[];
-extern u8 gFalling_IceCounts[];
-extern u8 gFalling_Counts[];
+extern u8 gReaper_PictureX[];
+extern u8 gReaper_PictureY[];
+extern u8 gIce_Counts[];
+extern u8 gDouse_Counts[];
 extern s8 gStreak_Styles[];
 extern s8 gStreak_Tremble[];
 extern u8 gTargetStrike_Styles[][7];
@@ -1227,13 +1231,13 @@ extern u16 gTargetStrike_Pictures[];
 extern u8 gTargetStrike_Reach[];
 extern u8 gTargetStrike_BiteStages[];
 extern u8 gTargetStrike_GlintDrawFlags[];
-extern u8 gDeathPlunge_PieceWidths[];
-extern u8 gDeathPlunge_PieceHeights[];
-extern u16 gDeathPlunge_PiecePictures[];
-extern u8 gDeathPlunge_PieceStartX[];
-extern u8 gDeathPlunge_PieceStartY[];
-extern s8 gDeathPlunge_X[];
-extern s8 gDeathPlunge_Y[];
+extern u8 gShatteringOpening_PieceWidths[];
+extern u8 gShatteringOpening_PieceHeights[];
+extern u16 gShatteringOpening_PiecePictures[];
+extern u8 gShatteringOpening_PieceStartX[];
+extern u8 gShatteringOpening_PieceStartY[];
+extern s8 gElementBurst_SparkX[];
+extern s8 gElementBurst_SparkY[];
 extern u8 gElementBurst_GlintFlips[];
 extern const struct ModelVertex gCruelRuin_StreakCorners[];
 extern const u16 gCruelRuin_DiscPitches[];
@@ -1268,7 +1272,7 @@ extern u8 gPrism_ShardHeights[];
 extern s32 gPrism_ShardPictures[];
 extern u8 gGatheringLights_Counts[];
 extern u8 gDjinnBeams_MotePictures[];
-extern u16 gMirroredWall_Pictures[];
+extern u16 gDjinnBeams_HeadPictures[];
 extern u8 gDjinnBeams_HeadWidths[];
 extern u8 gDjinnBeams_HeadHeights[];
 extern s8 gLobbedShells_Styles[];
@@ -1303,7 +1307,7 @@ extern u8 gPrism_Counts[];
 extern u16 gPlasma_Sparks[];
 extern u8 gPlasma_Columns[];
 extern u8 gPlasma_Counts[];
-extern u16 gPlasma_Shapes[][5];
+extern u16 gSparkGroups_Shapes[][5];
 extern u8 gPlasma_FlashPictures[];
 extern u8 gVolcano_Counts[];
 extern s8 gVolcano_Depths[][4];
@@ -1367,7 +1371,7 @@ extern u8 gRay_Sparks[][2];
 extern u8 gEruption_Counts[][3];
 extern u16 gEruption_PuffPictures[];
 extern u16 gEruption_PuffSizes[];
-extern u8 gProjectileVolleyB_GlintFlips[];
+extern u8 gBurstShower_GlintFlips[];
 extern s32 gAtalanta_UnitScale[];
 extern u8 gGrowth_VineWidths[];
 extern u8 gGrowth_HeightLimits[];
@@ -1380,16 +1384,16 @@ extern s8 gGrowth_PillarHeights[];
 extern s8 gGrowth_PuffWidths[];
 extern u8 gGrowth_PuffHeights[];
 extern u16 gGrowth_PuffPictures[];
-extern const s8 gGrowth_ColumnOffsets[];
-extern u8 gGrowth_Kinds[];
-// A thorn's kind in gGrowth_Kinds.
+extern const s8 gVine_ColumnOffsets[];
+extern u8 gThorn_Kinds[];
+// A thorn's kind in gThorn_Kinds.
 #define THORN_MIRRORED 1 ///< drawn mirrored across
 #define THORN_SMALL 2    ///< 32 pixels wide, not 48
-extern s8 gGrowth_X[];
-extern u8 gGrowth_Counts[];
-extern s8 gGrowth_ThornPuffWidths[];
-extern u8 gGrowth_ThornPuffHeights[];
-extern u16 gGrowth_ThornPuffPictures[];
+extern s8 gThorn_X[];
+extern u8 gThorn_Counts[];
+extern s8 gThorn_PuffWidths[];
+extern u8 gThorn_PuffHeights[];
+extern u16 gThorn_PuffPictures[];
 extern u8 gBolt_Counts[];
 extern u8 gBolt_GlintFlips[];
 extern u8 gBolt_GlintModes[];
@@ -1406,12 +1410,12 @@ extern const u8 gDjinnAttacks_LaunchFrames[];
 extern u8 gHail_PictureWidths[];
 extern u8 gHail_PictureHeights[];
 extern u16 gHail_Pictures[];
-extern const u8 gHail_CrackleFlips[];
-extern const u8 gHail_PortalWidths[];
-extern const u8 gHail_PortalHeights[];
-extern const u16 gHail_PortalPictures[];
-extern const u8 gHail_PortalX[];
-extern const u8 gHail_PortalY[];
+extern const u8 gGround_CrackleFlips[];
+extern const u8 gGround_PortalWidths[];
+extern const u8 gGround_PortalHeights[];
+extern const u16 gGround_PortalPictures[];
+extern const u8 gGround_PortalX[];
+extern const u8 gGround_PortalY[];
 extern const u8 gThor_TargetPalettes[];
 extern const u8 gThor_CrackleFlips[];
 extern u8 gSpire_ShardOffsets[];
@@ -1433,11 +1437,11 @@ extern const u8 gUlysses_PictureWidths[];
 extern const u8 gUlysses_PictureHeights[];
 extern const u16 gUlysses_Pictures[];
 extern const s8 gUlysses_ParticleStarts[][5];
-extern const u8 gSpiderWeb_PictureWidths[];
-extern const u8 gSpiderWeb_PictureHeights[];
-extern const u16 gSpiderWeb_Pictures[];
-extern const u8 gSpiderWeb_PictureX[];
-extern const s8 gSpiderWeb_PictureBiasY[];
+extern const u8 gSwirlSwipe_PictureWidths[];
+extern const u8 gSwirlSwipe_PictureHeights[];
+extern const u16 gSwirlSwipe_Pictures[];
+extern const u8 gSwirlSwipe_PictureX[];
+extern const s8 gSwirlSwipe_PictureBiasY[];
 extern const u8 gAzul_PartPoints[][2];
 extern const struct Scale gAzul_UnitScale;
 extern const u8 gAzul_ObjectX[];
@@ -1476,23 +1480,23 @@ extern const u8 gCastingImpact_ArmorCrushWaveGrowth[];
 extern const u8 gCastingImpact_ArmorCrushWaveStretch[];
 extern u8 gNereidCopy_Columns[];
 extern const s32 gNereidCopy_Gravity[];
-extern const u8 gHelmSplitter_TwelveX[];
-extern const u8 gHelmSplitter_TwelveZ[];
-extern const u8 gHelmSplitter_RightEightX[];
-extern const u8 gHelmSplitter_RightEightZ[];
-extern const u8 gFormationObjects_X[];
-extern const u8 gFormationObjects_Z[];
-extern const u8 gHelmSplitter_SmallEightX[];
-extern const u8 gHelmSplitter_SmallEightZ[];
-extern const s8 gFormationObjects_WideX[];
-extern const u8 gFormationObjects_WideZ[];
-extern u8 gHelmSplitter_ImpactBurstPictureWidths[];
-extern u8 gHelmSplitter_ImpactBurstPictureHeights[];
-extern u16 gHelmSplitter_ImpactBurstPictures[];
-extern s16 gParticleStreams_OrbitPoints[][3];
-extern s16 gParticleStreams_FireballPoints[][2];
-extern u16 gParticleStreams_FlashPictures[];
-extern u16 gParticleStreams_FlashSizes[];
+extern const u8 gSummonFormation_NereidX[];
+extern const u8 gSummonFormation_NereidZ[];
+extern const u8 gSummonFormation_CybeleX[];
+extern const u8 gSummonFormation_CybeleZ[];
+extern const u8 gSummonFormation_TiamatAlternateX[];
+extern const u8 gSummonFormation_TiamatAlternateZ[];
+extern const u8 gSummonFormation_TiamatX[];
+extern const u8 gSummonFormation_TiamatZ[];
+extern const s8 gSummonFormation_MegaeraX[];
+extern const u8 gSummonFormation_MegaeraZ[];
+extern u8 gImpactBurst_PictureWidths[];
+extern u8 gImpactBurst_PictureHeights[];
+extern u16 gImpactBurst_Pictures[];
+extern s16 gStarfieldFall_OrbitPoints[][3];
+extern s16 gStarfieldFall_FireballPoints[][2];
+extern u16 gStarfieldFall_FlashPictures[];
+extern u16 gStarfieldFall_FlashSizes[];
 extern u8 gRamses_StatueColumns[];
 extern u8 gRamses_StatueRows[];
 extern u16 gRamses_PuffPictures[];
@@ -1501,15 +1505,15 @@ extern u8 gRagnarok_StrikeColumns[];
 extern u8 gRagnarok_FlashPictures[];
 extern u8 gTitanBlade_FlashPictures[];
 extern s32 gTitanBlade_DustGravity[];
-extern const u8 gJudgment_BurstPictures[];
+extern const u8 gJudgment_ShieldSprites[];
 extern const u16 gJudgment_ShardPictures[];
 extern const u8 gJudgment_ShardWidths[];
 extern const u8 gJudgment_ShardHeights[];
 extern u8 gKirin_Columns[];
 extern u8 gKirin_Rows[];
 extern s32 gNeptune_Gravity[];
-extern const u16 gUndeadSword_SparkPictures[];
-extern const u16 gUndeadSword_SparkSizes[];
+extern const u16 gUndeadSword_PuffPictures[];
+extern const u16 gUndeadSword_PuffSizes[];
 extern const u8 gWindFunnel_Counts[];
 extern const u8 gDiamondBerg_RingStarts[4];
 extern const u8 gDiamondBerg_RingGrowth[4];
@@ -1539,9 +1543,9 @@ extern const s8 gWyrdCurse_DropBounces[];
 extern const u8 gBoltTrail_GlintFlips[];
 extern const u8 gMegaera_GlintFlips[];
 extern const u8 gMegaera_GlintModes[];
-extern const s32 gLightSurge_PillarSizes[4];
-extern const s8 gLightSurge_PillarShades[4];
-extern s8 gLightSurge_PillarOffsets[4];
+extern const s32 gLightSurge_RingSizes[4];
+extern const s8 gLightSurge_RingShades[4];
+extern s8 gLightSurge_RingSways[4];
 extern const u8 gDjinniCharge_EntranceFlags[];
 extern const s32 gDjinniCharge_DebrisGravity[4];
 extern const s8 gGaspFamily_StreakSteps[];
@@ -1563,7 +1567,7 @@ extern const struct ModelVertex gBattleEffect_BeamCorners[];
 extern const struct ModelVertex gBattleEffect_LongBeamCorners[];
 extern const struct ModelVertex gBattleEffect_SquareCorners[];
 extern const struct ModelVertex gBattleEffect_StandingSquareCorners[];
-extern struct ModelVertex gLegend_WingCorners[];
+extern struct ModelVertex gLegend_FanFlameCorners[];
 extern const struct ModelVertex gBattleEffect_GroundSquareCorners[];
 extern const u16 gBattleEffect_SmallSquareMesh[];
 extern const u16 gBattleEffect_SmallSquareMeshReversed[];
@@ -1575,12 +1579,12 @@ extern const u16 gCatastrophe_ForkMesh[];
 extern const u16 gBattleEffect_SquareMesh[];
 extern const u16 gBattleEffect_LargeSquareMesh[];
 extern const u16 gHaures_BurstMesh[];
-extern u8 gHeartbreak_SwingWidths[];
-extern u8 gHeartbreak_SwingHeights[];
-extern u16 gHeartbreak_SwingPictures[];
-extern u8 gHeartbreak_FistHeights[];
-extern u8 gHeartbreak_FistY[];
-extern u16 gHeartbreak_FistPictures[];
+extern u8 gHeartbreak_SparkBurstWidths[];
+extern u8 gHeartbreak_SparkBurstHeights[];
+extern u16 gHeartbreak_SparkBurstPictures[];
+extern u8 gHeartbreak_HeartBurnHeights[];
+extern u8 gHeartbreak_HeartBurnY[];
+extern u16 gHeartbreak_HeartBurnPictures[];
 extern const u8 gRagingHeat_Styles[][4];
 extern u8 gJuggle_Styles[][7];
 extern const u8 gFlora_PetalSizes[];
@@ -1663,8 +1667,8 @@ extern const u8 gCatastrophe_GlintFlips[];
 extern const s16 gCatastrophe_BoltRolls[];
 extern const u8 gHaures_ParticleX[];
 extern s32 gHaures_UnitScale[];
-extern const u8 gHaures_WingShapes[];
-extern u8 gHaures_WingMorphSteps[];
+extern const u8 gHaures_MoundShapes[];
+extern u8 gHaures_MoundMorphSteps[];
 extern const u8 gHaures_PartPoints[];
 extern const u8 gHaures_BandStarts[];
 extern u8 gHelmSplitter_PictureWidths[];
@@ -1832,11 +1836,11 @@ extern const struct Scale gCatastrophe_UnitScale;
 
 // haures.c
 /// In the map cell buffer: the mound's faces, eight bytes a quad.
-extern u8 gHaures_WingStrip[];
+extern u8 gHaures_MoundStrip[];
 /// The face after the mound's last, which ends the strip.
-extern u8 gHaures_WingStripEnd[];
+extern u8 gHaures_MoundStripEnd[];
 /// In the map cell buffer: each mound corner's shade.
-extern u8 gHaures_WingShades[];
+extern u8 gHaures_MoundShades[];
 extern const struct Scale gHaures_ChargeScale;
 extern const struct Scale gHaures_OrbitScale;
 extern const struct Scale gHaures_OpeningScale;
@@ -1857,7 +1861,7 @@ extern const u32 gBlitterTemplate[];
 /// brightest canvas level.
 extern const u32 BattleEffect_Mask[];
 /// The ARM immediate operand for 1 << n, n from 0 to 15 (blitter_operands.c).
-extern const u16 gBattleEffect_BitOperands[];
+extern const u16 gBlitter_ImmediatePowers[];
 /// Copy, one pixel, right to left.
 extern const u32 BattleEffect_CopyReverse[];
 /// Copy, one pixel, left to right.

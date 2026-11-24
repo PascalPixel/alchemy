@@ -80,10 +80,10 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   battleEffectState->shakeFrames = 128;
   Sound_PlayFar(SE_RUMBLE);
 
-  for (frame = 0; frame != gQuake_Timings[args->variant][TIMING_FRAMES];
+  for (frame = 0; frame != gQuake_Timings[args->variant][QUAKE_TIMING_FRAMES];
        frame++) {
     EFFECT_VIEW_FROM_CAMERA(camera);
-    if (frame == gQuake_Timings[args->variant][TIMING_FRAMES] - 16)
+    if (frame == gQuake_Timings[args->variant][QUAKE_TIMING_FRAMES] - 16)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     for (column = 0; column != QUAKE_PILLARS; column++) {
@@ -94,8 +94,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
       if ((frame & 31) + 32 == riseFrame)
         heights.column[column] += 32;
       if (frame >= riseFrame &&
-          frame <
-              riseFrame + gQuake_Timings[args->variant][TIMING_RISE_FRAMES]) {
+          frame < riseFrame +
+                      gQuake_Timings[args->variant][QUAKE_TIMING_RISE_FRAMES]) {
         s32 height;
         s32 top;
 
@@ -149,8 +149,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
                                  POSE_DAMAGE, member, 5);
       }
     }
-    BattleCamera_Shake(gQuake_Timings[args->variant][TIMING_SHAKE],
-                       gQuake_Timings[args->variant][TIMING_SHAKE]);
+    BattleCamera_Shake(gQuake_Timings[args->variant][QUAKE_TIMING_SHAKE],
+                       gQuake_Timings[args->variant][QUAKE_TIMING_SHAKE]);
     EFFECT_END_FRAME(battleEffectState);
   }
 

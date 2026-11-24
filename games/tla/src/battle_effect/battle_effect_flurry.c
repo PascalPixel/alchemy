@@ -114,7 +114,7 @@ FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunDoublestep, FLURRY_GUST,
 /// Where BlueArcSheetA or BlueArcSheetB is decoded in the effect's pictures.
 #define FLURRY_BLUE_ARC_PICTURES 3200
 /// The yellow orb's pictures, packed to half width past the smoke.
-#define FLURRY_FLASH_PICTURES (Ram_MapCellBuffer + 21128)
+#define FLURRY_ORB_PICTURES (Ram_MapCellBuffer + 21128)
 /// The level the canvas fills with on each hit, where the style flashes.
 #define FLURRY_FLASH_LEVEL 47
 
@@ -175,19 +175,19 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
         screen, otherPoint);
 
   // The pictures and the palette.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   // The orb's pictures, packed to half width: the canvas is shown twice as
   // wide.
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, state->sheet, 1, 0);
   /* FAKEMATCH(temporary): the flash pictures reached from a local holding the
-   * wave pictures' address; as FLURRY_FLASH_PICTURES[dst]. */
+   * wave pictures' address; as FLURRY_ORB_PICTURES[dst]. */
   waves = FLURRY_WAVE_PICTURES;
   for (row = 0; row != YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT; row++) {
     for (col = 0; col != YELLOW_ORB_WIDTH; col++) {
       s32 dst = row * YELLOW_ORB_PACKED_WIDTH + col / 2;
       s32 src = row * YELLOW_ORB_WIDTH + col;
 
-      (waves + dst)[FLURRY_FLASH_PICTURES - FLURRY_WAVE_PICTURES] =
+      (waves + dst)[FLURRY_ORB_PICTURES - FLURRY_WAVE_PICTURES] =
           state->sheet[src];
     }
   }
@@ -348,7 +348,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
       if (frame >= start + 2 && frame < start + 14)
         ((DrawRectangle)draw[0])(
             canvas,
-            FLURRY_FLASH_PICTURES +
+            FLURRY_ORB_PICTURES +
                 ((frame - start - 2) / 2) * PICTURE_BYTES(YELLOW_ORB_PACKED),
             targetPos.x / 2 - YELLOW_ORB_PACKED_WIDTH / 2,
             targetPos.y - YELLOW_ORB_PACKED_HEIGHT / 2, YELLOW_ORB_PACKED_WIDTH,
@@ -439,7 +439,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
   if (gFlurry_Styles[mode][FLURRY_EXTRA] == FLURRY_EXTRA_RIPPLE)
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -449,7 +449,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 #undef FLURRY_WAVE_PICTURES
 #undef FLURRY_SMOKE_PICTURES
 #undef FLURRY_BLUE_ARC_PICTURES
-#undef FLURRY_FLASH_PICTURES
+#undef FLURRY_ORB_PICTURES
 #undef FLURRY_FLASH_LEVEL
 #undef FLURRY_SMOKE_PUFFS
 #undef FLURRY_SMOKE_PICTURE_FRAMES

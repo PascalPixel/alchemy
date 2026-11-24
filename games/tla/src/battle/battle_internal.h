@@ -11,7 +11,7 @@
 #include "sprite_ids.h"
 #include "ability_ids.h"
 #include "djinn_ids.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "system/input.h"
 #include "system/heap_slots.h"
 #include "system/main_routine_state.h"
@@ -79,7 +79,7 @@
 #include "battle/range_falloff.h"
 #include "battle/battle_effect.h"
 #include "graphics/vram_tab.h"
-#include "game/owner_value.h"
+#include "game/unit_hp.h"
 #include "system/bg_scroll.h"
 #include "system/irq.h"
 #include "system/ram_code.h"
@@ -206,7 +206,7 @@ STATIC_ASSERT(offsetof(struct Snapshot, vitals) == 148);
 
 /// The packet the two consoles exchange each turn of a link battle: how many
 /// actions follow, a random check, and the random seed both sides then use.
-struct BattleLinkedActionState {
+struct BattleLinkHeader {
   s32 count;
   s32 check;
   s32 seed;
@@ -266,10 +266,10 @@ enum BattleActionFailure {
   ACTION_FAILURE_NO_PP   ///< the user has too little PP
 };
 
-/// BattleStaging_HideField's mode bit that hides the acting unit too, as the
-/// summons do.
+/// BattleStaging_RunFullScreen's mode bit that hides the acting unit too, as
+/// the summons do.
 #define STAGING_HIDE_ACTOR 1
-/// BattleStaging_HideField's mode bit for Daedalus's strike at the turn's
+/// BattleStaging_RunFullScreen's mode bit for Daedalus's strike at the turn's
 /// end: the acting unit plays no cast, with no pose, sound or star field.
 #define STAGING_NO_CAST 2
 
@@ -317,7 +317,7 @@ extern const s32 gBattleObject_EmptyScript[];
 
 /// The order enemies of a fixed formation take from the centre out: 0, -1, 1,
 /// -2, 2 and on.
-extern const s8 gBattleParty_CenterOrderOffsets[];
+extern const s8 gBattleFormation_CenteredOffsets[];
 
 /// Each character's battle sprite for each weapon kind
 /// (BattleUnit_GetWeaponSprite).

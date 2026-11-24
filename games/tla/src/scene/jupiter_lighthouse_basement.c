@@ -57,6 +57,7 @@
 #include "shared/tables.h"
 #include "field/field_effect.h"
 #include "field/actor_script.h"
+#include "scene/lighthouse_palettes.h"
 #include "fixed_math.h"
 
 /// The side room's sparks, which take turns at the particle sprite sheet's two
@@ -80,7 +81,7 @@ struct EffectOptions;
 
 void Actor_DepartInRing(s32 id);
 
-u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
+u8 MapGrid_SetCellAttributesAt(s32 x, s32 z, s32 layer, s32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -117,7 +118,7 @@ extern u32 gFieldEffect_LongScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -155,7 +156,7 @@ void JupiterLighthouse_UncoverMadPlant(void) {
     FieldMadPlant_LeapAtLeader(SPRITE_MAD_PLANT, 424, 488);
     gMainRoutineState.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(3));
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 3);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_MAD_PLANTS, 3);
   }
 }
 
@@ -211,7 +212,6 @@ void JupiterLighthouse_RestartSpark(struct Actor *actor) {
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
-void JupiterLighthouse_LoadPalettes(s32 mode);
 
 /// A spark's update: it stands still, and the room's tile animations with it,
 /// while Psynergy or a menu is up; otherwise it waits out its starting delay,
@@ -227,9 +227,9 @@ void JupiterLighthouse_UpdateSpark(struct Actor *actor) {
   }
   Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL);
   TilesetAnim_ResumeAll();
-  if (actor->riseEnabled != 0) {
+  if (actor->sceneByte != 0) {
     if ((gFrameCount & 7) == 0)
-      actor->riseEnabled--;
+      actor->sceneByte--;
     return;
   }
   if (actor->userValue == 0)
@@ -256,7 +256,7 @@ void JupiterLighthouse_SpawnSparks(void) {
     actor->speedLimit = i * (toFIXED(1) / 16) + toFIXED(1) / 2;
     actor->acceleration = i * (toFIXED(1) / 16) + toFIXED(1) / 2;
     actor->update = (ObjectUpdate)JupiterLighthouse_UpdateSpark;
-    actor->riseEnabled = i << 3;
+    actor->sceneByte = i << 3;
     Actor_SetSpriteFlags(actor, 0);
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RBG);
     ((struct FieldSprite *)actor->sprite)->priority = 1;
@@ -279,7 +279,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineState.next ==
       (s32)&SceneId_JupiterLighthouseBasementTeleporters) {
-    JupiterLighthouse_LoadPalettes(1);
+    JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_LIT);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
         gMainRoutineState.entrance ==
             JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_FROM_JUPITER_LIGHTHOUSE_ENTRANCE)
@@ -336,7 +336,7 @@ void Actor_RaiseFromCell(s32 id) {
   height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
   Import_MapGridSetCellHeight(actor->x.fixed, actor->z.fixed, 0,
                               CELL_HEIGHT_STEPS(height) + 6);
-  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
+  MapGrid_SetCellAttributesAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
 }
 
 #include "shared/whirlwind_carry_leader_lower.h"
@@ -353,7 +353,7 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 

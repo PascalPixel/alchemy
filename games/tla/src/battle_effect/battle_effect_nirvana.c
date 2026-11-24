@@ -38,7 +38,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   view = Ram_HeapSlots->cameraState;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_PINK_BURST_SHEET);
   object = BattleObject_GetFar(args->targets[0])->object;
   half = BattleUnit_GetEffectHeightFar(args->targets[0]) / 2;
@@ -318,7 +318,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET,
                              state->sheet + SOUL_SHATTER_SPARK_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
@@ -428,7 +428,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
     // The sparks: from frame 8, two more each frame, through seven
     // pictures three frames apiece, the last held; one in four is drawn
     // mirrored.
-    BattleEffect_FetchRectangleBlitters(args->side, draw);
+    BattleEffect_BuildCanvasBlitters(args->side, draw);
     {
       struct Particle *spark;
 
@@ -515,7 +515,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -599,7 +599,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   Iwram_ClearWordsEntry(canvas, CANVAS_VIEW_BYTES);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2PA = Q_8_8(1);
-  BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
+  BattleEffect_BuildCanvasBlitters(0, (void **)blitters);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   mistSheet = Ram_MapCellBuffer + SERAC_MIST;
   Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, mistSheet, 0, 0);
@@ -909,7 +909,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           texture.logHeight = 5;
           texture.pixels = (const u8 *)state->sheet;
           model->kind = MODEL_SHADED_MAX;
-          model->flags = 3;
+          model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
           model->vertices = vertices;
           model->scrollU = 0;
           model->texture = &texture;
@@ -933,7 +933,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           model->kind = MODEL_SHADED_ADDITIVE;
           model->scrollU = 0;
           model->scrollV = (frame / 2) & 31;
-          model->flags = 2;
+          model->flags = MODEL_ONE_SIDED;
           Render_DrawModelList(model);
           Matrix_Pop();
 

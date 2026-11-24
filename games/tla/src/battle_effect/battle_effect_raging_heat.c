@@ -77,7 +77,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   baseY = targets[0].y - 48;
   Resource_LoadAndDecompress(RESOURCE_CORNER_RUNE_B_SHEET, buffer, 1, 1);
   Picture_MirrorIntoQuadrants(buffer, state->sheet, 64, 64);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              state->sheet + RAGING_HEAT_FLASH_BURST_PICTURES, 1,
                              0);
@@ -314,14 +314,14 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_SMALL_FLAME_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sparkCels, 0, 0);
   if (args->variant == EFFECT_VARIANT_STRONGEST) {
     LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   }
   blitters = draw;
-  BattleEffect_FetchRectangleBlitters(0, blitters);
+  BattleEffect_BuildCanvasBlitters(0, blitters);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add((s32)BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   lift = 0;
   {
     s32 *life = &((struct Particle *)Ram_MapCellBuffer)->variant;
@@ -451,7 +451,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -462,7 +462,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
 /// Loads the grey ramp and fills the canvas with a white band, its left and
 /// right 32 columns fading out, stretched across the screen on BG2: the
 /// summons sweep it in from the right to white the battle out.
-void RagingHeat_FillGradientCanvas(void) {
+void BattleEffect_FillWhiteBand(void) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 x;
   s32 y;

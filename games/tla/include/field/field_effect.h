@@ -10,7 +10,7 @@
 union FieldObject;
 
 /// The eight tints a field Psynergy washes the screen in, by their index in
-/// gFieldEffect_TargetColors and FLAG_PSYNERGY_TINT.
+/// gFieldPsynergy_CastColors and FLAG_PSYNERGY_TINT.
 enum PsynergyTint {
   PSYNERGY_TINT_BLUE = 0,
   PSYNERGY_TINT_GREEN = 1,
@@ -24,10 +24,10 @@ enum PsynergyTint {
 };
 
 /// Each tint's colour (field_effect_data.c).
-extern const u32 gFieldEffect_TargetColors[PSYNERGY_TINT_COUNT];
+extern const u32 gFieldPsynergy_CastColors[PSYNERGY_TINT_COUNT];
 
 void FieldEffect_AdvanceMotion(union FieldObject *object);
 
-void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
+void FieldEffect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 #endif

@@ -13,14 +13,14 @@ struct TextReader {
   u32 previousCode; ///< the symbol decoded last, which picks the next's tree
   /// The message's next byte of bits, though typed as words: the decoder reads
   /// a byte at a time.
-  const u32 *words;
+  const u32 *bytes;
   /// The bits of the byte read last not yet used, lowest first, ended by a
   /// stop bit (BIT_STREAM_STOP).
   u32 bits;
 };
 
 STATIC_ASSERT(sizeof(struct TextReader) == 12);
-STATIC_ASSERT(offsetof(struct TextReader, words) == 4);
+STATIC_ASSERT(offsetof(struct TextReader, bytes) == 4);
 STATIC_ASSERT(offsetof(struct TextReader, bits) == 8);
 
 /// Points reader at the start of message.

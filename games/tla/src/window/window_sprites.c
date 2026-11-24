@@ -47,7 +47,7 @@ s32 Text_DrawGlyphPair(s32 character, u32 *tiles);
 s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
   struct WindowState *state = WINDOW_STATE;
   s32 width;
-  u32 spacingX = state->glyphSpacing;
+  u32 spacingX = state->letterSpacing;
   u32 spacingY = state->lineSpacing;
 
   if (mode != GLYPH_DRAW_PAGE_ARROW &&
@@ -114,7 +114,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       return 0;
     index = (output - state->sprites) * 4;
     output->motion = WINDOW_SPRITE_MOTION_STILL;
-    output->kind = WINDOW_SPRITE_GLYPH;
+    output->kind = WINDOW_SPRITE_PLAIN;
     if (mode == GLYPH_DRAW_PAGE_ARROW) {
       width = 1;
       output->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
@@ -212,7 +212,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *tiles);
 s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
   struct WindowState *state = Ram_HeapSlots->windowState;
   u32 tiles[32];
-  u32 spacingX = state->glyphSpacing;
+  u32 spacingX = state->letterSpacing;
   u32 spacingY = state->lineSpacing;
   struct WindowSprite *output;
   struct GlyphSprite *sprite;
@@ -224,7 +224,7 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
     return 0;
   index = (output - state->sprites) * 4;
   output->motion = WINDOW_SPRITE_MOTION_STILL;
-  output->kind = WINDOW_SPRITE_GLYPH;
+  output->kind = WINDOW_SPRITE_PLAIN;
   width = Text_DrawGlyphPair(character, tiles);
   Dma_Set(tiles,
           (void *)(OBJ_VRAM0 + (state->glyphTiles + index) * TILE_SIZE_4BPP),
@@ -262,7 +262,7 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   u32 tiles[32];
-  u32 spacingX = state->glyphSpacing;
+  u32 spacingX = state->letterSpacing;
   u32 spacingY = state->lineSpacing;
   struct WindowSprite *output;
   struct QueuedSprite *sprite;
@@ -274,7 +274,7 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
     return NULL;
   index = (output - state->sprites) * 4;
   output->motion = WINDOW_SPRITE_MOTION_STILL;
-  output->kind = WINDOW_SPRITE_GLYPH;
+  output->kind = WINDOW_SPRITE_PLAIN;
   vram = (void *)(OBJ_VRAM0 + (state->glyphTiles + index) * TILE_SIZE_4BPP);
   ((u16 *)&output->sprite.oam)[0] =
       y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_OFFSET_Y;

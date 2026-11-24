@@ -113,7 +113,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
     state->particles[DJINNI_CHARGE_START].x = focus[0];
     state->particles[DJINNI_CHARGE_START].y = focus[1];
     state->particles[DJINNI_CHARGE_START].z = focus[2];
-    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
     Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET,
                                state->sheet + DJINNI_CHARGE_DJINNI_PICTURE, 1,
                                1);
@@ -448,7 +448,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           model->scrollU = (frame / 4) & 63;
           model->scrollV = frame & 63;
           model->shade = shade;
-          model->flags = 3;
+          model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
           Render_ProjectVertices(cells, projected,
                                  DJINNI_CHARGE_FIREBALL_VERTICES);
           Render_DrawModelList(model);
@@ -461,7 +461,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
     }
     Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferCanvas);
   }
   BattleEffect_EndCanvasLayer();
 }

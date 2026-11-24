@@ -96,6 +96,7 @@ enum JupiterLighthouseRoomRedKeyActorId {
 /// The sparks of the activation's ring, from the leader to the beam.
 #define ACTIVATION_SPARKS 96
 #include "text/msg_ids.h"
+#include "scene/lighthouse_palettes.h"
 
 struct Actor;
 struct CellTarget;
@@ -104,8 +105,6 @@ struct CellTargetEntry;
 extern u32 gOrb_RisingScript[];
 
 void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to);
-
-void JupiterLighthouse_LoadPalettes(s32 value);
 
 void JupiterLighthouse_UpdateSparkRing(void);
 
@@ -148,7 +147,7 @@ extern u32 gFieldEffect_LongScript[];
 struct FieldEffect;
 
 void Actor_PlaceMovedBlock(void);
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 /// Queues an effect sprite for this frame at its depth, turned and scaled about
 /// its pivot (EffectSprite_Draw, through the overlay's own import row).
 void JupiterLighthouse_DrawSparkSprite(struct EffectSprite *sprite);
@@ -328,7 +327,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
       FIELD_CELL(leader->z.fixed) != ACTIVATION_CELL_Z)
     return;
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED);
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_NORTH);
   FieldEvent_Wait(30);
   leader->update = JupiterLighthouse_FlashColors;
@@ -381,7 +380,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   System_Wait(30);
   MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
   MapGrid_CopyCellsLayered(123, 32, 1, 5, 106, 32);
-  JupiterLighthouse_LoadPalettes(2);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_KEEP_COPIES);
   Event_PlaySound(SE_CLATTER);
   System_Wait(30);
   leader->timer = 3;
@@ -440,7 +439,7 @@ void JupiterLighthouse_HearTheVoice(void) {
   if (!Event_GetFlag(FLAG_VOICE_HEARD)) {
     Event_SetFlag(FLAG_VOICE_HEARD);
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
     PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
     PaletteFade_Interpolate(30);
@@ -546,7 +545,7 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
     return;
   Event_SetFlag(FLAG_ALEX_WAITING);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId(MsgFieldWaitingForCompanion);
   // "Ah, Felix... I've been waiting for you."
   FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
@@ -657,7 +656,7 @@ s32 Scene_Initialize(void) {
 /// once it is in its gap.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  JupiterLighthouse_LoadPalettes(0);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
   Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED))
@@ -709,8 +708,8 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 #include "shared/whirlwind_spawn.h"
 
-// Unused: nothing in the hall sets Actor_EmitRisingSparks as an update.
-#include "shared/actor_emit_rising_sparks.h"
+// Unused: nothing in the hall sets Actor_EmitSmoke as an update.
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
@@ -829,8 +828,8 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
                                       tile + (i & (ORB_PICTURES - 1)) * 2);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
-    sprite->oam.priority = BattleEffect_GetObjectPriority(leader);
-    sprite->depth = BattleEffect_GetObjectDepth(leader) - 1;
+    sprite->oam.priority = Actor_GetSpritePriority(leader);
+    sprite->depth = Actor_GetSpriteDepth(leader) - 1;
     spark->age = -1;
   }
   /* FAKEMATCH(dead): a block that only places firstSlot's declaration at the
@@ -943,7 +942,7 @@ s16 gJupiterLighthouse_PushedBlocks[] = {
 
 u32 gSceneExits[] = {                                                        
       SCENE_EXITS(JupiterLighthouseRoomRedKey),         SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_RED_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS, JupiterLighthouseRoomLockedDoors, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_RED_KEY),    SCENE_EXIT(2, JupiterLighthouseRoomRedKey, 3), 
-      SCENE_EXIT(3, JupiterLighthouseRoomRedKey, 2),  SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_RED_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_M_WEST, JupiterLighthouseRoomM, JUPITER_LIGHTHOUSE_ROOM_M_FROM_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_WEST),    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_RED_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_M_EAST, JupiterLighthouseRoomM, JUPITER_LIGHTHOUSE_ROOM_M_FROM_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_EAST),  
+      SCENE_EXIT(3, JupiterLighthouseRoomRedKey, 2),  SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_RED_KEY_TO_JUPITER_LIGHTHOUSE_TERRACES_WEST, JupiterLighthouseTerraces, JUPITER_LIGHTHOUSE_TERRACES_FROM_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_WEST),    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_RED_KEY_TO_JUPITER_LIGHTHOUSE_TERRACES_EAST, JupiterLighthouseTerraces, JUPITER_LIGHTHOUSE_TERRACES_FROM_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_EAST),  
       SCENE_EXIT(7, JupiterLighthouseRoomRedKey, 8),   SCENE_EXIT(8, JupiterLighthouseRoomRedKey, 7), SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_RED_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_WEST, JupiterLighthouseRoomCrackedFloor, JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_FROM_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_WEST), 
       SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_RED_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_EAST, JupiterLighthouseRoomCrackedFloor, JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_FROM_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_EAST), SCENE_EXITS_END,                                
   };

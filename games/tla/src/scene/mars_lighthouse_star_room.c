@@ -12,12 +12,12 @@
 /// and set in the dragon head's face, the star turns the lighthouse back to
 /// fire and its ice is gone, here and in every room below.
 
-#include "graphics/output.h"
+#include "graphics/window_sprite_list.h"
 #include "system/task.h"
 #include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
 #include "flags.h"
-#include "scene/ride.h"
+#include "scene/flame_throwers.h"
 #include "item_ids.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -306,7 +306,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 void MarsLighthouseStarRoom_WakeAfterBattle(void);
 void MarsLighthouseStarRoom_CreateMarsStar(s32 rise);
 void MarsLighthouseStarRoom_LayDownAdept(s32 actor);
-void Ride_Create(void);
+void FlameThrowers_Create(void);
 void CrackedTile_DropIn(void);
 void MapGrid_CenterOnFollowedPoint(void);
 void FieldEffect_StartBlankOverlay(s32 a);
@@ -320,7 +320,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   gMarsLighthouseStarRoom_MarsStar = NULL;
   Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
-  Ride_Create();
+  FlameThrowers_Create();
   FlameThrowers_Start(0, 0, 0, STEP_TRIGGER_FLAME_HIT);
   if (scene == (s32)&SceneId_MarsLighthouseStarRoom) {
     FieldEffect_StartBlankOverlay(0);
@@ -419,7 +419,7 @@ void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 /// Free of the ice, the Flame Dragons rise and roar, and the battle begins.
 void MarsLighthouseStarRoom_WakeFlameDragons(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   MarsLighthouseStarRoom_ClearDragonIce();
   Event_PlaySound(MUS_SILENCE);
   FieldEvent_Wait(40);
@@ -480,7 +480,7 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   agatioLight = Actor_Get(ACTOR_AGATIO_LIGHT);
   karstLight = Actor_Get(ACTOR_KARST_LIGHT);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MarsLighthouseStarRoom_ClearDragonIce();
   Actor_SetSpriteFlags(Actor_Get(ACTOR_AGATIO), 0);
@@ -619,7 +619,7 @@ void MarsLighthouseStarRoom_DrawStarWithLeader(struct Actor *actor) {
 /// The Mars Star as an actor on the floor by Agatio, rising first when asked.
 void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   struct Actor **slot = &gMarsLighthouseStarRoom_MarsStar;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   struct Actor *actor;
   struct FieldSprite *sprite;
   s32 size;
@@ -637,13 +637,13 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   actor->retainSpriteCache = 1;
   actor->update = MarsLighthouseStarRoom_DrawStarWithLeader;
-  size = sizeof(GlyphTransfer);
+  size = sizeof(IconTransfer);
   sprite->flags = clear;
   sprite->countAndShadow[0] = clear;
-  glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, size);
+  glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, size);
   Item_LoadIcon(ITEM_MARS_STAR);
   Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   if (rise) {
     System_Wait(1);
     (*slot)->velocityY = toFIXED(5) / 2;
@@ -660,7 +660,7 @@ void Event_End(void);
 /// dragon fell: "Your hand...so warm... People have such warm hands..."
 void MarsLighthouseStarRoom_HoldWarmHand(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetAnimation(ACTOR_KARST, 5);
   FieldEvent_SetMessageId((s32)MsgMarsLighthouseStarRoomYourHandSoWarmPeople);
   // "Your hand...so warm... People have such warm hands... I had forgotten..."
@@ -687,7 +687,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetAnimation(ACTOR_AGATIO, 5);
   Event_SetMessageId((s32)MsgMarsLighthouseStarRoomItsTooLateForUs);
   // "It's too late for us now... Hurry, light the beacon."
@@ -777,7 +777,7 @@ void MarsLighthouseStarRoom_ExamineStatue(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   // "There's a space for you to place something."
   Message_ShowCentered((s32)MsgMarsLighthouseStarRoomTheresSpace, 1);
   state->fieldMenu = 1;
@@ -797,12 +797,12 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   struct Actor **slot;
   struct Actor *actor;
   struct FieldSprite *sprite;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   u16 *palette;
 
   palette = (u16 *)Ram_HeapSlots->paletteFade;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   // "Felix used the Mars Star!"
   Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -822,10 +822,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     actor->retainSpriteCache = 1;
     sprite->countAndShadow[0] = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Item_LoadIcon(ITEM_MARS_STAR);
     Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
@@ -928,14 +928,14 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   struct Actor **slot, **placedStarSlot;
   struct Actor *actor, *placedStar;
   struct FieldSprite *sprite, *placedStarSprite;
-  GlyphTransfer *glyph, *placedStarGlyph;
+  IconTransfer *glyph, *placedStarGlyph;
   u16 *palette;
 
   flag = Event_GetFlag(FLAG_MARS_STAR_SET);
   if (flag == 0) {
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     // "Felix used the Mars Star!"
     Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -955,10 +955,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       actor->retainSpriteCache = 1;
       sprite->countAndShadow[0] = 0;
       actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-      glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+      glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
       Item_LoadIcon(ITEM_MARS_STAR);
       Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-      HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+      HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     }
     FieldEvent_Wait(20);
     Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
@@ -1000,7 +1000,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   }
   palette = (u16 *)Ram_HeapSlots->paletteFade;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   // "Felix used the Mars Star!"
   Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -1021,10 +1021,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     placedStar->retainSpriteCache = 1;
     placedStar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     placedStarGlyph =
-        HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+        HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Item_LoadIcon(ITEM_MARS_STAR);
     Vram_Load(placedStarSprite->slot, ICON_TILE_BYTES, placedStarGlyph->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
@@ -1215,7 +1215,7 @@ void MarsLighthouseStarRoom_ShootFireballs(void) {
 
 #include "shared/actor_is_beside.h"
 
-#include "shared/ride_update_carried.h"
+#include "shared/flame_update_forward.h"
 
 extern s32 gScriptedPart_Script[];
 
@@ -1223,14 +1223,14 @@ extern s32 gScriptedPart_Script[];
 
 /// A flame thrower's flame sent forward from `position` at `speed`; `flag`
 /// keeps its sprite when off screen.
-void Ride_SpawnForward(s32 *position, s32 speed, s32 flag) {
+void FlameThrower_SendForward(s32 *position, s32 speed, s32 flag) {
   struct Actor *actor = FieldActor_Create(SPRITE_BLAZE_FLAME, position[0],
                                           position[1], position[2]);
 
   if (actor != NULL) {
     actor->bounce = 0;
     actor->gravity = 0;
-    actor->riseBaseY = speed;
+    actor->sceneWord = speed;
     ((void (*)())Actor_ResetScripted)(actor, 2);
     actor->update = Flame_UpdateForward;
     if (flag != 0)
@@ -1242,7 +1242,7 @@ void Ride_SpawnForward(s32 *position, s32 speed, s32 flag) {
 s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
 s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
 
-#include "shared/ride_update_landing.h"
+#include "shared/flame_update_sideways.h"
 
 #include "shared/actor_setup_scripted_part.h"
 
@@ -1256,7 +1256,7 @@ s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
     if (actor != NULL) {                                                       \
       actor->bounce = 0;                                                       \
       actor->gravity = 0;                                                      \
-      actor->riseBaseY = -speed;                                               \
+      actor->sceneWord = -speed;                                               \
       Actor_SetupScriptedPart(actor, 3);                                       \
       actor->update = updateRoutine;                                           \
       if (flag != 0)                                                           \
@@ -1265,37 +1265,37 @@ s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
     }                                                                          \
   }
 
-DEFINE_RIDE_SPAWN_BACKWARD(Ride_SpawnBackward, Flame_UpdateForward)
+DEFINE_RIDE_SPAWN_BACKWARD(FlameThrower_SendBackward, Flame_UpdateForward)
 
 /// A flame thrower's flame that lands as it goes forward from `position`.
-void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 flag) {
+void FlameThrower_SendEast(s32 *position, s32 speed, s32 flag) {
   struct Actor *actor = FieldActor_Create(SPRITE_BLAZE_FLAME, position[0],
                                           position[1], position[2]);
 
   if (actor != NULL) {
     actor->bounce = 0;
     actor->gravity = 0;
-    actor->riseBaseY = speed;
+    actor->sceneWord = speed;
     Actor_SetupScriptedPart(actor, 3);
-    actor->update = Flame_UpdateLanding;
+    actor->update = Flame_UpdateSideways;
     if (flag != 0)
       actor->retainSpriteCache = 2;
     Actor_SelectAnimation(actor, 2);
   }
 }
 
-DEFINE_RIDE_SPAWN_BACKWARD(Ride_SpawnLandingBackward, Flame_UpdateLanding)
+DEFINE_RIDE_SPAWN_BACKWARD(FlameThrower_SendWest, Flame_UpdateSideways)
 
 #include "shared/actor_is_above.h"
 
-#include "shared/ride_update_drift.h"
+#include "shared/flame_thrower_update_spark.h"
 
 #include "shared/actor_setup_scripted_for.h"
 
-void Ride_UpdateDrift();
+void FlameThrower_UpdateSpark();
 
 /// A spark puffed from a flame thrower, drifting off in a random direction.
-void Ride_SpawnSpark(s32 *position, s32 base, s32 mode) {
+void FlameThrower_SendSpark(s32 *position, s32 base, s32 mode) {
   struct Actor *actor = MarsLighthouseStarRoom_CreateActor(
       SPRITE_DUST_CLOUD, position[0], position[1], position[2] - toFIXED(2));
   s32 spin;
@@ -1304,11 +1304,11 @@ void Ride_SpawnSpark(s32 *position, s32 base, s32 mode) {
     actor->bounce =
         Trig_Cos((Random_Below(TRIG_TURN * 3 / 16)) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
-    actor->riseBaseY = (u16)(Random16() << 1) + base;
+    actor->sceneWord = (u16)(Random16() << 1) + base;
     spin = (u16)Random16() - DEGtoANG(180);
     actor->timer = spin;
     Actor_SetupScriptedFor(actor, 2);
-    actor->update = Ride_UpdateDrift;
+    actor->update = FlameThrower_UpdateSpark;
     Actor_SetBlendMode(actor, 1);
   }
 }
@@ -1317,29 +1317,31 @@ typedef struct Actor Actor;
 
 #include "shared/flame_throwers_puff.c"
 
-#include "shared/ride_create.c"
+#include "shared/flame_throwers_create.c"
 
-#include "shared/ride_release_handle.h"
+#include "shared/flame_throwers_release_flame.h"
 
-void Ride_SetMode(s16 value) { RIDE_STATE->runsDuringPsynergy = value; }
+void FlameThrowers_SetMode(s16 value) {
+  FLAME_THROWERS_STATE->runsDuringPsynergy = value;
+}
 
 #include "shared/beam_start.h"
 
-#include "shared/ride_get_entry_value.c"
+#include "shared/flame_thrower_is_active.c"
 
-#include "shared/ride_set_entry_value.c"
+#include "shared/flame_thrower_set_active.c"
 
-s32 Ride_GetCounter(void) { return RIDE_STATE->counter; }
+s32 FlameThrowers_GetCounter(void) { return FLAME_THROWERS_STATE->counter; }
 
-#include "shared/ride_advance_counter.h"
+#include "shared/flame_throwers_advance_counter.h"
 
-#include "shared/ride_set_entry.h"
+#include "shared/flame_thrower_set.h"
 
-#include "shared/ride_set_entry_count.c"
+#include "shared/flame_thrower_set_puffs_off_screen.c"
 
-#include "shared/ride_get_entry_flags.c"
+#include "shared/flame_thrower_get_flags.c"
 
-#include "shared/ride_set_slot_actor.h"
+#include "shared/flame_throwers_set_stop.h"
 
 #include "shared/party_take_fall_damage.h"
 
@@ -1354,7 +1356,7 @@ void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseStarRoom_KnockBackIfHit(void) {
-  if (RIDE_STATE->active)
+  if (FLAME_THROWERS_STATE->active)
     Leader_KnockBack();
 }
 
@@ -1391,17 +1393,17 @@ s32 Fireball_CarryLeader(void) {
 #endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineState.leaderActorId);
-  ride = RIDE_STATE;
+  ride = FLAME_THROWERS_STATE;
   Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_ClearFlag(FLAG_MENU_OPEN);
   leader->update = (ObjectUpdate)Actor_Blink;
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {
-    if (MapGrid_GetCellAttributeLowNibbleOrBump(
-            0, leader->x.fixed, leader->z.fixed) != TERRAIN_ROUNDED_SQUARE) {
+    if (MapGrid_GetTerrainKindOrBumpAt(0, leader->x.fixed, leader->z.fixed) !=
+        TERRAIN_ROUNDED_SQUARE) {
       leader->x.fixed += ride->car->stepX;
       leader->z.fixed += ride->car->stepZ;
     } else {
@@ -1422,10 +1424,12 @@ s32 Fireball_CarryLeader(void) {
 #endif
 }
 
-#include "shared/ride_if_active.h"
+#include "shared/fireball_carry_leader_if_hit.h"
 
 /// Whether a flame or fireball has hit the leader (FlameHitState.active).
-s32 MarsLighthouseStarRoom_IsLeaderHit(void) { return RIDE_STATE->active; }
+s32 MarsLighthouseStarRoom_IsLeaderHit(void) {
+  return FLAME_THROWERS_STATE->active;
+}
 
 extern u32 gCrumbs_Script[];
 

@@ -316,8 +316,8 @@ enum BattleEnvironment {
 
 s32 WorldMap_GetCollision(struct WorldPosition *position);
 
-void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 y, u32 width,
-                                            u32 height, s32 value);
+void MapGrid_FillCollisionRectangle(s32 layer, s32 x, s32 y, u32 width,
+                                    u32 height, s32 value);
 
 STATIC_ASSERT(sizeof(struct MapLayer) == 56);
 STATIC_ASSERT(offsetof(struct MapState, layers) == 264);

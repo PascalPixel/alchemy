@@ -16,7 +16,7 @@
 #include "tla_edition.h"
 #include "graphics/oam.h"
 #include "graphics/render_input.h"
-#include "graphics/uiflow.h"
+#include "graphics/window_close.h"
 #include "static_assert.h"
 
 /// The window sprites WindowState keeps, free or in a window.
@@ -53,7 +53,7 @@ struct WindowState {
   u16 outline;                ///< the current message's, copied in to draw
   u16 colour;                 ///< the current message's, copied in to draw
   u16 textBuffer[TEXT_BUFFER_MASK + 1]; ///< decoded text, a ring of codes
-  u16 glyphSpacing;                     ///< 9 with the text style
+  u16 letterSpacing;                    ///< 9 with the text style
   u16 textBufferEnd;     ///< where the next code goes in textBuffer
   u16 lastMessageStart;  ///< where the last decoded message began in textBuffer
   u16 glyphResource;     ///< VRAM cache slot of the page arrow; 99 when none
@@ -125,7 +125,9 @@ enum MessageDecodeFlag {
 /// WindowSprite.kind: what a window sprite owns besides itself, which
 /// WindowSprite_Release frees.
 enum WindowSpriteKind {
-  WINDOW_SPRITE_GLYPH = 0,   ///< a glyph in the window's glyph tiles
+  /// Nothing else to free: a glyph in the window's glyph tiles, or a shop's
+  /// cursor or arrow, whose tiles the shop frees.
+  WINDOW_SPRITE_PLAIN = 0,
   WINDOW_SPRITE_ICON = 1,    ///< its own VRAM cache entry
   WINDOW_SPRITE_PORTRAIT = 2 ///< a VRAM cache entry and a palette slot
 };
@@ -186,7 +188,7 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 
 /// The two page arrows beside a paged list's page numbers, in the menus and
 /// the File Screen: tiles 296 and 297 of character block 0, which
-/// Link_DrawPageArrows slides back and forth each frame, and their
+/// PageArrows_Draw slides back and forth each frame, and their
 /// tilemap entries.
 #define PAGE_ARROW_TILE 296
 #define PAGE_ARROW_VRAM                                                        \
@@ -484,7 +486,7 @@ void PartyStatus_OpenAndWait(void);
 #define ICON_EQUIPPED 16
 /// Mark 2 on a cursed item that cannot be unequipped (ITEM_CURSED and
 /// ITEM_CANNOT_UNEQUIP) when its code has INVENTORY_EQUIPPED.
-#define ICON_ARTIFACT 32
+#define ICON_CURSED 32
 
 /// An action's id in its encoded list entry, below its flags.
 #define ACTION_ID_MASK 0x3fff

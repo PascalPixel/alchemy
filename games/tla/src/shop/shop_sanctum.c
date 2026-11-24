@@ -158,10 +158,10 @@ s32 Sanctum_Run(s32 actorId) {
     }
   }
 
-  cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
-                                        listWindow, 0, 0);
+  cursorAnchor = WindowSprite_CreateFar(
+      shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, listWindow, 0, 0);
   cursorAnchor->motion = WINDOW_SPRITE_MOTION_STILL;
-  cursorAnchor->kind = 0;
+  cursorAnchor->kind = WINDOW_SPRITE_PLAIN;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
   Sanctum_ShowKeeperMessage((s32)MsgWelcomeWearyWanderers);
@@ -246,7 +246,7 @@ s32 Sanctum_RunPartyService(void) {
   listWindow = Window_CreateFar(1, 12, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->cursorFrames = redraw;
-  Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
+  Menu_ShowPartyFiguresFar(listWindow, 2, 0);
 #if SANCTUM_HAS_DONATION_WINDOW
   donationWindow =
       Window_CreateFar(SANCTUM_DONATION_WINDOW_X, 16,
@@ -278,8 +278,8 @@ s32 Sanctum_RunPartyService(void) {
                        (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
       shop->cursorFrames = 3;
       if (redraw == MENU_GRID_CHANGED_PAGE) {
-        Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
-                                        SHOP_PARTY_PAGE_MEMBERS);
+        Menu_CreatePartyFiguresFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
+                                   SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
       }
       Sanctum_HighlightMembers(listWindow, memberIndex);
@@ -340,7 +340,7 @@ s32 Sanctum_RunPartyService(void) {
     wait(1);
   }
 
-  Menu_ReleaseEntryObjectsFar();
+  Menu_ReleasePartyFiguresFar();
   Window_CloseFar(donationWindow, 2);
   Window_CloseFar(listWindow, 2);
   wait(1);
@@ -393,16 +393,16 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
   if (window != 0) {
     WindowSprite_PrepareForRedrawFar(window);
     if (first != 0) {
-      icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
-                                    window, 88, -12);
-      icon->kind = 0;
+      icon = WindowSprite_CreateFar(shop->previousPageIcon,
+                                    WINDOW_SPRITE_SIZE_16X16, window, 88, -12);
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
       icon->animationStep = 0;
     }
     if (first + SHOP_PARTY_PAGE_MEMBERS < count) {
-      icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
-                                    window, 88, 0);
-      icon->kind = 0;
+      icon = WindowSprite_CreateFar(shop->nextPageIcon,
+                                    WINDOW_SPRITE_SIZE_16X16, window, 88, 0);
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
       icon->animationStep = 0;
     }
@@ -534,8 +534,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_InitializeFar(effect, SPRITE_PARTICLE, position.x,
                                 position.z);
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
-    FieldParticle_SetActorModeFar(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
+    FieldParticle_SetAnimationFar(effect, 7);
+    Sprite_SetAnimationColorModesFar(effect->sprite, (Random16() * 7) >> 16);
     effect->scaleY = FIXED_ONE * 7 / 10;
     effect->scaleX = FIXED_ONE * 7 / 10;
     wait(3);

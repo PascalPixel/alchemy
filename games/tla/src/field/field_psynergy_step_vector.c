@@ -348,7 +348,7 @@ void BattleEffect_EndCanvasSprite(void) {
 /// The sparks that circle an actor as it appears.
 #define APPEAR_SPARK_COUNT 64
 
-/// Actor_VanishInSparks's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the spark
+/// Actor_AppearInSparks's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the spark
 /// picture, and the sparks that circle the actor and their sprites.
 struct AppearSparksState {
   u8 picture[1024];
@@ -357,7 +357,7 @@ struct AppearSparksState {
 };
 
 #define SPARK_LIFE 50
-#define PHASE_DONE 999 ///< the vanish's phases are over
+#define PHASE_DONE 999 ///< the appearance's phases are over
 /// RESOURCE_SPARKLE_FADE's sparkles, each smaller and fainter than the last.
 #define SPARKLE_PICTURES 4
 /// The frames the sparks keep coming, and the frames the actor then takes to
@@ -370,7 +370,7 @@ struct AppearSparksState {
 /// stands, each rising and closing in for SPARK_LIFE frames. The actor spins
 /// and widens from nothing to full width over APPEAR_WIDEN_FRAMES, when its
 /// shadow shows again, and the sparks stop coming APPEAR_SPAWN_FRAMES later.
-void Actor_VanishInSparks(s32 actorId) {
+void Actor_AppearInSparks(s32 actorId) {
   struct AppearSparksState *state =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct AppearSparksState));
   s32 phase;
@@ -378,7 +378,7 @@ void Actor_VanishInSparks(s32 actorId) {
   s32 tiles;
   s32 spawning;
   struct Actor *actor = Actor_Lookup(actorId);
-  s32 depth = BattleEffect_GetObjectDepth(actor);
+  s32 depth = Actor_GetSpriteDepth(actor);
   s32 angle = (u16)actor->facing;
   struct WhirlSpark *spark;
   struct EffectSprite *sprite;
@@ -401,8 +401,8 @@ void Actor_VanishInSparks(s32 actorId) {
                           (i & (ORB_PICTURES - 1)) * OBJ_TILES_PER_8BPP_TILE);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
-    sprite->depth = BattleEffect_GetObjectDepth(actor);
-    sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
+    sprite->depth = Actor_GetSpriteDepth(actor);
+    sprite->oam.priority = Actor_GetSpritePriority(actor);
     spark->age = -1;
   }
   actor->scaleX = 0;
@@ -519,7 +519,7 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   FIXED scale[2];
   s32 position[4];
 
-  sprite = object->actor;
+  sprite = object->sprite;
   offset = 0;
   if (object->flags & FIELD_PARTICLE_LIFTED_BY_Z)
     offset = toFIXED(508) - object->z;
@@ -606,8 +606,8 @@ void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
 }
 
 /// Sets the animation of a field effect sprite.
-void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode) {
-  Sprite_StartAnimationFar(effect->actor, mode);
+void FieldParticle_SetAnimation(struct FieldParticle *effect, s32 mode) {
+  Sprite_StartAnimationFar(effect->sprite, mode);
 }
 
 /// Gives a field effect sprite its per-frame callback, starting at state 0.
@@ -628,7 +628,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
 
   Dma_Fill32(0, effect, sizeof *effect);
   animation = Sprite_CreateFar(kind);
-  effect->actor = animation;
+  effect->sprite = animation;
   if (animation != NULL)
     animation->image.priority = 0;
   FieldParticle_SetPosition(effect, x, z);
@@ -642,7 +642,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   // setup below still require a sprite. Callers also immediately use it, so
   // guarding this store alone would not establish allocation-failure recovery.
   {
-    struct Sprite *sprite = effect->actor;
+    struct Sprite *sprite = effect->sprite;
     sprite->flags = 0;
   }
   effect->stopAtTarget = 1;
@@ -652,12 +652,12 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   effect->active = 1;
   effect->randomValue = Random16();
   effect->flags = FIELD_PARTICLE_LIFTED_BY_Z;
-  FieldParticle_SetActorMode(effect, 1);
+  FieldParticle_SetAnimation(effect, 1);
 }
 
 /// Frees a field effect sprite and its sprite, clearing it to zero (inactive).
 void FieldEffect_ClearOwnedSlot(struct FieldParticle *effect) {
-  if (effect->actor)
-    Sprite_DestroyFar(effect->actor);
+  if (effect->sprite)
+    Sprite_DestroyFar(effect->sprite);
   Dma_Fill32(0, effect, sizeof *effect);
 }

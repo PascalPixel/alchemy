@@ -86,32 +86,28 @@ void Window_DrawZoomBorder(struct Window *window, s32 savePosition) {
   stage = (s16)window->zoomStage;
   duration = window->duration;
   remaining = duration - stage;
-  // Iwram_RatioMulQ14(d, v) is v / d in 16.16 fixed point, as in The Broken
+  // Iwram_DivFX(d, v) is v / d in 16.16 fixed point, as in The Broken
   // Seal: the left edge moves in by stage / duration of half the width, and
   // the width is (duration - stage) / duration of the whole, twice that half;
   // the same for the top and the height.
   scratch.scaledPart = toFIXED(stage * window->width);
   scratch.scaledDuration = toFIXED(2 * duration);
-  scratch.result =
-      Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
+  scratch.result = Iwram_DivFX(scratch.scaledDuration, scratch.scaledPart);
   x = FIXEDtoINT(scratch.result) + (s16)window->x;
 
   scratch.scaledPart = toFIXED(remaining * window->width);
-  scratch.result =
-      Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
+  scratch.result = Iwram_DivFX(scratch.scaledDuration, scratch.scaledPart);
   {
     s32 part = stage * window->height;
     width = FIXEDtoINT_TWICE(scratch.result);
     scratch.scaledPart = toFIXED(part);
   }
   scratch.scaledDuration = toFIXED(2 * window->duration);
-  scratch.result =
-      Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
+  scratch.result = Iwram_DivFX(scratch.scaledDuration, scratch.scaledPart);
   y = FIXEDtoINT(scratch.result) + (s16)window->y;
 
   scratch.scaledPart = toFIXED(remaining * window->height);
-  scratch.result =
-      Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
+  scratch.result = Iwram_DivFX(scratch.scaledDuration, scratch.scaledPart);
   height = FIXEDtoINT_TWICE(scratch.result);
 
   Window_DrawBorder(x, y, width, height);
@@ -277,7 +273,7 @@ void Text_ResetStyle(void) {
 
   state->colour = TEXT_COLOR_WHITE;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
-  state->glyphSpacing = TEXT_DEFAULT_GLYPH_SPACING;
+  state->letterSpacing = TEXT_DEFAULT_GLYPH_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
   state->unusedAfterLineSpacing = 1;
 }
@@ -293,7 +289,7 @@ void WindowSystem_StartFieldUpdate(void) {
 
   state->glyphTiles =
       VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_TILES, GLYPH_TILES_SIZE, 0);
-  state->glyphSpacing = TEXT_DEFAULT_GLYPH_SPACING;
+  state->letterSpacing = TEXT_DEFAULT_GLYPH_SPACING;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = TEXT_COLOR_WHITE;
@@ -310,7 +306,7 @@ void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
   if (loadGlyphTiles != 0)
     state->glyphTiles =
         VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_TILES, GLYPH_TILES_SIZE, 0);
-  state->glyphSpacing = TEXT_DEFAULT_GLYPH_SPACING;
+  state->letterSpacing = TEXT_DEFAULT_GLYPH_SPACING;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = TEXT_COLOR_WHITE;

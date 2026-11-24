@@ -14,7 +14,7 @@
 struct GroundParticleState {
   s32 entry;    ///< the VRAM cache entry holding the particles' tiles
   s32 tileBase; ///< their first tile in VRAM
-  struct GroundParticle particles[64];
+  struct WeatherParticle particles[64];
   /// The 16.16 position (x, height, z) new particles appear around; NULL
   /// keeps them where they fall.
   FIXED *leader;

@@ -8,7 +8,7 @@
 /// where The Broken Seal's are.
 
 #include "menu_internal.h"
-#include "graphics/output.h"
+#include "graphics/window_sprite_list.h"
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").

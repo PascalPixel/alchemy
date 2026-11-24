@@ -83,7 +83,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_CORNER_RUNE_A_SHEET, cells, 1, 1);
   Picture_MirrorIntoQuadrants(cells, state->sheet, 64, 64);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BLADE_SHEET,
                              state->sheet + LEGEND_BLADE_PICTURES, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLAME_GRADIENT_TEXTURE,
@@ -279,7 +279,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
             scale = FIXED_ONE * 3 - frame * (FIXED_ONE / 16);
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE,
                        (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
-          Render_TransformVertices(gLegend_WingCorners, vertices, 4);
+          Render_TransformVertices(gLegend_FanFlameCorners, vertices, 4);
           Render_DrawModelList(model);
         }
       }
@@ -392,7 +392,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   scale = 0;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   if (mode == CARD_BRAMBLE) {
     Resource_LoadAndDecompress(RESOURCE_VINE_CARD_SHEET, state->sheet, 1, 1);
   } else if (mode == CARD_FROST) {

@@ -780,15 +780,14 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
     REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 12);
   else
     REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_BuildCanvasBlitters(0, draw);
   {
     s32 spawned;
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
-    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer,
-             TASK_PASS_VBLANK);
+    Task_Add((s32)BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
     spawned = 0;
-    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sparkCels, 0, 0);
     if (mode == GEYSER_PURGATORY) {
       Resource_LoadAndDecompress(RESOURCE_CROSS_TEXTURE_SHEET, state->sheet, 1,
                                  1);
@@ -962,7 +961,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
     }
   }
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -1017,7 +1016,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   state->fadeStep = 0;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sparkCels, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -1026,7 +1025,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
   else
     frames = 72;
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add((s32)BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != frames; frame++) {
     camera = Ram_HeapSlots->cameraState;
@@ -1167,7 +1166,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_TransferCanvas);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
@@ -1210,7 +1209,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
   struct Particle *bubble;
 
   // Each frame the transfer task copies the canvas and clears it.
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -1280,7 +1279,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
   }
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -1473,9 +1472,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
-  RagingHeat_FillGradientCanvas();
+  BattleEffect_FillWhiteBand();
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   y = -80;
   for (frame = 0; frame != 27; frame++) {
     y += 4;
@@ -1485,7 +1484,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   zero = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   table = state->backdropLines;
   lift = -8;
@@ -2308,7 +2307,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   wait(1);
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
@@ -2421,7 +2420,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 #undef VENGEANCE_FRAMES

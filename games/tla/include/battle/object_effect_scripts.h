@@ -8,6 +8,6 @@
 
 /// Releases the actor at once; from its second word, waits for it to arrive
 /// and then releases it.
-extern const s32 gBattleEffect_SharedParticleScript[];
+extern const s32 gFieldEffect_ReleaseScript[];
 
 #endif

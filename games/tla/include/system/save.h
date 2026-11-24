@@ -41,11 +41,11 @@ struct SaveSummary {
   u8 djinn[4];         ///< the party's Djinn of each element
   s8 party[5];         ///< up to four party members, ended by -1
   s8 sendFlag;         ///< gMainRoutineState.sendFlag: the file is cleared
-  s8 flagCount;        ///< the Djinn found: their flags from FLAG_DJINN_FIRST
+  s8 djinnCount;       ///< the Djinn found: their flags from FLAG_DJINN_FIRST
   s8 reunited;         ///< FLAG_REUNION is set
   u8 windowHue;        ///< gMainRoutineState.windowHue
   u8 windowBrightness; ///< gMainRoutineState.windowBrightness
-  u16 frames;          ///< low half of the build stamp saved with the game
+  u16 buildStamp;      ///< low half of the build stamp saved with the game
   /// The play time saved at the start of the file's next sector (offset 0x10,
   /// or 0x110 for the extra summary), filled on reading; a file whose
   /// playTime differs from it was not written whole.

@@ -36,7 +36,7 @@
 #include "field/object.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
-#include "graphics/output.h"
+#include "graphics/window_sprite_list.h"
 #include "graphics/graphics.h"
 #include "graphics/resource.h"
 #include "graphics/vram_tab.h"
@@ -126,7 +126,7 @@ enum TrialRoadCell {
 };
 
 /// Trial Road's Mad Plant, the last of the five hidden in weeds: its
-/// FLAG_MAD_PLANT and its column of ENCOUNTER_TABLE_MAD_PLANTS.
+/// FLAG_MAD_PLANT and its column of ENCOUNTER_ZONE_MAD_PLANTS.
 #define MAD_PLANT_TRIAL_ROAD 4
 /// Set once the summit's stone pillar has been moved one cell east, into
 /// column 8 of the map, where it stays.
@@ -334,10 +334,10 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 /// A piece Felix cannot push: a pillar weeds hold down, a frozen puddle, a
 /// stake, or a log (logs roll by their own events).
 /// Leader_CanPushObjectAhead refuses a target with this byte set.
-#define PUSH_BLOCKED(object) *(u8 *)&object->riseCounter
+#define PUSH_BLOCKED(object) *(u8 *)&object->sceneCounter
 /// The height in pixels of a pillar's top (TrialRoad_AddPillarTop) above the
 /// pillar: PILLAR_HEIGHT standing, -PILLAR_HEIGHT lowered.
-#define PILLAR_TOP_HEIGHT(top) *(u8 *)&top->riseEnabled
+#define PILLAR_TOP_HEIGHT(top) *(u8 *)&top->sceneByte
 
 /// A fountain rises and falls once each FOUNTAIN_PERIOD frames, rising at
 /// FOUNTAIN_RISE_AT and falling at FOUNTAIN_FALL_AT.
@@ -763,7 +763,7 @@ s32 TrialRoad_OfferToGiveUp(void) {
 
   if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Actor_WalkToAndWait(gMainRoutineState.leaderActorId,
                         ((FIELD_CELL(leader->x.fixed)) << 4) + 8,
                         ((FIELD_CELL(leader->z.fixed)) << 4) + 8);
@@ -809,7 +809,7 @@ void TrialRoad_OpenChests(void) {
   s32 found;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_WalkToAndWait(gMainRoutineState.leaderActorId,
                       ((FIELD_CELL(leader->x.fixed)) << 4) + 8,
                       ((FIELD_CELL(leader->z.fixed)) << 4) + 8);
@@ -846,7 +846,7 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   struct TrialRoadState *state = gTrialRoadState;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   MessageArgument_Push(owner, MESSAGE_ARGUMENT_ACTOR);
   MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
   // "Felix put ...'s ... in the chest."
@@ -879,7 +879,7 @@ void TrialRoad_ExamineChest(s32 id) {
     flag = FLAG_OUTER_CHEST_OPEN;
   if (!Event_GetFlag(flag)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     // "The chest won't open. There's something keeping it shut tight."
     FieldMessage_Show((s32)MsgTrialRoadChestBlocked, FIELD_MESSAGE_ZOOM);
     Event_End();
@@ -1252,7 +1252,7 @@ void TrialRoad_StepOntoStake(s32 id, s32 other, s32 flag, s32 side) {
   if (PILLAR_TOP_HEIGHT(actor) != 0)
     return;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   partner->scaleY = FIXED_ONE / 8;
   wait(1);
   TrialRoad_RaiseStake(other);
@@ -1442,7 +1442,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   if (fromX == toX && fromZ == toZ)
     return;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetAnimationById(gMainRoutineState.leaderActorId, 8);
   Event_Wait(6);
   actor->speedLimit = toFIXED(1) / 2;
@@ -1626,7 +1626,7 @@ void TrialRoad_DriftWithStream(void) {
     return;
   if (leader->velocityZ == 0 && leader->velocityX == 0)
     return;
-  options.update = Effect_AdvanceMotionAtLeaderPriority;
+  options.update = FieldEffect_AdvanceMotionAtLeaderPriority;
   options.startScaleX = FIXED_ONE * 8 / 10;
   options.startScaleY = FIXED_ONE * 8 / 10;
   velocity[1] = 0;
@@ -1658,7 +1658,7 @@ void TrialRoad_ScatterWeedsHidingMadPlant(void) {
     gMainRoutineState.pendingDjinni =
         IF_FLAG_SET(FLAG_MAD_PLANT(MAD_PLANT_TRIAL_ROAD));
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS,
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_MAD_PLANTS,
                                           MAD_PLANT_TRIAL_ROAD);
   }
 }
@@ -1731,7 +1731,7 @@ void TrialRoad_ChallengeMoapa(void) {
                                   TRIAL_ROAD_SUMMIT_AFTER_WIN);
   Event_SetDefeatDestination(SCENE_TRIAL_ROAD_SUMMIT,
                              TRIAL_ROAD_SUMMIT_AFTER_DEFEAT);
-  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MOAPA, 4 - count);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_MOAPA, 4 - count);
 }
 
 /// Moving or pushing the summit's stone pillar, at cell (7, 20), one cell east
@@ -1897,9 +1897,9 @@ void TrialRoad_SetUpCrumblingStage(void) {
 void TrialRoad_SetUpLogStage(void) {
   MapGrid_CopyCellAttributes(11, 22, 11, 8, 11, 64);
   MapGrid_CopyCellAttributes(79, 22, 11, 8, 79, 64);
-  Actor_GetById(ACTOR_UPPER_LOG)->riseCounter = 1;
-  Actor_GetById(ACTOR_LOWER_LOG)->riseCounter = 1;
-  Actor_GetById(ACTOR_EAST_LOG)->riseCounter = 1;
+  Actor_GetById(ACTOR_UPPER_LOG)->sceneCounter = 1;
+  Actor_GetById(ACTOR_LOWER_LOG)->sceneCounter = 1;
+  Actor_GetById(ACTOR_EAST_LOG)->sceneCounter = 1;
   Actor_GetById(ACTOR_UPPER_LOG)->collisionFlags = 0;
   Actor_GetById(ACTOR_LOWER_LOG)->collisionFlags = 0;
   Actor_GetById(ACTOR_EAST_LOG)->collisionFlags = 0;
@@ -2664,7 +2664,7 @@ void TrialRoad_ReachPeakFirst(void) {
   struct Actor *actor;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(256, CAMERA_KEEP, 264, 1);
   Actor_PlaceOnActor(ACTOR_JENNA, ACTOR_FELIX);
@@ -2778,7 +2778,7 @@ void TrialRoad_ReachPeakFirst(void) {
 /// summit: "You may have been slow, but you made it through Trial Road".
 void TrialRoad_ReachPeakSecond(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(256, CAMERA_KEEP, 264, 1);
   Actor_PlaceOnActor(ACTOR_JENNA, ACTOR_FELIX);
@@ -2844,7 +2844,7 @@ void PartyInventory_Discard(s32 cue);
 /// the Shaman Village to rest.
 void TrialRoad_BeatMoapa(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   TrialRoad_PlaceActor(ACTOR_FELIX, 248, 272, FACING_EAST);
   TrialRoad_PlaceActor(ACTOR_PIERS, 224, 248, FACING_EAST);
@@ -2937,7 +2937,7 @@ void TrialRoad_BeatMoapa(void) {
 /// Shaman village."
 void TrialRoad_LoseToMoapa(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   TrialRoad_PlaceActor(ACTOR_MOAPA, 264, 264, FACING_WEST);
   TrialRoad_PlaceActor(ACTOR_LEFT_KNIGHT, 280, 248, FACING_WEST);
@@ -2980,7 +2980,7 @@ void TrialRoad_ShowTraps(void) {
   s32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetPosition(gMainRoutineState.leaderActorId, 0, 1016);
   Actor_SetPosition(ACTOR_MOAPA, 1016, 1016);
   for (i = ACTOR_MOAPA + 1; i < FIELD_ACTOR_COUNT; i++) {
@@ -3502,8 +3502,9 @@ UNUSED void TrialRoad_StepOnTrap(const u16 *table) {
   }
 }
 
-/// The dust's motion each frame, as Effect_AdvanceMotionAtLeaderPriority's: it
-/// drifts, slows, grows and spins, drawn at the leader's sprite priority.
+/// The dust's motion each frame, as
+/// FieldEffect_AdvanceMotionAtLeaderPriority's: it drifts, slows, grows and
+/// spins, drawn at the leader's sprite priority.
 void TrialRoad_DriftDust(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX = effect->velocity.x;

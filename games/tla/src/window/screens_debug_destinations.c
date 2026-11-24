@@ -71,7 +71,8 @@ s16 DebugSceneSelect_Run(void) {
       return result;
     }
 
-    MenuArrow_SetPosition(&arrow, MENU_TEXT_X, field * 14 + MENU_TEXT_Y);
+    MenuArrow_SetPosition(&arrow, DEBUG_SCENE_SELECTOR_COLON_X,
+                          field * 14 + DEBUG_SCENE_SELECTOR_FIRST_ROW_Y);
     scene = result;
     wait(1);
   }

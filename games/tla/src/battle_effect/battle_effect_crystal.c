@@ -93,7 +93,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
 
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
-    Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+    Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
     camera = Ram_HeapSlots->cameraState;
     target = BattleObject_GetFar(args->targets[0])->object;
 
@@ -164,8 +164,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
                 x += (Random16() & 7) - 4;
                 y += (Random16() & 7) - 4;
               }
-              Canvas_BlitAtFoot((u8 *)((s16)discOffsets[disc] + (s32)cells), x,
-                                y, width);
+              Canvas_BlitMirroredQuarters(
+                  (u8 *)((s16)discOffsets[disc] + (s32)cells), x, y, width);
             }
             orb->y += orb->velocityY;
           }

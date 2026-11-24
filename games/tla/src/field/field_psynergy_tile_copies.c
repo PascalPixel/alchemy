@@ -166,7 +166,7 @@ void ParticleBurst_Start(void) {
       (struct ParticleBurstState *)Ram_HeapSlots->battleEffect;
   struct FieldEffectState *effect = Ram_HeapSlots->fieldEffectState;
   struct FieldState *field = Ram_HeapSlots->fieldState;
-  struct Actor *owner = effect->mainActor;
+  struct Actor *owner = effect->caster;
   struct BurstCell *cell = (struct BurstCell *)field->psynergyCells;
   FIXED dx = FIELD_CELL_ORIGIN(cell->x) - owner->x.fixed + toFIXED(8);
   FIXED dz = FIELD_CELL_ORIGIN(cell->z) - owner->z.fixed + toFIXED(8);

@@ -167,7 +167,7 @@ void Daila_EnterDoor(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetSpeedParameters(gMainRoutineState.leaderActorId, 0x8000, 0x4000);
   Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 2);
   Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = 0;
@@ -224,8 +224,8 @@ Lighthouse rooms (`cracked_tile_fall.h` and its neighbours, over each
 room's `gCrackedTiles`), the pillars that are pounded, raised and lowered
 (`pillar_place.h`, `pound_sink_target.h`), the dust a crumbling pillar
 throws up (`dust.h`), the slide over ice (`leader_slide_on_ice.h`) and
-the Mars Lighthouse flame throwers (`beam_*.h` and the `ride_*` files,
-over one `FlameHitState` in [`ride.h`](../../include/scene/ride.h)).
+the Mars Lighthouse flame throwers (`beam_*.h` and the `flame_thrower_*`, `flame_throwers_*` and `flame_update_*` files,
+over one `FlameHitState` in [`flame_throwers.h`](../../include/scene/flame_throwers.h)).
 
 Tables the cartridge keeps in many overlays are shared files too: the
 field effects' three duration scripts

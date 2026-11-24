@@ -75,7 +75,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_StartCanvasLayer(0);
   else
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   if (mode == BREATH_PIKE) {
     LOAD_BG_PALETTE(RESOURCE_BLUE_FLAME_SHEET);
   } else {
@@ -486,7 +486,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -562,7 +562,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   // The caster closes in on the target.
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 8, toFIXED(4));
@@ -655,7 +655,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
 /// Draws a quarter picture, `size` pixels tall and half as wide, four times
 /// into the canvas, mirrored about (x, y) and keeping the brighter pixel: a
 /// whole glow or disc centred there, round at the canvas's double width.
-void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size) {
+void Canvas_BlitMirroredQuarters(void *source, s32 x, s32 y, s32 size) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 half;
 

@@ -112,7 +112,7 @@ const FIXED gWindowSprite_PulseScales[8] = {
 
 /// A row of 4-bit pixels for the centre tile and one for the end tile of a
 /// Psynergy range icon, colour 5 where the pattern marks
-/// (Menu_BuildLocalizedPatternTiles); a word's lowest nibble is its leftmost
+/// (RangeIcon_BuildTiles); a word's lowest nibble is its leftmost
 /// pixel.
 const struct BarPatternRow gMenu_BarPatternRows[6] = {
     {0x00055000, 0x00000000}, {0x05055050, 0x00000000},

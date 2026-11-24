@@ -132,8 +132,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   CommandIcon_ReloadSlot(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable(
       (u16 *)(BG_CHAR_BLOCK(0) + PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
-  Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
-  Menu_BuildLocalizedPatternTiles();
+  PageArrows_Draw(LIST_PAGE_ARROW_VRAM);
+  RangeIcon_BuildTiles();
   state->swappedUnit = -1;
   state->lastTarget = -1;
   {
@@ -457,8 +457,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
         /* FAKEMATCH(barrier): an empty asm. */
         __asm__ volatile("");
-        iconSprite->oam.f.tile =
-            Resource_LoadIndexedEntryToBuffer(parameter, handle);
+        iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(parameter, handle);
         state->iconShown[1] = 1;
         windowState->textPalette = BASIC_COLORS_PALETTE;
         if (ability->ppCost > unit->pp)
@@ -531,7 +530,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         __asm__ volatile("");
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
-        iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(
+        iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(
             summon->abilityId & ACTION_ID_MASK, summonIconSlot);
         state->iconShown[1] = 1;
         if (ok == 0)
@@ -674,7 +673,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
              k != INVENTORY_SLOTS && (entryValue = unit->inventory[k]) != 0;
              k++) {
           Item_GetDirectFar(entryValue);
-          if (Item_ClassifyUseAbility(actorId, entryValue) == 0) {
+          if (Item_CheckBattleUse(actorId, entryValue) == 0) {
             list[count] = entryValue;
             pick[count++] = k;
           }
@@ -683,7 +682,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
              k != INVENTORY_SLOTS && (entryValue = unit->inventory[k]) != 0;
              k++) {
           Item_GetDirectFar(entryValue);
-          if (Item_ClassifyUseAbility(actorId, entryValue) != 0) {
+          if (Item_CheckBattleUse(actorId, entryValue) != 0) {
             list[count] = entryValue;
             pick[count++] = k;
           }
@@ -738,10 +737,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       Sound_PlayFar(SE_CHIME);
       command->unitId = actorId;
       {
-        s32 priority = unit->agi;
+        s32 priority = unit->agility;
 
         if (priority != 0)
-          priority += (u32)(unit->agi * Random16()) >> 20;
+          priority += (u32)(unit->agility * Random16()) >> 20;
         command->priority = priority;
         if (commandIndex != 0 &&
             actors[commandIndex] == actors[commandIndex - 1])
@@ -1262,7 +1261,7 @@ s32 FieldMenu_SelectCommand(s32 selection) {
   }
   IconMenu_AddIcon(COMMAND_ICON_ITEM);
   IconMenu_AddIcon(COMMAND_ICON_STATUS);
-  IconMenu_Center(ICON_MENU_BOTTOM_ROW, SELECT_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, FIELD_MENU_ICON_ROW_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
 
@@ -1288,7 +1287,7 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   IconMenu_AddIcon(COMMAND_ICON_STATUS);
   // Only Japanese centres the entries before selecting.
 #if LANGUAGE == LANGUAGE_JAPANESE
-  IconMenu_Center(ICON_MENU_BOTTOM_ROW, SELECT_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, FIELD_MENU_ICON_ROW_WIDTH, 0);
 #endif
   command = IconMenu_AnimateTo(start, command - 1);
   IconMenu_Close();
@@ -1337,7 +1336,7 @@ s32 FileList_SelectAction(void) {
     IconMenu_AddIcon(COMMAND_ICON_BATTLE);
   if (gTitleUpdateOptionEnabled != 0)
     IconMenu_AddIcon(COMMAND_ICON_UPDATE);
-  IconMenu_Center(ICON_MENU_BOTTOM_ROW, TYPE_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, FILE_SCREEN_ICON_ROW_WIDTH, 0);
   result = IconMenu_Run(initial);
   IconMenu_Close();
   // The icon position's action, from the group's row of six.
@@ -1577,7 +1576,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   mode &= 1;
   IconMenu_Open();
   state = Ram_HeapSlots->iconMenu;
-  if (mode == RESOURCE_LAYOUT_TRANSFER_METHOD) {
+  if (mode == SEND_OPTION_TRANSFER_METHOD) {
     IconMenu_AddIcon(COMMAND_ICON_PASSWORD);
     IconMenu_AddIcon(COMMAND_ICON_LINK);
   } else {
@@ -1586,7 +1585,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
     IconMenu_AddIcon(COMMAND_ICON_BRONZE);
   }
   IconMenu_Center(ICON_MENU_BOTTOM_ROW, ENTRY_WIDTH, 0);
-  if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
+  if (mode != SEND_OPTION_TRANSFER_METHOD) {
     Task_Add(PasswordLevelMenu_DrawContents, TASK_PASS_FRAME - 10);
     state->drawnSelection = -1;
     window = Window_Create(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4,
@@ -1623,7 +1622,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
         TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, WINDOW_FLAG_INSTANT);
   }
   result = IconMenu_Run(0);
-  if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD)
+  if (mode != SEND_OPTION_TRANSFER_METHOD)
     Task_Remove(PasswordLevelMenu_DrawContents);
   else
     Task_Remove(TransferMethodMenu_DrawHelp);

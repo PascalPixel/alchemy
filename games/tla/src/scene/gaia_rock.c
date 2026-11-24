@@ -354,7 +354,7 @@ void GaiaRock_CheckAltar(void) {
 void GaiaRock_SusaAsksAboutTheSerpent(void) {
   if (Event_GetFlag(FLAG_SERPENT_SLAIN)) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldEvent_SetMessageId(MsgYouReGoing);
     FieldActor_StartRepeatedMotion(ACTOR_SUSA, 1);
     FieldEvent_Wait(15);

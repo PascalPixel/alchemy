@@ -36,7 +36,7 @@ struct FlashType {
     u16 joined;
   } id;
 };
-/// The id a Macronix chip answers with (Flash_ChipMacronix's): its device id
+/// The id a Macronix chip answers with (gFlash_ChipMacronix's): its device id
 /// 0x1c above the maker id 0xc2.
 #define FLASH_ID_MACRONIX (0x1c << 8 | 0xc2)
 
@@ -81,12 +81,12 @@ extern const struct FlashSetupInfo gFlash_ChipAtmel;
 extern const struct FlashSetupInfo gFlash_ChipAtmelLayout;
 /// The SST chip's entry, which programs a sector again after erasing it if a
 /// write fails.
-extern const struct FlashSetupInfo Flash_ChipSst;
+extern const struct FlashSetupInfo gFlash_ChipSst;
 /// The Macronix chip's entry.
-extern const struct FlashSetupInfo Flash_ChipMacronix;
+extern const struct FlashSetupInfo gFlash_ChipMacronix;
 /// The Panasonic chip's entry.
-extern const struct FlashSetupInfo Flash_ChipPanasonic;
+extern const struct FlashSetupInfo gFlash_ChipPanasonic;
 /// The library's name and version, which nothing reads.
-extern const char Flash_Version[];
+extern const char gFlash_Version[];
 
 #endif

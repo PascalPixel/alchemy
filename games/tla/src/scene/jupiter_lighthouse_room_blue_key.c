@@ -85,7 +85,7 @@ enum JupiterLighthouseRoomBlueKeyCellBehavior {
 
 struct Actor;
 s32 CrackedTile_Step(void);
-void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
+void MapGrid_SetCellAttributesAt(s32 x, s32 z, s32 layer, s32 value);
 void Actor_DisableById(s32 id);
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_PushColumn(void);
@@ -177,7 +177,8 @@ void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
     }
     actor->motionFlags = 0;
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
+    MapGrid_SetCellAttributesAt(actor->x.fixed, actor->z.fixed, 0,
+                                MAP_CELL_JUMP);
   }
 }
 
@@ -236,7 +237,8 @@ s32 Scene_PrepareMap(void) {
     actor->y.fixed = toFIXED(-PILLAR_SINK_DEPTH);
     Actor_SetPosition(ACTOR_PILLAR, 104, 232);
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
+    MapGrid_SetCellAttributesAt(actor->x.fixed, actor->z.fixed, 0,
+                                MAP_CELL_JUMP);
   }
   return 0;
 }
@@ -280,7 +282,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
@@ -383,7 +385,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(4, JupiterLighthouseRoomBlueKey, 3),
     SCENE_EXIT(5, JupiterLighthouseRoomBlueKey, 6),
     SCENE_EXIT(6, JupiterLighthouseRoomBlueKey, 5),
-    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_M, JupiterLighthouseRoomM, JUPITER_LIGHTHOUSE_ROOM_M_FROM_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_TERRACES, JupiterLighthouseTerraces, JUPITER_LIGHTHOUSE_TERRACES_FROM_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY),
     SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTH, JupiterLighthouseRoomCrackedFloor, JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_FROM_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_SOUTH),
     SCENE_EXIT(9, JupiterLighthouseRoomBlueKey, 10),
     SCENE_EXIT(10, JupiterLighthouseRoomBlueKey, 9),
@@ -412,7 +414,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_M, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_M},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_TERRACES, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_TERRACES},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTH, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTH},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 10, CONDITION_ALWAYS, 10},

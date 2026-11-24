@@ -245,7 +245,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   }
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -330,21 +330,21 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   savedScroll = gBgScroll[1].x;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
-  RagingHeat_FillGradientCanvas();
+  BattleEffect_FillWhiteBand();
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   // The battle flashes away as the summons' openings do, stopping while the
   // white covers the screen.
   for (bgX = -80, frame = 0; frame != SUMMON_OPENING_LOAD_FRAME + 1; frame++) {
     if (frame == SUMMON_OPENING_LOAD_FRAME) {
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-      BattleEffect_SelectLivingTargets(state->args);
+      BattleEffect_ShowLivingTargets(state->args);
       state->scrollStepX = -8;
       backdrop->busy = 1;
       Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0),
                            BATTLE_BACKGROUND_COLORS * 2, COLOR_PAIR(RGB_WHITE));
-      Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, state->sheet, 0,
+      Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, state->sheet, 0,
                                  0);
       // DEAD: ever-fainter copies of one mote, which Zagan never draws; the
       // ROM keeps the copies.
@@ -377,15 +377,15 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
   blit = blitters;
-  BattleEffect_FetchRectangleBlitters(0, (void **)blit);
+  BattleEffect_BuildCanvasBlitters(0, (void **)blit);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   skip = 0;
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                        SHEET_PALETTE_BYTES);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   wait(1);
-  BattleEffect_SpawnObjects(ZAGAN_PARTS, SPRITE_ZAGAN, 1);
+  BattleEffect_CreateSprites(ZAGAN_PARTS, SPRITE_ZAGAN, 1);
   REG_BG2X = skip;
   REG_BG2PA = Q_8_8(0.5);
 
@@ -679,7 +679,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       EFFECT_PRESENT_CANVAS(state);
     }
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   backdrop->busy = 0;
   for (i = 0; i != ZAGAN_PARTS; i++) {

@@ -49,8 +49,9 @@ struct BattleBackgroundState {
   s32 secondMode;
   s32 busy; ///< while set, an effect owns BG1's scroll and the camera leaves it
   /// 0 lets the camera update set the background's range each frame.
-  s32 flag;
-  s32 unusedAfterFlag[2]; ///< cleared when a battle starts; nothing reads them
+  s32 keepRange;
+  s32 unusedAfterKeepRange[2]; ///< cleared when a battle starts; nothing reads
+                               ///< them
 };
 
 /// A presentation's effect command, laid out as BattleEffectParams with a
@@ -114,8 +115,7 @@ STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 16);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 32);
 
 struct BattlePlan;
-UNREAD_RESULT BattleStaging_RunActorEntries(struct BattlePlan *plan,
-                                            s32 unused);
+UNREAD_RESULT BattleStaging_RunMessages(struct BattlePlan *plan, s32 unused);
 
 void BattleStaging_BuildTargetList(struct BattlePlan *plan,
                                    struct BattlePresentationState *state);
@@ -130,10 +130,10 @@ void BattleObject_Put(void);
 /// abilities.
 void BattleEffect_RunSummonFar(s32 *context);
 /// Copies the canvas to VRAM when a transfer is pending.
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_TransferCanvas(void);
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 /// Steps the background palette fade.
-void Palette_StepFadeTransfer(void);
+void BattleEffect_DarkenBackgroundStep(void);
 struct BattleEffectParams;
 
 /// The battle camera's distance from its focus in its default view, and the

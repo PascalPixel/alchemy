@@ -313,7 +313,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
 
   // Tear down.
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 #undef WHIRLWIND_FRAMES

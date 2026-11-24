@@ -69,7 +69,7 @@ s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
 /// Rebuilds a character's Psynergy list: what it learned for good stays, in
 /// order, then come its class's Psynergy up to its level and its equipped
 /// items' Psynergy, while the list has room.
-s32 Owner_UpdateClassActions(s32 owner) {
+s32 Unit_RebuildPsynergyList(s32 owner) {
   struct Unit *unit;
   struct PsynergyEntry *abilities;
   struct ClassDefinition *classDefinition;
@@ -232,7 +232,7 @@ void Party_InitializeCharacters(void) {
   const struct CharacterDefinition *character;
   u16 nameBuf[16];
   s32 unitId;
-  const s32 *startingUnitId = gCharacter_StartingEquipUnitIds;
+  const s32 *startingUnitId = gCharacter_NewGameIds;
   s32 i;
   s32 slot;
   u8 *name;
@@ -254,8 +254,8 @@ void Party_InitializeCharacters(void) {
     unit->name[UNIT_NAME_SIZE - 1] = 0;
   }
 
-  // gCharacter_StartingEquipUnitIds lists the characters given starting
-  // equipment, ended by -1 (artifact_slots.c).
+  // gCharacter_NewGameIds lists the characters given starting
+  // equipment, ended by -1 (rare_item_counters.c).
   if (*startingUnitId != -1) {
     for (; *startingUnitId != -1; startingUnitId++) {
       unit = Unit_Get(*startingUnitId);
@@ -326,9 +326,9 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
   gains->ability = -1;
   gains->hp = 0;
   gains->pp = 0;
-  gains->atk = 0;
-  gains->def = 0;
-  gains->agi = 0;
+  gains->attack = 0;
+  gains->defense = 0;
+  gains->agility = 0;
   gains->luck = 0;
   if (level < UNIT_LEVEL_MAX) {
     unit->level++;
@@ -341,9 +341,9 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
     if (gains->level == 1) {
       gains->hp += state->growth->hp[0];
       gains->pp += state->growth->pp[0];
-      gains->atk += state->growth->atk[0];
-      gains->def += state->growth->def[0];
-      gains->agi += state->growth->agi[0];
+      gains->attack += state->growth->attack[0];
+      gains->defense += state->growth->defense[0];
+      gains->agility += state->growth->agility[0];
       gains->luck += state->growth->luck[0];
     }
     // Each twenty-level band grows by the step between its growth points, a
@@ -361,18 +361,18 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
         state->growth->pp[growthBand + 1] - state->growth->pp[growthBand];
     gains->pp += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
                  GROWTH_BAND_LEVELS;
-    growthDifference =
-        state->growth->atk[growthBand + 1] - state->growth->atk[growthBand];
-    gains->atk += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
-                  GROWTH_BAND_LEVELS;
-    growthDifference =
-        state->growth->def[growthBand + 1] - state->growth->def[growthBand];
-    gains->def += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
-                  GROWTH_BAND_LEVELS;
-    growthDifference =
-        state->growth->agi[growthBand + 1] - state->growth->agi[growthBand];
-    gains->agi += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
-                  GROWTH_BAND_LEVELS;
+    growthDifference = state->growth->attack[growthBand + 1] -
+                       state->growth->attack[growthBand];
+    gains->attack += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
+                     GROWTH_BAND_LEVELS;
+    growthDifference = state->growth->defense[growthBand + 1] -
+                       state->growth->defense[growthBand];
+    gains->defense += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
+                      GROWTH_BAND_LEVELS;
+    growthDifference = state->growth->agility[growthBand + 1] -
+                       state->growth->agility[growthBand];
+    gains->agility += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
+                      GROWTH_BAND_LEVELS;
     growthDifference =
         state->growth->luck[growthBand + 1] - state->growth->luck[growthBand];
     gains->luck += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
@@ -380,9 +380,9 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
     // Commit the six gains before rebuilding Psynergy and derived stats.
     unit->baseHp += gains->hp;
     unit->basePp += gains->pp;
-    unit->baseAttack += gains->atk;
-    unit->baseDefense += gains->def;
-    unit->baseAgility += gains->agi;
+    unit->baseAttack += gains->attack;
+    unit->baseDefense += gains->defense;
+    unit->baseAgility += gains->agility;
     unit->baseLuck += gains->luck;
     // A character's base is one action a turn and no regeneration.
     unit->baseActionCount = 1;

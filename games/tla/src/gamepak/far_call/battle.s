@@ -27,11 +27,11 @@ FarCall_BattleTable:
 	export Battle_RunFar, Battle_Run
 	export BattleMotion_ProjectPositionFar, BattleMotion_ProjectPosition
 	export BattleMotion_ProjectScaledPositionFar, BattleMotion_ProjectScaledPosition
-	export BattleMotion_ProjectConditionalPositionFar, BattleMotion_ProjectConditionalPosition
+	export BattleMotion_ProjectCursorPointFar, BattleMotion_ProjectCursorPoint
 	export BattleUnit_ListLivingFar, BattleUnit_ListLiving
 	export BattleParty_PrepareMembersFar, BattleParty_PrepareMembers
 	export BattleCamera_SetCommandViewFar, BattleCamera_SetCommandView
-	export GetMotionRecordFar, GetMotionRecord
+	export Actor_GetSpriteFar, Actor_GetSprite
 	export BattleHighlight_SetModesFar, BattleHighlight_SetModes
 	export BattlePlayback_StartFar, BattlePlayback_Start
 	export ColorBuffer_ScaleFar, ColorBuffer_Scale
@@ -40,7 +40,7 @@ FarCall_BattleTable:
 	export DjinnRecovery_CountDownTwentyFar, DjinnRecovery_CountDownTwenty
 	export DebugParameterSet_LoadFar, DebugParameterSet_Load
 	export BattleObject_PutFar, BattleObject_Put
-	export ReleaseBattleObjectRecordsFar, ReleaseBattleObjectRecords
+	export BattleObject_DestroySpritesFar, BattleObject_DestroySprites
 	export BattleMessage_WaitForAdvanceAtFar, BattleMessage_WaitForAdvanceAt
 	export BattleDjinn_CountStandbyFar, BattleDjinn_CountStandby
 	export BattleParty_PrepareReserveOwnersFar, BattleParty_PrepareReserveOwners

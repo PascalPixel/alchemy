@@ -260,7 +260,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
                        CAMERA_KEEP,
                        toFIXED(gStaffCredit_FlightStarts[stage][1]), 0);
   WorldMap_UpdateCurrentTileBlock();
-  FieldEffect_ScheduleRatioTransition(gStaffCredit_StartZooms[stage], 1);
+  FieldWorldMap_StartZoom(gStaffCredit_StartZooms[stage], 1);
   map->yaw = TRIG_TURN / 16;
   map->pitch = TRIG_TURN * 13 / 16;
   Iwram_ClearWordsEntry((void *)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
@@ -277,7 +277,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
 
       map->yaw = (length - frame) * FLIGHT_TURN_STEP;
       if (frame == length - 59)
-        FieldEffect_ScheduleRatioTransition(gStaffCredit_EndZooms[stage], 60);
+        FieldWorldMap_StartZoom(gStaffCredit_EndZooms[stage], 60);
     }
     if (frame >= gStaffCredit_FlightFrames[stage] - 64) {
       u16 *turn = &map->pitch;
@@ -335,7 +335,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
     wait(1);
   }
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Task_Add(StaffCredit_BlendBeacon, TASK_PASS_FRAME);
   Event_PlaySound(SE_GLITTER);
   for (frame = 0; frame != 172; frame++) {
@@ -529,7 +529,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
     FieldCamera_MoveToFX(toFIXED(gStaffCredit_FlightReturns[stage][0]),
                          CAMERA_KEEP,
                          toFIXED(gStaffCredit_FlightReturns[stage][1]), 1);
-    FieldEffect_ScheduleRatioTransition(FIXED_ONE * 7 / 10, 60);
+    FieldWorldMap_StartZoom(FIXED_ONE * 7 / 10, 60);
     for (frame = 0; frame != 124;) {
       map->yaw -= FLIGHT_TURN_STEP;
       if (frame == 60) {
@@ -675,7 +675,7 @@ void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
   }
 }
 
-#include "shared/leader_search.h"
+#include "shared/ship_take_flight.h"
 
 /// Unused: the leader's ship lands, plain again.
 UNUSED void StaffCredit_EndFlight(void) {
@@ -746,7 +746,7 @@ UNUSED void StaffCredit_PlayLighthouseTransition(s32 mode) {
   }
   Task_AddFrame(StaffCredit_UpdateTransitionBlend, TASK_PASS_FRAME);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_GLITTER);
   gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 14);
   PUSH_PICTURE(6);

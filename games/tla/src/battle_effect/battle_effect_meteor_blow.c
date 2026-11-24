@@ -149,9 +149,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   BG_PLTT_COLOR(0, 1) = 0;
   state->transferMode = CANVAS_COPY;
   blank = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SET_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET,
                              state->sheet + METEOR_BLOW_DUST_BLOB_PICTURES, 1,
@@ -166,8 +166,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   wait(1);
   IWRAM_FILL_WORDS(map, 256 * 128, CANVAS_FILL_WORD(1));
   Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(2), map, BATTLE_BACKGROUND_BYTES);
-  BattleEffect_SelectLivingTargets(state->args);
-  BattleEffect_SpawnObjects(1, SPRITE_METEOR, 1);
+  BattleEffect_ShowLivingTargets(state->args);
+  BattleEffect_CreateSprites(1, SPRITE_METEOR, 1);
   REG_BLDCNT = blank;
   REG_BG2PA = Q_8_8(1);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
@@ -175,7 +175,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
-  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferFullScreenImage, TASK_PASS_VBLANK);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -272,8 +272,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       REG_BLDALPHA = EFFECT_BLEND_ADD;
     }
     if (frame == 116) {
-      Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
-      Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+      Task_Remove(BattleEffect_TransferFullScreenImage);
+      Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT,
                           BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -468,9 +468,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   background->busy = 0;
   Task_Remove(BattleEffect_ArmMeteorBlowPaletteDma);
   if (frame <= 115) {
-    Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferFullScreenImage);
   } else {
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferCanvas);
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_SetupBlendedDisplay();
@@ -492,7 +492,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
                              state->sheet + METEOR_BLOW_BILLOW, 0, 0);
@@ -668,7 +668,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Sprite_DestroyFar(state->sprites[0]);
   BattleEffect_EndCanvasLayer();

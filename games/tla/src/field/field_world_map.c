@@ -66,7 +66,7 @@ enum WorldMapGraphicsResource {
 
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
 /// camera state, the projection, the per-scanline ground plane routine in RAM
-/// (Matrix_UpdateVertices) and its first frame, and the per-frame view and
+/// (WorldMap_UpdateAffineLines) and its first frame, and the per-frame view and
 /// HBlank updates.
 UNREAD_RESULT WorldMap_InitializePerspective(void) {
   struct WorldMapView *perspective;
@@ -98,9 +98,9 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   REG_BLDY = 0;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_MAP_CELLS),
                       gMapGridCellBuffer);
-  perspective->fade = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
-                      DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
-  perspective->fadeStep = WORLD_MAP_WIDE_TILES;
+  perspective->shownLayers = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
+                             DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
+  perspective->wideTiles = WORLD_MAP_WIDE_TILES;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_MAP_ENTRANCES),
                       gMapScene);
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
@@ -154,11 +154,11 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     Iwram_TransformVector(&eyeOffset, camera->eye);
     Matrix_Initialize();
     Matrix_SetLookAt(camera->eye, cameraPosition);
-    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, Matrix_UpdateVerticesCode,
-                     Matrix_UpdateVerticesCodeSize);
-    WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(perspective->pitch),
-                                                  Trig_Sin(perspective->pitch)),
-                                cameraPosition, affineState->scanlines);
+    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, WorldMap_UpdateAffineLinesCode,
+                     WorldMap_UpdateAffineLinesCodeSize);
+    WorldMap_BuildScanlineTable(
+        Iwram_DivFX(Trig_Cos(perspective->pitch), Trig_Sin(perspective->pitch)),
+        cameraPosition, affineState->scanlines);
     gScanlineAngle = 0;
     gScanlinePitch = perspective->pitch;
     ((void (*)(void *, s32 *, void *, void *))Ram_HeapSlots->ramCode)(
@@ -444,7 +444,7 @@ static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
 
 /// Draws the cells of the world map's tile row tileRow into its tile maps: the
 /// lower layer's 32 cells, then the upper layer's.
-void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
+void WorldMap_DrawCellRow(u32 tileRow) {
   u8 *sourceCell;
   u8 *screenTile;
   u32 cellsCopied;
@@ -480,7 +480,7 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
 /// Draws the cells of the world map's tile column tileColumn into its tile
 /// maps: 64 cells down, the lower layer's 32 and then the upper layer's, which
 /// follow them in the tile maps and in the cells.
-void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
+void WorldMap_DrawCellColumn(u32 tileColumn) {
   u8 *sourceCell;
   u8 *screenTile;
   u32 cellsCopied;
@@ -555,15 +555,15 @@ void WorldMap_UpdateView(void) {
     // row 12 on when y grows and 18 back when it falls.
     if ((perspective->viewX ^ x) & toFIXED(16)) {
       if (perspective->viewX < x)
-        WorldMap_RenderPaletteMappedColumn(tileColumn + 16);
+        WorldMap_DrawCellColumn(tileColumn + 16);
       else
-        WorldMap_RenderPaletteMappedColumn(tileColumn - 16);
+        WorldMap_DrawCellColumn(tileColumn - 16);
     }
     if ((perspective->viewY ^ y) & toFIXED(16)) {
       if (perspective->viewY < y)
-        WorldMap_RenderPaletteMappedRow(tileRow + 12);
+        WorldMap_DrawCellRow(tileRow + 12);
       else
-        WorldMap_RenderPaletteMappedRow(tileRow - 18);
+        WorldMap_DrawCellRow(tileRow - 18);
     }
     perspective->viewX = x;
     perspective->viewY = y;
@@ -593,7 +593,7 @@ void WorldMap_UpdateView(void) {
     FIXED cosine = Trig_Cos(perspective->pitch);
     FIXED sine = Trig_Sin(perspective->pitch);
 
-    WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(cosine, sine), cameraPosition,
+    WorldMap_BuildScanlineTable(Iwram_DivFX(cosine, sine), cameraPosition,
                                 affineState->scanlines);
     gScanlineAngle = 0;
     gScanlinePitch = perspective->pitch;

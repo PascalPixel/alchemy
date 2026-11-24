@@ -33,7 +33,7 @@
 #include "system/frame.h"
 #include "field/field_event.h"
 #include "field/field.h"
-#include "graphics/palette_snapshots.h"
+#include "graphics/palette_cycles.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -239,7 +239,7 @@ void Settlements_RestoreWallCells(void);
 void Settlements_DropCrate(void);
 void Leader_SlideOnIce(void);
 void Leader_StopMoving(void);
-void Event_ResolveAllPendingActions(void);
+void Event_EndAllLastingPsynergy(void);
 void Scene_QueueMusic(s32 soundId);
 #ifdef MODERN
 void Rope_Lash(s32 index, s32 fromId, s32 toId);
@@ -465,7 +465,7 @@ void Settlements_CatchApple(void) {
   s32 mode;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetPosition(ACTOR_APPLE, 0, 0);
   Event_SetFlag(FLAG_KALT_ISLAND_APPLE_TAKEN);
   ItemDisplay_ShowItem(ITEM_APPLE, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
@@ -547,7 +547,7 @@ void Settlements_ClimbDownLadder(void) {
 /// room with beds below, in Gondowan into the cave with the Star Dust.
 void Settlements_StepOntoLadderFromWest(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWait(ACTOR_FELIX, 16, 0);
   Settlements_ClimbDownLadder();
@@ -558,7 +558,7 @@ void Settlements_StepOntoLadderFromWest(void) {
 /// beds below.
 void Settlements_StepOntoLadderFromEast(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_WalkByAndWait(ACTOR_FELIX, -2, -6);
   Actor_WalkByAndWait(ACTOR_FELIX, -14, -8);
   Settlements_ClimbDownLadder();
@@ -569,7 +569,7 @@ void Settlements_StepOntoLadderFromEast(void) {
 /// in Gondowan Settlement (cell (5, 16)), turns to face north and climbs down.
 void Settlements_TurnAndClimbDownLadder(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Settlements_ClimbDownLadder();
 }
@@ -650,7 +650,7 @@ void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 void Settlements_SetUpKaltIsland(void) {
   struct OrbitObject *actor;
   struct OrbitSprite *sprite;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
 
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
@@ -679,10 +679,10 @@ void Settlements_SetUpKaltIsland(void) {
     actor->y += toFIXED(16);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->visible = 1;
-  glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   Item_LoadIcon(ITEM_APPLE);
   Vram_Load(sprite->vramBlock, ICON_TILE_BYTES, glyph->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   actor->orbitCenterX = actor->x;
   actor->orbitAngle = 0;
   actor->orbitCenterY = actor->y;
@@ -794,7 +794,7 @@ void Settlements_EnterHouse(void) {
   u32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
     struct Actor *actor = Actor_Get(i);
 
@@ -1134,7 +1134,7 @@ void Settlements_DropCrate(void) {
   s32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   EventCamera_FollowActor(ACTOR_WALL_CRATE, 1);
   actor = Actor_Get(ACTOR_WALL_CRATE);
   column = FIELD_CELL(actor->x.fixed);
@@ -1359,7 +1359,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS(GondowanSettlementCave),
     SCENE_EXIT_UNLESS(GONDOWAN_SETTLEMENT_CAVE_TO_GONDOWAN_SETTLEMENT, GondowanSettlement, GONDOWAN_SETTLEMENT_FROM_GONDOWAN_SETTLEMENT_CAVE_A, EXIT_FLAG_NONE),
     // Hesperia Settlement's entrance 4 is where the caves below come up.
-    SCENE_EXIT_UNLESS(GONDOWAN_SETTLEMENT_CAVE_TO_HESPERIA_SETTLEMENT, HesperiaSettlement, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GONDOWAN_SETTLEMENT_CAVE_TO_HESPERIA_SETTLEMENT, HesperiaSettlement, HESPERIA_SETTLEMENT_FROM_CAVES, EXIT_FLAG_NONE),
     SCENE_EXITS(HesperiaSettlement),
     SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_HESPERIA_SETTLEMENT, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_TO_HESPERIA_SETTLEMENT_HOUSES_NORTH, HesperiaSettlementHouses, HESPERIA_SETTLEMENT_HOUSES_FROM_HESPERIA_SETTLEMENT_NORTH, EXIT_FLAG_NONE),
@@ -1368,7 +1368,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_TO_HESPERIA_SETTLEMENT_HOUSES_SOUTH_C, HesperiaSettlementHouses, HESPERIA_SETTLEMENT_HOUSES_FROM_HESPERIA_SETTLEMENT_SOUTH, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_TO_HESPERIA_SETTLEMENT_CAVE, HesperiaSettlementCave, HESPERIA_SETTLEMENT_CAVE_FROM_HESPERIA_SETTLEMENT, EXIT_FLAG_NONE),
     SCENE_EXITS(HesperiaSettlementCave),
-    SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_CAVE_TO_HESPERIA_SETTLEMENT, HesperiaSettlement, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_CAVE_TO_HESPERIA_SETTLEMENT, HesperiaSettlement, HESPERIA_SETTLEMENT_FROM_CAVES, EXIT_FLAG_NONE),
     SCENE_EXITS(HesperiaSettlementHouses),
     SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_HOUSES_TO_HESPERIA_SETTLEMENT_NORTH, HesperiaSettlement, HESPERIA_SETTLEMENT_FROM_HESPERIA_SETTLEMENT_HOUSES_NORTH, EXIT_FLAG_NONE),
     // The stairs between the room with beds and the floor above it.

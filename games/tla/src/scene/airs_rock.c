@@ -206,7 +206,7 @@ enum AirsRockFujinShieldChestEntrance {
 };
 #include "../field/actor_set_sprite_priority.c"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 
 #include "shared/scene_create_actor.h"
 
@@ -227,7 +227,7 @@ s32 AirsRock_ClearScriptedActorSpriteFlags(s32 actorId) {
 
 #include "shared/map_cell_set.c"
 
-#include "../field/actor_wait_until_idle.c"
+#include "../field/actor_wait_until_landed.c"
 
 #undef EFFECT_SET_SCRIPT
 
@@ -240,7 +240,7 @@ void Actor_PlaceMovedBlock(void);
 void Blocks_UnmarkCells(struct Actor *block) {
   struct MapState *map;
 
-  if (block->riseEnabled != 0) {
+  if (block->sceneByte != 0) {
     map = Ram_HeapSlots->mapGrid;
     if (map != NULL) {
       struct MapCell **cells = &map->layers[2].cells;
@@ -253,7 +253,7 @@ void Blocks_UnmarkCells(struct Actor *block) {
       cell = *cells;
       cell += x + ((row - 1) << 7);
       cell->collisionCode = 0;
-      block->riseEnabled = 0;
+      block->sceneByte = 0;
     }
   }
 }
@@ -288,7 +288,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// and its warning that the stones magnify the wind.
 void AirsRock_ExamineWindStone(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   // "Beware the Wind Stones." "The stones magnify the power of the wind. Use
   // caution when approaching Air's Rock."
   Message_ShowCentered((s32)MsgFieldWindStoneWarning, 1);
@@ -302,7 +302,7 @@ s32 TilesetAnim_Resume();
 /// screen wipes to the great hall inside Air's Rock.
 void AirsRock_EnterTheRock(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(64, 64, 83, 35, 1, 2);
   TilesetAnim_Resume(0);
@@ -327,7 +327,7 @@ void AirsRock_MoveFirstPillar(void) {
 
   actor = Actor_Get(ACTOR_FIRST_PILLAR);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (FIELD_CELL(actor->x.fixed) == 31) {
     Event_SetFlag(FLAG_FIRST_PILLAR_MOVED_WEST);
   } else {
@@ -356,7 +356,7 @@ void AirsRock_MoveSecondPillar(void) {
   actor = Actor_Get(ACTOR_SECOND_PILLAR);
   value = MapCell_GetAttributes(3, 70, 67);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (FIELD_CELL(actor->x.fixed) == 32) {
     Event_SetFlag(FLAG_SECOND_PILLAR_MOVED_WEST);
     value &= CELL_ATTRIBUTE_BITS;
@@ -382,7 +382,7 @@ void AirsRock_MoveThirdPillar(void) {
 
   actor = Actor_Get(ACTOR_THIRD_PILLAR);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (FIELD_HALF_CELL(actor->x.fixed) == 23) {
     Event_SetFlag(FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED);
   }
@@ -441,20 +441,21 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Wind Stone or a twister rock; the game clears what is pending so that the
 /// cast can go on to the stone's or rock's own whirlwind
 /// (AirsRock_TakeOverWhirlwind).
-void AirsRock_StartWhirlwind(void) { Event_ResolvePendingActions(0); }
+void AirsRock_StartWhirlwind(void) { Event_EndLastingPsynergy(0); }
 
 /// Nothing visible happens of its own as Felix casts Whirlwind on a Wind
 /// Stone or a twister rock; the game tells Whirlwind to leave out its usual
 /// little whirlwind, so that what follows is the stone's or the rock's own
 /// (AirsRock_BlowGust and the rest).
 void AirsRock_TakeOverWhirlwind(void) {
-  ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->childOption = 1;
+  ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->sceneVariant =
+      1;
 }
 
 /// The turn a gust's spark makes each frame: a lap every 32 frames.
 #define GUST_LAP_STEP (TRIG_TURN / 32)
 
-/// A gust's spark: circles the centre kept in bounce and riseBaseY, a lap every
+/// A gust's spark: circles the centre kept in bounce and sceneWord, a lap every
 /// 32 frames, its radius growing as it rises.
 void AirsRock_SpiralGust(struct Actor *actor) {
   s32 radius = actor->y.fixed;
@@ -465,7 +466,7 @@ void AirsRock_SpiralGust(struct Actor *actor) {
   actor->x.fixed = actor->bounce +
                    Iwram_MulFX(Trig_Cos((step & 0xff) * GUST_LAP_STEP), radius);
   actor->z.fixed =
-      actor->riseBaseY +
+      actor->sceneWord +
       Iwram_MulFX(Math_Sin((actor->speedLimit & 0xff) * GUST_LAP_STEP),
                   radius) /
           3;
@@ -485,7 +486,7 @@ void AirsRock_SpiralSpark(struct Actor *actor) {
       actor->bounce +
       Iwram_MulFX(Trig_Cos((step & 0xff) * GUST_LAP_STEP), radius) * 2;
   actor->z.fixed =
-      actor->riseBaseY +
+      actor->sceneWord +
       Iwram_MulFX(Math_Sin((actor->speedLimit & 0xff) * GUST_LAP_STEP), radius);
   actor->y.fixed += actor->gravity;
   actor->speedLimit++;
@@ -494,12 +495,12 @@ void AirsRock_SpiralSpark(struct Actor *actor) {
 }
 
 /// A Whirlwind target's update while the gust gathers: it flickers to the
-/// colour mode in riseCounter (a SpriteColorMode), at the rate riseEnabled
+/// colour mode in sceneCounter (a SpriteColorMode), at the rate sceneByte
 /// sets.
 void AirsRock_FlickerTarget(struct Actor *actor) {
-  u32 on = ((gFrameCount & 3) >> actor->riseEnabled) & 1;
+  u32 on = ((gFrameCount & 3) >> actor->sceneByte) & 1;
 
-  FieldActor_SetSpriteColor(actor, (u8)(on * actor->riseCounter));
+  FieldActor_SetSpriteColor(actor, (u8)(on * actor->sceneCounter));
 }
 
 // The Whirlwind gust in Air's Rock.
@@ -527,7 +528,7 @@ void AirsRock_BlowGust(void) {
   s32 newZ, newX, flag = 0, steps = 0, hit, angle, i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_RUSH);
   gust = FieldActor_Create(SPRITE_WHIRLWIND, leader->x.fixed, leader->y.fixed,
                            leader->z.fixed);
@@ -539,24 +540,24 @@ void AirsRock_BlowGust(void) {
    * view of the actor. */
   ((struct MotionView *)gust)->flags = 0;
   ((struct FieldSprite *)gust->sprite)->priority =
-      ((struct FieldSprite *)effect->child->sprite)->priority;
-  Actor_SetMoveTarget(gust, effect->child->x.fixed, effect->child->y.fixed,
-                      effect->child->z.fixed - toFIXED(1));
+      ((struct FieldSprite *)effect->target->sprite)->priority;
+  Actor_SetMoveTarget(gust, effect->target->x.fixed, effect->target->y.fixed,
+                      effect->target->z.fixed - toFIXED(1));
   while (gust->scaleY < FIXED_ONE * 13 / 10) {
     gust->scaleY += FIXED_ONE / 10;
     Event_Wait(1);
   }
   Actor_WaitForMove(gust);
-  gust->z.fixed = effect->child->z.fixed - toFIXED(1);
+  gust->z.fixed = effect->target->z.fixed - toFIXED(1);
   while (gust->scaleY < FIXED_ONE * 18 / 10) {
     if ((gFrameCount & 3) == 0) {
-      spark = FieldActor_Create(SPRITE_PARTICLE, effect->child->x.fixed, 0,
-                                effect->child->z.fixed);
+      spark = FieldActor_Create(SPRITE_PARTICLE, effect->target->x.fixed, 0,
+                                effect->target->z.fixed);
       spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
       spark->gravity = toFIXED(4) / 5;
-      spark->riseBaseY = spark->z.fixed;
+      spark->sceneWord = spark->z.fixed;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
@@ -567,16 +568,16 @@ void AirsRock_BlowGust(void) {
     if (gFrameCount & 1) {
       gust->scaleX += FIXED_ONE / 100;
       gust->scaleY += FIXED_ONE / 100;
-      Actor_SetSpriteColor(effect->child, SPRITE_COLOR_HIDDEN);
+      Actor_SetSpriteColor(effect->target, SPRITE_COLOR_HIDDEN);
     } else {
-      Actor_SetSpriteColor(effect->child, SPRITE_COLOR_GBR);
+      Actor_SetSpriteColor(effect->target, SPRITE_COLOR_GBR);
     }
     Event_Wait(1);
   }
-  Actor_SetSpriteColor(effect->child, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColor(effect->target, SPRITE_COLOR_NORMAL);
   Sound_Play(SE_WHOOSH);
-  cell.x = FIELD_CELL(effect->child->x.fixed);
-  cell.z = FIELD_CELL(effect->child->z.fixed);
+  cell.x = FIELD_CELL(effect->target->x.fixed);
+  cell.z = FIELD_CELL(effect->target->z.fixed);
   // The leader's facing rounded to the nearest of east, south, west and north.
   angle = FACING_QUARTER(leader->facing + DEGtoANG(45));
   delta.x = FIXEDtoINT(Trig_Cos(angle));
@@ -592,8 +593,8 @@ void AirsRock_BlowGust(void) {
   flag = CELL_CODE(flag);
   flag -= 1;
   steps -= 2;
-  newX = effect->child->x.part[0].integer + ((steps * delta.x) << 3);
-  newZ = effect->child->z.part[0].integer + ((steps * delta.z) << 3);
+  newX = effect->target->x.part[0].integer + ((steps * delta.x) << 3);
+  newZ = effect->target->z.part[0].integer + ((steps * delta.z) << 3);
   ((struct FieldSprite *)gust->sprite)->priority = 1;
   /* FAKEMATCH(temporary): cell, a map cell's pair, takes the gust's pixel
    * target; as newX and newZ at the move target. */
@@ -712,7 +713,7 @@ void AirsRock_SwirlDust(struct Actor *actor) {
 
   actor->y.fixed += actor->gravity;
   actor->x.fixed += actor->bounce;
-  actor->z.fixed += actor->riseBaseY;
+  actor->z.fixed += actor->sceneWord;
   if (FIELD_HALF_CELL(actor->x.fixed) <= 39) {
     actor->bounce += toFIXED(3) / 2;
     scale = actor->scaleX + (FIXED_ONE / 20);
@@ -749,7 +750,7 @@ void AirsRock_WhirlwindClearsWall(void) {
   FIXED x;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_TILES), buffer);
   Dma_Set(buffer, BG_CHAR_BLOCK(3) + WHIRLWIND_TOP_TILE * TILE_SIZE_4BPP,
@@ -782,9 +783,9 @@ void AirsRock_WhirlwindClearsWall(void) {
   }
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
-  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter =
+  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneCounter =
       SPRITE_COLOR_BLUE_TINT;
-  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseEnabled = 1;
+  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneByte = 1;
   Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update = AirsRock_FlickerTarget;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
@@ -800,7 +801,7 @@ void AirsRock_WhirlwindClearsWall(void) {
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
       spark->gravity = toFIXED(3) / 2;
-      spark->riseBaseY = spark->z.fixed;
+      spark->sceneWord = spark->z.fixed;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
@@ -823,7 +824,7 @@ void AirsRock_WhirlwindClearsWall(void) {
   MapGrid_SetShake(1, 1, 1);
   for (i = 0; i != 64; i++) {
     REG_BLDALPHA = ((BLEND_WEIGHT_MAX - 1 - (i >> 2)) << 8) | (i >> 2);
-    Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = Random16() & 7;
+    Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneCounter = Random16() & 7;
     FieldEvent_Wait(1);
   }
   FieldEvent_Wait(60);
@@ -854,7 +855,7 @@ void AirsRock_WhirlwindClearsWall(void) {
       }
       REG_BLDALPHA =
           (((j >> 4) & 0xf) << 8) | (BLEND_WEIGHT_MAX - ((j >> 4) & 0xf));
-      Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = Random16() & 7;
+      Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneCounter = Random16() & 7;
       FieldEvent_Wait(1);
     } while (j != 255);
   }
@@ -867,13 +868,13 @@ void AirsRock_WhirlwindClearsWall(void) {
   REG_BLDALPHA = BLEND_ALPHA(15, 0);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = SPRITE_COLOR_GREY;
+  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneCounter = SPRITE_COLOR_GREY;
   for (i = 0; i != 65; i++) {
     REG_BLDALPHA = ((i >> 2) << 8) | (BLEND_WEIGHT_MAX - (i >> 2));
     FieldEvent_Wait(1);
   }
   FieldTask_Remove(AirsRock_ScrollWave);
-  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseEnabled = 0;
+  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->sceneByte = 0;
   System_Wait(30);
   Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update = NULL;
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL),
@@ -921,13 +922,13 @@ void AirsRock_RideWhirlwind(void) {
   u16 facing;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   leader->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(leader, 0);
   GameFlag_Set(FLAG_RIDING_WHIRLWIND);
   Sound_Play(SE_KIRIN);
   rise = 0;
-  while (ride->riseEnabled != 0) {
+  while (ride->sceneByte != 0) {
     leader->x.fixed = ride->x.fixed;
     leader->y.fixed = ride->y.fixed + rise;
     leader->z.fixed = ride->z.fixed;
@@ -996,8 +997,8 @@ void AirsRock_RideWhirlwind(void) {
       }
     }
   found:
-    // The statue's riseCounter holds the layer of the ledge he lands on.
-    height = Map_GetTerrainHeight(statue->riseCounter, ride->x.fixed + dx,
+    // The statue's sceneCounter holds the layer of the ledge he lands on.
+    height = Map_GetTerrainHeight(statue->sceneCounter, ride->x.fixed + dx,
                                   ride->z.fixed + dz);
     leader->y.fixed = height;
     leader->groundHeight = height;
@@ -1010,10 +1011,10 @@ void AirsRock_RideWhirlwind(void) {
     leader->velocityY = toFIXED(4);
     leader->motionFlags = ACTOR_FALLS;
     leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-    leader->layer = statue->riseCounter;
+    leader->layer = statue->sceneCounter;
     FieldActor_SetMoveTargetFX(leader, leader->x.fixed + dx, leader->y.fixed,
                                leader->z.fixed + dz);
-    OverlayObject_WaitUntilIdle(leader);
+    Actor_WaitUntilLanded(leader);
     FieldActor_WaitForMove(leader);
     Actor_SetSpriteFlags(leader, 1);
     leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -1037,7 +1038,7 @@ void AirsRock_RideWhirlwind(void) {
         camera, leader->x.fixed,
         Map_GetTerrainHeight(0, leader->x.fixed, leader->z.fixed),
         leader->z.fixed);
-    OverlayObject_WaitUntilIdle(leader);
+    Actor_WaitUntilLanded(leader);
     FieldActor_WaitForMove(camera);
   }
   Actor_GetById(gMainRoutineState.leaderActorId)->priorityFlags |=
@@ -1088,7 +1089,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
       CELL_MARK_WHIRLWIND_END) {
   end:
     Actor_PlaySoundInView(shot, cue);
-    shot->riseEnabled = 0;
+    shot->sceneByte = 0;
     shot->update = 0;
     if (shot->facing == FACING_NORTH)
       Actor_StartScript(shot, gAirsRock_WhirlwindRisesScript);
@@ -1096,7 +1097,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
       Actor_StartScript(shot, gAirsRock_WhirlwindFadesScript);
     return;
   }
-  if (shot->riseCounter == 0) {
+  if (shot->sceneCounter == 0) {
     // i first says whether the whirlwind is beside the leader; the loop below
     // reuses it as the actor index.
     i = 0;
@@ -1121,8 +1122,8 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
           ((struct FieldSprite *)shot->sprite)->priority;
       state->raisedTrigger = RAISED_RIDE_WHIRLWIND;
       gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
-      shot->riseCounter = 1;
-      shot->riseEnabled = 1;
+      shot->sceneCounter = 1;
+      shot->sceneByte = 1;
     }
   }
   actors = &state->actors[ACTOR_FIRST_PLACED];
@@ -1180,8 +1181,8 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *actor) {
     Actor_SetSpriteFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
     shot->motionFlags = 0;
-    shot->riseCounter = 0;
-    shot->riseEnabled = 0;
+    shot->sceneCounter = 0;
+    shot->sceneByte = 0;
     shot->facing = actor->facing;
     shot->update = AirsRock_MoveWhirlwind;
     shot->watchedActor = actor;
@@ -1212,15 +1213,15 @@ void AirsRock_PlacePillar(void) {
   s32 x, z;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_PlaceMovedBlock();
   Blocks_MarkCells(((u8 *)gAirsRock_EntrancePillars));
   if (Map_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed) !=
       actor->y.fixed) {
     actor->layer = 2;
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    OverlayObject_WaitUntilIdle(actor);
-    OverlayObject_WaitUntilIdle(actor);
+    Actor_WaitUntilLanded(actor);
+    Actor_WaitUntilLanded(actor);
     Event_PlaySound(SE_THUMP);
     actor->motionFlags = 0;
     actor->layer = 0;
@@ -1246,7 +1247,7 @@ s32 FlagBlock_ApplyFlags();
 /// of ice.
 void AirsRock_FreezePuddle(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FlagBlock_ApplyFlags((s32)((u8 *)gAirsRock_FrozenPuddle));
   Event_End();
 }
@@ -1321,7 +1322,7 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   u32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Io_Write16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
@@ -1348,9 +1349,9 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   }
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
-  Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->riseCounter =
+  Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->sceneCounter =
       SPRITE_COLOR_BLUE_TINT;
-  Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->riseEnabled = 1;
+  Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->sceneByte = 1;
   Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->update = AirsRock_FlickerTarget;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
@@ -1366,7 +1367,7 @@ void AirsRock_WhirlwindOpensTheTop(void) {
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
       spark->gravity = toFIXED(3) / 2;
-      spark->riseBaseY = spark->z.fixed;
+      spark->sceneWord = spark->z.fixed;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
@@ -1564,7 +1565,7 @@ void AirsRock_WhirlwindClearsFog(void) {
   s32 z;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_TILES), buffer);
   Dma_Set(buffer, BG_CHAR_BLOCK(3) + WHIRLWIND_TOP_TILE * TILE_SIZE_4BPP,
@@ -1593,9 +1594,9 @@ void AirsRock_WhirlwindClearsFog(void) {
   }
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
-  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter =
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneCounter =
       SPRITE_COLOR_BLUE_TINT;
-  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseEnabled = 1;
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneByte = 1;
   Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update = AirsRock_FlickerTarget;
   for (i = 0; i != 45; i++) {
     s32 low = gFrameCount & 3;
@@ -1613,7 +1614,7 @@ void AirsRock_WhirlwindClearsFog(void) {
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
       spark->gravity = toFIXED(3) / 2;
-      spark->riseBaseY = spark->z.fixed;
+      spark->sceneWord = spark->z.fixed;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
@@ -1647,7 +1648,7 @@ void AirsRock_WhirlwindClearsFog(void) {
        i += toFIXED(1) / 64, z -= toFIXED(1) / 64) {
     fog->speedX = i;
     fog->speedY = z;
-    Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter = Random16() & 7;
+    Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneCounter = Random16() & 7;
     System_Wait(1);
   }
   FieldTask_Remove(AirsRock_LiftFog);
@@ -1657,7 +1658,7 @@ void AirsRock_WhirlwindClearsFog(void) {
   // The fog thins a weight every 32 frames, to none.
   for (i = 0; i != (FOG_WEIGHT << 5) + 1; i++) {
     REG_BLDALPHA = BLEND_ALPHA(FOG_WEIGHT - (i >> 5), BLEND_WEIGHT_MAX);
-    Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter = Random16() & 7;
+    Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneCounter = Random16() & 7;
     FieldEvent_Wait(1);
   }
   REG_DISPCNT &= ~DISPCNT_BG1_ON;
@@ -1666,13 +1667,13 @@ void AirsRock_WhirlwindClearsFog(void) {
   REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter = SPRITE_COLOR_GREY;
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneCounter = SPRITE_COLOR_GREY;
   for (i = 0; i != 129; i++) {
     REG_BLDALPHA = ((i >> 3) << 8) | (BLEND_WEIGHT_MAX - (i >> 3));
     FieldEvent_Wait(1);
   }
   FieldTask_Remove(AirsRock_ScrollWave);
-  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseEnabled = 0;
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->sceneByte = 0;
   System_Wait(30);
   Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update = NULL;
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG),
@@ -1882,7 +1883,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_BREATHING_STATUE)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
       Actor_GetById(ACTOR_BREATHING_STATUE)->timer = 180;
-      Actor_GetById(ACTOR_BREATHING_STATUE)->riseCounter = 1;
+      Actor_GetById(ACTOR_BREATHING_STATUE)->sceneCounter = 1;
       Actor_GetById(ACTOR_BREATHING_STATUE)->update =
           AirsRock_StatueBreathesWhirlwind;
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BREATHING_STATUE), 0);
@@ -1899,7 +1900,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_FIRST_BREATHING_STATUE)->y.fixed = -toFIXED(8);
       Actor_SetSpritePriority(ACTOR_FIRST_BREATHING_STATUE, 2);
       Actor_GetById(ACTOR_FIRST_BREATHING_STATUE)->timer = 60;
-      Actor_GetById(ACTOR_FIRST_BREATHING_STATUE)->riseCounter = 0;
+      Actor_GetById(ACTOR_FIRST_BREATHING_STATUE)->sceneCounter = 0;
       Actor_GetById(ACTOR_FIRST_BREATHING_STATUE)->update =
           AirsRock_StatueBreathesWhirlwind;
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_BREATHING_STATUE), 0);
@@ -1907,7 +1908,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_SECOND_BREATHING_STATUE)->y.fixed = -toFIXED(8);
       Actor_SetSpritePriority(ACTOR_SECOND_BREATHING_STATUE, 2);
       Actor_GetById(ACTOR_SECOND_BREATHING_STATUE)->timer = 180;
-      Actor_GetById(ACTOR_SECOND_BREATHING_STATUE)->riseCounter = 0;
+      Actor_GetById(ACTOR_SECOND_BREATHING_STATUE)->sceneCounter = 0;
       Actor_GetById(ACTOR_SECOND_BREATHING_STATUE)->update =
           AirsRock_StatueBreathesWhirlwind;
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_SECOND_BREATHING_STATUE), 0);

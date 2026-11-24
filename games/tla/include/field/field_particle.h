@@ -18,7 +18,7 @@ typedef void (*EffectCallback)(struct FieldParticle *);
 /// A particle a Psynergy effect moves and draws: its sprite, its position and
 /// target, its speed, scale and heading, and its per-frame callback.
 struct FieldParticle {
-  void *actor;        ///< the actor it draws, released with it
+  void *sprite;       ///< the sprite it draws (struct Sprite), released with it
   FIXED x;            ///< 16.16 fixed-point pixels
   FIXED z;            ///< 16.16 fixed-point pixels
   FIXED targetX;      ///< 16.16 fixed-point pixels; EFFECT_NO_TARGET at rest
@@ -58,7 +58,7 @@ STATIC_ASSERT(offsetof(struct FieldParticle, state) == 64);
 
 u32 FieldParticle_HasPendingTarget(struct FieldParticle *);
 void FieldParticle_SetPosition(struct FieldParticle *, s32, s32);
-void FieldParticle_SetActorMode(struct FieldParticle *, s32);
+void FieldParticle_SetAnimation(struct FieldParticle *, s32);
 void FieldParticle_SetCallback(struct FieldParticle *, EffectCallback);
 void FieldParticle_Update(struct FieldParticle *);
 

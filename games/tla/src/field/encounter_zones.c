@@ -4,7 +4,7 @@
 /// (gArea_NameRules) and the scenes and entrances that take it
 /// (gScene_EncounterRules); a World Map zone's, its encounter regions and
 /// the battle environments that take it (gWorldMap_EncounterRules); a Djinni
-/// zone's, the Djinn whose battles it holds (gEncounter_AreaEntryTable).
+/// zone's, the Djinn whose battles it holds (gEncounter_DjinnBattles).
 
 #include "battle/formations.h"
 #include "field/encounter_zone.h"
@@ -66,17 +66,17 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {55, 56},
         .weights = {10, 10},
     },
-    // ENCOUNTER_TABLE_AQUA_JELLIES
+    // ENCOUNTER_ZONE_AQUA_JELLIES
     {
         .formations = {58, 59},
         .weights = {50, 10},
     },
-    // ENCOUNTER_TABLE_SERPENT
+    // ENCOUNTER_ZONE_SERPENT
     {
         .formations = {61, 62, 63, 64, 65, 66, 67},
         .weights = {10, 10, 10, 10, 10, 10, 10},
     },
-    // ENCOUNTER_TABLE_MOAPA
+    // ENCOUNTER_ZONE_MOAPA
     {
         .formations = {69, 70, 71, 72, 73, FORMATION_KARST_AND_AGATIO_A,
                        FORMATION_KARST_AND_AGATIO_B,
@@ -566,7 +566,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {481, 482, 483, 484, 485, 486, 487, 488},
         .weights = {20, 20, 10, 10, 5},
     },
-    // Jupiter Lighthouse: SceneId_JupiterLighthouseRoomErinyesTunicChest entrances 3, 4, 8 and 9, SceneId_JupiterLighthouseRoomLockedDoors entrances 5 and 7, SceneId_JupiterLighthouseRoomRedKey, SceneId_JupiterLighthouseRoomCrackedFloor, SceneId_JupiterLighthouseRoomBlueKey, SceneId_JupiterLighthouseRoomM
+    // Jupiter Lighthouse: SceneId_JupiterLighthouseRoomErinyesTunicChest entrances 3, 4, 8 and 9, SceneId_JupiterLighthouseRoomLockedDoors entrances 5 and 7, SceneId_JupiterLighthouseRoomRedKey, SceneId_JupiterLighthouseRoomCrackedFloor, SceneId_JupiterLighthouseRoomBlueKey, SceneId_JupiterLighthouseTerraces
     {
         .rate = 55,
         .level = 30,
@@ -636,14 +636,14 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {501, 502, 503, 504, 505, 506, 507, 508},
         .weights = {20, 5, 20, 5, 5, 5},
     },
-    // Mars Lighthouse: SceneId_MarsLighthouseEntranceValkyrieMailChest, SceneId_MarsLighthouseEntranceSolBladeChest, SceneId_MarsLighthouseStarRoom, SceneId_MarsLighthouseRoomMInscriptions
+    // Mars Lighthouse: SceneId_MarsLighthouseEntranceValkyrieMailChest, SceneId_MarsLighthouseEntranceSolBladeChest, SceneId_MarsLighthouseStarRoom, SceneId_MarsLighthouseHall
     {
         .rate = 50,
         .level = 33,
         .formations = {501, 502, 503, 504, 505, 506, 507, 508},
         .weights = {10, 5, 15, 20, 5, 10, 5, 5},
     },
-    // Mars Lighthouse: SceneId_MarsLighthouseMercuryLedge, SceneId_MarsLighthouseJupiterLedge, SceneId_MarsLighthouseRoomMAlastorsHoodChest, SceneId_MarsLighthouseVenusLedge, SceneId_MarsLighthouseMarsTower, SceneId_MarsLighthouseMercuryTower, SceneId_MarsLighthouseJupiterTower, SceneId_MarsLighthouseVenusTower
+    // Mars Lighthouse: SceneId_MarsLighthouseMercuryLedge, SceneId_MarsLighthouseJupiterLedge, SceneId_MarsLighthouseMarsLedge, SceneId_MarsLighthouseVenusLedge, SceneId_MarsLighthouseMarsTower, SceneId_MarsLighthouseMercuryTower, SceneId_MarsLighthouseJupiterTower, SceneId_MarsLighthouseVenusTower
     {
         .rate = 50,
         .level = 33,
@@ -705,7 +705,7 @@ const struct EncounterZone gEncounterZones[] = {
                        FORMATION_KARST_AND_AGATIO_VS_ISAAC},
         .weights = {10, 10, 10, 10, 10},
     },
-    // ENCOUNTER_TABLE_HIDDEN_BOSSES
+    // ENCOUNTER_ZONE_HIDDEN_BOSSES
     {
         .formations = {631, 632, 633, 634},
         .weights = {10, 10, 10, 10},
@@ -720,7 +720,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {659},
         .weights = {10},
     },
-    // ENCOUNTER_TABLE_MAD_PLANTS
+    // ENCOUNTER_ZONE_MAD_PLANTS
     {
         .formations = {641, 642, 643, 644, 645},
         .weights = {10, 10, 10, 10, 10},

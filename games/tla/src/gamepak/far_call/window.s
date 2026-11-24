@@ -34,7 +34,7 @@ FarCall_WindowTable:
 	export Portrait_CreateFar, Portrait_Create
 	export Portrait_ReloadFar, Portrait_Reload
 	export WindowSprite_SetMotionFar, WindowSprite_SetMotion
-	export WindowSprite_SetInvertedSentinelFar, WindowSprite_SetInvertedSentinel
+	export WindowSprite_SetPriorityFar, WindowSprite_SetPriority
 	export Portrait_OpenWindowFar, Portrait_OpenWindow
 	export Portrait_CloseWindowFar, Portrait_CloseWindow
 	export Text_GetMessageSizeFar, Text_GetMessageSize
@@ -85,7 +85,7 @@ FarCall_WindowTable:
 	export Window_SetTilemapEntryFar, Window_SetTilemapEntry
 	export DebugSceneSelect_RunFar, DebugSceneSelect_Run
 	export DebugFlagEditor_RunFar, DebugFlagEditor_Run
-	export Resource_LoadByModeIntoSlotFar, Resource_LoadByModeIntoSlot
+	export SelectionIcon_LoadIntoSlotFar, SelectionIcon_LoadIntoSlot
 	export Window_MarkVisibleTextTilesFar, Window_MarkVisibleTextTiles
 	export ItemIcon_ComposeFar, ItemIcon_Compose
 	export PartyStatus_HighlightMembersFar, PartyStatus_HighlightMembers
@@ -96,12 +96,12 @@ FarCall_WindowTable:
 	export Save_ChooseAndLoadFileFar, Save_ChooseAndLoadFile
 	export Save_CopyFileFar, Save_CopyFile
 	export Save_EraseSelectedFileFar, Save_EraseSelectedFile
-	export Save_ProcessSelectedFileFar, Save_ProcessSelectedFile
+	export Save_WriteLinkTalliesFar, Save_WriteLinkTallies
 	export Save_WriteFileFar, Save_WriteFile
 	export Save_ScanFileSummariesFar, Save_ScanFileSummaries
 	export NameEntry_EditMemberNameFar, NameEntry_EditMemberName
-	export Resource_CopyFixedBlockBFar, Resource_CopyFixedBlockB
-	export Resource_CopyFixedBlockAFar, Resource_CopyFixedBlockA
+	export PointingHand_LoadIntoSlotFar, PointingHand_LoadIntoSlot
+	export NameCaret_LoadIntoSlotFar, NameCaret_LoadIntoSlot
 	export SelectionMenu_SetPositionFar, SelectionMenu_SetPosition
 	export DebugBrowser_IconsFar, DebugBrowser_Icons
 	export DebugBrowser_PortraitsFar, DebugBrowser_Portraits
@@ -119,10 +119,10 @@ FarCall_WindowTable:
 	export Menu_SelectCoinsOrMedalsFar, Menu_SelectCoinsOrMedals
 	export Screens_ReturnZeroFar, Screens_ReturnZero
 	export YesNoMenu_RunAtFar, YesNoMenu_RunAt
-	export Resource_LoadFixedBlockBIntoFreeSlotFar, Resource_LoadFixedBlockBIntoFreeSlot
+	export PointingHand_LoadIntoFreeSlotFar, PointingHand_LoadIntoFreeSlot
 	export Text_MeasureMessageFar, Text_MeasureMessage
 	export Window_HighlightRectFar, Window_HighlightRect
-	export Ability_LoadGlyphFar, Ability_LoadGlyph
+	export Ability_BuildIconTilesFar, Ability_BuildIconTiles
 	export Graphics_ExpandVramTilesByColorTableFar, Graphics_ExpandVramTilesByColorTable
 	export Text_UseExtraTilesFar, Text_UseExtraTiles
 	export Menu_AnimateSelectionToEntryFar, Menu_AnimateSelectionToEntry
@@ -131,10 +131,10 @@ FarCall_WindowTable:
 	export Save_CountFilesExcludingSentFar, Save_CountFilesExcludingSent
 	export Window_DrawBorderFar, Window_DrawBorder
 	export Window_EraseBorderRectFar, Window_EraseBorderRect
-	export Link_DrawPageArrowsFar, Link_DrawPageArrows
+	export PageArrows_DrawFar, PageArrows_Draw
 	export String_FormatStopwatchFar, String_FormatStopwatch
 	export Save_ToFileFar, Save_ToFile
-	export Icon_CopyResourceToSlotFar, Icon_CopyResourceToSlot
+	export ItemIcon_LoadLayersIntoSlotFar, ItemIcon_LoadLayersIntoSlot
 	export Text_DrawMessageToCanvasFar, Text_DrawMessageToCanvas
 	export Glyph_DrawAsSpriteFar, Glyph_DrawAsSprite
 	export Glyph_DrawToTilesFar, Glyph_DrawToTiles

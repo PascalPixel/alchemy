@@ -4,9 +4,9 @@
 	.include "games/tla/src/gamepak/far_call/veneer.s"
 	.global FarCall_TitleTable
 FarCall_TitleTable:
-	export Title_ShowIntroFar, Title_ShowIntro
-	export Title_NoOpColorFar, Title_NoOpColor
-	export Title_NoOpPaletteFar, Title_NoOpPalette
+	export Title_ShowTitleScreenFar, Title_ShowTitleScreen
+	export Title_AfterIntroNoOpFar, Title_AfterIntroNoOp
+	export Title_BeforeLogosNoOpFar, Title_BeforeLogosNoOp
 	export Title_ShowNintendoLogoFar, Title_ShowNintendoLogo
 	export Title_ShowCamelotLogoFar, Title_ShowCamelotLogo
 	export TitleIntro_RunFar, TitleIntro_Run

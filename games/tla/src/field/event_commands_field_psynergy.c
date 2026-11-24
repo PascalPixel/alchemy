@@ -11,13 +11,13 @@
 #include "macros.h"
 
 /// If the scene's sprite is active, stops its update callback
-/// (BattleEffect_DrawSceneSprite) and frees its VRAM cache entry.
+/// (FieldPsynergy_DrawCanvasSprite) and frees its VRAM cache entry.
 void FieldPsynergy_ReleaseSceneSprite(void) {
   struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
 
   if (effectState->spriteActive != 0) {
     effectState->spriteActive = 0;
-    Task_Remove(BattleEffect_DrawSceneSprite);
+    Task_Remove(FieldPsynergy_DrawCanvasSprite);
     VramCache_FreeEntry(effectState->spriteVramSlot);
   }
 }
@@ -53,7 +53,7 @@ s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
     return MapGrid_IsSandCell(x, z, layer);
   if (MapGrid_GetCycloneCellKind(x, z, layer) != CYCLONE_CELL_NONE ||
       MapGrid_IsWaterCell(x, z, layer) != 0 ||
-      MapGrid_GetCellAttributeLowNibbleFar(layer, x, z) != 0)
+      MapGrid_GetTerrainKindAtFar(layer, x, z) != 0)
     return 0;
   if (MapGrid_IsSandCell(x, z, layer) != 0)
     return 1;
@@ -155,19 +155,19 @@ u8 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value) {
 }
 
 /// Returns the attribute byte of the map cell at x, z in layer.
-s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer) {
+s32 MapGrid_GetCellAttributesAt(s32 x, s32 z, s32 layer) {
   return MapGrid_GetCellAt(x, z, layer)->attributeB;
 }
 
 /// Sets the attribute byte of the map cell at x, z in layer.
-u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value) {
+u8 MapGrid_SetCellAttributesAt(s32 x, s32 z, s32 layer, s32 value) {
   MapGrid_GetCellAt(x, z, layer)->attributeB = value;
   return value;
 }
 
 /// Sets bits in the attribute byte of the map cell at x, z in layer.
-u8 MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
-  s32 flags = MapGrid_GetAttributeBAt(x, z, layer);
+u8 MapGrid_SetCellAttributeBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
+  s32 flags = MapGrid_GetCellAttributesAt(x, z, layer);
   struct MapCell *cell = MapGrid_GetCellAt(x, z, layer);
 
   flags |= bits;
@@ -177,7 +177,7 @@ u8 MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
 
 /// Clears bits in the attribute byte of the map cell at x, z in layer.
 u8 MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
-  s32 flags = MapGrid_GetAttributeBAt(x, z, layer);
+  s32 flags = MapGrid_GetCellAttributesAt(x, z, layer);
   struct MapCell *cell = MapGrid_GetCellAt(x, z, layer);
 
   flags &= ~bits;
@@ -208,7 +208,7 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB) {
 /// from a quarter to full size.
 void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
-  struct Actor *mainActor = scene->mainActor;
+  struct Actor *mainActor = scene->caster;
   FIXED start[3];
   s32 i = 0;
 
@@ -231,7 +231,7 @@ void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
 /// 16 pixels above the caster, shrinking it from full size to a quarter.
 void FieldPsynergy_ShrinkToCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   struct Actor *mainActor =
-      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->mainActor;
+      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->caster;
   FIXED start[3];
   s32 i;
 
@@ -324,7 +324,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
       Actor_ReleaseFar(actor);
       return NULL;
     }
-    actor->groundHeight = scene->mainActor->groundHeight;
+    actor->groundHeight = scene->caster->groundHeight;
     actor->motionFlags = ACTOR_FLOATS;
     actor->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
     ((struct Sprite *)actor->sprite)->image.priority = 0;
@@ -452,7 +452,7 @@ void FieldPsynergy_FadeToCastColor(void) {
     tint = PSYNERGY_TINT_DARK_GREY;
   if (GameFlag_Get(FLAG_PSYNERGY_TINT(PSYNERGY_TINT_GREY)))
     tint = PSYNERGY_TINT_GREY;
-  Field_StartColorTransition(8, gFieldEffect_TargetColors[tint]);
+  Field_StartColorTransition(8, gFieldPsynergy_CastColors[tint]);
 }
 #undef Actor_SetAnimationSpeedFar
 #undef BG_CHANNELS

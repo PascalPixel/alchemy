@@ -318,7 +318,7 @@ void LuckyWheels_TransferCanvas(void) {
 
 /// Darkens the screen one step: lowers each channel of the machine's 16
 /// colours and of the icons' by 1.
-void Palette_DarkenScreenStep(void) {
+void LuckyWheels_DarkenStep(void) {
   u16 *col;
   s32 i;
 
@@ -362,7 +362,7 @@ void Palette_DarkenScreenStep(void) {
 
 /// Moves the sparks' colours one step toward the palette of resource; the
 /// backdrop colour is not written back.
-void Palette_StepTowardResource(s32 resource) {
+void LuckyWheels_StepSparkColors(s32 resource) {
   u16 dst[LUCKY_WHEELS_SPARK_COLORS];
   u16 *col = (u16 *)BG_PLTT;
   s32 i;
@@ -519,11 +519,11 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 #define LUCKY_WHEELS_SPIN_WIDTH 7
 #endif
 #if LANGUAGE == LANGUAGE_FRENCH
-#define LUCKY_WHEELS_COIN_DIGITS 3
-#define LUCKY_WHEELS_COIN_X 56
+#define LUCKY_WHEELS_TICKET_DIGITS 3
+#define LUCKY_WHEELS_TICKET_X 56
 #else
-#define LUCKY_WHEELS_COIN_DIGITS 2
-#define LUCKY_WHEELS_COIN_X 64
+#define LUCKY_WHEELS_TICKET_DIGITS 2
+#define LUCKY_WHEELS_TICKET_X 64
 #endif
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define LUCKY_WHEELS_STOP_X 23
@@ -655,8 +655,9 @@ void LuckyWheels_Update(void) {
   if (gDebugPaused == 0) {
     if (state->state == LUCKY_WHEELS_BETTING) {
       tickets = PartyInventory_CountItemFar(ITEM_GAME_TICKET);
-      Text_DrawNumberInWindowFar(tickets - state->bet, LUCKY_WHEELS_COIN_DIGITS,
-                                 state->subWindow, LUCKY_WHEELS_COIN_X, 0);
+      Text_DrawNumberInWindowFar(tickets - state->bet,
+                                 LUCKY_WHEELS_TICKET_DIGITS, state->subWindow,
+                                 LUCKY_WHEELS_TICKET_X, 0);
       Text_DrawNumberInWindowFar(state->bet, 2, state->subWindow, 64, 8);
       if (state->pressed & KEY_B) {
         struct ReelSave *save = (struct ReelSave *)gPartyDjinnRecovery;
@@ -1268,7 +1269,7 @@ void LuckyWheels_FinishFrame(void) {
 #define LUCKY_WHEELS_SPARKS ((struct Particle *)Ram_MapCellBuffer)
 
 /// The screen lines of the wheels' top and bottom edges, and the lines from
-/// each that LuckyWheels_InitializeTitle shades.
+/// each that LuckyWheels_SetUpBetting shades.
 #define LUCKY_WHEELS_WHEELS_TOP 23
 #define LUCKY_WHEELS_WHEELS_BOTTOM 110
 #define LUCKY_WHEELS_SHADE_LINES 40
@@ -1277,7 +1278,7 @@ void LuckyWheels_FinishFrame(void) {
 
 /// Sets up the bouncing title letters of a win, the brightness wave of the
 /// screen's lines and the betting window, and starts at betting.
-void LuckyWheels_InitializeTitle(void) {
+void LuckyWheels_SetUpBetting(void) {
   struct LuckyWheelsState *state;
   struct ReelEffectState *reelEffectState;
   struct Particle *letter;
@@ -1410,8 +1411,7 @@ void LuckyWheels_Run(void) {
       }
     }
   }
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_D),
-                      sheet);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_BLUE_GLOW_SHEET), sheet);
   entry = Resource_GetTableEntry(RESOURCE_SLOTS_MACHINE_PICTURE);
   Dma_Set(entry, (void *)&BG_PLTT_COLOR(LUCKY_WHEELS_MACHINE_PALETTE, 0),
           DMA_COPY_WORDS(8), REG_DMA3);
@@ -1503,7 +1503,7 @@ void LuckyWheels_Run(void) {
     Dma_Set(tiles, (void *)LUCKY_WHEELS_JACKPOT_TILES,
             LUCKY_WHEELS_JACKPOT_COPY, REG_DMA3);
     WindowSystem_InitFieldFar();
-    LuckyWheels_InitializeTitle();
+    LuckyWheels_SetUpBetting();
 
     for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
       struct Reel *reel = &state->reels[i];
@@ -1589,17 +1589,17 @@ void LuckyWheels_Run(void) {
             frame % (LUCKY_WHEELS_CYCLE_PALETTES * LUCKY_WHEELS_CYCLE_FRAMES);
 
         if (phase < LUCKY_WHEELS_CYCLE_FRAMES)
-          Palette_StepTowardResource(RESOURCE_MERCURY_DJINN_SHEET);
+          LuckyWheels_StepSparkColors(RESOURCE_MERCURY_DJINN_SHEET);
         else if (phase < LUCKY_WHEELS_CYCLE_FRAMES * 2)
-          Palette_StepTowardResource(RESOURCE_VENUS_DJINN_SHEET);
+          LuckyWheels_StepSparkColors(RESOURCE_VENUS_DJINN_SHEET);
         else if (phase < LUCKY_WHEELS_CYCLE_FRAMES * 3)
-          Palette_StepTowardResource(RESOURCE_EMBER_STREAK_SHEET);
+          LuckyWheels_StepSparkColors(RESOURCE_EMBER_STREAK_SHEET);
         else if (phase < LUCKY_WHEELS_CYCLE_FRAMES * 4)
-          Palette_StepTowardResource(RESOURCE_LIME_PALETTE);
+          LuckyWheels_StepSparkColors(RESOURCE_LIME_PALETTE);
         else
-          Palette_StepTowardResource(RESOURCE_JUPITER_DJINN_SHEET);
+          LuckyWheels_StepSparkColors(RESOURCE_JUPITER_DJINN_SHEET);
         if (state->timer < LUCKY_WHEELS_FADE_FRAMES)
-          Palette_DarkenScreenStep();
+          LuckyWheels_DarkenStep();
         if (state->timer > LUCKY_WHEELS_FADE_FRAMES && (frame & 7) == 0) {
           s32 x = (Random16() & 127) + 56;
           s32 y = (Random16() & 31) + 48;

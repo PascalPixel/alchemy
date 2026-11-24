@@ -75,9 +75,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_DOOM_DRAGON_A));
 
   // Forget the defeated classes the monster battles exclude.
-  for (i = 0; i < ARRAY_COUNT(gBattleFormation_LevelMatchedEnemies); i++)
-    GameFlag_Clear(
-        ENEMY_DEFEATED_FLAG(gBattleFormation_LevelMatchedEnemies[i]));
+  for (i = 0; i < ARRAY_COUNT(gBattleFormation_ExcludedEnemies); i++)
+    GameFlag_Clear(ENEMY_DEFEATED_FLAG(gBattleFormation_ExcludedEnemies[i]));
   // BUG: the three enemies formations 241 to 248 are made of are set by
   // their enemy ids, not their defeated flags, so they stay unavailable
   // unless beaten, and FLAG_DJINNI(DJINNI_SPRITZ), FLAG_DJINNI(DJINNI_ETHER)
@@ -287,7 +286,7 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
     return;
 #endif
   if (nameLength > 0)
-    suffix = unit->name[nameLength - 1] - LIST_MARKER_CHAR;
+    suffix = unit->name[nameLength - 1] - ENEMY_NAME_LETTER_FIRST;
   battle->nameLetterMasks[index] &= ~(1 << suffix);
 }
 
@@ -311,7 +310,7 @@ s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
     // the suffix; nameIndex holds the terminator, 0.
     nameIndex = 0;
     if (unit->name[0] == 0) {
-      unit->name[0] = LIST_MARKER_CHAR;
+      unit->name[0] = ENEMY_NAME_LETTER_FIRST;
       unit->name[nameByte] = nameIndex;
       return;
     }
@@ -324,7 +323,7 @@ s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
     if (nameByte != 0)
       goto scan_slots;
     terminatorIndex = nameIndex + 1;
-    unit->name[nameIndex] = LIST_MARKER_CHAR;
+    unit->name[nameIndex] = ENEMY_NAME_LETTER_FIRST;
     unit->name[terminatorIndex] = nameByte;
     return;
   }

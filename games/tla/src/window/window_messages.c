@@ -569,7 +569,7 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
         y += TEXT_LINE_HEIGHT;
         break;
       case 14:
-      case TEXT_WINDOW_STATE:
+      case TEXT_WINDOW_ANIMATION:
       case TEXT_ACTOR_NAME_START:
         text++;
         goto skip;
@@ -612,7 +612,7 @@ extern const void *const Text_MessageContexts[][2];
 /// (Text_DecodeSymbolCode) decodes. Messages are Huffman coded with one tree
 /// per previous symbol: the previous code picks the tree, the message's bits
 /// walk it to a leaf, and the leaf's 12-bit symbol is returned and becomes the
-/// next context. reader->words keeps the byte the bits are read from between
+/// next context. reader->bytes keeps the byte the bits are read from between
 /// calls.
 UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
   u32 code;
@@ -630,7 +630,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
   u32 leafNibble;
 
   code = reader->previousCode;
-  text = (const u8 *)reader->words;
+  text = (const u8 *)reader->bytes;
   textBits = reader->bits;
   treeBits = 1;
   // The previous code's high bits pick the bank, its low byte the tree. The
@@ -700,7 +700,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
   }
   reader->bits = textBits;
   reader->previousCode = code;
-  reader->words = (const u32 *)text;
+  reader->bytes = (const u32 *)text;
   return code;
 }
 

@@ -7,6 +7,6 @@ FarCall_CreditsTable:
 	export Credits_RunFar, Credits_Run
 	export EndingImage_StartFar, EndingImage_Start
 	export EndingImage_ShowFar, EndingImage_Show
-	export SceneState_SetScrollTargetFar, SceneState_SetScrollTarget
+	export EndingImage_SetTargetRowFar, EndingImage_SetTargetRow
 	export EndingImage_WaitForScrollFar, EndingImage_WaitForScroll
 	export EndingImage_LowerTopStripFar, EndingImage_LowerTopStrip

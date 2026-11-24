@@ -26,7 +26,7 @@ FarCall_FieldTable:
 	export Actor_SetAnimationSpeedFar, Actor_SetAnimationSpeed
 	export Actor_SetAnimationAndSpeedFar, Actor_SetAnimationAndSpeed
 	export Actor_StartScriptFar, Actor_StartScript
-	export Actor_StartRenderModeScriptFar, Actor_StartRenderModeScript
+	export Actor_StartMovementModeScriptFar, Actor_StartMovementModeScript
 	export Actor_FindFreeFar, Actor_FindFree
 	export Actor_CreateFar, Actor_Create
 	export Actor_ReleaseFar, Actor_Release
@@ -62,8 +62,8 @@ FarCall_FieldTable:
 	export BlendScript_StartFar, BlendScript_Start
 	export MapGrid_GetTerrainHeightFar, MapGrid_GetTerrainHeight
 	export MapGrid_GetCellBehaviorAtFar, MapGrid_GetCellBehaviorAt
-	export MapGrid_GetCellAttributeLowNibbleFar, MapGrid_GetCellAttributeLowNibble
-	export MapGrid_GetCellAttributeLowNibbleOrBumpFar, MapGrid_GetCellAttributeLowNibbleOrBump
+	export MapGrid_GetTerrainKindAtFar, MapGrid_GetTerrainKindAt
+	export MapGrid_GetTerrainKindOrBumpAtFar, MapGrid_GetTerrainKindOrBumpAt
 	export Map_CopyCellsRectFar, Map_CopyCellsRect
 	export Map_CopyCellAttributeRectFar, Map_CopyCellAttributeRect
 	export MapGrid_CopyCellTilesCellsRectFar, MapGrid_CopyCellTilesCellsRect
@@ -97,7 +97,7 @@ FarCall_FieldTable:
 	export SpriteColor_RemapPixelsFar, SpriteColor_RemapPixels
 	export TilesetAnim_SuspendAllFar, TilesetAnim_SuspendAll
 	export TilesetAnim_ResumeAllFar, TilesetAnim_ResumeAll
-	export ActorScript_FindOverlappingEntryFar, ActorScript_FindOverlappingEntry
+	export ActorScript_FindOverlappingActorFar, ActorScript_FindOverlappingActor
 	export MapGrid_GetTerrainKindFar, MapGrid_GetTerrainKind
 	export Actor_HasArrivedFar, Actor_HasArrived
 	export Actor_SetItemIconFar, Actor_SetItemIcon
@@ -105,7 +105,7 @@ FarCall_FieldTable:
 	export MapGrid_GetTerrainHeightAboveFar, MapGrid_GetTerrainHeightAbove
 	export WorldMap_IsWalkableFar, WorldMap_IsWalkable
 	export WorldMap_IsSailableFar, WorldMap_IsSailable
-	export Map_GetHeaderSizeFar, Map_GetHeaderSize
+	export Map_GetCameraBoundsFar, Map_GetCameraBounds
 	export Actor_GetSpriteIdFar, Actor_GetSpriteId
 	export Sprite_WaitForTrackEndFar, Sprite_WaitForTrackEnd
 	export Actor_WaitForTrackEndFar, Actor_WaitForTrackEnd

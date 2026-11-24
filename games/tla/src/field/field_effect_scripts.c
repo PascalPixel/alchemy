@@ -12,7 +12,7 @@
 
 /// The found item's picture growing in over the leader, from half size to full
 /// size, a step every 2 frames (field_sequence_item_display.c).
-const s32 gFieldEffect_ParticleEmitterScript[] = {
+const s32 gItemDisplay_GrowInScript[] = {
     SC_SET(SW_SCALE_X, FIXED_ONE / 2),
     SC_SET(SW_SCALE_Y, FIXED_ONE / 2),
     SC_WAIT(2),
@@ -32,7 +32,7 @@ const s32 gFieldEffect_ParticleEmitterScript[] = {
 
 /// Pulses twice, to 1.5 times full size, then rests, over and over: the found
 /// item's picture held over the leader (field_sequence_item_display.c).
-const s32 gFieldEffect_RisingPulseScript[] = {
+const s32 gItemDisplay_PulseScript[] = {
     SC_WAIT(10),
     SC_SET(SW_SCALE_X, FIXED_ONE * 11 / 8),
     SC_SET(SW_SCALE_Y, FIXED_ONE * 11 / 8),
@@ -65,7 +65,7 @@ const s32 gFieldEffect_RisingPulseScript[] = {
 
 /// A sparkle round the found item, sinking a quarter pixel a frame for 60
 /// frames before it goes (field_sequence_item_display.c).
-const s32 gBattleEffect_ParticleScript[] = {
+const s32 gItemDisplay_SparkleScript[] = {
     SC_ADD(SW_Y, -toFIXED(1) / 4),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
@@ -75,7 +75,7 @@ const s32 gBattleEffect_ParticleScript[] = {
 /// A Reveal marker: stays while Field_IsRevealActive returns nonzero (SC_CALL
 /// runs it again each frame), and releases itself once Reveal ends; the same
 /// as The Broken Seal's gFieldEffect_MarkerParticleScript.
-const s32 gBattleEffect_MarkerParticleScript[] = {
+const s32 gReveal_MarkerScript[] = {
     SC_CALL(Field_IsRevealActive),
     SC_RELEASE,
 };

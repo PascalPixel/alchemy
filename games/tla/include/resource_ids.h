@@ -24,8 +24,8 @@ extern char ResourceId_RuneSheet;
 /// Drawn by Bind, Charon, Cruel Ruin, the shards of Ice and Douse, Lucky
 /// Wheels, Neptune, the effect position helpers, Spider Web, the stat changes
 /// and the monster strikes.
-extern char ResourceId_ParticleSpritesD;
-#define RESOURCE_PARTICLE_SPRITES_D ((s32)&ResourceId_ParticleSpritesD)
+extern char ResourceId_BlueGlowSheet;
+#define RESOURCE_BLUE_GLOW_SHEET ((s32)&ResourceId_BlueGlowSheet)
 /// Drawn by Bind, Gasp, the healing motes, Lucky Wheels, Rime, the stat
 /// changes, Thor and Vengeance.
 extern char ResourceId_JupiterDjinnSheet;
@@ -56,8 +56,9 @@ extern char ResourceId_RedCrescentSheetA;
 #define RESOURCE_RED_CRESCENT_SHEET_A ((s32)&ResourceId_RedCrescentSheetA)
 
 /// Drawn by Cruel Ruin.
-extern char ResourceId_TileAnimationMask;
-#define RESOURCE_TILE_ANIMATION_MASK ((s32)&ResourceId_TileAnimationMask)
+extern char ResourceId_ShatteringOpeningSheet;
+#define RESOURCE_SHATTERING_OPENING_SHEET                                      \
+  ((s32)&ResourceId_ShatteringOpeningSheet)
 /// Drawn by Cruel Ruin.
 extern char ResourceId_CyanSparkSheet;
 #define RESOURCE_CYAN_SPARK_SHEET ((s32)&ResourceId_CyanSparkSheet)
@@ -212,8 +213,8 @@ extern char ResourceId_LightningBoltSheet;
 #define RESOURCE_LIGHTNING_BOLT_SHEET ((s32)&ResourceId_LightningBoltSheet)
 
 /// Drawn by the streak volleys.
-extern char ResourceId_FiveModeImage;
-#define RESOURCE_FIVE_MODE_IMAGE ((s32)&ResourceId_FiveModeImage)
+extern char ResourceId_FlameArcSheet;
+#define RESOURCE_FLAME_ARC_SHEET ((s32)&ResourceId_FlameArcSheet)
 /// Colours for the casting impacts, the streak volleys and Volcano.
 extern char ResourceId_RedPaletteB;
 #define RESOURCE_RED_PALETTE_B ((s32)&ResourceId_RedPaletteB)
@@ -258,8 +259,8 @@ extern char ResourceId_TornadoSheet;
 extern char ResourceId_BeamImage;
 #define RESOURCE_BEAM_IMAGE ((s32)&ResourceId_BeamImage)
 /// Drawn by the casting impacts and the monster strikes.
-extern char ResourceId_TwelveModeImage;
-#define RESOURCE_TWELVE_MODE_IMAGE ((s32)&ResourceId_TwelveModeImage)
+extern char ResourceId_BlueDropletSheet;
+#define RESOURCE_BLUE_DROPLET_SHEET ((s32)&ResourceId_BlueDropletSheet)
 /// Colours for the blessings' burst showers and the monster strikes.
 extern char ResourceId_PinkPalette;
 #define RESOURCE_PINK_PALETTE ((s32)&ResourceId_PinkPalette)
@@ -386,9 +387,9 @@ extern char ResourceId_MercuryLighthouseAerieBackdrop;
   ((s32)&ResourceId_MercuryLighthouseAerieBackdrop)
 /// A battle backdrop no battle in this game is fought on: the credits'
 /// slideshow shows it (gDisplayScroll_SlideResources).
-extern char ResourceId_TolbiShipInteriorsBackdrop;
-#define RESOURCE_TOLBI_SHIP_INTERIORS_BACKDROP                                 \
-  ((s32)&ResourceId_TolbiShipInteriorsBackdrop)
+extern char ResourceId_TolbiShipRoomsBackdrop;
+#define RESOURCE_TOLBI_SHIP_ROOMS_BACKDROP                                     \
+  ((s32)&ResourceId_TolbiShipRoomsBackdrop)
 /// A battle backdrop no battle in this game is fought on: the credits'
 /// slideshow shows it (gDisplayScroll_SlideResources).
 extern char ResourceId_ImilFuchinFallsBackdrop;
@@ -400,13 +401,13 @@ extern char ResourceId_KolimaForestBackdrop;
 #define RESOURCE_KOLIMA_FOREST_BACKDROP ((s32)&ResourceId_KolimaForestBackdrop)
 /// A battle backdrop no battle in this game is fought on: only the unused
 /// slideshow list names it (gDisplayScroll_UnusedSlideResources).
-extern char ResourceId_TretTreeInteriorsBackdrop;
-#define RESOURCE_TRET_TREE_INTERIORS_BACKDROP                                  \
-  ((s32)&ResourceId_TretTreeInteriorsBackdrop)
+extern char ResourceId_TretTreeRoomsBackdrop;
+#define RESOURCE_TRET_TREE_ROOMS_BACKDROP                                      \
+  ((s32)&ResourceId_TretTreeRoomsBackdrop)
 /// A battle backdrop no battle in this game is fought on: the credits'
 /// slideshow shows it (gDisplayScroll_SlideResources).
-extern char ResourceId_InteriorBackdrop;
-#define RESOURCE_INTERIOR_BACKDROP ((s32)&ResourceId_InteriorBackdrop)
+extern char ResourceId_RoomsBackdrop;
+#define RESOURCE_ROOMS_BACKDROP ((s32)&ResourceId_RoomsBackdrop)
 /// A battle backdrop no battle in this game is fought on: the credits'
 /// slideshow shows it (gDisplayScroll_SlideResources).
 extern char ResourceId_AltinPeakBackdrop;
@@ -534,8 +535,8 @@ extern char ResourceId_TargetBurstImage;
 extern char ResourceId_SlashSheet;
 #define RESOURCE_SLASH_SHEET ((s32)&ResourceId_SlashSheet)
 /// The path Atalanta's particles follow.
-extern char ResourceId_StagedParticlePath;
-#define RESOURCE_STAGED_PARTICLE_PATH ((s32)&ResourceId_StagedParticlePath)
+extern char ResourceId_AtalantaPath;
+#define RESOURCE_ATALANTA_PATH ((s32)&ResourceId_AtalantaPath)
 /// Drawn by the growing columns.
 extern char ResourceId_GreenPillarSheet;
 #define RESOURCE_GREEN_PILLAR_SHEET ((s32)&ResourceId_GreenPillarSheet)
@@ -559,8 +560,8 @@ extern char ResourceId_BillowTexture;
 #define RESOURCE_BILLOW_TEXTURE ((s32)&ResourceId_BillowTexture)
 /// The particle sprites nearly every battle effect loads first, 90 of them,
 /// from Annihilation to Zagan.
-extern char ResourceId_ParticleSpritesA;
-#define RESOURCE_PARTICLE_SPRITES_A ((s32)&ResourceId_ParticleSpritesA)
+extern char ResourceId_YellowGlowSheet;
+#define RESOURCE_YELLOW_GLOW_SHEET ((s32)&ResourceId_YellowGlowSheet)
 /// Drawn by the Djinni charge and Zagan.
 extern char ResourceId_PetalSheet;
 #define RESOURCE_PETAL_SHEET ((s32)&ResourceId_PetalSheet)
@@ -604,7 +605,7 @@ extern char ResourceId_LeafWarriorTiles;
 /// Loaded by ParticleBurst_Start.
 extern char ResourceId_Leaves;
 #define RESOURCE_LEAVES ((s32)&ResourceId_Leaves)
-/// Loaded by Actor_VanishInSparks, FieldPsynergy_EndRing and
+/// Loaded by Actor_AppearInSparks, FieldPsynergy_EndRing and
 /// FieldPsynergy_Lash.
 extern char ResourceId_SparkleFade;
 #define RESOURCE_SPARKLE_FADE ((s32)&ResourceId_SparkleFade)
@@ -742,11 +743,11 @@ extern char ResourceId_EmptyMap;
 /// Loaded by Heading_Show.
 extern char ResourceId_Headings;
 #define RESOURCE_HEADINGS ((s32)&ResourceId_Headings)
-/// Loaded by NameEntry_EditMemberName and Resource_CopyFixedBlockA.
-extern char ResourceId_UiFixedBlockATiles;
-#define RESOURCE_UI_FIXED_BLOCK_A_TILES ((s32)&ResourceId_UiFixedBlockATiles)
-/// Loaded by Icon_CreateWithResource, NameEntry_EditMemberName,
-/// Resource_CopyFixedBlockB, Resource_LoadFixedBlockBIntoFreeSlot and
+/// Loaded by NameEntry_EditMemberName and NameCaret_LoadIntoSlot.
+extern char ResourceId_NameCaretTiles;
+#define RESOURCE_NAME_CARET_TILES ((s32)&ResourceId_NameCaretTiles)
+/// Loaded by Icon_CreateHandCursor, NameEntry_EditMemberName,
+/// PointingHand_LoadIntoSlot, PointingHand_LoadIntoFreeSlot and
 /// Shop_InitializeState.
 extern char ResourceId_UiIconTiles;
 #define RESOURCE_UI_ICON_TILES ((s32)&ResourceId_UiIconTiles)
@@ -915,14 +916,14 @@ extern char ResourceId_FlameballSheet;
 extern char ResourceId_PortalSheet;
 #define RESOURCE_PORTAL_SHEET ((s32)&ResourceId_PortalSheet)
 /// Drawn by Thor.
-extern char ResourceId_ParticleSpritesB;
-#define RESOURCE_PARTICLE_SPRITES_B ((s32)&ResourceId_ParticleSpritesB)
+extern char ResourceId_PaleBlueGlowSheet;
+#define RESOURCE_PALE_BLUE_GLOW_SHEET ((s32)&ResourceId_PaleBlueGlowSheet)
 /// Drawn by Thor.
 extern char ResourceId_LightFanSheet;
 #define RESOURCE_LIGHT_FAN_SHEET ((s32)&ResourceId_LightFanSheet)
 /// Drawn by Thor.
-extern char ResourceId_ParticleSpritesC;
-#define RESOURCE_PARTICLE_SPRITES_C ((s32)&ResourceId_ParticleSpritesC)
+extern char ResourceId_BlueTallGlowSheet;
+#define RESOURCE_BLUE_TALL_GLOW_SHEET ((s32)&ResourceId_BlueTallGlowSheet)
 /// Drawn by Thor.
 extern char ResourceId_VioletLightningSheetB;
 #define RESOURCE_VIOLET_LIGHTNING_SHEET_B                                      \
@@ -1033,8 +1034,8 @@ extern char ResourceId_BlueCrescentSheet;
 extern char ResourceId_ExplosionSheet;
 #define RESOURCE_EXPLOSION_SHEET ((s32)&ResourceId_ExplosionSheet)
 /// Drawn by Judgment.
-extern char ResourceId_OverlayImageA;
-#define RESOURCE_OVERLAY_IMAGE_A ((s32)&ResourceId_OverlayImageA)
+extern char ResourceId_JudgmentFlashSheet;
+#define RESOURCE_JUDGMENT_FLASH_SHEET ((s32)&ResourceId_JudgmentFlashSheet)
 /// Drawn by Kirin.
 extern char ResourceId_FireBlobSheet;
 #define RESOURCE_FIRE_BLOB_SHEET ((s32)&ResourceId_FireBlobSheet)
@@ -1045,23 +1046,25 @@ extern char ResourceId_SeaSerpentTiles;
 extern char ResourceId_ArcFragmentsSheet;
 #define RESOURCE_ARC_FRAGMENTS_SHEET ((s32)&ResourceId_ArcFragmentsSheet)
 /// Drawn by the flashing strikes.
-extern char ResourceId_RevealMaskA;
-#define RESOURCE_REVEAL_MASK_A ((s32)&ResourceId_RevealMaskA)
+extern char ResourceId_VorpalSlashImageA;
+#define RESOURCE_VORPAL_SLASH_IMAGE_A ((s32)&ResourceId_VorpalSlashImageA)
 /// Drawn by the flashing strikes.
-extern char ResourceId_RevealMaskB;
-#define RESOURCE_REVEAL_MASK_B ((s32)&ResourceId_RevealMaskB)
+extern char ResourceId_VorpalSlashImageB;
+#define RESOURCE_VORPAL_SLASH_IMAGE_B ((s32)&ResourceId_VorpalSlashImageB)
 /// Drawn by the flashing strikes.
-extern char ResourceId_RevealMaskC;
-#define RESOURCE_REVEAL_MASK_C ((s32)&ResourceId_RevealMaskC)
+extern char ResourceId_QuickStrikeImageA;
+#define RESOURCE_QUICK_STRIKE_IMAGE_A ((s32)&ResourceId_QuickStrikeImageA)
 /// Drawn by the flashing strikes.
-extern char ResourceId_RevealMaskD;
-#define RESOURCE_REVEAL_MASK_D ((s32)&ResourceId_RevealMaskD)
+extern char ResourceId_QuickStrikeImageB;
+#define RESOURCE_QUICK_STRIKE_IMAGE_B ((s32)&ResourceId_QuickStrikeImageB)
 /// Drawn by the flashing strikes.
-extern char ResourceId_RevealMaskE;
-#define RESOURCE_REVEAL_MASK_E ((s32)&ResourceId_RevealMaskE)
+extern char ResourceId_UnusedFlashingStrikeImageA;
+#define RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_A                                \
+  ((s32)&ResourceId_UnusedFlashingStrikeImageA)
 /// Drawn by the flashing strikes.
-extern char ResourceId_RevealMaskF;
-#define RESOURCE_REVEAL_MASK_F ((s32)&ResourceId_RevealMaskF)
+extern char ResourceId_UnusedFlashingStrikeImageB;
+#define RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_B                                \
+  ((s32)&ResourceId_UnusedFlashingStrikeImageB)
 /// Drawn by Soul Shatter and Undead Sword.
 extern char ResourceId_LimeColumnSheet;
 #define RESOURCE_LIME_COLUMN_SHEET ((s32)&ResourceId_LimeColumnSheet)
@@ -1250,8 +1253,8 @@ extern char ResourceId_MossCaveBackdrop;
 extern char ResourceId_FireSwirlSheet;
 #define RESOURCE_FIRE_SWIRL_SHEET ((s32)&ResourceId_FireSwirlSheet)
 /// Drawn by Dragon Cloud.
-extern char ResourceId_DualStreamPath;
-#define RESOURCE_DUAL_STREAM_PATH ((s32)&ResourceId_DualStreamPath)
+extern char ResourceId_DragonCloudFlamePath;
+#define RESOURCE_DRAGON_CLOUD_FLAME_PATH ((s32)&ResourceId_DragonCloudFlamePath)
 /// Drawn by Legend.
 extern char ResourceId_BladeSheet;
 #define RESOURCE_BLADE_SHEET ((s32)&ResourceId_BladeSheet)
@@ -1359,16 +1362,16 @@ extern char ResourceId_BlizzardBackdrop;
 /// Loaded by Menu_OpenBackdropScreen and Shop_InitializeState.
 extern char ResourceId_ShopGemTiles;
 #define RESOURCE_SHOP_GEM_TILES ((s32)&ResourceId_ShopGemTiles)
-/// Loaded by Resource_LoadPairedBlocksIfAvailable.
+/// Loaded by Menu_LoadDjinnArrows.
 extern char ResourceId_ItemMenuTilesA;
 #define RESOURCE_ITEM_MENU_TILES_A ((s32)&ResourceId_ItemMenuTilesA)
-/// Loaded by Resource_LoadPairedBlocksIfAvailable.
+/// Loaded by Menu_LoadDjinnArrows.
 extern char ResourceId_ItemMenuTilesB;
 #define RESOURCE_ITEM_MENU_TILES_B ((s32)&ResourceId_ItemMenuTilesB)
 /// Item menu workspace (known fields only).
 extern char ResourceId_MenuArrowTiles;
 #define RESOURCE_MENU_ARROW_TILES ((s32)&ResourceId_MenuArrowTiles)
-/// Loaded by Resource_LoadPairedBlocks and Shop_InitializeState.
+/// Loaded by Menu_LoadStatArrows and Shop_InitializeState.
 extern char ResourceId_MenuSmallDownArrowTiles;
 #define RESOURCE_MENU_SMALL_DOWN_ARROW_TILES                                   \
   ((s32)&ResourceId_MenuSmallDownArrowTiles)
@@ -1407,7 +1410,7 @@ extern char ResourceId_IntroLighthousePicture;
 /// Loaded by TitleIntro_ShowLighthouse.
 extern char ResourceId_IntroGullSprites;
 #define RESOURCE_INTRO_GULL_SPRITES ((s32)&ResourceId_IntroGullSprites)
-/// Loaded by Title_ShowIntro.
+/// Loaded by Title_ShowTitleScreen.
 extern char ResourceId_TitleScreenPicture;
 #define RESOURCE_TITLE_SCREEN_PICTURE ((s32)&ResourceId_TitleScreenPicture)
 /// Loaded by ChampaCliffCaves_LoadColumn.

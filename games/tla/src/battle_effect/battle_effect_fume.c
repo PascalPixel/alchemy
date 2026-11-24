@@ -273,7 +273,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 #undef FUME_FRAMES

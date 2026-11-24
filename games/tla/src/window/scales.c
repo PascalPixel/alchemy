@@ -76,7 +76,7 @@ const u8 gSettingsMenu_BrightnessPresets[6] = {
 
 /// The command icon of each entry in the Pause menu (Save your quest, Sleep,
 /// Change settings, and the debug entries after them).
-const s8 gMenu_WorkspaceIcons[8] = {
+const s8 gPauseMenu_Icons[8] = {
     COMMAND_ICON_SAVE_QUEST, COMMAND_ICON_SLEEP, COMMAND_ICON_CHANGE_SETTINGS,
     COMMAND_ICON_DROP,       COMMAND_ICON_DROP,  COMMAND_ICON_DROP,
     0,                       0,

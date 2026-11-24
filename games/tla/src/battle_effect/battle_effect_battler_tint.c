@@ -46,7 +46,7 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
   state = Ram_HeapSlots->battleEffect;
 
   for (groupIndex = 0;
-       (group = GetMotionRecordFar(slot->object, groupIndex)) != NULL;
+       (group = Actor_GetSpriteFar(slot->object, groupIndex)) != NULL;
        groupIndex++) {
     if (timerSlot != TINT_KEEP)
       state->actorTimers[timerSlot] = timerFrames;

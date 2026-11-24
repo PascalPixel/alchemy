@@ -57,7 +57,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_PILLAR_SHEET, state->sheet, 1,
                              1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   if (args->variant != EFFECT_VARIANT_STRONGEST) {
     LOAD_BG_PALETTE(RESOURCE_VIOLET_PALETTE_B);
   }
@@ -184,8 +184,8 @@ void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_DYNAMITE);
 }
 
-/// Each spark group variant's row of gPlasma_Shapes: sparks per burst, bursts,
-/// and from SPARK_GROUPS_OFFSET each burst's offset across.
+/// Each spark group variant's row of gSparkGroups_Shapes: sparks per burst,
+/// bursts, and from SPARK_GROUPS_OFFSET each burst's offset across.
 #define SPARK_GROUPS_SPARKS 0 ///< sparks each burst throws
 #define SPARK_GROUPS_BURSTS 1 ///< bursts, SPARK_GROUPS_SPACING frames apart
 #define SPARK_GROUPS_OFFSET 2 ///< burst i's offset across, at [2 + i]
@@ -241,9 +241,9 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
   }
 
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_BuildCanvasBlitters(0, draw);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   if (mode == SPARK_GROUPS_DYNAMITE) {
     LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   } else if (mode == SPARK_GROUPS_RISING) {
@@ -252,7 +252,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
 
   sparks = PARTICLES;
 
-  for (i = 0; i != gPlasma_Shapes[args->variant][SPARK_GROUPS_BURSTS]; i++) {
+  for (i = 0; i != gSparkGroups_Shapes[args->variant][SPARK_GROUPS_BURSTS];
+       i++) {
     for (j = 0; j != SPARK_GROUPS_FLASHES; j++) {
       struct Particle *point;
       s32 radius;
@@ -265,22 +266,25 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
       point->y = -(Trig_Cos(angle) * radius);
       point->variant = j / 2 + SPARK_GROUPS_FLASH_LIFE;
     }
-    for (j = 0; j != gPlasma_Shapes[args->variant][SPARK_GROUPS_SPARKS]; j++) {
+    for (j = 0; j != gSparkGroups_Shapes[args->variant][SPARK_GROUPS_SPARKS];
+         j++) {
       struct Particle *spark;
       s32 speed;
       s32 angle;
 
-      spark =
-          sparks + i * gPlasma_Shapes[args->variant][SPARK_GROUPS_SPARKS] + j;
+      spark = sparks +
+              i * gSparkGroups_Shapes[args->variant][SPARK_GROUPS_SPARKS] + j;
       speed = (Random16() & 0x3ff) + 32;
       angle = Random16() & TRIG_ANGLE_MASK;
       if (args->side == EFFECT_SIDE_PARTY)
         spark->x = INTtoFIXED(
-            originX - gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] +
+            originX -
+            gSparkGroups_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] +
             SPARK_GROUPS_CENTRE_SHIFT);
       else
         spark->x = INTtoFIXED(
-            originX + gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] -
+            originX +
+            gSparkGroups_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] -
             SPARK_GROUPS_CENTRE_SHIFT);
       spark->y = INTtoFIXED(originY);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
@@ -291,9 +295,10 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
 
-  for (frame = 0; frame != gPlasma_Shapes[args->variant][SPARK_GROUPS_BURSTS] *
-                                   SPARK_GROUPS_SPACING +
-                               40;
+  for (frame = 0;
+       frame != gSparkGroups_Shapes[args->variant][SPARK_GROUPS_BURSTS] *
+                        SPARK_GROUPS_SPACING +
+                    40;
        frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraState;
 
@@ -322,26 +327,29 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
     }
 
     // Each burst flashes, then its ring and sparks, and the targets reel.
-    for (i = 0; i != gPlasma_Shapes[args->variant][SPARK_GROUPS_BURSTS]; i++) {
+    for (i = 0; i != gSparkGroups_Shapes[args->variant][SPARK_GROUPS_BURSTS];
+         i++) {
       start = i * SPARK_GROUPS_SPACING;
       if (frame == start)
         state->shakeFrames = 12;
 
       if (frame >= start && frame < start + 2) {
         if (args->side == EFFECT_SIDE_PARTY)
-          draw[0](canvas, state->sheet,
-                  originX -
-                      gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] +
-                      SPARK_GROUPS_CENTRE_SHIFT - FLASH_BURST_WIDTH / 2,
-                  originY - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
-                  FLASH_BURST_HEIGHT);
+          draw[0](
+              canvas, state->sheet,
+              originX -
+                  gSparkGroups_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] +
+                  SPARK_GROUPS_CENTRE_SHIFT - FLASH_BURST_WIDTH / 2,
+              originY - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
+              FLASH_BURST_HEIGHT);
         else
-          draw[0](canvas, state->sheet,
-                  originX +
-                      gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] -
-                      SPARK_GROUPS_CENTRE_SHIFT - FLASH_BURST_WIDTH / 2,
-                  originY - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
-                  FLASH_BURST_HEIGHT);
+          draw[0](
+              canvas, state->sheet,
+              originX +
+                  gSparkGroups_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] -
+                  SPARK_GROUPS_CENTRE_SHIFT - FLASH_BURST_WIDTH / 2,
+              originY - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
+              FLASH_BURST_HEIGHT);
       }
 
       if (frame >= start) {
@@ -354,11 +362,11 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
           y = FIXED_INTEGER_PART(point->y) + originY;
           if (args->side == EFFECT_SIDE_PARTY)
             x = FIXED_INTEGER_PART(point->x) + originX -
-                gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] +
+                gSparkGroups_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] +
                 SPARK_GROUPS_CENTRE_SHIFT;
           else
             x = FIXED_INTEGER_PART(point->x) + originX +
-                gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] -
+                gSparkGroups_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] -
                 SPARK_GROUPS_CENTRE_SHIFT;
           if (point->variant >= 0 && point->variant < SPARK_GROUPS_FLASH_DRAWN)
             draw[0](canvas,
@@ -381,11 +389,12 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
           gravity = -toFIXED(1) / 16;
         else
           gravity = toFIXED(1) / 16;
-        for (j = 0; j != gPlasma_Shapes[args->variant][SPARK_GROUPS_SPARKS];
+        for (j = 0;
+             j != gSparkGroups_Shapes[args->variant][SPARK_GROUPS_SPARKS];
              j++) {
           struct Particle *spark =
-              sparks + i * gPlasma_Shapes[args->variant][SPARK_GROUPS_SPARKS] +
-              j;
+              sparks +
+              i * gSparkGroups_Shapes[args->variant][SPARK_GROUPS_SPARKS] + j;
           if (spark->variant > 0) {
             Particle_AdvanceWithGravity2D(spark, 60, gravity);
             spark->variant--;

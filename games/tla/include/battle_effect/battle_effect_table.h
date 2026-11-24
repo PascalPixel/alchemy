@@ -41,7 +41,7 @@ enum {
 };
 
 /// The spark groups' variants past the three strengths (enum EffectVariant),
-/// which their callers set before the run: rows 3 to 5 of gPlasma_Shapes.
+/// which their callers set before the run: rows 3 to 5 of gSparkGroups_Shapes.
 enum {
   SPARK_GROUPS_SEVERE_BLOW = 3, ///< 340 sparks in one burst: Severe Blow
   SPARK_GROUPS_THRASH,          ///< 32 sparks: Thrash

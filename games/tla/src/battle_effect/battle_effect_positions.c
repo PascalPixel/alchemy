@@ -20,7 +20,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 
   camera = Ram_HeapSlots->cameraState;
   object = BattleObject_GetFar(unit)->object;
-  info = GetMotionRecordFar(object, 0);
+  info = Actor_GetSpriteFar(object, 0);
   EFFECT_VIEW_FROM_CAMERA(camera);
   scale = Iwram_MulFX(Matrix_ProjectPoint(&object->x, screen), info->scale);
   screen[1] -=
@@ -30,7 +30,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 
 /// Unused: reads the held keys when the first target is an enemy and does
 /// nothing with them.
-UNUSED void BattleEffect_ProbeKeysForExtendedActor(void) {
+UNUSED void BattleEffect_ReadKeysForEnemyTarget(void) {
   struct BattleEffectState *state;
   struct BattleEffectParams *args;
 
@@ -69,7 +69,7 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
     BattleEffect_RunCastingImpact(args, impact);
   } else if (kind == EFFECT_ID_CRITICAL_OFFSET + ATTACK_EFFECT_BURST ||
              kind == ATTACK_EFFECT_BURST) {
-    BattleEffect_RunCanvasModeByCount(args);
+    BattleEffect_RunBallAttack(args);
   } else if (kind >= EFFECT_ID_CRITICAL_OFFSET) {
     BattleEffect_RunCriticalHit(args);
   } else {
@@ -181,7 +181,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
                                      : RESOURCE_STAR_CRESCENT_SHEET),
           (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
   wait(1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, Ram_MapCellBuffer, 1,
                              0);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -321,7 +321,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleEffect_HideBg1AndRestoreBackdrop();
@@ -402,7 +402,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget,
                                         CRITICAL_HIT_ZOOM);
   wait(1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sheet, 0, 0);
   BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget,
                                         CRITICAL_HIT_ZOOM);
   wait(1);
@@ -436,7 +436,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     gBgScroll[1].y = BEAM_CANVAS_SCROLL_Y;
     state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     state->fadeStep = 0;
-    Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
+    Task_Add(BattleEffect_DarkenBackgroundStep, TASK_PASS_FRAME);
     Sound_PlayFar(SE_POWER_UP);
     for (frame = 0; frame != BEAM_FRAMES; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget,
@@ -468,7 +468,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
       }
       EFFECT_PRESENT_CANVAS(state);
     }
-    Task_Remove(Palette_StepFadeTransfer);
+    Task_Remove(BattleEffect_DarkenBackgroundStep);
     Actor_SetAnimationSpeedFar(object, ANIM_STEP_NORMAL);
     object->velocityX = velocityX;
     object->velocityY = velocityY;
@@ -554,7 +554,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   }
 
   // The background's palette steps back over seven frames.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   for (frame = 0, background = &Ram_HeapSlots->battleState->background;

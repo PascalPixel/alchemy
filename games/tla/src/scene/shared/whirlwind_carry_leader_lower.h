@@ -10,12 +10,12 @@ void Whirlwind_CarryLeaderLower(void) {
   s32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   i = 0;
   state->glowHeld = 0;
   actor->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(actor, 0);
-  while (*(u8 *)&linked->riseEnabled != 0) {
+  while (*(u8 *)&linked->sceneByte != 0) {
     actor->x.fixed = linked->x.fixed;
     actor->y.fixed = linked->y.fixed + i;
     actor->z.fixed = linked->z.fixed;

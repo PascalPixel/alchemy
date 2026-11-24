@@ -199,7 +199,7 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "shared/tables.h"
 #include "../field/actor_set_sprite_priority.c"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 
 #include "shared/scene_create_actor.h"
 
@@ -529,7 +529,7 @@ void AquaRockInside_DouseWaterOfLifeChestEastMoai(s32 unused, s32 id) {
   column =
       FIELD_CELL(Actor_Get(ACTOR_WATER_OF_LIFE_CHEST_BLUE_ROCK)->x.fixed) - 42;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
   // AquaRockInside_SetPillarHeight, defined below, is called with no prototype
   // in scope.
@@ -559,7 +559,7 @@ void AquaRockInside_DouseWaterOfLifeChestWestMoai(s32 unused, s32 id) {
   Map_LoadCellsAndShapes();
   MapGrid_CenterOnFollowedPoint();
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
   for (i = 0; i <= WATER_LEVEL_STEP - 1; i++) {
     AquaRockInside_SetPillarsHeight(INTtoFIXED(i));
@@ -615,7 +615,7 @@ void AquaRockInside_PushPillarOffLedge(s32 unused, s32 id) {
       MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
 #else
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       AquaRockInside_WaitToLand(actor);
       Event_SetFlag(FLAG_AQUA_ROCK_STEAM_ROOM_PILLAR_DROPPED);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
@@ -656,7 +656,7 @@ void AquaRockInside_SteamRoomStreamDrains(void) {
   s32 priority;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
   priority = TASK_PASS_FRAME;
@@ -708,7 +708,7 @@ void AquaRockInside_UseAquariusStone(void) {
   s32 j;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
   AquaRockInside_ShowAquariusStone();
   Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -765,7 +765,7 @@ void AquaRockInside_OpenDoorToTablet(s32 exit) {
   s32 height = 2;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(107, 96, 19, 29, width, height);
   FieldEvent_Wait(8);
@@ -793,7 +793,7 @@ void AquaRockInside_CheckColumn(void) {
   const u8 *message;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   seen = Event_GetFlag(FLAG_AQUA_ROCK_AQUARIUS_STONE_SET);
   message = MsgCheckedTheColumn;
   if (!seen) {
@@ -917,7 +917,7 @@ void AquaRockInside_DouseRustySwordChestMoai(s32 unused, s32 id) {
   Map_LoadCellsAndShapes();
   MapGrid_CenterOnFollowedPoint();
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
   for (i = 0; i < WATER_LEVEL_STEP; i++) {
     layer->offsetY += toFIXED(1);
@@ -966,7 +966,7 @@ void AquaRockInside_StepIntoVentGust(s32 trigger) {
     return;
   actor = Actor_Get(gMainRoutineState.leaderActorId);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   for (;;) {
     target.x = actor->x.fixed;
     target.y = actor->y.fixed;
@@ -1027,7 +1027,7 @@ void AquaRockInside_RideFalls(s32 exit) {
   u8 *flags;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
   flags = &actor->motionFlags;
   speed = 0;
@@ -1069,7 +1069,7 @@ void AquaRockInside_BlockMoaiWithPillar(s32 unused, s32 id) {
     s32 fade;
 
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
     Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
     Actor_SetAnimation(ACTOR_VIAL_CHEST_MOAI, 2);
@@ -1165,7 +1165,7 @@ void AquaRockInside_WaitToRise(struct Actor *actor) {
 /// "Everyone's PP was replenished!"
 void AquaRockInside_CheckPsynergyStone(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Message_ShowCentered(MsgCheckedThePsynergy, 1);
   Event_PlaySound(SE_RECOVERY);
   Party_AddPp(PARTY_PP_REPLENISH, 0);
@@ -1225,7 +1225,7 @@ void AquaRockInside_DouseTearStoneMoai(s32 unused, s32 id) {
   Map_LoadCellsAndShapes();
   MapGrid_CenterOnFollowedPoint();
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
   for (i = 0; i < WATER_LEVEL_STEP; i++) {
     layer->offsetY += toFIXED(1);
@@ -1248,7 +1248,7 @@ void AquaRockInside_WaterSinks(void) {
   s32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   layer->offsetY -= toFIXED(WATER_LEVEL_STEP);
   MapGrid_CenterOnFollowedPoint();
   MapGrid_SetShake(1, 1, 1);
@@ -1293,7 +1293,7 @@ void AquaRockInside_ParchLastPool(void) {
 
 #include "shared/actor_step_to_watched.h"
 
-#include "shared/actor_emit_bubbles.h"
+#include "shared/actor_emit_sparkles.h"
 
 extern u32 gLesson_TabletRiseScript[];
 extern u32 gAquaRockInside_TabletGlowScript[];
@@ -1373,16 +1373,16 @@ void AquaRockInside_PiersLearnsParch(s32 tabletId, s32 adeptId) {
     spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
     noMotion = 0;
     spark->motionFlags = noMotion;
-    spark->riseBaseY = toFIXED(122);
+    spark->sceneWord = toFIXED(122);
     spark->watchedActor = adept;
-    spark->riseCounter =
+    spark->sceneCounter =
         (LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
     Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
-    FieldVector_AddPolarOffsetFX(spark->riseBaseY, spark->timer,
+    FieldVector_AddPolarOffsetFX(spark->sceneWord, spark->timer,
                                  &spark->x.fixed);
     Actor_StartScript(spark, gAquaRockInside_SpiralSparkScript);
     if (i == 3) {
@@ -1402,10 +1402,10 @@ void AquaRockInside_PiersLearnsParch(s32 tabletId, s32 adeptId) {
                               adept->z.fixed);
     swirl->timer = Random16();
     swirl->userValue = TRIG_TURN / 32;
-    swirl->riseCounter = i;
-    swirl->riseEnabled = 1;
+    swirl->sceneCounter = i;
+    swirl->sceneByte = 1;
     swirl->bounce = swirl->x.fixed;
-    swirl->riseBaseY = 0;
+    swirl->sceneWord = 0;
     swirl->gravity = swirl->z.fixed;
     swirl->watchedActor = adept;
     swirl->motionFlags = (u16)0;
@@ -1429,7 +1429,7 @@ void AquaRockInside_PiersLearnsParch(s32 tabletId, s32 adeptId) {
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(tabletId, gLesson_TabletSettleScript);
   Actor_SetMovementTypeById(adeptId, gLesson_AdeptSettleScript);
-  adept->update = Actor_EmitBubbles;
+  adept->update = Actor_EmitSparkles;
   wait(120);
   adept->update = 0;
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
@@ -1449,7 +1449,7 @@ void AquaRockInside_ReadParchTablet(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   // "Felix checked the tablet. It looks like there are strange characters..."
   Message_ShowCentered((s32)&MsgCheckedTheTabletIt, 1);
   if (Event_GetFlag(FLAG_PIERS_LEARNED_PARCH)) {
@@ -1531,7 +1531,7 @@ void AquaRockInside_ReadParchTablet(void) {
 void AquaRockInside_WalkToParchTablet(void) {
   if (Event_GetFlag(FLAG_PIERS_LEARNED_PARCH)) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Message_ShowCentered(MsgCheckedTheTabletIt, 1);
     Event_End();
   } else {
@@ -1551,7 +1551,7 @@ void AquaRockInside_WalkToParchTablet(void) {
   void name(void) {                                                            \
     if (Event_GetFlag(FLAG_PIERS_LEARNED_PARCH)) {                             \
       Event_Start();                                                           \
-      FieldEvent_ResolvePendingActions(0);                                     \
+      FieldEvent_EndLastingPsynergy(0);                                        \
       Message_ShowCentered(MsgCheckedTheTabletIt, 1);                          \
       Event_End();                                                             \
     } else {                                                                   \
@@ -1660,7 +1660,7 @@ void AquaRockInside_FallThroughWater(void) {
   s32 i;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_StartScreenTransition();
   Actor_SetSpriteColorMode(actor, SPRITE_COLOR_BLUE_TINT);
   *flags = 0;
@@ -1777,8 +1777,8 @@ s32 Scene_Initialize(void) {
                                   SPRITE_COLOR_GREY);
       }
     }
-    Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_B)->riseCounter = 1;
-    Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C)->riseCounter = 1;
+    Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_B)->sceneCounter = 1;
+    Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C)->sceneCounter = 1;
     actor = Actor_GetById(ACTOR_RUSTY_SWORD_CHEST);
     if (actor != 0) {
       actor->motionFlags = 0;
@@ -1824,12 +1824,12 @@ s32 Scene_Initialize(void) {
       FieldActor_SetSpriteColor(Actor_GetById(ACTOR_TEAR_STONE_MOAI),
                                 SPRITE_COLOR_GREY);
     }
-    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_A)->riseCounter = 1;
-    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_B)->riseCounter = 1;
-    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_E)->riseCounter = 1;
-    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_G)->riseCounter = 1;
-    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_H)->riseCounter = 1;
-    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_I)->riseCounter = 1;
+    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_A)->sceneCounter = 1;
+    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_B)->sceneCounter = 1;
+    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_E)->sceneCounter = 1;
+    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_G)->sceneCounter = 1;
+    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_H)->sceneCounter = 1;
+    Actor_GetById(ACTOR_TEAR_STONE_WATER_PILLAR_I)->sceneCounter = 1;
   }
   return 0;
 }
@@ -2550,7 +2550,7 @@ void Vent_Puff(s32 *position, s32 base) {
     actor->bounce = Trig_Cos(((u32)(Random16() * (FIXED_ONE * 3 / 16)) >> 16) +
                              (FIXED_ONE * 3 / 16));
     actor->gravity = (u16)Random16();
-    actor->riseBaseY = (u16)(Random16() << 1) + base;
+    actor->sceneWord = (u16)(Random16() << 1) + base;
     angle = (u16)Random16() - DEGtoANG(180);
     actor->timer = angle;
     Actor_StartScripted(actor, 3);

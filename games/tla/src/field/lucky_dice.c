@@ -130,7 +130,7 @@ void Camera_ResetViewDefaults(void) {
   SET_VECTOR(offset, 0, 0, camera->distance);
   Iwram_TransformVector(offset, camera->eye);
 
-  nearPlane = Iwram_RatioMulQ14(toFIXED(250), FIXED_ONE * 3 / 4);
+  nearPlane = Iwram_DivFX(toFIXED(250), FIXED_ONE * 3 / 4);
   Projection_Set(toFIXED(250), nearPlane, toFIXED(32767));
 }
 
@@ -155,7 +155,7 @@ UNUSED s32 FixedPoint_MulQ8(s32 a, s32 b) {
 }
 
 /// Unused: divides two 8.8 fixed-point values.
-UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
+UNUSED s16 FixedPoint_DivQ8(s16 numerator, s16 denominator) {
   return (numerator * Q_8_8(1)) / denominator;
 }
 

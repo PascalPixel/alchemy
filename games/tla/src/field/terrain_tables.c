@@ -10,7 +10,7 @@
 /// the square stands (Terrain_GetRoundedSquareHeight takes the second height
 /// there) and 0 in its four cut corners.
 // clang-format off
-u8 gTerrain_LerpWeightTable[256] = {
+u8 gTerrain_RoundedSquareMask[256] = {
     0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
     0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
     0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,

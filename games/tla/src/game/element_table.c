@@ -32,7 +32,7 @@ const struct ElementLevelBonus gElement_PowerResistByLevel[16] = {
 /// The 48 enemy element presets, by EnemyDefinition.elementPreset.
 const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 1},
         .stats = {
             {.power = 100, .resistance = 100},
@@ -42,7 +42,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 1},
         .stats = {
             {.power = 80, .resistance = 72},
@@ -52,7 +52,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 1},
         .stats = {
             {.power = 80, .resistance = 90},
@@ -62,7 +62,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {1},
         .stats = {
             {.power = 100, .resistance = 48},
@@ -72,7 +72,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {1},
         .stats = {
             {.power = 100, .resistance = 72},
@@ -82,7 +82,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {1},
         .stats = {
             {.power = 95, .resistance = 48},
@@ -92,7 +92,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {1},
         .stats = {
             {.power = 95, .resistance = 72},
@@ -102,7 +102,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 1},
         .stats = {
             {.power = 105, .resistance = 48},
@@ -112,7 +112,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 1},
         .stats = {
             {.power = 105, .resistance = 72},
@@ -122,7 +122,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 0, 0, 2},
         .stats = {
             {.power = 90, .resistance = 100},
@@ -132,7 +132,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 0, 0, 2},
         .stats = {
             {.power = 90, .resistance = 152},
@@ -142,7 +142,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 2},
         .stats = {
             {.power = 95, .resistance = 127},
@@ -152,7 +152,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {1, 1, 1, 2},
         .stats = {
             {.power = 95, .resistance = 175},
@@ -162,7 +162,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 1},
         .stats = {
             {.power = 100, .resistance = 25},
@@ -172,7 +172,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 1},
         .stats = {
             {.power = 100, .resistance = 25},
@@ -182,7 +182,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {0, 1, 1, 2},
         .stats = {
             {.power = 100, .resistance = 48},
@@ -192,7 +192,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {0, 1, 1, 2},
         .stats = {
             {.power = 100, .resistance = 72},
@@ -202,7 +202,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 1, 1, 1},
         .stats = {
             {.power = 100, .resistance = 48},
@@ -212,7 +212,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {4, 2, 2},
         .stats = {
             {.power = 110, .resistance = 152},
@@ -222,7 +222,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 4, 0, 2},
         .stats = {
             {.power = 95, .resistance = 100},
@@ -232,7 +232,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 0, 4, 2},
         .stats = {
             {.power = 95, .resistance = 100},
@@ -242,7 +242,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {0, 2, 2, 4},
         .stats = {
             {.power = 90, .resistance = 48},
@@ -270,7 +270,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_MERCURY,
+        .attackElement = ELEMENT_MERCURY,
         .elementLevels = {2, 6, 0, 2},
         .stats = {
             {.power = 95, .resistance = 48},
@@ -280,7 +280,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_MERCURY,
+        .attackElement = ELEMENT_MERCURY,
         .elementLevels = {2, 6, 0, 2},
         .stats = {
             {.power = 95, .resistance = 100},
@@ -290,7 +290,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_MARS,
+        .attackElement = ELEMENT_MARS,
         .elementLevels = {2, 0, 6, 2},
         .stats = {
             {.power = 95, .resistance = 48},
@@ -300,7 +300,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_MARS,
+        .attackElement = ELEMENT_MARS,
         .elementLevels = {2, 0, 6, 2},
         .stats = {
             {.power = 95, .resistance = 100},
@@ -310,7 +310,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_JUPITER,
+        .attackElement = ELEMENT_JUPITER,
         .elementLevels = {0, 2, 2, 6},
         .stats = {
             {.power = 80, .resistance = 7},
@@ -320,7 +320,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_JUPITER,
+        .attackElement = ELEMENT_JUPITER,
         .elementLevels = {0, 2, 2, 6},
         .stats = {
             {.power = 80, .resistance = 25},
@@ -330,7 +330,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {3, 2, 2, 2},
         .stats = {
             {.power = 100, .resistance = 100},
@@ -340,7 +340,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {3, 2, 2, 2},
         .stats = {
             {.power = 100, .resistance = 127},
@@ -350,7 +350,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 3, 2, 2},
         .stats = {
             {.power = 85, .resistance = 72},
@@ -360,7 +360,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 3, 2, 2},
         .stats = {
             {.power = 85, .resistance = 100},
@@ -370,7 +370,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 2, 3, 2},
         .stats = {
             {.power = 85, .resistance = 72},
@@ -380,7 +380,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 2, 3, 2},
         .stats = {
             {.power = 85, .resistance = 100},
@@ -390,7 +390,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 2, 2, 3},
         .stats = {
             {.power = 85, .resistance = 48},
@@ -400,7 +400,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {2, 2, 2, 3},
         .stats = {
             {.power = 85, .resistance = 72},
@@ -410,7 +410,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {3, 3, 0, 4},
         .stats = {
             {.power = 95, .resistance = 100},
@@ -420,7 +420,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {7, 5, 10, 7},
         .stats = {
             {.power = 100, .resistance = 100},
@@ -430,7 +430,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {8, 6, 11, 8},
         .stats = {
             {.power = 100, .resistance = 127},
@@ -440,7 +440,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_MARS,
+        .attackElement = ELEMENT_MARS,
         .elementLevels = {9, 7, 14, 9},
         .stats = {
             {.power = 100, .resistance = 127},
@@ -450,7 +450,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {4, 8, 6, 5},
         .stats = {
             {.power = 100, .resistance = 72},
@@ -460,7 +460,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {0, 2, 1, 4},
         .stats = {
             {.power = 90, .resistance = 152},
@@ -470,7 +470,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {14, 16, 13, 15},
         .stats = {
             {.power = 90, .resistance = 130},
@@ -480,7 +480,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {11, 7, 14, 9},
         .stats = {
             {.power = 95, .resistance = 100},
@@ -490,7 +490,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
         },
     },
     {
-        .first = ELEMENT_NONE,
+        .attackElement = ELEMENT_NONE,
         .elementLevels = {17, 14, 12, 10},
         .stats = {
             {.power = 110, .resistance = 150},

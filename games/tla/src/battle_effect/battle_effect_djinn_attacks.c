@@ -69,10 +69,10 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   canvas = heap->battleCanvas;
   sheet = heap->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_FetchRectangleBlitters(0, blit);
+  BattleEffect_BuildCanvasBlitters(0, blit);
 
   cells = Ram_MapCellBuffer;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, state->sheet,
                              1, 0);
   Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET, cells, 1, 1);
@@ -203,8 +203,8 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_FetchRectangleBlitters(0, blit);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  BattleEffect_BuildCanvasBlitters(0, blit);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SMALL_SHEET, state->sheet,
                              1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLAMEBALL_SHEET,
@@ -347,7 +347,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
                       BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)heap->ramCode;
   draw[1] = (DrawRectangle)heap->ramCodePaired;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET, state->sheet, 1,
                              1);
   Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET,
@@ -459,8 +459,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_FetchRectangleBlitters(0, blitters);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  BattleEffect_BuildCanvasBlitters(0, blitters);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET, state->sheet, 1,
                              0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,

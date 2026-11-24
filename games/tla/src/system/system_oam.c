@@ -14,7 +14,7 @@ enum {
 /// masks of the depth slots sprites are linked into, a bit a slot.
 void Oam_ResetFrame(void) {
   gOamMatrixCount = 0;
-  Iwram_ClearWordsEntry(gOamBucketMasks, RENDER_DEPTH_SLOT_COUNT / 8);
+  Iwram_ClearWordsEntry(gOamDepthMasks, RENDER_DEPTH_SLOT_COUNT / 8);
 }
 
 /// Hands out the next OAM affine matrix for a sprite drawn with `source`'s
@@ -85,7 +85,7 @@ void Oam_AddSpriteAtDepthClamped(void *entry, s32 slot) {
     else
       slot = OAM_DEPTH_WINDOW - 1;
   }
-  mask = &gOamBucketMasks[(u32)slot >> 3];
+  mask = &gOamDepthMasks[(u32)slot >> 3];
   bit = slot & 7;
   buckets = gOamDepthLists;
   if (((u32)*mask >> bit) & 1) {
@@ -112,7 +112,7 @@ void Oam_AddSpriteAtDepth(void *entry, s32 slot) {
     slot = RENDER_DEPTH_SLOT_COUNT - 1;
   if (slot < 0)
     slot = 0;
-  mask = &gOamBucketMasks[(u32)slot >> 3];
+  mask = &gOamDepthMasks[(u32)slot >> 3];
   head = &gOamDepthLists[slot];
   bit = slot & 7;
   if (((u32)*mask >> bit) & 1) {

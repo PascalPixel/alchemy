@@ -17,7 +17,7 @@ Icon_ItemFrame:
 @ The equipped, cross and phi marks
 	.global gIcon_MarkPointers
 gIcon_MarkPointers:
-	.4byte Icon_MarkEquip, Icon_MarkCross, Icon_MarkPhi
+	.4byte Icon_MarkEquip, Icon_MarkCross, Icon_MarkCursed
 Icon_MarkEquip:
 	.ifdef TBS_EDITION_DE
 	.incbin "games/tla/src/graphics/ui/marks/equip_de.icon4"
@@ -38,7 +38,7 @@ Icon_MarkEquip:
 	.endif
 Icon_MarkCross:
 	.incbin "games/tla/src/graphics/ui/marks/cross.icon4"
-Icon_MarkPhi:
+Icon_MarkCursed:
 	.incbin "games/tla/src/graphics/ui/marks/phi.icon4"
 	.balign 4, 0
 

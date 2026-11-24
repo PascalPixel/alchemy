@@ -18,8 +18,8 @@ struct Actor *Whirlwind_Spawn(struct Actor *source) {
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->facing = source->facing;
   actor->timer = 0;
-  actor->riseCounter = 0;
-  actor->riseEnabled = 0;
+  actor->sceneCounter = 0;
+  actor->sceneByte = 0;
   actor->update = Whirlwind_Update;
   actor->speedLimit = toFIXED(3) / 2;
   options.priority = 1;

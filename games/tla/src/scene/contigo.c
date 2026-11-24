@@ -460,7 +460,7 @@ void Contigo_FreedDjinniJoinsParty(void) {
 #include "shared/actor_is_facing_near.h"
 
 void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 value);
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 /// The update of the two children walking round the middle of the village:
 /// each stands while it is talked to, while Mind Read shows its thoughts, or
@@ -473,9 +473,8 @@ s32 Contigo_PauseWhenFaced(struct Actor *self) {
   struct FieldEffectState *effect;
   struct Actor *other;
 
-  Actor_SetSpritePriorityDirect(
-      self, BattleEffect_GetObjectPriority(
-                Actor_GetById(gMainRoutineState.leaderActorId)));
+  Actor_SetSpritePriorityDirect(self, Actor_GetSpritePriority(Actor_GetById(
+                                          gMainRoutineState.leaderActorId)));
   mode = ABILITY_ID(event->psynergy);
   state = &self->paused;
   if (mode == ABILITY_MIND_READ) {
@@ -483,13 +482,13 @@ s32 Contigo_PauseWhenFaced(struct Actor *self) {
     if ((s8)effect->messageShown != 0)
       goto stand;
   }
-  if (self->riseEnabled == 1)
+  if (self->sceneByte == 1)
     goto stand;
   other = Actor_GetById(gMainRoutineState.leaderActorId);
   if (Position_Distance(&self->x.fixed, &other->x.fixed) <=
       CHILD_WALKS_ON_RANGE)
     goto walk;
-  if (self->riseCounter == 1)
+  if (self->sceneCounter == 1)
     other = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
   else
     other = Actor_GetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
@@ -571,7 +570,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// characters carved into it", which he cannot make sense of.
 void Contigo_ExamineWall(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   // "Felix examined the wall. There are characters carved into it...."
   FieldMessage_Show((s32)MsgContigoFelixExaminedTheWallThere, 1);
   Event_End();
@@ -581,7 +580,7 @@ void Contigo_ExamineWall(void) {
 /// characters from the wall are translated" on it.
 void Contigo_ReadSign(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   // "Felix examined the sign. The characters from the wall are translated..."
   FieldMessage_Show((s32)MsgContigoFelixExaminedTheSignThe, 1);
   Event_End();
@@ -591,7 +590,7 @@ void Contigo_ReadSign(void) {
 /// (4, 55)): "Turn the slot and get a prize! The lottery slots are over here."
 void Contigo_ReadLuckyWheelsSign(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   // "Turn the slot and get a prize! The lottery slots are over here."
   FieldMessage_Show((s32)MsgContigoTurnTheSlotAndGet, 1);
   Event_End();
@@ -602,7 +601,7 @@ void Contigo_ReadLuckyWheelsSign(void) {
 /// some cash and double up! The hi-lo dice are over here!"
 void Contigo_ReadSuperLuckyDiceSign(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   // "Drop some cash and double up! The hi-lo dice are over here!"
   FieldMessage_Show((s32)MsgContigoDropSomeCashAndDouble, 1);
   Event_End();
@@ -613,7 +612,7 @@ void Contigo_ReadSuperLuckyDiceSign(void) {
 /// know what the dice will do next! Come and give our dice a toss!"
 void Contigo_ReadLuckyDiceSign(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   // "You never know what the dice will do next! Come and give our dice a..."
   FieldMessage_Show((s32)MsgContigoYouNeverKnowWhatThe, 1);
   Event_End();
@@ -626,7 +625,7 @@ void Contigo_ReadLuckyDiceSign(void) {
 /// control the wind and air, and answers his yes or no.
 void Contigo_AskAboutWindLegend(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgContigoDoYouKnowAnythingAbout);
   // "Do you know anything about a legend about these people who could..."
   Event_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, 0);
@@ -692,7 +691,7 @@ void Contigo_BabyThinks(void) {
   u32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
     // "The baby's forehead is furrowed, like it's thinking."
     FieldMessage_Show((s32)MsgContigoTheBabysForeheadIsFurrowedLike, 1);
@@ -786,7 +785,7 @@ void Contigo_TalkToItemMerchant(void) {
     Shop_Run(SHOP_CONTIGO_ITEMS, ACTOR_ITEM_MERCHANT);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
       // "It's always such a letdown when you finish off a major task like..."
       Event_SetMessageId((s32)MsgContigoItsAlwaysSuchALetdown);
@@ -806,7 +805,7 @@ void Contigo_TalkToWeaponMerchant(void) {
     Shop_Run(SHOP_CONTIGO_WEAPONS, ACTOR_WEAPON_MERCHANT);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
       // "A cannon? Yeah, I think I heard something about a town up in..."
       Event_SetMessageId((s32)MsgContigoACannonYeahIThink);
@@ -826,7 +825,7 @@ void Contigo_TalkToArmorMerchant(void) {
     Shop_Run(SHOP_CONTIGO_ARMOR, ACTOR_ARMOR_MERCHANT);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
       // "Now that the wings are finished, I doubt anyone will be buying any..."
       Event_SetMessageId((s32)MsgContigoNowThatTheWingsAre);
@@ -846,7 +845,7 @@ void Contigo_TalkToInnkeeper(void) {
     Inn_CheckIn(CONTIGO_INN, ACTOR_INNKEEPER);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
       // "All of our work and all of our celebration are finally at an end...."
       Event_SetMessageId((s32)MsgContigoAllOfOurWorkAnd);
@@ -869,7 +868,7 @@ void Contigo_TalkToHealer(void) {
     Sanctum_Run(ACTOR_HEALER);
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
       // "It was a miracle that made all of the legends of the Anemos come..."
       Event_SetMessageId((s32)MsgContigoItWasAMiracleThat);
@@ -888,7 +887,7 @@ void Contigo_TalkToHealer(void) {
 /// ever played Superdice before, and answers his yes or no.
 void Contigo_AskAboutSuperDice(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgContigoSoTellMePalHave);
   // "So, tell me, pal... Have you ever played Superdice before?"
   Event_AskYesNoAndShowResponse(ACTOR_MAN_WARY_OF_UNLUCKY_PLAYERS, 0);
@@ -901,7 +900,7 @@ void Contigo_ReadSuperLuckyDiceRules(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)MsgContigoSuperLuckyDiceTheRules;
   // "Super Lucky Dice The Rules of the Game."
   FieldMessage_Show(msg, 1);
@@ -930,7 +929,7 @@ void Contigo_ReadLuckyDiceRules(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)MsgContigoLuckyDice;
   // "Lucky Dice"
   FieldMessage_Show(msg, 1);
@@ -949,7 +948,7 @@ void Contigo_ReadLuckyDicePairs(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)MsgContigoLuckyDiceB;
   // "Lucky Dice"
   FieldMessage_Show(msg, 1);
@@ -970,7 +969,7 @@ void Contigo_ReadLuckyDicePairs(void) {
 /// offers a game for game tickets (Contigo_OfferLuckyWheels).
 void Contigo_TalkToWheelsAttendant(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Contigo_OfferLuckyWheels(0);
   Event_End();
 }
@@ -981,7 +980,7 @@ void Contigo_ReadLuckyWheelsRules(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)MsgContigoLuckyWheelsRules;
   // "Lucky Wheels Rules"
   FieldMessage_Show(msg, 1);
@@ -1004,7 +1003,7 @@ void Contigo_ReadLuckyWheelsPrizes(void) {
   s32 msg;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   msg = (s32)MsgContigoLuckyWheelsPrizes;
   // "Lucky Wheels Prizes"
   FieldMessage_Show(msg, 1);
@@ -1027,7 +1026,7 @@ void Contigo_ReadLuckyWheelsPrizes(void) {
 /// geoglyph, and answers his yes or no.
 void Contigo_AskAboutGeoglyph(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgContigoHaveYouTakenAGood);
   // "Have you taken a good look at the Anemos geoglyph?"
   Event_AskYesNoAndShowResponse(ACTOR_MAN_ON_THE_GEOGLYPH, 0);
@@ -1044,8 +1043,8 @@ void Contigo_TalkToDoubtingBoy(void) {
   s16 angle = actor->facing;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
-  actor->riseEnabled = 1;
+  Event_EndLastingPsynergy(0);
+  actor->sceneByte = 1;
   if (state->psynergy == 0) {
     Actor_FaceActorById(ACTOR_BOY_DOUBTING_THE_LEGENDS,
                         gMainRoutineState.leaderActorId, 0);
@@ -1072,7 +1071,7 @@ void Contigo_TalkToDoubtingBoy(void) {
   Event_ShowMessageAndWait(ACTOR_BOY_DOUBTING_THE_LEGENDS, 0);
   if (state->psynergy == 0)
     actor->facing = angle;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   Event_End();
 }
 
@@ -1086,8 +1085,8 @@ void Contigo_TalkAboutTheShip(void) {
   s16 angle = actor->facing;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
-  actor->riseEnabled = 1;
+  Event_EndLastingPsynergy(0);
+  actor->sceneByte = 1;
   if (event->psynergy == 0) {
     Actor_FaceActorById(ACTOR_GIRL_ON_THE_SHIP, gMainRoutineState.leaderActorId,
                         0);
@@ -1108,7 +1107,7 @@ void Contigo_TalkAboutTheShip(void) {
   Event_ShowMessageAndWait(ACTOR_GIRL_ON_THE_SHIP, 0);
   if (event->psynergy == 0)
     actor->facing = angle;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   Event_End();
 }
 
@@ -1167,7 +1166,7 @@ void Contigo_ScatterWeedsOverBrambleSeed(void) {
     if (FIELD_CELL(leader->x.fixed) == 17 &&
         FIELD_CELL(leader->z.fixed) == 41) {
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       FieldEffect_SetAttached(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 0, -16);
@@ -1275,7 +1274,7 @@ void Contigo_ScoopForSalt(void) {
     struct FieldState *state = Ram_HeapSlots->fieldState;
 
     Event_Start();
-    Event_ResolvePendingActions(1);
+    Event_EndLastingPsynergy(1);
     Actor_SetPosition(ACTOR_SALT, 664, 952);
     wait(1);
     Actor_FaceActorById(ACTOR_SALT, gMainRoutineState.leaderActorId, 0);
@@ -1319,7 +1318,7 @@ void Contigo_ForceFreesDjinni(void) {
   u32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetPosition(ACTOR_SHINE, 56, 698);
   wait(1);
   options.priority = 2;
@@ -1430,7 +1429,7 @@ void Contigo_OfferLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
 
-  ObjectTable_Snapshot();
+  ActorTable_Snapshot();
   if (spoken == 0) {
     s32 message = (s32)MsgContigoStepRightUpAndTry;
 
@@ -1539,7 +1538,7 @@ void Contigo_OfferLuckyDice(void) {
   u32 price = Party_GetAverageLevel() * LUCKY_DICE_COINS_PER_LEVEL;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if ((u32)gMainRoutineState.coins < price) {
     Event_SetMessageId((s32)MsgContigoHeyYaDontHaveEnough);
     // "Hey! Ya don't have enough coins! Ya gotta pay to play."
@@ -1560,7 +1559,7 @@ void Contigo_OfferLuckyDice(void) {
       if (gMainRoutineState.coins != 0)
         price = 0;
     }
-    ObjectTable_Snapshot();
+    ActorTable_Snapshot();
     // "OK! Then take the dice."
     Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
@@ -1584,7 +1583,7 @@ void Contigo_OfferSuperLuckyDice(void) {
   u32 price = Party_GetAverageLevel() * LUCKY_DICE_COINS_PER_LEVEL;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if ((u32)gMainRoutineState.coins < price) {
     // Shown at the Lucky Dice attendant, who stands in the next tent: the box
     // opens at the top of the screen as his welcome does, a little further
@@ -1607,7 +1606,7 @@ void Contigo_OfferSuperLuckyDice(void) {
       if (gMainRoutineState.coins != 0)
         price = 0;
     }
-    ObjectTable_Snapshot();
+    ActorTable_Snapshot();
     // "OK, then let 'em roll!"
     Event_ShowMessageAndWait(ACTOR_SUPER_LUCKY_DICE_ATTENDANT, 0);
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
@@ -1638,7 +1637,7 @@ void Contigo_ShrinkActor(s32 id) {
 /// walks slowly in through it and the screen fades out.
 void Contigo_OpenSanctumDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_THUMP);
   {
     s32 width = 1;
@@ -1706,7 +1705,7 @@ void Contigo_TheReunion(void) {
 
   actor = Actor_GetById(ACTOR_HAMMA);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2250,7 +2249,7 @@ extern u32 gContigo_LeaderVisitsScript[];
 void Contigo_ReturnToNewHome(void) {
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     FieldCamera_SetSpeed(0.8);
     FieldCamera_MoveTo(160, CAMERA_KEEP, 368, 1);
     Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
@@ -2552,8 +2551,8 @@ void Contigo_InitializeVillage(void) {
   struct Actor *actor = Actor_GetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
 
   Task_Add(Contigo_KeepPriorityWithLeader, TASK_PASS_FRAME);
-  actor->riseCounter = 1;
-  actor->riseEnabled = 0;
+  actor->sceneCounter = 1;
+  actor->sceneByte = 0;
   actor->update = Contigo_PauseWhenFaced;
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
       GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) == 0) {
@@ -2563,8 +2562,8 @@ void Contigo_InitializeVillage(void) {
     Contigo_LockDoors();
   } else {
     actor = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
-    actor->riseCounter = 0;
-    actor->riseEnabled = 0;
+    actor->sceneCounter = 0;
+    actor->sceneByte = 0;
     actor->update = Contigo_PauseWhenFaced;
   }
   if (GameFlag_Get(FLAG_SHINE_FREED) != 0 &&
@@ -2702,7 +2701,7 @@ void Contigo_InitializeLuckyDice(void) {
   if (gMainRoutineState.entrance == ENTRANCE_FROM_SUPER_LUCKY_DICE) {
     coinChange = gMainRoutineState.coins - *(s32 *)gSceneState;
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     if (coinChange > 0) {
@@ -2728,7 +2727,7 @@ void Contigo_InitializeLuckyDice(void) {
   } else if (gMainRoutineState.entrance == ENTRANCE_FROM_LUCKY_DICE) {
     coinChange = gMainRoutineState.coins - *(s32 *)gSceneState;
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     if (coinChange > 0) {
@@ -2756,7 +2755,7 @@ void Contigo_InitializeLuckyDice(void) {
     // award a prize for each.
     wonPrizes = gMainRoutineState.wheelsPrizes;
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(20);
@@ -2796,7 +2795,7 @@ void Contigo_InitializeLuckyDice(void) {
 }
 
 void Actor_SetSpriteColorMode(struct Actor *, u32);
-s32 BattleEffect_GetObjectDepth(struct Actor *actor);
+s32 Actor_GetSpriteDepth(struct Actor *actor);
 
 /// The sparkle's update, played over Hamma as she speaks of Mars Lighthouse in
 /// the reunion: two pairs of white half-rings rise around her, a pair starting
@@ -2807,20 +2806,20 @@ void Contigo_RaiseSparkle(struct Actor *actor) {
   FIXED sine;
   s32 i, j;
   struct SparkleState *state = (struct SparkleState *)actor->watchedActor;
-  u8 *count = &actor->riseEnabled;
+  u8 *count = &actor->sceneByte;
   struct EffectSprite *sprite;
 
   if (*count & 1)
     Actor_SetSpriteColorMode(actor,
                              (u8)((u32)((struct CounterBits *)count)->rest %
                                   (SPRITE_COLOR_BRG + 1)));
-  if (actor->riseCounter == 0) {
+  if (actor->sceneCounter == 0) {
     if ((*count & (RING_INTERVAL - 1)) == 0) {
       Sound_Play(SE_RISING_RINGS);
       state->heights[state->nextPair] = 0;
       state->nextPair ^= 1;
     }
-  } else if (actor->riseCounter == 1) {
+  } else if (actor->sceneCounter == 1) {
     if (state->heights[0] >= RING_CLIMB && state->heights[1] >= RING_CLIMB) {
       Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
       VramCache_FreeEntry(state->vramEntry);
@@ -2847,9 +2846,9 @@ void Contigo_RaiseSparkle(struct Actor *actor) {
           sprite->scaleX = sine;
           sprite->scaleY = sine;
           if (j == 0) {
-            sprite->depth = BattleEffect_GetObjectDepth(actor) - 1;
+            sprite->depth = Actor_GetSpriteDepth(actor) - 1;
           } else {
-            sprite->depth = BattleEffect_GetObjectDepth(actor) + 1;
+            sprite->depth = Actor_GetSpriteDepth(actor) + 1;
             sprite->y -= toFIXED(1);
             sprite->scaleY = -sprite->scaleY;
           }
@@ -2876,8 +2875,8 @@ void Contigo_StartSparkle(struct Actor *actor, struct SparkleState *state) {
   state->heights[0] = RING_NOT_STARTED;
   state->heights[1] = RING_NOT_STARTED;
   state->actor = actor;
-  actor->riseCounter = 0;
-  actor->riseEnabled = 0;
+  actor->sceneCounter = 0;
+  actor->sceneByte = 0;
   actor->update = Contigo_RaiseSparkle;
   tile = gVramCacheEntries[state->vramEntry].offset >> 5;
   actor->watchedActor = (struct Actor *)state;
@@ -2886,14 +2885,14 @@ void Contigo_StartSparkle(struct Actor *actor, struct SparkleState *state) {
       EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tile);
       sprite->oam.fullColor = 0;
       sprite->oam.palette = 0;
-      sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
+      sprite->oam.priority = Actor_GetSpritePriority(actor);
       sprite++;
     }
   }
 }
 
 /// Ends the sparkle: its update finishes once both pairs have risen.
-void Contigo_StopSparkle(struct Actor *actor) { actor->riseCounter = 1; }
+void Contigo_StopSparkle(struct Actor *actor) { actor->sceneCounter = 1; }
 
 // clang-format off
 #include "shared/light_ring_tiles.c"

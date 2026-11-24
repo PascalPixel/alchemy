@@ -104,9 +104,9 @@ void Unit_Calculate(s32 unitId) {
   unit = Unit_Get(unitId);
   stats->hp = unit->baseHp;
   stats->pp = unit->basePp;
-  stats->atk = unit->baseAttack;
-  stats->def = unit->baseDefense;
-  stats->agi = unit->baseAgility;
+  stats->attack = unit->baseAttack;
+  stats->defense = unit->baseDefense;
+  stats->agility = unit->baseAgility;
   stats->luck = unit->baseLuck;
   stats->actionCount = unit->baseActionCount & UNIT_ACTION_COUNT_MASK;
   stats->hpRegen = unit->baseHpRegen;
@@ -146,8 +146,8 @@ void Unit_Calculate(s32 unitId) {
       stats->item = Item_GetDirect(unit->inventory[index]);
       if (stats->item->flags & ITEM_CURSED)
         unit->curse |= CURSE_BOUND | CURSE_ITEM;
-      stats->atk += stats->item->primaryBonus;
-      stats->def += stats->item->secondaryBonus;
+      stats->attack += stats->item->attack;
+      stats->defense += stats->item->defense;
       for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
         effectKind = stats->item->effects[effectIndex].kind;
         effectAmount = stats->item->effects[effectIndex].amount;
@@ -169,7 +169,7 @@ void Unit_Calculate(s32 unitId) {
           stats->ppRegen += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_AGILITY:
-          stats->agi += stats->amount;
+          stats->agility += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_LUCK:
           stats->luck += stats->amount;
@@ -224,9 +224,9 @@ void Unit_Calculate(s32 unitId) {
 
           stats->hp += djinn->hp;
           stats->pp += djinn->pp;
-          stats->atk += djinn->atk;
-          stats->def += djinn->def;
-          stats->agi += djinn->agi;
+          stats->attack += djinn->attack;
+          stats->defense += djinn->defense;
+          stats->agility += djinn->agility;
           stats->luck += djinn->luck;
         }
       }
@@ -239,9 +239,11 @@ void Unit_Calculate(s32 unitId) {
 
       stats->hp = stats->hp * classDefinition->hp / STAT_SCALE_ONE;
       stats->pp = stats->pp * classDefinition->pp / STAT_SCALE_ONE;
-      stats->atk = stats->atk * classDefinition->atk / STAT_SCALE_ONE;
-      stats->def = stats->def * classDefinition->def / STAT_SCALE_ONE;
-      stats->agi = stats->agi * classDefinition->agi / STAT_SCALE_ONE;
+      stats->attack = stats->attack * classDefinition->attack / STAT_SCALE_ONE;
+      stats->defense =
+          stats->defense * classDefinition->defense / STAT_SCALE_ONE;
+      stats->agility =
+          stats->agility * classDefinition->agility / STAT_SCALE_ONE;
       stats->luck = stats->luck * classDefinition->luck / STAT_SCALE_ONE;
     }
 
@@ -271,13 +273,13 @@ void Unit_Calculate(s32 unitId) {
           stats->ppRegen = stats->ppRegen * stats->amount / STAT_SCALE_ONE;
           break;
         case SCALE_EFFECT(EQUIP_EFFECT_SCALE_ATTACK):
-          stats->atk = stats->atk * stats->amount / STAT_SCALE_ONE;
+          stats->attack = stats->attack * stats->amount / STAT_SCALE_ONE;
           break;
         case SCALE_EFFECT(EQUIP_EFFECT_SCALE_DEFENSE):
-          stats->def = stats->def * stats->amount / STAT_SCALE_ONE;
+          stats->defense = stats->defense * stats->amount / STAT_SCALE_ONE;
           break;
         case SCALE_EFFECT(EQUIP_EFFECT_SCALE_AGILITY):
-          stats->agi = stats->agi * stats->amount / STAT_SCALE_ONE;
+          stats->agility = stats->agility * stats->amount / STAT_SCALE_ONE;
           break;
         case SCALE_EFFECT(EQUIP_EFFECT_SCALE_LUCK):
           stats->luck = stats->luck * stats->amount / STAT_SCALE_ONE;
@@ -289,9 +291,9 @@ void Unit_Calculate(s32 unitId) {
 
   // Then the battle's changes apply: the Attack, Defense and Agility stages,
   // a summon's boost to each element's power, and the Resistance stage.
-  stats->atk = stats->atk * (unit->attackStage + 8) / 8;
-  stats->def = stats->def * (unit->defenseStage + 8) / 8;
-  stats->agi = stats->agi * (unit->agilityStage + 8) / 8;
+  stats->attack = stats->attack * (unit->attackStage + 8) / 8;
+  stats->defense = stats->defense * (unit->defenseStage + 8) / 8;
+  stats->agility = stats->agility * (unit->agilityStage + 8) / 8;
   for (index = 0; index < ELEMENT_COUNT; index++)
     stats->element[index].power +=
         (unit->summonBoost[index] * unit->summonBoost[index] +
@@ -330,9 +332,9 @@ void Unit_Calculate(s32 unitId) {
       stats->ppRegen += 4;
   }
 
-  CLAMP(stats->atk, 0, UNIT_STAT_MAX);
-  CLAMP(stats->def, 0, UNIT_STAT_MAX);
-  CLAMP(stats->agi, 0, UNIT_STAT_MAX);
+  CLAMP(stats->attack, 0, UNIT_STAT_MAX);
+  CLAMP(stats->defense, 0, UNIT_STAT_MAX);
+  CLAMP(stats->agility, 0, UNIT_STAT_MAX);
   CLAMP(stats->luck, 0, UNIT_LUCK_MAX);
   // An enemy may act up to four times a turn, a character twice.
   if (unit->classId == CLASS_NONE) {
@@ -347,9 +349,9 @@ void Unit_Calculate(s32 unitId) {
     CLAMP(stats->element[index].resistance, 0, UNIT_ELEMENT_MAX);
   }
 
-  unit->atk = stats->atk;
-  unit->def = stats->def;
-  unit->agi = stats->agi;
+  unit->attack = stats->attack;
+  unit->defense = stats->defense;
+  unit->agility = stats->agility;
   unit->luck = stats->luck;
   unit->actionsPerTurn = stats->actionCount;
   unit->hpRegen = stats->hpRegen;
@@ -707,7 +709,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 /// Restores the PP of each party member whose element group's lighthouse
 /// the party is inside: Venus or Mars for Isaac, Garet, Felix and Jenna,
 /// Mercury or Jupiter for the others. Nothing calls it or its far-call export.
-void Party_RestorePpOfLitElements(void) {
+void Party_RestorePpInLighthouse(void) {
   s32 partySize;
   s32 partyIndex;
   u8 unitId;
@@ -902,7 +904,7 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
     }
     Unit_Calculate(i);
   }
-  Djinn_ActivateOfferedForParty();
+  Djinn_SetAllForParty();
   Party_RestoreHpPp(1);
   GameFlag_Set((byPassword & 1) + FLAG_TRANSFERRED_BY_LINK);
   GameFlag_Set(FLAG_DATA_TRANSFERRED);
@@ -980,7 +982,7 @@ void Party_AddIsaacsParty(void) {
   Party_AddMember(MIA);
   // Called with an argument it does not take.
   ((void (*)(s32))Party_BalanceDjinn)(0);
-  Djinn_ActivateOfferedForParty();
+  Djinn_SetAllForParty();
   for (i = 0; i <= PIERS; i++)
     Unit_Calculate(i);
   Party_RestoreHpPp(1);
@@ -998,7 +1000,7 @@ void Party_AddIsaacsParty(void) {
       djinni = missing[(Random16() * count) >> 16] + 1;
     else
       djinni = 0;
-    gSceneLocalState[SCENE_STATE_REUNION_DJINN + i] = djinni;
+    gSceneLocalState[SCENE_STATE_CHOSEN_DJINN + i] = djinni;
   }
   // The Psynergy items Isaac's party carried in The Broken Seal.
   Party_GiveItemIfMissing(ITEM_FROST_JEWEL, MIA);
@@ -1095,7 +1097,7 @@ void DataTransfer_GiveDefaultDjinn(void) {
       }
     }
   } while (remaining != 0);
-  Djinn_ActivateOfferedForParty();
+  Djinn_SetAllForParty();
 
   for (i = 0, k = 0; i < ELEMENT_COUNT;
        i++, k += TRANSFERRED_DJINN_PER_ELEMENT) {

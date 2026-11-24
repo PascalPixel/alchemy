@@ -180,13 +180,14 @@ enum MovementType {
   MOVEMENT_TYPE_FOLLOW_WATCHED = 5, ///< moves toward the watched actor
   MOVEMENT_TYPE_FACE_LEADER = 6,    ///< watches the leader and turns toward it
   /// gMovementType_ClearCollisionScript: clears the actor's child and
-  /// collision flags (Actor_ClearChildAndCollisionFlags).
+  /// collision flags (Actor_ClearSpriteAndCollisionFlags).
   MOVEMENT_TYPE_CLEAR_COLLISION = 7,
   /// gMovementType_SquashScript: squashes and stretches for ever.
   MOVEMENT_TYPE_SQUASH = 8,
   MOVEMENT_TYPE_TAKE_LEADER_LAYER = 9, ///< gMovementType_TakeLeaderLayerScript
   MOVEMENT_TYPE_IGNORE_RISES = 10,     ///< gMovementType_IgnoreRisesScript
-  MOVEMENT_TYPE_CLEAR_CHILD = 11       ///< gMovementType_ClearChildScript
+  MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS =
+      11 ///< gMovementType_ClearSpriteFlagsScript
 };
 
 /// How a placed actor turns when the leader talks to it (Scene_TalkToActor).
@@ -219,7 +220,8 @@ struct Trigger {
 /// (MsgActorUsesItem); an examine trigger shows no checking message.
 #define TRIGGER_SUBJECT_OWN_EFFECT 0x400
 /// Trigger.subject bit 9 on a Psynergy trigger: the cast neither flashes the
-/// caster nor announces the ability (FieldEffectState.visible and .active).
+/// caster nor announces the ability (FieldEffectState.flashCaster and
+/// .announceName).
 #define TRIGGER_SUBJECT_QUIET 0x200
 /// An item trigger's subject: the heading it needs in bits 15..12, whether it
 /// needs one, and its target, an actor or a cell behavior.

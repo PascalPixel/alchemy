@@ -17,7 +17,7 @@ const u32 gBattleTables_UnusedWord = 17;
 
 /// Where a centred formation's enemies stand, as places from the middle of
 /// the line: the first in the middle, the rest either side in turn.
-const s8 gBattleParty_CenterOrderOffsets[] = {0, -1, 1, -2, 2, -3, 3, -4, 4};
+const s8 gBattleFormation_CenteredOffsets[] = {0, -1, 1, -2, 2, -3, 3, -4, 4};
 
 // clang-format off
 // Each by enum BattleWeaponKind.
@@ -105,7 +105,7 @@ const u16 gBattleUnit_WeaponAnimationsPiers[] = {
 /// Where the party's places stand, x and y pixel pairs from the battlefield's
 /// centre, a 0, 0 pair after each layout; only the unused
 /// BattlePlacement_GetStepPair reads it.
-const s8 gBattlePlacement_StepPairs[] = {
+const s8 gBattlePlacement_Spots[] = {
     80, 48,
     80, 16,
     80, -16,

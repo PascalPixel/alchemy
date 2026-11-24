@@ -236,7 +236,7 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
 }
 
 /// Compares size bytes; returns the first byte of right that differs from left,
-/// or NULL when all match. Flash_VerifySector runs it from a copy in RAM.
+/// or NULL when all match. VerifyFlashSector runs it from a copy in RAM.
 u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size) {
   u16 index = size - 1;
 
@@ -258,7 +258,7 @@ typedef u8 *(*FlashVerifyCore)(u8 *source, u8 *flash, u16 size);
 
 /// Compares 4 KB sector `sector` of the chip with source; returns 0 when they
 /// match, else the address of the first byte of the chip that differs.
-s32 Flash_VerifySector(u16 sector, u8 *source) {
+s32 VerifyFlashSector(u16 sector, u8 *source) {
   u16 code[128];
   u16 *sourceCode;
   u16 *destinationCode;
@@ -269,7 +269,7 @@ s32 Flash_VerifySector(u16 sector, u8 *source) {
   sourceCode = (u16 *)VerifyFlashCore;
   sourceCode = (u16 *)((u32)sourceCode ^ 1);
   destinationCode = code;
-  halfwordsRemaining = ((u32)Flash_VerifySector - (u32)VerifyFlashCore) / 2;
+  halfwordsRemaining = ((u32)VerifyFlashSector - (u32)VerifyFlashCore) / 2;
   while (halfwordsRemaining != 0) {
     *destinationCode++ = *sourceCode++;
     halfwordsRemaining--;

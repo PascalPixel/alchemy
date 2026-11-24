@@ -148,7 +148,7 @@ s32 Task_Remove(TaskFunc func) {
 /// Suspends the task running `func`, or every task when `func` is null, by
 /// setting TASK_SUSPENDED in its priority's high byte, which then matches
 /// neither pass. Returns the last slot suspended, or -1.
-s32 Task_SuspendAll(TaskFunc func) {
+s32 Task_Suspend(TaskFunc func) {
   struct Task *task;
   u32 savedIme;
   s32 result;
@@ -170,7 +170,7 @@ s32 Task_SuspendAll(TaskFunc func) {
 }
 
 /// Suspends every task whose routine is in an overlay (TASK_IN_OVERLAY) unless
-/// its flags hold TASK_FLAG_KEEP_RUNNING, as Task_SuspendAll does.
+/// its flags hold TASK_FLAG_KEEP_RUNNING, as Task_Suspend does.
 s32 Task_SuspendOverlayTasks(void) {
   struct Task *task;
   u32 savedIme;
@@ -214,7 +214,7 @@ s32 Task_SetFlags(TaskFunc func, u32 mask) {
 
 /// Resumes the task running `func`, or every task when `func` is null, by
 /// clearing TASK_SUSPENDED. Returns the last slot resumed, or -1.
-s32 Task_ResumeAll(TaskFunc func) {
+s32 Task_Resume(TaskFunc func) {
   struct Task *task;
   u32 savedIme;
   s32 result;

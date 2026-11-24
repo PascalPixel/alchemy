@@ -17,8 +17,8 @@
 	export wait, waitFar
 	export Task_Add, Task_AddFar
 	export Task_Remove, Task_RemoveFar
-	export Task_SuspendAll, Task_SuspendAllFar
-	export Task_ResumeAll, Task_ResumeAllFar
+	export Task_Suspend, Task_SuspendFar
+	export Task_Resume, Task_ResumeFar
 	export Random16, Random16Far
 	export Trig_Atan, Trig_AtanFar
 	export Trig_Sin, Trig_SinFar
@@ -77,7 +77,7 @@
 	export Actor_SetAnimationSpeed, Actor_SetAnimationSpeedFar
 	export TundariaTower_StartEffectScript, Actor_StartScriptFar
 	export Actor_StartScript, Actor_StartScriptFar
-	export Actor_StartRenderModeScript, Actor_StartRenderModeScriptFar
+	export Actor_StartMovementModeScript, Actor_StartMovementModeScriptFar
 	export Import_ActorCreate, Actor_CreateFar
 	export Actor_Release, Actor_ReleaseFar
 	export WorldMap_UpdateCurrentTileBlock, WorldMap_UpdateCurrentTileBlockFar
@@ -97,7 +97,7 @@
 	export BlendScript_Start, BlendScript_StartFar
 	export Map_GetTerrainHeight, MapGrid_GetTerrainHeightFar
 	export MapGrid_GetCellBehaviorAt, MapGrid_GetCellBehaviorAtFar
-	export MapGrid_GetCellAttributeLowNibbleOrBump, MapGrid_GetCellAttributeLowNibbleOrBumpFar
+	export MapGrid_GetTerrainKindOrBumpAt, MapGrid_GetTerrainKindOrBumpAtFar
 	export Map_CopyCellsRect, Map_CopyCellsRectFar
 	export Map_CopyCellAttributeRect, Map_CopyCellAttributeRectFar
 	export MapGrid_CopyCellTilesCellsRect, MapGrid_CopyCellTilesCellsRectFar
@@ -152,7 +152,7 @@
 	export MessageArgument_Push, MessageArgument_PushFar
 	export Window_CloseMatchingId, Portrait_CloseWindowFar
 	export Text_GetMessageSize, Text_GetMessageSizeFar
-	export Save_ProcessSelectedFile, Save_ProcessSelectedFileFar
+	export Save_WriteLinkTallies, Save_WriteLinkTalliesFar
 	export PartyInventory_Discard, PartyInventory_DiscardFar
 	export Message_CloseFinishedWindows, Message_CloseFinishedWindowsFar
 	export FileList_SelectAction, FileList_SelectActionFar
@@ -169,9 +169,9 @@
 	export Save_ScanFileSummaries, Save_ScanFileSummariesFar
 	export NameEntry_EditMemberName, NameEntry_EditMemberNameFar
 	export DebugBrowser_Icons, DebugBrowser_IconsFar
-	export Resource_CopyFixedBlockB, Resource_CopyFixedBlockBFar
+	export PointingHand_LoadIntoSlot, PointingHand_LoadIntoSlotFar
 	export DebugBrowser_Portraits, DebugBrowser_PortraitsFar
-	export Resource_CopyFixedBlockA, Resource_CopyFixedBlockAFar
+	export NameCaret_LoadIntoSlot, NameCaret_LoadIntoSlotFar
 	export WindowColor_Apply, WindowColor_ApplyFar
 	export Summon_ShowLearnedMessage, Summon_ShowLearnedMessageFar
 	export YesNoMenu_Run, YesNoMenu_RunFar
@@ -209,7 +209,7 @@
 	export DataTransfer_Apply, DataTransfer_ApplyFar
 	export Unit_LevelUpTo, Unit_LevelUpToFar
 	export Party_AdjustCoins, Party_AdjustCoinsFar
-	export Item_AdjustCounter, Item_AdjustCounterFar
+	export Item_AdjustRareItemStock, Item_AdjustRareItemStockFar
 	export Party_RestoreHpPp, Party_RestoreHpPpFar
 	export Party_FindOwnerWithAction, Party_FindOwnerWithActionFar
 	export PartyInventory_HasSpace, PartyInventory_HasSpaceFar
@@ -326,7 +326,7 @@
 	export TreasureSpot_SetActorPosition, TreasureSpot_SetActorPositionFar
 	export LineScroll_InitWave, LineScroll_InitWaveFar
 	export ItemDisplay_ShowPicture, ItemDisplay_ShowPictureFar
-	export Title_ShowIntro, Title_ShowIntroFar
+	export Title_ShowTitleScreen, Title_ShowTitleScreenFar
 	export Actor_Lookup, Actor_LookupFar
 	export FieldEffect_StartBlankOverlay, FieldEffect_StartBlankOverlayFar
 	export WorldMap_ReloadPendingAreaGraphics, WorldMap_ReloadPendingAreaGraphicsFar
@@ -335,7 +335,7 @@
 	export TitleIntro_Run, TitleIntro_RunFar
 	export FieldPsynergy_FadeFromCastColor, FieldPsynergy_FadeFromCastColorFar
 	export FieldPsynergy_RunHandler, FieldPsynergy_RunHandlerFar
-	export Event_ResolveAllPendingActions, Event_ResolveAllPendingActionsFar
+	export Event_EndAllLastingPsynergy, Event_EndAllLastingPsynergyFar
 	export FieldPsynergy_LoadResources, FieldPsynergy_LoadResourcesFar
 	export Import_FieldPsynergySetupActorPair, FieldPsynergy_SetupActorPairFar
 	export FieldPsynergy_SetupActorPair, FieldPsynergy_SetupActorPairFar
@@ -343,7 +343,7 @@
 	export BattleEffect_StopMainActor, BattleEffect_StopMainActorFar
 	export FieldPsynergy_End, FieldPsynergy_EndFar
 	export FieldPsynergy_StartCast, FieldPsynergy_StartCastFar
-	export Event_ResolvePendingActions, Event_ResolvePendingActionsFar
+	export Event_EndLastingPsynergy, Event_EndLastingPsynergyFar
 	export SummonTablet_PlayRunes, SummonTablet_PlayRunesFar
 	export Sprite_ShareVramCacheEntry, Sprite_ShareVramCacheEntryFar
 	export Speaker_GetVoice, Speaker_GetVoiceFar
@@ -354,11 +354,11 @@
 	export FieldEffect_SpawnMoveHand, FieldEffect_SpawnMoveHandFar
 	export FieldPsynergy_StopMindReadWave, FieldPsynergy_StopMindReadWaveFar
 	export FieldPsynergy_GreyMindReadPalette, FieldPsynergy_GreyMindReadPaletteFar
-	export FieldEffect_SnapScaleToFull, FieldEffect_SnapScaleToFullFar
+	export FieldEffect_GrowHandAndWait, FieldEffect_GrowHandAndWaitFar
 	export Scene_PlayMusic, Scene_PlayMusicFar
 	export Scene_ChooseMusic, Scene_ChooseMusicFar
 	export FieldPsynergy_RestoreMindReadPalette, FieldPsynergy_RestoreMindReadPaletteFar
-	export UpdateRisingParticleBurst, UpdateRisingParticleBurstFar
+	export FieldEffect_BurstHand, FieldEffect_BurstHandFar
 	export Djinn_JoinParty, Djinn_JoinPartyFar
 	export Camera_WorldToScreen, Camera_WorldToScreenFar
 	export Import_HangingVinePlace, HangingVine_PlaceFar
@@ -372,13 +372,13 @@
 	export Prox_InitRockSprite, EffectSprite_InitFar
 	export DehkanPlateau_InitializeRopes, Rope_InitializeFar
 	export Idejima_CountAnswer, Event_CountAnswerFar
-	export ObjectTable_Snapshot, ObjectTable_SnapshotFar
+	export ActorTable_Snapshot, ActorTable_SnapshotFar
 	export Actor_Spawn, Actor_SpawnFar
 	export Actor_SetMovementType, Actor_SetMovementTypeFar
 	export Event_WaitForZoomTransition, Event_WaitForZoomTransitionFar
 	export Scene_QueueMusic, Scene_QueueMusicFar
 	export Event_NoOp, Event_NoOpFar
-	export FlagEntries_GetTable, FlagEntries_GetTableFar
+	export WorldMapPlaces_GetTable, WorldMapPlaces_GetTableFar
 	export Rope_Initialize, Rope_InitializeFar
 	export Rope_Tie, Rope_TieFar
 	export Rope_Coil, Rope_CoilFar
@@ -415,7 +415,7 @@
 	export GabombaStatueChamber_CountAnswer, Event_CountAnswerFar
 	export Exit_PrepareActorAnimation, Exit_PrepareActorAnimationFar
 	export ItemMenu_DrawItemDetails, ItemMenu_DrawItemDetailsFar
-	export Actor_VanishInSparks, Actor_VanishInSparksFar
+	export Actor_AppearInSparks, Actor_AppearInSparksFar
 	export Actor_SetSpriteRotationById, Actor_SetSpriteRotationByIdFar
 	export Kibombo_CountAnswer, Event_CountAnswerFar
 	export Actor_FallOverWithAnimationById, Actor_FallOverWithAnimationByIdFar
@@ -428,18 +428,18 @@
 	export EffectSprite_DrawAtWorldPosition, EffectSprite_DrawAtWorldPositionFar
 	export EffectSprite_Draw, EffectSprite_DrawFar
 	export BattleEffect_StepVector3, BattleEffect_StepVector3Far
-	export BattleEffect_GetObjectPriority, BattleEffect_GetObjectPriorityFar
+	export Actor_GetSpritePriority, Actor_GetSpritePriorityFar
 	export Import_MadPlantLeapAtLeader, MadPlant_LeapAtLeaderFar
 	export EndingImage_Start, EndingImage_StartFar
 	export Actor_PlaySoundInView, Actor_PlaySoundInViewFar
-	export MapGrid_GetAttributeBAt, MapGrid_GetAttributeBAtFar
-	export BattleEffect_GetObjectDepth, BattleEffect_GetObjectDepthFar
+	export MapGrid_GetCellAttributesAt, MapGrid_GetCellAttributesAtFar
+	export Actor_GetSpriteDepth, Actor_GetSpriteDepthFar
 	export Field_StartColorTransition, Field_StartColorTransitionFar
 	export Field_StartPaletteTransition, Field_StartPaletteTransitionFar
 	export EndingImage_Show, EndingImage_ShowFar
 	export BattleEffect_StartArcEffect, BattleEffect_StartArcEffectFar
 	export BattleEffect_EndArcEffect, BattleEffect_EndArcEffectFar
-	export SceneState_SetScrollTarget, SceneState_SetScrollTargetFar
+	export EndingImage_SetTargetRow, EndingImage_SetTargetRowFar
 	export BattleEffect_WaitForArcGroups, BattleEffect_WaitForArcGroupsFar
 	export EndingImage_WaitForScroll, EndingImage_WaitForScrollFar
 	export EndingImage_LowerTopStrip, EndingImage_LowerTopStripFar
@@ -454,7 +454,7 @@
 	export SceneEvent_FindActiveRecord, Scene_FindTriggerFar
 	export EasternAlhafraShip_CountAnswer, Event_CountAnswerFar
 	export Actor_WatchActor, Actor_WatchActorFar
-	export MapGrid_SetAttributeBAt, MapGrid_SetAttributeBAtFar
+	export MapGrid_SetCellAttributesAt, MapGrid_SetCellAttributesAtFar
 @ A second row for Credits_RunFar: the staff credits overlay's table keeps
 @ its stub at this place, after the field's.
 	export StaffCredit_RunCredits, Credits_RunFar
@@ -463,7 +463,7 @@
 	export Actor_DepartInRing, Actor_DepartInRingFar
 	export Actor_ArriveInRing, Actor_ArriveInRingFar
 	export Tightrope_Release, Tightrope_ReleaseFar
-	export MapGrid_SetAttributeBBitsAt, MapGrid_SetAttributeBBitsAtFar
+	export MapGrid_SetCellAttributeBitsAt, MapGrid_SetCellAttributeBitsAtFar
 	export MapGrid_ClearAttributeBBitsAt, MapGrid_ClearAttributeBBitsAtFar
 	export Teleport_PlaySparksAndFade, Teleport_PlaySparksAndFadeFar
 	export AlhafraManor_CountAnswer, Event_CountAnswerFar

@@ -28,7 +28,7 @@ struct SparkleState {
 #define RING_INTERVAL 16
 #define RING_NOT_STARTED 999
 
-/// The sparkle's frame counter in Actor.riseEnabled: bit 0 alternates, the
+/// The sparkle's frame counter in Actor.sceneByte: bit 0 alternates, the
 /// rest picks the colour.
 struct CounterBits {
   u8 low : 1;

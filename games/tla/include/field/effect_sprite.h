@@ -16,7 +16,7 @@
 /// position.
 struct EffectSprite {
   struct EffectSprite *next;
-  struct RenderOam oam;
+  struct OamData oam;
   FIXED x;
   FIXED y;
   FIXED scaleX;

@@ -415,7 +415,7 @@ s32 Prox_ChaseTarget(struct Actor *actor, struct Actor *target, s32 range,
   s32 *objectPos;
 
   // A child being talked to holds still.
-  if (actor->riseEnabled != 0) {
+  if (actor->sceneByte != 0) {
     actor->paused = 1;
     return 1;
   }
@@ -591,7 +591,7 @@ s32 Prox_EndEvent();
 /// boy says the children built it to have something to do in the cold.
 void Prox_AskAboutIgloos(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgProxFelixYouLikeIgloosRight);
   Event_AskYesNo(ACTOR_VILLAGER_ON_IGLOOS, 0);
   Prox_EndEvent();
@@ -615,7 +615,7 @@ void Prox_TalkToInnkeeper(void) {
     Inn_CheckIn(PROX_INN, ACTOR_INNKEEPER);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
       FieldEvent_SetMessageId((s32)MsgProxWeHadNoIdeaThere);
     } else {
@@ -639,7 +639,7 @@ void Prox_TalkToShopkeeper(void) {
     Shop_Run(SHOP_PROX, ACTOR_SHOPKEEPER);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
       FieldEvent_SetMessageId((s32)MsgProxYourFosterGrandmotherKnew);
     } else {
@@ -663,7 +663,7 @@ void Prox_TalkToHealer(void) {
     Sanctum_Run(ACTOR_HEALER);
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
       FieldEvent_SetMessageId((s32)MsgProxNowThatLighthouseHasBeen);
     } else {
@@ -684,8 +684,8 @@ void Prox_TalkToPlayingChild(void) {
   s16 angle = actor->facing;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  actor->riseEnabled = 1;
+  FieldEvent_EndLastingPsynergy(0);
+  actor->sceneByte = 1;
   if (state->psynergy == 0) {
     Actor_FaceActor(ACTOR_PLAYING_CHILD, gMainRoutineState.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxWeeeeWhatFunNow);
@@ -696,7 +696,7 @@ void Prox_TalkToPlayingChild(void) {
   Event_ShowMessage(ACTOR_PLAYING_CHILD, 0);
   if (state->psynergy == 0)
     actor->facing = angle;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   Prox_EndEvent();
 }
 
@@ -709,8 +709,8 @@ void Prox_TalkToChildWhoMissesRunning(void) {
   s16 angle = actor->facing;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  actor->riseEnabled = 1;
+  FieldEvent_EndLastingPsynergy(0);
+  actor->sceneByte = 1;
   if (state->psynergy == 0) {
     Actor_FaceActor(ACTOR_CHILD_WHO_MISSES_RUNNING,
                     gMainRoutineState.leaderActorId, 0);
@@ -722,7 +722,7 @@ void Prox_TalkToChildWhoMissesRunning(void) {
   Event_ShowMessage(ACTOR_CHILD_WHO_MISSES_RUNNING, 0);
   if (state->psynergy == 0)
     actor->facing = angle;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   Prox_EndEvent();
 }
 
@@ -736,8 +736,8 @@ void Prox_TalkToTrainingChild(void) {
   s16 angle = actor->facing;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  actor->riseEnabled = 1;
+  FieldEvent_EndLastingPsynergy(0);
+  actor->sceneByte = 1;
   if (state->psynergy == 0) {
     Actor_FaceActor(ACTOR_TRAINING_CHILD, gMainRoutineState.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIfImGoing);
@@ -748,7 +748,7 @@ void Prox_TalkToTrainingChild(void) {
   Event_ShowMessage(ACTOR_TRAINING_CHILD, 0);
   if (state->psynergy == 0)
     actor->facing = angle;
-  actor->riseEnabled = 0;
+  actor->sceneByte = 0;
   Prox_EndEvent();
 }
 
@@ -762,7 +762,7 @@ void Prox_SearchForParents(void) {
 
   if (lit == 0) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Event_PlaySound(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(89, 0, 77, 16, 1, 2);
     Event_SetFlag(FLAG_DOOR_LEFT_OPEN);
@@ -831,7 +831,7 @@ void FieldCamera_WaitForArrival(void);
 /// them all, and Puelle is left to wait for a miracle.
 void Prox_DecideToGoToLighthouse(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(160, CAMERA_KEEP, 160, 1);
   FieldCamera_WaitForArrival();
@@ -958,7 +958,7 @@ void Prox_MeetPuelle(void) {
   s32 owner;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(160, CAMERA_KEEP, 160, 1);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
@@ -1230,7 +1230,7 @@ void Prox_MoldHidesInSnow(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 2);
   Actor_SetSpeed(ACTOR_MOLD, 2);
   actor = Actor_Get(ACTOR_MOLD);
@@ -1286,7 +1286,7 @@ void Prox_ScoopUpMold(void) {
     struct FieldState *state = Ram_HeapSlots->fieldState;
 
     Event_Start();
-    FieldEvent_ResolvePendingActions(1);
+    FieldEvent_EndLastingPsynergy(1);
     Actor_SetPositionAndFacing(ACTOR_MOLD, toFIXED(408), toFIXED(145),
                                FACING_SOUTH);
     System_Wait(1);
@@ -1346,7 +1346,7 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
   s32 cell;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (!Event_GetFlag(FLAG_DOOR_LEFT_OPEN)) {
     if (width == 2)
       Event_PlaySound(SE_THUMP);
@@ -1445,7 +1445,7 @@ void Prox_ComeDownStairs(s32 westOrSouth) {
 
   actor = Actor_Get(gMainRoutineState.leaderActorId);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (westOrSouth != 0) {
     Actor_SetSpriteFlags(Actor_Get(gMainRoutineState.leaderActorId), 0);
     FieldActor_SetPositionAndResetMotion(actor, (actor->x.fixed + -toFIXED(1)),
@@ -1495,7 +1495,7 @@ void Prox_GiveThanksForBeacon(void) {
   struct Actor *leader;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldActor_Stop(ACTOR_VILLAGER_ON_THE_RESCUED);
   System_Wait(1);
@@ -1872,7 +1872,7 @@ void Prox_StartPlayingChase(s32 actorId, s32 x, s32 z, s32 quarry) {
   struct Actor *child = Actor_Get(actorId);
 
   child->timer = quarry;
-  child->riseEnabled = 0;
+  child->sceneByte = 0;
   child->update = (ObjectUpdate)Prox_PlayChase;
   Actor_SetPosition(actorId, x, z);
 }
@@ -1999,7 +1999,7 @@ void Prox_SayFarewell(void) {
 
   if (Event_GetFlag(FLAG_THANKED_FOR_BEACON) != 0) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldActor_Jump(ACTOR_JENNA, 2, 10);
     FieldActor_Jump(ACTOR_JENNA, 4, 10);

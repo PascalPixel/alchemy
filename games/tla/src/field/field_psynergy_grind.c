@@ -43,8 +43,8 @@ void FieldPsynergy_GrindOnTarget(void) {
   struct GrindState *state =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GrindState));
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
-  struct Actor *caster = scene->mainActor;
-  struct Actor *child = scene->child;
+  struct Actor *caster = scene->caster;
+  struct Actor *child = scene->target;
   struct Sprite *animation = child->sprite;
   struct EffectSprite *sprite;
   struct FieldPsynergyParticle *particle;
@@ -147,13 +147,11 @@ void FieldPsynergy_GrindOnTarget(void) {
       sprite = &state->sprites[next];
       particle = &state->particles[next];
       if (child != NULL) {
-        sprite->oam.priority = BattleEffect_GetObjectPriority(child);
+        sprite->oam.priority = Actor_GetSpritePriority(child);
         if (angle < TRIG_TURN / 2)
-          sprite->depth =
-              BattleEffect_GetObjectDepth(child) + GRIND_SPRAY_DEPTH;
+          sprite->depth = Actor_GetSpriteDepth(child) + GRIND_SPRAY_DEPTH;
         else
-          sprite->depth =
-              BattleEffect_GetObjectDepth(child) - GRIND_SPRAY_DEPTH;
+          sprite->depth = Actor_GetSpriteDepth(child) - GRIND_SPRAY_DEPTH;
       }
       particle->timer = 0;
       SET_POSITION(particle, scene->x, scene->y + toFIXED(5), scene->z);
@@ -262,7 +260,7 @@ void FieldPsynergy_Grind(void) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GrindState));
   scene = Ram_HeapSlots->fieldEffectState;
   FieldPsynergy_FadeToCastColor();
-  BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
+  BattleEffect_SetObjectUpdateMode(scene->caster, 0);
   ViewMove_Start(VIEW_MOVE_Z);
   wait(10);
 

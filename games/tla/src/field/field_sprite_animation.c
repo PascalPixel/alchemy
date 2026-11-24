@@ -97,7 +97,7 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
     end = (u8 *)buffer + size;
     if (index > 4)
       index = 0;
-    table = gResourceSlot_ConversionTables[index];
+    table = gSpriteColorTables[index];
     for (; pixel < end; pixel++) {
       u32 c = *pixel;
 

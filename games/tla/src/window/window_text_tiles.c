@@ -189,7 +189,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         // operands, as are codes 11, 12 and 14, whose meaning is open
         // (window_decode.c).
         case 14:
-        case TEXT_WINDOW_STATE:
+        case TEXT_WINDOW_ANIMATION:
         case TEXT_ACTOR_NAME_START:
           text++;
           // Skip the second operand too.

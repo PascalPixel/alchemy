@@ -26,7 +26,7 @@ s32 Shop_ChooseMember(void) {
   shop->listWindow = listWindow;
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
-  Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
+  Menu_ShowPartyFiguresFar(listWindow, 2, 0);
   while (1) {
     /* FAKEMATCH(dead): updates of unitId that cancel out. */
     unitId++;
@@ -37,8 +37,8 @@ s32 Shop_ChooseMember(void) {
                        (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
       shop->cursorFrames = 3;
       if (redraw == MENU_GRID_CHANGED_PAGE) {
-        Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
-                                        SHOP_PARTY_PAGE_MEMBERS);
+        Menu_CreatePartyFiguresFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
+                                   SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
       }
       Shop_DrawParty(listWindow, memberIndex, 0);
@@ -76,7 +76,7 @@ s32 Shop_ChooseMember(void) {
     }
   }
   ItemIconGrid_SetVisible(0);
-  Menu_ReleaseEntryObjectsFar();
+  Menu_ReleasePartyFiguresFar();
   Window_CloseFar(listWindow, 2);
   Window_CloseFar(shop->itemWindow, 2);
   Window_CloseFar(shop->moneyWindow, 2);
@@ -153,7 +153,7 @@ s32 Shop_SelectSell(s32 unitId) {
           Shop_DrawItemPrice(priceWindow, itemId,
                              Forge_GetItemCondition(itemId),
                              SHOP_PRICE_KIND_FORGE);
-        Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemPlainName);
+        Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemDescription);
       }
       if (gInput.pressed & KEY_A) {
         Sound_PlayFar(SE_MENU_CONFIRM);
@@ -304,7 +304,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
     MenuCursor_Place(NULL, SHOP_QUANTITY_CURSOR_X, 48);
     result = Shop_SelectQuantity(0, selection, price);
     wait(1);
-    Icon_PrepareActorFar(shop->cursor.anchor);
+    Icon_ShowFar(shop->cursor.anchor);
     MenuCursor_Place(NULL, savedX, savedY);
   }
   return result;

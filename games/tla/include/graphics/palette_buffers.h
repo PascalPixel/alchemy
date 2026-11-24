@@ -81,12 +81,12 @@ STATIC_ASSERT(offsetof(struct PaletteFade, delta) == 6272);
 STATIC_ASSERT(offsetof(struct PaletteFade, packed) == 8960);
 STATIC_ASSERT(offsetof(struct PaletteFade, page) == 10752);
 
-void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
+void TitlePaletteFade_BuildColors(u32 tint, u16 *source, u16 *destination,
                                   s32 selectedPalettes);
 
 void TitlePaletteFade_Initialize(void);
 void TitlePaletteFade_Update(void);
-void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes);
+void TitlePaletteFade_SetTarget(s32 tint, s32 selectedPalettes);
 void TitlePaletteFade_SetBackdrop(s32 color);
 void TitlePaletteFade_Start(s32 frames);
 void TitlePaletteFade_CalculateSteps(s16 *current, s16 *target, s16 *step,

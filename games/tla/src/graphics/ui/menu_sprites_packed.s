@@ -51,6 +51,6 @@ MenuSprites_ItemMenuTilesA:
 MenuSprites_ItemMenuTilesB:
 	.incbin "games/tla/src/graphics/ui/djinn_arrow_down.4bpp16x16.plz"
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.global MenuSprites_UiFixedBlockATiles
-MenuSprites_UiFixedBlockATiles:
+	.global MenuSprites_NameCaretTiles
+MenuSprites_NameCaretTiles:
 	.incbin "games/tla/src/graphics/ui/menu_sprites/sprite_c.4bpp16x16.plz"

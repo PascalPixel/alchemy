@@ -60,7 +60,7 @@
 #define WORLD_MAP_TILE_CELLS 16
 
 /// The world map's two tile maps, of 64 by 64 one-byte tiles: BG3's, the lower
-/// layer, and BG2's, the upper, right after it (WorldMap_ShowBg1FromBuffer).
+/// layer, and BG2's, the upper, right after it (WorldMap_EndStillImage).
 #define WORLD_MAP_LOWER_TILE_MAP BG_SCREEN_BLOCK(8)
 #define WORLD_MAP_UPPER_TILE_MAP BG_SCREEN_BLOCK(10)
 #define WORLD_MAP_TILE_MAP_WIDTH 64
@@ -70,9 +70,9 @@
 #define WORLD_MAP_VIEW_LAYER_BYTES                                             \
   (WORLD_MAP_VIEW_CELLS * WORLD_MAP_VIEW_CELLS * sizeof(struct WorldMapCell))
 
-/// Remaps byteCount bytes in place through gSpriteColorRemapTables.
+/// Remaps byteCount bytes in place through gSpriteColorGreyTable.
 void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
-  u8 *remapTable = (u8 *)gSpriteColorRemapTables;
+  u8 *remapTable = (u8 *)gSpriteColorGreyTable;
 
   while (byteCount-- != 0) {
     *bytes = remapTable[*bytes];
@@ -1088,7 +1088,7 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
 /// Reads map's camera bounds from its header, in 8-pixel tiles: bounds[0] its
 /// left, bounds[1] its right, bounds[2] its top and bounds[3] its bottom, a
 /// right or bottom of 0 standing for the map's whole MAPGRID_TILES.
-void Map_GetHeaderSize(s32 map, s32 *bounds) {
+void Map_GetCameraBounds(s32 map, s32 *bounds) {
   struct MapHeader *header;
 
   header = MAPGRID_RESOURCE((gMaps + map)->header);

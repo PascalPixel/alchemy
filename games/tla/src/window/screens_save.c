@@ -370,7 +370,7 @@ s32 Save_ScanFileSummaries(void) {
         gAnyFileCleared = 1;
         sentCount++;
       }
-      if (state->summary[i].flagCount != 0)
+      if (state->summary[i].djinnCount != 0)
         gTitleBattleOptionEnabled = 1;
       if (state->summary[i].level != 0 && state->summary[i].reunited == 0)
         gTitleUpdateOptionEnabled = 1;
@@ -428,10 +428,10 @@ s32 Save_BuildFileSummary(void) {
   summary->windowHue = gMainRoutineState.windowHue;
   summary->windowBrightness = gMainRoutineState.windowBrightness;
   summary->sendFlag = gMainRoutineState.sendFlag;
-  summary->flagCount = 0;
+  summary->djinnCount = 0;
   for (i = FLAG_DJINN_FIRST; i <= FLAG_DJINNI(DJINNI_WIND19); i++) {
     if (GameFlag_Get(i))
-      summary->flagCount++;
+      summary->djinnCount++;
   }
   summary->reunited = GameFlag_Get(FLAG_REUNION) != 0;
   {
@@ -444,7 +444,7 @@ s32 Save_BuildFileSummary(void) {
     n = SAVE_CHECKSUM_WORDS / 4;
     i = 0;
     n <<= 2;
-    Io_Write32(frames, &summary->frames);
+    Io_Write32(frames, &summary->buildStamp);
     goto test;
     do {
       sum += *word++;
@@ -477,7 +477,7 @@ s32 Save_WriteFile(s32 file) {
 /// Writes the link lobby's tallies (gMainRoutineState.linkTallies) into the
 /// current file's first part (gSaveSlot), under the saving screen, leaving the
 /// rest of the part as it was saved. Returns -1 when no file is current.
-s32 Save_ProcessSelectedFile(void) {
+s32 Save_WriteLinkTallies(void) {
   void *part;
   s32 value;
   s32 result;
@@ -540,7 +540,7 @@ s32 Save_ToFile(u32 slot) {
                                            FIELD_MESSAGE_KEEP_OPEN |
                                            FIELD_MESSAGE_LOWER);
     Save_BuildFileSummary();
-    ObjectTable_SnapshotFar();
+    ActorTable_SnapshotFar();
     error = Save_WritePartMasked(slot, gSaveBuffer);
     while (Message_AllTyped() == 0)
       wait(1);
@@ -591,7 +591,7 @@ s32 Save_ToChosenFile(void) {
       gSaveSlot = slot;
       progress = (s32)SaveProgress_Open(SAVE_PROGRESS_SAVING);
       Save_BuildFileSummary();
-      ObjectTable_SnapshotFar();
+      ActorTable_SnapshotFar();
       error = Save_WritePartMasked(slot, gSaveBuffer);
       SaveProgress_Close((struct Window *)progress);
       Message_CloseFinishedWindows();
@@ -1030,10 +1030,10 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       result = SAVE_MENU_NO_FILE;
       goto done;
     }
-  } else if (menuMode == FILE_LIST_EXTRA) {
+  } else if (menuMode == FILE_LIST_BATTLE) {
     for (i = 0;
          i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
-                                 save->summary[selectedFile].flagCount == 0);
+                                 save->summary[selectedFile].djinnCount == 0);
          i++) {
       selectedFile++;
       if (selectedFile == SAVE_FILE_COUNT)
@@ -1088,7 +1088,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   for (i = 0, summary = save->summary; i < SAVE_FILE_COUNT; i++, summary++) {
     if (save->summary[i].level == 0) {
       Text_DrawMessage((s32)MsgSaveNoData, (s32)fileList, 10, i * 16);
-    } else if (save->summary[i].frames < buildStamp) {
+    } else if (save->summary[i].buildStamp < buildStamp) {
       Text_DrawMessage((s32)MsgSaveContinue, (s32)fileList, 10, i * 16);
     } else if (save->summary[i].playTime !=
                save->summary[i].secondPartPlayTime) {
@@ -1172,8 +1172,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       } while (save->summary[selectedFile].level == 0 ||
                (menuMode == FILE_LIST_CONTINUE &&
                 save->summary[selectedFile].sendFlag != 0) ||
-               (menuMode == FILE_LIST_EXTRA &&
-                save->summary[selectedFile].flagCount == 0) ||
+               (menuMode == FILE_LIST_BATTLE &&
+                save->summary[selectedFile].djinnCount == 0) ||
                (menuMode == FILE_LIST_CLEARED &&
                 save->summary[selectedFile].sendFlag == 0) ||
                (menuMode == FILE_LIST_UPDATE &&
@@ -1188,8 +1188,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       } while (save->summary[selectedFile].level == 0 ||
                (menuMode == FILE_LIST_CONTINUE &&
                 save->summary[selectedFile].sendFlag != 0) ||
-               (menuMode == FILE_LIST_EXTRA &&
-                save->summary[selectedFile].flagCount == 0) ||
+               (menuMode == FILE_LIST_BATTLE &&
+                save->summary[selectedFile].djinnCount == 0) ||
                (menuMode == FILE_LIST_CLEARED &&
                 save->summary[selectedFile].sendFlag == 0) ||
                (menuMode == FILE_LIST_UPDATE &&

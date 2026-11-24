@@ -246,7 +246,7 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
     return;
   }
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgNaribweNoOneCanSeeFuture);
   // "No one can see the future. Absolutely no one. Except for our..."
   Event_ShowMessage(actor, 0);
@@ -264,7 +264,7 @@ void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
     return;
   }
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgNaribweStrangersToOurTownWould);
   // "Strangers to our town would do well to visit the fortune-teller's hut."
   Event_ShowMessage(actor, 0);
@@ -283,7 +283,7 @@ void Naribwe_TalkToPilgrim(s32 actor) {
     return;
   }
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgNaribweIAmButHumblePilgrim);
   // "I am but a humble pilgrim, serving the greater good in the heart of..."
   Event_ShowMessage(ACTOR_PILGRIM, 0);
@@ -301,7 +301,7 @@ void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
     return;
   }
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgNaribweItsStrangeAsHot);
   // "It's strange. As hot as it is here in Gondowan, if you head south..."
   Event_ShowMessage(ACTOR_PILGRIM, 0);
@@ -321,7 +321,7 @@ void Naribwe_EnterDoor(void) {
   u32 id;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   for (id = ACTOR_FIRST_PLACED; id < FIELD_TREASURE_ACTOR; id++) {
     struct Actor *actor = Actor_GetById(id);
 
@@ -351,7 +351,7 @@ void Naribwe_EnterDoor(void) {
 /// shows. The weeds stay gone until the party leaves the village.
 void Naribwe_ScatterWeeds(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetFlag(FLAG_WEEDS_SCATTERED);
   Event_End();
 }

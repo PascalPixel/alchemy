@@ -29,8 +29,8 @@
 #include "system/scene.h"
 #include "system/main_routine_state.h"
 #include "game/game_flags.h"
-#include "game/owner_state.h"
-#include "game/owner_value.h"
+#include "game/class_djinn.h"
+#include "game/unit_hp.h"
 #include "game/item.h"
 #include "game/inventory.h"
 #include "battle/battle_type.h"
@@ -68,7 +68,7 @@ static inline void Inventory_CompactSlots(s16 *inventory) {
 enum { ITEM_COUNTER_COUNT = 300, ITEM_COUNTER_MAX = 99 };
 
 /// A character's element group (gCharacter_ElementGroupTable): which two
-/// lighthouses Party_RestorePpOfLitElements restores its PP in.
+/// lighthouses Party_RestorePpInLighthouse restores its PP in.
 enum ElementGroup { ELEMENT_GROUP_VENUS_MARS, ELEMENT_GROUP_MERCURY_JUPITER };
 
 /// The marks on a unit's Psynergy slot of an action its class or an item gives
@@ -88,9 +88,9 @@ struct LevelUpState {
 struct StatState {
   s32 hp;          ///< maximum HP
   s32 pp;          ///< maximum PP
-  s32 atk;         ///< Attack, 0 to UNIT_STAT_MAX once clamped
-  s32 def;         ///< Defense, 0 to UNIT_STAT_MAX once clamped
-  s32 agi;         ///< Agility, 0 to UNIT_STAT_MAX once clamped
+  s32 attack;      ///< Attack, 0 to UNIT_STAT_MAX once clamped
+  s32 defense;     ///< Defense, 0 to UNIT_STAT_MAX once clamped
+  s32 agility;     ///< Agility, 0 to UNIT_STAT_MAX once clamped
   s32 unused;      ///< never written; a gap between Agility and Luck
   s32 luck;        ///< Luck, 0 to UNIT_LUCK_MAX once clamped
   s32 actionCount; ///< actions a turn
@@ -108,7 +108,7 @@ struct StatState {
 };
 
 /// How many of each rare item the shops may still sell, 0 to 99, by counter
-/// number (gItem_ArtifactSlotTable; RareItemStock_Adjust).
+/// number (gItem_RareItemCounters; RareItemStock_Adjust).
 extern u8 gRareItemStock[ITEM_COUNTER_COUNT];
 
 #endif

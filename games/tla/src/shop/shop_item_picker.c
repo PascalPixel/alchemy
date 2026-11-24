@@ -27,11 +27,11 @@ s32 Forge_Run(s32 actorId) {
                              ->entries[0]
                              ->animationId;
   window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
-  icon =
-      WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
+  icon = WindowSprite_CreateFar(shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16,
+                                window, 0, 0);
   icon->depth = OAM_DEPTH_FRONT;
   icon->motion = WINDOW_SPRITE_MOTION_STILL;
-  icon->kind = 0;
+  icon->kind = WINDOW_SPRITE_PLAIN;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = icon;
   messageBase = (s32)MsgRightWhenI;
@@ -133,14 +133,14 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
   shop->listWindow = partyWindow;
   cursorWindow = Window_CreateFar(30, 0, 1, 1, WINDOW_FLAG_INSTANT);
   result = 0;
-  cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
-                                        cursorWindow, 0, result);
+  cursorAnchor = WindowSprite_CreateFar(
+      shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, cursorWindow, 0, result);
   cursorAnchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   cursorAnchor->kind = result;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
   shop->cursorFrames = 1;
-  Menu_PlaceOwnerEntryObjectsFar(partyWindow, 2, 0);
+  Menu_ShowPartyFiguresFar(partyWindow, 2, 0);
   while (1) {
     if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
@@ -148,8 +148,8 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
                        (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
       shop->cursorFrames = 3;
       if (redraw == MENU_GRID_CHANGED_PAGE) {
-        Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
-                                        SHOP_PARTY_PAGE_MEMBERS);
+        Menu_CreatePartyFiguresFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
+                                   SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
       }
       Shop_DrawParty(partyWindow, memberIndex, 0);
@@ -186,7 +186,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
                                    SHOP_PARTY_PAGE_MEMBERS);
     }
   }
-  Menu_ReleaseEntryObjectsFar();
+  Menu_ReleasePartyFiguresFar();
   Window_CloseFar(cursorWindow, 2);
   Window_CloseFar(partyWindow, 2);
   Window_CloseFar(shop->itemWindow, 2);
@@ -260,7 +260,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       MenuCursor_Place(window, column * 16, row * 16 + 8);
       shop->cursorFrames = 3;
       ItemPicker_DrawItem(priceWindow, unitId, slot);
-      Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemPlainName);
+      Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemDescription);
     }
     wait(1);
     if (gInput.pressed & KEY_A) {
@@ -501,9 +501,9 @@ void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode) {
       if (entry < VRAM_CACHE_ENTRY_COUNT) {
         u32 *attr;
 
-        Icon_CopyResourceToSlotFar(items[i], mode, entry);
+        ItemIcon_LoadLayersIntoSlotFar(items[i], mode, entry);
         attr = (u32 *)&sprite->attr;
-        *attr++ = OUTPUT_SIZE_16X16;
+        *attr++ = WINDOW_SPRITE_SIZE_16X16;
         *attr = 0;
         sprite->attr.tile = gVramCacheEntries[entry].offset >> 5;
       }

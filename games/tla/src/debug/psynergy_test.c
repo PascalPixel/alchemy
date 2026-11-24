@@ -36,7 +36,7 @@
 #include "fixed_math.h"
 #include "system/vector3.h"
 #include "game/inventory.h"
-#include "graphics/uiflow.h"
+#include "graphics/window_close.h"
 #include "macros.h"
 #include "edition.h"
 #include "window/item_icon.h"
@@ -158,7 +158,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void PsynergyTest_NoOp(void) {}
 
 /// Opens the picker a full party drops an item with, and discards the choice.
-void PsynergyTest_TestItemSelection(void) {
+void PsynergyTest_OpenItemPicker(void) {
   s32 selectedSlot;
   s32 selectedUnit;
 
@@ -378,14 +378,14 @@ void PsynergyTest_PracticeShout(s32 unused, s32 actor) {
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
   if (Event_GetFlag(FLAG_KRADEN_MOVED) == 0) {
-    FieldEvent_SetMessageId((s32)MsgDailaInteriorsGah);
+    FieldEvent_SetMessageId((s32)MsgDailaRoomsGah);
     // "GAH!"
     Event_ShowMessage(actor, 0);
     Actor_WalkToAndWait(actor, 360, 72);
     Actor_FaceDirection(actor, FACING_SOUTH, 0);
     Event_SetFlag(FLAG_KRADEN_MOVED);
   } else {
-    FieldEvent_SetMessageId((s32)MsgDailaInteriorsYarg);
+    FieldEvent_SetMessageId((s32)MsgDailaRoomsYarg);
     // "YARG!"
     Event_ShowMessage(actor, 0);
     Actor_WalkToAndWait(actor, 392, 104);
@@ -404,7 +404,7 @@ void PsynergyTest_StartleAfterBlaze(s32 unused, s32 actor) {
   FieldActor_Jump(actor, 6, 15);
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
-  FieldEvent_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  FieldEvent_SetMessageId((s32)MsgDailaRoomsWhatAreYouDoing);
   // "What are you doing???"
   Event_ShowMessage(actor, 0);
   FieldEvent_Wait(10);
@@ -418,7 +418,7 @@ void PsynergyTest_StartleAgain(s32 unused, s32 actor) {
   FieldActor_Jump(actor, 6, 15);
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
-  FieldEvent_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  FieldEvent_SetMessageId((s32)MsgDailaRoomsWhatAreYouDoing);
   // "What are you doing???"
   Event_ShowMessage(actor, 0);
   FieldEvent_Wait(10);
@@ -561,20 +561,20 @@ s32 Scene_Initialize(void) {
   state->sceneAttributeLow = 0;
   // How many of each rare item the shops may sell, as in The Broken Seal's
   // Menu test, with a Fire Brand where it had a Masamune.
-  Item_AdjustCounter(ITEM_SHAMSHIR, 1);
-  Item_AdjustCounter(ITEM_SHAMSHIR, 1);
-  Item_AdjustCounter(ITEM_SHAMSHIR, 1);
-  Item_AdjustCounter(ITEM_SILVER_BLADE, 1);
-  Item_AdjustCounter(ITEM_SILVER_BLADE, 1);
-  Item_AdjustCounter(ITEM_FIRE_BRAND, 1);
-  Item_AdjustCounter(ITEM_CHINA_DRESS, 1);
-  Item_AdjustCounter(ITEM_COCKTAIL_DRESS, 1);
-  Item_AdjustCounter(ITEM_BLESSED_ROBE, 1);
-  Item_AdjustCounter(ITEM_ORACLES_ROBE, 1);
-  Item_AdjustCounter(ITEM_DRAGON_SHIELD, 1);
-  Item_AdjustCounter(ITEM_VAMBRACE, 1);
-  Item_AdjustCounter(ITEM_SPIRIT_ARMLET, 1);
-  Item_AdjustCounter(ITEM_WARRIORS_HELM, 1);
+  Item_AdjustRareItemStock(ITEM_SHAMSHIR, 1);
+  Item_AdjustRareItemStock(ITEM_SHAMSHIR, 1);
+  Item_AdjustRareItemStock(ITEM_SHAMSHIR, 1);
+  Item_AdjustRareItemStock(ITEM_SILVER_BLADE, 1);
+  Item_AdjustRareItemStock(ITEM_SILVER_BLADE, 1);
+  Item_AdjustRareItemStock(ITEM_FIRE_BRAND, 1);
+  Item_AdjustRareItemStock(ITEM_CHINA_DRESS, 1);
+  Item_AdjustRareItemStock(ITEM_COCKTAIL_DRESS, 1);
+  Item_AdjustRareItemStock(ITEM_BLESSED_ROBE, 1);
+  Item_AdjustRareItemStock(ITEM_ORACLES_ROBE, 1);
+  Item_AdjustRareItemStock(ITEM_DRAGON_SHIELD, 1);
+  Item_AdjustRareItemStock(ITEM_VAMBRACE, 1);
+  Item_AdjustRareItemStock(ITEM_SPIRIT_ARMLET, 1);
+  Item_AdjustRareItemStock(ITEM_WARRIORS_HELM, 1);
   gMainRoutineState.messageSpeed = MESSAGE_SPEED_FAST;
   Actor_SetAnimation(ACTOR_ICE_PILLAR, 2);
   Actor_SetAnimation(ACTOR_FLAME, 2);
@@ -703,7 +703,7 @@ void PsynergyTest_UpdateRings(struct Actor *actor) {
   FIXED sine;
   s32 i, j;
   struct SparkleState *state = (struct SparkleState *)actor->watchedActor;
-  u8 *count = &actor->riseEnabled;
+  u8 *count = &actor->sceneByte;
   struct EffectSprite *sprite;
 
   // Every other frame, the next of the normal colours and the five swaps.
@@ -711,13 +711,13 @@ void PsynergyTest_UpdateRings(struct Actor *actor) {
     Actor_SetSpriteColorMode(actor,
                              (u8)((u32)((struct CounterBits *)count)->rest %
                                   (SPRITE_COLOR_BRG + 1)));
-  if (actor->riseCounter == 0) {
+  if (actor->sceneCounter == 0) {
     if ((*count & (RING_INTERVAL - 1)) == 0) {
       Event_PlaySound(SE_RISING_RINGS);
       state->heights[state->nextPair] = 0;
       state->nextPair ^= 1;
     }
-  } else if (actor->riseCounter == 1) {
+  } else if (actor->sceneCounter == 1) {
     if (state->heights[0] >= RING_CLIMB && state->heights[1] >= RING_CLIMB) {
       Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
       VramCache_FreeEntry(state->vramEntry);
@@ -746,9 +746,9 @@ void PsynergyTest_UpdateRings(struct Actor *actor) {
           sprite->scaleX = sine;
           sprite->scaleY = sine;
           if (j == 0) {
-            sprite->depth = BattleEffect_GetObjectDepth(actor) - 1;
+            sprite->depth = Actor_GetSpriteDepth(actor) - 1;
           } else {
-            sprite->depth = BattleEffect_GetObjectDepth(actor) + 1;
+            sprite->depth = Actor_GetSpriteDepth(actor) + 1;
             sprite->y -= toFIXED(1);
             sprite->scaleY = -sprite->scaleY;
           }
@@ -864,7 +864,7 @@ struct Trigger gSceneEvents[] = {
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
      EVENT(PsynergyTest_EditIsaacName)},
     {TRIGGER_TALK, ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
-     EVENT(PsynergyTest_TestItemSelection)},
+     EVENT(PsynergyTest_OpenItemPicker)},
     {TRIGGER_TALK, ACTOR_WICKED_MACE, CONDITION_ALWAYS,
      EVENT(PsynergyTest_PickUpItem)},
 // Mind Read hears what Eastern Alhafra's men say after Briggs's attack. The
@@ -978,8 +978,8 @@ void PsynergyTest_StartRings(struct Actor *actor, struct SparkleState *state) {
   state->heights[0] = RING_NOT_STARTED;
   state->heights[1] = RING_NOT_STARTED;
   state->actor = actor;
-  actor->riseCounter = 0;
-  actor->riseEnabled = 0;
+  actor->sceneCounter = 0;
+  actor->sceneByte = 0;
   actor->update = PsynergyTest_UpdateRings;
   tile = gVramCacheEntries[state->vramEntry].offset / TILE_SIZE_4BPP;
   actor->watchedActor = (struct Actor *)state;
@@ -991,11 +991,11 @@ void PsynergyTest_StartRings(struct Actor *actor, struct SparkleState *state) {
       EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tile);
       sprite->oam.fullColor = 0;
       sprite->oam.palette = 0;
-      sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
+      sprite->oam.priority = Actor_GetSpritePriority(actor);
       sprite++;
     }
   }
 }
 
 /// Lets an actor's rings climb out.
-void PsynergyTest_StopRings(struct Actor *actor) { actor->riseCounter = 1; }
+void PsynergyTest_StopRings(struct Actor *actor) { actor->sceneCounter = 1; }

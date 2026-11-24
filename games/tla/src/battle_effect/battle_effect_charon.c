@@ -108,7 +108,7 @@ extern const struct Scale gCharon_FinaleScale;
 
 /// Where the pictures that load once are decoded in the effect's sprite sheet:
 /// the rune seal as it is stamped (RuneSealSheet, 184 by 80), then at frame 132
-/// Charon's, its wisp's and ParticleSpritesD's in turn.
+/// Charon's, its wisp's and BlueGlowSheet's in turn.
 #define CHARON_BEAST_PICTURES 9216
 #define CHARON_RUNE_SEAL 9216
 #define RUNE_SEAL_WIDTH 184
@@ -198,7 +198,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   FIXED objectPlace[4];
   FIXED revealPlace[4];
   FIXED finalePlace[4];
-  DrawRectangleFn blitters[2];
+  DrawRectangle blitters[2];
   struct ModelTexture sealTexture;
   struct ModelTexture fireRingTexture;
   struct ModelTexture swirlTexture;
@@ -211,7 +211,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   u32 savedScrollX;
   u8 *motePictures;
   struct BattleState *battle;
-  DrawRectangleFn *blit;
+  DrawRectangle *blit;
   FIXED beastX;
   FIXED beastZ;
   s32 sealFrame;
@@ -251,7 +251,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   {
     s32 order = TASK_PASS_VBLANK;
 
-    Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, order);
+    Task_Add(BattleEffect_TransferCanvas, order);
   }
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
@@ -274,7 +274,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   blit = blitters;
-  BattleEffect_FetchRectangleBlitters(0, blit);
+  BattleEffect_BuildCanvasBlitters(0, blit);
 
   source = (u8 *)Resource_GetTableEntry(RESOURCE_RED_DOME_TILES);
   Iwram_CopyWords((u16 *)&OBJ_PLTT_COLOR(2, 0), source, CHARON_DOME_COLORS * 2);
@@ -318,8 +318,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     SPRITES[CHARON_SHARD_FRAMES + i] = object;
     Iwram_CopyWords(object, sprites[0], offsetof(struct Sprite, lastNo));
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motePictures, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, state->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motePictures, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, state->sheet, 0, 0);
   for (j = 0; j != CHARON_RING_SHADES; j++) {
     moteSize = CHARON_RING_MOTE;
     for (i = 0; i != moteSize * moteSize * 2; i++) {
@@ -696,7 +696,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         source = (u8 *)Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_E);
         Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
-        Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
+        Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET,
                                    state->sheet + CHARON_BEAST_PICTURES, 0, 0);
         Iwram_CopyWords(motePictures, state->sheet + CHARON_BEAST_PICTURES,
                         MOTE_SET_BYTES);
@@ -1091,8 +1091,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           radius = 104;
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-        Canvas_BlitAtFoot(state->sheet + CHARON_ACT_PICTURES, centerX, 58,
-                          radius);
+        Canvas_BlitMirroredQuarters(state->sheet + CHARON_ACT_PICTURES, centerX,
+                                    58, radius);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
         blit[1] = Ram_HeapSlots->ramCodePaired;
@@ -1437,7 +1437,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                   CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   Resource_LoadAndDecompress(RESOURCE_GLOW_RING_TEXTURE,
                              state->sheet + CHARON_GLOW_RING, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motePictures, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motePictures, 0, 0);
   // DEAD: i counts to MOTE_SET_BYTES by 35, and nothing reads it; the ROM
   // keeps the add and the test.
   {
@@ -1660,7 +1660,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         WAVE_RADIUS = wave - step;
         if (wave > 0) {
           BattleEffect_DrawShadedCircles(state->sheet, wave, FIXED_ONE);
-          Canvas_BlitAtFoot(state->sheet, 60, 60, wave);
+          Canvas_BlitMirroredQuarters(state->sheet, 60, 60, wave);
         }
       }
     } else {
@@ -1769,9 +1769,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             drop->velocityY = -toFIXED(1);
           }
           if (drop->variant >= 0) {
-            Canvas_BlitAtFoot(state->sheet + CHARON_ACT_PICTURES,
-                              FIXEDtoINT(drop->x), FIXEDtoINT(drop->y),
-                              CHARON_DROP_RADIUS);
+            Canvas_BlitMirroredQuarters(
+                state->sheet + CHARON_ACT_PICTURES, FIXEDtoINT(drop->x),
+                FIXEDtoINT(drop->y), CHARON_DROP_RADIUS);
             drop->x += drop->velocityX;
             drop->y += drop->velocityY;
           }
@@ -1857,7 +1857,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   for (i = 0; i != arg->targetCount; i++) {
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

@@ -258,8 +258,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 16;
     // This mode writes the two masks and folds the progress the other way
     // round from WINDOW_TRANSITION_LEADER.
-    *scanlineData++ = state->active;
-    *scanlineData++ = state->mask;
+    *scanlineData++ = state->outsideLayers;
+    *scanlineData++ = state->insideLayers;
     value = state->value;
     if ((value & TRANSITION_OPEN) == 0)
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
@@ -299,14 +299,14 @@ void ScreenTransition_UpdateScanlineTable(void) {
     cameraX = view[0] & FIELD_PIXEL_MASK;
     cameraY8 = view[1] & FIELD_PIXEL_MASK;
   }
-    // Centred on state->centreX and centreY; each line's edges move out by
+    // Centred on state->centerX and centerY; each line's edges move out by
     // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
     // frame, so the outline ripples.
-    centerX = (state->centreX - cameraX) / FIXED_ONE;
-    centerY = (state->centreY - cameraY8) / FIXED_ONE - 16;
+    centerX = (state->centerX - cameraX) / FIXED_ONE;
+    centerY = (state->centerY - cameraY8) / FIXED_ONE - 16;
     k = -centerY * 2 + gFrameCount;
-    *scanlineData++ = state->mask;
-    *scanlineData++ = state->active;
+    *scanlineData++ = state->insideLayers;
+    *scanlineData++ = state->outsideLayers;
     value = state->value;
     if (value & TRANSITION_OPEN)
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
@@ -360,8 +360,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     actor = Actor_Lookup(Party_GetLeaderActor());
     centerX = (actor->x.fixed - ax) / FIXED_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 16;
-    *scanlineData++ = state->mask;
-    *scanlineData++ = state->active;
+    *scanlineData++ = state->insideLayers;
+    *scanlineData++ = state->outsideLayers;
     value = state->value;
     if (value & TRANSITION_OPEN)
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
@@ -402,8 +402,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // Centred 8 pixels above the leader's feet, not 16 as in
     // WINDOW_TRANSITION_LEADER.
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 8;
-    *scanlineData++ = state->mask;
-    *scanlineData++ = state->active;
+    *scanlineData++ = state->insideLayers;
+    *scanlineData++ = state->outsideLayers;
     value = state->value;
     if (value & TRANSITION_OPEN)
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
@@ -440,15 +440,15 @@ void ScreenTransition_UpdateScanlineTable(void) {
 
 /// Starts window transition mode at value 0, with no duration: the caller moves
 /// it.
-void ScreenTransition_InitializeBattleEffectState(s32 mode) {
+void ScreenTransition_StartWindowHeld(s32 mode) {
   struct ScreenTransitionState *state =
       HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
 
   Dma_Fill32(0, state, sizeof(*state));
   state->mode = mode;
   state->value = 0;
-  state->mask = WININ_WIN0_ALL | WININ_WIN1_ALL;
-  state->active = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
+  state->insideLayers = WININ_WIN0_ALL | WININ_WIN1_ALL;
+  state->outsideLayers = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
   Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
   Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK - 10);
 }
@@ -456,8 +456,8 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
 /// Unused: suspends the window transition's two tasks. Nothing calls it,
 /// by name, far-call entry or table.
 UNUSED void ScreenTransition_SuspendCallbacks(void) {
-  Task_SuspendAll(&ScreenTransition_UpdateScanlineTable);
-  Task_SuspendAll(&FieldEffect_StartWindowHBlankDma);
+  Task_Suspend(&ScreenTransition_UpdateScanlineTable);
+  Task_Suspend(&FieldEffect_StartWindowHBlankDma);
 }
 
 /// Allocates the screen transition state (HEAP_SLOT_SCREEN_TRANSITION) and
@@ -502,8 +502,8 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
         ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = 0;
-    state->mask = WININ_WIN0_ALL;
-    state->active = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
+    state->insideLayers = WININ_WIN0_ALL;
+    state->outsideLayers = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
     Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK - 10);
     wait(1);
@@ -583,8 +583,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
         ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = TRANSITION_OPEN;
-    state->mask = WININ_WIN0_ALL;
-    state->active = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
+    state->insideLayers = WININ_WIN0_ALL;
+    state->outsideLayers = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
     Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK - 10);
     wait(1);
@@ -836,14 +836,14 @@ void ScreenTransition_UpdateDissolve(void) {
   }
 
   ditherIndex = state->value - 1;
-  state->ditherToggle ^= 1;
+  state->page ^= 1;
   colorIndex = 0;
   if (ditherIndex & TRANSITION_OPEN)
     colorIndex = DISSOLVE_COVER_COLOR;
   ditherIndex = (ditherIndex & (TRANSITION_OPEN - 1)) * 2;
   for (i = 0; i <= 1; i++) {
     u8 pixelIndex = gScreenTransition_DitherTable[ditherIndex & (8 * 8 - 1)];
-    u8 *tileByte = &state->paletteNibbles[pixelIndex >> 1];
+    u8 *tileByte = &state->solidTilePixels[pixelIndex >> 1];
 
     if (pixelIndex & 1)
       *tileByte = (*tileByte & 0x0f) | (colorIndex << 4);
@@ -852,7 +852,7 @@ void ScreenTransition_UpdateDissolve(void) {
     ditherIndex++;
   }
 
-  IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->paletteNibbles,
+  IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->solidTilePixels,
                       DMA_COPY_WORDS(TILE_SIZE_4BPP / 4));
 }
 
@@ -880,7 +880,7 @@ void ScreenTransition_FillTilemapAndColorTile(s32 color) {
 
 /// Starts a dissolve of the given mode, its value held at 0, and waits two
 /// seconds.
-void ScreenTransition_InitializeState(s32 mode) {
+void ScreenTransition_StartDissolveHeld(s32 mode) {
   struct ScreenTransitionState *state;
 
   state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));

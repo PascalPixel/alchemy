@@ -22,7 +22,7 @@
 void GroundParticles_Start(void) {
   struct WeatherState *state;
   s32 *leader;
-  struct GroundParticle *particle;
+  struct WeatherParticle *particle;
   // words is the decode buffer, then each particle's attribute cursor.
   u32 *words;
   u32 i;
@@ -34,7 +34,7 @@ void GroundParticles_Start(void) {
   particle = state->particles;
   Dma_Fill32(fill, state, sizeof(struct WeatherState));
   words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
-  Decompress_ByteLz(gFieldEffect_GroundParticleTiles, words);
+  Decompress_ByteLz(gWeather_ParticleTiles, words);
   state->entry = VramCache_FindFreeEntry();
   state->tileBase = VramCache_Load(state->entry, 768, words);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
@@ -51,7 +51,7 @@ void GroundParticles_Start(void) {
     particle->posX = x;
     particle->posZ = z;
     particle->posY = MapGrid_GetTerrainHeightFar(MAPGRID_LAYER_GROUND, x, z);
-    particle->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
+    particle->timer = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
     particle++;
   }
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
@@ -168,7 +168,7 @@ void FieldMotes_Update(void) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   u32 spawned = 0;
   u32 i;
-  struct GroundParticle *mote;
+  struct WeatherParticle *mote;
 
   for (i = 0, mote = state->particles; i < WEATHER_PARTICLE_COUNT;
        i++, mote++) {

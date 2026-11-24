@@ -361,7 +361,7 @@ void KibomboMountains_DropOffLedge(s32 unused, s32 id) {
 /// runs to it and stays there eating, no longer watching the run.
 void KibomboMountains_TremorDropsBone(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetDestination(ACTOR_BONE, 764, 384);
   Actor_MoveToAndWait(ACTOR_BONE_CRATE, 746, 380);
   Actor_Get(ACTOR_BONE)->velocityY = toFIXED(4);
@@ -607,7 +607,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// their guards, leaving him on watch.
 void KibomboMountains_GuardsReport(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId(MsgKibomboMountainsIsWayClear);
   Actor_SetPosition(ACTOR_WARRIOR_E, 312, 304);
   // "Is the way clear?"
@@ -677,7 +677,7 @@ void KibomboMountains_GuardsTurnPartyBack(void) {
   s32 leader = gMainRoutineState.leaderActorId;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetPosition(ACTOR_WARRIOR_A, 248, 472);
   Actor_SetPosition(ACTOR_WARRIOR_B, 264, 472);
   Actor_SetPosition(ACTOR_WARRIOR_C, 235, 483);
@@ -770,7 +770,7 @@ void KibomboMountains_GuardSpotsParty(s32 id) {
   s32 leader = gMainRoutineState.leaderActorId;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_ResetTargetsAndVelocity(id);
   Actor_ShowEmote(id, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(id, leader, 20);
@@ -796,7 +796,7 @@ void KibomboMountains_DogSpotsParty(s32 id) {
   s32 leader = gMainRoutineState.leaderActorId;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldActor_Stop(id);
   Actor_ShowEmote(id, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(id, leader, 20);

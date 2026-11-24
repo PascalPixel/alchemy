@@ -101,7 +101,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   }
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, state->sheet);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
 
   // Additive and max blitters, clipped, and mirrored when the party casts.
   if (side == EFFECT_SIDE_PARTY) {
@@ -322,7 +322,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
     }
     EFFECT_PRESENT_CANVAS(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
@@ -614,7 +614,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
   // The shot pictures.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   if (mode == PROJECTILE_VOLLEY_SLASH ||
       mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
       mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
@@ -713,7 +713,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                1, 0);
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   // Where each shot starts and how fast it flies.
   user = BattleObject_GetFar(args->user)->object;
@@ -1310,7 +1310,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
 /// Unused: nothing calls it. Sends a unit back to its place (its anchor) with a
 /// hop.
-UNUSED void BattleEffect_InitializeRisingObject(s32 slot) {
+UNUSED void BattleEffect_HopBackToSpot(s32 slot) {
   struct BattleObject *context = BattleObject_GetFar(slot);
   struct Actor *actor = context->object;
 

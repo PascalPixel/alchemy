@@ -60,6 +60,7 @@ void Leader_CenterInCell(void);
 #include "macros.h"
 #include "shared/tables.h"
 #include "field/actor_script.h"
+#include "scene/lighthouse_palettes.h"
 
 /// Where the first two path blocks lie, each block in each of the east hall's
 /// three gaps: the block's flag after FLAG_PATH_BLOCK_PLACED(0), and what
@@ -454,7 +455,7 @@ void JupiterLighthouse_LiftPathBlock(s32 unused, s32 id) {
 }
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits);
+void MapGrid_SetCellAttributeBitsAt(s32 x, s32 z, s32 layer, s32 bits);
 
 /// An energy path block, pushed or Moved, comes to rest, landing with a thump
 /// if it dropped off a ledge. In one of the east hall's three gaps, (35, 15),
@@ -513,7 +514,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     Event_ClearFlag(FLAG_EAST_STAKE_SUNK);
     Event_Wait(10);
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     FieldCamera_MoveTo(664, CAMERA_KEEP, 136, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(20);
@@ -550,15 +551,15 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   } else {
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, MAPGRID_LAYER_GROUND,
                           8);
-    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed,
-                                MAPGRID_LAYER_GROUND, MAP_CELL_JUMP);
+    MapGrid_SetCellAttributeBitsAt(actor->x.fixed, actor->z.fixed,
+                                   MAPGRID_LAYER_GROUND, MAP_CELL_JUMP);
   }
 }
 
 /// Nothing visible happens as Felix starts to cast Pound on the east hall's
 /// stake; whatever the hall was still doing is settled first
-/// (`Event_ResolvePendingActions`).
-void JupiterLighthouse_StartPound(void) { Event_ResolvePendingActions(0); }
+/// (`Event_EndLastingPsynergy`).
+void JupiterLighthouse_StartPound(void) { Event_EndLastingPsynergy(0); }
 
 /// Pound hammers the cone-shaped stake in the east or the west hall down into
 /// the floor.
@@ -782,7 +783,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void JupiterLighthouse_LoadPalettes(s32 mode);
 s32 MapGrid_GetCellHeight(FIXED x, FIXED z, s32 layer);
 
 /// Lays out the blocks as the map is drawn: the first two stay in their gaps
@@ -794,7 +794,7 @@ s32 Scene_PrepareMap(void) {
   s32 height;
 
   Scene_SetArrivalFlags(0);
-  JupiterLighthouse_LoadPalettes(1);
+  JupiterLighthouse_LoadPalettes(LIGHTHOUSE_PALETTES_LIT);
   // Arriving from the bridge's floor, the grey blocks stand afresh on six of
   // the west hall's path cells.
   if (gMainRoutineState.entrance == ENTRANCE_FROM_BRIDGE_FLOOR) {
@@ -832,8 +832,8 @@ s32 Scene_PrepareMap(void) {
                                    MAPGRID_LAYER_GROUND);
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, MAPGRID_LAYER_GROUND,
                           height + 2);
-    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed,
-                                MAPGRID_LAYER_GROUND, MAP_CELL_JUMP);
+    MapGrid_SetCellAttributeBitsAt(actor->x.fixed, actor->z.fixed,
+                                   MAPGRID_LAYER_GROUND, MAP_CELL_JUMP);
   }
   JupiterLighthouse_LightWestPath(0);
   return 0;
@@ -852,7 +852,7 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 
 #include "shared/palette_cycle_step.h"
 
-void MapGrid_SetAttributeBAt();
+void MapGrid_SetCellAttributesAt();
 
 #include "shared/jupiter_lighthouse_load_palettes.h"
 
@@ -894,7 +894,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/whirlwind_spawn.h"
 
-#include "shared/actor_emit_rising_sparks.h"
+#include "shared/actor_emit_smoke.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
@@ -904,7 +904,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/actor_set_cell_open.h"
 
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -989,7 +989,7 @@ LATE_DATA s16 gJupiterLighthouse_WhorlPoundTargets[] = {
 LATE_DATA u32 gSceneExits[] = {                                                        
       SCENE_EXITS(JupiterLighthouseWhorl),         SCENE_EXIT(JUPITER_LIGHTHOUSE_WHORL_TO_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST, JupiterLighthouseRoomPhaetonsBladeChest, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_FROM_JUPITER_LIGHTHOUSE_WHORL),   SCENE_EXIT(2, JupiterLighthouseWhorl, 3),   
       SCENE_EXIT(3, JupiterLighthouseWhorl, 2),    SCENE_EXIT(4, JupiterLighthouseWhorl, 5),   SCENE_EXIT(5, JupiterLighthouseWhorl, 4),   
-      SCENE_EXIT(6, JupiterLighthouseWhorl, 7),   SCENE_EXIT(7, JupiterLighthouseWhorl, 6),  SCENE_EXIT(JUPITER_LIGHTHOUSE_WHORL_TO_JUPITER_LIGHTHOUSE_ROOM_M, JupiterLighthouseRoomM, JUPITER_LIGHTHOUSE_ROOM_M_FROM_JUPITER_LIGHTHOUSE_WHORL),   
+      SCENE_EXIT(6, JupiterLighthouseWhorl, 7),   SCENE_EXIT(7, JupiterLighthouseWhorl, 6),  SCENE_EXIT(JUPITER_LIGHTHOUSE_WHORL_TO_JUPITER_LIGHTHOUSE_TERRACES, JupiterLighthouseTerraces, JUPITER_LIGHTHOUSE_TERRACES_FROM_JUPITER_LIGHTHOUSE_WHORL),   
       SCENE_EXIT(9, JupiterLighthouseWhorl, 10),   SCENE_EXIT(10, JupiterLighthouseWhorl, 9), SCENE_EXIT(11, JupiterLighthouseWhorl, 12), 
       SCENE_EXIT(12, JupiterLighthouseWhorl, 11), SCENE_EXITS_END,                                
   };

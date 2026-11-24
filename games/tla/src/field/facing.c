@@ -47,7 +47,7 @@ const u8 gAnimationFacing_FivePicturesUnused[16] = {
 
 /// ANIM_FACING_FIVE_PICTURES's table: five pictures over 64 sectors, where
 /// The Broken Seal's has 16.
-const u8 gAnimationFacing_SixPictures[64] = {
+const u8 gAnimationFacing_FivePictures[64] = {
     1, 1, 1, 1, 0, 0, 0, 0,
     0, 0, 0, 0, 3, 3, 3, 3,
     3, 3, 3, MIRRORED(3), MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0),
@@ -99,7 +99,7 @@ const s32 gActorScript_CycleTable[32] = {
 
 /// The idle script an actor returns to when its own one ends: a lone SC_END,
 /// which reloads it. ActorScript_End (SC_END) points an actor here.
-const s32 gScript_MainScript[1] = {
+const s32 gActorScript_IdleScript[1] = {
     SC_END,
 };
 
@@ -150,13 +150,13 @@ const s32 gWorldMap_KeyYaws[16] = {
 // clang-format on
 
 /// A puff of sand the leader leaves behind as he moves (SPRITE_SAND_PUFF): its
-/// riseEnabled byte counts down from 15 a step every 5 frames, 14 steps, then
+/// sceneByte byte counts down from 15 a step every 5 frames, 14 steps, then
 /// the puff is shrunk to nothing and goes.
 const s32 gActor_WakeScript[] = {
-    SC_SET(SW_RISE_ENABLED, 15),
+    SC_SET(SW_SCENE_BYTE, 15),
     SC_LABEL(1),
     SC_WAIT(5),
-    SC_ADD(SW_RISE_ENABLED, -1),
+    SC_ADD(SW_SCENE_BYTE, -1),
     SC_LOOP(13, SC_TO(1)),
     SC_SET(SW_SCALE_X, 0),
     SC_WAIT(1),

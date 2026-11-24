@@ -55,7 +55,7 @@ void FieldPsynergy_Run(void) {
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct FieldState *event = Ram_HeapSlots->fieldState;
   s32 animation = scene->fieldPsynergy;
-  s32 targetId = scene->secondActorId;
+  s32 targetId = scene->targetId;
   s32 objectId;
 
   if (animation == FIELD_PSYNERGY_MOVE)
@@ -125,10 +125,10 @@ void FieldPsynergy_Run(void) {
       FieldPsynergy_ResumeHaltedActor(paused);
       party->haltedActor = -1;
     }
-    objectId = Field_FindNearbyPsynergyTarget(scene->firstActorId, animation);
+    objectId = Field_FindNearbyPsynergyTarget(scene->casterId, animation);
     objectId = FieldPsynergy_FilterHaltTarget(objectId);
     if (Scene_FindActorTalkTrigger(objectId) != 0) {
-      FieldPsynergy_SetupActorPair(scene->firstActorId, objectId);
+      FieldPsynergy_SetupActorPair(scene->casterId, objectId);
       FieldPsynergy_HaltOnTarget(objectId);
       FieldPsynergy_HaltActor(objectId);
       party->haltedActor = objectId;
@@ -139,19 +139,19 @@ void FieldPsynergy_Run(void) {
     // The wave and colour effect, stopping a running Reveal first.
     if (event->revealActive != 0)
       FieldPsynergy_EndReveal();
-    FieldPsynergy_StartMindReadWave(scene->firstActorId, targetId);
+    FieldPsynergy_StartMindReadWave(scene->casterId, targetId);
   }
 }
 
 /// Runs the field Psynergy animation the scene names on the target the player
-/// chose (FieldEffectState.secondActorId).
+/// chose (FieldEffectState.targetId).
 void FieldPsynergy_Dispatch(void) {
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct FieldState *event = Ram_HeapSlots->fieldState;
   s32 animation = scene->fieldPsynergy;
-  s32 targetId = scene->secondActorId;
+  s32 targetId = scene->targetId;
 
-  scene->enabled = 0;
+  scene->aimAhead = 0;
   if (animation == FIELD_PSYNERGY_MOVE)
     FieldPsynergy_SteerPushedTarget(targetId);
   else if (animation == FIELD_PSYNERGY_LIFT)
@@ -214,9 +214,9 @@ void FieldPsynergy_Dispatch(void) {
     if (event->revealActive != 0)
       FieldPsynergy_EndReveal();
     party = &gMainRoutineState;
-    if (party->haltedActor != scene->secondActorId)
-      ((struct Actor *)scene->child)->paused = 1;
-    FieldPsynergy_StartMindReadWave(scene->firstActorId, targetId);
+    if (party->haltedActor != scene->targetId)
+      ((struct Actor *)scene->target)->paused = 1;
+    FieldPsynergy_StartMindReadWave(scene->casterId, targetId);
   } else if (animation == FIELD_PSYNERGY_HALT) {
     // Resume the actor stopped before, then stop the target.
     struct MainRoutineState *party = &gMainRoutineState;
@@ -238,8 +238,8 @@ void FieldPsynergy_FinishMindRead(void) {
 
   if (effectState->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     FieldPsynergy_StopMindReadWave();
-    if (gMainRoutineState.haltedActor != effectState->secondActorId) {
-      ((struct Actor *)effectState->child)->paused = 0;
+    if (gMainRoutineState.haltedActor != effectState->targetId) {
+      ((struct Actor *)effectState->target)->paused = 0;
     }
   }
 }
@@ -310,7 +310,7 @@ s32 FieldPsynergy_GetCanvasPriority(struct Actor *actor, s32 facing) {
 }
 
 /// Returns the OBJ priority of the actor's sprite.
-s32 BattleEffect_GetObjectPriority(struct Actor *actor) {
+s32 Actor_GetSpritePriority(struct Actor *actor) {
   return ((struct PlacedSprite *)actor->sprite)->priority;
 }
 
@@ -324,7 +324,7 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor) {
 /// Returns the depth slot the actor's sprite takes, so that a sprite drawn
 /// with it sorts with it: from its projected depth on the world map, otherwise
 /// from its screen row.
-s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
+s32 Actor_GetSpriteDepth(struct Actor *actor) {
   FIXED point[3];
   s32 screen[3];
   s32 depth;
@@ -350,7 +350,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
 }
 
 /// Draws the Psynergy's canvas sprite (FieldEffectState.sprite) each frame.
-void BattleEffect_DrawSceneSprite(void) {
+void FieldPsynergy_DrawCanvasSprite(void) {
   EffectSprite_Draw(
       &((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->sprite);
 }
@@ -358,7 +358,7 @@ void BattleEffect_DrawSceneSprite(void) {
 /// When the caster faces away (FACING_NORTH), starts the Psynergy's canvas
 /// sprite (FieldEffectState.sprite): a blank 32x32 sprite of its own VRAM cache
 /// entry, twice as tall, 28 pixels above the caster in front of everything,
-/// drawn each frame by BattleEffect_DrawSceneSprite until
+/// drawn each frame by FieldPsynergy_DrawCanvasSprite until
 /// FieldPsynergy_ReleaseSceneSprite.
 void FieldPsynergy_StartSceneSprite(void) {
   struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
@@ -369,7 +369,7 @@ void FieldPsynergy_StartSceneSprite(void) {
   s32 slot;
   s32 tiles;
 
-  mainActor = effectState->mainActor;
+  mainActor = effectState->caster;
   if (effectState->angle == FACING_NORTH) {
     effectState->spriteActive = 1;
     buffer = Heap_Alloc(512);
@@ -391,7 +391,7 @@ void FieldPsynergy_StartSceneSprite(void) {
     Camera_WorldToScreen(position);
     sprite->x = position[0];
     sprite->y = position[2];
-    Task_Add(BattleEffect_DrawSceneSprite, TASK_PASS_FRAME);
+    Task_Add(FieldPsynergy_DrawCanvasSprite, TASK_PASS_FRAME);
   }
 }
 #undef WORLD_MAP_GROUND_DEPTH

@@ -101,7 +101,7 @@ void ReadFlashCore(const u8 *source, u8 *destination, u32 size);
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size);
 u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size);
 /// Compares a 4 KB sector with source; returns 0 when they match.
-s32 Flash_VerifySector(u16 sector, u8 *source);
+s32 VerifyFlashSector(u16 sector, u8 *source);
 /// Returns 0 when the 4 KB sector at cursor reads blank throughout.
 s32 CountRemainingErasedFlashBytes(u8 *cursor);
 /// Returns 0 when verify finds the sector blank, else FLASH_ERROR_NOT_ERASED.

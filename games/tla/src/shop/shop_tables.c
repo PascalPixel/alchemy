@@ -12,7 +12,7 @@
 /// Where each of the quantity bar's 30 segments starts in its tile buffer: a
 /// byte column of a 4-bit tile, so four segments to a tile and the next tile
 /// 32 bytes on, eight tiles in all.
-const u16 gShop_SelectorTileOffsets[30] = {
+const u16 gShop_QuantityBarSegmentOffsets[30] = {
     0, 1, 2, 3,
     32, 33, 34, 35,
     64, 65, 66, 67,
@@ -41,7 +41,7 @@ const s16 gShop_GameTicketCreditCosts[30] = {
 
 /// Unused: a list of gift items, ended by 0, that nothing reads: The Broken
 /// Seal's, with the Fire Brand where it has the Masamune.
-const s16 gShop_GiftItemIds[21] = {
+const s16 gShop_UnusedItemIds[21] = {
     ITEM_LONG_SWORD, ITEM_BROAD_SWORD, ITEM_CLAYMORE, ITEM_GREAT_SWORD, ITEM_SHAMSHIR,
     ITEM_SILVER_BLADE, ITEM_FIRE_BRAND, ITEM_ARCTIC_BLADE, ITEM_GAIA_BLADE,
     ITEM_SOL_BLADE, ITEM_MURAMASA, ITEM_SHORT_SWORD, ITEM_MINT, ITEM_DEMON_AXE,

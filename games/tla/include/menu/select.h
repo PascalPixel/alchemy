@@ -52,7 +52,7 @@ struct SelectionNode {
 };
 
 /// The kinds of icon the selection screen lists (SelectionNode.kind) and
-/// Resource_LoadByMode loads.
+/// SelectionIcon_Load loads.
 enum IconKind {
   ICON_KIND_NONE = 0,    ///< a free selection icon entry
   ICON_KIND_COMMAND = 1, ///< a command's icon, from its number
@@ -98,8 +98,8 @@ struct SelectionMenuState {
   /// list to start again from its first entry.
   u16 cursorIndex;
   u16 verticalScroll; ///< pixels added to the icons' y; 32 at setup
-  /// NODE_STATUS_SCROLLING while the cursor steps, NODE_STATUS_SHOWN after
-  /// (window_selection.c); each frame drawn adds 1.
+  /// SELECTION_STATUS_SCROLLING while the cursor steps, SELECTION_STATUS_SHOWN
+  /// after (window_selection.c); each frame drawn adds 1.
   u16 status;
   u16 pathTop[5];    ///< top, kept for each icon chosen on the path
   u16 pathCursor[5]; ///< cursorIndex, kept for each icon chosen on the path
@@ -111,8 +111,8 @@ struct SelectionMenuState {
 };
 
 /// SelectionMenuState.status: the cursor stepping, or the row shown.
-#define NODE_STATUS_SCROLLING 33
-#define NODE_STATUS_SHOWN 1
+#define SELECTION_STATUS_SCROLLING 33
+#define SELECTION_STATUS_SHOWN 1
 
 STATIC_ASSERT(sizeof(struct SelectionSprite) == 12);
 STATIC_ASSERT(sizeof(struct SelectionNode) == 52);

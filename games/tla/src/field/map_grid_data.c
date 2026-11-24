@@ -368,10 +368,10 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareTargetX,           // 0x11 SW_TARGET_X
     ActorScript_SetOrCompareTargetY,           // 0x12 SW_TARGET_Y
     ActorScript_SetOrCompareTargetZ,           // 0x13 SW_TARGET_Z
-    ActorScript_SetOrCompareVerticalMotion,    // 0x14 SW_BOUNCE
+    ActorScript_SetOrCompareBounce,            // 0x14 SW_BOUNCE
     ActorScript_SetOrCompareGravity,           // 0x15 SW_GRAVITY
     ActorScript_SetOrCompareTerrainHeight,     // 0x16 SW_GROUND
-    ActorScript_SetOrCompareRiseBaseY,         // 0x17
+    ActorScript_SetOrCompareSceneWord,         // 0x17
     ActorScript_SetOrCompareSprite,            // 0x18
     ActorScript_SetOrCompareSpriteStorageKind, // 0x19
     ActorScript_SetOrCompareMotionFlags,       // 0x1a SW_MOTION
@@ -387,8 +387,8 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareUserValue,         // 0x24 SW_USER_VALUE
     ActorScript_SetOrCompareWatchedActor,      // 0x25
     ActorScript_SetOrCompareUpdateAddress,     // 0x26 SW_HOOK
-    ActorScript_SetOrCompareRiseCounter,       // 0x27 SW_RISE_COUNTER
-    ActorScript_SetOrCompareRiseEnabled,       // 0x28 SW_RISE_ENABLED
+    ActorScript_SetOrCompareSceneCounter,      // 0x27 SW_SCENE_COUNTER
+    ActorScript_SetOrCompareSceneByte,         // 0x28 SW_SCENE_BYTE
 };
 
 // Each layout's resources, as offsets from ResourceId_EmptyMap, by map number;
@@ -655,7 +655,7 @@ const struct MapResources gMaps[] = {
     {797, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_whorl
     {798, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_blue_key
     {799, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_phaetons_blade_chest
-    {800, 801, {779, 780, 781}, 782}, // jupiter_lighthouse_room_m
+    {800, 801, {779, 780, 781}, 782}, // jupiter_lighthouse_terraces
     {802, 803, {779, 780, 781}, 782}, // jupiter_lighthouse_aerie
     {804, 805, {806, 807, 808}, 809}, // loho
     {810, 811, {812, 813, 814}, 815}, // loho_rooms
@@ -672,8 +672,8 @@ const struct MapResources gMaps[] = {
     {841, 835, {836, 837, 838}, 839}, // mars_lighthouse_jupiter_tower
     {842, 835, {836, 837, 838}, 839}, // mars_lighthouse_venus_tower
     {843, 844, {779, 845, 781}, 846}, // mars_lighthouse_aerie
-    {847, 844, {779, 780, 781}, 848}, // mars_lighthouse_room_m_flame
-    {849, 850, {836, 851, 838}, 852}, // mars_lighthouse_room_m_inscriptions
+    {847, 844, {779, 780, 781}, 848}, // mars_lighthouse_beacon_ledge
+    {849, 850, {836, 851, 838}, 852}, // mars_lighthouse_hall
     {853, 835, {836, 837, 838}, 839}, // mars_lighthouse_entrance_fugue
     {854, 835, {836, 837, 838}, 839}, // mars_lighthouse_entrance_teleport_lapis
     {855, 835, {836, 837, 838}, 839}, // mars_lighthouse_entrance_balm
@@ -683,7 +683,7 @@ const struct MapResources gMaps[] = {
     {859, 835, {836, 837, 838}, 839}, // mars_lighthouse_star_room
     {860, 844, {779, 780, 781}, 861}, // mars_lighthouse_mercury_ledge
     {862, 844, {779, 780, 781}, 861}, // mars_lighthouse_jupiter_ledge
-    {863, 844, {779, 780, 781}, 861}, // mars_lighthouse_room_m_alastors_hood_chest
+    {863, 844, {779, 780, 781}, 861}, // mars_lighthouse_mars_ledge
     {864, 844, {779, 780, 781}, 861}, // mars_lighthouse_venus_ledge
     {831, 865, {779, 780, 781}, 833}, // mars_lighthouse_outside
     {834, 866, {836, 837, 838}, 839}, // mars_lighthouse_mars_tower
@@ -691,8 +691,8 @@ const struct MapResources gMaps[] = {
     {841, 866, {836, 837, 838}, 839}, // mars_lighthouse_jupiter_tower
     {842, 866, {836, 837, 838}, 839}, // mars_lighthouse_venus_tower
     {843, 867, {779, 780, 781}, 846}, // mars_lighthouse_aerie
-    {847, 868, {779, 780, 781}, 848}, // mars_lighthouse_room_m_flame
-    {849, 869, {836, 837, 838}, 852}, // mars_lighthouse_room_m_inscriptions
+    {847, 868, {779, 780, 781}, 848}, // mars_lighthouse_beacon_ledge
+    {849, 869, {836, 837, 838}, 852}, // mars_lighthouse_hall
     {853, 866, {836, 837, 838}, 839}, // mars_lighthouse_entrance_fugue
     {854, 866, {836, 837, 838}, 839}, // mars_lighthouse_entrance_teleport_lapis
     {855, 866, {836, 837, 838}, 839}, // mars_lighthouse_entrance_balm
@@ -702,7 +702,7 @@ const struct MapResources gMaps[] = {
     {859, 866, {836, 837, 838}, 839}, // mars_lighthouse_star_room
     {860, 867, {779, 780, 781}, 861}, // mars_lighthouse_mercury_ledge
     {862, 867, {779, 780, 781}, 861}, // mars_lighthouse_jupiter_ledge
-    {863, 867, {779, 780, 781}, 861}, // mars_lighthouse_room_m_alastors_hood_chest
+    {863, 867, {779, 780, 781}, 861}, // mars_lighthouse_mars_ledge
     {864, 867, {779, 780, 781}, 861}, // mars_lighthouse_venus_ledge
     {870, 871, {872, 873, 874}, 875}, // mercury_lighthouse
     {876, 877, {878, 879, 880}, 881}, // treasure_isle_entrance

@@ -192,7 +192,7 @@ void Ulysses_FlutterFlake(void) {
 }
 
 /// The mage's sprite scale, one to one.
-extern const struct Scale gUlysses_ShipScale;
+extern const struct Scale gUlysses_MageScale;
 
 /// Where UlyssesSilhouette, then FlutteringFlakeSheet's cels, are decoded in
 /// the effect's pictures, and the silhouette's size.
@@ -322,7 +322,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   flakeAway = 0;
   skip = 0;
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   // The battle background darkens to black, its green first.
   for (frame = 0; frame != 32; frame++) {
     volatile u16 *c = (volatile u16 *)&BG_PLTT_COLOR(6, 0);
@@ -380,7 +380,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       }
     }
   }
-  BattleEffect_SpawnObjects(ULYSSES_MAGE_SPRITES + 1, SPRITE_ULYSSES, 3);
+  BattleEffect_CreateSprites(ULYSSES_MAGE_SPRITES + 1, SPRITE_ULYSSES, 3);
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -390,7 +390,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK);
   wait(1);
   blit = blits;
-  BattleEffect_FetchRectangleBlitters(0, (void **)blit);
+  BattleEffect_BuildCanvasBlitters(0, (void **)blit);
   // The silhouette, in the glow's palettes, goes to BG2's tiles and stays
   // there while the rune circles go to BG1's.
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
@@ -405,10 +405,10 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   blits[0](canvas, picture, 24, 8, ULYSSES_SILHOUETTE_WIDTH,
            ULYSSES_SILHOUETTE_HEIGHT);
   EFFECT_PRESENT_CANVAS(state);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLUTTERING_FLAKE_SHEET, picture, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sprites, 0, 0);
   loaded = 0;
   mage.x = toFIXED(200);
   mage.z = toFIXED(84);
@@ -559,8 +559,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       if (loaded == 1) {
         Task_Remove(BattleEffect_ProcessPendingBlock2Transfer);
         Task_Remove(Display_ApplyBg2Affine);
-        Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
-                 TASK_PASS_VBLANK + 15);
+        Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK + 15);
         Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET,
                                    state->sheet + ULYSSES_YELLOW_ORB_PICTURES,
                                    1, 0);
@@ -851,7 +850,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     // The mage stands from ULYSSES_APPEAR_FRAME, swaying once the strikes
     // begin.
     if (frame >= ULYSSES_APPEAR_FRAME && frame < ULYSSES_FLAKE_FRAME) {
-      mageScale = gUlysses_ShipScale;
+      mageScale = gUlysses_MageScale;
       if (frame > ULYSSES_STRIKES_FRAME - 1) {
         s32 u = frame - ULYSSES_STRIKES_FRAME;
 
@@ -927,7 +926,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT = EFFECT_DISPCNT;
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   background->busy = 0;
   battle = Ram_HeapSlots->battleState;
@@ -942,7 +941,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
-  Task_Remove(Palette_StepFadeTransfer);
+  Task_Remove(BattleEffect_DarkenBackgroundStep);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
@@ -1131,17 +1130,17 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
     picture = frame / 4;
     if (picture <= 5) {
       if (picture <= 3)
-        draw[0](canvas, state->sheet + gSpiderWeb_Pictures[picture],
-                gSpiderWeb_PictureX[picture + args->side * 6],
-                gSpiderWeb_PictureBiasY[picture] + 32,
-                gSpiderWeb_PictureWidths[picture],
-                gSpiderWeb_PictureHeights[picture]);
+        draw[0](canvas, state->sheet + gSwirlSwipe_Pictures[picture],
+                gSwirlSwipe_PictureX[picture + args->side * 6],
+                gSwirlSwipe_PictureBiasY[picture] + 32,
+                gSwirlSwipe_PictureWidths[picture],
+                gSwirlSwipe_PictureHeights[picture]);
       else
-        draw[0](canvas, Ram_MapCellBuffer + gSpiderWeb_Pictures[picture],
-                gSpiderWeb_PictureX[picture + args->side * 6],
-                gSpiderWeb_PictureBiasY[picture] + 32,
-                gSpiderWeb_PictureWidths[picture],
-                gSpiderWeb_PictureHeights[picture]);
+        draw[0](canvas, Ram_MapCellBuffer + gSwirlSwipe_Pictures[picture],
+                gSwirlSwipe_PictureX[picture + args->side * 6],
+                gSwirlSwipe_PictureBiasY[picture] + 32,
+                gSwirlSwipe_PictureWidths[picture],
+                gSwirlSwipe_PictureHeights[picture]);
     }
     if (frame == 8) {
       if (mode == SWIRL_SWIPE_POISON_BEAT) {
@@ -1255,11 +1254,11 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
 
   // Both canvases are cleared, and Impair's effect follows: the targets'
   // Defense drops.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
   Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
   args->prelude = 0;
-  Task_Remove(Palette_StepFadeTransfer);
+  Task_Remove(BattleEffect_DarkenBackgroundStep);
   BattleEffect_RunImpair(args);
 }
 

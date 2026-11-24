@@ -555,7 +555,7 @@ void BattleMessage_WaitForTyping(void) {
 }
 
 /// Takes an enemy out of the battle at once, one that leaves rather than falls.
-s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
+s32 BattleUnit_RemoveEnemy(s32 unitId) {
   // UB: declared s32 but returns no value; no caller reads it.
   struct Unit *creature;
   struct BattleObject *runtime;
@@ -575,7 +575,7 @@ s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
 /// Grants the Djinn bonus for the rest of the action.
 void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackState *runtime,
                                     u32 operand) {
-  runtime->flags |= 1;
+  runtime->djinnBonus |= 1;
 }
 
 /// Runs the queued battle events in order, then resets the queue.
@@ -597,7 +597,7 @@ u32 BattlePlayback_RunAll(void) {
         BattlePlayback_GrantDjinnBonus(runtime, queue->operands[i]);
         break;
       case PLAYBACK_REMOVE_UNIT:
-        BattleObject_DestroyTemporaryObject(queue->operands[i]);
+        BattleUnit_RemoveEnemy(queue->operands[i]);
         break;
       case PLAYBACK_UNIT_NAME:
         MessageArgument_PushFar(queue->operands[i], MESSAGE_ARGUMENT_ACTOR);
@@ -636,7 +636,7 @@ u32 BattlePlayback_RunAll(void) {
         BattleMotion_FlashHit(queue->operands[i], 0, 0);
         break;
       case PLAYBACK_DEFEAT:
-        BattleEnemy_RecordDefeat(queue->operands[i], runtime->flags);
+        BattleEnemy_RecordDefeat(queue->operands[i], runtime->djinnBonus);
         BattleUnit_ClearStatuses(queue->operands[i]);
         BattleMotion_ShowDowned(queue->operands[i]);
         break;
@@ -1078,7 +1078,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
     } else if (ability->effect == ABILITY_EFFECT_INSTANT_DEATH) {
       skipDamage = 1;
     } else if (ability->effect == ABILITY_EFFECT_SELF_DESTRUCT) {
-      // The user leaves the battle (BattleObject_DestroyTemporaryObject).
+      // The user leaves the battle (BattleUnit_RemoveEnemy).
       if (actor->hp != 0)
         BattlePlayback_Push(PLAYBACK_REMOVE_UNIT, unitId);
     } else if (ability->effect == ABILITY_EFFECT_DRAIN_PP) {
@@ -1112,7 +1112,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       if (target->defendLevel == DEFEND_VANISHED)
         break;
       hp = target->hp;
-      baseDefense = target->def;
+      baseDefense = target->defense;
       defense = baseDefense;
       if (defenseCut != 0) {
         if (defenseCut == DEFENSE_IGNORED)
@@ -1128,17 +1128,17 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
           elementBonus = 0;
         power = ability->power;
         if (kind == ABILITY_FORMULA_ATTACK_MULTIPLIED)
-          amount = Battle_CalculateAttackDamageFar(actor->atk, defense, 0,
+          amount = Battle_CalculateAttackDamageFar(actor->attack, defense, 0,
                                                    elementBonus) *
                    power / 10;
         else {
           s32 attack;
 
-          attack = actor->atk;
+          attack = actor->attack;
           if (abilityId == ABILITY_MELD || abilityId == ABILITY_MOLD) {
-            attack = Unit_Get(plan->unitId)->atk;
+            attack = Unit_Get(plan->unitId)->attack;
             if (abilityId == ABILITY_MELD)
-              attack += Unit_Get(plan->partnerId)->atk / 4;
+              attack += Unit_Get(plan->partnerId)->attack / 4;
           }
           amount = Battle_CalculateAttackDamageFar(attack, defense, power,
                                                    elementBonus);
@@ -1805,7 +1805,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       target->agilityStage = AGILITY_STAGE_DOUBLED;
       target->agilityTurns = AGILITY_CHANGE_TURNS;
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, target->agi - savedTarget->agi);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          target->agility - savedTarget->agility);
       PUSH_MESSAGE(MsgAgiUp);
       break;
 
@@ -1819,7 +1820,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       }
       target->agilityTurns = AGILITY_CHANGE_TURNS;
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, savedTarget->agi - target->agi);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          savedTarget->agility - target->agility);
       PUSH_MESSAGE(MsgAgiDown);
       break;
 
@@ -1827,7 +1829,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       target->attackStage -= 1;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, savedTarget->atk - target->atk);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          savedTarget->attack - target->attack);
       PUSH_MESSAGE(MsgAtkDown);
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
@@ -1836,7 +1839,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       target->attackStage -= 2;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, savedTarget->atk - target->atk);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          savedTarget->attack - target->attack);
       PUSH_MESSAGE(MsgAtkDown);
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
@@ -1845,7 +1849,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       target->attackStage += 1;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, target->atk - savedTarget->atk);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          target->attack - savedTarget->attack);
       PUSH_MESSAGE(MsgAtkUp);
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
@@ -1854,7 +1859,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       target->attackStage += 2;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, target->atk - savedTarget->atk);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          target->attack - savedTarget->attack);
       PUSH_MESSAGE(MsgAtkUp);
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
@@ -1863,7 +1869,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       target->defenseStage -= 1;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, savedTarget->def - target->def);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          savedTarget->defense - target->defense);
       PUSH_MESSAGE(MsgDefDown);
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
@@ -1872,7 +1879,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       target->defenseStage -= 2;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, savedTarget->def - target->def);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          savedTarget->defense - target->defense);
       PUSH_MESSAGE(MsgDefDown);
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
@@ -1881,7 +1889,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       target->defenseStage += 1;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, target->def - savedTarget->def);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          target->defense - savedTarget->defense);
       PUSH_MESSAGE(MsgDefUp);
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
@@ -1890,7 +1899,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       target->defenseStage += 2;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
-      BattlePlayback_Push(PLAYBACK_NUMBER, target->def - savedTarget->def);
+      BattlePlayback_Push(PLAYBACK_NUMBER,
+                          target->defense - savedTarget->defense);
       PUSH_MESSAGE(MsgDefUp);
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
@@ -2665,7 +2675,7 @@ done:
 
 /// Unused: makes three empty DMA3 transfers after a multiplication whose result
 /// it drops.
-void Dma_StopAllThenRunHook(void) {
+void Dma_StopDma3(void) {
   Math_UnsignedMulHigh(5, 0);
   Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
   Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);

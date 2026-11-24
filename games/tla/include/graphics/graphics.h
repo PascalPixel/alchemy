@@ -36,9 +36,9 @@ extern u8 gScreenFadeStartLevel;
 // volatile: ScreenFade_Start sets it for ScreenFade_Update, which the VBlank
 // handler runs, so it is no device.
 extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
-/// The two tiles of the link screen's page arrows, which Link_DrawPageArrows
+/// The two tiles of the link screen's page arrows, which PageArrows_Draw
 /// shifts and merges into the window border each frame.
-extern u8 gRomShiftedTilePair[];
+extern u8 gPageArrowTiles[];
 /// Matrix_BuildLookAt's dot product, a Thumb entry and its ARM code: eight
 /// words it copies onto its stack to run.
 extern const u32 RelocatedInnerProduct[];
@@ -74,8 +74,8 @@ extern u8 *gIcon_MiscIconPointers[];
 extern u8 *gPsynergyIcons[];
 /// The end of gPsynergyIcons, for Icon_CountPsynergyIcons.
 extern u8 *gPsynergyIconsEnd[];
-void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
-                       s32 reuse);
+void Ability_BuildIconTiles(s32 action, s32 withBase, s32 *slot, s32 *tile,
+                            s32 reuse);
 #ifndef OWN_BattleLayout_HighlightPartyPanels
 s32 PartyStatus_HighlightMembers(u16 *ids);
 #endif
@@ -90,7 +90,7 @@ s32 BattleUnit_ListIdsFar(s32 sideMask, s32 unitIds);
 /// entry.
 void Portrait_ReloadFar(s32 slot, s32 key, s32 unused);
 void Icon_DrawMisc(u32 index);
-s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot);
+s32 ItemIcon_LoadLayersIntoSlot(s32 inventoryCode, s32 layers, s32 cacheSlot);
 void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
 void MenuArrow_Release(s32 slot);
 void PartyStatus_Draw(s32 flags);
@@ -137,8 +137,8 @@ extern const u8 Resource_DecodeByteLzCode[];
 extern const u8 Text_LookupSymbolCode[];
 /// The size of Text_LookupSymbolCode.
 extern u8 Text_LookupSymbolCodeSize[];
-void Ability_LoadGlyphFar(s32 action, s32 withBase, s32 *slot, s32 *tile,
-                          s32 reuse);
+void Ability_BuildIconTilesFar(s32 action, s32 withBase, s32 *slot, s32 *tile,
+                               s32 reuse);
 s32 BattleParty_PrepareMembersFar(u16 *owners);
 s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align);
 void SelectionMenu_Clear(void);
@@ -150,7 +150,7 @@ void WindowSprite_Release(struct WindowSprite *node);
 #ifndef OWN_Resource_DecodeByteLzInRam
 s32 Decompress_ByteLz(const void *source, void *destination);
 #endif
-s32 Resource_LoadByMode(u32 mode, s32 value);
+s32 SelectionIcon_Load(u32 mode, s32 value);
 void SpriteColor_RemapPixelsFar(void *buffer, s32 size);
 void String_FormatDecimal(s32);
 void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
@@ -170,7 +170,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 /// it to the frame and divider tiles already on the tilemap.
 void Window_DrawDividerLineFar(s32 window, s32 x1, s32 y1, s32 x2, s32 y2);
 void WindowSprite_UpdateAll(void);
-void WindowSystem_StartBattleUpdate(s32 kind);
+void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles);
 /// Sets the text colour (0 to 15) of drawn text.
 s32 Text_SetColorFar(s32 color);
 /// Decompresses resource `resourceId` and loads its first `size` bytes into
@@ -202,8 +202,8 @@ extern const u8 gNameEntry_KeyboardTilemap[];
 /// first, then one between members.
 extern const s8 gWindow_PartyColumnOffsets[];
 
-/// The size of Tile_BuildCellTilesCode, which ScanlineWindow_FillSpans
+/// The size of ScanlineWindow_BuildSpansCode, which ScanlineWindow_FillSpans
 /// copies to the heap to run.
-extern u8 Tile_BuildCellTilesCodeSize[];
+extern u8 ScanlineWindow_BuildSpansCodeSize[];
 
 #endif

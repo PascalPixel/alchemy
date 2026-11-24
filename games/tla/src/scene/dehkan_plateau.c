@@ -604,7 +604,7 @@ void DehkanPlateau_DropFullMetalVestChestPillarIntoGap(void) {
   x = FIELD_CELL(actor->x.fixed);
   if (x == 56 && FIELD_CELL(actor->z.fixed) == 32) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Actor_DropAndWait(actor);
     Map_CopyCellAttributeRect(54, 32, 2, 1, x, 64);
     GameFlag_Set(FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP);
@@ -627,7 +627,7 @@ void DehkanPlateau_PlaceThemisAxeChestPillar(void) {
   Actor_PlaceMovedBlock();
   if (x == 52) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Map_CopyCellAttributeRect(51, 7, 1, 1, x, 7);
     wait(1);
     Actor_DropAndWait(actor);
@@ -651,7 +651,7 @@ void DehkanPlateau_PlaceTightropesPillar(void) {
   Actor_PlaceMovedBlock();
   if (x == 47) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Map_CopyCellAttributeRect(47, 12, 1, 1, x, 13);
     wait(1);
     Actor_DropAndWait(actor);
@@ -690,7 +690,7 @@ void DehkanPlateau_PushTightropesSecondPillar(void) {
       38) {
     flags = &Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags;
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     *flags = 0;
     wait(1);
     Leader_PushObjectAhead();
@@ -848,7 +848,7 @@ void DehkanPlateau_StepOnCrack(void) {
     return;
   }
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 4);
   Actor_MoveToAndWaitById(gMainRoutineState.leaderActorId, cellX << 3,
                           cellZ << 3);
@@ -1085,7 +1085,7 @@ void DehkanPlateau_PlaceVinePillar(struct Actor *actor) {
   x = FIELD_CELL(actor->x.fixed);
   if (x == 12) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Map_CopyCellAttributeRect(0, 32, 1, 1, x, 11);
     wait(1);
     Actor_DropAndWait(actor);
@@ -1191,7 +1191,7 @@ static __inline__ void Actor_PlaceFacing(s32 id, FIXED x, FIXED z, u16 angle) {
 /// off to the east.
 void DehkanPlateau_CannonFleesOverCracks(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(658, CAMERA_KEEP, 164, 1);
   FieldCamera_WaitForArrival();
@@ -1223,7 +1223,7 @@ void DehkanPlateau_CannonFleesOverCracks(void) {
 /// off east out of sight.
 void DehkanPlateau_CannonFleesEast(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_MoveTo(980, CAMERA_KEEP, 168, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(ACTOR_THEMIS_AXE_CHEST_CANNON,
@@ -1247,7 +1247,7 @@ void DehkanPlateau_CannonFleesEast(void) {
 /// and runs off east across.
 void DehkanPlateau_CannonLeapsAway(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_MoveTo(144, CAMERA_KEEP, 107, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(ACTOR_TIGHTROPES_CANNON, gMainRoutineState.leaderActorId,
@@ -1276,7 +1276,7 @@ void DehkanPlateau_CannonLeapsAway(void) {
 /// over it, cracking open a crack behind him.
 void DehkanPlateau_CannonPoundsStake(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_WatchAndSetScript(gMainRoutineState.leaderActorId,
                           ACTOR_TIGHTROPES_CANNON);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -1401,7 +1401,7 @@ void DehkanPlateau_CannonCracksPillars(void) {
 
   actor = Actor_GetById(ACTOR_TIGHTROPES_CANNON);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_WatchAndSetScript(gMainRoutineState.leaderActorId,
                           ACTOR_TIGHTROPES_CANNON);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -1478,7 +1478,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
   u32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   {
     s32 facing = FACING_NORTH;
 
@@ -1549,7 +1549,7 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   struct Actor *cannon = Actor_GetById(ACTOR_POUND_CUBE_CANNON);
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -1608,7 +1608,7 @@ void DehkanPlateau_CannonCracksLastPillar(void) {
 
   actor = Actor_GetById(ACTOR_CANNON);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_WatchAndSetScript(gMainRoutineState.leaderActorId, ACTOR_CANNON);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(760, 32, 204, 1);
@@ -1645,7 +1645,7 @@ void DehkanPlateau_CannonCracksLastPillar(void) {
 /// to leap: he looks about him and turns to face Felix.
 void DehkanPlateau_CannonCornered(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceActorById(ACTOR_CANNON, gMainRoutineState.leaderActorId, 0);
   Actor_ShowEmoteById(ACTOR_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirectionAndRefreshById(ACTOR_CANNON, FACING_EAST);
@@ -1675,7 +1675,7 @@ void DehkanPlateau_MeetCannon(void) {
 /// Cannon Pounds him through (cell (15, 5)), and takes it.
 void DehkanPlateau_TakePoundCube(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (gDehkanPlateau_PoundCube != 0)
     ItemDisplay_ShowPicture(gDehkanPlateau_PoundCube,
                             ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
@@ -1696,7 +1696,7 @@ void DehkanPlateau_LeaveRoom(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (gMainRoutineState.next == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
     Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 3);
   Sound_Play(SE_MAP_EXIT);
@@ -1998,7 +1998,7 @@ void DehkanPlateau_LandFromFall(void) {
   u32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -2107,7 +2107,7 @@ void DehkanPlateau_CreatePoundCube(void) {
   *slot = actor;
   if (actor != 0) {
     struct FieldSprite *sprite = actor->sprite;
-    GlyphTransfer *glyph;
+    IconTransfer *glyph;
 
     sprite->fullColor = 0;
     sprite->palette = 0;
@@ -2115,10 +2115,10 @@ void DehkanPlateau_CreatePoundCube(void) {
     actor->retainSpriteCache = 1;
     sprite->flags = clear;
     sprite->countAndShadow[0] = clear;
-    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_POUND_CUBE);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
 }
 

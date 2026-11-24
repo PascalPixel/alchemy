@@ -8,8 +8,8 @@
 #include "field/map_grid.h"
 
 /// Sets the collision code of each cell in a layer rectangle to value.
-void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 y, u32 width,
-                                            u32 height, s32 value) {
+void MapGrid_FillCollisionRectangle(s32 layer, s32 x, s32 y, u32 width,
+                                    u32 height, s32 value) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cells = map->layers[layer].cells;
   u32 row;

@@ -17,10 +17,11 @@ struct PendingEvent {
 };
 
 void Event_RunMessage(s32 actor, s32 message);
-void Event_ResolveAllPendingActions(void);
-void Event_ResolvePendingActions(s32 skip);
+void Event_EndAllLastingPsynergy(void);
+void Event_EndLastingPsynergy(s32 skip);
 s32 Field_RunPsynergyEndEvents(u32 action);
-s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
+s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 argument,
+                           s32 target);
 s32 Party_GetLeaderActor(void);
 void Event_ShowMessageAndWait(s32 actor, s32 flags);
 void Event_UpdateDebugSkip(void);
@@ -34,7 +35,7 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Event_SetDestination(s32 scene, s32 entrance);
 void Event_SetRestartPoint(s32 scene, s32 entrance);
-void Event_SetExitRequest(u16 countdown);
+void Event_SetExitRequest(u16 exit);
 void Event_SetMessageId(s32 message);
 
 #endif

@@ -94,7 +94,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
     EffectPosition_ProjectBattler(args->user, &source);
     EffectPosition_ProjectBattler(args->targets[0], &target);
     Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
-    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
     Resource_LoadAndDecompress(
         RESOURCE_CLAW_SLASH_SHEET,
         state->sheet + RISING_DRAGON_FLAME_DRAGON_HEAD_PICTURES, 1, 1);
@@ -322,7 +322,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
     }
     Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferCanvas);
   }
   BattleEffect_EndCanvasLayer();
 }
@@ -343,10 +343,10 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 #define FIGURE_ARM_REACHING 9438
 #define FIGURE_ARM_REACHING_WIDTH 48
 #define FIGURE_ARM_REACHING_HEIGHT 51
-/// A burst of sparks growing, four pictures (gHeartbreak_SwingPictures).
+/// A burst of sparks growing, four pictures (gHeartbreak_SparkBurstPictures).
 #define FIGURE_SPARK_BURST 11886
 /// A heart, then seven pictures of green flame burning it away
-/// (gHeartbreak_FistPictures); the first is also the heart held up.
+/// (gHeartbreak_HeartBurnPictures); the first is also the heart held up.
 #define FIGURE_HEART 20125
 #define FIGURE_HEART_WIDTH 32
 #define FIGURE_HEART_HEIGHT 29
@@ -463,20 +463,20 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
       if (args->side == EFFECT_SIDE_ENEMIES) {
         draw[args->side](canvas,
                          Ram_MapCellBuffer + FIGURE_SPARK_BURST +
-                             gHeartbreak_SwingPictures[cel],
-                         46 - gHeartbreak_SwingWidths[cel] / 2,
-                         y - gHeartbreak_SwingHeights[cel] / 2 + 61,
-                         gHeartbreak_SwingWidths[cel],
-                         gHeartbreak_SwingHeights[cel]);
+                             gHeartbreak_SparkBurstPictures[cel],
+                         46 - gHeartbreak_SparkBurstWidths[cel] / 2,
+                         y - gHeartbreak_SparkBurstHeights[cel] / 2 + 61,
+                         gHeartbreak_SparkBurstWidths[cel],
+                         gHeartbreak_SparkBurstHeights[cel]);
       } else {
         draw[args->side](canvas,
                          Ram_MapCellBuffer + FIGURE_SPARK_BURST +
-                             gHeartbreak_SwingPictures[cel],
-                         gHeartbreak_SwingWidths[cel] / 2 -
-                             gHeartbreak_SwingWidths[cel] + 82,
-                         y - gHeartbreak_SwingHeights[cel] / 2 + 61,
-                         gHeartbreak_SwingWidths[cel],
-                         gHeartbreak_SwingHeights[cel]);
+                             gHeartbreak_SparkBurstPictures[cel],
+                         gHeartbreak_SparkBurstWidths[cel] / 2 -
+                             gHeartbreak_SparkBurstWidths[cel] + 82,
+                         y - gHeartbreak_SparkBurstHeights[cel] / 2 + 61,
+                         gHeartbreak_SparkBurstWidths[cel],
+                         gHeartbreak_SparkBurstHeights[cel]);
       }
     }
 
@@ -499,15 +499,17 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
           if (args->side == EFFECT_SIDE_ENEMIES)
             draw[args->side](canvas,
                              Ram_MapCellBuffer + FIGURE_HEART +
-                                 gHeartbreak_FistPictures[cel],
-                             63, y + gHeartbreak_FistY[cel] - 8,
-                             FIGURE_HEART_WIDTH, gHeartbreak_FistHeights[cel]);
+                                 gHeartbreak_HeartBurnPictures[cel],
+                             63, y + gHeartbreak_HeartBurnY[cel] - 8,
+                             FIGURE_HEART_WIDTH,
+                             gHeartbreak_HeartBurnHeights[cel]);
           else
             draw[args->side](canvas,
                              Ram_MapCellBuffer + FIGURE_HEART +
-                                 gHeartbreak_FistPictures[cel],
-                             33, y + gHeartbreak_FistY[cel] - 8,
-                             FIGURE_HEART_WIDTH, gHeartbreak_FistHeights[cel]);
+                                 gHeartbreak_HeartBurnPictures[cel],
+                             33, y + gHeartbreak_HeartBurnY[cel] - 8,
+                             FIGURE_HEART_WIDTH,
+                             gHeartbreak_HeartBurnHeights[cel]);
         }
       }
     }
@@ -531,7 +533,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            Ram_HeapSlots->battleState->background,
                            BACKGROUND_DARKEN_FRAMES);

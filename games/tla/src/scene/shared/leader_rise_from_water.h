@@ -7,7 +7,7 @@ void Leader_RiseFromWater(void) {
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Camera_MoveWithinMapBounds_(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     leader->motionFlags = 0;
     Actor_SetPositionFX(gMainRoutineState.leaderActorId,

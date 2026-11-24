@@ -274,7 +274,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// can handle "some girl and her grandpa", and fights them.
 void SuhallaGate_RuffianSpotsParty(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgWaahhhItS);
   Actor_WalkTo(gMainRoutineState.leaderActorId, 472, 320);
   FieldCamera_MoveTo(456, CAMERA_KEEP, 280, 1);
@@ -317,7 +317,7 @@ void SuhallaGate_RuffiansAmbushParty(void) {
   s32 *owner;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgHaThatWas);
   state = &gMainRoutineState;
   owner = &state->leaderActorId;
@@ -382,7 +382,7 @@ void SuhallaGate_FightPunchAnt(void) {
 /// up to her and attacks.
 void SuhallaGate_PunchAntJumpsOut(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetPosition(ACTOR_PUNCH_ANT, 472, 480);
   Event_Wait(16);
   Actor_FaceActor(gMainRoutineState.leaderActorId, ACTOR_PUNCH_ANT, 0);
@@ -411,7 +411,7 @@ void SuhallaGate_PunchAntJumpsOutAsLeaderStepsAside(void) {
   s32 emote, frames;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetPosition(ACTOR_PUNCH_ANT, 472, 480);
   Event_Wait(16);
   Actor_FaceActor(gMainRoutineState.leaderActorId, ACTOR_PUNCH_ANT, 0);
@@ -443,7 +443,7 @@ void SuhallaGate_AfterPunchAntBattle(void) {
   struct Actor *leader;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)&MsgMyThatWas);
   Actor_SetPosition(ACTOR_CAVE_KRADEN, 512, 432);
   Actor_SetPosition(gMainRoutineState.leaderActorId, 528, 432);
@@ -479,7 +479,7 @@ void SuhallaGate_PointToMeetingSpot(void) {
   struct Actor *leader;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)&MsgNotThatWay);
   Actor_LaunchFromLeader(ACTOR_CLIFFS_KRADEN, -16, 0, FACING_EAST);
   Actor_WaitForMoveById(ACTOR_CLIFFS_KRADEN);

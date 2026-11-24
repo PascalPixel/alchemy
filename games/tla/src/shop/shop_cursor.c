@@ -21,7 +21,7 @@ void QuantityBar_Fill(s32 segments, s32 color, u8 *tileBuffer) {
   color = shifted + 1;
 
   if (segments > 0) {
-    offset = gShop_SelectorTileOffsets;
+    offset = gShop_QuantityBarSegmentOffsets;
     do {
       // The segment's byte in rows 1 to 6.
       u8 *column = tileBuffer + *offset++;
@@ -40,7 +40,7 @@ void QuantityBar_Fill(s32 segments, s32 color, u8 *tileBuffer) {
 /// Copies decimal glyph `digit` into its price-tile position, stopping at zero
 /// source bytes: two bytes of each of its four rows in the digit's tile, and
 /// two more in the same row of the next.
-void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
+void Shop_DrawPriceDigit(s32 digit, u8 *tileBuffer, u32 digitPosition) {
   u8 *src = gShop_GlyphBytes + digit * TILE_SIZE_4BPP;
   u8 *dst = tileBuffer + gShop_PriceDigitTileOffsets[digitPosition] + 2;
   s32 count;
@@ -74,29 +74,29 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
   // the blank price's eight tiles (8 * TILE_SIZE_4BPP bytes)
   Dma_Set(gShop_PriceTiles, tileBuffer, DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4),
           REG_DMA3);
-  Shop_CopyGlyphs(value % 10, tileBuffer, 0);
+  Shop_DrawPriceDigit(value % 10, tileBuffer, 0);
   value = value / 10;
   if (value != 0) {
-    Shop_CopyGlyphs(value % 10, tileBuffer, 1);
+    Shop_DrawPriceDigit(value % 10, tileBuffer, 1);
     value = value / 10;
     if (value != 0) {
-      Shop_CopyGlyphs(value % 10, tileBuffer, 2);
+      Shop_DrawPriceDigit(value % 10, tileBuffer, 2);
       value = value / 10;
       if (value != 0) {
         s32 remainingDigits;
 
-        Shop_CopyGlyphs(value % 10, tileBuffer, 3);
+        Shop_DrawPriceDigit(value % 10, tileBuffer, 3);
         remainingDigits = value / 10;
         if (remainingDigits != 0)
-          Shop_CopyGlyphs(remainingDigits % 10, tileBuffer, 4);
+          Shop_DrawPriceDigit(remainingDigits % 10, tileBuffer, 4);
       }
     }
   }
   resourceSlot = VramCache_FindFreeEntry();
   if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(resourceSlot, 8 * TILE_SIZE_4BPP, tileBuffer);
-    priceSprite =
-        WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_16X32, window, x, y);
+    priceSprite = WindowSprite_CreateFar(resourceSlot, WINDOW_SPRITE_SIZE_16X32,
+                                         window, x, y);
   }
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   return priceSprite;

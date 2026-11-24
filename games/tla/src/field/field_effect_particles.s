@@ -1,9 +1,9 @@
 	.section .rodata
 @ Field effect particles, 16x16 sprite pictures packed one after another
 
-@ A copy of The Broken Seal's gFieldEffect_GroundParticleTiles
-	.global gFieldEffect_GroundParticleTiles
-gFieldEffect_GroundParticleTiles:
+@ A copy of The Broken Seal's gWeather_ParticleTiles
+	.global gWeather_ParticleTiles
+gWeather_ParticleTiles:
 	.incbin "games/tla/src/field/ground.4bpp16x16.plz"
 
 @ A mote shrinking away, in six frames

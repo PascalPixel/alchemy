@@ -235,7 +235,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void Alhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step, s32 exit,
                               s32 unused) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(step->steps, step->x, step->y);
   Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = ACTOR_FALLS;
@@ -420,7 +420,7 @@ void Alhafra_GiveBreadToHungryBoy(void) {
   GameFlag_Set(FLAG_HUNGRY_BOY_FED);
   PartyInventory_Remove(ITEM_LARGE_BREAD);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgAlhafraThanksMister);
   Event_Wait(10);
   Actor_FaceActorById(ACTOR_HUNGRY_BOY, gMainRoutineState.leaderActorId, 0);
@@ -481,7 +481,7 @@ void Alhafra_TalkToHungryBoy(s32 id) {
 void Alhafra_FindGoldCoins(void) {
   GameFlag_Set(FLAG_GOLD_COINS_FOUND);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgAlhafraWhyLookAtThis);
   FieldCamera_MoveTo(560, CAMERA_KEEP, 496, 1);
   FieldCamera_WaitForArrival();
@@ -756,7 +756,7 @@ extern u32 gAlhafra_SecondSoldierFollowsBehindFelixScript[];
 void Alhafra_MadransArrive(s32 cellBehavior) {
   GameFlag_Set(FLAG_ALHAFRA_MADRANS_ARRIVED);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgAlhafraFinallyWeMadeIt);
   Actor_SetSpeed(ACTOR_MADRAS_ELDER, 1);
   Actor_SetSpeed(ACTOR_MADRAS_MAYOR, 1);
@@ -1229,7 +1229,7 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
 void Alhafra_PirateSeesMadrasMayor(s32 how) {
   Event_SetFlag(FLAG_PIRATE_LEFT);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgAlhafraOooThisAintGood);
   if (how == PIRATE_READ_BY_MIND_READ) {
     FieldEvent_Wait(10);

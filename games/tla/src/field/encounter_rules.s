@@ -167,7 +167,7 @@ gScene_EncounterRules:
 	encounter_rule JupiterLighthouseWhorl, -1, -1, 84, 0
 	encounter_rule JupiterLighthouseRoomBlueKey, -1, -1, 83, 0
 	encounter_rule JupiterLighthouseRoomPhaetonsBladeChest, -1, -1, 84, 0
-	encounter_rule JupiterLighthouseRoomM, -1, -1, 83, 0
+	encounter_rule JupiterLighthouseTerraces, -1, -1, 83, 0
 	encounter_rule MagmaRockSlide, -1, -1, 86, 0
 	encounter_rule MagmaRockSalamanderTailChest, 13, -1, 86, 0
 	encounter_rule MagmaRockSalamanderTailChest, 14, -1, 86, 0
@@ -208,10 +208,10 @@ gScene_EncounterRules:
 	encounter_rule MarsLighthouseEntranceValkyrieMailChest, -1, -1, 93, 0
 	encounter_rule MarsLighthouseEntranceSolBladeChest, -1, -1, 93, 0
 	encounter_rule MarsLighthouseStarRoom, -1, -1, 93, 0
-	encounter_rule MarsLighthouseRoomMInscriptions, -1, -1, 93, 0
+	encounter_rule MarsLighthouseHall, -1, -1, 93, 0
 	encounter_rule MarsLighthouseMercuryLedge, -1, -1, 94, 0
 	encounter_rule MarsLighthouseJupiterLedge, -1, -1, 94, 0
-	encounter_rule MarsLighthouseRoomMAlastorsHoodChest, -1, -1, 94, 0
+	encounter_rule MarsLighthouseMarsLedge, -1, -1, 94, 0
 	encounter_rule MarsLighthouseVenusLedge, -1, -1, 94, 0
 	encounter_rule MarsLighthouseMarsTower, -1, -1, 94, 0
 	encounter_rule MarsLighthouseMercuryTower, -1, -1, 94, 0

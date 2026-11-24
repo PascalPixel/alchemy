@@ -37,12 +37,12 @@ struct MapGridCellAnimation {
 };
 
 void Event_ShowMessageAndWait(s32 actor, s32 flags);
-void Event_ResolvePendingActions(s32 skip);
+void Event_EndLastingPsynergy(s32 skip);
 s32 Party_GetLeaderActor(void);
 void Event_Wait(s32 frames);
 void Event_Start(void);
 void Event_SetDestination(s32 scene, s32 entrance);
-void Event_SetExitRequest(u16 countdown);
+void Event_SetExitRequest(u16 exit);
 void Event_SetMessageId(s32 message);
 s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
@@ -119,7 +119,7 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z,
                                                     s32 angle);
 void Actor_SetAnimationAndWait(s32 actorId, s32 animation);
 void Actor_Jump(s32 actorId, s32 speed, s32 frames);
-void Actor_RunRepeatedMotion(u32 objectId, s32 variant);
+void Actor_RunRepeatedMotion(u32 actorId, s32 count);
 void Actor_SetSpritePriority(u32 actorId, s32 priority);
 void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void Actor_WatchAndSetScript(s32 actorId, s32 watchedActorId);
@@ -132,7 +132,7 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 attribute);
 void Actor_Stop(s32 actorId);
 /// Sets the field's exit request (Event_SetExitRequest, through the overlay's
 /// own import row).
-void Import_EventSetExitRequest(s32 countdown);
+void Import_EventSetExitRequest(s32 exit);
 void Actor_WaitForMove(struct Actor *actor);
 s32 PartyInventory_FindMember(s32 item_id);
 void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset);
@@ -144,7 +144,7 @@ void FieldPsynergy_StartMindReadWave(s32 x, s32 y);
 struct Actor *FieldCamera_GetActor(void);
 s32 FieldYesNo_Ask(s32 atBottom);
 void WorldMap_StartZoom(FIXED zoom, s32 frames);
-void WindowColor_Apply(s32 phase, s32 brightness);
+void WindowColor_Apply(s32 color, s32 brightness);
 void Field_RequestDjinnBattle(u32 flags, u32 djinn);
 void Event_AddPartyMember(s32 unit, s32 announce);
 void MapGrid_WaitForShakeToSettle(void);

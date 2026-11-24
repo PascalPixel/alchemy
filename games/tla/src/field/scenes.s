@@ -283,7 +283,7 @@ gScenes:
 	scene JupiterLighthouseWhorl, 0x6a0, AREA_JUPITER_LIGHTHOUSE, SCENE_TYPE_OTHER, 256, 0
 	scene JupiterLighthouseRoomBlueKey, 0x6a1, AREA_JUPITER_LIGHTHOUSE, SCENE_TYPE_OTHER, 257, 0
 	scene JupiterLighthouseRoomPhaetonsBladeChest, 0x6a2, AREA_JUPITER_LIGHTHOUSE, SCENE_TYPE_OTHER, 258, 0
-	scene JupiterLighthouseRoomM, 0x6a3, AREA_JUPITER_LIGHTHOUSE, SCENE_TYPE_OTHER, 259, 0
+	scene JupiterLighthouseTerraces, 0x6a3, AREA_JUPITER_LIGHTHOUSE, SCENE_TYPE_OTHER, 259, 0
 	scene JupiterLighthouseAerie, 0x6a4, AREA_JUPITER_LIGHTHOUSE, SCENE_TYPE_OTHER, 260, 0
 	scene JupiterLighthouseAerieBeacon, 0x6a5, AREA_JUPITER_LIGHTHOUSE, SCENE_TYPE_OTHER, 260, 0
 	scene Loho, 0x6a6, AREA_LOHO, SCENE_TYPE_TOWN, 261, 1
@@ -307,16 +307,16 @@ gScenes:
 	scene MarsLighthouseEntranceValkyrieMailChest, 0x6aa, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 282, 0
 	scene MarsLighthouseEntranceSolBladeChest, 0x6aa, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 283, 0
 	scene MarsLighthouseStarRoom, 0x6ab, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 284, 0
-	scene MarsLighthouseRoomMInscriptions, 0x6ac, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 277, 0
+	scene MarsLighthouseHall, 0x6ac, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 277, 0
 	scene MarsLighthouseMercuryLedge, 0x6ac, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 285, 0
 	scene MarsLighthouseJupiterLedge, 0x6ac, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 286, 0
-	scene MarsLighthouseRoomMAlastorsHoodChest, 0x6ac, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 287, 0
+	scene MarsLighthouseMarsLedge, 0x6ac, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 287, 0
 	scene MarsLighthouseVenusLedge, 0x6ac, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 288, 0
 	scene MarsLighthouseMarsTower, 0x6ad, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 271, 0
 	scene MarsLighthouseMercuryTower, 0x6ad, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 272, 0
 	scene MarsLighthouseJupiterTower, 0x6ad, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 273, 0
 	scene MarsLighthouseVenusTower, 0x6ad, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 274, 0
-	scene MarsLighthouseRoomMFlame, 0x6ac, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 276, 0
+	scene MarsLighthouseBeaconLedge, 0x6ac, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 276, 0
 	scene MarsLighthouseAerie, 0x6ae, AREA_MARS_LIGHTHOUSE, SCENE_TYPE_OTHER, 275, 0
 	scene TreasureIsleEntrance, 0x6af, AREA_TREASURE_ISLE, SCENE_TYPE_OTHER, 309, 1
 	scene TreasureIsleChests, 0x6af, AREA_TREASURE_ISLE, SCENE_TYPE_OTHER, 310, 1

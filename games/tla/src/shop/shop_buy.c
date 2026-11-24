@@ -90,7 +90,7 @@ next_page:
                        selectionIndex % SHOP_STOCK_PAGE_ITEMS * 32 - 8, 8);
       shop->cursorFrames = 4;
       Shop_DrawStock(stockWindow, selectionIndex);
-      Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemPlainName);
+      Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemDescription);
       WindowSprite_RedrawSavedRectFar(priceWindow);
       Shop_DrawItemPrice(priceWindow, itemId, (u16)stockDefinition->price,
                          SHOP_PRICE_KIND_BUY);
@@ -164,7 +164,7 @@ next_page:
   partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
-  Menu_PlaceOwnerEntryObjectsFar(partyWindow, 2, 0);
+  Menu_ShowPartyFiguresFar(partyWindow, 2, 0);
   itemWindow = Window_CreateFar(16, 11, 14, 9, WINDOW_FLAG_INSTANT);
   redraw = MENU_GRID_CHANGED_PAGE;
 
@@ -180,8 +180,8 @@ next_page:
                        selectionIndex % SHOP_PARTY_PAGE_MEMBERS * 24 - 12, 0);
       shop->cursorFrames = 3;
       if (redraw == MENU_GRID_CHANGED_PAGE) {
-        Menu_CreateOwnerEntryObjectsFar(
-            selectionIndex / SHOP_PARTY_PAGE_MEMBERS * SHOP_PARTY_PAGE_MEMBERS);
+        Menu_CreatePartyFiguresFar(selectionIndex / SHOP_PARTY_PAGE_MEMBERS *
+                                   SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
       }
       Shop_DrawParty(partyWindow, selectionIndex, shop->selectedItem);
@@ -241,13 +241,13 @@ next_page:
   }
 
   ItemIconGrid_SetVisible(0);
-  Menu_ReleaseEntryObjectsFar();
+  Menu_ReleasePartyFiguresFar();
   Window_CloseFar(itemWindow, 2);
   Window_CloseFar(partyWindow, 2);
   wait(1);
   if (purchaseResult == 0 && shop->action == SHOP_ACTION_ARTIFACTS) {
     for (removedCount = 0; removedCount < quantity; removedCount++)
-      Item_AdjustCounterFar(shop->selectedItem, -1);
+      Item_AdjustRareItemStockFar(shop->selectedItem, -1);
     if (Shop_ListAvailableArtifacts() == 0)
       goto close;
     if (selected > shop->stockCount - 1)
@@ -290,16 +290,16 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
   if (window != 0) {
     WindowSprite_PrepareForRedrawFar(window);
     if (stockIndex != 0) {
-      icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
-                                    window, 216, -16);
+      icon = WindowSprite_CreateFar(shop->previousPageIcon,
+                                    WINDOW_SPRITE_SIZE_16X16, window, 216, -16);
       zero = 0;
       icon->kind = zero;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
       icon->animationStep = zero;
     }
     if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
-      icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
-                                    window, 216, 24);
+      icon = WindowSprite_CreateFar(shop->nextPageIcon,
+                                    WINDOW_SPRITE_SIZE_16X16, window, 216, 24);
       zero = 0;
       icon->kind = zero;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
@@ -456,16 +456,16 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
   if (window != 0) {
     WindowSprite_PrepareForRedrawFar(window);
     if (first != 0) {
-      icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
-                                    window, 88, -12);
-      icon->kind = 0;
+      icon = WindowSprite_CreateFar(shop->previousPageIcon,
+                                    WINDOW_SPRITE_SIZE_16X16, window, 88, -12);
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
       icon->animationStep = 0;
     }
     if (first + SHOP_PARTY_PAGE_MEMBERS < count) {
-      icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
-                                    window, 88, 0);
-      icon->kind = 0;
+      icon = WindowSprite_CreateFar(shop->nextPageIcon,
+                                    WINDOW_SPRITE_SIZE_16X16, window, 88, 0);
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
       icon->animationStep = 0;
     }
@@ -535,25 +535,25 @@ void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
   savedEntry = unit->inventory[previewSlot];
   unit->inventory[previewSlot] = itemId | INVENTORY_EQUIPPED;
   Unit_CalculateFar(unitId);
-  previewStats[0] = unit->atk;
-  previewStats[1] = unit->def;
-  previewStats[2] = unit->agi;
+  previewStats[0] = unit->attack;
+  previewStats[1] = unit->defense;
+  previewStats[2] = unit->agility;
   previewStats[3] = unit->luck;
   unit->inventory[previewSlot] = savedEntry;
   Unit_CalculateFar(unitId);
-  baseStats[0] = unit->atk;
-  baseStats[1] = unit->def;
-  baseStats[2] = unit->agi;
+  baseStats[0] = unit->attack;
+  baseStats[1] = unit->defense;
+  baseStats[2] = unit->agility;
   baseStats[3] = unit->luck;
   for (index = 0; index <= 2; index++) {
     if (baseStats[index] > previewStats[index])
-      WindowSprite_CreateFar(shop->statDownIcon, OUTPUT_SIZE_16X16, window, 56,
-                             index * 16 - 4)
-          ->kind = 0;
+      WindowSprite_CreateFar(shop->statDownIcon, WINDOW_SPRITE_SIZE_16X16,
+                             window, 56, index * 16 - 4)
+          ->kind = WINDOW_SPRITE_PLAIN;
     else if (baseStats[index] < previewStats[index])
-      WindowSprite_CreateFar(shop->statUpIcon, OUTPUT_SIZE_16X16, window, 56,
-                             index * 16 - 4)
-          ->kind = 0;
+      WindowSprite_CreateFar(shop->statUpIcon, WINDOW_SPRITE_SIZE_16X16, window,
+                             56, index * 16 - 4)
+          ->kind = WINDOW_SPRITE_PLAIN;
     Text_DrawNumberInWindowFar(baseStats[index], 3, window, 32, index * 16);
     if (baseStats[index] != previewStats[index])
       Text_DrawNumberInWindowFar(previewStats[index], 3, window, 72,
@@ -617,9 +617,9 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
       quantityLimit = (u32)gMainRoutineState.coins / (u16)item->price;
 
     if (shop->action == SHOP_ACTION_ARTIFACTS) {
-      artifactsInStock = Item_AdjustCounterFar(itemId, 0);
+      artifactsInStock = Item_AdjustRareItemStockFar(itemId, 0);
       if (quantityLimit > artifactsInStock)
-        artifactsInStock = Item_AdjustCounterFar(itemId, 0);
+        artifactsInStock = Item_AdjustRareItemStockFar(itemId, 0);
       else
         artifactsInStock = quantityLimit;
       quantityLimit = artifactsInStock;
@@ -699,9 +699,10 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
     if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
       VramCache_Load(resourceSlot, 8 * TILE_SIZE_4BPP, 0);
       // The bar is two 32x8 sprites, the right one four tiles on.
-      WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_32X8, window, 0, 0);
-      rightHalf =
-          WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_32X8, window, 32, 0);
+      WindowSprite_CreateFar(resourceSlot, WINDOW_SPRITE_SIZE_32X8, window, 0,
+                             0);
+      rightHalf = WindowSprite_CreateFar(resourceSlot, WINDOW_SPRITE_SIZE_32X8,
+                                         window, 32, 0);
       rightHalf->sprite.oam.index += 4;
       for (;;) {
         if (gInput.pressed & KEY_A) {

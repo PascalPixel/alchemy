@@ -61,7 +61,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// elder's permission sends it back to town for a permit.
 void MadraDrawbridge_AskGoingToOsenia(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgMadraGoingToOsenia);
   // "You goin' to Osenia?" Yes: "You'll have to head back to town and get..."
   // No: "Then get lost, pal. These parts can be dangerous..."
@@ -86,7 +86,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 void MadraDrawbridge_BlockBridge(void) {
   if (Event_GetFlag(FLAG_GUARDS_BLOCKED_BRIDGE) == 0) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     if (Event_GetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION) == 0) {
       FieldCamera_SetSpeed(1.5);
       FieldCamera_MoveTo(164, CAMERA_KEEP, 260, 1);
@@ -125,7 +125,7 @@ void MadraDrawbridge_BlockBridge(void) {
 /// With the elder's permission, the guards greet the party and let it through.
 void MadraDrawbridge_LetPermittedPartyThrough(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_SetMessageId((s32)MsgMadraHeardAboutYou);
   FieldCamera_MoveTo(164, CAMERA_KEEP, 260, 1);
   FieldCamera_WaitForArrival();

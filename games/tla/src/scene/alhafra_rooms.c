@@ -148,8 +148,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void AlhafraRooms_MeetAlex(void) {
   Event_SetFlag(FLAG_ALHAFRA_MET_ALEX);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsSoYouveFinallyCome);
+  FieldEvent_EndLastingPsynergy(0);
+  FieldEvent_SetMessageId((s32)MsgAlhafraRoomsSoYouveFinallyCome);
   FieldCamera_MoveToActorById(ACTOR_ALEX, 1);
   Actor_WalkToAndWait(ACTOR_FELIX, 452, 335);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
@@ -200,7 +200,7 @@ void AlhafraRooms_TalkToItemMerchant(s32 actor) {
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_ALHAFRA_ITEMS, actor);
   } else {
-    Event_SetMessageId((s32)MsgAlhafraInteriorsDontMentionTheTidalWave);
+    Event_SetMessageId((s32)MsgAlhafraRoomsDontMentionTheTidalWave);
     // "Don't mention the tidal wave to the other merchants... It did a lot..."
     Event_ShowMessageAndWait(actor, 0);
   }
@@ -214,7 +214,7 @@ void AlhafraRooms_TalkToInnkeeper(s32 actor) {
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(ALHAFRA_INN, actor);
   } else {
-    Event_SetMessageId((s32)MsgAlhafraInteriorsMaybeYouveNoticedButA);
+    Event_SetMessageId((s32)MsgAlhafraRoomsMaybeYouveNoticedButA);
     // "Maybe you've noticed, but a lot of folk here lost their homes in the..."
     Event_ShowMessageAndWait(actor, 0);
   }
@@ -228,7 +228,7 @@ void AlhafraRooms_TalkToPriest(s32 actor) {
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
-    Event_SetMessageId((s32)MsgAlhafraInteriorsInTheMiddleOfOsenia);
+    Event_SetMessageId((s32)MsgAlhafraRoomsInTheMiddleOfOsenia);
     // "In the middle of Osenia, there's a terrible village where they..."
     Event_ShowMessageAndWait(actor, 0);
   }
@@ -238,7 +238,7 @@ void AlhafraRooms_TalkToPriest(s32 actor) {
 /// houseguests.
 void AlhafraRooms_TalkToHostess(s32 actor) {
   Actor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsAughWithAllTheseDemanding);
+  FieldEvent_SetMessageId((s32)MsgAlhafraRoomsAughWithAllTheseDemanding);
   // "Augh! With all these demanding houseguests, I feel like I've lost..."
   Event_ShowMessage(actor, 0);
 }
@@ -249,10 +249,10 @@ void AlhafraRooms_TalkToHostess(s32 actor) {
 void AlhafraRooms_GuestsAskForTea(void) {
   Event_SetFlag(FLAG_GUESTS_ASKED_FOR_TEA);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 152, 328);
   Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
-  FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsArentYouThirstyMyDear);
+  FieldEvent_SetMessageId((s32)MsgAlhafraRoomsArentYouThirstyMyDear);
   Actor_FaceDirection(ACTOR_DEMANDING_GUEST, FACING_EAST, 0);
   FieldEvent_Wait(20);
   // "Aren't you thirsty, my dear?"
@@ -303,7 +303,7 @@ void AlhafraRooms_GuestsAskForTea(void) {
 /// house is no lady at all.
 void AlhafraRooms_TalkToDemandingGuest(s32 actor) {
   Actor_FaceEachOther(actor, gMainRoutineState.leaderActorId, 0);
-  FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsWellISayItSeems);
+  FieldEvent_SetMessageId((s32)MsgAlhafraRoomsWellISayItSeems);
   // "Well! I say! It seems the lady of the house is no lady at all!"
   Event_ShowMessage(actor, 0);
   Actor_FaceDirection(ACTOR_DEMANDING_GUEST, FACING_SOUTH_SOUTHEAST, 0);
@@ -312,7 +312,7 @@ void AlhafraRooms_TalkToDemandingGuest(s32 actor) {
 /// Felix casts Mind Read on Alex, who turns to him and asks him to stop.
 void AlhafraRooms_ReadAlexsMind(s32 unused, s32 actor) {
   Actor_FaceEachOther(actor, gMainRoutineState.leaderActorId, 0);
-  FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsReallyIDoWishYou);
+  FieldEvent_SetMessageId((s32)MsgAlhafraRoomsReallyIDoWishYou);
   // "Really, I do wish you would quit using your Mind Read on me... Trust..."
   Event_ShowMessage(actor, 0);
   Actor_FaceDirection(actor, FACING_NORTHEAST, 0);
@@ -323,8 +323,7 @@ void AlhafraRooms_ReadAlexsMind(s32 unused, s32 actor) {
 /// soon be gone.
 void AlhafraRooms_HostTellsOfRepairs(s32 actor) {
   Event_SetFlag(FLAG_HOST_TOLD_OF_REPAIRS);
-  FieldEvent_SetMessageId(
-      (s32)MsgAlhafraInteriorsWeveAllStartedWorkingTogether);
+  FieldEvent_SetMessageId((s32)MsgAlhafraRoomsWeveAllStartedWorkingTogether);
   // "We've all started working together to repair the houses!"
   Event_ShowMessage(actor, 0);
   FieldEvent_Wait(10);
@@ -336,7 +335,7 @@ void AlhafraRooms_HostTellsOfRepairs(s32 actor) {
 /// Felix talks to Alex after Briggs is caught, and Alex asks whether it was
 /// he who caught him.
 void AlhafraRooms_AlexHearsOfBriggs(s32 actor) {
-  s32 msg = (s32)MsgAlhafraInteriorsSoIHearYouCaught;
+  s32 msg = (s32)MsgAlhafraRoomsSoIHearYouCaught;
 
   FieldEvent_SetMessageId(msg);
   // "So, I hear you caught Briggs..."
@@ -501,9 +500,8 @@ void AlhafraRooms_OverhearCrossboneIsleTale(void) {
     {
       Event_SetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE);
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
-      FieldEvent_SetMessageId(
-          (s32)MsgAlhafraInteriorsLegendsSaidThatCrossboneIsle);
+      FieldEvent_EndLastingPsynergy(0);
+      FieldEvent_SetMessageId((s32)MsgAlhafraRoomsLegendsSaidThatCrossboneIsle);
       Actor_WalkToAndWait(ACTOR_FELIX, 504, 328);
       Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_WEST);
       FieldCamera_MoveTo(408, CAMERA_KEEP, 328, 1);
@@ -759,119 +757,118 @@ struct Trigger gAlhafraRooms_Triggers[] = {
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_PRIEST, CONDITION_ALWAYS,
      EVENT(AlhafraRooms_TalkToPriest)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 214, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsSeasonalVeggiesBoilingWithSome))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsSeasonalVeggiesBoilingWithSome))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 215, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsThereIsASeafoodPie))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsThereIsASeafoodPie))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 216, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsItLooksLikeSomeKind))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsItLooksLikeSomeKind))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 217, CONDITION_ALWAYS,
-     FIND_MESSAGE(
-         MSGNO(MsgAlhafraInteriorsItsAlhafrasFamousBroiledLobsterits))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsItsAlhafrasFamousBroiledLobsterits))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsThatSeafoodStewHasAn))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsThatSeafoodStewHasAn))},
     {TRIGGER_STEP, 30, FLAG_ALHAFRA_MET_ALEX, EVENT(AlhafraRooms_MeetAlex)},
     {TRIGGER_TALK, ACTOR_WOMAN_ANGRY_AT_THE_SALE, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIDontCareIfIt)},
+     MSGNO(MsgAlhafraRoomsIDontCareIfIt)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_SHABBY_BUYERS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsThoseGuysWhoBoughtThe)},
+     MSGNO(MsgAlhafraRoomsThoseGuysWhoBoughtThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ANGRY_AT_THE_SALE,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIWonderIfTheMayor)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIWonderIfTheMayor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_SHABBY_BUYERS,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsWhyWouldAnyonePaySo)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsWhyWouldAnyonePaySo)},
     {TRIGGER_TALK, ACTOR_DEMANDING_GUEST, FLAG_GUESTS_ASKED_FOR_TEA,
      EVENT(AlhafraRooms_GuestsAskForTea)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
      ACTOR_DEMANDING_GUEST | TRIGGER_SUBJECT_OWN_EFFECT,
      FLAG_GUESTS_ASKED_FOR_TEA, EVENT(AlhafraRooms_GuestsAskForTea)},
     {TRIGGER_TALK, ACTOR_HOST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsWereTakingCareOfSome)},
+     MSGNO(MsgAlhafraRoomsWereTakingCareOfSome)},
     {TRIGGER_TALK, ACTOR_HOSTESS, CONDITION_ALWAYS,
      EVENT(AlhafraRooms_TalkToHostess)},
     {TRIGGER_TALK, ACTOR_DEMANDING_GUEST, CONDITION_ALWAYS,
      EVENT(AlhafraRooms_TalkToDemandingGuest)},
     {TRIGGER_TALK, ACTOR_DEMANDING_GUESTS_WIFE, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsWhenWeLostOurHouse)},
+     MSGNO(MsgAlhafraRoomsWhenWeLostOurHouse)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIJustWishThatOld)},
+     MSGNO(MsgAlhafraRoomsIJustWishThatOld)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOSTESS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIDontMindHelpingPeople)},
+     MSGNO(MsgAlhafraRoomsIDontMindHelpingPeople)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DEMANDING_GUEST,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsAllIAskIsFor)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsAllIAskIsFor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DEMANDING_GUESTS_WIFE,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIsThisHowAYoung)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIsThisHowAYoung)},
     {TRIGGER_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsDontMentionTheTidalWave)},
+     MSGNO(MsgAlhafraRoomsDontMentionTheTidalWave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIfAllMyGoodsWere)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIfAllMyGoodsWere)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsMaybeYouveNoticedButA)},
+     MSGNO(MsgAlhafraRoomsMaybeYouveNoticedButA)},
     {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsYouSeeHowFullOur)},
+     MSGNO(MsgAlhafraRoomsYouSeeHowFullOur)},
     {TRIGGER_TALK, ACTOR_MAN_ASKING_FOR_MONEY, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsTheTownOughtToGive)},
+     MSGNO(MsgAlhafraRoomsTheTownOughtToGive)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsICantBelieveTheInnkeeper)},
+     MSGNO(MsgAlhafraRoomsICantBelieveTheInnkeeper)},
     {TRIGGER_TALK, ACTOR_INN_COOK, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsTheInnkeeperToldMeTo)},
+     MSGNO(MsgAlhafraRoomsTheInnkeeperToldMeTo)},
     {TRIGGER_TALK, ACTOR_MAN_ON_THE_MEALS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsTheInnkeeperServesHisPaying)},
+     MSGNO(MsgAlhafraRoomsTheInnkeeperServesHisPaying)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_MEALS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsWereAllGuestsInThe)},
+     MSGNO(MsgAlhafraRoomsWereAllGuestsInThe)},
     {TRIGGER_TALK, ACTOR_HUNGRY_CHILD, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsOhhhImHungryMyTummy)},
+     MSGNO(MsgAlhafraRoomsOhhhImHungryMyTummy)},
     {TRIGGER_TALK, ACTOR_CHILD_MISSING_MEAT, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIDontThinkIveHad)},
+     MSGNO(MsgAlhafraRoomsIDontThinkIveHad)},
     {TRIGGER_TALK, ACTOR_MAN_ANGRY_AT_THE_MAYOR, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIllNeverForgiveTheMayor)},
+     MSGNO(MsgAlhafraRoomsIllNeverForgiveTheMayor)},
     {TRIGGER_TALK, ACTOR_WOMAN_WORRIED_ABOUT_HER_GUESTS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsOurGuestsAreVeryUpset)},
+     MSGNO(MsgAlhafraRoomsOurGuestsAreVeryUpset)},
     {TRIGGER_TALK, ACTOR_BOY_ON_THE_MAYORS_TREASURE, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsMyPopsBeenLookinAround)},
+     MSGNO(MsgAlhafraRoomsMyPopsBeenLookinAround)},
     {TRIGGER_TALK, ACTOR_CHILD_COOPED_UP, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsWhyDoWeAllHave)},
+     MSGNO(MsgAlhafraRoomsWhyDoWeAllHave)},
     {TRIGGER_TALK, ACTOR_MAN_BEARING_THE_DISCOMFORT, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsWeAllHaveToBear)},
+     MSGNO(MsgAlhafraRoomsWeAllHaveToBear)},
     {TRIGGER_TALK, ACTOR_WOMAN_EYEING_THE_WARRIOR, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIHeardTheresOnlyOne)},
+     MSGNO(MsgAlhafraRoomsIHeardTheresOnlyOne)},
     {TRIGGER_TALK, ACTOR_ALEX, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsTheBrokenMastOnThe)},
+     MSGNO(MsgAlhafraRoomsTheBrokenMastOnThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsINeverImaginedAnyoneFrom)},
+     MSGNO(MsgAlhafraRoomsINeverImaginedAnyoneFrom)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsPerhapsTheMayorWillCover)},
+     MSGNO(MsgAlhafraRoomsPerhapsTheMayorWillCover)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ASKING_FOR_MONEY,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIBetTheMasterOf)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIBetTheMasterOf)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsICantBelieveTheInnkeeperIs)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsICantBelieveTheInnkeeperIs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_COOK, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsICantBelieveImOnly)},
+     MSGNO(MsgAlhafraRoomsICantBelieveImOnly)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_MEALS,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsMaybeItsCauseAllWeve)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsMaybeItsCauseAllWeve)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_MEALS,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIThinkIveLostWeight)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIThinkIveLostWeight)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HUNGRY_CHILD, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsMaybeImJustHungryBut)},
+     MSGNO(MsgAlhafraRoomsMaybeImJustHungryBut)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_MISSING_MEAT,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsSniffSniffThatSmellThats)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsSniffSniffThatSmellThats)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ANGRY_AT_THE_MAYOR,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIHopeTheMayorsTreasure)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIHopeTheMayorsTreasure)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WORRIED_ABOUT_HER_GUESTS,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIKnowOurMayorsBad)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIKnowOurMayorsBad)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_THE_MAYORS_TREASURE,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsEveryoneSaysTheHillBeneath)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsEveryoneSaysTheHillBeneath)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_COOPED_UP,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIThinkTheyPutMe)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIThinkTheyPutMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_BEARING_THE_DISCOMFORT,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsWhenYoureLivingPackedIn)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsWhenYoureLivingPackedIn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_EYEING_THE_WARRIOR,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsThatWarriorNextDoorIs)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsThatWarriorNextDoorIs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
      ACTOR_ALEX | TRIGGER_SUBJECT_OWN_EFFECT, CONDITION_ALWAYS,
      EVENT(AlhafraRooms_ReadAlexsMind)},
     {TRIGGER_TALK, ACTOR_PRIEST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsInTheMiddleOfOsenia)},
+     MSGNO(MsgAlhafraRoomsInTheMiddleOfOsenia)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsThePeopleOfGarohBrought)},
+     MSGNO(MsgAlhafraRoomsThePeopleOfGarohBrought)},
     {TRIGGER_TABLE_END},
 };
 
@@ -894,92 +891,91 @@ struct Trigger gAlhafraRooms_TriggersOnceBriggsIsCaught[] = {
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_PRIEST, CONDITION_ALWAYS,
      EVENT(AlhafraRooms_TalkToPriest)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 214, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsSeasonalVeggiesBoilingWithSome))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsSeasonalVeggiesBoilingWithSome))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 215, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsThereIsASeafoodPie))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsThereIsASeafoodPie))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 216, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsItLooksLikeSomeKind))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsItLooksLikeSomeKind))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 217, CONDITION_ALWAYS,
-     FIND_MESSAGE(
-         MSGNO(MsgAlhafraInteriorsItsAlhafrasFamousBroiledLobsterits))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsItsAlhafrasFamousBroiledLobsterits))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsThatSeafoodStewHasAn))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsThatSeafoodStewHasAn))},
     {TRIGGER_TALK, ACTOR_WOMAN_EYEING_THE_WARRIOR,
      IF_FLAG_SET(FLAG_CHAMPA_MET_ALEX),
-     MSGNO(MsgAlhafraInteriorsThatCuteBoyNextDoor)},
+     MSGNO(MsgAlhafraRoomsThatCuteBoyNextDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_EYEING_THE_WARRIOR,
      IF_FLAG_SET(FLAG_CHAMPA_MET_ALEX),
-     MSGNO(MsgAlhafraInteriorsTheFellowNextDoorWas)},
+     MSGNO(MsgAlhafraRoomsTheFellowNextDoorWas)},
     {TRIGGER_TALK, ACTOR_WOMAN_ANGRY_AT_THE_SALE, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsImAmazedThoseGuysWho)},
+     MSGNO(MsgAlhafraRoomsImAmazedThoseGuysWho)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_SHABBY_BUYERS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIThoughtItWasWeird)},
+     MSGNO(MsgAlhafraRoomsIThoughtItWasWeird)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ANGRY_AT_THE_SALE,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsPiratesHereInAlhafraThats)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsPiratesHereInAlhafraThats)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_SHABBY_BUYERS,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsThoseGuysWereJustTrying)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsThoseGuysWereJustTrying)},
     {TRIGGER_TALK, ACTOR_HOST, FLAG_HOST_TOLD_OF_REPAIRS,
      EVENT(AlhafraRooms_HostTellsOfRepairs)},
     {TRIGGER_TALK, ACTOR_HOST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsOoohNotMuchLongerAnd)},
+     MSGNO(MsgAlhafraRoomsOoohNotMuchLongerAnd)},
     {TRIGGER_TALK, ACTOR_HOSTESS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsOnceMyOldNeighborsHouse)},
+     MSGNO(MsgAlhafraRoomsOnceMyOldNeighborsHouse)},
     {TRIGGER_TALK, ACTOR_DEMANDING_GUEST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsOnceEveryoneStartedWorkingTo)},
+     MSGNO(MsgAlhafraRoomsOnceEveryoneStartedWorkingTo)},
     {TRIGGER_TALK, ACTOR_DEMANDING_GUESTS_WIFE, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIWonderWhatHappenedThats)},
+     MSGNO(MsgAlhafraRoomsIWonderWhatHappenedThats)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsAhhItsSoRelievingTo)},
+     MSGNO(MsgAlhafraRoomsAhhItsSoRelievingTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOSTESS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsItWontBeLongUntil)},
+     MSGNO(MsgAlhafraRoomsItWontBeLongUntil)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DEMANDING_GUEST,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsTheLadyOfThisHouse)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsTheLadyOfThisHouse)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DEMANDING_GUESTS_WIFE,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsTheLadyOfTheHouse)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsTheLadyOfTheHouse)},
     {TRIGGER_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsTheMadransDroppedInAnd)},
+     MSGNO(MsgAlhafraRoomsTheMadransDroppedInAnd)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsTheMadransMustHaveBeen)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsTheMadransMustHaveBeen)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsAsSoonAsImDone)},
+     MSGNO(MsgAlhafraRoomsAsSoonAsImDone)},
     {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsWereAllTakingTurnsHelping)},
+     MSGNO(MsgAlhafraRoomsWereAllTakingTurnsHelping)},
     {TRIGGER_TALK, ACTOR_MAN_ASKING_FOR_MONEY, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsEveryonesWorkingSoHardTo)},
+     MSGNO(MsgAlhafraRoomsEveryonesWorkingSoHardTo)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsTheresStillPlentyOfWork)},
+     MSGNO(MsgAlhafraRoomsTheresStillPlentyOfWork)},
     {TRIGGER_TALK, ACTOR_INN_COOK, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsTonightsMealIsChockFull)},
+     MSGNO(MsgAlhafraRoomsTonightsMealIsChockFull)},
     {TRIGGER_TALK, ACTOR_CHILD_MISSING_MEAT, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsMomSaidWereGonnaHave)},
+     MSGNO(MsgAlhafraRoomsMomSaidWereGonnaHave)},
     {TRIGGER_TALK, ACTOR_MAN_BEARING_THE_DISCOMFORT, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsMySonHasTerribleLuck)},
+     MSGNO(MsgAlhafraRoomsMySonHasTerribleLuck)},
     {TRIGGER_TALK, ACTOR_WOMAN_EYEING_THE_WARRIOR, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsTheGuyNextToUs)},
+     MSGNO(MsgAlhafraRoomsTheGuyNextToUs)},
     {TRIGGER_TALK, ACTOR_ALEX, CONDITION_ALWAYS,
      EVENT(AlhafraRooms_AlexHearsOfBriggs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsWhyDoIHaveTo)},
+     MSGNO(MsgAlhafraRoomsWhyDoIHaveTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIMayNotLookVery)},
+     MSGNO(MsgAlhafraRoomsIMayNotLookVery)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ASKING_FOR_MONEY,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsWeHeardALoudPopping)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsWeHeardALoudPopping)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIWonderWhatOurNew)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIWonderWhatOurNew)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_COOK, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIWasToldToUse)},
+     MSGNO(MsgAlhafraRoomsIWasToldToUse)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_MISSING_MEAT,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsOhIfWeGetA)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsOhIfWeGetA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_BEARING_THE_DISCOMFORT,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIGuessIJustDont)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIGuessIJustDont)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_EYEING_THE_WARRIOR,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsOurNeighborIsSoMellow)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsOurNeighborIsSoMellow)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ALEX, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsFeelFreeToHelpWhomever)},
+     MSGNO(MsgAlhafraRoomsFeelFreeToHelpWhomever)},
     {TRIGGER_TALK, ACTOR_PRIEST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsCapturingTheDreadedBriggsWas)},
+     MSGNO(MsgAlhafraRoomsCapturingTheDreadedBriggsWas)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIThinkThisManMight)},
+     MSGNO(MsgAlhafraRoomsIThinkThisManMight)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1002,81 +998,80 @@ struct Trigger gAlhafraRooms_TriggersOnceTheMastIsCleared[] = {
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_PRIEST, CONDITION_ALWAYS,
      EVENT(AlhafraRooms_TalkToPriest)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 214, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsSeasonalVeggiesBoilingWithSome))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsSeasonalVeggiesBoilingWithSome))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 215, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsThereIsASeafoodPie))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsThereIsASeafoodPie))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 216, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsItLooksLikeSomeKind))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsItLooksLikeSomeKind))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 217, CONDITION_ALWAYS,
-     FIND_MESSAGE(
-         MSGNO(MsgAlhafraInteriorsItsAlhafrasFamousBroiledLobsterits))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsItsAlhafrasFamousBroiledLobsterits))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsThatSeafoodStewHasAn))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraRoomsThatSeafoodStewHasAn))},
     {TRIGGER_STEP, 31, IF_FLAG_SET(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE),
      EVENT(AlhafraRooms_OverhearCrossboneIsleTale)},
     {TRIGGER_TALK, ACTOR_WOMAN_ANGRY_AT_THE_SALE, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIDontWantToSay)},
+     MSGNO(MsgAlhafraRoomsIDontWantToSay)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_SHABBY_BUYERS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsBriggsDidntCommitAnyCrimes)},
+     MSGNO(MsgAlhafraRoomsBriggsDidntCommitAnyCrimes)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ANGRY_AT_THE_SALE,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsBriggsPaidForTheBoat)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsBriggsPaidForTheBoat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_SHABBY_BUYERS,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIDontBelieveForOne)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIDontBelieveForOne)},
     {TRIGGER_TALK, ACTOR_HOST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsFixingThatOldGuysHouse)},
+     MSGNO(MsgAlhafraRoomsFixingThatOldGuysHouse)},
     {TRIGGER_TALK, ACTOR_HOSTESS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsTheRepairsOnOurNeighbors)},
+     MSGNO(MsgAlhafraRoomsTheRepairsOnOurNeighbors)},
     {TRIGGER_TALK, ACTOR_DEMANDING_GUEST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsMyHouseIsDamagedMore)},
+     MSGNO(MsgAlhafraRoomsMyHouseIsDamagedMore)},
     {TRIGGER_TALK, ACTOR_DEMANDING_GUESTS_WIFE, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsMyHusbandAndIDont)},
+     MSGNO(MsgAlhafraRoomsMyHusbandAndIDont)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsWillTheyEverGetOut)},
+     MSGNO(MsgAlhafraRoomsWillTheyEverGetOut)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOSTESS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIDontHaveAnythingTo)},
+     MSGNO(MsgAlhafraRoomsIDontHaveAnythingTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DEMANDING_GUEST,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIDontMindNotBeing)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIDontMindNotBeing)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DEMANDING_GUESTS_WIFE,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIHatedThisPlaceAt)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIHatedThisPlaceAt)},
     {TRIGGER_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsTheBridgeToTheWest)},
+     MSGNO(MsgAlhafraRoomsTheBridgeToTheWest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsPeopleWillStartTravelingAgain)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsPeopleWillStartTravelingAgain)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsWereStillRecoveringFromThe)},
+     MSGNO(MsgAlhafraRoomsWereStillRecoveringFromThe)},
     {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsTheMayorUsedTheMoney)},
+     MSGNO(MsgAlhafraRoomsTheMayorUsedTheMoney)},
     {TRIGGER_TALK, ACTOR_MAN_ASKING_FOR_MONEY, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsItSeemsThatBriggsBroke)},
+     MSGNO(MsgAlhafraRoomsItSeemsThatBriggsBroke)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsBriggsMightHaveHadA)},
+     MSGNO(MsgAlhafraRoomsBriggsMightHaveHadA)},
     {TRIGGER_TALK, ACTOR_INN_COOK, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsABiggerBoatCouldHaul)},
+     MSGNO(MsgAlhafraRoomsABiggerBoatCouldHaul)},
     {TRIGGER_TALK, ACTOR_CHILD_MISSING_MEAT, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIJustWantAHouse)},
+     MSGNO(MsgAlhafraRoomsIJustWantAHouse)},
     {TRIGGER_TALK, ACTOR_MAN_BEARING_THE_DISCOMFORT, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsSomeoneSaidMySonAnd)},
+     MSGNO(MsgAlhafraRoomsSomeoneSaidMySonAnd)},
     {TRIGGER_TALK, ACTOR_WOMAN_EYEING_THE_WARRIOR, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsSoThatAlexFellowLeft)},
+     MSGNO(MsgAlhafraRoomsSoThatAlexFellowLeft)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsAfterTheTidalWaveIt)},
+     MSGNO(MsgAlhafraRoomsAfterTheTidalWaveIt)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsTheMayorMayHavePulled)},
+     MSGNO(MsgAlhafraRoomsTheMayorMayHavePulled)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ASKING_FOR_MONEY,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsBriggsAndHisWifeWere)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsBriggsAndHisWifeWere)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIfIHadAKey)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIfIHadAKey)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_COOK, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsSoWhatIfTradeBrings)},
+     MSGNO(MsgAlhafraRoomsSoWhatIfTradeBrings)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_MISSING_MEAT,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIdReallyLikeToHave)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIdReallyLikeToHave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_BEARING_THE_DISCOMFORT,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsIsntAnyoneHelpingMyFamily)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsIsntAnyoneHelpingMyFamily)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_EYEING_THE_WARRIOR,
-     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriorsHeWasJustMyType)},
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraRoomsHeWasJustMyType)},
     {TRIGGER_TALK, ACTOR_PRIEST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsIHeardYouWereThere)},
+     MSGNO(MsgAlhafraRoomsIHeardYouWereThere)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriorsTheyWereSoConfidentWhen)},
+     MSGNO(MsgAlhafraRoomsTheyWereSoConfidentWhen)},
     {TRIGGER_TABLE_END},
 };

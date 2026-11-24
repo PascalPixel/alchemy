@@ -69,8 +69,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   }
   state->transferMode = CANVAS_COPY_AND_FADE;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  BattleEffect_FetchRectangleBlitters(args->side, draw);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
+  BattleEffect_BuildCanvasBlitters(args->side, draw);
 
   // No spark is alive yet.
   for (i = 0, life = &state->particles[0].variant;

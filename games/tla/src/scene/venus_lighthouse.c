@@ -111,7 +111,7 @@ enum { VENUS_COLOR_MARK_TAG = 0x212 }; ///< the tag that marks the timer
 
 /// The scene's name for the byte Actor keeps for scene code. A statue with
 /// SW_VENUS_IMMOVABLE set cannot be pushed.
-enum { SW_VENUS_IMMOVABLE = SW_RISE_COUNTER };
+enum { SW_VENUS_IMMOVABLE = SW_SCENE_COUNTER };
 
 #define Actor_SetSpriteFlags                                                   \
   ((void (*)(struct Actor *, s32))Actor_SetSpriteFlags)
@@ -301,7 +301,7 @@ UNUSED void PushedActor_AdvancePair(void) {
   if (MapGrid_CheckCollision(pillar, &targetPosition) > 0)
     return;
 
-  transitionBusy = pillar->riseCounter;
+  transitionBusy = pillar->sceneCounter;
   if (transitionBusy != 0)
     return;
 
@@ -341,7 +341,7 @@ UNUSED void VenusLighthouse_Nothing(void) {}
 
 /// Flashes the leader white every fourth frame, with the sound of a breaking
 /// item every eighth.
-s32 VenusLighthouse_PulseChildEffect(void *actor) {
+s32 VenusLighthouse_FlashStruckLeader(void *actor) {
   if ((gFrameCount & 3) == 0)
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   else
@@ -409,7 +409,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 // statue that repels the leader, the reliefs and the paths Reveal shows.
 
 void Exit_PrepareActorAnimation(s32 id, s32 side);
-void Actor_VanishInSparks(s32 objectId);
+void Actor_AppearInSparks(s32 objectId);
 void VenusLighthouse_FelixLeaves(void);
 
 void VenusLighthouse_RepelLeader(void);
@@ -434,7 +434,7 @@ void VenusLighthouse_RepelLeader(void) {
   s32 z;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_SetMovementTypeById(leader, gVenusLeaderDazedScript);
   Actor_WaitForScriptEndById(leader);
   Actor_SetSpriteColor(Actor_GetById(leader), SPRITE_COLOR_GREY);
@@ -481,7 +481,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     leader->y.fixed = 0;
   } else if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_Wait(5);
     MapGrid_CopyCellTilesIndicesRect(52, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(52, 117, 41, 117, 3, 5);
@@ -504,7 +504,7 @@ void VenusLighthouse_SinkStatue(void) {
 
   statue = Actor_Get(ACTOR_FLOOR_SWITCH_STATUE);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (FIELD_CELL(statue->x.fixed) == 42) {
     FieldEvent_Wait(30);
     Event_PlaySound(SE_THUMP);
@@ -523,7 +523,7 @@ void VenusLighthouse_SinkStatue(void) {
 /// Searching the relief shows its words.
 void VenusLighthouse_ReadRelief(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetAnimation(FieldParty_GetLeaderActor(), ANIM_STAND);
   // "There are words carved into the relief... If ye seek to climb Venus..."
   Message_ShowCentered((s32)MsgVenusLighthouseReliefWords, 1);
@@ -533,7 +533,7 @@ void VenusLighthouse_ReadRelief(void) {
 /// Searching the other relief shows that only a true heart knows the road.
 void VenusLighthouse_ReadTrueHeart(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_SetAnimation(FieldParty_GetLeaderActor(), ANIM_STAND);
   // "The true road can only be known by he who bears a true heart."
   Message_ShowCentered((s32)MsgVenusLighthouseTrueHeart, 1);
@@ -611,7 +611,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineState.entrance == VENUS_LIGHTHOUSE_FROM_TITLE) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     VenusLighthouse_FelixLeaves();
     VenusLighthouse_DoubtLeaving();
     Event_End();
@@ -655,7 +655,7 @@ s32 Scene_Initialize(void) {
     state->restartScene = SCENE_VENUS_LIGHTHOUSE;
     state->restartEntrance = VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS;
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     VenusLighthouse_FelixLeaves();
     VenusLighthouse_DoubtLeaving();
     Event_End();
@@ -820,7 +820,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
   Actor_SetPosition(ACTOR_ALEX, 680, 920);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
-  Actor_VanishInSparks(ACTOR_ALEX);
+  Actor_AppearInSparks(ACTOR_ALEX);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -1287,10 +1287,10 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 /// The leader's actor script as the statue throws him back
 /// (VenusLighthouse_RepelLeader). He swells and shrinks ten times, flashing
-/// (VenusLighthouse_PulseChildEffect).
+/// (VenusLighthouse_FlashStruckLeader).
 s32 gVenusLeaderDazedScript[] = {
     SC_ANIMATION(12),
-    SC_SET(SW_HOOK, (s32)VenusLighthouse_PulseChildEffect),
+    SC_SET(SW_HOOK, (s32)VenusLighthouse_FlashStruckLeader),
     SC_LABEL(1),
     SC_SET(SW_SCALE_X, 11 * FIXED_ONE / 10),
     SC_SET(SW_SCALE_Y, 11 * FIXED_ONE / 10),

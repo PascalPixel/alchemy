@@ -27,7 +27,7 @@
 
 #include "game/inventory.h"
 #include "item_ids.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "version.h"
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
@@ -313,7 +313,7 @@ void ShopTest_TalkToSunshinesWife(s32 actor) {
 
 /// Opens the item picker for an item to show, as Naribwe's fortune-teller asks
 /// for one, and discards the member and slot chosen.
-void ShopTest_TestItemSelection(void) {
+void ShopTest_OpenItemPicker(void) {
   s32 selection[2];
 
   ItemPicker_RunToShow(&selection[1], &selection[0]);
@@ -509,7 +509,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, ACTOR_SANCTUM_MESSAGES, CONDITION_ALWAYS,
      EVENT(ShopTest_BrowseSanctumMessages)},
     {TRIGGER_TALK, ACTOR_ITEM_PICKER, CONDITION_ALWAYS,
-     EVENT(ShopTest_TestItemSelection)},
+     EVENT(ShopTest_OpenItemPicker)},
     {TRIGGER_TALK, ACTOR_NAME_ENTRY, CONDITION_ALWAYS,
      EVENT(ShopTest_EditPartyNames)},
     {TRIGGER_TALK, ACTOR_MURAMASA_AND_SUMMON, CONDITION_ALWAYS,
@@ -676,7 +676,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 void Unit_Calculate(s32 owner);
 
 /// Raises every party member `levels` levels.
-void ShopTest_AdjustPartyLevels(s32 levels) {
+void ShopTest_RaisePartyLevels(s32 levels) {
   s16 owners[16];
   s32 count = FieldParty_ListMembers(owners);
   s32 i;
@@ -716,12 +716,12 @@ void ShopTest_RunLevelEditor(void) {
     }
     wait(1);
     if ((gInput.pressed & KEY_START) || (gInput.pressed & KEY_SELECT)) {
-      ShopTest_AdjustPartyLevels(5);
+      ShopTest_RaisePartyLevels(5);
       Sound_Play(MUS_SUPER_LUCKY);
       redraw = 1;
     }
     if (gInput.pressed & KEY_A) {
-      ShopTest_AdjustPartyLevels(1);
+      ShopTest_RaisePartyLevels(1);
       Sound_Play(MUS_LUCKY);
       redraw = 1;
     }
@@ -777,7 +777,7 @@ void ShopTest_SelectItem(void) {
       if (PartyInventory_HasSpace()) {
         Text_DrawStringInWindow(gShopTest_ItemHelp, window, 0, 32);
         Text_DrawMessageAsTiles((s32)(item + MsgItemName), window, 120, 0);
-        Text_DrawMessage((s32)(item + MsgItemPlainName), window, 0, 16);
+        Text_DrawMessage((s32)(item + MsgItemDescription), window, 0, 16);
         ItemMenu_DrawItemDetails(details, item);
       } else {
         Text_DrawStringInWindow(gShopTest_ItemFull, window, 0, 32);
@@ -809,25 +809,25 @@ void ShopTest_SelectItem(void) {
     }
     if (gInput.repeat & KEY_RIGHT) {
       step = 1;
-      item += BROWSER_ROW_STEP;
+      item += DEBUG_BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_LEFT) {
       step = -1;
-      item -= BROWSER_ROW_STEP;
+      item -= DEBUG_BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_R) {
       step = 1;
-      item += BROWSER_PAGE_STEP;
+      item += DEBUG_BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_L) {
       step = -1;
-      item -= BROWSER_PAGE_STEP;
+      item -= DEBUG_BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }

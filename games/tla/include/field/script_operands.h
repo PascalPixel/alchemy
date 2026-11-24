@@ -39,7 +39,7 @@ struct ScriptOperands {
   u32 targetZ;
   u32 bounce;
   u32 gravity;
-  u32 riseBaseY;
+  u32 sceneWord;
   u32 sprite;
   u8 spriteStorageKind; ///< Actor.spriteStorageKind
   u8 motionFlags;
@@ -54,8 +54,8 @@ struct ScriptOperands {
   u16 wait;       ///< SC_WAIT's frames left, compared as signed
   u8 refused;     ///< Actor.refused, the blocked frames
   u8 frozen;
-  u8 riseCounter;
-  u8 riseEnabled;
+  u8 sceneCounter;
+  u8 sceneByte;
   s16 timer;
   s16 userValue;
   u32 watchedActor;

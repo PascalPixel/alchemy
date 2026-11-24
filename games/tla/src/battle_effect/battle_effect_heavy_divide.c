@@ -65,7 +65,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
                       BLITTER_TRANSPARENT);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   caster = BattleObject_GetFar(args->user)->object;
   if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {
     frames = HEAVY_DIVIDE_FRAMES;
@@ -298,7 +298,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   }
   Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -449,7 +449,7 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
       }
 
       // Puff i rises from frame 8 + 2i.
-      BattleEffect_FetchRectangleBlitters(args->side, draw);
+      BattleEffect_BuildCanvasBlitters(args->side, draw);
       for (i = 0; i != args->variant * 4 + 8; i++) {
         struct Particle *puff = &state->particles[i];
 
@@ -479,7 +479,7 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
       EFFECT_END_FRAME(state);
     } while (++frame != stagger + COOL_FRAMES);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -606,7 +606,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
       goto nextRow;
     }
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BURNING_SKULL_SHEET,
                              state->sheet + WYRD_CURSE_SKULL_PICTURES, 0, 0);
 
@@ -755,7 +755,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
   }
   Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -904,8 +904,9 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
           // frame.
           index = diameter - 2;
           if ((u32)index < 2 * RADIANT_FIRE_DISCS - 2)
-            Canvas_BlitAtFoot((void *)(*(s16 *)(index + (s32)discs) + cells),
-                              burst->x, burst->y, diameter);
+            Canvas_BlitMirroredQuarters(
+                (void *)(*(s16 *)(index + (s32)discs) + cells), burst->x,
+                burst->y, diameter);
         }
       }
 
@@ -1105,26 +1106,26 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   }
 
   // The canvas and its characters are cleared for Dull's effect.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   /* FAKEMATCH(dead): an empty once-only loop before the release. */
   do {
   } while (0);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), size);
   Iwram_ClearWordsEntry(canvas, size);
-  Task_Remove(Palette_StepFadeTransfer);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_DarkenBackgroundStep);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_RunDull(args);
 }
 
 /// Abilities: Earth Force.
 void BattleEffect_RunEarthForce(struct BattleEffectParams *args) {
-  BattleEffect_RunBoltTrail(args, BOLT_TRAIL_EARTH_FORCE);
+  BattleEffect_RunBallLightning(args, BALL_LIGHTNING_EARTH_FORCE);
 }
 
 /// Abilities: Thunder Mine.
 void BattleEffect_RunThunderMine(struct BattleEffectParams *args) {
-  BattleEffect_RunBoltTrail(args, BOLT_TRAIL_THUNDER_MINE);
+  BattleEffect_RunBallLightning(args, BALL_LIGHTNING_THUNDER_MINE);
 }
 
 #undef BURNING_SKULL_WIDTH

@@ -142,11 +142,11 @@ void TitlePaletteFade_SetCurrent(s32 tint, s32 selectedPalettes);
 /// sprite tiles.
 extern u8 gTitleIntro_LogoTileBuffer[];
 extern const u8 gTitle_PromptBlendLevels[];
-extern u16 gTitleIntro_ChannelCurve[];
-extern u16 gTitleIntro_ChannelCurveLight[];
-extern u16 gTitleIntro_ChannelCurveContrast[];
-s32 TitlePaletteFade_ClampComponent(s32 value);
-s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
+extern u16 gTitlePaletteFade_ChannelCurve[];
+extern u16 gTitlePaletteFade_ChannelCurveLight[];
+extern u16 gTitlePaletteFade_ChannelCurveContrast[];
+s32 TitlePaletteFade_ClampChannel(s32 value);
+s32 TitlePaletteFade_ClampShiftedChannel(s32 value);
 
 /// The intro's tiles, in 16 colours: the far clouds in character block 0, the
 /// near clouds in block 1, each 256 by 128 pixels, and the cards' text in block
@@ -984,7 +984,7 @@ s32 TitleIntro_Run(void) {
 /// pulsing. It holds 90 seconds with the prompt and 11 without, and A or Start
 /// ends it early, returning 1 (else 0); except in the Japanese edition, the
 /// prompt and the keys wait two seconds.
-s32 Title_ShowIntro(s32 prompt) {
+s32 Title_ShowTitleScreen(s32 prompt) {
   s32 blankTile = OFFSCREEN_TILE;
   s32 result = 0;
   struct TitleScreenState *state = HeapSlot_AllocEwram(
@@ -1100,7 +1100,7 @@ s32 Title_ShowIntro(s32 prompt) {
 }
 
 /// Unused: an empty entry the far-call table keeps.
-void Title_NoOpPalette(void) {}
+void Title_BeforeLogosNoOp(void) {}
 
 /// The Nintendo logo's first tile: character block 1's, as BG2 numbers its
 /// 256-colour tiles from block 0.
@@ -1256,7 +1256,7 @@ s32 Title_ShowCamelotLogo(void) {
 }
 
 /// Unused: an empty entry the far-call table keeps.
-void Title_NoOpColor(void) {}
+void Title_AfterIntroNoOp(void) {}
 
 // The palette fade (struct TitlePaletteFade) keeps the saved palettes, the
 // colour components shown now, the target components and each one's step.
@@ -1402,9 +1402,9 @@ void TitlePaletteFade_BuildColors(u32 tint, u16 *source, u16 *destination,
           green = SEPIA_LEVEL_MAX;
         if (blue > SEPIA_LEVEL_MAX)
           blue = SEPIA_LEVEL_MAX;
-        *destination++ = gTitleIntro_ChannelCurveLight[blue];
-        *destination++ = gTitleIntro_ChannelCurveLight[green];
-        *destination++ = gTitleIntro_ChannelCurveLight[red];
+        *destination++ = gTitlePaletteFade_ChannelCurveLight[blue];
+        *destination++ = gTitlePaletteFade_ChannelCurveLight[green];
+        *destination++ = gTitlePaletteFade_ChannelCurveLight[red];
       }
       break;
     // The same as PALETTE_TINT_WARM_DARK below, where the field's fade warms
@@ -1420,12 +1420,12 @@ void TitlePaletteFade_BuildColors(u32 tint, u16 *source, u16 *destination,
         red += 6;
         green += 4;
         blue -= 6;
-        red = TitlePaletteFade_ClampComponent(red);
-        green = TitlePaletteFade_ClampComponent(green);
-        blue = TitlePaletteFade_ClampComponent(blue);
-        SET_VECTOR(destination, gTitleIntro_ChannelCurveContrast[blue],
-                   gTitleIntro_ChannelCurveLight[green],
-                   gTitleIntro_ChannelCurve[red]);
+        red = TitlePaletteFade_ClampChannel(red);
+        green = TitlePaletteFade_ClampChannel(green);
+        blue = TitlePaletteFade_ClampChannel(blue);
+        SET_VECTOR(destination, gTitlePaletteFade_ChannelCurveContrast[blue],
+                   gTitlePaletteFade_ChannelCurveLight[green],
+                   gTitlePaletteFade_ChannelCurve[red]);
         destination += 3;
       }
       break;
@@ -1449,12 +1449,12 @@ void TitlePaletteFade_BuildColors(u32 tint, u16 *source, u16 *destination,
           blue = MUTED_BLUE_MAX;
         green += 2;
         blue += 2;
-        red = TitlePaletteFade_ClampComponent(red);
-        green = TitlePaletteFade_ClampComponent(green);
-        blue = TitlePaletteFade_ClampComponent(blue);
-        *destination++ = gTitleIntro_ChannelCurve[blue];
-        *destination++ = gTitleIntro_ChannelCurve[green];
-        *destination++ = gTitleIntro_ChannelCurve[red];
+        red = TitlePaletteFade_ClampChannel(red);
+        green = TitlePaletteFade_ClampChannel(green);
+        blue = TitlePaletteFade_ClampChannel(blue);
+        *destination++ = gTitlePaletteFade_ChannelCurve[blue];
+        *destination++ = gTitlePaletteFade_ChannelCurve[green];
+        *destination++ = gTitlePaletteFade_ChannelCurve[red];
       }
       break;
     case PALETTE_TINT_PALE:
@@ -1465,16 +1465,16 @@ void TitlePaletteFade_BuildColors(u32 tint, u16 *source, u16 *destination,
         red = RGB_RED(color);
         green = RGB_GREEN(color);
         blue = RGB_BLUE(color);
-        mean = TitlePaletteFade_ClampComponent((red + green + blue) / 3);
+        mean = TitlePaletteFade_ClampChannel((red + green + blue) / 3);
         red = (red >> 1) + mean;
         green = (green >> 1) + mean;
         blue = (blue >> 1) + mean;
-        red = TitlePaletteFade_ClampComponent(red);
-        green = TitlePaletteFade_ClampComponent(green);
-        blue = TitlePaletteFade_ClampComponent(blue);
-        SET_VECTOR(destination, gTitleIntro_ChannelCurveContrast[blue],
-                   gTitleIntro_ChannelCurveContrast[green],
-                   gTitleIntro_ChannelCurveContrast[red]);
+        red = TitlePaletteFade_ClampChannel(red);
+        green = TitlePaletteFade_ClampChannel(green);
+        blue = TitlePaletteFade_ClampChannel(blue);
+        SET_VECTOR(destination, gTitlePaletteFade_ChannelCurveContrast[blue],
+                   gTitlePaletteFade_ChannelCurveContrast[green],
+                   gTitlePaletteFade_ChannelCurveContrast[red]);
         destination += 3;
       }
       break;
@@ -1485,12 +1485,12 @@ void TitlePaletteFade_BuildColors(u32 tint, u16 *source, u16 *destination,
         red = RGB_RED(color);
         blue = RGB_BLUE(color);
         red += ((green >> 3) + (blue >> 3));
-        red = TitlePaletteFade_ClampComponent(red);
+        red = TitlePaletteFade_ClampChannel(red);
         green -= green / 3;
         blue -= blue / 3;
-        SET_VECTOR(destination, gTitleIntro_ChannelCurve[blue],
-                   gTitleIntro_ChannelCurve[green],
-                   gTitleIntro_ChannelCurveLight[red]);
+        SET_VECTOR(destination, gTitlePaletteFade_ChannelCurve[blue],
+                   gTitlePaletteFade_ChannelCurve[green],
+                   gTitlePaletteFade_ChannelCurveLight[red]);
         destination += 3;
       }
       break;
@@ -1505,12 +1505,12 @@ void TitlePaletteFade_BuildColors(u32 tint, u16 *source, u16 *destination,
         red += 6;
         green += 4;
         blue -= 6;
-        red = TitlePaletteFade_ClampComponent(red);
-        green = TitlePaletteFade_ClampComponent(green);
-        blue = TitlePaletteFade_ClampComponent(blue);
-        SET_VECTOR(destination, gTitleIntro_ChannelCurveContrast[blue],
-                   gTitleIntro_ChannelCurveLight[green],
-                   gTitleIntro_ChannelCurve[red]);
+        red = TitlePaletteFade_ClampChannel(red);
+        green = TitlePaletteFade_ClampChannel(green);
+        blue = TitlePaletteFade_ClampChannel(blue);
+        SET_VECTOR(destination, gTitlePaletteFade_ChannelCurveContrast[blue],
+                   gTitlePaletteFade_ChannelCurveLight[green],
+                   gTitlePaletteFade_ChannelCurve[red]);
         destination += 3;
       }
       break;
@@ -1543,9 +1543,9 @@ void TitlePaletteFade_BuildColors(u32 tint, u16 *source, u16 *destination,
       tintedRed = color * tintRed;
       green = color * tintGreen;
       blue = color * tintBlue;
-      tintedRed = TitlePaletteFade_ClampShiftedComponent(tintedRed);
-      green = TitlePaletteFade_ClampShiftedComponent(green);
-      blue = TitlePaletteFade_ClampShiftedComponent(blue);
+      tintedRed = TitlePaletteFade_ClampShiftedChannel(tintedRed);
+      green = TitlePaletteFade_ClampShiftedChannel(green);
+      blue = TitlePaletteFade_ClampShiftedChannel(blue);
       destination[colorIndex * 3 + 0] = blue;
       destination[colorIndex * 3 + 1] = green;
       destination[colorIndex * 3 + 2] = tintedRed;
@@ -1577,14 +1577,17 @@ void TitlePaletteFade_BuildColors(u32 tint, u16 *source, u16 *destination,
       scaledBlue = Iwram_MulFX(INTtoFIXED((color * tintBlue) >> 4),
                                (s32)INTtoFIXED(tintBlue) >> 4);
       tintedRed = FIXEDtoINT((u32)tintedRed);
-      clampedRed = TitlePaletteFade_ClampComponent(tintedRed);
+      clampedRed = TitlePaletteFade_ClampChannel(tintedRed);
       scaledGreen = FIXEDtoINT((u32)scaledGreen);
-      clampedGreen = TitlePaletteFade_ClampComponent(scaledGreen);
+      clampedGreen = TitlePaletteFade_ClampChannel(scaledGreen);
       scaledBlue = FIXEDtoINT((u32)scaledBlue);
-      clampedBlue = TitlePaletteFade_ClampComponent(scaledBlue);
-      destination[colorIndex * 3 + 0] = gTitleIntro_ChannelCurve[clampedBlue];
-      destination[colorIndex * 3 + 1] = gTitleIntro_ChannelCurve[clampedGreen];
-      destination[colorIndex * 3 + 2] = gTitleIntro_ChannelCurve[clampedRed];
+      clampedBlue = TitlePaletteFade_ClampChannel(scaledBlue);
+      destination[colorIndex * 3 + 0] =
+          gTitlePaletteFade_ChannelCurve[clampedBlue];
+      destination[colorIndex * 3 + 1] =
+          gTitlePaletteFade_ChannelCurve[clampedGreen];
+      destination[colorIndex * 3 + 2] =
+          gTitlePaletteFade_ChannelCurve[clampedRed];
     }
   } else if (tint & PALETTE_TINT_SPLIT) {
     for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
@@ -1666,7 +1669,7 @@ void TitlePaletteFade_Start(s32 frames) {
 }
 
 /// Holds a colour channel's level to 0 to 31.
-s32 TitlePaletteFade_ClampComponent(s32 value) {
+s32 TitlePaletteFade_ClampChannel(s32 value) {
   if (value > RGB_LEVEL_MAX)
     return RGB_LEVEL_MAX;
   if (value < 0)
@@ -1676,7 +1679,7 @@ s32 TitlePaletteFade_ClampComponent(s32 value) {
 
 /// Caps a colour component at a channel's brightest level shifted into the high
 /// bits. There is no lower bound.
-s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
+s32 TitlePaletteFade_ClampShiftedChannel(s32 value) {
   if (value > RGB_LEVEL_MAX << COMPONENT_SHIFT)
     value = RGB_LEVEL_MAX << COMPONENT_SHIFT;
   return value;

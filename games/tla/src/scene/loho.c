@@ -272,7 +272,7 @@ void Loho_FireCannon(void) {
 
   felix = Actor_GetById(ACTOR_FELIX);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   // Felix first walks round to stand south of the cannon, by the side he is
   // on.
   goto start;
@@ -811,7 +811,7 @@ void Loho_OpenDoorAndEnter(void) {
   u32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
     struct Actor *actor = Actor_GetById(i);
 
@@ -878,7 +878,7 @@ void Loho_ClimbDownLadder(void) {
 /// town from cell (35, 15), steps up to it and climbs down the ladder.
 void Loho_StepOntoLadderFacingEast(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWait(ACTOR_FELIX, 16, 0);
   Event_Wait(10);
@@ -889,7 +889,7 @@ void Loho_StepOntoLadderFacingEast(void) {
 /// town from cell (37, 15), steps up to it and climbs down the ladder.
 void Loho_StepOntoLadderFacingWest(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWait(ACTOR_FELIX, -16, 0);
   Event_Wait(10);
@@ -900,7 +900,7 @@ void Loho_StepOntoLadderFacingWest(void) {
 /// town, cell (36, 14), turns to face the ladder and climbs down.
 void Loho_TurnAndClimbDownLadder(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
   Loho_ClimbDownLadder();

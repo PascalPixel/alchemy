@@ -35,10 +35,10 @@ struct OverlaySprite {
   u8 vramBlock; ///< VRAM cache entry holding its tiles
   u8 cacheFlags;
   u8 rotation[2];
-  u8 size[4];   ///< width, height and the x and y offsets
-  u8 frame;     ///< the animation number last selected
-  u8 dirty;     ///< nonzero redraws its pixels
-  u8 nextFrame; ///< the sprite flags (enum SpriteFlag)
+  u8 size[4];       ///< width, height and the x and y offsets
+  u8 lastAnimation; ///< the animation number last selected
+  u8 dirty;         ///< nonzero redraws its pixels
+  u8 flags;         ///< the sprite flags (enum SpriteFlag)
   u8 layerCount;
 };
 
@@ -54,7 +54,7 @@ struct OverlayActor {
   u8 priorityFlags;
   FIXED velocityX, velocityY, velocityZ, speedLimit, acceleration;
   FIXED targetX, targetY, targetZ, bounce, gravity;
-  s32 riseBaseY;
+  s32 sceneWord;
   void *sprite;
   u8 spriteStorageKind;
   u8 motionFlags;
@@ -69,8 +69,8 @@ struct OverlayActor {
   s16 wait;
   u8 refused;
   u8 frozen;
-  u8 riseCounter;
-  u8 riseEnabled;
+  u8 sceneCounter;
+  u8 sceneByte;
   s16 timer;
   s16 userValue;
   struct Actor *watchedActor;

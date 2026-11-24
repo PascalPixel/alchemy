@@ -10,7 +10,7 @@
 #include "field/event_commands.h"
 #include "field/field_sequence.h"
 
-/// What Event_ResolvePendingActions leaves running, as bits of its skip.
+/// What Event_EndLastingPsynergy leaves running, as bits of its skip.
 enum PsynergyEndSkip {
   END_SKIP_REVEAL = 1 << 0,
   END_SKIP_RING = 1 << 1, ///< the ring of light (ABILITY_MAGNET)
@@ -25,13 +25,13 @@ void Event_RunMessage(s32 actor, s32 message) {
   Event_End();
 }
 
-/// Ends every lasting Psynergy (Event_ResolvePendingActions with none skipped).
-void Event_ResolveAllPendingActions(void) { Event_ResolvePendingActions(0); }
+/// Ends every lasting Psynergy (Event_EndLastingPsynergy with none skipped).
+void Event_EndAllLastingPsynergy(void) { Event_EndLastingPsynergy(0); }
 
 /// Ends the lasting Psynergy and runs their end events: Reveal, the ring of
 /// light and Sand (while the party is sand, gMainRoutineState.sandActive), each
 /// unless skip holds its bit (PsynergyEndSkip).
-void Event_ResolvePendingActions(s32 skip) {
+void Event_EndLastingPsynergy(s32 skip) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   state->busy = 0;
@@ -205,7 +205,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     state = Ram_HeapSlots->fieldState;
 
     if (abilityId != 0) {
-      GameFlag_Set(FLAG_ITEM_USE);
+      GameFlag_Set(FLAG_PSYNERGY_FROM_ITEM);
       GameFlag_Clear(FLAG_NOTHING_HAPPENS);
 
       if (abilityId == ABILITY_RETREAT && !GameFlag_Get(FLAG_RETREAT_BLOCKED)) {

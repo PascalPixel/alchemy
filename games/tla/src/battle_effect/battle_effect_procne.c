@@ -129,12 +129,12 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   graphics = Ram_HeapSlots->battleSheet;
 
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_BuildCanvasBlitters(0, draw);
   {
     struct Point2D wave;
     struct Point2D drift;
     Resource_LoadAndDecompress(RESOURCE_WHIRLWIND_SHEET, state->sheet, 1, 1);
-    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
     EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     wave.x = toFIXED(128);
     wave.y = toFIXED(40);
@@ -312,8 +312,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                                  RESOURCE_VIOLET_SKY_BACKDROP, 0);
         BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
                                     RESOURCE_VIOLET_SKY_BACKDROP, 8);
-        BattleEffect_SelectLivingTargets(state->args);
-        BattleEffect_SpawnObjects(PROCNE_SPRITES, SPRITE_PROCNE, 2);
+        BattleEffect_ShowLivingTargets(state->args);
+        BattleEffect_CreateSprites(PROCNE_SPRITES, SPRITE_PROCNE, 2);
         Resource_LoadAndDecompress(RESOURCE_VIOLET_COMET_SHEET,
                                    state->sheet + PROCNE_COMET_PICTURES, 1, 1);
 
@@ -689,11 +689,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_BuildCanvasBlitters(0, draw);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET,
                              state->sheet + DRAGON_FIRE_FLAME_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   if (mode == DRAGON_FIRE_DRAGON_DRIVER) {
     LOAD_BG_PALETTE(RESOURCE_LIGHTNING_BOLT_SHEET);
   }
@@ -748,9 +748,9 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     }
     EFFECT_FREE_PARTICLES(i, PARTICLES, DRAGON_FIRE_EMBERS);
     if (mode == DRAGON_FIRE_TIAMAT) {
-      BattleEffect_SelectLivingTargets(state->args);
+      BattleEffect_ShowLivingTargets(state->args);
       wait(1);
-      BattleEffect_SpawnObjects(DRAGON_FIRE_TIAMAT_SPRITES, SPRITE_TIAMAT, 2);
+      BattleEffect_CreateSprites(DRAGON_FIRE_TIAMAT_SPRITES, SPRITE_TIAMAT, 2);
     }
 
     for (frame = 0; frame != DRAGON_FIRE_FRAMES; frame++) {
@@ -990,10 +990,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                                    TIAMAT_THROAT);
         }
         if (twoPartTarget == 1)
-          BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT_ALTERNATE,
+          BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_TIAMAT_ALTERNATE,
                                              focus.x, focus.y);
         else
-          BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, focus.x,
+          BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_TIAMAT, focus.x,
                                              focus.y);
       }
       if (frame == 138) {
@@ -1045,7 +1045,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       EFFECT_END_FRAME(state);
     }
 
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferCanvas);
     EFFECT_RELEASE_BLITTERS();
     if (mode == DRAGON_FIRE_TIAMAT) {
       if (twoPartTarget == 1)

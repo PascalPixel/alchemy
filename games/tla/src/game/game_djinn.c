@@ -11,13 +11,13 @@
 /// search, and still when nobody has room.
 #define DJINN_COUNT_NONE 999
 
-/// Returns the definition of Djinni `index` of `element`; anything out of
+/// Returns the definition of Djinni `djinn` of `element`; anything out of
 /// range gives DJINNI_FLINT's.
-const struct DjinnDefinition *Djinn_GetDefinition(u32 element, u32 index) {
+const struct DjinnDefinition *Djinn_GetDefinition(u32 element, u32 djinn) {
   s32 entry = 0;
 
-  if (element < ELEMENT_COUNT && index < DJINN_PER_ELEMENT)
-    entry = element * DJINN_PER_ELEMENT + index;
+  if (element < ELEMENT_COUNT && djinn < DJINN_PER_ELEMENT)
+    entry = element * DJINN_PER_ELEMENT + djinn;
   return &gDjinn_DefinitionTable[entry];
 }
 
@@ -242,8 +242,8 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
 }
 
 /// Returns the ability the Djinni performs when it is unleashed.
-u16 Djinn_GetAbilityId(u32 element, u32 index) {
-  return Djinn_GetDefinition(element, index)->abilityId;
+u16 Djinn_GetAbilityId(u32 element, u32 djinn) {
+  return Djinn_GetDefinition(element, djinn)->abilityId;
 }
 
 /// Returns how many Djinn of `element` the unit holds, or of every element for
@@ -289,7 +289,7 @@ s32 Party_SumDjinnCounts(s32 element) {
 
 /// Counts the Djinn recovery down, then sets every Djinni each party member
 /// holds and can set, taking it off the recovery list.
-void Djinn_ActivateOfferedForParty(void) {
+void Djinn_SetAllForParty(void) {
   u16 owners[16];
   s32 count = Party_ListMembers((s16 *)owners);
   s32 i;

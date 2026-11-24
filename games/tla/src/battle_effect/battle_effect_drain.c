@@ -44,7 +44,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraState;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET),
                        SHEET_PALETTE_BYTES);
@@ -197,7 +197,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   if (mode == DRAIN_MOTES_TRUE_COLLIDE)
     BattleEffect_DrawShadedCirclesMirrored(sheet, 10, FIXED_ONE);
   else
-    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   if (mode == DRAIN_MOTES_DRAIN)
     palette = RESOURCE_ICE_BLOCK_SHEET;
   else if (mode == DRAIN_MOTES_PSY_DRAIN)
@@ -252,7 +252,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
     // Each transfer lowers every level by 4, leaving a trail.
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0;

@@ -209,7 +209,7 @@ void Idejima_WakeKraden(void) {
   struct Actor *leader;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
   message = (s32)MsgIdejimaGroan;
   FieldEvent_SetMessageId(message);
@@ -277,7 +277,7 @@ void Idejima_WakeJenna(void) {
   struct Actor *leader;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
   FieldEvent_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
@@ -335,7 +335,7 @@ void Idejima_WakeJenna(void) {
                          leader->z.part[0].integer);
   FieldActor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
-  Event_PrepareActorAndApplyValue(ACTOR_JENNA, 1);
+  FieldEvent_AddPartyMember(ACTOR_JENNA, 1);
   Event_SetFlag(FLAG_IDEJIMA_JENNA_JOINED);
   Event_End();
 }
@@ -346,7 +346,7 @@ void Idejima_WakeSheba(void) {
   struct Actor *leader;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   Event_SetMessageId(MsgIdejimaSecondGroan);
   // "Ohhh..."
@@ -409,7 +409,7 @@ void Idejima_WakeSheba(void) {
 /// meets it.
 void Idejima_EnterDoor(void) {
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -434,7 +434,7 @@ void Idejima_CatchUpWithFelix(void) {
 
   if (Event_GetFlag(FLAG_IDEJIMA_KRADEN_JOINED) == 0) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Idejima_WalkLeaderBack();
     FieldEvent_SetMessageId((s32)MsgIdejimaHeyFelix);
     // "Hey, Felix!"
@@ -493,7 +493,7 @@ void Idejima_CatchUpWithFelix(void) {
   }
   if (Event_GetFlag(FLAG_IDEJIMA_JENNA_JOINED) == 0) {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Idejima_WalkLeaderBack();
     Actor_SetPosition(ACTOR_JENNA, 312, 666);
     System_Wait(1);
@@ -550,14 +550,14 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
     Actor_SetScript(ACTOR_KRADEN, gIdejima_JoinTheLeaderScript);
     Actor_RunScriptAndWait(ACTOR_JENNA, gIdejima_JoinTheLeaderScript);
-    Event_PrepareActorAndApplyValue(ACTOR_JENNA, 1);
+    FieldEvent_AddPartyMember(ACTOR_JENNA, 1);
     Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 20);
     Event_SetFlag(FLAG_IDEJIMA_JENNA_JOINED);
     Event_End();
   }
   if (Event_GetFlag(FLAG_IDEJIMA_SHEBA_JOINED) == 0) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Idejima_WalkLeaderBack();
     Actor_SetPosition(ACTOR_SHEBA, 312, 666);
     System_Wait(1);
@@ -637,7 +637,7 @@ void Idejima_WonderWhereAlexHasGone(void) {
   const u8 *script;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(0.6);
   FieldCamera_MoveTo(108, CAMERA_KEEP, 720, 1);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
@@ -960,14 +960,14 @@ void DriftScene_Prepare(void) {
   Actor_SetAnimation(ACTOR_SHIP, 2);
 }
 
-#include "shared/drift_spawn.c"
+#include "shared/emote_pop_tilted.c"
 
 /// Jenna and Kraden reach Idejima and find Menardi's ship, which cannot sail
 /// without the orb that moved it. Alex joins them, the beacon is lit and the
 /// tremor tears Idejima away from Gondowan.
 void Idejima_BreakAwayFromGondowan(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
   FieldCamera_MoveTo(252, CAMERA_KEEP, 216, 0);
@@ -1092,10 +1092,9 @@ void Idejima_BreakAwayFromGondowan(void) {
   // "The thingie... that makes it go."
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  DriftScene_SpawnObject(toFIXED(238), toFIXED(48), toFIXED(172),
-                         DEGtoANG(315));
+  Emote_PopTilted(toFIXED(238), toFIXED(48), toFIXED(172), DEGtoANG(315));
   FieldEvent_Wait(10);
-  DriftScene_SpawnObject(toFIXED(246), toFIXED(48), toFIXED(172), DEGtoANG(45));
+  Emote_PopTilted(toFIXED(246), toFIXED(48), toFIXED(172), DEGtoANG(45));
   FieldEvent_Wait(30);
   // "What do you mean? What's so important about this...thingie?"
   Event_ShowMessage(ACTOR_JENNA, 0);
@@ -1212,7 +1211,7 @@ void Idejima_FindFelixAndSheba(void) {
   struct Actor *actor = Actor_Get(ACTOR_JENNA);
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Idejima_UseDriftPalette();
   DriftScene_Prepare();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1343,7 +1342,7 @@ void Idejima_RideTheTidalWave(void) {
   struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   DriftScene_Prepare();
   Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(314), toFIXED(200),
@@ -1658,7 +1657,7 @@ void Idejima_FelixWakes(void) {
 
   FelixWake_StartStep();
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
   FieldCamera_MoveTo(384, CAMERA_KEEP, 728, 0);
@@ -2096,7 +2095,7 @@ struct Trigger gIdejimaEventsWake[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gDriftScene_SpawnScript[] = {
+u32 gEmote_PopTiltedScript[] = {
     SC_WAIT(46),
     SC_RELEASE,
 };

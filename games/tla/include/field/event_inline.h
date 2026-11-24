@@ -154,9 +154,9 @@ static inline void FieldActor_WaitForMoveById(s32 actorId) {
   Actor_WaitForMoveById(actorId);
 }
 
-/// Event_ResolvePendingActions, from an event.
-static inline void FieldEvent_ResolvePendingActions(s32 skip) {
-  Event_ResolvePendingActions(skip);
+/// Event_EndLastingPsynergy, from an event.
+static inline void FieldEvent_EndLastingPsynergy(s32 skip) {
+  Event_EndLastingPsynergy(skip);
 }
 
 /// Event_SetMessageId, from an event.
@@ -191,8 +191,8 @@ static inline void FieldActor_SetSpriteColor(struct Actor *actor, s32 param) {
 static inline void FieldActor_Stop(s32 actorId) { Actor_Stop(actorId); }
 
 /// Event_SetExitRequest, from an event.
-static inline void FieldEvent_SetExitRequest(s32 request) {
-  Import_EventSetExitRequest(request);
+static inline void FieldEvent_SetExitRequest(s32 exit) {
+  Import_EventSetExitRequest(exit);
 }
 
 /// Holds the event until an actor has reached its destination
@@ -247,13 +247,13 @@ static inline s32 EventYesNo_Ask(s32 atBottom) {
 }
 
 /// Schedules a zoom of the field (WorldMap_StartZoom).
-static inline void FieldEffect_ScheduleRatioTransition(FIXED zoom, s32 frames) {
+static inline void FieldWorldMap_StartZoom(FIXED zoom, s32 frames) {
   WorldMap_StartZoom(zoom, frames);
 }
 
 /// Applies a window colour (WindowColor_Apply).
-static inline void FieldWindowColor_Apply(s32 phase, s32 brightness) {
-  WindowColor_Apply(phase, brightness);
+static inline void FieldWindowColor_Apply(s32 color, s32 brightness) {
+  WindowColor_Apply(color, brightness);
 }
 
 /// Requests a battle with a Djinni (Field_RequestDjinnBattle).
@@ -262,7 +262,7 @@ static inline void Event_RequestDjinnBattle(s32 actorId, s32 djinni) {
 }
 
 /// Event_AddPartyMember, from an event.
-static inline void Event_PrepareActorAndApplyValue(s32 unit, s32 announce) {
+static inline void FieldEvent_AddPartyMember(s32 unit, s32 announce) {
   Event_AddPartyMember(unit, announce);
 }
 

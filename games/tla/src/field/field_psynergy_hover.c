@@ -144,8 +144,8 @@ void HoverGlow_Update(void) {
   scaleY = scaleX * 6 / 8;
   sprite = &state->sprite;
   sprite->oam.index = state->tile + ((gFrameCount >> 1) & 1) * 32;
-  sprite->oam.priority = BattleEffect_GetObjectPriority(player);
-  sprite->depth = BattleEffect_GetObjectDepth(player) - 1;
+  sprite->oam.priority = Actor_GetSpritePriority(player);
+  sprite->depth = Actor_GetSpriteDepth(player) - 1;
   position[0] = player->x.fixed;
   position[1] = player->y.fixed;
   position[2] = player->z.fixed;
@@ -171,7 +171,7 @@ void FieldPsynergy_Hover(void) {
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct HoverState));
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct FieldState *field = Ram_HeapSlots->fieldState;
-  struct Actor *player = scene->mainActor;
+  struct Actor *player = scene->caster;
   struct PendingEvent *pending;
   struct EffectSprite *sprite;
   struct Actor *other;
@@ -216,7 +216,7 @@ void FieldPsynergy_Hover(void) {
     for (n = 0; n < FIELD_ACTOR_COUNT; n++) {
       other = field->actors[n];
       if (other != NULL && other->script != NULL &&
-          (other->collisionFlags & ACTOR_SOLID) && other != scene->mainActor) {
+          (other->collisionFlags & ACTOR_SOLID) && other != scene->caster) {
         // DEAD: the overlap test reads the actors themselves; the ROM keeps
         // the stores.
         position[0] = other->x.fixed;
@@ -241,8 +241,7 @@ void FieldPsynergy_Hover(void) {
     }
     wait(10);
     if (pending != NULL)
-      Field_RunPsynergyEvent(pending, scene->firstActorId,
-                             scene->secondActorId);
+      Field_RunPsynergyEvent(pending, scene->casterId, scene->targetId);
     for (i = HOVER_RING_GROW_FRAMES - 1; i != 0; i--) {
       state->scale = FIXED_ONE * i / HOVER_RING_GROW_FRAMES;
       wait(1);

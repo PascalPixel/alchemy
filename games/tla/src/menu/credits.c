@@ -69,7 +69,7 @@ extern s16 gEndingImage_Block;      ///< which character block the image is in
 extern s16 gEndingImage_FadeFrames; ///< frames of the fade-in, to 64
 extern u32 gEndingImage_MapScroll;  ///< the tilemap's scroll, 16.16 pixels
 extern volatile s32 gEndingImage_Scroll; ///< the scroll, 16.16 pixels
-/// The row a scene asks for (SceneState_SetScrollTarget); Row moves toward it.
+/// The row a scene asks for (EndingImage_SetTargetRow); Row moves toward it.
 extern s16 gEndingImage_TargetRow;
 extern s16 gEndingImage_Row;   ///< the row the scroll is heading for
 extern s16 gEndingImage_Speed; ///< the most rows a frame moves
@@ -161,10 +161,6 @@ enum CrawlStop {
   CRAWL_STOP_END = 2, ///< "---", the crawl's last line: the crawl ends
   CRAWL_STOP_LONG = 3 ///< "----", which no crawl line has
 };
-
-/// Credits_Run's modes: the title's story crawl over the slideshow, or the
-/// staff credits from a page, CREDITS_MODE_FIRST_PAGE being their first.
-enum CreditsMode { CREDITS_MODE_STORY_CRAWL = 1, CREDITS_MODE_FIRST_PAGE = 2 };
 
 /// Where Credits_DrawLine places a line in its 192 pixels.
 enum CreditsAlignment {
@@ -916,7 +912,7 @@ UNUSED void Credits_ReservedNoOp(void) {}
 
 /// Sets the row the ending's scrolling image moves to, in pixels from its
 /// top, at most gEndingImage_Speed a frame.
-void SceneState_SetScrollTarget(u16 row) { gEndingImage_TargetRow = row; }
+void EndingImage_SetTargetRow(u16 row) { gEndingImage_TargetRow = row; }
 
 /// Copies 15 columns of a scrolling image's map into a wrapping 2 KB
 /// tilemap by DMA, 31 rows of 64 bytes each, from the row the position
@@ -1237,10 +1233,10 @@ const u32 gDisplayScroll_UnusedSlideResources[] = {
     RESOURCE_VALE_STORM_BACKDROP,
     RESOURCE_SOL_SANCTUM_BACKDROP,
     RESOURCE_GRASSLAND_BACKDROP,
-    RESOURCE_INTERIOR_BACKDROP,
+    RESOURCE_ROOMS_BACKDROP,
     RESOURCE_FOREST_BACKDROP,
     RESOURCE_KOLIMA_FOREST_BACKDROP,
-    RESOURCE_TRET_TREE_INTERIORS_BACKDROP,
+    RESOURCE_TRET_TREE_ROOMS_BACKDROP,
     RESOURCE_TRET_TREE_BRANCH_BACKDROP,
     RESOURCE_SNOWFIELD_BACKDROP,
     RESOURCE_MERCURY_LIGHTHOUSE_BACKDROP,
@@ -1250,7 +1246,7 @@ const u32 gDisplayScroll_UnusedSlideResources[] = {
     RESOURCE_ALTIN_PEAK_BACKDROP,
     RESOURCE_LAMAKAN_DESERT_BACKDROP,
     RESOURCE_TOLBI_SHIP_DECK_BACKDROP,
-    RESOURCE_TOLBI_SHIP_INTERIORS_BACKDROP,
+    RESOURCE_TOLBI_SHIP_ROOMS_BACKDROP,
     RESOURCE_BEACH_BACKDROP,
     RESOURCE_COLOSSO_BACKDROP,
     RESOURCE_ALTMILLER_CAVE_BACKDROP,
@@ -1273,7 +1269,7 @@ const u32 gDisplayScroll_UnusedSlideResources[] = {
 const u32 gDisplayScroll_SlideResources[25] = {
     RESOURCE_VALE_STORM_BACKDROP,
     RESOURCE_SOL_SANCTUM_BACKDROP,
-    RESOURCE_INTERIOR_BACKDROP,
+    RESOURCE_ROOMS_BACKDROP,
     RESOURCE_KOLIMA_FOREST_BACKDROP,
     RESOURCE_TRET_TREE_BRANCH_BACKDROP,
     RESOURCE_SNOWFIELD_BACKDROP,
@@ -1283,7 +1279,7 @@ const u32 gDisplayScroll_SlideResources[25] = {
     RESOURCE_ALTIN_PEAK_BACKDROP,
     RESOURCE_LAMAKAN_DESERT_BACKDROP,
     RESOURCE_TOLBI_SHIP_DECK_BACKDROP,
-    RESOURCE_TOLBI_SHIP_INTERIORS_BACKDROP,
+    RESOURCE_TOLBI_SHIP_ROOMS_BACKDROP,
     RESOURCE_BEACH_BACKDROP,
     RESOURCE_COLOSSO_BACKDROP,
     RESOURCE_SUHALLA_DESERT_BACKDROP,

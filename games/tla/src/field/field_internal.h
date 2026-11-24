@@ -285,9 +285,9 @@ struct SpritePictureCacheSource {
   s16 number;
 };
 
-/// The size of Matrix_UpdateVerticesCode, an address equal to the size
+/// The size of WorldMap_UpdateAffineLinesCode, an address equal to the size
 /// (ld_script.ld).
-extern u8 Matrix_UpdateVerticesCodeSize[];
+extern u8 WorldMap_UpdateAffineLinesCodeSize[];
 
 /// The map converter's Thumb entry and ARM code (map_grid_convert.s), copied to
 /// RAM to run.

@@ -299,7 +299,7 @@ void BattleMotion_PlayHitFlash(s32 unitId) {
 /// sprite is. Returns 0.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(unitId)->object;
-  struct Sprite *record = GetMotionRecord(object, 0);
+  struct Sprite *record = Actor_GetSprite(object, 0);
   FIXED scale;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
@@ -315,9 +315,9 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *screen) {
 /// Projects the point above a unit onto the screen, into screen: the target
 /// cursor's place, EFFECT_HEIGHT_SMALL up for a small enemy and
 /// EFFECT_HEIGHT_LARGE for others, scaled as the sprite is. Returns 0.
-s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *screen) {
+s32 BattleMotion_ProjectCursorPoint(s32 unitId, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(unitId)->object;
-  struct Sprite *record = GetMotionRecord(object, 0);
+  struct Sprite *record = Actor_GetSprite(object, 0);
   FIXED scale;
 
   BattleCamera_ApplyTransform();

@@ -36,7 +36,7 @@ extern const s16 gPortrait_SpriteMap[];
 // The screens object calls the window sprite list's routines and
 // Oam_AddSpriteAtDepth with no declaration in scope, as its bytes need; a
 // current GCC gets them here.
-#include "graphics/output.h"
+#include "graphics/window_sprite_list.h"
 #endif
 
 /// One icon of the command row (struct BattleCommandRowState): its sprite,
@@ -67,7 +67,7 @@ struct CommandRowAffine {
 struct BattleCommandRowState {
   /// BG palette slots for the icons' 256-colour pixels, filled as each icon
   /// is loaded (BattleCommandRow_LoadIconTiles).
-  struct GlyphPalette palette;
+  struct IconPalette palette;
   struct BattleCommandRowIcon entries[6];
   void *window;
   s32 iconCount;
@@ -178,7 +178,7 @@ extern const u16 gSummon_Abilities[];
 /// VBlanks.
 extern const u8 gMenuTitle_BobOffsets[];
 
-/// The rows the range icons are marked with (Menu_BuildLocalizedPatternTiles).
+/// The rows the range icons are marked with (RangeIcon_BuildTiles).
 extern const struct BarPatternRow gMenu_BarPatternRows[];
 
 /// The standby Djinn counts 10 to 18, one tile each, from BG tile
@@ -202,8 +202,8 @@ extern const u8 gWindow_ProgressBarRows[];
 extern const u8 gWindow_ProgressBarTiles[];
 
 /// The ARM routine that reads the windows' edges off the UI tilemap for each
-/// scan line (cell_tiles.c), copied to RAM before it runs.
-extern u8 Tile_BuildCellTilesCode[];
+/// scan line (window_spans.c), copied to RAM before it runs.
+extern u8 ScanlineWindow_BuildSpansCode[];
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").

@@ -41,7 +41,7 @@
 #include "flags.h"
 #include "battle/battle_system.h"
 #include "game/game_flags.h"
-#include "game/owner_state.h"
+#include "game/class_djinn.h"
 #include "fixed_math.h"
 #include "field/field_event.h"
 #include "field/field_sequence.h"
@@ -222,7 +222,7 @@ struct ShopState {
                    ///< enum SanctumService)
   s8 burstMember;  ///< the sanctum's party member whose pose is randomized; -1
                    ///< none
-  /// ItemMenuState's: nonzero while Menu_UpdateEntryObjectTransforms places
+  /// ItemMenuState's: nonzero while Menu_UpdatePartyFigures places
   /// the party figures; cleared while a details window covers them.
   u8 memberSpritesShown;
   u8 figuresShown; ///< ItemMenuState's; not named here
@@ -271,7 +271,7 @@ extern const u8 gShop_PriceTiles[];
 /// (quantity.4bpp).
 extern const u8 gShop_QuantityTiles[];
 
-extern const u16 gShop_SelectorTileOffsets[30];
+extern const u16 gShop_QuantityBarSegmentOffsets[30];
 extern const u16 gShop_PriceDigitTileOffsets[5];
 extern const s16 gShop_GameTicketCreditCosts[30];
 extern const s16 gShop_StockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS];

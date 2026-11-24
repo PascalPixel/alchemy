@@ -14,7 +14,7 @@
 /// The heading the +Control Pad points, by its right, left, up and down bits
 /// (DPAD_INDEX), where Leader_StepOffRope and Leader_StepOffTightrope step;
 /// DPAD_ANGLE_NONE for none or opposed keys. The same table as
-/// gFieldEffect_CyclePatternWords.
+/// gInput_DpadAngles.
 const u16 gRope_KeyHeadings[16] = {
     DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,
     FACING_NORTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_NORTH,
@@ -62,7 +62,7 @@ const s16 gLineScroll_WaveSine[256] = {
 /// {dx, dy, tile, shape, size} for each of 16 frames of a ground particle
 /// (event_commands_weather.c): dx and dy in screen pixels from its spot, tile
 /// from its first tile.
-const s16 gFieldEffect_GroundParticleFrames[80] = {
+const s16 gWeather_RainSplashFrames[80] = {
     -8, -12, 20, 0, 1,
     -8, -12, 20, 0, 1,
     -8, -12, 20, 0, 1,

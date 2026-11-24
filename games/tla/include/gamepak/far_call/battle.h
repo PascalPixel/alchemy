@@ -18,15 +18,14 @@ void BattleCamera_SetViewFar(s32 x, s32 depth, s32 y, s32 zoom);
 /// Darkens the battle background's palette by level sixtieths; 0 restores it.
 void BattleBackground_SetPaletteLevelFar(s32 unused, s32 level);
 /// Returns sprite recordIndex of a unit's motion object, or null.
-void *GetMotionRecordFar(void *object, s32 recordIndex);
+void *Actor_GetSpriteFar(void *object, s32 recordIndex);
 /// Projects the point above a unit, where the target cursor points, onto the
 /// screen.
-s32 BattleMotion_ProjectConditionalPositionFar(s32 unitId,
-                                               struct TargetPoint *screen);
+s32 BattleMotion_ProjectCursorPointFar(s32 unitId, struct TargetPoint *screen);
 /// Readies the sprites of the listed units and destroys every other unit's.
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 refresh);
 /// Destroys a unit's sprites, its status icon and shadow with them.
-void ReleaseBattleObjectRecordsFar(s32 unitId);
+void BattleObject_DestroySpritesFar(s32 unitId);
 /// Readies every unit's sprites, destroying those of units no longer in the
 /// battle, and sets each unit's pose again.
 void BattleObject_PutFar(void);

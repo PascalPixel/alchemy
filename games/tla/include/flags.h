@@ -33,7 +33,7 @@
 #define FLAG_CHILDHOOD 0x20
 /// Unused: The Broken Seal's flag for the tunic young Isaac wears. Nothing in
 /// this game sets it; were it set, World Map actor placements would keep their
-/// full size (Event_SpawnObjectTable).
+/// full size (Event_SpawnActorTable).
 #define FLAG_ISAAC_WEARS_TUNIC 0x21
 
 /// Set as Isaac's party joins Felix's (Party_AddIsaacsParty); a file saved
@@ -110,7 +110,7 @@
 /// Field_StartColorTransition until Field_StartPaletteTransition.
 #define FLAG_PSYNERGY_TINTED 0x108
 /// Set, the highest of these picks the tint a field Psynergy fades
-/// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
+/// toward, gFieldPsynergy_CastColors[n], in place of the frame counter's pick
 /// (FieldPsynergy_FadeToCastColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
 /// Set while the field sequence handles its requests, and cleared while the
@@ -160,7 +160,7 @@
 /// frame. Nothing in the game sets it.
 #define FLAG_FAST_WALK 0x17f
 #define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
-#define FLAG_ITEM_USE 0x145     ///< the Psynergy comes from an item
+#define FLAG_PSYNERGY_FROM_ITEM 0x145 ///< the Psynergy comes from an item
 /// Set while the flying ship hovers on the World Map: Hover cast aboard it sets
 /// it, the ship takes off and the World Map announces "Hover"
 /// (WorldMap_SetUpFlyingShip); taking off with the dash keys clears it.
@@ -1082,7 +1082,7 @@
 #define FLAG_SHOP_ARTIFACTS_STOCKED 0x400
 
 /// The Mad Plants hidden in bushes, one flag each, set once it is beaten, in
-/// the order of their battles in ENCOUNTER_TABLE_MAD_PLANTS: the Gabomba
+/// the order of their battles in ENCOUNTER_ZONE_MAD_PLANTS: the Gabomba
 /// Catacombs' (0), Taopo Swamp's, Gaia Rock's, Jupiter Lighthouse's and
 /// Trial Road's (4).
 #define FLAG_MAD_PLANT_FIRST 0x9b5

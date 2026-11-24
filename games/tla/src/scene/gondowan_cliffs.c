@@ -135,7 +135,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 #include "../field/actor_set_sprite_priority.c"
 
-#include "../field/actor_prepare.c"
+#include "../field/actor_create_silhouette.c"
 
 #include "shared/scene_create_actor.h"
 
@@ -242,7 +242,7 @@ void GondowanCliffs_LeapStumpIntoWater(s32 mode, s32 id) {
   if (FIELD_CELL(actor->x.fixed) != 76)
     return;
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
   if (FIELD_CELL(Actor_GetById(ACTOR_STUMP)->x.fixed) == 76) {
     actor->motionFlags = 0;
@@ -370,7 +370,7 @@ void GondowanCliffs_TalkToDog(void) {
     gFieldState->fieldMenu = 1;
   } else {
     Event_Start();
-    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_EndLastingPsynergy(0);
     Actor_FaceEachOther(ACTOR_DOG, gMainRoutineState.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgRrruffRrruff);
     // "Rrruff! Rrruff!"
@@ -441,7 +441,7 @@ void Actor_PlaceOnActor(s32 actor, s32 target);
 /// go and help Piers.
 void GondowanCliffs_TurnBackToHelpPiers(void) {
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 552, 488);

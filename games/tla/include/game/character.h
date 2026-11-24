@@ -23,9 +23,9 @@ struct CharacterDefinition {
   ///@{
   s16 hp[GROWTH_POINTS];
   s16 pp[GROWTH_POINTS];
-  u16 atk[GROWTH_POINTS];
-  u16 def[GROWTH_POINTS];
-  u16 agi[GROWTH_POINTS];
+  u16 attack[GROWTH_POINTS];
+  u16 defense[GROWTH_POINTS];
+  u16 agility[GROWTH_POINTS];
   u8 luck[GROWTH_POINTS];
   ///@}
   /// The character's own level in each element before any Djinn, in tenths
@@ -53,9 +53,9 @@ struct DjinnDefinition {
   ///@{
   s8 hp;
   s8 pp;
-  s8 atk;
-  s8 def;
-  s8 agi;
+  s8 attack;
+  s8 defense;
+  s8 agility;
   s8 luck;
   ///@}
   u8 reservedAfterStats[2]; ///< 0 in every row
@@ -99,9 +99,9 @@ struct EnemyDefinition {
   ///@{
   u16 hp;
   u16 pp;
-  u16 atk;
-  u16 def;
-  u16 agi;
+  u16 attack;
+  u16 defense;
+  u16 agility;
   u8 luck;
   u8 actionCount; ///< actions a turn
   u8 hpRegen;     ///< HP restored at each turn's end
@@ -137,7 +137,7 @@ STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 72);
 /// attacks with, its level in each element, and its base power and resistance
 /// in each.
 struct EnemyElementPreset {
-  s32 first; ///< the element it attacks with (Enemy_GetAttackElement)
+  s32 attackElement; ///< the element it attacks with (Enemy_GetAttackElement)
   /// Its level in each element; Unit_GetElementLevels returns ten times each.
   u8 elementLevels[4];
   /// Its base power and resistance in each element, as
@@ -161,9 +161,9 @@ struct LevelUpResult {
   u16 ability;
   u16 hp;
   u16 pp;
-  u16 atk;
-  u16 def;
-  u16 agi;
+  u16 attack;
+  u16 defense;
+  u16 agility;
   u16 luck;
 };
 

@@ -171,9 +171,9 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   battle = Ram_HeapSlots->battleState;
   BattleEffect_StartCanvasLayer(0);
-  RagingHeat_FillGradientCanvas();
+  BattleEffect_FillWhiteBand();
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   // The battle flashes away; then the sky and the dragon's sprites load.
   bgX = -80;
   for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
@@ -224,7 +224,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   }
   Iwram_FillWords(canvas, CANVAS_VIEW_BYTES, 0);
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   REG_BG2X = 0;
   baseX = 0;
@@ -281,7 +281,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           Iwram_FillWords(canvas, CANVAS_VIEW_BYTES, gEclipse_FillLevels[i]);
         }
       }
-      req = gEclipse_Scales;
+      req = gEclipse_DragonScale;
       place[3] = 0;
       place[1] = toFIXED(255);
       baseX += velocityX;
@@ -367,8 +367,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         {
           s32 size = ECLIPSE_ORB.variant;
 
-          Canvas_BlitAtFoot(state->sheet, FIXEDtoINT(cx), FIXEDtoINT(cy),
-                            size * 2);
+          Canvas_BlitMirroredQuarters(state->sheet, FIXEDtoINT(cx),
+                                      FIXEDtoINT(cy), size * 2);
         }
       }
       if (frame >= ECLIPSE_RAYS_START) {
@@ -521,7 +521,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   }
   ActorShadow_LoadTilesFar();
   battle->arrowTiles = VramCache_AllocEntry(128);
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   for (i = 0; i != args->targetCount; i++) {
     BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_GRB, TINT_KEEP,
                              TINT_KEEP, 0);
@@ -611,7 +611,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         if (frame <= 27) {
           cells = state->sheet + ECLIPSE_BLAST_GLOW;
           BattleEffect_DrawShadedCircles(cells, 96, FIXED_ONE);
-          Canvas_BlitAtFoot(cells, FIXEDtoINT(q->x), FIXEDtoINT(q->y), 96);
+          Canvas_BlitMirroredQuarters(cells, FIXEDtoINT(q->x), FIXEDtoINT(q->y),
+                                      96);
         }
         Matrix_Initialize();
         Matrix_Translate(q->x - toFIXED(63), q->y - toFIXED(64), 0);
@@ -798,7 +799,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         model->vertices = vertices;
         model->texture = &landingTexture;
         model->shade = shade;
-        model->flags = 3;
+        model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
       }
       // The dome swells from half its size, turning.
       {
@@ -1089,8 +1090,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
           size = radius * 2;
           BattleEffect_DrawShadedCircles(Ram_MapCellBuffer, size, FIXED_ONE);
         }
-        Canvas_BlitAtFoot(Ram_MapCellBuffer, FIXEDtoINT(cx), FIXEDtoINT(cy),
-                          size);
+        Canvas_BlitMirroredQuarters(Ram_MapCellBuffer, FIXEDtoINT(cx),
+                                    FIXEDtoINT(cy), size);
       }
 
       // Each ray has an angle (x), a spin (y) and an age (variant), each
@@ -1190,7 +1191,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (kind == FORMATION_DOOM_DRAGON_C) {
     // Put the battle's view back by hand.
@@ -1199,7 +1200,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
     gBgScroll[1].y = state->savedBg1Y;
     gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
     gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-    Task_Remove(Palette_StepFadeTransfer);
+    Task_Remove(BattleEffect_DarkenBackgroundStep);
   } else {
     BattleEffect_EndCanvasLayer();
   }
@@ -1209,7 +1210,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
 
 /// Copies the canvas to VRAM once the effect has finished a frame, then clears,
 /// fades, darkens or brightens it as transferMode says.
-void BattleEffect_ProcessPendingGraphicsTransfer(void) {
+void BattleEffect_TransferCanvas(void) {
   struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   void *source = Ram_HeapSlots->battleCanvas;
   u32 ime;
@@ -1274,7 +1275,7 @@ void BattleEffect_ProcessPendingStampTransfer(void) {
 /// Copies a picture the size of the battle background from the map cell buffer
 /// to BG character block 2 once the effect has finished a frame, as
 /// transferMode says.
-void BattleEffect_FlushPendingGraphicsTransfer(void) {
+void BattleEffect_TransferFullScreenImage(void) {
   struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   void *source = Ram_MapCellBuffer;
   u32 ime;
@@ -1364,7 +1365,7 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
   (BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK) + (row) * MAP_ROW_BYTES)
 
 /// Writes BG1's map to show a picture CANVAS_SIZE wide from BG character block
-/// 2, as BattleTransition_BuildTilemap does for the battle background: four
+/// 2, as BattleTransition_BuildFlatTilemap does for the battle background: four
 /// rows of blank entries, two of BG1_CLEAR_TILE, then the picture's tiles in
 /// order, CANVAS_TILES rows of them, each row closed with BG1_CLEAR_TILE.
 void BattleEffect_BuildCanvasTilemap(void) {
@@ -1417,7 +1418,7 @@ void Display_ApplyBg2Affine(void) {
 }
 
 /// Writes the effect's BG2 reference point to BG2X and BG2Y.
-void Display_ApplyBg2Reference(void) {
+void BattleEffect_ApplyBg2Reference(void) {
   struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
 
   REG_BG2X = state->bg2x;
@@ -1426,7 +1427,7 @@ void Display_ApplyBg2Reference(void) {
 
 /// Darkens the battle background a step each frame while the canvas is open, so
 /// the effect stands out, for as many frames as fadeFrames says.
-void Palette_StepFadeTransfer(void) {
+void BattleEffect_DarkenBackgroundStep(void) {
   struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   s32 *framesLeft;
   struct BattleState *battle;
@@ -1446,7 +1447,7 @@ void Palette_StepFadeTransfer(void) {
 }
 
 /// Clears every target's flash timer.
-void BattleEffect_ClearActorTimers(void) {
+void BattleEffect_ClearTintTimers(void) {
   struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
 
   Iwram_ClearWords(state->actorTimers, sizeof state->actorTimers);
@@ -1497,7 +1498,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   s32 offset;
 
   BattleEffect_ConfigureEffectDisplay();
-  BattleEffect_ClearActorTimers();
+  BattleEffect_ClearTintTimers();
   display->secondMode = BATTLE_BACKGROUND_FIXED;
   wait(1);
   REG_BLDCNT = 0;
@@ -1511,7 +1512,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   state->fadeFrames = 0;
   state->fadeStep = 0;
-  Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_DarkenBackgroundStep, TASK_PASS_FRAME);
 
   // Change BG2's settings while it is hidden.
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -1562,7 +1563,7 @@ UNUSED void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   s32 column;
   s32 offset;
 
-  BattleEffect_ClearActorTimers();
+  BattleEffect_ClearTintTimers();
   display->secondMode = BATTLE_BACKGROUND_FIXED;
   wait(1);
   REG_BLDCNT = 0;
@@ -1576,7 +1577,7 @@ UNUSED void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                               BATTLE_BACKGROUND_FADE_RESTORE);
   state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   state->fadeStep = 0;
-  Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_DarkenBackgroundStep, TASK_PASS_FRAME);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
@@ -1670,7 +1671,7 @@ void BattleEffect_EndCanvasLayer(void) {
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  Task_Remove(Palette_StepFadeTransfer);
+  Task_Remove(BattleEffect_DarkenBackgroundStep);
   // This overwrites the saved y restored above, so BG1 is always left at
   // BATTLE_BACKGROUND_SCROLL_Y.
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
@@ -1741,7 +1742,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
   s32 column;
   s32 byteOffset;
 
-  BattleEffect_ClearActorTimers();
+  BattleEffect_ClearTintTimers();
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, screen->background, 0);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   layer->secondMode = BATTLE_BACKGROUND_NONE;

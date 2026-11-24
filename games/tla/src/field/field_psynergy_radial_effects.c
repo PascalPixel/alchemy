@@ -29,7 +29,7 @@
 #include "item_ids.h"
 #include "ability_ids.h"
 
-extern const s32 gBattleEffect_SharedParticleScript[];
+extern const s32 gFieldEffect_ReleaseScript[];
 
 /// Whirlwind: its leaves, their circling and wandering, the target's shrinking
 /// and the orb's flight, in frames.
@@ -99,7 +99,7 @@ void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
     effect->turnFrames = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
   }
   if (++effect->swirlFrames == WHIRLWIND_WANDER_FRAMES)
-    Actor_StartScriptFar(effect, gBattleEffect_SharedParticleScript);
+    Actor_StartScriptFar(effect, gFieldEffect_ReleaseScript);
 }
 
 /// Per-frame update of a Whirlwind particle: circles the anchor at 8 pixels,
@@ -133,7 +133,7 @@ void FieldEffect_CircleAnchor(struct Actor *effect) {
 
 /// Per-frame update of Whirlwind's target: it shrinks a 512th a frame and,
 /// below half its size, is put away at the map's origin.
-void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor) {
+void Whirlwind_UpdateTarget(struct Actor *actor) {
   s32 scale;
 
   scale = actor->scaleX - WHIRLWIND_TARGET_SCALE_STEP;
@@ -150,7 +150,7 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor) {
 void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 
 void Vector_AddPolarOffset(FIXED radius, s32 angle, s32 *position);
-void BattleEffect_AgeAndCueAtEighty(struct Actor *actor);
+void Whirlwind_UpdateSpentOrb(struct Actor *actor);
 
 /// Whirlwind: a whirlwind orb flies from the caster to the spot over ten
 /// frames, growing from a quarter size. With nothing to blow it whooshes away;
@@ -159,8 +159,8 @@ void BattleEffect_AgeAndCueAtEighty(struct Actor *actor);
 /// (HangingVine_Swing).
 void FieldPsynergy_Whirlwind(void) {
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
-  struct Actor *caster = scene->mainActor;
-  struct Actor *target = scene->child;
+  struct Actor *caster = scene->caster;
+  struct Actor *target = scene->target;
   struct Sprite *sprite = target->sprite;
   struct Vector3 position;
   struct Vector3 from;
@@ -172,9 +172,9 @@ void FieldPsynergy_Whirlwind(void) {
   s32 i;
   s32 frames = WHIRLWIND_TRAVEL_FRAMES + 1;
 
-  if (scene->childOption != 0)
+  if (scene->sceneVariant != 0)
     return;
-  if (scene->enabled == 0) {
+  if (scene->aimAhead == 0) {
     s32 animation;
 
     kind = ORB_ORBITING;
@@ -223,7 +223,7 @@ void FieldPsynergy_Whirlwind(void) {
     // higher each, 3 to 8 pixels out, circle it while the target shrinks.
     wait(20);
     if (target != 0)
-      target->update = (ObjectUpdate)FieldEffect_ShrinkActorScaleUntilHalf;
+      target->update = (ObjectUpdate)Whirlwind_UpdateTarget;
     for (i = 0; i < WHIRLWIND_LEAF_COUNT; i++) {
       s32 distance;
 
@@ -275,11 +275,11 @@ void FieldPsynergy_Whirlwind(void) {
         }
       }
     }
-    BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
+    BattleEffect_SetObjectUpdateMode(scene->caster, 0);
     FieldPsynergy_FadeFromCastColor();
     orb->timer = 0;
-    orb->update = (ObjectUpdate)BattleEffect_AgeAndCueAtEighty;
-    HangingVine_Swing(scene->secondActorId);
+    orb->update = (ObjectUpdate)Whirlwind_UpdateSpentOrb;
+    HangingVine_Swing(scene->targetId);
     Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
   }
@@ -288,7 +288,7 @@ void FieldPsynergy_Whirlwind(void) {
 
 /// Per-frame update of Whirlwind's orb once it has done its work: it whooshes
 /// on its 80th frame.
-void BattleEffect_AgeAndCueAtEighty(struct Actor *actor) {
+void Whirlwind_UpdateSpentOrb(struct Actor *actor) {
   if (actor->timer == 80) {
     actor->update = 0;
     Sound_PlayFar(SE_WHOOSH);
@@ -349,7 +349,7 @@ top:
 /// Pauses the target (effectState->child) and runs FieldPsynergy_Halt.
 void FieldPsynergy_HaltOnTarget(s32 unused) {
   struct Actor *target =
-      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->child;
+      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->target;
 
   target->paused = 1;
   FieldPsynergy_Halt();
@@ -365,7 +365,7 @@ void FieldPsynergy_HaltOnTarget(s32 unused) {
 /// and a high one, and scatters it into HALT_PARTICLES particles.
 void FieldPsynergy_Halt(void) {
   struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
-  struct Actor *caster = effectState->mainActor;
+  struct Actor *caster = effectState->caster;
   struct Actor *orb;
   struct FieldParticle *effect;
   struct Vector3 pos;
@@ -430,7 +430,7 @@ void FieldPsynergy_Halt(void) {
     Vector_AddPolarOffset(toFIXED(4), Random16(), &pos.x);
     FieldParticle_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateHaltParticle);
-    Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_WHITE);
+    Sprite_SetAnimationColorModesFar(effect->sprite, SPRITE_COLOR_WHITE);
     effect++;
   }
 
@@ -445,9 +445,9 @@ void FieldPsynergy_Halt(void) {
 }
 
 /// Per-frame update of an actor held by Halt: its sprite flickers through the
-/// colour modes of gBattleEffect_RandomChildValues at random.
+/// colour modes of gHalt_FlickerColorModes at random.
 void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
-  const s8 *table = gBattleEffect_RandomChildValues;
+  const s8 *table = gHalt_FlickerColorModes;
   s32 random = Random16();
   Actor_SetSpriteColorModeFar(actor, table[(u32)(random * 8) >> 16]);
 }
@@ -462,11 +462,11 @@ void FieldPsynergy_HaltActor(s32 actorId) {
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
     gMainRoutineState.pausedUpdate = actor->update;
-    gMainRoutineState.pausedPose = 0;
+    gMainRoutineState.pausedColorMode = 0;
     if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
       entry = ((struct Sprite *)actor->sprite)->entries[0];
       if (entry != NULL) {
-        gMainRoutineState.pausedPose = entry->colorMode;
+        gMainRoutineState.pausedColorMode = entry->colorMode;
       }
     }
     actor->update = (ObjectUpdate)FieldPsynergy_UpdateHaltedActor;
@@ -484,7 +484,7 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
     if (actor->update == (ObjectUpdate)FieldPsynergy_UpdateHaltedActor) {
       actor->update = gMainRoutineState.pausedUpdate;
       gMainRoutineState.pausedUpdate = NULL;
-      Actor_SetSpriteColorModeFar(actor, (s8)gMainRoutineState.pausedPose);
+      Actor_SetSpriteColorModeFar(actor, (s8)gMainRoutineState.pausedColorMode);
     }
     actor->paused = 0;
     Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);
@@ -519,8 +519,8 @@ static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
 /// 20 pixels moving the target to (-9, -9), rises 19.5 pixels and shrinks back.
 void FieldPsynergy_Catch(void) {
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
-  struct Actor *mainActor = scene->mainActor;
-  struct Actor *secondary = scene->child;
+  struct Actor *mainActor = scene->caster;
+  struct Actor *secondary = scene->target;
   struct Actor *actor;
   struct Vector3 spawn;
   struct Vector3 origin;
@@ -531,7 +531,7 @@ void FieldPsynergy_Catch(void) {
 
   SET_POSITION(&origin, mainActor->x.fixed, mainActor->y.fixed + toFIXED(16),
                mainActor->z.fixed);
-  if (scene->enabled) {
+  if (scene->aimAhead) {
     SET_POSITION(&target, mainActor->x.fixed, mainActor->y.fixed + toFIXED(32),
                  mainActor->z.fixed);
     Vector_AddPolarOffset(toFIXED(32), scene->angle, &target.x);
@@ -729,7 +729,7 @@ void FieldPsynergy_LashOnTarget(s32 value) {
   s32 first;
 
   if (Rope_FindById(value, &first, &second)) {
-    state->enabled = 1;
+    state->aimAhead = 1;
   } else {
     field->targetY = value;
     field->targetZ = first;
@@ -751,7 +751,7 @@ void FieldPsynergy_Lash(void) {
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct ScatterState));
   struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct FieldState *field = Ram_HeapSlots->fieldState;
-  struct Actor *caster = scene->mainActor;
+  struct Actor *caster = scene->caster;
   struct Actor *actor;
   struct EffectSprite *sprite;
   struct FieldPsynergyParticle *particle;
@@ -760,7 +760,7 @@ void FieldPsynergy_Lash(void) {
   s32 tileA;
   s32 i;
 
-  if (scene->child != 0) {
+  if (scene->target != 0) {
     scene->y += toFIXED(4);
     scene->z += toFIXED(4);
   }
@@ -806,7 +806,7 @@ void FieldPsynergy_Lash(void) {
       wait(1);
     }
     Sound_PlayFar(SE_WATER);
-    if (scene->enabled != 0) {
+    if (scene->aimAhead != 0) {
       for (i = 0; i < LASH_SPARKLES; i++)
         BattleEffect_SpawnScatterParticle(actor->x.fixed, actor->y.fixed,
                                           actor->z.fixed);
@@ -869,14 +869,13 @@ void FieldEffect_UpdateRetreatCaster(struct Actor *actor) {
 /// actor's screen position (8 pixels lower) in a direction within 1/8 turn of
 /// up the screen, at up to 5 pixels a frame, and starts again from the main
 /// actor on arrival until it takes its last flight.
-void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
+void Retreat_UpdateSpark(struct FieldParticle *effect) {
   struct Vector3 pos;
   struct Actor *main;
   s32 state;
   u32 spread;
 
-  main =
-      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->mainActor;
+  main = ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->caster;
   state = effect->state;
 
   if (state == RETREAT_PARTICLE_AIM) {
@@ -918,7 +917,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
 /// sparks fly up the screen, one a frame.
 void FieldPsynergy_Retreat(void) {
   struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
-  struct Actor *actor = effectState->mainActor;
+  struct Actor *actor = effectState->caster;
   struct Vector3 pos;
   struct FieldParticle *effect;
   struct FieldParticle *effects;
@@ -928,7 +927,7 @@ void FieldPsynergy_Retreat(void) {
   FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldPsynergy_FadeToCastColor();
   wait(10);
-  Actor_FaceDirectionById(effectState->firstActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(effectState->casterId, FACING_SOUTH, 0);
   wait(30);
   actor->update = (ObjectUpdate)Actor_CycleSpriteColors;
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
@@ -957,9 +956,9 @@ void FieldPsynergy_Retreat(void) {
     FIXED scale;
 
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
-    FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
-    FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->actor, Random_Below(7));
+    FieldParticle_SetCallback(effect, Retreat_UpdateSpark);
+    FieldParticle_SetAnimation(effect, 7);
+    Sprite_SetAnimationColorModesFar(effect->sprite, Random_Below(7));
     scale = (Random16() >> 1) + FIXED_ONE * 6 / 5; // 1.2 to 1.7
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -1049,7 +1048,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
 /// at 0.4 of full size, drawn with the tiles in effectState->arcTileSlot.
 void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
   struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
-  struct Actor *leader = effectState->mainActor;
+  struct Actor *leader = effectState->caster;
   struct Actor *actors[2];
   struct Actor *actor;
   struct DescendingArcSprite *sprite;
@@ -1152,7 +1151,7 @@ void FieldPsynergy_Avoid(void) {
   s32 phase;
 
   effectState = Ram_HeapSlots->fieldEffectState;
-  actor = effectState->mainActor;
+  actor = effectState->caster;
   group = actor->sprite;
   entry = group->entries[0];
   angle = actor->facing;
@@ -1164,7 +1163,7 @@ void FieldPsynergy_Avoid(void) {
   tiles = gFieldEffect_ArcSparkTiles;
   VramCache_Load((s16)slot, 256, tiles);
   gMainRoutineState.avoidDistance = toFIXED(2400);
-  gMainRoutineState.avoidByItem = GameFlag_Get(FLAG_ITEM_USE);
+  gMainRoutineState.avoidByItem = GameFlag_Get(FLAG_PSYNERGY_FROM_ITEM);
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   actor->update = (ObjectUpdate)FieldEffect_UpdateAvoidCaster;
   actor->arcPhase = 0;
@@ -1281,7 +1280,7 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
     EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tiles);
     sprite->oam.fullColor = 0;
     sprite->oam.palette = 0;
-    sprite->oam.priority = BattleEffect_GetObjectPriority(target);
+    sprite->oam.priority = Actor_GetSpritePriority(target);
   }
   state->age[group] = 0;
   state->target = target;
@@ -1321,9 +1320,9 @@ void BattleEffect_UpdateArcEffect(void) {
         sprite->scaleX = scale;
         sprite->scaleY = scale;
         if (i == 0) {
-          sprite->depth = BattleEffect_GetObjectDepth(state->target) - 1;
+          sprite->depth = Actor_GetSpriteDepth(state->target) - 1;
         } else {
-          sprite->depth = BattleEffect_GetObjectDepth(state->target) + 1;
+          sprite->depth = Actor_GetSpriteDepth(state->target) + 1;
           sprite->y -= toFIXED(1);
           sprite->scaleY = -sprite->scaleY;
         }
@@ -1461,7 +1460,7 @@ again:
     pos[0] = motion->x;
     pos[1] = motion->y;
     pos[2] = motion->z;
-    if (MapGrid_CheckCollisionFar(scene->mainActor, pos) > 0) {
+    if (MapGrid_CheckCollisionFar(scene->caster, pos) > 0) {
       state->done = 1;
       state->result = -1;
       state->phase++;
@@ -1471,7 +1470,7 @@ again:
     for (objectIndex = 0; objectIndex < FIELD_ACTOR_COUNT; objectIndex++) {
       actor = field->actors[objectIndex];
       if (actor != NULL && actor->script != NULL &&
-          (actor->collisionFlags & ACTOR_SOLID) && actor != scene->mainActor &&
+          (actor->collisionFlags & ACTOR_SOLID) && actor != scene->caster &&
           FieldPsynergy_CheckOverlap(&motion->x, 2, &actor->x.fixed,
                                      actor->radius - 2) >= 0) {
         state->done = 1;
@@ -1691,13 +1690,13 @@ void FieldPsynergy_Arrow(void) {
   EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X32, tile);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
-  sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
-  sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor) + 1;
+  sprite->oam.priority = Actor_GetSpritePriority(scene->caster);
+  sprite->depth = Actor_GetSpriteDepth(scene->caster) + 1;
   sprite->scaleX = FIXED_ONE * 2 / 5;
   sprite->scaleY = FIXED_ONE * 2 / 5;
   sprite->angle = scene->angle8;
-  pos[0] = scene->mainActor->x.fixed;
-  pos[2] = scene->mainActor->z.fixed;
+  pos[0] = scene->caster->x.fixed;
+  pos[2] = scene->caster->z.fixed;
   motion = &state->bowMotion;
   Vector_AddPolarOffset(toFIXED(8), scene->angle8, pos);
   SET_POSITION(motion, pos[0], toFIXED(16), pos[2]);
@@ -1710,13 +1709,13 @@ void FieldPsynergy_Arrow(void) {
   EffectSprite_Init(sprite, 12, 8, OBJ_SIZE_16X16, tile);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
-  sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
-  sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor) + 2;
+  sprite->oam.priority = Actor_GetSpritePriority(scene->caster);
+  sprite->depth = Actor_GetSpriteDepth(scene->caster) + 2;
   sprite->scaleX = 0;
   sprite->scaleY = 0;
   sprite->angle = scene->angle8;
-  pos[0] = scene->mainActor->x.fixed;
-  pos[2] = scene->mainActor->z.fixed;
+  pos[0] = scene->caster->x.fixed;
+  pos[2] = scene->caster->z.fixed;
   motion = &state->arrowMotion;
   Vector_AddPolarOffset(toFIXED(18), scene->angle8, pos);
   SET_POSITION(motion, pos[0], toFIXED(16), pos[2]);
@@ -1724,18 +1723,18 @@ void FieldPsynergy_Arrow(void) {
 
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->canvasSprite;
-  canvas->priority = BattleEffect_GetObjectPriority(scene->mainActor);
-  canvas->depth = BattleEffect_GetObjectDepth(scene->mainActor) + 3;
+  canvas->priority = Actor_GetSpritePriority(scene->caster);
+  canvas->depth = Actor_GetSpriteDepth(scene->caster) + 3;
   canvas->mode = CANVAS_SPRITE_256_COLORS;
   canvas->command = 0;
   canvas->angle = scene->angle8;
-  state->start[0] = scene->mainActor->x.fixed;
-  state->start[1] = scene->mainActor->y.fixed;
-  state->start[2] = scene->mainActor->z.fixed;
+  state->start[0] = scene->caster->x.fixed;
+  state->start[1] = scene->caster->y.fixed;
+  state->start[2] = scene->caster->z.fixed;
   blue = RGB(0, 0, RGB_LEVEL_MAX);
-  state->target[0] = scene->mainActor->x.fixed;
-  state->target[1] = scene->mainActor->y.fixed;
-  state->target[2] = scene->mainActor->z.fixed;
+  state->target[0] = scene->caster->x.fixed;
+  state->target[1] = scene->caster->y.fixed;
+  state->target[2] = scene->caster->z.fixed;
   Vector_AddPolarOffset(toFIXED(80), scene->angle8, state->target);
 
   // The canvas palette: blue full, red and green rising from half to full.
@@ -1778,7 +1777,7 @@ void FieldPsynergy_GatherNearbyCells(void) {
   struct PointState *field = Ram_HeapSlots->fieldState;
   struct CycloneState *state = Ram_HeapSlots->battleEffect;
   s16 *points = field->points;
-  struct Actor *owner = effect->mainActor;
+  struct Actor *owner = effect->caster;
   FIXED position[3];
   FIXED x, z;
   s32 kind;
@@ -1847,7 +1846,7 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void FieldPsynergy_RunTouchedEvents(void) {
   struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
   struct TouchCell *cells = (struct TouchCell *)gFieldState->psynergyCells;
-  struct Actor *caster = effectState->mainActor;
+  struct Actor *caster = effectState->caster;
   s32 count = 0;
   s16 ids[24];
   s32 i, j;
@@ -1885,8 +1884,8 @@ void FieldPsynergy_RunTouchedEvents(void) {
                                           effectState->fieldPsynergy, id);
 
     if (event != 0)
-      Field_RunPsynergyEvent(event, effectState->firstActorId,
-                             effectState->secondActorId);
+      Field_RunPsynergyEvent(event, effectState->casterId,
+                             effectState->targetId);
   }
 }
 

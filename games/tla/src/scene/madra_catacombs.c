@@ -265,7 +265,7 @@ void MadraCatacombs_TryLockedDoor(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   // "The door won't budge. ...Must be locked."
   FieldMessage_Show((s32)&MsgFieldDoorWontBudge, 1);
   state->fieldMenu = 1;
@@ -286,7 +286,7 @@ void MadraCatacombs_DropPillarIntoHole(void) {
     z = FIELD_CELL(actor->z.fixed);
     if (z == 13) {
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       Actor_DropAndWait(actor);
       MapGrid_CopyCellAttributes(41, 13, 2, 1, 39, z);
       Event_SetFlag(FLAG_MADRA_CATACOMBS_HOLE_FILLED);
@@ -334,7 +334,7 @@ void MadraCatacombs_UnlockWithRuinKey(void) {
   u32 i;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   Event_PlaySound(SE_STONE_RUMBLE);
   for (i = 0; i < 120; i++) {
     left->x.fixed += -(toFIXED(1) / 10);
@@ -419,7 +419,7 @@ void MadraCatacombs_HearEyesOfTruth(void) {
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED) != 0 &&
       Event_GetFlag(FLAG_MADRA_CATACOMBS_VILLAGE_DOOR_OPEN) == 0) {
     Event_Start();
-    Event_ResolvePendingActions(1);
+    Event_EndLastingPsynergy(1);
     Event_PlaySound(SE_RATTLE);
     MapGrid_CopyCellsTo(72, 63, 36, 38, 1, 2);
     Event_Wait(40);
@@ -435,7 +435,7 @@ void MadraCatacombs_HearEyesOfTruth(void) {
     Event_End();
   } else {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     // "Look upon me with eyes of truth... Then the door will open..."
     FieldMessage_Show((s32)&MsgFieldEyesOfTruth, 1);
     Event_End();
@@ -456,7 +456,7 @@ void MadraCatacombs_ShakeBookshelf(void) {
     x = actor->x.fixed;
     if (x < (toFIXED(186))) {
       Event_Start();
-      Event_ResolvePendingActions(0);
+      Event_EndLastingPsynergy(0);
       Event_PlaySound(SE_DUST_PUFF);
       actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       wait(10);
@@ -569,7 +569,7 @@ void MadraCatacombs_EnterDoor(void) {
 
   actor = Actor_GetById(party->leaderActorId);
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
@@ -597,7 +597,7 @@ void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
   s32 cell;
 
   Event_Start();
-  Event_ResolvePendingActions(0);
+  Event_EndLastingPsynergy(0);
   if (width == 2)
     Event_PlaySound(SE_THUMP);
   else
@@ -657,7 +657,7 @@ void MadraCatacombs_OpenTabletRoomDoor(void) {
 #define DEFINE_LEAVE_BLOCKED_WAY(name, exit)                                   \
   void name(void) {                                                            \
     Event_Start();                                                             \
-    Event_ResolvePendingActions(0);                                            \
+    Event_EndLastingPsynergy(0);                                               \
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId), 0);   \
     Actor_SetSpriteColor(Actor_GetById(gMainRoutineState.leaderActorId),       \

@@ -180,15 +180,15 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   motes = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  RagingHeat_FillGradientCanvas();
+  BattleEffect_FillWhiteBand();
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   // The battle flashes away; then the sky, the petals and Flora load.
   bgX = -80;
   for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
     if (frame == SUMMON_OPENING_LOAD_FRAME) {
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-      BattleEffect_SelectLivingTargets(state->args);
+      BattleEffect_ShowLivingTargets(state->args);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                RESOURCE_VIOLET_SKY_BACKDROP, 0);
       state->scrollTimer = 0;
@@ -251,8 +251,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     REG_BG2X = bgX << 8;
     EFFECT_PRESENT_CANVAS(state);
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, source, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, source, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   // DEAD: the dimmed mote copies, which nothing reads; the ROM keeps the
   // loop.
   size = FLORA_DIMMED_MOTE;
@@ -343,8 +343,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       s32 k = Random16() & 3;
       s32 n = gFlora_PetalSizes[k] * 2;
 
-      Canvas_BlitAtFoot(source + gFlora_PetalPictures[k], FLORA_GLOW_X,
-                        FLORA_GLOW_Y, n);
+      Canvas_BlitMirroredQuarters(source + gFlora_PetalPictures[k],
+                                  FLORA_GLOW_X, FLORA_GLOW_Y, n);
     }
     // Flora fades in from white, a level a frame.
     shown = frame - FLORA_APPEAR_FRAME;
@@ -1029,7 +1029,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
                              1);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   REG_BLDCNT = 0;
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add((s32)BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   // Centre the canvas's x 64 on the target.
   BattleObject_GetFar(args->targets[0]);
@@ -1127,7 +1127,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -1138,7 +1138,7 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
   struct PlacedSprite *record;
   s32 i;
 
-  for (i = 0; (record = GetMotionRecordFar(slot->object, i)) != NULL; i++) {
+  for (i = 0; (record = Actor_GetSpriteFar(slot->object, i)) != NULL; i++) {
     if (slot->fading == 0)
       record->priority = priority;
   }
@@ -1189,7 +1189,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add((s32)BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   targetObject = BattleObject_GetFar(args->targets[0])->object;
   casterObject = BattleObject_GetFar(args->user)->object;
   battle = Ram_HeapSlots->battleState;
@@ -1301,7 +1301,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   }
 
   battle->keepObjectPriorities = 0;
-  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove((s32)BattleEffect_TransferCanvas);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

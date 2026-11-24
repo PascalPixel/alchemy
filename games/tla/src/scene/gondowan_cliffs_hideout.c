@@ -61,7 +61,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 void GondowanCliffsHideout_WarriorsAreFound(void) {
   if (!GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     Event_Start();
-    Event_ResolvePendingActions(0);
+    Event_EndLastingPsynergy(0);
     Event_SetMessageId((s32)MsgKibomboWarriorsFound);
     FieldCamera_SetSpeed(1);
     FieldCamera_FollowActor(ACTOR_FIRE_MARKER, 1);

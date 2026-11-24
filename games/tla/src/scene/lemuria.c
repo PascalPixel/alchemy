@@ -174,7 +174,7 @@ extern u16 gLemuria_WideDoorOpening[];
 
 #include "shared/actor_is_facing_near.h"
 
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+s32 Actor_GetSpritePriority(struct Actor *actor);
 
 /// An update for the two walking children: each stands while it is talked to,
 /// while Mind Read shows its thoughts, or while it faces the other child or the
@@ -185,7 +185,7 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
   u32 mode;
   struct Actor *other;
 
-  Actor_SetSpritePriorityDirect(self, BattleEffect_GetObjectPriority(Actor_Get(
+  Actor_SetSpritePriorityDirect(self, Actor_GetSpritePriority(Actor_Get(
                                           gMainRoutineState.leaderActorId)));
   mode = ABILITY_ID(event->psynergy);
   state = &self->paused;
@@ -211,7 +211,7 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
   return 0;
 }
 
-s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellAttributesAt(s32 x, s32 z, s32 layer);
 
 extern struct MapGridCellAnimation gLemuria_UnclesDoor;
 extern struct MapGridCellAnimation gLemuria_GirlsHouseDoor;
@@ -248,7 +248,7 @@ void Lemuria_OpenDoorAndEnter(const struct MapGridCellAnimation *door, s32 exit,
   s32 id;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(door->steps, door->x, door->y);
   Actor_Get(gMainRoutineState.leaderActorId)->motionFlags = ACTOR_FALLS;
@@ -328,7 +328,7 @@ void Lemuria_TalkToSpoiledChild(void) {
 
   actor->timer = 1;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (state->psynergy == 0) {
     FieldEvent_SetMessageId((s32)&MsgLemuriaItHasBeenManyMany);
     Actor_FaceEachOther(ACTOR_SPOILED_CHILD, gMainRoutineState.leaderActorId,
@@ -357,7 +357,7 @@ void Lemuria_TalkToLonelyChild(void) {
 
   actor->timer = 1;
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   if (state->psynergy == 0) {
     FieldEvent_SetMessageId((s32)&MsgLemuriaWeAreOnlyChildren);
     Actor_FaceEachOther(ACTOR_LONELY_CHILD, gMainRoutineState.leaderActorId, 2);
@@ -418,7 +418,7 @@ void Lemuria_CycloneHardNutWeeds(void) {
     if (FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(HARD_NUT_X)) &&
         FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(HARD_NUT_Z))) {
       Event_Start();
-      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_EndLastingPsynergy(0);
       Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 16, 0);
@@ -454,11 +454,11 @@ void Lemuria_GrowVine(void) {
   Event_SetFlag(FLAG_LEMURIA_VINE_GROWN);
   x = toFIXED(856);
   z = toFIXED(1016);
-  attribute = MapGrid_GetAttributeBAt(x, z, 0);
-  MapGrid_SetAttributeBAt(x, z, 0, attribute | MAP_CELL_CLIMBABLE);
+  attribute = MapGrid_GetCellAttributesAt(x, z, 0);
+  MapGrid_SetCellAttributesAt(x, z, 0, attribute | MAP_CELL_CLIMBABLE);
   z = toFIXED(1032);
-  MapGrid_SetAttributeBAt(
-      x, z, 0, MapGrid_GetAttributeBAt(x, z, 0) | MAP_CELL_CLIMBABLE);
+  MapGrid_SetCellAttributesAt(
+      x, z, 0, MapGrid_GetCellAttributesAt(x, z, 0) | MAP_CELL_CLIMBABLE);
 }
 
 /// Unused: Scoop digs up the Water of Life of Lemuria's first treasure spot. No
@@ -540,7 +540,7 @@ void Lemuria_TryStuckDoor(void) {
   }
   Event_SetFlag(FLAG_LEMURIA_TOLD_DOOR_IS_BROKEN);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)&MsgLemuriaAreYouKidsPierssTraveling);
   Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 872, 880);
   actor = Actor_Get(ACTOR_KRADEN_STAND_IN);
@@ -644,7 +644,7 @@ void Lemuria_OfferSpringLuck(void) {
     return;
   }
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgLemuriaDoYouWishToTest);
   Actor_ShowEmote(ACTOR_MAN_AT_THE_SPRING, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   30);
@@ -860,7 +860,7 @@ void Lemuria_AdmirePalace(s32 id) {
   s32 c;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgLemuriaOh);
   Actor_SetFirstSpriteAnimation(Actor_Get(ACTOR_KRADEN_STAND_IN),
                                 SPRITE_KRADEN);
@@ -936,7 +936,7 @@ void Lemuria_KeepLookingAround(void) {
   struct Actor *leader;
 
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgLemuriaWhereAreYouGoingFelix);
   Actor_SetFirstSpriteAnimation(Actor_Get(ACTOR_KRADEN_STAND_IN),
                                 SPRITE_KRADEN);
@@ -973,7 +973,7 @@ void Lemuria_MarvelAtCity(void) {
 
   Event_SetFlag(FLAG_LEMURIA_CITY_ADMIRED);
   Event_Start();
-  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_EndLastingPsynergy(0);
   FieldEvent_SetMessageId((s32)MsgLemuriaThisPlaceIsRemarkableTruly);
   Actor_SetSpeed(ACTOR_WEST_PALACE_GUARD, 1);
   Actor_SetSpeed(ACTOR_EAST_PALACE_GUARD, 1);

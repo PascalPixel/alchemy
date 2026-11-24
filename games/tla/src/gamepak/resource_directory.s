@@ -33,7 +33,7 @@ Resource_DirectoryTable:
 	resource SmallFont, Text_SmallFont
 	resource ClockDigits, Field_ClockDigits
 	resource TitleScreenPicture, Title_ScreenPicture
-	resource , Title_IntroGraphicsC
+	resource , Title_IntroPeak
 	resource IntroClouds, Title_IntroClouds
 	resource IntroLighthousePicture, Title_IntroLighthousePicture
 	resource IntroGullSprites, Title_IntroGullSprites
@@ -64,11 +64,11 @@ Resource_DirectoryTable:
 	resource LamakanDesertBackdrop, Battle_LamakanDesertBackdrop
 	resource MogallForestBackdrop, Battle_MogallForestBackdrop
 	resource MercuryLighthouseAerieBackdrop, Battle_MercuryLighthouseAerieBackdrop
-	resource TolbiShipInteriorsBackdrop, Battle_TolbiShipInteriorsBackdrop
+	resource TolbiShipRoomsBackdrop, Battle_TolbiShipRoomsBackdrop
 	resource ImilFuchinFallsBackdrop, Battle_ImilFuchinFallsBackdrop
 	resource KolimaForestBackdrop, Battle_KolimaForestBackdrop
-	resource TretTreeInteriorsBackdrop, Battle_TretTreeInteriorsBackdrop
-	resource InteriorBackdrop, Battle_InteriorBackdrop
+	resource TretTreeRoomsBackdrop, Battle_TretTreeRoomsBackdrop
+	resource RoomsBackdrop, Battle_RoomsBackdrop
 	resource AltinPeakBackdrop, Battle_AltinPeakBackdrop
 	resource TolbiShipDeckBackdrop, Battle_TolbiShipDeckBackdrop
 	resource MercuryLighthouseBackdrop, Battle_MercuryLighthouseBackdrop
@@ -272,19 +272,19 @@ Resource_DirectoryTable:
 	resource FireStripesTexture, BattleEffect_FireStripesTexture
 	resource PinkBarSheet, BattleEffect_PinkBarSheet
 	resource CloudPuffSheet, BattleEffect_CloudPuffSheet
-	resource TileAnimationMask, BattleEffect_TileAnimationMask
+	resource ShatteringOpeningSheet, BattleEffect_ShatteringOpeningSheet
 	resource CyanSparkSheet, BattleEffect_CyanSparkSheet
 	resource VioletPaletteA, BattleEffect_VioletPaletteA
 	resource RedPaletteA, BattleEffect_RedPaletteA
 	resource YellowPaletteA, BattleEffect_YellowPaletteA
 	resource GreyCrescentSheet, BattleEffect_GreyCrescentSheet
 	resource StarCrescentSheet, BattleEffect_StarCrescentSheet
-	resource RevealMaskA, BattleEffect_RevealMaskA
-	resource RevealMaskB, BattleEffect_RevealMaskB
-	resource RevealMaskC, BattleEffect_RevealMaskC
-	resource RevealMaskD, BattleEffect_RevealMaskD
-	resource RevealMaskE, BattleEffect_RevealMaskE
-	resource RevealMaskF, BattleEffect_RevealMaskF
+	resource VorpalSlashImageA, BattleEffect_VorpalSlashImageA
+	resource VorpalSlashImageB, BattleEffect_VorpalSlashImageB
+	resource QuickStrikeImageA, BattleEffect_QuickStrikeImageA
+	resource QuickStrikeImageB, BattleEffect_QuickStrikeImageB
+	resource UnusedFlashingStrikeImageA, BattleEffect_UnusedFlashingStrikeImageA
+	resource UnusedFlashingStrikeImageB, BattleEffect_UnusedFlashingStrikeImageB
 	resource LimeColumnSheet, BattleEffect_LimeColumnSheet
 	resource , BattleEffect_RainSheet
 	resource FlameSheetA, BattleEffect_FlameSheetA
@@ -292,7 +292,7 @@ Resource_DirectoryTable:
 	resource FlameBladeSheet, BattleEffect_FlameBladeSheet
 	resource SwordSheet, BattleEffect_SwordSheet
 	resource IceTileSheet, BattleEffect_IceTileSheet
-	resource FiveModeImage, BattleEffect_FiveModeImage
+	resource FlameArcSheet, BattleEffect_FlameArcSheet
 	resource SpiderWebSheet, BattleEffect_SpiderWebSheet
 	resource VioletLightningSheetA, BattleEffect_VioletLightningSheetA
 	resource YellowSparkSheet, BattleEffect_YellowSparkSheet
@@ -305,7 +305,7 @@ Resource_DirectoryTable:
 	resource VioletLightningSheetB, BattleEffect_VioletLightningSheetB
 	resource FireBurstSheet, BattleEffect_FireBurstSheet
 	resource BlueCrescentSheet, BattleEffect_BlueCrescentSheet
-	resource OverlayImageA, BattleEffect_OverlayImageA
+	resource JudgmentFlashSheet, BattleEffect_JudgmentFlashSheet
 	resource VioletMoteSheet, BattleEffect_VioletMoteSheet
 	resource FireballSheet, BattleEffect_FireballSheet
 	resource MemberBurstImage, BattleEffect_MemberBurstImage
@@ -318,10 +318,10 @@ Resource_DirectoryTable:
 	resource ExplosionSheet, BattleEffect_ExplosionSheet
 	resource MagentaSwirlSheet, BattleEffect_MagentaSwirlSheet
 	resource MagentaTailSheet, BattleEffect_MagentaTailSheet
-	resource ParticleSpritesA, BattleEffect_ParticleSpritesA
-	resource ParticleSpritesB, BattleEffect_ParticleSpritesB
-	resource ParticleSpritesC, BattleEffect_ParticleSpritesC
-	resource ParticleSpritesD, BattleEffect_ParticleSpritesD
+	resource YellowGlowSheet, BattleEffect_YellowGlowSheet
+	resource PaleBlueGlowSheet, BattleEffect_PaleBlueGlowSheet
+	resource BlueTallGlowSheet, BattleEffect_BlueTallGlowSheet
+	resource BlueGlowSheet, BattleEffect_BlueGlowSheet
 	resource GreenPalette, BattleEffect_GreenPalette
 	resource CrossedDaggersSheet, BattleEffect_CrossedDaggersSheet
 	resource RuneSheet, BattleEffect_RuneSheet
@@ -404,7 +404,7 @@ Resource_DirectoryTable:
 	resource RockSpireSheet, BattleEffect_RockSpireSheet
 	resource LightningBoltSheet, BattleEffect_LightningBoltSheet
 	resource BeamImage, BattleEffect_BeamImage
-	resource TwelveModeImage, BattleEffect_TwelveModeImage
+	resource BlueDropletSheet, BattleEffect_BlueDropletSheet
 	resource WindStreakSheet, BattleEffect_WindStreakSheet
 	resource YellowPaletteB, BattleEffect_YellowPaletteB
 	resource BlueRingSheet, BattleEffect_BlueRingSheet
@@ -415,8 +415,8 @@ Resource_DirectoryTable:
 	resource TornadoSheet, BattleEffect_TornadoSheet
 	resource CrystalSheet, BattleEffect_CrystalSheet
 	resource LightningPillarSheet, BattleEffect_LightningPillarSheet
-	resource StagedParticlePath, BattleEffect_StagedParticlePath
-	resource DualStreamPath, BattleEffect_DualStreamPath
+	resource AtalantaPath, BattleEffect_AtalantaPath
+	resource DragonCloudFlamePath, BattleEffect_DragonCloudFlamePath
 	resource PerspectiveDataA, Field_PerspectiveDataA
 	resource DefaultMapCells, Field_DefaultMapCells
 	resource DefaultMapEntrances, Field_DefaultMapEntrances
@@ -524,7 +524,7 @@ Resource_DirectoryTable:
 	resource ShopDownArrowTiles, MenuSprites_ShopDownArrowTiles
 	resource ItemMenuTilesA, MenuSprites_ItemMenuTilesA
 	resource ItemMenuTilesB, MenuSprites_ItemMenuTilesB
-	resource UiFixedBlockATiles, MenuSprites_UiFixedBlockATiles
+	resource NameCaretTiles, MenuSprites_NameCaretTiles
 	resource BlueDevilSprites, Monster_BlueDevilSprites
 	resource PinkBruteSprites, Monster_PinkBruteSprites
 	resource ClubTrollSprites, Monster_ClubTrollSprites
@@ -1430,8 +1430,8 @@ Resource_DirectoryTable:
 	resource , Field_JupiterLighthouseWhorl
 	resource , Field_JupiterLighthouseRoomBlueKey
 	resource , Field_JupiterLighthouseRoomPhaetonsBladeChest
-	resource , Field_JupiterLighthouseRoomM
-	resource , Tileset_PaletteJupiterLighthouseRoomM
+	resource , Field_JupiterLighthouseTerraces
+	resource , Tileset_PaletteJupiterLighthouseTerraces
 	resource , Field_JupiterLighthouseAerie
 	resource , Tileset_PaletteJupiterLighthouseAerie
 	resource , Field_Loho
@@ -1477,12 +1477,12 @@ Resource_DirectoryTable:
 	resource , Tileset_MarsLighthouseAeriePalette
 	resource , Tileset_MarsLighthouseAerieTilesA
 	resource , Tileset_MarsLighthouseAerieTilesB
-	resource , Field_MarsLighthouseRoomMFlame
-	resource , Tileset_MarsLighthouseRoomMFlameTilesD
-	resource , Field_MarsLighthouseRoomMInscriptions
-	resource , Tileset_MarsLighthouseRoomMInscriptionsPalette
-	resource , Tileset_MarsLighthouseRoomMInscriptionsTilesA
-	resource , Tileset_MarsLighthouseRoomMInscriptionsTilesB
+	resource , Field_MarsLighthouseBeaconLedge
+	resource , Tileset_MarsLighthouseBeaconLedgeTilesD
+	resource , Field_MarsLighthouseHall
+	resource , Tileset_MarsLighthouseHallPalette
+	resource , Tileset_MarsLighthouseHallTilesA
+	resource , Tileset_MarsLighthouseHallTilesB
 	resource , Field_MarsLighthouseEntranceFugue
 	resource , Field_MarsLighthouseEntranceTeleportLapis
 	resource , Field_MarsLighthouseEntranceBalm
@@ -1493,13 +1493,13 @@ Resource_DirectoryTable:
 	resource , Field_MarsLighthouseMercuryLedge
 	resource , Tileset_MarsLighthouseMercuryLedgeTilesD
 	resource , Field_MarsLighthouseJupiterLedge
-	resource , Field_MarsLighthouseRoomMAlastorsHoodChest
+	resource , Field_MarsLighthouseMarsLedge
 	resource , Field_MarsLighthouseVenusLedge
 	resource , Tileset_PaletteMarsLighthouseOutsideThawed
 	resource , Tileset_PaletteMarsLighthouseMarsTowerThawed
 	resource , Tileset_PaletteMarsLighthouseAerieThawed
-	resource , Tileset_PaletteMarsLighthouseRoomMFlameThawed
-	resource , Tileset_PaletteMarsLighthouseRoomMInscriptionsThawed
+	resource , Tileset_PaletteMarsLighthouseBeaconLedgeThawed
+	resource , Tileset_PaletteMarsLighthouseHallThawed
 	resource , Field_MercuryLighthouse
 	resource , Tileset_MercuryLighthousePalette
 	resource , Tileset_MercuryLighthouseTilesA

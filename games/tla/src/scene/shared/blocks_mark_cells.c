@@ -11,7 +11,7 @@ void Blocks_MarkCells(u16 *ids) {
 
   for (; *ids != ACTOR_LIST_END; ids++) {
     actor = Actor_Get(*ids);
-    marked = &actor->riseEnabled;
+    marked = &actor->sceneByte;
     *marked = 0;
     if (MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(actor->x.fixed),
                               FIELD_CELL(actor->z.fixed)) &

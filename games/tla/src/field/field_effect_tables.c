@@ -18,9 +18,9 @@
 // clang-format off
 
 /// A heading for each value of the right, left, up and down bits of the
-/// +Control Pad, in eight ways (BattleEffect_GetEightWayHeadingWord); the same
+/// +Control Pad, in eight ways (Input_GetDpadAngleEightWay); the same
 /// as The Broken Seal's gWorldMap_CursorDirectionAngles.
-const u16 gBattleEffect_EightWayHeadingWords[16] = {
+const u16 gInput_DpadAnglesEightWay[16] = {
     DPAD_ANGLE_NONE, FACING_EAST,      FACING_WEST,      DPAD_ANGLE_NONE,
     FACING_NORTH,    FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
     FACING_SOUTH,    FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH,
@@ -30,24 +30,24 @@ const u16 gBattleEffect_EightWayHeadingWords[16] = {
 /// Move's hand animation by the quarter turns from its side of the target to
 /// the push (event_commands_mind_read.c): 3 toward its side, 2 away from it, 1
 /// either way across; The Broken Seal's gFieldEffect_QuadrantModes.
-const u8 gUnused_BattleEffectBytes[4] = {3, 1, 2, 1};
+const u8 gMoveHand_PushPoses[4] = {3, 1, 2, 1};
 
 /// Waits 60 frames and releases the actor; The Broken Seal's
 /// gFieldEffect_BurstParticleActorScript.
-const s32 gFieldEffect_HeavyImpactScript[] = {
+const s32 gGrowth_LeafScript[] = {
     SC_WAIT(60),
     SC_RELEASE,
 };
 
-/// Unused: the same four bytes as gUnused_BattleEffectBytes, as in The Broken
+/// Unused: the same four bytes as gMoveHand_PushPoses, as in The Broken
 /// Seal; nothing reads them.
 const u8 gFieldEffect_UnusedQuadrantModes[4] = {3, 1, 2, 1};
 
-/// Waits to arrive, sets off SpawnHeavyImpactEffect (event_commands_mind_read.c)
+/// Waits to arrive, sets off FieldEffect_SpawnHeavyImpact (event_commands_mind_read.c)
 /// and releases the actor.
-const s32 gBattleEffect_HeavyImpactScript[] = {
+const s32 gForce_FistScript[] = {
     SC_SYNC,
-    SC_CALL(SpawnHeavyImpactEffect),
+    SC_CALL(FieldEffect_SpawnHeavyImpact),
     SC_RELEASE,
 };
 
@@ -69,7 +69,7 @@ const s32 gFieldEffect_LongEffectScript[] = {
 
 /// The sprite params a paused actor flickers through at random
 /// (FieldPsynergy_UpdateHaltedActor): 0 twice as often as each of 1 to 6.
-const s8 gBattleEffect_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
+const s8 gHalt_FlickerColorModes[8] = {0, 0, 1, 2, 3, 4, 5, 6};
 
 /// The arrow's wobble once it has struck, a step a frame over eight frames
 /// (FieldPsynergy_UpdateArrow): turns from its heading, scaled by

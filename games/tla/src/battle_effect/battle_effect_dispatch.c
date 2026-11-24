@@ -173,7 +173,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
 }
 
 /// Shows the battle objects of every target with HP left.
-void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
+void BattleEffect_ShowLivingTargets(struct BattleEffectParams *args) {
   s16 list[UNIT_MAX];
   s32 count;
   s32 i;

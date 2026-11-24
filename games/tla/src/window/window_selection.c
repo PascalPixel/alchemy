@@ -1291,22 +1291,22 @@ u32 Menu_ConfirmSelection(struct SelectionMenuState *screen) {
 // window far-call table, which nothing calls.
 
 /// Does nothing.
-UNUSED void MenuArrow_NoOpCallback(void) {}
+UNUSED void MenuArrow_NoOp1(void) {}
 
 /// Does nothing.
-void MenuArrow_NoOpCallbackBank(void) {}
+void MenuArrow_NoOp2(void) {}
 
 /// Does nothing.
-void MenuArrow_NoOpCallbackA(void) {}
+void MenuArrow_NoOp3(void) {}
 
 /// Does nothing.
-UNUSED void MenuArrow_NoOpCallbackB(void) {}
+UNUSED void MenuArrow_NoOp4(void) {}
 
 /// Does nothing.
-UNUSED void MenuArrow_NoOpCallbackC(void) {}
+UNUSED void MenuArrow_NoOp5(void) {}
 
 /// Does nothing.
-void MenuArrow_NoOpCallbackD(void) {}
+void MenuArrow_NoOp6(void) {}
 
 /// Sets up a sprite as the right-pointing arrow, in a free VRAM cache entry
 /// returned in *slot, which MenuArrow_Release frees.

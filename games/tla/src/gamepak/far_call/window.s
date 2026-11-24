@@ -56,14 +56,14 @@ FarCall_WindowTable:
 	export Menu_SetupSelectionBothSidesFar, Menu_SetupSelectionBothSides
 	export SelectionMenu_RunFar, SelectionMenu_Run
 	export SelectionMenu_RunWithSoundsFar, SelectionMenu_RunWithSounds
-	export MenuArrow_NoOpCallbackBankFar, MenuArrow_NoOpCallbackBank
-	export MenuArrow_NoOpCallback1Far, MenuArrow_NoOpCallbackA
+	export MenuArrow_NoOp2Far, MenuArrow_NoOp2
+	export MenuArrow_NoOp3Far, MenuArrow_NoOp3
 	export SelectionMenu_BuildEntriesFar, SelectionMenu_BuildEntries
 	export SelectionMenu_ReservedNoOpFar, SelectionMenu_ReservedNoOp
 	export Battle_CollectPartyCommandsFar, Battle_CollectPartyCommands
 	export BattleMessage_ShowAndWaitFar, BattleMessage_ShowAndWait
 	export BattleMessage_OpenFar, BattleMessage_Open
-	export MenuArrow_NoOpCallback4Far, MenuArrow_NoOpCallbackD
+	export MenuArrow_NoOp6Far, MenuArrow_NoOp6
 	export Portrait_GetForSpeakerFar, Portrait_GetForSpeaker
 	export FieldMenu_RunFar, FieldMenu_Run
 	export FileList_SelectActionFar, FileList_SelectAction

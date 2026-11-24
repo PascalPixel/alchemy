@@ -566,6 +566,11 @@ struct ProjectedPoint {
 #define SERAC_RING_START_SCALE toFIXED(0.25586)
 #define SERAC_RING_GROWTH toFIXED(0.0229)
 
+/// A shard's y speed is three times a random fraction of a pixel less
+/// SERAC_SHARD_SPEED_BIAS: from about -0.58 to 2.42 pixels a frame, 0.92 on
+/// average.
+#define SERAC_SHARD_SPEED_BIAS 12768
+
 /// "Strike a chilling finishing blow." The Mercury Djinni drops onto the
 /// target, dust bursting where it lands; a spire of ice (its mesh built on the
 /// first frame) grows up around the target in rings of mist while the camera
@@ -797,7 +802,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
       }
       if (frame == 64) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
-        EFFECT_SHOW_DAMAGE(-1);
+        EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
       }
       if (frame == 30) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_BLUE_TINT,
@@ -861,7 +866,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
                              ring * toFIXED(10) + toFIXED(64),
                          target->z + ((Trig_Cos(angle) * ring) << 2));
             p->velocityX = ((Random16() & TRIG_ANGLE_MASK) << 1) + toFIXED(1);
-            p->velocityY = ((Random16() & TRIG_ANGLE_MASK) - 12768) * 3;
+            p->velocityY =
+                ((Random16() & TRIG_ANGLE_MASK) - SERAC_SHARD_SPEED_BIAS) * 3;
             p->velocityZ = ((Random16() & TRIG_ANGLE_MASK) - toFIXED(0.5)) << 1;
             if (p->x < 0) {
               p->velocityX = -p->velocityX;
@@ -1034,3 +1040,4 @@ void BattleEffect_RunStrongHit(struct BattleEffectParams *args) {
 #undef SERAC_RINGS_FRAME
 #undef SERAC_RING_START_SCALE
 #undef SERAC_RING_GROWTH
+#undef SERAC_SHARD_SPEED_BIAS

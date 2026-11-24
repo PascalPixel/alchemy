@@ -1397,9 +1397,30 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
 #define COATLICUE_TILT 4000
 #define COATLICUE_TILT_MIN 3000
 #define COATLICUE_COG_ROLL 74752
-/// The cog's scale as it settles, and once it has swollen from frame 274.
+/// The cog of light appears at COATLICUE_COG_FRAME, fading in over eight
+/// frames and growing over 64 from a quarter of its size to
+/// COATLICUE_COG_SCALE; at COATLICUE_COG_SWELL_FRAME it swells over 16 more to
+/// COATLICUE_COG_SCALE_MAX, leaning back to COATLICUE_TILT_MIN a 1024th of a
+/// turn a frame, and from COATLICUE_COG_FADE_FRAME it fades away.
+#define COATLICUE_COG_FRAME 210
+#define COATLICUE_COG_SWELL_FRAME 274
+#define COATLICUE_COG_FADE_FRAME 310
 #define COATLICUE_COG_SCALE 55536
 #define COATLICUE_COG_SCALE_MAX 85536
+#define COATLICUE_COG_GROWTH ((COATLICUE_COG_SCALE - FIXED_ONE / 4) / 64)
+#define COATLICUE_COG_SWELL                                                    \
+  ((COATLICUE_COG_SCALE_MAX - COATLICUE_COG_SCALE) / 16)
+/// The cog's glows about her each grow to full size over 22 frames.
+#define COATLICUE_GLOW_GROWTH (FIXED_ONE / 22)
+/// The cloud of bubbles is drawn squashed: about 0.85 of its size across, 0.69
+/// high and 0.42 deep. Flung away at
+/// COATLICUE_FLING_FRAME, it stretches across from a 16th of its width by
+/// COATLICUE_FLING_STRETCH a frame.
+#define COATLICUE_CLOUD_WIDTH_SCALE 55536
+#define COATLICUE_CLOUD_HEIGHT_SCALE 45536
+#define COATLICUE_CLOUD_DEPTH_SCALE 27768
+#define COATLICUE_FLING_FRAME 540
+#define COATLICUE_FLING_STRETCH 1500
 /// The fire ring's flashes at gCoatlicue_RingFrames, as it shines at
 /// gCoatlicue_FlashFrames, the cog's glows at gCoatlicue_GlowFrames, and the
 /// two coils of scaled water.
@@ -1417,6 +1438,12 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
 #define COATLICUE_COIL_TILT 3000
 #define COATLICUE_COIL_TILT_SPEED 22
 #define COATLICUE_SECOND_COIL_START 82
+/// From COATLICUE_COIL_SHRINK_FRAME the coils shrink away a 16th a frame from
+/// COATLICUE_COIL_SHRINK_SCALE, the second from COATLICUE_SECOND_COIL_EXTRA
+/// more, each gone below a quarter.
+#define COATLICUE_COIL_SHRINK_FRAME 294
+#define COATLICUE_COIL_SHRINK_SCALE 75536
+#define COATLICUE_SECOND_COIL_EXTRA 26384
 /// The healing's frames after the summon, and how far toward blue it lifts
 /// the battle background.
 #define COATLICUE_WASH_FRAMES 60
@@ -1662,31 +1689,30 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       }
     }
     // From frame 300 every sprite colour steps two levels a frame toward
-    // Coatlicue's own, lifted by redLift, greenLift and k in blue: first to
+    // Coatlicue's own, lifted by redLift, greenLift and blueLift: first to
     // white, then to a pale cyan, then to her colours.
     if (frame > 299) {
       u16 *source = Resource_GetTableEntry(RESOURCE_COATLICUE_TILES);
       u16 *dst = (u16 *)OBJ_PLTT;
       s32 redLift = RGB_LEVEL_MAX;
       s32 greenLift = RGB_LEVEL_MAX;
-
-      k = 15;
+      s32 blueLift = 15;
 
       if (frame > 315) {
         redLift = 4;
         greenLift = 12;
-        k = 16;
+        blueLift = 16;
       }
       if (frame > 337) {
         redLift = 0;
         greenLift = 0;
-        k = 0;
+        blueLift = 0;
       }
       for (i = 0; i != OBJ_PLTT_SIZE / 2; i++, source++, dst++) {
         s32 blue = RGB_BLUE(*dst);
         s32 green = RGB_GREEN(*dst);
         s32 red = RGB_RED(*dst);
-        s32 goalBlue = RGB_BLUE(*source) + k;
+        s32 goalBlue = RGB_BLUE(*source) + blueLift;
         s32 goalGreen = RGB_GREEN(*source) + greenLift;
         s32 goalRed = RGB_RED(*source) + redLift;
 
@@ -1848,7 +1874,10 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       Matrix_Initialize();
       Matrix_Translate(0, 0, toFIXED(256));
       if (frame > 539) {
-        Matrix_Scale(frame * 1500 - 805904, FIXED_ONE, FIXED_ONE);
+        Matrix_Scale(frame * COATLICUE_FLING_STRETCH -
+                         (COATLICUE_FLING_FRAME * COATLICUE_FLING_STRETCH -
+                          FIXED_ONE / 16),
+                     FIXED_ONE, FIXED_ONE);
       } else if (frame > 517) {
         Matrix_Scale(0, 0, FIXED_ONE);
       } else if (frame > 485) {
@@ -1868,7 +1897,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         Matrix_RotateY(a);
         Matrix_RotateX(Trig_Sin(a) >> 3);
       }
-      Matrix_Scale(55536, 45536, 27768);
+      Matrix_Scale(COATLICUE_CLOUD_WIDTH_SCALE, COATLICUE_CLOUD_HEIGHT_SCALE,
+                   COATLICUE_CLOUD_DEPTH_SCALE);
       if (frame == 360) {
         struct Particle *bubble;
 
@@ -2009,7 +2039,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       // The cog, from frame 210: it rises and grows as it fades in, spinning,
       // then from 274 rises and swells again, leaning back, and from 310
       // fades away.
-      cogFrame = frame - 210;
+      cogFrame = frame - COATLICUE_COG_FRAME;
       if ((u32)cogFrame <= 107) {
         s32 pitch;
 
@@ -2018,39 +2048,42 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         if (rise > toFIXED(24)) {
           rise = toFIXED(24);
         }
-        scale = (frame - 210) * 611 + FIXED_ONE / 4;
+        scale = (frame - COATLICUE_COG_FRAME) * COATLICUE_COG_GROWTH +
+                FIXED_ONE / 4;
         if (scale > COATLICUE_COG_SCALE) {
           scale = COATLICUE_COG_SCALE;
         }
-        if (frame > 273) {
+        if (frame >= COATLICUE_COG_SWELL_FRAME) {
           rise = frame * (toFIXED(1) / 2) - toFIXED(113);
           if (rise > toFIXED(32)) {
             rise = toFIXED(32);
           }
-          pitch = 21536 - (frame << 6);
+          pitch =
+              COATLICUE_TILT + COATLICUE_COG_SWELL_FRAME * 64 - (frame << 6);
           if (pitch < COATLICUE_TILT_MIN) {
             pitch = COATLICUE_TILT_MIN;
           }
-          scale = scale + (frame - 274) * 1875;
+          scale =
+              scale + (frame - COATLICUE_COG_SWELL_FRAME) * COATLICUE_COG_SWELL;
           if (scale > COATLICUE_COG_SCALE_MAX) {
             scale = COATLICUE_COG_SCALE_MAX;
           }
         }
         model->kind = MODEL_SHADED_MAX;
         texture.pixels = state->sheet + COATLICUE_COG;
-        shade = (frame << 3) - 1744;
+        shade = (frame << 3) - (COATLICUE_COG_FRAME + 8) * 8;
         if (shade > 0) {
           shade = 0;
         }
-        if (frame > 309) {
-          shade = (310 - frame) << 3;
+        if (frame >= COATLICUE_COG_FADE_FRAME) {
+          shade = (COATLICUE_COG_FADE_FRAME - frame) << 3;
         }
         model->shade = shade;
         Matrix_Initialize();
         Matrix_Translate(0, rise, 0);
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         Matrix_ScaleUniform(scale);
-        if (frame <= 273) {
+        if (frame < COATLICUE_COG_SWELL_FRAME) {
           Matrix_RotateZ(spin - COATLICUE_COG_ROLL);
         }
         Matrix_RotateX(pitch);
@@ -2170,7 +2203,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
 
           if (frame > startFrame && frame < startFrame + 100) {
             rise = -toFIXED(44);
-            scale = (frame - startFrame) * 2978;
+            scale = (frame - startFrame) * COATLICUE_GLOW_GROWTH;
             if (scale > FIXED_ONE - 1) {
               scale = FIXED_ONE;
             }
@@ -2209,7 +2242,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         if (frame < gCoatlicue_CoilStarts[i]) {
           continue;
         }
-        if (frame <= 293) {
+        if (frame < COATLICUE_COIL_SHRINK_FRAME) {
           scale = gCoatlicue_CoilScales[i] +
                   (frame - gCoatlicue_CoilStarts[i]) * gCoatlicue_CoilGrowth[i];
           if (scale > gCoatlicue_CoilMaxScales[i]) {
@@ -2268,7 +2301,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           if (shade > MODEL_SHADE_INVISIBLE / 4) {
             shade = MODEL_SHADE_INVISIBLE / 4;
           }
-          scale = i * 26384 - frame * (FIXED_ONE / 16) + 1279760;
+          scale = i * COATLICUE_SECOND_COIL_EXTRA - frame * (FIXED_ONE / 16) +
+                  (COATLICUE_COIL_SHRINK_FRAME * (FIXED_ONE / 16) +
+                   COATLICUE_COIL_SHRINK_SCALE);
           if (scale < FIXED_ONE / 4) {
             continue;
           }
@@ -2523,6 +2558,20 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
 #undef COATLICUE_COG_ROLL
 #undef COATLICUE_COG_SCALE
 #undef COATLICUE_COG_SCALE_MAX
+#undef COATLICUE_COG_FRAME
+#undef COATLICUE_COG_SWELL_FRAME
+#undef COATLICUE_COG_FADE_FRAME
+#undef COATLICUE_COG_GROWTH
+#undef COATLICUE_COG_SWELL
+#undef COATLICUE_GLOW_GROWTH
+#undef COATLICUE_CLOUD_WIDTH_SCALE
+#undef COATLICUE_CLOUD_HEIGHT_SCALE
+#undef COATLICUE_CLOUD_DEPTH_SCALE
+#undef COATLICUE_FLING_FRAME
+#undef COATLICUE_FLING_STRETCH
+#undef COATLICUE_COIL_SHRINK_FRAME
+#undef COATLICUE_COIL_SHRINK_SCALE
+#undef COATLICUE_SECOND_COIL_EXTRA
 #undef COATLICUE_RINGS
 #undef COATLICUE_FLASHES
 #undef COATLICUE_GLOWS

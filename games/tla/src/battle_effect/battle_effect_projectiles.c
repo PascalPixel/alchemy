@@ -345,8 +345,8 @@ void BattleEffect_RunShuriken(struct BattleEffectParams *args) {
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_SHURIKEN);
 }
 
-/// Ten pellets fly slowly at each target and bounce off it, up or down at
-/// random.
+/// Ten musical notes fly slowly at each target and bounce off it, up or down
+/// at random.
 ///
 /// Abilities: Crazy Voice.
 void BattleEffect_RunCrazyVoice(struct BattleEffectParams *args) {
@@ -546,6 +546,11 @@ enum VolleyField {
 #define PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE                                  \
   (PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE +                                    \
    PICTURE_BYTES(PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE))
+/// Sleet's, Blizzard's, Ice Blessing's and Chill Breath's ice pellets, and
+/// Crazy Voice's musical notes, six pictures of ProjectileVolleyImage.
+#define PROJECTILE_VOLLEY_PELLET_SIZE 8
+#define PROJECTILE_VOLLEY_NOTE_WIDTH 8
+#define PROJECTILE_VOLLEY_NOTE_HEIGHT 16
 /// The comets' width, and the shuriken's six pictures.
 #define PROJECTILE_VOLLEY_COMET_WIDTH 32
 #define SHURIKEN_WIDTH 32
@@ -1099,24 +1104,36 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                      mode == PROJECTILE_VOLLEY_BLIZZARD ||
                      mode == PROJECTILE_VOLLEY_ICE_BLESSING ||
                      mode == PROJECTILE_VOLLEY_CHILL_BREATH) {
-            draw[0](canvas,
-                    state->sheet + gProjectileVolley_PelletPictures[j & 3],
-                    position.x - 4, position.y - 4, 8, 8);
+            draw[0](
+                canvas, state->sheet + gProjectileVolley_PelletPictures[j & 3],
+                position.x - PROJECTILE_VOLLEY_PELLET_SIZE / 2,
+                position.y - PROJECTILE_VOLLEY_PELLET_SIZE / 2,
+                PROJECTILE_VOLLEY_PELLET_SIZE, PROJECTILE_VOLLEY_PELLET_SIZE);
           } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
-            draw[0](canvas, state->sheet + j % 6 * (8 * 16), position.x - 4,
-                    position.y - 8, 8, 16);
+            draw[0](
+                canvas,
+                state->sheet + j % 6 * PICTURE_BYTES(PROJECTILE_VOLLEY_NOTE),
+                position.x - PROJECTILE_VOLLEY_NOTE_WIDTH / 2,
+                position.y - PROJECTILE_VOLLEY_NOTE_HEIGHT / 2,
+                PROJECTILE_VOLLEY_NOTE_WIDTH, PROJECTILE_VOLLEY_NOTE_HEIGHT);
           } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER) {
-            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
-                                PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE,
-                                position.x - 9, position.y - 7);
+            EFFECT_DRAW_PICTURE(
+                draw[0], canvas, state->sheet,
+                PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE,
+                position.x - PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_WIDTH / 2,
+                position.y -
+                    (PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_HEIGHT + 1) / 2);
           } else if (mode == PROJECTILE_VOLLEY_WING_BEAT) {
-            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
-                                PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE,
-                                position.x - 6, position.y - 4);
+            EFFECT_DRAW_PICTURE(
+                draw[0], canvas, state->sheet,
+                PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE,
+                position.x - PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_WIDTH / 2,
+                position.y - PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_HEIGHT / 2);
           } else if (mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&
                      mode <= PROJECTILE_VOLLEY_STUN_STING) {
-            draw[0](canvas, state->sheet, position.x - 8, position.y - 1,
-                    SHORT_STREAK_WIDTH, SHORT_STREAK_HEIGHT);
+            draw[0](canvas, state->sheet, position.x - SHORT_STREAK_WIDTH / 2,
+                    position.y - SHORT_STREAK_HEIGHT / 2, SHORT_STREAK_WIDTH,
+                    SHORT_STREAK_HEIGHT);
           } else if (mode == PROJECTILE_VOLLEY_HYDRO_SLASH) {
             draw[0](canvas, state->sheet, position.x - BLUE_BUBBLE_WIDTH / 2,
                     position.y - BLUE_BUBBLE_HEIGHT / 2, BLUE_BUBBLE_WIDTH,
@@ -1137,9 +1154,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             top = position.y - (height >> 1);
             draw[0](canvas, picture, left, top, width, height);
           } else if (mode == PROJECTILE_VOLLEY_WING_STROKE) {
-            EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
-                                PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE,
-                                position.x - 15, position.y - 12);
+            EFFECT_DRAW_PICTURE(
+                draw[0], canvas, state->sheet,
+                PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE,
+                position.x -
+                    (PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE_WIDTH + 1) / 2,
+                position.y -
+                    (PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE_HEIGHT + 1) / 2);
           } else {
             draw[0](canvas, state->sheet, position.x - FLAMEBALL_WIDTH / 2,
                     position.y - FLAMEBALL_HEIGHT / 2, FLAMEBALL_WIDTH,
@@ -1391,6 +1412,9 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames,
 #undef PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE
 #undef PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE
 #undef PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE
+#undef PROJECTILE_VOLLEY_PELLET_SIZE
+#undef PROJECTILE_VOLLEY_NOTE_WIDTH
+#undef PROJECTILE_VOLLEY_NOTE_HEIGHT
 #undef PROJECTILE_VOLLEY_COMET_WIDTH
 #undef SHURIKEN_WIDTH
 #undef SHURIKEN_HEIGHT

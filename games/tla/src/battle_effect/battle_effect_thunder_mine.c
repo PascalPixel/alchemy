@@ -196,7 +196,7 @@ void BattleEffect_RunBallLightning(struct BattleEffectParams *args, s32 mode) {
       if (mode == BALL_LIGHTNING_THUNDER_MINE) {
         EFFECT_SHOW_DAMAGE(SE_CRASH);
       } else {
-        EFFECT_SHOW_DAMAGE(-1);
+        EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
         Sound_PlayFar(SE_CRASH);
       }
     }

@@ -82,7 +82,6 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
     struct Particle *point;
     struct Particle *drop;
     struct Particle *drops;
-    s32 *life;
 
     // Nereid rides in from the right.
     rise = 0;
@@ -100,11 +99,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
       point->variant = -(Random16() & 15);
     }
     // Every drop in the map cell buffer starts free.
-    life = &PARTICLES->variant;
-    for (k = 0; k != NEREID_DROPS; k++) {
-      *life = -1;
-      life += sizeof(struct Particle) / sizeof(s32);
-    }
+    EFFECT_FREE_PARTICLES(k, PARTICLES, NEREID_DROPS);
     drops = PARTICLES;
     BattleEffect_ShowLivingTargets(state->args);
     wait(1);
@@ -1008,6 +1003,8 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
       }
 
       // Seven sparks orbit the falling sprite.
+      /* FAKEMATCH(temporary): the orbit's place set in screen, the embers'
+       * projection, rather than a vector of its own. */
       screen.x = 0;
       screen.y = 0;
       screen.depth = toFIXED(512);
@@ -1019,6 +1016,7 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
         vector[0] = INTtoFIXED(gStarfieldFall_OrbitPoints[i][0] / 2);
         vector[1] = INTtoFIXED(gStarfieldFall_OrbitPoints[i][1] + frame);
         vector[2] = INTtoFIXED(gStarfieldFall_OrbitPoints[i][2] / 2);
+        /* FAKEMATCH(temporary): pos, standing for &spot. */
         EffectPosition_ProjectPoint(vector, pos = &spot);
         pos->x = FIXED_INTEGER_PART(pos->x) + 128;
         pos->y = FIXED_INTEGER_PART(pos->y) + 60;

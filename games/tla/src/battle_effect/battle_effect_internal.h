@@ -588,6 +588,10 @@ enum RedCrescentPicture {
 /// The bytes of BlueGlowSheet's ten flare pictures, 2 to 20 pixels square:
 /// 4 * (1 + 4 + ... + 100).
 #define FLARE_SET_BYTES 1540
+/// The battle sheet (HEAP_SLOT_BATTLE_SHEET) the casting impacts, the plain
+/// attacks and Cruel Ruin decode their glows into: room for BlueGlowSheet's
+/// flares, the largest of them, with ten bytes to spare.
+#define BATTLE_SHEET_BYTES (FLARE_SET_BYTES + 10)
 #define MOTE_PICTURES 10
 
 /// The columns of gTargetStrike_Styles, one row a style.
@@ -763,9 +767,11 @@ enum CanvasWipeFill {
   CANVAS_WIPE_CLEAR ///< colour 0: the canvas cleared
 };
 
-/// Lets the battle show the damage, playing hitSound (0 keeps the one queued)
-/// as the targets react; a second use changes nothing.
+/// Lets the battle show the damage, playing hitSound as the targets react: 0
+/// keeps the one queued, and HIT_SOUND_NONE plays none where the effect has
+/// played its own. A second use changes nothing.
 #define EFFECT_SHOW_DAMAGE(hitSound) BattlePlayback_StartFar(hitSound)
+#define HIT_SOUND_NONE (-1)
 
 /// Passed to BattleEffect_TintBattler as its palette, pose or timer slot: leave
 /// that one as it is.
@@ -885,7 +891,7 @@ enum SparkGroupsMode {
 enum ProjectileVolleyMode {
   PROJECTILE_VOLLEY_SLASH,         ///< comets, picked by the variant
   PROJECTILE_VOLLEY_SHURIKEN,      ///< spinning shurikens
-  PROJECTILE_VOLLEY_CRAZY_VOICE,   ///< bouncing pellets
+  PROJECTILE_VOLLEY_CRAZY_VOICE,   ///< bouncing musical notes
   PROJECTILE_VOLLEY_WING_FLUTTER,  ///< yellow sparks
   PROJECTILE_VOLLEY_WING_BEAT,     ///< small yellow sparks
   PROJECTILE_VOLLEY_CUTTING_EDGE,  ///< one large comet in ice colours

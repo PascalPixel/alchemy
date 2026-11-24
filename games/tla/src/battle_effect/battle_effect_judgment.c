@@ -5,6 +5,9 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
+/// Judgment's sprite scale, one to one.
+extern const struct Scale gJudgment_UnitScale;
+
 /// The gathering's length and the sweep's, in frames.
 #define JUDGMENT_GATHER_FRAMES 160
 #define JUDGMENT_SWEEP_FRAMES 336

@@ -172,6 +172,11 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
 
 /// Column `field` of style `mode`'s row of gTargetStrike_Styles.
 #define TARGET_STRIKE_VALUE(mode, field) gTargetStrike_Styles[(mode)][(field)]
+/// The slash a frame falls in, a slash lasting six pictures. The bites count
+/// their sparks' and puffs' slots by it too, though a bite lasts four, so the
+/// second and third bites share theirs.
+#define TARGET_STRIKE_SLASH(mode, frame)                                       \
+  ((frame) / (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) * 6))
 
 /// The motes in PARTICLES, 128 for each target, then the strike sparks.
 #define TARGET_STRIKE_MOTES_PER_TARGET 128
@@ -466,11 +471,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                                      POSE_DAMAGE, 0, 8);
             for (i = 0; i != TARGET_STRIKE_HIT_SPARKS; i++) {
               struct Particle *spark =
-                  &TARGET_STRIKE_SPARKS[frame /
-                                            (TARGET_STRIKE_VALUE(
-                                                 mode,
-                                                 TARGET_STRIKE_PICTURE_FRAMES) *
-                                             6) *
+                  &TARGET_STRIKE_SPARKS[TARGET_STRIKE_SLASH(mode, frame) *
                                             TARGET_STRIKE_HIT_SPARKS +
                                         i];
 
@@ -480,26 +481,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           if (mode == TARGET_STRIKE_STYLE_ORANGE_FLASH_SPARK_SLASH) {
             for (i = 0; i != 4; i++) {
               struct Particle *puff =
-                  &state->particles[frame /
-                                        (TARGET_STRIKE_VALUE(
-                                             mode,
-                                             TARGET_STRIKE_PICTURE_FRAMES) *
-                                         6) *
-                                        16 +
-                                    i];
+                  &state->particles[TARGET_STRIKE_SLASH(mode, frame) * 16 + i];
 
               puff->variant = 0;
             }
           } else {
             for (i = 0; i != 8; i++) {
               struct Particle *puff =
-                  &state->particles[frame /
-                                        (TARGET_STRIKE_VALUE(
-                                             mode,
-                                             TARGET_STRIKE_PICTURE_FRAMES) *
-                                         6) *
-                                        16 +
-                                    i];
+                  &state->particles[TARGET_STRIKE_SLASH(mode, frame) * 16 + i];
 
               puff->variant = 0;
             }
@@ -572,11 +561,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         }
         for (i = 0; i != TARGET_STRIKE_BITE_SPARKS; i++) {
           struct Particle *spark =
-              &TARGET_STRIKE_SPARKS[frame /
-                                        (TARGET_STRIKE_VALUE(
-                                             mode,
-                                             TARGET_STRIKE_PICTURE_FRAMES) *
-                                         6) *
+              &TARGET_STRIKE_SPARKS[TARGET_STRIKE_SLASH(mode, frame) *
                                         TARGET_STRIKE_BITE_SPARKS +
                                     i];
 
@@ -584,20 +569,12 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         }
         for (i = 0; i != 8; i++) {
           struct Particle *puff =
-              &state->particles[frame /
-                                    (TARGET_STRIKE_VALUE(
-                                         mode, TARGET_STRIKE_PICTURE_FRAMES) *
-                                     6) *
-                                    16 +
-                                i];
+              &state->particles[TARGET_STRIKE_SLASH(mode, frame) * 16 + i];
 
           puff->variant = 0;
         }
         for (i = 0; i != TARGET_STRIKE_BITE_MOTES; i++)
-          PARTICLES[frame /
-                        (TARGET_STRIKE_VALUE(mode,
-                                             TARGET_STRIKE_PICTURE_FRAMES) *
-                         6) *
+          PARTICLES[TARGET_STRIKE_SLASH(mode, frame) *
                         TARGET_STRIKE_BITE_MOTES +
                     i]
               .variant = 0;
@@ -1198,6 +1175,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
 }
 #undef BLITTER
 #undef TARGET_STRIKE_VALUE
+#undef TARGET_STRIKE_SLASH
 #undef TARGET_STRIKE_MOTES_PER_TARGET
 #undef TARGET_STRIKE_MOTE_SLOTS
 #undef TARGET_STRIKE_SPARK_COUNT

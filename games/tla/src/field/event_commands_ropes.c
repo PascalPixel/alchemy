@@ -428,6 +428,11 @@ void Rope_GetEndNodePosition(s32 index, s32 *position) {
 
 extern s32 gRope_LashPhase;
 
+s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
+               s32 wave);
+s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
+                s32 wave);
+
 /// Lash: throws rope index from post fromId to post toId and winds it round
 /// both. A rope coiled too short to reach falls back to its post.
 void Rope_Lash(s32 index, s32 fromId, s32 toId) {
@@ -484,8 +489,11 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
 /// Throws rope index from one point to another over twice its node count in
 /// frames: the end flies on an arc and each node follows the one ahead at 6
 /// pixels; then the rope swings and its flag is set. Does nothing to a rope
-/// already thrown.
-s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
+/// already thrown. The callers pass the wobble Tightrope_Recoil takes, which a
+/// rope leaves unused, and read no result: 0, or nothing for a rope already
+/// thrown.
+s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
+               s32 wave) {
   struct RopeState *state = ROPE_STATE;
   s32 dx = toX - x;
   s32 ex = dx >> 8;
@@ -587,7 +595,10 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
 
 /// Pulls a thrown rope back into its coil at the first point, one node a frame,
 /// clearing its flag, starting four frames after both posts start to unwind.
-s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
+/// The far end and the wobble are Tightrope_Recoil's arguments, which a rope
+/// leaves unused; as with Rope_Throw, no caller reads the result.
+s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
+                s32 wave) {
   struct RopeState *state = ROPE_STATE;
   // Default: each count below sets it again.
   s32 i = 0;

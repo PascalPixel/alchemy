@@ -580,6 +580,8 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
                                s32 fullWidth);
 s32 Message_AllTyped(void);
 s32 Window_IsClosed(struct Window *window);
+/// Declared without a prototype: Window_Create passes it an argument it never
+/// reads (a FAKEMATCH there).
 void Text_ResetStyle();
 void WindowSystem_StartFieldUpdate(void);
 void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles);
@@ -747,23 +749,23 @@ void SelectionMenu_SetPosition(u32 x, u32 y);
 void Menu_SetupSelectionBothSides(void);
 void SelectionMenu_SetupArrow(struct SelectionMenuState *state, s32 side);
 struct SelectionNode *
-SelectionMenu_GetCursorNode(struct SelectionMenuState *screen);
+SelectionMenu_GetCursorNode(struct SelectionMenuState *state);
 s32 SelectionMenu_Run(s32 mode);
 u32 SelectionMenu_RunWithSounds(u32 mode);
-void Menu_MoveSelectionForward(struct SelectionMenuState *screen);
-void Menu_MoveSelectionBackward(struct SelectionMenuState *screen);
+void Menu_MoveSelectionForward(struct SelectionMenuState *state);
+void Menu_MoveSelectionBackward(struct SelectionMenuState *state);
 void SelectionMenu_StepRight(struct SelectionMenuState *state);
 void SelectionMenu_StepLeft(struct SelectionMenuState *state);
 void SelectionMenu_RedrawIcon(struct SelectionMenuState *state, u32 rowIndex);
 void SelectionMenu_HighlightIcon(struct SelectionMenuState *state,
                                  u32 rowIndex);
-void Menu_ClearBattleHighlight(struct SelectionMenuState *screen);
-void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward);
+void Menu_ClearBattleHighlight(struct SelectionMenuState *state);
+void SelectionMenu_Scroll(struct SelectionMenuState *state, s32 forward);
 s32 SelectionIcon_Load(s32 mode, s32 value);
 s32 SelectionIcon_LoadIntoSlot(s32 mode, s32 value, s32 result, s32 option);
 void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                              s32 reuse);
-u32 Menu_ConfirmSelection(struct SelectionMenuState *screen);
+u32 Menu_ConfirmSelection(struct SelectionMenuState *state);
 void MenuArrow_NoOpCallback(void);
 void MenuArrow_NoOpCallbackBank(void);
 void MenuArrow_NoOpCallbackA(void);

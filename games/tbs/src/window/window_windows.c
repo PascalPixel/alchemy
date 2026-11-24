@@ -114,6 +114,8 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
 
   // Copies pixel rows 4 to 6 of tile sourceTile to rows 0 to 2 of
   // destinationTile and clears the rest of it.
+  /* FAKEMATCH(dead): a GNU nested function, which takes a link to this
+   * routine's frame that it never reads; as a static routine before it. */
   s32 WindowSystem_CopyTileLowerRows(u32 sourceTile, u32 destinationTile) {
     sourceTile &= TILE_NUMBER_MASK;
     destinationTile &= TILE_NUMBER_MASK;
@@ -303,6 +305,8 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     found->sprites.tailLink = &slot->sprites.head;
     found->opened = 1;
     found->flags = WINDOW_FLAG_OPEN;
+    /* FAKEMATCH(dead): x passed to Text_ResetStyle, which takes nothing and
+     * is declared without a prototype for it; as Text_ResetStyle(). */
     Text_ResetStyle(x);
     if (attrs & WINDOW_FLAG_TEXT_CANVAS) {
       found->flags |= WINDOW_FLAG_TEXT_CANVAS;

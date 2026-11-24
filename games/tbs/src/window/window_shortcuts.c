@@ -15,9 +15,10 @@
 #define SHORTCUT_ABILITY_MASK 0x3ff
 
 /// The area name notice's fields, which live in the field state block
-/// (gFieldState, a scene's state), for as long as the scene runs.
+/// (gFieldState, a scene's state), for as long as the scene runs: the six bytes
+/// struct FieldState leaves as unusedAfterPlacements.
 struct TimedNoticeState {
-  u8 fieldState[560];    ///< the field state's other fields
+  u8 fieldState[560];    ///< FieldState's fields before them
   struct Window *window; ///< the notice's window; it may since have closed
   u16 countdown;         ///< frames left to show it
 };

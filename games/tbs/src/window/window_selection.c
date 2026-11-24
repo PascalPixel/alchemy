@@ -48,43 +48,43 @@ enum {
 /// Allocates and resets the selection screen: the row of icons the player picks
 /// from, with arrows at each end and a pointing hand over the chosen target.
 void SelectionMenu_Create(void) {
-  struct SelectionMenuState *screen;
+  struct SelectionMenuState *state;
   struct SelectionSprite *visual;
   const u8 *table;
   s32 i;
   u16 clear = 0;
 
-  screen = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_MENU,
-                               sizeof(struct SelectionMenuState));
-  screen->head = NULL;
-  screen->path = NULL;
-  screen->window = NULL;
-  screen->unread = clear;
-  screen->top = clear;
+  state = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_MENU,
+                              sizeof(struct SelectionMenuState));
+  state->head = NULL;
+  state->path = NULL;
+  state->window = NULL;
+  state->unread = clear;
+  state->top = clear;
   // The first list starts from its first entry.
-  screen->cursorIndex = SELECTION_CURSOR_RESET;
-  screen->verticalScroll = SELECTION_ROW_HIDDEN;
-  screen->count = clear;
-  screen->locked = SELECTION_YES_NO_AT_BOTTOM;
+  state->cursorIndex = SELECTION_CURSOR_RESET;
+  state->verticalScroll = SELECTION_ROW_HIDDEN;
+  state->count = clear;
+  state->locked = SELECTION_YES_NO_AT_BOTTOM;
   for (i = 0; i != SELECTION_CHOSEN_RECORDS; i++) {
-    screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
-    screen->records[i + SELECTION_RECORD_CHOSEN].kind = ICON_KIND_NONE;
+    state->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
+    state->records[i + SELECTION_RECORD_CHOSEN].kind = ICON_KIND_NONE;
   }
   // The row has two icons more than the chosen ones; i is 5.
-  screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
-  screen->records[i + SELECTION_RECORD_ROW + 1].kind = ICON_KIND_NONE;
-  screen->records[SELECTION_ARROW_LEFT].kind = FALSE;
-  screen->records[SELECTION_ARROW_RIGHT].kind = FALSE;
-  screen->records[SELECTION_ARROW_LEFT].y = 0;
-  screen->records[SELECTION_ARROW_RIGHT].y = 0;
+  state->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
+  state->records[i + SELECTION_RECORD_ROW + 1].kind = ICON_KIND_NONE;
+  state->records[SELECTION_ARROW_LEFT].kind = FALSE;
+  state->records[SELECTION_ARROW_RIGHT].kind = FALSE;
+  state->records[SELECTION_ARROW_LEFT].y = 0;
+  state->records[SELECTION_ARROW_RIGHT].y = 0;
   table = gMenu_AnimatedCursorTiles;
-  screen->records[SELECTION_RECORD_HAND].slot = VramCache_FindFreeEntry();
-  screen->records[SELECTION_RECORD_HAND].tile = VramCache_Load(
-      screen->records[SELECTION_RECORD_HAND].slot, HAND_FRAME_BYTES, table);
-  screen->records[SELECTION_RECORD_HAND].kind = 0;
-  screen->records[SELECTION_RECORD_HAND].scale = 0;
-  screen->records[SELECTION_RECORD_LARGE_ICON].kind = ICON_KIND_NONE;
-  visual = &screen->records[SELECTION_RECORD_HAND].sprite;
+  state->records[SELECTION_RECORD_HAND].slot = VramCache_FindFreeEntry();
+  state->records[SELECTION_RECORD_HAND].tile = VramCache_Load(
+      state->records[SELECTION_RECORD_HAND].slot, HAND_FRAME_BYTES, table);
+  state->records[SELECTION_RECORD_HAND].kind = 0;
+  state->records[SELECTION_RECORD_HAND].scale = 0;
+  state->records[SELECTION_RECORD_LARGE_ICON].kind = ICON_KIND_NONE;
+  visual = &state->records[SELECTION_RECORD_HAND].sprite;
   visual->mode = OBJ_MODE_NORMAL;
   visual->mosaic = 0;
   visual->colors = 1;
@@ -98,17 +98,17 @@ void SelectionMenu_Create(void) {
 /// Empties the selection screen's list of entries.
 /// The high cursor bit requests resetting both the list origin and cursor.
 void SelectionMenu_Clear(void) {
-  struct SelectionMenuState *screen;
+  struct SelectionMenuState *state;
 
-  screen = gSelectionMenuState;
-  screen->head = NULL;
-  screen->unread = 0;
-  if (screen->cursorIndex & SELECTION_CURSOR_RESET) {
-    screen->top = 0;
-    screen->cursorIndex = 0;
+  state = gSelectionMenuState;
+  state->head = NULL;
+  state->unread = 0;
+  if (state->cursorIndex & SELECTION_CURSOR_RESET) {
+    state->top = 0;
+    state->cursorIndex = 0;
   }
-  screen->verticalScroll = 0;
-  screen->count = 0;
+  state->verticalScroll = 0;
+  state->count = 0;
 }
 
 /// Adds an entry (kind and id) to the selection screen's list, up to 16. The
@@ -127,23 +127,23 @@ void SelectionMenu_AddEntry(u32 kind, u32 base) {
 /// Creates icons for the first five listed entries from top, in a row along
 /// the bottom of the screen.
 void SelectionMenu_BuildEntries(u32 unused) {
-  struct SelectionMenuState *screen = gSelectionMenuState;
-  u32 count = screen->count;
+  struct SelectionMenuState *state = gSelectionMenuState;
+  u32 count = state->count;
   u32 entryIndex;
   struct SelectionNode *previous = 0;
   struct SelectionNode *node;
   s32 rowPosition = 0;
 
-  for (entryIndex = screen->top; entryIndex < count; entryIndex++) {
-    s32 base = screen->bases[entryIndex];
-    u32 kind = screen->kinds[entryIndex];
+  for (entryIndex = state->top; entryIndex < count; entryIndex++) {
+    s32 base = state->bases[entryIndex];
+    u32 kind = state->kinds[entryIndex];
 
     node = SelectionMenu_FindFreeIcon(SELECTION_ICON_ROW);
     if (node == 0)
       break;
     SelectionMenu_SetupIcon(kind, base, node, 0);
-    if (screen->head == 0) {
-      screen->head = node;
+    if (state->head == 0) {
+      state->head = node;
       node->previous = 0;
     } else {
       previous->next = node;
@@ -157,21 +157,21 @@ void SelectionMenu_BuildEntries(u32 unused) {
   }
 
   // The row is centred on x 100, at y 140.
-  screen->baseX = 100 - rowPosition * SELECTION_ICON_SPACING / 2;
-  screen->baseY = 140;
+  state->baseX = 100 - rowPosition * SELECTION_ICON_SPACING / 2;
+  state->baseY = 140;
   // rowPosition, the row's icon count, now steps an icon's spacing.
-  for (previous = screen->head, rowPosition = 0; previous != 0;
+  for (previous = state->head, rowPosition = 0; previous != 0;
        previous = previous->next) {
-    s32 x = screen->baseX + rowPosition;
+    s32 x = state->baseX + rowPosition;
     s32 y;
 
     previous->x = x;
-    y = screen->baseY;
+    y = state->baseY;
     previous->y = y;
     previous->targetX = x;
     previous->targetY = y;
     // While locked is 0 a yes or no row sits at the top of the screen.
-    if (previous->kind == ICON_KIND_YES_NO && screen->locked == 0) {
+    if (previous->kind == ICON_KIND_YES_NO && state->locked == 0) {
       previous->y = 6;
       previous->targetY = 6;
     }
@@ -444,48 +444,48 @@ void SelectionMenu_DrawArrow(struct SelectionMenuState *state, s32 side) {
 /// of the icon under the cursor, or that nothing is known (ICON_KIND_ABILITY)
 /// or held (ICON_KIND_ITEM).
 void SelectionMenu_OpenNameWindow(s32 mode, u32 count) {
-  struct SelectionMenuState *screen;
+  struct SelectionMenuState *state;
   struct SelectionNode *node;
   struct Window **slot;
   struct Window *window;
 
-  screen = gSelectionMenuState;
-  node = SelectionMenu_GetCursorNode(screen);
-  slot = &screen->window;
+  state = gSelectionMenuState;
+  node = SelectionMenu_GetCursorNode(state);
+  slot = &state->window;
   window = *slot;
   if (window == 0) {
     // A yes or no window, 5 by 3 tiles, from column 17 at the bottom, or the
     // top while locked is 0.
     if (mode == ICON_KIND_YES_NO) {
-      if (screen->locked != 0) {
+      if (state->locked != 0) {
         *slot = Window_Create(17, 17, 5, 3, mode);
       } else {
         *slot = Window_Create(17, 0, 5, 3, mode);
       }
-      screen->verticalScroll = 0;
-      screen->locked = SELECTION_YES_NO_AT_BOTTOM;
+      state->verticalScroll = 0;
+      state->locked = SELECTION_YES_NO_AT_BOTTOM;
     } else {
       *slot = Window_Create(19 + ((9 - count) >> 1), 17, count + 2, 3,
                             NAME_WINDOW_FLAGS);
     }
-    WindowSprite_PrepareForRedraw(screen->window);
+    WindowSprite_PrepareForRedraw(state->window);
   } else {
     if (count != 0 && window->width != count + 2) {
       Window_Close(window, WINDOW_FLAG_INSTANT);
       *slot = Window_Create(19 + ((9 - count) >> 1), 17, count + 2, 3,
                             NAME_WINDOW_FLAGS);
     }
-    WindowSprite_PrepareForRedraw(screen->window);
+    WindowSprite_PrepareForRedraw(state->window);
   }
-  if (screen->count != 0) {
-    Text_DrawMessageAsTiles(node->message, screen->window, 0, 0);
+  if (state->count != 0) {
+    Text_DrawMessageAsTiles(node->message, state->window, 0, 0);
   } else {
     switch (mode) {
     case ICON_KIND_ABILITY:
-      Text_DrawMessageAsTiles(MsgAbilityNotKnown, screen->window, 0, 0);
+      Text_DrawMessageAsTiles(MsgAbilityNotKnown, state->window, 0, 0);
       break;
     case ICON_KIND_ITEM:
-      Text_DrawMessageAsTiles(MsgItemNotHeld, screen->window, 0, 0);
+      Text_DrawMessageAsTiles(MsgItemNotHeld, state->window, 0, 0);
       break;
     }
   }
@@ -529,12 +529,12 @@ void SelectionMenu_Close(void) {
 
 /// Moves the row of icons to start at pixel (x, y), 16 pixels apart.
 void SelectionMenu_SetPosition(u32 x, u32 y) {
-  struct SelectionMenuState *screen = gSelectionMenuState;
+  struct SelectionMenuState *state = gSelectionMenuState;
   struct SelectionNode *node;
 
-  screen->baseX = x;
-  screen->baseY = y;
-  node = screen->head;
+  state->baseX = x;
+  state->baseY = y;
+  node = state->head;
   while (node != 0) {
     node->x = x;
     node->targetX = x;
@@ -602,11 +602,11 @@ void SelectionMenu_SetupArrow(struct SelectionMenuState *state, s32 side) {
 /// Returns the node at the selection screen's cursor index.
 /// cursorIndex is relative to head, not the number of queued entries.
 struct SelectionNode *
-SelectionMenu_GetCursorNode(struct SelectionMenuState *screen) {
-  struct SelectionNode *node = screen->head;
+SelectionMenu_GetCursorNode(struct SelectionMenuState *state) {
+  struct SelectionNode *node = state->head;
   s32 i;
 
-  for (i = 0; i != screen->cursorIndex; ++i) {
+  for (i = 0; i != state->cursorIndex; ++i) {
     node = node->next;
   }
   return node;
@@ -628,22 +628,22 @@ SelectionMenu_GetCursorNode(struct SelectionMenuState *screen) {
 /// Runs the selection row until the player chooses (the chosen entry's index)
 /// or, when mode allows it, cancels with B (-1).
 s32 SelectionMenu_Run(s32 mode) {
-  struct SelectionMenuState *screen = gSelectionMenuState;
+  struct SelectionMenuState *state = gSelectionMenuState;
 
-  SelectionMenu_HighlightIcon(screen, 0);
+  SelectionMenu_HighlightIcon(state, 0);
   for (;;) {
     wait(1);
     // No input while the row is pushed down.
-    if (screen->verticalScroll != 0) {
+    if (state->verticalScroll != 0) {
       continue;
     }
     if (mode != SELECTION_FIXED) {
       if (gKeysRepeat & KEY_RIGHT) {
-        SelectionMenu_StepRight(screen);
+        SelectionMenu_StepRight(state);
       } else if (gKeysRepeat & KEY_LEFT) {
-        SelectionMenu_StepLeft(screen);
+        SelectionMenu_StepLeft(state);
       } else if (gKeysPressed & KEY_A) {
-        return Menu_ConfirmSelection(screen);
+        return Menu_ConfirmSelection(state);
       }
     }
     if (mode != 0 && (gKeysPressed & KEY_B)) {
@@ -656,29 +656,29 @@ s32 SelectionMenu_Run(s32 mode) {
 /// on a yes or no row a cancel for no; B, when mode allows it, cancels with its
 /// sound.
 u32 SelectionMenu_RunWithSounds(u32 mode) {
-  struct SelectionMenuState *screen = gSelectionMenuState;
+  struct SelectionMenuState *state = gSelectionMenuState;
   u32 result;
 
   for (;;) {
     wait(1);
-    if (screen->verticalScroll != 0) {
+    if (state->verticalScroll != 0) {
       continue;
     }
 
     if (mode != SELECTION_FIXED) {
       if (gKeysRepeat & KEY_RIGHT) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-        SelectionMenu_StepRight(screen);
+        SelectionMenu_StepRight(state);
       } else if (gKeysRepeat & KEY_LEFT) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-        SelectionMenu_StepLeft(screen);
+        SelectionMenu_StepLeft(state);
       }
 
       if (gKeysPressed & KEY_A) {
         // On a yes or no row, entry 0 (yes) sounds as a confirm and the
         // other as a cancel.
-        result = screen->top + screen->cursorIndex;
-        if (screen->head->kind == ICON_KIND_YES_NO) {
+        result = state->top + state->cursorIndex;
+        if (state->head->kind == ICON_KIND_YES_NO) {
           if (result == 0)
             Sound_PlayFar(SE_MENU_CONFIRM);
           else
@@ -699,61 +699,61 @@ u32 SelectionMenu_RunWithSounds(u32 mode) {
 
 /// Moves the cursor one entry right, scrolling the row at its fourth place.
 /// This variant stops at the end; SelectionMenu_StepRight also wraps around.
-UNUSED void Menu_MoveSelectionForward(struct SelectionMenuState *screen) {
-  u32 nextEntry = screen->top + screen->cursorIndex + 1;
+UNUSED void Menu_MoveSelectionForward(struct SelectionMenuState *state) {
+  u32 nextEntry = state->top + state->cursorIndex + 1;
 
-  if (nextEntry == screen->count) {
+  if (nextEntry == state->count) {
     return;
   }
-  SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
-  screen->status = SELECTION_STATUS_SCROLLING;
+  SelectionMenu_RedrawIcon(state, state->cursorIndex);
+  state->status = SELECTION_STATUS_SCROLLING;
   wait(1);
-  screen->cursorIndex++;
-  if (screen->cursorIndex == SELECTION_LAST_PLACE &&
-      nextEntry + 1 < screen->count) {
-    screen->cursorIndex--;
-    screen->records[SELECTION_ARROW_RIGHT].base = ARROW_SCROLL_FRAMES;
-    screen->top++;
-    SelectionMenu_Scroll(screen, TRUE);
-    if (screen->top + screen->cursorIndex + 2 == screen->count) {
-      screen->records[SELECTION_ARROW_RIGHT].kind = FALSE;
+  state->cursorIndex++;
+  if (state->cursorIndex == SELECTION_LAST_PLACE &&
+      nextEntry + 1 < state->count) {
+    state->cursorIndex--;
+    state->records[SELECTION_ARROW_RIGHT].base = ARROW_SCROLL_FRAMES;
+    state->top++;
+    SelectionMenu_Scroll(state, TRUE);
+    if (state->top + state->cursorIndex + 2 == state->count) {
+      state->records[SELECTION_ARROW_RIGHT].kind = FALSE;
     }
-    screen->records[SELECTION_ARROW_LEFT].kind = TRUE;
+    state->records[SELECTION_ARROW_LEFT].kind = TRUE;
   }
-  screen->status = SELECTION_STATUS_SHOWN;
-  SelectionMenu_HighlightIcon(screen, screen->cursorIndex);
+  state->status = SELECTION_STATUS_SHOWN;
+  SelectionMenu_HighlightIcon(state, state->cursorIndex);
   wait(1);
-  SelectionMenu_OpenNameWindow(screen->head->kind, 0);
+  SelectionMenu_OpenNameWindow(state->head->kind, 0);
   wait(1);
 }
 
 /// Moves the cursor one entry left, scrolling the row at its second place. This
 /// variant stops at the beginning; SelectionMenu_StepLeft also wraps around.
-UNUSED void Menu_MoveSelectionBackward(struct SelectionMenuState *screen) {
+UNUSED void Menu_MoveSelectionBackward(struct SelectionMenuState *state) {
   u32 cursorIndex;
 
-  if (screen->top == 0 && screen->cursorIndex == 0) {
+  if (state->top == 0 && state->cursorIndex == 0) {
     return;
   }
-  SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
-  screen->status = SELECTION_STATUS_SCROLLING;
+  SelectionMenu_RedrawIcon(state, state->cursorIndex);
+  state->status = SELECTION_STATUS_SCROLLING;
   wait(1);
-  cursorIndex = screen->cursorIndex;
-  if (cursorIndex == 1 && screen->top != 0) {
-    screen->records[SELECTION_ARROW_LEFT].base = ARROW_SCROLL_FRAMES;
-    screen->top--;
-    SelectionMenu_Scroll(screen, FALSE);
-    if (screen->top == 0) {
-      screen->records[SELECTION_ARROW_LEFT].kind = FALSE;
+  cursorIndex = state->cursorIndex;
+  if (cursorIndex == 1 && state->top != 0) {
+    state->records[SELECTION_ARROW_LEFT].base = ARROW_SCROLL_FRAMES;
+    state->top--;
+    SelectionMenu_Scroll(state, FALSE);
+    if (state->top == 0) {
+      state->records[SELECTION_ARROW_LEFT].kind = FALSE;
     }
-    screen->records[SELECTION_ARROW_RIGHT].kind = cursorIndex;
+    state->records[SELECTION_ARROW_RIGHT].kind = cursorIndex;
   } else {
-    screen->cursorIndex--;
+    state->cursorIndex--;
   }
-  screen->status = SELECTION_STATUS_SHOWN;
-  SelectionMenu_HighlightIcon(screen, screen->cursorIndex);
+  state->status = SELECTION_STATUS_SHOWN;
+  SelectionMenu_HighlightIcon(state, state->cursorIndex);
   wait(1);
-  SelectionMenu_OpenNameWindow(screen->head->kind, 0);
+  SelectionMenu_OpenNameWindow(state->head->kind, 0);
   wait(1);
 }
 
@@ -947,9 +947,9 @@ void SelectionMenu_HighlightIcon(struct SelectionMenuState *state,
 
 /// Stops the battle's highlight of units (BattleHighlight_SetModesFar with mode
 /// 0); Menu_ConfirmSelection calls it as an entry is chosen.
-void Menu_ClearBattleHighlight(struct SelectionMenuState *screen) {
+void Menu_ClearBattleHighlight(struct SelectionMenuState *state) {
   u16 data[6];
-  struct SelectionNode *node = screen->head;
+  struct SelectionNode *node = state->head;
   s32 count = 0;
 
   while (node != 0) {
@@ -962,7 +962,7 @@ void Menu_ClearBattleHighlight(struct SelectionMenuState *screen) {
 
 /// Scrolls the row one entry: forward brings an icon in from the right as the
 /// leftmost shrinks away, and back the reverse; waits until it has moved.
-void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward) {
+void SelectionMenu_Scroll(struct SelectionMenuState *state, s32 forward) {
   struct SelectionNode *node;
   struct SelectionNode *last;
   struct SelectionNode *first;
@@ -973,16 +973,16 @@ void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward) {
   s32 rowY;
 
   if (forward != 0) {
-    entryIndex = screen->top + SELECTION_LAST_PLACE;
-    base = screen->bases[entryIndex];
-    kind = screen->kinds[entryIndex];
+    entryIndex = state->top + SELECTION_LAST_PLACE;
+    base = state->bases[entryIndex];
+    kind = state->kinds[entryIndex];
     node = SelectionMenu_FindFreeIcon(SELECTION_ICON_ROW);
     if (node == NULL)
       return;
     SelectionMenu_SetupIcon(kind, base, node, 0);
-    rowX = screen->baseX;
+    rowX = state->baseX;
     node->x = rowX + (SELECTION_LAST_PLACE + 1) * SELECTION_ICON_SPACING;
-    rowY = screen->baseY;
+    rowY = state->baseY;
     node->targetX = rowX + SELECTION_LAST_PLACE * SELECTION_ICON_SPACING;
     node->y = rowY;
     node->targetY = rowY;
@@ -991,7 +991,7 @@ void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward) {
     node->scaleEnd = Q_8_8(1);
     node->dx = -2;
     last = node;
-    node = screen->head;
+    node = state->head;
     node->scaleStep = -Q_8_8(1) / 8;
     node->scaleEnd = 0;
     for (;;) {
@@ -1004,25 +1004,25 @@ void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward) {
     node->next = last;
     last->next = NULL;
     last->previous = node;
-    node = screen->head;
+    node = state->head;
     do {
       wait(1);
     } while (node->scale != 0);
-    screen->head = node->next;
+    state->head = node->next;
     VramCache_FreeEntry(node->slot);
     node->kind = ICON_KIND_NONE;
     node = node->next;
     node->previous = NULL;
   } else {
-    entryIndex = screen->top;
-    base = screen->bases[entryIndex];
-    kind = screen->kinds[entryIndex];
+    entryIndex = state->top;
+    base = state->bases[entryIndex];
+    kind = state->kinds[entryIndex];
     node = SelectionMenu_FindFreeIcon(SELECTION_ICON_ROW);
     if (node == NULL)
       return;
     SelectionMenu_SetupIcon(kind, base, node, 0);
-    node->x = screen->baseX - SELECTION_ICON_SPACING;
-    node->y = screen->baseY;
+    node->x = state->baseX - SELECTION_ICON_SPACING;
+    node->y = state->baseY;
     node->targetY = node->y;
     node->dx = 2;
     node->scale = Q_8_8(1) / 8;
@@ -1030,11 +1030,11 @@ void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward) {
     node->targetX = node->x + SELECTION_ICON_SPACING;
     node->scaleEnd = Q_8_8(1);
     first = node;
-    node = screen->head;
+    node = state->head;
     node->previous = first;
     first->next = node;
     first->previous = NULL;
-    screen->head = first;
+    state->head = first;
     node = first;
     for (;;) {
       node->targetX = node->x + SELECTION_ICON_SPACING;
@@ -1045,7 +1045,7 @@ void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward) {
     }
     node->scaleEnd = 0;
     node->scaleStep = -Q_8_8(1) / 8;
-    node = screen->head;
+    node = state->head;
     do {
       wait(1);
     } while (node->scale != Q_8_8(1));
@@ -1181,60 +1181,59 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
 
 /// Chooses the entry under the cursor: the other icons gather into it and
 /// vanish, and it joins the chosen icons at the top left.
-u32 Menu_ConfirmSelection(struct SelectionMenuState *screen) {
+u32 Menu_ConfirmSelection(struct SelectionMenuState *state) {
   struct SelectionNode *node;
   struct SelectionNode *other = NULL;
   u32 nodeIndex = 0;
   u32 chosenIndex;
   struct SelectionSprite *sprite;
 
-  chosenIndex = screen->top + screen->cursorIndex;
-  Menu_ClearBattleHighlight(screen);
-  SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
-  screen->status = SELECTION_STATUS_SCROLLING;
+  chosenIndex = state->top + state->cursorIndex;
+  Menu_ClearBattleHighlight(state);
+  SelectionMenu_RedrawIcon(state, state->cursorIndex);
+  state->status = SELECTION_STATUS_SCROLLING;
   wait(1);
-  screen->records[SELECTION_ARROW_LEFT].kind = FALSE;
-  screen->records[SELECTION_ARROW_RIGHT].kind = FALSE;
-  screen->records[SELECTION_RECORD_HAND].kind = 0;
-  screen->records[SELECTION_RECORD_HAND].scale = 0;
+  state->records[SELECTION_ARROW_LEFT].kind = FALSE;
+  state->records[SELECTION_ARROW_RIGHT].kind = FALSE;
+  state->records[SELECTION_RECORD_HAND].kind = 0;
+  state->records[SELECTION_RECORD_HAND].scale = 0;
   SelectionMenu_FreeLargeIcon();
-  node = screen->head;
-  for (; node != NULL && screen->cursorIndex != nodeIndex; nodeIndex++) {
+  node = state->head;
+  for (; node != NULL && state->cursorIndex != nodeIndex; nodeIndex++) {
     node = node->next;
   }
   node->homeX = node->x;
   node->homeY = node->y;
   // The others slide halfway in each of two frames, then vanish.
-  for (other = screen->head; other != NULL; other = other->next) {
+  for (other = state->head; other != NULL; other = other->next) {
     if (other != node) {
       other->targetX = node->x;
       other->dx = (node->x - other->x) >> 1;
     }
   }
   wait(2);
-  for (other = screen->head; other != NULL; other = other->next) {
+  for (other = state->head; other != NULL; other = other->next) {
     if (other != node) {
       VramCache_FreeEntry(other->slot);
       other->kind = ICON_KIND_NONE;
     }
   }
-  screen->head = node;
+  state->head = node;
   node->previous = NULL;
   node->next = NULL;
   // The chosen icons line up from x 4, 16 pixels apart; the new one goes
   // after the last, reaching its place over two frames, and its record moves
   // to the chosen list.
   node->targetX = 4;
-  for (other = screen->path, nodeIndex = 0; other != NULL;
-       other = other->next) {
+  for (other = state->path, nodeIndex = 0; other != NULL; other = other->next) {
     node->targetX += SELECTION_ICON_SPACING;
     nodeIndex++;
   }
-  screen->pathTop[nodeIndex] = screen->top;
-  screen->pathCursor[nodeIndex] = screen->cursorIndex;
+  state->pathTop[nodeIndex] = state->top;
+  state->pathCursor[nodeIndex] = state->cursorIndex;
   node->dx = (node->targetX - node->x) >> 1;
-  screen->unread = 0;
-  screen->cursorIndex |= SELECTION_CURSOR_RESET;
+  state->unread = 0;
+  state->cursorIndex |= SELECTION_CURSOR_RESET;
   wait(2);
   other = SelectionMenu_FindFreeIcon(SELECTION_ICON_CHOSEN);
   other->kind = node->kind;
@@ -1261,16 +1260,16 @@ u32 Menu_ConfirmSelection(struct SelectionMenuState *screen) {
   sprite->palette = 0;
   sprite->tile = other->tile;
   node->kind = ICON_KIND_NONE;
-  screen->head = NULL;
-  if (screen->path != NULL) {
-    node = screen->path;
+  state->head = NULL;
+  if (state->path != NULL) {
+    node = state->path;
     while (node->next != NULL)
       node = node->next;
     node->next = other;
     other->previous = node;
     other->next = NULL;
   } else {
-    screen->path = other;
+    state->path = other;
     other->previous = NULL;
     other->next = NULL;
   }
@@ -1375,9 +1374,9 @@ void SelectionMenu_FreeLargeIcon(void) {
 s32 FieldMenu_Run(void) {
   s32 ret;
   s32 selection;
-  u8 *state;
+  struct FieldState *field;
 
-  state = (u8 *)gFieldState;
+  field = gFieldState;
   selection = 0;
 
   for (;;) {
@@ -1386,8 +1385,8 @@ s32 FieldMenu_Run(void) {
     // German, Spanish, French and Italian: mark the menu open, which pauses
     // Reveal's sparkles, and, while Reveal is active, clear its sparkles.
 #if TBS_PATCH_2
-    ((struct FieldState *)state)->menuOpen = 1;
-    if (((struct FieldState *)state)->revealActive != 0) {
+    field->menuOpen = 1;
+    if (field->revealActive != 0) {
       FieldEffect_ReleaseRevealSparklesFar();
       wait(1);
     }
@@ -1408,7 +1407,7 @@ s32 FieldMenu_Run(void) {
       ret = Actor_GetTriggerCellAheadOfCurrentFar();
       if (ret == 0)
         ret = CELL_BEHAVIOR_WALL;
-      ((struct FieldState *)state)->examineCell = ret;
+      field->examineCell = ret;
       break;
     case FIELD_MENU_PSYNERGY:
       ret = PsynergyMenu_RunFar();
@@ -1437,7 +1436,7 @@ s32 FieldMenu_Run(void) {
   }
 
 #if TBS_PATCH_2
-  ((struct FieldState *)state)->menuOpen = 0;
+  field->menuOpen = 0;
 #endif
   return ret;
 }
@@ -1464,12 +1463,12 @@ UNUSED void SelectionMenu_CreateEmpty(void) {
 /// returns the entry chosen or -1. initialIndex is a row index; cancellation
 /// returns -1 encoded as u32.
 u32 Menu_RunSelectionForValue(u32 initialIndex) {
-  struct SelectionMenuState *screen = gSelectionMenuState;
+  struct SelectionMenuState *state = gSelectionMenuState;
   u32 result;
 
   // locked 1: a yes or no row stays at the bottom.
-  screen->cursorIndex = initialIndex;
-  screen->locked = 1;
+  state->cursorIndex = initialIndex;
+  state->locked = 1;
   SelectionMenu_BuildEntries(initialIndex);
   Menu_SetupSelectionBothSides();
   SelectionMenu_OpenNameWindow(0, SELECTION_ROW_SHOWN);

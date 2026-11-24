@@ -492,6 +492,7 @@ s32 Text_DrawGlyphToCanvas(u8 *canvas, u32 ch, s32 x, s32 row) {
 /// Draws a character on the canvas at (x, row) with its shadow and returns its
 /// width.
 s32 Text_DrawGlyphToCanvas(u8 *canvas, s32 ch, s32 x, s32 row) {
+  // ch's glyph: a FontGlyph is 32 bytes, one a character from TEXT_SPACE.
   u16 *glyph = (u16 *)((u8 *)gFont_Glyphs +
                        (((ch & TEXT_LAST_FONT_CODE) - TEXT_SPACE) << 5));
   s32 width = *glyph;

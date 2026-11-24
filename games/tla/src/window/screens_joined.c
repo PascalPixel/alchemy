@@ -40,6 +40,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   s32 id;
   s32 text;
   s32 *p;
+  /* FAKEMATCH(temporary): cleared, a 0 held in a local for every 0 below. */
   u32 cleared = 0;
 
   window = NULL;

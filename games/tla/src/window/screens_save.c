@@ -43,6 +43,11 @@
 /// The tiles between two of the file list's party sprites, and between two of
 /// its Djinn counts, one for each element.
 #define FILE_LIST_SPRITE_SPACING 3
+/// How high the file list lifts a party sprite, in pixels, and how far it
+/// brings it forward: the two cancel on screen, and its depth runs past the
+/// field's last slot, so it is drawn in front of every field sprite and behind
+/// the windows' (OAM_DEPTH_WINDOW).
+#define FILE_LIST_SPRITE_LIFT 500
 
 #include "window/window.h"
 #include "gamepak/far_call/field.h"
@@ -890,8 +895,9 @@ void FileList_PlacePartySprites(void) {
       scale[0] = state->partyMemberScale[index];
       scale[1] = state->partyMemberScale[index];
       position[0] = toFIXED(state->partyMemberX[index]);
-      position[1] = toFIXED(500);
-      position[2] = toFIXED(state->partyMemberY[index]) + toFIXED(500);
+      position[1] = toFIXED(FILE_LIST_SPRITE_LIFT);
+      position[2] =
+          toFIXED(state->partyMemberY[index]) + toFIXED(FILE_LIST_SPRITE_LIFT);
       position[3] = 0;
       Render_ApplyProjectedPlacementFar((struct Sprite *)sprite, position,
                                         scale, FACING_SOUTH);

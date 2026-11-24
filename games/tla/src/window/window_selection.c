@@ -484,20 +484,24 @@ void SelectionMenu_OpenNameWindow(s32 mode, u32 count) {
   if (window == 0) {
     if (mode == ICON_KIND_YES_NO) {
       if (screen->locked != 0) {
-        *slot = Window_Create(17, 17, 5, 3, mode);
+        *slot = Window_Create(17, 17, 5, 3,
+                              WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
       } else {
-        *slot = Window_Create(17, 0, 5, 3, mode);
+        *slot = Window_Create(17, 0, 5, 3,
+                              WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
       }
       screen->verticalScroll = 0;
       screen->locked = SELECTION_YES_NO_AT_BOTTOM;
     } else {
-      *slot = Window_Create(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
+      *slot = Window_Create(19 + ((9 - count) >> 1), 17, count + 2, 3,
+                            WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
     }
     WindowSprite_PrepareForRedraw(screen->window);
   } else {
     if (count != 0 && window->width != count + 2) {
       Window_Close(window, WINDOW_FLAG_INSTANT);
-      *slot = Window_Create(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
+      *slot = Window_Create(19 + ((9 - count) >> 1), 17, count + 2, 3,
+                            WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
     }
     WindowSprite_PrepareForRedraw(screen->window);
   }
@@ -545,6 +549,8 @@ void SelectionMenu_Close(void) {
   // The arrows' entries, taken together by Menu_SetupSelectionBothSides.
   if (state->records[SELECTION_ARROW_LEFT].y != 0) {
     VramCache_FreeEntry(state->records[SELECTION_ARROW_LEFT].slot);
+    // DEAD: the left arrow tested again, whose y is always the right one's;
+    // the ROM keeps its load and branch.
     if (state->records[SELECTION_ARROW_LEFT].y != 0) {
       VramCache_FreeEntry(state->records[SELECTION_ARROW_RIGHT].slot);
     }
@@ -1280,12 +1286,12 @@ u32 Menu_ConfirmSelection(struct SelectionMenuState *screen) {
   return index;
 }
 
-// Six routines that do nothing, beside the menu arrows'; nothing calls the
-// first, the fourth or the fifth, and the others are reached only through
-// entries of the window far-call table.
+// Six routines that do nothing, beside the menu arrows': nothing refers to the
+// first, the fourth or the fifth, and the others only fill entries of the
+// window far-call table, which nothing calls.
 
 /// Does nothing.
-void MenuArrow_NoOpCallback(void) {}
+UNUSED void MenuArrow_NoOpCallback(void) {}
 
 /// Does nothing.
 void MenuArrow_NoOpCallbackBank(void) {}
@@ -1294,10 +1300,10 @@ void MenuArrow_NoOpCallbackBank(void) {}
 void MenuArrow_NoOpCallbackA(void) {}
 
 /// Does nothing.
-void MenuArrow_NoOpCallbackB(void) {}
+UNUSED void MenuArrow_NoOpCallbackB(void) {}
 
 /// Does nothing.
-void MenuArrow_NoOpCallbackC(void) {}
+UNUSED void MenuArrow_NoOpCallbackC(void) {}
 
 /// Does nothing.
 void MenuArrow_NoOpCallbackD(void) {}

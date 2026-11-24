@@ -336,6 +336,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 #if TLA_PATCH_1 && !TLA_PATCH_2
   maxWidth = 0;
 #endif
+  // Each of the 16 pages starts a line tall.
   pageHeights[0] = TEXT_LINE_HEIGHT;
   pageHeights[1] = TEXT_LINE_HEIGHT;
   pageHeights[2] = TEXT_LINE_HEIGHT;

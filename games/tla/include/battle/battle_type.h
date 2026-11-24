@@ -19,9 +19,12 @@ struct BattlePlan {
   /// Attack adds a quarter, or the unit Mold takes the place of.
   u8 partnerId;
   u8 targetIds[BATTLE_TARGET_CAPACITY];
+  /// Each target's place from the aimed unit's, which sets the range falloff.
   s8 targetOffset[BATTLE_TARGET_CAPACITY];
+  /// The blows that land on each target: 0 a miss, 2 or 3 a double or triple.
   s8 targetMultiplier[BATTLE_TARGET_CAPACITY];
-  s8 targetCritical[BATTLE_TARGET_CAPACITY];
+  s8 targetCritical[BATTLE_TARGET_CAPACITY]; ///< enum BattleCritical
+  /// Whether the ability's effect takes on each target, or HIT_NOT_ROLLED.
   s8 targetHit[BATTLE_TARGET_CAPACITY];
   u8 paddingBeforeCommand;
 

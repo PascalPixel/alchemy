@@ -2,9 +2,9 @@
 #define ALCHEMY_BATTLE_PRESENTATION_H
 
 /// @file
-/// What the battle object's later parts (games/tla/src/battle/battle_*.c, from
-/// motion_graphics.c to spoils.c) declare for the files that use them,
-/// written once.
+/// The battle's staging and turn: building the enemies and the battle
+/// background, choosing and carrying out actions, the turn's end, and the
+/// main-image routines they call.
 
 #include "types.h"
 #include "resource_ids.h"
@@ -14,38 +14,52 @@
 struct BattleActionRecord;
 struct BattlePlan;
 
+/// Returns 1 when the unit is among its side's units in the battle.
 u32 BattleUnit_IsListed(u32 id);
 
+/// Builds the battle's enemies from a formation; returns how many there are.
 s32 BattleFormation_BuildEnemyList(s32 recordId);
 
+/// The battle background: its scanline state made, its picture loaded, the
+/// state freed, and its display mode switched.
 void BattleBackground_Init(void);
 void BattleBackground_Load(s32 mode, s32 resource, s32 level);
 
+/// Opens the battle: the curtain, then the enemies announced.
 void BattleTransition_Run(s32 enemyCount, s32 kind);
 
+/// Does nothing, at the end of each turn and of the battle.
 void Battle_TurnEndNoOp(void);
 
 void BattleBackground_Free(void);
 
+/// An enemy kind's battle sprite and its palette.
 s32 BattleSprite_GetSprite(s32 index);
 s32 BattleSprite_GetPalette(s32 index);
 
+/// Announces an action and lays it out target by target; 0 stages it.
 s32 BattleActionRun_Build(struct BattleActionRecord *request,
                           struct BattlePlan *plan);
 
+/// Plays an attack: the run up to the target and the blow.
 s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode);
 
+/// Counts down one side's Djinn recovery at the turn's end.
 s32 DjinnRecovery_CountDownSide(s32 side);
 
 void BattleBackground_SetMode(s32 mode, s32 backgroundId, s32 fade);
 
+/// Chooses an enemy's action and its target.
 s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry);
 
+/// The battle effect an enemy kind's plain attack shows, and its defeat sound.
 u32 BattleSprite_GetAttackEffect(u32 index);
 u32 BattleSprite_GetDefeatSound(s32 index);
 
+/// Picks a random living target on the party's side or the enemies'.
 s32 BattleAI_ChooseRandomTarget(s32 party);
 
+/// Counts the standby Djinn on a unit's side, by element into counts.
 s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts);
 
 struct BattlePresentationState;
@@ -87,20 +101,24 @@ struct AIEnemyRest {
 extern const u8 Model_DecodeCode[];
 extern u8 Model_DecodeCodeSize[]; ///< Model_DecodeCode's bytes
 
+/// The field's sprite routines the battle's motion calls: a sprite run on to
+/// its animation's stop, one of its animations removed, and an animation's
+/// length in frames.
 void Sprite_SkipToStopFar(void *record);
-
 void Sprite_RemoveAnimationAtFar(void *record, s32 slot);
-
 s32 SpriteAnimation_SumCommandLengthsFar(s32 id, s32 animation, s32 timedCount);
 
 /// Writes size BGR555 colours of source to destination scaled by value / 256,
 /// at most 1.0: a palette dimmed toward black.
 void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
 
+/// Starts a message in the battle's message window.
 void BattleMessage_OpenFar(s32 message);
-
+/// One step of dissolving a sprite pixel by pixel.
 void SpriteDissolve_StepFar(void *record, s32 step);
-
+/// Levels the unit up once if its experience reaches the next level, filling
+/// gains, a struct LevelUpResult read as halfwords (enum LevelUpGain); its
+/// address, or 0 when the unit did not level up.
 s32 Unit_TryLevelUpFar(s32 unitId, s16 *gains);
 
 /// The advance arrow beside a battle message: eight 128-byte pictures of a
@@ -119,6 +137,7 @@ extern const u8 gBattleTransition_CurtainVariants[];
 /// The battle transition's curtain tiles, 32 bytes (one 4-bit tile) each.
 extern u8 gBattleTransition_CurtainTiles[];
 
+/// The Doom Dragon's opening: the screen shatters over the Serpent's stars.
 void BattleEffect_RunShatteringOpeningFar(
     struct BattlePresentationState *state);
 
@@ -126,6 +145,7 @@ void BattleEffect_RunShatteringOpeningFar(
 /// effects in.
 extern const struct BattleSideOrder gBattle_TurnEndSideOrder;
 
+/// Puts a unit's set Djinn on standby, one at random or all.
 void BattleUnit_DrainDjinn(s32 unitId, s32 all, s32 announce);
 
 #endif

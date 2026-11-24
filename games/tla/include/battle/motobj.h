@@ -51,17 +51,18 @@ struct MotionObject {
   u8 recordStorageKind;
   /// bits: 1 falls under gravity and bounces | 0 follows the terrain
   u8 motionFlags;
+  /// The ARRIVAL_AXIS_* watched for arrival at the target, as Actor's.
   u8 arrivalAxis;
-  u8 conditionResult; ///< the object script's last flag test
-  u8 snapToTarget;    ///< nonzero: lands exactly on the target
-  u8 collisionFlags;
-  u8 autoFaceMotion; ///< bit 0 turns the object to face where it moves
-  u8 paused;
-  u8 retainSpriteCache;
-  u8 repeatCount; ///< the object script's loop count
-  s16 wait;       ///< the object script's wait, in frames
-  void *callback;
-  s32 timer;
+  u8 conditionResult;   ///< the object script's last flag test
+  u8 snapToTarget;      ///< nonzero: lands exactly on the target
+  u8 collisionFlags;    ///< ActorCollisionFlag bits
+  u8 autoFaceMotion;    ///< bit 0 turns the object to face where it moves
+  u8 paused;            ///< nonzero: the motion update leaves it where it is
+  u8 retainSpriteCache; ///< keeps its sprite's VRAM cache entry
+  u8 repeatCount;       ///< the object script's loop count
+  s16 wait;             ///< the object script's wait, in frames
+  void *callback;       ///< Actor's hook; no battle code names it
+  s32 timer; ///< Actor's timer and userValue; no battle code names it
   struct Actor *watchedActor;
   void (*update)(union FieldObject *object);
 };

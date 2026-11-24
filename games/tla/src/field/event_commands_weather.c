@@ -11,6 +11,18 @@
 #include "field/ground_mask.h"
 #include "field/event.h"
 
+/// The weather's sprites: 16 by 16 pictures of 16 colours, four tiles each, in
+/// the last basic sprite palette (Palette_LoadBasicSpriteColors loads 0 to 13).
+#define WEATHER_PICTURE_BYTES (SPRITE_TILES(16, 16) * TILE_SIZE_4BPP)
+#define WEATHER_PALETTE 13
+/// OAM attribute 0's shape and attribute 1's size (GBATEK, "LCD OBJ - OAM
+/// Attributes"): a square sprite of size 1 is 16 by 16, a horizontal one of
+/// size 2 32 by 16.
+#define OAM_SHAPE_SQUARE 0
+#define OAM_SHAPE_HORIZONTAL 1
+#define OAM_SIZE_16X16 1
+#define OAM_SIZE_32X16 2
+
 /// The Broken Seal's rain each frame (GroundParticles_Start, which nothing
 /// calls), kept whole: each drop falls from up to the right, splashes and
 /// plays its RAIN_SPLASH_FRAMES frames of
@@ -84,10 +96,10 @@ void Weather_UpdateRain(void) {
       continue;
     if (GameFlag_Get(FLAG_WEATHER_HELD))
       particle->timer++;
-    // XXX: a streak started at 12 frames reads its first offsets one pair past
-    // the table's end; is it drawn a frame at its spot, by the next table's
-    // first pair? A frame-by-frame recording of Mars Lighthouse's rain would
-    // settle it.
+    // UB: a streak started at 12 frames reads its first offsets one pair past
+    // the table's end, gFieldEffect_SparklePictures's first row: for that frame
+    // it is drawn 2 pixels left of its spot and 12 below it. UBFIX starts it at
+    // 11.
     frame = &gGroundParticles_Offsets[2 * particle->timer];
     x = (particle->posX - originX) / FIXED_ONE + *frame++;
     y = (particle->posZ - particle->posY - originZ) / FIXED_ONE + *frame++;
@@ -96,8 +108,8 @@ void Weather_UpdateRain(void) {
       particle->x = x;
       particle->y = y;
       particle->tile = state->tileBase;
-      particle->shape = 1;
-      particle->size = 2;
+      particle->shape = OAM_SHAPE_HORIZONTAL;
+      particle->size = OAM_SIZE_32X16;
       Oam_AddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
     }
     if (particle->timer == 0) {
@@ -108,7 +120,11 @@ void Weather_UpdateRain(void) {
       particle->posX = x;
       particle->posZ = y;
       particle->posY = MapGrid_GetTerrainHeightFar(0, x, y);
+#ifdef UBFIX
+      particle->timer = 11;
+#else
       particle->timer = 12;
+#endif
     }
   }
 }

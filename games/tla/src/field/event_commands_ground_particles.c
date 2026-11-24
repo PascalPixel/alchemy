@@ -8,9 +8,9 @@
 #include "field/object.h"
 #include "field/ground_mask.h"
 
-/// mote.png's 16 by 16 pictures, four tiles each: two of each size, the
-/// motes shrinking as they rise and flickering between the two.
-#define MOTE_PICTURE_TILES 4
+/// mote.png's six pictures, four tiles each: two of each size, the motes
+/// shrinking as they rise and flickering between the two.
+#define MOTE_PICTURE_TILES SPRITE_TILES(16, 16)
 #define MOTE_LARGE 0
 #define MOTE_MEDIUM 2
 #define MOTE_SMALL 4
@@ -36,7 +36,8 @@ void GroundParticles_Start(void) {
   words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gWeather_ParticleTiles, words);
   state->entry = VramCache_FindFreeEntry();
-  state->tileBase = VramCache_Load(state->entry, 768, words);
+  state->tileBase =
+      VramCache_Load(state->entry, 6 * WEATHER_PICTURE_BYTES, words);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++) {
     s32 x;
@@ -45,7 +46,7 @@ void GroundParticles_Start(void) {
     words = (u32 *)particle;
     *words++ = 0;
     *words++ = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    *words = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
+    *words = OBJ_PRIORITY(1) | OBJ_PALETTE(WEATHER_PALETTE);
     x = leader[0];
     z = leader[2];
     particle->posX = x;
@@ -104,8 +105,8 @@ void RisingParticles_Update(void) {
           ((gFrameCount >> 3) & 1) * MOTE_PICTURE_TILES +
           particle->sprite.attributes.tile;
       particle->sprite.attributes.x = x;
-      particle->sprite.attributes.shape = 0;
-      particle->sprite.attributes.size = 1;
+      particle->sprite.attributes.shape = OAM_SHAPE_SQUARE;
+      particle->sprite.attributes.size = OAM_SIZE_16X16;
       particle->sprite.attributes.priority = 3;
       particle->sprite.attributes.blendMode = OBJ_MODE_SEMI_TRANSPARENT;
       particle->sprite.attributes.y = y;
@@ -131,14 +132,15 @@ void RisingParticles_Start(void) {
   u32 i;
   FIXED z;
 
-  // z carries the fill's zero before it is a particle's z, as
-  // FieldEffect_InitializeSparkles's size does.
+  /* FAKEMATCH(temporary): z, holding the fill's 0 before it is a particle's
+   * z; as 0 in the fill. */
   z = 0;
   Dma_Fill32Cell(fill, z, state, sizeof(struct WeatherState));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_MoteTiles, tiles);
   state->vramEntry = VramCache_FindFreeEntry();
-  state->tile = VramCache_Load(state->vramEntry, 768, tiles);
+  state->tile =
+      VramCache_Load(state->vramEntry, 6 * WEATHER_PICTURE_BYTES, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < ARRAY_COUNT(state->particles); i++, particle++) {
     u32 *sprite = particle->sprite.words;
@@ -146,7 +148,7 @@ void RisingParticles_Start(void) {
 
     *sprite++ = 0;
     *sprite++ = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    *sprite = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
+    *sprite = OBJ_PRIORITY(1) | OBJ_PALETTE(WEATHER_PALETTE);
     x = Random16() * 200 + toFIXED(288);
     z = toFIXED(80) - Random16() * 20;
     particle->posX = x;
@@ -209,8 +211,8 @@ void FieldMotes_Update(void) {
           mote->tile += MOTE_PICTURE_TILES;
         mote->x = x;
         mote->y = y - (mote->delay >> 2);
-        mote->shape = 0;
-        mote->size = 1;
+        mote->shape = OAM_SHAPE_SQUARE;
+        mote->size = OAM_SIZE_16X16;
         Oam_AddSpriteAtDepthClamped(mote, OAM_DEPTH_WINDOW);
       } else {
         mote->timer = 0;

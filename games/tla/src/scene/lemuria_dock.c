@@ -36,6 +36,9 @@ enum {
   ACTOR_CANNON
 };
 
+/// The gangplank's cell, (27, 28), between the pier and the ship's deck.
+enum { CELL_BEHAVIOR_GANGPLANK = 21 };
+
 extern u8 MsgAreWeSetting[];
 extern s32 gLemuriaDock_Exits[];
 extern s32 gLemuriaDock_ExitsToOtherWayIn[];
@@ -67,9 +70,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Coming up the pier from the shore of Ancient Lemuria: where Kraden is not
-/// already on the dock he steps out from the leader and walks to his place by
-/// the ship; where he is, he walks back into the leader.
+/// Felix steps onto the gangplank. Coming up the pier from the shore of
+/// Ancient Lemuria, where Kraden is not already on the dock he steps out from
+/// the leader and walks to his place by the ship; where he is, he walks back
+/// into the leader.
 void LemuriaDock_MoveKraden(void) {
   struct MainRoutineState *party = &gMainRoutineState;
 
@@ -219,8 +223,8 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  // XXX: what these cells show before the ship can fly; probes of the dock
-  // with and without FLAG_SHIP_FLIES would show it.
+  // Until the ship can fly, its wings are not out: plain hull and sea are
+  // drawn where they would show.
   if (!Flag_IsSet(FLAG_SHIP_FLIES)) {
     MapGrid_CopyCellsTo(57, 52, 64, 15, 1, 1);
     MapGrid_CopyCellsTo(60, 53, 67, 16, 6, 3);
@@ -281,7 +285,8 @@ struct Trigger gSceneEvents[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
      LEMURIA_DOCK_TO_LEMURIAN_SHIP_CABINS, CONDITION_ALWAYS,
      EVENT(LemuriaDock_EnterCabins)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(LemuriaDock_MoveKraden)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_GANGPLANK, CONDITION_ALWAYS,
+     EVENT(LemuriaDock_MoveKraden)},
     {TRIGGER_TALK, ACTOR_KRADEN, CONDITION_ALWAYS,
      EVENT(LemuriaDock_AskSettingOff)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),

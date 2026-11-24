@@ -62,8 +62,6 @@ extern struct Trigger gIzumoRooms_Triggers[];
 extern struct Trigger gIzumoRooms_SusasHouseTriggers[];
 extern struct Trigger gIzumoRooms_TriggersOnceTheSerpentIsSlain[];
 
-void Inn_CheckIn(s32 slot, s32 actor);
-
 /// The side of the hall of Susa's house Felix came up for the heroes' welcome.
 enum { HEROES_FROM_THE_EAST, HEROES_FROM_THE_WEST };
 
@@ -104,9 +102,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-void Shop_Run(s32 slot, s32 actor);
-void Sanctum_Run(s32 actor);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_SERPENT_SLAIN))

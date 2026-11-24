@@ -34,6 +34,7 @@
 #include "field/actor_script.h"
 #include "djinn_ids.h"
 #include "text/msg_ids.h"
+#include "shop/shop.h"
 
 /// Set once the old man of the mushroom house has been given the Healing
 /// Fungus and has traded Char for it.
@@ -180,8 +181,6 @@ extern struct Trigger gMadraRooms_TriggersAfterRaid[];
 extern struct Trigger gMadraRooms_TriggersOnReturn[];
 
 void Event_End(void);
-void Sanctum_Run(s32 actor);
-void Inn_CheckIn(s32 slot, s32 actor);
 void MadraRooms_ShinAngersPiers(void);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {

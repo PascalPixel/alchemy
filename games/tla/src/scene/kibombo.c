@@ -58,6 +58,7 @@
 #include "field/event.h"
 #include "system/frame.h"
 #include "system/system_call.h"
+#include "shop/shop.h"
 
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
@@ -74,9 +75,6 @@ void Event_ShowMessageAndWait(s32 speaker, s32 flags);
 void Actor_FaceDirectionAndRefreshById(s32 actor, s32 angle);
 void Actor_DisableById(s32 actor);
 void FlagBlock_ApplyFlags(const void *script);
-void Shop_Run(s32 shop, s32 keeper);
-void Sanctum_Run(s32 keeper);
-void Inn_CheckIn(s32 shop, s32 keeper);
 void Sound_Play(s32 cue);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Actor_Release(struct Actor *actor);

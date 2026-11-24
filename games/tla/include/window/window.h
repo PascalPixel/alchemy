@@ -763,4 +763,8 @@ struct WindowSprite *WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
                                                         s32 x, s32 y);
 void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 
+struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
+                                   s32 y);
+struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
+
 #endif

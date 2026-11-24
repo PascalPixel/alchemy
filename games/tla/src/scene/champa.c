@@ -773,9 +773,6 @@ void Champa_JennaAndShebaLookPuzzled(s32 firstId, s32 secondId) {
   FieldEvent_Wait(15);
 }
 
-struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
-void Portrait_OpenWindow(s32 object, s32 a, s32 b, s32 c);
-
 /// Event_ShowTwoMessagesAndWait's first half, kept in the scene: two actors
 /// speak at once, the second message waiting for the first when delay is
 /// nonzero; Champa_CloseTwoMessages closes them.

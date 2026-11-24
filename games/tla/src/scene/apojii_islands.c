@@ -13,6 +13,7 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "scene/dust.h"
+#include "shop/shop.h"
 
 /// Set once Douse has woken the Aqua Stone.
 #define FLAG_APOJII_AQUA_STONE_DOUSED 0x95f
@@ -142,8 +143,6 @@ s32 MapGrid_CheckCollision(struct Actor *actor, s32 *position);
 void Field_TryJumpForward(void);
 void Rope_Initialize(void);
 void Rope_Place(s32 index, s32 flag, s32 firstId, s32 secondId);
-void Shop_Run(s32 stockRow, s32 keeper);
-void Inn_CheckIn(s32 innId, s32 keeper);
 
 void ApojiiIslands_CycleFallsColors(void);
 void ApojiiIslands_CycleSeaColors(void);

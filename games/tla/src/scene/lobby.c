@@ -45,6 +45,7 @@
 #include "system/input.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
+#include "shop/shop.h"
 
 /// A gMainRoutineState.party byte with no member in it, all ones.
 #define PARTY_SLOT_EMPTY 255
@@ -66,7 +67,6 @@ void Serial_RemoveIrqHandlers(void);
 void Serial_Initialize(void);
 void Event_Start(void);
 void Event_End(void);
-void Sanctum_Run(s32 value);
 void GameFlag_SetByte(s32 flag, s32 value);
 
 /// Stores a byte in the eight game flags from `flag`.
@@ -723,7 +723,6 @@ check:
 void TilesetAnim_Resume(s32 channel);
 void TilesetAnim_Pause(s32 channel);
 void Field_RequestBattleFromEncounterTable(s32 table, s32 slot);
-struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y, s32 flags);
 
 /// Felix steps onto the diamond mark before the arched door to the arena, cell
 /// (13, 11), once he has applied: "Awaiting your opponent..." shows until the
@@ -758,7 +757,7 @@ s32 LinkLobby_EnterBattle(void) {
     LinkLobby_WriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
     if (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
       // "Awaiting your opponent..."
-      window = Message_OpenWindow(MsgLobbyAwaitingYourOpponent, 5, 4,
+      window = Message_OpenWindow((s32)MsgLobbyAwaitingYourOpponent, 5, 4,
                                   MESSAGE_WINDOW_ZOOM);
     while (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE)) {
       wait(1);

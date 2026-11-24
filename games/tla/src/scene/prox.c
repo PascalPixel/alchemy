@@ -69,6 +69,7 @@
 #include "text/msg_ids.h"
 #include "scene/falling_rocks.h"
 #include "scene/scene.h"
+#include "shop/shop.h"
 
 /// The people at the south gate for the farewell after the ending, numbering
 /// the rows of `gProx_SouthGateFarewellPlacements`; the party's rows go to
@@ -584,8 +585,6 @@ void Prox_TalkToInnkeeper(void) {
   }
 }
 
-s32 Shop_Run();
-
 /// Felix talks to the shopkeeper, the old woman behind the counter in the cave
 /// room behind the small door in the east cliff. From across the counter,
 /// facing north, she opens the shop; from anywhere else she marvels at the
@@ -607,8 +606,6 @@ void Prox_TalkToShopkeeper(void) {
     Prox_EndEvent();
   }
 }
-
-s32 Sanctum_Run();
 
 /// Felix talks to the healer, the old man behind the lectern in the Sanctum
 /// behind the wide wooden door in the west cliff. From in front of the

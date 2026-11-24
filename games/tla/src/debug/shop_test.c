@@ -97,16 +97,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// The routines of other banks the tests open that no header declares yet,
 /// as their banks define them.
-struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
-                                   s32 y);
-struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
-s32 Shop_Run(s32 stockRow, s32 keeper);
-s32 Sanctum_Run(s32 keeper);
-s32 Inn_CheckIn(s32 innId, s32 keeper);
-s32 Forge_Run(s32 keeper);
-void Forge_SetItem(s32 item);
-s32 Forge_GetItem(void);
-s32 ItemPicker_RunToShow(s32 *selectedUnit, s32 *selectedSlot);
 s32 NameEntry_EditMemberName(s32 member);
 void Summon_ShowLearnedMessage(s32 summon);
 void Summon_Learn(s32 summonId);

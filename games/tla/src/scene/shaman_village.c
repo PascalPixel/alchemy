@@ -65,6 +65,7 @@
 #include "text/msg_ids.h"
 
 #include "../field/actor_set_sprite_priority.c"
+#include "shop/shop.h"
 
 /// The people and things at the foot of Trial Road, numbering the rows of
 /// gShamanVillage_TrialGroundsPlacements; Moapa, his Knights and Kraden
@@ -338,9 +339,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 
-void Shop_Run(s32 shop, s32 keeper);
-void Sanctum_Run(s32 keeper);
-void Inn_CheckIn(s32 inn, s32 keeper);
 void Actor_Release(struct Actor *actor);
 void Rope_Initialize(void);
 void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);

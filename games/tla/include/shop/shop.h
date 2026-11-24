@@ -110,4 +110,13 @@ void ItemIconGrid_ShowInventory(struct Window *window, s32 x, s32 y,
 extern u8 gShop_GlyphBytes[];
 s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind);
 
+/// The shops, inns, sanctums and forges as events open them.
+s32 Shop_Run(s32 stockRow, s32 keeper);
+s32 Sanctum_Run(s32 keeper);
+s32 Inn_CheckIn(s32 innId, s32 keeper);
+s32 Forge_Run(s32 keeper);
+void Forge_SetItem(s32 item);
+s32 Forge_GetItem(void);
+s32 ItemPicker_RunToShow(s32 *selectedUnit, s32 *selectedSlot);
+
 #endif

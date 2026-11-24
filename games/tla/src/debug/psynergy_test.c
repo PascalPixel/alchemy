@@ -114,7 +114,6 @@ enum PsynergyTestActorId {
 };
 
 s32 ItemPicker_RunToDrop(s32 *selectedUnit, s32 *selectedSlot);
-s32 Inn_CheckIn(s32 innId, s32 keeper);
 void PsynergyTest_DigCells(s32 stage, s32 sourceX, s32 sourceY, s32 width,
                            s32 height, s32 destinationX, s32 destinationY);
 void PsynergyTest_GrowActor(s32 stage, s32 id, s32 x, s32 z);
@@ -125,14 +124,9 @@ void PsynergyTest_StopRings(struct Actor *actor);
 void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 animation);
 void Actor_FallOverById(u32 id, u32 angle);
 void Actor_DepartInRing(s32 actorId);
-s32 Sanctum_Run(s32 keeper);
 void Actor_ArriveInRing(s32 actorId);
 s32 Event_PickUpItem(s32 actor, s32 item, s32 flag);
 s32 NameEntry_EditMemberName(s32 member);
-s32 Shop_Run(s32 stockRow, s32 keeper);
-struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 options);
-struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
-                                   s32 y);
 
 extern u32 gLightRing_Tiles[];
 struct SparkleState gPsynergyTest_LeaderRings BSS_DATA ALIGNED(16);

@@ -19,6 +19,7 @@
 #include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/event_inline.h"
+#include "shop/shop.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -32,8 +33,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// The healer behind the counter, a bearded man in a long robe.
 #define ACTOR_HEALER ACTOR_FIRST_PLACED
-
-s32 Sanctum_Run(s32 keeper);
 
 /// Talking to the healer from across the counter, facing north: the Sanctum's
 /// services.

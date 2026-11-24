@@ -35,6 +35,7 @@
 #include "scene/sparkle.h"
 #include "graphics/palette_buffers.h"
 #include "version.h"
+#include "shop/shop.h"
 
 /// Force has freed Shine from the tree stump it was stuck in.
 #define FLAG_SHINE_FREED 0x9e7
@@ -762,10 +763,6 @@ void Contigo_BabyThinks(void) {
                              FACING_SOUTH_SOUTHEAST);
   Event_End();
 }
-
-void Shop_Run(s32 stockRow, s32 keeperId);
-void Sanctum_Run(s32 unitId);
-void Inn_CheckIn(s32 innId, s32 actorId);
 
 #include "shared/leader_is_facing_north.h"
 

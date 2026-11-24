@@ -158,8 +158,6 @@ extern struct Trigger gDailaRooms_SanctumEvents[];
 extern struct Trigger gDailaRooms_HousesEventsOnceTaviIsRescued[];
 extern struct Trigger gDailaRooms_SanctumEventsOnceTaviIsRescued[];
 
-void Sanctum_Run(s32 actor);
-
 extern s16 gDailaRooms_PillarFrozenFlags[];
 
 void FlagBlock_ApplyFlags(const s16 *flags);
@@ -279,8 +277,6 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gDailaRooms_SanctumEvents;
   return gDailaRooms_HousesEvents;
 }
-
-s32 Inn_CheckIn(s32 mode, s32 objectId);
 
 /// The weapon merchant at the right-hand counter of the shop sells to Felix
 /// when he talks to him from in front of it, facing north; from any other side

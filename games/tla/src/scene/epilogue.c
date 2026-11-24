@@ -132,10 +132,6 @@ void Epilogue_LoadPortraitFrame(void) {
   FieldTask_AddFrame(Epilogue_PlacePortraitFrame, TASK_PASS_FRAME);
 }
 
-struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
-struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
-                                   s32 y);
-
 /// A speaker (a sprite number) or'd with this shows the line with no portrait:
 /// a voice heard from off the image.
 #define EPILOGUE_NO_PORTRAIT 0x8000

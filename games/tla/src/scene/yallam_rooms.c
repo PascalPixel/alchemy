@@ -38,6 +38,7 @@
 #include "system/system.h"
 #include "window/message_argument.h"
 #include "text/msg_ids.h"
+#include "shop/shop.h"
 
 /// Sunshine is at work on the party's material; a night at the inn, or leaving
 /// Yallam, finishes it.
@@ -90,9 +91,6 @@ enum YallamRoomsShopsActorId {
 };
 
 void Event_End(void);
-void Shop_Run(s32 shop, s32 keeper);
-void Sanctum_Run(s32 keeper);
-void Inn_CheckIn(s32 shop, s32 keeper);
 
 void FieldEffect_StartBlankOverlay(s32 actor);
 
@@ -102,10 +100,6 @@ extern struct ActorPlacement gYallamRoomsShopsPlacements[];
 extern struct Trigger gYallamRooms_Triggers[];
 extern struct Trigger gYallamRoomsInnTriggers[];
 extern struct Trigger gYallamRoomsShopsTriggers[];
-
-void Forge_Run(s32 actor);
-
-void Forge_SetItem(s32 value);
 
 void ItemDisplay_ShowItem(s32 item, s32 mode);
 
@@ -384,7 +378,6 @@ UNUSED void YallamRooms_OfferToForge(void) {
   Event_End();
 }
 
-s32 Forge_GetItem(void);
 void Actor_FallOverById(s32 actor, s32 angle);
 
 /// Whether anyone in the party carries something Sunshine can forge: a rusty

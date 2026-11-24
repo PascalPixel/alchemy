@@ -1867,7 +1867,7 @@ void KandoreanTemple_FightChestbeaters(void) {
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Event_SetAfterBattleDestination(SCENE_KANDOREAN_TEMPLE_CHESTBEATERS,
                                   ENTRANCE_AFTER_CHESTBEATER_BATTLE);
-  Field_RequestBattleFromEncounterTable(9, 4);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 4);
   Event_End();
 }
 

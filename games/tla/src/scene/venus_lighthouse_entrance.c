@@ -1111,7 +1111,7 @@ void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                              VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  Field_RequestBattleFromEncounterTable(9, 0);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 0);
   Event_End();
 }
 

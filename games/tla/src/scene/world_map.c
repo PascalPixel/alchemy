@@ -1035,7 +1035,7 @@ void WorldMap_ExplainGivingDjinn(void) {
   Event_SetFlag(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
   FieldEvent_Wait(30);
-  Field_RequestBattleFromEncounterTable(9, 5);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 5);
 }
 
 /// The bandit and the thieves from Vault, after a linked game, want Isaac.

@@ -55,8 +55,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {45, 46, 47},
         .weights = {10, 10, 10},
     },
-    // Story battles: at Venus Lighthouse's entrance (slot 0), Suhalla Gate (1
-    // to 3), the Kandorean Temple (4) and on the World Map (5)
+    // ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY
     {
         .formations = {49, 50, 51, 52, 53, 637},
         .weights = {10, 10, 10, 10, 10, 10},

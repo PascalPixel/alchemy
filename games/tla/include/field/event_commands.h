@@ -338,6 +338,12 @@ void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 /// FLAG_MAD_PLANT's order.
 #define ENCOUNTER_ZONE_MAD_PLANTS 106
 
+/// The encounter zone of the early story battles: the Ruffian waiting for
+/// backup on Venus Lighthouse's plaza (slot 0), the Ruffian on the Suhalla road
+/// (1), the three Ruffians at the crevice (2) and the Punch Ant (3) at Suhalla
+/// Gate, the Chestbeaters in the Kandorean Temple (4) and Echo's lesson battle
+/// on the World Map (5).
+#define ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY 9
 /// The encounter zone of two story battles: the King Scorpion's in the Yampi
 /// Desert (slot 0), then Briggs and his crew's on his ship at Alhafra (slot
 /// 1).

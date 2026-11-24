@@ -318,7 +318,7 @@ const s16 gEncounter_BattleMusic[] = {
     ENCOUNTER_BATTLE_MUSIC(MUS_KARST_AND_AGATIO),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 4), // Agatio and Karst against Isaac
     ENCOUNTER_BATTLE_MUSIC(MUS_AQUA_HYDRA),
-    ENCOUNTER_KEY(9, 4), // the Chestbeaters in the Kandorean Temple
+    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 4), // the Chestbeaters in the Kandorean Temple
     ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA, 0), // the King Scorpion
     ENCOUNTER_KEY(ENCOUNTER_ZONE_AQUA_JELLIES, 1), // the Aqua Hydra
     // The Serpent (slots 0 to 4), Avimander and Poseidon.

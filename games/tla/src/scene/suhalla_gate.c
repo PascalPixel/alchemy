@@ -304,7 +304,7 @@ void SuhallaGate_RuffianSpotsParty(void) {
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                              VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  Field_RequestBattleFromEncounterTable(9, 1);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 1);
   Event_End();
 }
 
@@ -354,7 +354,7 @@ void SuhallaGate_RuffiansAmbushParty(void) {
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                              VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
   state->battleType = BATTLE_TYPE_NO_ESCAPE;
-  Field_RequestBattleFromEncounterTable(9, 2);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 2);
   Event_End();
 }
 
@@ -373,7 +373,7 @@ void SuhallaGate_FightPunchAnt(void) {
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                              VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  Field_RequestBattleFromEncounterTable(9, 3);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 3);
   Event_End();
 }
 

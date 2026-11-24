@@ -323,6 +323,18 @@ void Actor_PlaceOnActor(s32 actor, s32 target);
 /// follow, as they open while it is flooded.
 #define LOWER_DOOR_COUNT 4
 
+/// The ship's maps keep their overhead layer 60 rows south of the ground's.
+/// A door swings open there, drawn over the leader walking through it.
+#define OVERHEAD_LAYER_ROW 60
+
+/// The sinking pillar's sprite sheet's animations: hollow and empty, full of
+/// water, and sunk into the floor to its watery rim.
+enum SinkingPillarAnimation {
+  SINKING_PILLAR_EMPTY = 1,
+  SINKING_PILLAR_FULL,
+  SINKING_PILLAR_SUNK
+};
+
 /// The lift in the room of six jellies, its 3 by 3 cells at (50, 64) drawn
 /// lowered from spare cells at (68, 68) or raised from (72, 68).
 #define LemurianShip_DrawLiftLowered() MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3)
@@ -433,7 +445,7 @@ void LemurianShip_OpenDoor(void) {
                       gLemurianShip_Doors[found].z, 1, 2);
   MapGrid_AnimateCells(gLemurianShip_Doors[found].value,
                        gLemurianShip_Doors[found].x,
-                       gLemurianShip_Doors[found].z + 60);
+                       gLemurianShip_Doors[found].z + OVERHEAD_LAYER_ROW);
   Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
   {
@@ -482,7 +494,7 @@ void LemurianShip_OpenLowerDoor(void) {
                       gLemurianShip_LowerDoors[found].z, 1, 2);
   MapGrid_AnimateCells(gLemurianShip_LowerDoors[found].value,
                        gLemurianShip_LowerDoors[found].x,
-                       gLemurianShip_LowerDoors[found].z + 60);
+                       gLemurianShip_LowerDoors[found].z + OVERHEAD_LAYER_ROW);
   Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
   Actor_CenterOnColumn(gMainRoutineState.leaderActorId, 2, -4);
@@ -924,7 +936,7 @@ void LemurianShip_CheckPillarsOnDropTiles(void) {
           actor->y.fixed -= toFIXED(1) / 8;
           wait(1);
         }
-        Actor_SetAnimation(ACTOR_RIGHT_PILLAR, 3);
+        Actor_SetAnimation(ACTOR_RIGHT_PILLAR, SINKING_PILLAR_SUNK);
         Actor_SetPosition(ACTOR_RIGHT_PILLAR_PUDDLE, 568, 152);
         Event_Wait(20);
         Event_SetFlag(FLAG_RIGHT_PILLAR_SUNK);
@@ -960,7 +972,7 @@ void LemurianShip_CheckPillarsOnDropTiles(void) {
           actor->y.fixed -= toFIXED(1) / 8;
           wait(1);
         }
-        Actor_SetAnimation(ACTOR_LEFT_PILLAR, 3);
+        Actor_SetAnimation(ACTOR_LEFT_PILLAR, SINKING_PILLAR_SUNK);
         Actor_SetPosition(ACTOR_LEFT_PILLAR_PUDDLE, 472, 152);
         Event_Wait(20);
         Event_SetFlag(FLAG_LEFT_PILLAR_SUNK);
@@ -1004,7 +1016,7 @@ void LemurianShip_SetDownPillar(void) {
 #define DEFINE_DOUSE_PILLAR(name, pillar, fullFlag)                            \
   void name(void) {                                                            \
     Sound_Play(SE_DRIP);                                                       \
-    Actor_SetAnimationById(pillar, 2);                                         \
+    Actor_SetAnimationById(pillar, SINKING_PILLAR_FULL);                       \
     GameFlag_Set(fullFlag);                                                    \
     LemurianShip_CheckPillarsOnDropTiles();                                    \
   }
@@ -1183,35 +1195,43 @@ void LemurianShip_KeepPillarRoomPuddles(void) {
 #endif
 }
 
+/// A row of the flooded hold (the hold's copy 19 rows south) on the overhead
+/// layer.
+#define WADE_ROW(row) ((row) + OVERHEAD_LAYER_ROW)
+
 /// A task: in the flooded hold, draws the water rippling around Felix as he
-/// wades.
+/// wades. Each frame the overhead layer's water over columns 4 to 11 of rows 25
+/// to 30 is drawn afresh from a plain copy at (74, 105); where he stands on
+/// one of seven of those cells, the ripples' picture at (18, 126) is drawn on
+/// his cell, and on all but (7, 26) on the cell south of it too.
 void LemurianShip_RippleAroundLeader(void) {
   struct Actor *leader =
       ((struct Actor *)Actor_GetById(gMainRoutineState.leaderActorId));
   s32 x = FIELD_CELL(leader->x.fixed);
   s32 z = FIELD_CELL(leader->z.fixed);
 
-  MapGrid_CopyCellsTo(74, 105, 4, 85, 8, 6);
+  MapGrid_CopyCellsTo(74, 105, 4, WADE_ROW(25), 8, 6);
   if (z == 25) {
     if (x == 4)
-      MapGrid_CopyCellsTo(18, 126, 4, 85, 1, 2);
+      MapGrid_CopyCellsTo(18, 126, 4, WADE_ROW(25), 1, 2);
   } else if (z == 26) {
     if (x == 7)
-      MapGrid_CopyCellsTo(18, 126, 7, 86, 1, 1);
+      MapGrid_CopyCellsTo(18, 126, 7, WADE_ROW(26), 1, 1);
   } else if (z == 27) {
     if (x == 4)
-      MapGrid_CopyCellsTo(18, 126, 4, 87, 1, 2);
+      MapGrid_CopyCellsTo(18, 126, 4, WADE_ROW(27), 1, 2);
     else if (x == 6)
-      MapGrid_CopyCellsTo(18, 126, 6, 87, 1, 2);
+      MapGrid_CopyCellsTo(18, 126, 6, WADE_ROW(27), 1, 2);
     else if (x == 7)
-      MapGrid_CopyCellsTo(18, 126, 7, 87, 1, 2);
+      MapGrid_CopyCellsTo(18, 126, 7, WADE_ROW(27), 1, 2);
     else if (x == 9)
-      MapGrid_CopyCellsTo(18, 126, 9, 87, 1, 2);
+      MapGrid_CopyCellsTo(18, 126, 9, WADE_ROW(27), 1, 2);
   } else if (z == 29) {
     if (x == 6)
-      MapGrid_CopyCellsTo(18, 126, 6, 89, 1, 2);
+      MapGrid_CopyCellsTo(18, 126, 6, WADE_ROW(29), 1, 2);
   }
 }
+#undef WADE_ROW
 
 /// A task: once the water on a sunk pillar is gone (its puddle is no longer
 /// placed), the pillar rises again.
@@ -1223,14 +1243,14 @@ void LemurianShip_WatchPillarPuddles(void) {
     actor = ((struct Actor *)Actor_GetById(ACTOR_RIGHT_PILLAR_PUDDLE));
     if ((actor->x.fixed | actor->z.fixed) == 0) {
       state->raisedTrigger = RAISED_RIGHT_PILLAR;
-      Actor_SetAnimation(ACTOR_RIGHT_PILLAR, 1);
+      Actor_SetAnimation(ACTOR_RIGHT_PILLAR, SINKING_PILLAR_EMPTY);
     }
   }
   if (Event_GetFlag(FLAG_LEFT_PILLAR_SUNK)) {
     actor = ((struct Actor *)Actor_GetById(ACTOR_LEFT_PILLAR_PUDDLE));
     if ((actor->x.fixed | actor->z.fixed) == 0) {
       state->raisedTrigger = RAISED_LEFT_PILLAR;
-      Actor_SetAnimation(ACTOR_LEFT_PILLAR, 1);
+      Actor_SetAnimation(ACTOR_LEFT_PILLAR, SINKING_PILLAR_EMPTY);
     }
   }
 }
@@ -1930,9 +1950,9 @@ void LemurianShip_SetUpPillarRoom(void) {
   }
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_FULL)) {
     if (Event_GetFlag(FLAG_RIGHT_PILLAR_SUNK))
-      Actor_SetAnimation(ACTOR_RIGHT_PILLAR, 3);
+      Actor_SetAnimation(ACTOR_RIGHT_PILLAR, SINKING_PILLAR_SUNK);
     else
-      Actor_SetAnimation(ACTOR_RIGHT_PILLAR, 2);
+      Actor_SetAnimation(ACTOR_RIGHT_PILLAR, SINKING_PILLAR_FULL);
   }
   Actor_SetSpriteFlags(((struct Actor *)Actor_GetById(ACTOR_LEFT_PILLAR)), 0);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
@@ -1949,9 +1969,9 @@ void LemurianShip_SetUpPillarRoom(void) {
   }
   if (Event_GetFlag(FLAG_LEFT_PILLAR_FULL)) {
     if (Event_GetFlag(FLAG_LEFT_PILLAR_SUNK))
-      Actor_SetAnimation(ACTOR_LEFT_PILLAR, 3);
+      Actor_SetAnimation(ACTOR_LEFT_PILLAR, SINKING_PILLAR_SUNK);
     else
-      Actor_SetAnimation(ACTOR_LEFT_PILLAR, 2);
+      Actor_SetAnimation(ACTOR_LEFT_PILLAR, SINKING_PILLAR_FULL);
   }
   wait(1);
   FlagBlock_PlaceAll(gLemurianShip_TwoJellyRoomPuddles);
@@ -2471,6 +2491,7 @@ struct Trigger gLemurianShip_PillarRoomTriggers[] = {
 
 /// The lower deck's triggers.
 struct Trigger gLemurianShip_LowerDeckTriggers[] = {
+    // Unused: no cell of the lower deck's map answers 5, and its exits list none.
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, EXIT_CORRIDOR_TO_PILLAR_ROOM, CONDITION_ALWAYS, EXIT_CORRIDOR_TO_PILLAR_ROOM},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_CORRIDOR_TO_ENGINE_ROOM, CONDITION_ALWAYS, EVENT(LemurianShip_WalkIntoPassage)},

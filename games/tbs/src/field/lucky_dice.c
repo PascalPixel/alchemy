@@ -159,10 +159,6 @@ struct LuckyDiceSprites {
   u8 unusedEnd[324];
 };
 
-/// The battle effects' sprite sheet block, allocated at the size a battle
-/// effect gives it (BattleEffect_RunByIdRange); Lucky Dice leaves it empty.
-#define BATTLE_SHEET_BYTES 1550
-
 /// sprites.tsv's seven sheets, from the rolling die to the lucky numbers: 496
 /// 256-colour tiles, nearly all of sprite VRAM.
 #define DICE_SPRITE_TILES 496
@@ -364,7 +360,7 @@ void LuckyDice_Run(void) {
   s16 affineScale;
 
   // Allocate the screen's state blocks and reset the camera and tasks.
-  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, BATTLE_SHEET_BYTES);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, GLOW_SHEET_ROOM);
   spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS,
                                  DICE_SPRITES_PALETTE_COLORS * sizeof(u16));
   diceState = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(*diceState));

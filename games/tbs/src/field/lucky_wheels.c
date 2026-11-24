@@ -25,11 +25,6 @@
 /// The sparks of the jackpot, kept in the map cell buffer.
 #define LUCKY_WHEELS_SPARKS ((struct Particle *)Ram_MapGridCellBuffer)
 
-/// The battle effects' sprite sheet block, allocated at the size a battle
-/// effect gives it (BattleEffect_RunByIdRange): the blue glow sheet the
-/// jackpot's sparks are drawn from.
-#define BATTLE_SHEET_BYTES 1550
-
 /// Lucky Wheels' own state (struct LuckyWheelsState), in the heap slot Lucky
 /// Dice keeps its sprites in, beside the battle effect slots it borrows.
 #define LUCKY_WHEELS_HEAP_SLOT HEAP_SLOT_LUCKY_GAME
@@ -1207,7 +1202,7 @@ void LuckyWheels_Run(void) {
   s32 j;
   s32 k;
 
-  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, BATTLE_SHEET_BYTES);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, GLOW_SHEET_ROOM);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, LUCKY_WHEELS_CANVAS_SIZE);
   effect = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT,
                                sizeof(struct BattleEffectState));

@@ -68,10 +68,10 @@ void BattleEffect_RunZephyr(struct BattleEffectParams *args) {
 }
 /// Where each picture sits in the sprite sheet.
 enum StatBoostSheet {
-  STAT_BOOST_FLARES = 0,      ///< flares (BlueGlowSheet)
-  STAT_BOOST_BURST = 1550,    ///< six bursts of light (GlowOrb)
-  STAT_BOOST_PICTURE = 11150, ///< the picture the mode picks
-  STAT_BOOST_DJINNI = 26048   ///< the Djinni
+  STAT_BOOST_FLARES = 0,              ///< flares (BlueGlowSheet)
+  STAT_BOOST_BURST = GLOW_SHEET_ROOM, ///< six bursts of light (GlowOrb)
+  STAT_BOOST_PICTURE = 11150,         ///< the picture the mode picks
+  STAT_BOOST_DJINNI = 26048           ///< the Djinni
 };
 
 /// When the first target's flares burst and its sprite appears, with the

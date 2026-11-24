@@ -179,4 +179,10 @@ enum HeapSlot {
   HEAP_SLOT_COLOSSO_RACE = 59
 };
 
+/// The room an effect gives its glow pictures: HEAP_SLOT_BATTLE_SHEET's size,
+/// and where an effect's own pictures start in a sheet whose glow pictures
+/// come first. The largest glow sheet, BlueGlowSheet's ten flares from 2x2 to
+/// 20x20, takes 1540 bytes of it.
+#define GLOW_SHEET_ROOM 1550
+
 #endif

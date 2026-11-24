@@ -15,12 +15,6 @@ struct BattleEffectParams;
 struct ScreenPoint;
 struct Particle;
 
-/// The room an effect gives its glow pictures: the battle sheet slot's size,
-/// and where an effect's own pictures start in a sheet whose glow pictures
-/// come first. The largest glow sheet, BlueGlowSheet's ten flares from 2x2 to
-/// 20x20, takes 1540 bytes of it.
-#define GLOW_SHEET_ROOM 1550
-
 /// The large effects BattleEffect_RunSummon runs, by kind: the twelve
 /// summons. A summon's row of gAbilityBattleEffects has EFFECT_SUMMON plus its
 /// kind.

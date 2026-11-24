@@ -968,31 +968,18 @@ standard(void)
 						  "games/x/good.tsv\n");
 	RUN("check", true, "good.list");
 
-	/* The line limit is for code: a long table under its macro has none. */
+	/* Length is an alarm and never a failure: a long file passes. */
 	check(!mkdir("tools", 0777) && !mkdir("tools/x", 0777),
 		  "create a tool folder");
-	Buffer rows = {0}, code = {0};
-	static const char macro[] = "\t.macro row value\n\t.4byte \\value\n"
-								"\t.endm\ntable:\n";
-	for (size_t i = 0; macro[i]; i++)
-		byte(&rows, (unsigned char) macro[i]);
+	Buffer code = {0};
 	for (int line = 0; line < 1600; line++)
-	{
-		for (const char *at = "\trow 1\n"; *at; at++)
-			byte(&rows, (unsigned char) *at);
 		for (const char *at = "\tmov r0, r1\n"; *at; at++)
 			byte(&code, (unsigned char) *at);
-	}
-	byte(&rows, 0);
 	byte(&code, 0);
-	textFile("tools/x/rows.s", (char *) rows.data);
 	textFile("tools/x/code.s", (char *) code.data);
-	free(rows.data);
 	free(code.data);
-	textFile("long.list", "tools/x/rows.s\n");
-	RUN("check", true, "long.list");
 	textFile("long.list", "tools/x/code.s\n");
-	RUN("check", false, "long.list");
+	RUN("check", true, "long.list");
 
 	textFile("games/x/notes.txt", "");
 	textFile("games/x/wave_52.png", "");

@@ -16,7 +16,9 @@
  * is rows under a macro stated above them), a table (.tsv) of files or of
  * what an editor made, a picture (.png), a sample (.wav), a song (.mid),
  * dialogue (.po), a linker script (.ld), a Makefile, and rom.sha1. Nothing
- * else: no prose or notes (.md, .txt), no .json, no scripts (.py, .sh, .js,
+ * else: no notes (.md, .txt) but a folder's README.md, which explains that
+ * folder (the book about the games is in docs/), no .json, no scripts (.py,
+ * .sh, .js,
  * .ts, .rs), no binary dumps (.bin, .gba), and no assembler include (.inc)
  * but the few in INCLUDES below, each named with its reason.
  *
@@ -29,19 +31,11 @@
  * written bare from any other number, so none here tries; the row macros
  * hold it, and "make test-linking" adds a row to each list and links.
  *
- * LIMITS. A .c file has at most 2,000 lines, a .h file 500, a .s file 1,500.
- * The limit is for code. A file that is a table has none. In C that is an
- * array of rows, or a list of enum values, #defines and extern data, as the
- * first developers would also have kept it in C. The test is plain. A C file
- * is a table when no line of it, the lines that are only comment aside, holds
- * ") {" (a function's body, or a statement that takes a block) or ");" (a
- * function declared or called). It can be fooled: by code that reaches the
- * file through an #include or a macro defined elsewhere, by a macro that is
- * an expression and no statement, by a header of structs alone, and by a
- * statement that starts its line with "*", which reads as comment. A string
- * or a comment after code that holds either mark errs the safe way. A .s
- * file is a table when every line of it is a comment, a directive, a label,
- * or a row under a macro the file itself states above it.
+ * LENGTH. A file is split by what it holds, one thing a file, and never by
+ * how long it is: a table of every enemy stays whole, and so does one scene's
+ * code. A .c file of more than 2,000 lines, a .h of more than 500 and a .s of
+ * more than 1,500 are alarms, so that someone looks whether it holds more
+ * than one thing.
  *
  * TABLES. A .tsv file is rows of cells divided by tabs and ended by newlines.
  * Its first line is the names of its columns and nothing else: each name is
@@ -112,8 +106,6 @@ static const char *const NUMBERED[] = {
     /* The game's own name for the room: message 3770 of its debug menu. */
     "src/debug/psynergy_test_2.c",
 };
-/* PENDING: the line limits hold under tools/ and not yet under games/. */
-static const char *const LIMITS_HOLD_IN = "tools/";
 
 #define COUNT(list) (sizeof(list) / sizeof(*(list)))
 
@@ -288,43 +280,6 @@ static void checkTable(const char *path, const char *name) {
   free(text);
 }
 
-/* Whether C text is a table: see LIMITS at the head of this file. */
-static bool isTable(char *text) {
-  for (char *line = text, *next; line; line = next) {
-    next = cut(line, '\n');
-    line += strspn(line, " \t");
-    if (!strncmp(line, "//", 2) || !strncmp(line, "/*", 2) || *line == '*')
-      continue;
-    if (strstr(line, ") {") || strstr(line, ");"))
-      return false;
-  }
-  return true;
-}
-
-/* Whether assembly text is a table: every line is a comment, a directive, a
-   label, or a row under a macro the file itself states. */
-static bool isAssemblyTable(char *text) {
-  for (char *line = text, *next; line; line = next) {
-    next = cut(line, '\n');
-    line += strspn(line, " \t");
-    size_t word = strcspn(line, " \t");
-    if (!*line || *line == '@' || *line == '.' || line[word - 1] == ':')
-      continue;
-    /* The lines above are cut already, so each is a string of its own. */
-    bool stated = false;
-    for (char *at = text; at < line && !stated; at += strlen(at) + 1) {
-      const char *macro = at + strspn(at, " \t");
-      stated = !strncmp(macro, ".macro ", 7) &&
-               !strncmp(macro + 7, line, word) &&
-               !isalnum((unsigned char)macro[7 + word]) &&
-               macro[7 + word] != '_';
-    }
-    if (!stated)
-      return false;
-  }
-  return true;
-}
-
 static void checkLines(const char *path, const char *kind, long limit) {
   size_t size;
   char *text = readText(path, &size);
@@ -333,26 +288,16 @@ static void checkLines(const char *path, const char *kind, long limit) {
   long lines = 0;
   for (size_t i = 0; i < size; i++)
     lines += text[i] == '\n';
-  bool table = lines > limit &&
-               (strcmp(kind, "s") ? isTable(text) : isAssemblyTable(text));
   free(text);
-  if (lines <= limit)
-    return;
-  if (table)
-    tally(false, path, lines, "table in a .%s file of more than %ld lines",
-          kind, limit);
-  else if (!strncmp(path, LIMITS_HOLD_IN, strlen(LIMITS_HOLD_IN)))
-    wrong(path, "%ld lines, and a .%s file has at most %ld", lines, kind,
-          limit);
-  else
-    tally(true, path, lines, "game .%s file of more than %ld lines", kind,
-          limit);
+  if (lines > limit)
+    tally(false, path, lines, ".%s file of more than %ld lines", kind, limit);
 }
 
 static void checkKind(const char *path) {
   const char *name = strrchr(path, '/') + 1;
   const char *dot = strrchr(name, '.'), *kind = dot ? dot + 1 : "";
-  if (!strcmp(name, "Makefile") || !strcmp(name, "rom.sha1"))
+  if (!strcmp(name, "Makefile") || !strcmp(name, "rom.sha1") ||
+      !strcmp(name, "README.md"))
     return;
   if (!strcmp(kind, "tsv"))
     checkTable(path, name);

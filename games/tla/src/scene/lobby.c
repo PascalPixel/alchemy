@@ -52,10 +52,10 @@
 /// eight frames as the party walks to it from the diamond mark.
 enum { BATTLE_ARENA_GATE_ANIMATION = 5 };
 
-/// The formation a linked battle is requested with: encounter zone 1, the
-/// first Venus Djinn's battles, at slot 1, Granite's; the battle takes its
-/// enemies from the opponent's units exchanged before it.
-enum { LINK_BATTLE_ENCOUNTER_ZONE = 1, LINK_BATTLE_ENCOUNTER_SLOT = 1 };
+/// The slot a linked battle is requested with, in ENCOUNTER_ZONE_VENUS_DJINN:
+/// Granite's; the battle takes its enemies from the opponent's units exchanged
+/// before it.
+enum { LINK_BATTLE_ENCOUNTER_SLOT = 1 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -859,7 +859,7 @@ s32 LinkLobby_EnterBattle(void) {
       Event_SetDefeatDestination(SCENE_LOBBY, LOBBY_AFTER_LINK_LOSS);
     }
     gMainRoutineState.battleType = BATTLE_TYPE_LINK;
-    Field_RequestBattleFromEncounterTable(LINK_BATTLE_ENCOUNTER_ZONE,
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_VENUS_DJINN,
                                           LINK_BATTLE_ENCOUNTER_SLOT);
     // EXEC fills the payload's first four halfwords, where the link battle's
     // command entry looks for it in the partner's.

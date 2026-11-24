@@ -338,6 +338,20 @@ void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 /// FLAG_MAD_PLANT's order.
 #define ENCOUNTER_ZONE_MAD_PLANTS 106
 
+/// The Djinn's encounter zones (rows of gEncounterZones), two to an element:
+/// the first holds the battles of its first fifteen Djinn, who share its eight
+/// slots, and the second those of its last three and its two spares.
+enum DjinnEncounterZone {
+  ENCOUNTER_ZONE_VENUS_DJINN = 1,
+  ENCOUNTER_ZONE_VENUS_DJINN_LAST,
+  ENCOUNTER_ZONE_MERCURY_DJINN,
+  ENCOUNTER_ZONE_MERCURY_DJINN_LAST,
+  ENCOUNTER_ZONE_MARS_DJINN,
+  ENCOUNTER_ZONE_MARS_DJINN_LAST,
+  ENCOUNTER_ZONE_JUPITER_DJINN,
+  ENCOUNTER_ZONE_JUPITER_DJINN_LAST
+};
+
 /// The encounter zone of the early story battles: the Ruffian waiting for
 /// backup on Venus Lighthouse's plaza (slot 0), the Ruffian on the Suhalla road
 /// (1), the three Ruffians at the crevice (2) and the Punch Ant (3) at Suhalla

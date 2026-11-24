@@ -69,6 +69,15 @@ enum Difficulty {
   DIFFICULTY_HARD = 2 ///< "Play on HARD level? (Monsters are stronger)"
 };
 
+/// What MainRoutineState.wheelsPrizes holds in place of a first prize, as
+/// Lucky Wheels and its attendant leave it: no icon matched (also the list's
+/// end), or none to hand out, the player having quit while betting or the
+/// prizes having been given.
+enum LuckyWheelsPrizesMark {
+  WHEELS_PRIZES_END = -1,
+  WHEELS_PRIZES_NONE_TO_HAND_OUT = -2
+};
+
 /// gMainRoutineState, the state a save file keeps: play time, coins, the scene
 /// and the leader's position, the active party and the options.
 struct MainRoutineState {
@@ -91,9 +100,8 @@ struct MainRoutineState {
   /// each of 4, 8, 16, 32 and 64 on a new game; Lemuria's spring halves a
   /// prize's weight each time it is won.
   u8 prizeWeights[15];
-  /// The icons matched on the Lucky Wheels, a prize each, ended by -1, for
-  /// Contigo's attendant to hand out (-1 first: no prize, -2: handed out
-  /// already).
+  /// The icons matched on the Lucky Wheels, a prize each, ended by
+  /// WHEELS_PRIZES_END, for Contigo's attendant to hand out.
   s8 wheelsPrizes[8];
   /// For each icon, which of its three prizes it gave last
   /// (Contigo_SelectLuckyWheelsPrize).

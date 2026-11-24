@@ -50,15 +50,6 @@
 /// (Contigo_WidenCameraBounds).
 #define FLAG_WHOLE_VILLAGE_IN_VIEW FLAG_SCENE_TEMP_00
 
-/// What gMainRoutineState.wheelsPrizes holds in place of a first prize, as
-/// Lucky Wheels and its attendant leave it: no icon matched (also the list's
-/// end), or none to hand out, the player having quit while betting or the
-/// prizes having been given.
-enum LuckyWheelsPrizesMark {
-  WHEELS_PRIZES_END = -1,
-  WHEELS_PRIZES_NONE_TO_HAND_OUT = -2
-};
-
 /// The map cells the village's, the geoglyph's and the houses' trigger rows
 /// answer. A door's cell takes the number of the exit it leaves by, so those
 /// rows use the exit's own name.

@@ -106,6 +106,8 @@ extern s32 gFuchinTemple_ShotScript[];
 
 /// The cells outside the temple and in its rooms that run events.
 enum {
+  /// Outside: the road south, out to the world map.
+  CELL_BEHAVIOR_FUCHIN_TEMPLE_SOUTH_ROAD = 1,
   /// Outside: the temple's door.
   CELL_BEHAVIOR_FUCHIN_TEMPLE_DOOR = 2,
   /// Outside: the falls behind the monk's stump, the way into the grotto.
@@ -113,14 +115,26 @@ enum {
   /// Outside: the stump beside the monk, set only on the way out of the
   /// grotto with the Orb of Force.
   CELL_BEHAVIOR_FUCHIN_FALLS_MONK_ASKS = 5,
+  /// Outside: where the Psynergy Stone lies, cell (24, 17).
+  CELL_BEHAVIOR_FUCHIN_TEMPLE_PSYNERGY_STONE = 110,
   /// Inside: the temple's south door.
   CELL_BEHAVIOR_FUCHIN_TEMPLE_SOUTH_DOOR = 1,
+  /// Inside: the jar in Nyunpa's hall, cell (12, 27).
+  CELL_BEHAVIOR_FUCHIN_TEMPLE_UNICORN_RING_JAR = 101,
+  /// Inside: the school's south door, out to Xian.
+  CELL_BEHAVIOR_FEHS_SCHOOL_SOUTH_DOOR = 2,
   /// Inside: the lattice door to Feh's house.
   CELL_BEHAVIOR_FEHS_SCHOOL_HOUSE_DOOR = 3,
   /// Inside: the cells east and south of the school's tree trunk.
   CELL_BEHAVIOR_FEHS_SCHOOL_TREE_EAST_SOUTH = 10,
   /// Inside: the cells west and north of the school's tree trunk.
-  CELL_BEHAVIOR_FEHS_SCHOOL_TREE_WEST_NORTH = 11
+  CELL_BEHAVIOR_FEHS_SCHOOL_TREE_WEST_NORTH = 11,
+  /// Inside: the barrel in the school, cell (6, 14).
+  CELL_BEHAVIOR_FEHS_SCHOOL_ANTIDOTE_BARREL = 100,
+  /// Hama's room: the south door, out to Lama Temple.
+  CELL_BEHAVIOR_HAMAS_ROOM_SOUTH_DOOR = 4,
+  /// Hama's room: the jar, cell (27, 27).
+  CELL_BEHAVIOR_HAMAS_ROOM_COINS_JAR = 102
 };
 
 // Fuchin Temple's area temp flags last until the party enters another area.
@@ -287,22 +301,22 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// asks how the party got here, and whether the bridge is open.
 static void FuchinTemple_YoungManFromKolimaAsksAboutBridge(void) {
   Event_Start();
+  // "How did you get here? Is the bridge open again?"
   Event_SetMessageId(MsgXianHowDidGetHereBridge);
   if (Event_GetFlag(FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN) != 0) {
+    // "Did you know that the forest up ahead used to be a vast prairie?"
     gFieldState->message += 4;
   }
-  // "How did you get here? Is the bridge open again?", or once he has heard
-  // it is: "Did you know that the forest up ahead used to be a vast prairie?"
   Event_OpenMessage(ACTOR_YOUNG_MAN_FROM_KOLIMA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    // Yes: "Really?! Then I can go home to Kolima now?...", or after the
+    // prairie: "They say the prairie became a vast forest overnight..."
     GameFlag_Set(FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN);
   } else {
+    // No: "Oh... Then you came through the forest? That's too bad.", or after
+    // the prairie: "You don't believe me, do you? Well, it's the truth..."
     gFieldState->message++;
   }
-  // The answer: "Really?! Then I can go home to Kolima now?..." or "Oh...
-  // Then you came through the forest? That's too bad."; the second time,
-  // "They say the prairie became a vast forest overnight..." or "You don't
-  // believe me, do you? Well, it's the truth..."
   Event_ShowMessage(ACTOR_YOUNG_MAN_FROM_KOLIMA, 0);
   Event_End();
 }
@@ -1555,7 +1569,8 @@ static void FuchinTemple_OpenLockedDoor(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU) == 0 &&
       GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
-    FieldMessage_Show(MsgXianItIsLocked, 1);
+    // "It is locked."
+    FieldMessage_Show(MsgXianItIsLocked, FIELD_MESSAGE_ZOOM);
     Event_End();
   } else {
     Sound_Play(SE_DOOR_OPEN);
@@ -1729,7 +1744,6 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Sound_Play(SE_JUMP);
   Actor_Get(ACTOR_NYUNPA)->velocityY = toFIXED(8);
   Actor_SetAnimation(ACTOR_NYUNPA, ANIM_STAND);
-  // Praise the completed test before answering the follow-up questions.
   Event_SetMessageId(MsgXianExcellentIsaac);
   // "Excellent, Isaac!"
   Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
@@ -2210,7 +2224,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   // "However, I saw no change in the girl."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
-  // Interrupt the discussion with the arrival from the southern path.
+  // Feizhi runs in from the south.
   Actor_SetPosition(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 608);
   // "No! There was change!"
   Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
@@ -2708,6 +2722,8 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
+/// The student who trains by jumping: three hops, each higher, spinning a full
+/// turn in the third, then a second's rest.
 s32 gFuchinTemple_JumpingStudentScript[] = {
     SC_ANIMATION(ANIM_STILL),
     SC_SET(SW_GRAVITY, toFIXED(3) / 5),
@@ -2740,6 +2756,7 @@ s32 gFuchinTemple_JumpingStudentScript[] = {
     SC_END,
 };
 
+/// The point Force strikes on the training tree: no shadow.
 s32 gFuchinTemple_HiddenSpriteScript[] = {
     SC_CALL(FuchinTemple_ClearScriptedActorSpriteFlags),
     SC_WAIT(1),
@@ -2858,7 +2875,7 @@ struct ActorPlacement gFuchinTempleActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_FEH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     // The training tree, and where Force strikes it
-    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         232, 0, 168, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (s32)gFuchinTemple_HiddenSpriteScript,
         232, 0, 168, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -2883,7 +2900,7 @@ struct ActorPlacement gFuchinTempleActorPlacementsFromLamaTemple[] = {
 };
 
 struct Trigger gFuchinTempleGroundsTriggers[] = {
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_FUCHIN_TEMPLE_SOUTH_ROAD, CONDITION_ALWAYS, FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_FUCHIN_TEMPLE_DOOR, CONDITION_ALWAYS, EVENT(FuchinTemple_EnterTemple) },
     { TRIGGER_STEP, CELL_BEHAVIOR_FUCHIN_FALLS_GROTTO, CONDITION_ALWAYS, EVENT(FuchinTemple_EnterWaterfallGrotto) },
     { TRIGGER_STEP, CELL_BEHAVIOR_FUCHIN_FALLS_MONK_ASKS, FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST, EVENT(FuchinTemple_MonkAsksWhetherTestIsDone) },
@@ -2903,7 +2920,7 @@ struct Trigger gFuchinTempleGroundsTriggers[] = {
     { TRIGGER_TALK, ACTOR_WORRIED_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleNyunpaHasNotEatenInDays) },
     { TRIGGER_TALK, ACTOR_ADMIRING_BOY_MONK, CONDITION_ALWAYS, EVENT(FuchinTemple_BoyMonkSpeaksOfNyunpa) },
     { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(FuchinTemple_TalkToHealer) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 110, FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_FUCHIN_TEMPLE_PSYNERGY_STONE, FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_FROM_KOLIMA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleGemsFallingFromTheSkyMountains) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLS_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleIKnewMasterNyunpaWasFasting) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_MONK_READING_OMENS, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaReachedEnlightenmentDuringHis) },
@@ -2924,7 +2941,7 @@ struct Trigger gFuchinTempleGroundsTriggers[] = {
 
 struct Trigger gFuchinTempleTriggers[] = {
     { STEP_TRIGGER_FACING(FACING_SOUTH), CELL_BEHAVIOR_FUCHIN_TEMPLE_SOUTH_DOOR, CONDITION_ALWAYS, EVENT(FuchinTemple_LeaveTemple) },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, LACQUER_ROOMS_A_FEHS_SCHOOL_TO_XIAN },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_FEHS_SCHOOL_SOUTH_DOOR, CONDITION_ALWAYS, LACQUER_ROOMS_A_FEHS_SCHOOL_TO_XIAN },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_FEHS_SCHOOL_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(FuchinTemple_OpenLockedDoor) },
     { TRIGGER_TALK, ACTOR_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTemple) },
     { TRIGGER_TALK, ACTOR_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TAUGHT_FORCE), MSGNO(MsgFuchinTempleUseThisEnergyToFindThe) },
@@ -3011,22 +3028,24 @@ struct Trigger gFuchinTempleTriggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_FEHS_SCHOOL_TREE_WEST_NORTH, CONDITION_ALWAYS, EVENT(FuchinTemple_PushTreeByHand) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TRAINING_TREE, CONDITION_ALWAYS, EVENT(FuchinTemple_MoveTree) },
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_TRAINING_TREE_TARGET, CONDITION_ALWAYS, EVENT(FuchinTemple_ForceTree) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_FUCHIN_TEMPLE_ANTIDOTE_BARREL, FIND_ITEM(ITEM_ANTIDOTE) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_FUCHIN_TEMPLE_UNICORN_RING_JAR, FIND_ITEM(ITEM_UNICORN_RING) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_FEHS_SCHOOL_ANTIDOTE_BARREL, FLAG_FUCHIN_TEMPLE_ANTIDOTE_BARREL, FIND_ITEM(ITEM_ANTIDOTE) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_FUCHIN_TEMPLE_UNICORN_RING_JAR, FLAG_FUCHIN_TEMPLE_UNICORN_RING_JAR, FIND_ITEM(ITEM_UNICORN_RING) },
     { TRIGGER_TABLE_END },
 };
 
 struct Trigger gFuchinTempleTriggersFromLamaTemple[] = {
-    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_HAMAS_ROOM_SOUTH_DOOR, CONDITION_ALWAYS, LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE },
     { TRIGGER_TALK, ACTOR_HAMAS_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleMasterHamaIsMeditatingAskingFor) },
     { TRIGGER_TALK, ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleTheFutureHoldsManyHardshipsBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMAS_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDoNotThinkMasterHama) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleICannotSeeYourFutureClearly) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), 102, FLAG_HAMAS_ROOM_COINS_JAR, FIND_COINS(6) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_HAMAS_ROOM_COINS_JAR, FLAG_HAMAS_ROOM_COINS_JAR, FIND_COINS(6) },
     { TRIGGER_TABLE_END },
 };
 // clang-format on
 
+/// One of Nyunpa's crescents (FuchinTemple_SpawnNyunpasParticles): it rises
+/// facing north for 45 frames, then is put away.
 s32 gFuchinTemple_ShotScript[] = {
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(44),

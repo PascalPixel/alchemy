@@ -7,46 +7,6 @@
 #include "field/field.h"
 #include "field/field_sequence.h"
 
-/// The World Map's other encounter regions (enum WorldMapEncounterRegion),
-/// each named for the places whose entrances lie in it.
-enum {
-  WORLD_MAP_ENCOUNTER_REGION_VALE_VAULT = 1, ///< also Lunpa and Goma Cave
-  /// Also Bilibin Cave and the bridge out of Goma Cave.
-  WORLD_MAP_ENCOUNTER_REGION_BILIBIN_KOLIMA = 2,
-  /// Also Lama Temple and the Alpine Crossing.
-  WORLD_MAP_ENCOUNTER_REGION_XIAN_ALTIN = 3,
-  /// Also the Lamakan Desert's cave and Gondowan Cave's north end.
-  WORLD_MAP_ENCOUNTER_REGION_KALAY = 4,
-  /// Also Kalay's docks, Altmiller Cave and the Gondowan Passage's north end.
-  WORLD_MAP_ENCOUNTER_REGION_TOLBI = 5,
-  /// Also Lalivero, the Venus Lighthouse and the road to Babi Lighthouse.
-  WORLD_MAP_ENCOUNTER_REGION_SUHALLA = 6,
-  /// Fuchin Temple, the sign before Mogall Forest and the north end of Kolima
-  /// Bridge.
-  WORLD_MAP_ENCOUNTER_REGION_FUCHIN = 31
-};
-
-/// The World Map's encounter zones (encounter_zones.c's rows), two to a
-/// region: its open ground, then its forest.
-enum {
-  ENCOUNTER_ZONE_WORLD_MAP_VALE_VAULT = 7,
-  ENCOUNTER_ZONE_WORLD_MAP_VALE_VAULT_FOREST = 8,
-  ENCOUNTER_ZONE_WORLD_MAP_BILIBIN_KOLIMA = 13,
-  ENCOUNTER_ZONE_WORLD_MAP_BILIBIN_KOLIMA_FOREST = 14,
-  ENCOUNTER_ZONE_WORLD_MAP_SNOWFIELD = 29,
-  ENCOUNTER_ZONE_WORLD_MAP_SNOW_FOREST = 30,
-  ENCOUNTER_ZONE_WORLD_MAP_FUCHIN = 37,
-  ENCOUNTER_ZONE_WORLD_MAP_FUCHIN_FOREST = 38,
-  ENCOUNTER_ZONE_WORLD_MAP_XIAN_ALTIN = 45,
-  ENCOUNTER_ZONE_WORLD_MAP_XIAN_ALTIN_FOREST = 46,
-  ENCOUNTER_ZONE_WORLD_MAP_KALAY = 54,
-  ENCOUNTER_ZONE_WORLD_MAP_KALAY_FOREST = 55,
-  ENCOUNTER_ZONE_WORLD_MAP_TOLBI = 64,
-  ENCOUNTER_ZONE_WORLD_MAP_TOLBI_FOREST = 65,
-  ENCOUNTER_ZONE_WORLD_MAP_SUHALLA = 80,
-  ENCOUNTER_ZONE_WORLD_MAP_SUHALLA_FOREST = 81
-};
-
 /// The World Map's encounter zones (struct WorldMapEncounterRule): {encounter
 /// region, battle environment (-1 for any), flag (-1, or a flag that turns the
 /// rule off once set), zone}, ended by region -1.

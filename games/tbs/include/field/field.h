@@ -323,11 +323,26 @@ enum BattleEnvironment {
 };
 
 /// A world map cell's encounter region (bits 30..24 of its block word), which
-/// picks its encounter zones (gWorldMap_EncounterRules).
+/// picks its encounter zones (gWorldMap_EncounterRules), each named for the
+/// places whose entrances lie in it.
 enum WorldMapEncounterRegion {
+  WORLD_MAP_ENCOUNTER_REGION_VALE_VAULT = 1, ///< also Lunpa and Goma Cave
+  /// Also Bilibin Cave and the bridge out of Goma Cave.
+  WORLD_MAP_ENCOUNTER_REGION_BILIBIN_KOLIMA = 2,
+  /// Also Lama Temple and the Alpine Crossing.
+  WORLD_MAP_ENCOUNTER_REGION_XIAN_ALTIN = 3,
+  /// Also the Lamakan Desert's cave and Gondowan Cave's north end.
+  WORLD_MAP_ENCOUNTER_REGION_KALAY = 4,
+  /// Also Kalay's docks, Altmiller Cave and the Gondowan Passage's north end.
+  WORLD_MAP_ENCOUNTER_REGION_TOLBI = 5,
+  /// Also Lalivero, the Venus Lighthouse and the road to Babi Lighthouse.
+  WORLD_MAP_ENCOUNTER_REGION_SUHALLA = 6,
   /// Takes the second world map graphics set (WorldMap_LoadGraphics) and the
   /// snowfield's battle environments (WorldMap_GetBattleEnvironment).
-  WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD = 21
+  WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD = 21,
+  /// Fuchin Temple, the sign before Mogall Forest and the north end of Kolima
+  /// Bridge.
+  WORLD_MAP_ENCOUNTER_REGION_FUCHIN = 31
 };
 
 /// A map cell's terrain kind: the low four bits of its shape's first byte,

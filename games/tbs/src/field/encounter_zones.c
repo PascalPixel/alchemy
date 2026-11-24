@@ -61,7 +61,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {15, 16, 17, 18},
         .weights = {4, 4, 12, 8},
     },
-    // World Map, encounter region 1: beach, shallows and grassland
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_VALE_VAULT: beach, shallows and grassland
     {
         .rate = 25,
         .level = 3,
@@ -69,7 +69,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {20, 21, 22, 23, 24, 25, 26, 27},
         .weights = {4, 4, 4, 4, 2, 2, 2, 2},
     },
-    // World Map, encounter region 1: forest
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_VALE_VAULT: forest
     {
         .rate = 9,
         .level = 3,
@@ -110,7 +110,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {1, 2, 3, 4, 5, 29, 28},
         .weights = {10, 10, 10, 10, 10, 10, 1},
     },
-    // World Map, encounter region 2: beach, shallows and grassland
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_BILIBIN_KOLIMA: beach, shallows and grassland
     {
         .rate = 25,
         .level = 6,
@@ -118,7 +118,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {50, 51, 52, 53, 54, 55, 56, 57},
         .weights = {4, 4, 4, 4, 4, 2, 2, 2},
     },
-    // World Map, encounter region 2: forest
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_BILIBIN_KOLIMA: forest
     {
         .rate = 9,
         .level = 6,
@@ -300,7 +300,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {106, 107, 108},
         .weights = {10, 10, 10},
     },
-    // World Map, encounter region 31: grassland
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_FUCHIN: grassland
     {
         .rate = 20,
         .level = 11,
@@ -308,7 +308,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {120, 121, 122, 123},
         .weights = {3, 3, 3, 3},
     },
-    // World Map, encounter region 31: forest
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_FUCHIN: forest
     {
         .rate = 9,
         .level = 11,
@@ -367,7 +367,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {129, 130, 131, 132, 133, 134, 135, 136},
         .weights = {1, 1, 2, 2, 3, 4, 5, 5},
     },
-    // World Map, encounter region 3: desert, beach, shallows and grassland
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_XIAN_ALTIN: desert, beach, shallows and grassland
     {
         .rate = 25,
         .level = 12,
@@ -375,7 +375,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {141, 142, 143, 144, 145, 146},
         .weights = {3, 3, 1, 3, 1, 1},
     },
-    // World Map, encounter region 3: forest
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_XIAN_ALTIN: forest
     {
         .rate = 9,
         .level = 12,
@@ -441,7 +441,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {138, 139, 157, 158, 169, 170},
         .weights = {10, 10, 10, 10, 10, 10},
     },
-    // World Map, encounter region 4: desert, beach, shallows and grassland
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_KALAY: desert, beach, shallows and grassland
     {
         .rate = 25,
         .level = 15,
@@ -449,7 +449,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {180, 181, 182, 183, 184, 185, 186, 187},
         .weights = {4, 4, 4, 4, 4, 2, 2, 2},
     },
-    // World Map, encounter region 4: forest
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_KALAY: forest
     {
         .rate = 9,
         .level = 15,
@@ -523,7 +523,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {291, 292, 293, 294},
         .weights = {10, 10, 10, 10},
     },
-    // World Map, encounter region 5: desert, beach, shallows and grassland
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_TOLBI: desert, beach, shallows and grassland
     {
         .rate = 25,
         .level = 18,
@@ -531,7 +531,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {220, 221, 222, 223, 224, 225, 226, 227},
         .weights = {6, 6, 6, 6, 3, 3, 3, 3},
     },
-    // World Map, encounter region 5: forest
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_TOLBI: forest
     {
         .rate = 9,
         .level = 18,
@@ -657,7 +657,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {259, 260, 261, 262},
         .weights = {2, 2, 2, 2},
     },
-    // World Map, encounter region 6: desert, beach, shallows and grassland
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_SUHALLA: desert, beach, shallows and grassland
     {
         .rate = 25,
         .level = 22,
@@ -666,7 +666,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {268, 269, 270, 271, 272, 273, 274, 275},
         .weights = {4, 4, 3, 3, 3, 3, 3, 3},
     },
-    // World Map, encounter region 6: forest
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_SUHALLA: forest
     {
         .rate = 9,
         .level = 22,

@@ -55,28 +55,45 @@ enum WindowTransitionMode {
 };
 
 /// The encounter table's zones (encounter_zones.c's entries) that code names:
+/// the World Map's, two to a region (its open ground, then its forest), and
 /// the rows no step on a map rolls.
 enum EncounterZoneId {
   ENCOUNTER_ZONE_NONE = 0, ///< no battles
+  ENCOUNTER_ZONE_WORLD_MAP_VALE_VAULT = 7,
+  ENCOUNTER_ZONE_WORLD_MAP_VALE_VAULT_FOREST = 8,
   /// The event battles of Vale's stormy night (its monsters, and the
   /// travelers who catch Isaac in Vale's plaza), Vault's thieves and the World
   /// Map's Djinn tutorial battle.
   ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT = 12,
+  ENCOUNTER_ZONE_WORLD_MAP_BILIBIN_KOLIMA = 13,
+  ENCOUNTER_ZONE_WORLD_MAP_BILIBIN_KOLIMA_FOREST = 14,
+  ENCOUNTER_ZONE_WORLD_MAP_SNOWFIELD = 29,
+  ENCOUNTER_ZONE_WORLD_MAP_SNOW_FOREST = 30,
   /// The event battles of Tret Tree (Tret) and Mercury Lighthouse (the
   /// Lizard Man, then Saturos at the aerie).
   ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY = 36,
+  ENCOUNTER_ZONE_WORLD_MAP_FUCHIN = 37,
+  ENCOUNTER_ZONE_WORLD_MAP_FUCHIN_FOREST = 38,
+  ENCOUNTER_ZONE_WORLD_MAP_XIAN_ALTIN = 45,
+  ENCOUNTER_ZONE_WORLD_MAP_XIAN_ALTIN_FOREST = 46,
   /// The event battles of Mogall Forest, Altin Peak and Lamakan Desert,
   /// whose last two slots hold the battles with the Ant Lions and the
   /// Manticore.
   ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN = 53,
+  ENCOUNTER_ZONE_WORLD_MAP_KALAY = 54,
+  ENCOUNTER_ZONE_WORLD_MAP_KALAY_FOREST = 55,
   /// The monster attacks on the Tolbi-bound ship, the Kraken's last.
   ENCOUNTER_ZONE_TOLBI_SHIP = 62,
   /// The monsters behind the east doors of Crossbone Isle Cave's first four
   /// floors, one slot a floor.
   ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS = 63,
+  ENCOUNTER_ZONE_WORLD_MAP_TOLBI = 64,
+  ENCOUNTER_ZONE_WORLD_MAP_TOLBI_FOREST = 65,
   /// The battles that end the Colosso finals' matches, the slot chosen by
   /// how the match went.
   ENCOUNTER_ZONE_COLOSSO = 72,
+  ENCOUNTER_ZONE_WORLD_MAP_SUHALLA = 80,
+  ENCOUNTER_ZONE_WORLD_MAP_SUHALLA_FOREST = 81,
   /// The monsters behind the east doors of Crossbone Isle Cave's next five
   /// floors, one slot a floor, then Deadbeard on the Pirate Ship.
   ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS = 84,

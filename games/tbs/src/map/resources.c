@@ -204,5 +204,9 @@ const struct MapResources gMaps[] = {
 };
 // clang-format on
 
-/// Unused: four words after the table, which nothing reads.
+// XXX (no evidence): what the four numbers count; nothing reads them, so no
+// render or caller in reach shows it.
+/// Unused: four words after the map table that no code or table refers to,
+/// the same in every edition and in The Lost Age. Zeros pad the ROM after them
+/// up to the window bank, so they are a table of their own, not padding.
 const u32 gMapsTail[] = {0, 3, 7, 9};

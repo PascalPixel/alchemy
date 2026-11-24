@@ -2439,7 +2439,7 @@ s32 Scene_Initialize(void) {
             Actor_SetSpriteColorMode(serpent, 6);
             width = 30;
             height = 19;
-            MapGrid_CopyCellPictureCellsRect(85, 76, 5, 2, width, height);
+            MapGrid_CopyCellTilesCellsRect(85, 76, 5, 2, width, height);
             Sound_Play(SE_CRUMBLE);
             PaletteFade_SetTarget(RGB_WHITE, 0);
             PaletteFade_StartInterpolation(10);
@@ -2450,7 +2450,7 @@ s32 Scene_Initialize(void) {
             Event_Wait(60);
             Actor_SetSpriteColorMode(susa, 0);
             Actor_SetSpriteColorMode(serpent, 0);
-            MapGrid_CopyCellPictureCellsRect(85, 74, 5, 2, width, height);
+            MapGrid_CopyCellTilesCellsRect(85, 74, 5, 2, width, height);
             susa->paused = 0;
             serpent->paused = 0;
             Actor_SetAnimationSpeed(susa, ANIM_STEP_NORMAL);
@@ -2954,8 +2954,8 @@ s32 Scene_Initialize(void) {
     if (Test(FLAG_ALTAR_FELL)) {
       s32 height = 20;
 
-      MapGrid_CopyCellPictureCellsRect(117, 20, 7, 8, 104, height);
-      MapGrid_CopyCellPictureCellsRect(111, 12, 1, 6, 111, height);
+      MapGrid_CopyCellTilesCellsRect(117, 20, 7, 8, 104, height);
+      MapGrid_CopyCellTilesCellsRect(111, 12, 1, 6, 111, height);
       MapGrid_CopyCellAttributes(49, 84, 8, 8, 40, 84);
       Actor_SetPosition(ACTOR_FALLING_ALTAR, 0, 0);
     }

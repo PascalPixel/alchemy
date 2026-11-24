@@ -4,15 +4,15 @@ Field_Loho:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Loho, .LField_Loho_CELL_PICTURES
+	map_block Field_Loho, .LField_Loho_CELL_TILES
 	map_block Field_Loho, .LField_Loho_SHAPES
 	map_block Field_Loho, .LField_Loho_GRID
 	map_block Field_Loho, .LField_Loho_SHAPE_GRID
 	map_block Field_Loho, .LField_Loho_ANIMATION
 	map_block Field_Loho, .LField_Loho_BLEND
 	map_block Field_Loho, .LField_Loho_SCENE
-.LField_Loho_CELL_PICTURES:
-	.incbin "games/tla/src/map/loho/cell_pictures.delta0.lz"
+.LField_Loho_CELL_TILES:
+	.incbin "games/tla/src/map/loho/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_Loho_SHAPES:
 	.incbin "games/tla/src/map/loho/shapes.table.lz"

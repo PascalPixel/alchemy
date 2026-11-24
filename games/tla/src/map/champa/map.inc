@@ -4,15 +4,15 @@ Field_Champa:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, -3, 3, 0x1f, 0x1f
-	map_block Field_Champa, .LField_Champa_CELL_PICTURES
+	map_block Field_Champa, .LField_Champa_CELL_TILES
 	map_block Field_Champa, .LField_Champa_SHAPES
 	map_block Field_Champa, .LField_Champa_GRID
 	map_block Field_Champa, .LField_Champa_SHAPE_GRID
 	map_block Field_Champa, .LField_Champa_ANIMATION
 	map_block Field_Champa, .LField_Champa_BLEND
 	map_block Field_Champa, .LField_Champa_SCENE
-.LField_Champa_CELL_PICTURES:
-	.incbin "games/tla/src/map/champa/cell_pictures.delta2.lz"
+.LField_Champa_CELL_TILES:
+	.incbin "games/tla/src/map/champa/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_Champa_SHAPES:
 	.incbin "games/tla/src/map/champa/shapes.table.lz"

@@ -4,15 +4,15 @@ Field_AirsRockInsideClarityCircletChest:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_AirsRockInsideClarityCircletChest, .LField_AirsRockInsideClarityCircletChest_CELL_PICTURES
+	map_block Field_AirsRockInsideClarityCircletChest, .LField_AirsRockInsideClarityCircletChest_CELL_TILES
 	map_block Field_AirsRockInsideClarityCircletChest, .LField_AirsRockInsideClarityCircletChest_SHAPES
 	map_block Field_AirsRockInsideClarityCircletChest, .LField_AirsRockInsideClarityCircletChest_GRID
 	map_block Field_AirsRockInsideClarityCircletChest, .LField_AirsRockInsideClarityCircletChest_SHAPE_GRID
 	map_block Field_AirsRockInsideClarityCircletChest, .LField_AirsRockInsideClarityCircletChest_ANIMATION
 	map_block Field_AirsRockInsideClarityCircletChest, .LField_AirsRockInsideClarityCircletChest_BLEND
 	map_block Field_AirsRockInsideClarityCircletChest, .LField_AirsRockInsideClarityCircletChest_SCENE
-.LField_AirsRockInsideClarityCircletChest_CELL_PICTURES:
-	.incbin "games/tla/src/map/airs_rock_inside_clarity_circlet_chest/cell_pictures.delta2.lz"
+.LField_AirsRockInsideClarityCircletChest_CELL_TILES:
+	.incbin "games/tla/src/map/airs_rock_inside_clarity_circlet_chest/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_AirsRockInsideClarityCircletChest_SHAPES:
 	.incbin "games/tla/src/map/airs_rock_inside_clarity_circlet_chest/shapes.table.lz"

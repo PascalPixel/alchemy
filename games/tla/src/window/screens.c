@@ -202,8 +202,8 @@ extern const u8 gWindow_ProgressBarRows[];
 extern const u8 gWindow_ProgressBarTiles[];
 
 /// The ARM routine that reads the windows' edges off the UI tilemap for each
-/// scan line (cell_picture.c), copied to RAM before it runs.
-extern u8 Tile_BuildCellPicturesCode[];
+/// scan line (cell_tiles.c), copied to RAM before it runs.
+extern u8 Tile_BuildCellTilesCode[];
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").

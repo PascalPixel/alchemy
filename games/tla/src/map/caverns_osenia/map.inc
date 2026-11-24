@@ -4,15 +4,15 @@ Field_CavernsOsenia:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 0, 100, 100, 0, 0, 0xff, 0xff
-	map_block Field_CavernsOsenia, .LField_CavernsOsenia_CELL_PICTURES
+	map_block Field_CavernsOsenia, .LField_CavernsOsenia_CELL_TILES
 	map_block Field_CavernsOsenia, .LField_CavernsOsenia_SHAPES
 	map_block Field_CavernsOsenia, .LField_CavernsOsenia_GRID
 	map_block Field_CavernsOsenia, .LField_CavernsOsenia_SHAPE_GRID
 	map_block Field_CavernsOsenia, .LField_CavernsOsenia_ANIMATION
 	map_block Field_CavernsOsenia, .LField_CavernsOsenia_BLEND
 	map_block Field_CavernsOsenia, .LField_CavernsOsenia_SCENE
-.LField_CavernsOsenia_CELL_PICTURES:
-	.incbin "games/tla/src/map/caverns_osenia/cell_pictures.delta2.lz"
+.LField_CavernsOsenia_CELL_TILES:
+	.incbin "games/tla/src/map/caverns_osenia/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_CavernsOsenia_SHAPES:
 	.incbin "games/tla/src/map/caverns_osenia/shapes.table.lz"

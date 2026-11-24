@@ -4,15 +4,15 @@ Field_AttekaInlet:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 104, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 72, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_AttekaInlet, .LField_AttekaInlet_CELL_PICTURES
+	map_block Field_AttekaInlet, .LField_AttekaInlet_CELL_TILES
 	map_block Field_AttekaInlet, .LField_AttekaInlet_SHAPES
 	map_block Field_AttekaInlet, .LField_AttekaInlet_GRID
 	map_block Field_AttekaInlet, .LField_AttekaInlet_SHAPE_GRID
 	map_block Field_AttekaInlet, .LField_AttekaInlet_ANIMATION
 	map_block Field_AttekaInlet, .LField_AttekaInlet_BLEND
 	map_block Field_AttekaInlet, .LField_AttekaInlet_SCENE
-.LField_AttekaInlet_CELL_PICTURES:
-	.incbin "games/tla/src/map/atteka_inlet/cell_pictures.delta2.lz"
+.LField_AttekaInlet_CELL_TILES:
+	.incbin "games/tla/src/map/atteka_inlet/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_AttekaInlet_SHAPES:
 	.incbin "games/tla/src/map/atteka_inlet/shapes.table.lz"

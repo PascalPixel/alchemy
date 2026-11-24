@@ -39,7 +39,7 @@
 #define WORLD_MAP_REGION_GROUP 10
 
 /// A world map graphics set, a row of gWorldMap_GraphicsResources: its
-/// palette, tileset animation script, cell picture attributes and six tile
+/// palette, tileset animation script, cell tiles attributes and six tile
 /// sets.
 enum WorldMapGraphicsResource {
   WORLD_MAP_SET_PALETTE,
@@ -434,12 +434,12 @@ void WorldMap_ApplyAffinePage(void) {
 /// Copies one world map cell's tiles to a tile map: its top two, then its
 /// bottom two on the row below.
 static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
-  u32 cellPictureIndex = *(u16 *)cellBytes;
-  u16 *cellPictureTiles = (u16 *)Ram_MapCellBuffer;
+  u32 cellTilesIndex = *(u16 *)cellBytes;
+  u16 *cellTiles = (u16 *)Ram_MapCellBuffer;
 
-  cellPictureTiles += cellPictureIndex * 2;
-  *(u16 *)screenTile = *cellPictureTiles++;
-  *(u16 *)(screenTile + WORLD_MAP_TILE_MAP_WIDTH) = *cellPictureTiles;
+  cellTiles += cellTilesIndex * 2;
+  *(u16 *)screenTile = *cellTiles++;
+  *(u16 *)(screenTile + WORLD_MAP_TILE_MAP_WIDTH) = *cellTiles;
 }
 
 /// Draws the cells of the world map's tile row tileRow into its tile maps: the

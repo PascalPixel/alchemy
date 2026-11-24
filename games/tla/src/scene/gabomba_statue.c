@@ -349,7 +349,7 @@ enum ChannelHeading {
    HEADING_BIT(HEADING_WEST) | HEADING_BIT(HEADING_NORTH))
 
 /// The pieces of the channel, by the sides of the cell they join, which are
-/// also the rows of the cell pictures the map keeps for them.
+/// also the rows of the cell tiles the map keeps for them.
 enum ChannelPiece {
   PIECE_NONE,
   PIECE_NORTH_SOUTH,
@@ -388,7 +388,7 @@ enum ChannelPath {
 };
 
 /// What stands on a cell of the channel (PuzzleCell.occupied). The map keeps
-/// each piece's cell pictures in a row of their own (enum ChannelPiece), a
+/// each piece's cell tiles in a row of their own (enum ChannelPiece), a
 /// column for each of these: the column MapGrid_CopyCells copies from is what
 /// stands on the cell.
 enum {
@@ -1593,7 +1593,7 @@ enum {
 };
 
 /// A cog's cell word: its collision code (the cell behavior), the attribute
-/// bits above it and the flags of its cell picture, ORed into the map's.
+/// bits above it and the flags of its cell tiles, ORed into the map's.
 #define COG_CELL(behavior, attributes, pictureFlags)                           \
   ((u32)(attributes) << 24 | (behavior) << 16 | (pictureFlags))
 

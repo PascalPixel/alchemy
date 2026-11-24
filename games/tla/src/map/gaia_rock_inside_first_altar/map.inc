@@ -4,15 +4,15 @@ Field_GaiaRockInsideFirstAltar:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_GaiaRockInsideFirstAltar, .LField_GaiaRockInsideFirstAltar_CELL_PICTURES
+	map_block Field_GaiaRockInsideFirstAltar, .LField_GaiaRockInsideFirstAltar_CELL_TILES
 	map_block Field_GaiaRockInsideFirstAltar, .LField_GaiaRockInsideFirstAltar_SHAPES
 	map_block Field_GaiaRockInsideFirstAltar, .LField_GaiaRockInsideFirstAltar_GRID
 	map_block Field_GaiaRockInsideFirstAltar, .LField_GaiaRockInsideFirstAltar_SHAPE_GRID
 	map_block Field_GaiaRockInsideFirstAltar, .LField_GaiaRockInsideFirstAltar_ANIMATION
 	map_block Field_GaiaRockInsideFirstAltar, .LField_GaiaRockInsideFirstAltar_BLEND
 	map_block Field_GaiaRockInsideFirstAltar, .LField_GaiaRockInsideFirstAltar_SCENE
-.LField_GaiaRockInsideFirstAltar_CELL_PICTURES:
-	.incbin "games/tla/src/map/gaia_rock_inside_first_altar/cell_pictures.delta2.lz"
+.LField_GaiaRockInsideFirstAltar_CELL_TILES:
+	.incbin "games/tla/src/map/gaia_rock_inside_first_altar/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_GaiaRockInsideFirstAltar_SHAPES:
 	.incbin "games/tla/src/map/gaia_rock_inside_first_altar/shapes.table.lz"

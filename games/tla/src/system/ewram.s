@@ -474,8 +474,8 @@ gTitleIntro_LighthouseTilesTail:
 	.global gDecodeBuffer
 gDecodeBuffer:
 	.space 0x00004000
-	.global gCellPictures
-gCellPictures:
+	.global gCellTiles
+gCellTiles:
 	.space 0x00000004
 	.space 0x000001fe
 	.space 0x00003dfe

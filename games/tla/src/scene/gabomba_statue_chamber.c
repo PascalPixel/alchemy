@@ -850,10 +850,10 @@ void GabombaStatueChamber_ShowBlackCrystal(void) {
 /// pink drums becomes a tongue running south out of the small idol's chamber,
 /// its end (cells (23, 21) to (25, 21)) the way out to the statue grounds.
 void GabombaStatueChamber_UnrollTongue(void) {
-  MapGrid_CopyCellPictureIndicesRect(85, 78, 22, 79, 5, 11);
+  MapGrid_CopyCellTilesIndicesRect(85, 78, 22, 79, 5, 11);
   MapGrid_CopyCellAttributes(85, 78, 5, 11, 22, 15);
   MapGrid_CopyCellsTo(86, 30, 86, 20, 5, 2);
-  MapGrid_CopyCellPictureIndicesRect(86, 30, 84, 22, 9, 2);
+  MapGrid_CopyCellTilesIndicesRect(86, 30, 84, 22, 9, 2);
 }
 
 /// Moves the small idol's place in the map with it as it slides east: its old
@@ -868,8 +868,8 @@ void GabombaStatueChamber_UncoverPassage(void) {
 /// way down to the Gabomba Catacombs: the hole at cell (26, 6) and the four
 /// cells around it that lead in.
 void GabombaStatueChamber_OpenSecondHole(void) {
-  MapGrid_CopyCellPictureIndicesRect(0, 1, 26, 6, 1, 1);
-  MapGrid_CopyCellPictureIndicesRect(0, 65, 26, 70, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(0, 1, 26, 6, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(0, 65, 26, 70, 1, 1);
   MapGrid_CopyCellAttributes(0, 2, 3, 3, 25, 5);
 }
 

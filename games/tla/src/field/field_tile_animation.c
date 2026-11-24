@@ -1265,7 +1265,7 @@ s32 WorldMap_GetBlockCellBehavior(struct WorldPosition *position) {
   if (z < 0)
     z += toFIXED(32) - 1;
   z = WORLD_MAP_BLOCK(z) & 31;
-  return ((struct WorldMapBlocks *)gCellPictures)->blocks[x + z * 32].place;
+  return ((struct WorldMapBlocks *)gCellTiles)->blocks[x + z * 32].place;
 }
 
 /// Returns the world map's collision value (1-15) at position: from the upper

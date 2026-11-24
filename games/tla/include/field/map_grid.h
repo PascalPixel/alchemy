@@ -123,10 +123,10 @@ enum MapCellAttribute {
   MAP_CELL_JUMP = 0x80 ///< a gap the leader jumps across, pushing forward
 };
 
-/// One cell of a map layer: its cell picture and flags, its collision
+/// One cell of a map layer: its cell tiles and flags, its collision
 /// code and a second attribute byte.
 struct MapCell {
-  u16 picture : 12;      ///< its cell picture
+  u16 picture : 12;      ///< its cell tiles
   u16 actorLayer : 2;    ///< the map layer an actor here takes, plus one
   u16 actorPriority : 2; ///< the sprite priority an actor here is drawn at
   u8 collisionCode;
@@ -135,10 +135,10 @@ struct MapCell {
 
 /// A struct MapCell read as one word, as code that ORs bits into a cell writes
 /// it: its collision code (the cell behavior), the attribute bits above it and
-/// the flags of its cell picture.
+/// the flags of its cell tiles.
 #define MAP_CELL_WORD(behavior, attributes, pictureFlags)                      \
   ((u32)(attributes) << 24 | (behavior) << 16 | (pictureFlags))
-/// A cell picture's flags for an actor standing on the cell: the sprite
+/// The flags of a cell's tiles for an actor standing on the cell: the sprite
 /// priority it is drawn at and the map layer it takes, which the actors'
 /// placement reads (MapCell's actorPriority and actorLayer).
 #define CELL_DRAWS_ACTOR(priority, layer)                                      \

@@ -502,7 +502,7 @@ void MarsLighthouseEntrance_GrindIce(void) {
   x = 32;
   count = 6;
   do {
-    MapGrid_CopyCellPictureCellsRect_(x, 125, 3, 3, 39, 85);
+    MapGrid_CopyCellTilesCellsRect_(x, 125, 3, 3, 39, 85);
     MarsLighthouseEntrance_ScatterIceChips(ACTOR_ICE_SHAFT);
     count--;
     System_Wait(10);
@@ -581,7 +581,7 @@ void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
     Event_PlaySound(SE_FLASH);
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_Interpolate(60);
-    MapGrid_CopyCellPictureCellsRect_(47, 94, 10, 6, 47, 100);
+    MapGrid_CopyCellTilesCellsRect_(47, 94, 10, 6, 47, 100);
     Map_CopyCellAttributeRect_(110, 40, 12, 4, 46, 40);
     Actor_SetPosition(ACTOR_ICE_SHEET, 0, 0);
     Flag_Set(FLAG_LAPIS_SHEET_BURST);

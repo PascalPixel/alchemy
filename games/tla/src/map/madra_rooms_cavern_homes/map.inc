@@ -4,15 +4,15 @@ Field_MadraRoomsCavernHomes:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_MadraRoomsCavernHomes, .LField_MadraRoomsCavernHomes_CELL_PICTURES
+	map_block Field_MadraRoomsCavernHomes, .LField_MadraRoomsCavernHomes_CELL_TILES
 	map_block Field_MadraRoomsCavernHomes, .LField_MadraRoomsCavernHomes_SHAPES
 	map_block Field_MadraRoomsCavernHomes, .LField_MadraRoomsCavernHomes_GRID
 	map_block Field_MadraRoomsCavernHomes, .LField_MadraRoomsCavernHomes_SHAPE_GRID
 	map_block Field_MadraRoomsCavernHomes, .LField_MadraRoomsCavernHomes_ANIMATION
 	map_block Field_MadraRoomsCavernHomes, .LField_MadraRoomsCavernHomes_BLEND
 	map_block Field_MadraRoomsCavernHomes, .LField_MadraRoomsCavernHomes_SCENE
-.LField_MadraRoomsCavernHomes_CELL_PICTURES:
-	.incbin "games/tla/src/map/madra_rooms_cavern_homes/cell_pictures.delta2.lz"
+.LField_MadraRoomsCavernHomes_CELL_TILES:
+	.incbin "games/tla/src/map/madra_rooms_cavern_homes/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_MadraRoomsCavernHomes_SHAPES:
 	.incbin "games/tla/src/map/madra_rooms_cavern_homes/shapes.table.lz"

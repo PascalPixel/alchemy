@@ -49,8 +49,8 @@ struct TouchCell {
   s16 z;
 };
 
-/// A cell picture Cyclone copied (TileCopies_CopyTouchedCells): where it went,
-/// where it came from and the touched cell it opened, each in cells.
+/// A cell's tiles that Cyclone copied (TileCopies_CopyTouchedCells): where it
+/// went, where it came from and the touched cell it opened, each in cells.
 struct TouchCopy {
   u8 toX;
   u8 toZ;
@@ -156,10 +156,10 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle);
 
-/// MapGrid_CopyCellPictureCellsRect through its far call: copies width by
+/// MapGrid_CopyCellTilesCellsRect through its far call: copies width by
 /// height cells as they are from (fromX, fromZ) to (toX, toZ).
-void MapGrid_CopyCellPictureCellsRectFar(s32 toX, s32 toZ, s32 width,
-                                         s32 height, s32 fromX, s32 fromZ);
+void MapGrid_CopyCellTilesCellsRectFar(s32 toX, s32 toZ, s32 width, s32 height,
+                                       s32 fromX, s32 fromZ);
 
 void ParticleBurst_Update(void);
 

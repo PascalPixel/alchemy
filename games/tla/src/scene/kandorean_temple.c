@@ -1720,9 +1720,9 @@ void KandoreanTemple_ClimbDownTheLadder(void) {
 
 /// Opens the door to the cave below Poi's statue.
 void KandoreanTemple_OpenTheCaveDoor(void) {
-  MapGrid_CopyCellPictureIndicesRect(39, 39, 24, 38, 2, 2);
+  MapGrid_CopyCellTilesIndicesRect(39, 39, 24, 38, 2, 2);
   wait(10);
-  MapGrid_CopyCellPictureIndicesRect(39, 41, 24, 38, 2, 2);
+  MapGrid_CopyCellTilesIndicesRect(39, 41, 24, 38, 2, 2);
   wait(20);
   GameFlag_Set(FLAG_CAVE_DOOR_OPEN);
 }
@@ -1890,7 +1890,7 @@ void KandoreanTemple_OpenTheTempleDoor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_THUMP);
-  MapGrid_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
+  MapGrid_CopyCellTilesIndicesRect(77, 33, 77, 24, 2, 2);
   MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
   wait(10);
   GameFlag_Set(FLAG_TEMPLE_DOOR_OPEN);
@@ -2195,7 +2195,7 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
       s32 e = 1;
       s32 f = 4;
 
-      MapGrid_CopyCellPictureIndicesRect(41, 0, 20, 0, e, f);
+      MapGrid_CopyCellTilesIndicesRect(41, 0, 20, 0, e, f);
     }
     Actor_SetPosition(ACTOR_MIDDLE_CHESTBEATER, 0, 0);
     Actor_SetPosition(ACTOR_WEST_CHESTBEATER, 0, 0);
@@ -2803,7 +2803,7 @@ void KandoreanTemple_StartGate(void) {
     KandoreanTemple_StartMeditating(ACTOR_STUDENT_WHO_WOULD_BE_A_MONK, 480);
   }
   if (GameFlag_Get(FLAG_TEMPLE_DOOR_OPEN)) {
-    MapGrid_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
+    MapGrid_CopyCellTilesIndicesRect(77, 33, 77, 24, 2, 2);
     MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
   }
 #if TLA_PATCH_1 /* From patch 1. */
@@ -3528,13 +3528,13 @@ void KandoreanTemple_LowerTheLadder(void) {
   Event_WaitTransitionFrames();
   Event_Wait(20);
   Sound_Play(SE_SCUFFLE);
-  MapGrid_CopyCellPictureIndicesRect(41, 0, 20, 0, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(41, 0, 20, 0, 1, 1);
   Event_Wait(10);
-  MapGrid_CopyCellPictureIndicesRect(41, 1, 20, 1, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(41, 1, 20, 1, 1, 1);
   Event_Wait(10);
-  MapGrid_CopyCellPictureIndicesRect(41, 2, 20, 2, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(41, 2, 20, 2, 1, 1);
   Event_Wait(10);
-  MapGrid_CopyCellPictureIndicesRect(41, 3, 20, 3, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(41, 3, 20, 3, 1, 1);
   Event_Wait(10);
   GameFlag_Set(FLAG_LADDER_LOWERED);
   Event_End();

@@ -4,15 +4,15 @@ Field_JupiterLighthouseEntrance:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_JupiterLighthouseEntrance, .LField_JupiterLighthouseEntrance_CELL_PICTURES
+	map_block Field_JupiterLighthouseEntrance, .LField_JupiterLighthouseEntrance_CELL_TILES
 	map_block Field_JupiterLighthouseEntrance, .LField_JupiterLighthouseEntrance_SHAPES
 	map_block Field_JupiterLighthouseEntrance, .LField_JupiterLighthouseEntrance_GRID
 	map_block Field_JupiterLighthouseEntrance, .LField_JupiterLighthouseEntrance_SHAPE_GRID
 	map_block Field_JupiterLighthouseEntrance, .LField_JupiterLighthouseEntrance_ANIMATION
 	map_block Field_JupiterLighthouseEntrance
 	map_block Field_JupiterLighthouseEntrance, .LField_JupiterLighthouseEntrance_SCENE
-.LField_JupiterLighthouseEntrance_CELL_PICTURES:
-	.incbin "games/tla/src/map/jupiter_lighthouse_entrance/cell_pictures.delta2.lz"
+.LField_JupiterLighthouseEntrance_CELL_TILES:
+	.incbin "games/tla/src/map/jupiter_lighthouse_entrance/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_JupiterLighthouseEntrance_SHAPES:
 	.incbin "games/tla/src/map/jupiter_lighthouse_entrance/shapes.table.lz"

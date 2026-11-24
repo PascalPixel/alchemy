@@ -202,8 +202,8 @@ extern const u8 gNameEntry_KeyboardTilemap[];
 /// first, then one between members.
 extern const s8 gWindow_PartyColumnOffsets[];
 
-/// The size of Tile_BuildCellPicturesCode, which ScanlineWindow_FillSpans
+/// The size of Tile_BuildCellTilesCode, which ScanlineWindow_FillSpans
 /// copies to the heap to run.
-extern u8 Tile_BuildCellPicturesCodeSize[];
+extern u8 Tile_BuildCellTilesCodeSize[];
 
 #endif

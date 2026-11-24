@@ -13,9 +13,9 @@ by 128 of them. Each cell says four things. The first three are written
 together in `map.txt`, as `picture:behavior:flags`, and the fourth has a
 grid of its own:
 
-- **What is drawn.** The picture names a
-  [cell picture](../../glossary.md#cell-picture), four tiles two by two,
-  from the map's own list in `cell_pictures.tsv`. It is written in hex, and
+- **What is drawn.** The picture names the cell's
+  [cell tiles](../../glossary.md#cell-tiles), four tiles two by two,
+  from the map's own list in `cell_tiles.tsv`. It is written in hex, and
   its top digit holds the cell's layer and drawing priority, which is how
   Felix goes behind a roof by walking, with no code involved.
 - **What standing there does.** The behavior is the
@@ -93,7 +93,7 @@ otherwise: `empty_map/`, the empty map the scene table gives the title,
 the World Map, the credits and the debug level room, and `map_290/`,
 which no scene names and so keeps its number.
 
-When the party arrives, the grid, the cell pictures, the shapes, the tile
+When the party arrives, the grid, the cell tiles, the shapes, the tile
 animation, the blend script and the scene's own part of the map are
 unpacked into memory, where the field reads them directly. The palette
 and the tiles come too, unless they are already there.
@@ -102,7 +102,7 @@ and the tiles come too, unless they are already there.
 
 Each folder holds `map.inc`, which puts the map together and
 which [`maps.s`](maps.s) includes in the Game Pak's order, and its grids
-and tables: `map.txt`, `cell_pictures.tsv`, `shape_grid.tsv`,
+and tables: `map.txt`, `cell_tiles.tsv`, `shape_grid.tsv`,
 `shapes.tsv`, `animation.tsv` and `blend.tsv` where it has them. The
 scene's part is `scene.tsv`, three tables one after another: the points,
 where the party comes in, and the camera's bounds. Where the Japanese

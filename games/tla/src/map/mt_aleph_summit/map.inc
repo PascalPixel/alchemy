@@ -4,15 +4,15 @@ Field_MtAlephSummit:
 	map_layer 0, 0, 8, 8, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_MtAlephSummit, .LField_MtAlephSummit_CELL_PICTURES
+	map_block Field_MtAlephSummit, .LField_MtAlephSummit_CELL_TILES
 	map_block Field_MtAlephSummit, .LField_MtAlephSummit_SHAPES
 	map_block Field_MtAlephSummit, .LField_MtAlephSummit_GRID
 	map_block Field_MtAlephSummit, .LField_MtAlephSummit_SHAPE_GRID
 	map_block Field_MtAlephSummit, .LField_MtAlephSummit_ANIMATION
 	map_block Field_MtAlephSummit, .LField_MtAlephSummit_BLEND
 	map_block Field_MtAlephSummit, .LField_MtAlephSummit_SCENE
-.LField_MtAlephSummit_CELL_PICTURES:
-	.incbin "games/tla/src/map/mt_aleph_summit/cell_pictures.delta1.lz"
+.LField_MtAlephSummit_CELL_TILES:
+	.incbin "games/tla/src/map/mt_aleph_summit/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_MtAlephSummit_SHAPES:
 	.incbin "games/tla/src/map/sea_of_time_swirls/shapes.table.lz"

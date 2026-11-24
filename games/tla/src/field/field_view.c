@@ -68,7 +68,7 @@ u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
     y += toFIXED(32) - 1;
 
   index = blockX + ((WORLD_MAP_BLOCK(y) & (WORLD_MAP_VIEW_CELLS - 1)) << 5);
-  block = gCellPictures + index;
+  block = gCellTiles + index;
   if (((u8 *)block)[3] & WORLD_MAP_BLOCK_BEACH)
     rows = TERRAIN_ROWS_BEACH;
 

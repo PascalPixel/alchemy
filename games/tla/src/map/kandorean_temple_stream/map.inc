@@ -4,15 +4,15 @@ Field_KandoreanTempleStream:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 100, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_KandoreanTempleStream, .LField_KandoreanTempleStream_CELL_PICTURES
+	map_block Field_KandoreanTempleStream, .LField_KandoreanTempleStream_CELL_TILES
 	map_block Field_KandoreanTempleStream, .LField_KandoreanTempleStream_SHAPES
 	map_block Field_KandoreanTempleStream, .LField_KandoreanTempleStream_GRID
 	map_block Field_KandoreanTempleStream, .LField_KandoreanTempleStream_SHAPE_GRID
 	map_block Field_KandoreanTempleStream, .LField_KandoreanTempleStream_ANIMATION
 	map_block Field_KandoreanTempleStream, .LField_KandoreanTempleStream_BLEND
 	map_block Field_KandoreanTempleStream, .LField_KandoreanTempleStream_SCENE
-.LField_KandoreanTempleStream_CELL_PICTURES:
-	.incbin "games/tla/src/map/kandorean_temple_stream/cell_pictures.delta1.lz"
+.LField_KandoreanTempleStream_CELL_TILES:
+	.incbin "games/tla/src/map/kandorean_temple_stream/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_KandoreanTempleStream_SHAPES:
 	.incbin "games/tla/src/map/kandorean_temple_stream/shapes.table.lz"

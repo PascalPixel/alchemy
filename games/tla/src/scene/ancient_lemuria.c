@@ -439,8 +439,8 @@ s32 Scene_PrepareMap(void) {
   else if (entrance == ANCIENT_LEMURIA_FROM_LEMURIA_DOCK_EAST_B)
     GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
   if (GameFlag_Get(FLAG_LEMURIA_OTHER_WAY_IN)) {
-    MapGrid_CopyCellPictureCellsRect(38, 47, 26, 12, 8, 47);
-    MapGrid_CopyCellPictureCellsRect(102, 47, 26, 12, 72, 47);
+    MapGrid_CopyCellTilesCellsRect(38, 47, 26, 12, 8, 47);
+    MapGrid_CopyCellTilesCellsRect(102, 47, 26, 12, 72, 47);
     Map_CopyCellAttributeRect(38, 47, 26, 12, 8, 47);
   }
   return 0;

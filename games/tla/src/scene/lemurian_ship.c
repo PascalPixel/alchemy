@@ -1056,7 +1056,7 @@ void LemurianShip_ShowLeftPillarPuddle(void) {
       wait(1);                                                                 \
     }                                                                          \
     Actor_SetSpritePriority(pillar, 2);                                        \
-    MapGrid_CopyCellPictureIndicesRect(4, 123, column, 69, 1, 1);              \
+    MapGrid_CopyCellTilesIndicesRect(4, 123, column, 69, 1, 1);                \
     MapGrid_CopyCellAttributes(36, 0, 1, 1, column, 9);                        \
     Sound_Play(SE_THUMP);                                                      \
     MapGrid_CopyCellsTo(7, 124, 31, 64, 3, 2);                                 \

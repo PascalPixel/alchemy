@@ -4,15 +4,15 @@ Field_GabombaCatacombsTomegathericon:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 110, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 110, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_GabombaCatacombsTomegathericon, .LField_GabombaCatacombsTomegathericon_CELL_PICTURES
+	map_block Field_GabombaCatacombsTomegathericon, .LField_GabombaCatacombsTomegathericon_CELL_TILES
 	map_block Field_GabombaCatacombsTomegathericon, .LField_GabombaCatacombsTomegathericon_SHAPES
 	map_block Field_GabombaCatacombsTomegathericon, .LField_GabombaCatacombsTomegathericon_GRID
 	map_block Field_GabombaCatacombsTomegathericon, .LField_GabombaCatacombsTomegathericon_SHAPE_GRID
 	map_block Field_GabombaCatacombsTomegathericon, .LField_GabombaCatacombsTomegathericon_ANIMATION
 	map_block Field_GabombaCatacombsTomegathericon, .LField_GabombaCatacombsTomegathericon_BLEND
 	map_block Field_GabombaCatacombsTomegathericon, .LField_GabombaCatacombsTomegathericon_SCENE
-.LField_GabombaCatacombsTomegathericon_CELL_PICTURES:
-	.incbin "games/tla/src/map/gabomba_catacombs_tomegathericon/cell_pictures.delta2.lz"
+.LField_GabombaCatacombsTomegathericon_CELL_TILES:
+	.incbin "games/tla/src/map/gabomba_catacombs_tomegathericon/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_GabombaCatacombsTomegathericon_SHAPES:
 	.incbin "games/tla/src/map/gabomba_catacombs_tomegathericon/shapes.table.lz"

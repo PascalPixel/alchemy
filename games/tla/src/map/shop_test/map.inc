@@ -4,15 +4,15 @@ Field_ShopTest:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_ShopTest, .LField_ShopTest_CELL_PICTURES
+	map_block Field_ShopTest, .LField_ShopTest_CELL_TILES
 	map_block Field_ShopTest, .LField_ShopTest_SHAPES
 	map_block Field_ShopTest, .LField_ShopTest_GRID
 	map_block Field_ShopTest, .LField_ShopTest_SHAPE_GRID
 	map_block Field_ShopTest, .LField_ShopTest_ANIMATION
 	map_block Field_ShopTest, .LField_ShopTest_BLEND
 	map_block Field_ShopTest, .LField_ShopTest_SCENE
-.LField_ShopTest_CELL_PICTURES:
-	.incbin "games/tla/src/map/shop_test/cell_pictures.delta1.lz"
+.LField_ShopTest_CELL_TILES:
+	.incbin "games/tla/src/map/shop_test/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_ShopTest_SHAPES:
 	.incbin "games/tla/src/map/shop_test/shapes.table.lz"

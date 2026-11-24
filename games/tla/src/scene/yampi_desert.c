@@ -957,7 +957,7 @@ void YampiDesert_RaiseSandCloud(void) {
       }
     }
   }
-  MapGrid_CopyCellPictureIndicesRect(74, 71, 77, 9, 3, 3);
+  MapGrid_CopyCellTilesIndicesRect(74, 71, 77, 9, 3, 3);
 }
 
 /// Walking up to the cornered King Scorpion in the ring of rocks at the north
@@ -1069,7 +1069,7 @@ void YampiDesert_OpenGeyser(s32 mode) {
 
   if (mode == 1) {
     actor = Actor_GetById(ACTOR_GEYSER);
-    MapGrid_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
+    MapGrid_CopyCellTilesIndicesRect(35, 39, 13, 11, 3, 3);
     Actor_SetPosition(ACTOR_GEYSER, 232, 200);
     height = Map_GetTerrainHeight(MAPGRID_LAYER_GROUND, actor->x.fixed,
                                   actor->z.fixed);
@@ -1107,9 +1107,9 @@ void YampiDesert_RevealRockHint(void) {
 
   if (actor != NULL)
     Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 616, 444);
-  MapGrid_CopyCellPictureIndicesRect(82, 82, 15, 40, 5, 6);
+  MapGrid_CopyCellTilesIndicesRect(82, 82, 15, 40, 5, 6);
   MapGrid_CopyCellAttributes(82, 82, 5, 6, 15, 40);
-  MapGrid_CopyCellPictureIndicesRect(88, 82, 36, 25, 5, 5);
+  MapGrid_CopyCellTilesIndicesRect(88, 82, 36, 25, 5, 5);
   MapGrid_CopyCellAttributes(88, 82, 5, 5, 36, 25);
   if (column == 15) {
     if (row == 41)
@@ -1151,9 +1151,9 @@ void YampiDesert_HideRockHint(void) {
 
   if (Actor_GetById(ACTOR_HIDDEN_TREASURE) != NULL)
     Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 0, 0);
-  MapGrid_CopyCellPictureIndicesRect(82, 89, 15, 40, 5, 6);
+  MapGrid_CopyCellTilesIndicesRect(82, 89, 15, 40, 5, 6);
   MapGrid_CopyCellAttributes(82, 89, 5, 6, 15, 40);
-  MapGrid_CopyCellPictureIndicesRect(88, 89, 36, 25, 5, 5);
+  MapGrid_CopyCellTilesIndicesRect(88, 89, 36, 25, 5, 5);
   MapGrid_CopyCellAttributes(88, 89, 5, 5, 36, 25);
   if (column == 15 && row == 44)
     MOVE_LEADER_TO(15, 43)
@@ -1196,7 +1196,7 @@ void YampiDesert_HidePsynergyStone(void) {
 
 /// Opens the hole over the ladder in the spring's sand puddle.
 void YampiDesert_OpenLadderPit(void) {
-  MapGrid_CopyCellPictureIndicesRect(64, 64, 72, 32, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(64, 64, 72, 32, 1, 1);
   Map_CopyCellAttributeRect(64, 64, 1, 1, 8, 32);
   Map_CopyCellAttributeRect(64, 64, 1, 1, 8, 96);
 }
@@ -2027,7 +2027,7 @@ void YampiDesert_SetUpTrappedScorpion(void) {
 /// While the King Scorpion's Scoop runs, opens the hole it digs.
 void YampiDesert_OpenScoopHole(void) {
   if (((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->stage != 0)
-    MapGrid_CopyCellPictureIndicesRect(73, 76, 78, 11, 1, 1);
+    MapGrid_CopyCellTilesIndicesRect(73, 76, 78, 11, 1, 1);
 }
 
 /// The trapped King Scorpion digs its way out with Scoop.
@@ -2380,10 +2380,10 @@ void YampiDesert_SetUpKingScorpion(void) {
     Actor_SetPosition(STAKE(12), 328, 392);
     if (GameFlag_Get(FLAG_KING_SCORPION_BEATEN)) {
       if (GameFlag_Get(FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP)) {
-        MapGrid_CopyCellPictureIndicesRect(68, 77, 13, 9, 3, 3);
+        MapGrid_CopyCellTilesIndicesRect(68, 77, 13, 9, 3, 3);
         MapGrid_CopyCellAttributes(68, 77, 3, 3, 13, 9);
       } else {
-        MapGrid_CopyCellPictureIndicesRect(74, 71, 77, 9, 3, 3);
+        MapGrid_CopyCellTilesIndicesRect(74, 71, 77, 9, 3, 3);
         MapGrid_CopyCellAttributes(74, 71, 3, 3, 13, 9);
       }
       MapGrid_CopyCellAttributes(63, 77, 3, 3, 13, 73);
@@ -2509,7 +2509,7 @@ void YampiDesert_SetUpScorpionPit(void) {
       YampiDesert_DropScoopGem();
   }
   if (GameFlag_Get(FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP)) {
-    MapGrid_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
+    MapGrid_CopyCellTilesIndicesRect(35, 39, 13, 11, 3, 3);
     Actor_SetPosition(ACTOR_GEYSER, 232, 200);
   }
   Geyser_Start(0, GEYSER_FIRST_TERRAIN);

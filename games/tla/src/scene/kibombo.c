@@ -67,8 +67,7 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 value);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void Actor_FaceDirectionById(s32 actor, s32 angle, s32 frames);
 
-void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                        s32 f);
+void MapGrid_CopyCellTilesIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
 void Event_ShowMessageAndWait(s32 speaker, s32 flags);
@@ -784,7 +783,7 @@ enum { SCOOP_STAGE_DUG = 1 };
 /// Shows the vent by the statue uncovered, cell (23, 18), and lets the party
 /// climb down into it.
 void Kibombo_UncoverVent(void) {
-  MapGrid_CopyCellPictureIndicesRect(34, 33, 23, 18, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(34, 33, 23, 18, 1, 1);
   MapGrid_CopyCellAttributes(34, 33, 1, 1, 23, 18);
   GameFlag_Set(FLAG_KIBOMBO_VENT_UNCOVERED);
 }
@@ -801,7 +800,7 @@ void Kibombo_ScoopVent(s32 stage) {
 /// Uncovers the north one of the four marks at the dead end by the statue,
 /// cell (16, 7), as Scoop does.
 void Kibombo_UncoverNorthMark(void) {
-  MapGrid_CopyCellPictureIndicesRect(36, 34, 16, 7, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(36, 34, 16, 7, 1, 1);
   MapGrid_CopyCellAttributes(36, 34, 1, 1, 16, 7);
   GameFlag_Set(FLAG_NORTH_MARK_UNCOVERED);
 }
@@ -816,7 +815,7 @@ void Kibombo_ScoopNorthMark(s32 stage) {
 
 /// Uncovers the south mark, cell (16, 11).
 void Kibombo_UncoverSouthMark(void) {
-  MapGrid_CopyCellPictureIndicesRect(38, 34, 16, 11, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(38, 34, 16, 11, 1, 1);
   MapGrid_CopyCellAttributes(38, 34, 1, 1, 16, 11);
   GameFlag_Set(FLAG_SOUTH_MARK_UNCOVERED);
 }
@@ -831,7 +830,7 @@ void Kibombo_ScoopSouthMark(s32 stage) {
 
 /// Uncovers the west mark, cell (14, 9).
 void Kibombo_UncoverWestMark(void) {
-  MapGrid_CopyCellPictureIndicesRect(36, 36, 14, 9, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(36, 36, 14, 9, 1, 1);
   MapGrid_CopyCellAttributes(36, 36, 1, 1, 14, 9);
   GameFlag_Set(FLAG_WEST_MARK_UNCOVERED);
 }
@@ -845,7 +844,7 @@ void Kibombo_ScoopWestMark(s32 stage) {
 
 /// Uncovers the east mark, cell (18, 9).
 void Kibombo_UncoverEastMark(void) {
-  MapGrid_CopyCellPictureIndicesRect(38, 36, 18, 9, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(38, 36, 18, 9, 1, 1);
   MapGrid_CopyCellAttributes(38, 36, 1, 1, 18, 9);
   GameFlag_Set(FLAG_EAST_MARK_UNCOVERED);
 }
@@ -2559,7 +2558,7 @@ void Kibombo_SetStatueMouth(s32 open, s32 glow) {
 /// Puts out the Great Gabomba's tongue, in the pose given, or draws it back.
 void Kibombo_SetStatueTongue(s32 open, s32 mode) {
   if (open != 0) {
-    MapGrid_CopyCellPictureIndicesRect(41, 38, 79, 16, 3, 3);
+    MapGrid_CopyCellTilesIndicesRect(41, 38, 79, 16, 3, 3);
     MapGrid_CopyCellAttributes(12, 21, 1, 1, 16, 22);
     if (mode != 0)
       Actor_SetPositionAndResetMotion(Actor_GetById(ACTOR_STATUE_TONGUE),
@@ -2590,7 +2589,7 @@ void Kibombo_SetStatueTongue(s32 open, s32 mode) {
       break;
     }
   } else {
-    MapGrid_CopyCellPictureIndicesRect(45, 38, 79, 16, 3, 3);
+    MapGrid_CopyCellTilesIndicesRect(45, 38, 79, 16, 3, 3);
     MapGrid_CopyCellAttributes(17, 22, 1, 1, 16, 22);
     Actor_SetPosition(ACTOR_STATUE_TONGUE, 0, 0);
   }

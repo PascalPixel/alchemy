@@ -4,15 +4,15 @@ Field_LemuriaRooms:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_LemuriaRooms, .LField_LemuriaRooms_CELL_PICTURES
+	map_block Field_LemuriaRooms, .LField_LemuriaRooms_CELL_TILES
 	map_block Field_LemuriaRooms, .LField_LemuriaRooms_SHAPES
 	map_block Field_LemuriaRooms, .LField_LemuriaRooms_GRID
 	map_block Field_LemuriaRooms, .LField_LemuriaRooms_SHAPE_GRID
 	map_block Field_LemuriaRooms, .LField_LemuriaRooms_ANIMATION
 	map_block Field_LemuriaRooms
 	map_block Field_LemuriaRooms, .LField_LemuriaRooms_SCENE
-.LField_LemuriaRooms_CELL_PICTURES:
-	.incbin "games/tla/src/map/lemuria_rooms/cell_pictures.delta1.lz"
+.LField_LemuriaRooms_CELL_TILES:
+	.incbin "games/tla/src/map/lemuria_rooms/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_LemuriaRooms_SHAPES:
 	.incbin "games/tla/src/map/lemuria_rooms/shapes.table.lz"

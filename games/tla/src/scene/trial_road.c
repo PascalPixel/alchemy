@@ -732,12 +732,12 @@ void TrialRoad_UpdateFountains(void);
   void name(s32 side, s32 phase) {                                             \
     if (side == 0) {                                                           \
       if (phase == 3)                                                          \
-        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, leftX, phase);          \
+        MapGrid_CopyCellTilesCellsRect(0, 120, 1, 2, leftX, phase);            \
       MapGrid_CopyCellsLayered(127, 3, 1, 2, upperLeftX, 3);                   \
       MapGrid_CopyCellAttributes(groundLeftX, 127, 1, 1, leftX, 8);            \
     } else {                                                                   \
       if (phase == 3)                                                          \
-        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, rightX, phase);         \
+        MapGrid_CopyCellTilesCellsRect(0, 120, 1, 2, rightX, phase);           \
       MapGrid_CopyCellsLayered(127, 3, 1, 2, upperRightX, 3);                  \
       MapGrid_CopyCellAttributes(groundRightX, 127, 1, 1, rightX, 8);          \
     }                                                                          \

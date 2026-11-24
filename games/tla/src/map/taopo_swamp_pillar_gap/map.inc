@@ -4,15 +4,15 @@ Field_TaopoSwampPillarGap:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 100, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_TaopoSwampPillarGap, .LField_TaopoSwampPillarGap_CELL_PICTURES
+	map_block Field_TaopoSwampPillarGap, .LField_TaopoSwampPillarGap_CELL_TILES
 	map_block Field_TaopoSwampPillarGap, .LField_TaopoSwampPillarGap_SHAPES
 	map_block Field_TaopoSwampPillarGap, .LField_TaopoSwampPillarGap_GRID
 	map_block Field_TaopoSwampPillarGap, .LField_TaopoSwampPillarGap_SHAPE_GRID
 	map_block Field_TaopoSwampPillarGap, .LField_TaopoSwampPillarGap_ANIMATION
 	map_block Field_TaopoSwampPillarGap, .LField_TaopoSwampPillarGap_BLEND
 	map_block Field_TaopoSwampPillarGap, .LField_TaopoSwampPillarGap_SCENE
-.LField_TaopoSwampPillarGap_CELL_PICTURES:
-	.incbin "games/tla/src/map/taopo_swamp_pillar_gap/cell_pictures.delta2.lz"
+.LField_TaopoSwampPillarGap_CELL_TILES:
+	.incbin "games/tla/src/map/taopo_swamp_pillar_gap/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_TaopoSwampPillarGap_SHAPES:
 	.incbin "games/tla/src/map/taopo_swamp_pillar_gap/shapes.table.lz"

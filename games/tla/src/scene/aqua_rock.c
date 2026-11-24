@@ -858,8 +858,8 @@ void AquaRock_StepIntoCurrent(void) {
 /// the slopes starts to flow.
 void AquaRock_DouseDryMoai(void) {
   MapGrid_CopyCellAttributes(62, 41, 1, 2, 33, 41);
-  MapGrid_CopyCellPictureCellsRect(125, 32, 3, 13, 96, 32);
-  MapGrid_CopyCellPictureCellsRect(61, 96, 3, 13, 32, 96);
+  MapGrid_CopyCellTilesCellsRect(125, 32, 3, 13, 96, 32);
+  MapGrid_CopyCellTilesCellsRect(61, 96, 3, 13, 32, 96);
   Actor_SetSpriteColor(Actor_GetById(ACTOR_DRY_MOAI), SPRITE_COLOR_BRG);
   AquaRock_AddMoaiWater(ACTOR_DRY_MOAI);
   GameFlag_Set(FLAG_AQUA_ROCK_DRY_MOAI_FILLED);
@@ -971,7 +971,7 @@ void AquaRock_DouseMistSabreChestWaterStone(s32 unused, s32 id) {
   Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
   actor->update = (ObjectUpdate)AquaRock_StopFlashing;
   AquaRock_SetBubbleAnchor(ACTOR_MIST_SABRE_WATER_STONE);
-  MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
+  MapGrid_CopyCellTilesCellsRect(64, 68, 5, 13, 14, 94);
   Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
   Event_Wait(30);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -1277,7 +1277,7 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(FLAG_AQUA_ROCK_DRY_MOAI_FILLED)) {
       MapGrid_CopyCellAttributes(62, 41, 1, 2, 33, 41);
-      MapGrid_CopyCellPictureCellsRect(116, 95, 3, 13, 96, 32);
+      MapGrid_CopyCellTilesCellsRect(116, 95, 3, 13, 96, 32);
       MapGrid_CopyCellsLayered(122, 95, 3, 13, 32, 96);
       AquaRock_AddMoaiWater(ACTOR_DRY_MOAI);
     }
@@ -1332,7 +1332,7 @@ s32 Scene_Initialize(void) {
         Actor_GetById(ACTOR_WAY_INSIDE)->update = Actor_EmitWaterDrop;
         Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
         Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
-        MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
+        MapGrid_CopyCellTilesCellsRect(64, 68, 5, 13, 14, 94);
         Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
       }
     }

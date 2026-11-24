@@ -4,15 +4,15 @@ Field_JupiterLighthouseRoomBeam:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_JupiterLighthouseRoomBeam, .LField_JupiterLighthouseRoomBeam_CELL_PICTURES
+	map_block Field_JupiterLighthouseRoomBeam, .LField_JupiterLighthouseRoomBeam_CELL_TILES
 	map_block Field_JupiterLighthouseRoomBeam, .LField_JupiterLighthouseRoomBeam_SHAPES
 	map_block Field_JupiterLighthouseRoomBeam, .LField_JupiterLighthouseRoomBeam_GRID
 	map_block Field_JupiterLighthouseRoomBeam, .LField_JupiterLighthouseRoomBeam_SHAPE_GRID
 	map_block Field_JupiterLighthouseRoomBeam, .LField_JupiterLighthouseRoomBeam_ANIMATION
 	map_block Field_JupiterLighthouseRoomBeam
 	map_block Field_JupiterLighthouseRoomBeam, .LField_JupiterLighthouseRoomBeam_SCENE
-.LField_JupiterLighthouseRoomBeam_CELL_PICTURES:
-	.incbin "games/tla/src/map/jupiter_lighthouse_room_beam/cell_pictures.delta1.lz"
+.LField_JupiterLighthouseRoomBeam_CELL_TILES:
+	.incbin "games/tla/src/map/jupiter_lighthouse_room_beam/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_JupiterLighthouseRoomBeam_SHAPES:
 	.incbin "games/tla/src/map/jupiter_lighthouse_room_beam/shapes.table.lz"

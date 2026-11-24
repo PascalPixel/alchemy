@@ -1920,8 +1920,8 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
     if (x >= 0 && x < width && z >= 0 && z < height) {
       s32 n;
 
-      MapGrid_CopyCellPictureCellsRectFar(sourceX + x, sourceZ + z, 1, 1,
-                                          windowX + x, windowZ + z);
+      MapGrid_CopyCellTilesCellsRectFar(sourceX + x, sourceZ + z, 1, 1,
+                                        windowX + x, windowZ + z);
       MapGrid_GetCellAt(FIELD_CELL_ORIGIN(cell[i].x),
                         FIELD_CELL_ORIGIN(cell[i].z), 2)
           ->collisionCode = 0;
@@ -1949,8 +1949,8 @@ void TileCopies_Restore(void) {
   for (i = 0; i < gTouchCopies.count; i++) {
     struct TouchCopy *entry = &base->copies[i];
 
-    MapGrid_CopyCellPictureCellsRectFar(entry->toX, entry->toZ, 1, 1,
-                                        entry->fromX, entry->fromZ);
+    MapGrid_CopyCellTilesCellsRectFar(entry->toX, entry->toZ, 1, 1,
+                                      entry->fromX, entry->fromZ);
     MapGrid_GetCellAt(FIELD_CELL_ORIGIN(entry->cellX),
                       FIELD_CELL_ORIGIN(entry->cellZ), 2)
         ->collisionCode = 0;

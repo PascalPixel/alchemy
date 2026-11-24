@@ -303,11 +303,11 @@ extern char ResourceId_WindowTiles;
 /// (gWorldMap_GraphicsResources).
 extern char ResourceId_WorldMapPaletteA;
 #define RESOURCE_WORLD_MAP_PALETTE_A ((s32)&ResourceId_WorldMapPaletteA)
-/// The world map's cell picture attributes in its first graphics set
+/// The world map's cell tiles attributes in its first graphics set
 /// (gWorldMap_GraphicsResources).
-extern char ResourceId_DefaultCellPictureAttributes;
-#define RESOURCE_DEFAULT_CELL_PICTURE_ATTRIBUTES                               \
-  ((s32)&ResourceId_DefaultCellPictureAttributes)
+extern char ResourceId_DefaultCellTilesAttributes;
+#define RESOURCE_DEFAULT_CELL_TILES_ATTRIBUTES                                 \
+  ((s32)&ResourceId_DefaultCellTilesAttributes)
 /// The colours of the world map's third graphics set
 /// (gWorldMap_GraphicsResources).
 extern char ResourceId_WorldMapPaletteB;
@@ -656,11 +656,11 @@ extern char ResourceId_WorldMapPaletteC;
 /// row of gWorldMap_GraphicsResources.
 extern char ResourceId_WorldMapAnimationC;
 #define RESOURCE_WORLD_MAP_ANIMATION_C ((s32)&ResourceId_WorldMapAnimationC)
-/// The cell picture attributes of world map set C, in
-/// DefaultCellPictureAttributes' format: a row of gWorldMap_GraphicsResources.
-extern char ResourceId_WorldMapCellPictureAttributesC;
-#define RESOURCE_WORLD_MAP_CELL_PICTURE_ATTRIBUTES_C                           \
-  ((s32)&ResourceId_WorldMapCellPictureAttributesC)
+/// The cell tiles attributes of world map set C, in
+/// DefaultCellTilesAttributes' format: a row of gWorldMap_GraphicsResources.
+extern char ResourceId_WorldMapCellTilesAttributesC;
+#define RESOURCE_WORLD_MAP_CELL_TILES_ATTRIBUTES_C                             \
+  ((s32)&ResourceId_WorldMapCellTilesAttributesC)
 /// Tiles 1 of 6 of world map set C, a row of gWorldMap_GraphicsResources.
 extern char ResourceId_WorldMapTilesC1;
 #define RESOURCE_WORLD_MAP_TILES_C1 ((s32)&ResourceId_WorldMapTilesC1)
@@ -683,11 +683,11 @@ extern char ResourceId_WorldMapTilesC6;
 /// row of gWorldMap_GraphicsResources.
 extern char ResourceId_WorldMapAnimationB;
 #define RESOURCE_WORLD_MAP_ANIMATION_B ((s32)&ResourceId_WorldMapAnimationB)
-/// The cell picture attributes of world map set B, in
-/// DefaultCellPictureAttributes' format: a row of gWorldMap_GraphicsResources.
-extern char ResourceId_WorldMapCellPictureAttributesB;
-#define RESOURCE_WORLD_MAP_CELL_PICTURE_ATTRIBUTES_B                           \
-  ((s32)&ResourceId_WorldMapCellPictureAttributesB)
+/// The cell tiles attributes of world map set B, in
+/// DefaultCellTilesAttributes' format: a row of gWorldMap_GraphicsResources.
+extern char ResourceId_WorldMapCellTilesAttributesB;
+#define RESOURCE_WORLD_MAP_CELL_TILES_ATTRIBUTES_B                             \
+  ((s32)&ResourceId_WorldMapCellTilesAttributesB)
 /// Tiles 1 of 6 of world map set B, a row of gWorldMap_GraphicsResources.
 extern char ResourceId_WorldMapTilesB1;
 #define RESOURCE_WORLD_MAP_TILES_B1 ((s32)&ResourceId_WorldMapTilesB1)
@@ -713,11 +713,11 @@ extern char ResourceId_WorldMapPaletteD;
 /// row of gWorldMap_GraphicsResources.
 extern char ResourceId_WorldMapAnimationD;
 #define RESOURCE_WORLD_MAP_ANIMATION_D ((s32)&ResourceId_WorldMapAnimationD)
-/// The cell picture attributes of world map set D, in
-/// DefaultCellPictureAttributes' format: a row of gWorldMap_GraphicsResources.
-extern char ResourceId_WorldMapCellPictureAttributesD;
-#define RESOURCE_WORLD_MAP_CELL_PICTURE_ATTRIBUTES_D                           \
-  ((s32)&ResourceId_WorldMapCellPictureAttributesD)
+/// The cell tiles attributes of world map set D, in
+/// DefaultCellTilesAttributes' format: a row of gWorldMap_GraphicsResources.
+extern char ResourceId_WorldMapCellTilesAttributesD;
+#define RESOURCE_WORLD_MAP_CELL_TILES_ATTRIBUTES_D                             \
+  ((s32)&ResourceId_WorldMapCellTilesAttributesD)
 /// Tiles 1 of 6 of world map set D, a row of gWorldMap_GraphicsResources.
 extern char ResourceId_WorldMapTilesD1;
 #define RESOURCE_WORLD_MAP_TILES_D1 ((s32)&ResourceId_WorldMapTilesD1)

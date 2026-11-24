@@ -4,15 +4,15 @@ Field_ShamanVillageHouses:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_ShamanVillageHouses, .LField_ShamanVillageHouses_CELL_PICTURES
+	map_block Field_ShamanVillageHouses, .LField_ShamanVillageHouses_CELL_TILES
 	map_block Field_ShamanVillageHouses, .LField_ShamanVillageHouses_SHAPES
 	map_block Field_ShamanVillageHouses, .LField_ShamanVillageHouses_GRID
 	map_block Field_ShamanVillageHouses, .LField_ShamanVillageHouses_SHAPE_GRID
 	map_block Field_ShamanVillageHouses, .LField_ShamanVillageHouses_ANIMATION
 	map_block Field_ShamanVillageHouses, .LField_ShamanVillageHouses_BLEND
 	map_block Field_ShamanVillageHouses, .LField_ShamanVillageHouses_SCENE
-.LField_ShamanVillageHouses_CELL_PICTURES:
-	.incbin "games/tla/src/map/shaman_village_houses/cell_pictures.delta2.lz"
+.LField_ShamanVillageHouses_CELL_TILES:
+	.incbin "games/tla/src/map/shaman_village_houses/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_ShamanVillageHouses_SHAPES:
 	.incbin "games/tla/src/map/shaman_village_houses/shapes.table.lz"

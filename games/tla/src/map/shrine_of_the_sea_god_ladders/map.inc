@@ -4,15 +4,15 @@ Field_ShrineOfTheSeaGodLadders:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_ShrineOfTheSeaGodLadders, .LField_ShrineOfTheSeaGodLadders_CELL_PICTURES
+	map_block Field_ShrineOfTheSeaGodLadders, .LField_ShrineOfTheSeaGodLadders_CELL_TILES
 	map_block Field_ShrineOfTheSeaGodLadders, .LField_ShrineOfTheSeaGodLadders_SHAPES
 	map_block Field_ShrineOfTheSeaGodLadders, .LField_ShrineOfTheSeaGodLadders_GRID
 	map_block Field_ShrineOfTheSeaGodLadders, .LField_ShrineOfTheSeaGodLadders_SHAPE_GRID
 	map_block Field_ShrineOfTheSeaGodLadders, .LField_ShrineOfTheSeaGodLadders_ANIMATION
 	map_block Field_ShrineOfTheSeaGodLadders, .LField_ShrineOfTheSeaGodLadders_BLEND
 	map_block Field_ShrineOfTheSeaGodLadders, .LField_ShrineOfTheSeaGodLadders_SCENE
-.LField_ShrineOfTheSeaGodLadders_CELL_PICTURES:
-	.incbin "games/tla/src/map/shrine_of_the_sea_god_ladders/cell_pictures.delta1.lz"
+.LField_ShrineOfTheSeaGodLadders_CELL_TILES:
+	.incbin "games/tla/src/map/shrine_of_the_sea_god_ladders/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_ShrineOfTheSeaGodLadders_SHAPES:
 	.incbin "games/tla/src/map/shrine_of_the_sea_god_ladders/shapes.table.lz"

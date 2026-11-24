@@ -4,15 +4,15 @@ Field_ApojiiIslandsCave:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_ApojiiIslandsCave, .LField_ApojiiIslandsCave_CELL_PICTURES
+	map_block Field_ApojiiIslandsCave, .LField_ApojiiIslandsCave_CELL_TILES
 	map_block Field_ApojiiIslandsCave, .LField_ApojiiIslandsCave_SHAPES
 	map_block Field_ApojiiIslandsCave, .LField_ApojiiIslandsCave_GRID
 	map_block Field_ApojiiIslandsCave, .LField_ApojiiIslandsCave_SHAPE_GRID
 	map_block Field_ApojiiIslandsCave, .LField_ApojiiIslandsCave_ANIMATION
 	map_block Field_ApojiiIslandsCave, .LField_ApojiiIslandsCave_BLEND
 	map_block Field_ApojiiIslandsCave, .LField_ApojiiIslandsCave_SCENE
-.LField_ApojiiIslandsCave_CELL_PICTURES:
-	.incbin "games/tla/src/map/apojii_islands_cave/cell_pictures.delta1.lz"
+.LField_ApojiiIslandsCave_CELL_TILES:
+	.incbin "games/tla/src/map/apojii_islands_cave/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_ApojiiIslandsCave_SHAPES:
 	.incbin "games/tla/src/map/apojii_islands_cave/shapes.table.lz"

@@ -153,8 +153,7 @@ void Actor_WalkToById(s32 id, s32 x, s32 z);
 void Actor_FaceActorById(s32 id, s32 target, s32 frames);
 void Actor_FaceDirectionById(s32 id, s32 angle, s32 flags);
 void Actor_SetSpeedParameters(s32 id, FIXED speed, FIXED acceleration);
-void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                        s32 f);
+void MapGrid_CopyCellTilesIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z);
 s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
@@ -196,7 +195,7 @@ void Izumo_FinishMovingStone(void) {
   Sound_Play(SE_WATER);
   if (x == STONE_IN_PLACE_CELL_X && z == STONE_CELL_Z) {
     if (Flag_IsSet(FLAG_REVEALING)) {
-      MapGrid_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
+      MapGrid_CopyCellTilesIndicesRect(36, 12, 22, 8, 3, 3);
       Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
     }
     if (!Flag_IsSet(FLAG_GUARD_SAW_STONE_MOVED)) {
@@ -229,7 +228,7 @@ void Izumo_FinishMovingStone(void) {
   } else if (x == STONE_MISALIGNED_CELL_X && z == STONE_CELL_Z) {
     Flag_Clear(FLAG_STONE_IN_PLACE);
     if (Flag_IsSet(FLAG_REVEALING)) {
-      MapGrid_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
+      MapGrid_CopyCellTilesIndicesRect(36, 8, 22, 8, 3, 3);
       Call6((void (*)())Map_CopyCellAttributeRect, 36, 8, 3, 3, 22, 8);
     }
   }
@@ -692,13 +691,13 @@ void Izumo_RevealTheStoneCircle(void) {
 
   GameFlag_Set(FLAG_REVEALING);
   if (GameFlag_Get(FLAG_STONE_IN_PLACE)) {
-    MapGrid_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
+    MapGrid_CopyCellTilesIndicesRect(36, 12, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
     if (x == CIRCLE_CENTER_CELL_X && z == CIRCLE_CENTER_CELL_Z)
       Actor_SetHorizontalPositionWithTerrain(gMainRoutineState.leaderActorId,
                                              toFIXED(376), toFIXED(136));
   } else {
-    MapGrid_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
+    MapGrid_CopyCellTilesIndicesRect(36, 8, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 8, 3, 3, 22, 8);
   }
 }
@@ -706,7 +705,7 @@ void Izumo_RevealTheStoneCircle(void) {
 /// As Reveal fades the way down in the ring's centre is hidden again.
 void Izumo_HideTheStoneCircle(void) {
   GameFlag_Clear(FLAG_REVEALING);
-  MapGrid_CopyCellPictureIndicesRect(40, 8, 22, 8, 3, 3);
+  MapGrid_CopyCellTilesIndicesRect(40, 8, 22, 8, 3, 3);
   Call6((void (*)())Map_CopyCellAttributeRect, 40, 8, 3, 3, 22, 8);
 }
 

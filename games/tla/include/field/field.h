@@ -333,7 +333,7 @@ struct ReelSave {
 /// One 32-pixel cell of the World Map: its tile and its encounter region;
 /// Ram_MapBlocks holds 32 by 32 of them.
 struct WorldMapCell {
-  u32 tile : 24; ///< low halfword: the cell picture
+  u32 tile : 24; ///< low halfword: the cell tiles
   /// Passed to WorldMap_UpdateRegionTint; region / 10 picks the graphics set.
   u32 region : 6;
   u32 unused : 1; ///< no code names it

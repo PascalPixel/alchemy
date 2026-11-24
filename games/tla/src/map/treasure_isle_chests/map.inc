@@ -4,15 +4,15 @@ Field_TreasureIsleChests:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_TreasureIsleChests, .LField_TreasureIsleChests_CELL_PICTURES
+	map_block Field_TreasureIsleChests, .LField_TreasureIsleChests_CELL_TILES
 	map_block Field_TreasureIsleChests, .LField_TreasureIsleChests_SHAPES
 	map_block Field_TreasureIsleChests, .LField_TreasureIsleChests_GRID
 	map_block Field_TreasureIsleChests, .LField_TreasureIsleChests_SHAPE_GRID
 	map_block Field_TreasureIsleChests, .LField_TreasureIsleChests_ANIMATION
 	map_block Field_TreasureIsleChests, .LField_TreasureIsleChests_BLEND
 	map_block Field_TreasureIsleChests, .LField_TreasureIsleChests_SCENE
-.LField_TreasureIsleChests_CELL_PICTURES:
-	.incbin "games/tla/src/map/treasure_isle_chests/cell_pictures.delta1.lz"
+.LField_TreasureIsleChests_CELL_TILES:
+	.incbin "games/tla/src/map/treasure_isle_chests/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_TreasureIsleChests_SHAPES:
 	.incbin "games/tla/src/map/treasure_isle_chests/shapes.table.lz"

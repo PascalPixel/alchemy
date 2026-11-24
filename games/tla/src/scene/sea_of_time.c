@@ -988,7 +988,7 @@ void SeaOfTime_FacePoseidon(void) {
   fill = RGB(WAVE_RED, WAVE_GREEN, WAVE_BLUE);
   Dma_Set((const void *)&fill, (void *)&BG_PLTT_COLOR(SEA_PALETTE, 1),
           DMA_FILL_HALFWORDS(SEA_COLORS), REG_DMA3);
-  MapGrid_CopyCellPictureIndicesRect(49, 70, 19, 73, 6, 6);
+  MapGrid_CopyCellTilesIndicesRect(49, 70, 19, 73, 6, 6);
   // Steps each colour's red, green and blue by one toward the saved palette
   // every 10 frames until none changes.
   do {

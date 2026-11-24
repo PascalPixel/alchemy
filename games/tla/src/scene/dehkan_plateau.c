@@ -738,8 +738,8 @@ void DehkanPlateau_ForgetFall(void) {
           cell = &cracks[i][1];                                                \
           x = *cell++;                                                         \
           y = *cell++;                                                         \
-          MapGrid_CopyCellPictureIndicesRect(pictures[0], pictures[1], x, y,   \
-                                             1, 1);                            \
+          MapGrid_CopyCellTilesIndicesRect(pictures[0], pictures[1], x, y, 1,  \
+                                           1);                                 \
         }                                                                      \
       } else {                                                                 \
         if (*cell != 0)                                                        \
@@ -793,7 +793,7 @@ void DehkanPlateau_RestorePoundCubeCracks(void) {
         record = &gDehkanPlateau_PoundCubeCracks[i][1];
         x = *record++;
         y = *record++;
-        MapGrid_CopyCellPictureIndicesRect(
+        MapGrid_CopyCellTilesIndicesRect(
             gDehkanPlateau_PoundCubeCrackPictures[0],
             gDehkanPlateau_PoundCubeCrackPictures[1], x, y, 1, 1);
       }
@@ -867,19 +867,19 @@ void DehkanPlateau_StepOnCrack(void) {
       s16 scene = gMainRoutineState.next;
       y = *record++;
       if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-        MapGrid_CopyCellPictureIndicesRect(
+        MapGrid_CopyCellTilesIndicesRect(
             gDehkanPlateau_FullMetalVestChestCrackPictures[2],
             gDehkanPlateau_FullMetalVestChestCrackPictures[3], x, y, 1, 1);
       else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
-        MapGrid_CopyCellPictureIndicesRect(
+        MapGrid_CopyCellTilesIndicesRect(
             gDehkanPlateau_ThemisAxeChestCrackPictures[2],
             gDehkanPlateau_ThemisAxeChestCrackPictures[3], x, y, 1, 1);
       else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-        MapGrid_CopyCellPictureIndicesRect(
+        MapGrid_CopyCellTilesIndicesRect(
             gDehkanPlateau_TightropesCrackPictures[2],
             gDehkanPlateau_TightropesCrackPictures[3], x, y, 1, 1);
       else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
-        MapGrid_CopyCellPictureIndicesRect(
+        MapGrid_CopyCellTilesIndicesRect(
             gDehkanPlateau_PoundCubeCrackPictures[2],
             gDehkanPlateau_PoundCubeCrackPictures[3], x, y, 1, 1);
     }
@@ -894,24 +894,21 @@ void DehkanPlateau_StepOnCrack(void) {
           s32 srcX = gDehkanPlateau_FullMetalVestChestHolePictures[cellX],
               srcY = gDehkanPlateau_FullMetalVestChestHolePictures[cellX + 1],
               width = 1, height = 2;
-          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
-                                             height);
+          MapGrid_CopyCellTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
         }
       } else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST) {
         {
           s32 srcX = gDehkanPlateau_ThemisAxeChestHolePictures[cellX],
               srcY = gDehkanPlateau_ThemisAxeChestHolePictures[cellX + 1],
               width = 1, height = 2;
-          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
-                                             height);
+          MapGrid_CopyCellTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
         }
       } else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES) {
         {
           s32 srcX = gDehkanPlateau_TightropesHolePictures[cellX],
               srcY = gDehkanPlateau_TightropesHolePictures[cellX + 1],
               width = 1, height = 2;
-          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
-                                             height);
+          MapGrid_CopyCellTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
         }
       } else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE) {
         if ((n == POUND_CUBE_WEST_UPPER_CRACK &&
@@ -923,14 +920,12 @@ void DehkanPlateau_StepOnCrack(void) {
           s32 srcX = gDehkanPlateau_PoundCubeHolePictures[2 * JOINED_HOLE],
               srcY = gDehkanPlateau_PoundCubeHolePictures[2 * JOINED_HOLE + 1],
               width = 1, height = 2;
-          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
-                                             height);
+          MapGrid_CopyCellTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
         } else {
           s32 srcX = gDehkanPlateau_PoundCubeHolePictures[cellX],
               srcY = gDehkanPlateau_PoundCubeHolePictures[cellX + 1], width = 1,
               height = 2;
-          MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
-                                             height);
+          MapGrid_CopyCellTilesIndicesRect(srcX, srcY, toX, toZ, width, height);
         }
       }
     }
@@ -977,19 +972,19 @@ void DehkanPlateau_StepOnCrack(void) {
     {
       s16 scene = gMainRoutineState.next;
       if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-        MapGrid_CopyCellPictureIndicesRect(
+        MapGrid_CopyCellTilesIndicesRect(
             gDehkanPlateau_FullMetalVestChestCrackPictures[0],
             gDehkanPlateau_FullMetalVestChestCrackPictures[1], x, y, 1, 1);
       else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
-        MapGrid_CopyCellPictureIndicesRect(
+        MapGrid_CopyCellTilesIndicesRect(
             gDehkanPlateau_ThemisAxeChestCrackPictures[0],
             gDehkanPlateau_ThemisAxeChestCrackPictures[1], x, y, 1, 1);
       else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-        MapGrid_CopyCellPictureIndicesRect(
+        MapGrid_CopyCellTilesIndicesRect(
             gDehkanPlateau_TightropesCrackPictures[0],
             gDehkanPlateau_TightropesCrackPictures[1], x, y, 1, 1);
       else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
-        MapGrid_CopyCellPictureIndicesRect(
+        MapGrid_CopyCellTilesIndicesRect(
             gDehkanPlateau_PoundCubeCrackPictures[0],
             gDehkanPlateau_PoundCubeCrackPictures[1], x, y, 1, 1);
     }
@@ -1206,12 +1201,12 @@ void DehkanPlateau_CannonFleesOverCracks(void) {
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpeed(ACTOR_THEMIS_AXE_CHEST_CANNON, 1.6);
   Actor_WalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 664, 136);
-  MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(68, 33, 105, 6, 1, 1);
   Sound_Play(SE_RATTLE);
   DehkanPlateau_JoltCamera();
   GameFlag_Set(FLAG_CRACK_OPENED(7));
   Actor_WalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 664, 104);
-  MapGrid_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(69, 33, 105, 4, 1, 1);
   Sound_Play(SE_SPLASH);
   DehkanPlateau_JoltCamera();
   Event_Wait(10);
@@ -1300,7 +1295,7 @@ void DehkanPlateau_CannonPoundsStake(void) {
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 456, 168);
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 456, 184);
   GameFlag_Set(FLAG_CRACK_OPENED(1));
-  MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(69, 51, 92, 11, 1, 1);
   Sound_Play(SE_RATTLE);
   DehkanPlateau_JoltCamera();
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 456, 216);
@@ -1439,7 +1434,7 @@ void DehkanPlateau_CannonCracksPillars(void) {
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 712, 280);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(712, CAMERA_KEEP, 136, 1);
-  MapGrid_CopyCellPictureIndicesRect(112, 6, 110, 4, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(112, 6, 110, 4, 1, 1);
   Actor_SetSpritePriority(ACTOR_TIGHTROPES_CANNON, 1);
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 712, 200);
   Actor_WalkToAndWaitById(ACTOR_TIGHTROPES_CANNON, 712, 168);
@@ -1463,7 +1458,7 @@ void DehkanPlateau_CannonCracksPillars(void) {
                        SPRITE_FLAG_SHADOW);
   Event_Wait(10);
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 744, 72);
-  MapGrid_CopyCellPictureIndicesRect(66, 51, 110, 4, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(66, 51, 110, 4, 1, 1);
   Sound_Play(SE_SPLASH);
   DehkanPlateau_JoltCamera();
   Event_Wait(10);
@@ -1490,7 +1485,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
     Actor_SetHorizontalPositionAndAngleWithTerrain(
         gMainRoutineState.leaderActorId, toFIXED(248), toFIXED(136), facing);
   }
-  MapGrid_CopyCellPictureIndicesRect(65, 64, 15, 8, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(65, 64, 15, 8, 1, 1);
   GameFlag_Set(FLAG_CRACK_OPENED(5));
   Sound_Play(SE_RATTLE);
   DehkanPlateau_JoltCamera();
@@ -1527,8 +1522,8 @@ void DehkanPlateau_PoundLeaderThrough(void) {
   if (((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->stage !=
       0) {
     Sound_Play(SE_SPLASH);
-    MapGrid_CopyCellPictureIndicesRect(64, 64, 15, 8, 1, 1);
-    MapGrid_CopyCellPictureIndicesRect(64, 66, 15, 72, 1, 2);
+    MapGrid_CopyCellTilesIndicesRect(64, 64, 15, 8, 1, 1);
+    MapGrid_CopyCellTilesIndicesRect(64, 66, 15, 72, 1, 2);
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId), 0);
   }
 }
@@ -1795,8 +1790,8 @@ void DehkanPlateau_InitializeThemisAxeChest(void) {
 
     Actor_PlaceFacing(ACTOR_THEMIS_AXE_CHEST_CANNON, toFIXED(888), toFIXED(168),
                       angle);
-    MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
-    MapGrid_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
+    MapGrid_CopyCellTilesIndicesRect(68, 33, 105, 6, 1, 1);
+    MapGrid_CopyCellTilesIndicesRect(69, 33, 105, 4, 1, 1);
     GameFlag_Set(FLAG_CRACK_OPENED(7));
   }
   if (GameFlag_Get(FLAG_CANNON_FLED_EAST) != 0)
@@ -1887,7 +1882,7 @@ void DehkanPlateau_InitializeTightropes(void) {
     actor->collisionFlags &= ~ACTOR_SOLID;
     GameFlag_Set(FLAG_TIGHTROPES_STAKE_POUNDED);
     GameFlag_Set(FLAG_CRACK_OPENED(1));
-    MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
+    MapGrid_CopyCellTilesIndicesRect(69, 51, 92, 11, 1, 1);
     {
       Actor_SetPositionAndFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(616),
                                  toFIXED(280), FACING_SOUTH);
@@ -1975,9 +1970,9 @@ void DehkanPlateau_InitializeMintChest(void) {
       ACTOR_PRIORITY_IGNORES_RISES;
   DehkanPlateau_HideMintChestBlocks();
   if (GameFlag_Get(FLAG_CANNON_FLED_OVER_CRACKS) != 0) {
-    MapGrid_CopyCellPictureIndicesRect(3, 8, 30, 33, 1, 1);
-    MapGrid_CopyCellPictureIndicesRect(67, 3, 94, 28, 1, 5);
-    MapGrid_CopyCellPictureIndicesRect(3, 69, 30, 93, 1, 4);
+    MapGrid_CopyCellTilesIndicesRect(3, 8, 30, 33, 1, 1);
+    MapGrid_CopyCellTilesIndicesRect(67, 3, 94, 28, 1, 5);
+    MapGrid_CopyCellTilesIndicesRect(3, 69, 30, 93, 1, 4);
   }
   if ((u16)(gMainRoutineState.entrance - FIRST_LANDING_ENTRANCE) <=
       LAST_LANDING_ENTRANCE - FIRST_LANDING_ENTRANCE) {

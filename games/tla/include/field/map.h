@@ -21,8 +21,8 @@ struct WorldMapBlock {
                        ///< (WorldMap_GetBattleEnvironment)
 };
 
-/// The world map's blocks, a row of 32 for each z, in the cell picture buffer
-/// (gCellPictures) while the world map is shown.
+/// The world map's blocks, a row of 32 for each z, in the cell tiles buffer
+/// (gCellTiles) while the world map is shown.
 struct WorldMapBlocks {
   struct WorldMapBlock blocks[32 * 32];
 };

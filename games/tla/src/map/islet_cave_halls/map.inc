@@ -4,15 +4,15 @@ Field_IsletCaveHalls:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 2, 2, 0xf, 0xf
-	map_block Field_IsletCaveHalls, .LField_IsletCaveHalls_CELL_PICTURES
+	map_block Field_IsletCaveHalls, .LField_IsletCaveHalls_CELL_TILES
 	map_block Field_IsletCaveHalls, .LField_IsletCaveHalls_SHAPES
 	map_block Field_IsletCaveHalls, .LField_IsletCaveHalls_GRID
 	map_block Field_IsletCaveHalls, .LField_IsletCaveHalls_SHAPE_GRID
 	map_block Field_IsletCaveHalls, .LField_IsletCaveHalls_ANIMATION
 	map_block Field_IsletCaveHalls, .LField_IsletCaveHalls_BLEND
 	map_block Field_IsletCaveHalls, .LField_IsletCaveHalls_SCENE
-.LField_IsletCaveHalls_CELL_PICTURES:
-	.incbin "games/tla/src/map/islet_cave_halls/cell_pictures.delta2.lz"
+.LField_IsletCaveHalls_CELL_TILES:
+	.incbin "games/tla/src/map/islet_cave_halls/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_IsletCaveHalls_SHAPES:
 	.incbin "games/tla/src/map/islet_cave_halls/shapes.table.lz"

@@ -1293,7 +1293,7 @@ void Contigo_ScoopForSalt(void) {
 /// are kept out of reach at the top of the map, (48, 1), and copied into place.
 void Contigo_RevealMiddleDoor(void) {
   MapGrid_CopyCellsTo(27, 4, 48, 12, 1, 2);
-  MapGrid_CopyCellPictureIndicesRect(27, 6, 49, 12, 1, 2);
+  MapGrid_CopyCellTilesIndicesRect(27, 6, 49, 12, 1, 2);
   MapGrid_CopyCellAttributes(48, 1, 2, 1, 48, 19);
 }
 
@@ -1301,7 +1301,7 @@ void Contigo_RevealMiddleDoor(void) {
 /// and walking into it leads nowhere.
 void Contigo_HideMiddleDoor(void) {
   MapGrid_CopyCellsTo(27, 8, 48, 12, 1, 2);
-  MapGrid_CopyCellPictureIndicesRect(27, 10, 49, 12, 1, 2);
+  MapGrid_CopyCellTilesIndicesRect(27, 10, 49, 12, 1, 2);
   MapGrid_CopyCellAttributes(48, 0, 2, 1, 48, 19);
 }
 
@@ -1361,9 +1361,9 @@ void Contigo_ForceFreesDjinni(void) {
 /// trying one says it is locked (Scene_ShowEntranceLocked).
 void Contigo_LockDoors(void) {
   MapGrid_CopyCellsTo(0, 1, 26, 42, 1, 2);
-  MapGrid_CopyCellPictureIndicesRect(0, 1, 26, 48, 1, 2);
-  MapGrid_CopyCellPictureIndicesRect(0, 1, 11, 54, 1, 2);
-  MapGrid_CopyCellPictureIndicesRect(0, 1, 16, 54, 1, 2);
+  MapGrid_CopyCellTilesIndicesRect(0, 1, 26, 48, 1, 2);
+  MapGrid_CopyCellTilesIndicesRect(0, 1, 11, 54, 1, 2);
+  MapGrid_CopyCellTilesIndicesRect(0, 1, 16, 54, 1, 2);
   Map_CopyCellAttributeRect(0, 32, 1, 1, 26, 45);
   Map_CopyCellAttributeRect(0, 32, 1, 1, 26, 51);
   Map_CopyCellAttributeRect(0, 32, 1, 1, 11, 57);
@@ -1644,10 +1644,10 @@ void Contigo_OpenSanctumDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY) {
     s32 width = 1;
     s32 height = 2;
 
-    MapGrid_CopyCellPictureIndicesRect(sourceX, sourceY, doorX, doorY, width,
-                                       height);
-    MapGrid_CopyCellPictureIndicesRect(sourceX, sourceY + 2, doorX + 1, doorY,
-                                       width, height);
+    MapGrid_CopyCellTilesIndicesRect(sourceX, sourceY, doorX, doorY, width,
+                                     height);
+    MapGrid_CopyCellTilesIndicesRect(sourceX, sourceY + 2, doorX + 1, doorY,
+                                     width, height);
   }
   Event_Wait(20);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);

@@ -23,7 +23,7 @@
 
 /// Clears the weeds the Cyclone blew away: for each cell it touched (the field
 /// state's list from FieldPsynergy_GatherNearbyCells) inside the width by
-/// height rectangle at (x, z) of the layer, copies the matching cell picture
+/// height rectangle at (x, z) of the layer, copies the matching cell tiles
 /// from the rectangle at (toX, toZ) over it, opens it on layer 2 and records
 /// the copy in gTouchCopies, up to 64. Gaia Rock calls it after a Cyclone.
 void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
@@ -62,8 +62,8 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
       s32 dz = cellZ - top;
       s32 n;
 
-      MapGrid_CopyCellPictureCellsRectFar(toX + dx, toZ + dz, 1, 1, x + dx,
-                                          z + dz);
+      MapGrid_CopyCellTilesCellsRectFar(toX + dx, toZ + dz, 1, 1, x + dx,
+                                        z + dz);
       MapGrid_GetCellAt(FIELD_CELL_ORIGIN(cx), FIELD_CELL_ORIGIN(cz), 2)
           ->collisionCode = 0;
       n = gTouchCopies.count;

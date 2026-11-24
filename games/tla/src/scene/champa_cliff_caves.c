@@ -485,8 +485,8 @@ void ChampaCliffCaves_SailorTurnsAway(s32 actor) {
 /// north to the forged Trident floating over it. The path's cells, kept
 /// further down the map, are copied there with their behaviours.
 void ChampaCliffCaves_RevealPath(void) {
-  MapGrid_CopyCellPictureCellsRect(41, 97, 1, FORGE_PATH_CELLS,
-                                   FORGE_PATH_CELL_X, 77);
+  MapGrid_CopyCellTilesCellsRect(41, 97, 1, FORGE_PATH_CELLS, FORGE_PATH_CELL_X,
+                                 77);
   Map_CopyCellAttributeRect(41, 33, 1, FORGE_PATH_CELLS, FORGE_PATH_CELL_X,
                             FORGE_PATH_CELL_Z);
 }
@@ -498,8 +498,8 @@ void ChampaCliffCaves_HidePath(void) {
   s32 x;
   s32 z;
 
-  MapGrid_CopyCellPictureCellsRect(50, 97, 1, FORGE_PATH_CELLS,
-                                   FORGE_PATH_CELL_X, 77);
+  MapGrid_CopyCellTilesCellsRect(50, 97, 1, FORGE_PATH_CELLS, FORGE_PATH_CELL_X,
+                                 77);
   Map_CopyCellAttributeRect(46, 33, 1, FORGE_PATH_CELLS, FORGE_PATH_CELL_X,
                             FORGE_PATH_CELL_Z);
   actor = Actor_GetById(gMainRoutineState.leaderActorId);

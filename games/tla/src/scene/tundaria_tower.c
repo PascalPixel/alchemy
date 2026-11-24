@@ -420,7 +420,7 @@ void TundariaTower_BurstCrystal(s32 step) {
     TundariaTower_ScatterIceChips(&position, 1, FIXED_ONE * 8 / 10);
     break;
   case 3:
-    MapGrid_CopyCellPictureIndicesRect(31, 85, 20, 85, 3, 4);
+    MapGrid_CopyCellTilesIndicesRect(31, 85, 20, 85, 3, 4);
     position.x = toFIXED(347);
     position.y = 0;
     position.z = toFIXED(376);
@@ -557,9 +557,8 @@ void TundariaTower_ShrinkIceColumn(s32 phase, s32 step) {
     actor->scaleY = FIXED_ONE;
     GameFlag_Set(actor->timer);
     TundariaTower_SetColumnCell(Actor_GetById(effectState->secondActorId));
-    MapGrid_CopyCellPictureIndicesRect(67, 23,
-                                       (FIELD_CELL(actor->x.fixed)) + 64,
-                                       FIELD_CELL(actor->z.fixed), 1, 1);
+    MapGrid_CopyCellTilesIndicesRect(67, 23, (FIELD_CELL(actor->x.fixed)) + 64,
+                                     FIELD_CELL(actor->z.fixed), 1, 1);
     actor->z.fixed = 0;
     actor->y.fixed = 0;
     actor->x.fixed = 0;
@@ -701,7 +700,7 @@ void TundariaTower_EndRevealHiddenWay(void) {
   // The icy wall's part of the map is entered by 6, from the Burst Brooch's
   // room, or 7.
   if ((u16)(gMainRoutineState.entrance - 6) <= 1) {
-    MapGrid_CopyCellPictureIndicesRect(39, 100, 53, 100, 3, 3);
+    MapGrid_CopyCellTilesIndicesRect(39, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 41, 3, 3, 53, 37);
     if (FIELD_CELL(Actor_GetById(gMainRoutineState.leaderActorId)->z.fixed) ==
         38) {
@@ -722,7 +721,7 @@ void TundariaTower_RevealHiddenWay(void) {
   BlendScript_Suspend();
   GameFlag_Set(FLAG_HIDDEN_WAY_REVEALED);
   if ((u16)(gMainRoutineState.entrance - 6) <= 1) {
-    MapGrid_CopyCellPictureIndicesRect(43, 100, 53, 100, 3, 3);
+    MapGrid_CopyCellTilesIndicesRect(43, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 37, 3, 3, 53, 37);
     if (FIELD_CELL(Actor_GetById(gMainRoutineState.leaderActorId)->z.fixed) >
         38)
@@ -747,8 +746,8 @@ void TundariaTower_BurstMirrorWall(s32 step) {
 
   switch (step) {
   case 1:
-    MapGrid_CopyCellPictureIndicesRect(18, 97, 6, 97, 3, 4);
-    MapGrid_CopyCellPictureIndicesRect(82, 34, 70, 34, 3, 2);
+    MapGrid_CopyCellTilesIndicesRect(18, 97, 6, 97, 3, 4);
+    MapGrid_CopyCellTilesIndicesRect(82, 34, 70, 34, 3, 2);
     MapGrid_CopyCellAttributes(7, 36, 1, 1, 7, 35);
     GameFlag_Set(FLAG_MIRROR_WALL_BURST);
     break;
@@ -781,7 +780,7 @@ void TundariaTower_BurstBrownWall(s32 shake, s32 frame) {
     Task_Remove(TundariaTower_UpdateBrownWallCell);
   }
   if (shake == 1) {
-    MapGrid_CopyCellPictureIndicesRect(13, 26, 13, 16, 3, 3);
+    MapGrid_CopyCellTilesIndicesRect(13, 26, 13, 16, 3, 3);
     MapGrid_CopyCellAttributes(13, 26, 3, 3, 13, 16);
     GameFlag_Set(FLAG_BROWN_WALL_BURST);
   }

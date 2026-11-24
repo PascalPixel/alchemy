@@ -1208,8 +1208,8 @@ void LinkLobby_TakeSongRequest(s32 actor) {
 }
 
 void MapGrid_CenterOnFollowedPoint(void);
-void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
-                                        s32 destY, s32 width, s32 height);
+void MapGrid_CopyCellTilesIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
+                                      s32 width, s32 height);
 void Save_ProcessSelectedFile(void);
 /// Leaves for an entrance of a scene (Event_SetDestination, through the
 /// overlay's own import row).

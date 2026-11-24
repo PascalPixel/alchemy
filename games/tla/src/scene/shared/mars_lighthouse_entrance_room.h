@@ -35,10 +35,10 @@ static inline void Map_CopyCellAttributeRect_(s32 srcX, s32 srcY, s32 width,
   Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
 }
 
-static inline void MapGrid_CopyCellPictureCellsRect_(s32 srcX, s32 srcY,
-                                                     s32 width, s32 height,
-                                                     s32 dstX, s32 dstY) {
-  MapGrid_CopyCellPictureCellsRect(srcX, srcY, width, height, dstX, dstY);
+static inline void MapGrid_CopyCellTilesCellsRect_(s32 srcX, s32 srcY,
+                                                   s32 width, s32 height,
+                                                   s32 dstX, s32 dstY) {
+  MapGrid_CopyCellTilesCellsRect(srcX, srcY, width, height, dstX, dstY);
 }
 
 static inline void Actor_SetHorizontalPositionWithTerrain_(s32 id, FIXED x,

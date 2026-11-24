@@ -4,15 +4,15 @@ Field_DehkanPlateauMintChest:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_DehkanPlateauMintChest, .LField_DehkanPlateauMintChest_CELL_PICTURES
+	map_block Field_DehkanPlateauMintChest, .LField_DehkanPlateauMintChest_CELL_TILES
 	map_block Field_DehkanPlateauMintChest, .LField_DehkanPlateauMintChest_SHAPES
 	map_block Field_DehkanPlateauMintChest, .LField_DehkanPlateauMintChest_GRID
 	map_block Field_DehkanPlateauMintChest, .LField_DehkanPlateauMintChest_SHAPE_GRID
 	map_block Field_DehkanPlateauMintChest, .LField_DehkanPlateauMintChest_ANIMATION
 	map_block Field_DehkanPlateauMintChest, .LField_DehkanPlateauMintChest_BLEND
 	map_block Field_DehkanPlateauMintChest, .LField_DehkanPlateauMintChest_SCENE
-.LField_DehkanPlateauMintChest_CELL_PICTURES:
-	.incbin "games/tla/src/map/dehkan_plateau_mint_chest/cell_pictures.delta0.lz"
+.LField_DehkanPlateauMintChest_CELL_TILES:
+	.incbin "games/tla/src/map/dehkan_plateau_mint_chest/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_DehkanPlateauMintChest_SHAPES:
 	.incbin "games/tla/src/map/dehkan_plateau_mint_chest/shapes.table.lz"

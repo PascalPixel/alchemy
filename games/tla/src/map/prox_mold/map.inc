@@ -4,15 +4,15 @@ Field_ProxMold:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 90, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 66, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_ProxMold, .LField_ProxMold_CELL_PICTURES
+	map_block Field_ProxMold, .LField_ProxMold_CELL_TILES
 	map_block Field_ProxMold, .LField_ProxMold_SHAPES
 	map_block Field_ProxMold, .LField_ProxMold_GRID
 	map_block Field_ProxMold, .LField_ProxMold_SHAPE_GRID
 	map_block Field_ProxMold, .LField_ProxMold_ANIMATION
 	map_block Field_ProxMold, .LField_ProxMold_BLEND
 	map_block Field_ProxMold, .LField_ProxMold_SCENE
-.LField_ProxMold_CELL_PICTURES:
-	.incbin "games/tla/src/map/prox_mold/cell_pictures.delta1.lz"
+.LField_ProxMold_CELL_TILES:
+	.incbin "games/tla/src/map/prox_mold/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_ProxMold_SHAPES:
 	.incbin "games/tla/src/map/prox_mold/shapes.table.lz"

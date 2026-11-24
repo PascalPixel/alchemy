@@ -4,15 +4,15 @@ Field_MagmaRockInsideCrackedPillars:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_MagmaRockInsideCrackedPillars, .LField_MagmaRockInsideCrackedPillars_CELL_PICTURES
+	map_block Field_MagmaRockInsideCrackedPillars, .LField_MagmaRockInsideCrackedPillars_CELL_TILES
 	map_block Field_MagmaRockInsideCrackedPillars, .LField_MagmaRockInsideCrackedPillars_SHAPES
 	map_block Field_MagmaRockInsideCrackedPillars, .LField_MagmaRockInsideCrackedPillars_GRID
 	map_block Field_MagmaRockInsideCrackedPillars, .LField_MagmaRockInsideCrackedPillars_SHAPE_GRID
 	map_block Field_MagmaRockInsideCrackedPillars, .LField_MagmaRockInsideCrackedPillars_ANIMATION
 	map_block Field_MagmaRockInsideCrackedPillars, .LField_MagmaRockInsideCrackedPillars_BLEND
 	map_block Field_MagmaRockInsideCrackedPillars, .LField_MagmaRockInsideCrackedPillars_SCENE
-.LField_MagmaRockInsideCrackedPillars_CELL_PICTURES:
-	.incbin "games/tla/src/map/magma_rock_inside_cracked_pillars/cell_pictures.delta2.lz"
+.LField_MagmaRockInsideCrackedPillars_CELL_TILES:
+	.incbin "games/tla/src/map/magma_rock_inside_cracked_pillars/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_MagmaRockInsideCrackedPillars_SHAPES:
 	.incbin "games/tla/src/map/magma_rock_inside_cracked_pillars/shapes.table.lz"

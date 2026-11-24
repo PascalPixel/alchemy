@@ -4,15 +4,15 @@ Field_ShrineOfTheSeaGodFootprints:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 100, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_ShrineOfTheSeaGodFootprints, .LField_ShrineOfTheSeaGodFootprints_CELL_PICTURES
+	map_block Field_ShrineOfTheSeaGodFootprints, .LField_ShrineOfTheSeaGodFootprints_CELL_TILES
 	map_block Field_ShrineOfTheSeaGodFootprints, .LField_ShrineOfTheSeaGodFootprints_SHAPES
 	map_block Field_ShrineOfTheSeaGodFootprints, .LField_ShrineOfTheSeaGodFootprints_GRID
 	map_block Field_ShrineOfTheSeaGodFootprints, .LField_ShrineOfTheSeaGodFootprints_SHAPE_GRID
 	map_block Field_ShrineOfTheSeaGodFootprints, .LField_ShrineOfTheSeaGodFootprints_ANIMATION
 	map_block Field_ShrineOfTheSeaGodFootprints, .LField_ShrineOfTheSeaGodFootprints_BLEND
 	map_block Field_ShrineOfTheSeaGodFootprints, .LField_ShrineOfTheSeaGodFootprints_SCENE
-.LField_ShrineOfTheSeaGodFootprints_CELL_PICTURES:
-	.incbin "games/tla/src/map/shrine_of_the_sea_god_footprints/cell_pictures.delta2.lz"
+.LField_ShrineOfTheSeaGodFootprints_CELL_TILES:
+	.incbin "games/tla/src/map/shrine_of_the_sea_god_footprints/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_ShrineOfTheSeaGodFootprints_SHAPES:
 	.incbin "games/tla/src/map/shrine_of_the_sea_god_footprints/shapes.table.lz"

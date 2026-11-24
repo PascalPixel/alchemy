@@ -129,7 +129,7 @@ struct MapHeaderLayer {
 
 /// A layout's header: the camera's bounds, the layers' priorities, tile
 /// bases and setup, and the offsets, from the header's start, of its packed
-/// cell pictures, collision, cells, shapes, tileset animation, blend script
+/// cell tiles, collision, cells, shapes, tileset animation, blend script
 /// and script.
 struct MapHeader {
   /// The camera's bounds in 8-pixel tiles: left, top, right and bottom.
@@ -139,12 +139,12 @@ struct MapHeader {
   u8 charBase[3]; ///< each layer's BG char block
   u16 reserved;   ///< nothing reads it
   struct MapHeaderLayer layers[3];
-  s32 cellPictures; ///< staged and unpacked into the cell picture buffer
-  s32 collision;    ///< into Ram_MapCollision
-  s32 cells;        ///< into Ram_MapCellBuffer
-  s32 shapes;       ///< into gMapShapeGrid
-  s32 animation;    ///< the tileset animation script, or 0 for none
-  s32 blend;        ///< the blend script, or 0 for none
+  s32 cellTiles; ///< staged and unpacked into the cell tiles buffer
+  s32 collision; ///< into Ram_MapCollision
+  s32 cells;     ///< into Ram_MapCellBuffer
+  s32 shapes;    ///< into gMapShapeGrid
+  s32 animation; ///< the tileset animation script, or 0 for none
+  s32 blend;     ///< the blend script, or 0 for none
   /// Into Ram_MapCollision after its MAPGRID_SHAPE_TABLE_BYTES.
   s32 script;
 };
@@ -267,14 +267,14 @@ enum {
   FIELD_VIEW_HEIGHT = toFIXED(160)   ///< the screen's height
 };
 
-/// How a layout's cell picture data is packed: the method byte
+/// How a layout's cell tiles data is packed: the method byte
 /// TileMap_DecodeStagedBuffer reads before the halfwords.
-enum CellPicturePacking {
-  CELL_PICTURE_PACKING_RAW = 0, ///< copied as it is
+enum CellTilesPacking {
+  CELL_TILES_PACKING_RAW = 0, ///< copied as it is
   /// All the high bytes, then all the low bytes; each value is XORed with
   /// the one before.
-  CELL_PICTURE_PACKING_SPLIT_DELTA = 1,
-  CELL_PICTURE_PACKING_DELTA = 2 ///< each value is XORed with the one before
+  CELL_TILES_PACKING_SPLIT_DELTA = 1,
+  CELL_TILES_PACKING_DELTA = 2 ///< each value is XORed with the one before
 };
 
 /// A row of gSpritePictureCache_Sources: the packed resource that holds an

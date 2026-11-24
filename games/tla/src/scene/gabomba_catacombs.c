@@ -421,13 +421,13 @@ void GabombaCatacombs_UncoverMadPlant(void) {
 /// wall north of the ring of weeds, cells (7, 11) to (7, 14), on to the stairs
 /// down to the stream cave.
 void GabombaCatacombs_RevealWall(void) {
-  MapGrid_CopyCellPictureCellsRect(0, 0, 1, 2, 7, 11);
+  MapGrid_CopyCellTilesCellsRect(0, 0, 1, 2, 7, 11);
   Map_CopyCellAttributeRect(2, 4, 1, 1, 7, 14);
 }
 
 /// As Reveal wears off, the wall north of the ring of weeds closes again.
 void GabombaCatacombs_HideWall(void) {
-  MapGrid_CopyCellPictureCellsRect(1, 0, 1, 2, 7, 11);
+  MapGrid_CopyCellTilesCellsRect(1, 0, 1, 2, 7, 11);
   Map_CopyCellAttributeRect(2, 5, 1, 1, 7, 14);
 }
 

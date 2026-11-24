@@ -4,15 +4,15 @@ Field_IsletsDog:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, -1, -3, 0x3f, 0x3f
-	map_block Field_IsletsDog, .LField_IsletsDog_CELL_PICTURES
+	map_block Field_IsletsDog, .LField_IsletsDog_CELL_TILES
 	map_block Field_IsletsDog, .LField_IsletsDog_SHAPES
 	map_block Field_IsletsDog, .LField_IsletsDog_GRID
 	map_block Field_IsletsDog, .LField_IsletsDog_SHAPE_GRID
 	map_block Field_IsletsDog, .LField_IsletsDog_ANIMATION
 	map_block Field_IsletsDog, .LField_IsletsDog_BLEND
 	map_block Field_IsletsDog, .LField_IsletsDog_SCENE
-.LField_IsletsDog_CELL_PICTURES:
-	.incbin "games/tla/src/map/islets_dog/cell_pictures.delta2.lz"
+.LField_IsletsDog_CELL_TILES:
+	.incbin "games/tla/src/map/islets_dog/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_IsletsDog_SHAPES:
 	.incbin "games/tla/src/map/islets_dog/shapes.table.lz"

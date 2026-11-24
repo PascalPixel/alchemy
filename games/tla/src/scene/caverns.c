@@ -587,9 +587,9 @@ void Caverns_PrepareOsenia(void) {
 /// it, copied with their behaviours from a spare one beside the cave, over the
 /// sand in the pocket of rocks (cells (18, 12) to (20, 14)).
 void Caverns_OpenOseniaPassage(void) {
-  MapGrid_CopyCellPictureIndicesRect(35, 12, 18, 12, 3, 3);
+  MapGrid_CopyCellTilesIndicesRect(35, 12, 18, 12, 3, 3);
   MapGrid_CopyCellAttributes(35, 12, 3, 3, 18, 12);
-  MapGrid_CopyCellPictureIndicesRect(84, 13, 83, 13, 1, 1);
+  MapGrid_CopyCellTilesIndicesRect(84, 13, 83, 13, 1, 1);
   return;
 }
 

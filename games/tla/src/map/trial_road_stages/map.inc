@@ -4,15 +4,15 @@ Field_TrialRoadStages:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 84, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 168, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_TrialRoadStages, .LField_TrialRoadStages_CELL_PICTURES
+	map_block Field_TrialRoadStages, .LField_TrialRoadStages_CELL_TILES
 	map_block Field_TrialRoadStages, .LField_TrialRoadStages_SHAPES
 	map_block Field_TrialRoadStages, .LField_TrialRoadStages_GRID
 	map_block Field_TrialRoadStages, .LField_TrialRoadStages_SHAPE_GRID
 	map_block Field_TrialRoadStages, .LField_TrialRoadStages_ANIMATION
 	map_block Field_TrialRoadStages, .LField_TrialRoadStages_BLEND
 	map_block Field_TrialRoadStages, .LField_TrialRoadStages_SCENE
-.LField_TrialRoadStages_CELL_PICTURES:
-	.incbin "games/tla/src/map/trial_road_stages/cell_pictures.delta0.lz"
+.LField_TrialRoadStages_CELL_TILES:
+	.incbin "games/tla/src/map/trial_road_stages/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_TrialRoadStages_SHAPES:
 	.incbin "games/tla/src/map/trial_road_stages/shapes.table.lz"

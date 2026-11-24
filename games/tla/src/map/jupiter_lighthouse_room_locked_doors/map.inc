@@ -4,15 +4,15 @@ Field_JupiterLighthouseRoomLockedDoors:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_JupiterLighthouseRoomLockedDoors, .LField_JupiterLighthouseRoomLockedDoors_CELL_PICTURES
+	map_block Field_JupiterLighthouseRoomLockedDoors, .LField_JupiterLighthouseRoomLockedDoors_CELL_TILES
 	map_block Field_JupiterLighthouseRoomLockedDoors, .LField_JupiterLighthouseRoomLockedDoors_SHAPES
 	map_block Field_JupiterLighthouseRoomLockedDoors, .LField_JupiterLighthouseRoomLockedDoors_GRID
 	map_block Field_JupiterLighthouseRoomLockedDoors, .LField_JupiterLighthouseRoomLockedDoors_SHAPE_GRID
 	map_block Field_JupiterLighthouseRoomLockedDoors, .LField_JupiterLighthouseRoomLockedDoors_ANIMATION
 	map_block Field_JupiterLighthouseRoomLockedDoors
 	map_block Field_JupiterLighthouseRoomLockedDoors, .LField_JupiterLighthouseRoomLockedDoors_SCENE
-.LField_JupiterLighthouseRoomLockedDoors_CELL_PICTURES:
-	.incbin "games/tla/src/map/jupiter_lighthouse_room_locked_doors/cell_pictures.delta1.lz"
+.LField_JupiterLighthouseRoomLockedDoors_CELL_TILES:
+	.incbin "games/tla/src/map/jupiter_lighthouse_room_locked_doors/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_JupiterLighthouseRoomLockedDoors_SHAPES:
 	.incbin "games/tla/src/map/jupiter_lighthouse_room_locked_doors/shapes.table.lz"

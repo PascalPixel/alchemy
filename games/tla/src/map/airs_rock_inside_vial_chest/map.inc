@@ -4,15 +4,15 @@ Field_AirsRockInsideVialChest:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_AirsRockInsideVialChest, .LField_AirsRockInsideVialChest_CELL_PICTURES
+	map_block Field_AirsRockInsideVialChest, .LField_AirsRockInsideVialChest_CELL_TILES
 	map_block Field_AirsRockInsideVialChest, .LField_AirsRockInsideVialChest_SHAPES
 	map_block Field_AirsRockInsideVialChest, .LField_AirsRockInsideVialChest_GRID
 	map_block Field_AirsRockInsideVialChest, .LField_AirsRockInsideVialChest_SHAPE_GRID
 	map_block Field_AirsRockInsideVialChest, .LField_AirsRockInsideVialChest_ANIMATION
 	map_block Field_AirsRockInsideVialChest, .LField_AirsRockInsideVialChest_BLEND
 	map_block Field_AirsRockInsideVialChest, .LField_AirsRockInsideVialChest_SCENE
-.LField_AirsRockInsideVialChest_CELL_PICTURES:
-	.incbin "games/tla/src/map/airs_rock_inside_vial_chest/cell_pictures.delta2.lz"
+.LField_AirsRockInsideVialChest_CELL_TILES:
+	.incbin "games/tla/src/map/airs_rock_inside_vial_chest/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_AirsRockInsideVialChest_SHAPES:
 	.incbin "games/tla/src/map/airs_rock_inside_vial_chest/shapes.table.lz"

@@ -4,15 +4,15 @@ Field_AnemosInnerSanctumEntrance:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_AnemosInnerSanctumEntrance, .LField_AnemosInnerSanctumEntrance_CELL_PICTURES
+	map_block Field_AnemosInnerSanctumEntrance, .LField_AnemosInnerSanctumEntrance_CELL_TILES
 	map_block Field_AnemosInnerSanctumEntrance, .LField_AnemosInnerSanctumEntrance_SHAPES
 	map_block Field_AnemosInnerSanctumEntrance, .LField_AnemosInnerSanctumEntrance_GRID
 	map_block Field_AnemosInnerSanctumEntrance, .LField_AnemosInnerSanctumEntrance_SHAPE_GRID
 	map_block Field_AnemosInnerSanctumEntrance, .LField_AnemosInnerSanctumEntrance_ANIMATION
 	map_block Field_AnemosInnerSanctumEntrance, .LField_AnemosInnerSanctumEntrance_BLEND
 	map_block Field_AnemosInnerSanctumEntrance, .LField_AnemosInnerSanctumEntrance_SCENE
-.LField_AnemosInnerSanctumEntrance_CELL_PICTURES:
-	.incbin "games/tla/src/map/anemos_inner_sanctum_entrance/cell_pictures.delta1.lz"
+.LField_AnemosInnerSanctumEntrance_CELL_TILES:
+	.incbin "games/tla/src/map/anemos_inner_sanctum_entrance/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_AnemosInnerSanctumEntrance_SHAPES:
 	.incbin "games/tla/src/map/anemos_inner_sanctum_entrance/shapes.table.lz"

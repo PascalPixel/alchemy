@@ -4,15 +4,15 @@ Field_TaopoSwampDrips:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 100, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_TaopoSwampDrips, .LField_TaopoSwampDrips_CELL_PICTURES
+	map_block Field_TaopoSwampDrips, .LField_TaopoSwampDrips_CELL_TILES
 	map_block Field_TaopoSwampDrips, .LField_TaopoSwampDrips_SHAPES
 	map_block Field_TaopoSwampDrips, .LField_TaopoSwampDrips_GRID
 	map_block Field_TaopoSwampDrips, .LField_TaopoSwampDrips_SHAPE_GRID
 	map_block Field_TaopoSwampDrips, .LField_TaopoSwampDrips_ANIMATION
 	map_block Field_TaopoSwampDrips, .LField_TaopoSwampDrips_BLEND
 	map_block Field_TaopoSwampDrips, .LField_TaopoSwampDrips_SCENE
-.LField_TaopoSwampDrips_CELL_PICTURES:
-	.incbin "games/tla/src/map/taopo_swamp_drips/cell_pictures.delta2.lz"
+.LField_TaopoSwampDrips_CELL_TILES:
+	.incbin "games/tla/src/map/taopo_swamp_drips/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_TaopoSwampDrips_SHAPES:
 	.incbin "games/tla/src/map/taopo_swamp_drips/shapes.table.lz"

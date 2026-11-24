@@ -422,7 +422,7 @@ Resource_DirectoryTable:
 	resource DefaultMapEntrances, Field_DefaultMapEntrances
 	resource WorldMapPaletteA, WorldMap_PaletteA
 	resource DefaultMapAnimation, Field_DefaultMapAnimation
-	resource DefaultCellPictureAttributes, Field_DefaultCellPictureAttributes
+	resource DefaultCellTilesAttributes, Field_DefaultCellTilesAttributes
 	resource WorldMapTilesA1, WorldMap_TilesA1
 	resource WorldMapTilesA2, WorldMap_TilesA2
 	resource WorldMapTilesA3, WorldMap_TilesA3
@@ -431,7 +431,7 @@ Resource_DirectoryTable:
 	resource WorldMapTilesA6, WorldMap_TilesA6
 	resource WorldMapPaletteB, WorldMap_PaletteB
 	resource WorldMapAnimationB, WorldMap_AnimationB
-	resource WorldMapCellPictureAttributesB, WorldMap_CellPictureAttributesB
+	resource WorldMapCellTilesAttributesB, WorldMap_CellTilesAttributesB
 	resource WorldMapTilesB1, WorldMap_TilesB1
 	resource WorldMapTilesB2, WorldMap_TilesB2
 	resource WorldMapTilesB3, WorldMap_TilesB3
@@ -440,7 +440,7 @@ Resource_DirectoryTable:
 	resource WorldMapTilesB6, WorldMap_TilesB6
 	resource WorldMapPaletteC, WorldMap_PaletteC
 	resource WorldMapAnimationC, WorldMap_AnimationC
-	resource WorldMapCellPictureAttributesC, WorldMap_CellPictureAttributesC
+	resource WorldMapCellTilesAttributesC, WorldMap_CellTilesAttributesC
 	resource WorldMapTilesC1, WorldMap_TilesC1
 	resource WorldMapTilesC2, WorldMap_TilesC2
 	resource WorldMapTilesC3, WorldMap_TilesC3
@@ -449,7 +449,7 @@ Resource_DirectoryTable:
 	resource WorldMapTilesC6, WorldMap_TilesC6
 	resource WorldMapPaletteD, WorldMap_PaletteD
 	resource WorldMapAnimationD, WorldMap_AnimationD
-	resource WorldMapCellPictureAttributesD, WorldMap_CellPictureAttributesD
+	resource WorldMapCellTilesAttributesD, WorldMap_CellTilesAttributesD
 	resource WorldMapTilesD1, WorldMap_TilesD1
 	resource WorldMapTilesD2, WorldMap_TilesD2
 	resource WorldMapTilesD3, WorldMap_TilesD3

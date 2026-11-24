@@ -4,15 +4,15 @@ Field_MarsLighthouseRoomMFlame:
 	map_layer 0, 0, 12, 12, -2, -2, 0x1f, 0x1f
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_MarsLighthouseRoomMFlame, .LField_MarsLighthouseRoomMFlame_CELL_PICTURES
+	map_block Field_MarsLighthouseRoomMFlame, .LField_MarsLighthouseRoomMFlame_CELL_TILES
 	map_block Field_MarsLighthouseRoomMFlame, .LField_MarsLighthouseRoomMFlame_SHAPES
 	map_block Field_MarsLighthouseRoomMFlame, .LField_MarsLighthouseRoomMFlame_GRID
 	map_block Field_MarsLighthouseRoomMFlame, .LField_MarsLighthouseRoomMFlame_SHAPE_GRID
 	map_block Field_MarsLighthouseRoomMFlame, .LField_MarsLighthouseRoomMFlame_ANIMATION
 	map_block Field_MarsLighthouseRoomMFlame
 	map_block Field_MarsLighthouseRoomMFlame, .LField_MarsLighthouseRoomMFlame_SCENE
-.LField_MarsLighthouseRoomMFlame_CELL_PICTURES:
-	.incbin "games/tla/src/map/mars_lighthouse_room_m_flame/cell_pictures.delta2.lz"
+.LField_MarsLighthouseRoomMFlame_CELL_TILES:
+	.incbin "games/tla/src/map/mars_lighthouse_room_m_flame/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_MarsLighthouseRoomMFlame_SHAPES:
 	.incbin "games/tla/src/map/mars_lighthouse_room_m_flame/shapes.table.lz"

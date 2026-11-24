@@ -1502,8 +1502,8 @@ void AirsRockInside_BlowGust(void) {
           GameFlag_Set(FLAG_TIGHTROPES_GUST_PATH_CLEARED);
           cell.x = FIELD_CELL(gust->x.fixed) + 64;
           cell.z = FIELD_CELL(gust->z.fixed);
-          MapGrid_CopyCellPictureIndicesRect(90, 25, cell.x + 1, cell.z, 1, 3);
-          MapGrid_CopyCellPictureIndicesRect(21, 88, 24, 89, 1, 2);
+          MapGrid_CopyCellTilesIndicesRect(90, 25, cell.x + 1, cell.z, 1, 3);
+          MapGrid_CopyCellTilesIndicesRect(21, 88, 24, 89, 1, 2);
           Map_CopyCellAttributeRect(23, 92, 2, 1, 23, 89);
           Map_CopyCellAttributeRect(18, 33, 2, 1, 23, 25);
         } else if (gMainRoutineState.next ==
@@ -1512,7 +1512,7 @@ void AirsRockInside_BlowGust(void) {
           cell.z = FIELD_CELL(gust->z.fixed - gust->y.fixed) + 64;
           if (hit == GUST_STOP_PAIRED_STAKES_NORTH_BARRIER) {
             GameFlag_Set(FLAG_PAIRED_STAKES_NORTH_BARRIER_BLOWN_AWAY);
-            MapGrid_CopyCellPictureIndicesRect(39, 82, cell.x, cell.z, 1, 1);
+            MapGrid_CopyCellTilesIndicesRect(39, 82, cell.x, cell.z, 1, 1);
             Map_CopyCellAttributeRect(39, 82, 1, 1, 38, 82);
             MapGrid_CopyCellAttributes(38, 19, 1, 1, 38, 18);
           } else {
@@ -2015,7 +2015,7 @@ void AirsRockInside_WakeHallStatue(void) {
   PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_ALL);
   PaletteFade_StartInterpolation(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
-  MapGrid_CopyCellPictureIndicesRect(64, 78, 18, 105, 3, 3);
+  MapGrid_CopyCellTilesIndicesRect(64, 78, 18, 105, 3, 3);
   MapGrid_SetShake(5, 7, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   for (i = 0; i != BLEND_WEIGHT_MAX * 2; i++) {
@@ -2079,13 +2079,13 @@ void AirsRockInside_OpenTabletRoomDoor(void) {
   Sound_Play(SE_THUMP);
   width = 1;
   height = 2;
-  MapGrid_CopyCellPictureIndicesRect(65, 76, 19, 92, width, height);
+  MapGrid_CopyCellTilesIndicesRect(65, 76, 19, 92, width, height);
   FieldEvent_Wait(8);
-  MapGrid_CopyCellPictureIndicesRect(66, 76, 19, 92, width, height);
+  MapGrid_CopyCellTilesIndicesRect(66, 76, 19, 92, width, height);
   FieldEvent_Wait(8);
-  MapGrid_CopyCellPictureIndicesRect(67, 76, 19, 92, width, height);
+  MapGrid_CopyCellTilesIndicesRect(67, 76, 19, 92, width, height);
   FieldEvent_Wait(8);
-  MapGrid_CopyCellPictureIndicesRect(62, 76, 19, 92, width, height);
+  MapGrid_CopyCellTilesIndicesRect(62, 76, 19, 92, width, height);
   FieldEvent_Wait(15);
   Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = 0;
   Actor_GetById(gMainRoutineState.leaderActorId)->speedLimit =
@@ -2327,7 +2327,7 @@ void AirsRockInside_WakeVialChestStatue(void) {
   PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_ALL);
   PaletteFade_StartInterpolation(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
-  MapGrid_CopyCellPictureIndicesRect(68, 84, 12, 77, 3, 3);
+  MapGrid_CopyCellTilesIndicesRect(68, 84, 12, 77, 3, 3);
   MapGrid_SetShake(5, 7, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   for (i = 0; i != BLEND_WEIGHT_MAX * 2; i++) {
@@ -2514,7 +2514,7 @@ extern u32 gOrbitSpark_Script[];
     Map_CopyCellAttributeRect(groundColumn, 17, 1, 1, 8, 19);                  \
     Map_CopyCellAttributeRect(groundColumn, 17, 1, 1, 24, 19);                 \
     MapGrid_CopyCellsTo(pictureColumn, 17, 72, 19, 1, 2);                      \
-    MapGrid_CopyCellPictureIndicesRect(pictureColumn, 17, 88, 19, 1, 2);       \
+    MapGrid_CopyCellTilesIndicesRect(pictureColumn, 17, 88, 19, 1, 2);         \
   }
 
 /// Nothing visible of its own: as Reveal fades, the Reveal tablet room's two

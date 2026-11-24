@@ -579,7 +579,7 @@ void WorldMap_LeaveShip(void) {
   s32 shore = 0;
   s32 blocked;
   struct WorldMapBlock *block;
-  struct WorldMapBlocks *blocks = (struct WorldMapBlocks *)gCellPictures;
+  struct WorldMapBlocks *blocks = (struct WorldMapBlocks *)gCellTiles;
   u8 flags;
 
   position[0] = ship->x.fixed;

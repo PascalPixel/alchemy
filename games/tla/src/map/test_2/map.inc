@@ -4,15 +4,15 @@ Field_Test2:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Test2, .LField_Test2_CELL_PICTURES
+	map_block Field_Test2, .LField_Test2_CELL_TILES
 	map_block Field_Test2, .LField_Test2_SHAPES
 	map_block Field_Test2, .LField_Test2_GRID
 	map_block Field_Test2, .LField_Test2_SHAPE_GRID
 	map_block Field_Test2
 	map_block Field_Test2
 	map_block Field_Test2, .LField_Test2_SCENE
-.LField_Test2_CELL_PICTURES:
-	.incbin "games/tla/src/map/empty_map/cell_pictures.delta0.lz"
+.LField_Test2_CELL_TILES:
+	.incbin "games/tla/src/map/empty_map/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_Test2_SHAPES:
 	.incbin "games/tla/src/map/contigo/shapes.table.lz"

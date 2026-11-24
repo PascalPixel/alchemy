@@ -688,11 +688,11 @@ s32 Scene_PrepareMap(void) {
   s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_ATTEKA_INLET && GameFlag_Get(FLAG_REUNION_AT_CONTIGO)) {
-    MapGrid_CopyCellPictureIndicesRect(54, 47, 4, 15, 10, 4);
-    MapGrid_CopyCellPictureIndicesRect(54, 38, 73, 7, 10, 4);
-    MapGrid_CopyCellPictureIndicesRect(54, 43, 21, 55, 10, 3);
-    MapGrid_CopyCellPictureIndicesRect(65, 43, 21, 20, 10, 3);
-    MapGrid_CopyCellPictureIndicesRect(4, 47, 4, 50, 10, 3);
+    MapGrid_CopyCellTilesIndicesRect(54, 47, 4, 15, 10, 4);
+    MapGrid_CopyCellTilesIndicesRect(54, 38, 73, 7, 10, 4);
+    MapGrid_CopyCellTilesIndicesRect(54, 43, 21, 55, 10, 3);
+    MapGrid_CopyCellTilesIndicesRect(65, 43, 21, 20, 10, 3);
+    MapGrid_CopyCellTilesIndicesRect(4, 47, 4, 50, 10, 3);
   }
   return 0;
 }

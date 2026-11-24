@@ -473,7 +473,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
 
   // Off the switch's middle, 8 pixels square from (676, 788).
   if ((u32)(leader->x.part[0].integer - 676) > 7 || z < 788 || z >= 796) {
-    MapGrid_CopyCellPictureIndicesRect(53, 50, 42, 49, 1, 1);
+    MapGrid_CopyCellTilesIndicesRect(53, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
     GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH);
     leader->motionFlags |= ACTOR_FOLLOWS_TERRAIN;
@@ -483,7 +483,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_Wait(5);
-    MapGrid_CopyCellPictureIndicesRect(52, 50, 42, 49, 1, 1);
+    MapGrid_CopyCellTilesIndicesRect(52, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(52, 117, 41, 117, 3, 5);
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH);
     Sound_Play(SE_RATTLE);

@@ -16,9 +16,9 @@
 #define Ram_MapCollision FIXED_ADDRESS((u8 *), 0x0202c000, gMapGridShapes)
 #define Ram_MapScenePoints FIXED_ADDRESS((u8 *), 0x0202e008, gMapScenePoints)
 #define Ram_BgTileBuffer FIXED_ADDRESS((u8 *), 0x02038000, gBgTileBuffer)
-/// The cell picture table (gCellPictures), as MapGrid_RenderCellPictureRow
+/// The cell tiles table (gCellTiles), as MapGrid_RenderCellTilesRow
 /// reads it.
-#define Ram_MapBlocks FIXED_ADDRESS((u8 *), 0x02020000, gCellPictures)
+#define Ram_MapBlocks FIXED_ADDRESS((u8 *), 0x02020000, gCellTiles)
 #define Ram_MapShapeGrid FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid)
 
 /// The sound driver's mixer, SoundMainRAM, 932 bytes. m4aSoundInit copies
@@ -56,10 +56,10 @@
 /// the map header's shapes and the field's actor cells read.
 extern u8 gMapShapeGrid[];
 
-/// The layout's cell pictures, 32 KB of EWRAM at 0x02020000: each cell picture
+/// The layout's cell tiles, 32 KB of EWRAM at 0x02020000: each cell's tiles
 /// 8 bytes, its top two tile entries, then its bottom two. MapGrid_LoadMap
 /// decodes them in.
-extern u32 gCellPictures[];
+extern u32 gCellTiles[];
 
 /// Called once by the next VBlank, which clears it first; the world map sets it
 /// to show its next picture.

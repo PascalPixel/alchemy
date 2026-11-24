@@ -4,15 +4,15 @@ Field_IzumoRuinsSecondRoom:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_IzumoRuinsSecondRoom, .LField_IzumoRuinsSecondRoom_CELL_PICTURES
+	map_block Field_IzumoRuinsSecondRoom, .LField_IzumoRuinsSecondRoom_CELL_TILES
 	map_block Field_IzumoRuinsSecondRoom, .LField_IzumoRuinsSecondRoom_SHAPES
 	map_block Field_IzumoRuinsSecondRoom, .LField_IzumoRuinsSecondRoom_GRID
 	map_block Field_IzumoRuinsSecondRoom, .LField_IzumoRuinsSecondRoom_SHAPE_GRID
 	map_block Field_IzumoRuinsSecondRoom, .LField_IzumoRuinsSecondRoom_ANIMATION
 	map_block Field_IzumoRuinsSecondRoom
 	map_block Field_IzumoRuinsSecondRoom, .LField_IzumoRuinsSecondRoom_SCENE
-.LField_IzumoRuinsSecondRoom_CELL_PICTURES:
-	.incbin "games/tla/src/map/izumo_ruins_second_room/cell_pictures.delta1.lz"
+.LField_IzumoRuinsSecondRoom_CELL_TILES:
+	.incbin "games/tla/src/map/izumo_ruins_second_room/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_IzumoRuinsSecondRoom_SHAPES:
 	.incbin "games/tla/src/map/izumo_ruins_second_room/shapes.table.lz"

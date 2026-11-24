@@ -36,6 +36,7 @@
 #include "system/math_table.h"
 #include "system/ram_buffer.h"
 #include "system/scene.h"
+#include "system/point.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -297,14 +298,14 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 extern s32 gPushLeaderSteps[];
 
-s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Point *position);
 
 /// Unused: the leader pushes what stands in front of him a cell on, unless
 /// something solid is beyond it or on top of it, the ground beyond refuses it
 /// or it is still moving, as The Broken Seal's pushing scenes do; nothing here
 /// calls it.
 UNUSED void PushedActor_AdvancePair(void) {
-  struct FieldPosition targetPosition;
+  struct Point targetPosition;
   struct Actor *leader;
   struct Actor *pillar;
   struct Actor *blockingActor;

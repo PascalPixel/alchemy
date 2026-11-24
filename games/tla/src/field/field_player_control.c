@@ -72,9 +72,9 @@ enum FieldShortcutKind {
 /// the run, the wading, the footprints or the steered velocity, a script
 /// command of its own, so both stay.
 s32 Actor_UpdateWalkingControl(struct Actor *actor) {
-  struct FieldPosition position;
-  struct FieldPosition testPosition;
-  struct FieldPosition contact;
+  struct Point position;
+  struct Point testPosition;
+  struct Point contact;
   s16 angleOffsets[22];
   s32 collision;
   s32 pushed;
@@ -218,7 +218,7 @@ push_objects:
                                   &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(toFIXED(1) / 4, direction,
-                                    (struct FieldPosition *)&other->x.fixed);
+                                    (struct Point *)&other->x.fixed);
               other->targetX = ACTOR_NO_TARGET;
               other->targetY = ACTOR_NO_TARGET;
               other->targetZ = ACTOR_NO_TARGET;
@@ -357,10 +357,8 @@ s32 Field_CheckConfiguredKeys(void) {
 /// (16.16 pixels) with radii radiusA and radiusB (pixels); -1 otherwise.
 s32 Field_CheckSpheresOverlap(FIXED *firstPosition, s32 radiusA,
                               FIXED *secondPosition, s32 radiusB) {
-  const struct FieldPosition *firstPoint =
-      (const struct FieldPosition *)firstPosition;
-  const struct FieldPosition *secondPoint =
-      (const struct FieldPosition *)secondPosition;
+  const struct Point *firstPoint = (const struct Point *)firstPosition;
+  const struct Point *secondPoint = (const struct Point *)secondPosition;
   const s32 *firstCoordinate = &firstPoint->x;
   const s32 *secondCoordinate = &secondPoint->x;
   s32 dx = FIXEDtoINT(*firstCoordinate++ - *secondCoordinate++);
@@ -415,9 +413,9 @@ extern struct MapCell gMapGridCellBuffer[];
 /// running, sliding around walls, pushing movable actors, turning, playing the
 /// matching animation and leaving footprints.
 s32 Actor_UpdatePlayerControl(struct Actor *actor) {
-  struct FieldPosition position;
-  struct FieldPosition testPosition;
-  struct FieldPosition contact;
+  struct Point position;
+  struct Point testPosition;
+  struct Point contact;
   s16 angleOffsets[22];
   s32 collision;
   s32 pushed;
@@ -584,7 +582,7 @@ push_objects:
                                   &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(toFIXED(1) / 4, direction,
-                                    (struct FieldPosition *)&other->x.fixed);
+                                    (struct Point *)&other->x.fixed);
               other->targetX = ACTOR_NO_TARGET;
               other->targetY = ACTOR_NO_TARGET;
               other->targetZ = ACTOR_NO_TARGET;
@@ -650,7 +648,7 @@ counted:
     actor->velocityX = collision;
     actor->velocityZ = collision;
     Vector_AddPolarOffset(speed, (u16)heading,
-                          (struct FieldPosition *)&actor->velocityX);
+                          (struct Point *)&actor->velocityX);
     if (actor->timer != 0)
       actor->timer--;
   }

@@ -20,7 +20,7 @@
 
 struct Actor;
 struct FieldEffect;
-struct FieldPosition;
+struct Point;
 struct FieldSprite;
 struct Particle;
 struct ParticleSprite;

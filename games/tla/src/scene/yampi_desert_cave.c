@@ -40,7 +40,7 @@
 #include "system/task.h"
 #include "text/msg_ids.h"
 
-s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Point *position);
 
 #include "shared/tables.h"
 

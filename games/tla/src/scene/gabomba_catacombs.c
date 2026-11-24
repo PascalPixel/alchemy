@@ -33,6 +33,7 @@
 #include "field/scene_tables.h"
 #include "system/frame.h"
 #include "system/scene.h"
+#include "system/point.h"
 #include "field/event_inline.h"
 #include "scene/event_layer.h"
 #include "field/field.h"
@@ -54,7 +55,7 @@
 #define FLAG_GABOMBA_BESTOWED_POWER 0x9ce
 
 void Actor_StartScript(struct Actor *actor, const void *script);
-s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Point *position);
 void Event_End(void);
 
 extern u32 gGabombaCatacombs_SplashScript[];
@@ -527,7 +528,7 @@ void GabombaCatacombs_FreezeStreamPuddle(void) {
 /// a wall or post lies just south of him or diagonally ahead.
 void GabombaCatacombs_DriftWithStream(struct Actor *actor, s32 dz) {
   struct Actor *camera;
-  struct FieldPosition position;
+  struct Point position;
 
   camera = gFieldState->camera;
 

@@ -45,6 +45,7 @@
 #include "scene/mars_lighthouse_aerie.h"
 #include "scene/scene.h"
 #include "system/scene.h"
+#include "system/point.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

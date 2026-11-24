@@ -49,14 +49,13 @@
 #define SAME_CELL(a, b) ((((a) - (b) + toFIXED(8)) >> 20) == 0)
 
 struct Actor;
-struct FieldPosition;
+struct Point;
 
 /// The collision at an actor's probe point (tile_animation.c): 2 for a cell
 /// with no tile, 1 a rise of more than 8 pixels, -1 a drop of more than 12,
 /// else 0.
-s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
-s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
-                                struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Point *position);
+s32 MapGrid_CheckCollisionAbove(struct Actor *actor, struct Point *position);
 
 /// The map converter copied to RAM (Render_ConvertMapCode), which joins a
 /// decoded map's planes into its cell words.

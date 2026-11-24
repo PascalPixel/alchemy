@@ -281,7 +281,7 @@ extern u16 gPushKinds[];
 
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *number, s32 *kind);
 
-s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Point *position);
 
 void Actor_StopAtPushTarget(struct Actor *actor);
 

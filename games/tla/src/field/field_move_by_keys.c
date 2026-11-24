@@ -48,7 +48,7 @@
 /// that is not MAP_CELL_CLIMBABLE, or onto ground too high (up) or too low
 /// (down), and records the held keys in the field state. Returns 1.
 s32 Actor_MoveByKeys(struct Actor *actor) {
-  struct FieldPosition position;
+  struct Point position;
   struct MapCell *sourceCell;
   struct MapCell *destinationCell;
   struct FieldState *state;
@@ -138,7 +138,7 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
 /// hand: the pad moves him from node to node along it, a half cell a step, and
 /// sets the rope swinging.
 s32 Actor_CrossRope(struct Actor *actor) {
-  struct FieldPosition position;
+  struct Point position;
   s32 collisionFlags;
   struct Sprite *sprite;
   struct RopeState *rope;
@@ -269,7 +269,7 @@ static inline void TurnToward(struct Actor *actor, u16 angle) {
 /// SC_TIGHTROPE (LEADER_MOVEMENT_TIGHTROPE): Actor_CrossRope on a tightrope,
 /// which the leader walks, the rope wobbling under him.
 s32 Actor_CrossTightrope(struct Actor *actor) {
-  struct FieldPosition position;
+  struct Point position;
   s32 collisionFlags;
   struct Sprite *sprite;
   s32 animation;
@@ -421,10 +421,10 @@ s32 Sand_CheckEndKeys(struct Actor *actor) {
 /// Psynergy, moved by the direction pad on a field map, leaving puffs of sand;
 /// up against a face, or down at a drop, he climbs it as sand.
 s32 Actor_MoveAsSand(struct Actor *actor) {
-  struct FieldPosition position;
-  struct FieldPosition testPosition;
+  struct Point position;
+  struct Point testPosition;
   s16 angleOffsets[10];
-  struct FieldPosition spawn;
+  struct Point spawn;
   s32 collision;
   s32 heading;
   FIXED groundHere;
@@ -517,7 +517,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       actor->velocityX = 0;
       actor->velocityZ = 0;
       Vector_AddPolarOffset(speed, (u16)heading,
-                            (struct FieldPosition *)&actor->velocityX);
+                            (struct Point *)&actor->velocityX);
       actor->velocityY = -actor->velocityZ;
       actor->velocityZ = 0;
     }
@@ -671,7 +671,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       actor->velocityX = 0;
       actor->velocityZ = 0;
       Vector_AddPolarOffset(speed, (u16)heading,
-                            (struct FieldPosition *)&actor->velocityX);
+                            (struct Point *)&actor->velocityX);
       wakeTimer = &actor->wakeTimer;
       if (*wakeTimer != 0)
         (*wakeTimer)--;
@@ -721,9 +721,9 @@ done:
 /// the event state and leaves a puff of sand (SPRITE_SAND_PUFF) behind it every
 /// fifth frame it moves.
 s32 Actor_MoveAsSandOnWorldMap(struct Actor *actor) {
-  struct FieldPosition position;
-  struct FieldPosition leftPosition;
-  struct FieldPosition rightPosition;
+  struct Point position;
+  struct Point leftPosition;
+  struct Point rightPosition;
   s16 angleOffsets[22];
   s32 collision;
   s32 angle;
@@ -839,8 +839,7 @@ update_object:
                         Iwram_MulFX(actor->velocityZ, actor->velocityZ));
     actor->velocityX = 0;
     actor->velocityZ = 0;
-    Vector_AddPolarOffset(speed, (u16)angle,
-                          (struct FieldPosition *)&actor->velocityX);
+    Vector_AddPolarOffset(speed, (u16)angle, (struct Point *)&actor->velocityX);
     if (actor->wakeTimer != 0)
       actor->wakeTimer--;
   }

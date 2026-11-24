@@ -822,8 +822,8 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
 /// side, and within limit pixels of home. After SCRIPT_WANDER_TRIES failed
 /// tries it turns around and waits for the next frame.
 s32 Actor_Wander(struct Actor *actor) {
-  struct FieldPosition candidatePosition;
-  struct FieldPosition probePosition;
+  struct Point candidatePosition;
+  struct Point probePosition;
   s32 minimumDistance;
   const s32 *operands;
   s32 distanceRange;
@@ -901,8 +901,8 @@ s32 Actor_Wander(struct Actor *actor) {
 /// ground around the point, while it is within limit pixels of home; outside
 /// that, or when no point works, it heads back towards home.
 s32 ActorScript_WanderNearHome(struct Actor *actor) {
-  struct FieldPosition candidatePosition;
-  struct FieldPosition probePosition;
+  struct Point candidatePosition;
+  struct Point probePosition;
   s32 minimumDistance;
   const s32 *operands;
   s32 distanceRange;
@@ -1203,9 +1203,9 @@ extern const s16 gWorldMap_KeyHeadings[16];
 /// SC_HOVER: the leader hovering (the Hover Psynergy), moved by the direction
 /// pad over what lies below.
 s32 Actor_UpdateHoverControl(struct Actor *actor) {
-  struct FieldPosition position;
-  struct FieldPosition testPosition;
-  struct FieldPosition contact;
+  struct Point position;
+  struct Point testPosition;
+  struct Point contact;
   s16 angleOffsets[22];
   s32 collision;
   s16 heading;

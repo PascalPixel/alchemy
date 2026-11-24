@@ -1156,8 +1156,7 @@ s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height) {
 
 /// As MapGrid_CheckCollisionAt for the point position (16.16 pixels, read as
 /// its whole-pixel halves) on the actor's layer, against its ground height.
-s32 MapGrid_CheckCollision(struct Actor *actor,
-                           struct FieldPosition *position) {
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Point *position) {
   s32 x = ((struct FieldCoordinate *)&position->x)->part[0].integer;
   s32 z = ((struct FieldCoordinate *)&position->z)->part[0].integer;
   struct MapState *map = Ram_HeapSlots->mapGrid;
@@ -1195,8 +1194,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 
 /// As MapGrid_CheckCollision, against the actor's height and with no -1: 2 on
 /// a wall, 1 when the ground rises more than 8 pixels above it, else 0.
-s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
-                                struct FieldPosition *position) {
+s32 MapGrid_CheckCollisionAbove(struct Actor *actor, struct Point *position) {
   s32 x = ((struct FieldCoordinate *)&position->x)->part[0].integer;
   s32 z = ((struct FieldCoordinate *)&position->z)->part[0].integer;
   struct MapState *map = Ram_HeapSlots->mapGrid;

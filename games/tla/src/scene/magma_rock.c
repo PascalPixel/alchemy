@@ -38,6 +38,7 @@
 #include "system/main_routine_state.h"
 #include "field/field_coordinate.h"
 #include "system/scene.h"
+#include "system/point.h"
 #include "field/map_grid.h"
 #include "field/field.h"
 #include "field/event_commands.h"

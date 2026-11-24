@@ -3,9 +3,10 @@
 These are the words the pages about The Lost Age share. Each entry says
 what the word means and links to the page that explains it.
 
-An entry's `Evidence:` line says where its word comes from. That is Camelot's
-own word where Camelot has one for the thing, else the word programmers of
-the time used, else plain English.
+A word is the one a modern engineer who knows the Game Boy Advance, or a
+player who knows the game in English, follows without a gloss. An entry's
+Sources line says what the game itself, Sega's SGL manual and GBATEK each
+call the thing, or none where one has no word for it.
 
 ## Golden Sun
 
@@ -16,7 +17,9 @@ parts. The first is The Broken Seal (2001), whose builds are named `tbs`.
 Its sequel is The Lost Age (2002), which these pages are about and whose
 builds are named `tla`.
 
-Evidence: Camelot: the games' titles.
+Sources: the game: "Transfer data from Golden Sun?"; the Japanese text's
+黄金の太陽~開かれし封印~ and 失われし時代; the credits' "GOLDEN SUN: THE LOST AGE". SGL: none.
+GBATEK: none.
 
 ### Camelot
 
@@ -24,7 +27,7 @@ Camelot Software Planning made both games, and Nintendo published them. The
 game opens on Nintendo's logo and then Camelot's. Their source was never
 released.
 
-Evidence: Camelot: the credits.
+Sources: the game: the credits' "CAMELOT". SGL: none. GBATEK: none.
 
 ### The party
 
@@ -36,7 +39,8 @@ In a battle the first four fight and the rest wait in reserve, ready to
 step in when the front line falls. Each of them is a [unit](#unit)
 ([Game rules](src/game/README.md#the-party-and-its-coins)).
 
-Evidence: Camelot: the game's text says party throughout.
+Sources: the game: "joined your party" (なかま, and once パーティ). SGL: none.
+GBATEK: none.
 
 ### The places, in story order
 
@@ -46,7 +50,8 @@ Garoh and Kibombo, out to sea and on to Lemuria, then to Jupiter
 Lighthouse, Magma Rock and Prox, and up Mars Lighthouse, where the game
 ends. Pages list places in that order.
 
-Evidence: Camelot: the area names in the game's text.
+Sources: the game: the area names, such as "Jupiter Lighthouse". SGL: none.
+GBATEK: none.
 
 ### Prologue
 
@@ -57,8 +62,8 @@ Kraden come out of Venus Lighthouse, Alex sends them west, and they cross
 the Suhalla Gate on their way to Idejima. The title then plays its intro once more
 (`TITLE_FROM_IDEJIMA`) ([Scenes](src/scene/README.md)).
 
-Evidence: the game: "Prologue from Book One"; Camelot: The Broken Seal's
-debug scene label PLOGV00.
+Sources: the game: "Prologue from Book One" (ぜんさくのあらすじ, the previous game's
+synopsis). SGL: none. GBATEK: none.
 
 ### Psynergy and PP
 
@@ -71,7 +76,8 @@ and Growth, and some on the field, such as Move, Lash and Reveal
 Each use costs PP, Psynergy Points: Quake costs 4, Cure 3 and Move 2. PP
 comes back as the party walks, and a night at an inn restores it.
 
-Evidence: Camelot: the game's text ("Your Psynergy Points.").
+Sources: the game: "Psynergy", "Psynergy Points" (エナジー, and EP for PP). SGL:
+none. GBATEK: none.
 
 ### The four elements
 
@@ -80,7 +86,8 @@ The four elements are Venus (earth), Mercury (water), Mars (fire) and Jupiter
 Djinni and summon belongs to one. Felix is Venus, Jenna Mars, Sheba Jupiter
 and Piers Mercury ([Game rules](src/game/README.md#element-levels)).
 
-Evidence: Camelot: the game's text.
+Sources: the game: "Venus", "Mercury", "Mars" and "Jupiter" (ぞくせい for an
+element). SGL: none. GBATEK: none.
 
 ### Power and Resist
 
@@ -90,7 +97,8 @@ and healing of what the fighter casts in that element. Resist lowers the
 damage it takes from it
 ([Battles](src/battle/README.md#the-element-multiplier)).
 
-Evidence: Camelot: the Status screen's labels.
+Sources: the game: the Status screen's "Power" and "Resist" (パワー, たいせい). SGL:
+none. GBATEK: none.
 
 ### Djinn
 
@@ -102,7 +110,7 @@ helps decide its class: Echo, a Venus Djinni, gives 9 HP, 4 PP and 3
 Attack. Unleashed in battle, it does its own move and goes on standby, ready
 for a [summon](#summons) ([Game rules](src/game/README.md#djinn-and-classes)).
 
-Evidence: Camelot: the game's text.
+Sources: the game: "Djinn", "Djinni" (ジン). SGL: none. GBATEK: none.
 
 ### Summons
 
@@ -115,7 +123,7 @@ element: Zagan takes one Venus and one Mars. The Djinn a summon spent then
 need a few [turns](#turns-and-actions) to recover
 ([Battles](src/battle/README.md#commands-and-ability-ids)).
 
-Evidence: Camelot: the game's text.
+Sources: the game: "Summon" (しょうかん). SGL: none. GBATEK: none.
 
 ## The project
 
@@ -130,7 +138,7 @@ shows one). Sometimes a line is written in an unusual way where a plainer
 one would do the same, because only that way builds the same bytes
 ([Welcome](../README.md)).
 
-Evidence: plain English; the project's own words.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### The original
 
@@ -138,7 +146,7 @@ The original is the game as [Camelot](#camelot) shipped it: the cartridge of
 each [edition](#editions). The source reproduces each one byte for byte,
 bugs included.
 
-Evidence: plain English; the project's own word.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Editions
 
@@ -149,7 +157,7 @@ than their text: when the cursor on the [map screen](#map-screen) reaches a
 new marker, the Japanese edition draws its name at once, and the others six
 [frames](#frame) later.
 
-Evidence: plain English; the project's own word.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### pret
 
@@ -160,7 +168,7 @@ named piece of code is spelled like `Battle_Run`, a value the whole
 game shares starts with `g`, like `gTasks`, and bugs are marked `BUG` and
 `BUGFIX`.
 
-Evidence: the group's own name.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### BUG, BUGFIX and UBFIX
 
@@ -177,7 +185,7 @@ does not say what it holds then. On the cartridge it came out one
 particular way, and the source keeps that. The comment marks the spot, and
 a version that leaves nothing open sits beside it behind `UBFIX`.
 
-Evidence: plain English, in pret's markers.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Unused
 
@@ -190,7 +198,7 @@ game ever asks for.
 
 What only the [debug menus](#debug-menus) reach is not unused.
 
-Evidence: plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Module header
 
@@ -201,22 +209,24 @@ of the game learns the numbers of the [sequences](#sequence), such as
 `SEQUENCE_BATTLE`. A header sits at the same path under `include/` as its
 code has under `src/`: `src/system/system.c` has `include/system/system.h`.
 
-Evidence: plain English; the project's own word.
+Sources: the game: none. SGL: ヘッダファイル, its `sgl.h`. GBATEK: none.
 
 ### Object
 
 For readers of the code: the game is not built in one go. Each file of the
 source is turned into bytes separately, and the result is called an object.
 The objects are then laid end to end to make the cartridge. The word has
-nothing to do with the people and things in a scene, which are
-[actors](#actor).
+nothing to do with the things on the field that the game's text calls
+objects, which are [actors](#actor), nor with GBATEK's OBJ, which is a
+[sprite](#sprite-and-oam).
 
 A very long file is written as several smaller parts beside it, each named
 for the file and the part, and still makes one object. The shops are one:
 `src/shop/shop.c` gathers the inn, buying, selling and the forge from
 `src/shop/shop_*.c`.
 
-Evidence: plain English; the GNU tools' "object file".
+Sources: the game: none. SGL: オブジェクト (`OBJECT`), a placed model. GBATEK:
+"OBJ", a sprite.
 
 ## The system
 
@@ -228,8 +238,8 @@ the battles and the menus all use it and none of them could run without it.
 It is one of the code's four divisions, with Field, Battle and Interface
 ([System](system.md)).
 
-Evidence: Camelot: the credits, "Programming", then "System", "Battle",
-"Field" and "User Interface".
+Sources: the game: the credits' "Programming", then "System". SGL: none.
+GBATEK: none.
 
 ### Main routine
 
@@ -242,8 +252,7 @@ round it is a whole sequence: the loop that goes round once a
 [frame](#frame) is inside [`wait()`](#wait)
 ([System](system.md#the-main-routine)).
 
-Evidence: tradition: メインルーチン, the period's word for the code that runs
-outside the interrupts.
+Sources: the game: none. SGL: メインループ, the loop run once a frame. GBATEK: none.
 
 ### Sequence
 
@@ -257,9 +266,10 @@ name: it is asked for by naming the scene to walk around. The Title and the
 File Screen are scenes, so the field sequence runs them too, and a menu or
 a shop is a function called from inside a sequence. Only one sequence runs
 at a time
-([System](system.md#the-main-routine)).
+([System](system.md#the-main-routine)). The sound driver's sequence is
+another thing, a piece of music.
 
-Evidence: tradition: ゲームシーケンス.
+Sources: the game: none. SGL: シーケンス, a piece of music. GBATEK: none.
 
 ### Super Lucky Dice
 
@@ -270,7 +280,7 @@ Seal does not have. Like the other two, it keeps the last two background
 palettes safe while it runs and puts them back after
 ([Field code](src/field/README.md#lucky-dice-lucky-wheels-and-super-lucky-dice)).
 
-Evidence: the game: "Super Lucky Dice".
+Sources: the game: "Super Lucky Dice" (マッチングダイス). SGL: none. GBATEK: none.
 
 ### Field sequence
 
@@ -280,24 +290,24 @@ until Felix steps through a door. On the way it answers whatever the leader
 runs into, the [field requests](#field-request)
 ([Field code](src/field/README.md#the-field-sequence-serves-requests)).
 
-Evidence: Camelot: the credits' "Field"; tradition: sequence.
+Sources: the game: the credits' "Field". SGL: none. GBATEK: none.
 
 ### Transition and next sequence
 
 A transition is the handover from one [sequence](#sequence) to the next.
 Stepping through a door is one, and so is going into a battle. The sequence
 that is ending writes down what should run next, a scene or another
-sequence, in the [main routine's work](#main-routines-work), and the
+sequence, in the [main routine's state](#main-routines-state), and the
 [main routine](#main-routine) starts it. The word is kept for this
 handover. The wipe or fade the player sees while it happens is a screen
 transition, `ScreenTransition_` in the code, which is only the drawing
 ([System code](src/system/README.md#the-main-routine)).
 
-Evidence: tradition: シーケンス遷移.
+Sources: the game: none. SGL: none. GBATEK: none.
 
-### Main routine's work
+### Main routine's state
 
-`gMainRoutineWork` is the block of memory that outlives every
+`gMainRoutineState` is the block of memory that outlives every
 [sequence](#sequence): one C struct in a global. What a battle or a scene
 set up for itself is cleared away when it ends, but this block is left
 alone, so the next sequence can read it. It holds what runs next, who is in
@@ -309,7 +319,7 @@ snapshot of where a scene's [actors](#actor) stand, and a save file keeps
 all four
 ([System](system.md#saving)).
 
-Evidence: tradition: work, named for its owner, the main routine.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Frame
 
@@ -320,7 +330,8 @@ calls [`wait()`](#wait) for 40 frames before she goes on: two thirds of a
 second, when nothing slows the game down
 ([System code](src/system/README.md#the-frame-loop)).
 
-Evidence: tradition: フレーム, one pass of a game's processing.
+Sources: the game: none. SGL: フレーム, one picture shown. GBATEK: "Frame 0-1", a
+bitmap buffer.
 
 ### Wait
 
@@ -334,7 +345,8 @@ colours one shade toward violet, waits ten frames, and goes round again
 until none has changed. So a scene can be written top to bottom, in the
 order things happen ([System](system.md#waiting-and-tasks)).
 
-Evidence: tradition: WAIT, the period's word for it.
+Sources: the game: none. SGL: `slSynch`, which waits for the next picture
+(次のビデオ表示を待つ). GBATEK: none.
 
 ### Task
 
@@ -349,7 +361,8 @@ and a higher rank runs earlier in the frame. A few tasks are called by the
 room for 24
 ([System code](src/system/README.md#the-task-runner)).
 
-Evidence: tradition: タスク and its 実行関数.
+Sources: the game: none. SGL: イベント (`EVENT`) with its 実行関数 is this thing; its
+タスク is the second processor's. GBATEK: none.
 
 ### VBlank
 
@@ -359,7 +372,7 @@ breaks off whatever the game is doing and runs one small piece of its code.
 That piece puts the finished [frame](#frame) on screen, prepares the sound
 and reads the buttons ([System code](src/system/README.md#what-vblank-does)).
 
-Evidence: tradition: V ブランク, the hardware's own name.
+Sources: the game: none. SGL: ブランキング. GBATEK: "V-Blank", "VBlank".
 
 ### Slowdown
 
@@ -372,7 +385,7 @@ not, because the sound is prepared at every [VBlank](#vblank) whether the
 frame is ready or not. So the tune keeps its speed while the image on
 screen falls behind it ([System code](src/system/README.md#what-vblank-does)).
 
-Evidence: tradition: 処理落ち.
+Sources: the game: none. SGL: 処理落ち. GBATEK: none.
 
 ### Fixed-point number
 
@@ -383,26 +396,30 @@ lower 16 bits the decimal part. `toFIXED(0.8)` writes one, `FIXED_ONE` is
 on. In the code its type is `FIXED`. A routine that takes such numbers
 where its plain form takes whole pixels ends in `FX`
 (`Actor_SetPositionFX`), and angles are counted the same way, 65,536 to the
-turn, written `DEGtoANG(90)`. The words are those of the reference for SGL,
-Sega’s library for the Saturn, whose fixed-point, angle and matrix design this
-code matches; the current matrix and its `Matrix_Push`, `Matrix_RotateX` and
-`Matrix_Translate` are named the same way.
+turn, written `DEGtoANG(90)`. `FIXED`, `toFIXED`, `DEGtoANG` and the `FX`
+suffix are the words of the reference for SGL, Sega’s library for the Saturn,
+whose fixed-point, angle and matrix design this code matches; the current
+matrix's `Matrix_Push`, `Matrix_RotateX` and `Matrix_Translate` are modelled
+on its `slPushMatrix`, `slRotX` and `slTranslate`.
 
-Evidence: SGL's FIXED, toFIXED and the FX suffix; plain English: fixed-point
-number.
+Sources: the game: none. SGL: 固定小数点 (`FIXED`), with `toFIXED`, `DEGtoANG` and
+the FX suffix. GBATEK: "Integer portion" and "Fractional portion".
 
-### Work
+### State
 
-A work is the block of memory where one part of the game keeps what it is
-working on while it runs. It is named `g<Owner>Work` where the code has
-named it. The battle has one and the menus have one, and each is found
-again through a [heap slot](#heap-slot). The
-[main routine's](#main-routines-work) is the one that is kept apart and
-outlives the rest
+A system's state is the block of memory it keeps its running values in. It
+is set up when the system starts and kept for as long as the system runs:
+one C struct, `struct <Owner>State`, in a global named `g<Owner>State`
+where the code has named it. The menus' holds their windows, which question
+they are at and where the hand last was for each party member, so that
+going back to Jenna's items lands where the player left them. The battle
+has one too, and each is found again through a [heap slot](#heap-slot).
+The [main routine's](#main-routines-state) is the one that is kept apart
+and outlives the rest
 ([System](system.md#saving)).
 
-Evidence: tradition: ワーク, working memory, as in the hardware's Work RAM,
-used here for a system's block.
+Sources: the game: none. SGL: ワーク (`WORK`), a pooled 64-byte block attached to
+an event. GBATEK: "Work RAM".
 
 ### Heap and pools
 
@@ -419,21 +436,22 @@ That is simple and quick. The whole heap is emptied before each
 cave it began in
 ([System code](src/system/README.md#the-heap)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Heap slot
 
 A heap slot is one of 62 numbered places, each remembering where one block
 from the [heap](#heap-and-pools) is, so that other code can find the block
-again. The battle's [work](#work) is found through one, and the menus' work
-through another ([System code](src/system/README.md#the-heap)).
+again. The battle's [state](#state) is found through one, and the menus'
+state through another ([System code](src/system/README.md#the-heap)).
 
-Evidence: plain English; the project's own word.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### IWRAM and EWRAM
 
-IWRAM and EWRAM are the console's two areas of memory. The letters stand
-for internal and external work RAM, RAM being memory. IWRAM is 32 KB inside
+IWRAM and EWRAM are the console's two areas of work RAM, RAM being memory,
+as Game Boy Advance programmers name them; GBATEK calls them the on-chip
+and the on-board work RAM. IWRAM is 32 KB inside
 the processor, the chip that follows the game's instructions, and it is the
 fastest memory there is. EWRAM is 256 KB beside the processor, and slower.
 So the code that must be quickest is copied into IWRAM, and the big things
@@ -441,7 +459,8 @@ go in EWRAM: the scene the party is in unpacks its [overlay](#overlay) into
 32 KB of it
 ([System code](src/system/README.md#memory-map)).
 
-Evidence: tradition: the hardware's own names.
+Sources: the game: none. SGL: none. GBATEK: "On-chip Work RAM" and "On-board
+Work RAM".
 
 ### Main image
 
@@ -451,7 +470,7 @@ without copying it into memory first. It is cut into fifteen
 windows, menus, shops, sound. What only one scene needs is kept apart, in
 [overlays](#overlay) ([System](system.md#overlays)).
 
-Evidence: plain English; the project's own word.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Game Pak
 
@@ -462,21 +481,18 @@ image, map and tune, listed in the
 [flash chip](#flash-chip) the saves are written to
 ([The Game Pak](src/gamepak/README.md)).
 
-Evidence: Nintendo: "Game Pak", the instruction booklets' word for the
-cartridge; tradition: GBATEK's "GamePak ROM", "GamePak SRAM" and "GamePak
-Waitstates".
+Sources: the game: none. SGL: none. GBATEK: "Game Pak", "GamePak ROM".
 
 ### Flash chip
 
 The flash chip is the small chip on the cartridge the three save
 [files](#file-and-copy) are written to. It keeps what is written with the
-power off. It is 64 KB, divided into 16 sectors of 4 KB. A sector is the
-smallest piece the game saves at a time
+power off. It is 64 KB, divided into 16 sectors of 4 KB; an Atmel chip's
+own sectors are 128 bytes, and the game erases thirty-two of them as one
+sector of 4 KB. A sector is the smallest piece the game saves at a time
 ([The Game Pak](src/gamepak/README.md#the-flash-chip)).
 
-Evidence: the hardware's word, GBATEK's "GamePak Flash ROM"; the library's
-file names are the project's, from the chip makers' names as GBATEK lists them
-(Atmel, SST, Macronix).
+Sources: the game: none. SGL: none. GBATEK: "GBA Cart Backup Flash ROM".
 
 ### Bank
 
@@ -490,7 +506,8 @@ moving anything another depends on
 For readers who know older consoles: every bank is always in place, and none
 is switched in or out.
 
-Evidence: plain English; the project's own word.
+Sources: the game: none. SGL: カラーバンク, a bank of colours. GBATEK: "Wave RAM
+Bank", a bank of the wave memory.
 
 ### Bank folder
 
@@ -500,9 +517,8 @@ System has `system/`, `gamepak/` and `sound/`. The Field has `field/`. The
 Battle has `battle/`, `game/` and `battle_effect/`. The Interface has
 `window/`, `menu/` and `shop/`.
 
-Evidence: Camelot: the credits' four Programming divisions, "System",
-"Battle", "Field" and "User Interface"; `window`, `menu` and `shop` from
-their own entries; plain English for the grouping.
+Sources: the game: the credits' "System", "Battle", "Field" and "User
+Interface". SGL: none. GBATEK: none.
 
 ### Far call
 
@@ -518,7 +534,7 @@ leads to with `Far` added: the main routine starts a battle through
 `Battle_RunFar`, which leads to `Battle_Run`
 ([The Game Pak](src/gamepak/README.md#why-the-main-image-is-cut-into-banks)).
 
-Evidence: tradition: ジャンプテーブル for the table; "far call" is plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Veneer
 
@@ -531,8 +547,7 @@ thing can go to the veneer and be sent the right way.
 [overlay](#overlay) open with are made of them
 ([The Game Pak](src/gamepak/README.md#a-veneer)).
 
-Evidence: tradition: the ARM and GNU linkers' "veneer", the stub they place
-for a branch that cannot reach its target.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Overlay
 
@@ -546,8 +561,7 @@ at which of its scenes the party is in, as the Suhalla Gate's does for its
 three. They all unpack into the same 32 KB of memory, so only one is loaded
 at a time ([System](system.md#overlays)).
 
-Evidence: tradition: the GNU linker's word; the linker's `.bss` for the
-globals' folder.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Entry table and import table
 
@@ -564,7 +578,7 @@ When Felix walks into a door in Alhafra, Alhafra's overlay asks the field
 for that exit through its import table
 ([System code](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Resource directory
 
@@ -573,7 +587,7 @@ it: each overlay, map and image is a numbered row. The game finds a thing
 by its row, so Daila's [overlay](#overlay) is row 1617
 ([The Game Pak](src/gamepak/README.md#the-resource-directory-and-table-order)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### File and copy
 
@@ -583,7 +597,8 @@ chip's 4 KB sectors. A newly saved copy is written to free sectors first,
 and only then is the old copy given up, so there is no moment at which
 neither copy is on the chip ([System code](src/system/README.md#saving)).
 
-Evidence: Camelot: "Please choose a file." (きろくばしょを えらんでください).
+Sources: the game: "Please choose a file." (きろくばしょ, a place of record). SGL:
+none. GBATEK: none.
 
 ### Background layer
 
@@ -594,7 +609,8 @@ drawn on three of them: the ground, the walls, and the roofs and treetops.
 The World Map uses the two the console can scale and rotate
 ([Field code](src/field/README.md#towns-and-dungeons-on-screen)).
 
-Evidence: tradition: the hardware's BG.
+Sources: the game: none. SGL: スクロール画面, NBG0 to NBG3 and RBG0. GBATEK: "BG",
+"BG0-BG3".
 
 ### Sprite and OAM
 
@@ -602,12 +618,15 @@ A sprite is a small figure the console can place anywhere on the screen,
 over or between the [background layers](#background-layer). It shows one
 [picture](#picture) of its [sprite sheet](#sprite-sheet) at a time. The
 people are sprites, and so are the pointing hand in a menu and the letters
-of a spoken line. OAM, the object attribute memory, is the console's list of
-where each one sits, and the game writes it afresh every [frame](#frame)
+of a spoken line. GBATEK calls a sprite an OBJ, and the code's names for
+the console's sprite fields start `OBJ_`. OAM, the object attribute memory,
+is the console's list of where each one sits, and the game writes it afresh
+every [frame](#frame)
 ([System code](src/system/README.md#the-frames-sprites)).
 
-Evidence: tradition: スプライト and the hardware's OAM; SGL's SPRITE, the
-thing placed on screen.
+Sources: the game: none. SGL: スプライト, the small figure moved freely over the
+scrolls, which `SPRITE` records as a command. GBATEK: "OBJ", "OAM - Object
+Attribute Memory".
 
 ### Sprite sheet
 
@@ -618,7 +637,7 @@ the code's names Sheet is short for it (`RESOURCE_TORNADO_SHEET`). Tiles and
 letters are kept the same way, on a tile sheet and a font sheet
 ([Graphics](src/graphics/README.md#sprites-and-their-animations)).
 
-Evidence: tradition: the sprite sheet.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Sprite animation
 
@@ -630,7 +649,7 @@ In a battle Felix's body and his weapon change pose together, each from its
 own run of pictures, while his shadow stays flat on the ground
 ([Field code](src/field/README.md#sprites-and-their-animation)).
 
-Evidence: plain English; no word of the time names one layer of a sprite.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Picture
 
@@ -643,8 +662,8 @@ a number of [frames](#frame) before the next one takes its place, and the
 animation of a map's tiles steps through pictures the same way
 ([Field code](src/field/README.md#sprites-and-their-animation)).
 
-Evidence: SGL's PICTURE, the picture data a sprite shows; plain English,
-since the time's パターン and コマ each mean other things too.
+Sources: the game: none. SGL: ピクチャー (`PICTURE`), the record of a sprite's
+picture data. GBATEK: none.
 
 ### Texture
 
@@ -658,21 +677,22 @@ can scroll across it, so a ring seems to spin
 [picture](#picture) is shown by a [sprite](#sprite-and-oam) as it was
 drawn; a texture is painted onto a model and takes the shape of its faces.
 
-Evidence: plain English and the period tradition, texture mapping
-(テクスチャ); the code's `ModelTexture`.
+Sources: the game: none. SGL: テクスチャ (`TEXTURE`), a two-dimensional picture
+pasted onto a polygon. GBATEK: none.
 
 ### Palette number
 
 A drawing on the cartridge does not hold colours. It holds numbers, and a
 palette is the list that says which colour each number stands for. The
-console keeps sixteen palettes of 16 colours each. A palette number says
-which of them a [sprite](#sprite-and-oam) or a tile, one of the small
-squares a [background layer](#background-layer) is made of, is painted in.
+console keeps sixteen palettes of 16 colours for the
+[background layers](#background-layer) and another sixteen for the
+[sprites](#sprite-and-oam). A palette number says which of its set's
+sixteen a sprite, or a tile, one of the small squares a background layer is
+made of, is painted in.
 So one drawing can appear in several colourings
 ([Graphics](src/graphics/README.md#how-the-console-draws-an-image)).
 
-Evidence: plain English for the hardware's own field, GBATEK's "Palette
-Number".
+Sources: the game: none. SGL: パレットナンバー. GBATEK: "Palette Number".
 
 ### Palette fade
 
@@ -682,7 +702,7 @@ together. A scene fading in as the party arrives is one, and so is the
 change of light over 60 frames before the Gabomba Statue speaks
 ([Field code](src/field/README.md#the-palette-fade)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Sound
 
@@ -691,8 +711,9 @@ says what kind it is. Below 80 it is music. From 80 it is a jingle. From 100
 it is a sound effect, an SE
 ([Sound](src/sound/README.md#what-a-sound-number-means)).
 
-Evidence: Camelot: the credits' "Music" and "Sound Effects", and the sound
-test's "Music", "Jingle" and "SE".
+Sources: the game: the credits' "Music" and "Sound Effects"; the sound test's
+"Music", "Jingle" and "SE". SGL: ＢＧＭ and 効果音. GBATEK: "Sound 1-4" and "DMA
+Sound A", the console's channels.
 
 ## The field
 
@@ -702,7 +723,8 @@ The field is everywhere the party walks: a town, a dungeon or the World Map.
 The word also names the code that runs it, which is everything outside a
 battle ([Field](field.md)).
 
-Evidence: Camelot: the credits' "Field", and せんとう&フィールド.
+Sources: the game: the credits' "Field"; せんとう&フィールド (`MsgUsableAnywhere`).
+SGL: none. GBATEK: none.
 
 ### The ship
 
@@ -711,7 +733,8 @@ the sea on the World Map. At Atteka Inlet, Hamma gives it wings, a
 [game flag](#game-flag) is set, and from then on the ship flies
 ([Scenes](src/scene/README.md)).
 
-Evidence: the game: "Lemurian Ship".
+Sources: the game: "Lemurian Ship" (ふね); the debug labels REM_SHIP01 and
+REM_FUNE01. SGL: none. GBATEK: none.
 
 ### Scene
 
@@ -722,7 +745,9 @@ one, and its sanctum another, which is why the screen fades between them.
 Each has a short label Camelot gave it (`TITLE`, `WORLD`, `DELY00` for
 Daila) ([Field](field.md#scenes-and-areas)).
 
-Evidence: Camelot: the developer test message 05746 heads a location name シーン.
+Sources: the game: a developer test message's シーン; the debug scene selector's
+labels, one a scene (TITLE, DELY00). SGL: シーン, a scene file of a modelling
+program. GBATEK: none.
 
 ### Room
 
@@ -730,7 +755,8 @@ A room is the inside of a building: a house, a shop, an inn. Most rooms are
 not [scenes](#scene) of their own. Daila's inn and its shops are rooms of
 one scene, on its [rooms map](#rooms-map).
 
-Evidence: Camelot: the scene labels' ROOM (DLY_ROOM, MD_ROOM01, KB_ROOM).
+Sources: the game: へや; the debug labels DLY_ROOM, MD_ROOM01 and KB_ROOM. SGL:
+none. GBATEK: none.
 
 ### Area
 
@@ -741,16 +767,20 @@ its own, their music. They also share one set of short-lived
 [game flags](#game-flag)
 ([Field](field.md#scenes-and-areas)).
 
-Evidence: Camelot: the area names.
+Sources: the game: the area names. SGL: none. GBATEK: none.
 
 ### Map
 
 A map is the ground a [scene](#scene) is drawn on: a grid of
 [cells](#cell), 128 on a side, shown as three
 [background layers](#background-layer). Two scenes can share one
-([Maps](src/map/README.md)).
+([Maps](src/map/README.md)). The World Map is a scene of its own, and the
+chart R opens on it is the [map screen](#map-screen). GBATEK's BG Map is
+another thing, the grid of tile numbers one background layer shows, its
+tilemap.
 
-Evidence: Camelot: the credits' "Maps".
+Sources: the game: the credits' "Maps"; "World Map" (ワールドマップ). SGL: マップ, the
+largest unit of a scroll. GBATEK: "BG Map", a layer's tilemap.
 
 ### Still image
 
@@ -765,7 +795,7 @@ shows that still image behind the windows until they close
 It is not the [map screen](#map-screen), the map of the whole world that R
 opens.
 
-Evidence: plain English: an image that stands still.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Map screen
 
@@ -778,9 +808,8 @@ sails on, drawn tilted away from it. The map screen is no scene: it is a
 chart of that land, shown without leaving the World Map, and nobody walks on
 it ([Field code](src/field/README.md#the-map-screen)).
 
-Evidence: the game: "This place doesn't seem to appear on the map..."
-(`MsgNotOnMap`), which it shows there; plain English: map screen, since a
-[map](#map) is a scene's ground.
+Sources: the game: "This place doesn't seem to appear on the map..." (ちず).
+SGL: none. GBATEK: none.
 
 ### Rooms map
 
@@ -789,23 +818,25 @@ A rooms map is the [map](#map) of a [scene](#scene) that holds several
 rooms map. The door the party comes in by picks the room
 ([Scenes](src/scene/README.md#design)).
 
-Evidence: Camelot: the credits' "Maps" and the scene labels' ROOM.
+Sources: the game: the credits' "Maps"; the debug labels' ROOM. SGL: none.
+GBATEK: none.
 
 ### Cell
 
-A cell is one 16-pixel square of a [map](#map). It says which [cell picture](#cell-picture) is drawn there, the
+A cell is one 16-pixel square of a [map](#map). It says which [cell tiles](#cell-tiles) draw it, the
 shape and height of the ground, and its [cell behavior](#cell-behavior)
 ([Maps](src/map/README.md#cells)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: セル (`CELL`), the 8-pixel tile. GBATEK: none.
 
-### Cell picture
+### Cell tiles
 
-A cell picture is what is drawn on one [cell](#cell). It is four tiles, two
-by two. A tile is the console's own building block, a square 8 pixels on a
-side ([Maps](src/map/README.md#cells)).
+A cell's tiles are the four tiles of the [tileset](#tileset) that draw one
+[cell](#cell) of a map, two by two. A tile is the console's own building
+block, a square 8 pixels on a side ([Maps](src/map/README.md#cells)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: キャラクタパターン, a square of one cell or two by two.
+GBATEK: none.
 
 ### Cell behavior
 
@@ -814,7 +845,7 @@ walks into it or searches it. It is what makes one cell a wall, another a
 ledge to jump down, and another a jar worth pressing A at
 ([Maps](src/map/README.md#cells)).
 
-Evidence: plain English; Camelot's 属性 (attribute) means an element.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Actor
 
@@ -823,7 +854,7 @@ party and the townspeople are actors, and so are the sparks of a Psynergy
 and the point the camera follows. A scene has room for 64
 ([Field code](src/field/README.md#everything-that-moves-runs-an-actor-script)).
 
-Evidence: tradition: the Western word for a thing on a game's stage.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Actor id
 
@@ -833,7 +864,7 @@ kept for the eight characters (`ACTOR_FELIX` is 4), so Isaac has a number,
 scene places, in the order of its list of them
 ([Scenes](src/scene/README.md#who-stands-where)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Actor placement
 
@@ -844,7 +875,7 @@ keeps four such lists and picks one by how far the story has gone: before
 Briggs is caught, after, once the mast is cleared and once the ship has
 gone ([Scenes](src/scene/README.md#who-stands-where)).
 
-Evidence: plain English for what a row does, place an actor.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Actor script
 
@@ -860,7 +891,7 @@ piece of the field's own code that steers it each frame, and the player's
 control of the leader on foot is one of those, `SC_PLAYER`
 ([Field code](src/field/README.md#how-an-actor-script-runs)).
 
-Evidence: tradition: スクリプト for a character's commands.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Watched actor
 
@@ -871,7 +902,7 @@ whoever is watching whomever. In Lemuria, two people walking their rounds
 are each given the other to watch
 ([Field code](src/field/README.md#who-runs-which-script)).
 
-Evidence: plain English for what the orders do.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Field effect
 
@@ -880,7 +911,7 @@ the sparks of a field Psynergy. It moves, grows and spins by an
 [actor script](#actor-script) of its own
 ([Field code](src/field/README.md#one-actor-for-everything)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Trigger
 
@@ -892,7 +923,7 @@ first row that fits runs. In Alhafra, one row says that walking into a door
 runs the [event](#event) that opens it and walks the leader through
 ([Scenes](src/scene/README.md#what-a-trigger-row-says)).
 
-Evidence: tradition: the Western word for a spot on a map that starts something.
+Sources: the game: none. SGL: トリガー, a shoulder button. GBATEK: none.
 
 ### Step trigger
 
@@ -902,7 +933,7 @@ onto, or walks into, a [cell](#cell) with a given
 the arrival of Madra's mayor and his party, who have come hunting Briggs
 ([Scenes](src/scene/README.md#which-triggers-a-cell-starts)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Examine trigger
 
@@ -912,7 +943,8 @@ Jenna lies is one: she wakes and joins the party. Chests, jars, barrels,
 rocks, graves and trees have lines of their own, the same in every scene
 ([Scenes](src/scene/README.md#which-triggers-a-cell-starts)).
 
-Evidence: plain English.
+Sources: the game: "searched the" (しらべる), the game's verb. SGL: none. GBATEK:
+none.
 
 ### Exit
 
@@ -922,7 +954,7 @@ the map. A scene's list of exits says which scene and
 rows, so that the same path leads somewhere new once the story has moved on
 ([Scenes](src/scene/README.md#exits)).
 
-Evidence: Camelot: the game's text, 出口.
+Sources: the game: 出口. SGL: none. GBATEK: none.
 
 ### Entrance
 
@@ -930,11 +962,12 @@ An entrance is where the party appears in a [scene](#scene). It gives a
 spot to stand on, a way to face and how far the camera may travel
 ([Scenes](src/scene/README.md#entrances)).
 
-Evidence: Camelot: the game's text, 入口.
+Sources: the game: "Return to the dungeon's entrance." (入口). SGL: none.
+GBATEK: none.
 
 ### Field request
 
-A field request is a note in the field's [work](#work) that something
+A field request is a note in the field's [state](#state) that something
 needs an answer. There are twelve kinds: an exit taken, a battle due, a
 person to talk to, a cell to search, a menu to open, and others. Three
 kinds of code set one. The leader's [actor script](#actor-script) sets the
@@ -946,7 +979,7 @@ something the field must do after it has returned. The
 `wait(1)` returns, never in the middle of a frame, and answers the most
 urgent first ([Field code](src/field/README.md#the-twelve-requests)).
 
-Evidence: plain English; the project's own word.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Event
 
@@ -959,8 +992,8 @@ between `Event_Start` and `Event_End`, one
 [event command](#event-command) to a line
 ([Scenes](src/scene/README.md#events)).
 
-Evidence: Camelot: the Shining Force III credits' "Events", by two of Golden
-Sun's field programmers.
+Sources: the game: none. SGL: イベント (`EVENT`), which names our task. GBATEK:
+none.
 
 ### Event command
 
@@ -977,7 +1010,7 @@ until what it started is over. One that only starts something, such as
 `Actor_WalkTo`, returns at once
 ([Scenes](src/scene/README.md#events)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Destination
 
@@ -990,7 +1023,7 @@ chose somewhere else. After a defeat it goes to the restart point, again
 unless an event chose somewhere else
 ([System code](src/system/README.md#running-another-sequence)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Game flag
 
@@ -1004,8 +1037,7 @@ was dug up stays dug while the party goes in and out of Daila's houses. A
 battle wipes neither
 ([Game rules](src/game/README.md#the-game-flags)).
 
-Evidence: Camelot: 田口泰宏, the System programmer, speaks of flags (Shining
-Force III, 1998).
+Sources: the game: none. SGL: フラグ, any yes-or-no value. GBATEK: none.
 
 ### Debug menus
 
@@ -1022,8 +1054,9 @@ Pause menu gains three lines, `Rough menu`, `Debug menu` and
 `Restart quest`. There is also a sound test
 ([Debug scenes](src/debug/README.md#how-the-debug-scenes-are-reached)).
 
-Evidence: Camelot: the menus' labels ("Rough menu", "Debug menu"), the
-scene codes TEST0 to TEST7 and サウンドテスト.
+Sources: the game: "Rough menu" (がさつメニュー), "Debug menu", "Restart quest",
+"Sound test" and "Shop Test"; the debug labels TEST0 to TEST7. SGL: none.
+GBATEK: none.
 
 ## The battle
 
@@ -1035,7 +1068,8 @@ coins at the end. It is a [sequence](#sequence) of its own, so the scene the
 party was walking in is cleared away while it runs and set up again after
 ([Battle](battle.md)).
 
-Evidence: Camelot: the credits' "Battle".
+Sources: the game: the credits' "Battle"; "Battle" (バトル, せんとう). SGL: none.
+GBATEK: none.
 
 ### Unit
 
@@ -1045,7 +1079,7 @@ them, its stats, Psynergy, items, Djinn and ailments, which the code reads
 with `Unit_Get`. A unit in the party is a party member
 ([Game rules](src/game/README.md#the-unit)).
 
-Evidence: plain English; the game's キャラ means only a party member.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Formation
 
@@ -1054,7 +1088,7 @@ has 660 of them in a list. One is Briggs with a Sea Fighter, and another
 is a Wild Wolf with a Punch Ant
 ([Battles](src/battle/README.md#the-enemies-of-a-formation)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Turns and actions
 
@@ -1063,8 +1097,8 @@ A turn is one pass through a battle's fighters, in which every
 action is one unit's go within it: Felix's attack is one action, and the
 Wild Wolf's answer is another ([Battles](src/battle/README.md#turns)).
 
-Evidence: Camelot: "HP recovery / turn" (かいふくHP/ターン) and 行動 for one
-unit's go.
+Sources: the game: "HP recovery / turn" (かいふくHP/ターン); 行動 for one unit's go.
+SGL: none. GBATEK: none.
 
 ### Staging
 
@@ -1073,7 +1107,7 @@ it does: who steps forward, what line announces it and which
 [battle effect](#battle-effect) plays
 ([Battles](src/battle/README.md#staging-and-announcement)).
 
-Evidence: tradition: 演出.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Playback queue
 
@@ -1085,7 +1119,7 @@ going down. A [task](#task) plays it, a little each frame, once the
 blow has landed
 ([Battles](src/battle/README.md#how-outcomes-reach-the-screen)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Battle effect
 
@@ -1096,9 +1130,7 @@ frame and calls [`wait(1)`](#wait). It decides when a hit is shown, never
 what the hit does
 ([Battle effects](src/battle_effect/README.md)).
 
-Evidence: Camelot: the credits' "Battle Effects", beside "Battle Characters"
-and "Battle Backgrounds", a Graphic Arts heading; the code is the Battle
-division's.
+Sources: the game: the credits' "Battle Effects". SGL: none. GBATEK: none.
 
 ### Mote
 
@@ -1114,7 +1146,7 @@ a smaller one the farther the mote is
 the field a mote is a sprite, such as the motes that circle down onto the
 leader as a Venus Djinni joins.
 
-Evidence: plain English: a mote, a speck.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Battle background
 
@@ -1122,7 +1154,7 @@ A battle background is the image behind a battle. It is chosen by where
 the fight happens, such as the grassland, the Suhalla Desert or a ship's
 deck ([Graphics](src/graphics/README.md#battle-backgrounds)).
 
-Evidence: Camelot: the credits' "Battle Backgrounds".
+Sources: the game: the credits' "Battle Backgrounds". SGL: none. GBATEK: none.
 
 ### Battle Arena
 
@@ -1132,8 +1164,8 @@ them with `Welcome to Battle Arena,`. Its code is the lobby's
 [overlay](#overlay), The Broken Seal's arena reworked
 ([Scenes](src/scene/README.md#the-title-the-file-screen-and-the-battle-arena)).
 
-Evidence: the game: "Battle Arena", "Linked Battles and Monster Battles";
-Camelot: the scene label ROUNGE.
+Sources: the game: "Welcome to Battle Arena" (バトルステージ), "Linked Battles and
+Monster Battles"; the debug label ROUNGE. SGL: none. GBATEK: none.
 
 ## The interface
 
@@ -1144,15 +1176,18 @@ The interface is everything the player reads and chooses from: the
 the counters of the shops, sanctums, inns and the forge
 ([Interface](interface.md)).
 
-Evidence: Camelot: the credits' "User Interface".
+Sources: the game: the credits' "User Interface". SGL: none. GBATEK: none.
 
 ### Window
 
 A window is a bordered box the game opens for text or choices. Talk to a
 villager and one grows out of its own centre, then shrinks back into it when
-the line is done ([Windows](src/window/README.md#windows)).
+the line is done ([Windows](src/window/README.md#windows)). The console's
+own display windows, which show or hide layers over parts of the screen, are
+another thing, which the code names `WIN0` and `WININ`.
 
-Evidence: Camelot: ウインドウ, as in "Window color" (`MsgWindowColorLabel`).
+Sources: the game: "Window color" (ウインドウカラー). SGL: ウインドウ, a display window.
+GBATEK: "Window 0", "OBJ Window", the display windows.
 
 ### Border
 
@@ -1160,7 +1195,7 @@ The border is the edge drawn around a [window](#window). It is drawn in the
 window colour the player chose in the settings, as the window's filling is
 ([Windows](src/window/README.md#windows)).
 
-Evidence: plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Message
 
@@ -1169,8 +1204,7 @@ letters at a time, stopping for a button where a page ends. A villager's
 line is one, and so is a battle's `Felix takes 27 damage!`. Up to three can
 be typing at once ([Windows](src/window/README.md#typing)).
 
-Evidence: Camelot: the settings label メッセージスピード ("Message" in English,
-`MsgMessageSpeedLabel`).
+Sources: the game: "Message Speed" (メッセージスピード). SGL: none. GBATEK: none.
 
 ### The screens
 
@@ -1180,9 +1214,9 @@ entry and the [map screen](#map-screen). The File Screen is where a
 [file](#file-and-copy) is chosen, copied or erased, and the Pause menu is
 what Start opens on the field ([Interface](interface.md)).
 
-Evidence: Camelot: "Please choose a file.", "The Pause Menu is not available
-now." (`MsgFieldPauseUnavailable`), the scene label TITLE; the rest plain
-English.
+Sources: the game: "Title screen" (タイトルがめん), "Please choose a file.", "The
+Pause Menu is not available now." (ポーズメニュー); the debug label TITLE. SGL: none.
+GBATEK: "Screen Base Block", a layer's map.
 
 ### Password
 
@@ -1194,7 +1228,8 @@ symbols, leaving out the letters that look alike: I and O, l and o. Both
 ways in are in the scene after the Title
 ([Scenes](src/scene/README.md#the-title-the-file-screen-and-the-battle-arena)).
 
-Evidence: the game: "Password", "Invalid password.".
+Sources: the game: "Password" (パスワード), "Invalid password.". SGL: none. GBATEK:
+none.
 
 ### Menu
 
@@ -1203,7 +1238,8 @@ Psynergy, Djinn, Item and Status screens
 ([Menus](src/menu/README.md#the-screens)). The folder `menu/` also holds the
 staff credits and the title intro.
 
-Evidence: Camelot: "Rough menu" (`MsgRoughMenu`).
+Sources: the game: "Rough menu" (がさつメニュー), "Debug menu". SGL: none. GBATEK:
+none.
 
 ### Shop
 
@@ -1211,7 +1247,8 @@ A shop is any counter the party does business at: a shop's, a sanctum's or
 an inn's, or the [forge](#the-forge). Alhafra's innkeeper asking 7 coins a
 guest is the shop code at work ([Shops](src/shop/README.md)).
 
-Evidence: the game: "Weapons Shop", "Feel free to keep shopping!".
+Sources: the game: "Weapons Shop", "Feel free to keep shopping!" (武器屋, やど屋: a
+shop by its trade). SGL: none. GBATEK: none.
 
 ### The forge
 
@@ -1220,10 +1257,11 @@ there, such as a Tear Stone, and comes back for what was made of it. What
 comes out is rolled from the material's own list: a Tear Stone becomes a
 Cloud Wand, a Clear Bracelet, a Pure Circlet or a Spirit Ring. Its code is
 in the shop bank, and the material left there is kept in the
-[main routine's work](#main-routines-work), so a save remembers it
+[main routine's state](#main-routines-state), so a save remembers it
 ([Shops](src/shop/README.md)).
 
-Evidence: the game: "Sunshine's smithy", and the materials' "(forgeable)".
+Sources: the game: "Sunshine's smithy" (かじ屋), "(forgeable)" (きたえなおせる). SGL:
+none. GBATEK: none.
 
 ## The folders
 
@@ -1236,8 +1274,8 @@ how much PP Cure costs, what Echo adds to a character. They are kept in
 one place because the field, the battles and the menus all need the same
 answers ([Game rules](src/game/README.md)).
 
-Evidence: Camelot: the credits' "Game Design"; plain English "game rules",
-said so.
+Sources: the game: the credits' "Game Design" and "Game Planning". SGL: none.
+GBATEK: none.
 
 ### Graphics
 
@@ -1245,7 +1283,7 @@ Graphics is the game's art as files anyone can open and edit. Each
 folder is named for what it holds or the place it belongs to
 ([Graphics](src/graphics/README.md)).
 
-Evidence: Camelot: the credits' "Graphic Arts"; plain English.
+Sources: the game: the credits' "Graphic Arts". SGL: none. GBATEK: none.
 
 ### Graphics folders
 
@@ -1253,58 +1291,51 @@ For readers of the files: the folders of images under `src/graphics/`,
 and what is in each.
 
 - `battle_backgrounds`: the [battle backgrounds](#battle-background).
-  Evidence: Camelot: the credits' "Battle Backgrounds".
 - `battle_effects`: the [battle effects](#battle-effect)' drawings and
-  colours. Evidence: Camelot: the credits' "Battle Effects".
-- `field_effects`: the sparks field Psynergy draws. Evidence: the
-  [field effect](#field-effect)'s word.
+  colours.
+- `field_effects`: the sparks field Psynergy draws, its
+  [field effects](#field-effect).
 - `font`: the letters, how wide each one is, and the tables that match
-  text to letters. Evidence: plain
-  English.
-- `monster`: the enemies' battle sprites. Evidence: Camelot: the credits'
-  "Monster Design"; the game: "Monsters won't attack".
-- `palettes`: the windows' colours and the colours most sprites share. Evidence:
-  plain English.
+  text to letters.
+- `monster`: the enemies' battle sprites.
+- `palettes`: the windows' colours and the colours most sprites share.
 - `palette_editor`: the swatch of the palette editor, a tool the
-  [debug menus](#debug-menus) reach. Evidence: plain English.
+  [debug menus](#debug-menus) reach.
 - `sprite`: the drawings of every person and thing that moves, and their
-  animations. Evidence: the hardware's
-  word ([Sprite and OAM](#sprite-and-oam)); Camelot: the credits' "Map
-  Characters" and "Battle Characters" for the work.
-- `tileset`: the small squares and colours a map's
-  [cell pictures](#cell-picture) are drawn from. Evidence: tradition: the
-  tile set; Camelot: the credits' "Maps" for the work.
-- `ui`: every [Interface](#interface) image, such as the menus' icons. Evidence: Camelot: the
-  credits' "User Interface", whose banks place them; plain English for the
-  subfolders.
+  animations, as [sprites](#sprite-and-oam).
+- `tileset`: the tiles and colours a map's
+  [cell tiles](#cell-tiles) come from.
+- `ui`: every [Interface](#interface) image, such as the menus' icons.
+
+Sources: the game: the credits' "Battle Backgrounds", "Battle Effects",
+"Monster Design", "Map Characters", "Battle Characters", "Maps" and "User
+Interface"; "Monsters won't attack". SGL: none. GBATEK: none.
 
 ### Places and minigames
 
 The graphics folders named for a place or a thing in the game:
 
 - `aqua_rock` and `aqua_rock_inside`, Aqua Rock's tiles, outside and in.
-  Evidence: its area name, Aqua Rock.
-- `lemuria_palace`, the tiles of Lemuria's palace. Evidence: its area name,
-  Lemuria.
-- `trial_road`, Trial Road's image. Evidence: its area name, Trial Road.
+- `lemuria_palace`, the tiles of Lemuria's palace.
+- `trial_road`, Trial Road's image.
 - `lucky_dice` and `lucky_wheels`, the two minigames' images.
-  Evidence: the game: "Lucky Dice", "Lucky Wheels".
 - `world_map`, the World Map's own images.
-  Evidence: the game: "World Map".
-- `title`, the Title's images and its intro. Evidence: Camelot: the scene
-  label TITLE.
-- `credits`, the staff roll's font. Evidence: Camelot: the credits
-  themselves.
-- `ending`, the images of the game's ending. Evidence: plain English.
+- `title`, the Title's images and its intro.
+- `credits`, the staff roll's font.
+- `ending`, the images of the game's ending.
+
+Sources: the game: "Lucky Dice" (ギャンブルダイス), "Lucky Wheels" (ふくびきスロット), "World
+Map", the area names Aqua Rock, Lemuria and Trial Road; the debug label TITLE.
+SGL: none. GBATEK: none.
 
 ### Tileset
 
 A tileset is the set of tiles, with their colours, that a map's
-[cell pictures](#cell-picture) are put together from. A tile is a square 8
+[cell tiles](#cell-tiles) come from. A tile is a square 8
 pixels on a side, the console's own building block
 ([Graphics](src/graphics/README.md#tilesets)).
 
-Evidence: tradition: the tile set; plain English.
+Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Monster
 
@@ -1312,5 +1343,5 @@ A monster is an enemy as the player sees it, its sprite in a battle
 ([Graphics](src/graphics/README.md#monsters)). In the code an enemy is a
 [unit](#unit) like any other.
 
-Evidence: Camelot: the credits' "Monster Design"; the game: "Monsters won't
-attack".
+Sources: the game: the credits' "Monster Design"; "Monsters won't attack so
+often now." (モンスター). SGL: none. GBATEK: none.

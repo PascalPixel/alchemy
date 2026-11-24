@@ -259,12 +259,13 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         // The head's other pictures, still decoded after its first.
         u8 *dst = Ram_MapCellBuffer + OBJ_32X32_8BPP_BYTES;
         for (i = 0; i != ECLIPSE_OPEN_JAW_PICTURES; i++) {
-
-          void *o = (void *)OBJ_TILES(
+          void *tiles = (void *)OBJ_TILES(
               (struct Sprite *)state->sprites[gEclipse_TileObjects[i]]);
+          /* FAKEMATCH(dead): size zeroed before its value. */
           s32 size = 0;
+
           size = OBJ_32X32_8BPP_BYTES;
-          Iwram_CopyWordsEntry(o, &dst[i * OBJ_32X32_8BPP_BYTES], size);
+          Iwram_CopyWordsEntry(tiles, &dst[i * OBJ_32X32_8BPP_BYTES], size);
         }
       }
       if (frame == ECLIPSE_RAYS_START) {
@@ -884,10 +885,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
 }
 
 /// Unused: does nothing; nothing calls it.
-UNUSED void BattleEffect_ReservedNoOpA(void) {}
+UNUSED void BattleEffect_NoOpA(void) {}
 
 /// Unused: does nothing; nothing calls it.
-UNUSED void BattleEffect_ReservedNoOpB(void) {}
+UNUSED void BattleEffect_NoOpB(void) {}
 
 /// Where GlowBandTextureA is decoded in the effect's pictures.
 #define FORM_CHANGE_GLOW_BAND 12288
@@ -1074,6 +1075,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       }
     }
 
+    // DEAD: frame never falls below 0; the ROM keeps the compare and branch.
     if (frame >= 0) {
       FIXED cx = INTtoFIXED(center.x / 2);
       FIXED cy = INTtoFIXED(center.y);

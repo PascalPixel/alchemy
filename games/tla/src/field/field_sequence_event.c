@@ -501,9 +501,9 @@ void Event_SetRestartPoint(s32 sceneId, s32 entrance) {
 
 /// The event command "request exit": sets the field's exit request
 /// (EXIT_KEEP_DESTINATION leaves for gMainRoutineState's next and entrance).
-void Event_SetExitRequest(u16 request) {
+void Event_SetExitRequest(u16 exit) {
   struct FieldState *field = gFieldState;
-  field->exit = request;
+  field->exit = exit;
 }
 
 #undef GIFT_RECEIVED_MESSAGE_MODE

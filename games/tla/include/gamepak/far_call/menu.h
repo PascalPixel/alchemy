@@ -9,7 +9,7 @@
 struct WindowSprite;
 /// Turns an icon's window sprite on and copies its screen position into its OAM
 /// attributes, with no affine matrix.
-void Icon_PrepareActorFar(struct WindowSprite *object);
+void Icon_ShowFar(struct WindowSprite *object);
 /// Describes item in window with the entry's own count.
 void ItemMenu_DrawItemDetailsFar(void *window, s32 item);
 /// Describes an item (an inventory entry) in window, one 8-pixel row a line,
@@ -19,11 +19,11 @@ void ItemMenu_DrawItemDetailsWithCountFar(void *window, s32 item, s32 count);
 void Palette_LoadIconsIntoHighlightFar(void);
 /// Creates the first four party members' figures in a row from tile (originX,
 /// originY) inside window, three tiles apart.
-void Menu_PlaceOwnerEntryObjectsFar(void *window, s32 originX, s32 originY);
+void Menu_ShowPartyFiguresFar(void *window, s32 originX, s32 originY);
 /// Replaces the menu's party figures with up to four party members' figures,
 /// from party place first on.
-void Menu_CreateOwnerEntryObjectsFar(s32 first);
+void Menu_CreatePartyFiguresFar(s32 first);
 /// Destroys the menu's party figures and stops placing them.
-void Menu_ReleaseEntryObjectsFar(void);
+void Menu_ReleasePartyFiguresFar(void);
 
 #endif

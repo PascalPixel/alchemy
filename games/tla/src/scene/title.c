@@ -39,7 +39,7 @@ extern s16 gTitleVramBlock;
 
 s32 Credits_Run(s32 mode);
 
-s32 Title_ShowIntro(s32 prompt);
+s32 Title_ShowTitleScreen(s32 prompt);
 
 void TitleIntro_Run(s32 unused);
 
@@ -118,7 +118,7 @@ s32 Scene_Initialize(void) {
       if (Save_ScanFileSummaries() > 0) {
         Event_PlaySound(MUS_MAIN_THEME_TITLE);
         TitleIntro_Run(1);
-        if (Title_ShowIntro(1) == 0) {
+        if (Title_ShowTitleScreen(1) == 0) {
           Event_PlaySound(SOUND_FADE_OUT_BGM);
           ScreenFade_ToBlack(30);
           ScreenFade_Wait();
@@ -144,7 +144,7 @@ s32 Scene_Initialize(void) {
     }
     if (gMainRoutineState.entrance == TITLE_FROM_IDEJIMA) {
       Event_PlaySound(MUS_TITLE_AFTER_PROLOGUE);
-      Title_ShowIntro(0);
+      Title_ShowTitleScreen(0);
       FieldWindowColor_Apply(gMainRoutineState.windowHue,
                              gMainRoutineState.windowBrightness);
       Party_SetLeaderFelix();

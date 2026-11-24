@@ -447,7 +447,7 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
       actor->speedLimit = FIXEDtoINT(Math_Sin((offset & 0xfffff) >> 4) *
                                      BEACON_FLAME_SWING_SPREAD);
       // The same byte, written through its address.
-      *(u8 *)&sprite->nextFrame = 0;
+      *(u8 *)&sprite->flags = 0;
       sprite->priority =
           ((struct MarsLighthouseAerieSprite *)anchor->sprite)->priority;
     }
@@ -2032,7 +2032,7 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
       actor->update = MarsLighthouseAerie_OrbitBeaconFire;
       actor->speedLimit = Math_Sin(Random16() * 0xffff >> 20) * 24;
       actor->speedLimit = FIXEDtoINT(anchor->speedLimit);
-      sprite->nextFrame = 0;
+      sprite->flags = 0;
       ((struct FieldSprite *)sprite)->priority = 1;
     }
   }

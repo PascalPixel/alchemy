@@ -1435,7 +1435,7 @@ struct Actor *YampiDesert_CreateScoopGem(void) {
     visual->attr2High = mask;
     actor->motionFlags = 0;
     actor->retainSpriteCache = 1;
-    visual->nextFrame = 0;
+    visual->flags = 0;
     visual->layerCount = 0;
     icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_SCOOP_GEM);

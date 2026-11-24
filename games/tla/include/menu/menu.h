@@ -62,7 +62,7 @@ extern u8 gShop_GlyphBytes[];
 /// `L`, before a level in the file list (screens_save.c).
 extern const u8 gStatusMenu_LevelLetterString[];
 void *IconMenu_Open(void);
-void ItemMenu_PositionCategory(void);
+void Menu_HideEntryIcons(void);
 void IconMenu_AddIcon(s32 icon);
 void IconMenu_Close(void);
 void Resource_ResetPendingTransfer(void);
@@ -77,7 +77,7 @@ struct DjinnMenuBackdrop;
 /// The down arrow from the class now to the class an equipment would give
 /// (backdrop.4bpp), which Menu_WatchStart blinks every four frames at
 /// CLASS_CHANGE_ARROW_TILE.
-extern u8 gMenu_StartPromptTile[];
+extern u8 gMenu_ClassChangeArrowTile[];
 void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 first);
 void Event_FinishScreenTransitionFar(void);
 void Scene_TalkToActorFar(s32, s32);
@@ -101,12 +101,12 @@ struct WindowSprite *WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
 void SelectionMenu_StopDrawing(void);
 void *String_FormatPlayTime(s32 frames, u8 *out);
 void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 style);
-void Icon_PrepareActor(struct WindowSprite *icon);
-#ifndef OWN_UiTextResource_Initialize
+void Icon_Show(struct WindowSprite *icon);
+#ifndef OWN_MenuArrow_Create
 struct MenuSprite;
 void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot);
 #endif
-#ifndef OWN_UiTextResource_SetPosition
+#ifndef OWN_MenuArrow_SetPosition
 void MenuArrow_SetPosition(struct Obj *obj, s32 x, s32 y);
 #endif
 void Window_SetTilemapEntryFar(s32 window, s32 value, s32 x, s32 y, u32 mode);

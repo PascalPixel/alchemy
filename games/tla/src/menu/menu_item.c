@@ -51,8 +51,7 @@ s32 ItemMenu_ShowDetails(s32 value);
 void ItemMenu_TryBreak(void);
 s32 ItemMenu_Use(void);
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId);
-void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
-                                 s32 originY);
+void Menu_ShowPartyFigures(struct Window *window, s32 originX, s32 originY);
 
 /// Where the edition's text goes. The international editions have longer
 /// words, and some languages move a message to fit its own.
@@ -81,7 +80,7 @@ void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
 #define ITEM_TRADED_X 15
 #endif
 
-void Resource_LoadPairedBlocks(void);
+void Menu_LoadStatArrows(void);
 void ItemMenu_Close(void);
 s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut);
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns);
@@ -112,10 +111,10 @@ s32 ItemMenu_Run(void) {
   Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeState(0);
+  Menu_InitializeState(0);
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
-  Resource_LoadPairedBlocks();
+  Menu_LoadStatArrows();
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   screen->questionWindow =
@@ -174,7 +173,7 @@ typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 enum ItemMenuCommand {
   ITEM_COMMAND_USE,
   ITEM_COMMAND_EQUIP,
-  ITEM_COMMAND_INSPECT,
+  ITEM_COMMAND_DETAILS,
   ITEM_COMMAND_GIVE,
   ITEM_COMMAND_REMOVE,
   ITEM_COMMAND_DROP
@@ -192,7 +191,7 @@ enum ItemMenuStep {
   ITEM_STEP_TRADE = 7,  ///< the receiver is full: choose what they give back
   ITEM_STEP_IDLE = 8,   ///< nothing sets it
   ITEM_STEP_COMMAND = 9,
-  ITEM_STEP_INSPECT = 10, ///< ItemMenu_ShowDetails
+  ITEM_STEP_DETAILS = 10, ///< ItemMenu_ShowDetails
   ITEM_STEP_REMOVE = 11,
   ITEM_STEP_QUANTITY = 12 ///< nothing sets it
 };
@@ -347,8 +346,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       if (command == ITEM_COMMAND_REMOVE) {
         state = ITEM_STEP_REMOVE;
       }
-      if (command == ITEM_COMMAND_INSPECT) {
-        state = ITEM_STEP_INSPECT;
+      if (command == ITEM_COMMAND_DETAILS) {
+        state = ITEM_STEP_DETAILS;
       }
       break;
 
@@ -431,7 +430,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       menu->selectedItemIcon->motion = ICON_SHOWN;
       menu->selectedItemIcon->x = 120;
       menu->selectedItemIcon->y = 28;
-      Icon_PrepareActor(menu->selectedItemIcon);
+      Icon_Show(menu->selectedItemIcon);
       Window_ClearInteriorTilesFar(menu->listWindow, 0, 72, 120, 96);
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
       // Yes: take result + 1 of the stack out, one at a time.
@@ -763,7 +762,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_ITEM;
       break;
 
-    case ITEM_STEP_INSPECT:
+    case ITEM_STEP_DETAILS:
       menu->sideIcons[0]->motion = ICON_HIDDEN;
       ItemMenu_ShowDetails(menu->selectedItems[0]);
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->statusWindow);
@@ -794,7 +793,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 }
 
 s32 Item_Use(s32 slot, s32 owner, s32 target);
-s32 Item_PlayUseAnimation(s32 item);
+s32 Item_PlayUseSound(s32 item);
 
 /// Uses the selected item from the party member in side 0 on the one in side 1.
 /// On failure plays the error sound, shows why in the info window and returns
@@ -826,20 +825,20 @@ s32 ItemMenu_Use(void) {
   item = menu->selectedItems[0];
   mask = INVENTORY_ITEM_ID_MASK;
   mask &= item;
-  Item_PlayUseAnimation(mask);
+  Item_PlayUseSound(mask);
   Unit_CalculateFar(menu->sideMember[0]);
   Unit_CalculateFar(menu->sideMember[1]);
   return 1;
 }
 
 /// Sets up the item menu's first screen: the cursor window with the party's
-/// figures (MenuCursor_Create, Menu_PlaceOwnerEntryObjects), the info window
+/// figures (MenuCursor_Create, Menu_ShowPartyFigures), the info window
 /// along the bottom and an 8 by 2 cursor grid. The parameters are not used.
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   struct ItemMenuState *menu = (struct ItemMenuState *)Ram_HeapSlots->menuState;
   s32 ownerIndex;
 
-  Menu_PlaceOwnerEntryObjects(MenuCursor_Create(menu), 2, 2);
+  Menu_ShowPartyFigures(MenuCursor_Create(menu), 2, 2);
   for (ownerIndex = 0; ownerIndex < 4; ownerIndex++)
     menu->memberY[ownerIndex] = MENU_MEMBER_Y;
 
@@ -936,7 +935,7 @@ void ItemMenu_HideTradedIcons(void) {
 
 #undef ITEM_IWRAM_COPY_WORDS
 
-void Menu_ReleaseEntryObjects(void);
+void Menu_ReleasePartyFigures(void);
 
 /// Closes the item menu: releases the party figures, hides the icons and the
 /// status panel's portrait (the state's cursor), and closes every window the
@@ -946,7 +945,7 @@ void ItemMenu_Close(void) {
   struct WindowSprite *cursor;
 
   menu = Ram_HeapSlots->menuState;
-  Menu_ReleaseEntryObjects();
+  Menu_ReleasePartyFigures();
   ItemMenu_HideAllIcons();
   wait(1);
   cursor = menu->cursor;
@@ -987,7 +986,7 @@ s32 ItemMenu_SelectMember(s32 pane) {
   owner = Unit_Get((u16)menu->memberIds[index]);
   menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
   result = ItemMenu_RunMemberSelection(menu->memberIds, menu->items);
-  Icon_PrepareActor(menu->sideIcons[pane]);
+  Icon_Show(menu->sideIcons[pane]);
   wait(1);
   return result;
 }
@@ -1069,7 +1068,7 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
                          STATUS_PANEL_EXPERIENCE);
       }
       if (redraw == 2) {
-        Menu_CreateOwnerEntryObjects(selection / 4 * 4);
+        Menu_CreatePartyFigures(selection / 4 * 4);
         wait(1);
       }
       Menu_MarkChosenMember(menu->mainWindow, selection, count);
@@ -1119,7 +1118,7 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
 void ItemMenu_OpenCategory(s32 ownerId) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
 
-  ItemMenu_PositionCategory();
+  Menu_HideEntryIcons();
   WindowSprite_RedrawSavedRectFar(menu->itemWindow);
   ItemMenu_DrawCategory(menu->itemWindow, ownerId, 0);
 }
@@ -1187,7 +1186,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       marker->sprite.oam.x = marker->x =
           ((selection * 3 + menu->mainWindow->x) << 3) - 2;
       if (redraw == 2) {
-        Menu_CreateOwnerEntryObjects(selection / 4 * 4);
+        Menu_CreatePartyFigures(selection / 4 * 4);
         wait(1);
       }
       Menu_MarkChosenMember(menu->mainWindow, selection, count);
@@ -1255,7 +1254,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
     redraw = Menu_MoveGridCursor(&selection, count, 4);
   }
   marker = menu->sideIcons[1];
-  Icon_PrepareActor(marker);
+  Icon_Show(marker);
   marker->motion = ICON_HIDDEN;
   EquipmentMenu_StopCompatibilityIndicators();
   wait(1);
@@ -1264,7 +1263,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   menu->sideMember[1] = menu->memberIds[selection];
   selection = menu->sideIndex[0];
   count = menu->sideCount[0];
-  Menu_CreateOwnerEntryObjects(selection / 4 * 4);
+  Menu_CreatePartyFigures(selection / 4 * 4);
   Menu_MarkChosenMember(menu->mainWindow, selection, count);
   menu->pageArrows[0]->motion = ICON_HIDDEN;
   menu->pageArrows[1]->motion = ICON_HIDDEN;
@@ -1337,7 +1336,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
 
   for (slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
     if (items[slot] == 0) {
-      Icon_PrepareActor(menu->entryIcons[slot]);
+      Icon_Show(menu->entryIcons[slot]);
       menu->entryIcons[slot]->motion = ICON_HIDDEN;
     }
   }
@@ -1425,7 +1424,7 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
 }
 
 /// Shows party member ownerId's items in the item window, laid out for layout
-/// mode (see ItemMenu_RefreshEntry), or "no items" when there are none.
+/// mode (see ItemMenu_PlaceIcons), or "no items" when there are none.
 void ItemMenu_RefreshMember(s32 ownerId, s32 mode) {
   struct ItemMenuState *menu;
   struct Unit *owner;
@@ -1436,7 +1435,7 @@ void ItemMenu_RefreshMember(s32 ownerId, s32 mode) {
   items = menu->items;
   menu->itemCount = ItemMenu_CollectItems(owner, items, 0);
   WindowSprite_RedrawSavedRectFar(menu->itemWindow);
-  ItemMenu_RefreshEntry(mode);
+  ItemMenu_PlaceIcons(mode);
   ItemMenu_DrawIcons(items, 0);
   if (ItemMenu_CountItems(ownerId) == 0)
     Text_DrawMessageAsTilesFar((s32)MsgItemMenuEmpty, menu->itemWindow, 8, 24);
@@ -1646,7 +1645,7 @@ s32 ItemMenu_ChooseCommand(void) {
 
   lastCommand = menu->listMode;
   if (lastCommand == -1) {
-    if (commandStates[ITEM_COMMAND_INSPECT] == ITEM_COMMAND_STATE_AVAILABLE) {
+    if (commandStates[ITEM_COMMAND_DETAILS] == ITEM_COMMAND_STATE_AVAILABLE) {
       column = 2;
       row = 0;
     }
@@ -1714,7 +1713,7 @@ s32 ItemMenu_ChooseCommand(void) {
         case ITEM_COMMAND_EQUIP:
           Sound_PlayFar(SE_NOTE_HIGH);
           break;
-        case ITEM_COMMAND_INSPECT:
+        case ITEM_COMMAND_DETAILS:
         case ITEM_COMMAND_GIVE:
         case ITEM_COMMAND_DROP:
           Sound_PlayFar(SE_MENU_CONFIRM);
@@ -1805,7 +1804,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
 
   commandStates[ITEM_COMMAND_GIVE] = ITEM_COMMAND_STATE_AVAILABLE;
   commandStates[ITEM_COMMAND_DROP] = ITEM_COMMAND_STATE_AVAILABLE;
-  commandStates[ITEM_COMMAND_INSPECT] = ITEM_COMMAND_STATE_AVAILABLE;
+  commandStates[ITEM_COMMAND_DETAILS] = ITEM_COMMAND_STATE_AVAILABLE;
 
   if (menu->selectedItems[0] & INVENTORY_EQUIPPED) {
     commandStates[ITEM_COMMAND_REMOVE] = ITEM_COMMAND_STATE_AVAILABLE;
@@ -1874,7 +1873,7 @@ void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
   Text_DrawMessageAsTilesFar(firstCommandMessage + 3, window, 80,
                              32); // "Drop"
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (commandStates[ITEM_COMMAND_INSPECT] == ITEM_COMMAND_STATE_DISABLED)
+  if (commandStates[ITEM_COMMAND_DETAILS] == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
   Text_DrawMessageAsTilesFar(firstCommandMessage + 4, window, 80,
                              24); // "Details"
@@ -2002,7 +2001,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
 #endif
   window = Window_CreateFar(0, 0, ITEM_DETAILS_WINDOW_WIDTH, 10,
                             WINDOW_FLAG_INSTANT);
-  Task_Remove(Menu_UpdateEntryObjectTransforms);
+  Task_Remove(Menu_UpdatePartyFigures);
 
   {
     struct WindowSprite *cursor = menu->cursor;
@@ -2048,7 +2047,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
   {
     s32 priority = TASK_PASS_FRAME;
 
-    Task_Add(Menu_UpdateEntryObjectTransforms, priority);
+    Task_Add(Menu_UpdatePartyFigures, priority);
   }
 
   {
@@ -2577,7 +2576,7 @@ void ItemMenu_DrawItemHead(void) {
   menu->selectedItemIcon->motion = ICON_SHOWN;
   menu->selectedItemIcon->x = 112;
   menu->selectedItemIcon->y = 8;
-  Icon_PrepareActor(menu->selectedItemIcon);
+  Icon_Show(menu->selectedItemIcon);
   Text_DrawStringAtOffsetFar(Unit_Get(menu->sideMember[0]),
                              menu->questionWindow, 16, 0);
   Text_DrawMessageAsTilesFar((menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
@@ -2766,7 +2765,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 
 /// Loads the small up and down arrows of the stat changes
 /// (Icon_CreateStatChangeArrow) into free VRAM cache slots.
-void Resource_LoadPairedBlocks(void) {
+void Menu_LoadStatArrows(void) {
   struct ItemMenuState *state = Ram_HeapSlots->menuState;
   s32 value = VramCache_FindFreeEntry();
 
@@ -2812,8 +2811,8 @@ s32 ItemMenu_BuildPagedList(struct PagedList *list, s32 pane) {
 
 /// Names the item under the list's cursor in the info window and highlights
 /// its row alone.
-s32 ItemMenu_DrawItemDetailPage(s32 listWindow, void *unused,
-                                struct PagedList *state) {
+s32 ItemMenu_ShowSelectedRow(s32 listWindow, void *unused,
+                             struct PagedList *state) {
   struct ItemMenuState *menu;
   s32 page;
   s32 combined;
@@ -2963,7 +2962,7 @@ s32 ItemMenu_RunList(s32 pane) {
         changed = 0;
         if (owner->inventory[previous] != 0) {
           icon = menu->entryIcons[previous];
-          Icon_PrepareActor(icon);
+          Icon_Show(icon);
         }
         if (redraw != 0) {
           wait(1);
@@ -2973,7 +2972,7 @@ s32 ItemMenu_RunList(s32 pane) {
                                        CHANGE_HELP_X, 88);
           redraw = 0;
         }
-        ItemMenu_DrawItemDetailPage(window, unused, &state);
+        ItemMenu_ShowSelectedRow(window, unused, &state);
         menu->selectedItems[pane] = menu->items[state.selectedIndex];
         ItemMenu_DrawEquipPreview(menu->sideMember[pane], state.selectedIndex,
                                   0, menu->sideMember[pane]);
@@ -3046,7 +3045,7 @@ s32 ItemMenu_RunList(s32 pane) {
             menu->itemCount = ItemMenu_CollectItems(
                 Unit_Get(menu->sideMember[pane]), menu->items, 0);
           } while (menu->itemCount == 0);
-          Menu_CreateOwnerEntryObjects(member / 4 * 4);
+          Menu_CreatePartyFigures(member / 4 * 4);
           Menu_MarkChosenMember(menu->mainWindow, member, count);
           menu->pageArrows[0]->motion = ICON_HIDDEN;
           menu->pageArrows[1]->motion = ICON_HIDDEN;
@@ -3058,7 +3057,7 @@ s32 ItemMenu_RunList(s32 pane) {
   }
 
   Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);
-  Icon_PrepareActor(menu->gridCursor);
+  Icon_Show(menu->gridCursor);
   menu->selectedSlots[pane] = state.selectedIndex;
   menu->selectedIndexByMember[menu->sideMember[pane]] = state.selectedIndex;
   menu->selectedItems[pane] = result;

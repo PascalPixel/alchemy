@@ -8,8 +8,8 @@
 /// own still resolves.
 
 /// The window object defines these with its own types.
-#define OWN_UiTextResource_Initialize
-#define OWN_UiTextResource_SetPosition
+#define OWN_MenuArrow_Create
+#define OWN_MenuArrow_SetPosition
 
 #include "battle/battle.h"
 #include "debug/debug.h"
@@ -52,7 +52,7 @@
 #include "system/scene.h"
 #include "menu/select.h"
 #include "text/msg_ids.h"
-#include "menu/node_chain.h"
+#include "menu/selection_cursor.h"
 #include "static_assert.h"
 #include "macros.h"
 #include "graphics/oam.h"

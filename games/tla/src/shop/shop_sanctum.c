@@ -246,7 +246,7 @@ s32 Sanctum_RunPartyService(void) {
   listWindow = Window_CreateFar(1, 12, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->cursorFrames = redraw;
-  Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
+  Menu_ShowPartyFiguresFar(listWindow, 2, 0);
 #if SANCTUM_HAS_DONATION_WINDOW
   donationWindow =
       Window_CreateFar(SANCTUM_DONATION_WINDOW_X, 16,
@@ -278,8 +278,8 @@ s32 Sanctum_RunPartyService(void) {
                        (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
       shop->cursorFrames = 3;
       if (redraw == MENU_GRID_CHANGED_PAGE) {
-        Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
-                                        SHOP_PARTY_PAGE_MEMBERS);
+        Menu_CreatePartyFiguresFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
+                                   SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
       }
       Sanctum_HighlightMembers(listWindow, memberIndex);
@@ -340,7 +340,7 @@ s32 Sanctum_RunPartyService(void) {
     wait(1);
   }
 
-  Menu_ReleaseEntryObjectsFar();
+  Menu_ReleasePartyFiguresFar();
   Window_CloseFar(donationWindow, 2);
   Window_CloseFar(listWindow, 2);
   wait(1);

@@ -40,7 +40,7 @@ s32 PsynergyMenu_Run(void) {
   Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeState(0);
+  Menu_InitializeState(0);
 #if TLA_PATCH_2
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(savedTiles, (void *)BG_CHAR_BLOCK(1), MENU_SAVED_TILE_BYTES);
@@ -199,7 +199,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
           ItemMenu_DrawMessage(0, (s32)MsgPsynergyChooseForR);
           break;
         }
-        ItemMenu_PositionCategory();
+        Menu_HideEntryIcons();
         StatusPanel_Draw(menu->statusWindow, menu->memberIds[0], 0,
                          STATUS_PANEL_EXPERIENCE);
         chosenAction = PsynergyMenu_RunList(0);
@@ -275,7 +275,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
       if (useResult != -1) {
         StatusPanel_Draw(menu->statusWindow, menu->memberIds[1], 0,
                          STATUS_PANEL_EXPERIENCE);
-        Ability_PlayUseAnimation(menu->sideAction[0] & PSYNERGY_ABILITY_MASK);
+        Ability_PlayUseSound(menu->sideAction[0] & PSYNERGY_ABILITY_MASK);
         WindowSprite_ClearListFar(menu->infoWindow);
         ItemMenu_ShowMessage(menu->useResult + (s32)MsgItemUseResult, 0, -1);
       } else {
@@ -373,7 +373,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
       PsynergyMenu_CollectActions(unit, actions, PSYNERGY_LIST_FIELD);
   result = PsynergyMenu_SelectMember(menu->memberTable, actions);
   icon = menu->sideIcon[partySlot];
-  Icon_PrepareActor(icon);
+  Icon_Show(icon);
   wait(1);
   return result;
 }
@@ -425,7 +425,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
       PsynergyMenu_DrawShortcuts(menu->shortcutWindow, ownerIds[selection]);
       Menu_ReloadMemberPortrait(menu, ownerIds[selection]);
       if (redraw == 2) {
-        Menu_CreateOwnerEntryObjects(selection / 4 * 4);
+        Menu_CreatePartyFigures(selection / 4 * 4);
         wait(1);
       }
       Menu_MarkChosenMember(menu->auxiliaryWindow, selection, count);
@@ -500,7 +500,7 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId) {
   menu->psynergyCount =
       PsynergyMenu_CollectActions(owner, psynergies, PSYNERGY_LIST_FIELD);
   WindowSprite_RedrawSavedRectFar(menu->psynergyWindow);
-  PsynergyMenu_RefreshMemberEntries(108, 32, 8);
+  PsynergyMenu_PlaceEntryIcons(108, 32, 8);
   PsynergyMenu_DrawPsynergyIcons(psynergies);
   if (menu->psynergyCount == 0) {
     Text_DrawMessageAsTilesFar((s32)MsgPsynergyMenuEmpty, menu->psynergyWindow,
@@ -542,7 +542,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
                          STATUS_PANEL_EXPERIENCE);
         Menu_ReloadMemberPortrait(menu, menu->memberTable[selection]);
         if (redraw == 2) {
-          Menu_CreateOwnerEntryObjects(selection / 4 * 4);
+          Menu_CreatePartyFigures(selection / 4 * 4);
           wait(1);
         }
         Menu_MarkChosenMember(menu->auxiliaryWindow, selection, count);
@@ -586,7 +586,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
     redraw = Menu_MoveGridCursor(&selection, count, 4);
   }
   icon = menu->sideIcon[1];
-  Icon_PrepareActor(icon);
+  Icon_Show(icon);
   icon->motion = ICON_HIDDEN;
   wait(1);
   menu->tabIndex[1] = selection;
@@ -594,7 +594,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   menu->memberIds[1] = menu->memberTable[selection];
   selection = menu->tabIndex[0];
   count = menu->tabCounts[0];
-  Menu_CreateOwnerEntryObjects(selection / 4 * 4);
+  Menu_CreatePartyFigures(selection / 4 * 4);
   Menu_MarkChosenMember(menu->auxiliaryWindow, selection, count);
   menu->pageArrows[0]->motion = ICON_HIDDEN;
   menu->pageArrows[1]->motion = ICON_HIDDEN;
@@ -1088,7 +1088,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         changed = 0;
         if (menu->psynergies[previous] != 0) {
           icon = menu->entryIcons[previous];
-          Icon_PrepareActor(icon);
+          Icon_Show(icon);
         }
         if (redraw != 0) {
           redraw = 0;
@@ -1202,7 +1202,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
               Unit_Get(menu->memberIds[0]), menu->psynergies, listMode);
         } while (menu->psynergyCount == 0);
         menu->tabIndex[paneIndex] = member;
-        Menu_CreateOwnerEntryObjects(member / 4 * 4);
+        Menu_CreatePartyFigures(member / 4 * 4);
         Menu_MarkChosenMember(menu->auxiliaryWindow, member, ownerCount);
         menu->pageArrows[0]->motion = ICON_HIDDEN;
         menu->pageArrows[1]->motion = ICON_HIDDEN;
@@ -1250,7 +1250,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   }
 
   menu->flags &= ~PSYNERGY_MENU_SHORTCUT_HELP;
-  Icon_PrepareActor(menu->entryGridCursor);
+  Icon_Show(menu->entryGridCursor);
   menu->sideRow[paneIndex] = state.selectedIndex;
   menu->selectedIndexByMember[menu->memberIds[paneIndex]] = state.selectedIndex;
   menu->sideAction[paneIndex] = result;

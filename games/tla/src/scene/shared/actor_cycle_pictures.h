@@ -8,21 +8,21 @@ void Actor_CyclePictures(struct Actor *actor) {
   case 0:
     animation->colorMode = SPRITE_COLOR_WHITE;
     sprite->dirty = 1;
-    sprite->nextFrame = 2;
+    sprite->flags = 2;
     break;
   case 1:
     sprite->dirty = 1;
-    sprite->nextFrame = 0;
+    sprite->flags = 0;
     break;
   case 2:
     animation->colorMode = SPRITE_COLOR_WHITE;
     sprite->dirty = 1;
-    sprite->nextFrame = 0;
+    sprite->flags = 0;
     break;
   case 3:
     animation->colorMode = SPRITE_COLOR_NORMAL;
     sprite->dirty = 1;
-    sprite->nextFrame = 0;
+    sprite->flags = 0;
     break;
   }
   actor->timer++;

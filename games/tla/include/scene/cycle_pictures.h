@@ -20,11 +20,11 @@ struct AnimatedSprite {
   u8 scale[4];
   u8 vramBlock; ///< VRAM cache entry holding its tiles
   u8 cacheFlags;
-  s16 rotation; ///< 1/65536 turns
-  u8 size[4];   ///< width, height and the x and y offsets
-  u8 frame;     ///< the animation number last selected
-  u8 dirty;     ///< nonzero redraws its pixels
-  u8 nextFrame; ///< the sprite flags (enum SpriteFlag)
+  s16 rotation;     ///< 1/65536 turns
+  u8 size[4];       ///< width, height and the x and y offsets
+  u8 lastAnimation; ///< the animation number last selected
+  u8 dirty;         ///< nonzero redraws its pixels
+  u8 flags;         ///< the sprite flags (enum SpriteFlag)
   /// The layer count, then the shadow's link and attributes.
   u8 shadow[13];
   struct SpriteAnimation *animation;

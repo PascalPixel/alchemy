@@ -745,7 +745,7 @@ extern char ResourceId_Headings;
 /// Loaded by NameEntry_EditMemberName and NameCaret_LoadIntoSlot.
 extern char ResourceId_NameCaretTiles;
 #define RESOURCE_NAME_CARET_TILES ((s32)&ResourceId_NameCaretTiles)
-/// Loaded by Icon_CreateWithResource, NameEntry_EditMemberName,
+/// Loaded by Icon_CreateHandCursor, NameEntry_EditMemberName,
 /// PointingHand_LoadIntoSlot, PointingHand_LoadIntoFreeSlot and
 /// Shop_InitializeState.
 extern char ResourceId_UiIconTiles;
@@ -1359,16 +1359,16 @@ extern char ResourceId_BlizzardBackdrop;
 /// Loaded by Menu_OpenBackdropScreen and Shop_InitializeState.
 extern char ResourceId_ShopGemTiles;
 #define RESOURCE_SHOP_GEM_TILES ((s32)&ResourceId_ShopGemTiles)
-/// Loaded by Resource_LoadPairedBlocksIfAvailable.
+/// Loaded by Menu_LoadDjinnArrows.
 extern char ResourceId_ItemMenuTilesA;
 #define RESOURCE_ITEM_MENU_TILES_A ((s32)&ResourceId_ItemMenuTilesA)
-/// Loaded by Resource_LoadPairedBlocksIfAvailable.
+/// Loaded by Menu_LoadDjinnArrows.
 extern char ResourceId_ItemMenuTilesB;
 #define RESOURCE_ITEM_MENU_TILES_B ((s32)&ResourceId_ItemMenuTilesB)
 /// Item menu workspace (known fields only).
 extern char ResourceId_MenuArrowTiles;
 #define RESOURCE_MENU_ARROW_TILES ((s32)&ResourceId_MenuArrowTiles)
-/// Loaded by Resource_LoadPairedBlocks and Shop_InitializeState.
+/// Loaded by Menu_LoadStatArrows and Shop_InitializeState.
 extern char ResourceId_MenuSmallDownArrowTiles;
 #define RESOURCE_MENU_SMALL_DOWN_ARROW_TILES                                   \
   ((s32)&ResourceId_MenuSmallDownArrowTiles)
@@ -1407,7 +1407,7 @@ extern char ResourceId_IntroLighthousePicture;
 /// Loaded by TitleIntro_ShowLighthouse.
 extern char ResourceId_IntroGullSprites;
 #define RESOURCE_INTRO_GULL_SPRITES ((s32)&ResourceId_IntroGullSprites)
-/// Loaded by Title_ShowIntro.
+/// Loaded by Title_ShowTitleScreen.
 extern char ResourceId_TitleScreenPicture;
 #define RESOURCE_TITLE_SCREEN_PICTURE ((s32)&ResourceId_TitleScreenPicture)
 /// Loaded by ChampaCliffCaves_LoadColumn.

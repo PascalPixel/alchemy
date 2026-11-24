@@ -47,8 +47,8 @@ void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow) {
                        (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
       shop->cursorFrames = 3;
       if (redraw == MENU_GRID_CHANGED_PAGE) {
-        Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
-                                        SHOP_PARTY_PAGE_MEMBERS);
+        Menu_CreatePartyFiguresFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
+                                   SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
       }
       Shop_DrawParty(window, memberIndex, shop->selectedItem);

@@ -191,8 +191,8 @@ static inline void FieldActor_SetSpriteColor(struct Actor *actor, s32 param) {
 static inline void FieldActor_Stop(s32 actorId) { Actor_Stop(actorId); }
 
 /// Event_SetExitRequest, from an event.
-static inline void FieldEvent_SetExitRequest(s32 request) {
-  Import_EventSetExitRequest(request);
+static inline void FieldEvent_SetExitRequest(s32 exit) {
+  Import_EventSetExitRequest(exit);
 }
 
 /// Holds the event until an actor has reached its destination
@@ -252,8 +252,8 @@ static inline void FieldWorldMap_StartZoom(FIXED zoom, s32 frames) {
 }
 
 /// Applies a window colour (WindowColor_Apply).
-static inline void FieldWindowColor_Apply(s32 phase, s32 brightness) {
-  WindowColor_Apply(phase, brightness);
+static inline void FieldWindowColor_Apply(s32 color, s32 brightness) {
+  WindowColor_Apply(color, brightness);
 }
 
 /// Requests a battle with a Djinni (Field_RequestDjinnBattle).

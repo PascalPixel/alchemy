@@ -12,7 +12,7 @@
 /// The SST chip's time limits in milliseconds, by enum FlashPhase (see
 /// FlashSetupInfo.maxTime): 10 to program a byte, 40 to erase a sector, 200 the
 /// whole chip.
-const u16 Flash_MaxTimeSst[] = {
+const u16 gFlash_MaxTimeSst[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     40, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
@@ -27,19 +27,19 @@ const struct FlashSetupInfo gFlash_ChipDefault = {
     .eraseChip = EraseFlashChip,
     .eraseSector = EraseFlashSector,
     .wait = WaitForFlashWrite,
-    .maxTime = (u16 *)Flash_MaxTimeSst,
+    .maxTime = (u16 *)gFlash_MaxTimeSst,
     .type = {.romSize = 65536,
              .sector = {.size = 4096, .shift = 12, .count = 16, .top = 0},
              .wait = {3, 3},
              .id = {.joined = 0}},
 };
 
-const struct FlashSetupInfo Flash_ChipSst = {
+const struct FlashSetupInfo gFlash_ChipSst = {
     .program = ProgramFlashSectorWithEraseRetry,
     .eraseChip = EraseFlashChip,
     .eraseSector = EraseFlashSector,
     .wait = WaitForFlashWrite,
-    .maxTime = (u16 *)Flash_MaxTimeSst,
+    .maxTime = (u16 *)gFlash_MaxTimeSst,
     .type = {.romSize = 65536,
              .sector = {.size = 4096, .shift = 12, .count = 16, .top = 0},
              .wait = {1, 2},

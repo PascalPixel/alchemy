@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_NODE_CHAIN_H
-#define ALCHEMY_NODE_CHAIN_H
+#ifndef ALCHEMY_SELECTION_CURSOR_H
+#define ALCHEMY_SELECTION_CURSOR_H
 
 /// @file
 /// The selection screen's icon under the hand.

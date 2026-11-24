@@ -164,7 +164,7 @@ next_page:
   partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
-  Menu_PlaceOwnerEntryObjectsFar(partyWindow, 2, 0);
+  Menu_ShowPartyFiguresFar(partyWindow, 2, 0);
   itemWindow = Window_CreateFar(16, 11, 14, 9, WINDOW_FLAG_INSTANT);
   redraw = MENU_GRID_CHANGED_PAGE;
 
@@ -180,8 +180,8 @@ next_page:
                        selectionIndex % SHOP_PARTY_PAGE_MEMBERS * 24 - 12, 0);
       shop->cursorFrames = 3;
       if (redraw == MENU_GRID_CHANGED_PAGE) {
-        Menu_CreateOwnerEntryObjectsFar(
-            selectionIndex / SHOP_PARTY_PAGE_MEMBERS * SHOP_PARTY_PAGE_MEMBERS);
+        Menu_CreatePartyFiguresFar(selectionIndex / SHOP_PARTY_PAGE_MEMBERS *
+                                   SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
       }
       Shop_DrawParty(partyWindow, selectionIndex, shop->selectedItem);
@@ -241,7 +241,7 @@ next_page:
   }
 
   ItemIconGrid_SetVisible(0);
-  Menu_ReleaseEntryObjectsFar();
+  Menu_ReleasePartyFiguresFar();
   Window_CloseFar(itemWindow, 2);
   Window_CloseFar(partyWindow, 2);
   wait(1);

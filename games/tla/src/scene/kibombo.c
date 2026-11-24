@@ -84,7 +84,7 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 void Actor_SetAnimationById(u32 actorId, s32 animation);
 void FieldPsynergy_RunHandler(s32 type);
 void FieldCamera_WaitForArrival(void);
-void Import_EventSetExitRequest(s32 countdown);
+void Import_EventSetExitRequest(s32 exit);
 void FieldPsynergy_LoadResources(s32 a, s32 b);
 void BattleEffect_StopMainActor(void);
 

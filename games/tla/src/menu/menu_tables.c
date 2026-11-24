@@ -91,6 +91,6 @@ s32 gDjinnFigures_SpriteIds[4] = {SPRITE_VENUS_DJINNI, SPRITE_MERCURY_DJINNI,
                                   SPRITE_MARS_DJINNI, SPRITE_JUPITER_DJINNI};
 
 /// The command icons the Status screen shows (MenuIcon_LoadSlots).
-u16 gStatusScreen_CommandIcons[5] = {COMMAND_ICON_SUMMON, COMMAND_ICON_PSYNERGY,
-                                     COMMAND_ICON_ITEM, COMMAND_ICON_DJINN,
-                                     COMMAND_ICON_STATUS};
+u16 gStatusScreen_StatusIcons[5] = {COMMAND_ICON_SUMMON, COMMAND_ICON_PSYNERGY,
+                                    COMMAND_ICON_ITEM, COMMAND_ICON_DJINN,
+                                    COMMAND_ICON_STATUS};

@@ -35,7 +35,7 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Event_SetDestination(s32 scene, s32 entrance);
 void Event_SetRestartPoint(s32 scene, s32 entrance);
-void Event_SetExitRequest(u16 countdown);
+void Event_SetExitRequest(u16 exit);
 void Event_SetMessageId(s32 message);
 
 #endif

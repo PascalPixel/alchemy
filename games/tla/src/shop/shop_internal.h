@@ -222,7 +222,7 @@ struct ShopState {
                    ///< enum SanctumService)
   s8 burstMember;  ///< the sanctum's party member whose pose is randomized; -1
                    ///< none
-  /// ItemMenuState's: nonzero while Menu_UpdateEntryObjectTransforms places
+  /// ItemMenuState's: nonzero while Menu_UpdatePartyFigures places
   /// the party figures; cleared while a details window covers them.
   u8 memberSpritesShown;
   u8 figuresShown; ///< ItemMenuState's; not named here

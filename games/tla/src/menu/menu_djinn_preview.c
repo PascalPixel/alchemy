@@ -45,7 +45,7 @@ void Menu_CreatePairFigures(s32 first, s32 second);
 /// members' stats and each one's Psynergy, Left and Right their pages. Returns
 /// DJINN_RESULT_CONFIRMED for Yes, DJINN_RESULT_BACK for No or B, and
 /// DJINN_RESULT_START for Start.
-s32 PsynergyList_RunCompareLoop(u32 mode) {
+s32 DjinnMenu_RunPreview(u32 mode) {
   struct DjinnMenuState *menu;
   struct DjinnMenuBackdrop *backdrop;
   struct WindowState *state;
@@ -481,7 +481,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
   DjinnFigures_SetSlotPhase(0, 0);
   DjinnFigures_SetSlotPhase(1, 0);
-  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
+  Task_Add(Menu_UpdatePartyFigures, TASK_PASS_FRAME);
   ((struct WindowState *)Ram_HeapSlots->windowState)->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
@@ -640,7 +640,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     }
     wait(1);
   }
-  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
+  Task_Add(Menu_UpdatePartyFigures, TASK_PASS_FRAME);
   ((struct WindowState *)Ram_HeapSlots->windowState)->holdTilemapUpload = 1;
   Window_CloseIfOpen(helpWindowSlot, 1);
   wait(1);

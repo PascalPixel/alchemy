@@ -52,7 +52,7 @@ extern const u8 gWindowColor_WaveTable[];
 /// Sets the window colours (WINDOW_SHADE) for a window colour (0 to
 /// WINDOW_COLOR_COUNT - 1, a hue around the colour wheel) and brightness (0 to
 /// WINDOW_BRIGHTNESS_COUNT - 1, WINDOW_BRIGHTNESS_NEUTRAL the plain one).
-void WindowColor_Apply(s32 hue, s32 brightness) {
+void WindowColor_Apply(s32 color, s32 brightness) {
   s16 rgb[3];
   s16 step;
   s16 red;
@@ -60,7 +60,7 @@ void WindowColor_Apply(s32 hue, s32 brightness) {
   s16 blue;
   s16 offset;
 
-  step = ((hue + WINDOW_COLOR_COUNT / 2) % WINDOW_COLOR_COUNT) * 4;
+  step = ((color + WINDOW_COLOR_COUNT / 2) % WINDOW_COLOR_COUNT) * 4;
   offset = brightness - WINDOW_BRIGHTNESS_NEUTRAL;
   red = gWindowColor_WaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + offset;
   green = gWindowColor_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS / 3) %
@@ -364,7 +364,7 @@ extern const u8 gSettingsMenu_HuePresets[], gSettingsMenu_BrightnessPresets[];
 /// The colour presets SELECT steps through (gSettingsMenu_HuePresets).
 #define SETTINGS_PRESET_COUNT 6
 
-void Icon_PrepareActorFar(struct WindowSprite *icon);
+void Icon_ShowFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
 void FieldMessage_Show(s32 message, s32 mode);
 
@@ -419,7 +419,7 @@ s32 SettingsMenu_Run(void) {
       for (i = 0; i <= 2; i++) {
         icon = state->choiceIcons[0][i];
         icon->depth = OAM_DEPTH_FRONT - 4;
-        Icon_PrepareActorFar(icon);
+        Icon_ShowFar(icon);
         resourceIndex = (u8)state->choiceIcons[0][i]->index;
         dimmed = 0;
         if (i != state->option[SETTINGS_ROW_MESSAGE_SPEED])
@@ -429,7 +429,7 @@ s32 SettingsMenu_Run(void) {
       for (i = 0; i <= 1; i++) {
         icon = state->choiceIcons[1][i];
         icon->depth = OAM_DEPTH_FRONT - 4;
-        Icon_PrepareActorFar(icon);
+        Icon_ShowFar(icon);
         resourceIndex = (u8)state->choiceIcons[1][i]->index;
         dimmed = 0;
         if (i != state->option[SETTINGS_ROW_SPEECH])
@@ -439,7 +439,7 @@ s32 SettingsMenu_Run(void) {
       for (i = 0; i <= 1; i++) {
         icon = state->choiceIcons[2][i];
         icon->depth = OAM_DEPTH_FRONT - 4;
-        Icon_PrepareActorFar(icon);
+        Icon_ShowFar(icon);
         resourceIndex = (u8)state->choiceIcons[2][i]->index;
         dimmed = 0;
         if (i != state->option[SETTINGS_ROW_AUTO_SLEEP])
@@ -721,7 +721,7 @@ s32 PauseMenu_Choose(s32 initial) {
         do {
           icon = state->icon[i];
           icon->depth = OAM_DEPTH_FRONT - 4;
-          Icon_PrepareActorFar(icon);
+          Icon_ShowFar(icon);
           resourceIndex = (u8)icon->index;
           dimmed = 0;
           if (i != state->page)

@@ -342,10 +342,10 @@ struct MarsLighthouseAerieSprite {
   u8 vramBlock; ///< VRAM cache entry holding its tiles
   u8 cacheFlags;
   u8 rotation[2];
-  u8 size[4];   ///< width, height and the x and y offsets
-  u8 frame;     ///< the animation number last selected
-  u8 dirty;     ///< nonzero redraws its pixels
-  u8 nextFrame; ///< the sprite flags (enum SpriteFlag)
+  u8 size[4];       ///< width, height and the x and y offsets
+  u8 lastAnimation; ///< the animation number last selected
+  u8 dirty;         ///< nonzero redraws its pixels
+  u8 flags;         ///< the sprite flags (enum SpriteFlag)
 };
 
 /// One halfword read as a struct's field.
@@ -471,10 +471,10 @@ struct YampiDesertVisual {
   u8 vramBlock; ///< VRAM cache entry holding its tiles
   u8 cacheFlags;
   u8 rotation[2];
-  u8 size[4];   ///< width, height and the x and y offsets
-  u8 frame;     ///< the animation number last selected
-  u8 dirty;     ///< nonzero redraws its pixels
-  u8 nextFrame; ///< the sprite flags (enum SpriteFlag)
+  u8 size[4];       ///< width, height and the x and y offsets
+  u8 lastAnimation; ///< the animation number last selected
+  u8 dirty;         ///< nonzero redraws its pixels
+  u8 flags;         ///< the sprite flags (enum SpriteFlag)
   u8 layerCount;
 };
 

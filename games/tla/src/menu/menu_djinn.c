@@ -35,7 +35,7 @@ s32 Menu_GetModuloOfSum(s32 value, s32 modulus) {
 
 /// Places the four party figures over their Djinn columns, 56 pixels apart
 /// from x 32, at screen y 61 plus yOffset. Returns that y.
-s32 Menu_SetFirstActorRowCoordinates(s32 yOffset) {
+s32 DjinnMenu_PlacePartyFigures(s32 yOffset) {
   struct DjinnMenuState *menu;
   s32 memberX;
   s32 memberIndex;
@@ -58,7 +58,7 @@ s32 Menu_GetDjinnGiveMessage(void) {
   return (s32)MsgDjinnGiveTutorialA;
 }
 
-void Resource_LoadPairedBlocksIfAvailable(void);
+void Menu_LoadDjinnArrows(void);
 
 s32 DjinnMenu_RunScreen(void);
 
@@ -82,7 +82,7 @@ s32 DjinnMenu_Run(void) {
   enabled = Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeState(0);
+  Menu_InitializeState(0);
   backdrop = Heap_AllocEwram(sizeof(*backdrop));
   menu->backdrop = backdrop;
   backdrop->tutorialTimer = 0;
@@ -105,9 +105,9 @@ s32 DjinnMenu_Run(void) {
   Text_UseExtraTilesFar(1);
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   menu->memberCount = Party_ListMembersFar(menu->members);
-  Resource_LoadPairedBlocksIfAvailable();
+  Menu_LoadDjinnArrows();
   ItemMenu_Initialize(0, 3, 0, 7);
-  Menu_SetFirstActorRowCoordinates(0);
+  DjinnMenu_PlacePartyFigures(0);
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   menu->helpWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   menu->pairEntries[0] = DJINN_ENTRY_NONE;
@@ -144,7 +144,7 @@ void Menu_OpenBackdropScreen(void);
 s32 DjinnMenu_SelectDjinn(s32 mode);
 s32 DjinnMenu_ShowMemberStatus(void);
 s32 DjinnMenu_ShowHelp(void);
-s32 PsynergyList_RunCompareLoop(u32 mode);
+s32 DjinnMenu_RunPreview(u32 mode);
 /// Moves a Djinni from owner to recipient, set or on standby as it was;
 /// returns -1 when it cannot.
 s32 Djinn_TransferFar(s32 owner, s32 element, s32 index, s32 recipient);
@@ -228,7 +228,7 @@ s32 DjinnMenu_RunScreen(void) {
       step = DJINN_STEP_SELECT_DJINN;
       break;
     case DJINN_STEP_SELECT_DJINN:
-      Menu_SetFirstActorRowCoordinates(0);
+      DjinnMenu_PlacePartyFigures(0);
       DjinnFigures_SetSlotPosition(1, 0, MENU_FIGURE_HIDDEN_Y);
       result = DjinnMenu_SelectDjinn(DJINN_SELECT_DJINNI);
       step = DJINN_STEP_SHOW_HELP;
@@ -266,7 +266,7 @@ s32 DjinnMenu_RunScreen(void) {
       step = DJINN_STEP_SELECT_DJINN;
       break;
     case DJINN_STEP_SELECT_ACTION:
-      Menu_SetFirstActorRowCoordinates(-8);
+      DjinnMenu_PlacePartyFigures(-8);
       menu->member = menu->members[menu->selectedColumn[0]];
       menu->shownMember[0] = menu->members[menu->selectedColumn[0]];
       DjinnFigures_SetSlotPosition(0, DJINN_FIGURE_X(menu->selectedColumn[0]),
@@ -312,7 +312,7 @@ s32 DjinnMenu_RunScreen(void) {
       icon->motion = ICON_HIDDEN;
       icon = menu->pageArrows[1];
       icon->motion = ICON_HIDDEN;
-      result = PsynergyList_RunCompareLoop(DJINN_COMPARE_GIVE);
+      result = DjinnMenu_RunPreview(DJINN_COMPARE_GIVE);
       if (result == DJINN_RESULT_START)
         done = 1;
       step = DJINN_STEP_SELECT_ACTION;
@@ -338,7 +338,7 @@ s32 DjinnMenu_RunScreen(void) {
       icon->motion = ICON_HIDDEN;
       icon = menu->pageArrows[1];
       icon->motion = ICON_HIDDEN;
-      result = PsynergyList_RunCompareLoop(DJINN_COMPARE_STANDBY);
+      result = DjinnMenu_RunPreview(DJINN_COMPARE_STANDBY);
       if (result == DJINN_RESULT_START)
         done = 1;
       step = DJINN_STEP_SELECT_ACTION;
@@ -363,7 +363,7 @@ s32 DjinnMenu_RunScreen(void) {
       icon->motion = ICON_HIDDEN;
       icon = menu->pageArrows[1];
       icon->motion = ICON_HIDDEN;
-      result = PsynergyList_RunCompareLoop(DJINN_COMPARE_TRADE);
+      result = DjinnMenu_RunPreview(DJINN_COMPARE_TRADE);
       if (result == DJINN_RESULT_START)
         done = 1;
       step = DJINN_STEP_SELECT_ACTION;
@@ -389,7 +389,7 @@ s32 DjinnMenu_RunScreen(void) {
       icon->motion = ICON_HIDDEN;
       icon = menu->pageArrows[1];
       icon->motion = ICON_HIDDEN;
-      result = PsynergyList_RunCompareLoop(DJINN_COMPARE_SET);
+      result = DjinnMenu_RunPreview(DJINN_COMPARE_SET);
       if (result == DJINN_RESULT_START)
         done = 1;
       step = DJINN_STEP_SELECT_ACTION;
@@ -523,7 +523,7 @@ void Menu_OpenBackdropScreen(void) {
 
   window = menu->statusWindow;
   WindowSprite_ClearListFar(window);
-  icon = Icon_CreateWithResource(window, -8, 11);
+  icon = Icon_CreateHandCursor(window, -8, 11);
   icon->motion = ICON_HIDDEN;
   menu->cursor = icon;
   entry = VramCache_FindFreeEntry();
@@ -946,7 +946,7 @@ s32 DjinnMenu_ShowHelp(void) {
     WindowSprite_PrepareForRedrawFar(menu->statusWindow);
     ((struct WindowState *)Ram_HeapSlots->windowState)->holdTilemapUpload = 0;
   }
-  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
+  Task_Add(Menu_UpdatePartyFigures, TASK_PASS_FRAME);
   return result;
 }
 
@@ -1084,7 +1084,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (redraw >> 2) { // DJINN_REDRAW_PAGE
         s32 page = memberColumn / 4 * 4;
 
-        Menu_CreateOwnerEntryObjects(page);
+        Menu_CreatePartyFigures(page);
         DjinnMenu_DrawPage(backdrop, page);
         if (mode == DJINN_SELECT_ACTION) {
           s32 fromX;

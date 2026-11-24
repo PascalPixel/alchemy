@@ -326,7 +326,7 @@
 	export TreasureSpot_SetActorPosition, TreasureSpot_SetActorPositionFar
 	export LineScroll_InitWave, LineScroll_InitWaveFar
 	export ItemDisplay_ShowPicture, ItemDisplay_ShowPictureFar
-	export Title_ShowIntro, Title_ShowIntroFar
+	export Title_ShowTitleScreen, Title_ShowTitleScreenFar
 	export Actor_Lookup, Actor_LookupFar
 	export FieldEffect_StartBlankOverlay, FieldEffect_StartBlankOverlayFar
 	export WorldMap_ReloadPendingAreaGraphics, WorldMap_ReloadPendingAreaGraphicsFar
@@ -439,7 +439,7 @@
 	export EndingImage_Show, EndingImage_ShowFar
 	export BattleEffect_StartArcEffect, BattleEffect_StartArcEffectFar
 	export BattleEffect_EndArcEffect, BattleEffect_EndArcEffectFar
-	export SceneState_SetScrollTarget, SceneState_SetScrollTargetFar
+	export EndingImage_SetTargetRow, EndingImage_SetTargetRowFar
 	export BattleEffect_WaitForArcGroups, BattleEffect_WaitForArcGroupsFar
 	export EndingImage_WaitForScroll, EndingImage_WaitForScrollFar
 	export EndingImage_LowerTopStrip, EndingImage_LowerTopStripFar

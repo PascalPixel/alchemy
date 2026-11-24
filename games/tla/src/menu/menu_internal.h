@@ -70,7 +70,7 @@ enum DjinnMenuResult {
 /// DjinnMenuBackdrop.tutorialStep: where the Djinn tutorial is. The tutorial
 /// plays the menu itself, one scripted press a step, after a wait counted in
 /// frames (DjinnMenu_SelectDjinn and, on the preview screens,
-/// PsynergyList_RunCompareLoop).
+/// DjinnMenu_RunPreview).
 enum DjinnTutorialStep {
   DJINN_TUTORIAL_OFF = 0,
   /// Giving a Djinni and setting it: "To give your Djinni to someone else,
@@ -138,7 +138,7 @@ enum DjinnSelectMode {
 #define DJINN_NUMBER(v) ((v) & DJINN_ENTRY_INDEX)
 
 /// The preview loop's four operations, as its confirmation text describes them
-/// (PsynergyList_RunCompareLoop's mode).
+/// (DjinnMenu_RunPreview's mode).
 enum DjinnCompareOperation {
   DJINN_COMPARE_TRADE = 0,
   DJINN_COMPARE_GIVE = 1,
@@ -191,10 +191,10 @@ enum DjinnCompareOperation {
 #include "graphics/vram_tab.h"
 #include "window/item_icon.h"
 
-void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
-                                s32 originX, s32 originY, s32 columns);
-void PsynergyMenu_PositionMemberEntry(struct WindowSprite **icons, s32 index,
-                                      s32 x, s32 y, s32 columns);
+void Menu_PlaceEntryIconInGrid(struct WindowSprite *icon, s32 index,
+                               s32 originX, s32 originY, s32 columns);
+void PsynergyMenu_PlaceEntryIcon(struct WindowSprite **icons, s32 index, s32 x,
+                                 s32 y, s32 columns);
 void ItemMenu_PlaceIcon(struct WindowSprite **icons, s32 index, s32 x, s32 y,
                         s32 columns);
 void Window_SetBounds(struct Window *window, s32 x, s32 y, s32 width,
@@ -245,7 +245,7 @@ struct ItemMenuState {
   s16 memberY[8];         ///< screen pixels
   FIXED memberScale[8];   ///< 16.16 fixed point, FIXED_ONE full size
   /// The party member each figure shows, -1 for none
-  /// (Menu_CreateOwnerEntryObjects).
+  /// (Menu_CreatePartyFigures).
   s16 memberSpriteIds[8];
   u16 selectedSlots[2]; ///< each side's inventory slot chosen
   u16 selectedItems[2]; ///< each side's inventory entry chosen
@@ -287,7 +287,7 @@ struct ItemMenuState {
   u8 shopStock[638];           ///< ShopState's stock and party; not named here
   u16 resourceSlots[2];        ///< VRAM cache slots of two arrow pictures
   u8 shopKeeper[23]; ///< ShopState's cursor and keeper; not named here
-  /// Nonzero while Menu_UpdateEntryObjectTransforms places the party figures
+  /// Nonzero while Menu_UpdatePartyFigures places the party figures
   /// (memberSprites); the shops clear it while a details window covers them.
   s8 memberSpritesShown;
   /// Nonzero while the row of four figures is drawn
@@ -497,7 +497,7 @@ void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Text_UseExtraTilesFar(s32 flag);
 /// Marks the text tiles the tilemap shows and frees those it no longer shows.
 void Window_MarkVisibleTextTilesFar(void);
-void Menu_CreateOwnerEntryObjects(s32 first);
+void Menu_CreatePartyFigures(s32 first);
 void Menu_MarkChosenMember(s32 unused, s32 index, s32 count);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 /// Loads entry id's icon of kind mode into sprite tile slot slot (a free one
@@ -506,18 +506,19 @@ void Resource_LoadByModeIntoSlotFar(s32 mode, s32 id, s32 slot, s32 flags);
 s32 Sprite_StartAnimationFar(void *object, s32 argument);
 /// Animates the page arrows on a window's top border, from tile offset.
 void Link_DrawPageArrowsFar(s32 offset);
-void Menu_UpdateEntryObjectTransforms(void);
+void Menu_UpdatePartyFigures(void);
 void Input_ResetKeyRepeat(void);
 s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 owner);
 void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode);
-s32 Ability_ApplyToTargets(s32 entry, s32 member, s32 target, s32 mode);
-s32 Ability_PlayUseAnimation(s32 action);
+s32 Ability_ApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
+                           s32 plainPower);
+s32 Ability_PlayUseSound(s32 action);
 void DjinnFigures_InitializeTopRow(void);
 void DjinnFigures_ReleaseTopRow(void);
 void Menu_FreeArrows(void);
-/// One 4-bit tile (backdrop.4bpp) the Djinn menus copy into the backdrop's
-/// frame; the Djinn preview blinks it, drawing it and a fill of the window
-/// background in turn every four frames.
+/// One 4-bit tile (class_change_arrow.4bpp) the Djinn menus copy into the
+/// backdrop's frame; the Djinn preview blinks it, drawing it and a fill of the
+/// window background in turn every four frames.
 extern u8 gMenu_BackdropBorderTile[];
 void WindowSprite_PrepareForRedrawFar(s32 window);
 s32 Message_AllTypedFar(void);
@@ -627,7 +628,7 @@ enum UnitStatus {
 #define MENU_DRAW_STATUS_LABEL Text_DrawStringAtOffsetFar
 #endif
 
-/// PsynergyList_RunCompareLoop's pages for a give or trade, which R cycles; the
+/// DjinnMenu_RunPreview's pages for a give or trade, which R cycles; the
 /// first two also index its per-member page counts.
 enum DjinnComparePage {
   DJINN_COMPARE_PAGE_GIVER = 0,    ///< the giver's stats and Psynergy

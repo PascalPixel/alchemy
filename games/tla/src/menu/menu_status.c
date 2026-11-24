@@ -14,8 +14,8 @@ enum StatusScreenStep {
   STATUS_STEP_EQUIPMENT = 3 ///< their equipment page
 };
 
-/// The page modes of StatusScreen_DrawStatusAilments and
-/// ItemMenu_DrawMemberStatus, in the mode's low byte: the party row's summary,
+/// The page modes of StatusScreen_DrawStatusPage and
+/// StatusScreen_DrawTopRows, in the mode's low byte: the party row's summary,
 /// or the full status page, with the elemental levels, Power and Resist.
 enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 /// A bit over the page mode: draw without clearing the window first, as for a
@@ -72,7 +72,7 @@ s32 PartyMemberChooser_Open(void) {
   Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeState(0);
+  Menu_InitializeState(0);
 
   state->partyCount = Party_ListMembersFar(state->memberIds);
   StatusScreen_Initialize(0, 3, 0, 7);
@@ -142,7 +142,7 @@ s32 StatusScreen_Run(void) {
   // Window 0 shows only the windows' layer and the sprites.
   transition->winOut = WININ_WIN0_BG0 | WININ_WIN0_OBJ;
   Menu_SuspendFieldTasks();
-  Window_InitializeState(0);
+  Menu_InitializeState(0);
   page = &state->page;
   *page = 0;
   state->partyCount = Party_ListMembersFar(state->memberIds);
@@ -196,9 +196,9 @@ s32 StatusScreen_Run(void) {
 }
 
 void MenuIcon_SetActive(s32 active);
-s32 StatusScreen_SelectCommand(void);
-s32 PsynergyMenu_SelectAction(void);
-s32 ItemMenu_SelectItem(void);
+s32 StatusScreen_RunStatusPage(void);
+s32 StatusScreen_RunPsynergyPage(void);
+s32 StatusScreen_RunEquipmentPage(void);
 
 /// The Status menu's pages: choose a party member, then their status page, A
 /// for their Psynergy page and A again for their equipment page, whose A goes
@@ -216,10 +216,10 @@ s32 StatusScreen_RunPages(void) {
     switch (step) {
     case STATUS_STEP_MEMBER:
       state->selectedSlots[0] = finished;
-      Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
+      Task_Add(Menu_UpdatePartyFigures, TASK_PASS_FRAME);
       MenuIcon_SetActive(1);
       step = StatusScreen_SelectMember(0);
-      Task_Remove(Menu_UpdateEntryObjectTransforms);
+      Task_Remove(Menu_UpdatePartyFigures);
       if (step == -1) {
         result = step;
         finished = 1;
@@ -228,19 +228,19 @@ s32 StatusScreen_RunPages(void) {
       break;
     case STATUS_STEP_STATUS:
       MenuIcon_SetActive(1);
-      result = StatusScreen_SelectCommand();
+      result = StatusScreen_RunStatusPage();
       step = result == -1 ? STATUS_STEP_MEMBER : STATUS_STEP_PSYNERGY;
       break;
     case STATUS_STEP_PSYNERGY:
       MenuIcon_SetActive(0);
-      result = PsynergyMenu_SelectAction();
+      result = StatusScreen_RunPsynergyPage();
       step = STATUS_STEP_MEMBER;
       if (result != -1)
         step = STATUS_STEP_EQUIPMENT;
       break;
     case STATUS_STEP_EQUIPMENT:
       MenuIcon_SetActive(0);
-      result = ItemMenu_SelectItem();
+      result = StatusScreen_RunEquipmentPage();
       // STATUS_STEP_MEMBER for -1, STATUS_STEP_STATUS otherwise.
       step = NONZERO(~result);
       break;
@@ -256,8 +256,8 @@ s32 StatusScreen_RunPages(void) {
   return result;
 }
 
-s32 PsynergyMenu_ChooseMember(void);
-s32 PartyMemberChooser_RunRearrange(void);
+s32 PartyMemberChooser_ChooseMember(void);
+s32 StatusScreen_RunPartyRow(void);
 
 /// Lets the player choose a party member in slot, from the one chosen last: the
 /// party member chooser on the chooser page, else the Status menu's
@@ -283,11 +283,11 @@ s32 StatusScreen_SelectMember(s32 slot) {
   else
     MenuCursor_Slide(index * 24 - 10, 16);
   if (menu->page == STATUS_SCREEN_PAGE_CHOOSER)
-    result = PsynergyMenu_ChooseMember();
+    result = PartyMemberChooser_ChooseMember();
   else
-    result = PartyMemberChooser_RunRearrange();
+    result = StatusScreen_RunPartyRow();
   cursor = menu->memberCursors[slot];
-  Icon_PrepareActor(cursor);
+  Icon_Show(cursor);
   wait(1);
   return result;
 }
@@ -385,7 +385,7 @@ s32 PartyMemberChooser_MoveEntry(s32 selection, s32 direction);
 /// their status; L and R move the party member one place along the party order;
 /// Select lists the Djinn found (once the first is caught, FLAG_DJINN_FIRST); A
 /// chooses the party member and B backs out.
-s32 PartyMemberChooser_RunRearrange(void) {
+s32 StatusScreen_RunPartyRow(void) {
   struct StatusScreenState *menu;
   s32 ownerIndex;
   s32 ownerCount;
@@ -434,7 +434,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       StatusScreen_ShowMemberStatus(menu->memberIds[ownerIndex], page);
       Menu_ReloadMemberPortrait(menu, menu->memberIds[ownerIndex]);
       if (redraw == 2) {
-        Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
+        Menu_CreatePartyFigures(ownerIndex / 4 * 4);
         wait(1);
       }
       Menu_MarkChosenMember(menu->memberWindow, ownerIndex, ownerCount);
@@ -456,7 +456,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       if (PartyMemberChooser_MoveEntry(ownerIndex, 1)) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         ownerIndex++;
-        Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
+        Menu_CreatePartyFigures(ownerIndex / 4 * 4);
         Menu_MarkChosenMember(menu->memberWindow, ownerIndex, ownerCount);
       } else {
         Sound_PlayFar(SE_MENU_ERROR);
@@ -466,7 +466,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       if (PartyMemberChooser_MoveEntry(ownerIndex, 0)) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         ownerIndex--;
-        Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
+        Menu_CreatePartyFigures(ownerIndex / 4 * 4);
         Menu_MarkChosenMember(menu->memberWindow, ownerIndex, ownerCount);
       } else {
         Sound_PlayFar(SE_MENU_ERROR);
@@ -488,11 +488,11 @@ s32 PartyMemberChooser_RunRearrange(void) {
   return result;
 }
 
-void Menu_PlaceEntryActorsInGrid(s32 x, s32 y, s32 columns);
+void Menu_PlaceEntryIconsInGrid(s32 x, s32 y, s32 columns);
 
 /// The party member chooser (menu page 3): Left and Right choose a party
 /// member, showing their status and Psynergy icons; A chooses and B backs out.
-s32 PsynergyMenu_ChooseMember(void) {
+s32 PartyMemberChooser_ChooseMember(void) {
   struct StatusScreenState *menu =
       (struct StatusScreenState *)Ram_HeapSlots->menuState;
   s32 selection = menu->memberIndex[0];
@@ -520,10 +520,10 @@ s32 PsynergyMenu_ChooseMember(void) {
           PsynergyMenu_CollectActions(Unit_Get(menu->memberIds[selection]),
                                       menu->entries, PSYNERGY_LIST_ALL);
       PsynergyMenu_DrawPsynergyIcons(menu->entries);
-      Menu_PlaceEntryActorsInGrid(96, 96, 8);
+      Menu_PlaceEntryIconsInGrid(96, 96, 8);
       Menu_HideEmptyEntryIcons(menu->entries);
       if (pending == 2) {
-        Menu_CreateOwnerEntryObjects(selection / 4 * 4);
+        Menu_CreatePartyFigures(selection / 4 * 4);
         wait(1);
       }
       Menu_MarkChosenMember(menu->memberWindow, selection, count);
@@ -588,8 +588,7 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
   return 1;
 }
 
-void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
-                                 s32 originY);
+void Menu_ShowPartyFigures(struct Window *window, s32 originX, s32 originY);
 
 /// Sets up the party row of the Status menu and the party member chooser: the
 /// top-left window with the hand cursor and the party's figures, no other
@@ -599,7 +598,7 @@ void StatusScreen_Initialize(s32 unusedA, s32 unusedB, s32 unusedC,
                              s32 unusedD) {
   struct StatusScreenState *state = Ram_HeapSlots->menuState;
 
-  Menu_PlaceOwnerEntryObjects(MenuCursor_Create(state), 2, 2);
+  Menu_ShowPartyFigures(MenuCursor_Create(state), 2, 2);
   state->unopenedWindow = 0;
   state->statusWindow = 0;
   state->helpWindow = 0;
@@ -610,7 +609,7 @@ void StatusScreen_Initialize(s32 unusedA, s32 unusedB, s32 unusedC,
   state->rowCount = 2;
 }
 
-void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode);
+void StatusScreen_DrawStatusPage(s32 window, s32 ownerId, s32 mode);
 
 /// Shows party member resource's status in the party row's status window,
 /// opening it the first time with the party member's portrait (and, for the
@@ -636,10 +635,10 @@ void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
          state->page) == STATUS_SCREEN_PAGE_CHOOSER) {
       Menu_SpawnIconEntries(state, handle);
     }
-    StatusScreen_DrawStatusAilments(handle, resource, STATUS_PAGE_NO_CLEAR);
+    StatusScreen_DrawStatusPage(handle, resource, STATUS_PAGE_NO_CLEAR);
     return;
   }
-  StatusScreen_DrawStatusAilments(handle, resource, STATUS_PAGE_SUMMARY);
+  StatusScreen_DrawStatusPage(handle, resource, STATUS_PAGE_SUMMARY);
 }
 
 /// The switch-characters help follows the A-button label on the help line:
@@ -661,7 +660,7 @@ void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full);
 /// statuses, whose advice the help window gives, Right the other column, its
 /// entries explained in turn; L and R change party member. Returns 1 for A, -1
 /// for B.
-s32 StatusScreen_SelectCommand(void) {
+s32 StatusScreen_RunStatusPage(void) {
   struct StatusScreenState *menu;
   s32 pane;
   s32 result;
@@ -696,8 +695,7 @@ s32 StatusScreen_SelectCommand(void) {
   while (done == 0 && !GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     // DEAD: Unit_Get's result is not used; the ROM keeps the call.
     Unit_Get(menu->selectedIds[0]);
-    StatusScreen_DrawStatusAilments(window, menu->selectedIds[0],
-                                    STATUS_PAGE_FULL);
+    StatusScreen_DrawStatusPage(window, menu->selectedIds[0], STATUS_PAGE_FULL);
     count = StatusScreen_BuildAvailability(entries, 1, menu->selectedIds[0]);
     hasAilments = 0;
     if (count == 0)
@@ -940,7 +938,7 @@ extern const u8 gMenu_LvString[];
 /// Djinn count.
 extern const u8 gMenu_SlashString[];
 
-void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags);
+void StatusScreen_DrawTopRows(s32 window, s32 owner, s32 flags);
 
 void MenuPanel_DrawEntryList(struct Window *panel, s32 x, s32 y,
                              const u8 *enabled);
@@ -948,11 +946,11 @@ void MenuPanel_DrawEntryList(struct Window *panel, s32 x, s32 y,
 s32 Unit_GetElementLevelFar(s32 ownerId, s32 element);
 
 /// Draws party member memberId's status page into window: the top rows
-/// (ItemMenu_DrawMemberStatus), the status list or "Normal", and except on the
+/// (StatusScreen_DrawTopRows), the status list or "Normal", and except on the
 /// chooser page the Djinn counts by element and, in mode 1, the elemental
 /// levels, Power and Resist. With STATUS_PAGE_NO_CLEAR in mode the window is
 /// not cleared first.
-void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
+void StatusScreen_DrawStatusPage(s32 window, s32 ownerId, s32 mode) {
   struct StatusScreenState *menu = Ram_HeapSlots->menuState;
   struct Unit *unit;
   s32 element;
@@ -973,7 +971,7 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   else
     djinnRow = 10;
   menu->statusCursor->motion = ICON_SHOWN;
-  ItemMenu_DrawMemberStatus(window, ownerId, mode);
+  StatusScreen_DrawTopRows(window, ownerId, mode);
   StatusScreen_BuildAvailability(ailments, 1, ownerId);
   keepDrawn = mode & STATUS_PAGE_NO_CLEAR;
   if (keepDrawn == 0)
@@ -1054,7 +1052,7 @@ extern const u8 gMenu_PpString[];
 /// Draws the top rows of party member owner's status page into window: name,
 /// class, level, experience, HP and PP on the left, Attack, Defense, Agility
 /// and Luck on the right.
-void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
+void StatusScreen_DrawTopRows(s32 window, s32 owner, s32 flags) {
   struct ItemMenuState *menu;
   struct Unit *unit;
 
@@ -1480,7 +1478,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 /// The Status menu's Psynergy page: the party member's Psynergy, PAGE_ROWS to a
 /// page, each with its PP cost and range icon; the cursor's Psynergy is
 /// described in the info window with where it can be used.
-s32 PsynergyMenu_SelectAction(void) {
+s32 StatusScreen_RunPsynergyPage(void) {
   struct PsynergyMenuState *menu;
   s32 result;
   s32 window;
@@ -1792,7 +1790,7 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
 
 /// The Status menu's equipment page: the party member's items, PAGE_ROWS to a
 /// page, beside the equipment window of what they wear.
-s32 ItemMenu_SelectItem(void) {
+s32 StatusScreen_RunEquipmentPage(void) {
   struct ItemMenuState *menu;
   struct Unit *owner;
   s32 result;
@@ -1901,7 +1899,7 @@ void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   u8 *items;
 
-  ItemMenu_PositionCategory();
+  Menu_HideEntryIcons();
   ItemMenu_HideAllIcons();
   Text_DrawMessageAsTilesFar(MsgEquipSlotLabels, window, 0, 0);
   Text_DrawMessageAsTilesFar(MsgEquipSlotLabels + 1, window, 0, 32);
@@ -1944,7 +1942,7 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items) {
 }
 
 /// Places each of the 32 entry icons on the grid.
-void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
+void Menu_PlaceEntryIconsInGrid(s32 originX, s32 originY, s32 columns) {
   s32 entryIndex;
   struct WindowSprite *icon;
   struct WindowSprite **icons;
@@ -1954,19 +1952,19 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
        entryIndex <= MENU_ENTRY_ICONS - 1; entryIndex++) {
     icon = *icons++;
     if (icon != NULL) {
-      Menu_PlaceEntryActorInGrid(icon, entryIndex, originX, originY, columns);
+      Menu_PlaceEntryIconInGrid(icon, entryIndex, originX, originY, columns);
     }
   }
 }
 
-/// The side of a cell of the grids Menu_PlaceEntryActorInGrid places icons in.
+/// The side of a cell of the grids Menu_PlaceEntryIconInGrid places icons in.
 #define ENTRY_ICON_CELL_SIZE 16
 
 /// Places icon at cell index (an index above 31 is taken as 0) of a grid of
 /// ENTRY_ICON_CELL_SIZE square cells, columns wide, from (originX, originY),
 /// and shows it.
-void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
-                                s32 originX, s32 originY, s32 columns) {
+void Menu_PlaceEntryIconInGrid(struct WindowSprite *icon, s32 index,
+                               s32 originX, s32 originY, s32 columns) {
   s32 entryIndex;
 
   entryIndex = index;
@@ -1975,7 +1973,7 @@ void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
   }
   icon->y = (entryIndex / columns * ENTRY_ICON_CELL_SIZE) + originY;
   icon->x = (entryIndex % columns * ENTRY_ICON_CELL_SIZE) + originX;
-  Icon_PrepareActor(icon);
+  Icon_Show(icon);
 }
 
 /// Places the icon of each worn weapon, armor, shield and helm at x 216, on its
@@ -1986,7 +1984,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
   s32 slotIndex;
 
   menu = Ram_HeapSlots->menuState;
-  ItemMenu_PositionCategory();
+  Menu_HideEntryIcons();
   for (slotIndex = 0; slotIndex < INVENTORY_SLOTS; slotIndex++) {
     if (items[slotIndex] != 0 && (items[slotIndex] & INVENTORY_EQUIPPED) != 0) {
       icon = menu->entryIcons[slotIndex];
@@ -2010,7 +2008,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
           icon->y = EQUIPPED_ICON_Y(1);
           break;
         }
-        Icon_PrepareActor(icon);
+        Icon_Show(icon);
       }
     }
   }
@@ -2018,7 +2016,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
 
 /// Moves all 32 entry icons off screen, to (248, 168), before a screen lays
 /// them out again.
-void ItemMenu_PositionCategory(void) {
+void Menu_HideEntryIcons(void) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   s32 x = MENU_ICON_HIDDEN_X;
   struct WindowSprite **entry = menu->entryIcons;
@@ -2031,7 +2029,7 @@ void ItemMenu_PositionCategory(void) {
     if (object != 0) {
       object->x = x;
       object->y = y;
-      Icon_PrepareActor(object);
+      Icon_Show(object);
     }
     remaining--;
   } while (remaining >= 0);

@@ -69,7 +69,7 @@ extern s16 gEndingImage_Block;      ///< which character block the image is in
 extern s16 gEndingImage_FadeFrames; ///< frames of the fade-in, to 64
 extern u32 gEndingImage_MapScroll;  ///< the tilemap's scroll, 16.16 pixels
 extern volatile s32 gEndingImage_Scroll; ///< the scroll, 16.16 pixels
-/// The row a scene asks for (SceneState_SetScrollTarget); Row moves toward it.
+/// The row a scene asks for (EndingImage_SetTargetRow); Row moves toward it.
 extern s16 gEndingImage_TargetRow;
 extern s16 gEndingImage_Row;   ///< the row the scroll is heading for
 extern s16 gEndingImage_Speed; ///< the most rows a frame moves
@@ -916,7 +916,7 @@ UNUSED void Credits_ReservedNoOp(void) {}
 
 /// Sets the row the ending's scrolling image moves to, in pixels from its
 /// top, at most gEndingImage_Speed a frame.
-void SceneState_SetScrollTarget(u16 row) { gEndingImage_TargetRow = row; }
+void EndingImage_SetTargetRow(u16 row) { gEndingImage_TargetRow = row; }
 
 /// Copies 15 columns of a scrolling image's map into a wrapping 2 KB
 /// tilemap by DMA, 31 rows of 64 bytes each, from the row the position

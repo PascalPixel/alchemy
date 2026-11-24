@@ -63,9 +63,9 @@ gStatusPanel_PpRowString:
 	.asciz "EP    /"
 	.endif
 @ The tile the Start prompt blinks while a menu watches for Start
-	.global gMenu_StartPromptTile
-gMenu_StartPromptTile:
-	.incbin "games/tla/src/menu/backdrop.4bpp"
+	.global gMenu_ClassChangeArrowTile
+gMenu_ClassChangeArrowTile:
+	.incbin "games/tla/src/menu/class_change_arrow.4bpp"
 	.if EDITION_INTERNATIONAL
 	.else
 	.global gItemMenu_ArrangeKeysString
@@ -177,7 +177,7 @@ gMenu_PatternRowMasks:
 	.4byte 0x05055050, 0x05050505
 	.global gMenu_BackdropBorderTile
 gMenu_BackdropBorderTile:
-	.incbin "games/tla/src/menu/backdrop.4bpp"
+	.incbin "games/tla/src/menu/class_change_arrow.4bpp"
 	.ifdef TLA_EDITION_ES
 	.global gDjinnMenu_TextLevel
 gDjinnMenu_TextLevel:

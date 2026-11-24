@@ -280,7 +280,7 @@ extern u8 *gIcon_MarkPointers[];
 /// The command icons' overlays, all 43 entries the same picture.
 extern u8 *gIcon_OverlayPointerTable[];
 /// The menus' hand cursor and gem, 16x16 4bpp sprites; the hand is loaded
-/// by Icon_CreateWithResourceVariant.
+/// by Icon_CreateHandCursor.
 extern u8 gIcon_ResourceTiles[];
 /// Pixels: the hop a window's sprite makes, one step a frame.
 extern const s8 gWindowSprite_BounceOffsets[];

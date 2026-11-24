@@ -315,16 +315,16 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   return 0;
 }
 
-/// Plays the use sound of item's action (Ability_PlayUseAnimation, which, for
+/// Plays the use sound of item's action (Ability_PlayUseSound, which, for
 /// all its name, plays only a sound).
-void Item_PlayUseAnimation(u32 item) {
-  Ability_PlayUseAnimation(Item_GetDirectFar(item)->abilityId &
-                           PSYNERGY_ABILITY_MASK);
+void Item_PlayUseSound(u32 item) {
+  Ability_PlayUseSound(Item_GetDirectFar(item)->abilityId &
+                       PSYNERGY_ABILITY_MASK);
 }
 
 /// Plays the sound of action used from the menu, and returns at once: no
 /// animation is drawn and nothing waits.
-void Ability_PlayUseAnimation(s32 action) {
+void Ability_PlayUseSound(s32 action) {
   s32 formula;
   u32 effect;
   struct AbilityDefinition *actionDefinition;

@@ -33,7 +33,7 @@
 /// DjinnCompareOperation): both party members' stats and Psynergy as the change
 /// would leave them, paged with R, the Djinni figures hopping across, and "Is
 /// this OK?". Each unit is changed, measured and put back; nothing is applied.
-s32 PsynergyList_RunCompareLoop(u32 mode) {
+s32 DjinnMenu_RunPreview(u32 mode) {
   struct DjinnMenuState *menu;
   struct DjinnMenuBackdrop *backdrop;
   struct WindowState *state;

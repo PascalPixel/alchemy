@@ -223,7 +223,7 @@ enum SoundId {
   /// The smallest prize jingle: two pairs in Lucky Dice, a Tolbi Spring prize
   /// under 5,000 coins, and one level from the debug level editor; also an item
   /// or Psynergy used from the menu whose effect has no jingle of its own, such
-  /// as the stat items (Ability_PlayUseAnimation). The row before it is the
+  /// as the stat items (Ability_PlayUseSound). The row before it is the
   /// empty song: Colosso_ShowMatchResult plays this one minus 1 plus the
   /// match's result, which lands there for a result of 0.
   MUS_LUCKY = 91,

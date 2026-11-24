@@ -298,48 +298,48 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 
 /// Builds icon `resource` (0 to 31) of gIcon_MiscIconPointers, the table the
 /// status icons come from (Icon_DrawMisc), in a transfer block taken from
-/// HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry `index` with it and
+/// HEAP_SLOT_ICON_TRANSFER, reloads VRAM cache entry `index` with it and
 /// returns the entry's first tile.
 s32 StatusIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
-  GlyphTransfer *state;
+  IconTransfer *state;
 
-  state = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*state));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_ICON_TRANSFER, sizeof(*state));
   Icon_DrawMisc(resource);
   result = VramCache_Reload(index, (s32)state->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   return result;
 }
 
 /// Builds the icon of inventory item `resource` (the count above one and both
-/// marks) in a transfer block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM
+/// marks) in a transfer block taken from HEAP_SLOT_ICON_TRANSFER, reloads VRAM
 /// cache entry `index` with it and returns the entry's first tile.
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
-  GlyphTransfer *state;
+  IconTransfer *state;
 
-  state = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*state));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_ICON_TRANSFER, sizeof(*state));
   ItemIcon_Compose(resource,
                    ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN);
   result = VramCache_Reload(index, (s32)state->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   return result;
 }
 
 /// Builds the icon of ability `resource` in a transfer block taken from
-/// HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry `index` with it and
+/// HEAP_SLOT_ICON_TRANSFER, reloads VRAM cache entry `index` with it and
 /// returns the entry's first tile.
 s32 AbilityIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 tile;
   s32 slot;
   s32 result;
-  GlyphTransfer *state;
+  IconTransfer *state;
 
-  state = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*state));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_ICON_TRANSFER, sizeof(*state));
   slot = index;
   Ability_LoadGlyph(resource, 0, &slot, &tile, 1);
   result = VramCache_Reload(index, (s32)state->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   return result;
 }
 
@@ -380,7 +380,7 @@ s32 WindowSprite_GetPointerTiles(s32 no) {
 
 /// Copies the 4bpp decoder into RAM, calls it with the transfer's encoded
 /// source and byte buffer, then releases the copied code.
-UNUSED void Icon_Decompress(GlyphTransfer *state) {
+UNUSED void Icon_Decompress(IconTransfer *state) {
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, Tile_Decompress4bpp,
                    Tile_Decompress4bppCodeSize);
   ((void (*)(const void *, u8 *))((union HeapState *)gHeapSlots)
@@ -409,11 +409,11 @@ struct Window *Link_CreateCountdownLabelWindow(void) {
 }
 
 /// Decodes command icon `icon` (ResourceId_CommandIcons, 1 KB of 256-colour
-/// pixels) in a block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache
+/// pixels) in a block taken from HEAP_SLOT_ICON_TRANSFER, reloads VRAM cache
 /// entry `slotIndex` with it and returns the entry's first tile.
 s32 CommandIcon_ReloadSlot(s32 slotIndex, s32 icon) {
-  GlyphTransfer *buffer =
-      HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  IconTransfer *buffer =
+      HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   u16 *offsetTable = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
   u8 **encoded = &buffer->encoded;
   void *target = (void *)((u32)offsetTable + offsetTable[icon]);
@@ -422,14 +422,14 @@ s32 CommandIcon_ReloadSlot(s32 slotIndex, s32 icon) {
   *encoded = target;
   Decompress_ByteLz(target, buffer);
   result = VramCache_Reload(slotIndex, (s32)buffer);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   return result;
 }
 
 /// The command icons on BG1 share at most COMMAND_ICON_COLORS BG colours,
 /// given out in the order their pixels first use them; a colour met after that
-/// takes colour COMMAND_ICON_COLORS. A GlyphPalette slot holds
-/// GLYPH_PALETTE_SLOT_UNSET until its colour is given out.
+/// takes colour COMMAND_ICON_COLORS. A IconPalette slot holds
+/// ICON_PALETTE_SLOT_UNSET until its colour is given out.
 #define COMMAND_ICON_COLORS 64
 /// A command icon as BG1 tiles: 32 by 32 pixels, 16 tiles of 256 colours.
 #define COMMAND_ICON_BG_TILES (COMMAND_ICON_BYTES / TILE_SIZE_8BPP)
@@ -437,9 +437,9 @@ s32 CommandIcon_ReloadSlot(s32 slotIndex, s32 icon) {
 /// Loads command icon `glyph` as 8bpp BG tiles into character block 1 from
 /// 64-byte tile `tile` on (COMMAND_ICON_BG_TILES, 32x32), for the command row's
 /// BG1.
-void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
+void BattleCommandRow_LoadIconTiles(struct IconPalette *palette, s32 glyph,
                                     s32 tile) {
-  GlyphTransfer *decoded;
+  IconTransfer *decoded;
   u8 *font;
   u8 *remapped;
   u8 *source;
@@ -447,7 +447,7 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
   s32 i;
   u32 index;
 
-  decoded = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*decoded));
+  decoded = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(*decoded));
   font = Resource_GetTableEntry((u32)RESOURCE_COMMAND_ICONS);
   decoded->encoded = font + ((u16 *)font)[glyph];
   Decompress_ByteLz(decoded->encoded, decoded);
@@ -456,7 +456,7 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
   destination = remapped;
   for (i = 0; i < COMMAND_ICON_BYTES; i++) {
     index = *source++;
-    if (palette->slot[index] == GLYPH_PALETTE_SLOT_UNSET) {
+    if (palette->slot[index] == ICON_PALETTE_SLOT_UNSET) {
       palette->slot[index] = palette->count;
       if (palette->count < COMMAND_ICON_COLORS) {
         ((u16 *)BG_PLTT)[palette->count] = ((u16 *)OBJ_PLTT)[index];
@@ -468,7 +468,7 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
   Dma_Set(remapped, BG_CHAR_BLOCK(1) + tile * TILE_SIZE_8BPP,
           DMA_COPY_WORDS(COMMAND_ICON_BYTES / 4), REG_DMA3);
   Heap_Release(remapped);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
 }
 
 /// Loads the command row's icon `index` as command icon `icon`: as BG1 tiles

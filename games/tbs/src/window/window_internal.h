@@ -239,11 +239,11 @@ enum {
   SPRITE_SHAPE_TALL = 2, ///< size 0 is 8x16
 };
 
-/// HEAP_SLOT_GLYPH_TRANSFER's pointer, kept in IWRAM (system/iwram.s, after
+/// HEAP_SLOT_ICON_TRANSFER's pointer, kept in IWRAM (system/iwram.s, after
 /// gWindowState and gPartyStatusState): the glyph transfer buffer icons are
 /// built in. Each icon builder allocates the slot for its build and frees it
 /// after.
-#define gGlyphState (*(GlyphTransfer **)&gHeapSlots[HEAP_SLOT_GLYPH_TRANSFER])
+#define gGlyphState (*(IconTransfer **)&gHeapSlots[HEAP_SLOT_ICON_TRANSFER])
 
 /// Each message context bank's Huffman models and their offsets, which the
 /// message catalog built from games/tbs/text defines.

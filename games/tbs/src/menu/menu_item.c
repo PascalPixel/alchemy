@@ -111,7 +111,7 @@ s32 ItemMenu_Run(void) {
   Window_InitializeState(0);
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
-  Resource_LoadPairedBlocks();
+  Menu_LoadStatArrows();
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   screen->questionWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
@@ -438,7 +438,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       menu->selectedItemIcon->motion = ICON_SHOWN;
       menu->selectedItemIcon->x = 120;
       menu->selectedItemIcon->y = 28;
-      Icon_PrepareActor(menu->selectedItemIcon);
+      Icon_Show(menu->selectedItemIcon);
       Window_ClearInteriorTilesFar((void *)menu->listWindow, 0, 72, 120, 96);
       WindowSprite_RedrawSavedRectFar(menu->questionWindow);
       // Yes: take result + 1 of the stack out, one at a time.
@@ -845,7 +845,7 @@ s32 ItemMenu_Use(void) {
     return result;
   }
 
-  Item_PlayUseAnimation(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
+  Item_PlayUseSound(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
   Unit_CalculateFar(menu->sideMember[0]);
   Unit_CalculateFar(menu->sideMember[1]);
   return 1;
@@ -997,7 +997,7 @@ s32 ItemMenu_SelectMember(s32 side) {
   unit = Unit_GetFar(menu->memberIds[memberIndex]);
   menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
   result = ItemMenu_RunMemberSelection(menu->memberIds, menu->items);
-  Icon_PrepareActor(menu->sideIcons[side]);
+  Icon_Show(menu->sideIcons[side]);
   wait(1);
   return result;
 }
@@ -1059,7 +1059,7 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
       if (showEquipment) {
         menu->itemCount = ItemMenu_CollectItems(
             Unit_GetFar(memberIds[selection]), menu->items, 0);
-        ItemMenu_OpenCategory(memberIds[selection]);
+        ItemMenu_ShowEquipment(memberIds[selection]);
         StatusPanel_Draw(window, memberIds[selection], 0, STATUS_PANEL_STATS);
       } else {
         ItemMenu_RefreshMember(memberIds[selection], 0);
@@ -1120,13 +1120,13 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
 
 /// Shows the equipment view of party member memberId's items in the item
 /// window.
-void ItemMenu_OpenCategory(s32 memberId) {
+void ItemMenu_ShowEquipment(s32 memberId) {
   struct ItemMenuState *menu;
 
   menu = gMenuState;
-  ItemMenu_PositionCategory();
+  Menu_HideEntryIcons();
   WindowSprite_RedrawSavedRectFar(menu->itemWindow);
-  ItemMenu_DrawCategory(menu->itemWindow, memberId, 0);
+  ItemMenu_DrawEquipment(menu->itemWindow, memberId, 0);
 }
 
 /// Chooses the party member to use or give the selected item (enum
@@ -1254,7 +1254,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   // The marker, still NULL.
   targetMarker = menu->sideIcons[1];
   menu->sideIndex[1] = memberIndex;
-  Icon_PrepareActor(targetMarker);
+  Icon_Show(targetMarker);
   targetMarker->motion = ICON_HIDDEN;
   EquipmentMenu_StopCompatibilityIndicators();
   wait(1);
@@ -1338,7 +1338,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
 
   for (slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
     if (items[slot] == 0) {
-      Icon_PrepareActor(menu->entryIcons[slot]);
+      Icon_Show(menu->entryIcons[slot]);
       menu->entryIcons[slot]->motion = ICON_HIDDEN;
     }
   }
@@ -2476,7 +2476,7 @@ void ItemMenu_DrawItemHead(void) {
   menu->selectedItemIcon->motion = ICON_SHOWN;
   menu->selectedItemIcon->x = 112;
   menu->selectedItemIcon->y = 8;
-  Icon_PrepareActor(menu->selectedItemIcon);
+  Icon_Show(menu->selectedItemIcon);
   Text_DrawStringAtOffsetFar(Unit_GetFar(menu->sideMember[0])->name,
                              menu->questionWindow, 16, 0);
   Text_DrawMessageAsTilesFar((menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
@@ -2633,7 +2633,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 
 /// Loads the stat arrows (up and down) into two free VRAM blocks, kept in the
 /// menu state's resource slots.
-void Resource_LoadPairedBlocks(void) {
+void Menu_LoadStatArrows(void) {
   struct ItemMenuState *menu = gMenuState;
   s32 block = VramCache_FindFreeEntry();
 
@@ -2680,8 +2680,8 @@ s32 ItemMenu_BuildPagedList(struct PagedList *result, s32 index) {
 /// Updates the item list for the row under the cursor: puts the selected item's
 /// plain name in the info window and highlights its row of the five. window and
 /// memberState are not used.
-s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberState,
-                                struct PagedList *pageState) {
+s32 ItemMenu_ShowSelectedRow(struct Window *window, void *memberState,
+                             struct PagedList *pageState) {
   struct ItemMenuState *menu;
   s32 page;
   s32 index;
@@ -2704,11 +2704,11 @@ s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberState,
 
   for (row = 0; row < LIST_PAGE_SIZE; row++) {
     if (row == pageState->row) {
-      Render_SetTilemapFlagRect((void *)menu->itemWindow, 1, row * 2 + 1, 14, 1,
-                                HIGHLIGHT_PALETTE);
+      Window_SetHighlightRect((void *)menu->itemWindow, 1, row * 2 + 1, 14, 1,
+                              HIGHLIGHT_PALETTE);
     } else {
-      Render_SetTilemapFlagRect((void *)menu->itemWindow, 1, row * 2 + 1, 14, 1,
-                                WINDOW_PALETTE);
+      Window_SetHighlightRect((void *)menu->itemWindow, 1, row * 2 + 1, 14, 1,
+                              WINDOW_PALETTE);
     }
   }
 
@@ -2718,7 +2718,7 @@ s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberState,
 
 /// Draws one page of the item list into window: up to five item names with
 /// their icons, and the page numbers when there is more than one page.
-s32 ItemMenu_DrawNamePage(struct Window *window, s32 unused,
+s32 ItemMenu_DrawListPage(struct Window *window, s32 unused,
                           const struct PagedList *pageState) {
   struct ItemMenuState *menu = gMenuState;
   u32 page;
@@ -2808,18 +2808,18 @@ s32 ItemMenu_RunList(s32 sideIndex) {
         changed = 0;
         if (memberUnit->inventory[previous] != 0) {
           icon = menu->entryIcons[previous];
-          Icon_PrepareActor(icon);
+          Icon_Show(icon);
         }
         if (redraw != 0) {
           wait(1);
-          ItemMenu_DrawNamePage(window, 0, &state);
+          ItemMenu_DrawListPage(window, 0, &state);
           if (sideIndex == 0) {
             Text_DrawMessageAsTilesFar(MsgChangeCharacterHelp, window,
                                        HELP_TEXT_X, 88);
           }
           redraw = 0;
         }
-        ItemMenu_DrawItemDetailPage(window, memberState, &state);
+        ItemMenu_ShowSelectedRow(window, memberState, &state);
         menu->selectedItems[sideIndex] = menu->items[state.selectedIndex];
         ItemMenu_DrawEquipPreview(menu->sideMember[sideIndex],
                                   state.selectedIndex, 0,
@@ -2827,7 +2827,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
         if (menu->items[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
           // Swell the selected icon from its first step, in depth slot 250;
-          // Icon_PrepareActor stills it again when the cursor leaves.
+          // Icon_Show stills it again when the cursor leaves.
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animationStep = 0;
           icon->depth = OAM_DEPTH_FRONT - 5;
@@ -2910,7 +2910,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
   }
 
   Window_ClearInteriorTilesFar((void *)window, 0, 88, 120, 96);
-  Icon_PrepareActor(menu->gridCursor);
+  Icon_Show(menu->gridCursor);
   menu->selectedSlots[sideIndex] = state.selectedIndex;
   menu->selectedIndexByMember[menu->sideMember[sideIndex]] =
       state.selectedIndex;

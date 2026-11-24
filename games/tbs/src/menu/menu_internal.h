@@ -188,7 +188,7 @@ enum DjinnPreviewMode {
   DJINN_PREVIEW_ADD = 4        ///< the other's Djinni is added, set if it was
 };
 
-/// PsynergyList_RunCompareLoop's pages for a give or trade, which R cycles; the
+/// DjinnMenu_RunPreview's pages for a give or trade, which R cycles; the
 /// first two also index its per-member page counts.
 enum DjinnComparePage {
   DJINN_COMPARE_PAGE_GIVER = 0,    ///< the giver's stats and Psynergy
@@ -258,7 +258,7 @@ enum DjinnSelectMode {
 #define DJINN_NUMBER(v) ((v) & 0x1f)
 
 /// The preview loop's four operations, as its confirmation text describes them
-/// (PsynergyList_RunCompareLoop's mode).
+/// (DjinnMenu_RunPreview's mode).
 enum DjinnCompareOperation {
   DJINN_COMPARE_TRADE = 0,
   DJINN_COMPARE_GIVE = 1,

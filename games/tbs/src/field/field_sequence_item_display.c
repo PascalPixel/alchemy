@@ -159,17 +159,16 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
     picture->velocityY = toFIXED(2);
     picture->gravity = toFIXED(1) / 4;
 
-    // Draw the item's icon into HEAP_SLOT_GLYPH_TRANSFER, then send its tiles
+    // Draw the item's icon into HEAP_SLOT_ICON_TRANSFER, then send its tiles
     // to the sprite's.
-    iconBuffer =
-        HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    iconBuffer = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItemFar(item);
 
     sprite->image.tile =
         VramCache_Load(sprite->slot, ICON_TILE_BYTES,
-                       (u8 *)iconBuffer + offsetof(GlyphTransfer, tiles));
+                       (u8 *)iconBuffer + offsetof(IconTransfer, tiles));
 
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     picture->update = ItemDisplay_EmitSparkles;
   }
 
@@ -239,7 +238,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *leader = Actor_Lookup(gMainRoutineState.leaderActorId);
   void *iconBuffer =
-      HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+      HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   struct Actor *actor =
       Actor_CreateFar(SPRITE_BLANK, leader->x.fixed,
                       leader->y.fixed + toFIXED(36), leader->z.fixed);
@@ -255,8 +254,8 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 
     Icon_DrawItemFar(item);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES,
-                   (u8 *)iconBuffer + offsetof(GlyphTransfer, tiles));
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+                   (u8 *)iconBuffer + offsetof(IconTransfer, tiles));
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
 
     if (flags & ITEM_DISPLAY_SPARKLES)
       actor->update = ItemDisplay_EmitSparkles;

@@ -1655,7 +1655,7 @@ static void FuchinFallsCave_HopWest(void) { Scene_HopLeaderBy(-32, 0); }
 static void ImilFuchinFalls_PlaceDragonsEye(void) {
   struct Actor *actor;
   struct Sprite *sprite;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   u8 clear = 0;
 
   actor =
@@ -1668,10 +1668,10 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
     sprite->image.palette = 0;
     actor->motionFlags = clear;
     actor->retainSpriteCache = 1;
-    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(*glyph));
     Icon_DrawItem(ITEM_DRAGONS_EYE);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     gImilFuchinFalls_DragonsEye = actor;
   }
 }

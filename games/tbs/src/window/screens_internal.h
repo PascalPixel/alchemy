@@ -358,7 +358,7 @@ struct BattleCommandRowIcon {
 struct BattleCommandRowState {
   /// BG palette slots for the icons' 256-colour pixels, filled as each icon
   /// is loaded (BattleCommandRow_LoadIconTiles).
-  struct GlyphPalette palette;
+  struct IconPalette palette;
   struct BattleCommandRowIcon entries[6];
   struct Window *window; ///< shows the selected command's name
   s32 iconCount;

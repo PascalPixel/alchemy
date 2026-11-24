@@ -12,11 +12,11 @@ gMenu_ArrowTiles:
 	.incbin "games/tbs/src/graphics/ui/menu_sprites/sup.4bpp16x16"
 	.incbin "games/tbs/src/graphics/ui/menu_sprites/up.4bpp16x16"
 	.incbin "games/tbs/src/graphics/ui/menu_sprites/down.4bpp16x16"
-	.global gMenu_PairSpriteATiles
-gMenu_PairSpriteATiles:
+	.global gMenu_DjinnArrowUpTiles
+gMenu_DjinnArrowUpTiles:
 	.incbin "games/tbs/src/graphics/ui/djinn_arrow_up.4bpp16x16"
-	.global gMenu_PairSpriteBTiles
-gMenu_PairSpriteBTiles:
+	.global gMenu_DjinnArrowDownTiles
+gMenu_DjinnArrowDownTiles:
 	.incbin "games/tbs/src/graphics/ui/djinn_arrow_down.4bpp16x16"
 	.incbin "games/tbs/src/graphics/ui/menu_sprites/digits.4bpp"
 	.incbin "games/tbs/src/graphics/ui/menu_sprites/price.4bpp"

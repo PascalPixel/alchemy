@@ -78,8 +78,8 @@ enum HeapSlot {
   HEAP_SLOT_WINDOW = 15,
   /// The party status window's layout (struct PartyStatusWindow).
   HEAP_SLOT_PARTY_STATUS = 16,
-  /// The buffers an icon or portrait is decoded through (GlyphTransfer).
-  HEAP_SLOT_GLYPH_TRANSFER = 17,
+  /// The buffers an icon or portrait is decoded through (IconTransfer).
+  HEAP_SLOT_ICON_TRANSFER = 17,
   /// The selection screen's state (struct SelectionMenuState).
   HEAP_SLOT_SELECTION_MENU = 18,
   /// The selection state Menu_AllocateSelectionState allocates, which nothing

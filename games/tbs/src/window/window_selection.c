@@ -1324,7 +1324,7 @@ void SelectionMenu_LoadLargeIcon(void) {
   struct SelectionMenuState *state = gSelectionMenuState;
   struct SelectionNode *selected = SelectionMenu_GetCursorNode(state);
   struct SelectionNode *largeIcon;
-  GlyphTransfer *buffer;
+  IconTransfer *buffer;
   u8 *table;
   void *resource;
   s32 resourceId;
@@ -1332,7 +1332,7 @@ void SelectionMenu_LoadLargeIcon(void) {
   if (selected->kind != ICON_KIND_COMMAND && selected->kind != ICON_KIND_YES_NO)
     return;
 
-  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  buffer = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   largeIcon = &state->records[SELECTION_RECORD_LARGE_ICON];
   resourceId = selected->base;
   // The resource starts with a halfword offset per command icon.
@@ -1352,7 +1352,7 @@ void SelectionMenu_LoadLargeIcon(void) {
   largeIcon->scale = LARGE_ICON_ZOOM_STEP;
   largeIcon->scaleStep = LARGE_ICON_ZOOM_STEP;
   largeIcon->scaleEnd = 6 * LARGE_ICON_ZOOM_STEP;
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
 }
 
 /// Frees the large command icon, if it is shown.

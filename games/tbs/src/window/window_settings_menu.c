@@ -521,7 +521,7 @@ s32 SettingsMenu_Run(void) {
       for (i = 0; i <= 2; i++) {
         frame = state->choiceIcons[0][i];
         frame->depth = OAM_DEPTH_FRONT - 4;
-        Icon_PrepareActorFar(frame);
+        Icon_ShowFar(frame);
         resourceIndex = (u8)state->choiceIcons[0][i]->index;
         dimmed = 0;
         if (i != state->option[SETTINGS_ROW_MESSAGE_SPEED])
@@ -531,7 +531,7 @@ s32 SettingsMenu_Run(void) {
       for (i = 0; i <= 1; i++) {
         frame = state->choiceIcons[1][i];
         frame->depth = OAM_DEPTH_FRONT - 4;
-        Icon_PrepareActorFar(frame);
+        Icon_ShowFar(frame);
         resourceIndex = (u8)state->choiceIcons[1][i]->index;
         dimmed = 0;
         if (i != state->option[SETTINGS_ROW_SPEECH])
@@ -541,7 +541,7 @@ s32 SettingsMenu_Run(void) {
       for (i = 0; i <= 1; i++) {
         frame = state->choiceIcons[2][i];
         frame->depth = OAM_DEPTH_FRONT - 4;
-        Icon_PrepareActorFar(frame);
+        Icon_ShowFar(frame);
         resourceIndex = (u8)state->choiceIcons[2][i]->index;
         dimmed = 0;
         if (i != state->option[SETTINGS_ROW_AUTO_SLEEP])
@@ -822,7 +822,7 @@ s32 PauseMenu_Choose(void) {
         do {
           icon = state->icon[i];
           icon->depth = OAM_DEPTH_FRONT - 4;
-          Icon_PrepareActorFar(icon);
+          Icon_ShowFar(icon);
           resourceIndex = (u8)icon->index;
           dimmed = 0;
           if (i != state->page) {

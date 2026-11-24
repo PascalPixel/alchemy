@@ -1420,7 +1420,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct Actor *star = NULL;
   struct Actor *starShadow;
   struct Sprite *sprite;
-  GlyphTransfer *transfer;
+  IconTransfer *transfer;
   u32 answeredYes;
 
   Event_Start();
@@ -1622,11 +1622,11 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     star->retainSpriteCache = 1;
     star->speedLimit = toFIXED(8) / 5;
     star->acceleration = toFIXED(4) / 5;
-    transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    transfer = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     // Display the Venus Star icon before sending it toward the beacon.
     Item_LoadIcon(ITEM_VENUS_STAR);
     Vram_Load(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   }
   Actor_SetSpritePriority(ACTOR_VENUS_STAR_SHADOW, 1);
   starShadow = Actor_Get(ACTOR_VENUS_STAR_SHADOW);

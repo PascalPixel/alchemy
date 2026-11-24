@@ -285,7 +285,7 @@ s32 Shop_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
       &((struct ShopState *)gMenuState)->cursor.anchor;
   u8 savedCursorMode = (*cursorSlot)->motion;
-  Icon_PrepareActorFar(*cursorSlot);
+  Icon_ShowFar(*cursorSlot);
   choice = YesNoMenu_RunAtFar(SHOP_CONFIRM_MENU_X, 5, choice);
   (*cursorSlot)->motion = savedCursorMode;
   return choice;
@@ -297,7 +297,7 @@ s32 Sanctum_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
       &((struct ShopState *)gMenuState)->cursor.anchor;
   u8 savedCursorMode = (*cursorSlot)->motion;
-  Icon_PrepareActorFar(*cursorSlot);
+  Icon_ShowFar(*cursorSlot);
   choice = YesNoMenu_RunAtFar(7, 7, choice);
   (*cursorSlot)->motion = savedCursorMode;
   return choice;

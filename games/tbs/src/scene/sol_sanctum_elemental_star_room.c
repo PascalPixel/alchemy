@@ -2250,7 +2250,7 @@ static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker,
 /// Animates a star's icon and replaces its owner's mythril bag with the star.
 static s32 SolSanctumElementalStarRoom_PresentStarFX(s32 item, FIXED x, FIXED y,
                                                      FIXED z) {
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   struct Actor *actor;
   struct Sprite *sprite;
   s32 member;
@@ -2270,10 +2270,10 @@ static s32 SolSanctumElementalStarRoom_PresentStarFX(s32 item, FIXED x, FIXED y,
   sprite->image.palette = 0;
   actor->velocityY = toFIXED(5) / 2;
   actor->gravity = toFIXED(1) / 4;
-  glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
+  glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(*glyph));
   Icon_DrawItem(item);
   VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   Sound_Play(MUS_TREASURE_FOUND);
   ItemDisplay_ShowPicture(actor, 3);
   Inventory_Discard(member, slot);

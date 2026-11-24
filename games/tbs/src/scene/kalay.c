@@ -1165,7 +1165,7 @@ static inline void Kalay_CatchUpWithLunpa(void) {
 /// Sets up Kalay.
 static void Kalay_PrepareTown(void) {
   OrbitingMapActor *nut;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   OrbitingMapActorSprite *sprite;
 
   Kalay_CatchUpWithLunpa();
@@ -1188,10 +1188,10 @@ static void Kalay_PrepareTown(void) {
     nut->mode = 0;
     nut->y = toFIXED(10);
     nut->visible = 1;
-    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Icon_DrawItem(ITEM_NUT);
     VramCache_Load(sprite->palette, ICON_TILE_BYTES, glyph->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     nut->orbitAngle = 0;
     nut->orbitCenterX = nut->x;
     nut->orbitCenterY = nut->y;

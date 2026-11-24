@@ -251,7 +251,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
     MenuCursor_Place(NULL, SHOP_QUANTITY_CURSOR_X, 48);
     result = Shop_SelectQuantity(0, stackQuantity, unitSalePrice);
     wait(1);
-    Icon_PrepareActorFar(shop->cursor.anchor);
+    Icon_ShowFar(shop->cursor.anchor);
     MenuCursor_Place(NULL, savedX, savedY);
   }
   return result;

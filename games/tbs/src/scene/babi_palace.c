@@ -2669,7 +2669,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   struct Sprite *sprite;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   s32 set;
 
   BabiPalace_PauseDoorAnimations();
@@ -2701,10 +2701,10 @@ s32 Scene_Initialize(void) {
         sprite->image.fullColor = 0;
         sprite->image.palette = 0;
         // The icon's tiles are the 128 bytes of a 16 by 16 sprite.
-        glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+        glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
         Item_LoadIcon(ITEM_CLOAK_BALL);
         Vram_Load(sprite->slot, 128, glyph->tiles);
-        HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+        HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
       }
       if (gMainRoutineState.entrance ==
               BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM &&

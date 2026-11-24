@@ -79,7 +79,7 @@ STATIC_ASSERT(offsetof(struct StatusScreenState, rowSprites) == 548);
 STATIC_ASSERT(offsetof(struct StatusScreenState, rowX) == 564);
 STATIC_ASSERT(sizeof(struct StatusScreenState) == 580);
 
-/// The statuses the Status screens show, as StatusScreen_BuildAvailability
+/// The statuses the Status screens show, as StatusScreen_ListStatuses
 /// fills them: one byte each, nonzero while the party member has it.
 enum UnitStatus {
   CHARACTER_DOWN,   ///< HP 0; listed only when the caller asks for it

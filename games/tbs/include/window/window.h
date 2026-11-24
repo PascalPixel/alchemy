@@ -655,7 +655,7 @@ enum TilemapEntryMode {
   TILEMAP_ENTRY_WINDOW, ///< in WINDOW_PALETTE
   /// In palette 1, which the Status screen and the party rearranging fill
   /// with the element icons' colours for the rows that are not highlighted
-  /// (StatusScreen_Run, PartyMemberChooser_RunRearrange).
+  /// (StatusScreen_Run, StatusScreen_RunPartyRow).
   TILEMAP_ENTRY_ICON
 };
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
@@ -728,7 +728,7 @@ void Icon_DrawMisc(u32 index);
 void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                           s32 palette, s32 reuse);
 void Icon_ReservedNoOp(void);
-void Icon_Decode(GlyphTransfer *glyph, s32 outlined);
+void Icon_Decode(IconTransfer *glyph, s32 outlined);
 
 void SelectionMenu_Create(void);
 void SelectionMenu_Clear(void);

@@ -867,7 +867,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   struct Sprite *garetSprite;
   struct Actor *star;
   struct Sprite *starSprite;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   u8 crystalIndex;
   u32 frame;
   s32 flickerDelay;
@@ -1297,7 +1297,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
       FieldActor_Create(SPRITE_BLANK, starOrigin->x.fixed,
                         starOrigin->y.fixed + toFIXED(36), starOrigin->z.fixed);
   if (star != NULL) {
-    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     starSprite = star->sprite;
     starSprite->flags = 0;
     starSprite->count = 0;
@@ -1306,7 +1306,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     starSprite->image.priority = 1;
     Icon_DrawItem(ITEM_MARS_STAR);
     VramCache_Load(starSprite->slot, ICON_TILE_BYTES, glyph->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
     ItemDisplay_ShowPicture(star, 3);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);

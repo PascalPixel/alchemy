@@ -25,7 +25,7 @@ static s32 Scene_UpdateFloatingNut(OrbitingMapActor *nut) {
 void Scene_FloatNut(s32 id) {
   OrbitingMapActor *actor;
   OrbitingMapActorSprite *sprite;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
 
   actor = (OrbitingMapActor *)Actor_GetById(id);
   sprite = actor->sprite;
@@ -44,10 +44,10 @@ void Scene_FloatNut(s32 id) {
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->visible = 1;
 
-  glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   Icon_DrawItem(ITEM_NUT);
   VramCache_Load(sprite->palette, ICON_TILE_BYTES, glyph->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
 
   actor->orbitCenterX = actor->x;
   actor->orbitAngle = 0;

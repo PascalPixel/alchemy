@@ -1105,7 +1105,7 @@ static void CottageRoomsB_RestoreRoomPatch(void) {
 static void CottageRoomsB_ShowMythrilBag(void) {
   struct Actor *actor;
   struct Sprite *sprite;
-  GlyphTransfer *glyph;
+  IconTransfer *glyph;
   u8 clear = 0;
 
   Event_Start();
@@ -1123,10 +1123,10 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   sprite->count = clear;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
+  glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(*glyph));
   Icon_DrawItem(ITEM_MYTHRIL_BAG);
   VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
-  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
   gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_KRADEN, 1);

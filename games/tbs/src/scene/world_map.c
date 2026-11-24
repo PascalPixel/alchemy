@@ -2008,7 +2008,7 @@ static void WorldMap_UseBlackOrb(void) {
   struct Actor *actor;
   s32 message;
   struct Sprite *sprite;
-  GlyphTransfer *icon;
+  IconTransfer *icon;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
@@ -2053,10 +2053,10 @@ static void WorldMap_UseBlackOrb(void) {
     /* LEFTOVER(template): the motion flags cleared again after the sprite
      * resets, as ImilFuchinFalls_PlaceDragonsEye clears them. */
     orb->motionFlags = 0;
-    icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    icon = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
     Item_LoadIcon(ITEM_BLACK_ORB);
     Vram_Load(sprite->slot, ICON_TILE_BYTES, icon->tiles);
-    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
     Event_Wait(20);
     orb->update = WorldMap_PulseOrbAndSpawnSparks;
     Event_Wait(80);

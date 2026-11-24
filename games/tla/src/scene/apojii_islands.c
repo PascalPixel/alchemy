@@ -221,7 +221,7 @@ u16 gApojiiIslands_LowerScrollX BSS_DATA;
 /// The markers drawn over the spring once the Aqua Stone is woken.
 struct CellMarkers gApojiiIslands_CellMarkers BSS_DATA;
 extern u32 gWadingSplash_Script[];
-extern u32 gWaterDropScript[];
+extern u32 gRippleScript[];
 
 #include "shared/tables.h"
 #include "scene_ids.h"
@@ -875,7 +875,7 @@ void ApojiiIslands_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "shared/actor_spawn_wading_splash.h"
 
-#include "shared/actor_emit_water_drop.h"
+#include "shared/actor_emit_ripples.h"
 
 /// Unused here: Aqua Rock's stream carries the leader south, splashing, and
 /// off a ledge he drops with the water (AquaRock_FlowWithStream).
@@ -1132,7 +1132,7 @@ u32 gWadingSplash_Script[] = {
     SC_RELEASE,
 };
 
-#include "shared/water_drop_script.c"
+#include "shared/ripple_script.c"
 
 #include "shared/ground_particle_frames.c"
 

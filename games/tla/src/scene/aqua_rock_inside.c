@@ -148,7 +148,7 @@ struct BeamState gAquaRockInside_Splashes BSS_DATA;
 extern u32 gOrbitSpark_Script[];
 extern u32 gAquaRockInside_SplashScript[];
 extern u32 gWadingSplash_Script[];
-extern u32 gWaterDropScript[];
+extern u32 gRippleScript[];
 /// The water pillars' tiles, compressed (graphics/aqua_rock_inside/tiles.s).
 extern const u8 gAquaRockInside_PillarTiles[];
 /// The splashes' tiles, compressed.
@@ -2222,7 +2222,7 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/actor_spawn_wading_splash.h"
 
-#include "shared/actor_emit_water_drop.h"
+#include "shared/actor_emit_ripples.h"
 
 #include "shared/leader_flow_with_stream.h"
 
@@ -2740,7 +2740,7 @@ u32 gWadingSplash_Script[] = {
     SC_RELEASE,
 };
 
-u32 gWaterDropScript[] = {
+u32 gRippleScript[] = {
     SC_ADD(SW_Y, toFIXED(0.25)),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),

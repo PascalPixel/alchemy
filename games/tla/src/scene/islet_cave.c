@@ -85,6 +85,8 @@ extern u32 gIsletCave_SentinelScript[];
 extern s32 gIsletCave_ShrunkFireScript[];
 extern s16 gIsletCave_DoorFrames[];
 
+/// The Teleport circle's shimmer (shared/teleport_shimmer.c): the colours it
+/// writes and the palette cycle that runs them round the circle.
 u16 gPaletteCycleBright BSS_DATA;
 u16 *gPaletteCycleSlots BSS_DATA;
 u16 gPaletteCycleTimer BSS_DATA;

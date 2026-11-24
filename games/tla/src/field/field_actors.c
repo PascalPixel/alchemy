@@ -33,6 +33,8 @@
 
 /// The frames Sprite_WaitForTrackEnd waits at most.
 #define TRACK_END_WAIT_FRAMES 90
+/// The longest an actor's script or move is waited for: 10 seconds.
+#define ACTOR_WAIT_FRAMES_MAX 600
 
 /// Waits, at most TRACK_END_WAIT_FRAMES, for a sprite's animation to change or
 /// for its first layer's script to reach ANIMCMD_HOLD.
@@ -536,7 +538,8 @@ void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   }
 }
 
-/// Waits until the actor's script reaches SC_END, at most 600 frames; it
+/// Waits until the actor's script reaches SC_END, at most
+/// ACTOR_WAIT_FRAMES_MAX frames; it
 /// returns as soon as the script idles, and after the limit whether or not it
 /// has.
 void Actor_WaitForScriptEnd(struct Actor *actor) {
@@ -547,7 +550,7 @@ void Actor_WaitForScriptEnd(struct Actor *actor) {
     do {
       wait(1);
       waitedFrames++;
-      if (waitedFrames > 599)
+      if (waitedFrames >= ACTOR_WAIT_FRAMES_MAX)
         break;
     } while (actor->script != 0 &&
              ((const s32 *)actor->script)[actor->scriptCursor] != SC_END);
@@ -1009,11 +1012,13 @@ s32 ActorScript_ShowSprite(struct Actor *interpreter) {
   return 1;
 }
 
-/// Waits, at most 600 frames, for an actor to reach where it is going.
+/// Waits, at most ACTOR_WAIT_FRAMES_MAX frames, for an actor to reach where it
+/// is going.
 void Actor_WaitForMove(void *actor) {
   s32 waitedFrames;
 
-  for (waitedFrames = 0; waitedFrames < 600 && Actor_IsTargetUnset(actor) == 0;
+  for (waitedFrames = 0;
+       waitedFrames < ACTOR_WAIT_FRAMES_MAX && Actor_IsTargetUnset(actor) == 0;
        waitedFrames++) {
     wait(1);
   }

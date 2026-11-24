@@ -2,7 +2,11 @@
 
 The Alchemy project reconstructs the source code of both Golden Sun games on Game Boy Advance, ☀️ [The Broken Seal](https://alchemy.pascalpixel.com/tbs) and ⚓️ [The Lost Age](https://alchemy.pascalpixel.com/tla), for video game preservation. It is a 100% [matching decompilation](https://alchemy.pascalpixel.com/tbs/glossary#matching-decompilation): readable code, images, music and text that build the same ROMs as the originals, byte for byte.
 
+<a href="https://alchemy.pascalpixel.com"><img src="https://alchemy.pascalpixel.com/docs.png" align="right" width="400" alt="Alchemy's documentation on the interface: Isaac talks to Garet's sister in Vale, beside the guide's sidebar" /></a>
+
 [alchemy.pascalpixel.com](https://alchemy.pascalpixel.com) explains how both games work, written from this source, with recordings from the games themselves.
+
+<br clear="right" />
 
 ## Build
 

@@ -58,9 +58,9 @@ top:
     FieldEffect_ClearOwnedSlot(effect);
 }
 
-/// Pauses the target (effectState->child) and runs FieldPsynergy_Halt.
+/// Pauses the target (effectState->target) and runs FieldPsynergy_Halt.
 void FieldPsynergy_HaltOnTarget(s32 unused) {
-  struct Actor *target = ((struct FieldEffectState *)gFieldEffectState)->child;
+  struct Actor *target = ((struct FieldEffectState *)gFieldEffectState)->target;
 
   target->paused = 1;
   FieldPsynergy_Halt();
@@ -71,7 +71,7 @@ void FieldPsynergy_HaltOnTarget(s32 unused) {
 /// one, and bursts into HALT_SPARKLES sparkles that fly out and back.
 void FieldPsynergy_Halt(void) {
   struct FieldEffectState *effectState = gFieldEffectState;
-  struct Actor *caster = effectState->mainActor;
+  struct Actor *caster = effectState->caster;
   struct Actor *stopwatch;
   struct FieldParticle *effect;
   struct Vector3 pos;
@@ -135,7 +135,7 @@ void FieldPsynergy_Halt(void) {
     Vector_AddPolarOffset(toFIXED(4), Random16(), &pos.x);
     FieldParticle_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateHaltParticle);
-    Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_WHITE);
+    Sprite_SetAnimationColorModesFar(effect->sprite, SPRITE_COLOR_WHITE);
     effect++;
   }
 
@@ -150,10 +150,10 @@ void FieldPsynergy_Halt(void) {
 }
 
 /// Per-frame update of a halted actor: gives its sprite one of eight colour
-/// modes (gFieldEffect_RandomChildValues) at random, so it flickers.
+/// modes (gHalt_FlickerColorModes) at random, so it flickers.
 void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
   void *object = (void *)actor;
-  const s8 *table = gFieldEffect_RandomChildValues;
+  const s8 *table = gHalt_FlickerColorModes;
   s32 random = Random16();
   Actor_SetSpriteColorModeFar(object, table[(u32)(random * 8) >> 16]);
 }
@@ -167,11 +167,11 @@ void FieldPsynergy_HaltActor(s32 actorId) {
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
     gMainRoutineState.pausedUpdate = (u32)actor->update;
-    gMainRoutineState.pausedPose = 0;
+    gMainRoutineState.pausedColorMode = 0;
     if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
       entry = actor->sprite->entries[0];
       if (entry != NULL) {
-        gMainRoutineState.pausedPose = entry->colorMode;
+        gMainRoutineState.pausedColorMode = entry->colorMode;
       }
     }
     actor->update = FieldPsynergy_UpdateHaltedActor;
@@ -189,7 +189,7 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
       struct MainRoutineState *mainState = &gMainRoutineState;
       actor->update = (void (*)(struct Actor *))mainState->pausedUpdate;
       mainState->pausedUpdate = 0;
-      Actor_SetSpriteColorModeFar(actor, mainState->pausedPose);
+      Actor_SetSpriteColorModeFar(actor, mainState->pausedColorMode);
     }
     actor->paused = 0;
     Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);

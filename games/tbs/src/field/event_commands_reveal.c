@@ -148,7 +148,7 @@ void FieldPsynergy_EndReveal(void) {
       Field_RunPsynergyEvent(event, gMainRoutineState.leaderActorId,
                              eventTarget);
 
-    if (effectState->childOption == 0) {
+    if (effectState->sceneVariant == 0) {
       transition->nextMode = 0;
       transition->duration = 1;
       transition->step = 1;

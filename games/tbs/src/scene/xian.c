@@ -283,16 +283,16 @@ static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *carrier) {
       FIELD_CELL(carrier->x.fixed) <= CARRIER_ROUTE_WEST_COLUMN + 2 &&
       carrier->velocityX <= 0) {
     if (leader->x.fixed <= carrier->x.fixed) {
-      carrier->riseCounter++;
+      carrier->sceneCounter++;
       near = 1;
     }
   } else {
-    carrier->riseCounter = 0;
+    carrier->sceneCounter = 0;
   }
-  // riseCounter counts the frames he has stood there.
-  if (near && carrier->riseCounter > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
+  // sceneCounter counts the frames he has stood there.
+  if (near && carrier->sceneCounter > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
     gFieldState->raisedTrigger = RAISED_CARRIER_BLOCKED;
-    carrier->riseCounter = 0;
+    carrier->sceneCounter = 0;
   }
   Xian_StopCarrierBeforeLeader(carrier, leader, 18, near);
   RETURN_UNREAD(0);

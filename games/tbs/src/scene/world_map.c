@@ -2601,9 +2601,9 @@ static void WorldMap_WalkIntoStorm(void) { WorldMap_CatchInStorm(ACTOR_STORM); }
 
 /// Casting Douse on the whirlwind that holds the party gathers the rain cloud
 /// high up, over the party where it floats, not on the ground below
-/// (event_commands_douse.c reads `childOption`).
+/// (event_commands_douse.c reads `sceneVariant`).
 static void WorldMap_StartDousingStorm(void) {
-  ((struct FieldEffectState *)gFieldEffectState)->childOption = 1;
+  ((struct FieldEffectState *)gFieldEffectState)->sceneVariant = 1;
 }
 
 /// Douse on the whirlwind that holds the party stops it, and the party drops

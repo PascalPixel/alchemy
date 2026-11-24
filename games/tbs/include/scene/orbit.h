@@ -78,7 +78,7 @@ typedef struct OrbitingMapActor {
   FIXED orbitCenterZ; ///< Actor.targetZ: 16.16 fixed-point pixels
   s32 bounce;
   s32 gravity;
-  s32 riseBaseY;
+  s32 sceneWord;
   OrbitingMapActorSprite *sprite;
   u8 spriteStorageKind;
   u8 mode; ///< Actor's motionFlags; the Nut's scenes zero it
@@ -99,8 +99,8 @@ typedef struct OrbitingMapActor {
   /// Actor's frozen, which skips steering, terrain, gravity and floating;
   /// the Nut's scenes set it.
   u8 visible;
-  u8 riseCounter;
-  u8 riseEnabled;
+  u8 sceneCounter;
+  u8 sceneByte;
   s16 timer;
   u16 userValue;
   struct Actor *watchedActor;

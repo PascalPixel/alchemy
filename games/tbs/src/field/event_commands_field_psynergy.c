@@ -29,7 +29,7 @@ void FieldPsynergy_Run(void) {
   effectState = gFieldEffectState;
   fieldState = gFieldState;
   kind = effectState->fieldPsynergy;
-  targetId = effectState->secondActorId;
+  targetId = effectState->targetId;
 
   switch (kind) {
   case FIELD_PSYNERGY_MOVE:
@@ -86,7 +86,7 @@ void FieldPsynergy_Run(void) {
     // The wave and colour effect, stopping a running Reveal first.
     if (fieldState->revealActive != 0)
       FieldPsynergy_EndReveal();
-    FieldPsynergy_StartMindReadWave(effectState->firstActorId, targetId);
+    FieldPsynergy_StartMindReadWave(effectState->casterId, targetId);
     return;
   case FIELD_PSYNERGY_REVEAL:
     FieldPsynergy_Reveal();
@@ -109,16 +109,16 @@ void FieldPsynergy_Dispatch(void) {
   struct FieldEffectState *effectState = gFieldEffectState;
   struct FieldState *fieldState = gFieldState;
   s32 kind = effectState->fieldPsynergy;
-  s32 targetId = effectState->secondActorId;
+  s32 targetId = effectState->targetId;
 
-  effectState->enabled = 0;
+  effectState->aimAhead = 0;
   switch (kind) {
   case FIELD_PSYNERGY_MIND_READ:
     if (fieldState->revealActive != 0)
       FieldPsynergy_EndReveal();
-    if (gMainRoutineState.haltedActor != effectState->secondActorId)
-      ((struct Actor *)effectState->child)->paused = 1;
-    FieldPsynergy_StartMindReadWave(effectState->firstActorId, targetId);
+    if (gMainRoutineState.haltedActor != effectState->targetId)
+      ((struct Actor *)effectState->target)->paused = 1;
+    FieldPsynergy_StartMindReadWave(effectState->casterId, targetId);
     break;
   case FIELD_PSYNERGY_MOVE:
     // Push the target with the direction keys.
@@ -182,8 +182,8 @@ void FieldPsynergy_FinishMindRead(void) {
 
   if (effectState->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     FieldPsynergy_StopMindReadWave();
-    if (gMainRoutineState.haltedActor != effectState->secondActorId) {
-      ((struct Actor *)effectState->child)->paused = 0;
+    if (gMainRoutineState.haltedActor != effectState->targetId) {
+      ((struct Actor *)effectState->target)->paused = 0;
     }
   }
 }
@@ -308,8 +308,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
       Actor_ReleaseFar(actor);
       return NULL;
     }
-    actor->groundHeight =
-        ((struct Actor *)effectState->mainActor)->groundHeight;
+    actor->groundHeight = ((struct Actor *)effectState->caster)->groundHeight;
     actor->motionFlags = ACTOR_FLOATS;
     actor->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
     actor->sprite->image.priority = 0;

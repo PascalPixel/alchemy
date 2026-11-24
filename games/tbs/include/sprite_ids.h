@@ -610,9 +610,11 @@ enum StumpAnimation {
   STUMP_ANIMATION_SPLASH = 3 ///< drops into water with a splash
 };
 
-/// SPRITE_SPROUT's animations for a sprout that stands grown, or half grown
-/// (sprout.tsv).
+/// SPRITE_SPROUT's animations (sprout.tsv): grown into a vine, growing under
+/// Growth, and standing grown or half grown.
 enum SproutAnimation {
+  SPROUT_ANIMATION_VINE = 0,       ///< grown into a vine, held
+  SPROUT_ANIMATION_GROW = 2,       ///< pictures 0 to 6, as Growth plays it
   SPROUT_ANIMATION_HALF_GROWN = 3, ///< held at picture 3, half grown
   SPROUT_ANIMATION_GROWN = 4       ///< picture 6, grown tall, held
 };

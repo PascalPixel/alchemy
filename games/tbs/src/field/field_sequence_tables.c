@@ -442,7 +442,7 @@ const s32 gFieldEffect_FragmentScript[] = {
 
 /// An angle for each value of the right, left, up and down bits of the +Control
 /// Pad; DPAD_ANGLE_NONE for none (Input_GetDpadAngle, event_commands_move.c).
-const u16 gFieldEffect_CyclePatternWords[16] = {
+const u16 gInput_DpadAngles[16] = {
     DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,
     FACING_NORTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_NORTH,
     FACING_SOUTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_SOUTH,
@@ -464,11 +464,11 @@ const s32 gFieldEffect_BurstParticleActorScript[] = {
 /// The same four bytes as gFieldEffect_QuadrantModes; nothing reads them.
 const u8 gUnused_BattleEffectBytes[4] = {3, 1, 2, 1};
 
-/// Waits to arrive, sets off SpawnHeavyImpactEffect (event_commands_lift.c)
+/// Waits to arrive, sets off FieldEffect_SpawnHeavyImpact (event_commands_lift.c)
 /// and releases the actor.
 const s32 gFieldEffect_HeavyImpactScript[] = {
     SC_SYNC,
-    SC_CALL(SpawnHeavyImpactEffect),
+    SC_CALL(FieldEffect_SpawnHeavyImpact),
     SC_RELEASE,
 };
 
@@ -491,7 +491,7 @@ const s32 gFieldEffect_LongEffectScript[] = {
 /// The colour modes a Halted actor flickers through at random
 /// (FieldPsynergy_UpdateHaltedActor, event_commands_halt.c): its own colours
 /// twice as often as each of the five channel swaps and grey.
-const s8 gFieldEffect_RandomChildValues[8] = {
+const s8 gHalt_FlickerColorModes[8] = {
     SPRITE_COLOR_NORMAL, SPRITE_COLOR_NORMAL, SPRITE_COLOR_GRB, SPRITE_COLOR_RBG,
     SPRITE_COLOR_BGR, SPRITE_COLOR_GBR, SPRITE_COLOR_BRG, SPRITE_COLOR_GREY,
 };

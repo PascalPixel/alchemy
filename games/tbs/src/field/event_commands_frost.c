@@ -74,12 +74,12 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *actor) {
 /// Runs Frost cast on a target.
 void FieldPsynergy_FrostOnTarget(s32 unused) {
   struct FieldEffectState *effectState = gFieldEffectState;
-  struct Actor *target = effectState->child;
+  struct Actor *target = effectState->target;
 
   if (target != 0) {
     // With childMode the target neither flashes nor freezes.
     if (effectState->childMode != 0) {
-      effectState->enabled = 1;
+      effectState->aimAhead = 1;
     }
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     FieldPsynergy_Frost();
@@ -87,7 +87,7 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
 }
 
 /// FROST_SNOWFLAKES snowflakes spiral in on the Psynergy's position and make
-/// the target flash FROST_FLASHES times; without childOption the target
+/// the target flash FROST_FLASHES times; without sceneVariant the target
 /// freezes.
 void FieldPsynergy_Frost(void) {
   s32 eventTarget;
@@ -99,7 +99,7 @@ void FieldPsynergy_Frost(void) {
   s32 i;
 
   effectState = gFieldEffectState;
-  target = effectState->child;
+  target = effectState->target;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ICE);
 
@@ -139,7 +139,7 @@ void FieldPsynergy_Frost(void) {
   Sound_PlayFar(SE_ICE);
   wait(50);
 
-  if (target != NULL && effectState->enabled == 0) {
+  if (target != NULL && effectState->aimAhead == 0) {
     Sound_PlayFar(SE_POWER_UP);
 
     // Flash for 1 frame in every 5.
@@ -150,7 +150,7 @@ void FieldPsynergy_Frost(void) {
       wait(4);
     }
 
-    if (effectState->childOption == 0) {
+    if (effectState->sceneVariant == 0) {
       Sound_PlayFar(SE_SHIMMER);
       Actor_SelectAnimationFar(target, PUDDLE_ANIMATION_FREEZE);
     }

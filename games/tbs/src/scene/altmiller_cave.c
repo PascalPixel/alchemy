@@ -500,7 +500,7 @@ static void AltmillerCave_EndReveal(void) {
   if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARK) != 0) {
     AltmillerCave_InitializeDarkness();
     // Reveal then leaves the light around the party open as it ends.
-    effectState->childOption = 1;
+    effectState->sceneVariant = 1;
   }
   if (gMainRoutineState.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     Actor_SetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_NONE);
@@ -520,8 +520,8 @@ static void AltmillerCave_StartRetreat(void) {
   struct Actor *replacement;
 
   effectState = (struct FieldEffectState *)gFieldEffectState;
-  original = effectState->mainActor;
-  Actor_FaceDirection(effectState->firstActorId, FACING_SOUTH, 0);
+  original = effectState->caster;
+  Actor_FaceDirection(effectState->casterId, FACING_SOUTH, 0);
   Actor_SetSpriteColorMode(original, SPRITE_COLOR_NORMAL);
   Event_Wait(20);
   replacement = FieldActor_Create(0, original->x.fixed, original->y.fixed,
@@ -530,7 +530,7 @@ static void AltmillerCave_StartRetreat(void) {
     Dma_Set(original, replacement, DMA_COPY_WORDS(sizeof(struct Actor) / 4),
             REG_DMA3);
     original->update = 0;
-    effectState->mainActor = replacement;
+    effectState->caster = replacement;
     original->spriteStorageKind = 0;
   }
 }
@@ -2337,8 +2337,8 @@ static void AltmillerCave_ReleaseWallBurst(void) {
 
     FieldParticle_Initialize(fragment, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
-    FieldParticle_SetActorMode(fragment, PARTICLE_ANIMATION_TWINKLE);
-    Sprite_SetAnimationColorModes(fragment->actor, Random_Below(7));
+    FieldParticle_SetAnimation(fragment, PARTICLE_ANIMATION_TWINKLE);
+    Sprite_SetAnimationColorModes(fragment->sprite, Random_Below(7));
     scale = Math_DivideUnsigned(Random_Next(), 3) + 3 * FIXED_ONE / 2;
     fragment->scaleY = scale;
     fragment->scaleX = scale;

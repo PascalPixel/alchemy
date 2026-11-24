@@ -514,8 +514,8 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 /// (VenusLighthouse_PushPillarAhead). A light sets
 /// SW_VENUS_LIGHT_ARRIVED as it reaches its gate, which then opens.
 enum {
-  SW_VENUS_IMMOVABLE = SW_RISE_COUNTER,
-  SW_VENUS_LIGHT_ARRIVED = SW_RISE_ENABLED
+  SW_VENUS_IMMOVABLE = SW_SCENE_COUNTER,
+  SW_VENUS_LIGHT_ARRIVED = SW_SCENE_BYTE
 };
 
 #include "shared/actor_distance.c"
@@ -562,7 +562,7 @@ static void VenusLighthouse_PushPillarAhead(void) {
     return;
 
   // A pillar still sinking into its socket stays where it is.
-  rising = pillar->riseCounter;
+  rising = pillar->sceneCounter;
   if (rising != 0)
     return;
 
@@ -891,7 +891,7 @@ static struct Actor *VenusLighthouse_CreateLight(s32 x, s32 z,
   effect->collisionFlags = 0;
   effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   effect->update = (void (*)(struct Actor *))VenusLighthouse_TrailLight;
-  effect->riseEnabled = 0;
+  effect->sceneByte = 0;
   Actor_StartScript(effect, script);
   return effect;
 }
@@ -1943,8 +1943,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
     // The gate opens as soon as either light reaches it
     // (SW_VENUS_LIGHT_ARRIVED), while the other may still be running.
     while ((firstGateEffect)->script != 0 || (secondGateEffect)->script != 0) {
-      if (firstGateEffect->riseEnabled != 0 ||
-          secondGateEffect->riseEnabled != 0) {
+      if (firstGateEffect->sceneByte != 0 || secondGateEffect->sceneByte != 0) {
         Event_Wait(30);
         Sound_Play(SE_DOOR_OPEN);
         MapGrid_PlayMapEdit(gVenusThirdFloorGateCells, 109, 37);
@@ -2474,8 +2473,8 @@ static void VenusLighthouse_MoveSocketPillar(void) {
           216, 760, gVenusFourthFloorLightToSouthwest);
       while ((firstGateEffect)->script != 0 ||
              (secondGateEffect)->script != 0) {
-        if (firstGateEffect->riseEnabled != 0 ||
-            secondGateEffect->riseEnabled != 0) {
+        if (firstGateEffect->sceneByte != 0 ||
+            secondGateEffect->sceneByte != 0) {
           Event_Wait(30);
           MapGrid_AnimateCells(gVenusFourthFloorGateCells, 77, 35);
           MapGrid_CopyCellAttributes(13, 35, 1, 1, 13, 36);

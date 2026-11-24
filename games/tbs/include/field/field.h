@@ -116,7 +116,7 @@ extern const s32 gMovementType_WanderCloseScript[];
 extern const s32 gActor_LaunchScript[];
 /// Movement type 5: Actor_MoveTowardTarget every frame, forever.
 extern const s32 gMovementType_FollowWatchedScript[];
-/// Movement type 7: Actor_ClearChildAndCollisionFlags once, then SC_END.
+/// Movement type 7: Actor_ClearSpriteAndCollisionFlags once, then SC_END.
 extern const s32 gMovementType_ResetActionScript[];
 /// Turns by Actor_StepAngle until it faces the kept angle, then SC_END.
 extern const s32 gActor_StepAngleScript[];
@@ -149,14 +149,14 @@ extern const s16 gWorldMap_KeyHeadings[16];
 // The field effects' scripts and tables (field_sequence_tables.c,
 // movement_scripts.c, field_effect_tables.c and
 // graphics/field_effects/spark_tiles.s).
-extern const u16 gFieldEffect_CyclePatternWords[];
-extern const s8 gFieldEffect_RandomChildValues[];
+extern const u16 gInput_DpadAngles[];
+extern const s8 gHalt_FlickerColorModes[];
 /// The 32 by 16 spark of Avoid's falling arcs (arc_spark.png), 4 bits a pixel;
 /// FieldPsynergy_Avoid loads it.
 extern const u8 gFieldEffect_ArcSparkTiles[];
 extern const s32 gFieldEffect_BurstParticleActorScript[];
-/// Waits to arrive, sets off SpawnHeavyImpactEffect and releases the actor:
-/// Force's fist as it lands.
+/// Waits to arrive, sets off FieldEffect_SpawnHeavyImpact and releases the
+/// actor: Force's fist as it lands.
 extern const s32 gFieldEffect_HeavyImpactScript[];
 /// The emote bubble's script (Actor_ShowEmoteById): eight 2-frame steps
 /// of squash and stretch (SC_ADD to SW_SCALE_X and SW_SCALE_Y), 30 frames
@@ -178,7 +178,7 @@ extern const u8 gFieldEffect_QuadrantModes[];
 /// The eight tints (PALETTE_TINT_CUSTOM and an RGB555 colour) a field
 /// Psynergy fades the palettes toward, picked by the frame counter or
 /// by the FLAG_PSYNERGY_TINT flags (FieldPsynergy_FadeToCastColor).
-extern const s32 gFieldEffect_TargetColors[];
+extern const s32 gFieldPsynergy_CastColors[];
 extern const s16 gFieldEffect_GroundParticleFrames[];
 /// The ground particles' 16 by 16 tiles, packed (Decompress_ByteLz).
 extern const u8 gFieldEffect_GroundParticleTiles[];
@@ -440,7 +440,7 @@ void ActorScript_SetOrCompareGravity(struct ScriptOperands *state,
                                      s32 operation, s32 value);
 void ActorScript_SetOrCompareTerrainHeight(struct ScriptOperands *state,
                                            s32 operation, s32 value);
-void ActorScript_SetOrCompareRiseBaseY(struct ScriptOperands *state,
+void ActorScript_SetOrCompareSceneWord(struct ScriptOperands *state,
                                        s32 operation, s32 value);
 void ActorScript_SetOrCompareSprite(struct ScriptOperands *state, s32 operation,
                                     s32 value);
@@ -470,10 +470,10 @@ void ActorScript_SetOrCompareWatchedActor(struct ScriptOperands *state,
                                           s32 operation, s32 value);
 void ActorScript_SetOrCompareUpdateAddress(struct ScriptOperands *state,
                                            s32 operation, s32 value);
-void ActorScript_SetOrCompareRiseCounter(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
-void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareSceneCounter(struct ScriptOperands *state,
+                                          s32 operation, s32 value);
+void ActorScript_SetOrCompareSceneByte(struct ScriptOperands *state,
+                                       s32 operation, s32 value);
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value);
 void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
 

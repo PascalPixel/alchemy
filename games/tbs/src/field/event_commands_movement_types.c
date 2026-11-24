@@ -20,7 +20,7 @@
 /// The SC_CALL routine of MOVEMENT_TYPE_RESET_ACTION: clears an actor's sprite
 /// flags, so it has no shadow, and its collision flags, so nothing collides
 /// with it.
-s32 Actor_ClearChildAndCollisionFlags(struct Actor *actor) {
+s32 Actor_ClearSpriteAndCollisionFlags(struct Actor *actor) {
   Actor_SetSpriteFlagsFar(actor, 0);
   actor->collisionFlags = 0;
   return 0;

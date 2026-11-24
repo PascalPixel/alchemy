@@ -51,7 +51,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
   s32 state;
   u32 spread;
 
-  main = ((struct FieldEffectState *)gFieldEffectState)->mainActor;
+  main = ((struct FieldEffectState *)gFieldEffectState)->caster;
   state = effect->state;
 
   if (state == RETREAT_PARTICLE_AIM) {
@@ -95,7 +95,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
 /// Spins the main actor and shrinks it while 24 particles fly out, one a frame.
 void FieldPsynergy_Retreat(void) {
   struct FieldEffectState *effectState = gFieldEffectState;
-  struct Actor *actor = effectState->mainActor;
+  struct Actor *actor = effectState->caster;
   struct Vector3 pos;
   struct FieldParticle *effect;
   u32 i;
@@ -104,7 +104,7 @@ void FieldPsynergy_Retreat(void) {
   FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldPsynergy_FadeToCastColor();
   wait(10);
-  Actor_FaceDirectionById(effectState->firstActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(effectState->casterId, FACING_SOUTH, 0);
   wait(30);
   actor->update = Actor_CycleSpriteColors;
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
@@ -134,8 +134,8 @@ void FieldPsynergy_Retreat(void) {
     FIXED scale;
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
-    FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->actor, Random16_Below(7));
+    FieldParticle_SetAnimation(effect, 7);
+    Sprite_SetAnimationColorModesFar(effect->sprite, Random16_Below(7));
     scale = (Random16() >> 1) + FIXED_ONE * 6 / 5; // 1.2 to 1.7
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -266,7 +266,7 @@ struct DescendingArcSprite {
 /// effectState->arcTileSlot.
 void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
   struct FieldEffectState *effectState = gFieldEffectState;
-  struct Actor *leader = effectState->mainActor;
+  struct Actor *leader = effectState->caster;
   struct Actor *actors[2];
   struct Actor *actor;
   struct DescendingArcSprite *sprite;

@@ -63,7 +63,7 @@ void FieldEffect_UpdateScaledArcActorB(struct Actor *arc) {
 /// then release themselves.
 void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
   struct FieldEffectState *effectState = gFieldEffectState;
-  struct Actor *source = effectState->mainActor;
+  struct Actor *source = effectState->caster;
   struct Actor *arcs[2];
   struct Actor *arc;
   struct Sprite *sprite;

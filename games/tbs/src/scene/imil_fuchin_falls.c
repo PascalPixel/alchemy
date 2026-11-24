@@ -1903,7 +1903,7 @@ static void FuchinFallsCave_EndRevealLighting(void) {
       FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST) {
     effectState = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
     state = *(gHeapSlots + HEAP_SLOT_SCREEN_TRANSITION);
-    effectState->childOption = 1;
+    effectState->sceneVariant = 1;
     state->nextMode = 0;
     state->duration = 1;
     state->step = 1;

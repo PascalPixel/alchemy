@@ -1202,25 +1202,25 @@ static void CrossboneIsleSteppingStones_PushOrClimbDown(void) {
 /// Nothing visible happens when Isaac walks onto the lowest floor of the
 /// seventh floor's side room, among the brown pits, for example cell (54, 15)
 /// in its north east. The game starts the fade overlay on him and sets his
-/// `riseCounter`. From then on, walking on the brown floor along the raised
+/// `sceneCounter`. From then on, walking on the brown floor along the raised
 /// pink ground south of it, he shows only from the waist up: the overlay
 /// covers the rest in the colour of the raised ground, as if he stood behind
 /// it.
 static void CrossboneIsleSteppingStones_StartRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   gFadeOverlayState->actor = leader;
-  leader->riseCounter = 1;
+  leader->sceneCounter = 1;
 }
 
 /// Nothing visible happens when Isaac leaves the lowest floor of the seventh
 /// floor's side room at cell (33, 27), below the west ladders, or cell
 /// (54, 14) in the north east. The fade overlay lets him go and his
-/// `riseCounter` is cleared.
+/// `sceneCounter` is cleared.
 static void CrossboneIsleSteppingStones_StopRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   gFadeOverlayState->actor = NULL;
-  leader->riseCounter = 0;
+  leader->sceneCounter = 0;
 }
 
 /// Puts the frozen puddle under the leader when it is behind and below the
@@ -1610,10 +1610,10 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineState.next == SCENE_CROSSBONE_ISLE_STACKED_PILLARS) {
     Actor_CreateConfigured(584, 0, 200, SPRITE_CRATE);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Actor_Get(ACTOR_PARTY_LEADER)->riseCounter = 1;
+      Actor_Get(ACTOR_PARTY_LEADER)->sceneCounter = 1;
     }
     FieldEffect_StartFadeOverlay(0);
-    if (Actor_Get(ACTOR_PARTY_LEADER)->riseCounter == 0) {
+    if (Actor_Get(ACTOR_PARTY_LEADER)->sceneCounter == 0) {
       CrossboneIsleSteppingStones_StopRising();
     }
     CrossboneIsleSteppingStones_InitializePillarPriority(ACTOR_FIRST_PILLAR);

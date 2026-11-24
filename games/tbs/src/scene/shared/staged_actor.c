@@ -88,7 +88,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
   if (FieldActor_CheckMovementCollision(next, &dst) > 0)
     return;
 
-  if (next->riseCounter != 0)
+  if (next->sceneCounter != 0)
     return;
 
   Actor_SelectAnimation(lead, ANIM_PUSH);

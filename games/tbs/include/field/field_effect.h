@@ -44,7 +44,7 @@ struct FieldEffect {
   s32 targetZ;
   ///@}
   /// Added to x, y and z each frame by the update routines, in 16.16
-  /// fixed-point pixels per frame; Actor's bounce, gravity and riseBaseY.
+  /// fixed-point pixels per frame; Actor's bounce, gravity and sceneWord.
   struct Vector3 velocity;
   struct Sprite *sprite; ///< the sprite spin turns
   u8 spriteStorageKind;  ///< Actor's; not named by this view
@@ -57,7 +57,7 @@ struct FieldEffect {
   u8 snapToTarget;
   ///@}
   u8 collisionFlags; ///< Actor's collisionFlags; not named by this view
-  /// Actor's steeringFlags to riseEnabled; not named by this view.
+  /// Actor's steeringFlags to sceneByte; not named by this view.
   ///@{
   u8 steeringFlags;
   u8 paused;
@@ -66,8 +66,8 @@ struct FieldEffect {
   u16 wait;
   u8 refused;
   u8 frozen;
-  u8 riseCounter;
-  u8 riseEnabled;
+  u8 sceneCounter;
+  u8 sceneByte;
   ///@}
   /// Added to the sprite's rotation each frame by the update routines, in
   /// 1/65536 turns per frame; Imil's rising effects keep a drift here instead.

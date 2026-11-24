@@ -14,8 +14,8 @@ void FieldPsynergy_CatchOnTarget(s32 unused) { FieldPsynergy_Catch(); }
 /// 19.5 pixels and shrinks back into the caster.
 void FieldPsynergy_Catch(void) {
   struct FieldEffectState *effectState = gFieldEffectState;
-  struct Actor *caster = effectState->mainActor;
-  struct Actor *caught = effectState->child;
+  struct Actor *caster = effectState->caster;
+  struct Actor *caught = effectState->target;
   struct Actor *hand;
   struct Point spawn;
   struct Point origin;
@@ -27,7 +27,7 @@ void FieldPsynergy_Catch(void) {
   origin.x = caster->x.fixed;
   origin.y = caster->y.fixed + toFIXED(16);
   origin.z = caster->z.fixed;
-  if (effectState->enabled) {
+  if (effectState->aimAhead) {
     target.x = caster->x.fixed;
     target.y = caster->y.fixed + toFIXED(32);
     target.z = caster->z.fixed;

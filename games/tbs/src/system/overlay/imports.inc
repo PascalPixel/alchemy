@@ -311,7 +311,7 @@
 	export Scene_PlayMusic, Scene_PlayMusicFar
 	export Djinn_JoinParty, Djinn_JoinPartyFar
 	export FieldParticle_HasPendingTarget, FieldParticle_HasPendingTargetFar
-	export FieldParticle_SetActorMode, FieldParticle_SetActorModeFar
+	export FieldParticle_SetAnimation, FieldParticle_SetAnimationFar
 	export FieldParticle_SetCallback, FieldParticle_SetCallbackFar
 	export FieldParticle_Initialize, FieldParticle_InitializeFar
 	export FieldEffect_ClearOwnedSlot, FieldEffect_ClearOwnedSlotFar

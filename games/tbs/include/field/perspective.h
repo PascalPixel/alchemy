@@ -18,8 +18,8 @@ struct WorldMapView {
   u8 *script; ///< NULL at load
   /// MapGridScrollState's flags: REG_DISPCNT bits, BG0 to BG3 and the sprites
   /// at load.
-  u16 fade;
-  u8 fadeStep; ///< MapGridScrollState's wideTiles, 0x80 at load
+  u16 shownLayers;
+  u8 wideTiles; ///< MapGridScrollState's wideTiles, 0x80 at load
   /// As MapGridScrollState: footprints, tileset animations and blend script.
   u8 animationsAndBlend[228 - 23];
   FIXED view[2]; ///< the view's top left, x then y, 16.16 fixed-point pixels

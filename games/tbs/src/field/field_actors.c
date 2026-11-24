@@ -283,7 +283,7 @@ struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
     actor->bounce = FIXED_ONE / 4;
     actor->collisionFlags = 0;
     actor->steeringFlags = ACTOR_FACES_MOTION;
-    actor->riseBaseY = 0;
+    actor->sceneWord = 0;
     actor->facing = FACING_SOUTH;
     // Its home position, in pixels.
     actor->homeX = x / toFIXED(1);

@@ -153,7 +153,7 @@ FarCall_OverworldTable:
 	export BattleBackground_GetSelectedFar, BattleBackground_GetSelected
 	overlay_veneer FieldEffect_SpawnMoveHand
 	overlay_veneer FieldEffect_SnapScaleToFull
-	overlay_veneer UpdateRisingParticleBurst
+	overlay_veneer FieldEffect_BurstHand
 	export Party_AddPpFar, Party_AddPp
 	overlay_veneer Party_AddHp
 	overlay_veneer VramCache_CountFreeBlocks
@@ -165,7 +165,7 @@ FarCall_OverworldTable:
 	export FieldParticle_UpdateFar, FieldParticle_Update
 	export FieldParticle_HasPendingTargetFar, FieldParticle_HasPendingTarget
 	export FieldParticle_SetPositionFar, FieldParticle_SetPosition
-	export FieldParticle_SetActorModeFar, FieldParticle_SetActorMode
+	export FieldParticle_SetAnimationFar, FieldParticle_SetAnimation
 	export FieldParticle_SetCallbackFar, FieldParticle_SetCallback
 	export FieldParticle_InitializeFar, FieldParticle_Initialize
 	export FieldEffect_ClearOwnedSlotFar, FieldEffect_ClearOwnedSlot

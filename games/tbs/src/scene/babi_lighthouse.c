@@ -1203,10 +1203,10 @@ static struct Actor *BabiLighthouse_FindActorAhead(struct Actor *actor) {
 /// When Carry is cast on the grey pillar on the Road to Babi Lighthouse, the
 /// pillar lands in a ring of puffs of dust where it is set down.
 ///
-/// It only asks Carry (through childOption) to wait for the dropped pillar to
+/// It only asks Carry (through sceneVariant) to wait for the dropped pillar to
 /// land and throw the puffs.
 static void BabiLighthouse_LandCarriedPillarInPuffs(void) {
-  ((struct FieldEffectState *)gFieldEffectState)->childOption = 1;
+  ((struct FieldEffectState *)gFieldEffectState)->sceneVariant = 1;
 }
 
 /// After Move or Carry on the grey pillar on the Road to Babi Lighthouse, a

@@ -2597,7 +2597,7 @@ static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target) {
   FieldPsynergy_LoadResources(ABILITY_MIND_READ, 1);
   effectState = gFieldEffectState;
   FieldPsynergy_SetupActorPair(caster, target);
-  effectState->active = 0;
+  effectState->announceName = 0;
   FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
   wait(1);

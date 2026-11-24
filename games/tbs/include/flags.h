@@ -150,7 +150,7 @@
 /// colosseum's escorts as they swap Mia in for Jenna.
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
 /// The highest of these that is set picks the tint a field Psynergy fades
-/// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
+/// toward, gFieldPsynergy_CastColors[n], in place of the frame counter's pick
 /// (FieldPsynergy_FadeToCastColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
 /// Holds the field's palette blend still (PaletteFade_Update), while a

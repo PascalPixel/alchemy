@@ -138,7 +138,7 @@ void Djinn_JoinPartyFar(s32 slot, s32 element, s32 djinn);
 void FieldParticle_UpdateFar(struct FieldParticle *effect);
 u32 FieldParticle_HasPendingTargetFar(struct FieldParticle *effect);
 void FieldParticle_SetPositionFar(struct FieldParticle *effect, s32 x, s32 z);
-void FieldParticle_SetActorModeFar(struct FieldParticle *effect, s32 mode);
+void FieldParticle_SetAnimationFar(struct FieldParticle *effect, s32 mode);
 void FieldParticle_SetCallbackFar(struct FieldParticle *effect,
                                   EffectCallback callback);
 void FieldParticle_InitializeFar(struct FieldParticle *effect, s32 kind, s32 x,

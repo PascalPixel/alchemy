@@ -137,8 +137,8 @@ void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 /// it whooshes off.
 void FieldPsynergy_Whirlwind(void) {
   struct FieldEffectState *effectState = gFieldEffectState;
-  struct Actor *caster = effectState->mainActor;
-  struct Actor *target = effectState->child;
+  struct Actor *caster = effectState->caster;
+  struct Actor *target = effectState->target;
   struct Vector3 pos;
   struct Vector3 from;
   struct Vector3 to;
@@ -178,7 +178,7 @@ void FieldPsynergy_Whirlwind(void) {
   wait(20);
   // Cleared by FieldPsynergy_Dispatch: cast on a target a trigger
   // names, the target is blown away.
-  if (effectState->enabled == 0) {
+  if (effectState->aimAhead == 0) {
     if (target != 0)
       target->update = FieldEffect_ShrinkActorScaleUntilHalf;
 

@@ -79,7 +79,7 @@ void FieldPsynergy_Avoid(void) {
   s32 count;
 
   effectState = gFieldEffectState;
-  actor = effectState->mainActor;
+  actor = effectState->caster;
   sprite = actor->sprite;
   entry = sprite->entries[0];
   angle = actor->facing;

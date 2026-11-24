@@ -183,10 +183,10 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   // The ground is BG3 and BG2, two 512-pixel affine layers that wrap (char
   // blocks 2 and 3, screen blocks 8 and 10); BG1 is a plain layer on screen
   // block 5.
-  perspective->fade = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
-                      DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
+  perspective->shownLayers = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
+                             DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
   // fadeStep is where a map keeps wideTiles, read by the tileset animations.
-  perspective->fadeStep = WORLD_MAP_WIDE_TILES;
+  perspective->wideTiles = WORLD_MAP_WIDE_TILES;
   Io_Write16Inline(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) |
                        BGCNT_SCREEN_BASE(8) | BGCNT_WRAP | BGCNT_SIZE(2),
                    &REG_BG3CNT);

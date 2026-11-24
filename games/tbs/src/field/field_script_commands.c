@@ -823,9 +823,9 @@ SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareGravity, gravity)
 /// State value SW_GROUND: sets, adds to or compares the ground height under the
 /// actor.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTerrainHeight, groundHeight)
-/// State value 23: sets, adds to or compares the actor's riseBaseY, scene
+/// State value 23: sets, adds to or compares the actor's sceneWord, scene
 /// code's own word.
-SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareRiseBaseY, riseBaseY)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareSceneWord, sceneWord)
 /// State value 24: sets, adds to or compares the actor's sprite.
 SCRIPT_DEFINE_OPERAND_ADDRESS(ActorScript_SetOrCompareSprite, sprite)
 /// State value 25: sets, adds to or compares whether the actor draws no sprite,
@@ -884,14 +884,13 @@ SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareUserValue, userValue, s16)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareWatchedActor, watchedActor)
 /// State value SW_HOOK: sets, adds to or compares the actor's update routine.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareUpdateAddress, update)
-/// State value SW_RISE_COUNTER: sets, adds to or compares the actor's rise
+/// State value SW_SCENE_COUNTER: sets, adds to or compares the actor's rise
 /// counter.
-SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRiseCounter, riseCounter,
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSceneCounter, sceneCounter,
                              u8)
-/// State value SW_RISE_ENABLED: sets, adds to or compares whether the actor
+/// State value SW_SCENE_BYTE: sets, adds to or compares whether the actor
 /// rises.
-SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRiseEnabled, riseEnabled,
-                             u8)
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSceneByte, sceneByte, u8)
 
 /// Reads the two words after the command (a state value number and a value) and
 /// passes operation to that value's handler.

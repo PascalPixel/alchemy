@@ -695,10 +695,10 @@ static void TunnelRuins_HopSouthOrPushSmallPillars(void) {
 static void TunnelRuins_BlowAwayIvyA(void) {
   GameFlag_Set(FLAG_TUNNEL_RUINS_IVY_WEST_HALF_GONE);
   if (GameFlag_Get(FLAG_TUNNEL_RUINS_IVY_EAST_HALF_GONE) != 0) {
-    Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->sceneCounter = 0;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
   } else {
-    Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->sceneCounter = 1;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags |= ACTOR_NOT_TARGETED;
   }
 }
@@ -709,10 +709,10 @@ static void TunnelRuins_BlowAwayIvyA(void) {
 static void TunnelRuins_BlowAwayIvyB(void) {
   GameFlag_Set(FLAG_TUNNEL_RUINS_IVY_EAST_HALF_GONE);
   if (GameFlag_Get(FLAG_TUNNEL_RUINS_IVY_WEST_HALF_GONE) != 0) {
-    Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->sceneCounter = 0;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
   } else {
-    Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->sceneCounter = 1;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags |= ACTOR_NOT_TARGETED;
   }
 }

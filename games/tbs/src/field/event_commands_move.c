@@ -9,7 +9,7 @@
 /// DPAD_ANGLE_NONE when none or a diagonal is held.
 s32 Input_GetDpadAngle(u32 unused) {
   // Indexed by the right, left, up and down bits.
-  return gFieldEffect_CyclePatternWords[DPAD_INDEX(gKeysHeld)];
+  return gInput_DpadAngles[DPAD_INDEX(gKeysHeld)];
 }
 
 /// Per-frame update of Move's hand (FieldEffect_SpawnMoveHand): turns it
@@ -73,8 +73,8 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   s32 cellZ;
 
   effectState = gFieldEffectState;
-  caster = effectState->mainActor;
-  target = effectState->child;
+  caster = effectState->caster;
+  target = effectState->target;
   // effectState->angle is the way the caster faces; the hand's side of the
   // target is the opposite way, toward the caster.
   angle = effectState->angle + DEGtoANG(180);
@@ -207,7 +207,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     Actor_SetMoveTargetFar(pusher, position.x, position.y + toFIXED(16),
                            position.z);
     if (moved == 1) {
-      Actor_GetById(effectState->firstActorId)->steeringFlags &=
+      Actor_GetById(effectState->casterId)->steeringFlags &=
           ~ACTOR_FACES_MOTION;
       caster->speedLimit = toFIXED(1) / 5;
       caster->acceleration = toFIXED(1) / 5;
@@ -228,10 +228,9 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   target->update = effectState->savedCallback;
   FieldPsynergy_StopCasterUpdate();
   if (moved == 1)
-    Actor_GetById(effectState->firstActorId)->steeringFlags |=
-        ACTOR_FACES_MOTION;
+    Actor_GetById(effectState->casterId)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldPsynergy_FadeFromCastColor();
-  UpdateRisingParticleBurst(pusher);
+  FieldEffect_BurstHand(pusher);
 }
 
 /// Field effect sprite callback of a particle that flies 30 pixels out from
@@ -291,7 +290,7 @@ void FieldPsynergy_Move(void) {
   struct Actor *hand;
 
   effectState = gFieldEffectState;
-  caster = effectState->mainActor;
+  caster = effectState->caster;
 
   /* FAKEMATCH(dead): an empty once-only loop before the call. */
   do {
@@ -304,7 +303,7 @@ void FieldPsynergy_Move(void) {
     wait(30);
   }
   FieldPsynergy_FadeFromCastColor();
-  UpdateRisingParticleBurst(hand);
+  FieldEffect_BurstHand(hand);
 }
 
 /// Spawns Move's hand (SPRITE_MOVE_HAND) 16 pixels above the caster, at quarter
@@ -381,7 +380,7 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
 
 /// Ends a hand: over 31 frames it rises 1 pixel, turns 1/8 turn and shrinks by
 /// 1/32 of full size a frame, then bursts into 8 sparkles and is released.
-void UpdateRisingParticleBurst(struct Actor *hand) {
+void FieldEffect_BurstHand(struct Actor *hand) {
   struct Actor *sparkle;
   s32 i;
   FIXED dist;

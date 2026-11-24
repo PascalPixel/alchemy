@@ -3148,7 +3148,7 @@ static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
 
   result = 0;
   if (actor->paused == 1) {
-    if (actor->riseCounter == 0) {
+    if (actor->sceneCounter == 0) {
       Actor_SelectAnimation(actor, ANIM_STAND);
       return 1;
     }
@@ -3165,16 +3165,16 @@ static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
       actor->paused = 1;
       Actor_SelectAnimation(actor, ANIM_STAND);
       result = 1;
-      actor->riseCounter = result;
+      actor->sceneCounter = result;
     } else {
       actor->paused = 0;
       Actor_SelectAnimation(actor, ANIM_WALK);
-      actor->riseCounter = 0;
+      actor->sceneCounter = 0;
     }
   } else {
     actor->paused = 0;
     Actor_SelectAnimation(actor, ANIM_WALK);
-    actor->riseCounter = 0;
+    actor->sceneCounter = 0;
   }
   return result;
 }

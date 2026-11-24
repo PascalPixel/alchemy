@@ -479,8 +479,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_InitializeFar(effect, SPRITE_PARTICLE, position.x,
                                 position.z);
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
-    FieldParticle_SetActorModeFar(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->actor, Random16_Below(7));
+    FieldParticle_SetAnimationFar(effect, 7);
+    Sprite_SetAnimationColorModesFar(effect->sprite, Random16_Below(7));
     effect->scaleY = FIXED_ONE * 7 / 10;
     effect->scaleX = FIXED_ONE * 7 / 10;
     wait(3);

@@ -40,7 +40,7 @@ struct BattleActor {
   s32 targetZ;
   s32 bounce;
   s32 gravity;
-  s32 riseBaseY;
+  s32 sceneWord;
   void *sprite; ///< one sprite, or a list of a two-part enemy's two
   u8 spriteStorageKind;
   u8 motionFlags;
@@ -55,8 +55,8 @@ struct BattleActor {
   u16 wait;
   u8 refused;
   u8 frozen;
-  u8 riseCounter;
-  u8 riseEnabled;
+  u8 sceneCounter;
+  u8 sceneByte;
   s16 timer;
   u16 userValue;
   struct BattleActor *watchedActor;

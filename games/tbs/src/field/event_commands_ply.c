@@ -58,7 +58,7 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
                        effectState->x +
                            Iwram_MulFX(toFIXED(6), Trig_Sin(emitter->timer *
                                                             (TRIG_TURN / 64))),
-                       effectState->y + ABOVE, effectState->z);
+                       effectState->y + PSYNERGY_EFFECT_HEIGHT, effectState->z);
     emitter->timer++;
     emitter->timer = (emitter->timer + 64) % 64;
   }
@@ -97,7 +97,7 @@ void FieldPsynergy_PlyOnTarget(s32 unused) {
 /// flies far away.
 void FieldPsynergy_Ply(void) {
   struct FieldEffectState *effectState = gFieldEffectState;
-  struct Actor *target = effectState->mainActor;
+  struct Actor *target = effectState->caster;
   struct Actor *actor;
   struct Sprite *last;
   u8 resourceSlot;
@@ -168,7 +168,7 @@ void FieldPsynergy_Ply(void) {
     target->timer = 0;
     // Cast on a target (enabled cleared by FieldPsynergy_Dispatch),
     // the sparks fall for 192 frames instead of 128.
-    if (effectState->enabled != 0)
+    if (effectState->aimAhead != 0)
       wait(128);
     else
       wait(192);

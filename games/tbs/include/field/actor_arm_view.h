@@ -91,9 +91,9 @@ struct ActorArmView {
   /// Taken off velocityY each frame above the ground, 16.16 fixed-point
   /// pixels per frame; also scales a floating actor's bob.
   FIXED gravity;
-  /// Actor's riseBaseY, sprite and sprite kind; not named here.
+  /// Actor's sceneWord, sprite and sprite kind; not named here.
   ///@{
-  s32 riseBaseY;
+  s32 sceneWord;
   void *sprite;
   u8 spriteStorageKind;
   ///@}
@@ -118,8 +118,8 @@ struct ActorArmView {
   /// (the actor script's parameter), footprint side and watched actor; not
   /// named here.
   ///@{
-  u8 riseCounter;
-  u8 riseEnabled;
+  u8 sceneCounter;
+  u8 sceneByte;
   s16 timer;
   s16 userValue;
   struct ActorArmView *watchedActor;

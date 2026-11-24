@@ -10,6 +10,7 @@
 #include "types.h"
 #include "game/item.h"
 #include "window/window.h"
+#include "window/screens.h"
 #include "sprite_ids.h"
 
 /// The hand cursor's bob in pixels, a step every two frames: right and up by
@@ -90,7 +91,8 @@ u8 gStatusScreen_CursorWidths[5] = {9, 4, 6, 5, 7};
 s32 gDjinnFigures_SpriteIds[4] = {SPRITE_VENUS_DJINNI, SPRITE_MERCURY_DJINNI,
                                   SPRITE_MARS_DJINNI, SPRITE_JUPITER_DJINNI};
 
-/// The command icons the Status screen shows (MenuIcon_LoadSlots).
-u16 gStatusScreen_StatusIcons[5] = {COMMAND_ICON_SUMMON, COMMAND_ICON_PSYNERGY,
-                                    COMMAND_ICON_ITEM, COMMAND_ICON_DJINN,
-                                    COMMAND_ICON_STATUS};
+/// The status icons (MenuIcon_LoadSlots).
+u16 gStatusScreen_StatusIcons[5] = {
+    OWNER_CONDITION_DOWNED, OWNER_CONDITION_POISON,
+    OWNER_CONDITION_DEADLY_POISON, OWNER_CONDITION_CURSED_ITEM,
+    OWNER_CONDITION_HAUNT};

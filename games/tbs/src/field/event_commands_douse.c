@@ -7,10 +7,10 @@
 
 /// The drops Douse rains: cast at nothing, cast on a target, and cast on a
 /// target in Mercury Lighthouse's entrance or middle floors
-/// (FieldEffectState.lit), where white motes sway down in their place and
-/// nothing splashes.
-// XXX: why those two floors take motes; a recording of Douse cast in
-// SCENE_MERCURY_LIGHTHOUSE_ENTRANCE would show what the player sees there.
+/// (FieldEffectState.lit), where larger blue drops sway down in their place
+/// and none splashes; elsewhere, as in Imil, the drops are small and white.
+// XXX (no evidence): why those two floors take other drops; the code only
+// tests the map, and a recording shows the difference, not its reason.
 #define DOUSE_DROPS 10
 #define DOUSE_DROPS_ON_TARGET 24
 #define DOUSE_SWAYING_DROPS_ON_TARGET 30
@@ -146,7 +146,7 @@ void FieldPsynergy_Douse(void) {
     }
     wait(10);
   } else {
-    // Every 6 frames, a white mote sways down from 3 to 8 pixels round the
+    // Every 6 frames, a blue drop sways down from 3 to 8 pixels round the
     // cloud.
     if (effectState->aimAhead != 0)
       count = DOUSE_DROPS;

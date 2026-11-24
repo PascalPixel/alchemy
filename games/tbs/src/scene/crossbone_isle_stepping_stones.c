@@ -466,7 +466,7 @@ static void CrossboneIsleSteppingStones_ReadMapGridCell(
   if (grid != NULL) {
     struct MapGridCell *cell = grid->layers[layer].cells;
 
-    cell += x + (y << 7);
+    cell += x + (y << MAPGRID_ROW_SHIFT);
     Dma_Set(cell, dst, DMA_COPY_WORDS(sizeof(*cell) / sizeof(u32)), REG_DMA3);
     Dma_Wait(REG_DMA3);
   }
@@ -482,7 +482,7 @@ static void CrossboneIsleSteppingStones_SetCellAttributes(
     struct CrossboneIslePillarCellBits *cell =
         (struct CrossboneIslePillarCellBits *)grid->layers[layer].cells;
 
-    cell += x + (y << 7);
+    cell += x + (y << MAPGRID_ROW_SHIFT);
     cell->lowFlags = source->bits.lowFlags;
     cell->highFlags = source->bits.highFlags;
     cell->behavior = source->bits.behavior;

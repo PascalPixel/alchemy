@@ -127,9 +127,6 @@ enum {
   ACTOR_SIGN
 };
 
-/// A map grid row, MAPGRID_SIZE cells, as a shift.
-#define MAPGRID_ROW_SHIFT 7
-
 /// The most cells one shove rolls a log.
 #define LOG_ROLL_MAX_CELLS 11
 

@@ -37,6 +37,15 @@
 /// round (gParch_PictureTiles).
 #define RING_ARC_STEP (TRIG_TURN / 64)
 
+/// The stages of drawing the Ring, 32, 32 and 16 frames.
+enum RingDrawPhase {
+  /// The sparkles rise from two points sweeping half a turn round the caster.
+  RING_SPARKS_CIRCLE = 0,
+  /// They sweep the half turn again, and the ring is drawn behind them.
+  RING_DRAWN = 1,
+  RING_SPARKS_DIE_OUT = 2 ///< no new sparkles start; the last ones rise away
+};
+
 /// The Ring's state (heap slot battleEffect): the sparkle picture, the 64
 /// sparkles that rise round the caster as the ring is drawn and burst when it
 /// ends, the motes that circle it after, and what the per-frame task shows.
@@ -188,13 +197,14 @@ void FieldPsynergy_Ring(void) {
     pos[1] = scene->caster->y.fixed + toFIXED(16);
     pos[2] = scene->caster->z.fixed;
     Camera_WorldToScreen(pos);
-    // The whole pixels of the caster's place on screen.
+    // BG0's 128-pixel ring picture is centred on the caster's place on
+    // screen, its whole pixels.
     {
-      s32 x = *((s16 *)pos + 1);
+      s32 x = ((struct FieldCoordinate *)pos)[0].part[0].integer;
       s32 y;
 
       gBgScroll[0].x = 64 - x;
-      y = *((s16 *)pos + 5);
+      y = ((struct FieldCoordinate *)pos)[2].part[0].integer;
       gBgScroll[0].y = 64 - y;
     }
     IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 2048, 0);
@@ -229,7 +239,7 @@ void FieldPsynergy_Ring(void) {
     Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_FRAME);
     wait(1);
     state->cycling = 0;
-    phase = 0;
+    phase = RING_SPARKS_CIRCLE;
     timer = 0;
     do {
       if (drawing) {
@@ -267,22 +277,22 @@ void FieldPsynergy_Ring(void) {
           mote->timer = 0;
       }
       switch (phase) {
-      case 0:
+      case RING_SPARKS_CIRCLE:
         angle = timer * RING_ARC_STEP;
         if (timer == 32) {
-          phase = 1;
+          phase = RING_DRAWN;
           timer = -1;
         }
         break;
-      case 1:
+      case RING_DRAWN:
         drawing = 1;
         angle = arcStart = timer * RING_ARC_STEP;
         if (timer == 32) {
-          phase = 2;
+          phase = RING_SPARKS_DIE_OUT;
           timer = -1;
         }
         break;
-      case 2:
+      case RING_SPARKS_DIE_OUT:
         repeat = 0;
         if (timer == 16)
           phase = FIELD_PSYNERGY_FINISHED;

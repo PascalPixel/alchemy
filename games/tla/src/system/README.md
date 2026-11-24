@@ -1,0 +1,251 @@
+# System code
+
+This folder is the base the rest of the game runs on: start-up, the main
+routine, the frame, tasks, the heap and the save.
+[System](../../../../docs/tla/system.md) gives the four big ideas. This page goes one step
+closer, so you know what each part is for before you open it.
+
+## Start-up
+
+Switching on and the reset with A, B, Select and Start are the same thing:
+both run the cartridge's first instruction. Start-up clears memory, copies
+the hottest routines into fast RAM, switches on the interrupts, and calls
+the main routine, which never returns. It is `System_Initialize`.
+
+## The main routine
+
+`MainRoutine_Run` goes round three steps for as long as the console is on:
+clear away the last sequence, call the next one as a function, and when it
+returns work out what follows. One trip is a whole sequence, not a frame.
+The loop that goes round once a frame is
+[inside `wait()`](#the-frame-loop).
+
+It also has four debug starts, which only work with debug mode on: the
+Venus Lighthouse entrance, the scene after the Title, Mt. Aleph's summit,
+and the Title by another way in. Nothing in the finished game asks for any
+of them.
+
+### Clearing away the last sequence
+
+Before every sequence the task list is emptied, the whole heap is taken
+back, looping sounds are cut off and any line-by-line screen effect is
+switched off. This is what makes each sequence start cold. Only what lies
+outside the heap crosses from one to the next: the main routine's state, the
+game flags, the characters' units and the actor snapshot, each a fixed
+block of memory (`gMainRoutineState`, `gCharacterUnits` and
+`gSnapshotObjects` are declared in `ewram.s`).
+
+A scene's overlay is loaded here too, just before the field sequence is
+called. A battle and the three games of chance load none.
+
+### Running another sequence
+
+A scene ends with an exit, which the main routine turns into a destination
+through the scene's exit table. Anything else ends with a result, and
+`Scene_ReturnFromSequence` picks the destination from it: back where the
+party stood, to the restart point after a defeat, or wherever an event
+named beforehand.
+
+Besides the field there are four sequences: the battle, and the three games
+of chance, Lucky Dice, Lucky Wheels and Super Lucky Dice. The three games
+put background palettes 14 and 15 aside while they run and back after.
+
+## The frame loop
+
+![Felix talks to the man by the pond in Daila: a window opens at the top, the line is typed with a bobbing arrow, the next page follows, and the window closes. (No portrait: Daila's villagers have none.)](https://alchemy.pascalpixel.com/tla/guides/window/talk.gif)
+
+The frame loop is the inside of `wait()`. One trip round it is one frame.
+
+The rule that shapes everything here: during a frame the game never touches
+the screen. It only writes down, in ordinary memory, what the screen should
+become. The console signals when it has finished drawing a picture, the
+[VBlank](../../../../docs/tla/glossary.md#vblank), and in that gap everything written down
+goes up at once.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  code(["The caller's code, up to its wait"]) --> tasks(["Tasks run"])
+  tasks --> list(["The frame's sprites are put in one list"])
+  list --> done(["Marked finished"])
+  done --> vblank(["VBlank: it all goes up at once"])
+  vblank -- "frames left" --> tasks
+  vblank -- "done: wait returns" --> code
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class code code
+  class tasks,list,done frame
+  class vblank hardware
+```
+
+One trip, in order:
+
+1. Every task of the frame pass runs, highest rank first.
+2. The sprites that were asked for are written into one list
+   ([The frame's sprites](#the-frames-sprites)).
+3. The frame is marked finished.
+4. The loop sleeps until the VBlank handler has run.
+5. The sprite slots are emptied, the frame count goes up by one and held
+   buttons are turned into repeats.
+
+The caller's own work is part of the frame as well. What it did between its
+last `wait()` and this one came before step 1, and is shown with what the
+tasks do. So a frame's time is the caller's work and the tasks' together.
+
+### What VBlank does
+
+The VBlank handler, `System_VBlankHandler`, does two kinds of work. If the
+frame was marked finished, it copies the frame to the screen. Whether or
+not it was, it runs the tasks of its own pass, reads the buttons and
+prepares the next stretch of sound.
+
+That split is the game's [slowdown](../../../../docs/tla/glossary.md#slowdown). A frame
+that runs long is simply shown one VBlank later, whole. Everything counted
+in frames stretches together, nothing is ever shown half moved, and the
+music keeps its tempo.
+
+### Buttons and sleep
+
+The frame loop also turns held buttons into repeats for the menus, and puts
+the console to sleep: when L, R and Select are held together, when the
+player picks Sleep in the Pause menu, and, if the settings allow it, after
+three minutes without a button. L, R and Select wake it again.
+
+### Waiting from anywhere
+
+Any routine may call `wait()`, however deep in its own calls it is, but
+for a [task](../../../../docs/tla/glossary.md#task) and the VBlank handler: a task is
+called from inside `wait()` and must return for the frame to end. Code that
+a task might reach checks first (`gTasksRunning`).
+
+There is one line of execution throughout: `wait()` starts no second one.
+The Broken Seal's `wait()` moves the stack before it runs the tasks. The
+Lost Age's does not: its tasks run on the caller's stack.
+
+## The task runner
+
+A [task](../../../../docs/tla/glossary.md#task) is a function put on a list once and
+called every frame until it is taken off. The list holds 24, four more
+than The Broken Seal's. Each task has a rank, which the code calls its
+`priority`, and higher ranks run first. That is how one task gets to see
+another's finished work in the same frame.
+
+There are two passes. Most tasks run once a frame from the frame loop. A
+few run once a VBlank from the handler: the ones that copy something to the
+screen. When a frame runs long, those few run more than once in it.
+[The field's tasks](../field/README.md#the-fields-tasks) lists the ones a
+town keeps on the list.
+
+### A task's life
+
+`Task_Add` puts a function on the list with a rank, and sorts the list. If
+the function is already there it only gets the new rank, so nothing is on
+the list twice. `Task_Remove` takes it off.
+
+A task can also be suspended and resumed: it stays on the list and is
+passed over. Opening the field menu suspends every task whose function is
+in the overlay, so the scene holds still behind the menu, and a scene can
+flag one of its tasks to keep running through that.
+
+The main routine empties the list before every sequence, and the field
+sequence empties it again as it sets a scene up. So each sequence adds what
+it needs when it starts, and a scene adds its own on top.
+
+An entry of the list is the function, the rank and that one flag. A task
+gets no arguments and no memory of its own, so what it has to remember is
+in its owner's [state](../../../../docs/tla/glossary.md#state). No task adds a task, and no
+task calls `wait()` ([Who may wait](../../../../docs/tla/system.md#who-may-wait)).
+
+## The frame's sprites
+
+The console draws sprites in the order of one list, and has no idea of
+"in front". So the game rebuilds that list from scratch every frame.
+Whatever wants a sprite shown drops it into one of 256 depth slots
+(`Oam_AddSpriteAtDepth`), and the list is written from the highest slot
+down.
+
+Because the slots are emptied every frame, a sprite shows only while
+something keeps asking for it. Nothing ever has to take one down.
+
+Screen settings follow the same rule as sprites. A change to a hardware
+register is queued, and the VBlank handler carries the queue out with the
+frame it belongs to (`IoWriteQueue_FlushPending`).
+
+## The heap
+
+The heap hands out memory like a stack of plates: each block goes on top of
+the last, and giving one back gives back everything above it. That makes
+it nearly free, and it means blocks go back in reverse order. The main
+routine empties the lot between sequences.
+
+A block that other code has to find again is kept in a numbered
+[heap slot](../../../../docs/tla/glossary.md#heap-slot). The game calls such a block a
+[state](../../../../docs/tla/glossary.md#state): the menu's state, the battle's state. Asking
+for a slot that is already filled just returns it, so the code that sets a
+state up and the code that reads it make the same call (`HeapSlot_Alloc`).
+
+## Memory map
+
+The console has two working memories: 256 KB that is large and slower, and
+32 KB that is small and fast. The game keeps most of its state in the first
+and what must be quick in the second, each with a heap of its own. Where
+everything sits is fixed, and is declared in `ewram.s` and `iwram.s`.
+
+## Saving
+
+![As above](https://alchemy.pascalpixel.com/tla/guides/runtime/save.gif)
+
+A save is never overwritten in place. Here each file is one part of 12 KB,
+filling three sectors of the flash chip. The chip has room for five parts,
+one at every third sector, and there are three files, so two places are
+always spare. The new copy of a part goes into a spare place with a higher
+count, is read back, and only then is the old copy retired. Every part
+carries a label and a checksum, so a half-written one is recognised and
+ignored.
+
+A part holds the game flags, the main routine's state, every character's
+stats and where the scene's actors stand. It is `Save_WritePart` and its
+neighbours, and the Save command that uses them is in
+[Windows](../window/README.md#saving).
+
+## The link cable
+
+Two consoles trade one small checked packet at every VBlank. Anything
+bigger, such as a whole party, is cut into numbered pieces and resent from
+the first one that goes missing (`Serial_StepBlockTransfer`).
+
+The Lost Age uses it in two places. The Battle Arena's lobby trades two
+players' parties for a link battle, and the scene after the Title receives
+The Broken Seal's saved Clear Data: its game flags and its characters.
+
+## How an overlay reaches the rest of the game
+
+![Felix climbs the steps to the door of Daila's sanctum: Daila fades out and the sanctum fades in with him inside its door](https://alchemy.pascalpixel.com/tla/guides/front/sanctum-door.gif)
+
+An [overlay](../../../../docs/tla/glossary.md#overlay) is a scene's code, unpacked into
+one fixed spot when the party arrives. It and the always-loaded
+[main image](../../../../docs/tla/glossary.md#main-image) find each other through two
+tables:
+
+- The [entry table](../../../../docs/tla/glossary.md#entry-table-and-import-table) at the
+  overlay's start: seven functions the field calls to ask the scene about
+  itself ([Scenes](../scene/README.md#the-entry-table) explains each).
+- The import table at its end: one line for each main-image function the
+  overlay calls.
+
+Scenes share overlays, 114 for 325 scenes: the three scenes of the Suhalla
+Gate are one overlay. An overlay that holds several scenes still has one
+entry table. Its functions look at which scene the party is in and answer
+for that one: the Suhalla Gate's hands over one list of actors for the
+cliffs, another for the road and a third for the cave
+([suhalla_gate.c](../scene/suhalla_gate.c)).
+
+It works the other way too, and one scene can serve as several rooms:
+[Increase item and level](../debug/README.md#the-test-scenes) becomes four
+other rooms through four of its entrances.
+
+## Where the rest is
+
+The cartridge itself, and how its contents are found, is
+[The Game Pak](../gamepak/README.md).

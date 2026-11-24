@@ -140,6 +140,11 @@ void Matrix_RotateY(s32 angle);
 void Matrix_SetRotateY(s32 angle);
 void Matrix_RotateX(s32 angle);
 void Matrix_RotateZ(s32 angle);
+/// The basic sprite palettes, loaded for the debug text
+/// (Palette_GetBasicSpriteColors).
+extern const u8 gSystem_BasicColorPalette[];
+FIXED Math_SqrtFX(FIXED value);
+
 void Matrix_TranslateVector(const FIXED *position);
 void Matrix_Translate(FIXED x, FIXED y, FIXED z);
 void Matrix_ScaleUniform(FIXED scale);

@@ -18,11 +18,20 @@
  *               with no file is the map's treasure spots.
  *   spots.tsv   one row a treasure spot: column, row and subject. Only where
  *               the map has any.
- *   placed.tsv  what follows the map, where anything does: a global name
- *               (empty when it continues the one above), a packed file as a
- *               path from the maps' folder, the bytes the original packer
- *               left after it as hex digits, an alignment to fill to and the
- *               byte to fill with when it is not zero.
+ *   tilesets.tsv  the tilesets that follow the map, where any does: the
+ *               tileset's folder in ../graphics/tileset and, when only one
+ *               part of it follows (one palette of the folder "palette"),
+ *               that part.
+ *   placed.tsv  only for the test maps, which each hold a copy of the same
+ *               blank tileset under a name of their own: a global name, a
+ *               packed file as a path from the maps' folder, and what follows
+ *               it, as in a tileset's packed.tsv.
+ *
+ * Each tileset's folder has packed.tsv, one row a packed file in the order
+ * the Game Pak holds them: the part (palette, tiles_a), its file, the bytes
+ * the original packer left after it as hex digits, an alignment to fill to
+ * and the byte to fill with when it is not zero. A part's global name is
+ * made of the folder's and its own: Tileset_VenusLighthouseTilesA.
  *
  * The last column of each is "edition": empty, or the one language edition
  * the row is for (ja, en, de, es, fr or it).
@@ -131,6 +140,37 @@ bytes(char **cells, int count)
 	fprintf(out, "\n");
 }
 
+/* venus_lighthouse is VenusLighthouse. */
+static char *
+camel(char *to, const char *from)
+{
+	int upper = 1;
+
+	for (; *from; from++)
+		if (*from == '_')
+			upper = 1;
+		else
+		{
+			*to++ = upper ? (char)toupper((unsigned char)*from) : *from;
+			upper = 0;
+		}
+	*to = 0;
+	return to;
+}
+
+/* A packed file under its global name, and what the packer left after it. */
+static void
+place(const char *name, const char *folder, const char *file, char **after)
+{
+	begin(after[3]);
+	fprintf(out, "\t.global %s\n%s:\n\t.incbin \"%s/%s\"\n", name, name, folder, file);
+	for (const char *digit = after[0]; digit[0] && digit[1]; digit += 2)
+		fprintf(out, "\t.byte 0x%c%c\n", digit[0], digit[1]);
+	if (after[1][0])
+		fprintf(out, "\t.balign %s, 0x%s\n", after[1], after[2][0] ? after[2] : "0");
+	end(after[3]);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -154,30 +194,19 @@ main(int argc, char **argv)
 	{
 		const char *name = maps.rows[map][0];
 		char own[1024], field[256];
-		struct Table header, layers, blocks, spots, placed;
+		struct Table header, layers, blocks, spots, tilesets, placed;
 
 		snprintf(own, sizeof own, "%s/%s", folder, name);
 		header = load(own, "header", 1);
 		layers = load(own, "layers", 1);
 		blocks = load(own, "contents", 1);
 		spots = load(own, "spots", 0);
+		tilesets = load(own, "tilesets", 0);
 		placed = load(own, "placed", 0);
 		if (maps.rows[map][1][0])
 			snprintf(field, sizeof field, "%s", maps.rows[map][1]);
 		else
-		{
-			char *to = field + snprintf(field, sizeof field, "Field_");
-			int upper = 1;
-			for (const char *from = name; *from; from++)
-				if (*from == '_')
-					upper = 1;
-				else
-				{
-					*to++ = upper ? (char)toupper((unsigned char)*from) : *from;
-					upper = 0;
-				}
-			*to = 0;
-		}
+			camel(field + snprintf(field, sizeof field, "Field_"), name);
 		for (size_t row = 0; row < header.count; row++)
 		{
 			char **cells = header.rows[row];
@@ -231,19 +260,28 @@ main(int argc, char **argv)
 				fprintf(out, "\t.balign %s, 0\n", cells[2]);
 			end(cells[3]);
 		}
-		for (size_t row = 0; row < placed.count; row++)
+		for (size_t row = 0; row < tilesets.count; row++)
 		{
-			char **cells = placed.rows[row];
-			begin(cells[5]);
-			if (cells[0][0])
-				fprintf(out, "\t.global %s\n%s:\n", cells[0], cells[0]);
-			fprintf(out, "\t.incbin \"%s/%s\"\n", folder, cells[1]);
-			for (const char *digit = cells[2]; digit[0] && digit[1]; digit += 2)
-				fprintf(out, "\t.byte 0x%c%c\n", digit[0], digit[1]);
-			if (cells[3][0])
-				fprintf(out, "\t.balign %s, 0x%s\n", cells[3], cells[4][0] ? cells[4] : "0");
-			end(cells[5]);
+			char **cells = tilesets.rows[row];
+			char sets[1024], set[1280], global[256];
+			struct Table packed;
+
+			snprintf(sets, sizeof sets, "%s/../graphics/tileset", folder);
+			snprintf(set, sizeof set, "%s/%s", sets, cells[0]);
+			packed = load(set, "packed", 1);
+			for (size_t part = 0; part < packed.count; part++)
+			{
+				char **one = packed.rows[part];
+				int other = !strncmp(one[1], "../", 3);
+
+				if (cells[1][0] && strcmp(cells[1], one[0]))
+					continue;
+				camel(camel(global + snprintf(global, sizeof global, "Tileset_"), cells[0]), one[0]);
+				place(global, other ? sets : set, one[1] + (other ? 3 : 0), one + 2);
+			}
 		}
+		for (size_t row = 0; row < placed.count; row++)
+			place(placed.rows[row][0], folder, placed.rows[row][1], placed.rows[row] + 2);
 	}
 	if (fclose(out))
 		fail(argv[2], "cannot write");

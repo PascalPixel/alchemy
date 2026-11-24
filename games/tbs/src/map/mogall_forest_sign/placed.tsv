@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_MogallForestPalette	../graphics/tileset/mogall_forest/palette.gbapal.lz	cc
-Tileset_MogallForestTilesA	../graphics/tileset/mogall_forest/tiles_a.4bpp.mtf	63
-Tileset_MogallForestTilesB	../graphics/tileset/mogall_forest/tiles_b.4bpp.mtf	10a1
-Tileset_MogallForestTilesC	../graphics/tileset/mogall_forest/tiles_c.4bpp.mtf	e5a2
-Tileset_MogallForestTilesD	../graphics/tileset/mogall_forest/tiles_d.4bpp.mtf	0a07	4

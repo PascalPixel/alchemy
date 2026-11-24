@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_ColosseumTunnelPalette	../graphics/tileset/colosseum_tunnel/palette.gbapal.lz	8e89
-Tileset_ColosseumTunnelTilesA	../graphics/tileset/colosseum_tunnel/tiles_a.4bpp.mtf	e0
-Tileset_ColosseumTunnelTilesB	../graphics/tileset/colosseum_tunnel/tiles_b.4bpp.mtf	8cba
-Tileset_ColosseumTunnelTilesC	../graphics/tileset/colosseum_tunnel/tiles_c.4bpp.mtf	c6
-Tileset_ColosseumTunnelTilesD	../graphics/tileset/colosseum_tunnel/tiles_d.4bpp.mtf	58	4

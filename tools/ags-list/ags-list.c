@@ -32,7 +32,8 @@
  * placed under Resource_OverlayNUMBER and filled to four bytes.
  *
  * Three tables are ones the game's code reads, one row an entry:
- * "song, player" is gSongTable (an empty song is the silent one);
+ * "song, player" is gSongTable: a song is its file's name in sound/songs,
+ * placed under Song_NAME in mixed case (an empty song is the silent one);
  * "scene, code, area, kind, map, attributes" is gScenes, a named row also
  * giving SceneId_NAME its number; "resource, place" is the resource
  * directory, a named row also giving ResourceId_NAME its number.
@@ -343,7 +344,7 @@ main(int argc, char **argv)
 		fprintf(out, "@ Written by ags-list from its table: do not edit.\n\t.section .rodata\n\t.balign 4\n\t.global gSongTable\ngSongTable:\n");
 		while (fgets(line, sizeof line, in))
 		{
-			char *cells[2] = {line, ""};
+			char *cells[2] = {line, ""}, text[MAX_TEXT];
 			int cell = 0;
 
 			line[strcspn(line, "\n")] = 0;
@@ -355,7 +356,8 @@ main(int argc, char **argv)
 					*at = 0;
 					cells[++cell] = at + 1;
 				}
-			fprintf(out, "\t.4byte %s\n\t.2byte %s, %s\n", cells[0][0] ? cells[0] : ".LEmptySong", cells[1], cells[1]);
+			label(cells[0], text);
+			fprintf(out, "\t.4byte %s%s\n\t.2byte %s, %s\n", cells[0][0] ? "Song_" : ".LEmptySong", text, cells[1], cells[1]);
 		}
 		fprintf(out, ".LEmptySong:\n\t.byte 0, 0, 0, 0\n");
 		fclose(in);

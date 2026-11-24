@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_TrialRoadGaspPalette	../graphics/tileset/trial_road_gasp/palette.gbapal.lz
-Tileset_TrialRoadGaspTilesA	../graphics/tileset/trial_road_gasp/tiles_a.4bpp.mtf	5b
-Tileset_TrialRoadGaspTilesB	../graphics/tileset/trial_road_gasp/tiles_b.4bpp.mtf	16
-Tileset_TrialRoadGaspTilesC	../graphics/tileset/trial_road_gasp/tiles_c.4bpp.mtf	100000
-Tileset_TrialRoadGaspTilesD	../graphics/tileset/trial_road_gasp/tiles_d.4bpp.mtf	0209

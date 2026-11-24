@@ -4,10 +4,10 @@
 /// @file
 /// The areas: groups of scenes that share their music, their area flags and
 /// the name shown on arriving from another area. Each scene's row of gScenes
-/// (field/scenes.list.tsv) gives its area, and the music and area name rules match by
-/// it (field/music_rules.list.tsv, field/area_name_rules.list.tsv). Each is named after the
-/// area name its rule shows (MsgDebugAreaName); where two areas show one name,
-/// the second is named after the scenes it holds.
+/// (field/scenes.list.tsv) gives its area, and the music and area name rules
+/// match by it (field/music_rules.list.tsv, field/area_name_rules.list.tsv).
+/// Each is named after the area name its rule shows (MsgDebugAreaName); where
+/// two areas show one name, the second is named after the scenes it holds.
 
 enum AreaId {
   AREA_TITLE_SCREEN,

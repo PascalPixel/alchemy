@@ -227,7 +227,7 @@ graphics(void)
 	RUN("graphics", true, "redrawn.png", "redrawn.4bpp16x16");
 	Buffer redrawn = readFile("redrawn.4bpp16x16");
 	equal(&tiles, &redrawn, "redrawing preserves the tile stream");
-	textFile("list.tsv", "TILES\t4bpp\n");
+	textFile("list.tsv", "part\tform\nTILES\t4bpp\n");
 	RUN("graphics", true, "list.tsv", "list.parts");
 	Buffer listed = readFile("list.parts"),
 		   rules = readFile("list.parts.d");
@@ -260,60 +260,82 @@ graphics(void)
 	RUN("graphics", false, "run_01.png", "run.bitmaps");
 	free(written.data);
 	free(pictureRun.data);
-	textFile("map.tsv", "cell:u8\tgrid:2x3\tat:0,0\tfill:ff\n01 02\n\n03 04\n");
+	textFile("map.tsv", "0\t1\n1\t2\n255\t255\n3\t4\n");
 	RUN("graphics", true, "map.tsv", "map.plane");
 	Buffer plane = readFile("map.plane");
 	uint8_t expected[] = {1, 2, 255, 255, 3, 4};
 	Buffer reference = {expected, sizeof(expected), 0};
-	equal(&plane, &reference, "blank map rows retain their position");
-	textFile("grid.txt", "grid:2x2\tat:1,0\tfill:1:2:3\n5:6:7\n8\n");
-	RUN("graphics", true, "grid.txt", "grid.grid");
+	equal(&plane, &reference, "a plane writes a byte for each cell under its header");
+	textFile("narrow.tsv", "0\t1\n1\t2\n3\n");
+	RUN("graphics", false, "narrow.tsv", "narrow.plane");
+	textFile("grid_picture.tsv", "0\t1\n1\t5\n1\t8\n");
+	textFile("grid_behavior.tsv", "0\t1\n2\t6\n2\t0\n");
+	textFile("grid_shape.tsv", "0\t1\n3\t7\n3\t0\n");
+	RUN("graphics", true, "grid_picture.tsv", "grid.grid");
 	Buffer grid = readFile("grid.grid");
 	uint8_t gridBytes[] = {2, 6, 2, 0, 3, 7, 3, 0, 1, 0, 5, 0, 1, 0, 8, 0};
 	Buffer gridReference = {gridBytes, sizeof(gridBytes), 0};
 	equal(&grid, &gridReference, "a grid writes behaviors, shapes, cell pictures");
 	free(grid.data);
-	textFile("scene.tsv", "id:u8\tx:u16\n1\t2\n0xff\n\nid:u8\tz:u16\n3\t4\n0xff\n\nleft:s8\n-1\n");
-	RUN("graphics", true, "scene.tsv", "scene.scene");
+	textFile("points.tsv", "id\tx\n1\t2\n");
+	textFile("entrances.tsv", "id\tz\n3\t4\n");
+	textFile("bounds.tsv", "left\n-1\n");
+	RUN("graphics", true, "points.tsv", "scene.scene");
 	Buffer sceneTable = readFile("scene.scene");
 	uint8_t sceneBytes[] = {12, 0, 16, 0, 18, 0, 0, 0, 1, 2, 0, 255,
-							3, 4, 0, 255, 255, 255, 255};
+							3, 4, 0, 255, 255, 255, 255, 255};
 	Buffer sceneReference = {sceneBytes, sizeof(sceneBytes), 0};
 	equal(&sceneTable, &sceneReference,
-		  "a scene writes its header, its tables and an empty edit list");
+		  "a scene writes its header, its tables each with its end, and an "
+		  "empty edit list");
 	free(sceneTable.data);
-	textFile("twoscene.tsv", "id:u8\n1\n\nid:u8\n2\n");
-	RUN("graphics", false, "twoscene.tsv", "twoscene.scene");
-	textFile("bases.txt", "grid:1x1\tat:0,0\tfill:0:0:0\n8fff:255:12\n");
-	RUN("graphics", true, "bases.txt", "bases.grid");
+	/* An edition's scene has all three of its own tables. */
+	textFile("points_ja.tsv", "id\n1\n");
+	textFile("entrances_ja.tsv", "id\n2\n");
+	RUN("graphics", false, "points_ja.tsv", "twoscene.scene");
+	RUN("graphics", false, "entrances.tsv", "named.scene");
+	textFile("grid_picture_ja.tsv", "0\n36863\n");
+	textFile("grid_behavior_ja.tsv", "0\n255\n");
+	textFile("grid_shape_ja.tsv", "0\n12\n");
+	RUN("graphics", true, "grid_picture_ja.tsv", "bases.grid");
 	Buffer bases = readFile("bases.grid");
 	uint8_t basesBytes[] = {255, 12, 0xff, 0x8f};
 	Buffer basesReference = {basesBytes, sizeof(basesBytes), 0};
 	equal(&bases, &basesReference,
-		  "a grid reads its picture in hex, behavior and shape in decimal");
+		  "an edition's grid is its own three tables, every number decimal");
 	free(bases.data);
-	textFile("hexbehavior.txt", "grid:1x1\tat:0,0\tfill:0:0:0\n1:ff\n");
-	RUN("graphics", false, "hexbehavior.txt", "hexbehavior.grid");
-	textFile("wideshape.txt", "grid:1x1\tat:0,0\tfill:0:0:0\n1:0:256\n");
-	RUN("graphics", false, "wideshape.txt", "wideshape.grid");
-	textFile("hexfill.txt", "grid:1x1\tat:0,0\tfill:0:a:0\n1\n");
-	RUN("graphics", false, "hexfill.txt", "hexfill.grid");
-	textFile("screen.txt", "palette:14\n128 1023h\n\n1v 2hv\n");
-	RUN("graphics", true, "screen.txt", "screen.tilemap");
+	textFile("grid_behavior_ja.tsv", "0\nff\n");
+	RUN("graphics", false, "grid_picture_ja.tsv", "hexbehavior.grid");
+	textFile("grid_behavior_ja.tsv", "0\n255\n");
+	textFile("grid_shape_ja.tsv", "0\n256\n");
+	RUN("graphics", false, "grid_picture_ja.tsv", "wideshape.grid");
+	textFile("grid_shape_ja.tsv", "0\n12\n12\n");
+	RUN("graphics", false, "grid_picture_ja.tsv", "tallshape.grid");
+	textFile("screen.tsv", "0\t1\n128\t1023\n1\t2\n");
+	textFile("screen.flip.tsv", "0\t1\n\th\nv\thv\n");
+	textFile("screen.palette.tsv", "0\t1\n14\t14\n14\t14\n");
+	RUN("graphics", true, "screen.tsv", "screen.tilemap");
 	Buffer screen = readFile("screen.tilemap");
 	uint8_t screenBytes[] = {0x80, 0xe0, 0xff, 0xe7, 1, 0xe8, 2, 0xec};
 	Buffer screenReference = {screenBytes, sizeof(screenBytes), 0};
 	equal(&screen, &screenReference, "a tile map writes tile, flips, palette");
 	free(screen.data);
-	textFile("hextile.txt", "palette:0\n3ffh\n");
-	RUN("graphics", false, "hextile.txt", "hextile.tilemap");
-	textFile("widetile.txt", "palette:0\n1024\n");
-	RUN("graphics", false, "widetile.txt", "widetile.tilemap");
-	textFile("ragged.txt", "palette:0\n1 2\n3\n");
-	RUN("graphics", false, "ragged.txt", "ragged.tilemap");
-	textFile("walls.txt", "0123 4567\n89ab cdef\n0000 1111\n2222 3333\n\n"
-						  "ffff ffff\nffff ffff\nffff ffff\nffff ffff\n");
-	RUN("graphics", true, "walls.txt", "walls.collision");
+	textFile("hextile.tsv", "0\n3ff\n");
+	RUN("graphics", false, "hextile.tsv", "hextile.tilemap");
+	textFile("widetile.tsv", "0\n1024\n");
+	RUN("graphics", false, "widetile.tsv", "widetile.tilemap");
+	textFile("ragged.tsv", "0\t1\n1\t2\n3\n");
+	RUN("graphics", false, "ragged.tsv", "ragged.tilemap");
+	textFile("walls.tsv", "0\t1\t2\t3\t4\t5\t6\t7\n"
+						  "0\t1\t2\t3\t4\t5\t6\t7\n"
+						  "8\t9\t10\t11\t12\t13\t14\t15\n"
+						  "0\t0\t0\t0\t1\t1\t1\t1\n"
+						  "2\t2\t2\t2\t3\t3\t3\t3\n"
+						  "15\t15\t15\t15\t15\t15\t15\t15\n"
+						  "15\t15\t15\t15\t15\t15\t15\t15\n"
+						  "15\t15\t15\t15\t15\t15\t15\t15\n"
+						  "15\t15\t15\t15\t15\t15\t15\t15\n");
+	RUN("graphics", true, "walls.tsv", "walls.collision");
 	Buffer walls = readFile("walls.collision");
 	check(walls.len == 32, "four collision tiles of eight bytes");
 	uint8_t wallBytes[] = {0x10, 0x32, 0x98, 0xba, 0, 0, 0x22, 0x22,
@@ -323,25 +345,27 @@ graphics(void)
 	equal(&walls, &wallReference,
 		  "collision tiles run across, rows down, left value low");
 	free(walls.data);
-	textFile("short.txt", "0123\n0123\n0123\n");
-	RUN("graphics", false, "short.txt", "short.collision");
-	textFile("records.tsv", "kind:u8\tvalue:u16\tname\n1\t0x203\tQuake\n2\t4\tSpire\n");
+	textFile("short.tsv", "0\t1\t2\t3\n0\t1\t2\t3\n0\t1\t2\t3\n0\t1\t2\t3\n");
+	RUN("graphics", false, "short.tsv", "short.collision");
+	textFile("records.tsv", "id\tx\tname\n1\t515\tQuake\n2\t4\tSpire\n");
 	RUN("graphics", true, "records.tsv", "records.table");
 	Buffer records = readFile("records.table");
 	uint8_t recordBytes[] = {1, 3, 2, 2, 4, 0};
 	Buffer recordReference = {recordBytes, sizeof(recordBytes), 0};
 	equal(&records, &recordReference, "a label column writes nothing");
 	free(records.data);
-	textFile("names.tsv", "name:str4\tlevel:u8\tenemy\n"
-						  "\" A\\\"\"\t7\tFirst\n\"\\xff\"\t1\tSecond\n\"\"\t2\tThird\n");
-	RUN("graphics", true, "names.tsv", "names.table");
-	Buffer names = readFile("names.table");
-	uint8_t nameBytes[] = {' ', 'A', '"', 0, 7, 0xff, 0, 0, 0, 1, 0, 0, 0, 0, 2};
-	Buffer nameReference = {nameBytes, sizeof(nameBytes), 0};
-	equal(&names, &nameReference, "a string column is padded with zeros");
-	free(names.data);
-	textFile("anims.tsv", "channel\t1\npicture\t1536\t2\t1152\t10\njump\t0\n"
-						  "paused\t10\nstop\nend\n");
+	textFile("corners.tsv", "top_left\ttop_left_flip\ttop_left_palette\n"
+							"1\thv\t3\n2\t\t0\n");
+	RUN("graphics", true, "corners.tsv", "corners.table");
+	Buffer corners = readFile("corners.table");
+	uint8_t cornerBytes[] = {1, 0x3c, 2, 0};
+	Buffer cornerReference = {cornerBytes, sizeof(cornerBytes), 0};
+	equal(&corners, &cornerReference,
+		  "a corner's flip and palette join the tile before them");
+	free(corners.data);
+	textFile("anims.tsv", "animation\tcommand\tvalue\tcount\tdestination\tframes\n"
+						  "1\tpicture\t1536\t2\t1152\t10\n1\tjump\t0\n10\tstop\n");
+	textFile("anims.paused.tsv", "animation\n10\n");
 	RUN("graphics", true, "anims.tsv", "anims.script");
 	Buffer anims = readFile("anims.script");
 	uint8_t animBytes[] = {0x01, 0xfd, 0x00, 0x06, 0x02, 0x00, 0x80, 0x04,
@@ -349,10 +373,24 @@ graphics(void)
 						   0xff, 0xff};
 	Buffer animReference = {animBytes, sizeof(animBytes), 0};
 	equal(&anims, &animReference,
-		  "script operands are decimal; paused sets the marker's bit 7");
+		  "a script writes each animation's marker, a paused one's bit 7, "
+		  "and its own end");
 	free(anims.data);
-	textFile("anims.tsv", "paused\t128\n");
-	RUN("graphics", false, "anims.tsv", "anims.script");
+	textFile("manyanims.tsv",
+			 "animation\tcommand\tvalue\tcount\tdestination\tframes\n16\tstop\n");
+	RUN("graphics", false, "manyanims.tsv", "manyanims.script");
+	textFile("blend.tsv", "command\tvalue\tframes\ncontrol\t100\n"
+						  "level\t5\t3\nlevel\t6\t3\njump\t1\n");
+	RUN("graphics", false, "blend.tsv", "blend.script");
+	textFile("blend.tsv", "command\tvalue\tframes\nlevel\t5\t3\n"
+						  "level\t6\t3\njump\t1\n");
+	RUN("graphics", true, "blend.tsv", "blend.script");
+	Buffer blend = readFile("blend.script");
+	uint8_t blendBytes[] = {5, 0, 3, 0, 6, 0, 3, 0, 1, 0xfe, 0xff, 0xff};
+	Buffer blendReference = {blendBytes, sizeof(blendBytes), 0};
+	equal(&blend, &blendReference,
+		  "a blend's jump counts commands and lands on a pair of halfwords");
+	free(blend.data);
 	Image icon = {.width = 32, .height = 32, .depth = 4};
 	for (unsigned i = 0; i < 48; i++)
 		byte(&icon.palette, i * 8 % 256);
@@ -362,26 +400,26 @@ graphics(void)
 	writeFile("icon.png", &iconPng);
 	free(iconPng.data);
 	freeImage(&icon);
-	textFile("icons.tsv", "align\t32\nicon\n-\n");
+	textFile("icons.tsv", "slot\ticon\talign\n0\ticon\t32\n1\n");
 	RUN("graphics", true, "icons.tsv", "icons.icons4");
 	Buffer icons = readFile("icons.icons4");
 	check(icons.len % 32 == 0 && read16(icons.data) == 4 &&
 			  read16(icons.data + 2) == 0,
-		  "an icon bank's alignment is decimal and the empty slot has no offset");
+		  "an icon is padded to its alignment and the empty slot has no offset");
 	free(icons.data);
-	textFile("icons.tsv", "align\t20\nicon\n");
+	textFile("icons.tsv", "slot\ticon\talign\n0\ticon\t20\n");
 	RUN("graphics", false, "icons.tsv", "icons.icons4");
 	writeFile("glyph.png", &png);
-	textFile("glyph.tsv", "first\t41\ntop\t2\nrows\t10\n41\t12\n");
+	textFile("glyph.tsv", "glyph\twidth\theight\n65\t12\t10\n");
 	RUN("graphics", true, "glyph.png", "glyph.font");
 	Buffer glyph = readFile("glyph.font");
 	check(glyph.len == 22 && read16(glyph.data) == 12 &&
 			  read16(glyph.data + 2) == 0xffff,
-		  "a font's codes are hex, its rows and widths decimal");
+		  "a glyph is its width and the rows kept from the top of its cell");
 	free(glyph.data);
-	textFile("glyph.tsv", "first\t41\ntop\t0\nrows\tf\n41\t6\n");
+	textFile("glyph.tsv", "glyph\twidth\theight\n65\t6\tf\n");
 	RUN("graphics", false, "glyph.png", "glyph.font");
-	textFile("long.tsv", "name:str2\n\"abc\"\n");
+	textFile("long.tsv", "id\n256\n");
 	RUN("graphics", false, "long.tsv", "long.table");
 	RUN("graphics", false, "tiles.png", "tiles.4bpp", "-mwidth", "0");
 	Buffer preserved = readFile("tiles.4bpp");
@@ -464,13 +502,18 @@ tileLayouts(void)
 static void
 spriteAnimations(void)
 {
+	const char *columns = "animation\tcommand\tvalue\tframes\n";
 	textFile("bank.tsv", "sprite\twidth\theight\tscale\tdraw\tadjust_x\t"
-						 "adjust_y\tbox_x\tbox_y\tcodec\tpictures\tanimations\n"
-						 "Walker\t8\t8\t0x100\t0\t0\t0\t0\t0\t0\t-\tWalker\n");
-	textFile("walker.tsv",
-			 "anim\tpicture 3 6, wait 2, kind 17, jump 1\n"
-			 "anim\tblank 4, command 242 10, play 0, hold 1, end\n"
-			 "anim\tpicture 0 1, loop\n");
+						 "adjust_y\tbox_x\tbox_y\tcodec\tpictures\tanimations\t"
+						 "animation_count\n"
+						 "Walker\t8\t8\t256\t0\t0\t0\t0\t0\t0\t\tWalker\n");
+	char *walker = formatString(
+		"%s0\tpicture\t3\t6\n0\twait\t\t2\n0\tkind\t17\n0\tjump\t1\n"
+		"1\tblank\t\t4\n1\tcommand\t242\t10\n1\tplay\t0\n1\thold\t1\n1\tend\n"
+		"2\tpicture\t0\t1\n2\tloop\n",
+		columns);
+	textFile("walker.tsv", walker);
+	free(walker);
 	RUN("graphics", true, "bank.tsv", "bank.sprites");
 	Buffer bank = readFile("bank.sprites");
 	const char *scripts[] = {
@@ -483,15 +526,20 @@ spriteAnimations(void)
 		check(strstr((char *) bank.data, scripts[i]) != NULL,
 			  "animation commands pack as command and argument bytes");
 	free(bank.data);
-	const char *rejected[] = {"anim\tpicture 0 1, jump 0\n",
-							  "anim\tpicture 0 1, jump 2\n",
-							  "anim\tpicture 239 1\n", "anim\tcommand 253 0\n",
-							  "anim\tpicture 0\n", "anim\tplay\n"};
+	const char *rejected[] = {"0\tpicture\t0\t1\n0\tjump\t0\n",
+							  "0\tpicture\t0\t1\n0\tjump\t2\n",
+							  "0\tpicture\t239\t1\n", "0\tcommand\t253\t0\n",
+							  "0\tpicture\t0\n", "0\tplay\n"};
 	for (size_t i = 0; i < sizeof(rejected) / sizeof(*rejected); i++)
 	{
-		textFile("walker.tsv", rejected[i]);
+		char *table = formatString("%s%s", columns, rejected[i]);
+		textFile("walker.tsv", table);
+		free(table);
 		RUN("graphics", false, "bank.tsv", "bank.sprites");
 	}
+	/* The old form, a list of commands in one cell, is refused. */
+	textFile("walker.tsv", "anim\tpicture 0 1, loop\n");
+	RUN("graphics", false, "bank.tsv", "bank.sprites");
 }
 
 static void
@@ -543,7 +591,7 @@ static void
 midiFile(unsigned key)
 {
 	const char *skeleton = "smsh-sequence 1\nstream Track\nalign 4 0\n"
-						   "header Song block_count=0 priority=0 reverb=0 "
+						   "header block_count=0 priority=0 reverb=0 "
 						   "tone_bank=Voices tracks=Track\n";
 	Buffer conductor = {0}, midi = {0};
 	byte(&conductor, 0);
@@ -581,6 +629,8 @@ music(void)
 	check(strstr((char *) first.data, "0x3c") &&
 			  strstr((char *) first.data, "Voices"),
 		  "MIDI note and tone-bank relocation");
+	check(strstr((char *) first.data, ".global Song_Song\n") != NULL,
+		  "the song's label is its file's name");
 	midiFile(61);
 	RUN("music", true, "song.mid", "song.s");
 	Buffer second = readFile("song.s");

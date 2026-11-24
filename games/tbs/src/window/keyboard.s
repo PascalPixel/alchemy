@@ -11,18 +11,18 @@ gFileList_DjinnSpriteIds:
 	.global gNameEntry_KeyboardTilemap
 gNameEntry_KeyboardTilemap:
 	.ifdef TBS_EDITION_JA
-	.incbin "games/tbs/src/window/keyboard_ja.table.lz"
+	.incbin "games/tbs/src/window/keyboard_ja.tilemap.lz"
 	.global gNameEntry_AlternateKeyboardTilemap
 gNameEntry_AlternateKeyboardTilemap:
-	.incbin "games/tbs/src/window/keyboard_ja_latin.table.lz"
+	.incbin "games/tbs/src/window/keyboard_ja_latin.tilemap.lz"
 	.global NameEntry_UnusedKeyboardTilemap
 NameEntry_UnusedKeyboardTilemap:
-	.incbin "games/tbs/src/window/keyboard_ja_latin_unused.table.lz"
+	.incbin "games/tbs/src/window/keyboard_ja_latin_unused.tilemap.lz"
 	.else
 	.ifdef TBS_EDITION_ES
-	.incbin "games/tbs/src/window/keyboard_es.table.lz"
+	.incbin "games/tbs/src/window/keyboard_es.tilemap.lz"
 	.else
-	.incbin "games/tbs/src/window/keyboard.table.lz"
+	.incbin "games/tbs/src/window/keyboard.tilemap.lz"
 	.endif
 	.endif
 	.balign 4, 0

@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_TaopoSwampPoolPalette	../graphics/tileset/taopo_swamp_pool/palette.gbapal.lz	e14088
-Tileset_TaopoSwampPoolTilesA	../graphics/tileset/taopo_swamp_pool/tiles_a.4bpp.mtf		4	ff
-Tileset_TaopoSwampPoolTilesB	../graphics/tileset/taopo_swamp_pool/tiles_b.4bpp.mtf
-Tileset_TaopoSwampPoolTilesC	../graphics/tileset/taopo_swamp_pool/tiles_c.4bpp.mtf	5022
-Tileset_TaopoSwampPoolTilesD	../graphics/tileset/taopo_swamp_pool/tiles_d.4bpp.mtf	c12682

@@ -5,7 +5,6 @@
  * Repeated map entries must agree after undoing flips. Animated drawings append
  * otherwise hidden tiles below the visible map, keeping every tile editable.
  */
-#include <ctype.h>
 #include "resource.h"
 
 /* Shared map entries must draw identical pixels after undoing their flips. */
@@ -53,30 +52,11 @@ mappedPart(const char *input, const char *path, const char *form,
 		   count = number(fields->items[4], 10, 1024);
 	if (!count)
 		fail("empty tile range");
-	/* A tile map's grid, its columns numbered, else a table of u16 columns. */
 	char *name = formatString("%s.tsv", fields->items[2]),
 		 *mapPath = sibling(input, name);
-	Buffer rawMap = readFile(mapPath);
 	free(name);
 	size_t wide = 0;
-	Buffer map;
-	if (rawMap.len && isdigit(*rawMap.data))
-		map = tilemap(mapPath, &wide);
-	else
-	{
-		Strings lines = linesOf(&rawMap);
-		if (!lines.len)
-			fail("empty tilemap");
-		Strings columns = split(lines.items[0], '\t');
-		wide = columns.len;
-		for (size_t i = 0; i < wide; i++)
-			if ((*columns.items[i] != 'x' && *columns.items[i] != 't') ||
-				!isdigit((unsigned char) columns.items[i][1]))
-				fail("tilemap requires u16 columns");
-		freeStrings(&columns);
-		freeStrings(&lines);
-		map = table(&rawMap);
-	}
+	Buffer map = tilemap(mapPath, &wide);
 	if (!wide)
 		fail("empty tilemap");
 	if (map.len % (2 * wide))
@@ -153,7 +133,6 @@ mappedPart(const char *input, const char *path, const char *form,
 	free(shown);
 	freeImage(&image);
 	free(map.data);
-	free(rawMap.data);
 	free(mapPath);
 	return out;
 }

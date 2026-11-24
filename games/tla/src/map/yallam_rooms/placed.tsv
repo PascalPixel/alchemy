@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_YallamRoomsPalette	../graphics/tileset/yallam_rooms/palette.gbapal.lz	04
-Tileset_YallamRoomsTilesA	../graphics/tileset/yallam_rooms/tiles_a.4bpp.mtf
-Tileset_YallamRoomsTilesB	../graphics/tileset/yallam_rooms/tiles_b.4bpp.mtf	0c
-Tileset_YallamRoomsTilesC	../graphics/tileset/yallam_rooms/tiles_c.4bpp.mtf	bb1f
-Tileset_YallamRoomsTilesD	../graphics/tileset/yallam_rooms/tiles_d.4bpp.mtf	7b9cde

@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_IzumoRoomsPalette	../graphics/tileset/izumo_rooms/palette.gbapal.lz	cc0c26
-Tileset_IzumoRoomsTilesA	../graphics/tileset/izumo_rooms/tiles_a.4bpp.mtf	058000
-Tileset_IzumoRoomsTilesB	../graphics/tileset/izumo_rooms/tiles_b.4bpp.mtf
-Tileset_IzumoRoomsTilesC	../graphics/tileset/izumo_rooms/tiles_c.4bpp.mtf	7a
-Tileset_IzumoRoomsTilesD	../graphics/tileset/izumo_rooms/tiles_d.4bpp.mtf	b1744f

@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_McCoyPalaceGroundsPalette	../graphics/tileset/mccoy_palace_grounds/palette.gbapal.lz	8cdad6
-Tileset_McCoyPalaceGroundsTilesA	../graphics/tileset/mccoy_palace_grounds/tiles_a.4bpp.mtf	60cf83
-Tileset_McCoyPalaceGroundsTilesB	../graphics/tileset/mccoy_palace_grounds/tiles_b.4bpp.mtf
-Tileset_McCoyPalaceGroundsTilesC	../graphics/tileset/mccoy_palace_grounds/tiles_c.4bpp.mtf	b03e
-Tileset_McCoyPalaceGroundsTilesD	../graphics/tileset/mccoy_palace_grounds/tiles_d.4bpp.mtf	a9	4

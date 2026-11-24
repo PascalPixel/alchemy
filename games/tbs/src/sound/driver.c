@@ -281,8 +281,8 @@ void MPlayStart(struct MusicPlayerInfo *player,
     return;
 
   // Preserve a higher-priority song unless the music player is idle.
-  // checkPriority is 0 for every music player (sound/music_players.list.tsv), so
-  // in this game a new song always replaces the one playing.
+  // checkPriority is 0 for every music player (sound/music_players.list.tsv),
+  // so in this game a new song always replaces the one playing.
   if (player->checkPriority != 0 &&
       ((player->header != NULL && (player->tracks[0].flags & MPT_FLG_START)) ||
        ((player->status & MUSICPLAYER_STATUS_TRACK) != 0 &&

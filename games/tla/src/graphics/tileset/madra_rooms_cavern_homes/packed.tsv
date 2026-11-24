@@ -1,0 +1,11 @@
+part	file	left	pad	fill	edition
+palette	palette.gbapal.lz	c7
+tiles_a	tiles_a.4bpp.mtf	080a
+tiles_b	tiles_b.4bpp.mtf	3c00
+tiles_c	tiles_c.4bpp.mtf	1d1e			ja
+tiles_c	tiles_c.4bpp.mtf	0100			en
+tiles_c	tiles_c.4bpp.mtf	0100			de
+tiles_c	tiles_c.4bpp.mtf	0100			es
+tiles_c	tiles_c.4bpp.mtf	0100			fr
+tiles_c	tiles_c.4bpp.mtf	0100			it
+tiles_d	tiles_d.4bpp.mtf	22b9

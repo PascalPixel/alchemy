@@ -40,12 +40,11 @@ typeOf(const char *name)
 		return "u16";
 	if (!strcmp(name, "dx") || !strcmp(name, "dy"))
 		return "s16";
-	/* A numbered column, x00 or attr3, has the type of its letters. */
+	/* A numbered column, word2 or attr3, has the type of its letters. */
 	size_t letters = strcspn(name, "0123456789");
 	if (!name[letters] || name[letters + strspn(name + letters, "0123456789")])
 		return NULL;
-	if ((letters == 1 && (*name == 'x' || *name == 't')) ||
-		(letters == 4 && !strncmp(name, "word", 4)))
+	if (letters == 4 && !strncmp(name, "word", 4))
 		return "u16";
 	if (letters == 1 && *name == 'w')
 		return "u32";

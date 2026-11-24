@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_KolimaForestTreePalette	../graphics/tileset/kolima_forest_tree/palette.gbapal.lz	05
-Tileset_KolimaForestTreeTilesA	../graphics/tileset/kolima_forest_tree/tiles_a.4bpp.mtf	07f0
-Tileset_KolimaForestTreeTilesB	../graphics/tileset/kolima_forest_tree/tiles_b.4bpp.mtf	8f63
-Tileset_KolimaForestTreeTilesC	../graphics/tileset/kolima_forest_tree/tiles_c.4bpp.mtf	6b
-Tileset_KolimaForestTreeTilesD	../graphics/tileset/kolima_forest_tree/tiles_d.4bpp.mtf		4

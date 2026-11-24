@@ -42,13 +42,13 @@ Title_GoldenSunLogo	golden_sun.gbapal					it
 	golden_sun.8bpp.lz			d12747		it	
 Field_WorldMapPicture	../world_map/picture.gbapal						
 	../world_map/picture.8bpp.lz			023101			
-Title_IntroTilesB	to_be_continued.parts.lz					ja	
-Title_IntroTilesB	to_be_continued.parts.lz					en	
-Title_IntroTilesB	to_be_continued_de.gbapal					de	
+Title_ToBeContinuedLettering	to_be_continued.parts.lz					ja	
+Title_ToBeContinuedLettering	to_be_continued.parts.lz					en	
+Title_ToBeContinuedLettering	to_be_continued_de.gbapal					de	
 	to_be_continued_de.8bpp.lz			ab02		de	
-Title_IntroTilesB	to_be_continued_es.gbapal					es	
+Title_ToBeContinuedLettering	to_be_continued_es.gbapal					es	
 	to_be_continued_es.8bpp.lz			e83022		es	
-Title_IntroTilesB	to_be_continued_fr.gbapal					fr	
+Title_ToBeContinuedLettering	to_be_continued_fr.gbapal					fr	
 	to_be_continued_fr.8bpp.lz			85015b		fr	
-Title_IntroTilesB	to_be_continued_it.gbapal					it	
+Title_ToBeContinuedLettering	to_be_continued_it.gbapal					it	
 	to_be_continued_it.8bpp.lz			8a		it	

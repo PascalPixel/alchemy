@@ -5,7 +5,7 @@
 	.balign 4
 	.global gClear_GridTilemap
 gClear_GridTilemap:
-	.incbin "games/tla/src/graphics/clear/tilemap.table.lz"
+	.incbin "games/tla/src/graphics/clear/tilemap.tilemap.lz"
 
 	.global gClear_PasswordGrid
 gClear_PasswordGrid:

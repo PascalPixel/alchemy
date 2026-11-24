@@ -59,8 +59,8 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
    MessageArgument_PushFar((act), MESSAGE_ARGUMENT_ABILITY),                   \
    FieldMessage_ShowFar((m), FIELD_MESSAGE_ZOOM))
 
-/// A scene's encounter zones (gScene_EncounterRules, encounter_rules.list.tsv), ended
-/// by scene -1.
+/// A scene's encounter zones (gScene_EncounterRules, encounter_rules.list.tsv),
+/// ended by scene -1.
 struct SceneEncounterRule {
   s16 sceneId;               ///< -1 ends the table
   s16 entrance;              ///< -1 for any entrance
@@ -89,8 +89,8 @@ struct MapMusicRule {
 /// entrance and the flag gives the music.
 extern const struct MapMusicRule gScene_MusicRules[];
 
-/// A rule naming the area a scene is in (gArea_NameRules, area_name_rules.list.tsv),
-/// ended by id -1.
+/// A rule naming the area a scene is in (gArea_NameRules,
+/// area_name_rules.list.tsv), ended by id -1.
 struct AreaNameRule {
   s16 id;            ///< a scene, or an area
   s16 entrance : 15; ///< -1 for any entrance

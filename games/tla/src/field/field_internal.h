@@ -290,7 +290,8 @@ extern u8 Render_ConvertMapCodeSize[];
 /// The scene data's halfword offset of its edits, from gMapScene.
 extern u8 gMapSceneEditsOffset[];
 
-/// Each animation number's packed pictures, ending at number 0 (sprite_sources.list.tsv).
+/// Each animation number's packed pictures, ending at number 0
+/// (sprite_sources.list.tsv).
 extern struct SpritePictureCacheSource gSpritePictureCache_Sources[];
 
 /// The sprites' shadow, 16 by 8 at 256 colours, loaded into VRAM cache entry

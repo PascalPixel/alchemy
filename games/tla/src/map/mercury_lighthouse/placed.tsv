@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_MercuryLighthousePalette	../graphics/tileset/mercury_lighthouse/palette.gbapal.lz	25
-Tileset_MercuryLighthouseTilesA	../graphics/tileset/mercury_lighthouse/tiles_a.4bpp.mtf	7d0000
-Tileset_MercuryLighthouseTilesB	../graphics/tileset/mercury_lighthouse/tiles_b.4bpp.mtf	0007
-Tileset_MercuryLighthouseTilesC	../graphics/tileset/mercury_lighthouse/tiles_c.4bpp.mtf	109e
-Tileset_MercuryLighthouseTilesD	../graphics/tileset/mercury_lighthouse/tiles_d.4bpp.mtf	fb4f

@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_VenusLighthousePalette	../graphics/tileset/venus_lighthouse/palette.gbapal.lz
-Tileset_VenusLighthouseTilesA	../graphics/tileset/venus_lighthouse/tiles_a.4bpp.mtf	14f0
-Tileset_VenusLighthouseTilesB	../graphics/tileset/venus_lighthouse/tiles_b.4bpp.mtf	b0
-Tileset_VenusLighthouseTilesC	../graphics/tileset/venus_lighthouse/tiles_c.4bpp.mtf	08
-Tileset_VenusLighthouseTilesD	../graphics/tileset/venus_lighthouse/tiles_d.4bpp.mtf	0c

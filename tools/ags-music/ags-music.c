@@ -2,18 +2,23 @@
  * ags-music.c
  *
  * Assemble the conductor layout and its timed music streams.
- * The conductor describes stream labels, alignment, and song headers. MIDI
+ * The conductor describes stream labels, alignment, and the song header. MIDI
  * tracks supply their events; sequence.c owns sound-command encoding. Validate
  * all pointer targets before publishing the completed assembly.
+ *
+ * The song's global label is its file's name in mixed case after Song_:
+ * mus_venus_lighthouse.mid is Song_MusVenusLighthouse, as ags-list names it
+ * in gSongTable.
  */
 #include "sequence.h"
+#include <ctype.h>
 
 static const char *
 field(const Strings *fields, const char *key)
 {
 	size_t n = strlen(key);
 	const char *value = NULL;
-	for (size_t i = 2; i < fields->len; i++)
+	for (size_t i = 1; i < fields->len; i++)
 		if (!strncmp(fields->items[i], key, n) && fields->items[i][n] == '=')
 		{
 			if (value)
@@ -73,18 +78,48 @@ readConductor(const Midi *midi, TimeSignature **signatures, size_t *count)
 }
 
 /*
+ * mus_venus_lighthouse.mid -> Song_MusVenusLighthouse: the label of the song
+ * a file holds.
+ */
+static void
+songLabel(const char *path, char *out, size_t size)
+{
+	const char *name = strrchr(path, '/');
+	name = name ? name + 1 : path;
+	size_t n = strcspn(name, "."), at = (size_t) snprintf(out, size, "Song_");
+	bool upper = true;
+	if (!n || at + n >= size)
+		fail("song file name cannot be a label: %s", path);
+	for (size_t i = 0; i < n; i++)
+	{
+		unsigned char c = (unsigned char) name[i];
+		if (c == '_')
+			upper = true;
+		else if (!isalnum(c))
+			fail("song file name cannot be a label: %s", path);
+		else
+		{
+			out[at++] = upper ? (char) toupper(c) : (char) c;
+			upper = false;
+		}
+	}
+	out[at] = 0;
+}
+
+/*
  * A song header contains one tone-bank pointer followed by its track pointers.
  * Tone banks are external; track targets are checked against emitted labels.
  */
 static void
-sequenceHeader(Assembly *assembly, const Strings *fields, Strings *toneBanks)
+sequenceHeader(Assembly *assembly, const char *label, const Strings *fields,
+			   Strings *toneBanks)
 {
 	const char *block = field(fields, "block_count"),
 			   *priority = field(fields, "priority"),
 			   *reverb = field(fields, "reverb"),
 			   *tone = field(fields, "tone_bank"),
 			   *tracks = field(fields, "tracks");
-	if (fields->len != 7)
+	if (fields->len != 6)
 		fail("sequence header has unexpected fields");
 	if (number(block, 10, 255))
 		fail("nonzero sequence block count is unsupported");
@@ -94,7 +129,7 @@ sequenceHeader(Assembly *assembly, const Strings *fields, Strings *toneBanks)
 		count += *list.items[j] != 0;
 	if (!count || count > 16)
 		fail("sequence header needs 1..16 tracks");
-	labelAt(assembly, fields->items[1], assembly->bytes.len, true);
+	labelAt(assembly, label, assembly->bytes.len, true);
 	byte(&assembly->bytes, count);
 	byte(&assembly->bytes, 0);
 	byte(&assembly->bytes, number(priority, 10, 255));
@@ -127,6 +162,9 @@ main(int argc, char **argv)
 	if (lines.len && !*lines.items[lines.len - 1])
 		free(lines.items[--lines.len]);
 	Assembly a = {0};
+	char label[256];
+	bool headed = false;
+	songLabel(argv[1], label, sizeof label);
 	size_t streamIndex = 0;
 	Strings toneBanks = {0};
 	for (size_t i = 1; i < lines.len; i++)
@@ -151,9 +189,12 @@ main(int argc, char **argv)
 				fail("sequence alignment must be 2..256");
 			alignAssembly(&a, n, number(f.items[2], 10, 255));
 		}
-		else if (!strcmp(f.items[0], "header") && f.len >= 2)
+		else if (!strcmp(f.items[0], "header"))
 		{
-			sequenceHeader(&a, &f, &toneBanks);
+			if (headed)
+				fail("a MIDI holds one song: second header");
+			headed = true;
+			sequenceHeader(&a, label, &f, &toneBanks);
 		}
 		else
 			fail("unsupported conductor skeleton line: %s", lines.items[i]);

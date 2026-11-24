@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_LacquerRoomsAPalette	../graphics/tileset/lacquer_rooms_a/palette.gbapal.lz	a88060
-Tileset_LacquerRoomsATilesA	../graphics/tileset/lacquer_rooms_a/tiles_a.4bpp.mtf	1300
-Tileset_LacquerRoomsATilesB	../graphics/tileset/lacquer_rooms_a/tiles_b.4bpp.mtf
-Tileset_LacquerRoomsATilesC	../graphics/tileset/lacquer_rooms_a/tiles_c.4bpp.mtf	18
-Tileset_LacquerRoomsATilesD	../graphics/tileset/lacquer_rooms_a/tiles_d.4bpp.mtf	fb144d	4

@@ -174,10 +174,12 @@ extern const struct SceneEncounterRule gScene_EncounterRules[];
 
 extern const struct EncounterZone gEncounterZones[];
 
-/// Each scene's music by scene or group, entrance and flag (music_rules.list.tsv).
+/// Each scene's music by scene or group, entrance and flag
+/// (music_rules.list.tsv).
 extern const struct MapMusicRule gScene_MusicRules[];
 
-/// Each scene's area name by scene or group and entrance (area_name_rules.list.tsv).
+/// Each scene's area name by scene or group and entrance
+/// (area_name_rules.list.tsv).
 extern const struct AreaNameRule gArea_NameRules[];
 
 extern const s16 gScene_ReturnRules[];

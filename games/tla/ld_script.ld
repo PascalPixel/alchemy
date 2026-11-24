@@ -329,7 +329,7 @@ SECTIONS
         . = ABSOLUTE(ROM_SHIFT + 0x081a6000);
         "*/games/tla/src/gamepak/far_call/title.o"(.text)
         "*/games/tla/src/menu/title_intro.o"(.text)
-        "*/games/tla/src/graphics/title/prompt.o"(.rodata)
+        "*/games/tla/src/graphics/title/prompt.list.o"(.rodata)
         "*/games/tla/src/menu/logo.o"(.rodata)
         "*/games/tla/src/menu/title_intro_tables.o"(.rodata)
         "*/games/tla/src/menu/title_intro_tables.o"(.data)
@@ -809,7 +809,7 @@ SECTIONS
         "*/games/tla/src/graphics/lucky_wheels/lucky_wheels.list.o"(.rodata)
         "*/games/tla/src/graphics/lucky_dice/board.list.o"(.rodata)
         "*/games/tla/src/graphics/lucky_wheels/dome.list.o"(.rodata)
-        "*/games/tla/src/graphics/lucky_dice/lucky_dice.o"(.rodata)
+        "*/games/tla/src/graphics/lucky_dice/lucky_dice.list.o"(.rodata)
         "*/games/tla/src/graphics/lucky_wheels/lucky_wheels.list.o"(.rodata.a)
         "*/games/tla/src/graphics/summon/summon.list.o"(.rodata)
         "*/games/tla/src/graphics/summon/crimson_beast.list.o"(.rodata)

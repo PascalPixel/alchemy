@@ -2,15 +2,16 @@
 #define ALCHEMY_SOUNDS_H
 
 /// @file
-/// Sound ids, one for each row of gSongTable (sound/song_table.s) in order:
+/// Sound ids, one for each row of gSongTable (sound/song_table.list.tsv) in
+/// order:
 /// MUS_ ids are music and jingles, SE_ ids sound effects, as their sequences in
 /// sound/songs are named. Music takes the title of its track where the two are
 /// matched (MUS_TO_THE_OPEN_SEA), and otherwise the place or moment it is the
 /// music of (MUS_PROX).
-/// A row of the empty song (Sound_EmptySong), which plays nothing, has no name,
-/// and the next named row's number is written after it. A sequence with no name
-/// yet keeps its number as its placeholder: those the game plays say where, and
-/// no code, table or actor script plays the rest. Four rows are controls no
+/// A row of the empty song, an empty cell in the table, which plays nothing,
+/// has no name, and the next named row's number is written after it. A sound
+/// effect is named for what it sounds like; one that no code, table or actor
+/// script plays has UNUSED in its name. Four rows are controls no
 /// sound plays from. Sound_Play tests the controls first, then the ranges: from
 /// SOUND_SE_FIRST to SOUND_SE_END on the player its gSongTable row names, from
 /// SOUND_JINGLE_FIRST jingles, music otherwise (sound_driver_symbols.h).
@@ -533,7 +534,8 @@ enum SoundId {
   /// SE_MARS_LIGHTHOUSE_DOORWAY's notes on voice 70 at tempo 100; nothing plays
   /// it.
   SE_UNUSED_MARS_LIGHTHOUSE_DOORWAY_A,
-  /// SE_UNUSED_CLATTER_SLOW's first eight notes and times on noise voice 21 at SE_UNUSED_CLATTER_SWELL's tempo,
+  /// SE_UNUSED_CLATTER_SLOW's first eight notes and times on noise voice 21 at
+  /// SE_UNUSED_CLATTER_SWELL's tempo,
   /// the seventh 82 for 63; nothing plays it.
   SE_UNUSED_CLATTER_BRIEF,
   /// Played as Garoh's people howl at night.
@@ -545,7 +547,8 @@ enum SoundId {
   /// and down until stopped; nothing plays it.
   SE_UNUSED_GABOMBA_JAWS_OPEN_HELD,
   SE_UNUSED_CLATTER_SLOW,
-  /// SE_UNUSED_CLATTER_SLOW's notes at a faster tempo, their loudness rising and falling;
+  /// SE_UNUSED_CLATTER_SLOW's notes at a faster tempo, their loudness rising
+  /// and falling;
   /// nothing plays either.
   SE_UNUSED_CLATTER_SWELL,
   /// The Sea of Time opening a way (SeaOfTime_Open).
@@ -559,7 +562,8 @@ enum SoundId {
   /// The Madra Catacombs' chest sliding with its bookshelf.
   SE_BOOKSHELF_SLIDE,
   SE_UNUSED_HISS_CASCADE,
-  /// SE_UNUSED_HISS_CASCADE's notes six semitones lower and more slowly; nothing plays
+  /// SE_UNUSED_HISS_CASCADE's notes six semitones lower and more slowly;
+  /// nothing plays
   /// either.
   SE_UNUSED_HISS_CASCADE_LOW = 538,
   /// The leader emerging as Sand ends (FieldPsynergy_EndSand).
@@ -580,7 +584,8 @@ enum SoundId {
   SE_UNUSED_SETTLE_SHORT,
   /// SE_TABLET_RISE two semitones lower and softer; nothing plays it.
   SE_UNUSED_TABLET_RISE_LOW,
-  /// The first seven notes of SE_UNUSED_HISS_CASCADE_LOW's second track seventeen semitones lower,
+  /// The first seven notes of SE_UNUSED_HISS_CASCADE_LOW's second track
+  /// seventeen semitones lower,
   /// louder and at half its tempo; nothing plays either.
   SE_UNUSED_HISS_PUFFS_LOW,
   /// SE_BOOKSHELF_SLIDE with its first note three semitones higher; nothing
@@ -589,7 +594,8 @@ enum SoundId {
   /// Played as the party drops through a hole on an islet.
   SE_DROP_THROUGH_HOLE,
   SE_UNUSED_FLUTTER,
-  /// SE_UNUSED_FLUTTER's five note times and three of its notes on voice 92, at a faster
+  /// SE_UNUSED_FLUTTER's five note times and three of its notes on voice 92, at
+  /// a faster
   /// tempo; nothing plays either.
   SE_UNUSED_RING_FLUTTER,
   /// Played as Magma Rock's flames grow.
@@ -684,7 +690,8 @@ enum SoundId {
   SE_GABOMBA_STATUE_COGS,
   SE_UNUSED_LOW_BUZZ,
   SE_UNUSED_ARPEGGIO_RISING,
-  /// SE_UNUSED_ARPEGGIO_RISING's times and loudness, a note of each of its chords, with other
+  /// SE_UNUSED_ARPEGGIO_RISING's times and loudness, a note of each of its
+  /// chords, with other
   /// notes falling on the Surf sample (voice 108) at a slower tempo; nothing
   /// plays either.
   SE_UNUSED_SURF_FALL,

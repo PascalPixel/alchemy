@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_ShipRoomsPalette	../graphics/tileset/ship_rooms/palette.gbapal.lz
-Tileset_ShipRoomsTilesA	../graphics/tileset/ship_rooms/tiles_a.4bpp.mtf	c0bec0
-Tileset_ShipRoomsTilesB	../graphics/tileset/ship_rooms/tiles_b.4bpp.mtf	21cf49
-Tileset_ShipRoomsTilesC	../graphics/tileset/ship_rooms/tiles_c.4bpp.mtf	d68339
-Tileset_ShipRoomsTilesD	../graphics/tileset/ship_rooms/tiles_d.4bpp.mtf		4

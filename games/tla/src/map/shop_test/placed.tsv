@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_ShopTestPalette	../graphics/tileset/shop_test/palette.gbapal.lz
-Tileset_ShopTestTilesA	../graphics/tileset/shop_test/tiles_a.4bpp.mtf	260000
-Tileset_ShopTestTilesB	../graphics/tileset/shop_test/tiles_b.4bpp.mtf	0fd8
-Tileset_ShopTestTilesC	../graphics/tileset/shop_test/tiles_c.4bpp.mtf	06
-Tileset_ShopTestTilesD	../graphics/tileset/set_119/tiles_d.4bpp.mtf	e53d

@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_IceRoomsPalette	../graphics/tileset/ice_rooms/palette.gbapal.lz	1f
-Tileset_IceRoomsTilesA	../graphics/tileset/ice_rooms/tiles_a.4bpp.mtf	47900e
-Tileset_IceRoomsTilesB	../graphics/tileset/ice_rooms/tiles_b.4bpp.mtf
-Tileset_IceRoomsTilesC	../graphics/tileset/ice_rooms/tiles_c.4bpp.mtf	c37389
-Tileset_IceRoomsTilesD	../graphics/tileset/ice_rooms/tiles_d.4bpp.mtf	c483	4

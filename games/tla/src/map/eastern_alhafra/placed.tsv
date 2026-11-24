@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_EasternAlhafraPalette	../graphics/tileset/eastern_alhafra/palette.gbapal.lz	0d
-Tileset_EasternAlhafraTilesA	../graphics/tileset/eastern_alhafra/tiles_a.4bpp.mtf	01
-Tileset_EasternAlhafraTilesB	../graphics/tileset/eastern_alhafra/tiles_b.4bpp.mtf		4	ff
-Tileset_EasternAlhafraTilesC	../graphics/tileset/eastern_alhafra/tiles_c.4bpp.mtf	8abcc1
-Tileset_EasternAlhafraTilesD	../graphics/tileset/eastern_alhafra/tiles_d.4bpp.mtf

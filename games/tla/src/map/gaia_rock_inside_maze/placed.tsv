@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_GaiaRockInsideMazePalette	../graphics/tileset/gaia_rock_inside_maze/palette.gbapal.lz	18
-Tileset_GaiaRockInsideMazeTilesA	../graphics/tileset/gaia_rock_inside_maze/tiles_a.4bpp.mtf	20
-Tileset_GaiaRockInsideMazeTilesB	../graphics/tileset/gaia_rock_inside_maze/tiles_b.4bpp.mtf	28
-Tileset_GaiaRockInsideMazeTilesC	../graphics/tileset/gaia_rock_inside_maze/tiles_c.4bpp.mtf
-Tileset_GaiaRockInsideMazeTilesD	../graphics/tileset/gaia_rock_inside_maze/tiles_d.4bpp.mtf	237022

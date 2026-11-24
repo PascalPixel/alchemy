@@ -29,8 +29,8 @@ Battle_MercuryLighthouseAerieBackdrop	mercury_lighthouse_aerie.gbapal
 	mercury_lighthouse_aerie.bitmap.d7						
 Battle_TolbiShipRoomsBackdrop	tolbi_ship_rooms.gbapal						
 	tolbi_ship_rooms.bitmap.d7			3966			
-Battle_ImilFuchinFallsBackdrop	imil_fuchin_falls.gbapal						
-	imil_fuchin_falls.bitmap.d7			4515			
+Battle_FuchinFallsCaveBackdrop	fuchin_falls_cave.gbapal						
+	fuchin_falls_cave.bitmap.d7			4515			
 Battle_KolimaForestBackdrop	kolima_forest.gbapal						
 	kolima_forest.bitmap.d7						
 Battle_TretTreeRoomsBackdrop	tret_tree_rooms.gbapal						

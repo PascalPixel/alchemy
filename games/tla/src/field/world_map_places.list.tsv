@@ -37,7 +37,7 @@ place	marker	map_marker	sprite	x	z	facing	shown_flag	shown_while	visit_scene	vis
 45	1	2	SPRITE_UNSEEN_MARKER	12461	7142	90			LemuriaEntrance		LemuriaEntrance		
 45	0	0	SPRITE_WORLD_MAP_LEMURIA	13088	1058	90			LemuriaEntrance		LemuriaEntrance		
 46	2	0	SPRITE_WORLD_MAP_TUNDARIA_TOWER	9490	10930	90			TundariaTowerEntrance				
-47	1	0	SPRITE_WORLD_MAP_HOUSE	5810	10134	90			SwAttekaIslet				
+47	1	0	SPRITE_WORLD_MAP_HOUSE	5810	10134	90			SouthwestAttekaIslet				
 48	1	0	SPRITE_WORLD_MAP_HOUSE	8582	7380	90			GondowanSettlement				
 49	1	0	SPRITE_WORLD_MAP_HOUSE	6307	6200	90			HesperiaSettlement				
 50	1	0	SPRITE_WORLD_MAP_SNOWY_HOUSE	8848	4600	90			KaltIsland				

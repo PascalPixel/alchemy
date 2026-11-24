@@ -2,13 +2,14 @@
 #define ALCHEMY_SOUNDS_H
 
 /// @file
-/// Sound ids, one for each row of gSongTable (sound/song_table.s) in order:
-/// MUS_ ids are music and jingles, SE_ ids sound effects, as their sequences
-/// in sound/songs are named. A row of the empty song (dummy_song_header), which
-/// plays nothing, has no name, and the next named row's number is written
-/// after it. A sequence with no name yet keeps its number as its placeholder:
-/// no code or table in the game plays one, by name or by number, and only the
-/// sound test (SoundTest_Run), which nothing calls, can start it. Music takes
+/// Sound ids, one for each row of gSongTable (sound/song_table.list.tsv) in
+/// order: MUS_ ids are music and jingles, SE_ ids sound effects, as their
+/// sequences in sound/songs are named. A row of the empty song, an empty cell
+/// in the table, which plays nothing, has no name, and the next named row's
+/// number is written after it. A sound effect is named for what it sounds
+/// like; one that no code or table in the game plays has UNUSED in its name,
+/// and only the sound test (SoundTest_Run), which nothing calls, can start
+/// it. Music takes
 /// the title of its track where the two are matched (MUS_A_LONG_JOURNEY), the
 /// titles as Miketendo64's track guide lists them, and otherwise the place or
 /// moment the player knows it from (MUS_DUNGEON); a sound effect by what it

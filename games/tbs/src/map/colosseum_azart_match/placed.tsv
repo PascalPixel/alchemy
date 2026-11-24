@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_ColosseumAzartMatchPalette	../graphics/tileset/colosseum_azart_match/palette.gbapal.lz	319d0f
-Tileset_ColosseumAzartMatchTilesA	../graphics/tileset/colosseum_azart_match/tiles_a.4bpp.mtf	63
-Tileset_ColosseumAzartMatchTilesB	../graphics/tileset/colosseum_azart_match/tiles_b.4bpp.mtf
-Tileset_ColosseumAzartMatchTilesC	../graphics/tileset/colosseum_azart_match/tiles_c.4bpp.mtf	259685
-Tileset_ColosseumAzartMatchTilesD	../graphics/tileset/colosseum_azart_match/tiles_d.4bpp.mtf	69	4

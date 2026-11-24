@@ -1,8 +1,8 @@
 name	file	section	align	left	pad	edition	fill
 Field_WhirlwindTiles	whirlwind_tiles.4bpp.lz			071236			
-Field_WhirlwindMap	whirlwind_map.table.lz			d9e1e4			
+Field_WhirlwindMap	whirlwind_map.tilemap.lz			d9e1e4			
 Field_LightningTiles	lightning_tiles.parts.lz			9fe5			
-Field_LightningMap	lightning_map.table.lz			f12e			
+Field_LightningMap	lightning_map.tilemap.lz			f12e			
 Field_WalkPathA	walk_path_a.table.lz			41ad6c			
 Field_WalkPathB	walk_path_b.table.lz			ce03			
 Field_WalkPathC	walk_path_c.table.lz			a081			

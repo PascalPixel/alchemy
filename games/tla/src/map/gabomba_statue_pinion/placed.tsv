@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_GabombaStatuePinionPalette	../graphics/tileset/gabomba_statue_pinion/palette.gbapal.lz	f00ca6
-Tileset_GabombaStatuePinionTilesA	../graphics/tileset/gabomba_statue_pinion/tiles_a.4bpp.mtf
-Tileset_GabombaStatuePinionTilesB	../graphics/tileset/gabomba_statue_pinion/tiles_b.4bpp.mtf
-Tileset_GabombaStatuePinionTilesC	../graphics/tileset/gabomba_statue_pinion/tiles_c.4bpp.mtf	ff
-Tileset_GabombaStatuePinionTilesD	../graphics/tileset/gabomba_statue_pinion/tiles_d.4bpp.mtf	f3

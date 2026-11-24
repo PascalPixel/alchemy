@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_TreasureIsleEntrancePalette	../graphics/tileset/treasure_isle_entrance/palette.gbapal.lz	9e4d
-Tileset_TreasureIsleEntranceTilesA	../graphics/tileset/treasure_isle_entrance/tiles_a.4bpp.mtf		4
-Tileset_TreasureIsleEntranceTilesB	../graphics/tileset/treasure_isle_entrance/tiles_b.4bpp.mtf
-Tileset_TreasureIsleEntranceTilesC	../graphics/tileset/treasure_isle_entrance/tiles_c.4bpp.mtf	066b35
-Tileset_TreasureIsleEntranceTilesD	../graphics/tileset/treasure_isle_entrance/tiles_d.4bpp.mtf	885f

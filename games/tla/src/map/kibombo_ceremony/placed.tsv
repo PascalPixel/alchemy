@@ -1,6 +1,0 @@
-name	file	left	pad	fill	edition
-Tileset_KibomboCeremonyPalette	../graphics/tileset/kibombo_ceremony/palette.gbapal.lz	d0e0
-Tileset_KibomboCeremonyTilesA	../graphics/tileset/kibombo_ceremony/tiles_a.4bpp.mtf	0c09
-Tileset_KibomboCeremonyTilesB	../graphics/tileset/kibombo_ceremony/tiles_b.4bpp.mtf	0fbc0e
-Tileset_KibomboCeremonyTilesC	../graphics/tileset/kibombo_ceremony/tiles_c.4bpp.mtf
-Tileset_KibomboCeremonyTilesD	../graphics/tileset/kibombo_ceremony/tiles_d.4bpp.mtf	7cfe81

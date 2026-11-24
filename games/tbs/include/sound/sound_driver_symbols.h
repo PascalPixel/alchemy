@@ -33,8 +33,8 @@ enum SoundControl {
   SOUND_SE_FIRST = SE_BELL
 };
 
-/// The music players by their row in gMPlayTable (sound/music_players.list.tsv),
-/// as a song table row names them (Song.ms).
+/// The music players by their row in gMPlayTable
+/// (sound/music_players.list.tsv), as a song table row names them (Song.ms).
 enum MusicPlayerId {
   MUSIC_PLAYER_JINGLE = 0,    ///< gMPlayInfo_Jingle
   MUSIC_PLAYER_BGM = 1,       ///< gMPlayInfo_BGM

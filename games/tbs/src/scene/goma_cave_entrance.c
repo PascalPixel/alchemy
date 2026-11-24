@@ -40,6 +40,7 @@
 #include "field/event_commands.h"
 #include "field/field.h"
 #include "field/field_psynergy_state.h"
+#include "field/map_grid.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "game/inventory.h"
@@ -86,7 +87,7 @@ enum GomaCaveEntranceActorId {
 };
 
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
-static void GomaCaveEntrance_LeapStump(s32 stumpId);
+static void Scene_LeapStump(s32 stumpId);
 static void GomaCaveEntrance_GiveShamansRod(void);
 
 #include "shared/field_effect_create.c"
@@ -168,11 +169,11 @@ static void GomaCaveEntrance_PushWestPillar(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
   Actor_SetSpeed(ACTOR_WEST_PILLAR, 0.2);
   Sound_Play(SE_PUSH);
-  // A cell, MAPGRID_CELL_PIXELS, east from TRIGGER_PUSH_WEST_PILLAR_EAST, west
-  // from TRIGGER_PUSH_WEST_PILLAR_WEST.
-  offsetX = (TRIGGER_PUSH_WEST_PILLAR_EAST + TRIGGER_PUSH_WEST_PILLAR_WEST -
-             (state->stepTrigger << 1))
-            << 4;
+  // A cell east from TRIGGER_PUSH_WEST_PILLAR_EAST, west from
+  // TRIGGER_PUSH_WEST_PILLAR_WEST.
+  offsetX = TRIGGER_PUSH_WEST_PILLAR_EAST + TRIGGER_PUSH_WEST_PILLAR_WEST -
+            state->stepTrigger * 2;
+  offsetX *= MAPGRID_CELL_PIXELS;
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
   Actor_SetDestinationOffset(ACTOR_WEST_PILLAR, offsetX, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -499,7 +500,7 @@ static void GomaCaveEntrance_MoveStump(void) {
   Event_Start();
   column = FIELD_CELL(Actor_Get(ACTOR_STUMP)->x.fixed);
   if (column == 11) {
-    GomaCaveEntrance_LeapStump(ACTOR_STUMP);
+    Scene_LeapStump(ACTOR_STUMP);
     Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(39, 12, 3, 1, 8, 12);
     MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, 11);
@@ -523,69 +524,14 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   FieldPsynergy_StopCasterUpdate();
 }
 
-/// Spins the leaping stump a thirty-second of a turn each frame.
-static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
-  struct Sprite *sprite = actor->sprite;
-
-  sprite->rotation -= TRIG_TURN / 32;
-}
-
-#include "shared/actor_wait_below_height.c"
-
-/// The stump tips over the column's edge, leaps spinning into the pool, lands
-/// with a shake and a ring of dust, bounces once and sinks with a splash.
-static void GomaCaveEntrance_LeapStump(s32 stumpId) {
-  struct Vector3 dir;
-  struct EffectOptions options;
-  struct Actor *stump;
-  u32 i;
-
-  stump = Actor_Get(stumpId);
-  stump->motionFlags = 0;
-  for (i = 0; i < STUMP_TIP_FRAMES; i++) {
-    wait(1);
-    stump->sprite->rotation -= TRIG_TURN / 256;
-    stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;
-    stump->targetX = ACTOR_NO_TARGET;
-  }
-  stump->update = GomaCaveEntrance_SpinStump;
-  Actor_SetSpeed(stumpId, 3);
-  Actor_SetDestination(stumpId, 160, 192);
-  stump->gravity = toFIXED(4) / 5;
-  stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  stump->layer = 0;
-  Actor_WaitForMoveById(stumpId);
-  Actor_WaitBelowHeight(stump, toFIXED(32));
-  Sound_Play(SE_THUMP);
-  MapGrid_SetShake(5, 5, 1);
-  Sound_Play(SE_RUMBLE);
-  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  for (i = 0; i < STUMP_LANDING_PUFFS; i++) {
-    SET_POSITION(&dir, Trig_Cos(i * FACING_STEP), 0, Trig_Sin(i * FACING_STEP));
-    dir.x -= dir.x / 4;
-    dir.z -= dir.z / 2;
-    FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x,
-                      dir.y, dir.z, 0, NULL);
-  }
-  stump->velocityY = toFIXED(5);
-  Actor_SetDestination(stumpId, 139, 196);
-  Actor_WaitForMoveById(stumpId);
-  Actor_WaitBelowHeight(stump, toFIXED(32));
-  stump->update = NULL;
-  stump->sprite->rotation = TRIG_TURN / 16;
-  options.type = SPRITE_SPLASH;
-  options.startScaleX = FIXED_ONE / 2;
-  options.startScaleY = 4 * FIXED_ONE / 5;
-  options.targetScaleX = 3 * FIXED_ONE / 2;
-  options.targetScaleY = 6 * FIXED_ONE / 5;
-  FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
-                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                        EFFECT_SCALE_TO_TARGET,
-                    &options);
-  Sound_Play(SE_CAST);
-  Actor_SetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
-  MapGrid_WaitForShakeToSettle();
-}
+/// Where the stump lands from the ledge and where it bounces on to and sinks,
+/// in pixels, and the ground's height there.
+#define STUMP_LANDING_X 160
+#define STUMP_LANDING_Z 192
+#define STUMP_RESTING_X 139
+#define STUMP_RESTING_Z 196
+#define STUMP_FLOOR_HEIGHT toFIXED(32)
+#include "shared/stump_leap.c"
 
 #include "shared/item_equip.c"
 

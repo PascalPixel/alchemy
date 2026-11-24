@@ -78,7 +78,7 @@ enum GomaCaveStreamActorId {
 /// reaches it.
 enum { ENTRANCE_BESIDE_STUMP = 99 };
 
-static void GomaCaveStream_LeapStump(s32 stumpId);
+static void Scene_LeapStump(s32 stumpId);
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
@@ -106,7 +106,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// change.
 static void GomaCaveStream_MoveStump(void) {
   if (Actor_Get(ACTOR_STUMP)->x.fixed / toFIXED(16) == 24) {
-    GomaCaveStream_LeapStump(ACTOR_STUMP);
+    Scene_LeapStump(ACTOR_STUMP);
     Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_STUMP), 0);
@@ -144,71 +144,14 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Spins the leaping stump a thirty-second of a turn each frame.
-static void GomaCaveStream_SpinStump(struct Actor *actor) {
-  struct Sprite *sprite = actor->sprite;
-
-  sprite->rotation -= TRIG_TURN / 32;
-}
-
-#include "shared/actor_wait_below_height.c"
-
-/// The stump leaps out of the way and sinks in the water.
-static void GomaCaveStream_LeapStump(s32 stumpId) {
-  struct Actor *stump;
-  u32 i;
-  struct Vector3 dir;
-  struct EffectOptions options;
-
-  stump = Actor_Get(stumpId);
-  stump->motionFlags = 0;
-  for (i = 0; i < STUMP_TIP_FRAMES; i++) {
-    wait(1);
-    stump->sprite->rotation -= TRIG_TURN / 256;
-    stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;
-    stump->targetX = ACTOR_NO_TARGET;
-  }
-  stump->update = GomaCaveStream_SpinStump;
-  Actor_SetSpeed(stumpId, 3);
-  Actor_SetDestination(stumpId, 376, 288);
-  stump->gravity = toFIXED(4) / 5;
-  stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  stump->layer = 0;
-  Actor_WaitForMoveById(stumpId);
-  Actor_WaitBelowHeight(stump, 0);
-  Sound_Play(SE_THUMP);
-  MapGrid_SetShake(5, 5, 1);
-  Sound_Play(SE_RUMBLE);
-  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  // The puffs of dust, a sixteenth of a turn apart.
-  for (i = 0; i < STUMP_LANDING_PUFFS; i++) {
-    dir.x = Trig_Cos(i * (TRIG_TURN / 16));
-    dir.y = 0;
-    dir.z = Trig_Sin(i * (TRIG_TURN / 16));
-    dir.x -= dir.x / 4;
-    dir.z -= dir.z / 2;
-    FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x,
-                      dir.y, dir.z, 0, NULL);
-  }
-  stump->velocityY = toFIXED(5);
-  Actor_SetDestination(stumpId, 346, 292);
-  Actor_WaitForMoveById(stumpId);
-  Actor_WaitBelowHeight(stump, 0);
-  stump->update = NULL;
-  stump->sprite->rotation = TRIG_TURN / 16;
-  options.type = SPRITE_SPLASH;
-  options.startScaleX = FIXED_ONE / 2;
-  options.startScaleY = 4 * FIXED_ONE / 5;
-  options.targetScaleX = 3 * FIXED_ONE / 2;
-  options.targetScaleY = 6 * FIXED_ONE / 5;
-  FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
-                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                        EFFECT_SCALE_TO_TARGET,
-                    &options);
-  Sound_Play(SE_CAST);
-  Actor_SetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
-  MapGrid_WaitForShakeToSettle();
-}
+/// Where the stump lands from the ledge and where it bounces on to and sinks,
+/// in pixels, and the ground's height there.
+#define STUMP_LANDING_X 376
+#define STUMP_LANDING_Z 288
+#define STUMP_RESTING_X 346
+#define STUMP_RESTING_Z 292
+#define STUMP_FLOOR_HEIGHT 0
+#include "shared/stump_leap.c"
 
 #include "shared/field_effect_duration_scripts.c"
 

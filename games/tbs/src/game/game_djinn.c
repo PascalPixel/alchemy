@@ -10,6 +10,11 @@
 /// search, and still when nobody has room.
 #define DJINN_COUNT_NONE 999
 
+/// What Djinn_GiveToParty returns in place of a unit when nobody gets the
+/// Djinni; its one caller, Djinn_JoinParty, plays the joining only for a unit.
+#define DJINN_GIVE_FOUND_BEFORE -1
+#define DJINN_GIVE_NO_ROOM -2
+
 /// Returns the definition of Djinni `djinni` of `element`; anything out of
 /// range gives DJINNI_FLINT's.
 const struct DjinnDefinition *Djinn_GetDefinition(u32 element, u32 djinni) {
@@ -21,8 +26,8 @@ const struct DjinnDefinition *Djinn_GetDefinition(u32 element, u32 djinni) {
 }
 
 /// Gives a newly found Djinni to the party member holding the fewest Djinn who
-/// has room, on standby. Returns who got it, -1 if found before, -2 when nobody
-/// has room.
+/// has room, on standby. Returns who got it, DJINN_GIVE_FOUND_BEFORE or
+/// DJINN_GIVE_NO_ROOM.
 s32 Djinn_GiveToParty(s32 element, s32 djinn) {
   s32 flag = djinn + element * DJINN_PER_ELEMENT + FLAG_DJINN_FIRST;
   s32 leastLoadedMember = 0;
@@ -32,7 +37,7 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
   s32 elementIndex;
 
   if (GameFlag_Get(flag) != 0)
-    return -1;
+    return DJINN_GIVE_FOUND_BEFORE;
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
@@ -51,7 +56,7 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
   }
 
   if (fewestDjinn == DJINN_COUNT_NONE)
-    return -2;
+    return DJINN_GIVE_NO_ROOM;
 
   Djinn_Give(leastLoadedMember, element, djinn);
   DjinnRecovery_AddStandby(leastLoadedMember, element, djinn);
@@ -218,6 +223,8 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
   s32 entryIndex;
 
   if (counts != 0) {
+    /* FAKEMATCH(temporary): slot stands for each &counts[element]; the plain
+       form stores counts[3] down to counts[0] directly. */
     u8 *slot;
 
     slot = counts + 3;

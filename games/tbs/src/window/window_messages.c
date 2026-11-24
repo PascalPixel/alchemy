@@ -488,18 +488,18 @@ void Portrait_ClearSlots(void) {
 /// gPortrait_CharacterMap, the others from gPortrait_SpriteMap, numbered from
 /// PORTRAIT_SPRITE_MAP_FIRST (Icon_LoadWithPalette takes it as the row
 /// PORTRAIT_JUPITER_DJINNI).
-s32 Portrait_GetForSpeaker(u32 value) {
+s32 Portrait_GetForSpeaker(u32 speaker) {
   s32 result = -1;
   s32 portraitIndex = 0;
 
   // Both maps are {speaker, portrait} pairs ending in -1 (window/scales.c).
-  if (value <= SPRITE_GARET_CHILD) {
+  if (speaker <= SPRITE_GARET_CHILD) {
     for (;;) {
       s32 speakerId = gPortrait_CharacterMap[portraitIndex];
 
       if (speakerId == -1)
         break;
-      if (speakerId == value) {
+      if (speakerId == speaker) {
         portraitIndex++;
         result = gPortrait_CharacterMap[portraitIndex];
         break;
@@ -512,7 +512,7 @@ s32 Portrait_GetForSpeaker(u32 value) {
 
       if (speakerId == -1)
         break;
-      if (speakerId == value) {
+      if (speakerId == speaker) {
         portraitIndex++;
         result = gPortrait_SpriteMap[portraitIndex];
         result += PORTRAIT_SPRITE_MAP_FIRST;

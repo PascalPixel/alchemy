@@ -615,9 +615,9 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
 }
 
 /// Sets the colour mode (SpriteColorMode) of each of a sprite's animations to
-/// value, except sprite animations drawn hidden (SPRITE_COLOR_HIDDEN), and
+/// colorMode, except sprite animations drawn hidden (SPRITE_COLOR_HIDDEN), and
 /// marks the sprite for redrawing.
-void Sprite_SetAnimationColorModes(void *rawSprite, u32 value) {
+void Sprite_SetAnimationColorModes(void *rawSprite, u32 colorMode) {
   struct Sprite *sprite = rawSprite;
   if (sprite != 0) {
     u32 count = sprite->count;
@@ -628,7 +628,7 @@ void Sprite_SetAnimationColorModes(void *rawSprite, u32 value) {
       do {
         struct SpriteAnimation *layer = *entry++;
         if (layer->colorMode != SPRITE_COLOR_HIDDEN)
-          layer->colorMode = value;
+          layer->colorMode = colorMode;
         remaining--;
       } while (remaining != 0);
     }

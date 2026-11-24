@@ -155,9 +155,9 @@ s32 BattleDjinnMenu_ListChangedAbilities(const struct PsynergyEntry *oldGrid,
                                          u16 *out, s32 *gained, s32 *lost);
 UNREAD_RESULT WindowSprite_CreateAbilityIcon(struct Window *window, s32 x,
                                              s32 y, s32 abilityId);
-struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
-                                                 s32 encodedDjinn, s32 page,
-                                                 s32 *pageCount);
+struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
+                                                 s32 member, s32 encodedDjinn,
+                                                 s32 page, s32 *pageCount);
 s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member);
 s32 BattleDjinnMenu_Run(s32 member, s32 unused);
 s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby);

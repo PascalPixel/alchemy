@@ -1089,44 +1089,45 @@ s32 SelectionIcon_Load(s32 mode, s32 value) {
   return result;
 }
 
-/// Loads the icon of an entry of kind mode into sprite tile slot result (a free
-/// slot when -1) and returns the slot, or -1 when none was free.
-s32 SelectionIcon_LoadIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
+/// Loads the icon of entry, of kind kind, into sprite tile slot slot (a free
+/// slot when -1), drawn from baseIcon where the kind takes one, and returns the
+/// slot, or -1 when none was free.
+s32 SelectionIcon_LoadIntoSlot(s32 kind, s32 entry, s32 slot, s32 baseIcon) {
   s32 output;
-  s32 original = result;
+  s32 original = slot;
 
-  if (result == -1) {
-    result = VramCache_FindFreeEntry();
-    if (result == VRAM_CACHE_ENTRY_COUNT)
+  if (slot == -1) {
+    slot = VramCache_FindFreeEntry();
+    if (slot == VRAM_CACHE_ENTRY_COUNT)
       return original;
   }
 
-  switch (mode) {
+  switch (kind) {
   case ICON_KIND_COMMAND:
   case ICON_KIND_YES_NO:
-    Icon_BuildCommandIconTiles(value, option, &result, &output, 1);
+    Icon_BuildCommandIconTiles(entry, baseIcon, &slot, &output, 1);
     break;
   case ICON_KIND_ITEM:
     ItemIcon_LoadLayersIntoSlot(
-        value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN | ICON_CURSED,
-        result);
+        entry, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN | ICON_CURSED,
+        slot);
     break;
   case ICON_KIND_EQUIPMENT_ITEM:
     ItemIcon_LoadLayersIntoSlot(
-        value, ICON_COUNT_ABOVE_ONE | ICON_BROKEN | ICON_CURSED, result);
+        entry, ICON_COUNT_ABOVE_ONE | ICON_BROKEN | ICON_CURSED, slot);
     break;
   case ICON_KIND_ABILITY:
-    Ability_BuildIconTiles(value, option, &result, &output, 1);
+    Ability_BuildIconTiles(entry, baseIcon, &slot, &output, 1);
     break;
   case ICON_KIND_PATTERN:
-    Icon_BuildMiscIconTiles(value, 0, result);
+    Icon_BuildMiscIconTiles(entry, 0, slot);
     break;
   case ICON_KIND_TABLE_ENTRY:
-    MenuTitle_LoadFirstTile(value, 0, result);
+    MenuTitle_LoadFirstTile(entry, 0, slot);
     break;
   }
 
-  return result;
+  return slot;
 }
 
 /// Sets up a selection icon for an entry: its icon tiles (in its old slot when
@@ -1312,7 +1313,7 @@ void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
 }
 
 /// Frees an arrow sprite's tile slot.
-void MenuArrow_Release(s32 value) { VramCache_FreeEntry(value); }
+void MenuArrow_Release(s32 slot) { VramCache_FreeEntry(slot); }
 
 /// Loads the large icon of the command under the cursor, zooming in: 32x32 in
 /// 256 colours (32 * 32 bytes, record 15), its scale stepping up by

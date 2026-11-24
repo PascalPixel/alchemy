@@ -331,7 +331,7 @@ void GroundMask_Suspend(void);
 void GroundMask_Resume(void);
 const struct SpeakerDefinition *Speaker_FindDefinition(u32 id);
 s32 Speaker_GetActorSprite(s32 id);
-s32 Speaker_GetVoice(u32 id);
+s32 Speaker_GetVoice(u32 spriteId);
 s32 Speaker_GetHaltedLines(s32 id);
 
 /// Mind Read's caster's palette cycle, two frames a step

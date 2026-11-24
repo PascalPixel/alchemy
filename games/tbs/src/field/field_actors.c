@@ -19,13 +19,13 @@
 #define PIXEL_PAIR_ODD_MASK 0xff00
 
 /// One step of dissolving a sprite pixel by pixel.
-void SpriteDissolve_Step(u8 *obj, u32 pos) {
+void SpriteDissolve_Step(u8 *rawSprite, u32 step) {
   u16 *tile;
   s32 tileCount;
   u32 i;
   const u8 *order;
 
-  struct Sprite *sprite = (struct Sprite *)obj;
+  struct Sprite *sprite = (struct Sprite *)rawSprite;
 
   tile = (u16 *)(OBJ_VRAM0 + gVramCacheEntries[sprite->slot].offset);
   tileCount = (sprite->width * sprite->height) / DISSOLVE_TILE_PIXELS;
@@ -37,8 +37,8 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
       u32 highMask = PIXEL_PAIR_ODD_MASK;
       u32 indexMask = DISSOLVE_TILE_PIXELS - 1;
 
-      for (; i < tileCount; i++, tile += TILE_SIZE_8BPP / 2, pos++) {
-        if ((pos - DISSOLVE_FIRST_STEP) <= DISSOLVE_TILE_PIXELS - 1) {
+      for (; i < tileCount; i++, tile += TILE_SIZE_8BPP / 2, step++) {
+        if ((step - DISSOLVE_FIRST_STEP) <= DISSOLVE_TILE_PIXELS - 1) {
           u8 pixel;
           u16 *pixelPair;
           u32 isOdd;
@@ -46,7 +46,7 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
           // Each tile reads the order DISSOLVE_ORDER_STRIDE entries and a step
           // on from the tile before, so neighbouring tiles lose different
           // pixels at the same step.
-          pixel = order[(pos + i * DISSOLVE_ORDER_STRIDE) & indexMask];
+          pixel = order[(step + i * DISSOLVE_ORDER_STRIDE) & indexMask];
           // The halfword holding the pixel: its offset rounded down to even.
           pixelPair =
               (u16 *)((u8 *)tile + (pixel & (DISSOLVE_TILE_PIXELS - 2)));
@@ -493,9 +493,9 @@ void Actor_SetSpriteScale(struct Actor *actor, u32 fixedScale) {
 
 /// Sets the colour mode (SpriteColorMode) of a one-sprite actor's sprite
 /// animations, except those drawn hidden (see Sprite_SetAnimationColorModes).
-void Actor_SetSpriteColorMode(struct Actor *actor, u32 param) {
+void Actor_SetSpriteColorMode(struct Actor *actor, u32 colorMode) {
   if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE)
-    Sprite_SetAnimationColorModes(actor->sprite, param);
+    Sprite_SetAnimationColorModes(actor->sprite, colorMode);
 }
 
 /// Suspends the actor camera updates, starts the palette back to normal and, a

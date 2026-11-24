@@ -37,15 +37,15 @@ s32 Speaker_GetActorSprite(s32 id) {
   return actor->sprite->entries[0]->animationId;
 }
 
-/// Returns the voice of sprite id's messages: the first of its four blip
+/// Returns the voice of sprite spriteId's messages: the first of its four blip
 /// sounds, SE_VOICE_FIRST plus its definition's value, or 0 for none
 /// (SPEAKER_VOICE_NONE) or with the Speech option off
 /// (gMainRoutineState.speech).
-s32 Speaker_GetVoice(u32 id) {
+s32 Speaker_GetVoice(u32 spriteId) {
   u8 voice;
 
   if (gMainRoutineState.speech == 0 ||
-      (voice = Speaker_FindDefinition(id)->value) == SPEAKER_VOICE_NONE) {
+      (voice = Speaker_FindDefinition(spriteId)->value) == SPEAKER_VOICE_NONE) {
     return 0;
   }
   return voice + SE_VOICE_FIRST;

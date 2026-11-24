@@ -20,29 +20,30 @@ void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot) {
   Encounter_SelectBattleMusic(zone, slot);
 }
 
-/// The low bits of Field_RequestDjinnBattle's flag: the Djinni's actor.
+/// The low bits of Field_RequestDjinnBattle's actorAndHop: the Djinni's actor.
 #define DJINN_ACTOR_MASK 0xff
 
-/// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
-/// Djinni's actor, which hops first unless DJINN_NO_HOP is set.
-void Field_RequestDjinnBattle(s32 flag, s32 no) {
+/// Sets up the battle with Djinni number `djinni`. The low 8 bits of
+/// actorAndHop are the Djinni's actor, which hops first unless DJINN_NO_HOP is
+/// set.
+void Field_RequestDjinnBattle(s32 actorAndHop, s32 djinni) {
   struct FieldState *fieldState;
   struct MainRoutineState *state;
   s32 skipHop;
 
   fieldState = gFieldState;
-  skipHop = flag & DJINN_NO_HOP;
-  flag &= DJINN_ACTOR_MASK;
+  skipHop = actorAndHop & DJINN_NO_HOP;
+  actorAndHop &= DJINN_ACTOR_MASK;
 
   if (skipHop == 0)
-    Djinn_RunBattleStartHop(flag);
+    Djinn_RunBattleStartHop(actorAndHop);
 
   state = &gMainRoutineState;
   // DJINN_NO_HOP rides along: it tells Djinn_RestoreActorAfterBattle to put
   // the Djinni back 32 pixels north of the leader, not at its placement's
   // position.
-  state->pendingDjinni = (no + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
-  fieldState->encounter = Encounter_GetDjinnFormation(no);
+  state->pendingDjinni = (djinni + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
+  fieldState->encounter = Encounter_GetDjinnFormation(djinni);
   if (fieldState->mode == ACTOR_SYSTEM_WORLD_MAP) {
     struct Actor *leader = Actor_Lookup(state->leaderActorId);
 

@@ -393,7 +393,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     s32 facing);
 void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
                                  s32 facing, s32 depth);
-void Sprite_SetAnimationColorModes(void *rawSprite, u32 value);
+void Sprite_SetAnimationColorModes(void *rawSprite, u32 colorMode);
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
 s32 SpritePictureCache_FindByTag(s32 tag);
 s32 Sprite_ResetAnimations(struct Sprite *sprite);
@@ -411,7 +411,7 @@ void SpriteAnimation_Clear(struct SpriteAnimation *record);
 struct Sprite *Sprite_Create(s32 id);
 void Sprite_Destroy(struct Sprite *sprite);
 s32 SpriteAnimation_SumCommandLengths(s32 id, u32 animation, s32 frameCount);
-void SpriteDissolve_Step(u8 *obj, u32 pos);
+void SpriteDissolve_Step(u8 *rawSprite, u32 step);
 void SpriteDissolve_Run(u8 *sprite);
 void SpriteDissolve_RunMany(u8 **sprites, s32 count);
 void Actor_SelectAnimation(void *raw, s32 no);
@@ -518,7 +518,7 @@ void Actor_WaitForScriptEnd(void *rawActor);
 void Actor_SetSpriteFlags(struct Actor *actor, u32 flags);
 void Actor_SetBlendMode(struct Actor *actor, u32 mode);
 void Actor_SetSpriteScale(struct Actor *actor, u32 fixedScale);
-void Actor_SetSpriteColorMode(struct Actor *actor, u32 param);
+void Actor_SetSpriteColorMode(struct Actor *actor, u32 colorMode);
 void ActorSystem_SuspendProjectionAndShowSprites(void);
 void ActorSystem_ResumeProjectionAndHideLayers(void);
 s32 Actor_ReturnTrue(void);

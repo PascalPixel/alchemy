@@ -575,9 +575,12 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 
       x = probePosition.vector.x;
       z = probePosition.vector.z;
-      cell =
-          &((struct MapCell *)Ram_MapBlocks)[((x / toFIXED(32)) & 31) +
-                                             (((z / toFIXED(32)) & 31) << 5)];
+      cell = &((struct MapCell *)
+                   Ram_MapBlocks)[((x / toFIXED(WORLD_MAP_CELL_PIXELS)) &
+                                   (WORLD_MAP_VIEW_CELLS - 1)) +
+                                  (((z / toFIXED(WORLD_MAP_CELL_PIXELS)) &
+                                    (WORLD_MAP_VIEW_CELLS - 1)) *
+                                   WORLD_MAP_VIEW_CELLS)];
     } else {
       s32 x, z;
 

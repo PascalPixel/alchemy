@@ -330,8 +330,13 @@ struct ReelSave {
   s8 wonPrizes[16];
 };
 
+/// The World Map's cells in view (Ram_MapBlocks, and the blocks in gCellTiles):
+/// 32 by 32 cells of 32 pixels, found by a position's cell modulo 32 each way.
+#define WORLD_MAP_VIEW_CELLS 32
+#define WORLD_MAP_CELL_PIXELS 32
+
 /// One 32-pixel cell of the World Map: its tile and its encounter region;
-/// Ram_MapBlocks holds 32 by 32 of them.
+/// Ram_MapBlocks holds WORLD_MAP_VIEW_CELLS by WORLD_MAP_VIEW_CELLS of them.
 struct WorldMapCell {
   u32 tile : 24; ///< low halfword: the cell tiles
   /// Passed to WorldMap_UpdateRegionTint; region / 10 picks the graphics set.

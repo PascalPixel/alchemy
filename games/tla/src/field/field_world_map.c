@@ -313,9 +313,12 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
 
   buffer = Heap_Alloc(BG_PLTT_SIZE);
   perspective = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
-  block =
-      &((struct WorldMapCell *)Ram_MapBlocks)[((x / toFIXED(32)) & 31) +
-                                              (((z / toFIXED(32)) & 31) << 5)];
+  block = &((struct WorldMapCell *)
+                Ram_MapBlocks)[((x / toFIXED(WORLD_MAP_CELL_PIXELS)) &
+                                (WORLD_MAP_VIEW_CELLS - 1)) +
+                               (((z / toFIXED(WORLD_MAP_CELL_PIXELS)) &
+                                 (WORLD_MAP_VIEW_CELLS - 1)) *
+                                WORLD_MAP_VIEW_CELLS)];
   WorldMap_UpdateRegionTint(block->region, 0);
   region = block->region;
   region /= WORLD_MAP_REGION_GROUP;

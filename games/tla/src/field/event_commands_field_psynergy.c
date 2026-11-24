@@ -10,10 +10,6 @@
 #include "field/object.h"
 #include "macros.h"
 
-/// The World Map's cells in view, Ram_MapBlocks: 32 by 32 cells of 32 pixels,
-/// found by a position's cell modulo 32 each way.
-#define WORLD_MAP_VIEW_CELLS 32
-#define WORLD_MAP_CELL_PIXELS 32
 /// The first World Map collision that is water to Scoop and Parch: the sea from
 /// here to WORLD_MAP_COLLISION_SEA_LAST, all but WORLD_MAP_COLLISION_SEA_FIRST.
 #define WORLD_MAP_COLLISION_WATER_FIRST 2

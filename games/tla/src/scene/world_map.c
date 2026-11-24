@@ -137,10 +137,6 @@ enum WorldMapCellBehavior {
   CELL_BEHAVIOR_WORLD_MAP_FIRST_FLIGHT = 40
 };
 
-/// The World Map's blocks (struct WorldMapBlocks): 32 pixels square, 32 to a
-/// row and a column.
-#define WORLD_MAP_BLOCK_SIZE toFIXED(32)
-#define WORLD_MAP_BLOCKS_ACROSS 32
 /// A block's terrain byte: the party may step ashore from the open sea here.
 #define WORLD_MAP_BLOCK_LANDING (1 << 6)
 
@@ -582,11 +578,11 @@ void WorldMap_LeaveShip(void) {
   position[2] = ship->z.fixed;
   Vector_AddPolarOffset(toFIXED(24), ship->facing, position);
   blocked = 0;
-  block = &blocks->blocks[(position[0] / WORLD_MAP_BLOCK_SIZE &
-                           WORLD_MAP_BLOCKS_ACROSS - 1) +
-                          (position[2] / WORLD_MAP_BLOCK_SIZE &
-                           WORLD_MAP_BLOCKS_ACROSS - 1) *
-                              WORLD_MAP_BLOCKS_ACROSS];
+  block = &blocks->blocks[(position[0] / toFIXED(WORLD_MAP_CELL_PIXELS) &
+                           WORLD_MAP_VIEW_CELLS - 1) +
+                          (position[2] / toFIXED(WORLD_MAP_CELL_PIXELS) &
+                           WORLD_MAP_VIEW_CELLS - 1) *
+                              WORLD_MAP_VIEW_CELLS];
   if (cell > WORLD_MAP_COLLISION_WALKABLE_LAST) {
     blocked = 1;
   } else {

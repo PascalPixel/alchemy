@@ -105,8 +105,11 @@ void WorldMap_PreloadCurrentTileBlock(void) {
       }
     }
   }
-  block = (struct WorldMapCell *)Ram_MapBlocks +
-          (((x / toFIXED(32)) & 31) + (((y / toFIXED(32)) & 31) << 5));
+  block =
+      (struct WorldMapCell *)Ram_MapBlocks +
+      (((x / toFIXED(WORLD_MAP_CELL_PIXELS)) & (WORLD_MAP_VIEW_CELLS - 1)) +
+       (((y / toFIXED(WORLD_MAP_CELL_PIXELS)) & (WORLD_MAP_VIEW_CELLS - 1)) *
+        WORLD_MAP_VIEW_CELLS));
   WorldMap_UpdateRegionTint(block->region, 1);
   value = block->region;
   resources = gWorldMap_GraphicsResources[WorldMap_GetRegionGroupGraphics(
@@ -1251,12 +1254,14 @@ s32 WorldMap_GetBlockCellBehavior(struct WorldPosition *position) {
 
   // Rounded towards zero, as a division would.
   if (x < 0)
-    x += toFIXED(32) - 1;
-  x = WORLD_MAP_BLOCK(x) & 31;
+    x += toFIXED(WORLD_MAP_CELL_PIXELS) - 1;
+  x = WORLD_MAP_BLOCK(x) & (WORLD_MAP_VIEW_CELLS - 1);
   if (z < 0)
-    z += toFIXED(32) - 1;
-  z = WORLD_MAP_BLOCK(z) & 31;
-  return ((struct WorldMapBlocks *)gCellTiles)->blocks[x + z * 32].place;
+    z += toFIXED(WORLD_MAP_CELL_PIXELS) - 1;
+  z = WORLD_MAP_BLOCK(z) & (WORLD_MAP_VIEW_CELLS - 1);
+  return ((struct WorldMapBlocks *)gCellTiles)
+      ->blocks[x + z * WORLD_MAP_VIEW_CELLS]
+      .place;
 }
 
 /// Returns the world map's collision value (1-15) at position: from the upper

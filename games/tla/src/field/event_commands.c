@@ -25,10 +25,6 @@
 #include "event_commands_ropes.c"
 #include "event_commands_psynergy_dispatch.c"
 #include "event_commands_field_psynergy.c"
-
-#undef PaletteFade_SetTarget
-#undef Actor_ReleaseFar
-
 #include "event_commands_field_psynergy_state.c"
 #include "event_commands_mind_read.c"
 

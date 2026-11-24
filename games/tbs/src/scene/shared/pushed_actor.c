@@ -83,7 +83,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
   if (blocker != NULL && (blocker->collisionFlags & ACTOR_SOLID) != 0)
     return;
 
-  next->layer = 2;
+  next->layer = MAPGRID_LAYER_OVERHEAD;
   Actor_StepFrom(&dst, next, gPushedActor_DirectionSteps[dir]);
   if (FieldActor_CheckMovementCollision(next, &dst) > 0)
     return;
@@ -228,7 +228,7 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
   struct Actor *actor;
   s32 steps;
   s32 width, height;
-  u8 *mode;
+  u8 *layer;
   s32 column, row;
   s32 nearEdge, farEdge;
   s32 offset;
@@ -239,8 +239,8 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
   if (actor == NULL) {
     return 0;
   }
-  mode = &actor->layer;
-  *mode = 2;
+  layer = &actor->layer;
+  *layer = MAPGRID_LAYER_OVERHEAD;
   {
     s32 rectangle = probe->rectangleIndex;
 
@@ -298,7 +298,7 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
         DIRECTION_STEP_Z_FIXED(gPushedActor_DirectionSteps[direction]);
   }
 found:
-  *mode = 0;
+  *layer = MAPGRID_LAYER_GROUND;
   if (steps == 0) {
     return 0;
   }

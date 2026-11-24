@@ -17,30 +17,35 @@ s32 VENT_TOUCHING(struct Actor *a, struct Actor *b) {
 }
 
 /// Moves the thing by its velocities, slows it in x and z, grows and spins its
-/// sprite, and stops its fall in z when it lands on the leader or on one of
-/// the actors the vent state lists.
+/// sprite, and stops its drift in z when it meets the leader or one of the
+/// actors the vent state lists. Vent_Puff keeps the puff's motion in fields
+/// it borrows for the purpose: bounce is its x velocity, gravity its y velocity
+/// and sceneWord its z velocity, all 16.16 pixels a frame; speedLimit and
+/// acceleration are what its x and y scale grow by each frame, and timer its
+/// spin.
 void VENT_BOUNCE(struct Actor *actor) {
   struct VentState *state = VENT_STATE;
   struct Actor *other = Actor_GetById(gMainRoutineState.leaderActorId);
-  FIXED dx = actor->bounce;
-  FIXED dz;
+  FIXED velocityX = actor->bounce;
+  FIXED velocityZ;
   struct Sprite *sprite;
   s32 i;
 
-  actor->x.fixed += dx;
+  actor->x.fixed += velocityX;
   actor->y.fixed += actor->gravity;
-  dz = actor->sceneWord;
-  actor->z.fixed += dz;
-  actor->bounce = dx - dx / 18;
-  actor->sceneWord = dz - dz / 16;
+  velocityZ = actor->sceneWord;
+  actor->z.fixed += velocityZ;
+  actor->bounce = velocityX - velocityX / 18;
+  actor->sceneWord = velocityZ - velocityZ / 16;
   actor->scaleX += actor->speedLimit;
   sprite = actor->sprite;
   {
-    s32 acceleration = actor->acceleration;
+    s32 scaleStepY = actor->acceleration;
 
-    actor->scaleY += acceleration;
+    actor->scaleY += scaleStepY;
   }
   sprite->rotation += actor->timer;
+  // Meeting an actor turns a quarter of the z velocity into y velocity.
   if (other->y.fixed == other->groundHeight && VENT_TOUCHING(actor, other)) {
     actor->z.fixed -= actor->sceneWord;
     actor->gravity += actor->sceneWord >> 2;

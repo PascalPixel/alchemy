@@ -1,16 +1,8 @@
 /// @file
 /// Creating an actor as a black silhouette.
 
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
 #include "types.h"
+#include "field/field.h"
 #include "field/field_event.h"
 
 /// Creates an actor of sprite type at a 16.16 position to stand as a

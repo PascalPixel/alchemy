@@ -57,6 +57,7 @@ void Garoh_ScatterDustRing(s32 id);
 #include "flags.h"
 #include "djinn_ids.h"
 #include "field/field_sequence_event.h"
+#include "field/field_sequence.h"
 #include "system/ram_buffer.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
@@ -203,6 +204,23 @@ enum GarohCellBehavior {
 #define FLAG_WEREWOLF_PEERED_OUT FLAG_AREA_TEMP_20
 #define FLAG_LITTLE_WEREWOLF_THANKED FLAG_AREA_TEMP_01
 #define FLAG_EVENING FLAG_AREA_TEMP_18
+/// By night the village's actors take the warm tint as well as its map.
+/// Nothing in the code sets it, so they keep their own colours.
+#define FLAG_NIGHT_TINTS_ACTORS FLAG_AREA_TEMP_11
+
+/// The passage within the werewolves' cave behind the round grey rock, which
+/// Reveal opens (Garoh_EnterOpening): from before the rock to the little room
+/// beyond it and back (scene_exits.h names only the exits between scenes). An
+/// exit and the entrance on its side share a number.
+enum GarohWerewolfCavePassage {
+  GAROH_WEREWOLF_CAVE_TO_ROOM_BEHIND_ROCK = 6,
+  GAROH_WEREWOLF_CAVE_ROOM_BEHIND_ROCK_TO_CAVE,
+  GAROH_WEREWOLF_CAVE_FROM_ROOM_BEHIND_ROCK = 6,
+  GAROH_WEREWOLF_CAVE_ROOM_BEHIND_ROCK_FROM_CAVE
+};
+
+/// The werewolf sheet's last picture, held: sitting on the ground.
+enum { ANIM_WEREWOLF_SIT = 5 };
 /// The way up: the pillars sunk into their slots, and the rope Lashed.
 #define FLAG_FIRST_PILLAR_SUNK FLAG_SCENE_TEMP_01
 #define FLAG_SECOND_PILLAR_SUNK FLAG_SCENE_TEMP_02
@@ -552,7 +570,7 @@ void Garoh_WerewolfPeersFromCave(void) {
   void Garoh_OpenCaveEntrance(s32 id) {
     FieldPsynergy_LoadResources(ABILITY_REVEAL, 1);
     FieldPsynergy_SetupActorPair(id, 0);
-    FieldPsynergy_RunHandler(1);
+    FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
     BattleEffect_StopMainActor();
     FieldPsynergy_End();
   }
@@ -560,7 +578,7 @@ void Garoh_WerewolfPeersFromCave(void) {
   void Garoh_CloseCaveEntrance(s32 id) {
     FieldPsynergy_LoadResources(ABILITY_REVEAL, 1);
     FieldPsynergy_SetupActorPair(id, 0);
-    FieldPsynergy_RunHandler(3);
+    FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_EXTRA);
     BattleEffect_StopMainActor();
     FieldPsynergy_End();
   }
@@ -627,7 +645,8 @@ void Garoh_EnterOpening(void) {
   struct FieldState *event = Ram_HeapSlots->fieldState;
 
   Event_PlaySound(SE_MAP_EXIT);
-  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldState->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Flag_Set(FLAG_ARRIVAL_STAIRS_DOWN);
   FieldEvent_SetExitRequest(event->stepTrigger);
@@ -689,7 +708,8 @@ s32 Scene_Initialize(void) {
   struct FieldState *state;
 
   if (gMainRoutineState.next == SCENE_GAROH_TUNNELS) {
-    gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+    gFieldState->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   } else if (gMainRoutineState.next == SCENE_GAROH_WEREWOLF_CAVE) {
     FieldActor_SetSpritePriority(ACTOR_FIRE_A, 1);
     FieldActor_SetSpritePriority(ACTOR_FIRE_B, 1);
@@ -697,14 +717,18 @@ s32 Scene_Initialize(void) {
       Actor_SetPositionAndFacing(ACTOR_MAHA, toFIXED(328), toFIXED(162),
                                  FACING_SOUTH);
     }
-    gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+    gFieldState->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     FieldEffect_StartBlankOverlay(0);
-    if (gMainRoutineState.entrance == 6) {
+    if (gMainRoutineState.entrance ==
+        GAROH_WEREWOLF_CAVE_FROM_ROOM_BEHIND_ROCK) {
       state = Ram_HeapSlots->fieldState;
-      state->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+      state->transition =
+          SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
       Event_ClearFlag(FLAG_ARRIVAL_STAIRS_UP);
       Event_ClearFlag(FLAG_ARRIVAL_STAIRS_DOWN);
-      gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+      gFieldState->transition = SCENE_TRANSITION(
+          TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
     }
@@ -737,9 +761,9 @@ void Garoh_InitializeVillage(void) {
   if (Event_GetFlag(FLAG_GAROH_SECRET_SHARED) == 0 ||
       Event_GetFlag(FLAG_GAROH_NIGHT) != 0) {
     Event_SetFlag(FLAG_GAROH_NIGHT);
-    PaletteFade_ApplyTarget(PALETTE_TINT_WARM_DARK, 1);
-    if (Event_GetFlag(FLAG_AREA_TEMP_11))
-      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 2);
+    PaletteFade_ApplyTarget(PALETTE_TINT_WARM_DARK, PALETTES_BG);
+    if (Event_GetFlag(FLAG_NIGHT_TINTS_ACTORS))
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_OBJECTS);
     PaletteFade_Interpolate(1);
     Event_WaitTransitionFrames();
     PaletteFade_PackTarget();
@@ -762,7 +786,8 @@ void Garoh_InitializeVillage(void) {
   if (gMainRoutineState.entrance == GAROH_FROM_GAROH_WEREWOLF_CAVE) {
     struct FieldState *state = Ram_HeapSlots->fieldState;
 
-    state->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    state->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Event_ClearFlag(FLAG_ARRIVAL_STAIRS_UP);
     Event_ClearFlag(FLAG_ARRIVAL_STAIRS_DOWN);
     Event_StartScreenTransition();
@@ -1284,6 +1309,7 @@ void Garoh_WerewolfRunsPast(void) {
   Actor_RunRepeatedMotion(ACTOR_WEREWOLF, 2);
   Actor_SetScript(ACTOR_WEREWOLF, gGaroh_WerewolfLookAroundScript);
   gFieldState->message--;
+  // "Awoooooo!!!"
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   FieldActor_Stop(ACTOR_WEREWOLF);
   FieldEvent_Wait(20);
@@ -1314,7 +1340,9 @@ void Garoh_WerewolfRunsPast(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_EAST, 0);
   FieldEvent_Wait(30);
+  // "Ah-ah-awoooo!!!"
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
+  // "Eeek!"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_WEREWOLF, 2);
   FieldEvent_Wait(10);
@@ -1355,6 +1383,7 @@ void Garoh_WerewolfRunsPast(void) {
   FieldActor_Jump(ACTOR_KRADEN, 6, 23);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "I don't believe it! Was that a°"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
@@ -1364,14 +1393,18 @@ void Garoh_WerewolfRunsPast(void) {
   FieldEvent_Wait(25);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
+  // "A what? Kraden, do you know what that thing was?"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(25);
+  // "Well... Perhaps..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   FieldEvent_Wait(10);
+  // "So, what are you waiting for!? Tell us!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "I suspect it may have been...a lycanthrope."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
     Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1380,21 +1413,27 @@ void Garoh_WerewolfRunsPast(void) {
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
+  // "A lycanthwhat?"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "Just think of them as a race of people born with special powers..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   FieldEvent_Wait(10);
+  // "Kind of like Adepts, you mean?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Yes, that sounds right. Sheba, you've put it quite well."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "Adepts borrow their abilities from the power of the elements..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
+  // "While lycanthropes borrow theirs from the power of beasts..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
@@ -1403,8 +1442,10 @@ void Garoh_WerewolfRunsPast(void) {
   Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(30);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "This is why they take the forms of animals..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD, 33);
+  // "They may look frightening... But we must try to communicate with them."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_WalkByAndWait(ACTOR_KRADEN, -8, -8);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
@@ -1420,11 +1461,15 @@ void Garoh_WerewolfRunsPast(void) {
   FieldEvent_Wait(20);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "Lycanthropes... Werewolves... A whole village in hiding..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
     Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
+  // "Is it just me... Or does Kraden seem a little TOO happy to have found
+  // werewolves?" Yes: "What? Me? Happy to find werewolves? You must be joking!"
+  // No: "I would love to study them, but still...they do frighten me..."
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
@@ -1435,6 +1480,7 @@ void Garoh_WerewolfRunsPast(void) {
     FieldEvent_Wait(20);
     if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
       Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
+    // "What? Me? Happy to find werewolves? You must be joking!"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
     gFieldState->message++;
   } else {
@@ -1446,15 +1492,19 @@ void Garoh_WerewolfRunsPast(void) {
     if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
       Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
     gFieldState->message++;
+    // "I would love to study them, but still...they do frighten me..."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
   }
   FieldActor_Jump(ACTOR_KRADEN, 6, 15);
   FieldActor_Jump(ACTOR_KRADEN, 6, 23);
+  // "I guess I'm just curious about all of the secrets of these new lands..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   FieldEvent_Wait(15);
+  // "Any real scholar would be thrilled to explore a new land full of mystery,
+  // huh?"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
   FieldEvent_Wait(25);
@@ -1465,14 +1515,17 @@ void Garoh_WerewolfRunsPast(void) {
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "So, are there werewolves only on Osenia?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0, 0);
   FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 3);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
+  // "Ummm..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
   Garoh_PopQuestionMarks(ACTOR_SHEBA);
   FieldEvent_Wait(20);
+  // "If so, how could you even have known about them, Kraden?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
@@ -1485,9 +1538,11 @@ void Garoh_WerewolfRunsPast(void) {
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
+  // "Er... I, uh..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
+  // "Yeah... That is weird."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 0);
@@ -1511,6 +1566,7 @@ void Garoh_WerewolfRunsPast(void) {
   Actor_WalkByAndWait(ACTOR_KRADEN, 0, 16);
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  // "All right, so I lied!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1519,6 +1575,7 @@ void Garoh_WerewolfRunsPast(void) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
+  // "I'm glad we found werewolves! There! Are you happy!?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 2);
   Actor_WalkByAndWait(ACTOR_KRADEN, -16, 0);
@@ -1531,8 +1588,10 @@ void Garoh_WerewolfRunsPast(void) {
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD, 33);
+  // "And you know what!? I even want to get a closer look if I can!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
+  // "So let's go! Let's find us some werewolves!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
   FieldActor_Jump(ACTOR_KRADEN, 6, 15);
   FieldActor_Jump(ACTOR_KRADEN, 6, 23);
@@ -1706,19 +1765,23 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldCamera_MoveToActorById(ACTOR_FELIX, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(1.5);
-  // "Do you think we lost him somewhere?"
+  // "Do you think we lost him somewhere?" Yes: "That would be a shame..." No:
+  // "I hope we didn't... Or rather, I'd be quite unhappy if we did..."
   Event_OpenMessage(ACTOR_KRADEN, 0);
   if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     FieldEvent_Wait(20);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "That would be a shame..."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
     gFieldState->message = (gFieldState->message + 1);
   } else {
     FieldEvent_Wait(30);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     gFieldState->message = (gFieldState->message + 1);
+    // "I hope we didn't... Or rather, I'd be quite unhappy if we did..."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   }
+  // "Grrrr..."
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
   FieldEvent_Wait(10);
@@ -1733,6 +1796,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldActor_WaitForMoveById(ACTOR_SHEBA);
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "What was that?"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
@@ -1742,6 +1806,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   FieldEvent_Wait(20);
+  // "It sounded like a wolf growling, didn't it?"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST, 0);
@@ -1754,6 +1819,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(25);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(25);
+  // "My hearing is not so very good, but... there was something."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
@@ -1764,7 +1830,9 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_AnimateThenWait(ACTOR_JENNA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "Perhaps we should search this area more thoroughly..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
+  // "There is no need..."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
@@ -1777,6 +1845,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_CAVE_PASSAGE), 0);
   Garoh_OpenCavePassage(ACTOR_CAVE_PASSAGE);
   FieldEvent_Wait(20);
+  // "Look... He's using Psynergy."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_WEREWOLF, 0.7);
   Actor_SetSpeed(ACTOR_MAHA, 0.7);
@@ -1802,6 +1871,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_WEREWOLF, 2);
   FieldEvent_Wait(10);
+  // "Garrrrooow..."
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 2);
   FieldActor_StartRepeatedMotion(ACTOR_SHEBA, 2);
@@ -1812,22 +1882,27 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
   FieldEvent_Wait(20);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+  // "Fear not... This child is harmless."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "He does look kind of...small..."
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   FieldActor_StartRepeatedMotion(ACTOR_WEREWOLF, 3);
   Actor_SetAttachedEffect(ACTOR_WEREWOLF,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
+  // "Grrrrrrr..."
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
+  // "Tell me, who are you? How did you come to be here?"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   FieldActor_Jump(ACTOR_WEREWOLF, 6, 15);
   FieldActor_Jump(ACTOR_WEREWOLF, 6, 23);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+  // "I should like to ask you the same question."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1838,10 +1913,14 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
+  // "Could it be? Do you outsiders possess the power to reveal the unseen?"
+  // Yes: "Of course... I was certain that you must." No: "Impossible... Without
+  // Reveal, you could not have entered this cave."
   Event_OpenMessage(ACTOR_MAHA, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     FieldEvent_Wait(40);
     Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+    // "Impossible... Without Reveal, you could not have entered this cave."
     FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
     gFieldState->message = (gFieldState->message + 1);
   } else {
@@ -1849,30 +1928,40 @@ void Garoh_WerewolvesRevealThemselves(void) {
     Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
     FieldEvent_Wait(10);
     gFieldState->message = (gFieldState->message + 1);
+    // "Of course... I was certain that you must."
     FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   }
   Actor_RunRepeatedMotion(ACTOR_WEREWOLF, 2);
   FieldEvent_Wait(10);
+  // "Grawooo..."
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_EAST, 0);
   FieldEvent_Wait(30);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
+  // "Yes, you are correct. They must have passed the challenge of Air's Rock."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Er... How come that kid doesn't talk, like you?"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
+  // "When we become werewolves, speaking the human tongue becomes more
+  // difficult."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
+  // "But you can... You must be someone special, then..."
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+  // "Hurh hurr hrrr... 'Special'? Perhaps. Why don't you
+  // just call me Maha..."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "So... I assume you also can use Whirlwind..."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1882,6 +1971,9 @@ void Garoh_WerewolvesRevealThemselves(void) {
   }
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
+  // "If you learned Reveal on Air's Rock, you must also know Whirlwind." Yes:
+  // "That's right... I think we can tell Maha that we're Adepts." No: "I don't
+  // think we need to hide the fact that we're Adepts from Maha..."
   FieldMessage_ShowAtActor(ACTOR_MAHA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
@@ -1894,6 +1986,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
     FieldEvent_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
     FieldEvent_Wait(20);
+    // "I don't think we need to hide the fact that we're Adepts from Maha..."
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
     gFieldState->message = (gFieldState->message + 1);
   } else {
@@ -1901,11 +1994,13 @@ void Garoh_WerewolvesRevealThemselves(void) {
     Actor_AnimateThenWait(ACTOR_JENNA, ANIM_NOD, 20);
     FieldEvent_Wait(20);
     gFieldState->message = (gFieldState->message + 1);
+    // "That's right... I think we can tell Maha that we're Adepts."
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   }
   Actor_FaceDirection(ACTOR_MAHA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(30);
+  // "Awooo..."
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
@@ -1916,13 +2011,20 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   FieldEvent_Wait(10);
+  // "What did he say? I don't understand..."
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
+  // "He wanted to know what an Adept is... A question I would like answered as
+  // well."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
+  // "Adepts tap the power of elemental energies to generate forces like
+  // Whirlwind..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Elementals... You mean the four elements, the powers of earth and fire,
+  // water and wind?"
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
@@ -1935,41 +2037,55 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
+  // "That is correct. These elements together comprise everything in our
+  // world..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
+  // "Interesting. Very interesting..."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_WEREWOLF, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Awooo..."
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
+  // "Um... What did he say that time?"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
+  // "He asked if there were no longer any need to hide from you..."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "...Why did he have to hide in here in the first place?"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_WEREWOLF, 2);
   FieldEvent_Wait(10);
+  // "Aaah-Ah-Awoooh! Hawawoooh!"
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   FieldEvent_Wait(20);
+  // "No doubt, most would find the sight of a werewolf rather unnerving..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
+  // "You are, sadly, correct. Many consider ours an accursed race."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "And if they found you in your werewolf form?"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
+  // "...Once, our people were burned at the stake as abominations... They
+  // called this 'purification.'"
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD, 33);
+  // "Horrible..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
@@ -1978,6 +2094,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldActor_Jump(ACTOR_WEREWOLF, 6, 15);
   FieldActor_Jump(ACTOR_WEREWOLF, 6, 23);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "But...this little one... He won't get excited and try to bite, will he?"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_MAHA, 2.5);
   Actor_SetSpeed(ACTOR_WEREWOLF, 2.5);
@@ -1991,7 +2108,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_WalkByAndWait(ACTOR_WEREWOLF, 16, 0);
   FieldEvent_Wait(1);
   Actor_Get(ACTOR_WEREWOLF)->steeringFlags |= ACTOR_FACES_MOTION;
-  FieldActor_SetAnimation(ACTOR_WEREWOLF, 5);
+  FieldActor_SetAnimation(ACTOR_WEREWOLF, ANIM_WEREWOLF_SIT);
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_WEREWOLF, 1.3);
   Actor_SetSpeed(ACTOR_MAHA, 0.7);
@@ -2012,22 +2129,29 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(20);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "Child, return to your home."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_WEREWOLF, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Arrooo?"
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+  // "Don't worry. We can trust them... Go back home now."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(45);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_WEST, 0);
   FieldEvent_Wait(20);
+  // "Aarrrooo?"
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+  // "They are Adepts, not unlike us werewolves... They guard an ancient
+  // secret."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(45);
   Actor_FaceDirection(ACTOR_MAHA, FACING_EAST, 0);
   FieldEvent_Wait(20);
+  // "We can trust them. They will not betray us to the world."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_WEREWOLF, ANIM_NOD, 20);
   FieldEvent_Wait(20);
@@ -2035,6 +2159,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(35);
   Actor_AnimateThenWait(ACTOR_WEREWOLF, ANIM_NOD, 20);
   FieldEvent_Wait(20);
+  // "Woof."
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
@@ -2066,6 +2191,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_SetPosition(ACTOR_WEREWOLF, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
+  // "It has grown quite late."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
@@ -2076,16 +2202,22 @@ void Garoh_WerewolvesRevealThemselves(void) {
   }
   FieldEvent_Wait(30);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
+  // "Why don't you go to the inn and rest..."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "But then..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "I will not leave this place."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "You aren't going home?"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "When I learned Reveal, I lost my human form. The wild is my home now."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "So, Master Maha, you always look this way?"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
@@ -2093,17 +2225,21 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
+  // "And the little one?"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+  // "The child changed because he looked directly at the full moon."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(30);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
+  // "So, by tomorrow morning, he will have returned to his human form again?"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "Correct. Now, let us retire."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
@@ -2230,42 +2366,57 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
+  // "Would you mind telling me a little more about werewolves?"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_WalkByAndWait(ACTOR_MAHA, -8, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "You want to know the reason we possess the power to transform into
+  // beasts?"
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Ah... Well, I, er... Actually, yes."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Do you find it strange that we can change our shapes?"
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "Well, ummm... Yes."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
+  // "But surely changing one's shape is not really all that unusual."
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "What are you getting at?"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_WalkByAndWait(ACTOR_MAHA, 16, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "Think about the caterpillar for a moment. When the time is right, does it
+  // not transform into a beautiful butterfly?"
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Well, yes. It's only natural..."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
+  // "And the pill bug and hedgehog? Do they not change their shapes to protect
+  // themselves?"
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   FieldEvent_Wait(10);
+  // "I have heard of these creatures, yes..."
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_WalkByAndWait(ACTOR_MAHA, -8, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "And many amphibians possess the power to change color at will, correct?"
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
@@ -2275,37 +2426,48 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(25);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "In light of all this, do you mean to tell me you find werewolves so
+  // abnormal?"
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Hrmm, well... To be honest, I hadn't thought of it that way before..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+  // "Perhaps you simply did not give it enough thought."
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 45);
   FieldActor_Jump(ACTOR_KRADEN, 6, 15);
   FieldActor_Jump(ACTOR_KRADEN, 6, 23);
+  // "How insulting! I, sir... am a SCIENTIST!"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Indeed! A scientist? That is impressive."
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_MAHA, FACING_NORTH, 0);
   FieldEvent_Wait(30);
+  // "I have spent a great deal of time thinking about werewolves."
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_MAHA, 0, 0);
   Actor_WalkByAndWait(ACTOR_MAHA, 4, -12);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
+  // "For a time, I even felt cursed to have been born a werewolf..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_WalkByAndWait(ACTOR_MAHA, 4, -12);
   FieldEvent_Wait(10);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+  // "But after taking a more objective look at nature..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
+  // "I realized that weaker species have survived by evolving...by
+  // transforming. Don't you agree?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
@@ -2314,33 +2476,45 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(20);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "Think about it for a moment. Without changing their bodies with weapons
+  // and armor... Humans would be very weak creatures indeed."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
+  // "I believe that evolving into werewolves is just one way for humanity to
+  // survive..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
+  // "But that's..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "Of course, there's no way I can prove this theory."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
+  // "But I felt that our ability to use Whirlwind was evidence of this."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Whirlwind? Why?"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "I had thought only the people of Garoh could use Whirlwind."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "It was a gift known only to werewolves, to Garoh's pack..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "And that only a chosen few could use Reveal..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+  // "But now I find that you, too, can use these... What does it all mean?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
@@ -2352,6 +2526,7 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
+  // "Why are you able to use Whirlwind, and what is an Adept?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
     Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
@@ -2363,26 +2538,36 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(25);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
+  // "Master Maha, do you know of a continent called Angara? It lies far north
+  // of the Eastern Sea."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Angara?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "In the middle of Angara, there is a peak called Mt. Aleph."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "Mt. Aleph? ...Then it's true! Our legends say this peak has stood since
+  // this world began!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "If Mt. Aleph does exist, then perhaps our legends are true!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "It does exist..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "These two hail from the village at the base of Mt. Aleph, a village called
+  // Vale."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(15);
@@ -2390,6 +2575,7 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(30);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "They come from Mt. Aleph!? Incredible!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_AnimateThenWait(ACTOR_JENNA, ANIM_NOD, 20);
@@ -2398,6 +2584,8 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(25);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "And they are both Adepts. And while their powers may vary... Everyone from
+  // Vale is an Adept to a certain degree."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   FieldActor_StartRepeatedMotion(ACTOR_MAHA, 3);
   Actor_SetAttachedEffect(ACTOR_MAHA,
@@ -2405,14 +2593,18 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(40);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
+  // "Then, does that not make them like us in Garoh?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "In Vale, the myths say that Mt. Aleph itself gave birth to the Adepts..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "This is not what the legends of Garoh tell us..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   FieldEvent_Wait(20);
+  // "As a people, they are quite gifted...but it goes far beyond that..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_WalkByAndWait(ACTOR_KRADEN, 16, 0);
   FieldEvent_Wait(20);
@@ -2433,10 +2625,13 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldCamera_MoveTo(344, CAMERA_KEEP, 208, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
+  // "The mystical stones on Mt. Aleph... The Psynergy Stones... They are
+  // closely linked to the powers of the townsfolk."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_MAHA, 1.2);
   Actor_WalkByAndWait(ACTOR_MAHA, 16, 16);
   Actor_SetSpeed(ACTOR_MAHA, 0.7);
+  // "'Psynergy Stones,' you say?"
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
@@ -2448,22 +2643,29 @@ void Garoh_MahaTellsTheLegend(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST, 0);
   FieldEvent_Wait(30);
+  // "If there were similar stones in Garoh, it might explain your powers as
+  // well."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
+  // "And what manner of stones are these Psynergy Stones?"
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
+  // "You've seen them, Maha! The shining stone at the heart of Air's Rock."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "I know the stone you speak of, but..."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD, 33);
+  // "Air's Rock is quite far from Garoh."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
+  // "I don't see how it could affect the people here."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
@@ -2471,6 +2673,9 @@ void Garoh_MahaTellsTheLegend(void) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   FieldEvent_Wait(20);
+  // "I wonder... Could it be the wind?" Yes: "You probably figured it out for
+  // yourself already, Felix." No: "I guess I couldn't have expected you to
+  // understand, Felix..."
   Event_OpenMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
@@ -2480,11 +2685,13 @@ void Garoh_MahaTellsTheLegend(void) {
   }
   if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     FieldEvent_Wait(25);
+    // "You probably figured it out for yourself already, Felix."
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
     gFieldState->message = (gFieldState->message + 1);
   } else {
     FieldEvent_Wait(40);
     gFieldState->message = (gFieldState->message + 1);
+    // "I guess I couldn't have expected you to understand, Felix..."
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   }
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2496,23 +2703,32 @@ void Garoh_MahaTellsTheLegend(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
+  // "There were strong winds blowing within Air's Rock... Those winds would
+  // carry far..."
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Carry? Carry what?"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Ugh! You're so dense! The power of the Psynergy Stone!"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+  // "How is that possible? How could the stone's power be carried on the wind?"
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  // "Do not belittle the power of the wind!"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_AnimateThenWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD, 33);
+  // "Given time, the wind can grind great mountains down to sand!"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   FieldEvent_Wait(10);
+  // "I mean, the wind at Air's Rock was strong enough to blow us off the
+  // ground!"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
@@ -2525,6 +2741,8 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   FieldEvent_Wait(10);
+  // "So why couldn't the wind carry particles of the stone all the way to
+  // Garoh?"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   FieldActor_StartRepeatedMotion(ACTOR_MAHA, 3);
   Actor_SetAttachedEffect(ACTOR_MAHA,
@@ -2554,30 +2772,41 @@ void Garoh_MahaTellsTheLegend(void) {
   Actor_SetAttachedEffect(ACTOR_MAHA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
+  // "Those particles from the Psynergy Stone must be charged with its power!"
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 3);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
+  // "This explains why your Psynergy is weaker than that of Vale's people...
+  // You've been exposed to smaller particles."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "The wind patterns might also affect who among us in Garoh can use
+  // Whirlwind."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
+  // "Of course, this is all mere conjecture, but it does offer us some
+  // clues..."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "Thank you, umm..."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_SHEBA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "It's Sheba. I'm pleased to meet you."
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "Oh! Haven't we given you our names, Master Maha?"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
+  // "I am Kraden."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
@@ -2585,6 +2814,7 @@ void Garoh_MahaTellsTheLegend(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "This is Jenna..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   FieldEvent_Wait(20);
@@ -2596,6 +2826,7 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(10);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
+    // "Piers..."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
     Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
     FieldEvent_Wait(20);
@@ -2613,6 +2844,7 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(20);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
+  // "And Felix."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
@@ -2624,8 +2856,10 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(30);
   Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(25);
+  // "You must permit me to thank you for all you've done."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD, 33);
+  // "No, no, please... We don't need any thanks..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_NORTH, 0);
   FieldEvent_Wait(40);
@@ -2663,6 +2897,7 @@ void Garoh_MahaTellsTheLegend(void) {
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
+  // "That's too bad... I was going to give you this."
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
@@ -2695,17 +2930,23 @@ void Garoh_MahaTellsTheLegend(void) {
   Actor_WalkByAndWait(ACTOR_ETHER, 0, 8);
   FieldEvent_Wait(5);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "It's a Djinni!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
+  // "A 'Djinni'? Is that what you call them?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_WalkByAndWait(ACTOR_MAHA, 0, 24);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(10);
+  // "When he is with you, he adds to your power. He is very helpful."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "I suppose you'll be continuing your journey now?" Yes: "So you intend to
+  // travel by sea? That is a long journey..." No: "So, you still can't tell
+  // just what sort of journeys await you..."
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
@@ -2716,11 +2957,13 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(20);
   if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     FieldEvent_Wait(30);
+    // "So you intend to travel by sea? That is a long journey..."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
     gFieldState->message = (gFieldState->message + 1);
   } else {
     FieldEvent_Wait(40);
     gFieldState->message = (gFieldState->message + 1);
+    // "So, you still can't tell just what sort of journeys await you..."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   }
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
@@ -2732,6 +2975,8 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
+  // "In that case, I think you will get more use out of this 'Djinni' than I
+  // will."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_SetSpeed(ACTOR_MAHA, 2.4);
   Actor_Get(ACTOR_MAHA)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -2759,6 +3004,7 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(20);
   gFieldState->message = (gFieldState->message + 1);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Another Djinni! Talk about lucky!"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   FieldEvent_Wait(30);
@@ -2766,17 +3012,20 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
+  // "This is a great gift. We are quite thankful."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+  // "You don't need to thank me. Just take care on your travels."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Good luck with the... werewolf thing, Maha..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
@@ -2799,6 +3048,7 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
+  // "Well, Felix, we must be going now."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(20);
@@ -2925,8 +3175,8 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(3, GarohWerewolfCave, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, GarohWerewolfCave, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, GarohWerewolfCave, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, GarohWerewolfCave, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, GarohWerewolfCave, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_WEREWOLF_CAVE_TO_ROOM_BEHIND_ROCK, GarohWerewolfCave, GAROH_WEREWOLF_CAVE_ROOM_BEHIND_ROCK_FROM_CAVE, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_WEREWOLF_CAVE_ROOM_BEHIND_ROCK_TO_CAVE, GarohWerewolfCave, GAROH_WEREWOLF_CAVE_FROM_ROOM_BEHIND_ROCK, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(GAROH_WEREWOLF_CAVE_TO_GAROH_ROOMS_HOUSES, GarohRoomsHouses, GAROH_ROOMS_HOUSES_FROM_GAROH_WEREWOLF_CAVE, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };

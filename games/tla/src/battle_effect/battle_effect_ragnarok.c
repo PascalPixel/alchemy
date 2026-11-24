@@ -675,6 +675,3 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 #undef FLASH_LIFE
 #undef FLASH_BURN_FRAMES
 #undef SWORD_GROUND_Y
-
-/// Judgment's sprite scale, read by the part that follows.
-extern const struct Scale gJudgment_UnitScale;

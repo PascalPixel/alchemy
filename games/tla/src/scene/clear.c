@@ -1344,10 +1344,11 @@ s32 Clear_EnterPassword(void) {
           struct Window *box;
           struct MainRoutineState *party;
           s16 crc;
+          s32 decodedLength;
 
-          action = Clear_DecodePassword(gClear_PasswordText, length,
-                                        gClear_DecodedPassword);
-          crcLength = action - PASSWORD_CRC_BYTES;
+          decodedLength = Clear_DecodePassword(gClear_PasswordText, length,
+                                               gClear_DecodedPassword);
+          crcLength = decodedLength - PASSWORD_CRC_BYTES;
           check =
               Clear_CalculatePasswordCrc16(crcLength, gClear_DecodedPassword);
 
@@ -1356,7 +1357,7 @@ s32 Clear_EnterPassword(void) {
                               WINDOW_FLAG_INSTANT);
           crc = check;
           if (gClear_DecodedPassword[crcLength] == (u16)crc >> 8 &&
-              gClear_DecodedPassword[action - 1] == (u16)crc % 256) {
+              gClear_DecodedPassword[decodedLength - 1] == (u16)crc % 256) {
             Text_DrawMessageAsTiles((s32)MsgFieldPasswordAccepted, box, 0, 0);
             Sound_Play(SE_MENU_CONFIRM);
             do {

@@ -11,6 +11,10 @@
 
 struct Actor;
 
+/// The C library's absolute value, which the channel puzzle measures its
+/// paths with.
+s32 abs(s32);
+
 void GabombaStatue_TurnCogs(s32 direction);
 
 void GabombaStatue_StopClock(void);
@@ -84,12 +88,11 @@ void GabombaStatue_InitializeSteel(void);
 void GabombaStatue_InitializeCogs(void);
 void GabombaStatue_InitializeArrows(void);
 void GabombaStatue_InitializePinion(void);
-void GabombaStatue_StartClock();
-void GabombaStatue_ResetClock();
+void GabombaStatue_StartClock(s32 mode);
+void GabombaStatue_ResetClock(void);
 s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
                           s32 direction, s32 last, s32 bit);
 void GabombaStatue_WritePiece(s32 x, s32 z, s32 kind, s32 state);
-s32 abs(s32);
 s32 GabombaStatue_PickPiece(s32 row, s32 column, s32 direction);
 void GabombaStatue_SetBlocksRaised(s32 id, s32 show);
 

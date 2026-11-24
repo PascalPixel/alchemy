@@ -171,6 +171,20 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 /// again without its flags.
 enum { ENTRANCE_AFTER_THE_FIGHT = 77, ENTRANCE_ISAAC_AND_IVAN_FALL = 99 };
 
+/// The poses of the fight on the terrace, by each sheet: Isaac hunched and
+/// battered, then on his back; Ivan on one knee, then down; Mia kneeling;
+/// Agatio bent over, catching his breath; Garet seen from behind, hanging by
+/// his hands from the ledge.
+enum {
+  ANIM_ISAAC_STAGGER = 38,
+  ANIM_ISAAC_LIE_BEATEN = 39,
+  ANIM_IVAN_KNEEL = 31,
+  ANIM_IVAN_LIE_BEATEN = 32,
+  ANIM_MIA_KNEEL = 9,
+  ANIM_AGATIO_CATCH_BREATH = 8,
+  ANIM_GARET_HANG = 14
+};
+
 /// The energy block's gap: the cell it drops into and lights the path from.
 enum { ENERGY_BLOCK_GAP_CELL_X = 63, ENERGY_BLOCK_GAP_CELL_Z = 15 };
 /// The path from the energy block's gap lit, and the Hover pad at its end.
@@ -740,9 +754,9 @@ void JupiterLighthouse_PlaceForTheFight(void) {
     FieldTask_AddFrame((void (*)(void))JupiterLighthouse_KeepGaretHanging,
                        priority);
   }
-  Actor_SetAnimation(ACTOR_ISAAC, 38);
-  Actor_SetAnimation(ACTOR_IVAN, 31);
-  Actor_SetAnimation(ACTOR_MIA, 9);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_ISAAC_STAGGER);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_IVAN_KNEEL);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_KNEEL);
 }
 
 extern u32 gJupiterLighthouse_FelixArrivesWestScript[];
@@ -769,6 +783,11 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 west) {
   FieldEvent_Wait(26);
   Event_PlaySound(SE_FLOOR_SWITCH);
   Actor_SetScript(ACTOR_FELIX, gJupiterLighthouse_FelixLooksAroundScript);
+  // Mia's and Garet's cries, then Isaac's and Ivan's, in windows on the
+  // screen's right (tile column 20 or 21) when the party is on the west side,
+  // else on its left (column 5): the first speaker's at tile row 9, the
+  // second's at row 2, each portrait 5 columns left of its window and a row
+  // above.
   if (west != 0) {
     // "Ahhhh!!!" and "Mia!"
     FieldEvent_ShowTwoMessagesAndWait(ACTOR_MIA, 20, 9, 15, 8, ACTOR_GARET, 20,
@@ -898,7 +917,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 west) {
   // "Don't worry about me... I'm fine, but Garet..."
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 5);
   Actor_FaceDirectionAndWait(ACTOR_MIA, angle);
-  Actor_SetAnimation(ACTOR_MIA, 9);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_KNEEL);
   // "Garet, you're only using one arm to hang on... What's the matter?"
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 5);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
@@ -919,19 +938,19 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 west) {
   Actor_SetSpeed(ACTOR_MIA, 0.1);
   Actor_SetDestinationOffset(ACTOR_MIA, 4, 2);
   FieldActor_WaitForMoveById(ACTOR_MIA);
-  Actor_SetAnimation(ACTOR_MIA, 9);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_KNEEL);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Actor_SetDestinationOffset(ACTOR_MIA, -2, 2);
   FieldActor_WaitForMoveById(ACTOR_MIA);
-  Actor_SetAnimation(ACTOR_MIA, 9);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_KNEEL);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Actor_SetDestinationOffset(ACTOR_MIA, 2, 1);
   FieldActor_WaitForMoveById(ACTOR_MIA);
-  Actor_SetAnimation(ACTOR_MIA, 9);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_KNEEL);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Actor_SetDestinationOffset(ACTOR_MIA, -2, -1);
   FieldActor_WaitForMoveById(ACTOR_MIA);
-  Actor_SetAnimation(ACTOR_MIA, 9);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_KNEEL);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   FieldEvent_Wait(40);
   Actor_SetDestinationOffset(ACTOR_MIA, 0, -2);
@@ -1068,7 +1087,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 west) {
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
   Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, angle);
-  Actor_SetAnimation(ACTOR_ISAAC, 38);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_ISAAC_STAGGER);
   FieldCamera_MoveTo(784, 0, 274, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
@@ -1283,7 +1302,7 @@ void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
-  Actor_SetAnimation(ACTOR_IVAN, 32);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_IVAN_LIE_BEATEN);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHWEST);
   // "Keep it together, Ivan!"
@@ -1325,9 +1344,9 @@ void JupiterLighthouse_PlaceTheHurt(void) {
   PLACE(ACTOR_ISAAC, 761, 219, FACING_NORTHWEST);
   PLACE(ACTOR_IVAN, 741, 232, FACING_NORTHWEST);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ISAAC), 0);
-  Actor_SetAnimation(ACTOR_ISAAC, 39);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_ISAAC_LIE_BEATEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
-  Actor_SetAnimation(ACTOR_IVAN, 32);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_IVAN_LIE_BEATEN);
   PLACE(ACTOR_JENNA, 761, 203, FACING_SOUTH);
   PLACE(ACTOR_SHEBA, 725, 232, FACING_EAST);
   PLACE(ACTOR_KRADEN, 729, 203, FACING_SOUTHEAST);
@@ -1375,15 +1394,15 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
                              FACING_NORTHWEST);
   Actor_SetScript(ACTOR_MIA, (s32)gJupiterLighthouse_MiaScript);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ISAAC), 0);
-  Actor_SetAnimation(ACTOR_ISAAC, 39);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_ISAAC_LIE_BEATEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
-  Actor_SetAnimation(ACTOR_IVAN, 32);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_IVAN_LIE_BEATEN);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId((s32)MsgWeDidItAgatio);
   // "We did it, Agatio!"
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
-  Actor_SetAnimation(ACTOR_AGATIO, 8);
+  Actor_SetAnimation(ACTOR_AGATIO, ANIM_AGATIO_CATCH_BREATH);
   FieldEvent_Wait(40);
   // "It was close, but we did it."
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
@@ -2154,11 +2173,11 @@ LATE_DATA struct Trigger gSceneEvents[] = {
 /// the Japanese edition set at a height of 12 pixels.
 LATE_DATA u32 gJupiterLighthouse_GaretHangsScript[] = {
 #if !TLA_PATCH_1
-    SC_ANIMATION(14),
+    SC_ANIMATION(ANIM_GARET_HANG),
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, toFIXED(12)),
 #else
-    SC_ANIMATION(14),
+    SC_ANIMATION(ANIM_GARET_HANG),
     SC_SET(SW_MOTION, 0),
     SC_SET(SW_Y, toFIXED(12)),
 #endif

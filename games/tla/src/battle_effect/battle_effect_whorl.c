@@ -39,7 +39,8 @@
 /// The motes that trail the funnel of Whorl and Gale.
 #define TWISTING_COLUMN_MOTES 16
 
-/// The angle a frame the Jupiter Djinni's bob turns by as it rides the funnel.
+/// The angle a frame the Jupiter Djinni's bob turns by as it rides the funnel,
+/// about 18 degrees: a bob every 20 frames.
 #define TWISTING_COLUMN_BOB_STEP 3304
 
 /// How far the Jupiter Djinni sways to either side as it rides the funnel, a
@@ -52,10 +53,14 @@
 #define TWISTING_COLUMN_LIFT_STEPS 16
 
 /// Lethe Albion's and Raging Flood's bands of water: 128 pixels long and 48
-/// wide, rippling up to 28 pixels from their axis.
+/// wide, rippling up to 28 pixels from their axis, and stretched to about 2.09
+/// times their length, wider than the screen. Their swirls are squares
+/// stretched to about 1.31 across and flattened to half their height.
 #define TWISTING_COLUMN_BAND_HALF_LENGTH 64
 #define TWISTING_COLUMN_BAND_WIDTH 48
 #define TWISTING_COLUMN_BAND_RIPPLE 28
+#define TWISTING_COLUMN_BAND_STRETCH 137072
+#define TWISTING_COLUMN_SWIRL_STRETCH 85536
 
 /// Poison Flow's stream ripples up to 64 pixels from its axis.
 #define TWISTING_COLUMN_STREAM_RIPPLE 64
@@ -71,8 +76,16 @@
 #define TWISTING_COLUMN_WAVE_RISE 64
 #define TWISTING_COLUMN_WAVE_RISE_STEP (TRIG_TURN / 2 / TWISTING_COLUMN_FRAMES)
 
-/// How far Whorl's and Gale's funnel turns about its length from the upright.
+/// How far Whorl's and Gale's funnel turns about its length from the upright,
+/// about 17 degrees: it slants down from the top right onto the target.
 #define TWISTING_COLUMN_LEAN 3096
+
+/// The column's brightest shades (RenderModel.shade), and the frames it starts
+/// to fade out.
+#define TWISTING_COLUMN_BAND_SHADE (-20)
+#define TWISTING_COLUMN_FLOOD_SHADE (-8)
+#define TWISTING_COLUMN_FADE_FRAME 46
+#define TWISTING_COLUMN_FUNNEL_FADE_FRAME 30
 
 /// The twisting column shared by the Djinn Whorl and Gale, Lethe Albion,
 /// Poison Flow and Raging Flood, a textured strip turned about its length.
@@ -105,9 +118,12 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
   void *vertices = TWISTING_COLUMN_TRANSFORMED;
   u8 *sheet = TWISTING_COLUMN_SHEET;
   void *mesh = TWISTING_COLUMN_MESH;
-  s32 point[3];
-  s32 screen[3];
-  s32 pos[3];
+  // Where the Jupiter Djinni's entrance leaves it, in the world and on the
+  // screen, and where it rides the funnel this frame. Lethe Albion and Raging
+  // Flood set djinniPlace to the caster's place, which they never read.
+  s32 djinniStart[3];
+  s32 djinniScreen[3];
+  s32 djinniPlace[3];
   struct ScreenPoint moteScreen;
   struct ScreenPoint targetScreen;
   struct ScreenPoint casterScreen;
@@ -123,7 +139,7 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
     BattleEffect_RunDjinniEntrance(
         args,
         DJINNI_ENTRANCE(ELEMENT_JUPITER, args->side, DJINNI_ANCHOR_HIGH_USER_X),
-        screen, point);
+        djinniScreen, djinniStart);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
   } else if (mode == TWISTING_COLUMN_LETHE_ALBION ||
@@ -156,9 +172,9 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
     } else {
       Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE, sheet, 0, 0);
     }
-    pos[0] = caster->x;
-    pos[1] = caster->y;
-    pos[2] = caster->z;
+    djinniPlace[0] = caster->x;
+    djinniPlace[1] = caster->y;
+    djinniPlace[2] = caster->z;
     Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                Ram_MapCellBuffer + TWISTING_COLUMN_FLASH_BURST,
                                1, 0);
@@ -247,7 +263,7 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
             struct Particle *mote = state->particles;
 
             for (i = 0; i != TWISTING_COLUMN_SAVED_TARGET; i++, mote++) {
-              SET_POSITION(mote, point[0],
+              SET_POSITION(mote, djinniStart[0],
                            INTtoFIXED(Random16() & 31) + toFIXED(64), 0);
               mote->velocityX = ((Random16() & 63) + 64) << 13;
               if (mote->x > 0) {
@@ -264,23 +280,24 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
       if (mode <= TWISTING_COLUMN_GALE) {
         s32 k;
 
-        pos[0] = point[0] + Trig_Sin(frame * (TRIG_TURN / 32)) *
-                                TWISTING_COLUMN_DJINNI_SWAY;
+        djinniPlace[0] = djinniStart[0] + Trig_Sin(frame * (TRIG_TURN / 32)) *
+                                              TWISTING_COLUMN_DJINNI_SWAY;
         k = 4;
         if (frame > 39) {
           k = frame - 36;
         }
-        pos[1] = point[1] + INTtoFIXED(k) -
-                 Trig_Cos(frame * TWISTING_COLUMN_BOB_STEP) * k;
+        djinniPlace[1] = djinniStart[1] + INTtoFIXED(k) -
+                         Trig_Cos(frame * TWISTING_COLUMN_BOB_STEP) * k;
         if (frame > 27) {
-          pos[1] = pos[1] + frame * toFIXED(4) - toFIXED(112);
+          djinniPlace[1] = djinniPlace[1] + frame * toFIXED(4) - toFIXED(112);
         }
-        pos[2] = point[2];
-        EffectPosition_ProjectPoint(pos, (struct ScreenPoint *)screen);
+        djinniPlace[2] = djinniStart[2];
+        EffectPosition_ProjectPoint(djinniPlace,
+                                    (struct ScreenPoint *)djinniScreen);
         blit[0](canvas,
                 state->sheet + TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES,
-                screen[0] / 2 - 10, screen[1] - 20, SMALL_DJINNI_WIDTH,
-                SMALL_DJINNI_HEIGHT);
+                djinniScreen[0] / 2 - 10, djinniScreen[1] - 20,
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       }
       if (frame > 7) {
         if (mode <= TWISTING_COLUMN_GALE && frame <= 47) {
@@ -302,26 +319,26 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
             }
           } else if (frame <= 19) {
             target->verticalMotionStrength = 0;
-            target->x +=
-                (pos[0] - state->particles[TWISTING_COLUMN_SAVED_TARGET].x) /
-                TWISTING_COLUMN_DRIFT_STEPS;
-            target->y +=
-                (pos[1] - state->particles[TWISTING_COLUMN_SAVED_TARGET].y) /
-                TWISTING_COLUMN_DRIFT_STEPS;
-            target->z +=
-                (pos[2] - state->particles[TWISTING_COLUMN_SAVED_TARGET].z) /
-                TWISTING_COLUMN_DRIFT_STEPS;
+            target->x += (djinniPlace[0] -
+                          state->particles[TWISTING_COLUMN_SAVED_TARGET].x) /
+                         TWISTING_COLUMN_DRIFT_STEPS;
+            target->y += (djinniPlace[1] -
+                          state->particles[TWISTING_COLUMN_SAVED_TARGET].y) /
+                         TWISTING_COLUMN_DRIFT_STEPS;
+            target->z += (djinniPlace[2] -
+                          state->particles[TWISTING_COLUMN_SAVED_TARGET].z) /
+                         TWISTING_COLUMN_DRIFT_STEPS;
           } else if (frame <= 31 && (args->variant == EFFECT_VARIANT_STRONGER ||
                                      frame <= 23)) {
-            target->x +=
-                (pos[0] - state->particles[TWISTING_COLUMN_SAVED_TARGET].x) /
-                TWISTING_COLUMN_LIFT_STEPS;
-            target->y +=
-                (pos[1] - state->particles[TWISTING_COLUMN_SAVED_TARGET].y) /
-                TWISTING_COLUMN_LIFT_STEPS;
-            target->z +=
-                (pos[2] - state->particles[TWISTING_COLUMN_SAVED_TARGET].z) /
-                TWISTING_COLUMN_LIFT_STEPS;
+            target->x += (djinniPlace[0] -
+                          state->particles[TWISTING_COLUMN_SAVED_TARGET].x) /
+                         TWISTING_COLUMN_LIFT_STEPS;
+            target->y += (djinniPlace[1] -
+                          state->particles[TWISTING_COLUMN_SAVED_TARGET].y) /
+                         TWISTING_COLUMN_LIFT_STEPS;
+            target->z += (djinniPlace[2] -
+                          state->particles[TWISTING_COLUMN_SAVED_TARGET].z) /
+                         TWISTING_COLUMN_LIFT_STEPS;
             target->scaleX +=
                 (FIXED_ONE / 4 -
                  state->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX) /
@@ -359,9 +376,9 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
               s32 size = (i & 3) + 1;
 
               if (mode == TWISTING_COLUMN_WHORL) {
-                mote->x += (pos[0] - mote->velocityX) / 32;
-                mote->y += (pos[1] - mote->velocityY) / 32;
-                mote->z += (pos[2] - mote->velocityZ) / 32;
+                mote->x += (djinniPlace[0] - mote->velocityX) / 32;
+                mote->y += (djinniPlace[1] - mote->velocityY) / 32;
+                mote->z += (djinniPlace[2] - mote->velocityZ) / 32;
               } else {
                 Particle_AdvanceWithGravity3D(mote, 62, toFIXED(1) / 64);
               }
@@ -436,23 +453,29 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
       }
 
       model = Render_AllocateModelList(1);
+      // The bands fade in four levels a frame from MODEL_SHADE_INVISIBLE to
+      // their brightest, Lethe Albion's TWISTING_COLUMN_BAND_SHADE and Raging
+      // Flood's TWISTING_COLUMN_FLOOD_SHADE. From TWISTING_COLUMN_FADE_FRAME
+      // Lethe Albion's fade out eight levels a frame; Raging Flood's count up
+      // from beyond their brightest, and so stay at it.
       if (mode == TWISTING_COLUMN_RAGING_FLOOD) {
-        if (frame <= 45) {
+        if (frame < TWISTING_COLUMN_FADE_FRAME) {
           shade = frame * 4 - 64;
         } else {
-          shade = frame * 8 - 376;
+          shade = (frame - (TWISTING_COLUMN_FADE_FRAME + 1)) * 8;
         }
-        if (shade > -8) {
-          shade = -8;
+        if (shade > TWISTING_COLUMN_FLOOD_SHADE) {
+          shade = TWISTING_COLUMN_FLOOD_SHADE;
         }
       } else {
-        if (frame <= 45) {
+        if (frame < TWISTING_COLUMN_FADE_FRAME) {
           shade = frame * 4 - 64;
         } else {
-          shade = 348 - frame * 8;
+          shade = TWISTING_COLUMN_BAND_SHADE -
+                  (frame - TWISTING_COLUMN_FADE_FRAME) * 8;
         }
-        if (shade > -20) {
-          shade = -20;
+        if (shade > TWISTING_COLUMN_BAND_SHADE) {
+          shade = TWISTING_COLUMN_BAND_SHADE;
         }
       }
       if (shade < MODEL_SHADE_INVISIBLE) {
@@ -532,7 +555,7 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
           }
           Matrix_RotateZ(i * (TRIG_TURN / 64) + TRIG_TURN / 256);
           Matrix_RotateX(i * (TRIG_TURN / 8) - frame * (TRIG_TURN / 32));
-          Matrix_Scale(137072, FIXED_ONE, FIXED_ONE);
+          Matrix_Scale(TWISTING_COLUMN_BAND_STRETCH, FIXED_ONE, FIXED_ONE);
           Render_TransformVertices(gMapGridCellBuffer, vertices,
                                    TWISTING_COLUMN_VERTICES);
           Render_DrawModelList(model);
@@ -607,19 +630,22 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
           Matrix_RotateX(i * (TRIG_TURN / 2));
           Matrix_RotateZ(FIXEDtoINT(
               Trig_Sin((frame + i * 8) * (TRIG_TURN / 32)) * (TRIG_TURN / 32)));
-          Matrix_Scale(85536, FIXED_ONE / 2, FIXED_ONE);
+          Matrix_Scale(TWISTING_COLUMN_SWIRL_STRETCH, FIXED_ONE / 2, FIXED_ONE);
           Render_TransformVertices(gMapGridCellBuffer, vertices,
                                    TWISTING_COLUMN_VERTICES);
           Render_DrawModelList(model);
         }
       } else {
-        if (frame <= 29) {
+        // The funnel and Poison Flow's stream fade in alike, and out from
+        // TWISTING_COLUMN_FUNNEL_FADE_FRAME.
+        if (frame < TWISTING_COLUMN_FUNNEL_FADE_FRAME) {
           shade = frame * 4 - 64;
         } else {
-          shade = 220 - frame * 8;
+          shade = TWISTING_COLUMN_BAND_SHADE -
+                  (frame - TWISTING_COLUMN_FUNNEL_FADE_FRAME) * 8;
         }
-        if (shade > -20) {
-          shade = -20;
+        if (shade > TWISTING_COLUMN_BAND_SHADE) {
+          shade = TWISTING_COLUMN_BAND_SHADE;
         }
         if (shade > MODEL_SHADE_INVISIBLE) {
           model->shade = shade;
@@ -631,7 +657,7 @@ void BattleEffect_RunTwistingColumn(struct BattleEffectParams *args, u32 mode) {
             model->scrollU = ~(frame << 3) & TEXTURE_SCROLL_MASK;
           }
           model->scrollV = 0;
-          Matrix_TranslateVector(pos);
+          Matrix_TranslateVector(djinniPlace);
           Matrix_Translate(0, toFIXED(16), 0);
           for (i = 0; i != 3; i++) {
             Matrix_Push();
@@ -713,3 +739,9 @@ void BattleEffect_RunCannon(struct BattleEffectParams *args) {
 #undef TWISTING_COLUMN_WAVE_RISE
 #undef TWISTING_COLUMN_WAVE_RISE_STEP
 #undef TWISTING_COLUMN_LEAN
+#undef TWISTING_COLUMN_BAND_STRETCH
+#undef TWISTING_COLUMN_SWIRL_STRETCH
+#undef TWISTING_COLUMN_BAND_SHADE
+#undef TWISTING_COLUMN_FLOOD_SHADE
+#undef TWISTING_COLUMN_FADE_FRAME
+#undef TWISTING_COLUMN_FUNNEL_FADE_FRAME

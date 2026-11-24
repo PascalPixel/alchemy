@@ -381,9 +381,6 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAnemosInnerSanctumEntrance_EmptyTriggers;
 }
 
-/// Whether the game flag is set.
-static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
-
 /// Opens with the window transition. In the last room, gives the six
 /// blocks their symbols, lets the leader stand on them, and once they are
 /// placed this visit leaves them placed and flickering. Back from the
@@ -420,7 +417,7 @@ s32 Scene_Initialize(void) {
       AnemosInnerSanctumEntrance_PlaceBlocks();
     }
   }
-  if (Flag_Test(FLAG_DULLAHAN_FOUGHT)) {
+  if (Event_GetFlag(FLAG_DULLAHAN_FOUGHT)) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     AnemosInnerSanctumEntrance_LightRises();
@@ -509,7 +506,11 @@ void LightSprites_Draw(void) {
 }
 
 /// Takes `size` bytes from the heap for a picture's decompression.
-static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
+static inline void *BumpAlloc(s32 size) {
+  /* FAKEMATCH(wrapper): Heap_Alloc through this inline, which loads its size
+   * afresh. */
+  return Heap_Alloc(size);
+}
 
 #include "shared/light_sprites_init_a.h"
 

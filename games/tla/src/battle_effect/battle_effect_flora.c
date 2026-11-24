@@ -145,7 +145,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   s32 spin;
   s32 spread;
   s32 twist;
-  s32 petals; // gEffectScratch, as FLORA_STATE reads it
+  /* FAKEMATCH(signature): petals, gEffectScratch's address held as an
+   * integer, which FLORA_STATE casts back. */
+  s32 petals;
   s32 i;
   s32 j;
   s32 order;

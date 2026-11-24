@@ -73,6 +73,10 @@ static inline void Actor_HeadToward(s32 id, s32 target) {
 /// plank bridge on its way back out (Champa_MeetAlex).
 #define FLAG_WALKED_INTO_THE_VILLAGE 0x970
 
+/// Kraden's sprite's animation 8: shaking his head again and again, slower
+/// than ANIM_SHAKE_HEAD, until another animation is set.
+#define ANIM_KRADEN_KEEP_SHAKING_HEAD 8
+
 /// The map cells Champa's step and examine triggers answer; a door's cell
 /// takes the number of the exit it leaves by.
 enum ChampaCellBehavior {
@@ -1442,7 +1446,7 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(1);
   Actor_Get(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldEvent_Wait(10);
-  Actor_SetAnimation(ACTOR_KRADEN, 8);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_KRADEN_KEEP_SHAKING_HEAD);
   FieldEvent_Wait(30);
   // "Lord Babi is dead?"
   Event_ShowMessage(ACTOR_KRADEN, 0);

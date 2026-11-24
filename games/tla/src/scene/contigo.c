@@ -50,6 +50,15 @@
 /// (Contigo_WidenCameraBounds).
 #define FLAG_WHOLE_VILLAGE_IN_VIEW FLAG_SCENE_TEMP_00
 
+/// What gMainRoutineState.wheelsPrizes holds in place of a first prize, as
+/// Lucky Wheels and its attendant leave it: no icon matched (also the list's
+/// end), or none to hand out, the player having quit while betting or the
+/// prizes having been given.
+enum LuckyWheelsPrizesMark {
+  WHEELS_PRIZES_END = -1,
+  WHEELS_PRIZES_NONE_TO_HAND_OUT = -2
+};
+
 /// The map cells the village's, the geoglyph's and the houses' trigger rows
 /// answer. A door's cell takes the number of the exit it leaves by, so those
 /// rows use the exit's own name.
@@ -1121,7 +1130,7 @@ void Contigo_TeleportOut(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
 
-  gMainRoutineState.teleportState = 2;
+  gMainRoutineState.teleportState = TELEPORT_ARRIVING;
   Event_SetDestination(SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST,
                        ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_FROM_CONTIGO);
   Event_Wait(40);
@@ -2670,11 +2679,42 @@ void Contigo_InitializeShops(void) {
 
 void ItemDisplay_ShowItem(s32 item, s32 count);
 
+/// Back from a dice game, the attendant reports the coins the party won, with
+/// a jingle for the size of the win, or lost.
+static inline void Contigo_ReportCoinChange(void) {
+  s32 coinChange;
+
+  coinChange = gMainRoutineState.coins - *(s32 *)gSceneState;
+  Event_Start();
+  Event_EndLastingPsynergy(0);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  if (coinChange > 0) {
+    if (coinChange >= LUCKY_DICE_LARGE_WIN)
+      Sound_Play(MUS_SUPER_LUCKY);
+    else if (coinChange >= LUCKY_DICE_MEDIUM_WIN)
+      Sound_Play(MUS_VERY_LUCKY);
+    else
+      Sound_Play(MUS_LUCKY);
+    Event_Wait(20);
+    Event_SetMessageId(COIN_WON_MESSAGE);
+    MessageArgument_Push(coinChange, MESSAGE_ARGUMENT_NUMBER);
+    // "Ya won ... coin! Talk about lucky!"
+    Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
+    Sound_WaitForJingle();
+  } else if (coinChange < 0) {
+    Event_SetMessageId(COIN_LOST_MESSAGE);
+    MessageArgument_Push(-coinChange, MESSAGE_ARGUMENT_NUMBER);
+    // "Ya lost ... coin. Better luck next time."
+    Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
+  }
+  Event_End();
+}
+
 /// Sets up the dice hall: its signs drawn small and its attendants' colours,
 /// and on the party's return from a game the coins won or lost, or the
 /// prizes.
 void Contigo_InitializeLuckyDice(void) {
-  s32 coinChange;
   s8 *wonPrizes;
   s8 *prize;
   s32 item;
@@ -2699,57 +2739,9 @@ void Contigo_InitializeLuckyDice(void) {
   GameFlag_Clear(FLAG_LEFT_FOR_A_GAME);
   // The dice games come back here to report the change in the party's coins.
   if (gMainRoutineState.entrance == ENTRANCE_FROM_SUPER_LUCKY_DICE) {
-    coinChange = gMainRoutineState.coins - *(s32 *)gSceneState;
-    Event_Start();
-    Event_EndLastingPsynergy(0);
-    Event_StartScreenTransition();
-    Event_WaitTransitionFrames();
-    if (coinChange > 0) {
-      if (coinChange >= LUCKY_DICE_LARGE_WIN)
-        Sound_Play(MUS_SUPER_LUCKY);
-      else if (coinChange >= LUCKY_DICE_MEDIUM_WIN)
-        Sound_Play(MUS_VERY_LUCKY);
-      else
-        Sound_Play(MUS_LUCKY);
-      Event_Wait(20);
-      Event_SetMessageId(COIN_WON_MESSAGE);
-      MessageArgument_Push(coinChange, MESSAGE_ARGUMENT_NUMBER);
-      // "Ya won ... coin! Talk about lucky!"
-      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
-      Sound_WaitForJingle();
-    } else if (coinChange < 0) {
-      Event_SetMessageId(COIN_LOST_MESSAGE);
-      MessageArgument_Push(-coinChange, MESSAGE_ARGUMENT_NUMBER);
-      // "Ya lost ... coin. Better luck next time."
-      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
-    }
-    Event_End();
+    Contigo_ReportCoinChange();
   } else if (gMainRoutineState.entrance == ENTRANCE_FROM_LUCKY_DICE) {
-    coinChange = gMainRoutineState.coins - *(s32 *)gSceneState;
-    Event_Start();
-    Event_EndLastingPsynergy(0);
-    Event_StartScreenTransition();
-    Event_WaitTransitionFrames();
-    if (coinChange > 0) {
-      if (coinChange >= LUCKY_DICE_LARGE_WIN)
-        Sound_Play(MUS_SUPER_LUCKY);
-      else if (coinChange >= LUCKY_DICE_MEDIUM_WIN)
-        Sound_Play(MUS_VERY_LUCKY);
-      else
-        Sound_Play(MUS_LUCKY);
-      Event_Wait(20);
-      Event_SetMessageId(COIN_WON_MESSAGE);
-      MessageArgument_Push(coinChange, MESSAGE_ARGUMENT_NUMBER);
-      // "Ya won ... coin! Talk about lucky!"
-      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
-      Sound_WaitForJingle();
-    } else if (coinChange < 0) {
-      Event_SetMessageId(COIN_LOST_MESSAGE);
-      MessageArgument_Push(-coinChange, MESSAGE_ARGUMENT_NUMBER);
-      // "Ya lost ... coin. Better luck next time."
-      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
-    }
-    Event_End();
+    Contigo_ReportCoinChange();
   } else if (gMainRoutineState.entrance == ENTRANCE_FROM_LUCKY_WHEELS) {
     // Lucky Wheels comes back with the icons matched, for the attendant to
     // award a prize for each.
@@ -2759,9 +2751,9 @@ void Contigo_InitializeLuckyDice(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(20);
-    if (wonPrizes[0] == -1) {
+    if (wonPrizes[0] == WHEELS_PRIZES_END) {
       Contigo_OfferLuckyWheels(1);
-    } else if (wonPrizes[0] == -2) {
+    } else if (wonPrizes[0] == WHEELS_PRIZES_NONE_TO_HAND_OUT) {
       Event_SetMessageId(READ_SIGN_MESSAGE);
       // "The rules are listed on the sign. Take a look, take a look."
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
@@ -2769,8 +2761,8 @@ void Contigo_InitializeLuckyDice(void) {
       Event_SetMessageId(CONGRATULATIONS_MESSAGE);
       // "Congratulations!"
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
-      if (wonPrizes[0] != -1) {
-        for (prize = wonPrizes; *prize != -1; prize++) {
+      if (wonPrizes[0] != WHEELS_PRIZES_END) {
+        for (prize = wonPrizes; *prize != WHEELS_PRIZES_END; prize++) {
           if (prize == wonPrizes)
             Event_SetMessageId(FIRST_PRIZE_MESSAGE);
           else
@@ -2785,7 +2777,7 @@ void Contigo_InitializeLuckyDice(void) {
           Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
         }
       }
-      gMainRoutineState.wheelsPrizes[0] = -2;
+      gMainRoutineState.wheelsPrizes[0] = WHEELS_PRIZES_NONE_TO_HAND_OUT;
       Event_SetMessageId(COME_AGAIN_MESSAGE);
       // "Come again!"
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);

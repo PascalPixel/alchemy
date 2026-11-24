@@ -447,8 +447,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Sound_Play(MUS_SILENCE);
   Sound_Play(SE_SHIMMER);
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 3);
-  Actor_SetSpriteColor(((s32)Actor_GetById(ACTOR_HOLE_COVER)),
-                       SPRITE_COLOR_WHITE);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_HOLE_COVER), SPRITE_COLOR_WHITE);
   Actor_SetPosition(ACTOR_HOLE_COVER, 424, 104);
   PaletteFade_SetTarget(RGB_WHITE, 0);
   PaletteFade_StartInterpolation(40);
@@ -886,8 +885,7 @@ extern u32 gGabombaStatueChamber_WalkOffScript[];
 /// `GABOMBA_STATUE_CHAMBER_IDOL_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH`.
 /// The question "Are you Kibombo!?" only chooses Akafubu's reply.
 void GabombaStatueChamber_WhereIsTheOrb(void) {
-  struct Actor *crystal =
-      (struct Actor *)((s32)Actor_GetById(ACTOR_BLACK_CRYSTAL));
+  struct Actor *crystal = Actor_GetById(ACTOR_BLACK_CRYSTAL);
   struct FieldSprite *sprite;
   u8 *block;
   s32 westSideFacing, eastSideFacing;
@@ -896,8 +894,8 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Event_Start();
   Event_EndLastingPsynergy(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  FieldActor_SetPositionAndResetMotion(
-      ((s32)Actor_GetById(ACTOR_BLACK_CRYSTAL)), toFIXED(392), 0, toFIXED(268));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_BLACK_CRYSTAL),
+                                       toFIXED(392), 0, toFIXED(268));
   wait(1);
   leader = gMainRoutineState.leaderActorId;
   Actor_SetPositionAndFacing(leader, toFIXED(360), toFIXED(184),
@@ -941,8 +939,8 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "It came in through there and rolled along this groove in the floor..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
-  FieldActor_SetPositionAndResetMotion(
-      ((s32)Actor_GetById(ACTOR_BLACK_CRYSTAL)), toFIXED(392), 0, toFIXED(340));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_BLACK_CRYSTAL),
+                                       toFIXED(392), 0, toFIXED(340));
   Sound_Play(SOUND_FADE_OUT_BGM);
   PaletteFade_SetTarget(PALETTE_TINT_SEPIA, 0);
   PaletteFade_StartInterpolation(40);

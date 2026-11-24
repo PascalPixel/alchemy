@@ -85,6 +85,11 @@ enum AngelRise {
 /// The archer an archer's beam comes from (JupiterLighthouse_StartBeam).
 enum BeamSide { BEAM_LEFT, BEAM_RIGHT };
 
+/// The path blocks' glows, pictures of LightSprites_InitB's set: the lit
+/// channel of the path piece each block carries, from east round to south on
+/// the left block and from west round to south on the right.
+enum { GLOW_PATH_EAST_SOUTH = 3, GLOW_PATH_WEST_SOUTH = 5 };
+
 /// The cells of the gaps at the ends of the archers' paths, which a path block
 /// fills.
 #define LEFT_GAP_CELL_X 6
@@ -435,7 +440,7 @@ s32 Scene_PrepareMap(void) {
     JupiterLighthouse_FillLeftGap();
     JupiterLighthouse_LightLeftPath();
   } else {
-    LightSprites_Add(ACTOR_LEFT_PATH_BLOCK, 3);
+    LightSprites_Add(ACTOR_LEFT_PATH_BLOCK, GLOW_PATH_EAST_SOUTH);
     Actor_Get(ACTOR_LEFT_PATH_BLOCK)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
   }
@@ -448,7 +453,7 @@ s32 Scene_PrepareMap(void) {
     JupiterLighthouse_FillRightGap();
     JupiterLighthouse_LightRightPath();
   } else {
-    LightSprites_Add(ACTOR_RIGHT_PATH_BLOCK, 5);
+    LightSprites_Add(ACTOR_RIGHT_PATH_BLOCK, GLOW_PATH_WEST_SOUTH);
     Actor_Get(ACTOR_RIGHT_PATH_BLOCK)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
   }

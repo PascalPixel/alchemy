@@ -116,6 +116,12 @@ void Actor_PlaceBlocks(void *data);
 void JupiterLighthouse_InitSparkSprite(struct EffectSprite *sprite, s32 pivotX,
                                        s32 pivotY, u32 attributes, s32 tile);
 
+/// The state of the code every Jupiter Lighthouse room's overlay keeps its own
+/// copy of: a whirlwind's ride (shared/whirlwind_*.h), the palette cycle
+/// (shared/palette_cycle_step.h), the lit actors' sprites
+/// (shared/light_sprites_*.h) and the cracked tiles (shared/cracked_tile_*.h).
+/// This hall has neither whirlwind nor cracked tile, but its copies of that
+/// code keep their state here all the same.
 s32 gWhirlwindRiding BSS_DATA;
 u16 gPaletteCycleColors[16] BSS_DATA;
 /// Palette 13's first two colours; it is copied whole, with the unlit colours
@@ -147,7 +153,6 @@ extern u32 gFieldEffect_LongScript[];
 struct FieldEffect;
 
 void Actor_PlaceMovedBlock(void);
-void MapGrid_SetCellAttributesAt();
 /// Queues an effect sprite for this frame at its depth, turned and scaled about
 /// its pivot (EffectSprite_Draw, through the overlay's own import row).
 void JupiterLighthouse_DrawSparkSprite(struct EffectSprite *sprite);
@@ -195,8 +200,6 @@ void JupiterLighthouse_PlacePushedBlock(s32 unused, s32 id) {
     Actor_PlaceMovedBlock();
   }
 }
-
-void Actor_SetSpriteColorMode();
 
 #include "shared/actor_cycle_pictures.h"
 
@@ -277,7 +280,7 @@ void Orb_SpawnRising(void) {
 extern s32 gJupiterLighthouse_SparksPerFrame;
 extern s32 gJupiterLighthouse_SparkSoundOn;
 
-void JupiterLighthouse_AddSparks();
+void JupiterLighthouse_AddSparks(s32 count);
 
 /// A frame task while the lighthouse wakes: adds this frame's sparks to the
 /// ring, with the rising sound until the tower starts to shake.
@@ -690,9 +693,10 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 
 #include "shared/palette_cycle_step.h"
 
-void MapGrid_SetCellHeight();
-
 #include "shared/jupiter_lighthouse_load_palettes.h"
+
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
+u8 MapGrid_SetCellAttributesAt(s32 x, s32 z, s32 layer, s32 value);
 
 #include "shared/actor_raise_from_cell.h"
 

@@ -190,17 +190,29 @@ enum AquaRockMistSabreChestActorId {
   /// rings of water rise and the leader sinks inside (AquaRock_SinkInside).
   ACTOR_WAY_INSIDE
 };
+
+/// The Mist Sabre chest's room's ways between its west and east halves, which
+/// its one map holds, each named by the half it leaves; a way's exit and the
+/// entrance at its foot share its number.
+enum AquaRockMistSabreChestWay {
+  WAY_MIST_SABRE_CHEST_WEST_TO_EAST = 4,
+  WAY_MIST_SABRE_CHEST_EAST_TO_WEST
+};
 extern struct Trigger gAquaRock_Triggers[];
 extern struct Trigger gAquaRock_SlopesTriggers[];
 extern struct Trigger gAquaRock_MistSabreChestTriggers[];
 
+/// FieldActor_Create, by the name shared/actor_emit_water_drop.h calls it.
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 
-/// Takes `size` bytes from the heap.
-static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
+/// Takes `size` bytes from the heap for a picture's decompression.
+static inline void *BumpAlloc(s32 size) {
+  /* FAKEMATCH(wrapper): Heap_Alloc through this inline. */
+  return Heap_Alloc(size);
+}
 #include "flags.h"
 #include "field/event.h"
 #include "field/field_sequence_event.h"
@@ -1303,7 +1315,12 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_SECOND_ROCK, 856, 936);
       MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 58);
     }
-    if (gMainRoutineState.entrance == 5 || gMainRoutineState.entrance == 7) {
+    // Arriving in the east half from the west. The map has no entrance 7; the
+    // east half's other entrance, from the Moai's spring
+    // (AQUA_ROCK_MIST_SABRE_CHEST_FROM_AQUA_ROCK_MOAI_C), gets the west half's
+    // set-up.
+    if (gMainRoutineState.entrance == WAY_MIST_SABRE_CHEST_EAST_TO_WEST ||
+        gMainRoutineState.entrance == 7) {
       AquaRock_StartBubbles();
       GroundParticles_Start();
       if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
@@ -1614,7 +1631,7 @@ void AquaRock_StartBubbles(void) {
   void *buffer;
 
   Iwram_ClearWordsEntry(state, sizeof(struct AquaRockBubbles));
-  buffer = MemAlloc_(256);
+  buffer = BumpAlloc(256);
   Decompress_TaggedLz(gAquaRock_BubbleTiles, buffer);
   state->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(state->vramEntry, 256, buffer);
@@ -1757,8 +1774,8 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_INSIDE_VIAL_CHEST, AquaRockInsideVialChest, AQUA_ROCK_INSIDE_VIAL_CHEST_FROM_AQUA_ROCK_MIST_SABRE_CHEST),
     SCENE_EXIT(AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_MOAI_A, AquaRockMoai, AQUA_ROCK_MOAI_FROM_AQUA_ROCK_MIST_SABRE_CHEST_A),
     SCENE_EXIT(AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_MOAI_B, AquaRockMoai, AQUA_ROCK_MOAI_FROM_AQUA_ROCK_MIST_SABRE_CHEST_B),
-    SCENE_EXIT(4, AquaRockMistSabreChest, 5),
-    SCENE_EXIT(5, AquaRockMistSabreChest, 4),
+    SCENE_EXIT(WAY_MIST_SABRE_CHEST_WEST_TO_EAST, AquaRockMistSabreChest, WAY_MIST_SABRE_CHEST_EAST_TO_WEST),
+    SCENE_EXIT(WAY_MIST_SABRE_CHEST_EAST_TO_WEST, AquaRockMistSabreChest, WAY_MIST_SABRE_CHEST_WEST_TO_EAST),
     SCENE_EXIT(AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_MOAI_D, AquaRockMoai, AQUA_ROCK_MOAI_FROM_AQUA_ROCK_MIST_SABRE_CHEST_D),
     SCENE_EXITS_END,
 };

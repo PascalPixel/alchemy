@@ -150,9 +150,10 @@ extern struct ActorPlacement gAlhafranCave_JailActorPlacements[];
 extern struct Trigger gAlhafranCave_CaveTriggers[];
 extern struct Trigger gAlhafranCave_JailTriggers[];
 struct EffectSprite gAlhafranCave_CrateSprite BSS_DATA ALIGNED(16);
-/// Cleared as Eoleo bursts into tears, beside the idle task added then; nothing
-/// reads it.
-s32 gAlhafranCave_ClearedWord BSS_DATA;
+/// The frame count of AlhafranCave_IdleTask, cleared as the task is added, as
+/// other scenes clear the count their event's task keeps; the task is empty, so
+/// nothing counts it or reads it.
+s32 gAlhafranCave_IdleTaskFrame BSS_DATA;
 
 /// The current scene's actors: the cave's or the jail's.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
@@ -744,7 +745,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   // "WAHHH!"
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 20);
-  gAlhafranCave_ClearedWord = 0;
+  gAlhafranCave_IdleTaskFrame = 0;
   Task_AddFrame(AlhafranCave_IdleTask, TASK_PASS_FRAME);
   Actor_ShowEmote(ACTOR_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "I don't know why he's crying! You're his mother! Can't you do..."

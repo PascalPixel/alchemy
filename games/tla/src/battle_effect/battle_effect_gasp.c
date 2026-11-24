@@ -85,13 +85,15 @@
 #define GASP_SHINE_RAY_FRAMES 32
 #define GASP_SHINE_RAY_SCROLL_MASK 0x1f
 
-/// Lull: a ring of music notes, leaning back GASP_LULL_TILT and righting itself
-/// a 1024th of a turn a frame, fades after GASP_LULL_RING_FRAMES.
+/// Lull: a ring of music notes, leaning back GASP_LULL_TILT (about 100
+/// degrees) and righting itself a 1024th of a turn a frame, turning
+/// about 2 degrees a frame, fades after GASP_LULL_RING_FRAMES.
 #define GASP_LULL_NOTES 12
 #define GASP_LULL_RING_FRAMES 64
 #define GASP_LULL_TILT 18288
 
-/// Mold: the Djinni's sprite shrinks GASP_MOLD_SHRINK a frame; for its first
+/// Mold: the Djinni's sprite shrinks GASP_MOLD_SHRINK a frame (about 7
+/// percent of its size); for its first
 /// GASP_MOLD_SLOW_FADE_FRAMES the canvas keeps three quarters of each pixel,
 /// then half.
 #define GASP_MOLD_SHRINK 4592
@@ -113,7 +115,8 @@
 
 /// Call Dullahan: the sparks his bolt scatters, each at least
 /// GASP_DULLAHAN_SPARK_SPEED_MIN fast, and the first of them drawn; each bolt
-/// flies out GASP_DULLAHAN_REACH steps, turning GASP_DULLAHAN_SWING as it goes.
+/// flies out GASP_DULLAHAN_REACH steps, turning GASP_DULLAHAN_SWING (about 265
+/// degrees) as it goes.
 #define GASP_DULLAHAN_SPARKS 128
 #define GASP_DULLAHAN_SPARKS_DRAWN 64
 #define GASP_DULLAHAN_SPARK_SPEED_MIN 32

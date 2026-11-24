@@ -57,7 +57,7 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   s32 kind;
   s32 impact;
 
-  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SHEET, 1550);
+  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SHEET, BATTLE_SHEET_BYTES);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   state = Ram_HeapSlots->battleEffect;

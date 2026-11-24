@@ -51,6 +51,12 @@
 /// tells of his power only then.
 #define FLAG_EOLEO_LIFTED 0x8ae
 
+/// Due north and due south nudged by the least angle (a 65536th of a turn)
+/// toward the west or the east.
+#define FACING_NORTH_BY_WEST (FACING_NORTH - 1)
+#define FACING_NORTH_BY_EAST (FACING_NORTH + 1)
+#define FACING_SOUTH_BY_WEST (FACING_SOUTH + 1)
+
 /// Where the party comes back after the battle with Briggs and a Sea Fighter
 /// of his crew, numbered 99 as The Broken Seal's Altin Peak numbers its own,
 /// and the entrance it then counts as: the foot of the stairs down from the
@@ -181,6 +187,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   Event_ShowMessageAndWait(ACTOR_EOLEO, 0);
   Field_StartColorTransition(8, RGB(16, 16, 4));
   BattleEffect_StartArcEffect();
+  // Eoleo cycles through colours with swelling arcs, as a caster does.
   BattleEffect_SetObjectUpdateMode((s32)Actor_GetById(id), 2);
   Sound_Play(SE_ASCEND);
   Event_Wait(30);
@@ -612,8 +619,8 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(10);
   // "We lost..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH - 1, 0);
-  Actor_FaceDirectionById(ACTOR_JENNA, FACING_NORTH + 1, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_BY_WEST, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_NORTH_BY_EAST, 0);
   Event_Wait(50);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -705,8 +712,8 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_SetAnimationAndWait(ACTOR_CHAUCHA, ANIM_SHAKE_HEAD);
   // "The only reason Briggs became a pirate was to help the people of Champa."
   Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 15);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH - 1, 0);
-  Actor_FaceDirectionById(ACTOR_JENNA, FACING_NORTH + 1, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_BY_WEST, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_NORTH_BY_EAST, 0);
   Event_Wait(50);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -1465,7 +1472,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   // "Due to your efforts, Piers is going to be released."
   Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirectionById(ACTOR_SHEBA, FACING_SOUTH + 1, 0);
+  Actor_FaceDirectionById(ACTOR_SHEBA, FACING_SOUTH_BY_WEST, 0);
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
@@ -1810,6 +1817,8 @@ struct Trigger gSceneEvents[] = {
      EVENT(EasternAlhafraShip_StartMovingCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TALL_CRATE, CONDITION_ALWAYS,
      EVENT(EasternAlhafraShip_FinishMovingCrate)},
+    // TRIGGER_PUSH and TRIGGER_PUSHED answer any target (Scene_FindTrigger):
+    // their 30 is never compared.
     {TRIGGER_PUSH, 30, CONDITION_ALWAYS,
      EVENT(EasternAlhafraShip_StartMovingCrate)},
     {TRIGGER_PUSHED, 30, CONDITION_ALWAYS,

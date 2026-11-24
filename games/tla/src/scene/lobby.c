@@ -14,6 +14,7 @@
 #include "battle/battle.h"
 #include "sprite_ids.h"
 #include "window/message_argument.h"
+#include "window/window.h"
 #include "field/field_state.h"
 #include "system/frame.h"
 #include "sound/sound_driver_symbols.h"
@@ -46,6 +47,15 @@
 
 /// A gMainRoutineState.party byte with no member in it, all ones.
 #define PARTY_SLOT_EMPTY 255
+
+/// The map's tileset animation of the iron gate in the north wall, run for
+/// eight frames as the party walks to it from the diamond mark.
+enum { BATTLE_ARENA_GATE_ANIMATION = 5 };
+
+/// The formation a linked battle is requested with: encounter zone 1, the
+/// first Venus Djinn's battles, at slot 1, Granite's; the battle takes its
+/// enemies from the opponent's units exchanged before it.
+enum { LINK_BATTLE_ENCOUNTER_ZONE = 1, LINK_BATTLE_ENCOUNTER_SLOT = 1 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -722,8 +732,8 @@ check:
   return result;
 }
 
-void TilesetAnim_Resume(s32 layer);
-void TilesetAnim_Pause(s32 layer);
+void TilesetAnim_Resume(s32 channel);
+void TilesetAnim_Pause(s32 channel);
 void Field_RequestBattleFromEncounterTable(s32 table, s32 slot);
 struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y, s32 flags);
 
@@ -760,8 +770,8 @@ s32 LinkLobby_EnterBattle(void) {
     LinkLobby_WriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
     if (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
       // "Awaiting your opponent..."
-      // Zooms open (MESSAGE_WINDOW_ZOOM).
-      window = Message_OpenWindow(MsgLobbyAwaitingYourOpponent, 5, 4, 1);
+      window = Message_OpenWindow(MsgLobbyAwaitingYourOpponent, 5, 4,
+                                  MESSAGE_WINDOW_ZOOM);
     while (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE)) {
       wait(1);
       stop = 0;
@@ -797,9 +807,9 @@ s32 LinkLobby_EnterBattle(void) {
     savedUnits =
         HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
     Task_Remove(LinkLobby_PollPeerReady);
-    TilesetAnim_Resume(5);
+    TilesetAnim_Resume(BATTLE_ARENA_GATE_ANIMATION);
     wait(8);
-    TilesetAnim_Pause(5);
+    TilesetAnim_Pause(BATTLE_ARENA_GATE_ANIMATION);
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineState.leaderActorId, 0);
       Event_SetMessageId((s32)MsgLobbyGoodLuck);
@@ -820,9 +830,9 @@ s32 LinkLobby_EnterBattle(void) {
       if (LinkLobby_ExchangePartyRecords() < 0) {
         Actor_SetSpeed(ACTOR_FELIX, 1);
         Actor_WalkTo(ACTOR_FELIX, 216, 200);
-        TilesetAnim_Resume(5);
+        TilesetAnim_Resume(BATTLE_ARENA_GATE_ANIMATION);
         wait(8);
-        TilesetAnim_Pause(5);
+        TilesetAnim_Pause(BATTLE_ARENA_GATE_ANIMATION);
         Actor_WaitForMoveById(ACTOR_FELIX);
         HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
         LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
@@ -849,7 +859,8 @@ s32 LinkLobby_EnterBattle(void) {
       Event_SetDefeatDestination(SCENE_LOBBY, LOBBY_AFTER_LINK_LOSS);
     }
     gMainRoutineState.battleType = BATTLE_TYPE_LINK;
-    Field_RequestBattleFromEncounterTable(1, 1);
+    Field_RequestBattleFromEncounterTable(LINK_BATTLE_ENCOUNTER_ZONE,
+                                          LINK_BATTLE_ENCOUNTER_SLOT);
     // EXEC fills the payload's first four halfwords, where the link battle's
     // command entry looks for it in the partner's.
     table = (u16 *)gSerialTransfer.payload;
@@ -898,6 +909,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
         Event_ClearFlag(FLAG_LINK_BATTLE_ARRANGED);
         Event_ClearFlag(FLAG_LINK_BATTLE);
         Event_SetFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED);
+        // "When you finish your preparations, please step into the circle!"
         line = msg + 7;
         gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_STREAK] = answer;
         goto message;
@@ -905,9 +917,11 @@ s32 LinkLobby_ChooseBattleMode(void) {
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
       Event_SetFlag(FLAG_LINK_BATTLE);
       LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+      // "Please wait until an opponent arrives, then."
       line = msg + 6;
       goto message;
     } else {
+      // "When you finish your preparations, please step into the circle!"
       line = msg + 3;
       goto message;
     }
@@ -921,6 +935,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
     }
     if (Event_GetFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED)) {
+      // "When you finish your preparations, please step into the circle!"
       line = msg + 3;
     message:
       Event_SetMessageId(line);
@@ -938,12 +953,16 @@ s32 LinkLobby_ChooseBattleMode(void) {
         Event_SetMessageId(msg + 2);
       else
         Event_SetMessageId(msg + 1);
-      // "Would you like to apply?"
+      // "Your opponent has asked for a battle. Do you accept?", or with no
+      // request yet "Would you like to apply?"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
       if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
         if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE)) {
           Event_SetFlag(FLAG_LINK_BATTLE);
           Event_SetFlag(FLAG_LINK_BATTLE_ARRANGED);
+          // "When you finish your preparations, please step into the
+          // circle!", or with no request yet "You have asked for a battle. We
+          // will call your name if your opponent accepts. Please wait."
           if (Event_GetFlag(FLAG_LINK_LOBBY_PARTNER_ASKED))
             Event_SetMessageId(msg + 3);
           else
@@ -963,9 +982,6 @@ s32 LinkLobby_ChooseBattleMode(void) {
   }
   Event_End();
 }
-
-void MessageArgument_ClearAll(void);
-void MessageArgument_Push(s32 value, s32 digits);
 
 /// Felix talks to the man behind the counter right of the arched door: across
 /// the counter, from the south, he tells the linked battles won in all; from
@@ -1010,9 +1026,9 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
   }
 }
 
-s32 Window_Create();
-void WindowSprite_PrepareForRedraw();
-void Text_DrawNumber();
+void WindowSprite_PrepareForRedraw(struct Window *window);
+void Text_DrawNumber(s32 value, s32 digits, struct Window *window, s32 x,
+                     s32 y);
 s32 DebugParameterSet_Load();
 
 /// A developer's leftover: the white-bearded man in green placed below the
@@ -1022,7 +1038,7 @@ s32 DebugParameterSet_Load();
 /// to you.", or for a set that does not exist, "There's no such parameter. Ask
 /// Mr. Sugimoto."
 s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
-  s32 window;
+  struct Window *window;
   s32 choice;
   s32 shown;
   s32 ok;
@@ -1123,10 +1139,6 @@ extern u8 MsgLobbyComeBackWhenYoureReady[];
 extern u16 gLinkLobby_SongRequestSounds[SONG_REQUEST_SOUNDS];
 
 s32 SoundFlag_Test(s32 song);
-s32 Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-void WindowSprite_PrepareForRedraw(s32 window);
-void Text_DrawNumber(s32 value, s32 digits, s32 window, s32 x, s32 y);
-void Window_Close(s32 window, s32 instant);
 
 /// "You have a song request?": the player picks a piece of music or a sound by
 /// number with Left and Right and hears it with A, until B ends it with "Come
@@ -1138,7 +1150,7 @@ void Window_Close(s32 window, s32 instant);
 /// (LinkLobby_TalkToVisitor); ACTOR_SONG_REQUEST_VISITOR, a strongman, stands
 /// below the hall where the player cannot walk.
 void LinkLobby_TakeSongRequest(s32 actor) {
-  s32 window;
+  struct Window *window;
   s32 song;
   s32 shown;
   s32 step;
@@ -1433,7 +1445,7 @@ s32 LinkLobby_Initialize(void) {
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
   LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   wait(1);
-  TilesetAnim_Pause(5);
+  TilesetAnim_Pause(BATTLE_ARENA_GATE_ANIMATION);
   {
     /* FAKEMATCH(temporary): name holds the payload's address, viewed as
      * halfwords. */

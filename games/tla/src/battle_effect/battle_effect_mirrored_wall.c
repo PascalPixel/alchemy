@@ -85,6 +85,11 @@ void BattleEffect_RunSpark(struct BattleEffectParams *args) {
 #define DJINN_BEAMS_MOTE_WIDTH 24
 #define DJINN_BEAMS_MOTE_HEIGHT 24
 #define DJINN_BEAMS_DJINNI_PICTURE 26048
+/// The column of light is one row of EarthWallSheet's 6x1 strip, bright in the
+/// middle and dimming to orange at its edge, after the 5x1 strip at the sprite
+/// sheet's start; each half of the column draws it, the second mirrored.
+#define DJINN_BEAMS_COLUMN_STRIP 5
+#define DJINN_BEAMS_COLUMN_STRIP_WIDTH 6
 
 /// When there is a prelude the Djinni of the element appears, sways and rises
 /// away; then over each target in turn, sixteen frames apart, motes drift down
@@ -247,10 +252,10 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
         screenPosition.x += offsetX;
         if (frame < start + 104) {
           s32 pic = frame / 4;
-          s32 width = 6;
+          s32 width = DJINN_BEAMS_COLUMN_STRIP_WIDTH;
 
           if (frame > start + 88)
-            width = 6 - (frame - start - 88) / 3;
+            width = DJINN_BEAMS_COLUMN_STRIP_WIDTH - (frame - start - 88) / 3;
           if (pic > 2)
             pic = (pic & 1) + 1;
           if (frame < start + 100) {
@@ -264,11 +269,12 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
                     gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
           }
           // Every row of the column, from the top down to the feet, is the
-          // same strip of the column's first picture.
+          // same strip.
           for (k = 0; k != screenPosition.y; k++) {
-            draw[0](canvas, state->sheet + 5, screenPosition.x - width, k,
-                    width, 1);
-            draw[1](canvas, state->sheet + 5, screenPosition.x, k, width, 1);
+            draw[0](canvas, state->sheet + DJINN_BEAMS_COLUMN_STRIP,
+                    screenPosition.x - width, k, width, 1);
+            draw[1](canvas, state->sheet + DJINN_BEAMS_COLUMN_STRIP,
+                    screenPosition.x, k, width, 1);
           }
         }
       }
@@ -387,6 +393,9 @@ void BattleEffect_RunFormicAcid(struct BattleEffectParams *args) {
 #define LOBBED_SHELLS_SHARDS 16
 /// The frames a burst's piece is drawn for.
 #define LOBBED_SHELLS_BURST_FRAMES 45
+/// A shard tumbles through nine pictures, five frames each: the large shard's,
+/// or for every second shard the small shard's, which follow them.
+#define LOBBED_SHELLS_SMALL_SHARD 9
 
 /// A style's record in gLobbedShells_Styles: nonzero when its shells burst into
 /// shards instead of smoke, the blitter its shells are drawn with (0 keeps the
@@ -591,7 +600,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
           s32 flip;
 
           if (i & 1)
-            picture += 9;
+            picture += LOBBED_SHELLS_SMALL_SHARD;
           flip = args->side;
           draw[burst->velocityX > 0 ? flip ^ 1 : flip](
               canvas,
@@ -640,6 +649,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 #undef DJINN_BEAMS_MOTE_WIDTH
 #undef DJINN_BEAMS_MOTE_HEIGHT
 #undef DJINN_BEAMS_DJINNI_PICTURE
+#undef DJINN_BEAMS_COLUMN_STRIP
+#undef DJINN_BEAMS_COLUMN_STRIP_WIDTH
 #undef LOBBED_SHELLS_BURSTS
 #undef LOBBED_SHELLS_PIECE_SLOTS
 #undef LOBBED_SHELLS_TARGET_SHELLS
@@ -654,6 +665,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 #undef LOBBED_SHELLS_SMOKE_PUFFS
 #undef LOBBED_SHELLS_SHARDS
 #undef LOBBED_SHELLS_BURST_FRAMES
+#undef LOBBED_SHELLS_SMALL_SHARD
 #undef LOBBED_SHELLS_SHATTER
 #undef LOBBED_SHELLS_SHELL_BLITTER
 #undef LOBBED_SHELLS_SHELLS

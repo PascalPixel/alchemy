@@ -141,11 +141,11 @@ void Actor_Hide(s32 id);
 void Kibombo_RestoreBlocks(void);
 void Kibombo_AkafubuChants(void);
 void Kibombo_SetStatueMouth(s32 open, s32 glow);
-void Kibombo_SetStatueTongue(s32 open, s32 mode);
+void Kibombo_SetStatueTongue(s32 open, s32 pose);
 void Kibombo_StopFireFlicker(void);
 void Kibombo_ClimbDownLadder(s32 x, s32 z);
 void Kibombo_OpenCeremonyScene(void);
-void Kibombo_CrowdCheers(void);
+void Kibombo_CrowdPanics(void);
 
 extern s32 gLeader_WalkThroughDoorScript[];
 extern u32 gKibombo_KradenMeetsPiersScript[];
@@ -267,6 +267,22 @@ enum KibomboStatueGroundsActorId {
   /// (Kibombo_CarryBlackCrystal); Piers's, Jenna's and Sheba's rows take
   /// their own numbers, so it follows Kraden.
   ACTOR_CRYSTAL_MARKER = 27
+};
+
+/// The poses Kibombo_SetStatueTongue gives the Great Gabomba's tongue, each in
+/// the sprite sheet's daylight colours or those it wears by the ceremony
+/// night's firelight. Out, it hangs from the mouth to the drums; to the ground,
+/// 34 pixels lower, as the statue leaves it once it has answered.
+enum StatueTonguePose {
+  STATUE_TONGUE_IN_MOUTH, ///< no tongue but the map's, inside the mouth
+  /// Unused: no call unrolls the tongue through this routine.
+  STATUE_TONGUE_UNROLLING_BY_DAY,
+  STATUE_TONGUE_OUT_BY_DAY,
+  /// Unused: no call unrolls the tongue through this routine.
+  STATUE_TONGUE_UNROLLING_BY_FIRELIGHT,
+  STATUE_TONGUE_OUT_BY_FIRELIGHT,
+  STATUE_TONGUE_TO_THE_GROUND_BY_DAY,
+  STATUE_TONGUE_TO_THE_GROUND_BY_FIRELIGHT
 };
 
 /// The village by day and on the ceremony night: after the puddle, the two
@@ -2555,35 +2571,35 @@ void Kibombo_SetStatueMouth(s32 open, s32 glow) {
   }
 }
 
-/// Puts out the Great Gabomba's tongue, in the pose given, or draws it back.
-void Kibombo_SetStatueTongue(s32 open, s32 mode) {
+/// Puts out the Great Gabomba's tongue in a StatueTonguePose, or draws it back.
+void Kibombo_SetStatueTongue(s32 open, s32 pose) {
   if (open != 0) {
     MapGrid_CopyCellTilesIndicesRect(41, 38, 79, 16, 3, 3);
     MapGrid_CopyCellAttributes(12, 21, 1, 1, 16, 22);
-    if (mode != 0)
+    if (pose != STATUE_TONGUE_IN_MOUTH)
       Actor_SetPositionAndResetMotion(Actor_GetById(ACTOR_STATUE_TONGUE),
                                       toFIXED(264), toFIXED(32), toFIXED(308));
-    switch (mode) {
-    case 0:
+    switch (pose) {
+    case STATUE_TONGUE_IN_MOUTH:
       Actor_SetPosition(ACTOR_STATUE_TONGUE, 0, 0);
       break;
-    case 1:
+    case STATUE_TONGUE_UNROLLING_BY_DAY:
       Actor_SetAnimationById(ACTOR_STATUE_TONGUE, 0);
       break;
-    case 2:
+    case STATUE_TONGUE_OUT_BY_DAY:
       Actor_SetAnimationById(ACTOR_STATUE_TONGUE, 1);
       break;
-    case 3:
+    case STATUE_TONGUE_UNROLLING_BY_FIRELIGHT:
       Actor_SetAnimationById(ACTOR_STATUE_TONGUE, 2);
       break;
-    case 4:
+    case STATUE_TONGUE_OUT_BY_FIRELIGHT:
       Actor_SetAnimationById(ACTOR_STATUE_TONGUE, 3);
       break;
-    case 5:
+    case STATUE_TONGUE_TO_THE_GROUND_BY_DAY:
       Actor_SetAnimationById(ACTOR_STATUE_TONGUE, 6);
       Actor_GetById(ACTOR_STATUE_TONGUE)->y.fixed -= toFIXED(34);
       break;
-    case 6:
+    case STATUE_TONGUE_TO_THE_GROUND_BY_FIRELIGHT:
       Actor_SetAnimationById(ACTOR_STATUE_TONGUE, 7);
       Actor_GetById(ACTOR_STATUE_TONGUE)->y.fixed -= toFIXED(34);
       break;
@@ -3142,8 +3158,11 @@ void Kibombo_OpenCeremonyScene(void) {
 
 extern s32 gKibombo_CrowdDanceScript[];
 
-/// The warriors jump and cheer, then dance.
-void Kibombo_CrowdCheers(void) {
+/// The warriors leap up in fright; two cry out and all dance in a frenzy until
+/// Akafubu silences them, calms them and calls for more drums. It goes on from
+/// the caller's message: the jewel seen (Kibombo_GabombaSeesOrb) or the gift
+/// answered (Kibombo_GabombaResponds).
+void Kibombo_CrowdPanics(void) {
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(264, 0, 400, 1);
   FieldCamera_WaitForArrival();
@@ -3158,9 +3177,13 @@ void Kibombo_CrowdCheers(void) {
   Actor_Jump(ACTOR_WARRIOR_H, 6, 40);
   Actor_FaceDirectionAndWait(ACTOR_WARRIOR_C, FACING_SOUTH_SOUTHWEST);
   Actor_Jump(ACTOR_WARRIOR_C, 2, 0);
+  // "Ahh! We have enraged the Great Gabomba!", or after the gift "Wahhh! The
+  // Great Gabomba spews jets of flame!"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_WARRIOR_C, 0);
   Actor_FaceDirectionAndWait(ACTOR_WARRIOR_F, FACING_SOUTH_SOUTHEAST);
   Actor_Jump(ACTOR_WARRIOR_F, 2, 0);
+  // "No! Great catastrophe shall befall the Kibombo!", or "It is the end of
+  // Kibombo! Our village is doomed!"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_WARRIOR_F, 0);
   Actor_SetMovementTypeById(ACTOR_WARRIOR_A, gKibombo_CrowdDanceScript);
   Actor_SetMovementTypeById(ACTOR_WARRIOR_B, gKibombo_CrowdDanceScript);
@@ -3174,6 +3197,7 @@ void Kibombo_CrowdCheers(void) {
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
   Actor_Jump(ACTOR_AKAFUBU, 2, 10);
   Actor_Jump(ACTOR_AKAFUBU, 4, 10);
+  // "Silence! SILENCE!"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Actor_Stop(ACTOR_WARRIOR_A);
   Actor_Stop(ACTOR_WARRIOR_B);
@@ -3193,15 +3217,24 @@ void Kibombo_CrowdCheers(void) {
   Actor_FaceDirection(ACTOR_WARRIOR_G, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_WARRIOR_H, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmoteById(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  // "Do not be hasty! The Great Gabomba has not opened his eyes in anger!",
+  // or "Do not be hasty, my people! The Great Gabomba is not angered by our
+  // ceremony!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
+  // "Your prayers...have not appeased him... That is all!", or "He is angered
+  // by the presence of wicked thoughts!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
   Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_NOD);
+  // "Pray! You must pray more! Let the Great Gabomba hear our desires!", or
+  // "Cast away your wicked thoughts! Dance! Dance for the Great Gabomba!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
   Actor_Jump(ACTOR_AKAFUBU, 4, 10);
+  // "Drums! More drums!!!"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
 }
 
-/// Still nothing from the statue: the warriors call for more drums.
+/// Still nothing from the statue: Akafubu asks whether it is still not pleased,
+/// and calls for more drums.
 void Kibombo_GabombaStillNotPleased(void) {
   struct Actor **slot;
   struct Actor *actor;
@@ -3238,7 +3271,8 @@ void Kibombo_GabombaStillNotPleased(void) {
       KIBOMBO_STATUE_GROUNDS_CEREMONY_TO_GABOMBA_STATUE_ARROWS_SOUTH);
 }
 
-/// The warriors cry that the Great Gabomba has seen their jewel.
+/// Akafubu cries that the Great Gabomba has seen the jewel; its eyes swell for
+/// a moment, then shake, and the warriors panic.
 void Kibombo_GabombaSeesOrb(void) {
   Kibombo_OpenCeremonyScene();
   Sound_Play(SE_STATUE_STIRS);
@@ -3266,14 +3300,15 @@ void Kibombo_GabombaSeesOrb(void) {
   Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_RIGHT_EYE),
                        SPRITE_COLOR_DARK);
   Event_Wait(120);
-  Kibombo_CrowdCheers();
+  Kibombo_CrowdPanics();
   GameFlag_Set(FLAG_GABOMBA_BACK_FROM_CEREMONY);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(
       KIBOMBO_STATUE_GROUNDS_CEREMONY_TO_GABOMBA_STATUE_ARROWS_SOUTH);
 }
 
-/// The warriors cry that the Great Gabomba has responded to their gift.
+/// Akafubu cries that the Great Gabomba has responded to the gift; its eyes
+/// flash, embers rise from its fire, and the warriors panic.
 void Kibombo_GabombaResponds(void) {
   Kibombo_OpenCeremonyScene();
   Event_PlaySound(SE_STATUE_STIRS);
@@ -3291,12 +3326,12 @@ void Kibombo_GabombaResponds(void) {
   // "Look! The Great Gabomba has responded to our gift!"
   Event_ShowMessageThenWait(ACTOR_AKAFUBU, 0, 20);
   Sound_Play(SE_STATUE_STIRS);
-  Kibombo_SetStatueTongue(1, 0);
+  Kibombo_SetStatueTongue(1, STATUE_TONGUE_IN_MOUTH);
   Event_Wait(20);
   Sound_Play(SE_WAVE);
   Task_Add(Kibombo_RaiseEmbers, TASK_PASS_FRAME);
   Event_Wait(120);
-  Kibombo_CrowdCheers();
+  Kibombo_CrowdPanics();
   GameFlag_Set(FLAG_GABOMBA_BACK_FROM_CEREMONY);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(
@@ -3328,7 +3363,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   // "Look! The Great Gabomba has responded to our gift!"
   Event_ShowMessageThenWait(ACTOR_AKAFUBU, 0, 20);
   Event_PlaySound(SE_STATUE_STIRS);
-  Kibombo_SetStatueTongue(1, 0);
+  Kibombo_SetStatueTongue(1, STATUE_TONGUE_IN_MOUTH);
   Event_Wait(20);
   Sound_Play(SE_CART_ROLL);
   actor->scaleY = FIXED_ONE / 10;
@@ -3370,14 +3405,14 @@ void Kibombo_GabombaRespondsToGift(void) {
     }
   }
   Actor_SetPosition(ACTOR_STATUE_TONGUE, 0, 0);
-  Kibombo_SetStatueTongue(0, 0);
+  Kibombo_SetStatueTongue(0, STATUE_TONGUE_IN_MOUTH);
   Kibombo_SetStatueMouth(1, 1);
   Event_Wait(10);
   Kibombo_SetStatueMouth(0, 1);
   Event_Wait(40);
   Event_PlaySound(SE_STATUE_STIRS);
   Kibombo_SetStatueMouth(1, 1);
-  Kibombo_SetStatueTongue(1, 0);
+  Kibombo_SetStatueTongue(1, STATUE_TONGUE_IN_MOUTH);
   Sound_Play(SE_WATER);
   Actor_SetPositionAndResetMotion(Actor_GetById(ACTOR_STATUE_TONGUE),
                                   toFIXED(264), toFIXED(24), toFIXED(308));
@@ -3705,25 +3740,25 @@ void Kibombo_InitializeStatueGroundsByDay(void) {
   Kibombo_InitializeStatueGrounds();
   if (GameFlag_Get(FLAG_GABOMBA_RESPONDED)) {
     Kibombo_SetStatueMouth(1, 0);
-    Kibombo_SetStatueTongue(1, 5);
+    Kibombo_SetStatueTongue(1, STATUE_TONGUE_TO_THE_GROUND_BY_DAY);
   }
   wait(1);
   entrance = gMainRoutineState.entrance;
   if (entrance == ENTRANCE_STATUE_SHUT) {
     Kibombo_SetStatueMouth(0, 0);
-    Kibombo_SetStatueTongue(0, 0);
+    Kibombo_SetStatueTongue(0, STATUE_TONGUE_IN_MOUTH);
     Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, 0, 0, 0);
   } else if (entrance == ENTRANCE_STATUE_OPEN) {
     Kibombo_SetStatueMouth(1, 0);
-    Kibombo_SetStatueTongue(1, 0);
+    Kibombo_SetStatueTongue(1, STATUE_TONGUE_IN_MOUTH);
     Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, 0, 0, 0);
   } else if (entrance == ENTRANCE_STATUE_TONGUE_OUT) {
     Kibombo_SetStatueMouth(1, 0);
-    Kibombo_SetStatueTongue(1, 2);
+    Kibombo_SetStatueTongue(1, STATUE_TONGUE_OUT_BY_DAY);
     Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, 0, 0, 0);
   } else if (entrance == ENTRANCE_STATUE_REACHING) {
     Kibombo_SetStatueMouth(1, 1);
-    Kibombo_SetStatueTongue(1, 4);
+    Kibombo_SetStatueTongue(1, STATUE_TONGUE_OUT_BY_FIRELIGHT);
     Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, 0, 0, 0);
     Actor_SetAnimationById(ACTOR_STATUE_TONGUE, 4);
   }
@@ -3746,7 +3781,7 @@ void Kibombo_InitializeStatueGroundsCeremony(void) {
   Kibombo_InitializeStatueGrounds();
   if (GameFlag_Get(FLAG_GABOMBA_RESPONDED)) {
     Kibombo_SetStatueMouth(1, 1);
-    Kibombo_SetStatueTongue(1, 4);
+    Kibombo_SetStatueTongue(1, STATUE_TONGUE_OUT_BY_FIRELIGHT);
   }
   wait(1);
   switch (gMainRoutineState.entrance) {
@@ -3784,7 +3819,7 @@ void Kibombo_InitializeStatueGroundsCeremony(void) {
                                FACING_SOUTHEAST);
   }
   if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
-    Kibombo_SetStatueTongue(1, 6);
+    Kibombo_SetStatueTongue(1, STATUE_TONGUE_TO_THE_GROUND_BY_FIRELIGHT);
     Actor_SetPosition(ACTOR_AKAFUBU, 0, 0);
   }
   Event_StartScreenTransition();
@@ -3806,19 +3841,19 @@ void Kibombo_InitializeStatueGroundsCeremony(void) {
   Event_End();
   if (gMainRoutineState.entrance == ENTRANCE_STATUE_SHUT) {
     Kibombo_SetStatueMouth(0, 0);
-    Kibombo_SetStatueTongue(0, 0);
+    Kibombo_SetStatueTongue(0, STATUE_TONGUE_IN_MOUTH);
     Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, 0, 0, 0);
   } else if (gMainRoutineState.entrance == ENTRANCE_STATUE_OPEN) {
     Kibombo_SetStatueMouth(1, 1);
-    Kibombo_SetStatueTongue(1, 0);
+    Kibombo_SetStatueTongue(1, STATUE_TONGUE_IN_MOUTH);
     Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, 0, 0, 0);
   } else if (gMainRoutineState.entrance == ENTRANCE_STATUE_TONGUE_OUT) {
     Kibombo_SetStatueMouth(1, 1);
-    Kibombo_SetStatueTongue(1, 4);
+    Kibombo_SetStatueTongue(1, STATUE_TONGUE_OUT_BY_FIRELIGHT);
     Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, 0, 0, 0);
   } else if (gMainRoutineState.entrance == ENTRANCE_STATUE_REACHING) {
     Kibombo_SetStatueMouth(1, 1);
-    Kibombo_SetStatueTongue(1, 4);
+    Kibombo_SetStatueTongue(1, STATUE_TONGUE_OUT_BY_FIRELIGHT);
     Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, 0, 0, 0);
     Actor_SetAnimationById(ACTOR_STATUE_TONGUE, 5);
   }

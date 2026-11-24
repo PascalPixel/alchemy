@@ -104,6 +104,10 @@ enum { CELL_BEHAVIOR_GEYSER_SAND = 10 };
 /// ship.
 enum { ENTRANCE_PASS_BY_SHIP = 99 };
 
+/// Unused: an entrance on the tree stump's ledge, cell (79, 34), between the
+/// stump and Kindle. No exit, event or debug room leads to it.
+enum { ENTRANCE_STUMP_LEDGE = 99 };
+
 /// Talking to the red Djinni on the ledge near the tree stump starts the battle
 /// with Kindle, a Mars Djinni, who joins Felix once beaten.
 void GondowanCliffs_FightKindle(void) {
@@ -198,7 +202,7 @@ void GondowanCliffs_BlowAwayWeeds(void);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-void Tightrope_Place(s32 a, s32 b, s32 c);
+void Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId);
 void Rope_Initialize(void);
 void Geyser_Start(s32 unused, s32 firstTerrain);
 void Tightrope_Initialize(void);
@@ -424,6 +428,7 @@ void GondowanCliffs_SetUpPass(void) {
                          GONDOWAN_CLIFFS_PASS_FROM_WORLD_MAP_NORTH);
   }
   Tightrope_Initialize();
+  /* FAKEMATCH(wrapper): Tightrope_Place called through Value3. */
   Value3((s32 (*)())Tightrope_Place, 0, ACTOR_PASS_TIGHTROPE_POST_A,
          ACTOR_PASS_TIGHTROPE_POST_B);
   Iwram_CopyWords((s32)gGondowanCliffs_SavedWaterColors,
@@ -641,7 +646,7 @@ LATE_DATA struct SceneEntrance gGondowanCliffs_Entrances[] = {
     {GONDOWAN_CLIFFS_FROM_WORLD_MAP_A, CONDITION_ALWAYS, 536, 0, 488, FACING_EAST, 0, 512, 0, 2048, 864, 0},
     {GONDOWAN_CLIFFS_FROM_WORLD_MAP_B, CONDITION_ALWAYS, 2024, 0, 792, FACING_WEST, 0, 512, 0, 2048, 864, 0},
     {GONDOWAN_CLIFFS_FROM_GONDOWAN_CLIFFS_HIDEOUT, CONDITION_ALWAYS, 1576, 0, 680, FACING_SOUTH, 0, 512, 0, 2048, 864, 0},
-    {99, CONDITION_ALWAYS, 1272, 0, 552, FACING_SOUTH, 0, 512, 0, 2048, 864, 0},
+    {ENTRANCE_STUMP_LEDGE, CONDITION_ALWAYS, 1272, 0, 552, FACING_SOUTH, 0, 512, 0, 2048, 864, 0},
     {SCENE_TABLE_END},
 };
 

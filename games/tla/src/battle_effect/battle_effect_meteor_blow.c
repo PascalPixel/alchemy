@@ -38,6 +38,12 @@ extern const struct Scale gMeteorBlow_DoubleScale;
 /// METEOR_BLOW_START_YAW, and turns a 256th of a turn a frame on each.
 #define METEOR_BLOW_START_PITCH 3328
 #define METEOR_BLOW_START_YAW 9472
+/// From frame 48 the turn round slows by 4 a frame, until it stops at
+/// METEOR_BLOW_YAW_STILL_FRAME. The turn up would slow by 8 a frame from frame
+/// 160, as if it were to stop at METEOR_BLOW_PITCH_STILL_FRAME, but the sky
+/// is drawn only to frame 115.
+#define METEOR_BLOW_YAW_STILL_FRAME 112
+#define METEOR_BLOW_PITCH_STILL_FRAME 152
 
 /// The sky's colour, the backdrop's a line at a time over the battle view:
 /// each line's level is a quarter of its line plus a base, half of
@@ -72,6 +78,11 @@ extern const struct Scale gMeteorBlow_DoubleScale;
 /// The meteor's step on one axis each frame of its flight: its speed times the
 /// heading's sine or cosine, times 64.
 #define METEOR_BLOW_FLIGHT_STEP(trig, speed) (((trig) * (speed)) >> 10)
+/// The meteor's heading starts at DEGtoANG(135); from frame 24 it swings
+/// towards 0 by METEOR_BLOW_HEADING_TURN a frame, as if it had swung since
+/// METEOR_BLOW_HEADING_TURN_FRAME, and stays at 0 from frame 102.
+#define METEOR_BLOW_HEADING_TURN 286
+#define METEOR_BLOW_HEADING_TURN_FRAME 16
 
 /// The landing: the meteor comes down on the foes from METEOR_BLOW_LANDING_X,
 /// and METEOR_BLOW_SPARKS burst from it at METEOR_BLOW_BURST_FRAME. The battle
@@ -381,12 +392,12 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       if (frame <= 159) {
         pitch += TRIG_TURN / 256;
       } else if (frame <= 191) {
-        pitch = pitch - frame * 8 + 1216;
+        pitch = pitch - frame * 8 + METEOR_BLOW_PITCH_STILL_FRAME * 8;
       }
       if (frame <= 47) {
         yaw += TRIG_TURN / 256;
       } else if (frame <= 111) {
-        yaw = yaw - frame * 4 + 448;
+        yaw = yaw - frame * 4 + METEOR_BLOW_YAW_STILL_FRAME * 4;
       }
       position[0] = METEOR_BLOW_SKY_CENTER_X;
       position[1] = METEOR_BLOW_SKY_CENTER_Y;
@@ -436,7 +447,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       s32 a = DEGtoANG(135);
 
       if (frame > 23) {
-        a = a - frame * 286 + 4576;
+        a = a - frame * METEOR_BLOW_HEADING_TURN +
+            METEOR_BLOW_HEADING_TURN_FRAME * METEOR_BLOW_HEADING_TURN;
         if (a < 0) {
           a = 0;
         }

@@ -117,6 +117,26 @@ enum IdejimaActorId {
 /// Kraden's sprite lying asleep on his side.
 enum { KRADEN_ANIMATION_ASLEEP = 5 };
 
+/// The leader's sheet as Felix wakes on the beach: lying on his back, sitting
+/// up, then, checking himself for injuries, swinging each arm and kicking out
+/// each leg.
+enum {
+  ANIM_LEADER_LIE_ON_BACK = 41,
+  ANIM_LEADER_SIT_UP = 42,
+  ANIM_LEADER_SWING_RIGHT_ARM = 45,
+  ANIM_LEADER_SWING_LEFT_ARM = 46,
+  ANIM_LEADER_KICK_RIGHT_LEG = 47,
+  ANIM_LEADER_KICK_LEFT_LEG = 48
+};
+
+/// Animation 18 of Sheba's sheet sits her up on the ground; of Jenna's, it
+/// lays her on her side.
+enum { ANIM_SHEBA_SIT_UP = 18, ANIM_JENNA_LIE_ON_SIDE = 18 };
+
+/// Menardi's ship rocking every 10 frames, quicker than at rest, as the island
+/// drifts.
+enum { SHIP_ANIMATION_ROCK_FAST = 2 };
+
 extern struct SceneEntrance gSceneEntrances[];
 extern u32 gIdejimaExits[];
 extern struct Trigger gIdejimaEvents[];
@@ -353,7 +373,7 @@ void Idejima_WakeSheba(void) {
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 40);
   // "Nnng."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  Actor_SetAnimationById(ACTOR_SHEBA, 18);
+  Actor_SetAnimationById(ACTOR_SHEBA, ANIM_SHEBA_SIT_UP);
   // "The wave!"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   MapGrid_CopyCellAttributes(38, 31, 2, 1, 14, 40);
@@ -949,7 +969,7 @@ void Idejima_UseDriftPalette(void) {
 
 /// Readies the island adrift: the sea's layer drifts a quarter of a pixel east
 /// and an eighth south each frame, the beacon's cells are copied in and the
-/// ship plays its second animation.
+/// ship rocks quickly.
 void DriftScene_Prepare(void) {
   struct MapLayer *layer =
       &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[0];
@@ -957,7 +977,7 @@ void DriftScene_Prepare(void) {
   layer->speedX = toFIXED(1) / 4;
   layer->speedY = toFIXED(1) / 8;
   MapGrid_CopyCellsTo(72, 10, 75, 8, 1, 1);
-  Actor_SetAnimation(ACTOR_SHIP, 2);
+  Actor_SetAnimation(ACTOR_SHIP, SHIP_ANIMATION_ROCK_FAST);
 }
 
 #include "shared/emote_pop_tilted.c"
@@ -1220,7 +1240,7 @@ void Idejima_FindFelixAndSheba(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
   Actor_SetPosition(gMainRoutineState.leaderActorId, 432, 234);
   Actor_Get(gMainRoutineState.leaderActorId)->scaleX = -FIXED_ONE;
-  Actor_SetAnimation(gMainRoutineState.leaderActorId, 41);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_LIE_ON_BACK);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineState.leaderActorId), 0);
   Actor_SetPosition(ACTOR_ALEX, 392, 172);
   System_Wait(1);
@@ -1357,7 +1377,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
   Actor_SetPositionAndFacing(gMainRoutineState.leaderActorId, toFIXED(312),
                              toFIXED(230), FACING_WEST);
-  Actor_SetAnimation(gMainRoutineState.leaderActorId, 41);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_LIE_ON_BACK);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineState.leaderActorId), 0);
   System_Wait(1);
   Event_StartScreenTransition();
@@ -1398,7 +1418,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   // "Jenna?"
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimation(ACTOR_SHEBA, 18);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHEBA_SIT_UP);
   FieldEvent_Wait(40);
   // "What...happened?"
   Event_ShowMessage(ACTOR_SHEBA, 0);
@@ -1522,7 +1542,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 20);
   // "Felix... are you awake?"
   Event_ShowMessage(ACTOR_ALEX, 0);
-  Actor_SetAnimation(gMainRoutineState.leaderActorId, 42);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_SIT_UP);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
@@ -1662,7 +1682,7 @@ void Idejima_FelixWakes(void) {
   System_Wait(1);
   FieldCamera_MoveTo(384, CAMERA_KEEP, 728, 0);
   System_Wait(1);
-  Actor_SetAnimation(gMainRoutineState.leaderActorId, 41);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_LIE_ON_BACK);
   System_Wait(1);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineState.leaderActorId), 0);
   System_Wait(1);
@@ -1682,7 +1702,7 @@ void Idejima_FelixWakes(void) {
   FelixWake_EndStep();
   FelixWake_WaitForButton();
   FelixWake_StartStep();
-  Actor_SetAnimation(gMainRoutineState.leaderActorId, 42);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_SIT_UP);
   System_Wait(1);
   FelixWake_EndStep();
   FelixWake_WaitForButton();
@@ -1700,12 +1720,14 @@ void Idejima_FelixWakes(void) {
   leader = gMainRoutineState.leaderActorId;
   if (answer == 0) {
     Actor_WaitForAnimationChange(leader);
-    Actor_SetAnimation(gMainRoutineState.leaderActorId, 45);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId,
+                       ANIM_LEADER_SWING_RIGHT_ARM);
     System_Wait(1);
     FelixWake_EndStep();
     FieldEvent_Wait(50);
     FelixWake_StartStep();
-    Actor_SetAnimation(gMainRoutineState.leaderActorId, 46);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId,
+                       ANIM_LEADER_SWING_LEFT_ARM);
     System_Wait(1);
     FelixWake_EndStep();
     FieldEvent_Wait(50);
@@ -1717,12 +1739,14 @@ void Idejima_FelixWakes(void) {
     FelixWake_EndStep();
     FieldEvent_Wait(20);
     FelixWake_StartStep();
-    Actor_SetAnimation(gMainRoutineState.leaderActorId, 47);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId,
+                       ANIM_LEADER_KICK_RIGHT_LEG);
     System_Wait(1);
     FelixWake_EndStep();
     FieldEvent_Wait(50);
     FelixWake_StartStep();
-    Actor_SetAnimation(gMainRoutineState.leaderActorId, 48);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId,
+                       ANIM_LEADER_KICK_LEFT_LEG);
     System_Wait(1);
     FelixWake_EndStep();
     FieldEvent_Wait(50);
@@ -1834,7 +1858,7 @@ void Idejima_LayDownTheOthers(void) {
     actor->motionFlags = 0;
     actor->y.fixed = toFIXED(12);
     actor->collisionFlags = 0;
-    Actor_SetAnimation(ACTOR_JENNA, 18);
+    Actor_SetAnimation(ACTOR_JENNA, ANIM_JENNA_LIE_ON_SIDE);
   }
   flag = Event_GetFlag(FLAG_IDEJIMA_SHEBA_JOINED);
   if (flag == 0) {

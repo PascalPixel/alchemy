@@ -172,6 +172,21 @@ extern u16 gLemuria_WideDoorOpening[];
 #define FLAG_STAR_DUST_DUG_UP FLAG_AREA_TEMP_07
 #define FLAG_VIAL_DUG_UP FLAG_AREA_TEMP_08
 
+/// The actors of Lemuria's treasure spots, in the order of its rows in
+/// gSceneItems (the scene items 101 to 109): eight buried for Scoop, and the
+/// Hard Nut in the pasture's weeds.
+enum LemuriaTreasureActorId {
+  ACTOR_BURIED_WATER_OF_LIFE = FIELD_TREASURE_ACTOR,
+  ACTOR_BURIED_NUT,
+  ACTOR_BURIED_BRAMBLE_SEED,
+  ACTOR_BURIED_LUCKY_MEDAL,
+  ACTOR_BURIED_RUSTY_SWORD,
+  ACTOR_HARD_NUT,
+  ACTOR_BURIED_BONE,
+  ACTOR_BURIED_STAR_DUST,
+  ACTOR_BURIED_VIAL
+};
+
 #include "shared/actor_is_facing_near.h"
 
 s32 Actor_GetSpritePriority(struct Actor *actor);
@@ -414,7 +429,7 @@ void Lemuria_CycloneHardNutWeeds(void) {
 
   FieldTileCopies_CopyTouchedCells(59, 64, 4, 3, 49, 71, 2);
   if (Event_GetFlag(FLAG_LEMURIA_HARD_NUT) == 0) {
-    Actor_SetPosition(FIELD_TREASURE_ACTOR + 5, HARD_NUT_X, HARD_NUT_Z);
+    Actor_SetPosition(ACTOR_HARD_NUT, HARD_NUT_X, HARD_NUT_Z);
     if (FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(HARD_NUT_X)) &&
         FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(HARD_NUT_Z))) {
       Event_Start();
@@ -433,7 +448,7 @@ void Teleport_PlaySparksAndFade(void);
 
 /// Unused: teleports the party, with sparks and a fade, to the door of the
 /// girl's house. No trigger or call of the scene reaches it.
-void Lemuria_TeleportToGirlsHouse(void) {
+UNUSED void Lemuria_TeleportToGirlsHouse(void) {
   struct MainRoutineState *party;
 
   Teleport_PlaySparksAndFade();
@@ -463,51 +478,52 @@ void Lemuria_GrowVine(void) {
 
 /// Unused: Scoop digs up the Water of Life of Lemuria's first treasure spot. No
 /// trigger reaches it.
-void Lemuria_ScoopWaterOfLife(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR, FLAG_WATER_OF_LIFE_DUG_UP);
+UNUSED void Lemuria_ScoopWaterOfLife(s32 id) {
+  Event_DigUpTreasure(id, ACTOR_BURIED_WATER_OF_LIFE,
+                      FLAG_WATER_OF_LIFE_DUG_UP);
 }
 
 /// Unused: Scoop digs up the Nut of Lemuria's second treasure spot. No trigger
 /// reaches it.
-void Lemuria_ScoopNut(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 1, FLAG_NUT_DUG_UP);
+UNUSED void Lemuria_ScoopNut(s32 id) {
+  Event_DigUpTreasure(id, ACTOR_BURIED_NUT, FLAG_NUT_DUG_UP);
 }
 
 /// Unused: Scoop digs up the Bramble Seed of Lemuria's third treasure spot. No
 /// trigger reaches it.
-void Lemuria_ScoopBrambleSeed(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 2, FLAG_BRAMBLE_SEED_DUG_UP);
+UNUSED void Lemuria_ScoopBrambleSeed(s32 id) {
+  Event_DigUpTreasure(id, ACTOR_BURIED_BRAMBLE_SEED, FLAG_BRAMBLE_SEED_DUG_UP);
 }
 
 /// Felix casts Scoop on the patch of ground right of the Spring of Lemuria,
 /// where a butterfly flutters, cell (33, 61): he digs up a Lucky Medal.
 void Lemuria_ScoopLuckyMedal(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 3, FLAG_LUCKY_MEDAL_DUG_UP);
+  Event_DigUpTreasure(id, ACTOR_BURIED_LUCKY_MEDAL, FLAG_LUCKY_MEDAL_DUG_UP);
 }
 
 /// Felix casts Scoop on the patch of ground near Lunpa's tower in the east of
 /// the town, where a butterfly flutters, cell (55, 58): he digs up a Rusty
 /// Sword.
 void Lemuria_ScoopRustySword(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 4, FLAG_RUSTY_SWORD_DUG_UP);
+  Event_DigUpTreasure(id, ACTOR_BURIED_RUSTY_SWORD, FLAG_RUSTY_SWORD_DUG_UP);
 }
 
 /// Felix casts Scoop on the patch of ground near the dog, where a butterfly
 /// flutters, cell (23, 38): he digs up a Bone.
 void Lemuria_ScoopBone(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 6, FLAG_BONE_DUG_UP);
+  Event_DigUpTreasure(id, ACTOR_BURIED_BONE, FLAG_BONE_DUG_UP);
 }
 
 /// Felix casts Scoop on the patch of ground left of the palace, where a
 /// butterfly flutters, cell (18, 26): he digs up Star Dust.
 void Lemuria_ScoopStarDust(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 7, FLAG_STAR_DUST_DUG_UP);
+  Event_DigUpTreasure(id, ACTOR_BURIED_STAR_DUST, FLAG_STAR_DUST_DUG_UP);
 }
 
 /// Unused: Scoop digs up the Vial of Lemuria's ninth treasure spot. No trigger
 /// reaches it.
-void Lemuria_ScoopVial(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 8, FLAG_VIAL_DUG_UP);
+UNUSED void Lemuria_ScoopVial(s32 id) {
+  Event_DigUpTreasure(id, ACTOR_BURIED_VIAL, FLAG_VIAL_DUG_UP);
 }
 
 s32 Party_FindOwnerWithAction();
@@ -822,17 +838,20 @@ s32 Scene_Initialize(void) {
     HangingVine_Place(ACTOR_SPROUT, 1);
     Lemuria_GrowVine();
   }
+  // Each treasure still buried has its actor taken off to the map's corner
+  // and marked as standing for a map cell instead (Actor_SetWideSprite's mode
+  // 0).
   if (!Event_GetFlag(FLAG_LUCKY_MEDAL_DUG_UP)) {
-    Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 3, 0);
+    Actor_SetWideSprite(ACTOR_BURIED_LUCKY_MEDAL, 0);
   }
   if (!Event_GetFlag(FLAG_RUSTY_SWORD_DUG_UP)) {
-    Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 4, 0);
+    Actor_SetWideSprite(ACTOR_BURIED_RUSTY_SWORD, 0);
   }
   if (!Event_GetFlag(FLAG_BONE_DUG_UP)) {
-    Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 6, 0);
+    Actor_SetWideSprite(ACTOR_BURIED_BONE, 0);
   }
   if (!Event_GetFlag(FLAG_STAR_DUST_DUG_UP)) {
-    Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 7, 0);
+    Actor_SetWideSprite(ACTOR_BURIED_STAR_DUST, 0);
   }
   // Lunpa has opened the window above his door.
   if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE)) {

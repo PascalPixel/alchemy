@@ -368,7 +368,8 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
     }
 
     // The flames: each one's place on the ring turned into the canvas, the
-    // second eight on a ring tipped on its side.
+    // second eight on a ring tipped on its side. A flame stands centred on its
+    // place, three quarters of its height above it.
     for (i = 0; i != gJuggle_Styles[args->variant][JUGGLE_RING_FLAMES]; i++) {
       s32 cel = (frame / 2 + i * 4) & 3;
       s32 *place;
@@ -398,8 +399,9 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       place[1] = y + 64;
       blitters[gJuggle_Styles[args->variant][JUGGLE_RING_BLITTER]](
           canvas, state->sheet + cel * PICTURE_BYTES(JUGGLE_FLAME),
-          x + CANVAS_SIZE / 2 - JUGGLE_FLAME_WIDTH / 2, y + 16,
-          JUGGLE_FLAME_WIDTH, JUGGLE_FLAME_HEIGHT);
+          x + CANVAS_SIZE / 2 - JUGGLE_FLAME_WIDTH / 2,
+          y + CANVAS_SIZE / 2 - JUGGLE_FLAME_HEIGHT * 3 / 4, JUGGLE_FLAME_WIDTH,
+          JUGGLE_FLAME_HEIGHT);
     }
 
     // The strike: sparks burst from every target.

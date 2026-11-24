@@ -95,7 +95,11 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
+/// Takes `size` bytes from the heap for a picture's decompression.
+static inline void *BumpAlloc(s32 size) {
+  /* FAKEMATCH(wrapper): Heap_Alloc through this inline. */
+  return Heap_Alloc(size);
+}
 
 /// Loads the portraits' frame, a window border round a green panel
 /// (RESOURCE_GREEN_PANEL) drawn in portrait slot 0's palette, and starts
@@ -301,6 +305,8 @@ s32 Scene_Initialize(void) {
   scroll = gBgScroll;
   scroll[3].y = 16;
   scroll[2].y = 16;
+  /* FAKEMATCH(wrapper): most pictures shown through Call3 rather than called
+   * directly. */
   Call3((void (*)())EndingImage_Show, RESOURCE_ENDING_CLIFF_DAY_PICTURE,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(100);

@@ -81,8 +81,6 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
   s32 k;
-  s32 fillMode;
-  s32 flatKind;
   u8 *pixels;
 
   state = Ram_HeapSlots->battleEffect;
@@ -428,8 +426,6 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
     // From frame 90: the shards, flat triangles in eight shades; from 100 the
     // screen fades to white.
-    fillMode = CANVAS_COPY_AND_CLEAR;
-    flatKind = MODEL_SOLID_ADDITIVE;
     if (frame > 89) {
       u8 color[1];
       FIXED center;
@@ -437,9 +433,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       s32 y;
 
       model->mesh = gBattleEffect_TriangleMesh;
-      model->kind = flatKind;
+      model->kind = MODEL_SOLID_ADDITIVE;
       if (frame > 99) {
-        EFFECT_SET_TRANSFER(state, fillMode, CANVAS_FILL_WORD(2));
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(2));
         Palette_BrightenBgEntries(2, 2, 2);
       }
       for (i = 0, step = ODYSSEY_SHARDS; i != ODYSSEY_SHARD_COUNT; i++) {

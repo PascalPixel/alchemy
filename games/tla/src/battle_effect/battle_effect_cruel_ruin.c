@@ -432,6 +432,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     break;
   }
   {
+    /* FAKEMATCH(temporary): copy, a local standing for the IWRAM routine's
+     * address. */
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
@@ -789,8 +791,11 @@ void BattleEffect_EndElementStreaks(void) {
 /// The circle of runes turns round the orb from frame 24 for
 /// CRUEL_RUIN_RUNE_FRAMES, until the flash.
 #define CRUEL_RUIN_RUNE_FRAMES 100
-/// The rays' length grows to CRUEL_RUIN_RAY_LENGTH_MAX.
+/// The rays' length grows to CRUEL_RUIN_RAY_LENGTH_MAX; each is
+/// CRUEL_RUIN_RAY_WIDTH across, a little under half of the beam it is drawn
+/// from, after the beam is already halved.
 #define CRUEL_RUIN_RAY_LENGTH_MAX (FIXED_ONE * 625 / 512)
+#define CRUEL_RUIN_RAY_WIDTH 30384
 /// The ball of light that falls grows to this size; its streak's width scales
 /// by CRUEL_RUIN_STREAK_SCALE for each pixel of the ball's size, as the falling
 /// streaks' do.
@@ -808,6 +813,8 @@ void BattleEffect_EndElementStreaks(void) {
 #define CRUEL_RUIN_RIBBON_SWAY_STEP 2348
 #define CRUEL_RUIN_RIBBON_FRAMES 46
 #define CRUEL_RUIN_FIRST_RIBBON_ROLL 3048
+/// The ribbons are drawn at about 70 percent of their strip's length.
+#define CRUEL_RUIN_RIBBON_STRETCH 45536
 /// The ribbons' texture scrolls back from ~CRUEL_RUIN_RIBBON_SCROLL, 2 texels a
 /// frame on the first and 4 on the second.
 #define CRUEL_RUIN_RIBBON_SCROLL 63
@@ -1231,7 +1238,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               Matrix_Translate(-toFIXED(4), -toFIXED(44), 0);
               Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
               Matrix_RotateZ(p->z);
-              Matrix_Scale(30384, sy, FIXED_ONE / 2);
+              Matrix_Scale(CRUEL_RUIN_RAY_WIDTH, sy, FIXED_ONE / 2);
               Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
               Render_DrawModelList(model);
             }
@@ -1614,7 +1621,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               x += INTtoFIXED((t - CRUEL_RUIN_RIBBON_QUADS / 2) * 7);
             }
             Matrix_Translate(x, -toFIXED(16), 0);
-            Matrix_Scale(45536, FIXED_ONE, FIXED_ONE / 2);
+            Matrix_Scale(CRUEL_RUIN_RIBBON_STRETCH, FIXED_ONE, FIXED_ONE / 2);
             if (i == 0) {
               Matrix_RotateZ(-CRUEL_RUIN_FIRST_RIBBON_ROLL);
             } else {

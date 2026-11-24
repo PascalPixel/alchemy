@@ -43,7 +43,10 @@ enum DragonFireMode {
 /// The whirlwind rises in two pieces: its foot, a cel's upper rows, then a
 /// whole cel above it.
 #define PROCNE_WHIRLWIND_FOOT_HEIGHT 48
+/// The dust picture after them, a 16x16 puff, drawn with its middle 4 pixels
+/// left of and above its mote.
 #define PROCNE_DUST (3 * PROCNE_WHIRLWIND_CEL)
+#define PROCNE_DUST_SIZE 16
 #define PROCNE_COMET_PICTURES 13824
 
 #define PROCNE_DUST_MOTES 24 ///< dust motes that swirl up the whirlwind
@@ -280,8 +283,10 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             // DEAD: always true, as a mote restarts once past 48 pixels up and
             // climbs little more than 2 pixels a frame; the ROM keeps the test.
             if (point[index].y < toFIXED(64))
-              draw[0](canvas, state->sheet + PROCNE_DUST, screen.x - 12,
-                      screen.y - 12, 16, 16);
+              draw[0](canvas, state->sheet + PROCNE_DUST,
+                      screen.x - (PROCNE_DUST_SIZE / 2 + 4),
+                      screen.y - (PROCNE_DUST_SIZE / 2 + 4), PROCNE_DUST_SIZE,
+                      PROCNE_DUST_SIZE);
             if (point[index].z > 24)
               point[index].z -= 4;
             point[index].velocityY += point[index].velocityX * 2;
@@ -586,6 +591,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 #undef PROCNE_WHIRLWIND_CEL
 #undef PROCNE_WHIRLWIND_FOOT_HEIGHT
 #undef PROCNE_DUST
+#undef PROCNE_DUST_SIZE
 #undef PROCNE_COMET_PICTURES
 #undef PROCNE_DUST_MOTES
 #undef PROCNE_DUST_SPIN_GAIN
@@ -648,6 +654,10 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 /// The level the canvas is cleared to each frame of the flash, until its last
 /// two frames turn it CANVAS_LEVEL_BRIGHTEST.
 #define DRAGON_FIRE_FLASH_LEVEL 16
+/// A spark's heading is a random one from DRAGON_FIRE_HEADING, about 110
+/// degrees, to an eighth of a turn past it; a puff of breath's from about 110
+/// degrees the other way.
+#define DRAGON_FIRE_HEADING 20000
 
 /// Tiamat's pieces (state->sprites), each showing its own picture of the sprite
 /// sheet: piece n shows animation n. As it breathes, its head, horns, jaw and
@@ -833,7 +843,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
             if (spark->variant == -1) {
               s32 speed = (Random16() & 255) + 128;
-              s32 angle = (Random16() & 0x1fff) + 20000;
+              s32 angle = (Random16() & 0x1fff) + DRAGON_FIRE_HEADING;
 
               if (mode == DRAGON_FIRE_TIAMAT) {
                 if (twoPartTarget == 1) {
@@ -872,7 +882,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
           if (puff->variant == -1) {
             s32 speed = (Random16() & 255) + 128;
-            s32 angle = (Random16() & 0x1fff) - 20000;
+            s32 angle = (Random16() & 0x1fff) - DRAGON_FIRE_HEADING;
 
             if (mode == DRAGON_FIRE_TIAMAT) {
               if (twoPartTarget == 1) {
@@ -1081,3 +1091,4 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 #undef DRAGON_FIRE_SPARK_LIFE
 #undef DRAGON_FIRE_EMBER_LIFE
 #undef DRAGON_FIRE_FLASH_LEVEL
+#undef DRAGON_FIRE_HEADING

@@ -120,13 +120,15 @@ struct DropletBuffer {
   struct Particle droplets[512];
 };
 
+/// Eclipse's scale for the dragon's sprites, and Cruel Ruin's for its
+/// summon, one to one.
 extern const struct Scale gEclipse_DragonScale;
-
 extern const struct Scale gCruelRuin_UnitScale;
 
 /// One handler for each battle effect, by effect less one; 0 where none.
 extern void (*const gBattleEffect_Handlers[])(struct BattleEffectParams *args);
 
+/// Zagan's scale, one to one.
 extern const struct Scale gZagan_UnitScale;
 
 extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
@@ -588,6 +590,10 @@ enum RedCrescentPicture {
 /// The bytes of BlueGlowSheet's ten flare pictures, 2 to 20 pixels square:
 /// 4 * (1 + 4 + ... + 100).
 #define FLARE_SET_BYTES 1540
+/// The battle sheet (HEAP_SLOT_BATTLE_SHEET) the casting impacts, the plain
+/// attacks and Cruel Ruin decode their glows into: room for BlueGlowSheet's
+/// flares, the largest of them, with ten bytes to spare.
+#define BATTLE_SHEET_BYTES (FLARE_SET_BYTES + 10)
 #define MOTE_PICTURES 10
 
 /// The columns of gTargetStrike_Styles, one row a style.
@@ -763,9 +769,11 @@ enum CanvasWipeFill {
   CANVAS_WIPE_CLEAR ///< colour 0: the canvas cleared
 };
 
-/// Lets the battle show the damage, playing hitSound (0 keeps the one queued)
-/// as the targets react; a second use changes nothing.
+/// Lets the battle show the damage, playing hitSound as the targets react: 0
+/// keeps the one queued, and HIT_SOUND_NONE plays none where the effect has
+/// played its own. A second use changes nothing.
 #define EFFECT_SHOW_DAMAGE(hitSound) BattlePlayback_StartFar(hitSound)
+#define HIT_SOUND_NONE (-1)
 
 /// Passed to BattleEffect_TintBattler as its palette, pose or timer slot: leave
 /// that one as it is.
@@ -885,7 +893,7 @@ enum SparkGroupsMode {
 enum ProjectileVolleyMode {
   PROJECTILE_VOLLEY_SLASH,         ///< comets, picked by the variant
   PROJECTILE_VOLLEY_SHURIKEN,      ///< spinning shurikens
-  PROJECTILE_VOLLEY_CRAZY_VOICE,   ///< bouncing pellets
+  PROJECTILE_VOLLEY_CRAZY_VOICE,   ///< bouncing musical notes
   PROJECTILE_VOLLEY_WING_FLUTTER,  ///< yellow sparks
   PROJECTILE_VOLLEY_WING_BEAT,     ///< small yellow sparks
   PROJECTILE_VOLLEY_CUTTING_EDGE,  ///< one large comet in ice colours
@@ -1172,7 +1180,6 @@ s32 BattleSprite_HasHeavyImpactFar(s32 enemyId);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void *Actor_GetSpriteFar(void *object, s32 index);
 u32 Heap_GetRemainingIwram(void);
-s32 Inn_RoomPrice(s32 innId);
 void Palette_LoadBasicSpriteColors(void);
 u32 Random16(void);
 void BattleObject_DestroySpritesFar(s32 actor);
@@ -1182,8 +1189,6 @@ void Matrix_Translate(FIXED x, FIXED y, FIXED z);
 void Matrix_ScaleVector(FIXED *scale);
 void Matrix_Scale(FIXED x, FIXED y, FIXED z);
 void Matrix_ScaleUniform(FIXED scale);
-void Shop_InitializeState(void);
-void Shop_ReleaseState(void);
 void Sprite_RemoveAnimationFar(void *record, s32 entry);
 void Matrix_RotateX(s32 angle);
 void Matrix_RotateZ(s32 angle);
@@ -1200,9 +1205,13 @@ void wait(s32 frames);
 
 // The tables of effect_table.c, in its order.
 
+/// Where each size of mote and of flare starts in its sprite sheet, in bytes.
 extern u16 gBattleEffect_MotePictures[];
 extern u16 gBattleEffect_FlarePictures[];
+/// Where each of Cruel Ruin's circles starts in its sprite sheet.
 extern const u16 gCruelRuin_CirclePictures[];
+/// The pictures several effects share: the sparkles, the ember puff that rises
+/// in six pictures, and the six glints, with their sizes and offsets.
 extern u16 gBattleEffect_SparklePictures[];
 extern u8 gBattleEffect_SparkleSizes[];
 extern u8 gBattleEffect_PuffArcPictureWidths[];
@@ -1212,18 +1221,25 @@ extern u16 gBattleEffect_PuffArcPictures[];
 extern u16 gBattleEffect_GlintPictures[];
 extern u8 gBattleEffect_GlintPictureWidths[];
 extern u8 gBattleEffect_GlintPictureHeights[];
+/// Spire's shard pictures.
 extern u8 gSpire_ShardWidths[];
 extern u8 gSpire_ShardHeights[];
 extern u16 gSpire_ShardPictures[];
+/// The stat change's shard pictures.
 extern u16 gStatChange_ShardPictures[];
 extern u8 gStatChange_ShardWidths[];
 extern u8 gStatChange_ShardHeights[];
+/// Where the Death Card's Reaper draws its seven panels, seven x for each side.
 extern u8 gReaper_PictureX[];
 extern u8 gReaper_PictureY[];
+/// Ice's shards and frames, and Douse's drops, by variant.
 extern u8 gIce_Counts[];
 extern u8 gDouse_Counts[];
+/// The streaks' styles, and the struck target's tremble.
 extern s8 gStreak_Styles[];
 extern s8 gStreak_Tremble[];
+/// The target strikes: their styles (enum TargetStrikeColumn), the slash
+/// pictures and how far each reaches, the bite's stages and the glints' flips.
 extern u8 gTargetStrike_Styles[][7];
 extern u8 gTargetStrike_Widths[];
 extern u8 gTargetStrike_Heights[];
@@ -1231,14 +1247,19 @@ extern u16 gTargetStrike_Pictures[];
 extern u8 gTargetStrike_Reach[];
 extern u8 gTargetStrike_BiteStages[];
 extern u8 gTargetStrike_GlintDrawFlags[];
+/// The 33 pieces the screen shatters into as Death Plunge opens: their pictures
+/// and where they start.
 extern u8 gShatteringOpening_PieceWidths[];
 extern u8 gShatteringOpening_PieceHeights[];
 extern u16 gShatteringOpening_PiecePictures[];
 extern u8 gShatteringOpening_PieceStartX[];
 extern u8 gShatteringOpening_PieceStartY[];
+/// The element burst's four corner sparks: their places and flips.
 extern s8 gElementBurst_SparkX[];
 extern s8 gElementBurst_SparkY[];
 extern u8 gElementBurst_GlintFlips[];
+/// Cruel Ruin: the streak's corners, the discs' turns, the pillars, the blasts,
+/// and each streak's start, size, path and roll.
 extern const struct ModelVertex gCruelRuin_StreakCorners[];
 extern const u16 gCruelRuin_DiscPitches[];
 extern const u16 gCruelRuin_DiscYaws[];
@@ -1255,6 +1276,8 @@ extern const u8 gCruelRuin_StreakStepX[];
 extern const u8 gCruelRuin_StreakStepY[];
 extern const u8 gCruelRuin_StreakEndY[];
 extern const s32 gCruelRuin_StreakRolls[];
+/// Eclipse: the glints' flips, the dragon's sprites that take new tiles as it
+/// turns and their places, the canvas's fills, and the rings.
 extern const u8 gEclipse_GlintFlips[];
 extern const u8 gEclipse_TileObjects[];
 extern const u8 gEclipse_FillFrames[];
@@ -1263,28 +1286,43 @@ extern const u8 gEclipse_ObjectX[];
 extern const u8 gEclipse_ObjectZ[];
 extern const u8 gEclipse_RingGrowth[];
 extern const s8 gEclipse_RingHeights[];
+/// The form change's four waves: when each starts, how fast it grows and how
+/// far it is stretched.
 extern u8 gFormChange_WaveStarts[];
 extern u8 gFormChange_WaveGrowth[];
 extern u8 gFormChange_WaveStretch[];
+/// Prism's crystal and the shards it breaks into: their places and pictures.
 extern u8 gPrism_ShardStarts[];
 extern u8 gPrism_ShardWidths[];
 extern u8 gPrism_ShardHeights[];
 extern s32 gPrism_ShardPictures[];
+/// The gathering lights' motes for each target, and the frames before the
+/// targets' share, by mode.
 extern u8 gGatheringLights_Counts[];
+/// The Djinn beams: the motes' pictures as they sway, and the beam head's three
+/// pictures.
 extern u8 gDjinnBeams_MotePictures[];
 extern u16 gDjinnBeams_HeadPictures[];
 extern u8 gDjinnBeams_HeadWidths[];
 extern u8 gDjinnBeams_HeadHeights[];
+/// The lobbed shells: each style's record (LOBBED_SHELLS_SHATTER and the rest),
+/// and the shards' pictures.
 extern s8 gLobbedShells_Styles[];
 extern u8 gLobbedShells_ShardWidths[];
 extern u8 gLobbedShells_ShardHeights[];
 extern u16 gLobbedShells_ShardPictures[];
+/// Where Condemn draws its seven pictures of the reaper and his crescent, by
+/// side.
 extern u8 gCondemn_PictureX[];
 extern u8 gCondemn_PictureY[];
+/// Bind's triangles: the first corner of each.
 extern s32 gBind_Vertex[];
 extern s32 gBind_TriangleStrikeVertex[];
+/// The star's ring: its points and radii, alternating.
 extern s32 gStar_Points[];
 extern u8 gStar_Radii[];
+/// Procne: the grid her nine sprites sit on, the four strikes' frames and a
+/// strike's three pictures.
 extern u8 gProcne_GridX[];
 extern u8 gProcne_GridY[];
 extern u16 gProcne_Frames[];
@@ -1292,6 +1330,8 @@ extern u8 gProcne_PictureWidths[];
 extern u8 gProcne_PictureHeights[];
 extern u8 gProcne_PictureBiasY[];
 extern u16 gProcne_Pictures[];
+/// Tiamat: the embers' speeds and sizes, a spark's two pixels, and the flame
+/// streak's six pictures.
 extern u8 gTiamat_EmberSpeeds[];
 extern u8 gTiamat_SparkPixels[];
 extern u8 gTiamat_EmberSizes[];
@@ -1299,25 +1339,40 @@ extern u8 gTiamat_FlameWidths[];
 extern u8 gTiamat_FlameHeights[];
 extern u8 gTiamat_FlameDrops[];
 extern u16 gTiamat_FlamePictures[];
+/// Nereid: the three water columns' feet and the falling sparks' gravity.
 extern u8 gNereid_Columns[];
 extern s32 gNereid_Gravity[];
+/// The vortices: Froth's counts and the whirlwind's shapes, by variant (the
+/// FROTH_ and WHIRLWIND_ columns).
 extern u8 gVortices_Counts[][2];
 extern u8 gVortices_Shapes[][3];
+/// Prism's crystals, frames and damage frame, by variant.
 extern u8 gPrism_Counts[];
+/// Plasma: the sparks and shake of each lightning pillar, the columns, and the
+/// counts, by variant.
 extern u16 gPlasma_Sparks[];
 extern u8 gPlasma_Columns[];
 extern u8 gPlasma_Counts[];
+/// The spark groups' shapes, by variant: sparks in a group, groups and each
+/// group's x.
 extern u16 gSparkGroups_Shapes[][5];
+/// Plasma's flash burst picture for each three frames of a flash.
 extern u8 gPlasma_FlashPictures[];
+/// Volcano's pillars of fire: how many, their depths and when each erupts.
 extern u8 gVolcano_Counts[];
 extern s8 gVolcano_Depths[][4];
 extern u8 gVolcano_StartFrames[];
+/// The target motes' glint flips.
 extern u8 gTargetMotes_GlintFlips[];
+/// Zagan: where his sprites sit as he charges and as he gallops, and his dust
+/// rings.
 extern const u16 gZagan_ChargePoints[][2];
 extern const u16 gZagan_GallopPoints[][2];
 extern const u8 gZagan_RingStarts[];
 extern const u8 gZagan_RingGrowth[];
 extern const s8 gZagan_RingHeights[];
+/// Cybele: her sprites' poses, and the pictures of her thorns, flowers, chips,
+/// sparks and blasts.
 extern u8 gCybele_ObjectPoses[];
 extern u16 gCybele_ThornPictures[];
 extern u8 gCybele_ThornWidths[];
@@ -1331,6 +1386,8 @@ extern u16 gCybele_SparkPictures[];
 extern u8 gCybele_SparkSizes[];
 extern u16 gCybele_BlastPictures[];
 extern u16 gCybele_BlastSizes[];
+/// Boreas: the crystals' points, the shake, his sprites' animations, and the
+/// pictures of the crystals, debris, spray, rising crystals and falls.
 extern u8 gBoreas_Points[][2];
 extern s8 gBoreas_ShakeOffsets[];
 extern u16 gBoreas_CrystalPictures[];
@@ -1349,14 +1406,19 @@ extern u8 gBoreas_RisingCrystalHeights[];
 extern u8 gBoreas_FallWidths[];
 extern u8 gBoreas_FallHeights[];
 extern u16 gBoreas_FallPictures[];
+/// Drain's motes: their gravities, and their size by mode.
 extern s32 gDrain_Gravities[];
 extern u8 gDrainMotes_Sizes[];
+/// Quake's frames, rise and shake, by variant.
 extern u8 gQuake_Timings[][3];
+/// Fire's counts by variant, and its flare pictures.
 extern u8 gFire_Counts[];
 extern u8 gFire_FlareWidths[];
 extern u8 gFire_FlareHeights[];
 extern u8 gFire_FlareBiasY[];
 extern u16 gFire_FlarePictures[];
+/// Frost: where the mounds rise, its timings by variant, and the pictures of
+/// its motes, mounds and ice chips.
 extern u8 gFrost_MoundSpots[];
 extern u8 gFrost_Timings[];
 extern u8 gFrost_MoteWidths[];
@@ -1367,12 +1429,18 @@ extern u8 gFrost_MoundHeights[];
 extern u8 gFrost_ChipWidths[];
 extern u8 gFrost_ChipHeights[];
 extern u16 gFrost_ChipCells[];
+/// The sparks each of Ray's bolts throws a frame, by variant.
 extern u8 gRay_Sparks[][2];
+/// Eruption's counts by variant, and its puffs' pictures.
 extern u8 gEruption_Counts[][3];
 extern u16 gEruption_PuffPictures[];
 extern u16 gEruption_PuffSizes[];
+/// The burst shower's glint flips.
 extern u8 gBurstShower_GlintFlips[];
+/// Atalanta's sprites' scale, one to one.
 extern s32 gAtalanta_UnitScale[];
+/// Growth: the vines' and pillars' pictures, the columns by strength and where
+/// they root, how tall they grow, and the dust puffs.
 extern u8 gGrowth_VineWidths[];
 extern u8 gGrowth_HeightLimits[];
 extern u16 gGrowth_VinePictures[];
@@ -1384,19 +1452,28 @@ extern s8 gGrowth_PillarHeights[];
 extern s8 gGrowth_PuffWidths[];
 extern u8 gGrowth_PuffHeights[];
 extern u16 gGrowth_PuffPictures[];
+/// Each vine's x about the middle of the targets.
 extern const s8 gVine_ColumnOffsets[];
+/// Each thorn's kind (THORN_MIRRORED, THORN_SMALL).
 extern u8 gThorn_Kinds[];
 // A thorn's kind in gThorn_Kinds.
 #define THORN_MIRRORED 1 ///< drawn mirrored across
 #define THORN_SMALL 2    ///< 32 pixels wide, not 48
+/// The thorns: where each roots, how many by strength, and the dust puffs as
+/// each bursts out.
 extern s8 gThorn_X[];
 extern u8 gThorn_Counts[];
 extern s8 gThorn_PuffWidths[];
 extern u8 gThorn_PuffHeights[];
 extern u16 gThorn_PuffPictures[];
+/// Bolt: its sparks, glints, spread and bolts by strength, and how its glints
+/// are flipped and blended.
 extern u8 gBolt_Counts[];
 extern u8 gBolt_GlintFlips[];
 extern u8 gBolt_GlintModes[];
+/// The projectile volley: the comets' heights, each mode's record (enum
+/// VolleyField), the hit flash's pictures and spread, the pellets' pictures and
+/// the glints' flips.
 extern u8 gProjectileVolley_CometHeights[];
 extern u8 gProjectileVolley_Modes[][5];
 extern u8 gProjectileVolley_FlashWidths[];
@@ -1406,24 +1483,33 @@ extern u8 gProjectileVolley_FlashRises[];
 extern u16 gProjectileVolley_FlashPictures[];
 extern u16 gProjectileVolley_PelletPictures[];
 extern u8 gProjectileVolley_GlintFlips[];
+/// The frames the Djinni throws its five flames on.
 extern const u8 gDjinnAttacks_LaunchFrames[];
+/// Hail's four ice chip pictures.
 extern u8 gHail_PictureWidths[];
 extern u8 gHail_PictureHeights[];
 extern u16 gHail_Pictures[];
+/// Ground: the crackles' flips, and the portals' pictures and places.
 extern const u8 gGround_CrackleFlips[];
 extern const u8 gGround_PortalWidths[];
 extern const u8 gGround_PortalHeights[];
 extern const u16 gGround_PortalPictures[];
 extern const u8 gGround_PortalX[];
 extern const u8 gGround_PortalY[];
+/// Thor: the palettes a struck target flashes in, and the crackles' flips.
 extern const u8 gThor_TargetPalettes[];
 extern const u8 gThor_CrackleFlips[];
+/// Spire: where each shard sits in the boulder, the boulders' x and drop
+/// frames, and how many by variant.
 extern u8 gSpire_ShardOffsets[];
 extern s8 gSpire_RockX[];
 extern u8 gSpire_DropFrames[];
 extern u8 gSpire_RockCounts[];
+/// The flurries: their styles (enum FlurryColumn) and the glints' flips.
 extern u8 gFlurry_Styles[][8];
 extern const u8 gFlurry_GlintFlips[];
+/// Gaia: the growing wall's rows, the flame's pictures, the wall layer's shift
+/// and the late rocks.
 extern u16 gGaia_RowPictures[];
 extern u8 gGaia_RowWidths[];
 extern u16 gGaia_FlamePictures[];
@@ -1431,17 +1517,22 @@ extern u8 gGaia_FlameWidths[];
 extern u8 gGaia_FlameHeights[];
 extern s8 gGaia_Bg2Shifts[][3];
 extern u8 gGaia_LateRockColumns[];
+/// Ulysses: where the mage's sprites sit, the summon's pictures, and where its
+/// six particles start.
 extern const u8 gUlysses_ObjectX[];
 extern const u8 gUlysses_ObjectZ[];
 extern const u8 gUlysses_PictureWidths[];
 extern const u8 gUlysses_PictureHeights[];
 extern const u16 gUlysses_Pictures[];
 extern const s8 gUlysses_ParticleStarts[][5];
+/// The swirl swipe's six pictures: their sizes, pictures, x and rise.
 extern const u8 gSwirlSwipe_PictureWidths[];
 extern const u8 gSwirlSwipe_PictureHeights[];
 extern const u16 gSwirlSwipe_Pictures[];
 extern const u8 gSwirlSwipe_PictureX[];
 extern const s8 gSwirlSwipe_PictureBiasY[];
+/// Azul: the points of the battlefield's shattered parts, and the serpent's
+/// sprites, early and late.
 extern const u8 gAzul_PartPoints[][2];
 extern const struct Scale gAzul_UnitScale;
 extern const u8 gAzul_ObjectX[];
@@ -1449,10 +1540,14 @@ extern const u8 gAzul_ObjectZ[];
 extern const struct Scale gAzul_LateUnitScale;
 extern const s8 gAzul_LateObjectX[];
 extern const s8 gAzul_LateObjectZ[];
+/// The plain attacks' beam: its six pictures and how far each reaches.
 extern u8 gBeam_PictureWidths[];
 extern u8 gBeam_PictureHeights[];
 extern u16 gBeam_Pictures[];
 extern u8 gBeam_PictureReaches[];
+/// The casting impacts: glint flips, the bite's pictures, Raiden's Wrath's and
+/// Apocalypse's pictures and places, the ice chips, and Stun Jip's bands and
+/// Armor Crush's waves.
 extern const u8 gCastingImpact_SquallGlintFlips[];
 extern const u8 gCastingImpact_SapGlintFlips[];
 extern const u8 gCastingImpact_BitePictures[];
@@ -1478,8 +1573,11 @@ extern const s8 gCastingImpact_StunJipBandHeights[];
 extern const u8 gCastingImpact_ArmorCrushWaveStarts[];
 extern const u8 gCastingImpact_ArmorCrushWaveGrowth[];
 extern const u8 gCastingImpact_ArmorCrushWaveStretch[];
+/// The unused copy of Nereid: its columns and gravity.
 extern u8 gNereidCopy_Columns[];
 extern const s32 gNereidCopy_Gravity[];
+/// The summons' sprite formations, each sprite's x and depth: Nereid's,
+/// Cybele's, Tiamat's two and Megaera's.
 extern const u8 gSummonFormation_NereidX[];
 extern const u8 gSummonFormation_NereidZ[];
 extern const u8 gSummonFormation_CybeleX[];
@@ -1490,74 +1588,107 @@ extern const u8 gSummonFormation_TiamatX[];
 extern const u8 gSummonFormation_TiamatZ[];
 extern const s8 gSummonFormation_MegaeraX[];
 extern const u8 gSummonFormation_MegaeraZ[];
+/// The impact burst's pictures.
 extern u8 gImpactBurst_PictureWidths[];
 extern u8 gImpactBurst_PictureHeights[];
 extern u16 gImpactBurst_Pictures[];
+/// The starfield fall: the orbiting sparks, the fireballs and the flash
+/// pictures.
 extern s16 gStarfieldFall_OrbitPoints[][3];
 extern s16 gStarfieldFall_FireballPoints[][2];
 extern u16 gStarfieldFall_FlashPictures[];
 extern u16 gStarfieldFall_FlashSizes[];
+/// Ramses: where each of the statue's sprites sits, and the puffs' pictures.
 extern u8 gRamses_StatueColumns[];
 extern u8 gRamses_StatueRows[];
 extern u16 gRamses_PuffPictures[];
 extern u16 gRamses_PuffSizes[];
+/// Ragnarok: the strikes' columns and the flash's pictures.
 extern u8 gRagnarok_StrikeColumns[];
 extern u8 gRagnarok_FlashPictures[];
+/// Titan Blade: the flash's pictures and the dust's gravities.
 extern u8 gTitanBlade_FlashPictures[];
 extern s32 gTitanBlade_DustGravity[];
+/// Judgment: the sprites its shield is copied into, and the shards' pictures.
 extern const u8 gJudgment_ShieldSprites[];
 extern const u16 gJudgment_ShardPictures[];
 extern const u8 gJudgment_ShardWidths[];
 extern const u8 gJudgment_ShardHeights[];
+/// Kirin: the row's x offsets and heights.
 extern u8 gKirin_Columns[];
 extern u8 gKirin_Rows[];
+/// Neptune's spray: its four gravities.
 extern s32 gNeptune_Gravity[];
+/// Undead Sword's sparks: their pictures and sizes.
 extern const u16 gUndeadSword_PuffPictures[];
 extern const u16 gUndeadSword_PuffSizes[];
+/// The wind funnels, by mode.
 extern const u8 gWindFunnel_Counts[];
+/// Diamond Berg: its ripples, and its flashes' roll and pitch.
 extern const u8 gDiamondBerg_RingStarts[4];
 extern const u8 gDiamondBerg_RingGrowth[4];
 extern const s8 gDiamondBerg_RingHeights[4];
 extern const s16 gDiamondBerg_ShardRolls[8];
 extern const s16 gDiamondBerg_ShardPitches[8];
+/// Geode's rings: when each starts, how fast it grows, and its height.
 extern const u8 gGeode_WaveStarts[];
 extern const u8 gGeode_WaveGrowth[];
 extern const s8 gGeode_WaveHeights[];
+/// Soul Shatter's sparks: their pictures and sizes.
 extern u16 gSoulShatter_SparkPictures[];
 extern u16 gSoulShatter_SparkSizes[];
+/// Serac: the spire's rings, and the ripples of mist.
 extern const s8 gSerac_RowHeights[];
 extern const s8 gSerac_RowRadii[];
 extern const u8 gSerac_RingStarts[];
 extern const u8 gSerac_RingGrowth[];
 extern const s8 gSerac_RingHeights[];
+/// The heavy blow: its strike frame and chips, by mode, and a chip's two
+/// pixels.
 extern u8 gHeavyBlow_StrikeFrames[];
 extern u8 gHeavyBlow_ChipCounts[];
 extern const u8 gHeavyBlow_ChipPixels[];
+/// Cool: its columns of ice and its sparks.
 extern s16 gCool_ColumnX[];
 extern u8 gCool_ColumnStarts[];
 extern u8 gCool_ColumnHeights[];
 extern u8 gCool_ColumnLeans[];
 extern u16 gCool_SparkPictures[];
 extern u16 gCool_SparkSizes[];
+/// Wyrd Curse's drops: their bounce speeds.
 extern const s8 gWyrdCurse_DropBounces[];
+/// The ball lightning's glint flips.
 extern const u8 gBoltTrail_GlintFlips[];
+/// Megaera's glints: their flips and how they are blended, by variant.
 extern const u8 gMegaera_GlintFlips[];
 extern const u8 gMegaera_GlintModes[];
+/// Light Surge's four rings: their full sizes, shades and sways.
 extern const s32 gLightSurge_RingSizes[4];
 extern const s8 gLightSurge_RingShades[4];
 extern s8 gLightSurge_RingSways[4];
+/// The Djinni charge: the Djinni's entrance by mode, and the debris's
+/// gravities.
 extern const u8 gDjinniCharge_EntranceFlags[];
 extern const s32 gDjinniCharge_DebrisGravity[4];
+/// The Gasp family: the streak's steps and mesh, and the counts by variant.
 extern const s8 gGaspFamily_StreakSteps[];
 extern const u16 gGaspFamily_StreakMesh[];
 extern const u8 gGaspFamily_Counts[];
+/// The frames Charon's canvas flashes.
 extern u8 gCharon_FlashFrames[];
+/// Models several effects share: a band's and a cylinder's corners.
 extern const struct ModelVertex gBattleEffect_OctagonBandCorners[];
 extern const struct ModelVertex gBattleEffect_CylinderCorners[];
+/// The casting impacts' band mesh.
 extern const u16 gCastingImpact_BandMesh[];
+/// The geyser's mesh.
 extern const u16 gGeyser_Mesh[];
+/// The cylinder's mesh, the ripples and rings several effects spread.
 extern const u16 gBattleEffect_CylinderMesh[];
+/// Geode's ring's corners.
 extern const struct ModelVertex gGeode_RingCorners[];
+/// Models several effects share: a ring, a triangle, beams and squares, their
+/// corners and meshes.
 extern const struct ModelVertex gBattleEffect_RingCorners[];
 extern const u16 gBattleEffect_RingMesh[];
 extern const u16 gBattleEffect_TriangleMesh[];
@@ -1567,26 +1698,41 @@ extern const struct ModelVertex gBattleEffect_BeamCorners[];
 extern const struct ModelVertex gBattleEffect_LongBeamCorners[];
 extern const struct ModelVertex gBattleEffect_SquareCorners[];
 extern const struct ModelVertex gBattleEffect_StandingSquareCorners[];
+/// A flame of Legend's fan: its corners.
 extern struct ModelVertex gLegend_FanFlameCorners[];
+/// Models several effects share: a square on the ground, and the meshes of
+/// small squares and a column.
 extern const struct ModelVertex gBattleEffect_GroundSquareCorners[];
 extern const u16 gBattleEffect_SmallSquareMesh[];
 extern const u16 gBattleEffect_SmallSquareMeshReversed[];
 extern const u16 gBattleEffect_ColumnMesh[];
+/// The heavy blow's sword mesh.
 extern const u16 gHeavyBlow_SwordMesh[];
+/// A tall quad's mesh.
 extern const u16 gBattleEffect_TallMesh[];
+/// Haures's band mesh.
 extern const u16 gHaures_BandMesh[];
+/// Catastrophe's burst mesh.
 extern const u16 gCatastrophe_ForkMesh[];
+/// The square meshes several effects share.
 extern const u16 gBattleEffect_SquareMesh[];
 extern const u16 gBattleEffect_LargeSquareMesh[];
+/// Haures's burst mesh.
 extern const u16 gHaures_BurstMesh[];
+/// Heartbreak: the burst of sparks at the figure's hand, and the heart in its
+/// fist burning away.
 extern u8 gHeartbreak_SparkBurstWidths[];
 extern u8 gHeartbreak_SparkBurstHeights[];
 extern u16 gHeartbreak_SparkBurstPictures[];
 extern u8 gHeartbreak_HeartBurnHeights[];
 extern u8 gHeartbreak_HeartBurnY[];
 extern u16 gHeartbreak_HeartBurnPictures[];
+/// Raging Heat's sparks, spread, rings and embers, by level.
 extern const u8 gRagingHeat_Styles[][4];
+/// Juggle's styles, one row a mode.
 extern u8 gJuggle_Styles[][7];
+/// Flora: the petals' pictures, and when and where each bloom opens and how it
+/// is turned.
 extern const u8 gFlora_PetalSizes[];
 extern const u16 gFlora_PetalPictures[];
 extern const u16 gFlora_BloomFrames[];
@@ -1594,13 +1740,20 @@ extern const s16 gFlora_BloomRolls[];
 extern const s16 gFlora_BloomPitches[];
 extern const s8 gFlora_BloomX[];
 extern const s8 gFlora_BloomY[];
+/// Sabre Dance's dagger: its mesh and corners.
 extern const u16 gSabreDance_DaggerMesh[];
 extern const struct ModelVertex gSabreDance_DaggerCorners[];
+/// Fume's levels, one row a level (enum FumeLevelColumn).
 extern const u16 gFume_Levels[][FUME_COLUMNS];
+/// Ocean Fist's early drops: their gravities.
 extern const s32 gOceanFist_DropGravity[4];
+/// The rushing strike's streak scale, by mode.
 extern const s32 gRushingStrike_Scales[];
+/// The mirrored wall: its scale by mode and its bursts' shades.
 extern const s32 gMirroredWall_Scales[];
 extern const s32 gMirroredWall_Shades[];
+/// Daedalus: the shake, the birds' wing beats and drifts, the clatters, the
+/// rings, the leg, the splashes and the dives.
 extern s8 gDaedalus_ShakeOffsets[];
 extern u8 gDaedalus_WingBeatPictures[];
 extern u8 gDaedalus_BirdStarts[][2];
@@ -1612,16 +1765,24 @@ extern s8 gDaedalus_RingX[];
 extern u8 gDaedalus_RightLegPoints[][2];
 extern u8 gDaedalus_SplashPoints[][6][2];
 extern u16 gDaedalus_DiveStarts[];
+/// The seven frames Daedalus's strikes land on.
 extern const u8 gDaedalusStrike_HitFrames[];
+/// Which of Vengeance's seven arrows strike, by level.
 extern const u8 gVengeance_ArrowStrikes[][7];
+/// Life Shear's scythe: its two blades' meshes and its corners.
 extern const u16 gLifeShear_PaleBladeMesh[];
 extern const u16 gLifeShear_OrangeBladeMesh[];
 extern const struct ModelVertex gLifeShear_BladeCorners[];
+/// The geyser's drops: their gravity and smallest picture, by mode (enum
+/// GeyserMode).
 extern const s32 gGeyser_DropGravity[];
 extern const s8 gGeyser_DropMinSizes[];
+/// The unused bubble column's glowing oval, fifteen pictures.
 extern u8 gBubbleColumn_PictureWidths[];
 extern u8 gBubbleColumn_PictureHeights[];
 extern u16 gBubbleColumn_Pictures[];
+/// Coatlicue: the bubbles' pictures, the bursts of bubbles, the ring's,
+/// flashes' and glows' frames, and the coils.
 extern u8 gCoatlicue_PictureWidths[];
 extern u8 gCoatlicue_PictureHeights[];
 extern u16 gCoatlicue_Pictures[];
@@ -1643,6 +1804,8 @@ extern u16 gCoatlicue_CoilScales[];
 extern u16 gCoatlicue_CoilRolls[];
 extern u16 gCoatlicue_CoilGrowth[];
 extern u16 gCoatlicue_CoilMaxScales[];
+/// Catastrophe: the flashes, the demon's, armour's and mirrored demon's
+/// sprites, the bursts of lightning, the strikes and the glints.
 extern const u16 gCatastrophe_FlashFrames[];
 extern const u16 gCatastrophe_FlashLengths[];
 extern const u8 gCatastrophe_DemonX[];
@@ -1665,21 +1828,28 @@ extern const s16 gCatastrophe_StrikeTurns[];
 extern const s16 gCatastrophe_StrikePictures[];
 extern const u8 gCatastrophe_GlintFlips[];
 extern const s16 gCatastrophe_BoltRolls[];
+/// Haures: the particles, his scale, the wings' shapes and morphs, the parts
+/// and the bands.
 extern const u8 gHaures_ParticleX[];
 extern s32 gHaures_UnitScale[];
 extern const u8 gHaures_MoundShapes[];
 extern u8 gHaures_MoundMorphSteps[];
 extern const u8 gHaures_PartPoints[];
 extern const u8 gHaures_BandStarts[];
+/// Helm Splitter's pictures, and where each is drawn.
 extern u8 gHelmSplitter_PictureWidths[];
 extern u8 gHelmSplitter_PictureHeights[];
 extern u16 gHelmSplitter_Pictures[];
 extern s8 gHelmSplitter_PictureBiasX[];
 extern s8 gHelmSplitter_PictureBiasY[];
+/// How many of Dragon Cloud's embers are sparks, by variant.
 extern u8 gDragonCloud_SparkCounts[];
+/// The element cards: each card's length and how its sparks move.
 extern u8 gElementCards_Frames[];
 extern struct SparkMotion gElementCards_SparkMotions[];
+/// Triple Chomp's three bites' frames.
 extern u8 gTripleChomp_BiteFrames[];
+/// The breaths: their lengths, bursts, glows, jaws and the frames they hit.
 extern u8 gBreath_Frames[];
 extern u8 gBreath_BurstFrames[];
 extern u8 gBreath_MaxSizes[];
@@ -1687,18 +1857,22 @@ extern u8 gBreath_RingStarts[];
 extern u8 gBreath_RingGrowth[];
 extern s8 gBreath_RingX[];
 extern u8 gBreath_FlashFrames[];
+/// Trident: its rings, each trident's spin, the prong's corners and the glints'
+/// flips.
 extern const u8 gTrident_RingStarts[];
 extern const u8 gTrident_RingGrowth[];
 extern const s8 gTrident_RingHeights[];
 extern const s32 gTrident_Spins[];
 extern const struct ModelVertex gTrident_ProngCorners[];
 extern const u8 gTrident_GlintFlips[];
+/// The leaping strike's waves and rings.
 extern const u8 gLeapingStrike_WaveStarts[];
 extern const u8 gLeapingStrike_WaveGrowth[];
 extern const s8 gLeapingStrike_WaveHeights[];
 extern const u8 gLeapingStrike_RingStarts[];
 extern const u8 gLeapingStrike_RingGrowth[];
 extern const s8 gLeapingStrike_RingHeights[];
+/// Meteor Blow: its pictures, waves and rings.
 extern const u8 gMeteorBlow_PictureWidths[];
 extern const u8 gMeteorBlow_PictureHeights[];
 extern const u16 gMeteorBlow_Pictures[];
@@ -1708,10 +1882,13 @@ extern const u8 gMeteorBlow_WaveStretch[];
 extern const u8 gMeteorBlow_RingStarts[];
 extern const u8 gMeteorBlow_RingGrowth[];
 extern const s8 gMeteorBlow_RingHeights[];
+/// Liquifier's splash: its corners, start frames and heights.
 extern const struct ModelVertex gLiquifier_SplashCorners[];
 extern const u8 gLiquifier_SplashStarts[];
 extern const u8 gLiquifier_SplashHeights[];
+/// The canvas burst's flame picture for each three frames of its life.
 extern const u8 gCanvasBurst_FlamePictures[];
+/// Megiddo: its flashes' turns and starts, and its rays' turns and places.
 extern const s16 gMegiddo_FlashPitches[];
 extern const s16 gMegiddo_FlashYaws[];
 extern const u16 gMegiddo_FlashStarts[];
@@ -1720,11 +1897,15 @@ extern const s16 gMegiddo_RayYaws[];
 extern const s16 gMegiddo_RayRolls[];
 extern const s8 gMegiddo_RayX[];
 extern const s8 gMegiddo_RayY[];
+/// Odyssey's flashes: their pitch and yaw.
 extern const s16 gOdyssey_FlashPitches[];
 extern const s16 gOdyssey_FlashYaws[];
+/// Moloch's rings: when each starts, how fast it grows, and its height.
 extern const u8 gMoloch_RingStarts[4];
 extern const u8 gMoloch_RingGrowth[];
 extern const s8 gMoloch_RingHeights[];
+/// Iris: the splashes, the pillar and particle models, the sound frames, the
+/// streaks, the drops, the strips and the cone.
 extern s32 gIris_SplashRadii[];
 extern const u8 gIris_SplashOffsetsY[];
 extern const u16 gIris_PillarMesh[];
@@ -1803,6 +1984,7 @@ enum FlurryExtra {
   FLURRY_EXTRA_RIPPLE  ///< BG2 swings on a sine wave and smoke rises
 };
 
+/// The scale each of Gaia's rocks starts from before it grows.
 extern const struct Scale gGaia_UnitScale;
 
 // spider_web.c
@@ -1818,6 +2000,7 @@ extern u8 gSerac_MeshEnd[]; ///< the mesh's end, after 112 faces
 extern const s8 gVoidBeam_Corners[][2]; ///< the hexagon's corners (z, y)
 
 // flora.c
+/// Flora's scale, one to one.
 extern const struct Scale gFlora_UnitScale;
 /// Inside gEffectScratch: FloraState from its second tile number on, read at
 /// its fixed place.
@@ -1826,12 +2009,14 @@ extern u16 gFlora_PetalTiles[];
 extern u16 gFlora_SpritePalettes[];
 
 // daedalus.c
+/// The scales of the forest canopy Daedalus flies over, of his machine's
+/// pieces and of his missiles.
 extern const struct Scale gDaedalus_CanopyScale;
 extern const struct Scale gDaedalus_MachineScale;
 extern const struct Scale gDaedalus_MissileScale;
 
+/// Coatlicue's and Catastrophe's figures' scales.
 extern const struct Scale gCoatlicue_UnitScale;
-
 extern const struct Scale gCatastrophe_UnitScale;
 
 // haures.c
@@ -1841,14 +2026,17 @@ extern u8 gHaures_MoundStrip[];
 extern u8 gHaures_MoundStripEnd[];
 /// In the map cell buffer: each mound corner's shade.
 extern u8 gHaures_MoundShades[];
+/// Haures's scales as he charges, as he circles and as he opens.
 extern const struct Scale gHaures_ChargeScale;
 extern const struct Scale gHaures_OrbitScale;
 extern const struct Scale gHaures_OpeningScale;
 
 // moloch.c
+/// Moloch's motes' sizes, by a mote's number's low three bits.
 extern const u8 gMoloch_MoteSizes[];
 /// In the map cell buffer: the tiles Iris draws its sprites from.
 extern u8 gIris_TileBuffer[];
+/// Iris's scale while she rises.
 extern const struct Scale gIris_UnitScale;
 /// The template BattleEffect_BuildBlitter walks word by word to write a blitter
 /// (patch_template.s); none of it runs where it is.

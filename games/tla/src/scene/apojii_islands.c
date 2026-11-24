@@ -223,14 +223,13 @@ struct CellMarkers gApojiiIslands_CellMarkers BSS_DATA;
 extern u32 gWadingSplash_Script[];
 extern u32 gWaterDropScript[];
 
-/// Creates an actor of `kind` at a point (Import_ActorCreate).
+/// FieldActor_Create, by the name shared/actor_emit_water_drop.h calls it.
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 
-/// Moves the camera to a point within the map's bounds
-/// (FieldCamera_MoveWithinMapBounds).
+/// FieldCamera_MoveToFX, by the name shared/leader_rise_from_water.h calls it.
 static __inline__ void Camera_MoveWithinMapBounds_(FIXED x, FIXED a, FIXED z,
                                                    s32 b) {
   FieldCamera_MoveWithinMapBounds(x, a, z, b);

@@ -56,6 +56,7 @@
 #include "system/io_write.h"
 #include "field/field_effect.h"
 #include "text/msg_ids.h"
+#include "window/window.h"
 #include "scene/lighthouse_palettes.h"
 
 /// Set as each locked door opens to its key.
@@ -246,9 +247,11 @@ void JupiterLighthouse_UseBlueKey(s32 item) {
 /// Felix checks the red or the blue door before it is open: "The door's
 /// locked."
 void JupiterLighthouse_TryLockedDoor(void) {
+  // As A pressed with nothing ahead does, this asks for the field menu, which
+  // the field opens once the event is over.
   gFieldState->fieldMenu = 1;
   // "The door's locked."
-  Message_ShowCentered(MsgFieldDoorLocked, 1);
+  Message_ShowCentered(MsgFieldDoorLocked, FIELD_MESSAGE_ZOOM);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }

@@ -96,6 +96,10 @@ enum { EXIT_HOVER_HALL_STAIRS = 6 };
 struct Actor;
 struct LightOam;
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
+/// The state of the code every Jupiter Lighthouse room's overlay keeps its own
+/// copy of: a whirlwind's ride (shared/whirlwind_*.h), the palette cycle
+/// (shared/palette_cycle_step.h), the lit actors' sprites
+/// (shared/light_sprites_*.h) and the cracked tiles (shared/cracked_tile_*.h).
 s32 gWhirlwindRiding BSS_DATA;
 u16 gPaletteCycleColors[16] BSS_DATA;
 /// Palette 13's first two colours; it is copied whole, with the unlit colours
@@ -113,8 +117,8 @@ s16 gLightSpritePriority BSS_DATA;
 struct CellTarget gCrackedTiles BSS_DATA;
 s32 Actor_GetSpritePriority(struct Actor *actor);
 void JupiterLighthouse_StopHovering(void);
-void MapGrid_SetCellHeight();
-void MapGrid_SetCellAttributesAt();
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
+u8 MapGrid_SetCellAttributesAt(s32 x, s32 z, s32 layer, s32 value);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -126,8 +130,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
+/// The step handlers below pass on the cell behavior their trigger hands them;
+/// CrackedTile_Step finds the leader's cell itself and never reads it.
 s32 CrackedTile_Step();
-struct Actor *Whirlwind_Spawn();
+struct Actor *Whirlwind_Spawn(struct Actor *source);
 
 /// Nothing visible happens when Felix starts to Hover; while he floats, the
 /// Hover hall's stairs down between the statues, cell (34, 17), are walled
@@ -210,9 +216,9 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
 /// Felix steps on a cracked tile in the Hover hall with his feet on the floor:
 /// it gives way under him (a tile not yet cracked takes one step first) and
 /// the party falls to the cracked hall below.
-void JupiterLighthouse_StepOnLowerCrackedTile(s32 arg) {
+void JupiterLighthouse_StepOnLowerCrackedTile(s32 cellBehavior) {
   if (Actor_Get(gMainRoutineState.leaderActorId)->y.fixed == 0 &&
-      CrackedTile_Step(arg) != 0)
+      CrackedTile_Step(cellBehavior) != 0)
     FieldEvent_SetExitRequest(THROUGH_CRACKED_TILE);
 }
 
@@ -222,7 +228,7 @@ void JupiterLighthouse_StepOnLowerCrackedTile(s32 arg) {
 /// hall's walls, cell (18, 34) against the east wall and cell (8, 39) against
 /// the west; on those he is drawn behind the statue's head
 /// (`FieldActor_SetSpritePriority`) as he sinks through the hole.
-void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
+void JupiterLighthouse_StepOnUpperCrackedTile(s32 cellBehavior) {
   struct Actor *leader;
   s32 x;
   s32 z;
@@ -235,7 +241,7 @@ void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
       FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 3);
     if (x == 8 && z == 39)
       FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 3);
-    if (CrackedTile_Step(arg) != 0)
+    if (CrackedTile_Step(cellBehavior) != 0)
       FieldEvent_SetExitRequest(THROUGH_UPPER_CRACKED_TILE);
   }
 }
@@ -245,14 +251,14 @@ void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
 /// at once and the party falls to the cracked hall below. Hovering over it at
 /// row 11 or 17, in front of a statue, he is blown away as on the rows before
 /// the statues (JupiterLighthouse_RaiseUpperWhirlwind).
-void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
+void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 cellBehavior) {
   struct Actor *leader;
   s32 x;
   s32 z;
 
   leader = Actor_Get(gMainRoutineState.leaderActorId);
   if (leader->y.fixed <= 0) {
-    JupiterLighthouse_StepOnLowerCrackedTile(arg);
+    JupiterLighthouse_StepOnLowerCrackedTile(cellBehavior);
   } else {
     x = FIELD_CELL(leader->x.fixed);
     z = FIELD_CELL(leader->z.fixed);

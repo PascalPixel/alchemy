@@ -104,6 +104,28 @@ enum AirsRockCellMark {
   CELL_MARK_BLOCKED = 255
 };
 
+/// The kinds of barrier a gust sweeps away, each a row of
+/// gAirsRock_GustTargets, by the way the gust crosses it: a bank of sand
+/// across an east-west path the gust blows north or south through a cell at a
+/// time, or a mound across a north-south path it blows west through a column
+/// at a time.
+enum AirsRockGustBarrier {
+  GUST_BARRIER_BLOWN_NORTH = 0,
+  GUST_BARRIER_BLOWN_SOUTH = 2,
+  GUST_BARRIER_BLOWN_WEST
+};
+
+/// Clears a barrier a gust blew away on an earlier visit: a mound three cells
+/// wide or a bank three cells tall, (x, z) its north-west cell.
+#define CLEAR_SAND_MOUND(x, z)                                                 \
+  (MapGrid_CopyCellsTo(64, 0, (x) + 64, (z) - 1, 3, 3),                        \
+   MapGrid_CopyCellAttributes(64, 0, 3, 2, (x) + 64, z),                       \
+   MapGrid_CopyCellAttributes(64, 0, 3, 2, x, z))
+#define CLEAR_SAND_BANK(x, z)                                                  \
+  (MapGrid_CopyCellsTo(64, 0, (x) + 64, (z) - 1, 1, 4),                        \
+   MapGrid_CopyCellAttributes(64, 0, 1, 3, (x) + 64, z),                       \
+   MapGrid_CopyCellAttributes(64, 0, 1, 3, x, z))
+
 /// The Storm Brand chest's room, numbering gAirsRock_StormBrandChestPlacements.
 enum AirsRockStormBrandChestActorId {
   /// The huge twister-shaped rock Whirlwind clears the wall's mud with.
@@ -670,7 +692,9 @@ void AirsRock_BlowGust(void) {
       }
       Event_Wait(1);
     }
-    if (hit == 2) {
+    // Blown south, the sweep clears the row behind the gust, so the row it
+    // stops on is cleared last.
+    if (hit == GUST_BARRIER_BLOWN_SOUTH) {
       MapGrid_CopyCellsTo(gAirsRock_GustTargets[2][0],
                           gAirsRock_GustTargets[2][1], cell.x, cell.z, 1, 1);
       MapGrid_CenterOnFollowedPoint();
@@ -962,7 +986,7 @@ void AirsRock_RideWhirlwind(void) {
       if (gInput.held & KEY_RIGHT) {
         dx = toFIXED(16);
         dz = 0;
-        leader->facing = dz;
+        leader->facing = FACING_EAST;
         moved = 1;
       }
       if (gInput.held & KEY_LEFT) {
@@ -987,7 +1011,7 @@ void AirsRock_RideWhirlwind(void) {
         CELL_MARK_BLOCKED) {
       dx = toFIXED(16);
       dz = 0;
-      leader->facing = dz;
+      leader->facing = FACING_EAST;
       if ((u16)CELL_CODE(MapCell_GetAttributes(
               2, FIELD_CELL(ride->x.fixed + dx),
               FIELD_CELL(ride->z.fixed - ride->y.fixed))) ==
@@ -1773,46 +1797,27 @@ s32 Scene_Initialize(void) {
       Leader_Lift(toFIXED(88));
     }
     // The barriers already blown away stay gone.
-    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN)) {
-      MapGrid_CopyCellsTo(64, 0, 113, 11, 3, 3);
-      MapGrid_CopyCellAttributes(64, 0, 3, 2, 113, 12);
-      MapGrid_CopyCellAttributes(64, 0, 3, 2, 49, 12);
-    }
-    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 1)) {
-      MapGrid_CopyCellsTo(64, 0, 70, 39, 1, 4);
-      MapGrid_CopyCellAttributes(64, 0, 1, 3, 70, 40);
-      MapGrid_CopyCellAttributes(64, 0, 1, 3, 6, 40);
-    }
-    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 2)) {
-      MapGrid_CopyCellsTo(64, 0, 103, 38, 1, 4);
-      MapGrid_CopyCellAttributes(64, 0, 1, 3, 103, 39);
-      MapGrid_CopyCellAttributes(64, 0, 1, 3, 39, 39);
-    }
-    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 3)) {
-      MapGrid_CopyCellsTo(64, 0, 87, 43, 1, 4);
-      MapGrid_CopyCellAttributes(64, 0, 1, 3, 87, 44);
-      MapGrid_CopyCellAttributes(64, 0, 1, 3, 23, 44);
-    }
+    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN))
+      CLEAR_SAND_MOUND(49, 12);
+    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 1))
+      CLEAR_SAND_BANK(6, 40);
+    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 2))
+      CLEAR_SAND_BANK(39, 39);
+    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 3))
+      CLEAR_SAND_BANK(23, 44);
     if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 4)) {
+      // The bank at (6, 52), the one a gust blows south through: its edits
+      // start a row lower than the other banks'.
       MapGrid_CopyCellsTo(64, 0, 70, 52, 1, 4);
       MapGrid_CopyCellAttributes(64, 0, 1, 3, 70, 52);
       MapGrid_CopyCellAttributes(64, 0, 1, 3, 6, 53);
     }
-    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 5)) {
-      MapGrid_CopyCellsTo(64, 0, 79, 49, 3, 3);
-      MapGrid_CopyCellAttributes(64, 0, 3, 2, 79, 50);
-      MapGrid_CopyCellAttributes(64, 0, 3, 2, 15, 50);
-    }
-    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 6)) {
-      MapGrid_CopyCellsTo(64, 0, 103, 48, 1, 4);
-      MapGrid_CopyCellAttributes(64, 0, 1, 3, 103, 49);
-      MapGrid_CopyCellAttributes(64, 0, 1, 3, 39, 49);
-    }
-    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 7)) {
-      MapGrid_CopyCellsTo(64, 0, 111, 52, 3, 3);
-      MapGrid_CopyCellAttributes(64, 0, 3, 2, 111, 53);
-      MapGrid_CopyCellAttributes(64, 0, 3, 2, 47, 53);
-    }
+    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 5))
+      CLEAR_SAND_MOUND(15, 50);
+    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 6))
+      CLEAR_SAND_BANK(39, 49);
+    if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + 7))
+      CLEAR_SAND_MOUND(47, 53);
     if (GameFlag_Get(FLAG_AIRS_ROCK_WALL_CLEARED)) {
       MapGrid_CopyCellsTo(68, 0, 79, 0, 11, 10);
       MapGrid_CopyCellAttributes(38, 9, 1, 1, 16, 9);
@@ -2298,11 +2303,11 @@ struct Trigger gAirsRock_FujinShieldChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The kinds of barrier a gust sweeps away (AirsRock_BlowGust), a row each: the
-/// map cell the cleared ground's picture is copied from, and how far the
-/// barrier's pictures lie from the cells the gust crosses, 64 cells east. Kinds
-/// 1 and 3 clear a column three cells tall, 0 and 2 one cell; the map marks
-/// its barriers with kinds 0, 2 and 3.
+/// The kinds of barrier a gust sweeps away (enum AirsRockGustBarrier), a row
+/// each: the map cell the cleared ground's picture is copied from, and how far
+/// the barrier's pictures lie from the cells the gust crosses, 64 cells east.
+/// An odd kind clears a column three cells tall, an even one a cell; no
+/// barrier is of kind 1.
 s16 gAirsRock_GustTargets[][4] = {
     {64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0},
 };

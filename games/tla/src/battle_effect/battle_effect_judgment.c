@@ -5,6 +5,9 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
+/// Judgment's sprite scale, one to one.
+extern const struct Scale gJudgment_UnitScale;
+
 /// The gathering's length and the sweep's, in frames.
 #define JUDGMENT_GATHER_FRAMES 160
 #define JUDGMENT_SWEEP_FRAMES 336
@@ -77,6 +80,10 @@
 /// over the ground at the crash and at the flare's explosion, tilted
 /// JUDGMENT_CRASH_RING_TILT and JUDGMENT_FLASH_RING_TILT.
 #define JUDGMENT_FIRE_RING 16384
+/// The frames from which the crash's ring and the explosion's ring fade, eight
+/// levels a frame.
+#define JUDGMENT_FIRE_RING_FADE_FRAME 152
+#define JUDGMENT_FLASH_RING_FADE_FRAME 80
 #define JUDGMENT_CRASH_RING_TILT 3000
 #define JUDGMENT_FLASH_RING_TILT 5000
 
@@ -451,8 +458,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;
-      if (frame > 151) {
-        shade = (frame * -8) + 1216;
+      if (frame >= JUDGMENT_FIRE_RING_FADE_FRAME) {
+        shade = frame * -8 + JUDGMENT_FIRE_RING_FADE_FRAME * 8;
       }
       model->shade = shade;
       Matrix_Initialize();
@@ -786,8 +793,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       model->texture = &glare;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;
-      if (frame > 79) {
-        shade = (frame * -8) + 640;
+      if (frame >= JUDGMENT_FLASH_RING_FADE_FRAME) {
+        shade = frame * -8 + JUDGMENT_FLASH_RING_FADE_FRAME * 8;
       }
       model->shade = shade;
       Matrix_Initialize();

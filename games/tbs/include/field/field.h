@@ -42,7 +42,7 @@ struct ActorPlacement;
 /// path in ColossoRaceState is played back or recorded by
 /// Colosso_UpdatePathOpponent.
 struct PathRecorder {
-  s16 mode;      ///< 1 plays the path, 2 records it, 9 finished
+  s16 mode;      ///< a PathRecorderMode (scene/colosso_setup.h)
   s16 mirror;    ///< nonzero mirrors the path across the finish
   s16 actorId;   ///< the actor id moved along the path
   u16 pathIndex; ///< the next halfword of ColossoRaceState.path, x then z
@@ -144,6 +144,9 @@ extern u8 TileMap_DrawRowsCodeSize[];
 /// address equal to the size (ld_script.ld).
 extern u8 Matrix_UpdateVerticesSize;
 extern const s32 gWorldMap_FootprintActions[6];
+/// The direction pad's headings, defined as u16 in facing.c. Declared here
+/// with the sign, so Up's three quarters of a turn reads negative; the
+/// player's steps keep each one as a u16 again, the same heading.
 extern const s16 gWorldMap_KeyHeadings[16];
 
 // The field effects' scripts and tables (field_sequence_tables.c,

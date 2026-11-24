@@ -10,10 +10,6 @@
 #include "field/object.h"
 #include "macros.h"
 
-/// The first World Map collision that is water to Scoop and Parch: the sea from
-/// here to WORLD_MAP_COLLISION_SEA_LAST, all but WORLD_MAP_COLLISION_SEA_FIRST.
-#define WORLD_MAP_COLLISION_WATER_FIRST 2
-
 /// If the scene's sprite is active, stops its update callback
 /// (FieldPsynergy_DrawCanvasSprite) and frees its VRAM cache entry.
 void FieldPsynergy_ReleaseSceneSprite(void) {

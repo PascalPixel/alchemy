@@ -590,8 +590,8 @@ void Portrait_CloseWindow(u32 speaker) {
     if (portraitSprite == NULL)
       continue;
 #endif
-    if ((u8)portraitSprite->kind == WINDOW_SPRITE_PORTRAIT &&
-        (u8)portraitSprite->index == resourceId) {
+    if (portraitSprite->kind == WINDOW_SPRITE_PORTRAIT &&
+        portraitSprite->index == resourceId) {
       Window_Close(window, WINDOW_FLAG_INSTANT);
       return;
     }

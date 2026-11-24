@@ -171,7 +171,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       entry->attributes.bits.x = window->x * 8 + x;
       entry->attributes.bits.y = window->y * 8 + y;
       entry->tile.bits.index = VramCache_Reload(
-          (u8)sprite->index,
+          sprite->index,
           (s32)(rising ? gDjinnMenu_ArrowUpTiles : gDjinnMenu_ArrowDownTiles));
       WindowSprite_AppendToList(&window->sprites, sprite);
     }

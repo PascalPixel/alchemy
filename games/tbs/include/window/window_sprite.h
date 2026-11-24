@@ -74,13 +74,13 @@ enum WindowSpriteKind {
 /// or a portrait), with its VRAM cache slot and OAM attributes.
 struct WindowSprite {
   struct WindowSprite *next; ///< the next sprite in its list
-  s8 kind;                   ///< an enum WindowSpriteKind
-  s8 motion;                 ///< its WINDOW_SPRITE_MOTION_ motion; 0 while free
+  u8 kind;                   ///< an enum WindowSpriteKind
+  u8 motion;                 ///< its WINDOW_SPRITE_MOTION_ motion; 0 while free
   u16 x;                     ///< screen pixels
   u16 y;                     ///< screen pixels
   u16 unused;
   u16 animationStep; ///< step of its motion's animation
-  s8 index;          ///< VRAM cache slot, or a glyph's tile after glyphTiles
+  u8 index;          ///< VRAM cache slot, or a glyph's tile after glyphTiles
   /// The depth slot it is drawn at (Oam_AddSpriteAtDepth): a higher slot is
   /// drawn in front. The windows' glyphs take 254.
   u8 depth;

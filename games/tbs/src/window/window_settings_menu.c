@@ -828,7 +828,7 @@ s32 PauseMenu_Choose(void) {
           icon = state->icon[i];
           icon->depth = OAM_DEPTH_FRONT - 4;
           Icon_ShowFar(icon);
-          resourceIndex = (u8)icon->index;
+          resourceIndex = icon->index;
           dimmed = 0;
           if (i != state->page) {
             dimmed = 1;

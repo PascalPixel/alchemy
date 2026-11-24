@@ -70,7 +70,6 @@
 #include "types.h"
 #include "battle/battle.h"
 #include "debug/debug.h"
-#include "field/create_configured_actor.h"
 #include "field/event.h"
 #include "field/event_commands.h"
 #include "field/field.h"

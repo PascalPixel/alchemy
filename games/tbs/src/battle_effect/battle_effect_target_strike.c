@@ -31,7 +31,7 @@
 /// The canvas row the fangs' pictures start at.
 #define TARGET_STRIKE_BITE_Y 56
 /// The bite's stages after the tornado sprite sheet: BeamImage for a slash,
-/// TwelveModeImage otherwise.
+/// BlueDropletSheet otherwise.
 #define TARGET_STRIKE_BITE_PICTURES 3200
 #define TARGET_STRIKE_BITE_WIDTH 18
 #define TARGET_STRIKE_BITE_HEIGHT 48
@@ -164,13 +164,13 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
   if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH)
     Resource_LoadAndDecompress(
         RESOURCE_BEAM_IMAGE, state->sheet + TARGET_STRIKE_BITE_PICTURES, 0, 0);
   else
-    Resource_LoadAndDecompress(RESOURCE_TWELVE_MODE_IMAGE,
+    Resource_LoadAndDecompress(RESOURCE_BLUE_DROPLET_SHEET,
                                state->sheet + TARGET_STRIKE_BITE_PICTURES, 0,
                                0);
   switch (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COLOR)) {

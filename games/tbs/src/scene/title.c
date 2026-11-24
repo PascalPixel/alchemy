@@ -106,9 +106,9 @@ s32 Scene_Initialize(void) {
       // With no save file (or no backup memory) there is no title intro.
       if (Save_ScanFileSummaries() > 0) {
         Sound_Play(MUS_MAIN_THEME_TITLE);
-        // Title_ShowIntro with its prompt returns 0 when a minute passes
+        // Title_ShowTitleScreen with its prompt returns 0 when a minute passes
         // without A or Start: fade out and start again from the logos.
-        if (Title_ShowIntro(1) == 0) {
+        if (Title_ShowTitleScreen(1) == 0) {
           Sound_Play(SOUND_FADE_OUT_BGM);
           ScreenFade_ToBlack(30);
           ScreenFade_Wait();
@@ -130,7 +130,7 @@ s32 Scene_Initialize(void) {
     // TITLE_FROM_VALE_PLAZA: the intro without its prompt holds the title five
     // seconds.
     Sound_Play(MUS_THE_PASSAGE_OF_TIME);
-    Title_ShowIntro(0);
+    Title_ShowTitleScreen(0);
     Party_EndChildhood();
     Event_SetDestination(SCENE_VALE, VALE_FROM_TITLE);
     Sound_Play(SOUND_FADE_OUT_BGM);

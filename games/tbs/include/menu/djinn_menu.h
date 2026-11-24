@@ -61,7 +61,7 @@ struct DjinnMenuState {
   /// ItemMenuState's and ShopState's itemWindow; not named here.
   struct Window *itemWindow;
   struct Window *window;
-  /// Never given a window, so NULL from Window_InitializeState on; the preview
+  /// Never given a window, so NULL from Menu_InitializeState on; the preview
   /// still redraws it, which reads the window's place from the BIOS.
   struct Window *unopenedWindow;
   struct Window *infoWindow; ///< ItemMenuState's; not named here

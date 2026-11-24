@@ -115,7 +115,7 @@ void FieldEffect_CircleAnchor(struct Actor *effect) {
 
 /// Shrinks an event-selected Whirlwind target each frame; below half size,
 /// moves it to the origin, stops it and removes the update.
-void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor) {
+void Whirlwind_UpdateTarget(struct Actor *actor) {
   s32 scale;
 
   scale = actor->scaleX - WHIRLWIND_TARGET_SCALE_STEP;
@@ -180,7 +180,7 @@ void FieldPsynergy_Whirlwind(void) {
   // names, the target is blown away.
   if (effectState->aimAhead == 0) {
     if (target != 0)
-      target->update = FieldEffect_ShrinkActorScaleUntilHalf;
+      target->update = Whirlwind_UpdateTarget;
 
     // Leaves from 4 pixels above the orb, each 0.8 pixel higher, 3 to 8
     // pixels away.

@@ -123,7 +123,7 @@ void FieldPsynergy_Force(void) {
     pos.z = effectState->z;
   }
   Actor_SetMoveTargetFar(projectile, pos.x, pos.y, pos.z);
-  Actor_StartScriptFar(projectile, gFieldEffect_HeavyImpactScript);
+  Actor_StartScriptFar(projectile, gForce_FistScript);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {

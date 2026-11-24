@@ -94,11 +94,11 @@ extern u8 gShatteringOpening_PieceStartY[];
 extern s8 gElementBurst_SparkX[];
 extern s8 gElementBurst_SparkY[];
 extern u8 gElementBurst_SparkFlips[];
-extern u8 gSpiderWeb_PictureWidths[];
-extern u8 gSpiderWeb_PictureHeights[];
-extern u16 gSpiderWeb_Pictures[];
-extern u8 gSpiderWeb_PictureX[];
-extern s8 gSpiderWeb_PictureBiasY[];
+extern u8 gSwirlSwipe_PictureWidths[];
+extern u8 gSwirlSwipe_PictureHeights[];
+extern u16 gSwirlSwipe_Pictures[];
+extern u8 gSwirlSwipe_PictureX[];
+extern s8 gSwirlSwipe_PictureBiasY[];
 
 /// Each gathering-lights mode: the lights per target and the frames before the
 /// targets' turns.
@@ -214,7 +214,7 @@ enum {
                       ///< impact and BattleEffect_RunUnusedSevereBlowLeap
   SPARK_GROUPS_THRASH ///< 32 sparks: Thrash
 };
-extern u16 gPlasma_Shapes[][5];
+extern u16 gSparkGroups_Shapes[][5];
 
 extern u8 gPlasma_FlashPictures[];
 extern u8 gVolcano_Counts[];
@@ -421,8 +421,8 @@ extern u8 gBeam_PictureHeights[];
 extern u16 gBeam_Pictures[];
 extern u8 gBeam_PictureReaches[];
 extern u8 gCastingImpact_GlintDrawFlags[];
-extern u8 gCastingImpact_PictureX[][7];
-extern u8 gCastingImpact_PictureY[];
+extern u8 gReaper_PictureX[][7];
+extern u8 gReaper_PictureY[];
 extern u16 gCastingImpact_IceChipPictures[];
 extern u8 gHelmSplitter_PictureWidths[];
 extern u8 gHelmSplitter_PictureHeights[];
@@ -451,7 +451,7 @@ extern u8 gRagnarok_FlashPictures[];
 extern u8 gTitanBlade_FlashPictures[];
 extern s32 gTitanBlade_DustGravity[];
 extern u8 gJudgment_BurstHeights[];
-extern u16 gJudgment_BurstPictures[];
+extern u16 gJudgment_ShieldSprites[];
 extern u16 gJudgment_ShardPictures[];
 extern u8 gJudgment_ShardWidths[];
 extern u8 gJudgment_ShardHeights[];

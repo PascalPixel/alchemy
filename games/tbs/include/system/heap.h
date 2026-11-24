@@ -85,7 +85,7 @@ enum HeapSlot {
   /// The selection state Menu_AllocateSelectionState allocates, which nothing
   /// calls.
   HEAP_SLOT_SELECTION_STATE = 19,
-  /// The settings menu's state (struct OptionMenuState, gOptionMenuState).
+  /// The settings menu's state (struct SettingsMenuState, gOptionMenuState).
   HEAP_SLOT_SETTINGS_MENU = 20,
   /// Mind Read's wave state (struct MindReadState, gMindReadState).
   HEAP_SLOT_MIND_READ = 22,

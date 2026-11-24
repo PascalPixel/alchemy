@@ -87,7 +87,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     // The sprite's own four of the glyph tiles.
     index = (windowSprite - state->sprites) * 4;
     windowSprite->motion = WINDOW_SPRITE_MOTION_STILL;
-    windowSprite->kind = WINDOW_SPRITE_GLYPH;
+    windowSprite->kind = WINDOW_SPRITE_PLAIN;
     if (mode == GLYPH_DRAW_PAGE_ARROW) {
       width = 1;
       windowSprite->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;

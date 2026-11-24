@@ -178,7 +178,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #endif
 
 /// The password level menu (IconMenu_ChooseSendOption,
-/// RESOURCE_LAYOUT_PASSWORD_LEVEL): its heading window ("Password Selection")
+/// SEND_OPTION_PASSWORD_LEVEL): its heading window ("Password Selection")
 /// and, outside the Japanese edition, the explanation window under it.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN ||             \
     LANGUAGE == LANGUAGE_ITALIAN
@@ -206,7 +206,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #endif
 
 /// The transfer method menu (IconMenu_ChooseSendOption,
-/// RESOURCE_LAYOUT_TRANSFER_METHOD): its heading window ("Transfer Method"),
+/// SEND_OPTION_TRANSFER_METHOD): its heading window ("Transfer Method"),
 /// the heading's x in it in pixels, and the help window.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN
 #define TRANSFER_METHOD_WINDOW_X 6

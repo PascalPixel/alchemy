@@ -143,7 +143,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   if (picture == 0)
     return 0;
 
-  Actor_StartScriptFar(picture, gFieldEffect_ParticleEmitterScript);
+  Actor_StartScriptFar(picture, gItemDisplay_GrowInScript);
   {
     struct Sprite *sprite = picture->sprite;
     void *iconBuffer;
@@ -199,7 +199,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
                          leader->z.fixed);
   wait(3);
   Actor_SelectAnimationFar(leader, ANIM_LEADER_ARMS_RAISED);
-  Actor_StartScriptFar(actor, gFieldEffect_RisingPulseScript);
+  Actor_StartScriptFar(actor, gItemDisplay_PulseScript);
   // FACING_SOUTH, a quarter turn, faces the screen.
   leader->facing = FACING_SOUTH;
 }
@@ -214,7 +214,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
     leader = Actor_Lookup(gMainRoutineState.leaderActorId);
     if (flags & ITEM_DISPLAY_SPARKLES) {
       Actor_SetSpriteFlagsFar(object, 0);
-      Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
+      Actor_StartScriptFar(object, gItemDisplay_GrowInScript);
       ((struct Actor *)object)->velocityY = toFIXED(2);
       ((struct Actor *)object)->gravity = toFIXED(1) / 4;
       ((struct Actor *)object)->update = ItemDisplay_EmitSparkles;
@@ -388,7 +388,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
                   column * toFIXED(MAPGRID_CELL_PIXELS) + toFIXED(8), 0,
                   row * toFIXED(MAPGRID_CELL_PIXELS) + toFIXED(8));
               if (actor != 0) {
-                Actor_StartScriptFar(actor, gFieldEffect_MarkerParticleScript);
+                Actor_StartScriptFar(actor, gReveal_MarkerScript);
                 Actor_SetSpriteFlagsFar(actor, 0);
                 actor->update = Reveal_EmitSparkles;
               }

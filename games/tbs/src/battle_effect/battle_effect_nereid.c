@@ -68,7 +68,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   resource = Resource_GetTableEntry(RESOURCE_FIRE_PILLAR_SHEET_A);
   resource += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(resource, state->sheet + NEREID_COLUMN_PICTURE);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_YELLOW_GLOW_SHEET),
                       motes);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);

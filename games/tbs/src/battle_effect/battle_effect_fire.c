@@ -35,7 +35,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   else
     BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);

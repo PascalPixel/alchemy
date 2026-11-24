@@ -98,7 +98,7 @@ void DebugSceneSelect_RunFar(void);
 s16 DebugSceneSelect_RunFar(void);
 #endif
 s32 DebugFlagEditor_RunFar(void);
-s32 Resource_LoadByModeIntoSlotFar(s32 mode, s32 value, s32 result, s32 option);
+s32 SelectionIcon_LoadIntoSlotFar(s32 mode, s32 value, s32 result, s32 option);
 void Window_MarkVisibleTextTilesFar(void);
 s32 PartyStatus_HighlightMembersFar(u16 *ids);
 struct WindowSprite *WindowSprite_CreateLoadedFar(s32 icon, s32 layers,
@@ -108,7 +108,7 @@ s32 Save_ToChosenFileFar(void);
 s32 Save_ChooseAndLoadFileFar(s32 mode);
 s32 Save_CopyFileFar(void);
 s32 Save_EraseSelectedFileFar(void);
-s32 Save_ProcessSelectedFileFar(void);
+s32 Save_WriteLinkTalliesFar(void);
 s32 Save_ScanFileSummariesFar(void);
 s32 NameEntry_EditMemberNameFar(s32 member);
 s32 DebugBrowser_IconsFar(void);

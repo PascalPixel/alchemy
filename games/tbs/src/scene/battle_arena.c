@@ -1428,7 +1428,7 @@ static s32 BattleArena_SaveBattleResults(void) {
                               MESSAGE_WINDOW_ZOOM);
   while (Message_AllTyped() == 0)
     wait(1);
-  Save_ProcessSelectedFile();
+  Save_WriteLinkTallies();
   Window_Close(window, 1);
   wait(1);
   window =
@@ -1452,7 +1452,7 @@ static s32 BattleArena_SaveMonsterBattleResults(void) {
                               MESSAGE_WINDOW_ZOOM);
   while (Message_AllTyped() == 0)
     wait(1);
-  Save_ProcessSelectedFile();
+  Save_WriteLinkTallies();
   Window_Close(window, 1);
   wait(1);
   window = Message_OpenWindow(MsgLobbyMonsterBattleResults, 5, 4,

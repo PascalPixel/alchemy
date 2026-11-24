@@ -194,7 +194,7 @@ struct SelectionNode;
 struct SelectionMenuState;
 struct MessageReader;
 struct Message;
-struct OptionMenuState;
+struct SettingsMenuState;
 
 /// The flags of a UI window (struct Window.flags), which Window_Create
 /// takes as its attributes.
@@ -280,7 +280,7 @@ enum TextColor {
 /// The OAM shape and size a window sprite is created with
 /// (WindowSprite_Create): attribute 0's shape in the low half, attribute 1's
 /// size in the high half.
-#define OUTPUT_SIZE_16X16 0x40000000
+#define WINDOW_SPRITE_SIZE_16X16 0x40000000
 #define OUTPUT_SIZE_32X32 0x80000000
 #define OUTPUT_SIZE_32X8 0x40004000
 #define OUTPUT_SIZE_32X16 0x80004000
@@ -495,7 +495,7 @@ enum PauseMenuEntry {
 };
 
 /// The kinds of icon the selection screen lists (SelectionNode.kind) and
-/// Resource_LoadByMode, Resource_LoadByModeIntoSlot and
+/// SelectionIcon_Load, SelectionIcon_LoadIntoSlot and
 /// WindowSprite_CreateFromResource load.
 enum IconKind {
   ICON_KIND_NONE = 0,    ///< a free selection icon entry
@@ -757,8 +757,8 @@ void SelectionMenu_RedrawIcon(struct SelectionMenuState *state, u32 index);
 void SelectionMenu_HighlightIcon(struct SelectionMenuState *state, u32 index);
 void Menu_ClearBattleHighlight(struct SelectionMenuState *screen);
 void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward);
-s32 Resource_LoadByMode(s32 mode, s32 value);
-s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option);
+s32 SelectionIcon_Load(s32 mode, s32 value);
+s32 SelectionIcon_LoadIntoSlot(s32 mode, s32 value, s32 result, s32 option);
 void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                              s32 reuse);
 u32 Menu_ConfirmSelection(struct SelectionMenuState *screen);
@@ -772,7 +772,7 @@ void MenuArrow_Create(struct MenuSprite *object, s32 *slot);
 void MenuArrow_SetPosition(struct MenuSprite *obj, s32 x, s32 y);
 void MenuArrow_Release(s32 value);
 void SelectionMenu_LoadLargeIcon(void);
-void Resource_ResetPendingTransfer(void);
+void SelectionMenu_FreeLargeIcon(void);
 s32 FieldMenu_Run(void);
 void PartyStatus_OpenAndWait(void);
 // UB: FieldMenu_Run calls it with no prototype and uses the result, though it
@@ -800,18 +800,18 @@ void Menu_ReleaseSelectionState(void);
 void SettingsMenu_ReservedNoOpA(void);
 void SettingsMenu_ReservedNoOpB(void);
 void SettingsMenu_ReservedNoOpC(void);
-void SettingsMenu_ResetEntries(struct OptionMenuState *state);
-void WindowColor_CalculateTint(struct OptionMenuState *state);
-void WindowColor_WritePalette(struct OptionMenuState *state);
-u16 WindowColor_ScaleTint(struct OptionMenuState *state, FIXED scale_r,
+void SettingsMenu_ResetEntries(struct SettingsMenuState *state);
+void WindowColor_CalculateTint(struct SettingsMenuState *state);
+void WindowColor_WritePalette(struct SettingsMenuState *state);
+u16 WindowColor_ScaleTint(struct SettingsMenuState *state, FIXED scale_r,
                           FIXED scale_g, FIXED scale_b);
 u16 Color_ScaleComponents(s16 *rgb, FIXED red_scale, FIXED green_scale,
                           FIXED blue_scale);
 void WindowColor_Apply(s32 phase, s32 brightness);
-void SettingsMenu_PreviousRow(struct OptionMenuState *state);
-void SettingsMenu_NextRow(struct OptionMenuState *state);
-void SettingsMenu_LowerSetting(struct OptionMenuState *state);
-void SettingsMenu_RaiseSetting(struct OptionMenuState *state);
+void SettingsMenu_PreviousRow(struct SettingsMenuState *state);
+void SettingsMenu_NextRow(struct SettingsMenuState *state);
+void SettingsMenu_LowerSetting(struct SettingsMenuState *state);
+void SettingsMenu_RaiseSetting(struct SettingsMenuState *state);
 void SettingsMenu_SelectionNoOp(void);
 void SettingsMenu_AnimateCursors(void);
 void SettingsMenu_InitializeState(void);

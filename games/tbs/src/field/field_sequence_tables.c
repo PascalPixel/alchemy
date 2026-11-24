@@ -48,7 +48,7 @@ const s16 gFieldEffect_TargetRangeByMode[25] = {
 const u8 gMindRead_CasterPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
 
 /// Grows from half size to full size, a step every 2 frames.
-const s32 gFieldEffect_ParticleEmitterScript[] = {
+const s32 gItemDisplay_GrowInScript[] = {
     SC_SET(SW_SCALE_X, FIXED_ONE / 2),
     SC_SET(SW_SCALE_Y, FIXED_ONE / 2),
     SC_WAIT(2),
@@ -68,7 +68,7 @@ const s32 gFieldEffect_ParticleEmitterScript[] = {
 
 /// Pulses twice, to 1.5 times full size, then rests, over and over: the found
 /// item's picture held over the leader (field_sequence_item_display.c).
-const s32 gFieldEffect_RisingPulseScript[] = {
+const s32 gItemDisplay_PulseScript[] = {
     SC_WAIT(10),
     SC_SET(SW_SCALE_X, FIXED_ONE * 11 / 8),
     SC_SET(SW_SCALE_Y, FIXED_ONE * 11 / 8),
@@ -109,7 +109,7 @@ const s32 gFieldEffect_ParticleScript[] = {
 
 /// A Reveal marker: stays while Field_IsRevealActive returns nonzero (SC_CALL
 /// runs it again each frame), and releases itself once Reveal ends.
-const s32 gFieldEffect_MarkerParticleScript[] = {
+const s32 gReveal_MarkerScript[] = {
     SC_CALL(Field_IsRevealActive),
     SC_RELEASE,
 };
@@ -455,8 +455,8 @@ const u16 gInput_DpadAngles[16] = {
 const u8 gFieldEffect_QuadrantModes[4] = {3, 1, 2, 1};
 
 /// Waits 60 frames and releases the actor. Word +4 is
-/// gFieldEffect_HeavyImpactScript.
-const s32 gFieldEffect_BurstParticleActorScript[] = {
+/// gForce_FistScript.
+const s32 gGrowth_LeafScript[] = {
     SC_WAIT(60),
     SC_RELEASE,
 };
@@ -466,7 +466,7 @@ const u8 gUnused_BattleEffectBytes[4] = {3, 1, 2, 1};
 
 /// Waits to arrive, sets off FieldEffect_SpawnHeavyImpact (event_commands_lift.c)
 /// and releases the actor.
-const s32 gFieldEffect_HeavyImpactScript[] = {
+const s32 gForce_FistScript[] = {
     SC_SYNC,
     SC_CALL(FieldEffect_SpawnHeavyImpact),
     SC_RELEASE,

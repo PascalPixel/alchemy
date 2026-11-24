@@ -122,12 +122,12 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
   if (window == 0)
     window = Window_CreateFar(-5, 0, 5, 5, WINDOW_FLAG_INSTANT);
-  anchor =
-      WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
+  anchor = WindowSprite_CreateFar(shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16,
+                                  window, 0, 0);
   anchor->motion = WINDOW_SPRITE_MOTION_STILL;
   // The hand's icon is the shop's, freed by Shop_ReleaseState, not the
   // sprite's.
-  anchor->kind = WINDOW_SPRITE_GLYPH;
+  anchor->kind = WINDOW_SPRITE_PLAIN;
   // The hand waits off the left edge until a screen places it
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = anchor;

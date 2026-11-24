@@ -714,7 +714,7 @@ static void MogallForest_SecondArea_PushLog(void) {
       destinationRow = 30;
       MapGrid_CopyCellAttributes(44, 30, 2, 4, destinationColumn,
                                  destinationRow);
-      PushedActor_FillGridAttributeRectangle(2, 35, 30, 1, 4, 0);
+      MapGrid_FillCollisionRectangle(2, 35, 30, 1, 4, 0);
     }
   }
 
@@ -724,16 +724,15 @@ static void MogallForest_SecondArea_PushLog(void) {
 /// Makes the rock's new cell solid and clears the four cells round it, one of
 /// which it came from.
 static inline void MogallForest_UpdateRockCells(s32 column, s32 row) {
-  PushedActor_FillGridAttributeRectangle(2, column, row, 1, 1,
-                                         CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(2, column + 1, row, 1, 1,
-                                         CELL_BEHAVIOR_NORMAL);
-  PushedActor_FillGridAttributeRectangle(2, column - 1, row, 1, 1,
-                                         CELL_BEHAVIOR_NORMAL);
-  PushedActor_FillGridAttributeRectangle(2, column, row + 1, 1, 1,
-                                         CELL_BEHAVIOR_NORMAL);
-  PushedActor_FillGridAttributeRectangle(2, column, row - 1, 1, 1,
-                                         CELL_BEHAVIOR_NORMAL);
+  MapGrid_FillCollisionRectangle(2, column, row, 1, 1, CELL_BEHAVIOR_WALL);
+  MapGrid_FillCollisionRectangle(2, column + 1, row, 1, 1,
+                                 CELL_BEHAVIOR_NORMAL);
+  MapGrid_FillCollisionRectangle(2, column - 1, row, 1, 1,
+                                 CELL_BEHAVIOR_NORMAL);
+  MapGrid_FillCollisionRectangle(2, column, row + 1, 1, 1,
+                                 CELL_BEHAVIOR_NORMAL);
+  MapGrid_FillCollisionRectangle(2, column, row - 1, 1, 1,
+                                 CELL_BEHAVIOR_NORMAL);
 }
 
 /// Move on the small grey rock below the upper log in the second area's river
@@ -1040,7 +1039,7 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
     rock->groundHeight = -toFIXED(2);
     rock->y.fixed = -toFIXED(2);
     GameFlag_Set(FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED);
-    PushedActor_FillGridAttributeRectangle(2, 43, 23, 1, 1, CELL_BEHAVIOR_WALL);
+    MapGrid_FillCollisionRectangle(2, 43, 23, 1, 1, CELL_BEHAVIOR_WALL);
   }
   Event_End();
 }
@@ -1469,12 +1468,12 @@ s32 Scene_Initialize(void) {
             ACTOR_PRIORITY_UNDERFOOT;
         MapGrid_CopyCellAttributes(44, 30, 2, 4, 34, 30);
 #if TBS_PATCH_1
-        PushedActor_FillGridAttributeRectangle(0, 35, 29, 1, 4, 0);
+        MapGrid_FillCollisionRectangle(0, 35, 29, 1, 4, 0);
 #endif
       }
       PushedActor_BlockFootprint(ACTOR_SECOND_AREA_LOG);
       PushedActor_BlockFootprint(ACTOR_SECOND_AREA_SOUTH_LOG);
-      PushedActor_FillGridAttributeRectangle(
+      MapGrid_FillCollisionRectangle(
           2, FIELD_CELL(Actor_Get(ACTOR_SECOND_AREA_ROCK)->x.fixed),
           FIELD_CELL(Actor_Get(ACTOR_SECOND_AREA_ROCK)->z.fixed), 1, 1,
           CELL_BEHAVIOR_WALL);
@@ -1524,7 +1523,7 @@ s32 Scene_Initialize(void) {
       break;
 
     case MOGALL_FOREST_KILLER_APE_CHEST_FROM_STUMPS:
-      PushedActor_FillGridAttributeRectangle(
+      MapGrid_FillCollisionRectangle(
           2, FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed),
           FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed), 1, 1,
           CELL_BEHAVIOR_WALL);
@@ -1569,7 +1568,7 @@ s32 Scene_Initialize(void) {
             ACTOR_PRIORITY_UNDERFOOT;
         MapGrid_CopyCellAttributes(26, 20, 2, 4, 40, 32);
       }
-      PushedActor_FillGridAttributeRectangle(
+      MapGrid_FillCollisionRectangle(
           2, FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->x.fixed),
           FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed), 1, 1,
           CELL_BEHAVIOR_WALL);

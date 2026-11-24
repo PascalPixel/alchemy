@@ -108,7 +108,7 @@ s32 ItemMenu_Run(void) {
   gActorSystemState->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeState(0);
+  Menu_InitializeState(0);
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
   Menu_LoadStatArrows();
@@ -179,7 +179,7 @@ enum ItemMenuStep {
   ITEM_STEP_TRADE = 7,  ///< the receiver is full: choose what they give back
   ITEM_STEP_IDLE = 8,   ///< nothing sets it
   ITEM_STEP_COMMAND = 9,
-  ITEM_STEP_INSPECT = 10, ///< Details (ItemMenu_ShowDetails)
+  ITEM_STEP_DETAILS = 10, ///< Details (ItemMenu_ShowDetails)
   ITEM_STEP_REMOVE = 11,
   ITEM_STEP_QUANTITY = 12 ///< nothing sets it
 };
@@ -346,8 +346,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       if (command == ITEM_COMMAND_REMOVE) {
         state = ITEM_STEP_REMOVE;
       }
-      if (command == ITEM_COMMAND_INSPECT) {
-        state = ITEM_STEP_INSPECT;
+      if (command == ITEM_COMMAND_DETAILS) {
+        state = ITEM_STEP_DETAILS;
       }
       break;
 
@@ -430,7 +430,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         break;
       }
       menu->sideMember[1] = 0;
-      Resource_LoadByModeIntoSlotFar(
+      SelectionIcon_LoadIntoSlotFar(
           ICON_KIND_ITEM,
           (menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) |
               (result << INVENTORY_QUANTITY_SHIFT),
@@ -788,7 +788,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       break;
 
     // Show its description.
-    case ITEM_STEP_INSPECT:
+    case ITEM_STEP_DETAILS:
       menu->sideIcons[0]->motion = ICON_HIDDEN;
       ItemMenu_ShowDetails(menu->selectedItems[0]);
       WindowSprite_RedrawSavedRectFar(menu->statusWindow);
@@ -1421,11 +1421,11 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
     itemId = *entries++;
     if (itemId != 0) {
       if (iconStyle == 0) {
-        Resource_LoadByModeIntoSlotFar(ICON_KIND_ITEM, itemId,
-                                       (u8)(*icons)->index, 0);
+        SelectionIcon_LoadIntoSlotFar(ICON_KIND_ITEM, itemId,
+                                      (u8)(*icons)->index, 0);
       } else {
-        Resource_LoadByModeIntoSlotFar(ICON_KIND_EQUIPMENT_ITEM, itemId,
-                                       (u8)(*icons)->index, 0);
+        SelectionIcon_LoadIntoSlotFar(ICON_KIND_EQUIPMENT_ITEM, itemId,
+                                      (u8)(*icons)->index, 0);
       }
     }
     icons++;
@@ -1434,7 +1434,7 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
 }
 
 /// Shows party member memberId's items in the item window, laid out for layout
-/// mode (see ItemMenu_RefreshEntry), or "no items" when there are none.
+/// mode (see ItemMenu_PlaceIcons), or "no items" when there are none.
 void ItemMenu_RefreshMember(s32 memberId, s32 mode) {
   struct ItemMenuState *menu;
   struct Unit *member;
@@ -1445,7 +1445,7 @@ void ItemMenu_RefreshMember(s32 memberId, s32 mode) {
   items = menu->items;
   menu->itemCount = ItemMenu_CollectItems(member, items, 0);
   WindowSprite_RedrawSavedRectFar(menu->itemWindow);
-  ItemMenu_RefreshEntry(mode);
+  ItemMenu_PlaceIcons(mode);
   ItemMenu_DrawIcons(items, 0);
   if (ItemMenu_CountItems(memberId) == 0)
     Text_DrawMessageAsTilesFar(MsgItemMenuEmpty, menu->itemWindow, 8, 24);
@@ -1650,7 +1650,7 @@ s32 ItemMenu_ChooseCommand(void) {
   // preference is Use, Remove, Equip, Give, then Details.
   lastCommand = (s8)menu->listMode;
   if (lastCommand == -1) {
-    if (commandStates[ITEM_COMMAND_INSPECT] == ITEM_COMMAND_STATE_AVAILABLE) {
+    if (commandStates[ITEM_COMMAND_DETAILS] == ITEM_COMMAND_STATE_AVAILABLE) {
       column = 2;
       row = 0;
     }
@@ -1733,7 +1733,7 @@ s32 ItemMenu_ChooseCommand(void) {
         case ITEM_COMMAND_EQUIP:
           Sound_PlayFar(SE_NOTE_HIGH); // Equip
           break;
-        case ITEM_COMMAND_INSPECT:
+        case ITEM_COMMAND_DETAILS:
         case ITEM_COMMAND_GIVE:
         case ITEM_COMMAND_DROP:
           Sound_PlayFar(SE_MENU_CONFIRM);
@@ -1817,7 +1817,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
 
   commandStates[ITEM_COMMAND_GIVE] = ITEM_COMMAND_STATE_AVAILABLE;
   commandStates[ITEM_COMMAND_DROP] = ITEM_COMMAND_STATE_AVAILABLE;
-  commandStates[ITEM_COMMAND_INSPECT] = ITEM_COMMAND_STATE_AVAILABLE;
+  commandStates[ITEM_COMMAND_DETAILS] = ITEM_COMMAND_STATE_AVAILABLE;
 
   if (menu->selectedItems[0] & INVENTORY_EQUIPPED) {
     commandStates[ITEM_COMMAND_REMOVE] = ITEM_COMMAND_STATE_AVAILABLE;
@@ -1877,7 +1877,7 @@ void ItemMenu_DrawCommands(const s8 *commandStates, struct Window *window) {
   Text_DrawMessageAsTilesFar(firstCommandMessage + 3, window, 80,
                              32); // "Drop"
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (commandStates[ITEM_COMMAND_INSPECT] == ITEM_COMMAND_STATE_DISABLED)
+  if (commandStates[ITEM_COMMAND_DETAILS] == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
   Text_DrawMessageAsTilesFar(firstCommandMessage + 4, window, 80,
                              24); // "Details"
@@ -2471,8 +2471,8 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
 void ItemMenu_DrawItemHead(void) {
   struct ItemMenuState *menu = gMenuState;
 
-  Resource_LoadByModeIntoSlotFar(ICON_KIND_ITEM, menu->selectedItems[0],
-                                 (u8)menu->selectedItemIcon->index, 0);
+  SelectionIcon_LoadIntoSlotFar(ICON_KIND_ITEM, menu->selectedItems[0],
+                                (u8)menu->selectedItemIcon->index, 0);
   menu->selectedItemIcon->motion = ICON_SHOWN;
   menu->selectedItemIcon->x = 112;
   menu->selectedItemIcon->y = 8;

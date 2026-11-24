@@ -35,7 +35,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   state->args = args;
   EFFECT_START_NARROW_CANVAS(0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_SWIRL_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PINK_STAR_SHEET,
                              state->sheet + HELM_SPLITTER_STAR_PICTURES, 1, 0);
@@ -257,7 +257,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   additive = slots[HEAP_SLOT_RAM_CODE_PAIRED - HEAP_SLOT_BATTLE_EFFECT];
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLARE_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLARE_IMAGE,
                              state->sheet + IMPACT_BURST_FRAGMENT_PICTURES, 0,

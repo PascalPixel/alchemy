@@ -69,7 +69,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FLAME_BLADE_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              state->sheet + RAGNAROK_FLASH_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
 
   // Flashes and sparks for three columns, though only two strike: the third's
   // random draws are still taken.

@@ -101,13 +101,13 @@ Resource_DirectoryTable:
 	group BattleEffect, StarBurstSheet, CrescentSheet, VorpalSlashImageA, VorpalSlashImageB, QuickStrikeImageA
 	group BattleEffect, QuickStrikeImageB, UnusedFlashingStrikeImageA, UnusedFlashingStrikeImageB, LimeColumnSheet, RainSheet
 	group BattleEffect, FlameSheetA, DemonFaceSheet, FlameBladeSheet, SwordSheet, IceTileSheet
-	group BattleEffect, FiveModeImage, SpiderWebSheet, VioletLightningSheetA, YellowSparkSheet, ProjectileVolleyImage
+	group BattleEffect, FlameArcSheet, SpiderWebSheet, VioletLightningSheetA, YellowSparkSheet, ProjectileVolleyImage
 	group BattleEffect, ShurikenSheet, FlareSheet, FlareImage, VioletPaletteB, FireSwirlSheet
 	group BattleEffect, VioletLightningSheetB, FireBurstSheet, BlueCrescentSheet, JudgmentFlashSheet, VioletMoteSheet
 	group BattleEffect, JudgmentBurstSheet, FireballSheet, MemberBurstImage, SlashSheet, WaveSheet
 	group BattleEffect, TargetBurstImage, PinkStarSheet, WaterSpraySheet, BlueFlameSheet, ExplosionSheet
-	group BattleEffect, MagentaSwirlSheet, MagentaTailSheet, ParticleSpritesA, ParticleSpritesB, ParticleSpritesC
-	group BattleEffect, ParticleSpritesD, GreenPalette, SwordSlashSheet, RuneSheet, FlameColumnSheet
+	group BattleEffect, MagentaSwirlSheet, MagentaTailSheet, YellowGlowSheet, PaleBlueGlowSheet, BlueTallGlowSheet
+	group BattleEffect, BlueGlowSheet, GreenPalette, SwordSlashSheet, RuneSheet, FlameColumnSheet
 	group BattleEffect, EarthWallSheet, OrangePaletteA, FlashBurstSheet, ThornSheet, CometSheetA
 	group BattleEffect, CometSheetB, CometSheetC, WhirlwindSheet, GreenPillarSheet, VineSheet
 	group BattleEffect, FirePillarSheetA, RedPaletteB, OrangePaletteB, VioletCometSheet, FlameballSheet
@@ -123,7 +123,7 @@ Resource_DirectoryTable:
 	group BattleEffect, GlowOrbSheet, IceChipSheet, IceBlockSheet, SparkleDots, PinkBurstSheet
 	group BattleEffect, LightFanSheet, BlueBurstSheet, DustPuffSheet, GoldShellSheet, BlastSheet
 	group BattleEffect, FlameSheetB, FirePillarSheetB, RockSpireSheet, LightningBoltSheet, BeamImage
-	group BattleEffect, TwelveModeImage, WindStreakSheet, YellowPaletteB, BlueRingSheet, RedPaletteC
+	group BattleEffect, BlueDropletSheet, WindStreakSheet, YellowPaletteB, BlueRingSheet, RedPaletteC
 	group BattleEffect, VioletPaletteD, BlueBeamSheet, VortexSheet, TornadoSheet, CrystalSheet
 	group BattleEffect, WaterSparkleSheet, LightningPillarSheet, AtalantaPath, DragonCloudFlamePath
 	group Field, PerspectiveDataA, DefaultGridCells, DefaultTileAnimation, DefaultCellTilesAttributes

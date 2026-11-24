@@ -174,8 +174,7 @@ static void KolimaForestEntrance_PushLog(void) {
       // become ground to cross on.
       Actor_Get(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
-      PushedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4,
-                                             CELL_BEHAVIOR_NORMAL);
+      MapGrid_FillCollisionRectangle(2, 20, 17, 1, 4, CELL_BEHAVIOR_NORMAL);
       GameFlag_Set(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_RIVER_LOG), 0);
     }
@@ -198,8 +197,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER) != 0) {
     Actor_Get(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
-    PushedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4,
-                                           CELL_BEHAVIOR_NORMAL);
+    MapGrid_FillCollisionRectangle(2, 20, 17, 1, 4, CELL_BEHAVIOR_NORMAL);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_RIVER_LOG), 0);
   }
   PushedActor_BlockFootprint(ACTOR_FIRST_LOG);

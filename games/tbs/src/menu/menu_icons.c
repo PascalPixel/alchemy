@@ -68,7 +68,7 @@ s32 Icon_CreatePsynergyIcon(struct Window *window, s32 x, s32 y,
   // VRAM_CACHE_ENTRY_COUNT means no slot was free.
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     Icon_LoadResourceIntoSlot(abilityId, slot);
-    WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
+    WindowSprite_CreateFar(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   }
 #ifdef UBFIX
   return 0;
@@ -88,7 +88,8 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
     resource = menu->resourceSlots[0];
   else
     resource = menu->resourceSlots[1];
-  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);
+  object =
+      WindowSprite_CreateFar(resource, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms both return -1. */
     if (variant || x)
@@ -117,7 +118,8 @@ s32 Icon_CreateDjinnArrow(struct Window *window, s32 x, s32 y, s32 variant) {
     resource = menu->resourceSlots[1];
     y -= 4;
   }
-  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);
+  object =
+      WindowSprite_CreateFar(resource, WINDOW_SPRITE_SIZE_16X16, window, x, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms both return -1. */
     if (variant || x)

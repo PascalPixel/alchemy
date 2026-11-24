@@ -165,7 +165,7 @@ enum CastingImpact {
 /// Where Mortal Danger draws `picture`, one of the reaper's seven pictures
 /// (REAPER_PICTURE_X), for the casting `side`.
 #define CASTING_IMPACT_PICTURE_X(side, picture)                                \
-  gCastingImpact_PictureX[(side)][(picture)]
+  gReaper_PictureX[(side)][(picture)]
 
 /// Gathers sparks around the caster, launches the Djinni and draws the
 /// impact on the first target.
@@ -221,7 +221,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // Setup: the pictures.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, state, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, pictures, 1, 0);
   BattleEffect_PackYellowOrbs(
@@ -947,19 +947,19 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         if (frame <= 3) {
           blitters[0](canvas, state->sheet,
                       CASTING_IMPACT_PICTURE_X(state->args->side, 0),
-                      imageY + gCastingImpact_PictureY[0],
-                      REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
+                      imageY + gReaper_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
+                      REAPER_SHEET_RAISED_HEIGHT);
         } else {
           if (frame <= 7) {
             blitters[0](canvas, state->sheet,
                         CASTING_IMPACT_PICTURE_X(state->args->side, 0),
-                        imageY + gCastingImpact_PictureY[0],
-                        REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
+                        imageY + gReaper_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
+                        REAPER_SHEET_RAISED_HEIGHT);
           }
           EFFECT_DRAW_PICTURE(blitters[0], canvas, state->sheet,
                               REAPER_SHEET_SWUNG,
                               CASTING_IMPACT_PICTURE_X(state->args->side, 1),
-                              imageY + gCastingImpact_PictureY[1]);
+                              imageY + gReaper_PictureY[1]);
           if (frame == 4 || frame == 5) {
             Iwram_FillWords(canvas, CANVAS_BYTES,
                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
@@ -968,31 +968,31 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             EFFECT_DRAW_PICTURE(blitters[0], canvas, state->sheet,
                                 REAPER_SHEET_CRESCENT,
                                 CASTING_IMPACT_PICTURE_X(state->args->side, 2),
-                                imageY + gCastingImpact_PictureY[2]);
+                                imageY + gReaper_PictureY[2]);
           }
           if (frame == 8 || frame == 9) {
             EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
                                 RED_CRESCENT_FADE_A,
                                 CASTING_IMPACT_PICTURE_X(state->args->side, 3),
-                                imageY + gCastingImpact_PictureY[3]);
+                                imageY + gReaper_PictureY[3]);
           }
           if (frame == 10 || frame == 11) {
             EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
                                 RED_CRESCENT_FADE_B,
                                 CASTING_IMPACT_PICTURE_X(state->args->side, 4),
-                                imageY + gCastingImpact_PictureY[4]);
+                                imageY + gReaper_PictureY[4]);
           }
           if (frame == 12 || frame == 13) {
             EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
                                 RED_CRESCENT_FADE_C,
                                 CASTING_IMPACT_PICTURE_X(state->args->side, 5),
-                                imageY + gCastingImpact_PictureY[5]);
+                                imageY + gReaper_PictureY[5]);
           }
           if (frame == 14 || frame == 15) {
             EFFECT_DRAW_PICTURE(blitters[0], canvas, pictures,
                                 RED_CRESCENT_FADE_D,
                                 CASTING_IMPACT_PICTURE_X(state->args->side, 6),
-                                imageY + gCastingImpact_PictureY[6]);
+                                imageY + gReaper_PictureY[6]);
           }
         }
       } else if (mode == CASTING_IMPACT_ASURA) {

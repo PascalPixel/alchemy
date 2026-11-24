@@ -8,7 +8,7 @@
 /// The SST chip's time limits, a row per enum FlashPhase (row 0 unused):
 /// milliseconds, the timer's reload value and its control.
 // clang-format off
-const u16 Flash_MaxTimeSst[] = {
+const u16 gFlash_MaxTimeSst[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     40, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
@@ -21,7 +21,7 @@ const struct FlashSetupInfo gFlash_ChipDefault = {
     .eraseChip = EraseFlashChip,
     .eraseSector = EraseFlashSector,
     .wait = WaitForFlashWrite,
-    .maxTime = (u16 *)Flash_MaxTimeSst,
+    .maxTime = (u16 *)gFlash_MaxTimeSst,
     .type = {.romSize = 65536,
              .sector = {.size = 4096, .shift = 12, .count = 16, .top = 0},
              .wait = {3, 3},
@@ -33,7 +33,7 @@ const struct FlashSetupInfo gFlash_ChipSst = {
     .eraseChip = EraseFlashChip,
     .eraseSector = EraseFlashSector,
     .wait = WaitForFlashWrite,
-    .maxTime = (u16 *)Flash_MaxTimeSst,
+    .maxTime = (u16 *)gFlash_MaxTimeSst,
     .type = {.romSize = 65536,
              .sector = {.size = 4096, .shift = 12, .count = 16, .top = 0},
              .wait = {1, 2},

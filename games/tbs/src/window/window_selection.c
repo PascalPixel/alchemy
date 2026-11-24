@@ -515,7 +515,7 @@ void SelectionMenu_Close(void) {
     }
     node = node->next;
   }
-  Resource_ResetPendingTransfer();
+  SelectionMenu_FreeLargeIcon();
   // An arrow's y is nonzero once SelectionMenu_SetupArrow has given it a slot.
   if (state->records[SELECTION_ARROW_LEFT].y != 0) {
     VramCache_FreeEntry(state->records[SELECTION_ARROW_LEFT].slot);
@@ -617,8 +617,8 @@ SelectionMenu_GetCursorNode(struct SelectionMenuState *screen) {
 #define SELECTION_FIXED 999
 
 /// The selection row's status while it scrolls, and once it shows.
-#define NODE_STATUS_SCROLLING 33
-#define NODE_STATUS_SHOWN 1
+#define SELECTION_STATUS_SCROLLING 33
+#define SELECTION_STATUS_SHOWN 1
 
 /// The row's last place, the fifth: the cursor stepping onto it with more
 /// entries to come scrolls the row instead.
@@ -706,7 +706,7 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionMenuState *screen) {
     return;
   }
   SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
-  screen->status = NODE_STATUS_SCROLLING;
+  screen->status = SELECTION_STATUS_SCROLLING;
   wait(1);
   screen->cursorIndex++;
   if (screen->cursorIndex == SELECTION_LAST_PLACE &&
@@ -720,7 +720,7 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionMenuState *screen) {
     }
     screen->records[SELECTION_ARROW_LEFT].kind = TRUE;
   }
-  screen->status = NODE_STATUS_SHOWN;
+  screen->status = SELECTION_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(screen, screen->cursorIndex);
   wait(1);
   SelectionMenu_OpenNameWindow(screen->head->kind, 0);
@@ -736,7 +736,7 @@ UNUSED void Menu_MoveSelectionBackward(struct SelectionMenuState *screen) {
     return;
   }
   SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
-  screen->status = NODE_STATUS_SCROLLING;
+  screen->status = SELECTION_STATUS_SCROLLING;
   wait(1);
   cursorIndex = screen->cursorIndex;
   if (cursorIndex == 1 && screen->top != 0) {
@@ -750,7 +750,7 @@ UNUSED void Menu_MoveSelectionBackward(struct SelectionMenuState *screen) {
   } else {
     screen->cursorIndex--;
   }
-  screen->status = NODE_STATUS_SHOWN;
+  screen->status = SELECTION_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(screen, screen->cursorIndex);
   wait(1);
   SelectionMenu_OpenNameWindow(screen->head->kind, 0);
@@ -766,7 +766,7 @@ void SelectionMenu_StepRight(struct SelectionMenuState *state) {
   u32 end;
 
   SelectionMenu_RedrawIcon(state, state->cursorIndex);
-  state->status = NODE_STATUS_SCROLLING;
+  state->status = SELECTION_STATUS_SCROLLING;
   wait(1);
   state->cursorIndex++;
   // With more entries than the five shown, stepping past the last gathers the
@@ -824,7 +824,7 @@ void SelectionMenu_StepRight(struct SelectionMenuState *state) {
   } else if (state->cursorIndex == state->count) {
     state->cursorIndex = 0;
   }
-  state->status = NODE_STATUS_SHOWN;
+  state->status = SELECTION_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(state, state->cursorIndex);
   wait(1);
   SelectionMenu_OpenNameWindow(state->head->kind, 0);
@@ -839,7 +839,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuState *state) {
   s32 kind;
 
   SelectionMenu_RedrawIcon(state, state->cursorIndex);
-  state->status = NODE_STATUS_SCROLLING;
+  state->status = SELECTION_STATUS_SCROLLING;
   wait(1);
   // As SelectionMenu_StepRight, mirrored: from the second place with entries
   // before it the row scrolls back; from the first entry the icons gather at
@@ -898,7 +898,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuState *state) {
   } else {
     state->cursorIndex = state->count - 1;
   }
-  state->status = NODE_STATUS_SHOWN;
+  state->status = SELECTION_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(state, state->cursorIndex);
   wait(1);
   kind = state->head->kind;
@@ -1060,7 +1060,7 @@ void SelectionMenu_Scroll(struct SelectionMenuState *screen, s32 forward) {
 /// Loads the icon of an entry of kind mode (ICON_KIND_COMMAND,
 /// ICON_KIND_YES_NO, ICON_KIND_ITEM, ICON_KIND_ABILITY or
 /// ICON_KIND_TABLE_ENTRY) into a free sprite tile slot and returns it, or -1.
-s32 Resource_LoadByMode(s32 mode, s32 value) {
+s32 SelectionIcon_Load(s32 mode, s32 value) {
   s32 output;
   s32 result = -1;
 
@@ -1091,7 +1091,7 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
 
 /// Loads the icon of an entry of kind mode into sprite tile slot result (a free
 /// slot when -1) and returns the slot, or -1 when none was free.
-s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
+s32 SelectionIcon_LoadIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   s32 output;
   s32 original = result;
 
@@ -1191,13 +1191,13 @@ u32 Menu_ConfirmSelection(struct SelectionMenuState *screen) {
   chosenIndex = screen->top + screen->cursorIndex;
   Menu_ClearBattleHighlight(screen);
   SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
-  screen->status = NODE_STATUS_SCROLLING;
+  screen->status = SELECTION_STATUS_SCROLLING;
   wait(1);
   screen->records[SELECTION_ARROW_LEFT].kind = FALSE;
   screen->records[SELECTION_ARROW_RIGHT].kind = FALSE;
   screen->records[SELECTION_RECORD_HAND].kind = 0;
   screen->records[SELECTION_RECORD_HAND].scale = 0;
-  Resource_ResetPendingTransfer();
+  SelectionMenu_FreeLargeIcon();
   node = screen->head;
   for (; node != NULL && screen->cursorIndex != nodeIndex; nodeIndex++) {
     node = node->next;
@@ -1356,7 +1356,7 @@ void SelectionMenu_LoadLargeIcon(void) {
 
 /// Frees the large command icon, if it is shown.
 /// The large preview owns a cache slot independently of the visible row icons.
-void Resource_ResetPendingTransfer(void) {
+void SelectionMenu_FreeLargeIcon(void) {
   struct SelectionNode *largeIcon =
       &gSelectionMenuState->records[SELECTION_RECORD_LARGE_ICON];
 

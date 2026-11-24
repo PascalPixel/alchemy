@@ -134,7 +134,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   } else {
     Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                (state->sheet + BURST_SHOWER_PICTURES), 1, 1);
-    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
     // The grey mode: a ramp of greys, with blending off.
     if (mode == BURST_SHOWER_MODE_GREY) {
       for (i = 0, color = (u16 *)BG_PLTT; i != SHEET_PALETTE_COLORS; i++) {

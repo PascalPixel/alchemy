@@ -214,7 +214,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                              state->sheet + JUDGMENT_SHEET_BURST, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                              state->sheet + JUDGMENT_SHEET_TORNADO, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
 
   for (i = 0; i != DIMMED_COPIES; i++) {
     u8 *src = motes;
@@ -390,7 +390,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         n = 6;
       }
       high = gJudgment_BurstHeights[n];
-      picture = gJudgment_BurstPictures[n] + JUDGMENT_SHEET_BURST;
+      picture = gJudgment_ShieldSprites[n] + JUDGMENT_SHEET_BURST;
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);

@@ -65,7 +65,7 @@ s32 PsynergyMenu_Run(void) {
   gActorSystemState->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeState(0);
+  Menu_InitializeState(0);
   menu->memberCount = Party_ListMembersFar(menu->memberTable);
   ItemMenu_Initialize(0, 3, 0, 7);
   menu->messageWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
@@ -816,8 +816,8 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   for (i = 0; i < PSYNERGY_SLOTS; i++) {
     psynergyId = *p++;
     if (psynergyId != 0) {
-      Resource_LoadByModeIntoSlotFar(ICON_KIND_ABILITY, psynergyId,
-                                     (u8)(*icons)->index, 0);
+      SelectionIcon_LoadIntoSlotFar(ICON_KIND_ABILITY, psynergyId,
+                                    (u8)(*icons)->index, 0);
     }
     icons++;
   }

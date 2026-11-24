@@ -283,7 +283,7 @@ void ScreenTransition_UpdateFromCenter(void);
 void ScreenTransition_UpdateScanline(void);
 void ScreenTransition_UpdateDissolve(void);
 void ScreenTransition_FillTilemapAndColorTile(s32 color);
-void ScreenTransition_InitializeState(s32 value);
+void ScreenTransition_StartDissolveHeld(s32 value);
 
 void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames);

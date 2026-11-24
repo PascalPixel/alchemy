@@ -191,10 +191,10 @@ const u8 gTitle_PromptBlendLevels[PROMPT_PULSE_FRAMES] = {
 #define SUN_X 92
 #define SUN_Y 32
 
-/// A VBlank task of the title intro, added by Title_ShowIntro: places the lens
-/// flare's pieces along a line down from the sun, which swings up as the intro
-/// goes on, alternating two sets of three every other VBlank so all six show,
-/// hides the rest, adds the sun and copies the list to OAM.
+/// A VBlank task of the title intro, added by Title_ShowTitleScreen: places the
+/// lens flare's pieces along a line down from the sun, which swings up as the
+/// intro goes on, alternating two sets of three every other VBlank so all six
+/// show, hides the rest, adds the sun and copies the list to OAM.
 void Title_UpdateIntroSprites(void) {
   struct IntroState *state;
   u32 spriteCount;
@@ -409,7 +409,7 @@ void Title_LoadIntroBackgrounds(void) {
 /// white into the title picture, the Golden Sun logo over the peak. That holds
 /// a minute with the "Press Start" prompt pulsing when `prompt` is set, five
 /// seconds without, and returns 1 when A or Start ends it, else 0.
-s32 Title_ShowIntro(s32 prompt) {
+s32 Title_ShowTitleScreen(s32 prompt) {
   struct IntroState *introState;
   s32 result;
   u8 savedCpuLoadDisplay;

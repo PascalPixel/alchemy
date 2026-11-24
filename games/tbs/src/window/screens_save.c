@@ -332,7 +332,7 @@ s32 Save_WriteFile(s32 file) {
 /// Writes the 64-byte save stamp (gBattleArenaRecord, which lies in the first
 /// half of the save buffer) into the current file's first part, leaving the
 /// rest of the part as it was saved.
-s32 Save_ProcessSelectedFile(void) {
+s32 Save_WriteLinkTallies(void) {
   void *part;
   s32 result;
   s32 error;
@@ -371,7 +371,7 @@ s32 Save_ProcessSelectedFile(void) {
 }
 
 /// Asks whether to save over the current file and, on Yes, writes the save
-/// stamp into it (Save_ProcessSelectedFile) and says so.
+/// stamp into it (Save_WriteLinkTallies) and says so.
 UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
   s32 result;
 
@@ -389,7 +389,7 @@ UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
   } else {
     Message_CloseFinishedWindows();
     Sound_PlayFar(MUS_SAVED);
-    result = Save_ProcessSelectedFile();
+    result = Save_WriteLinkTallies();
     if (result >= 0) {
       FieldMessage_Show(MsgGameSaved, FIELD_MESSAGE_ZOOM);
     }
@@ -1029,7 +1029,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     x = -12;
     y = selectedFile * 16 + 4;
     cursorSprite =
-        WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, fileList, x, y);
+        WindowSprite_Create(vramSlot, WINDOW_SPRITE_SIZE_16X16, fileList, x, y);
     cursorSprite->motion = WINDOW_SPRITE_MOTION_STILL;
     fileCursor.anchor = cursorSprite;
   }

@@ -128,7 +128,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_CRESCENT_SHEET),
                     SHEET_PALETTE_BYTES);
   wait(1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, Ram_MapGridCellBuffer,
                              1, 0);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -335,7 +335,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   BattleCamera_SetViewAtPairMidpointFar(
       state->args->user, state->args->firstTarget, CRITICAL_HIT_ZOOM);
   wait(1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sheet, 0, 0);
   BattleCamera_SetViewAtPairMidpointFar(
       state->args->user, state->args->firstTarget, CRITICAL_HIT_ZOOM);
   wait(1);

@@ -15,7 +15,7 @@ void BattleObject_Put(void) {
 
 /// Readies the sprite of every unit in the battle (releasing those of units
 /// that left), keeping their modes and motions.
-void BattleUnit_ListAllAndSubmit(void) {
+void BattleObject_PutKeepingPoses(void) {
   s16 unitIds[UNIT_MAX];
 
   BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);

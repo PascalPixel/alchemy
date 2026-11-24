@@ -14,7 +14,7 @@
 
 /// The settings menu's state (heap block 20): the settings being edited and how
 /// many values each takes, the page, and the cursor, markers and icons.
-struct OptionMenuState {
+struct SettingsMenuState {
   u8 unused[1024];
   /// Seven 52-byte entries (struct OptionMenuEntry in window_settings_menu.c),
   /// whose state only the unused SettingsMenu_ResetEntries writes.
@@ -45,11 +45,11 @@ struct OptionMenuState {
   struct WindowSprite *icon[6];
 };
 
-STATIC_ASSERT(sizeof(struct OptionMenuState) == 1576);
-STATIC_ASSERT(offsetof(struct OptionMenuState, entries) == 1024);
+STATIC_ASSERT(sizeof(struct SettingsMenuState) == 1576);
+STATIC_ASSERT(offsetof(struct SettingsMenuState, entries) == 1024);
 
 /// The settings menu's state, HEAP_SLOT_SETTINGS_MENU under its own name.
 #define gOptionMenuState                                                       \
-  (*(struct OptionMenuState **)&gHeapSlots[HEAP_SLOT_SETTINGS_MENU])
+  (*(struct SettingsMenuState **)&gHeapSlots[HEAP_SLOT_SETTINGS_MENU])
 
 #endif

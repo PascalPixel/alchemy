@@ -264,12 +264,12 @@ extern char ResourceId_BlueFlameSheet;
 #define RESOURCE_BLUE_FLAME_SHEET ((s32)&ResourceId_BlueFlameSheet)
 /// The particles nearly every animation loads, from Annihilation to Volcano and
 /// most summons.
-extern char ResourceId_ParticleSpritesA;
-#define RESOURCE_PARTICLE_SPRITES_A ((s32)&ResourceId_ParticleSpritesA)
+extern char ResourceId_YellowGlowSheet;
+#define RESOURCE_YELLOW_GLOW_SHEET ((s32)&ResourceId_YellowGlowSheet)
 /// A second shared particle sprite sheet: the beams, Bind, Death Plunge,
 /// Ice and Douse, the Neptune summon, the stat changes, and Lucky Wheels.
-extern char ResourceId_ParticleSpritesD;
-#define RESOURCE_PARTICLE_SPRITES_D ((s32)&ResourceId_ParticleSpritesD)
+extern char ResourceId_BlueGlowSheet;
+#define RESOURCE_BLUE_GLOW_SHEET ((s32)&ResourceId_BlueGlowSheet)
 /// Curse's flames (BattleEffect_RunCurse).
 extern char ResourceId_FlameColumnSheet;
 #define RESOURCE_FLAME_COLUMN_SHEET ((s32)&ResourceId_FlameColumnSheet)
@@ -520,7 +520,7 @@ extern char ResourceId_CyanPalette;
 /// (Title_LoadIntroBackgrounds).
 extern char ResourceId_IntroSun;
 #define RESOURCE_INTRO_SUN ((s32)&ResourceId_IntroSun)
-/// The 256-colour picture Title_ShowIntro puts on BG2 once the intro's
+/// The 256-colour picture Title_ShowTitleScreen puts on BG2 once the intro's
 /// sprites are gone.
 extern char ResourceId_TitleScreen;
 #define RESOURCE_TITLE_SCREEN ((s32)&ResourceId_TitleScreen)
@@ -625,8 +625,8 @@ extern char ResourceId_FlameBladeSheet; ///< Ragnarok.
 extern char ResourceId_IceTileSheet; ///< Death Plunge.
 #define RESOURCE_ICE_TILE_SHEET ((s32)&ResourceId_IceTileSheet)
 /// The streak volleys' images: three colour rows of six 20x40 images.
-extern char ResourceId_FiveModeImage;
-#define RESOURCE_FIVE_MODE_IMAGE ((s32)&ResourceId_FiveModeImage)
+extern char ResourceId_FlameArcSheet;
+#define RESOURCE_FLAME_ARC_SHEET ((s32)&ResourceId_FlameArcSheet)
 extern char ResourceId_SpiderWebSheet; ///< Spider Web and the lobbed shells.
 #define RESOURCE_SPIDER_WEB_SHEET ((s32)&ResourceId_SpiderWebSheet)
 extern char ResourceId_FlareSheet; ///< Helm Splitter.
@@ -651,11 +651,11 @@ extern char ResourceId_SlashSheet; ///< The Atalanta summon.
 /// Judgment's explosion (JUDGMENT_SHEET_EXPLOSION).
 extern char ResourceId_ExplosionSheet;
 #define RESOURCE_EXPLOSION_SHEET ((s32)&ResourceId_ExplosionSheet)
-extern char ResourceId_ParticleSpritesB; ///< The Thor summon.
-#define RESOURCE_PARTICLE_SPRITES_B ((s32)&ResourceId_ParticleSpritesB)
-/// The Thor summon, beside ParticleSpritesB.
-extern char ResourceId_ParticleSpritesC;
-#define RESOURCE_PARTICLE_SPRITES_C ((s32)&ResourceId_ParticleSpritesC)
+extern char ResourceId_PaleBlueGlowSheet; ///< The Thor summon.
+#define RESOURCE_PALE_BLUE_GLOW_SHEET ((s32)&ResourceId_PaleBlueGlowSheet)
+/// The Thor summon, beside PaleBlueGlowSheet.
+extern char ResourceId_BlueTallGlowSheet;
+#define RESOURCE_BLUE_TALL_GLOW_SHEET ((s32)&ResourceId_BlueTallGlowSheet)
 /// Rotten Blood's green, which Decompose shares.
 extern char ResourceId_GreenPalette;
 #define RESOURCE_GREEN_PALETTE ((s32)&ResourceId_GreenPalette)
@@ -697,8 +697,8 @@ extern char ResourceId_LightFanSheet; ///< The Thor summon.
 extern char ResourceId_FlameSheetB; ///< Meteor and Outer Space.
 #define RESOURCE_FLAME_SHEET_B ((s32)&ResourceId_FlameSheetB)
 /// The monster strikes' picture for every kind but a slash.
-extern char ResourceId_TwelveModeImage;
-#define RESOURCE_TWELVE_MODE_IMAGE ((s32)&ResourceId_TwelveModeImage)
+extern char ResourceId_BlueDropletSheet;
+#define RESOURCE_BLUE_DROPLET_SHEET ((s32)&ResourceId_BlueDropletSheet)
 /// The star field's rings (ElementGlow_InitializeStarField), with the Mercury
 /// field's colours.
 extern char ResourceId_BlueRingSheet;

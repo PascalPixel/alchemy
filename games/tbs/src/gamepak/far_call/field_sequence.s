@@ -99,7 +99,7 @@ FarCall_OverworldTable:
 	overlay_veneer FieldMotes_Start
 	export FieldEffect_InitializeSparklesFar, FieldEffect_InitializeSparkles
 	export ScreenTransition_StartHeldWindowFar, ScreenTransition_StartHeldWindow
-	overlay_veneer ScreenTransition_InitializeState
+	overlay_veneer ScreenTransition_StartDissolveHeld
 	overlay_veneer ScreenTransition_Start
 	overlay_veneer ScreenTransition_Finish
 	overlay_veneer ScreenTransition_HideBackgrounds
@@ -152,7 +152,7 @@ FarCall_OverworldTable:
 	export Sprite_ShareVramCacheEntryFar, Sprite_ShareVramCacheEntry
 	export BattleBackground_GetSelectedFar, BattleBackground_GetSelected
 	overlay_veneer FieldEffect_SpawnMoveHand
-	overlay_veneer FieldEffect_SnapScaleToFull
+	overlay_veneer FieldEffect_GrowHandAndWait
 	overlay_veneer FieldEffect_BurstHand
 	export Party_AddPpFar, Party_AddPp
 	overlay_veneer Party_AddHp

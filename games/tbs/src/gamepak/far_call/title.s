@@ -2,7 +2,7 @@
 	.include "games/tbs/src/gamepak/far_call/table.inc"
 	.global FarCall_TitleTable
 FarCall_TitleTable:
-	export Title_ShowIntroFar, Title_ShowIntro
+	export Title_ShowTitleScreenFar, Title_ShowTitleScreen
 	overlay_veneer Title_AfterIntroNoOp
 	overlay_veneer Title_BeforeLogosNoOp
 	export Title_ShowNintendoLogoFar, Title_ShowNintendoLogo

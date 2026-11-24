@@ -33,7 +33,7 @@ void FieldEffect_UpdateRetreatCaster(struct Actor *actor) {
     actor->spriteStorageKind = ACTOR_SPRITE_NONE;
 }
 
-/// The states of a Retreat particle (FieldEffect_UpdateRadialLaunch).
+/// The states of a Retreat particle (Retreat_UpdateSpark).
 enum RetreatParticleState {
   RETREAT_PARTICLE_AIM = 0,    ///< placed on the main actor and aimed
   RETREAT_PARTICLE_FLYING = 1, ///< back to RETREAT_PARTICLE_AIM on arrival
@@ -45,7 +45,7 @@ enum RetreatParticleState {
 /// actor's screen position (8 pixels lower) in a direction within 1/8 turn of
 /// up the screen, at up to 5 pixels a frame, and starts again from the main
 /// actor on arrival until it takes its last flight.
-void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
+void Retreat_UpdateSpark(struct FieldParticle *effect) {
   struct Vector3 pos;
   struct Actor *main;
   s32 state;
@@ -133,7 +133,7 @@ void FieldPsynergy_Retreat(void) {
   do {
     FIXED scale;
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
-    FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
+    FieldParticle_SetCallback(effect, Retreat_UpdateSpark);
     FieldParticle_SetAnimation(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->sprite, Random16_Below(7));
     scale = (Random16() >> 1) + FIXED_ONE * 6 / 5; // 1.2 to 1.7

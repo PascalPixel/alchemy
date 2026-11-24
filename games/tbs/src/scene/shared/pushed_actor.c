@@ -367,9 +367,9 @@ UNUSED static void PushedActor_Roll(struct PushedActorProbe probe) {
   tilePosition.x = FIELD_CELL(tilePosition.x);
   tilePosition.z = FIELD_CELL(tilePosition.z);
 
-  PushedActor_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
-                                         horizontalExtent, verticalExtent,
-                                         CELL_BEHAVIOR_NORMAL);
+  MapGrid_FillCollisionRectangle(0, tilePosition.x, tilePosition.z,
+                                 horizontalExtent, verticalExtent,
+                                 CELL_BEHAVIOR_NORMAL);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.5, 0.1);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(15);
@@ -441,12 +441,12 @@ UNUSED static void PushedActor_Roll(struct PushedActorProbe probe) {
     MapGrid_CopyCellAttributes(
         probe.position.x, probe.position.z, horizontalExtent, verticalExtent,
         horizontalOrigin + probe.position.x, verticalOrigin + probe.position.z);
-    PushedActor_FillGridAttributeRectangle(0, probe.position.x,
-                                           probe.position.z, horizontalExtent,
-                                           verticalExtent, CELL_BEHAVIOR_WALL);
-    PushedActor_FillGridAttributeRectangle(2, probe.position.x,
-                                           probe.position.z, horizontalExtent,
-                                           verticalExtent, CELL_BEHAVIOR_WALL);
+    MapGrid_FillCollisionRectangle(0, probe.position.x, probe.position.z,
+                                   horizontalExtent, verticalExtent,
+                                   CELL_BEHAVIOR_WALL);
+    MapGrid_FillCollisionRectangle(2, probe.position.x, probe.position.z,
+                                   horizontalExtent, verticalExtent,
+                                   CELL_BEHAVIOR_WALL);
 
     {
       originalPosition.x +=
@@ -462,9 +462,9 @@ UNUSED static void PushedActor_Roll(struct PushedActorProbe probe) {
     MapGrid_CopyCellAttributeRect(horizontalOrigin, verticalOrigin,
                                   horizontalExtent, verticalExtent,
                                   originalPosition.x, originalPosition.z);
-    PushedActor_FillGridAttributeRectangle(
-        2, originalPosition.x, originalPosition.z, horizontalExtent,
-        verticalExtent, CELL_BEHAVIOR_NORMAL);
+    MapGrid_FillCollisionRectangle(2, originalPosition.x, originalPosition.z,
+                                   horizontalExtent, verticalExtent,
+                                   CELL_BEHAVIOR_NORMAL);
   }
   Scene_PlayQueuedMusic();
 }
@@ -524,9 +524,9 @@ UNUSED static s32 PushedActor_BlockFootprint(s32 id) {
   MapGrid_CopyCellAttributeRect(probe.position.x, probe.position.z, width,
                                 height, idx + probe.position.x,
                                 dstZ + probe.position.z);
-  PushedActor_FillGridAttributeRectangle(0, probe.position.x, probe.position.z,
-                                         width, height, CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(2, probe.position.x, probe.position.z,
-                                         width, height, CELL_BEHAVIOR_WALL);
+  MapGrid_FillCollisionRectangle(0, probe.position.x, probe.position.z, width,
+                                 height, CELL_BEHAVIOR_WALL);
+  MapGrid_FillCollisionRectangle(2, probe.position.x, probe.position.z, width,
+                                 height, CELL_BEHAVIOR_WALL);
   return 1;
 }

@@ -62,7 +62,7 @@ s32 Menu_SuspendFieldTasks(void) {
 
 /// Clears the whole menu state and sets its defaults: no side selected, one
 /// entry in each side, and a 1x1 cursor grid.
-void Window_InitializeState(s32 unused) {
+void Menu_InitializeState(s32 unused) {
   struct ItemMenuState *menu = gMenuState;
 
   Dma_Fill32(0, menu, MENU_STATE_SIZE);
@@ -405,7 +405,8 @@ UNUSED s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x,
   block = VramCache_FindFreeEntry();
   if (block != 0) {
     VramCache_Load(block, ICON_TILE_BYTES, gIcon_ResourceTiles);
-    icon = (s32)WindowSprite_CreateFar(block, OUTPUT_SIZE_16X16, window, x, y);
+    icon = (s32)WindowSprite_CreateFar(block, WINDOW_SPRITE_SIZE_16X16, window,
+                                       x, y);
   }
   return icon;
 }
@@ -428,7 +429,8 @@ s32 Icon_CreateHandCursor(struct Window *window, s32 x, s32 y) {
   if (block != 0) {
 #endif
     VramCache_Load(block, ICON_TILE_BYTES, gIcon_ResourceTiles);
-    icon = (s32)WindowSprite_CreateFar(block, OUTPUT_SIZE_16X16, window, x, y);
+    icon = (s32)WindowSprite_CreateFar(block, WINDOW_SPRITE_SIZE_16X16, window,
+                                       x, y);
   }
   return icon;
 }
@@ -646,7 +648,7 @@ void MenuCursor_Slide(s32 x, s32 y) {
 UNUSED void PsynergyMenu_ReservedNoOp(void) {}
 
 /// Lays the entry icons out eight to a row from (108, 40). Nothing calls it.
-UNUSED void PsynergyMenu_RefreshMemberEntriesDefault(void) {
+UNUSED void PsynergyMenu_PlaceEntryIconsDefault(void) {
   PsynergyMenu_PlaceEntryIcons(108, 40, 8);
 }
 
@@ -701,7 +703,7 @@ void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
 
 /// Lays the inventory's INVENTORY_SLOTS item icons out five to a row from (116,
 /// y): y is 56 for layout 1 and 40 otherwise.
-void ItemMenu_RefreshEntry(s32 layout) {
+void ItemMenu_PlaceIcons(s32 layout) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
   struct WindowSprite *icon;

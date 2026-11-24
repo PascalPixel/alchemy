@@ -46,7 +46,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   if (state->args->variant == EFFECT_VARIANT_BASIC)
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_RED_PALETTE_B),
                     SHEET_PALETTE_BYTES);

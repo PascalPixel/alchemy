@@ -55,7 +55,7 @@ enum BattleStaging {
 #define EFFECT_ON_DOWNED 0x10000 ///< shown on downed targets too (revivals)
 /// Plays the effect on the side opposite its targets. Unused: no entry of
 /// gAbilityBattleEffects in either game sets it and no code adds it, so the
-/// flip in BattleStaging_HideField never happens.
+/// flip in BattleStaging_RunFullScreen never happens.
 #define EFFECT_OTHER_SIDE 0x20000
 
 /// The effect kind Severe Blow alone has: the status window drops its PP row

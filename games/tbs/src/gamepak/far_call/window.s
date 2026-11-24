@@ -85,7 +85,7 @@ FarCall_WindowTable:
 	export Window_SetTilemapEntryFar, Window_SetTilemapEntry
 	export DebugSceneSelect_RunFar, DebugSceneSelect_Run
 	export DebugFlagEditor_RunFar, DebugFlagEditor_Run
-	export Resource_LoadByModeIntoSlotFar, Resource_LoadByModeIntoSlot
+	export SelectionIcon_LoadIntoSlotFar, SelectionIcon_LoadIntoSlot
 	overlay_veneer Debug_SelectShortcuts
 	export Window_MarkVisibleTextTilesFar, Window_MarkVisibleTextTiles
 	overlay_veneer ItemIcon_Compose
@@ -99,7 +99,7 @@ FarCall_WindowTable:
 	export Save_ChooseAndLoadFileFar, Save_ChooseAndLoadFile
 	export Save_CopyFileFar, Save_CopyFile
 	export Save_EraseSelectedFileFar, Save_EraseSelectedFile
-	export Save_ProcessSelectedFileFar, Save_ProcessSelectedFile
+	export Save_WriteLinkTalliesFar, Save_WriteLinkTallies
 	overlay_veneer Save_WriteFile
 	export Save_ScanFileSummariesFar, Save_ScanFileSummaries
 	export NameEntry_EditMemberNameFar, NameEntry_EditMemberName

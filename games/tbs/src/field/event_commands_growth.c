@@ -86,7 +86,7 @@ void FieldPsynergy_Growth(void) {
     particle =
         Actor_Spawn(SPRITE_VINE, pos.values[0], pos.values[1], pos.values[2]);
     if (particle != 0) {
-      Actor_StartScriptFar(particle, gFieldEffect_BurstParticleActorScript);
+      Actor_StartScriptFar(particle, gGrowth_LeafScript);
       particle->motionFlags = ACTOR_FALLS;
     }
     wait(((Random16() * 2) >> 16) + 2);

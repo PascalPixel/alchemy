@@ -55,7 +55,7 @@ s32 Save_ScanFileSummaries(void);
 u32 Save_BuildFileSummary(void);
 s16 Save_WriteCurrentFile(void);
 s32 Save_WriteFile(s32 file);
-s32 Save_ProcessSelectedFile(void);
+s32 Save_WriteLinkTallies(void);
 s32 Save_ConfirmAndProcessSelectedFile(void);
 s32 Save_CopyFile(void);
 s32 Save_EraseSelectedFile(void);
@@ -186,14 +186,14 @@ enum FileAction {
 
 /// What IconMenu_ChooseSendOption offers.
 enum ResourceLayoutMode {
-  RESOURCE_LAYOUT_TRANSFER_METHOD = 0, ///< Password or Cable
-  RESOURCE_LAYOUT_PASSWORD_LEVEL = 1   ///< Gold, Silver or Bronze
+  SEND_OPTION_TRANSFER_METHOD = 0, ///< Password or Cable
+  SEND_OPTION_PASSWORD_LEVEL = 1   ///< Gold, Silver or Bronze
 };
 
-/// The places of the transfer method menu (RESOURCE_LAYOUT_TRANSFER_METHOD).
+/// The places of the transfer method menu (SEND_OPTION_TRANSFER_METHOD).
 enum TransferMethod { TRANSFER_METHOD_PASSWORD = 0, TRANSFER_METHOD_CABLE = 1 };
 
-/// The places of the password level menu (RESOURCE_LAYOUT_PASSWORD_LEVEL).
+/// The places of the password level menu (SEND_OPTION_PASSWORD_LEVEL).
 enum PasswordLevel {
   PASSWORD_LEVEL_GOLD = 0,
   PASSWORD_LEVEL_SILVER = 1,

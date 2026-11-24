@@ -15,7 +15,7 @@ enum {
 };
 
 /// The settings menu's rows, in the order of their help messages
-/// (MsgOptionHelp on) and of OptionMenuState.option.
+/// (MsgOptionHelp on) and of SettingsMenuState.option.
 enum SettingsMenuRow {
   SETTINGS_ROW_WINDOW_COLOR = 0, ///< "Window color"
   SETTINGS_ROW_WINDOW_BRIGHTNESS = 1,
@@ -36,7 +36,7 @@ UNUSED void SettingsMenu_ReservedNoOpB(void) {}
 UNUSED void SettingsMenu_ReservedNoOpC(void) {}
 
 /// One of the seven entries of the settings menu's state
-/// (OptionMenuState.entries); only its state is known, and only the unused
+/// (SettingsMenuState.entries); only its state is known, and only the unused
 /// SettingsMenu_ResetEntries writes it.
 struct OptionMenuEntry {
   u8 unused[10];
@@ -46,7 +46,8 @@ struct OptionMenuEntry {
 
 /// Clears the settings menu's seven entry states, its row, its tint and its
 /// cursor animation.
-UNUSED void SettingsMenu_ResetEntries(struct OptionMenuState *optionMenuState) {
+UNUSED void
+SettingsMenu_ResetEntries(struct SettingsMenuState *optionMenuState) {
   struct OptionMenuEntry *entry =
       (struct OptionMenuEntry *)optionMenuState->entries;
 
@@ -73,7 +74,7 @@ UNUSED void SettingsMenu_ResetEntries(struct OptionMenuState *optionMenuState) {
 /// Works out the window tint (red, green and blue, 0 to 31) from the window
 /// colour settings: the window color picks a point on the colour wheel and the
 /// brightness shifts all three channels.
-UNUSED void WindowColor_CalculateTint(struct OptionMenuState *state) {
+UNUSED void WindowColor_CalculateTint(struct SettingsMenuState *state) {
   s16 phase;
   s32 bias;
   s32 blue;
@@ -110,7 +111,7 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuState *state) {
 
 /// Writes the window colours (shades 0 to 6 of WINDOW_SHADE), each a
 /// fixed scale of the window tint.
-UNUSED void WindowColor_WritePalette(struct OptionMenuState *state) {
+UNUSED void WindowColor_WritePalette(struct SettingsMenuState *state) {
   *(s16 *)&WINDOW_SHADE(0) = WindowColor_ScaleTint(
       state, FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 5, toFIXED(1.06666));
   *(s16 *)&WINDOW_SHADE(1) = WindowColor_ScaleTint(
@@ -129,7 +130,7 @@ UNUSED void WindowColor_WritePalette(struct OptionMenuState *state) {
 
 /// Returns the window tint with each channel scaled (16.16 fixed point) and
 /// clamped to 0 to 31, as a BGR555 colour.
-u16 WindowColor_ScaleTint(struct OptionMenuState *state, FIXED redScale,
+u16 WindowColor_ScaleTint(struct SettingsMenuState *state, FIXED redScale,
                           FIXED greenScale, FIXED blueScale) {
   s32 red;
   s32 green;
@@ -217,7 +218,7 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
                                           FIXED_ONE * 22 / 15);
 }
 
-/// The rows of the unused three-row settings cursor (OptionMenuState.page).
+/// The rows of the unused three-row settings cursor (SettingsMenuState.page).
 enum OptionMenuRow {
   OPTION_ROW_MESSAGE_SPEED = 0,
   OPTION_ROW_WINDOW_COLOR = 1,
@@ -228,7 +229,7 @@ enum OptionMenuRow {
 
 /// Moves the three-row settings cursor up, wrapping to the bottom. The three
 /// rows are those of SettingsMenu_LowerSetting.
-UNUSED void SettingsMenu_PreviousRow(struct OptionMenuState *state) {
+UNUSED void SettingsMenu_PreviousRow(struct SettingsMenuState *state) {
   if (state->page == OPTION_ROW_MESSAGE_SPEED)
     state->page = OPTION_ROW_WINDOW_BRIGHTNESS;
   else
@@ -236,14 +237,14 @@ UNUSED void SettingsMenu_PreviousRow(struct OptionMenuState *state) {
 }
 
 /// Moves the three-row settings cursor down, wrapping to the top.
-UNUSED void SettingsMenu_NextRow(struct OptionMenuState *state) {
+UNUSED void SettingsMenu_NextRow(struct SettingsMenuState *state) {
   if (++state->page > OPTION_ROW_WINDOW_BRIGHTNESS)
     state->page = OPTION_ROW_MESSAGE_SPEED;
 }
 
 /// Lowers the setting on the three-row cursor's row: message speed, window
 /// color or window brightness.
-UNUSED void SettingsMenu_LowerSetting(struct OptionMenuState *state) {
+UNUSED void SettingsMenu_LowerSetting(struct SettingsMenuState *state) {
   switch (state->page) {
   case OPTION_ROW_MESSAGE_SPEED:
     if (gMainRoutineState.messageSpeed != 0)
@@ -262,7 +263,7 @@ UNUSED void SettingsMenu_LowerSetting(struct OptionMenuState *state) {
 
 /// Raises the setting on the three-row cursor's row: message speed, window
 /// color or window brightness.
-UNUSED void SettingsMenu_RaiseSetting(struct OptionMenuState *state) {
+UNUSED void SettingsMenu_RaiseSetting(struct SettingsMenuState *state) {
   switch (state->page) {
   case OPTION_ROW_MESSAGE_SPEED:
     if (gMainRoutineState.messageSpeed < MESSAGE_SPEED_FAST)
@@ -290,7 +291,7 @@ void SettingsMenu_AnimateCursors(void) {
   s32 cursorResource;
   s32 markerResource;
   s32 selectedOption;
-  struct OptionMenuState *state;
+  struct SettingsMenuState *state;
 
   state = gOptionMenuState;
   selectedOption = state->page;
@@ -324,11 +325,11 @@ void SettingsMenu_AnimateCursors(void) {
 /// Allocates the settings menu's state block, copies the settings into it with
 /// how many values each takes, and starts its per-frame task.
 void SettingsMenu_InitializeState(void) {
-  struct OptionMenuState *state;
+  struct SettingsMenuState *state;
 
   state = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
-                              sizeof(struct OptionMenuState));
-  Dma_Fill32(0, state, sizeof(struct OptionMenuState));
+                              sizeof(struct SettingsMenuState));
+  Dma_Fill32(0, state, sizeof(struct SettingsMenuState));
   state->option[SETTINGS_ROW_WINDOW_COLOR] = gMainRoutineState.windowHue;
   state->optionCount[SETTINGS_ROW_WINDOW_COLOR] = WINDOW_COLOR_COUNT;
   state->option[SETTINGS_ROW_WINDOW_BRIGHTNESS] =
@@ -359,7 +360,7 @@ void SettingsMenu_Release(void) {
 /// brightness sliders with their markers, the cursor and the setting icons.
 /// Returns the window.
 struct Window *SettingsMenu_Open(void) {
-  struct OptionMenuState *state;
+  struct SettingsMenuState *state;
   struct Window *window;
   struct WindowSprite *marker;
   s32 x;
@@ -391,7 +392,7 @@ struct Window *SettingsMenu_Open(void) {
   x = VramCache_FindFreeEntry();
   if (x < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(x, 128, gPointingHandTiles);
-    marker = WindowSprite_Create(x, OUTPUT_SIZE_16X16, window, 0, 0);
+    marker = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
     state->cursor.sprite = marker;
     x = window->x * 8;
     y = window->y * 8 + 12;
@@ -429,7 +430,7 @@ struct Window *SettingsMenu_Open(void) {
   x = VramCache_FindFreeEntry();
   if (x < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(x, 256, 0);
-    marker = WindowSprite_Create(x, OUTPUT_SIZE_16X16, window, 0, 0);
+    marker = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
     marker->oam.fullColor = 1;
     state->marker[0].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
@@ -442,7 +443,7 @@ struct Window *SettingsMenu_Open(void) {
   x = VramCache_FindFreeEntry();
   if (x < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(x, 256, 0);
-    marker = WindowSprite_Create(x, OUTPUT_SIZE_16X16, window, 0, 0);
+    marker = WindowSprite_Create(x, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
     marker->oam.fullColor = 1;
     state->marker[1].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
@@ -476,7 +477,7 @@ struct Window *SettingsMenu_Open(void) {
 /// auto-sleep) until A or START keeps the settings (returns 0) or B drops them
 /// (returns -1).
 s32 SettingsMenu_Run(void) {
-  struct OptionMenuState *state;
+  struct SettingsMenuState *state;
   struct Window *settingsWindow;
   struct Window *helpWindow;
   struct WindowSprite *pair;
@@ -661,7 +662,7 @@ s32 SettingsMenu_Run(void) {
 /// The Pause menu's per-frame task: moves the cursor and pulses the
 /// chosen entry's icon.
 void PauseMenu_AnimateCursor(void) {
-  struct OptionMenuState *state = gOptionMenuState;
+  struct SettingsMenuState *state = gOptionMenuState;
   u32 index;
 
   MenuCursor_AdvanceFar(&state->cursor.cursor);
@@ -673,8 +674,8 @@ void PauseMenu_AnimateCursor(void) {
 void PauseMenu_Initialize(void) {
   void *state;
   state = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
-                              sizeof(struct OptionMenuState));
-  Dma_Fill32(0, state, sizeof(struct OptionMenuState));
+                              sizeof(struct SettingsMenuState));
+  Dma_Fill32(0, state, sizeof(struct SettingsMenuState));
   Task_Add(PauseMenu_AnimateCursor, TASK_PASS_FRAME);
 }
 
@@ -689,7 +690,7 @@ void PauseMenu_Release(void) {
 /// Change settings, and the debug entries in debug mode; only Change settings
 /// while FLAG_IN_BATTLE_ARENA is set), their icons and the cursor.
 struct Window *PauseMenu_Open(void) {
-  struct OptionMenuState *state;
+  struct SettingsMenuState *state;
   s32 rows;
   s32 first;
   s32 settingsOnly;
@@ -746,7 +747,7 @@ struct Window *PauseMenu_Open(void) {
   if (cacheSlot < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(cacheSlot, 128, gPointingHandTiles);
     state->cursor.sprite =
-        WindowSprite_Create(cacheSlot, OUTPUT_SIZE_16X16, window, 0, 0);
+        WindowSprite_Create(cacheSlot, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
     x = window->x * 8;
     y = window->y * 8 + 16;
     MenuCursor_SetPositionImmediateFar(&state->cursor.cursor, x, y);
@@ -780,7 +781,7 @@ s32 PauseMenu_Choose(void) {
   s32 top;
   const s8 *pauseIcons;
   struct WindowSprite *icon;
-  struct OptionMenuState *state;
+  struct SettingsMenuState *state;
 
   redraw = 1;
   rows = PAUSE_MENU_ROWS;

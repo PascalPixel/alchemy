@@ -54,8 +54,8 @@ extern s16 gDjinn_ElementSprites[];
 /// gElement_PowerResistByLevel, which Unit_CalculateBaseElements reads by whole
 /// level, 0 to 15.
 struct ElementLevelBonus {
-  u16 power; ///< base power, before the tenths of a level
-  u16 res;   ///< base resistance, likewise
+  u16 power;      ///< base power, before the tenths of a level
+  u16 resistance; ///< base resistance, likewise
 };
 /// The power and resistance by element level (element_table.c): a table
 /// nothing writes, defined writable in .rodata as gFont_MarkGlyphCodes is.

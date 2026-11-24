@@ -161,9 +161,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   // The light fan is loaded twice; the second load changes nothing.
   Resource_LoadAndDecompress(RESOURCE_LIGHT_FAN_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_LIGHT_FAN_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_C,
+  Resource_LoadAndDecompress(RESOURCE_BLUE_TALL_GLOW_SHEET,
                              state->sheet + THOR_SPRITE_PICTURES, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
 
   {
     s32 offset;
@@ -411,7 +411,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                              state->sheet + THOR_HAMMER_GLOW_PICTURE, 1, 0);
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_CRYSTAL_SHEET),
                   SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_B, motes, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PALE_BLUE_GLOW_SHEET, motes, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   {
     FIXED thorX;

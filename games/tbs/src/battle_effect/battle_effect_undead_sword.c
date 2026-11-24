@@ -52,7 +52,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   sprites =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_BATTLE_SHEET);
   EFFECT_START_NARROW_CANVAS(0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET,
                              state->sheet + UNDEAD_SWORD_PUFF_SHEET, 1, 0);

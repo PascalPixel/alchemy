@@ -144,9 +144,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, state->sheet);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_YELLOW_GLOW_SHEET),
                       graphics);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_D),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_BLUE_GLOW_SHEET),
                       state->sheet + BIND_FLARE_PICTURES);
   palette = Resource_GetTableEntry(RESOURCE_JUPITER_DJINN_SHEET);
   palette += SHEET_PALETTE_BYTES;
@@ -297,9 +297,9 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, state->sheet);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_YELLOW_GLOW_SHEET),
                       graphics);
-  palette = Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_D);
+  palette = Resource_GetTableEntry(RESOURCE_BLUE_GLOW_SHEET);
   Decompress_TaggedLz(palette, state->sheet + BIND_FLARE_PICTURES);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Projection_ScaledUnit(state->args->targets[0], &anchor);

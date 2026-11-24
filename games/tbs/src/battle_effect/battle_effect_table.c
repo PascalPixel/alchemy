@@ -197,13 +197,13 @@ s8 gElementBurst_SparkX[] = {0, 32, 0, 32};
 s8 gElementBurst_SparkY[] = {0, 0, 32, 32};
 u8 gElementBurst_SparkFlips[] = GLINT_FLIPS;
 /// The six pictures: the first four from the swirl sprite sheet, the last two
-/// from the tail sprite sheet. gSpiderWeb_PictureX has six entries for each
+/// from the tail sprite sheet. gSwirlSwipe_PictureX has six entries for each
 /// side.
-u8 gSpiderWeb_PictureWidths[] = {40, 112, 112, 112, 88, 64};
-u8 gSpiderWeb_PictureHeights[] = {56, 80, 64, 64, 80, 88};
-u16 gSpiderWeb_Pictures[] = {0, 2240, 11200, 18368, 0, 7040};
-u8 gSpiderWeb_PictureX[] = {72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0};
-s8 gSpiderWeb_PictureBiasY[] = {0, 4, 24, -6, -20, -28, 0, 0};
+u8 gSwirlSwipe_PictureWidths[] = {40, 112, 112, 112, 88, 64};
+u8 gSwirlSwipe_PictureHeights[] = {56, 80, 64, 64, 80, 88};
+u16 gSwirlSwipe_Pictures[] = {0, 2240, 11200, 18368, 0, 7040};
+u8 gSwirlSwipe_PictureX[] = {72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0};
+s8 gSwirlSwipe_PictureBiasY[] = {0, 4, 24, -6, -20, -28, 0, 0};
 
 // battle_effect_gathering_lights.c
 
@@ -381,7 +381,7 @@ u8 gPlasma_Counts[] = {1, 3, 7};
 // battle_effect_plasma.c: Spark group shapes and flash pictures.
 
 /// The spark groups, by variant: the SPARK_GROUPS_ columns.
-u16 gPlasma_Shapes[][5] = {
+u16 gSparkGroups_Shapes[][5] = {
     // sparks per burst, bursts, each burst's offset across
     [EFFECT_VARIANT_BASIC] = {128, 1, 16, 0, 0},
     [EFFECT_VARIANT_STRONGER] = {255, 1, 16, 0, 0},
@@ -1104,8 +1104,8 @@ u8 gBeam_PictureReaches[] = SLASH_PICTURE_REACH;
 
 /// The flips a glint may take, picked at random.
 u8 gCastingImpact_GlintDrawFlags[] = GLINT_FLIPS;
-u8 gCastingImpact_PictureX[][7] = REAPER_PICTURE_X;
-u8 gCastingImpact_PictureY[] = REAPER_PICTURE_Y;
+u8 gReaper_PictureX[][7] = REAPER_PICTURE_X;
+u8 gReaper_PictureY[] = REAPER_PICTURE_Y;
 /// The four ice chip pictures, 8x8.
 u16 gCastingImpact_IceChipPictures[] = {2308, 2372, 2436, 2500, 0};
 
@@ -1180,7 +1180,7 @@ s32 gTitanBlade_DustGravity[] = {toFIXED(1) / 2, toFIXED(1) / 4, toFIXED(1) / 4,
 /// Judgment's burst: seven quarter pictures, each half as wide as it is
 /// tall, from JUDGMENT_SHEET_BURST.
 u8 gJudgment_BurstHeights[] = {2, 3, 4, 6, 10, 11, 12};
-u16 gJudgment_BurstPictures[] = {0, 8, 26, 58, 130, 330, 572};
+u16 gJudgment_ShieldSprites[] = {0, 8, 26, 58, 130, 330, 572};
 /// The six shard pictures thrown from the burst, from the sprite sheet's start.
 u16 gJudgment_ShardPictures[] = {2396, 2985, 3698, 4411, 4810, 5146};
 u8 gJudgment_ShardWidths[] = {19, 23, 23, 19, 16, 17};

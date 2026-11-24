@@ -851,14 +851,14 @@ void ScreenTransition_UpdateDissolve(void) {
   }
 
   ditherIndex = state->value - 1;
-  state->ditherToggle ^= 1;
+  state->page ^= 1;
   colorIndex = 0;
   if (ditherIndex & TRANSITION_OPEN)
     colorIndex = DISSOLVE_COVER_COLOR;
   ditherIndex = (ditherIndex & (TRANSITION_OPEN - 1)) * 2;
   for (i = 0; i <= 1; i++) {
     u8 pixelIndex = gScreenTransition_DitherTable[ditherIndex & (8 * 8 - 1)];
-    u8 *tileByte = &state->paletteNibbles[pixelIndex >> 1];
+    u8 *tileByte = &state->solidTilePixels[pixelIndex >> 1];
     if (pixelIndex & 1)
       *tileByte = (*tileByte & 0x0f) | (colorIndex << 4);
     else
@@ -866,7 +866,7 @@ void ScreenTransition_UpdateDissolve(void) {
     ditherIndex++;
   }
 
-  IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->paletteNibbles,
+  IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->solidTilePixels,
                       DMA_COPY_WORDS(TILE_SIZE_4BPP / 4));
 }
 
@@ -893,7 +893,7 @@ void ScreenTransition_FillTilemapAndColorTile(s32 color) {
 
 /// Unused: nothing calls it, by name or through its far-call veneer. Starts a
 /// dissolve of the given mode, its value held at 0, and waits two seconds.
-void ScreenTransition_InitializeState(s32 mode) {
+void ScreenTransition_StartDissolveHeld(s32 mode) {
   struct ScreenTransitionState *state;
 
   state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));

@@ -279,7 +279,7 @@ s32 BattleEnemy_List(s16 *unitIds);
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds);
 s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds);
 void BattleObject_Put(void);
-void BattleUnit_ListAllAndSubmit(void);
+void BattleObject_PutKeepingPoses(void);
 s32 BattleObject_GetPalette(s32 unitId);
 s32 Enemy_HasSpriteRoom(s32 enemyId);
 s32 EnemySprite_LoadIntoSlots(s32 unitId);
@@ -365,9 +365,9 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay);
 UNREAD_RESULT BattleStaging_BuildTargetList(struct BattleActionRun *plan,
                                             struct BattleEffectParams *args);
 s32 BattleStaging_RunFlee(struct BattleActionRun *plan);
-s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode);
-UNREAD_RESULT BattleStaging_RunActorEntries(struct BattleActionRun *plan,
-                                            s32 unused);
+s32 BattleStaging_RunFullScreen(struct BattleActionRun *plan, s32 mode);
+UNREAD_RESULT BattleStaging_RunMessages(struct BattleActionRun *plan,
+                                        s32 unused);
 s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode);
 s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input, s32 flags);
 s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
@@ -398,7 +398,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
                                           s32 slot);
 u32 Ability_IsPsynergy(s32 abilityId);
 UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 acting);
-void Dma_StopAllThenRunHook(void);
+void Dma_StopDma3(void);
 void BattlePlayback_Start(s32 cue);
 s32 BattlePlayback_SchedulePhase(s32 frames);
 void BattlePlayback_Run(void);

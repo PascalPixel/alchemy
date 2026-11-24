@@ -142,10 +142,10 @@ s32 Sanctum_Run(s32 keeperId) {
     Portrait_CreateFar(IVAN, 0, 0, listWindow, -4, -4);
   }
 
-  cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
-                                        listWindow, 0, 0);
+  cursorAnchor = WindowSprite_CreateFar(
+      shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, listWindow, 0, 0);
   cursorAnchor->motion = WINDOW_SPRITE_MOTION_STILL;
-  cursorAnchor->kind = WINDOW_SPRITE_GLYPH; // the icon is the shop state's
+  cursorAnchor->kind = WINDOW_SPRITE_PLAIN; // the icon is the shop state's
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
   // "Welcome, weary wanderers. What aid do you seek?"

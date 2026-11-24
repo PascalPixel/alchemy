@@ -53,7 +53,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, state->sheet,
                              1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   BattleEffect_BuildCanvasBlitters(state->args->side ^ 1, draw);
   {
     struct Actor *actor = BattleObject_GetFar(state->args->user)->actor;

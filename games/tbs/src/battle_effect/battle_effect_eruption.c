@@ -33,7 +33,7 @@ enum {
 };
 
 /// The mote pictures in the sprite sheet: two sets, MOTE_SET_BYTES apart.
-#define ERUPTION_FIELD_MOTE_PICTURES 12800
+#define ERUPTION_MOTE_PICTURES 12800
 
 /// The puffs of smoke given a start; the variant's ERUPTION_FIELD_PUFFS of
 /// them are thrown.
@@ -139,7 +139,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
                 state->sheet +
                     (gBattleEffect_MotePictures[size - 1] +
                      (i & 1) * MOTE_SET_BYTES) +
-                    ERUPTION_FIELD_MOTE_PICTURES,
+                    ERUPTION_MOTE_PICTURES,
                 screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(mote, PARTICLE_DAMPING_NONE,
                                       -toFIXED(1) / 8);
@@ -231,7 +231,7 @@ void BattleEffect_CreateSprites(s32 count, s32 spriteId, u32 priority) {
 /// (BattleEffect_CallDoNothing).
 void BattleEffect_DoNothing(void) {}
 
-#undef ERUPTION_FIELD_MOTE_PICTURES
+#undef ERUPTION_MOTE_PICTURES
 #undef ERUPTION_PUFFS
 #undef ERUPTION_PUFF_FRAMES
 #undef ERUPTION_MOTE_LARGEST

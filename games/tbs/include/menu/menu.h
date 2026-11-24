@@ -181,7 +181,7 @@ enum ListSort {
 
 s32 Menu_ResumeFieldTasks(void);
 s32 Menu_SuspendFieldTasks(void);
-void Window_InitializeState(s32 unused);
+void Menu_InitializeState(s32 unused);
 s32 Window_UpdateOrCreate(struct Window **handle, s32 x, s32 y, s32 w, s32 h,
                           s32 flags);
 void Window_CloseIfOpen(struct Window **handle, s32 instant);
@@ -203,13 +203,13 @@ void Menu_PlacePartyFigures(void);
 void MenuCursor_Position(s32 xOffset, s32 yOffset);
 void MenuCursor_Slide(s32 x, s32 y);
 void PsynergyMenu_ReservedNoOp(void);
-void PsynergyMenu_RefreshMemberEntriesDefault(void);
+void PsynergyMenu_PlaceEntryIconsDefault(void);
 void PsynergyMenu_PlaceEntryIcons(s32 originX, s32 originY, s32 columns);
 void PsynergyMenu_PlaceEntryIcon(struct WindowSprite **slot, s32 index,
                                  s32 originX, s32 originY, s32 columns);
 void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
                         s32 originY, s32 columns);
-void ItemMenu_RefreshEntry(s32 layout);
+void ItemMenu_PlaceIcons(s32 layout);
 void ItemMenu_ShowMessage(s32 message, s32 x, s32 y);
 s32 ItemMenu_Sort(u16 *inventory, s32 mode);
 void Menu_CopyListOrder(s32 mode, u8 *order);
@@ -348,10 +348,9 @@ void StatusScreen_DrawSelectionLabels(struct Window *target, s32 selected,
                                       const u8 *entries);
 void StatusScreen_ShowMemberProgressMessage(struct Window *destination, s32 row,
                                             s32 hasDjinn);
-void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
-                                     s32 mode);
+void StatusScreen_DrawStatusPage(struct Window *window, s32 memberId, s32 mode);
 void Menu_BusyWait(void);
-void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags);
+void StatusScreen_DrawTopRows(struct Window *window, s32 memberId, s32 flags);
 s32 StatusScreen_ListStatuses(u8 *ailments, s32 requested, s32 memberId);
 s32 PagedList_Build(struct PagedList *result, s32 index);
 void Menu_BuildPatternTiles(void);
@@ -375,9 +374,9 @@ s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction);
 s32 Menu_ReservedStatusOne(void);
 void ItemMenu_DrawEquipment(struct Window *window, s32 memberId, s32 mode);
 void ItemMenu_DrawEquippedItemNames(struct Window *window, u16 *items);
-void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns);
-void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
-                                s32 originX, s32 originY, s32 columns);
+void Menu_PlaceEntryIconsInGrid(s32 originX, s32 originY, s32 columns);
+void Menu_PlaceEntryIconInGrid(struct WindowSprite *icon, s32 index,
+                               s32 originX, s32 originY, s32 columns);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 void Menu_HideEntryIcons(void);
 s32 Menu_CreateEightEntryActors(struct Window *window);
@@ -396,7 +395,7 @@ void Ability_PlayUseSound(s32 action);
 
 s32 Menu_ReservedStatusZero(void);
 s32 Menu_WrapIndex(s32 value, s32 modulus);
-s32 Menu_SetFirstActorRowCoordinates(s32 yOffset);
+s32 DjinnMenu_PlacePartyFigures(s32 yOffset);
 s32 DjinnMenu_Run(void);
 s32 DjinnMenu_RunScreen(void);
 void DjinnMenu_AdjustPalettes(s32 brightnessDelta);

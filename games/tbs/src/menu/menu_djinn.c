@@ -86,7 +86,7 @@ s32 Menu_WrapIndex(s32 value, s32 modulus) {
 
 /// Places the four party figures over their Djinn columns, at screen y
 /// DJINN_MEMBER_FIGURE_Y plus yOffset. Returns that y.
-s32 Menu_SetFirstActorRowCoordinates(s32 yOffset) {
+s32 DjinnMenu_PlacePartyFigures(s32 yOffset) {
   struct DjinnMenuState *menu;
   s32 memberX;
   s32 memberIndex;
@@ -115,7 +115,7 @@ s32 DjinnMenu_Run(void) {
   gActorSystemState->suspended = 1;
   Window_DrawBorderFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   wait(1);
-  Window_InitializeState(0);
+  Menu_InitializeState(0);
   backdrop = Heap_AllocEwram(sizeof(*backdrop));
   menu->backdrop = backdrop;
   backdrop->tutorialTimer = 0;
@@ -140,7 +140,7 @@ s32 DjinnMenu_Run(void) {
   menu->memberCount = Party_ListMembersFar(menu->members);
   Menu_LoadDjinnArrows();
   ItemMenu_Initialize(0, 3, 0, 7);
-  Menu_SetFirstActorRowCoordinates(0);
+  DjinnMenu_PlacePartyFigures(0);
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   menu->helpWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   menu->pairEntries[0] = DJINN_ENTRY_NONE;
@@ -248,7 +248,7 @@ s32 DjinnMenu_RunScreen(void) {
     case DJINN_STEP_RESERVED:
       break;
     case DJINN_STEP_SELECT_DJINN:
-      Menu_SetFirstActorRowCoordinates(0);
+      DjinnMenu_PlacePartyFigures(0);
       DjinnFigures_SetSlotPosition(1, 0, MENU_FIGURE_HIDDEN_Y, 0);
       result = DjinnMenu_SelectDjinn(DJINN_SELECT_DJINNI);
       step = DJINN_STEP_SHOW_HELP;
@@ -293,7 +293,7 @@ s32 DjinnMenu_RunScreen(void) {
     // this chooser runs.
     case DJINN_STEP_SELECT_ACTION:
       DjinnMenu_DrawElementList(&menu->backdrop->list);
-      Menu_SetFirstActorRowCoordinates(-8);
+      DjinnMenu_PlacePartyFigures(-8);
       menu->member = menu->members[menu->selectedColumn[0]];
       menu->shownMember[0] = menu->members[menu->selectedColumn[0]];
       DjinnFigures_SetSlotPosition(0, DJINN_FIGURE_X(menu->selectedColumn[0]),

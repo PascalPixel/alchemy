@@ -36,7 +36,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET),
                   SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -167,7 +167,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
     alternate = 1;
   state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
   Iwram_CopyWords(BG_PLTT,
                   Resource_GetTableEntry(alternate == 0
                                              ? RESOURCE_ICE_BLOCK_SHEET

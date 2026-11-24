@@ -261,16 +261,16 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
     WindowSprite_PrepareForRedrawFar(window);
     // The arrows show the shop's own icons, which closing the window leaves.
     if (stockIndex != 0) {
-      icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
-                                    window, 216, -16);
-      icon->kind = WINDOW_SPRITE_GLYPH;
+      icon = WindowSprite_CreateFar(shop->previousPageIcon,
+                                    WINDOW_SPRITE_SIZE_16X16, window, 216, -16);
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
       icon->animationStep = 0;
     }
     if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
-      icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
-                                    window, 216, 24);
-      icon->kind = WINDOW_SPRITE_GLYPH;
+      icon = WindowSprite_CreateFar(shop->nextPageIcon,
+                                    WINDOW_SPRITE_SIZE_16X16, window, 216, 24);
+      icon->kind = WINDOW_SPRITE_PLAIN;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
       icon->animationStep = 0;
     }
@@ -453,13 +453,13 @@ void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
   // Attack, Defense and Agility, each with the shop's own arrow icon.
   for (index = 0; index <= 2; index++) {
     if (baseStats[index] > previewStats[index])
-      WindowSprite_CreateFar(shop->statDownIcon, OUTPUT_SIZE_16X16, window, 56,
-                             index * 16 - 4)
-          ->kind = WINDOW_SPRITE_GLYPH;
+      WindowSprite_CreateFar(shop->statDownIcon, WINDOW_SPRITE_SIZE_16X16,
+                             window, 56, index * 16 - 4)
+          ->kind = WINDOW_SPRITE_PLAIN;
     else if (baseStats[index] < previewStats[index])
-      WindowSprite_CreateFar(shop->statUpIcon, OUTPUT_SIZE_16X16, window, 56,
-                             index * 16 - 4)
-          ->kind = WINDOW_SPRITE_GLYPH;
+      WindowSprite_CreateFar(shop->statUpIcon, WINDOW_SPRITE_SIZE_16X16, window,
+                             56, index * 16 - 4)
+          ->kind = WINDOW_SPRITE_PLAIN;
     Text_DrawNumberInWindowFar(baseStats[index], 3, window, 32, index * 16);
     if (baseStats[index] != previewStats[index])
       Text_DrawNumberInWindowFar(previewStats[index], 3, window, 72,

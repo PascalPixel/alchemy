@@ -138,7 +138,7 @@
 	export Save_ChooseAndLoadFile, Save_ChooseAndLoadFileFar
 	export Save_CopyFile, Save_CopyFileFar
 	export Save_EraseSelectedFile, Save_EraseSelectedFileFar
-	export Save_ProcessSelectedFile, Save_ProcessSelectedFileFar
+	export Save_WriteLinkTallies, Save_WriteLinkTalliesFar
 	export Save_ScanFileSummaries, Save_ScanFileSummariesFar
 	export NameEntry_EditMemberName, NameEntry_EditMemberNameFar
 	export DebugBrowser_Icons, DebugBrowser_IconsFar
@@ -351,7 +351,7 @@
 @ Credits bank (far_call/credits.s)
 	export Import_CreditsRun, Credits_RunFar
 @ Title bank (far_call/title.s)
-	export Title_ShowIntro, Title_ShowIntroFar
+	export Title_ShowTitleScreen, Title_ShowTitleScreenFar
 	export Title_ShowNintendoLogo, Title_ShowNintendoLogoFar
 	export Import_TitleShowCamelotLogo, Title_ShowCamelotLogoFar
 @ Sound bank (far_call/sound.s)

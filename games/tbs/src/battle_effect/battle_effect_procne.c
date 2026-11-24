@@ -131,7 +131,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   resource += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(resource, state->sheet);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_YELLOW_GLOW_SHEET),
                       motes);
 
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);

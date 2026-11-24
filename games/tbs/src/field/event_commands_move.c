@@ -96,7 +96,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
                target->z.fixed);
   Vector_AddPolarOffset(toFIXED(16), angle, &position);
   Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
-  FieldEffect_SnapScaleToFull(pusher);
+  FieldEffect_GrowHandAndWait(pusher);
   // The hand floats at up to 4 pixels a frame.
   pusher->speedLimit = toFIXED(4);
   pusher->acceleration = toFIXED(1) / 2;
@@ -297,7 +297,7 @@ void FieldPsynergy_Move(void) {
   } while (0);
   FieldPsynergy_FadeToCastColor();
   hand = FieldEffect_SpawnMoveHand(caster);
-  FieldEffect_SnapScaleToFull(hand);
+  FieldEffect_GrowHandAndWait(hand);
   if (hand != 0) {
     Actor_SelectAnimationFar(hand, MOVE_HAND_ANIMATION_FLEX);
     wait(30);
@@ -360,7 +360,7 @@ struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
 /// Sets an actor's scale at once to full size (its first step of 1/16 past
 /// FIXED_ONE - 1: exactly FIXED_ONE from a multiple of 1/16) when it is
 /// smaller, then waits, at most 600 frames, for it to arrive at its target.
-void FieldEffect_SnapScaleToFull(struct Actor *actor) {
+void FieldEffect_GrowHandAndWait(struct Actor *actor) {
   FIXED next;
   FIXED scale;
 

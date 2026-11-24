@@ -588,16 +588,14 @@ static void ValeCave_PushLogOverEdge(void) {
 
       Actor_Get(probe.actorSlot)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       // The cells it held on the ledge, and its landing, become open floor.
-      PushedActor_FillGridAttributeRectangle(0, FIELD_CELL(probe.position.x),
-                                             (FIELD_CELL(probe.position.z) - 2),
-                                             1, 4, CELL_BEHAVIOR_NORMAL);
-      PushedActor_FillGridAttributeRectangle(2, FIELD_CELL(probe.position.x),
-                                             (FIELD_CELL(probe.position.z) - 2),
-                                             1, 4, CELL_BEHAVIOR_NORMAL);
-      PushedActor_FillGridAttributeRectangle(2, 16, 18, 1, 2,
-                                             CELL_BEHAVIOR_NORMAL);
-      PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, 4,
-                                             CELL_BEHAVIOR_NORMAL);
+      MapGrid_FillCollisionRectangle(0, FIELD_CELL(probe.position.x),
+                                     (FIELD_CELL(probe.position.z) - 2), 1, 4,
+                                     CELL_BEHAVIOR_NORMAL);
+      MapGrid_FillCollisionRectangle(2, FIELD_CELL(probe.position.x),
+                                     (FIELD_CELL(probe.position.z) - 2), 1, 4,
+                                     CELL_BEHAVIOR_NORMAL);
+      MapGrid_FillCollisionRectangle(2, 16, 18, 1, 2, CELL_BEHAVIOR_NORMAL);
+      MapGrid_FillCollisionRectangle(0, 16, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
       GameFlag_Set(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE);
       Sound_Play(SE_LOG_FALL);
     }
@@ -634,8 +632,8 @@ static void ValeCave_PushLogOffLedge(void) {
   Actor_SetAnimation(ACTOR_WEST_LOG, LOG_ANIMATION_DROP_IN);
   Actor_SetSpritePriority(ACTOR_WEST_LOG, 3);
   Actor_Get(ACTOR_WEST_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  PushedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
-  PushedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
+  MapGrid_FillCollisionRectangle(0, 12, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
+  MapGrid_FillCollisionRectangle(0, 13, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
   GameFlag_Set(FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE);
   Sound_Play(SE_LOG_FALL);
   Event_End();
@@ -658,8 +656,8 @@ static void ValeCave_PushLogNorth(void) {
     Actor_SetAnimation(ACTOR_SOUTH_LOG, LOG_ANIMATION_DROP_IN);
 
     Actor_Get(ACTOR_SOUTH_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    PushedActor_FillGridAttributeRectangle(
-        0, 13, (FIELD_CELL(probe.position.z)) - 1, 4, 2, CELL_BEHAVIOR_NORMAL);
+    MapGrid_FillCollisionRectangle(0, 13, (FIELD_CELL(probe.position.z)) - 1, 4,
+                                   2, CELL_BEHAVIOR_NORMAL);
     if (FIELD_CELL(probe.position.z) == SOUTH_LOG_SOUTH_ROW) {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
     } else {
@@ -841,29 +839,23 @@ static void ValeCave_ApplyEntryState(void) {
       // Each log already pushed leaves open floor; else its rectangle
       // blocks its cells again.
       if (GameFlag_Get(FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE) != 0) {
-        PushedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4,
-                                               CELL_BEHAVIOR_NORMAL);
-        PushedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4,
-                                               CELL_BEHAVIOR_NORMAL);
+        MapGrid_FillCollisionRectangle(0, 12, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
+        MapGrid_FillCollisionRectangle(0, 13, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
       } else {
         PushedActor_BlockFootprint(ACTOR_WEST_LOG);
       }
       if (GameFlag_Get(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE) != 0) {
-        PushedActor_FillGridAttributeRectangle(2, 16, 16, 1, 4,
-                                               CELL_BEHAVIOR_NORMAL);
-        PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, 4,
-                                               CELL_BEHAVIOR_NORMAL);
+        MapGrid_FillCollisionRectangle(2, 16, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
+        MapGrid_FillCollisionRectangle(0, 16, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
       } else {
         PushedActor_BlockFootprint(ACTOR_EAST_LOG);
       }
       southLogOnSouthernRow =
           GameFlag_Get(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
       if (southLogOnSouthernRow != 0) {
-        PushedActor_FillGridAttributeRectangle(0, 13, 19, 4, 2,
-                                               CELL_BEHAVIOR_NORMAL);
+        MapGrid_FillCollisionRectangle(0, 13, 19, 4, 2, CELL_BEHAVIOR_NORMAL);
       } else if (GameFlag_Get(FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW) != 0) {
-        PushedActor_FillGridAttributeRectangle(0, 13, 15, 4, 2,
-                                               southLogOnSouthernRow);
+        MapGrid_FillCollisionRectangle(0, 13, 15, 4, 2, southLogOnSouthernRow);
         MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
         MapGrid_CopyCellAttributes(14, 13, 1, 1, 14, 15);
       } else {

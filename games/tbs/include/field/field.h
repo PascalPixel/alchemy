@@ -30,7 +30,7 @@ extern u8 Render_DecodePictureCodeSize[];
 /// Four 256-byte colour tables (remap0 to remap3), indexed by pixel: the
 /// SpriteColorMode tables after gSpriteColorTables' five, the
 /// first also remapping the command icons (SpriteColor_RemapPixels).
-extern const u8 gSpriteColorRemapTables[];
+extern const u8 gSpriteColorGreyTable[];
 
 struct BattleEffectParams;
 struct FieldPosition;
@@ -154,22 +154,22 @@ extern const s8 gHalt_FlickerColorModes[];
 /// The 32 by 16 spark of Avoid's falling arcs (arc_spark.png), 4 bits a pixel;
 /// FieldPsynergy_Avoid loads it.
 extern const u8 gFieldEffect_ArcSparkTiles[];
-extern const s32 gFieldEffect_BurstParticleActorScript[];
+extern const s32 gGrowth_LeafScript[];
 /// Waits to arrive, sets off FieldEffect_SpawnHeavyImpact and releases the
 /// actor: Force's fist as it lands.
-extern const s32 gFieldEffect_HeavyImpactScript[];
+extern const s32 gForce_FistScript[];
 /// The emote bubble's script (Actor_ShowEmoteById): eight 2-frame steps
 /// of squash and stretch (SC_ADD to SW_SCALE_X and SW_SCALE_Y), 30 frames
 /// still, then SC_RELEASE.
 extern const s32 gEmote_BubbleScript[];
-extern const s32 gFieldEffect_MarkerParticleScript[];
-extern const s32 gFieldEffect_ParticleEmitterScript[];
+extern const s32 gReveal_MarkerScript[];
+extern const s32 gItemDisplay_GrowInScript[];
 extern const s32 gFieldEffect_ParticleScript[];
 extern const u32 gFieldEffect_PulseScales[];
 extern const s32 gFieldEffect_SourceHoldScript[];
 extern const s16 gFieldEffect_TargetRangeByMode[];
 /// A lone SC_RELEASE: an actor that has arrived releases itself
-/// (FieldEffect_ReleaseOnArrival).
+/// (MindRead_UpdateCrescent).
 extern const s32 gFieldEffect_UntargetedActorScript[];
 /// The 32 by 16 spark a field Psynergy's particles draw (spark.png), 4
 /// bits a pixel; FieldPsynergy_LoadResources loads it.
@@ -182,7 +182,7 @@ extern const s32 gFieldPsynergy_CastColors[];
 extern const s16 gWeather_RainSplashFrames[];
 /// The ground particles' 16 by 16 tiles, packed (Decompress_ByteLz).
 extern const u8 gWeather_ParticleTiles[];
-extern const s32 gFieldEffect_RisingPulseScript[];
+extern const s32 gItemDisplay_PulseScript[];
 
 /// The first five 256-byte colour tables of SpriteColorMode, indexed by pixel.
 extern const u8 gSpriteColorTables[][256];
@@ -663,7 +663,7 @@ void WorldMap_BuildScanlineTable(FIXED depth, s32 *position,
                                  struct WorldMapScanline *scanline);
 
 void SpriteViewer_Run(void);
-s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction);
+s32 SpriteViewer_StepSpriteId(s32 spriteId, s32 direction);
 void SpriteViewer_LayOutRing(s32 centerX, s32 centerY,
                              struct SpritePlacement *positions);
 void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex);

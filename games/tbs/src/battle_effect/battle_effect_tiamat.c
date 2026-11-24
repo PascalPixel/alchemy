@@ -111,7 +111,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   resource = Resource_GetTableEntry(RESOURCE_EMBER_STREAK_SHEET);
   resource += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(resource, state->sheet + DRAGON_FIRE_FLAME_PICTURES);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_YELLOW_GLOW_SHEET),
                       motes);
   if (mode == DRAGON_FIRE_DRAGON_DRIVER)
     Iwram_CopyWords(BG_PLTT,

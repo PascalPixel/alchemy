@@ -420,9 +420,8 @@ static s32 CrossboneIsleSteppingStones_StrandLog(s32 actorId) {
 
     MapGrid_CopyCellAttributes(sourceCellX, sourceCellZ, width, depth,
                                probe.position.x, probe.position.z);
-    PushedActor_FillGridAttributeRectangle(0, probe.position.x,
-                                           probe.position.z, width, depth,
-                                           CELL_BEHAVIOR_WALL);
+    MapGrid_FillCollisionRectangle(0, probe.position.x, probe.position.z, width,
+                                   depth, CELL_BEHAVIOR_WALL);
   }
 
   Actor_SelectAnimation(actor, 1);
@@ -1436,7 +1435,7 @@ static void CrossboneIsleSteppingStones_StartMovingSinkingBoulder(void) {
   x = FIELD_CELL(boulder->x.fixed);
   z = FIELD_CELL(boulder->z.fixed);
 
-  PushedActor_FillGridAttributeRectangle(2, x, z, 1, 1, CELL_BEHAVIOR_NORMAL);
+  MapGrid_FillCollisionRectangle(2, x, z, 1, 1, CELL_BEHAVIOR_NORMAL);
   Event_End();
 }
 
@@ -1450,9 +1449,9 @@ static void CrossboneIsleSteppingStones_MoveSinkingBoulder(void) {
 
   boulder = Actor_Get(ACTOR_SINKING_BOULDER);
   Event_Start();
-  PushedActor_FillGridAttributeRectangle(2, FIELD_CELL(boulder->x.fixed),
-                                         (FIELD_CELL(boulder->z.fixed)), 1, 1,
-                                         CELL_BEHAVIOR_WALL);
+  MapGrid_FillCollisionRectangle(2, FIELD_CELL(boulder->x.fixed),
+                                 (FIELD_CELL(boulder->z.fixed)), 1, 1,
+                                 CELL_BEHAVIOR_WALL);
   if (FIELD_CELL(boulder->x.fixed) == SINKING_BOULDER_COLUMN) {
     alreadyLowered =
         Event_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK);

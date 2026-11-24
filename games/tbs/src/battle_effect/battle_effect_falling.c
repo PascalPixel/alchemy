@@ -234,7 +234,7 @@ struct DropSplashBuffer {
 /// Ram_MapGridCellBuffer seen as Douse's struct DropSplashBuffer.
 #define DOUSE_SPLASH_BUFFER ((struct DropSplashBuffer *)Ram_MapGridCellBuffer)
 
-/// BlueBeamSheet, after ParticleSpritesD's ten flare pictures (as many bytes as
+/// BlueBeamSheet, after BlueGlowSheet's ten flare pictures (as many bytes as
 /// two sets of motes): the falling drop, a blue bubble; the white flash it
 /// lands in, as large as the drop; then the white splash that spreads.
 #define DOUSE_DROP_WIDTH 24
@@ -268,7 +268,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET,
                              state->sheet + DOUSE_FALLING_PICTURE, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, state->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, state->sheet, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |

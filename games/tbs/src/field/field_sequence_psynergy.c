@@ -26,7 +26,7 @@ s32 Field_UsePsynergy(u32 code) {
   Actor_Lookup(gMainRoutineState.leaderActorId);
   retreat = 0;
   Leader_StopMoving();
-  GameFlag_ClearFar(FLAG_ITEM_USE);
+  GameFlag_ClearFar(FLAG_PSYNERGY_FROM_ITEM);
   if (userId == UNIT_NONE)
     userId = 0;
 

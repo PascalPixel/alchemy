@@ -21,8 +21,8 @@
 #define STATUS_SAVED_TILE_BYTES 2048
 #endif
 
-/// The page modes of StatusScreen_DrawStatusAilments and
-/// ItemMenu_DrawMemberStatus, in the mode's low byte: the party row's summary,
+/// The page modes of StatusScreen_DrawStatusPage and
+/// StatusScreen_DrawTopRows, in the mode's low byte: the party row's summary,
 /// or the full status page, with the elemental levels, Power and Resist.
 enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 /// A bit over the page mode: draw without clearing the window first, as for a
@@ -139,7 +139,7 @@ s32 PartyMemberChooser_Open(void) {
   gActorSystemState->suspended = 1;
   Window_DrawBorderFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   wait(1);
-  Window_InitializeState(0);
+  Menu_InitializeState(0);
 
   menu->partyCount = Party_ListMembersFar(menu->memberIds);
   StatusScreen_Initialize(0, 3, 0, 7);
@@ -195,7 +195,7 @@ s32 StatusScreen_Run(void) {
   Window_DrawBorderFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   wait(1);
   Menu_SuspendFieldTasks();
-  Window_InitializeState(0);
+  Menu_InitializeState(0);
   menu->page = STATUS_SCREEN_PAGE_STATUS;
   menu->partyCount = Party_ListMembersFar(menu->memberIds);
   StatusScreen_Initialize(0, 3, 0, 7);
@@ -593,7 +593,7 @@ s32 PartyMemberChooser_ChooseMember(void) {
           Unit_GetFar(menu->memberTable[memberIndex]), (u16 *)menu->psynergies,
           PSYNERGY_LIST_ALL);
       PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
-      Menu_PlaceEntryActorsInGrid(96, 96, 8);
+      Menu_PlaceEntryIconsInGrid(96, 96, 8);
       Menu_HideEmptyEntryIcons(menu->psynergies);
     }
     MenuCursor_Position(MENU_MEMBER_CURSOR_X(memberIndex), 16);
@@ -724,10 +724,10 @@ void StatusScreen_ShowMemberStatus(s32 member, s32 frame) {
       Menu_SpawnIconEntries((struct ItemMenuState *)menu, window);
     }
     Menu_CreateEightEntryActors(window);
-    StatusScreen_DrawStatusAilments(window, member, STATUS_PAGE_NO_CLEAR);
+    StatusScreen_DrawStatusPage(window, member, STATUS_PAGE_NO_CLEAR);
     return;
   }
-  StatusScreen_DrawStatusAilments(window, member, STATUS_PAGE_SUMMARY);
+  StatusScreen_DrawStatusPage(window, member, STATUS_PAGE_SUMMARY);
 }
 
 /// The party member's status page.
@@ -765,8 +765,8 @@ s32 StatusScreen_RunStatusPage(void) {
   // One party member's page at a time; L and R start the next.
   while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
     Unit_GetFar(menu->selectedIds[0]);
-    StatusScreen_DrawStatusAilments(menu->statusWindow, menu->selectedIds[0],
-                                    STATUS_PAGE_FULL);
+    StatusScreen_DrawStatusPage(menu->statusWindow, menu->selectedIds[0],
+                                STATUS_PAGE_FULL);
     count = StatusScreen_ListStatuses(entries, 1, menu->selectedIds[0]);
     hasAilments = 0;
     if (count == 0)
@@ -990,11 +990,11 @@ void StatusScreen_ShowMemberProgressMessage(struct Window *destination, s32 row,
 }
 
 /// Draws party member memberId's status page into window: the top rows
-/// (ItemMenu_DrawMemberStatus), the status list or "Normal", and except on the
+/// (StatusScreen_DrawTopRows), the status list or "Normal", and except on the
 /// chooser page the Djinn counts by element and, on STATUS_PAGE_FULL, the
 /// elemental levels, Power and Resist.
-void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
-                                     s32 mode) {
+void StatusScreen_DrawStatusPage(struct Window *window, s32 memberId,
+                                 s32 mode) {
   struct StatusScreenState *menu = gMenuState;
   struct Unit *unit;
   s32 djinnRow;
@@ -1015,7 +1015,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   else
     djinnRow = 10;
   menu->statusCursor->motion = ICON_SHOWN;
-  ItemMenu_DrawMemberStatus(window, memberId, mode);
+  StatusScreen_DrawTopRows(window, memberId, mode);
   StatusScreen_ListStatuses(ailments, 1, memberId);
   StatusScreen_UpdateSelectionIcons(ailments);
   keepDrawn = mode & STATUS_PAGE_NO_CLEAR;
@@ -1114,7 +1114,7 @@ void Menu_BusyWait(void) {
 /// Draws the top rows of party member memberId's status page into window: name,
 /// class, level, experience, HP and PP on the left, Attack, Defense, Agility
 /// and Luck on the right.
-void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags) {
+void StatusScreen_DrawTopRows(struct Window *window, s32 memberId, s32 flags) {
   struct ItemMenuState *menu;
   struct Unit *unit;
 
@@ -2040,7 +2040,7 @@ void ItemMenu_DrawEquippedItemNames(struct Window *window, u16 *items) {
 /// Places the 32 entry icons in a grid of 16x16 cells, columns wide, from
 /// (originX, originY), and shows them: the party member chooser's Psynergy
 /// icons.
-void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
+void Menu_PlaceEntryIconsInGrid(s32 originX, s32 originY, s32 columns) {
   s32 entryIndex;
   struct WindowSprite *icon;
   struct WindowSprite **icons;
@@ -2049,19 +2049,19 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
        entryIndex <= MENU_ENTRY_ICONS - 1; entryIndex++) {
     icon = *icons++;
     if (icon != NULL) {
-      Menu_PlaceEntryActorInGrid(icon, entryIndex, originX, originY, columns);
+      Menu_PlaceEntryIconInGrid(icon, entryIndex, originX, originY, columns);
     }
   }
 }
 
-/// The side of a cell of the grids Menu_PlaceEntryActorInGrid places icons in.
+/// The side of a cell of the grids Menu_PlaceEntryIconInGrid places icons in.
 #define ENTRY_ICON_CELL_SIZE 16
 
 /// Places icon at cell index (an index above 31 is taken as 0) of a grid of
 /// ENTRY_ICON_CELL_SIZE square cells, columns wide, from (originX, originY),
 /// and shows it.
-void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
-                                s32 originX, s32 originY, s32 columns) {
+void Menu_PlaceEntryIconInGrid(struct WindowSprite *icon, s32 index,
+                               s32 originX, s32 originY, s32 columns) {
   s32 entryIndex;
 
   entryIndex = index;
@@ -2160,7 +2160,7 @@ s32 Menu_CreateEightEntryActors(struct Window *window) {
 
 /// Shows the icon of each status that flags marks
 /// (StatusScreen_ListStatuses) down the left edge from y 88, 16 pixels
-/// apart, beside the status labels of StatusScreen_DrawStatusAilments.
+/// apart, beside the status labels of StatusScreen_DrawStatusPage.
 void StatusScreen_ShowStatusIcons(const u8 *flags) {
   struct ItemMenuState *menu;
   struct WindowSprite **slot;
@@ -2230,8 +2230,8 @@ s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled) {
         kind = OWNER_CONDITION_NORMAL;
         break;
       }
-      Resource_LoadByModeIntoSlotFar(ICON_KIND_PATTERN, kind,
-                                     (u8)menu->categoryIcons[index]->index, 0);
+      SelectionIcon_LoadIntoSlotFar(ICON_KIND_PATTERN, kind,
+                                    (u8)menu->categoryIcons[index]->index, 0);
     }
   }
   return 1;

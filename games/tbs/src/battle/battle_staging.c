@@ -61,16 +61,16 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   if (result == 0) {
     switch (battle->actionRun.staging) {
     case STAGING_MESSAGES:
-      BattleStaging_RunActorEntries(&battle->actionRun, 0);
+      BattleStaging_RunMessages(&battle->actionRun, 0);
       break;
     case STAGING_ATTACK:
       BattleStaging_RunAttack(&battle->actionRun, 0);
       break;
     case STAGING_SUMMON:
-      BattleStaging_HideField(&battle->actionRun, STAGING_HIDE_ACTOR);
+      BattleStaging_RunFullScreen(&battle->actionRun, STAGING_HIDE_ACTOR);
       break;
     case STAGING_FULL_SCREEN:
-      BattleStaging_HideField(&battle->actionRun, 0);
+      BattleStaging_RunFullScreen(&battle->actionRun, 0);
       break;
     case STAGING_CAST:
       BattleStaging_RunPsynergyCast(&battle->actionRun, CAST_PSYNERGY);
@@ -207,7 +207,7 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
 /// Plays a summon or a full-screen Psynergy: the unit glows in its element and
 /// the other side fades out while the effect plays, then everyone fades back
 /// in. STAGING_HIDE_ACTOR hides the unit too, as the summons do.
-s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
+s32 BattleStaging_RunFullScreen(struct BattleActionRun *plan, s32 mode) {
   u16 units[UNIT_MAX];
   struct BattleStagingState state;
   u32 userId;
@@ -369,8 +369,8 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
 
 /// Clears the highlights, then applies the action to each target in turn and
 /// plays its events; with no target, only waits for the player.
-UNREAD_RESULT BattleStaging_RunActorEntries(struct BattleActionRun *plan,
-                                            s32 unused) {
+UNREAD_RESULT BattleStaging_RunMessages(struct BattleActionRun *plan,
+                                        s32 unused) {
   s32 targetIndex;
 
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
@@ -536,7 +536,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
     // After a critical hit every unit is shown again and the zoom ends.
     if (critical != 0) {
       view->keepRange = 0;
-      BattleUnit_ListAllAndSubmit();
+      BattleObject_PutKeepingPoses();
       BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
     }
     BattleMotion_ReturnToSpot(state.effect.targets[0]);

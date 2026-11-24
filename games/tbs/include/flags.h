@@ -117,7 +117,7 @@
 /// "It doesn't work here." Cleared on every normal scene entry (not a return
 /// keeping the party's position); the scenes that forbid Retreat set it.
 #define FLAG_RETREAT_BLOCKED 0x144
-#define FLAG_ITEM_USE 0x145 ///< the Psynergy comes from an item
+#define FLAG_PSYNERGY_FROM_ITEM 0x145 ///< the Psynergy comes from an item
 /// No random encounters while set (Encounter_CountStepsAndSelectFormation),
 /// unless FLAG_IGNORE_ENCOUNTER_CHECKS is set; debug entrances set it.
 #define FLAG_NO_ENCOUNTERS 0x160

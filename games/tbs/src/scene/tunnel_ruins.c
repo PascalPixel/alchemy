@@ -1492,11 +1492,11 @@ static void TunnelRuins_UpdateSmallPillarCells(void) {
 /// 19) to (111, 19)) and makes each pillar's cell a wall.
 static void TunnelRuins_UpdateGreyPillarCells(void) {
   MapGrid_CopyCellAttributes(108, 19, 4, 1, 44, 19);
-  PushedActor_FillGridAttributeRectangle(
+  MapGrid_FillCollisionRectangle(
       0, FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_A)->x.fixed),
       FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_A)->z.fixed), 1, 1,
       CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(
+  MapGrid_FillCollisionRectangle(
       0, FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_B)->x.fixed),
       FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_B)->z.fixed), 1, 1,
       CELL_BEHAVIOR_WALL);

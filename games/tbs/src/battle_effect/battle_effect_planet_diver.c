@@ -46,7 +46,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   state->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_YELLOW_GLOW_SHEET),
                       motes);
   resource = Resource_GetTableEntry(RESOURCE_FLASH_BURST_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);

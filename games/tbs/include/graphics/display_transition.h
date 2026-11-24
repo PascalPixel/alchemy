@@ -19,7 +19,7 @@ struct ScreenTransitionDissolveState {
   /// ScreenTransitionState's solidTile, as 4-bit pixels two a byte: the
   /// dissolve sets two more each frame and copies the tile to BG character
   /// block 0.
-  u8 paletteNibbles[34];
+  u8 solidTilePixels[34];
   /// The progress, moved from start to end over duration frames: the
   /// TRANSITION_OPEN bit says whether the dissolve fills or clears the tile,
   /// the bits below it how far it has gone.
@@ -35,7 +35,7 @@ struct ScreenTransitionDissolveState {
   ///@}
   /// ScreenTransitionState's page: the dissolve flips it each frame and
   /// never reads it.
-  u8 ditherToggle;
+  u8 page;
   s8 start;    ///< the value's first step
   s8 end;      ///< the value's last step
   s8 duration; ///< frames; 0 when the value is not moving

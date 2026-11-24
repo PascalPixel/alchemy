@@ -148,7 +148,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     doubleWidth = 1;
   }
 
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, state->sheet, 0, 0);
   if (mode <= HEALING_MODE_WISH || mode == HEALING_MODE_CURE_POISON ||
       mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC) {

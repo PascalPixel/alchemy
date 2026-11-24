@@ -445,9 +445,9 @@ enum VenusTrack {
 /// The tag VENUS_COLOR_MARK puts above the colour mode.
 enum { VENUS_COLOR_MARK_TAG = 0x212 };
 
-static UNUSED s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x,
-                                                         s32 z, u32 width,
-                                                         u32 height, s32 value);
+static UNUSED s32 MapGrid_FillCollisionRectangle(u32 layer, s32 x, s32 z,
+                                                 u32 width, u32 height,
+                                                 s32 value);
 
 /// Sets bits in a byte of flags.
 static inline void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }

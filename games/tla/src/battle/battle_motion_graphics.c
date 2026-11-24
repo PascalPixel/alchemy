@@ -29,6 +29,10 @@ void BattleObject_Reset(struct BattleObject *battleObject, s32 keep);
 #define CRITICAL_ZOOM_START 100
 #define CRITICAL_ZOOM_GAIN 30
 
+/// The frames the battle background darkens through before an item's effect,
+/// a BACKGROUND_LEVEL_STEP each: to two thirds of its brightness.
+#define ITEM_DARKEN_FRAMES 20
+
 /// The beasts called up in battle (ABILITY_WILD_WOLF to ABILITY_CALL_DULLAHAN):
 /// for a call that lands, saves the battle object it borrows and brings in the
 /// beast's enemy (ENEMY_WILD_WOLF for Wild Wolf and so on) to play the attack;
@@ -356,6 +360,10 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   background = Ram_HeapSlots->battleBackground;
   actorId = plan->unitId;
   battleObject = BattleObject_Get(actorId);
+  // The camera swings round to watch the run up from the side: it takes the
+  // attacker's bearing from the battlefield's centre, an eighth of a turn back
+  // for a party member and three eighths on for an enemy, within half a turn,
+  // and turns halfway there from the party's action view.
   {
     s32 x = battleObject->anchorX;
     FIXED z;
@@ -510,7 +518,7 @@ s32 Inventory_BreakFar(s32 owner, s32 slot);
 
 /// Plays an item's use: the camera turns to the user's side, the user raises
 /// the item and, for an item with a battle effect, the battle background dims
-/// over 20 frames while the effect plays with its messages. Then the item is
+/// to two thirds while the effect plays with its messages. Then the item is
 /// spent as its use type says: used up, broken one time in eight, or the
 /// Hermes' Water left an Empty Bottle. When a used-up item empties its slot,
 /// the user's later item commands this turn (`selection` is this one) follow
@@ -570,7 +578,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     do {
       struct BattleState *battle = heap->battleState;
 
-      if (i < 20) {
+      if (i < ITEM_DARKEN_FRAMES) {
         u16 *palette = battle->palette;
         FIXED value = FIXED_ONE - fade;
 
@@ -581,7 +589,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
       wait(1);
       i++;
       fade += BACKGROUND_LEVEL_STEP;
-    } while (i < 20);
+    } while (i < ITEM_DARKEN_FRAMES);
     if (plan->battleEffect & EFFECT_BY_ID_RANGE)
       BattleEffect_RunByIdRangeFar(&state);
     else

@@ -126,6 +126,11 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 /// The trigger a numbered stone of the Blaze tablet's room raises, less its
 /// number.
 enum { STEP_CELL_TRIGGER_BASE = 200 };
+/// The numbers the Blaze tablet room's upper layer gives the cells of column 16
+/// on the way to the tablet: the end of the entrance's walkway (row 26), then
+/// a stone every second row, up to the foot of the tablet's platform (row 14).
+/// The five stones between are the ones that fade away.
+enum { MARKER_WALKWAY_END = 1, MARKER_PLATFORM_FOOT = 7 };
 
 /// The cell behaviours the rooms' maps mark their spots with, which the
 /// trigger tables answer. A room may use a number in its own sense.
@@ -733,6 +738,9 @@ void MagmaRockInside_TargetStatue(s32 stage) {
   table = gMagmaRockInside_Statues;
   FieldEvent_EndLastingPsynergy(0);
   scene = gMainRoutineState.next;
+  /* LEFTOVER(template): the entrance hall's and Fury's room's branches, empty,
+     the room chain MagmaRockInside_FinishPushingPillar tests with work in
+     each. */
   if (scene == SCENE_MAGMA_ROCK_INSIDE_ENTRANCE) {
   } else if (scene == SCENE_MAGMA_ROCK_INSIDE_FURY) {
   } else if (scene == SCENE_MAGMA_ROCK_INSIDE_CRACKED_PILLARS) {
@@ -1734,7 +1742,7 @@ void MagmaRockInside_FadeStoneAway(s32 x, s32 z) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Scene_SetActorSpritePriority(actor, 0);
   Actor_SetSpriteFlags(actor, 0);
-  ((struct FieldSprite *)actor->sprite)->blendMode = 2;
+  ((struct FieldSprite *)actor->sprite)->blendMode = OBJ_MODE_WINDOW;
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
@@ -1782,7 +1790,7 @@ void MagmaRockInside_StepOnMarker(void) {
   // The marker's row: 54 for the first, four rows up for each after it.
   row -= (*trigger - (STEP_CELL_TRIGGER_BASE + 1)) << 2;
   cell >>= 8;
-  if (cell != 1 && cell != 7) {
+  if (cell != MARKER_WALKWAY_END && cell != MARKER_PLATFORM_FOOT) {
     MagmaRockInside_StampStepCell();
     MagmaRockInside_FadeStoneAway(264, row * 8 + 10);
     if (!Event_GetFlag(FLAG_ANY_MARKER_LIT))
@@ -1880,7 +1888,7 @@ void MagmaRockInside_SpawnSpark(struct Actor *source) {
   Scene_SetActorSpritePriority(actor, 1);
   Actor_SelectAnimation(actor, 1);
   Actor_SetSpriteFlags(actor, 0);
-  Actor_SetBlendMode(actor, 1);
+  Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
   Actor_StartScript(actor, gMagmaRockInside_FlameScript);
 }
 
@@ -2037,7 +2045,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
     Scene_SetActorSpritePriority(actor, 1);
     Actor_SelectAnimation(actor, 7);
     Actor_SetSpriteFlags(actor, 0);
-    Actor_SetBlendMode(actor, 1);
+    Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
     Actor_StartScript(actor, gMagmaRockInside_RisingSparkScript);
     REG_BLDALPHA = BLEND_ALPHA(4, 16);
     wait(2);
@@ -2067,7 +2075,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
-    Actor_SetBlendMode(spark, 1);
+    Actor_SetBlendMode(spark, OBJ_MODE_SEMI_TRANSPARENT);
     FieldVector_AddPolarOffsetFX(spark->sceneWord, spark->timer,
                                  &spark->x.fixed);
     Actor_StartScript(spark, gMagmaRockInside_CirclingSparkScript);
@@ -2100,7 +2108,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
     FieldActor_SetSpriteColor(riser, SPRITE_COLOR_RED_TINT);
     Actor_SelectAnimation(riser, 7);
     Actor_SetSpriteFlags(riser, 0);
-    Actor_SetBlendMode(riser, 1);
+    Actor_SetBlendMode(riser, OBJ_MODE_SEMI_TRANSPARENT);
     Actor_StartScript(riser, gMagmaRockInside_OrbitScript);
     i += 2;
   } while (i != ORBIT_HALF_TURN);
@@ -2527,6 +2535,9 @@ s32 Scene_Initialize(void) {
         Actor_GetById(ACTOR_PILLAR_C)->x.fixed = toFIXED(344);
       Actor_PlaceBlocks(gMagmaRockInside_CrackedPillarsPillars);
       Lower(ACTOR_LOWER_COLUMN, 0);
+      // The platforms ride in and out of view: each keeps its sprite's tiles
+      // in VRAM (bit 0) and its picture drawn (bit 1) while off screen, so it
+      // shows at once as it comes back (ActorSystem_PlaceSprites).
       Actor_GetById(ACTOR_LAVA_PLATFORM_A)->retainSpriteCache = 3;
       Actor_GetById(ACTOR_LAVA_PLATFORM_B)->retainSpriteCache = 3;
       Actor_GetById(ACTOR_LAVA_PLATFORM_C)->retainSpriteCache = 3;

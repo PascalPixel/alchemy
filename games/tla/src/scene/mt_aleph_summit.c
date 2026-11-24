@@ -75,6 +75,15 @@ enum MtAlephSummitAlexLine {
 /// the one that goes on to the lighthouses' beacons.
 enum { STAFF_CREDIT_OPENING = 0, STAFF_CREDIT_TO_BEACONS = 1 };
 
+/// The epilogue's entrance from the summit, once the Wise One has gone. The
+/// epilogue reads no entrance and lists only its default
+/// (shared/scene_entrances_mapless.c): the number is the summit's alone.
+enum { EPILOGUE_FROM_MT_ALEPH_SUMMIT = 1 };
+
+/// The looks BattleEffect_SetObjectUpdateMode gives a caster: none, and the
+/// cycling colours Alex and the Wise One take as they gather power.
+enum { CASTER_LOOK_NONE = 0, CASTER_LOOK_CYCLING_COLORS = 2 };
+
 #include "../field/field_effect_move.c"
 
 /// The palette fade's three channels of one 16-colour palette.
@@ -334,6 +343,7 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   volatile u32 *held;
   struct HeapSlots *heap;
+  struct MapState *map;
 
   buffer = Heap_AllocEwram(BG_PLTT_SIZE);
   Window_LoadGraphics();
@@ -431,8 +441,7 @@ s32 Scene_Initialize(void) {
     FieldCamera_SetSpeed(1);
     Actor_SetAnimation(ACTOR_ALEX, 14);
     actor = Actor_Get(ACTOR_ALEX);
-    scale = 0;
-    actor->facing = scale;
+    actor->facing = 0;
     Actor_Get(ACTOR_ALEX)->x.fixed = toFIXED(248);
     Actor_Get(ACTOR_ALEX)->z.fixed = toFIXED(152);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
@@ -446,7 +455,7 @@ s32 Scene_Initialize(void) {
     REG_BG3CNT &= ~BGCNT_PRIORITY(3);
     REG_BG3CNT |= BGCNT_PRIORITY(2);
     System_Wait(1);
-    ((struct FieldState *)heap->fieldState)->transition = scale;
+    ((struct FieldState *)heap->fieldState)->transition = 0;
     REG_DISPCNT &= ~DISPCNT_BG1_ON;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -599,7 +608,8 @@ s32 Scene_Initialize(void) {
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
     Actor_SetAnimation(ACTOR_ALEX, 13);
     BattleEffect_StartArcEffect();
-    BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_ALEX), 2);
+    BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_ALEX),
+                                     CASTER_LOOK_CYCLING_COLORS);
     Event_PlaySound(SE_GATHERING_POWER);
     Event_StartColorTransition(8, RGB(4, 4, 16));
     FieldEvent_Wait(20);
@@ -623,12 +633,13 @@ s32 Scene_Initialize(void) {
     // "Look at me! My body is brimming with power!"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
     FieldEvent_Wait(10);
-    BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_ALEX), 0);
+    BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_ALEX), CASTER_LOOK_NONE);
     BattleEffect_WaitForArcGroups();
     BattleEffect_EndArcEffect();
     Actor_SetAnimation(ACTOR_WISE_ONE, 6);
     BattleEffect_StartArcEffect();
-    BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_WISE_ONE), 2);
+    BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_WISE_ONE),
+                                     CASTER_LOOK_CYCLING_COLORS);
     System_Wait(30);
     Event_PlaySound(SE_POWER_UP);
     MapGrid_SetShake(16, 16, 1);
@@ -684,7 +695,8 @@ s32 Scene_Initialize(void) {
     MapGrid_SetShake(16, 16, 1);
     FieldEvent_Wait(10);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-    BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_WISE_ONE), 0);
+    BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_WISE_ONE),
+                                     CASTER_LOOK_NONE);
     BattleEffect_WaitForArcGroups();
     BattleEffect_EndArcEffect();
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -739,7 +751,7 @@ s32 Scene_Initialize(void) {
     // "If you survive, perhaps we shall meet again someday..."
     FieldEvent_ShowMessageThenWait(ACTOR_WISE_ONE, 0, 5);
     FieldEvent_Wait(10);
-    heap = (struct HeapSlots *)Ram_HeapSlots->mapGrid;
+    map = Ram_HeapSlots->mapGrid;
     MapGrid_SetShake(16, 16, 1);
     for (j = 0, scale = -FIXED_ONE * 15 / 8; j != 128;
          j++, scale += FIXED_ONE / 16) {
@@ -756,7 +768,7 @@ s32 Scene_Initialize(void) {
         PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
         PaletteFade_Interpolate(64);
       }
-      ((struct MapState *)heap)->layers[1].offsetY -= toFIXED(1);
+      map->layers[1].offsetY -= toFIXED(1);
       Actor_Get(ACTOR_ALEX)->z.fixed += toFIXED(1);
       System_Wait(1);
     }
@@ -772,7 +784,7 @@ s32 Scene_Initialize(void) {
     PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
     PaletteFade_Interpolate(120);
     System_Wait(300);
-    Event_SetDestination(SCENE_EPILOGUE, 1);
+    Event_SetDestination(SCENE_EPILOGUE, EPILOGUE_FROM_MT_ALEPH_SUMMIT);
   } else {
     gFieldState->transition = 0;
     Event_StartScreenTransition();

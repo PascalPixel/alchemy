@@ -8,6 +8,9 @@
 #include "types.h"
 #include "edition.h"
 
+/// The range falloff: each table is a percent of the full amount, indexed by
+/// the target's distance in places from the aimed unit (0 to 5), from the
+/// chance an effect lands to the damage, healing and PP each formula gives.
 extern u8 gRangeFalloff_EffectChance[];
 extern s32 gRangeFalloff_PpLoss[];
 extern s32 gRangeFalloff_HealHp[];

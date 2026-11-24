@@ -46,7 +46,8 @@ void Battle_TurnStartNoOp(void) {}
 /// The plan of the extra action Daedalus queues for the turn's end
 /// (COMMAND_DAEDALUS): ABILITY_DAEDALUS_STRIKE from a random unit of the
 /// queuing side against every unit of the other, staged as the summon
-/// SUMMON_EFFECT_DAEDALUS_STRIKE.
+/// SUMMON_EFFECT_DAEDALUS_STRIKE. source is the queued BattleActionRecord, read
+/// as halfwords: [0] its unit, [3] its command.
 void BattleStaging_PlanDaedalus(u16 *source, struct BattlePlan *plan) {
   u16 ids[10];
   s32 count;
@@ -66,12 +67,10 @@ void BattleStaging_PlanDaedalus(u16 *source, struct BattlePlan *plan) {
   plan->element = ELEMENT_MARS;
   plan->staging = STAGING_DAEDALUS;
   {
-    s32 half = source[3];
-    s16 *value;
+    s32 command = source[3];
 
-    value = &plan->command;
     plan->unitId = own;
-    *value = half;
+    plan->command = command;
   }
   for (i = 0; i < count; i++) {
     plan->targetIds[i] = ids[i];
@@ -574,9 +573,9 @@ s32 BattleStaging_RunFullScreen(struct BattlePlan *plan, s32 mode) {
 
     if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
-    // Gaia's caster stays out of the fade back in. XXX: a summon's kind 3 is
-    // Kirin, which this skips too; staging Kirin would show whether that is
-    // meant.
+    // Gaia's caster stays out of the fade back in, and so, as kind
+    // SUMMON_EFFECT_KIRIN, does Kirin's summoner: it is back at once where
+    // Tiamat's fades in with the rest.
     if (!(mode & STAGING_NO_CAST) && units[i] == actor &&
         state.kind == BATTLE_EFFECT_GAIA)
       continue;

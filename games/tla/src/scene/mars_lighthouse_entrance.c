@@ -455,7 +455,9 @@ void MarsLighthouseEntrance_StartPoundIceCone(s32 mode, s32 index) {
 
 extern u32 gDebris_Script[];
 
-/// Throws six chips of ice from an actor as its ice cracks or breaks.
+/// Throws six chips of ice from an actor as its ice cracks or breaks, as the
+/// star room's MarsLighthouseStarRoom_ScatterIceChips does; each overlay keeps
+/// its own, this one creating them through its other import row.
 void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
   struct Actor *source = Actor_Get(id);
   s32 i;
@@ -467,24 +469,24 @@ void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
         source->z.fixed + (Random16() << 4) - (Random16() << 4));
 
     if (actor != NULL) {
-      s32 angle;
-      s32 radius;
+      s32 heading;
+      s32 speed;
       s32 scale;
 
-      angle = Random16();
-      radius = Random16();
+      heading = Random16();
+      speed = Random16();
       scale = (Random16() >> 1) + FIXED_ONE / 4;
       Actor_StartScript(actor, gDebris_Script);
       Actor_SetSpriteFlags(actor, 0);
-      actor->velocityY = angle * 4 + toFIXED(2);
-      actor->velocityZ = Iwram_MulFX(radius * 8, Trig_Cos(angle));
-      actor->velocityX = Iwram_MulFX(radius * 8, Math_Sin(angle));
+      actor->velocityY = heading * 4 + toFIXED(2);
+      actor->velocityZ = Iwram_MulFX(speed * 8, Trig_Cos(heading));
+      actor->velocityX = Iwram_MulFX(speed * 8, Math_Sin(heading));
       actor->acceleration = 0;
       actor->gravity = toFIXED(33) / 100;
       actor->scaleX = scale;
       actor->scaleY = scale;
       actor->bounce = FIXED_ONE / 2;
-      Actor_SetSpriteColorMode(actor, 1);
+      Actor_SetSpriteColorMode(actor, SPRITE_COLOR_GRB);
     }
   }
 }
@@ -1152,22 +1154,20 @@ const struct Trigger *Scene_GetTriggers(void) {
 #include "shared/actor_freeze.h"
 #undef SET_SPRITE_WINDOW_LAYERS
 
-extern u32 gMarsLighthouseEntrance_DragonFireOn[];
+extern s16 gMarsLighthouseEntrance_DragonFireOn;
 
 /// The dragon face at the west end of the long hall breathes fire for a
 /// second and stops for four, in turn.
 void MarsLighthouseEntrance_PulseDragonFire(void) {
-  s16 *state = &gMarsLighthouseEntrance_DragonFireOn;
-
   if (gMarsLighthouseEntrance_DragonFireTimer < 60) {
-    if (*state == 0) {
+    if (gMarsLighthouseEntrance_DragonFireOn == 0) {
       FlameThrower_Set(0, FLAME_FORWARD | 3);
-      *state = 1;
+      gMarsLighthouseEntrance_DragonFireOn = 1;
     }
   } else {
-    if (((struct HalfwordField *)state)->value == 1) {
+    if (gMarsLighthouseEntrance_DragonFireOn == 1) {
       FlameThrower_Set(0, FLAME_THROWER_DRY | 3);
-      *state = 0;
+      gMarsLighthouseEntrance_DragonFireOn = 0;
     }
   }
   if (++gMarsLighthouseEntrance_DragonFireTimer > 300)
@@ -1455,8 +1455,7 @@ extern s32 gMarsLighthouseEntrance_FireballToLapisIceSheet[];
 
 s32 Scene_PrepareMap(void) {
   if (Flag_IsSet(FLAG_MARS_LIGHTHOUSE_THAWED))
-    Map_CopyPalette(gMainRoutineState.mapId +
-                        (SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE - SCENE_PROX),
+    Map_CopyPalette(gMainRoutineState.mapId + MARS_LIGHTHOUSE_THAWED_MAPS,
                     (s32)BG_PLTT);
   return 0;
 }
@@ -1543,8 +1542,6 @@ void FlameThrower_UpdateSpark(struct Actor *actor);
 #include "shared/actor_setup_scripted_for.h"
 
 #include "shared/flame_thrower_send_spark.c"
-
-typedef struct Actor Actor;
 
 #include "shared/flame_throwers_puff.c"
 
@@ -1765,6 +1762,9 @@ extern s32 gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
+/// Puts a short-lived effect sprite, dust unless `options` names another, at
+/// a point, moving off at the velocity given and drawn at the leader's
+/// priority: this overlay's own copy of field_effect_spawn.c.
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
@@ -2750,9 +2750,7 @@ struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[] = {
 };
 
 /// 1 while the dragon face at the west end of the long hall breathes fire.
-u32 gMarsLighthouseEntrance_DragonFireOn[] = {
-    0,
-};
+s16 gMarsLighthouseEntrance_DragonFireOn = 0;
 
 s32 gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

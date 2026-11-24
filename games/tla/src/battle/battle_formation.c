@@ -134,9 +134,17 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   return result;
 }
 
-/// The element power an enemy gains a level (BattleEnemy_AdjustLevel); its
-/// other stats gain tenths of a point.
+/// What an enemy gains a level (BattleEnemy_AdjustLevel), each stat in tenths
+/// of a point: 9.7 HP, 1.5 PP, 12.3 Attack, 3.3 Defense and 5.1 Agility; and
+/// its element power in whole points.
+///@{
+#define HP_GAIN_TENTHS 97
+#define PP_GAIN_TENTHS 15
+#define ATTACK_GAIN_TENTHS 123
+#define DEFENSE_GAIN_TENTHS 33
+#define AGILITY_GAIN_TENTHS 51
 #define ELEMENT_POWER_GAIN 15
+///@}
 
 /// Raises an enemy by levels, or lowers it for a negative count, each stat by a
 /// fixed amount a level and no lower than 70 percent of what it was.
@@ -148,23 +156,23 @@ UNREAD_RESULT BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
 
   Iwram_CopyWordsEntry(base, &unit->baseHp, sizeof *base);
 
-  value = unit->baseHp + levels * 97 / 10;
+  value = unit->baseHp + levels * HP_GAIN_TENTHS / 10;
   CLAMP(value, base->baseHp * 7 / 10, UNIT_ENEMY_HP_MAX);
   unit->baseHp = value;
 
-  value = unit->basePp + levels * 15 / 10;
+  value = unit->basePp + levels * PP_GAIN_TENTHS / 10;
   CLAMP(value, base->basePp * 7 / 10, UNIT_ENEMY_PP_MAX);
   unit->basePp = value;
 
-  value = unit->baseAttack + levels * 123 / 10;
+  value = unit->baseAttack + levels * ATTACK_GAIN_TENTHS / 10;
   CLAMP(value, base->baseAttack * 7 / 10, UNIT_STAT_MAX);
   unit->baseAttack = value;
 
-  value = unit->baseDefense + levels * 33 / 10;
+  value = unit->baseDefense + levels * DEFENSE_GAIN_TENTHS / 10;
   CLAMP(value, base->baseDefense * 7 / 10, UNIT_STAT_MAX);
   unit->baseDefense = value;
 
-  value = unit->baseAgility + levels * 51 / 10;
+  value = unit->baseAgility + levels * AGILITY_GAIN_TENTHS / 10;
   CLAMP(value, base->baseAgility * 7 / 10, UNIT_STAT_MAX);
   unit->baseAgility = value;
 
@@ -480,6 +488,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     break;
   case FORMATION_LAYOUT_INTERLEAVED:
     for (;;) {
+      s32 member;
+
       remainingKinds = 0;
       for (i = 0; i < FORMATION_MEMBERS; i++) {
         if (memberCounts[i] != 0)
@@ -487,10 +497,10 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       }
       if (remainingKinds == 0)
         break;
-      spriteSlots = memberOrder[(Random16() * remainingKinds) >> 16];
-      enemyClasses[enemyCount++] =
-          record->memberIds[spriteSlots] + ENEMY_ID_FIRST;
-      memberCounts[spriteSlots]--;
+      // One of the members still owed a copy, at random.
+      member = memberOrder[(Random16() * remainingKinds) >> 16];
+      enemyClasses[enemyCount++] = record->memberIds[member] + ENEMY_ID_FIRST;
+      memberCounts[member]--;
     }
     break;
   default:

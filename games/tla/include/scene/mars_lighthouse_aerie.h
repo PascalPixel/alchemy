@@ -2,9 +2,8 @@
 #define ALCHEMY_SCENE_MARS_LIGHTHOUSE_AERIE_H
 
 /// @file
-/// Mars Lighthouse's aerie: its events and scripts, and the views of a sprite,
-/// an actor and the heap through which its rising rings and the Golden Sun's
-/// rise are drawn.
+/// Mars Lighthouse's aerie: its events and scripts, and the views of a sprite
+/// and the heap through which the beacon is lit.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -12,8 +11,9 @@
 struct Actor;
 
 /// A field sprite (struct FieldSprite) read a byte at a time, as the aerie's
-/// rising rings set their colours and priority and load their tiles.
-struct OverlaySprite {
+/// flames take the beacon fire's priority and the Mars Star's sprite its
+/// colours and the star's icon.
+struct MarsLighthouseAerieSprite {
   u8 link[4];
   u8 y; ///< attribute 0's y
   /// Attribute 0's high byte.
@@ -40,41 +40,6 @@ struct OverlaySprite {
   u8 dirty;         ///< nonzero redraws its pixels
   u8 flags;         ///< the sprite flags (enum SpriteFlag)
   u8 layerCount;
-};
-
-/// struct Actor with its update hook stored as a plain word
-/// (MarsLighthouseAerie_WatchGoldenSunRise).
-struct OverlayActor {
-  const s32 *script;
-  s16 scriptCursor;
-  u16 facing;
-  FIXED x, y, z, groundHeight, scaleX, scaleY;
-  u16 radius;
-  u8 layer;
-  u8 priorityFlags;
-  FIXED velocityX, velocityY, velocityZ, speedLimit, acceleration;
-  FIXED targetX, targetY, targetZ, bounce, gravity;
-  s32 sceneWord;
-  void *sprite;
-  u8 spriteStorageKind;
-  u8 motionFlags;
-  u8 arrivalAxis;
-  u8 conditionResult;
-  u8 snapToTarget;
-  u8 collisionFlags;
-  u8 steeringFlags;
-  u8 paused;
-  u8 retainSpriteCache;
-  u8 repeatCount;
-  s16 wait;
-  u8 refused;
-  u8 frozen;
-  u8 sceneCounter;
-  u8 sceneByte;
-  s16 timer;
-  s16 userValue;
-  struct Actor *watchedActor;
-  s32 update;
 };
 
 /// The heap slots read as plain words, the field state's among them.

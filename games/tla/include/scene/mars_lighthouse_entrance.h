@@ -19,8 +19,6 @@ struct Position;
 /// (shared/leader_knock_back.c).
 s32 Leader_KnockBack(void);
 
-void FlameThrower_SendForward();
-
 void MarsLighthouseEntrance_DrawLapisCrackedSheet(void);
 
 void MarsLighthouseEntrance_ShootFireballAtHiddenCircleIceSheet(void);
@@ -59,9 +57,15 @@ void MarsLighthouseEntrance_ShootBalmFireball(void);
 s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
 
 s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
-void FlameThrower_SendBackward();
-void FlameThrower_SendEast();
-void FlameThrower_SendWest();
+/// A flame thrower's flame sent forward, backward, east or west from
+/// `position` at `speed` (shared/flame_thrower_send_*.c); `offScreen` keeps its
+/// sprite's picture loaded out of sight.
+///@{
+void FlameThrower_SendForward(s32 *position, s32 speed, s32 offScreen);
+void FlameThrower_SendBackward(s32 *position, s32 speed, s32 offScreen);
+void FlameThrower_SendEast(s32 *position, s32 speed, s32 offScreen);
+void FlameThrower_SendWest(s32 *position, s32 speed, s32 offScreen);
+///@}
 
 void Actor_RollAndCrumble(struct Actor *actor);
 

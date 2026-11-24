@@ -357,6 +357,8 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     battle = heap->battleState;
     view->secondMode = BATTLE_BACKGROUND_FIXED;
     view->busy = 0;
+    // Against the Doom Dragon the party, reserves too, is drawn at seven
+    // tenths of its size for the rest of the battle; nothing sets it back.
     ownerCount = BattleParty_PrepareMembers(owners);
     ownerCount += BattleParty_PrepareReserveOwners(owners + ownerCount);
     for (i = 0; i != ownerCount; i++) {

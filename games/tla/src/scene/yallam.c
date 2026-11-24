@@ -490,7 +490,9 @@ void Yallam_OfferYeppSong(void) {
   FieldEvent_SetMessageId(MsgDoYouWant);
   // "Do you want to hear one of the songs Yepp wrote?"
   Event_OpenMessage(ACTOR_SONG_LEADER, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(0, 0) == 0)
+  // The answer animates Isaac, who is not here, where the other questions
+  // pass the leader: nobody nods or shakes his head.
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_ISAAC, 0) == 0)
     Yallam_ShowSongGame();
   else
     Event_ShowMessage(ACTOR_SONG_LEADER, 0);

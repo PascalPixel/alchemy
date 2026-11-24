@@ -420,10 +420,10 @@ struct Unit {
   s8 reflect;    ///< Reflect's turns left, 7 when cast
   u8 haunt;      ///< set while an evil spirit grips the unit
   u8 grimReaper; ///< the Grim Reaper's countdown, 7 when cursed
-  /// The totals of equipment effects 23 (unleash chance) and 24 that
-  /// Unit_Calculate sums.
-  // Nothing reads them back but ScriptedBattle_SaveUnits and
-  // ScriptedBattle_RestoreUnits, which copy them out and back.
+  /// [0] the EQUIP_EFFECT_ADD_UNLEASH_CHANCE total Unit_Calculate sums, which
+  /// nothing reads (Equipment_GetUnleashRateBonus sums it afresh); [1] set by
+  /// ABILITY_EFFECT_COUNTER while the unit is ready to counterattack, for the
+  /// rest of the turn.
   u8 equipBonus[2];
   /// The extra action: 2 when cast, down one at each turn's end.
   u8 ready;

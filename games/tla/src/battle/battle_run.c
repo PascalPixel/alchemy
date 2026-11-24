@@ -196,11 +196,12 @@ s32 Battle_Run(s32 enemyGroup) {
   battle->background = BattleBackground_GetSelectedFar();
   HeapSlot_AllocEwram(HEAP_SLOT_SPRITES, 3584);
   HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 1536);
-  ActorSystem_InitializeFar(4);
+  ActorSystem_InitializeFar(ACTOR_SYSTEM_BATTLE);
+  // The Djinn lesson's battle loads the glyph tiles too.
   if (GameFlag_Get(FLAG_DJINN_LESSON) != 0)
-    WindowSystem_InitBattleFar(1);
+    WindowSystem_InitBattleFar(TRUE);
   else
-    WindowSystem_InitBattleFar(0);
+    WindowSystem_InitBattleFar(FALSE);
 
   BattleCamera_Create();
   enemyCount = BattleFormation_BuildEnemyList(battle->formation);
@@ -616,6 +617,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
     }
   }
   if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
+    // remaining, spent on the members, now walks the enemy units' ids.
     remaining = FIRST_ENEMY_UNIT;
     enemyLimit = enemyCapacity + FIRST_ENEMY_UNIT;
     if (remaining < enemyLimit) {
@@ -639,6 +641,8 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
 
 /// As BattleUnit_ListLiving, with the reserve owners listed after the
 /// active ones.
+// A copy rather than a flag to BattleUnit_ListLiving: its list of members has
+// room for ten where that one's has eight, and one routine would not keep both.
 s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
   u16 members[10];
   s32 remaining;

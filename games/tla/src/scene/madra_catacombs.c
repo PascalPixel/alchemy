@@ -105,7 +105,10 @@ enum MadraCatacombsCellBehavior {
   /// The red double door before Moloch's tablet, cells (9, 22) and (10, 22).
   CELL_BEHAVIOR_MADRA_CATACOMBS_TABLET_DOOR = 10,
   /// Cell (33, 17), west of the vine-covered pillar's place.
-  CELL_BEHAVIOR_MADRA_CATACOMBS_VINE_PILLAR_PUSH = 11
+  CELL_BEHAVIOR_MADRA_CATACOMBS_VINE_PILLAR_PUSH = 11,
+  /// The village's wall east of the golden door, cell (36, 39), where Reveal
+  /// shows the push button; the village's only cell of this behavior.
+  CELL_BEHAVIOR_MADRA_CATACOMBS_BUTTON_WALL = 10
 };
 
 /// The braziers that flare up down each side of the hall before Moloch's
@@ -1007,6 +1010,8 @@ struct Trigger gMadraCatacombs_EntranceTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MADRA_CATACOMBS_ENTRANCE_TO_MADRA_CATACOMBS_STONE_DOOR_SOUTH, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoor)},
     {TRIGGER_EXIT, MADRA_CATACOMBS_ENTRANCE_TO_MADRA_CATACOMBS_CHAMPA_TUNNEL_EAST, CONDITION_ALWAYS, MADRA_CATACOMBS_ENTRANCE_TO_MADRA_CATACOMBS_CHAMPA_TUNNEL_EAST},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_VILLAGE_ROPE_LOW_POST, FLAG_VILLAGE_ROPE_TIED, 0},
+    // A pushed trigger answers whatever cell is pushed against
+    // (Scene_FindTrigger): its 10 is never compared.
     {TRIGGER_PUSHED, 10, FLAG_MADRA_CATACOMBS_HOLE_FILLED, EVENT(MadraCatacombs_DropPillarIntoHole)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_HOLE_PILLAR, FLAG_MADRA_CATACOMBS_HOLE_FILLED, EVENT(MadraCatacombs_DropPillarIntoHole)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PUSHED_PILLAR, FLAG_MADRA_CATACOMBS_PILLAR_PLACED, EVENT(MadraCatacombs_StartMovingPushedPillar)},
@@ -1017,7 +1022,7 @@ struct Trigger gMadraCatacombs_EntranceTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_VILLAGE_PUDDLE, FLAG_VILLAGE_PUDDLE_FROZEN, EVENT(MadraCatacombs_FreezePuddle)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(MadraCatacombs_RevealButton)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(MadraCatacombs_HideButton)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(MadraCatacombs_HearEyesOfTruth)},
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_MADRA_CATACOMBS_BUTTON_WALL, CONDITION_ALWAYS, EVENT(MadraCatacombs_HearEyesOfTruth)},
     {TRIGGER_TABLE_END},
 };
 

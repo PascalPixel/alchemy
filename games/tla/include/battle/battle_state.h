@@ -104,9 +104,11 @@ struct BattleState {
   u16 kindsEnd;           ///< read only by the defeat search, as a sixth kind
   u32 nameLetterMasks[6]; ///< for each kind, the name letters already given
   s8 lastNameLetter[6];   ///< for each kind, the last name letter given
-  u8 unusedAfterChannels[2]; ///< no code names it
+  u8 unusedAfterNameLetters[2]; ///< no code names it
+  /// The earliest kind in enemyKinds that fell, which the victory message
+  /// names; ENEMY_BATTLE_SIZE until one falls.
   u16 firstDefeated;
-  u16 defeatState;
+  u16 defeatState;   ///< DEFEAT_ONE, DEFEAT_SEVERAL or DEFEAT_BY_PARTY_MEMBER
   u8 enemyKindCount; ///< kinds of enemy listed, at most 5
   u8 partyStatus;    ///< how the party status window draws
   /// The formation's layout: 0 or 1 lists the enemies in the order they were
@@ -174,8 +176,9 @@ struct BattleState {
   /// Nonzero keeps the backdrop's palette while a summon (Charon, Atalanta,
   /// Neptune, Moloch) colours the screen.
   u8 keepBackdropPalette;
-  /// Poseidon's force field: 1 for an enemy of id 101 to 103 while flag 0x173
-  /// is clear; until the Trident lands, MsgFieldProtects turns abilities away.
+  /// Poseidon's force field: 1 when the formation's last enemy is one of
+  /// ENEMY_POSEIDON to ENEMY_POSEIDON_3, outside FLAG_MONSTER_BATTLE; until
+  /// the Trident lands, MsgFieldProtects turns abilities away.
   u8 forceField;
   /// The animation the acting unit takes as it calls up its Psynergy; 3 as
   /// its action starts.

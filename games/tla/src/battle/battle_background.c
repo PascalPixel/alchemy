@@ -10,6 +10,7 @@
 #include "fixed_math.h"
 #include "battle/presentation.h"
 #include "system/system.h"
+#include "battle/battle_effect.h"
 
 /// The zoomed background's BG2CNT for the first 256 picture tiles: a 256 by
 /// 256 affine map in screen block 7, 256 colours, priority 2.
@@ -667,6 +668,11 @@ struct Ring {
 #define STAR_FIELD_CENTER (STAR_FIELD_SIZE / 2)
 #define STAR_FIELD_RING_SIZE 32
 #define STAR_FIELD_FRAMES 45 ///< the frames a cast's glow lasts
+/// The frames the background darkens through as the star field gathers, a
+/// BACKGROUND_LEVEL_STEP each.
+#define STAR_FIELD_DARKEN_FRAMES 25
+/// The frames an enemy's cast shows its element's streaks.
+#define ELEMENT_STREAK_FRAMES 40
 /// The blue ring sprite sheet's colours, before its pictures; an element's
 /// palette replaces them.
 #define STAR_FIELD_COLORS 64
@@ -691,9 +697,6 @@ struct StarFieldState {
   s32 originPending; ///< 1 once the origin is queued for REG_BG2X
 };
 
-typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
-                         s32 height);
-
 // The star tables: each picture's size and sprite sheet offset, and the ring's
 // four pictures.
 extern const u8 gElementGlow_SparkSizes[];
@@ -704,7 +707,7 @@ extern const s32 gElementGlow_RingPictures[];
 /// shrinks as its life runs out, a spent one starting again while the field is
 /// young, and the three rings move outward.
 void ElementGlow_UpdateStarField(void) {
-  s32 j;
+  s32 ringsLeft;
   s32 frame;
   u32 size;
   s32 ringX;
@@ -713,12 +716,12 @@ void ElementGlow_UpdateStarField(void) {
   void *dest;
   s32 i;
   struct StarFieldState *state;
-  DrawFunc draw;
+  DrawRectangle draw;
   struct Spark *spark;
   struct Ring *ring;
-  s32 *pos;
-  s32 k;
-  FIXED dist;
+  s32 *axis;
+  s32 axisIndex;
+  FIXED distance;
   FIXED scale;
   s32 step;
   u32 radius;
@@ -727,31 +730,34 @@ void ElementGlow_UpdateStarField(void) {
   s32 x;
   s32 y;
   s32 life;
-  s32 (*mul)(s32 a, s32 b);
+  s32 (*mulFX)(s32 a, s32 b);
 
   dest = Ram_HeapSlots->battleCanvas;
   state = (struct StarFieldState *)Ram_HeapSlots->battleEffect;
   state->ready = 0;
-  draw = (DrawFunc)Ram_HeapSlots->ramCode;
+  draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   for (i = 0; i < STAR_FIELD_SPARKS; i++) {
     spark = &state->sparks[i];
     life = spark->life;
     if (life != 0) {
-      dist = Math_SqrtFX((spark->motion[0] >> 8) * (spark->motion[0] >> 8) +
-                         (spark->motion[1] >> 8) * (spark->motion[1] >> 8) +
-                         (spark->motion[2] >> 8) * (spark->motion[2] >> 8));
-      if (dist <= toFIXED(1) / 16 - 1) {
+      // The motion's first three words are the spark's place, the last three
+      // its velocity: each frame it is pulled toward the centre by the same
+      // amount whatever its distance, and its velocity loses 1/128.
+      distance = Math_SqrtFX((spark->motion[0] >> 8) * (spark->motion[0] >> 8) +
+                             (spark->motion[1] >> 8) * (spark->motion[1] >> 8) +
+                             (spark->motion[2] >> 8) * (spark->motion[2] >> 8));
+      if (distance <= toFIXED(1) / 16 - 1) {
         spark->life = 0;
       } else {
-        scale = Iwram_DivFX(dist, FIXED_ONE);
+        scale = Iwram_DivFX(distance, FIXED_ONE);
         spark->life--;
-        mul = Iwram_MulFX;
-        pos = spark->motion;
-        for (k = 0; k < 3; k++) {
-          step = mul(mul(-*pos >> 8, scale), FIXED_ONE * 19 / 16);
-          pos[3] = pos[3] - (pos[3] >> 7) + step;
-          *pos += pos[3];
-          pos++;
+        mulFX = Iwram_MulFX;
+        axis = spark->motion;
+        for (axisIndex = 0; axisIndex < 3; axisIndex++) {
+          step = mulFX(mulFX(-*axis >> 8, scale), FIXED_ONE * 19 / 16);
+          axis[3] = axis[3] - (axis[3] >> 7) + step;
+          *axis += axis[3];
+          axis++;
         }
       }
       life = spark->life;
@@ -785,8 +791,9 @@ void ElementGlow_UpdateStarField(void) {
            x - (size >> 1), y - (size >> 1), size, size);
     }
   }
-  draw = (DrawFunc)Ram_HeapSlots->ramCodePaired;
-  for (ring = state->rings, j = STAR_FIELD_RINGS - 1; j >= 0; j--, ring++) {
+  draw = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  for (ring = state->rings, ringsLeft = STAR_FIELD_RINGS - 1; ringsLeft >= 0;
+       ringsLeft--, ring++) {
     ring->x += ring->velocityX;
     ring->y += ring->velocityY;
     ringX = ring->x >> STAR_FIELD_PIXEL_SHIFT;
@@ -975,14 +982,14 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   Io_Write16(WININ_WIN0_ALL, &REG_WININ);
   Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
   if (mode == GLOW_STAR_FIELD) {
-    // The star field for 45 frames, the background darkening for the first 25.
+    // The star field, the background darkening as it starts.
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, BLEND_WEIGHT_MAX));
     ElementGlow_InitializeStarField(element);
     for (frame = 0, pos = &starPosition; frame < STAR_FIELD_FRAMES; frame++) {
       brightness = &battle->brightness;
       ime = &REG_IME;
       state = (struct StarFieldState *)Ram_HeapSlots->battleEffect;
-      if (frame <= 24)
+      if (frame < STAR_FIELD_DARKEN_FRAMES)
         ColorBuffer_Scale(battle->palette, BATTLE_BG_PALETTE,
                           *brightness =
                               FIXED_ONE - frame * BACKGROUND_LEVEL_STEP,
@@ -997,9 +1004,9 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     }
     ElementGlow_End(element);
   } else if (mode == GLOW_STREAKS) {
-    // The streaks for 40 frames, their canvas centred on the unit likewise.
+    // The streaks, their canvas centred on the unit likewise.
     BattleEffect_StartElementStreaksFar(element);
-    for (frame = 0; frame < 40; frame++) {
+    for (frame = 0; frame < ELEMENT_STREAK_FRAMES; frame++) {
       BattleMotion_ProjectScaledPosition(unitId, (s32 *)&streakPosition);
       origin[0] = (STAR_FIELD_CENTER - streakPosition.x) << 8;
       origin[1] = (STAR_FIELD_CENTER - streakPosition.y) << 8;

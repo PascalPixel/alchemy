@@ -452,6 +452,9 @@ void StaffCredit_ShowBeacon(s32 stage) {
         u8 *fill;
 
         StaffCredit_DrawGlowRings(grid, frame + 8, FIXED_ONE);
+        // The 64-pixel grid into tiles, one row of tiles at a time (by): eight
+        // blank tiles, then the row's eight tiles of the glow (bx), each eight
+        // lines of four bytes, two pixels to a byte.
         by = 0;
         rowBase = 0;
         goto blockRowTest;
@@ -697,6 +700,7 @@ void StaffCredit_UpdateTransitionBlend(void) {
   }
 }
 
+/// FieldCamera_MoveToFX, under the name shared/camera_jitter.h calls it by.
 static inline void Camera_Move(FIXED x, FIXED y, FIXED z, s32 mode) {
   FieldCamera_MoveToFX(x, y, z, mode);
 }

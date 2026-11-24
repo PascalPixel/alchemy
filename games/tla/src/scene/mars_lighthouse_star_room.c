@@ -191,7 +191,8 @@ extern s16 gSlideOnIce_SteerAngles[];
 extern u32 gDebris_Script[];
 
 /// Six chips of ice burst from an actor and bounce away: the wind stone's
-/// sprite, tinted to ice.
+/// sprite, tinted to ice. Each flies off on a random heading at up to 8 pixels
+/// a frame, and rises at 2 to 6, higher the further round its heading is.
 void MarsLighthouseStarRoom_ScatterIceChips(s32 id) {
   struct Actor *source = Actor_Get(id);
   s32 i;
@@ -203,18 +204,18 @@ void MarsLighthouseStarRoom_ScatterIceChips(s32 id) {
         source->z.fixed + (Random16() << 4) - (Random16() << 4));
 
     if (actor != NULL) {
-      s32 angle;
-      s32 radius;
+      s32 heading;
+      s32 speed;
       s32 scale;
 
-      angle = Random16();
-      radius = Random16();
+      heading = Random16();
+      speed = Random16();
       scale = ((u32)Random16() >> 1) + FIXED_ONE / 4;
       Actor_StartScript(actor, gDebris_Script);
       Actor_SetSpriteFlags(actor, 0);
-      actor->velocityY = angle * 4 + toFIXED(2);
-      actor->velocityZ = Iwram_MulFX(radius * 8, Trig_Cos(angle));
-      actor->velocityX = Iwram_MulFX(radius * 8, Math_Sin(angle));
+      actor->velocityY = heading * 4 + toFIXED(2);
+      actor->velocityZ = Iwram_MulFX(speed * 8, Trig_Cos(heading));
+      actor->velocityX = Iwram_MulFX(speed * 8, Math_Sin(heading));
       actor->acceleration = 0;
       actor->gravity = toFIXED(33) / 100;
       actor->scaleX = scale;
@@ -404,8 +405,7 @@ void Map_CopyPalette(s32 scene, s32 a1);
 
 s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED))
-    Map_CopyPalette(gMainRoutineState.mapId +
-                        (SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE - SCENE_PROX),
+    Map_CopyPalette(gMainRoutineState.mapId + MARS_LIGHTHOUSE_THAWED_MAPS,
                     (s32)BG_PLTT);
   if (gMainRoutineState.entrance ==
       MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS_BATTLE)
@@ -861,8 +861,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  Map_CopyPalette(gMainRoutineState.mapId +
-                      (SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE - SCENE_PROX),
+  Map_CopyPalette(gMainRoutineState.mapId + MARS_LIGHTHOUSE_THAWED_MAPS,
                   palette);
   /* FAKEMATCH(dead): a once-only block that places black, the colour the
    * palette's first entry takes, at its store; as black declared with the
@@ -1060,8 +1059,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  Map_CopyPalette(gMainRoutineState.mapId +
-                      (SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE - SCENE_PROX),
+  Map_CopyPalette(gMainRoutineState.mapId + MARS_LIGHTHOUSE_THAWED_MAPS,
                   palette);
   *palette = 0;
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -1194,7 +1192,7 @@ void MarsLighthouseStarRoom_SpawnRisingSparks(void) {
     RISING_SPARK_FRAMES_LEFT(actor) = RISING_SPARK_FRAMES;
     actor->update = MarsLighthouseStarRoom_UpdateRisingSpark;
     Actor_SelectAnimation(actor, 5);
-    Actor_SetBlendMode(actor, 1);
+    Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
   }
 }
 
@@ -1219,7 +1217,7 @@ void MarsLighthouseStarRoom_ShootFireballs(void) {
 
 extern s32 gScriptedPart_Script[];
 
-#include "shared/actor_reset_scripted.h"
+#include "shared/actor_reset_scripted_for.h"
 
 /// A flame thrower's flame sent forward from `position` at `speed`; `flag`
 /// keeps its sprite when off screen.
@@ -1231,7 +1229,7 @@ void FlameThrower_SendForward(s32 *position, s32 speed, s32 flag) {
     actor->bounce = 0;
     actor->gravity = 0;
     actor->sceneWord = speed;
-    ((void (*)())Actor_ResetScripted)(actor, 2);
+    Actor_ResetScriptedFor(actor, 2);
     actor->update = Flame_UpdateForward;
     if (flag != 0)
       actor->retainSpriteCache = 2;
@@ -1309,11 +1307,9 @@ void FlameThrower_SendSpark(s32 *position, s32 base, s32 mode) {
     actor->timer = spin;
     Actor_SetupScriptedFor(actor, 2);
     actor->update = FlameThrower_UpdateSpark;
-    Actor_SetBlendMode(actor, 1);
+    Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
   }
 }
-
-typedef struct Actor Actor;
 
 #include "shared/flame_throwers_puff.c"
 

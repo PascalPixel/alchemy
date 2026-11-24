@@ -315,16 +315,16 @@ s32 Ability_ApplyToTargets(s32 abilityId, s32 userId, s32 targetId,
 
 /// Plays the sound of using item from the menu (Ability_PlayUseSound),
 /// after a use that changed something.
-s32 Item_PlayUseSound(s32 item) {
-  return Ability_PlayUseSound(Item_GetDirectFar(item)->abilityId &
-                              PSYNERGY_ABILITY_MASK);
+void Item_PlayUseSound(s32 item) {
+  Ability_PlayUseSound(Item_GetDirectFar(item)->abilityId &
+                       PSYNERGY_ABILITY_MASK);
 }
 
 /// Plays the sound of a Psynergy or item used from the menu; unlike in battle,
 /// no animation is drawn and nothing waits. Healing HP or PP plays
 /// SE_RECOVERY, revival MUS_RECOVERING_AFTER_COMBAT, curing poison
 /// MUS_POISON_CURED, and any other effect MUS_LUCKY.
-s32 Ability_PlayUseSound(s32 abilityId) {
+void Ability_PlayUseSound(s32 abilityId) {
   s32 formula;
   u32 effect;
   struct AbilityDefinition *ability;
@@ -351,6 +351,7 @@ s32 Ability_PlayUseSound(s32 abilityId) {
       return;
     default:
       Sound_PlayReturnOne(MUS_LUCKY);
+      // Fall through.
 
     // The HP and PP restores no ability has (ability_table.c).
     case ABILITY_EFFECT_RESTORE_HP:

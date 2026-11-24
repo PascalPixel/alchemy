@@ -781,8 +781,10 @@ void WorldMap_RefuseToRunAway(void) {
 /// The actor slot the pond's coins take when they show (WorldMap_GazeIntoPond).
 enum { ACTOR_POND_COINS = 79 };
 
-/// Searching the pond: one time in sixteen there are coins in the shallows,
-/// one in sixteen the boat rocks, and otherwise one of the pond's lines.
+/// Searching the open sea ahead of the ship, which the text calls the pond:
+/// one time in sixteen there are coins in the shallows, one in sixteen the
+/// boat rocks, and otherwise one of the pond's lines. No checking message
+/// comes first (TRIGGER_SUBJECT_OWN_EFFECT).
 void WorldMap_GazeIntoPond(void) {
   u32 roll = (Random16() << 4) >> 16;
 
@@ -2584,8 +2586,8 @@ void WorldMap_LoadTidalWave(void) {
   Event_PlaySound(SE_SCATTER);
   System_Wait(120);
   gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  // mode holds one 0 for the rest of the function; the closing scroll reset
-  // stores it again.
+  /* FAKEMATCH(temporary): mode, a local standing for the fade's 0; as the
+   * literal. */
   mode = 0;
   PaletteFade_ApplyTarget(RGB_WHITE, mode);
   PaletteFade_Interpolate(1);
@@ -2955,7 +2957,7 @@ LATE_DATA u32 gSceneExits[] = {
                IDEJIMA_FROM_WORLD_MAP_SOUTH),
     SCENE_EXIT(WORLD_MAP_TO_LEMURIAN_SHIP_TILLER_A, LemurianShipTiller,
                LEMURIAN_SHIP_TILLER_FROM_WORLD_MAP_C),
-    SCENE_EXIT(WORLD_MAP_TO_IDEJIMA_NORTH_B, Idejima, 12),
+    SCENE_EXIT(WORLD_MAP_TO_IDEJIMA_NORTH_B, Idejima, IDEJIMA_FROM_TITLE),
     SCENE_EXIT(WORLD_MAP_TO_AQUA_ROCK_MOAI_NORTH, AquaRockMoai,
                AQUA_ROCK_MOAI_FROM_WORLD_MAP_NORTH),
     SCENE_EXIT(WORLD_MAP_TO_IDEJIMA_SOUTHWEST, Idejima,
@@ -3276,7 +3278,10 @@ LATE_DATA struct Trigger gSceneEvents[] = {
      EVENT(WorldMap_MeetPetra)},
     {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_CORE, FLAG_DJINNI(DJINNI_CORE),
      EVENT(WorldMap_MeetCore)},
-    {TRIGGER_EXAMINE, 1123, CONDITION_ALWAYS, EVENT(WorldMap_GazeIntoPond)},
+    // 99 is what the search finds on open sea ahead of the ship,
+    // field_sequence_run.c's SHIP_SEA_EXAMINE_CODE.
+    {TRIGGER_EXAMINE, TRIGGER_SUBJECT_OWN_EFFECT | 99, CONDITION_ALWAYS,
+     EVENT(WorldMap_GazeIntoPond)},
     {TRIGGER_STEP, STEP_TRIGGER_AREA(PLACED_DAILA), CONDITION_ALWAYS,
      EVENT(WorldMap_EnterDaila)},
     // Walking into a place's marker (its slot among gWorldMap_PlacedActors)
@@ -3388,6 +3393,9 @@ LATE_DATA struct Trigger gSceneEvents[] = {
      WORLD_MAP_TO_CAVERNS_ATTEKA},
     {TRIGGER_EXIT, STEP_TRIGGER_AREA(57), CONDITION_ALWAYS,
      WORLD_MAP_TO_CAVERNS_ANGARA},
+    // XXX: no block of the World Map (games/tla/src/map/world/blocks.tsv) has
+    // place 1, so no cell seems to answer this row; logging the step trigger
+    // codes as the leader walks the shores round Daila would settle it.
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, WORLD_MAP_TO_DAILA_NORTH},
     {TRIGGER_EXIT, WORLD_MAP_TO_DEHKAN_PLATEAU_TIGHTROPES, CONDITION_ALWAYS,
      WORLD_MAP_TO_DEHKAN_PLATEAU_TIGHTROPES},

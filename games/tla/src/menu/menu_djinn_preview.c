@@ -419,7 +419,7 @@ s32 DjinnMenu_RunPreview(u32 mode) {
     }
     if (redraw != 0) {
       redraw = 0;
-      confirmationChoice = Menu_GetModuloOfSum(confirmationChoice, 2);
+      confirmationChoice = Menu_WrapIndex(confirmationChoice, 2);
     }
     MenuCursor_Position(confirmationChoice * 56 + 80, 16);
     if ((frame & 3) == 0) {
@@ -461,7 +461,7 @@ s32 DjinnMenu_RunPreview(u32 mode) {
       if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
         selectedPages[page]--;
         selectedPages[page] =
-            Menu_GetModuloOfSum(selectedPages[page], pageCounts[page]);
+            Menu_WrapIndex(selectedPages[page], pageCounts[page]);
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         redraw = 1;
@@ -473,7 +473,7 @@ s32 DjinnMenu_RunPreview(u32 mode) {
         selectedPages[page]++;
         redraw = 1;
         selectedPages[page] =
-            Menu_GetModuloOfSum(selectedPages[page], pageCounts[page]);
+            Menu_WrapIndex(selectedPages[page], pageCounts[page]);
       }
     }
     wait(1);
@@ -578,6 +578,8 @@ s32 DjinnMenu_ShowMemberStatus(void) {
           DJINN_PREVIEW_NO_CHANGE, selectedPages[0] + 1, 1);
       render->holdTilemapUpload = 0;
     }
+    // The page numbers, written out as in DjinnMenu_RunPreview: one routine
+    // shared by both does not keep the ROM's bytes.
     if (pageCounts[side] > 1) {
       window = menu->secondWindow;
       for (pageIndex = 0; pageIndex < pageCounts[side]; pageIndex++) {
@@ -626,14 +628,14 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     if (repeatedKeys & KEY_LEFT) {
       selectedPages[side]--;
       selectedPages[side] =
-          Menu_GetModuloOfSum(selectedPages[side], pageCounts[side]);
+          Menu_WrapIndex(selectedPages[side], pageCounts[side]);
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
     } else if (repeatedKeys & KEY_RIGHT) {
       selectedPages[side]++;
       selectedPages[side] =
-          Menu_GetModuloOfSum(selectedPages[side], pageCounts[side]);
+          Menu_WrapIndex(selectedPages[side], pageCounts[side]);
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;

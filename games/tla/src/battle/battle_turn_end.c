@@ -233,11 +233,7 @@ s32 BattleUnit_CountDownRegenerate(s32 id) {
       if (hp == unit->hpMax) {
         BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgHpFull);
       } else {
-        {
-          u32 opcode = PLAYBACK_NUMBER;
-
-          BattlePlayback_Push(opcode, gain);
-        }
+        BattlePlayback_Push(PLAYBACK_NUMBER, gain);
         BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgHpRecover);
       }
       unit->hp = hp;

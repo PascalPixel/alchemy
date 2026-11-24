@@ -1,71 +1,49 @@
 /// @file
 /// The Mars Lighthouse flame throwers' puffs, which four of its rooms keep a
-/// copy of, with the views of the ride state and heap slots the routine reads
-/// them through.
+/// copy of.
 
-/// A flame thrower of the ride state, as FlameThrowers_Puff reads it.
-typedef struct Entry {
-  s16 active;
-  s16 timer; ///< frames to its next puff
-  u16 flags; ///< enum FlameThrowerFlags: which flame, or none
-  /// Puffs even off screen, and its flames keep their sprites.
-  s16 offScreen;
-  struct Actor *actor;
-  FIXED reach; ///< 16.16 pixels, from the flags' low four bits
-} Entry;
-
-/// The ride state as FlameThrowers_Puff reads it: a flame reaching its stop
-/// sets stopped, which calls back once.
-typedef struct State {
-  u8 unusedBeforeStopped[6];
-  s16 stopped;
-  s16 wasStopped;
-  u8 unusedAfterWasStopped[4];
-  s16 runsDuringPsynergy; ///< FlameThrowers_SetMode: not paused by Psynergy
-  void (*onStopped)();
-  Entry entries[4];
-} State;
-
-/// The heap slots as FlameThrowers_Puff reads them: the field state through a
-/// union, which keeps its read after the stores before it.
-typedef struct HeapSlotsView {
-  u8 unusedBeforeMapGrid[32];
-  struct MapState *mapGrid;
-  u8 unusedBeforeFieldState[108 - 36];
+/// The heap slots as FlameThrowers_Puff reads the field state's slot, as a
+/// word.
+struct HeapSlotsFieldStateView {
+  u8 slotsBefore[offsetof(struct HeapSlots, fieldState)];
   union {
     s32 word;
     void *pointer;
   } fieldState;
-} HeapSlotsView;
+};
 
-/// Each frame, every flame thrower in view sends its flame: forward, landing
-/// forward or back, back, or a spark, by its flags, every ninth frame. They
-/// pause while a menu is open, or a Psynergy is used unless the ride state runs
-/// them through it; reaching a stop calls the stop's callback once.
+/// Each frame, every flame thrower in view sends its flame (forward, back, east
+/// or west) or a spark, as its flags say, every ninth frame. They pause while a
+/// menu is open, or while a Psynergy is used unless FlameThrowers_SetMode keeps
+/// them running; the first frame a flame meets a blocked stop calls the
+/// state's callback.
 void FlameThrowers_Puff(void) {
   s32 saved[2];
-  State *state;
-  Entry *entry;
+  struct FlameHitState *state;
+  struct FlameThrower *entry;
   struct MapState *map;
   s32 *view;
   s32 cameraX, cameraZ;
   s32 v;
   s32 i;
 
-  state = (State *)FLAME_THROWERS_STATE;
-  map = ((HeapSlotsView *)Ram_HeapSlots)->mapGrid;
+  state = FLAME_THROWERS_STATE;
+  map = Ram_HeapSlots->mapGrid;
   entry = state->entries;
   view = &map->viewX;
   cameraX = view[0];
   cameraX &= FIELD_PIXEL_MASK;
   cameraZ = view[1] & FIELD_PIXEL_MASK;
   saved[1] = map->origin[1];
-  saved[0] = ((HeapSlotsView *)Ram_HeapSlots)->fieldState.word;
-  if (state->stopped != 0 && state->wasStopped == 0 && state->onStopped != 0)
-    state->onStopped();
-  v = (u16)state->stopped;
-  state->wasStopped = v;
-  state->stopped = 0;
+  /* FAKEMATCH(signature): the field state read through a union as a word, so
+     the load stays after the stores before it, and blocked tested as signed. */
+  saved[0] = ((struct HeapSlotsFieldStateView *)Ram_HeapSlots)->fieldState.word;
+  if ((s16)state->blocked != 0 && state->wasBlocked == 0 &&
+      state->onBlocked != 0)
+    state->onBlocked();
+  v = (u16)state->blocked;
+  state->wasBlocked = v;
+  state->blocked = 0;
   for (i = 0; i < 4; i++, entry++) {
     struct Actor *actor;
     s32 flag, x, y, offScreen, value;

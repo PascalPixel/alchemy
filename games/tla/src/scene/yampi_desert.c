@@ -121,12 +121,14 @@ enum YampiDesertRaisedTrigger {
 };
 
 /// The cell behaviors the desert's code reads: sand that flows north, south,
-/// west or east and carries the leader, and a rise to the upper level.
+/// west or east and carries the leader, the rim round each stream, which
+/// carries nobody, and a rise to the upper level.
 enum YampiDesertCellBehavior {
   CELL_BEHAVIOR_YAMPI_DESERT_FLOW_NORTH = 10,
   CELL_BEHAVIOR_YAMPI_DESERT_FLOW_SOUTH = 11,
   CELL_BEHAVIOR_YAMPI_DESERT_FLOW_WEST = 12,
   CELL_BEHAVIOR_YAMPI_DESERT_FLOW_EAST = 13,
+  CELL_BEHAVIOR_YAMPI_DESERT_FLOW_RIM = 14,
   CELL_BEHAVIOR_YAMPI_DESERT_RISE = 20
 };
 
@@ -1581,7 +1583,11 @@ void YampiDesert_UpdateSandFlow(void) {
   under = map->layers[MAPGRID_LAYER_MIDDLE].cells + index;
   Actor_SetAnimationSpeed(leader, ANIM_STEP_NORMAL);
   TilesetAnim_ResumeAll();
-  if ((u8)(under->collisionCode - CELL_BEHAVIOR_YAMPI_DESERT_FLOW_NORTH) <= 4) {
+  // On a stream or its rim, a leader moving as Sand is not carried, and one
+  // on foot has his sprite flags set to show his shadow alone.
+  if ((u8)(under->collisionCode - CELL_BEHAVIOR_YAMPI_DESERT_FLOW_NORTH) <=
+      CELL_BEHAVIOR_YAMPI_DESERT_FLOW_RIM -
+          CELL_BEHAVIOR_YAMPI_DESERT_FLOW_NORTH) {
     if (gMainRoutineState.movementMode == LEADER_MOVEMENT_SAND)
       speed = 0;
     else

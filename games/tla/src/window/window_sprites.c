@@ -521,6 +521,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
     if (scale > Q_8_8(1)) {
       sprite->affine = 3;
       // Drawn at double size, so set 8 pixels up and left.
+      /* FAKEMATCH(dead): x read through its taken address. */
       sprite->x = *(u16 *)&windowSprite->x - 8;
       sprite->y = (u16)windowSprite->y - 8;
     } else {

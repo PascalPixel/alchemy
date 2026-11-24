@@ -793,7 +793,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 }
 
 s32 Item_Use(s32 slot, s32 owner, s32 target);
-s32 Item_PlayUseSound(s32 item);
+void Item_PlayUseSound(s32 item);
 
 /// Uses the selected item from the party member in side 0 on the one in side 1.
 /// On failure plays the error sound, shows why in the info window and returns
@@ -1504,6 +1504,8 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
       style |= STATUS_PANEL_EQUIP;
       StatusPanel_Draw(menu->statusWindow, target, slot, style);
     } else {
+      // The class item's preview again, as the Psynergy item's below: one
+      // routine shared by the three does not keep the ROM's bytes.
       s32 size;
 
       unit = Unit_Get(target);
@@ -2703,6 +2705,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   s32 window;
   s32 slot;
   s32 member;
+  s32 result;
 
   slot = menu->selectedSlots[1];
   member = menu->sideMember[1];
@@ -2711,9 +2714,9 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   Iwram_CopyWords(saved, unit, BATTLE_UNIT_SIZE);
   window = menu->questionWindow;
   // Nothing to ask when it cannot be worn, or what it would replace is cursed
-  // on (EQUIP_REFUSED_CANNOT_WEAR or EQUIP_REFUSED_CURSED).
-  if ((u32)(Inventory_EquipFar(menu->sideMember[1], menu->selectedSlots[1]) +
-            2) <= 1) {
+  // on.
+  result = Inventory_EquipFar(menu->sideMember[1], menu->selectedSlots[1]);
+  if (result == EQUIP_REFUSED_CANNOT_WEAR || result == EQUIP_REFUSED_CURSED) {
     selection = 1;
   } else {
     Text_DrawMessageAsTilesFar((s32)MsgYes, window, EQUIP_YES_X, EQUIP_YES_Y);

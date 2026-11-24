@@ -668,6 +668,9 @@ void Text_DrawStringAtOffset(u8 *text, struct Window *window, s32 offsetX,
 
   cell = (((s16)window->y + ((u32)offsetY >> 3) + 1) << 5) +
          ((s16)window->x + ((u32)offsetX >> 3)) + 1;
+  // BUG: the buffer is released only when the text starts on screen; text
+  // placed below the screen keeps its buffer taken. BUGFIX releases it either
+  // way.
   if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
     vram = (s32)WINDOW_TILEMAP_VRAM;
     cell *= 2;
@@ -675,8 +678,13 @@ void Text_DrawStringAtOffset(u8 *text, struct Window *window, s32 offsetX,
     src = (s32)canvas->tilemap + cell;
     phase = offsetX & 7;
     Text_DrawStringAsTiles(buffer, (u16 *)src, (u16 *)dst, phase);
+#ifndef BUGFIX
     Heap_Release(buffer);
+#endif
   }
+#ifdef BUGFIX
+  Heap_Release(buffer);
+#endif
 }
 
 u8 *String_FormatNumber(u8 *output, s32 value, s32 width);

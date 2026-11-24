@@ -14,10 +14,6 @@
 #include "field/cell_target.h"
 #include "field/scene_tables.h"
 
-/// The byte, or the word, at byte offset of base.
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
 /// The frames the aerie's JupiterLighthouse_RaiseAngels takes to raise an
 /// angel and tilt the lid, and then to lift both angels and the lid off the
 /// well once both are shot.

@@ -1,5 +1,5 @@
 /// @file
-/// The battle's small tables: where the party's places fall, the party's
+/// The battle's small tables: where a formation's enemies stand, the party's
 /// weapon sprites, the camera's command matrix, how an ability weakens with
 /// distance, and the forms Dullahan takes.
 

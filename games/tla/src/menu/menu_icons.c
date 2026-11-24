@@ -61,9 +61,9 @@ s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
 
 /// Loads an icon into a free cache slot and creates its sprite when possible:
 /// ability resourceId's Psynergy icon at (x, y) of window, for the Djinn
-/// preview's Psynergy lists. Returns no value; callers ignore it.
-s32 Icon_CreatePsynergyIcon(struct Window *window, s32 x, s32 y,
-                            s32 resourceId) {
+/// preview's Psynergy lists.
+void Icon_CreatePsynergyIcon(struct Window *window, s32 x, s32 y,
+                             s32 resourceId) {
   s32 slot;
 
   slot = VramCache_FindFreeEntry();
@@ -77,55 +77,55 @@ s32 Icon_CreatePsynergyIcon(struct Window *window, s32 x, s32 y,
 /// window. Returns 1, or -1 when no window sprite is free.
 s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
                                s32 variant) {
-  struct WindowSprite *object;
+  struct WindowSprite *arrow;
   u32 resource;
-  struct ItemMenuState *data = Ram_HeapSlots->menuState;
+  struct ItemMenuState *menu = Ram_HeapSlots->menuState;
 
   if (variant == STAT_ARROW_UP)
-    resource = (u16)data->resourceSlots[0];
+    resource = (u16)menu->resourceSlots[0];
   else
-    resource = (u16)data->resourceSlots[1];
-  object =
+    resource = (u16)menu->resourceSlots[1];
+  arrow =
       WindowSprite_CreateFar(resource, WINDOW_SPRITE_SIZE_16X16, window, x, y);
-  if (object == 0) {
+  if (arrow == 0) {
     /* FAKEMATCH(dead): a test whose two arms are alike. */
     if (variant || x)
       return -1;
     else
       return -1;
   }
-  object->kind = 0;
-  object->animationStep = 0;
-  object->motion = ICON_SHOWN;
+  arrow->kind = 0;
+  arrow->animationStep = 0;
+  arrow->motion = ICON_SHOWN;
   return 1;
 }
 
 /// As Icon_CreateStatChangeArrow, with the arrow raised 3 pixels for variant
 /// 0 and 4 for any other. Returns 1, or -1 when no window sprite is free.
 s32 Icon_CreateDjinnArrow(struct Window *window, s32 x, s32 y, s32 variant) {
-  struct WindowSprite *object;
+  struct WindowSprite *arrow;
   u32 resource;
-  struct ItemMenuState *data = Ram_HeapSlots->menuState;
+  struct ItemMenuState *menu = Ram_HeapSlots->menuState;
 
   if (variant == STAT_ARROW_UP) {
-    resource = (u16)data->resourceSlots[0];
+    resource = (u16)menu->resourceSlots[0];
     y -= 3;
   } else {
-    resource = (u16)data->resourceSlots[1];
+    resource = (u16)menu->resourceSlots[1];
     y -= 4;
   }
-  object =
+  arrow =
       WindowSprite_CreateFar(resource, WINDOW_SPRITE_SIZE_16X16, window, x, y);
-  if (object == 0) {
+  if (arrow == 0) {
     /* FAKEMATCH(dead): a test whose two arms are alike. */
     if (variant || x)
       return -1;
     else
       return -1;
   }
-  object->kind = 0;
-  object->animationStep = 0;
-  object->motion = ICON_SHOWN;
+  arrow->kind = 0;
+  arrow->animationStep = 0;
+  arrow->motion = ICON_SHOWN;
   return 1;
 }
 
@@ -523,8 +523,10 @@ void MenuIcon_PushSlots(void) {
 extern u16 gStatusScreen_StatusIcons[5];
 
 /// Loads the five status icons (gStatusScreen_StatusIcons), one for each
-/// status MenuPanel_DrawEntryList lists, into free VRAM cache slots, and starts
-/// drawing them (MenuIcon_PushSlots).
+/// status MenuPanel_DrawEntryList lists (enum UnitStatus), into free VRAM cache
+/// slots, and starts drawing them (MenuIcon_PushSlots). They are the battle
+/// Status screen's pictures for downed, poison, deadly poison, a cursed item
+/// and haunt.
 void MenuIcon_LoadSlots(void) {
   struct ItemMenuState *menu = Ram_HeapSlots->menuState;
   struct IconSprite *slot = menu->menuIcons;

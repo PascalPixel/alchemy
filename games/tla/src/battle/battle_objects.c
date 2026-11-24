@@ -9,6 +9,10 @@
 #include "system/system.h"
 #include "macros.h"
 
+/// A sprite animation's priority above 3, which is not drawn: a shadow's while
+/// its unit is in the air.
+#define SHADOW_HIDDEN_PRIORITY 9
+
 /// The status icons' bits in BattleObject.activeStatuses.
 #define ICON_POISON 0x01
 #define ICON_VENOM 0x02 ///< deadly poison
@@ -355,19 +359,17 @@ void Sprite_DetachScripts(void *recordGroup) {
   }
 }
 
-/// Returns a unit's battle object, through its place, or null for a unit with
-/// no place.
-static inline struct BattleObject *BattleObject_GetInline(s32 unitId) {
+/// Returns a unit's battle object, through its place in BattleState.placement,
+/// or null for a unit with no place.
+static __inline__ struct BattleObject *BattleObject_FindSlot(s32 id) {
   struct BattleState *battle = Ram_HeapSlots->battleState;
-  struct BattleObject *battleObject = battle->slots;
-  s32 placementIndex;
+  struct BattleObject *slots = battle->slots;
 
-  if (unitId > ALLY_MAX)
-    unitId -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
-  placementIndex = unitId;
-  if (battle->placement[placementIndex] == BATTLE_OBJECT_NONE)
-    return 0;
-  return &battleObject[battle->placement[placementIndex]];
+  if (id > ALLY_MAX)
+    id -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
+  if (battle->placement[id] == BATTLE_OBJECT_NONE)
+    return NULL;
+  return &slots[battle->placement[id]];
 }
 
 /// Task, each frame of a battle: advances every unit's status icon, sets its
@@ -395,7 +397,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       struct BattleObject *slot;
 
       object = 0;
-      slot = BattleObject_GetInline(unitIds[unitIndex]);
+      slot = BattleObject_FindSlot(unitIds[unitIndex]);
       if (slot != 0) {
         object = slot->object;
         BattleStatusIcon_Cycle(slot);
@@ -406,8 +408,9 @@ void BattleObject_UpdateSpritePriorities(void) {
             struct SpriteAnimation *effect;
             s32 effectPriority = 0;
 
+            // An airborne unit's shadow is hidden.
             if (object->y != 0)
-              effectPriority = 9;
+              effectPriority = SHADOW_HIDDEN_PRIORITY;
             effect = slot->shadowEntry;
             /* FAKEMATCH(dead): a store the loops below overwrite, behind a
              * test of slot. */
@@ -522,19 +525,6 @@ void Actor_DetachSpriteScripts(struct MotionObject *object) {
       break;
     }
   }
-}
-
-/// Returns a unit's battle object, through its place in BattleState.placement,
-/// or null for a unit with no place.
-static __inline__ struct BattleObject *BattleObject_FindSlot(s32 id) {
-  struct BattleState *battle = Ram_HeapSlots->battleState;
-  struct BattleObject *slots = battle->slots;
-
-  if (id > ALLY_MAX)
-    id -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
-  if (battle->placement[id] == BATTLE_OBJECT_NONE)
-    return NULL;
-  return &slots[battle->placement[id]];
 }
 
 /// Frees the enemy sprite slots a unit holds and marks its actor for release at
@@ -658,6 +648,7 @@ void BattleCamera_SetDefaultView(void) {
 
 /// Returns a unit's battle object, through its place, or null for a unit with
 /// no place.
+// BattleObject_FindSlot's lookup written out: calling it compiles otherwise.
 struct BattleObject *BattleObject_Get(s32 objectId) {
   struct BattleState *battle = Ram_HeapSlots->battleState;
   struct BattleObject *slots = battle->slots;

@@ -328,11 +328,10 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     // A turns the page; each list page starts its own group at the top.
     if (gInput.pressed & KEY_A) {
       page = (page + 1) % STATUS_PAGE_COUNT;
-      // XXX: page + 3 is the group of the page after the new one (the Djinn
-      // group on turning to Psynergy), so the position reset is the next
-      // page's; the switch above sets the group again from the help entry.
-      // Turning through the pages with each list's cursor moved would show
-      // whether a list keeps its place.
+      // page + 3 is the list group of the page after the new one, so a list
+      // goes back to its top on the turn to the page before it; A turns only
+      // forward, so each list still opens at its top. The switch above sets
+      // the group again from the help entry.
       cursor.group = page + 3;
       cursor.groupPositions[page + 3] = 0;
       cursor.groupSize = 1;

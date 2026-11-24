@@ -155,6 +155,17 @@ enum TrialRoadCell {
 /// Set once Gasp has stopped mirroring Felix and hopped away to where he can
 /// be talked to.
 #define FLAG_GASP_FLED FLAG_SCENE_TEMP_88
+/// The link race's flags, which no code in the game sets, as nothing chooses
+/// RIVAL_LINKED: the
+/// byte of flags from FLAG_LINK_PLAYER holds this player's number in the link,
+/// so the rival follows the other player's record; while
+/// FLAG_LINKED_RIVAL_HALTS is set, a rival whose record has its top byte set
+/// stops 12 pixels beside the course's corner, 16 pixels north of it with the
+/// far side's timer if FLAG_LINKED_RIVAL_ON_FAR_SIDE is set and 16 south with
+/// the near side's if not.
+#define FLAG_LINK_PLAYER FLAG_SCENE_TEMP_F8
+#define FLAG_LINKED_RIVAL_HALTS FLAG_SCENE_TEMP_11
+#define FLAG_LINKED_RIVAL_ON_FAR_SIDE FLAG_SCENE_TEMP_12
 /// Set once Whirlwind has blown away the weeds on the pillar stage's pillar C,
 /// on the Pound stage's pillar B, and on the sand stage's cliff.
 #define FLAG_PILLAR_STAGE_WEEDS_BLOWN_AWAY FLAG_AREA_TEMP_07
@@ -292,11 +303,14 @@ enum TrialRoadFountainStageActorId {
 /// The stage room's entrances. Every stage is the same room redrawn: the
 /// stairs down at a stage's foot lead in at the top of the stage below, and
 /// the door at its top in at the foot of the next. The Shaman Village enters
-/// the first stage by its left or right path; the summit returns to the last
-/// stage the same way; while Moapa explains the trial's rules
-/// (ShamanVillage_ExplainTrialRules), TRIAL_ROAD_RULES deals a course and
-/// TRIAL_ROAD_RULES_COURSE shows it. The summit is entered again after the
-/// battle with Moapa, won or lost.
+/// the first stage by its left or right path, at
+/// TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_E or _F, and the summit
+/// returns to the last stage the same way, at
+/// TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST_B or _EAST_B; each goes on to
+/// the stage entrance of its last digit. While Moapa explains the trial's
+/// rules (ShamanVillage_ExplainTrialRules), the village's entrance _G deals a
+/// course and TRIAL_ROAD_RULES_COURSE shows it. The summit is entered again
+/// after the battle with Moapa, won or lost.
 enum TrialRoadEntrance {
   TRIAL_ROAD_STAGE_FOOT_LEFT = 1,
   TRIAL_ROAD_STAGE_FOOT_RIGHT = 2,
@@ -304,11 +318,6 @@ enum TrialRoadEntrance {
   TRIAL_ROAD_STAGE_TOP_RIGHT = 4,
   TRIAL_ROAD_SUMMIT_AFTER_WIN = 4,
   TRIAL_ROAD_SUMMIT_AFTER_DEFEAT = 5,
-  TRIAL_ROAD_FROM_VILLAGE_LEFT = 31,
-  TRIAL_ROAD_FROM_VILLAGE_RIGHT = 32,
-  TRIAL_ROAD_FROM_SUMMIT_LEFT = 33,
-  TRIAL_ROAD_FROM_SUMMIT_RIGHT = 34,
-  TRIAL_ROAD_RULES = 50,
   TRIAL_ROAD_RULES_COURSE = 55
 };
 
@@ -481,10 +490,10 @@ struct EffectSpriteAttributes {
 
 /// What the rival does each frame (TrialRoad_MoveRival).
 enum TrialRoadRivalMode {
-  RIVAL_REPLAY = 1,  ///< walks the recorded path
-  RIVAL_RECORD = 2,  ///< records the actor's path
-  RIVAL_LINKED = 3,  ///< stands where the linked player's record puts it
-  RIVAL_MIRROR = 4,  ///< follows the leader mirrored across the course
+  RIVAL_REPLAY = 1, ///< walks the recorded path
+  RIVAL_RECORD = 2, ///< records the actor's path
+  RIVAL_LINKED = 3, ///< Unused: stands where the linked player's record puts it
+  RIVAL_MIRROR = 4, ///< follows the leader mirrored across the course
   RIVAL_WAITING = 9, ///< the path is done
 };
 
@@ -2365,7 +2374,8 @@ s32 Scene_PrepareMap(void) {
     s32 px;
     u32 i;
 
-    if ((u32)(entrance - TRIAL_ROAD_FROM_VILLAGE_LEFT) <= 1) {
+    if ((u32)(entrance -
+              TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_E) <= 1) {
       if (!GameFlag_Get(FLAG_STAGE_ORDER_DEALT)) {
         unit = Unit_Get(gMainRoutineState.leaderActorId);
         Iwram_ClearWordsEntry(state, sizeof(*state));
@@ -2386,7 +2396,8 @@ s32 Scene_PrepareMap(void) {
       // From the village, in at the foot of the left or right path.
       n = entrance % 10;
       Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, n);
-    } else if ((u32)(entrance - TRIAL_ROAD_FROM_SUMMIT_LEFT) <= 1) {
+    } else if ((u32)(entrance -
+                     TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST_B) <= 1) {
       if (!GameFlag_Get(FLAG_STAGE_ORDER_DEALT)) {
         unit = Unit_Get(gMainRoutineState.leaderActorId);
         Iwram_ClearWordsEntry(state, sizeof(*state));
@@ -2416,7 +2427,8 @@ s32 Scene_PrepareMap(void) {
       // From the summit, in at the top of the left or right path.
       n = entrance % 10;
       Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, n);
-    } else if (entrance == TRIAL_ROAD_RULES) {
+    } else if (entrance ==
+               TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_G) {
       unit = Unit_Get(gMainRoutineState.leaderActorId);
       Iwram_ClearWordsEntry(state, sizeof(*state));
       value = 0;
@@ -2437,6 +2449,11 @@ s32 Scene_PrepareMap(void) {
       s32 *words;
       s32 row;
 
+      // The map holds the room three times, for layers 0 to 2, 34 cells
+      // apart, with the course patterns south of them: each redraw below
+      // is made on all three. Rows 0 to 12 are the stage's top (the doors,
+      // the chests and the switch), rows 13 to 33 the arena that a pattern
+      // fills, and rows 34 to 43 its foot.
       if (entrance == TRIAL_ROAD_RULES_COURSE) {
         s32 x1;
         s32 x2;
@@ -2450,6 +2467,9 @@ s32 Scene_PrepareMap(void) {
         Actor_SetSpriteColor(Actor_GetById(ACTOR_LEFT_OUTER_CHEST), 3);
         Actor_SetSpriteColor(Actor_GetById(ACTOR_RIGHT_INNER_CHEST), 3);
         Actor_SetSpriteColor(Actor_GetById(ACTOR_RIGHT_OUTER_CHEST), 3);
+        // The course Moapa shows: the arena is cleared, each copy of the
+        // blank cell at its west edge carried across it, and the dealt
+        // pattern drawn from column 1.
         Map_CopyRawCellsRect(0, 12, 1, 21, 0, 13);
         Map_CopyRawCellsRect(x1, 12, 1, 21, x1, 13);
         Map_CopyRawCellsRect(x2, 12, 1, 21, x2, 13);
@@ -2478,6 +2498,11 @@ s32 Scene_PrepareMap(void) {
         layer = &map->layers[2];
         SET_LAYER(68, x2);
         value = 1;
+        // The room is drawn for the leader's path: from the left path the
+        // top and the foot slide
+        // 9 cells east, and from the right path 10 cells west with the
+        // four blue chests following; the strip either leaves is blanked
+        // by carrying a blank cell across it.
         if (entrance & value) {
           TrialRoad_CopyCellsBackward(0, 0, 102, 13, 9, 0);
           Map_CopyRawCellsRect(0, 0, 10, 1, 1, 0);
@@ -2507,6 +2532,8 @@ s32 Scene_PrepareMap(void) {
         Actor_SetSpriteColor(Actor_GetById(ACTOR_LEFT_OUTER_CHEST), 3);
         Actor_SetSpriteColor(Actor_GetById(ACTOR_RIGHT_INNER_CHEST), 3);
         Actor_SetSpriteColor(Actor_GetById(ACTOR_RIGHT_OUTER_CHEST), 3);
+        // The stage's own pattern fills the arena from column 10, and the
+        // other stages' treasures are put away.
         destinationY = 13;
         value = state->pattern;
         px = gTrialRoad_StageMapCells[value][0];
@@ -2552,6 +2579,8 @@ s32 Scene_PrepareMap(void) {
   } else if (scene == SCENE_TRIAL_ROAD_SUMMIT &&
              GameFlag_Get(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT) &&
              !GameFlag_Get(FLAG_PARTY_FIRST_AT_PEAK)) {
+    // During the race, the doorway of the path the party did not take is
+    // drawn shut, as TrialRoad_ShutSummitDoorway shuts the party's own.
     if (gTrialRoadState->mirrored != 0)
       MapGrid_CopyCellsLayered(26, 79, 1, 2, 13, 79);
     else
@@ -2658,11 +2687,9 @@ void TrialRoad_PlaceMoapaAtPeak(void) {
 
 void Actor_PlaceOnActor(s32 actor, s32 value);
 
-/// The party gathers at the summit first, and Moapa and his knights arrive
-/// after them: "You were quite swift! You may prove a challenge yet!"
-void TrialRoad_ReachPeakFirst(void) {
-  struct Actor *actor;
-
+/// The camera pans to the summit, and the party walks up to its near side and
+/// turns to face the far one, where Moapa stands or will land.
+static inline void TrialRoad_GatherAtPeak(void) {
   Event_Start();
   Event_EndLastingPsynergy(0);
   FieldCamera_SetSpeed(2);
@@ -2687,6 +2714,14 @@ void TrialRoad_ReachPeakFirst(void) {
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_FaceDirection(ACTOR_SHEBA, TrialRoad_MirrorAngle(FACING_EAST), 0);
   FieldCamera_WaitForArrival();
+}
+
+/// The party gathers at the summit first, and Moapa and his knights arrive
+/// after them: "You were quite swift! You may prove a challenge yet!"
+void TrialRoad_ReachPeakFirst(void) {
+  struct Actor *actor;
+
+  TrialRoad_GatherAtPeak();
   wait(20);
   Event_PlaySound(SE_ITEM_BREAK);
   wait(20);
@@ -2777,30 +2812,7 @@ void TrialRoad_ReachPeakFirst(void) {
 /// Moapa and his knights are already waiting when the party reaches the
 /// summit: "You may have been slow, but you made it through Trial Road".
 void TrialRoad_ReachPeakSecond(void) {
-  Event_Start();
-  Event_EndLastingPsynergy(0);
-  FieldCamera_SetSpeed(2);
-  FieldCamera_MoveTo(256, CAMERA_KEEP, 264, 1);
-  Actor_PlaceOnActor(ACTOR_JENNA, ACTOR_FELIX);
-  Actor_PlaceOnActor(ACTOR_SHEBA, ACTOR_FELIX);
-  Actor_PlaceOnActor(ACTOR_PIERS, ACTOR_FELIX);
-  Actor_SetSpeed(ACTOR_FELIX, 1);
-  Actor_SetSpeed(ACTOR_JENNA, 1);
-  Actor_SetSpeed(ACTOR_SHEBA, 1);
-  Actor_SetSpeed(ACTOR_PIERS, 1);
-  Actor_WalkTo(ACTOR_FELIX, TrialRoad_MirrorCellX(28), 272);
-  Actor_WalkTo(ACTOR_PIERS, TrialRoad_MirrorCellX(28), 256);
-  Actor_WalkTo(ACTOR_JENNA, TrialRoad_MirrorCellX(27), 248);
-  Actor_WalkTo(ACTOR_SHEBA, TrialRoad_MirrorCellX(27), 280);
-  Actor_WaitForMoveById(ACTOR_FELIX);
-  Actor_FaceDirection(ACTOR_FELIX, TrialRoad_MirrorAngle(FACING_EAST), 0);
-  Actor_WaitForMoveById(ACTOR_PIERS);
-  Actor_FaceDirection(ACTOR_PIERS, TrialRoad_MirrorAngle(FACING_EAST), 0);
-  Actor_WaitForMoveById(ACTOR_JENNA);
-  Actor_FaceDirection(ACTOR_JENNA, TrialRoad_MirrorAngle(FACING_EAST), 0);
-  Actor_WaitForMoveById(ACTOR_SHEBA);
-  Actor_FaceDirection(ACTOR_SHEBA, TrialRoad_MirrorAngle(FACING_EAST), 0);
-  FieldCamera_WaitForArrival();
+  TrialRoad_GatherAtPeak();
   Event_SetMessageId((s32)MsgTrialRoadSlowArrival);
   FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   // "You may have been slow, but you made it through Trial Road to the..."
@@ -2811,6 +2823,8 @@ void TrialRoad_ReachPeakSecond(void) {
   Actor_RunRepeatedMotion(ACTOR_MOAPA, 2);
   // "Let the battle begin!"
   Event_ShowMessage(ACTOR_MOAPA, 0);
+  // The same charge as TrialRoad_ReachPeakFirst's: written once and shared,
+  // it does not compile to the ROM's code.
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
@@ -2946,7 +2960,8 @@ void TrialRoad_LoseToMoapa(void) {
   TrialRoad_PlaceActor(ACTOR_PIERS, 216, 254, FACING_EAST);
   TrialRoad_PlaceActor(ACTOR_JENNA, 232, 244, FACING_EAST);
   TrialRoad_PlaceActor(ACTOR_SHEBA, 224, 296, FACING_EAST);
-  Actor_SetAnimation(ACTOR_FELIX, 38);
+  // Felix alone is left on his feet, the others lying collapsed.
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_LEADER_STILL);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_COLLAPSE);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_COLLAPSE);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_COLLAPSE);
@@ -3719,7 +3734,7 @@ void TrialRoad_MoveRival(void) {
     s32 angle, link, animation, partner;
     s16 packed;
 
-    player = ((s32)GameFlag_GetByte(FLAG_SCENE_TEMP_F8)) ^ 1;
+    player = ((s32)GameFlag_GetByte(FLAG_LINK_PLAYER)) ^ 1;
     signature = (s16 *)gLinkPeerSignatures[player];
     if (((gLinkStatus >> player) & 1) == 0)
       return;
@@ -3729,14 +3744,14 @@ void TrialRoad_MoveRival(void) {
     packed = *signature++;
     link = packed >> 8;
     animation = packed & 0xff;
-    if (GameFlag_Get(dz = FLAG_SCENE_TEMP_11) && link != 0) {
+    if (GameFlag_Get(dz = FLAG_LINKED_RIVAL_HALTS) && link != 0) {
       state->mode = RIVAL_WAITING;
       Actor_SelectAnimation(rival, 1);
       if (trialRoadLinkState->originX < rival->x.fixed)
         x = trialRoadLinkState->originX + toFIXED(12);
       else
         x = trialRoadLinkState->originX - toFIXED(12);
-      if (!GameFlag_Get(FLAG_SCENE_TEMP_12)) {
+      if (!GameFlag_Get(FLAG_LINKED_RIVAL_ON_FAR_SIDE)) {
         z = trialRoadLinkState->originZ + toFIXED(16);
         rival->timer = trialRoadLinkState->rivalTimers[1];
       } else {
@@ -4053,11 +4068,20 @@ void (*gTrialRoad_StageSetUps[])(void) = {
     TrialRoad_SetUpSandStage,
 };
 
-/// The recordings Moapa's party runs by: one a stage pattern, then one for each
-/// side.
+/// The recordings Moapa's party runs by, as resource ids: one for each stage
+/// pattern, in gTrialRoad_StageSetUps' order, then his run at the blue chests
+/// when he reached the stage's switch first and when Felix did.
 u32 gTrialRoad_RivalRecordings[] = {
-    450, 451, 452, 453, 454, 455,
-    456, 457, 458, 459,
+    450, // the pillar stage
+    451, // the torch stage
+    452, // the weeds stage
+    453, // the Pound stage
+    454, // the crumbling stage
+    455, // the log stage
+    456, // the fountain stage
+    457, // the sand stage
+    458, // the chests, Moapa at the switch first
+    459, // the chests, Felix at the switch first
 };
 
 /// Each stage's place in the map, in cells.

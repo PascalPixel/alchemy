@@ -1,7 +1,6 @@
 /// @file
 /// What the Mars Lighthouse rooms with flame throwers share: the flag bytes of
-/// the crack the leader falls through, and the calls they make through
-/// wrappers of their own.
+/// the crack the leader falls through, and the routines they call.
 #ifndef ALCHEMY_MARS_LIGHTHOUSE_ENTRANCE_ROOM_H
 #define ALCHEMY_MARS_LIGHTHOUSE_ENTRANCE_ROOM_H
 
@@ -30,6 +29,9 @@ void Actor_StartScript(struct Actor *actor, const void *script);
 void ActorTable_Snapshot(void);
 FIXED Trig_Cos(s32 angle);
 
+/// The event commands MapGrid_CopyCellAttributes, MapGrid_CopyCellsLayered,
+/// Actor_SetPositionFX, FieldActor_Create and FieldCamera_MoveToFX, under the
+/// names the entrance's events still call them by; they compile alike.
 static inline void Map_CopyCellAttributeRect_(s32 srcX, s32 srcY, s32 width,
                                               s32 height, s32 dstX, s32 dstY) {
   Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);

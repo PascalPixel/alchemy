@@ -1,6 +1,6 @@
 /// @file
-/// The 660 enemy formations, by formation id, and the enemies whose level
-/// follows the party's.
+/// The 660 enemy formations, by formation id, each run of them headed by the
+/// battle or place it is for, and the enemies whose level follows the party's.
 
 #include "enemy_ids.h"
 #include "battle/formations.h"
@@ -8,6 +8,9 @@
 // clang-format off
 struct Formation gFormations[] = {
     [0] = {0},
+    // Djinni battles, each Djinni alone, its element's Djinn in a run of eleven
+    // after an empty row: Venus, Mercury, Mars, then Jupiter
+    // (gEncounter_DjinnBattles gives each its zone and slot).
     [1] = {
         .memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_UNUSED_ECHO)},
         .minimumCounts = {1},
@@ -232,6 +235,9 @@ struct Formation gFormations[] = {
         .maximumCounts = {1},
     },
     [48] = {0},
+    // Story battles: the Ruffian at Venus Lighthouse's entrance, the Ruffian,
+    // the three Ruffians and the Punch Ant of Suhalla Gate, and the three
+    // Chestbeaters in the Kandorean Temple.
     [49] = {
         .memberIds = {ENEMY_ROW(ENEMY_RUFFIAN)},
         .minimumCounts = {1},
@@ -258,6 +264,8 @@ struct Formation gFormations[] = {
         .maximumCounts = {3},
     },
     [54] = {0},
+    // The King Scorpion in the Yampi Desert, and Briggs and a Sea Fighter on
+    // Briggs's ship at Alhafra.
     [55] = {
         .memberIds = {ENEMY_ROW(ENEMY_KING_SCORPION)},
         .minimumCounts = {1},
@@ -270,6 +278,7 @@ struct Formation gFormations[] = {
         .maximumCounts = {1, 1},
     },
     [57] = {0},
+    // An Aqua Jelly below deck of the Lemurian Ship, then the Aqua Hydra.
     [58] = {
         .memberIds = {ENEMY_ROW(ENEMY_AQUA_JELLY)},
         .minimumCounts = {1},
@@ -281,6 +290,9 @@ struct Formation gFormations[] = {
         .maximumCounts = {1},
     },
     [60] = {0},
+    // The Serpent in Gaia Rock, one row for each beam of sunlight let into its
+    // lair from none to four; then Avimander in Champa and Poseidon at the Sea
+    // of Time.
     [61] = {
         .memberIds = {ENEMY_ROW(ENEMY_SERPENT)},
         .minimumCounts = {1},
@@ -317,6 +329,8 @@ struct Formation gFormations[] = {
         .maximumCounts = {1},
     },
     [68] = {0},
+    // Moapa and his two Knights at the Trial Road's peak, one row for each
+    // stage door the party reached first.
     [69] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_MOAPA), ENEMY_ROW(ENEMY_KNIGHT), ENEMY_ROW(ENEMY_KNIGHT)},
@@ -347,6 +361,7 @@ struct Formation gFormations[] = {
         .minimumCounts = {1, 1, 1},
         .maximumCounts = {1, 1, 1},
     },
+    // Karst and Agatio on Jupiter Lighthouse's aerie.
     [FORMATION_KARST_AND_AGATIO_A] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_KARST), ENEMY_ROW(ENEMY_AGATIO)},
@@ -365,6 +380,8 @@ struct Formation gFormations[] = {
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
+    // The two Flame Dragons in Mars Lighthouse, then the Doom Dragon's three
+    // forms on its aerie.
     [77] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_FLAME_DRAGON_KARST), ENEMY_ROW(ENEMY_FLAME_DRAGON_AGATIO)},
@@ -389,6 +406,11 @@ struct Formation gFormations[] = {
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
+    // One enemy class a row, most of them alone (the Star Magician with his
+    // four balls). No encounter zone holds these: only a Battle Arena monster
+    // battle, which may choose any formation
+    // (BattleFormation_SelectLevelMatchedCandidate), and the debug battle menu
+    // fight them.
     [81] = {
         .memberIds = {ENEMY_ROW(ENEMY_RUFFIAN)},
         .minimumCounts = {1},
@@ -1185,6 +1207,12 @@ struct Formation gFormations[] = {
     },
     [239] = {0},
     [240] = {0},
+    // From here to 628, a place's random battles in a run of up to eight, the
+    // encounter zones its scenes take choosing among them with weights of their
+    // own.
+    //
+    // The World Map's encounter region 1, on foot; the Psynergy test room's
+    // battles take its first.
     [241] = {
         .memberIds = {ENEMY_ROW(ENEMY_GIANT_BAT)},
         .minimumCounts = {1},
@@ -1227,6 +1255,7 @@ struct Formation gFormations[] = {
     },
     [249] = {0},
     [250] = {0},
+    // The Kandorean Temple.
     [251] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_WOLF)},
         .minimumCounts = {1},
@@ -1269,6 +1298,7 @@ struct Formation gFormations[] = {
     },
     [259] = {0},
     [260] = {0},
+    // The Shrine of the Sea God.
     [261] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_WOLF)},
         .minimumCounts = {1},
@@ -1311,6 +1341,8 @@ struct Formation gFormations[] = {
     },
     [269] = {0},
     [270] = {0},
+    // The Dehkan Plateau. Its zones take 274 again in their last slot, so none
+    // holds 278.
     [271] = {
         .memberIds = {ENEMY_ROW(ENEMY_ANGLE_WORM)},
         .minimumCounts = {1},
@@ -1353,6 +1385,7 @@ struct Formation gFormations[] = {
     },
     [279] = {0},
     [280] = {0},
+    // The World Map's encounter region 11, on foot.
     [281] = {
         .memberIds = {ENEMY_ROW(ENEMY_RAT_SOLDIER), ENEMY_ROW(ENEMY_ANGLE_WORM)},
         .minimumCounts = {1},
@@ -1395,6 +1428,7 @@ struct Formation gFormations[] = {
     },
     [289] = {0},
     [290] = {0},
+    // The Madra Catacombs.
     [291] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINI_GOBLIN), ENEMY_ROW(ENEMY_DRONE_BEE)},
         .minimumCounts = {1},
@@ -1429,6 +1463,8 @@ struct Formation gFormations[] = {
     [298] = {0},
     [299] = {0},
     [300] = {0},
+    // The World Map's encounter regions 2 and 12 (the desert round Air's Rock),
+    // on foot.
     [301] = {
         .memberIds = {ENEMY_ROW(ENEMY_MOMONGA)},
         .minimumCounts = {1},
@@ -1471,6 +1507,7 @@ struct Formation gFormations[] = {
     },
     [309] = {0},
     [310] = {0},
+    // The Yampi Desert.
     [311] = {
         .memberIds = {ENEMY_ROW(ENEMY_KOBOLD), ENEMY_ROW(ENEMY_MOMONGA)},
         .minimumCounts = {1},
@@ -1513,6 +1550,7 @@ struct Formation gFormations[] = {
     },
     [319] = {0},
     [320] = {0},
+    // Air's Rock outside, then inside.
     [321] = {
         .memberIds = {ENEMY_ROW(ENEMY_KOBOLD), ENEMY_ROW(ENEMY_DINO)},
         .minimumCounts = {1},
@@ -1593,6 +1631,7 @@ struct Formation gFormations[] = {
     },
     [339] = {0},
     [340] = {0},
+    // The Gondowan Cliffs.
     [341] = {
         .memberIds = {ENEMY_ROW(ENEMY_FLASH_ANT)},
         .minimumCounts = {1},
@@ -1635,6 +1674,8 @@ struct Formation gFormations[] = {
     },
     [349] = {0},
     [350] = {0},
+    // The World Map's encounter regions 3 and 18 (the ground darkened until the
+    // Gabomba ceremony ends), on foot.
     [351] = {
         .memberIds = {ENEMY_ROW(ENEMY_FLASH_ANT)},
         .minimumCounts = {1},
@@ -1677,6 +1718,7 @@ struct Formation gFormations[] = {
     },
     [359] = {0},
     [360] = {0},
+    // The Kibombo Mountains.
     [361] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_GORILLA), ENEMY_ROW(ENEMY_DIRGE)},
         .minimumCounts = {1},
@@ -1719,6 +1761,7 @@ struct Formation gFormations[] = {
     },
     [369] = {0},
     [370] = {0},
+    // The Gabomba Statue.
     [371] = {
         .memberIds = {ENEMY_ROW(ENEMY_BONE_FIGHTER)},
         .minimumCounts = {1},
@@ -1761,6 +1804,7 @@ struct Formation gFormations[] = {
     },
     [379] = {0},
     [380] = {0},
+    // One to four Conch Shells in the Lemurian Ship's cabins.
     [381] = {
         .memberIds = {ENEMY_ROW(ENEMY_CONCH_SHELL)},
         .minimumCounts = {1},
@@ -1787,6 +1831,7 @@ struct Formation gFormations[] = {
     [388] = {0},
     [389] = {0},
     [390] = {0},
+    // The World Map's encounter regions 7 and 9, aboard the ship.
     [391] = {
         .memberIds = {ENEMY_ROW(ENEMY_URCHIN_BEAST)},
         .minimumCounts = {1},
@@ -1829,6 +1874,8 @@ struct Formation gFormations[] = {
     },
     [399] = {0},
     [400] = {0},
+    // The World Map's encounter region 4, on foot (its snowfield takes Tundaria
+    // Tower's).
     [401] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_VERMIN), ENEMY_ROW(ENEMY_DIRE_WOLF)},
         .minimumCounts = {1},
@@ -1871,6 +1918,7 @@ struct Formation gFormations[] = {
     },
     [409] = {0},
     [410] = {0},
+    // Taopo Swamp.
     [411] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_VERMIN), ENEMY_ROW(ENEMY_DEATH_CAP)},
         .minimumCounts = {1, 1},
@@ -1913,6 +1961,7 @@ struct Formation gFormations[] = {
     },
     [419] = {0},
     [420] = {0},
+    // The Apojii Islands Cave and Aqua Rock.
     [421] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAN_O_WAR), ENEMY_ROW(ENEMY_FAERY)},
         .minimumCounts = {1},
@@ -1955,6 +2004,7 @@ struct Formation gFormations[] = {
     },
     [429] = {0},
     [430] = {0},
+    // Gaia Rock.
     [431] = {
         .memberIds = {ENEMY_ROW(ENEMY_FIRE_WORM)},
         .minimumCounts = {1},
@@ -1997,6 +2047,7 @@ struct Formation gFormations[] = {
     },
     [439] = {0},
     [440] = {0},
+    // The Ankohl Ruins.
     [441] = {
         .memberIds = {ENEMY_ROW(ENEMY_SQUIRRELFANG)},
         .minimumCounts = {1},
@@ -2039,6 +2090,7 @@ struct Formation gFormations[] = {
     },
     [449] = {0},
     [450] = {0},
+    // Tundaria Tower, and the snowfield of the World Map's encounter region 4.
     [451] = {
         .memberIds = {ENEMY_ROW(ENEMY_SQUIRRELFANG)},
         .minimumCounts = {1},
@@ -2081,6 +2133,7 @@ struct Formation gFormations[] = {
     },
     [459] = {0},
     [460] = {0},
+    // The World Map's encounter region 8, aboard the ship.
     [461] = {
         .memberIds = {ENEMY_ROW(ENEMY_SPIRAL_SHELL)},
         .minimumCounts = {2},
@@ -2123,6 +2176,8 @@ struct Formation gFormations[] = {
     },
     [469] = {0},
     [470] = {0},
+    // The World Map's encounter regions 5, 15 (the sandy shore north of Shaman
+    // Village) and 16 (the snow round Prox), on foot.
     [471] = {
         .memberIds = {ENEMY_ROW(ENEMY_PTERANODON)},
         .minimumCounts = {1},
@@ -2165,6 +2220,7 @@ struct Formation gFormations[] = {
     },
     [479] = {0},
     [480] = {0},
+    // Jupiter Lighthouse.
     [481] = {
         .memberIds = {ENEMY_ROW(ENEMY_DEVIL_SCORPION)},
         .minimumCounts = {1},
@@ -2207,6 +2263,7 @@ struct Formation gFormations[] = {
     },
     [489] = {0},
     [490] = {0},
+    // Magma Rock, outside and in.
     [491] = {
         .memberIds = {ENEMY_ROW(ENEMY_RAGING_ROCK)},
         .minimumCounts = {1},
@@ -2249,6 +2306,8 @@ struct Formation gFormations[] = {
     },
     [499] = {0},
     [500] = {0},
+    // Mars Lighthouse. Two encounter zones that no rule or scene names take 495
+    // to 498 and 501 to 504 as well.
     [501] = {
         .memberIds = {ENEMY_ROW(ENEMY_DOODLE_BUG)},
         .minimumCounts = {1},
@@ -2291,6 +2350,7 @@ struct Formation gFormations[] = {
     },
     [509] = {0},
     [510] = {0},
+    // The Alhafran Cave.
     [511] = {
         .memberIds = {ENEMY_ROW(ENEMY_OOZE)},
         .minimumCounts = {1},
@@ -2333,6 +2393,7 @@ struct Formation gFormations[] = {
     },
     [519] = {0},
     [520] = {0},
+    // The Gabomba Catacombs.
     [521] = {
         .memberIds = {ENEMY_ROW(ENEMY_DOOMSAYER), ENEMY_ROW(ENEMY_BONE_FIGHTER)},
         .minimumCounts = {1},
@@ -2375,6 +2436,7 @@ struct Formation gFormations[] = {
     },
     [529] = {0},
     [530] = {0},
+    // The Izumo Ruins.
     [531] = {
         .memberIds = {ENEMY_ROW(ENEMY_FIRE_WORM)},
         .minimumCounts = {1},
@@ -2417,6 +2479,7 @@ struct Formation gFormations[] = {
     },
     [539] = {0},
     [540] = {0},
+    // The Islet Cave's halls.
     [541] = {
         .memberIds = {ENEMY_ROW(ENEMY_HARRIDAN)},
         .minimumCounts = {1},
@@ -2459,6 +2522,7 @@ struct Formation gFormations[] = {
     },
     [549] = {0},
     [550] = {0},
+    // Treasure Isle, short of the rock that Lift raises.
     [551] = {
         .memberIds = {ENEMY_ROW(ENEMY_HARRIDAN)},
         .minimumCounts = {1},
@@ -2501,6 +2565,7 @@ struct Formation gFormations[] = {
     },
     [559] = {0},
     [560] = {0},
+    // The Shaman Village Cave.
     [561] = {
         .memberIds = {ENEMY_ROW(ENEMY_TALON_RUNNER)},
         .minimumCounts = {1},
@@ -2543,6 +2608,7 @@ struct Formation gFormations[] = {
     },
     [569] = {0},
     [570] = {0},
+    // The Trial Road.
     [571] = {
         .memberIds = {ENEMY_ROW(ENEMY_PTERANODON)},
         .minimumCounts = {1},
@@ -2585,6 +2651,7 @@ struct Formation gFormations[] = {
     },
     [579] = {0},
     [580] = {0},
+    // The Northern Reaches.
     [581] = {
         .memberIds = {ENEMY_ROW(ENEMY_SPIRAL_SHELL)},
         .minimumCounts = {4},
@@ -2627,6 +2694,7 @@ struct Formation gFormations[] = {
     },
     [589] = {0},
     [590] = {0},
+    // Treasure Isle past the rock that Lift raises, the scene where Gale waits.
     [591] = {
         .memberIds = {ENEMY_ROW(ENEMY_SEA_HEDGEHOG)},
         .minimumCounts = {1},
@@ -2669,6 +2737,7 @@ struct Formation gFormations[] = {
     },
     [599] = {0},
     [600] = {0},
+    // The Yampi Desert Cave.
     [601] = {
         .memberIds = {ENEMY_ROW(ENEMY_SAND_SCORPION)},
         .minimumCounts = {1},
@@ -2711,6 +2780,7 @@ struct Formation gFormations[] = {
     },
     [609] = {0},
     [610] = {0},
+    // The Islet Cave's corridors.
     [611] = {
         .memberIds = {ENEMY_ROW(ENEMY_CHIMERA_WORM)},
         .minimumCounts = {1},
@@ -2753,6 +2823,7 @@ struct Formation gFormations[] = {
     },
     [619] = {0},
     [620] = {0},
+    // The Anemos Inner Sanctum.
     [621] = {
         .memberIds = {ENEMY_ROW(ENEMY_GRAVE_WIGHT)},
         .minimumCounts = {1},
@@ -2795,6 +2866,10 @@ struct Formation gFormations[] = {
     },
     [629] = {0},
     [630] = {0},
+    // The guardians of four hidden places (HiddenBoss): the Star Magician at
+    // the end of Treasure Isle, Valukar in the Yampi Desert Cave, the Sentinel
+    // at the end of the Islet Cave and the Dullahan, the shadow at the Anemos
+    // Inner Sanctum's entrance.
     [631] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_STAR_MAGICIAN), ENEMY_ROW(ENEMY_REFRESH_BALL), ENEMY_ROW(ENEMY_GUARDIAN_BALL), ENEMY_ROW(ENEMY_THUNDER_BALL), ENEMY_ROW(ENEMY_ANGER_BALL)},
@@ -2819,6 +2894,9 @@ struct Formation gFormations[] = {
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
+    // Event battles: Navampa, Azart and Satrage in the Shaman Village Cave, the
+    // World Map's bandits, the Wild Wolf of Echo's Djinn lesson on the World
+    // Map, and Karst and Agatio against Isaac's party in Jupiter Lighthouse.
     [635] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_NAVAMPA_SHAMAN_VILLAGE_CAVE), ENEMY_ROW(ENEMY_AZART_SHAMAN_VILLAGE_CAVE), ENEMY_ROW(ENEMY_SATRAGE_SHAMAN_VILLAGE_CAVE)},
@@ -2844,6 +2922,7 @@ struct Formation gFormations[] = {
     },
     [639] = {0},
     [640] = {0},
+    // The hidden Mad Plants, in FLAG_MAD_PLANT's order.
     [641] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_PLANT_GABOMBA_CATACOMBS)},
         .minimumCounts = {1},
@@ -2874,6 +2953,7 @@ struct Formation gFormations[] = {
     [648] = {0},
     [649] = {0},
     [650] = {0},
+    // The Mimics, by the place each waits in.
     [651] = {
         .memberIds = {ENEMY_ROW(ENEMY_MIMIC_KANDOREAN_TEMPLE)},
         .minimumCounts = {1},

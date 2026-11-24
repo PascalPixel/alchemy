@@ -128,7 +128,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
     Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(0, 2), colour);
   }
   if ((u16)secondIndex != 0) {
-    glyph = (const u8 *)&gFont_Glyphs[-TEXT_SPACE] + ((u16)secondIndex << 5);
+    glyph = (const u8 *)(&gFont_Glyphs[-TEXT_SPACE] + (u16)secondIndex);
     secondWidth = *(const u16 *)glyph;
     glyph += 2;
     if (state->outline == TEXT_STYLE_OUTLINED) {

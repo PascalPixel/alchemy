@@ -262,14 +262,6 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 
-/// The value of type at byte off of base.
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 /// Mold, just dug out of the snow pile at the head of the frozen river,
 /// joins the party: "Felix found the Venus Djinni Mold!" It runs as soon as
 /// `Prox_ScoopUpMold` has set it off, while the lighthouse is still unlit.
@@ -287,8 +279,6 @@ void Prox_MercuryDjinniJoins(void) {
 }
 
 #include "shared/position_distance.h"
-
-#undef FIELD_AT
 
 extern struct ActorPlacement gProx_SouthGateFarewellPlacements[];
 extern struct ActorPlacement gProx_TownPlacements[];
@@ -446,16 +436,15 @@ s32 Prox_ChaseTarget(struct Actor *actor, struct Actor *target, s32 range,
   return result;
 }
 
-#if TLA_PATCH_1
-
 /// The children's game of chase after the ending: each runs at the child it
-/// chases, and stops when the leader comes up close (from patch 1).
+/// chases, and from patch 1 stops when the leader comes up close.
 s32 Prox_PlayChase(struct Actor *actor) {
   struct WindowState *window = (struct WindowState *)Ram_HeapSlots->windowState;
   struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 flag = 0;
   struct Actor *target;
 
+#if TLA_PATCH_1
   target = Actor_Get(gMainRoutineState.leaderActorId);
   if (Position_Distance(&target->x.fixed, &actor->x.fixed) <=
       CHASE_STOP_RANGE) {
@@ -463,45 +452,21 @@ s32 Prox_PlayChase(struct Actor *actor) {
     Actor_SelectAnimation(actor, ANIM_WALK);
     return 0;
   }
-  if (actor->timer == 0)
-    target = Actor_Get(ACTOR_TRAINING_CHILD);
-  else if (actor->timer == 1)
-    target = Actor_Get(ACTOR_PLAYING_CHILD);
-  else
-    target = Actor_Get(ACTOR_CHILD_WHO_MISSES_RUNNING);
-  if (Prox_ChaseTarget(actor, target, CHASE_CHILD_RANGE, 0) == 0) {
-    target = Actor_Get(gMainRoutineState.leaderActorId);
-    if ((state->talk != 0 || window->mindRead != 0) && (actor->timer & 2))
-      flag = 1;
-    Prox_ChaseTarget(actor, target, CHASE_LEADER_RANGE, flag);
-  }
-  return 0;
-}
-
-#else
-
-s32 Prox_PlayChase(struct Actor *actor) {
-  struct WindowState *window = (struct WindowState *)Ram_HeapSlots->windowState;
-  struct FieldState *state = Ram_HeapSlots->fieldState;
-  s32 flag = 0;
-  struct Actor *target;
-
-  if (actor->timer == 0)
-    target = Actor_Get(ACTOR_TRAINING_CHILD);
-  else if (actor->timer == 1)
-    target = Actor_Get(ACTOR_PLAYING_CHILD);
-  else
-    target = Actor_Get(ACTOR_CHILD_WHO_MISSES_RUNNING);
-  if (Prox_ChaseTarget(actor, target, CHASE_CHILD_RANGE, 0) == 0) {
-    target = Actor_Get(gMainRoutineState.leaderActorId);
-    if ((state->talk != 0 || window->mindRead != 0) && (actor->timer & 2))
-      flag = 1;
-    Prox_ChaseTarget(actor, target, CHASE_LEADER_RANGE, flag);
-  }
-  return 0;
-}
-
 #endif
+  if (actor->timer == 0)
+    target = Actor_Get(ACTOR_TRAINING_CHILD);
+  else if (actor->timer == 1)
+    target = Actor_Get(ACTOR_PLAYING_CHILD);
+  else
+    target = Actor_Get(ACTOR_CHILD_WHO_MISSES_RUNNING);
+  if (Prox_ChaseTarget(actor, target, CHASE_CHILD_RANGE, 0) == 0) {
+    target = Actor_Get(gMainRoutineState.leaderActorId);
+    if ((state->talk != 0 || window->mindRead != 0) && (actor->timer & 2))
+      flag = 1;
+    Prox_ChaseTarget(actor, target, CHASE_LEADER_RANGE, flag);
+  }
+  return 0;
+}
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -549,13 +514,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gProx_CavesPlacements;
   return gProx_SouthGatePlacements;
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 /// Felix casts Scoop on the hidden spot just east of the igloo, past its
 /// fence among the snowy rocks, cell (40, 21), and digs up Dark Matter:
@@ -1447,39 +1405,32 @@ void Prox_ComeDownStairs(s32 westOrSouth) {
   Event_Start();
   FieldEvent_EndLastingPsynergy(0);
   if (westOrSouth != 0) {
+    // Without his shadow on the stairs, until he is down.
     Actor_SetSpriteFlags(Actor_Get(gMainRoutineState.leaderActorId), 0);
-    FieldActor_SetPositionAndResetMotion(actor, (actor->x.fixed + -toFIXED(1)),
+    FieldActor_SetPositionAndResetMotion(actor, actor->x.fixed - toFIXED(1),
                                          actor->y.fixed,
-                                         (actor->z.fixed + -toFIXED(6)));
+                                         actor->z.fixed - toFIXED(6));
     System_Wait(1);
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId,
                               ANIM_LEADER_ARRIVE_ALTERNATE);
   } else {
-    FieldActor_SetPositionAndResetMotion(actor, (actor->x.fixed + toFIXED(1)),
+    FieldActor_SetPositionAndResetMotion(actor, actor->x.fixed + toFIXED(1),
                                          actor->y.fixed,
-                                         (actor->z.fixed + -toFIXED(6)));
+                                         actor->z.fixed - toFIXED(6));
     System_Wait(1);
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId,
                               ANIM_LEADER_ARRIVE);
   }
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineState.leaderActorId), 1);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineState.leaderActorId),
+                       SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
   Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 0, 8);
   FieldActor_WaitForMoveById(gMainRoutineState.leaderActorId);
   Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
   Prox_EndEvent();
 }
-#undef FIELD_AT
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void FieldCamera_WaitForArrival(void);
 s32 Prox_EndEvent();
 
@@ -2496,8 +2447,6 @@ extern s16 gSlideOnIce_SteerAngles[];
 #include "shared/actor_steer_by_pad.h"
 
 #include "shared/leader_stop_if_pending.h"
-#undef FIELD_AT
-
 /// A point on the map: 16.16 fixed-point pixels.
 struct Position {
   FIXED x;
@@ -2515,13 +2464,6 @@ s32 Actor_HasArrived(struct Actor *actor);
 
 #include "shared/slide_on_ice_from_edge.c"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 /// Stops the leader's slide on the ice where it is (nonzero), or lets it run.
 void Leader_SetSlideStopped(s32 stopped) { gSlideOnIce_Stopped = stopped; }
 
@@ -2537,8 +2479,6 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
 #include "shared/rock_spawn.h"
-#undef FIELD_AT
-
 /// The overlay's call to EffectSprite_Init: one rock's sprite, its size,
 /// pivot and attributes.
 void Prox_InitRockSprite(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
@@ -3253,4 +3193,3 @@ s32 gProx_GaretRunsAhead[] = {
     SC_END,
 };
 // clang-format on
-#undef FIELD_AT

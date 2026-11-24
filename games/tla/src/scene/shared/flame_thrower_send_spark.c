@@ -3,7 +3,7 @@
 /// more, spinning, blended over the room (FlameThrower_UpdateSpark). Unlike the
 /// flames it never keeps its picture out of sight.
 void FlameThrower_SendSpark(s32 *position, s32 speed, s32 offScreen) {
-  struct Actor *actor = Import_ActorCreate_(
+  struct Actor *actor = FieldActor_Create(
       SPRITE_DUST_CLOUD, position[0], position[1], position[2] - toFIXED(2));
   s32 spin;
 

@@ -1,12 +1,13 @@
-/// Every sixteenth frame a splash ring (SPRITE_SPLASH_RING's animation 2)
-/// starts 7.5 pixels down at the actor and rises a quarter of a pixel a frame
-/// for 31 frames (gWaterDropScript).
+/// Ripples on the water over an actor, as over Aqua Rock's way inside once its
+/// Water Stone is doused: every sixteenth frame a blue ring
+/// (SPRITE_SPLASH_RING's animation 2) widens from 7.5 pixels under it, rising
+/// a quarter of a pixel a frame for 31 frames (gWaterDropScript).
 void Actor_EmitWaterDrop(struct Actor *actor) {
   s32 phase = gFrameCount & 15;
 
   if (phase == 0) {
-    struct Actor *child = Import_ActorCreate_(
-        SPRITE_SPLASH_RING, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+    struct Actor *child = FieldActor_Create(SPRITE_SPLASH_RING, actor->x.fixed,
+                                            actor->y.fixed, actor->z.fixed);
 
     if (child != 0) {
       struct FieldSprite *sprite = child->sprite;

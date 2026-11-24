@@ -67,9 +67,9 @@
 #include "../field/actor_set_sprite_priority.c"
 
 /// The people and things at the foot of Trial Road, numbering the rows of
-/// gShamanVillageTrialGroundsActorPlacements; Moapa, his Knights and Kraden
+/// gShamanVillage_TrialGroundsPlacements; Moapa, his Knights and Kraden
 /// keep the same rows in the village's table
-/// (gShamanVillageVillageActorPlacements).
+/// (gShamanVillage_VillagePlacements).
 enum ShamanVillageTrialActorId {
   /// The six torches about the start of Trial Road (SPRITE_TORCH).
   ACTOR_FIRST_TORCH = ACTOR_FIRST_PLACED,
@@ -85,7 +85,7 @@ enum ShamanVillageTrialActorId {
   ACTOR_KRADEN
 };
 
-/// Moapa at home, the fourth row of gShamanVillageHousesActorPlacements (the
+/// Moapa at home, the fourth row of gShamanVillage_HousesPlacements (the
 /// village's houses and inn), with the inn's counter and its innkeeper after.
 enum ShamanVillageHousesActorId {
   ACTOR_MOAPA_AT_HOME = ACTOR_FIRST_PLACED + 3,
@@ -193,6 +193,14 @@ enum ShamanVillageCell {
   /// (13, 24) and (17, 28) in the village, (37, 14) in the north-east.
   CLOSED_TENT_CELL = 22
 };
+
+/// The leader lying on his back (pictures 51 and 52 of his sprite sheet):
+/// eyes shut, then open.
+enum { ANIM_LEADER_LIE_ASLEEP = 41, ANIM_LEADER_LIE_AWAKE };
+
+/// The looks BattleEffect_SetObjectUpdateMode gives a caster: none, and the
+/// cycling colours Sheba takes as she gathers power.
+enum { CASTER_LOOK_NONE = 0, CASTER_LOOK_CYCLING_COLORS = 2 };
 
 #include "../field/field_effect_move.c"
 
@@ -312,7 +320,7 @@ void ShamanVillage_SetUpNorthEnd(void);
 void ShamanVillage_SetUpVillage(void);
 void ShamanVillage_SetUpHouses(void);
 void ShamanVillage_SetUpSanctum(void);
-void Party_RestoreHpPp(s32 mode);
+void Party_RestoreHpPp(s32 cureConditions);
 void ShamanVillage_TalkToEastKnight(void);
 void ShamanVillage_TellOutsidersToLeave(void);
 void ShamanVillage_WarnOfMoapasPower(void);
@@ -362,8 +370,8 @@ void ShamanVillage_CountDownToStart(void);
 extern s32 gLeader_WalkThroughDoorScript[];
 extern s32 gShamanVillage_HopFortuneTellerScript[];
 extern struct SceneEntrance gSceneEntrances[];
-extern struct SceneEntrance gShamanVillageTentsEntrances[];
-extern struct SceneEntrance gShamanVillageSanctumEntrances[];
+extern struct SceneEntrance gShamanVillage_TentsEntrances[];
+extern struct SceneEntrance gShamanVillage_SanctumEntrances[];
 
 /// Felix talks to Aroma, the Jupiter Djinni on the ledge east of the
 /// fortune-teller's tent, and it joins the party: "Felix found the Jupiter
@@ -377,9 +385,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_SHAMAN_VILLAGE_TENTS)
-    return gShamanVillageTentsEntrances;
+    return gShamanVillage_TentsEntrances;
   if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
-    return gShamanVillageSanctumEntrances;
+    return gShamanVillage_SanctumEntrances;
   return gSceneEntrances;
 }
 
@@ -388,33 +396,33 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gShamanVillage_Placements[];
-extern struct ActorPlacement gShamanVillageTrialGroundsActorPlacements[];
-extern struct ActorPlacement gShamanVillageNorthEndActorPlacements[];
+extern struct ActorPlacement gShamanVillage_TrialGroundsPlacements[];
+extern struct ActorPlacement gShamanVillage_NorthEndPlacements[];
 
-extern struct ActorPlacement gShamanVillageVillageActorPlacements[];
-extern struct ActorPlacement gShamanVillageHousesActorPlacements[];
-extern struct ActorPlacement gShamanVillageTentsActorPlacements[];
-extern struct ActorPlacement gShamanVillageSanctumActorPlacements[];
+extern struct ActorPlacement gShamanVillage_VillagePlacements[];
+extern struct ActorPlacement gShamanVillage_HousesPlacements[];
+extern struct ActorPlacement gShamanVillage_TentsPlacements[];
+extern struct ActorPlacement gShamanVillage_SanctumPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_SHAMAN_VILLAGE_TRIAL_GROUNDS)
-    return gShamanVillageTrialGroundsActorPlacements;
+    return gShamanVillage_TrialGroundsPlacements;
   if (scene == SCENE_SHAMAN_VILLAGE_NORTH_END)
-    return gShamanVillageNorthEndActorPlacements;
+    return gShamanVillage_NorthEndPlacements;
   if (scene == SCENE_SHAMAN_VILLAGE) {
     if (Event_GetFlag(FLAG_MOAPA_BEATEN))
-      gShamanVillageVillageActorPlacements[0].talkFacing =
+      gShamanVillage_VillagePlacements[0].talkFacing =
           TALK_FACING_PARTY_AND_BACK;
-    return gShamanVillageVillageActorPlacements;
+    return gShamanVillage_VillagePlacements;
   }
   if (scene == SCENE_SHAMAN_VILLAGE_HOUSES)
-    return gShamanVillageHousesActorPlacements;
+    return gShamanVillage_HousesPlacements;
   if (scene == SCENE_SHAMAN_VILLAGE_TENTS)
-    return gShamanVillageTentsActorPlacements;
+    return gShamanVillage_TentsPlacements;
   if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
-    return gShamanVillageSanctumActorPlacements;
+    return gShamanVillage_SanctumPlacements;
   return gShamanVillage_Placements;
 }
 
@@ -722,28 +730,28 @@ void ShamanVillage_BlowAwaySand(void) {
 }
 
 extern struct Trigger gShamanVillage_Triggers[];
-extern struct Trigger gShamanVillageTrialGroundsTriggers[];
-extern struct Trigger gShamanVillageNorthEndTriggers[];
-extern struct Trigger gShamanVillageVillageTriggers[];
-extern struct Trigger gShamanVillageHousesTriggers[];
-extern struct Trigger gShamanVillageTentsTriggers[];
-extern struct Trigger gShamanVillageSanctumTriggers[];
+extern struct Trigger gShamanVillage_TrialGroundsTriggers[];
+extern struct Trigger gShamanVillage_NorthEndTriggers[];
+extern struct Trigger gShamanVillage_VillageTriggers[];
+extern struct Trigger gShamanVillage_HousesTriggers[];
+extern struct Trigger gShamanVillage_TentsTriggers[];
+extern struct Trigger gShamanVillage_SanctumTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_SHAMAN_VILLAGE_TRIAL_GROUNDS)
-    return gShamanVillageTrialGroundsTriggers;
+    return gShamanVillage_TrialGroundsTriggers;
   if (scene == SCENE_SHAMAN_VILLAGE_NORTH_END)
-    return gShamanVillageNorthEndTriggers;
+    return gShamanVillage_NorthEndTriggers;
   if (scene == SCENE_SHAMAN_VILLAGE)
-    return gShamanVillageVillageTriggers;
+    return gShamanVillage_VillageTriggers;
   if (scene == SCENE_SHAMAN_VILLAGE_HOUSES)
-    return gShamanVillageHousesTriggers;
+    return gShamanVillage_HousesTriggers;
   if (scene == SCENE_SHAMAN_VILLAGE_TENTS)
-    return gShamanVillageTentsTriggers;
+    return gShamanVillage_TentsTriggers;
   if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
-    return gShamanVillageSanctumTriggers;
+    return gShamanVillage_SanctumTriggers;
   return gShamanVillage_Triggers;
 }
 
@@ -2569,11 +2577,10 @@ void ShamanVillage_CastWhirlwindOnSand(void) {
   Actor_SetSpritePriority(ACTOR_SHEBA, 1);
   Event_PlaySound(SE_PSYNERGY_SPARKLE);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_SHEBA)),
-                                   2);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_SHEBA),
+                                   CASTER_LOOK_CYCLING_COLORS);
   Event_Wait(40);
-  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_SHEBA)),
-                                   0);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_SHEBA), CASTER_LOOK_NONE);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   ShamanVillage_BlowAwaySand();
@@ -2881,14 +2888,15 @@ void ShamanVillage_SetUpNorthEnd(void) {
 
 #include "shared/smoke_drift.h"
 
-/// Puffs a blended cloud of smoke at x, y, z, half its size, that
-/// Smoke_Drift moves for SMOKE_FRAMES.
+/// Puffs a see-through white cloud of chimney smoke at x, y, z, half its size,
+/// as Smoke_Spawn does but drawn under the actors around it; Smoke_Drift moves
+/// it for SMOKE_FRAMES.
 void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
   struct Actor *actor =
       ((struct Actor *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
 
   if (actor != NULL) {
-    actor->retainSpriteCache = 2;
+    actor->retainSpriteCache = 2; // its picture stays composed off screen
     actor->motionFlags = 0;
     actor->timer = 0;
     actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2898,10 +2906,11 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
     Actor_SetSpriteFlags(actor, 0);
     actor->scaleX = FIXED_ONE / 2;
     actor->scaleY = FIXED_ONE / 2;
+    // Its frames left, which Smoke_Drift counts down.
     *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
     actor->update = Smoke_Drift;
     Import_ActorSelectAnimation(actor, 5);
-    Actor_SetBlendMode(actor, 1);
+    Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
   }
 }
 
@@ -2991,10 +3000,10 @@ void ShamanVillage_SetUpHouses(void) {
        gMainRoutineState.entrance ==
            SHAMAN_VILLAGE_HOUSES_FROM_TRIAL_ROAD_SUMMIT_EAST_B) &&
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    Party_RestoreHpPp(1);
+    Party_RestoreHpPp(TRUE); // poison and haunting cured too
     Event_Start();
     Event_EndLastingPsynergy(0);
-    Actor_SetAnimation(gMainRoutineState.leaderActorId, 41);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_LIE_ASLEEP);
     Actor_SetSpriteFlags(
         ((struct Actor *)Actor_GetById(gMainRoutineState.leaderActorId)), 0);
     wait(1);
@@ -3006,7 +3015,7 @@ void ShamanVillage_SetUpHouses(void) {
       if (gInput.held != 0)
         break;
     }
-    Actor_SetAnimation(gMainRoutineState.leaderActorId, 42);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_LIE_AWAKE);
     Event_Wait(10);
     for (i = 0; i < 30; i++) {
       wait(1);
@@ -3421,14 +3430,14 @@ s16 gShamanVillage_LetteringWinScript[] ALIGNED(4) = {
 
 #include "shared/scene_entrances_default.c"
 
-struct SceneEntrance gShamanVillageTentsEntrances[] = {
+struct SceneEntrance gShamanVillage_TentsEntrances[] = {
     {15, CONDITION_ALWAYS, 544, 0, 680, FACING_NORTH, 0, 420, 560, 660, 720, 0},
     {16, CONDITION_ALWAYS, 752, 0, 680, FACING_NORTH, 0, 630, 560, 870, 720, 0},
     {17, CONDITION_ALWAYS, 544, 0, 904, FACING_NORTH, 0, 420, 780, 660, 940, 0},
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gShamanVillageSanctumEntrances[] = {
+struct SceneEntrance gShamanVillage_SanctumEntrances[] = {
     {6, CONDITION_ALWAYS, 720, 0, 544, FACING_NORTH, 0, 600, 380, 840, 600, 0},
     {SCENE_TABLE_END},
 };
@@ -3464,6 +3473,8 @@ u32 gSceneExits[] = {
     SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_NORTHWEST, ShamanVillageHouses, SHAMAN_VILLAGE_HOUSES_FROM_SHAMAN_VILLAGE_NORTHWEST),
     SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_NORTH_END_NORTHEAST, ShamanVillageNorthEnd, SHAMAN_VILLAGE_NORTH_END_FROM_SHAMAN_VILLAGE_NORTHEAST),
     SCENE_EXITS(ShamanVillageHouses),
+    // The houses' own stairs between their floors join exits and entrances 2
+    // and 4, 5 and 9, 7 and 10, and 12 and 14.
     SCENE_EXIT(SHAMAN_VILLAGE_HOUSES_TO_SHAMAN_VILLAGE_NORTHWEST, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_HOUSES_NORTHWEST),
     SCENE_EXIT(2, ShamanVillageHouses, 4),
     SCENE_EXIT(SHAMAN_VILLAGE_HOUSES_TO_SHAMAN_VILLAGE_NORTH, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_HOUSES_NORTH),
@@ -3491,7 +3502,7 @@ struct ActorPlacement gShamanVillage_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShamanVillageTrialGroundsActorPlacements[] = {
+struct ActorPlacement gShamanVillage_TrialGroundsPlacements[] = {
     {SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3509,7 +3520,7 @@ struct ActorPlacement gShamanVillageTrialGroundsActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShamanVillageNorthEndActorPlacements[] = {
+struct ActorPlacement gShamanVillage_NorthEndPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 120, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 120, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 216, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -3524,7 +3535,7 @@ struct ActorPlacement gShamanVillageNorthEndActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShamanVillageVillageActorPlacements[] = {
+struct ActorPlacement gShamanVillage_VillagePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 428, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 248, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 364, 0, 248, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -3545,7 +3556,7 @@ struct ActorPlacement gShamanVillageVillageActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShamanVillageHousesActorPlacements[] = {
+struct ActorPlacement gShamanVillage_HousesPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 90, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 110, 0, 172, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 126, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -3561,7 +3572,7 @@ struct ActorPlacement gShamanVillageHousesActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShamanVillageTentsActorPlacements[] = {
+struct ActorPlacement gShamanVillage_TentsPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 678, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 508, 0, 656, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 542, 0, 628, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
@@ -3571,7 +3582,7 @@ struct ActorPlacement gShamanVillageTentsActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShamanVillageSanctumActorPlacements[] = {
+struct ActorPlacement gShamanVillage_SanctumPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 720, 0, 466, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 746, 0, 516, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 700, 0, 524, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -3583,7 +3594,7 @@ struct Trigger gShamanVillage_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShamanVillageTrialGroundsTriggers[] = {
+struct Trigger gShamanVillage_TrialGroundsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3631,7 +3642,7 @@ struct Trigger gShamanVillageTrialGroundsTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShamanVillageNorthEndTriggers[] = {
+struct Trigger gShamanVillage_NorthEndTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3667,7 +3678,7 @@ struct Trigger gShamanVillageNorthEndTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShamanVillageVillageTriggers[] = {
+struct Trigger gShamanVillage_VillageTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK |
          TRIGGER_FLAG_FACING | FACING_NORTH,
@@ -3795,7 +3806,7 @@ struct Trigger gShamanVillageVillageTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShamanVillageHousesTriggers[] = {
+struct Trigger gShamanVillage_HousesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3882,7 +3893,7 @@ struct Trigger gShamanVillageHousesTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShamanVillageTentsTriggers[] = {
+struct Trigger gShamanVillage_TentsTriggers[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
@@ -3916,7 +3927,7 @@ struct Trigger gShamanVillageTentsTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShamanVillageSanctumTriggers[] = {
+struct Trigger gShamanVillage_SanctumTriggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_TALK, ACTOR_PRIEST, CONDITION_ALWAYS,
      EVENT(ShamanVillage_TalkToPriest)},

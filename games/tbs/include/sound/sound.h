@@ -76,7 +76,7 @@ void SoundMainBTM(void *block);
 /// (SoundInfo.cgbNotes).
 extern struct CgbChannel gCgbChans[4];
 
-/// The music player table (sound/music_players.list.tsv) supplies the music
+/// The music player table (sound/music_player_table.s) supplies the music
 /// player count and the mixer's line limit as the addresses of these symbols.
 extern char gNumMusicPlayers[];
 extern char gMaxLines[];

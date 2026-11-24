@@ -1,0 +1,224 @@
+@ Every scene (struct Scene), in the order that numbers them: a named row gives
+@ SceneId_NAME its number, which C reads at link time (scene_ids.h). Each row is
+@ the resource of the overlay the scene loads, its area, its type (enum
+@ SceneType) and its map, a row of gMaps.
+	.macro scene name, code:req, area:req, kind:req, map:req
+	.ifnb \name
+	.global SceneId_\name
+	.equiv SceneId_\name, (. - gScenes) / 8
+	.endif
+	.2byte \code
+	.byte \area, \kind
+	.2byte \map, 0
+	.endm
+
+@ The World Map's map, as its scene's row names it; the field compares
+@ gMainRoutineState.mapId with it (MAP_INDEX_WORLD).
+	.global MapIndex_World
+	.equiv MapIndex_World, 1
+
+	.section .rodata
+	.balign 4
+	.global gScenes
+gScenes:
+	scene Title, 0x36f, 0, 1, 0
+	scene FileScreen, 0x370, 1, 1, 0
+	scene WorldMap, 0x371, 2, 1, MapIndex_World
+	scene ValePrologue, 0x372, 3, 2, 2
+	scene Vale, 0x373, 3, 2, 3
+	scene ValePlaza, 0x374, 3, 2, 4
+	scene ValeKradensCottage, 0x375, 3, 2, 5
+	scene CottageRoomsA, 0x376, 3, 2, 6
+	scene CottageRoomsB, 0x377, 3, 2, 7
+	scene Sanctum, 0x378, 3, 2, 8
+	scene ValeEruption, 0x379, 3, 2, 9
+	scene SolSanctumLunaSolRooms, 0x37a, 4, 1, 11
+	scene SolSanctumStatue, 0x37b, 4, 1, 12
+	scene SolSanctumPsynergyStone, 0x37c, 4, 1, 13
+	scene SolSanctumMaze, 0x37d, 4, 1, 14
+	scene SolSanctumCorridor, 0x37e, 4, 1, 15
+	scene SolSanctumReliefs, 0x37f, 4, 1, 18
+	scene SolSanctumElementalStarRoom, 0x380, 4, 1, 16
+	scene SolSanctumEruption, 0x381, 4, 1, 17
+	scene SolEntrance, 0x37f, 4, 1, 10
+	scene Vault, 0x382, 5, 2, 19
+	scene LogRoomsA, 0x383, 5, 2, 20
+	scene StoneRooms, 0x384, 5, 2, 21
+	scene VaultRevisit, 0x385, 5, 2, 19
+	scene LogRoomsB, 0x386, 5, 2, 20
+	scene GomaCaveEntrance, 0x387, 6, 1, 22
+	scene GomaCavePond, 0x388, 7, 1, 23
+	scene GomaCavePillar, 0x389, 7, 1, 24
+	scene GomaCaveStream, 0x38a, 7, 1, 25
+	scene GomaCaveBridge, 0x38a, 7, 1, 26
+	scene Bilibin, 0x38b, 8, 2, 33
+	scene CottageRoomsC, 0x38c, 8, 2, 34
+	scene BilibinTreasury, 0x38b, 8, 2, 35
+	scene McCoyPalace, 0x38d, 9, 2, 38
+	scene McCoyPalaceGrounds, 0x38e, 9, 2, 37
+	scene BilibinBarricade, 0x38b, 10, 1, 36
+	scene Kolima, 0x38f, 11, 2, 39
+	scene LogRoomsC, 0x390, 11, 2, 40
+	scene KolimaTunnel, 0x38f, 11, 2, 42
+	scene KolimaBridge, 0x38f, 12, 1, 41
+	scene KolimaForestEntrance, 0x391, 13, 1, 43
+	scene KolimaForestGlade, 0x392, 13, 1, 44
+	scene KolimaForestCliff, 0x393, 13, 1, 45
+	scene KolimaForestFloodgate, 0x394, 13, 1, 46
+	scene KolimaForestTree, 0x395, 13, 1, 47
+	scene TreeRooms, 0x396, 14, 1, 48
+	scene TretTreeBranch, 0x397, 14, 1, 49
+	scene BilibinCaveIce, 0x398, 15, 1, 52
+	scene BilibinCaveRapier, 0x398, 15, 1, 51
+	scene BilibinCaveEntrance, 0x398, 16, 1, 50
+	scene Imil, 0x399, 17, 2, 53
+	scene IceRooms, 0x399, 17, 2, 54
+	scene ImilFallsCave, 0x39a, 18, 1, 55
+	scene MercuryLighthouseEntrance, 0x39b, 19, 1, 56
+	scene MercuryLighthouseLower, 0x39c, 19, 1, 57
+	scene MercuryLighthouseMiddle, 0x39c, 19, 1, 58
+	scene MercuryLighthouseUpper, 0x39c, 19, 1, 59
+	scene MercuryLighthouseExterior, 0x39c, 19, 1, 60
+	scene MercuryLighthouseAerie, 0x39d, 19, 1, 61
+	scene UnusedMercuryLighthouseAerieCopy, 0x39d, 19, 1, 61
+	scene FuchinTempleGrounds, 0x39e, 20, 2, 62
+	scene LacquerRoomsA, 0x39e, 20, 2, 63
+	scene FuchinFallsCaveEntrance, 0x39a, 21, 1, 64
+	scene FuchinFallsCaveZephyr, 0x39a, 21, 1, 65
+	scene FuchinFallsCaveDragonsEye, 0x39a, 21, 1, 66
+	scene FuchinFallsCaveArcticBlade, 0x39a, 21, 1, 67
+	scene FuchinFallsCaveOrbOfForce, 0x39a, 21, 1, 68
+	scene FuchinFallsCaveDragonStatue, 0x39a, 21, 1, 69
+	scene MogallForestSign, 0x39f, 22, 1, 70
+	scene MogallForestQuartz, 0x39f, 22, 1, 71
+	scene MogallForestKillerApe, 0x39f, 22, 1, 72
+	scene MogallForestSidePaths, 0x39f, 22, 1, 73
+	scene Xian, 0x3a0, 23, 2, 74
+	scene LacquerRoomsB, 0x3a1, 23, 2, 75
+	scene AlpineCrossing, 0x3a2, 24, 1, 76
+	scene Altin, 0x3a3, 25, 2, 77
+	scene CottageRoomsD, 0x3a3, 25, 2, 78
+	scene AltinPeakFirstWaterBeast, 0x3a4, 26, 1, 79
+	scene AltinPeakRailTunnel, 0x3a4, 26, 1, 80
+	scene AltinPeakSecondWaterBeast, 0x3a4, 26, 1, 81
+	scene AltinPeakSouthEntrance, 0x3a4, 26, 1, 82
+	scene AltinPeakThirdWaterBeast, 0x3a4, 26, 1, 83
+	scene AltinPeakPool, 0x3a4, 26, 1, 84
+	scene AltinPeakSpritz, 0x3a4, 26, 1, 85
+	scene AltinPeakJunction, 0x3a4, 26, 1, 86
+	scene AltinPeakFallingRocks, 0x3a4, 26, 1, 87
+	scene AltinPeakHydrosStatue, 0x3a4, 26, 1, 88
+	scene AltinPeakWestExit, 0x3a4, 26, 1, 89
+	scene LamaTemple, 0x3a2, 27, 2, 91
+	scene LamakanDesertEast, 0x3a5, 28, 1, 92
+	scene LamakanDesertSmog, 0x3a5, 28, 1, 93
+	scene LamakanDesertManticore, 0x3a5, 28, 1, 94
+	scene LamakanDesertCave, 0x3a5, 28, 1, 90
+	scene ValeCaveMouth, 0x3a6, 29, 1, 30
+	scene ValeCaveKite, 0x3a6, 30, 1, 31
+	scene ValeCaveLogs, 0x3a6, 30, 1, 32
+	scene VaultCavePassage, 0x3a7, 31, 1, 27
+	scene VaultCaveVambrace, 0x3a7, 31, 1, 28
+	scene VaultCaveMouth, 0x3a7, 31, 1, 29
+	scene Kalay, 0x3a8, 32, 2, 95
+	scene StuccoRoomsA, 0x3a9, 32, 2, 96
+	scene KalaySanctum, 0x3a9, 32, 2, 97
+	scene HammetPalaceGrounds, 0x3a8, 33, 2, 98
+	scene HammetPalace, 0x3aa, 33, 2, 99
+	scene Lunpa, 0x3ab, 34, 2, 100
+	scene RockRooms, 0x3ac, 34, 2, 101
+	scene WestLunpaCave, 0x3ad, 35, 1, 102
+	scene KalayDocks, 0x3ae, 36, 2, 103
+	scene CottageRoomsE, 0x3ae, 36, 2, 104
+	scene TolbiShipDeck, 0x3af, 37, 1, 105
+	scene TolbiShipMast, 0x3b0, 37, 1, 106
+	scene ShipRooms, 0x3b1, 37, 1, 107
+	scene TolbiDocks, 0x3ae, 38, 2, 108
+	scene CrossboneIsle, 0x3b2, 39, 1, 109
+	scene CrossboneIsleCaveEntrance, 0x3b2, 39, 1, 121
+	scene CrossboneIsleSteppingStones, 0x3b3, 39, 1, 110
+	scene CrossboneIsleIcePillars, 0x3b3, 39, 1, 111
+	scene CrossboneIsleKeys, 0x3b4, 39, 1, 112
+	scene CrossboneIsleStatues, 0x3b4, 39, 1, 113
+	scene CrossboneIsleFloodgate, 0x3b3, 39, 1, 114
+	scene CrossboneIsleBane, 0x3b4, 39, 1, 115
+	scene CrossboneIsleStackedPillars, 0x3b3, 39, 1, 116
+	scene CrossboneIsleDragonStatue, 0x3b3, 39, 1, 117
+	scene CrossboneIsleFloatingLogs, 0x3b2, 39, 1, 118
+	scene CrossboneIslePier, 0x3b2, 39, 1, 119
+	scene PirateShip, 0x3b2, 39, 1, 120
+	scene CrossboneIsleFirstFloor, 0x3b2, 39, 1, 121
+	scene CrossboneIsleSecondFloor, 0x3b2, 39, 1, 121
+	scene CrossboneIsleThirdFloor, 0x3b2, 39, 1, 121
+	scene CrossboneIsleFourthFloor, 0x3b2, 39, 1, 121
+	scene CrossboneIsleFifthFloor, 0x3b2, 39, 1, 121
+	scene CrossboneIsleSixthFloor, 0x3b2, 39, 1, 121
+	scene CrossboneIsleSeventhFloor, 0x3b2, 39, 1, 121
+	scene CrossboneIsleEighthFloor, 0x3b2, 39, 1, 121
+	scene CrossboneIsleNinthFloor, 0x3b2, 39, 1, 121
+	scene Tolbi, 0x3b5, 40, 2, 122
+	scene StuccoRoomsB, 0x3b6, 40, 2, 123
+	scene StuccoRoomsC, 0x3b7, 40, 2, 124
+	scene BabiPalace, 0x3b8, 41, 2, 126
+	scene BabiPalaceEntrance, 0x3b8, 41, 2, 125
+	scene Colosseum, 0x3b9, 42, 1, 128
+	scene ColosseumTunnel, 0x3b9, 42, 1, 127
+	scene ColosseumEntrance, 0x3b9, 42, 1, 129
+	scene ColosseumAzartMatch, 0x3ba, 42, 1, 130
+	scene ColosseumSatrageMatch, 0x3bb, 42, 1, 131
+	scene ColosseumNavampaMatch, 0x3bc, 42, 1, 132
+	scene AltmillerCaveEntrance, 0x3bd, 43, 1, 133
+	scene AltmillerCaveBabi, 0x3bd, 43, 1, 134
+	scene AltmillerCaveVialChest, 0x3bd, 43, 1, 135
+	scene AltmillerCaveSquall, 0x3bd, 43, 1, 136
+	scene AltmillerCaveCookieChest, 0x3bd, 43, 1, 137
+	scene AltmillerCaveDraught, 0x3bd, 43, 1, 138
+	scene GondowanPassage, 0x3be, 44, 1, 139
+	scene KalayTunnelEntrance, 0x3a8, 45, 1, 147
+	scene KalayTunnelCave, 0x3a8, 46, 1, 148
+	scene KalayTunnelPassage, 0x3a8, 46, 1, 149
+	scene KalayTunnelTreasureRoom, 0x3a8, 46, 1, 150
+	scene GondowanCaveRiver, 0x3be, 47, 1, 140
+	scene GondowanCave, 0x3be, 47, 1, 141
+	scene LunpaFortressGates, 0x3ab, 48, 1, 142
+	scene LunpaFortressGroundFloor, 0x3bf, 49, 1, 143
+	scene LunpaFortressUpperFloor, 0x3bf, 49, 1, 144
+	scene LunpaFortressCave, 0x3bf, 49, 1, 145
+	scene LunpaFortressToadonpa, 0x3bf, 49, 1, 146
+	scene SuhallaDesertNorth, 0x3c0, 50, 1, 151
+	scene SuhallaDesertSouth, 0x3c0, 50, 1, 152
+	scene SuhallaDesertCaves, 0x3c0, 50, 1, 153
+	scene Suhalla, 0x3c1, 51, 2, 154
+	scene TimberRoomsA, 0x3c2, 51, 2, 155
+	scene SuhallaGateCheckpoint, 0x3c3, 52, 1, 156
+	scene SuhallaGateDew, 0x3c3, 52, 1, 157
+	scene GatewayCave, 0x3c3, 52, 1, 158
+	scene TunnelRuinsGreatStatue, 0x3c4, 53, 1, 159
+	scene TunnelRuinsLadyStatues, 0x3c4, 53, 1, 160
+	scene BabiLighthouseStoneDoor, 0x3c5, 54, 1, 163
+	scene BabiLighthouseLuff, 0x3c5, 54, 1, 162
+	scene BabiLighthouseEntry, 0x3c5, 54, 1, 161
+	scene RoadToBabiLighthouse, 0x3c5, 54, 1, 167
+	scene Lalivero, 0x3c6, 55, 2, 164
+	scene TimberRoomsB, 0x3c7, 55, 2, 165
+	scene TimberRoomsC, 0x3c7, 55, 2, 166
+	scene VenusLighthouseEntry, 0x3c8, 56, 1, 168
+	scene VenusLighthouseGroundFloor, 0x3c8, 56, 1, 169
+	scene VenusLighthouseFirstFloor, 0x3c8, 57, 1, 170
+	scene VenusLighthouseSecondFloor, 0x3c8, 57, 1, 171
+	scene VenusLighthouseThirdFloor, 0x3c8, 57, 1, 172
+	scene VenusLighthouseFourthFloor, 0x3c8, 57, 1, 173
+	scene VenusLighthouseAerie, 0x3c9, 57, 1, 174
+	scene LemurianShip, 0x3ca, 58, 2, 175
+	scene TolbiSpring, 0x3b7, 59, 2, 176
+	scene BattleArena, 0x3cb, 60, 2, 177
+	scene Test0, 0x3cc, 61, 1, 178
+	scene Test1, 0x3cc, 62, 1, 179
+	scene Test2, 0x3cc, 63, 1, 180
+	scene Test3, 0x3cc, 64, 1, 181
+	scene Test4, 0x3cc, 65, 1, 182
+	scene Test5, 0x3cc, 66, 1, 183
+	scene Test6, 0x3cc, 67, 1, 184
+	scene Test7, 0x3cc, 68, 1, 185
+	scene IncreaseItemAndLevel, 0x3cd, 69, 1, 0
+	scene MenuTest, 0x3ce, 70, 1, 0

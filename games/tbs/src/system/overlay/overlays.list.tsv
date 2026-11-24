@@ -1,97 +1,97 @@
-overlay	ja	en	de	es	fr	it
-36f	a04f	a04f	313224			
-370		0000dd	00dd	08	0000dd	08
-371	030cf7		03e6			e603
-372	3f03		7e06c2	8e0e	8e0e	e0bd
-373	6e2b82	2b82			ab023a	
-374	46d7fc		50		688146	
-375			040a13	040b	7804	b4040b
-376						
-377	42		ed		21	
-378	1848		72	e40f	3030	e40f
-379			07	07	07	07
-37a	5e0a3b	7c	7c0464	643e	643e	643e
-37b	0508	510508	00b1	510508	510508	510508
-37c						
-37d						
-37e	104e	104e	104e	104e	104e	104e
-37f	dbd46d		cb322d	36759b	36759b	36759b
-380		c5	3903c5	d865	3903	d865
-381	763d65		7586	fc75	fc75	03
-382	6e3e07	a36e3e	06	30	30	30
-383	20	46e0	011e	f2	01	f2
-384	0ac7					
-385	b8	e02dbc	21	c0	c0	e02dbc
-386		03	c6408e	c6408e	c6408e	03
-387	78	c1	0b	c52a	c52a	040d8a
-388	9058	9058	9058	9058	9058	9058
-389	04		0ee8	02	02	
-38a	820721	165682	165682	165682	165682	165682
-38b			3803	f000ce	f000ce	780067
-38c	09f09b					4c80df
-38d	94	fd1121		71c201	71c201	71c201
-38e	71	47	95f7	386610	386610	6610
-38f		b0				
-390	511640	1640	1640	1640	1640	1640
-391	43	0414	2204	8022	8022	8022
-392			3c			3c
-393	3c	7c00	3c			003c
-394	85		91f800	1f60	1f60	3ec01c
-395	784d8a			c136ae	c136ae	
-396	9628	8c0ee2		4381d0	4381d0	
-397			e9			
-398	70a669			70a669	70a669	
-399	f2fb	5b	14	f798	f798	98
-39a	5fb3	f4be	6b3669	e120	e120	c341
-39b		46	db	0338cd	0338cd	0338cd
-39c	ed93	48	4e			
-39d						
-39e	5cba8b	e1	91			
-39f	833851			181006	181006	1810ad
-3a0	62	8812	793c16	3c16	3c16	
-3a1	c0					c69468
-3a2			81f1	ee	ee	
-3a3	bbf85d	5c8fff	0cd7e3	d7	d7	
-3a4				dc37	dc37	
-3a5	2e24	e742	918c	19	19	8029
-3a6	2f	64	07	78	78	4c
-3a7	3cbf		2e			6917
-3a8	660564	1c4181	16	8fc340	8fc340	03715c
-3a9		14014e	690214			
-3aa	45	22	222fc4	193122	193122	193122
-3ab	6049	016c	62		6c	40
-3ac	83	7ca605	f09916	7d41ae	f09916	7d41ae
-3ad	fe	9b	a6	0d	a6	0d
-3ae	f8	f8a5	c0	155f6f	e17de0	6f5c
-3af			9256			49e6e8
-3b0	02b9ed	9427	bc47	51bc	51bc	4751bc
-3b1			e8e09d	600710	600710	760011
-3b2	170074	33fe11	1833fe	1833fe	1833fe	1833fe
-3b3	07			11	11	
-3b4	a9c7dc	21	2044	5dc5e9	5dc5e9	e9
-3b5	7bcc43	99077c		90	90	99077c
-3b6	25	0b	22d8	f04333	d8a9	a5
-3b7	05	df	d36e15	d36e15	d36e15	6e15
-3b8	2279	e2	3e	92	92	a2
-3b9	66	8d1011		900104	900104	900104
-3ba	6840	68	3d4b1a	ec8021	cc4ccd	
-3bb	064338	0643		06		06
-3bc	f4		f402	07f402	57ec04	
-3bd		20	08			c9
-3be		12	d012	c2	c2	
-3bf		19	803706			06
-3c0	363b					
-3c1						
-3c2	b16241		76ce	76ce	76ce	76ce
-3c3	574018	ee9d02	9c02	8b09de	8b09de	31c17b
-3c4	6e		489c	4204	4204	
-3c5			a02d	45	45	52d0
-3c6	ba80		ac	ac	ac	ac
-3c7						
-3c8	46	e70aa9	14	b8cc12	b8cc12	975962
-3c9	fb9a	bc	f0093e	f2	f2	3c
-3ca	871e9e	b4cf87	18			b4cf87
-3cb	a31a	8a	2070	fe2070	261a	70
-3cc	51	51	19	19	19	19
-3cd	a95165	013027	61			a8bd61
-3ce	f1	3b07f2		ad626c	2a7d	
+file	name	ja	en	de	es	fr	it
+overlays/resource_36f.lz	Resource_Overlay36f	a04f	a04f	313224
+overlays/resource_370.lz	Resource_Overlay370		0000dd	00dd	08	0000dd	08
+overlays/resource_371.lz	Resource_Overlay371	030cf7		03e6			e603
+overlays/resource_372.lz	Resource_Overlay372	3f03		7e06c2	8e0e	8e0e	e0bd
+overlays/resource_373.lz	Resource_Overlay373	6e2b82	2b82			ab023a
+overlays/resource_374.lz	Resource_Overlay374	46d7fc		50		688146
+overlays/resource_375.lz	Resource_Overlay375			040a13	040b	7804	b4040b
+overlays/resource_376.lz	Resource_Overlay376
+overlays/resource_377.lz	Resource_Overlay377	42		ed		21
+overlays/resource_378.lz	Resource_Overlay378	1848		72	e40f	3030	e40f
+overlays/resource_379.lz	Resource_Overlay379			07	07	07	07
+overlays/resource_37a.lz	Resource_Overlay37a	5e0a3b	7c	7c0464	643e	643e	643e
+overlays/resource_37b.lz	Resource_Overlay37b	0508	510508	00b1	510508	510508	510508
+overlays/resource_37c.lz	Resource_Overlay37c
+overlays/resource_37d.lz	Resource_Overlay37d
+overlays/resource_37e.lz	Resource_Overlay37e	104e	104e	104e	104e	104e	104e
+overlays/resource_37f.lz	Resource_Overlay37f	dbd46d		cb322d	36759b	36759b	36759b
+overlays/resource_380.lz	Resource_Overlay380		c5	3903c5	d865	3903	d865
+overlays/resource_381.lz	Resource_Overlay381	763d65		7586	fc75	fc75	03
+overlays/resource_382.lz	Resource_Overlay382	6e3e07	a36e3e	06	30	30	30
+overlays/resource_383.lz	Resource_Overlay383	20	46e0	011e	f2	01	f2
+overlays/resource_384.lz	Resource_Overlay384	0ac7
+overlays/resource_385.lz	Resource_Overlay385	b8	e02dbc	21	c0	c0	e02dbc
+overlays/resource_386.lz	Resource_Overlay386		03	c6408e	c6408e	c6408e	03
+overlays/resource_387.lz	Resource_Overlay387	78	c1	0b	c52a	c52a	040d8a
+overlays/resource_388.lz	Resource_Overlay388	9058	9058	9058	9058	9058	9058
+overlays/resource_389.lz	Resource_Overlay389	04		0ee8	02	02
+overlays/resource_38a.lz	Resource_Overlay38a	820721	165682	165682	165682	165682	165682
+overlays/resource_38b.lz	Resource_Overlay38b			3803	f000ce	f000ce	780067
+overlays/resource_38c.lz	Resource_Overlay38c	09f09b					4c80df
+overlays/resource_38d.lz	Resource_Overlay38d	94	fd1121		71c201	71c201	71c201
+overlays/resource_38e.lz	Resource_Overlay38e	71	47	95f7	386610	386610	6610
+overlays/resource_38f.lz	Resource_Overlay38f		b0
+overlays/resource_390.lz	Resource_Overlay390	511640	1640	1640	1640	1640	1640
+overlays/resource_391.lz	Resource_Overlay391	43	0414	2204	8022	8022	8022
+overlays/resource_392.lz	Resource_Overlay392			3c			3c
+overlays/resource_393.lz	Resource_Overlay393	3c	7c00	3c			003c
+overlays/resource_394.lz	Resource_Overlay394	85		91f800	1f60	1f60	3ec01c
+overlays/resource_395.lz	Resource_Overlay395	784d8a			c136ae	c136ae
+overlays/resource_396.lz	Resource_Overlay396	9628	8c0ee2		4381d0	4381d0
+overlays/resource_397.lz	Resource_Overlay397			e9
+overlays/resource_398.lz	Resource_Overlay398	70a669			70a669	70a669
+overlays/resource_399.lz	Resource_Overlay399	f2fb	5b	14	f798	f798	98
+overlays/resource_39a.lz	Resource_Overlay39a	5fb3	f4be	6b3669	e120	e120	c341
+overlays/resource_39b.lz	Resource_Overlay39b		46	db	0338cd	0338cd	0338cd
+overlays/resource_39c.lz	Resource_Overlay39c	ed93	48	4e
+overlays/resource_39d.lz	Resource_Overlay39d
+overlays/resource_39e.lz	Resource_Overlay39e	5cba8b	e1	91
+overlays/resource_39f.lz	Resource_Overlay39f	833851			181006	181006	1810ad
+overlays/resource_3a0.lz	Resource_Overlay3a0	62	8812	793c16	3c16	3c16
+overlays/resource_3a1.lz	Resource_Overlay3a1	c0					c69468
+overlays/resource_3a2.lz	Resource_Overlay3a2			81f1	ee	ee
+overlays/resource_3a3.lz	Resource_Overlay3a3	bbf85d	5c8fff	0cd7e3	d7	d7
+overlays/resource_3a4.lz	Resource_Overlay3a4				dc37	dc37
+overlays/resource_3a5.lz	Resource_Overlay3a5	2e24	e742	918c	19	19	8029
+overlays/resource_3a6.lz	Resource_Overlay3a6	2f	64	07	78	78	4c
+overlays/resource_3a7.lz	Resource_Overlay3a7	3cbf		2e			6917
+overlays/resource_3a8.lz	Resource_Overlay3a8	660564	1c4181	16	8fc340	8fc340	03715c
+overlays/resource_3a9.lz	Resource_Overlay3a9		14014e	690214
+overlays/resource_3aa.lz	Resource_Overlay3aa	45	22	222fc4	193122	193122	193122
+overlays/resource_3ab.lz	Resource_Overlay3ab	6049	016c	62		6c	40
+overlays/resource_3ac.lz	Resource_Overlay3ac	83	7ca605	f09916	7d41ae	f09916	7d41ae
+overlays/resource_3ad.lz	Resource_Overlay3ad	fe	9b	a6	0d	a6	0d
+overlays/resource_3ae.lz	Resource_Overlay3ae	f8	f8a5	c0	155f6f	e17de0	6f5c
+overlays/resource_3af.lz	Resource_Overlay3af			9256			49e6e8
+overlays/resource_3b0.lz	Resource_Overlay3b0	02b9ed	9427	bc47	51bc	51bc	4751bc
+overlays/resource_3b1.lz	Resource_Overlay3b1			e8e09d	600710	600710	760011
+overlays/resource_3b2.lz	Resource_Overlay3b2	170074	33fe11	1833fe	1833fe	1833fe	1833fe
+overlays/resource_3b3.lz	Resource_Overlay3b3	07			11	11
+overlays/resource_3b4.lz	Resource_Overlay3b4	a9c7dc	21	2044	5dc5e9	5dc5e9	e9
+overlays/resource_3b5.lz	Resource_Overlay3b5	7bcc43	99077c		90	90	99077c
+overlays/resource_3b6.lz	Resource_Overlay3b6	25	0b	22d8	f04333	d8a9	a5
+overlays/resource_3b7.lz	Resource_Overlay3b7	05	df	d36e15	d36e15	d36e15	6e15
+overlays/resource_3b8.lz	Resource_Overlay3b8	2279	e2	3e	92	92	a2
+overlays/resource_3b9.lz	Resource_Overlay3b9	66	8d1011		900104	900104	900104
+overlays/resource_3ba.lz	Resource_Overlay3ba	6840	68	3d4b1a	ec8021	cc4ccd
+overlays/resource_3bb.lz	Resource_Overlay3bb	064338	0643		06		06
+overlays/resource_3bc.lz	Resource_Overlay3bc	f4		f402	07f402	57ec04
+overlays/resource_3bd.lz	Resource_Overlay3bd		20	08			c9
+overlays/resource_3be.lz	Resource_Overlay3be		12	d012	c2	c2
+overlays/resource_3bf.lz	Resource_Overlay3bf		19	803706			06
+overlays/resource_3c0.lz	Resource_Overlay3c0	363b
+overlays/resource_3c1.lz	Resource_Overlay3c1
+overlays/resource_3c2.lz	Resource_Overlay3c2	b16241		76ce	76ce	76ce	76ce
+overlays/resource_3c3.lz	Resource_Overlay3c3	574018	ee9d02	9c02	8b09de	8b09de	31c17b
+overlays/resource_3c4.lz	Resource_Overlay3c4	6e		489c	4204	4204
+overlays/resource_3c5.lz	Resource_Overlay3c5			a02d	45	45	52d0
+overlays/resource_3c6.lz	Resource_Overlay3c6	ba80		ac	ac	ac	ac
+overlays/resource_3c7.lz	Resource_Overlay3c7
+overlays/resource_3c8.lz	Resource_Overlay3c8	46	e70aa9	14	b8cc12	b8cc12	975962
+overlays/resource_3c9.lz	Resource_Overlay3c9	fb9a	bc	f0093e	f2	f2	3c
+overlays/resource_3ca.lz	Resource_Overlay3ca	871e9e	b4cf87	18			b4cf87
+overlays/resource_3cb.lz	Resource_Overlay3cb	a31a	8a	2070	fe2070	261a	70
+overlays/resource_3cc.lz	Resource_Overlay3cc	51	51	19	19	19	19
+overlays/resource_3cd.lz	Resource_Overlay3cd	a95165	013027	61			a8bd61
+overlays/resource_3ce.lz	Resource_Overlay3ce	f1	3b07f2		ad626c	2a7d

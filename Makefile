@@ -492,8 +492,10 @@ $(LIBGCC_WORK)/_lshrdi3.o: alchemy-gcc/gcc/libgcc2.c $(LIBGCC_TOOLS)
 	cd $(@D) && $(LIBGCC_CC) -I. $(LIBGCC_INCLUDES) -DL_lshrdi3 $(CURDIR)/$< -c -o $(@F)
 
 # --- Lists -----------------------------------------------------------------
-# A folder of pictures placed in order has a list.tsv beside them; ags-list
-# writes its list.s, in every edition the same, before an edition is built.
+# Packed files placed in order have a list.tsv or NAME.list.tsv beside them;
+# ags-list writes its .s, in every edition the same, before an edition is
+# built. A table the code reads is never one of these: it is C, or assembler
+# source with its macro above its rows.
 MAPS = games/tbs/src/map/maps.s games/tla/src/map/maps.s
 LISTS := $(patsubst %.tsv,%.s,$(shell find games -name list.tsv -o -name '*.list.tsv'))
 .PHONY: lists

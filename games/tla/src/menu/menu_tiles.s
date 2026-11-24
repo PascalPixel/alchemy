@@ -1,4 +1,5 @@
 	.section .rodata
+	.balign 4
 @ 4bpp rows of dots in colour 5, each reaching further right than the last
 	.global gMenu_PatternRowMasks
 gMenu_PatternRowMasks:

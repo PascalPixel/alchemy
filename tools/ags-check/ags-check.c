@@ -11,24 +11,28 @@
  * with status one when there is any. "make test" runs it.
  *
  * KINDS. A source file is one of: C (.c), a header (.h), assembly (.s) that
- * holds real instructions or data that is honestly shaped by hand, a table
- * (.tsv), a picture (.png), a sample (.wav), a song (.mid), dialogue (.po), a
- * linker script (.ld), a Makefile, and rom.sha1. Nothing else: no prose or
- * notes (.md, .txt), no .json, no scripts (.py, .sh, .js, .ts, .rs), no
- * binary dumps (.bin, .gba), and no assembler include (.inc) but the few in
- * INCLUDES below, each named with its reason.
+ * holds real instructions or data that is honestly shaped by hand (a table
+ * that was assembler source, or that gives the numbers C reads at link time,
+ * is rows under a macro stated above them), a table (.tsv) of files or of
+ * what an editor made, a picture (.png), a sample (.wav), a song (.mid),
+ * dialogue (.po), a linker script (.ld), a Makefile, and rom.sha1. Nothing
+ * else: no prose or notes (.md, .txt), no .json, no scripts (.py, .sh, .js,
+ * .ts, .rs), no binary dumps (.bin, .gba), and no assembler include (.inc)
+ * but the few in INCLUDES below, each named with its reason.
  *
  * LIMITS. A .c file has at most 2,000 lines, a .h file 500, a .s file 1,500.
- * The limit is for code. A .c or .h file that is a table has none: an array
- * of rows, or a list of enum values, #defines and extern data, as the first
- * developers would also have kept it in C. The test is plain. A file is a
- * table when no line of it, the lines that are only comment aside, holds
+ * The limit is for code. A file that is a table has none. In C that is an
+ * array of rows, or a list of enum values, #defines and extern data, as the
+ * first developers would also have kept it in C. The test is plain. A C file
+ * is a table when no line of it, the lines that are only comment aside, holds
  * ") {" (a function's body, or a statement that takes a block) or ");" (a
  * function declared or called). It can be fooled: by code that reaches the
  * file through an #include or a macro defined elsewhere, by a macro that is
  * an expression and no statement, by a header of structs alone, and by a
  * statement that starts its line with "*", which reads as comment. A string
- * or a comment after code that holds either mark errs the safe way.
+ * or a comment after code that holds either mark errs the safe way. A .s
+ * file is a table when every line of it is a comment, a directive, a label,
+ * or a row under a macro the file itself states above it.
  *
  * TABLES. A .tsv file is rows of cells divided by tabs and ended by newlines.
  * Its first line is the names of its columns and nothing else: each name is
@@ -286,6 +290,30 @@ static bool isTable(char *text) {
   return true;
 }
 
+/* Whether assembly text is a table: every line is a comment, a directive, a
+   label, or a row under a macro the file itself states. */
+static bool isAssemblyTable(char *text) {
+  for (char *line = text, *next; line; line = next) {
+    next = cut(line, '\n');
+    line += strspn(line, " \t");
+    size_t word = strcspn(line, " \t");
+    if (!*line || *line == '@' || *line == '.' || line[word - 1] == ':')
+      continue;
+    /* The lines above are cut already, so each is a string of its own. */
+    bool stated = false;
+    for (char *at = text; at < line && !stated; at += strlen(at) + 1) {
+      const char *macro = at + strspn(at, " \t");
+      stated = !strncmp(macro, ".macro ", 7) &&
+               !strncmp(macro + 7, line, word) &&
+               !isalnum((unsigned char)macro[7 + word]) &&
+               macro[7 + word] != '_';
+    }
+    if (!stated)
+      return false;
+  }
+  return true;
+}
+
 static void checkLines(const char *path, const char *kind, long limit) {
   size_t size;
   char *text = readText(path, &size);
@@ -294,7 +322,8 @@ static void checkLines(const char *path, const char *kind, long limit) {
   long lines = 0;
   for (size_t i = 0; i < size; i++)
     lines += text[i] == '\n';
-  bool table = lines > limit && strcmp(kind, "s") && isTable(text);
+  bool table = lines > limit &&
+               (strcmp(kind, "s") ? isTable(text) : isAssemblyTable(text));
   free(text);
   if (lines <= limit)
     return;

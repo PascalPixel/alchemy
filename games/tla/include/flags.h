@@ -426,7 +426,7 @@
 #define FLAG_KIBOMBO_PIERS_MET 0x8f3
 /// Set as the Gabomba's charges drive the party back from the statue, cleared
 /// as Akafubu ends the ceremony; while it is set the music rules
-/// choose silence for their groups 31 and 32 (music_rules.list.tsv).
+/// choose silence for their groups 31 and 32 (music_rules.c).
 #define FLAG_GABOMBA_MUSIC_SILENCED 0x8f7
 /// Set as the ceremony sends the party back to Kibombo; the Gabomba Statue's
 /// arrow room reads it once and clears it.

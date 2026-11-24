@@ -2,7 +2,7 @@
 #define ALCHEMY_SOUNDS_H
 
 /// @file
-/// Sound ids, one for each row of gSongTable (sound/song_table.list.tsv) in
+/// Sound ids, one for each row of gSongTable (sound/song_table.s) in
 /// order:
 /// MUS_ ids are music and jingles, SE_ ids sound effects, as their sequences in
 /// sound/songs are named. Music takes the title of its track where the two are

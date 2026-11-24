@@ -25,7 +25,7 @@ struct Scene {
   s16 attributes;
 };
 
-/// Every scene's row, by scene number (field/scenes.list.tsv).
+/// Every scene's row, by scene number (field/scenes.s).
 extern const struct Scene gScenes[];
 
 /// The sixteen headings an actor faces, in turns from east, clockwise on the

@@ -1060,7 +1060,7 @@
 /// (Party_EndChildhood); nothing clears it. While it is set Vale's field music
 /// is MUS_VILLAGE_THEME, ahead of the MUS_DUNGEON_THEME that
 /// FLAG_VALE_STORM_MONSTER_FOUGHT chose (the music rules in
-/// field/music_rules.list.tsv).
+/// field/music_rules.c).
 #define FLAG_VALE_THREE_YEARS_LATER 0x901
 /// The jar's Elixir by the cottage; after Kalay it is searchable only from the
 /// third patch.

@@ -1511,7 +1511,7 @@ enum {
   FUCHIN_TEMPLE_GROUNDS_FROM_LACQUER_ROOMS_A = 2,
   FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE = 3,
   /// In front of the traveling healer, where a party defeated anywhere at
-  /// Fuchin Temple wakes (its return point in field/restart_rules.list.tsv).
+  /// Fuchin Temple wakes (its return point in field/restart_rules.c).
   FUCHIN_TEMPLE_GROUNDS_AFTER_DEFEAT = 5,
 };
 /// SceneId_FuchinTempleGrounds's exits.
@@ -2063,7 +2063,7 @@ enum {
   LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM = 2,
   LAMA_TEMPLE_FROM_ALPINE_CROSSING = 3,
   /// In front of the traveling healer, where a party defeated anywhere in Lama
-  /// Temple wakes (its return point in field/restart_rules.list.tsv).
+  /// Temple wakes (its return point in field/restart_rules.c).
   LAMA_TEMPLE_AFTER_DEFEAT = 5,
 };
 /// SceneId_LamaTemple's exits.

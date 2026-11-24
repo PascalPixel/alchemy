@@ -3,7 +3,7 @@
 
 /// @file
 /// Scene numbers, named after their places, in the order of gScenes
-/// (field/scenes.list.tsv).
+/// (field/scenes.s).
 ///
 /// Each SceneId_ is an absolute symbol whose value is the scene's row in the
 /// table; C names the number by its macro, SCENE_VALE for SceneId_Vale, and
@@ -17,7 +17,7 @@ extern char SceneId_FileScreen;
 #define SCENE_FILE_SCREEN ((s32)&SceneId_FileScreen)
 extern char SceneId_WorldMap;
 #define SCENE_WORLD_MAP ((s32)&SceneId_WorldMap)
-/// The World Map's map, row 1 of gMaps (field/scenes.list.tsv names it with the
+/// The World Map's map, row 1 of gMaps (field/scenes.s names it with the
 /// World Map's scene row), which the field compares gMainRoutineState.mapId
 /// with.
 extern char MapIndex_World;

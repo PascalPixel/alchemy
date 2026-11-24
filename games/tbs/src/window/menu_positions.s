@@ -1,5 +1,6 @@
 	.include "games/tbs/include/edition.inc"
 	.section .rodata
+	.balign 4
 @ This string is not filled to four bytes: the tables follow it directly.
 	.if EDITION_INTERNATIONAL
 	.global gBattleStatusScreen_PpString

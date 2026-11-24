@@ -639,7 +639,7 @@ void m4aMPlayLFOSpeedSet(struct MusicPlayerInfo *player, u32 mask, u32 value);
 void ClearModM(struct MusicPlayerTrack *track);
 
 /// Each music player's work area, its tracks and how many it has, by enum
-/// MusicPlayerId (sound/music_players.list.tsv).
+/// MusicPlayerId (sound/music_player_table.s).
 extern const struct MusicPlayer gMPlayTable[];
 /// Each sound's header and music player, by sound id (sounds.h;
 /// sound/song_table.s).

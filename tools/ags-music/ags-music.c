@@ -7,8 +7,8 @@
  * all pointer targets before publishing the completed assembly.
  *
  * The song's global label is its file's name in mixed case after Song_:
- * mus_venus_lighthouse.mid is Song_MusVenusLighthouse, as ags-list names it
- * in gSongTable.
+ * mus_venus_lighthouse.mid is Song_MusVenusLighthouse, as the song table
+ * names it.
  */
 #include "sequence.h"
 #include <ctype.h>

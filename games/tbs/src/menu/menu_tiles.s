@@ -1,4 +1,5 @@
 	.section .rodata
+	.balign 4
 @ 4bpp row that grows one pixel at a time in color 5
 	.global gMenu_PatternRowMasks
 gMenu_PatternRowMasks:

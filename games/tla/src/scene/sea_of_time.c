@@ -327,9 +327,7 @@ void SeaOfTime_CircleSwirl(void) {
 void SeaOfTime_RideCurrent(void) {
   struct FieldState *state = (struct FieldState *)Ram_HeapSlots->fieldState;
   struct Actor *actor = Actor_GetById(ACTOR_SHIP);
-  struct {
-    s32 x, y, z;
-  } center;
+  FIXED center[3];
   FIXED ends[4];
   struct EffectOptions spark;
   s32 turn[1];
@@ -351,55 +349,55 @@ void SeaOfTime_RideCurrent(void) {
 
   switch (state->stepTrigger) {
   case CELL_BEHAVIOR_SWIRL_RING_SOUTH:
-    center.x = 0;
-    center.z = -1;
+    center[0] = 0;
+    center[2] = -1;
     break;
   case CELL_BEHAVIOR_SWIRL_RING_EAST:
-    center.x = -1;
-    center.z = 0;
+    center[0] = -1;
+    center[2] = 0;
     break;
   case CELL_BEHAVIOR_SWIRL_RING_NORTH:
-    center.x = 0;
-    center.z = 1;
+    center[0] = 0;
+    center[2] = 1;
     break;
   case CELL_BEHAVIOR_SWIRL_RING_WEST:
-    center.x = 1;
-    center.z = 0;
+    center[0] = 1;
+    center[2] = 0;
     break;
   case CELL_BEHAVIOR_SWIRL_RING_SOUTHEAST:
-    center.x = -1;
-    center.z = -1;
+    center[0] = -1;
+    center[2] = -1;
     break;
   case CELL_BEHAVIOR_SWIRL_RING_NORTHEAST:
-    center.x = -1;
-    center.z = 1;
+    center[0] = -1;
+    center[2] = 1;
     break;
   case CELL_BEHAVIOR_SWIRL_RING_NORTHWEST:
-    center.x = 1;
-    center.z = 1;
+    center[0] = 1;
+    center[2] = 1;
     break;
   case CELL_BEHAVIOR_SWIRL_RING_SOUTHWEST:
-    center.x = 1;
-    center.z = -1;
+    center[0] = 1;
+    center[2] = -1;
     break;
   }
-  center.x = SWIRL_SQUARE_CORNER(SWIRL_SQUARE(actor->x.fixed) + center.x) +
-             toFIXED(16);
-  center.z = SWIRL_SQUARE_CORNER(SWIRL_SQUARE(actor->z.fixed) + center.z) +
-             toFIXED(16);
+  center[0] = SWIRL_SQUARE_CORNER(SWIRL_SQUARE(actor->x.fixed) + center[0]) +
+              toFIXED(16);
+  center[2] = SWIRL_SQUARE_CORNER(SWIRL_SQUARE(actor->z.fixed) + center[2]) +
+              toFIXED(16);
   pos = &actor->x.fixed;
-  if (Position_FlatDistance(pos, &center) > CURRENT_HOLD_DISTANCE) {
-    if (*pos < center.x)
+  if (Position_FlatDistance(pos, center) > CURRENT_HOLD_DISTANCE) {
+    if (*pos < center[0])
       *pos += toFIXED(1) / 2;
     else
       *pos -= toFIXED(1) / 2;
-    if (actor->z.fixed < center.z)
+    if (actor->z.fixed < center[2])
       actor->z.fixed += toFIXED(1) / 2;
     else
       actor->z.fixed -= toFIXED(1) / 2;
   }
-  if (MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE, FIELD_CELL(center.x),
-                            FIELD_CELL(center.z)) >>
+  if (MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE, FIELD_CELL(center[0]),
+                            FIELD_CELL(center[2])) >>
           8 ==
       CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE) {
     turn[0] = SeaOfTime_Cos(-TRIG_TURN / 128);
@@ -408,17 +406,14 @@ void SeaOfTime_RideCurrent(void) {
     turn[0] = SeaOfTime_Cos(TRIG_TURN / 128);
     s = Trig_Sin(TRIG_TURN / 128);
   }
-  dx = actor->x.fixed - center.x;
-  dz = actor->z.fixed - center.z;
-  {
-    s32 (*mul)(s32 a, s32 b) = Iwram_MulFX;
-    x = mul(dx, turn[0]);
-    x -= mul(dz, s);
-    z = mul(dx, s);
-    z += mul(dz, turn[0]);
-  }
-  x += center.x;
-  z += center.z;
+  dx = actor->x.fixed - center[0];
+  dz = actor->z.fixed - center[2];
+  x = Iwram_MulFX(dx, turn[0]);
+  x -= Iwram_MulFX(dz, s);
+  z = Iwram_MulFX(dx, s);
+  z += Iwram_MulFX(dz, turn[0]);
+  x += center[0];
+  z += center[2];
   actor->x.fixed = x;
   actor->z.fixed = z;
 
@@ -447,8 +442,8 @@ void SeaOfTime_RideCurrent(void) {
     ends[2] += actor->x.fixed;
     ends[3] += actor->z.fixed;
     if (ends[1] != actor->z.fixed) {
-      ends[1] += -toFIXED(12);
-      ends[3] += -toFIXED(12);
+      ends[1] -= toFIXED(12);
+      ends[3] -= toFIXED(12);
     }
     flip = *counter & 4;
     px = ends[0];
@@ -529,6 +524,8 @@ void SeaOfTime_FollowChannel(void) {
         if ((gFrameCount & 10) == 0) {
           Sound_Play(SE_CURRENT);
         }
+        // The current's spray (SeaOfTime_RideCurrent), larger, from further
+        // out and thrown 4 pixels wide; each routine writes its own.
         spark.priority = 2;
         spark.palette = SPRITE_COLOR_WHITE;
         spark.startScaleX = FIXED_ONE * 7 / 5;
@@ -707,6 +704,58 @@ void SeaOfTime_TimeWaves(void) {
 
 extern u32 gSeaOfTime_WaveState;
 
+/// Steps one of a colour's channels a unit toward its target, setting changed
+/// if it moved: the sea's colours fade a step at a time this way, toward the
+/// waves' colour and back to the colours saved on arrival.
+#define STEP_TOWARD(channel, target, changed)                                  \
+  {                                                                            \
+    if ((channel) < (target)) {                                                \
+      (channel)++;                                                             \
+      (changed) = 1;                                                           \
+    }                                                                          \
+    if ((channel) > (target)) {                                                \
+      (channel)--;                                                             \
+      (changed) = 1;                                                           \
+    }                                                                          \
+  }
+
+/// One step of the sea's colours (SEA_PALETTE from colour 1) toward the waves'
+/// colour, every channel of each a unit nearer.
+#define STEP_SEA_TOWARD_WAVES(palette, i, changed)                             \
+  for (i = 1, palette = &BG_PLTT_COLOR(SEA_PALETTE, 1); i != SEA_COLORS;       \
+       i++, palette++) {                                                       \
+    u16 color = *palette;                                                      \
+    u16 r = RGB_RED(color);                                                    \
+    u16 g = RGB_GREEN(color);                                                  \
+    u16 b = RGB_BLUE(color);                                                   \
+                                                                               \
+    STEP_TOWARD(r, WAVE_RED, changed);                                         \
+    STEP_TOWARD(g, WAVE_GREEN, changed);                                       \
+    STEP_TOWARD(b, WAVE_BLUE, changed);                                        \
+    *palette = RGB(r, g, b);                                                   \
+  }
+
+/// One step of the sea's colours back toward those saved on arrival
+/// (gSeaOfTime_SavedColors, the sea's from colour 1 on).
+#define STEP_SEA_TOWARD_SAVED_COLORS(palette, saved, i, j, changed)            \
+  palette = &BG_PLTT_COLOR(SEA_PALETTE, 0);                                    \
+  for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != SEA_COLORS + 1;     \
+       i++, j++) {                                                             \
+    u16 color = palette[i];                                                    \
+    u16 target = saved->colors[j];                                             \
+    u16 r = RGB_RED(color);                                                    \
+    u16 g = RGB_GREEN(color);                                                  \
+    u16 b = RGB_BLUE(color);                                                   \
+    u16 tr = RGB_RED(target);                                                  \
+    u16 tg = RGB_GREEN(target);                                                \
+    u16 tb = RGB_BLUE(target);                                                 \
+                                                                               \
+    STEP_TOWARD(r, tr, changed);                                               \
+    STEP_TOWARD(g, tg, changed);                                               \
+    STEP_TOWARD(b, tb, changed);                                               \
+    palette[i] = RGB(r, g, b);                                                 \
+  }
+
 /// The waves start once the ship has circled a trunk enough times: with a
 /// rising sound, the stripes and swirls in the water fade over a few seconds
 /// until the sea lies flat, and the channels stop carrying the ship. They last
@@ -728,39 +777,7 @@ void SeaOfTime_StartWaves(void) {
   do {
     wait(10);
     changed = 0;
-    for (i = 1, palette = &BG_PLTT_COLOR(SEA_PALETTE, 1); i != SEA_COLORS;
-         i++, palette++) {
-      u16 color = *palette;
-      u16 r = RGB_RED(color);
-      u16 g = RGB_GREEN(color);
-      u16 b = RGB_BLUE(color);
-
-      if (r < WAVE_RED) {
-        r++;
-        changed = 1;
-      }
-      if (r > WAVE_RED) {
-        r--;
-        changed = 1;
-      }
-      if (g < WAVE_GREEN) {
-        g++;
-        changed = 1;
-      }
-      if (g > WAVE_GREEN) {
-        g--;
-        changed = 1;
-      }
-      if (b < WAVE_BLUE) {
-        b++;
-        changed = 1;
-      }
-      if (b > WAVE_BLUE) {
-        b--;
-        changed = 1;
-      }
-      *palette = RGB(r, g, b);
-    }
+    STEP_SEA_TOWARD_WAVES(palette, i, changed);
     frame = gFrameCount;
     gSeaOfTime_WaveState += frame & 1;
   } while (changed);
@@ -794,45 +811,7 @@ void SeaOfTime_StopWaves(void) {
   do {
     wait(10);
     changed = 0;
-    palette = &BG_PLTT_COLOR(SEA_PALETTE, 0);
-    // The saved colours are the sea's from colour 1 on.
-    for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != SEA_COLORS + 1;
-         i++, j++) {
-      u16 color = palette[i];
-      u16 target = saved->colors[j];
-      u16 r = RGB_RED(color);
-      u16 g = RGB_GREEN(color);
-      u16 b = RGB_BLUE(color);
-      u16 tr = RGB_RED(target);
-      u16 tg = RGB_GREEN(target);
-      u16 tb = RGB_BLUE(target);
-
-      if (r < tr) {
-        r++;
-        changed = 1;
-      }
-      if (r > tr) {
-        r--;
-        changed = 1;
-      }
-      if (g < tg) {
-        g++;
-        changed = 1;
-      }
-      if (g > tg) {
-        g--;
-        changed = 1;
-      }
-      if (b < tb) {
-        b++;
-        changed = 1;
-      }
-      if (b > tb) {
-        b--;
-        changed = 1;
-      }
-      palette[i] = RGB(r, g, b);
-    }
+    STEP_SEA_TOWARD_SAVED_COLORS(palette, saved, i, j, changed);
   } while (changed);
   gSeaOfTime_WaveState = 1;
   Event_ClearFlag(FLAG_WAVES_RUNNING);
@@ -863,6 +842,7 @@ void SeaOfTime_PushBackInRoughWater(void) {
                       actor->z.fixed + toFIXED(8));
   while (Actor_HasArrived(actor) == 0) {
     if ((gFrameCount & 3) == 0) {
+      // The channels' spray (SeaOfTime_FollowChannel), written out again here.
       options.priority = 2;
       options.palette = SPRITE_COLOR_WHITE;
       options.startScaleX = FIXED_ONE * 7 / 5;
@@ -939,7 +919,7 @@ void SeaOfTime_UpdateWater(struct Actor *actor) {
   s32 even = gFrameCount & 1;
 
   if (even == 0) {
-    FIXED dx = toFIXED(Random16() & 31) + -toFIXED(14);
+    FIXED dx = toFIXED(Random16() & 31) - toFIXED(14);
 
     spark.startScaleX = FIXED_ONE * 7 / 10;
     spark.startScaleY = FIXED_ONE * 7 / 10;
@@ -994,45 +974,7 @@ void SeaOfTime_FacePoseidon(void) {
   do {
     wait(10);
     changed = 0;
-    palette = &BG_PLTT_COLOR(SEA_PALETTE, 0);
-    // The saved colours are the sea's from colour 1 on.
-    for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != SEA_COLORS + 1;
-         i++, j++) {
-      u16 color = palette[i];
-      u16 target = saved->colors[j];
-      u16 r = RGB_RED(color);
-      u16 g = RGB_GREEN(color);
-      u16 b = RGB_BLUE(color);
-      u16 tr = RGB_RED(target);
-      u16 tg = RGB_GREEN(target);
-      u16 tb = RGB_BLUE(target);
-
-      if (r < tr) {
-        r++;
-        changed = 1;
-      }
-      if (r > tr) {
-        r--;
-        changed = 1;
-      }
-      if (g < tg) {
-        g++;
-        changed = 1;
-      }
-      if (g > tg) {
-        g--;
-        changed = 1;
-      }
-      if (b < tb) {
-        b++;
-        changed = 1;
-      }
-      if (b > tb) {
-        b--;
-        changed = 1;
-      }
-      palette[i] = RGB(r, g, b);
-    }
+    STEP_SEA_TOWARD_SAVED_COLORS(palette, saved, i, j, changed);
   } while (changed);
   Event_Wait(30);
   // The shower of water, with SE_SCATTER every 64 frames.
@@ -1405,39 +1347,7 @@ void SeaOfTime_Open(void) {
   do {
     wait(10);
     changed = 0;
-    for (i = 1, palette = &BG_PLTT_COLOR(SEA_PALETTE, 1); i != SEA_COLORS;
-         i++, palette++) {
-      u16 color = *palette;
-      u16 r = RGB_RED(color);
-      u16 g = RGB_GREEN(color);
-      u16 b = RGB_BLUE(color);
-
-      if (r < WAVE_RED) {
-        r++;
-        changed = 1;
-      }
-      if (r > WAVE_RED) {
-        r--;
-        changed = 1;
-      }
-      if (g < WAVE_GREEN) {
-        g++;
-        changed = 1;
-      }
-      if (g > WAVE_GREEN) {
-        g--;
-        changed = 1;
-      }
-      if (b < WAVE_BLUE) {
-        b++;
-        changed = 1;
-      }
-      if (b > WAVE_BLUE) {
-        b--;
-        changed = 1;
-      }
-      *palette = RGB(r, g, b);
-    }
+    STEP_SEA_TOWARD_WAVES(palette, i, changed);
     gSeaOfTime_WaveState += gFrameCount & 1;
   } while (changed);
   Task_Remove(SeaOfTime_AnimateSea);

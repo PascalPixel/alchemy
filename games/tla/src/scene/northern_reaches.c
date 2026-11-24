@@ -83,7 +83,7 @@ enum NorthernReachesActorId {
   ACTOR_KRADEN
 };
 
-void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
+void NorthernReaches_ShatterIceWall(FIXED *blast, FIXED *position,
                                     void (*callback)(void));
 
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
@@ -312,7 +312,7 @@ void NorthernReaches_FireMagmaBall(void) {
     to[0] = toFIXED(400);
     to[1] = 0;
     to[2] = toFIXED(80);
-    NorthernReaches_ShatterIceWall((s32)from, to, NorthernReaches_ClearIceWall);
+    NorthernReaches_ShatterIceWall(from, to, NorthernReaches_ClearIceWall);
     FieldEvent_Wait(20);
     Actor_SetPosition(ACTOR_CANNON_SMOKE, 0, 0);
     Actor_SetPosition(ACTOR_MAGMA_BALL_SHOT, 0, 0);
@@ -332,6 +332,8 @@ void NorthernReaches_FireMagmaBall(void) {
     EventCamera_FollowActor(ACTOR_SHIP, 1);
     Actor_MoveToAndWait(ACTOR_SHIP, 464, 152);
     Actor_SetSpeed(ACTOR_SHIP, 0.6);
+    // Off toward the horizon: five steps of 16 pixels north, written out as
+    // the event's other steps are, the ship a sixteenth smaller at each.
     Actor_ShrinkBy(ship, FIXED_ONE / 16);
     Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
     FieldActor_WaitForMoveById(ACTOR_SHIP);
@@ -398,8 +400,10 @@ void BattleEffect_StepVector3(s32 *vector, s32 damping, s32 gravity);
 
 /// The Magma Ball's explosion over the ice wall: sparks fly, the screen fades
 /// to white, `callback` draws the wall gone and its shards fly apart from
-/// `position`.
-void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
+/// `position`. The caller passes where the ball struck as `blast`, but nothing
+/// reads it: the sparks burst at random over a fixed stretch of the screen, 52
+/// to 179 pixels across and 16 to 79 down, wherever the ball landed.
+void NorthernReaches_ShatterIceWall(FIXED *blast, FIXED *position,
                                     void (*callback)(void)) {
   struct IceWallState *state;
   struct IceShard *shard;

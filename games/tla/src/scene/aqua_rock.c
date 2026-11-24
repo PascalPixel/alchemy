@@ -221,7 +221,7 @@ static inline void *BumpAlloc(s32 size) {
 #include "types.h"
 #include "field/scene_tables.h"
 #include "field/event.h"
-#include "field/ground_mask.h"
+#include "field/weather.h"
 #include "scene/scene.h"
 #include "scene/ground_effects.h"
 #include "system/task.h"

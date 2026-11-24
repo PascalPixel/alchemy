@@ -8,7 +8,7 @@
 #include "field/event_commands.h"
 #include "field/field.h"
 #include "field/object.h"
-#include "field/ground_mask.h"
+#include "field/weather.h"
 
 /// The frames the first motes and sparkles are spread over as they start.
 #define FIRST_SPAWN_FRAMES 16

@@ -8,7 +8,7 @@
 #include "flags.h"
 #include "sounds.h"
 #include "field/field.h"
-#include "field/ground_mask.h"
+#include "field/weather.h"
 #include "field/event.h"
 
 /// The weather's sprites: 16 by 16 pictures of 16 colours, four tiles each, in

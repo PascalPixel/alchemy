@@ -231,7 +231,7 @@ extern u32 gRippleScript[];
 #include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "field/field_event.h"
-#include "field/ground_mask.h"
+#include "field/weather.h"
 #include "scene/scene.h"
 #include "scene/ground_effects.h"
 #include "scene/event_layer.h"

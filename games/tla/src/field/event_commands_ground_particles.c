@@ -6,7 +6,7 @@
 #include "field/event_commands.h"
 #include "field/field.h"
 #include "field/object.h"
-#include "field/ground_mask.h"
+#include "field/weather.h"
 
 /// mote.png's six pictures, four tiles each: two of each size, the motes
 /// shrinking as they rise and flickering between the two.

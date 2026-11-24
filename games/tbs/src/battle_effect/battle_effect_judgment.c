@@ -62,7 +62,7 @@ struct JudgmentState {
 /// The pink burst's beam picture, at the sprite sheet's start.
 #define JUDGMENT_BEAM_WIDTH 24
 #define JUDGMENT_BEAM_HEIGHT 64
-/// The burst's seven quarter pictures (OverlayImageB), after the beam.
+/// The burst's seven quarter pictures (JudgmentBurstSheet), after the beam.
 #define JUDGMENT_SHEET_BURST PICTURE_BYTES(JUDGMENT_BEAM)
 /// The tornado sprite sheet, after the burst's seven quarter pictures; its six
 /// glint pictures are the burst's shards (gJudgment_ShardPictures counts from
@@ -79,8 +79,8 @@ struct JudgmentState {
 #define JUDGMENT_SHEET_FLARE_A 16384
 #define JUDGMENT_SHEET_FLARE_B                                                 \
   (JUDGMENT_SHEET_FLARE_A + PICTURE_BYTES(JUDGMENT_FLARE))
-/// OverlayImageA's three flash pictures, a byte a pixel, one after another in
-/// the sprite sheet: the small flash, the large flash and the glow.
+/// JudgmentFlashSheet's three flash pictures, a byte a pixel, one after another
+/// in the sprite sheet: the small flash, the large flash and the glow.
 #define JUDGMENT_SHEET_FLASH_SMALL_WIDTH 16
 #define JUDGMENT_SHEET_FLASH_SMALL_HEIGHT 17
 #define JUDGMENT_SHEET_FLASH_LARGE_WIDTH 24
@@ -210,7 +210,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   minimumDepth = JUDGMENT_SPARK_DEPTH_NONE;
   maximumDepth = 0;
   Resource_LoadAndDecompress(RESOURCE_PINK_BURST_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_OVERLAY_IMAGE_B,
+  Resource_LoadAndDecompress(RESOURCE_JUDGMENT_BURST_SHEET,
                              state->sheet + JUDGMENT_SHEET_BURST, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                              state->sheet + JUDGMENT_SHEET_TORNADO, 1, 0);
@@ -579,7 +579,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
       Resource_LoadAndDecompress(RESOURCE_EXPLOSION_SHEET,
                                  state->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);
-      Resource_LoadAndDecompress(RESOURCE_OVERLAY_IMAGE_A,
+      Resource_LoadAndDecompress(RESOURCE_JUDGMENT_FLASH_SHEET,
                                  state->sheet + JUDGMENT_SHEET_FLASH_SMALL, 0,
                                  0);
     }

@@ -224,7 +224,7 @@ s32 StatusScreen_Run(void) {
   Text_UseExtraTilesFar(1);
 #endif
   menu->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
-  for (index = 0; index < STATUS_FIGURE_COUNT; index++)
+  for (index = 0; index < STATUS_MEMBER_FIGURE_COUNT; index++)
     menu->memberY[index] = MENU_MEMBER_Y;
   if (Party_SumDjinnCountsFar(-1) != 0)
     DjinnFigures_InitializeTopRow(menu->selectorWindow, 0);
@@ -440,7 +440,7 @@ StatusScreen_SetSelectedMemberRow(struct StatusScreenState *menu,
                                   s32 selectedMember) {
   s32 rowIndex;
 
-  for (rowIndex = 0; rowIndex < STATUS_FIGURE_COUNT; rowIndex++)
+  for (rowIndex = 0; rowIndex < STATUS_MEMBER_FIGURE_COUNT; rowIndex++)
     menu->memberY[rowIndex] = MENU_MEMBER_Y;
   menu->memberY[selectedMember] = MENU_MEMBER_RAISED_Y;
 }
@@ -586,7 +586,7 @@ s32 PsynergyMenu_ChooseMember(void) {
       page = (page + 3) % 3;
       StatusScreen_ShowMemberStatus(menu->memberTable[memberIndex], page);
       Menu_ReloadMemberPortrait(menu, menu->memberTable[memberIndex]);
-      for (rowIndex = 0; rowIndex < STATUS_FIGURE_COUNT; rowIndex++)
+      for (rowIndex = 0; rowIndex < STATUS_MEMBER_FIGURE_COUNT; rowIndex++)
         menu->rowPositions[rowIndex] = MENU_MEMBER_Y;
       menu->rowPositions[memberIndex] = MENU_MEMBER_RAISED_Y;
       menu->psynergyCount = PsynergyMenu_CollectActions(

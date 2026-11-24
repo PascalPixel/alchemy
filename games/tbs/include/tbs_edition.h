@@ -27,7 +27,7 @@
 #define FILE_SCREEN_ICON_ROW_WIDTH 4     ///< the File Screen's icon row
 #define DEBUG_SCENE_SELECTOR_COLON_X 100 ///< the debug scene selector's colons
 #define DEBUG_SCENE_SELECTOR_LABEL_X 110 ///< its entrance number and area name
-#define ENEMY_NAME_SUFFIX_FIRST 'A'
+#define ENEMY_NAME_LETTER_FIRST 'A'
 #else
 #define TEXT_BUFFER_MASK 0x1FF
 #define WINDOW_COUNT 8
@@ -35,7 +35,7 @@
 #define FILE_SCREEN_ICON_ROW_WIDTH 7
 #define DEBUG_SCENE_SELECTOR_COLON_X 74
 #define DEBUG_SCENE_SELECTOR_LABEL_X 82
-#define ENEMY_NAME_SUFFIX_FIRST '1'
+#define ENEMY_NAME_LETTER_FIRST '1'
 #endif
 
 /// The y of the debug scene selector's first row, in pixels, where its arrow
@@ -78,21 +78,21 @@
 #define HELP_TEXT_X 16   ///< the help line under the item and Psynergy menus
 #define SWITCH_HELP_X 64 ///< the Status menu's help for switching members
 #define STATUS_LIST_PAGE_ROWS 6 ///< the Status menu's Psynergy names a page
-#define STATUS_FIGURE_COUNT 4   ///< member figures the Status menu lowers
+#define STATUS_MEMBER_FIGURE_COUNT 4 ///< member figures the Status menu lowers
 #elif LANGUAGE == LANGUAGE_GERMAN
 #define SHOP_SELL_PRICE_X 14
 #define SHOP_SELL_PRICE_WIDTH 16
 #define HELP_TEXT_X 0
 #define SWITCH_HELP_X 80
 #define STATUS_LIST_PAGE_ROWS 5
-#define STATUS_FIGURE_COUNT 8
+#define STATUS_MEMBER_FIGURE_COUNT 8
 #else
 #define SHOP_SELL_PRICE_X 15
 #define SHOP_SELL_PRICE_WIDTH 15
 #define HELP_TEXT_X 0
 #define SWITCH_HELP_X 80
 #define STATUS_LIST_PAGE_ROWS 5
-#define STATUS_FIGURE_COUNT 8
+#define STATUS_MEMBER_FIGURE_COUNT 8
 #endif
 
 /// The shop's buying screen: the price window's width. The coins window's is

@@ -81,14 +81,14 @@ Resource_DirectoryTable:
 	resource ResourceFarCallsAlternate, FarCall_ResourceTable
 	resource WindowTiles, Window_Tiles
 	resource SmallFont, Text_SmallFont
-	group Title, IntroGraphicsA, IntroGraphicsB, IntroGraphicsC, NintendoLogo, CamelotLogo
+	group Title, IntroSun, TitleScreen, IntroPeak, NintendoLogo, CamelotLogo
 	group Title, GoldenSunLogo
 	group Field, WorldMapPicture
 	group Title, IntroTilesB
 	group Battle, SuhallaGateBackdrop, PirateShipBackdrop, CrossboneIsleCaveBackdrop, ColossoBackdrop, VenusLighthouseAerieStormBackdrop
 	group Battle, VenusLighthouseAerieBackdrop, VenusLighthouseBackdrop, SuhallaDesertBackdrop, AltmillerCaveBackdrop, TunnelRuinsBackdrop
-	group Battle, BabiLighthouseBackdrop, LamakanDesertBackdrop, MogallForestBackdrop, MercuryLighthouseAerieBackdrop, TolbiShipInteriorsBackdrop
-	group Battle, ImilFuchinFallsBackdrop, KolimaForestBackdrop, TretTreeInteriorsBackdrop, GomaCaveBackdrop, InteriorBackdrop
+	group Battle, BabiLighthouseBackdrop, LamakanDesertBackdrop, MogallForestBackdrop, MercuryLighthouseAerieBackdrop, TolbiShipRoomsBackdrop
+	group Battle, ImilFuchinFallsBackdrop, KolimaForestBackdrop, TretTreeRoomsBackdrop, GomaCaveBackdrop, RoomsBackdrop
 	group Battle, AltinPeakBackdrop, TolbiShipDeckBackdrop, MercuryLighthouseBackdrop, ValeStormBackdrop, TretTreeBranchBackdrop
 	group Battle, BeachBackdrop, SnowfieldBackdrop, GrasslandBackdrop, SolSanctumBackdrop, ForestBackdrop
 	group Battle, VioletSkyBackdrop, DesertBackdrop, DuskCloudsBackdrop, AerialViewBackdrop
@@ -97,14 +97,14 @@ Resource_DirectoryTable:
 	resource LuckyWheelsJackpot, LuckyWheels_Jackpot
 	resource LuckyDiceBoard, LuckyDice_Board
 	resource LuckyDiceSprites, LuckyDice_Sprites
-	group BattleEffect, TileAnimationMask, CyanSparkSheet, VioletPaletteA, RedPaletteA, YellowPaletteA
-	group BattleEffect, StarBurstSheet, CrescentSheet, RevealMaskA, RevealMaskB, RevealMaskC
-	group BattleEffect, RevealMaskD, RevealMaskE, RevealMaskF, LimeColumnSheet, RainSheet
+	group BattleEffect, ShatteringOpeningSheet, CyanSparkSheet, VioletPaletteA, RedPaletteA, YellowPaletteA
+	group BattleEffect, StarBurstSheet, CrescentSheet, VorpalSlashImageA, VorpalSlashImageB, QuickStrikeImageA
+	group BattleEffect, QuickStrikeImageB, UnusedFlashingStrikeImageA, UnusedFlashingStrikeImageB, LimeColumnSheet, RainSheet
 	group BattleEffect, FlameSheetA, DemonFaceSheet, FlameBladeSheet, SwordSheet, IceTileSheet
 	group BattleEffect, FiveModeImage, SpiderWebSheet, VioletLightningSheetA, YellowSparkSheet, ProjectileVolleyImage
 	group BattleEffect, ShurikenSheet, FlareSheet, FlareImage, VioletPaletteB, FireSwirlSheet
-	group BattleEffect, VioletLightningSheetB, FireBurstSheet, BlueCrescentSheet, OverlayImageA, VioletMoteSheet
-	group BattleEffect, OverlayImageB, FireballSheet, MemberBurstImage, SlashSheet, WaveSheet
+	group BattleEffect, VioletLightningSheetB, FireBurstSheet, BlueCrescentSheet, JudgmentFlashSheet, VioletMoteSheet
+	group BattleEffect, JudgmentBurstSheet, FireballSheet, MemberBurstImage, SlashSheet, WaveSheet
 	group BattleEffect, TargetBurstImage, PinkStarSheet, WaterSpraySheet, BlueFlameSheet, ExplosionSheet
 	group BattleEffect, MagentaSwirlSheet, MagentaTailSheet, ParticleSpritesA, ParticleSpritesB, ParticleSpritesC
 	group BattleEffect, ParticleSpritesD, GreenPalette, SwordSlashSheet, RuneSheet, FlameColumnSheet
@@ -125,7 +125,7 @@ Resource_DirectoryTable:
 	group BattleEffect, FlameSheetB, FirePillarSheetB, RockSpireSheet, LightningBoltSheet, BeamImage
 	group BattleEffect, TwelveModeImage, WindStreakSheet, YellowPaletteB, BlueRingSheet, RedPaletteC
 	group BattleEffect, VioletPaletteD, BlueBeamSheet, VortexSheet, TornadoSheet, CrystalSheet
-	group BattleEffect, WaterSparkleSheet, LightningPillarSheet, StagedParticlePath, DualStreamPath
+	group BattleEffect, WaterSparkleSheet, LightningPillarSheet, AtalantaPath, DragonCloudFlamePath
 	group Field, PerspectiveDataA, DefaultGridCells, DefaultTileAnimation, DefaultCellTilesAttributes
 	resource WorldMapPaletteA, WorldMap_PaletteA
 	resource WorldMapTilesA, WorldMap_TilesA
@@ -139,7 +139,7 @@ Resource_DirectoryTable:
 	resource WorldMapTilesH, WorldMap_TilesH
 	resource WorldMapTilesI, WorldMap_TilesI
 	resource WorldMapTilesJ, WorldMap_TilesJ
-	group Colosso, OpponentPathA, OpponentPathB, OpponentPathC, Lettering
+	group Colosso, AzartOpponentPath, SatrageOpponentPath, NavampaOpponentPath, Lettering
 	resource MenuCursorPictures, MenuCursor_PictureA
 	resource , MenuCursor_PictureB
 	resource , MenuCursor_PictureC

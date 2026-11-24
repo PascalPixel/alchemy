@@ -16,11 +16,12 @@
 #define FLASHING_STRIKE_PICTURE_BYTES (SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE)
 
 /// The flashing strike's modes (BattleEffect_RunFlashingStrike): which two
-/// RevealMask resources it shows.
+/// pictures it shows.
 enum FlashingStrikeMode {
-  FLASHING_STRIKE_UNUSED,       ///< RevealMaskE and F; nothing passes it
-  FLASHING_STRIKE_QUICK_STRIKE, ///< RevealMaskC and D, with a hop
-  FLASHING_STRIKE_VORPAL_SLASH  ///< RevealMaskA and B
+  FLASHING_STRIKE_UNUSED, ///< UnusedFlashingStrikeImageA and B; nothing passes
+                          ///< it
+  FLASHING_STRIKE_QUICK_STRIKE, ///< QuickStrikeImageA and B, with a hop
+  FLASHING_STRIKE_VORPAL_SLASH  ///< VorpalSlashImageA and B
 };
 
 /// The user leaps high at the first target, then sparks burst beneath it.
@@ -75,20 +76,20 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   REG_BLDCNT = 0;
 
   if (mode == FLASHING_STRIKE_UNUSED) {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_E, state->imageStorage, 1,
-                               0);
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_F, Ram_MapGridCellBuffer, 1,
-                               1);
+    Resource_LoadAndDecompress(RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_A,
+                               state->imageStorage, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_B,
+                               Ram_MapGridCellBuffer, 1, 1);
   } else if (mode == FLASHING_STRIKE_QUICK_STRIKE) {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, state->imageStorage, 1,
-                               0);
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_D, Ram_MapGridCellBuffer, 1,
-                               1);
+    Resource_LoadAndDecompress(RESOURCE_QUICK_STRIKE_IMAGE_A,
+                               state->imageStorage, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_QUICK_STRIKE_IMAGE_B,
+                               Ram_MapGridCellBuffer, 1, 1);
   } else {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, state->imageStorage, 1,
-                               0);
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_B, Ram_MapGridCellBuffer, 1,
-                               1);
+    Resource_LoadAndDecompress(RESOURCE_VORPAL_SLASH_IMAGE_A,
+                               state->imageStorage, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_VORPAL_SLASH_IMAGE_B,
+                               Ram_MapGridCellBuffer, 1, 1);
   }
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 

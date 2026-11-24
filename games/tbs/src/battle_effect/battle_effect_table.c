@@ -168,8 +168,8 @@ u8 gTargetStrike_GlintDrawFlags[] = GLINT_FLIPS;
 u8 gDeathPlunge_SwordWidths[] = {20, 21, 22, 25};
 u8 gDeathPlunge_SwordHeights[] = {32, 31, 27, 24};
 u16 gDeathPlunge_SwordPictures[] = {0, 640, 1291, 1885};
-/// The 33 pieces of the TileAnimationMask picture: where each starts on the
-/// canvas, its size, and where its pixels begin in the decoded picture. The
+/// The 33 pieces of the ShatteringOpeningSheet picture: where each starts on
+/// the canvas, its size, and where its pixels begin in the decoded picture. The
 /// offsets carry one more entry, where the last piece ends.
 u8 gDeathPlunge_PieceWidths[] = {21, 20, 24, 30, 35, 69, 19, 23, 9,  22, 33,
                                  10, 18, 9,  7,  9,  17, 55, 30, 25, 40, 29,

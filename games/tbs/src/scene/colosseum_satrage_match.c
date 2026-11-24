@@ -1169,7 +1169,7 @@ s32 Scene_Initialize(void) {
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
-    ColosseumSatrageMatch_StartOpponentPath(RESOURCE_OPPONENT_PATH_B);
+    ColosseumSatrageMatch_StartOpponentPath(RESOURCE_SATRAGE_OPPONENT_PATH);
     break;
   case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST:
     Task_AddFrame(Colosso_RaiseTakePlaceOnPsynergy, TASK_PASS_FRAME);

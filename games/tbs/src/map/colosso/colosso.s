@@ -1,16 +1,16 @@
 	.include "games/tbs/include/edition.inc"
 	.section .rodata
-	.global Colosso_OpponentPathA
-Colosso_OpponentPathA:
-	.incbin "games/tbs/src/map/colosso/opponent_path_a.table.lz"
+	.global Colosso_AzartOpponentPath
+Colosso_AzartOpponentPath:
+	.incbin "games/tbs/src/map/colosso/azart_opponent_path.table.lz"
 	.byte 0xe0, 0xc8, 0xb4	@ PACKER: left in the buffer by WorldMap_TilesE+0x1899
-	.global Colosso_OpponentPathB
-Colosso_OpponentPathB:
-	.incbin "games/tbs/src/map/colosso/opponent_path_b.table.lz"
-	.byte 0x33, 0x59	@ PACKER: left in the buffer by Colosso_OpponentPathA+0x15c6
-	.global Colosso_OpponentPathC
-Colosso_OpponentPathC:
-	.incbin "games/tbs/src/map/colosso/opponent_path_c.table.lz"
+	.global Colosso_SatrageOpponentPath
+Colosso_SatrageOpponentPath:
+	.incbin "games/tbs/src/map/colosso/satrage_opponent_path.table.lz"
+	.byte 0x33, 0x59	@ PACKER: left in the buffer by Colosso_AzartOpponentPath+0x15c6
+	.global Colosso_NavampaOpponentPath
+Colosso_NavampaOpponentPath:
+	.incbin "games/tbs/src/map/colosso/navampa_opponent_path.table.lz"
 	.byte 0x8d, 0x8f	@ PACKER: left in the buffer by WorldMap_TilesE+0x1a8e
 	.global Colosso_Lettering
 Colosso_Lettering:
@@ -36,16 +36,16 @@ Colosso_Lettering:
 	.endif
 	.endif
 	.ifdef TBS_EDITION_DE
-	.byte 0x30, 0x58	@ PACKER: left in the buffer by Colosso_OpponentPathC+0xdfa
+	.byte 0x30, 0x58	@ PACKER: left in the buffer by Colosso_NavampaOpponentPath+0xdfa
 	.else
 	.ifdef TBS_EDITION_FR
-	.byte 0x73	@ PACKER: left in the buffer by Colosso_OpponentPathC+0xdb3
+	.byte 0x73	@ PACKER: left in the buffer by Colosso_NavampaOpponentPath+0xdb3
 	.else
 	.ifdef TBS_EDITION_JA
-	.byte 0xbd, 0x8e	@ PACKER: left in the buffer by Colosso_OpponentPathC+0xf02
+	.byte 0xbd, 0x8e	@ PACKER: left in the buffer by Colosso_NavampaOpponentPath+0xf02
 	.else
 	.ifdef TBS_EDITION_EN
-	.byte 0xc5	@ PACKER: left in the buffer by Colosso_OpponentPathC+0x124f
+	.byte 0xc5	@ PACKER: left in the buffer by Colosso_NavampaOpponentPath+0x124f
 	.endif
 	.endif
 	.endif

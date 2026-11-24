@@ -1176,7 +1176,7 @@ s32 Scene_Initialize(void) {
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
-    Colosso_StartOpponent(RESOURCE_OPPONENT_PATH_C);
+    Colosso_StartOpponent(RESOURCE_NAVAMPA_OPPONENT_PATH);
     break;
 
   case COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH:

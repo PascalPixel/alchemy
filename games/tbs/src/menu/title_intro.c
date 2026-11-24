@@ -275,7 +275,7 @@ void Title_LoadIntroBackgrounds(void) {
 
   introState = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
   REG_DISPCNT = 0;
-  resourceData = Resource_GetTableEntry(RESOURCE_INTRO_GRAPHICS_A);
+  resourceData = Resource_GetTableEntry(RESOURCE_INTRO_SUN);
   Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4),
           REG_DMA3);
   OBJ_PLTT[0] = 0;
@@ -284,7 +284,7 @@ void Title_LoadIntroBackgrounds(void) {
   Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0,
           DMA_COPY_HALFWORDS(INTRO_SPRITE_TILES * TILE_SIZE_4BPP / 2),
           REG_DMA3);
-  resourceData = Resource_GetTableEntry(RESOURCE_INTRO_GRAPHICS_C);
+  resourceData = Resource_GetTableEntry(RESOURCE_INTRO_PEAK);
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4),
           REG_DMA3);
   BG_PLTT[0] = 0;
@@ -539,7 +539,7 @@ s32 Title_ShowIntro(s32 prompt) {
                    BGCNT_SCREEN_BASE(PICTURE_SCREEN);
       REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
       gBgScroll[2].y = 0;
-      resourceData = Resource_GetTableEntry(RESOURCE_INTRO_GRAPHICS_B);
+      resourceData = Resource_GetTableEntry(RESOURCE_TITLE_SCREEN);
       Dma_Set(resourceData, (void *)BG_PLTT,
               DMA_COPY_WORDS(TITLE_PICTURE_COLORS * 2 / 4), REG_DMA3);
       BG_PLTT[0] = 0;

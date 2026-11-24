@@ -1,7 +1,7 @@
 	.include "games/tbs/include/edition.inc"
 	.section .rodata
-	.global Title_IntroGraphicsA
-Title_IntroGraphicsA:
+	.global Title_IntroSun
+Title_IntroSun:
 	.incbin "games/tbs/src/graphics/title/intro_sun_glare.gbapal"
 	.incbin "games/tbs/src/graphics/title/intro_sun.parts.plz"
 	.ifeq EDITION_INTERNATIONAL
@@ -9,8 +9,8 @@ Title_IntroGraphicsA:
 	.else
 	.byte 0x44	@ PACKER: left in the buffer by Window_Tiles+0x1177
 	.endif
-	.global Title_IntroGraphicsB
-Title_IntroGraphicsB:
+	.global Title_TitleScreen
+Title_TitleScreen:
 	.ifeq EDITION_INTERNATIONAL
 	.incbin "games/tbs/src/graphics/title/screen_ja.gbapal"
 	.incbin "games/tbs/src/graphics/title/screen_ja.8bpp.plz"
@@ -39,8 +39,8 @@ Title_IntroGraphicsB:
 	.endif
 	.endif
 	.balign 4, 0
-	.global Title_IntroGraphicsC
-Title_IntroGraphicsC:
+	.global Title_IntroPeak
+Title_IntroPeak:
 	.incbin "games/tbs/src/graphics/title/intro_peak.gbapal"
 	.incbin "games/tbs/src/graphics/title/intro_peak.parts.plz"
 	.balign 4, 0
@@ -54,7 +54,7 @@ Title_CamelotLogo:
 	.incbin "games/tbs/src/graphics/title/camelot_logo_ja.parts.lz"
 	.else
 	.incbin "games/tbs/src/graphics/title/camelot_logo.parts.lz"
-	.byte 0x04, 0x18, 0x03	@ PACKER: left in the buffer by Title_IntroGraphicsC+0x1829
+	.byte 0x04, 0x18, 0x03	@ PACKER: left in the buffer by Title_IntroPeak+0x1829
 	.endif
 	.global Title_GoldenSunLogo
 Title_GoldenSunLogo:
@@ -65,18 +65,18 @@ Title_GoldenSunLogo:
 	.ifdef TBS_EDITION_FR
 	.incbin "games/tbs/src/graphics/title/golden_sun_fr.gbapal"
 	.incbin "games/tbs/src/graphics/title/golden_sun_fr.8bpp.lz"
-	.byte 0x08, 0x01, 0x29	@ PACKER: left in the buffer by Title_IntroGraphicsC+0x1921
+	.byte 0x08, 0x01, 0x29	@ PACKER: left in the buffer by Title_IntroPeak+0x1921
 	.else
 	.incbin "games/tbs/src/graphics/title/golden_sun.gbapal"
 	.incbin "games/tbs/src/graphics/title/golden_sun.8bpp.lz"
-	.byte 0xd1, 0x27, 0x47	@ PACKER: left in the buffer by Title_IntroGraphicsC+0x190d
+	.byte 0xd1, 0x27, 0x47	@ PACKER: left in the buffer by Title_IntroPeak+0x190d
 	.endif
 	.endif
 	.global Field_WorldMapPicture
 Field_WorldMapPicture:
 	.incbin "games/tbs/src/graphics/world_map/picture.gbapal"
 	.incbin "games/tbs/src/graphics/world_map/picture.8bpp.lz"
-	.byte 0x02, 0x31, 0x01	@ PACKER: left in the buffer by Title_IntroGraphicsC+0x3b01
+	.byte 0x02, 0x31, 0x01	@ PACKER: left in the buffer by Title_IntroPeak+0x3b01
 @ "To be continued" lettering
 	.global Title_IntroTilesB
 Title_IntroTilesB:

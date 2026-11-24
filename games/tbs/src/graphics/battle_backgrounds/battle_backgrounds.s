@@ -3,7 +3,7 @@
 Battle_SuhallaGateBackdrop:
 	.incbin "games/tbs/src/graphics/battle_backgrounds/suhalla_gate.gbapal"
 	.incbin "games/tbs/src/graphics/battle_backgrounds/suhalla_gate.bitmap.d7"
-	.byte 0x41, 0x83	@ PACKER: left in the buffer by Title_IntroGraphicsC+0x4442
+	.byte 0x41, 0x83	@ PACKER: left in the buffer by Title_IntroPeak+0x4442
 	.global Battle_PirateShipBackdrop
 Battle_PirateShipBackdrop:
 	.incbin "games/tbs/src/graphics/battle_backgrounds/pirate_ship.gbapal"
@@ -60,33 +60,33 @@ Battle_MogallForestBackdrop:
 Battle_MercuryLighthouseAerieBackdrop:
 	.incbin "games/tbs/src/graphics/battle_backgrounds/mercury_lighthouse_aerie.gbapal"
 	.incbin "games/tbs/src/graphics/battle_backgrounds/mercury_lighthouse_aerie.bitmap.d7"
-	.global Battle_TolbiShipInteriorsBackdrop
-Battle_TolbiShipInteriorsBackdrop:
-	.incbin "games/tbs/src/graphics/battle_backgrounds/tolbi_ship_interiors.gbapal"
-	.incbin "games/tbs/src/graphics/battle_backgrounds/tolbi_ship_interiors.bitmap.d7"
+	.global Battle_TolbiShipRoomsBackdrop
+Battle_TolbiShipRoomsBackdrop:
+	.incbin "games/tbs/src/graphics/battle_backgrounds/tolbi_ship_rooms.gbapal"
+	.incbin "games/tbs/src/graphics/battle_backgrounds/tolbi_ship_rooms.bitmap.d7"
 	.byte 0x39, 0x66	@ PACKER: left in the buffer by Battle_MogallForestBackdrop+0x4076
 	.global Battle_ImilFuchinFallsBackdrop
 Battle_ImilFuchinFallsBackdrop:
 	.incbin "games/tbs/src/graphics/battle_backgrounds/imil_fuchin_falls.gbapal"
 	.incbin "games/tbs/src/graphics/battle_backgrounds/imil_fuchin_falls.bitmap.d7"
-	.byte 0x45, 0x15	@ PACKER: left in the buffer by Battle_TolbiShipInteriorsBackdrop+0x383e
+	.byte 0x45, 0x15	@ PACKER: left in the buffer by Battle_TolbiShipRoomsBackdrop+0x383e
 	.global Battle_KolimaForestBackdrop
 Battle_KolimaForestBackdrop:
 	.incbin "games/tbs/src/graphics/battle_backgrounds/kolima_forest.gbapal"
 	.incbin "games/tbs/src/graphics/battle_backgrounds/kolima_forest.bitmap.d7"
-	.global Battle_TretTreeInteriorsBackdrop
-Battle_TretTreeInteriorsBackdrop:
-	.incbin "games/tbs/src/graphics/battle_backgrounds/tret_tree_interiors.gbapal"
-	.incbin "games/tbs/src/graphics/battle_backgrounds/tret_tree_interiors.bitmap.d7"
+	.global Battle_TretTreeRoomsBackdrop
+Battle_TretTreeRoomsBackdrop:
+	.incbin "games/tbs/src/graphics/battle_backgrounds/tret_tree_rooms.gbapal"
+	.incbin "games/tbs/src/graphics/battle_backgrounds/tret_tree_rooms.bitmap.d7"
 	.byte 0x58, 0xe7	@ PACKER: left in the buffer by Battle_KolimaForestBackdrop+0x49fa
 	.global Battle_GomaCaveBackdrop
 Battle_GomaCaveBackdrop:
 	.incbin "games/tbs/src/graphics/battle_backgrounds/goma_cave.gbapal"
 	.incbin "games/tbs/src/graphics/battle_backgrounds/goma_cave.bitmap.d7"
-	.global Battle_InteriorBackdrop
-Battle_InteriorBackdrop:
-	.incbin "games/tbs/src/graphics/battle_backgrounds/interior.gbapal"
-	.incbin "games/tbs/src/graphics/battle_backgrounds/interior.bitmap.d7"
+	.global Battle_RoomsBackdrop
+Battle_RoomsBackdrop:
+	.incbin "games/tbs/src/graphics/battle_backgrounds/rooms.gbapal"
+	.incbin "games/tbs/src/graphics/battle_backgrounds/rooms.bitmap.d7"
 	.global Battle_AltinPeakBackdrop
 Battle_AltinPeakBackdrop:
 	.incbin "games/tbs/src/graphics/battle_backgrounds/altin_peak.gbapal"

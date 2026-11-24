@@ -1,9 +1,9 @@
 	.include "games/tbs/include/edition.inc"
 	.section .rodata
-	.global BattleEffect_TileAnimationMask
-BattleEffect_TileAnimationMask:
-	.incbin "games/tbs/src/graphics/battle_effects/tile_mask_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/tile_mask.bitmaps.lz"
+	.global BattleEffect_ShatteringOpeningSheet
+BattleEffect_ShatteringOpeningSheet:
+	.incbin "games/tbs/src/graphics/battle_effects/shattering_opening_00.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/shattering_opening.bitmaps.lz"
 	.ifdef TBS_EDITION_EN
 	.byte 0x32, 0xb9, 0x81	@ PACKER: left in the buffer by LuckyDice_Sprites+0x845
 	.else
@@ -51,40 +51,40 @@ BattleEffect_CrescentSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/crescent.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/crescent.bitmap.lz"
 	.byte 0x09, 0x01	@ PACKER: left in the buffer by BattleEffect_CyanSparkSheet+0x5ea
-	.global BattleEffect_RevealMaskA
-BattleEffect_RevealMaskA:
-	.incbin "games/tbs/src/graphics/battle_effects/reveal_a.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/reveal_a.bitmap.lz"
+	.global BattleEffect_VorpalSlashImageA
+BattleEffect_VorpalSlashImageA:
+	.incbin "games/tbs/src/graphics/battle_effects/vorpal_slash_a.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/vorpal_slash_a.bitmap.lz"
 	.byte 0x0a, 0x21	@ PACKER: left in the buffer by BattleEffect_CyanSparkSheet+0x6c2
-	.global BattleEffect_RevealMaskB
-BattleEffect_RevealMaskB:
-	.incbin "games/tbs/src/graphics/battle_effects/reveal_b.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/reveal_b.bitmap.lz"
-	.byte 0x00, 0x7b, 0x09	@ PACKER: left in the buffer by BattleEffect_RevealMaskA+0x2e5
-	.global BattleEffect_RevealMaskC
-BattleEffect_RevealMaskC:
-	.incbin "games/tbs/src/graphics/battle_effects/reveal_c.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/reveal_c.bitmap.lz"
-	.global BattleEffect_RevealMaskD
-BattleEffect_RevealMaskD:
-	.incbin "games/tbs/src/graphics/battle_effects/reveal_d.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/reveal_d.bitmap.lz"
+	.global BattleEffect_VorpalSlashImageB
+BattleEffect_VorpalSlashImageB:
+	.incbin "games/tbs/src/graphics/battle_effects/vorpal_slash_b.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/vorpal_slash_b.bitmap.lz"
+	.byte 0x00, 0x7b, 0x09	@ PACKER: left in the buffer by BattleEffect_VorpalSlashImageA+0x2e5
+	.global BattleEffect_QuickStrikeImageA
+BattleEffect_QuickStrikeImageA:
+	.incbin "games/tbs/src/graphics/battle_effects/quick_strike_a.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/quick_strike_a.bitmap.lz"
+	.global BattleEffect_QuickStrikeImageB
+BattleEffect_QuickStrikeImageB:
+	.incbin "games/tbs/src/graphics/battle_effects/quick_strike_b.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/quick_strike_b.bitmap.lz"
 	.balign 4, 0
-	.global BattleEffect_RevealMaskE
-BattleEffect_RevealMaskE:
-	.incbin "games/tbs/src/graphics/battle_effects/reveal_e.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/reveal_e.bitmap.lz"
+	.global BattleEffect_UnusedFlashingStrikeImageA
+BattleEffect_UnusedFlashingStrikeImageA:
+	.incbin "games/tbs/src/graphics/battle_effects/unused_flashing_strike_a.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/unused_flashing_strike_a.bitmap.lz"
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.global BattleEffect_RevealMaskF
-BattleEffect_RevealMaskF:
-	.incbin "games/tbs/src/graphics/battle_effects/reveal_f.gbapal"
-	.incbin "games/tbs/src/graphics/battle_effects/reveal_f.bitmap.lz"
-	.byte 0x30, 0xe1, 0x08	@ PACKER: left in the buffer by BattleEffect_RevealMaskE+0x3e9
+	.global BattleEffect_UnusedFlashingStrikeImageB
+BattleEffect_UnusedFlashingStrikeImageB:
+	.incbin "games/tbs/src/graphics/battle_effects/unused_flashing_strike_b.gbapal"
+	.incbin "games/tbs/src/graphics/battle_effects/unused_flashing_strike_b.bitmap.lz"
+	.byte 0x30, 0xe1, 0x08	@ PACKER: left in the buffer by BattleEffect_UnusedFlashingStrikeImageA+0x3e9
 	.global BattleEffect_LimeColumnSheet
 BattleEffect_LimeColumnSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/lime_column.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/lime_column.bitmap.lz"
-	.byte 0x02	@ PACKER: left in the buffer by BattleEffect_RevealMaskF+0x3cf
+	.byte 0x02	@ PACKER: left in the buffer by BattleEffect_UnusedFlashingStrikeImageB+0x3cf
 	.global BattleEffect_RainSheet
 BattleEffect_RainSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/rain.gbapal"
@@ -193,18 +193,18 @@ BattleEffect_BlueCrescentSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/blue_crescent.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/blue_crescent.bitmap.lz"
 	.byte 0xe0, 0x02	@ PACKER: left in the buffer by BattleEffect_FireBurstSheet+0x21e
-	.global BattleEffect_OverlayImageA
-BattleEffect_OverlayImageA:
-	.incbin "games/tbs/src/graphics/battle_effects/overlay_a.bitmaps.lz"
+	.global BattleEffect_JudgmentFlashSheet
+BattleEffect_JudgmentFlashSheet:
+	.incbin "games/tbs/src/graphics/battle_effects/judgment_flash.bitmaps.lz"
 	.byte 0x88	@ PACKER: left in the buffer by BattleEffect_FireBurstSheet+0x43b
 	.global BattleEffect_VioletMoteSheet
 BattleEffect_VioletMoteSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/mote.gbapal"
 	.incbin "games/tbs/src/graphics/battle_effects/mote.bitmap.lz"
-	.byte 0x28, 0x41, 0x42	@ PACKER: left in the buffer by BattleEffect_OverlayImageA+0x111
-	.global BattleEffect_OverlayImageB
-BattleEffect_OverlayImageB:
-	.incbin "games/tbs/src/graphics/battle_effects/overlay_b.bitmaps.lz"
+	.byte 0x28, 0x41, 0x42	@ PACKER: left in the buffer by BattleEffect_JudgmentFlashSheet+0x111
+	.global BattleEffect_JudgmentBurstSheet
+BattleEffect_JudgmentBurstSheet:
+	.incbin "games/tbs/src/graphics/battle_effects/judgment_burst.bitmaps.lz"
 	.global BattleEffect_FireballSheet
 BattleEffect_FireballSheet:
 	.incbin "games/tbs/src/graphics/battle_effects/fireball.gbapal"

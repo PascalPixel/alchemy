@@ -564,8 +564,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress(RESOURCE_TILE_ANIMATION_MASK, state->imageStorage,
-                             1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SHATTERING_OPENING_SHEET,
+                             state->imageStorage, 1, 1);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);

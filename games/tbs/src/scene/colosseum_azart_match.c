@@ -854,7 +854,7 @@ s32 Scene_Initialize(void) {
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
-    Colosso_StartOpponent(RESOURCE_OPPONENT_PATH_A);
+    Colosso_StartOpponent(RESOURCE_AZART_OPPONENT_PATH);
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST:
     Task_AddFrame(Colosso_RaiseTakePlaceOnPsynergy, TASK_PASS_FRAME);

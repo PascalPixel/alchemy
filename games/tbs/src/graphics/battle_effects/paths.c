@@ -1,8 +1,8 @@
 /// @file
 /// The flight paths of two battle effects: Atalanta's as her shafts of light
 /// gather, and that of the flame Dragon Cloud sends from its user.
-/// Each is resource data (ResourceId_StagedParticlePath and
-/// ResourceId_DualStreamPath).
+/// Each is resource data (ResourceId_AtalantaPath and
+/// ResourceId_DragonCloudFlamePath).
 
 #include "types.h"
 
@@ -14,7 +14,7 @@
 
 /// Atalanta's path while her shafts of light gather: a move a frame for 209
 /// frames, the last move never read.
-const s8 BattleEffect_StagedParticlePath[][2] = {
+const s8 BattleEffect_AtalantaPath[][2] = {
     PATH_START(160, 95),
     {-5, -3},
     {-4, -3},
@@ -230,7 +230,7 @@ const s8 BattleEffect_StagedParticlePath[][2] = {
 
 /// The path of the flame Dragon Cloud sends from its user: a move a frame for
 /// 40 frames.
-const s8 BattleEffect_DualStreamPath[][2] = {
+const s8 BattleEffect_DragonCloudFlamePath[][2] = {
     PATH_START(17, -39),
     {6, 5},
     {6, 5},

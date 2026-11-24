@@ -65,12 +65,27 @@ void Actor_Release(struct Actor *actor);
 
 /// The ways into the scene that its set-up answers, besides scene_exits.h's.
 enum VenusLighthouseEntranceEntrance {
+  /// The map's own way in, in the lighthouse's doorway at the top of its
+  /// stairs: the party goes on to it once Jenna takes over, and wakes there
+  /// after a defeat.
+  ENTRANCE_LIGHTHOUSE_DOOR = 1,
+  /// On the path south of the plaza, between the bushes: where the debug
+  /// menu's Venus Lighthouse start puts the party (MainRoutine_Run).
+  ENTRANCE_PLAZA_PATH = 10,
+  /// Further south, between the workmen and the soldiers.
+  ENTRANCE_BY_WORKMEN = 11,
+  /// On the west road, beside the Ruffian who waits for backup.
+  ENTRANCE_WEST_ROAD = 12,
   /// Where the prologue hands the party to Jenna: Felix, Sheba and Piers leave
   /// it.
   ENTRANCE_JENNA_TAKES_OVER = 90,
   /// Back from the battle with the Ruffian who waited for backup.
   ENTRANCE_AFTER_RUFFIAN_BATTLE = 99
 };
+
+/// The looks BattleEffect_SetObjectUpdateMode gives a caster: none, and the
+/// cycling colours Jenna and Alex take as they gather power.
+enum { CASTER_LOOK_NONE = 0, CASTER_LOOK_CYCLING_COLORS = 2 };
 
 /// The map cells the step triggers answer, by the behaviour the map gives
 /// them: the row before the lighthouse door, either side of it (cells (17, 7)
@@ -180,10 +195,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void VenusLighthouseEntrance_BlastActorWithPsynergy(void *soldierId) {
   Field_StartColorTransition(8, RGB(4, 4, 16));
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_JENNA), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_JENNA),
+                                   CASTER_LOOK_CYCLING_COLORS);
   FieldEvent_Wait(20);
   VenusLighthouseEntrance_BlastActorSkyward(soldierId);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_JENNA), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_JENNA), CASTER_LOOK_NONE);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
@@ -260,8 +276,8 @@ s32 Scene_Initialize(void) {
     }
   }
   if (gMainRoutineState.entrance == VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT) {
-    gMainRoutineState.returnEntrance = 1;
-    gMainRoutineState.entrance = 1;
+    gMainRoutineState.returnEntrance = ENTRANCE_LIGHTHOUSE_DOOR;
+    gMainRoutineState.entrance = ENTRANCE_LIGHTHOUSE_DOOR;
     Party_RestoreHpPp(1);
     VenusLighthouseEntrance_WakeUp();
   }
@@ -273,7 +289,8 @@ s32 Scene_Initialize(void) {
     Party_RemoveMember(ACTOR_FELIX);
     Party_RemoveMember(ACTOR_SHEBA);
     Party_RemoveMember(ACTOR_PIERS);
-    Event_SetDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, 1);
+    Event_SetDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
+                         ENTRANCE_LIGHTHOUSE_DOOR);
   }
   if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN)) {
     Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, 5);
@@ -687,7 +704,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   FieldEvent_Wait(50);
   BattleEffect_StartArcEffect();
   actor = Actor_GetById(ACTOR_ALEX);
-  BattleEffect_SetObjectUpdateMode(actor, 2);
+  BattleEffect_SetObjectUpdateMode(actor, CASTER_LOOK_CYCLING_COLORS);
   Event_PlaySound(SE_GATHERING_POWER);
   FieldEvent_Wait(20);
   Field_StartColorTransition(8, RGB(4, 4, 16));
@@ -711,7 +728,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   VenusLighthouseEntrance_BlastActorSkyward(ACTOR_SURPRISED_SOLDIER);
   FieldEvent_Wait(30);
   actor = Actor_GetById(ACTOR_ALEX);
-  BattleEffect_SetObjectUpdateMode(actor, 0);
+  BattleEffect_SetObjectUpdateMode(actor, CASTER_LOOK_NONE);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(16);
@@ -1566,9 +1583,12 @@ struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE, CONDITION_ALWAYS, 376, 0,
      104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {10, CONDITION_ALWAYS, 376, 0, 232, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {11, CONDITION_ALWAYS, 384, 0, 392, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {12, CONDITION_ALWAYS, 112, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_PLAZA_PATH, CONDITION_ALWAYS, 376, 0, 232, FACING_SOUTH, 0, -1,
+     -1, -1, -1, 0},
+    {ENTRANCE_BY_WORKMEN, CONDITION_ALWAYS, 384, 0, 392, FACING_SOUTH, 0, -1,
+     -1, -1, -1, 0},
+    {ENTRANCE_WEST_ROAD, CONDITION_ALWAYS, 112, 0, 272, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {ENTRANCE_JENNA_TAKES_OVER, CONDITION_ALWAYS, 376, 0, 104, FACING_SOUTH, 0,
      -1, -1, -1, -1, 0},
     {VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT, CONDITION_ALWAYS, 384, 0, 168,

@@ -1,0 +1,18 @@
+block	file	pad	edition
+cell_tiles	cell_tiles.delta1.lz	4
+shapes	shapes.table.lz	4
+grid	map_ja.grid.lz	4	ja
+grid	map.grid.lz	4	en
+grid	map.grid.lz	4	de
+grid	map.grid.lz	4	es
+grid	map.grid.lz	4	fr
+grid	map.grid.lz	4	it
+shape_grid	shape_grid.plane.lz	4
+animation	daila_flooded/animation.script.lz	4
+none
+scene	scene_ja.scene.lz		ja
+scene	scene.scene.lz		en
+scene	scene.scene.lz		de
+scene	scene.scene.lz		es
+scene	scene.scene.lz		fr
+scene	scene.scene.lz		it

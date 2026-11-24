@@ -1,0 +1,12 @@
+block	file	pad	edition
+cell_tiles	cell_tiles.delta2.lz	4
+shapes	shapes.table.lz	4
+grid	map.grid.lz	4	ja
+grid	map.grid.lz	4	en
+grid	map_de.grid.lz	4	de
+grid	map_de.grid.lz	4	es
+grid	map_de.grid.lz	4	fr
+grid	map_de.grid.lz	4	it
+animation	tileset_anims.script.lz	4
+blend	blend.script.lz	4
+markers		4

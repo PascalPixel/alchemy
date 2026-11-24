@@ -1,31 +1,11 @@
 name	file	left	pad	fill	edition
-Tileset_MadraRoomsCavernHomesPalette	../graphics/tileset/madra_rooms_cavern_homes/palette.gbapal.lz	c7			ja
-Tileset_MadraRoomsCavernHomesTilesA	../graphics/tileset/madra_rooms_cavern_homes/tiles_a.4bpp.mtf	080a			ja
-Tileset_MadraRoomsCavernHomesTilesB	../graphics/tileset/madra_rooms_cavern_homes/tiles_b.4bpp.mtf	3c00			ja
+Tileset_MadraRoomsCavernHomesPalette	../graphics/tileset/madra_rooms_cavern_homes/palette.gbapal.lz	c7
+Tileset_MadraRoomsCavernHomesTilesA	../graphics/tileset/madra_rooms_cavern_homes/tiles_a.4bpp.mtf	080a
+Tileset_MadraRoomsCavernHomesTilesB	../graphics/tileset/madra_rooms_cavern_homes/tiles_b.4bpp.mtf	3c00
 Tileset_MadraRoomsCavernHomesTilesC	../graphics/tileset/madra_rooms_cavern_homes/tiles_c.4bpp.mtf	1d1e			ja
-Tileset_MadraRoomsCavernHomesTilesD	../graphics/tileset/madra_rooms_cavern_homes/tiles_d.4bpp.mtf	22b9			ja
-Tileset_MadraRoomsCavernHomesPalette	../graphics/tileset/madra_rooms_cavern_homes/palette.gbapal.lz	c7			en
-Tileset_MadraRoomsCavernHomesTilesA	../graphics/tileset/madra_rooms_cavern_homes/tiles_a.4bpp.mtf	080a			en
-Tileset_MadraRoomsCavernHomesTilesB	../graphics/tileset/madra_rooms_cavern_homes/tiles_b.4bpp.mtf	3c00			en
 Tileset_MadraRoomsCavernHomesTilesC	../graphics/tileset/madra_rooms_cavern_homes/tiles_c.4bpp.mtf	0100			en
-Tileset_MadraRoomsCavernHomesTilesD	../graphics/tileset/madra_rooms_cavern_homes/tiles_d.4bpp.mtf	22b9			en
-Tileset_MadraRoomsCavernHomesPalette	../graphics/tileset/madra_rooms_cavern_homes/palette.gbapal.lz	c7			de
-Tileset_MadraRoomsCavernHomesTilesA	../graphics/tileset/madra_rooms_cavern_homes/tiles_a.4bpp.mtf	080a			de
-Tileset_MadraRoomsCavernHomesTilesB	../graphics/tileset/madra_rooms_cavern_homes/tiles_b.4bpp.mtf	3c00			de
 Tileset_MadraRoomsCavernHomesTilesC	../graphics/tileset/madra_rooms_cavern_homes/tiles_c.4bpp.mtf	0100			de
-Tileset_MadraRoomsCavernHomesTilesD	../graphics/tileset/madra_rooms_cavern_homes/tiles_d.4bpp.mtf	22b9			de
-Tileset_MadraRoomsCavernHomesPalette	../graphics/tileset/madra_rooms_cavern_homes/palette.gbapal.lz	c7			es
-Tileset_MadraRoomsCavernHomesTilesA	../graphics/tileset/madra_rooms_cavern_homes/tiles_a.4bpp.mtf	080a			es
-Tileset_MadraRoomsCavernHomesTilesB	../graphics/tileset/madra_rooms_cavern_homes/tiles_b.4bpp.mtf	3c00			es
 Tileset_MadraRoomsCavernHomesTilesC	../graphics/tileset/madra_rooms_cavern_homes/tiles_c.4bpp.mtf	0100			es
-Tileset_MadraRoomsCavernHomesTilesD	../graphics/tileset/madra_rooms_cavern_homes/tiles_d.4bpp.mtf	22b9			es
-Tileset_MadraRoomsCavernHomesPalette	../graphics/tileset/madra_rooms_cavern_homes/palette.gbapal.lz	c7			fr
-Tileset_MadraRoomsCavernHomesTilesA	../graphics/tileset/madra_rooms_cavern_homes/tiles_a.4bpp.mtf	080a			fr
-Tileset_MadraRoomsCavernHomesTilesB	../graphics/tileset/madra_rooms_cavern_homes/tiles_b.4bpp.mtf	3c00			fr
 Tileset_MadraRoomsCavernHomesTilesC	../graphics/tileset/madra_rooms_cavern_homes/tiles_c.4bpp.mtf	0100			fr
-Tileset_MadraRoomsCavernHomesTilesD	../graphics/tileset/madra_rooms_cavern_homes/tiles_d.4bpp.mtf	22b9			fr
-Tileset_MadraRoomsCavernHomesPalette	../graphics/tileset/madra_rooms_cavern_homes/palette.gbapal.lz	c7			it
-Tileset_MadraRoomsCavernHomesTilesA	../graphics/tileset/madra_rooms_cavern_homes/tiles_a.4bpp.mtf	080a			it
-Tileset_MadraRoomsCavernHomesTilesB	../graphics/tileset/madra_rooms_cavern_homes/tiles_b.4bpp.mtf	3c00			it
 Tileset_MadraRoomsCavernHomesTilesC	../graphics/tileset/madra_rooms_cavern_homes/tiles_c.4bpp.mtf	0100			it
-Tileset_MadraRoomsCavernHomesTilesD	../graphics/tileset/madra_rooms_cavern_homes/tiles_d.4bpp.mtf	22b9			it
+Tileset_MadraRoomsCavernHomesTilesD	../graphics/tileset/madra_rooms_cavern_homes/tiles_d.4bpp.mtf	22b9

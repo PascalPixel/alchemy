@@ -1,0 +1,12 @@
+block	file	pad	edition
+cell_tiles	cell_tiles.delta1.lz	4
+shapes	shapes.table.lz	4
+grid	map_ja.grid.lz	4	ja
+grid	map.grid.lz	4	en
+grid	map.grid.lz	4	de
+grid	map.grid.lz	4	es
+grid	map.grid.lz	4	fr
+grid	map.grid.lz	4	it
+animation	tileset_anims.script.lz	4
+blend	mercury_lighthouse_entrance/blend.script.lz	4
+markers		4

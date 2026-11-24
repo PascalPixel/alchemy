@@ -504,7 +504,7 @@ $(LISTS): %.s: %.tsv | tools
 # beside the folders gives their order;
 # ags-maps writes maps.s from them.
 MAPS := games/tbs/src/map/maps.s games/tla/src/map/maps.s
-$(MAPS): %/maps.s: %/maps.tsv $$(wildcard $$*/*/header.tsv $$*/*/layers.tsv $$*/*/blocks.tsv $$*/*/spots.tsv $$*/*/placed.tsv) | tools
+$(MAPS): %/maps.s: %/maps.tsv $$(wildcard $$*/*/header.tsv $$*/*/layers.tsv $$*/*/contents.tsv $$*/*/spots.tsv $$*/*/placed.tsv) | tools
 	tools/out/ags-maps $* $@
 
 # --- Tools and tests -------------------------------------------------------

@@ -1,31 +1,11 @@
 name	file	left	pad	fill	edition
-Tileset_NaribwePalette	../graphics/tileset/naribwe/palette.gbapal.lz	29c7			ja
-Tileset_NaribweTilesA	../graphics/tileset/naribwe/tiles_a.4bpp.mtf	94c6			ja
-Tileset_NaribweTilesB	../graphics/tileset/naribwe/tiles_b.4bpp.mtf	c80258			ja
-Tileset_NaribweTilesC	../graphics/tileset/naribwe/tiles_c.4bpp.mtf				ja
+Tileset_NaribwePalette	../graphics/tileset/naribwe/palette.gbapal.lz	29c7
+Tileset_NaribweTilesA	../graphics/tileset/naribwe/tiles_a.4bpp.mtf	94c6
+Tileset_NaribweTilesB	../graphics/tileset/naribwe/tiles_b.4bpp.mtf	c80258
+Tileset_NaribweTilesC	../graphics/tileset/naribwe/tiles_c.4bpp.mtf
 Tileset_NaribweTilesD	../graphics/tileset/naribwe/tiles_d_ja.4bpp.mtf	01			ja
-Tileset_NaribwePalette	../graphics/tileset/naribwe/palette.gbapal.lz	29c7			en
-Tileset_NaribweTilesA	../graphics/tileset/naribwe/tiles_a.4bpp.mtf	94c6			en
-Tileset_NaribweTilesB	../graphics/tileset/naribwe/tiles_b.4bpp.mtf	c80258			en
-Tileset_NaribweTilesC	../graphics/tileset/naribwe/tiles_c.4bpp.mtf				en
 Tileset_NaribweTilesD	../graphics/tileset/naribwe/tiles_d.4bpp.mtf				en
-Tileset_NaribwePalette	../graphics/tileset/naribwe/palette.gbapal.lz	29c7			de
-Tileset_NaribweTilesA	../graphics/tileset/naribwe/tiles_a.4bpp.mtf	94c6			de
-Tileset_NaribweTilesB	../graphics/tileset/naribwe/tiles_b.4bpp.mtf	c80258			de
-Tileset_NaribweTilesC	../graphics/tileset/naribwe/tiles_c.4bpp.mtf				de
 Tileset_NaribweTilesD	../graphics/tileset/naribwe/tiles_d.4bpp.mtf				de
-Tileset_NaribwePalette	../graphics/tileset/naribwe/palette.gbapal.lz	29c7			es
-Tileset_NaribweTilesA	../graphics/tileset/naribwe/tiles_a.4bpp.mtf	94c6			es
-Tileset_NaribweTilesB	../graphics/tileset/naribwe/tiles_b.4bpp.mtf	c80258			es
-Tileset_NaribweTilesC	../graphics/tileset/naribwe/tiles_c.4bpp.mtf				es
 Tileset_NaribweTilesD	../graphics/tileset/naribwe/tiles_d.4bpp.mtf				es
-Tileset_NaribwePalette	../graphics/tileset/naribwe/palette.gbapal.lz	29c7			fr
-Tileset_NaribweTilesA	../graphics/tileset/naribwe/tiles_a.4bpp.mtf	94c6			fr
-Tileset_NaribweTilesB	../graphics/tileset/naribwe/tiles_b.4bpp.mtf	c80258			fr
-Tileset_NaribweTilesC	../graphics/tileset/naribwe/tiles_c.4bpp.mtf				fr
 Tileset_NaribweTilesD	../graphics/tileset/naribwe/tiles_d.4bpp.mtf				fr
-Tileset_NaribwePalette	../graphics/tileset/naribwe/palette.gbapal.lz	29c7			it
-Tileset_NaribweTilesA	../graphics/tileset/naribwe/tiles_a.4bpp.mtf	94c6			it
-Tileset_NaribweTilesB	../graphics/tileset/naribwe/tiles_b.4bpp.mtf	c80258			it
-Tileset_NaribweTilesC	../graphics/tileset/naribwe/tiles_c.4bpp.mtf				it
 Tileset_NaribweTilesD	../graphics/tileset/naribwe/tiles_d.4bpp.mtf				it

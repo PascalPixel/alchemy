@@ -1,0 +1,17 @@
+block	file	pad	edition
+cell_tiles	cell_tiles_ja.delta2.lz	4	ja
+cell_tiles	cell_tiles.delta2.lz	4	en
+cell_tiles	cell_tiles.delta2.lz	4	de
+cell_tiles	cell_tiles.delta2.lz	4	es
+cell_tiles	cell_tiles.delta2.lz	4	fr
+cell_tiles	cell_tiles.delta2.lz	4	it
+shapes	shapes.table.lz	4
+grid	map_ja.grid.lz	4	ja
+grid	map.grid.lz	4	en
+grid	map_de.grid.lz	4	de
+grid	map_de.grid.lz	4	es
+grid	map_de.grid.lz	4	fr
+grid	map_de.grid.lz	4	it
+animation	altmiller_cave_squall/tileset_anims.script.lz	4
+blend	goma_cave_entrance/blend.script.lz	4
+markers		4

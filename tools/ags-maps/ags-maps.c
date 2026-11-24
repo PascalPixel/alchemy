@@ -11,7 +11,7 @@
  *
  *   header.tsv  one row: the twelve numbers of the map's header.
  *   layers.tsv  three rows: the eight numbers of each layer.
- *   blocks.tsv  one row for each block the header points at, in order: the
+ *   contents.tsv  one row for each block the header points at, in order: the
  *               block's name, its packed file (in this folder, or as
  *               FOLDER/FILE in another map's) and an alignment to zero-fill
  *               to after it. The block "none" is a pointer of zero; a block
@@ -159,7 +159,7 @@ main(int argc, char **argv)
 		snprintf(own, sizeof own, "%s/%s", folder, name);
 		header = load(own, "header", 1);
 		layers = load(own, "layers", 1);
-		blocks = load(own, "blocks", 1);
+		blocks = load(own, "contents", 1);
 		spots = load(own, "spots", 0);
 		placed = load(own, "placed", 0);
 		if (maps.rows[map][1][0])

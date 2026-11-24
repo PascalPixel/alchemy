@@ -1,0 +1,23 @@
+block	file	pad	edition
+cell_tiles	cell_tiles_ja.delta1.lz	4	ja
+cell_tiles	cell_tiles.delta1.lz	4	en
+cell_tiles	cell_tiles.delta1.lz	4	de
+cell_tiles	cell_tiles.delta1.lz	4	es
+cell_tiles	cell_tiles.delta1.lz	4	fr
+cell_tiles	cell_tiles.delta1.lz	4	it
+shapes	kibombo_statue_grounds/shapes.table.lz	4
+grid	map_ja.grid.lz	4	ja
+grid	map.grid.lz	4	en
+grid	map.grid.lz	4	de
+grid	map.grid.lz	4	es
+grid	map.grid.lz	4	fr
+grid	map.grid.lz	4	it
+shape_grid	kibombo_statue_grounds/shape_grid.plane.lz	4
+animation	kandorean_temple_mimic/animation.script.lz	4
+blend	lobby/blend.script.lz	4
+scene	scene_ja.scene.lz	4	ja
+scene	scene.scene.lz	4	en
+scene	scene.scene.lz	4	de
+scene	scene.scene.lz	4	es
+scene	scene.scene.lz	4	fr
+scene	scene.scene.lz	4	it

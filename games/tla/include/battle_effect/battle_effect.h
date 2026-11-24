@@ -92,72 +92,131 @@ enum BattleKnockback {
   KNOCKBACK_HURL_FAR
 };
 
-/// A battle background's id, as BATTLE_BACKGROUND_ID reads it in the summons;
-/// nothing reads the word or the bytes.
-// XXX: is the union there for anything but the order of the summons' stores
-// beside the read, so a FAKEMATCH(signature) to tag; reading the id as a plain
-// u16 and comparing the editions would settle it.
+/// A battle background's id, as BATTLE_BACKGROUND_ID reads it in the summons.
+/// Nothing reads the word or the bytes: read as BattleState.background's plain
+/// u16, the summons compile the same in all six editions.
 union BattleBackgroundId {
   u16 id;
   s32 word;
   u8 bytes[6];
 };
 
+/// Rebuilds the background palette's first ramp as a grey whose channels sway
+/// with the frame, each at its own phase, so the effect shimmers through
+/// colours.
 void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
                                      s32 bluePhase);
-/// The canvas layer and its helpers.
+/// Opens the canvas layer over the battle, darkening the battle background
+/// behind it.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
+/// Closes the canvas layer and brings the battle background's colours back.
 void BattleEffect_EndCanvasLayer(void);
+/// Counts down each target's flash timer and gives it its own palette back
+/// when one runs out.
 void BattleEffect_CountDownBattlerTints(void);
+/// BattleEffect_BuildBlitter for a 128 by 128 canvas, its mode and flags
+/// packed as mode << 4 | flags.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
+/// Tints a unit's battle object, sets its pose and starts its flash timer.
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
+/// Draws the upper left quarter of a shaded disc into `map`, its rings darker
+/// outward by a cosine falloff scaled by `scale`.
 void BattleEffect_DrawShadedCircles(u8 *map, s32 size, FIXED scale);
+/// Copies a width by height picture into one twice its size, mirrored into
+/// all four quadrants.
 void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
+/// A Djinni gathers out of sparks at an anchor, sways and bursts into motes
+/// (DJINNI_ENTRANCE packs which, its side and where); the anchor's screen and
+/// world points are returned.
 void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *effect,
                                     u32 packed, s32 *screen, s32 *world);
+/// Draws a quarter picture four times into the canvas, mirrored about (x, y),
+/// keeping the brighter pixel: a whole glow centred there.
 void Canvas_BlitMirroredQuarters(void *source, s32 x, s32 y, s32 size);
+/// Allocates `count` model entries and a cleared one that ends the list.
 struct PoolEntry *Render_AllocateModelList(s32 count);
+/// Runs `count` packed vertices through the current transform into screen
+/// coordinates, with the ARM kernel copied into the heap.
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+/// Projects a unit's place onto the screen, 16 pixels higher.
 void EffectPosition_ProjectBattler(s32 id, struct ScreenPoint *position);
+/// Creates `count` sprites of `spriteId` in the effect's state, the nth
+/// showing its animation n.
 void BattleEffect_CreateSprites(s32 count, s32 spriteId, u32 priority);
+/// Shows the battle objects of every target with HP left.
 void BattleEffect_ShowLivingTargets(struct BattleEffectParams *args);
+/// Knocks a unit back in its damage pose with the caller's acceleration, top
+/// speed, hop and reach in percent, as BattleMotion_ApplyKnockback does from
+/// its tables.
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
+/// Builds the two usual canvas blitters, mirrored when `flip` is set: out[0]
+/// keeps the brighter level, out[1] adds the levels.
 void BattleEffect_BuildCanvasBlitters(s32 flip, void **out);
+/// Shakes the battle view by random offsets in the two ranges, powers of two.
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 /// Moves a particle one frame on the screen: its velocity scaled by `damping`
 /// sixty-fourths, then `gravity` added to its y speed.
 void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
                                    s32 gravity);
+/// Builds `count` quads of a vertex strip, each width by height texels, and
+/// ends the list with an empty triangle.
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
 /// Moves a particle one frame in three dimensions: its velocity scaled by
 /// `damping` sixty-fourths, then `gravity` added to its y speed.
 void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
                                    s32 gravity);
+/// Opens the canvas layer with the canvas repeated across a wrapping map.
 void BattleEffect_StartTiledCanvas(s32 bgControl);
+/// As BattleEffect_StartTiledCanvas, the rest of each row showing the
+/// canvas's top right tile.
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
+/// Fills the canvas with a white band, its edges fading, that the summons
+/// sweep in from the right to white the battle out.
 void BattleEffect_FillWhiteBand(void);
+/// Scrolls BG1 a step every few VBlanks.
 void BattleEffect_AdvanceScrollOnInterval(void);
+/// Writes a drawing routine for the canvas into heap slot `slot`, built from
+/// gBlitterTemplate for one clip, mirroring and blend mode.
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
+/// Brightens the battle background's colours by a step in each channel, or
+/// darkens them by a negative one.
 void Palette_BrightenBattleBg(s32 redDelta, s32 greenDelta, s32 blueDelta);
+/// As Palette_BrightenBattleBg, from the background's own colours as the
+/// battle keeps them.
 void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta, s32 blueDelta);
+/// Builds the mesh of an open cylinder of `segments` sides, the band
+/// Coatlicue shows.
 void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
                             struct MeshTriangle *triangles, s32 segments);
 /// Loads a grey ramp into the background colours from colour 1.
 void Graphics_LoadGreyRamp(void);
+/// Fills a grid of columns by rows vertices with two triangles a cell, each
+/// cellWidth by cellHeight texels, and ends the list.
 void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
                     s32 cellWidth, s32 cellHeight);
+/// Brightens background colours 1 to 63 by a step in each channel, or darkens
+/// them by a negative one.
 void Palette_BrightenBgEntries(s32 blueDelta, s32 greenDelta, s32 redDelta);
+/// Puts the battle screen back into the display state every effect starts
+/// from and ends with.
 void BattleEffect_ConfigureEffectDisplay(void);
+/// Clears every target's flash timer.
 void BattleEffect_ClearTintTimers(void);
+/// Draws a line on the canvas, keeping the brighter colour where it crosses
+/// what is drawn.
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
 /// Sets the registers that show the canvas on BG2.
 void BattleEffect_SetupCanvasWindows(void);
+/// Draws the whole disc BattleEffect_DrawShadedCircles draws a quarter of.
 void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale);
+
+/// The effects with a runner of their own: the summons, Daedalus's second
+/// strike, and Trident, Cruel Ruin and Meteor Blow.
 void BattleEffect_RunRamses(struct BattleEffectParams *effect);
 void BattleEffect_RunNereid(struct BattleEffectParams *effect);
 void BattleEffect_RunKirin(struct BattleEffectParams *effect);
@@ -183,6 +242,8 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *effect);
 void BattleEffect_RunTrident(struct BattleEffectParams *effect);
 void BattleEffect_RunCruelRuin(struct BattleEffectParams *effect);
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *effect);
+
+/// Effects several abilities share, those that take a `mode` told apart by it.
 void BattleEffect_RunDjinnBeams(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunLobbedShells(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunImpair(struct BattleEffectParams *args);
@@ -193,28 +254,47 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *effect,
 void BattleEffect_ArmBg1HBlankDma(void);
 /// Reverses the first 64 background colours, keeping the backdrop colour.
 void Palette_MirrorBgColors(void);
+/// Shows the battle background, as dark as the canvas's fade left it, behind
+/// a cleared canvas, and fades out the action's sound effects.
 void BattleEffect_SetupBlendedDisplay(void);
+/// Fireballs rain on the targets and burn where they land, then a blast of
+/// fire sweeps across them.
 void BattleEffect_RunDragonFire(struct BattleEffectParams *effect, s32 mode);
+/// Arranges the effect's sprites in a formation (enum SummonFormation) about
+/// (x, y), 16.16 pixels.
 void BattleEffect_PlaceFormationSprites(s32 formation, s32 x, s32 y);
+/// Opens an impact flash and scatters sparks and fragments, keeping the
+/// effect's sprites in formation for the first 36 frames.
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y);
+/// Fires streaks at each target in turn from above the user.
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *effect, s32 mode);
+/// Motes burst out of the user and float upwards, and each target reacts.
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *effect, s32 mode);
+/// The screen point midway between the first and last targets.
 void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *midpoint);
+/// The revival of Balm, Tinder and Phoenix: comets or feathers tumble round
+/// the targets, and every target flashes.
 void BattleEffect_RunTumblingQuads(struct BattleEffectParams *effect, s32 mode);
+/// The user strikes each target with the extras its mode's style chooses.
 void BattleEffect_RunTargetStrike(struct BattleEffectParams *effect, s32 mode);
+/// Moves a unit's object `percent` percent of the way to the target's in
+/// `frames` frames.
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
+/// Unused: a turning cloud swirl on BG2 until A is pressed.
 void BattleEffect_RunCloudSwirl(struct BattleEffectParams *effect);
+/// Turns the battle camera's yaw by the effect's delta, at least half of it
+/// every VBlank.
 void BattleCamera_ApplyPhasedDelta(void);
-typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 /// The window BattleEffect_BuildCenteredIndexList builds a list of indices
-/// around: its value, radius and limit, and the values it lists.
-typedef struct {
-  s32 reservedA[3];
+/// around: its value, radius and limit, and the values it lists. Nothing
+/// calls it, so nothing says what the first and last three words hold.
+typedef struct BattleEffectIndexWindow {
+  s32 unusedBefore[3];
   s32 currentValue;
   s32 indexRadius;
   s32 entryLimit;
-  s32 reservedB[3];
+  s32 unusedAfter[3];
   s16 values[1];
 } BattleEffectIndexWindow;
 /// What BattleEffect_RunDjinniEntrance takes added to its element; the element
@@ -303,15 +383,32 @@ struct DualColumn {
   s32 start;               ///< the frame it starts to grow
 };
 
+/// Steps background colours 0 to 63 one level towards a palette resource.
 void BattleEffect_StepPaletteToResource(s32 resourceId);
+/// Wipes the canvas across or down, leaving it as `fill` says (enum
+/// CanvasWipeFill).
 void BattleEffect_WipeCanvas(s32 direction, s32 fill);
+/// Projects a unit's sprite onto the screen, raised by half its height and 16
+/// pixels more.
 void EffectPosition_ProjectSprite(s32 id, struct ScreenPoint *position);
+/// Builds window 0's right edge for every line and restarts the DMA that
+/// writes it.
 void BattleEffect_BuildWindowEdgeTable(void);
+/// Motes burst out of each target in turn and are pulled into the user, who
+/// glows white as they arrive.
 void BattleEffect_RunDrainMotes(struct BattleEffectParams *effect, s32 mode);
+/// Boreas's scale, copied each frame before his sprites are placed.
 extern const struct Scale gBoreas_UnitScale;
+/// Flares of light swirl in to each target in turn and burst, and the mode's
+/// picture plays over it.
 void BattleEffect_RunStatBoost(struct BattleEffectParams *effect, u32 mode);
+/// Each of the four rock pillars' heights in pixels.
 extern const struct RockWallHeights gRockWall_Heights;
+/// A fountain of motes and smoke bursts up beside the targets and falls back
+/// on them one after another.
 void BattleEffect_RunEruption(struct BattleEffectParams *effect, s32 mode);
+/// Vines or green pillars grow one after another, alternately mirrored, each
+/// flaring at its root.
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *effect,
                                     s32 mode);
 /// Copies `size` bytes of colour levels, halving each.

@@ -304,12 +304,13 @@ enum TrialRoadFountainStageActorId {
 /// stairs down at a stage's foot lead in at the top of the stage below, and
 /// the door at its top in at the foot of the next. The Shaman Village enters
 /// the first stage by its left or right path, at
-/// TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_E or _F, and the summit
-/// returns to the last stage the same way, at
-/// TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST_B or _EAST_B; each goes on to
-/// the stage entrance of its last digit. While Moapa explains the trial's
-/// rules (ShamanVillage_ExplainTrialRules), the village's entrance _G deals a
-/// course and TRIAL_ROAD_RULES_COURSE shows it. The summit is entered again
+/// TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_WEST or _EAST, and the
+/// summit returns to the last stage the same way, at
+/// TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST or _EAST; each goes on to the
+/// stage entrance of its last digit. While Moapa explains the trial's rules
+/// (ShamanVillage_ExplainTrialRules), the village sends the party in at
+/// TRIAL_ROAD_STAGES_FOR_TRIAL_RULES, which deals a course for
+/// TRIAL_ROAD_RULES_COURSE to show. The summit is entered again
 /// after the battle with Moapa, won or lost.
 enum TrialRoadEntrance {
   TRIAL_ROAD_STAGE_FOOT_LEFT = 1,
@@ -2375,7 +2376,7 @@ s32 Scene_PrepareMap(void) {
     u32 i;
 
     if ((u32)(entrance -
-              TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_E) <= 1) {
+              TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_WEST) <= 1) {
       if (!GameFlag_Get(FLAG_STAGE_ORDER_DEALT)) {
         unit = Unit_Get(gMainRoutineState.leaderActorId);
         Iwram_ClearWordsEntry(state, sizeof(*state));
@@ -2397,7 +2398,7 @@ s32 Scene_PrepareMap(void) {
       n = entrance % 10;
       Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, n);
     } else if ((u32)(entrance -
-                     TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST_B) <= 1) {
+                     TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST) <= 1) {
       if (!GameFlag_Get(FLAG_STAGE_ORDER_DEALT)) {
         unit = Unit_Get(gMainRoutineState.leaderActorId);
         Iwram_ClearWordsEntry(state, sizeof(*state));
@@ -2427,8 +2428,7 @@ s32 Scene_PrepareMap(void) {
       // From the summit, in at the top of the left or right path.
       n = entrance % 10;
       Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, n);
-    } else if (entrance ==
-               TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_G) {
+    } else if (entrance == TRIAL_ROAD_STAGES_FOR_TRIAL_RULES) {
       unit = Unit_Get(gMainRoutineState.leaderActorId);
       Iwram_ClearWordsEntry(state, sizeof(*state));
       value = 0;
@@ -4277,8 +4277,8 @@ LAST_DATA u32 gSceneExits[] = {
     SCENE_EXITS(TrialRoadGasp),
     SCENE_EXIT(TRIAL_ROAD_GASP_TO_TRIAL_ROAD_CAVE_ROCK, TrialRoadCaveRock, TRIAL_ROAD_CAVE_ROCK_FROM_TRIAL_ROAD_GASP),
     SCENE_EXITS(TrialRoadSummit),
-    SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_STAGES_WEST, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST_B),
-    SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_STAGES_EAST, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_EAST_B),
+    SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_STAGES_WEST, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_WEST),
+    SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_STAGES_EAST, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_TRIAL_ROAD_SUMMIT_EAST),
     SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_CAVE_ROCK, TrialRoadCaveRock, TRIAL_ROAD_CAVE_ROCK_FROM_TRIAL_ROAD_SUMMIT),
     SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_SHAMAN_VILLAGE_HOUSES_EAST_A, ShamanVillageHouses, SHAMAN_VILLAGE_HOUSES_FROM_TRIAL_ROAD_SUMMIT_EAST_A),
     SCENE_EXIT(TRIAL_ROAD_SUMMIT_TO_SHAMAN_VILLAGE_HOUSES_EAST_B, ShamanVillageHouses, SHAMAN_VILLAGE_HOUSES_FROM_TRIAL_ROAD_SUMMIT_EAST_B),

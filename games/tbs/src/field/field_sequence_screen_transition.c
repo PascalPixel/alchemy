@@ -696,7 +696,7 @@ void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
 /// Each frame of the centre-line transition: moves the value toward its end and
 /// sets the two lines where the screen switches between shown and blank.
 void ScreenTransition_Update(void) {
-  struct ScreenTransitionDissolveState *state = *Ram_DisplayState;
+  struct ScreenTransitionState *state = *Ram_DisplayState;
   struct ScreenTransitionDisplay *display =
       *(struct ScreenTransitionDisplay **)Ram_MapGridState;
   u32 edgeDistance;
@@ -730,7 +730,7 @@ void ScreenTransition_Update(void) {
 
 /// As ScreenTransition_Update, but the lines flicker every other frame.
 void ScreenTransition_UpdateFromCenter(void) {
-  struct ScreenTransitionDissolveState *state = *Ram_DisplayState;
+  struct ScreenTransitionState *state = *Ram_DisplayState;
   struct ScreenTransitionDisplay *window =
       *(struct ScreenTransitionDisplay **)Ram_MapGridState;
   u16 edgeDistance;
@@ -827,7 +827,7 @@ again:
 /// with DISSOLVE_COVER_COLOR), and to DISSOLVE_COVER_COLOR while it closes
 /// (values after it fill the clear tile ScreenTransition_Finish starts from).
 void ScreenTransition_UpdateDissolve(void) {
-  struct ScreenTransitionDissolveState *state = *Ram_DisplayState;
+  struct ScreenTransitionState *state = *Ram_DisplayState;
   s32 ditherIndex;
   s32 colorIndex;
   u32 i;

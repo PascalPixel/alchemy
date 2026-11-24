@@ -11,37 +11,6 @@
 #include "static_assert.h"
 #include "types.h"
 
-/// The screen transition state as the dissolve and the centre-line transition
-/// read it: the same block as ScreenTransitionState, with its solid tile read
-/// a byte (two pixels) at a time.
-struct ScreenTransitionDissolveState {
-  u16 pages[2][322]; ///< ScreenTransitionState's pages, unread here
-  /// ScreenTransitionState's solidTile, as 4-bit pixels two a byte: the
-  /// dissolve sets two more each frame and copies the tile to BG character
-  /// block 0.
-  u8 solidTilePixels[34];
-  /// The progress, moved from start to end over duration frames: the
-  /// TRANSITION_OPEN bit says whether the dissolve fills or clears the tile,
-  /// the bits below it how far it has gone.
-  u16 value;
-  /// ScreenTransitionState's centre, layers and spare byte; the dissolve
-  /// reads none of them.
-  ///@{
-  s32 centerX;
-  s32 centerY;
-  s16 insideLayers;
-  s16 outsideLayers;
-  u8 unused;
-  ///@}
-  /// ScreenTransitionState's page: the dissolve flips it each frame and
-  /// never reads it.
-  u8 page;
-  s8 start;    ///< the value's first step
-  s8 end;      ///< the value's last step
-  s8 duration; ///< frames; 0 when the value is not moving
-  s8 step;     ///< frames
-};
-
 /// The map grid state as a transition reads it: the display control bits the
 /// scene shows, and the two lines where the centre-line transition blanks the
 /// screen and shows it again, with the HBlank interrupt's copies of them.
@@ -125,9 +94,6 @@ struct ScreenTransitionState {
   s8 nextMode;
 };
 
-STATIC_ASSERT(offsetof(struct ScreenTransitionDissolveState, value) == 1322);
-STATIC_ASSERT(offsetof(struct ScreenTransitionDissolveState, start) == 1338);
-STATIC_ASSERT(sizeof(struct ScreenTransitionDissolveState) == 1344);
 STATIC_ASSERT(offsetof(struct ScreenTransitionDisplay, dispcnt) == 20);
 STATIC_ASSERT(offsetof(struct ScreenTransitionDisplay, firstLine) == 256);
 STATIC_ASSERT(offsetof(struct ScreenTransitionDisplay, irqPhase) == 264);

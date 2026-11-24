@@ -20,6 +20,10 @@ enum ScreenTransitionStyle {
   TRANSITION_CENTRE_LINE = 4
 };
 
+/// TRANSITION_CENTRE_LINE's variants: the lines open or close steadily, or
+/// flicker every other frame as they close (ScreenTransition_UpdateFromCenter).
+enum CentreLineVariant { CENTRE_LINE_STEADY = 0, CENTRE_LINE_FLICKERING = 1 };
+
 /// A scene transition as FieldState.transition holds it.
 #define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
 /// The two bytes of a SCENE_TRANSITION: its enum ScreenTransitionStyle, and

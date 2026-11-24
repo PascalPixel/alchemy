@@ -10,10 +10,6 @@
 #include "fixed_math.h"
 #include "flags.h"
 
-/// TRANSITION_CENTRE_LINE's variant whose lines flicker every other frame as
-/// they close (ScreenTransition_UpdateFromCenter); variant 0 closes steadily.
-#define CENTRE_LINE_FLICKERING 1
-
 /// Writes the actor's position on screen, in pixels, to position[0] and
 /// position[1]; an actor with a sprite is raised by its frame box. Returns -1
 /// when the actor does not exist.

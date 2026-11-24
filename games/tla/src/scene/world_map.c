@@ -903,7 +903,8 @@ s32 Scene_Initialize(void) {
     FieldWorldMap_StartZoom(FIXED_ONE, 1);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   state = Ram_HeapSlots->fieldState;
-  state->transition = SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 0);
+  state->transition =
+      SCENE_TRANSITION(TRANSITION_CENTRE_LINE, CENTRE_LINE_STEADY);
   state->transitionFrames = 16;
   wait(1);
   FieldCamera_SetSpeed(8);

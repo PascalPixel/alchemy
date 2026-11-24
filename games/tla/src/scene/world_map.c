@@ -239,7 +239,7 @@ FIXED Party_GetPpRatio(void);
 void WorldMap_WatchVenusLighthouseCollapse(void);
 
 s32 Event_PickUpItem(s32 actor, s32 item, s32 flag);
-void Actor_StartMovementModeScript(void);
+void Actor_StartMovementModeScript(struct Actor *actor);
 s32 Field_FindNearbyTalkTarget(s32 owner);
 s32 WorldMap_IsWalkable(struct Actor *actor, s32 *position);
 void Party_GivePiersDjinn(void);
@@ -458,6 +458,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// while it rises, and the PP gauge appears, since flying uses the party's PP.
 void WorldMap_SetUpFlyingShip(void) {
   struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct Actor *leader;
 
   gMainRoutineState.movementMode = LEADER_MOVEMENT_FLYING_SHIP;
   if (Event_GetFlag(FLAG_SHIP_HOVERING)) {
@@ -466,8 +467,8 @@ void WorldMap_SetUpFlyingShip(void) {
     // "Hover"
     Message_ShowCentered((s32)MsgCastAbilityName, 4);
   }
-  if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
-    Actor_StartMovementModeScript();
+  if ((leader = Actor_Get(FieldParty_GetLeaderActor())) != NULL)
+    Actor_StartMovementModeScript(leader);
   Ship_TakeFlight();
   if (Event_GetFlag(FLAG_SHIP_HOVERING))
     state->climbing = 0;

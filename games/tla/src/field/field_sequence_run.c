@@ -510,8 +510,8 @@ s32 FieldSequence_Run(void) {
     // Hand the leader back to the player, with the control order for how the
     // party moves, and run the walking update until the next request.
     GameFlag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
-    if (Field_GetPartyActor() != NULL)
-      Actor_StartMovementModeScriptFar();
+    if ((leader = Field_GetPartyActor()) != NULL)
+      Actor_StartMovementModeScriptFar(leader);
     pending = &gMainRoutineState.sandActive;
     do {
       wait(1);

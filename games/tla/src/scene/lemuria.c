@@ -455,7 +455,7 @@ UNUSED void Lemuria_TeleportToGirlsHouse(void) {
   Event_SetDestination(SCENE_LEMURIA, LEMURIA_FROM_LEMURIA_ROOMS_WEST_B);
   party = &gMainRoutineState;
 
-  party->teleportState = 2;
+  party->teleportState = TELEPORT_ARRIVING;
 }
 
 /// Felix casts Growth on the sprout at the cliff's edge below Lunpa's tower: a

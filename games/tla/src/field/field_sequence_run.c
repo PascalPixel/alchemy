@@ -50,14 +50,6 @@ s32 Leader_StepOffTightrope(void);
 /// A map entrance stream's row: the entrance, its x and z, and its flags byte.
 #define MAP_ENTRANCE_ROW_BYTES 6
 
-/// Teleport's steps (gMainRoutineState.teleportState): a place was chosen and
-/// the scene it lands in is loading, then the party arrives in it.
-enum TeleportState {
-  TELEPORT_NONE,
-  TELEPORT_CHOSEN,
-  TELEPORT_ARRIVING,
-};
-
 /// The field sequence: runs the current scene, which the party entered by
 /// entrance, until it leaves; returns the exit kind it left by, for
 /// Scene_TakeExit, or EXIT_KEEP_DESTINATION when the next scene is already in

@@ -78,6 +78,10 @@ enum LuckyWheelsPrizesMark {
   WHEELS_PRIZES_NONE_TO_HAND_OUT = -2
 };
 
+/// Teleport's steps (MainRoutineState.teleportState): a place was chosen and
+/// the scene it lands in is loading, then the party arrives in it.
+enum TeleportState { TELEPORT_NONE, TELEPORT_CHOSEN, TELEPORT_ARRIVING };
+
 /// gMainRoutineState, the state a save file keeps: play time, coins, the scene
 /// and the leader's position, the active party and the options.
 struct MainRoutineState {
@@ -242,8 +246,8 @@ struct MainRoutineState {
   /// The chosen place's flag, which the world map takes as its entrance; -1
   /// after cancelling.
   s16 teleportEntrance;
-  /// 1 once a place is chosen and 2 as the party arrives, when the scene it
-  /// lands in plays the arrival and clears it.
+  /// An enum TeleportState: the scene the party lands in plays the arrival
+  /// and clears it.
   s8 teleportState;
   /// Set while the leader stands on the upper level of the Alhafran Cave,
   /// where Sand ends; cleared on entering a scene.

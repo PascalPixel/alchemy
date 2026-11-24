@@ -291,7 +291,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void Scene_LeaveByExit(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
-  gMainRoutineState.teleportState = 2;
+  gMainRoutineState.teleportState = TELEPORT_ARRIVING;
   FieldEvent_SetExitRequest(MARS_LIGHTHOUSE_AERIE_TO_MARS_LIGHTHOUSE_HALL);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();

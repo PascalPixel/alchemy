@@ -556,7 +556,7 @@ void MarsLighthouseEntrance_TeleportFromLapisNorthCircle(void) {
   } else {
     Teleport_StartShimmer();
     Teleport_PlaySparks();
-    gMainRoutineState.teleportState = 2;
+    gMainRoutineState.teleportState = TELEPORT_ARRIVING;
     FieldEvent_SetExitRequest(LAPIS_NORTH_CIRCLE);
     FieldEvent_Wait(40);
     Teleport_StopShimmer();
@@ -569,7 +569,7 @@ void MarsLighthouseEntrance_TeleportFromLapisNorthCircle(void) {
 void MarsLighthouseEntrance_TeleportFromLapisSouthCircle(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
-  gMainRoutineState.teleportState = 2;
+  gMainRoutineState.teleportState = TELEPORT_ARRIVING;
   FieldEvent_SetExitRequest(LAPIS_SOUTH_CIRCLE);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();
@@ -712,7 +712,7 @@ void MarsLighthouseEntrance_BlockRetreatAtChest(void) {
 void MarsLighthouseEntrance_TeleportFromBalm(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
-  gMainRoutineState.teleportState = 2;
+  gMainRoutineState.teleportState = TELEPORT_ARRIVING;
   FieldEvent_SetExitRequest(
       MARS_LIGHTHOUSE_ENTRANCE_BALM_TO_MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE_NORTH_B);
   FieldEvent_Wait(40);
@@ -808,7 +808,7 @@ void MarsLighthouseEntrance_WatchFireballMeltIce(void) {
 void MarsLighthouseEntrance_TeleportFromHiddenCircle(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
-  gMainRoutineState.teleportState = 2;
+  gMainRoutineState.teleportState = TELEPORT_ARRIVING;
   FieldEvent_SetExitRequest(
       MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE_TO_MARS_LIGHTHOUSE_ENTRANCE_BALM_NORTH_B);
   FieldEvent_Wait(40);
@@ -857,7 +857,7 @@ void MarsLighthouseEntrance_ClearFireballRow(void) {
 void MarsLighthouseEntrance_TeleportFromValkyrieNorth(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
-  gMainRoutineState.teleportState = 2;
+  gMainRoutineState.teleportState = TELEPORT_ARRIVING;
   FieldEvent_SetExitRequest(VALKYRIE_NORTH_CIRCLE);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();
@@ -869,7 +869,7 @@ void MarsLighthouseEntrance_TeleportFromValkyrieNorth(void) {
 void MarsLighthouseEntrance_TeleportFromValkyrieSouth(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
-  gMainRoutineState.teleportState = 2;
+  gMainRoutineState.teleportState = TELEPORT_ARRIVING;
   FieldEvent_SetExitRequest(VALKYRIE_SOUTH_CIRCLE);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();

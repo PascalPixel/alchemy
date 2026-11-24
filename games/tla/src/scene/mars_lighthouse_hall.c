@@ -677,7 +677,7 @@ void MarsLighthouseHall_StartDoorways(s32 entrance) {
 void MarsLighthouseHall_TeleportToAerie(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
-  gMainRoutineState.teleportState = 2;
+  gMainRoutineState.teleportState = TELEPORT_ARRIVING;
   FieldEvent_SetExitRequest(MARS_LIGHTHOUSE_HALL_TO_MARS_LIGHTHOUSE_AERIE);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();

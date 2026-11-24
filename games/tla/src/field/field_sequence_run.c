@@ -186,8 +186,11 @@ s32 FieldSequence_Run(void) {
     value = state->transitionActive;
     if (value == 0) {
       // XXX: why a Teleport arrival holds 6584 bytes of the battle effect's
-      // slot through its two 20-frame pauses; a heap trace of an arrival
-      // would settle it.
+      // slot through its two 20-frame pauses. No state of that size is known
+      // (Teleport's own take 7824), and what the scene's tasks take from the
+      // heap in those frames is freed with it (HeapSlot_Release). A trace of
+      // HeapSlots.nextIwram through a Teleport chosen on the map screen,
+      // which no render here stages, would settle it.
       if (gMainRoutineState.teleportState == TELEPORT_CHOSEN) {
         HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 6584);
         wait(20);
@@ -319,11 +322,13 @@ s32 FieldSequence_Run(void) {
           WorldMap_ReloadPendingAreaGraphics();
         } else if (state->raisedTrigger == FIELD_RAISED_TRIGGER_TELEPORT) {
           Leader_StopMoving();
-          MapScreen_Show(1);
+          MapScreen_Show(1); // MAP_SCREEN_TELEPORT
           if (gMainRoutineState.teleportScene != -1)
             gMainRoutineState.teleportState = TELEPORT_CHOSEN;
         } else if (state->raisedTrigger == FIELD_RAISED_TRIGGER_MAP_SCREEN) {
           Leader_StopMoving();
+          // Shown once, to look (MAP_SCREEN_LOOK): MapScreen_Show always
+          // returns 0, so the mode is never flipped to Teleport's.
           value = 0;
           while (MapScreen_Show(value))
             value ^= 1;

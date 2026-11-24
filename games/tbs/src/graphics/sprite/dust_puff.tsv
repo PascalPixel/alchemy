@@ -1,6 +1,0 @@
-anim	blank 100, hold
-anim	picture 0 2, picture 1 2, picture 2 2, picture 3 2, picture 4 2, picture 5 3, picture 6 3, picture 7 4, play 0
-anim	picture 0 4, picture 1 4, picture 2 4, picture 3 4, picture 4 4, picture 5 6, picture 6 6, picture 7 8, play 0
-anim	picture 0 12, picture 1 12, picture 2 12, picture 3 12, picture 4 12, picture 5 18, picture 6 18, picture 7 24, play 0
-anim	picture 0 6, loop
-anim	picture 0 8, picture 1 8, picture 2 8, picture 3 8, picture 4 8, picture 5 8, picture 6 8, picture 7 8, play 0

@@ -1,7 +1,0 @@
-anim	picture 0 7, hold
-anim	picture 0 31, picture 2 31, picture 4 31, picture 2 16, loop
-anim	picture 6 14, picture 8 7, hold
-anim	picture 10 48, picture 12 7, picture 14 7, jump 1
-anim	picture 0 31, hold
-anim	picture 16 31, hold
-anim	picture 18 31, hold

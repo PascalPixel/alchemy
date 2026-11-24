@@ -1,5 +1,0 @@
-anim	picture 12 5, hold
-anim	picture 12 9, loop
-anim	picture 12 8, picture 15 8, picture 18 8, picture 21 8, loop
-anim	picture 0 8, picture 3 8, picture 6 8, picture 9 8, loop
-anim	picture 12 5, picture 15 5, picture 18 5, picture 21 5, loop

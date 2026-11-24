@@ -1,2 +1,0 @@
-# Assembly the assembler reads through .include, not C.
-games/tbs/include/ed_asm.h

@@ -1,8 +1,0 @@
-anim	picture 0 9, hold
-anim	picture 0 46, picture 3 12, picture 0 146, picture 3 12, picture 0 31, picture 3 7, picture 0 146, picture 12 151, picture 0 61, picture 3 13, loop
-anim	picture 30 9, picture 15 9, picture 18 9, picture 21 9, picture 24 9, picture 27 9, loop
-anim	picture 6 24, play 1
-anim	picture 9 9, picture 0 8, picture 12 9, picture 0 8, picture 9 9, picture 0 8, picture 12 9, picture 0 8, play 1
-anim	picture 9 24, hold
-anim	picture 12 9, hold
-anim	kind 17, picture 33 9, picture 34 9, picture 35 9, loop

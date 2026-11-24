@@ -1,7 +1,0 @@
-control	0x3f42
-level	0x1003	46
-level	0x1002	36
-level	0x1003	50
-level	0x1002	45
-jump	0
-end

@@ -1,3 +1,0 @@
-anim	picture 0 100, hold
-anim	picture 0 10, picture 1 10, picture 2 10, picture 3 10, picture 4 10, picture 5 10, loop
-anim	picture 6 10, play 2

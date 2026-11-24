@@ -1,24 +1,8 @@
-# Editor analysis uses the English modern-build view of each game.
-# compile_flags.txt anchors these relative paths at the repository root.
 Diagnostics:
-  # Headers also supply declarations indirectly; include order affects matching.
   UnusedIncludes: None
 ---
 If:
   PathMatch: [games/tla/.*]
 CompileFlags:
   Remove: [-DTBS_EDITION_EN=1, -I]
-  Add:
-    - -DTLA_EDITION_EN=1
-    - -Igames/tla/include
-    - -Igames/tla/include/battle
-    - -Igames/tla/include/field
-    - -Igames/tla/include/game
-    - -Igames/tla/include/gamepak
-    - -Igames/tla/include/graphics
-    - -Igames/tla/include/menu
-    - -Igames/tla/include/shop
-    - -Igames/tla/include/sound
-    - -Igames/tla/include/system
-    - -Igames/tla/include/window
-    - -Iout/tla-en
+  Add: [-DTLA_EDITION_EN=1, -Igames/tla/include, -Iout/tla-en]

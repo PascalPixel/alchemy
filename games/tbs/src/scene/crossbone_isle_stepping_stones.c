@@ -204,6 +204,14 @@ enum {
   CELL_BEHAVIOR_STACKED_PILLARS_LEAVE_LOWEST_FLOOR = 41
 };
 
+/// A log lying still: log_north_south.tsv's and log_west_east.tsv's picture 10
+/// held, the first of the pictures their rolls turn through.
+#define LOG_ANIMATION_AT_REST 1
+
+/// SPRITE_TURNING_ROCK's round boulder (turning_rock.tsv's picture 1), as the
+/// dragon statue's room's boulder is drawn.
+#define TURNING_ROCK_ANIMATION_BOULDER 2
+
 /// The cells beside the pillars, columns, logs and boulder of the first,
 /// second, fifth and eighth floors' side rooms, from which walking into one
 /// pushes it.
@@ -218,6 +226,21 @@ enum { CELL_BEHAVIOR_FLOODGATE_SWITCH = 20 };
 /// WATER_DISSOLVE_LINES lines of the screen show it scrolled down to there,
 /// line by line, more often each frame.
 #define WATER_PANEL_SCROLL_Y (12 * MAPGRID_CELL_PIXELS)
+
+/// The floodgate room's map: its layers 1 and 2 begin at the map's columns 32
+/// and 64, and each water level is kept below the room as those two layers
+/// side by side, the raised water from row 32 and the drained from row 64.
+/// The stream the level changes in is the 16 by 5 cells from (10, 19).
+enum {
+  FLOODGATE_LAYER_1_COLUMN = 32,
+  FLOODGATE_LAYER_2_COLUMN = 64,
+  RAISED_WATER_ROW = 32,
+  DRAINED_WATER_ROW = 64,
+  STREAM_COLUMN = 10,
+  STREAM_ROW = 19,
+  /// Where the stream at its other level is drawn, WATER_PANEL_SCROLL_Y below.
+  WATER_PANEL_ROW = STREAM_ROW + 12
+};
 #define WATER_DISSOLVE_LINES 48
 
 /// A damped particle loses a PARTICLE_DRAG-th of its speed across the ground
@@ -296,6 +319,11 @@ CrossboneIsleSteppingStones_StopAtGroundOrHeight(struct Actor *actor,
 
 /// Finds the cells the actor covers: their width and depth, the top-left one,
 /// and the cell where the map grid's layer 1 starts.
+///
+/// The actor's row of gPushedActor_Rectangles is read as the four words of a
+/// struct PushedActorRectangle: [0] x0, [1] z0, [2] x1 and [3] z1. An actor
+/// whose animation is none of the six kinds gets row 7, past them, and is
+/// refused.
 static s32 CrossboneIsleSteppingStones_QueryCoveredCells(
     s32 id, u32 *width, u32 *depth, struct PushedActorProbe *probe,
     s32 *layerOriginX, s32 *layerOriginZ) {
@@ -424,7 +452,7 @@ static s32 CrossboneIsleSteppingStones_StrandLog(s32 actorId) {
                                    depth, CELL_BEHAVIOR_WALL);
   }
 
-  Actor_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, LOG_ANIMATION_AT_REST);
   actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 
   return 1;
@@ -823,13 +851,19 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
 
   waterRaised = GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   if (waterRaised == 0) {
-    MapGrid_DrawCellPanel(10, 19, 16, 5, waterRaised, 10, 31);
-    MapGrid_DrawCellPanel(10, 51, 16, 5, 1, 10, 31);
-    MapGrid_DrawCellPanel(42, 51, 16, 5, 2, 10, 31);
+    MapGrid_DrawCellPanel(STREAM_COLUMN, STREAM_ROW, 16, 5, waterRaised,
+                          STREAM_COLUMN, WATER_PANEL_ROW);
+    MapGrid_DrawCellPanel(STREAM_COLUMN, RAISED_WATER_ROW + STREAM_ROW, 16, 5,
+                          1, STREAM_COLUMN, WATER_PANEL_ROW);
+    MapGrid_DrawCellPanel(32 + STREAM_COLUMN, RAISED_WATER_ROW + STREAM_ROW, 16,
+                          5, 2, STREAM_COLUMN, WATER_PANEL_ROW);
   } else {
-    MapGrid_DrawCellPanel(10, 19, 16, 5, 0, 10, 31);
-    MapGrid_DrawCellPanel(10, 83, 16, 5, 1, 10, 31);
-    MapGrid_DrawCellPanel(42, 83, 16, 5, 2, 10, 31);
+    MapGrid_DrawCellPanel(STREAM_COLUMN, STREAM_ROW, 16, 5, 0, STREAM_COLUMN,
+                          WATER_PANEL_ROW);
+    MapGrid_DrawCellPanel(STREAM_COLUMN, DRAINED_WATER_ROW + STREAM_ROW, 16, 5,
+                          1, STREAM_COLUMN, WATER_PANEL_ROW);
+    MapGrid_DrawCellPanel(32 + STREAM_COLUMN, DRAINED_WATER_ROW + STREAM_ROW,
+                          16, 5, 2, STREAM_COLUMN, WATER_PANEL_ROW);
   }
   sOtherWaterChance = 0;
   Task_AddFrame(CrossboneIsleSteppingStones_PrepareWaterScroll,
@@ -844,11 +878,15 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   // The map takes the new level for good.
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED) == 0) {
-    MapGrid_CopyCellsTo(0, 32, 32, 0, 32, 32);
-    MapGrid_CopyCellsTo(32, 32, 64, 0, 32, 32);
+    MapGrid_CopyCellsTo(0, RAISED_WATER_ROW, FLOODGATE_LAYER_1_COLUMN, 0, 32,
+                        32);
+    MapGrid_CopyCellsTo(32, RAISED_WATER_ROW, FLOODGATE_LAYER_2_COLUMN, 0, 32,
+                        32);
   } else {
-    MapGrid_CopyCellsTo(0, 64, 32, 0, 32, 32);
-    MapGrid_CopyCellsTo(32, 64, 64, 0, 32, 32);
+    MapGrid_CopyCellsTo(0, DRAINED_WATER_ROW, FLOODGATE_LAYER_1_COLUMN, 0, 32,
+                        32);
+    MapGrid_CopyCellsTo(32, DRAINED_WATER_ROW, FLOODGATE_LAYER_2_COLUMN, 0, 32,
+                        32);
   }
   wait(1);
   Irq_SetHandler(IRQ_HBLANK, 0, 0);
@@ -916,8 +954,10 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
   Event_End();
 }
 
-/// Matches a nearby actor's draw priority when it is behind the
-/// comparison actor.
+/// When actor stands just behind front, up to two cells north of it, within a
+/// cell east or west and at the same height, it is drawn no nearer the viewer
+/// than front: it takes front's sprite priority (the background layers it is
+/// drawn over) if its own is nearer. Returns whether it stands there.
 static s32
 CrossboneIsleSteppingStones_SyncPriorityIfBehind(struct Actor *actor,
                                                  struct Actor *front) {
@@ -942,8 +982,9 @@ CrossboneIsleSteppingStones_SyncPriorityIfBehind(struct Actor *actor,
   return result;
 }
 
-/// Matches the comparison actor's draw priority when it overlaps the
-/// actor in front.
+/// The same test from the front: when actor stands just behind front, it takes
+/// front's sprite priority if its own is nearer the viewer. Returns whether it
+/// stands there.
 static s32
 CrossboneIsleSteppingStones_SyncPriorityIfAhead(struct Actor *front,
                                                 struct Actor *actor) {
@@ -968,8 +1009,15 @@ CrossboneIsleSteppingStones_SyncPriorityIfAhead(struct Actor *front,
   return result;
 }
 
-/// Keeps each moving pillar's priority and collision flags consistent with the
-/// leader.
+/// A stacked pillar's update routine, each frame. While Psynergy is cast it is
+/// solid and drawn on Isaac's layers. Otherwise a pillar just behind Isaac or
+/// another pillar is drawn no nearer than it, and then the pillars just behind
+/// it no nearer than it in turn; a pillar whose top is below Isaac's feet is
+/// walked over, drawn under him and not solid. A pillar none of this touches
+/// goes back to the priority its place gives it.
+// XXX: what the player would see without it; a recording of Isaac walking
+// round the stacked pillars, with this routine and with it returning at once,
+// would settle it.
 static UNREAD_RESULT
 CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1601,8 +1649,10 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0 &&
         GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED) != 0) {
       MapGrid_CopyCellsTo(79, 34, 84, 24, 1, 2);
-      MapGrid_CopyCellsTo(0, 32, 32, 0, 32, 32);
-      MapGrid_CopyCellsTo(32, 32, 64, 0, 32, 32);
+      MapGrid_CopyCellsTo(0, RAISED_WATER_ROW, FLOODGATE_LAYER_1_COLUMN, 0, 32,
+                          32);
+      MapGrid_CopyCellsTo(32, RAISED_WATER_ROW, FLOODGATE_LAYER_2_COLUMN, 0, 32,
+                          32);
       CrossboneIsleSteppingStones_FloatLogs();
       MapGrid_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     }
@@ -1647,7 +1697,7 @@ s32 Scene_Initialize(void) {
       }
     }
   } else if (gMainRoutineState.next == SCENE_CROSSBONE_ISLE_DRAGON_STATUE) {
-    Actor_SetAnimation(ACTOR_SINKING_BOULDER, 2);
+    Actor_SetAnimation(ACTOR_SINKING_BOULDER, TURNING_ROCK_ANIMATION_BOULDER);
     Actor_SetSpriteColorById(ACTOR_SINKING_BOULDER, SPRITE_COLOR_GREY);
     PushedActor_BlockFootprint(ACTOR_FIRST_LOG);
     PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 1);

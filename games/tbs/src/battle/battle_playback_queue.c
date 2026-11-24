@@ -133,7 +133,7 @@ UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
 void BattlePlayback_MarkMessage(void) { gBattleMessageState->marked = 1; }
 
 /// Takes an enemy out of the battle at once, one that leaves rather than falls.
-UNREAD_RESULT BattleObject_DestroyTemporaryObject(s32 unitId) {
+UNREAD_RESULT BattleUnit_RemoveEnemy(s32 unitId) {
   struct Unit *enemy;
   struct BattleObject *slot;
 
@@ -179,7 +179,7 @@ u32 BattlePlayback_RunAll(void) {
         BattlePlayback_GrantDjinnBonus(runtime, queue->operands[eventIndex]);
         break;
       case PLAYBACK_REMOVE_UNIT:
-        BattleObject_DestroyTemporaryObject(queue->operands[eventIndex]);
+        BattleUnit_RemoveEnemy(queue->operands[eventIndex]);
         break;
       case PLAYBACK_UNIT_NAME:
         MessageArgument_PushFar(queue->operands[eventIndex],

@@ -57,8 +57,9 @@ struct BattleBackgroundState {
   s32 busy; ///< while set, BattleCamera_SetRange leaves BG1's scroll
   /// 0 lets the camera update set the background's range each frame; 1 for
   /// a critical hit's zoom and once a turn's view is set.
-  s32 flag;
-  s32 unusedAfterFlag[2]; ///< cleared when a battle starts; nothing reads them
+  s32 keepRange;
+  s32 unusedAfterKeepRange[2]; ///< cleared when a battle starts; nothing reads
+                               ///< them
 };
 
 /// A presentation step's stack state: the battle effect command it builds and

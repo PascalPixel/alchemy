@@ -250,13 +250,13 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
     s32 labels = MsgPanelStatLabel;
 
     Text_DrawMessageAsTilesFar(labels, window, 0, 40); // "Attack"
-    value = unit->atk;
+    value = unit->attack;
     Text_DrawNumberInWindowFar(value, 3, window, 64, 40);
     Text_DrawMessageAsTilesFar(labels + 1, window, 0, 48); // "Defense"
-    value = unit->def;
+    value = unit->defense;
     Text_DrawNumberInWindowFar(value, 3, window, 64, 48);
     Text_DrawMessageAsTilesFar(labels + 4, window, 0, 56); // "Agility"
-    value = unit->agi;
+    value = unit->agility;
     Text_DrawNumberInWindowFar(value, 3, window, 64, 56);
     Text_DrawMessageAsTilesFar(labels + 3, window, 0, 64); // "Luck"
     value = unit->luck;
@@ -363,30 +363,30 @@ enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
 void Text_DrawStatComparison(const struct Unit *after,
                              const struct Unit *before, struct Window *window) {
   Text_DrawMessageAsTilesFar(MsgPanelStatLabel, window, 0, 32);
-  Text_DrawNumberAtOffsetFar(before->atk, 3, window, 16, 40);
-  if (after->atk != before->atk) {
-    Text_DrawNumberAtOffsetFar(after->atk, 3, window, 64, 40);
-    if (after->atk > before->atk) {
+  Text_DrawNumberAtOffsetFar(before->attack, 3, window, 16, 40);
+  if (after->attack != before->attack) {
+    Text_DrawNumberAtOffsetFar(after->attack, 3, window, 64, 40);
+    if (after->attack > before->attack) {
       Icon_CreateStatChangeArrow(window, 44, 36, STAT_ARROW_UP);
     } else {
       Icon_CreateStatChangeArrow(window, 44, 36, STAT_ARROW_DOWN);
     }
   }
   Text_DrawMessageAsTilesFar(MsgPanelDefenseLabel, window, 0, 48);
-  Text_DrawNumberAtOffsetFar(before->def, 3, window, 16, 56);
-  if (after->def != before->def) {
-    Text_DrawNumberAtOffsetFar(after->def, 3, window, 64, 56);
-    if (after->def > before->def) {
+  Text_DrawNumberAtOffsetFar(before->defense, 3, window, 16, 56);
+  if (after->defense != before->defense) {
+    Text_DrawNumberAtOffsetFar(after->defense, 3, window, 64, 56);
+    if (after->defense > before->defense) {
       Icon_CreateStatChangeArrow(window, 44, 52, STAT_ARROW_UP);
     } else {
       Icon_CreateStatChangeArrow(window, 44, 52, STAT_ARROW_DOWN);
     }
   }
   Text_DrawMessageAsTilesFar(MsgAgilityLabel, window, 0, 64);
-  Text_DrawNumberAtOffsetFar(before->agi, 3, window, 16, 72);
-  if (after->agi != before->agi) {
-    Text_DrawNumberAtOffsetFar(after->agi, 3, window, 64, 72);
-    if (after->agi > before->agi) {
+  Text_DrawNumberAtOffsetFar(before->agility, 3, window, 16, 72);
+  if (after->agility != before->agility) {
+    Text_DrawNumberAtOffsetFar(after->agility, 3, window, 64, 72);
+    if (after->agility > before->agility) {
       Icon_CreateStatChangeArrow(window, 44, 68, STAT_ARROW_UP);
     } else {
       Icon_CreateStatChangeArrow(window, 44, 68, STAT_ARROW_DOWN);

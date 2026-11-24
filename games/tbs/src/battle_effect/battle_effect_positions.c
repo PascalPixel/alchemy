@@ -71,7 +71,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   UNUSED s32 unused[3];
 
   actor = GetBattleObjectSlotFar(unit)->actor;
-  sprite = GetMotionRecordFar(actor, 0);
+  sprite = Actor_GetSpriteFar(actor, 0);
   EFFECT_VIEW_FROM_CAMERA(camera);
   scale =
       Iwram_MulFX(Matrix_ProjectPoint(&actor->x.fixed, screen), sprite->scale);

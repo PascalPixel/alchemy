@@ -60,9 +60,9 @@ s32 Battle_Run(s32 enemyGroup) {
   // The opening transition owns the background until it is over.
   view->frames = 0;
   view->targetYaw = YAW_PARTY_ACTION;
-  view->flag = 1;
-  view->unusedAfterFlag[0] = 0;
-  view->unusedAfterFlag[1] = 0;
+  view->keepRange = 1;
+  view->unusedAfterKeepRange[0] = 0;
+  view->unusedAfterKeepRange[1] = 0;
   REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_SetFar(FLAG_IN_BATTLE);
   // XXX (no evidence): what flag 0x169 marks; it is set as every battle
@@ -178,7 +178,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // After the entry transition the camera task owns the background
   // again, and the sprite priorities are sorted every frame.
   BattleTransition_Run(enemyCount, enemyGroup);
-  view->flag = 0;
+  view->keepRange = 0;
   gCpuLoadDisplayEnabled = 0;
   Task_Add(BattleObject_UpdateSpritePriorities, TASK_PASS_FRAME);
 
@@ -245,7 +245,7 @@ s32 Battle_Run(s32 enemyGroup) {
 
     // The end of the turn.
     battle->firstStrike = FIRST_STRIKE_NONE;
-    Battle_ReservedNoOpF674();
+    Battle_TurnEndNoOp();
     Battle_ProcessTurnEnd();
     BattleObject_DestroyAll();
     if (battle->isLink != 0) {
@@ -335,8 +335,8 @@ fled:
 
 finished:
   // Every way out: Djinn recover one step and the next battle starts normally.
-  BattleParty_ResetActiveRuntimeFields();
-  Battle_ReservedNoOpF674();
+  BattleParty_ClearBattleStatuses();
+  Battle_TurnEndNoOp();
   DjinnRecovery_CountDown();
   Battle_SetType(BATTLE_TYPE_NORMAL);
   Task_Remove(BattleObject_UpdateSpritePriorities);

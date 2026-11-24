@@ -41,7 +41,7 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   view->frames = 60;
   battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
-  view->flag = 0;
+  view->keepRange = 0;
   battle->brightness = FIXED_ONE;
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   Matrix_Initialize();
@@ -314,7 +314,7 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
       u32 child;
 
       animation =
-          GetMotionRecord(BattleObject_Get(state.effect.targets[i])->actor, 0);
+          Actor_GetSprite(BattleObject_Get(state.effect.targets[i])->actor, 0);
       for (child = 0; child != animation->count - 1; child++)
         state.savedAnimationParameters[i][child] =
             animation->entries[child]->colorMode;
@@ -451,7 +451,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
 
   // The run up: as long as the attacker's POSE_LEAP, with its class's hop
   // height.
-  animation = GetMotionRecord(BattleObject_Get(plan->unitId)->actor, 0);
+  animation = Actor_GetSprite(BattleObject_Get(plan->unitId)->actor, 0);
   frames = SpriteAnimation_SumCommandLengthsFar(
       animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(state.effect.user, state.effect.targets[0],
@@ -497,7 +497,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
     if (critical != 0) {
       state.effect.kind += EFFECT_ID_CRITICAL_OFFSET;
       zoomOnCritical = 1;
-      view->flag = 1;
+      view->keepRange = 1;
       criticalPair[0] = state.effect.user;
       criticalPair[1] = state.effect.firstTarget;
       criticalPair[2] = BATTLE_UNIT_LIST_END;
@@ -535,7 +535,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
     BattlePlayback_WaitForReady();
     // After a critical hit every unit is shown again and the zoom ends.
     if (critical != 0) {
-      view->flag = 0;
+      view->keepRange = 0;
       BattleUnit_ListAllAndSubmit();
       BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
     }
@@ -588,7 +588,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
   Unit_GetFar(savedInput->targetIds[0]);
 
   missed = flags & 2;
-  animation = GetMotionRecord(BattleObject_Get(savedInput->unitId)->actor, 0);
+  animation = Actor_GetSprite(BattleObject_Get(savedInput->unitId)->actor, 0);
   frames = SpriteAnimation_SumCommandLengthsFar(
       animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(state.effect.user, savedInput->targetIds[0],
@@ -653,7 +653,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
 
   for (targetOrFadeIndex = 0; targetOrFadeIndex != state.effect.targetCount;
        targetOrFadeIndex++) {
-    struct Sprite *animation = GetMotionRecord(
+    struct Sprite *animation = Actor_GetSprite(
         BattleObject_Get(state.effect.targets[targetOrFadeIndex])->actor, 0);
     s32 entryIndex;
 
@@ -750,7 +750,7 @@ UNREAD_RESULT BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
   u8 lastPictureMask = SPRITE_PICTURE_NONE;
   u8 previousPicture;
 
-  for (; (record = GetMotionRecord(actor, recordIndex)) != NULL;
+  for (; (record = Actor_GetSprite(actor, recordIndex)) != NULL;
        recordIndex++) {
     children = &record->entries[1];
     child = record->entries[0];
@@ -830,7 +830,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
 
   for (targetIndex = 0; targetIndex != state.effect.targetCount;
        targetIndex++) {
-    struct Sprite *animation = GetMotionRecord(
+    struct Sprite *animation = Actor_GetSprite(
         BattleObject_Get(state.effect.targets[targetIndex])->actor, 0);
     s32 entryIndex;
 
@@ -947,7 +947,7 @@ void BattleMotion_ShowDowned(s32 unitId) {
   unit = Unit_GetFar(unitId);
   for (recordCount = 0;
        (record =
-            GetMotionRecord(BattleObject_Get(unitId)->actor, recordCount)) != 0;
+            Actor_GetSprite(BattleObject_Get(unitId)->actor, recordCount)) != 0;
        recordCount++) {
     if (unit->side != BATTLE_SIDE_ENEMY)
       Sprite_StartAnimationFar(record, POSE_PARTY_HELD);
@@ -957,7 +957,7 @@ void BattleMotion_ShowDowned(s32 unitId) {
 
   if (unit->side == BATTLE_SIDE_ENEMY) {
     for (recordCount = 0;
-         (record = GetMotionRecord(BattleObject_Get(unitId)->actor,
+         (record = Actor_GetSprite(BattleObject_Get(unitId)->actor,
                                    recordCount)) != 0;
          recordCount++) {
       entry = record->entries[0];

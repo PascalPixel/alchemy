@@ -430,15 +430,15 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
         Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_ATTACK),
                                 statusWindow, 136, 16);
-        Text_DrawNumberInWindow(unit->atk, 3, statusWindow,
+        Text_DrawNumberInWindow(unit->attack, 3, statusWindow,
                                 OWNER_STATUS_VALUE_X, 16);
         Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DEFENSE),
                                 statusWindow, 136, 24);
-        Text_DrawNumberInWindow(unit->def, 3, statusWindow,
+        Text_DrawNumberInWindow(unit->defense, 3, statusWindow,
                                 OWNER_STATUS_VALUE_X, 24);
         Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_AGILITY),
                                 statusWindow, 136, 32);
-        Text_DrawNumberInWindow(unit->agi, 3, statusWindow,
+        Text_DrawNumberInWindow(unit->agility, 3, statusWindow,
                                 OWNER_STATUS_VALUE_X, 32);
         Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_LUCK),
                                 statusWindow, 136, 40);
@@ -626,16 +626,16 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         helpValue = 0;
         Iwram_CopyWords(savedUnit, unit, sizeof(*unit));
 
-        attackDelta = unit->atk;
-        defenseDelta = unit->def;
-        agilityDelta = unit->agi;
+        attackDelta = unit->attack;
+        defenseDelta = unit->defense;
+        agilityDelta = unit->agility;
         unit->attackStage = 0;
         unit->defenseStage = 0;
         unit->agilityStage = 0;
         Unit_CalculateFar(member);
-        attackDelta -= unit->atk;
-        defenseDelta -= unit->def;
-        agilityDelta -= unit->agi;
+        attackDelta -= unit->attack;
+        defenseDelta -= unit->defense;
+        agilityDelta -= unit->agility;
         Iwram_CopyWords(unit, savedUnit, sizeof(*unit));
         Heap_Release(savedUnit);
 

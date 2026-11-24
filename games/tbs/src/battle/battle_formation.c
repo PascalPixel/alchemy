@@ -142,10 +142,9 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     pool[i].score = -1;
 
   // Forget the defeated enemies the monster battles exclude.
-  for (i = 0; i < ARRAY_COUNT(gBattleFormation_LevelMatchedEnemies); i++) {
-    Enemy_GetDefinitionFar(gBattleFormation_LevelMatchedEnemies[i]);
-    GameFlag_ClearFar(
-        ENEMY_DEFEATED_FLAG(gBattleFormation_LevelMatchedEnemies[i]));
+  for (i = 0; i < ARRAY_COUNT(gBattleFormation_ExcludedEnemies); i++) {
+    Enemy_GetDefinitionFar(gBattleFormation_ExcludedEnemies[i]);
+    GameFlag_ClearFar(ENEMY_DEFEATED_FLAG(gBattleFormation_ExcludedEnemies[i]));
   }
 
   // Each qualifying formation replaces the pool's lowest entry; empty

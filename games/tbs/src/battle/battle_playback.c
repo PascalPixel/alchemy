@@ -157,8 +157,7 @@ void BattlePlayback_Run(void) {
             MessageArgument_ClearAllFar();
             break;
           case PLAYBACK_REMOVE_UNIT:
-            BattleObject_DestroyTemporaryObject(
-                events->queue.operands[eventIndex]);
+            BattleUnit_RemoveEnemy(events->queue.operands[eventIndex]);
             break;
           // The hit's sound, then the damage pose and PLAY_HIT's flashes.
           case PLAYBACK_HIT:
@@ -181,7 +180,7 @@ void BattlePlayback_Run(void) {
             BattleEnemy_RecordDefeat(events->unitId, events->flags);
             BattleUnit_ClearStatuses(events->unitId);
             unit = Unit_GetFar(events->unitId);
-            for (spriteIndex = 0; (sprite = GetMotionRecord(
+            for (spriteIndex = 0; (sprite = Actor_GetSprite(
                                        BattleObject_Get(events->unitId)->actor,
                                        spriteIndex)) != 0;
                  spriteIndex++) {
@@ -326,7 +325,7 @@ void BattlePlayback_Run(void) {
 
           for (spriteIndex = 0, slot = sprites,
               lastPictureMask = SPRITE_PICTURE_NONE;
-               (sprite = GetMotionRecord(
+               (sprite = Actor_GetSprite(
                     BattleObject_Get(events->unitId)->actor, spriteIndex)) != 0;
                spriteIndex++) {
             struct SpriteAnimation *child;
@@ -357,7 +356,7 @@ void BattlePlayback_Run(void) {
 
         slot = BattleObject_Get(events->unitId);
         slot->fading = 1;
-        for (count = 0; (sprite = GetMotionRecord(slot->actor, count)) != 0;
+        for (count = 0; (sprite = Actor_GetSprite(slot->actor, count)) != 0;
              count++)
           sprites[count] = sprite;
         base = events->timer * 4;

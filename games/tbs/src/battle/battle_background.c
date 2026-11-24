@@ -124,8 +124,8 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
     }
   }
 
-  Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
-  BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
+  BattleTransition_BuildAffineTilemap(BG_SCREEN_BLOCK(7));
+  BattleTransition_BuildFlatTilemap(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
 }
 
 /// Allocates the zoomed background's scanline state.
@@ -174,8 +174,8 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
-  Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
-  BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
+  BattleTransition_BuildAffineTilemap(BG_SCREEN_BLOCK(7));
+  BattleTransition_BuildFlatTilemap(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
   // BG1's last row is left clear.
   Iwram_ClearWords((BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN) + BG_SCREEN_SIZE -
                     BG_SCREEN_WIDTH * 2),

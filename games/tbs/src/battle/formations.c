@@ -1532,7 +1532,7 @@ struct Formation gFormations[] = {
 
 /// The 20 enemies whose defeated flags a monster battle clears before it
 /// picks a formation (BattleFormation_SelectLevelMatchedCandidate).
-u16 gBattleFormation_LevelMatchedEnemies[] = {
+u16 gBattleFormation_ExcludedEnemies[] = {
     ENEMY_ZOMBIE_DJINN_LESSON,
     ENEMY_MYSTERY_MAN,
     ENEMY_MYSTERY_WOMAN,

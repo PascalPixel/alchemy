@@ -336,14 +336,14 @@ struct Unit {
   /// element preset, a character's from its element levels
   /// (Unit_CalculateBaseElements).
   struct BattleElementStats baseElement[ELEMENT_COUNT];
-  s16 hpMax; ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)
-  s16 ppMax; ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)
-  s16 hp;    ///< current HP, 0 when downed
-  s16 pp;    ///< current PP
-  u16 atk;   ///< Attack, 0 to 999 (Unit_Calculate)
-  u16 def;   ///< Defense, 0 to 999 (Unit_Calculate)
-  u16 agi;   ///< Agility, 0 to 999: the order of the turn's actions
-  u8 luck;   ///< 0 to 99 (Unit_Calculate)
+  s16 hpMax;  ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)
+  s16 ppMax;  ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)
+  s16 hp;     ///< current HP, 0 when downed
+  s16 pp;     ///< current PP
+  u16 attack; ///< Attack, 0 to 999 (Unit_Calculate)
+  u16 defense; ///< Defense, 0 to 999 (Unit_Calculate)
+  u16 agility; ///< Agility, 0 to 999: the order of the turn's actions
+  u8 luck;     ///< 0 to 99 (Unit_Calculate)
   /// Actions each turn, 0 to 2: baseActionCount, one more while ready, and
   /// the equipment's extra actions (Unit_Calculate). Each gives the unit a
   /// place in the turn's queue.

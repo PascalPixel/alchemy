@@ -1149,11 +1149,11 @@ void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags) {
   Text_DrawMessageAsTilesFar(STAT_LABEL(1), window, 152, 8);
   Text_DrawMessageAsTilesFar(STAT_LABEL(2), window, 152, 16);
   Text_DrawMessageAsTilesFar(STAT_LABEL(3), window, 152, 24);
-  Text_DrawNumberInWindowFar(unit->atk, STATUS_STAT_DIGITS, window,
+  Text_DrawNumberInWindowFar(unit->attack, STATUS_STAT_DIGITS, window,
                              STATUS_STAT_X, 0);
-  Text_DrawNumberInWindowFar(unit->def, STATUS_STAT_DIGITS, window,
+  Text_DrawNumberInWindowFar(unit->defense, STATUS_STAT_DIGITS, window,
                              STATUS_STAT_X, 8);
-  Text_DrawNumberInWindowFar(unit->agi, STATUS_STAT_DIGITS, window,
+  Text_DrawNumberInWindowFar(unit->agility, STATUS_STAT_DIGITS, window,
                              STATUS_STAT_X, 16);
   Text_DrawNumberInWindowFar(unit->luck, STATUS_STAT_DIGITS, window,
                              STATUS_STAT_X, 24);
@@ -1759,8 +1759,8 @@ s32 ItemMenu_DrawItemPage(struct Window *window, s32 unused,
   message = MsgStatLabel;
   Text_DrawMessageAsTilesFar(message, window, 32, 16);
   Text_DrawMessageAsTilesFar(message + 1, window, 32, 24);
-  Text_DrawNumberInWindowFar(unit->atk, 3, window, STATUS_ITEM_STAT_X, 16);
-  Text_DrawNumberInWindowFar(unit->def, 3, window, STATUS_ITEM_STAT_X, 24);
+  Text_DrawNumberInWindowFar(unit->attack, 3, window, STATUS_ITEM_STAT_X, 16);
+  Text_DrawNumberInWindowFar(unit->defense, 3, window, STATUS_ITEM_STAT_X, 24);
   return 1;
 }
 

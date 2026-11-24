@@ -426,7 +426,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           if (actor->y.fixed > toFIXED(128))
             actor->y.fixed = toFIXED(128);
           actor->gravity = 0;
-          for (n = 0; (record = GetMotionRecordFar(slot->actor, n)) != 0; n++)
+          for (n = 0; (record = Actor_GetSpriteFar(slot->actor, n)) != 0; n++)
             Sprite_StartAnimationFar(record, POSE_DAMAGE);
         }
       }

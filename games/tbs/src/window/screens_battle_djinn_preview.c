@@ -230,15 +230,15 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     String_FormatNumberToHalfwords(numberText, oldPp);
     Text_DrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES, win,
                                 DJINN_PREVIEW_VITALS_X, 2);
-    oldAtk = savedUnit->atk;
+    oldAtk = savedUnit->attack;
     String_FormatNumberToHalfwords(numberText, oldAtk);
     Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
                                 win, DJINN_PREVIEW_STAT_X, 3);
-    oldDef = savedUnit->def;
+    oldDef = savedUnit->defense;
     String_FormatNumberToHalfwords(numberText, oldDef);
     Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
                                 win, DJINN_PREVIEW_STAT_X, 4);
-    oldAgi = savedUnit->agi;
+    oldAgi = savedUnit->agility;
     String_FormatNumberToHalfwords(numberText, oldAgi);
     Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
                                 win, DJINN_PREVIEW_STAT_X, 5);
@@ -348,34 +348,34 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
                               rising);
     }
 
-    String_FormatNumberToHalfwords(numberText, unit->atk);
+    String_FormatNumberToHalfwords(numberText, unit->attack);
     Text_DrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES, win, 11,
                                 3);
-    if (unit->atk != oldAtk) {
+    if (unit->attack != oldAtk) {
       rising = 0;
-      if (unit->atk > oldAtk)
+      if (unit->attack > oldAtk)
         rising = 1;
       DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(3),
                               rising);
     }
 
-    String_FormatNumberToHalfwords(numberText, unit->def);
+    String_FormatNumberToHalfwords(numberText, unit->defense);
     Text_DrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES, win, 11,
                                 4);
-    if (unit->def != oldDef) {
+    if (unit->defense != oldDef) {
       rising = 0;
-      if (unit->def > oldDef)
+      if (unit->defense > oldDef)
         rising = 1;
       DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(4),
                               rising);
     }
 
-    String_FormatNumberToHalfwords(numberText, unit->agi);
+    String_FormatNumberToHalfwords(numberText, unit->agility);
     Text_DrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES, win, 11,
                                 5);
-    if (unit->agi != oldAgi) {
+    if (unit->agility != oldAgi) {
       rising = 0;
-      if (unit->agi > oldAgi)
+      if (unit->agility > oldAgi)
         rising = 1;
       DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(5),
                               rising);

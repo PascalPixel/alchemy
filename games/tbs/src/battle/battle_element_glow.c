@@ -131,8 +131,8 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
         picture = 0;
       else if (picture > 6)
         picture = 6;
-      size = gElementGlow_StarSizes[picture];
-      draw(canvas, (u8 *)state + gElementGlow_StarPictures[picture],
+      size = gElementGlow_SparkSizes[picture];
+      draw(canvas, (u8 *)state + gElementGlow_SparkPictures[picture],
            x - (size >> 1), y - (size >> 1), size, size);
     }
   }

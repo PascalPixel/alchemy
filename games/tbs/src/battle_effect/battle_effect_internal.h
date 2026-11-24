@@ -23,7 +23,6 @@
 #include "battle/battle_unit.h"
 #include "battle/battle_state.h"
 #include "battle/blitter.h"
-#include "battle/canvas.h"
 #include "battle/playback_queue.h"
 #include "battle_effect/battle_effect.h"
 #include "battle_effect/battle_effect_table.h"

@@ -146,6 +146,12 @@ enum JupiterLighthouseWhorlActorId {
 
 extern s16 gJupiterLighthouse_WhorlPoundTargets[];
 extern s32 gPaletteCyclePausesInEvents;
+/// The state of the code every Jupiter Lighthouse room's overlay keeps its own
+/// copy of: a whirlwind's ride (shared/whirlwind_*.h), the palette cycle
+/// (shared/palette_cycle_step.h), the lit actors' sprites
+/// (shared/light_sprites_*.h) and the cracked tiles (shared/cracked_tile_*.h).
+/// These rooms have neither whirlwind nor cracked tile, but their copies of
+/// that code keep their state here all the same.
 s32 gWhirlwindRiding BSS_DATA;
 u16 gPaletteCycleColors[16] BSS_DATA;
 /// Palette 13's first two colours; it is copied whole, with the unlit colours
@@ -730,9 +736,9 @@ void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-void Actors_SetCellsOpen();
-void LightSprites_InitB();
-void LightSprites_AddCounted();
+void Actors_SetCellsOpen(const u16 *list);
+void LightSprites_InitB(void);
+void LightSprites_AddCounted(s32 id, s32 frame);
 
 /// Sets up the rooms as the party enters: the archer statue at three quarters
 /// of its size, the stakes and the bridge as their flags leave them, the
@@ -747,7 +753,7 @@ s32 Scene_Initialize(void) {
         ACTOR_PRIORITY_IGNORES_RISES;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = FIXED_ONE * 3 / 4;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = FIXED_ONE * 3 / 4;
-  Actors_SetCellsOpen((s32)&gJupiterLighthouse_WhorlPoundTargets);
+  Actors_SetCellsOpen((const u16 *)gJupiterLighthouse_WhorlPoundTargets);
   if (Event_GetFlag(FLAG_BUTTON_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_BUTTON_PILLAR, 136, 600);
     JupiterLighthouse_RaiseBridge(0);
@@ -852,7 +858,7 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 
 #include "shared/palette_cycle_step.h"
 
-void MapGrid_SetCellAttributesAt();
+u8 MapGrid_SetCellAttributesAt(s32 x, s32 z, s32 layer, s32 value);
 
 #include "shared/jupiter_lighthouse_load_palettes.h"
 
@@ -906,10 +912,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 s32 Actor_GetSpritePriority(struct Actor *actor);
 
-/// Queues the lit actors' sprites: for each listed actor with a position,
-/// projects it from the map's view, skips it off screen, and writes a 16 by 16
-/// sprite, or a 32 by 64 one with gLightSpritesLarge, at its animation picture
-/// and depth.
 #include "shared/light_sprites_draw.h"
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }

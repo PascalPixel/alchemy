@@ -546,17 +546,15 @@ struct Window;
   } while (0)
 
 /// gMaps holds Mars Lighthouse's nineteen maps twice, from its outside to its
-/// Venus ledge: frozen from row 270, then again from row 289 in the colours the
-/// lighthouse takes once it is thawed (FLAG_MARS_LIGHTHOUSE_THAWED). A frozen
-/// map's thawed copy is MARS_LIGHTHOUSE_THAWED_MAPS rows on, the distance the
-/// linker gives between the two first rows: they are named here for the scene
-/// ids that share their numbers, Prox (270) and Jupiter Ledge (289).
-extern char MapRow_MarsLighthouseOutside __asm__("SceneId_Prox");
-extern char MapRow_MarsLighthouseOutsideThawed __asm__(
-    "SceneId_MarsLighthouseJupiterLedge");
+/// Venus ledge: frozen, then again in the colours the lighthouse takes once it
+/// is thawed (FLAG_MARS_LIGHTHOUSE_THAWED). A frozen map's thawed copy is
+/// MARS_LIGHTHOUSE_THAWED_MAPS rows on, the distance the linker gives between
+/// the two first rows (field/map_resources.s).
+extern char MapIndex_MarsLighthouseOutside;
+extern char MapIndex_MarsLighthouseOutsideThawed;
 #define MARS_LIGHTHOUSE_THAWED_MAPS                                            \
-  ((s32)&MapRow_MarsLighthouseOutsideThawed -                                  \
-   (s32)&MapRow_MarsLighthouseOutside)
+  ((s32)&MapIndex_MarsLighthouseOutsideThawed -                                \
+   (s32)&MapIndex_MarsLighthouseOutside)
 
 /// The Lemurian Ship's background palette, the blues of the band along its hull
 /// and the surf, in the scenes that show the ship: Atteka Inlet, Lemuria's dock

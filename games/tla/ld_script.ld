@@ -4,7 +4,7 @@
    same tests the C makes.
 
    The build preprocesses it once for the main image, and once for each
-   overlay with OVERLAY defined as the overlay's number; it reads each
+   overlay with OVERLAY and OVERLAY_<its name> defined; it reads each
    image's objects from the statements below, in order, and links them in
    that order.
 

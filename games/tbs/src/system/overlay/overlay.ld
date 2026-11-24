@@ -1,7 +1,9 @@
 /* One overlay of The Broken Seal, loaded at 0x2008000: ld_script.ld includes
-   this file when the build defines OVERLAY as the overlay's number, and the
-   block for that number is the overlay. The build finds the overlays from the
-   lines that test OVERLAY, and each overlay's objects from its statements.
+   this file when the build defines OVERLAY and OVERLAY_NAME for the overlay
+   of that name, and the block that tests the name is the overlay. Its number
+   is its row in the resource directory (gamepak/resource_directory.s), which
+   names it the same. The build finds the overlays from the lines that test a
+   name, and each overlay's objects from its statements.
 
    An overlay's .text opens with the entry table every scene and debug room
    links, src/scene/entry.s, which each resolves against its own code. Its
@@ -132,197 +134,197 @@ SECTIONS \
     } \
 }
 
-#if OVERLAY == 0x36f
+#if defined(OVERLAY_Title)
 SCENE_WITH_BSS(title)
-#elif OVERLAY == 0x370
+#elif defined(OVERLAY_FileScreen)
 SCENE_AND(file_screen, scene/file_screen_keyboard.list)
-#elif OVERLAY == 0x371
+#elif defined(OVERLAY_WorldMap)
 SCENE_AND(world_map, graphics/world_map/lighthouse_transition.list)
-#elif OVERLAY == 0x372
+#elif defined(OVERLAY_ValePrologue)
 SCENE(vale_prologue)
-#elif OVERLAY == 0x373
+#elif defined(OVERLAY_Vale)
 SCENE(vale)
-#elif OVERLAY == 0x374
+#elif defined(OVERLAY_ValePlaza)
 SCENE(vale_plaza)
-#elif OVERLAY == 0x375
+#elif defined(OVERLAY_ValeKradensCottage)
 SCENE(vale_kradens_cottage)
-#elif OVERLAY == 0x376
+#elif defined(OVERLAY_CottageRoomsA)
 SCENE(cottage_rooms_a)
-#elif OVERLAY == 0x377
+#elif defined(OVERLAY_CottageRoomsB)
 SCENE(cottage_rooms_b)
-#elif OVERLAY == 0x378
+#elif defined(OVERLAY_Sanctum)
 SCENE(sanctum)
-#elif OVERLAY == 0x379
+#elif defined(OVERLAY_ValeEruption)
 SCENE(vale_eruption)
-#elif OVERLAY == 0x37a
+#elif defined(OVERLAY_SolSanctumLunaSolRooms)
 SCENE(sol_sanctum_luna_sol_rooms)
-#elif OVERLAY == 0x37b
+#elif defined(OVERLAY_SolSanctumStatue)
 SCENE_AND(sol_sanctum_statue, graphics/sol_sanctum_statue/rows.list)
-#elif OVERLAY == 0x37c
+#elif defined(OVERLAY_SolSanctumPsynergyStone)
 SCENE(sol_sanctum_psynergy_stone)
-#elif OVERLAY == 0x37d
+#elif defined(OVERLAY_SolSanctumMaze)
 SCENE(sol_sanctum_maze)
-#elif OVERLAY == 0x37e
+#elif defined(OVERLAY_SolSanctumCorridor)
 SCENE(sol_sanctum_corridor)
-#elif OVERLAY == 0x37f
+#elif defined(OVERLAY_SolSanctumEntrance)
 SCENE(sol_sanctum_entrance)
-#elif OVERLAY == 0x380
+#elif defined(OVERLAY_SolSanctumElementalStarRoom)
 SCENE(sol_sanctum_elemental_star_room)
-#elif OVERLAY == 0x381
+#elif defined(OVERLAY_SolSanctumEruption)
 SCENE(sol_sanctum_eruption)
-#elif OVERLAY == 0x382
+#elif defined(OVERLAY_Vault)
 SCENE(vault)
-#elif OVERLAY == 0x383
+#elif defined(OVERLAY_LogRoomsA)
 SCENE(log_rooms_a)
-#elif OVERLAY == 0x384
+#elif defined(OVERLAY_StoneRooms)
 SCENE(stone_rooms)
-#elif OVERLAY == 0x385
+#elif defined(OVERLAY_VaultRevisit)
 SCENE(vault_revisit)
-#elif OVERLAY == 0x386
+#elif defined(OVERLAY_LogRoomsB)
 SCENE(log_rooms_b)
-#elif OVERLAY == 0x387
+#elif defined(OVERLAY_GomaCaveEntrance)
 SCENE(goma_cave_entrance)
-#elif OVERLAY == 0x388
+#elif defined(OVERLAY_GomaCavePond)
 SCENE(goma_cave_pond)
-#elif OVERLAY == 0x389
+#elif defined(OVERLAY_GomaCavePillar)
 SCENE(goma_cave_pillar)
-#elif OVERLAY == 0x38a
+#elif defined(OVERLAY_GomaCaveStream)
 SCENE(goma_cave_stream)
-#elif OVERLAY == 0x38b
+#elif defined(OVERLAY_Bilibin)
 SCENE(bilibin)
-#elif OVERLAY == 0x38c
+#elif defined(OVERLAY_CottageRoomsC)
 SCENE(cottage_rooms_c)
-#elif OVERLAY == 0x38d
+#elif defined(OVERLAY_McCoyPalace)
 SCENE(mccoy_palace)
-#elif OVERLAY == 0x38e
+#elif defined(OVERLAY_McCoyPalaceGrounds)
 SCENE(mccoy_palace_grounds)
-#elif OVERLAY == 0x38f
+#elif defined(OVERLAY_Kolima)
 SCENE(kolima)
-#elif OVERLAY == 0x390
+#elif defined(OVERLAY_LogRoomsC)
 SCENE(log_rooms_c)
-#elif OVERLAY == 0x391
+#elif defined(OVERLAY_KolimaForestEntrance)
 SCENE(kolima_forest_entrance)
-#elif OVERLAY == 0x392
+#elif defined(OVERLAY_KolimaForestGlade)
 SCENE(kolima_forest_glade)
-#elif OVERLAY == 0x393
+#elif defined(OVERLAY_KolimaForestCliff)
 SCENE(kolima_forest_cliff)
-#elif OVERLAY == 0x394
+#elif defined(OVERLAY_KolimaForestFloodgate)
 SCENE(kolima_forest_floodgate)
-#elif OVERLAY == 0x395
+#elif defined(OVERLAY_KolimaForestTree)
 SCENE(kolima_forest_tree)
-#elif OVERLAY == 0x396
+#elif defined(OVERLAY_TreeRooms)
 SCENE(tree_rooms)
-#elif OVERLAY == 0x397
+#elif defined(OVERLAY_TretTreeBranch)
 SCENE(tret_tree_branch)
-#elif OVERLAY == 0x398
+#elif defined(OVERLAY_BilibinCave)
 SCENE(bilibin_cave)
-#elif OVERLAY == 0x399
+#elif defined(OVERLAY_Imil)
 SCENE(imil)
-#elif OVERLAY == 0x39a
+#elif defined(OVERLAY_ImilFuchinFalls)
 SCENE(imil_fuchin_falls)
-#elif OVERLAY == 0x39b
+#elif defined(OVERLAY_MercuryLighthouseEntrance)
 SCENE(mercury_lighthouse_entrance)
-#elif OVERLAY == 0x39c
+#elif defined(OVERLAY_MercuryLighthouse)
 SCENE(mercury_lighthouse)
-#elif OVERLAY == 0x39d
+#elif defined(OVERLAY_MercuryLighthouseAerie)
 SCENE(mercury_lighthouse_aerie)
-#elif OVERLAY == 0x39e
+#elif defined(OVERLAY_FuchinTemple)
 SCENE(fuchin_temple)
-#elif OVERLAY == 0x39f
+#elif defined(OVERLAY_MogallForest)
 SCENE(mogall_forest)
-#elif OVERLAY == 0x3a0
+#elif defined(OVERLAY_Xian)
 SCENE(xian)
-#elif OVERLAY == 0x3a1
+#elif defined(OVERLAY_LacquerRoomsB)
 SCENE(lacquer_rooms_b)
-#elif OVERLAY == 0x3a2
+#elif defined(OVERLAY_AlpineCrossingLamaTemple)
 SCENE(alpine_crossing_lama_temple)
-#elif OVERLAY == 0x3a3
+#elif defined(OVERLAY_Altin)
 SCENE(altin)
-#elif OVERLAY == 0x3a4
+#elif defined(OVERLAY_AltinPeak)
 SCENE(altin_peak)
-#elif OVERLAY == 0x3a5
+#elif defined(OVERLAY_LamakanDesert)
 SCENE_AND(lamakan_desert, graphics/lamakan_desert/heat_gauge.list)
-#elif OVERLAY == 0x3a6
+#elif defined(OVERLAY_ValeCave)
 SCENE(vale_cave)
-#elif OVERLAY == 0x3a7
+#elif defined(OVERLAY_VaultCave)
 SCENE(vault_cave)
-#elif OVERLAY == 0x3a8
+#elif defined(OVERLAY_Kalay)
 SCENE(kalay)
-#elif OVERLAY == 0x3a9
+#elif defined(OVERLAY_StuccoRoomsA)
 SCENE(stucco_rooms_a)
-#elif OVERLAY == 0x3aa
+#elif defined(OVERLAY_HammetPalace)
 SCENE(hammet_palace)
-#elif OVERLAY == 0x3ab
+#elif defined(OVERLAY_Lunpa)
 SCENE(lunpa)
-#elif OVERLAY == 0x3ac
+#elif defined(OVERLAY_RockRooms)
 SCENE(rock_rooms)
-#elif OVERLAY == 0x3ad
+#elif defined(OVERLAY_WestLunpaCave)
 SCENE(west_lunpa_cave)
-#elif OVERLAY == 0x3ae
+#elif defined(OVERLAY_KalayTolbiDocks)
 SCENE(kalay_tolbi_docks)
-#elif OVERLAY == 0x3af
+#elif defined(OVERLAY_TolbiShipDeck)
 SCENE(tolbi_ship_deck)
-#elif OVERLAY == 0x3b0
+#elif defined(OVERLAY_TolbiShipMast)
 SCENE(tolbi_ship_mast)
-#elif OVERLAY == 0x3b1
+#elif defined(OVERLAY_ShipRooms)
 SCENE(ship_rooms)
-#elif OVERLAY == 0x3b2
+#elif defined(OVERLAY_CrossboneIsle)
 SCENE(crossbone_isle)
-#elif OVERLAY == 0x3b3
+#elif defined(OVERLAY_CrossboneIsleSteppingStones)
 SCENE(crossbone_isle_stepping_stones)
-#elif OVERLAY == 0x3b4
+#elif defined(OVERLAY_CrossboneIsleKeys)
 SCENE(crossbone_isle_keys)
-#elif OVERLAY == 0x3b5
+#elif defined(OVERLAY_Tolbi)
 SCENE(tolbi)
-#elif OVERLAY == 0x3b6
+#elif defined(OVERLAY_StuccoRoomsB)
 SCENE(stucco_rooms_b)
-#elif OVERLAY == 0x3b7
+#elif defined(OVERLAY_TolbiGames)
 SCENE(tolbi_games)
-#elif OVERLAY == 0x3b8
+#elif defined(OVERLAY_BabiPalace)
 SCENE(babi_palace)
-#elif OVERLAY == 0x3b9
+#elif defined(OVERLAY_ColosseumEntrance)
 SCENE(colosseum_entrance)
-#elif OVERLAY == 0x3ba
+#elif defined(OVERLAY_ColosseumAzartMatch)
 SCENE_AND(colosseum_azart_match, graphics/colosso/gauge.list)
-#elif OVERLAY == 0x3bb
+#elif defined(OVERLAY_ColosseumSatrageMatch)
 SCENE_AND(colosseum_satrage_match, graphics/colosso/gauge.list)
-#elif OVERLAY == 0x3bc
+#elif defined(OVERLAY_ColosseumNavampaMatch)
 SCENE_AND(colosseum_navampa_match, graphics/colosso/gauge.list)
-#elif OVERLAY == 0x3bd
+#elif defined(OVERLAY_AltmillerCave)
 SCENE(altmiller_cave)
-#elif OVERLAY == 0x3be
+#elif defined(OVERLAY_GondowanCave)
 SCENE(gondowan_cave)
-#elif OVERLAY == 0x3bf
+#elif defined(OVERLAY_LunpaFortress)
 SCENE(lunpa_fortress)
-#elif OVERLAY == 0x3c0
+#elif defined(OVERLAY_SuhallaDesert)
 SCENE(suhalla_desert)
-#elif OVERLAY == 0x3c1
+#elif defined(OVERLAY_Suhalla)
 SCENE(suhalla)
-#elif OVERLAY == 0x3c2
+#elif defined(OVERLAY_TimberRoomsA)
 SCENE(timber_rooms_a)
-#elif OVERLAY == 0x3c3
+#elif defined(OVERLAY_SuhallaGate)
 SCENE(suhalla_gate)
-#elif OVERLAY == 0x3c4
+#elif defined(OVERLAY_TunnelRuins)
 SCENE(tunnel_ruins)
-#elif OVERLAY == 0x3c5
+#elif defined(OVERLAY_BabiLighthouse)
 SCENE(babi_lighthouse)
-#elif OVERLAY == 0x3c6
+#elif defined(OVERLAY_Lalivero)
 SCENE(lalivero)
-#elif OVERLAY == 0x3c7
+#elif defined(OVERLAY_TimberRoomsBc)
 SCENE(timber_rooms_bc)
-#elif OVERLAY == 0x3c8
+#elif defined(OVERLAY_VenusLighthouse)
 SCENE(venus_lighthouse)
-#elif OVERLAY == 0x3c9
+#elif defined(OVERLAY_VenusLighthouseAerie)
 SCENE(venus_lighthouse_aerie)
-#elif OVERLAY == 0x3ca
+#elif defined(OVERLAY_LemurianShip)
 SCENE(lemurian_ship)
-#elif OVERLAY == 0x3cb
+#elif defined(OVERLAY_BattleArena)
 SCENE(battle_arena)
-#elif OVERLAY == 0x3cc
+#elif defined(OVERLAY_TestScenes)
 DEBUG_ROOM(test_scenes)
-#elif OVERLAY == 0x3cd
+#elif defined(OVERLAY_IncreaseItemAndLevel)
 DEBUG_ROOM(level)
-#elif OVERLAY == 0x3ce
+#elif defined(OVERLAY_MenuTest)
 DEBUG_ROOM(test)
 #endif
 

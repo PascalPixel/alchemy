@@ -2,9 +2,7 @@
 @ Resource_GetTableEntry looks up. A named row gives ResourceId_NAME its number,
 @ which C reads at link time (resource_ids.h); a row of 0 is unused.
 @ A row's number is its place, so a row added or moved renumbers every row
-@ after it. Code naming a resource by its symbol follows, but some numbers
-@ travel bare: the scene table (field/scenes.s) names each scene's overlay by
-@ number, and overlay.ld numbers each overlay's objects.
+@ after it, and everything naming a resource by its symbol follows.
 	.macro resource name, place:req
 	.ifnb \name
 	.global ResourceId_\name
@@ -20,6 +18,16 @@
 	.global MapResource_\place
 	.equiv MapResource_\place, (. - Resource_DirectoryTable) / 4 - ResourceId_EmptyMap
 	.4byte \place
+	.endm
+
+@ An overlay's resource: a row that gives OverlayId_NAME its number, by which
+@ the scene table (field/scenes.s) names the overlay a scene loads. Its packed
+@ image is Overlay_NAME (system/overlay/overlays.list.tsv), linked from the
+@ block of that name in system/overlay/overlay.ld.
+	.macro overlay name:req
+	.global OverlayId_\name
+	.equiv OverlayId_\name, (. - Resource_DirectoryTable) / 4
+	.4byte Overlay_\name
 	.endm
 
 	.section .rodata
@@ -1637,120 +1645,120 @@ Resource_DirectoryTable:
 	map_resource Tileset_Test7TilesB
 	map_resource Tileset_Test7TilesC
 	map_resource Tileset_Test7TilesD
-	resource , Resource_Overlay649
-	resource , Resource_Overlay64a
-	resource , Resource_Overlay64b
-	resource , Resource_Overlay64c
-	resource , Resource_Overlay64d
-	resource , Resource_Overlay64e
-	resource , Resource_Overlay64f
-	resource , Resource_Overlay650
-	resource , Resource_Overlay651
-	resource , Resource_Overlay652
-	resource , Resource_Overlay653
-	resource , Resource_Overlay654
-	resource , Resource_Overlay655
-	resource , Resource_Overlay656
-	resource , Resource_Overlay657
-	resource , Resource_Overlay658
-	resource , Resource_Overlay659
-	resource , Resource_Overlay65a
-	resource , Resource_Overlay65b
-	resource , Resource_Overlay65c
-	resource , Resource_Overlay65d
-	resource , Resource_Overlay65e
-	resource , Resource_Overlay65f
-	resource , Resource_Overlay660
-	resource , Resource_Overlay661
-	resource , Resource_Overlay662
-	resource , Resource_Overlay663
-	resource , Resource_Overlay664
-	resource , Resource_Overlay665
-	resource , Resource_Overlay666
-	resource , Resource_Overlay667
-	resource , Resource_Overlay668
-	resource , Resource_Overlay669
-	resource , Resource_Overlay66a
-	resource , Resource_Overlay66b
-	resource , Resource_Overlay66c
-	resource , Resource_Overlay66d
-	resource , Resource_Overlay66e
-	resource , Resource_Overlay66f
-	resource , Resource_Overlay670
-	resource , Resource_Overlay671
-	resource , Resource_Overlay672
-	resource , Resource_Overlay673
-	resource , Resource_Overlay674
-	resource , Resource_Overlay675
-	resource , Resource_Overlay676
-	resource , Resource_Overlay677
-	resource , Resource_Overlay678
-	resource , Resource_Overlay679
-	resource , Resource_Overlay67a
-	resource , Resource_Overlay67b
-	resource , Resource_Overlay67c
-	resource , Resource_Overlay67d
-	resource , Resource_Overlay67e
-	resource , Resource_Overlay67f
-	resource , Resource_Overlay680
-	resource , Resource_Overlay681
-	resource , Resource_Overlay682
-	resource , Resource_Overlay683
-	resource , Resource_Overlay684
-	resource , Resource_Overlay685
-	resource , Resource_Overlay686
-	resource , Resource_Overlay687
-	resource , Resource_Overlay688
-	resource , Resource_Overlay689
-	resource , Resource_Overlay68a
-	resource , Resource_Overlay68b
-	resource , Resource_Overlay68c
-	resource , Resource_Overlay68d
-	resource , Resource_Overlay68e
-	resource , Resource_Overlay68f
-	resource , Resource_Overlay690
-	resource , Resource_Overlay691
-	resource , Resource_Overlay692
-	resource , Resource_Overlay693
-	resource , Resource_Overlay694
-	resource , Resource_Overlay695
-	resource , Resource_Overlay696
-	resource , Resource_Overlay697
-	resource , Resource_Overlay698
-	resource , Resource_Overlay699
-	resource , Resource_Overlay69a
-	resource , Resource_Overlay69b
-	resource , Resource_Overlay69c
-	resource , Resource_Overlay69d
-	resource , Resource_Overlay69e
-	resource , Resource_Overlay69f
-	resource , Resource_Overlay6a0
-	resource , Resource_Overlay6a1
-	resource , Resource_Overlay6a2
-	resource , Resource_Overlay6a3
-	resource , Resource_Overlay6a4
-	resource , Resource_Overlay6a5
-	resource , Resource_Overlay6a6
-	resource , Resource_Overlay6a7
-	resource , Resource_Overlay6a8
-	resource , Resource_Overlay6a9
-	resource , Resource_Overlay6aa
-	resource , Resource_Overlay6ab
-	resource , Resource_Overlay6ac
-	resource , Resource_Overlay6ad
-	resource , Resource_Overlay6ae
-	resource , Resource_Overlay6af
-	resource , Resource_Overlay6b0
-	resource , Resource_Overlay6b1
-	resource , Resource_Overlay6b2
-	resource , Resource_Overlay6b3
-	resource , Resource_Overlay6b4
-	resource , Resource_Overlay6b5
-	resource , Resource_Overlay6b6
-	resource , Resource_Overlay6b7
-	resource , Resource_Overlay6b8
-	resource , Resource_Overlay6b9
-	resource , Resource_Overlay6ba
+	overlay Title
+	overlay Clear
+	overlay WorldMap
+	overlay StaffCredit
+	overlay VenusLighthouseEntrance
+	overlay VenusLighthouse
+	overlay SuhallaGate
+	overlay Idejima
+	overlay Daila
+	overlay DailaRooms
+	overlay KandoreanTemple
+	overlay ShrineOfTheSeaGod
+	overlay DehkanPlateau
+	overlay LemurianShip
+	overlay LemurianShipDeck
+	overlay Madra
+	overlay MadraRooms
+	overlay MadraCatacombs
+	overlay MadraDrawbridge
+	overlay OseniaCliffs
+	overlay Mikasalla
+	overlay MikasallaRooms
+	overlay Garoh
+	overlay GarohRooms
+	overlay YampiDesert
+	overlay YampiDesertCave
+	overlay AirsRock
+	overlay AirsRockInside
+	overlay Alhafra
+	overlay AlhafraRooms
+	overlay AlhafraManor
+	overlay EasternAlhafra
+	overlay EasternAlhafraShip
+	overlay AlhafranCave
+	overlay GondowanCliffs
+	overlay GondowanCliffsHideout
+	overlay Naribwe
+	overlay NaribweRooms
+	overlay KibomboMountains
+	overlay Kibombo
+	overlay GabombaStatue
+	overlay GabombaStatueChamber
+	overlay GabombaCatacombs
+	overlay Islets
+	overlay IsletCave
+	overlay Yallam
+	overlay YallamRooms
+	overlay TaopoSwamp
+	overlay ApojiiIslands
+	overlay ApojiiIslandsCave
+	overlay AquaRock
+	overlay AquaRockInside
+	overlay IzumoRooms
+	overlay Izumo
+	overlay IzumoRuins
+	overlay GaiaRock
+	overlay GaiaRockInside
+	overlay Champa
+	overlay ChampaRooms
+	overlay ChampaSanctum
+	overlay ChampaCliffCaves
+	overlay AnkohlRuins
+	overlay SeaOfTime
+	overlay LemuriaEntrance
+	overlay LemuriaDock
+	overlay AncientLemuria
+	overlay Lemuria
+	overlay LemuriaRooms
+	overlay LemuriaPalace
+	overlay LemuriaSpring
+	overlay TundariaTower
+	overlay Settlements
+	overlay MagmaRock
+	overlay MagmaRockInside
+	overlay AttekaInlet
+	overlay Contigo
+	overlay ShamanVillageCave
+	overlay ShamanVillage
+	overlay TrialRoad
+	overlay JupiterLighthouseEntrance
+	overlay JupiterLighthouseBasement
+	overlay JupiterLighthouseRoomGateButton
+	overlay JupiterLighthouseRoomBeam
+	overlay JupiterLighthouseRoomErinyesTunicChest
+	overlay JupiterLighthouseRoomLockedDoors
+	overlay JupiterLighthouseRoomRedKey
+	overlay JupiterLighthouseRoomCrackedFloor
+	overlay JupiterLighthouseWhorl
+	overlay JupiterLighthouseRoomBlueKey
+	overlay JupiterLighthouseRoomPhaetonsBladeChest
+	overlay JupiterLighthouseTerraces
+	overlay JupiterLighthouseAerie
+	overlay JupiterLighthouseAerieBeacon
+	overlay Loho
+	overlay NorthernReaches
+	overlay Prox
+	overlay Caverns
+	overlay MarsLighthouseEntrance
+	overlay MarsLighthouseStarRoom
+	overlay MarsLighthouseHall
+	overlay MarsLighthouseRoomF
+	overlay MarsLighthouseAerie
+	overlay TreasureIsle
+	overlay AnemosInnerSanctum
+	overlay AnemosInnerSanctumEntrance
+	overlay MercuryLighthouse
+	overlay Epilogue
+	overlay MtAlephSummit
+	overlay Lobby
+	overlay TestScenes
+	overlay IconTest
+	overlay PsynergyTest
+	overlay PsynergyTest2
+	overlay ShopTest
 	resource , 0
 	resource , 0
 	resource , 0

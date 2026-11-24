@@ -1,18 +1,14 @@
 	.include "enums/flags.inc"
 	.include "enums/item_ids.inc"
 	.include "enums/game/game.inc"
+	.include "enums/src/field/field_sequence_internal.inc"
 
-@ What a treasure spot is (enum ContainerKind, field_sequence_internal.h, and
-@ four of enum ExamineTarget, field/scene_tables.h), the mark on a scene's
-@ header and on coins, and the nine Mimics counted from the Kandorean Temple's
-@ (enemy_ids.h). Their headers compute values or sit outside include/, so the
-@ build cannot hand them to assembly.
-	.equiv CONTAINER_CHEST, 128
-	.equiv CONTAINER_MIMIC, 129
-	.equiv CONTAINER_PSYNERGY_STONE, 130
-	.equiv CONTAINER_GROUND, 131
-	.equiv CONTAINER_STONE_TABLET, 132
-	.equiv CONTAINER_POND, 133
+@ What a treasure spot is comes from enum ContainerKind
+@ (field_sequence_internal.h). The rest the build cannot hand to assembly,
+@ since their headers compute values: four of enum ExamineTarget
+@ (field/scene_tables.h), the mark on a scene's header and on coins
+@ (field_sequence_internal.h), and the nine Mimics counted from the Kandorean
+@ Temple's (enemy_ids.h).
 	.equiv EXAMINE_JAR, 2
 	.equiv EXAMINE_BARREL, 3
 	.equiv EXAMINE_GRAVE, 8

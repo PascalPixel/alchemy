@@ -27,14 +27,16 @@ MAKEFLAGS += --no-print-directory
 # keeps its intermediates: a debugger or a size report can read them.
 .SECONDARY:
 
-# Plain `make` builds the English Broken Seal, the compilers first if they are
-# missing; `make compare` checks it against rom.sha1.
-.DEFAULT_GOAL := tbs-en
+.DEFAULT_GOAL := all
+# Plain make builds and checks all twelve editions, one job a core.
+.PHONY: all
+all:
+	@$(MAKE) -j$(shell getconf _NPROCESSORS_ONLN) compare-editions
 .PHONY: help all compare $(EDITIONS) $(addprefix compare-,$(EDITIONS)) compare-tbs compare-tla compare-editions clean
 
 help:
 	@printf '%s\n' \
-	  'make                    build tbs-en (the compilers first, once); make compare checks it' \
+	  'make                    build all twelve editions (the compilers first, once) and check each against rom.sha1' \
 	  'make bootstrap          build the pinned compilers and tools into tools/out' \
 	  'make tbs-en             build one edition: tbs or tla, then ja en de es fr it' \
 	  'make compare-tbs-en     build one edition and check it against rom.sha1' \
@@ -42,7 +44,7 @@ help:
 	  'make compare-editions   all twelve editions' \
 	  'make modern             all twelve editions'\'' C through a current GCC (MODERN_CC)' \
 	  'make test               test the C build tools and the format' \
-	  'make test-linking       add a row to the scene and resource lists and link: every name follows' \
+	  'make test-linking       add a row to the scene, resource and map lists and link: every name follows' \
 	  'make SHIFT=4 tbs-en     the shift test: everything after the header moves 4 bytes'
 
 # Each edition builds in its own make, so its variables below are set once;
@@ -216,10 +218,11 @@ EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS) $(if $(SHIFT),--de
 OVERLAY_STREAM := games/$(GAME)/src/system/overlay/overlays.list
 # The linker script: games/$(GAME)/ld_script.ld, run through the C
 # preprocessor for the edition as its C is, once for the main image and once
-# for each overlay (-DOVERLAY=0x<number>). The overlays are the numbers its
+# for each overlay (-DOVERLAY -DOVERLAY_<name>). The overlays are the names its
 # overlay.ld tests; each image links the objects its script names, in order.
+# An overlay has no number here: that is its row in the resource directory.
 OVERLAY_LD := games/$(GAME)/src/system/overlay/overlay.ld
-OVERLAY_IDS := $(shell sed -n 's/^\#\(el\)*if OVERLAY == 0x\([0-9a-f]*\)$$/\2/p' $(OVERLAY_LD))
+OVERLAY_NAMES := $(shell sed -n 's/^\#\(el\)*if defined(OVERLAY_\([A-Za-z0-9]*\))$$/\2/p' $(OVERLAY_LD))
 LD_CPPFLAGS := -P -lang-asm -nostdinc -Igames/$(GAME)/include -D$(DEFINE)=1 $(if $(SHIFT),-DROM_SHIFT=$(SHIFT))
 LD_HEADERS := games/$(GAME)/include/edition.h games/$(GAME)/include/version.h
 LD_SCRIPT := $(BUILD)/ld/main.ld
@@ -239,18 +242,18 @@ $(BUILD)/ld/main.stamp: games/$(GAME)/ld_script.ld $(LD_HEADERS) $(call if_missi
 $(BUILD)/ld/overlay_%.ld: $(BUILD)/ld/overlay_%.stamp ;
 $(BUILD)/ld/overlay_%.stamp: games/$(GAME)/ld_script.ld $(OVERLAY_LD) $(LD_HEADERS) $$(call if_missing,$(BUILD)/ld/overlay_$$*.ld)
 	@mkdir -p $(@D)
-	new=$(@:.stamp=.ld).$$$$.new; $(CPP) $(LD_CPPFLAGS) -DOVERLAY=0x$* $< $$new && { cmp -s $$new $(@:.stamp=.ld) && rm $$new || mv $$new $(@:.stamp=.ld); }
+	new=$(@:.stamp=.ld).$$$$.new; $(CPP) $(LD_CPPFLAGS) -DOVERLAY -DOVERLAY_$* $< $$new && { cmp -s $$new $(@:.stamp=.ld) && rm $$new || mv $$new $(@:.stamp=.ld); }
 	@touch $@
 .PHONY: FORCE
 FORCE:
 # The objects each script names, first mention first, as make variables.
 object_list = grep -o '\*/games/[^"( ]*\.o' $(2) | sed 's|^\*/||; s|\.o$$||' | \
               awk -v name=$(1) '!seen[$$0]++ { list = list " \\\n\t$$(BUILD)/obj/" $$0 ".o" } END { print name " :=" list }'
-$(BUILD)/objects.mk: $(LD_SCRIPT) $(OVERLAY_IDS:%=$(BUILD)/ld/overlay_%.ld)
+$(BUILD)/objects.mk: $(LD_SCRIPT) $(OVERLAY_NAMES:%=$(BUILD)/ld/overlay_%.ld)
 	@{ echo '# Written by the Makefile from the linker script: do not edit.'; \
 	  $(call object_list,MAIN_OBJS,$(LD_SCRIPT)); \
-	  echo 'OVERLAYS := $(OVERLAY_IDS)'; \
-	  $(foreach id,$(OVERLAY_IDS),$(call object_list,OVERLAY_OBJS_$(id),$(BUILD)/ld/overlay_$(id).ld);) \
+	  echo 'OVERLAYS := $(OVERLAY_NAMES)'; \
+	  $(foreach name,$(OVERLAY_NAMES),$(call object_list,OVERLAY_OBJS_$(name),$(BUILD)/ld/overlay_$(name).ld);) \
 	} > $@.new
 	cmp -s $@.new $@ && rm $@.new || mv $@.new $@
 OVERLAY_DEPS = $(BUILD)/ld/overlay_$*.ld
@@ -258,7 +261,7 @@ include $(BUILD)/objects.mk
 
 # The source an object is built from: NAME.c, NAME.s, NAME.S or NAME.mid.
 source = $(firstword $(wildcard $(1).c $(1).s $(1).S $(1).mid))
-OVERLAY_OBJS := $(foreach id,$(OVERLAYS),$(OVERLAY_OBJS_$(id)))
+OVERLAY_OBJS := $(foreach name,$(OVERLAYS),$(OVERLAY_OBJS_$(name)))
 OBJS := $(sort $(MAIN_OBJS) $(OVERLAY_OBJS))
 # ⚓️'s overlays are built for size: C linked only into overlays takes -Os.
 ifeq ($(GAME),tla)
@@ -318,13 +321,13 @@ $(BUILD)/overlays/%/imports.o: $(BUILD)/overlays/%/imports.s $(VENEER_$(GAME))
 
 # An overlay links at 0x2008000 against the main image's symbols, less the
 # names it defines itself; its image is packed as Camelot's packer did.
-$(BUILD)/overlays/resource_%.elf: $$(OVERLAY_OBJS_$$*) $$(OVERLAY_IMPORTS) $$(OVERLAY_DEPS) $(BUILD)/symbols.elf $(LIBGCC)
+$(BUILD)/overlays/%.elf: $$(OVERLAY_OBJS_$$*) $$(OVERLAY_IMPORTS) $$(OVERLAY_DEPS) $(BUILD)/symbols.elf $(LIBGCC)
 	@mkdir -p $(@D)
 	$(NM) -g --defined-only $(OVERLAY_OBJS_$*) $(OVERLAY_IMPORTS) $(LIBGCC) | awk 'NF == 3 { print $$3 }' > $(@:.elf=.own)
 	$(OBJCOPY) --extract-symbol --strip-symbols=$(@:.elf=.own) $(BUILD)/symbols.elf $(@:.elf=.symbols.elf)
 	$(LD) --no-warn-mismatch -n $(OVERLAY_SCRIPT) -Map $(@:.elf=.map) -R $(@:.elf=.symbols.elf) -o $@ $(OVERLAY_OBJS_$*) $(OVERLAY_IMPORTS) $(LIBGCC)
 
-$(BUILD)/overlays/resource_%.lz: $(BUILD)/overlays/resource_%.elf $(OVLPACK)
+$(BUILD)/overlays/%.lz: $(BUILD)/overlays/%.elf $(OVLPACK)
 	$(OBJCOPY) -O binary $< $(@:.lz=.bin)
 	$(OVLPACK) $(@:.lz=.bin) $@
 
@@ -342,7 +345,11 @@ $(BUILD)/text/stamp: games/$(GAME)/text/$(LANG).po $(PO2AGS) $(CHARMAP)
 	@touch $@
 
 # A header's enum constants for the assembly tables that name its ids:
-# a .s file includes enums/NAME.inc for include/NAME.h.
+# a .s file includes enums/NAME.inc for include/NAME.h, and
+# enums/src/NAME.inc for a header kept beside its sources, src/NAME.h.
+$(BUILD)/enums/src/%.inc: games/$(GAME)/src/%.h $(ENUMS)
+	@mkdir -p $(@D)
+	$(ENUMS) $< $@
 $(BUILD)/enums/%.inc: games/$(GAME)/include/%.h $(ENUMS)
 	@mkdir -p $(@D)
 	$(ENUMS) $< $@
@@ -370,12 +377,20 @@ $(BUILD)/obj/%.o: %.s
 	@mkdir -p $(@D)
 	$(AS) $(EDITION_ASFLAGS) -o $@ $<
 
-# The linking test (make test-linking) assembles the two lists that number the
-# scenes and the resources from copies with one row more in the middle: the
-# middle scene's row again under the name LinkingTest, and an unused resource
-# of that name. Nothing else differs from the edition's build, so an image that
-# links has taken every number from the lists.
+# The linking test (make test-linking) assembles the three lists that number
+# the scenes, the resources (the overlays among them) and the maps from copies
+# with one row more in the middle: the middle scene's row and the middle map's
+# row again under the name LinkingTest, and an unused resource of that name,
+# which falls before the overlays' rows. Nothing else differs from the
+# edition's build, so an image that links has taken every number from the lists.
+MAP_LIST_tbs := games/tbs/src/map/resources
+MAP_LIST_tla := games/tla/src/field/map_resources
 ifdef LINKING
+$(BUILD)/obj/$(MAP_LIST_$(GAME)).o: $(MAP_LIST_$(GAME)).s
+	@mkdir -p $(@D)
+	awk 'NR == FNR { if ($$1 == "map") rows++; next } { print } \
+	     $$1 == "map" && ++row == int(rows / 2) { sub(/map [A-Za-z0-9_]*,/, "map LinkingTest,"); print }' $< $< > $(@:.o=.s)
+	$(AS) $(EDITION_ASFLAGS) -o $@ $(@:.o=.s)
 $(BUILD)/obj/games/$(GAME)/src/field/scenes.o: games/$(GAME)/src/field/scenes.s
 	@mkdir -p $(@D)
 	awk 'NR == FNR { if ($$1 == "scene") rows++; next } { print } \
@@ -541,37 +556,70 @@ test: tools format-check
 	$(MAKE) -f tools/Makefile test
 	git ls-files games tools | tools/out/ags-check
 
-# make test-linking: the tree links itself. A scene's or a resource's number is
-# its row in games/<game>/src/field/scenes.s or src/gamepak/resource_directory.s,
-# and everything that refers to one names it, so the linker fills the number
-# in. The test builds LINKING_EDITION again into out/linking/ with one row more
-# in the middle of each list and no other change, and reads both images'
-# symbols: the image links, every SceneId_, ResourceId_ and MapResource_ name
-# is still there, each one after a new row is one more than it was and each
-# one before it is what it was. It edits no tracked file, and the ROM
-# comparison does not run it. What it cannot see is a number written bare.
+# make test-linking: the tree links itself. A scene's, a resource's, an
+# overlay's or a map's number is its row in games/<game>/src/field/scenes.s,
+# src/gamepak/resource_directory.s or the map list, and everything that refers
+# to one names it, so the linker fills the number in. The test builds
+# LINKING_EDITION again into out/linking/ with one row more in the middle of
+# each list and no other change, and reads both images. First their symbols:
+# the image links, every SceneId_, ResourceId_, MapResource_, OverlayId_ and
+# MapIndex_ name is still there, each one after a new row is one more than it
+# was and each one before it is what it was, and every overlay has moved.
+# Then their bytes, read back to names through those symbols (linking_rows):
+# every scene's row of the scene table still names the overlay and the map it
+# named, and every overlay's row of the directory still holds its own image.
+# It edits no tracked file, and the ROM comparison does not run it. What it
+# cannot see is a number written bare where no row macro pastes a name.
 LINKING_EDITION ?= tla-en
+LINKING_WAS := out/$(LINKING_EDITION)/$(LINKING_EDITION)
+LINKING_NOW := out/linking/$(LINKING_EDITION)/$(LINKING_EDITION)
+# The rows of image $(1), an ELF: "scene NAME OVERLAY MAP" for each row of
+# gScenes, and "overlay NAME own" for each overlay whose row of the directory
+# holds the address of Overlay_NAME. A number no name has reads "?".
+linking_rows = $(NM) -t d $(1).elf > $(1).names && $(OBJCOPY) -O binary $(1).elf $(1).image && \
+	{ od -An -v -t u2 -j $$(awk '$$3 == "gScenes" { at = $$1 } $$3 == "Rom_Start" { rom = $$1 } END { print at - rom }' $(1).names) \
+	     -N $$(awk '$$3 ~ /^SceneId_/ && $$1 >= rows { rows = $$1 + 1 } END { print rows * 8 }' $(1).names) $(1).image | sed 's/^/scenes /'; \
+	  od -An -v -t u4 -j $$(awk '$$3 == "Resource_DirectoryTable" { at = $$1 } $$3 == "Rom_Start" { rom = $$1 } END { print at - rom }' $(1).names) \
+	     -N $$(awk '$$3 ~ /^(Resource|Overlay)Id_/ && $$1 >= rows { rows = $$1 + 1 } END { print rows * 4 }' $(1).names) $(1).image | sed 's/^/directory /'; } | \
+	awk 'NR == FNR { if ($$3 ~ /^SceneId_/) scene[$$1 + 0] = substr($$3, 9); \
+	                 else if ($$3 ~ /^OverlayId_/) overlay[$$1 + 0] = substr($$3, 11); \
+	                 else if ($$3 ~ /^MapIndex_/) map[$$1 + 0] = substr($$3, 10); \
+	                 else if ($$3 ~ /^Overlay_/) image[substr($$3, 9)] = $$1 + 0; next } \
+	     function named(names, number) { return number in names ? names[number] : "?" } \
+	     $$1 == "scenes" { for (i = 2; i <= NF; i++) cell[cells++] = $$i } \
+	     $$1 == "directory" { for (i = 2; i <= NF; i++) word[words++] = $$i } \
+	     END { for (row = 0; row * 4 < cells; row++) \
+	             print "scene", named(scene, row), named(overlay, cell[row * 4]), named(map, cell[row * 4 + 2]); \
+	           for (row = 0; row < words; row++) if (row in overlay) \
+	             print "overlay", overlay[row], (word[row] == image[overlay[row]] ? "own" : "?") }' $(1).names - > $(1).rows
 .PHONY: test-linking
 test-linking: $(LINKING_EDITION)
 	@$(MAKE) $(SERIAL) -f Makefile EDITION=$(LINKING_EDITION) LINKING=1 elf
-	@{ $(NM) -t d out/$(LINKING_EDITION)/$(LINKING_EDITION).elf | sed "s/^/was /"; \
-	   $(NM) -t d out/linking/$(LINKING_EDITION)/$(LINKING_EDITION).elf | sed "s/^/now /"; } | \
-	awk '$$3 != "A" || $$4 !~ /^(SceneId|ResourceId|MapResource)_/ { next } \
+	@{ $(NM) -t d $(LINKING_WAS).elf | sed "s/^/was /"; $(NM) -t d $(LINKING_NOW).elf | sed "s/^/now /"; } | \
+	awk '$$3 != "A" || $$4 !~ /^(SceneId|ResourceId|MapResource|OverlayId|MapIndex)_/ { next } \
 	     $$1 == "was" { was[$$4] = $$2 + 0; next } { now[$$4] = $$2 + 0 } \
-	     END { if (!("SceneId_LinkingTest" in now) || !("ResourceId_LinkingTest" in now)) { \
+	     END { if (!("SceneId_LinkingTest" in now) || !("ResourceId_LinkingTest" in now) || !("MapIndex_LinkingTest" in now)) { \
 	             print "test-linking: the new rows have no numbers"; exit 1 } \
-	           scene = now["SceneId_LinkingTest"]; resource = now["ResourceId_LinkingTest"]; \
+	           scene = now["SceneId_LinkingTest"]; resource = now["ResourceId_LinkingTest"]; map = now["MapIndex_LinkingTest"]; \
 	           empty = was["ResourceId_EmptyMap"]; \
 	           for (name in was) { \
 	             if (name ~ /^SceneId_/) step = was[name] >= scene; \
-	             else if (name ~ /^ResourceId_/) step = was[name] >= resource; \
+	             else if (name ~ /^(Resource|Overlay)Id_/) step = was[name] >= resource; \
+	             else if (name ~ /^MapIndex_/) step = was[name] >= map; \
 	             else step = (was[name] + empty >= resource) - (empty >= resource); \
 	             if (!(name in now)) { print "test-linking: " name " is gone"; bad++ } \
 	             else if (now[name] != was[name] + step) { bad++; \
 	               print "test-linking: " name " was " was[name] ", is " now[name] ", should be " was[name] + step } \
+	             else if (name ~ /^OverlayId_/ && !step) { bad++; print "test-linking: the new resource is not before " name } \
 	             else if (step) moved++; else stayed++ } \
 	           if (bad || !moved) { print "test-linking: FAILED"; exit 1 } \
-	           print "test-linking: scene " scene " and resource " resource " added, " moved " names moved by one, " stayed " stayed: OK" }'
+	           print "test-linking: scene " scene ", resource " resource " and map " map " added, " moved " names moved by one, " stayed " stayed: OK" }'
+	@$(call linking_rows,$(LINKING_WAS)) && $(call linking_rows,$(LINKING_NOW)) && \
+	grep -v '^scene LinkingTest ' $(LINKING_NOW).rows | cmp -s - $(LINKING_WAS).rows && ! grep -q '?' $(LINKING_WAS).rows || { \
+	  grep -v '^scene LinkingTest ' $(LINKING_NOW).rows | diff $(LINKING_WAS).rows - | head -20; grep '?' $(LINKING_WAS).rows | head -20; \
+	  echo "test-linking: a scene's overlay or map, or an overlay's image, is not its own: FAILED"; exit 1; }
+	@awk '{ rows[$$1]++ } END { print "test-linking: " rows["scene"] " scenes name the overlay and the map they named, " \
+	      rows["overlay"] " overlays hold their own images: OK" }' $(LINKING_WAS).rows
 
 # Both games' C is as clang-format writes it (AGENTS.md S3). Without
 # clang-format installed the check says so

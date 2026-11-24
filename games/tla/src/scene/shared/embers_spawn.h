@@ -1,12 +1,11 @@
-/// Two embers fly up from a point and bounce away for 20 frames, then flicker
-/// 20 more and are gone (gEmbers_Script); `speed` tips their throw, and the
-/// rolling fireball passes its facing.
+/// Two chips of ice fly up from a cell the rolling fireball breaks and bounce
+/// away for 20 frames, then flicker 20 more and are gone (gEmbers_Script):
+/// SPRITE_WIND_STONE's picture of glowing orbs, painted SPRITE_COLOR_GRB, so
+/// pale cyan and blue. `speed` tips their throw; the fireball passes its
+/// facing.
 void Embers_Spawn(s32 x, s32 y, s32 z, s32 speed) {
   s32 i;
 
-  // XXX: embers, or chips of the ice the fireball breaks (SPRITE_WIND_STONE's
-  // picture, painted SPRITE_COLOR_GRB)? A render of a Mars Lighthouse fireball
-  // breaking ice would settle it.
   for (i = 0; i < 2; i++) {
     struct Actor *object = FieldActor_Create(SPRITE_WIND_STONE, x, y, z);
 

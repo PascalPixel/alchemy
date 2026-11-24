@@ -7,10 +7,6 @@
 /// before the parts, and each part includes it too, so that a part read on its
 /// own still resolves.
 
-/// The window object defines these with its own types.
-#define OWN_MenuArrow_Create
-#define OWN_MenuArrow_SetPosition
-
 #include "battle/battle.h"
 #include "debug/debug.h"
 #include "djinn_ids.h"

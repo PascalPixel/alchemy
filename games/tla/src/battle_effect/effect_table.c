@@ -20,7 +20,7 @@
 /// A face of no corners ends a textured mesh.
 #define MESH_END 0, 0, 0, 0, 0, 0
 
-/// A row of gLobbedShells_Styles, the four bytes battle_effect_mirrored_wall.c
+/// A row of gLobbedShells_Styles, the four bytes battle_effect_djinn_beams.c
 /// reads through its LOBBED_SHELLS_ macros: whether the shells burst into
 /// shards rather than smoke; the blitter they are drawn with, 0 keeping the
 /// brighter level and 1 adding; the shells lobbed at each target; and the

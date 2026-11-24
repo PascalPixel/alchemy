@@ -965,7 +965,7 @@ void BattleEffect_BuildCanvasTilemap(void);
    OBJ_64X64_8BPP_BYTES)
 void BattleEffect_ProcessPendingStampTransfer(void);
 
-// mirrored_wall.c
+// djinn_beams.c
 /// Fetches the max and additive blitters, flipped or not.
 void BattleEffect_BuildCanvasBlitters(s32 flip, void **out);
 

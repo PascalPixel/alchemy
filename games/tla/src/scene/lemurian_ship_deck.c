@@ -67,6 +67,9 @@ enum {
   ACTOR_KRADEN
 };
 
+/// The puddle sprite sheet's animation of the water lying unfrozen, glinting.
+enum { PUDDLE_GLINTING = 1 };
+
 /// The shore's cells, as map.txt has them; the cabin door's step cells are the
 /// exit to the cabins and leave by it.
 enum LemurianShipDeckCellBehavior {
@@ -97,6 +100,11 @@ enum LemurianShipDeckCellBehavior {
 /// Draws the cabin door open, from spare cells of the map at (51, 38).
 #define LemurianShipDeck_DrawCabinDoorOpen()                                   \
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2)
+
+/// Draws plain hull over the cells at (67, 16) of the ship's middle layer: the
+/// copy that Lemuria's dock makes there among those that hide the ship's wings
+/// until it can fly (lemuria_dock.c), one cell wider.
+#define LemurianShipDeck_HideWing() MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3)
 
 extern struct ActorPlacement gLemurianShipDeck_Placements[];
 extern struct ActorPlacement gLemurianShipDeck_TillerPlacements[];
@@ -290,7 +298,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(342, 48, 408, 0);
   System_Wait(1);
-  MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
+  LemurianShipDeck_HideWing();
   LemurianShipDeck_PlaceFacing(gMainRoutineState.leaderActorId, toFIXED(552),
                                toFIXED(376), FACING_EAST);
   LemurianShipDeck_PlaceFacing(ACTOR_KRADEN, toFIXED(558), toFIXED(345),
@@ -457,7 +465,7 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   FieldActor_LaunchFromLeader(ACTOR_JENNA, -16, -16, FACING_SOUTHEAST);
   FieldActor_LaunchFromLeader(ACTOR_KRADEN, -24, 8, FACING_EAST_NORTHEAST);
   FieldActor_LaunchFromLeader(ACTOR_PIERS, -4, 24, FACING_NORTHEAST);
-  MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
+  LemurianShipDeck_HideWing();
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   Event_StartScreenTransition();
@@ -590,7 +598,7 @@ s32 Scene_Initialize(void) {
     gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
-    Actor_SetAnimation(ACTOR_PUDDLE, 1);
+    Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_GLINTING);
     FlagBlock_PlaceAll(gLemurianShipDeck_Puddles);
     FieldTask_AddFrame(LemurianShipDeck_RotateSurfColors, TASK_PASS_FRAME);
     if (gMainRoutineState.entrance == MAIN_DECK_ARRIVAL_ENTRANCE)
@@ -602,6 +610,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// At sea, by the tiller, the ship lies at no pier: open water is drawn over
+/// the pier and the gangplank the map shares with Lemuria's dock, on its ground
+/// and overhead layers. Returns 0.
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineState.next == SCENE_LEMURIAN_SHIP_TILLER) {
     MapGrid_CopyCellsTo(2, 2, 10, 24, 18, 10);

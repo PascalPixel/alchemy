@@ -1333,15 +1333,17 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// A water beast's update routine while it hops along a route: it leaps every
 /// WATER_BEAST_HOP_PERIOD frames with SE_JUMP, and lands with a splash
 /// (SE_SPLASH) that shakes the screen for a few frames.
+/// Altin's Altin_BeastHop is the same hop in that scene's overlay, its landing
+/// shaking the screen up and down where this one shakes it sideways.
 static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
   struct Actor *beast = updated;
   // The frames left of the landing's shake.
-  s16 *shakeDelay = (s16 *)&beast->userValue;
+  s16 *shakeFrames = (s16 *)&beast->userValue;
 
   // timer counts the frames of the hop, and the effect's countdown is set
   // while the beast is in the air, so that it lands with one splash.
-  if (*shakeDelay != 0) {
-    if (--*shakeDelay == 1)
+  if (*shakeFrames != 0) {
+    if (--*shakeFrames == 1)
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   }
   if (beast->velocityY == 0) {
@@ -1351,6 +1353,7 @@ static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
       if (((struct FieldEffect *)updated)->countdown != 0) {
         Sound_Play(SE_SPLASH);
         ((struct FieldEffect *)updated)->countdown = 0;
+        // shakeFrames, set through the field itself: four frames of shake.
         beast->userValue = 4;
         MapGrid_SetShake(1, 0, 1);
       }
@@ -2538,10 +2541,12 @@ static void AltinPeak_AdvanceCart(struct Actor *actor) {
                                &position);
   actor->x.fixed = position.x;
   actor->z.fixed = position.z;
-  ahead = MapGrid_GetTerrainHeight(2, position.x, position.z);
+  ahead =
+      MapGrid_GetTerrainHeight(MAPGRID_LAYER_OVERHEAD, position.x, position.z);
   FieldVector_AddPolarOffsetFX(-Iwram_MulFX(speed, 3 * FIXED_ONE / 2), angle,
                                &position);
-  behind = MapGrid_GetTerrainHeight(2, position.x, position.z);
+  behind =
+      MapGrid_GetTerrainHeight(MAPGRID_LAYER_OVERHEAD, position.x, position.z);
   if (*timer <= CART_COUNTDOWN_TURN) {
     if (ahead == behind) {
       Actor_SelectAnimation(actor, MINE_CART_ANIMATION_ROLL);
@@ -2586,7 +2591,8 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
     position.y = actor->y.fixed;
     position.z = actor->z.fixed;
     FieldVector_AddPolarOffset(16, heading, &position);
-    if (MapGrid_GetTerrainHeight(2, position.x, position.z) == actor->y.fixed) {
+    if (MapGrid_GetTerrainHeight(MAPGRID_LAYER_OVERHEAD, position.x,
+                                 position.z) == actor->y.fixed) {
       break;
     }
     heading += DEGtoANG(90);
@@ -2594,7 +2600,7 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   if (directionIndex == 4) {
     return;
   }
-  actor->layer = 2;
+  actor->layer = MAPGRID_LAYER_OVERHEAD;
   leader->x.fixed = 0;
   leader->z.fixed = 0;
   Sprite_AddAnimation(actor->sprite, SPRITE_CART_RIDER);
@@ -2616,7 +2622,8 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   Sound_Play(SE_CART_ROLL);
   // The route cells select turns, a countdown sound, and the destination.
   for (;;) {
-    switch (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed)) {
+    switch (MapGrid_GetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, actor->x.fixed,
+                                      actor->z.fixed)) {
     case CELL_BEHAVIOR_ALTIN_PEAK_CART_TURN_RIGHT:
       AltinPeak_TurnCartRight(actor);
       break;

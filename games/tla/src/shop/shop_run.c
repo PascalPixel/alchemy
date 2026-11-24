@@ -209,9 +209,19 @@ void Sound_WaitForJingle(void) {
   }
 }
 
-/// Shows the shopkeeper's line `messageId` and waits until it is typed out.
-/// Lines are given as the weapon shop's: the armor shop, the item shop and the
-/// general store each say their own version, as many messages on.
+/// Turns the weapon shop's line `message` into the one the shop of `shopType`
+/// says: the armor shop, the item shop and the general store each have their
+/// own version, as many messages on.
+#define SHOP_KEEPER_LINE(message, shopType)                                    \
+  ((shopType) == SHOP_TYPE_GENERAL_STORE &&                                    \
+       ((message) += MsgGeneralStoreWelcome - MsgWeaponShopWelcome),           \
+   (shopType) == SHOP_TYPE_ARMOR &&                                            \
+       ((message) += MsgArmorShopWelcome - MsgWeaponShopWelcome),              \
+   (shopType) == SHOP_TYPE_ITEMS &&                                            \
+       ((message) += MsgItemShopWelcome - MsgWeaponShopWelcome))
+
+/// Shows the shopkeeper's line `messageId`, given as the weapon shop's
+/// (SHOP_KEEPER_LINE), and waits until it is typed out.
 void Shop_ShowKeeperMessage(s32 messageId) {
   struct ShopState *shop = Ram_HeapSlots->menuState;
   s32 resolvedMessage;
@@ -222,12 +232,7 @@ void Shop_ShowKeeperMessage(s32 messageId) {
   voice = Speaker_GetVoiceFar(shop->keeperGraphics);
   Message_CloseFinishedWindowsFar();
   shopType = shop->shopType;
-  if (shopType == SHOP_TYPE_GENERAL_STORE)
-    resolvedMessage += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;
-  if (shopType == SHOP_TYPE_ARMOR)
-    resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
-  if (shopType == SHOP_TYPE_ITEMS)
-    resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
+  SHOP_KEEPER_LINE(resolvedMessage, shopType);
   Message_OpenWindowFar(resolvedMessage, 5, 0,
                         MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
                             MESSAGE_WINDOW_UNREAD);
@@ -252,12 +257,7 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   resolvedMessage = messageId;
   voice = Speaker_GetVoiceFar(shop->keeperGraphics);
   shopType = shop->shopType;
-  if (shopType == SHOP_TYPE_GENERAL_STORE)
-    resolvedMessage += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;
-  if (shopType == SHOP_TYPE_ARMOR)
-    resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
-  if (shopType == SHOP_TYPE_ITEMS)
-    resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
+  SHOP_KEEPER_LINE(resolvedMessage, shopType);
   (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(resolvedMessage, 5, 0,

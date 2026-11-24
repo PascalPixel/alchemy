@@ -35,53 +35,7 @@ s32 Actor_IsTargetUnset(struct Actor *actor) {
 /// destination. Airs Rock waits on it while the lift carries the leader up.
 s32 Actor_HasArrived(struct Actor *actor) { return Actor_IsTargetUnset(actor); }
 
-/// An actor as the motion update reads it (struct Actor's layout).
-struct MotionObject {
-  struct MotionScript *script;
-  s16 step;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 groundHeight;
-  s32 scaleX;
-  s32 scaleY;
-  u16 radius;
-  u8 terrainId;
-  u8 priorityFlags;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 speedLimit;
-  s32 acceleration;
-  s32 targetX;
-  s32 targetY;
-  s32 targetZ;
-  s32 bounce;
-  s32 gravity;
-  s32 sceneWord;
-  void *animation;
-  u8 animationKind;
-  u8 motionFlags;
-  u8 arrivalAxis;
-  u8 unusedAfterArrivalAxis; ///< no code names it
-  u8 snapToTarget;
-  u8 collisionFlags;
-  u8 actionFlags;
-  u8 paused;
-  u8 unusedAfterPaused[2]; ///< no code names it
-  s16 wait;
-  u8 refused;
-  u8 frozen;
-  u8 unusedAfterFrozen[10]; ///< no code names it
-  void (*update)(struct MotionObject *object);
-  s32 moved[3];
-  struct MotionObject *standingOn;
-};
-
-typedef s32 (*MotionCommand)(struct MotionObject *object);
-
-extern const MotionCommand gActorScript_CommandTable[];
+extern const ScriptCommandFn gActorScript_CommandTable[];
 extern const s32 gActorScript_CycleTable[];
 
 /// The highest script word read as a command, an index of
@@ -101,7 +55,7 @@ static __inline__ s32 Object_Square(s32 value) { return value * value; }
 /// free flight in 3D, following the ground, floating, and solid actors that
 /// refuse to overlap.
 void Actor_UpdateAllOnField(void) {
-  struct MotionObject *object;
+  struct Actor *object;
   s32 objectsRemaining;
   s32 x;
   FIXED y;
@@ -125,22 +79,22 @@ void Actor_UpdateAllOnField(void) {
   object = Ram_HeapSlots->actors;
   for (objectsRemaining = ACTOR_COUNT - 1; objectsRemaining >= 0;
        objectsRemaining--, object++) {
-    struct MotionScript *script;
+    const s32 *script;
 
     arrivedAtTarget = 0;
     script = object->script;
     if (script == NULL)
       continue;
     if (object->update != NULL) {
-      object->update(object);
+      object->update((union FieldObject *)object);
       script = object->script;
     }
     if (script == NULL)
       continue;
     if (object->paused != 0) {
-      object->moved[0] = arrivedAtTarget;
-      object->moved[1] = arrivedAtTarget;
-      object->moved[2] = arrivedAtTarget;
+      object->stepX = arrivedAtTarget;
+      object->stepY = arrivedAtTarget;
+      object->stepZ = arrivedAtTarget;
       continue;
     }
 
@@ -148,13 +102,16 @@ void Actor_UpdateAllOnField(void) {
       object->wait--;
     } else {
       for (;;) {
-        u32 command = script->word[object->step];
+        /* FAKEMATCH(signature): the script read through struct
+         * MotionScript, a one-word view; as script[object->scriptCursor]. */
+        u32 command =
+            ((const struct MotionScript *)script)->word[object->scriptCursor];
 
         if (command <= SCRIPT_COMMAND_MAX) {
           if (gActorScript_CommandTable[command](object) == 0)
             break;
         } else {
-          object->step++;
+          object->scriptCursor++;
         }
         script = object->script;
       }
@@ -162,9 +119,9 @@ void Actor_UpdateAllOnField(void) {
         continue;
     }
 
-    x = object->x;
-    y = object->y;
-    z = object->z;
+    x = object->x.fixed;
+    y = object->y.fixed;
+    z = object->z.fixed;
     if (object->frozen == 0) {
       if (object->motionFlags == 0) {
         if (object->targetX != ACTOR_NO_TARGET) {
@@ -265,9 +222,9 @@ void Actor_UpdateAllOnField(void) {
           velocityX = x + object->velocityX;
           velocityZ = z + object->velocityZ;
           standing = 0;
-          object->standingOn = NULL;
+          object->carrier = NULL;
           if (object->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
-            struct MotionObject *other = Ram_HeapSlots->actors;
+            struct Actor *other = Ram_HeapSlots->actors;
             s32 i;
 
             for (i = 0; i < ACTOR_COUNT; i++, other++) {
@@ -279,23 +236,23 @@ void Actor_UpdateAllOnField(void) {
                 continue;
               if (other == object)
                 continue;
-              if ((FIELD_CELL(velocityX - other->x + toFIXED(8))) != 0)
+              if ((FIELD_CELL(velocityX - other->x.fixed + toFIXED(8))) != 0)
                 continue;
-              if ((FIELD_CELL(velocityZ - other->z + toFIXED(8))) != 0)
+              if ((FIELD_CELL(velocityZ - other->z.fixed + toFIXED(8))) != 0)
                 continue;
-              dy = y - other->y;
+              dy = y - other->y.fixed;
               if ((dy - toFIXED(16) < 0 ? -(dy - toFIXED(16))
                                         : dy - toFIXED(16)) > toFIXED(8) - 1)
                 continue;
               standing = 1;
-              ground = other->y + toFIXED(16);
-              object->standingOn = other;
+              ground = other->y.fixed + toFIXED(16);
+              object->carrier = other;
               break;
             }
           }
           if (!standing)
-            ground = MapGrid_GetTerrainHeight(object->terrainId, velocityX,
-                                              velocityZ);
+            ground =
+                MapGrid_GetTerrainHeight(object->layer, velocityX, velocityZ);
           velocityY = ground - object->groundHeight;
           if (ground - y > -toFIXED(4))
             y += velocityY;
@@ -379,17 +336,17 @@ void Actor_UpdateAllOnField(void) {
     switch (object->arrivalAxis) {
     case ARRIVAL_AXIS_X:
       if (x == object->targetX ||
-          ((object->x - object->targetX) ^ (x - object->targetX)) < 0)
+          ((object->x.fixed - object->targetX) ^ (x - object->targetX)) < 0)
         arrivedAtTarget = 1;
       break;
     case ARRIVAL_AXIS_Y:
       if (y == object->targetY ||
-          ((object->y - object->targetY) ^ (y - object->targetY)) < 0)
+          ((object->y.fixed - object->targetY) ^ (y - object->targetY)) < 0)
         arrivedAtTarget = 1;
       break;
     case ARRIVAL_AXIS_Z:
       if (z == object->targetZ ||
-          ((object->z - object->targetZ) ^ (z - object->targetZ)) < 0)
+          ((object->z.fixed - object->targetZ) ^ (z - object->targetZ)) < 0)
         arrivedAtTarget = 1;
       break;
     }
@@ -410,21 +367,21 @@ void Actor_UpdateAllOnField(void) {
       object->arrivalAxis = ARRIVAL_AXIS_NONE;
     }
 
-    object->moved[0] = x - object->x;
-    object->moved[1] = y - object->y;
-    object->moved[2] = z - object->z;
-    SET_POSITION(object, x, y, z);
+    object->stepX = x - object->x.fixed;
+    object->stepY = y - object->y.fixed;
+    object->stepZ = z - object->z.fixed;
+    SET_ACTOR_POSITION(object, x, y, z);
 
     // Turn to face the direction of travel, at most a sixteenth of a turn a
     // frame.
-    if (object->actionFlags & ACTOR_FACES_MOTION) {
+    if (object->steeringFlags & ACTOR_FACES_MOTION) {
       x = object->velocityX;
       z = object->velocityZ;
       if (x != 0 || z != 0) {
         s32 facingStep;
         s32 maximumFacingStep;
 
-        facingStep = (s16)(Trig_Atan(z, x) - object->angle);
+        facingStep = (s16)(Trig_Atan(z, x) - object->facing);
 
         maximumFacingStep = FACING_STEP;
         if (facingStep > maximumFacingStep)
@@ -432,7 +389,7 @@ void Actor_UpdateAllOnField(void) {
         maximumFacingStep = -FACING_STEP;
         if (facingStep < maximumFacingStep)
           facingStep = maximumFacingStep;
-        object->angle += facingStep;
+        object->facing += facingStep;
       }
     }
   }

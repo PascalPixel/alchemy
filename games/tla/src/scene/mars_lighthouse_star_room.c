@@ -1192,7 +1192,7 @@ void MarsLighthouseStarRoom_SpawnRisingSparks(void) {
     RISING_SPARK_FRAMES_LEFT(actor) = RISING_SPARK_FRAMES;
     actor->update = MarsLighthouseStarRoom_UpdateRisingSpark;
     Actor_SelectAnimation(actor, 5);
-    Actor_SetBlendMode(actor, 1);
+    Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
   }
 }
 
@@ -1307,7 +1307,7 @@ void FlameThrower_SendSpark(s32 *position, s32 base, s32 mode) {
     actor->timer = spin;
     Actor_SetupScriptedFor(actor, 2);
     actor->update = FlameThrower_UpdateSpark;
-    Actor_SetBlendMode(actor, 1);
+    Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
   }
 }
 

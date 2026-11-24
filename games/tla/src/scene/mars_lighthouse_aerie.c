@@ -345,7 +345,7 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
   Actor_SetSpriteFlags(actor, 0);
   actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetBlendMode(actor, 1);
+  Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
   gMarsLighthouseAerie_BeaconFlameFrame = 0;
   FieldTask_AddFrame(MarsLighthouseAerie_SpawnBeaconFlames, TASK_PASS_FRAME);
 }
@@ -2260,7 +2260,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   FieldTask_Remove(Orb_SpawnRising);
   actor = Actor_Get(ACTOR_BEACON_FIRE);
   actor->motionFlags = 0;
-  Actor_SetBlendMode(actor, 1);
+  Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEACON_FIRE), SPRITE_COLOR_WHITE);
   FieldActor_SetSpritePriority(ACTOR_BEACON_FIRE, 2);
   gMarsLighthouseAerie_BeaconFireFrame = 0;

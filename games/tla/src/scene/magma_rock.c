@@ -1883,8 +1883,7 @@ s32 Scene_Initialize(void) {
   s32 *owner, *leader;
   s16 *entrance;
   struct Actor *actor;
-  // other serves in turn as a table, a step and a size.
-  FIXED other, rise;
+  FIXED nudge, rise;
   FIXED offset;
   s32 priorityBit, destinationX, destinationColumn, width;
 
@@ -1907,12 +1906,11 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_SLIDE_PILLAR_A, 264, 360);
     if (Event_GetFlag(FLAG_SLIDE_PILLAR_B_PUSHED))
       Actor_SetPosition(ACTOR_SLIDE_PILLAR_B, 248, 408);
-    other = (s32)gMagmaRock_SlidePillars;
     destinationX = 78;
-    Actor_PlaceBlocks(other);
+    Actor_PlaceBlocks(gMagmaRock_SlidePillars);
     MapGrid_CopyCellAttributes(98, 21, 4, 3, destinationX, 21);
     MapGrid_CopyCellAttributes(98, 27, 4, 3, destinationX, 24);
-    Blocks_MarkCells(other);
+    Blocks_MarkCells(gMagmaRock_SlidePillars);
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
       actor = Actor_GetById(ACTOR_SLIDE_STATUE_CAP);
       actor->x.fixed += toFIXED(1);
@@ -1992,18 +1990,17 @@ s32 Scene_Initialize(void) {
             gMagmaRock_SalamanderTailHighEastStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(ACTOR_HIGH_EAST_STATUE_CAP_A);
-          other = toFIXED(1);
-          actor->x.fixed += other;
+          nudge = toFIXED(1);
+          actor->x.fixed += nudge;
           actor->motionFlags = 0;
           actor->collisionFlags = 0;
-          rise = toFIXED(24);
-          actor->groundHeight = actor->y.fixed += rise;
+          actor->groundHeight = actor->y.fixed += toFIXED(24);
           Actor_SetSpriteFlags(actor, 0);
           actor = Actor_GetById(ACTOR_HIGH_EAST_STATUE_CAP_B);
-          actor->x.fixed += other;
+          actor->x.fixed += nudge;
           actor->motionFlags = 0;
           actor->collisionFlags = 0;
-          actor->groundHeight = actor->y.fixed += rise;
+          actor->groundHeight = actor->y.fixed += toFIXED(24);
           Actor_SetSpriteFlags(actor, 0);
         }
         MagmaRock_RebuildFlameParts(ACTOR_HIGH_EAST_STATUE_CAP_A);
@@ -2032,9 +2029,8 @@ s32 Scene_Initialize(void) {
       } else if (*entrance <= SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE) {
         if (Event_GetFlag(FLAG_LOW_WEST_PILLAR_PUSHED))
           Actor_SetPosition(ACTOR_LOW_WEST_PILLAR, 264, 584);
-        rise = (s32)gMagmaRock_SalamanderTailLowWestPillars;
-        Actor_PlaceBlocks(rise);
-        Blocks_MarkCells(rise);
+        Actor_PlaceBlocks(gMagmaRock_SalamanderTailLowWestPillars);
+        Blocks_MarkCells(gMagmaRock_SalamanderTailLowWestPillars);
         Rope_Initialize();
         Call4((void (*)())MagmaRock_PlaceRope, 0, FLAG_LOW_WEST_ROPE_LASHED,
               ACTOR_LOW_WEST_ROPE_EAST_POST, ACTOR_LOW_WEST_ROPE_WEST_POST);
@@ -2042,18 +2038,17 @@ s32 Scene_Initialize(void) {
             gMagmaRock_SalamanderTailLowWestStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(ACTOR_LOW_WEST_STATUE_CAP_A);
-          other = toFIXED(1);
-          actor->x.fixed += other;
+          nudge = toFIXED(1);
+          actor->x.fixed += nudge;
           actor->motionFlags = 0;
           actor->collisionFlags = 0;
-          rise = toFIXED(24);
-          actor->groundHeight = actor->y.fixed += rise;
+          actor->groundHeight = actor->y.fixed += toFIXED(24);
           Actor_SetSpriteFlags(actor, 0);
           actor = Actor_GetById(ACTOR_LOW_WEST_STATUE_CAP_B);
-          actor->x.fixed += other;
+          actor->x.fixed += nudge;
           actor->motionFlags = 0;
           actor->collisionFlags = 0;
-          actor->groundHeight = actor->y.fixed += rise;
+          actor->groundHeight = actor->y.fixed += toFIXED(24);
           Actor_SetSpriteFlags(actor, 0);
         }
         MagmaRock_RebuildFlameParts(ACTOR_LOW_WEST_STATUE_CAP_A);
@@ -2111,10 +2106,8 @@ s32 Scene_Initialize(void) {
       destinationColumn = 42;
       MapGrid_CopyCellAttributes(0, 32, 5, 8, destinationColumn, 17);
       MapGrid_CopyCellAttributes(0, 96, 5, 8, destinationColumn, 81);
-      width = 5;
-      other = 8;
-      MapGrid_CopyCellsTo(0, 32, 42, 17, width, other);
-      MapGrid_CopyCellsTo(0, 96, 42, 81, width, other);
+      MapGrid_CopyCellsTo(0, 32, 42, 17, 5, 8);
+      MapGrid_CopyCellsTo(0, 96, 42, 81, 5, 8);
     }
     leader = &state->leaderActorId;
     Actor_GetById(*leader)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;

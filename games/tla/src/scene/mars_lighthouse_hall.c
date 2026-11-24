@@ -1225,7 +1225,7 @@ void FlameThrower_SendSpark(struct Vector3 *position, s32 value, s32 mode) {
     actor->timer = spin;
     ((void (*)())Actor_SetupScripted)(actor, 2);
     actor->update = FlameThrower_UpdateSpark;
-    Actor_SetBlendMode(actor, 1);
+    Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
   }
 }
 

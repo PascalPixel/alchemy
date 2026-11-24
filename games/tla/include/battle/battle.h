@@ -62,7 +62,9 @@ enum BattleHighlight {
 /// The battle sprites' animations (AnimationObject_SelectAnimation numbers)
 /// that the battle code picks by name.
 enum BattlePose {
-  POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held
+  /// The battler held still: an enemy asleep, stunned or held, or a party
+  /// member standing again between turns.
+  POSE_STILL = 0,
   POSE_STANDING = 1,
   POSE_LEAP = 2,       ///< running up to a target and leaping
   POSE_CAST = 3,       ///< a hand raised to cast or use an item

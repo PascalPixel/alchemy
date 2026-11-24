@@ -1097,7 +1097,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
         // Another pose first, so that the leap starts over, held on its first
         // picture until frame 14.
-        Actor_SelectAnimationFar(user, POSE_ENEMY_HELD);
+        Actor_SelectAnimationFar(user, POSE_STILL);
         Actor_SelectAnimationFar(user, POSE_LEAP);
         Actor_SetAnimationSpeedFar(user, 0);
         Sound_PlayFar(SE_POWER_UP);

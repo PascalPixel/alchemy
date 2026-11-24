@@ -244,7 +244,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       target->y.fixed -= targetHeight;
       // The user takes its first animation, a party member's stance between
       // turns.
-      Actor_SelectAnimationFar(user, POSE_ENEMY_HELD);
+      Actor_SelectAnimationFar(user, POSE_STILL);
     }
     if (frame == DEATH_PLUNGE_STRIKE_FRAME) {
       if (args->variant == EFFECT_VARIANT_BASIC)

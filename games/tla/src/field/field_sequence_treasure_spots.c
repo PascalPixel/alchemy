@@ -56,15 +56,6 @@ s32 SceneItem_FindPosition(s32 value, s32 *out) {
 
 void Actor_ShowItemIconById(s32 id, s32 item);
 
-/// The chest sprite's animations.
-enum {
-  TREASURE_SPOT_CHEST_OPEN = 2, ///< standing open
-  TREASURE_SPOT_CHEST_OPENING = 4,
-  TREASURE_SPOT_CHEST_CLOSING = 5, ///< closing again on what nobody could carry
-  TREASURE_SPOT_CHEST_OPENING_EMPTY = 6, ///< its lid lifting on nothing inside
-  TREASURE_SPOT_CHEST_MIMIC = 7          ///< jumping up as a mimic
-};
-
 /// Places an actor at each of the map's treasure spots (ids 100 to 239) that
 /// the scene has an event for, up to sixteen: a chest for a chest event, shown
 /// open once its flag is set and gone once its mimic was beaten, and a Psynergy
@@ -165,9 +156,32 @@ void Field_PlaceTreasureSpots(void) {
   } while (!(type & SCENE_ITEMS_HEADER));
 }
 
-/// Mode 0 moves the actor to x and z 0 and marks it with sceneWord
-/// TREASURE_SPOT_ON_CELL; any other mode draws its sprite wide (shape 1), 4
-/// pixels lower.
+/// OAM shapes and sizes (GBATEK "OBJ Attributes"): a horizontal sprite of size
+/// 0 is 16 by 8 pixels, a square one of size 1 16 by 16.
+enum {
+  OAM_SHAPE_SQUARE = 0,
+  OAM_SHAPE_HORIZONTAL = 1,
+  OAM_SIZE_16X8 = 0, ///< with OAM_SHAPE_HORIZONTAL
+  OAM_SIZE_16X16 = 1 ///< with OAM_SHAPE_SQUARE
+};
+
+/// What the scenes ask of a treasure spot's actor (Actor_SetWideSprite).
+enum TreasureSpotSpriteMode {
+  /// Off the map at x and z 0, marked TREASURE_SPOT_ON_CELL.
+  TREASURE_SPOT_PUT_AWAY = 0,
+  TREASURE_SPOT_WIDE = 1 ///< (or any other) drawn 16 by 8, 4 pixels lower
+};
+
+/// What Actor_ReturnHome does with a buried treasure's actor.
+enum ReturnHomeMode {
+  RETURN_HOME_CLEAR_Z = 1, ///< its z set to 0
+  /// Scoop has dug it up: its flag set, back at its home, dropped from hand.
+  RETURN_HOME_DUG_UP = 2
+};
+
+/// TREASURE_SPOT_PUT_AWAY moves the actor to x and z 0 and marks it with
+/// sceneWord TREASURE_SPOT_ON_CELL; any other mode draws its sprite wide, 16 by
+/// 8 pixels, 4 pixels lower.
 void Actor_SetWideSprite(u32 actorId, s32 mode) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -175,7 +189,7 @@ void Actor_SetWideSprite(u32 actorId, s32 mode) {
   actor = Actor_Lookup(actorId);
   if (actor == 0)
     return;
-  if (mode == 0) {
+  if (mode == TREASURE_SPOT_PUT_AWAY) {
     actor->x.fixed = 0;
     actor->z.fixed = 0;
     actor->sceneWord = TREASURE_SPOT_ON_CELL;
@@ -185,11 +199,11 @@ void Actor_SetWideSprite(u32 actorId, s32 mode) {
   if (sprite == 0)
     return;
   sprite->offsetY += 4;
-  sprite->image.shape = 1;
-  sprite->image.size = 0;
+  sprite->image.shape = OAM_SHAPE_HORIZONTAL;
+  sprite->image.size = OAM_SIZE_16X8;
 }
 
-/// Draws the actor's sprite square (shape 0, size 1), 8 pixels down.
+/// Draws the actor's sprite square, 16 by 16 pixels, 8 pixels down.
 void Actor_SetSquareSprite(u32 actorId) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -201,8 +215,8 @@ void Actor_SetSquareSprite(u32 actorId) {
   if (sprite == 0)
     return;
   sprite->offsetY = 8;
-  sprite->image.shape = 0;
-  sprite->image.size = 1;
+  sprite->image.shape = OAM_SHAPE_SQUARE;
+  sprite->image.size = OAM_SIZE_16X16;
 }
 
 /// Returns the OAM shape of the actor's sprite (0 square, 1 wide, 2 tall), or
@@ -210,7 +224,7 @@ void Actor_SetSquareSprite(u32 actorId) {
 s32 Actor_GetSpriteShape(u32 actorId) {
   struct Actor *actor;
   struct Sprite *sprite;
-  s32 shape = 0;
+  s32 shape = OAM_SHAPE_SQUARE;
 
   actor = Actor_Lookup(actorId);
   if (actor != 0) {
@@ -221,17 +235,18 @@ s32 Actor_GetSpriteShape(u32 actorId) {
   return shape;
 }
 
-/// Mode 1 moves the actor to z 0; mode 2 sets flag, draws a moved actor square
-/// again and drops it back home (homeX, homeZ) at Scoop's anchor.
+/// RETURN_HOME_CLEAR_Z moves the actor to z 0; RETURN_HOME_DUG_UP sets flag,
+/// draws a moved actor square again and drops it back home (homeX, homeZ) at
+/// Scoop's anchor.
 void Actor_ReturnHome(s32 mode, u32 actorId, s32 flag) {
   struct Actor *actor;
 
   actor = Actor_Lookup(actorId);
   if (actor == 0)
     return;
-  if (mode == 1)
+  if (mode == RETURN_HOME_CLEAR_Z)
     actor->z.fixed = 0;
-  if (mode == 2) {
+  if (mode == RETURN_HOME_DUG_UP) {
     GameFlag_Set(flag);
     if (actor->x.fixed != 0)
       Actor_SetSquareSprite(actorId);

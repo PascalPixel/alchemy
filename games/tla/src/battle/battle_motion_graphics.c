@@ -453,9 +453,9 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     BattleMotion_ReturnToSpot(state.actors[0]);
   } else {
     zoomOnCritical = 0;
-    state.flags = 0;
+    state.prelude = 0;
     if (plan->battleEffect != 0)
-      state.flags = 1;
+      state.prelude = 1;
     if (critical != 0)
       state.kind += EFFECT_ID_CRITICAL_OFFSET;
     if (state.kind != EFFECT_ID_CRITICAL_OFFSET + ATTACK_EFFECT_BURST &&
@@ -722,7 +722,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   BattleStaging_BuildTargetList(plan, &state);
   isDjinni = mode & CAST_DJINNI;
   if (isDjinni)
-    state.flags = 1;
+    state.prelude = 1;
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   heap = Ram_HeapSlots;
   PartyStatus_DrawFar(heap->battleState->partyStatus & ~PARTY_STATUS_SHOW_PP);

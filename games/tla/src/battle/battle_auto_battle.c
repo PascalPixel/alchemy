@@ -354,7 +354,7 @@ UNUSED s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *action) {
     state.side = EFFECT_SIDE_PARTY;
   else
     state.side = EFFECT_SIDE_ENEMIES;
-  state.flags = 0;
+  state.prelude = 0;
 
   wait(4);
   BattleEffect_RunByIdRangeFar(&state);
@@ -386,7 +386,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
     wait(40);
   }
   state.kind = action->parameter;
-  state.initialValue = action->range;
+  state.range = action->range;
   state.actor = action->unitId;
   state.firstTarget = action->target;
   if (BattleObject_IsValidId(state.actor) < 0)

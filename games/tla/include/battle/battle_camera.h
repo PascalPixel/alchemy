@@ -57,17 +57,17 @@ struct BattleBackgroundState {
 /// A presentation's effect command, laid out as BattleEffectParams with a
 /// ninth actor, and the animation state it keeps.
 struct BattlePresentationState {
-  s32 kind;         ///< the effect's index in the handler table
-  s32 side;         ///< 1 when the targets are the party, 0 for enemies
-  s32 actor;        ///< the user's unit id
-  s32 firstTarget;  ///< the action's first target
-  s32 initialValue; ///< BattleEffectParams's range: the action's, or 1
-  s32 count;        ///< targets in actors
-  s32 variant;      ///< the ability's size, from 0
-  s32 flags;        ///< BattleEffectParams's prelude, at the same offset
-  u8 unused[4];     ///< no code names it
-  s16 actors[9];    ///< the targets' unit ids, count of them
-  u8 params[8][4];  ///< each target's animation entries' param, kept
+  s32 kind;        ///< the effect's index in the handler table
+  s32 side;        ///< 1 when the targets are the party, 0 for enemies
+  s32 actor;       ///< the user's unit id
+  s32 firstTarget; ///< the action's first target
+  s32 range;       ///< as BattleEffectParams's: the action's, or 1
+  s32 count;       ///< targets in actors
+  s32 variant;     ///< the ability's size, from 0
+  s32 prelude;     ///< as BattleEffectParams's: 1 plays a prelude
+  u8 unused[4];    ///< no code names it
+  s16 actors[9];   ///< the targets' unit ids, count of them
+  u8 params[8][4]; ///< each target's animation entries' param, kept
 };
 
 STATIC_ASSERT(sizeof(struct BattleBackgroundState) == 32);

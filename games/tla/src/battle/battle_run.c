@@ -119,7 +119,7 @@ void Battle_ChangeEnemyForm(s32 id) {
 void Battle_PlayFormChange(s32 value) {
   struct BattlePresentationState request;
 
-  request.initialValue = 0;
+  request.range = 0;
   request.actor = FIRST_ENEMY_UNIT;
   request.firstTarget = 0;
   request.count = 1;

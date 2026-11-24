@@ -124,7 +124,7 @@ void FieldPsynergy_TremorOnTarget(void) {
       // Shake the gathered objects' sprites with the view.
       if (field->mode == ACTOR_SYSTEM_MAP) {
         for (i = 0; i < tremorState->view.count; i++) {
-          struct Sprite *sprite = tremorState->view.objects[i]->sprite;
+          struct Sprite *sprite = tremorState->view.actors[i]->sprite;
           s32 rotation = tremorState->view.spriteRotations[i];
 
           if (amplitude > SWAY_SHAKE)
@@ -243,7 +243,7 @@ void FieldPsynergy_Tremor(void) {
     // Shake the gathered objects' sprites with the view.
     if (field->mode == ACTOR_SYSTEM_MAP) {
       for (i = 0; i < viewMoveState->count; i++) {
-        struct Sprite *sprite = viewMoveState->objects[i]->sprite;
+        struct Sprite *sprite = viewMoveState->actors[i]->sprite;
         s32 rotation = viewMoveState->spriteRotations[i];
 
         if (amplitude > 0)

@@ -611,10 +611,10 @@ void ViewMove_SaveNearbySprites(void) {
             (s16)(scene->fieldPsynergy | REACH_SHAKEN_OBJECTS), scene->casterId,
             i) == -1)
       continue;
-    group->objects[group->count] = actor;
+    group->actors[group->count] = actor;
     group->spriteRotations[group->count] =
         ((struct Sprite *)actor->sprite)->rotation;
-    if (++group->count == ARRAY_COUNT(group->objects))
+    if (++group->count == ARRAY_COUNT(group->actors))
       break;
   }
 }
@@ -625,7 +625,7 @@ void ViewMove_RestoreNearbySprites(void) {
   s32 i;
 
   for (i = 0; i < group->count; i++)
-    ((struct Sprite *)group->objects[i]->sprite)->rotation =
+    ((struct Sprite *)group->actors[i]->sprite)->rotation =
         group->spriteRotations[i];
 }
 #undef VIEW_EDGE_MARGIN

@@ -48,6 +48,7 @@
 #include "system/io_reg.h"
 #include "system/vector3.h"
 #include "system/field_effect.h"
+#include "window/window.h"
 #include "graphics/vram_tab.h"
 #include "system/task.h"
 #include "window/item_icon.h"
@@ -84,6 +85,20 @@ enum {
   /// The Jupiter Star's shadow: an unseen marker whose shadow alone shows, at
   /// an eighth of its size, following the star from Felix to the well.
   ACTOR_STAR_SHADOW = 37
+};
+
+/// The poses of the battles with Karst and Agatio, by each sheet: facing off,
+/// weapons ready (Felix, Piers and Jenna seen from behind), and lying beaten on
+/// the ground. Jenna and Sheba fall as ANIM_COLLAPSE.
+enum {
+  ANIM_AGATIO_BATTLE_STANCE = 9,
+  ANIM_AGATIO_LIE_BEATEN = 10,
+  ANIM_KARST_BATTLE_STANCE = 8,
+  ANIM_KARST_LIE_BEATEN = 9,
+  ANIM_LEADER_BATTLE_STANCE = 50,
+  ANIM_PIERS_BATTLE_STANCE = 12,
+  ANIM_PIERS_LIE_BEATEN = 13,
+  ANIM_JENNA_BATTLE_STANCE = 27
 };
 
 /// Set once Karst and Agatio have met Felix on his way up to the well, so that
@@ -486,7 +501,8 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
     Event_Start();
     FieldEvent_EndLastingPsynergy(0);
     // "There seems to be a wide hole for the Elemental Star. Cast the..."
-    Message_ShowCentered((s32)MsgThereSeemsTo, 5);
+    Message_ShowCentered((s32)MsgThereSeemsTo,
+                         FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
     answer = Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
     if (answer != 0) {
       Actor_SetSpeed(ACTOR_FELIX, 1);
@@ -800,7 +816,8 @@ void JupiterLighthouse_BeaconIsLit(void) {
   // "What are you doing!?"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 0);
   // "They stole the Mars Star!"
-  Message_ShowCentered(gFieldState->message++, 5);
+  Message_ShowCentered(gFieldState->message++,
+                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
   PartyInventory_Add(ITEM_MYTHRIL_BAG);
   for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
     if ((Unit_Get(FELIX)->inventory[slot] & INVENTORY_ITEM_ID_MASK) ==
@@ -918,10 +935,10 @@ void JupiterLighthouse_JennaJoinsTheFight(void) {
     Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(552), toFIXED(392),
                                FACING_NORTH);
   }
-  Actor_SetAnimation(ACTOR_AGATIO, 9);
-  Actor_SetAnimation(ACTOR_KARST, 8);
-  Actor_SetAnimation(ACTOR_FELIX, 50);
-  Actor_SetAnimation(ACTOR_PIERS, 12);
+  Actor_SetAnimation(ACTOR_AGATIO, ANIM_AGATIO_BATTLE_STANCE);
+  Actor_SetAnimation(ACTOR_KARST, ANIM_KARST_BATTLE_STANCE);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_LEADER_BATTLE_STANCE);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_PIERS_BATTLE_STANCE);
   FieldCamera_MoveTo(520, 104, 312, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1029,11 +1046,11 @@ void JupiterLighthouse_ShebaJoinsTheFight(void) {
   FieldEvent_SetMessageId((s32)MsgCallSheba);
   // "Jenna!"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
-  Actor_SetAnimation(ACTOR_AGATIO, 9);
-  Actor_SetAnimation(ACTOR_KARST, 8);
-  Actor_SetAnimation(ACTOR_FELIX, 50);
-  Actor_SetAnimation(ACTOR_PIERS, 12);
-  Actor_SetAnimation(ACTOR_JENNA, 27);
+  Actor_SetAnimation(ACTOR_AGATIO, ANIM_AGATIO_BATTLE_STANCE);
+  Actor_SetAnimation(ACTOR_KARST, ANIM_KARST_BATTLE_STANCE);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_LEADER_BATTLE_STANCE);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_PIERS_BATTLE_STANCE);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_JENNA_BATTLE_STANCE);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1201,10 +1218,10 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_SetPositionAndFacing(ACTOR_ALEX, toFIXED(480), toFIXED(360), north);
   Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(592), toFIXED(392),
                              FACING_EAST);
-  Actor_SetAnimation(ACTOR_JENNA, 19);
-  Actor_SetAnimation(ACTOR_SHEBA, 19);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_COLLAPSE);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_COLLAPSE);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_COLLAPSE);
-  Actor_SetAnimation(ACTOR_PIERS, 13);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_PIERS_LIE_BEATEN);
   actor = Actor_Get(ACTOR_FELIX);
   actor->scaleX = -actor->scaleX;
   actor = Actor_Get(ACTOR_SHEBA);
@@ -1213,8 +1230,8 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId((s32)MsgWasnTThe);
-  Actor_SetAnimation(ACTOR_AGATIO, 9);
-  Actor_SetAnimation(ACTOR_KARST, 8);
+  Actor_SetAnimation(ACTOR_AGATIO, ANIM_AGATIO_BATTLE_STANCE);
+  Actor_SetAnimation(ACTOR_KARST, ANIM_KARST_BATTLE_STANCE);
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
   FieldEvent_Wait(5);
   // "Isaac wasn't the only surprise. They were all far more powerful than..."
@@ -1686,8 +1703,8 @@ void JupiterLighthouse_WeBeatThem(void) {
   Actor_SetPositionAndFacing(ACTOR_ALEX, toFIXED(480), toFIXED(360), north);
   Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(592), toFIXED(392),
                              FACING_EAST);
-  Actor_SetAnimation(ACTOR_AGATIO, 10);
-  Actor_SetAnimation(ACTOR_KARST, 9);
+  Actor_SetAnimation(ACTOR_AGATIO, ANIM_AGATIO_LIE_BEATEN);
+  Actor_SetAnimation(ACTOR_KARST, ANIM_KARST_LIE_BEATEN);
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(520, 104, 312, 0);
   Event_StartScreenTransition();

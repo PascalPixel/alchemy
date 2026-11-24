@@ -20,13 +20,13 @@ void LineScroll_ArmDma(void) {
 
   dma = REG_DMA0;
   destination = (volatile u32 *)&REG_BG1HOFS;
-  status = dma[5];
+  status = dma[DMA_CNT_H_INDEX];
   control = status & (u16)~DMA_START_TIMING_DRQ_REPEAT;
-  dma[5] = control;
-  status = dma[5];
+  dma[DMA_CNT_H_INDEX] = control;
+  status = dma[DMA_CNT_H_INDEX];
   control = status & (u16)~DMA_ENABLE;
-  dma[5] = control;
-  (void)dma[5];
+  dma[DMA_CNT_H_INDEX] = control;
+  (void)dma[DMA_CNT_H_INDEX];
 
   *destination = *source++;
   *destination = *source++;
@@ -126,7 +126,8 @@ void LineScroll_Stop(void) {
   Task_Remove(LineScroll_ArmDma);
   Task_Remove(LineScroll_BuildPage);
   dma0 = REG_DMA0;
-  dma0[5] = (u16)~DMA_START_TIMING_DRQ_REPEAT & dma0[5];
-  dma0[5] = (u16)~DMA_ENABLE & dma0[5];
-  (void)dma0[5];
+  dma0[DMA_CNT_H_INDEX] =
+      (u16)~DMA_START_TIMING_DRQ_REPEAT & dma0[DMA_CNT_H_INDEX];
+  dma0[DMA_CNT_H_INDEX] = (u16)~DMA_ENABLE & dma0[DMA_CNT_H_INDEX];
+  (void)dma0[DMA_CNT_H_INDEX];
 }

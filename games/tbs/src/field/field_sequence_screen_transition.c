@@ -51,9 +51,9 @@ void ScreenTransition_StartWindowHBlankDma(void) {
   volatile u16 *dma0 = REG_DMA0;
 
   // Stop the previous transfer before priming the first line's registers.
-  dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-  dma0[5] &= ~DMA_ENABLE;
-  (void)dma0[5];
+  dma0[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
+  dma0[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
+  (void)dma0[DMA_CNT_H_INDEX];
   REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   Io_Write16(*scanlineData++, &REG_WININ);
   Io_Write16(*scanlineData++, &REG_WINOUT);
@@ -117,9 +117,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
         {
           volatile u16 *dma0 = REG_DMA0;
 
-          dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-          dma0[5] &= ~DMA_ENABLE;
-          dma0[5];
+          dma0[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
+          dma0[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
+          dma0[DMA_CNT_H_INDEX];
         }
         return;
       }
@@ -838,9 +838,9 @@ void ScreenTransition_UpdateDissolve(void) {
       state->duration = 0;
       Task_Remove(ScreenTransition_UpdateDissolve);
       dma0 = REG_DMA0;
-      dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-      dma0[5] &= ~DMA_ENABLE;
-      (void)dma0[5];
+      dma0[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
+      dma0[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
+      (void)dma0[DMA_CNT_H_INDEX];
       return;
     } else {
       s32 delta = state->end - state->start;

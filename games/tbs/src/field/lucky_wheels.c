@@ -544,9 +544,9 @@ void LuckyWheels_Update(void) {
   Random16();
 
   dma = REG_DMA0;
-  dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-  dma[5] &= ~DMA_ENABLE;
-  (void)dma[5];
+  dma[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
+  dma[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
+  (void)dma[DMA_CNT_H_INDEX];
   // One halfword at each HBlank (repeating, destination reloaded).
   Dma_Set(wheels->scanlineOffsets, (void *)&REG_BLDY,
           DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)dma);

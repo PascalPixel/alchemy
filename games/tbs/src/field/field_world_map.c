@@ -418,9 +418,9 @@ void WorldMap_ApplyAffinePage(void) {
   // Stop the last VBlank's HBlank DMA, then load line 0's eight words (BG2PA to
   // BG3Y) by hand; the DMA repeats eight words into the same registers at
   // each HBlank for the lines after it.
-  dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-  dma0[5] &= ~DMA_ENABLE;
-  (void)dma0[5];
+  dma0[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
+  dma0[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
+  (void)dma0[DMA_CNT_H_INDEX];
   if (affinePages != NULL) {
     affineSource = (u32 *)affinePages[gFrameCount & 1];
     *affineRegisters++ = *affineSource++;

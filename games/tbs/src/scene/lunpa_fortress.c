@@ -493,7 +493,9 @@ enum JudgmentMessage {
 
 /// Where the west hall's pair have their circles of light on the overhead
 /// layer, 136 pixels across; the layer scrolls by the first guard's distance
-/// from it, so the circles walk with the pair.
+/// from it, so the circles walk with the pair. It is written as a double, so
+/// that subtraction is worked out in floating point and turned back into
+/// 16.16; toFIXED(136) is the same value in integers.
 #define PAIRED_PATROL_LAYER_ORIGIN_X (136.0 * FIXED_ONE)
 
 static s32 LunpaFortress_TryTakeChestItem(s32 actorId, s32 itemId);
@@ -907,12 +909,16 @@ static s32 LunpaFortress_TryTakeChestItem(s32 actorId, s32 itemId) {
   return itemGiven;
 }
 
+/// Unused: an empty function nothing refers to.
 static void UNUSED LunpaFortress_DoNothingA(void) {}
 
+/// Unused: an empty function nothing refers to.
 static void UNUSED LunpaFortress_DoNothingB(void) {}
 
+/// Unused: an empty function nothing refers to.
 static void UNUSED LunpaFortress_DoNothingC(void) {}
 
+/// Unused: an empty function nothing refers to.
 static void UNUSED LunpaFortress_DoNothingD(void) {}
 
 /// Isaac takes the Cell Key, which lies on a stool just inside the north cell
@@ -1060,6 +1066,7 @@ static void LunpaFortress_CheckHallPatrol(void) {
            ->layers[MAPGRID_LAYER_OVERHEAD];
   struct FieldState *state = gFieldState;
 
+  // DEAD: the camera's actor looked up and dropped; the ROM keeps the call.
   FieldCamera_GetActor();
   if (gFrameCount & 1) {
     patrolLayer->speedX = 1;
@@ -1079,6 +1086,8 @@ static void LunpaFortress_CheckHallPatrol(void) {
       patrolLayer->phaseY = toFIXED(576) - guard->z.fixed;
     }
     if (!LunpaFortress_IsLeaderPassingHallPatrol()) {
+      // DEAD: whether the guard is on screen, asked and dropped; the ROM keeps
+      // the call.
       LunpaFortress_IsGuardNearViewCenter(ACTOR_UPPER_FLOOR_HALL_PATROL);
       if (LunpaFortress_IsLeaderNearGuard(ACTOR_UPPER_FLOOR_HALL_PATROL) &&
           gMainRoutineState.cloaked != 0) {
@@ -1450,6 +1459,8 @@ static void UNUSED LunpaFortress_UnusedFirstPatrolThrowsPartyOut(void) {
 /// party is back outside at the Lunpa Fortress Gates.
 static void LunpaFortress_GuardThrowsPartyOut(s32 actorId) {
   Event_Start();
+  // DEAD: a second start, which sets again what the first has just set (its
+  // task, Task_Add finds already running); the ROM keeps the call.
   Event_Start();
   Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 1);
   Actor_SetDestinationOffset(actorId, 0, 0);
@@ -1917,6 +1928,7 @@ static void LunpaFortress_BlowAwaySecondSwitchIvy(void) {
   Actor_SetPosition(ACTOR_CAVE_SECOND_SWITCH_IVY, 0, 0);
 }
 
+/// Unused: an empty function nothing refers to.
 static void UNUSED LunpaFortress_DoNothingE(void) {}
 
 /// Garet, Ivan and Mia step out from Isaac and gather round Hammet.
@@ -3467,6 +3479,7 @@ static void LunpaFortress_ReadStartledOldManMind(void) {
   }
 }
 
+/// Unused: an empty function nothing refers to.
 static void UNUSED LunpaFortress_DoNothingF(void) {}
 
 /// Talking to Dodonpa behind the door of Hammet's old cell, after Donpa's

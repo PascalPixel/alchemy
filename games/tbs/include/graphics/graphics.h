@@ -207,7 +207,7 @@ extern const u8 Text_DecodeSymbol[];
 extern u8 Text_DecodeSymbolCodeSize[];
 /// ScanlineWindow_BuildEdges, copied to the heap by ScanlineWindow_FillSpans
 /// for each frame of a window transition.
-extern u8 Tile_BuildCellTilesCodeSize[];
+extern u8 ScanlineWindow_BuildEdgesCodeSize[];
 /// Interleaves a layout's three decoded cell planes into cell words, for
 /// TileMap_ConvertBuffer.
 extern const u8 Tile_ConvertMapGrid[];

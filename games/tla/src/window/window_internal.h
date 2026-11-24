@@ -213,7 +213,7 @@ s32 ItemMenu_RunFar(void);
 /// The field menu's Status screen.
 s32 StatusScreen_RunFar(void);
 /// Moves a menu cursor to (x, y), gliding as mode says.
-void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
+void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 frames);
 /// Places a menu cursor at (x, y) at once.
 void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 

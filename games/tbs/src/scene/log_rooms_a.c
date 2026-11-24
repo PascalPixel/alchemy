@@ -2943,7 +2943,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  temporaryActor = (struct Actor *)FieldEffect_PlayCueAndStartEmitterOnTarget(
+  temporaryActor = (struct Actor *)Chest_OpenAndShowItem(
       ACTOR_IVAN, ACTOR_THIRD_CHEST, ITEM_SHAMANS_ROD);
   Event_Wait(60);
   rod = MsgVaultIvanGotShamansRod;

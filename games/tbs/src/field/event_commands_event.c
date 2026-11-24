@@ -10,7 +10,7 @@
 #if LANGUAGE == LANGUAGE_GERMAN
 #define GIFT_RECEIVED_MESSAGE MsgGaveItemToMember
 #else
-#define GIFT_RECEIVED_MESSAGE (MsgColossoIsaacGotItem + 1)
+#define GIFT_RECEIVED_MESSAGE (MsgGotItem + 1)
 #endif
 
 /// Japanese and English show it zooming open and waiting for the jingle; from
@@ -31,7 +31,7 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
   }
 #endif
   MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-  FieldMessage_ShowFar(MsgColossoIsaacGotItem, flags);
+  FieldMessage_ShowFar(MsgGotItem, flags);
 }
 
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)

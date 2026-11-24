@@ -80,7 +80,7 @@ UNUSED s32 FixedPoint_MulQ8(s16 left, s16 right) {
 }
 
 /// Unused: divides two 8.8 fixed-point values.
-UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
+UNUSED s16 FixedPoint_DivQ8(s16 numerator, s16 denominator) {
   return (numerator * Q8_ONE) / denominator;
 }
 

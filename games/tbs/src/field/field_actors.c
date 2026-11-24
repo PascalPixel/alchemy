@@ -162,7 +162,7 @@ void ActorSystem_Initialize(s32 controlMode) {
   if (controlMode == ACTOR_SYSTEM_BATTLE)
     Task_Add(Actor_UpdateAllMotion, TASK_PASS_FRAME + 10);
   else
-    Task_Add(Actor_UpdateAllThumb, TASK_PASS_FRAME + 10);
+    Task_Add(Actor_UpdateAllOnField, TASK_PASS_FRAME + 10);
   if (controlMode >= ACTOR_SYSTEM_WORLD_MAP &&
       controlMode <= ACTOR_SYSTEM_BATTLE) {
     Task_Add(ActorSystem_ProjectSprites, TASK_PASS_FRAME);

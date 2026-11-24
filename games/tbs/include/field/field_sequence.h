@@ -192,7 +192,7 @@ void FieldPsynergy_Carry(void);
 #define TREASURE_SPOT_LIST_END 255
 
 s32 Party_GetCharacterSprite(s32 character);
-s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood);
+s32 Party_GetCharacterSpriteForChildhood(s32 character, s32 childhood);
 void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot);
 void Actor_ReleaseAtIndex(s32 actorIndex);
 void Actor_ResetForLeader(struct ActorPlacement *table);
@@ -235,17 +235,16 @@ s32 Field_ExamineCell(s32 tile);
 s32 Field_GetPsynergyTargetRange(s32 kind);
 s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind);
-s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
-                                               s32 itemId);
-void Actor_SetSpritePalette(struct Actor *actor, s32 palette);
+s32 Chest_OpenAndShowItem(s32 actorId, s32 target, s32 itemId);
+void Actor_SetLayersColorMode(struct Actor *actor, s32 colorModePlusOne);
 void Field_EndBusyAndReveal(void);
 const struct Trigger *Field_FindItemTrigger(s32 item);
 s32 Field_UseItem(s32 packedItem, s32 slot);
 void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, s32 *target);
 s32 Field_RunPsynergyEndEvents(s32 packed);
 s32 Field_UsePsynergy(u32 code);
-s32 Scene_HasFieldPsynergyTrigger(s32 group);
-u32 Scene_HasPsynergyTrigger(u16 item);
+s32 Scene_HasPsynergyTrigger(s32 group);
+u32 Scene_HasItemTrigger(u16 item);
 
 void Actor_SnapToTerrain(void *object);
 void Field_PlaceTreasureSpots(void);

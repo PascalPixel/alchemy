@@ -139,7 +139,7 @@ enum HeapSlot {
   HEAP_SLOT_LUCKY_GAME = 45,
   /// A routine run from RAM: the canvas drawing routine
   /// BattleEffect_BuildBlitter writes, called as a DrawRectangle and released
-  /// before its canvas, or the world map's copy of Matrix_UpdateVertices.
+  /// before its canvas, or the world map's copy of WorldMap_UpdateAffineLines.
   HEAP_SLOT_RAM_CODE = 46,
   /// A second routine as HEAP_SLOT_RAM_CODE, released before it: always a
   /// BattleEffect_BuildBlitter routine, the second of a pair whose first is in

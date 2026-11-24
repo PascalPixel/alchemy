@@ -62,8 +62,8 @@ STATIC_ASSERT(offsetof(struct FarCallSystemTable, cos) == 96);
 extern const struct FarCallSystemTable FarCall_RuntimeTable;
 
 /// One screen line of the world map's ground, as WorldMap_BuildScanlineTable
-/// fills it: its fields are struct WorldMapScanline's.
-struct ScanVertex {
+/// fills it, as world_map_affine.h declares it.
+struct WorldMapScanline {
   FIXED scale; ///< the line's width scale
   FIXED depth; ///< the line's ground distance, halved
   s32 offsetX; ///< where the line starts on the map, from the origin, 16.16
@@ -72,8 +72,9 @@ struct ScanVertex {
   s16 pc;      ///< BG2PC, the same
 };
 
-/// One background's affine registers, BG2PA to BG2Y.
-struct BgAffine {
+/// One background's affine registers, BG2PA to BG2Y, as world_map_affine.h
+/// declares them.
+struct WorldMapAffineLine {
   s16 pa;
   s16 pb; ///< not written by this routine
   s16 pc;
@@ -87,8 +88,9 @@ struct BgAffine {
 /// terms, whose rotation terms stay cached while the yaw (gScanlineAngle) is
 /// unchanged; affine receives each line's parameters twice, for BG2 and then
 /// BG3, as the HBlank DMA writes both.
-void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
-                           struct ScanVertex *line, struct BgAffine *affine) {
+void WorldMap_UpdateAffineLines(struct Vector3 *eye, struct Vector3 *target,
+                                struct WorldMapScanline *line,
+                                struct WorldMapAffineLine *affine) {
   u32 angle;
   FIXED originX;
   FIXED originZ;

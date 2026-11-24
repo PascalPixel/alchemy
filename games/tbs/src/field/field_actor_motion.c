@@ -72,7 +72,7 @@ static __inline__ s32 Actor_Square(s32 value) { return value * value; }
 /// Advances all 64 actors by one frame, as Actor_UpdateAll does for the eight
 /// script-driven actors, with the field's extras: free flight in 3D, following
 /// the ground, floating, and solid actors that refuse to overlap.
-void Actor_UpdateAllThumb(void) {
+void Actor_UpdateAllOnField(void) {
   struct Actor *actor;
   const ActorScriptWords *script;
   s32 actorsLeft;
@@ -512,7 +512,7 @@ void Actor_UpdateAllMotion(void) {
 #ifndef UBFIX
       arrivedAtTarget = 0;
 #endif
-      // Steer in the XZ plane as Actor_UpdateAllThumb does on the ground,
+      // Steer in the XZ plane as Actor_UpdateAllOnField does on the ground,
       // or brake; this loop has no free flight, ground following or floating.
       if (actor->targetX != ACTOR_NO_TARGET) {
         dx = (actor->targetX - x) / FIXED_ONE;

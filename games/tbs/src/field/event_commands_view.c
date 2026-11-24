@@ -136,7 +136,7 @@ void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
     if (bubble != 0) {
       struct Sprite *sprite;
 
-      Actor_StartScriptFar(bubble, gFieldEffect_WatchedActorScript);
+      Actor_StartScriptFar(bubble, gEmote_BubbleScript);
       Actor_SelectAnimationFar(bubble, emote & EMOTE_ANIMATION_MASK);
       bubble->motionFlags = 0;
       bubble->timer = 0;

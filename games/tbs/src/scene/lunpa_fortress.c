@@ -894,7 +894,7 @@ static s32 LunpaFortress_TryTakeChestItem(s32 actorId, s32 itemId) {
   s32 itemEffect;
 
   Event_Start();
-  itemEffect = FieldEffect_PlayCueAndStartEmitterOnTarget(0, actorId, itemId);
+  itemEffect = Chest_OpenAndShowItem(0, actorId, itemId);
   if (Party_GiveItem(itemId, 0) != -1) {
     Actor_SetAnimation(actorId, CHEST_ANIMATION_OPEN_EMPTY);
     itemGiven = 1;

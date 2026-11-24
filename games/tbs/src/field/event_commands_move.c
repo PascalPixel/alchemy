@@ -151,7 +151,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
         Sound_PlayFar(SE_MENU_ERROR);
       continue;
     }
-    hit = ActorScript_FindOverlappingEntryFar(target, (s32 *)&position);
+    hit = ActorScript_FindOverlappingActorFar(target, (s32 *)&position);
     if (hit != NULL) {
       if (hit != caster) {
         Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
@@ -175,8 +175,8 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
       if (cellX == (beyond.x & FIELD_CELL_MASK) &&
           cellZ == (beyond.z & FIELD_CELL_MASK)) {
         // The caster can be pushed only onto flat ground.
-        if (MapGrid_GetCellAttributeLowNibbleFar(caster->layer, beyond.x,
-                                                 beyond.z) != TERRAIN_FLAT) {
+        if (MapGrid_GetTerrainKindAtFar(caster->layer, beyond.x, beyond.z) !=
+            TERRAIN_FLAT) {
           Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
           if ((gFrameCount & 15) == 0)
             Sound_PlayFar(SE_MENU_ERROR);

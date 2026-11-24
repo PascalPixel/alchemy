@@ -9768,7 +9768,7 @@ msgstr ""
 "{protagonist_name} got\n"
 "{argument_signed_number} coin{plural_suffix}.{end_wait}"
 
-msgctxt "MsgColossoIsaacGotItem"
+msgctxt "MsgGotItem"
 msgid "02410"
 msgstr ""
 "{protagonist_name} got\n"

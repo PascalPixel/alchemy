@@ -15,8 +15,8 @@ static __inline__ void Io_Write16Swapped(volatile u16 *reg, s32 value) {
   *reg = value;
 }
 
-/// Matrix_UpdateVertices, run from RAM: works out each screen line's BG2 and
-/// BG3 affine parameters for the camera into one of the two affine pages.
+/// WorldMap_UpdateAffineLines, run from RAM: works out each screen line's BG2
+/// and BG3 affine parameters for the camera into one of the two affine pages.
 typedef s32 (*WorldMapPlaneFn)(void *camera, s32 *position, void *lines,
                                void *out);
 
@@ -139,7 +139,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
 
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
 /// camera state, the projection, the per-scanline ground plane routine in RAM
-/// (Matrix_UpdateVertices) and its first frame, and the per-frame view and
+/// (WorldMap_UpdateAffineLines) and its first frame, and the per-frame view and
 /// HBlank updates.
 UNREAD_RESULT WorldMap_InitializePerspective(void) {
   struct WorldMapView *perspective;
@@ -241,7 +241,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
     Matrix_Initialize();
     Matrix_SetLookAt(camera->eye, cameraPosition);
-    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, Matrix_UpdateVertices,
+    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, WorldMap_UpdateAffineLines,
                      &Matrix_UpdateVerticesSize);
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(perspective->pitch),
                                                   Trig_Sin(perspective->pitch)),
@@ -478,7 +478,7 @@ static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
 
 /// Draws row tileRow of the cell buffer into both layers' BG maps, 32 cells in
 /// each: the row of the ground that scrolls into view.
-void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
+void WorldMap_DrawCellRow(u32 tileRow) {
   u8 *sourceCell;
   u8 *screenTile;
   u32 cellsCopied;
@@ -508,7 +508,7 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
 /// Draws column tileColumn of the cell buffer into both layers' BG maps, 32
 /// cells down in each (the second layer's map and cells follow the first's):
 /// the column of the ground that scrolls into view.
-void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
+void WorldMap_DrawCellColumn(u32 tileColumn) {
   u8 *sourceCell;
   u8 *screenTile;
   u32 cellsCopied;
@@ -574,15 +574,15 @@ void WorldMap_UpdateView(void) {
     tileRow = y / toFIXED(16);
     if ((perspective->view[0] ^ x) & toFIXED(16)) {
       if (perspective->view[0] < x)
-        WorldMap_RenderPaletteMappedColumn(tileColumn + 16);
+        WorldMap_DrawCellColumn(tileColumn + 16);
       else
-        WorldMap_RenderPaletteMappedColumn(tileColumn - 16);
+        WorldMap_DrawCellColumn(tileColumn - 16);
     }
     if ((perspective->view[1] ^ y) & toFIXED(16)) {
       if (perspective->view[1] < y)
-        WorldMap_RenderPaletteMappedRow(tileRow + 12);
+        WorldMap_DrawCellRow(tileRow + 12);
       else
-        WorldMap_RenderPaletteMappedRow(tileRow - 18);
+        WorldMap_DrawCellRow(tileRow - 18);
     }
     perspective->view[0] = x;
     perspective->view[1] = y;
@@ -726,7 +726,7 @@ void WorldMap_StartStillImage(void) {
 
 /// VBlank at the end of the still image: puts BG1 back as the plain layer
 /// and copies the area's four tile sets back into char blocks 2 and 3.
-void WorldMap_ShowBg1FromBuffer(void) {
+void WorldMap_EndStillImage(void) {
   Io_Write16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
   Dma_Set(gBgTileBuffer, BG_CHAR_BLOCK(2),
           DMA_COPY_WORDS(4 * WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
@@ -758,7 +758,7 @@ void WorldMap_LoadAreaGraphics(void) {
                       Ram_BgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 3);
   // The VBlank copies the tiles back and the next frame shows the ground;
   // only then is the still image's buffer refilled with the cells.
-  gVBlankCallback = WorldMap_ShowBg1FromBuffer;
+  gVBlankCallback = WorldMap_EndStillImage;
   perspective->windowTop = 0;
   perspective->windowBottom = DISPLAY_HEIGHT - 1;
   wait(1);
@@ -774,7 +774,7 @@ void WorldMap_LoadAreaGraphics(void) {
 /// the perspective view, without reloading the area's palette or tiles.
 void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   struct WorldMapView *perspective = gMapGridState[0];
-  gVBlankCallback = WorldMap_ShowBg1FromBuffer;
+  gVBlankCallback = WorldMap_EndStillImage;
   perspective->windowTop = 0;
   perspective->windowBottom = DISPLAY_HEIGHT - 1;
   wait(1);

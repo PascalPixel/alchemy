@@ -41,8 +41,8 @@ static inline void PaletteFade_Interpolate(s32 frames) {
 static inline void Item_LoadIcon(s32 item) { Icon_DrawItem(item); }
 
 /// Holds an item's picture up over the leader, as when the party finds it.
-static inline void Item_ShowFound(s32 item, s32 height) {
-  ItemDisplay_ShowItem(item, height);
+static inline void Item_ShowFound(s32 item, s32 flags) {
+  ItemDisplay_ShowItem(item, flags);
 }
 
 /// Redraws the room around the point the camera follows, after an event has

@@ -2,7 +2,7 @@
 /// Actor script commands: waits, jumps, flags, moves and state values.
 ///
 /// Each `SC_` handler here is reached through gActorScript_CommandTable
-/// (actor_script.c), which Actor_UpdateAll and Actor_UpdateAllThumb call
+/// (actor_script.c), which Actor_UpdateAll and Actor_UpdateAllOnField call
 /// for each live actor; each returns 1 to run on and 0 to end the actor's
 /// frame (the protocol is in this folder's README).
 
@@ -43,7 +43,7 @@ s32 ActorScript_Wait(struct Actor *interpreter) {
 
 /// SC_SYNC: waits until the actor arrives at its target, or until a solid actor
 /// has blocked it for 60 frames (refused is the blocked count, which
-/// Actor_UpdateAllThumb raises).
+/// Actor_UpdateAllOnField raises).
 s32 ActorScript_WaitForArrival(struct Actor *interpreter) {
   if (interpreter->refused > SCRIPT_BLOCKED_MOVE_FRAMES - 1) {
     interpreter->refused = 0;
@@ -252,7 +252,7 @@ s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
 
 /// Returns the first solid actor that an actor at position values would
 /// overlap, as ActorScript_CheckOverlap tests, or NULL.
-struct Actor *ActorScript_FindOverlappingEntry(struct Actor *actor,
+struct Actor *ActorScript_FindOverlappingActor(struct Actor *actor,
                                                s32 *values) {
   s32 actorIndex;
   struct Actor *candidate = gActors;
@@ -817,7 +817,7 @@ SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetY, targetY)
 /// for.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetZ, targetZ)
 /// State value SW_BOUNCE: sets, adds to or compares the actor's bounce.
-SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareVerticalMotion, bounce)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareBounce, bounce)
 /// State value SW_GRAVITY: sets, adds to or compares the actor's gravity.
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareGravity, gravity)
 /// State value SW_GROUND: sets, adds to or compares the ground height under the

@@ -312,7 +312,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
 
   action = Ability_Get(PSYNERGY_ABILITY_MASK &
                        ((struct PsynergyMenuState *)gMenuState)->sideAction[0]);
-  if (Scene_HasFieldPsynergyTriggerFar(action->fieldPsynergy) != 0) {
+  if (Scene_HasPsynergyTriggerFar(action->fieldPsynergy) != 0) {
     return ITEM_USE_MODE_FROM_FIELD;
   }
   classification = ITEM_USE_MODE_WHOLE_PARTY;

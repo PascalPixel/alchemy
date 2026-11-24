@@ -379,7 +379,7 @@ void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
       if (value == key)
         break;
       if (value & ENCOUNTER_BATTLE_MUSIC_MARKER)
-        music = value & ENCOUNTER_BATTLE_MUSIC_SONG_MASK;
+        music = value & ENCOUNTER_BATTLE_MUSIC_MASK;
     }
   }
   gMainRoutineState.battleMusic = music;

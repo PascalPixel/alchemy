@@ -27,7 +27,7 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareTargetX,           // 17 SW_TARGET_X
     ActorScript_SetOrCompareTargetY,           // 18 SW_TARGET_Y
     ActorScript_SetOrCompareTargetZ,           // 19 SW_TARGET_Z
-    ActorScript_SetOrCompareVerticalMotion,    // 20 SW_BOUNCE
+    ActorScript_SetOrCompareBounce,            // 20 SW_BOUNCE
     ActorScript_SetOrCompareGravity,           // 21 SW_GRAVITY
     ActorScript_SetOrCompareTerrainHeight,     // 22 SW_GROUND
     ActorScript_SetOrCompareSceneWord,         // 23 SW_SCENE_WORD

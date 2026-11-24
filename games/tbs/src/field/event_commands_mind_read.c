@@ -68,7 +68,7 @@ void FieldPsynergy_StopMindReadWave(void) {
   FieldPsynergy_RestoreMindReadPalette();
   Task_Remove(FieldPsynergy_UpdateMindReadWave);
   // Back to SPRITE_COLOR_NORMAL.
-  Actor_SetSpritePalette(Actor_GetById(state->sourceId), 1);
+  Actor_SetLayersColorMode(Actor_GetById(state->sourceId), 1);
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_MIND_READ);
 }
@@ -111,7 +111,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
     FieldEffect_AdvanceHueCycle();
   }
   // The caster's colours cycle.
-  Actor_SetSpritePalette(Actor_GetById(state->sourceId), 0);
+  Actor_SetLayersColorMode(Actor_GetById(state->sourceId), 0);
 
   if (state->counter == 0 || state->counter == MIND_READ_PARTICLE_GAP ||
       state->counter == 2 * MIND_READ_PARTICLE_GAP) {

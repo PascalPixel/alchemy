@@ -31,7 +31,7 @@ STATIC_ASSERT(sizeof(struct FadeOverlayState) == 28);
 #define WEATHER_PARTICLE_COUNT 32 ///< WeatherState.particles
 
 /// One weather particle: OAM attributes followed by its world position.
-struct GroundParticle {
+struct WeatherParticle {
   /// The depth-slot queue's link, as AnimationSpritePart.link; cleared with the
   /// attributes and never read by the effects.
   u8 link[4];
@@ -59,18 +59,18 @@ struct GroundParticle {
   u16 timer;       ///< Frames left; zero frees the particle.
 };
 
-/// GroundParticle.timer after the decrement that counts a live particle down,
+/// WeatherParticle.timer after the decrement that counts a live particle down,
 /// when it was already free (0): the u16 wraps.
 #define GROUND_PARTICLE_FREED 65535
 
-STATIC_ASSERT(offsetof(struct GroundParticle, positionX) == 12);
-STATIC_ASSERT(sizeof(struct GroundParticle) == 32);
+STATIC_ASSERT(offsetof(struct WeatherParticle, positionX) == 12);
+STATIC_ASSERT(sizeof(struct WeatherParticle) == 32);
 
 /// HEAP_SLOT_WEATHER while ground particles, motes or sparkles run.
 struct WeatherState {
   s32 entry;    ///< Resource entry holding the effect's tiles.
   s32 tileBase; ///< Their first tile in VRAM.
-  struct GroundParticle particles[WEATHER_PARTICLE_COUNT];
+  struct WeatherParticle particles[WEATHER_PARTICLE_COUNT];
   s32 unused;  ///< Unused by the weather effects.
   s32 stopped; ///< Nonzero stops new sparkle bursts.
 };

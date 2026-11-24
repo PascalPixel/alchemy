@@ -90,8 +90,8 @@ void Sprite_SetAnimationSpeedFar(struct Sprite *sprite, s32 step);
 void SpriteColor_RemapPixelsFar(u8 *bytes, s32 byteCount);
 void TilesetAnim_SuspendAllFar(void);
 void TilesetAnim_ResumeAllFar(void);
-struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *actor,
+struct Actor *ActorScript_FindOverlappingActorFar(struct Actor *actor,
                                                   s32 *values);
-s32 MapGrid_GetCellAttributeLowNibbleFar(s32 layer, s32 x, s32 y);
+s32 MapGrid_GetTerrainKindAtFar(s32 layer, s32 x, s32 y);
 
 #endif

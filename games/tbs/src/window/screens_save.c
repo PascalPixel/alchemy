@@ -607,8 +607,9 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
   s32 i;
 
   for (i = 0; i < 4 && summary->party[i] != -1; i++) {
-    struct Sprite *sprite = Sprite_CreateFar(Party_RemapCharacterIdIfEnabledFar(
-        summary->party[i], (s8)summary->childhood));
+    struct Sprite *sprite =
+        Sprite_CreateFar(Party_GetCharacterSpriteForChildhoodFar(
+            summary->party[i], (s8)summary->childhood));
 
     if (sprite != NULL) {
       Sprite_StartAnimationFar(sprite, ANIM_STAND);

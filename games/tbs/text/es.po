@@ -10723,7 +10723,7 @@ msgstr ""
 "{protagonist_name} obtuvo\n"
 "{argument_signed_number} moneda{control:13}.{end_wait}"
 
-msgctxt "MsgColossoIsaacGotItem"
+msgctxt "MsgGotItem"
 msgid "02650"
 msgstr ""
 "{protagonist_name} obtuvo\n"

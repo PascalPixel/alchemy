@@ -43,7 +43,7 @@ const s16 gFieldEffect_TargetRangeByMode[25] = {
     -1,
 };
 
-/// The palette cycle of Mind Read's caster (Actor_SetSpritePalette,
+/// The palette cycle of Mind Read's caster (Actor_SetLayersColorMode,
 /// (gFrameCount >> 1) & 7): palettes 1 to 4 and back to 0, two frames each.
 const u8 gMindRead_CasterPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
 
@@ -352,7 +352,7 @@ const s16 gLineScroll_WaveSine[256] = {
 /// {dx, dy, tile, shape, size} for each of the 16 frames of a raindrop's
 /// splash (event_commands_weather.c): dx and dy in screen pixels from its
 /// spot, tile from its first tile.
-const s16 gFieldEffect_GroundParticleFrames[80] = {
+const s16 gWeather_RainSplashFrames[80] = {
     -8, -12, 20, 0, 1,
     -8, -12, 20, 0, 1,
     -8, -12, 20, 0, 1,

@@ -10735,7 +10735,7 @@ msgstr ""
 "{protagonist_name} gagne\n"
 "{argument_signed_number} pièce{control:13}.{end_wait}"
 
-msgctxt "MsgColossoIsaacGotItem"
+msgctxt "MsgGotItem"
 msgid "02650"
 msgstr ""
 "{protagonist_name} prend:\n"

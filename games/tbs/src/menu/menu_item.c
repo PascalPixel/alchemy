@@ -289,8 +289,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         menu->completionFlag = 1;
       }
       if (command == ITEM_COMMAND_USE) {
-        if (Scene_HasPsynergyTriggerFar(menu->selectedItems[0] &
-                                        INVENTORY_ITEM_ID_MASK) != 0) {
+        if (Scene_HasItemTriggerFar(menu->selectedItems[0] &
+                                    INVENTORY_ITEM_ID_MASK) != 0) {
           done = 1;
           // The international editions report target 0 (command is
           // ITEM_COMMAND_USE here) and the bare item id; the Japanese ones the
@@ -1834,8 +1834,8 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
     }
   }
 
-  if (Scene_HasPsynergyTriggerFar(menu->selectedItems[0] &
-                                  INVENTORY_ITEM_ID_MASK) != 0)
+  if (Scene_HasItemTriggerFar(menu->selectedItems[0] &
+                              INVENTORY_ITEM_ID_MASK) != 0)
     commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_AVAILABLE;
 
   if (menu->partyCount <= 1)
@@ -1900,7 +1900,7 @@ s32 Item_ClassifyUseMode(s32 memberId, s32 inventoryEntry) {
   itemId &= INVENTORY_ITEM_ID_MASK;
   item = Item_GetDirectFar(itemId);
 
-  if (Scene_HasPsynergyTriggerFar(itemId) != 0) {
+  if (Scene_HasItemTriggerFar(itemId) != 0) {
     return ITEM_USE_MODE_FROM_FIELD;
   }
 

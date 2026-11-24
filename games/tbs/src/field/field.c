@@ -13,7 +13,7 @@
 ///                   Render_PlaceProjectedSprite; field_sprite_animation.c:
 ///                   Sprite_Create, Sprite_StartAnimation
 ///   Actors          field_actors.c: Actor_Create, ActorSystem_Initialize;
-///                   field_actor_motion.c: Actor_UpdateAllThumb,
+///                   field_actor_motion.c: Actor_UpdateAllOnField,
 ///                   Actor_SetMoveTarget
 ///   Actor scripts   field_script_commands.c, the SC_ commands of
 ///                   actor_script.h

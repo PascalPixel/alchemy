@@ -6,9 +6,9 @@
 
 #include "types.h"
 
-struct BgAffine;
+struct WorldMapAffineLine;
 struct Vector3;
-struct ScanVertex;
+struct WorldMapScanline;
 
 /// The world map camera's yaw, in 1/65536 turns, the scanline parameters were
 /// built for; the vertex update rebuilds them when it changes.
@@ -16,7 +16,8 @@ extern u32 gScanlineAngle;
 /// The world map camera's pitch the scanline parameters were built for.
 extern u32 gScanlinePitch;
 
-void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
-                           struct ScanVertex *line, struct BgAffine *affine);
+void WorldMap_UpdateAffineLines(struct Vector3 *eye, struct Vector3 *target,
+                                struct WorldMapScanline *line,
+                                struct WorldMapAffineLine *affine);
 
 #endif

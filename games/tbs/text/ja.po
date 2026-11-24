@@ -9963,7 +9963,7 @@ msgstr ""
 "{protagonist_name}は\n"
 "{argument_signed_number}コイン 手に入れた{end_wait}"
 
-msgctxt "MsgColossoIsaacGotItem"
+msgctxt "MsgGotItem"
 msgid "02447"
 msgstr ""
 "{protagonist_name}は\n"

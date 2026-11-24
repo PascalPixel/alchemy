@@ -286,7 +286,7 @@
 	export Event_WaitTransitionFrames, Event_WaitTransitionFramesFar
 	export LineScroll_InitWave, LineScroll_InitWaveFar
 	export LineScroll_Stop, LineScroll_StopFar
-	export FieldEffect_PlayCueAndStartEmitterOnTarget, FieldEffect_PlayCueAndStartEmitterOnTargetFar
+	export Chest_OpenAndShowItem, Chest_OpenAndShowItemFar
 	export ItemDisplay_ShowPicture, ItemDisplay_ShowPictureFar
 	export ItemDisplay_ShowItem, ItemDisplay_ShowItemFar
 	export TreasureSpot_SetActorPosition, TreasureSpot_SetActorPositionFar

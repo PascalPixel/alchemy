@@ -7,9 +7,9 @@
 #include "event_commands_internal.h"
 
 /// The frames of a raindrop's splash on the ground
-/// (gFieldEffect_GroundParticleFrames, five halfwords each), played from the
+/// (gWeather_RainSplashFrames, five halfwords each), played from the
 /// last down to the first.
-#define GROUND_PARTICLE_FRAMES 16
+#define RAIN_SPLASH_FRAMES 16
 
 /// mote.png's 16 by 16 pictures, four tiles each: two of each size, the
 /// motes shrinking as they rise and flickering between the two.
@@ -26,7 +26,7 @@ void Weather_UpdateRain(void) {
   s32 *camera = grid->view;
   s32 cameraX = camera[0];
   s32 cameraZ = camera[1];
-  struct GroundParticle *particle = state->particles;
+  struct WeatherParticle *particle = state->particles;
   u32 i;
 
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++) {
@@ -39,7 +39,7 @@ void Weather_UpdateRain(void) {
     // BUG: freezing a timer of 16 indexes past the 16-frame table.
     if (GameFlag_GetFar(FLAG_WEATHER_HELD))
       particle->timer++;
-    frame = &gFieldEffect_GroundParticleFrames[5 * particle->timer];
+    frame = &gWeather_RainSplashFrames[5 * particle->timer];
     x = (particle->positionX - cameraX) / FIXED_ONE + *frame++;
     y = (particle->positionZ - particle->positionY - cameraZ) / FIXED_ONE +
         *frame++;
@@ -64,7 +64,7 @@ void Weather_UpdateRain(void) {
       particle->positionZ = y;
       particle->positionY =
           toFIXED(MapGrid_GetTerrainHeightFar(0, FIXEDtoINT(x), FIXEDtoINT(y)));
-      particle->timer = GROUND_PARTICLE_FRAMES;
+      particle->timer = RAIN_SPLASH_FRAMES;
     }
   }
 }
@@ -116,7 +116,7 @@ void Weather_UpdateLightning(void) {
 void Weather_StartRain(void) {
   struct WeatherState *state;
   s32 *leader;
-  struct GroundParticle *particle;
+  struct WeatherParticle *particle;
   // words is the decode buffer, then each particle's attribute cursor.
   u32 *words;
   u32 i;
@@ -128,7 +128,7 @@ void Weather_StartRain(void) {
   particle = state->particles;
   Dma_Fill32(fill, state, sizeof(struct WeatherState));
   words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
-  Decompress_ByteLz(gFieldEffect_GroundParticleTiles, words);
+  Decompress_ByteLz(gWeather_ParticleTiles, words);
   state->entry = VramCache_FindFreeEntry();
   state->tileBase = VramCache_Load(state->entry, 768, words);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
@@ -146,7 +146,7 @@ void Weather_StartRain(void) {
     particle->positionZ = z;
     particle->positionY =
         toFIXED(MapGrid_GetTerrainHeightFar(0, FIXEDtoINT(x), FIXEDtoINT(z)));
-    particle->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
+    particle->timer = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
     particle++;
   }
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
@@ -169,7 +169,7 @@ void FieldMotes_Update(void) {
   struct MapGridScrollState *grid = gMapGridState[0];
   u32 spawned = 0;
   u32 i;
-  struct GroundParticle *mote = state->particles;
+  struct WeatherParticle *mote = state->particles;
 
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, mote++) {
     s32 x;
@@ -236,7 +236,7 @@ void FieldMotes_Update(void) {
 /// 32 of them under the leader with staggered timers, drawn semi-transparent.
 void FieldMotes_Start(void) {
   struct WeatherState *state;
-  struct GroundParticle *mote;
+  struct WeatherParticle *mote;
   u8 *tiles;
   u32 i;
   u32 size;
@@ -270,7 +270,7 @@ void FieldMotes_Start(void) {
     mote->positionY = toFIXED(
         MapGrid_GetTerrainHeightFar(0, FIXEDtoINT((s32)p), FIXEDtoINT(z)));
     // Staggered as the raindrops are.
-    mote->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
+    mote->timer = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
     mote++;
   }
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
@@ -289,7 +289,7 @@ void FieldEffect_UpdateSparkles(void) {
   s32 *camera;
   FIXED spawnX;
   FIXED spawnZ;
-  struct GroundParticle *sparkle;
+  struct WeatherParticle *sparkle;
   const u16 *frame;
   s32 *leader;
   s32 cameraX;
@@ -381,7 +381,7 @@ void FieldEffect_UpdateSparkles(void) {
 void FieldEffect_InitializeSparkles(void) {
   u32 size = sizeof(struct WeatherState);
   struct WeatherState *state = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
-  struct GroundParticle *sparkle = state->particles;
+  struct WeatherParticle *sparkle = state->particles;
   u8 *tiles;
   u32 i;
 
@@ -415,7 +415,7 @@ void FieldEffect_InitializeSparkles(void) {
     sparkle->positionY = toFIXED(
         MapGrid_GetTerrainHeightFar(0, FIXEDtoINT((s32)attr), FIXEDtoINT(z)));
     // Staggered as the raindrops are.
-    sparkle->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
+    sparkle->timer = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
     i++;
     sparkle++;
   } while (i < WEATHER_PARTICLE_COUNT);

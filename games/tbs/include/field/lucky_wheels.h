@@ -10,15 +10,15 @@
 
 s32 LuckyWheels_Start(void);
 void LuckyWheels_TransferCanvas(void);
-void Palette_DarkenScreenStep(void);
-void Palette_StepTowardResource(s32 resource);
+void LuckyWheels_DarkenStep(void);
+void LuckyWheels_StepSparkColors(s32 resource);
 void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 extern const u16 gLuckyWheels_SparkPictures[];
 extern const u8 gLuckyWheels_SymbolPrizes[];
 extern const u8 gLuckyWheels_MachineSpriteX[];
 extern const u8 gLuckyWheels_MachineSpriteY[];
 void LuckyWheels_Update(void);
-void LuckyWheels_InitializeTitle(void);
+void LuckyWheels_SetUpBetting(void);
 void LuckyWheels_Run(void);
 void LzPack_ResetChains(void);
 void LzPack_InsertSlotNode(s32 index);

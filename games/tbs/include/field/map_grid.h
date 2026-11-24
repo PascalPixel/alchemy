@@ -115,7 +115,7 @@ extern u8 gMapGridAnimTiles[];
 extern u8 gMapGridShapes[];
 
 /// 32 KB of EWRAM at 0x02038000 holding background tiles, such as the world
-/// map's char blocks 2 and 3, which WorldMap_ShowBg1FromBuffer copies back
+/// map's char blocks 2 and 3, which WorldMap_EndStillImage copies back
 /// after the still image.
 extern u8 gBgTileBuffer[];
 

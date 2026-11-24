@@ -518,7 +518,7 @@ enum BlazeMode {
 };
 
 /// The flames of Blaze's jet, and the smoke puffs they leave.
-#define BLAZE_DROPS 16
+#define BLAZE_FLAMES 16
 /// The frames a flame of the jet lives, in BLAZE_LONG_SPRAY and otherwise.
 #define BLAZE_LONG_FLAME_FRAMES 33
 #define BLAZE_FLAME_FRAMES 25
@@ -528,12 +528,12 @@ enum BlazeMode {
 /// it points, and the actor it has reached.
 struct BlazeState {
   u8 unused[4096]; ///< no code names it
-  struct EffectSprite drops[BLAZE_DROPS];
-  struct FieldPsynergyParticle dropMotion[BLAZE_DROPS];
-  struct EffectSprite puffs[BLAZE_DROPS];
-  struct FieldPsynergyParticle puffMotion[BLAZE_DROPS];
+  struct EffectSprite flames[BLAZE_FLAMES];
+  struct FieldPsynergyParticle flameMotion[BLAZE_FLAMES];
+  struct EffectSprite puffs[BLAZE_FLAMES];
+  struct FieldPsynergyParticle puffMotion[BLAZE_FLAMES];
   s32 origin[3];
-  u16 dropTile;
+  u16 flameTile;
   u16 puffTile;
   u16 angle;
   u16 targetAngle;
@@ -570,10 +570,10 @@ void Blaze_UpdateSpray(void) {
   s32 turn;
 
   if (state->emitting != 0 && (gFrameCount & 3) == 0) {
-    particle = state->dropMotion;
-    for (i = 0; i < BLAZE_DROPS; i++, particle++) {
+    particle = state->flameMotion;
+    for (i = 0; i < BLAZE_FLAMES; i++, particle++) {
       if (particle->timer == -1) {
-        sprite = &state->drops[i];
+        sprite = &state->flames[i];
         if (scene->target != NULL)
           sprite->depth = Actor_GetSpriteDepth(scene->target);
         else
@@ -600,15 +600,15 @@ void Blaze_UpdateSpray(void) {
   }
 
   state->hit = 0;
-  particle = state->dropMotion;
-  for (i = 0; i < BLAZE_DROPS; i++, particle++) {
+  particle = state->flameMotion;
+  for (i = 0; i < BLAZE_FLAMES; i++, particle++) {
     if (particle->timer == -1)
       continue;
-    sprite = &state->drops[i];
+    sprite = &state->flames[i];
     sprite->scaleY = sprite->scaleX =
         particle->timer * (FIXED_ONE / 25) + FIXED_ONE / 2;
     sprite->oam.index =
-        state->dropTile + (((particle->timer >> 1) + i) & 3) * 32;
+        state->flameTile + (((particle->timer >> 1) + i) & 3) * 32;
     if (state->angle > DEGtoANG(180))
       sprite->depth--;
     else
@@ -653,7 +653,7 @@ void Blaze_UpdateSpray(void) {
   }
 
   particle = state->puffMotion;
-  for (i = 0; i < BLAZE_DROPS; i++, particle++) {
+  for (i = 0; i < BLAZE_FLAMES; i++, particle++) {
     if (particle->timer >= 0) {
       sprite = &state->puffs[i];
       sprite->oam.index = state->puffTile + ((particle->timer >> 2) & 7) * 8;

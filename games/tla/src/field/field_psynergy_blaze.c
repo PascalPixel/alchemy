@@ -25,8 +25,8 @@ void Field_StartColorTransition(s32 frames, s32 color);
 
 /// The jet's longest spray, in frames; B ends it sooner.
 #define BLAZE_SPRAY_FRAMES 80
-/// How far in front of the caster the jet's drops are drawn.
-#define BLAZE_DROP_DEPTH 10
+/// How far in front of the caster the jet's flames are drawn.
+#define BLAZE_FLAME_DEPTH 10
 
 /// The flame's colour, after the torch it is cast at: an index of
 /// gBlaze_TintColors.
@@ -60,7 +60,7 @@ void FieldPsynergy_Blaze(void) {
   FIXED height;
   s32 id;
   s32 resourceId;
-  s32 dropSlot;
+  s32 flameSlot;
   s32 puffSlot;
   s32 tile;
   s32 i;
@@ -181,15 +181,15 @@ void FieldPsynergy_Blaze(void) {
       break;
     }
     Decompress_TaggedLz(Resource_GetTableEntry(resourceId), state);
-    dropSlot = VramCache_FindFreeEntry();
-    tile = VramCache_Load(dropSlot, 4096, state);
-    state->dropTile = tile;
-    cursor.particle = state->dropMotion;
-    for (j = 0; j < BLAZE_DROPS; j++) {
-      sprite = &state->drops[j];
+    flameSlot = VramCache_FindFreeEntry();
+    tile = VramCache_Load(flameSlot, 4096, state);
+    state->flameTile = tile;
+    cursor.particle = state->flameMotion;
+    for (j = 0; j < BLAZE_FLAMES; j++) {
+      sprite = &state->flames[j];
 
       EffectSprite_Init(sprite, 15, 24, OBJ_SIZE_32X32, tile);
-      sprite->depth = Actor_GetSpriteDepth(caster) + BLAZE_DROP_DEPTH;
+      sprite->depth = Actor_GetSpriteDepth(caster) + BLAZE_FLAME_DEPTH;
       sprite->oam.priority = Actor_GetSpritePriority(caster);
       sprite->oam.fullColor = 1;
       sprite->oam.palette = 0;
@@ -201,7 +201,7 @@ void FieldPsynergy_Blaze(void) {
     tile = VramCache_Load(puffSlot, 2048, state);
     state->puffTile = tile;
     cursor.particle = state->puffMotion;
-    for (j = 0; j < BLAZE_DROPS; j++) {
+    for (j = 0; j < BLAZE_FLAMES; j++) {
       sprite = &state->puffs[j];
 
       EffectSprite_Init(sprite, 8, 15, OBJ_SIZE_16X16, tile);
@@ -238,16 +238,16 @@ void FieldPsynergy_Blaze(void) {
     Sound_PlayFar(SOUND_FADE_OUT_EXIT_SE);
     state->emitting = 0;
     for (k = 0; k < 60; k++) {
-      cursor.particle = state->dropMotion;
-      for (j = 0; j < BLAZE_DROPS && cursor.particle->timer == -1;
+      cursor.particle = state->flameMotion;
+      for (j = 0; j < BLAZE_FLAMES && cursor.particle->timer == -1;
            j++, cursor.particle++)
         ;
-      if (j == BLAZE_DROPS)
+      if (j == BLAZE_FLAMES)
         break;
       wait(1);
     }
     Task_Remove(Blaze_UpdateSpray);
-    VramCache_FreeEntry(dropSlot);
+    VramCache_FreeEntry(flameSlot);
     VramCache_FreeEntry(puffSlot);
   }
   FieldPsynergy_FadeFromCastColor();
@@ -285,4 +285,4 @@ s32 Actor_CheckBlocked(struct Actor *actor) {
 }
 
 #undef BLAZE_SPRAY_FRAMES
-#undef BLAZE_DROP_DEPTH
+#undef BLAZE_FLAME_DEPTH

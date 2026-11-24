@@ -1,14 +1,17 @@
 /// @file
-/// A particle's sprite that grows as it animates.
+/// The dust Scoop throws up, each grain growing as it flies.
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
 
 #include "macros.h"
 
-/// Animates a particle's sprite through 8 tiles (4 frames each), grows its
-/// scale by 0.1 a frame up to 1.0, draws it at the particle's projected
-/// position and advances the particle.
+/// Advances one grain of Scoop's dust a frame: its sprite steps through eight
+/// pictures of eight tiles from tiles, four frames each, grows by a tenth of
+/// its size a frame to full size, is drawn at the grain's place on screen, and
+/// the grain moves on (Field_AdvanceWithGravity3D). Sand's
+/// GrowingParticle_Update is the same but for its own age check and
+/// Field_AdvanceWithGravity2D, so each Psynergy keeps its own.
 void BattleEffect_UpdateGrowingParticleSprite(
     struct EffectSprite *sprite, struct FieldPsynergyParticle *particle,
     s32 tiles) {

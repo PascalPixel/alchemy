@@ -83,6 +83,86 @@ typedef void (*OperandFunc)(struct ScriptOperands *operands, s32 operation,
 /// The handler for each work value number (map_grid_data.c).
 extern const OperandFunc gActorScript_OperandHandlerTable[41];
 
+/// The work value handlers of gActorScript_OperandHandlerTable, one an SW_
+/// value: each sets, adds to or compares (into conditionResult) the actor field
+/// it names; positions, targets, velocities and gravity are 16.16 pixels.
+void ActorScript_SetOrCompareScriptAddress(struct ScriptOperands *operands,
+                                           s32 operation, s32 value);
+void ActorScript_SetOrCompareCursor(struct ScriptOperands *operands,
+                                    s32 operation, s32 value);
+void ActorScript_SetOrCompareFacing(struct ScriptOperands *operands,
+                                    s32 operation, s32 value);
+void ActorScript_SetOrCompareX(struct ScriptOperands *operands, s32 operation,
+                               s32 value);
+void ActorScript_SetOrCompareY(struct ScriptOperands *operands, s32 operation,
+                               s32 value);
+void ActorScript_SetOrCompareZ(struct ScriptOperands *operands, s32 operation,
+                               s32 value);
+void ActorScript_SetOrCompareRadius(struct ScriptOperands *operands,
+                                    s32 operation, s32 value);
+void ActorScript_SetOrCompareScaleX(struct ScriptOperands *operands,
+                                    s32 operation, s32 value);
+void ActorScript_SetOrCompareScaleY(struct ScriptOperands *operands,
+                                    s32 operation, s32 value);
+void ActorScript_SetOrCompareVelocityX(struct ScriptOperands *operands,
+                                       s32 operation, s32 value);
+void ActorScript_SetOrCompareVelocityY(struct ScriptOperands *operands,
+                                       s32 operation, s32 value);
+void ActorScript_SetOrCompareVelocityZ(struct ScriptOperands *operands,
+                                       s32 operation, s32 value);
+void ActorScript_SetOrCompareSpeedLimit(struct ScriptOperands *operands,
+                                        s32 operation, s32 value);
+void ActorScript_SetOrCompareAcceleration(struct ScriptOperands *operands,
+                                          s32 operation, s32 value);
+void ActorScript_SetOrCompareTargetX(struct ScriptOperands *operands,
+                                     s32 operation, s32 value);
+void ActorScript_SetOrCompareTargetY(struct ScriptOperands *operands,
+                                     s32 operation, s32 value);
+void ActorScript_SetOrCompareTargetZ(struct ScriptOperands *operands,
+                                     s32 operation, s32 value);
+void ActorScript_SetOrCompareBounce(struct ScriptOperands *operands,
+                                    s32 operation, s32 value);
+void ActorScript_SetOrCompareGravity(struct ScriptOperands *operands,
+                                     s32 operation, s32 value);
+void ActorScript_SetOrCompareTerrainHeight(struct ScriptOperands *operands,
+                                           s32 operation, s32 value);
+void ActorScript_SetOrCompareSceneWord(struct ScriptOperands *operands,
+                                       s32 operation, s32 value);
+void ActorScript_SetOrCompareSprite(struct ScriptOperands *operands,
+                                    s32 operation, s32 value);
+void ActorScript_SetOrCompareSpriteStorageKind(struct ScriptOperands *operands,
+                                               s32 operation, s32 value);
+void ActorScript_SetOrCompareMotionFlags(struct ScriptOperands *operands,
+                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareArrivalAxis(struct ScriptOperands *operands,
+                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareComparisonResult(struct ScriptOperands *operands,
+                                              s32 operation, s32 value);
+void ActorScript_SetOrCompareSnapToTarget(struct ScriptOperands *operands,
+                                          s32 operation, s32 value);
+void ActorScript_SetOrCompareCollisionFlags(struct ScriptOperands *operands,
+                                            s32 operation, s32 value);
+void ActorScript_SetOrCompareSteeringFlags(struct ScriptOperands *operands,
+                                           s32 operation, s32 value);
+void ActorScript_SetOrComparePaused(struct ScriptOperands *operands,
+                                    s32 operation, s32 value);
+void ActorScript_SetOrCompareRepeatCount(struct ScriptOperands *operands,
+                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareWait(struct ScriptOperands *operands,
+                                  s32 operation, s32 value);
+void ActorScript_SetOrCompareTimer(struct ScriptOperands *operands,
+                                   s32 operation, s32 value);
+void ActorScript_SetOrCompareUserValue(struct ScriptOperands *operands,
+                                       s32 operation, s32 value);
+void ActorScript_SetOrCompareWatchedActor(struct ScriptOperands *operands,
+                                          s32 operation, s32 value);
+void ActorScript_SetOrCompareUpdateAddress(struct ScriptOperands *operands,
+                                           s32 operation, s32 value);
+void ActorScript_SetOrCompareSceneCounter(struct ScriptOperands *operands,
+                                          s32 operation, s32 value);
+void ActorScript_SetOrCompareSceneByte(struct ScriptOperands *operands,
+                                       s32 operation, s32 value);
+
 s32 ActorScript_Goto(struct Actor *interpreter);
 s32 ActorScript_HideSprites(struct Actor *interpreter);
 s32 ActorScript_ShowSprite(struct Actor *interpreter);

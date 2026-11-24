@@ -29,6 +29,7 @@
 #include "gamepak/far_call/window.h"
 #include "field/lucky_wheels_title.h"
 #include "field/field.h"
+#include "field/dice_game.h"
 #include "field/field_sequence.h"
 #include "battle/battle_effect_state.h"
 #include "resource_ids.h"

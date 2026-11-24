@@ -8,6 +8,14 @@
 #include "system/input.h"
 #include "graphics/render_placement.h"
 
+extern const u16 gSpriteViewer_BackdropColors[8];
+
+void SpriteViewer_SetLayerPriority(s32 slot, s32 value);
+void SpriteViewer_SetLayerColorMode(s32 slot, s32 value);
+void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value);
+void SpriteViewer_SetLayerSprite(s32 slot, s32 value);
+void SpriteViewer_LayOutRing(s32 x, s32 z, struct SpritePlacement *out);
+
 s32 SpriteViewer_StepSpriteId(s32 value, s32 delta);
 void SpriteViewer_PlaceRing(void);
 

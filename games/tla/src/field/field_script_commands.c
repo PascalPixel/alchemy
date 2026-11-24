@@ -1065,7 +1065,7 @@ enum ScriptOperandOperation {
   }
 
 /// The work value handlers, one for each entry of enum ActorScriptValue (see
-/// gActorScript_OperandHandlerTable in actor_script_operands.c); each names the
+/// gActorScript_OperandHandlerTable in map_grid_data.c); each names the
 /// actor field it sets, adds to or compares.
 SCRIPT_DEFINE_OPERAND_ADDRESS(ActorScript_SetOrCompareScriptAddress, script)
 

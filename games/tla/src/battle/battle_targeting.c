@@ -2329,7 +2329,15 @@ u32 Ability_IsPsynergy(s32 abilityId) {
   return pp != 0;
 }
 
+/// The battle's state, as the forms of Poseidon and the Doom Dragon read it
+/// before BattleAI_ChooseAction sets its own battle further on.
 #define AI_BATTLE ((struct BattleState *)Ram_HeapSlots->battleState)
+
+/// The Doom Dragon's poses for its later actions in a turn, beside POSE_CAST,
+/// a head thrust forward: one head lunging low, and one reared high
+/// (battle_doom_dragon_a.png's pictures 6 and 8, and 14 and 16).
+#define DOOM_DRAGON_POSE_LOW 6
+#define DOOM_DRAGON_POSE_HIGH 7
 
 /// The choices an enemy may fail to carry out before it defends instead.
 #define AI_MAX_FAILED_CHOICES 16
@@ -2401,26 +2409,23 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   selectionMemory = &unit->aiState;
   enemy = Enemy_GetDefinitionFar(unit->enemyId);
   if (unit->enemyId == ENEMY_POSEIDON) {
-    selectionMemory = &((struct BattleState *)Ram_HeapSlots->battleState)
-                           ->aiStates[request->turnAction];
+    selectionMemory = &AI_BATTLE->aiStates[request->turnAction];
     if (request->turnAction == 1)
       enemy = Enemy_GetDefinitionFar(ENEMY_POSEIDON_SECOND_ACTION);
   } else if (unit->enemyId == ENEMY_DOOM_DRAGON_A) {
-    // Each later action of the turn plays another of the dragon's animations.
-    // XXX: which head each of 6, 3 and 7 shows; recording the Doom Dragon's
-    // turns would settle it.
+    // Each later action of the turn strikes with another pose of its heads.
     selectionMemory = &AI_BATTLE->aiStates[request->turnAction];
     switch (request->turnAction) {
     case 1:
-      AI_BATTLE->actingAnimation = 6;
+      AI_BATTLE->actingAnimation = DOOM_DRAGON_POSE_LOW;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_C);
       break;
     case 2:
-      AI_BATTLE->actingAnimation = 3;
+      AI_BATTLE->actingAnimation = POSE_CAST;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_B);
       break;
     case 3:
-      AI_BATTLE->actingAnimation = 7;
+      AI_BATTLE->actingAnimation = DOOM_DRAGON_POSE_HIGH;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_D);
       break;
     }
@@ -2428,18 +2433,18 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
     selectionMemory = &AI_BATTLE->aiStates[request->turnAction];
     switch (request->turnAction) {
     case 1:
-      AI_BATTLE->actingAnimation = 6;
+      AI_BATTLE->actingAnimation = DOOM_DRAGON_POSE_LOW;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_G);
       break;
     case 2:
-      AI_BATTLE->actingAnimation = 3;
+      AI_BATTLE->actingAnimation = POSE_CAST;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_F);
       break;
     }
   } else if (unit->enemyId == ENEMY_DOOM_DRAGON_H) {
     selectionMemory = &AI_BATTLE->aiStates[request->turnAction];
     if (request->turnAction == 1) {
-      AI_BATTLE->actingAnimation = 3;
+      AI_BATTLE->actingAnimation = POSE_CAST;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_I);
     }
   } else if (unit->enemyId == ENEMY_DULLAHAN) {

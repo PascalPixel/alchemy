@@ -145,10 +145,10 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  BattleEffect_SelectLivingTargets(state->args);
-  BattleEffect_SpawnObjects(ATALANTA_SPRITES, SPRITE_ATALANTA, 1);
+  BattleEffect_ShowLivingTargets(state->args);
+  BattleEffect_CreateSprites(ATALANTA_SPRITES, SPRITE_ATALANTA, 1);
   Resource_LoadAndDecompress(RESOURCE_SLASH_SHEET, state->sheet, 1, 1);
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_LIME_PALETTE),
                   SHEET_PALETTE_BYTES);

@@ -291,7 +291,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

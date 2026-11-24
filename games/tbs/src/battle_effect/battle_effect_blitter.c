@@ -108,13 +108,13 @@
     }                                                                          \
     PUT(templateWords[6]);                                                     \
     PUT(templateWords[7]);                                                     \
-    PUT(templateWords[8] + gBattleEffect_BitOperands[widthShift]);             \
+    PUT(templateWords[8] + gBlitter_ImmediatePowers[widthShift]);              \
     if ((flags & COMPOSITE_FLIP_X) != 0) {                                     \
       PUT(templateWords[9]);                                                   \
     } else {                                                                   \
       PUT(templateWords[10]);                                                  \
     }                                                                          \
-    PUT(templateWords[11] + gBattleEffect_BitOperands[widthShift]);            \
+    PUT(templateWords[11] + gBlitter_ImmediatePowers[widthShift]);             \
   }                                                                            \
   templateWords += 12;                                                         \
                                                                                \

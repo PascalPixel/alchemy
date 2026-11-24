@@ -121,7 +121,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
                         COMPOSITE_LIGHTEN);
     draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   } else {
-    BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+    BattleEffect_BuildCanvasBlitters(state->args->side, draw);
   }
 
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
@@ -173,7 +173,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
     state->particles[i].variant = -1;

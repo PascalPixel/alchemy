@@ -212,7 +212,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   REG_BG2X = canvasShiftX << 8;
   state->transferMode = CANVAS_COPY_AND_FADE;
   state->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   if (state->args->side == EFFECT_SIDE_PARTY)
     drawFlags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
   else
@@ -421,7 +421,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -545,7 +545,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     shard->variant = Random16() & 0xff;
   }
 
-  BattleEffect_FetchRectangleBlitters(state->args->side, blitters);
+  BattleEffect_BuildCanvasBlitters(state->args->side, blitters);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0;

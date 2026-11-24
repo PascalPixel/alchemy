@@ -165,7 +165,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Task_Remove(BattleCamera_ApplyPhasedDelta);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();

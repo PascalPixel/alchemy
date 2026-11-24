@@ -116,7 +116,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
       s32 y = FIXEDtoINT(Trig_Cos(angle) * DJINN_BEAMS_DJINNI_SWAY_Y) +
               djinniY - 24;
 
-      BattleEffect_FetchRectangleBlitters(state->args->side ^ k, draw);
+      BattleEffect_BuildCanvasBlitters(state->args->side ^ k, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
@@ -221,7 +221,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     EFFECT_PRESENT_CANVAS(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

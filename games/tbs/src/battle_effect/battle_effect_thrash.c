@@ -136,7 +136,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
     EFFECT_END_FRAME(state);
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

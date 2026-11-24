@@ -17,7 +17,7 @@ enum MirroredWallMode {
 
 /// Builds the two usual canvas blitters, the lightening one and the additive
 /// one, both drawing mirrored when flip is nonzero.
-void BattleEffect_FetchRectangleBlitters(s32 flip, BlitterPair out) {
+void BattleEffect_BuildCanvasBlitters(s32 flip, BlitterPair out) {
   if (flip == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);

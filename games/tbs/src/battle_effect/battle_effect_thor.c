@@ -190,7 +190,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   state->scrollStepY = 0;
   view->busy = 1;
   Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   state->transferMode = CANVAS_COPY;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
@@ -401,8 +401,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   view->busy = 0;
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   BattleEffect_SetupBlendedDisplay();
-  BattleEffect_SelectLivingTargets(state->args);
-  BattleEffect_SpawnObjects(THOR_SPRITES, SPRITE_THOR, 1);
+  BattleEffect_ShowLivingTargets(state->args);
+  BattleEffect_CreateSprites(THOR_SPRITES, SPRITE_THOR, 1);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, Ram_MapGridCellBuffer, 1,
                              0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_PILLAR_SHEET, state->sheet, 1,
@@ -617,7 +617,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           thorSpeedX = thorSpeedX * 60 / DAMPING_SCALE;
           thorSpeedY = thorSpeedY * 60 / DAMPING_SCALE;
         }
-        BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_THOR, thorX, thorY);
+        BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_THOR, thorX, thorY);
       }
       if (frame >= THOR_APPEAR_FRAME && frame <= 143) {
         s32 thorScreenX;
@@ -649,7 +649,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     }
 
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferCanvas);
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_THOR, thorX, thorY);
   }
   for (i = 0; i != THOR_SPRITES; i++) {

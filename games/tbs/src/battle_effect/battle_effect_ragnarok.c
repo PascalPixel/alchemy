@@ -61,7 +61,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_FetchRectangleBlitters(state->args->side, blit);
+  BattleEffect_BuildCanvasBlitters(state->args->side, blit);
   // The user takes its leap pose and animates fast until the end.
   Actor_SelectAnimationFar(user, POSE_LEAP);
   Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL * 3);

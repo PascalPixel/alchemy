@@ -33,7 +33,7 @@ enum SummonEffectId {
                           ///< (battle_effect_judgment.c)
   SUMMON_EFFECT_BOREAS,   ///< BattleEffect_RunBoreas (battle_effect_boreas.c)
   SUMMON_EFFECT_METEOR,   ///< BattleEffect_RunMeteor
-                          ///< (battle_effect_particle_streams.c)
+                          ///< (battle_effect_starfield_fall.c)
   SUMMON_EFFECT_THOR      ///< BattleEffect_RunThor (battle_effect_thor.c)
 };
 
@@ -266,7 +266,7 @@ struct Point2D {
 };
 
 /// A blitter pair: [0] built in HEAP_SLOT_RAM_CODE and [1] in
-/// HEAP_SLOT_RAM_CODE_PAIRED (BattleEffect_FetchRectangleBlitters fills one).
+/// HEAP_SLOT_RAM_CODE_PAIRED (BattleEffect_BuildCanvasBlitters fills one).
 /// Many effects keep this pair in their stack frame.
 typedef DrawRectangle BlitterPair[2];
 
@@ -332,12 +332,12 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args);
 
 // battle_effect_canvas.c
 void BattleEffect_WipeCanvas(s32 direction, s32 fill);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
-void BattleEffect_FlushPendingGraphicsTransfer(void);
+void BattleEffect_TransferCanvas(void);
+void BattleEffect_TransferFullScreenImage(void);
 void BattleEffect_ApplyWindowBlendRegisters(void);
-void Display_ApplyBg2Reference(void);
-void Palette_StepFadeTransfer(void);
-void BattleEffect_ClearActorTimers(void);
+void BattleEffect_ApplyBg2Reference(void);
+void BattleEffect_DarkenBackgroundStep(void);
+void BattleEffect_ClearTintTimers(void);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_OpenCanvasLayer(s32 bgControl);
@@ -360,7 +360,7 @@ void BattleEffect_RunHaunting(struct BattleEffectParams *args);
 void BattleEffect_RunGatheringLights(struct BattleEffectParams *args, s32 mode);
 
 // battle_effect_mirrored_wall.c
-void BattleEffect_FetchRectangleBlitters(s32 flip, BlitterPair out);
+void BattleEffect_BuildCanvasBlitters(s32 flip, BlitterPair out);
 void BattleEffect_RunBerserk(struct BattleEffectParams *args);
 void BattleEffect_RunSpasm(struct BattleEffectParams *args);
 void BattleEffect_RunRecovery(struct BattleEffectParams *args);
@@ -444,7 +444,7 @@ void BattleEffect_CallDoNothing(s32 count);
 void BattleEffect_RunSummon(struct BattleEffectParams *args);
 void BattleEffect_RunFromTable(struct BattleEffectParams *args);
 void BattleEffect_BuildWindowEdgeTable(void);
-void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args);
+void BattleEffect_ShowLivingTargets(struct BattleEffectParams *args);
 void BattleEffect_SetupBlendedDisplay(void);
 /// Passed to BattleEffect_TintBattler as its palette, animation or timerSlot:
 /// leave that one as it is.
@@ -508,7 +508,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args);
 void BattleEffect_RunSmokeBomb(struct BattleEffectParams *args);
 void BattleEffect_RunBlast(struct BattleEffectParams *args);
 void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode);
-void BattleEffect_SpawnObjects(s32 count, s32 spriteId, u32 priority);
+void BattleEffect_CreateSprites(s32 count, s32 spriteId, u32 priority);
 void BattleEffect_DoNothing(void);
 
 // battle_effect_burst_shower.c
@@ -557,11 +557,11 @@ void BattleEffect_RunIceBlessing(struct BattleEffectParams *args);
 void BattleEffect_RunBlizzard(struct BattleEffectParams *args);
 void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                       s32 mode);
-void BattleEffect_InitializeRisingObject(s32 id);
+void BattleEffect_HopBackToSpot(s32 id);
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames);
 
 // battle_effect_rushing_strike.c
-void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount);
+void BattleEffect_PackYellowOrbs(u8 *src, u8 *dst, s32 stride, s32 rowCount);
 void BattleEffect_RunBoneCharge(struct BattleEffectParams *args);
 void BattleEffect_RunBruteForce(struct BattleEffectParams *args);
 void BattleEffect_RunOnslaught(struct BattleEffectParams *args);
@@ -610,7 +610,7 @@ void Projection_Sprite(s32 id, struct ScreenPoint *position);
 void Projection_ScaledUnit(s32 id, struct ScreenPoint *position);
 void Projection_Unit(s32 id, struct ScreenPoint *position);
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
-void BattleEffect_ProbeKeysForExtendedActor(void);
+void BattleEffect_ReadKeysForEnemyTarget(void);
 void BattleEffect_RunByIdRange(struct BattleEffectParams *args);
 
 // battle_effect_beams.c
@@ -627,15 +627,15 @@ void BattleEffect_RunKite(struct BattleEffectParams *args);
 
 // battle_effect_helm_splitter.c
 void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args);
-void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z);
+void BattleEffect_PlaceFormationSprites(s32 formation, FIXED x, FIXED z);
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y);
 
-// battle_effect_particle_streams.c
+// battle_effect_starfield_fall.c
 void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep);
 void BattleEffect_ArmPaletteHBlankDma(void);
 void BattleEffect_RunMeteor(struct BattleEffectParams *args);
 void BattleEffect_RunOuterSpace(struct BattleEffectParams *args);
-void BattleEffect_RunParticleStreams(struct BattleEffectParams *args, s32 mode);
+void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode);
 
 // battle_effect_ramses.c
 void BattleEffect_RunRamses(struct BattleEffectParams *args);

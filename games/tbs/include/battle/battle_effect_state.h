@@ -24,7 +24,7 @@ struct BattleBg2Origin {
 STATIC_ASSERT(sizeof(struct BattleBg2Origin) == 12);
 STATIC_ASSERT(offsetof(struct BattleBg2Origin, y) == 4);
 
-/// How BattleEffect_ProcessPendingGraphicsTransfer moves the effect's
+/// How BattleEffect_TransferCanvas moves the effect's
 /// 128x128 canvas into VRAM once a frame (state->transferMode); the canvas
 /// pixels are indices into a palette ramp, so scaling them fades a trail.
 /// For the clear, darken and brighten modes transferValue is a word, a fill or
@@ -102,7 +102,7 @@ struct BattleEffectState {
   /// and 2.
   s32 cameraPhase;
   s32 fadeFrames; ///< battle background fade frames left
-                  ///< (Palette_StepFadeTransfer)
+                  ///< (BattleEffect_DarkenBackgroundStep)
   s32 fadeStep;   ///< CANVAS_FADE_STEPs the background has darkened so far
   /// Window, display and blend registers, which
   /// BattleEffect_ApplyWindowBlendRegisters writes all at once.
@@ -119,7 +119,7 @@ struct BattleEffectState {
   ///@}
   u16 padding; ///< aligns bg2x; never read or written
   /// BG2's reference point, written to BG2X and BG2Y by
-  /// Display_ApplyBg2Reference and BattleEffect_AdvanceBg2OnInterval.
+  /// BattleEffect_ApplyBg2Reference and BattleEffect_AdvanceBg2OnInterval.
   ///@{
   s32 bg2x;
   s32 bg2y;

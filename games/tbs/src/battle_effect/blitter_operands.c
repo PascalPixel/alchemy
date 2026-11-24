@@ -21,10 +21,10 @@
       ARM_IMMEDIATE_BIT(12), ARM_IMMEDIATE_BIT(13), ARM_IMMEDIATE_BIT(14),     \
       ARM_IMMEDIATE_BIT(15)
 
-/// Unused: a copy of gBattleEffect_BitOperands that nothing reads.
-u16 gUnused_BitOperands[] = {ARM_IMMEDIATE_POWERS};
+/// Unused: a copy of gBlitter_ImmediatePowers that nothing reads.
+u16 gBlitter_UnusedImmediatePowers[] = {ARM_IMMEDIATE_POWERS};
 /// The operand for 1 << n, by n from 0 to 15. BattleEffect_BuildBlitter
 /// (battle_effect_blitter.c) adds the entry for the canvas width's power of two
 /// (7 for the 128-pixel canvas) to two of the instructions that clip a picture
 /// at the canvas's left and right edges, so that they hold the width.
-u16 gBattleEffect_BitOperands[] = {ARM_IMMEDIATE_POWERS};
+u16 gBlitter_ImmediatePowers[] = {ARM_IMMEDIATE_POWERS};

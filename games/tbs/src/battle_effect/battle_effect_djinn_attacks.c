@@ -66,7 +66,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   state->args = args;
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_FetchRectangleBlitters(0, blit);
+  BattleEffect_BuildCanvasBlitters(0, blit);
 
   cells = Ram_MapGridCellBuffer;
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
@@ -199,7 +199,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   state->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_FetchRectangleBlitters(0, blit);
+  BattleEffect_BuildCanvasBlitters(0, blit);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SMALL_SHEET, state->sheet,
                              1, 1);
@@ -451,7 +451,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   state->args = args;
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_FetchRectangleBlitters(0, blitters);
+  BattleEffect_BuildCanvasBlitters(0, blitters);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET, state->sheet, 1,
                              0);

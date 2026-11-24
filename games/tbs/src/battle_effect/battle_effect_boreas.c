@@ -111,7 +111,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240); // an empty window
@@ -124,11 +124,11 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
                       COMPOSITE_TRANSPARENT);
   drawAlt = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            RESOURCE_VIOLET_SKY_BACKDROP, 0);
-  BattleEffect_SpawnObjects(BOREAS_SPRITES, SPRITE_BOREAS, 1);
+  BattleEffect_CreateSprites(BOREAS_SPRITES, SPRITE_BOREAS, 1);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
@@ -537,7 +537,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

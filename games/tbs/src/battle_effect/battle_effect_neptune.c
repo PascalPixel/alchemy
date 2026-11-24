@@ -127,14 +127,14 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ResetBg2Pa, TASK_PASS_VBLANK);
   Irq_SetHandler(IRQ_VCOUNT, 0, BattleEffect_SetBg2AffineScaleHalf);
   state->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   // Setup: wipe the battle away, swap in the storm clouds and load the
   // pictures.
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240);
-  BattleEffect_SelectLivingTargets(state->args);
-  BattleEffect_SpawnObjects(NEPTUNE_SPRITES, SPRITE_NEPTUNE, 1);
+  BattleEffect_ShowLivingTargets(state->args);
+  BattleEffect_CreateSprites(NEPTUNE_SPRITES, SPRITE_NEPTUNE, 1);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,

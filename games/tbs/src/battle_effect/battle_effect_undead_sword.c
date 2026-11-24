@@ -56,7 +56,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET,
                              state->sheet + UNDEAD_SWORD_PUFF_SHEET, 1, 0);
-  BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+  BattleEffect_BuildCanvasBlitters(state->args->side, draw);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
 
@@ -121,7 +121,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
     }
 
     // The clouds billow out two a frame from frame 8.
-    BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+    BattleEffect_BuildCanvasBlitters(state->args->side, draw);
     for (i = 0, particle = state->particles; i != UNDEAD_SWORD_PUFFS; i++) {
       if (frame >= i / 2 + 8 && particle->variant < UNDEAD_SWORD_PUFF_FRAMES) {
         s32 drawX;
@@ -132,9 +132,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
         drawY = FIXEDtoINT(particle->y);
         if (picture > UNDEAD_SWORD_PUFF_PICTURES - 1)
           picture = UNDEAD_SWORD_PUFF_PICTURES - 1;
-        src = state->sheet + gUndeadSword_SparkPictures[picture] +
+        src = state->sheet + gUndeadSword_PuffPictures[picture] +
               UNDEAD_SWORD_PUFF_SHEET;
-        size = gUndeadSword_SparkSizes[picture];
+        size = gUndeadSword_PuffSizes[picture];
         draw[0](canvas, src, drawX - size / 2, drawY - size / 2, size, size);
         particle->variant++;
         Particle_AdvanceWithGravity2D(particle, 62, -toFIXED(1) / 8);
@@ -148,7 +148,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
       BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

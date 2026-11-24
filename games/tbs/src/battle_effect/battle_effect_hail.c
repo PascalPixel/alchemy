@@ -38,7 +38,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(args, ELEMENT_MERCURY, state->args->side,
                                  DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
-  BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+  BattleEffect_BuildCanvasBlitters(state->args->side, draw);
   Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, state->sheet, 1, 1);
   EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                         CANVAS_FADE_THREE_QUARTERS);
@@ -251,7 +251,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
         struct Particle *crackle = &state->particles[GROUND_FIRST_CRACKLE + i];
 
         crackle->velocityX = Random16() % 6 + 3;
-        crackle->velocityY = gHail_CrackleFlips[Random16() & 3];
+        crackle->velocityY = gGround_CrackleFlips[Random16() & 3];
       }
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -269,13 +269,13 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
           y = position.y - PORTAL_HEIGHT / 2;
           draw[0](canvas, state->sheet, x, y, PORTAL_WIDTH, PORTAL_HEIGHT);
           if ((frame & 3) <= 1)
-            draw[0](canvas, state->sheet + gHail_PortalPictures[1],
-                    x + gHail_PortalX[1], y + gHail_PortalY[1],
-                    gHail_PortalWidths[1], gHail_PortalHeights[1]);
+            draw[0](canvas, state->sheet + gGround_PortalPictures[1],
+                    x + gGround_PortalX[1], y + gGround_PortalY[1],
+                    gGround_PortalWidths[1], gGround_PortalHeights[1]);
           else
-            draw[0](canvas, state->sheet + gHail_PortalPictures[2],
-                    x + gHail_PortalX[2], y + gHail_PortalY[2],
-                    gHail_PortalWidths[2], gHail_PortalHeights[2]);
+            draw[0](canvas, state->sheet + gGround_PortalPictures[2],
+                    x + gGround_PortalX[2], y + gGround_PortalY[2],
+                    gGround_PortalWidths[2], gGround_PortalHeights[2]);
           for (j = 0; j != GROUND_CRACKLES_PER_PORTAL; j++) {
             struct Particle *crackle =
                 &state->particles[GROUND_FIRST_CRACKLE +
@@ -287,19 +287,20 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                                 COMPOSITE_LIGHTEN);
             draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
             if (crackle->velocityY & 4)
-              crackleX = x - gHail_PortalWidths[crackle->velocityX] -
-                         gHail_PortalX[crackle->velocityX] + 24;
+              crackleX = x - gGround_PortalWidths[crackle->velocityX] -
+                         gGround_PortalX[crackle->velocityX] + 24;
             else
-              crackleX = x + gHail_PortalX[crackle->velocityX];
+              crackleX = x + gGround_PortalX[crackle->velocityX];
             if (crackle->velocityY & 8)
-              crackleY = y - gHail_PortalHeights[crackle->velocityX] -
-                         gHail_PortalY[crackle->velocityX] + 48;
+              crackleY = y - gGround_PortalHeights[crackle->velocityX] -
+                         gGround_PortalY[crackle->velocityX] + 48;
             else
-              crackleY = y + gHail_PortalY[crackle->velocityX];
+              crackleY = y + gGround_PortalY[crackle->velocityX];
             draw[1](canvas,
-                    state->sheet + gHail_PortalPictures[crackle->velocityX],
-                    crackleX, crackleY, gHail_PortalWidths[crackle->velocityX],
-                    gHail_PortalHeights[crackle->velocityX]);
+                    state->sheet + gGround_PortalPictures[crackle->velocityX],
+                    crackleX, crackleY,
+                    gGround_PortalWidths[crackle->velocityX],
+                    gGround_PortalHeights[crackle->velocityX]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
           }
           portal->x += portal->velocityX;

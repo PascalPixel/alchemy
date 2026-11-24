@@ -49,8 +49,8 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectState *state,
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   state->args->prelude = 0;
-  Task_Remove(Palette_StepFadeTransfer);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_DarkenBackgroundStep);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
 }
 
@@ -224,7 +224,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, state, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, pictures, 1, 0);
-  BattleEffect_PackTileRows(
+  BattleEffect_PackYellowOrbs(
       pictures, state->sheet + CASTING_IMPACT_ORB_PICTURES, YELLOW_ORB_WIDTH,
       YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT);
   if (mode == CASTING_IMPACT_SCORCH || mode == CASTING_IMPACT_BARRAGE) {
@@ -321,10 +321,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   } else {
     state->transferValue = CANVAS_FADE_HALF;
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   Projection_ScaledUnit(state->args->targets[0], &targetPos);
   Projection_ScaledUnit(state->args->user, &casterPos);
-  BattleEffect_FetchRectangleBlitters(state->args->side, blitters);
+  BattleEffect_BuildCanvasBlitters(state->args->side, blitters);
   state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   state->fadeStep = 0;
   casterActor = GetBattleObjectSlotFar(state->args->user)->actor;
@@ -804,7 +804,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                 imageY + 56, gBattleEffect_GlintPictureWidths[image],
                 gBattleEffect_GlintPictureHeights[image]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-            BattleEffect_FetchRectangleBlitters(state->args->side, blitters);
+            BattleEffect_BuildCanvasBlitters(state->args->side, blitters);
           }
         }
       } else if (mode == CASTING_IMPACT_AQUA_SOCK) {
@@ -866,7 +866,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             }
           }
         }
-        BattleEffect_FetchRectangleBlitters(state->args->side, blitters);
+        BattleEffect_BuildCanvasBlitters(state->args->side, blitters);
       } else if (mode == CASTING_IMPACT_PSYPHON_SEAL) {
         s32 height;
         EFFECT_RELEASE_BLITTERS();
@@ -888,7 +888,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                                                     RUNE_HALF_WIDTH, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
-        BattleEffect_FetchRectangleBlitters(state->args->side, blitters);
+        BattleEffect_BuildCanvasBlitters(state->args->side, blitters);
       } else if (mode == CASTING_IMPACT_CYCLONE_SLASH) {
         // A tornado stands over the target.
         s32 image;
@@ -1276,8 +1276,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
     Iwram_ClearWords(canvas, CANVAS_BYTES);
     state->args->prelude = 0;
-    Task_Remove(Palette_StepFadeTransfer);
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_DarkenBackgroundStep);
+    Task_Remove(BattleEffect_TransferCanvas);
     EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpair(args);
   } else {

@@ -208,7 +208,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
 /// Creates the `count` sprites a summon's figure is drawn from, all of sprite
 /// `spriteId`, into state->sprites: sprite n plays animation n, its piece of
 /// the figure, at BG priority `priority`.
-void BattleEffect_SpawnObjects(s32 count, s32 spriteId, u32 priority) {
+void BattleEffect_CreateSprites(s32 count, s32 spriteId, u32 priority) {
   struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   s32 piece = 0;
 

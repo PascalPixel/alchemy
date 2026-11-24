@@ -59,7 +59,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   state->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_BuildCanvasBlitters(0, draw);
 
   resource = Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
@@ -97,9 +97,9 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       point->variant = -(Random16() & 15);
     }
     EFFECT_FREE_PARTICLES(k, PARTICLES, NEREID_DROPS);
-    BattleEffect_SelectLivingTargets(state->args);
+    BattleEffect_ShowLivingTargets(state->args);
     wait(1);
-    BattleEffect_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
+    BattleEffect_CreateSprites(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
     for (frame = 0; frame != NEREID_FRAMES; frame++) {
       // A or B, once the columns rise, skips to the last frames.
@@ -120,7 +120,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
         if (focus.x < toFIXED(120))
           velocity.x += toFIXED(1) / 2;
       }
-      BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
+      BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_NEREID, focus.x,
                                          focus.y);
 
       // Drops burst up among the targets.
@@ -224,7 +224,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       EFFECT_PRESENT_CANVAS(state);
     }
 
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_TransferCanvas);
     EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
     for (k = 0; k != NEREID_OBJECTS; k++)

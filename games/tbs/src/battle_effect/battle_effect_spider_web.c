@@ -189,7 +189,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
     }
     EFFECT_END_FRAME(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

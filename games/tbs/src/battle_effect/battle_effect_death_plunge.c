@@ -56,7 +56,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   state->transferMode = CANVAS_COPY_AND_FADE;
   state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
   // The run, most of the way to the target.
   first = GetBattleObjectSlotFar(state->args->user);
   second = GetBattleObjectSlotFar(state->args->targets[0]);
@@ -265,19 +265,19 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-        width = gDeathPlunge_SwordWidths[picture];
-        height = gDeathPlunge_SwordHeights[picture];
+        width = gBladeRain_SwordWidths[picture];
+        height = gBladeRain_SwordHeights[picture];
         blit[drift < 0](canvas,
-                        state->sheet + gDeathPlunge_SwordPictures[picture],
+                        state->sheet + gBladeRain_SwordPictures[picture],
                         FIXEDtoINT(blade->x) - (width >> 1),
                         FIXEDtoINT(blade->y) - (height >> 1), width, height);
 #else
         blit[(u32)drift >> 31](
-            canvas, state->sheet + gDeathPlunge_SwordPictures[picture],
+            canvas, state->sheet + gBladeRain_SwordPictures[picture],
             FIXEDtoINT(blade->x) -
-                ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
+                ((width = gBladeRain_SwordWidths[picture]) >> 1),
             FIXEDtoINT(blade->y) -
-                ((height = gDeathPlunge_SwordHeights[picture]) >> 1),
+                ((height = gBladeRain_SwordHeights[picture]) >> 1),
             width, height);
 #endif
         if (frame >= i * 4 + 16) {
@@ -289,19 +289,19 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         u32 height;
 
 #ifdef UBFIX
-        width = gDeathPlunge_SwordWidths[picture];
-        height = gDeathPlunge_SwordHeights[picture];
+        width = gBladeRain_SwordWidths[picture];
+        height = gBladeRain_SwordHeights[picture];
         blit[drift < 0](
-            canvas, state->sheet + gDeathPlunge_SwordPictures[picture],
+            canvas, state->sheet + gBladeRain_SwordPictures[picture],
             FIXEDtoINT(blade->x) - (width >> 1),
             FIXEDtoINT(blade->y) - (height >> 1), width, height - 4);
 #else
         blit[(u32)drift >> 31](
-            canvas, state->sheet + gDeathPlunge_SwordPictures[picture],
+            canvas, state->sheet + gBladeRain_SwordPictures[picture],
             FIXEDtoINT(blade->x) -
-                ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
+                ((width = gBladeRain_SwordWidths[picture]) >> 1),
             FIXEDtoINT(blade->y) -
-                ((height = gDeathPlunge_SwordHeights[picture]) >> 1),
+                ((height = gBladeRain_SwordHeights[picture]) >> 1),
             width, height - 4);
 #endif
       }
@@ -467,7 +467,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   }
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
@@ -535,7 +535,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   state->args = args;
 
-  BattleEffect_ClearActorTimers();
+  BattleEffect_ClearTintTimers();
   view->secondMode = BATTLE_BACKGROUND_FIXED;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
@@ -575,8 +575,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 
   // The pieces fly out from the middle.
-  startY = gDeathPlunge_PieceStartY;
-  startX = gDeathPlunge_PieceStartX;
+  startY = gShatteringOpening_PieceStartY;
+  startX = gShatteringOpening_PieceStartX;
   radius = 0;
   piece = state->particles;
   for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
@@ -737,9 +737,11 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     if (frame <= 50) {
       for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
         piece = &state->particles[i];
-        draw[0](canvas, state->imageStorage + gDeathPlunge_PiecePictures[i],
+        draw[0](canvas,
+                state->imageStorage + gShatteringOpening_PiecePictures[i],
                 FIXEDtoINT(piece->x), FIXEDtoINT(piece->y),
-                gDeathPlunge_PieceWidths[i], gDeathPlunge_PieceHeights[i]);
+                gShatteringOpening_PieceWidths[i],
+                gShatteringOpening_PieceHeights[i]);
         if (frame > 3)
           Particle_AdvanceWithGravity2D(piece, PARTICLE_DAMPING_NONE,
                                         toFIXED(1) / 4);
@@ -805,7 +807,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_TintBattler(state->args->targets[0], TINT_KEEP, POSE_STANDING,
                            TINT_KEEP, 0);
   gBgScroll[1].x = state->savedBg1X;
@@ -934,12 +936,13 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
       for (i = 0; i != 4; i++) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-                            gDeathPlunge_DrawFlags[i] | EFFECT_CLIP_BOUNDS,
+                            gElementBurst_SparkFlips[i] | EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
         draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
         draw[1](canvas,
                 state->sheet + picture * PICTURE_BYTES(ELEMENT_BURST_SPARK),
-                gDeathPlunge_X[i] + 32, ground.y + gDeathPlunge_Y[i] - 32,
+                gElementBurst_SparkX[i] + 32,
+                ground.y + gElementBurst_SparkY[i] - 32,
                 ELEMENT_BURST_SPARK_WIDTH, ELEMENT_BURST_SPARK_HEIGHT);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
@@ -968,7 +971,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
   // Finish, as for the element pillar.
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
@@ -1072,15 +1075,15 @@ void BattleEffect_StartElementStreaks(s32 element) {
   state->transferMode = CANVAS_COPY_AND_DARKEN;
   state->transferValue = CANVAS_FILL_WORD(6);
   Task_Add(BattleEffect_DrawStreaks, TASK_PASS_FRAME);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 }
 
 /// Ends the element streaks and frees what they took.
 void BattleEffect_EndElementStreaks(void) {
   Task_Remove(BattleEffect_DrawStreaks);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  Task_Remove(Palette_StepFadeTransfer);
+  Task_Remove(BattleEffect_DarkenBackgroundStep);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }

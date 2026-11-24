@@ -354,7 +354,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   for (i = 0; i != GAIA_ROCKS; i++)
     Sprite_DestroyFar(state->sprites[i]);

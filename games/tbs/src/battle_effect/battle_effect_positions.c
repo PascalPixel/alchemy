@@ -82,7 +82,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 
 /// Unused: reads the held keys when the first target is an enemy and does
 /// nothing with them.
-UNUSED void BattleEffect_ProbeKeysForExtendedActor(void) {
+UNUSED void BattleEffect_ReadKeysForEnemyTarget(void) {
   // XXX (no evidence): what the keys were for, perhaps choosing an effect for
   // enemy targets; nothing calls this in either game.
   struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);

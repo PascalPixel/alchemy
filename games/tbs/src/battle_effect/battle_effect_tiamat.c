@@ -154,9 +154,9 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_FREE_PARTICLES(i, PARTICLES, DRAGON_FIRE_EMBERS);
   if (mode == DRAGON_FIRE_TIAMAT) {
-    BattleEffect_SelectLivingTargets(state->args);
+    BattleEffect_ShowLivingTargets(state->args);
     wait(1);
-    BattleEffect_SpawnObjects(TIAMAT_SPRITES, SPRITE_TIAMAT, 2);
+    BattleEffect_CreateSprites(TIAMAT_SPRITES, SPRITE_TIAMAT, 2);
   }
 
   for (frame = 0; frame != DRAGON_FIRE_FRAMES; frame++) {
@@ -379,7 +379,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         Sprite_StartAnimationFar(state->sprites[TIAMAT_JAW], TIAMAT_JAW);
         Sprite_StartAnimationFar(state->sprites[TIAMAT_THROAT], TIAMAT_THROAT);
       }
-      BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, tiamat.x,
+      BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_TIAMAT, tiamat.x,
                                          tiamat.y);
     }
     if (frame == 138) {
@@ -432,7 +432,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   if (mode == DRAGON_FIRE_TIAMAT) {
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_TIAMAT, tiamat.x, tiamat.y);

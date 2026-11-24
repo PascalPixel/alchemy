@@ -10,7 +10,7 @@
 /// in sprites.tsv's order) in order. A party member's field sprite shares its
 /// character number, so the field draws a character id as its sprite. The
 /// summons' figures, from SPRITE_ATALANTA on, are each summon's own sprite: its
-/// event creates its objects of it (BattleEffect_SpawnObjects), each playing
+/// event creates its objects of it (BattleEffect_CreateSprites), each playing
 /// one of its animations. A row sprites.tsv leaves empty, with no size and no
 /// pictures, shows nothing and has no name; the next named row's number is
 /// written after it.

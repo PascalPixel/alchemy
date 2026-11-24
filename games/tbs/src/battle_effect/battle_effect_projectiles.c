@@ -234,9 +234,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     }
     EFFECT_PRESENT_CANVAS(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
-  Task_Remove(Palette_StepFadeTransfer);
+  Task_Remove(BattleEffect_DarkenBackgroundStep);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -496,7 +496,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                1, 0);
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   user = GetBattleObjectSlotFar(state->args->user)->actor;
   shots = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_SHOTS]);
@@ -922,7 +922,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 }
 
 /// Sends a unit back to its place (its anchor) with a hop.
-UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
+UNUSED void BattleEffect_HopBackToSpot(s32 id) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct Actor *actor = slot->actor;
 

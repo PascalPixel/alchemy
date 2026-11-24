@@ -54,7 +54,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, state->sheet,
                              1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  BattleEffect_FetchRectangleBlitters(state->args->side ^ 1, draw);
+  BattleEffect_BuildCanvasBlitters(state->args->side ^ 1, draw);
   {
     struct Actor *actor = GetBattleObjectSlotFar(state->args->user)->actor;
     struct Actor *goal = GetBattleObjectSlotFar(state->args->targets[0])->actor;

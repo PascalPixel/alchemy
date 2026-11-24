@@ -308,8 +308,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                                RESOURCE_VIOLET_SKY_BACKDROP, 0);
       BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
                                   RESOURCE_VIOLET_SKY_BACKDROP, 8);
-      BattleEffect_SelectLivingTargets(state->args);
-      BattleEffect_SpawnObjects(PROCNE_SPRITES, SPRITE_PROCNE, 2);
+      BattleEffect_ShowLivingTargets(state->args);
+      BattleEffect_CreateSprites(PROCNE_SPRITES, SPRITE_PROCNE, 2);
 
       resource = Resource_GetTableEntry(RESOURCE_VIOLET_COMET_SHEET);
       Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);

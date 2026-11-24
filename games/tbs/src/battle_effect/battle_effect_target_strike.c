@@ -541,7 +541,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   BattleEffect_EndCanvasLayer();
 }
 

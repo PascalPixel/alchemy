@@ -94,7 +94,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   state->args = args;
-  BattleEffect_SpawnObjects(CYBELE_SPRITES, SPRITE_CYBELE, 1);
+  BattleEffect_CreateSprites(CYBELE_SPRITES, SPRITE_CYBELE, 1);
 
   order = Ram_MapGridCellBuffer;
   for (i = 0; i != CYBELE_DISSOLVE_RUNS * CANVAS_SIZE; i++)
@@ -154,7 +154,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     thorn->velocityY = 0;
     thorn->variant = 0;
   }
-  BattleEffect_SelectLivingTargets(state->args);
+  BattleEffect_ShowLivingTargets(state->args);
 
   height = -toFIXED(64);
   speed = 0;
@@ -187,7 +187,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     height += speed;
     if (height > toFIXED(64))
       height = toFIXED(64);
-    BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_CYBELE, toFIXED(128),
+    BattleEffect_PlaceFormationSprites(SUMMON_FORMATION_CYBELE, toFIXED(128),
                                        height);
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
@@ -536,7 +536,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   EFFECT_RELEASE_BLITTERS();
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleEffect_RunImpactBurst(SUMMON_FORMATION_CYBELE, toFIXED(128), height);

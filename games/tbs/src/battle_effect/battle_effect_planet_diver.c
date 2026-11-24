@@ -300,7 +300,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(state);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
@@ -415,7 +415,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     }
     EFFECT_PRESENT_CANVAS(state);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();

@@ -80,7 +80,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   state->transferMode = CANVAS_COPY_AND_FADE;
   state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   source = GetBattleObjectSlotFar(state->args->user)->actor;
   target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
@@ -241,7 +241,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   state->transferMode = CANVAS_COPY_AND_FADE;
   state->transferValue = CANVAS_FADE_HALF;
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_TransferCanvas, TASK_PASS_VBLANK);
 
   source = GetBattleObjectSlotFar(state->args->user)->actor;
   target = GetBattleObjectSlotFar(state->args->targets[0])->actor;

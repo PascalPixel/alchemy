@@ -243,7 +243,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   // canvas leaves it, which repairs nothing this effect changed.
   // XXX (no evidence): why Condemn reloads the background; the reload puts
   // back the picture already there, so nothing the game shows says why.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_TransferCanvas);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, gBattleState->background,
                            BACKGROUND_DARKENED_LEVEL);

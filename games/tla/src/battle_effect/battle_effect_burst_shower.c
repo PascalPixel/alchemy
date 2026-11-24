@@ -510,8 +510,11 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         break;
       }
       if (palette != NULL) {
-        __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;
-        routine((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+        /* FAKEMATCH(temporary): copy, a local standing for the IWRAM routine's
+         * address. */
+        s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
+
+        copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
       }
     }
   }

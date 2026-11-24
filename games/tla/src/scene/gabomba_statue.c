@@ -363,7 +363,8 @@ enum ChannelPiece {
   PIECE_SOUTH_WEST_AND_NORTH_EAST, ///< two curves
   /// No channel: the statues and a block with no piece on it stop a charge.
   PIECE_STOP,
-  PIECE_SOCKET ///< the hole a raised block leaves
+  PIECE_SOCKET, ///< the hole a raised block leaves
+  PIECE_KINDS
 };
 
 /// The four charges' paths, by the bit of PuzzleCell.state that marks a cell
@@ -409,6 +410,16 @@ enum {
 
 /// The blocks of the channel, one for each of the room's block actors.
 enum { CHANNEL_BLOCKS = 7 };
+
+/// A Pound handler runs each frame of the fist's fall with (landed, frame):
+/// landed is 1 on the frame the fist lands, POUND_LAND_FRAME, and what it
+/// strikes sinks a step on each frame before.
+enum { POUND_LAND_FRAME = 8 };
+
+/// The channel blocks' animations, which all the blocks share with the first:
+/// the green crystal spins one way as the right arrow panel turns them
+/// clockwise, and back as the left turns them counterclockwise.
+enum { BLOCK_ANIM_TURN_CLOCKWISE = 2, BLOCK_ANIM_TURN_COUNTERCLOCKWISE = 3 };
 
 /// The two ways a block turns (GabombaStatue_TurnBlockPiece).
 enum { TURN_COUNTERCLOCKWISE, TURN_CLOCKWISE };
@@ -1422,8 +1433,8 @@ void GabombaStatue_HideLadderTopBlocks(void) {
 /// Pound on one of the two stakes either side of the flashing cog in the south
 /// of its room, cells (20, 30) and (24, 30), drives it into the floor. Once
 /// both are down, the cogs turn the other way.
-void GabombaStatue_PoundStake(s32 a, s32 b) {
-  Pound_SinkTarget(gGabombaStatue_Stakes, a, b);
+void GabombaStatue_PoundStake(s32 landed, s32 frame) {
+  Pound_SinkTarget(gGabombaStatue_Stakes, landed, frame);
   if (Event_GetFlag(FLAG_GABOMBA_FIRST_STAKE_POUNDED) &&
       Event_GetFlag(FLAG_GABOMBA_SECOND_STAKE_POUNDED))
     gFieldState->raisedTrigger = RAISED_COGS_TURN_BACK;
@@ -1457,10 +1468,12 @@ void GabombaStatue_CogsTurnBack(void) {
 }
 
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 value);
-/// Pound on the arrows room's stake raises the channel's blocks.
-void GabombaStatue_PoundArrowsStake(s32 value) {
-  GabombaStatue_RaiseBlocks(value);
-  if (value == 1)
+/// Pound on the arrows room's stake raises the channel's blocks. It passes
+/// GabombaStatue_RaiseBlocks no frame, so how far the stake sinks before the
+/// fist lands is left to whatever that argument holds.
+void GabombaStatue_PoundArrowsStake(s32 landed) {
+  GabombaStatue_RaiseBlocks(landed);
+  if (landed == 1)
     gFieldState->raisedTrigger = RAISED_STAKE_STANDS_UP;
 }
 
@@ -2561,15 +2574,19 @@ void GabombaStatue_InitializePinion(void) {
 
 static __inline__ void *Mem_Alloc(s32 size) { return Heap_Alloc(size); }
 
+/// A raised block's picture: 16 pixels square in 256 colours, one for each
+/// piece in enum ChannelPiece's order.
+enum { BLOCK_PICTURE_BYTES = 16 * 16 };
+
 /// Loads the blocks' pictures into the VRAM cache.
 void GabombaStatue_LoadBlockPictures(void) {
   struct SceneState *state = &gSceneState;
-  void *buffer = Mem_Alloc(3072);
+  void *buffer = Mem_Alloc(PIECE_KINDS * BLOCK_PICTURE_BYTES);
   s32 handle;
 
   Decompress_TaggedLz(gField_CachedTilesA, buffer);
   handle = VramCache_FindFreeEntry();
-  VramCache_Load(handle, 3072, buffer);
+  VramCache_Load(handle, PIECE_KINDS * BLOCK_PICTURE_BYTES, buffer);
   state->blockTileEntry = handle;
   Heap_Release(buffer);
 }
@@ -2587,7 +2604,7 @@ s32 GabombaStatue_IsCellTaken(u32 x, u32 z) {
                                           sizeof(struct PuzzleCell));
     s32 code;
 
-    // The same byte, read through its address.
+    /* FAKEMATCH(dead): occupied read through its address. */
     if (*(u8 *)&cell->occupied != BLOCK_NONE || cell->blocked != 0)
       return 1;
     code = cell->kind;
@@ -3050,7 +3067,7 @@ void GabombaStatue_SetBlocksRaised(s32 id, s32 show) {
           } else {
             actor->x.fixed = 0;
             actor->z.fixed = 0;
-            // The same byte, written through its address.
+            /* FAKEMATCH(dead): occupied set through its address. */
             *(u8 *)&cell->occupied = BLOCK_IN_PLACE;
             MapGrid_CopyCells(BLOCK_IN_PLACE, cell->kind, 1, 1,
                               state->originX + column, state->originZ + row);
@@ -3074,20 +3091,21 @@ s32 GabombaStatue_TurnBlockPiece(s32 x, s32 z, s32 direction) {
 
 /// A step of the Pound on the arrows room's stake: it sinks, and as it ends the
 /// blocks rise.
-void GabombaStatue_RaiseBlocks(s32 value, s32 row) {
+void GabombaStatue_RaiseBlocks(s32 landed, s32 frame) {
   struct Actor *actor = Actor_Get(ACTOR_ARROWS_STAKE);
 
-  if (row < CHANNEL_ROWS)
+  if (frame < POUND_LAND_FRAME)
     actor->scaleY += -FIXED_ONE * 31 / 256;
-  if (value == 1) {
+  if (landed == 1) {
     GabombaStatue_SetBlocksRaised(gSceneState.firstBlock, 1);
     Actor_SelectAnimation(actor, 6);
     actor->scaleY = FIXED_ONE;
   }
 }
 
-/// Pounding a raised block sets it back into its place in the channel.
-void GabombaStatue_PoundBlock(s32 mode) {
+/// Pounding a raised block sets it back into its place in the channel as the
+/// fist lands.
+void GabombaStatue_PoundBlock(s32 landed) {
   struct SceneState *state;
   struct Actor *actor;
   struct PuzzleCell *cell;
@@ -3095,7 +3113,7 @@ void GabombaStatue_PoundBlock(s32 mode) {
   u32 row, col;
   s32 found;
 
-  if (mode != 1)
+  if (landed != 1)
     return;
   state = &gSceneState;
   actor = Actor_Get(
@@ -3106,7 +3124,7 @@ void GabombaStatue_PoundBlock(s32 mode) {
     s32 kind = state->cells[z][x].kind;
 
     cell = &state->cells[z][x];
-    cell->occupied = mode;
+    cell->occupied = BLOCK_IN_PLACE;
     MapGrid_CopyCells(BLOCK_IN_PLACE, kind, 1, 1, state->originX + x,
                       state->originZ + z);
   }
@@ -3127,9 +3145,9 @@ void GabombaStatue_PoundBlock(s32 mode) {
   state->blocksRaised = found;
 }
 
-/// Sets the first block actor's animation.
-void GabombaStatue_SetBlockAnimation(s32 mode) {
-  Actor_SetAnimationById(gSceneState.firstBlock, mode);
+/// Sets the channel blocks' animation (BLOCK_ANIM_TURN_*).
+void GabombaStatue_SetBlockAnimation(s32 animation) {
+  Actor_SetAnimationById(gSceneState.firstBlock, animation);
 }
 
 /// Turns every raised block a quarter turn.
@@ -3149,6 +3167,15 @@ void GabombaStatue_TurnBlocks(s32 direction) {
 /// The frames the raised blocks take to turn a quarter turn.
 enum { BLOCK_TURN_FRAMES = 20 };
 
+/// The arrow panels' cells, which the map keeps at cells (0, 12) to (1, 13): a
+/// column for each panel, a row for each of its two states.
+enum {
+  RIGHT_ARROW_PANEL_COLUMN = 0,
+  LEFT_ARROW_PANEL_COLUMN = 1,
+  ARROW_PANEL_RAISED_ROW = 12,
+  ARROW_PANEL_PRESSED_ROW = 13
+};
+
 /// Stepping onto the left arrow panel presses it, and with the blocks raised
 /// turns them a quarter turn counterclockwise.
 void GabombaStatue_PressLeftArrowPanel(void) {
@@ -3156,13 +3183,13 @@ void GabombaStatue_PressLeftArrowPanel(void) {
   s32 i;
 
   if (state->leftArrowDown == 0) {
-    MapGrid_CopyCellsLayered(1, 13, 1, 1, state->originX + 3,
-                             state->originZ - 2);
+    MapGrid_CopyCellsLayered(LEFT_ARROW_PANEL_COLUMN, ARROW_PANEL_PRESSED_ROW,
+                             1, 1, state->originX + 3, state->originZ - 2);
     if (state->blocksRaised != 0) {
       Event_PlaySound(SE_GABOMBA_STATUE_ARROW);
       Event_Start();
       FieldEvent_EndLastingPsynergy(0);
-      GabombaStatue_SetBlockAnimation(3);
+      GabombaStatue_SetBlockAnimation(BLOCK_ANIM_TURN_COUNTERCLOCKWISE);
       for (i = 0; i < BLOCK_TURN_FRAMES; i++) {
         s32 *offset = &state->blocksAngle;
 
@@ -3180,7 +3207,8 @@ void GabombaStatue_PressLeftArrowPanel(void) {
 /// Stepping off the left arrow panel raises it again.
 void GabombaStatue_ReleaseLeftArrowPanel(void) {
   if (gSceneState.leftArrowDown != 0) {
-    MapGrid_CopyCellsLayered(1, 12, 1, 1, gSceneState.originX + 3,
+    MapGrid_CopyCellsLayered(LEFT_ARROW_PANEL_COLUMN, ARROW_PANEL_RAISED_ROW, 1,
+                             1, gSceneState.originX + 3,
                              gSceneState.originZ - 2);
     gSceneState.leftArrowDown = 0;
   }
@@ -3192,13 +3220,13 @@ void GabombaStatue_PressRightArrowPanel(void) {
   s32 i;
 
   if (state->rightArrowDown == 0) {
-    MapGrid_CopyCellsLayered(0, 13, 1, 1, state->originX + 7,
-                             state->originZ - 2);
+    MapGrid_CopyCellsLayered(RIGHT_ARROW_PANEL_COLUMN, ARROW_PANEL_PRESSED_ROW,
+                             1, 1, state->originX + 7, state->originZ - 2);
     if (state->blocksRaised != 0) {
       Event_PlaySound(SE_GABOMBA_STATUE_ARROW);
       Event_Start();
       FieldEvent_EndLastingPsynergy(0);
-      GabombaStatue_SetBlockAnimation(2);
+      GabombaStatue_SetBlockAnimation(BLOCK_ANIM_TURN_CLOCKWISE);
       for (i = 0; i < BLOCK_TURN_FRAMES; i++) {
         s32 *offset = &state->blocksAngle;
 
@@ -3216,7 +3244,8 @@ void GabombaStatue_PressRightArrowPanel(void) {
 /// Stepping off the right arrow panel raises it again.
 void GabombaStatue_ReleaseRightArrowPanel(void) {
   if (gSceneState.rightArrowDown != 0) {
-    MapGrid_CopyCellsLayered(0, 12, 1, 1, gSceneState.originX + 7,
+    MapGrid_CopyCellsLayered(RIGHT_ARROW_PANEL_COLUMN, ARROW_PANEL_RAISED_ROW,
+                             1, 1, gSceneState.originX + 7,
                              gSceneState.originZ - 2);
     gSceneState.rightArrowDown = 0;
   }
@@ -3648,8 +3677,9 @@ struct ClockState {
   u8 mode;
 };
 
-/// The clock's state, kept in the inventory snapshot's spare room.
-#define CLOCK_STATE ((struct ClockState *)(gInventorySnapshot + 648))
+/// The clock's state, kept 256 bytes into the inventory snapshot's spare room.
+#define CLOCK_STATE                                                            \
+  ((struct ClockState *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE + 256))
 
 /// Converts the remaining frames into minutes, seconds and tenths
 /// (`MM:SS:T`).
@@ -3671,7 +3701,8 @@ void GabombaStatue_FormatClock(s32 time, u8 *text) {
 }
 
 /// Plays the clock's tick each second and returns the scale of the changing
-/// digits, which shrink and grow back over the first third of each second.
+/// digits, which shrink out of sight and grow back over the last third of each
+/// second, as the clock counts down to its tick.
 s32 GabombaStatue_TickClock(s32 time) {
   struct ClockState *clock = CLOCK_STATE;
   s32 frame = time % FRAMES_PER_SECOND;
@@ -3713,8 +3744,11 @@ void GabombaStatue_DrawClock(void) {
   s32 scale;
   u32 *p;
 
-  GabombaStatue_FormatClock(*timer + 50, digit);
-  GabombaStatue_FormatClock(*timer + 60, clock->old);
+  // The digits shown move on 10 frames before each second runs out, while
+  // those changing have shrunk out of sight (GabombaStatue_TickClock); the
+  // ones that differ from the time a second before are the ones that shrink.
+  GabombaStatue_FormatClock(*timer + FRAMES_PER_SECOND - 10, digit);
+  GabombaStatue_FormatClock(*timer + FRAMES_PER_SECOND, clock->old);
   GabombaStatue_FormatClock(*timer, clock->now);
   // old and now walk the sprite sheet and the pictures here, the digit lists
   // below.
@@ -3825,20 +3859,20 @@ void GabombaStatue_ResetClock(void) {
   CLOCK_STATE->timer = FRAMES_PER_SECOND * 60;
 }
 
-/// Puts out the stakes of a table of rows (actor, mode, flag), ended by -1,
-/// opening the cells under each.
+/// Puts out the stakes of a table of rows (actor, kind, flag), ended by -1,
+/// each standing or driven down as its flag says.
 void GabombaStatue_PlaceSwitchActors(const u16 *entry) {
   s32 value;
 
   for (; (value = *entry) != (u16)-1; entry += 2) {
     u16 id = *entry++;
     struct Actor *actor = Actor_Get(id);
-    s16 mode = entry[0];
+    s16 kind = entry[0];
     s16 flag = entry[1];
 
     actor->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlags(actor, 0);
-    Actor_SetCellOpen(id, (u16)mode, (u16)flag, actor->layer);
+    Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
   }
 }
 
@@ -4041,10 +4075,10 @@ LATE_DATA u32 gGabombaStatue_AkafubuComesUpScript[] = {
     SC_END,
 };
 
-/// The stakes beside the flashing cog: actor, the mode its cells open with, and
-/// the flag Pounding it sets.
+/// The stakes beside the flashing cog: actor, its look, and the flag Pounding
+/// it sets.
 LATE_DATA s16 gGabombaStatue_Stakes[] = {
-    ACTOR_FIRST_STAKE, 2, FLAG_GABOMBA_FIRST_STAKE_POUNDED, ACTOR_SECOND_STAKE, 2, FLAG_GABOMBA_SECOND_STAKE_POUNDED, -1, 0,
+    ACTOR_FIRST_STAKE, STAKE_MOSSY_STONE, FLAG_GABOMBA_FIRST_STAKE_POUNDED, ACTOR_SECOND_STAKE, STAKE_MOSSY_STONE, FLAG_GABOMBA_SECOND_STAKE_POUNDED, -1, 0,
 };
 
 /// The random seeds a game's channel is laid from, one picked by the leader's

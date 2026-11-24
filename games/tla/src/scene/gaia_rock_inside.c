@@ -290,8 +290,8 @@ typedef struct {
   PathStep steps[MAZE_STEPS + 1];
 } Path;
 
-/// The maze's path, kept in the inventory snapshot's spare room.
-#define gPath ((Path *)(gInventorySnapshot + 648))
+/// The maze's path, kept 256 bytes into the inventory snapshot's spare room.
+#define gPath ((Path *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE + 256))
 
 /// Set once the plant on a step of the maze has pointed the way on; it points
 /// again whenever the party comes back to that step.

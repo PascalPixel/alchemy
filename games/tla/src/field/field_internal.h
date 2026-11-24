@@ -327,4 +327,13 @@ void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
 void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
                                  struct WorldMapScanline *scanline);
 
+/// The footprints the leader leaves in snow and sand, and the leader's
+/// userValue that asks for the pair next. Every routine that moves the leader
+/// by the pad sets it on a stop.
+enum FootprintAnimation {
+  FOOTPRINT_ONE_FOOT = 1, ///< one print, fading
+  /// Two prints side by side, fading: laid first after a stop.
+  FOOTPRINT_BOTH_FEET = 2
+};
+
 #endif // ALCHEMY_FIELD_INTERNAL_H

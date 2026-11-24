@@ -21,15 +21,6 @@
 #include "field/field_sequence_event.h"
 #include "game/class_djinn.h"
 
-/// The footprints the leader leaves in snow and sand, and the leader's
-/// userValue that asks for the pair next. Every routine that moves the leader
-/// by the pad, here and in the parts after this one, sets it on a stop.
-enum FootprintAnimation {
-  FOOTPRINT_ONE_FOOT = 1, ///< one print, fading
-  /// Two prints side by side, fading: laid first after a stop.
-  FOOTPRINT_BOTH_FEET = 2
-};
-
 /// The actor script commands' limits, angles and distances.
 enum {
   SCRIPT_LABEL_SEARCH_WORDS = 1024, ///< script words a jump searches

@@ -111,6 +111,10 @@ static s32 StuccoRoomsC_SelectLuckyWheelsPrize(s32 category);
 static void TolbiSpring_InitializeTossSimulation(void);
 static s32 TolbiSpring_RunToss(s32 tossKind);
 
+/// An exit's flag word of -1 stands for no flag: GameFlag_GetFar reads it as
+/// flag 0xfff, which nothing sets, so the exit is always taken.
+#define EXIT_FLAG_NONE 0xffffffff
+
 /// What the player throws into the spring, chosen by Menu_SelectCoinsOrMedals.
 enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 
@@ -1682,12 +1686,12 @@ const struct SceneEntrance gTolbiSpring_Entrances[] = {
 const u32 gTolbiSpring_Exits[] = {
     SCENE_EXITS(TolbiSpring),
     SCENE_EXIT_UNLESS(TOLBI_SPRING_TO_TOLBI, Tolbi, TOLBI_FROM_TOLBI_SPRING,
-                      0xffffffff),
+                      EXIT_FLAG_NONE),
     SCENE_EXITS(StuccoRoomsC),
     SCENE_EXIT_UNLESS(STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI, Tolbi,
-                      TOLBI_FROM_LUCKY_DICE, 0xffffffff),
+                      TOLBI_FROM_LUCKY_DICE, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI, Tolbi,
-                      TOLBI_FROM_LUCKY_WHEELS, 0xffffffff),
+                      TOLBI_FROM_LUCKY_WHEELS, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

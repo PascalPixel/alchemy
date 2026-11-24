@@ -81,6 +81,18 @@
 #include "text/msg_ids.h"
 
 extern s16 gTreeRooms_MapPatches[];
+
+/// The columns of a row of gTreeRooms_MapPatches, six halfwords, whose rows
+/// run on until a flag of -1.
+enum {
+  MAP_PATCH_FLAG,
+  MAP_PATCH_REDRAWN,
+  MAP_PATCH_SOURCE_X,
+  MAP_PATCH_SOURCE_Y,
+  MAP_PATCH_DESTINATION_X,
+  MAP_PATCH_DESTINATION_Y,
+  MAP_PATCH_ROW_LENGTH
+};
 extern s32 gTreeRooms_LeaderGathersActions[];
 extern s32 gTreeRooms_GaretGathersActions[];
 extern s32 gTreeRooms_IvanGathersActions[];
@@ -1123,13 +1135,14 @@ static void TreeRooms_ApplyFlaggedMapPatches(void) {
   s32 patchOffset;
 
   for (patchOffset = 0; gTreeRooms_MapPatches[patchOffset] != -1;
-       patchOffset += 6) {
-    if (GameFlag_Get(gTreeRooms_MapPatches[patchOffset]) &&
-        gTreeRooms_MapPatches[patchOffset + 1] != 0)
-      MapGrid_CopyCellsTo(gTreeRooms_MapPatches[patchOffset + 2],
-                          gTreeRooms_MapPatches[patchOffset + 3],
-                          gTreeRooms_MapPatches[patchOffset + 4],
-                          gTreeRooms_MapPatches[patchOffset + 5], 1, 1);
+       patchOffset += MAP_PATCH_ROW_LENGTH) {
+    if (GameFlag_Get(gTreeRooms_MapPatches[patchOffset + MAP_PATCH_FLAG]) &&
+        gTreeRooms_MapPatches[patchOffset + MAP_PATCH_REDRAWN] != 0)
+      MapGrid_CopyCellsTo(
+          gTreeRooms_MapPatches[patchOffset + MAP_PATCH_SOURCE_X],
+          gTreeRooms_MapPatches[patchOffset + MAP_PATCH_SOURCE_Y],
+          gTreeRooms_MapPatches[patchOffset + MAP_PATCH_DESTINATION_X],
+          gTreeRooms_MapPatches[patchOffset + MAP_PATCH_DESTINATION_Y], 1, 1);
   }
 }
 

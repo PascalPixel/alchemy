@@ -25,8 +25,8 @@
 #define CHARON_COLUMNS 4
 #define CHARON_COLUMN_HEIGHT 30
 #define CHARON_COLUMN_END 56
-/// The summon's sprites in the effect state: the red dome's until frame 132,
-/// then Charon's.
+/// The summon's sprites in the effect state: the red dome's until
+/// CHARON_ARRIVAL_FRAME, then Charon's.
 #define OBJECTS ((struct Sprite **)state->sprites)
 /// Charon (CrimsonBeastTiles) as a grid of sprites four across and three down,
 /// its wisp (WhiteWispsTiles, in a sprite palette of its own) and the 64x64
@@ -49,9 +49,9 @@
 /// The map cell buffer: the shards' sprites from its start, where the attack
 /// later decodes FlashBurstSheet (SPRITE_BUFFER). At 16384, a list of
 /// CHARON_HIDDEN_SPRITES sprites built at frame 0, which the summon never
-/// reads; from frame 243 the red orb's 64x64 picture (RedOrbTiles) over it
-/// (ORB_BUFFER, read back as REVEAL_BUFFER) and the order it is revealed
-/// in after it. Then the particles.
+/// reads; from the frame before CHARON_ORB_FRAME the red orb's 64x64 picture
+/// (RedOrbTiles) over it (ORB_BUFFER, read back as REVEAL_BUFFER) and the order
+/// it is revealed in after it. Then the particles.
 #define SPRITES ((struct Sprite **)Ram_MapCellBuffer)
 #define SPRITE_BUFFER gMapGridCellBuffer
 #define OAM_BUFFER ((u32 *)(gMapGridCellBuffer + 16384))
@@ -59,10 +59,10 @@
 #define ORB_BUFFER (gMapGridCellBuffer + 16384)
 #define REVEAL_BUFFER (Ram_MapCellBuffer + 16384)
 #define CHARON_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 16896))
-/// The swarm: CHARON_SWARM particles fly up from frame 132, the shards ride
-/// those from CHARON_SWARM_SHARDS on, the first CHARON_LARGE_SHARDS a quarter
-/// larger, and each CHARON_SWARM_GROUP particles tumble a step faster than the
-/// group before.
+/// The swarm: CHARON_SWARM particles fly up from CHARON_ARRIVAL_FRAME, the
+/// shards ride those from CHARON_SWARM_SHARDS on, the first CHARON_LARGE_SHARDS
+/// a quarter larger, and each CHARON_SWARM_GROUP particles tumble a step faster
+/// than the group before.
 #define CHARON_SWARM 128
 #define CHARON_SWARM_SHARDS (CHARON_PARTICLES + 64)
 #define CHARON_LARGE_SHARDS 10
@@ -107,8 +107,8 @@ extern const struct Scale gCharon_RevealScale;
 extern const struct Scale gCharon_FinaleScale;
 
 /// Where the pictures that load once are decoded in the effect's sprite sheet:
-/// the rune seal as it is stamped (RuneSealSheet, 184 by 80), then at frame 132
-/// Charon's, its wisp's and BlueGlowSheet's in turn.
+/// the rune seal as it is stamped (RuneSealSheet, 184 by 80), then at
+/// CHARON_ARRIVAL_FRAME Charon's, its wisp's and BlueGlowSheet's in turn.
 #define CHARON_BEAST_PICTURES 9216
 #define CHARON_RUNE_SEAL 9216
 #define RUNE_SEAL_WIDTH 184
@@ -156,8 +156,42 @@ extern const struct Scale gCharon_FinaleScale;
 #define CHARON_FRAMES 394 ///< frames of Charon's coming, unless A or B skips it
 #define CHARON_ATTACK_FRAMES 180 ///< frames of the attack that follows
 #define CHARON_FLASHES 3 ///< the backdrop's flashes, at gCharon_FlashFrames
-/// The frame the rune seal is stamped on the ground, after the canvas flashes.
+/// Charon's coming, in frames. From CHARON_DRAIN_FRAME the backdrop's red
+/// drains away and its blue comes back; the rune seal is stamped on the ground
+/// after the canvas flashes (CHARON_SEAL_FRAME), and the swirls fade from
+/// CHARON_SWIRL_FADE_FRAME. The backdrop's green and then its red drain away
+/// from CHARON_GREEN_DRAIN_FRAME, and in a white flash Charon appears among a
+/// swarm of shards (CHARON_ARRIVAL_FRAME); the backdrop fades toward a red dusk
+/// from CHARON_DUSK_FRAME. The curse seal falls turning (CHARON_CURSE_FRAME),
+/// the swirl turns under it from CHARON_CURSE_SWIRL_FRAME, and it fades from
+/// CHARON_CURSE_FADE_FRAME; the red orb is revealed from CHARON_ORB_FRAME and
+/// is gone at CHARON_ORB_GONE_FRAME. A white flash brings three rings of fire
+/// (CHARON_RINGS_FRAME); the orb comes back magenta and swells
+/// (CHARON_MAGENTA_FRAME), and the dark disc rimmed in magenta swells over the
+/// canvas from CHARON_DISC_FRAME. Charon's own colours are tinted toward violet
+/// from CHARON_VIOLET_FRAME, back from CHARON_UNVIOLET_FRAME, and toward red
+/// from CHARON_REDDEN_FRAME.
+#define CHARON_DRAIN_FRAME 32
 #define CHARON_SEAL_FRAME 56
+#define CHARON_SWIRL_FADE_FRAME 96
+#define CHARON_GREEN_DRAIN_FRAME 108
+#define CHARON_ARRIVAL_FRAME 132
+#define CHARON_DUSK_FRAME 168
+#define CHARON_CURSE_FRAME 200
+#define CHARON_VIOLET_FRAME 214
+#define CHARON_CURSE_SWIRL_FRAME 232
+#define CHARON_ORB_FRAME 244
+#define CHARON_UNVIOLET_FRAME 251
+#define CHARON_CURSE_FADE_FRAME 254
+#define CHARON_RINGS_FRAME 302
+#define CHARON_ORB_GONE_FRAME 310
+#define CHARON_MAGENTA_FRAME 330
+#define CHARON_DISC_FRAME 347
+#define CHARON_REDDEN_FRAME 348
+/// As the red drains, the backdrop's green is held this many levels darker,
+/// and its blue comes back from as dark; at the seal, half as dark in green
+/// and as dark in blue.
+#define CHARON_DRAIN_DIMMING 20
 /// The rune seal glows this many levels brighter than its own colours, pulsing
 /// by CHARON_SEAL_GLOW_PULSE either way.
 #define CHARON_SEAL_GLOW 16
@@ -346,47 +380,50 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
   for (frame = 0; frame != CHARON_FRAMES && !(gInput.repeat & (KEY_A | KEY_B));
        frame++) {
-    u8 *order = REVEAL_BUFFER + (frame - 244) * 2;
+    u8 *order = REVEAL_BUFFER + (frame - CHARON_ORB_FRAME) * 2;
 
-    // From frame 32 the backdrop's red drains away and its blue comes back.
-    darkenFrame = frame - 32;
+    // The backdrop's red drains away and its blue comes back.
+    darkenFrame = frame - CHARON_DRAIN_FRAME;
     if (darkenFrame >= 0 && darkenFrame < 22) {
-      Palette_BrightenSavedBattleBg(-darkenFrame, -20, frame - 52);
+      Palette_BrightenSavedBattleBg(
+          -darkenFrame, -CHARON_DRAIN_DIMMING,
+          frame - (CHARON_DRAIN_FRAME + CHARON_DRAIN_DIMMING));
     }
-    if (frame == 55) {
-      Palette_BrightenSavedBattleBg(0, -10, -20);
+    if (frame == CHARON_SEAL_FRAME - 1) {
+      Palette_BrightenSavedBattleBg(0, -CHARON_DRAIN_DIMMING / 2,
+                                    -CHARON_DRAIN_DIMMING);
     }
     if (frame == 4) {
       Sound_PlayFar(SE_TREMOR);
     }
-    if (frame == 55) {
+    if (frame == CHARON_SEAL_FRAME - 1) {
       Sound_PlayFar(SE_BANE_ESCAPE);
     }
     if (frame == 78) {
       Sound_PlayFar(SE_GUSH);
     }
-    if (frame == 127) {
+    if (frame == CHARON_ARRIVAL_FRAME - 5) {
       Sound_PlayFar(SE_POWER_UP);
     }
-    if (frame == 131) {
+    if (frame == CHARON_ARRIVAL_FRAME - 1) {
       Sound_PlayFar(SE_MONSTER_ROAR);
     }
-    if (frame == 206) {
+    if (frame == CHARON_CURSE_FRAME + 6) {
       Sound_PlayFar(SE_SWIRL);
     }
-    if (frame == 244) {
+    if (frame == CHARON_ORB_FRAME) {
       Sound_PlayFar(SE_POWER_UP);
     }
-    if (frame == 302) {
+    if (frame == CHARON_RINGS_FRAME) {
       Sound_PlayFar(SE_POWER_UP);
     }
-    if (frame == 308) {
+    if (frame == CHARON_RINGS_FRAME + 6) {
       Sound_PlayFar(SE_POWER_UP);
     }
-    if (frame == 312) {
+    if (frame == CHARON_RINGS_FRAME + 10) {
       Sound_PlayFar(SE_POWER_UP);
     }
-    if (frame == 350) {
+    if (frame == CHARON_DISC_SWAY_FRAME) {
       Sound_PlayFar(SE_LAUNCH);
     }
     if (frame == 0) {
@@ -425,12 +462,12 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
       }
     }
-    if (frame >= 132 && frame < 240) {
+    if (frame >= CHARON_ARRIVAL_FRAME && frame < 240) {
       struct Scale swarmScale = gCharon_SwarmScale;
 
       swarmScale.y = FIXED_ONE * 5 / 4;
       swarmScale.x = FIXED_ONE * 5 / 4;
-      if (frame == 132) {
+      if (frame == CHARON_ARRIVAL_FRAME) {
         for (i = 0; i != CHARON_SWARM; i++) {
           CHARON_PARTICLES[i].x = INTtoFIXED(Random16() % 160 + 40);
           CHARON_PARTICLES[i].y = INTtoFIXED((Random16() & 63) + 32);
@@ -482,7 +519,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       Render_ApplyProjectedPlacementFar(OBJECTS[0], pulsePlace, &pulseScale.x,
                                         0);
     }
-    if (frame == 131) {
+    if (frame == CHARON_ARRIVAL_FRAME - 1) {
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                RESOURCE_AERIAL_VIEW_BACKDROP, 0);
       Iwram_FillWords((u16 *)&BG_PLTT_COLOR(6, 0), BATTLE_BACKGROUND_COLORS * 2,
@@ -490,15 +527,15 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
-    if (frame >= 132 && frame < 147) {
-      Iwram_FillWords(
-          canvas, CANVAS_VIEW_BYTES,
-          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST - (frame - 132) * 4));
+    if (frame >= CHARON_ARRIVAL_FRAME && frame < CHARON_ARRIVAL_FRAME + 15) {
+      Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
+                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST -
+                                       (frame - CHARON_ARRIVAL_FRAME) * 4));
     }
     // Every fourth frame the backdrop fades a step from the flash's white to
-    // its own colours, and from frame 168 on toward a red dusk; the wisp
-    // darkens from white to a deep red.
-    if ((frame & 3) == 0 && (frame >= 132 && frame < 240)) {
+    // its own colours, and from CHARON_DUSK_FRAME on toward a red dusk; the
+    // wisp darkens from white to a deep red.
+    if ((frame & 3) == 0 && (frame >= CHARON_ARRIVAL_FRAME && frame < 240)) {
       u16 *target = Resource_GetTableEntry(RESOURCE_AERIAL_VIEW_BACKDROP);
       u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
 
@@ -510,7 +547,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         s32 tg;
         s32 tr;
 
-        if (frame < 168) {
+        if (frame < CHARON_DUSK_FRAME) {
           tb = RGB_BLUE(*target);
           tg = RGB_GREEN(*target);
           tr = RGB_RED(*target);
@@ -540,7 +577,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         *color = RGB(r, g, b);
       }
       for (i = 0; i != PALETTE_COLORS - 1; i++) {
-        s32 r = RGB_LEVEL_MAX - (frame - 132) / 4;
+        s32 r = RGB_LEVEL_MAX - (frame - CHARON_ARRIVAL_FRAME) / 4;
         s32 g = r;
         s32 b = r;
 
@@ -565,7 +602,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         OBJ_PLTT_COLOR(CHARON_WISP_PALETTE, 1 + i) = RGB(r, g, b);
       }
     }
-    if (frame >= 132 && frame < 240) {
+    if (frame >= CHARON_ARRIVAL_FRAME && frame < 240) {
       u16 *target = Resource_GetTableEntry(RESOURCE_CRIMSON_BEAST_TILES);
       u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 0);
 
@@ -589,27 +626,26 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         *color = RGB(r, g, b);
       }
     }
-    // Charon's own colours are tinted toward violet from frame 214, back from
-    // 251, and toward red from 348.
+    // Charon's own colours are tinted toward violet, back, and toward red.
     tinted = 0;
-    if (frame >= 214 && frame < 246) {
-      s32 t = (frame - 214) / 4;
+    if (frame >= CHARON_VIOLET_FRAME && frame < 246) {
+      s32 t = (frame - CHARON_VIOLET_FRAME) / 4;
 
       red = t / 2;
       green = 0;
       blue = t;
       tinted = 1;
     }
-    if (frame >= 251 && frame < 283) {
-      s32 t = (frame - 251) / 2;
+    if (frame >= CHARON_UNVIOLET_FRAME && frame < 283) {
+      s32 t = (frame - CHARON_UNVIOLET_FRAME) / 2;
 
       red = 4 - t / 4;
       green = -(t / 2);
       blue = 8 - t / 2;
       tinted = 1;
     }
-    if (frame >= 348 && frame < 412) {
-      red = (frame - 348) / 4;
+    if (frame >= CHARON_REDDEN_FRAME && frame < 412) {
+      red = (frame - CHARON_REDDEN_FRAME) / 4;
       green = red / 2 - 8;
       blue = red / 8 - 4;
       tinted = 1;
@@ -643,8 +679,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         OBJ_PLTT_COLOR(0, i) = RGB(r, g, b);
       }
     }
-    if (frame >= 132 && frame < 860) {
-      if (frame == 132) {
+    if (frame >= CHARON_ARRIVAL_FRAME && frame < 860) {
+      if (frame == CHARON_ARRIVAL_FRAME) {
         Sprite_DestroyFar((struct Sprite *)OBJECTS[0]);
         source = (u8 *)Resource_GetTableEntry(RESOURCE_CRIMSON_BEAST_TILES);
         Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(0, 0), CHARON_BEAST_COLORS * 2,
@@ -705,7 +741,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         beastX = toFIXED(72);
         beastZ = toFIXED(56);
       }
-      if (frame == 243) {
+      if (frame == CHARON_ORB_FRAME - 1) {
         source = (u8 *)Resource_GetTableEntry(RESOURCE_RED_ORB_TILES);
         Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(CHARON_ORB_PALETTE, 0),
                         CHARON_ORB_COLORS * 2, 0);
@@ -783,13 +819,13 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                                             objectScale, 0);
         }
       }
-      if (frame == 200) {
+      if (frame == CHARON_CURSE_FRAME) {
         source = (u8 *)Resource_GetTableEntry(RESOURCE_BOLT_SHEET);
         Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
       }
-      // The curse seal falls turning onto the ground and fades from frame
-      // 254; from frame 232 the swirl turns under it.
-      if (frame >= 200 && frame < 302) {
+      // The curse seal falls turning onto the ground and fades; the swirl
+      // turns under it.
+      if (frame >= CHARON_CURSE_FRAME && frame < CHARON_RINGS_FRAME) {
         void *texture = Heap_AllocEwram(32);
         struct RenderModel *model = Render_AllocateModelList(1);
         s32 t = frame - 200;
@@ -798,8 +834,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
         shade = t * 4 + MODEL_SHADE_INVISIBLE;
         scale = CHARON_FALL_SCALE - t * CHARON_SCALE_STEP;
-        if (frame > 253) {
-          shade = (254 - frame) * 8;
+        if (frame > CHARON_CURSE_FADE_FRAME - 1) {
+          shade = (CHARON_CURSE_FADE_FRAME - frame) * 8;
         }
         if (scale < CHARON_SEAL_SCALE_MIN) {
           scale = CHARON_SEAL_SCALE_MIN;
@@ -828,8 +864,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                                    4);
           Render_DrawModelList(model);
         }
-        if (frame > 231) {
-          t = frame - 232;
+        if (frame > CHARON_CURSE_SWIRL_FRAME - 1) {
+          t = frame - CHARON_CURSE_SWIRL_FRAME;
           shade = t * 2 + MODEL_SHADE_INVISIBLE;
           scale = CHARON_FALL_SCALE - t * CHARON_SWIRL_SHRINK;
           if (shade < MODEL_SHADE_INVISIBLE) {
@@ -858,10 +894,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Heap_Release(model);
         Heap_Release(texture);
       }
-      // From frame 244 the red orb is revealed in its sprite, two pixel
-      // pairs of every tile a frame, as its colours rise from black, and it
-      // shrinks away to nothing at frame 310.
-      if (frame >= 244 && frame < 310) {
+      // The red orb is revealed in its sprite, two pixel pairs of every tile a
+      // frame, as its colours rise from black, and it shrinks away to
+      // nothing.
+      if (frame >= CHARON_ORB_FRAME && frame < CHARON_ORB_GONE_FRAME) {
         struct Scale revealScale = gCharon_RevealScale;
 
         if (frame < 260) {
@@ -927,10 +963,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           }
         }
       }
-      // A white flash at frame 302; the backdrop comes back and fades toward a
-      // deeper dusk, and three rings of fire spread, eight frames apart.
-      if (frame > 301) {
-        if (frame == 302) {
+      // A white flash; the backdrop comes back and fades toward a deeper dusk,
+      // and three rings of fire spread, eight frames apart.
+      if (frame > CHARON_RINGS_FRAME - 1) {
+        if (frame == CHARON_RINGS_FRAME) {
           Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(CHARON_ORB_PALETTE, 0),
@@ -944,7 +980,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                                      state->sheet + CHARON_ACT_PICTURES, 0, 0);
           Graphics_LoadGreyRamp();
         }
-        if (frame > 303) {
+        if (frame > CHARON_RINGS_FRAME + 1) {
           u16 *target = Resource_GetTableEntry(RESOURCE_AERIAL_VIEW_BACKDROP);
           u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
 
@@ -977,7 +1013,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             *color = RGB(r, g, b);
           }
         }
-        if (frame > 301) {
+        if (frame > CHARON_RINGS_FRAME - 1) {
           s32 k;
           s32 x;
           s32 stripShade;
@@ -993,7 +1029,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           model->mesh = gBattleEffect_LargeSquareMesh;
           model->vertices = texture;
           for (k = 0; k != 3; k++) {
-            x = frame - 302 - k * 8;
+            x = frame - CHARON_RINGS_FRAME - k * 8;
             if (x >= 0) {
               stripShade = x * 4 - 16;
               size = 140000 - x * 6192;
@@ -1024,24 +1060,24 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           Heap_Release(texture);
         }
       }
-      // At frame 330 the orb turns magenta and swells from nothing,
-      // shaking from frame 347.
-      if (frame == 330) {
+      // The orb turns magenta and swells from nothing, shaking from the
+      // disc's frame on.
+      if (frame == CHARON_MAGENTA_FRAME) {
         Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(CHARON_ORB_PALETTE, 0),
                         CHARON_ORB_COLORS * 2,
                         COLOR_PAIR(RGB(RGB_LEVEL_MAX, 0, RGB_LEVEL_MAX)));
       }
-      if (frame >= 330 && frame < 351) {
+      if (frame >= CHARON_MAGENTA_FRAME && frame < 351) {
         struct Scale finaleScale = gCharon_FinaleScale;
         s32 dx = 0;
         s32 dz = 0;
 
-        if (frame > 346) {
+        if (frame > CHARON_DISC_FRAME - 1) {
           dx = 347 - frame;
-          dz = (frame - 347) / 4;
+          dz = (frame - CHARON_DISC_FRAME) / 4;
         }
         finaleScale.x = finaleScale.y =
-            frame * (FIXED_ONE / 32) - 330 * (FIXED_ONE / 32);
+            frame * (FIXED_ONE / 32) - CHARON_MAGENTA_FRAME * (FIXED_ONE / 32);
         finalePlace[3] = 0;
         finalePlace[1] = toFIXED(255);
         finalePlace[0] = INTtoFIXED(dx) + toFIXED(92);
@@ -1049,10 +1085,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Render_ApplyProjectedPlacementFar(OBJECTS[CHARON_REVEAL], finalePlace,
                                           &finaleScale.x, 0);
       }
-      // From frame 347 the canvas is drawn opaque in magenta: a dark disc
-      // rimmed in magenta swells, and from CHARON_DISC_SWAY_FRAME sways across;
-      // the backdrop flashes white at frames 357 and 376.
-      if (frame == 347) {
+      // The canvas is drawn opaque in magenta: a dark disc rimmed in magenta
+      // swells, and from CHARON_DISC_SWAY_FRAME sways across; the backdrop
+      // flashes white twice, 19 frames apart, from ten frames on.
+      if (frame == CHARON_DISC_FRAME) {
         EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
         REG_BLDCNT = 0;
         {
@@ -1071,8 +1107,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           }
         }
       }
-      if (frame > 346) {
-        s32 radius = (frame - 345) * 4;
+      if (frame > CHARON_DISC_FRAME - 1) {
+        s32 radius = (frame - (CHARON_DISC_FRAME - 2)) * 4;
         s32 centerX = CHARON_DISC_X;
 
         if (frame >= CHARON_DISC_SWAY_FRAME) {
@@ -1098,7 +1134,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         blit[1] = Ram_HeapSlots->ramCodePaired;
       }
       for (j = 0; j != 2; j++) {
-        s32 flashFrame = frame - 357 - j * 19;
+        s32 flashFrame = frame - (CHARON_DISC_FRAME + 10) - j * 19;
 
         if (flashFrame == 0) {
           Iwram_FillWords((u16 *)&BG_PLTT_COLOR(6, 0),
@@ -1174,7 +1210,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
     }
     // Before Charon comes the backdrop's green drains away, then its red.
-    if (frame >= 108 && frame < 132) {
+    if (frame >= 108 && frame < CHARON_ARRIVAL_FRAME) {
       u16 *color;
 
       for (i = 0, color = (u16 *)&BG_PLTT_COLOR(6, 0);
@@ -1206,7 +1242,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
     }
     // The rune seal is stamped into the battle background's own tiles, on the
-    // ground, and its colours pulse until frame 88.
+    // ground, and its colours pulse for 32 frames.
     if (sealFrame >= 0 && sealFrame < 36) {
       if (frame == CHARON_SEAL_FRAME) {
         s32 x;
@@ -1238,7 +1274,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           }
         }
       }
-      if (frame < 88) {
+      if (frame < CHARON_SEAL_FRAME + 32) {
         u16 *color = Resource_GetTableEntry(RESOURCE_RUNE_SEAL_SHEET);
         u16 *entry = (u16 *)&BG_PLTT_COLOR(CHARON_SEAL_PALETTE, 0);
 
@@ -1275,7 +1311,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     // Until Charon comes the swirl turns on the ground, a second inside it
     // the other way; from the seal on, the charm ring and a smaller one inside
     // it turn with them.
-    if (frame < 132) {
+    if (frame < CHARON_ARRIVAL_FRAME) {
       s32 risingScale;
       s32 shade;
       s32 rise = FIXED_ONE / 2 - CHARON_SEAL_FRAME * CHARON_SCALE_STEP;
@@ -1297,7 +1333,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       if (shade >= -8) {
         shade = -8;
       }
-      if (frame > 95) {
+      if (frame > CHARON_SWIRL_FADE_FRAME - 1) {
         shade = 184 - frame * 2;
         model->shade = shade;
       }
@@ -1322,7 +1358,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture, 4);
         Render_DrawModelList(model);
       }
-      if (frame > 95) {
+      if (frame > CHARON_SWIRL_FADE_FRAME - 1) {
         shade = 568 - frame * 6;
         model->shade = shade;
       }
@@ -1380,7 +1416,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   }
 
   Sound_PlayFar(SE_WAVE);
-  if (frame < 132) {
+  if (frame < CHARON_ARRIVAL_FRAME) {
     Sprite_DestroyFar((struct Sprite *)OBJECTS[0]);
   } else {
     for (i = 0; i != CHARON_OBJECTS; i++) {

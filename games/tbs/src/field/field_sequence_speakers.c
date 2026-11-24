@@ -40,11 +40,11 @@ s32 Speaker_GetActorSprite(s32 id) {
 /// Returns the voice of sprite id's messages: the first of its four blip
 /// sounds, SE_VOICE_FIRST plus its definition's value, or 0 for none
 /// (SPEAKER_VOICE_NONE) or with the Speech option off
-/// (gMainRoutineWork.speech).
+/// (gMainRoutineState.speech).
 s32 Speaker_GetVoice(u32 id) {
   u8 voice;
 
-  if (gMainRoutineWork.speech == 0 ||
+  if (gMainRoutineState.speech == 0 ||
       (voice = Speaker_FindDefinition(id)->value) == SPEAKER_VOICE_NONE) {
     return 0;
   }

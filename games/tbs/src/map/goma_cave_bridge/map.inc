@@ -5,14 +5,14 @@ Field_GomaCaveBridge:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_CELL_PICTURES
+	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_CELL_TILES
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_SHAPES
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_GRID
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_ANIMATION
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_BLEND
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_MARKERS
-.LField_GomaCaveBridge_CELL_PICTURES:
-	.incbin "games/tbs/src/map/goma_cave_bridge/cell_pictures.delta2.lz"
+.LField_GomaCaveBridge_CELL_TILES:
+	.incbin "games/tbs/src/map/goma_cave_bridge/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_GomaCaveBridge_SHAPES:
 	.incbin "games/tbs/src/map/goma_cave_bridge/shapes.table.lz"
@@ -34,14 +34,14 @@ Field_GomaCaveBridge:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_CELL_PICTURES
+	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_CELL_TILES
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_SHAPES
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_GRID
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_ANIMATION
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_BLEND
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_MARKERS
-.LField_GomaCaveBridge_CELL_PICTURES:
-	.incbin "games/tbs/src/map/goma_cave_bridge/cell_pictures.delta2.lz"
+.LField_GomaCaveBridge_CELL_TILES:
+	.incbin "games/tbs/src/map/goma_cave_bridge/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_GomaCaveBridge_SHAPES:
 	.incbin "games/tbs/src/map/goma_cave_bridge/shapes.table.lz"
@@ -63,14 +63,14 @@ Field_GomaCaveBridge:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_CELL_PICTURES
+	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_CELL_TILES
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_SHAPES
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_GRID
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_ANIMATION
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_BLEND
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_MARKERS
-.LField_GomaCaveBridge_CELL_PICTURES:
-	.incbin "games/tbs/src/map/goma_cave_bridge/cell_pictures.delta2.lz"
+.LField_GomaCaveBridge_CELL_TILES:
+	.incbin "games/tbs/src/map/goma_cave_bridge/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_GomaCaveBridge_SHAPES:
 	.incbin "games/tbs/src/map/goma_cave_bridge/shapes.table.lz"
@@ -92,14 +92,14 @@ Field_GomaCaveBridge:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_CELL_PICTURES
+	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_CELL_TILES
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_SHAPES
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_GRID
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_ANIMATION
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_BLEND
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_MARKERS
-.LField_GomaCaveBridge_CELL_PICTURES:
-	.incbin "games/tbs/src/map/goma_cave_bridge/cell_pictures.delta2.lz"
+.LField_GomaCaveBridge_CELL_TILES:
+	.incbin "games/tbs/src/map/goma_cave_bridge/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_GomaCaveBridge_SHAPES:
 	.incbin "games/tbs/src/map/goma_cave_bridge/shapes.table.lz"
@@ -120,14 +120,14 @@ Field_GomaCaveBridge:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_CELL_PICTURES
+	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_CELL_TILES
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_SHAPES
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_GRID
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_ANIMATION
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_BLEND
 	map_offset Field_GomaCaveBridge, .LField_GomaCaveBridge_MARKERS
-.LField_GomaCaveBridge_CELL_PICTURES:
-	.incbin "games/tbs/src/map/goma_cave_bridge/cell_pictures.delta2.lz"
+.LField_GomaCaveBridge_CELL_TILES:
+	.incbin "games/tbs/src/map/goma_cave_bridge/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_GomaCaveBridge_SHAPES:
 	.incbin "games/tbs/src/map/goma_cave_bridge/shapes.table.lz"

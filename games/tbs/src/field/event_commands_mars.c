@@ -16,18 +16,18 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   FIXED scale;
   s32 remaining;
   struct Actor *djinni;
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Actor *leader;
   struct FieldParticle *effect;
   s8 *slotState;
 
   djinni = Actor_GetById(djinniId);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (djinni == NULL)
     return;
 
   FieldEffect_InitializeSlots();
-  effectWork = gFieldEffectWork;
+  effectState = gFieldEffectState;
   // Tint the screen red.
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(16, 4, 4));
   wait(30);
@@ -57,7 +57,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   // One spark a frame into each of the field effect sprites.
-  effect = effectWork->particles;
+  effect = effectState->particles;
   remaining = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
@@ -73,14 +73,14 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   } while (remaining >= 0);
 
   wait(60);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineState.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
 
   // Every spark still in use stops its fountain.
   wait(20);
-  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
+  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectState, particles,
                                    MARS_SPARK_STOPPING);
 
   // The leader pulses while the sparks swarm it.
@@ -89,7 +89,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   wait(100);
 
   // Every spark still in use goes.
-  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
+  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectState, particles,
                                    MARS_SPARK_LEAVING);
 
   // The leader stops pulsing.
@@ -122,7 +122,7 @@ void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
   s16 frames;
   FIXED y;
 
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   timer = mote->orbitFrames - 1;
   mote->orbitFrames = timer;
   frames = mote->orbitFrames;
@@ -149,7 +149,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   s32 state;
   u32 random;
 
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   state = effect->state;
 
   if (state == VENUS_PARTICLE_AIM) {

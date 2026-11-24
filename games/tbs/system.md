@@ -51,8 +51,8 @@ aside. It is built again from scratch.
 So a sequence can pass something on in only three places, the three things
 the main routine leaves alone:
 
-- the [main routine's work](glossary.md#main-routines-work), one C struct
-  in a global, `gMainRoutineWork`, which holds the party, their coins, what
+- the [main routine's state](glossary.md#main-routines-state), one C struct
+  in a global, `gMainRoutineState`, which holds the party, their coins, what
   runs next and how the last sequence ended;
 - the [game flags](glossary.md#game-flag), one bit for each thing the game
   remembers, such as a chest being open;
@@ -66,11 +66,11 @@ how a puzzle resets
 ([State that cleans itself up](src/scene/README.md#state-that-cleans-itself-up)).
 
 Take the three thieves in Vault's inn. The event that ends in their attack
-writes two destinations into the work, one for a win and one for a loss,
-asks for a battle, and lets the field sequence end. The battle knows
-nothing about Vault. It runs, and writes its result. The main routine reads
-the result, picks the matching destination, and starts a fresh field
-sequence in the loft.
+writes two destinations into the main routine's state, one for a win and
+one for a loss, asks for a battle, and lets the field sequence end. The
+battle knows nothing about Vault. It runs, and writes its result. The main
+routine reads the result, picks the matching destination, and starts a
+fresh field sequence in the loft.
 
 That is why any sequence can follow any other, and why Camelot's own debug
 menu can drop the party into any scene in the game.
@@ -148,7 +148,7 @@ Four things about tasks are easy to get wrong:
   them each frame.
 - The list keeps a function, a rank and one flag, and nothing else. What a
   task needs to remember lives with whatever put it on the list: the
-  field's work, a window's.
+  field's state, a window's.
 
 Anything may put a task on the list and take it off again. The field and
 the windows keep theirs there as long as they run, a scene adds its own for
@@ -239,7 +239,7 @@ again, and that would upset the pass that is running.
 | a command that takes time, such as `Event_ShowMessage` or one ending `AndWait` | an event | starts something, then calls `wait(1)` until it is over: a window has closed, an actor has arrived |
 | `SC_WAIT(n)` | an actor script | sets a count in the actor, which the actors' task takes one off each frame |
 | `SC_SYNC` | an actor script | holds the script on this order until the actor has arrived |
-| a count in its owner's work | a task | the task looks at it each frame and returns: a pause in the middle of a line, the time a hit flashes in a battle |
+| a count in its owner's state | a task | the task looks at it each frame and returns: a pause in the middle of a line, the time a hit flashes in a battle |
 
 Only the first three hold any code up, and they are all `wait()`. The rest
 are numbers that a task looks at once a frame. `Actor_WalkToAndWait` gives
@@ -254,7 +254,7 @@ is who runs what.
    and over. It is the only code waiting.
 2. Inside one `wait(1)` the actors' task comes to Isaac. His script is on
    the order that reads the D-pad and the buttons, `SC_PLAYER`. It sees the
-   A Button and sets a request in the field's work. The task goes on to the
+   A Button and sets a request in the field's state. The task goes on to the
    man, whose script is part-way through an `SC_WAIT`, and takes one off
    his count.
 3. `wait(1)` returns. The field's routine finds a request and leaves its
@@ -319,13 +319,14 @@ shows both directions.
 ## Saving
 
 A save is the three things that outlive a sequence: the game flags, the
-main routine's work and the actor snapshot, taken again as the save begins
+main routine's state and the actor snapshot, taken again as the save begins
 so that it holds where the people in the current scene stand. Nothing else
 needs saving, because everything else is rebuilt from those.
 
-That gives a simple rule for new state: if the game should remember it, it
-has to live in a flag or in the work. A yes-or-no fact is a flag. Anything
-larger goes in the work, which still has stretches no code uses.
+That gives a simple rule for anything new: if the game should remember it,
+it has to live in a flag or in the main routine's state. A yes-or-no fact is
+a flag. Anything larger goes in the main routine's state, which still has
+stretches no code uses.
 
 The save lives in a [flash chip](glossary.md#flash-chip) on the cartridge,
 written in 16 sectors. Each of the three files is two parts of one sector

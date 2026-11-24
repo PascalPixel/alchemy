@@ -245,7 +245,7 @@ void PaletteFade_BackupAndDarkenPartial(u8 *buffer, u32 amount, u8 *backup,
 void PaletteFade_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup,
                                                     u32 bytes);
 void PaletteFade_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes);
-s32 Save_InitializeWork(void);
+s32 Save_InitializeState(void);
 u32 Save_SelectWriteSector(s32 partId);
 u32 Save_WriteSector(s32 sector);
 s32 Save_ReadSector(s32 index);
@@ -259,7 +259,7 @@ s32 Save_InvalidateSector(s32 index);
 s32 Save_CompareBytes(u8 *left, u8 *right, s32 count);
 u32 Save_GetLatestCounter(s32 partId);
 s32 Save_LoadFileSummaries(void);
-u32 Save_ReleaseWork(void);
+u32 Save_ReleaseState(void);
 
 void Serial_Initialize(void);
 void Serial_EnableTransferTimer(void);

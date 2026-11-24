@@ -4,14 +4,14 @@ Field_FuchinTempleGrounds:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_FuchinTempleGrounds, .LField_FuchinTempleGrounds_CELL_PICTURES
+	map_offset Field_FuchinTempleGrounds, .LField_FuchinTempleGrounds_CELL_TILES
 	map_offset Field_FuchinTempleGrounds, .LField_FuchinTempleGrounds_SHAPES
 	map_offset Field_FuchinTempleGrounds, .LField_FuchinTempleGrounds_GRID
 	map_offset Field_FuchinTempleGrounds, .LField_FuchinTempleGrounds_ANIMATION
 	map_offset Field_FuchinTempleGrounds, .LField_FuchinTempleGrounds_BLEND
 	map_offset Field_FuchinTempleGrounds, .LField_FuchinTempleGrounds_MARKERS
-.LField_FuchinTempleGrounds_CELL_PICTURES:
-	.incbin "games/tbs/src/map/fuchin_temple_grounds/cell_pictures.delta0.lz"
+.LField_FuchinTempleGrounds_CELL_TILES:
+	.incbin "games/tbs/src/map/fuchin_temple_grounds/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_FuchinTempleGrounds_SHAPES:
 	.incbin "games/tbs/src/map/fuchin_temple_grounds/shapes.table.lz"

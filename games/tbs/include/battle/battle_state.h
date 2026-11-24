@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_BATTLE_WORK_H
-#define ALCHEMY_BATTLE_WORK_H
+#ifndef ALCHEMY_BATTLE_STATE_H
+#define ALCHEMY_BATTLE_STATE_H
 
 /// @file
-/// BattleWork, the battle's own work, and the battle message window's work.
+/// BattleState, the battle's own state, and the battle message window's state.
 
 #include "fixed_math.h"
 #include "static_assert.h"
@@ -46,24 +46,24 @@ struct BattleMessageOffset {
 
 /// The battle message window: its window, its message and whether the
 /// next message is marked.
-struct BattleMessageWork {
+struct BattleMessageState {
   struct Window *window;              ///< the message window
   struct BattleMessageOffset *offset; ///< its message
   s32 marked; ///< set by PLAYBACK_MARK; passed to the next message
 };
 
 STATIC_ASSERT(sizeof(struct BattleMessageOffset) == 8);
-STATIC_ASSERT(sizeof(struct BattleMessageWork) == 12);
-STATIC_ASSERT(offsetof(struct BattleMessageWork, marked) == 8);
+STATIC_ASSERT(sizeof(struct BattleMessageState) == 12);
+STATIC_ASSERT(offsetof(struct BattleMessageState, marked) == 8);
 
-/// The battle message window's work, in HEAP_SLOT_BATTLE_MESSAGE, which
+/// The battle message window's state, in HEAP_SLOT_BATTLE_MESSAGE, which
 /// Battle_Run takes and zeroes for the battle.
-#define gBattleMessageWork                                                     \
-  (*(struct BattleMessageWork **)&gHeapSlots[HEAP_SLOT_BATTLE_MESSAGE])
+#define gBattleMessageState                                                    \
+  (*(struct BattleMessageState **)&gHeapSlots[HEAP_SLOT_BATTLE_MESSAGE])
 
 /// The playback queue and the state of its playback: the phase, the entry
 /// playing and the advance arrow.
-struct BattlePlaybackWork {
+struct BattlePlaybackState {
   struct BattlePlaybackQueue queue; ///< the action's playback, in play order
   s32 phase;      ///< enum BattlePlaybackPhase, or a message phase
   s32 eventIndex; ///< the next queued entry to play
@@ -89,23 +89,23 @@ enum { BATTLE_ACTION_CAPACITY = 20 };
 #define BACKGROUND_LEVEL_STEP (FIXED_ONE / 60)
 
 /// The frames a link battle tolerates without a connection before it gives
-/// up: a count above it pauses the battle (BattleWork.linkPaused) or fails
+/// up: a count above it pauses the battle (BattleState.linkPaused) or fails
 /// the sync, transfer or wait for the partner's commands under way.
 #define LINK_MAX_MISSED_FRAMES 24
 
-/// BattleWork.challengeFlag's bit: the challenge effect landed on a party
+/// BattleState.challengeFlag's bit: the challenge effect landed on a party
 /// member ("This is no time to be running away!").
 #define BATTLE_CHALLENGED_PARTY 2
 
-/// The battle's own work: its enemies, units and their battle objects, the
+/// The battle's own state: its enemies, units and their battle objects, the
 /// turn's actions, the spoils, the background palette, the action under way and
 /// the playback.
 ///
 /// It lives in the HEAP_SLOT_BATTLE heap slot: Battle_Run takes and
 /// zeroes it, sets arrowTiles to -1 and formation, and the next scene change
-/// clears the heap. Every battle part reads it through gBattleWork, and the
+/// clears the heap. Every battle part reads it through gBattleState, and the
 /// battle effects read its background id and palette.
-struct BattleWork {
+struct BattleState {
   s32 formation;      ///< the encounter's enemy formation
   s16 spriteSlots[6]; ///< the unit in each enemy sprite slot, 0 when free
   /// The enemies met so far, for their name letters, and the first
@@ -166,31 +166,31 @@ struct BattleWork {
   u8 paddingAfterHighlight[2]; ///< up to the word actionRun starts on
   /// The action being carried out, as BattleActionRun_Build lays it out.
   struct BattleActionRun actionRun;
-  struct BattlePlaybackWork playback;
+  struct BattlePlaybackState playback;
   /// A value Battle_AdjustDebugValue edits with the d-pad while
   /// Start is held.
   s32 debugValue;
 };
 
-STATIC_ASSERT(sizeof(struct BattleWork) == 2092);
+STATIC_ASSERT(sizeof(struct BattleState) == 2092);
 
-STATIC_ASSERT(offsetof(struct BattleWork, partyStatus) == 65);
-STATIC_ASSERT(offsetof(struct BattleWork, challengeFlag) == 67);
-STATIC_ASSERT(offsetof(struct BattleWork, partyUnits) == 88);
-STATIC_ASSERT(offsetof(struct BattleWork, enemyIds) == 102);
-STATIC_ASSERT(offsetof(struct BattleWork, objects) == 116);
-STATIC_ASSERT(offsetof(struct BattleWork, objectIndex) == 732);
-STATIC_ASSERT(offsetof(struct BattleWork, actions) == 748);
-STATIC_ASSERT(offsetof(struct BattleWork, spoils) == 1328);
-STATIC_ASSERT(offsetof(struct BattleWork, palette) == 1348);
-STATIC_ASSERT(offsetof(struct BattleWork, brightness) == 1604);
-STATIC_ASSERT(offsetof(struct BattleWork, background) == 1608);
-STATIC_ASSERT(offsetof(struct BattleWork, actionRun) == 1620);
-STATIC_ASSERT(offsetof(struct BattleWork, playback) == 1720);
-STATIC_ASSERT(offsetof(struct BattlePlaybackWork, phase) == 328);
-STATIC_ASSERT(offsetof(struct BattlePlaybackWork, flags) == 364);
+STATIC_ASSERT(offsetof(struct BattleState, partyStatus) == 65);
+STATIC_ASSERT(offsetof(struct BattleState, challengeFlag) == 67);
+STATIC_ASSERT(offsetof(struct BattleState, partyUnits) == 88);
+STATIC_ASSERT(offsetof(struct BattleState, enemyIds) == 102);
+STATIC_ASSERT(offsetof(struct BattleState, objects) == 116);
+STATIC_ASSERT(offsetof(struct BattleState, objectIndex) == 732);
+STATIC_ASSERT(offsetof(struct BattleState, actions) == 748);
+STATIC_ASSERT(offsetof(struct BattleState, spoils) == 1328);
+STATIC_ASSERT(offsetof(struct BattleState, palette) == 1348);
+STATIC_ASSERT(offsetof(struct BattleState, brightness) == 1604);
+STATIC_ASSERT(offsetof(struct BattleState, background) == 1608);
+STATIC_ASSERT(offsetof(struct BattleState, actionRun) == 1620);
+STATIC_ASSERT(offsetof(struct BattleState, playback) == 1720);
+STATIC_ASSERT(offsetof(struct BattlePlaybackState, phase) == 328);
+STATIC_ASSERT(offsetof(struct BattlePlaybackState, flags) == 364);
 
-/// The battle's work: gHeapSlots[HEAP_SLOT_BATTLE] under its own name.
-#define gBattleWork (*(struct BattleWork **)&gHeapSlots[HEAP_SLOT_BATTLE])
+/// The battle's state: gHeapSlots[HEAP_SLOT_BATTLE] under its own name.
+#define gBattleState (*(struct BattleState **)&gHeapSlots[HEAP_SLOT_BATTLE])
 
 #endif

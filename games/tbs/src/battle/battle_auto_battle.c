@@ -79,7 +79,7 @@ DEFINE_ADJUST_CAMERA(BattleCamera_AdjustByShoulderKeys)
 /// Auto battle: plays one action, a defeated target replaced by a living unit
 /// of its side. Returns 1 when the party got away, -1 when the unit is down.
 s32 AutoBattle_RunAction(struct BattleAction *action) {
-  struct BattleBackgroundWork *view;
+  struct BattleBackgroundState *view;
   s32 unitId;
   s32 yaw;
   struct Unit *actor;
@@ -90,7 +90,7 @@ s32 AutoBattle_RunAction(struct BattleAction *action) {
     return -1;
 
   action->target = BattleAbility_ReplaceDefeated(action);
-  view = gBattleBackgroundWork;
+  view = gBattleBackgroundState;
   // Here any unit id above Felix's counts as an enemy, Jenna's included.
   if (action->unitId > FELIX)
     yaw = YAW_ENEMY_ACTION;
@@ -116,7 +116,7 @@ s32 AutoBattle_RunAction(struct BattleAction *action) {
     break;
   case COMMAND_ATTACK:
   default: {
-    struct BattleBackgroundWork *view = gBattleBackgroundWork;
+    struct BattleBackgroundState *view = gBattleBackgroundState;
     view->flag = 0;
     AutoBattle_RunAttackOrItem(action);
     view->flag = 0;
@@ -189,7 +189,7 @@ s32 AutoBattle_ShowDefend(const struct BattleAction *action) {
 /// plays on the target side.
 s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   u16 visibleUnits[UNIT_MAX];
-  struct BattleStagingWork context;
+  struct BattleStagingState context;
   s32 unitId;
   s32 targetId;
   u32 sideStart;
@@ -209,7 +209,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   }
 
   {
-    struct BattleBackgroundWork *view = gBattleBackgroundWork;
+    struct BattleBackgroundState *view = gBattleBackgroundState;
     // An enemy caster turns the camera to YAW_BEHIND_ENEMIES, not
     // YAW_ENEMY_ACTION.
     view->targetYaw =
@@ -305,56 +305,57 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
 /// Unused auto battle attack: "<unit> attacks!", the attacker runs up to its
 /// target, the blow, and both return.
 s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
-  struct BattleStagingWork work;
+  struct BattleStagingState state;
 
   // A short wait when the camera already faces the party's side.
-  if (gBattleBackgroundWork->targetYaw == YAW_PARTY_ACTION) {
-    gBattleBackgroundWork->targetYaw = YAW_PARTY_ACTION;
+  if (gBattleBackgroundState->targetYaw == YAW_PARTY_ACTION) {
+    gBattleBackgroundState->targetYaw = YAW_PARTY_ACTION;
     wait(10);
   } else {
-    gBattleBackgroundWork->targetYaw = YAW_PARTY_ACTION;
+    gBattleBackgroundState->targetYaw = YAW_PARTY_ACTION;
     wait(30);
   }
 
-  work.effect.user = input->unitId;
-  if (BattleObject_IsValidId(work.effect.user) < 0)
+  state.effect.user = input->unitId;
+  if (BattleObject_IsValidId(state.effect.user) < 0)
     return -1;
 
-  work.effect.targets[0] = input->target;
-  if (BattleObject_IsValidId(work.effect.targets[0]) < 0)
+  state.effect.targets[0] = input->target;
+  if (BattleObject_IsValidId(state.effect.targets[0]) < 0)
     return -1;
 
   // Lookups whose results are unused, and a roll that only advances the
   // random number generator.
-  Unit_GetFar(work.effect.user);
-  Unit_GetFar(work.effect.targets[0]);
+  Unit_GetFar(state.effect.user);
+  Unit_GetFar(state.effect.targets[0]);
   Random16();
-  MessageArgument_PushFar(work.effect.user, MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_PushFar(state.effect.user, MESSAGE_ARGUMENT_ACTOR);
   BattleMessage_ShowAndWaitFar(MsgActorAttacks);
-  BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], 13, 0);
-  Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor,
+  BattleMotion_ApproachTarget(state.effect.user, state.effect.targets[0], 13,
+                              0);
+  Actor_SetAnimationSpeedFar(BattleObject_Get(state.effect.user)->actor,
                              ANIM_STEP_NORMAL);
-  BattleObject_Get(work.effect.targets[0]);
+  BattleObject_Get(state.effect.targets[0]);
 
-  work.effect.targetCount = 1;
-  if ((u16)work.effect.targets[0] <= ALLY_MAX)
-    work.effect.side = EFFECT_SIDE_PARTY;
+  state.effect.targetCount = 1;
+  if ((u16)state.effect.targets[0] <= ALLY_MAX)
+    state.effect.side = EFFECT_SIDE_PARTY;
   else
-    work.effect.side = EFFECT_SIDE_ENEMIES;
-  work.effect.prelude = 0;
+    state.effect.side = EFFECT_SIDE_ENEMIES;
+  state.effect.prelude = 0;
 
   wait(4);
-  BattleEffect_RunByIdRangeFar(&work.effect);
-  BattleMotion_ReturnToSpot(work.effect.targets[0]);
-  BattleMotion_ReturnToSpot(work.effect.user);
+  BattleEffect_RunByIdRangeFar(&state.effect);
+  BattleMotion_ReturnToSpot(state.effect.targets[0]);
+  BattleMotion_ReturnToSpot(state.effect.user);
   return 0;
 }
 
 /// Auto battle: an attack or an item, played on the first living unit of the
 /// target's side.
 s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
-  struct BattleStagingWork work;
-  struct BattleBackgroundWork *view = gBattleBackgroundWork;
+  struct BattleStagingState state;
+  struct BattleBackgroundState *view = gBattleBackgroundState;
   struct Actor *userActor;
   s32 targetYaw;
   s32 targetIndex;
@@ -372,66 +373,67 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
     view->frames = 40;
     wait(40);
   }
-  work.effect.kind = action->parameter;
-  work.effect.range = action->range;
-  work.effect.user = action->unitId;
-  work.effect.firstTarget = action->target;
-  if (BattleObject_IsValidId(work.effect.user) < 0)
+  state.effect.kind = action->parameter;
+  state.effect.range = action->range;
+  state.effect.user = action->unitId;
+  state.effect.firstTarget = action->target;
+  if (BattleObject_IsValidId(state.effect.user) < 0)
     return -1;
-  if (work.effect.firstTarget > FIRST_ENEMY_UNIT - 1)
-    work.effect.targetCount =
-        BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, work.effect.targets);
+  if (state.effect.firstTarget > FIRST_ENEMY_UNIT - 1)
+    state.effect.targetCount =
+        BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, state.effect.targets);
   else
-    work.effect.targetCount =
-        BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, work.effect.targets);
+    state.effect.targetCount =
+        BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, state.effect.targets);
   // The status window without its PP row (see PARTY_STATUS_SUMMONS).
-  PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
+  PartyStatus_DrawFar(gBattleState->partyStatus & ~PARTY_STATUS_SHOW_PP);
   // The unit raises its hand (POSE_CAST); then only the first living unit of
   // the target's side takes the effect.
-  userActor = BattleObject_Get(work.effect.user)->actor;
+  userActor = BattleObject_Get(state.effect.user)->actor;
   Actor_SelectAnimationFar(userActor, POSE_CAST);
   Actor_SetAnimationSpeedFar(userActor, ANIM_STEP_NORMAL);
   if ((u16)action->target <= ALLY_MAX) {
-    work.effect.side = EFFECT_SIDE_PARTY;
-    BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, work.effect.targets);
-    work.effect.targetCount = 1;
+    state.effect.side = EFFECT_SIDE_PARTY;
+    BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, state.effect.targets);
+    state.effect.targetCount = 1;
   } else {
-    work.effect.side = EFFECT_SIDE_ENEMIES;
-    BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, work.effect.targets);
-    work.effect.targetCount = 1;
+    state.effect.side = EFFECT_SIDE_ENEMIES;
+    BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, state.effect.targets);
+    state.effect.targetCount = 1;
   }
 
   // Keep each target's sprite entries' parameters for the effect.
-  for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++) {
+  for (targetIndex = 0; targetIndex != state.effect.targetCount;
+       targetIndex++) {
     struct Sprite *sprite =
-        BattleObject_Get(work.effect.targets[targetIndex])->actor->sprite;
+        BattleObject_Get(state.effect.targets[targetIndex])->actor->sprite;
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != sprite->count - 1; entryIndex++)
-      work.savedAnimationParameters[targetIndex][entryIndex] =
+      state.savedAnimationParameters[targetIndex][entryIndex] =
           sprite->entries[entryIndex]->colorMode;
   }
   // The four elements' pillars in turn, then the blow.
-  work.effect.kind = ELEMENT_VENUS;
-  work.effect.variant = 0;
-  BattleEffect_RunElementPillarFar(&work.effect);
-  work.effect.kind = ELEMENT_MERCURY;
-  BattleEffect_RunElementPillarFar(&work.effect);
-  work.effect.kind = ELEMENT_MARS;
-  BattleEffect_RunElementPillarFar(&work.effect);
-  work.effect.kind = ELEMENT_JUPITER;
-  BattleEffect_RunElementPillarFar(&work.effect);
-  work.effect.kind = 0;
+  state.effect.kind = ELEMENT_VENUS;
+  state.effect.variant = 0;
+  BattleEffect_RunElementPillarFar(&state.effect);
+  state.effect.kind = ELEMENT_MERCURY;
+  BattleEffect_RunElementPillarFar(&state.effect);
+  state.effect.kind = ELEMENT_MARS;
+  BattleEffect_RunElementPillarFar(&state.effect);
+  state.effect.kind = ELEMENT_JUPITER;
+  BattleEffect_RunElementPillarFar(&state.effect);
+  state.effect.kind = 0;
   /* LEFTOVER(template): the choice of runner BattleStaging_RunAttack, RunItem
    * and RunPsynergyCast make, under their test of the kind, which is 0 here. */
-  if (work.effect.kind)
-    BattleEffect_RunByIdRangeFar(&work.effect);
+  if (state.effect.kind)
+    BattleEffect_RunByIdRangeFar(&state.effect);
   else
-    BattleEffect_RunFromTableFar(&work.effect);
+    BattleEffect_RunFromTableFar(&state.effect);
   Actor_SelectAnimationFar(userActor, POSE_STANDING);
-  for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++)
-    BattleMotion_ReturnToSpot(work.effect.targets[targetIndex]);
-  BattleMotion_ReturnToSpot(work.effect.user);
+  for (targetIndex = 0; targetIndex != state.effect.targetCount; targetIndex++)
+    BattleMotion_ReturnToSpot(state.effect.targets[targetIndex]);
+  BattleMotion_ReturnToSpot(state.effect.user);
   return 0;
 }
 

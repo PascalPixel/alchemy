@@ -4,14 +4,14 @@ Field_SolEntrance:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 30, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 50, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_SolEntrance, .LField_SolEntrance_CELL_PICTURES
+	map_offset Field_SolEntrance, .LField_SolEntrance_CELL_TILES
 	map_offset Field_SolEntrance, .LField_SolEntrance_SHAPES
 	map_offset Field_SolEntrance, .LField_SolEntrance_GRID
 	map_offset Field_SolEntrance
 	map_offset Field_SolEntrance
 	map_offset Field_SolEntrance, .LField_SolEntrance_MARKERS
-.LField_SolEntrance_CELL_PICTURES:
-	.incbin "games/tbs/src/map/sol_entrance/cell_pictures.delta1.lz"
+.LField_SolEntrance_CELL_TILES:
+	.incbin "games/tbs/src/map/sol_entrance/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_SolEntrance_SHAPES:
 	.incbin "games/tbs/src/map/sol_entrance/shapes.table.lz"

@@ -10,7 +10,7 @@
 /// equip it. An artifact bought takes its stock counter down, and the list is
 /// rebuilt. Repeats until B.
 s32 Shop_SelectBuy(void) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   struct Window *priceWindow = 0;
   struct Window *stockWindow;
   struct Window *messageWindow;
@@ -169,7 +169,7 @@ next_page:
         continue;
       }
       Inventory_RemoveFar(unitId, capacitySlot);
-      if ((u32)selectedDefinition->price > gMainRoutineWork.holdings.coins) {
+      if ((u32)selectedDefinition->price > gMainRoutineState.holdings.coins) {
         Sound_PlayFar(SE_MENU_CANCEL);
         // "Oh! That's a fine choice, but you don't have enough money."
         Shop_ShowKeeperMessageHidingCursor(MsgBuyNotEnoughMoney);
@@ -242,7 +242,7 @@ close:
 /// Draws a page of seven stock items with their prices, the page arrows, and
 /// the chosen item lifted and pulsing.
 void Shop_DrawStock(struct Window *window, s32 selected) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
   s16 *itemIds;
   s16 *stockCursor;
   s32 itemCount;
@@ -253,7 +253,7 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
   struct ItemDefinition *item;
   struct WindowSprite *icon;
 
-  shop = gMenuWork;
+  shop = gMenuState;
   itemIds = shop->stockItemIds;
   itemCount = shop->stockCount;
   stockIndex = selected - selected % SHOP_STOCK_PAGE_ITEMS;
@@ -299,21 +299,21 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
 
 /// Draws the party's coins in the coins window, in the edition's layout.
 void Shop_DrawMoney(void) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
   struct Window *window;
 
-  shop = gMenuWork;
+  shop = gMenuState;
   window = shop->moneyWindow;
   if (window != 0) {
 #if LANGUAGE != LANGUAGE_JAPANESE
     Text_DrawMessageAsTilesFar(MsgYourCoins, window, 0, 0);
-    Text_DrawNumberInWindowFar(gMainRoutineWork.holdings.coins, 6, window, 32,
+    Text_DrawNumberInWindowFar(gMainRoutineState.holdings.coins, 6, window, 32,
                                8);
 #else
     s32 msg = MsgYourCoins;
 
     Text_DrawMessageAsTilesFar(msg, window, 0, 0);
-    Text_DrawNumberInWindowFar(gMainRoutineWork.holdings.coins, 6, window, 0,
+    Text_DrawNumberInWindowFar(gMainRoutineState.holdings.coins, 6, window, 0,
                                8);
     Text_DrawMessageAsTilesFar(msg - 2, window, 48, 8); // MsgCoins
 #endif
@@ -374,7 +374,7 @@ void Shop_DrawMessage(struct Window *window, s32 message) {
 /// draws at four fifths of their size the party members who cannot equip
 /// `itemId`.
 void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   s32 memberIndex;
 
   if (window != 0) {
@@ -398,7 +398,7 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
 /// the item it would replace. The item is tried on in that item's slot and the
 /// slot put back.
 void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   struct Unit *unit = Unit_GetFar(unitId);
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 replacedItemId = -1;
@@ -524,7 +524,7 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
 /// the artifact's stock and a full stack less what the party member carries.
 /// Returns the count (1 for other items), or -1 when cancelled.
 s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
   struct Unit *unit;
   struct ItemDefinition *item;
   s32 carriedQuantity;
@@ -533,7 +533,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   s32 artifactLimit;
   s32 selectedQuantity;
 
-  shop = gMenuWork;
+  shop = gMenuState;
   unit = Unit_GetFar(unitId);
   item = Item_GetDirectFar(itemId);
   selectedQuantity = 1;
@@ -549,7 +549,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 
     quantityLimit = INVENTORY_STACK_MAX;
     if (item->price != 0)
-      quantityLimit = (u32)gMainRoutineWork.holdings.coins / item->price;
+      quantityLimit = (u32)gMainRoutineState.holdings.coins / item->price;
 
     if (shop->action == SHOP_ACTION_ARTIFACTS) {
       artifactLimit = Item_AdjustCounterFar(itemId, 0);
@@ -708,7 +708,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
 /// Offers to equip the item just bought, and warns of a curse. Returns 1 when
 /// it was equipped.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   struct Unit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);

@@ -1,9 +1,9 @@
-#ifndef ALCHEMY_FIELD_WORK_H
-#define ALCHEMY_FIELD_WORK_H
+#ifndef ALCHEMY_FIELD_STATE_H
+#define ALCHEMY_FIELD_STATE_H
 
 /// @file
-/// FieldWork, the running scene's work, with its treasure spots and the raised
-/// triggers the field sequence handles itself.
+/// FieldState, the running scene's state, with its treasure spots and the
+/// raised triggers the field sequence handles itself.
 
 #include "edition.h"
 #include "fixed_math.h"
@@ -16,7 +16,7 @@ struct Trigger;
 struct Actor;
 struct MapGridCell;
 
-/// The actor ids FieldWork.actors maps (enum ActorId): the party's eight
+/// The actor ids FieldState.actors maps (enum ActorId): the party's eight
 /// characters, then the actors a scene places.
 #define ACTOR_ID_COUNT 66
 
@@ -34,7 +34,7 @@ STATIC_ASSERT(offsetof(struct TreasureSpot, id) == 4);
 STATIC_ASSERT(offsetof(struct TreasureSpot, column) == 6);
 STATIC_ASSERT(offsetof(struct TreasureSpot, row) == 7);
 
-/// The values of FieldWork.raisedTrigger that the field sequence handles
+/// The values of FieldState.raisedTrigger that the field sequence handles
 /// itself, rather than passing them to the scene (Scene_RunRaisedTrigger).
 enum FieldRaisedTrigger {
   /// Party members fell to poison or hazardous ground this step.
@@ -49,18 +49,18 @@ enum FieldRaisedTrigger {
 /// How long a map's screen transition takes, in frames, unless an event or
 /// scene sets another length.
 #define MAP_TRANSITION_FRAMES 16
-/// The frames Reveal lasts once cast, ten seconds (FieldWork.revealFrames).
+/// The frames Reveal lasts once cast, ten seconds (FieldState.revealFrames).
 #define REVEAL_FRAMES 600
 
-/// A field Psynergy for FieldWork.psynergy: the unit who uses it, in bits 10
+/// A field Psynergy for FieldState.psynergy: the unit who uses it, in bits 10
 /// to 13, and the Psynergy, in bits 0 to 9 (Field_UsePsynergy).
 #define FIELD_PSYNERGY(unit, abilityId) ((unit) << 10 | (abilityId))
 
-/// A field scene's work: FieldSequence_Run allocates it in heap slot
+/// A field scene's state: FieldSequence_Run allocates it in heap slot
 /// HEAP_SLOT_FIELD, zeroes it and frees it on the way out, and the field
 /// sequence, the event commands and the scene overlays all reach it through
-/// gFieldWork.
-struct FieldWork {
+/// gFieldState.
+struct FieldState {
   /// The actor placement tables placed so far, recorded by
   /// Event_SpawnActorPlacements.
   struct ActorPlacement *tables[4];
@@ -155,50 +155,50 @@ struct FieldWork {
   s8 menuOpen;
 };
 
-STATIC_ASSERT(sizeof(struct FieldWork) == 3276);
-STATIC_ASSERT(offsetof(struct FieldWork, tables) == 0);
-STATIC_ASSERT(offsetof(struct FieldWork, triggers) == 16);
-STATIC_ASSERT(offsetof(struct FieldWork, actors) == 20);
-STATIC_ASSERT(offsetof(struct FieldWork, treasureSpots) == 284);
-STATIC_ASSERT(offsetof(struct FieldWork, stepTrigger) == 364);
-STATIC_ASSERT(offsetof(struct FieldWork, talk) == 376);
-STATIC_ASSERT(offsetof(struct FieldWork, encounter) == 380);
-STATIC_ASSERT(offsetof(struct FieldWork, raisedTrigger) == 386);
-STATIC_ASSERT(offsetof(struct FieldWork, blockedSteps) == 412);
-STATIC_ASSERT(offsetof(struct FieldWork, mode) == 414);
-STATIC_ASSERT(offsetof(struct FieldWork, encounterZones) == 416);
-STATIC_ASSERT(offsetof(struct FieldWork, encounterBias) == 424);
-STATIC_ASSERT(offsetof(struct FieldWork, encounterThreshold) == 428);
-STATIC_ASSERT(offsetof(struct FieldWork, walkingDistanceScale) == 432);
-STATIC_ASSERT(offsetof(struct FieldWork, walkingDistance) == 436);
-STATIC_ASSERT(offsetof(struct FieldWork, currentCell) == 440);
-STATIC_ASSERT(offsetof(struct FieldWork, previousCell) == 444);
-STATIC_ASSERT(offsetof(struct FieldWork, transition) == 448);
-STATIC_ASSERT(offsetof(struct FieldWork, transitionActive) == 454);
-STATIC_ASSERT(offsetof(struct FieldWork, transitionFrames) == 456);
-STATIC_ASSERT(offsetof(struct FieldWork, fastForward) == 460);
-STATIC_ASSERT(offsetof(struct FieldWork, message) == 472);
-STATIC_ASSERT(offsetof(struct FieldWork, camera) == 480);
-STATIC_ASSERT(offsetof(struct FieldWork, unusedAfterMessage) == 474);
-STATIC_ASSERT(offsetof(struct FieldWork, unusedBeforeCamera) == 476);
-STATIC_ASSERT(offsetof(struct FieldWork, speaker) == 500);
-STATIC_ASSERT(offsetof(struct FieldWork, messageWindow) == 504);
-STATIC_ASSERT(offsetof(struct FieldWork, sideWindow) == 508);
-STATIC_ASSERT(offsetof(struct FieldWork, savedFadeTarget) == 566);
-STATIC_ASSERT(offsetof(struct FieldWork, busy) == 3254);
-STATIC_ASSERT(offsetof(struct FieldWork, revealActive) == 3256);
-STATIC_ASSERT(offsetof(struct FieldWork, revealFrames) == 3258);
-STATIC_ASSERT(offsetof(struct FieldWork, revealCenterX) == 3260);
-STATIC_ASSERT(offsetof(struct FieldWork, revealCenterY) == 3262);
-STATIC_ASSERT(offsetof(struct FieldWork, effectTimerRunning) == 3264);
-STATIC_ASSERT(offsetof(struct FieldWork, choiceMessage) == 3266);
-STATIC_ASSERT(offsetof(struct FieldWork, choiceWidth) == 3268);
-STATIC_ASSERT(offsetof(struct FieldWork, psynergyActing) == 3270);
-STATIC_ASSERT(offsetof(struct FieldWork, castStarted) == 3271);
-STATIC_ASSERT(offsetof(struct FieldWork, queuedSound) == 3272);
+STATIC_ASSERT(sizeof(struct FieldState) == 3276);
+STATIC_ASSERT(offsetof(struct FieldState, tables) == 0);
+STATIC_ASSERT(offsetof(struct FieldState, triggers) == 16);
+STATIC_ASSERT(offsetof(struct FieldState, actors) == 20);
+STATIC_ASSERT(offsetof(struct FieldState, treasureSpots) == 284);
+STATIC_ASSERT(offsetof(struct FieldState, stepTrigger) == 364);
+STATIC_ASSERT(offsetof(struct FieldState, talk) == 376);
+STATIC_ASSERT(offsetof(struct FieldState, encounter) == 380);
+STATIC_ASSERT(offsetof(struct FieldState, raisedTrigger) == 386);
+STATIC_ASSERT(offsetof(struct FieldState, blockedSteps) == 412);
+STATIC_ASSERT(offsetof(struct FieldState, mode) == 414);
+STATIC_ASSERT(offsetof(struct FieldState, encounterZones) == 416);
+STATIC_ASSERT(offsetof(struct FieldState, encounterBias) == 424);
+STATIC_ASSERT(offsetof(struct FieldState, encounterThreshold) == 428);
+STATIC_ASSERT(offsetof(struct FieldState, walkingDistanceScale) == 432);
+STATIC_ASSERT(offsetof(struct FieldState, walkingDistance) == 436);
+STATIC_ASSERT(offsetof(struct FieldState, currentCell) == 440);
+STATIC_ASSERT(offsetof(struct FieldState, previousCell) == 444);
+STATIC_ASSERT(offsetof(struct FieldState, transition) == 448);
+STATIC_ASSERT(offsetof(struct FieldState, transitionActive) == 454);
+STATIC_ASSERT(offsetof(struct FieldState, transitionFrames) == 456);
+STATIC_ASSERT(offsetof(struct FieldState, fastForward) == 460);
+STATIC_ASSERT(offsetof(struct FieldState, message) == 472);
+STATIC_ASSERT(offsetof(struct FieldState, camera) == 480);
+STATIC_ASSERT(offsetof(struct FieldState, unusedAfterMessage) == 474);
+STATIC_ASSERT(offsetof(struct FieldState, unusedBeforeCamera) == 476);
+STATIC_ASSERT(offsetof(struct FieldState, speaker) == 500);
+STATIC_ASSERT(offsetof(struct FieldState, messageWindow) == 504);
+STATIC_ASSERT(offsetof(struct FieldState, sideWindow) == 508);
+STATIC_ASSERT(offsetof(struct FieldState, savedFadeTarget) == 566);
+STATIC_ASSERT(offsetof(struct FieldState, busy) == 3254);
+STATIC_ASSERT(offsetof(struct FieldState, revealActive) == 3256);
+STATIC_ASSERT(offsetof(struct FieldState, revealFrames) == 3258);
+STATIC_ASSERT(offsetof(struct FieldState, revealCenterX) == 3260);
+STATIC_ASSERT(offsetof(struct FieldState, revealCenterY) == 3262);
+STATIC_ASSERT(offsetof(struct FieldState, effectTimerRunning) == 3264);
+STATIC_ASSERT(offsetof(struct FieldState, choiceMessage) == 3266);
+STATIC_ASSERT(offsetof(struct FieldState, choiceWidth) == 3268);
+STATIC_ASSERT(offsetof(struct FieldState, psynergyActing) == 3270);
+STATIC_ASSERT(offsetof(struct FieldState, castStarted) == 3271);
+STATIC_ASSERT(offsetof(struct FieldState, queuedSound) == 3272);
 
-/// The running field scene's work, heap slot HEAP_SLOT_FIELD; FieldSequence_Run
-/// takes it and frees it.
-#define gFieldWork (*(struct FieldWork **)&gHeapSlots[HEAP_SLOT_FIELD])
+/// The running field scene's state, heap slot HEAP_SLOT_FIELD;
+/// FieldSequence_Run takes it and frees it.
+#define gFieldState (*(struct FieldState **)&gHeapSlots[HEAP_SLOT_FIELD])
 
 #endif

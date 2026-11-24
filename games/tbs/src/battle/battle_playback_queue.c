@@ -66,8 +66,8 @@ UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
     // Cycle the eight pictures, one every four frames.
     pictureTiles =
         ((gFrameCount >> 2) & 7) * 128 + (s32)gBattleMessage_AdvanceArrowTiles;
-    window = gBattleMessageWork->window;
-    offset = gBattleMessageWork->offset;
+    window = gBattleMessageState->window;
+    offset = gBattleMessageState->offset;
     // Outside the windows, sprites show and BG2 does not.
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
@@ -130,7 +130,7 @@ UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
 }
 
 /// Marks the next message, as PLAYBACK_MARK does.
-void BattlePlayback_MarkMessage(void) { gBattleMessageWork->marked = 1; }
+void BattlePlayback_MarkMessage(void) { gBattleMessageState->marked = 1; }
 
 /// Takes an enemy out of the battle at once, one that leaves rather than falls.
 UNREAD_RESULT BattleObject_DestroyTemporaryObject(s32 unitId) {
@@ -149,12 +149,12 @@ UNREAD_RESULT BattleObject_DestroyTemporaryObject(s32 unitId) {
   }
 }
 
-/// BattlePlaybackWork.flags bit 0: a Djinni struck a weakness, so enemies that
+/// BattlePlaybackState.flags bit 0: a Djinni struck a weakness, so enemies that
 /// fall pay the Djinn bonus (BattleEnemy_RecordDefeat).
 #define PLAYBACK_FLAG_DJINN_BONUS 1
 
 /// Grants the Djinn bonus for the rest of the action.
-void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackWork *runtime,
+void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackState *runtime,
                                     u32 operand) {
   runtime->flags |= PLAYBACK_FLAG_DJINN_BONUS;
 }
@@ -166,7 +166,7 @@ void BattlePlayback_RunAll(void) {
 #else
 u32 BattlePlayback_RunAll(void) {
 #endif
-  struct BattlePlaybackWork *runtime = &gBattleWork->playback;
+  struct BattlePlaybackState *runtime = &gBattleState->playback;
   struct BattlePlaybackQueue *queue = &runtime->queue;
   s32 eventIndex;
 
@@ -200,7 +200,7 @@ u32 BattlePlayback_RunAll(void) {
                                 MESSAGE_ARGUMENT_ABILITY);
         break;
       case PLAYBACK_MARK:
-        gBattleMessageWork->marked = 1;
+        gBattleMessageState->marked = 1;
         break;
       case PLAYBACK_CLEAR_ARGUMENTS:
         MessageArgument_ClearAllFar();
@@ -228,7 +228,7 @@ u32 BattlePlayback_RunAll(void) {
         BattleMotion_ShowDowned(queue->operands[eventIndex]);
         break;
       case PLAYBACK_DRAW_STATUS:
-        PartyStatus_DrawFar(gBattleWork->partyStatus);
+        PartyStatus_DrawFar(gBattleState->partyStatus);
         break;
       case PLAYBACK_REFRESH_UNIT:
         BattleUnit_BuildStatusFlags(
@@ -244,7 +244,7 @@ u32 BattlePlayback_RunAll(void) {
 /// Queues one playback command with its operand, and returns the opcode.
 /// Nothing checks the queue's capacity.
 u32 BattlePlayback_Push(u32 opcode, u32 operand) {
-  struct BattlePlaybackQueue *queue = &gBattleWork->playback.queue;
+  struct BattlePlaybackQueue *queue = &gBattleState->playback.queue;
   u32 index = queue->count;
 
   queue->opcodes[index] = opcode;

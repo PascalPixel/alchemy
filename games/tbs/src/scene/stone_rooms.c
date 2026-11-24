@@ -40,7 +40,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -99,7 +99,7 @@ const u32 *Scene_GetExits(void) { return gStoneRooms_Exits; }
 
 /// Places the three jailed thieves, or the lone prisoner.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
+  if (gMainRoutineState.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerActorPlacements;
   }
   return gStoneRooms_ThiefActorPlacements;
@@ -107,7 +107,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// Returns the thieves' triggers, or the prisoner's.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
+  if (gMainRoutineState.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerTriggers;
   }
   return gStoneRooms_ThiefTriggers;
@@ -209,9 +209,9 @@ static void StoneRooms_LeaveForVault(void) {
 s32 Scene_Initialize(void) {
   s16 entrance;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  entrance = gMainRoutineWork.entrance;
+  entrance = gMainRoutineState.entrance;
 
   if (entrance == STONE_ROOMS_FROM_LUNPA) {
     // The room is in Vault's area, so coming from Lunpa changes the area and

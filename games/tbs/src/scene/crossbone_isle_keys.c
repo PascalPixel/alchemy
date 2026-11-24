@@ -68,7 +68,7 @@
 #include "system/dma.h"
 #include "system/heap_slots.h"
 #include "system/io_write.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 
 extern s32 gCrossboneIsleKeys_BaneSquashScript[];
@@ -311,7 +311,7 @@ static void CrossboneIsleKeys_BaneJoins(void) {
 UNUSED static void CrossboneIsleKeys_UnusedNoOpA(void) {}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 selector = gMainRoutineState.next;
 
   if (selector == SCENE_CROSSBONE_ISLE_KEYS) {
     return gCrossboneIsleKeysRoomEntrances;
@@ -330,7 +330,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gCrossboneIsleKeysExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 selector = gMainRoutineState.next;
 
   if (selector == SCENE_CROSSBONE_ISLE_KEYS) {
     return gCrossboneIsleKeysRoomActorPlacements;
@@ -349,7 +349,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// past it.
 ///
 /// The event itself does nothing: Halt's own effect holds the statue, and
-/// each statue's chase checks gMainRoutineWork.haltedActor before it moves.
+/// each statue's chase checks gMainRoutineState.haltedActor before it moves.
 static void CrossboneIsleKeys_HaltStatue(void) {}
 
 /// Keeps Bane turned toward Isaac on the spiked ledge, every frame.
@@ -510,12 +510,12 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
 static void CrossboneIsleKeys_BaneKeepsAway(void) {
   struct Actor *djinni;
   s32 target;
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
-    if (gMainRoutineWork.haltedActor != ACTOR_BANE) {
-      target = work->stepTrigger;
+    if (gMainRoutineState.haltedActor != ACTOR_BANE) {
+      target = state->stepTrigger;
       djinni = Actor_Get(ACTOR_BANE);
       djinni->speedLimit = Actor_Get(ACTOR_PARTY_LEADER)->speedLimit;
       djinni = Actor_Get(ACTOR_BANE);
@@ -536,7 +536,7 @@ static void CrossboneIsleKeys_HaltBane(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 selector = gMainRoutineState.next;
 
   if (selector == SCENE_CROSSBONE_ISLE_KEYS) {
     return gCrossboneIsleKeysRoomTriggers;
@@ -667,7 +667,7 @@ static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
 
   CrossboneIsleKeys_UseBlueKey(2);
   if (Actor_Get(ACTOR_PARTY_LEADER)->facing == FACING_SOUTH) {
-    blockedSteps = &gFieldWork->blockedSteps;
+    blockedSteps = &gFieldState->blockedSteps;
     if (*blockedSteps > FIELD_PUSH_FRAMES) {
       Field_TryJumpForward();
       *blockedSteps = resetSteps;
@@ -687,7 +687,7 @@ static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
 
   CrossboneIsleKeys_UseBlueKey(3);
   if (Actor_Get(ACTOR_PARTY_LEADER)->facing == FACING_SOUTH) {
-    blockedSteps = &gFieldWork->blockedSteps;
+    blockedSteps = &gFieldState->blockedSteps;
     if (*blockedSteps > FIELD_PUSH_FRAMES) {
       Field_TryJumpForward();
       *blockedSteps = resetSteps;
@@ -772,14 +772,14 @@ static void CrossboneIsleKeys_CheckFirstStatueTrigger(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / toFIXED(16);
   s32 row = leader->z.fixed / toFIXED(16);
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
   if (!Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) &&
-      gMainRoutineWork.cloaked == 0 &&
-      gMainRoutineWork.haltedActor != ACTOR_FIRST_STATUE &&
+      gMainRoutineState.cloaked == 0 &&
+      gMainRoutineState.haltedActor != ACTOR_FIRST_STATUE &&
       (column >= 21 && column <= 23) && row >= 10 && row <= 11) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
-    work->raisedTrigger = RAISED_FIRST_CHASE;
+    state->raisedTrigger = RAISED_FIRST_CHASE;
   }
 }
 
@@ -821,14 +821,14 @@ static void CrossboneIsleKeys_CheckSecondStatueTrigger(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / toFIXED(16);
   s32 row = leader->z.fixed / toFIXED(16);
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
   if (Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) == 0 &&
-      gMainRoutineWork.cloaked == 0 &&
-      gMainRoutineWork.haltedActor != ACTOR_SECOND_STATUE && column == 10 &&
+      gMainRoutineState.cloaked == 0 &&
+      gMainRoutineState.haltedActor != ACTOR_SECOND_STATUE && column == 10 &&
       (row >= 16 && row <= 18)) {
     Event_SetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
-    CrossboneIsleKeys_RaiseEvent(&work->raisedTrigger, RAISED_SECOND_CHASE);
+    CrossboneIsleKeys_RaiseEvent(&state->raisedTrigger, RAISED_SECOND_CHASE);
   }
 }
 
@@ -872,7 +872,7 @@ static void CrossboneIsleKeys_TrackStatueColumn(s32 statueIndex) {
   s32 row = leader->z.fixed / toFIXED(16);
   s32 statueId = statueIndex + ACTOR_THIRD_STATUE;
 
-  if (gMainRoutineWork.haltedActor == statueId)
+  if (gMainRoutineState.haltedActor == statueId)
     return;
   if (column == gCrossboneIsleKeys_StatueColumns[statueIndex])
     return;
@@ -920,7 +920,7 @@ UNUSED static void CrossboneIsleKeys_TrackFifthStatueColumn(void) {
 static void CrossboneIsleKeys_ThirdStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
-  if (gMainRoutineWork.haltedActor != ACTOR_THIRD_STATUE) {
+  if (gMainRoutineState.haltedActor != ACTOR_THIRD_STATUE) {
     Event_Start();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.7);
     Actor_SetSpeed(ACTOR_THIRD_STATUE, 1.7);
@@ -950,7 +950,7 @@ static void CrossboneIsleKeys_ThirdStatuePushesLeaderBack(void) {
 static void CrossboneIsleKeys_FourthStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
-  if (gMainRoutineWork.haltedActor != ACTOR_FOURTH_STATUE) {
+  if (gMainRoutineState.haltedActor != ACTOR_FOURTH_STATUE) {
     Event_Start();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.7);
     Actor_SetSpeed(ACTOR_FOURTH_STATUE, 1.7);
@@ -990,14 +990,15 @@ static void CrossboneIsleKeys_CheckFifthStatueTrigger(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / toFIXED(16);
   s32 row = leader->z.fixed / toFIXED(16);
-  struct FieldWork *work = gFieldWork;
-  struct MainRoutineWork *state = &gMainRoutineWork;
+  struct FieldState *fieldState = gFieldState;
+  struct MainRoutineState *state = &gMainRoutineState;
 
   if (state->haltedActor != ACTOR_FIFTH_STATUE &&
       Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) == 0 &&
       state->cloaked == 0 && column == 19 && (row >= 15 && row <= 16)) {
     Event_SetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
-    CrossboneIsleKeys_RaiseEvent(&work->raisedTrigger, RAISED_FIFTH_CHASE);
+    CrossboneIsleKeys_RaiseEvent(&fieldState->raisedTrigger,
+                                 RAISED_FIFTH_CHASE);
   }
 }
 
@@ -1441,15 +1442,15 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
 /// of the room of keys, the statues of the statue room, or the pillars and
 /// Bane of Bane's room.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_KEYS) {
+  if (gMainRoutineState.next == SCENE_CROSSBONE_ISLE_KEYS) {
     CrossboneIsleKeys_InitializeKeys();
   }
-  if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_STATUES) {
+  if (gMainRoutineState.next == SCENE_CROSSBONE_ISLE_STATUES) {
     CrossboneIsleKeys_InitializeStatues();
   }
-  if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_BANE) {
+  if (gMainRoutineState.next == SCENE_CROSSBONE_ISLE_BANE) {
     CrossboneIsleKeys_InitializeBane();
   }
   return 0;

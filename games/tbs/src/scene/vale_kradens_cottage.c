@@ -105,7 +105,7 @@
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -493,7 +493,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
       Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
       Event_Wait(8);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
-      gFieldWork->message++;
+      gFieldState->message++;
     }
     // Kraden: then it is decided.
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
@@ -546,7 +546,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
@@ -566,7 +566,7 @@ static void ValeKradensCottage_KradenSetsOff(void) {
   Actor_Get(ACTOR_GARET)->facing = FACING_NORTH;
   Actor_Get(ACTOR_JENNA)->facing = FACING_NORTH;
   MapGrid_AnimateCells(gValeKradensCottage_DoorOpens, 43, 8);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -615,7 +615,7 @@ static void ValeKradensCottage_KradenSetsOff(void) {
   Actor_SetPosition(ACTOR_SATUROS, 0, 0);
   Actor_SetPosition(ACTOR_MENARDI, 0, 0);
   GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   GameFlag_Set(FLAG_VALE_KRADENS_DOOR_OPEN);
   Event_End();
@@ -963,9 +963,9 @@ static void ValeKradensCottage_OverhearKraden(void) {
 /// Arriving in Kraden's part of Vale places the actors for the storm or for the
 /// day, and plays the arrival from the cottage.
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
           VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED ||
-      gMainRoutineWork.entrance ==
+      gMainRoutineState.entrance ==
           VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
@@ -1007,7 +1007,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
     Event_Start();
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (gMainRoutineWork.entrance ==
+      if (gMainRoutineState.entrance ==
           VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH) {
         ValeKradensCottage_KradenSetsOff();
       }
@@ -1135,14 +1135,14 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
 
 /// In Vale on the stormy night, a monster attacks by the broken fence.
 static void ValeKradensCottage_FightFirstMonster(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Event_Start();
 
-  work = gFieldWork;
-  work->transition =
+  state = gFieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  work->transitionFrames = 64;
+  state->transitionFrames = 64;
 
   GameFlag_Set(FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 0);
@@ -1152,14 +1152,14 @@ static void ValeKradensCottage_FightFirstMonster(void) {
 
 /// In Vale on the stormy night, a second monster attacks by the broken fence.
 static void ValeKradensCottage_FightSecondMonster(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Event_Start();
 
-  work = gFieldWork;
-  work->transition =
+  state = gFieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  work->transitionFrames = 64;
+  state->transitionFrames = 64;
 
   GameFlag_Set(FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 1);

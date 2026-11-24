@@ -76,7 +76,7 @@
 #include "system/dma.h"
 #include "system/heap_slots.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -264,9 +264,9 @@ static void TreeRooms_StepOnLeaf(s32 leafFlag, s32 sourceColumn, s32 sourceRow,
   struct Actor *actor;
   s32 spinFrame;
 
-  destinationColumn = FIELD_CELL(gMainRoutineWork.x) + 64;
-  destinationRow = FIELD_CELL(gMainRoutineWork.z);
-  leaderActorId = gMainRoutineWork.leaderActorId;
+  destinationColumn = FIELD_CELL(gMainRoutineState.x) + 64;
+  destinationRow = FIELD_CELL(gMainRoutineState.z);
+  leaderActorId = gMainRoutineState.leaderActorId;
   actor = Actor_Get(leaderActorId);
   if (entrance == *sLastLeaf)
     return;
@@ -519,9 +519,9 @@ static void TreeRooms_FightTret(void) {
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_WRATHFUL_BLINK);
   // "Here, you will all become trees, and you'll wither with the rest of us!"
   Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  gFieldWork->transitionFrames = 64;
+  gFieldState->transitionFrames = 64;
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Event_SetAfterBattleDestination(SCENE_TREE_ROOMS,
                                   TREE_ROOMS_AFTER_FIGHT_TRET);
@@ -569,8 +569,8 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   }
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   wait(10);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 48;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = 48;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -796,9 +796,9 @@ static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
 s32 Scene_Initialize(void) {
   struct Actor *tret;
   struct Actor *actor;
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   struct MapGridLayerScroll *layer;
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 entrance;
   s32 leaderActorId;
   struct Actor *secondTret;
@@ -814,7 +814,7 @@ s32 Scene_Initialize(void) {
   secondTret->y.fixed = -toFIXED(10);
   Actor_SetSpriteColorById(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
-  if (gMainRoutineWork.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
+  if (gMainRoutineState.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
     Task_AddFrame(TretPalette_UpdateMapTint, TASK_PASS_FRAME);
   if (GameFlag_Get(FLAG_TRET_DEFEATED)) {
     Actor_SetPosition(ACTOR_SECOND_TRET, 0, 0);
@@ -822,7 +822,7 @@ s32 Scene_Initialize(void) {
   }
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     TreeRooms_ApplyFlaggedMapPatches();
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
   // Match the first layer's parallax offset and scale to the room bounds.
   layer = &grid->layers[0];
   layer->offsetX += Iwram_MulFX(grid->minX + toFIXED(160), FIXED_ONE / 10);
@@ -837,11 +837,11 @@ s32 Scene_Initialize(void) {
   GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN);
   wait(1);
   TreeRooms_ApplyPostBattleState(0);
-  work = gFieldWork;
-  work->transition =
+  state = gFieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-  entrance = gMainRoutineWork.entrance;
-  leaderActorId = gMainRoutineWork.leaderActorId;
+  entrance = gMainRoutineState.entrance;
+  leaderActorId = gMainRoutineState.leaderActorId;
   actor = Actor_Get(leaderActorId);
   // Falling through a room, Isaac falls on to the entrance numbered ten lower;
   // at the fall's end he lands in a ring of dust in Tret's room.
@@ -881,8 +881,8 @@ s32 Scene_Initialize(void) {
 /// Saves background palettes 0 to 13, the rooms' own colours, which the
 /// light's slow swell inside Tret brightens (TretPalette_UpdateMapTint).
 static void TretPalette_SaveMapColors(void) {
-  Dma_Set((const void *)BG_PLTT, gPaletteFadeWork->palette, DMA_COPY_WORDS(112),
-          REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, gPaletteFadeState->palette,
+          DMA_COPY_WORDS(112), REG_DMA3);
 }
 
 /// The light inside Tret Tree slowly swells and fades: over a few seconds the
@@ -904,13 +904,13 @@ static void TretPalette_UpdateMapTint(void) {
   s32 green;
   s32 blue;
   u32 color;
-  struct FieldWork *work;
-  struct PaletteFade *paletteWork;
+  struct FieldState *state;
+  struct PaletteFade *paletteState;
 
-  work = gFieldWork;
-  paletteWork = gPaletteFadeWork;
-  sourceColors = paletteWork->palette;
-  if (work->psynergy != 0)
+  state = gFieldState;
+  paletteState = gPaletteFadeState;
+  sourceColors = paletteState->palette;
+  if (state->psynergy != 0)
     return;
   if ((gFrameCount & 31) != 0)
     return;

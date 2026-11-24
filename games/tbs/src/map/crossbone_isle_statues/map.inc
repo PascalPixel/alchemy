@@ -4,14 +4,14 @@ Field_CrossboneIsleStatues:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_CrossboneIsleStatues, .LField_CrossboneIsleStatues_CELL_PICTURES
+	map_offset Field_CrossboneIsleStatues, .LField_CrossboneIsleStatues_CELL_TILES
 	map_offset Field_CrossboneIsleStatues, .LField_CrossboneIsleStatues_SHAPES
 	map_offset Field_CrossboneIsleStatues, .LField_CrossboneIsleStatues_GRID
 	map_offset Field_CrossboneIsleStatues, .LField_CrossboneIsleStatues_ANIMATION
 	map_offset Field_CrossboneIsleStatues, .LField_CrossboneIsleStatues_BLEND
 	map_offset Field_CrossboneIsleStatues, .LField_CrossboneIsleStatues_MARKERS
-.LField_CrossboneIsleStatues_CELL_PICTURES:
-	.incbin "games/tbs/src/map/crossbone_isle_statues/cell_pictures.delta2.lz"
+.LField_CrossboneIsleStatues_CELL_TILES:
+	.incbin "games/tbs/src/map/crossbone_isle_statues/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_CrossboneIsleStatues_SHAPES:
 	.incbin "games/tbs/src/map/crossbone_isle_statues/shapes.table.lz"

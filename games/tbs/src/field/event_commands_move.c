@@ -58,7 +58,7 @@ void FieldEffect_UpdateMoveHand(struct Actor *hand) {
 void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   struct Vector3 position;
   struct Vector3 beyond;
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Actor *caster;
   struct Actor *target;
   struct Actor *pusher;
@@ -72,12 +72,12 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   s32 cellX;
   s32 cellZ;
 
-  effectWork = gFieldEffectWork;
-  caster = effectWork->mainActor;
-  target = effectWork->child;
-  // effectWork->angle is the way the caster faces; the hand's side of the
+  effectState = gFieldEffectState;
+  caster = effectState->mainActor;
+  target = effectState->child;
+  // effectState->angle is the way the caster faces; the hand's side of the
   // target is the opposite way, toward the caster.
-  angle = effectWork->angle + DEGtoANG(180);
+  angle = effectState->angle + DEGtoANG(180);
   moved = 0;
   if (target == NULL)
     return;
@@ -207,7 +207,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     Actor_SetMoveTargetFar(pusher, position.x, position.y + toFIXED(16),
                            position.z);
     if (moved == 1) {
-      Actor_GetById(effectWork->firstActorId)->steeringFlags &=
+      Actor_GetById(effectState->firstActorId)->steeringFlags &=
           ~ACTOR_FACES_MOTION;
       caster->speedLimit = toFIXED(1) / 5;
       caster->acceleration = toFIXED(1) / 5;
@@ -223,12 +223,12 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   }
 
   // Restore the target's colours, script and update, and remove the hand.
-  Actor_SetSpriteColorModeFar(target, effectWork->savedPalette);
-  Actor_StartScriptFar(target, effectWork->savedScript);
-  target->update = effectWork->savedCallback;
+  Actor_SetSpriteColorModeFar(target, effectState->savedPalette);
+  Actor_StartScriptFar(target, effectState->savedScript);
+  target->update = effectState->savedCallback;
   FieldPsynergy_StopCasterUpdate();
   if (moved == 1)
-    Actor_GetById(effectWork->firstActorId)->steeringFlags |=
+    Actor_GetById(effectState->firstActorId)->steeringFlags |=
         ACTOR_FACES_MOTION;
   FieldPsynergy_FadeFromCastColor();
   UpdateRisingParticleBurst(pusher);
@@ -286,12 +286,12 @@ void FieldPsynergy_Move(void) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   UNUSED s32 work[3];
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Actor *caster;
   struct Actor *hand;
 
-  effectWork = gFieldEffectWork;
-  caster = effectWork->mainActor;
+  effectState = gFieldEffectState;
+  caster = effectState->mainActor;
 
   /* FAKEMATCH(dead): an empty once-only loop before the call. */
   do {

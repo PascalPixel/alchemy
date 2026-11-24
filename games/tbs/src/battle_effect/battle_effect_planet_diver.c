@@ -31,7 +31,7 @@ struct ImpactChip {
 void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   BlitterPair draw;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   u8 *motes;
   struct Actor *target;
@@ -41,29 +41,30 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       motes);
   resource = Resource_GetTableEntry(RESOURCE_FLASH_BURST_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   resource += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(resource, work->sheet);
+  Decompress_TaggedLz(resource, state->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   for (i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
     PLANET_DIVER_IMPACT_CHIPS[i].life = 0;
-  user = GetBattleObjectSlotFar(work->args->user)->actor;
-  target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
+  user = GetBattleObjectSlotFar(state->args->user)->actor;
+  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
   if (user->x.fixed > 0)
     stepX = -toFIXED(15);
   else
@@ -74,13 +75,13 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
 
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame > 17 || frame == 0) {
-      Projection_Unit(work->args->user, &screenPosition);
+      Projection_Unit(state->args->user, &screenPosition);
       screenPosition.x /= 2;
     }
 
     // The flash spreads from the user.
     if (frame >= 2 && frame <= 3)
-      draw[0](canvas, work->sheet, screenPosition.x - FLASH_BURST_WIDTH / 2,
+      draw[0](canvas, state->sheet, screenPosition.x - FLASH_BURST_WIDTH / 2,
               screenPosition.y - FLASH_BURST_HEIGHT, FLASH_BURST_WIDTH,
               FLASH_BURST_HEIGHT);
     if (frame >= 4 && frame <= 15) {
@@ -90,7 +91,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         s32 y = screenPosition.y + FIXEDtoINT(frame * Trig_Cos(angle)) - frame;
 
         draw[0](canvas,
-                work->sheet + (frame - 4) / 2 * PICTURE_BYTES(FLASH_BURST),
+                state->sheet + (frame - 4) / 2 * PICTURE_BYTES(FLASH_BURST),
                 x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT,
                 FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       }
@@ -105,14 +106,14 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
       user->snapToTarget = 0;
       Actor_SetMoveTargetFar(user, user->x.fixed * 3, 0, user->z.fixed);
       Actor_SelectAnimationFar(user, POSE_LEAP);
-      work->shakeFrames = 4;
+      state->shakeFrames = 4;
       Sound_PlayFar(SE_WHOOSH);
     }
     if (frame == 16) {
       resource = Resource_GetTableEntry(RESOURCE_FLAMEBALL_SHEET);
       Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
       resource += SHEET_PALETTE_BYTES;
-      Decompress_TaggedLz(resource, work->sheet);
+      Decompress_TaggedLz(resource, state->sheet);
       user->gravity = 0;
       user->velocityX = 0;
       user->velocityY = 0;
@@ -130,12 +131,12 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         // XXX (no evidence): whether the party side's nudge was meant to move
         // x, as the enemies' side does; The Lost Age's Planet Diver was
         // rewritten without it, and nothing else shows the intent.
-        if (work->args->side == EFFECT_SIDE_ENEMIES) {
-          draw[0](canvas, work->sheet, screenPosition.x - FLAMEBALL_WIDTH / 2,
+        if (state->args->side == EFFECT_SIDE_ENEMIES) {
+          draw[0](canvas, state->sheet, screenPosition.x - FLAMEBALL_WIDTH / 2,
                   screenPosition.y - 52, FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
           screenPosition.x -= 8;
         } else {
-          draw[1](canvas, work->sheet, screenPosition.x - 26,
+          draw[1](canvas, state->sheet, screenPosition.x - 26,
                   screenPosition.y - 52, FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
           screenPosition.y += 8;
         }
@@ -156,10 +157,10 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
           chip->velocityY = -(Trig_Cos(angle) * speed << 1) >> 6;
           chip->life = (Random16() & 7) + 32;
         }
-        work->shakeFrames = 8;
+        state->shakeFrames = 8;
         EFFECT_SHOW_DAMAGE(SE_CRASH);
-        BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
-        BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
+        BattleMotion_ApplyKnockbackFar(state->args->targets[0], KNOCKBACK_HURL);
+        BattleEffect_TintBattler(state->args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
       }
     }
@@ -187,7 +188,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -205,7 +206,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
 void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   s32 point[3];
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   BlitterPair draw;
@@ -213,14 +214,14 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   s32 i;
   s32 k;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
   resource = Resource_GetTableEntry(RESOURCE_SKULL_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   resource += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(resource, work->sheet);
+  Decompress_TaggedLz(resource, state->sheet);
   resource = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -230,7 +231,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
                       COMPOSITE_ADDITIVE);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
   for (i = 0; i != HAUNT_SCATTERED; i++) {
     PARTICLES[i].x = ((Random16() & 255) - 127) << 15;
@@ -239,15 +240,15 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   }
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != work->args->targetCount * 32 + 96; frame++) {
+  for (frame = 0; frame != state->args->targetCount * 32 + 96; frame++) {
     s32 *row;
     struct BattleCamera *camera = gBattleCamera;
 
     if (frame == 96)
       EFFECT_SHOW_DAMAGE(0);
 
-    row = work->bg2xLines;
-    if (work->args->side == EFFECT_SIDE_ENEMIES) {
+    row = state->bg2xLines;
+    if (state->args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
         *row++ = CANVAS_WAVE_BG2X(toFIXED(6) -
                                   Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6);
@@ -256,9 +257,9 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
         *row++ = CANVAS_WAVE_BG2X(Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6);
     }
 
-    EFFECT_FOR_EACH_TARGET(k, work->args) {
+    EFFECT_FOR_EACH_TARGET(k, state->args) {
       struct Actor *target =
-          GetBattleObjectSlotFar(work->args->targets[k])->actor;
+          GetBattleObjectSlotFar(state->args->targets[k])->actor;
 
       // Spin the skulls about a point above the target.
       EFFECT_VIEW_FROM_CAMERA(camera);
@@ -267,7 +268,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
       if (frame > k * 32) {
         Matrix_RotateX(frame << 9);
         if (frame == k * 32 + 32)
-          BattleEffect_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
+          BattleEffect_TintBattler(state->args->targets[k], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, k, 32);
 
         // Each skull steps nearer the centre.
@@ -283,7 +284,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
             if (dist != 0) {
               Projection_Point(skull, &screenPosition);
               screenPosition.x >>= 1;
-              draw[0](canvas, work->sheet + i % 3 * PICTURE_BYTES(SKULL),
+              draw[0](canvas, state->sheet + i % 3 * PICTURE_BYTES(SKULL),
                       screenPosition.x - SKULL_WIDTH / 2,
                       screenPosition.y - SKULL_HEIGHT / 2, SKULL_WIDTH,
                       SKULL_HEIGHT);
@@ -296,7 +297,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -324,7 +325,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 /// turning a 128th of a turn a frame; each target takes its damage pose 32
 /// frames into its turn.
 void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   void *resource;
   BlitterPair draw;
@@ -334,13 +335,13 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   s32 offsetX;
   s32 frame;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->args = args;
+  state->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   resource = Resource_GetTableEntry(RESOURCE_SPIRAL_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
-  Decompress_TaggedLz((u8 *)resource + SHEET_PALETTE_BYTES, work->sheet);
+  Decompress_TaggedLz((u8 *)resource + SHEET_PALETTE_BYTES, state->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -348,22 +349,22 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_LIGHTEN);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  if (work->args->side == EFFECT_SIDE_PARTY) {
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  if (state->args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(ORBITING_SPIRALS_PARTY_START_X << 8);
     offsetX = -NARROW_CANVAS_PARTY_X;
   } else {
     offsetX = 0;
   }
   for (frame = 0;
-       frame != (work->args->targetCount * ORBITING_SPIRALS_INTERVAL) + 48;
+       frame != (state->args->targetCount * ORBITING_SPIRALS_INTERVAL) + 48;
        frame++) {
     struct BattleCamera *camera = gBattleCamera;
     s32 *row;
     s32 i;
 
-    row = work->bg2xLines;
-    if (work->args->side == EFFECT_SIDE_ENEMIES) {
+    row = state->bg2xLines;
+    if (state->args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
         *row++ = CANVAS_WAVE_BG2X(toFIXED(8) -
                                   Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8);
@@ -374,17 +375,17 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
             (NARROW_CANVAS_PARTY_X << 8);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
-    EFFECT_FOR_EACH_TARGET(member, work->args) {
+    EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor;
 
-      actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
+      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
       if (frame > member * ORBITING_SPIRALS_INTERVAL &&
           frame <
               (member * ORBITING_SPIRALS_INTERVAL) + ORBITING_SPIRALS_LIFE) {
         s32 spin;
 
         if (frame == (member * ORBITING_SPIRALS_INTERVAL) + 32) {
-          BattleEffect_TintBattler(work->args->targets[member],
+          BattleEffect_TintBattler(state->args->targets[member],
                                    SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP,
                                    0);
         }
@@ -405,14 +406,14 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
           // 16 frames.
           phase = frame / 16;
           draw[phase & 1](canvas,
-                          work->sheet +
+                          state->sheet +
                               (frame / 4 - phase * 4) * PICTURE_BYTES(SPIRAL),
                           x - SPIRAL_WIDTH / 2, y - SPIRAL_HEIGHT / 2,
                           SPIRAL_WIDTH, SPIRAL_HEIGHT);
         }
       }
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);

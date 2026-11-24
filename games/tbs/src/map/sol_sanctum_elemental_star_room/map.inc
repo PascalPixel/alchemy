@@ -4,14 +4,14 @@ Field_SolSanctumElementalStarRoom:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 80, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 112, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_SolSanctumElementalStarRoom, .LField_SolSanctumElementalStarRoom_CELL_PICTURES
+	map_offset Field_SolSanctumElementalStarRoom, .LField_SolSanctumElementalStarRoom_CELL_TILES
 	map_offset Field_SolSanctumElementalStarRoom, .LField_SolSanctumElementalStarRoom_SHAPES
 	map_offset Field_SolSanctumElementalStarRoom, .LField_SolSanctumElementalStarRoom_GRID
 	map_offset Field_SolSanctumElementalStarRoom, .LField_SolSanctumElementalStarRoom_ANIMATION
 	map_offset Field_SolSanctumElementalStarRoom, .LField_SolSanctumElementalStarRoom_BLEND
 	map_offset Field_SolSanctumElementalStarRoom, .LField_SolSanctumElementalStarRoom_MARKERS
-.LField_SolSanctumElementalStarRoom_CELL_PICTURES:
-	.incbin "games/tbs/src/map/sol_sanctum_elemental_star_room/cell_pictures.delta1.lz"
+.LField_SolSanctumElementalStarRoom_CELL_TILES:
+	.incbin "games/tbs/src/map/sol_sanctum_elemental_star_room/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_SolSanctumElementalStarRoom_SHAPES:
 	.incbin "games/tbs/src/map/sol_sanctum_elemental_star_room/shapes.table.lz"

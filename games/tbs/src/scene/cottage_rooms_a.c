@@ -71,7 +71,7 @@
 #include "field/script_operands.h"
 #include "scene/import.h"
 #include "scene/sleep_z.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "text/msg_ids.h"
 
 extern s32 gCottageRoomsA_FaceTargetScript[];
@@ -310,9 +310,9 @@ static void CottageRoomsA_LeaveThroughDoor(s32 exitNumber) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     Weather_StopLightning();
   Sound_Play(SE_MAP_EXIT);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(exitNumber);
@@ -370,7 +370,7 @@ static void CottageRoomsA_LeaveToValePlazaNorth(void) {
 /// Sets up a house of Vale as the party arrives.
 s32 Scene_Initialize(void) {
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   // On the stormy night every resident is out, and lightning flashes outside.
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -390,7 +390,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_WEAPON_MERCHANT, 0, 0);
     Actor_SetPosition(ACTOR_ARMOR_MERCHANT, 0, 0);
     Weather_StartLightning();
-    ((struct FieldBlendWork *)gFieldBlendWork[0])->loud = 1;
+    ((struct FieldBlendState *)gFieldBlendState[0])->loud = 1;
     Weather_LastLightning();
     wait(30);
     Event_StartScreenTransition();
@@ -399,7 +399,7 @@ s32 Scene_Initialize(void) {
   }
   // The returning party gets the household reunion only on its first visit.
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    if (gMainRoutineWork.entrance == COTTAGE_ROOMS_A_FROM_VALE_EAST) {
+    if (gMainRoutineState.entrance == COTTAGE_ROOMS_A_FROM_VALE_EAST) {
       if (GameFlag_Get(FLAG_GARET_CAME_HOME) == 0) {
         CottageRoomsA_GaretComesHome();
       }
@@ -407,7 +407,7 @@ s32 Scene_Initialize(void) {
     Actor_Get(ACTOR_GARETS_FATHER)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
   }
   // Once Jenna is taken, her grandmother lies sick in bed.
-  if (gMainRoutineWork.entrance == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
+  if (gMainRoutineState.entrance == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
       Actor_SetPosition(ACTOR_JENNAS_GRANDMOTHER, 454, 150);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNAS_GRANDMOTHER), 0);
@@ -535,7 +535,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   timedUpdate = CottageRoomsA_SpawnSleepZ;
   Task_AddFrame(timedUpdate, TASK_PASS_FRAME);
   wait(1);
-  gFieldWork->transitionFrames = 32;
+  gFieldState->transitionFrames = 32;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -721,7 +721,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH_NORTHWEST, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   FieldCamera_MoveTo(777, 0, 428, 1);
   Event_Wait(20);

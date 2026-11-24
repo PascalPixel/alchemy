@@ -71,7 +71,7 @@ Heartrender's hearts ripple sideways, and Meteor's sky glows blue from the
 bottom of the screen up.
 
 Those line copies, the scrolling and the shake run as tasks the handler adds,
-and they read the handler's work. So a handler removes its tasks before it
+and they read the handler's state. So a handler removes its tasks before it
 frees anything they read, and every handler ends with that tidying.
 
 ## Blitters

@@ -65,7 +65,7 @@
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "field/field_effect.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/map_grid_scroll.h"
 #include "field/pushed_actor.h"
 #include "field/scene_tables.h"
@@ -82,7 +82,7 @@
 #include "system/heap_slots.h"
 #include "system/io_reg.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/vram_cache.h"
 #include "window/screens.h"
@@ -455,7 +455,7 @@ s32 Scene_Initialize(void) {
     platform->y.fixed = toFIXED(1) / 2;
   }
 
-  entrance = gMainRoutineWork.entrance;
+  entrance = gMainRoutineState.entrance;
 
   switch (entrance) {
   case VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR:
@@ -804,7 +804,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   // "You've questioned us for the last time! Let's see what you can do!"
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -833,7 +833,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   }
   Event_Wait(20);
   // Yes: "There's not a moment to spare! Let's move!"
@@ -1098,14 +1098,14 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   } else {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     answeredYes = 0;
   }
   // Yes: "You're smarter than I thought if you've already figured it out."
   // No: "I want the rod that will get us into Jupiter Lighthouse."
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
   if (answeredYes != 0) {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   }
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
@@ -1123,14 +1123,14 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   } else {
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     answeredYes = 0;
   }
   // Yes: "The Shaman's Rod? If it means saving Sheba, I will give it to you."
   // No: "He wants the Shaman's Rod. If it will save Sheba, I'll give it up."
   VenusLighthouseAerie_ShowMessage(ACTOR_IVAN);
   if (answeredYes != 0) {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   }
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   VenusLighthouseAerie_FaceActor(ACTOR_GARET, FACING_SOUTH);
@@ -1514,7 +1514,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     answeredYes = TRUE;
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     answeredYes = FALSE;
   }
   wait(20);
@@ -1528,7 +1528,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Wait(40);
   if (answeredYes) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
 
   // Saturos and Menardi recover from their defeat before using the Venus Star.
@@ -1700,7 +1700,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
     answeredYes = TRUE;
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
     answeredYes = FALSE;
   }
@@ -1708,7 +1708,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   // No: "Have you forgotten everything we've learned? Venus is earth. It..."
   VenusLighthouseAerie_ShowMessage(ACTOR_GARET);
   if (answeredYes) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_Wait(20);
 
@@ -2179,9 +2179,9 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   VenusLighthouseAerie_TryToPreventFall();
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  gFieldWork->transitionFrames = 24;
+  gFieldState->transitionFrames = 24;
 
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -2265,9 +2265,9 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   Actor_SetSpriteColorById(ACTOR_BEACON_ORB, SPRITE_COLOR_GBR);
   Actor_Get(ACTOR_BEACON_ORB)->y.fixed = toFIXED(40);
   Task_AddFrame(VenusLighthouseAerie_SpawnSideOrbitParticles, TASK_PASS_FRAME);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  gFieldWork->transitionFrames = 24;
+  gFieldState->transitionFrames = 24;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -2403,13 +2403,13 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   } else {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   }
   // Yes: "Even though we couldn't stop the beacon from being lit?"
   // No: "All our efforts were for naught."
   VenusLighthouseAerie_ShowMessage(ACTOR_IVAN);
   if (answeredYes != 0) {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   }
   Actor_SetSpeed(ACTOR_GARET, 1.6);
   garetSpeaker = SPEAKER_PORTRAIT_LEFT | ACTOR_GARET;
@@ -2731,7 +2731,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   white = RGB_WHITE;
 
   PLTT_BACKDROP = white;
-  gFieldWork->transitionFrames = 1;
+  gFieldState->transitionFrames = 1;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -2802,7 +2802,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   Actor_Get(ACTOR_BEACON_ORB)->motionFlags |= ACTOR_FLOATS;
   Actor_SetSpriteColorById(ACTOR_BEACON_ORB, SPRITE_COLOR_GBR);
   Task_AddFrame(VenusLighthouseAerie_SpawnSideOrbitParticles, TASK_PASS_FRAME);
-  gFieldWork->transitionFrames = 1;
+  gFieldState->transitionFrames = 1;
   Event_StartScreenTransition();
   PaletteFade_ApplySource(RGB_WHITE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -2998,7 +2998,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
     VenusLighthouseAerie_ShowMessage(ACTOR_MIA);
     answeredYes = 1;
   } else {
-    gFieldWork->message += 3;
+    gFieldState->message += 3;
     Event_Wait(60);
     // "After all this, you don't have the guts to tell Jenna about Felix?"
     VenusLighthouseAerie_ShowMessage(ACTOR_GARET);
@@ -3010,7 +3010,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
     VenusLighthouseAerie_ShowMessage(ACTOR_MIA);
   }
   if (answeredYes != 0) {
-    gFieldWork->message += 3;
+    gFieldState->message += 3;
   }
   VenusLighthouseAerie_FaceActor(ACTOR_PARTY_LEADER, FACING_SOUTH);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -3175,15 +3175,15 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 272, 216);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 272, 254);
   Event_Wait(80);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(80);
   ActorSystem_SuspendProjectionAndShowSprites();
-  ((struct WindowWork *)gWindowWork[0])->voiceSound = 0;
-  ((struct WindowWork *)gWindowWork[0])->voiceCountdown = 0;
+  ((struct WindowState *)gWindowState[0])->voiceSound = 0;
+  ((struct WindowState *)gWindowState[0])->voiceCountdown = 0;
   // "But despite a long and tiring search, Jenna was nowhere to be found."
   FieldMessage_ShowCentered(MsgVenusDespiteLongTiring, 0, 0);
   ActorSystem_ResumeProjectionAndHideLayers();
@@ -3350,13 +3350,13 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   struct Actor *center;
   struct Actor *effect;
   struct Sprite *sprite;
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   s32 drift;
   s32 phase;
   s32 angle;
 
   center = Actor_Get(ACTOR_BEACON_ORB);
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
   drift = toFIXED(Random_Below(48));
   if ((s16)(FIXEDtoINT(grid->view[1])) <= 129) {
     if (gFrameCount & 1) {

@@ -2,7 +2,7 @@
 #define ALCHEMY_GROUND_MASK_H
 
 /// @file
-/// The fade overlay's marks beside an actor, and the work of the weather's
+/// The fade overlay's marks beside an actor, and the state of the weather's
 /// ground particles, motes of light and sparkles.
 
 #include "edition.h"
@@ -14,21 +14,21 @@
 struct Actor;
 
 /// The fade overlay draws one mark on each side of its tracked actor.
-struct FadeOverlayWork {
+struct FadeOverlayState {
   /// The left and right marks: 16-pixel-wide semi-transparent sprites drawn
   /// where the ground beside the actor rises above its floor.
   struct AnimationSpritePart marks[2];
   struct Actor *actor; ///< the actor tracked; null draws nothing
 };
 
-STATIC_ASSERT(sizeof(struct FadeOverlayWork) == 28);
+STATIC_ASSERT(sizeof(struct FadeOverlayState) == 28);
 
-/// HEAP_SLOT_FADE_OVERLAY: the fade overlay's work from
+/// HEAP_SLOT_FADE_OVERLAY: the fade overlay's state from
 /// FieldEffect_StartFadeOverlay until the next scene change.
-#define gFadeOverlayWork                                                       \
-  (*(struct FadeOverlayWork **)&gHeapSlots[HEAP_SLOT_FADE_OVERLAY])
+#define gFadeOverlayState                                                      \
+  (*(struct FadeOverlayState **)&gHeapSlots[HEAP_SLOT_FADE_OVERLAY])
 
-#define WEATHER_PARTICLE_COUNT 32 ///< WeatherWork.particles
+#define WEATHER_PARTICLE_COUNT 32 ///< WeatherState.particles
 
 /// One weather particle: OAM attributes followed by its world position.
 struct GroundParticle {
@@ -47,7 +47,7 @@ struct GroundParticle {
   u16 x : 9;           ///< Screen pixels.
   u16 affineIndex : 5; ///< Sparkles: 8 on alternate frames, else 0.
   u16 size : 2;        ///< From the ground particle frame; motes, sparkles: 1.
-  u16 tile : 10;       ///< The work's tileBase plus the frame's tile.
+  u16 tile : 10;       ///< The state's tileBase plus the frame's tile.
   u16 priority : 2;    ///< 1.
   u16 palette : 4;     ///< 13; not named by the effects.
   ///@}
@@ -67,7 +67,7 @@ STATIC_ASSERT(offsetof(struct GroundParticle, positionX) == 12);
 STATIC_ASSERT(sizeof(struct GroundParticle) == 32);
 
 /// HEAP_SLOT_WEATHER while ground particles, motes or sparkles run.
-struct WeatherWork {
+struct WeatherState {
   s32 entry;    ///< Resource entry holding the effect's tiles.
   s32 tileBase; ///< Their first tile in VRAM.
   struct GroundParticle particles[WEATHER_PARTICLE_COUNT];
@@ -75,9 +75,9 @@ struct WeatherWork {
   s32 stopped; ///< Nonzero stops new sparkle bursts.
 };
 
-STATIC_ASSERT(sizeof(struct WeatherWork) == 1040);
+STATIC_ASSERT(sizeof(struct WeatherState) == 1040);
 
 /// HEAP_SLOT_WEATHER: the running ground particles, motes or sparkles.
-#define gWeatherWork (*(struct WeatherWork **)&gHeapSlots[HEAP_SLOT_WEATHER])
+#define gWeatherState (*(struct WeatherState **)&gHeapSlots[HEAP_SLOT_WEATHER])
 
 #endif

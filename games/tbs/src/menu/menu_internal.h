@@ -23,7 +23,7 @@
 #include "menu/status_screen.h"
 #include "system/dma.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/vram_cache.h"
 #include "window/battle_status.h"
@@ -68,14 +68,14 @@ enum ItemUseResult {
   ITEM_USE_RESULT_DEFENSE_UP = 21  ///< "Your Defense increased!"
 };
 
-/// StatusScreenWork.page: which screen the party member row belongs to.
+/// StatusScreenState.page: which screen the party member row belongs to.
 enum StatusScreenPage {
   STATUS_SCREEN_PAGE_STATUS = 0, ///< the Status menu (StatusScreen_Run)
   /// The party member chooser (PartyMemberChooser_Open).
   STATUS_SCREEN_PAGE_CHOOSER = 3
 };
 
-/// PsynergyMenuWork.mode: what choosing a Psynergy does.
+/// PsynergyMenuState.mode: what choosing a Psynergy does.
 enum PsynergyMenuMode {
   PSYNERGY_MODE_USE = 0,
   PSYNERGY_MODE_SET_L = 1, ///< make it the L shortcut
@@ -114,9 +114,9 @@ enum ItemTargetMode {
   ITEM_TARGET_GIVE = 1 ///< the party member to give it to
 };
 
-/// The bytes of the menu work, heap block HEAP_SLOT_MENU. Each screen's run
+/// The bytes of the menu state, heap block HEAP_SLOT_MENU. Each screen's run
 /// function takes the block as it opens and releases it as it closes.
-#define MENU_WORK_SIZE 2672
+#define MENU_STATE_SIZE 2672
 
 /// Inventory icons occupy five columns in the fifteen-slot list.
 #define MENU_ITEM_GRID_COLUMNS 5
@@ -177,7 +177,7 @@ enum StatusPanelKind {
 #define ICON_HIDDEN 13 ///< WINDOW_SPRITE_MOTION_HIDDEN
 
 /// The Djinn change DjinnMenu_DrawStatPreview previews, with the Djinn in the
-/// work's sides removePairSlot and addPairSlot.
+/// state's sides removePairSlot and addPairSlot.
 enum DjinnPreviewMode {
   DJINN_PREVIEW_ADD_AND_SET = 0, ///< the other's Djinni is added and set
   DJINN_PREVIEW_UNSET = 1,       ///< the chosen Djinni is unset

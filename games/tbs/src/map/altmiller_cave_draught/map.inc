@@ -5,14 +5,14 @@ Field_AltmillerCaveDraught:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_CELL_PICTURES
+	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_CELL_TILES
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_SHAPES
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_GRID
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_ANIMATION
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_BLEND
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_MARKERS
-.LField_AltmillerCaveDraught_CELL_PICTURES:
-	.incbin "games/tbs/src/map/altmiller_cave_draught/cell_pictures_ja.delta2.lz"
+.LField_AltmillerCaveDraught_CELL_TILES:
+	.incbin "games/tbs/src/map/altmiller_cave_draught/cell_tiles_ja.delta2.lz"
 	.balign 4, 0
 .LField_AltmillerCaveDraught_SHAPES:
 	.incbin "games/tbs/src/map/altmiller_cave_draught/shapes.table.lz"
@@ -35,14 +35,14 @@ Field_AltmillerCaveDraught:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_CELL_PICTURES
+	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_CELL_TILES
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_SHAPES
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_GRID
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_ANIMATION
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_BLEND
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_MARKERS
-.LField_AltmillerCaveDraught_CELL_PICTURES:
-	.incbin "games/tbs/src/map/altmiller_cave_draught/cell_pictures.delta2.lz"
+.LField_AltmillerCaveDraught_CELL_TILES:
+	.incbin "games/tbs/src/map/altmiller_cave_draught/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_AltmillerCaveDraught_SHAPES:
 	.incbin "games/tbs/src/map/altmiller_cave_draught/shapes.table.lz"
@@ -65,14 +65,14 @@ Field_AltmillerCaveDraught:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_CELL_PICTURES
+	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_CELL_TILES
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_SHAPES
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_GRID
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_ANIMATION
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_BLEND
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_MARKERS
-.LField_AltmillerCaveDraught_CELL_PICTURES:
-	.incbin "games/tbs/src/map/altmiller_cave_draught/cell_pictures.delta2.lz"
+.LField_AltmillerCaveDraught_CELL_TILES:
+	.incbin "games/tbs/src/map/altmiller_cave_draught/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_AltmillerCaveDraught_SHAPES:
 	.incbin "games/tbs/src/map/altmiller_cave_draught/shapes.table.lz"
@@ -95,14 +95,14 @@ Field_AltmillerCaveDraught:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_CELL_PICTURES
+	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_CELL_TILES
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_SHAPES
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_GRID
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_ANIMATION
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_BLEND
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_MARKERS
-.LField_AltmillerCaveDraught_CELL_PICTURES:
-	.incbin "games/tbs/src/map/altmiller_cave_draught/cell_pictures.delta2.lz"
+.LField_AltmillerCaveDraught_CELL_TILES:
+	.incbin "games/tbs/src/map/altmiller_cave_draught/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_AltmillerCaveDraught_SHAPES:
 	.incbin "games/tbs/src/map/altmiller_cave_draught/shapes.table.lz"
@@ -125,14 +125,14 @@ Field_AltmillerCaveDraught:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_CELL_PICTURES
+	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_CELL_TILES
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_SHAPES
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_GRID
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_ANIMATION
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_BLEND
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_MARKERS
-.LField_AltmillerCaveDraught_CELL_PICTURES:
-	.incbin "games/tbs/src/map/altmiller_cave_draught/cell_pictures.delta2.lz"
+.LField_AltmillerCaveDraught_CELL_TILES:
+	.incbin "games/tbs/src/map/altmiller_cave_draught/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_AltmillerCaveDraught_SHAPES:
 	.incbin "games/tbs/src/map/altmiller_cave_draught/shapes.table.lz"
@@ -154,14 +154,14 @@ Field_AltmillerCaveDraught:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_CELL_PICTURES
+	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_CELL_TILES
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_SHAPES
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_GRID
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_ANIMATION
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_BLEND
 	map_offset Field_AltmillerCaveDraught, .LField_AltmillerCaveDraught_MARKERS
-.LField_AltmillerCaveDraught_CELL_PICTURES:
-	.incbin "games/tbs/src/map/altmiller_cave_draught/cell_pictures.delta2.lz"
+.LField_AltmillerCaveDraught_CELL_TILES:
+	.incbin "games/tbs/src/map/altmiller_cave_draught/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_AltmillerCaveDraught_SHAPES:
 	.incbin "games/tbs/src/map/altmiller_cave_draught/shapes.table.lz"

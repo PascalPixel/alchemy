@@ -40,7 +40,7 @@
 ///
 /// Abilities: Ragnarok.
 void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 column;
   u8 *motes;
@@ -49,7 +49,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
 
@@ -58,24 +58,24 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   // XXX (no evidence): why it is forced to the stronger one; the store
   // changes nothing the game shows, so only the author's intent would say.
   args->variant = EFFECT_VARIANT_STRONGER;
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_FetchRectangleBlitters(work->args->side, blit);
+  BattleEffect_FetchRectangleBlitters(state->args->side, blit);
   // The user takes its leap pose and animates fast until the end.
   Actor_SelectAnimationFar(user, POSE_LEAP);
   Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL * 3);
 
-  Resource_LoadAndDecompress(RESOURCE_FLAME_BLADE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_BLADE_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                             work->sheet + RAGNAROK_FLASH_PICTURES, 1, 0);
+                             state->sheet + RAGNAROK_FLASH_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
 
   // Flashes and sparks for three columns, though only two strike: the third's
   // random draws are still taken.
   for (column = 0; column != RAGNAROK_SEEDED; column++) {
     for (i = 0; i != RAGNAROK_FLASHES; i++) {
-      struct Particle *flash = &work->particles[column * RAGNAROK_FLASHES + i];
+      struct Particle *flash = &state->particles[column * RAGNAROK_FLASHES + i];
 
       s32 radius = i * 2;
       s32 angle = Random16() & TRIG_ANGLE_MASK;
@@ -93,7 +93,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
       speed = (Random16() & 0x1ff) + 32;
       angle = Random16() & TRIG_ANGLE_MASK;
-      spark->x = INTtoFIXED(gRagnarok_StrikeColumns[work->args->side][column]);
+      spark->x = INTtoFIXED(gRagnarok_StrikeColumns[state->args->side][column]);
       spark->y = toFIXED(88);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
@@ -101,14 +101,15 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     }
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != RAGNAROK_FRAMES; frame++) {
     if (frame == 4) {
       Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 8) {
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
     }
     if (frame == 18) {
       Sound_PlayFar(SE_CRASH);
@@ -125,7 +126,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       s32 top;
 
       height = RAGNAROK_BLADE_HEIGHT;
-      if (work->args->side == EFFECT_SIDE_PARTY) {
+      if (state->args->side == EFFECT_SIDE_PARTY) {
         if (frame < RAGNAROK_BLADE_SWING_FRAMES) {
           x = frame * 10 - 8;
           top = frame * 16 - RAGNAROK_BLADE_HEIGHT;
@@ -152,7 +153,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
         height = height - top - (RAGNAROK_BLADE_HEIGHT - RAGNAROK_BLADE_FLOOR);
       }
       if (height > 0) {
-        blit[0](canvas, work->sheet, x - RAGNAROK_BLADE_WIDTH / 2, top,
+        blit[0](canvas, state->sheet, x - RAGNAROK_BLADE_WIDTH / 2, top,
                 RAGNAROK_BLADE_WIDTH, height);
       }
     }
@@ -166,18 +167,18 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       s32 start = column * 8 + RAGNAROK_FIRST_STRIKE_FRAME;
 
       if (frame == start) {
-        work->shakeFrames = 12;
+        state->shakeFrames = 12;
       }
       if (frame >= start) {
         if (frame < start + 2) {
-          blit[0](canvas, work->sheet + RAGNAROK_FLASH_PICTURES,
-                  gRagnarok_StrikeColumns[work->args->side][column] -
+          blit[0](canvas, state->sheet + RAGNAROK_FLASH_PICTURES,
+                  gRagnarok_StrikeColumns[state->args->side][column] -
                       FLASH_BURST_WIDTH / 2,
                   56, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         }
         for (i = 0; i != RAGNAROK_RING; i++) {
           struct Particle *flash =
-              &work->particles[column * RAGNAROK_FLASHES + i];
+              &state->particles[column * RAGNAROK_FLASHES + i];
 
           s32 x;
           s32 life;
@@ -185,11 +186,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
           y = FIXEDtoINT(flash->y);
           x = FIXEDtoINT(flash->x) +
-              gRagnarok_StrikeColumns[work->args->side][column];
+              gRagnarok_StrikeColumns[state->args->side][column];
           life = flash->variant;
           if (life >= 0 && life < RAGNAROK_FLASH_BURN_FRAMES) {
             blit[0](canvas,
-                    work->sheet +
+                    state->sheet +
                         gRagnarok_FlashPictures[life / 3] *
                             PICTURE_BYTES(FLASH_BURST) +
                         RAGNAROK_FLASH_PICTURES,
@@ -238,18 +239,18 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       }
 
       // Every target flashes and recoils.
-      EFFECT_FOR_EACH_TARGET(i, work->args) {
+      EFFECT_FOR_EACH_TARGET(i, state->args) {
         if (frame == start + 6) {
-          BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
+          BattleEffect_TintBattler(state->args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyKnockbackFar(work->args->targets[i],
+          BattleMotion_ApplyKnockbackFar(state->args->targets[i],
                                          KNOCKBACK_HURL);
         }
       }
     }
 
     BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL);

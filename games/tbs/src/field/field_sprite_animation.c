@@ -32,7 +32,7 @@ enum {
 /// pixels, or 0 when nothing was loaded.
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
-  struct ActorSystemWork *system;
+  struct ActorSystemState *system;
   struct SpritePictureCache *record;
   struct SpritePictureCacheSource *entry;
   u32 *offset;
@@ -47,7 +47,7 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 
   if (slot >= RESOURCE_SLOT_COUNT)
     return 0;
-  system = gActorSystemWork;
+  system = gActorSystemState;
   record = &system->pictureCaches[slot];
   metadata = Resource_GetMetadataRecordFar(number);
   record->tag = (slot << PICTURE_CACHE_TAG_SLOT_SHIFT) | number;
@@ -99,7 +99,7 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 /// Returns the buffer loaded into the sprite picture cache with this tag, or 0.
 s32 SpritePictureCache_FindByTag(s32 tag) {
   u32 i;
-  struct SpritePictureCache *slot = gActorSystemWork->pictureCaches;
+  struct SpritePictureCache *slot = gActorSystemState->pictureCaches;
 
   for (i = 0; i < RESOURCE_SLOT_COUNT; i++, slot++) {
     if (slot->tag == tag)

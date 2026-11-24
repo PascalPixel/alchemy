@@ -9,7 +9,7 @@
 /// scanline at a time.
 void LineScroll_ArmDma(void) {
   volatile u16 *dma;
-  struct LineScrollWork *state;
+  struct LineScrollState *state;
   u32 *source;
   u16 status;
   u32 control;
@@ -40,7 +40,7 @@ void LineScroll_ArmDma(void) {
 /// BG2 and BG1 offsets, the scroll plus a sine wave for x and for y (an axis
 /// with no step stays flat), then shows that page.
 void LineScroll_BuildPage(void) {
-  struct LineScrollWork *work = gLineScroll;
+  struct LineScrollState *state = gLineScroll;
   s32 x3 = (s16)gBgScroll[3].x;
   s32 y3 = (s16)gBgScroll[3].y;
   s32 x2 = (s16)gBgScroll[2].x;
@@ -54,9 +54,9 @@ void LineScroll_BuildPage(void) {
   s32 scanline;
   u16 wave;
 
-  row = &work->rows[work->page ^ 1][0][0].x;
-  step = work->stepX;
-  phase = (work->frame + (u16)y3) * work->freqX;
+  row = &state->rows[state->page ^ 1][0][0].x;
+  step = state->stepX;
+  phase = (state->frame + (u16)y3) * state->freqX;
   if (step == 0) {
     for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
       row[scanline * 6] = x3;
@@ -68,7 +68,7 @@ void LineScroll_BuildPage(void) {
     u16 scroll2 = x2;
     u16 scroll1 = x1;
 
-    amplitude = work->ampX;
+    amplitude = state->ampX;
     for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
       wave = Iwram_MulFX(gLineScroll_WaveSine[FIXEDtoINT(phase) &
                                               (LINE_SCROLL_WAVE_ENTRIES - 1)],
@@ -83,9 +83,9 @@ void LineScroll_BuildPage(void) {
       phase += step;
     }
   }
-  row = &work->rows[work->page ^ 1][0][0].y;
-  step = work->stepY;
-  phase = (work->frame + (u16)y3) * work->freqY;
+  row = &state->rows[state->page ^ 1][0][0].y;
+  step = state->stepY;
+  phase = (state->frame + (u16)y3) * state->freqY;
   if (step == 0) {
     for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
       row[scanline * 6] = y3;
@@ -97,7 +97,7 @@ void LineScroll_BuildPage(void) {
     u16 scroll2 = y2;
     u16 scroll1 = y1;
 
-    amplitude = work->ampY;
+    amplitude = state->ampY;
     for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
       wave = Iwram_MulFX(gLineScroll_WaveSine[FIXEDtoINT(phase) &
                                               (LINE_SCROLL_WAVE_ENTRIES - 1)],
@@ -112,8 +112,8 @@ void LineScroll_BuildPage(void) {
       phase += step;
     }
   }
-  work->frame++;
-  work->page ^= 1;
+  state->frame++;
+  state->page ^= 1;
 }
 
 // The shared source that starts the line scroll, at its place in the ROM.

@@ -4,8 +4,8 @@
 /// formatting behind it, the sprites (window sprites) that windows carry,
 /// icons, the selection screen and the option and pause menus.
 ///
-/// Everything lives in one work block, struct WindowWork (heap slot
-/// HEAP_SLOT_WINDOW, reached as WINDOW_WORK): the tilemap, the window slots,
+/// Everything lives in one state block, struct WindowState (heap slot
+/// HEAP_SLOT_WINDOW, reached as WINDOW_STATE): the tilemap, the window slots,
 /// three messages, a pool of 64 window sprites and the decoded text.
 ///
 /// window_internal.h holds what every part shares (includes, edition values

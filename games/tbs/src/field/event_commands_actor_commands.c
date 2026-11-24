@@ -212,7 +212,7 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 facing) {
     struct Actor *leader;
 
     Actor_SetSpeedParameters(actorId, toFIXED(3) / 5, toFIXED(3) / 10);
-    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+    leader = Actor_GetById(gMainRoutineState.leaderActorId);
     if (leader != NULL)
       Actor_SetHorizontalPositionWithTerrain(actorId, leader->x.fixed,
                                              leader->z.fixed);
@@ -620,10 +620,10 @@ void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
 }
 
 /// Releases the actor and empties its slot,
-/// writing NULL to its place in the field work's actor table.
+/// writing NULL to its place in the field state's actor table.
 void Actor_ReleaseById(s32 actorId) {
   void *released = Actor_Lookup(actorId);
-  struct FieldWork *table = gFieldWork;
+  struct FieldState *table = gFieldState;
 #ifdef UBFIX
   struct Actor *empty = NULL;
 #endif
@@ -632,7 +632,7 @@ void Actor_ReleaseById(s32 actorId) {
     Actor_ReleaseFar(released);
 #ifdef UBFIX
     // The getter accepts slots through 191, including non-actor storage.
-    memcpy((u8 *)table + offsetof(struct FieldWork, actors) +
+    memcpy((u8 *)table + offsetof(struct FieldState, actors) +
                // Copy the pointer representation without extending the actor
                // array.
                actorId * sizeof(void *),
@@ -828,24 +828,24 @@ void Actor_CopyGraphics(u32 targetId, u32 sourceId) {
 UNUSED void Actor_ReservedNoOp(void) {}
 
 /// Sets the number of the event's next message.
-void Event_SetMessageId(s32 message) { gFieldWork->message = message; }
+void Event_SetMessageId(s32 message) { gFieldState->message = message; }
 
 /// Returns the sprite (the first animation's id) of the actor in the low 12
 /// bits of actorId, or -1 if there is no such animated actor.
 s32 Actor_GetSpriteById(s32 actorId) {
 #ifdef UBFIX
-  struct FieldWork *state = gFieldWork;
+  struct FieldState *state = gFieldState;
   s32 sprite = -1;
   struct Actor *entry;
 
   actorId &= SPEAKER_ACTOR_MASK;
-  // BUG: the -1 sentinel becomes index 4095, beyond the field work. All
+  // BUG: the -1 sentinel becomes index 4095, beyond the field state. All
   // indices from ACTOR_ID_COUNT to 4095 lie outside the actor table.
   if (actorId >= ACTOR_ID_COUNT)
     return -1;
   entry = state->actors[actorId];
 #else
-  struct FieldWork *state = gFieldWork;
+  struct FieldState *state = gFieldState;
   s32 sprite = -1;
   struct Actor *entry = state->actors[actorId & SPEAKER_ACTOR_MASK];
 #endif
@@ -858,7 +858,7 @@ s32 Actor_GetSpriteById(s32 actorId) {
 /// Returns the first of the scene's actors (ACTOR_FIRST_PLACED to
 /// ACTOR_LAST_ID) showing sprite, or -1.
 s32 Actor_FindBySprite(s32 sprite) {
-  struct FieldWork *state = gFieldWork;
+  struct FieldState *state = gFieldState;
   s32 result = -1;
   s32 index;
   struct Actor *actor;

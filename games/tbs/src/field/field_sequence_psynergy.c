@@ -9,7 +9,7 @@
 /// PP.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *fieldState = gFieldState;
   const struct Trigger *before;
   const struct Trigger *after;
   const struct Trigger *during;
@@ -23,7 +23,7 @@ s32 Field_UsePsynergy(u32 code) {
   abilityGroup = Ability_Get(abilityId)->fieldPsynergy;
   userId = ACT_UNIT(code);
   // The leader is looked up and the result is not used.
-  Actor_Lookup(gMainRoutineWork.leaderActorId);
+  Actor_Lookup(gMainRoutineState.leaderActorId);
   retreat = 0;
   Leader_StopMoving();
   GameFlag_ClearFar(FLAG_ITEM_USE);
@@ -36,7 +36,8 @@ s32 Field_UsePsynergy(u32 code) {
     PSYNERGY_MESSAGE(userId, abilityId, MsgNothingHappened);
     return 0;
   }
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP && abilityId == ABILITY_REVEAL) {
+  if (fieldState->mode == ACTOR_SYSTEM_WORLD_MAP &&
+      abilityId == ABILITY_REVEAL) {
     // "Reveal!!! ...Nothing happened."
     PSYNERGY_MESSAGE(userId, ABILITY_REVEAL, MsgNothingHappened);
     return 0;
@@ -59,14 +60,14 @@ s32 Field_UsePsynergy(u32 code) {
     if (declined != 0)
       return 0;
     {
-      struct MainRoutineWork *state = &gMainRoutineWork;
+      struct MainRoutineState *state = &gMainRoutineState;
       s32 sceneId, returnEntrance;
       sceneId = (u16)state->retreatScene;
       state->next = sceneId;
       returnEntrance = (u16)state->retreatEntrance;
       state->entrance = returnEntrance;
     }
-    work->exit = EXIT_KEEP_DESTINATION;
+    fieldState->exit = EXIT_KEEP_DESTINATION;
     retreat = 1;
   }
   // A use that pays no PP only runs the scene's ending events.
@@ -80,9 +81,9 @@ s32 Field_UsePsynergy(u32 code) {
       // "[Psynergy]... Not enough PP."
       PSYNERGY_MESSAGE(userId, abilityId, MsgNotEnoughPp);
       // Retreat was already accepted: take its exit back (the scene and
-      // entrance it chose stay in the main routine's work).
+      // entrance it chose stay in the main routine's state).
       if (retreat)
-        work->exit = 0;
+        fieldState->exit = 0;
       return 0;
     }
     Unit_AddPpFar(userId, -ppCost);
@@ -99,7 +100,7 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_SetFar(FLAG_PLAY_PSYNERGY_CAST);
   GameFlag_SetFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
-    target = Field_FindNearbyPsynergyTarget(gMainRoutineWork.leaderActorId,
+    target = Field_FindNearbyPsynergyTarget(gMainRoutineState.leaderActorId,
                                             abilityGroup);
     // The after event plays the Psynergy itself.
     if (after && (after->subject & TRIGGER_SUBJECT_OWN_EFFECT)) {
@@ -110,11 +111,11 @@ s32 Field_UsePsynergy(u32 code) {
     GameFlag_ClearFar(FLAG_PSYNERGY_TARGET);
 
   // Play the Psynergy.
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
+  if (fieldState->mode == ACTOR_SYSTEM_WORLD_MAP)
     Actor_ClearOutOfBounds();
   FieldPsynergy_LoadResources(abilityId, 0);
-  work->psynergyActing = 1;
-  FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId, target);
+  fieldState->psynergyActing = 1;
+  FieldPsynergy_SetupActorPair(gMainRoutineState.leaderActorId, target);
   FieldPsynergy_StartCast();
 
   Field_RunPsynergyEvent(before, userId, target);
@@ -130,9 +131,9 @@ s32 Field_UsePsynergy(u32 code) {
     FieldPsynergy_FinishMindRead();
   GameFlag_ClearFar(FLAG_PLAY_PSYNERGY_CAST);
   GameFlag_ClearFar(FLAG_PSYNERGY_TARGET);
-  work->psynergyActing = 0;
+  fieldState->psynergyActing = 0;
   FieldPsynergy_End();
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
+  if (fieldState->mode == ACTOR_SYSTEM_WORLD_MAP)
     Actor_Respawn();
   return 0;
 }

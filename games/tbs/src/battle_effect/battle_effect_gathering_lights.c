@@ -45,7 +45,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                                      s32 mode) {
   struct ScreenPoint screenPosition;
   BlitterPair draw;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   s32 k;
@@ -53,13 +53,13 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   s32 paletteId;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_MEMBER_BURST_IMAGE),
-                      work);
+                      state);
   if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
     paletteId = RESOURCE_PINK_BURST_SHEET;
   else if (mode == GATHERING_LIGHTS_RUMBLE)
@@ -68,13 +68,13 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     paletteId = RESOURCE_MERCURY_DJINN_SHEET;
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId),
                   SHEET_PALETTE_BYTES);
-  BattleEffect_FetchRectangleBlitters(work->args->side, draw);
+  BattleEffect_FetchRectangleBlitters(state->args->side, draw);
 
   // The lights fly off the user in every direction.
   EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
-  EFFECT_FOR_EACH_TARGET(k, work->args) {
-    struct Actor *user = GetBattleObjectSlotFar(work->args->user)->actor;
-    s32 height = BattleUnit_GetEffectHeightFar(work->args->user);
+  EFFECT_FOR_EACH_TARGET(k, state->args) {
+    struct Actor *user = GetBattleObjectSlotFar(state->args->user)->actor;
+    s32 height = BattleUnit_GetEffectHeightFar(state->args->user);
 
     for (i = 0; i != GATHERING_LIGHTS_SLOTS; i++) {
       struct Particle *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
@@ -88,12 +88,13 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   }
 
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_ENEMY_CRY);
 
   for (frame = 0;
        frame != gGatheringLights_Counts[mode][GATHERING_LIGHTS_FRAMES] +
-                    work->args->targetCount * GATHERING_LIGHTS_TARGET_FRAMES;
+                    state->args->targetCount * GATHERING_LIGHTS_TARGET_FRAMES;
        frame++) {
     s32 *row;
 
@@ -106,16 +107,16 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     // Ripple the canvas line by line.
-    row = work->bg2xLines;
+    row = state->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
       *row++ = CANVAS_WAVE_BG2X(toFIXED(GATHERING_LIGHTS_RIPPLE) -
                                 Trig_Sin((frame + i) * (TRIG_TURN / 64)) *
                                     GATHERING_LIGHTS_RIPPLE);
 
-    EFFECT_FOR_EACH_TARGET(k, work->args) {
+    EFFECT_FOR_EACH_TARGET(k, state->args) {
       struct Actor *target =
-          GetBattleObjectSlotFar(work->args->targets[k])->actor;
-      s32 half = BattleUnit_GetEffectHeightFar(work->args->targets[k]) / 2;
+          GetBattleObjectSlotFar(state->args->targets[k])->actor;
+      s32 half = BattleUnit_GetEffectHeightFar(state->args->targets[k]) / 2;
 
       if (frame ==
           k * GATHERING_LIGHTS_TARGET_FRAMES + GATHERING_LIGHTS_HIT_FRAME + 1) {
@@ -126,7 +127,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
       }
       if (frame ==
           k * GATHERING_LIGHTS_TARGET_FRAMES + GATHERING_LIGHTS_HIT_FRAME)
-        BattleEffect_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
+        BattleEffect_TintBattler(state->args->targets[k], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, k, 26);
       if (frame > k * GATHERING_LIGHTS_TARGET_FRAMES) {
         for (i = 0; i != gGatheringLights_Counts[mode][GATHERING_LIGHTS_COUNT];
@@ -138,7 +139,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
               mote->variant >= 0) {
             Projection_Point(mote, &screenPosition);
             screenPosition.x >>= 1;
-            draw[0](canvas, work->sheet + i % 3 * PICTURE_BYTES(MEMBER_BURST),
+            draw[0](canvas, state->sheet + i % 3 * PICTURE_BYTES(MEMBER_BURST),
                     screenPosition.x - MEMBER_BURST_WIDTH / 2,
                     screenPosition.y - MEMBER_BURST_HEIGHT / 2,
                     MEMBER_BURST_WIDTH, MEMBER_BURST_HEIGHT);
@@ -161,7 +162,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
         }
       }
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

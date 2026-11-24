@@ -15,11 +15,11 @@
 /// Makes the leader jump two cells forward, over the cell in front, when the
 /// map allows it (MapGrid_CheckCollision).
 s32 Field_TryJumpForward(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 result = -1;
   s32 angle = FACING_NEAREST_CARDINAL(leader->facing);
   u8 savedMotionFlags = leader->motionFlags;
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   s32 spriteFlags = SPRITE_FLAG_SHADOW;
   struct FieldPosition positionStorage;
   struct FieldPosition *position;
@@ -56,7 +56,7 @@ again:
     leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & (u8)~SPRITE_FLAG_SHADOW);
     Actor_MoveToAndWaitById(
-        gMainRoutineWork.leaderActorId,
+        gMainRoutineState.leaderActorId,
         ((struct FieldCoordinate *)&position->x)->part[0].integer,
         ((struct FieldCoordinate *)&position->z)->part[0].integer);
     Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
@@ -84,9 +84,9 @@ again:
     }
     leader->motionFlags = savedMotionFlags;
     Event_End();
-    if (work != NULL)
-      work->walkingDistance +=
-          Iwram_MulFX(work->walkingDistanceScale, toFIXED(32));
+    if (state != NULL)
+      state->walkingDistance +=
+          Iwram_MulFX(state->walkingDistanceScale, toFIXED(32));
     // Landed on another jump spot: stand, then jump again, testing the gap
     // and the landing afresh.
     if (MapGrid_GetCellBehaviorAtFar(leader->layer, position->x, position->z) ==
@@ -104,14 +104,14 @@ again:
 /// wall it is on (the player presses down at a climbable wall); -1 when there
 /// is none to climb.
 s32 Field_ClimbDown(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 gridX = CELL_MIDDLE(leader->x.part[0].integer);
   s32 gridZ = CELL_MIDDLE(leader->z.part[0].integer);
   s32 result;
 
   Event_Start();
 
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
+  if (gMainRoutineState.movementMode == LEADER_MOVEMENT_WALK) {
     s32 index = gridX / MAPGRID_CELL_PIXELS +
                 (gridZ / MAPGRID_CELL_PIXELS) * MAPGRID_SIZE;
 
@@ -132,10 +132,10 @@ s32 Field_ClimbDown(void) {
 
       // Step to the middle of the cell, face north and climb down a cell at
       // 1 pixel a frame, in free flight (no motion flags) with no shadow.
-      Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, gridX, gridZ);
+      Actor_MoveToAndWaitById(gMainRoutineState.leaderActorId, gridX, gridZ);
       leader->speedLimit = FIXED_ONE;
-      Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
-      Actor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
+      Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
+      Actor_WaitForScriptEndById(gMainRoutineState.leaderActorId);
       leader->steeringFlags = ACTOR_FACES_MOTION;
       leader->motionFlags = 0;
       Actor_SetSpriteFlagsFar(leader, 0);
@@ -143,8 +143,8 @@ s32 Field_ClimbDown(void) {
       Actor_SetMoveTargetFar(leader, toFIXED(gridX),
                              leader->y.fixed - toFIXED(16),
                              toFIXED(gridZ) + toFIXED(16));
-      Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-      gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
+      Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
+      gMainRoutineState.movementMode = LEADER_MOVEMENT_CLIMB;
     } else {
       goto failure;
     }
@@ -158,7 +158,7 @@ s32 Field_ClimbDown(void) {
     leader->groundHeight = leader->y.fixed;
     Actor_SetSpriteFlagsFar(leader, SPRITE_FLAG_SHADOW);
     Event_Wait(6);
-    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+    gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
     leader->steeringFlags = ACTOR_FACES_MOTION;
     leader->facing = FACING_NORTH;
   }
@@ -175,7 +175,7 @@ failure:
 /// the wall it is on (the player presses up at a climbable wall); -1 when there
 /// is none to climb.
 s32 Field_ClimbUp(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   s16 spriteFlags = SPRITE_FLAG_SHADOW;
   s32 gridX = CELL_MIDDLE(leader->x.part[0].integer);
   s32 gridZ = CELL_MIDDLE(leader->z.part[0].integer);
@@ -186,7 +186,7 @@ s32 Field_ClimbUp(void) {
   if (leader->spriteStorageKind == ACTOR_SPRITE_ONE)
     spriteFlags = leader->sprite->flags;
 
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
+  if (gMainRoutineState.movementMode == LEADER_MOVEMENT_WALK) {
     s32 index = gridX / MAPGRID_CELL_PIXELS +
                 (gridZ / MAPGRID_CELL_PIXELS) * MAPGRID_SIZE;
 
@@ -205,7 +205,7 @@ s32 Field_ClimbUp(void) {
 
       // Step to the middle of the cell, crouch, jump and grab the wall.
       leader->steeringFlags = 0;
-      Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, gridX, gridZ);
+      Actor_MoveToAndWaitById(gMainRoutineState.leaderActorId, gridX, gridZ);
       Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
       wait(4);
       Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAP);
@@ -218,7 +218,7 @@ s32 Field_ClimbUp(void) {
       leader->velocityY = 0;
       Actor_SelectAnimationFar(leader, ANIM_LEADER_CLING);
       wait(4);
-      gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
+      gMainRoutineState.movementMode = LEADER_MOVEMENT_CLIMB;
       leader->steeringFlags = ACTOR_FACES_MOTION;
       wait(8);
     } else {
@@ -230,13 +230,13 @@ s32 Field_ClimbUp(void) {
     Actor_SelectAnimationFar(leader, ANIM_LEADER_CLIMB_OVER_TOP);
     Actor_SetMoveTargetFar(leader, toFIXED(gridX), leader->y.fixed + toFIXED(8),
                            toFIXED(gridZ) - toFIXED(16));
-    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+    Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
     leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     spriteFlags |= SPRITE_FLAG_SHADOW;
     leader->groundHeight = leader->y.fixed;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Event_Wait(4);
-    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+    gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
     leader->steeringFlags = ACTOR_FACES_MOTION;
   }
 

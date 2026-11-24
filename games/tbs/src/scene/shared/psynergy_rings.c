@@ -11,7 +11,7 @@ static void Scene_SpawnPsynergyRings(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
   struct Sprite *sprite;
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct FieldEffectState *effectState = gFieldEffectState;
   s32 i;
 
   Sound_Play(PSYNERGY_RINGS_SOUND);
@@ -29,7 +29,7 @@ static void Scene_SpawnPsynergyRings(struct Actor *parent) {
         Sprite_StartAnimation(sprite, 0);
         sprite->flags = 0;
         VramCache_FreeEntry(sprite->slot);
-        sprite->slot = effectWork->tileSlot;
+        sprite->slot = effectState->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
             (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;

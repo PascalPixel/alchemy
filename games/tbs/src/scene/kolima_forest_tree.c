@@ -74,7 +74,7 @@
 #include "sound/sound_driver_symbols.h"
 #include "system/io_reg.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/system_call.h"
 #include "text/msg_ids.h"
@@ -178,12 +178,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Unused: takes the touched exit after the leader's current movement. No
 /// trigger row names it.
 UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 0);
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
   Event_End();
 }
 
@@ -252,7 +252,7 @@ static void KolimaForestTree_TalkToTret(void) {
       KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_CLOSE_EYES);
       waterHolder = PartyInventory_FindMember(ITEM_HERMES_WATER);
       if (waterHolder != -1) {
-        u16 *menuRequest = &gFieldWork->fieldMenu;
+        u16 *menuRequest = &gFieldState->fieldMenu;
         u16 open = 1;
 
         *menuRequest = open;
@@ -539,7 +539,7 @@ static void KolimaForestTree_RestoreTret(void) {
     // "Yes, that's right... I must hurry."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   } else {
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
@@ -551,7 +551,7 @@ static void KolimaForestTree_RestoreTret(void) {
       // "Tret should be able to do it, now that his energy has returned."
       Event_ShowMessage(ACTOR_MIA, 0);
     } else {
-      gFieldWork->message += 1;
+      gFieldState->message += 1;
     }
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     // "Ask him to save everyone he turned into a tree!"
@@ -610,7 +610,7 @@ static void KolimaForestTree_RestoreTret(void) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   } else {
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   }
   // Yes: "You really think Psynergy Stones caused all of this trouble?"
   // No: "I know you don't want to believe it, but nothing else makes..."
@@ -751,7 +751,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   }
   Event_Wait(10);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_LOOK_LEFT);
@@ -807,10 +807,10 @@ s32 Scene_Initialize(void) {
   laurelBlank = Actor_Get(ACTOR_INVISIBLE_LAUREL);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_TRETS_WRATHFUL_SIDE, SPRITE_COLOR_HIDDEN);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gMainRoutineWork.retreatScene = SCENE_KOLIMA_FOREST_ENTRANCE;
-  gMainRoutineWork.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
+  gMainRoutineState.retreatScene = SCENE_KOLIMA_FOREST_ENTRANCE;
+  gMainRoutineState.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
   if (!GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED))
     KolimaPalette_Curse(TREE_CURSE_DIVISOR);
   Actor_Get(ACTOR_TRET)->radius = 6;

@@ -36,7 +36,7 @@
 /// Abilities: Prism, Hail Prism, Freeze Prism.
 void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   BlitterPair draw;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   struct Particle *seed;
@@ -49,25 +49,25 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   s32 j;
 
   shards = PARTICLES;
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, work->sheet, 1, 1);
-  BattleEffect_FetchRectangleBlitters(work->args->side, draw);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, state->sheet, 1, 1);
+  BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The crystals wait above the screen, each eight frames behind the last,
   // and drift sideways so that they land over the targets.
-  for (j = 0; j != gPrism_Counts[work->args->variant][PRISM_CRYSTAL_COUNT];
+  for (j = 0; j != gPrism_Counts[state->args->variant][PRISM_CRYSTAL_COUNT];
        j++) {
-    seed = &work->particles[j];
+    seed = &state->particles[j];
     // DEAD: x keeps a first random number, drawn and never read; the ROM
     // keeps the mask and the store.
     x = Random16() & 31;
     seed->y = -toFIXED(64);
-    if (work->args->side == EFFECT_SIDE_PARTY) {
+    if (state->args->side == EFFECT_SIDE_PARTY) {
       x = INTtoFIXED((Random16() & 31) + 80);
       seed->velocityX = (Random16() & 63) << 12;
     } else {
@@ -80,9 +80,9 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     seed->variant = j * 8;
   }
 
-  for (frame = 0; frame != gPrism_Counts[work->args->variant][PRISM_FRAMES];
+  for (frame = 0; frame != gPrism_Counts[state->args->variant][PRISM_FRAMES];
        frame++) {
-    if (work->args->variant == EFFECT_VARIANT_STRONGEST &&
+    if (state->args->variant == EFFECT_VARIANT_STRONGEST &&
         frame < PRISM_TURN_FRAMES) {
       struct BattleCamera *camera = gBattleCamera;
       s32 speed;
@@ -92,20 +92,20 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
       else
         speed = PRISM_TURN_FRAMES * PRISM_TURN_SLOWDOWN -
                 frame * PRISM_TURN_SLOWDOWN;
-      if (work->args->side == EFFECT_SIDE_ENEMIES)
+      if (state->args->side == EFFECT_SIDE_ENEMIES)
         camera->yaw -= speed;
       else
         camera->yaw += speed;
     }
-    if (frame == gPrism_Counts[work->args->variant][PRISM_FRAMES] - 80)
+    if (frame == gPrism_Counts[state->args->variant][PRISM_FRAMES] - 80)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    if (frame == gPrism_Counts[work->args->variant][PRISM_FRAMES] - 8) {
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
+    if (frame == gPrism_Counts[state->args->variant][PRISM_FRAMES] - 8) {
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
-    if (frame <= gPrism_Counts[work->args->variant][PRISM_FRAMES] - 8) {
-      for (i = 0; i != gPrism_Counts[work->args->variant][PRISM_CRYSTAL_COUNT];
+    if (frame <= gPrism_Counts[state->args->variant][PRISM_FRAMES] - 8) {
+      for (i = 0; i != gPrism_Counts[state->args->variant][PRISM_CRYSTAL_COUNT];
            i++) {
-        crystal = &work->particles[i];
+        crystal = &state->particles[i];
         if (crystal->z == PRISM_SHATTERED) {
           // A shattered crystal's shards fly and spin; kind 4 asks for pictures
           // past the twelve the tables hold, whose heights read as zero, so
@@ -120,7 +120,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
             shard = &shards[i * PRISM_SHARDS_PER_CRYSTAL + j];
             draw[j <= 2](
                 canvas,
-                work->sheet + gPrism_ShardPictures[picture] +
+                state->sheet + gPrism_ShardPictures[picture] +
                     PRISM_SHARD_PICTURES,
                 FIXEDtoINT(shard->x) - gPrism_ShardWidths[picture] / 2,
                 FIXEDtoINT(shard->y) - gPrism_ShardHeights[picture] / 2,
@@ -133,7 +133,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
           }
         } else if (frame >= crystal->variant) {
           // A falling crystal.
-          draw[i & 1](canvas, work->sheet,
+          draw[i & 1](canvas, state->sheet,
                       FIXEDtoINT(crystal->x) - CRYSTAL_WIDTH / 2,
                       FIXEDtoINT(crystal->y), CRYSTAL_WIDTH, CRYSTAL_HEIGHT);
           Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE,
@@ -157,18 +157,18 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
               shard->z = 32;
               shard->variant = 0;
             }
-            work->shakeFrames = 8;
+            state->shakeFrames = 8;
             Sound_PlayFar(SE_CLATTER);
-            EFFECT_FOR_EACH_TARGET(j, work->args)
-              BattleEffect_TintBattler(work->args->targets[j],
+            EFFECT_FOR_EACH_TARGET(j, state->args)
+              BattleEffect_TintBattler(state->args->targets[j],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 4);
           }
         }
       }
     }
-    BattleCamera_Shake(work->args->variant * 2 + 4,
-                       work->args->variant * 4 + 8);
-    EFFECT_END_FRAME(work);
+    BattleCamera_Shake(state->args->variant * 2 + 4,
+                       state->args->variant * 4 + 8);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

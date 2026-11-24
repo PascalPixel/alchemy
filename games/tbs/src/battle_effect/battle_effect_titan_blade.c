@@ -67,7 +67,7 @@
 void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   void **slots;
   void **slot;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle blitters[2];
   u8 *sheet;
@@ -80,15 +80,15 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
   slot = slots;
-  work = *slot++;
+  state = *slot++;
   canvas = *slot;
   sheet =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_BATTLE_SHEET);
 
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Projection_Unit(work->args->targets[0], &screenPosition);
+  Projection_Unit(state->args->targets[0], &screenPosition);
   canvasCenterX = screenPosition.x / 2;
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -101,16 +101,17 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_RAM_CODE_PAIRED);
 
   Resource_LoadAndDecompress(RESOURCE_SWORD_SHEET,
-                             work->sheet + TITAN_BLADE_SWORD_PICTURE, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, work->sheet, 1, 0);
+                             state->sheet + TITAN_BLADE_SWORD_PICTURE, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                             work->sheet + TITAN_BLADE_FLASH_PICTURES, 1, 0);
+                             state->sheet + TITAN_BLADE_FLASH_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   for (i = 0; i != TITAN_BLADE_FLASHES; i++) {
-    struct Particle *flash = &work->particles[i];
+    struct Particle *flash = &state->particles[i];
 
     s32 distance = i * 2;
     s32 angle = Random16() & TRIG_ANGLE_MASK;
@@ -152,13 +153,13 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     }
 
     if (frame == 8) {
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
     }
     if (frame == 48) {
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
     }
     if (frame == TITAN_BLADE_STRIKE_FRAME) {
-      work->shakeFrames = 16;
+      state->shakeFrames = 16;
     }
 
     if (frame == 4) {
@@ -175,7 +176,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     // The flashes light in turn, each further out from the sword.
     if (frame > 55) {
       for (i = 0; i != TITAN_BLADE_DRAWN_FLASHES; i++) {
-        struct Particle *flash = &work->particles[i];
+        struct Particle *flash = &state->particles[i];
 
         s32 x;
         s32 life;
@@ -188,7 +189,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
             life < TITAN_BLADE_FLASH_SHOWN * TITAN_BLADE_FLASH_FRAMES) {
           blitters[0](
               canvas,
-              work->sheet +
+              state->sheet +
                   gTitanBlade_FlashPictures[life / TITAN_BLADE_FLASH_FRAMES] *
                       PICTURE_BYTES(FLASH_BURST) +
                   TITAN_BLADE_FLASH_PICTURES,
@@ -241,9 +242,9 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           (phase - TITAN_BLADE_PILLAR_SCROLL_FRAME * TITAN_BLADE_PILLAR_SPEED) %
           height;
 
-      blit(canvas, work->sheet, x,
+      blit(canvas, state->sheet, x,
            TITAN_BLADE_GROUND_Y - FIRE_PILLAR_HEIGHT - scroll, width, height);
-      blit(canvas, work->sheet, x, TITAN_BLADE_GROUND_Y - scroll, width,
+      blit(canvas, state->sheet, x, TITAN_BLADE_GROUND_Y - scroll, width,
            scroll);
     }
 
@@ -301,7 +302,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
             height - top - (TITAN_BLADE_SWORD_HEIGHT - TITAN_BLADE_GROUND_Y);
       }
       if (height > 0) {
-        blitters[1](canvas, work->sheet + TITAN_BLADE_SWORD_PICTURE, x, top,
+        blitters[1](canvas, state->sheet + TITAN_BLADE_SWORD_PICTURE, x, top,
                     TITAN_BLADE_SWORD_WIDTH, height);
       }
     }
@@ -342,10 +343,10 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
     // Every target flashes and recoils.
     if (frame == 68) {
-      EFFECT_FOR_EACH_TARGET(i, work->args) {
-        BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
+      EFFECT_FOR_EACH_TARGET(i, state->args) {
+        BattleEffect_TintBattler(state->args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
-        BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_JOLT);
+        BattleMotion_ApplyKnockbackFar(state->args->targets[i], KNOCKBACK_JOLT);
       }
     }
 
@@ -360,7 +361,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     }
 
     BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

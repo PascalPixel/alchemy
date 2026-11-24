@@ -34,9 +34,9 @@
 /// would leave them, paged with R, the Djinni figures hopping across, and "Is
 /// this OK?". Each unit is changed, measured and put back; nothing is applied.
 s32 PsynergyList_RunCompareLoop(u32 mode) {
-  struct DjinnMenuWork *menu;
+  struct DjinnMenuState *menu;
   struct DjinnMenuBackdrop *backdrop;
-  struct WindowWork *work;
+  struct WindowState *state;
   struct Window *list;
   s32 pageCounts[2];
   s32 selectedPages[2];
@@ -52,7 +52,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   s32 index;
   s32 memberIndex;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   confirmationChoice = YES;
   result = 0;
   redraw = 1;
@@ -84,7 +84,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   // unit, work the unit out again, compare its Psynergy with a copy taken
   // before, and put the unit back from the copy.
   if (mode <= DJINN_COMPARE_GIVE) {
-    u16 *diffWork;
+    u16 *diffState;
     struct Unit *originalUnit;
     struct Unit *unit;
     s32 memberId;
@@ -98,7 +98,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     s32 gainedCount;
     s32 size;
 
-    diffWork = Heap_AllocEwram(96);
+    diffState = Heap_AllocEwram(96);
     size = sizeof(*originalUnit);
     originalUnit = Heap_AllocEwram(size);
     secondElement = 0;
@@ -122,7 +122,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     }
     Unit_CalculateFar(memberId);
     pageCounts[0] = PsynergyList_Diff(originalUnit->psynergy, unit->psynergy,
-                                      diffWork, &gainedCount, &lostCount);
+                                      diffState, &gainedCount, &lostCount);
     Iwram_CopyWords(unit, originalUnit, size);
 
     memberId = menu->shownMember[1];
@@ -137,12 +137,12 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     }
     Unit_CalculateFar(memberId);
     pageCounts[1] = PsynergyList_Diff(originalUnit->psynergy, unit->psynergy,
-                                      diffWork, &gainedCount, &lostCount);
+                                      diffState, &gainedCount, &lostCount);
     Iwram_CopyWords(unit, originalUnit, size);
     Heap_Release(originalUnit);
-    Heap_Release(diffWork);
+    Heap_Release(diffState);
   } else if (mode == DJINN_COMPARE_STANDBY || mode == DJINN_COMPARE_SET) {
-    u16 *diffWork;
+    u16 *diffState;
     struct Unit *originalUnit;
     struct Unit *unit;
     s32 firstMemberId;
@@ -152,7 +152,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     s32 lostCount;
     s32 gainedCount;
 
-    diffWork = Heap_AllocEwram(96);
+    diffState = Heap_AllocEwram(96);
     originalUnit = Heap_AllocEwram(sizeof(*originalUnit));
     firstMemberId = menu->shownMember[0];
     firstElement = menu->pairElement[0];
@@ -167,12 +167,12 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     }
     Unit_CalculateFar(firstMemberId);
     pageCounts[0] = PsynergyList_Diff(originalUnit->psynergy, unit->psynergy,
-                                      diffWork, &gainedCount, &lostCount);
+                                      diffState, &gainedCount, &lostCount);
     Iwram_CopyWords(unit, originalUnit, sizeof(*originalUnit));
     pageCounts[1] = pageCounts[0];
     page = DJINN_COMPARE_PAGE_GIVER;
     Heap_Release(originalUnit);
-    Heap_Release(diffWork);
+    Heap_Release(diffState);
   }
 
   // Psynergy entries to pages of five.
@@ -262,7 +262,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     s32 pressedKeys;
     s32 repeatedKeys;
 
-    work = WINDOW_WORK;
+    state = WINDOW_STATE;
     backdrop = menu->backdrop;
     pressedKeys = gKeysPressed;
     repeatedKeys = gKeysRepeat;
@@ -295,21 +295,21 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         if (backdrop->tutorialTimer == 60) {
           struct Window *window;
 
-          Iwram_CopyWords(saved, work->tilemap, size);
+          Iwram_CopyWords(saved, state->tilemap, size);
           // "Setting a Djinni changes your attributes and maybe even your
           // class."
           window = Message_OpenWindowFar(MsgDjinnTutorialSetChanges, 8, 0,
                                          MESSAGE_WINDOW_ZOOM);
           DjinnTutorial_SetCursor(menu, ICON_SHOWN);
           MenuCursor_Slide(2, 96);
-          gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gMainRoutineState.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0) {
             wait(1);
           }
           Window_CloseFar(window, 1);
-          Iwram_CopyWords(work->tilemap, saved, size);
+          Iwram_CopyWords(state->tilemap, saved, size);
           Window_MarkVisibleTextTilesFar();
-          work->dirty = 1;
+          state->dirty = 1;
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = DJINN_TUTORIAL_CLASS_PSYNERGY;
@@ -320,21 +320,21 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         if (backdrop->tutorialTimer == 60) {
           struct Window *window;
 
-          Iwram_CopyWords(saved, work->tilemap, size);
+          Iwram_CopyWords(saved, state->tilemap, size);
           // "When your class changes, the Psynergy you can use may also
           // change."
           window = Message_OpenWindowFar(MsgDjinnTutorialClassPsynergy, 8, 0,
                                          MESSAGE_WINDOW_ZOOM);
           DjinnTutorial_SetCursor(menu, ICON_SHOWN);
           MenuCursor_Slide(106, 56);
-          gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gMainRoutineState.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0) {
             wait(1);
           }
           Window_CloseFar(window, 1);
-          Iwram_CopyWords(work->tilemap, saved, size);
+          Iwram_CopyWords(state->tilemap, saved, size);
           Window_MarkVisibleTextTilesFar();
-          work->dirty = 1;
+          state->dirty = 1;
           wait(1);
           redraw = 1;
           backdrop->tutorialTimer = 0;
@@ -366,7 +366,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
                                      16);
         }
       }
-      work->holdTilemapUpload = 1;
+      state->holdTilemapUpload = 1;
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar(menu->secondWindow);
       if ((redraw >> 1) != 0) {
@@ -409,7 +409,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
                                   selectedPages[0] + 1, 1);
         break;
       }
-      work->holdTilemapUpload = 0;
+      state->holdTilemapUpload = 0;
     }
 
     // The Psynergy list's page numbers on the right window's top border:
@@ -438,7 +438,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
                                   TILEMAP_ENTRY_PLAIN);
         Window_SetTilemapEntryFar(list, PAGE_ARROW_RIGHT, list->width - 2, -1,
                                   TILEMAP_ENTRY_PLAIN);
-        Window_MarkTilemapRow(work, list->y);
+        Window_MarkTilemapRow(state, list->y);
       }
     }
 
@@ -561,20 +561,20 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   DjinnFigures_SetSlotPhase(1, 0);
   Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
 
-  WINDOW_WORK->holdTilemapUpload = 1;
+  WINDOW_STATE->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
   Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   Window_CloseIfOpen((struct Window **)&menu->window, 1);
   Window_CloseIfOpen(&menu->secondWindow, 1);
   WindowSprite_RedrawSavedRectFar(menu->listWindow);
-  // BUG: no window is ever made in unopenedWindow (DjinnMenuWork), so this
+  // BUG: no window is ever made in unopenedWindow (DjinnMenuState), so this
   // redraws through NULL; see the field. BUGFIX skips it.
 #ifndef BUGFIX
   WindowSprite_RedrawSavedRectFar((struct Window *)menu->unopenedWindow);
 #endif
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  WINDOW_WORK->holdTilemapUpload = 0;
+  WINDOW_STATE->holdTilemapUpload = 0;
   wait(1);
   return result;
 }
@@ -590,10 +590,10 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   s32 frame;
   struct Window **leftWindowSlot;
   struct Window **rightWindowSlot;
-  struct WindowWork *work;
+  struct WindowState *state;
   u32 pressedKeys;
   u32 repeatedKeys;
-  struct DjinnMenuWork *menu;
+  struct DjinnMenuState *menu;
   struct Unit *unit;
   struct Window *window;
   u16 *listedActions;
@@ -604,7 +604,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   s32 side;
   s32 blink;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   phase = 0;
   redraw = 1;
   result = 0;
@@ -641,11 +641,11 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   Text_DrawMessageAsTilesFar(MsgCurrentStatus + 2, menu->statusWindow, 0, 16);
   side = 0;
   while (1) {
-    work = WINDOW_WORK;
+    state = WINDOW_STATE;
     pressedKeys = gKeysPressed;
     repeatedKeys = gKeysRepeat;
     if (redraw) {
-      work->holdTilemapUpload = 1;
+      state->holdTilemapUpload = 1;
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar(menu->secondWindow);
       DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairMember[0], 0, 0,
@@ -653,7 +653,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->pairMember[0],
                                 0, 0, DJINN_PREVIEW_NO_CHANGE,
                                 selectedPages[0] + 1, 1);
-      work->holdTilemapUpload = 0;
+      state->holdTilemapUpload = 0;
     }
     if (pageCounts[side] > 1) {
       window = menu->secondWindow;
@@ -672,7 +672,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
                                 TILEMAP_ENTRY_PLAIN);
       Window_SetTilemapEntryFar(window, PAGE_ARROW_RIGHT, window->width - 2, -1,
                                 TILEMAP_ENTRY_PLAIN);
-      Window_MarkTilemapRow(work, window->y);
+      Window_MarkTilemapRow(state, window->y);
     }
     // blink is worked out as the preview's hop step is, and not used; the
     // Djinni figure stays below the screen.
@@ -720,20 +720,20 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     wait(1);
   }
   Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
-  WINDOW_WORK->holdTilemapUpload = 1;
+  WINDOW_STATE->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
   Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   Window_CloseIfOpen(leftWindowSlot, 1);
   Window_CloseIfOpen(rightWindowSlot, 1);
   WindowSprite_RedrawSavedRectFar(menu->listWindow);
-  // BUG: no window is ever made in unopenedWindow (DjinnMenuWork), so this
+  // BUG: no window is ever made in unopenedWindow (DjinnMenuState), so this
   // redraws through NULL; see the field. BUGFIX skips it.
 #ifndef BUGFIX
   WindowSprite_RedrawSavedRectFar((struct Window *)menu->unopenedWindow);
 #endif
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  WINDOW_WORK->holdTilemapUpload = 0;
+  WINDOW_STATE->holdTilemapUpload = 0;
   wait(1);
   return result;
 }
@@ -744,9 +744,9 @@ s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
   s32 tradeCount;
   s32 memberColumn;
   s8 *entry;
-  struct DjinnMenuWork *menu;
+  struct DjinnMenuState *menu;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   tradeCount = 0;
   memberColumn = 0;
   if (tradeCount < menu->memberCount) {
@@ -769,14 +769,14 @@ s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
 /// Tests whether a hypothetical give leaves every pair of party members within
 /// one Djinn.
 s32 Djinn_CheckGiveBalance(s32 sourceMemberColumn, s32 targetMemberColumn) {
-  struct DjinnMenuWork *menu;
+  struct DjinnMenuState *menu;
   s8 ownedCounts[16];
   u8 firstMember;
   u8 secondMember;
   s32 difference;
   s32 balanced;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   Djinn_CountOwned((u8 *)ownedCounts);
   ownedCounts[sourceMemberColumn] -= 1;
   ownedCounts[targetMemberColumn] += 1;
@@ -803,14 +803,14 @@ s32 Djinn_CheckGiveBalance(s32 sourceMemberColumn, s32 targetMemberColumn) {
 /// writes every party member's total, set or not, into ownedCounts by list
 /// column.
 void Djinn_CountOwned(u8 *ownedCounts) {
-  struct DjinnMenuWork *menu;
+  struct DjinnMenuState *menu;
   struct Unit *unit;
   s32 memberIndex;
   s32 element;
   s32 djinnIndex;
   s32 ownedCount;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   for (memberIndex = 0; memberIndex < menu->memberCount; memberIndex++) {
     unit = Unit_GetFar(menu->members[memberIndex]);
     ownedCount = 0;

@@ -9,15 +9,15 @@
 void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
   struct Actor *subject;
   struct Actor *camera;
-  struct FieldWork *work;
-  struct MapGridScrollWork *grid;
+  struct FieldState *state;
+  struct MapGridScrollState *grid;
 
   subject = Actor_Lookup(actorId);
-  // The slot already holds the field work, which this returns; the camera
+  // The slot already holds the field state, which this returns; the camera
   // commands here all find it this way.
-  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  camera = work->camera;
-  grid = gMapGridWork[0];
+  state = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldState));
+  camera = state->camera;
+  grid = gMapGridState[0];
   if (subject != 0) {
     grid->origin = &camera->x.fixed;
     Actor_StartCameraFar(camera, (s32)subject);
@@ -25,7 +25,7 @@ void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
       SET_ACTOR_POSITION(camera, subject->x.fixed, subject->y.fixed,
                          subject->z.fixed);
       wait(1);
-      if (work->mode != ACTOR_SYSTEM_WORLD_MAP) {
+      if (state->mode != ACTOR_SYSTEM_WORLD_MAP) {
         MapGrid_CenterOnFollowedPointFar();
       }
     }
@@ -34,10 +34,10 @@ void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
 
 /// Sets the camera's top speed and acceleration, in 16.16 pixels per frame.
 void FieldCamera_SetSpeedParameters(FIXED speedLimit, FIXED acceleration) {
-  struct FieldWork *fieldWork =
-      HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  fieldWork->camera->speedLimit = speedLimit;
-  fieldWork->camera->acceleration = acceleration;
+  struct FieldState *fieldState =
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldState));
+  fieldState->camera->speedLimit = speedLimit;
+  fieldState->camera->acceleration = acceleration;
 }
 
 /// Pans the camera to a point in 16.16 pixels (CAMERA_KEEP keeps that axis),
@@ -46,7 +46,7 @@ void FieldCamera_SetSpeedParameters(FIXED speedLimit, FIXED acceleration) {
 void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
                                      FIXED requestedZ, s32 glide) {
   s32 shouldGlide;
-  struct FieldWork *fieldWork;
+  struct FieldState *fieldState;
   FIXED minimumX;
   FIXED minimumZ;
   FIXED maximumX;
@@ -55,16 +55,16 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
   FIXED positionX;
   FIXED positionZ;
   FIXED positionY;
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   struct Actor *camera;
 
   positionX = requestedX;
   positionY = requestedY;
   shouldGlide = glide;
   positionZ = requestedZ;
-  fieldWork = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  camera = fieldWork->camera;
-  grid = gMapGridWork[0];
+  fieldState = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldState));
+  camera = fieldState->camera;
+  grid = gMapGridState[0];
 
   // Keep the screen inside the map: the view centre stays 120 pixels from
   // either side, 96 from the top and 64 from the bottom (it sits 96 pixels
@@ -101,7 +101,7 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
   if (shouldGlide == 0) {
     SET_ACTOR_POSITION(camera, positionX, positionY, positionZ);
     wait(1);
-    if (fieldWork->mode != ACTOR_SYSTEM_WORLD_MAP) {
+    if (fieldState->mode != ACTOR_SYSTEM_WORLD_MAP) {
       MapGrid_CenterOnFollowedPointFar();
     }
   } else {
@@ -115,8 +115,8 @@ void FieldCamera_MoveToActorById(s32 actorId, s32 glide) {
   struct Actor *subject;
 
   subject = Actor_Lookup(actorId);
-  // The field work, looked up and not used.
-  HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
+  // The field state, looked up and not used.
+  HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldState));
   if (subject != NULL) {
     FieldCamera_MoveWithinMapBounds(subject->x.fixed, CAMERA_KEEP,
                                     subject->z.fixed, glide);
@@ -125,16 +125,16 @@ void FieldCamera_MoveToActorById(s32 actorId, s32 glide) {
 
 /// Waits (at most 600 frames) for the camera to arrive, then 2 frames more.
 void FieldCamera_WaitForArrival(void) {
-  Actor_WaitForMoveFar(((struct FieldWork *)HeapSlot_AllocEwram(
-                            HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
+  Actor_WaitForMoveFar(((struct FieldState *)HeapSlot_AllocEwram(
+                            HEAP_SLOT_FIELD, sizeof(struct FieldState)))
                            ->camera);
   Event_Wait(2);
 }
 
 /// Returns the camera actor.
 struct Actor *FieldCamera_GetActor(void) {
-  return ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
-                                                  sizeof(struct FieldWork)))
+  return ((struct FieldState *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                   sizeof(struct FieldState)))
       ->camera;
 }
 
@@ -143,8 +143,8 @@ struct Actor *FieldCamera_GetActor(void) {
 UNUSED void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition) {
   struct Actor *camera;
 
-  camera = ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
-                                                    sizeof(struct FieldWork)))
+  camera = ((struct FieldState *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                     sizeof(struct FieldState)))
                ->camera;
   if (target != NULL) {
     Actor_StartCameraFar(camera, 0);

@@ -13,7 +13,7 @@ struct SceneStateView {
 };
 
 /// The running totals Unit_Calculate builds a unit's stats in.
-struct StatWork {
+struct StatState {
   s32 hp;          ///< maximum HP
   s32 pp;          ///< maximum PP
   s32 atk;         ///< Attack, 0 to UNIT_STAT_MAX once clamped
@@ -38,10 +38,10 @@ struct StatWork {
 /// The distance between `a` and `b`, |a - b|.
 #define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-/// Starts a new game: clears the main routine's work and restarts at the
+/// Starts a new game: clears the main routine's state and restarts at the
 /// opening.
 void Game_RestartQuest(void) {
-  MainRoutineWork_InitializeDefaults();
+  MainRoutineState_InitializeDefaults();
   MainRoutine_RunFar(0);
 }
 
@@ -50,7 +50,7 @@ void Game_RestartQuest(void) {
 struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0)
     return (struct DjinnRecoveryTable *)Unit_Get(FIRST_ENEMY_UNIT + 3);
-  return (struct DjinnRecoveryTable *)&gMainRoutineWork.holdings;
+  return (struct DjinnRecoveryTable *)&gMainRoutineState.holdings;
 }
 
 /// Returns the average level of the party members, rounded down (0 with no
@@ -63,7 +63,7 @@ u32 Party_GetAverageLevel(void) {
   if (partySize == 0)
     return 0;
   for (i = 0; i < partySize; i++)
-    totalLevels += Unit_Get(gMainRoutineWork.party[i])->level;
+    totalLevels += Unit_Get(gMainRoutineState.party[i])->level;
   totalLevels /= partySize;
   return totalLevels;
 }
@@ -139,7 +139,7 @@ UNUSED void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// Works out a unit's stats from its base stats, equipment, set Djinn, class
 /// and battle stat levels; its HP and PP keep their share of a new maximum.
 void Unit_Calculate(s32 unitId) {
-  struct StatWork *stats;
+  struct StatState *stats;
   struct Unit *unit;
   s32 index, effectIndex, elementIndex;
   s32 value;
@@ -150,7 +150,7 @@ void Unit_Calculate(s32 unitId) {
   s16 previousMaximum;
 
   // Start with the unit's base stats and elemental power/resistance.
-  stats = Heap_AllocEwram(sizeof(struct StatWork));
+  stats = Heap_AllocEwram(sizeof(struct StatState));
   unit = Unit_Get(unitId);
   stats->hp = unit->baseHp;
   stats->pp = unit->basePp;
@@ -441,7 +441,7 @@ void GameFlag_RefreshLureCap(void) {
   GameFlag_Clear(FLAG_LURE_CAP);
   partySize = Party_CountMembers();
   for (member = 0; member < partySize; member++) {
-    struct Unit *unit = Unit_Get(gMainRoutineWork.party[member]);
+    struct Unit *unit = Unit_Get(gMainRoutineState.party[member]);
     s32 slot;
 
     for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
@@ -495,12 +495,12 @@ u32 BuildStamp_GetTime(void) {
 
 /// Clears the game's state and sets a new game's defaults: Isaac alone in the
 /// party, the standard buttons, the message speed and the Lucky Wheels odds.
-void MainRoutineWork_InitializeDefaults(void) {
+void MainRoutineState_InitializeDefaults(void) {
   volatile s32 zero;
 
   // Clear the state up to the characters, the scene state with its snapshots,
   // and the flags.
-  Dma_Fill32Cell(zero, 0, &gMainRoutineWork, sizeof(gMainRoutineWork));
+  Dma_Fill32Cell(zero, 0, &gMainRoutineState, sizeof(gMainRoutineState));
   Dma_Fill32Cell(zero, 0, gSceneLocalState, sizeof(struct SceneStateView));
   WAIT_DMA();
   Dma_Fill32Cell(zero, 0, gGameFlagBytes, GAME_FLAG_COUNT / 8);
@@ -508,48 +508,48 @@ void MainRoutineWork_InitializeDefaults(void) {
       ACTOR_SNAPSHOT_EMPTY;
   Dma_Fill32Cell(zero, 0, gCharacterUnits, sizeof(gCharacterUnits));
   Party_InitializeCharacters();
-  gMainRoutineWork.aKeys = KEY_A;
-  gMainRoutineWork.bKeys = KEY_B;
-  gMainRoutineWork.selectKeys = KEY_SELECT;
-  gMainRoutineWork.startKeys = KEY_START;
-  gMainRoutineWork.firstShortcutKeys = KEY_L;
-  gMainRoutineWork.secondShortcutKeys = KEY_R;
-  gMainRoutineWork.dashKeys = KEY_B;
-  gMainRoutineWork.firstShortcut = 0;
-  gMainRoutineWork.secondShortcut = 0;
-  gMainRoutineWork.leaderActorId = ISAAC;
+  gMainRoutineState.aKeys = KEY_A;
+  gMainRoutineState.bKeys = KEY_B;
+  gMainRoutineState.selectKeys = KEY_SELECT;
+  gMainRoutineState.startKeys = KEY_START;
+  gMainRoutineState.firstShortcutKeys = KEY_L;
+  gMainRoutineState.secondShortcutKeys = KEY_R;
+  gMainRoutineState.dashKeys = KEY_B;
+  gMainRoutineState.firstShortcut = 0;
+  gMainRoutineState.secondShortcut = 0;
+  gMainRoutineState.leaderActorId = ISAAC;
   Party_AddMember(ISAAC);
-  gMainRoutineWork.holdings.coins = 0;
-  gMainRoutineWork.messageSpeed = 1;
-  gMainRoutineWork.speech = 1;
-  gMainRoutineWork.unusedAfterSpeech = 1;
-  gMainRoutineWork.windowHue = 0;
-  gMainRoutineWork.windowBrightness = 8;
-  gMainRoutineWork.buildStamp = 0;
-  gMainRoutineWork.startStamp = BuildStamp_GetTime();
+  gMainRoutineState.holdings.coins = 0;
+  gMainRoutineState.messageSpeed = 1;
+  gMainRoutineState.speech = 1;
+  gMainRoutineState.unusedAfterSpeech = 1;
+  gMainRoutineState.windowHue = 0;
+  gMainRoutineState.windowBrightness = 8;
+  gMainRoutineState.buildStamp = 0;
+  gMainRoutineState.startStamp = BuildStamp_GetTime();
   gPlayTimeFrames = 0;
-  gMainRoutineWork.playTime = 0;
+  gMainRoutineState.playTime = 0;
   gIdleSleepEnabled = 0;
-  gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
+  gMainRoutineState.idleSleepEnabled = gIdleSleepEnabled;
   gIdleFrames = 0;
   gSaveSlot = -1;
   // The spring game's medal prizes, three to a ring, each ring out from the
   // centre twice as likely as the one inside it.
-  gMainRoutineWork.holdings.prizeWeights[0] = 4;
-  gMainRoutineWork.holdings.prizeWeights[1] = 4;
-  gMainRoutineWork.holdings.prizeWeights[2] = 4;
-  gMainRoutineWork.holdings.prizeWeights[3] = 8;
-  gMainRoutineWork.holdings.prizeWeights[4] = 8;
-  gMainRoutineWork.holdings.prizeWeights[5] = 8;
-  gMainRoutineWork.holdings.prizeWeights[6] = 16;
-  gMainRoutineWork.holdings.prizeWeights[7] = 16;
-  gMainRoutineWork.holdings.prizeWeights[8] = 16;
-  gMainRoutineWork.holdings.prizeWeights[9] = 32;
-  gMainRoutineWork.holdings.prizeWeights[10] = 32;
-  gMainRoutineWork.holdings.prizeWeights[11] = 32;
-  gMainRoutineWork.holdings.prizeWeights[12] = 64;
-  gMainRoutineWork.holdings.prizeWeights[13] = 64;
-  gMainRoutineWork.holdings.prizeWeights[14] = 64;
+  gMainRoutineState.holdings.prizeWeights[0] = 4;
+  gMainRoutineState.holdings.prizeWeights[1] = 4;
+  gMainRoutineState.holdings.prizeWeights[2] = 4;
+  gMainRoutineState.holdings.prizeWeights[3] = 8;
+  gMainRoutineState.holdings.prizeWeights[4] = 8;
+  gMainRoutineState.holdings.prizeWeights[5] = 8;
+  gMainRoutineState.holdings.prizeWeights[6] = 16;
+  gMainRoutineState.holdings.prizeWeights[7] = 16;
+  gMainRoutineState.holdings.prizeWeights[8] = 16;
+  gMainRoutineState.holdings.prizeWeights[9] = 32;
+  gMainRoutineState.holdings.prizeWeights[10] = 32;
+  gMainRoutineState.holdings.prizeWeights[11] = 32;
+  gMainRoutineState.holdings.prizeWeights[12] = 64;
+  gMainRoutineState.holdings.prizeWeights[13] = 64;
+  gMainRoutineState.holdings.prizeWeights[14] = 64;
 }
 
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes
@@ -606,7 +606,7 @@ void Party_EndChildhood(void) {
   Unit_LearnPsynergy(GARET, ABILITY_MOVE);
   Unit_LearnPsynergy(IVAN, ABILITY_MIND_READ);
 
-  gMainRoutineWork.holdings.coins += PROLOGUE_COINS;
+  gMainRoutineState.holdings.coins += PROLOGUE_COINS;
 }
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
@@ -618,7 +618,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
+    unit = Unit_Get(gMainRoutineState.party[partyIndex]);
 
     unit->hp = unit->hpMax;
     unit->pp = unit->ppMax;
@@ -644,7 +644,7 @@ void Party_RestorePpOfLitElements(void) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unitId = gMainRoutineWork.party[partyIndex];
+    unitId = gMainRoutineState.party[partyIndex];
     lighthouseGroup = gCharacter_LighthouseGroupTable[unitId];
     restorePp = 0;
     if (lighthouseGroup == LIGHTHOUSE_GROUP_VENUS_MARS) {

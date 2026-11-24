@@ -21,15 +21,15 @@ struct LinkSignature {
 
 /// The battle menus' task while the party's commands are chosen
 /// (Battle_CollectPartyCommands): eases the battle view a third of the way to
-/// BattleMenuWork.targetViewOffset each frame (a pixel at least), draws the
-/// sprites of BattleMenuWork.icons that are shown (the chosen command's and
+/// BattleMenuState.targetViewOffset each frame (a pixel at least), draws the
+/// sprites of BattleMenuState.icons that are shown (the chosen command's and
 /// ability's icons, the party member's portrait) and slides the page arrows.
 /// In a link battle it also runs the timer: once the partner has chosen, 15
 /// seconds counted down in a window at the top left, SE_TRIPLE_TONE_LOW playing
 /// at each second.
 void BattleMenu_Update(void) {
-  struct BattleMenuWork *state = gBattleMenuWork;
-  struct BattleWork *runtime;
+  struct BattleMenuState *state = gBattleMenuState;
+  struct BattleState *runtime;
   struct LinkSignature *signature;
   s32 target;
   s32 current;
@@ -67,7 +67,7 @@ void BattleMenu_Update(void) {
     if (state->linkTimer == 0)
       return;
 
-    runtime = gBattleWork;
+    runtime = gBattleState;
     if (runtime->linkPaused == 0)
       goto load_timer;
     state->timer = 0;
@@ -126,18 +126,18 @@ void BattleMenu_Update(void) {
 /// Tests whether the party may not run from this battle, and if so says "This
 /// is no time to be running away!": a battle an event starts
 /// (BATTLE_TYPE_SCRIPTED), a link battle, and a party once challenged
-/// (BattleWork.challengeFlag). In a BATTLE_TYPE_NO_ESCAPE battle the party may
+/// (BattleState.challengeFlag). In a BATTLE_TYPE_NO_ESCAPE battle the party may
 /// try, and always fails (battle/battle_turn.c).
 s32 Battle_RefuseFlee(void) {
   s16 buffer[64];
   struct Window *window;
   s32 result;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 mode;
 
-  battle = gBattleWork;
-  mode = gMainRoutineWork.battleType;
-  if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE ||
+  battle = gBattleState;
+  mode = gMainRoutineState.battleType;
+  if (gMainRoutineState.battleType == BATTLE_TYPE_NO_ESCAPE ||
       mode <= BATTLE_TYPE_NO_ESCAPE || (result = 1, mode > BATTLE_TYPE_LINK)) {
     result = 0;
   }
@@ -157,7 +157,7 @@ s32 Battle_RefuseFlee(void) {
     do {
       wait(1);
     } while ((gKeysPressed & (KEY_A | KEY_B)) == 0 &&
-             gBattleMenuWork->timer != 0);
+             gBattleMenuState->timer != 0);
     Window_Close(window, 1);
   }
   return result;

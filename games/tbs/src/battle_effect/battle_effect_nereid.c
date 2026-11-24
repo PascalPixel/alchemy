@@ -49,14 +49,14 @@
 void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   BlitterPair draw;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *motes;
   u8 *resource;
 
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
@@ -64,13 +64,14 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   resource = Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   resource += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(resource, work->sheet);
+  Decompress_TaggedLz(resource, state->sheet);
   resource = Resource_GetTableEntry(RESOURCE_FIRE_PILLAR_SHEET_A);
   resource += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(resource, work->sheet + NEREID_COLUMN_PICTURE);
+  Decompress_TaggedLz(resource, state->sheet + NEREID_COLUMN_PICTURE);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       motes);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   {
     struct Point2D focus;
     struct Point2D velocity;
@@ -86,17 +87,17 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     focus.y = toFIXED(88);
     velocity.x = -toFIXED(16);
     velocity.y = -toFIXED(4);
-    EFFECT_FREE_PARTICLES(k, work->particles, ARRAY_COUNT(work->particles));
+    EFFECT_FREE_PARTICLES(k, state->particles, ARRAY_COUNT(state->particles));
     // DEAD: particles NEREID_UNREAD_FIRST on get a place and delay nothing
     // reads; the ROM keeps the stores.
     for (k = 0; k != NEREID_UNREAD_COUNT; k++) {
-      point = &work->particles[NEREID_UNREAD_FIRST + k];
+      point = &state->particles[NEREID_UNREAD_FIRST + k];
       point->x = Random16() & 127;
       point->y = (Random16() & 7) + 56;
       point->variant = -(Random16() & 15);
     }
     EFFECT_FREE_PARTICLES(k, PARTICLES, NEREID_DROPS);
-    BattleEffect_SelectLivingTargets(work->args);
+    BattleEffect_SelectLivingTargets(state->args);
     wait(1);
     BattleEffect_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
@@ -156,12 +157,12 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
         for (k = 0; k != NEREID_COLUMNS; k++) {
           s32 span = (frame * 16 - 256 + k * 25) % FIRE_PILLAR_HEIGHT;
 
-          draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
+          draw[0](canvas, state->sheet + NEREID_COLUMN_PICTURE,
                   gNereid_Columns[k][NEREID_COLUMN_X] - FIRE_PILLAR_WIDTH / 2,
                   gNereid_Columns[k][NEREID_COLUMN_Y] - span -
                       FIRE_PILLAR_HEIGHT,
                   FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
-          draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
+          draw[0](canvas, state->sheet + NEREID_COLUMN_PICTURE,
                   gNereid_Columns[k][NEREID_COLUMN_X] - FIRE_PILLAR_WIDTH / 2,
                   gNereid_Columns[k][NEREID_COLUMN_Y] - span, FIRE_PILLAR_WIDTH,
                   span);
@@ -171,7 +172,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       // The waves along the bottom.
       if (frame <= 95) {
         for (k = 0; k != 5; k++)
-          draw[0](canvas, work->sheet, k * 32 + ((frame / 4) & 31) - 32,
+          draw[0](canvas, state->sheet, k * 32 + ((frame / 4) & 31) - 32,
                   120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
       }
 
@@ -199,35 +200,35 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
 
       // The targets bounce and flash white.
       if (frame <= 79) {
-        EFFECT_FOR_EACH_TARGET(k, work->args) {
+        EFFECT_FOR_EACH_TARGET(k, state->args) {
           if (frame > 29) {
             s32 phase = frame % 12;
 
             if (phase == 0) {
               struct Actor *actor =
-                  GetBattleObjectSlotFar(work->args->targets[k])->actor;
+                  GetBattleObjectSlotFar(state->args->targets[k])->actor;
 
-              BattleEffect_TintBattler(work->args->targets[k],
+              BattleEffect_TintBattler(state->args->targets[k],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE,
                                        TINT_KEEP, 0);
               actor->velocityY = toFIXED(9) / 2;
               actor->gravity = BATTLE_UNIT_GRAVITY;
             }
             if (phase == 6)
-              BattleEffect_TintBattler(work->args->targets[k],
+              BattleEffect_TintBattler(state->args->targets[k],
                                        SPRITE_COLOR_NORMAL, POSE_DAMAGE,
                                        TINT_KEEP, 0);
           }
         }
       }
-      EFFECT_PRESENT_CANVAS(work);
+      EFFECT_PRESENT_CANVAS(state);
     }
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
     for (k = 0; k != NEREID_OBJECTS; k++)
-      Sprite_DestroyFar(work->sprites[k]);
+      Sprite_DestroyFar(state->sprites[k]);
   }
   BattleEffect_EndCanvasLayer();
 }

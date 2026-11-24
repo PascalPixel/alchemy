@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-/// MainRoutineWork.messageSpeed, as the settings menu names it
+/// MainRoutineState.messageSpeed, as the settings menu names it
 /// (MsgMessageSpeedSetting + speed): it indexes the speed tables below.
 enum MessageSpeed {
   MESSAGE_SPEED_SLOW = 0,

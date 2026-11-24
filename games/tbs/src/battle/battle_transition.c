@@ -149,7 +149,7 @@ void BattleTransition_BuildTilemap(void *tilemap) {
 
 /// Shows the zoomed background's finished page each VBlank.
 void BattleBackground_ShowZoomedPage(void) {
-  struct BattleBackgroundWork *view =
+  struct BattleBackgroundState *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleAffineHdma *scanlines;
   u16 *line;
@@ -240,10 +240,10 @@ void BattleTransition_ClearBg0Vofs(void) { Io_Write16(0, &REG_BG0VOFS); }
 /// the Venus Lighthouse aerie; then announces the enemies.
 void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   volatile u32 fill;
-  struct BattleStagingWork work;
+  struct BattleStagingState state;
   u16 unitIds[UNIT_MAX];
   u16 visibleUnitIds[UNIT_MAX];
-  struct BattleBackgroundWork *view;
+  struct BattleBackgroundState *view;
   s32 *timer;
   u16 *tilemap;
   s32 tile;
@@ -252,7 +252,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   s32 count;
   s32 id;
   struct BattleObject *battleObject;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 visibleCount;
 
   view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -325,7 +325,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
                      BattleTransition_ClearBg0Vofs);
       gBgScroll[0].y = TRANSITION_BG0_BAND;
       wait(1);
-      PartyStatus_CreateWindowFar(gBattleWork->partyStatus);
+      PartyStatus_CreateWindowFar(gBattleState->partyStatus);
       wait(20);
       IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(2));
       IoWriteQueue_SetBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(0));
@@ -361,11 +361,11 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
 
       // The enemies alone take part in the shattering opening.
       battle->background = RESOURCE_VENUS_LIGHTHOUSE_AERIE_STORM_BACKDROP;
-      work.effect.targetCount =
-          BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, work.effect.targets);
-      work.effect.targets[work.effect.targetCount] = BATTLE_UNIT_LIST_END;
-      BattleObject_SpawnObjectsForList(work.effect.targets, 0);
-      BattleEffect_RunShatteringOpeningFar(&work.effect);
+      state.effect.targetCount =
+          BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, state.effect.targets);
+      state.effect.targets[state.effect.targetCount] = BATTLE_UNIT_LIST_END;
+      BattleObject_SpawnObjectsForList(state.effect.targets, 0);
+      BattleEffect_RunShatteringOpeningFar(&state.effect);
       BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
       *timer = start;
     }
@@ -373,7 +373,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
                    BattleTransition_ClearBg0Vofs);
     wait(1);
     wait(20);
-    PartyStatus_CreateWindowFar(gBattleWork->partyStatus);
+    PartyStatus_CreateWindowFar(gBattleState->partyStatus);
     IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(2));
     IoWriteQueue_SetBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(0));
     // Everyone appears, the party fading in.

@@ -51,7 +51,7 @@
 #include "scene/actor_orbit.h"
 #include "scene/catch_nut.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -127,7 +127,7 @@ const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 
 /// The people outside McCoy's Palace.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_MC_COY_PALACE_GROUNDS) {
+  if (gMainRoutineState.next == SCENE_MC_COY_PALACE_GROUNDS) {
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
       gMcCoyPalaceGroundsActorPlacements[ACTOR_EAST_GUARD - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
@@ -157,7 +157,7 @@ static void McCoyPalaceGrounds_SearchWell(void) {
 
 /// What the party can talk to, search and catch outside McCoy's Palace.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_MC_COY_PALACE_GROUNDS) {
+  if (gMainRoutineState.next == SCENE_MC_COY_PALACE_GROUNDS) {
     return gMcCoyPalaceGroundsTriggers;
   }
   return gMcCoyPalaceGroundsNoTriggers;
@@ -248,7 +248,7 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
     // "The lord will only meet with brave and mighty warriors. You..."
     Event_OpenMessage(ACTOR_EAST_GUARD, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-      gFieldWork->message++;
+      gFieldState->message++;
       // "Hmmm, I see... You seem pretty confident..."
       Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
       if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < toFIXED(270)) {
@@ -308,7 +308,7 @@ static void McCoyPalaceGrounds_EnterPalace(void) {
     McCoyPalaceGrounds_OpenDoor();
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   Event_Wait(16);
@@ -319,16 +319,16 @@ static void McCoyPalaceGrounds_EnterPalace(void) {
 /// Sets up the grounds outside McCoy's Palace, and plays the guards' arrest
 /// once the curse is lifted.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   struct Actor *actor;
 
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
   actor = Actor_Get(ACTOR_WEST_WORKER);
   actor->priorityFlags = 0;
   actor->sprite->image.priority = 1;
 
-  if (gMainRoutineWork.next == SCENE_MC_COY_PALACE_GROUNDS) {
+  if (gMainRoutineState.next == SCENE_MC_COY_PALACE_GROUNDS) {
     McCoyPalaceGrounds_RestoreStory();
   }
 
@@ -461,7 +461,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   Actor_SetPosition(ACTOR_WEST_GUARD, 0, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

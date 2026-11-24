@@ -25,7 +25,7 @@
 /// the cave's east mouth.
 ///
 /// One exit table serves every scene. The other getters choose by
-/// gMainRoutineWork.next, and Gondowan Passage's actor placements and
+/// gMainRoutineState.next, and Gondowan Passage's actor placements and
 /// triggers also by FLAG_BABI_SPOKE_AFTER_COLOSSO. An empty set answers any
 /// other scene. Every scene's trigger table carries the river room's two
 /// chests.
@@ -62,7 +62,7 @@
 #include "scene/import.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -177,7 +177,7 @@ static void GondowanCave_LeapIntoWater(s32 actorId);
 #include "shared/staged_actor.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_GONDOWAN_PASSAGE) {
     return gGondowanPassageEntrances;
@@ -199,7 +199,7 @@ const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 /// Iodem waits on Gondowan Passage once Babi has sent the party after
 /// Colosso.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_GONDOWAN_PASSAGE) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
@@ -219,7 +219,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// The triggers of each scene, with Iodem's in Gondowan Passage when he is
 /// there.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_GONDOWAN_PASSAGE) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
@@ -273,10 +273,10 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       Actor_WaitForMoveById(ACTOR_IODEM);
       Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
       // A defeat now returns the party to the Tolbi Sanctum.
-      gMainRoutineWork.restartScene = SCENE_STUCCO_ROOMS_B;
-      gMainRoutineWork.restartEntrance = STUCCO_ROOMS_B_SANCTUM_NORTH;
+      gMainRoutineState.restartScene = SCENE_STUCCO_ROOMS_B;
+      gMainRoutineState.restartEntrance = STUCCO_ROOMS_B_SANCTUM_NORTH;
     } else {
-      gFieldWork->message += 1;
+      gFieldState->message += 1;
       // "Then we should continue on our way to the lighthouse."
       Event_ShowMessage(ACTOR_IODEM, 0);
       Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
@@ -353,7 +353,7 @@ static void GondowanCave_SoldierAsksAboutCrossing(void) {
     }
     Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     // No: "That's a good idea. They wouldn't let you into Babi Lighthouse,
     // anyway."
     Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
@@ -376,9 +376,9 @@ static void GondowanCave_ReadSoldierMind(void) {
 /// in the south-east corner of the east cave (cell (49, 29)), and comes out on
 /// the world map.
 static void GondowanCave_LeaveToWorldMapEast(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   // XXX (no evidence): what story flags 0x9a3, 0x9a4 and 0x9a6 hold, among
   // FLAG_GONDOWAN_CAVE_STUMP_MOVED and FLAG_GONDOWAN_CAVE_PILLAR_DROPPED; only
@@ -392,7 +392,7 @@ static void GondowanCave_LeaveToWorldMapEast(void) {
     GameFlag_Set(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
     GameFlag_Set(0x9a4);
   }
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -537,16 +537,16 @@ static void GondowanCave_LiftBoulder(void) {
 
 /// Sets up the scene as the party enters.
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.next == SCENE_GONDOWAN_PASSAGE) {
+  if (gMainRoutineState.next == SCENE_GONDOWAN_PASSAGE) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
       Actor_SetPosition(ACTOR_IODEM, 0, 0);
     }
   }
-  if (gMainRoutineWork.next == SCENE_GONDOWAN_CAVE) {
+  if (gMainRoutineState.next == SCENE_GONDOWAN_CAVE) {
     // XXX (no evidence): why this arrival changes the drop's cell; the
     // change has no effect that play shows.
-    if (gMainRoutineWork.entrance == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
+    if (gMainRoutineState.entrance == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
       MapGrid_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
     if (GameFlag_Get(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {

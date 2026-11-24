@@ -2,14 +2,14 @@
 #define ALCHEMY_SCENE_H
 
 /// @file
-/// Scenes, exit regions and scene entry tables, with the field work they
-/// fill (field_work.h).
+/// Scenes, exit regions and scene entry tables, with the field state they
+/// fill (field_state.h).
 
 #include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 #include "field/actor.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "field/scene_tables.h"
 
 struct Actor;
@@ -22,11 +22,11 @@ struct Scene {
   /// and the step counters and moves Retreat's destination;
   /// FLAG_AREA_VISITED(area) marks it visited (Scene_Arrive).
   s8 area;
-  /// An enum SceneType, copied to gMainRoutineWork.sceneType:
+  /// An enum SceneType, copied to gMainRoutineState.sceneType:
   /// SCENE_TYPE_TOWN for towns and their rooms (53 rows: Vale,
   /// Bilibin, Kalay, Tolbi and others), SCENE_TYPE_OTHER for the rest.
   s8 sceneType;
-  u16 mapIndex; ///< the map loaded for it, copied to gMainRoutineWork.mapId
+  u16 mapIndex; ///< the map loaded for it, copied to gMainRoutineState.mapId
   u16 reserved; ///< 0 in every row; not read
 };
 
@@ -39,7 +39,7 @@ struct SceneExitRegion {
   s16 maxX, maxY, maxZ; ///< pixels, exclusive
   s16 condition; ///< CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else
                  ///< the flag clear
-  s16 value;     ///< the exit kind, stored in FieldWork's exit
+  s16 value;     ///< the exit kind, stored in FieldState's exit
 };
 
 STATIC_ASSERT(sizeof(struct SceneExitRegion) == 16);

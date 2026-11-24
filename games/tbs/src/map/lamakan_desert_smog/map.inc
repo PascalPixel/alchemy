@@ -4,14 +4,14 @@ Field_LamakanDesertSmog:
 	map_layer 0, 0, 16, 16, 0, 0, 0x7f, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0x7f, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_LamakanDesertSmog, .LField_LamakanDesertSmog_CELL_PICTURES
+	map_offset Field_LamakanDesertSmog, .LField_LamakanDesertSmog_CELL_TILES
 	map_offset Field_LamakanDesertSmog, .LField_LamakanDesertSmog_SHAPES
 	map_offset Field_LamakanDesertSmog, .LField_LamakanDesertSmog_GRID
 	map_offset Field_LamakanDesertSmog, .LField_LamakanDesertSmog_ANIMATION
 	map_offset Field_LamakanDesertSmog
 	map_offset Field_LamakanDesertSmog, .LField_LamakanDesertSmog_MARKERS
-.LField_LamakanDesertSmog_CELL_PICTURES:
-	.incbin "games/tbs/src/map/lamakan_desert_smog/cell_pictures.delta1.lz"
+.LField_LamakanDesertSmog_CELL_TILES:
+	.incbin "games/tbs/src/map/lamakan_desert_smog/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_LamakanDesertSmog_SHAPES:
 	.incbin "games/tbs/src/map/lamakan_desert_smog/shapes.table.lz"

@@ -77,8 +77,8 @@ s16 DebugSceneSelect_Run(void) {
 
   window = 0;
   selectedField = 0;
-  sceneId = gMainRoutineWork.returnScene;
-  entrance = gMainRoutineWork.returnEntrance;
+  sceneId = gMainRoutineState.returnScene;
+  entrance = gMainRoutineState.returnEntrance;
   window = Window_Create(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
   DebugSceneSelect_DrawRow(window, sceneId, &entrance);
   MenuArrow_Create(&cursor, &cursorSlot);
@@ -367,7 +367,7 @@ s32 DebugBrowser_Icons(void) {
   page = 0;
   mode = 0;
   redraw = 1;
-  gActorSystemWork->suspended = redraw;
+  gActorSystemState->suspended = redraw;
   wait(1);
 
   while (1) {
@@ -431,7 +431,7 @@ s32 DebugBrowser_Icons(void) {
     wait(1);
   }
   Window_Close(window, 2);
-  gActorSystemWork->suspended = 0;
+  gActorSystemState->suspended = 0;
   return 0;
 }
 
@@ -448,7 +448,7 @@ s32 DebugBrowser_Icons(void) {
 /// Browses the character and sprite portrait maps as one circular list. Shows
 /// each entry's glyph and label, then releases both windows on A or B.
 s32 DebugBrowser_Portraits(void) {
-  struct WindowWork *work;
+  struct WindowState *state;
   struct Window *portrait;
   s32 redraw;
   struct Window *window;
@@ -461,9 +461,9 @@ s32 DebugBrowser_Portraits(void) {
   s32 slot;
   s32 cancelKey;
   s32 palette = PORTRAIT_PALETTE + 1; // portrait slot 1's, as slotOffset
-  u32 slotOffset = offsetof(struct WindowWork, portraitSprites[1]);
+  u32 slotOffset = offsetof(struct WindowState, portraitSprites[1]);
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   redraw = 1;
   portrait = Portrait_OpenWindow(0, 0, 10, 5);
   window = Window_Create(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
@@ -507,7 +507,7 @@ s32 DebugBrowser_Portraits(void) {
       else
         glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] +
                 PORTRAIT_SPRITE_MAP_FIRST;
-      slot = *(u16 *)((u8 *)work + slotOffset);
+      slot = *(u16 *)((u8 *)state + slotOffset);
       Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
       Text_DrawNumberInWindow(index, 2, window, 0, 0);
       Text_DrawMessageAsTiles(index + DEBUG_GLYPH_NAME, window, 24, 0);

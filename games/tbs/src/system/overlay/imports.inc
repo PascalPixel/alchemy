@@ -78,14 +78,14 @@
 	export Actor_WaitForMove, Actor_WaitForMoveFar
 	export WorldMap_LoadDefaultCellsAndUpdateBlock, WorldMap_LoadDefaultCellsAndUpdateBlockFar
 	export MapGrid_PlayMapEdit, MapGrid_PlayMapEditFar
-	export MapGrid_CopyCellPictureIndicesRect, MapGrid_CopyCellPictureIndicesRectFar
+	export MapGrid_CopyCellTilesIndicesRect, MapGrid_CopyCellTilesIndicesRectFar
 	export TilesetAnim_Resume, TilesetAnim_ResumeFar
 	export TilesetAnim_Pause, TilesetAnim_PauseFar
 	export BlendScript_Resume, BlendScript_ResumeFar
 	export BlendScript_Suspend, BlendScript_SuspendFar
 	export MapGrid_GetTerrainHeight, MapGrid_GetTerrainHeightFar
 	export MapGrid_GetCellBehaviorAt, MapGrid_GetCellBehaviorAtFar
-	export MapGrid_CopyCellPictureCellsRect, MapGrid_CopyCellPictureCellsRectFar
+	export MapGrid_CopyCellTilesCellsRect, MapGrid_CopyCellTilesCellsRectFar
 	export MapGrid_CopyCellAttributeRect, MapGrid_CopyCellAttributeRectFar
 	export MapGrid_CopyCellIndexRect, MapGrid_CopyCellIndexRectFar
 	export WorldMap_SetWindowCellTile, WorldMap_SetWindowCellTileFar
@@ -164,7 +164,7 @@
 	export PartyInventory_Remove, PartyInventory_RemoveFar
 	export Inventory_Equip, Inventory_EquipFar
 	export Ability_GetDirect, Ability_Get
-	export MainRoutineWork_InitializeDefaults, MainRoutineWork_InitializeDefaultsFar
+	export MainRoutineState_InitializeDefaults, MainRoutineState_InitializeDefaultsFar
 	export GameFlag_Get, GameFlag_GetFar
 	export GameFlag_Set, GameFlag_SetFar
 	export Import_GameFlagSet, GameFlag_SetFar

@@ -6,13 +6,13 @@
 #include "event_commands_internal.h"
 
 /// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
-/// of sight and bursts into a light particle for each of the effect work's,
+/// of sight and bursts into a light particle for each of the effect state's,
 /// which circle and close in on the leader, who turns to the camera and raises
 /// its arms (ANIM_LEADER_ARMS_RAISED).
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct Vector3 position;
   struct Actor *djinni;
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct FieldParticle *effect;
   FIXED scale;
   s32 remainingParticles;
@@ -21,7 +21,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   if (djinni == NULL)
     return;
   FieldEffect_InitializeSlots();
-  effectWork = gFieldEffectWork;
+  effectState = gFieldEffectState;
   // Tint the screen yellow.
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(12, 12, 4));
   Sound_PlayFar(SE_NOTE_LOW);
@@ -46,7 +46,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
   Actor_ReleaseFar(djinni);
   Sound_PlayFar(SE_SCATTER);
-  effect = effectWork->particles;
+  effect = effectState->particles;
   remainingParticles = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   // One a frame, each in a random colour mode from SPRITE_COLOR_NORMAL to
   // SPRITE_COLOR_GREY.
@@ -65,9 +65,9 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   } while (remainingParticles >= 0);
 
   wait(60);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineState.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
   wait(40);
   Sound_PlayFar(SE_SCATTER);
@@ -114,7 +114,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   struct Vector3 position;
   s32 state;
 
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   state = effect->state;
 
   if (state == MARS_SPARK_AIM) {

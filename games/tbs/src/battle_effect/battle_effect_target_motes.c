@@ -91,7 +91,7 @@ void BattleEffect_RunDrown(struct BattleEffectParams *args) {
 #define TARGET_MOTES_RIPPLE(mode)                                              \
   (!((mode) <= TARGET_MOTES_PINK_SMOKE || (mode) == TARGET_MOTES_PARALYZE))
 
-/// Where Paralyze keeps its glint images in work->sheet.
+/// Where Paralyze keeps its glint images in state->sheet.
 enum { TARGET_MOTES_GLINT_PICTURES = 9600 };
 
 #define TARGET_MOTES 512      ///< motes scattered at the start
@@ -121,7 +121,7 @@ enum { TARGET_MOTES_GLINT_PICTURES = 9600 };
 /// Around each target in turn, motes (smoke, hearts, orbs) close in on it or
 /// rise, and the target flashes.
 void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   s32 total;
@@ -135,12 +135,12 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   s32 *row;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   count = TARGET_MOTES_PER_TARGET;
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, state->sheet, 1, 1);
   if (mode == TARGET_MOTES_TAINT) {
     palette = Resource_GetTableEntry(RESOURCE_LIME_PALETTE);
   } else if (mode == TARGET_MOTES_PINK_SMOKE) {
@@ -152,23 +152,24 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   } else if (mode == TARGET_MOTES_HEARTRENDER) {
     palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
   } else if (mode == TARGET_MOTES_MYSTIC_FLAME) {
-    Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET, state->sheet, 1, 0);
     palette = Resource_GetTableEntry(RESOURCE_GLOW_ORB_SHEET);
   } else if (mode == TARGET_MOTES_DEMON_FIRE) {
     count = DEMON_FIRE_ORBS;
-    Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET, state->sheet, 1, 0);
     palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
   } else {
     count = DROWN_DROPS;
-    Resource_LoadAndDecompress(RESOURCE_VORTEX_SHEET, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_VORTEX_SHEET, state->sheet, 1, 0);
     palette = Resource_GetTableEntry(RESOURCE_VORTEX_SHEET);
   }
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   if (mode == TARGET_MOTES_HEARTRENDER)
-    Resource_LoadAndDecompress(RESOURCE_HEART_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_HEART_SHEET, state->sheet, 1, 1);
   if (mode == TARGET_MOTES_PARALYZE)
     Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
-                               work->sheet + TARGET_MOTES_GLINT_PICTURES, 1, 0);
+                               state->sheet + TARGET_MOTES_GLINT_PICTURES, 1,
+                               0);
 
   for (i = 0; i != TARGET_MOTES; i++) {
     struct Particle *mote = &PARTICLES[i];
@@ -186,14 +187,15 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   }
 
   if (TARGET_MOTES_START_WIDE(mode))
-    total = work->args->targetCount * TARGET_MOTES_STAGGER +
+    total = state->args->targetCount * TARGET_MOTES_STAGGER +
             TARGET_MOTES_WIDE_RUN_ON;
   else
     total =
-        work->args->targetCount * TARGET_MOTES_STAGGER + TARGET_MOTES_RUN_ON;
+        state->args->targetCount * TARGET_MOTES_STAGGER + TARGET_MOTES_RUN_ON;
   if (TARGET_MOTES_RIPPLE(mode))
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != total; frame++) {
@@ -203,31 +205,32 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     if (mode == TARGET_MOTES_DEMON_FIRE) {
       if (frame ==
           total - TARGET_MOTES_DAMAGE_END_FRAMES - DEMON_FIRE_LEAP_FRAMES)
-        BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0],
+        BattleMotion_ApproachTargetFar(state->args->user,
+                                       state->args->targets[0],
                                        DEMON_FIRE_APPROACH_FRAMES, 0);
       if (frame == total - TARGET_MOTES_DAMAGE_END_FRAMES) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-        BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
-        work->shakeFrames = 8;
+        BattleMotion_ApplyKnockbackFar(state->args->targets[0], KNOCKBACK_HURL);
+        state->shakeFrames = 8;
       }
     } else if (frame == total - TARGET_MOTES_DAMAGE_END_FRAMES) {
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
-    row = work->bg2xLines;
+    row = state->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
       *row++ = CANVAS_WAVE_BG2X(
           toFIXED(4) -
           Trig_Sin(frame * (TRIG_TURN / 16) + i * (TRIG_TURN / 32)) * 4);
 
-    EFFECT_FOR_EACH_TARGET(member, work->args) {
+    EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor =
-          GetBattleObjectSlotFar(work->args->targets[member])->actor;
+          GetBattleObjectSlotFar(state->args->targets[member])->actor;
 
       // Paralyze's glints sparkle near the target.
       if (mode == TARGET_MOTES_PARALYZE &&
           frame > member * TARGET_MOTES_STAGGER &&
           frame < member * TARGET_MOTES_STAGGER + 32) {
-        Projection_ScaledUnit(work->args->targets[member], &base);
+        Projection_ScaledUnit(state->args->targets[member], &base);
         for (i = 0; i != 2; i++) {
           s32 angle;
           s32 radius;
@@ -246,7 +249,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                               COMPOSITE_LIGHTEN);
           EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(
               canvas,
-              work->sheet + gBattleEffect_GlintPictures[frame & 3] +
+              state->sheet + gBattleEffect_GlintPictures[frame & 3] +
                   TARGET_MOTES_GLINT_PICTURES,
               x, y + 16, gBattleEffect_GlintPictureWidths[frame & 3],
               gBattleEffect_GlintPictureHeights[frame & 3]);
@@ -283,21 +286,22 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
               screen.x >>= 1;
               if (mode == TARGET_MOTES_MYSTIC_FLAME ||
                   mode == TARGET_MOTES_DEMON_FIRE)
-                draw[1](canvas, work->sheet + picture * PICTURE_BYTES(GLOW_ORB),
+                draw[1](canvas,
+                        state->sheet + picture * PICTURE_BYTES(GLOW_ORB),
                         screen.x - GLOW_ORB_WIDTH / 2,
                         screen.y - GLOW_ORB_HEIGHT / 2, GLOW_ORB_WIDTH,
                         GLOW_ORB_HEIGHT);
               else if (mode == TARGET_MOTES_DROWN)
-                draw[1](canvas, work->sheet + DROWN_DROP_PICTURE,
+                draw[1](canvas, state->sheet + DROWN_DROP_PICTURE,
                         screen.x - DROWN_DROP_WIDTH / 2,
                         screen.y - DROWN_DROP_HEIGHT / 2, DROWN_DROP_WIDTH,
                         DROWN_DROP_HEIGHT);
               else if (mode == TARGET_MOTES_HEARTRENDER)
-                draw[1](canvas, work->sheet, screen.x - HEART_WIDTH / 2,
+                draw[1](canvas, state->sheet, screen.x - HEART_WIDTH / 2,
                         screen.y - HEART_HEIGHT / 2, HEART_WIDTH, HEART_HEIGHT);
               else
                 draw[(i & 3) != 0](
-                    canvas, work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF),
+                    canvas, state->sheet + picture * PICTURE_BYTES(SMOKE_PUFF),
                     screen.x - SMOKE_PUFF_WIDTH / 2,
                     screen.y - SMOKE_PUFF_HEIGHT / 2, SMOKE_PUFF_WIDTH,
                     SMOKE_PUFF_HEIGHT);
@@ -328,13 +332,13 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
         if (delay > 31)
           delay = 31;
-        BattleEffect_TintBattler(work->args->targets[member],
+        BattleEffect_TintBattler(state->args->targets[member],
                                  SPRITE_COLOR_WHITE, POSE_DAMAGE, member,
                                  delay);
       }
     }
     BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -368,7 +372,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 ///
 /// Abilities: Sleep.
 void BattleEffect_RunSleep(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 anchor[3];
   struct Particle *current;
@@ -380,12 +384,12 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   s32 targetIndex;
 
   sheep = PARTICLES;
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->args = args;
+  state->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress(RESOURCE_SHEEP_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SHEEP_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   drawUpright = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -402,24 +406,24 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
     current->z = Random16() & 3;
     current->variant = Random16() & 255;
   }
-  if (work->args->side == EFFECT_SIDE_PARTY)
+  if (state->args->side == EFFECT_SIDE_PARTY)
     REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_SWIRL);
   for (frame = 0; frame != SLEEP_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
     if (frame == SLEEP_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
-    EFFECT_FOR_EACH_TARGET(targetIndex, work->args) {
+    EFFECT_FOR_EACH_TARGET(targetIndex, state->args) {
       struct Actor *target;
 
-      target = GetBattleObjectSlotFar(work->args->targets[targetIndex])->actor;
+      target = GetBattleObjectSlotFar(state->args->targets[targetIndex])->actor;
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(anchor, target->x.fixed, toFIXED(40), target->z.fixed);
       Matrix_TranslateVector(anchor);
       if (frame == targetIndex * SLEEP_TARGET_STAGGER + SLEEP_ASLEEP_FRAME)
-        BattleEffect_TintBattler(work->args->targets[targetIndex],
+        BattleEffect_TintBattler(state->args->targets[targetIndex],
                                  SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP,
                                  0);
     }
@@ -432,13 +436,13 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
         picture =
             (current->variant / SHEEP_TUMBLE_STEP) & (SHEEP_PICTURES * 2 - 1);
         if (picture < SHEEP_PICTURES)
-          drawUpright(canvas, work->sheet + picture * PICTURE_BYTES(SHEEP),
+          drawUpright(canvas, state->sheet + picture * PICTURE_BYTES(SHEEP),
                       FIXEDtoINT(current->x) - SHEEP_WIDTH / 2,
                       FIXEDtoINT(current->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
                       SHEEP_HEIGHT);
         else
           drawFlipped(canvas,
-                      work->sheet + picture * PICTURE_BYTES(SHEEP) -
+                      state->sheet + picture * PICTURE_BYTES(SHEEP) -
                           SHEEP_PICTURES * PICTURE_BYTES(SHEEP),
                       FIXEDtoINT(current->x) - SHEEP_WIDTH / 2,
                       FIXEDtoINT(current->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
@@ -462,7 +466,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   EFFECT_FINISH_CANVAS();
 }
@@ -485,7 +489,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 ///
 /// Abilities: Curse; Lucid Prophecy.
 void BattleEffect_RunCurse(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   /* LEFTOVER(frame): draw[1], the idle half of the pair. */
   BlitterPair draw;
@@ -498,44 +502,44 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
 
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  work->args = args;
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress(RESOURCE_FLAME_COLUMN_SHEET, work->sheet, 1, 1);
-  if (work->args->side == EFFECT_SIDE_PARTY) {
+  Resource_LoadAndDecompress(RESOURCE_FLAME_COLUMN_SHEET, state->sheet, 1, 1);
+  if (state->args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  work->transferMode = CANVAS_COPY_AND_CLEAR;
-  work->transferValue = 0;
+  state->transferMode = CANVAS_COPY_AND_CLEAR;
+  state->transferValue = 0;
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Each flame starts at a random point of its flicker.
-  EFFECT_FOR_EACH_TARGET(i, work->args) {
-    work->particles[i].variant = Random16() & 63;
+  EFFECT_FOR_EACH_TARGET(i, state->args) {
+    state->particles[i].variant = Random16() & 63;
   }
-  for (frame = 0; frame != (work->args->targetCount << 5) + 32; frame++) {
+  for (frame = 0; frame != (state->args->targetCount << 5) + 32; frame++) {
     if (frame == 32) {
       EFFECT_SHOW_DAMAGE(0);
     }
     i = 0;
-    if (work->args->targetCount != 0) {
-      candle = work->particles;
+    if (state->args->targetCount != 0) {
+      candle = state->particles;
       do {
         start = i * CURSE_STAGGER;
         if (frame == start) {
           Sound_PlayFar(SE_CRACK);
         }
         if (frame >= start && frame < start + CURSE_CANDLE_FRAMES) {
-          Projection_ScaledUnit(work->args->targets[i], &screenPosition);
-          if (work->args->side == EFFECT_SIDE_PARTY) {
+          Projection_ScaledUnit(state->args->targets[i], &screenPosition);
+          if (state->args->side == EFFECT_SIDE_PARTY) {
             screenPosition.x -= NARROW_CANVAS_PARTY_X;
           }
           y = screenPosition.y;
           screenPosition.y = y - 16;
-          draw[0](canvas, work->sheet + CURSE_CANDLE_PICTURE,
+          draw[0](canvas, state->sheet + CURSE_CANDLE_PICTURE,
                   screenPosition.x - CURSE_CANDLE_WIDTH / 2,
                   y - CURSE_CANDLE_HEIGHT, CURSE_CANDLE_WIDTH,
                   CURSE_CANDLE_HEIGHT);
@@ -543,7 +547,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
           if (frame >= start) {
             picture = ((frame - start) + candle->variant) /
                       CURSE_FLICKER_FRAMES % CURSE_FLAME_PICTURES;
-            draw[0](canvas, work->sheet + picture * PICTURE_BYTES(CURSE_FLAME),
+            draw[0](canvas, state->sheet + picture * PICTURE_BYTES(CURSE_FLAME),
                     screenPosition.x - CURSE_FLAME_WIDTH / 2,
                     screenPosition.y - 16, CURSE_FLAME_WIDTH,
                     CURSE_FLAME_HEIGHT);
@@ -551,9 +555,9 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
         }
         candle++;
         i++;
-      } while (i != work->args->targetCount);
+      } while (i != state->args->targetCount);
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

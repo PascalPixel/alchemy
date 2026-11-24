@@ -19,7 +19,7 @@
 ///
 /// Abilities: Helm Splitter.
 void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   u8 *graphics;
   DrawRectangle draw[2];
@@ -30,26 +30,26 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  work->args = args;
+  state->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_FIRE_SWIRL_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_SWIRL_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PINK_STAR_SHEET,
-                             work->sheet + HELM_SPLITTER_STAR_PICTURES, 1, 0);
-  BattleEffect_FetchRectangleBlitters(work->args->side, draw);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+                             state->sheet + HELM_SPLITTER_STAR_PICTURES, 1, 0);
+  BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (i = 0; i != HELM_SPLITTER_CLEARED_SLOTS; i++)
     PARTICLES[i].variant = 0;
   sparks = PARTICLES;
 
   {
-    struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;
+    struct Actor *actor = GetBattleObjectSlotFar(state->args->user)->actor;
     struct Actor *target =
-        GetBattleObjectSlotFar(work->args->targets[0])->actor;
+        GetBattleObjectSlotFar(state->args->targets[0])->actor;
     FIXED diffX = target->x.fixed - actor->x.fixed;
     FIXED startX = actor->x.fixed;
     FIXED deltaX = diffX * 80 / 100;
@@ -78,21 +78,21 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
   // Play the swirl and impact, then let the sparks bounce and fade.
   for (frame = 0; frame != HELM_SPLITTER_FRAMES; frame++) {
-    Projection_Unit(work->args->user, &position);
+    Projection_Unit(state->args->user, &position);
     REG_BG2X = (80 - position.x) << 8;
     if (frame >= 8 && frame <= 23) {
       s32 picture = (frame - 8) / 2;
 
       if (picture > 6)
         picture = 6;
-      if (work->args->side == EFFECT_SIDE_ENEMIES) {
-        draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
+      if (state->args->side == EFFECT_SIDE_ENEMIES) {
+        draw[0](canvas, state->sheet + gHelmSplitter_Pictures[picture],
                 gHelmSplitter_PictureBiasX[picture] + 30,
                 gHelmSplitter_PictureBiasY[picture] + position.y - 60,
                 gHelmSplitter_PictureWidths[picture],
                 gHelmSplitter_PictureHeights[picture]);
       } else {
-        draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
+        draw[0](canvas, state->sheet + gHelmSplitter_Pictures[picture],
                 -gHelmSplitter_PictureBiasX[picture] -
                     gHelmSplitter_PictureWidths[picture] + 108,
                 gHelmSplitter_PictureBiasY[picture] + position.y - 60,
@@ -103,10 +103,10 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     // The strike.
     if (frame == HELM_SPLITTER_STRIKE_FRAME) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
+      BattleEffect_TintBattler(state->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
-      BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_BOUNCE);
-      work->shakeFrames = 4;
+      BattleMotion_ApplyKnockbackFar(state->args->targets[0], KNOCKBACK_BOUNCE);
+      state->shakeFrames = 4;
       for (i = 0; i != HELM_SPLITTER_SPARKS; i++) {
         s32 force = (Random16() & 63) + 256;
         s32 angle = Random16() & TRIG_ANGLE_MASK;
@@ -132,7 +132,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
           s32 sy = FIXEDtoINT(spark->y);
 
           draw[0](canvas,
-                  work->sheet + HELM_SPLITTER_STAR_PICTURES +
+                  state->sheet + HELM_SPLITTER_STAR_PICTURES +
                       (frame + i) / 4 % 6 *
                           (HELM_SPLITTER_STAR_SIZE * HELM_SPLITTER_STAR_SIZE),
                   sx - HELM_SPLITTER_STAR_SIZE / 2,
@@ -142,7 +142,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -155,13 +155,13 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 #define FORMATION_TWELVE 12
 #define FORMATION_EIGHT 8
 
-/// Places a summon's figure, the sprites in work->sprites, in its formation;
+/// Places a summon's figure, the sprites in state->sprites, in its formation;
 /// x and z are its origin in 16.16 pixels.
 void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
   static struct SpriteScale normalScale = {{{FIXED_ONE, FIXED_ONE}}};
   static struct SpriteScale largeScale = {
       {{FIXED_ONE * 5 / 4, FIXED_ONE * 5 / 4}}};
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct SpriteScale normal = normalScale;
   struct SpriteScale big = largeScale;
   struct SpritePlacement pos;
@@ -178,28 +178,28 @@ void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
           INTtoFIXED(i % FORMATION_GRID_COLUMNS * FORMATION_GRID_SPACING) + x;
       pos.y =
           INTtoFIXED(i / FORMATION_GRID_COLUMNS * FORMATION_GRID_SPACING) + z;
-      Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
+      Actor_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_NEREID:
     for (i = 0; i != FORMATION_TWELVE; i++) {
       pos.x = INTtoFIXED(gHelmSplitter_TwelveX[i]) + x - toFIXED(16);
       pos.y = INTtoFIXED(gHelmSplitter_TwelveZ[i]) + z - toFIXED(32);
-      Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
+      Actor_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_CYBELE:
     for (i = 0; i != FORMATION_EIGHT; i++) {
       pos.x = INTtoFIXED(gHelmSplitter_RightEightX[i]) + x + toFIXED(16);
       pos.y = INTtoFIXED(gHelmSplitter_RightEightZ[i]) + z;
-      Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
+      Actor_ApplyProjectedPlacementFar(state->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT:
     for (i = 0; i != FORMATION_EIGHT; i++) {
       pos.x = INTtoFIXED(gHelmSplitter_SmallEightX[i]) + x;
       pos.y = INTtoFIXED(gHelmSplitter_SmallEightZ[i]) + z;
-      Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &big, 0);
+      Actor_ApplyProjectedPlacementFar(state->sprites[i], &pos, &big, 0);
     }
     break;
   }
@@ -211,12 +211,12 @@ void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
 #define IMPACT_BURST_FRAGMENT_HEIGHT 24
 
 #define IMPACT_BURST_FRAMES 72
-#define IMPACT_BURST_FRAGMENTS 3     ///< fragments, work->particles 61 to 63
+#define IMPACT_BURST_FRAGMENTS 3     ///< fragments, state->particles 61 to 63
 #define IMPACT_BURST_DRAWN_LARGE 30  ///< large sparks drawn
 #define IMPACT_BURST_DRAWN_SMALL 60  ///< small sparks drawn
 #define IMPACT_BURST_LARGE_SPARKS 64 ///< large sparks thrown
 #define IMPACT_BURST_SMALL_SPARKS 64 ///< small sparks thrown
-/// the first fragment in work->particles
+/// the first fragment in state->particles
 #define IMPACT_BURST_FIRST_FRAGMENT 61
 /// The fragments' speed apart.
 #define IMPACT_BURST_FRAGMENT_SPEED 32
@@ -229,7 +229,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle additive;
   DrawRectangle maxBlend;
@@ -241,7 +241,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  work = *cursor++;
+  state = *cursor++;
   canvas = *cursor;
   sheet =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_BATTLE_SHEET);
@@ -259,30 +259,31 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
                       COMPOSITE_ADDITIVE);
   additive = slots[HEAP_SLOT_RAM_CODE_PAIRED - HEAP_SLOT_BATTLE_EFFECT];
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_FLARE_SHEET, work->sheet, 1, 0);
-  Resource_LoadAndDecompress(
-      RESOURCE_FLARE_IMAGE, work->sheet + IMPACT_BURST_FRAGMENT_PICTURES, 0, 0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  Resource_LoadAndDecompress(RESOURCE_FLARE_SHEET, state->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLARE_IMAGE,
+                             state->sheet + IMPACT_BURST_FRAGMENT_PICTURES, 0,
+                             0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Large sparks fly.
   for (i = 0; i != IMPACT_BURST_LARGE_SPARKS; i++) {
     s32 speed = (Random16() & 255) + 256;
     s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-    work->particles[i].x = x;
-    work->particles[i].y = y;
-    work->particles[i].velocityX = (Trig_Sin(angle) * speed) >> 7;
-    work->particles[i].velocityY = -((Trig_Cos(angle) * speed) >> 6);
-    work->particles[i].variant = (Random16() & 15) + 16;
+    state->particles[i].x = x;
+    state->particles[i].y = y;
+    state->particles[i].velocityX = (Trig_Sin(angle) * speed) >> 7;
+    state->particles[i].velocityY = -((Trig_Cos(angle) * speed) >> 6);
+    state->particles[i].variant = (Random16() & 15) + 16;
   }
 
   // Three fragments fly apart.
   for (i = 0; i != IMPACT_BURST_FRAGMENTS; i++) {
-    work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
-    work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
-    work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityX =
+    state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
+    state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
+    state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityX =
         (Trig_Sin(i * (DEGtoANG(120))) * IMPACT_BURST_FRAGMENT_SPEED) >> 6;
-    work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityY =
+    state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityY =
         -((Trig_Cos(i * (DEGtoANG(120))) * IMPACT_BURST_FRAGMENT_SPEED) >> 5);
   }
 
@@ -315,12 +316,13 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 #ifdef UBFIX
       width = gHelmSplitter_ImpactBurstPictureWidths[picture];
       height = gHelmSplitter_ImpactBurstPictureHeights[picture];
-      maxBlend(canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[picture],
+      maxBlend(canvas,
+               state->sheet + gHelmSplitter_ImpactBurstPictures[picture],
                FIXEDtoINT(x) - (width >> 1), FIXEDtoINT(y) - (height >> 1),
                width, height);
 #else
       maxBlend(
-          canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[picture],
+          canvas, state->sheet + gHelmSplitter_ImpactBurstPictures[picture],
           FIXEDtoINT(x) -
               ((width = gHelmSplitter_ImpactBurstPictureWidths[picture]) >> 1),
           FIXEDtoINT(y) -
@@ -331,7 +333,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
     }
 
     for (i = 0; i != IMPACT_BURST_DRAWN_LARGE; i++) {
-      particle = &work->particles[i];
+      particle = &state->particles[i];
       if (frame > i / 2 && particle->variant > 0) {
         s32 size;
         s32 drawX;
@@ -364,7 +366,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 
     for (i = 0; i != IMPACT_BURST_FRAGMENTS; i++) {
       struct Particle *fragment =
-          &work->particles[IMPACT_BURST_FIRST_FRAGMENT + i];
+          &state->particles[IMPACT_BURST_FIRST_FRAGMENT + i];
 
       if (frame >= 36 && frame <= 63) {
         s32 picture;
@@ -376,7 +378,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
         drawX = FIXED_INTEGER_PART(fragment->x);
         drawY = FIXED_INTEGER_PART(fragment->y);
         maxBlend(canvas,
-                 work->sheet + picture * PICTURE_BYTES(IMPACT_BURST_FRAGMENT) +
+                 state->sheet + picture * PICTURE_BYTES(IMPACT_BURST_FRAGMENT) +
                      IMPACT_BURST_FRAGMENT_PICTURES,
                  drawX - IMPACT_BURST_FRAGMENT_WIDTH / 2,
                  drawY - IMPACT_BURST_FRAGMENT_HEIGHT / 2,
@@ -386,7 +388,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 
     if (frame <= 35)
       BattleEffect_PlaceFormationObjects(formation, originX, y);
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

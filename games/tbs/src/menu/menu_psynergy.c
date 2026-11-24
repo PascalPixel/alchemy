@@ -14,7 +14,7 @@
 /// nine, where the list's other reads take PSYNERGY_ABILITY_MASK's fourteen.
 #define ABILITY_DESCRIPTION_MASK 0x1ff
 
-/// PsynergyMenuWork.flags: set on going back to the list after a use or a
+/// PsynergyMenuState.flags: set on going back to the list after a use or a
 /// cancelled target, which nothing reads; and while Select shows the shortcut
 /// help in the list.
 #define PSYNERGY_MENU_BACK_TO_LIST 1
@@ -55,17 +55,17 @@ s32 PsynergyMenu_Run(void) {
 #if TBS_PATCH_2
   void *saved = Heap_AllocEwram(PSYNERGY_PROMPT_TILES_SIZE);
 #endif
-  struct PsynergyMenuWork *menu =
-      HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
+  struct PsynergyMenuState *menu =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_STATE_SIZE);
   s32 member;
   s32 unused;
   s32 psynergy;
   s32 result;
 
-  gActorSystemWork->suspended = 1;
+  gActorSystemState->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeWork(0);
+  Window_InitializeState(0);
   menu->memberCount = Party_ListMembersFar(menu->memberTable);
   ItemMenu_Initialize(0, 3, 0, 7);
   menu->messageWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
@@ -83,7 +83,7 @@ s32 PsynergyMenu_Run(void) {
   result = PsynergyMenu_RunSteps(&member, &unused, &psynergy);
   Menu_StopWatchingStart();
   if (result == 1) {
-    struct FieldWork *target = gFieldWork;
+    struct FieldState *target = gFieldState;
     u16 request;
     // The action looked up here is not used.
     Ability_Get(PSYNERGY_ABILITY_MASK & menu->sideAction[0]);
@@ -92,23 +92,23 @@ s32 PsynergyMenu_Run(void) {
   }
   // Close the menu and give the screen back to the field.
   WindowSprite_ClearListFar((void *)menu->statusWindow);
-  WINDOW_WORK->holdTilemapUpload = 1;
+  WINDOW_STATE->holdTilemapUpload = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   HeapSlot_Release(HEAP_SLOT_MENU);
-  gActorSystemWork->suspended = 0;
+  gActorSystemState->suspended = 0;
 #if TBS_PATCH_2
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords(PSYNERGY_PROMPT_TILES, saved, PSYNERGY_PROMPT_TILES_SIZE);
-  WINDOW_WORK->holdTilemapUpload = 0;
+  WINDOW_STATE->holdTilemapUpload = 0;
   Heap_Release(saved);
   wait(1);
   Menu_ResumeFieldTasks();
 #endif
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  WINDOW_WORK->holdTilemapUpload = 0;
+  WINDOW_STATE->holdTilemapUpload = 0;
   Party_ClearUnusableShortcutsFar();
   return result;
 }
@@ -127,7 +127,7 @@ enum PsynergyMenuStep {
 /// then use it on a party member (or the whole party), or, in the shortcut
 /// modes, set it as the L or R shortcut.
 s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
-  struct PsynergyMenuWork *menu;
+  struct PsynergyMenuState *menu;
   s32 useResult;
   s32 step;
   s32 done;
@@ -139,7 +139,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 
   step = PSYNERGY_STEP_MEMBER;
   done = 0;
-  menu = gMenuWork;
+  menu = gMenuState;
   useResult = 0;
 
   while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
@@ -311,7 +311,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   s32 classification;
 
   action = Ability_Get(PSYNERGY_ABILITY_MASK &
-                       ((struct PsynergyMenuWork *)gMenuWork)->sideAction[0]);
+                       ((struct PsynergyMenuState *)gMenuState)->sideAction[0]);
   if (Scene_HasFieldPsynergyTriggerFar(action->fieldPsynergy) != 0) {
     return ITEM_USE_MODE_FROM_FIELD;
   }
@@ -332,7 +332,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
 /// from the one chosen last, with each party member's Psynergy shown as the
 /// cursor passes.
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
-  struct PsynergyMenuWork *menu = gMenuWork;
+  struct PsynergyMenuState *menu = gMenuState;
   s32 memberIndex = menu->tabIndex[partySlot];
   struct WindowSprite *icon;
   struct Unit *unit;
@@ -366,7 +366,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
 
 /// The party member row of the Psynergy menu.
 s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
-  struct PsynergyMenuWork *menu;
+  struct PsynergyMenuState *menu;
   s32 selection;
   s32 memberCount;
   s32 redraw;
@@ -379,7 +379,7 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
   s32 shortcutCount;
   s8 fieldCount;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   selection = menu->tabIndex[0];
   memberCount = menu->tabCounts[0];
   redraw = 1;
@@ -389,7 +389,7 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
   unit = Unit_GetFar(memberIds[selection]);
   if (Window_UpdateOrCreate(&menu->psynergyWindow, 13, 3, 17, 10,
                             WINDOW_FLAG_INSTANT))
-    Menu_SpawnIconEntries((struct ItemMenuWork *)menu, menu->psynergyWindow);
+    Menu_SpawnIconEntries((struct ItemMenuState *)menu, menu->psynergyWindow);
   if (Window_UpdateOrCreate(&menu->shortcutWindow, 13, 13, 17, 4,
                             WINDOW_FLAG_INSTANT)) {
     menu->cursorIcon = WindowSprite_CreateFromResourceFar(
@@ -478,10 +478,10 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
 /// to a row, or "no Psynergy" when they have none.
 void PsynergyMenu_RefreshMemberPsynergy(s32 memberId) {
   u16 *psynergies;
-  struct PsynergyMenuWork *menu;
+  struct PsynergyMenuState *menu;
   struct Unit *member;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   member = Unit_GetFar(memberId);
   psynergies = menu->psynergies;
   menu->psynergyCount =
@@ -502,7 +502,7 @@ UNUSED void PsynergyMenu_NoOp(void) {}
 /// Chooses the party member to use the selected Psynergy on.
 s32 PsynergyMenu_SelectTarget(s32 targetMode) {
 
-  struct PsynergyMenuWork *menu;
+  struct PsynergyMenuState *menu;
   s32 selection;
   s32 count;
   s32 redraw;
@@ -510,7 +510,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
   s32 shown;
   struct WindowSprite *marker;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   selection = menu->tabIndex[1];
   count = menu->memberCount;
   redraw = 1;
@@ -585,9 +585,9 @@ s32 PsynergyMenu_SetShortcut(s32 memberId, s32 abilityId, s32 shortcutIndex) {
   s32 code = (memberId << PSYNERGY_SHORTCUT_MEMBER_SHIFT) | id;
 
   if (shortcutIndex == PSYNERGY_SHORTCUT_L) {
-    gMainRoutineWork.firstShortcut = code;
+    gMainRoutineState.firstShortcut = code;
   } else {
-    gMainRoutineWork.secondShortcut = code;
+    gMainRoutineState.secondShortcut = code;
   }
   return 1;
 }
@@ -606,27 +606,27 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 memberId) {
   s32 height;
   s32 wide;
 
-  if (gMainRoutineWork.firstShortcut != 0 &&
-      gMainRoutineWork.secondShortcut != 0)
+  if (gMainRoutineState.firstShortcut != 0 &&
+      gMainRoutineState.secondShortcut != 0)
     Text_DrawMessageAsTilesFar(MsgShortcutChangeHelp, window, 0, -8);
   else
     Text_DrawMessageAsTilesFar(MsgShortcutLabel, window, 0, -8);
 
   Text_GetMessageSizeFar(
-      (gMainRoutineWork.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+      (gMainRoutineState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
           MsgAbilityName,
       &left, &top, &width, &height);
   if (width < 0 || width > 10)
     wide = 1;
   else
     wide = 0;
-  if (gMainRoutineWork.firstShortcut != 0) {
-    MessageArgument_PushFar(gMainRoutineWork.firstShortcut &
+  if (gMainRoutineState.firstShortcut != 0) {
+    MessageArgument_PushFar(gMainRoutineState.firstShortcut &
                                 PSYNERGY_SHORTCUT_ID_MASK,
                             MESSAGE_ARGUMENT_ABILITY);
     Text_DrawMessageAsTilesFar(MsgShortcutNameL, window, 0, 0);
     if (wide == 0)
-      Text_DrawStringAtOffsetFar(Unit_GetFar(gMainRoutineWork.firstShortcut >>
+      Text_DrawStringAtOffsetFar(Unit_GetFar(gMainRoutineState.firstShortcut >>
                                              PSYNERGY_SHORTCUT_MEMBER_SHIFT)
                                      ->name,
                                  window, 80, 0);
@@ -635,20 +635,20 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 memberId) {
   }
 
   Text_GetMessageSizeFar(
-      (gMainRoutineWork.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+      (gMainRoutineState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
           MsgAbilityName,
       &left, &top, &width, &height);
   if (width < 0 || width > 10)
     wide = 1;
   else
     wide = 0;
-  if (gMainRoutineWork.secondShortcut != 0) {
-    MessageArgument_PushFar(gMainRoutineWork.secondShortcut &
+  if (gMainRoutineState.secondShortcut != 0) {
+    MessageArgument_PushFar(gMainRoutineState.secondShortcut &
                                 PSYNERGY_SHORTCUT_ID_MASK,
                             MESSAGE_ARGUMENT_ABILITY);
     Text_DrawMessageAsTilesFar(MsgShortcutNameR, window, 0, 8);
     if (wide == 0)
-      Text_DrawStringAtOffsetFar(Unit_GetFar(gMainRoutineWork.secondShortcut >>
+      Text_DrawStringAtOffsetFar(Unit_GetFar(gMainRoutineState.secondShortcut >>
                                              PSYNERGY_SHORTCUT_MEMBER_SHIFT)
                                      ->name,
                                  window, 80, 8);
@@ -667,14 +667,14 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member) {
   s32 height;
   u16 wide;
 
-  if (gMainRoutineWork.firstShortcut != 0 &&
-      gMainRoutineWork.secondShortcut != 0)
+  if (gMainRoutineState.firstShortcut != 0 &&
+      gMainRoutineState.secondShortcut != 0)
     Text_DrawMessageAsTilesFar(MsgShortcutChangeHelp, window, 0, -8);
   else
     Text_DrawMessageAsTilesFar(MsgShortcutLabel, window, 0, -8);
 
   Text_GetMessageSizeFar(
-      (gMainRoutineWork.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+      (gMainRoutineState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
           MsgAbilityName,
       &left, &top, &width, &height);
   if (width < 0 || width > 11)
@@ -685,18 +685,18 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member) {
     Text_DrawStringInWindowFar((u8 *)gMenu_ShortcutLString, window, 0, 0);
   else
     Text_DrawStringInWindowFar((u8 *)gMenu_ShortcutLColonString, window, 0, 0);
-  if (gMainRoutineWork.firstShortcut != 0) {
+  if (gMainRoutineState.firstShortcut != 0) {
     if (wide)
       Text_DrawMessageAsTilesFar(
-          (gMainRoutineWork.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+          (gMainRoutineState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
               MsgAbilityName,
           window, 8, 0);
     else
       Text_DrawMessageAsTilesFar(
-          (gMainRoutineWork.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+          (gMainRoutineState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
               MsgAbilityName,
           window, 16, 0);
-    Text_DrawStringAtOffsetFar(Unit_GetFar(gMainRoutineWork.firstShortcut >>
+    Text_DrawStringAtOffsetFar(Unit_GetFar(gMainRoutineState.firstShortcut >>
                                            PSYNERGY_SHORTCUT_MEMBER_SHIFT)
                                    ->name,
                                window, 80, 0);
@@ -705,7 +705,7 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member) {
   }
 
   Text_GetMessageSizeFar(
-      (gMainRoutineWork.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+      (gMainRoutineState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
           MsgAbilityName,
       &left, &top, &width, &height);
   if (width < 0 || width > 11)
@@ -716,18 +716,18 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member) {
     Text_DrawStringInWindowFar((u8 *)gMenu_ShortcutRString, window, 0, 8);
   else
     Text_DrawStringInWindowFar((u8 *)gMenu_ShortcutRColonString, window, 0, 8);
-  if (gMainRoutineWork.secondShortcut != 0) {
+  if (gMainRoutineState.secondShortcut != 0) {
     if (wide)
       Text_DrawMessageAsTilesFar(
-          (gMainRoutineWork.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+          (gMainRoutineState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
               MsgAbilityName,
           window, 8, 8);
     else
       Text_DrawMessageAsTilesFar(
-          (gMainRoutineWork.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+          (gMainRoutineState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
               MsgAbilityName,
           window, 16, 8);
-    Text_DrawStringAtOffsetFar(Unit_GetFar(gMainRoutineWork.secondShortcut >>
+    Text_DrawStringAtOffsetFar(Unit_GetFar(gMainRoutineState.secondShortcut >>
                                            PSYNERGY_SHORTCUT_MEMBER_SHIFT)
                                    ->name,
                                window, 80, 8);
@@ -745,14 +745,14 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member) {
 /// Nothing calls it.
 void PsynergyMenu_CreateEntryGrid(void) {
   struct Window *window;
-  struct PsynergyMenuWork *menu;
+  struct PsynergyMenuState *menu;
   struct WindowSprite *cursor;
   s32 index;
   s32 x;
   s32 y;
   struct WindowSprite **sprite;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   window = MenuCursor_Create(menu);
   Menu_CreatePartyFigures((void *)window, 2, 2, 8, 0);
 
@@ -794,9 +794,9 @@ void PsynergyMenu_CreateEntryGrid(void) {
 /// Releases the party figures and closes the Psynergy grid screen's windows.
 /// Nothing calls it.
 void PsynergyMenu_CloseWindows(void) {
-  struct PsynergyMenuWork *menu;
+  struct PsynergyMenuState *menu;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   Menu_ReleasePartyFigures();
   Window_CloseFar((void *)menu->auxiliaryWindow, 1);
   Window_CloseFar((void *)menu->psynergyWindow, 1);
@@ -811,7 +811,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   u16 *p;
   s32 psynergyId;
 
-  icons = ((struct PsynergyMenuWork *)gMenuWork)->entryIcons;
+  icons = ((struct PsynergyMenuState *)gMenuState)->entryIcons;
   p = psynergies;
   for (i = 0; i < PSYNERGY_SLOTS; i++) {
     psynergyId = *p++;
@@ -884,7 +884,7 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
 /// last for them (kept within the list), five to a page. Returns 1.
 s32 PsynergyMenu_BuildPagedList(struct PagedList *result, s32 index) {
   s32 unitBits;
-  struct PsynergyMenuWork *menu = gMenuWork;
+  struct PsynergyMenuState *menu = gMenuState;
   s32 entryCount;
   s32 row;
   s32 page;
@@ -916,14 +916,14 @@ s32 PsynergyMenu_BuildPagedList(struct PagedList *result, s32 index) {
 
 /// Updates the Psynergy list for the row under the cursor: puts the Psynergy's
 /// description in the info window, unless a kept message is there, and
-/// highlights its row of the five. window and work are not used.
-s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
+/// highlights its row of the five. window and memberState are not used.
+s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *memberState,
                                 struct PagedList *state) {
-  struct PsynergyMenuWork *menu;
+  struct PsynergyMenuState *menu;
   s32 actionIndex;
   s32 rowIndex;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   actionIndex = state->page * LIST_PAGE_SIZE;
   actionIndex += state->row;
   state->selectedIndex = actionIndex;
@@ -978,7 +978,7 @@ s32 PsynergyMenu_DrawActionPage(struct Window *window, s32 unused,
   s32 cursor;
   struct Unit *member;
   struct AbilityDefinition *ability;
-  struct PsynergyMenuWork *menu = gMenuWork;
+  struct PsynergyMenuState *menu = gMenuState;
 
   (void)unused;
 
@@ -1035,7 +1035,7 @@ s32 PsynergyMenu_DrawActionPage(struct Window *window, s32 unused,
 
 /// The Psynergy list of the party member in sideIndex, five a page.
 s32 PsynergyMenu_RunList(s32 sideIndex) {
-  struct PsynergyMenuWork *menu;
+  struct PsynergyMenuState *menu;
   struct AbilityDefinition *ability;
   struct WindowSprite *icon;
   struct Window *window;
@@ -1050,10 +1050,10 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
   struct Unit *memberUnit;
   s32 previous;
   s32 shortcutHelp;
-  s32 work[5];
+  s32 memberState[5];
   struct PagedList state;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   result = 0;
   previous = 0;
   shortcutHelp = 0;
@@ -1091,7 +1091,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
           wait(1);
           PsynergyMenu_DrawActionPage(window, 0, &state);
         }
-        PsynergyMenu_DrawDetailPage(window, work, &state);
+        PsynergyMenu_DrawDetailPage(window, memberState, &state);
         menu->sideAction[sideIndex] = menu->psynergies[state.selectedIndex];
         menu->cursorIcon->motion = ICON_HIDDEN;
         if (menu->psynergies[state.selectedIndex] != 0) {

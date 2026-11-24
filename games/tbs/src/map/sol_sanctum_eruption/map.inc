@@ -4,14 +4,14 @@ Field_SolSanctumEruption:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 80, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 112, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_SolSanctumEruption, .LField_SolSanctumEruption_CELL_PICTURES
+	map_offset Field_SolSanctumEruption, .LField_SolSanctumEruption_CELL_TILES
 	map_offset Field_SolSanctumEruption, .LField_SolSanctumEruption_SHAPES
 	map_offset Field_SolSanctumEruption, .LField_SolSanctumEruption_GRID
 	map_offset Field_SolSanctumEruption, .LField_SolSanctumEruption_ANIMATION
 	map_offset Field_SolSanctumEruption, .LField_SolSanctumEruption_BLEND
 	map_offset Field_SolSanctumEruption, .LField_SolSanctumEruption_MARKERS
-.LField_SolSanctumEruption_CELL_PICTURES:
-	.incbin "games/tbs/src/map/sol_sanctum_eruption/cell_pictures.delta1.lz"
+.LField_SolSanctumEruption_CELL_TILES:
+	.incbin "games/tbs/src/map/sol_sanctum_eruption/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_SolSanctumEruption_SHAPES:
 	.incbin "games/tbs/src/map/sol_sanctum_eruption/shapes.table.lz"

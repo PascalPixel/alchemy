@@ -2,8 +2,8 @@
 #define ALCHEMY_BATTLE_CAMERA_H
 
 /// @file
-/// The battle camera, its view work and the battle background's affine
-/// work.
+/// The battle camera, its view state and the battle background's affine
+/// state.
 
 #include "edition.h"
 #include "fixed_math.h"
@@ -47,7 +47,7 @@ STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 54);
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the yaw the battle camera eases
 /// toward and the frames left to ease it, and how the battle background is
 /// shown.
-struct BattleBackgroundWork {
+struct BattleBackgroundState {
   s32 targetYaw; ///< 1/65536 turns
   s32 frames;    ///< frames left to ease the yaw, a sixteenth a frame
   s32 mode;      ///< enum BattleBackgroundMode
@@ -61,11 +61,11 @@ struct BattleBackgroundWork {
   s32 unusedAfterFlag[2]; ///< cleared when a battle starts; nothing reads them
 };
 
-/// A presentation step's stack work: the battle effect command it builds and
+/// A presentation step's stack state: the battle effect command it builds and
 /// runs, and the targets' sprite colour modes saved beside it. The
 /// presentation steps of battle_staging.c and battle_auto_battle.c,
 /// BattleTransition_Run and ElementGlow_Play keep one as a local.
-struct BattleStagingWork {
+struct BattleStagingState {
   struct BattleEffectParams effect;
   /// Each target's sprite animations' SpriteColorMode
   /// (SpriteAnimation.colorMode), all but its last, saved before the effect;
@@ -73,13 +73,13 @@ struct BattleStagingWork {
   u8 savedAnimationParameters[8][4];
 };
 
-STATIC_ASSERT(sizeof(struct BattleBackgroundWork) == 32);
-STATIC_ASSERT(offsetof(struct BattleBackgroundWork, mode) == 8);
-STATIC_ASSERT(offsetof(struct BattleBackgroundWork, busy) == 16);
-STATIC_ASSERT(sizeof(struct BattleStagingWork) == 84);
-STATIC_ASSERT(offsetof(struct BattleStagingWork, effect.targets) == 36);
+STATIC_ASSERT(sizeof(struct BattleBackgroundState) == 32);
+STATIC_ASSERT(offsetof(struct BattleBackgroundState, mode) == 8);
+STATIC_ASSERT(offsetof(struct BattleBackgroundState, busy) == 16);
+STATIC_ASSERT(sizeof(struct BattleStagingState) == 84);
+STATIC_ASSERT(offsetof(struct BattleStagingState, effect.targets) == 36);
 
-/// BattleBackgroundWork.mode and secondMode: how the battle background is
+/// BattleBackgroundState.mode and secondMode: how the battle background is
 /// shown.
 enum BattleBackgroundMode {
   /// Not loaded yet: the next load adds BattleBackground_ShowZoomedPage.
@@ -106,7 +106,7 @@ struct BattleAffine {
   s32 x, y; ///< BG2X and BG2Y, 8.8 fixed-point pixels
 };
 
-/// The battle background's scanline work, in HEAP_SLOT_BATTLE_SCANLINES: two
+/// The battle background's scanline state, in HEAP_SLOT_BATTLE_SCANLINES: two
 /// pages of per-line BG2CNT values, swapped each frame, and the affine
 /// parameters.
 struct BattleAffineHdma {

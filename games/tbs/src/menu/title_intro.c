@@ -37,8 +37,8 @@ struct IntroSprite {
 #define INTRO_APPROACH_FRAME 239
 #define INTRO_FLASH_FRAME 280
 
-/// IntroWork.state, which the intro writes and nothing reads.
-enum IntroState {
+/// IntroState.state, which the intro writes and nothing reads.
+enum IntroPhase {
   INTRO_STATE_SCROLLING = 0, ///< the pictures scroll in
   /// From frame 239, or a skip with A or START: the approach to the flash.
   INTRO_STATE_APPROACH = 1,
@@ -54,7 +54,7 @@ enum IntroState {
 #define FLARE_OBJECT_COUNT 12
 
 /// The title intro's state, in HEAP_SLOT_TITLE_INTRO.
-struct IntroWork {
+struct IntroState {
   s32 backRows;  ///< rows of the clouds copied in as they scroll
   s32 frontRows; ///< rows of the peak copied in
   /// The intro's frame, which a skip moves on to INTRO_APPROACH_FRAME
@@ -62,7 +62,7 @@ struct IntroWork {
   /// VBlanks counted by Title_UpdateIntroSprites, which pace the scroll and
   /// the flare's rise
   s32 frameCount;
-  s32 state; ///< an enum IntroState
+  s32 state; ///< an enum IntroPhase
   s32 rise;  ///< how far the lens flare's lower end has risen
   union {
     struct OamWords objects[INTRO_OBJECT_COUNT];
@@ -130,7 +130,7 @@ const u8 gTitle_PromptBlendLevels[PROMPT_PULSE_FRAMES] = {
 };
 // clang-format on
 
-#define INTRO_OBJ(i) (work->area.objects[i])
+#define INTRO_OBJ(i) (state->area.objects[i])
 
 /// Brings `v` into a sprite's y, 0 to 255, by whole turns
 #define WRAP_OBJ_Y(v)                                                          \
@@ -196,7 +196,7 @@ const u8 gTitle_PromptBlendLevels[PROMPT_PULSE_FRAMES] = {
 /// goes on, alternating two sets of three every other VBlank so all six show,
 /// hides the rest, adds the sun and copies the list to OAM.
 void Title_UpdateIntroSprites(void) {
-  struct IntroWork *work;
+  struct IntroState *state;
   u32 spriteCount;
   s32 lineLeftY;
   s32 lineRightY;
@@ -204,16 +204,16 @@ void Title_UpdateIntroSprites(void) {
   s32 y;
   s32 sunY;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
   spriteCount = 0;
   if (gDebugPaused == 0) {
-    if ((++work->frameCount & 3) == 0)
-      work->rise++;
+    if ((++state->frameCount & 3) == 0)
+      state->rise++;
   }
   lineLeftY = 48 - gBgScroll[1].y;
-  lineRightY = 144 - work->rise;
-  if (work->frame < INTRO_FLASH_FRAME) {
-    if ((work->frameCount & 1) == 0) {
+  lineRightY = 144 - state->rise;
+  if (state->frame < INTRO_FLASH_FRAME) {
+    if ((state->frameCount & 1) == 0) {
       PLACE_ON_FLARE_LINE(0, FLARE_DISC_RADIUS);
       MIRRORED_QUAD(spriteCount, FLARE_DISC_RADIUS, OBJ_SIZE_16X16,
                     FLARE_WHITE_DISC_TILE);
@@ -266,14 +266,14 @@ void Title_UpdateIntroSprites(void) {
 /// the sun's and lens flare's sprite tiles, builds the images' maps and sets
 /// the blending and windows.
 void Title_LoadIntroBackgrounds(void) {
-  struct IntroWork *work;
+  struct IntroState *introState;
   u8 *resourceData;
   u16 *tilemap;
   s32 column;
   s32 row;
   u16 tileIndex;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
+  introState = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
   REG_DISPCNT = 0;
   resourceData = Resource_GetTableEntry(RESOURCE_INTRO_GRAPHICS_A);
   Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4),
@@ -348,12 +348,12 @@ void Title_LoadIntroBackgrounds(void) {
     }
     gBgScroll[1].y = INTRO_SCROLL_START;
     gBgScroll[2].y = INTRO_SCROLL_START;
-    work->frame = 0;
-    work->backRows = 0;
-    work->frontRows = 0;
-    work->frameCount = 0;
-    work->rise = 0;
-    work->state = INTRO_STATE_SCROLLING;
+    introState->frame = 0;
+    introState->backRows = 0;
+    introState->frontRows = 0;
+    introState->frameCount = 0;
+    introState->rise = 0;
+    introState->state = INTRO_STATE_SCROLLING;
     Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
     // DEAD: the first BLDCNT, a lighten effect, at once replaced by the
     // blend; the ROM keeps the write.
@@ -410,7 +410,7 @@ void Title_LoadIntroBackgrounds(void) {
 /// a minute with the "Press Start" prompt pulsing when `prompt` is set, five
 /// seconds without, and returns 1 when A or Start ends it, else 0.
 s32 Title_ShowIntro(s32 prompt) {
-  struct IntroWork *work;
+  struct IntroState *introState;
   s32 result;
   u8 savedCpuLoadDisplay;
   u16 clearValue;
@@ -427,11 +427,11 @@ s32 Title_ShowIntro(s32 prompt) {
   // BUG: the block is sized for the prompt's sprites, but the intro's OAM list
   // runs on past its end.
 #ifdef BUGFIX
-  work = HeapSlot_Alloc(HEAP_SLOT_TITLE_INTRO, sizeof(struct IntroWork));
+  introState = HeapSlot_Alloc(HEAP_SLOT_TITLE_INTRO, sizeof(struct IntroState));
 #else
-  work =
-      HeapSlot_Alloc(HEAP_SLOT_TITLE_INTRO, offsetof(struct IntroWork, area) +
-                                                sizeof(work->area.prompt));
+  introState = HeapSlot_Alloc(HEAP_SLOT_TITLE_INTRO,
+                              offsetof(struct IntroState, area) +
+                                  sizeof(introState->area.prompt));
 #endif
   DebugText_Clear();
   VramCache_Reset();
@@ -458,20 +458,20 @@ s32 Title_ShowIntro(s32 prompt) {
     s32 frameCount;
 
     // A or Start skips to the approach, which still plays out to the flash.
-    frame = work->frame;
+    frame = introState->frame;
     if (frame > INTRO_SKIP_AFTER_FRAME && frame < INTRO_APPROACH_FRAME &&
         (gKeysPressed & (KEY_A | KEY_START)) != 0) {
-      work->state = INTRO_STATE_APPROACH;
-      work->frame = INTRO_APPROACH_FRAME;
+      introState->state = INTRO_STATE_APPROACH;
+      introState->frame = INTRO_APPROACH_FRAME;
       frame = INTRO_APPROACH_FRAME;
     }
     nextFrame = frame + 1;
-    work->frame = nextFrame;
+    introState->frame = nextFrame;
     if (nextFrame <= INTRO_FLASH_FRAME - 2) {
       // The clouds (BG1) scroll a pixel every third frame and the peak (BG2)
       // every other one; as a new row of tiles comes into view, its row of
       // the picture is copied over the VRAM row leaving at the bottom.
-      frameCount = work->frameCount;
+      frameCount = introState->frameCount;
       if (frameCount % 3 == 0) {
         s32 y;
 
@@ -479,12 +479,12 @@ s32 Title_ShowIntro(s32 prompt) {
         y = gBgScroll[1].y;
         if ((y & 7) == 0) {
           Dma_Set(CLOUD_ROW(INTRO_FIRST_MAP_ROW - 1) -
-                      work->backRows * CLOUD_ROW_BYTES,
+                      introState->backRows * CLOUD_ROW_BYTES,
                   CLOUD_VRAM_ROW(INTRO_VRAM_ROWS - 1) -
-                      work->backRows * CLOUD_ROW_BYTES,
+                      introState->backRows * CLOUD_ROW_BYTES,
                   DMA_COPY_HALFWORDS(CLOUD_ROW_BYTES / 2), REG_DMA3);
-          work->backRows++;
-          frameCount = work->frameCount;
+          introState->backRows++;
+          frameCount = introState->frameCount;
         }
       }
       if ((frameCount & 1) == 0) {
@@ -493,11 +493,11 @@ s32 Title_ShowIntro(s32 prompt) {
         gBgScroll[2].y--;
         y = gBgScroll[2].y;
         if ((y & 7) == 0) {
-          if (work->frontRows * 8 <= (PEAK_ROWS_ABOVE - 1) * 8) {
+          if (introState->frontRows * 8 <= (PEAK_ROWS_ABOVE - 1) * 8) {
             Dma_Set(PEAK_ROW(INTRO_FIRST_MAP_ROW - PEAK_MAP_ROW - 1) -
-                        work->frontRows * PEAK_ROW_BYTES,
+                        introState->frontRows * PEAK_ROW_BYTES,
                     PEAK_VRAM_ROW(INTRO_VRAM_ROWS - 1) -
-                        work->frontRows * PEAK_ROW_BYTES,
+                        introState->frontRows * PEAK_ROW_BYTES,
                     DMA_COPY_HALFWORDS(PEAK_ROW_BYTES / 2), REG_DMA3);
           } else {
             // Above the peak: each new row is cleared, and the map's bottom
@@ -506,7 +506,7 @@ s32 Title_ShowIntro(s32 prompt) {
             clearValue = 0;
             Dma_Set(&clearValue,
                     INTRO_FRONT_TILE(PEAK_FIRST_TILE) +
-                        (DISPLAY_HEIGHT - work->frontRows * 8) %
+                        (DISPLAY_HEIGHT - introState->frontRows * 8) %
                             DISPLAY_HEIGHT * DISPLAY_WIDTH,
                     DMA_FILL_HALFWORDS(PEAK_ROW_BYTES / 2), REG_DMA3);
             tilemap = (u16 *)BG_SCREEN_BLOCK(INTRO_FRONT_SCREEN) +
@@ -518,16 +518,16 @@ s32 Title_ShowIntro(s32 prompt) {
               *tilemap++ = PEAK_FIRST_TILE;
             }
           }
-          work->frontRows++;
+          introState->frontRows++;
         }
       }
-      if (work->frame == INTRO_APPROACH_FRAME)
-        work->state = INTRO_STATE_APPROACH;
+      if (introState->frame == INTRO_APPROACH_FRAME)
+        introState->state = INTRO_STATE_APPROACH;
     } else if (nextFrame == INTRO_FLASH_FRAME + 1) {
       // Unused: the loop ends at the flash, before these frames.
-      work->state = INTRO_STATE_AFTER_FLASH;
+      introState->state = INTRO_STATE_AFTER_FLASH;
     } else if (nextFrame == INTRO_FLASH_FRAME + 9) {
-      work->state = INTRO_STATE_SCROLLING;
+      introState->state = INTRO_STATE_SCROLLING;
     } else if (nextFrame == INTRO_FLASH_FRAME) {
       // The flash: behind the white the intro's sprites stop, OAM goes back
       // to the frame's own sprite list and the title picture is put up.
@@ -567,7 +567,7 @@ s32 Title_ShowIntro(s32 prompt) {
   DebugText_Clear();
   if (prompt != 0) {
     u8 *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
-    struct IntroSprite *sprite = work->area.prompt.sprites;
+    struct IntroSprite *sprite = introState->area.prompt.sprites;
 
     Decompress_ByteLz(gTitle_PromptTiles, buffer);
     for (i = 0; i < PROMPT_TILES; i++) {
@@ -594,7 +594,7 @@ s32 Title_ShowIntro(s32 prompt) {
     holdFrames = TITLE_HOLD_FRAMES;
   for (i = 0; i < holdFrames; i++) {
     if (prompt != 0) {
-      struct IntroSprite *sprite = work->area.prompt.sprites;
+      struct IntroSprite *sprite = introState->area.prompt.sprites;
       u32 level;
       s32 x;
 #if LANGUAGE == LANGUAGE_GERMAN
@@ -842,31 +842,31 @@ void TitlePaletteFade_CalculateSteps(s16 *sourceComponents,
 /// packs the components into the spare RGB555 copy of the palettes and queues
 /// both palettes for VBlank.
 void TitlePaletteFade_Update(void) {
-  struct TitlePaletteFade *work = (struct TitlePaletteFade *)gPaletteFadeWork;
-  u16 *componentSteps = work->delta;
+  struct TitlePaletteFade *state = (struct TitlePaletteFade *)gPaletteFadeState;
+  u16 *componentSteps = state->delta;
   u16 *currentComponents;
   u16 *packedColors;
   s32 i;
   u16 *pagePalettes;
 
-  if (work->duration == 0)
+  if (state->duration == 0)
     return;
-  if ((s8)++work->step < work->duration) {
-    currentComponents = work->current;
+  if ((s8)++state->step < state->duration) {
+    currentComponents = state->current;
     for (i = 0; i <= TITLE_PALETTE_FADE_CHANNELS - 1; i++)
       *currentComponents++ += *componentSteps++;
   } else {
-    Dma_Set(work->target, work->current,
-            DMA_COPY_WORDS(sizeof(work->current) / 4), REG_DMA3);
-    work->duration = 0;
+    Dma_Set(state->target, state->current,
+            DMA_COPY_WORDS(sizeof(state->current) / 4), REG_DMA3);
+    state->duration = 0;
   }
   // Pack into the page not queued last frame, which VBlank may still read.
-  packedColors = work->packed[work->page ^ 1];
+  packedColors = state->packed[state->page ^ 1];
   {
     s32 blueMask = BLUE_BITS;
 
     i = PLTT_COLORS;
-    currentComponents = work->current;
+    currentComponents = state->current;
     for (; i != 0; i--) {
       *packedColors++ =
           (currentComponents[0] & blueMask) |
@@ -875,8 +875,8 @@ void TitlePaletteFade_Update(void) {
           (((s16)currentComponents[2] >> BLUE_SHIFT) & RED_BITS);
       currentComponents += 3;
     }
-    work->page ^= 1;
-    pagePalettes = work->packed[work->page];
+    state->page ^= 1;
+    pagePalettes = state->packed[state->page];
     {
       u16 *backgroundColors = pagePalettes;
 
@@ -1178,7 +1178,7 @@ UNUSED void TitlePaletteFade_Release(void) {
 /// Unused: sets the fade target by tinting the saved background and/or
 /// sprite palettes with the requested tint.
 UNUSED void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes) {
-  struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
+  struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeState;
 
   if (fade != NULL)
     TitlePaletteFade_BuildColors(mode, fade->palette, fade->target,
@@ -1187,7 +1187,7 @@ UNUSED void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes) {
 
 /// Sets the colours shown now by tinting the saved palettes.
 void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes) {
-  struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
+  struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeState;
 
   if (fade != NULL)
     TitlePaletteFade_BuildColors(mode, fade->palette, fade->current,
@@ -1196,7 +1196,7 @@ void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes) {
 
 /// Unused: replaces the first saved colour, the backdrop.
 UNUSED void TitlePaletteFade_SetBackdrop(s32 color) {
-  struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
+  struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeState;
 
   if (fade != NULL)
     fade->palette[0] = color;
@@ -1207,7 +1207,7 @@ UNUSED void TitlePaletteFade_SetBackdrop(s32 color) {
 /// its distance divided by the frames, the remainder kept in the ten bits below
 /// it, so every colour arrives together.
 void TitlePaletteFade_Start(s32 frames) {
-  struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
+  struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeState;
 
   if (fade != NULL) {
     fade->duration = frames;

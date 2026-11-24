@@ -5,9 +5,9 @@
 #include "battle_internal.h"
 
 #ifndef UBFIX
-/// BattleWork's unit lists, read as one array of halfwords.
-struct BattleWorkUnitListView {
-  s16 items[64]; ///< BattleWork from its start; each list at its offset / 2
+/// BattleState's unit lists, read as one array of halfwords.
+struct BattleStateUnitListView {
+  s16 items[64]; ///< BattleState from its start; each list at its offset / 2
 };
 #endif
 
@@ -17,7 +17,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   u16 places[6];
   s32 count;
 
-  // UB: the view treats distinct BattleWork members as one array.
+  // UB: the view treats distinct BattleState members as one array.
 #ifdef UBFIX
   s16 *unitIds;
   s32 unitId;
@@ -25,7 +25,8 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   s32 sideTag;
 
   count = 0;
-  unitIds = requireLivingUnit ? gBattleWork->partyUnits : gBattleWork->enemyIds;
+  unitIds =
+      requireLivingUnit ? gBattleState->partyUnits : gBattleState->enemyIds;
   sideTag = requireLivingUnit ? PLACE_PARTY : PLACE_ENEMY;
   for (place = 0; unitIds[place] != BATTLE_UNIT_LIST_END; place++) {
     unitId = unitIds[place];
@@ -36,7 +37,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
     places[count++] = place | sideTag;
   }
 #else
-  struct BattleWorkUnitListView *lists;
+  struct BattleStateUnitListView *lists;
   s16 *entry;
   u16 *cursor;
   s32 listedUnit;
@@ -46,12 +47,12 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   s32 offset;
 
   count = 0;
-  lists = (struct BattleWorkUnitListView *)gBattleWork;
+  lists = (struct BattleStateUnitListView *)gBattleState;
 
   // The party's standing places, else the enemies' places in use.
   if (requireLivingUnit != 0) {
     place = 0;
-    slot = offsetof(struct BattleWork, partyUnits) / sizeof(s16);
+    slot = offsetof(struct BattleState, partyUnits) / sizeof(s16);
     if (lists->items[slot] != BATTLE_UNIT_LIST_END) {
       entry = lists->items;
       for (;;) {
@@ -70,8 +71,8 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
     }
   } else {
     place = 0;
-    slot = offsetof(struct BattleWork, enemyIds) / sizeof(s16) - 1;
-    tail = offsetof(struct BattleWork, enemyIds) / sizeof(s16) - 1;
+    slot = offsetof(struct BattleState, enemyIds) / sizeof(s16) - 1;
+    tail = offsetof(struct BattleState, enemyIds) / sizeof(s16) - 1;
     offset = tail * 2;
     entry = (lists->items + 1);
     if (*(s16 *)((char *)entry + offset) != BATTLE_UNIT_LIST_END) {
@@ -302,7 +303,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
   u16 candidatePlaces[6];
   s32 unitIds[6];
   s32 targetPlaces[6];
-  struct BattleWork *battle;
+  struct BattleState *battle;
   struct Unit *unit;
   struct Unit *nextUnit;
   struct Unit *thisUnit;
@@ -321,7 +322,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
   u32 roll;
   s16 *slot;
 
-  battle = gBattleWork;
+  battle = gBattleState;
   targetCount = 0;
   candidateCount = 0;
 

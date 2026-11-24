@@ -9,7 +9,7 @@
 /// and y in pixels, y at the top of its sprite.
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   struct Actor *actor = Actor_Lookup(actorId);
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   s32 *view;
   s32 cameraX;
   s32 cameraZ;
@@ -18,7 +18,7 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 
   if (actor == 0)
     return -1;
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
   view = grid->view;
   cameraX = view[0] & FIELD_PIXEL_MASK;
   cameraZ = view[1] & FIELD_PIXEL_MASK;
@@ -46,14 +46,14 @@ UNUSED void Exit_NoOp(void) {}
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
 /// fading it to black.
 UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   s32 i;
   s32 level;
 
-  Sound_PlayFar(gMainRoutineWork.battleMusic);
+  Sound_PlayFar(gMainRoutineState.battleMusic);
   Sound_PlayFar(SE_STOP_ACTION_SE);
   Sound_PlayFar(SE_BEAST_CRY);
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     // On the World Map the flash colours the window palette's black instead,
     // and the screen closes toward the centre line from its middle
     // (ScreenTransition_UpdateFromCenter); a field scene closes with
@@ -62,7 +62,7 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
                (u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BLACK_COLOR));
     ScreenTransition_Finish(SCENE_TRANSITION(TRANSITION_CENTER_LINE, 1),
                             ENCOUNTER_CLOSE_FRAMES);
-    work->transitionActive = 0;
+    state->transitionActive = 0;
     wait(ENCOUNTER_CLOSE_FRAMES);
     for (i = 0; i < ENCOUNTER_FADE_FRAMES; i++) {
       level = RGB_LEVEL_MAX - 1 - i * ENCOUNTER_FADE_STEP;
@@ -75,7 +75,7 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
     ScreenTransition_Finish(
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
         ENCOUNTER_CLOSE_FRAMES);
-    work->transitionActive = 0;
+    state->transitionActive = 0;
     wait(ENCOUNTER_CLOSE_FRAMES);
     for (i = 0; i < ENCOUNTER_FADE_FRAMES; i++) {
       level = RGB_LEVEL_MAX - 1 - i * ENCOUNTER_FADE_STEP;
@@ -92,7 +92,7 @@ void Exit_PrepareAnimation(s32 animation) {
   struct Sprite *sprite;
   struct SpriteAnimation *doorway;
 
-  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  actor = Actor_Lookup(gMainRoutineState.leaderActorId);
   sprite = actor->sprite;
   doorway =
       (struct SpriteAnimation *)Sprite_AddAnimationFar(sprite, SPRITE_DOORWAY);
@@ -135,7 +135,7 @@ void Exit_StartStairsDown(void) {
 /// the cell's north edge, the leader plays animation for 30 frames, loses the
 /// hidden doorway part and walks 8 pixels south.
 void Entrance_PlayArrivalAnimation(s32 animation) {
-  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gMainRoutineState.leaderActorId);
   struct Sprite *sprite = leader->sprite;
   struct SpriteAnimation *doorway =
       (struct SpriteAnimation *)Sprite_AddAnimationFar(sprite, SPRITE_DOORWAY);
@@ -184,7 +184,7 @@ s32 Entrance_PlayArrival(void) {
         struct Actor *leader;
 
         GameFlag_ClearFar(flag);
-        leaderId = gMainRoutineWork.leaderActorId;
+        leaderId = gMainRoutineState.leaderActorId;
         leader = Actor_Lookup(leaderId);
         // FLAG_ARRIVE_FALLING is set by scenes the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels

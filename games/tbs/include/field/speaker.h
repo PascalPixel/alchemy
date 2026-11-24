@@ -44,7 +44,7 @@ struct SpeakerDefinition {
 };
 
 /// The palette fade, heap slot HEAP_SLOT_PALETTE_FADE under its own name.
-#define gPaletteFadeWork                                                       \
+#define gPaletteFadeState                                                      \
   (*(struct PaletteFade **)&gHeapSlots[HEAP_SLOT_PALETTE_FADE])
 
 #endif

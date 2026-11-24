@@ -108,7 +108,7 @@
 #include "system/io_reg.h"
 #include "system/io_write.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -601,7 +601,7 @@ static void VenusLighthouse_PushPillarAhead(void) {
 /// After a battle, draws every actor whose timer holds a
 /// VENUS_COLOR_MARK in its colour mode again.
 static void VenusLighthouse_RestoreMarkedColors(void) {
-  struct Actor **actors = &gFieldWork->actors[ACTOR_FIRST_PLACED];
+  struct Actor **actors = &gFieldState->actors[ACTOR_FIRST_PLACED];
   struct Actor *actor;
   u32 actorId;
 
@@ -698,13 +698,13 @@ VenusLighthouse_EmitPassageSparkTrail(struct Actor *actor) {
 /// passage's other end.
 ///
 /// The passage's cell carries the number of the exit it leaves by
-/// (work->stepTrigger), and VenusLighthouse_ArriveThroughSparkPassage brings
+/// (state->stepTrigger), and VenusLighthouse_ArriveThroughSparkPassage brings
 /// him out sparkling at the far end.
 static void VenusLighthouse_EnterSparklingPassage(void) {
   struct Actor *leader;
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
   Sound_Play(SE_SPARKLING_PASSAGE);
@@ -720,7 +720,7 @@ static void VenusLighthouse_EnterSparklingPassage(void) {
   Event_Wait(30);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
   Event_End();
 }
 
@@ -760,14 +760,14 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
 /// strip on each side wherever the floor beside him is higher than his own,
 /// but on this flat floor it leaves him looking just as before.
 static void VenusLighthouse_EnterCappedPillarRows(void) {
-  gFadeOverlayWork->actor = Actor_Get(ACTOR_PARTY_LEADER);
+  gFadeOverlayState->actor = Actor_Get(ACTOR_PARTY_LEADER);
 }
 
 /// Nothing visible happens when Isaac steps out of the dotted square of the
 /// capped pillars onto the floor round it. The game stops drawing the fade
 /// overlay (VenusLighthouse_EnterCappedPillarRows) on him.
 static void VenusLighthouse_LeaveCappedPillarRows(void) {
-  gFadeOverlayWork->actor = NULL;
+  gFadeOverlayState->actor = NULL;
 }
 
 #include "shared/actor_depth.c"
@@ -967,7 +967,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
 /// Selects the scene's entrances. VenusLighthouseGroundFloor takes the
 /// fallback table.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_VENUS_LIGHTHOUSE_ENTRY) {
     return gVenusLighthouseEntryEntrances;
@@ -998,7 +998,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *placements;
   s16 sceneId;
 
-  sceneId = gMainRoutineWork.next;
+  sceneId = gMainRoutineState.next;
   if (sceneId == SCENE_VENUS_LIGHTHOUSE_ENTRY) {
     return gVenusLighthouseEntryActorPlacements;
   }
@@ -1124,14 +1124,14 @@ static void VenusLighthouse_CarryPillarPastWall(void) {
 static void VenusLighthouse_ReadRelief(void) {
   s32 message;
 #if !TBS_PATCH_1 || TBS_PATCH_2
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 #endif
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 #if TBS_PATCH_1 && !TBS_PATCH_2
   message = (s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief);
 #else
-  message = work->examineCell + MSGNO(MsgVenusThereWordsCarvedIntoRelief) -
+  message = state->examineCell + MSGNO(MsgVenusThereWordsCarvedIntoRelief) -
             CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF;
 #endif
   FieldMessage_Show(message, 1);
@@ -1273,11 +1273,11 @@ static inline void VenusLighthouse_DrawSecondPath(void) {
 /// search switches it (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH). The
 /// Tunnel Ruins under Babi Lighthouse open their ways to match.
 static void VenusLighthouse_SearchStatue(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
-  work->revealFrames = 0;
-  work->busy = 1;
+  state = gFieldState;
+  state->revealFrames = 0;
+  state->busy = 1;
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgVenusStatueSpeaksIsaacSoulYe, 1);
@@ -1318,7 +1318,7 @@ static void VenusLighthouse_SearchStatue(void) {
   FieldCamera_MoveTo(456, CAMERA_KEEP, 423, 1);
   FieldCamera_WaitForMove();
   Event_End();
-  work->busy = 0;
+  state->busy = 0;
 }
 
 /// Isaac Moves the grey spiral-marked block in the room east of the reliefs.
@@ -1442,11 +1442,11 @@ static void VenusLighthouse_StepOnFloorSwitch(void) {
 /// statue as he says the wanderers did something to it that made the floor
 /// light up.
 static void VenusLighthouse_TalkToScholarByDoor(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
-  work->revealFrames = 0;
-  work->busy = 1;
+  state = gFieldState;
+  state->revealFrames = 0;
+  state->busy = 1;
   Event_Start();
   Event_SetMessageId(MsgVenusThoughtIdExploreAfterDoor);
   Actor_FaceActor(ACTOR_DOOR_SCHOLAR, ACTOR_PARTY_LEADER, 0);
@@ -1684,7 +1684,7 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
   u32 frame;
   FIXED dustX;
 
-  layer = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
+  layer = &((struct MapGridScrollState *)gMapGridState[0])->layers[2];
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   column = leader->x.part[0].integer;
   leaderZ = leader->z.part[0].integer;
@@ -1739,7 +1739,7 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
       Sound_Play(SE_THUMP);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       MapGrid_WaitForShakeToSettle();
-      gFieldWork->transition =
+      gFieldState->transition =
           SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
       Import_EventSetExitRequest(
           VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST);
@@ -2207,7 +2207,7 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
   u32 frame;
   FIXED dustX;
 
-  layer = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
+  layer = &((struct MapGridScrollState *)gMapGridState[0])->layers[2];
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   column = leader->x.part[0].integer;
   leaderZ = leader->z.part[0].integer;
@@ -2254,7 +2254,7 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
       Sound_Play(SE_THUMP);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       MapGrid_WaitForShakeToSettle();
-      gFieldWork->transition =
+      gFieldState->transition =
           SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
       Import_EventSetExitRequest(
           VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST);
@@ -2277,7 +2277,7 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
   u32 frame;
   FIXED dustX;
 
-  layer = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
+  layer = &((struct MapGridScrollState *)gMapGridState[0])->layers[2];
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   column = leader->x.part[0].integer;
   leaderZ = leader->z.part[0].integer;
@@ -2323,7 +2323,7 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
       Sound_Play(SE_THUMP);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       MapGrid_WaitForShakeToSettle();
-      gFieldWork->transition =
+      gFieldState->transition =
           SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
       Import_EventSetExitRequest(
           VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST);
@@ -2524,7 +2524,7 @@ static void VenusLighthouse_EnterRisingPassage(void) {
 /// Selects the puzzle interactions and dialogue for the current lighthouse
 /// scene.
 const struct Trigger *Scene_GetTriggers(void) {
-  s32 sceneId = gMainRoutineWork.next;
+  s32 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_VENUS_LIGHTHOUSE_ENTRY) {
     return gVenusLighthouseEntryTriggers;
@@ -2586,11 +2586,11 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     VenusLighthouse_RestoreMarkedColors();
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  sceneId = gMainRoutineWork.next;
+  sceneId = gMainRoutineState.next;
   if (sceneId == SCENE_VENUS_LIGHTHOUSE_ENTRY) {
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
       VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK);
     else
@@ -2604,7 +2604,7 @@ s32 Scene_Initialize(void) {
     VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_HEADED_FOR_BABI);
     VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_COLOSSO_VICTORS);
   } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_GROUND_FLOOR) {
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_ENTRY:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_FROM_RELIEFS:
       VenusLighthouse_LayDownHurtActor(ACTOR_SCHOLAR_ATTACKED_ANYWAY);
@@ -2653,7 +2653,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_FIRST_FLOOR) {
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR:
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       break;
@@ -2723,7 +2723,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_SECOND_FLOOR) {
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT:
       VenusLighthouse_ArriveThroughSparkPassage();
       Scene_QueueMusic(SE_AMBIENT_WATER);
@@ -2761,7 +2761,7 @@ s32 Scene_Initialize(void) {
       VenusLighthouse_MoveGatePillar();
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH:
-      gFieldWork->transition =
+      gFieldState->transition =
           SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
       Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = -toFIXED(2);
       // It then redraws the moved wall as the others do.
@@ -2782,12 +2782,12 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(15, 32, 3, 1, 9, 32);
         MapGrid_CopyCellAttributes(12, 32, 3, 1, 15, 32);
       }
-      if (gMainRoutineWork.entrance !=
+      if (gMainRoutineState.entrance !=
           VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH)
         break;
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      gFieldWork->transition = SCENE_TRANSITION(
+      gFieldState->transition = SCENE_TRANSITION(
           TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH:
@@ -2795,7 +2795,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR) {
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST:
       VenusLighthouse_PourWestSandSlide();
       break;
@@ -2822,11 +2822,11 @@ s32 Scene_Initialize(void) {
         wait(1);
         Task_AddFrame(VenusLighthouse_PuffEastSlideHead, TASK_PASS_FRAME);
       }
-      if (gMainRoutineWork.entrance ==
+      if (gMainRoutineState.entrance ==
           VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_SOUTHWEST_ROOM)
         VenusLighthouse_ArriveThroughSparkPassage();
       else if (
-          gMainRoutineWork.entrance ==
+          gMainRoutineState.entrance ==
           VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST)
         VenusLighthouse_PourEastSandSlide();
       break;
@@ -2885,7 +2885,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   } else if (sceneId == SCENE_VENUS_LIGHTHOUSE_FOURTH_FLOOR) {
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_FROM_WALL_SWITCHES:
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -2944,7 +2944,7 @@ s32 Scene_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST:
-      gFieldWork->transition =
+      gFieldState->transition =
           SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
       Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = -toFIXED(2);
       // fall through
@@ -2985,16 +2985,16 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellsTo(63, 29, 49, 20, 1, 1);
         MapGrid_CopyCellsTo(41, 56, 44, 17, 3, 4);
       }
-      if (gMainRoutineWork.entrance ==
+      if (gMainRoutineState.entrance ==
               VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST ||
-          gMainRoutineWork.entrance ==
+          gMainRoutineState.entrance ==
               VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST) {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
-        gFieldWork->transition = SCENE_TRANSITION(
+        gFieldState->transition = SCENE_TRANSITION(
             TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
       }
-      if (gMainRoutineWork.entrance ==
+      if (gMainRoutineState.entrance ==
           VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING)
         VenusLighthouse_RaiseLeaderInSparkles();
       break;
@@ -3108,10 +3108,10 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   FIXED particleX;
 
   {
-    struct FieldWork *work = gFieldWork;
+    struct FieldState *state = gFieldState;
 
-    actorId = gMainRoutineWork.leaderActorId;
-    viewCenter = work->camera;
+    actorId = gMainRoutineState.leaderActorId;
+    viewCenter = state->camera;
   }
   actor = Actor_Get(actorId);
   nextPosition.x =
@@ -3210,7 +3210,7 @@ static void VenusLighthouse_MoveFirstFloorSandFall(void) {
   u32 row;
   u32 particleIndex;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_Start();
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
@@ -3314,7 +3314,7 @@ static void VenusLighthouse_PourWestSandSlide(void) {
   u32 row;
   u32 particleIndex;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_Start();
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
@@ -3372,7 +3372,7 @@ static void VenusLighthouse_PourEastSandSlide(void) {
   u32 row;
   u32 particleIndex;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_Start();
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
@@ -3568,7 +3568,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *light) {
       Actor_StartScript(light, gVenusLightGoesOut);
       return 0;
     }
-    if (gMainRoutineWork.next == SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR) {
+    if (gMainRoutineState.next == SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR) {
       for (socket = 0;
            socket <= 3 &&
            !(FIELD_CELL(light->x.fixed) == gVenusThirdFloorSockets[socket].x &&

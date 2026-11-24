@@ -45,7 +45,7 @@
 #include "system/heap_release.h"
 #include "system/io_reg.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/save.h"
 #include "system/system.h"
 #include "text/msg_ids.h"

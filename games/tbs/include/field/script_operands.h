@@ -16,21 +16,21 @@ struct Actor;
 typedef s32 (*ScriptCommand)(struct Actor *);
 
 /// The whole 112-byte slot as SC_SET, SC_ADD and SC_CMP see it: each field is
-/// one work value (enum ActorScriptValue in actor_script.h), reached through
+/// one state value (enum ActorScriptValue in actor_script.h), reached through
 /// gActorScript_OperandHandlerTable, and named for what the field keeps there.
 struct ScriptOperands {
   u32 scriptAddress; ///< SW_SCRIPT; an add steps it by whole words
   u16 cursor;        ///< SW_CURSOR, compared as signed
-  u16 facing;        ///< SW_FACING, and the work values either side
+  u16 facing;        ///< SW_FACING, and the state values either side
   u32 x;             ///< SW_X, 16.16 fixed-point pixels
   u32 y;             ///< SW_Y
   u32 z;             ///< SW_Z
   u32 groundHeight;  ///< SW_GROUND
   u32 scaleX;        ///< SW_SCALE_X, 16.16 fixed point
-  u32 scaleY;        ///< SW_SCALE_Y, and the work value after it
+  u32 scaleY;        ///< SW_SCALE_Y, and the state value after it
   u16 radius;        ///< SW_RADIUS, in pixels; compared as signed
-  u8 layer;          ///< no work value
-  u8 priorityFlags;  ///< no work value
+  u8 layer;          ///< no state value
+  u8 priorityFlags;  ///< no state value
   u32 velocityX;     ///< SW_VELOCITY_X, 16.16 fixed-point pixels per frame
   u32 velocityY;     ///< SW_VELOCITY_Y
   u32 velocityZ;     ///< SW_VELOCITY_Z
@@ -53,11 +53,11 @@ struct ScriptOperands {
   u8 collisionFlags;    ///< SW_COLLISION
   u8 steeringFlags;     ///< SW_STEERING
   u8 paused;            ///< SW_PAUSED
-  u8 retainSpriteCache; ///< keeps the sprite's VRAM; no work value
+  u8 retainSpriteCache; ///< keeps the sprite's VRAM; no state value
   u8 repeatCount;       ///< SW_REPEAT, SC_LOOP's count
   u16 wait;             ///< SW_WAIT, compared as signed
-  u8 refused;           ///< Actor.refused; no work value
-  u8 frozen;            ///< ActorArmView.frozen; no work value
+  u8 refused;           ///< Actor.refused; no state value
+  u8 frozen;            ///< ActorArmView.frozen; no state value
   u8 riseCounter;       ///< SW_RISE_COUNTER, kept by scene code
   u8 riseEnabled;       ///< SW_RISE_ENABLED, kept by scene code
   s16 timer;            ///< SW_TIMER, what its actor script reads

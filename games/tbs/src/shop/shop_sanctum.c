@@ -48,7 +48,7 @@ s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind) {
 
 /// Counts party members who need the service in shop->action.
 s32 Sanctum_CountMembersInNeed(void) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   s32 eligibleCount = 0;
   s32 serviceKind = shop->action;
   s32 memberIndex;
@@ -63,7 +63,7 @@ s32 Sanctum_CountMembersInNeed(void) {
 /// Returns the current service's line that stands where messageId stands among
 /// the revive service's lines.
 s32 Sanctum_GetServiceMessage(s32 messageId) {
-  s8 serviceKind = ((struct ShopWork *)gMenuWork)->action;
+  s8 serviceKind = ((struct ShopState *)gMenuState)->action;
 
   if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
     messageId += MsgCurePoisonService - MsgReviveService;
@@ -83,7 +83,7 @@ s32 Sanctum_GetServiceMessage(s32 messageId) {
 void Sanctum_ShowKeeperMessage(s32 messageId) {
   s32 voice;
 
-  voice = Speaker_GetVoiceFar(((struct ShopWork *)gMenuWork)->keeperGraphics);
+  voice = Speaker_GetVoiceFar(((struct ShopState *)gMenuState)->keeperGraphics);
   Message_CloseFinishedWindowsFar();
   messageId = Sanctum_GetServiceMessage(messageId);
   Message_OpenWindowFar(messageId, 5, 0,
@@ -97,7 +97,7 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
 
 /// As Sanctum_ShowKeeperMessage, hiding the hand cursor while the line shows.
 void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   u8 savedCursorMode = shop->cursor.anchor->motion;
   s32 voice = Speaker_GetVoiceFar(shop->keeperGraphics);
 
@@ -118,11 +118,11 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
 s32 Sanctum_Run(s32 keeperId) {
   s32 serviceSelection = 0;
   struct Window *listWindow = 0;
-  struct ShopWork *shop;
+  struct ShopState *shop;
   struct WindowSprite *cursorAnchor;
 
-  Shop_InitializeWork();
-  shop = gMenuWork;
+  Shop_InitializeState();
+  shop = gMenuState;
   shop->action = serviceSelection;
 
   {
@@ -145,7 +145,7 @@ s32 Sanctum_Run(s32 keeperId) {
   cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
                                         listWindow, 0, 0);
   cursorAnchor->motion = WINDOW_SPRITE_MOTION_STILL;
-  cursorAnchor->kind = WINDOW_SPRITE_GLYPH; // the icon is the shop work's
+  cursorAnchor->kind = WINDOW_SPRITE_GLYPH; // the icon is the shop state's
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
   // "Welcome, weary wanderers. What aid do you seek?"
@@ -184,14 +184,14 @@ s32 Sanctum_Run(s32 keeperId) {
   Sanctum_ShowKeeperMessage(MsgSanctumFarewell);
   Window_CloseFar(shop->moneyWindow, 2);
   Window_CloseFar(listWindow, 2);
-  Shop_ReleaseWork();
+  Shop_ReleaseState();
   return 0;
 }
 
 /// Lets the player pick a party member for the service, asks for the donation,
 /// then applies it with its burst; offers another while any still need it.
 s32 Sanctum_RunPartyService(void) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   struct Window *priceWindow;
   s32 redraw;
   s32 serviceKind;
@@ -269,7 +269,7 @@ s32 Sanctum_RunPartyService(void) {
         chooseAgain = 1;
         continue;
       }
-      if (donation > gMainRoutineWork.holdings.coins) {
+      if (donation > gMainRoutineState.holdings.coins) {
         Sound_PlayFar(SE_MENU_CANCEL);
         // "I'm sorry, but you must be able to pay the donation."
         Sanctum_ShowKeeperMessageHidingCursor(messageBase + 1);
@@ -349,7 +349,7 @@ void Sanctum_ApplyService(s32 unitId, s32 serviceKind) {
 /// Shows the chosen party member running in place, and those who do not need
 /// the service drawn smaller.
 void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   s32 memberIndex;
   s32 serviceKind = shop->action;
 
@@ -374,7 +374,7 @@ void Sanctum_DrawFee(struct Window *target, s32 unitId) {
   s32 serviceOrMessage;
   s32 donation;
 
-  serviceOrMessage = ((struct ShopWork *)gMenuWork)->action;
+  serviceOrMessage = ((struct ShopState *)gMenuState)->action;
   donation = Sanctum_ServicePrice(unitId, serviceOrMessage);
   if (target != 0) {
     WindowSprite_PrepareForRedrawFar(target);
@@ -429,7 +429,7 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
 /// Steps the burst's sparkles, and while the tune plays flickers the party
 /// member's icon through random colours, a new one each frame.
 void Sanctum_UpdateBurst(void) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   s32 i;
   s8 burstMember;
 
@@ -453,13 +453,13 @@ static const s8 sSanctumServiceCues[4] = {
 /// greyed, and SANCTUM_BURST_SPARKLES sparkles flying in at the icon as it
 /// flickers through colours, then the recovery sound.
 void Sanctum_RunMemberIconBurst(s32 member) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
   s8 savedCursorMode;
   struct Point position;
   struct FieldParticle *effect;
   s32 effectIndex;
 
-  shop = gMenuWork;
+  shop = gMenuState;
   savedCursorMode = shop->cursor.anchor->motion;
   shop->burstMember = -1;
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;

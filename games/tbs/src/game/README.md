@@ -127,7 +127,7 @@ scene and one on entering a new area
 ([Scenes](../scene/README.md#state-that-cleans-itself-up)). Everything
 else is free for the story.
 
-Flags and the main routine's work are all a save holds, so anything the
+Flags and the main routine's state are all a save holds, so anything the
 game should remember has to be one or the other.
 
 ## Rare item counters

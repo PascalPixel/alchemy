@@ -98,7 +98,7 @@ void BattleEffect_RunPsyCrystal(struct BattleEffectParams *args) {
 /// Motes of light scattered around each target swirl in towards it, one target
 /// after another.
 void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frameCount;
   s32 member;
@@ -116,30 +116,30 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   s32 originY;
   BlitterPair blit;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   canvasShiftX = 0;
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
 
-  if (work->args->prelude == 1) {
+  if (state->args->prelude == 1) {
     s32 element =
         mode == HEALING_MODE_PSY_CRYSTAL ? ELEMENT_MARS : ELEMENT_MERCURY;
 
     if (mode == HEALING_MODE_PSY_CRYSTAL || mode == HEALING_MODE_PLY)
-      BattleEffect_RunDjinniEntrance(args, element, work->args->side,
+      BattleEffect_RunDjinniEntrance(args, element, state->args->side,
                                      DJINNI_ANCHOR_OVER_TARGET, &originX,
                                      &originY);
     else
-      BattleEffect_RunDjinniEntrance(args, element, work->args->side,
+      BattleEffect_RunDjinniEntrance(args, element, state->args->side,
                                      DJINNI_ANCHOR_TARGET_X, &originX,
                                      &originY);
-    work->args->variant = EFFECT_VARIANT_BASIC;
+    state->args->variant = EFFECT_VARIANT_BASIC;
   }
 
   if (mode == HEALING_MODE_PLY) {
-    Projection_ScaledUnit(work->args->targets[0], &base);
+    Projection_ScaledUnit(state->args->targets[0], &base);
     canvasShiftX = CANVAS_SIZE / 2 - base.x;
     REG_BG2X = canvasShiftX << 8;
     REG_BG2PA = Q_8_8(1);
@@ -149,10 +149,10 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   }
 
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, state->sheet, 0, 0);
   if (mode <= HEALING_MODE_WISH || mode == HEALING_MODE_CURE_POISON ||
       mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC) {
-    if (work->args->variant == EFFECT_VARIANT_BASIC)
+    if (state->args->variant == EFFECT_VARIANT_BASIC)
       resource = Resource_GetTableEntry(RESOURCE_ICE_SHARD_SHEET);
     else
       resource = Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET);
@@ -175,8 +175,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       resource = Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SMALL_SHEET);
   }
   resource += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(resource, work->sheet + HEALING_DJINNI_PICTURE);
-  BattleEffect_FetchRectangleBlitters(work->args->side, blit);
+  Decompress_TaggedLz(resource, state->sheet + HEALING_DJINNI_PICTURE);
+  BattleEffect_FetchRectangleBlitters(state->args->side, blit);
 
   // Scatter the motes around each target's centre.
   if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL) {
@@ -188,7 +188,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    frameCount = work->args->targetCount * 8 + 88;
+    frameCount = state->args->targetCount * 8 + 88;
   } else if (mode == HEALING_MODE_WISH) {
     for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
@@ -198,7 +198,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    frameCount = work->args->targetCount * 8 + 88;
+    frameCount = state->args->targetCount * 8 + 88;
   } else if (mode == HEALING_MODE_CURE) {
     for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
@@ -210,7 +210,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       spark->velocityY = ((Random16() & 31) + 32) << 13;
       spark->variant = 0;
     }
-    frameCount = work->args->targetCount * 8 + 88;
+    frameCount = state->args->targetCount * 8 + 88;
   } else if (mode == HEALING_MODE_CURE_POISON) {
     for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
@@ -220,7 +220,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    frameCount = work->args->targetCount * 8 + 72;
+    frameCount = state->args->targetCount * 8 + 72;
   } else {
     for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
@@ -230,16 +230,16 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    frameCount = work->args->targetCount * 8 + 72;
+    frameCount = state->args->targetCount * 8 + 72;
   }
 
   motesPerTarget = HEALING_MOTES;
-  if (work->args->variant == EFFECT_VARIANT_BASIC)
+  if (state->args->variant == EFFECT_VARIANT_BASIC)
     motesPerTarget = HEALING_MOTES / 2;
-  else if (work->args->variant == EFFECT_VARIANT_STRONGEST)
+  else if (state->args->variant == EFFECT_VARIANT_STRONGEST)
     motesPerTarget = HEALING_MOTES * 2;
-  work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = CANVAS_FADE_THREE_QUARTERS;
+  state->transferMode = CANVAS_COPY_AND_FADE;
+  state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != frameCount; frame++) {
@@ -249,7 +249,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       EFFECT_SHOW_DAMAGE(0);
 
     // The Djinni sways, then rises away.
-    if (work->args->prelude == 1) {
+    if (state->args->prelude == 1) {
       if (doubleWidth == 0) {
         s32 x = FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) *
                            HEALING_DJINNI_SWAY) +
@@ -259,10 +259,10 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
         if (frame > 32)
           y = y - frame * 2 + 64;
-        blit[0](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
+        blit[0](canvas, state->sheet + HEALING_DJINNI_PICTURE, x, y,
                 DJINNI_WIDTH, DJINNI_HEIGHT);
         if (frame <= 3)
-          blit[1](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
+          blit[1](canvas, state->sheet + HEALING_DJINNI_PICTURE, x, y,
                   DJINNI_WIDTH, DJINNI_HEIGHT);
       } else {
         s32 x = FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) *
@@ -273,17 +273,17 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
         if (frame > 32)
           y = y - frame * 2 + 64;
-        blit[0](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
+        blit[0](canvas, state->sheet + HEALING_DJINNI_PICTURE, x, y,
                 SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         if (frame <= 3)
-          blit[1](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
+          blit[1](canvas, state->sheet + HEALING_DJINNI_PICTURE, x, y,
                   SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       }
     }
 
-    EFFECT_FOR_EACH_TARGET(member, work->args) {
+    EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor =
-          GetBattleObjectSlotFar(work->args->targets[member])->actor;
+          GetBattleObjectSlotFar(state->args->targets[member])->actor;
       s32 start = member * 8;
 
       EFFECT_VIEW_FROM_CAMERA(camera);
@@ -292,7 +292,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       if (frame == start + 20)
         Sound_PlayFar(SE_RECOVERY);
       if (frame == start + 36)
-        BattleEffect_TintBattler(work->args->targets[member],
+        BattleEffect_TintBattler(state->args->targets[member],
                                  SPRITE_COLOR_WHITE, TINT_KEEP, member, 28);
 
       // Each target's motes swirl round it.
@@ -347,7 +347,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
               if (mode == HEALING_MODE_PLY ||
                   mode == HEALING_MODE_CURE_POISON ||
                   mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC) {
-                u8 *picture = work->sheet + gBattleEffect_SparklePictures[size];
+                u8 *picture =
+                    state->sheet + gBattleEffect_SparklePictures[size];
                 u32 edge = gBattleEffect_SparkleSizes[size];
                 u32 half = edge >> 1;
 
@@ -371,7 +372,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
         }
       }
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

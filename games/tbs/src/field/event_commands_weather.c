@@ -21,12 +21,12 @@
 /// Task of the rain: each drop splashes on the ground and starts again at a new
 /// spot within 128 pixels of the leader.
 void Weather_UpdateRain(void) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
-  struct WeatherWork *work = gWeatherWork;
+  struct MapGridScrollState *grid = gMapGridState[0];
+  struct WeatherState *state = gWeatherState;
   s32 *camera = grid->view;
   s32 cameraX = camera[0];
   s32 cameraZ = camera[1];
-  struct GroundParticle *particle = work->particles;
+  struct GroundParticle *particle = state->particles;
   u32 i;
 
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++) {
@@ -48,7 +48,7 @@ void Weather_UpdateRain(void) {
       particle->priority = 1;
       particle->x = x;
       particle->y = y;
-      particle->tile = work->tileBase + *(const u16 *)frame;
+      particle->tile = state->tileBase + *(const u16 *)frame;
       frame++;
       particle->shape = *(const u8 *)frame;
       particle->size = *(const u8 *)(frame + 1);
@@ -72,19 +72,19 @@ void Weather_UpdateRain(void) {
 /// Task for the storm: lightning flashes the BG colours three times, 5 frames
 /// apart.
 void Weather_UpdateLightning(void) {
-  struct FieldBlendWork *work = gFieldBlendWork[0];
-  struct PaletteFade *target = gPaletteFadeWork;
+  struct FieldBlendState *state = gFieldBlendState[0];
+  struct PaletteFade *target = gPaletteFadeState;
 
-  if (work->timer < 0)
+  if (state->timer < 0)
     return;
   if (GameFlag_GetFar(FLAG_WEATHER_HELD))
-    work->timer = 128;
-  switch (work->timer--) {
+    state->timer = 128;
+  switch (state->timer--) {
   case 0:
     // The burst ends: arm the next.
-    if (work->enabled != 0) {
-      work->timer = Random16_Below(400) - Random16_Below(100) + 150;
-      if (work->loud != 0)
+    if (state->enabled != 0) {
+      state->timer = Random16_Below(400) - Random16_Below(100) + 150;
+      if (state->loud != 0)
         Sound_PlayFar(SE_THUNDER_LOUD);
       else
         Sound_PlayFar(SE_THUNDER);
@@ -93,8 +93,8 @@ void Weather_UpdateLightning(void) {
   case 5:
   case 10:
     // A frame after each flash: fade back to the dark colours over 12 frames.
-    PaletteFade_SetTarget((s32)work, 1);
-    Dma_Set(work->delta, target->delta,
+    PaletteFade_SetTarget((s32)state, 1);
+    Dma_Set(state->delta, target->delta,
             DMA_COPY_WORDS(sizeof target->delta / 4), REG_DMA3);
     target->duration = 12;
     target->step = 0;
@@ -103,7 +103,7 @@ void Weather_UpdateLightning(void) {
   case 6:
   case 11:
     // The flash: the lit colours, in one frame.
-    PaletteFade_SetTarget((s32)work->to, 1);
+    PaletteFade_SetTarget((s32)state->to, 1);
     target->duration = 1;
     target->step = 0;
     break;
@@ -114,7 +114,7 @@ void Weather_UpdateLightning(void) {
 /// the splash tiles and puts 32 drops under the leader with staggered timers,
 /// drawn semi-transparent.
 void Weather_StartRain(void) {
-  struct WeatherWork *work;
+  struct WeatherState *state;
   s32 *leader;
   struct GroundParticle *particle;
   // words is the decode buffer, then each particle's attribute cursor.
@@ -122,15 +122,15 @@ void Weather_StartRain(void) {
   u32 i;
   u32 fill = 0;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
-  leader = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
+  state = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherState));
+  leader = ((struct MapGridScrollState *)gMapGridState[0])->origin;
   Scene_QueueMusic(SE_AMBIENT_WATER);
-  particle = work->particles;
-  Dma_Fill32(fill, work, sizeof(struct WeatherWork));
+  particle = state->particles;
+  Dma_Fill32(fill, state, sizeof(struct WeatherState));
   words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_GroundParticleTiles, words);
-  work->entry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 768, words);
+  state->entry = VramCache_FindFreeEntry();
+  state->tileBase = VramCache_Load(state->entry, 768, words);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++) {
     FIXED x;
@@ -165,11 +165,11 @@ union ParticleLinkWord {
 /// starts again within 128 pixels of the leader, eight new ones a frame at
 /// most.
 void FieldMotes_Update(void) {
-  struct WeatherWork *work = gWeatherWork;
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct WeatherState *state = gWeatherState;
+  struct MapGridScrollState *grid = gMapGridState[0];
   u32 spawned = 0;
   u32 i;
-  struct GroundParticle *mote = work->particles;
+  struct GroundParticle *mote = state->particles;
 
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, mote++) {
     s32 x;
@@ -197,13 +197,13 @@ void FieldMotes_Update(void) {
       y = FIXEDtoINT(mote->positionZ - mote->positionY - cameraZ) - age;
       if ((u32)(x + 16) <= 255 && y >= -32 && y <= DISPLAY_HEIGHT - 1) {
         if (mote->timer < 60) {
-          mote->tile = work->tileBase + MOTE_SMALL * MOTE_PICTURE_TILES;
+          mote->tile = state->tileBase + MOTE_SMALL * MOTE_PICTURE_TILES;
           mote->delay += 3;
         } else if (mote->timer < 90) {
-          mote->tile = work->tileBase + MOTE_MEDIUM * MOTE_PICTURE_TILES;
+          mote->tile = state->tileBase + MOTE_MEDIUM * MOTE_PICTURE_TILES;
           mote->delay++;
         } else {
-          mote->tile = work->tileBase + MOTE_LARGE * MOTE_PICTURE_TILES;
+          mote->tile = state->tileBase + MOTE_LARGE * MOTE_PICTURE_TILES;
         }
         if ((gFrameCount >> 3) & 1)
           mote->tile += MOTE_PICTURE_TILES;
@@ -235,25 +235,25 @@ void FieldMotes_Update(void) {
 /// Starts the floating motes (FieldMotes_Update): loads their tiles and puts
 /// 32 of them under the leader with staggered timers, drawn semi-transparent.
 void FieldMotes_Start(void) {
-  struct WeatherWork *work;
+  struct WeatherState *state;
   struct GroundParticle *mote;
   u8 *tiles;
   u32 i;
   u32 size;
 
-  size = sizeof(struct WeatherWork);
-  work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
-  mote = work->particles;
-  // size, done with once the work is allocated, carries the fill's 0.
+  size = sizeof(struct WeatherState);
+  state = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
+  mote = state->particles;
+  // size, done with once the state is allocated, carries the fill's 0.
   size = 0;
-  Dma_Fill32(size, work, sizeof(*work));
+  Dma_Fill32(size, state, sizeof(*state));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_MoteTiles, tiles);
-  work->entry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 768, tiles);
+  state->entry = VramCache_FindFreeEntry();
+  state->tileBase = VramCache_Load(state->entry, 768, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++) {
-    s32 *pos = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
+    s32 *pos = ((struct MapGridScrollState *)gMapGridState[0])->origin;
     // p walks the sprite's attribute words, then holds the x, as size carries
     // the fill's 0 above.
     u32 p = (u32)mote;
@@ -282,10 +282,10 @@ void FieldMotes_Start(void) {
 /// Task of the sparkles: now and then a burst of up to four twinkles on one
 /// spot within 128 pixels of the leader.
 void FieldEffect_UpdateSparkles(void) {
-  struct WeatherWork *work;
+  struct WeatherState *state;
   u32 spawned;
   u32 i;
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   s32 *camera;
   FIXED spawnX;
   FIXED spawnZ;
@@ -302,14 +302,14 @@ void FieldEffect_UpdateSparkles(void) {
   u32 b;
   u32 frames;
 
-  work = gWeatherWork;
+  state = gWeatherState;
   spawned = 0;
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
   camera = grid->view;
   spawnX = 0;
   spawnZ = 0;
   i = 0;
-  sparkle = work->particles;
+  sparkle = state->particles;
   delay = 0;
   sx = 0;
   sy = 0;
@@ -328,7 +328,7 @@ void FieldEffect_UpdateSparkles(void) {
            *(const s16 *)frame;
       frame++;
       if ((u32)(x + 15) <= 255 && sy >= -32 && sy <= DISPLAY_HEIGHT - 1) {
-        sparkle->tile = work->tileBase + *frame;
+        sparkle->tile = state->tileBase + *frame;
         sparkle->x = sx;
         sparkle->shape = 0;
         sparkle->size = 1;
@@ -345,7 +345,7 @@ void FieldEffect_UpdateSparkles(void) {
       }
       sparkle->timer--;
     }
-    if (spawned <= 3 && sparkle->timer == 0 && work->stopped == 0) {
+    if (spawned <= 3 && sparkle->timer == 0 && state->stopped == 0) {
       if (delay != 0) {
         // The rest of a burst, on the first sparkle's spot.
         sparkle->positionX = spawnX;
@@ -379,23 +379,23 @@ void FieldEffect_UpdateSparkles(void) {
 /// Starts the sparkles (FieldEffect_UpdateSparkles): loads their tiles and
 /// clears the 32 sparkles.
 void FieldEffect_InitializeSparkles(void) {
-  u32 size = sizeof(struct WeatherWork);
-  struct WeatherWork *work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
-  struct GroundParticle *sparkle = work->particles;
+  u32 size = sizeof(struct WeatherState);
+  struct WeatherState *state = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
+  struct GroundParticle *sparkle = state->particles;
   u8 *tiles;
   u32 i;
 
-  // size, done with once the work is allocated, carries the fill's 0.
+  // size, done with once the state is allocated, carries the fill's 0.
   size = 0;
-  Dma_Fill32(size, work, sizeof(*work));
+  Dma_Fill32(size, state, sizeof(*state));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_SparkleTiles, tiles);
-  work->entry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 512, tiles);
+  state->entry = VramCache_FindFreeEntry();
+  state->tileBase = VramCache_Load(state->entry, 512, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   do {
-    struct MapGridScrollWork *view = gMapGridWork[0];
+    struct MapGridScrollState *view = gMapGridState[0];
     s32 *leader;
     // attr walks the sprite's attribute words, then holds the x.
     u32 attr;
@@ -426,26 +426,26 @@ void FieldEffect_InitializeSparkles(void) {
 /// (PALETTE_TINT_WARM) and lit (PALETTE_TINT_PALE) BG colours and their 12-step
 /// fade, and arms the first burst to end in 600 frames, repeating.
 void Weather_StartLightning(void) {
-  struct FieldBlendWork *work;
+  struct FieldBlendState *state;
   struct PaletteFade *buffers;
 
-  work =
-      HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
-  buffers = gPaletteFadeWork;
-  Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
-  PaletteFade_Build(PALETTE_TINT_WARM, buffers, work, 1);
-  PaletteFade_Build(PALETTE_TINT_PALE, buffers, work->to, 1);
-  PaletteFade_CalculateSteps(work->to, work->from, work->delta, 12);
-  PaletteFade_Build((s32)work, 0, buffers->target, 1);
-  work->timer = 600;
-  work->enabled = 1;
+  state = HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND,
+                              sizeof(struct FieldBlendState));
+  buffers = gPaletteFadeState;
+  Dma_Fill32(0, state, sizeof(struct FieldBlendState));
+  PaletteFade_Build(PALETTE_TINT_WARM, buffers, state, 1);
+  PaletteFade_Build(PALETTE_TINT_PALE, buffers, state->to, 1);
+  PaletteFade_CalculateSteps(state->to, state->from, state->delta, 12);
+  PaletteFade_Build((s32)state, 0, buffers->target, 1);
+  state->timer = 600;
+  state->enabled = 1;
   Task_Add(Weather_UpdateLightning, TASK_PASS_FRAME);
 }
 
 /// Stops the lightning: no flash for 32767 frames, and none after.
 void Weather_StopLightning(void) {
-  struct FieldBlendWork *state =
-      HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
+  struct FieldBlendState *state = HeapSlot_AllocEwram(
+      HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendState));
   state->timer = 32767;
   state->enabled = 0;
 }
@@ -453,8 +453,8 @@ void Weather_StopLightning(void) {
 /// One last burst of lightning, its first flash two frames from now (timer 12;
 /// Weather_UpdateLightning flashes at 11), then no more.
 void Weather_LastLightning(void) {
-  struct FieldBlendWork *state =
-      HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
+  struct FieldBlendState *state = HeapSlot_AllocEwram(
+      HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendState));
   state->timer = 12;
   state->enabled = 0;
 }
@@ -462,8 +462,8 @@ void Weather_LastLightning(void) {
 /// Restarts the lightning: the next burst ends in 128 frames, its first flash
 /// 118 frames from now, and bursts repeat.
 void Weather_ResumeLightning(void) {
-  struct FieldBlendWork *state =
-      HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
+  struct FieldBlendState *state = HeapSlot_AllocEwram(
+      HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendState));
   state->timer = 128;
   state->enabled = 1;
 }
@@ -472,20 +472,20 @@ void Weather_ResumeLightning(void) {
 /// palette to, each fading back to palette from (PaletteFade_Build modes) on
 /// the BG colours, ending 120 frames from now, and no more after.
 void Weather_StartLightningFlash(s32 from, s32 to) {
-  struct FieldBlendWork *work;
+  struct FieldBlendState *state;
   struct PaletteFade *buffers;
   s16 *target;
 
-  work =
-      HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
-  buffers = gPaletteFadeWork;
-  Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
-  PaletteFade_Build(from, buffers, work, 1);
-  target = work->to;
+  state = HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND,
+                              sizeof(struct FieldBlendState));
+  buffers = gPaletteFadeState;
+  Dma_Fill32(0, state, sizeof(struct FieldBlendState));
+  PaletteFade_Build(from, buffers, state, 1);
+  target = state->to;
   PaletteFade_Build(to, buffers, target, 1);
-  PaletteFade_CalculateSteps(target, work->from, work->delta, 12);
-  PaletteFade_Build((s32)work, 0, buffers->target, 1);
-  work->timer = 120;
-  work->enabled = 0;
+  PaletteFade_CalculateSteps(target, state->from, state->delta, 12);
+  PaletteFade_Build((s32)state, 0, buffers->target, 1);
+  state->timer = 120;
+  state->enabled = 0;
   Task_Add(Weather_UpdateLightning, TASK_PASS_FRAME);
 }

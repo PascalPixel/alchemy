@@ -103,7 +103,7 @@ u32 Save_FindFreeFile(void) {
   u32 file;
   struct SaveFileSummary *summary;
 
-  summary = gSaveWork->summary;
+  summary = gSaveState->summary;
   for (file = 0; file < SAVE_FILE_COUNT; file++, summary++) {
     if (summary->level == 0)
       return file;
@@ -114,25 +114,25 @@ u32 Save_FindFreeFile(void) {
 /// Returns how many save files there are, leaving out those whose summary has
 /// its send flag set (the files saved at the end of the game) when
 /// `excludeSent` is nonzero, or SAVE_ERROR_NO_MEMORY when the backup memory
-/// cannot be read. It opens and releases the save workspace itself.
+/// cannot be read. It opens and releases the save state itself.
 s32 Save_CountFilesExcludingSent(s32 excludeSent) {
   s32 file;
   s32 count;
   struct SaveFileSummary *summary;
 
-  if (Save_InitializeWork() != 0) {
+  if (Save_InitializeState() != 0) {
     count = SAVE_ERROR_NO_MEMORY;
   } else {
     count = Save_LoadFileSummaries();
     if (excludeSent != 0) {
-      summary = gSaveWork->summary;
+      summary = gSaveState->summary;
       for (file = 0; file < SAVE_FILE_COUNT; file++) {
         if ((s8)summary[file].sendFlag != 0)
           count--;
       }
     }
   }
-  Save_ReleaseWork();
+  Save_ReleaseState();
   return count;
 }
 
@@ -144,23 +144,23 @@ s32 Save_ScanFileSummaries(void) {
   s32 sentCount;
   s32 fileCount;
 
-  error = Save_InitializeWork();
+  error = Save_InitializeState();
   sentCount = 0;
   fileCount = SAVE_ERROR_NO_MEMORY;
   if (error == 0) {
     s32 i;
-    struct SaveWork *work;
+    struct SaveState *state;
 
     fileCount = Save_LoadFileSummaries();
-    work = gSaveWork;
+    state = gSaveState;
     gTitleSendOptionEnabled = 0;
     gTitleBattleOptionEnabled = 0;
     for (i = 0; i < SAVE_FILE_COUNT; i++) {
-      if (work->summary[i].sendFlag != 0) {
+      if (state->summary[i].sendFlag != 0) {
         gTitleSendOptionEnabled = 1;
         sentCount++;
       }
-      if (work->summary[i].flagCount != 0) {
+      if (state->summary[i].flagCount != 0) {
         gTitleBattleOptionEnabled = 1;
       }
     }
@@ -169,14 +169,14 @@ s32 Save_ScanFileSummaries(void) {
       gTitleSendOptionEnabled = 0;
     }
   }
-  Save_ReleaseWork();
+  Save_ReleaseState();
   if (fileCount != 0 && sentCount == fileCount) {
     return fileCount + SAVE_SCAN_ALL_CLEARED;
   }
   return fileCount;
 }
 
-/// Prepares the save buffer for writing: stamps the main routine's work with
+/// Prepares the save buffer for writing: stamps the main routine's state with
 /// the time and options, then fills the file summary shown on the file menus
 /// (the leader's name, level and class, the play time, area, coins, Djinn of
 /// each element, the party, the send flag and how many Djinn have been found)
@@ -195,8 +195,8 @@ u32 Save_BuildFileSummary(void) {
   // The summary's header comes before the save buffer.
   summary = (struct SaveFileSummary *)((u32)gSaveBuffer -
                                        offsetof(struct SaveFileSummary, name));
-  gMainRoutineWork.buildStamp = BuildStamp_GetTimeFar(0);
-  gMainRoutineWork.playTime = gPlayTimeFrames;
+  gMainRoutineState.buildStamp = BuildStamp_GetTimeFar(0);
+  gMainRoutineState.playTime = gPlayTimeFrames;
   // A second copy of the play time in the file's second part, which
   // Save_LoadFileSummaries reads back into SaveFileSummary.secondPartPlayTime:
   // the file list lists a file whose two play times differ as corrupted.
@@ -212,19 +212,19 @@ u32 Save_BuildFileSummary(void) {
     copy[SECOND_PART_PLAY_TIME_WORD] = gPlayTimeFrames;
 #endif
   }
-  gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
+  gMainRoutineState.idleSleepEnabled = gIdleSleepEnabled;
 
-  leader = Unit_GetFar(gMainRoutineWork.leaderActorId);
+  leader = Unit_GetFar(gMainRoutineState.leaderActorId);
   destination = summary->name;
   source = leader->name;
   for (i = 0; i < (s32)sizeof(summary->name); i++)
     *destination++ = *source++;
   summary->level = leader->level;
-  summary->playTime = gMainRoutineWork.playTime;
+  summary->playTime = gMainRoutineState.playTime;
   summary->area =
-      Area_GetNameIndexFar(gMainRoutineWork.next, gMainRoutineWork.entrance);
+      Area_GetNameIndexFar(gMainRoutineState.next, gMainRoutineState.entrance);
   summary->classId = leader->classId;
-  summary->coins = gMainRoutineWork.holdings.coins;
+  summary->coins = gMainRoutineState.holdings.coins;
   summary->djinn[ELEMENT_VENUS] = Party_SumDjinnCountsFar(ELEMENT_VENUS);
   summary->djinn[ELEMENT_MERCURY] = Party_SumDjinnCountsFar(ELEMENT_MERCURY);
   summary->djinn[ELEMENT_MARS] = Party_SumDjinnCountsFar(ELEMENT_MARS);
@@ -234,9 +234,9 @@ u32 Save_BuildFileSummary(void) {
   for (i = 0; i <= 3 && members[i] != BATTLE_UNIT_LIST_END; i++)
     summary->party[i] = members[i];
   summary->party[i] = -1;
-  summary->windowHue = gMainRoutineWork.windowHue;
-  summary->windowBrightness = gMainRoutineWork.windowBrightness;
-  summary->sendFlag = gMainRoutineWork.sendFlag;
+  summary->windowHue = gMainRoutineState.windowHue;
+  summary->windowBrightness = gMainRoutineState.windowBrightness;
+  summary->sendFlag = gMainRoutineState.sendFlag;
   summary->flagCount = 0;
   for (i = FLAG_DJINN_FIRST; i < FLAG_DJINNI(ELEMENT_COUNT * DJINN_PER_ELEMENT);
        i++) {
@@ -248,7 +248,7 @@ u32 Save_BuildFileSummary(void) {
     s32 n;
     u32 frames;
 
-    frames = gMainRoutineWork.buildStamp;
+    frames = gMainRoutineState.buildStamp;
     // The checksum's words, counted in fours and multiplied back below.
     n = SAVE_CHECKSUM_WORDS / 4;
     i = 0;
@@ -278,7 +278,7 @@ s16 Save_WriteCurrentFile(void) {
   result = 0;
   file = gSaveSlot;
   if (file != -1) {
-    error = Save_InitializeWork();
+    error = Save_InitializeState();
     if (error != 0) {
       FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
       result = SAVE_ERROR_NO_MEMORY;
@@ -298,7 +298,7 @@ s16 Save_WriteCurrentFile(void) {
         }
       }
     }
-    Save_ReleaseWork();
+    Save_ReleaseState();
     file = result;
   }
   return file;
@@ -310,7 +310,7 @@ s32 Save_WriteFile(s32 file) {
   s32 error;
   s16 result = 0;
 
-  error = Save_InitializeWork();
+  error = Save_InitializeState();
   if (error != 0) {
     FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
@@ -325,7 +325,7 @@ s32 Save_WriteFile(s32 file) {
       result = SAVE_ERROR_WRITE;
     }
   }
-  Save_ReleaseWork();
+  Save_ReleaseState();
   return result;
 }
 
@@ -343,7 +343,7 @@ s32 Save_ProcessSelectedFile(void) {
   // BUG: returns without freeing the part buffer.
   if (gSaveSlot == -1)
     return -1;
-  error = Save_InitializeWork();
+  error = Save_InitializeState();
   if (error != 0) {
     FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
@@ -365,7 +365,7 @@ s32 Save_ProcessSelectedFile(void) {
       result = SAVE_ERROR_WRITE;
     }
   }
-  Save_ReleaseWork();
+  Save_ReleaseState();
   Heap_Release(part);
   return result;
 }
@@ -406,7 +406,7 @@ s32 Save_CopyFile(void) {
   s32 result;
 
   result = 0;
-  error = Save_InitializeWork();
+  error = Save_InitializeState();
   if (error != 0) {
     FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
@@ -444,7 +444,7 @@ s32 Save_CopyFile(void) {
     }
   }
 
-  Save_ReleaseWork();
+  Save_ReleaseState();
   return result;
 }
 
@@ -455,7 +455,7 @@ s32 Save_EraseSelectedFile(void) {
   s32 file;
   s32 result = 0;
 
-  error = Save_InitializeWork();
+  error = Save_InitializeState();
   if (error != 0) {
     FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
@@ -484,7 +484,7 @@ s32 Save_EraseSelectedFile(void) {
       }
     }
   }
-  Save_ReleaseWork();
+  Save_ReleaseState();
   return result;
 }
 
@@ -546,7 +546,7 @@ void FileList_StopPulse(void) { Task_Remove(FileList_UpdatePulse); }
 /// animates.
 void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
                             s32 height) {
-  u16 *tilemap = (u16 *)gWindowWork[0];
+  u16 *tilemap = (u16 *)gWindowState[0];
   s32 sum;
 
   sum = x + window->x;
@@ -566,7 +566,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
     y = 0;
   }
   // BUG: the bottom is tested against the screen's width, so a rectangle
-  // ending below row DISPLAY_TILE_HEIGHT writes past WindowWork.tilemap; the
+  // ending below row DISPLAY_TILE_HEIGHT writes past WindowState.tilemap; the
   // one caller, the file list's highlight, never does.
 #ifdef BUGFIX
   if (y + height > DISPLAY_TILE_HEIGHT - 1)
@@ -588,7 +588,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
       height--;
       offset += BG_SCREEN_WIDTH * 2;
     } while (height != 0);
-    ((struct WindowWork *)tilemap)->dirty = 1;
+    ((struct WindowState *)tilemap)->dirty = 1;
   }
 }
 
@@ -603,7 +603,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
 /// frame (FileList_PlacePartySprites).
 void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
                                struct SaveFileSummary *summary) {
-  struct ShopWork *menu = gMenuWork;
+  struct ShopState *menu = gMenuState;
   s32 i;
 
   for (i = 0; i < 4 && summary->party[i] != -1; i++) {
@@ -628,7 +628,7 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
 
 /// Stops placing the party sprites of the file list and releases them.
 void FileList_HidePartySprites(void) {
-  struct ShopWork *menu = gMenuWork;
+  struct ShopState *menu = gMenuState;
   s32 i;
 
   Task_Remove(FileList_PlacePartySprites);
@@ -643,7 +643,7 @@ void FileList_HidePartySprites(void) {
 /// A task: draws each party sprite of the file list at its
 /// place and scale for this frame.
 void FileList_PlacePartySprites(void) {
-  struct ShopWork *menu = gMenuWork;
+  struct ShopState *menu = gMenuState;
   struct SpriteScale scale;
   struct SpritePlacement position;
   s32 index = 0;
@@ -672,7 +672,7 @@ void FileList_PlacePartySprites(void) {
 /// (x, y) inside `window`, and starts placing them every frame
 /// (FileList_PlaceDjinnSprites). Does nothing when `window` is NULL.
 void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   s32 i;
 
   if (window != NULL) {
@@ -697,7 +697,7 @@ void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
 
 /// Stops placing the Djinn sprites of the file list and releases them.
 void FileList_HideDjinnSprites(void) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   s32 i;
 
   Task_Remove(FileList_PlaceDjinnSprites);
@@ -712,7 +712,7 @@ void FileList_HideDjinnSprites(void) {
 /// A task: draws each Djinn sprite of the file list at its
 /// place, at scale 1.0, for this frame.
 void FileList_PlaceDjinnSprites(void) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   struct SpriteScale scale;
   struct SpritePlacement position;
   s32 index;
@@ -815,31 +815,31 @@ void FileList_DrawSummary(struct Window *window,
 s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   struct Window *fileList;
 #if TBS_PATCH_1
-  struct SaveWork *save;
+  struct SaveState *save;
   struct Window *summaryWindow;
   struct Window *partyWindow;
   struct Window *djinnWindow;
   struct SaveFileSummary *summary;
   struct WindowSprite *modePicture;
   s32 summaryDirty;
-  struct WindowWork *work;
+  struct WindowState *state;
   u32 buildStamp;
-  struct ShopWork *spriteWork;
+  struct ShopState *spriteState;
   s32 result;
   s32 i;
   s32 y;
 #else
   struct Window *summaryWindow;
-  struct SaveWork *save;
+  struct SaveState *save;
   struct Window *partyWindow;
   struct Window *djinnWindow;
   struct SaveFileSummary *summary;
   struct WindowSprite *modePicture;
   s32 cursorStyle;
   s32 summaryDirty;
-  struct WindowWork *work;
+  struct WindowState *state;
   u32 buildStamp;
-  struct ShopWork *spriteWork;
+  struct ShopState *spriteState;
   struct MenuCursor fileCursor;
   s32 result;
   s32 i;
@@ -849,17 +849,17 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   struct WindowSprite *cursorSprite;
 #endif
 
-  spriteWork = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(*spriteWork));
-  save = gSaveWork;
+  spriteState = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(*spriteState));
+  save = gSaveState;
   summaryWindow = NULL;
   partyWindow = NULL;
   djinnWindow = NULL;
   summaryDirty = 1;
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   buildStamp = BuildStamp_GetTimeFar();
   // Start on the first file the mode allows.
   // BUG: when none is, the jump to done returns FILE_LIST_NO_FILE without
-  // releasing spriteWork's HEAP_SLOT_MENU block.
+  // releasing spriteState's HEAP_SLOT_MENU block.
   if (selectedFile < 0)
     selectedFile = 0;
 #if TBS_PATCH_1
@@ -916,7 +916,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   }
 
   // The file list, and the mode's sprite above it.
-  Dma_Fill32(0, spriteWork, sizeof(*spriteWork));
+  Dma_Fill32(0, spriteState, sizeof(*spriteState));
   FileList_StartPulse();
   fileList = Window_Create(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
   summary = save->summary;
@@ -926,7 +926,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       Text_DrawMessage(MsgSaveNoData, fileList, 10, y);
     } else if (summary->frames < buildStamp) {
       // Saved by an older build: "(Continue from a Sanctum)", since such a
-      // file resumes at MainRoutineWork.restartScene, not where it was saved
+      // file resumes at MainRoutineState.restartScene, not where it was saved
       // (scene/file_screen.c).
       Text_DrawMessage(MsgSaveContinue, fileList, 10, y);
     } else if (summary->playTime != summary->secondPartPlayTime) {
@@ -936,7 +936,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     } else {
       Text_DrawString(summary->name, fileList, FILE_LIST_NAME_X, y);
       Text_DrawMessage(summary->area + MsgDebugAreaName, fileList, 62, y);
-      work->dirty = 1;
+      state->dirty = 1;
     }
   }
   Window_DrawDividerLine(fileList, 0, 2, 27, 2);
@@ -995,7 +995,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   }
 
   // The file list, and the mode's sprite above it.
-  Dma_Fill32(0, spriteWork, sizeof(*spriteWork));
+  Dma_Fill32(0, spriteState, sizeof(*spriteState));
   fileList = Window_Create(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
 
   for (i = 0, summary = save->summary; i < SAVE_FILE_COUNT; i++, summary++) {
@@ -1015,7 +1015,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       Text_DrawString(summary->name, fileList, FILE_LIST_NAME_X, y);
       Text_DrawMessage(save->summary[i].area + MsgDebugAreaName, fileList, 72,
                        y);
-      work->dirty = 1;
+      state->dirty = 1;
     }
   }
   Window_DrawDividerLine(fileList, 0, 2, 27, 2);
@@ -1067,8 +1067,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
           djinnWindow = NULL;
         }
       } else {
-        WindowColor_Apply(gMainRoutineWork.windowHue,
-                          gMainRoutineWork.windowBrightness);
+        WindowColor_Apply(gMainRoutineState.windowHue,
+                          gMainRoutineState.windowBrightness);
         FileList_HideDjinnSprites();
         FileList_HidePartySprites();
         Window_Close(djinnWindow, 2);
@@ -1145,8 +1145,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   FileList_StopPulse();
 #endif
   HeapSlot_Release(HEAP_SLOT_MENU);
-  WindowColor_Apply(gMainRoutineWork.windowHue,
-                    gMainRoutineWork.windowBrightness);
+  WindowColor_Apply(gMainRoutineState.windowHue,
+                    gMainRoutineState.windowBrightness);
   wait(1);
 done:
   return result;
@@ -1159,21 +1159,21 @@ s32 Save_ToChosenFile(void) {
   s32 result;
   s32 file;
   s32 error;
-  struct SaveWork *work;
+  struct SaveState *state;
 
   result = 0;
-  error = Save_InitializeWork();
+  error = Save_InitializeState();
   if (error != 0) {
     FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
-    work = gSaveWork;
+    state = gSaveState;
     file = FileList_SelectFile(gSaveSlot, FILE_LIST_SAVE);
     if (file == -1) {
       result = file;
     } else {
-      if (work->summary[file].level != 0) {
+      if (state->summary[file].level != 0) {
         FieldMessage_Show(MsgOverwriteConfirm, FIELD_MESSAGE_ZOOM |
                                                    FIELD_MESSAGE_KEEP_OPEN |
                                                    FIELD_MESSAGE_LOWER);
@@ -1210,7 +1210,7 @@ s32 Save_ToChosenFile(void) {
     }
   }
 done:
-  Save_ReleaseWork();
+  Save_ReleaseState();
   return result;
 }
 
@@ -1219,7 +1219,7 @@ done:
 /// and options.
 s32 Save_ChooseAndLoadFile(s32 mode) {
   s32 result = 0;
-  s32 error = Save_InitializeWork();
+  s32 error = Save_InitializeState();
 
   if (error != 0) {
     FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
@@ -1241,14 +1241,14 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
         FieldMessage_Show(MsgLoadFailed, FIELD_MESSAGE_ZOOM);
         result = SAVE_ERROR_READ;
       } else {
-        gPlayTimeFrames = gMainRoutineWork.playTime;
-        gIdleSleepEnabled = gMainRoutineWork.idleSleepEnabled;
+        gPlayTimeFrames = gMainRoutineState.playTime;
+        gIdleSleepEnabled = gMainRoutineState.idleSleepEnabled;
         gIdleFrames = 0;
         gSaveSlot = file;
       }
     }
   }
-  Save_ReleaseWork();
+  Save_ReleaseState();
   return result;
 }
 

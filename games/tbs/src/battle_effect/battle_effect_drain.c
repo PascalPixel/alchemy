@@ -19,7 +19,7 @@
 ///
 /// Abilities: Break.
 void BattleEffect_RunBreak(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle draw;
   u8 *sheet;
@@ -30,11 +30,11 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET),
@@ -48,15 +48,15 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   EFFECT_VIEW_FROM_CAMERA(camera);
 
   // Scatter the shards around the middle of each body.
-  EFFECT_FOR_EACH_TARGET(member, work->args) {
+  EFFECT_FOR_EACH_TARGET(member, state->args) {
     struct Actor *actor;
     s32 offset;
     s32 height;
     struct Particle *shard;
 
     offset = member * BREAK_SHARDS_PER_TARGET * sizeof(struct Particle);
-    actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
-    height = BattleUnit_GetEffectHeightFar(work->args->targets[member]) / 2;
+    actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+    height = BattleUnit_GetEffectHeightFar(state->args->targets[member]) / 2;
     SET_VECTOR(point, actor->x.fixed, height, actor->z.fixed);
     Projection_Point(point, &screen);
     screen.x >>= 1;
@@ -79,20 +79,20 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
     }
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != work->args->targetCount * DRAIN_TARGET_FRAMES +
+  for (frame = 0; frame != state->args->targetCount * DRAIN_TARGET_FRAMES +
                                BREAK_FALL_FRAMES;
        frame++) {
     if (frame == BREAK_HIT_FRAME)
       EFFECT_SHOW_DAMAGE(0);
-    EFFECT_FOR_EACH_TARGET(member, work->args) {
+    EFFECT_FOR_EACH_TARGET(member, state->args) {
       s32 offset;
 
       offset = member * BREAK_SHARDS_PER_TARGET * sizeof(struct Particle);
       if (frame == member * DRAIN_TARGET_FRAMES) {
         Sound_PlayFar(SE_CRACK);
-        BattleEffect_TintBattler(work->args->targets[member],
+        BattleEffect_TintBattler(state->args->targets[member],
                                  SPRITE_COLOR_WHITE, TINT_KEEP, member, 20);
       }
       // A shard falls and goes out below the ground.
@@ -117,7 +117,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
@@ -146,7 +146,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 ///
 /// Abilities: Drain, Psy Drain.
 void BattleEffect_RunDrain(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle draw;
   u8 *sheet;
@@ -157,7 +157,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
@@ -165,7 +165,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
     alternate = 0;
   else
     alternate = 1;
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Iwram_CopyWords(BG_PLTT,
@@ -177,12 +177,13 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
   // The motes fly out of each target's body.
   EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_MOTES_PER_TARGET);
 
-  EFFECT_FOR_EACH_TARGET(member, work->args) {
+  EFFECT_FOR_EACH_TARGET(member, state->args) {
     struct Actor *actor;
     s32 halfHeight;
 
-    actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
-    halfHeight = BattleUnit_GetEffectHeightFar(work->args->targets[member]) / 2;
+    actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+    halfHeight =
+        BattleUnit_GetEffectHeightFar(state->args->targets[member]) / 2;
     for (i = 0; i != DRAIN_MOTES_PER_TARGET; i++) {
       struct Particle *mote = &PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
 
@@ -198,30 +199,30 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != work->args->targetCount * DRAIN_TARGET_FRAMES +
+  for (frame = 0; frame != state->args->targetCount * DRAIN_TARGET_FRAMES +
                                DRAIN_END_FRAMES;
        frame++) {
     struct Actor *user;
     s32 halfHeight;
 
-    user = GetBattleObjectSlotFar(work->args->user)->actor;
-    halfHeight = BattleUnit_GetEffectHeightFar(work->args->user) / 2;
+    user = GetBattleObjectSlotFar(state->args->user)->actor;
+    halfHeight = BattleUnit_GetEffectHeightFar(state->args->user) / 2;
     if (frame == DRAIN_HIT_FRAME)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == DRAIN_GLOW_FRAME)
-      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
+      BattleEffect_TintBattler(state->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
-    if (frame == work->args->targetCount * DRAIN_TARGET_FRAMES +
+    if (frame == state->args->targetCount * DRAIN_TARGET_FRAMES +
                      DRAIN_END_FRAMES - DRAIN_GLOW_END_FRAMES)
-      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
-                               TINT_KEEP, 0);
-    EFFECT_FOR_EACH_TARGET(member, work->args) {
+      BattleEffect_TintBattler(state->args->user, SPRITE_COLOR_NORMAL,
+                               TINT_KEEP, TINT_KEEP, 0);
+    EFFECT_FOR_EACH_TARGET(member, state->args) {
       if (frame == member * DRAIN_TARGET_FRAMES)
-        BattleEffect_TintBattler(work->args->targets[member],
+        BattleEffect_TintBattler(state->args->targets[member],
                                  SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 42);
       if (frame > member * DRAIN_TARGET_FRAMES) {
         for (i = 0; i != DRAIN_DRAWN; i++) {
@@ -258,7 +259,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

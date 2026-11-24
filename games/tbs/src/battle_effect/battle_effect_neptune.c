@@ -94,12 +94,12 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   s32 neptuneVelocityX;
   s32 neptuneVelocityZ;
   s32 savedBg1ScrollX;
-  struct BattleBackgroundWork *view;
+  struct BattleBackgroundState *view;
   s32 j;
   s32 emittedDrops;
   s32 dropOriginX;
   u32 *heap;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   s32 frame;
   s32 flareFrame;
   s32 beamLines;
@@ -115,34 +115,34 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
   heap = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)heap[0];
-  work = (struct BattleEffectWork *)HEAP_SLOT_FROM(
+  state = (struct BattleEffectState *)HEAP_SLOT_FROM(
       heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_EFFECT);
   motes = (u8 *)HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS,
                                HEAP_SLOT_BATTLE_SHEET);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   Task_Add(BattleEffect_ResetBg2Pa, TASK_PASS_VBLANK);
   Irq_SetHandler(IRQ_VCOUNT, 0, BattleEffect_SetBg2AffineScaleHalf);
-  work->transferMode = CANVAS_COPY;
+  state->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Setup: wipe the battle away, swap in the storm clouds and load the
   // pictures.
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240);
-  BattleEffect_SelectLivingTargets(work->args);
+  BattleEffect_SelectLivingTargets(state->args);
   BattleEffect_SpawnObjects(NEPTUNE_SPRITES, SPRITE_NEPTUNE, 1);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            RESOURCE_DUSK_CLOUDS_BACKDROP, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
-                             work->sheet + NEPTUNE_FLARE_SHEET, 0, 0);
+                             state->sheet + NEPTUNE_FLARE_SHEET, 0, 0);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   windowEdgeStep = 1;
   neptuneX = toFIXED(280);
@@ -151,7 +151,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   neptuneVelocityZ = -toFIXED(8);
   savedBg1ScrollX = gBgScroll[1].x;
   view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   view->busy = 1;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
@@ -169,7 +169,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     s32 a = (Random16() & 0x3fff) + DEGtoANG(180);
     s32 r = (Random16() & 127) + 255;
 
-    flareSeed = &work->particles[i];
+    flareSeed = &state->particles[i];
     flareSeed->x = (Trig_Sin(a) * r) >> 2;
     flareSeed->y = (Trig_Cos(a) * r) >> 2;
     flareSeed->velocityX = -flareSeed->x / NEPTUNE_FLARE_FRAMES;
@@ -261,7 +261,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
             INTtoFIXED((gNeptune_ObjectX[i] * 3) >> 1) + neptuneX - toFIXED(32);
         place.y =
             INTtoFIXED((gNeptune_ObjectY[i] * 3) >> 1) + neptuneZ - toFIXED(24);
-        Actor_ApplyProjectedPlacementFar(work->sprites[i], &place, &scale, 0);
+        Actor_ApplyProjectedPlacementFar(state->sprites[i], &place, &scale, 0);
       }
     }
 
@@ -282,15 +282,15 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     if (frame == NEPTUNE_FLARES_FRAME) {
       Irq_SetHandler(IRQ_VCOUNT, NEPTUNE_NARROW_LINES,
                      BattleEffect_SetBg2AffineScaleHalf);
-      work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
-      work->fadeStep = 0;
+      state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
+      state->fadeStep = 0;
     }
 
     // Flares converge on Neptune's head.
     flareFrame = frame - NEPTUNE_FLARES_FRAME;
     if (flareFrame >= 0 && flareFrame < NEPTUNE_FLARES_WINDOW) {
       for (i = 0; i != NEPTUNE_FLARE_COUNT; i++) {
-        flare = &work->particles[i];
+        flare = &state->particles[i];
         if (frame >= i / 4 + NEPTUNE_FLARES_FRAME &&
             frame < i / 4 + NEPTUNE_FLARES_FRAME + NEPTUNE_FLARE_FRAMES) {
           s32 fx = FIXEDtoINT(flare->x) + NEPTUNE_FLARES_X;
@@ -298,7 +298,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           s32 size = (i & 3) + 5;
           span = size * 2;
           blit[0](canvas,
-                  work->sheet + gBattleEffect_FlarePictures[size - 1] +
+                  state->sheet + gBattleEffect_FlarePictures[size - 1] +
                       NEPTUNE_FLARE_SHEET,
                   fx - size, fy - size, span, span);
           flare->x += flare->velocityX;
@@ -309,7 +309,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
     if (frame == NEPTUNE_BURST_FRAME) {
       for (i = 0; i != NEPTUNE_BURST_SPARKS; i++) {
-        burstSeed = &work->particles[i];
+        burstSeed = &state->particles[i];
         burstSeed->x = (Random16() & 15) - 8;
         burstSeed->y = (Random16() & 15) - 8;
         if (burstSeed->x < 0) {
@@ -337,14 +337,14 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         /* LEFTOVER(template): r holds 1, the smallest flare's size. */
         s32 r = 1;
         if (frame >= i / 2 + NEPTUNE_BURST_FRAME) {
-          blit[0](canvas, work->sheet + pictures[r - 1] + NEPTUNE_FLARE_SHEET,
-                  work->particles[i].x - r, work->particles[i].y - r, r * 2,
+          blit[0](canvas, state->sheet + pictures[r - 1] + NEPTUNE_FLARE_SHEET,
+                  state->particles[i].x - r, state->particles[i].y - r, r * 2,
                   r * 2);
-          work->particles[i].x += work->particles[i].velocityX;
-          work->particles[i].y += work->particles[i].velocityY;
-          if (work->particles[i].y < 0) {
-            work->particles[i].y = work->particles[i].velocityY;
-            work->particles[i].x = work->particles[i].z;
+          state->particles[i].x += state->particles[i].velocityX;
+          state->particles[i].y += state->particles[i].velocityY;
+          if (state->particles[i].y < 0) {
+            state->particles[i].y = state->particles[i].velocityY;
+            state->particles[i].x = state->particles[i].z;
           }
         }
       }
@@ -391,8 +391,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (size > 4) {
         size = 4;
       }
-      EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
-                        60, size);
+      EFFECT_DRAW_FLARE(blit[1], canvas, state->sheet + NEPTUNE_FLARE_SHEET,
+                        108, 60, size);
     }
     if (frame >= NEPTUNE_SWELL_FRAME && frame < NEPTUNE_SECOND_SWELL_FRAME) {
       s32 size;
@@ -400,8 +400,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (size > 6) {
         size = 6;
       }
-      EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
-                        60, size);
+      EFFECT_DRAW_FLARE(blit[1], canvas, state->sheet + NEPTUNE_FLARE_SHEET,
+                        108, 60, size);
     }
     if (frame >= NEPTUNE_SECOND_SWELL_FRAME) {
       s32 size;
@@ -410,14 +410,14 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (size > 8) {
         size = 8;
       }
-      EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
-                        60, size);
+      EFFECT_DRAW_FLARE(blit[1], canvas, state->sheet + NEPTUNE_FLARE_SHEET,
+                        108, 60, size);
       if (frame < NEPTUNE_SPLASH_FRAME) {
         size = swellFrame / 4 + 1;
         if (size > 4) {
           size = 4;
         }
-        EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET,
+        EFFECT_DRAW_FLARE(blit[1], canvas, state->sheet + NEPTUNE_FLARE_SHEET,
                           100, 52, size);
       }
     }
@@ -428,7 +428,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         picture = 2;
       }
       blit[1](canvas,
-              work->sheet + NEPTUNE_SPLASH +
+              state->sheet + NEPTUNE_SPLASH +
                   picture * PICTURE_BYTES(WATER_SPLASH),
               63, 18, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
     }
@@ -436,12 +436,12 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       s32 picture;
       picture = (frame - NEPTUNE_BURST_FRAME) / 2 % 4 + 3;
       blit[0](canvas,
-              work->sheet + NEPTUNE_SPLASH +
+              state->sheet + NEPTUNE_SPLASH +
                   picture * PICTURE_BYTES(WATER_SPLASH),
               72, 30, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
       if (picture == 5) {
         blit[0](canvas,
-                work->sheet + NEPTUNE_SPLASH + 2 * PICTURE_BYTES(WATER_SPLASH),
+                state->sheet + NEPTUNE_SPLASH + 2 * PICTURE_BYTES(WATER_SPLASH),
                 66, 22, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
       }
     }
@@ -467,11 +467,11 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
     for (i = 0; i != 5; i++) {
       // The sea scrolls along the bottom.
-      blit[1](canvas, work->sheet,
+      blit[1](canvas, state->sheet,
               i * WATER_WAVE_WIDTH + ((frame / 4) & 31) - WATER_WAVE_WIDTH,
               NEPTUNE_SEA_Y, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   // The second stage: five columns of water crash down on the targets.
@@ -481,20 +481,20 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   BattleEffect_SetupBlendedDisplay();
   Task_Remove(BattleEffect_ResetBg2Pa);
   REG_WIN0H = WIN_RANGE(0, 240);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
     PARTICLES[i].variant = 0;
   }
   for (i = 0; i != NEPTUNE_COLUMN_SLOTS; i++) {
-    work->particles[i].x = (Random16() & 31) + 32;
-    work->particles[i].y = 0;
-    work->particles[i].variant = 0;
+    state->particles[i].x = (Random16() & 31) + 32;
+    state->particles[i].y = 0;
+    state->particles[i].variant = 0;
   }
-  EFFECT_FOR_EACH_TARGET(i, work->args) {
-    Projection_ScaledUnit(work->args->targets[i], &targetPosition);
-    work->particles[i].x = targetPosition.x / 2;
+  EFFECT_FOR_EACH_TARGET(i, state->args) {
+    Projection_ScaledUnit(state->args->targets[i], &targetPosition);
+    state->particles[i].x = targetPosition.x / 2;
   }
-  Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET, state->sheet, 1, 1);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -504,7 +504,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     for (i = 0; i != NEPTUNE_COLUMNS; i++) {
-      column = &work->particles[i];
+      column = &state->particles[i];
       if (frame == i * NEPTUNE_COLUMN_INTERVAL + 7) {
         Sound_PlayFar(SE_CAST);
       }
@@ -512,13 +512,13 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (frame >= i * NEPTUNE_COLUMN_INTERVAL &&
           column->variant < NEPTUNE_COLUMN_LANDED_FRAMES) {
         s32 wobble = frame * NEPTUNE_COLUMN_SPEED % BLUE_FLAME_COLUMN_HEIGHT;
-        blit[1](canvas, work->sheet, column->x - BLUE_FLAME_COLUMN_WIDTH / 2,
+        blit[1](canvas, state->sheet, column->x - BLUE_FLAME_COLUMN_WIDTH / 2,
                 column->y + wobble - 216, BLUE_FLAME_COLUMN_WIDTH,
                 BLUE_FLAME_COLUMN_HEIGHT);
-        blit[1](canvas, work->sheet, column->x - BLUE_FLAME_COLUMN_WIDTH / 2,
+        blit[1](canvas, state->sheet, column->x - BLUE_FLAME_COLUMN_WIDTH / 2,
                 column->y + wobble - 112, BLUE_FLAME_COLUMN_WIDTH,
                 BLUE_FLAME_COLUMN_HEIGHT - wobble);
-        blit[1](canvas, work->sheet + NEPTUNE_COLUMN_HEAD,
+        blit[1](canvas, state->sheet + NEPTUNE_COLUMN_HEAD,
                 column->x - BLUE_FLAME_SPLASH_WIDTH / 2,
                 column->y - BLUE_FLAME_SPLASH_HEIGHT, BLUE_FLAME_SPLASH_WIDTH,
                 BLUE_FLAME_SPLASH_HEIGHT);
@@ -531,7 +531,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           emittedDrops = 0;
           dropOriginX = column->x;
           if (column->variant < NEPTUNE_COLUMN_SHAKE_FRAMES) {
-            work->shakeFrames = 4;
+            state->shakeFrames = 4;
           }
           for (j = 0; j != PARTICLE_POOL_COUNT; j++) {
             if (PARTICLES[j].variant == 0) {
@@ -552,11 +552,11 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_FOR_EACH_TARGET(i, work->args) {
+    EFFECT_FOR_EACH_TARGET(i, state->args) {
       if (frame == i * NEPTUNE_COLUMN_INTERVAL + 8) {
-        BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
+        BattleEffect_TintBattler(state->args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 8);
-        BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_LEAP);
+        BattleMotion_ApplyKnockbackFar(state->args->targets[i], KNOCKBACK_LEAP);
       }
     }
     for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
@@ -578,11 +578,11 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(4, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   for (i = 0; i != NEPTUNE_SPRITES; i++) {
-    Sprite_DestroyFar(work->sprites[i]);
+    Sprite_DestroyFar(state->sprites[i]);
   }
   EFFECT_FINISH_CANVAS();
 }

@@ -16,7 +16,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   struct Actor *copy;
   struct Actor *previous;
   struct Sprite *sharedSprite;
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Actor **cursor;
   struct Actor **list;
   struct FieldParticle *effect;
@@ -33,7 +33,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
 
   // Tint the screen blue.
   FieldEffect_InitializeSlots();
-  effectWork = gFieldEffectWork;
+  effectState = gFieldEffectState;
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 4, 16));
   wait(30);
   // Unpause the Djinni, so its script and motion run.
@@ -98,9 +98,9 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   if (sharedSlot != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(sharedSlot);
   wait(10);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineState.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
   wait(20);
 
@@ -111,7 +111,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
-  effect = effectWork->particles;
+  effect = effectState->particles;
   i = MERCURY_DROPLETS - 1;
   do {
     FieldParticle_Initialize(effect, SPRITE_DROPLET, position.x, position.z);
@@ -125,7 +125,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
 
   // After 120 frames every droplet still in use takes its last fall.
   wait(120);
-  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, i, effectWork, particles,
+  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, i, effectState, particles,
                                    MERCURY_DROPLET_LAST_FALL);
 
   // Restore the colours.

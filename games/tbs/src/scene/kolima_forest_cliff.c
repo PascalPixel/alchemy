@@ -35,7 +35,7 @@
 #include "scene/kolima_palette.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 
 extern struct SceneEntrance gKolimaForestCliffEntrances[];
@@ -113,9 +113,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Sets up the logs and the forest's colours on entry.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
-  work->transition =
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Scene_RedrawActorRectangle(ACTOR_RIVER_LOG);
 

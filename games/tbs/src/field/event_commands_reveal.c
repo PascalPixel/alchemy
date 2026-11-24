@@ -40,30 +40,30 @@ void Actor_SetRevealSpriteColor(s32 value) {
 /// Task of the timed Psynergy (FIELD_PSYNERGY_REVEAL): asks for it to end once
 /// the leader is REVEAL_RADIUS from its centre or its time has run out.
 void FieldPsynergy_WatchLeaderDistance(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct Actor *actor;
   FIXED distanceX;
   s32 distanceZ;
 
-  work = gFieldWork;
-  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  if (work->effectTimerRunning != 0) {
-    if (work->revealFrames != 0)
-      work->revealFrames--;
+  state = gFieldState;
+  actor = Actor_Lookup(gMainRoutineState.leaderActorId);
+  if (state->effectTimerRunning != 0) {
+    if (state->revealFrames != 0)
+      state->revealFrames--;
   }
 
   // In screen pixels: y is z less the height. x is scaled by 0.81649, about
   // the square root of 2/3.
-  distanceX = Iwram_MulFX(work->revealCenterX - actor->x.fixed / FIXED_ONE,
+  distanceX = Iwram_MulFX(state->revealCenterX - actor->x.fixed / FIXED_ONE,
                           toFIXED(0.81649));
   distanceZ =
-      work->revealCenterY - (actor->z.fixed - actor->y.fixed) / FIXED_ONE;
+      state->revealCenterY - (actor->z.fixed - actor->y.fixed) / FIXED_ONE;
   if (distanceX * distanceX + distanceZ * distanceZ >=
           REVEAL_RADIUS * REVEAL_RADIUS ||
-      work->revealFrames == 0) {
+      state->revealFrames == 0) {
     // Raise Reveal as a Psynergy request that pays no PP, which runs its
     // ending events.
-    u16 *slot = (u16 *)&work->psynergy;
+    u16 *slot = (u16 *)&state->psynergy;
     u32 request = ACT_PACKED | ABILITY_REVEAL;
 
     *slot = request;
@@ -74,18 +74,18 @@ void FieldPsynergy_WatchLeaderDistance(void) {
 /// round the leader; runs the scene's Reveal event if there is one, puts
 /// markers round the leader and watches how far the leader walks.
 void FieldPsynergy_Reveal(void) {
-  struct FieldWork *work;
+  struct FieldState *fieldState;
   struct ScreenTransitionState *state;
   struct Actor *target;
   s32 eventTarget;
   void *event;
   s32 frame;
 
-  work = gFieldWork;
+  fieldState = gFieldState;
   Actor_SetRevealSpriteColor(SPRITE_COLOR_GREY);
   ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_RIPPLE);
   state = HEAP_SLOT_BLOCK(HEAP_SLOT_SCREEN_TRANSITION);
-  target = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  target = Actor_Lookup(gMainRoutineState.leaderActorId);
   state->centreX = target->x.fixed;
   state->centreY = target->z.fixed - target->y.fixed;
   // The BG palettes turn grey in one frame.
@@ -94,22 +94,22 @@ void FieldPsynergy_Reveal(void) {
   PaletteFade_StartInterpolation(1);
   // Not in the English release.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
-  work->revealActive = 0;
+  fieldState->revealActive = 0;
 #endif
   wait(1);
   event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                     FIELD_PSYNERGY_REVEAL, &eventTarget);
   if (event != NULL)
-    Field_RunPsynergyEvent(event, gMainRoutineWork.leaderActorId, eventTarget);
+    Field_RunPsynergyEvent(event, gMainRoutineState.leaderActorId, eventTarget);
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
 
-  // Record the centre (in pixels) and the time in the field work, and put
+  // Record the centre (in pixels) and the time in the field state, and put
   // markers nearby.
-  work->revealActive = 1;
-  work->revealCenterX = state->centreX / FIXED_ONE;
-  work->revealCenterY = state->centreY / FIXED_ONE;
-  work->revealFrames = REVEAL_FRAMES;
-  work->effectTimerRunning = 1;
+  fieldState->revealActive = 1;
+  fieldState->revealCenterX = state->centreX / FIXED_ONE;
+  fieldState->revealCenterY = state->centreY / FIXED_ONE;
+  fieldState->revealFrames = REVEAL_FRAMES;
+  fieldState->effectTimerRunning = 1;
   FieldEffect_SpawnRevealMarkers();
   for (frame = 0; frame <= 18; frame++) {
     wait(1);
@@ -121,9 +121,9 @@ void FieldPsynergy_Reveal(void) {
 /// Ends Reveal if it is running: stops its watch, brings the colours back from
 /// black over 30 frames and runs the scene's PSYNERGY_PHASE_FADES event.
 void FieldPsynergy_EndReveal(void) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct ScreenTransitionState *transition = gScreenTransitionWork;
-  struct FieldWork *state = gFieldWork;
+  struct FieldEffectState *effectState = gFieldEffectState;
+  struct ScreenTransitionState *transition = gScreenTransitionState;
+  struct FieldState *state = gFieldState;
   s32 eventTarget;
   void *event;
 
@@ -145,10 +145,10 @@ void FieldPsynergy_EndReveal(void) {
     event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_FADES),
                                       FIELD_PSYNERGY_REVEAL, &eventTarget);
     if (event != NULL)
-      Field_RunPsynergyEvent(event, gMainRoutineWork.leaderActorId,
+      Field_RunPsynergyEvent(event, gMainRoutineState.leaderActorId,
                              eventTarget);
 
-    if (effectWork->childOption == 0) {
+    if (effectState->childOption == 0) {
       transition->nextMode = 0;
       transition->duration = 1;
       transition->step = 1;

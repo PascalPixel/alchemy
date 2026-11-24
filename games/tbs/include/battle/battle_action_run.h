@@ -9,7 +9,7 @@
 #include "battle/battle_unit.h"
 
 enum {
-  /// Targets an action can hold: as many units as BattleWork.objects holds, 8
+  /// Targets an action can hold: as many units as BattleState.objects holds, 8
   /// party places and 6 enemies.
   BATTLE_TARGET_CAPACITY = 14,
   BATTLE_ACTION_RUN_SIZE = 100

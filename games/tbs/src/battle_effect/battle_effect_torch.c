@@ -23,7 +23,7 @@
 ///
 /// Abilities: Torch.
 void BattleEffect_RunTorch(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 screenY;
   s32 screenX;
@@ -46,19 +46,20 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   s32 angle;
   s32 *line;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_WRAP);
   BattleEffect_RunDjinniEntrance(args, ELEMENT_MARS + DJINNI_ENTRANCE_LONG,
-                                 work->args->side, DJINNI_ANCHOR_OVER_USER,
+                                 state->args->side, DJINNI_ANCHOR_OVER_USER,
                                  &screenX, &screenY);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
   REG_BG2PA = Q_8_8(1.0 / 1.5);
-  BattleEffect_FetchRectangleBlitters(work->args->side, draw);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  BattleEffect_FetchRectangleBlitters(state->args->side, draw);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   // The rings: each pixel's level is half its distance from the middle, its
   // rows drawn a little taller; one quarter is worked out and mirrored into
@@ -74,10 +75,10 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
         distance = 1;
       if (distance > CANVAS_LEVEL_BRIGHTEST)
         distance = CANVAS_LEVEL_BRIGHTEST;
-      work->sheet[y * CANVAS_SIZE + x] = distance;
-      work->sheet[y * CANVAS_SIZE + CANVAS_SIZE - 1 - x] = distance;
-      work->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + x] = distance;
-      work->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + CANVAS_SIZE - 1 - x] =
+      state->sheet[y * CANVAS_SIZE + x] = distance;
+      state->sheet[y * CANVAS_SIZE + CANVAS_SIZE - 1 - x] = distance;
+      state->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + x] = distance;
+      state->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + CANVAS_SIZE - 1 - x] =
           distance;
     }
   }
@@ -112,8 +113,8 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     ramp[i] = ((u16 *)BG_PLTT)[i] = RGB(red, green, blue);
   }
 
-  draw[0](canvas, work->sheet, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
-  work->transferPending = 1;
+  draw[0](canvas, state->sheet, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+  state->transferPending = 1;
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
 
   // Fade the rings in, sway the lines, then fade them out.
@@ -130,7 +131,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
 
     // Each line starts one canvas pixel further along than the one above,
     // swayed either way by up to TORCH_SWAY.
-    line = work->bg2xLines;
+    line = state->bg2xLines;
     for (i = 0, angle = -(swayPhase << 9); i != DISPLAY_HEIGHT; i++) {
       *line++ = CANVAS_WAVE_BG2X(i * toFIXED(4) - Trig_Sin(angle) * TORCH_SWAY +
                                  toFIXED(4));
@@ -141,7 +142,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     // DEAD: never true, as frame stays below TORCH_FRAMES; the ROM keeps the
     // compare and the store.
     if (frame > 127) {
-      work->transferPending = 1;
+      state->transferPending = 1;
     } else {
       ramp[1] = ramp[CANVAS_LEVEL_BRIGHTEST];
       Dma_Set(ramp + CANVAS_LEVEL_BRIGHTEST - 1, ramp + CANVAS_LEVEL_BRIGHTEST,
@@ -160,15 +161,15 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
 ///
 /// Abilities: Kite.
 void BattleEffect_RunKite(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   s32 originX;
   s32 originY;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  work->args = args;
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(args, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG,
-                                 work->args->side ^ 1,
+                                 state->args->side ^ 1,
                                  DJINNI_ANCHOR_OVER_TARGET, &originX, &originY);
   BattleEffect_EndCanvasLayer();
 }

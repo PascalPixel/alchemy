@@ -52,7 +52,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -237,11 +237,11 @@ const struct Trigger *Scene_GetTriggers(void) { return gLogRoomsC_Triggers; }
 
 /// Sets up the houses for the curse and the way they're entered.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   u32 actorId;
   u32 entrance;
 
-  work->transition =
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 
   // While the curse lasts, the trees cast no shadow.
@@ -254,7 +254,7 @@ s32 Scene_Initialize(void) {
     }
   }
 
-  entrance = (u16)gMainRoutineWork.entrance;
+  entrance = (u16)gMainRoutineState.entrance;
 
   // By the village's south door the room is the father's house. By the north
   // doorway or up from Kolima Tunnel, the two entrances after it, other cells

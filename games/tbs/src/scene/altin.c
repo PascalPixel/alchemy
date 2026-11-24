@@ -3,7 +3,7 @@
 /// share this overlay and the area name Altin: the village outdoors
 /// (SceneId_Altin), and its inn, shops and houses (SceneId_CottageRoomsD), a
 /// rooms map each in its own camera box. The getters pick each scene's
-/// tables by gMainRoutineWork.next, and both share one exit table. A third,
+/// tables by gMainRoutineState.next, and both share one exit table. A third,
 /// empty set of tables serves any other scene.
 ///
 /// When the party comes in from the World Map on the east, the village is under
@@ -64,7 +64,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/system_call.h"
 #include "text/msg_ids.h"
@@ -296,7 +296,7 @@ static void CottageRoomsD_PlaceSheltering(void);
 static void Altin_BeastSpewWater(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == MAP_ALTIN_VILLAGE) {
     return gAltin_Entrances;
@@ -315,7 +315,7 @@ const u32 *Scene_GetExits(void) { return gAltin_Exits; }
 /// Some villagers only turn back after talking once the flood is over or
 /// their family has gone home.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s32 sceneId = gMainRoutineWork.next;
+  s32 sceneId = gMainRoutineState.next;
   if (sceneId == MAP_ALTIN_VILLAGE) {
     if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED)) {
       gAltin_ActorPlacements[ACTOR_WOMAN_WATER_LUCK - ACTOR_FIRST_PLACED]
@@ -342,7 +342,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == MAP_ALTIN_VILLAGE) {
     return gAltin_Triggers;
@@ -637,14 +637,14 @@ static void CottageRoomsD_TalkToInnkeeper(void) {
 /// armor shop (cell (8, 19)), and by the rails at the south (cell (17, 25)).
 static void Altin_EnterDoor(void) {
   u32 actorId;
-  struct FieldWork *work;
+  struct FieldState *state;
   struct Actor *actor;
   s32 doorIndex;
   s32 column;
   s32 row;
   s32 rightColumn;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_ID; actorId++) {
     actor = Actor_Get(actorId);
@@ -653,7 +653,7 @@ static void Altin_EnterDoor(void) {
     }
   }
 
-  doorIndex = (s16)(work->stepTrigger - CELL_BEHAVIOR_ALTIN_FIRST_DOOR);
+  doorIndex = (s16)(state->stepTrigger - CELL_BEHAVIOR_ALTIN_FIRST_DOOR);
   column = (s16)gAltin_Doors[doorIndex].x;
   row = (s16)gAltin_Doors[doorIndex].y;
   if (doorIndex == DOOR_SANCTUM) {
@@ -681,7 +681,7 @@ static void Altin_EnterDoor(void) {
   }
 
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (doorIndex == DOOR_ARMOR_SHOP) {
@@ -695,7 +695,7 @@ static void Altin_EnterDoor(void) {
     }
   }
   Event_Wait(10);
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -707,14 +707,14 @@ static void Altin_EnterDoor(void) {
 /// rails run south (cell (20, 16)), or the one in the west cliff by the water
 /// beast (cell (1, 28)).
 static void Altin_WalkIntoMine(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Sound_Play(SE_MAP_EXIT);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -815,7 +815,7 @@ s32 Scene_Initialize(void) {
     GameFlag_Set(FLAG_ALTIN_WATER_DRAINED);
   }
 
-  sceneId = gMainRoutineWork.next;
+  sceneId = gMainRoutineState.next;
   if (sceneId == MAP_ALTIN_VILLAGE) {
     Altin_ApplyWaterLevel();
   } else if (sceneId == MAP_ALTIN_HOUSES) {
@@ -862,7 +862,7 @@ static void Altin_ApplyWaterLevel(void) {
     Actor_SetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
     Task_AddFrame(Altin_BeastSpewWater, TASK_PASS_FRAME);
   }
-  if (gMainRoutineWork.entrance == ALTIN_FROM_SANCTUM) {
+  if (gMainRoutineState.entrance == ALTIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   // XXX: what copying these four by three cells into the flooded village's

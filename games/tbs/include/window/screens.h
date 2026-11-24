@@ -105,7 +105,7 @@ struct BattleAction;
 struct AbilityDefinition;
 struct GlyphPalette;
 struct PsynergyEntry;
-struct BattleCommandRowWork;
+struct BattleCommandRowState;
 
 UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void);
 UNREAD_RESULT RangeIcon_Draw(struct Window *window, s32 x, s32 y, s32 pattern,
@@ -119,12 +119,12 @@ s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 AbilityIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 Portrait_Load(u32 member, s32 cacheSlot);
 s32 WindowSprite_GetPointerTiles(s32 no);
-void Icon_Decompress(GlyphTransfer *work);
+void Icon_Decompress(GlyphTransfer *state);
 struct Window *Link_CreateCountdownLabelWindow(void);
 s32 CommandIcon_ReloadSlot(s32 slotIndex, s32 icon);
 void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
                                     s32 tile);
-void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
+void BattleCommandRow_LoadIcon(struct BattleCommandRowState *state, s32 index,
                                u32 kind);
 void CommandRow_PutBg1Behind(void);
 void CommandRow_PutBg1InFront(void);

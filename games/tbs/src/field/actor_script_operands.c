@@ -1,11 +1,11 @@
 /// @file
-/// Script work values: the handler SC_SET, SC_ADD and SC_CMP call for each.
+/// Script state values: the handler SC_SET, SC_ADD and SC_CMP call for each.
 
 #include "field/actor_script_operands.h"
 #include "types.h"
 #include "field/field.h"
 
-/// The handler for each work value number (enum ActorScriptValue).
+/// The handler for each state value number (enum ActorScriptValue).
 const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareScriptAddress,     // 0 SW_SCRIPT
     ActorScript_SetOrCompareCursor,            // 1 SW_CURSOR

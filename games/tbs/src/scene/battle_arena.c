@@ -195,14 +195,14 @@ enum BattleArenaSlot {
   BATTLE_ARENA_SLOT_ALONE = 5
 };
 
-/// The Battle Arena's raised triggers (FieldWork.raisedTrigger).
+/// The Battle Arena's raised triggers (FieldState.raisedTrigger).
 enum BattleArenaRaisedTrigger {
   BATTLE_ARENA_EVENT_NONE = 0,
   BATTLE_ARENA_EVENT_ASK_TO_PARTICIPATE = 1, ///< BattleArena_AskToParticipate
   BATTLE_ARENA_EVENT_DISCONNECTED = 2 ///< BattleArena_ReportLinkDisconnected
 };
 
-/// gMainRoutineWork.linkTallies, as the Battle Arena keeps them.
+/// gMainRoutineState.linkTallies, as the Battle Arena keeps them.
 enum LinkTally {
   LINK_TALLY_MONSTER_WINS = 0,
   LINK_TALLY_MONSTER_LOSSES = 1,
@@ -309,7 +309,7 @@ u8 *Scene_GetExits(void) { return (u8 *)gBattleArenaExits; }
 
 /// The actor placements entry.
 s32 Scene_GetActorPlacements(void) {
-  s16 entrance = gMainRoutineWork.entrance;
+  s16 entrance = gMainRoutineState.entrance;
 
   if (entrance == BATTLE_ARENA_AFTER_LINK_LOSS ||
       entrance == BATTLE_ARENA_AFTER_MONSTER_LOSS) {
@@ -361,11 +361,11 @@ static void BattleArena_WriteSlotValue(s32 slot) {
 
 /// The task that watches the opponent each frame in the Battle Arena.
 static UNREAD_RESULT BattleArena_WatchOpponent(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 result;
   s32 i;
 
-  work = gFieldWork;
+  state = gFieldState;
   result = 1;
   // The leader is south of z 224 (16.16 pixels), towards the way out: the
   // party stops talking about the last battle.
@@ -373,7 +373,7 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
     GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
   }
   // While BATTLE_ARENA_EVENT_DISCONNECTED waits, skip the opponent tracking.
-  if (work->raisedTrigger != BATTLE_ARENA_EVENT_DISCONNECTED) {
+  if (state->raisedTrigger != BATTLE_ARENA_EVENT_DISCONNECTED) {
     BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_SIGNATURE);
     if (!GameFlag_Get(FLAG_BATTLE_ARENA_LINK_UP)) {
       // Without a link for more than BATTLE_ARENA_PEER_WAIT_FRAMES frames,
@@ -396,7 +396,7 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
            BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_IN_CIRCLE))) {
         GameFlag_Set(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
         if (GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_APPLIED)) {
-          work->raisedTrigger = BATTLE_ARENA_EVENT_ASK_TO_PARTICIPATE;
+          state->raisedTrigger = BATTLE_ARENA_EVENT_ASK_TO_PARTICIPATE;
         }
         result = 1;
       } else {
@@ -407,7 +407,7 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
     if (GameFlag_Get(FLAG_BATTLE_ARENA_OPPONENT_ASKED) &&
         GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_APPLIED) &&
         !GameFlag_Get(FLAG_BATTLE_ARENA_ATTENDANT_ASKED)) {
-      work->raisedTrigger = BATTLE_ARENA_EVENT_ASK_TO_PARTICIPATE;
+      state->raisedTrigger = BATTLE_ARENA_EVENT_ASK_TO_PARTICIPATE;
     }
   }
   // BATTLE_ARENA_PEER_WAIT_FRAMES frames without a link while a linked battle
@@ -417,14 +417,14 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
       !GameFlag_Get(FLAG_MONSTER_BATTLE) &&
       !BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_SIGNATURE) &&
       sBattleArenaWaitFrames >= BATTLE_ARENA_PEER_WAIT_FRAMES) {
-    work->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
+    state->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
     GameFlag_Set(FLAG_BATTLE_ARENA_LINK_DISCONNECTED);
     GameFlag_Clear(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
     GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_APPLIED);
     BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
   }
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_DISCONNECTED)) {
-    work->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
+    state->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
   }
   RETURN_UNREAD(result);
 }
@@ -479,13 +479,13 @@ static s32 BattleArena_AskToParticipate(void) {
 /// `BattleArena_WatchOpponent` and `BattleArena_EnterBattle` raise it
 /// (BATTLE_ARENA_EVENT_DISCONNECTED).
 static s32 BattleArena_ReportLinkDisconnected(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
   BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
   GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
   GameFlag_Clear(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
   Event_Start();
-  work->raisedTrigger = BATTLE_ARENA_EVENT_NONE;
+  state->raisedTrigger = BATTLE_ARENA_EVENT_NONE;
   Event_SetMessageId(MsgLobbyLinkDisconnected);
   // "The link was disconnected."
   Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -626,7 +626,7 @@ done:
 }
 
 /// Copies the character ids of the first three party members
-/// (gMainRoutineWork.party), ends them with 0xff and returns how many. A
+/// (gMainRoutineState.party), ends them with 0xff and returns how many. A
 /// null destination only counts them.
 static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
   s32 memberCount = Party_CountMembers();
@@ -634,15 +634,15 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
     memberCount = BATTLE_ARENA_UNIT_RECORD_COUNT;
   if (memberCount > 0) {
 #ifndef UBFIX
-    s16 *partyAddress = (s16 *)&gMainRoutineWork;
+    s16 *partyAddress = (s16 *)&gMainRoutineState;
 #endif
     const u8 *source;
     s32 remaining;
 #ifdef UBFIX
     // The original short-pointer addition traverses a struct as an array.
-    source = gMainRoutineWork.party;
+    source = gMainRoutineState.party;
 #else
-    partyAddress += offsetof(struct MainRoutineWork, party) / sizeof(s16);
+    partyAddress += offsetof(struct MainRoutineState, party) / sizeof(s16);
     source = (const u8 *)partyAddress;
 #endif
     remaining = memberCount;
@@ -841,12 +841,12 @@ check:
 /// Before a battle is arranged, nothing happens on the mark. A lost link or a
 /// failed trade walks him back out and lets the attendant say so.
 static s32 BattleArena_EnterBattle(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 failed;
   struct Window *window;
   s32 missedFrames;
   s32 cancelEntry;
-  u8 *savedWork;
+  u8 *savedState;
   u8 *source;
   u8 *destination;
   u16 *signature;
@@ -854,7 +854,7 @@ static s32 BattleArena_EnterBattle(void) {
 
   failed = 0;
   window = 0;
-  work = gFieldWork;
+  state = gFieldState;
   missedFrames = 0;
   if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
     Event_Start();
@@ -884,7 +884,7 @@ static s32 BattleArena_EnterBattle(void) {
         missedFrames = 0;
       }
       if (cancelEntry) {
-        work->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
+        state->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
         GameFlag_Set(FLAG_BATTLE_ARENA_LINK_DISCONNECTED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_APPLIED);
@@ -907,14 +907,14 @@ static s32 BattleArena_EnterBattle(void) {
     // Djinn into units FIRST_ENEMY_UNIT to FIRST_ENEMY_UNIT + 3. The copy to
     // gActorSpriteSlots (32 KB into gMapGridCellBuffer) hands them to
     // Battle_Run, which copies them back.
-    savedWork =
+    savedState =
         HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
     Task_Remove((TaskFunc)BattleArena_WatchOpponent);
     TilesetAnim_Resume(BATTLE_ARENA_GATE_ANIMATION);
     wait(8);
     TilesetAnim_Pause(BATTLE_ARENA_GATE_ANIMATION);
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
-      Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
+      Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineState.leaderActorId, 0);
       Event_SetMessageId(MsgLobbyGoodLuck);
       // "Good luck!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -952,7 +952,7 @@ static s32 BattleArena_EnterBattle(void) {
         GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_UP);
         GameFlag_Clear(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
         GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
-        work->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
+        state->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
         Event_End();
         return BATTLE_ARENA_NO_RESULT;
       }
@@ -982,7 +982,7 @@ static s32 BattleArena_EnterBattle(void) {
     signature[2] = 'E';
     signature[3] = 'C';
     i = 0;
-    source = savedWork;
+    source = savedState;
     destination = gActorSpriteSlots;
     for (; i < 6 * BATTLE_UNIT_SIZE; i++) {
       *destination++ = *source++;
@@ -1012,7 +1012,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
   // a battle." (MsgLobbyPleaseSpeakWhen), as quoted where each is chosen.
   messageBase = MsgLobbyPleaseSpeakWhen;
   Event_Start();
-  Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineState.leaderActorId, 0);
   if (BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_SIGNATURE) == 0) {
     wait(1);
   }
@@ -1034,7 +1034,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
         GameFlag_Set(FLAG_BATTLE_ARENA_PLAYER_APPLIED);
         // "When you finish your preparations, please step into the circle!"
         messageId = messageBase + 7;
-        gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = answer;
+        gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_STREAK] = answer;
         goto message;
       }
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
@@ -1125,10 +1125,10 @@ static s32 BattleArena_TellLinkedWins(s32 actorId) {
   s32 messageBase;
 
   Event_Start();
-  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(actorId, gMainRoutineState.leaderActorId, 0);
   if (FACING_IS_NORTH(facing)) {
     messageBase = MsgLobbyLooksLikeFirst;
-    tally = &gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS];
+    tally = &gMainRoutineState.linkTallies[LINK_TALLY_LINKED_WINS];
     if (*tally != 0) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*tally, MESSAGE_ARGUMENT_NUMBER);
@@ -1142,7 +1142,7 @@ static s32 BattleArena_TellLinkedWins(s32 actorId) {
     }
   } else {
     messageBase = MsgLobbyLooksLikeFirstTime;
-    tally = &gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK];
+    tally = &gMainRoutineState.linkTallies[LINK_TALLY_LINKED_STREAK];
     if (*tally != 0) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*tally, MESSAGE_ARGUMENT_NUMBER);
@@ -1174,7 +1174,7 @@ static s32 BattleArena_ChooseDebugParameterSet(s32 actorId) {
   s32 loadResult;
 
   Event_Start();
-  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(actorId, gMainRoutineState.leaderActorId, 0);
   Event_SetMessageId(MsgLobbyChooseParameters);
   // "Choose your parameters here."
   Event_ShowMessage(actorId, 0);
@@ -1257,10 +1257,10 @@ static s32 BattleArena_PartyContains(s32 memberId) {
     count = memberLimit;
   }
   for (i = 0; i < count; i++) {
-    if (gMainRoutineWork.party[i] == BATTLE_UNIT_LIST_END) {
+    if (gMainRoutineState.party[i] == BATTLE_UNIT_LIST_END) {
       return 0;
     }
-    if (gMainRoutineWork.party[i] == memberId) {
+    if (gMainRoutineState.party[i] == memberId) {
       return 1;
     }
   }
@@ -1285,7 +1285,7 @@ static s32 BattleArena_TalkByProgress(s32 actorId) {
   s32 speakerPresent = BattleArena_PartyContains(actorId);
 
   Event_Start();
-  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(actorId, gMainRoutineState.leaderActorId, 0);
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED)) {
     // Isaac's flag is tested and the result dropped; messageBase first holds
     // whether the speaker fought (FLAG_BATTLE_ARENA_IN_PARTY_FIRST + actor id).
@@ -1355,7 +1355,7 @@ static s32 BattleArena_TalkToVisitor(s32 actorId) {
     message = MsgLobbyBattleArenaOld;
     break;
   }
-  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(actorId, gMainRoutineState.leaderActorId, 0);
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED))
     step = 2 - (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_WON) != 0);
   Event_SetMessageId(message + step);
@@ -1374,7 +1374,7 @@ static s32 BattleArena_ExplainPartyOrder(s32 actorId) {
   s32 message;
 
   Event_Start();
-  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(actorId, gMainRoutineState.leaderActorId, 0);
   if (!Event_GetFlag(FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT)) {
     if (Party_CountMembers() <= 3)
       message = MsgLobbyThreeAlliesFightLinkedFinals;
@@ -1400,10 +1400,10 @@ static s32 BattleArena_ExplainPartyOrder(s32 actorId) {
 static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
 
   Event_Start();
-  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
-  if (gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
+  Actor_FaceActor(actorId, gMainRoutineState.leaderActorId, 0);
+  if (gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
     MessageArgument_Push(
-        gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK],
+        gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK],
         MESSAGE_ARGUMENT_NUMBER);
     Event_SetMessageId(MsgLobbyWonNumberConsecutive);
   } else {
@@ -1492,16 +1492,16 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 /// File Screen the link is started.
 s32 Scene_Initialize(void) {
   s32 i;
-  struct FieldWork *work;
+  struct FieldState *state;
   void (*func)(void);
 
   gBattleArenaCallFrames = 0;
   sBattleArenaWaitFrames = 0;
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
   BattleArena_DrawThreeDigitValue(
-      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
+      gMainRoutineState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
   BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
   wait(1);
@@ -1525,7 +1525,7 @@ s32 Scene_Initialize(void) {
     }
   }
   // A monster battle won: offer the next one.
-  if (gMainRoutineWork.entrance == BATTLE_ARENA_AFTER_MONSTER_WIN) {
+  if (gMainRoutineState.entrance == BATTLE_ARENA_AFTER_MONSTER_WIN) {
     s32 wins;
     s32 messageOffset;
     s32 v;
@@ -1534,8 +1534,8 @@ s32 Scene_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_ALONE);
-    gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_WINS]++;
-    gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK]++;
+    gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_WINS]++;
+    gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_STREAK]++;
     // The offer has two lines a level (FLAG_MONSTER_BATTLE_WINS, -1 when a
     // series starts), the next monster's line going no further than
     // MONSTER_OFFER_LAST_NEXT. FLAG_AREA_TEMP_E8's byte counts the victories 0
@@ -1554,7 +1554,7 @@ s32 Scene_Initialize(void) {
     } else {
       FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, v + 1);
     }
-    Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineState.leaderActorId, 0);
     Event_SetMessageId(MsgLobbyNotBadNextMonster + messageOffset);
     Event_OpenMessage(ACTOR_ATTENDANT, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == YES) {
@@ -1567,12 +1567,12 @@ s32 Scene_Initialize(void) {
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
       MessageArgument_Push(
-          gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK],
+          gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_STREAK],
           MESSAGE_ARGUMENT_NUMBER);
-      if (gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
-          gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
-        gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
-            gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK];
+      if (gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
+          gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
+        gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
+            gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_STREAK];
         Event_SetMessageId(MsgLobbyWonNumberBattleBroke);
         // "You won ... battle. You broke the record!"
         Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -1586,20 +1586,20 @@ s32 Scene_Initialize(void) {
     }
     Event_End();
     // A monster battle lost: the series ends, and a new best run is saved.
-  } else if (gMainRoutineWork.entrance == BATTLE_ARENA_AFTER_MONSTER_LOSS) {
-    gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
+  } else if (gMainRoutineState.entrance == BATTLE_ARENA_AFTER_MONSTER_LOSS) {
+    gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
     Event_Start();
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_ALONE);
-    Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineState.leaderActorId, 0);
     MessageArgument_Push(
-        gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK],
+        gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_STREAK],
         MESSAGE_ARGUMENT_NUMBER);
-    if (gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
-        gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
-      gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
-          gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK];
+    if (gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
+        gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
+      gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
+          gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_STREAK];
       Event_SetMessageId(MsgLobbyWonNumberBattleBroke);
       // "You won ... battle. You broke the record!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -1609,14 +1609,14 @@ s32 Scene_Initialize(void) {
       // "You won ... battle. I told you our monsters were tough!..."
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
     }
-    gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = 0;
+    gMainRoutineState.linkTallies[LINK_TALLY_MONSTER_STREAK] = 0;
     GameFlag_Clear(FLAG_MONSTER_BATTLE);
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
     Event_End();
     // A linked battle won: count the win and the run; a longer run is the
     // board's new record. Saved.
-  } else if (gMainRoutineWork.entrance == BATTLE_ARENA_AFTER_LINK_WIN) {
+  } else if (gMainRoutineState.entrance == BATTLE_ARENA_AFTER_LINK_WIN) {
     s32 v;
 
     Event_Start();
@@ -1627,29 +1627,29 @@ s32 Scene_Initialize(void) {
     // The battle broke off instead (Battle_Run set FLAG_AREA_TEMP_E8): report
     // the link lost and restart it.
     if (Event_GetFlag(FLAG_AREA_TEMP_E8)) {
-      work = gFieldWork;
+      state = gFieldState;
       GameFlag_Clear(FLAG_AREA_TEMP_E8);
-      work->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
+      state->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
       GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
       wait(20);
       BattleArena_RestartLink();
       BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
       BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
     } else {
-      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS]++;
-      v = gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] + 1;
-      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
-      if (gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK] < (u16)v)
-        gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK] = v;
+      gMainRoutineState.linkTallies[LINK_TALLY_LINKED_WINS]++;
+      v = gMainRoutineState.linkTallies[LINK_TALLY_LINKED_STREAK] + 1;
+      gMainRoutineState.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
+      if (gMainRoutineState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK] < (u16)v)
+        gMainRoutineState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK] = v;
       BattleArena_DrawThreeDigitValue(
-          gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
+          gMainRoutineState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
       BattleArena_SaveBattleResults();
       GameFlag_Set(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
       GameFlag_Set(FLAG_BATTLE_ARENA_LINK_BATTLE_WON);
     }
     Event_End();
     // A linked battle lost: count the loss and end the run. Saved.
-  } else if (gMainRoutineWork.entrance == BATTLE_ARENA_AFTER_LINK_LOSS) {
+  } else if (gMainRoutineState.entrance == BATTLE_ARENA_AFTER_LINK_LOSS) {
     s32 v;
 
     Event_Start();
@@ -1658,8 +1658,8 @@ s32 Scene_Initialize(void) {
     BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
     BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
     if ((v = GameFlag_Get(FLAG_MONSTER_BATTLE)) == 0) {
-      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_LOSSES]++;
-      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
+      gMainRoutineState.linkTallies[LINK_TALLY_LINKED_LOSSES]++;
+      gMainRoutineState.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
       BattleArena_SaveBattleResults();
     }
     GameFlag_Set(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
@@ -1672,17 +1672,17 @@ s32 Scene_Initialize(void) {
     Serial_Initialize();
     GameFlag_Clear(FLAG_LINK_BATTLE_ARRANGED);
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
-    if (gMainRoutineWork.idleSleepEnabled != 0) {
+    if (gMainRoutineState.idleSleepEnabled != 0) {
       Event_Start();
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
+      Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineState.leaderActorId, 0);
       Event_SetMessageId(MsgLobbyNoteCantUse);
       // "Note: you can't use the sleep function in battle stages!"
       Event_ShowMessage(ACTOR_ATTENDANT, 0);
       Event_End();
     }
-    gMainRoutineWork.idleSleepEnabled = 0;
+    gMainRoutineState.idleSleepEnabled = 0;
     gIdleSleepEnabled = 0;
     BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
     BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
@@ -1690,7 +1690,7 @@ s32 Scene_Initialize(void) {
   func = (TaskFunc)BattleArena_WatchOpponent;
   Task_AddFrame(func, TASK_PASS_FRAME);
   Task_SetFlags(func, TASK_FLAG_KEEP_RUNNING);
-  if (gMainRoutineWork.entrance != BATTLE_ARENA_AFTER_MONSTER_WIN ||
+  if (gMainRoutineState.entrance != BATTLE_ARENA_AFTER_MONSTER_WIN ||
       !GameFlag_Get(FLAG_MONSTER_BATTLE)) {
     Party_RestoreHpPp(1);
     DjinnRecovery_CountDownTwenty();

@@ -113,7 +113,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 originX;
   s32 originY;
   BlitterPair draw;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   s32 member;
@@ -128,14 +128,14 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  if (work->args->prelude == 1)
-    BattleEffect_RunDjinniEntrance(args, ELEMENT_JUPITER, work->args->side,
+  if (state->args->prelude == 1)
+    BattleEffect_RunDjinniEntrance(args, ELEMENT_JUPITER, state->args->side,
                                    DJINNI_ANCHOR_OVER_TARGET, &originX,
                                    &originY);
   REG_BG2PA = Q_8_8(1);
@@ -143,21 +143,21 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   palette = Resource_GetTableEntry(RESOURCE_RUNE_SHEET);
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet);
+  Decompress_TaggedLz(palette, state->sheet);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       graphics);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_D),
-                      work->sheet + BIND_FLARE_PICTURES);
+                      state->sheet + BIND_FLARE_PICTURES);
   palette = Resource_GetTableEntry(RESOURCE_JUPITER_DJINN_SHEET);
   palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet + BIND_DJINNI_PICTURE);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
-  Projection_ScaledUnit(work->args->targets[0], &anchor);
+  Decompress_TaggedLz(palette, state->sheet + BIND_DJINNI_PICTURE);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
+  Projection_ScaledUnit(state->args->targets[0], &anchor);
   shift = CANVAS_SIZE / 2 - anchor.x;
   REG_BG2X = shift << 8;
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
+  for (frame = 0; frame != state->args->targetCount * 20 + 72; frame++) {
     if (frame == BIND_RUNE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
     // The colours cycle through the hues.
@@ -165,20 +165,20 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
                                     DEGtoANG(120), 0);
 
     // The Djinni sways, then rises away.
-    if (work->args->prelude == 1) {
+    if (state->args->prelude == 1) {
       s32 x;
       s32 y;
 
       x = FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) * BIND_DJINNI_SWAY) +
           originX + shift - DJINNI_WIDTH / 2;
       y = FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * 4) + originY - 24;
-      BattleEffect_FetchRectangleBlitters(work->args->side, draw);
+      BattleEffect_FetchRectangleBlitters(state->args->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[0](canvas, work->sheet + BIND_DJINNI_PICTURE, x, y, DJINNI_WIDTH,
+      draw[0](canvas, state->sheet + BIND_DJINNI_PICTURE, x, y, DJINNI_WIDTH,
               DJINNI_HEIGHT);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + BIND_DJINNI_PICTURE, x, y, DJINNI_WIDTH,
+        draw[1](canvas, state->sheet + BIND_DJINNI_PICTURE, x, y, DJINNI_WIDTH,
                 DJINNI_HEIGHT);
       EFFECT_RELEASE_BLITTERS();
     }
@@ -190,13 +190,13 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
                         COMPOSITE_LIGHTEN);
     draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
     if (frame > 16 && (frame & 15) == 0)
-      work->transferValue += CANVAS_FILL_WORD(1);
+      state->transferValue += CANVAS_FILL_WORD(1);
 
     // Only the first target's triangle is drawn, though the frames are counted
     // for every target.
     for (member = 0; member != 1; member++) {
       memberFrame = frame - member * 8;
-      actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
+      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
       if (memberFrame >= 0 && memberFrame < 96) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         SET_VECTOR(ScreenPoint_Coordinates(&corner), actor->x.fixed,
@@ -207,7 +207,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
         // The triangle.
         if (memberFrame <= 67) {
           for (j = 0; j != 3; j++) {
-            point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
+            point = &state->particles[member * BIND_SLOTS_PER_TARGET + j];
             Matrix_Initialize();
             if (memberFrame < BIND_RUNE_FRAME) {
               scale.x = FIXED_ONE * 21 / 8 - (memberFrame * 3 << 9);
@@ -224,9 +224,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
           }
           for (j = 0; j != 3; j++) {
             struct Particle *from =
-                &work->particles[j + member * BIND_SLOTS_PER_TARGET];
+                &state->particles[j + member * BIND_SLOTS_PER_TARGET];
             struct Particle *to =
-                &work->particles[(j + 1) % 3 + member * BIND_SLOTS_PER_TARGET];
+                &state->particles[(j + 1) % 3 + member * BIND_SLOTS_PER_TARGET];
 
             size = 5 - memberFrame / 16;
             for (k = 0; k != BIND_EDGE_FLARES; k++) {
@@ -236,23 +236,23 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
                       k * (to->velocityY - from->velocityY) / BIND_EDGE_FLARES;
 
               EFFECT_DRAW_FLARE(draw[0], canvas,
-                                work->sheet + BIND_FLARE_PICTURES, x, y, size);
+                                state->sheet + BIND_FLARE_PICTURES, x, y, size);
             }
           }
         }
         // Then the rune, in two mirrored halves.
         if (memberFrame >= BIND_RUNE_FRAME) {
-          draw[0](canvas, work->sheet, screen.x - RUNE_HALF_WIDTH,
+          draw[0](canvas, state->sheet, screen.x - RUNE_HALF_WIDTH,
                   screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
                   RUNE_HALF_HEIGHT);
-          draw[1](canvas, work->sheet, screen.x,
+          draw[1](canvas, state->sheet, screen.x,
                   screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
                   RUNE_HALF_HEIGHT);
         }
       }
     }
     EFFECT_RELEASE_BLITTERS();
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -270,7 +270,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   struct ScreenPoint corner;
   struct ScreenPoint screen;
   struct Vector3 scale;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   BlitterPair draw;
@@ -286,33 +286,33 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  work->args = args;
+  state->args = args;
   EFFECT_START_NARROW_CANVAS(0);
 
   palette = Resource_GetTableEntry(RESOURCE_RUNE_SHEET);
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet);
+  Decompress_TaggedLz(palette, state->sheet);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       graphics);
   palette = Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_D);
-  Decompress_TaggedLz(palette, work->sheet + BIND_FLARE_PICTURES);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
-  Projection_ScaledUnit(work->args->targets[0], &anchor);
+  Decompress_TaggedLz(palette, state->sheet + BIND_FLARE_PICTURES);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
+  Projection_ScaledUnit(state->args->targets[0], &anchor);
   shift = CANVAS_SIZE / 2 - anchor.x;
   REG_BG2X = shift << 8;
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
+  for (frame = 0; frame != state->args->targetCount * 20 + 72; frame++) {
     if (frame == BIND_RUNE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
     // The user sets off towards the target.
     if (frame == 46)
-      BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0],
+      BattleMotion_ApproachTargetFar(state->args->user, state->args->targets[0],
                                      TRIANGLE_STRIKE_LEAP_FRAMES, 0);
     BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
                                     DEGtoANG(120), 0);
@@ -324,13 +324,13 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
                         COMPOSITE_LIGHTEN);
     draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
     if (frame > 16 && (frame & 15) == 0)
-      work->transferValue += CANVAS_FILL_WORD(1);
+      state->transferValue += CANVAS_FILL_WORD(1);
 
     // Only the first target's triangle is drawn, though the frames are counted
     // for every target.
     for (member = 0; member != 1; member++) {
       memberFrame = frame - member * 8;
-      actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
+      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
       if (memberFrame >= 0 && memberFrame < 96) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         SET_VECTOR(ScreenPoint_Coordinates(&corner), actor->x.fixed,
@@ -340,7 +340,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
         screen.y -= 24;
         if (memberFrame <= 67) {
           for (j = 0; j != 3; j++) {
-            point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
+            point = &state->particles[member * BIND_SLOTS_PER_TARGET + j];
             Matrix_Initialize();
             if (memberFrame < BIND_RUNE_FRAME) {
               scale.x = FIXED_ONE * 21 / 8 - (memberFrame * 3 << 9);
@@ -357,9 +357,9 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
           }
           for (j = 0; j != 3; j++) {
             struct Particle *from =
-                &work->particles[j + member * BIND_SLOTS_PER_TARGET];
+                &state->particles[j + member * BIND_SLOTS_PER_TARGET];
             struct Particle *to =
-                &work->particles[(j + 1) % 3 + member * BIND_SLOTS_PER_TARGET];
+                &state->particles[(j + 1) % 3 + member * BIND_SLOTS_PER_TARGET];
 
             size = 5 - memberFrame / 16;
             for (k = 0; k != BIND_EDGE_FLARES; k++) {
@@ -369,23 +369,23 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
                       k * (to->velocityY - from->velocityY) / BIND_EDGE_FLARES;
 
               EFFECT_DRAW_FLARE(draw[0], canvas,
-                                work->sheet + BIND_FLARE_PICTURES, x, y, size);
+                                state->sheet + BIND_FLARE_PICTURES, x, y, size);
             }
           }
         }
         // Then the rune, in two mirrored halves.
         if (memberFrame >= BIND_RUNE_FRAME) {
-          draw[0](canvas, work->sheet, screen.x - RUNE_HALF_WIDTH,
+          draw[0](canvas, state->sheet, screen.x - RUNE_HALF_WIDTH,
                   screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
                   RUNE_HALF_HEIGHT);
-          draw[1](canvas, work->sheet, screen.x,
+          draw[1](canvas, state->sheet, screen.x,
                   screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
                   RUNE_HALF_HEIGHT);
         }
       }
     }
     EFFECT_RELEASE_BLITTERS();
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

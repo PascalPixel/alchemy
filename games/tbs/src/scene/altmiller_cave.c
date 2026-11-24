@@ -32,7 +32,7 @@
 /// start over on every ordinary arrival.
 ///
 /// The rooms share one entrance table and one exit table, and the other
-/// getters choose by gMainRoutineWork.next. Scene_Initialize sends an entry
+/// getters choose by gMainRoutineState.next. Scene_Initialize sends an entry
 /// from outside the cave (entrance 0) to the room's first entrance, darkens the
 /// dark rooms and puts back what the party has done.
 ///
@@ -76,7 +76,7 @@
 #include "field/actor_script.h"
 #include "field/event_inline.h"
 #include "field/field.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
@@ -91,7 +91,7 @@
 #include "system/heap_slots.h"
 #include "system/io_write.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -359,7 +359,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gAltmillerCave_Exits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_ALTMILLER_CAVE_BABI) {
     return gAltmillerCave_BabiActorPlacements;
@@ -398,10 +398,10 @@ static void AltmillerCave_ApplyFadeBlend(void) {
 /// Keeps the passage's darkness level, and shows it unless Reveal is lighting
 /// the passage.
 static void AltmillerCave_SetFadeLevel(s32 level) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
   CAVE_STATE(CAVE_DARKNESS) = level;
-  if (work->revealActive == 0) {
+  if (state->revealActive == 0) {
     AltmillerCave_ApplyFadeBlend();
   }
 }
@@ -453,14 +453,14 @@ static void AltmillerCave_DarkenToLevel5(void) {
 /// darkens by its levels, the other dark rooms evenly, black outside the
 /// light.
 static void AltmillerCave_InitializeDarkness(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *fieldState = gFieldState;
   struct ScreenTransitionState *state;
 
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->transitionFrames = 24;
+  fieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  fieldState->transitionFrames = 24;
   wait(1);
   ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_LEADER_LOW);
-  state = gScreenTransitionWork;
+  state = gScreenTransitionState;
   state->value = ALTMILLER_CAVE_LIGHT_STEPS;
   if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS) != 0) {
     state->mask = ALTMILLER_CAVE_STEPS_LIGHT_WININ;
@@ -479,10 +479,10 @@ static void AltmillerCave_InitializeDarkness(void) {
 /// rocks in its color. The rocks are blue, green, white, yellow and red from
 /// the left, the order Babi gives.
 static void AltmillerCave_StartReveal(void) {
-  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_ENTRANCE) {
+  if (gMainRoutineState.next == SCENE_ALTMILLER_CAVE_ENTRANCE) {
     Io_Write16(BLEND_ALPHA(0, 16), &REG_BLDALPHA);
   }
-  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
+  if (gMainRoutineState.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     Actor_SetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_BLUE);
     Actor_SetSpriteColorById(ACTOR_GREEN_ROCK, COLOR_GREEN);
     Actor_SetSpriteColorById(ACTOR_WHITE_ROCK, COLOR_WHITE);
@@ -494,15 +494,15 @@ static void AltmillerCave_StartReveal(void) {
 /// When Reveal wears off, a dark room goes dark again around the light, and the
 /// five rocks in the rock room turn back to plain grey.
 static void AltmillerCave_EndReveal(void) {
-  struct FieldEffectWork *effectWork =
-      (struct FieldEffectWork *)gFieldEffectWork;
+  struct FieldEffectState *effectState =
+      (struct FieldEffectState *)gFieldEffectState;
 
   if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARK) != 0) {
     AltmillerCave_InitializeDarkness();
     // Reveal then leaves the light around the party open as it ends.
-    effectWork->childOption = 1;
+    effectState->childOption = 1;
   }
-  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
+  if (gMainRoutineState.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     Actor_SetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_NONE);
     Actor_SetSpriteColorById(ACTOR_GREEN_ROCK, COLOR_NONE);
     Actor_SetSpriteColorById(ACTOR_WHITE_ROCK, COLOR_NONE);
@@ -515,13 +515,13 @@ static void AltmillerCave_EndReveal(void) {
 /// screen, then lets the spell carry the party out. Retreat plays on a copy of
 /// him made after the turn, and the leader himself stops updating.
 static void AltmillerCave_StartRetreat(void) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Actor *original;
   struct Actor *replacement;
 
-  effectWork = (struct FieldEffectWork *)gFieldEffectWork;
-  original = effectWork->mainActor;
-  Actor_FaceDirection(effectWork->firstActorId, FACING_SOUTH, 0);
+  effectState = (struct FieldEffectState *)gFieldEffectState;
+  original = effectState->mainActor;
+  Actor_FaceDirection(effectState->firstActorId, FACING_SOUTH, 0);
   Actor_SetSpriteColorMode(original, SPRITE_COLOR_NORMAL);
   Event_Wait(20);
   replacement = FieldActor_Create(0, original->x.fixed, original->y.fixed,
@@ -530,7 +530,7 @@ static void AltmillerCave_StartRetreat(void) {
     Dma_Set(original, replacement, DMA_COPY_WORDS(sizeof(struct Actor) / 4),
             REG_DMA3);
     original->update = 0;
-    effectWork->mainActor = replacement;
+    effectState->mainActor = replacement;
     original->spriteStorageKind = 0;
   }
 }
@@ -563,8 +563,8 @@ static void AltmillerCave_PushPillar(void) {
 /// Before Frost is cast on the puddle in Squall's hall, the game checks whether
 /// anything stands on it. If so, nothing freezes.
 static void AltmillerCave_CheckPuddleCovered(void) {
-  struct FieldEffectWork *effectWork =
-      (struct FieldEffectWork *)gFieldEffectWork;
+  struct FieldEffectState *effectState =
+      (struct FieldEffectState *)gFieldEffectState;
   struct Actor *target = Actor_Get(ACTOR_SQUALL_ROOM_PUDDLE);
   struct FieldPosition position;
 
@@ -573,7 +573,7 @@ static void AltmillerCave_CheckPuddleCovered(void) {
   position.z = target->z.fixed;
 
   if (FieldActor_CheckMovementCollision(target, &position) > 0) {
-    effectWork->childMode = 1;
+    effectState->childMode = 1;
   }
 }
 
@@ -582,12 +582,12 @@ static void AltmillerCave_CheckPuddleCovered(void) {
 /// party wedges the columns out of the way to reach Squall. The puddle's cell
 /// becomes a wall, copied from a spare cell of the map.
 static void AltmillerCave_FreezePuddle(void) {
-  struct FieldEffectWork *effectWork =
-      (struct FieldEffectWork *)gFieldEffectWork;
+  struct FieldEffectState *effectState =
+      (struct FieldEffectState *)gFieldEffectState;
   struct Actor *puddle = Actor_Get(ACTOR_SQUALL_ROOM_PUDDLE);
   s32 blocked;
 
-  blocked = effectWork->childMode;
+  blocked = effectState->childMode;
   if (blocked == 0) {
     MapGrid_CopyCellAttributes(76, 16, 1, 1, 73, 17);
     if (puddle != NULL) {
@@ -604,7 +604,7 @@ static void AltmillerCave_FreezePuddle(void) {
 /// (24, 17), (23, 18) and (22, 17)) makes Isaac hop over it, if the ground two
 /// cells on is clear. Once the puddle is frozen he can no longer hop it.
 static void AltmillerCave_HopOverPuddle(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
   s32 motionFlags = actor->motionFlags;
   union {
     struct FieldPosition position;
@@ -1243,7 +1243,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
   // The room brightens as two men from Tolbi arrive: "Babi!" The light
   // widens to fill the screen and the darkness (BG1) fades out.
-  state = gScreenTransitionWork;
+  state = gScreenTransitionState;
   state->value = ALTMILLER_CAVE_LIGHT_FULL;
   for (eva = 0, evb = BLEND_WEIGHT_MAX; eva <= BLEND_WEIGHT_MAX; eva++, evb--) {
     Io_Write16(ALTMILLER_CAVE_DARKNESS_BLEND, &REG_BLDCNT);
@@ -2096,7 +2096,7 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_ALTMILLER_CAVE_BABI) {
     return gAltmillerCave_BabiTriggers;
@@ -2140,38 +2140,38 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 i;
 
-  if (gMainRoutineWork.entrance == 0) {
-    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_BABI) {
-      gMainRoutineWork.entrance =
+  if (gMainRoutineState.entrance == 0) {
+    if (gMainRoutineState.next == SCENE_ALTMILLER_CAVE_BABI) {
+      gMainRoutineState.entrance =
           ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE;
     }
-    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_VIAL_CHEST) {
-      gMainRoutineWork.entrance =
+    if (gMainRoutineState.next == SCENE_ALTMILLER_CAVE_VIAL_CHEST) {
+      gMainRoutineState.entrance =
           ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI;
     }
-    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_SQUALL) {
-      gMainRoutineWork.entrance =
+    if (gMainRoutineState.next == SCENE_ALTMILLER_CAVE_SQUALL) {
+      gMainRoutineState.entrance =
           ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST;
     }
-    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_COOKIE_CHEST) {
-      gMainRoutineWork.entrance =
+    if (gMainRoutineState.next == SCENE_ALTMILLER_CAVE_COOKIE_CHEST) {
+      gMainRoutineState.entrance =
           ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL;
     }
-    if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
-      gMainRoutineWork.entrance =
+    if (gMainRoutineState.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
+      gMainRoutineState.entrance =
           ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST;
     }
   }
   GameFlag_Set(FLAG_ALTMILLER_CAVE_DARK);
   Event_ClearFlag(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
-  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_ENTRANCE) {
-    if (gMainRoutineWork.entrance == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
+  if (gMainRoutineState.next == SCENE_ALTMILLER_CAVE_ENTRANCE) {
+    if (gMainRoutineState.entrance == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         CAVE_STATE(CAVE_DARKNESS) = 0;
       }
       GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         CAVE_STATE(CAVE_DARKNESS) = 5;
@@ -2179,7 +2179,7 @@ s32 Scene_Initialize(void) {
       GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
   }
-  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_BABI) {
+  if (gMainRoutineState.next == SCENE_ALTMILLER_CAVE_BABI) {
     if (GameFlag_Get(FLAG_BABI_SAVED)) {
       Actor_SetPosition(ACTOR_INVISIBLE_BABI, 0, 0);
     } else {
@@ -2189,7 +2189,7 @@ s32 Scene_Initialize(void) {
       actor->sprite->rotation = DEGtoANG(90);
     }
   }
-  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_SQUALL) {
+  if (gMainRoutineState.next == SCENE_ALTMILLER_CAVE_SQUALL) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_BlockFallenColumnCells();
     if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN)) {
@@ -2208,7 +2208,7 @@ s32 Scene_Initialize(void) {
     }
 #endif
   }
-  if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
+  if (gMainRoutineState.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_BlockFallenColumnCells();
     Actor_Get(ACTOR_FIRST_FALLEN_COLUMN)->update =
@@ -2225,7 +2225,7 @@ s32 Scene_Initialize(void) {
 #endif
     // Coming up to the rocks (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE)
     // starts the puzzle over, with the red light first.
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) {
       Dma_Fill32(0, gAltmillerCave_LightWheel, sizeof(struct LightWheel));
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -2274,9 +2274,9 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARK)) {
     AltmillerCave_InitializeDarkness();
   } else {
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-    gFieldWork->transitionFrames = 24;
+    gFieldState->transitionFrames = 24;
   }
   return 0;
 }
@@ -2319,19 +2319,19 @@ static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
 /// Mystic Draught's room, and the shaking calms. While the WALL_BURST_PIECES
 /// pieces fly, the field's colors are tinted (Shop_SaveAndTintFieldPalette).
 static void AltmillerCave_ReleaseWallBurst(void) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Vector3 position;
   struct FieldParticle *fragment;
   s32 fragmentIndex;
 
   FieldEffect_InitializeSlots();
-  effectWork = (struct FieldEffectWork *)gFieldEffectWork;
+  effectState = (struct FieldEffectState *)gFieldEffectState;
   Shop_SaveAndTintFieldPalette(PALETTE_TINT_CUSTOM | RGB(8, 8, 8));
   position.x = toFIXED(504);
   position.y = toFIXED(24);
   position.z = toFIXED(144);
   Camera_WorldToScreen(&position);
-  fragment = effectWork->particles;
+  fragment = effectState->particles;
   for (fragmentIndex = 0; fragmentIndex < WALL_BURST_PIECES; fragmentIndex++) {
     FIXED scale;
 
@@ -2353,7 +2353,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   wait(30);
   {
     u8 *stateCursor;
-    FIELD_PARTICLES_SET_ACTIVE_STATE(stateCursor, fragmentIndex, effectWork,
+    FIELD_PARTICLES_SET_ACTIVE_STATE(stateCursor, fragmentIndex, effectState,
                                      particles, 2);
   }
   MapGrid_WaitForShakeToSettle();

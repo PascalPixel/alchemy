@@ -4,14 +4,14 @@ Field_KolimaForestEntrance:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_KolimaForestEntrance, .LField_KolimaForestEntrance_CELL_PICTURES
+	map_offset Field_KolimaForestEntrance, .LField_KolimaForestEntrance_CELL_TILES
 	map_offset Field_KolimaForestEntrance, .LField_KolimaForestEntrance_SHAPES
 	map_offset Field_KolimaForestEntrance, .LField_KolimaForestEntrance_GRID
 	map_offset Field_KolimaForestEntrance, .LField_KolimaForestEntrance_ANIMATION
 	map_offset Field_KolimaForestEntrance
 	map_offset Field_KolimaForestEntrance, .LField_KolimaForestEntrance_MARKERS
-.LField_KolimaForestEntrance_CELL_PICTURES:
-	.incbin "games/tbs/src/map/kolima_forest_entrance/cell_pictures.delta0.lz"
+.LField_KolimaForestEntrance_CELL_TILES:
+	.incbin "games/tbs/src/map/kolima_forest_entrance/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_KolimaForestEntrance_SHAPES:
 	.incbin "games/tbs/src/map/kolima_forest_entrance/shapes.table.lz"

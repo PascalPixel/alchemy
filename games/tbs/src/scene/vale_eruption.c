@@ -46,7 +46,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -117,7 +117,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gValeEruption_Triggers; }
 /// Arriving in Vale during the eruption plays the return from the mountain,
 /// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE.
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.entrance == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
+  if (gMainRoutineState.entrance == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
     ValeEruption_ReturnFromMtAleph();
   }
   return 0;
@@ -126,7 +126,7 @@ s32 Scene_Initialize(void) {
 /// In Vale during the eruption, the volcano shakes the ground before the
 /// sanctum while the villagers wonder where Isaac and Garet are.
 static void ValeEruption_ReturnFromMtAleph(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   const s32 *actionScript;
 
   Event_Start();
@@ -147,9 +147,9 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   FieldCamera_MoveTo(256, CAMERA_KEEP, 612, 0);
   FieldCamera_WaitForArrival();
   MapGrid_CenterOnFollowedPoint();
-  work = gFieldWork;
-  work->transition = 0;
-  work->transitionFrames = 32;
+  state = gFieldState;
+  state->transition = 0;
+  state->transitionFrames = 32;
   Event_StartScreenTransition();
 
   // The camera pans up to the villagers as the ground shakes.
@@ -473,9 +473,9 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Weather_LastLightning();
   Sound_Play(SE_CRASH);
   Event_Wait(30);
-  work = gFieldWork;
-  work->transition = 0;
-  work->transitionFrames = 64;
+  state = gFieldState;
+  state->transition = 0;
+  state->transitionFrames = 64;
   Event_FinishScreenTransition();
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();

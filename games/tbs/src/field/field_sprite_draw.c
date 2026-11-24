@@ -55,7 +55,7 @@ enum SpritePartAffine {
 s32 Sprite_ComposePicture(struct Sprite *sprite, u16 dir) {
   s32 mirrored;
   u32 size;
-  struct ActorSystemWork *system;
+  struct ActorSystemState *system;
   SpriteDrawFn decodePicture;
   s32 decoderWasLoaded;
   struct SpriteAnimation *layer;
@@ -73,10 +73,10 @@ s32 Sprite_ComposePicture(struct Sprite *sprite, u16 dir) {
   u32 facing;
   s32 tile;
 
-  // The actor system's work and the picture decoder sit in the heap slot
+  // The actor system's state and the picture decoder sit in the heap slot
   // table; load the decoder into RAM for this call if no one else has.
   mirrored = 0;
-  system = gActorSystemWork;
+  system = gActorSystemState;
   decoderWasLoaded = 1;
   decodePicture = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
   if (decodePicture == 0) {
@@ -505,7 +505,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
 
   // Project first, then discard sprites beyond the padded screen bounds.
   affine = SPRITE_PART_AFFINE;
-  if (gActorSystemWork->suspended == 0) {
+  if (gActorSystemState->suspended == 0) {
     z = Matrix_ProjectPoint(point, screen);
     if (screen[2] != 0 && screen[0] >= -PROJECTED_MARGIN &&
         screen[0] <= DISPLAY_WIDTH + PROJECTED_MARGIN &&

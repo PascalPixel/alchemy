@@ -126,7 +126,7 @@ Resource_DirectoryTable:
 	group BattleEffect, TwelveModeImage, WindStreakSheet, YellowPaletteB, BlueRingSheet, RedPaletteC
 	group BattleEffect, VioletPaletteD, BlueBeamSheet, VortexSheet, TornadoSheet, CrystalSheet
 	group BattleEffect, WaterSparkleSheet, LightningPillarSheet, StagedParticlePath, DualStreamPath
-	group Field, PerspectiveDataA, DefaultGridCells, DefaultTileAnimation, DefaultCellPictureAttributes
+	group Field, PerspectiveDataA, DefaultGridCells, DefaultTileAnimation, DefaultCellTilesAttributes
 	resource WorldMapPaletteA, WorldMap_PaletteA
 	resource WorldMapTilesA, WorldMap_TilesA
 	resource WorldMapTilesB, WorldMap_TilesB

@@ -116,9 +116,9 @@ enum PartyStatusFlag {
   PARTY_STATUS_SHOW_DJINN = 2,  ///< add the Djinn column (needs the PP row)
   PARTY_STATUS_CLOSED = 9,      ///< erase the window
   PARTY_STATUS_KEEP_FLAGS = -1, ///< redraw with the flags it has
-  /// BattleWork.partyStatus while the party cannot summon.
+  /// BattleState.partyStatus while the party cannot summon.
   PARTY_STATUS_NO_SUMMONS = PARTY_STATUS_SHOW_PP,
-  /// BattleWork.partyStatus while it can, drawn only while a Djinni is on
+  /// BattleState.partyStatus while it can, drawn only while a Djinni is on
   /// standby.
   PARTY_STATUS_SUMMONS = PARTY_STATUS_SHOW_PP | PARTY_STATUS_SHOW_DJINN
 };

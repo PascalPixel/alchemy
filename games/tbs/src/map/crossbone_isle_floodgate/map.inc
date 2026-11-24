@@ -4,14 +4,14 @@ Field_CrossboneIsleFloodgate:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_CrossboneIsleFloodgate, .LField_CrossboneIsleFloodgate_CELL_PICTURES
+	map_offset Field_CrossboneIsleFloodgate, .LField_CrossboneIsleFloodgate_CELL_TILES
 	map_offset Field_CrossboneIsleFloodgate, .LField_CrossboneIsleFloodgate_SHAPES
 	map_offset Field_CrossboneIsleFloodgate, .LField_CrossboneIsleFloodgate_GRID
 	map_offset Field_CrossboneIsleFloodgate, .LField_CrossboneIsleFloodgate_ANIMATION
 	map_offset Field_CrossboneIsleFloodgate
 	map_offset Field_CrossboneIsleFloodgate, .LField_CrossboneIsleFloodgate_MARKERS
-.LField_CrossboneIsleFloodgate_CELL_PICTURES:
-	.incbin "games/tbs/src/map/crossbone_isle_floodgate/cell_pictures.delta0.lz"
+.LField_CrossboneIsleFloodgate_CELL_TILES:
+	.incbin "games/tbs/src/map/crossbone_isle_floodgate/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_CrossboneIsleFloodgate_SHAPES:
 	.incbin "games/tbs/src/map/crossbone_isle_floodgate/shapes.table.lz"

@@ -74,7 +74,7 @@
 #include "field/event.h"
 #include "field/event_commands.h"
 #include "field/field.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "game/game.h"
@@ -84,7 +84,7 @@
 #include "sound/sound.h"
 #include "system/heap_slots.h"
 #include "system/io_reg.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/system_call.h"
 #include "text/msg_ids.h"
@@ -240,7 +240,7 @@ static UNREAD_RESULT FuchinTemple_FaceLeader(struct Actor *actor) {
 
 /// The entrances outside, or those of the rooms map.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_FUCHIN_TEMPLE_GROUNDS) {
     return gFuchinTempleGroundsEntrances;
@@ -255,10 +255,10 @@ const u32 *Scene_GetExits(void) { return gFuchinTempleExits; }
 /// The actors outside, in Hama's room, or in the temple and Feh's school, where
 /// once Hsu is known to be trapped the tree and two students are gone.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_FUCHIN_TEMPLE_GROUNDS) {
+  if (gMainRoutineState.next == SCENE_FUCHIN_TEMPLE_GROUNDS) {
     return gFuchinTempleGroundsActorPlacements;
   }
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
     return gFuchinTempleActorPlacementsFromLamaTemple;
   }
@@ -289,7 +289,7 @@ static void FuchinTemple_YoungManFromKolimaAsksAboutBridge(void) {
   Event_Start();
   Event_SetMessageId(MsgXianHowDidGetHereBridge);
   if (Event_GetFlag(FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN) != 0) {
-    gFieldWork->message += 4;
+    gFieldState->message += 4;
   }
   // "How did you get here? Is the bridge open again?", or once he has heard
   // it is: "Did you know that the forest up ahead used to be a vast prairie?"
@@ -297,7 +297,7 @@ static void FuchinTemple_YoungManFromKolimaAsksAboutBridge(void) {
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     GameFlag_Set(FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN);
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   // The answer: "Really?! Then I can go home to Kolima now?..." or "Oh...
   // Then you came through the forest? That's too bad."; the second time,
@@ -325,11 +325,11 @@ static void FuchinTemple_BoyMonkSpeaksOfNyunpa(void) {
     // "Isn't it noble of him to try to save the world by becoming..."
     Event_OpenMessage(ACTOR_ADMIRING_BOY_MONK, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-      gFieldWork->message++;
+      gFieldState->message++;
       // "Do you know what you mean when you say that?"
       Event_OpenMessage(ACTOR_ADMIRING_BOY_MONK, 0);
       if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-        gFieldWork->message++;
+        gFieldState->message++;
       }
     }
     // Yes: "However, I really do not want to see Nyunpa waste away."
@@ -471,7 +471,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
       // "I knew it!"
       Event_ShowMessage(ACTOR_NYUNPA, 0);
     } else {
-      gFieldWork->message += 2;
+      gFieldState->message += 2;
       // Yes: "I knew it!"
       Event_ShowMessage(ACTOR_NYUNPA, 0);
     }
@@ -491,9 +491,9 @@ static void FuchinTemple_NyunpaOffersTest(void) {
       Event_Wait(30);
       // No: "You speak lies... You are indeed following them!"
       Event_ShowMessage(ACTOR_NYUNPA, 0);
-      gFieldWork->message += 1;
+      gFieldState->message += 1;
     } else {
-      gFieldWork->message += 1;
+      gFieldState->message += 1;
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
       Event_Wait(20);
@@ -1308,7 +1308,7 @@ static void FuchinTemple_FehAsksToSeeChi(void) {
     GameFlag_Set(FLAG_FEH_WAITS_TO_SEE_CHI);
     Event_End();
   } else {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // "What you can do is an incredible thing. Hiding it is not good."
     Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
     Event_End();
@@ -1602,10 +1602,10 @@ static void FuchinTemple_ReadNyunpasLastWish(void) {
 
 /// The triggers outside, in Hama's room, or in the temple and Feh's school.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_FUCHIN_TEMPLE_GROUNDS) {
+  if (gMainRoutineState.next == SCENE_FUCHIN_TEMPLE_GROUNDS) {
     return gFuchinTempleGroundsTriggers;
   }
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
     return gFuchinTempleTriggersFromLamaTemple;
   }
@@ -1670,7 +1670,7 @@ static void FuchinTemple_EnterWaterfallGrotto(void) {
   particleTask = FuchinTemple_SpawnGrottoEntryParticle;
   Task_AddFrame(particleTask, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
-  gFieldWork->transitionFrames = 60;
+  gFieldState->transitionFrames = 60;
   Event_FinishScreenTransition();
   Sound_Play(SE_CAST);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -1700,7 +1700,7 @@ static void FuchinTemple_EnterTemple(void) {
   MapGrid_AnimateCells(gFuchinTemple_TempleDoorOpens, 77, 8);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   Event_Wait(16);
@@ -1716,7 +1716,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 168, 504);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -1750,12 +1750,12 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
     Event_Wait(20);
     // "This is called 'force' by the western world, but it is..."
     Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
   } else {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_NYUNPA, 2);
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "You possess great wisdom for one so young, but I feel I must..."
     Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
@@ -1801,11 +1801,11 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
     Event_Wait(20);
     // "Sometimes, you must let go of your belief that fighting..."
     Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_NYUNPA, 2);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Ha ha... That is right. There is no good in wanton destruction."
     Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   }
@@ -2452,10 +2452,10 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
     // "I'm more worried about Felix and the others... But I'm not opposed to
     // rescuing Hsu."
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(20);
     // "I am worried about Feizhi and Master Hama... But I understand why you
@@ -2499,10 +2499,10 @@ s32 Scene_Initialize(void) {
   struct Actor *trainingTree;
   s32 heardHsuTrapped;
 
-  if (gMainRoutineWork.next == SCENE_LACQUER_ROOMS_A) {
-    gFieldWork->transition =
+  if (gMainRoutineState.next == SCENE_LACQUER_ROOMS_A) {
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS) {
       if (GameFlag_Get(FLAG_NYUNPA_ENLIGHTENED)) {
         Actor_SetAnimation(ACTOR_NYUNPA, ANIM_NYUNPA_WITHERED);
@@ -2514,9 +2514,9 @@ s32 Scene_Initialize(void) {
           FuchinTemple_NyunpaTeachesKi();
         }
       }
-    } else if (gMainRoutineWork.entrance ==
+    } else if (gMainRoutineState.entrance ==
                    LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN ||
-               gMainRoutineWork.entrance ==
+               gMainRoutineState.entrance ==
                    LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       heardHsuTrapped = GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED);
@@ -2560,7 +2560,7 @@ s32 Scene_Initialize(void) {
       Actor_Prepare(304, 24, 224, SPRITE_CRATE);
       Actor_SetAnimation(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
       Actor_SetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
-    } else if (gMainRoutineWork.entrance ==
+    } else if (gMainRoutineState.entrance ==
                LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       if (!GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
@@ -2573,7 +2573,7 @@ s32 Scene_Initialize(void) {
   } else {
     Scene_QueueMusic(SE_AMBIENT_WATER);
     Actor_Get(ACTOR_FALLS_MONK)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
             FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE &&
         GameFlag_Get(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) &&
         !GameFlag_Get(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST)) {
@@ -2591,13 +2591,13 @@ s32 Scene_Initialize(void) {
 /// Starts Mind Read from caster on target as part of an event, without the
 /// window that announces its name.
 static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
 
   GameFlag_Set(FLAG_PLAY_PSYNERGY_CAST);
   FieldPsynergy_LoadResources(ABILITY_MIND_READ, 1);
-  effectWork = gFieldEffectWork;
+  effectState = gFieldEffectState;
   FieldPsynergy_SetupActorPair(caster, target);
-  effectWork->active = 0;
+  effectState->active = 0;
   FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
   wait(1);

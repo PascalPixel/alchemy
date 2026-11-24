@@ -49,8 +49,8 @@
 
 /// What a shortcut key's assignment requests: its top two bits.
 enum FieldShortcutKind {
-  FIELD_SHORTCUT_PSYNERGY = 0, ///< fieldWork->psynergy, an ability
-  FIELD_SHORTCUT_ITEM = 1      ///< fieldWork->item
+  FIELD_SHORTCUT_PSYNERGY = 0, ///< fieldState->psynergy, an ability
+  FIELD_SHORTCUT_ITEM = 1      ///< fieldState->item
 };
 
 /// A shortcut key's assignment: its kind in the top two bits, from this one,
@@ -98,23 +98,23 @@ UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> FIELD_SHORTCUT_KIND_SHIFT;
   u32 requestId = FIELD_SHORTCUT_ID_MASK & encodedAssignment;
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
   if (GameFlag_GetFar(FLAG_MENUS_RAISE_TRIGGER) != 0) {
-    work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
-  } else if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+    state->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
+  } else if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (FIELD_SHORTCUT_KEYS & KEY_R) {
-      work->raisedTrigger = FIELD_RAISED_TRIGGER_MAP_SCREEN;
+      state->raisedTrigger = FIELD_RAISED_TRIGGER_MAP_SCREEN;
     } else if (FIELD_SHORTCUT_KEYS & KEY_L) {
-      work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM;
+      state->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM;
     }
   } else {
     switch (assignmentKind) {
     case FIELD_SHORTCUT_PSYNERGY:
-      work->psynergy = requestId;
+      state->psynergy = requestId;
       break;
     case FIELD_SHORTCUT_ITEM:
-      work->item = requestId;
+      state->item = requestId;
       break;
     }
   }
@@ -123,27 +123,27 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
 }
 
 /// Checks the keys the player has configured: Select, A and Start set their
-/// flag in the field work and return 1; the two shortcut keys pass on their
+/// flag in the field state and return 1; the two shortcut keys pass on their
 /// assignment (Field_RequestShortcut) and return its request id.
 s32 Field_CheckConfiguredKeys(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   s32 result = 0;
 
-  if (work == NULL)
+  if (state == NULL)
     return 0;
-  if (gKeysPressed & gMainRoutineWork.selectKeys) {
-    work->fieldMenu = 1;
+  if (gKeysPressed & gMainRoutineState.selectKeys) {
+    state->fieldMenu = 1;
     result = 1;
-  } else if (gKeysPressed & gMainRoutineWork.aKeys) {
-    work->aButton = 1;
+  } else if (gKeysPressed & gMainRoutineState.aKeys) {
+    state->aButton = 1;
     result = 1;
-  } else if (gKeysPressed & gMainRoutineWork.startKeys) {
-    work->pauseMenu = 1;
+  } else if (gKeysPressed & gMainRoutineState.startKeys) {
+    state->pauseMenu = 1;
     result = 1;
-  } else if (gKeysPressed & gMainRoutineWork.firstShortcutKeys) {
-    result = Field_RequestShortcut(gMainRoutineWork.firstShortcut);
-  } else if (gKeysPressed & gMainRoutineWork.secondShortcutKeys) {
-    result = Field_RequestShortcut(gMainRoutineWork.secondShortcut);
+  } else if (gKeysPressed & gMainRoutineState.firstShortcutKeys) {
+    result = Field_RequestShortcut(gMainRoutineState.firstShortcut);
+  } else if (gKeysPressed & gMainRoutineState.secondShortcutKeys) {
+    result = Field_RequestShortcut(gMainRoutineState.secondShortcut);
   }
   return result;
 }
@@ -225,7 +225,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
   }
   // Walk, or run with the dash keys; with FLAG_FAST_WALK, B moves faster
   // still.
-  if (gKeysHeld & gMainRoutineWork.dashKeys) {
+  if (gKeysHeld & gMainRoutineState.dashKeys) {
     actor->speedLimit = FIELD_RUN_SPEED;
     actor->acceleration = FIELD_ACCELERATION;
     movementAnimation = ANIM_LEADER_RUN;
@@ -384,11 +384,11 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
   // Count the blocked steps, and pick the animation: pushing; stopped,
   // standing and in time glancing about (leaning back when the leader has no
   // HP); or walking or running.
-  if (gFieldWork != NULL) {
+  if (gFieldState != NULL) {
     if (collision & PLAYER_STEP_BLOCKED)
-      gFieldWork->blockedSteps++;
+      gFieldState->blockedSteps++;
     else
-      gFieldWork->blockedSteps = 0;
+      gFieldState->blockedSteps = 0;
   }
   if (pushed != 0) {
     Actor_SelectAnimation(actor, ANIM_PUSH);
@@ -396,7 +396,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
     s32 action;
 
     action = ANIM_LEADER_LOOK_AROUND;
-    if (Unit_GetFar(gMainRoutineWork.leaderActorId)->hp == 0)
+    if (Unit_GetFar(gMainRoutineState.leaderActorId)->hp == 0)
       action = ANIM_LEADER_LEAN_BACK;
     Actor_SelectAnimation(actor, action);
   } else {
@@ -441,7 +441,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
   // Leave a footprint every 18 walking or 12 running frames on maps that show
   // them, alternating left and right; timer counts down the frames to the next.
   footprintAngle = (u16)angle;
-  if (((struct MapGridScrollWork *)gMapGridWork[0])->footprints != 0 &&
+  if (((struct MapGridScrollState *)gMapGridState[0])->footprints != 0 &&
       actor->timer == 0 && collision == 0) {
     struct Actor *effect;
 
@@ -517,7 +517,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
   count = 0;
 #endif
   // Walk, or run with the dash keys.
-  if (gKeysHeld & gMainRoutineWork.dashKeys) {
+  if (gKeysHeld & gMainRoutineState.dashKeys) {
     actor->speedLimit = WORLD_MAP_RUN_SPEED;
     actor->acceleration = WORLD_MAP_RUN_ACCELERATION;
     movementAnimation = ANIM_LEADER_RUN;
@@ -641,11 +641,11 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
   }
 
 update_actor:
-  if (gFieldWork != NULL) {
+  if (gFieldState != NULL) {
     if ((collision & PLAYER_STEP_BLOCKED) != 0)
-      gFieldWork->blockedSteps++;
+      gFieldState->blockedSteps++;
     else
-      gFieldWork->blockedSteps = 0;
+      gFieldState->blockedSteps = 0;
   }
   if (collision != 0)
     Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
@@ -685,7 +685,7 @@ update_actor:
   // Turn the camera towards the pad's yaw by an eighth of the difference a
   // frame, at most WORLD_MAP_YAW_STEP_MAX, finishing the turn once
   // the step falls under WORLD_MAP_YAW_STEP_MIN.
-  perspective = gMapGridWork[0];
+  perspective = gMapGridState[0];
   targetCameraYaw = gWorldMap_KeyYaws[DPAD_INDEX(gKeysHeld)];
   yawStep = (s16)(targetCameraYaw - perspective->yaw) / 8;
   if (yawStep > WORLD_MAP_YAW_STEP_MAX)
@@ -825,11 +825,11 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
       }
     }
   }
-  if (gFieldWork != NULL) {
+  if (gFieldState != NULL) {
     if (collisionFlags & PLAYER_STEP_BLOCKED)
-      gFieldWork->blockedSteps++;
+      gFieldState->blockedSteps++;
     else
-      gFieldWork->blockedSteps = 0;
+      gFieldState->blockedSteps = 0;
   }
   Actor_SelectAnimation(actor, animation);
   if (collisionFlags != 0) {

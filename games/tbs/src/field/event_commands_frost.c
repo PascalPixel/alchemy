@@ -73,13 +73,13 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *actor) {
 
 /// Runs Frost cast on a target.
 void FieldPsynergy_FrostOnTarget(s32 unused) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *target = effectWork->child;
+  struct FieldEffectState *effectState = gFieldEffectState;
+  struct Actor *target = effectState->child;
 
   if (target != 0) {
     // With childMode the target neither flashes nor freezes.
-    if (effectWork->childMode != 0) {
-      effectWork->enabled = 1;
+    if (effectState->childMode != 0) {
+      effectState->enabled = 1;
     }
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     FieldPsynergy_Frost();
@@ -92,14 +92,14 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
 void FieldPsynergy_Frost(void) {
   s32 eventTarget;
   struct Vector3 pos;
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Actor *target;
   struct Actor *particle;
   void *event;
   s32 i;
 
-  effectWork = gFieldEffectWork;
-  target = effectWork->child;
+  effectState = gFieldEffectState;
+  target = effectState->child;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ICE);
 
@@ -124,7 +124,7 @@ void FieldPsynergy_Frost(void) {
       particle->userValue = Random16();
       Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_BLUE_TINT);
 
-      SET_POSITION(&pos, effectWork->x, effectWork->y, effectWork->z);
+      SET_POSITION(&pos, effectState->x, effectState->y, effectState->z);
       radius = (Random16() << 2) + toFIXED(2);
       Vector_AddPolarOffset(radius, Random16(), &pos);
       particle->targetX = pos.x;
@@ -139,7 +139,7 @@ void FieldPsynergy_Frost(void) {
   Sound_PlayFar(SE_ICE);
   wait(50);
 
-  if (target != NULL && effectWork->enabled == 0) {
+  if (target != NULL && effectState->enabled == 0) {
     Sound_PlayFar(SE_POWER_UP);
 
     // Flash for 1 frame in every 5.
@@ -150,7 +150,7 @@ void FieldPsynergy_Frost(void) {
       wait(4);
     }
 
-    if (effectWork->childOption == 0) {
+    if (effectState->childOption == 0) {
       Sound_PlayFar(SE_SHIMMER);
       Actor_SelectAnimationFar(target, PUDDLE_ANIMATION_FREEZE);
     }
@@ -159,7 +159,7 @@ void FieldPsynergy_Frost(void) {
     event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                       FIELD_PSYNERGY_FROST, &eventTarget);
     if (event != NULL) {
-      Field_RunPsynergyEvent(event, gMainRoutineWork.leaderActorId,
+      Field_RunPsynergyEvent(event, gMainRoutineState.leaderActorId,
                              eventTarget);
     }
     wait(20);

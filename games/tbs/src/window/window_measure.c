@@ -25,7 +25,7 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
                         u32 *windowWidth, u32 *windowHeight, u16 *spacing,
                         u32 flags) {
 #if !TBS_PATCH_2
-  struct WindowWork *work;
+  struct WindowState *state;
 #endif
   s32 x;
   s32 y;
@@ -36,7 +36,7 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
   s32 fittedPosition;
 
 #if !TBS_PATCH_2
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
 #endif
   x = *windowX;
   y = *windowY;
@@ -57,7 +57,7 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
     *windowWidth = (*windowWidth + WINDOW_PAD_X) >> 3;
     *windowHeight = (*windowHeight + WINDOW_PAD_Y) >> 3;
 #if !TBS_PATCH_2
-    if (work->mindRead != 0) {
+    if (state->mindRead != 0) {
       *windowWidth += 2;
       rightLimit = DISPLAY_TILE_WIDTH - 1;
     }
@@ -112,7 +112,7 @@ DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAllPages,
 /// pixels.
 void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                          u16 *spacing) {
-  struct WindowWork *work;
+  struct WindowState *state;
   u32 lines;
   u32 width;
   u32 height;
@@ -129,7 +129,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   s32 trailing;
 #endif
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
 #if LANGUAGE == LANGUAGE_JAPANESE
   trailing = 0;
 #endif
@@ -139,7 +139,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   lineWidth = 0;
   count = 0;
   for (;;) {
-    code = work->textBuffer[entryIndex];
+    code = state->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     // A character adds its width.
     if (code >= TEXT_SPACE) {
@@ -149,7 +149,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         count++;
       } else {
         glyph = gFont_Glyphs[code - TEXT_SPACE].width;
-        style = work->outline;
+        style = state->outline;
         if (style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
           glyph++;
         lineWidth += glyph;
@@ -172,7 +172,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
           glyph = KANJI_WIDTH;
           if (code <= TEXT_LAST_FONT_CODE)
             glyph = gFont_Glyphs[code - TEXT_SPACE].width;
-          style = work->outline;
+          style = state->outline;
           if (style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
             glyph++;
           lineWidth += glyph;
@@ -210,7 +210,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     case TEXT_PAGE:
       // The French, Spanish and Italian releases end the style at a page
       // break, as their messages do (Message_Type).
-      work->outline = TEXT_STYLE_PLAIN;
+      state->outline = TEXT_STYLE_PLAIN;
       goto done;
 #endif
     case TEXT_UNUSED_14:
@@ -225,7 +225,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     case TEXT_STYLE:
-      work->outline = work->textBuffer[entryIndex];
+      state->outline = state->textBuffer[entryIndex];
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     }
@@ -241,7 +241,7 @@ done:
   if (width < lineWidth)
     width = lineWidth;
 #if !TBS_PATCH_2
-  if (work->mindRead)
+  if (state->mindRead)
     width = width + 2;
 #endif
   *outWidth = width;
@@ -289,7 +289,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   u32 pageHeights[16];
   u16 lineSpacingCounts[MESSAGE_LINE_COUNT];
   u16 lineWidths[MESSAGE_LINE_COUNT];
-  struct WindowWork *work;
+  struct WindowState *state;
   u32 maxWidth;
   u32 line;
   u32 width;
@@ -306,7 +306,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 
   trailing = 0;
 #endif
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   pageHeights[0] = TEXT_LINE_HEIGHT;
   pageHeights[1] = TEXT_LINE_HEIGHT;
   pageHeights[2] = TEXT_LINE_HEIGHT;
@@ -329,7 +329,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   count = 0;
   page = 0;
   for (;;) {
-    code = work->textBuffer[entryIndex];
+    code = state->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     if (code >= TEXT_SPACE) {
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -338,7 +338,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         count++;
       } else {
         glyph = gFont_Glyphs[code - TEXT_SPACE].width;
-        outline = work->outline;
+        outline = state->outline;
         if (outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
           glyph++;
         width += glyph;
@@ -360,7 +360,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
           glyph = KANJI_WIDTH;
           if (code <= TEXT_LAST_FONT_CODE)
             glyph = gFont_Glyphs[code - TEXT_SPACE].width;
-          outline = work->outline;
+          outline = state->outline;
           if (outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
             glyph++;
           width += glyph;
@@ -410,7 +410,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       if (page == 0 && maxWidth < width)
         maxWidth = width;
 #if TBS_PATCH_3
-      work->outline = TEXT_STYLE_PLAIN;
+      state->outline = TEXT_STYLE_PLAIN;
 #endif
       page++;
       break;
@@ -426,7 +426,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     case TEXT_STYLE:
-      work->outline = work->textBuffer[entryIndex];
+      state->outline = state->textBuffer[entryIndex];
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     }
@@ -436,7 +436,7 @@ done:
   // dropped Mind Read's widening from the first-page measure, the fit and the
   // pen; patch 4 (Spanish and Italian) puts it back here alone.
 #if !TBS_PATCH_2 || TBS_PATCH_4
-  if (work->mindRead != 0)
+  if (state->mindRead != 0)
     maxWidth += 2;
 #endif
   for (pageIndex = 0; pageIndex < page; pageIndex++) {

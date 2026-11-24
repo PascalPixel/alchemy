@@ -90,7 +90,7 @@
 #include "system/io_reg.h"
 #include "system/iwram_call.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/system_call.h"
 #include "text/msg_ids.h"
@@ -198,7 +198,7 @@ const u32 *Scene_GetExits(void) { return gMercuryLighthouseAerieExits; }
 /// Returns the actors, with Jenna, Kraden, Felix and Menardi placed only on the
 /// first arrival (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT).
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.entrance != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
+  if (gMainRoutineState.entrance != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
     GameFlag_Set(FLAG_HOSTAGES_GONE);
   }
   return gMercuryLighthouseAerieActorPlacements;
@@ -215,9 +215,9 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
 
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_AERIE) {
+  if (gMainRoutineState.next == SCENE_MERCURY_LIGHTHOUSE_AERIE) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     Task_AddFrame(MercuryLighthouseAerie_FlickerBeacon, TASK_PASS_FRAME);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
@@ -254,17 +254,17 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_BEACON_STATUE + 3), 0);
     Actor_Get(ACTOR_FIRST_BEACON_STATUE + 2)->scaleX = -FIXED_ONE;
     Actor_Get(ACTOR_FIRST_BEACON_STATUE + 3)->scaleX = -FIXED_ONE;
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         MercuryLighthouseAerie_PartyArrives();
       }
-    } else if (gMainRoutineWork.entrance ==
+    } else if (gMainRoutineState.entrance ==
                MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE) {
       if (!GameFlag_Get(FLAG_LIFT_UP)) {
         {
           struct MapGridLayerScroll *lift =
-              &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
+              &((struct MapGridScrollState *)gMapGridState[0])->layers[2];
 
           lift->offsetY = toFIXED(1024);
         }
@@ -276,7 +276,7 @@ s32 Scene_Initialize(void) {
           MercuryLighthouseAerie_AlexAppears();
         }
       }
-    } else if (gMainRoutineWork.entrance ==
+    } else if (gMainRoutineState.entrance ==
                MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) {
       GameFlag_Set(FLAG_LIFT_UP);
     }
@@ -308,7 +308,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   MapGrid_SetShake(5, 5, 1);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   MapGrid_WaitForShakeToSettle();
@@ -589,9 +589,9 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
     Event_Wait(20);
     // "But, unlike you, we are not healers."
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
   } else {
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 10);
@@ -950,12 +950,12 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
     Event_Wait(20);
     // "You overestimate your chances."
     Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "And yet you still want to fight? Ship of fools..."
     Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   }
@@ -1017,7 +1017,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   MapGrid_CenterOnFollowedPoint();
   wait(1);
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(60);
@@ -1131,9 +1131,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     // "Geez, Isaac, you knew all along, and you didn't tell us?"
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
     // "I know it's hard to believe, but it looks like Mia's one of us."
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
@@ -1263,11 +1263,11 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Event_Wait(30);
     // "If that's the case, you will have to fight me, as well. I've..."
     Event_ShowMessage(ACTOR_ALEX, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(30);
 
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Yes, Isaac. You seem like a smart warrior. You can't beat..."
     Event_ShowMessage(ACTOR_ALEX, 0);
   }
@@ -1345,7 +1345,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   {
     struct MapGridLayerScroll *lift;
     FieldCamera_MoveTo(152, CAMERA_KEEP, 216, 1);
-    lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
+    lift = &((struct MapGridScrollState *)gMapGridState[0])->layers[2];
     lift->offsetY = toFIXED(896);
     MapGrid_CenterOnFollowedPoint();
     wait(1);
@@ -1388,9 +1388,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
       Event_Wait(20);
       // "Ha! Too bad! Menardi has them. You'll have to ask her!"
       Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
-      gFieldWork->message++;
+      gFieldState->message++;
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
       Event_Wait(20);
       // "Ha! You're right... Menardi has the Elemental Stars!"
       Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
@@ -1412,9 +1412,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Event_Wait(20);
     // "I appreciate your honesty."
     Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_ALEX, 1);
     Event_Wait(20);
@@ -1444,9 +1444,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Event_Wait(20);
     // "I look forward to it. I shall see you soon, then."
     Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     // "That's too bad... I shall look forward to seeing you again."
@@ -1509,9 +1509,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Event_Wait(20);
     // "That's right, Isaac! All we have to do is stop them from lighting..."
     Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);
     // "You're not helping here! We're fine as long as the lighthouses..."
@@ -1614,7 +1614,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   {
     struct MapGridLayerScroll *lift =
-        &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
+        &((struct MapGridScrollState *)gMapGridState[0])->layers[2];
 
     lift->offsetY = toFIXED(1024);
   }
@@ -1635,7 +1635,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
 static void MercuryLighthouseAerie_CallLift(void) {
   struct MapGridLayerScroll *lift;
 
-  lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
+  lift = &((struct MapGridScrollState *)gMapGridState[0])->layers[2];
   Event_Start();
   lift->offsetY = toFIXED(896);
   MapGrid_CenterOnFollowedPoint();
@@ -1791,14 +1791,14 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
 /// Writes to out the ids of the actors standing on the lift, columns 4 to 8 and
 /// three rows from its top, while its map layer is scrolled y pixels down.
 static void MercuryLighthouseAerie_FindActorsOnLift(s32 *out, s32 y) {
-  struct FieldWork *work;
+  struct FieldState *state;
   u32 slot;
 
-  work = gFieldWork;
+  state = gFieldState;
   y = 64 - FIELD_CELL(y);
-  for (slot = 0; slot < sizeof(work->actors) / sizeof(work->actors[0]);
+  for (slot = 0; slot < sizeof(state->actors) / sizeof(state->actors[0]);
        slot++) {
-    struct Actor *actor = work->actors[slot];
+    struct Actor *actor = state->actors[slot];
 
     if (actor != NULL) {
       s32 cell = FIELD_CELL(actor->x.fixed);
@@ -1827,7 +1827,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
   u32 n;
   FIXED speed;
 
-  lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
+  lift = &((struct MapGridScrollState *)gMapGridState[0])->layers[2];
   speed = toFIXED(1) / 10;
   n = 0;
   for (i = 0; i <= 4; i++)
@@ -1865,7 +1865,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
   u32 n;
   FIXED speed;
 
-  lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
+  lift = &((struct MapGridScrollState *)gMapGridState[0])->layers[2];
   speed = toFIXED(3) / 2;
   n = 0;
   for (i = 0; i <= 4; i++)
@@ -1939,14 +1939,14 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   struct Actor *beacon;
   struct Actor *spark;
   struct Sprite *sprite;
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   s32 height;
   FIXED scale;
   s32 cycleFrame;
   u32 angle;
 
   beacon = Actor_Get(ACTOR_BEACON);
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
   height = toFIXED(Random_Below(48));
   if (((struct FieldCoordinate *)&grid->view[1])->part[0].integer <=
       BEACON_SHOWN_VIEW_TOP) {

@@ -71,7 +71,7 @@
 #include "system/heap_slots.h"
 #include "system/input.h"
 #include "system/io_reg.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/system_call.h"
 
@@ -142,13 +142,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// cells south are as much higher, so the picture does not change.
 static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
                                                        s32 cellOffsetZ) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   struct Actor *actor;
   s32 offsetX = cellOffsetX;
   s32 offsetZ = cellOffsetZ;
   FIXED groundHeight;
 
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineState.leaderActorId);
   offsetX *= toFIXED(16);
   offsetZ *= toFIXED(16);
 
@@ -161,7 +161,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
     actor->groundHeight = groundHeight;
   }
 
-  actor = work->camera;
+  actor = state->camera;
   if (actor != NULL) {
     actor->x.fixed += offsetX;
     actor->z.fixed += offsetZ;
@@ -217,10 +217,10 @@ static void TretTreeBranch_LeaveSoutheastVine(void) {
 /// The exit sound plays, and the door's cell carries its own exit number,
 /// which the step trigger hands on as the exit to take.
 static void TretTreeBranch_EnterTretTreeRooms(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
   Sound_Play(SE_MAP_EXIT);
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
 }
 
 /// The oval round Isaac (WINDOW_TRANSITION_LEADER) in which the leaves in front
@@ -249,7 +249,7 @@ static void TretTreeBranch_RevealFades(void) {
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-  TretTreeBranch_SetRevealWindow(gScreenTransitionWork);
+  TretTreeBranch_SetRevealWindow(gScreenTransitionState);
 }
 
 /// Returns the scene's events: its eight doors, the six cells at the vines'
@@ -284,14 +284,14 @@ static void UNUSED TretTreeBranch_ExchangeInputPacket(void) {
 s32 Scene_Initialize(void) {
   struct ScreenTransitionState *state;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
   ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_LEADER);
 
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-  state = gScreenTransitionWork;
+  state = gScreenTransitionState;
   TretTreeBranch_SetRevealWindow(state);
 
   TretTreeBranch_StartBg3Split();
@@ -318,7 +318,7 @@ static void TretTreeBranch_ApplyBg3ScrollAtScanline(void) {
 /// every four frames, so they drift slowly right.
 static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
   struct MapGridLayerScroll *layer =
-      &((struct MapGridScrollWork *)gMapGridWork[0])
+      &((struct MapGridScrollState *)gMapGridState[0])
            ->layers[MAPGRID_LAYER_GROUND];
   s32 horizontalOffset;
 

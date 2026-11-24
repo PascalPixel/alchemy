@@ -63,7 +63,7 @@
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/system_call.h"
 
@@ -268,7 +268,7 @@ static UNREAD_RESULT ValeCave_FaceActorTowardLeader(struct Actor *actor) {
 
 /// Selects entrance positions and camera bounds for the current cave room.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_VALE_CAVE_MOUTH) {
     return gValeCave_MouthEntrances;
@@ -290,7 +290,7 @@ const u32 *Scene_GetExits(void) { return gValeCave_Exits; }
 /// Selects the current room's actor placements, which are Kite, and the crates
 /// and logs.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_VALE_CAVE_MOUTH) {
     return gValeCave_MouthActorPlacements;
@@ -539,12 +539,12 @@ static void ValeCave_KiteRunsBehindRocks(void) {
 /// Each cell of the ring of floor round the rocks (cells (46..52, 17..20))
 /// sends Kite to the point opposite, from gValeCave_WalkTargets.
 static void ValeCave_KiteKeepsAway(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   s32 route;
 
   if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_ROCKS) != 0 &&
-      gMainRoutineWork.haltedActor != ACTOR_KITE) {
-    route = work->stepTrigger - CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
+      gMainRoutineState.haltedActor != ACTOR_KITE) {
+    route = state->stepTrigger - CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
     Actor_Get(ACTOR_KITE)->speedLimit =
         Actor_Get(ACTOR_PARTY_LEADER)->speedLimit;
     Actor_Get(ACTOR_KITE)->acceleration =
@@ -673,7 +673,7 @@ static void ValeCave_PushLogNorth(void) {
 
 /// Selects the current room's step, Psynergy and examine triggers.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_VALE_CAVE_MOUTH) {
     return gValeCave_MouthTriggers;
@@ -690,10 +690,10 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Arriving in any of the three rooms chooses the entry transition and restores
 /// the room's puzzle state.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == SCENE_VALE_CAVE_MOUTH) {
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  if (gMainRoutineState.next == SCENE_VALE_CAVE_MOUTH) {
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     wait(1);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_SECOND_LOG, 3);
@@ -709,7 +709,7 @@ s32 Scene_Initialize(void) {
 ///
 /// Each plays the exit sound first. The cell's behavior is the exit's number.
 static void ValeCave_LeaveRoom(void) {
-  s32 exitNumber = gFieldWork->stepTrigger;
+  s32 exitNumber = gFieldState->stepTrigger;
 
   Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(exitNumber);
@@ -778,8 +778,8 @@ static void ValeCave_ApplyEntryState(void) {
   s32 southLogOnSouthernRow;
 
   // Each room reuses the temporary flags for its own puzzle state.
-  if (gMainRoutineWork.next == SCENE_VALE_CAVE_KITE) {
-    switch (gMainRoutineWork.entrance) {
+  if (gMainRoutineState.next == SCENE_VALE_CAVE_KITE) {
+    switch (gMainRoutineState.entrance) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH:
     case VALE_CAVE_KITE_WEST_FROM_EAST:
     case VALE_CAVE_KITE_WEST_FROM_SOUTH:
@@ -802,7 +802,7 @@ static void ValeCave_ApplyEntryState(void) {
         break;
       }
       GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_OFF);
-      if (gMainRoutineWork.entrance == VALE_CAVE_KITE_EAST_FROM_WEST) {
+      if (gMainRoutineState.entrance == VALE_CAVE_KITE_EAST_FROM_WEST) {
         GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_BEHIND_ROCKS);
       }
       wait(1);
@@ -833,8 +833,8 @@ static void ValeCave_ApplyEntryState(void) {
       }
       break;
     }
-  } else if (gMainRoutineWork.next == SCENE_VALE_CAVE_LOGS) {
-    switch (gMainRoutineWork.entrance) {
+  } else if (gMainRoutineState.next == SCENE_VALE_CAVE_LOGS) {
+    switch (gMainRoutineState.entrance) {
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST:
     case VALE_CAVE_LOGS_NORTH_FROM_SOUTH:
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST:

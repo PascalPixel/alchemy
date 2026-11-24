@@ -238,13 +238,13 @@ UNREAD_RESULT BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
 /// digits abroad and the alphabet in Japanese. Returns -1 when five kinds are
 /// already listed.
 s32 BattleEnemy_ClaimNameLetter(s32 enemyId, s32 unused) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 kindCount;
   s32 kindIndex;
   s32 attempt;
   s32 suffix;
 
-  battle = gBattleWork;
+  battle = gBattleState;
   kindCount = battle->enemyKindCount;
   for (kindIndex = 0; kindIndex < kindCount; kindIndex++) {
     if (battle->enemyKinds[kindIndex] == enemyId)
@@ -283,7 +283,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 enemyId, s32 unused) {
 
 /// Frees a departing enemy's name letter for the next of its kind.
 UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   struct Unit *unit;
   s32 count = battle->enemyKindCount;
   s32 index;
@@ -369,7 +369,7 @@ s32 BattleFormation_GetRandomMember(s32 formationId) {
 /// the formation for the party's level instead.
 s32 BattleFormation_BuildEnemyList(s32 formationId) {
   u16 *enemyKinds;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   struct Formation *formation;
   s32 enemyCount;
   s32 levelAdjustment;
@@ -389,7 +389,7 @@ s32 BattleFormation_BuildEnemyList(s32 formationId) {
   u32 i;
   s32 memberIndex;
 
-  battle = gBattleWork;
+  battle = gBattleState;
   levelAdjustment = 0;
   battle->enemyKindCount = 0;
   enemyKinds = listBuffer;

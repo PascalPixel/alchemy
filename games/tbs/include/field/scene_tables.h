@@ -10,7 +10,7 @@
 #include "scene_ids.h"
 #include "sprite_ids.h"
 #include "static_assert.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "game/character_ids.h"
 
 /// The sixteen compass headings in 1/65536 turns, from east through south: a
@@ -87,7 +87,7 @@ enum { FLAG_VALE_PARTY_LEFT = 0x815 };
 /// A scene's entrance: where and facing which way the party arrives,
 /// and the camera's bounds there (-1 for none).
 struct SceneEntrance {
-  /// The entrance number the main routine's work names; -1 ends the table.
+  /// The entrance number the main routine's state names; -1 ends the table.
   s16 entrance;
   s16 requiredFlag;      ///< a flag that must be set, or -1 for none
   s16 x;                 ///< pixels
@@ -265,7 +265,7 @@ enum TriggerKind {
   TRIGGER_EXAMINE = 3, ///< the A button on what is ahead, when it is no actor
   TRIGGER_ITEM = 4,    ///< an item used on a cell or an actor
   TRIGGER_PSYNERGY = 5,
-  TRIGGER_RAISED = 6, ///< raised by code through FieldWork.raisedTrigger
+  TRIGGER_RAISED = 6, ///< raised by code through FieldState.raisedTrigger
   /// Talking to an actor Halt has stopped
   /// (Scene_FindActorTalkTrigger).
   TRIGGER_TALK_HALTED = 7

@@ -18,7 +18,7 @@ void System_Initialize(void) {
   Dma0_Stop();
   Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
   // Clear IWRAM up to the heap's end (the stacks above it are in use), then
-  // install the resident IWRAM code before any service can use its work blocks
+  // install the resident IWRAM code before any service can use its state blocks
   Dma_Fill32(0, (void *)IWRAM_START, 30 * 1024);
   Heap_Initialize();
   System_InstallIwramAndIrqs();

@@ -2,7 +2,7 @@
 #define ALCHEMY_MAP_GRID_SCROLL_H
 
 /// @file
-/// The map layers' scroll work and the background scroll values.
+/// The map layers' scroll state and the background scroll values.
 
 #include "fixed_math.h"
 #include "static_assert.h"
@@ -22,9 +22,9 @@ struct MapGridLayerScroll {
   struct MapGridCell *cells; ///< the layer's first cell in the map cell buffer
 };
 
-/// The field map's work: the followed position, screen shake, tileset
+/// The field map's state: the followed position, screen shake, tileset
 /// animations, blend script, view and its bounds, and three scrolling layers.
-struct MapGridScrollWork {
+struct MapGridScrollState {
   /// The followed point, read as x, height and z in 16.16 fixed-point pixels;
   /// FieldCamera_FollowActor points it at the camera's position.
   FIXED *origin;
@@ -55,12 +55,12 @@ struct MapGridScrollWork {
 
 STATIC_ASSERT(sizeof(struct MapGridLayerScroll) == 48);
 STATIC_ASSERT(offsetof(struct MapGridLayerScroll, cells) == 44);
-STATIC_ASSERT(sizeof(struct MapGridScrollWork) == 404);
-STATIC_ASSERT(offsetof(struct MapGridScrollWork, animations) == 24);
-STATIC_ASSERT(offsetof(struct MapGridScrollWork, blend) == 216);
-STATIC_ASSERT(offsetof(struct MapGridScrollWork, view) == 228);
-STATIC_ASSERT(offsetof(struct MapGridScrollWork, animationActive) == 252);
-STATIC_ASSERT(offsetof(struct MapGridScrollWork, layers) == 260);
+STATIC_ASSERT(sizeof(struct MapGridScrollState) == 404);
+STATIC_ASSERT(offsetof(struct MapGridScrollState, animations) == 24);
+STATIC_ASSERT(offsetof(struct MapGridScrollState, blend) == 216);
+STATIC_ASSERT(offsetof(struct MapGridScrollState, view) == 228);
+STATIC_ASSERT(offsetof(struct MapGridScrollState, animationActive) == 252);
+STATIC_ASSERT(offsetof(struct MapGridScrollState, layers) == 260);
 
 /// A background's hardware scroll offsets.
 struct BgScroll {

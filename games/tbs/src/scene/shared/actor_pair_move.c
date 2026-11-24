@@ -11,7 +11,7 @@ static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
   FIXED x;
   FIXED z;
 
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   raft = Actor_GetById(id);
   Event_Start();
   {

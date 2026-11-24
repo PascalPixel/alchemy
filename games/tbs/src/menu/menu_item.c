@@ -91,7 +91,7 @@ s32 ItemMenu_Run(void) {
 #if TBS_PATCH_1
   void *backup;
 #endif
-  struct ItemMenuWork *screen;
+  struct ItemMenuState *screen;
   s32 item;
   s32 target;
   s32 member;
@@ -104,11 +104,11 @@ s32 ItemMenu_Run(void) {
 #if TBS_PATCH_1
   backup = Heap_AllocEwram(size);
 #endif
-  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
-  gActorSystemWork->suspended = 1;
+  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_STATE_SIZE);
+  gActorSystemState->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeWork(0);
+  Window_InitializeState(0);
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
   Resource_LoadPairedBlocks();
@@ -128,7 +128,7 @@ s32 ItemMenu_Run(void) {
   result = ItemMenu_RunCommands(&member, &target, &item);
   Menu_StopWatchingStart();
   if (result == 1) {
-    struct FieldWork *selection = gFieldWork;
+    struct FieldState *selection = gFieldState;
 
     selection->item =
         (member << ACT_UNIT_SHIFT) | (item & INVENTORY_ITEM_ID_MASK);
@@ -137,24 +137,24 @@ s32 ItemMenu_Run(void) {
 
   // Close the menu and give the screen back to the field.
   WindowSprite_ClearListFar(screen->statusWindow);
-  WINDOW_WORK->holdTilemapUpload = 1;
+  WINDOW_STATE->holdTilemapUpload = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   IconMenu_ReleaseArrows();
   HeapSlot_Release(HEAP_SLOT_MENU);
-  gActorSystemWork->suspended = 0;
+  gActorSystemState->suspended = 0;
 #if TBS_PATCH_1
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords(BG_CHAR_BLOCK(1), backup, size);
-  WINDOW_WORK->holdTilemapUpload = 0;
+  WINDOW_STATE->holdTilemapUpload = 0;
   Heap_Release(backup);
   wait(1);
   Menu_ResumeFieldTasks();
 #endif
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  WINDOW_WORK->holdTilemapUpload = 0;
+  WINDOW_STATE->holdTilemapUpload = 0;
   Party_ClearUnusableShortcutsFar();
   return result;
 }
@@ -197,7 +197,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
   s32 menuResult;
   struct Unit *sourceUnit;
   struct Unit *targetUnit;
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   struct ItemDefinition *item;
   struct Unit *sourceCopy;
   struct Unit *targetCopy;
@@ -223,7 +223,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
   selection = 0;
   menuResult = 0;
   state = ITEM_STEP_MEMBER;
-  menu = gMenuWork;
+  menu = gMenuState;
 
   while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
     switch (state) {
@@ -826,10 +826,10 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
 
 /// Uses the selected item from the party member in side 0 on the one in side 1.
 s32 ItemMenu_Use(void) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   s32 result;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   result = Item_Use(menu->selectedSlots[0], menu->sideMember[0],
                     menu->sideMember[1]);
 
@@ -854,7 +854,7 @@ s32 ItemMenu_Use(void) {
 /// Sets up the item menu's first screen: the cursor window with the party's
 /// figures, the info window along the bottom, and an 8 by 2 cursor grid.
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   s32 memberIndex;
 
   Menu_CreatePartyFigures(MenuCursor_Create(menu), 2, 2, 8, 0);
@@ -877,7 +877,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 /// to 7 at MENU_ICON_HIDDEN_X, the rest 8 pixels further, all at
 /// MENU_ICON_HIDDEN_Y, each showing item graphic
 /// slot of the same number.
-void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
+void Menu_SpawnIconEntries(struct ItemMenuState *menu, struct Window *window) {
   struct WindowSprite **firstIcons;
   s32 firstSlot;
   struct WindowSprite **secondIcons;
@@ -921,7 +921,8 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
 
 /// Hides all the item icons.
 void ItemMenu_HideAllIcons(void) {
-  struct WindowSprite **icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
+  struct WindowSprite **icons =
+      ((struct ItemMenuState *)gMenuState)->entryIcons;
   s32 slot;
 
   for (slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
@@ -935,7 +936,7 @@ void ItemMenu_HideAllIcons(void) {
 #if LANGUAGE != LANGUAGE_JAPANESE
 /// Hides the item icons in the first column of the five-wide item grid.
 void ItemMenu_HidePageIcons(void) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   s32 slot = 0;
   s32 hidden = ICON_HIDDEN;
   struct WindowSprite **iconSlot = menu->entryIcons;
@@ -951,13 +952,13 @@ void ItemMenu_HidePageIcons(void) {
 #endif
 
 /// Closes the item menu: releases the party figures, hides the icons and the
-/// status panel's portrait (the work's cursor), and closes every window the
+/// status panel's portrait (the state's cursor), and closes every window the
 /// menu opened.
 void ItemMenu_Close(void) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   struct WindowSprite *cursor;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   Menu_ReleasePartyFigures();
   ItemMenu_HideAllIcons();
   wait(1);
@@ -979,7 +980,7 @@ void ItemMenu_Close(void) {
 /// Lets the player choose a party member in side (0 or 1), starting from the
 /// party member chosen last.
 s32 ItemMenu_SelectMember(s32 side) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   s32 result = 0;
   s32 memberIndex;
   struct Unit *unit;
@@ -1003,7 +1004,7 @@ s32 ItemMenu_SelectMember(s32 side) {
 
 /// The party member row of the item menu.
 s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   s32 selection;
   s32 memberCount;
   s32 result;
@@ -1014,7 +1015,7 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
   struct Window *window;
   s32 memberIndex;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   selection = menu->sideIndex[0];
   memberCount = menu->sideCount[0];
   redraw = 1;
@@ -1120,9 +1121,9 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
 /// Shows the equipment view of party member memberId's items in the item
 /// window.
 void ItemMenu_OpenCategory(s32 memberId) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   ItemMenu_PositionCategory();
   WindowSprite_RedrawSavedRectFar(menu->itemWindow);
   ItemMenu_DrawCategory(menu->itemWindow, memberId, 0);
@@ -1132,7 +1133,7 @@ void ItemMenu_OpenCategory(s32 memberId) {
 /// ItemTargetMode) to.
 s32 ItemMenu_SelectTarget(s32 mode) {
 
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   struct Window *window;
   s32 memberCount;
   s32 memberIndex;
@@ -1142,7 +1143,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   s32 heldCount;
   struct WindowSprite *targetMarker;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   window = menu->itemWindow;
   memberIndex = menu->sideIndex[1];
   memberCount = menu->partyCount;
@@ -1268,10 +1269,10 @@ s32 ItemMenu_SelectTarget(s32 mode) {
 /// has each party figure nod (ANIM_NOD) if that party member can equip the
 /// item, or stand (ANIM_STAND) if not.
 void EquipmentMenu_UpdateCompatibilityIndicators(void) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   s8 memberIndex;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   if ((gFrameCount & 31) == 0 && menu->partyCount != 0) {
     memberIndex = 0;
     do {
@@ -1292,10 +1293,10 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
 /// Ends EquipmentMenu_UpdateCompatibilityIndicators: puts every party figure
 /// back to ANIM_STAND and removes the task.
 void EquipmentMenu_StopCompatibilityIndicators(void) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   s8 memberIndex;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   if (menu->partyCount != 0) {
     memberIndex = 0;
     do {
@@ -1322,9 +1323,9 @@ s32 ItemMenu_IsStatRaisingItem(s32 itemId) {
 
 /// Clears the message window and writes message into it.
 void ItemMenu_DrawMessage(s32 unused, s32 message) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   WindowSprite_RedrawSavedRectFar(menu->questionWindow);
   Text_DrawMessageAsTilesFar(message, menu->questionWindow, 0, 0);
 }
@@ -1332,7 +1333,7 @@ void ItemMenu_DrawMessage(s32 unused, s32 message) {
 /// Hides the icon of each of the 32 list entries whose item is 0. Each of the
 /// 32 icon slots must hold a sprite (Menu_SpawnIconEntries).
 void Menu_HideEmptyEntryIcons(const u16 *items) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   s32 slot;
 
   for (slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
@@ -1414,7 +1415,7 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
   struct WindowSprite **icons;
   s32 itemId;
 
-  icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
+  icons = ((struct ItemMenuState *)gMenuState)->entryIcons;
   entries = inventoryEntries;
   for (i = 0; i < INVENTORY_SLOTS; i++) {
     itemId = *entries++;
@@ -1435,11 +1436,11 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
 /// Shows party member memberId's items in the item window, laid out for layout
 /// mode (see ItemMenu_RefreshEntry), or "no items" when there are none.
 void ItemMenu_RefreshMember(s32 memberId, s32 mode) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   struct Unit *member;
   u16 *items;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   member = Unit_GetFar(memberId);
   items = menu->items;
   menu->itemCount = ItemMenu_CollectItems(member, items, 0);
@@ -1457,7 +1458,7 @@ UNUSED void ItemMenu_NoOp(void) {}
 /// target's stats with it equipped; for a Psynergy item, the Psynergy it
 /// teaches.
 void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   s32 panelStyle = 0;
   struct Unit *unit = Unit_GetFar(member);
   s32 inventoryEntry = unit->inventory[slot];
@@ -1607,7 +1608,7 @@ s32 ItemMenu_CommandCursorY(s32 column, s32 row) {
 /// and Drop below (grid index = row * 3 + column, as ItemMenuCommand counts
 /// them).
 s32 ItemMenu_ChooseCommand(void) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   s8 commandStates[6];
   s32 column;
   s32 lastCommand;
@@ -1622,7 +1623,7 @@ s32 ItemMenu_ChooseCommand(void) {
   commandIndex = 0;
   column = 0;
   row = 0;
-  menu = gMenuWork;
+  menu = gMenuState;
   redraw = 1;
   ItemMenu_BuildCommands(commandStates);
   // Draw the item's name and the command grid, unless they are up already.
@@ -1786,10 +1787,10 @@ s32 ItemMenu_ChooseCommand(void) {
 /// worn equipment that is not cursed, Give with someone to give to, Drop unless
 /// the item is indispensable, and neither for cursed equipment being worn.
 void ItemMenu_BuildCommands(s8 *commandStates) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   struct ItemDefinition *item;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   item = Item_GetDirectFar(INVENTORY_ITEM_ID_MASK & menu->selectedItems[0]);
 
   if (item->type == ITEM_TYPE_NONE) { // usable items
@@ -1941,9 +1942,9 @@ s32 Item_ClassifyUseMode(s32 memberId, s32 inventoryEntry) {
 /// breaks one time in eight, with the break sound and "It broke!" in the info
 /// window. Called only after a successful use on a chosen party member.
 void ItemMenu_TryBreak(void) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   // One time in eight: 8192 of Random16's 65536 values.
   if ((Item_GetDirectFar(INVENTORY_ITEM_ID_MASK & menu->selectedItems[0])
            ->useType == ITEM_USE_MAY_BREAK) &&
@@ -1960,7 +1961,7 @@ void ItemMenu_TryBreak(void) {
 /// Opens the details window (top left, 13 by 10 tiles) and describes the item
 /// in side itemIndex there. Returns 1.
 s32 ItemMenu_OpenDetail(s32 itemIndex) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
 
   Window_UpdateOrCreate(&menu->equipWindow, 0, 0, 13, 10, WINDOW_FLAG_INSTANT);
   Palette_LoadIconsIntoHighlight();
@@ -1977,10 +1978,10 @@ s32 ItemMenu_OpenDetail(s32 itemIndex) {
 s32 ItemMenu_ShowDetails(s32 inventoryEntry) {
 #if TBS_PATCH_1
   s32 changed = 1;
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   struct WindowSprite *itemIcon = menu->selectedItemIcon;
 #else
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   s32 changed = 1;
 #endif
   struct Window *window;
@@ -1992,7 +1993,7 @@ s32 ItemMenu_ShowDetails(s32 inventoryEntry) {
   window = Window_CreateFar(0, 0, ITEM_QUANTITY_WINDOW_WIDTH, 10,
                             WINDOW_FLAG_INSTANT);
   // Hide the party figures (without their placement task they are not
-  // drawn) and the status panel's portrait (the work's cursor), which the
+  // drawn) and the status panel's portrait (the state's cursor), which the
   // window covers, meanwhile.
   Task_Remove(Menu_PlacePartyFigures);
 
@@ -2310,7 +2311,7 @@ void ItemMenu_DrawStat(s32 statChange, s32 unused, struct Window *window, s32 x,
 /// headed by the item.
 void ItemMenu_PlaceItemWindowBelowItemQuestion(void) {
   Window_SetBounds(
-      (struct Window *)((struct ItemMenuWork *)gMenuWork)->itemWindow, 13, 5,
+      (struct Window *)((struct ItemMenuState *)gMenuState)->itemWindow, 13, 5,
       17, 10);
 }
 
@@ -2318,7 +2319,7 @@ void ItemMenu_PlaceItemWindowBelowItemQuestion(void) {
 /// question.
 void ItemMenu_PlaceItemWindowBelowQuestion(void) {
   Window_SetBounds(
-      (struct Window *)((struct ItemMenuWork *)gMenuWork)->itemWindow, 13, 3,
+      (struct Window *)((struct ItemMenuState *)gMenuState)->itemWindow, 13, 3,
       17, 10);
 }
 
@@ -2326,7 +2327,7 @@ void ItemMenu_PlaceItemWindowBelowQuestion(void) {
 /// and a question below it.
 void ItemMenu_FitMessageWindowToItemQuestion(void) {
   Window_SetBounds(
-      (struct Window *)((struct ItemMenuWork *)gMenuWork)->questionWindow, 13,
+      (struct Window *)((struct ItemMenuState *)gMenuState)->questionWindow, 13,
       0, 17, 5);
 }
 
@@ -2334,7 +2335,7 @@ void ItemMenu_FitMessageWindowToItemQuestion(void) {
 /// Japanese.
 void ItemMenu_FitMessageWindowToLongItemQuestion(void) {
   Window_SetBounds(
-      (struct Window *)((struct ItemMenuWork *)gMenuWork)->questionWindow, 13,
+      (struct Window *)((struct ItemMenuState *)gMenuState)->questionWindow, 13,
       0, 17, 6);
 }
 
@@ -2342,14 +2343,14 @@ void ItemMenu_FitMessageWindowToLongItemQuestion(void) {
 /// or the quantity dial.
 void ItemMenu_FitMessageWindowToItemChoices(void) {
   Window_SetBounds(
-      (struct Window *)((struct ItemMenuWork *)gMenuWork)->questionWindow, 13,
+      (struct Window *)((struct ItemMenuState *)gMenuState)->questionWindow, 13,
       0, 17, 7);
 }
 
 /// Makes the message window 3 rows tall, for a one-line question.
 void ItemMenu_FitMessageWindowToQuestion(void) {
   Window_SetBounds(
-      (struct Window *)((struct ItemMenuWork *)gMenuWork)->questionWindow, 13,
+      (struct Window *)((struct ItemMenuState *)gMenuState)->questionWindow, 13,
       0, 17, 3);
 }
 
@@ -2365,7 +2366,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   s32 changed;
   s32 receiverCount;
   s32 memberCount;
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   // 1 KB of HEAP_SLOT_TILE_SCRATCH to draw the dial's digits in, released
   // before returning.
   void *tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
@@ -2468,7 +2469,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
 /// Shows the selected item at the top of the message window: its icon, its
 /// party member's name and its name.
 void ItemMenu_DrawItemHead(void) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
 
   Resource_LoadByModeIntoSlotFar(ICON_KIND_ITEM, menu->selectedItems[0],
                                  (u8)menu->selectedItemIcon->index, 0);
@@ -2549,7 +2550,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   s32 rows = 2;
   s32 selection = 0;
   s32 changed = 1;
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   struct Unit *unit = Unit_GetFar(menu->sideMember[1]);
   struct Unit *saved;
   struct Window *window;
@@ -2631,9 +2632,9 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 }
 
 /// Loads the stat arrows (up and down) into two free VRAM blocks, kept in the
-/// menu work's resource slots.
+/// menu state's resource slots.
 void Resource_LoadPairedBlocks(void) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   s32 block = VramCache_FindFreeEntry();
 
   menu->resourceSlots[0] = block;
@@ -2648,7 +2649,7 @@ void Resource_LoadPairedBlocks(void) {
 /// for them (kept within the list), five items to a page. Returns 1.
 s32 ItemMenu_BuildPagedList(struct PagedList *result, s32 index) {
   s32 unit;
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   s32 itemCount;
   s32 row;
   s32 page;
@@ -2678,16 +2679,16 @@ s32 ItemMenu_BuildPagedList(struct PagedList *result, s32 index) {
 
 /// Updates the item list for the row under the cursor: puts the selected item's
 /// plain name in the info window and highlights its row of the five. window and
-/// memberWork are not used.
-s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberWork,
+/// memberState are not used.
+s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberState,
                                 struct PagedList *pageState) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   s32 page;
   s32 index;
   s32 row;
 
   page = pageState->page;
-  menu = gMenuWork;
+  menu = gMenuState;
   index = page * LIST_PAGE_SIZE;
   index += pageState->row;
   pageState->selectedIndex = index;
@@ -2719,7 +2720,7 @@ s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberWork,
 /// their icons, and the page numbers when there is more than one page.
 s32 ItemMenu_DrawNamePage(struct Window *window, s32 unused,
                           const struct PagedList *pageState) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   u32 page;
   u32 firstEntry;
   u32 visibleCount;
@@ -2765,7 +2766,7 @@ UNUSED void ItemMenu_ItemNamePageNoOp(void) {}
 /// The item list of the party member in sideIndex (0: the holder, 1: the
 /// receiver of a trade), five items a page.
 s32 ItemMenu_RunList(s32 sideIndex) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
   struct Window *window;
   s32 changed;
   s32 moved;
@@ -2777,10 +2778,10 @@ s32 ItemMenu_RunList(s32 sideIndex) {
   struct Unit *memberUnit;
   s32 previous;
   struct WindowSprite *icon;
-  s32 work[5];
+  s32 memberState[5];
   struct PagedList state;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   result = 0;
   previous = 0;
   menu->equipPreview = result;
@@ -2818,7 +2819,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
           }
           redraw = 0;
         }
-        ItemMenu_DrawItemDetailPage(window, work, &state);
+        ItemMenu_DrawItemDetailPage(window, memberState, &state);
         menu->selectedItems[sideIndex] = menu->items[state.selectedIndex];
         ItemMenu_DrawEquipPreview(menu->sideMember[sideIndex],
                                   state.selectedIndex, 0,

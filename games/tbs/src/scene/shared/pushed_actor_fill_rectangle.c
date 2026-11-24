@@ -8,7 +8,7 @@
 static s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
                                                   u32 width, u32 height,
                                                   s32 value) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   struct MapGridCell *cells;
   u32 row;
   u32 column;

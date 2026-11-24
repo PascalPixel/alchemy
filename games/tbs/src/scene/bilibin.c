@@ -2,7 +2,7 @@
 /// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three scenes that
 /// share one overlay: SceneId_Bilibin, SceneId_BilibinTreasury and
 /// SceneId_BilibinBarricade. The getters pick each scene's tables by
-/// gMainRoutineWork.next, and Scene_Initialize sets up the scene being
+/// gMainRoutineState.next, and Scene_Initialize sets up the scene being
 /// entered. Bilibin_PushStatueOrCrates serves all three.
 ///
 /// Bilibin (SceneId_Bilibin) is the town past Goma Cave, whose chief, Lord
@@ -134,7 +134,7 @@
 #include "menu/menu.h"
 #include "scene/import.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -341,7 +341,7 @@ enum BilibinSpareCell {
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_BILIBIN) {
     return gBilibinEntrances;
@@ -357,7 +357,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 /// Only the Bilibin Treasury has exit regions.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_BILIBIN_TREASURY) {
+  if (gMainRoutineState.next == SCENE_BILIBIN_TREASURY) {
     return (const struct SceneExitRegion *)gBilibinTreasuryRegions;
   }
   return 0;
@@ -375,7 +375,7 @@ static void Bilibin_GustJoins(void) {
 /// Selects the actors of Bilibin, the Bilibin Barricade or the Bilibin
 /// Treasury.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_BILIBIN) {
     return gBilibinActorPlacements;
@@ -399,7 +399,7 @@ static void Bilibin_InspectWell(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_BILIBIN) {
     return gBilibinTriggers;
@@ -442,7 +442,7 @@ static void Bilibin_ExamineTreeMan(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinItsTreeButAlmostLooks);
   if (Event_GetFlag(FLAG_BILIBIN_TREE_EXAMINED) != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_ShowMessage(ACTOR_TREE_MAN, 0);
   GameFlag_Set(FLAG_BILIBIN_TREE_EXAMINED);
@@ -518,9 +518,9 @@ static void Bilibin_OpenDoorAndLeave(void) {
   s32 exitIndex;
   s32 column;
   s32 row;
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   // Freeze placed actors before the exit cells start animating.
   for (actorSlot = ACTOR_FIRST_PLACED; actorSlot < ACTOR_ID_COUNT;
@@ -530,7 +530,7 @@ static void Bilibin_OpenDoorAndLeave(void) {
       actor->motionFlags = 0;
     }
   }
-  exitIndex = (s16)(work->stepTrigger - BILIBIN_TO_INN);
+  exitIndex = (s16)(state->stepTrigger - BILIBIN_TO_INN);
   if (exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
     Sound_Play(SE_THUMP);
   } else {
@@ -542,7 +542,7 @@ static void Bilibin_OpenDoorAndLeave(void) {
   MapGrid_PlayMapEdit(gBilibin_DoorSteps[exitIndex], column, row);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
@@ -697,7 +697,7 @@ static void Bilibin_JillGivesHardNut(void) {
   // "Please, take this. It is a small token of my appreciation."
   Event_ShowMessageThenWait(ACTOR_JILL, 0, 10);
   FieldMessage_Show(MsgBilibinJillGaveIsaacSpecialGift, 1);
-  gFieldWork->message++;
+  gFieldState->message++;
   Item_ShowFound(ITEM_HARD_NUT, 3);
   Party_GiveItem(ITEM_HARD_NUT, 0);
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
@@ -736,13 +736,13 @@ static void Bilibin_JillGivesHardNut(void) {
 /// Sets up the scene being entered, Bilibin, the Bilibin Barricade or the
 /// Bilibin Treasury.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gMainRoutineWork.next == SCENE_BILIBIN) {
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  if (gMainRoutineState.next == SCENE_BILIBIN) {
     Bilibin_RestoreVillageActors();
-  } else if (gMainRoutineWork.next == SCENE_BILIBIN_BARRICADE) {
+  } else if (gMainRoutineState.next == SCENE_BILIBIN_BARRICADE) {
     Bilibin_RestoreRiverActors();
     Task_AddFrame(Bilibin_UpdateRiverRipples, TASK_PASS_FRAME);
-  } else if (gMainRoutineWork.next == SCENE_BILIBIN_TREASURY) {
+  } else if (gMainRoutineState.next == SCENE_BILIBIN_TREASURY) {
     Bilibin_SetUpTreasury();
   }
   return 0;
@@ -763,14 +763,14 @@ static void Bilibin_RestoreVillageActors(void) {
     Actor_SetPosition(ACTOR_FORMER_TREE_MAN, 0, 0);
   }
   Actor_Get(ACTOR_IVY)->scaleY = 3 * FIXED_ONE / 2;
-  entrance = gMainRoutineWork.entrance;
+  entrance = gMainRoutineState.entrance;
   if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_WEST) {
     Actor_SetPosition(ACTOR_IVY, 0, 0);
   } else if (entrance == BILIBIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-    entrance = gMainRoutineWork.entrance;
+    entrance = gMainRoutineState.entrance;
     if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_EAST) {
       Actor_SetPosition(ACTOR_VILLAGE_STATUE, 248, 216);
     }
@@ -925,11 +925,11 @@ static void Bilibin_UpdateCratesCells(void) {
 static void Bilibin_SetUpTreasury(void) {
   struct Actor *leader;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Bilibin_UpdateTreasuryStatueCells();
-  if (gMainRoutineWork.entrance == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
-      gMainRoutineWork.entrance == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {
+  if (gMainRoutineState.entrance == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
+      gMainRoutineState.entrance == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       Event_Start();
@@ -988,11 +988,11 @@ static void Bilibin_PushStatueOrCrates(void) {
       Actor_SelectAnimation(leader, ANIM_STAND);
       // Each scene derives its cell behaviors from this same moved
       // actor.
-      if (gMainRoutineWork.next == SCENE_BILIBIN_BARRICADE)
+      if (gMainRoutineState.next == SCENE_BILIBIN_BARRICADE)
         Bilibin_UpdateCratesCells();
-      else if (gMainRoutineWork.next == SCENE_BILIBIN)
+      else if (gMainRoutineState.next == SCENE_BILIBIN)
         Bilibin_UpdateVillageStatueCells();
-      else if (gMainRoutineWork.next == SCENE_BILIBIN_TREASURY)
+      else if (gMainRoutineState.next == SCENE_BILIBIN_TREASURY)
         Bilibin_UpdateTreasuryStatueCells();
     }
   }
@@ -1003,7 +1003,7 @@ static void Bilibin_PushStatueOrCrates(void) {
 static void Bilibin_UpdateRiverRipples(void) {
   struct Actor *actor;
 
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineState.leaderActorId);
   if (actor->x.fixed < toFIXED(142)) {
     if (actor->y.fixed < toFIXED(8)) {
       if (gBilibin_RippleTimer.frames == 0)

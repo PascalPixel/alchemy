@@ -64,7 +64,7 @@
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "field/field_effect.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "game/game.h"
@@ -79,7 +79,7 @@
 #include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
 #include "system/io_reg.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
@@ -723,7 +723,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_FIRST_ROCK + 7, 0, 0);
   }
   // The lightning starts at once, except before Dora and Kyle's event.
-  if (gMainRoutineWork.entrance !=
+  if (gMainRoutineState.entrance !=
           VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA ||
       GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
     Weather_StartRain();
@@ -749,7 +749,7 @@ s32 Scene_Initialize(void) {
   }
   wait(1);
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
-      gMainRoutineWork.entrance ==
+      gMainRoutineState.entrance ==
           VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA) {
     ValePrologue_DoraSendsIsaacToThePlaza();
     return 0;
@@ -775,8 +775,8 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_CHEST_ROPE_DROPPED);
     Event_End();
   }
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 24;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = 24;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Weather_ResumeLightning();
@@ -798,8 +798,8 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   FieldCamera_MoveTo(316, 160, 880, 1);
   Actor_SetPosition(ACTOR_KYLE, 294, 868);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Weather_ResumeLightning();
@@ -2760,13 +2760,13 @@ static void ValePrologue_RebuildRiverbank(void) {
 /// rope bridge west of his house (cells (3..4, 54)). It attacks once (slot 2 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 static void ValePrologue_FightThirdMonster(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Event_Start();
-  work = gFieldWork;
-  work->transition =
+  state = gFieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  work->transitionFrames = 64;
+  state->transitionFrames = 64;
   GameFlag_Set(FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 2);
   GameFlag_Set(FLAG_VALE_STORM_MONSTER_FOUGHT);
@@ -2778,13 +2778,13 @@ static void ValePrologue_FightThirdMonster(void) {
 /// (21, 85..86)). It attacks once (slot 3 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 static void ValePrologue_FightFourthMonster(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Event_Start();
-  work = gFieldWork;
-  work->transition =
+  state = gFieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  work->transitionFrames = 64;
+  state->transitionFrames = 64;
   GameFlag_Set(FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 3);
   GameFlag_Set(FLAG_VALE_STORM_MONSTER_FOUGHT);

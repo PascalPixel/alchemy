@@ -52,18 +52,18 @@ enum HeapSlot {
   HEAP_SLOT_SPRITES = 4,
   /// The 64 actors (struct Actor).
   HEAP_SLOT_ACTORS = 5,
-  /// The actor system's work (struct ActorSystemWork, gActorSystemWork), taken
-  /// by ActorSystem_Initialize.
+  /// The actor system's state (struct ActorSystemState, gActorSystemState),
+  /// taken by ActorSystem_Initialize.
   HEAP_SLOT_ACTOR_SYSTEM = 6,
-  /// The world map's affine work (struct WorldMapAffineWork).
+  /// The world map's affine state (struct WorldMapAffineState).
   HEAP_SLOT_WORLD_MAP_AFFINE = 7,
-  /// The field map's scrolling work (struct MapGridScrollWork), or on the world
-  /// map its perspective view (struct WorldMapView); gMapGridWork.
+  /// The field map's scrolling state (struct MapGridScrollState), or on the
+  /// world map its perspective view (struct WorldMapView); gMapGridState.
   HEAP_SLOT_MAP_GRID = 8,
-  /// A battle's struct BattleWork (gBattleWork), from Battle_Run to
+  /// A battle's struct BattleState (gBattleState), from Battle_Run to
   /// the next scene change.
   HEAP_SLOT_BATTLE = 9,
-  /// The battle background's scanline work (struct BattleAffineHdma).
+  /// The battle background's scanline state (struct BattleAffineHdma).
   HEAP_SLOT_BATTLE_SCANLINES = 10,
   /// Unused: 640 bytes Battle_Run allocates with the battle's other blocks,
   /// which nothing reads or writes.
@@ -74,36 +74,37 @@ enum HeapSlot {
   /// A scratch buffer, usually 1 KB, that a picture is decoded into and
   /// released as soon as its tiles are in VRAM.
   HEAP_SLOT_TILE_SCRATCH = 14,
-  /// The window renderer's work (struct WindowWork, gWindowWork).
+  /// The window renderer's state (struct WindowState, gWindowState).
   HEAP_SLOT_WINDOW = 15,
   /// The party status window's layout (struct PartyStatusWindow).
   HEAP_SLOT_PARTY_STATUS = 16,
   /// The buffers an icon or portrait is decoded through (GlyphTransfer).
   HEAP_SLOT_GLYPH_TRANSFER = 17,
-  /// The selection screen's work (struct SelectionMenuWork).
+  /// The selection screen's state (struct SelectionMenuState).
   HEAP_SLOT_SELECTION_MENU = 18,
-  /// The work of Menu_AllocateSelectionWorkspace, which nothing calls.
-  HEAP_SLOT_SELECTION_WORKSPACE = 19,
-  /// The settings menu's work (struct OptionMenuWork, gOptionMenuWork).
+  /// The selection state Menu_AllocateSelectionState allocates, which nothing
+  /// calls.
+  HEAP_SLOT_SELECTION_STATE = 19,
+  /// The settings menu's state (struct OptionMenuState, gOptionMenuState).
   HEAP_SLOT_SETTINGS_MENU = 20,
-  /// Mind Read's wave work (struct MindReadWork, gMindReadWork).
+  /// Mind Read's wave state (struct MindReadState, gMindReadState).
   HEAP_SLOT_MIND_READ = 22,
-  /// A field scene's struct FieldWork, which scenes read as struct FieldWork
-  /// (gFieldWork); FieldSequence_Run takes it and frees it on the way out.
+  /// A field scene's struct FieldState, which scenes read as struct FieldState
+  /// (gFieldState); FieldSequence_Run takes it and frees it on the way out.
   HEAP_SLOT_FIELD = 27,
-  /// The palette cycles (struct PaletteCycleWork).
+  /// The palette cycles (struct PaletteCycleState).
   HEAP_SLOT_PALETTE_CYCLES = 28,
   /// The running ground particles, motes or sparkles (struct
-  /// WeatherWork).
+  /// WeatherState).
   HEAP_SLOT_WEATHER = 29,
-  /// The field's colour blend work (gFieldBlendWork): the struct
-  /// FieldBlendWork the storm's lightning and Weather_StartLightningFlash
+  /// The field's colour blend state (gFieldBlendState): the struct
+  /// FieldBlendState the storm's lightning and Weather_StartLightningFlash
   /// allocate.
   HEAP_SLOT_FIELD_BLEND = 30,
   /// The screen transition (struct ScreenTransitionState,
-  /// gScreenTransitionWork): the window edges and dissolve of a scene change.
+  /// gScreenTransitionState): the window edges and dissolve of a scene change.
   HEAP_SLOT_SCREEN_TRANSITION = 31,
-  /// The palette fade (gPaletteFadeWork) that moves the BG and sprite palettes
+  /// The palette fade (gPaletteFadeState) that moves the BG and sprite palettes
   /// toward target colours: the struct PaletteFade
   /// PaletteFade_Initialize allocates on scene load, or the title
   /// intro's struct TitlePaletteFade.
@@ -111,17 +112,17 @@ enum HeapSlot {
   /// The floating lights of Sol Sanctum's Elemental Star room (struct
   /// SolSanctumRingList, sol_sanctum_elemental_star_ring_setup.c).
   HEAP_SLOT_SOL_SANCTUM_LIGHTS = 33,
-  /// The line scroll's work (struct LineScrollWork).
+  /// The line scroll's state (struct LineScrollState).
   HEAP_SLOT_LINE_SCROLL = 34,
   /// Where Mercury Lighthouse keeps a pointer to the state of the lights that
   /// carry the leader over its pools (struct MercuryLighthouseLights).
   HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS = 35,
-  /// The fade overlay's work (struct FadeOverlayWork).
+  /// The fade overlay's state (struct FadeOverlayState).
   HEAP_SLOT_FADE_OVERLAY = 36,
-  /// The battle message window's work (struct BattleMessageWork).
+  /// The battle message window's state (struct BattleMessageState).
   HEAP_SLOT_BATTLE_MESSAGE = 37,
-  /// The running battle effect's own work (gBattleEffectWork). Lucky Dice
-  /// keeps its own work in this slot and the next two.
+  /// The running battle effect's own state (gBattleEffectState). Lucky Dice
+  /// keeps its own state in this slot and the next two.
   HEAP_SLOT_BATTLE_EFFECT = 39,
   /// The running battle effect's pixel canvas.
   HEAP_SLOT_BATTLE_CANVAS = 40,
@@ -129,7 +130,7 @@ enum HeapSlot {
   HEAP_SLOT_BATTLE_SHEET = 41,
   /// The battle's entry transition timer, in frames (gBattleEntryTimer).
   HEAP_SLOT_BATTLE_ENTRY_TIMER = 42,
-  /// The title intro's state (struct IntroWork).
+  /// The title intro's state (struct IntroState).
   HEAP_SLOT_TITLE_INTRO = 43,
   /// The battle background's view and entry transition (32 bytes), from
   /// Battle_Run.
@@ -150,8 +151,8 @@ enum HeapSlot {
   /// the length of one message's decoding (Message_Decode), or of one
   /// Message_DecodeRaw call when the slot is empty.
   HEAP_SLOT_MESSAGE_DECODER = 50,
-  /// The save workspace (struct SaveWork), from
-  /// Save_InitializeWork to Save_ReleaseWork around each
+  /// The save state (struct SaveState), from
+  /// Save_InitializeState to Save_ReleaseState around each
   /// save, load, copy or delete and each scan of the files, as the main
   /// menu's (Save_ScanFileSummaries).
   HEAP_SLOT_SAVE = 51,
@@ -164,17 +165,17 @@ enum HeapSlot {
   /// Each linked console's party (ENEMY_UNITS_SIZE bytes), from the
   /// Battle Arena and Battle_Run.
   HEAP_SLOT_ENEMY_UNITS = 54,
-  /// The menu work (MENU_WORK_SIZE bytes) shared by the field menu's screens
+  /// The menu state (MENU_STATE_SIZE bytes) shared by the field menu's screens
   /// and the shop; each takes it on opening and releases it on closing.
   HEAP_SLOT_MENU = 55,
-  /// The Psynergy effect's work (struct FieldEffectWork, gFieldEffectWork).
+  /// The Psynergy effect's state (struct FieldEffectState, gFieldEffectState).
   HEAP_SLOT_FIELD_EFFECT = 56,
-  /// The battle command menus' work (struct BattleMenuWork).
+  /// The battle command menus' state (struct BattleMenuState).
   HEAP_SLOT_BATTLE_MENU = 57,
-  /// A command icon menu's work (struct IconMenuWork).
+  /// A command icon menu's state (struct IconMenuState).
   HEAP_SLOT_ICON_MENU = 58,
-  /// The Colosso finals' race work (struct ColossoRaceWork), which
-  /// gColossoWork reads by its own name.
+  /// The Colosso finals' race state (struct ColossoRaceState), which
+  /// gColossoState reads by its own name.
   HEAP_SLOT_COLOSSO_RACE = 59
 };
 

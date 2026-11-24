@@ -2,7 +2,7 @@
 /// Vale and the World Map: the golden ring that rises around someone using
 /// Psynergy.
 
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 
 /// Sets off a golden ring around the actor: its two halves
 /// (field_effect_vertical.c), drawn from the Psynergy's cached tiles.
@@ -10,7 +10,7 @@ void WorldMap_CreateAttachedEffects(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
   struct Sprite *sprite;
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct FieldEffectState *effectState = gFieldEffectState;
   s32 i;
 
   for (i = 0; i < 2; ++i) {
@@ -27,7 +27,7 @@ void WorldMap_CreateAttachedEffects(struct Actor *parent) {
         Sprite_StartAnimation(sprite, 0);
         sprite->flags = 0;
         VramCache_FreeEntry(sprite->slot);
-        sprite->slot = effectWork->tileSlot;
+        sprite->slot = effectState->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
             (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;

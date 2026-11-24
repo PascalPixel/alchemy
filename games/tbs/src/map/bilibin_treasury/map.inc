@@ -4,14 +4,14 @@ Field_BilibinTreasury:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 80, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_BilibinTreasury, .LField_BilibinTreasury_CELL_PICTURES
+	map_offset Field_BilibinTreasury, .LField_BilibinTreasury_CELL_TILES
 	map_offset Field_BilibinTreasury, .LField_BilibinTreasury_SHAPES
 	map_offset Field_BilibinTreasury, .LField_BilibinTreasury_GRID
 	map_offset Field_BilibinTreasury, .LField_BilibinTreasury_ANIMATION
 	map_offset Field_BilibinTreasury, .LField_BilibinTreasury_BLEND
 	map_offset Field_BilibinTreasury, .LField_BilibinTreasury_MARKERS
-.LField_BilibinTreasury_CELL_PICTURES:
-	.incbin "games/tbs/src/map/bilibin_treasury/cell_pictures.delta2.lz"
+.LField_BilibinTreasury_CELL_TILES:
+	.incbin "games/tbs/src/map/bilibin_treasury/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_BilibinTreasury_SHAPES:
 	.incbin "games/tbs/src/map/bilibin_treasury/shapes.table.lz"

@@ -2,7 +2,7 @@
 #define ALCHEMY_SAVE_H
 
 /// @file
-/// The save workspace: sector headers and file summaries.
+/// The save state: sector headers and file summaries.
 
 #include "fixed_math.h"
 #include "static_assert.h"
@@ -41,7 +41,7 @@ struct SaveFileSummary {
   u32 coins;
   u8 djinn[4]; ///< the party's Djinn of each element
   s8 party[5]; ///< up to four party members, ended by -1
-  /// Copied from MainRoutineWork.sendFlag, which saving at the end of the
+  /// Copied from MainRoutineState.sendFlag, which saving at the end of the
   /// game sets; the file list for cleared data lists a file without it as not
   /// cleared.
   s8 sendFlag;
@@ -49,10 +49,10 @@ struct SaveFileSummary {
   u8 childhood; ///< FLAG_CHILDHOOD is set; remaps the party's sprites
   /// bits: 15..8 windowBrightness | 7..0 windowHue
   ///@{
-  u16 windowHue : 8;        ///< MainRoutineWork.windowHue
-  u16 windowBrightness : 8; ///< MainRoutineWork.windowBrightness
+  u16 windowHue : 8;        ///< MainRoutineState.windowHue
+  u16 windowBrightness : 8; ///< MainRoutineState.windowBrightness
   ///@}
-  /// Low half of MainRoutineWork.buildStamp; a file below the current stamp
+  /// Low half of MainRoutineState.buildStamp; a file below the current stamp
   /// is listed as from an older build.
   u16 frames;
   /// Filled on reading: the play time from the file's second part. A file
@@ -61,9 +61,9 @@ struct SaveFileSummary {
   u32 checksum; ///< the sum of the 968 words from gGameFlagBytes
 };
 
-/// The save work: which of the 16 flash sectors hold a part, their part ids and
-/// counters, one sector's buffer and the three files' summaries.
-struct SaveWork {
+/// The save state: which of the 16 flash sectors hold a part, their part ids
+/// and counters, one sector's buffer and the three files' summaries.
+struct SaveState {
   u8 occupied[16]; ///< 1 for a sector holding the current copy of a part
   u8 partId[16];   ///< each sector's part; 16 for none
   u16 counter[16]; ///< each sector's counter
@@ -82,19 +82,19 @@ STATIC_ASSERT(sizeof(struct SaveFileSummary) == 64);
 STATIC_ASSERT(offsetof(struct SaveFileSummary, level) == 28);
 STATIC_ASSERT(offsetof(struct SaveFileSummary, sendFlag) == 49);
 STATIC_ASSERT(offsetof(struct SaveFileSummary, checksum) == 60);
-STATIC_ASSERT(offsetof(struct SaveWork, slot) == 64);
-STATIC_ASSERT(offsetof(struct SaveWork, summary) == 4160);
+STATIC_ASSERT(offsetof(struct SaveState, slot) == 64);
+STATIC_ASSERT(offsetof(struct SaveState, summary) == 4160);
 
 STATIC_ASSERT(sizeof(struct SaveSectorHeader) == 16);
-STATIC_ASSERT(sizeof(struct SaveWork) == 4352);
-STATIC_ASSERT(offsetof(struct SaveWork, partId) == 16);
-STATIC_ASSERT(offsetof(struct SaveWork, counter) == 32);
+STATIC_ASSERT(sizeof(struct SaveState) == 4352);
+STATIC_ASSERT(offsetof(struct SaveState, partId) == 16);
+STATIC_ASSERT(offsetof(struct SaveState, counter) == 32);
 STATIC_ASSERT(offsetof(struct SaveFileSummary, flagCount) == 50);
 STATIC_ASSERT(offsetof(struct SaveFileSummary, secondPartPlayTime) == 56);
 
-/// The save work, heap slot HEAP_SLOT_SAVE under its own name; null between
+/// The save state, heap slot HEAP_SLOT_SAVE under its own name; null between
 /// save operations.
-#define gSaveWork (*(struct SaveWork **)&gHeapSlots[HEAP_SLOT_SAVE])
+#define gSaveState (*(struct SaveState **)&gHeapSlots[HEAP_SLOT_SAVE])
 
 /// The word, counted from gSceneLocalState (system/ewram.s), which opens a
 /// file's second part, that holds the second copy of the play time

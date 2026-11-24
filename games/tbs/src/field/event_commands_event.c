@@ -37,14 +37,14 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
 /// end at once and L restores normal waits.
 void Event_UpdateDebugSkip(void) {
-  struct FieldWork *fieldWork = gFieldWork;
+  struct FieldState *fieldState = gFieldState;
 
   if (gDebugMode != 0) {
     if (gKeysPressed & KEY_L) {
-      fieldWork->fastForward = 0;
+      fieldState->fastForward = 0;
     }
     if (gKeysPressed & KEY_R) {
-      fieldWork->fastForward = -1;
+      fieldState->fastForward = -1;
     }
   }
 }
@@ -52,7 +52,7 @@ void Event_UpdateDebugSkip(void) {
 /// Waits the requested frames through wait(), unless debug fast-forward
 /// (Event_UpdateDebugSkip) is on: the wait events use.
 void Event_Wait(s32 frames) {
-  if (gFieldWork->fastForward == 0 && frames != 0) {
+  if (gFieldState->fastForward == 0 && frames != 0) {
     wait(frames);
   }
 }
@@ -63,14 +63,14 @@ void Event_Wait(s32 frames) {
 void Leader_StopMoving(void) {
   struct Actor *actor;
 
-  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  actor = Actor_Lookup(gMainRoutineState.leaderActorId);
   actor->speedLimit = FIXED_ONE;
   actor->acceleration = toFIXED(1) / 2;
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   actor->velocityX = 0;
   actor->velocityZ = 0;
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_CLIMB) {
+  if (gMainRoutineState.movementMode == LEADER_MOVEMENT_CLIMB) {
     Actor_SelectAnimationFar(actor, ANIM_LEADER_CLING);
     return;
   }
@@ -81,36 +81,36 @@ void Leader_StopMoving(void) {
 /// message and timing state, and starts the debug fast-forward task with the
 /// leader as the message speaker.
 void Event_Start(void) {
-  struct FieldWork *fieldWork = gFieldWork;
+  struct FieldState *fieldState = gFieldState;
 
   AreaNameWindow_HideFar();
   Leader_StopMoving();
   // A raised or step trigger still marked running is ended first.
-  if ((s16)fieldWork->busy != 0) {
+  if ((s16)fieldState->busy != 0) {
     Field_EndBusyAndReveal();
   }
   // Every event starts with no name window and normal waits.
-  fieldWork->choiceMessage = 0;
-  fieldWork->choiceWidth = 0;
-  fieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
-  fieldWork->fastForward = 0;
-  fieldWork->unusedAfterMessage = -1;
-  fieldWork->unusedBeforeCamera[0] = -1;
-  fieldWork->unusedBeforeCamera[1] = -1;
+  fieldState->choiceMessage = 0;
+  fieldState->choiceWidth = 0;
+  fieldState->transitionFrames = MAP_TRANSITION_FRAMES;
+  fieldState->fastForward = 0;
+  fieldState->unusedAfterMessage = -1;
+  fieldState->unusedBeforeCamera[0] = -1;
+  fieldState->unusedBeforeCamera[1] = -1;
   Task_Add(Event_UpdateDebugSkip, TASK_PASS_FRAME);
   // XXX (no evidence): what flag 0x132 means; every event start in both games
   // clears it, nothing in either game's source names it or reads it by its
   // number, and no other code of tbs-en's build loads that number for a flag.
   GameFlag_ClearFar(0x132);
-  fieldWork->speaker = gMainRoutineWork.leaderActorId;
-  fieldWork->messageWindow = 0;
+  fieldState->speaker = gMainRoutineState.leaderActorId;
+  fieldState->messageWindow = 0;
 }
 
 /// Ends an event: stops the debug fast-forward task, gives the camera back to
 /// the leader and refreshes FLAG_LURE_CAP (GameFlag_RefreshLureCap).
 void Event_End(void) {
   Task_Remove(Event_UpdateDebugSkip);
-  FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  FieldCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   GameFlag_RefreshLureCapFar();
 }
 
@@ -126,7 +126,7 @@ void Event_RunActorUpdateAndWait(struct ActorPlacement *table) {
   Event_NoOpUpdate();
   Actor_ResetForLeader(table);
   wait(1);
-  Actor_Lookup(gMainRoutineWork.leaderActorId);
+  Actor_Lookup(gMainRoutineState.leaderActorId);
 }
 
 /// Spawns the actors of an actor placement table after the last actor in use.
@@ -137,9 +137,9 @@ void Event_AppendActorPlacements(struct ActorPlacement *table) {
 /// Sets the scene's trigger table, which the field checks as the leader moves:
 /// Altin Peak's event calls it.
 void Event_SetTriggers(const struct Trigger *triggers) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
-  work->triggers = triggers;
+  state->triggers = triggers;
 }
 
 /// Adds unit to the party. With announce nonzero it also shows `<name> joined
@@ -178,12 +178,12 @@ s32 Party_CheckShortcut(u32 shortcut) {
 }
 
 /// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
-/// gMainRoutineWork.firstShortcut or secondShortcut.
+/// gMainRoutineState.firstShortcut or secondShortcut.
 void Party_ClearUnusableShortcuts(void) {
-  if (Party_CheckShortcut(gMainRoutineWork.firstShortcut) != 0)
-    gMainRoutineWork.firstShortcut = 0;
-  if (Party_CheckShortcut(gMainRoutineWork.secondShortcut) != 0)
-    gMainRoutineWork.secondShortcut = 0;
+  if (Party_CheckShortcut(gMainRoutineState.firstShortcut) != 0)
+    gMainRoutineState.firstShortcut = 0;
+  if (Party_CheckShortcut(gMainRoutineState.secondShortcut) != 0)
+    gMainRoutineState.secondShortcut = 0;
 }
 
 /// Takes unit out of the party, fully restoring its HP and PP and curing its
@@ -205,12 +205,12 @@ void Party_RemoveMemberRestored(s32 unit) {
   survivingMembers = 0;
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    vitals = Unit_GetFar(gMainRoutineWork.party[partyIndex]);
+    vitals = Unit_GetFar(gMainRoutineState.party[partyIndex]);
     if (vitals->hp != 0)
       survivingMembers++;
   }
   if (survivingMembers == 0) {
-    vitals = Unit_GetFar(gMainRoutineWork.leaderActorId);
+    vitals = Unit_GetFar(gMainRoutineState.leaderActorId);
     vitals->hp = 1;
     Unit_UpdateGauges(vitals);
   }
@@ -226,7 +226,7 @@ s32 Party_CheckItemLimit(s32 item) {
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
     heldQuantity +=
-        Inventory_CountItemFar(gMainRoutineWork.party[partyIndex], item);
+        Inventory_CountItemFar(gMainRoutineState.party[partyIndex], item);
 
   if (heldQuantity >= partyCount * INVENTORY_STACK_MAX) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
@@ -244,7 +244,7 @@ s32 Party_CheckItemLimit(s32 item) {
 /// every bag is full the player picks something to drop. Returns who got it,
 /// or -1.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 savedMessage;
   s32 owner;
   s32 result;
@@ -253,10 +253,10 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   s32 member;
   s32 slot;
 
-  work = gFieldWork;
+  state = gFieldState;
   // The messages below move the event's message on; every return puts it
   // back, so the event continues where it was.
-  savedMessage = work->message;
+  savedMessage = state->message;
   owner = PartyInventory_AddFar(item);
   if (owner == -1) {
     // Every bag is full: "But you can't carry any more items."
@@ -285,7 +285,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       Item_AdjustCounterFar(item, 1);
       MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar(MsgWhatWillYouDrop + 2, FIELD_MESSAGE_ZOOM);
-      work->message = savedMessage;
+      state->message = savedMessage;
       return owner;
     } else {
       // A carried item was picked: drop it (the whole stack) and take the new
@@ -311,7 +311,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         Inventory_DiscardFar(member, slot);
       owner = PartyInventory_AddFar(item);
       Sound_PlayFar(MUS_TREASURE_FOUND);
-      if (owner == gMainRoutineWork.leaderActorId) {
+      if (owner == gMainRoutineState.leaderActorId) {
         ItemGift_ShowGotItem(item, FIELD_MESSAGE_ZOOM |
                                        FIELD_MESSAGE_WAITING_FOR_SOUND);
       } else {
@@ -321,7 +321,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
                              FIELD_MESSAGE_ZOOM |
                                  FIELD_MESSAGE_WAITING_FOR_SOUND);
       }
-      work->message = savedMessage;
+      state->message = savedMessage;
       return owner;
     }
   } else {
@@ -330,12 +330,12 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     Sound_PlayFar(MUS_TREASURE_FOUND);
     ItemGift_ShowGotItem(item,
                          FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
-    if (owner != gMainRoutineWork.leaderActorId) {
+    if (owner != gMainRoutineState.leaderActorId) {
       MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
       MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
       FieldMessage_ShowFar(GIFT_RECEIVED_MESSAGE, GIFT_RECEIVED_MESSAGE_MODE);
     }
-    work->message = savedMessage;
+    state->message = savedMessage;
   }
   return owner;
 }
@@ -380,10 +380,10 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
 /// forceBottom is set; the actor then nods for yes or shakes its head for no.
 /// Returns 0 for yes.
 s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
-  struct FieldWork *work = gFieldWork;
-  s32 sprite = Scene_FindActorPlacement(work->speaker)->sprite;
-  struct Window *window = (struct Window *)work->messageWindow;
-  struct Window *side = (struct Window *)work->sideWindow;
+  struct FieldState *state = gFieldState;
+  s32 sprite = Scene_FindActorPlacement(state->speaker)->sprite;
+  struct Window *window = (struct Window *)state->messageWindow;
+  struct Window *side = (struct Window *)state->sideWindow;
   s32 useBottom = 1;
   s32 answer;
 
@@ -412,7 +412,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
   }
 
   answer =
-      YesNoMenu_RunFar(useBottom, work->choiceMessage, work->choiceWidth, 0);
+      YesNoMenu_RunFar(useBottom, state->choiceMessage, state->choiceWidth, 0);
   if (answer != 0) {
     Actor_SetAnimationById(actorId, ANIM_SHAKE_HEAD);
     Portrait_CloseWindowFar(sprite);
@@ -445,49 +445,49 @@ void Party_LearnAbility(s32 unit, s32 ability) {
                        FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
 }
 
-/// Starts the event's screen transition, as FieldWork.transition and
+/// Starts the event's screen transition, as FieldState.transition and
 /// transitionFrames give it.
 void Event_StartScreenTransition(void) {
-  struct FieldWork *fieldWork = gFieldWork;
+  struct FieldState *fieldState = gFieldState;
 
-  ScreenTransition_Start(fieldWork->transition, fieldWork->transitionFrames);
-  fieldWork->transitionActive = 1;
+  ScreenTransition_Start(fieldState->transition, fieldState->transitionFrames);
+  fieldState->transitionActive = 1;
 }
 
 /// Finishes the event's screen transition.
 void Event_FinishScreenTransition(void) {
-  struct FieldWork *fieldWork = gFieldWork;
+  struct FieldState *fieldState = gFieldState;
 
-  ScreenTransition_Finish(fieldWork->transition, fieldWork->transitionFrames);
-  fieldWork->transitionActive = 0;
+  ScreenTransition_Finish(fieldState->transition, fieldState->transitionFrames);
+  fieldState->transitionActive = 0;
 }
 
 /// Waits as long as the event's screen transition runs.
-void Event_WaitTransitionFrames(void) { wait(gFieldWork->transitionFrames); }
+void Event_WaitTransitionFrames(void) { wait(gFieldState->transitionFrames); }
 
 /// Makes the event leave for the given entrance of the given scene: raises the
-/// exit request EXIT_KEEP_DESTINATION and writes gMainRoutineWork.next and
+/// exit request EXIT_KEEP_DESTINATION and writes gMainRoutineState.next and
 /// entrance.
 void Event_SetDestination(s32 sceneId, s32 entrance) {
-  gFieldWork->exit = EXIT_KEEP_DESTINATION;
-  gMainRoutineWork.next = sceneId;
-  gMainRoutineWork.entrance = entrance;
+  gFieldState->exit = EXIT_KEEP_DESTINATION;
+  gMainRoutineState.next = sceneId;
+  gMainRoutineState.entrance = entrance;
 }
 
 /// Makes the event leave and records scene and entrance as the restart
 /// point.
 void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
-  struct FieldWork *fieldWork = gFieldWork;
-  fieldWork->exit = EXIT_KEEP_DESTINATION;
-  gMainRoutineWork.restartScene = sceneId;
-  gMainRoutineWork.restartEntrance = entrance;
+  struct FieldState *fieldState = gFieldState;
+  fieldState->exit = EXIT_KEEP_DESTINATION;
+  gMainRoutineState.restartScene = sceneId;
+  gMainRoutineState.restartEntrance = entrance;
 }
 
 /// Sets the field's exit request, which ends the scene: an exit kind, or
-/// EXIT_KEEP_DESTINATION for gMainRoutineWork's next and entrance.
+/// EXIT_KEEP_DESTINATION for gMainRoutineState's next and entrance.
 void Event_SetExitRequest(u16 request) {
-  struct FieldWork *fieldWork = gFieldWork;
-  fieldWork->exit = request;
+  struct FieldState *fieldState = gFieldState;
+  fieldState->exit = request;
 }
 
 #undef GIFT_RECEIVED_MESSAGE

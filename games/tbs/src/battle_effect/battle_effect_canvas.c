@@ -15,7 +15,7 @@
 /// Wipes the whole canvas to one colour with a ragged edge, a frame at a time:
 /// 23 frames across, 15 down.
 void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *canvas;
   u8 delay[CANVAS_SIZE];
   s32 x;
@@ -23,7 +23,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   s32 wipePosition;
 
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   for (x = 0; x != CANVAS_SIZE; x++)
     delay[x] = Random16() & WIPE_LAG_MAX;
 
@@ -45,7 +45,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
               canvas[CANVAS_PIXEL_OFFSET(wipePosition, y)] = 1 - fill;
         }
       }
-      EFFECT_PRESENT_CANVAS(work);
+      EFFECT_PRESENT_CANVAS(state);
     } while (front <= WIPE_ACROSS_END);
   } else {
     s32 front;
@@ -65,7 +65,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
               canvas[CANVAS_PIXEL_OFFSET(x, wipePosition)] = 1 - fill;
         }
       }
-      EFFECT_PRESENT_CANVAS(work);
+      EFFECT_PRESENT_CANVAS(state);
     } while (front <= CANVAS_SIZE + WIPE_LAG_MAX);
   }
 }
@@ -73,23 +73,23 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
 /// Copies the canvas to VRAM once the effect has finished a frame, then clears,
 /// fades, darkens or brightens it as transferMode says.
 void BattleEffect_ProcessPendingGraphicsTransfer(void) {
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   void *source;
   s32 *counter;
   s32 nextCounter;
 
-  if (work->transferPending == 1) {
+  if (state->transferPending == 1) {
     source = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-    switch (work->transferMode) {
+    switch (state->transferMode) {
     case CANVAS_COPY:
       Iwram_CopyWords(BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
       break;
     case CANVAS_COPY_AND_CLEAR:
       Iwram_CopyWords(BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
-      Iwram_FillWords(source, CANVAS_BYTES, work->transferValue);
+      Iwram_FillWords(source, CANVAS_BYTES, state->transferValue);
       break;
     case CANVAS_COPY_AND_FADE:
-      if (work->transferValue == CANVAS_FADE_HALF) {
+      if (state->transferValue == CANVAS_FADE_HALF) {
         PaletteFade_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(1),
                                    CANVAS_BYTES);
       } else {
@@ -98,19 +98,19 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
       }
       break;
     case CANVAS_COPY_AND_DARKEN:
-      PaletteFade_BackupAndDarken(source, work->transferValue,
+      PaletteFade_BackupAndDarken(source, state->transferValue,
                                   (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       break;
     case CANVAS_COPY_AND_BRIGHTEN:
-      PaletteFade_BackupAndBrighten(source, work->transferValue,
+      PaletteFade_BackupAndBrighten(source, state->transferValue,
                                     (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       break;
     }
-    work->transferPending = 0;
-    counter = &work->vblanksSinceTransfer;
+    state->transferPending = 0;
+    counter = &state->vblanksSinceTransfer;
     nextCounter = 1;
   } else {
-    counter = &work->vblanksSinceTransfer;
+    counter = &state->vblanksSinceTransfer;
     nextCounter = *counter + 1;
   }
   *counter = nextCounter;
@@ -119,26 +119,26 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
 /// Copies a full-screen image to VRAM once the effect has finished a frame,
 /// as transferMode says.
 void BattleEffect_FlushPendingGraphicsTransfer(void) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *source;
   s32 transferMode;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   source = Ram_MapGridCellBuffer;
-  if (work->transferPending != 1)
+  if (state->transferPending != 1)
     return;
 
-  transferMode = work->transferMode;
+  transferMode = state->transferMode;
   switch (transferMode) {
   case CANVAS_COPY:
     Iwram_CopyWords(BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
     break;
   case CANVAS_COPY_AND_CLEAR:
     Iwram_CopyWords(BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
-    Iwram_FillWords(source, BATTLE_BACKGROUND_BYTES, work->transferValue);
+    Iwram_FillWords(source, BATTLE_BACKGROUND_BYTES, state->transferValue);
     break;
   case CANVAS_COPY_AND_FADE:
-    if (work->transferValue == CANVAS_FADE_HALF) {
+    if (state->transferValue == CANVAS_FADE_HALF) {
       PaletteFade_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(2),
                                  BATTLE_BACKGROUND_BYTES);
     } else {
@@ -147,78 +147,78 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
     }
     break;
   case CANVAS_COPY_AND_DARKEN:
-    PaletteFade_BackupAndDarken(source, work->transferValue,
+    PaletteFade_BackupAndDarken(source, state->transferValue,
                                 (void *)BG_CHAR_BLOCK(2),
                                 BATTLE_BACKGROUND_BYTES);
     break;
   }
 
-  work->transferPending = 0;
+  state->transferPending = 0;
 }
 
 /// The battle background's first BG palette, of the eight its colours take.
 #define BATTLE_BACKGROUND_PALETTE 6
 
 /// Writes the window, display and blend registers the effect keeps in its
-/// work, all at once.
+/// state, all at once.
 void BattleEffect_ApplyWindowBlendRegisters(void) {
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-  REG_WIN0H = work->win0h;
-  REG_WIN0V = work->win0v;
-  REG_WIN1H = work->win1h;
-  REG_WIN1V = work->win1v;
-  REG_WININ = work->winin;
-  REG_WINOUT = work->winout;
-  REG_DISPCNT = work->dispcnt;
-  REG_BLDCNT = work->bldcnt;
-  REG_BLDALPHA = work->bldalpha;
+  REG_WIN0H = state->win0h;
+  REG_WIN0V = state->win0v;
+  REG_WIN1H = state->win1h;
+  REG_WIN1V = state->win1v;
+  REG_WININ = state->winin;
+  REG_WINOUT = state->winout;
+  REG_DISPCNT = state->dispcnt;
+  REG_BLDCNT = state->bldcnt;
+  REG_BLDALPHA = state->bldalpha;
 }
 
 /// Writes the effect's BG2 reference point to BG2X and BG2Y.
 void Display_ApplyBg2Reference(void) {
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-  REG_BG2X = work->bg2x;
-  REG_BG2Y = work->bg2y;
+  REG_BG2X = state->bg2x;
+  REG_BG2Y = state->bg2y;
 }
 
 /// Darkens the battle background a step each frame while the canvas is open, so
 /// the effect stands out.
 void Palette_StepFadeTransfer(void) {
-  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleState *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-  if (work->fadeFrames > 0) {
-    s32 step = ++work->fadeStep;
+  if (state->fadeFrames > 0) {
+    s32 step = ++state->fadeStep;
 
     Graphics_ScaleRgb555ClampedFar(
         battle->palette, (void *)&BG_PLTT_COLOR(BATTLE_BACKGROUND_PALETTE, 0),
         FIXED_ONE - step * BACKGROUND_LEVEL_STEP, BATTLE_BACKGROUND_COLORS);
-    work->fadeFrames--;
+    state->fadeFrames--;
   }
 }
 
 /// Clears every target's flash timer.
 void BattleEffect_ClearActorTimers(void) {
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-  Iwram_ClearWords(work->actorTimers, sizeof work->actorTimers);
+  Iwram_ClearWords(state->actorTimers, sizeof state->actorTimers);
 }
 
 /// Counts down each target's flash timer and gives it its own palette back when
 /// one runs out.
 void BattleEffect_CountDownBattlerTints(void) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   s32 actorIndex;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  for (actorIndex = 0; actorIndex != ARRAY_COUNT(work->actorTimers);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  for (actorIndex = 0; actorIndex != ARRAY_COUNT(state->actorTimers);
        actorIndex++) {
-    if (work->actorTimers[actorIndex] != 0) {
-      if ((work->actorTimers[actorIndex] = work->actorTimers[actorIndex] - 1) ==
-          0) {
-        BattleEffect_TintBattler(work->args->targets[actorIndex],
+    if (state->actorTimers[actorIndex] != 0) {
+      if ((state->actorTimers[actorIndex] =
+               state->actorTimers[actorIndex] - 1) == 0) {
+        BattleEffect_TintBattler(state->args->targets[actorIndex],
                                  SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
       }
     }
@@ -228,10 +228,10 @@ void BattleEffect_CountDownBattlerTints(void) {
 /// Opens the canvas layer over the battle, darkening the battle background
 /// behind it.
 void BattleEffect_StartCanvasLayer(s32 bgControl) {
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleState *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleBackgroundWork *display =
+  struct BattleBackgroundState *display =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
@@ -245,8 +245,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   wait(1);
 
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
-  work->fadeFrames = 0;
-  work->fadeStep = 0;
+  state->fadeFrames = 0;
+  state->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
 
   // Change BG2's settings while it is hidden.
@@ -284,9 +284,9 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
 
     Iwram_ClearWords(canvas, CANVAS_BYTES);
     Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-    work->shakeFrames = 0;
-    work->savedBg1X = gBgScroll[1].x;
-    work->savedBg1Y = gBgScroll[1].y;
+    state->shakeFrames = 0;
+    state->savedBg1X = gBgScroll[1].x;
+    state->savedBg1Y = gBgScroll[1].y;
     wait(1);
   }
 }
@@ -294,10 +294,10 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
 /// Opens the canvas layer as BattleEffect_StartCanvasLayer does, with the
 /// windows off and a half-faded background.
 void BattleEffect_OpenCanvasLayer(s32 bgControl) {
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleState *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleBackgroundWork *display =
+  struct BattleBackgroundState *display =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
@@ -314,8 +314,8 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   wait(1);
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background,
                               BATTLE_BACKGROUND_FADE_RESTORE);
-  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
-  work->fadeStep = 0;
+  state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
+  state->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
@@ -381,13 +381,13 @@ void BattleEffect_StartTiledCanvas(s32 bgControl) {
 
 /// Closes the canvas layer and brings the battle background's colours back.
 void BattleEffect_EndCanvasLayer(void) {
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleState *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   s32 i;
 
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
-  gBgScroll[1].x = work->savedBg1X;
-  gBgScroll[1].y = work->savedBg1Y;
+  gBgScroll[1].x = state->savedBg1X;
+  gBgScroll[1].y = state->savedBg1Y;
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -428,10 +428,10 @@ void BattleEffect_EndCanvasLayer(void) {
 /// Hides BG1 and the windows and starts bringing the battle background's
 /// colours back.
 void BattleEffect_HideBg1AndRestoreBackdrop(void) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 *secondMode;
 
-  secondMode = &((struct BattleBackgroundWork *)HEAP_SLOT_BLOCK(
+  secondMode = &((struct BattleBackgroundState *)HEAP_SLOT_BLOCK(
                      HEAP_SLOT_BATTLE_BACKGROUND))
                     ->secondMode;
   battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
@@ -461,17 +461,17 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
 
 /// Shows the canvas on BG1 instead of BG2, at its own size.
 void BattleEffect_SetupCanvasTileMap(void) {
-  // UB: indexing past gBattleWork reaches the heap slots after it.
+  // UB: indexing past gBattleState reaches the heap slots after it.
 #ifdef UBFIX
   void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleWork *screen = gBattleWork;
-  struct BattleBackgroundWork *layer =
+  struct BattleState *screen = gBattleState;
+  struct BattleBackgroundState *layer =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
-  u8 **cells = (u8 **)&gBattleWork;
+  u8 **cells = (u8 **)&gBattleState;
   void *canvas = cells[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
-  struct BattleWork *screen = (struct BattleWork *)cells[0];
-  struct BattleBackgroundWork *layer = (struct BattleBackgroundWork *)
+  struct BattleState *screen = (struct BattleState *)cells[0];
+  struct BattleBackgroundState *layer = (struct BattleBackgroundState *)
       cells[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
 #endif
   s32 row;

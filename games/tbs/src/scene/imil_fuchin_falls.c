@@ -77,7 +77,7 @@
 #include "field/facing.h"
 #include "field/field.h"
 #include "field/field_effect.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/ground_mask.h"
 #include "field/map_grid.h"
 #include "field/scene_tables.h"
@@ -93,7 +93,7 @@
 #include "system/input.h"
 #include "system/io_reg.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -338,7 +338,7 @@ static void FuchinFallsCave_FightZephyr(void) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_IMIL_FALLS_CAVE) {
     return gImilFuchinFalls_ImilFallsCaveEntrances;
@@ -370,7 +370,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gImilFuchinFalls_Exits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_IMIL_FALLS_CAVE) {
     return gImilFuchinFalls_ImilFallsCaveActorPlacements;
@@ -1200,7 +1200,7 @@ static struct Actor *FuchinFallsCave_CreateHiddenActor(s32 x, s32 y, s32 z,
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_IMIL_FALLS_CAVE) {
     return gImilFuchinFalls_ImilFallsCaveTriggers;
@@ -1420,9 +1420,9 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
 /// Puts the logs of the Arctic Blade's room, in both of its halves, where their
 /// flags say, and rewrites the cells of their runs to match.
 static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
           FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE ||
-      gMainRoutineWork.entrance ==
+      gMainRoutineState.entrance ==
           FUCHIN_FALLS_CAVE_ARCTIC_BLADE_NORTH_HALF_FROM_SOUTH_HALF) {
     MapGrid_CopyCellAttributes(22, 20, 9, 8, 14, 10);
   } else {
@@ -1467,9 +1467,9 @@ static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
 /// whole.
 static void FuchinFallsCave_FadeOverlayFollowsLeader(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
-    struct FadeOverlayWork *work = *(gHeapSlots + HEAP_SLOT_FADE_OVERLAY);
+    struct FadeOverlayState *state = *(gHeapSlots + HEAP_SLOT_FADE_OVERLAY);
 
-    work->actor = Actor_Get(ACTOR_PARTY_LEADER);
+    state->actor = Actor_Get(ACTOR_PARTY_LEADER);
   }
 }
 
@@ -1478,19 +1478,19 @@ static void FuchinFallsCave_FadeOverlayFollowsLeader(void) {
 /// the room's fade overlay stops following him.
 static void FuchinFallsCave_FadeOverlayStopsFollowing(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
-    struct FadeOverlayWork *work = *(gHeapSlots + HEAP_SLOT_FADE_OVERLAY);
+    struct FadeOverlayState *state = *(gHeapSlots + HEAP_SLOT_FADE_OVERLAY);
 
-    work->actor = NULL;
+    state->actor = NULL;
   }
 }
 
 /// Sets up the scene as the party enters: Isaac walks up to Fever in Imil Falls
 /// Cave, and each room of Fuchin Falls Cave is put in order.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      gMainRoutineWork.next == SCENE_IMIL_FALLS_CAVE) {
+      gMainRoutineState.next == SCENE_IMIL_FALLS_CAVE) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     Imil_WalkTowardFever();
   } else {
@@ -1514,18 +1514,18 @@ static void Imil_WalkTowardFever(void) {
 /// or lit.
 static void ImilFuchinFalls_PrepareRoom(void) {
   struct Actor *actor;
-  struct FadeOverlayWork *work;
+  struct FadeOverlayState *state;
 
   ImilFuchinFalls_RebuildLogRoom();
-  if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
+  if (gMainRoutineState.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
     if (!GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND) &&
-        gMainRoutineWork.entrance ==
+        gMainRoutineState.entrance ==
             FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS) {
       ImilFuchinFalls_PlaceDragonsEye();
     }
-    if (gMainRoutineWork.entrance >=
+    if (gMainRoutineState.entrance >=
             FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE &&
-        gMainRoutineWork.entrance <=
+        gMainRoutineState.entrance <=
             FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR) {
       // Two hidden crates on the west ledge by the stairs down, at cells
       // (9, 28) and (11, 28). Isaac walks over both cells and nothing shows.
@@ -1537,10 +1537,10 @@ static void ImilFuchinFalls_PrepareRoom(void) {
       FuchinFallsCave_CreateHiddenActor(toFIXED(188), 0, toFIXED(452),
                                         SPRITE_CRATE);
     }
-  } else if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
+  } else if (gMainRoutineState.next == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
     // Default: NULL unless the arrival from the south half's middle takes the
     // fade overlay.
-    work = NULL;
+    state = NULL;
     actor = Actor_Get(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE);
     gImilFuchinFalls_TrackLeader = 0;
     actor->motionFlags = 0;
@@ -1548,7 +1548,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     Actor_SetSpritePriority(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE, 1);
     Actor_SetSpriteColorById(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE,
                              SPRITE_COLOR_HIDDEN);
-    switch (gMainRoutineWork.entrance) {
+    switch (gMainRoutineState.entrance) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST:
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST:
       FieldEffect_StartFadeOverlay(0);
@@ -1557,11 +1557,11 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE:
       FieldEffect_StartFadeOverlay(0);
       gImilFuchinFalls_TrackLeader = 1;
-      work = gFadeOverlayWork;
-      work->actor = NULL;
+      state = gFadeOverlayState;
+      state->actor = NULL;
       break;
     }
-    if (gMainRoutineWork.entrance <=
+    if (gMainRoutineState.entrance <=
         FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST) {
       // Once the eye is set, the shadow of the hidden path is drawn again;
       // before, the room's northern half is dimmed to a dark blue.
@@ -1569,7 +1569,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
         MapGrid_CopyCellsTo(30, 57, 19, 57, 1, 1);
         MapGrid_CopyCellsTo(30, 8, 12, 8, 8, 7);
       } else {
-        gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+        gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         PaletteFade_ApplySource(PALETTE_TINT_CUSTOM | RGB(8, 8, 12),
                                 PALETTES_BG);
         PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 12),
@@ -1585,21 +1585,21 @@ static void ImilFuchinFalls_PrepareRoom(void) {
 /// the cells of their runs as the map draws them, which the rebuild routines
 /// copy back from.
 static void ImilFuchinFalls_RebuildLogRoom(void) {
-  if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ENTRANCE) {
+  if (gMainRoutineState.next == SCENE_FUCHIN_FALLS_CAVE_ENTRANCE) {
     MapGrid_CopyCellAttributes(8, 29, 15, 5, 8, 42);
     FuchinFallsCave_RebuildEntranceLogs();
-  } else if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
+  } else if (gMainRoutineState.next == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     MapGrid_CopyCellAttributes(12, 8, 10, 18, 0, 28);
     FuchinFallsCave_RebuildZephyrRoomLogs();
-  } else if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE &&
-             gMainRoutineWork.entrance !=
+  } else if (gMainRoutineState.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE &&
+             gMainRoutineState.entrance !=
                  FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS) {
     MapGrid_CopyCellAttributes(12, 21, 9, 16, 12, 3);
     FuchinFallsCave_RebuildDragonsEyeRoomLogs();
-  } else if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE) {
-    if (gMainRoutineWork.entrance ==
+  } else if (gMainRoutineState.next == SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE) {
+    if (gMainRoutineState.entrance ==
             FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE ||
-        gMainRoutineWork.entrance ==
+        gMainRoutineState.entrance ==
             FUCHIN_FALLS_CAVE_ARCTIC_BLADE_NORTH_HALF_FROM_SOUTH_HALF) {
       MapGrid_CopyCellAttributes(14, 10, 9, 8, 22, 20);
     } else {
@@ -1621,16 +1621,16 @@ static void ImilFuchinFalls_RebuildLogRoom(void) {
 /// the Dragon's Eye room he jumps south from the stump (cell (17, 22)) onto the
 /// upright log, but only while it lies in the middle of the pool.
 static void ImilFuchinFalls_HopOnTrigger(void) {
-  s32 trigger = gFieldWork->stepTrigger;
+  s32 trigger = gFieldState->stepTrigger;
 
-  if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
+  if (gMainRoutineState.next == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     if (trigger == CELL_BEHAVIOR_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END) {
       Scene_HopLeaderBy(0, -32);
     } else {
       Scene_HopLeaderBy(-32, 0);
     }
   }
-  if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE &&
+  if (gMainRoutineState.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE &&
       trigger == CELL_BEHAVIOR_FUCHIN_FALLS_DRAGONS_EYE_ROOM_STUMP &&
       GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE)) {
     Scene_HopLeaderBy(0, 32);
@@ -1886,7 +1886,7 @@ static void FuchinFallsCave_SearchDragonStatue(void) {
   } else {
     FieldMessage_Show(MsgFuchinEyelessDragon, 1);
     if (PartyInventory_FindMember(ITEM_DRAGONS_EYE) != -1) {
-      gFieldWork->fieldMenu = 1;
+      gFieldState->fieldMenu = 1;
     }
   }
   Event_End();
@@ -1896,14 +1896,14 @@ static void FuchinFallsCave_SearchDragonStatue(void) {
 /// before the Dragon's Eye is set, the room fades up from black to its dim blue
 /// again.
 static void FuchinFallsCave_EndRevealLighting(void) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct ScreenTransitionState *state;
 
-  if (gMainRoutineWork.entrance <=
+  if (gMainRoutineState.entrance <=
       FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST) {
-    effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
+    effectState = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
     state = *(gHeapSlots + HEAP_SLOT_SCREEN_TRANSITION);
-    effectWork->childOption = 1;
+    effectState->childOption = 1;
     state->nextMode = 0;
     state->duration = 1;
     state->step = 1;
@@ -1955,7 +1955,7 @@ static void Imil_SlideActorAcrossIce(void) {
   FIXED z;
   FIXED x;
 
-  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  actor = Actor_Lookup(gMainRoutineState.leaderActorId);
 
   for (;;) {
     heading = gImilFuchinFalls_SlideHeadings[DPAD_INDEX(gKeysHeld)];

@@ -4,14 +4,14 @@ Field_BabiLighthouseRooms:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_BabiLighthouseRooms, .LField_BabiLighthouseRooms_CELL_PICTURES
+	map_offset Field_BabiLighthouseRooms, .LField_BabiLighthouseRooms_CELL_TILES
 	map_offset Field_BabiLighthouseRooms, .LField_BabiLighthouseRooms_SHAPES
 	map_offset Field_BabiLighthouseRooms, .LField_BabiLighthouseRooms_GRID
 	map_offset Field_BabiLighthouseRooms, .LField_BabiLighthouseRooms_ANIMATION
 	map_offset Field_BabiLighthouseRooms, .LField_BabiLighthouseRooms_BLEND
 	map_offset Field_BabiLighthouseRooms, .LField_BabiLighthouseRooms_MARKERS
-.LField_BabiLighthouseRooms_CELL_PICTURES:
-	.incbin "games/tbs/src/map/babi_lighthouse_rooms/cell_pictures.delta2.lz"
+.LField_BabiLighthouseRooms_CELL_TILES:
+	.incbin "games/tbs/src/map/babi_lighthouse_rooms/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_BabiLighthouseRooms_SHAPES:
 	.incbin "games/tbs/src/map/babi_lighthouse_rooms/shapes.table.lz"

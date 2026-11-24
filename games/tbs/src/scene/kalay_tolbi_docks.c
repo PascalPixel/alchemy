@@ -66,7 +66,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "window/screens.h"
 #include "window/window.h"
@@ -232,7 +232,7 @@ static void KalayTolbiDocks_GroundJoins(void) {
 /// Selects the entrances of Kalay Docks, Tolbi Docks or the rooms
 /// on CottageRoomsE.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_KALAY_DOCKS) {
     return gKalayTolbiDocks_KalayEntrances;
@@ -255,7 +255,7 @@ const u32 *Scene_GetExits(void) { return gKalayTolbiDocks_Exits; }
 /// come back (FLAG_TOLBI_SHIP_REACHED_TOLBI), and once the Colosso Tour's
 /// passengers are stranded after Colosso (FLAG_COLOSSO_OVER).
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_KALAY_DOCKS) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
@@ -300,7 +300,7 @@ static void KalayTolbiDocks_GreetArrivals(void) {
 
 /// Selects each scene's events for the same three times as its people.
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_KALAY_DOCKS) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
@@ -352,7 +352,7 @@ static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
       Event_ShowMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
       GameFlag_Set(FLAG_KALAY_DOCKS_CARRYING_MESSAGE);
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
       // "Is that so? Well, then I guess I'll ask someone else then."
       Event_ShowMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
     }
@@ -438,7 +438,7 @@ static void KalayTolbiDocks_TalkToManCheckingTickets(void) {
       Actor_SetAnimationAndWait(ACTOR_CHECKING_TICKETS, ANIM_NOD);
       Actor_WalkToAndWait(ACTOR_CHECKING_TICKETS, 88, 1288);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_SOUTH, 0);
-      gFieldWork->message++;
+      gFieldState->message++;
       // "Thank you very much. Please board the ship, and we'll set..."
       Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
       Inventory_Discard(ticketHolder, ticketSlot);
@@ -489,7 +489,7 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
 /// ship's plank.
 static void KalayTolbiDocks_TalkToWomanSellingTickets(void) {
   struct Window *coinsWindow;
-  struct MainRoutineWork *state;
+  struct MainRoutineState *state;
   s32 ticketPrice = TICKET_PRICE;
   s32 coinLabel;
 
@@ -506,7 +506,7 @@ static void KalayTolbiDocks_TalkToWomanSellingTickets(void) {
       // "Please buy a ticket if you're planning to travel by ship."
       Event_ShowMessageThenWait(ACTOR_SELLING_TICKETS, 0, 10);
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
       MessageArgument_Push(ticketPrice, MESSAGE_ARGUMENT_NUMBER);
       // "Let's see...there are four of you, so it will cost ......"
       Event_OpenMessage(ACTOR_SELLING_TICKETS, 0);
@@ -514,7 +514,7 @@ static void KalayTolbiDocks_TalkToWomanSellingTickets(void) {
           Window_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH, 4, 2);
       coinLabel = MSGNO(MsgYourCoins);
       Text_DrawMessageAsTiles(coinLabel, coinsWindow, 0, 0);
-      state = &gMainRoutineWork;
+      state = &gMainRoutineState;
       Text_DrawNumberInWindow(state->holdings.coins, 6, coinsWindow,
                               TICKET_COUNTER_X, 8);
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -532,7 +532,7 @@ static void KalayTolbiDocks_TalkToWomanSellingTickets(void) {
         Window_Close(coinsWindow, 2);
         Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
         Event_Wait(10);
-        gFieldWork->message++;
+        gFieldState->message++;
         Sound_Play(SE_MENU_CANCEL);
         // "Uh oh... You don't have enough money. I can't sell you a ticket."
         Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
@@ -540,7 +540,7 @@ static void KalayTolbiDocks_TalkToWomanSellingTickets(void) {
         Window_Close(coinsWindow, 2);
         Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
         Event_Wait(10);
-        gFieldWork->message += 3;
+        gFieldState->message += 3;
         // "All right then, please take your ticket."
         Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
         Party_GiveItem(ITEM_BOAT_TICKET, 0);
@@ -606,7 +606,7 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
         GameFlag_Set(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED);
       } else {
         Event_Wait(10);
-        gFieldWork->message++;
+        gFieldState->message++;
         // "Oh... I hope nothing awful's happened to them..."
         Event_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
         Event_Wait(10);
@@ -629,11 +629,11 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Sound_Play(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
-  if (gMainRoutineWork.next == SCENE_KALAY_DOCKS) {
+  if (gMainRoutineState.next == SCENE_KALAY_DOCKS) {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 304, 1392);
     MapGrid_AnimateCells(gKalayTolbiDocks_KalayDoorCells, 78, 86);
   } else {
-    if (gMainRoutineWork.next == SCENE_TOLBI_DOCKS) {
+    if (gMainRoutineState.next == SCENE_TOLBI_DOCKS) {
       Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 192);
       MapGrid_AnimateCells(gKalayTolbiDocks_TolbiDoorCells, 74, 9);
     }
@@ -649,14 +649,14 @@ enum { KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO = 90 };
 
 /// Prepares whichever of the three scenes is entered.
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.entrance == KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO) {
+  if (gMainRoutineState.entrance == KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO) {
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gMainRoutineWork.next == SCENE_KALAY_DOCKS) {
+  if (gMainRoutineState.next == SCENE_KALAY_DOCKS) {
     KalayTolbiDocks_PrepareKalayDocks();
-  } else if (gMainRoutineWork.next == SCENE_TOLBI_DOCKS) {
+  } else if (gMainRoutineState.next == SCENE_TOLBI_DOCKS) {
     KalayTolbiDocks_PrepareTolbiDocks();
-  } else if (gMainRoutineWork.next == SCENE_COTTAGE_ROOMS_E) {
+  } else if (gMainRoutineState.next == SCENE_COTTAGE_ROOMS_E) {
     KalayTolbiDocks_PrepareRoom();
   }
   return 0;
@@ -665,13 +665,13 @@ s32 Scene_Initialize(void) {
 /// On the first arrival at Kalay Docks from the World Map, Garet runs to see
 /// the Karagol.
 static void KalayTolbiDocks_PrepareKalayDocks(void) {
-  if (gMainRoutineWork.entrance == KALAY_DOCKS_FROM_WORLD_MAP_SOUTH) {
+  if (gMainRoutineState.entrance == KALAY_DOCKS_FROM_WORLD_MAP_SOUTH) {
     if (Event_GetFlag(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) == 0) {
       GameFlag_Set(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL);
       KalayTolbiDocks_GaretSeesTheKaragol();
     }
   }
-  if (gMainRoutineWork.entrance == KALAY_DOCKS_FROM_TOLBI_SHIP_DECK) {
+  if (gMainRoutineState.entrance == KALAY_DOCKS_FROM_TOLBI_SHIP_DECK) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       GameFlag_Clear(FLAG_KALAY_DOCKS_WENT_ASHORE);
     }
@@ -694,10 +694,10 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
   if (Event_GetFlag(FLAG_COLOSSO_OVER)) {
     Actor_SetSpriteColorById(ACTOR_SECOND_TOUR_GUIDE, SPRITE_COLOR_RBG);
   }
-  if (gMainRoutineWork.entrance == TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E) {
+  if (gMainRoutineState.entrance == TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
-  if (gMainRoutineWork.entrance == TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK) {
+  if (gMainRoutineState.entrance == TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK) {
     GameFlag_Clear(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
   }
   if (GameFlag_Get(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED)) {
@@ -736,7 +736,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
 /// The rooms at the docks open with a window transition and no area
 /// name.
 static void KalayTolbiDocks_PrepareRoom(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 }

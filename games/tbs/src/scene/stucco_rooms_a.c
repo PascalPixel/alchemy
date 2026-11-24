@@ -51,7 +51,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -159,7 +159,7 @@ static void StuccoRoomsA_ApplyRoomState(void);
 /// Selects the entrance table of Kalay's houses and inn, or of the
 /// Kalay Sanctum.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_STUCCO_ROOMS_A) {
     return gStuccoRoomsA_HouseEntrances;
@@ -176,10 +176,10 @@ const u32 *Scene_GetExits(void) { return gStuccoRoomsA_Exits; }
 
 /// The inn's rooms share one actor placement table and the houses another.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s32 sceneId = gMainRoutineWork.next;
+  s32 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_STUCCO_ROOMS_A) {
-    s32 entrance = gMainRoutineWork.entrance;
+    s32 entrance = gMainRoutineState.entrance;
     struct ActorPlacement *table;
 
     switch (entrance) {
@@ -209,10 +209,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Selects room dialogue with the same entrance grouping as the
 /// actor placements.
 const struct Trigger *Scene_GetTriggers(void) {
-  s32 sceneId = gMainRoutineWork.next;
+  s32 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_STUCCO_ROOMS_A) {
-    s32 entrance = gMainRoutineWork.entrance;
+    s32 entrance = gMainRoutineState.entrance;
 
     switch (entrance) {
     case STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE:
@@ -317,7 +317,7 @@ static void StuccoRoomsA_TalkToHealer(void) {
 /// Each door's step trigger is the exit it leaves by, and
 /// gStuccoRoomsA_DoorCells holds the cells its opening is drawn on.
 static void StuccoRoomsA_OpenDoorAndExit(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   u32 slot;
   s32 doorIndex;
 
@@ -332,7 +332,7 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
     }
   }
 
-  switch (work->stepTrigger) {
+  switch (state->stepTrigger) {
   case STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST:
     doorIndex = 0;
     break;
@@ -366,7 +366,7 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
   Event_Wait(10);
 
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -375,9 +375,9 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
 /// Sets the opening transition and restores room-specific actors and
 /// tiles.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gMainRoutineWork.next == SCENE_STUCCO_ROOMS_A) {
+  if (gMainRoutineState.next == SCENE_STUCCO_ROOMS_A) {
     StuccoRoomsA_ApplyRoomState();
   }
   return 0;
@@ -386,7 +386,7 @@ s32 Scene_Initialize(void) {
 /// Once the Colosso tour has left, its guests are gone from Kalay's inn, and
 /// two people from the houses.
 static void StuccoRoomsA_ApplyRoomState(void) {
-  s16 entrance = gMainRoutineWork.entrance;
+  s16 entrance = gMainRoutineState.entrance;
 
   switch (entrance) {
   case STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER: {

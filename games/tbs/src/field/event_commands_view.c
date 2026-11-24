@@ -22,7 +22,7 @@
 /// The event command "set view bounds": the camera keeps the screen inside
 /// these map coordinates (FieldCamera_MoveWithinMapBounds).
 void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
 
   grid->minX = minX;
   grid->minY = minY;
@@ -33,13 +33,13 @@ void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
 /// Task: moves the zoom one step from its previous value toward its target, and
 /// removes itself on the last step.
 UNREAD_RESULT WorldMap_StepZoom(void) {
-  struct WorldMapView *perspective = gMapGridWork[0];
+  struct WorldMapView *perspective = gMapGridState[0];
   s32 *from; // the zoom the transition starts from
   s32 delta;
   s32 zoom;
 
-  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
-                                               sizeof(struct FieldWork)))
+  if (((struct FieldState *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                sizeof(struct FieldState)))
           ->camera->paused != 0)
     return;
   if (perspective->zoomTransitionFrames == 0)
@@ -59,11 +59,11 @@ UNREAD_RESULT WorldMap_StepZoom(void) {
 
 /// Starts a zoom to zoom (16.16) over frames frames, on the World Map only.
 void WorldMap_StartZoom(FIXED zoom, s32 frames) {
-  struct WorldMapView *perspective = gMapGridWork[0];
+  struct WorldMapView *perspective = gMapGridState[0];
   FIXED inverse;
 
-  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
-                                               sizeof(struct FieldWork)))
+  if (((struct FieldState *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                sizeof(struct FieldState)))
           ->mode != ACTOR_SYSTEM_WORLD_MAP)
     return;
   {
@@ -80,10 +80,10 @@ void WorldMap_StartZoom(FIXED zoom, s32 frames) {
 /// frames).
 void Event_WaitForZoomTransition(void) {
   s32 frames;
-  struct WorldMapView *perspective = gMapGridWork[0];
+  struct WorldMapView *perspective = gMapGridState[0];
 
-  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
-                                               sizeof(struct FieldWork)))
+  if (((struct FieldState *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                sizeof(struct FieldState)))
           ->mode == ACTOR_SYSTEM_WORLD_MAP) {
     frames = 0;
     if (perspective->zoomTransitionFrames != 0) {

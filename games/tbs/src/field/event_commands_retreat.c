@@ -51,7 +51,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
   s32 state;
   u32 spread;
 
-  main = ((struct FieldEffectWork *)gFieldEffectWork)->mainActor;
+  main = ((struct FieldEffectState *)gFieldEffectState)->mainActor;
   state = effect->state;
 
   if (state == RETREAT_PARTICLE_AIM) {
@@ -94,8 +94,8 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
 
 /// Spins the main actor and shrinks it while 24 particles fly out, one a frame.
 void FieldPsynergy_Retreat(void) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *actor = effectWork->mainActor;
+  struct FieldEffectState *effectState = gFieldEffectState;
+  struct Actor *actor = effectState->mainActor;
   struct Vector3 pos;
   struct FieldParticle *effect;
   u32 i;
@@ -104,7 +104,7 @@ void FieldPsynergy_Retreat(void) {
   FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldPsynergy_FadeToCastColor();
   wait(10);
-  Actor_FaceDirectionById(effectWork->firstActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(effectState->firstActorId, FACING_SOUTH, 0);
   wait(30);
   actor->update = Actor_CycleSpriteColors;
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
@@ -129,7 +129,7 @@ void FieldPsynergy_Retreat(void) {
   pos.z = actor->z.fixed;
   Camera_WorldToScreen(&pos);
   i = 0;
-  effect = effectWork->particles;
+  effect = effectState->particles;
   do {
     FIXED scale;
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
@@ -147,8 +147,8 @@ void FieldPsynergy_Retreat(void) {
 
   // The flying particles vanish once they arrive.
   for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
-    if (effectWork->particles[i].active != 0)
-      effectWork->particles[i].state = RETREAT_PARTICLE_LAST_FLIGHT;
+    if (effectState->particles[i].active != 0)
+      effectState->particles[i].state = RETREAT_PARTICLE_LAST_FLIGHT;
   }
   wait(40);
   FieldPsynergy_FadeFromCastColor();
@@ -167,7 +167,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
 
   limit = particle->groundHeight + toFIXED(10);
   source = particle->watchedActor;
-  if (gMainRoutineWork.mapId == MAP_INDEX_WORLD)
+  if (gMainRoutineState.mapId == MAP_INDEX_WORLD)
     limit = particle->groundHeight + toFIXED(4);
 
   y = particle->y.fixed;
@@ -196,7 +196,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
 
   limit = particle->groundHeight + toFIXED(10);
   source = particle->watchedActor;
-  if (gMainRoutineWork.mapId == MAP_INDEX_WORLD)
+  if (gMainRoutineState.mapId == MAP_INDEX_WORLD)
     limit = particle->groundHeight + toFIXED(4);
 
   y = particle->y.fixed;
@@ -263,10 +263,10 @@ struct DescendingArcSprite {
 
 /// Avoid's rings: a pair of falling arcs (one upside down) 64 pixels above
 /// source, at 0.4 of full size, drawn with the tiles in
-/// effectWork->arcTileSlot.
+/// effectState->arcTileSlot.
 void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *leader = effectWork->mainActor;
+  struct FieldEffectState *effectState = gFieldEffectState;
+  struct Actor *leader = effectState->mainActor;
   struct Actor *actors[2];
   struct Actor *actor;
   struct DescendingArcSprite *sprite;
@@ -290,7 +290,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
     Sprite_StartAnimationFar((struct Sprite *)sprite, 0);
     sprite->flags = 0;
     VramCache_FreeEntry(sprite->slot);
-    sprite->slot = effectWork->arcTileSlot;
+    sprite->slot = effectState->arcTileSlot;
     sprite->retainCacheEntry = 1;
     sprite->attr.half.tile = gVramCacheEntries[sprite->slot].offset >> 5;
     sprite->fullColor = 0;

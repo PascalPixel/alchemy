@@ -15,9 +15,9 @@
 void BattleCamera_Update(void) {
   void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
   struct BattleCamera *camera = slots[0];
-  struct BattleBackgroundWork *view =
+  struct BattleBackgroundState *view =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE_BACKGROUND);
-  struct BattleWork *battle =
+  struct BattleState *battle =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE);
   struct Point eyeOffset;
   s32 *focus;
@@ -74,7 +74,7 @@ void BattleCamera_Update(void) {
 /// each, then whether the party strikes first or is caught by surprise.
 void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s16 enemies[8];
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   s32 i;
 
   MessageArgument_ClearAllFar();
@@ -107,13 +107,13 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
 /// left to right, or for a fixed formation out from the centre.
 void BattleUnit_Collect(void) {
   u16 unitIds[UNIT_MAX];
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 count;
   s32 i;
   s32 position;
   s32 formation;
 
-  battle = gBattleWork;
+  battle = gBattleState;
   count = BattleParty_PrepareMembers(unitIds);
   for (i = 0; i < count; i++)
     battle->partyUnits[i] = unitIds[i];

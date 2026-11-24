@@ -53,7 +53,7 @@
 
 /// Darkens the background by level, 0 for its own colours.
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   u16 *palette = battle->palette;
   volatile u32 ime;
 
@@ -74,7 +74,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 /// Switches the background's display mode, optionally fades its palette by
 /// fade, and rebuilds both its maps.
 void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
-  struct BattleBackgroundWork *view = gBattleBackgroundWork;
+  struct BattleBackgroundState *view = gBattleBackgroundState;
 
   if (view->mode == BATTLE_BACKGROUND_NONE) {
     Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
@@ -93,10 +93,10 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 
   if (fade == BATTLE_BACKGROUND_FADE_RESTORE) {
-    Dma_Set(gBattleWork->palette, BATTLE_BG_PALETTE,
+    Dma_Set(gBattleState->palette, BATTLE_BG_PALETTE,
             DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
   } else if (fade != 0) {
-    u16 *source = gBattleWork->palette;
+    u16 *source = gBattleState->palette;
     u16 *destination = BATTLE_BG_PALETTE;
     s32 colorIndex;
 
@@ -128,18 +128,18 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
 }
 
-/// Allocates the zoomed background's scanline work.
+/// Allocates the zoomed background's scanline state.
 void BattleBackground_Init(void) {
   struct BattleAffineHdma *scanlines;
-  struct BattleBackgroundWork *view;
+  struct BattleBackgroundState *view;
   scanlines =
       HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES, sizeof *scanlines);
-  view = gBattleBackgroundWork;
+  view = gBattleBackgroundState;
   Dma_Fill32(0, scanlines, sizeof *scanlines);
   view->mode = BATTLE_BACKGROUND_NONE;
 }
 
-/// Frees the zoomed background's scanline work.
+/// Frees the zoomed background's scanline state.
 void BattleBackground_Free(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SCANLINES);
 }
@@ -151,10 +151,10 @@ typedef const u8 *(*BitDecoder)(const u8 *source, void *destination);
 /// Loads a battle background, its picture, its palette darkened by level (none
 /// when negative) and both its maps.
 void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
-  struct BattleBackgroundWork *view =
+  struct BattleBackgroundState *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   u8 *backgroundData = Resource_GetTableEntry(resourceId);
-  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  struct BattleState *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   u16 *palette;
 
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, BitDecoder_DecodeImage,
@@ -192,7 +192,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
 /// the plane lies flat, from 1 it wraps and turns with the camera.
 void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
                            s32 offsetY, FIXED scale) {
-  struct BattleBackgroundWork *view =
+  struct BattleBackgroundState *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleAffineHdma *scanlines =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SCANLINES);
@@ -436,11 +436,11 @@ UNUSED s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 /// Unused debug aid: while Start is held, edits a value with the d-pad until A
 /// takes it; with Select held, returns DEBUG_VALUE_SELECT.
 UNUSED s32 Battle_AdjustDebugValue(s32 selectedValue) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
 
   if (gKeysHeld & KEY_START) {
     for (;;) {
-      battle = gBattleWork;
+      battle = gBattleState;
       if (gKeysRepeat & KEY_LEFT)
         battle->debugValue--;
       if (gKeysRepeat & KEY_RIGHT)
@@ -524,7 +524,7 @@ void BattleHighlight_ClearAllSpriteModes(void) {
 /// Lightens the highlighted units by the next step of the blend ramp: the first
 /// sixteen steps once, then the second sixteen over and over.
 void BattleBackground_StepHighlightBlend(void) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   s8 *blendRamp;
   u16 rampIndex;
   s32 nextIndex;
@@ -547,7 +547,7 @@ void BattleBackground_StepHighlightBlend(void) {
 /// or with HIGHLIGHT_OFF stops the highlight.
 void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
   s16 unitIds[UNIT_MAX];
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   u32 unitCount;
   u32 unitIndex;
 

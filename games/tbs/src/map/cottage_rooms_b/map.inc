@@ -4,14 +4,14 @@ Field_CottageRoomsB:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_CottageRoomsB, .LField_CottageRoomsB_CELL_PICTURES
+	map_offset Field_CottageRoomsB, .LField_CottageRoomsB_CELL_TILES
 	map_offset Field_CottageRoomsB, .LField_CottageRoomsB_SHAPES
 	map_offset Field_CottageRoomsB, .LField_CottageRoomsB_GRID
 	map_offset Field_CottageRoomsB, .LField_CottageRoomsB_ANIMATION
 	map_offset Field_CottageRoomsB, .LField_CottageRoomsB_BLEND
 	map_offset Field_CottageRoomsB, .LField_CottageRoomsB_MARKERS
-.LField_CottageRoomsB_CELL_PICTURES:
-	.incbin "games/tbs/src/map/cottage_rooms_b/cell_pictures.delta1.lz"
+.LField_CottageRoomsB_CELL_TILES:
+	.incbin "games/tbs/src/map/cottage_rooms_b/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_CottageRoomsB_SHAPES:
 	.incbin "games/tbs/src/map/cottage_rooms_b/shapes.table.lz"

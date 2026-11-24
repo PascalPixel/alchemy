@@ -31,7 +31,7 @@
 /// Djinni appears where they gather, and sparkles spiral in on each target in
 /// turn. Nothing reaches it.
 UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 member;
   u8 *sheet;
@@ -46,18 +46,18 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   struct ScreenPoint view;
   BlitterPair draw;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, state->sheet,
+                             1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, draw);
+  BattleEffect_FetchRectangleBlitters(state->args->side ^ 1, draw);
   {
-    struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;
-    struct Actor *goal = GetBattleObjectSlotFar(work->args->targets[0])->actor;
+    struct Actor *actor = GetBattleObjectSlotFar(state->args->user)->actor;
+    struct Actor *goal = GetBattleObjectSlotFar(state->args->targets[0])->actor;
 
     for (i = 0; i != DJINN_HEAL_SWIRL_SLOTS; i++) {
       struct Particle *spark = &PARTICLES[i];
@@ -69,7 +69,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
                    (Trig_Cos(heading) * speed) >> 5);
       spark->variant = 0;
     }
-    EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+    EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
                           CANVAS_FADE_THREE_QUARTERS);
 
     // The swirl.
@@ -92,11 +92,11 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     }
     Matrix_TranslateVector(position);
     if (frame == 0)
-      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
+      BattleEffect_TintBattler(state->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
     if (frame == 24)
-      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
-                               TINT_KEEP, 0);
+      BattleEffect_TintBattler(state->args->user, SPRITE_COLOR_NORMAL,
+                               TINT_KEEP, TINT_KEEP, 0);
     for (i = 0; i != DJINN_HEAL_SWIRL_MOTES; i++) {
       struct Particle *spark = &PARTICLES[i];
       if (frame > i && spark->variant == 0) {
@@ -143,11 +143,11 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame * (TRIG_TURN / 64)) * 4), 0);
       Projection_Point(djinniPoint, &screen);
       screen.x >>= 1;
-      draw[1](canvas, work->sheet, screen.x - SMALL_DJINNI_WIDTH / 2,
+      draw[1](canvas, state->sheet, screen.x - SMALL_DJINNI_WIDTH / 2,
               screen.y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
               MERCURY_SMALL_DJINNI_HEIGHT);
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   // The healing.
   for (i = 0; i != DJINN_HEAL_SPARKS; i++) {
@@ -158,22 +158,22 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     spark->variant = 0;
   }
   Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, sheet, 0, 0);
-  for (frame = 0; frame != work->args->targetCount * 8 + 72; frame++) {
+  for (frame = 0; frame != state->args->targetCount * 8 + 72; frame++) {
     struct BattleCamera *camera = gBattleCamera;
     EFFECT_VIEW_FROM_CAMERA(camera);
     // The Djinni sways, then flies off.
-    if (frame >= work->args->targetCount * 8 + 40)
+    if (frame >= state->args->targetCount * 8 + 40)
       target[1] += toFIXED(4);
     SET_VECTOR(point, target[0], target[1],
                target[2] + Trig_Sin(frame * (TRIG_TURN / 32)) * 40);
     Projection_Point(point, &view);
     view.x >>= 1;
-    draw[0](canvas, work->sheet, view.x - SMALL_DJINNI_WIDTH / 2,
+    draw[0](canvas, state->sheet, view.x - SMALL_DJINNI_WIDTH / 2,
             view.y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
             MERCURY_SMALL_DJINNI_HEIGHT);
-    EFFECT_FOR_EACH_TARGET(member, work->args) {
+    EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *object =
-          GetBattleObjectSlotFar(work->args->targets[member])->actor;
+          GetBattleObjectSlotFar(state->args->targets[member])->actor;
       s32 start = member * 8;
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(position, object->x.fixed, toFIXED(40), object->z.fixed);
@@ -182,10 +182,10 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       if (frame == start + 30)
         Sound_PlayFar(SE_RECOVERY);
       if (frame == start + 40)
-        BattleEffect_TintBattler(work->args->targets[member],
+        BattleEffect_TintBattler(state->args->targets[member],
                                  SPRITE_COLOR_WHITE, TINT_KEEP, TINT_KEEP, 0);
       if (frame == start + 64)
-        BattleEffect_TintBattler(work->args->targets[member],
+        BattleEffect_TintBattler(state->args->targets[member],
                                  SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
       if (frame > start) {
         Matrix_RotateY((frame - start) << 9);
@@ -226,7 +226,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   EFFECT_FINISH_CANVAS();
 }
@@ -235,18 +235,18 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 /// on the VBlank after one of the effect's frames ends, half of it on the
 /// others, so the camera keeps turning while a frame runs long.
 void BattleCamera_ApplyPhasedDelta(void) {
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  s32 *phase = &work->cameraPhase;
+  s32 *phase = &state->cameraPhase;
 
   // XXX (no evidence): whether the half turns are meant to keep the turn
   // smooth when an effect's frame runs long; the code shows the effect, not
   // the reason.
   if (*phase == CAMERA_PHASE_FRAME_DONE) {
-    camera->yaw += work->cameraDelta;
+    camera->yaw += state->cameraDelta;
     *phase = CAMERA_PHASE_IDLE;
   } else {
-    camera->yaw += work->cameraDelta / 2;
+    camera->yaw += state->cameraDelta / 2;
     if (*phase == CAMERA_PHASE_HALF_TURNED)
       *phase = CAMERA_PHASE_IDLE;
     else

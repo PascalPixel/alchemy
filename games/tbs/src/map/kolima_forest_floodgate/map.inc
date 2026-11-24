@@ -4,14 +4,14 @@ Field_KolimaForestFloodgate:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_KolimaForestFloodgate, .LField_KolimaForestFloodgate_CELL_PICTURES
+	map_offset Field_KolimaForestFloodgate, .LField_KolimaForestFloodgate_CELL_TILES
 	map_offset Field_KolimaForestFloodgate, .LField_KolimaForestFloodgate_SHAPES
 	map_offset Field_KolimaForestFloodgate, .LField_KolimaForestFloodgate_GRID
 	map_offset Field_KolimaForestFloodgate, .LField_KolimaForestFloodgate_ANIMATION
 	map_offset Field_KolimaForestFloodgate
 	map_offset Field_KolimaForestFloodgate, .LField_KolimaForestFloodgate_MARKERS
-.LField_KolimaForestFloodgate_CELL_PICTURES:
-	.incbin "games/tbs/src/map/kolima_forest_floodgate/cell_pictures.delta0.lz"
+.LField_KolimaForestFloodgate_CELL_TILES:
+	.incbin "games/tbs/src/map/kolima_forest_floodgate/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_KolimaForestFloodgate_SHAPES:
 	.incbin "games/tbs/src/map/kolima_forest_floodgate/shapes.table.lz"

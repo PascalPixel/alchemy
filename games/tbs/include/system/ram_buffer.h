@@ -3,7 +3,7 @@
 
 /// @file
 /// The buffers and IWRAM variables the code reaches at fixed addresses, and
-/// the work pointers of gHeapSlots by name.
+/// the state pointers of gHeapSlots by name.
 
 #include "types.h"
 #include "version.h"
@@ -15,7 +15,7 @@
 #define Ram_MapGridCellBuffer                                                  \
   FIXED_ADDRESS((u8 *), 0x02010000, gMapGridCellBuffer)
 #define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gDecodeBuffer)
-#define Ram_CellPictures FIXED_ADDRESS((u8 *), 0x02020000, gCellPictures)
+#define Ram_CellTiles FIXED_ADDRESS((u8 *), 0x02020000, gCellTiles)
 #define Ram_MapGridShapes FIXED_ADDRESS((u8 *), 0x0202c000, gMapGridShapes)
 #define Ram_BgTileBuffer FIXED_ADDRESS((u8 *), 0x02038000, gBgTileBuffer)
 
@@ -50,21 +50,22 @@
   FIXED_ADDRESS((u8 *), 0x03001b10, gVramCacheEntries)
 #endif
 
-/// Work pointers in gHeapSlots, by name; a file that uses one includes
+/// State pointers in gHeapSlots, by name; a file that uses one includes
 /// system/heap.h for the slot numbers.
-#define Ram_MapGridWork ((void **)&gHeapSlots[HEAP_SLOT_MAP_GRID])
-#define Ram_CameraWork ((void **)&gHeapSlots[HEAP_SLOT_CAMERA])
-#define Ram_FieldWork ((void **)&gHeapSlots[HEAP_SLOT_FIELD])
-#define Ram_DisplayWork ((void **)&gHeapSlots[HEAP_SLOT_SCREEN_TRANSITION])
-#define Ram_ActorEffectWork ((void **)&gHeapSlots[HEAP_SLOT_FADE_OVERLAY])
+#define Ram_MapGridState ((void **)&gHeapSlots[HEAP_SLOT_MAP_GRID])
+#define Ram_CameraState ((void **)&gHeapSlots[HEAP_SLOT_CAMERA])
+#define Ram_FieldState ((void **)&gHeapSlots[HEAP_SLOT_FIELD])
+#define Ram_DisplayState ((void **)&gHeapSlots[HEAP_SLOT_SCREEN_TRANSITION])
+#define Ram_ActorEffectState ((void **)&gHeapSlots[HEAP_SLOT_FADE_OVERLAY])
 #define Ram_BattleEntryTimer                                                   \
   ((void **)&gHeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER])
-#define Ram_FieldEffectWork ((void **)&gHeapSlots[HEAP_SLOT_FIELD_EFFECT])
+#define Ram_FieldEffectState ((void **)&gHeapSlots[HEAP_SLOT_FIELD_EFFECT])
 
-/// How many bytes gFieldBlendWork's slot lies past gFieldWork's in gHeapSlots:
-/// the three slots from HEAP_SLOT_FIELD to HEAP_SLOT_FIELD_BLEND.
+/// How many bytes gFieldBlendState's slot lies past gFieldState's in
+/// gHeapSlots: the three slots from HEAP_SLOT_FIELD to HEAP_SLOT_FIELD_BLEND.
 // Kept as a number: the scene overlays that use it do not include heap.h,
 // where the slot numbers are.
-#define Ram_FieldBlendWorkOffset FIXED_OFFSET(12, gFieldBlendWork, gFieldWork)
+#define Ram_FieldBlendStateOffset                                              \
+  FIXED_OFFSET(12, gFieldBlendState, gFieldState)
 
 #endif

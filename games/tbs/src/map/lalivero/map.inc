@@ -5,14 +5,14 @@ Field_Lalivero:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Lalivero, .LField_Lalivero_CELL_PICTURES
+	map_offset Field_Lalivero, .LField_Lalivero_CELL_TILES
 	map_offset Field_Lalivero, .LField_Lalivero_SHAPES
 	map_offset Field_Lalivero, .LField_Lalivero_GRID
 	map_offset Field_Lalivero, .LField_Lalivero_ANIMATION
 	map_offset Field_Lalivero
 	map_offset Field_Lalivero, .LField_Lalivero_MARKERS
-.LField_Lalivero_CELL_PICTURES:
-	.incbin "games/tbs/src/map/lalivero/cell_pictures_de.delta1.lz"
+.LField_Lalivero_CELL_TILES:
+	.incbin "games/tbs/src/map/lalivero/cell_tiles_de.delta1.lz"
 	.balign 4, 0
 .LField_Lalivero_SHAPES:
 	.incbin "games/tbs/src/map/lalivero/shapes.table.lz"
@@ -34,14 +34,14 @@ Field_Lalivero:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Lalivero, .LField_Lalivero_CELL_PICTURES
+	map_offset Field_Lalivero, .LField_Lalivero_CELL_TILES
 	map_offset Field_Lalivero, .LField_Lalivero_SHAPES
 	map_offset Field_Lalivero, .LField_Lalivero_GRID
 	map_offset Field_Lalivero, .LField_Lalivero_ANIMATION
 	map_offset Field_Lalivero
 	map_offset Field_Lalivero, .LField_Lalivero_MARKERS
-.LField_Lalivero_CELL_PICTURES:
-	.incbin "games/tbs/src/map/lalivero/cell_pictures_de.delta1.lz"
+.LField_Lalivero_CELL_TILES:
+	.incbin "games/tbs/src/map/lalivero/cell_tiles_de.delta1.lz"
 	.balign 4, 0
 .LField_Lalivero_SHAPES:
 	.incbin "games/tbs/src/map/lalivero/shapes.table.lz"
@@ -63,14 +63,14 @@ Field_Lalivero:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Lalivero, .LField_Lalivero_CELL_PICTURES
+	map_offset Field_Lalivero, .LField_Lalivero_CELL_TILES
 	map_offset Field_Lalivero, .LField_Lalivero_SHAPES
 	map_offset Field_Lalivero, .LField_Lalivero_GRID
 	map_offset Field_Lalivero, .LField_Lalivero_ANIMATION
 	map_offset Field_Lalivero
 	map_offset Field_Lalivero, .LField_Lalivero_MARKERS
-.LField_Lalivero_CELL_PICTURES:
-	.incbin "games/tbs/src/map/lalivero/cell_pictures_de.delta1.lz"
+.LField_Lalivero_CELL_TILES:
+	.incbin "games/tbs/src/map/lalivero/cell_tiles_de.delta1.lz"
 	.balign 4, 0
 .LField_Lalivero_SHAPES:
 	.incbin "games/tbs/src/map/lalivero/shapes.table.lz"
@@ -92,14 +92,14 @@ Field_Lalivero:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Lalivero, .LField_Lalivero_CELL_PICTURES
+	map_offset Field_Lalivero, .LField_Lalivero_CELL_TILES
 	map_offset Field_Lalivero, .LField_Lalivero_SHAPES
 	map_offset Field_Lalivero, .LField_Lalivero_GRID
 	map_offset Field_Lalivero, .LField_Lalivero_ANIMATION
 	map_offset Field_Lalivero
 	map_offset Field_Lalivero, .LField_Lalivero_MARKERS
-.LField_Lalivero_CELL_PICTURES:
-	.incbin "games/tbs/src/map/lalivero/cell_pictures_de.delta1.lz"
+.LField_Lalivero_CELL_TILES:
+	.incbin "games/tbs/src/map/lalivero/cell_tiles_de.delta1.lz"
 	.balign 4, 0
 .LField_Lalivero_SHAPES:
 	.incbin "games/tbs/src/map/lalivero/shapes.table.lz"
@@ -120,14 +120,14 @@ Field_Lalivero:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Lalivero, .LField_Lalivero_CELL_PICTURES
+	map_offset Field_Lalivero, .LField_Lalivero_CELL_TILES
 	map_offset Field_Lalivero, .LField_Lalivero_SHAPES
 	map_offset Field_Lalivero, .LField_Lalivero_GRID
 	map_offset Field_Lalivero, .LField_Lalivero_ANIMATION
 	map_offset Field_Lalivero
 	map_offset Field_Lalivero, .LField_Lalivero_MARKERS
-.LField_Lalivero_CELL_PICTURES:
-	.incbin "games/tbs/src/map/lalivero/cell_pictures.delta1.lz"
+.LField_Lalivero_CELL_TILES:
+	.incbin "games/tbs/src/map/lalivero/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_Lalivero_SHAPES:
 	.incbin "games/tbs/src/map/lalivero/shapes.table.lz"

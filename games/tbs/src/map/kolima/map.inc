@@ -4,14 +4,14 @@ Field_Kolima:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Kolima, .LField_Kolima_CELL_PICTURES
+	map_offset Field_Kolima, .LField_Kolima_CELL_TILES
 	map_offset Field_Kolima, .LField_Kolima_SHAPES
 	map_offset Field_Kolima, .LField_Kolima_GRID
 	map_offset Field_Kolima, .LField_Kolima_ANIMATION
 	map_offset Field_Kolima, .LField_Kolima_BLEND
 	map_offset Field_Kolima, .LField_Kolima_MARKERS
-.LField_Kolima_CELL_PICTURES:
-	.incbin "games/tbs/src/map/kolima/cell_pictures.delta1.lz"
+.LField_Kolima_CELL_TILES:
+	.incbin "games/tbs/src/map/kolima/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_Kolima_SHAPES:
 	.incbin "games/tbs/src/map/kolima/shapes.table.lz"

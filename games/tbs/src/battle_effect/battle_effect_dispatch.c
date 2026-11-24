@@ -1,6 +1,6 @@
 /// @file
 /// The two ways into an effect, a summon or an ordinary ability, with the
-/// sheet, work and canvas they lend it; and the helpers the summons share for
+/// sheet, state and canvas they lend it; and the helpers the summons share for
 /// window 0's ragged edge and the targets' sprites.
 // Part of battle_effect.c.
 
@@ -15,10 +15,10 @@ void BattleEffect_CallDoNothing(s32 count) {
 }
 
 /// Runs one of the large battle effects, the summons: takes the effect's sheet,
-/// work and canvas, runs it and frees them again.
+/// state and canvas, runs it and frees them again.
 void BattleEffect_RunSummon(struct BattleEffectParams *args) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectState));
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
   if (args->kind == SUMMON_EFFECT_NONE) {
@@ -70,17 +70,17 @@ void BattleEffect_RunSummon(struct BattleEffectParams *args) {
 }
 
 /// Runs an ordinary battle effect from gBattleEffect_Handlers, with the sprite
-/// sheet, work and canvas it lends.
+/// sheet, state and canvas it lends.
 void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
   s32 kind;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
 
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectState));
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  work->args = args;
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state->args = args;
   kind = args->kind;
   if (kind == BATTLE_EFFECT_NONE)
     args->variant = EFFECT_VARIANT_BASIC;
@@ -158,7 +158,7 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
 void BattleEffect_SetupBlendedDisplay(void) {
   void **slots = &gHeapSlots[HEAP_SLOT_BATTLE];
   u8 *canvas = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE, HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleWork *battle = slots[0];
+  struct BattleState *battle = slots[0];
   volatile u32 fill;
 
   REG_DISPCNT = DISPCNT_MODE_1;
@@ -184,17 +184,17 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
                               s32 timerSlot, s32 timerFrames) {
   struct BattleObject *slot;
   struct Sprite *group;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   s32 groupIndex;
 
   slot = GetBattleObjectSlotFar(unitId);
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
   for (groupIndex = 0;
        (group = GetMotionRecordFar(slot->actor, groupIndex)) != NULL;
        groupIndex++) {
     if (timerSlot != TINT_KEEP) {
-      work->actorTimers[timerSlot] = timerFrames;
+      state->actorTimers[timerSlot] = timerFrames;
     }
     if (slot->fading == 0) {
       if (palette != TINT_KEEP) {

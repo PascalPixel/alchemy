@@ -101,7 +101,7 @@
 #include "field/facing.h"
 #include "field/field.h"
 #include "field/field_effect.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
@@ -115,7 +115,7 @@
 #include "system/input.h"
 #include "system/io_reg.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -339,7 +339,7 @@ static s32 Imil_UpdateTremble(struct Actor *actor) {
 
 /// Imil is two scenes: the village, and its houses and Sanctum.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == SCENE_ICE_ROOMS) {
+  if (gMainRoutineState.next == SCENE_ICE_ROOMS) {
     return gImil_RoomEntrances;
   }
   return gImil_TownEntrances;
@@ -351,7 +351,7 @@ const u32 *Scene_GetExits(void) { return gImil_Exits; }
 
 /// Once Saturos is beaten at Mercury Lighthouse, the villagers are well again.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_ICE_ROOMS) {
+  if (gMainRoutineState.next == SCENE_ICE_ROOMS) {
     Scene_AssignViewFlags(gImil_RoomActorPlacements);
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       gImil_RoomActorPlacements[ACTOR_RESTAURANT_OWNER - ACTOR_FIRST_PLACED]
@@ -379,7 +379,7 @@ static void Imil_SlideOnIce(void) { Leader_SlideOnIce(); }
 /// The village's, or the houses' and the Sanctum's, conversations and
 /// Psynergy targets.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_ICE_ROOMS) {
+  if (gMainRoutineState.next == SCENE_ICE_ROOMS) {
     return gImil_RoomTriggers;
   }
   return gImil_TownTriggers;
@@ -643,12 +643,12 @@ static void Imil_ReadJustinsMind(void) {
 /// Isaac walks north into one of Imil's six doors: everyone stops, the door
 /// opens and he walks in.
 static void Imil_OpenDoorAndExit(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct Actor *actor;
   u32 i;
   s32 exit;
 
-  work = gFieldWork;
+  state = gFieldState;
   Event_Start();
   for (i = ACTOR_FIRST_PLACED; i <= ACTOR_LAST_ID; i++) {
     actor = Actor_Get(i);
@@ -656,7 +656,7 @@ static void Imil_OpenDoorAndExit(void) {
       actor->motionFlags = 0;
     }
   }
-  exit = (s16)(work->stepTrigger - EXIT_CELL_BEHAVIOR_OFFSET);
+  exit = (s16)(state->stepTrigger - EXIT_CELL_BEHAVIOR_OFFSET);
   if (exit == IMIL_TO_ICE_ROOMS_NORTHEAST) {
     Sound_Play(SE_THUMP);
   } else {
@@ -669,7 +669,7 @@ static void Imil_OpenDoorAndExit(void) {
     MapGrid_PlayMapEdit(gImil_DoorCellSteps[exit - 1], x, y);
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (exit == IMIL_TO_ICE_ROOMS_NORTHEAST) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -869,9 +869,9 @@ s32 Scene_Initialize(void) {
   struct Actor *leader;
   s32 entrance;
 
-  if (gMainRoutineWork.next == SCENE_IMIL) {
+  if (gMainRoutineState.next == SCENE_IMIL) {
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Actor_SetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                        STRONGMAN_ANIMATION_SQUATS);
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -887,13 +887,13 @@ s32 Scene_Initialize(void) {
       Imil_PlaceMovedSnowman();
     }
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
-        gMainRoutineWork.entrance == IMIL_FROM_IMIL_FALLS_CAVE) {
+        gMainRoutineState.entrance == IMIL_FROM_IMIL_FALLS_CAVE) {
       Imil_ArriveFromFallsCave();
     }
-  } else if (gMainRoutineWork.next == SCENE_ICE_ROOMS) {
-    gFieldWork->transition =
+  } else if (gMainRoutineState.next == SCENE_ICE_ROOMS) {
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    entrance = gMainRoutineWork.entrance;
+    entrance = gMainRoutineState.entrance;
     if (entrance == ICE_ROOMS_HOUSE_SOUTHWEST) {
       Actor_SetSpriteColorById(ACTOR_INVISIBLE_CRATE, SPRITE_COLOR_HIDDEN);
       Actor_Get(ACTOR_INVISIBLE_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
@@ -990,7 +990,7 @@ s32 Scene_Initialize(void) {
 
 static void Imil_MeetMiaAtOldCouplesHouse(void) {
   const s32 *table;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Event_Start();
   Actor_SetPosition(ACTOR_MIA, 182, 150);
@@ -998,9 +998,9 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   wait(1);
   FieldCamera_SetSpeed(0.3);
   FieldCamera_MoveTo(140, CAMERA_KEEP, 164, 1);
-  work = gFieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->transitionFrames = 40;
+  state = gFieldState;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state->transitionFrames = 40;
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
   Actor_SetSpeed(ACTOR_GARET, 0.4);
@@ -1162,10 +1162,10 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetScript(ACTOR_GARET, table);
   Actor_RunScriptAndWait(ACTOR_IVAN, table);
   Event_Wait(20);
-  work = gFieldWork;
-  work->transition =
+  state = gFieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  work->transitionFrames = 24;
+  state->transitionFrames = 24;
   Import_GameFlagSet(FLAG_IMIL_MET_MIA);
   Event_End();
 }
@@ -1240,12 +1240,12 @@ static void Imil_OldManBobsAndSpeaks(void) {
 }
 
 static void Imil_MiaCastsPlyOnOldMan(void) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
 
   FieldPsynergy_LoadResources(ABILITY_PLY, 1);
-  effectWork = gFieldEffectWork;
+  effectState = gFieldEffectState;
   FieldPsynergy_SetupActorPair(ACTOR_MIA, ACTOR_OLD_MAN);
-  effectWork->finishCallback = Imil_OldManBobsAndSpeaks;
+  effectState->finishCallback = Imil_OldManBobsAndSpeaks;
   FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
   FieldPsynergy_StopCasterUpdate();
@@ -1333,7 +1333,7 @@ static void Imil_UpdateFootprints(void) {
   s32 isSet;
   s32 zoneFlag = FLAG_IMIL_NO_FOOTPRINTS;
   s32 otherZoneFlag = FLAG_IMIL_FOOTPRINTS;
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
 
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   x = actor->x.fixed;
@@ -1346,7 +1346,7 @@ static void Imil_UpdateFootprints(void) {
     isSet = GameFlag_Get(zoneFlag);
     if (isSet != 0)
       return;
-    ((struct MapGridScrollWork *)gMapGridWork[0])->footprints = isSet;
+    ((struct MapGridScrollState *)gMapGridState[0])->footprints = isSet;
     Import_GameFlagSet(zoneFlag);
     GameFlag_Clear(otherZoneFlag);
     return;
@@ -1354,7 +1354,7 @@ static void Imil_UpdateFootprints(void) {
   // On the raised ground under the big tree.
   if (x > toFIXED(232) && actor->y.fixed > toFIXED(30) &&
       actor->z.fixed > toFIXED(212)) {
-    grid = gMapGridWork[0];
+    grid = gMapGridState[0];
     grid->footprints = 0;
     Import_GameFlagSet(zoneFlag);
     GameFlag_Clear(otherZoneFlag);
@@ -1363,7 +1363,7 @@ static void Imil_UpdateFootprints(void) {
   isSet = GameFlag_Get(otherZoneFlag);
   if (isSet != 0)
     return;
-  grid = gMapGridWork[0];
+  grid = gMapGridState[0];
   grid->footprints = 1;
   Import_GameFlagSet(otherZoneFlag);
   GameFlag_Clear(zoneFlag);
@@ -1415,7 +1415,7 @@ static void Imil_ArriveFromFallsCave(void) {
 }
 
 static void Imil_MiaSaysFarewellToApprentices(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Event_Start();
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
@@ -1425,9 +1425,9 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(690, 0, 164, 1);
-  work = gFieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->transitionFrames = 48;
+  state = gFieldState;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state->transitionFrames = 48;
   Event_StartScreenTransition();
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1574,7 +1574,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   /* FAKEMATCH(dead): the transition's store alone in a once-only block; as
    * the plain store. */
   do {
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   } while (0);
   Import_GameFlagSet(FLAG_IMIL_MIA_SAID_FAREWELL);
@@ -1618,7 +1618,7 @@ static void Leader_SlideOnIce(void) {
   FIXED z;
   FIXED x;
 
-  subject = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  subject = Actor_Lookup(gMainRoutineState.leaderActorId);
 
   for (;;) {
     heading = gImil_SlideHeadings[DPAD_INDEX(gKeysHeld)];

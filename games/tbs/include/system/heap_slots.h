@@ -10,24 +10,24 @@
 
 struct ScreenTransitionState;
 
-/// The heap slots from HEAP_SLOT_MAP_GRID on: gMapGridWork[0] is the map's work
-/// (struct MapGridScrollWork, or the world map's struct WorldMapView).
-#define gMapGridWork (*(void *(*)[]) & gHeapSlots[HEAP_SLOT_MAP_GRID])
-/// The menu work, heap slot HEAP_SLOT_MENU: each menu screen and the shop
+/// The heap slots from HEAP_SLOT_MAP_GRID on: gMapGridState[0] is the map's
+/// state (struct MapGridScrollState, or the world map's struct WorldMapView).
+#define gMapGridState (*(void *(*)[]) & gHeapSlots[HEAP_SLOT_MAP_GRID])
+/// The menu state, heap slot HEAP_SLOT_MENU: each menu screen and the shop
 /// read it through their own struct while they are open.
-#define gMenuWork (*(void **)&gHeapSlots[HEAP_SLOT_MENU])
+#define gMenuState (*(void **)&gHeapSlots[HEAP_SLOT_MENU])
 
-/// The heap slots from HEAP_SLOT_FIELD_BLEND on: gFieldBlendWork[0] is the
-/// field's colour blend work.
-#define gFieldBlendWork (*(void *(*)[]) & gHeapSlots[HEAP_SLOT_FIELD_BLEND])
-/// The screen transition's work, heap slot HEAP_SLOT_SCREEN_TRANSITION.
-#define gScreenTransitionWork                                                  \
+/// The heap slots from HEAP_SLOT_FIELD_BLEND on: gFieldBlendState[0] is the
+/// field's colour blend state.
+#define gFieldBlendState (*(void *(*)[]) & gHeapSlots[HEAP_SLOT_FIELD_BLEND])
+/// The screen transition's state, heap slot HEAP_SLOT_SCREEN_TRANSITION.
+#define gScreenTransitionState                                                 \
   (*(struct ScreenTransitionState **)&gHeapSlots[HEAP_SLOT_SCREEN_TRANSITION])
 /// HEAP_SLOT_BATTLE_ENTRY_TIMER: the battle's entry transition timer in frames.
 #define gBattleEntryTimer (*(s32 **)&gHeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER])
-/// The running Psynergy effect's work (struct FieldEffectWork), heap slot
+/// The running Psynergy effect's state (struct FieldEffectState), heap slot
 /// HEAP_SLOT_FIELD_EFFECT.
-#define gFieldEffectWork (*(void **)&gHeapSlots[HEAP_SLOT_FIELD_EFFECT])
+#define gFieldEffectState (*(void **)&gHeapSlots[HEAP_SLOT_FIELD_EFFECT])
 
 // EWRAM buffers
 /// The map's cells at 0x02010000, 128 by 128 words: 64 KB, so while a map is

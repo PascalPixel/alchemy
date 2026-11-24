@@ -4,14 +4,14 @@ Field_TimberRoomsA:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_TimberRoomsA, .LField_TimberRoomsA_CELL_PICTURES
+	map_offset Field_TimberRoomsA, .LField_TimberRoomsA_CELL_TILES
 	map_offset Field_TimberRoomsA, .LField_TimberRoomsA_SHAPES
 	map_offset Field_TimberRoomsA, .LField_TimberRoomsA_GRID
 	map_offset Field_TimberRoomsA, .LField_TimberRoomsA_ANIMATION
 	map_offset Field_TimberRoomsA, .LField_TimberRoomsA_BLEND
 	map_offset Field_TimberRoomsA, .LField_TimberRoomsA_MARKERS
-.LField_TimberRoomsA_CELL_PICTURES:
-	.incbin "games/tbs/src/map/timber_rooms_a/cell_pictures.delta2.lz"
+.LField_TimberRoomsA_CELL_TILES:
+	.incbin "games/tbs/src/map/timber_rooms_a/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_TimberRoomsA_SHAPES:
 	.incbin "games/tbs/src/map/timber_rooms_a/shapes.table.lz"

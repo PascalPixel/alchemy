@@ -258,7 +258,7 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
   *y = gBattlePlacement_StepPairs[partyPlace + 1];
 }
 
-/// BattleWork.enemyIds of an enemy that left the battle, and of a place
+/// BattleState.enemyIds of an enemy that left the battle, and of a place
 /// held for one: unit ids 254 and 255 in the list.
 #define IS_PLACEHOLDER_ID(id) ((u16)((id) - BATTLE_UNIT_REMOVED) <= 1)
 
@@ -333,7 +333,7 @@ s32 Enemy_GetFreeUnitId(void) {
 /// Lays the enemies out again and moves each one's battle object anchor to its
 /// new place.
 UNREAD_RESULT BattlePlacement_RelayoutEnemies(void) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   u16 unitIds[UNIT_MAX];
   s32 xPositions[ENEMY_BATTLE_SIZE];
   s32 zPositions[ENEMY_BATTLE_SIZE];
@@ -361,7 +361,7 @@ UNREAD_RESULT BattlePlacement_RelayoutEnemies(void) {
 /// Places every unit at the start of a battle and creates its battle object at
 /// its spot.
 void BattleUnit_RefreshPlacement(void) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   u16 unitIds[UNIT_MAX];
   s32 xPositions[ENEMY_BATTLE_SIZE];
   s32 zPositions[ENEMY_BATTLE_SIZE];
@@ -373,7 +373,7 @@ void BattleUnit_RefreshPlacement(void) {
   s32 enemy;
   u8 *place;
 
-  battle = gBattleWork;
+  battle = gBattleState;
   count = BattleParty_PrepareMembers(unitIds);
   // objectIndex[0..7] is each party unit id's place and objectIndex[8..13]
   // the enemy places, numbered 8 to 13.

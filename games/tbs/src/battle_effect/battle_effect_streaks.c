@@ -79,7 +79,7 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
 /// fading trail.
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 k;
   DrawRectangle drawLower;
@@ -93,13 +93,13 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   s32 streaks = STREAK_MAX;
   FIXED lift = toFIXED(20); // the streaks fly 20 pixels above the ground
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
 
-  if (work->args->side == EFFECT_SIDE_ENEMIES) {
+  if (state->args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                         COMPOSITE_LIGHTEN);
@@ -117,7 +117,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     drawLower = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_PAIRED);
   }
 
-  Resource_LoadAndDecompress(RESOURCE_FIVE_MODE_IMAGE, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIVE_MODE_IMAGE, state->sheet, 0, 0);
   switch (mode) {
   case STREAK_STYLE_EMBER:
     resource = RESOURCE_EMBER_STREAK_SHEET;
@@ -138,19 +138,19 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   }
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(resource),
                   SHEET_PALETTE_BYTES);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  source = GetBattleObjectSlotFar(work->args->user)->actor;
+  source = GetBattleObjectSlotFar(state->args->user)->actor;
   {
     // The loop counts 6 frames for each streak though targets are 32 frames
     // apart, so with three or four targets it stops before the last one's
     // second flash.
-    s32 totalFrames = streaks * work->args->targetCount * STREAK_SPACING + 48;
+    s32 totalFrames = streaks * state->args->targetCount * STREAK_SPACING + 48;
 
-    EFFECT_FOR_EACH_TARGET(k, work->args) {
-      target = GetBattleObjectSlotFar(work->args->targets[k])->actor;
+    EFFECT_FOR_EACH_TARGET(k, state->args) {
+      target = GetBattleObjectSlotFar(state->args->targets[k])->actor;
       for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
-        struct Particle *streak = &work->particles[k * streaks + streakIndex];
+        struct Particle *streak = &state->particles[k * streaks + streakIndex];
 
         SET_POSITION(streak, source->x.fixed, source->y.fixed + lift,
                      source->z.fixed);
@@ -162,7 +162,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     }
 
     for (frame = 0; frame != totalFrames; frame++) {
-      s32 *row = work->bg2xLines;
+      s32 *row = state->bg2xLines;
 
       // A sine wave of BG2X offsets for the wave HBlank DMA, which nothing arms
       // here, so the canvas does not ripple.
@@ -172,13 +172,13 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       if (frame > totalFrames - 16)
         REG_BLDALPHA = EFFECT_BLEND_CANVAS(totalFrames - frame);
       EFFECT_VIEW_FROM_CAMERA(camera);
-      EFFECT_FOR_EACH_TARGET(k, work->args) {
+      EFFECT_FOR_EACH_TARGET(k, state->args) {
         if (frame >= k * STREAK_TARGET_DELAY) {
           for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
             if (frame >=
                 k * STREAK_TARGET_DELAY + streakIndex * STREAK_SPACING) {
               struct Particle *streak =
-                  &work->particles[k * streaks + streakIndex];
+                  &state->particles[k * streaks + streakIndex];
               s32 step;
 
               Projection_Point(streak, &position);
@@ -187,8 +187,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               if (step > 5)
                 step = 5;
               if (STREAK_VALUE(mode, STREAK_ANIMATE)) {
-                u8 *picture = &work->sheet[step * PICTURE_BYTES(STREAK) +
-                                           frame / 2 % 3 * STREAK_FRAME_BYTES];
+                u8 *picture = &state->sheet[step * PICTURE_BYTES(STREAK) +
+                                            frame / 2 % 3 * STREAK_FRAME_BYTES];
 
                 drawUpper(canvas, picture, position.x - STREAK_WIDTH / 2,
                           position.y - STREAK_HEIGHT, STREAK_WIDTH,
@@ -196,8 +196,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
                 drawLower(canvas, picture, position.x - STREAK_WIDTH / 2,
                           position.y, STREAK_WIDTH, STREAK_HEIGHT);
               } else {
-                u8 *picture = &work->sheet[step * PICTURE_BYTES(STREAK) +
-                                           2 * STREAK_FRAME_BYTES];
+                u8 *picture = &state->sheet[step * PICTURE_BYTES(STREAK) +
+                                            2 * STREAK_FRAME_BYTES];
 
                 drawUpper(canvas, picture, position.x - STREAK_WIDTH / 2,
                           position.y - STREAK_HEIGHT, STREAK_WIDTH,
@@ -215,7 +215,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               frame >= k * STREAK_TARGET_DELAY + 30 &&
               frame < k * STREAK_TARGET_DELAY + 62) {
             struct Actor *struck =
-                GetBattleObjectSlotFar(work->args->targets[k])->actor;
+                GetBattleObjectSlotFar(state->args->targets[k])->actor;
 
             struck->x.fixed += INTtoFIXED(
                 gStreak_Tremble[(frame - k * STREAK_TARGET_DELAY - 30) % 8]);
@@ -223,7 +223,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               struck->x.fixed += toFIXED(1) / 2;
             else
               struck->x.fixed -= toFIXED(1) / 2;
-            BattleEffect_TintBattler(work->args->targets[k], TINT_KEEP,
+            BattleEffect_TintBattler(state->args->targets[k], TINT_KEEP,
                                      POSE_DAMAGE, TINT_KEEP, 0);
           }
 
@@ -233,23 +233,23 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               Sound_PlayFar(SE_IMPACT);
               if (k == 0) // the first hit lets the battle show the damage
                 EFFECT_SHOW_DAMAGE(-1);
-              BattleEffect_TintBattler(work->args->targets[k],
+              BattleEffect_TintBattler(state->args->targets[k],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
             }
             if (frame == k * STREAK_TARGET_DELAY + 40)
-              BattleEffect_TintBattler(work->args->targets[k],
+              BattleEffect_TintBattler(state->args->targets[k],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
           }
           if (STREAK_VALUE(mode, STREAK_MOTION) != -1 &&
               frame == k * STREAK_TARGET_DELAY + 24) {
-            work->shakeFrames = 4;
-            BattleMotion_ApplyKnockbackFar(work->args->targets[k],
+            state->shakeFrames = 4;
+            BattleMotion_ApplyKnockbackFar(state->args->targets[k],
                                            STREAK_VALUE(mode, STREAK_MOTION));
           }
         }
       }
       BattleCamera_Shake(8, 8);
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
     }
   }
 
@@ -295,7 +295,7 @@ void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   s32 worldPoint[3];
   struct ScreenPoint position;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   BlitterPair draw;
   struct BattleCamera *camera;
@@ -306,11 +306,11 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  work->args = args;
+  state->args = args;
   if (mode == MOTE_FOUNTAIN_HEALING)
     BattleEffect_StartCanvasLayer(0);
   else
@@ -328,9 +328,10 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     resource = RESOURCE_EARTH_WALL_SHEET;
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(resource),
                   SHEET_PALETTE_BYTES);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
-  source = GetBattleObjectSlotFar(work->args->user)->actor;
+  source = GetBattleObjectSlotFar(state->args->user)->actor;
   for (i = 0; i != MOTE_FOUNTAIN_MOTES; i++) {
     s32 speed;
     s32 angle;
@@ -385,24 +386,24 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
       }
     }
     if (mode == MOTE_FOUNTAIN_DRIFTING) {
-      EFFECT_FOR_EACH_TARGET(i, work->args) {
+      EFFECT_FOR_EACH_TARGET(i, state->args) {
         if (frame == i * 8 + 48) {
           EFFECT_SHOW_DAMAGE(-1);
-          BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
+          BattleEffect_TintBattler(state->args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 8);
         }
       }
     } else {
-      EFFECT_FOR_EACH_TARGET(i, work->args) {
+      EFFECT_FOR_EACH_TARGET(i, state->args) {
         if (frame == i * 8 + 48) {
           Sound_PlayFar(SE_RECOVERY);
           EFFECT_SHOW_DAMAGE(-1);
-          BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
+          BattleEffect_TintBattler(state->args->targets[i], SPRITE_COLOR_WHITE,
                                    TINT_KEEP, i, 8);
         }
       }
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

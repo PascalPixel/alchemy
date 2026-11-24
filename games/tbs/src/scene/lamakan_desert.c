@@ -18,7 +18,7 @@
 /// three quarters, Garet, Ivan or Mia complains of the heat
 /// (LamakanDesert_ComplainAboutHeat); when it is full, the party loses a
 /// quarter of its HP and it starts again. The steps are counted in
-/// gMainRoutineWork.hazardSteps against HEAT_LIMIT.
+/// gMainRoutineState.hazardSteps against HEAT_LIMIT.
 ///
 /// Most rings of rocks hide something only Reveal shows: an oasis, an Ant
 /// Lion's pit, a chest or a Psynergy Stone, and in the second scene Smog.
@@ -103,7 +103,7 @@
 #define HEAT_GAUGE_GREEN_FLICKER 32
 
 /// The steps of heat at which the party loses HEAT_DAMAGE_PERCENT of its HP
-/// and the count starts again (gMainRoutineWork.hazardLimit).
+/// and the count starts again (gMainRoutineState.hazardLimit).
 #define HEAT_LIMIT 600
 #define HEAT_DAMAGE_PERCENT 25
 /// The gauge's marks, in percent of HEAT_LIMIT, past which Garet, Ivan or Mia
@@ -331,7 +331,7 @@ static UNREAD_RESULT LamakanDesert_KickUpSand(struct Actor *actor) {
 
 /// Where the party can enter each of the four scenes.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_LAMAKAN_DESERT_EAST) {
     return gLamakanDesertEastEntrances;
@@ -355,8 +355,8 @@ const u32 *Scene_GetExits(void) { return gLamakanDesertExits; }
 
 /// The pits, the Manticore and Smog of each scene.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
-    if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
+    if (gMainRoutineState.entrance ==
         LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
       GameFlag_Set(FLAG_LAMAKAN_MANTICORE_BEATEN);
       // The French, Spanish and Italian editions mark Kalay reached here too.
@@ -370,13 +370,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 #endif
     }
   }
-  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_EAST) {
+  if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_EAST) {
     return gLamakanDesertEastActorPlacements;
   }
-  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_SMOG) {
+  if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_SMOG) {
     return gLamakanDesertSmogActorPlacements;
   }
-  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
+  if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
     return gLamakanDesertManticoreActorPlacements;
   }
   return gLamakanDesertActorPlacementsOther;
@@ -406,7 +406,7 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
   s32 markerId;
 
   GameFlag_Clear(FLAG_SECRETS_REVEALED);
-  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_EAST) {
+  if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_EAST) {
     HIDE_SECRET(22, 7);
     HIDE_SECRET(8, 10);
     HIDE_SECRET(23, 21);
@@ -414,7 +414,7 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
     HIDE_SECRET(16, 42);
     HIDE_SECRET(36, 44);
     HIDE_SECRET(14, 55);
-  } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_SMOG) {
+  } else if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_SMOG) {
     HIDE_SECRET(42, 5);
     HIDE_SECRET(20, 11);
     HIDE_SECRET_SOUTH_ROW(20, 11);
@@ -433,7 +433,7 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
     HIDE_SECRET(6, 46);
     HIDE_SECRET(27, 55);
     HIDE_SECRET(43, 56);
-  } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
+  } else if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
     // Sand fills the three secrets in the west, north to south the Mint's
     // treasure spot, the pit and the oasis. Sandfalls close over the two
     // passages at the head of the slopes of sand, whose cells there are plain
@@ -462,7 +462,7 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
        markerId++) {
     TreasureSpot_SetActorPosition(markerId, 0, 0);
   }
-  if (gMainRoutineWork.next != SCENE_LAMAKAN_DESERT_CAVE) {
+  if (gMainRoutineState.next != SCENE_LAMAKAN_DESERT_CAVE) {
     LineScroll_StartWave(0, FIXED_ONE * 4, FIXED_ONE, FIXED_ONE / 8, FIXED_ONE,
                          FIXED_ONE / 2, FIXED_ONE / 4);
   }
@@ -474,7 +474,7 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
 
   GameFlag_Clear(FLAG_DESERT_EVENT_RUNNING);
   GameFlag_Set(FLAG_SECRETS_REVEALED);
-  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_EAST) {
+  if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_EAST) {
     SHOW_SECRET(EAST_SECRET_OASIS_NORTH, 22, 7);
     SHOW_SECRET(EAST_SECRET_VULCAN_AXE, 8, 10);
     SHOW_SECRET(EAST_SECRET_PIT, 23, 21);
@@ -483,7 +483,7 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
     SHOW_SECRET(EAST_SECRET_OASIS_SOUTHEAST, 36, 44);
     SHOW_SECRET(EAST_SECRET_FIRST_PSYNERGY_STONE, 14, 55);
     Actor_SetPosition(ACTOR_FIRST_PIT, 400, 364);
-  } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_SMOG) {
+  } else if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_SMOG) {
     SHOW_SECRET(SMOG_SECRET_OASIS_NORTHEAST, 42, 5);
     SHOW_SECRET(SMOG_SECRET_PIT_NORTH, 20, 11);
     SHOW_SECRET_SOUTH_ROWS(SMOG_SECRET_PIT_NORTH, 20, 11);
@@ -507,7 +507,7 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
     Actor_SetPosition(ACTOR_FIRST_PIT + 2, 144, 380);
     Actor_SetPosition(ACTOR_LAST_PIT, 576, 716);
     Actor_SetPosition(ACTOR_SMOG, 648, 408);
-  } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
+  } else if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
     // The three secrets come back from their spare patches. The sandfalls
     // part and the slopes lead into the passages; in the west one the
     // Manticore stands (CELL_BEHAVIOR_LAMAKAN_DESERT_MANTICORE), and a wall
@@ -531,7 +531,7 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
     TreasureSpot_SetPosition(i, -1, -1);
   }
   TreasureSpot_MoveLeaderAway();
-  if (gMainRoutineWork.next != SCENE_LAMAKAN_DESERT_CAVE) {
+  if (gMainRoutineState.next != SCENE_LAMAKAN_DESERT_CAVE) {
     LineScroll_Stop();
   }
 }
@@ -582,9 +582,9 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
 /// the gauge drops back below it. Nothing is raised while Reveal is showing the
 /// pits.
 static void HeatGauge_RaiseQuarterTriggers(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   s32 percent =
-      gMainRoutineWork.hazardSteps * 100 / gMainRoutineWork.hazardLimit;
+      gMainRoutineState.hazardSteps * 100 / gMainRoutineState.hazardLimit;
 
   if (GameFlag_Get(FLAG_SECRETS_REVEALED) != 0)
     return;
@@ -610,16 +610,16 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
   if (Event_GetFlag(FLAG_HEAT_QUARTER) == 0 &&
       percent >= HEAT_QUARTER_PERCENT) {
     GameFlag_Set(FLAG_HEAT_QUARTER);
-    work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_QUARTER;
+    state->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_QUARTER;
   }
   if (Event_GetFlag(FLAG_HEAT_HALF) == 0 && percent >= HEAT_HALF_PERCENT) {
     GameFlag_Set(FLAG_HEAT_HALF);
-    work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_HALF;
+    state->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_HALF;
   }
   if (Event_GetFlag(FLAG_HEAT_THREE_QUARTERS) == 0 &&
       percent >= HEAT_THREE_QUARTERS_PERCENT) {
     GameFlag_Set(FLAG_HEAT_THREE_QUARTERS);
-    work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS;
+    state->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS;
   }
 }
 
@@ -639,7 +639,7 @@ static s32 LamakanDesert_PixelsToOasis(const s32 *position, const s32 *oasis) {
 /// heart over his head while the heat gauge drains, for at least a second, then
 /// hops out.
 static void LamakanDesert_BatheInOasis(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 frames;
   FIXED best;
   s32 count;
@@ -655,15 +655,15 @@ static void LamakanDesert_BatheInOasis(void) {
   s16 *heat;
   u16 *revealFrames;
 
-  work = gFieldWork;
+  state = gFieldState;
   frames = 60;
   best = toFIXED(240);
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   HeatGauge_SetHeld(1);
-  if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_EAST) {
+  if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_EAST) {
     count = 3;
     oases = gLamakanDesertEast_Oases;
-  } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_SMOG) {
+  } else if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_SMOG) {
     count = 5;
     oases = gLamakanDesertSmog_Oases;
   } else {
@@ -727,8 +727,8 @@ static void LamakanDesert_BatheInOasis(void) {
 
   // A running Reveal's countdown stays full while the leader bathes, at least
   // 60 frames and until the heat has drained.
-  revealFrames = &work->revealFrames;
-  heat = &gMainRoutineWork.hazardSteps;
+  revealFrames = &state->revealFrames;
+  heat = &gMainRoutineState.hazardSteps;
   {
     s32 drained = 0;
 
@@ -767,7 +767,7 @@ static void LamakanDesert_BatheInOasis(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = toFIXED(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(10);
-  work->revealFrames = frames;
+  state->revealFrames = frames;
   HeatGauge_SetHeld(0);
 }
 
@@ -777,18 +777,18 @@ static void LamakanDesert_BatheInOasis(void) {
 /// heat without the dust.
 static void HeatGauge_CountStep(void) {
   struct Actor *actor;
-  struct FieldWork *work;
+  struct FieldState *state;
   struct EffectOptions params;
   FIXED dx;
   FIXED z;
   s32 phase;
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  work = gFieldWork;
+  actor = Actor_Get(gMainRoutineState.leaderActorId);
+  state = gFieldState;
   if (actor->targetX == ACTOR_NO_TARGET) {
     return;
   }
-  gMainRoutineWork.hazardSteps++;
-  if (work->stepTrigger == CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE) {
+  gMainRoutineState.hazardSteps++;
+  if (state->stepTrigger == CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE) {
     return;
   }
   if (actor->speedLimit <= toFIXED(1)) {
@@ -844,7 +844,7 @@ static void LamakanDesert_FallIntoPit(void) {
   s32 dz;
   s32 distance;
 
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   best = ACTOR_FIRST_PIT;
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   min = PIT_SEARCH_DISTANCE;
@@ -917,10 +917,10 @@ static void LamakanDesert_SlipDownSand(void) {
 
   HeatGauge_CountStep();
   {
-    struct FieldWork *work = gFieldWork;
+    struct FieldState *state = gFieldState;
 
-    id = gMainRoutineWork.leaderActorId;
-    center = work->camera;
+    id = gMainRoutineState.leaderActorId;
+    center = state->camera;
   }
   actor = Actor_Get(id);
   // First check for a ledge immediately below the sliding actor.
@@ -983,7 +983,7 @@ static void LamakanDesert_SlipDownSand(void) {
 /// at him and settles back. It happens each time until the Manticore is
 /// beaten.
 static void LamakanDesert_MeetManticore(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   struct FieldPosition backward;
 
   HeatGauge_CountStep();
@@ -997,7 +997,7 @@ static void LamakanDesert_MeetManticore(void) {
   // The heat stops rising while the leader faces the Manticore, and a running
   // Reveal is kept full until it has risen.
   HeatGauge_SetHeld(1);
-  work->revealFrames = REVEAL_FRAMES;
+  state->revealFrames = REVEAL_FRAMES;
   Actor_Get(ACTOR_PARTY_LEADER)->velocityX = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->velocityZ = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->targetX = ACTOR_NO_TARGET;
@@ -1033,28 +1033,28 @@ static void LamakanDesert_MeetManticore(void) {
   Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
   Actor_SetSpeed(ACTOR_MANTICORE, 0.5);
   Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 92);
-  work->revealFrames = REVEAL_FRAMES;
+  state->revealFrames = REVEAL_FRAMES;
   HeatGauge_SetHeld(0);
 }
 
 /// Entering Lamakan Desert sets the heat's limit, HEAT_LIMIT steps, hides the
 /// desert's secrets, and shows the heat gauge everywhere but in the cave.
 s32 Scene_Initialize(void) {
-  gMainRoutineWork.hazardLimit = HEAT_LIMIT;
-  gMainRoutineWork.hazardMode = HAZARD_COUNT_ON_CELLS;
-  gMainRoutineWork.hazardDamage = HAZARD_DAMAGE_PERCENT | HEAT_DAMAGE_PERCENT;
-  if (gMainRoutineWork.next != SCENE_LAMAKAN_DESERT_CAVE) {
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gMainRoutineState.hazardLimit = HEAT_LIMIT;
+  gMainRoutineState.hazardMode = HAZARD_COUNT_ON_CELLS;
+  gMainRoutineState.hazardDamage = HAZARD_DAMAGE_PERCENT | HEAT_DAMAGE_PERCENT;
+  if (gMainRoutineState.next != SCENE_LAMAKAN_DESERT_CAVE) {
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     HeatGauge_Start();
     Task_AddFrame(HeatGauge_RaiseQuarterTriggers, TASK_PASS_FRAME);
-    if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_EAST) {
+    if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_EAST) {
       SAVE_SECRET(EAST_SECRET_OASIS_NORTH, 22, 7);
       SAVE_SECRET(EAST_SECRET_VULCAN_AXE, 8, 10);
       SAVE_SECRET(EAST_SECRET_PIT, 23, 21);
       SAVE_SECRET(EAST_SECRET_OASIS_SOUTHWEST, 16, 42);
       SAVE_SECRET(EAST_SECRET_OASIS_SOUTHEAST, 36, 44);
       SAVE_SECRET(EAST_SECRET_FIRST_PSYNERGY_STONE, 14, 55);
-    } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_SMOG) {
+    } else if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_SMOG) {
       SAVE_SECRET(SMOG_SECRET_OASIS_NORTHEAST, 42, 5);
       SAVE_SECRET(SMOG_SECRET_PIT_NORTH, 20, 11);
       SAVE_SECRET(SMOG_SECRET_LUCKY_PEPPER, 14, 12);
@@ -1069,7 +1069,7 @@ s32 Scene_Initialize(void) {
       SAVE_SECRET(SMOG_SECRET_OASIS_SOUTHWEST, 6, 46);
       SAVE_SECRET(SMOG_SECRET_OASIS_SOUTH, 27, 55);
       SAVE_SECRET(SMOG_SECRET_POTION, 43, 56);
-    } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
+    } else if (gMainRoutineState.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
       Scene_QueueMusic(SE_AMBIENT_WIND);
       // The three secrets in the west, saved 4 by 4 to spare patches on row
       // 124.
@@ -1139,7 +1139,7 @@ static void HeatGauge_Draw(void) {
 
   // Window 1 spans the gauge, from the screen's left edge to the gauge's
   // right, on the lines it covers: each line's WIN1H, past WININ and WINOUT.
-  state = gScreenTransitionWork;
+  state = gScreenTransitionState;
   if (state != NULL) {
     u16 *edge = state->pages[state->page];
     s32 right = (s16)(shown << 3);
@@ -1188,8 +1188,8 @@ static void HeatGauge_Draw(void) {
   IoWriteQueue_Store32((u32)palette++, *word++);
   IoWriteQueue_Store32((u32)palette++, *word++);
 
-  gHeatGauge_Level = gMainRoutineWork.hazardSteps * HEAT_GAUGE_LEVELS /
-                     gMainRoutineWork.hazardLimit;
+  gHeatGauge_Level = gMainRoutineState.hazardSteps * HEAT_GAUGE_LEVELS /
+                     gMainRoutineState.hazardLimit;
   if (gHeatGauge_Level >= HEAT_GAUGE_LEVELS - 1) {
     gHeatGauge_Flash = HEAT_GAUGE_LEVELS - 1;
   }

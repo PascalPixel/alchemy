@@ -18,7 +18,7 @@
 #include "field/encounter_zone.h"
 #include "field/event.h"
 #include "field/field.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/ground_mask.h"
 #include "field/map_grid_scroll.h"
 #include "field/world_map_encounter_rules.h"
@@ -145,7 +145,7 @@ struct TransitionShape {
 extern struct TransitionShape gScreenTransition_Shapes[TRANSITION_OPEN];
 
 /// The party leader's actor placement table (leader_placement.c), which
-/// Actor_ResetForLeader copies into the field work.
+/// Actor_ResetForLeader copies into the field state.
 extern const struct ActorPlacement gField_DefaultActorPlacements[2];
 
 /// Curves mapping a 5-bit colour channel to the colour buffer's channel,

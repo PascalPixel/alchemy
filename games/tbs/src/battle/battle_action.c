@@ -87,7 +87,7 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
 s32 BattleActionRun_Build(struct BattleAction *request,
                           struct BattleActionRun *plan) {
   struct Unit *actor = Unit_GetFar(request->unitId);
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   s32 selectedTargetId;
   s32 abilityId;
 

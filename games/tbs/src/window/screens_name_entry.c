@@ -54,8 +54,8 @@ s32 NameEntry_CountLetters(const u8 *name) {
 /// rectangle, both into WINDOW_TILEMAP_VRAM and into the UI
 /// tilemap that mirrors it.
 void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
-  struct WindowWork *work = WINDOW_WORK;
-  s16 *mirror = (s16 *)work->tilemap;
+  struct WindowState *state = WINDOW_STATE;
+  s16 *mirror = (s16 *)state->tilemap;
   s16 *buffer = Heap_AllocEwram(768);
   s16 *input = buffer;
   u32 cell;
@@ -89,7 +89,7 @@ void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
 /// in, as those two differ in it alone.
 void Window_SetInteriorPalette(const struct Window *window, s32 x, s32 y,
                                s32 width, s32 height, u32 palette) {
-  u8 *tilemap = gWindowWork[0];
+  u8 *tilemap = gWindowState[0];
 
   x += window->x + 1;
   y += window->y + 1;
@@ -131,7 +131,7 @@ void Window_SetInteriorPalette(const struct Window *window, s32 x, s32 y,
       height--;
       x += MAP_ROW_BYTES;
     } while (height != 0);
-    ((struct WindowWork *)tilemap)->dirty = 1;
+    ((struct WindowState *)tilemap)->dirty = 1;
   }
 }
 
@@ -169,19 +169,19 @@ void NameEntry_LoadCaretTiles(s32 slot) {
 #define NAME_MAX_BYTES 14 ///< stored name bytes, excluding its terminator
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-/// Copies the name `str` into the window work's text buffer and returns its
+/// Copies the name `str` into the window state's text buffer and returns its
 /// width in pixels, where the caret stands after it.
 s32 Text_SetString(const u8 *str) {
-  struct WindowWork *work;
+  struct WindowState *state;
   u16 *dst;
   s32 count;
   u32 width;
   u32 height;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   count = 0;
   if (*str != 0) {
-    dst = work->textBuffer;
+    dst = state->textBuffer;
     do {
       *dst = *str;
       str++;
@@ -189,7 +189,7 @@ s32 Text_SetString(const u8 *str) {
       count++;
     } while (*str != 0);
   }
-  work->textBuffer[count] = 0;
+  state->textBuffer[count] = 0;
   Text_MeasureDecoded(0, &width, &height, 0);
   return width;
 }
@@ -254,7 +254,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   u8 text[NAME_MAX_BYTES + 2];
   u8 *editedName = text + 1;
   u8 *originalName = Unit_GetFar(member)->name;
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   s32 textDirty = 1;
   s32 cursorDirty = 1;
   struct Window *keyboardWindow;
@@ -278,7 +278,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   Text_DrawStringInWindow(gNameEntry_EndKeyLabel, keyboardWindow, 144, 40);
 #endif
   Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 7);
-  work->dirty = 1;
+  state->dirty = 1;
   // A zero byte before editedName, as in the Japanese entry, where it is the
   // letter before the first; nothing here reads it.
   text[0] = 0;
@@ -486,7 +486,7 @@ s32 NameEntry_EditMemberName(s32 member) {
 
       cell = ((keyboardWindow->y + keyRow + 1) << 5) + tx;
       // Key glyphs use the low byte of the mirrored tilemap entries.
-      letter = ((u8 *)&work->tilemap)[cell * 2];
+      letter = ((u8 *)&state->tilemap)[cell * 2];
       if (letterCount == NAME_MAX_LETTERS)
         continue;
       *end++ = letter;
@@ -523,7 +523,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   u8 text[NAME_MAX_BYTES + 2];
   u8 *editedName = text + 1;
   u8 *originalName = Unit_GetFar(member)->name;
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   s32 textDirty = 1;
   s32 cursorDirty = 1;
   struct Window *keyboardWindow;
@@ -542,7 +542,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   Portrait_OpenWindow(Portrait_GetForSpeaker(member), 0, 3, 1);
   Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
   Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
-  work->dirty = 1;
+  state->dirty = 1;
   // A zero byte before editedName: the letter before the first, which
   // NameEntry_AcceptsMark reads when a voicing mark is entered first.
   text[0] = 0;
@@ -717,7 +717,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       else
         Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
       Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
-      work->dirty = 1;
+      state->dirty = 1;
       continue;
     }
     if (gKeysRepeat & KEY_B) {
@@ -794,7 +794,7 @@ s32 NameEntry_EditMemberName(s32 member) {
 
       cell = ((keyboardWindow->y + keyRow + 1) << 5) + tx;
       // Key glyphs use the low byte of the mirrored tilemap entries.
-      letter = ((u8 *)&work->tilemap)[cell * 2];
+      letter = ((u8 *)&state->tilemap)[cell * 2];
       // The keyboard's dakuten key.
       if (letter == NAME_VOICED_KEY)
         letter = TEXT_MARK_VOICED;

@@ -67,7 +67,7 @@
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "field/field_effect.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/ground_mask.h"
 #include "field/map_grid_scroll.h"
 #include "field/pushed_actor.h"
@@ -83,7 +83,7 @@
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "system/irq.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -228,8 +228,8 @@ enum { PARTICLE_DRAG = 10, PARTICLE_DRAG_Y = 3 };
 union CrossboneIslePillarCell {
   struct MapGridCell cell;
   struct CrossboneIslePillarCellBits {
-    u32 cellPicture : 12;
-    u32 lowFlags : 2; ///< bits 13..12 of MapGridCell.cellPictureAndFlags
+    u32 cellTiles : 12;
+    u32 lowFlags : 2; ///< bits 13..12 of MapGridCell.cellTilesAndFlags
     u8 highFlags : 2; ///< bits 15..14, read by MapGrid_GetCellHighFlags
     u8 behavior;
     u8 shape;
@@ -299,7 +299,7 @@ CrossboneIsleSteppingStones_StopAtGroundOrHeight(struct Actor *actor,
 static s32 CrossboneIsleSteppingStones_QueryCoveredCells(
     s32 id, u32 *width, u32 *depth, struct PushedActorProbe *probe,
     s32 *layerOriginX, s32 *layerOriginZ) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
   struct Actor *actor = Actor_Get(id);
   u32 i;
   s32 coordinate;
@@ -440,7 +440,7 @@ static inline void Dma_Wait(volatile u32 *dma) {
 /// Reads one map cell through DMA, waiting until the transfer finishes.
 static void CrossboneIsleSteppingStones_ReadMapGridCell(
     s32 layer, s32 x, s32 y, union CrossboneIslePillarCell *dst) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
 
   if (grid != NULL) {
     struct MapGridCell *cell = grid->layers[layer].cells;
@@ -452,10 +452,10 @@ static void CrossboneIsleSteppingStones_ReadMapGridCell(
 }
 
 /// Copies the cell's flags and cell behavior without replacing its
-/// cell picture.
+/// cell tiles.
 static void CrossboneIsleSteppingStones_SetCellAttributes(
     s32 layer, s32 x, s32 y, const union CrossboneIslePillarCell *source) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct MapGridScrollState *grid = gMapGridState[0];
 
   if (grid != NULL) {
     struct CrossboneIslePillarCellBits *cell =
@@ -599,7 +599,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 #if TBS_PATCH_1
   jumpDirection = FACING_NEAREST_CARDINAL(leader->facing);
 #endif
-  if (gMainRoutineWork.movementMode != LEADER_MOVEMENT_WALK) {
+  if (gMainRoutineState.movementMode != LEADER_MOVEMENT_WALK) {
     return 0;
   }
 #if TBS_PATCH_1
@@ -683,7 +683,7 @@ CrossboneIsleSteppingStones_SetSpriteColorFromTimer(struct Actor *actor) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_CROSSBONE_ISLE_STEPPING_STONES) {
     return gCrossboneIsleSteppingStonesEntrances;
@@ -709,7 +709,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gCrossboneIsleSteppingStonesExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_CROSSBONE_ISLE_STEPPING_STONES) {
     return gCrossboneIsleSteppingStonesActorPlacements;
@@ -977,7 +977,7 @@ CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *actor) {
   s32 hit;
   u32 id;
 
-  if (gFieldWork->castStarted == 1) {
+  if (gFieldState->castStarted == 1) {
     actor->sprite->image.priority = leader->sprite->image.priority;
     actor->collisionFlags |= ACTOR_SOLID;
     RETURN_UNREAD(0);
@@ -1208,7 +1208,7 @@ static void CrossboneIsleSteppingStones_PushOrClimbDown(void) {
 /// it.
 static void CrossboneIsleSteppingStones_StartRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  gFadeOverlayWork->actor = leader;
+  gFadeOverlayState->actor = leader;
   leader->riseCounter = 1;
 }
 
@@ -1219,7 +1219,7 @@ static void CrossboneIsleSteppingStones_StartRising(void) {
 static void CrossboneIsleSteppingStones_StopRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  gFadeOverlayWork->actor = NULL;
+  gFadeOverlayState->actor = NULL;
   leader->riseCounter = 0;
 }
 
@@ -1279,15 +1279,15 @@ static void CrossboneIsleSteppingStones_FreezeSecondPuddle(void) {
 static void CrossboneIsleSteppingStones_FrostStartsOnThirdPuddle(void) {
   struct Actor *leader;
   struct Actor *puddle;
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   puddle = Actor_Get(ACTOR_THIRD_PUDDLE);
-  effectWork = gFieldEffectWork;
+  effectState = gFieldEffectState;
   if (FIELD_CELL(puddle->x.fixed) == FIELD_CELL(leader->x.fixed) &&
       FIELD_CELL(puddle->z.fixed) == FIELD_CELL(leader->z.fixed)) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE);
-    effectWork->childMode = 1;
+    effectState->childMode = 1;
   } else {
     GameFlag_Clear(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE);
   }
@@ -1485,7 +1485,7 @@ static void CrossboneIsleSteppingStones_PushSinkingBoulder(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_CROSSBONE_ISLE_STEPPING_STONES) {
     return gCrossboneIsleSteppingStonesTriggers;
@@ -1581,15 +1581,15 @@ s32 Scene_Initialize(void) {
   s32 x;
   s32 z;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_ICE_PILLARS) {
+  if (gMainRoutineState.next == SCENE_CROSSBONE_ISLE_ICE_PILLARS) {
     Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR);
     Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR + 1);
     Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR + 2);
     Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR + 3);
     Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR + 4);
-  } else if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_FLOODGATE) {
+  } else if (gMainRoutineState.next == SCENE_CROSSBONE_ISLE_FLOODGATE) {
     MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
     Scene_RedrawActorRectangle(ACTOR_FIRST_LOG);
     Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 1);
@@ -1607,7 +1607,7 @@ s32 Scene_Initialize(void) {
       CrossboneIsleSteppingStones_FloatLogs();
       MapGrid_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     }
-  } else if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_STACKED_PILLARS) {
+  } else if (gMainRoutineState.next == SCENE_CROSSBONE_ISLE_STACKED_PILLARS) {
     Actor_CreateConfigured(584, 0, 200, SPRITE_CRATE);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_Get(ACTOR_PARTY_LEADER)->riseCounter = 1;
@@ -1647,7 +1647,7 @@ s32 Scene_Initialize(void) {
         }
       }
     }
-  } else if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_DRAGON_STATUE) {
+  } else if (gMainRoutineState.next == SCENE_CROSSBONE_ISLE_DRAGON_STATUE) {
     Actor_SetAnimation(ACTOR_SINKING_BOULDER, 2);
     Actor_SetSpriteColorById(ACTOR_SINKING_BOULDER, SPRITE_COLOR_GREY);
     Scene_RedrawActorRectangle(ACTOR_FIRST_LOG);

@@ -30,7 +30,7 @@
 void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   u8 *sheet;
   void *cells;
@@ -47,13 +47,13 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
-  work = *cursor++;
+  state = *cursor++;
   canvas = *cursor;
   {
     // The canvas is cleared to 0 as the transfer starts.
     s32 transferValue = 0;
 
-    work->args = args;
+    state->args = args;
     BattleEffect_StartTiledCanvas(0);
     REG_BG2PA = Q_8_8(1);
     REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -61,7 +61,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     sheet = Resource_GetTableEntry(RESOURCE_COUNTER_REVEAL_SHEET);
     Iwram_CopyWords(BG_PLTT, sheet, SHEET_PALETTE_BYTES);
     sheet = sheet + SHEET_PALETTE_BYTES;
-    Decompress_TaggedLz(sheet, work->sheet);
+    Decompress_TaggedLz(sheet, state->sheet);
     cells = Ram_MapGridCellBuffer;
     sheet = Resource_GetTableEntry(RESOURCE_RED_CRESCENT_SHEET_A);
     sheet = sheet + SHEET_PALETTE_BYTES;
@@ -74,10 +74,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
                         COMPOSITE_TRANSPARENT);
     draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
-    EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, transferValue);
+    EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, transferValue);
   }
   drawReaper = 1;
-  if (work->args->side == EFFECT_SIDE_PARTY) {
+  if (state->args->side == EFFECT_SIDE_PARTY) {
     swayCenter[0] = -toFIXED(80);
   } else {
     swayCenter[0] = toFIXED(112);
@@ -103,7 +103,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     }
     // The second pass, lower and further across.
     if (frame == CONDEMN_PASS_FRAMES) {
-      if (work->args->side == EFFECT_SIDE_PARTY) {
+      if (state->args->side == EFFECT_SIDE_PARTY) {
         swayCenter[0] = -toFIXED(32);
       } else {
         swayCenter[0] = toFIXED(72);
@@ -117,8 +117,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     }
     // The last pass, on the first target.
     if (frame == 2 * CONDEMN_PASS_FRAMES) {
-      Projection_ScaledUnit(work->args->targets[0], position);
-      if (work->args->side == EFFECT_SIDE_PARTY) {
+      Projection_ScaledUnit(state->args->targets[0], position);
+      if (state->args->side == EFFECT_SIDE_PARTY) {
         swayCenter[0] = INTtoFIXED(position[0].x - 128);
       } else {
         swayCenter[0] = INTtoFIXED(position[0].x - 64);
@@ -131,7 +131,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       drawReaper = 1;
     }
     // Each of the first two passes ripples harder as the reaper fades out.
-    scanline = work->bg2xLines;
+    scanline = state->bg2xLines;
     ripple = 0;
     if (frame < CONDEMN_PASS_FRAMES) {
       if (frame >= CONDEMN_PASS_FRAMES - CONDEMN_FADE_FRAMES) {
@@ -158,7 +158,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       angle += TRIG_TURN / 32;
     }
     if (drawReaper != 0) {
-      if (work->args->side == EFFECT_SIDE_ENEMIES) {
+      if (state->args->side == EFFECT_SIDE_ENEMIES) {
         pictureColumn = 0;
         pictureRow = 0;
       } else {
@@ -167,18 +167,18 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
         pictureRow = i >> 31;
       }
       if (frame < CONDEMN_SWING_FRAME) {
-        draw[work->args->side](
-            canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
+        draw[state->args->side](
+            canvas, state->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
             CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
             REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
       } else {
         if (frame <= 91) {
-          draw[work->args->side](
-              canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
+          draw[state->args->side](
+              canvas, state->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
               CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
               REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
         }
-        EFFECT_DRAW_PICTURE(draw[work->args->side], canvas, work->sheet,
+        EFFECT_DRAW_PICTURE(draw[state->args->side], canvas, state->sheet,
                             REAPER_SHEET_SWUNG,
                             CONDEMN_PICTURE_X(pictureColumn, 1),
                             CONDEMN_PICTURE_Y(pictureRow, 1) + screenY);
@@ -189,31 +189,31 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         }
         if (frame >= 90 && frame <= 91) {
-          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas, work->sheet,
+          EFFECT_DRAW_PICTURE(draw[state->args->side], canvas, state->sheet,
                               REAPER_SHEET_CRESCENT,
                               CONDEMN_PICTURE_X(pictureColumn, 2),
                               CONDEMN_PICTURE_Y(pictureRow, 2) + screenY);
         }
         if (frame >= 92 && frame <= 93) {
-          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas,
+          EFFECT_DRAW_PICTURE(draw[state->args->side], canvas,
                               Ram_MapGridCellBuffer, RED_CRESCENT_FADE_A,
                               CONDEMN_PICTURE_X(pictureColumn, 3),
                               CONDEMN_PICTURE_Y(pictureRow, 3) + screenY);
         }
         if (frame >= 94 && frame <= 95) {
-          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas,
+          EFFECT_DRAW_PICTURE(draw[state->args->side], canvas,
                               Ram_MapGridCellBuffer, RED_CRESCENT_FADE_B,
                               CONDEMN_PICTURE_X(pictureColumn, 4),
                               CONDEMN_PICTURE_Y(pictureRow, 4) + screenY);
         }
         if (frame >= 96 && frame <= 97) {
-          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas,
+          EFFECT_DRAW_PICTURE(draw[state->args->side], canvas,
                               Ram_MapGridCellBuffer, RED_CRESCENT_FADE_C,
                               CONDEMN_PICTURE_X(pictureColumn, 5),
                               CONDEMN_PICTURE_Y(pictureRow, 5) + screenY);
         }
         if (frame >= 98 && frame <= 99) {
-          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas,
+          EFFECT_DRAW_PICTURE(draw[state->args->side], canvas,
                               Ram_MapGridCellBuffer, RED_CRESCENT_FADE_D,
                               CONDEMN_PICTURE_X(pictureColumn, 6),
                               CONDEMN_PICTURE_Y(pictureRow, 6) + screenY);
@@ -222,7 +222,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     }
     // Knock the target back.
     if (frame == CONDEMN_SWING_FRAME) {
-      target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
+      target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
       target->velocityY = toFIXED(1);
       target->acceleration = toFIXED(2);
       target->speedLimit = toFIXED(2);
@@ -230,14 +230,14 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       target->steeringFlags = 0;
       target->snapToTarget = 0;
       Actor_SetMoveTargetFar(target, target->x.fixed << 1, 0, target->z.fixed);
-      BattleEffect_TintBattler(work->args->targets[0], TINT_KEEP, POSE_DAMAGE,
+      BattleEffect_TintBattler(state->args->targets[0], TINT_KEEP, POSE_DAMAGE,
                                TINT_KEEP, 0);
     }
     if (frame == CONDEMN_BOUNCE_FRAME) {
-      GetBattleObjectSlotFar(work->args->targets[0])->actor->gravity =
+      GetBattleObjectSlotFar(state->args->targets[0])->actor->gravity =
           BATTLE_UNIT_GRAVITY;
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   // Finish: the tasks, then the battle background reloaded, darkened as a
   // canvas leaves it, which repairs nothing this effect changed.
@@ -245,7 +245,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   // back the picture already there, so nothing the game shows says why.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, gBattleWork->background,
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, gBattleState->background,
                            BACKGROUND_DARKENED_LEVEL);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();

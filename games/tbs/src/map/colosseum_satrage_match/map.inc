@@ -4,14 +4,14 @@ Field_ColosseumSatrageMatch:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_ColosseumSatrageMatch, .LField_ColosseumSatrageMatch_CELL_PICTURES
+	map_offset Field_ColosseumSatrageMatch, .LField_ColosseumSatrageMatch_CELL_TILES
 	map_offset Field_ColosseumSatrageMatch, .LField_ColosseumSatrageMatch_SHAPES
 	map_offset Field_ColosseumSatrageMatch, .LField_ColosseumSatrageMatch_GRID
 	map_offset Field_ColosseumSatrageMatch, .LField_ColosseumSatrageMatch_ANIMATION
 	map_offset Field_ColosseumSatrageMatch, .LField_ColosseumSatrageMatch_BLEND
 	map_offset Field_ColosseumSatrageMatch, .LField_ColosseumSatrageMatch_MARKERS
-.LField_ColosseumSatrageMatch_CELL_PICTURES:
-	.incbin "games/tbs/src/map/colosseum_satrage_match/cell_pictures.delta1.lz"
+.LField_ColosseumSatrageMatch_CELL_TILES:
+	.incbin "games/tbs/src/map/colosseum_satrage_match/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_ColosseumSatrageMatch_SHAPES:
 	.incbin "games/tbs/src/map/colosseum_satrage_match/shapes.table.lz"

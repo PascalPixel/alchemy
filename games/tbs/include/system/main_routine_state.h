@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_MAIN_ROUTINE_WORK_H
-#define ALCHEMY_MAIN_ROUTINE_WORK_H
+#ifndef ALCHEMY_MAIN_ROUTINE_STATE_H
+#define ALCHEMY_MAIN_ROUTINE_STATE_H
 
 /// @file
-/// The main routine's work: the transition data the main routine reads
+/// The main routine's state: the transition data the main routine reads
 /// between sequences and the state every sequence shares, which a save file
 /// keeps.
 
@@ -11,7 +11,7 @@
 #include "types.h"
 #include "battle/battle_unit.h"
 
-/// A scene's type (Scene.sceneType, copied to MainRoutineWork.sceneType).
+/// A scene's type (Scene.sceneType, copied to MainRoutineState.sceneType).
 enum SceneType {
   SCENE_TYPE_OTHER = 1, ///< every other scene: dungeons, the world map
   /// Towns and their rooms, where walking restores no PP, recovers no
@@ -20,7 +20,7 @@ enum SceneType {
   SCENE_TYPE_TOWN = 2
 };
 
-/// gMainRoutineWork.hazardMode: what advances the hazard count
+/// gMainRoutineState.hazardMode: what advances the hazard count
 /// (Field_UpdateWalking).
 enum HazardMode {
   /// The distance the leader walks on CELL_BEHAVIOR_DESERT_SAND ground.
@@ -29,12 +29,12 @@ enum HazardMode {
   HAZARD_COUNT_FRAMES = 1
 };
 
-/// gMainRoutineWork.hazardDamage's bit 8: its low byte is a percentage of
+/// gMainRoutineState.hazardDamage's bit 8: its low byte is a percentage of
 /// maximum HP rather than HP.
 #define HAZARD_DAMAGE_PERCENT 0x100
 
-/// gMainRoutineWork.battleType: how the next battle starts (Battle_SetType); it
-/// is set back to BATTLE_TYPE_NORMAL as the battle ends.
+/// gMainRoutineState.battleType: how the next battle starts (Battle_SetType);
+/// it is set back to BATTLE_TYPE_NORMAL as the battle ends.
 enum BattleType {
   BATTLE_TYPE_NORMAL = 0,
   /// A battle the party cannot run from: a Mimic's
@@ -78,11 +78,11 @@ struct PartyHoldings {
   s8 wonPrizes[16];
 };
 
-/// The main routine's work: the transition data the main routine reads between
+/// The main routine's state: the transition data the main routine reads between
 /// sequences (the scene and entrance it runs next, sequenceResult, the return
 /// point, the after-battle and defeat destinations and the restart point), and
 /// what every sequence shares (the party, coins, Djinn, play time and options).
-struct MainRoutineWork {
+struct MainRoutineState {
   /// BuildStamp_GetTime's value when the game was last saved; its low
   /// half goes into the file's summary.
   u32 buildStamp;
@@ -207,36 +207,36 @@ struct MainRoutineWork {
   u8 unusedAfterStartStamp[4];
 };
 
-STATIC_ASSERT(offsetof(struct MainRoutineWork, buildStamp) == 0);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, playTime) == 4);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, idleSleepEnabled) == 554);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, holdings.coins) == 16);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, holdings.shopCredit) == 280);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, holdings.shopGifts) == 284);
-STATIC_ASSERT(sizeof(struct MainRoutineWork) == 704);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, holdings.wonPrizes) == 300);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, area) == 460);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, dashKeys) == 540);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, avoidDistance) == 580);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, entrance) == 450);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, battleBackground) == 470);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, x) == 476);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, movementMode) == 498);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, leaderActorId) == 500);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, party) == 504);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, speech) == 522);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, messageSpeed) == 524);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, aKeys) == 528);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, firstShortcutKeys) == 536);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, secondShortcutKeys) == 538);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, firstShortcut) == 544);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, retreatEntrance) == 578);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, cloaked) == 588);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, linkTallies) == 676);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, startStamp) == 696);
+STATIC_ASSERT(offsetof(struct MainRoutineState, buildStamp) == 0);
+STATIC_ASSERT(offsetof(struct MainRoutineState, playTime) == 4);
+STATIC_ASSERT(offsetof(struct MainRoutineState, idleSleepEnabled) == 554);
+STATIC_ASSERT(offsetof(struct MainRoutineState, holdings.coins) == 16);
+STATIC_ASSERT(offsetof(struct MainRoutineState, holdings.shopCredit) == 280);
+STATIC_ASSERT(offsetof(struct MainRoutineState, holdings.shopGifts) == 284);
+STATIC_ASSERT(sizeof(struct MainRoutineState) == 704);
+STATIC_ASSERT(offsetof(struct MainRoutineState, holdings.wonPrizes) == 300);
+STATIC_ASSERT(offsetof(struct MainRoutineState, area) == 460);
+STATIC_ASSERT(offsetof(struct MainRoutineState, dashKeys) == 540);
+STATIC_ASSERT(offsetof(struct MainRoutineState, avoidDistance) == 580);
+STATIC_ASSERT(offsetof(struct MainRoutineState, entrance) == 450);
+STATIC_ASSERT(offsetof(struct MainRoutineState, battleBackground) == 470);
+STATIC_ASSERT(offsetof(struct MainRoutineState, x) == 476);
+STATIC_ASSERT(offsetof(struct MainRoutineState, movementMode) == 498);
+STATIC_ASSERT(offsetof(struct MainRoutineState, leaderActorId) == 500);
+STATIC_ASSERT(offsetof(struct MainRoutineState, party) == 504);
+STATIC_ASSERT(offsetof(struct MainRoutineState, speech) == 522);
+STATIC_ASSERT(offsetof(struct MainRoutineState, messageSpeed) == 524);
+STATIC_ASSERT(offsetof(struct MainRoutineState, aKeys) == 528);
+STATIC_ASSERT(offsetof(struct MainRoutineState, firstShortcutKeys) == 536);
+STATIC_ASSERT(offsetof(struct MainRoutineState, secondShortcutKeys) == 538);
+STATIC_ASSERT(offsetof(struct MainRoutineState, firstShortcut) == 544);
+STATIC_ASSERT(offsetof(struct MainRoutineState, retreatEntrance) == 578);
+STATIC_ASSERT(offsetof(struct MainRoutineState, cloaked) == 588);
+STATIC_ASSERT(offsetof(struct MainRoutineState, linkTallies) == 676);
+STATIC_ASSERT(offsetof(struct MainRoutineState, startStamp) == 696);
 
 /// The game's state (system/ewram.s).
-extern struct MainRoutineWork gMainRoutineWork;
+extern struct MainRoutineState gMainRoutineState;
 /// The eight characters' units, which follow it (Unit_Get).
 extern struct Unit gCharacterUnits[8];
 
@@ -244,7 +244,7 @@ extern struct Unit gCharacterUnits[8];
 /// battle trigger does before starting one.
 #define Battle_SetType(mode)                                                   \
   do {                                                                         \
-    gMainRoutineWork.battleType = (mode);                                      \
+    gMainRoutineState.battleType = (mode);                                     \
   } while (0)
 
 #endif

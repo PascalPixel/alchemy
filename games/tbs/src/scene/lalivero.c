@@ -45,7 +45,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -211,7 +211,7 @@ static void Lalivero_WharfGuardLetsPartyThrough(void) {
 /// Walking north into one of Lalivero's doors opens it, or the Sanctum's gate,
 /// and Isaac walks in.
 static void Lalivero_EnterDoor(void) {
-  s32 door = gFieldWork->stepTrigger;
+  s32 door = gFieldState->stepTrigger;
   s32 x = gLaliveroDoorCells[door][0];
   s32 y = gLaliveroDoorCells[door][1];
 
@@ -225,7 +225,7 @@ static void Lalivero_EnterDoor(void) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   }
   Event_Wait(10);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(door);
 }
 
@@ -233,11 +233,11 @@ static void Lalivero_EnterDoor(void) {
 /// of the weapon and armor shop (cell (26, 15)) in Lalivero takes Isaac down
 /// inside.
 static void Lalivero_EnterDoorway(void) {
-  struct FieldWork *work = gFieldWork;
-  s16 *trigger = (s16 *)&work->stepTrigger;
+  struct FieldState *state = gFieldState;
+  s16 *trigger = (s16 *)&state->stepTrigger;
   s32 exit = *trigger;
 
-  work->transitionFrames = MAP_TRANSITION_FRAMES;
+  state->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(exit);
 }
 
@@ -492,12 +492,12 @@ static void Lalivero_IodemGivesBlackOrb(void) {
     Event_Wait(20);
     // "We're going to need to work on your memory, Isaac."
     Event_ShowMessage(ACTOR_MIA, 0);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // "I know we need to leave, but we should hear what Iodem has..."
     Event_ShowMessage(ACTOR_MIA, 0);
   }
@@ -626,12 +626,12 @@ static void Lalivero_IodemGivesBlackOrb(void) {
     Event_Wait(20);
     // "Good. Then it's settled. I'll make arrangements for you to..."
     Event_ShowMessage(ACTOR_IODEM, 0);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // "You swore an oath. It is meaningless unless you go immediately."
     Event_ShowMessage(ACTOR_IODEM, 0);
   }
@@ -699,7 +699,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
   Event_Wait(30);
   Actor_SetPosition(ACTOR_BLACK_ORB, 0, 0);
-  gFieldWork->message += 1;
+  gFieldState->message += 1;
   Party_GiveItem(ITEM_BLACK_ORB, 0);
   Event_Wait(10);
   Actor_Get(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -874,15 +874,16 @@ s32 Scene_Initialize(void) {
   GlyphTransfer *icon;
 
   // Coming back from the lighthouse switches the town to its later state.
-  if (gMainRoutineWork.entrance == LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE) {
+  if (gMainRoutineState.entrance == LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
     GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
   }
-  if (gMainRoutineWork.entrance == LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE_QUIETLY) {
+  if (gMainRoutineState.entrance ==
+      LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE_QUIETLY) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 24;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = 24;
 
   // The three plants stand half grown and block nothing.
   Actor_SetAnimation(ACTOR_FIRST_PLANT, SPROUT_ANIMATION_HALF_GROWN);
@@ -942,8 +943,8 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 78, 23);
     MapGrid_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 17, 23);
     MapGrid_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 18, 23);
-    if ((gMainRoutineWork.entrance == LALIVERO_FROM_WORLD_MAP_EAST ||
-         gMainRoutineWork.entrance == LALIVERO_FROM_WORLD_MAP_WEST) &&
+    if ((gMainRoutineState.entrance == LALIVERO_FROM_WORLD_MAP_EAST ||
+         gMainRoutineState.entrance == LALIVERO_FROM_WORLD_MAP_WEST) &&
         !Event_GetFlag(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN)) {
       GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
       // The woman and the girl who wander nearest the soldiers stay put during

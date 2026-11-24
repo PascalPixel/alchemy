@@ -9,7 +9,7 @@
 	.endm
 
 @ The World Map's map, row 1 of gMaps, as its scene row names it; the field
-@ compares gMainRoutineWork.mapId with it (MAP_INDEX_WORLD).
+@ compares gMainRoutineState.mapId with it (MAP_INDEX_WORLD).
 	.global MapIndex_World
 	.equiv MapIndex_World, 1
 

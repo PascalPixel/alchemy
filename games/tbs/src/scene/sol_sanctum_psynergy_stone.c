@@ -58,7 +58,7 @@ s32 Scene_Initialize(void) {
   FIXED shakeX = toFIXED(1);
   FIXED shakeY = toFIXED(1);
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
   Import_GameFlagSet(FLAG_RETREAT_BLOCKED);

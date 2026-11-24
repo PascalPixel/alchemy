@@ -18,7 +18,7 @@ extern char SceneId_FileScreen;
 extern char SceneId_WorldMap;
 #define SCENE_WORLD_MAP ((s32)&SceneId_WorldMap)
 /// The World Map's map, row 1 of gMaps (field/scenes.s names it with the World
-/// Map's scene row), which the field compares gMainRoutineWork.mapId with.
+/// Map's scene row), which the field compares gMainRoutineState.mapId with.
 extern char MapIndex_World;
 #define MAP_INDEX_WORLD ((s32)&MapIndex_World)
 /// Vale on the stormy night of the prologue, which Camelot labels PLOGV00.

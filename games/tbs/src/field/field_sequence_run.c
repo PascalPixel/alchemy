@@ -8,7 +8,7 @@
 /// The hazard count's limit each scene starts with, in steps on hazard cells:
 /// the hazard deals its damage each time the count reaches it.
 #define HAZARD_LIMIT_DEFAULT 16
-/// FieldWork.talk's request bit, set above the actor id so that a talk to
+/// FieldState.talk's request bit, set above the actor id so that a talk to
 /// actor 0 is still a request (The Lost Age sets bit 14).
 #define FIELD_TALK_REQUEST (1 << 12)
 /// Isaac's pose when the whole party has fallen: lying flat, the picture
@@ -24,51 +24,51 @@
 /// The field sequence: runs the current scene, which the party entered by
 /// entrance, until it leaves; returns the exit kind it left by, for
 /// Scene_TakeExit, or EXIT_KEEP_DESTINATION when the next scene is already in
-/// gMainRoutineWork: a random battle, a party that fell outside battle, Retreat
-/// or an event's destination.
+/// gMainRoutineState: a random battle, a party that fell outside battle,
+/// Retreat or an event's destination.
 s32 FieldSequence_Run(s32 entrance) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct Actor *actor;
   s32 mode;
   s32 result = 0;
   s32 code;
 
   // Set up the scene.
-  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  Dma_Fill32(0, work, sizeof(struct FieldWork));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldState));
+  Dma_Fill32(0, state, sizeof(struct FieldState));
   GameFlag_ClearFar(FLAG_IN_BATTLE);
-  gMainRoutineWork.returnScene = gMainRoutineWork.next;
-  gMainRoutineWork.returnEntrance = gMainRoutineWork.entrance;
-  gMainRoutineWork.afterBattleScene = -1;
-  gMainRoutineWork.afterBattleEntrance = -1;
-  gMainRoutineWork.defeatScene = -1;
-  gMainRoutineWork.defeatEntrance = -1;
+  gMainRoutineState.returnScene = gMainRoutineState.next;
+  gMainRoutineState.returnEntrance = gMainRoutineState.entrance;
+  gMainRoutineState.afterBattleScene = -1;
+  gMainRoutineState.afterBattleEntrance = -1;
+  gMainRoutineState.defeatScene = -1;
+  gMainRoutineState.defeatEntrance = -1;
   Task_ResetAll();
   Djinn_ResolvePending(0);
-  if (gMainRoutineWork.mapId == MAP_INDEX_WORLD) {
+  if (gMainRoutineState.mapId == MAP_INDEX_WORLD) {
     WorldMap_InitializePerspectiveFar();
-    gMainRoutineWork.perspectiveMap = 1;
+    gMainRoutineState.perspectiveMap = 1;
     mode = ACTOR_SYSTEM_WORLD_MAP;
     Encounter_SelectMapZones(0);
   } else {
-    MapGrid_LoadMapFar(gMainRoutineWork.mapId);
+    MapGrid_LoadMapFar(gMainRoutineState.mapId);
     mode = ACTOR_SYSTEM_MAP;
     Encounter_SelectMapZones(1);
   }
-  work->mode = mode;
+  state->mode = mode;
   ActorSystem_InitializeFar(mode);
   WindowSystem_InitFieldFar();
   Field_ClearRequests();
-  work->triggers = gOverlayArea.triggers();
+  state->triggers = gOverlayArea.triggers();
   Scene_ApplyEntrance();
   Actor_ResetForLeader((struct ActorPlacement *)gOverlayArea.actorPlacements());
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0)
     Actor_Restore();
-  if (gMainRoutineWork.pendingDjinni != 0)
+  if (gMainRoutineState.pendingDjinni != 0)
     Djinn_RestoreActorAfterBattle();
   if (mode == ACTOR_SYSTEM_WORLD_MAP) {
     WorldMap_UpdateCurrentTileBlockFar();
-    WorldMap_LoadGraphicsFar(gMainRoutineWork.x, gMainRoutineWork.z);
+    WorldMap_LoadGraphicsFar(gMainRoutineState.x, gMainRoutineState.z);
   } else {
     MapGrid_CenterOnFollowedPointFar();
   }
@@ -77,110 +77,110 @@ s32 FieldSequence_Run(s32 entrance) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   // The default fade is from the backdrop colour over 16 frames; the scene's
   // initialization may choose another.
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->transitionFrames = MAP_TRANSITION_FRAMES;
-  work->transitionActive = 0;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state->transitionFrames = MAP_TRANSITION_FRAMES;
+  state->transitionActive = 0;
   // Field_UpdateWalking scales the leader's speed by this (16.16) into the
   // distance counted towards PP, Djinn recovery and poison: FIXED_ONE / 160
   // counts each of them on by one about every 160 pixels walked.
-  work->walkingDistanceScale = FIXED_ONE / 160;
-  work->walkingDistance = 0;
-  if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN) {
-    work->walkingDistanceScale = 0;
+  state->walkingDistanceScale = FIXED_ONE / 160;
+  state->walkingDistance = 0;
+  if (gMainRoutineState.sceneType == SCENE_TYPE_TOWN) {
+    state->walkingDistanceScale = 0;
     GameFlag_SetFar(FLAG_RETREAT_BLOCKED);
   }
-  work->previousCell = (struct MapGridCell *)Ram_MapGridCellBuffer;
+  state->previousCell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   // A fresh entry (not a return from battle) resets the hazard count to its
   // defaults (damage 1 every HAZARD_LIMIT_DEFAULT steps), the stopped actor and
   // Cloak.
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) == 0) {
     Scene_SetRestartPoint();
-    gMainRoutineWork.hazardLimit = HAZARD_LIMIT_DEFAULT;
-    gMainRoutineWork.hazardMode = HAZARD_COUNT_ON_CELLS;
-    gMainRoutineWork.hazardDamage = 1;
-    gMainRoutineWork.haltedActor = -1;
-    gMainRoutineWork.cloaked = 0;
+    gMainRoutineState.hazardLimit = HAZARD_LIMIT_DEFAULT;
+    gMainRoutineState.hazardMode = HAZARD_COUNT_ON_CELLS;
+    gMainRoutineState.hazardDamage = 1;
+    gMainRoutineState.haltedActor = -1;
+    gMainRoutineState.cloaked = 0;
   }
   FieldPsynergy_ResumeCloakCheck();
-  work->queuedSound = -1;
+  state->queuedSound = -1;
   gOverlayArea.initialize();
 
   // The scene's initialization may already have taken an exit.
-  code = work->exit;
+  code = state->exit;
   if (code != 0) {
     result = code;
-    work->exit = 0;
+    state->exit = 0;
   } else {
     GameFlag_ClearFar(FLAG_KEEP_PARTY_POSITION);
     // Fade in, show the area name and give what was left pending.
     if (Field_CountRequests() == 0) {
-      if (work->transitionActive == 0) {
-        ScreenTransition_Start(work->transition, work->transitionFrames);
-        work->transitionActive = 1;
+      if (state->transitionActive == 0) {
+        ScreenTransition_Start(state->transition, state->transitionFrames);
+        state->transitionActive = 1;
         PLTT_BACKDROP = 0;
         // An arrival the last scene asked for (Entrance_PlayArrival) plays
         // through the fade; with none, wait out half of it.
         if (Entrance_PlayArrival() == 0)
-          wait((work->transitionFrames + 1) / 2);
+          wait((state->transitionFrames + 1) / 2);
       }
       if (GameFlag_GetFar(FLAG_SHOW_AREA_NAME) != 0) {
         GameFlag_ClearFar(FLAG_SHOW_AREA_NAME);
-        AreaNameWindow_ShowFar(gMainRoutineWork.next);
+        AreaNameWindow_ShowFar(gMainRoutineState.next);
       }
-      if (gMainRoutineWork.pendingDjinni != 0) {
-        Djinn_ResolvePending(gMainRoutineWork.pendingDjinni, 1);
-        gMainRoutineWork.pendingDjinni = 0;
+      if (gMainRoutineState.pendingDjinni != 0) {
+        Djinn_ResolvePending(gMainRoutineState.pendingDjinni, 1);
+        gMainRoutineState.pendingDjinni = 0;
       }
-      if (gMainRoutineWork.pendingItem != 0) {
+      if (gMainRoutineState.pendingItem != 0) {
         WorldMap_Freeze();
-        if (Party_CheckItemLimit(gMainRoutineWork.pendingItem) == 0)
-          PartyInventory_GiveItem(gMainRoutineWork.pendingItem, 0);
+        if (Party_CheckItemLimit(gMainRoutineState.pendingItem) == 0)
+          PartyInventory_GiveItem(gMainRoutineState.pendingItem, 0);
         WorldMap_Unfreeze();
-        gMainRoutineWork.pendingItem = 0;
+        gMainRoutineState.pendingItem = 0;
       }
     }
 
     for (;;) {
       // Note where the leader is, for the requests to use.
       GameFlag_SetFar(FLAG_FIELD_HANDLING_REQUESTS);
-      actor = work->actors[gMainRoutineWork.leaderActorId];
+      actor = state->actors[gMainRoutineState.leaderActorId];
       Actor_StartIdleFar(actor);
-      gMainRoutineWork.x = actor->x.fixed;
-      gMainRoutineWork.y = 0;
-      gMainRoutineWork.z = actor->z.fixed;
-      gMainRoutineWork.heading = actor->facing;
-      gMainRoutineWork.layer = actor->layer;
+      gMainRoutineState.x = actor->x.fixed;
+      gMainRoutineState.y = 0;
+      gMainRoutineState.z = actor->z.fixed;
+      gMainRoutineState.heading = actor->facing;
+      gMainRoutineState.layer = actor->layer;
 
       // Handle the pending requests, most urgent first.
       while (Field_CountRequests() != 0) {
-        s32 next = work->exit;
+        s32 next = state->exit;
 
         if (next != 0) {
           result = next;
-          work->exit = 0;
+          state->exit = 0;
           goto done;
         }
-        if (work->raisedTrigger != 0) {
-          work->busy = 1;
-          if (work->raisedTrigger == FIELD_RAISED_TRIGGER_PARTY_FELL) {
+        if (state->raisedTrigger != 0) {
+          state->busy = 1;
+          if (state->raisedTrigger == FIELD_RAISED_TRIGGER_PARTY_FELL) {
             // Characters fell to poison or hazardous ground.
             u32 i;
 
             Leader_StopMoving();
             WorldMap_Freeze();
-            for (i = 0; i < work->fallenCount; i++) {
+            for (i = 0; i < state->fallenCount; i++) {
               Actor_SelectAnimationFar(actor, ANIM_LEADER_LEAN_BACK);
-              MessageArgument_PushFar(work->fallenOwners[i],
+              MessageArgument_PushFar(state->fallenOwners[i],
                                       MESSAGE_ARGUMENT_ACTOR);
               // "[member]'s strength is exhausted..."
               FieldMessage_ShowFar(MsgFieldStrengthExhausted,
                                    FIELD_MESSAGE_ZOOM);
             }
-            if (work->survivorCount == 0) {
+            if (state->survivorCount == 0) {
               // The whole party fell: back to the last sanctum with 1 HP.
               struct Unit *vitals;
 
-              if (gMainRoutineWork.leaderActorId == 0) {
+              if (gMainRoutineState.leaderActorId == 0) {
                 if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0)
                   Actor_SelectAnimationFar(actor,
                                            ISAAC_CHILD_ANIMATION_STAND_BRACED);
@@ -193,55 +193,55 @@ s32 FieldSequence_Run(s32 entrance) {
               // "Isaac's party has been annihilated..."
               FieldMessage_ShowFar(MsgFieldPartyAnnihilated,
                                    FIELD_MESSAGE_ZOOM);
-              vitals = Unit_GetFar(gMainRoutineWork.leaderActorId);
+              vitals = Unit_GetFar(gMainRoutineState.leaderActorId);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
-              gMainRoutineWork.next = gMainRoutineWork.restartScene;
-              gMainRoutineWork.entrance = gMainRoutineWork.restartEntrance;
+              gMainRoutineState.next = gMainRoutineState.restartScene;
+              gMainRoutineState.entrance = gMainRoutineState.restartEntrance;
               WorldMap_Unfreeze();
               result = EXIT_KEEP_DESTINATION;
               goto done;
             }
             WorldMap_Unfreeze();
-          } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_MAP_SCREEN) {
+          } else if (state->raisedTrigger == FIELD_RAISED_TRIGGER_MAP_SCREEN) {
             Leader_StopMoving();
             MapScreen_Show(RESOURCE_WORLD_MAP_PICTURE);
-          } else if (work->raisedTrigger ==
+          } else if (state->raisedTrigger ==
                      FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM) {
             Leader_StopMoving();
             WorldMap_ZoomOutWhileLHeld();
           } else {
-            Scene_RunRaisedTrigger(work->raisedTrigger);
+            Scene_RunRaisedTrigger(state->raisedTrigger);
           }
-          work->busy = 0;
-          work->raisedTrigger = 0;
-        } else if (work->encounter != 0) {
+          state->busy = 0;
+          state->raisedTrigger = 0;
+        } else if (state->encounter != 0) {
           // A random encounter: save the actors and go to the battle.
           Leader_StopMoving();
           Actor_Snapshot();
-          gMainRoutineWork.returnMusic = -1;
-          gMainRoutineWork.next = SEQUENCE_BATTLE;
-          gMainRoutineWork.entrance = work->encounter;
-          work->exit = EXIT_KEEP_DESTINATION;
-          Field_StartEncounterTransition(work->encounter);
-          work->encounterBias = 0;
-          work->encounter = 0;
-          gMainRoutineWork.encounterSteps = 0;
-        } else if (work->stepTrigger != 0) {
-          work->busy = 1;
-          Scene_RunStepTriggerOrExit(work->stepTrigger);
-          work->busy = 0;
-          work->stepTrigger = 0;
-        } else if (work->pushCell != 0) {
-          Field_RunPushCell(work->pushCell);
-          work->pushCell = 0;
-        } else if (work->aButton != 0) {
+          gMainRoutineState.returnMusic = -1;
+          gMainRoutineState.next = SEQUENCE_BATTLE;
+          gMainRoutineState.entrance = state->encounter;
+          state->exit = EXIT_KEEP_DESTINATION;
+          Field_StartEncounterTransition(state->encounter);
+          state->encounterBias = 0;
+          state->encounter = 0;
+          gMainRoutineState.encounterSteps = 0;
+        } else if (state->stepTrigger != 0) {
+          state->busy = 1;
+          Scene_RunStepTriggerOrExit(state->stepTrigger);
+          state->busy = 0;
+          state->stepTrigger = 0;
+        } else if (state->pushCell != 0) {
+          Field_RunPushCell(state->pushCell);
+          state->pushCell = 0;
+        } else if (state->aButton != 0) {
           // Examine the actor or cell ahead, or open the menu if neither
           // has an event.
           s32 object;
 
           AreaNameWindow_HideFar();
-          object = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
+          object = Field_FindNearbyTalkTarget(gMainRoutineState.leaderActorId);
           // mode, done with, holds whether there is something to talk to, then
           // the cell behavior ahead.
           mode = 0;
@@ -249,19 +249,19 @@ s32 FieldSequence_Run(s32 entrance) {
             mode = Scene_FindActorTalkTrigger(object) != 0;
           }
           if (mode != 0) {
-            work->talk = object | FIELD_TALK_REQUEST;
-            work->fieldMenu = 0;
+            state->talk = object | FIELD_TALK_REQUEST;
+            state->fieldMenu = 0;
           } else {
             mode = Actor_GetTriggerCellAheadOfCurrent();
             if (mode != 0) {
-              work->examineCell = mode;
-              work->fieldMenu = 0;
+              state->examineCell = mode;
+              state->fieldMenu = 0;
             } else {
-              work->fieldMenu = 1;
+              state->fieldMenu = 1;
             }
           }
-          work->aButton = 0;
-        } else if (work->fieldMenu != 0) {
+          state->aButton = 0;
+        } else if (state->fieldMenu != 0) {
           // The field menu (in debug mode, B + Select opens the debug flag
           // editor).
           AreaNameWindow_HideFar();
@@ -273,38 +273,38 @@ s32 FieldSequence_Run(s32 entrance) {
               (gKeysHeld & KEY_SELECT) != 0) {
             DebugFlagEditor_RunFar();
           } else if (GameFlag_GetFar(FLAG_MENUS_RAISE_TRIGGER) != 0) {
-            work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
+            state->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
           } else {
-            work->effectTimerRunning = 0;
+            state->effectTimerRunning = 0;
             FieldMenu_RunFar();
-            work->effectTimerRunning = 1;
+            state->effectTimerRunning = 1;
           }
           WorldMap_Unfreeze();
           GameFlag_ClearFar(FLAG_MENU_OPEN);
           GameFlag_RefreshLureCapFar();
-          work->fieldMenu = 0;
-        } else if ((s16)work->talk != 0) {
+          state->fieldMenu = 0;
+        } else if ((s16)state->talk != 0) {
           WorldMap_Freeze();
-          Scene_TalkToActor(work->talk & (FIELD_TALK_REQUEST - 1));
+          Scene_TalkToActor(state->talk & (FIELD_TALK_REQUEST - 1));
           WorldMap_Unfreeze();
-          work->talk = 0;
-        } else if (work->examineCell != 0) {
+          state->talk = 0;
+        } else if (state->examineCell != 0) {
           WorldMap_Freeze();
-          Field_ExamineCell(work->examineCell);
+          Field_ExamineCell(state->examineCell);
           WorldMap_Unfreeze();
-          work->examineCell = 0;
-        } else if (work->psynergy != 0) {
+          state->examineCell = 0;
+        } else if (state->psynergy != 0) {
           AreaNameWindow_HideFar();
           WorldMap_Freeze();
-          Field_UsePsynergy(work->psynergy);
+          Field_UsePsynergy(state->psynergy);
           WorldMap_Unfreeze();
-          work->psynergy = 0;
-        } else if (work->item != 0) {
+          state->psynergy = 0;
+        } else if (state->item != 0) {
           WorldMap_Freeze();
-          Field_UseItem(work->item, work->itemSlot);
+          Field_UseItem(state->item, state->itemSlot);
           WorldMap_Unfreeze();
-          work->item = 0;
-        } else if (work->pauseMenu != 0) {
+          state->item = 0;
+        } else if (state->pauseMenu != 0) {
           // The Pause menu (in debug mode, B opens the debug scene select and L
           // the palette editor).
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -317,17 +317,17 @@ s32 FieldSequence_Run(s32 entrance) {
             PaletteEditor_Run();
           } else if (GameFlag_GetFar(FLAG_MENUS_RAISE_TRIGGER) != 0) {
             // As for the field menu above.
-            work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
+            state->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
           } else {
             Field_EndBusyAndReveal();
             AreaNameWindow_HideFar();
-            gMainRoutineWork.returnMusic = Sound_GetCurrentBgmFar();
+            gMainRoutineState.returnMusic = Sound_GetCurrentBgmFar();
             if (GameFlag_GetFar(FLAG_IN_BATTLE_ARENA) == 0) {
               // With fewer than PAUSE_MENU_VRAM_BLOCKS of the sprite VRAM
               // blocks free, sprite drawing stays suspended while the menu
               // runs, and a frame passes so that the field's sprites give
               // their VRAM back before it opens.
-              struct ActorSystemWork *system = gActorSystemWork;
+              struct ActorSystemState *system = gActorSystemState;
               u8 *owner = gVramCacheBlockOwners;
               s32 free = 0;
               s32 n;
@@ -350,7 +350,7 @@ s32 FieldSequence_Run(s32 entrance) {
           }
           WorldMap_Unfreeze();
           GameFlag_ClearFar(FLAG_MENU_OPEN);
-          work->pauseMenu = 0;
+          state->pauseMenu = 0;
         }
       }
 
@@ -358,20 +358,20 @@ s32 FieldSequence_Run(s32 entrance) {
       // air (only a key check runs), on the World Map or walking, and run the
       // walking update until the next request.
       GameFlag_ClearFar(FLAG_FIELD_HANDLING_REQUESTS);
-      actor = work->actors[gMainRoutineWork.leaderActorId];
+      actor = state->actors[gMainRoutineState.leaderActorId];
       if (actor != NULL) {
-        if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_AIRBORNE)
+        if (gMainRoutineState.movementMode == LEADER_MOVEMENT_AIRBORNE)
           Actor_StartKeyCheckFar(actor);
-        else if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_CLIMB)
+        else if (gMainRoutineState.movementMode == LEADER_MOVEMENT_CLIMB)
           Actor_StartMoveByKeysFar(actor);
-        else if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
+        else if (state->mode == ACTOR_SYSTEM_WORLD_MAP)
           Actor_StartWorldMapControlFar(actor);
         else
           Actor_StartPlayerControlFar(actor);
       }
       do {
         wait(1);
-        actor = work->actors[gMainRoutineWork.leaderActorId];
+        actor = state->actors[gMainRoutineState.leaderActorId];
         if (gDebugMode == 0 || GameFlag_GetFar(FLAG_DEBUG_STEPS_OFF) == 0)
           Field_UpdateWalking(actor->layer, actor->x.fixed, actor->y.fixed,
                               actor->z.fixed);
@@ -380,10 +380,10 @@ s32 FieldSequence_Run(s32 entrance) {
   }
 
 done:
-  if (work->transitionActive != 0) {
-    ScreenTransition_Finish(work->transition, work->transitionFrames);
-    work->transitionActive = 0;
-    wait(work->transitionFrames);
+  if (state->transitionActive != 0) {
+    ScreenTransition_Finish(state->transition, state->transitionFrames);
+    state->transitionActive = 0;
+    wait(state->transitionFrames);
   }
   HeapSlot_Release(HEAP_SLOT_FIELD);
   return result;
@@ -395,8 +395,8 @@ done:
 /// leader or up to 64 pixels above it, or a behavior the scene has an examine
 /// trigger for. Returns 0 otherwise.
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
-  struct FieldWork *work;
-  struct MapGridScrollWork *grid;
+  struct FieldState *state;
+  struct MapGridScrollState *grid;
   struct Actor *leader;
   union PolarOffsetPosition probePosition;
   u8 *cell;
@@ -405,19 +405,19 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   s32 result;
 
   result = 0;
-  leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  work = gFieldWork;
-  grid = gMapGridWork[0];
+  leader = Actor_Lookup(gMainRoutineState.leaderActorId);
+  state = gFieldState;
+  grid = gMapGridState[0];
   if (leader != 0) {
     probePosition.vector.x = leader->x.fixed;
     probePosition.vector.y = leader->y.fixed;
     probePosition.vector.z = leader->z.fixed;
     Vector_AddPolarOffset(toFIXED(16), leader->facing,
                           probePosition.coordinates);
-    // World Map cell pictures are 32 pixels square, 32 to a row; map cells 16
+    // World Map cell tiles are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
-    if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-      cell = Ram_CellPictures +
+    if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
+      cell = Ram_CellTiles +
              ((((probePosition.vector.x / toFIXED(32)) & 31) +
                (((probePosition.vector.z / toFIXED(32)) & 31) << 5))
               << 2);
@@ -449,8 +449,8 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 /// entry, or the scene's first one) unless it keeps its position, and sets the
 /// map's scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
 void Scene_ApplyEntrance(void) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
-  s32 entrance = gMainRoutineWork.entrance;
+  struct MapGridScrollState *grid = gMapGridState[0];
+  s32 entrance = gMainRoutineState.entrance;
   const struct SceneEntrance *entranceEntry = gOverlayArea.entrances();
   s32 foundEntrance = 0;
 
@@ -467,11 +467,11 @@ void Scene_ApplyEntrance(void) {
 
   // Camera bounds apply even when returning to a saved party position.
   if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
-    gMainRoutineWork.x = INTtoFIXED(entranceEntry->x);
-    gMainRoutineWork.y = INTtoFIXED(entranceEntry->y);
-    gMainRoutineWork.z = INTtoFIXED(entranceEntry->z);
-    gMainRoutineWork.heading = entranceEntry->facing;
-    gMainRoutineWork.layer = 0;
+    gMainRoutineState.x = INTtoFIXED(entranceEntry->x);
+    gMainRoutineState.y = INTtoFIXED(entranceEntry->y);
+    gMainRoutineState.z = INTtoFIXED(entranceEntry->z);
+    gMainRoutineState.heading = entranceEntry->facing;
+    gMainRoutineState.layer = 0;
   }
 
   if (entranceEntry->cameraLeft != -1)

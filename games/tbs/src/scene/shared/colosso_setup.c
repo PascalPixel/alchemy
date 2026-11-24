@@ -3,7 +3,7 @@
 /// the race gauge at the top of the screen and the opponent running a recorded
 /// path (colosso_path_opponent.c).
 
-/// Starts the race gauge (struct ColossoRaceWork, in HEAP_SLOT_COLOSSO_RACE):
+/// Starts the race gauge (struct ColossoRaceState, in HEAP_SLOT_COLOSSO_RACE):
 /// Isaac and the opponent as playerActorId and opponentActorId, a bar
 /// of segments pieces either side, and the finish at pixel (finishX, finishZ)
 /// in 16.16, where the two item actors stand. Unless the party returns
@@ -11,23 +11,23 @@
 void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
                             s32 segments, FIXED finishX, FIXED finishZ,
                             s32 finishItemActorIdA, s32 finishItemActorIdB) {
-  struct ColossoRaceWork *work;
+  struct ColossoRaceState *state;
   struct Actor *player;
   struct Actor *opponent;
   void *graphics;
   s32 vramSlot;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_COLOSSO_RACE,
-                             sizeof(struct ColossoRaceWork));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_COLOSSO_RACE,
+                              sizeof(struct ColossoRaceState));
   graphics = Heap_AllocEwram(GAUGE_TILE_COUNT * TILE_SIZE_4BPP);
 
-  work->gauge.playerActorId = playerActorId;
-  work->gauge.opponentActorId = opponentActorId;
-  work->gauge.finishItemActorIdA = finishItemActorIdA;
-  work->gauge.finishItemActorIdB = finishItemActorIdB;
-  work->gauge.segments = segments;
-  work->gauge.finishX = finishX;
-  work->gauge.finishZ = finishZ;
+  state->gauge.playerActorId = playerActorId;
+  state->gauge.opponentActorId = opponentActorId;
+  state->gauge.finishItemActorIdA = finishItemActorIdA;
+  state->gauge.finishItemActorIdB = finishItemActorIdB;
+  state->gauge.segments = segments;
+  state->gauge.finishX = finishX;
+  state->gauge.finishZ = finishZ;
 
   player = Actor_Get(playerActorId);
   opponent = Actor_Get(opponentActorId);
@@ -37,12 +37,12 @@ void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
     opponent->z.fixed = player->z.fixed;
   }
 
-  work->gauge.level = 0;
-  work->gauge.hold = 0;
+  state->gauge.level = 0;
+  state->gauge.hold = 0;
 
   FieldDecompress_TaggedLz(gColosso_GaugeGraphics, graphics);
   vramSlot = VramCache_FindFreeEntry();
-  work->gauge.vramBlock = vramSlot;
+  state->gauge.vramBlock = vramSlot;
   VramCache_Load((s16)vramSlot, GAUGE_TILE_COUNT * TILE_SIZE_4BPP, graphics);
 
   Task_AddFrame(Colosso_DrawGauge, TASK_PASS_FRAME - 10);
@@ -50,18 +50,18 @@ void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
   Heap_Release(graphics);
 }
 
-/// Decodes the opponent's recorded path (resource) after the gauge's work and,
+/// Decodes the opponent's recorded path (resource) after the gauge's state and,
 /// unless the party returns to where it was, has the opponent run it from the
 /// start, mirrored across the finish; then starts the opponent's task.
 void Colosso_StartOpponent(s32 resource) {
-  struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
+  struct ColossoRaceState *state = (struct ColossoRaceState *)gColossoState;
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneLocalState;
 
-  FieldDecompress_TaggedLz(Resource_GetTableEntry(resource), work->path);
+  FieldDecompress_TaggedLz(Resource_GetTableEntry(resource), state->path);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     recorder->mode = PATH_RECORDER_PLAY;
     recorder->mirror = 1;
-    recorder->actorId = work->gauge.opponentActorId;
+    recorder->actorId = state->gauge.opponentActorId;
     recorder->still = 0;
     recorder->pathIndex = 0;
   }

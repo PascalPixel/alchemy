@@ -37,7 +37,7 @@
 #include "system/heap_slots.h"
 #include "system/input.h"
 #include "system/io_reg.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/task.h"
 #include "system/vram_cache.h"
@@ -75,7 +75,7 @@ enum ShopStockRow {
   SHOP_STOCK_ROW_VALE_WEAPONS = 1,
   SHOP_STOCK_ROW_VALE_ARMOR = 2,
   /// Xian's weapon, armor and item shops, the warriors' shops, which greet
-  /// the party with lines of their own (ShopWork.warriorShop).
+  /// the party with lines of their own (ShopState.warriorShop).
   SHOP_STOCK_ROW_XIAN_WEAPONS = 16,
   SHOP_STOCK_ROW_XIAN_ARMOR = 17,
   SHOP_STOCK_ROW_XIAN_ITEMS = 18
@@ -152,7 +152,7 @@ enum {
 #define SHOP_EMPTY_GRID_Y 20
 #endif
 
-/// Outside Japan the coins window (ShopWork.moneyWindow) is a tile wider, and
+/// Outside Japan the coins window (ShopState.moneyWindow) is a tile wider, and
 /// every counter's item description (Shop_DrawMessage, shop_buy.c) is drawn as
 /// tiles (Text_DrawMessageAsTilesFar) rather than into a text canvas.
 #if LANGUAGE != LANGUAGE_JAPANESE

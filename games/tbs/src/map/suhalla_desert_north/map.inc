@@ -4,14 +4,14 @@ Field_SuhallaDesertNorth:
 	map_layer 0, 0, 16, 16, 0, 0, 0x7f, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0x7f, 0xff
 	map_layer 128, 0, 20, 20, -121, 35, 0x1f, 0x1f
-	map_offset Field_SuhallaDesertNorth, .LField_SuhallaDesertNorth_CELL_PICTURES
+	map_offset Field_SuhallaDesertNorth, .LField_SuhallaDesertNorth_CELL_TILES
 	map_offset Field_SuhallaDesertNorth, .LField_SuhallaDesertNorth_SHAPES
 	map_offset Field_SuhallaDesertNorth, .LField_SuhallaDesertNorth_GRID
 	map_offset Field_SuhallaDesertNorth, .LField_SuhallaDesertNorth_ANIMATION
 	map_offset Field_SuhallaDesertNorth
 	map_offset Field_SuhallaDesertNorth, .LField_SuhallaDesertNorth_MARKERS
-.LField_SuhallaDesertNorth_CELL_PICTURES:
-	.incbin "games/tbs/src/map/suhalla_desert_north/cell_pictures.delta1.lz"
+.LField_SuhallaDesertNorth_CELL_TILES:
+	.incbin "games/tbs/src/map/suhalla_desert_north/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_SuhallaDesertNorth_SHAPES:
 	.incbin "games/tbs/src/map/suhalla_desert_north/shapes.table.lz"

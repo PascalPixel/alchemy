@@ -46,8 +46,8 @@
 /// copy the rest into WIN0H and WIN1H one word each HBlank, so that every line
 /// of the screen gets its own window edges.
 void ScreenTransition_StartWindowHBlankDma(void) {
-  struct ScreenTransitionState *work = gScreenTransitionWork;
-  u16 *scanlineData = work->pages[work->page];
+  struct ScreenTransitionState *state = gScreenTransitionState;
+  u16 *scanlineData = state->pages[state->page];
   volatile u16 *dma0 = REG_DMA0;
 
   // Stop the previous transfer before priming the first line's registers.
@@ -74,7 +74,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
   struct ScreenTransitionState *state;
   struct TransitionSpan *span;
   struct TransitionShape *shape;
-  struct MapGridScrollWork *grid;
+  struct MapGridScrollState *grid;
   u16 *scanlineData;
   struct Actor *actor;
   u32 i;
@@ -95,8 +95,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
   u32 leftEdge;
   s32 oppositeEdges;
 
-  grid = gMapGridWork[0];
-  state = gScreenTransitionWork;
+  grid = gMapGridState[0];
+  state = gScreenTransitionState;
 
   // Finish or advance the timed phase before generating the hidden page.
   if (state->duration != 0) {
@@ -303,7 +303,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
       cameraY = view[1] & FIELD_PIXEL_MASK;
     }
     // Centred on the leader's place on screen, above its feet.
-    actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+    actor = Actor_Lookup(gMainRoutineState.leaderActorId);
     centerX = (actor->x.fixed - cameraX) / FIXED_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE -
               TRANSITION_ELLIPSE_RISE;
@@ -398,7 +398,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
       cameraX = view[0] & FIELD_PIXEL_MASK;
       cameraY = view[1] & FIELD_PIXEL_MASK;
     }
-    actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+    actor = Actor_Lookup(gMainRoutineState.leaderActorId);
     centerX = (actor->x.fixed - cameraX) / FIXED_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE -
               TRANSITION_ELLIPSE_RISE;
@@ -437,7 +437,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
       cameraX = view[0] & FIELD_PIXEL_MASK;
       cameraY = view[1] & FIELD_PIXEL_MASK;
     }
-    actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+    actor = Actor_Lookup(gMainRoutineState.leaderActorId);
     centerX = (actor->x.fixed - cameraX) / FIXED_ONE;
     // Centred lower above the leader's feet than WINDOW_TRANSITION_LEADER's.
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE -
@@ -518,7 +518,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   s32 style;
 
   style = SCENE_TRANSITION_STYLE(mode);
-  display = gMapGridWork[0];
+  display = gMapGridState[0];
   variant = SCENE_TRANSITION_VARIANT(mode);
   switch (style) {
   case TRANSITION_FADE:
@@ -574,7 +574,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   case TRANSITION_CENTER_LINE: {
     struct ScreenTransitionState *state;
 
-    display = gMapGridWork[0];
+    display = gMapGridState[0];
     state = ScreenTransition_AllocateAndClearState();
     display->firstLine = DISPLAY_HEIGHT / 2;
     display->secondLine = DISPLAY_HEIGHT / 2;
@@ -679,7 +679,7 @@ void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
                                       s32 clearBg1) {
   struct ScreenTransitionWin *state;
 
-  state = gMapGridWork[0];
+  state = gMapGridState[0];
   if (state != NULL) {
     if (clearBg1 != 0) {
       state->dispcnt &= ~DISPCNT_BG1_ON;
@@ -696,9 +696,9 @@ void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
 /// Each frame of the centre-line transition: moves the value toward its end and
 /// sets the two lines where the screen switches between shown and blank.
 void ScreenTransition_Update(void) {
-  struct ScreenTransitionDissolveState *state = *Ram_DisplayWork;
+  struct ScreenTransitionDissolveState *state = *Ram_DisplayState;
   struct ScreenTransitionWin *display =
-      *(struct ScreenTransitionWin **)Ram_MapGridWork;
+      *(struct ScreenTransitionWin **)Ram_MapGridState;
   u32 edgeDistance;
 
   if (state->duration != 0) {
@@ -730,9 +730,9 @@ void ScreenTransition_Update(void) {
 
 /// As ScreenTransition_Update, but the lines flicker every other frame.
 void ScreenTransition_UpdateFromCenter(void) {
-  struct ScreenTransitionDissolveState *state = *Ram_DisplayWork;
+  struct ScreenTransitionDissolveState *state = *Ram_DisplayState;
   struct ScreenTransitionWin *window =
-      *(struct ScreenTransitionWin **)Ram_MapGridWork;
+      *(struct ScreenTransitionWin **)Ram_MapGridState;
   u16 edgeDistance;
 
   if (state->duration != 0) {
@@ -782,7 +782,7 @@ enum ScreenTransitionIrqPhase {
 void ScreenTransition_UpdateScanline(void) {
   u32 scanline = REG_VCOUNT;
   struct ScreenTransitionWin *state;
-  state = gMapGridWork[0];
+  state = gMapGridState[0];
 
   // Keep the same VCount sample across phase changes.
 again:
@@ -827,7 +827,7 @@ again:
 /// with DISSOLVE_COVER_COLOR), and to DISSOLVE_COVER_COLOR while it closes
 /// (values after it fill the clear tile ScreenTransition_Finish starts from).
 void ScreenTransition_UpdateDissolve(void) {
-  struct ScreenTransitionDissolveState *state = *Ram_DisplayWork;
+  struct ScreenTransitionDissolveState *state = *Ram_DisplayState;
   s32 ditherIndex;
   s32 colorIndex;
   u32 i;
@@ -873,7 +873,7 @@ void ScreenTransition_UpdateDissolve(void) {
 /// Unused, as the dissolve is: fills background screen block 4 with tile 0 in
 /// WINDOW_PALETTE and, unless color is -1, makes tile 0 solid color.
 void ScreenTransition_FillTilemapAndColorTile(s32 color) {
-  struct ScreenTransitionState *work = gScreenTransitionWork;
+  struct ScreenTransitionState *state = gScreenTransitionState;
   Dma_Fill32(WINDOW_TILE_PAIR(BG_TILE_PALETTE(WINDOW_PALETTE)),
              BG_SCREEN_BLOCK(4),
              DISPLAY_TILE_HEIGHT * BG_SCREEN_WIDTH * sizeof(u16));
@@ -883,10 +883,10 @@ void ScreenTransition_FillTilemapAndColorTile(s32 color) {
     u32 *tile;
     for (remainingWords = 0; remainingWords < 8; remainingWords++)
       pattern = (pattern << 4) | color;
-    tile = work->solidTile;
+    tile = state->solidTile;
     for (remainingWords = 0; remainingWords < 8; remainingWords++)
       *tile++ = pattern;
-    Dma_Set(work->solidTile, BG_CHAR_BLOCK(0),
+    Dma_Set(state->solidTile, BG_CHAR_BLOCK(0),
             DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);
   }
 }

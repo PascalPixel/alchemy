@@ -16,10 +16,10 @@ struct Sprite;
 
 /// The Psynergy menu: its windows, icons and cursors, the party members' tabs
 /// and the Psynergy listed for the chosen party member.
-struct PsynergyMenuWork {
-  u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
+struct PsynergyMenuState {
+  u8 unused[8]; ///< no view of the menu state names it (see menu/README.md)
   s32 selectedMember;         ///< the party member chosen
-  struct Window *moneyWindow; ///< ShopWork's; not named here
+  struct Window *moneyWindow; ///< ShopState's; not named here
   struct Window *auxiliaryWindow;
   struct WindowSprite *sideIcon[2]; ///< each side's cursor
   s8 tabIndex[2];  ///< each side's party member, in memberTable
@@ -28,15 +28,15 @@ struct PsynergyMenuWork {
   struct Window *statusWindow;
   struct Window *shortcutWindow;
   struct Window *infoWindow;
-  struct Window *equipWindow; ///< ItemMenuWork's; not named here
+  struct Window *equipWindow; ///< ItemMenuState's; not named here
   struct Window *listWindow;
-  /// ItemMenuWork's modalWindow and the two windows it never opens;
+  /// ItemMenuState's modalWindow and the two windows it never opens;
   /// not named here.
   u8 itemWindows[12];
   struct WindowSprite *entryGridCursor;
   struct WindowSprite *entryIcons[32];
-  struct WindowSprite *categoryIcons[8]; ///< ItemMenuWork's; not named here
-  u8 unusedAfterIcons[36];               ///< no view of the menu work names it
+  struct WindowSprite *categoryIcons[8]; ///< ItemMenuState's; not named here
+  u8 unusedAfterIcons[36];               ///< no view of the menu state names it
   struct Window *messageWindow;
   /// The cursor grid: its place and its size.
   ///@{
@@ -52,8 +52,8 @@ struct PsynergyMenuWork {
   u16 sideRow[2];               ///< each side's Psynergy row chosen
   u16 sideAction[2]; ///< each side's Psynergy chosen, as a party member action
                      ///< entry
-  struct WindowSprite *cursor; ///< ItemMenuWork's; not named here
-  /// DjinnMenuWork's backdrop pointer at 388; no view names the rest.
+  struct WindowSprite *cursor; ///< ItemMenuState's; not named here
+  /// DjinnMenuState's backdrop pointer at 388; no view names the rest.
   u8 aroundBackdrop[72];
   u16 psynergies[32]; ///< the chosen party member's Psynergy listed
   u16 memberTable[8]; ///< the party in order (Party_ListMembers)
@@ -70,33 +70,33 @@ struct PsynergyMenuWork {
   /// ItemMenuFiguresView's figures and their x; not named here.
   u8 figureRow[24];
   s16 slotY[4]; ///< screen pixels
-  /// ItemMenuFiguresView's phases and DjinnMenuWork's pair; not named here.
+  /// ItemMenuFiguresView's phases and DjinnMenuState's pair; not named here.
   u8 figurePhases[22];
   s16 useResult;   ///< the use's result message, after MsgItemUseResult
-  s8 equipPreview; ///< ItemMenuWork's; not named here
-  u8 listMode;     ///< ItemMenuWork's; not named here
-  u8 unusedAfterListMode[2];   ///< no view of the menu work names it
+  s8 equipPreview; ///< ItemMenuState's; not named here
+  u8 listMode;     ///< ItemMenuState's; not named here
+  u8 unusedAfterListMode[2];   ///< no view of the menu state names it
   s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
   u8 mode; ///< 0 to use Psynergy; 1 or 2 to set the L or R shortcut
 };
 
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, auxiliaryWindow) == 16);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergyWindow) == 32);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, entryGridCursor) == 68);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, entryIcons) == 72);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, messageWindow) == 268);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedColumn) == 272);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedRow) == 273);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, columnCount) == 274);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, rowCount) == 275);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, sideAction[0]) == 376);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergies) == 456);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergyCount) == 536);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberIds) == 538);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedIndexByMember) == 608);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, auxiliaryWindow) == 16);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, psynergyWindow) == 32);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, entryGridCursor) == 68);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, entryIcons) == 72);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, messageWindow) == 268);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, selectedColumn) == 272);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, selectedRow) == 273);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, columnCount) == 274);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, rowCount) == 275);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, sideAction[0]) == 376);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, psynergies) == 456);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, psynergyCount) == 536);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, memberIds) == 538);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, selectedIndexByMember) == 608);
 
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, skipSlide) == 546);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, tabSprites) == 276);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberScale) == 340);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, skipSlide) == 546);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, tabSprites) == 276);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, memberScale) == 340);
 
 #endif

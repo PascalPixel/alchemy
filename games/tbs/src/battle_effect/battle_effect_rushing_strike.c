@@ -71,7 +71,7 @@ void BattleEffect_RunHeadbutt(struct BattleEffectParams *args) {
 /// The user rushes at the first target; a ring flares where it hits and sparks
 /// scatter.
 void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   BlitterPair draw;
   struct BattleCamera *camera;
@@ -90,14 +90,14 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   u8 *rings;
 
   rings = Ram_MapGridCellBuffer;
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
 
-  if (work->args->side == EFFECT_SIDE_ENEMIES) {
+  if (state->args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -114,10 +114,10 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, work->sheet, 1, 0);
-  BattleEffect_PackTileRows(work->sheet, (u8 *)rings, YELLOW_ORB_WIDTH,
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, state->sheet, 1, 0);
+  BattleEffect_PackTileRows(state->sheet, (u8 *)rings, YELLOW_ORB_WIDTH,
                             YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT);
-  Resource_LoadAndDecompress(RESOURCE_BLUE_BURST_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_BURST_SHEET, state->sheet, 1, 1);
   switch (mode) {
   case RUSHING_STRIKE_BONE_CHARGE:
     paletteId = RESOURCE_FIRE_PILLAR_SHEET_B;
@@ -134,13 +134,15 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   }
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId),
                   SHEET_PALETTE_BYTES);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   // Send the user in, and ready the sparks at the target.
-  BattleEffect_SetApproachMotion(work->args->user, work->args->targets[0], 10);
-  target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
+  BattleEffect_SetApproachMotion(state->args->user, state->args->targets[0],
+                                 10);
+  target = GetBattleObjectSlotFar(state->args->targets[0])->actor;
   for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
-    newSpark = &work->particles[i];
+    newSpark = &state->particles[i];
     newSpark->x = target->x.fixed;
     newSpark->y = target->y.fixed + toFIXED(10);
     newSpark->z = target->z.fixed;
@@ -151,21 +153,21 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       newSpark->velocityX = -newSpark->velocityX;
     newSpark->variant = i / 2 + RUSHING_STRIKE_SPARK_FRAMES;
   }
-  Projection_Unit(work->args->targets[0], &origin);
+  Projection_Unit(state->args->targets[0], &origin);
 
   for (frame = 0; frame != RUSHING_STRIKE_FRAMES; frame++) {
     // The burst at the user as it rushes in.
     if (frame < RUSHING_STRIKE_BURST_FRAMES) {
-      Projection_Unit(work->args->user, &screen);
-      draw[0](canvas, work->sheet, screen.x / 2 - 16, screen.y - 48, 40, 32);
-      draw[1](canvas, work->sheet, screen.x / 2 - 16, screen.y - 16, 40, 32);
+      Projection_Unit(state->args->user, &screen);
+      draw[0](canvas, state->sheet, screen.x / 2 - 16, screen.y - 48, 40, 32);
+      draw[1](canvas, state->sheet, screen.x / 2 - 16, screen.y - 16, 40, 32);
     }
     if (frame == RUSHING_STRIKE_FRAME) {
-      BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
+      BattleEffect_TintBattler(state->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
-      BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
+      BattleMotion_ApplyKnockbackFar(state->args->targets[0], KNOCKBACK_HURL);
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
     }
     // The ring where it hits.
     ringFrame = frame - RUSHING_STRIKE_RING_FRAME;
@@ -179,7 +181,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     if (ringFrame >= 0 && ringFrame <= 55) {
       EFFECT_VIEW_FROM_CAMERA(camera);
       for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
-        spark = &work->particles[i];
+        spark = &state->particles[i];
         size = spark->variant;
         if (size > 0) {
           Projection_Point(&spark->x, &sparkScreen);
@@ -194,7 +196,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       }
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_FINISH_CANVAS();
 }

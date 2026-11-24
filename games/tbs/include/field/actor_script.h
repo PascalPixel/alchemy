@@ -102,9 +102,9 @@ enum ActorScriptCommand {
 #define SC_FLAG_ON(f) SCRIPT_COMMAND_FLAG_ON, (f)
 #define SC_FLAG_OFF(f) SCRIPT_COMMAND_FLAG_OFF, (f)
 #define SC_FLAG_REV(f) SCRIPT_COMMAND_FLAG_REV, (f)
-#define SC_SET(w, v) SCRIPT_COMMAND_SET, (w), (v) ///< Write a work value.
-#define SC_ADD(w, v) SCRIPT_COMMAND_ADD, (w), (v) ///< Add to a work value.
-/// Test whether work value w equals v.
+#define SC_SET(w, v) SCRIPT_COMMAND_SET, (w), (v) ///< Write a state value.
+#define SC_ADD(w, v) SCRIPT_COMMAND_ADD, (w), (v) ///< Add to a state value.
+/// Test whether state value w equals v.
 #define SC_CMP(w, v) SCRIPT_COMMAND_CMP, (w), (v)
 /// Set the speed limit, in pixels a frame: SC_SPEED(0.8).
 #define SC_SPEED(speed) SC_SET(SW_SPEED, toFIXED(speed))
@@ -130,7 +130,7 @@ enum ActorScriptCommand {
 #define SC_CALL(fn) SCRIPT_COMMAND_CALL, (s32)(fn)
 #define SC_KEY_COUNT SCRIPT_COMMAND_KEY_COUNT ///< Check the configured keys.
 
-/// Script work values for SC_SET, SC_ADD and SC_CMP: the actor's fields, by
+/// Script state values for SC_SET, SC_ADD and SC_CMP: the actor's fields, by
 /// their place in gActorScript_OperandHandlerTable.
 enum ActorScriptValue {
   SW_SCRIPT = 0,

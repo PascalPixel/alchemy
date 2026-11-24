@@ -4,14 +4,14 @@ Field_RoadToBabiLighthouse:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_RoadToBabiLighthouse, .LField_RoadToBabiLighthouse_CELL_PICTURES
+	map_offset Field_RoadToBabiLighthouse, .LField_RoadToBabiLighthouse_CELL_TILES
 	map_offset Field_RoadToBabiLighthouse, .LField_RoadToBabiLighthouse_SHAPES
 	map_offset Field_RoadToBabiLighthouse, .LField_RoadToBabiLighthouse_GRID
 	map_offset Field_RoadToBabiLighthouse, .LField_RoadToBabiLighthouse_ANIMATION
 	map_offset Field_RoadToBabiLighthouse, .LField_RoadToBabiLighthouse_BLEND
 	map_offset Field_RoadToBabiLighthouse, .LField_RoadToBabiLighthouse_MARKERS
-.LField_RoadToBabiLighthouse_CELL_PICTURES:
-	.incbin "games/tbs/src/map/road_to_babi_lighthouse/cell_pictures.delta0.lz"
+.LField_RoadToBabiLighthouse_CELL_TILES:
+	.incbin "games/tbs/src/map/road_to_babi_lighthouse/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_RoadToBabiLighthouse_SHAPES:
 	.incbin "games/tbs/src/map/road_to_babi_lighthouse/shapes.table.lz"

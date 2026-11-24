@@ -33,7 +33,7 @@ enum VramCacheFixedEntry {
   VRAM_CACHE_ENTRY_ACTOR_SHADOW = 93,
   /// The fade overlay's solid tiles (FieldEffect_StartFadeOverlay).
   VRAM_CACHE_ENTRY_FADE_OVERLAY = 94,
-  /// The window sprites' glyph tiles (WindowWork.glyphTiles).
+  /// The window sprites' glyph tiles (WindowState.glyphTiles).
   VRAM_CACHE_ENTRY_GLYPH_TILES = 95
 };
 

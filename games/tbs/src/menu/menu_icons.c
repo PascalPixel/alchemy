@@ -5,14 +5,14 @@
 #include "menu_internal.h"
 
 /// Loads the Djinn menu's up and down arrows (djinn_arrow_up and
-/// djinn_arrow_down) into two free VRAM blocks, kept in the work's
+/// djinn_arrow_down) into two free VRAM blocks, kept in the state's
 /// resourceSlots[0] and [1] for Icon_DrawVariantWithTileOffset.
 void Resource_LoadPairedBlocksIfAvailable(void) {
   s32 firstSlot;
   s32 secondSlot;
-  struct ItemMenuWork *activeState;
+  struct ItemMenuState *activeState;
 
-  activeState = gMenuWork;
+  activeState = gMenuState;
   // VramCache_FindFreeEntry returns VRAM_CACHE_ENTRY_COUNT (96), never -1,
   // when no slot is free, so these tests always pass; VramCache_Load refuses
   // slot 96 itself.
@@ -29,12 +29,12 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
 }
 
 /// Releases both cached icon resources used by the menu: the two arrows in the
-/// work's resourceSlots, which ItemMenu_Run and DjinnMenu_Run free as they
+/// state's resourceSlots, which ItemMenu_Run and DjinnMenu_Run free as they
 /// close.
 void IconMenu_ReleaseArrows(void) {
-  struct ItemMenuWork *menu;
+  struct ItemMenuState *menu;
 
-  menu = gMenuWork;
+  menu = gMenuState;
   VramCache_FreeEntry(menu->resourceSlots[0]);
   VramCache_FreeEntry(menu->resourceSlots[1]);
 }
@@ -82,7 +82,7 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
                                s32 variant) {
   struct WindowSprite *object;
   u32 resource;
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
 
   if (variant == 0)
     resource = menu->resourceSlots[0];
@@ -109,7 +109,7 @@ s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
                                    s32 variant) {
   struct WindowSprite *object;
   u32 resource;
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
 
   if (variant == 0) {
     resource = menu->resourceSlots[0];

@@ -2,7 +2,7 @@
 /// The way into Sol Sanctum: the mountainside before its door, and the first
 /// rooms inside, where Isaac, Garet and Jenna follow Kraden on the morning the
 /// story begins. Two scenes share this overlay, and every entry point chooses
-/// by gMainRoutineWork.next.
+/// by gMainRoutineState.next.
 ///
 /// Sol Entrance (SceneId_SolEntrance) is the paved terrace at the top of the
 /// path from Vale, with the sanctum's carved door in the cliff. Walking north
@@ -82,7 +82,7 @@
 #include "scene/import.h"
 #include "scene/walk_into_leader.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -223,7 +223,7 @@ s32 gSolSanctumEntrance_RumbleTimer BSS_DATA;
 /// Returns Sol Entrance's entrances (SceneId_SolEntrance) or Sol
 /// Sanctum's (SceneId_SolSanctumReliefs).
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_SOL_ENTRANCE) {
     return gSolEntrance_Entrances;
@@ -243,11 +243,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
   s32 firstStatueRoomEntrance = SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_CHEST_ROOM;
 
-  if (gMainRoutineWork.next == SCENE_SOL_SANCTUM_RELIEFS) {
-    if (gMainRoutineWork.entrance >= firstStatueRoomEntrance) {
-      if (gMainRoutineWork.entrance >
+  if (gMainRoutineState.next == SCENE_SOL_SANCTUM_RELIEFS) {
+    if (gMainRoutineState.entrance >= firstStatueRoomEntrance) {
+      if (gMainRoutineState.entrance >
           SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_STEPS_ROOM) {
-        if (gMainRoutineWork.entrance <=
+        if (gMainRoutineState.entrance <=
             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
           return gSolSanctumReliefs_SecondReliefRoomActorPlacements;
         }
@@ -259,7 +259,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     Scene_AssignViewFlags(table);
     return table;
   }
-  if (gMainRoutineWork.next == SCENE_SOL_ENTRANCE) {
+  if (gMainRoutineState.next == SCENE_SOL_ENTRANCE) {
     return gSolEntrance_ActorPlacements;
   }
   return gSolSanctumEntrance_FallbackActorPlacements;
@@ -270,14 +270,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s32 firstStatueRoomEntrance = SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_CHEST_ROOM;
 
-  if (gMainRoutineWork.next == SCENE_SOL_ENTRANCE) {
+  if (gMainRoutineState.next == SCENE_SOL_ENTRANCE) {
     return gSolEntrance_Triggers;
   }
-  if (gMainRoutineWork.next == SCENE_SOL_SANCTUM_RELIEFS) {
-    if (gMainRoutineWork.entrance >= firstStatueRoomEntrance) {
-      if (gMainRoutineWork.entrance >
+  if (gMainRoutineState.next == SCENE_SOL_SANCTUM_RELIEFS) {
+    if (gMainRoutineState.entrance >= firstStatueRoomEntrance) {
+      if (gMainRoutineState.entrance >
           SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_STEPS_ROOM) {
-        if (gMainRoutineWork.entrance <=
+        if (gMainRoutineState.entrance <=
             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
           return gSolSanctumReliefs_SecondReliefRoomTriggers;
         }
@@ -335,7 +335,7 @@ static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
     // "It's a relief of a minotaur..."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
-      gFieldWork->fieldMenu = 1;
+      gFieldState->fieldMenu = 1;
     }
   }
 
@@ -403,7 +403,7 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
 /// the six statues across the water (cell (100, 31)). It too has one eye
 /// sparkling and a hole for the other, until the second Small Jewel is set.
 static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Event_Start();
 
@@ -411,10 +411,10 @@ static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
     // "It's the minotaur relief, with both eyes sparkling brightly."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefBothEyes, 1);
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0) {
-    work = gFieldWork;
+    state = gFieldState;
     // "It's a relief of a minotaur..."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
-    work->fieldMenu = 1;
+    state->fieldMenu = 1;
   } else {
     // "It's a relief of a minotaur..."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
@@ -674,7 +674,7 @@ static void SolSanctumEntrance_PushStatue(void) {
       statue->velocityX = 0;
       statue->velocityZ = 0;
       Actor_SelectAnimation(leader, ANIM_STAND);
-      switch (gMainRoutineWork.entrance) {
+      switch (gMainRoutineState.entrance) {
       case SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_CHEST_ROOM:
       case SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_STATUE_NOOK:
       case SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_STEPS_ROOM:
@@ -698,7 +698,7 @@ static void SolSanctumEntrance_PushStatue(void) {
 
 /// Sets up Sol Entrance or Sol Sanctum.
 s32 Scene_Initialize(void) {
-  s32 sceneId = gMainRoutineWork.next;
+  s32 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_SOL_ENTRANCE) {
     SolSanctumEntrance_ApplyEntryState();
@@ -712,7 +712,7 @@ s32 Scene_Initialize(void) {
 static void SolSanctumEntrance_ApplyEntryState(void) {
   // Retreat does not work here.
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     gSolSanctumEntrance_RumbleTimer = 0;
     Task_AddFrame(SolSanctumEntrance_UpdateEruptionRumbles, TASK_PASS_FRAME);
@@ -734,7 +734,7 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
 /// Sets up Sol Sanctum (SceneId_SolSanctumReliefs).
 static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 entrance;
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Scene_QueueMusic(SE_RUMBLE);
@@ -742,7 +742,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     FieldEffect_InitializeSparkles();
   }
 
-  entrance = gMainRoutineWork.entrance;
+  entrance = gMainRoutineState.entrance;
   switch (entrance) {
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST:
   case SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_STATUE_HALL:
@@ -762,8 +762,8 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
-    gMainRoutineWork.retreatScene = SCENE_SOL_SANCTUM_RELIEFS;
-    gMainRoutineWork.retreatEntrance = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
+    gMainRoutineState.retreatScene = SCENE_SOL_SANCTUM_RELIEFS;
+    gMainRoutineState.retreatEntrance = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ENTERED) == 0)
       SolSanctumEntrance_IntroduceSanctum();
     break;
@@ -822,7 +822,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
 /// answer gets "Take a good look at it" or "I doubt that...".
 static void SolSanctumEntrance_IntroduceSanctum(void) {
   Event_Start();
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
   Event_Wait(4);
@@ -877,7 +877,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
   GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   Event_End();
@@ -1117,7 +1117,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 /// key..."
 static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Event_Start();
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

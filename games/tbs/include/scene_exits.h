@@ -2551,7 +2551,7 @@ enum {
   SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND = 23,
   SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS = 24,
   /// Where a defeat in the monster attacks or the Kraken battle returns the
-  /// party (gMainRoutineWork.restartEntrance): the voyage's flags are
+  /// party (gMainRoutineState.restartEntrance): the voyage's flags are
   /// cleared and the party goes up on deck.
   SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT = 30,
 };

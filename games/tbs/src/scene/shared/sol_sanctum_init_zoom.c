@@ -8,16 +8,16 @@
 /// eruption the ground rumbles and shakes, and the weather's sparkles start
 /// (FieldEffect_InitializeSparkles).
 s32 Scene_Initialize(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   FIXED shakeX = toFIXED(1);
   FIXED shakeY = toFIXED(1);
   FIXED shakeDecay = FIXED_ONE;
 
-  work = gFieldWork;
-  work->transition =
+  state = gFieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  work->transitionFrames = MAP_TRANSITION_FRAMES;
+  state->transitionFrames = MAP_TRANSITION_FRAMES;
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Scene_QueueMusic(SE_RUMBLE);
     MapGrid_SetScreenShake(shakeX, shakeY, shakeDecay);

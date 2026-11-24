@@ -4,14 +4,14 @@ Field_SuhallaDesertCaves:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_SuhallaDesertCaves, .LField_SuhallaDesertCaves_CELL_PICTURES
+	map_offset Field_SuhallaDesertCaves, .LField_SuhallaDesertCaves_CELL_TILES
 	map_offset Field_SuhallaDesertCaves, .LField_SuhallaDesertCaves_SHAPES
 	map_offset Field_SuhallaDesertCaves, .LField_SuhallaDesertCaves_GRID
 	map_offset Field_SuhallaDesertCaves, .LField_SuhallaDesertCaves_ANIMATION
 	map_offset Field_SuhallaDesertCaves, .LField_SuhallaDesertCaves_BLEND
 	map_offset Field_SuhallaDesertCaves, .LField_SuhallaDesertCaves_MARKERS
-.LField_SuhallaDesertCaves_CELL_PICTURES:
-	.incbin "games/tbs/src/map/suhalla_desert_caves/cell_pictures.delta1.lz"
+.LField_SuhallaDesertCaves_CELL_TILES:
+	.incbin "games/tbs/src/map/suhalla_desert_caves/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_SuhallaDesertCaves_SHAPES:
 	.incbin "games/tbs/src/map/altmiller_cave_entrance/shapes.table.lz"

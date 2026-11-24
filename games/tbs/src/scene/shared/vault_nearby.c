@@ -15,12 +15,12 @@ enum {
 /// The update routine of the two children round the well, by their timer's
 /// VILLAGER_IS_BOY and VILLAGER_TALKED_TO. A villager stops when close to and
 /// facing its partner, and otherwise when the leader is within STOP_RANGE in
-/// front of it. While a talk is pending (FieldWork's talk) or Mind Read is on
+/// front of it. While a talk is pending (FieldState's talk) or Mind Read is on
 /// the range is TALK_STOP_RANGE, and a villager being talked to stops whichever
 /// way it faces.
 static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
-  u8 *windowWork = gWindowWork[0];
-  struct FieldWork *work = gFieldWork;
+  u8 *windowState = gWindowState[0];
+  struct FieldState *state = gFieldState;
   s32 force = 0;
   s32 range = STOP_RANGE;
   struct Actor *partner;
@@ -37,7 +37,8 @@ static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
 
   player = Actor_GetById(ACTOR_PARTY_LEADER);
 
-  if ((s16)work->talk != 0 || windowWork[WINDOW_WORK_MIND_READ_OFFSET] != 0) {
+  if ((s16)state->talk != 0 ||
+      windowState[WINDOW_STATE_MIND_READ_OFFSET] != 0) {
     range = TALK_STOP_RANGE;
     if ((actor->timer & VILLAGER_TALKED_TO) != 0) {
       force = 1;

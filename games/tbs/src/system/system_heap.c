@@ -12,91 +12,92 @@
 /// every heap slot) and sets the pools' next addresses to gIwramHeap and
 /// gEwramHeap.
 void Heap_Initialize(void) {
-  union HeapState *work = (union HeapState *)gHeapSlots;
+  union HeapState *state = (union HeapState *)gHeapSlots;
 
-  Dma_Fill32(0, work, 256);
-  work->heap.nextIwram = gIwramHeap;
-  work->heap.nextEwram = gEwramHeap;
+  Dma_Fill32(0, state, 256);
+  state->heap.nextIwram = gIwramHeap;
+  state->heap.nextEwram = gEwramHeap;
 }
 
 /// Returns the IWRAM bytes left to allocate, up to Ram_IwramHeapEnd (the
 /// address of gCartridgeResetMarker), the end the allocators test.
 s32 Heap_GetRemainingIwram(void) {
-  union HeapState *work = (union HeapState *)gHeapSlots;
+  union HeapState *state = (union HeapState *)gHeapSlots;
 
-  return (s32)(*(u8 (*)[]) & gCartridgeResetMarker) - (s32)work->heap.nextIwram;
+  return (s32)(*(u8 (*)[]) & gCartridgeResetMarker) -
+         (s32)state->heap.nextIwram;
 }
 
 /// Returns the EWRAM bytes left to allocate, up to the end of EWRAM.
 /// Battle_Run calls it around each action and ignores the result.
 s32 Heap_GetRemainingEwram(void) {
-  union HeapState *work = (union HeapState *)gHeapSlots;
+  union HeapState *state = (union HeapState *)gHeapSlots;
 
-  return EWRAM_END - (s32)work->heap.nextEwram;
+  return EWRAM_END - (s32)state->heap.nextEwram;
 }
 
 /// Returns heap slot `slot`'s block, first allocating `size` bytes for it
 /// (rounded up to words), from IWRAM when they fit and EWRAM otherwise.
 void *HeapSlot_Alloc(s32 slot, s32 size) {
-  union HeapState *work;
+  union HeapState *state;
   s32 alignedSize;
   u32 address;
   u32 nextAddress;
   u32 next;
   u32 cachedAddress;
 
-  work = (union HeapState *)gHeapSlots;
-  cachedAddress = (u32)work->slots[slot];
+  state = (union HeapState *)gHeapSlots;
+  cachedAddress = (u32)state->slots[slot];
   if (cachedAddress == 0) {
-    cachedAddress = (u32)work->heap.nextIwram;
+    cachedAddress = (u32)state->heap.nextIwram;
     alignedSize = (((u32)size + 3) >> 2) * 4;
     next = cachedAddress + alignedSize;
     // A block ending exactly at the pool's end is refused too
     if (next >= (u32)Ram_IwramHeapEnd) {
-      address = (u32)work->heap.nextEwram;
+      address = (u32)state->heap.nextEwram;
       nextAddress = address + alignedSize;
       if (nextAddress >= EWRAM_END) {
         return NULL;
       }
-      work->heap.nextEwram = (void *)nextAddress;
-      work->slots[slot] = (void *)address;
+      state->heap.nextEwram = (void *)nextAddress;
+      state->slots[slot] = (void *)address;
       return (void *)address;
     }
-    work->heap.nextIwram = (void *)next;
-    work->slots[slot] = (void *)cachedAddress;
+    state->heap.nextIwram = (void *)next;
+    state->slots[slot] = (void *)cachedAddress;
     return (void *)cachedAddress;
   }
   return (void *)cachedAddress;
 }
 
 /// As HeapSlot_Alloc, but tries EWRAM first, for blocks that need
-/// room more than speed: the battle, shop and save work, among others.
+/// room more than speed: the battle, shop and save state, among others.
 void *HeapSlot_AllocEwram(s32 slot, s32 size) {
-  union HeapState *work;
+  union HeapState *state;
   u32 alignedSize;
   u32 next;
   u32 address;
   u32 nextAddress;
   u32 cachedAddress;
 
-  work = (union HeapState *)gHeapSlots;
-  cachedAddress = (u32)work->slots[slot];
+  state = (union HeapState *)gHeapSlots;
+  cachedAddress = (u32)state->slots[slot];
   if (cachedAddress == 0) {
-    address = (u32)work->heap.nextEwram;
+    address = (u32)state->heap.nextEwram;
     alignedSize = (((u32)size + 3) >> 2) * 4;
     next = address + alignedSize;
     if (next >= EWRAM_END) {
-      address = (u32)work->heap.nextIwram;
+      address = (u32)state->heap.nextIwram;
       nextAddress = address + alignedSize;
       if (nextAddress >= (u32)Ram_IwramHeapEnd) {
         return NULL;
       }
-      work->heap.nextIwram = (void *)nextAddress;
-      work->slots[slot] = (void *)address;
+      state->heap.nextIwram = (void *)nextAddress;
+      state->slots[slot] = (void *)address;
       return (void *)address;
     }
-    work->heap.nextEwram = (void *)next;
-    work->slots[slot] = (void *)address;
+    state->heap.nextEwram = (void *)next;
+    state->slots[slot] = (void *)address;
     return (void *)address;
   }
   return (void *)cachedAddress;
@@ -105,24 +106,24 @@ void *HeapSlot_AllocEwram(s32 slot, s32 size) {
 /// Allocates `size` bytes (rounded up to words) with no heap slot, from IWRAM
 /// when they fit and EWRAM otherwise, and advances that pool's next address.
 void *Heap_Alloc(s32 size) {
-  union HeapState *work = (union HeapState *)gHeapSlots;
+  union HeapState *state = (union HeapState *)gHeapSlots;
   u32 nextAddress;
   u32 next;
   u32 allocationAddress;
   u32 alignedWords = ((u32)size + 3) >> 2;
 
-  allocationAddress = (u32)work->heap.nextIwram;
+  allocationAddress = (u32)state->heap.nextIwram;
   size = alignedWords << 2;
   next = allocationAddress + size;
   if (next >= (u32)Ram_IwramHeapEnd) {
-    allocationAddress = (u32)work->heap.nextEwram;
+    allocationAddress = (u32)state->heap.nextEwram;
     nextAddress = allocationAddress + size;
     if (nextAddress >= EWRAM_END) {
       return NULL;
     }
-    work->heap.nextEwram = (void *)nextAddress;
+    state->heap.nextEwram = (void *)nextAddress;
   } else {
-    work->heap.nextIwram = (void *)next;
+    state->heap.nextIwram = (void *)next;
   }
   return (void *)allocationAddress;
 }
@@ -130,24 +131,24 @@ void *Heap_Alloc(s32 size) {
 /// As Heap_Alloc, but tries EWRAM first. Called mostly by the battle code and
 /// the credits for buffers too large to want IWRAM.
 void *Heap_AllocEwram(s32 size) {
-  union HeapState *work = (union HeapState *)gHeapSlots;
+  union HeapState *state = (union HeapState *)gHeapSlots;
   u32 alternateNextAddress;
   u32 primaryNextAddress;
   u32 allocationAddress;
   u32 alignedWords = ((u32)size + 3) >> 2;
 
-  allocationAddress = (u32)work->heap.nextEwram;
+  allocationAddress = (u32)state->heap.nextEwram;
   size = alignedWords << 2;
   primaryNextAddress = allocationAddress + size;
   if (primaryNextAddress >= EWRAM_END) {
-    allocationAddress = (u32)work->heap.nextIwram;
+    allocationAddress = (u32)state->heap.nextIwram;
     alternateNextAddress = allocationAddress + size;
     if (alternateNextAddress >= (u32)Ram_IwramHeapEnd) {
       return NULL;
     }
-    work->heap.nextIwram = (void *)alternateNextAddress;
+    state->heap.nextIwram = (void *)alternateNextAddress;
   } else {
-    work->heap.nextEwram = (void *)primaryNextAddress;
+    state->heap.nextEwram = (void *)primaryNextAddress;
   }
   return (void *)allocationAddress;
 }

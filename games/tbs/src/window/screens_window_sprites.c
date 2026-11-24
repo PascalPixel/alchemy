@@ -138,7 +138,7 @@ struct WindowSprite *WindowSprite_CreateFromTable(s32 tableEntry,
 /// is tried first).
 struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
                                      struct Window *window, s32 x, s32 y) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   struct WindowSprite *portrait = NULL;
   s32 slot;
   s32 tile;
@@ -159,9 +159,9 @@ struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
   // No side given: the second slot if it is free, else the first.
   if ((u32)side > 1) {
     side = 1;
-    if (work->portraitPictures[1] != PORTRAIT_SLOT_EMPTY) {
+    if (state->portraitPictures[1] != PORTRAIT_SLOT_EMPTY) {
       side = 0;
-      if (work->portraitPictures[0] != PORTRAIT_SLOT_EMPTY)
+      if (state->portraitPictures[0] != PORTRAIT_SLOT_EMPTY)
         return portrait;
     }
   }
@@ -176,8 +176,8 @@ struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
 
   // Recorded even when no sprite was free and WindowSprite_Create released
   // the VRAM slot.
-  work->portraitPictures[side] = icon;
-  work->portraitSprites[side] = slot;
+  state->portraitPictures[side] = icon;
+  state->portraitSprites[side] = slot;
   return portrait;
 }
 
@@ -188,9 +188,9 @@ void Portrait_Reload(u32 side, s32 character, s32 unused) {
   s32 tile;
   s32 slot;
   u32 icon;
-  struct WindowWork *work;
+  struct WindowState *state;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
 
   if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0) {
     if (character == ISAAC)
@@ -202,15 +202,15 @@ void Portrait_Reload(u32 side, s32 character, s32 unused) {
   icon = Portrait_GetForSpeaker(character);
   if (icon != -1U) {
     if (side > 1U) {
-      if (work->portraitPictures[1] == icon) {
+      if (state->portraitPictures[1] == icon) {
         side = 1;
-      } else if (work->portraitPictures[0] == icon) {
+      } else if (state->portraitPictures[0] == icon) {
         side = 0;
       } else {
         return;
       }
     }
-    slot = work->portraitSprites[side];
+    slot = state->portraitSprites[side];
     Icon_LoadWithPalette(icon, unused, &slot, &tile, PORTRAIT_PALETTE + side,
                          1);
   }
@@ -237,10 +237,10 @@ typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 /// Fills `spans`, a page of the screen transition's window edges past its WININ
 /// and WINOUT, with the windows' horizontal extent on each of the 160 scan
 /// lines: (left << 8) | right in the second halfword (WIN1H) of each line's
-/// pair, read from the UI tilemap by the ARM routine Tile_BuildCellPictures,
+/// pair, read from the UI tilemap by the ARM routine Tile_BuildCellTiles,
 /// copied into RAM for the call.
 void ScanlineWindow_FillSpans(void *spans) {
-  void *tilemap = gWindowWork[0];
+  void *tilemap = gWindowState[0];
 
   if (tilemap == NULL) {
     // BUG: the fill is one halfword for each of the DISPLAY_HEIGHT lines, but
@@ -254,8 +254,7 @@ void ScanlineWindow_FillSpans(void *spans) {
   } else {
     WindowSpanRoutine routine;
 
-    RamCode_Load(routine, Tile_BuildCellPictures,
-                 Tile_BuildCellPicturesCodeSize);
+    RamCode_Load(routine, Tile_BuildCellTiles, Tile_BuildCellTilesCodeSize);
     routine(spans, tilemap);
     Heap_Release(routine);
   }

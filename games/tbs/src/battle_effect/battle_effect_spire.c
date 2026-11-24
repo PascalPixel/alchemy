@@ -24,7 +24,7 @@
 ///
 /// Abilities: Spire, Clay Spire, Stone Spire.
 void BattleEffect_RunSpire(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle blit;
   s32 rockCount;
@@ -39,24 +39,24 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   u32 width;
   u32 height;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->args = args;
+  state->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   blit = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  Projection_ScaledUnit(work->args->targets[0], &first);
-  Projection_ScaledUnit(work->args->targets[work->args->targetCount - 1],
+  Projection_ScaledUnit(state->args->targets[0], &first);
+  Projection_ScaledUnit(state->args->targets[state->args->targetCount - 1],
                         &last);
   first.x += (last.x - first.x) / 2;
   REG_BG2X = (CANVAS_SIZE / 2 - first.x) << 8;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  rockCount = gSpire_RockCounts[work->args->variant];
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
+  rockCount = gSpire_RockCounts[state->args->variant];
   for (i = 0; i != rockCount; i++) {
-    rock = &work->particles[i];
+    rock = &state->particles[i];
     rock->y = -toFIXED(64);
     rock->velocityY = 0;
   }
@@ -77,10 +77,10 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
     if (frame == gSpire_DropFrames[rockCount - 1] + 48)
       EFFECT_SHOW_DAMAGE(SE_WATER);
     for (i = 0; i != rockCount; i++) {
-      rock = &work->particles[i];
+      rock = &state->particles[i];
       if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
       }
       if (frame >= gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         for (j = 0; j != SPIRE_SHARDS; j++) {
@@ -93,13 +93,13 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
           width = gSpire_ShardWidths[picture];
           height = gSpire_ShardHeights[picture];
           blit(canvas,
-               work->sheet + gSpire_ShardPictures[picture] +
+               state->sheet + gSpire_ShardPictures[picture] +
                    SPIRE_SHARD_PICTURES,
                FIXEDtoINT(shard->x) - (width >> 1),
                FIXEDtoINT(shard->y) - (height >> 1), width, height);
 #else
           blit(canvas,
-               work->sheet + gSpire_ShardPictures[picture] +
+               state->sheet + gSpire_ShardPictures[picture] +
                    SPIRE_SHARD_PICTURES,
                FIXEDtoINT(shard->x) -
                    ((width = gSpire_ShardWidths[picture]) >> 1),
@@ -117,7 +117,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       // The boulder falls over its column.
       if (frame < gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         if (frame >= gSpire_DropFrames[i])
-          blit(canvas, work->sheet,
+          blit(canvas, state->sheet,
                gSpire_RockX[i] + CANVAS_SIZE / 2 - SPIRE_ROCK_WIDTH / 2,
                FIXEDtoINT(rock->y), SPIRE_ROCK_WIDTH, SPIRE_ROCK_HEIGHT);
         rock->y += rock->velocityY;
@@ -127,13 +127,13 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
           rock->y = toFIXED(50);
       }
       if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
-        EFFECT_FOR_EACH_TARGET(j, work->args)
-          BattleEffect_TintBattler(work->args->targets[j], SPRITE_COLOR_WHITE,
+        EFFECT_FOR_EACH_TARGET(j, state->args)
+          BattleEffect_TintBattler(state->args->targets[j], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, j, 8);
       }
     }
     BattleCamera_Shake(2, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

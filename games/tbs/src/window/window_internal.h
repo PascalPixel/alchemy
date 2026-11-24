@@ -14,7 +14,7 @@
 #include "resource_ids.h"
 #include "battle/battle.h"
 #include "battle/battle_side.h"
-#include "battle/battle_work.h"
+#include "battle/battle_state.h"
 #include "field/event.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -72,7 +72,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode);
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 #endif
 
-/// WindowWork owns three messages, each with four line gaps.
+/// WindowState owns three messages, each with four line gaps.
 #define MESSAGE_COUNT 3
 #define MESSAGE_LINE_COUNT 4 ///< lines a page; spacing has one gap each
 #define TEXT_DEFAULT_COLOR                                                     \
@@ -96,7 +96,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 #define SELECTION_MENU_ENTRY_LIMIT 16 ///< entries a selection row can list
 #define AREA_NAME_WINDOW_FRAMES 90    ///< how long the area's name shows
 
-/// The control codes of decoded message text (WindowWork.textBuffer). Codes
+/// The control codes of decoded message text (WindowState.textBuffer). Codes
 /// from TEXT_SPACE up are characters.
 enum {
   TEXT_END = 0,  ///< the text ends; the window stays open
@@ -161,7 +161,7 @@ enum SelectionIconGroup {
   SELECTION_ICON_CHOSEN = 1 ///< the five icons already chosen; any nonzero
 };
 
-/// The style of sprite text (WindowWork.outline, set by TEXT_STYLE): its
+/// The style of sprite text (WindowState.outline, set by TEXT_STYLE): its
 /// glyphs outlined, or a motion of the glyph sprites (Glyph_Draw).
 enum TextStyle {
   TEXT_STYLE_PLAIN = 0,
@@ -240,9 +240,10 @@ enum {
 };
 
 /// HEAP_SLOT_GLYPH_TRANSFER's pointer, kept in IWRAM (system/iwram.s, after
-/// gWindowWork and gPartyStatusWork): the glyph transfer work icons are built
-/// in. Each icon builder allocates the slot for its build and frees it after.
-#define gGlyphWork (*(GlyphTransfer **)&gHeapSlots[HEAP_SLOT_GLYPH_TRANSFER])
+/// gWindowState and gPartyStatusState): the glyph transfer buffer icons are
+/// built in. Each icon builder allocates the slot for its build and frees it
+/// after.
+#define gGlyphState (*(GlyphTransfer **)&gHeapSlots[HEAP_SLOT_GLYPH_TRANSFER])
 
 /// Each message context bank's Huffman models and their offsets, which the
 /// message catalog built from games/tbs/text defines.

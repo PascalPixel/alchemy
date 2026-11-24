@@ -4,14 +4,14 @@ Field_GondowanCaveRiver:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_GondowanCaveRiver, .LField_GondowanCaveRiver_CELL_PICTURES
+	map_offset Field_GondowanCaveRiver, .LField_GondowanCaveRiver_CELL_TILES
 	map_offset Field_GondowanCaveRiver, .LField_GondowanCaveRiver_SHAPES
 	map_offset Field_GondowanCaveRiver, .LField_GondowanCaveRiver_GRID
 	map_offset Field_GondowanCaveRiver, .LField_GondowanCaveRiver_ANIMATION
 	map_offset Field_GondowanCaveRiver, .LField_GondowanCaveRiver_BLEND
 	map_offset Field_GondowanCaveRiver, .LField_GondowanCaveRiver_MARKERS
-.LField_GondowanCaveRiver_CELL_PICTURES:
-	.incbin "games/tbs/src/map/gondowan_cave_river/cell_pictures.delta2.lz"
+.LField_GondowanCaveRiver_CELL_TILES:
+	.incbin "games/tbs/src/map/gondowan_cave_river/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_GondowanCaveRiver_SHAPES:
 	.incbin "games/tbs/src/map/gondowan_cave_river/shapes.table.lz"

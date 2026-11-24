@@ -29,7 +29,7 @@
 ///
 /// Abilities: Annihilation.
 void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   u8 *particleSheet;
   struct BattleCamera *camera;
@@ -44,24 +44,24 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   s32 size;
   u8 *burstPixels;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   particleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   burstPixels = Ram_MapGridCellBuffer;
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FIRE_BURST_SHEET, burstPixels, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, particleSheet, 0, 0);
-  BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0], 4,
+  BattleMotion_ApproachTargetFar(state->args->user, state->args->targets[0], 4,
                                  0);
   wait(1);
-  targetActor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
+  targetActor = GetBattleObjectSlotFar(state->args->targets[0])->actor;
 
   for (i = 0; i != ANNIHILATION_SHARDS; i++) {
     // Shards burst from the target.
-    struct Particle *seed = &work->particles[i];
+    struct Particle *seed = &state->particles[i];
 
     SET_POSITION(seed, targetActor->x.fixed, targetActor->y.fixed,
                  targetActor->z.fixed);
@@ -73,21 +73,21 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
     seed->variant = i / 4 * 2 + ANNIHILATION_SHARD_LIFE;
   }
 
-  Projection_ScaledUnit(work->args->targets[0], &origin);
+  Projection_ScaledUnit(state->args->targets[0], &origin);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {
     if (frame == ANNIHILATION_HIT_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    if (work->args->variant != EFFECT_VARIANT_BASIC &&
+    if (state->args->variant != EFFECT_VARIANT_BASIC &&
         frame == ANNIHILATION_HIT_FRAME)
       Sound_PlayFar(SE_POWER_UP);
-    Projection_ScaledUnit(work->args->user, &position);
+    Projection_ScaledUnit(state->args->user, &position);
     // The fire streak in front of the user.
     if (frame >= ANNIHILATION_STREAK_FRAME &&
         frame < ANNIHILATION_STREAK_FRAME + ANNIHILATION_STREAK_PICTURES) {
-      if (work->args->side == EFFECT_SIDE_ENEMIES)
+      if (state->args->side == EFFECT_SIDE_ENEMIES)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
       else
@@ -95,16 +95,16 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_ADDITIVE);
       blitters[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-      if (work->args->side == EFFECT_SIDE_ENEMIES)
+      if (state->args->side == EFFECT_SIDE_ENEMIES)
         blitters[0](canvas,
-                    work->sheet + (frame - ANNIHILATION_STREAK_FRAME) *
-                                      PICTURE_BYTES(FIRE_STREAK),
+                    state->sheet + (frame - ANNIHILATION_STREAK_FRAME) *
+                                       PICTURE_BYTES(FIRE_STREAK),
                     position.x / 2 - FIRE_STREAK_WIDTH / 2, position.y - 24,
                     FIRE_STREAK_WIDTH, FIRE_STREAK_HEIGHT);
       else
         blitters[0](canvas,
-                    work->sheet + (frame - ANNIHILATION_STREAK_FRAME) *
-                                      PICTURE_BYTES(FIRE_STREAK),
+                    state->sheet + (frame - ANNIHILATION_STREAK_FRAME) *
+                                       PICTURE_BYTES(FIRE_STREAK),
                     position.x / 2, position.y - 24, FIRE_STREAK_WIDTH,
                     FIRE_STREAK_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -120,7 +120,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       blitters[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
       if (step > ANNIHILATION_BURST_PICTURES - 1)
         step = ANNIHILATION_BURST_PICTURES - 1;
-      if (work->args->variant == EFFECT_VARIANT_BASIC)
+      if (state->args->variant == EFFECT_VARIANT_BASIC)
         strip = 0;
       else
         strip = ANNIHILATION_BURST_PICTURES * PICTURE_BYTES(FIRE_BURST);
@@ -143,11 +143,11 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
     EFFECT_VIEW_FROM_CAMERA(camera);
     // Shards shrink and fall.
     if (frame > 3) {
-      BattleEffect_FetchRectangleBlitters(work->args->side, blitters);
+      BattleEffect_FetchRectangleBlitters(state->args->side, blitters);
       for (i = 0; i != ANNIHILATION_SHARDS; i++) {
         s32 life;
 
-        shard = &work->particles[i];
+        shard = &state->particles[i];
         life = shard->variant;
         if (life > 0) {
           Projection_Point(shard, &out);
@@ -164,17 +164,17 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
     }
     // The strike throws the target back.
     if (frame == ANNIHILATION_HIT_FRAME) {
-      BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
-      work->shakeFrames = 4;
+      BattleMotion_ApplyKnockbackFar(state->args->targets[0], KNOCKBACK_HURL);
+      state->shakeFrames = 4;
     }
     if (frame == ANNIHILATION_STREAK_FRAME)
-      BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_RED_TINT,
+      BattleEffect_TintBattler(state->args->targets[0], SPRITE_COLOR_RED_TINT,
                                TINT_KEEP, TINT_KEEP, 0);
     if (frame == ANNIHILATION_FLASH_FRAME)
-      BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_RED_TINT,
+      BattleEffect_TintBattler(state->args->targets[0], SPRITE_COLOR_RED_TINT,
                                TINT_KEEP, TINT_KEEP, 0);
     BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();

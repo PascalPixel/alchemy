@@ -26,12 +26,12 @@
 #include "battle/battle_action_run.h"
 #include "battle/battle_actor.h"
 #include "battle/battle_camera.h"
-#include "battle/battle_effect_work.h"
+#include "battle/battle_effect_state.h"
 #include "battle/battle_random.h"
 #include "battle/battle_side.h"
 #include "battle/battle_sprites.h"
 #include "battle/battle_unit.h"
-#include "battle/battle_work.h"
+#include "battle/battle_state.h"
 #include "battle/blitter.h"
 #include "battle/debug_parameter_set.h"
 #include "battle/first_strike.h"
@@ -69,7 +69,7 @@
 #include "system/irq.h"
 #include "system/irq_lock.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/projection.h"
 #include "system/ram_buffer.h"
 #include "system/ram_code.h"
@@ -94,7 +94,7 @@
 #define BATTLE_WINOUT (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
 
 /// The battle background's colours: BG palettes 6 to 13, filled from
-/// BattleWork.palette, darkened or not.
+/// BattleState.palette, darkened or not.
 #define BATTLE_BG_PALETTE ((u16 *)&BG_PLTT_COLOR(6, 0))
 
 /// The opening curtain's tiles: 4-bit tiles 128 to 136 of character block 1,
@@ -112,12 +112,12 @@
 /// three enemy ids from FIRST_ENEMY_UNIT.
 #define LINK_PARTY_SIZE 3
 
-/// BattleWork.objectIndex of a unit with no place on the battlefield:
+/// BattleState.objectIndex of a unit with no place on the battlefield:
 /// BattleUnit_RefreshPlacement fills the list with it, and BattleObject_Get
 /// returns NULL for it.
 #define BATTLE_OBJECT_NONE 255
 
-/// BattleWork.defeatState: whether the last enemy fell alone, or with others
+/// BattleState.defeatState: whether the last enemy fell alone, or with others
 /// before it, or a party member's action ended the battle with a single
 /// defeat. The messages are "has been downed!" and "'s party goes down!",
 /// MsgDowned plus the state; DEFEAT_BY_PARTY_MEMBER shows neither.

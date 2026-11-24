@@ -41,7 +41,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
       -32,
       -32,
   };
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   s32 pillar;
@@ -56,16 +56,16 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   s32 x;
   s32 y;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   // The canvas at its own width, opaque: the pillars hide what is behind them.
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress(RESOURCE_ROCK_WALL_SHEET,
-                             work->sheet + QUAKE_WALL_PICTURE, 1, 1);
+                             state->sheet + QUAKE_WALL_PICTURE, 1, 1);
 
   // Cut the strip of ground that caps each pillar from the battle background.
   Iwram_CopyWords(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(2), 2 * BG_CHAR_SIZE);
@@ -74,11 +74,11 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
     for (x = 0; x != QUAKE_PILLAR_WIDTH; x++) {
       s32 pixel = BACKGROUND_PIXEL_OFFSET(x + QUAKE_GROUND_X, y);
 
-      work->sheet[row * QUAKE_PILLAR_WIDTH + x] = Ram_MapGridCellBuffer[pixel];
+      state->sheet[row * QUAKE_PILLAR_WIDTH + x] = Ram_MapGridCellBuffer[pixel];
     }
   }
 
-  if (work->args->side == EFFECT_SIDE_PARTY) {
+  if (state->args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
     xOffset = -NARROW_CANVAS_PARTY_X;
   } else {
@@ -87,18 +87,18 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_FOR_EACH_TARGET(member, work->args)
-    work->particles[member].variant = 0;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_FOR_EACH_TARGET(member, state->args)
+    state->particles[member].variant = 0;
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   heights = (*(const struct RockWallHeights *)&wallHeights);
-  work->shakeFrames = 128;
+  state->shakeFrames = 128;
   Sound_PlayFar(SE_RUMBLE);
 
   for (frame = 0;
-       frame != gQuake_Timings[work->args->variant][QUAKE_TIMING_FRAMES];
+       frame != gQuake_Timings[state->args->variant][QUAKE_TIMING_FRAMES];
        frame++) {
     EFFECT_VIEW_FROM_CAMERA(camera);
-    if (frame == gQuake_Timings[work->args->variant][QUAKE_TIMING_FRAMES] - 16)
+    if (frame == gQuake_Timings[state->args->variant][QUAKE_TIMING_FRAMES] - 16)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     for (pillar = 0; pillar != 3; pillar++) {
@@ -109,7 +109,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
       if ((frame & 31) + 32 == riseFrame)
         heights.column[pillar] += 32;
       if (frame >= riseFrame &&
-          frame < riseFrame + gQuake_Timings[work->args->variant]
+          frame < riseFrame + gQuake_Timings[state->args->variant]
                                             [QUAKE_TIMING_RISE_FRAMES]) {
         s32 height;
         s32 top;
@@ -121,17 +121,17 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
         if (height < 0)
           height = -height;
         top = QUAKE_PILLAR_FOOT - height;
-        draw(canvas, work->sheet + QUAKE_WALL_PICTURE, QUAKE_PILLAR_X(pillar),
+        draw(canvas, state->sheet + QUAKE_WALL_PICTURE, QUAKE_PILLAR_X(pillar),
              top, QUAKE_PILLAR_WIDTH, height);
-        draw(canvas, work->sheet, QUAKE_PILLAR_X(pillar),
+        draw(canvas, state->sheet, QUAKE_PILLAR_X(pillar),
              QUAKE_PILLAR_FOOT - QUAKE_GROUND_HEIGHT - height,
              QUAKE_PILLAR_WIDTH, QUAKE_GROUND_HEIGHT);
 
         // Throw up the targets standing on the pillar.
-        EFFECT_FOR_EACH_TARGET(member, work->args) {
+        EFFECT_FOR_EACH_TARGET(member, state->args) {
           struct Actor *actor;
 
-          actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
+          actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
           SET_VECTOR(point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
           Projection_Point(point, &screen);
           screen.x += xOffset;
@@ -142,29 +142,30 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
             actor->gravity = BATTLE_UNIT_GRAVITY;
           }
           if (actor->y.fixed < 0)
-            BattleEffect_TintBattler(work->args->targets[member],
+            BattleEffect_TintBattler(state->args->targets[member],
                                      SPRITE_COLOR_NORMAL, POSE_DAMAGE,
                                      TINT_KEEP, 0);
         }
       }
     }
 
-    EFFECT_FOR_EACH_TARGET(member, work->args) {
+    EFFECT_FOR_EACH_TARGET(member, state->args) {
       struct Actor *actor;
       struct Particle *landing;
 
-      actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
-      landing = &work->particles[member];
+      actor = GetBattleObjectSlotFar(state->args->targets[member])->actor;
+      landing = &state->particles[member];
       if (landing->variant == 0 && actor->y.fixed <= 0 &&
           actor->velocityY < 0) {
         landing->variant = 1;
-        BattleEffect_TintBattler(work->args->targets[member],
+        BattleEffect_TintBattler(state->args->targets[member],
                                  SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 5);
       }
     }
-    BattleCamera_Shake(gQuake_Timings[work->args->variant][QUAKE_TIMING_SHAKE],
-                       gQuake_Timings[work->args->variant][QUAKE_TIMING_SHAKE]);
-    EFFECT_END_FRAME(work);
+    BattleCamera_Shake(
+        gQuake_Timings[state->args->variant][QUAKE_TIMING_SHAKE],
+        gQuake_Timings[state->args->variant][QUAKE_TIMING_SHAKE]);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

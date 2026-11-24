@@ -15,7 +15,7 @@
 /// element (gDjinnFigures_SpriteIds), in place of any figures there, placed
 /// each frame by DjinnFigures_UpdateAllPositions.
 void DjinnFigures_InitializeTopRow(void *window, s32 unused) {
-  struct ItemMenuWork *state = gMenuWork;
+  struct ItemMenuState *state = gMenuState;
   s32 index;
 
   for (index = 0; index < 4; index++) {
@@ -43,7 +43,7 @@ void DjinnFigures_InitializeTopRow(void *window, s32 unused) {
 /// Releases the four sprites and removes their task.
 #define DJINN_FIGURES_DEFINE_RELEASE(name, update)                             \
   void name(void) {                                                            \
-    struct ItemMenuWork *state = gMenuWork;                                    \
+    struct ItemMenuState *state = gMenuState;                                  \
     s32 index;                                                                 \
                                                                                \
     for (index = 0; index < 4; index++) {                                      \
@@ -68,7 +68,7 @@ DJINN_FIGURES_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
 /// Task while the top row is up: places its four figures at full size where
 /// the screen has put them.
 void DjinnFigures_UpdateAllPositions(void) {
-  struct ItemMenuWork *state = gMenuWork;
+  struct ItemMenuState *state = gMenuState;
   s32 index;
   struct SpriteScale scale;
   struct SpritePlacement placement;
@@ -99,7 +99,7 @@ void DjinnFigures_UpdateAllPositions(void) {
 /// growing toward full size, facing south, or west for a figure whose y is
 /// marked negative (DjinnFigures_SetSlotPosition).
 void DjinnFigures_UpdateBottomRow(void) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   s32 index;
   struct SpriteScale scale;
   struct SpritePlacement placement;
@@ -148,7 +148,7 @@ void DjinnFigures_UpdateBottomRow(void) {
 /// element at full size, in place of any there, parked below the screen until
 /// the menu moves one.
 void DjinnFigures_InitializeBottomRow(s32 window, s32 unused) {
-  struct ItemMenuWork *state = gMenuWork;
+  struct ItemMenuState *state = gMenuState;
   s32 index;
 
   for (index = 0; index < 4; index++) {
@@ -174,15 +174,15 @@ void DjinnFigures_InitializeBottomRow(s32 window, s32 unused) {
 
 /// Places figure index at (x, y). With negative set, y keeps its low bits and
 /// is marked negative from bit 15 up, and the bottom row faces that figure
-/// west; no caller sets it. Returns where figureY[index] lies in the menu work,
-/// or index when there is no figure.
+/// west; no caller sets it. Returns where figureY[index] lies in the menu
+/// state, or index when there is no figure.
 s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
-  struct ItemMenuWork *state = gMenuWork;
+  struct ItemMenuState *state = gMenuState;
 
   if (state->figures[index] != NULL) {
     state->figureX[index] = x;
     state->figureY[index] = negative != 0 ? y | (s32)0xffff8000 : y;
-    return offsetof(struct ItemMenuWork, figureY) + index * 2;
+    return offsetof(struct ItemMenuState, figureY) + index * 2;
   }
   return index;
 }
@@ -190,7 +190,7 @@ s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
 /// Sets figure index's scale phase (16.16): negative for a fixed scale of
 /// -phase, otherwise the scale it grows from toward full size.
 s32 DjinnFigures_SetSlotPhase(s32 index, FIXED phase) {
-  ((struct ItemMenuWork *)gMenuWork)->figureScales[index] = phase;
+  ((struct ItemMenuState *)gMenuState)->figureScales[index] = phase;
 #ifdef UBFIX
   return 0;
 #endif
@@ -199,7 +199,7 @@ s32 DjinnFigures_SetSlotPhase(s32 index, FIXED phase) {
 /// Makes figure index the Djinni figure of element (gDjinnFigures_SpriteIds)
 /// playing `animation`. Returns 1.
 s32 DjinnFigures_ReplaceSlot(s32 index, s32 element, s32 animation) {
-  struct ItemMenuWork *state = gMenuWork;
+  struct ItemMenuState *state = gMenuState;
 
   if (state->figures[index] != NULL) {
     Sprite_DestroyFar(state->figures[index]);
@@ -221,7 +221,7 @@ DJINN_FIGURES_DEFINE_RELEASE(DjinnFigures_ReleaseBottomRow,
 
 /// Has each party figure stand (ANIM_STAND). Nothing calls it.
 UNUSED void Menu_StartPartyFiguresStanding(void) {
-  struct ItemMenuWork *menu = gMenuWork;
+  struct ItemMenuState *menu = gMenuState;
   s32 index;
 
   for (index = 0; index < menu->partyCount; ++index) {

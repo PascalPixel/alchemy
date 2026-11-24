@@ -90,7 +90,7 @@
 #include "system/input.h"
 #include "system/io_write_queue.h"
 #include "system/main_routine.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/vram_cache.h"
 #include "window/screens.h"
@@ -473,7 +473,7 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   FIXED x;
   FIXED z;
 
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   actor = Actor_Get(actorId);
   Event_Start();
   {
@@ -511,7 +511,7 @@ static void ColosseumAzartMatch_RollLogNorthSouth(void) {
   s32 row;
   s32 offset;
 
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineState.leaderActorId);
   row = FIELD_CELL(actor->z.fixed);
   offset = -LOG_NORTH_SOUTH_FLOAT;
   if (row <= LOG_NORTH_ROW) {
@@ -530,7 +530,7 @@ static void ColosseumAzartMatch_RollLogEastWest(void) {
   s32 offset;
   s32 direction;
 
-  column = FIELD_CELL(Actor_Get(gMainRoutineWork.leaderActorId)->x.fixed);
+  column = FIELD_CELL(Actor_Get(gMainRoutineState.leaderActorId)->x.fixed);
   if ((gKeysHeld & KEY_LEFT) != 0) {
     direction = -1;
   }
@@ -586,7 +586,7 @@ static void ColosseumAzartMatch_PushPipeworksPipe(void) {
   struct Actor *actor;
   s32 none;
 
-  leaderId = gMainRoutineWork.leaderActorId;
+  leaderId = gMainRoutineState.leaderActorId;
   leader = Actor_Get(leaderId);
   actor = Actor_Get(ACTOR_PIPEWORKS_PIPE);
   GameFlag_Set(FLAG_PIPEWORKS_PIPE_PUSHED);
@@ -601,8 +601,8 @@ static void ColosseumAzartMatch_PushPipeworksPipe(void) {
                              actor->z.fixed);
   Event_Wait(6);
   Actor_SetAnimation(leaderId, ANIM_WALK);
-  Actor_StartCamera(((struct FieldWork *)HeapSlot_AllocEwram(
-                         HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
+  Actor_StartCamera(((struct FieldState *)HeapSlot_AllocEwram(
+                         HEAP_SLOT_FIELD, sizeof(struct FieldState)))
                         ->camera,
                     (s32)actor);
   Actor_SetSpeedAndAcceleration(leaderId, 0.3, 0.2);
@@ -772,7 +772,7 @@ s32 Scene_Initialize(void) {
   s32 x;
   s32 col;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   actor = Actor_Get(ACTOR_ROCK_A);
   hit = MapGrid_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
@@ -832,7 +832,7 @@ s32 Scene_Initialize(void) {
   Actor_Get(ACTOR_PIPE_EAST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_IRON_SHIELD);
   Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_PADDED_GLOVES);
-  switch (gMainRoutineWork.entrance) {
+  switch (gMainRoutineState.entrance) {
   case COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 4, toFIXED(1304),
                            toFIXED(192), ACTOR_PRIZE_A, ACTOR_PRIZE_B);
@@ -1050,7 +1050,7 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
 static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
   s32 path;
 
-  if (gMainRoutineWork.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gMainRoutineState.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(actorId);
   } else {
     Event_Start();
@@ -1124,7 +1124,7 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
   s32 path;
   struct Actor *second;
 
-  if (gMainRoutineWork.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gMainRoutineState.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     Event_Start();
@@ -1187,7 +1187,7 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
 static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
   s32 path;
 
-  if (gMainRoutineWork.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gMainRoutineState.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(actorId);
   } else {
     Event_Start();
@@ -1231,7 +1231,7 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
 static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
   s32 path;
 
-  if (gMainRoutineWork.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gMainRoutineState.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(actorId);
     return;
   }

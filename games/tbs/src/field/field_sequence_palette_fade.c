@@ -7,7 +7,7 @@
 /// The colours a palette fade moves: the BG's 224, then the OBJ's 224.
 #define COLOR_HALF 224
 #define COLOR_MAX (2 * COLOR_HALF)
-/// Palette fade work holds each channel of a colour in bits 14..10 of a
+/// Palette fade state holds each channel of a colour in bits 14..10 of a
 /// halfword, where RGB555 keeps blue: green's bits move up
 /// BLUE_SHIFT - GREEN_SHIFT to get there, red's BLUE_SHIFT.
 #define BLUE_CHANNEL(color) ((color) & BLUE_BITS)
@@ -48,37 +48,37 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
 /// one step toward its target, packs it into RGB555 and queues it for the BG
 /// and OBJ palettes.
 void PaletteFade_Update(void) {
-  struct PaletteFade *work = gPaletteFadeWork;
-  u16 *channelDelta = work->delta;
+  struct PaletteFade *state = gPaletteFadeState;
+  u16 *channelDelta = state->delta;
   s32 i;
 
   if (GameFlag_GetFar(FLAG_PALETTE_BLEND_HELD) != 0) {
     return;
   }
-  if (work->duration == 0) {
+  if (state->duration == 0) {
     return;
   }
   // Accumulate modular 16-bit channel steps; on the last frame copy the
   // target itself, so rounding in the steps never leaves the colours short.
-  if (++work->step < work->duration) {
-    u16 *currentChannel = work->current;
+  if (++state->step < state->duration) {
+    u16 *currentChannel = state->current;
     for (i = 0; i < PALETTE_FADE_CHANNELS; i++) {
       *currentChannel++ += *channelDelta++;
     }
   } else {
-    Iwram_CopyWords(work->current, work->target, sizeof(work->current));
-    work->duration = 0;
+    Iwram_CopyWords(state->current, state->target, sizeof(state->current));
+    state->duration = 0;
   }
 
   {
     // Pack the channels into the hidden page as RGB555: each channel's bits
     // 14..10 become its colour's level.
-    u16 *packed = work->packed[1 ^ work->page];
+    u16 *packed = state->packed[1 ^ state->page];
     s32 blueMask = BLUE_BITS;
     u16 *current;
 
     i = COLOR_MAX;
-    current = work->current;
+    current = state->current;
     for (; i != 0; i--) {
       *packed++ =
           (current[0] & blueMask) |
@@ -90,9 +90,9 @@ void PaletteFade_Update(void) {
 
   // Show the page just written: queue its BG half and OBJ half (224 colours,
   // 112 words each) for the palettes.
-  work->page ^= 1;
+  state->page ^= 1;
   {
-    u16 *packed = work->packed[work->page];
+    u16 *packed = state->packed[state->page];
 
     IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)packed,
                         DMA_COPY_WORDS(COLOR_HALF / 2));
@@ -372,18 +372,18 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   }
 }
 
-/// Sets up the palette fade (gPaletteFadeWork) from the BG and OBJ palettes and
-/// starts updating the palettes from it each frame.
+/// Sets up the palette fade (gPaletteFadeState) from the BG and OBJ palettes
+/// and starts updating the palettes from it each frame.
 void PaletteFade_Initialize(void) {
-  struct PaletteFade *work;
+  struct PaletteFade *state;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*work));
-  Dma_Fill32(0, work, sizeof(*work));
-  Dma_Set((void *)BG_PLTT, &work->palette[0], DMA_COPY_WORDS(COLOR_HALF / 2),
+  state = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*state));
+  Dma_Fill32(0, state, sizeof(*state));
+  Dma_Set((void *)BG_PLTT, &state->palette[0], DMA_COPY_WORDS(COLOR_HALF / 2),
           REG_DMA3);
-  Dma_Set((void *)OBJ_PLTT, &work->palette[COLOR_HALF],
+  Dma_Set((void *)OBJ_PLTT, &state->palette[COLOR_HALF],
           DMA_COPY_WORDS(COLOR_HALF / 2), REG_DMA3);
-  PaletteFade_Build(PALETTE_TINT_NONE, work->palette, work->target,
+  PaletteFade_Build(PALETTE_TINT_NONE, state->palette, state->target,
                     PALETTES_ALL);
   Task_Add(PaletteFade_Update, TASK_PASS_FRAME + 15);
 }
@@ -397,40 +397,40 @@ void PaletteFade_Release(void) {
 /// Sets the colours the buffer moves toward (see PaletteFade_Build); does
 /// nothing without a palette fade.
 void PaletteFade_SetTarget(s32 mode, s32 half) {
-  struct PaletteFade *work = gPaletteFadeWork;
+  struct PaletteFade *state = gPaletteFadeState;
 
-  if (work != NULL) {
-    PaletteFade_Build(mode, work->palette, work->target, half);
+  if (state != NULL) {
+    PaletteFade_Build(mode, state->palette, state->target, half);
   }
 }
 
 /// Sets the colours the buffer shows now (see PaletteFade_Build).
 void PaletteFade_SetSource(s32 mode, s32 half) {
-  struct PaletteFade *work = gPaletteFadeWork;
+  struct PaletteFade *state = gPaletteFadeState;
 
-  if (work != NULL) {
-    PaletteFade_Build(mode, work->palette, work->current, half);
+  if (state != NULL) {
+    PaletteFade_Build(mode, state->palette, state->current, half);
   }
 }
 
 /// Sets the buffer's source backdrop colour (BG colour 0 of its palette copy).
 void PaletteFade_SetBackdrop(u32 color) {
-  struct PaletteFade *work = gPaletteFadeWork;
+  struct PaletteFade *state = gPaletteFadeState;
 
-  if (work != NULL) {
-    work->palette[0] = color;
+  if (state != NULL) {
+    state->palette[0] = color;
   }
 }
 
 /// Starts moving the shown colours to the target colours over frames frames:
-/// sets work->duration, clears work->step and fills work->delta.
+/// sets state->duration, clears state->step and fills state->delta.
 void PaletteFade_StartInterpolation(s32 frames) {
-  struct PaletteFade *work = gPaletteFadeWork;
+  struct PaletteFade *state = gPaletteFadeState;
 
-  if (work != NULL) {
-    work->duration = frames;
-    work->step = 0;
-    PaletteFade_CalculateSteps(work->current, work->target, work->delta,
+  if (state != NULL) {
+    state->duration = frames;
+    state->step = 0;
+    PaletteFade_CalculateSteps(state->current, state->target, state->delta,
                                frames);
   }
 }

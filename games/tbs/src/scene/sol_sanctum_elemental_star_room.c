@@ -68,7 +68,7 @@
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/io_reg.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "window/screens.h"
 #include "window/window.h"
@@ -191,7 +191,7 @@ struct Actor;
 
 /// Advances through the current dialogue's consecutive messages.
 static inline void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
-  gFieldWork->message += amount;
+  gFieldState->message += amount;
 }
 
 #include "shared/actor_facing.c"
@@ -273,7 +273,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   MapGrid_PlayMapEdit(gSolSanctum_StarCells, RISEN_PILLAR_LEFT(41), 10);
   OPEN_RISEN_PILLAR(41, 10);
   Event_Wait(40);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -378,7 +378,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   MapGrid_PlayMapEdit(gSolSanctum_StarCells, RISEN_PILLAR_LEFT(21), 29);
   OPEN_RISEN_PILLAR(21, 29);
   Event_Wait(40);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -500,7 +500,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   MapGrid_PlayMapEdit(gSolSanctum_StarCells, RISEN_PILLAR_LEFT(36), 10);
   OPEN_RISEN_PILLAR(36, 10);
   Event_Wait(40);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1385,7 +1385,7 @@ static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
   Actor_Jump(ACTOR_GARET, 2, 20);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
   Actor_Jump(ACTOR_GARET, 6, 40);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(
@@ -1552,9 +1552,9 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetPosition(ACTOR_PARTY_LEADER, 471, 290);
   rising->motionFlags = 0;
   rising->y.fixed = toFIXED(40);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
-  gFieldWork->transitionFrames = 32;
+  gFieldState->transitionFrames = 32;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -1823,7 +1823,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 30);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 30);
@@ -1920,7 +1920,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 10);
@@ -1949,7 +1949,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   // "You understand now, don't you?"
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
   Event_Wait(20);
@@ -2190,7 +2190,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Party_RemoveMemberRestored(JENNA);
   SolSanctumElementalStarRoom_GiveMythrilBags();
   MapGrid_CopyCellAttributes(8, 0, 5, 1, 27, 17);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   Event_End();
 }
@@ -2232,7 +2232,7 @@ s32 Scene_Initialize(void) {
     SolSanctumElementalStarRoom_StandAroundHostages();
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) == 0) {
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
       SolSanctumElementalStarRoom_EnterStarRoom();
     }
@@ -2286,8 +2286,8 @@ static s32 SolSanctumElementalStarRoom_PresentStarFX(s32 item, FIXED x, FIXED y,
 /// Makes room among the items and gives the party four Mythril Bags, keeping
 /// the dialogue's place.
 static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
-  struct FieldWork *work = gFieldWork;
-  s16 savedMessage = work->message;
+  struct FieldState *state = gFieldState;
+  s16 savedMessage = state->message;
   s32 itemSlot;
   s32 itemOwner;
   s32 freeSlots;
@@ -2311,7 +2311,7 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
   PartyInventory_Add(ITEM_MYTHRIL_BAG);
   PartyInventory_Add(ITEM_MYTHRIL_BAG);
   PartyInventory_Add(ITEM_MYTHRIL_BAG);
-  work->message = savedMessage;
+  state->message = savedMessage;
 }
 
 /// Alex warps in where he has been placed, hidden.

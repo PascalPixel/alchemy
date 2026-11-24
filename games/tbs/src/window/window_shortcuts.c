@@ -1,6 +1,6 @@
 /// @file
 /// The area name shown on entering an area, the debug Psynergy shortcut picker
-/// and the unused selection workspace.
+/// and the unused selection state.
 // Part of window.c.
 
 #include "window_internal.h"
@@ -8,16 +8,16 @@
 /// The entries of the debug shortcut picker's list, which
 /// Menu_FindShortcutEntries searches whole.
 #define SHORTCUT_LIST_ENTRIES 448
-/// A shortcut (gMainRoutineWork.firstShortcut and secondShortcut) is
+/// A shortcut (gMainRoutineState.firstShortcut and secondShortcut) is
 /// member << SHORTCUT_MEMBER_SHIFT | action, as Debug_SelectShortcuts stores
 /// it.
 #define SHORTCUT_MEMBER_SHIFT 10
 #define SHORTCUT_ABILITY_MASK 0x3ff
 
-/// The area name notice's fields, which live in the field work block
-/// (gFieldWork, a scene's work), for as long as the scene runs.
-struct TimedNoticeWork {
-  u8 fieldWork[560];     ///< the field work's other fields
+/// The area name notice's fields, which live in the field state block
+/// (gFieldState, a scene's state), for as long as the scene runs.
+struct TimedNoticeState {
+  u8 fieldState[560];    ///< the field state's other fields
   struct Window *window; ///< the notice's window; it may since have closed
   u16 countdown;         ///< frames left to show it
 };
@@ -25,7 +25,7 @@ struct TimedNoticeWork {
 /// Shows the area's name in a window centred in the screen's top ten rows, for
 /// AREA_NAME_WINDOW_FRAMES; a per-frame task closes it.
 void AreaNameWindow_Show(void) {
-  struct TimedNoticeWork *notice;
+  struct TimedNoticeState *notice;
   s32 height;
   s32 width;
   s32 y;
@@ -33,11 +33,11 @@ void AreaNameWindow_Show(void) {
   s32 areaMessage;
   struct Window *nameWindow;
 
-  notice = (struct TimedNoticeWork *)gFieldWork;
+  notice = (struct TimedNoticeState *)gFieldState;
   x = 8;
   y = 8;
   areaMessage =
-      Area_GetNameIndexFar(gMainRoutineWork.next, gMainRoutineWork.entrance) +
+      Area_GetNameIndexFar(gMainRoutineState.next, gMainRoutineState.entrance) +
       MsgDebugAreaName;
   Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
   x = (DISPLAY_TILE_WIDTH - width) >> 1;
@@ -51,10 +51,10 @@ void AreaNameWindow_Show(void) {
 
 /// Counts the area name down, and closes it at 0.
 void AreaNameWindow_Update(void) {
-  struct TimedNoticeWork *notice;
+  struct TimedNoticeState *notice;
   u16 framesLeft;
 
-  notice = (struct TimedNoticeWork *)gFieldWork;
+  notice = (struct TimedNoticeState *)gFieldState;
   // Adding (u16)-1 takes one off in 16 bits.
   notice->countdown = (framesLeft = notice->countdown + (u16)-1);
   if (framesLeft == 0) {
@@ -67,7 +67,7 @@ void AreaNameWindow_Update(void) {
 void AreaNameWindow_Hide(void) {
   struct Window *window;
 
-  window = ((struct TimedNoticeWork *)gFieldWork)->window;
+  window = ((struct TimedNoticeState *)gFieldState)->window;
   if (window != NULL && window->flags != 0) {
     Window_Close(window, WINDOW_FLAG_INSTANT);
     Task_Remove(AreaNameWindow_Update);
@@ -85,12 +85,12 @@ s32 Item_ReturnTrue(void) { return 1; }
 
 /// Steps the window hue one step: back when keys contains LEFT, on otherwise.
 UNUSED void SettingsMenu_StepWindowHue(s32 keys) {
-  u8 hue = gMainRoutineWork.windowHue;
+  u8 hue = gMainRoutineState.windowHue;
   if (keys & KEY_LEFT)
     hue += (u8)-1;
   else
     hue += 1;
-  gMainRoutineWork.windowHue = hue;
+  gMainRoutineState.windowHue = hue;
 }
 
 /// A Psynergy the debug shortcut picker lists: its party member and the
@@ -102,7 +102,7 @@ struct AbilityListEntry {
 
 /// Lets the player pick two Psynergy shortcuts from all the party's Psynergy,
 /// showing each one's cost and description, and stores them in
-/// gMainRoutineWork.firstShortcut and secondShortcut (member <<
+/// gMainRoutineState.firstShortcut and secondShortcut (member <<
 /// SHORTCUT_MEMBER_SHIFT | Psynergy).
 void Debug_SelectShortcuts(void) {
   struct AbilityListEntry *list;
@@ -231,9 +231,9 @@ void Debug_SelectShortcuts(void) {
     }
     // Persist both member/ability pairs before releasing the picker resources.
     // A, B and START all keep the picks.
-    gMainRoutineWork.firstShortcut =
+    gMainRoutineState.firstShortcut =
         (list[first].member << SHORTCUT_MEMBER_SHIFT) | list[first].ability;
-    gMainRoutineWork.secondShortcut =
+    gMainRoutineState.secondShortcut =
         (list[second].member << SHORTCUT_MEMBER_SHIFT) | list[second].ability;
     Window_Close(picks, 1);
     Window_Close(title, 1);
@@ -287,9 +287,9 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
 
   for (entryIndex = 0; entryIndex < SHORTCUT_LIST_ENTRIES; entryIndex++) {
     if (entries[entryIndex].ability ==
-            (gMainRoutineWork.firstShortcut & SHORTCUT_ABILITY_MASK) &&
+            (gMainRoutineState.firstShortcut & SHORTCUT_ABILITY_MASK) &&
         entries[entryIndex].member ==
-            (gMainRoutineWork.firstShortcut >> SHORTCUT_MEMBER_SHIFT)) {
+            (gMainRoutineState.firstShortcut >> SHORTCUT_MEMBER_SHIFT)) {
       *firstIndex = entryIndex;
       break;
     }
@@ -297,9 +297,9 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
 
   for (entryIndex = 0; entryIndex < SHORTCUT_LIST_ENTRIES; entryIndex++) {
     if (entries[entryIndex].ability ==
-            (gMainRoutineWork.secondShortcut & SHORTCUT_ABILITY_MASK) &&
+            (gMainRoutineState.secondShortcut & SHORTCUT_ABILITY_MASK) &&
         entries[entryIndex].member ==
-            (gMainRoutineWork.secondShortcut >> SHORTCUT_MEMBER_SHIFT)) {
+            (gMainRoutineState.secondShortcut >> SHORTCUT_MEMBER_SHIFT)) {
       *secondIndex = entryIndex;
       break;
     }
@@ -309,10 +309,10 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
 /// Runs the debug Psynergy shortcut picker (Debug_SelectShortcuts).
 void Menu_RunSelectionHook(void) { Debug_SelectShortcuts(); }
 
-/// The work block of HEAP_SLOT_SELECTION_WORKSPACE (gSelectionWorkspace): two
+/// The state block of HEAP_SLOT_SELECTION_STATE (gSelectionState): two
 /// VRAM cache entries with their flags and a window, among fields nothing here
 /// uses. Only the two unused functions below touch it.
-struct SelectionWorkspace {
+struct SelectionState {
   u8 unusedBeforeFirst[70];
   /// Nonzero when firstResource is a VRAM cache entry to free on release.
   u16 firstActive;
@@ -326,36 +326,36 @@ struct SelectionWorkspace {
   u8 unusedAfterWindow[12];
 };
 
-STATIC_ASSERT(sizeof(struct SelectionWorkspace) == 4100);
+STATIC_ASSERT(sizeof(struct SelectionState) == 4100);
 
-/// Unused: allocates the work block of HEAP_SLOT_SELECTION_WORKSPACE and clears
+/// Unused: allocates the state block of HEAP_SLOT_SELECTION_STATE and clears
 /// its two flags.
-UNUSED void Menu_AllocateSelectionWorkspace(void) {
-  struct SelectionWorkspace *work;
+UNUSED void Menu_AllocateSelectionState(void) {
+  struct SelectionState *state;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_WORKSPACE,
-                             sizeof(struct SelectionWorkspace));
-  work->firstActive = 0;
-  work->secondActive = 0;
+  state = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_STATE,
+                              sizeof(struct SelectionState));
+  state->firstActive = 0;
+  state->secondActive = 0;
 }
 
-/// Unused: closes the window of HEAP_SLOT_SELECTION_WORKSPACE's work block,
+/// Unused: closes the window of HEAP_SLOT_SELECTION_STATE's state block,
 /// frees the VRAM cache entries its flags mark and frees the block.
-UNUSED void Menu_ReleaseSelectionWorkspace(void) {
-  struct SelectionWorkspace *work;
+UNUSED void Menu_ReleaseSelectionState(void) {
+  struct SelectionState *state;
 
-  work = *(struct SelectionWorkspace **)gSelectionWorkspace;
-  Window_Close(work->window, 0);
-  while (Window_IsClosed(work->window) == 0) {
+  state = *(struct SelectionState **)gSelectionState;
+  Window_Close(state->window, 0);
+  while (Window_IsClosed(state->window) == 0) {
     wait(1);
   }
-  if (work->firstActive != 0) {
-    VramCache_FreeEntry(work->firstResource);
+  if (state->firstActive != 0) {
+    VramCache_FreeEntry(state->firstResource);
   }
-  if (work->secondActive != 0) {
-    VramCache_FreeEntry(work->secondResource);
+  if (state->secondActive != 0) {
+    VramCache_FreeEntry(state->secondResource);
   }
-  HeapSlot_Release(HEAP_SLOT_SELECTION_WORKSPACE);
+  HeapSlot_Release(HEAP_SLOT_SELECTION_STATE);
 }
 
 #undef SHORTCUT_LIST_ENTRIES

@@ -6,7 +6,7 @@
 #include "event_commands_internal.h"
 
 /// The drops Douse rains: cast at nothing, cast on a target, and cast on a
-/// target where they sway down (FieldEffectWork.lit).
+/// target where they sway down (FieldEffectState.lit).
 #define DOUSE_DROPS 10
 #define DOUSE_DROPS_ON_TARGET 24
 #define DOUSE_SWAYING_DROPS_ON_TARGET 30
@@ -76,8 +76,8 @@ void FieldPsynergy_Douse(void) {
   struct Vector3 pos;
   struct Vector3 start;
   struct Vector3 end;
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *caster = effectWork->mainActor;
+  struct FieldEffectState *effectState = gFieldEffectState;
+  struct Actor *caster = effectState->mainActor;
   struct Actor *cloud;
   s32 step;
   s32 steps = GROW_STEPS + 1;
@@ -91,21 +91,21 @@ void FieldPsynergy_Douse(void) {
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
   // No target: 16 pixels in front of the caster, at the ground's height.
-  if (effectWork->child == 0) {
-    effectWork->x = caster->x.fixed;
-    effectWork->z = caster->z.fixed;
-    Vector_AddPolarOffset(toFIXED(16), effectWork->angle,
-                          (struct Vector3 *)&effectWork->x);
-    effectWork->y = MapGrid_GetTerrainHeightFar(MAPGRID_LAYER_GROUND,
-                                                effectWork->x, effectWork->z);
+  if (effectState->child == 0) {
+    effectState->x = caster->x.fixed;
+    effectState->z = caster->z.fixed;
+    Vector_AddPolarOffset(toFIXED(16), effectState->angle,
+                          (struct Vector3 *)&effectState->x);
+    effectState->y = MapGrid_GetTerrainHeightFar(
+        MAPGRID_LAYER_GROUND, effectState->x, effectState->z);
   }
   SET_POSITION(&start, caster->x.fixed, caster->y.fixed + toFIXED(16),
                caster->z.fixed);
-  end.x = effectWork->x;
-  y = effectWork->y;
+  end.x = effectState->x;
+  y = effectState->y;
   end.y = y + toFIXED(32);
-  end.z = effectWork->z;
-  if (effectWork->childOption != 0)
+  end.z = effectState->z;
+  if (effectState->childOption != 0)
     end.y = y + toFIXED(80);
 
   // Grow from a quarter to full size on the way.
@@ -122,11 +122,11 @@ void FieldPsynergy_Douse(void) {
   }
   wait(10);
 
-  if ((s8)effectWork->lit == 0) {
+  if ((s8)effectState->lit == 0) {
     // Drop a particle every 6 frames from 3 to 8 pixels round the cloud (the
     // last right under it); enabled is cleared once a target is dispatched.
     count = DOUSE_DROPS;
-    if (effectWork->enabled == 0)
+    if (effectState->enabled == 0)
       count = DOUSE_DROPS_ON_TARGET;
     for (step = 0; step < count; step++) {
       pos.x = cloud->x.fixed;
@@ -152,7 +152,7 @@ void FieldPsynergy_Douse(void) {
   } else {
     // Every 6 frames, a swaying particle falls from 3 to 8 pixels round the
     // cloud.
-    if (effectWork->enabled != 0)
+    if (effectState->enabled != 0)
       count = DOUSE_DROPS;
     else
       count = DOUSE_SWAYING_DROPS_ON_TARGET;

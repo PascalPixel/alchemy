@@ -2,7 +2,7 @@
 #define ALCHEMY_COLOSSO_GAUGE_H
 
 /// @file
-/// The Colosso race gauge's sprites and work.
+/// The Colosso race gauge's sprites and state.
 
 #include "fixed_math.h"
 
@@ -14,10 +14,10 @@ struct ColossoGaugeSprite {
   s32 tile; ///< OAM attribute 2: the tile, with palette 14 and priority 1
 };
 
-/// The Colosso race gauge's work at the start of the race's heap slot
+/// The Colosso race gauge's state at the start of the race's heap slot
 /// (HEAP_SLOT_COLOSSO_RACE): its sprites, how far it has slid down, the racers
 /// and the finish.
-struct ColossoGaugeWork {
+struct ColossoGaugeState {
   /// The bar, its ends and the racers' marks: 2 * segments + 6 sprites, all
   /// 18 for Colosseum Final 3's six segments.
   struct ColossoGaugeSprite sprites[18];
@@ -50,16 +50,16 @@ struct ColossoGaugeWork {
 };
 
 STATIC_ASSERT(sizeof(struct ColossoGaugeSprite) == 12);
-STATIC_ASSERT(sizeof(struct ColossoGaugeWork) == 240);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, vramBlock) == 216);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, level) == 218);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, hold) == 220);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, playerActorId) == 222);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, opponentActorId) == 224);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishItemActorIdA) == 226);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishItemActorIdB) == 228);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, segments) == 230);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishX) == 232);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishZ) == 236);
+STATIC_ASSERT(sizeof(struct ColossoGaugeState) == 240);
+STATIC_ASSERT(offsetof(struct ColossoGaugeState, vramBlock) == 216);
+STATIC_ASSERT(offsetof(struct ColossoGaugeState, level) == 218);
+STATIC_ASSERT(offsetof(struct ColossoGaugeState, hold) == 220);
+STATIC_ASSERT(offsetof(struct ColossoGaugeState, playerActorId) == 222);
+STATIC_ASSERT(offsetof(struct ColossoGaugeState, opponentActorId) == 224);
+STATIC_ASSERT(offsetof(struct ColossoGaugeState, finishItemActorIdA) == 226);
+STATIC_ASSERT(offsetof(struct ColossoGaugeState, finishItemActorIdB) == 228);
+STATIC_ASSERT(offsetof(struct ColossoGaugeState, segments) == 230);
+STATIC_ASSERT(offsetof(struct ColossoGaugeState, finishX) == 232);
+STATIC_ASSERT(offsetof(struct ColossoGaugeState, finishZ) == 236);
 
 #endif

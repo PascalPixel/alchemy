@@ -49,7 +49,7 @@ struct BurstParticleVisualGroup {
 void FieldPsynergy_GrowthOnTarget(s32 unused) {
   struct Actor *target;
 
-  target = ((struct FieldEffectWork *)gFieldEffectWork)->child;
+  target = ((struct FieldEffectState *)gFieldEffectState)->child;
   if (target != NULL) {
     FieldEffect_SpawnBurstParticleField();
     // A sprout grows tall: sprout.tsv's animation 2, pictures 0 to 6.
@@ -68,7 +68,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
 /// caster, and then five bits of vine (SPRITE_VINE) fall 4 to 10 pixels round
 /// the Psynergy's position.
 void FieldPsynergy_Growth(void) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct FieldEffectState *effectState = gFieldEffectState;
   struct BurstParticleVector pos;
   s32 i;
 
@@ -78,11 +78,11 @@ void FieldPsynergy_Growth(void) {
     struct Actor *particle;
     FIXED radius;
 
-    pos.values[0] = effectWork->x;
-    pos.values[2] = effectWork->z;
+    pos.values[0] = effectState->x;
+    pos.values[2] = effectState->z;
     radius = (Random16() * 6) + toFIXED(4);
     Vector_AddPolarOffset(radius, Random16(), &pos);
-    pos.values[1] = effectWork->y;
+    pos.values[1] = effectState->y;
     particle =
         Actor_Spawn(SPRITE_VINE, pos.values[0], pos.values[1], pos.values[2]);
     if (particle != 0) {
@@ -98,13 +98,13 @@ void FieldPsynergy_Growth(void) {
 /// Sends GROWTH_PARTICLE_MAX green sparks, one every 2 frames, from in front of
 /// the caster to points round the Psynergy's position.
 void FieldEffect_SpawnBurstParticleField(void) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Actor *caster;
   s32 pos[3];
   s32 particleIndex;
 
-  effectWork = gFieldEffectWork;
-  caster = effectWork->mainActor;
+  effectState = gFieldEffectState;
+  caster = effectState->mainActor;
   FieldPsynergy_FadeToCastColor();
 
   for (particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;
@@ -114,16 +114,16 @@ void FieldEffect_SpawnBurstParticleField(void) {
     struct BurstParticleVisual *shadow;
     FIXED radius;
 
-    if (effectWork->angle == FACING_SOUTH) {
+    if (effectState->angle == FACING_SOUTH) {
       SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + toFIXED(10),
                  caster->z.fixed);
-    } else if (effectWork->angle == FACING_NORTH) {
+    } else if (effectState->angle == FACING_NORTH) {
       SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + toFIXED(24),
                  caster->z.fixed);
     } else {
       SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + toFIXED(10),
                  caster->z.fixed);
-      Vector_AddPolarOffset(toFIXED(10), effectWork->angle, pos);
+      Vector_AddPolarOffset(toFIXED(10), effectState->angle, pos);
     }
 
     // The shadow part takes the image's colour mode, shape, size, tile and
@@ -152,9 +152,9 @@ void FieldEffect_SpawnBurstParticleField(void) {
       Actor_SetSpriteFlagsFar(particle, SPRITE_FLAG_SHADOW);
 
       // Destination: 4 to 10 pixels from the Psynergy's position.
-      SET_VECTOR(pos, effectWork->x, effectWork->y, effectWork->z);
-      if (effectWork->angle == FACING_NORTH)
-        Vector_AddPolarOffset(toFIXED(14), effectWork->angle, pos);
+      SET_VECTOR(pos, effectState->x, effectState->y, effectState->z);
+      if (effectState->angle == FACING_NORTH)
+        Vector_AddPolarOffset(toFIXED(14), effectState->angle, pos);
       radius = Random16() * 6 + toFIXED(4);
       Vector_AddPolarOffset(radius, Random16(), pos);
       Actor_SetMoveTargetFar(particle, pos[0], pos[1], pos[2]);

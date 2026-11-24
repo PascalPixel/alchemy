@@ -28,12 +28,12 @@ struct Window;
 /// screen has no place for it.
 #define MENU_FIGURE_HIDDEN_Y 200
 
-/// The item menu's work, in the HEAP_SLOT_MENU heap slot: its windows, the
+/// The item menu's state, in the HEAP_SLOT_MENU heap slot: its windows, the
 /// party figures, the items listed and the two choices a command makes.
-struct ItemMenuWork {
-  u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
+struct ItemMenuState {
+  u8 unused[8]; ///< no view of the menu state names it (see menu/README.md)
   s32 selectedMember;         ///< the party member chosen
-  struct Window *moneyWindow; ///< ShopWork's; not named here
+  struct Window *moneyWindow; ///< ShopState's; not named here
   struct Window *mainWindow;
   /// The two sides: the party member whose items are shown, and the one an item
   /// is given to.
@@ -55,7 +55,7 @@ struct ItemMenuWork {
   struct WindowSprite *gridCursor;     ///< only prepared by name
   struct WindowSprite *entryIcons[MENU_ENTRY_ICONS];
   struct WindowSprite *categoryIcons[8];
-  u8 unusedAfterIcons[36]; ///< no view of the menu work names it
+  u8 unusedAfterIcons[36]; ///< no view of the menu state names it
   struct Window *questionWindow;
   /// The cursor grid: its place and its size, 1 by 1 at first.
   ///@{
@@ -71,7 +71,7 @@ struct ItemMenuWork {
   u16 selectedSlots[2];            ///< each side's inventory slot chosen
   u16 selectedItems[2];            ///< each side's inventory entry chosen
   struct WindowSprite *cursor;
-  /// DjinnMenuWork's backdrop pointer at 388; no view names the rest.
+  /// DjinnMenuState's backdrop pointer at 388; no view names the rest.
   u8 aroundBackdrop[72];
   u16 items[32];    ///< the inventory entries listed
   u16 memberIds[8]; ///< the party in order (Party_ListMembers)
@@ -91,50 +91,50 @@ struct ItemMenuWork {
   s16 figureY[4];
   s32 figureScales[4];
   ///@}
-  u8 unusedAfterFigures[6]; ///< DjinnMenuWork's pair; not named here
+  u8 unusedAfterFigures[6]; ///< DjinnMenuState's pair; not named here
   s16 messageOffset;        ///< the item use's result, after MsgItemUseResult
   s8 equipPreview; ///< 1 while the stats preview a removal, not an equip
   u8 listMode;     ///< the command chosen last (ItemMenuCommand); -1 for none
-  u8 unusedAfterListMode[2];   ///< no view of the menu work names it
+  u8 unusedAfterListMode[2];   ///< no view of the menu state names it
   s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
-  u8 mode;           ///< not named through this struct; PsynergyMenuWork.mode
-  u8 shopStock[297]; ///< ShopWork's stock, party and cursor; not named
+  u8 mode;           ///< not named through this struct; PsynergyMenuState.mode
+  u8 shopStock[297]; ///< ShopState's stock, party and cursor; not named
                      ///< here
   u16 resourceSlots[2]; ///< VRAM cache slots of two arrow pictures
 };
 
-STATIC_ASSERT(offsetof(struct ItemMenuWork, sideIcons) == 20);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, sideIndex) == 28);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, sideCount) == 30);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, itemWindow) == 32);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, descriptionWindow) == 44);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, gridCursor) == 68);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, entryIcons) == 72);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, categoryIcons) == 200);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, questionWindow) == 268);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedColumn) == 272);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedRow) == 273);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, columnCount) == 274);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, rowCount) == 275);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSprites) == 276);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberX) == 308);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberY) == 324);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberScale) == 340);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedSlots) == 372);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedItems) == 376);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, cursor) == 380);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, items) == 456);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberIds) == 520);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, itemCount) == 536);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, sideMember) == 538);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedItemIcon) == 540);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, figures) == 548);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, messageOffset) == 602);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, equipPreview) == 604);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedIndexByMember) == 608);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, mode) == 616);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, resourceSlots) == 914);
-STATIC_ASSERT(sizeof(struct ItemMenuWork) == 920);
+STATIC_ASSERT(offsetof(struct ItemMenuState, sideIcons) == 20);
+STATIC_ASSERT(offsetof(struct ItemMenuState, sideIndex) == 28);
+STATIC_ASSERT(offsetof(struct ItemMenuState, sideCount) == 30);
+STATIC_ASSERT(offsetof(struct ItemMenuState, itemWindow) == 32);
+STATIC_ASSERT(offsetof(struct ItemMenuState, descriptionWindow) == 44);
+STATIC_ASSERT(offsetof(struct ItemMenuState, gridCursor) == 68);
+STATIC_ASSERT(offsetof(struct ItemMenuState, entryIcons) == 72);
+STATIC_ASSERT(offsetof(struct ItemMenuState, categoryIcons) == 200);
+STATIC_ASSERT(offsetof(struct ItemMenuState, questionWindow) == 268);
+STATIC_ASSERT(offsetof(struct ItemMenuState, selectedColumn) == 272);
+STATIC_ASSERT(offsetof(struct ItemMenuState, selectedRow) == 273);
+STATIC_ASSERT(offsetof(struct ItemMenuState, columnCount) == 274);
+STATIC_ASSERT(offsetof(struct ItemMenuState, rowCount) == 275);
+STATIC_ASSERT(offsetof(struct ItemMenuState, memberSprites) == 276);
+STATIC_ASSERT(offsetof(struct ItemMenuState, memberX) == 308);
+STATIC_ASSERT(offsetof(struct ItemMenuState, memberY) == 324);
+STATIC_ASSERT(offsetof(struct ItemMenuState, memberScale) == 340);
+STATIC_ASSERT(offsetof(struct ItemMenuState, selectedSlots) == 372);
+STATIC_ASSERT(offsetof(struct ItemMenuState, selectedItems) == 376);
+STATIC_ASSERT(offsetof(struct ItemMenuState, cursor) == 380);
+STATIC_ASSERT(offsetof(struct ItemMenuState, items) == 456);
+STATIC_ASSERT(offsetof(struct ItemMenuState, memberIds) == 520);
+STATIC_ASSERT(offsetof(struct ItemMenuState, itemCount) == 536);
+STATIC_ASSERT(offsetof(struct ItemMenuState, sideMember) == 538);
+STATIC_ASSERT(offsetof(struct ItemMenuState, selectedItemIcon) == 540);
+STATIC_ASSERT(offsetof(struct ItemMenuState, figures) == 548);
+STATIC_ASSERT(offsetof(struct ItemMenuState, messageOffset) == 602);
+STATIC_ASSERT(offsetof(struct ItemMenuState, equipPreview) == 604);
+STATIC_ASSERT(offsetof(struct ItemMenuState, selectedIndexByMember) == 608);
+STATIC_ASSERT(offsetof(struct ItemMenuState, mode) == 616);
+STATIC_ASSERT(offsetof(struct ItemMenuState, resourceSlots) == 914);
+STATIC_ASSERT(sizeof(struct ItemMenuState) == 920);
 
 /// The item command grid, by row * 3 + column: Use, Equip and Details on top,
 /// Give, Remove and Drop below (ItemMenu_ChooseCommand).

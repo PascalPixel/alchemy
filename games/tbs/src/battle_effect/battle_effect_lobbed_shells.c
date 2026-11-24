@@ -107,7 +107,7 @@ void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
 void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
   BlitterPair draw;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   s32 k;
@@ -118,21 +118,21 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   FIXED height;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  work->args = args;
+  state->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   resource = Resource_GetTableEntry(RESOURCE_GOLD_SHELL_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   resource += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(resource, work->sheet);
+  Decompress_TaggedLz(resource, state->sheet);
   resource = Resource_GetTableEntry(RESOURCE_SMOKE_SHEET);
   Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   resource += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(resource, work->sheet + LOBBED_SHELLS_SMOKE_PICTURES);
+  Decompress_TaggedLz(resource, state->sheet + LOBBED_SHELLS_SMOKE_PICTURES);
   if (mode == LOBBED_SHELLS_BONE_CHILLER)
     resource = Resource_GetTableEntry(RESOURCE_BLUE_PALETTE);
   else if (mode == LOBBED_SHELLS_STICKY_GOO)
@@ -151,11 +151,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
   // Each target's shell starts at the user.
   EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
-  source = GetBattleObjectSlotFar(work->args->user)->actor;
+  source = GetBattleObjectSlotFar(state->args->user)->actor;
   height = toFIXED(4);
-  EFFECT_FOR_EACH_TARGET(k, work->args) {
+  EFFECT_FOR_EACH_TARGET(k, state->args) {
     struct Actor *target =
-        GetBattleObjectSlotFar(work->args->targets[k])->actor;
+        GetBattleObjectSlotFar(state->args->targets[k])->actor;
 
     for (i = 0; i != LOBBED_SHELLS_SLOTS; i++) {
       struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
@@ -197,12 +197,13 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
       draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
     }
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   if (LOBBED_SHELLS_SHATTER(mode) == 0)
-    total = work->args->targetCount * LOBBED_SHELLS_TARGET_FRAMES +
+    total = state->args->targetCount * LOBBED_SHELLS_TARGET_FRAMES +
             LOBBED_SHELLS_SMOKE_END_FRAMES;
   else
-    total = work->args->targetCount * LOBBED_SHELLS_TARGET_FRAMES +
+    total = state->args->targetCount * LOBBED_SHELLS_TARGET_FRAMES +
             LOBBED_SHELLS_SHARDS_END_FRAMES;
   Sound_PlayFar(SE_CURSE);
 
@@ -211,15 +212,15 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
     EFFECT_VIEW_FROM_CAMERA(camera);
     k = 0;
-    if (work->args->targetCount != 0) {
+    if (state->args->targetCount != 0) {
       do {
         if (frame >= k * LOBBED_SHELLS_TARGET_FRAMES) {
           struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS];
 
           if (frame ==
               k * LOBBED_SHELLS_TARGET_FRAMES + LOBBED_SHELL_FLIGHT_FRAMES) {
-            BattleEffect_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, k, 16);
+            BattleEffect_TintBattler(state->args->targets[k],
+                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 16);
             EFFECT_SHOW_DAMAGE(SE_IMPACT);
           }
           if (shot->variant >= 0) {
@@ -235,12 +236,12 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
             Projection_Point(shot, &position);
             position.x >>= 1;
             if (step >= LOBBED_SHELL_UPRIGHT_PICTURES)
-              draw[0](canvas, work->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
+              draw[0](canvas, state->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
                       position.x - LOBBED_SHELL_HEIGHT / 2,
                       position.y - LOBBED_SHELL_WIDTH / 2, LOBBED_SHELL_HEIGHT,
                       LOBBED_SHELL_WIDTH);
             else
-              draw[0](canvas, work->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
+              draw[0](canvas, state->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
                       position.x - LOBBED_SHELL_WIDTH / 2,
                       position.y - LOBBED_SHELL_HEIGHT / 2, LOBBED_SHELL_WIDTH,
                       LOBBED_SHELL_HEIGHT);
@@ -290,7 +291,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
           }
         }
         k++;
-      } while (k != work->args->targetCount);
+      } while (k != state->args->targetCount);
     }
     // The bursts.
     for (i = 0; i != LOBBED_SHELLS_BURST_SLOTS; i++) {
@@ -301,7 +302,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
         position.x >>= 1;
         if (LOBBED_SHELLS_SHATTER(mode) == 0) {
           draw[1](canvas,
-                  work->sheet + burst->variant / 8 * PICTURE_BYTES(SMOKE_PUFF) +
+                  state->sheet +
+                      burst->variant / 8 * PICTURE_BYTES(SMOKE_PUFF) +
                       LOBBED_SHELLS_SMOKE_PICTURES,
                   position.x - SMOKE_PUFF_WIDTH / 2,
                   position.y - SMOKE_PUFF_HEIGHT / 2, SMOKE_PUFF_WIDTH,
@@ -316,7 +318,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
           flip = args->side;
           draw[burst->velocityX > 0 ? flip ^ 1 : flip](
               canvas,
-              work->sheet + gLobbedShells_ShardPictures[picture] +
+              state->sheet + gLobbedShells_ShardPictures[picture] +
                   LOBBED_SHELLS_SHARD_PICTURES,
               position.x - gLobbedShells_ShardWidths[picture] / 2,
               position.y - gLobbedShells_ShardHeights[picture] / 2,
@@ -332,7 +334,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
       }
     }
     BattleCamera_Shake(2, 2);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

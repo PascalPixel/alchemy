@@ -77,7 +77,7 @@
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/io_reg.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -300,7 +300,7 @@ enum {
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_COLOSSEUM) {
     return gColosseumEntrances;
@@ -320,8 +320,8 @@ const u32 *Scene_GetExits(void) { return gColosseumEntranceExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   const struct ActorPlacement *table;
 
-  if (gMainRoutineWork.next == SCENE_COLOSSEUM) {
-    switch (gMainRoutineWork.entrance) {
+  if (gMainRoutineState.next == SCENE_COLOSSEUM) {
+    switch (gMainRoutineState.entrance) {
     case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
     case COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS:
       table = gColosseumStandsActorPlacements;
@@ -354,7 +354,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
       table = gColosseumActorPlacements;
       break;
     }
-  } else if (gMainRoutineWork.next == SCENE_COLOSSEUM_ENTRANCE) {
+  } else if (gMainRoutineState.next == SCENE_COLOSSEUM_ENTRANCE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       table = gColosseumEntranceActorPlacementsAfterColosso;
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
@@ -369,13 +369,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gMainRoutineWork.next;
+  s16 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_COLOSSEUM_TUNNEL) {
     return gColosseumTunnelTriggers;
   }
   if (sceneId == SCENE_COLOSSEUM) {
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) {
       return gColosseumTriggersFromColosseumAzartMatchWest;
     }
@@ -453,13 +453,13 @@ static void ColosseumEntrance_OfferLuckyGuess(void) {
       // "Want to try out the Lucky Guess?"
       Event_OpenMessage(ACTOR_LUCKY_GUESS_MAN, 0);
       if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-        gFieldWork->message++;
+        gFieldState->message++;
         Actor_ShowEmote(ACTOR_LUCKY_GUESS_MAN,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
         // "Aren't you Isaac? The one handpicked by Babi?"
         Event_OpenMessage(ACTOR_LUCKY_GUESS_MAN, 0);
         if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-          gFieldWork->message++;
+          gFieldState->message++;
         }
         Event_Wait(40);
         Event_ShowMessage(ACTOR_LUCKY_GUESS_MAN, 0);
@@ -594,7 +594,7 @@ static void ColosseumEntrance_AskIfReadyForFinals(void) {
   // "Are you ready for the finals?"
   Event_OpenMessage(ACTOR_FINALS_SOLDIER, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0)
-    gFieldWork->message++;
+    gFieldState->message++;
   Event_ShowMessage(ACTOR_FINALS_SOLDIER, 0);
   Event_End();
 }
@@ -712,7 +712,7 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumEntrance_EnterGatesScript);
     Event_Wait(80);
-    gFieldWork->transitionFrames = 40;
+    gFieldState->transitionFrames = 40;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
   } else {
@@ -770,7 +770,7 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
       Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumEntrance_EnterGatesScript);
       Event_Wait(80);
-      gFieldWork->transitionFrames = 40;
+      gFieldState->transitionFrames = 40;
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
     } else {
@@ -802,7 +802,7 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
       Actor_SetSpeed(ACTOR_GARET, 1);
       Actor_SetScript(ACTOR_GARET, gColosseumEntrance_EnterGatesScript);
       Event_Wait(80);
-      gFieldWork->transitionFrames = 40;
+      gFieldState->transitionFrames = 40;
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
     }
@@ -939,7 +939,7 @@ static void ColosseumEntrance_FinalsStart(void) {
       Import_EventSetExitRequest(
           COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST);
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
       // "We'll be starting soon, so you'd better get ready fast!"
       Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FINALS_SOLDIER, 0);
     }
@@ -977,8 +977,8 @@ static void ColosseumEntrance_TalkToTrialAttendant(void) {
     FieldCamera_SetSpeed(6.4);
     FieldCamera_MoveTo(540, CAMERA_KEEP, 208, 1);
     FieldCamera_WaitForArrival();
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    gFieldWork->transitionFrames = 32;
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+    gFieldState->transitionFrames = 32;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     if (GameFlag_Get(FLAG_COLOSSO_FAILED_TRIAL_SEEN) != 0) {
@@ -1014,8 +1014,8 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   wait(1);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-  gFieldWork->transitionFrames = 32;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+  gFieldState->transitionFrames = 32;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -1095,12 +1095,12 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
     Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 184, 863);
     Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 184, 796);
     Actor_SetPosition(ACTOR_FAILING_WARRIOR, 0, 0);
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-    gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+    gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Import_EventSetExitRequest(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS);
     Event_End();
   }
@@ -1110,7 +1110,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
 /// went.
 static void ColosseumEntrance_ExplainTrial(void) {
   Event_Start();
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 
   Event_StartScreenTransition();
@@ -1122,7 +1122,7 @@ static void ColosseumEntrance_ExplainTrial(void) {
   Event_SetMessageId(MsgColosseumHaveMakeThroughCountlessMatches);
 
   if (GameFlag_Get(FLAG_COLOSSO_CLEARED_TRIAL_SEEN) != 0) {
-    gFieldWork->message = gFieldWork->message + 1;
+    gFieldState->message = gFieldState->message + 1;
   }
 
   ColosseumEntrance_ShowMessageAndPause(ACTOR_TRIAL_ATTENDANT);
@@ -1162,8 +1162,8 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   wait(1);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-  gFieldWork->transitionFrames = 32;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+  gFieldState->transitionFrames = 32;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -1251,9 +1251,9 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, WARRIOR_ANIMATION_ARMS_RAISED);
   Event_Wait(80);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_COLOSSO_CLEARED_TRIAL_SEEN);
@@ -1263,7 +1263,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
 
 /// Sets up the Colosseum or its entrance as the party arrives.
 s32 Scene_Initialize(void) {
-  s32 sceneId = gMainRoutineWork.next;
+  s32 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_COLOSSEUM) {
     ColosseumEntrance_ApplyArrivalState();
@@ -1278,7 +1278,7 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
   s32 entrance;
 
   wait(1);
-  entrance = gMainRoutineWork.entrance;
+  entrance = gMainRoutineState.entrance;
   switch (entrance) {
   case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
     Actor_SetAnimation(ACTOR_STANDS_WEST_TORCH, TORCH_ANIMATION_LIT);
@@ -1389,9 +1389,9 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
-  gFieldWork->transitionFrames = 1;
+  gFieldState->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   PaletteFade_ApplySource(RGB(0, 0, 0), PALETTES_ALL);
@@ -1510,13 +1510,13 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
     ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
     flag = 1;
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     ColosseumEntrance_FaceDirection(ACTOR_IVAN, FACING_NORTH);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
   }
   if (flag != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER + 1, FACING_EAST, 0);
@@ -1574,8 +1574,8 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 808, 164);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 312);
   Event_Wait(60);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 40;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = 40;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST);

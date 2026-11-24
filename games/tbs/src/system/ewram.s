@@ -5,8 +5,8 @@ gSaveBuffer:
 	.global gGameFlagBytes
 gGameFlagBytes:
 	.space 512
-	.global gMainRoutineWork
-gMainRoutineWork:
+	.global gMainRoutineState
+gMainRoutineState:
 	.space 320
 	.global gRareItemStock
 gRareItemStock:
@@ -66,8 +66,8 @@ gSerialTransfer:
 	.global gSerialReceivedSize
 gSerialReceivedSize:
 	.space 8
-	.global gSerialWork
-gSerialWork:
+	.global gSerialState
+gSerialState:
 	.space 352
 	.global gLinkExchangeState
 gLinkExchangeState:
@@ -243,10 +243,10 @@ gActorSpriteSlots:
 	.size gDecodeBuffer, 16384
 gDecodeBuffer:
 	.space 16384
-	.global gCellPictures
-	.type gCellPictures, %object
-	.size gCellPictures, 32768
-gCellPictures:
+	.global gCellTiles
+	.type gCellTiles, %object
+	.size gCellTiles, 32768
+gCellTiles:
 	.space 32768
 	.global gMapGridAnimTiles
 	.type gMapGridAnimTiles, %object

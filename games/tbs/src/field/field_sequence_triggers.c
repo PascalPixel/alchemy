@@ -23,9 +23,9 @@ struct ActorPlacement *Scene_FindActorPlacement(s32 id) {
   s32 tableIndex;
   s32 placedActorId = ACTOR_FIRST_PLACED;
 
-  for (tableIndex = 0; tableIndex < (s32)ARRAY_COUNT(gFieldWork->tables);
+  for (tableIndex = 0; tableIndex < (s32)ARRAY_COUNT(gFieldState->tables);
        tableIndex++) {
-    placement = gFieldWork->tables[tableIndex];
+    placement = gFieldState->tables[tableIndex];
     if (placement == NULL)
       continue;
     if (id < ACTOR_FIRST_PLACED) {
@@ -95,11 +95,11 @@ u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result) {
 /// Returns the first of the scene's triggers of kind for target whose condition
 /// holds, or NULL.
 const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
-  struct FieldWork *work = gFieldWork;
-  const struct Trigger *trigger = work->triggers;
+  struct FieldState *state = gFieldState;
+  const struct Trigger *trigger = state->triggers;
   s32 flags;
   u32 facing =
-      ((struct Actor *)Actor_Lookup(gMainRoutineWork.leaderActorId))->facing;
+      ((struct Actor *)Actor_Lookup(gMainRoutineState.leaderActorId))->facing;
 
   flags = trigger->kind;
   while (flags != -1) {
@@ -123,7 +123,7 @@ const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
         matches = 1;
         break;
       case STEP_TRIGGER_FLAG_WALKING:
-        if (work->blockedSteps > minimumPushFrames) {
+        if (state->blockedSteps > minimumPushFrames) {
           matches = 1;
         }
         break;
@@ -135,7 +135,7 @@ const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
             (u16)((flags - facing) + (DEGtoANG(45) - 1)) <= DEGtoANG(90) - 2;
         break;
       case STEP_TRIGGER_FLAG_WALKING | TRIGGER_FLAG_FACING:
-        if (work->blockedSteps > minimumPushFrames) {
+        if (state->blockedSteps > minimumPushFrames) {
           flags &= TRIGGER_FACING_MASK;
           matches =
               (u16)((flags - facing) + (DEGtoANG(45) - 1)) <= DEGtoANG(90) - 2;
@@ -158,12 +158,12 @@ const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
 UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk trigger of actor id, or 0: for the actor stopped with Halt
-/// (gMainRoutineWork.haltedActor), its TRIGGER_TALK_HALTED event if it has
+/// (gMainRoutineState.haltedActor), its TRIGGER_TALK_HALTED event if it has
 /// one, the event for talking to it while it is stopped (Crossbone Isle's Bane
 /// has one).
 const struct Trigger *Scene_FindActorTalkTrigger(s32 id) {
   const struct Trigger *talkTrigger = Scene_FindTrigger(TRIGGER_TALK, id);
-  s32 haltedActorId = gMainRoutineWork.haltedActor;
+  s32 haltedActorId = gMainRoutineState.haltedActor;
 
   if (haltedActorId == id) {
     const struct Trigger *haltedTrigger =
@@ -190,7 +190,7 @@ s32 Scene_TalkToActor(s32 id) {
   u32 savedAngle;
   s32 decodeFlags = 0;
 
-  if (gMainRoutineWork.haltedActor == id) {
+  if (gMainRoutineState.haltedActor == id) {
     actorHalted = 1;
     trigger = Scene_FindTrigger(TRIGGER_TALK_HALTED, id);
     if (trigger == 0) {
@@ -225,13 +225,13 @@ s32 Scene_TalkToActor(s32 id) {
       savedAngle = actor->facing;
       if ((u8)placement->talkFacing <= TALK_FACING_PARTY_AND_BACK ||
           (s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
-        struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+        struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
 
         leader->targetX = leader->x.fixed;
         leader->targetY = leader->y.fixed;
         leader->targetZ = leader->z.fixed;
         SET_VELOCITY(leader, 0, 0, 0);
-        Actor_TurnToFaceEachOther(id, gMainRoutineWork.leaderActorId, 0);
+        Actor_TurnToFaceEachOther(id, gMainRoutineState.leaderActorId, 0);
       }
     }
     // A result below TRIGGER_RESULT_MESSAGE_END is a message; above, a function
@@ -251,7 +251,7 @@ s32 Scene_TalkToActor(s32 id) {
       // says: watching the leader or its old angle.
       if (actor->script[actor->scriptCursor] == SCRIPT_COMMAND_END) {
         if ((s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
-          actor->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
+          actor->watchedActor = Actor_GetById(gMainRoutineState.leaderActorId);
           actor->steeringFlags |= ACTOR_FACES_MOTION;
           Actor_SetMovementType(actor, (s32)gActor_FaceWatchedScript);
         } else if ((s8)placement->talkFacing == TALK_FACING_PARTY_AND_BACK) {
@@ -266,8 +266,8 @@ s32 Scene_TalkToActor(s32 id) {
   }
 finish:
   if (actorHalted) {
-    FieldPsynergy_ResumeHaltedActor(gMainRoutineWork.haltedActor);
-    gMainRoutineWork.haltedActor = -1;
+    FieldPsynergy_ResumeHaltedActor(gMainRoutineState.haltedActor);
+    gMainRoutineState.haltedActor = -1;
   }
   return result;
 }
@@ -307,14 +307,14 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
   const struct Trigger *exit;
   s32 exitId;
   s32 handled;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   touch = Scene_FindTrigger(TRIGGER_STEP, value);
   handled = -1;
-  work = gFieldWork;
+  state = gFieldState;
   if ((touch != 0) && (touch->value != 0)) {
     if (touch->kind & STEP_TRIGGER_FLAG_WALKING) {
-      work->blockedSteps = 0;
+      state->blockedSteps = 0;
     }
     if (touch->value < TRIGGER_RESULT_MESSAGE_END) {
       Event_Start();
@@ -345,7 +345,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
         Exit_StartStairsDown();
         break;
       }
-      work->exit = exit->value;
+      state->exit = exit->value;
       handled = 0;
     }
   }
@@ -357,31 +357,31 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 /// it has pushed for more than FIELD_PUSH_FRAMES frames; the count then
 /// restarts.
 s32 Field_RunPushCell(s32 behavior) {
-  struct FieldWork *work = gFieldWork;
-  s32 leader = gMainRoutineWork.leaderActorId;
+  struct FieldState *state = gFieldState;
+  s32 leader = gMainRoutineState.leaderActorId;
 
   switch (behavior) {
   case CELL_BEHAVIOR_LEDGE:
-    if (work->blockedSteps > FIELD_PUSH_FRAMES && (gKeysHeld & KEY_DOWN)) {
+    if (state->blockedSteps > FIELD_PUSH_FRAMES && (gKeysHeld & KEY_DOWN)) {
       Actor_JumpDownLedge(leader, ANIM_LEADER_SPRING, 0);
-      work->blockedSteps = 0;
+      state->blockedSteps = 0;
     }
     break;
   case CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED:
   case CELL_BEHAVIOR_JUMP_FORWARD:
-    if (work->blockedSteps > FIELD_PUSH_FRAMES) {
+    if (state->blockedSteps > FIELD_PUSH_FRAMES) {
       Field_TryJumpForward();
-      work->blockedSteps = 0;
+      state->blockedSteps = 0;
     }
     break;
   case CELL_BEHAVIOR_CLIMB:
-    if (work->blockedSteps > FIELD_PUSH_FRAMES) {
+    if (state->blockedSteps > FIELD_PUSH_FRAMES) {
       if (gKeysHeld & KEY_DOWN) {
         Field_ClimbDown();
       } else if (gKeysHeld & KEY_UP) {
         Field_ClimbUp();
       }
-      work->blockedSteps = 0;
+      state->blockedSteps = 0;
     }
     break;
   }
@@ -399,7 +399,7 @@ s32 Field_ExamineCell(s32 tile) {
   s32 rewardType;
   s32 canOpen;
 
-  leader = gMainRoutineWork.leaderActorId;
+  leader = gMainRoutineState.leaderActorId;
   // Each fixed spot has its own pair of lines, chosen through
   // gField_ExamineTriggerMessageOffsets; the unsigned compare also rejects
   // codes below CELL_BEHAVIOR_JAR.
@@ -439,7 +439,7 @@ s32 Field_ExamineCell(s32 tile) {
         if ((searchResult & FIND_FUNCTION_BITS) != 0) {
           // A function.
           if (GameFlag_IsConditionActive(condition) != 0)
-            ((void (*)(s32))trigger->value)(gMainRoutineWork.leaderActorId);
+            ((void (*)(s32))trigger->value)(gMainRoutineState.leaderActorId);
           if (GameFlag_GetFar(FLAG_NOTHING_HAPPENS) != 0)
             FieldMessage_ShowFar(MsgTileResult + messageOffset,
                                  FIELD_MESSAGE_ZOOM);
@@ -500,7 +500,7 @@ s32 Field_ExamineCell(s32 tile) {
                 GameFlag_SetFar(condition);
             } else if (rewardType == FIND_MIMIC) {
               // A mimic: a battle with its slot of ENCOUNTER_ZONE_MIMIC.
-              struct FieldWork *work = gFieldWork;
+              struct FieldState *state = gFieldState;
 
               if ((trigger->kind & EXAMINE_TRIGGER_MASK) ==
                   EXAMINE_TRIGGER(EXAMINE_CHEST))
@@ -509,18 +509,19 @@ s32 Field_ExamineCell(s32 tile) {
               // pendingDjinni, which FieldSequence_Run resolves when the scene
               // is entered again after the battle.
               if (condition != -1) {
-                gMainRoutineWork.pendingDjinni = condition | CONDITION_FLAG_SET;
+                gMainRoutineState.pendingDjinni =
+                    condition | CONDITION_FLAG_SET;
               }
               // BATTLE_TYPE_NO_ESCAPE (battle/battle_turn.c): no first strike
               // or surprise, and every attempt to run fails; the command menu
               // still offers it, refusing outright only for
               // BATTLE_TYPE_SCRIPTED and BATTLE_TYPE_LINK.
-              work->encounter = Encounter_GetFormationAtSlot(
+              state->encounter = Encounter_GetFormationAtSlot(
                   ENCOUNTER_ZONE_MIMIC, (u16)trigger->value);
               Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
               Encounter_SelectBattleMusic(ENCOUNTER_ZONE_MIMIC,
                                           (u16)trigger->value);
-              Sound_PlayFar(gMainRoutineWork.battleMusic);
+              Sound_PlayFar(gMainRoutineState.battleMusic);
               // "The treasure chest was really a Mimic!"
               FieldMessage_ShowFar(MsgChestWasMimic, FIELD_MESSAGE_ZOOM);
             } else if (rewardType == FIND_COINS(0)) {
@@ -528,7 +529,7 @@ s32 Field_ExamineCell(s32 tile) {
               void *object;
 
               object = ItemDisplay_ShowItemInFront(
-                  gMainRoutineWork.leaderActorId, 0);
+                  gMainRoutineState.leaderActorId, 0);
               wait(30);
               if ((trigger->kind & EXAMINE_TRIGGER_MASK) ==
                   EXAMINE_TRIGGER(EXAMINE_CHEST))
@@ -551,7 +552,7 @@ s32 Field_ExamineCell(s32 tile) {
               s32 recipient;
 
               object =
-                  ItemDisplay_ShowItemInFront(gMainRoutineWork.leaderActorId,
+                  ItemDisplay_ShowItemInFront(gMainRoutineState.leaderActorId,
                                               trigger->value & FIND_ITEM_MASK);
               wait(30);
               recipient = PartyInventory_AddFar((u16)trigger->value);
@@ -577,7 +578,7 @@ s32 Field_ExamineCell(s32 tile) {
                 Sound_PlayFar(MUS_TREASURE_FOUND);
                 MessageArgument_PushFar(trigger->value & messageOffset,
                                         MESSAGE_ARGUMENT_ITEM);
-                if (recipient == gMainRoutineWork.leaderActorId) {
+                if (recipient == gMainRoutineState.leaderActorId) {
                   // "Isaac got [item]."
                   FieldMessage_ShowFar(MsgColossoIsaacGotItem,
                                        FIELD_MESSAGE_ZOOM |

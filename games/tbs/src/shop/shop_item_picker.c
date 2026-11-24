@@ -8,7 +8,7 @@
 /// dropped, in the selling screen without its shopkeeper. Returns 0 with the
 /// choice in selectedUnit and selectedSlot, or -1 for B with both -1.
 s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
   struct WindowSprite *cursorAnchor;
   struct Window *partyWindow;
   s32 memberIndex = 0;
@@ -17,8 +17,8 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   s32 itemSlot;
   s32 result = 0;
 
-  Shop_InitializeWork();
-  shop = gMenuWork;
+  Shop_InitializeState();
+  shop = gMenuState;
   shop->itemWindow = Window_CreateFar(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
   partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
@@ -87,7 +87,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   Window_CloseFar(partyWindow, 2);
   Window_CloseFar(shop->itemWindow, 2);
   wait(1);
-  Shop_ReleaseWork();
+  Shop_ReleaseState();
   return result;
 }
 
@@ -126,7 +126,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
 /// cancel sound (the game's bug; BUGFIX shows its message, see
 /// SHOP_CANNOT_REMOVE_STATUS). Returns the slot, or -1 when cancelled.
 s32 ItemPicker_SelectItem(s32 unitId) {
-  struct ShopWork *shop = gMenuWork;
+  struct ShopState *shop = gMenuState;
   struct Window *descriptionWindow;
   struct Window *priceWindow;
   struct Unit *unit;

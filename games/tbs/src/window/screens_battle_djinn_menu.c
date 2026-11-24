@@ -15,7 +15,7 @@
 #endif
 
 /// The party status window's layout, whose Djinn column the menu blinks.
-#define PARTY_STATUS_LAYOUT (*(struct PartyStatusWindow **)gPartyStatusWork)
+#define PARTY_STATUS_LAYOUT (*(struct PartyStatusWindow **)gPartyStatusState)
 
 /// A battle Djinn entry packs a Djinni's DJINN_COMMAND (bits 11..8 its element,
 /// 7..0 its number in the element, DJINN_COMMAND_INDEX), its standby bit and
@@ -37,7 +37,7 @@
 s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   struct CursorSprite cursorStorage;
   u16 messageText[64];
-  struct WindowWork *work;
+  struct WindowState *state;
   struct Window *previewWindow;
   s32 drawnRow;
   s32 cursorSlot;
@@ -51,7 +51,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   s32 redraw;
   s32 alreadySelected;
   s32 previewPages;
-  struct BattleMenuWork *navigation;
+  struct BattleMenuState *navigation;
   struct Unit *unit;
   struct DjinnRecoveryList *list;
   struct Window *listWindow;
@@ -74,7 +74,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   s32 i;
   s32 j;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   previewWindow = 0;
   drawnRow = -1;
   cursorSlot = VramCache_AllocEntry(128);
@@ -135,7 +135,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     }
   }
   djinnEntries[djinnCount] = BATTLE_DJINN_ENTRY_END;
-  work->dirty = 1;
+  state->dirty = 1;
 
   for (;;) {
     /* LEFTOVER(template): sprite holds &cursorStorage, as
@@ -152,7 +152,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         redraw != 0) {
       selectedDjinn = djinnEntries[firstEntry + selectedRow];
       standbyElements = 0;
-      work->holdTilemapUpload = 1;
+      state->holdTilemapUpload = 1;
       Window_HighlightRect(listWindow->x + 1, listWindow->y + drawnRow * 2 + 1,
                            listWindow->width - 2, 1, WINDOW_PALETTE);
       if (previewPage != 0) {
@@ -170,7 +170,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         MessageArgument_ClearAll();
         alreadySelected = 0;
         for (k = 0; k <= 7; k++) {
-          if ((u32)gBattleMenuWork->chosenDjinn[k] == selectedDjinn) {
+          if ((u32)gBattleMenuState->chosenDjinn[k] == selectedDjinn) {
             alreadySelected = 1;
             break;
           }
@@ -225,15 +225,15 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         BATTLE_MENU_MESSAGE_COPY(MsgBattleNoDjinn, messageText,
                                  BATTLE_MENU_MESSAGE_CAPACITY);
       }
-      work->holdTilemapUpload = 0;
+      state->holdTilemapUpload = 0;
       if (previewPage == 0) {
-        work->holdTilemapUpload = 1;
+        state->holdTilemapUpload = 1;
         Window_Close(messageWindow, 1);
         messageWindow =
             Window_Create(0, 4, 30, 4,
                           WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                               WINDOW_FLAG_BORDERED_CANVAS);
-        work->holdTilemapUpload = (u8)previewPage;
+        state->holdTilemapUpload = (u8)previewPage;
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
@@ -286,8 +286,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       Window_HighlightRect(listWindow->x + 1,
                            listWindow->y + selectedRow * 2 + 1,
                            listWindow->width - 2, 1, HIGHLIGHT_PALETTE);
-      work->dirty = 1;
-      work->holdTilemapUpload = 0;
+      state->dirty = 1;
+      state->holdTilemapUpload = 0;
     }
 
     // Each frame: the current page's number lit 12 frames in 16 (steady while
@@ -326,14 +326,14 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         Window_SetTilemapEntry(listWindow, WINDOW_TILE_BORDER_TOP_RIGHT,
                                listWindow->width - 2, -1, 0);
       }
-      Window_MarkTilemapRow(work, listWindow->y - 1);
+      Window_MarkTilemapRow(state, listWindow->y - 1);
     }
 
     // Tutorial input replaces live keys but uses the same navigation below.
     pressed = gKeysPressed;
     repeated = gKeysRepeat;
     held = gKeysHeld;
-    navigation = gBattleMenuWork;
+    navigation = gBattleMenuState;
     if (navigation->tutorialStep != 0) {
       repeated = 0;
       pressed = 0;
@@ -346,7 +346,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         navigation->tutorialDelay--;
       }
     }
-    navigation = gBattleMenuWork;
+    navigation = gBattleMenuState;
     if (navigation->timer == 0 || (pressed & KEY_B)) {
       Sound_PlayFar(SE_MENU_CANCEL);
       encodedDjinn = -1;
@@ -425,7 +425,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                  0);
           Window_SetTilemapEntry(previewWindow, LIST_TILE_PAGES_RIGHT,
                                  previewWindow->width - 2, -1, 0);
-          Window_MarkTilemapRow(work, previewWindow->y);
+          Window_MarkTilemapRow(state, previewWindow->y);
         }
         if (previewPage == 0 && previewPages != 0) {
           if (previewWindow != 0) {

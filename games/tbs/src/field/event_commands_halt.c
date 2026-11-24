@@ -13,12 +13,12 @@
 /// pixels round 8 pixels above the Psynergy's position on screen, and is freed
 /// on arrival.
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Vector3 pos;
   s16 angle;
   s32 state;
 
-  effectWork = gFieldEffectWork;
+  effectState = gFieldEffectState;
 top:
   state = effect->state;
   if (state == OUT_AND_BACK_AIM_OUT) {
@@ -41,9 +41,9 @@ top:
     goto top;
   }
   if (state == OUT_AND_BACK_AIM_BACK) {
-    pos.x = effectWork->x;
-    pos.y = effectWork->y + toFIXED(8);
-    pos.z = effectWork->z;
+    pos.x = effectState->x;
+    pos.y = effectState->y + toFIXED(8);
+    pos.z = effectState->z;
     Camera_WorldToScreen(&pos);
     Vector_AddPolarOffset(toFIXED(4), Random16(), &pos);
     effect->targetX = pos.x;
@@ -58,9 +58,9 @@ top:
     FieldEffect_ClearOwnedSlot(effect);
 }
 
-/// Pauses the target (effectWork->child) and runs FieldPsynergy_Halt.
+/// Pauses the target (effectState->child) and runs FieldPsynergy_Halt.
 void FieldPsynergy_HaltOnTarget(s32 unused) {
-  struct Actor *target = ((struct FieldEffectWork *)gFieldEffectWork)->child;
+  struct Actor *target = ((struct FieldEffectState *)gFieldEffectState)->child;
 
   target->paused = 1;
   FieldPsynergy_Halt();
@@ -70,8 +70,8 @@ void FieldPsynergy_HaltOnTarget(s32 unused) {
 /// position over GROW_STEPS frames, growing, sounds three low tones and a high
 /// one, and bursts into HALT_SPARKLES sparkles that fly out and back.
 void FieldPsynergy_Halt(void) {
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *caster = effectWork->mainActor;
+  struct FieldEffectState *effectState = gFieldEffectState;
+  struct Actor *caster = effectState->mainActor;
   struct Actor *stopwatch;
   struct FieldParticle *effect;
   struct Vector3 pos;
@@ -80,7 +80,7 @@ void FieldPsynergy_Halt(void) {
   s32 step;
   s32 i;
 
-  effectWork->y = caster->y.fixed;
+  effectState->y = caster->y.fixed;
   stopwatch = Actor_Spawn(SPRITE_STOPWATCH, 0, 0, 0);
   step = 0;
   Actor_SelectAnimationFar(stopwatch, 0);
@@ -92,9 +92,9 @@ void FieldPsynergy_Halt(void) {
   from.x = caster->x.fixed;
   from.y = caster->y.fixed + toFIXED(16);
   from.z = caster->z.fixed;
-  to.x = effectWork->x;
-  to.y = effectWork->y + toFIXED(8);
-  to.z = effectWork->z;
+  to.x = effectState->x;
+  to.y = effectState->y + toFIXED(8);
+  to.z = effectState->z;
   // It arrives on the last step, grown from a quarter to full size.
   for (;;) {
     s32 steps = GROW_STEPS + 1;
@@ -126,7 +126,7 @@ void FieldPsynergy_Halt(void) {
 
   // Sparkles 4 pixels round it fly out, then come back to the Psynergy's
   // position.
-  effect = &effectWork->particles[0];
+  effect = &effectState->particles[0];
   for (i = 0; i < HALT_SPARKLES; i++) {
     pos.x = stopwatch->x.fixed;
     pos.y = stopwatch->y.fixed + toFIXED(8);
@@ -159,19 +159,19 @@ void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
 }
 
 /// Halts actorId, keeping its per-frame update and, if it is animated, its
-/// first animation's colour mode in gMainRoutineWork.
+/// first animation's colour mode in gMainRoutineState.
 void FieldPsynergy_HaltActor(s32 actorId) {
   struct Actor *actor;
   struct SpriteAnimation *entry;
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    gMainRoutineWork.pausedUpdate = (u32)actor->update;
-    gMainRoutineWork.pausedPose = 0;
+    gMainRoutineState.pausedUpdate = (u32)actor->update;
+    gMainRoutineState.pausedPose = 0;
     if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
       entry = actor->sprite->entries[0];
       if (entry != NULL) {
-        gMainRoutineWork.pausedPose = entry->colorMode;
+        gMainRoutineState.pausedPose = entry->colorMode;
       }
     }
     actor->update = FieldPsynergy_UpdateHaltedActor;
@@ -186,10 +186,10 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
   if (actor != NULL) {
     if (actor->update == FieldPsynergy_UpdateHaltedActor) {
-      struct MainRoutineWork *mainWork = &gMainRoutineWork;
-      actor->update = (void (*)(struct Actor *))mainWork->pausedUpdate;
-      mainWork->pausedUpdate = 0;
-      Actor_SetSpriteColorModeFar(actor, mainWork->pausedPose);
+      struct MainRoutineState *mainState = &gMainRoutineState;
+      actor->update = (void (*)(struct Actor *))mainState->pausedUpdate;
+      mainState->pausedUpdate = 0;
+      Actor_SetSpriteColorModeFar(actor, mainState->pausedPose);
     }
     actor->paused = 0;
     Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);

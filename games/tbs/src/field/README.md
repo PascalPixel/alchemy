@@ -47,7 +47,7 @@ task for all 64 actors.
 ### The twelve requests
 
 A request is a note that something needs an answer: a number in the
-field's work, 0 while nothing is asked. Three kinds of code set one.
+field's state, 0 while nothing is asked. Three kinds of code set one.
 
 - The leader's script. Its order `SC_PLAYER`, which the actors' task runs,
   looks at the buttons and sets the request for A, the field menu, the

@@ -5,14 +5,14 @@ Field_CrossboneIsleFloatingLogs:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 80, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_CELL_PICTURES
+	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_CELL_TILES
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_SHAPES
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_GRID
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_ANIMATION
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_BLEND
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_MARKERS
-.LField_CrossboneIsleFloatingLogs_CELL_PICTURES:
-	.incbin "games/tbs/src/map/crossbone_isle_floating_logs/cell_pictures.delta2.lz"
+.LField_CrossboneIsleFloatingLogs_CELL_TILES:
+	.incbin "games/tbs/src/map/crossbone_isle_floating_logs/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_CrossboneIsleFloatingLogs_SHAPES:
 	.incbin "games/tbs/src/map/crossbone_isle_floating_logs/shapes.table.lz"
@@ -38,14 +38,14 @@ Field_CrossboneIsleFloatingLogs:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 80, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_CELL_PICTURES
+	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_CELL_TILES
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_SHAPES
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_GRID
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_ANIMATION
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_BLEND
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_MARKERS
-.LField_CrossboneIsleFloatingLogs_CELL_PICTURES:
-	.incbin "games/tbs/src/map/crossbone_isle_floating_logs/cell_pictures.delta2.lz"
+.LField_CrossboneIsleFloatingLogs_CELL_TILES:
+	.incbin "games/tbs/src/map/crossbone_isle_floating_logs/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_CrossboneIsleFloatingLogs_SHAPES:
 	.incbin "games/tbs/src/map/crossbone_isle_floating_logs/shapes.table.lz"
@@ -71,14 +71,14 @@ Field_CrossboneIsleFloatingLogs:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 80, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_CELL_PICTURES
+	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_CELL_TILES
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_SHAPES
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_GRID
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_ANIMATION
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_BLEND
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_MARKERS
-.LField_CrossboneIsleFloatingLogs_CELL_PICTURES:
-	.incbin "games/tbs/src/map/crossbone_isle_floating_logs/cell_pictures.delta2.lz"
+.LField_CrossboneIsleFloatingLogs_CELL_TILES:
+	.incbin "games/tbs/src/map/crossbone_isle_floating_logs/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_CrossboneIsleFloatingLogs_SHAPES:
 	.incbin "games/tbs/src/map/crossbone_isle_floating_logs/shapes.table.lz"
@@ -103,14 +103,14 @@ Field_CrossboneIsleFloatingLogs:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 80, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_CELL_PICTURES
+	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_CELL_TILES
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_SHAPES
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_GRID
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_ANIMATION
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_BLEND
 	map_offset Field_CrossboneIsleFloatingLogs, .LField_CrossboneIsleFloatingLogs_MARKERS
-.LField_CrossboneIsleFloatingLogs_CELL_PICTURES:
-	.incbin "games/tbs/src/map/crossbone_isle_floating_logs/cell_pictures.delta2.lz"
+.LField_CrossboneIsleFloatingLogs_CELL_TILES:
+	.incbin "games/tbs/src/map/crossbone_isle_floating_logs/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_CrossboneIsleFloatingLogs_SHAPES:
 	.incbin "games/tbs/src/map/crossbone_isle_floating_logs/shapes.table.lz"

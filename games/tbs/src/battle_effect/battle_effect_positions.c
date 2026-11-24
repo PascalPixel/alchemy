@@ -85,8 +85,8 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 UNUSED void BattleEffect_ProbeKeysForExtendedActor(void) {
   // XXX (no evidence): what the keys were for, perhaps choosing an effect for
   // enemy targets; nothing calls this in either game.
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  struct BattleEffectParams *args = work->args;
+  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectParams *args = state->args;
 
   if (args->targets[0] >= FIRST_ENEMY_UNIT)
     (void)gKeysHeld;
@@ -98,7 +98,7 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   s32 kind;
 
   HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SHEET, 1550);
-  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectState));
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   kind = args->kind;
   if (kind >= EFFECT_RANGE_CASTING_IMPACT && kind < EFFECT_RANGE_BEAM) {

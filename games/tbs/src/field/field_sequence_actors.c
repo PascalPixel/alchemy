@@ -15,7 +15,7 @@ enum {
 #define PLACEMENT_SPRITE_MAX 9989
 
 /// The ids Actor_Lookup answers: more than the ACTOR_ID_COUNT slots, so one
-/// past them reads the field work's members after the slots.
+/// past them reads the field state's members after the slots.
 #define LOOKUP_ID_COUNT 192
 
 /// Returns the sprite of character, which is the character itself except that
@@ -62,7 +62,7 @@ s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
 /// Creates the actors of a scene's actor placement table (ended by sprite -1),
 /// and records the table among the scene's tables.
 void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct Actor *actor;
   struct Actor *previous;
   struct Sprite *sprite;
@@ -73,15 +73,15 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
   u8 spriteSlot;
   u16 placementSprite;
 
-  work = gFieldWork;
+  state = gFieldState;
   // Remember the table once, before consuming slots for its actor
   // placements.
-  for (tableIndex = 0; tableIndex < (s32)ARRAY_COUNT(work->tables);
+  for (tableIndex = 0; tableIndex < (s32)ARRAY_COUNT(state->tables);
        tableIndex++) {
-    if (work->tables[tableIndex] == entry)
+    if (state->tables[tableIndex] == entry)
       break;
-    if (work->tables[tableIndex] == 0) {
-      work->tables[tableIndex] = entry;
+    if (state->tables[tableIndex] == 0) {
+      state->tables[tableIndex] = entry;
       break;
     }
   }
@@ -101,7 +101,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
     // Scene_Arrive clears these temporary flags on a normal entry.
     if (condition >= FLAG_DJINN_FIRST &&
         condition < FLAG_DJINN_FIRST + ACTOR_DJINNI_FLAG_COUNT &&
-        work->mode != ACTOR_SYSTEM_WORLD_MAP &&
+        state->mode != ACTOR_SYSTEM_WORLD_MAP &&
         !GameFlag_IsConditionActive(condition + ACTOR_DJINNI_FLAG_COUNT))
       continue;
     spriteId = Party_GetCharacterSprite(entry->sprite);
@@ -152,7 +152,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
         actor->motionFlags = ACTOR_FLOATS;
         actor->y.fixed += toFIXED(1) / 2;
       }
-      if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+      if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
         // World Map actor placements use single sprites and do not follow the
         // ground.
         actor->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
@@ -171,14 +171,14 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       }
       actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     }
-    work->actors[actorIndex] = actor;
+    state->actors[actorIndex] = actor;
   }
 }
 
 /// Releases the actor in slot actorIndex, if there is one, and
 /// empties the slot.
 void Actor_ReleaseAtIndex(s32 actorIndex) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   void *object = Actor_Lookup(actorIndex);
 
   if (object != NULL) {
@@ -188,22 +188,22 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
       void *empty = NULL;
 
       // Actor_Lookup also accepts ids past the actor slots, within the
-      // field work.
-      memcpy((u8 *)work + offsetof(struct FieldWork, actors) +
+      // field state.
+      memcpy((u8 *)state + offsetof(struct FieldState, actors) +
                  (u32)actorIndex * sizeof(empty),
              &empty, sizeof(empty));
     }
 #else
-    work->actors[actorIndex] = NULL;
+    state->actors[actorIndex] = NULL;
 #endif
   }
 }
 
 /// Creates a scene's actors on entering it: the party leader where the main
-/// routine's work puts it, then the scene's actor placement table from actor
+/// routine's state puts it, then the scene's actor placement table from actor
 /// slot 8, and the camera that follows the leader.
 void Actor_ResetForLeader(struct ActorPlacement *table) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct ActorPlacement *entry;
   struct Actor *actor;
   struct Actor *camera;
@@ -213,35 +213,35 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   s32 pos;
   FIXED height;
 
-  work = gFieldWork;
-  leader = gMainRoutineWork.leaderActorId;
+  state = gFieldState;
+  leader = gMainRoutineState.leaderActorId;
   // Build the leader's temporary actor placement before the scene's placed
   // actors.
-  entry = (struct ActorPlacement *)((u8 *)work + offsetof(struct FieldWork,
-                                                          leaderPlacements));
+  entry = (struct ActorPlacement *)((u8 *)state + offsetof(struct FieldState,
+                                                           leaderPlacements));
   entry[0] = gField_DefaultActorPlacements[0];
   entry[1] = gField_DefaultActorPlacements[1];
-  for (pos = 0; pos < (s32)ARRAY_COUNT(work->tables); pos++)
-    work->tables[pos] = 0;
+  for (pos = 0; pos < (s32)ARRAY_COUNT(state->tables); pos++)
+    state->tables[pos] = 0;
   Actor_ClearAll();
   entry->condition = -1;
   entry->sprite = leader;
-  SET_POSITION(entry, gMainRoutineWork.x, 0, gMainRoutineWork.z);
-  entry->facing = gMainRoutineWork.heading;
+  SET_POSITION(entry, gMainRoutineState.x, 0, gMainRoutineState.z);
+  entry->facing = gMainRoutineState.heading;
   Event_SpawnActorPlacements(entry, leader);
   Event_SpawnActorPlacements(table, ACTOR_FIRST_PLACED);
 
-  actor = work->actors[leader];
-  // gMainRoutineWork.layer keeps the leader's map grid layer (FieldSequence_Run
-  // saves its layer there).
-  actor->layer = gMainRoutineWork.layer;
+  actor = state->actors[leader];
+  // gMainRoutineState.layer keeps the leader's map grid layer
+  // (FieldSequence_Run saves its layer there).
+  actor->layer = gMainRoutineState.layer;
   pos = actor->x.fixed / toFIXED(MAPGRID_CELL_PIXELS) +
         (actor->z.fixed / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE;
   cell = &MAPGRID_CELLS[pos];
   above = &MAPGRID_CELLS[pos - MAPGRID_SIZE];
-  if (gMainRoutineWork.y != 0 && cell->behavior == CELL_BEHAVIOR_CLIMB &&
+  if (gMainRoutineState.y != 0 && cell->behavior == CELL_BEHAVIOR_CLIMB &&
       above->behavior == CELL_BEHAVIOR_CLIMB) {
-    gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
+    gMainRoutineState.movementMode = LEADER_MOVEMENT_CLIMB;
     height = MapGrid_GetTerrainHeightFar(0, actor->x.fixed,
                                          actor->z.fixed - toFIXED(16)) -
              toFIXED(32);
@@ -251,7 +251,7 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
     Actor_SetSpriteFlagsFar(actor, 0);
     Actor_SelectAnimationFar(actor, ANIM_LEADER_CLING);
   } else {
-    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+    gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
   }
 
   // The camera follows this leader and starts at its resolved ground height;
@@ -260,24 +260,24 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
                            actor->x.fixed, actor->y.fixed, actor->z.fixed);
   camera->groundHeight = actor->groundHeight;
   Actor_StartCameraFar(camera, (s32)actor);
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     struct SpriteAnimation *meta =
         (struct SpriteAnimation *)Sprite_AddAnimationFar(actor->sprite,
                                                          SPRITE_BLANK_32);
     meta->colorMode = SPRITE_COLOR_HIDDEN;
     meta->priority = 9;
   }
-  ((struct MapGridScrollWork *)gMapGridWork[0])->origin = &camera->x.fixed;
-  work->camera = camera;
+  ((struct MapGridScrollState *)gMapGridState[0])->origin = &camera->x.fixed;
+  state->camera = camera;
 }
 
 /// Returns the slot after the last placed actor (8 when there is none), or -1
 /// when the last slot is occupied.
 s32 Actor_FindLastActiveId(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   s32 lastActorIndex = ACTOR_FIRST_PLACED - 1;
   s32 actorIndex = ACTOR_FIRST_PLACED;
-  struct Actor **slot = &work->actors[ACTOR_FIRST_PLACED];
+  struct Actor **slot = &state->actors[ACTOR_FIRST_PLACED];
 
   for (; actorIndex < ACTOR_ID_COUNT; actorIndex++) {
     struct Actor *actor = *slot++;
@@ -293,9 +293,9 @@ s32 Actor_FindLastActiveId(void) {
   return lastActorIndex;
 }
 
-/// Unused: returns the address of actor slot index in the field work.
+/// Unused: returns the address of actor slot index in the field state.
 UNUSED void *Actor_GetSlotAddress(u32 actorIndex) {
-  return (u8 *)gFieldWork + offsetof(struct FieldWork, actors) +
+  return (u8 *)gFieldState + offsetof(struct FieldState, actors) +
          actorIndex * sizeof(void *);
 }
 
@@ -311,7 +311,7 @@ UNUSED void *Actor_GetSlotAddress(u32 actorIndex) {
 /// Gives each actor placement with condition 0 a condition saying whether
 /// it lies within the map's view bounds, so that only those inside appear.
 void Scene_AssignViewFlags(struct ActorPlacement *entry) {
-  struct MapGridScrollWork *view = gMapGridWork[0];
+  struct MapGridScrollState *view = gMapGridState[0];
 
   GameFlag_ClearFar(FLAG_IN_VIEW);
   GameFlag_SetFar(FLAG_OUT_OF_VIEW);
@@ -341,7 +341,7 @@ void Scene_AssignViewFlags(struct ActorPlacement *entry) {
 /// Releases the placed actors far from the view's centre: more than 160 pixels
 /// to either side, 200 pixels north or 100 pixels south. Actors at (0, 0) stay.
 void Actor_ClearOutOfBounds(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   struct Actor *camera;
   FIXED centerX;
   FIXED centerZ;
@@ -353,14 +353,14 @@ void Actor_ClearOutOfBounds(void) {
   s32 releaseCacheMask;
   s32 i;
 
-  camera = work->camera;
+  camera = state->camera;
   centerX = camera->x.fixed;
   left = centerX - toFIXED(160);
   right = centerX + toFIXED(160);
   centerZ = camera->z.fixed;
   top = centerZ - toFIXED(200);
   bottom = centerZ + toFIXED(100);
-  actorSlot = &work->actors[ACTOR_FIRST_PLACED];
+  actorSlot = &state->actors[ACTOR_FIRST_PLACED];
   // Every bit of SPRITE_CACHE_FLAGS but retainCacheEntry.
   releaseCacheMask = ~1;
 
@@ -400,12 +400,12 @@ void Actor_ClearOutOfBounds(void) {
 /// Releases every placed actor and places the scene's actors again from its
 /// first actor placement table after the leader's.
 void Actor_Respawn(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   struct ActorPlacement *placements;
   s32 slotIndex;
 
   for (slotIndex = 0; slotIndex < PLACED_MAX; slotIndex++) {
-    struct Actor *actor = work->actors[ACTOR_FIRST_PLACED + slotIndex];
+    struct Actor *actor = state->actors[ACTOR_FIRST_PLACED + slotIndex];
 
     if (actor != 0) {
       // As in Actor_ClearOutOfBounds: free the sprite and its
@@ -413,47 +413,47 @@ void Actor_Respawn(void) {
       actor->spriteStorageKind = ACTOR_SPRITE_ONE;
       actor->sprite->retainCacheEntry = 0;
       Actor_ReleaseFar(actor);
-      work->actors[ACTOR_FIRST_PLACED + slotIndex] = 0;
+      state->actors[ACTOR_FIRST_PLACED + slotIndex] = 0;
     }
   }
-  placements = work->tables[1];
-  work->tables[1] = 0;
-  work->tables[2] = 0;
-  work->tables[3] = 0;
+  placements = state->tables[1];
+  state->tables[1] = 0;
+  state->tables[2] = 0;
+  state->tables[3] = 0;
   if (placements != 0)
     Event_SpawnActorPlacements(placements, Actor_FindLastActiveId());
 }
 
 /// Empties all the actor slots, without releasing the actors.
 void Actor_ClearAll(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct Actor *emptyActor;
   s32 actorIndex;
 
   emptyActor = NULL;
-  work = gFieldWork;
+  state = gFieldState;
   for (actorIndex = 0; actorIndex < ACTOR_ID_COUNT; actorIndex++) {
-    work->actors[actorIndex] = emptyActor;
+    state->actors[actorIndex] = emptyActor;
   }
 }
 
 /// Returns the actor in slot actorIndex (below LOOKUP_ID_COUNT), or NULL.
 void *Actor_Lookup(u32 actorIndex) {
-  u8 *workBytes = (u8 *)gFieldWork;
+  u8 *stateBytes = (u8 *)gFieldState;
   u32 slotOffset;
 #ifdef UBFIX
   void *object;
 #endif
   if (actorIndex > LOOKUP_ID_COUNT - 1)
     return 0;
-  slotOffset = (actorIndex * 4) + offsetof(struct FieldWork, actors);
+  slotOffset = (actorIndex * 4) + offsetof(struct FieldState, actors);
 #ifdef UBFIX
   // The legacy range includes non-pointer fields. Copy their representation
   // without reading them through an incompatible pointer lvalue.
-  memcpy(&object, workBytes + slotOffset, sizeof(object));
+  memcpy(&object, stateBytes + slotOffset, sizeof(object));
   return object;
 #else
-  return *(void **)(workBytes + slotOffset);
+  return *(void **)(stateBytes + slotOffset);
 #endif
 }
 
@@ -461,22 +461,22 @@ void *Actor_Lookup(u32 actorIndex) {
 /// gActorSnapshot, with each one's slot, animation, sprite flags and
 /// priority, so that Actor_Restore can put them back.
 void Actor_Snapshot(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct Actor *snapshot = gActorSnapshot.actors;
   u8 *animations = gActorSnapshot.animations;
   u8 *spriteFlags = gActorSnapshot.spriteFlags;
   u8 *priorities = gActorSnapshot.priorities;
   u8 *indices = gActorSnapshot.slots;
   u32 savedCount = 0;
-  s32 actorLimit = sizeof(work->actors) / sizeof(work->actors[0]);
+  s32 actorLimit = sizeof(state->actors) / sizeof(state->actors[0]);
   struct Actor *actor;
   s32 actorIndex;
   u32 animation;
   u32 spriteFlagBits;
   u32 priority;
 
-  work = gFieldWork;
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
+  state = gFieldState;
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP)
     actorLimit = ACTOR_FIRST_PLACED;
   // Keep each actor and its three sprite-state bytes at matching save
   // indices.
@@ -527,8 +527,9 @@ void Actor_Restore(void) {
   s32 animation;
   s32 priority;
   FIXED y;
-  struct FieldWork **work = &gFieldWork;
-  struct MapGridScrollWork **grid = (struct MapGridScrollWork **)gMapGridWork;
+  struct FieldState **state = &gFieldState;
+  struct MapGridScrollState **grid =
+      (struct MapGridScrollState **)gMapGridState;
 
   restoredCount = 0;
   actorIndex = *indices++;
@@ -548,8 +549,8 @@ void Actor_Restore(void) {
       sprite->shadow.priority = priority;
       *(struct Sprite **)&actor->sprite = sprite;
       // Re-anchor the camera only when restoring the selected leader.
-      if (actorIndex == gMainRoutineWork.leaderActorId) {
-        camera = (*work)->camera;
+      if (actorIndex == gMainRoutineState.leaderActorId) {
+        camera = (*state)->camera;
         cameraPosition = (*grid)->origin;
         y = actor->y.fixed;
         camera->groundHeight = y;

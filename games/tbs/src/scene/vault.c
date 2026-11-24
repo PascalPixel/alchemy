@@ -82,7 +82,7 @@
 #include "sound/sound.h"
 #include "system/point.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "window/window.h"
 #include "text/msg_ids.h"
@@ -162,8 +162,8 @@ static void Vault_FaceEachOtherAndWait(s32 actorId, s32 other, s32 delay);
 /// man who should be fixing it, and stops when Isaac comes up in front of her,
 /// or while he talks to someone or reads a mind.
 static UNREAD_RESULT Vault_UpdateWomanWantingRoofFixed(struct Actor *woman) {
-  struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
-  struct FieldWork *work = gFieldWork;
+  struct WindowState *window = (struct WindowState *)gWindowState[0];
+  struct FieldState *state = gFieldState;
   s32 force = 0;
   s32 range = STOP_RANGE;
   struct Actor *leader;
@@ -172,7 +172,7 @@ static UNREAD_RESULT Vault_UpdateWomanWantingRoofFixed(struct Actor *woman) {
     RETURN_UNREAD(0);
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((s16)work->talk != 0 || window->mindRead != 0) {
+  if ((s16)state->talk != 0 || window->mindRead != 0) {
     range = TALK_STOP_RANGE;
     force = 1;
   }
@@ -211,13 +211,13 @@ static int Vault_GetIvanVenusDjinnCount(void) {
 /// If Ivan holds Flint, he gives it back to Isaac first.
 static void Vault_IvanStaysBehind(void) {
   struct Actor *actor;
-  struct FieldWork *work;
+  struct FieldState *state;
 
-  work = gFieldWork;
+  state = gFieldState;
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0 ||
       GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) == 0) {
     Import_EventSetExitRequest(
-        work->stepTrigger -
+        state->stepTrigger -
         (CELL_BEHAVIOR_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
     return;
   }
@@ -227,7 +227,7 @@ static void Vault_IvanStaysBehind(void) {
     Actor_SetPositionFX(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
-  if (work->stepTrigger == CELL_BEHAVIOR_VAULT_SOUTH_GATE) {
+  if (state->stepTrigger == CELL_BEHAVIOR_VAULT_SOUTH_GATE) {
     Actor_WalkToAndWait(ACTOR_IVAN, 400, 448);
   } else {
     FieldCamera_SetSpeed(0.8);
@@ -251,7 +251,7 @@ static void Vault_IvanStaysBehind(void) {
   }
   Party_RemoveMemberRestored(IVAN);
   Import_EventSetExitRequest(
-      work->stepTrigger -
+      state->stepTrigger -
       (CELL_BEHAVIOR_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -277,7 +277,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 static inline void Vault_AskYesNoAndShowAnswer(s32 speaker) {
   Event_OpenMessage(speaker, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0)
-    ++gFieldWork->message;
+    ++gFieldState->message;
   Event_ShowMessage(speaker, 0);
 }
 
@@ -290,7 +290,7 @@ static void Vault_AskAboutEruption(void) {
   Vault_FaceEachOtherAndWait(ACTOR_ERUPTION_WITNESS, ACTOR_PARTY_LEADER, 2);
   Event_OpenMessage(ACTOR_ERUPTION_WITNESS, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_ShowMessage(ACTOR_ERUPTION_WITNESS, 0);
   Actor_FaceDirection(ACTOR_ERUPTION_WITNESS, FACING_SOUTH_SOUTHWEST, 0);
@@ -447,7 +447,7 @@ static void Vault_TalkAboutIvan(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultTalkingAboutHammetsServantIvan);
   if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0) {
-    ++gFieldWork->message;
+    ++gFieldState->message;
   }
   Vault_ShowStandingActorMessage(ACTOR_OLD_MAN_ON_HAMMETS_SERVANT);
   Event_End();
@@ -474,7 +474,7 @@ static void Vault_AskWhetherIvanWentToLunpa(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultDidntGoLunpa);
   if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0)
-    ++gFieldWork->message;
+    ++gFieldState->message;
   Actor_SetAnimation(ACTOR_BOY_ROUND_THE_WELL, ANIM_STILL);
   Vault_FaceEachOtherAndWait(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 10);
@@ -535,7 +535,7 @@ static void Vault_TalkToDogAfterCapture(void) {
   Actor_SetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
-    gFieldWork->fieldMenu = 1;
+    gFieldState->fieldMenu = 1;
   }
   Event_End();
 }
@@ -595,7 +595,7 @@ static void Vault_ReadMindOnIvan(void) {
   } else {
     Event_SetMessageId(MsgVaultWhereDidIvanGoBy);
     if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0)
-      ++gFieldWork->message;
+      ++gFieldState->message;
   }
   Vault_ShowThought(ACTOR_BOY_ROUND_THE_WELL);
   Event_End();
@@ -866,7 +866,7 @@ s32 Scene_Initialize(void) {
   }
   // Back through the gates while Ivan waits in Vault: "Welcome back, you two!
   // Let's go find the rod!"
-  if (gMainRoutineWork.entrance <= VAULT_NORTH_UNUSED) {
+  if (gMainRoutineState.entrance <= VAULT_NORTH_UNUSED) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -876,7 +876,7 @@ s32 Scene_Initialize(void) {
           if (actor != NULL) {
             Actor_SetPositionFX(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
           }
-          if (gMainRoutineWork.entrance == VAULT_FROM_WORLD_MAP_SOUTH) {
+          if (gMainRoutineState.entrance == VAULT_FROM_WORLD_MAP_SOUTH) {
             Actor_SetPosition(ACTOR_IVAN, 400, 448);
           } else {
             Actor_SetPosition(ACTOR_IVAN, 224, 162);
@@ -902,7 +902,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_SAP, 408, 120);
   }
   // The same welcome out of the Vault Sanctum while Ivan is out of the party.
-  if (gMainRoutineWork.entrance == VAULT_FROM_SANCTUM) {
+  if (gMainRoutineState.entrance == VAULT_FROM_SANCTUM) {
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
       if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
         if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) == 0) {
@@ -926,7 +926,7 @@ s32 Scene_Initialize(void) {
     }
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   } else {
-    if (gMainRoutineWork.entrance == VAULT_FROM_LOG_ROOMS_A_WEST) {
+    if (gMainRoutineState.entrance == VAULT_FROM_LOG_ROOMS_A_WEST) {
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
         Actor_SetPosition(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, 0, 0);
       }

@@ -29,9 +29,9 @@ extern const u16 gBattleUnit_WeaponKinds[];
 struct SpriteAnimation;
 struct Sprite;
 struct BattleSideOrder;
-struct BattleBackgroundWork;
+struct BattleBackgroundState;
 struct SpriteScale;
-struct MindReadWork;
+struct MindReadState;
 
 /// One of the star field's three rings, moving outward on the effect canvas.
 struct Ring {
@@ -89,12 +89,12 @@ extern u8 BitDecoder_Size[];
 /// The extra matrix the battle camera's projection applies first while
 /// commands are chosen (FLAG_CHOOSING_COMMANDS), in 16.16 words.
 extern const FIXED gBattleCamera_CommandMatrix[];
-/// Where SparkWork.sheet holds the spark's square picture for each frame of
+/// Where SparkState.sheet holds the spark's square picture for each frame of
 /// life left, 0 to 6: byte offsets, a byte a pixel.
 extern s32 gElementGlow_StarPictures[];
 /// The spark's width and height in pixels by life left: 1 to 4, 4 from three.
 extern u8 gElementGlow_StarSizes[];
-/// Where SparkWork.sheet holds the ring's four 32 by 32 frames: byte offsets,
+/// Where SparkState.sheet holds the ring's four 32 by 32 frames: byte offsets,
 /// 1,024 apart.
 extern s32 gElementGlow_RingPictures[];
 /// The highlighted units' BLDY lightening: 15 down to 0 once, then the second
@@ -103,13 +103,14 @@ extern s8 gBattleHighlight_BlendRamp[];
 /// The 104 encounter zones (encounter_zones.c), read as struct EncounterZone
 /// rows.
 extern u16 gEncounterZones[];
-/// The HEAP_SLOT_MIND_READ heap slot: Mind Read's wave work while its effect
+/// The HEAP_SLOT_MIND_READ heap slot: Mind Read's wave state while its effect
 /// runs.
-#define gMindReadWork                                                          \
-  (*(struct MindReadWork **)&gHeapSlots[HEAP_SLOT_MIND_READ])
+#define gMindReadState                                                         \
+  (*(struct MindReadState **)&gHeapSlots[HEAP_SLOT_MIND_READ])
 /// The heap slots from HEAP_SLOT_BATTLE_EFFECT, then the canvas and sprite
-/// sheet: the running battle effect's BattleEffectWork first.
-#define gBattleEffectWork (*(void *(*)[]) & gHeapSlots[HEAP_SLOT_BATTLE_EFFECT])
+/// sheet: the running battle effect's BattleEffectState first.
+#define gBattleEffectState                                                     \
+  (*(void *(*)[]) & gHeapSlots[HEAP_SLOT_BATTLE_EFFECT])
 /// The HEAP_SLOT_ENEMY_UNITS heap slot: the six enemy battle units,
 /// BATTLE_UNIT_SIZE bytes each, that Unit_Get returns for unit ids 128 to 133
 /// during a battle.
@@ -120,8 +121,8 @@ extern u32 gRandomSeed;
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the camera's turn, which
 /// battle_staging.c, battle_auto_battle.c and battle_turn.c set for each
 /// action, and the background's display mode.
-#define gBattleBackgroundWork                                                  \
-  (*(struct BattleBackgroundWork **)&gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND])
+#define gBattleBackgroundState                                                 \
+  (*(struct BattleBackgroundState **)&gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND])
 /// SC_FACE_WATCHED every frame, forever: the script of an actor told to
 /// keep facing its watched actor.
 extern const s32 gActor_FaceWatchedScript[];
@@ -191,7 +192,7 @@ enum BattlePose {
 /// them.
 enum BattleSpriteMode { SPRITE_OPAQUE, SPRITE_SEMI_TRANSPARENT };
 
-/// BattleHighlight_SetModes' mode, kept in BattleWork.highlightMode:
+/// BattleHighlight_SetModes' mode, kept in BattleState.highlightMode:
 /// whether the selected units are highlighted, every other unit faded.
 enum BattleHighlight { HIGHLIGHT_OFF, HIGHLIGHT_SELECTED };
 
@@ -206,7 +207,7 @@ enum BattleElementGlow {
 };
 
 struct BattleAction;
-struct BattlePlaybackWork;
+struct BattlePlaybackState;
 struct BattleEffectParams;
 struct DjinnRecoveryTable;
 struct BattleTransitionEntry;
@@ -259,7 +260,7 @@ s32 BattleUnit_CountDownSleep(s32 unitId);
 #define DEFINE_ADJUST_CAMERA(name)                                             \
   void name(void) {                                                            \
     struct BattleCamera *cam = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);              \
-    struct BattleBackgroundWork *view =                                        \
+    struct BattleBackgroundState *view =                                       \
         HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);                          \
                                                                                \
     if ((gKeysHeld & KEY_L) != 0) {                                            \
@@ -310,7 +311,7 @@ void BattleObject_DestroyAll(void);
 #else
 void *BattleObject_DestroyAll(void);
 #endif
-s32 Battle_GetWorkEntryPair(s32 place, struct Point *position);
+s32 Battle_GetStateEntryPair(s32 place, struct Point *position);
 UNREAD_RESULT BattleCamera_ApplyTransform(void);
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected);
 void *GetMotionRecord(struct Actor *actor, s32 recordIndex);
@@ -384,7 +385,7 @@ UNREAD_RESULT BattleMessage_WaitForAdvance(void);
 UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 void BattlePlayback_MarkMessage(void);
 UNREAD_RESULT BattleObject_DestroyTemporaryObject(s32 unitId);
-void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackWork *runtime,
+void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackState *runtime,
                                     u32 operand);
 #ifdef UBFIX
 void BattlePlayback_RunAll(void);

@@ -31,10 +31,10 @@ struct SelectionSprite {
 struct SelectionNode {
   struct SelectionNode *previous; ///< the icon before it in its row
   struct SelectionNode *next;     ///< the icon after it in its row
-  /// The entry's number within its kind, as listed in SelectionMenuWork.bases;
+  /// The entry's number within its kind, as listed in SelectionMenuState.bases;
   /// for an arrow, the frames left of its nudge after a scroll.
   u16 base;
-  /// The entry's kind, as listed in SelectionMenuWork.kinds, or ICON_KIND_NONE
+  /// The entry's kind, as listed in SelectionMenuState.kinds, or ICON_KIND_NONE
   /// for a free record; for an arrow, TRUE while it shows.
   u16 kind;
   u16 slot;      ///< VRAM cache slot of its picture
@@ -54,7 +54,7 @@ struct SelectionNode {
   struct SelectionSprite sprite;
 };
 
-/// The entries of SelectionMenuWork.records.
+/// The entries of SelectionMenuState.records.
 enum SelectionRecord {
   SELECTION_RECORD_ROW = 2,    ///< the first of the row's seven icons
   SELECTION_RECORD_CHOSEN = 9, ///< the first of the five icons chosen
@@ -65,7 +65,7 @@ enum SelectionRecord {
 
 /// The selection screen (heap block 18): the row of icons the player picks
 /// from, with arrows at each end and a pointing hand over the chosen target.
-struct SelectionMenuWork {
+struct SelectionMenuState {
   /// 0 and 1 the arrows at the row's ends, 2 to 8 the row's icons, 9 to 13 the
   /// icons chosen so far, 14 the pointing hand, whose picture is loaded at
   /// setup, and 15 the large icon.
@@ -100,7 +100,7 @@ struct SelectionMenuWork {
   u8 unused[42];
 };
 
-/// The bit of SelectionMenuWork.cursorIndex set as an entry is chosen, on
+/// The bit of SelectionMenuState.cursorIndex set as an entry is chosen, on
 /// which SelectionMenu_Clear puts the next list's top and cursor back to its
 /// first entry.
 #define SELECTION_CURSOR_RESET 0x80
@@ -109,10 +109,10 @@ STATIC_ASSERT(sizeof(struct SelectionSprite) == 12);
 STATIC_ASSERT(sizeof(struct SelectionNode) == 52);
 STATIC_ASSERT(offsetof(struct SelectionNode, message) == 32);
 STATIC_ASSERT(offsetof(struct SelectionNode, sprite) == 40);
-STATIC_ASSERT(offsetof(struct SelectionMenuWork, head) == 840);
-STATIC_ASSERT(offsetof(struct SelectionMenuWork, kinds) == 852);
-STATIC_ASSERT(offsetof(struct SelectionMenuWork, cursorIndex) == 926);
-STATIC_ASSERT(offsetof(struct SelectionMenuWork, locked) == 952);
-STATIC_ASSERT(sizeof(struct SelectionMenuWork) == 996);
+STATIC_ASSERT(offsetof(struct SelectionMenuState, head) == 840);
+STATIC_ASSERT(offsetof(struct SelectionMenuState, kinds) == 852);
+STATIC_ASSERT(offsetof(struct SelectionMenuState, cursorIndex) == 926);
+STATIC_ASSERT(offsetof(struct SelectionMenuState, locked) == 952);
+STATIC_ASSERT(sizeof(struct SelectionMenuState) == 996);
 
 #endif

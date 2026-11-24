@@ -48,8 +48,8 @@ void InventorySnapshot_Save(void) {
   save = gInventorySnapshot;
   if (*save != INVENTORY_SNAPSHOT_SENTINEL) {
     *save++ = INVENTORY_SNAPSHOT_SENTINEL;
-    firstShortcut = gMainRoutineWork.firstShortcut;
-    secondShortcut = gMainRoutineWork.secondShortcut;
+    firstShortcut = gMainRoutineState.firstShortcut;
+    secondShortcut = gMainRoutineState.secondShortcut;
     // Save each inventory before retaining its Psynergy-granting items.
     for (unitId = ISAAC; unitId <= MIA; unitId++) {
       struct Unit *unit = Unit_Get(unitId);
@@ -70,10 +70,10 @@ void InventorySnapshot_Save(void) {
     // UB: the party order's four bytes are read as two halfwords, through a
     // pointer of another type.
 #ifdef UBFIX
-    save[0] = gMainRoutineWork.party[0] | (gMainRoutineWork.party[1] << 8);
-    save[1] = gMainRoutineWork.party[2] | (gMainRoutineWork.party[3] << 8);
+    save[0] = gMainRoutineState.party[0] | (gMainRoutineState.party[1] << 8);
+    save[1] = gMainRoutineState.party[2] | (gMainRoutineState.party[3] << 8);
 #else
-    inventory = (s16 *)gMainRoutineWork.party;
+    inventory = (s16 *)gMainRoutineState.party;
     save[0] = inventory[0];
     save[1] = inventory[1];
 #endif
@@ -100,19 +100,19 @@ void InventorySnapshot_Restore(void) {
       Unit_Calculate(unitId);
     }
 
-    gMainRoutineWork.firstShortcut = *source++;
-    gMainRoutineWork.secondShortcut = *source++;
+    gMainRoutineState.firstShortcut = *source++;
+    gMainRoutineState.secondShortcut = *source++;
     // UB: the party order's four bytes are written as two halfwords, through a
     // pointer of another type.
 #ifdef UBFIX
-    gMainRoutineWork.party[0] = source[0];
-    gMainRoutineWork.party[1] = source[0] >> 8;
-    gMainRoutineWork.party[2] = source[1];
-    gMainRoutineWork.party[3] = source[1] >> 8;
+    gMainRoutineState.party[0] = source[0];
+    gMainRoutineState.party[1] = source[0] >> 8;
+    gMainRoutineState.party[2] = source[1];
+    gMainRoutineState.party[3] = source[1] >> 8;
     source++;
 #else
-    *(u16 *)gMainRoutineWork.party = *source++;
-    *(u16 *)&gMainRoutineWork.party[2] = *source;
+    *(u16 *)gMainRoutineState.party = *source++;
+    *(u16 *)&gMainRoutineState.party[2] = *source;
 #endif
     source = gInventorySnapshot;
     *source = 0;

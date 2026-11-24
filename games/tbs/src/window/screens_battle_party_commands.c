@@ -41,11 +41,11 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
 /// flees (COMMAND_FLEE for the first actor), or -1 when the link fails.
 s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 s32 commandCount) {
-  struct BattleMenuWork *state;
+  struct BattleMenuState *state;
   // Default: each local given NULL or 0 here is set for real before it is
   // read.
-  struct BattleWork *battle = NULL;
-  struct BattleWork *linkBattle = NULL;
+  struct BattleState *battle = NULL;
+  struct BattleState *linkBattle = NULL;
   u16 *peerSignature = NULL;
   u16 *transferWords = NULL;
   struct BattleAction *command = NULL;
@@ -84,14 +84,14 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   parameter = 0;
   largeIconSlot = VramCache_AllocEntry(COMMAND_ICON_BYTES);
   smallIconSlot = VramCache_AllocEntry(512);
-  state =
-      HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, sizeof(struct BattleMenuWork));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU,
+                              sizeof(struct BattleMenuState));
   CommandIcon_ReloadSlot(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable(
       (u16 *)(BG_CHAR_BLOCK(0) + PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
   Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
   Menu_BuildLocalizedPatternTiles();
-  battle = gBattleWork;
+  battle = gBattleState;
   for (k = 0; k < 8; k++) {
     state->chosenDjinn[k] = BATTLE_MENU_NO_DJINNI;
   }
@@ -234,9 +234,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 #endif
       // The party member's row starts on Attack; its portrait shows at the
       // left.
-      gBattleMenuWork->commandActor = unitId;
-      gBattleMenuWork->commandSelection[1] = 0;
-      iconSprite = &gBattleMenuWork->icons[BATTLE_MENU_ICON_PORTRAIT];
+      gBattleMenuState->commandActor = unitId;
+      gBattleMenuState->commandSelection[1] = 0;
+      iconSprite = &gBattleMenuState->icons[BATTLE_MENU_ICON_PORTRAIT];
       iconSprite->oam.word.attr01 =
           OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       iconSprite->oam.word.attr23 = 0;
@@ -248,8 +248,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
     mark_visible:
       Window_MarkVisibleTextTiles();
-      gBattleMenuWork->iconShown[BATTLE_MENU_ICON_COMMAND] = 0;
-      gBattleMenuWork->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
+      gBattleMenuState->iconShown[BATTLE_MENU_ICON_COMMAND] = 0;
+      gBattleMenuState->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
       // memberList is the party member alone, ended by
       // BATTLE_UNIT_LIST_END: marked in the battle and highlighted in the party
       // status window.
@@ -285,10 +285,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
 
       // Out of time in a link battle: Defend.
-      if (gBattleMenuWork->timer == 0) {
+      if (gBattleMenuState->timer == 0) {
         mode = COMMAND_ICON_DEFEND;
       }
-      iconSprite = &gBattleMenuWork->icons[BATTLE_MENU_ICON_COMMAND];
+      iconSprite = &gBattleMenuState->icons[BATTLE_MENU_ICON_COMMAND];
       MenuSprite_Initialize(*iconSprite,
                             OBJ_SIZE_32X32 | OBJ_256_COLORS |
                                 OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
@@ -323,7 +323,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       case COMMAND_ICON_PSYNERGY: {
         struct MenuSprite *iconSprite;
         struct AbilityDefinition *ability;
-        struct WindowWork *work;
+        struct WindowState *windowState;
         u16 *list;
         u8 *pick;
         s32 range;
@@ -367,7 +367,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         range = ability->range;
         iconSprite = &state->icons[BATTLE_MENU_ICON_ABILITY];
         handle = VramCache_AllocEntry(128);
-        work = WINDOW_WORK;
+        windowState = WINDOW_STATE;
         commandWindow = Window_Create(8, 17, 18, 3, MENU_WINDOW_FLAGS);
         state->icons[BATTLE_MENU_ICON_COMMAND].oam.f.x = 40;
         iconSprite->oam.word.attr01 =
@@ -379,7 +379,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         __asm__ volatile("");
         iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(parameter, handle);
         state->iconShown[BATTLE_MENU_ICON_ABILITY] = 1;
-        work->textPalette = BASIC_COLORS_PALETTE;
+        windowState->textPalette = BASIC_COLORS_PALETTE;
         if (ability->ppCost > unit->pp) {
           Text_SetColor(TEXT_COLOR_RED);
         } else if (unit->psySeal != 0) {
@@ -388,7 +388,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Text_DrawMessageAsTiles(parameter + MsgAbilityName, commandWindow, 16,
                                 0);
         Text_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
-        work->textPalette = WINDOW_PALETTE;
+        windowState->textPalette = WINDOW_PALETTE;
         Text_SetColor(TEXT_COLOR_WHITE);
         Window_SetTilemapEntry(commandWindow, PSYNERGY_COST_FIRST_TILE, 11, 0,
                                0);
@@ -521,7 +521,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       djinn_list:
         state->icons[BATTLE_MENU_ICON_COMMAND].oam.f.x = 144;
-        gBattleMenuWork->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
+        gBattleMenuState->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
         mode = BattleDjinnMenu_Run(unitId, 1);
         command->range = 0;
         if (mode == -1) {
@@ -529,7 +529,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         commandKind = COMMAND_DJINN;
         parameter = mode;
-        gBattleMenuWork->chosenDjinn[commandIndex] = mode;
+        gBattleMenuState->chosenDjinn[commandIndex] = mode;
         element = DJINN_COMMAND_ELEMENT(parameter);
         index = DJINN_COMMAND_INDEX(parameter);
         if (Djinn_IsSetFar(unitId, element, index) != 0) {
@@ -740,7 +740,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     // window, that is while the partner is still choosing; a timer window
     // was closed above and is only forgotten here. mode counts the frames
     // without the link, and past LINK_MAX_MISSED_FRAMES gives up (-1).
-    linkBattle = gBattleWork;
+    linkBattle = gBattleState;
     mode = 0;
     if (state->timerWindow == 0 && linkBattle->linkPaused == 0) {
       state->timerWindow =

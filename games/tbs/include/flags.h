@@ -53,7 +53,7 @@
 #define FLAG_MENUS_RAISE_TRIGGER 0x107
 /// The next field scene starts where the party was, as after a battle: the
 /// scene's flags are not reset, the actors come back from their snapshot,
-/// and the music saved in gMainRoutineWork.returnMusic resumes if there is
+/// and the music saved in gMainRoutineState.returnMusic resumes if there is
 /// one (a random battle clears it, so the scene's own music plays).
 /// FieldSequence_Run clears it once the scene starts.
 #define FLAG_KEEP_PARTY_POSITION 0x109
@@ -427,7 +427,7 @@
 #define FLAG_ALTMILLER_CAVE_MIMIC_BEATEN 0xef5
 
 // Babi Lighthouse
-/// Arrival through room 2's entrance 10 changes its cell pictures and
+/// Arrival through room 2's entrance 10 changes its cell tiles and
 /// behaviors; entrances 10 and 11 restore those changes on later
 /// visits.
 #define FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR 0x980

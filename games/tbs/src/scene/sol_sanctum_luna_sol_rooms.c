@@ -86,7 +86,7 @@
 #include "sound/sound_driver_symbols.h"
 #include "system/io_reg.h"
 #include "system/io_write.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
 
@@ -811,8 +811,8 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 32;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = 32;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -871,8 +871,8 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
                                             6);
   Actor_SetSpeed(ACTOR_KRADEN, 2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 280);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 32;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = 32;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING);
@@ -945,8 +945,8 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   Task_Remove(SolSanctumLunaSolRooms_UpdateSecondFallingLight);
   Task_Remove(SolSanctumLunaSolRooms_UpdateThirdFallingLight);
   Task_Remove(SolSanctumLunaSolRooms_UpdateFourthFallingLight);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 32;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = 32;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(
@@ -1030,8 +1030,8 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(speaker, 6);
   }
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 32;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = 32;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(
@@ -1254,9 +1254,9 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     }
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     Event_Wait(80);
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
-    gFieldWork->transitionFrames = 24;
+    gFieldState->transitionFrames = 24;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
@@ -1275,7 +1275,7 @@ s32 Scene_Initialize(void) {
   s32 anyLightLit;
 
   wait(1);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   playedEntranceEvent = 0;
   if (GameFlag_Get(FLAG_SOL_SANCTUM_FOUND) != 0 &&
@@ -1300,7 +1300,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_KRADEN, 576, 120);
     }
   }
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED) {
     if (Event_GetFlag(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) == 0) {
       SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed();
@@ -1308,7 +1308,7 @@ s32 Scene_Initialize(void) {
       playedEntranceEvent = 1;
     }
   } else if (
-      gMainRoutineWork.entrance ==
+      gMainRoutineState.entrance ==
       SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_TRIGGERED) {
     if (Event_GetFlag(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) == 0) {
       SolSanctumLunaSolRooms_SpringTrap();
@@ -1319,7 +1319,7 @@ s32 Scene_Initialize(void) {
       GameFlag_Clear(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN);
       playedEntranceEvent = 1;
     }
-  } else if (gMainRoutineWork.entrance ==
+  } else if (gMainRoutineState.entrance ==
              SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN) {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) != 0) {
       SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights();
@@ -1351,7 +1351,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsTo(45, STATUE_LIGHTS_LIT_ROW, 34, 10, 4, 2);
       MapGrid_CopyCellsTo(45, STATUE_LIGHTS_DARK_ROW, 16, 10, 4, 2);
       MapGrid_CopyCellsTo(14, 45, 14, 41, 8, 4);
-      if (gMainRoutineWork.entrance !=
+      if (gMainRoutineState.entrance !=
           SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION) {
         if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) == 0) {
           // The cells SolSanctumLunaSolRooms_RiseToElementalStarRoom copies as
@@ -1408,7 +1408,7 @@ s32 Scene_Initialize(void) {
   }
   // The arrival after the Wise One's rescue plays only once.
   if (Event_GetFlag(FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN) == 0 &&
-      gMainRoutineWork.entrance ==
+      gMainRoutineState.entrance ==
           SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION) {
     SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue();
     GameFlag_Set(FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN);
@@ -1463,7 +1463,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   wait(1);
   Actor_SetPosition(ACTOR_GARET, 280, 134);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
-  gFieldWork->transitionFrames = 1;
+  gFieldState->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
@@ -1526,7 +1526,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Scene_WalkIntoLeader(ACTOR_GARET);
-  palette = gPaletteFadeWork;
+  palette = gPaletteFadeState;
   palette->target[0] = 0;
   palette->target[1] = 0;
   palette->target[2] = 0;
@@ -1535,9 +1535,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   palette->step = 1;
   palette->padding = 1;
   Io_Write16(0, &PLTT_BACKDROP);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  gFieldState->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_End();
 }
 

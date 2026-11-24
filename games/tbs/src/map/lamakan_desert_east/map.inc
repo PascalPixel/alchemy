@@ -4,14 +4,14 @@ Field_LamakanDesertEast:
 	map_layer 0, 0, 16, 16, 0, 0, 0x7f, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0x7f, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_LamakanDesertEast, .LField_LamakanDesertEast_CELL_PICTURES
+	map_offset Field_LamakanDesertEast, .LField_LamakanDesertEast_CELL_TILES
 	map_offset Field_LamakanDesertEast, .LField_LamakanDesertEast_SHAPES
 	map_offset Field_LamakanDesertEast, .LField_LamakanDesertEast_GRID
 	map_offset Field_LamakanDesertEast, .LField_LamakanDesertEast_ANIMATION
 	map_offset Field_LamakanDesertEast
 	map_offset Field_LamakanDesertEast, .LField_LamakanDesertEast_MARKERS
-.LField_LamakanDesertEast_CELL_PICTURES:
-	.incbin "games/tbs/src/map/lamakan_desert_east/cell_pictures.delta1.lz"
+.LField_LamakanDesertEast_CELL_TILES:
+	.incbin "games/tbs/src/map/lamakan_desert_east/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_LamakanDesertEast_SHAPES:
 	.incbin "games/tbs/src/map/lamakan_desert_east/shapes.table.lz"

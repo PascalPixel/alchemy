@@ -27,7 +27,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     lights->poolBehavior = region;
     return;
   }
-  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  actor = Actor_Lookup(gMainRoutineState.leaderActorId);
   z = actor->z.fixed;
   cell = (struct MapGridCell *)Ram_MapGridCellBuffer +
          (z / toFIXED(16)) * MAPGRID_SIZE + actor->x.fixed / toFIXED(16);

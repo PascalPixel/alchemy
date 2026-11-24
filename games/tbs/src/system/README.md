@@ -26,9 +26,9 @@ sequence, not a frame. The loop that goes round once a frame is
 Before every sequence the task list is emptied, the whole heap is taken
 back, looping sounds are cut off and any line-by-line screen effect is
 switched off. This is what makes each sequence start cold. Only what lies
-outside the heap crosses from one to the next: the main routine's work, the
+outside the heap crosses from one to the next: the main routine's state, the
 game flags and the actor snapshot, each a fixed block of memory
-(`gMainRoutineWork` and `gActorSnapshot` are declared in `ewram.s`).
+(`gMainRoutineState` and `gActorSnapshot` are declared in `ewram.s`).
 
 A scene's overlay is loaded here too, just before the field sequence is
 called. A battle, Lucky Dice and Lucky Wheels load none.
@@ -147,7 +147,7 @@ it needs when it starts, and a scene adds its own on top.
 
 An entry of the list is the function, the rank and that one flag. A task
 gets no arguments and no memory of its own, so what it has to remember is
-in its owner's [work](../../glossary.md#work). No task adds a task, and no
+in its owner's [state](../../glossary.md#state). No task adds a task, and no
 task calls `wait()` ([Who may wait](../../system.md#who-may-wait)). It is
 all in `system_task.c`.
 
@@ -174,10 +174,10 @@ it nearly free, and it means blocks go back in reverse order. The main
 routine empties the lot between sequences.
 
 A block that other code has to find again is kept in a numbered
-[heap slot](../../glossary.md#heap-slot). The game calls such a block a
-[work](../../glossary.md#work): the menu's work, the battle's work. Asking
-for a slot that is already filled just returns it, so the code that sets a
-work up and the code that reads it make the same call. It is
+[heap slot](../../glossary.md#heap-slot). Such a block is its owner's
+[state](../../glossary.md#state): the menu's state, the battle's state.
+Asking for a slot that is already filled just returns it, so the code that
+sets a state up and the code that reads it make the same call. It is
 `system_heap.c`.
 
 ## Memory map
@@ -197,7 +197,7 @@ new copy of a part goes into a spare sector with a higher count, is read
 back, and only then is the old copy retired. Every sector carries a label
 and a checksum, so a half-written one is recognised and ignored.
 
-The parts hold the game flags, the main routine's work and where the
+The parts hold the game flags, the main routine's state and where the
 scene's actors stand. It is `system_save.c`, and the Save command that
 uses it is in [Windows](../window/README.md#saving).
 

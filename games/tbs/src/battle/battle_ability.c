@@ -100,7 +100,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
   s32 unitId;
   s32 abilityId;
   s32 elementBonus; // elemental power less resistance
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 halveDefense; // the attack counts half the target's Defense
   s32 multiplier;   // 0 on a miss, 2 or 3 for a double or triple blow
   s32 damageDealt;  // HP or PP the target lost (negative if healed)
@@ -122,7 +122,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
 
   // 1. The target as it was, its distance and the element.
   elementBonus = 0;
-  battle = gBattleWork;
+  battle = gBattleState;
   halveDefense = 0;
   damageDealt = 0;
   leaveOneHp = 0;
@@ -1230,7 +1230,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
   Heap_Release(savedTarget);
   Unit_CalculateFar(targetId);
   // The party's status is drawn now, not through the queue.
-  PartyStatus_DrawFar(gBattleWork->partyStatus);
+  PartyStatus_DrawFar(gBattleState->partyStatus);
   if (target->hp != 0)
     BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, targetId);
   // A haunted unit pays, one time in four, a quarter of what it took, at the

@@ -358,8 +358,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       // A two-part enemy: its two sprites in the actor system's next group
       // table. BUG: a failed create leaves sprite null, and its flags are still
       // written.
-      sprites = (struct Sprite **)gActorSystemWork->spriteGroups +
-                gActorSystemWork->count;
+      sprites = (struct Sprite **)gActorSystemState->spriteGroups +
+                gActorSystemState->count;
       spriteId = battleObject->resource;
       actor->spriteStorageKind = ACTOR_SPRITE_GROUP;
       actor->sprite = sprites;
@@ -435,7 +435,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
 /// Returns unitId's battle object, through its place, or null for a unit with
 /// no place.
 struct BattleObject *BattleObject_Get(s32 unitId) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleState *battle = gBattleState;
   struct BattleObject *objects = battle->objects;
   s32 place = unitId;
 
@@ -519,8 +519,8 @@ void *BattleObject_DestroyAll(void) {
 
 /// Unused: writes the battlefield spot of place (its anchor, on the ground) to
 /// position, and returns 0.
-s32 Battle_GetWorkEntryPair(s32 place, struct Point *position) {
-  struct BattleWork *battle = gBattleWork;
+s32 Battle_GetStateEntryPair(s32 place, struct Point *position) {
+  struct BattleState *battle = gBattleState;
 
   SET_POSITION(position, battle->objects[place].anchorX, 0,
                battle->objects[place].anchorZ);

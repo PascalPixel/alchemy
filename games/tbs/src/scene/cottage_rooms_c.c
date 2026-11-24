@@ -251,7 +251,7 @@ static void CottageRoomsC_TalkToHungryDiner(void) {
   // "Did you hear a sound? You heard it, right?"
   Event_OpenMessage(ACTOR_BILIBIN_HUNGRY_DINER, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_ShowMessage(ACTOR_BILIBIN_HUNGRY_DINER, 0);
   Actor_FaceDirection(ACTOR_BILIBIN_HUNGRY_DINER, FACING_SOUTH, 10);
@@ -267,7 +267,7 @@ static void CottageRoomsC_AskAboutTreeSpirit(void) {
   // "Do you believe a tree spirit can curse a man?"
   Event_OpenMessage(ACTOR_BILIBIN_DINER_WITH_PICKAXE, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
-    gFieldWork->message++;
+    gFieldState->message++;
   }
   Event_ShowMessage(ACTOR_BILIBIN_DINER_WITH_PICKAXE, 0);
   Actor_FaceDirection(ACTOR_BILIBIN_DINER_WITH_PICKAXE, FACING_SOUTH, 10);
@@ -406,7 +406,7 @@ static void CottageRoomsC_ReadMiaAdmirersMind(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   actor = Actor_Get(ACTOR_BILIBIN_DINER_WITH_PICKAXE);
   actor->priorityFlags = 0;

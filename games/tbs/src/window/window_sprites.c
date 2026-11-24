@@ -25,10 +25,10 @@ typedef s32 (*GlyphRoutine)(struct Window *, u32, u32, u32, const u8 *);
 /// Draws a character of a window's text with its top-left corner at pixel (x,
 /// y) of the window's interior and returns how far the text advances.
 s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
-  struct WindowWork *work = WINDOW_WORK;
-  u32 spacingX = work->letterSpacing;
+  struct WindowState *state = WINDOW_STATE;
+  u32 spacingX = state->letterSpacing;
   s32 width;
-  u32 spacingY = work->lineSpacing;
+  u32 spacingY = state->lineSpacing;
 
   // A text canvas window draws the glyph into its canvas.
   if (mode != GLYPH_DRAW_PAGE_ARROW &&
@@ -40,7 +40,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     s32 mark;
 
     font = NULL;
-    if (gBattleMessageWork->window == window) {
+    if (gBattleMessageState->window == window) {
       font = Resource_GetTableEntry(RESOURCE_SMALL_FONT);
       width = 3;
       if (character == ' ')
@@ -50,7 +50,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     character &= (1 << TEXT_CODE_MARK_SHIFT) - 1;
     width = 4;
 #else
-    if (gBattleMessageWork->window == window) {
+    if (gBattleMessageState->window == window) {
       Resource_GetTableEntry(RESOURCE_SMALL_FONT);
       Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
       width = 3;
@@ -85,14 +85,14 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     if (windowSprite == NULL)
       return 0;
     // The sprite's own four of the glyph tiles.
-    index = (windowSprite - work->sprites) * 4;
+    index = (windowSprite - state->sprites) * 4;
     windowSprite->motion = WINDOW_SPRITE_MOTION_STILL;
     windowSprite->kind = WINDOW_SPRITE_GLYPH;
     if (mode == GLYPH_DRAW_PAGE_ARROW) {
       width = 1;
       windowSprite->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
     } else {
-      switch (work->outline) {
+      switch (state->outline) {
       case TEXT_STYLE_SHAKE:
         windowSprite->motion = WINDOW_SPRITE_MOTION_SHAKE;
         break;
@@ -125,8 +125,8 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     if ((u8)windowSprite->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
       // The page arrow sits in the window's bottom-right corner.
       sprite = SPRITE_CELL(windowSprite);
-      if (work->glyphResource == NO_GLYPH_RESOURCE)
-        work->glyphResource = VramCache_FindFreeEntry();
+      if (state->glyphResource == NO_GLYPH_RESOURCE)
+        state->glyphResource = VramCache_FindFreeEntry();
       sprite->x = (window->x << 3) + ((window->width - 2) << 3) + 4;
       sprite->y =
           (window->y << 3) + ((window->height - 2) << 3) + PAGE_ARROW_Y_OFFSET;
@@ -134,14 +134,15 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       // Copy the glyph's tiles to its sprite tiles (sprite VRAM) and place it:
       // half the line spacing below y and half the letter spacing right of x,
       // in screen pixels.
-      Dma_Set(tiles,
-              (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * TILE_SIZE_4BPP),
-              DMA_COPY_WORDS(32), REG_DMA3);
+      Dma_Set(
+          tiles,
+          (void *)(OBJ_VRAM0 + (state->glyphTiles + index) * TILE_SIZE_4BPP),
+          DMA_COPY_WORDS(32), REG_DMA3);
       ((u16 *)&windowSprite->oam)[0] =
           y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_Y_OFFSET;
       ((u16 *)&windowSprite->oam)[1] =
           (x + (spacingX >> 1) + window->x * 8 + 2) | GLYPH_SPRITE_SIZE;
-      ((u16 *)&windowSprite->oam)[2] = work->glyphTiles + index;
+      ((u16 *)&windowSprite->oam)[2] = state->glyphTiles + index;
       sprite = SPRITE_CELL(windowSprite);
     }
     windowSprite->depth = OAM_DEPTH_FRONT - 1;
@@ -188,8 +189,8 @@ STATIC_ASSERT(offsetof(struct WindowSpriteCellView, attr) ==
 /// Puts a character into a window's tilemap as a tile at tile (x, y) of its
 /// interior.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
-  void *work = gWindowWork[0];
-  u8 *base = work;
+  void *state = gWindowState[0];
+  u8 *base = state;
   struct WindowSpriteCellView *out;
   s32 idx;
   u16 *slot;
@@ -203,15 +204,15 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     return;
   if (mode == GLYPH_DRAW_PAGE_ARROW) {
     s32 column = (u16)-2;
-    work = WindowSprite_AcquireFree();
-    if (work == NULL)
+    state = WindowSprite_AcquireFree();
+    if (state == NULL)
       return;
-    out = work;
-    idx =
-        ((struct WindowSprite *)out - ((struct WindowWork *)base)->sprites) * 4;
+    out = state;
+    idx = ((struct WindowSprite *)out - ((struct WindowState *)base)->sprites) *
+          4;
     out->active = WINDOW_SPRITE_MOTION_PAGE_ARROW;
     attr = &out->attr;
-    slot = &((struct WindowWork *)base)->glyphResource;
+    slot = &((struct WindowState *)base)->glyphResource;
     if (*slot == NO_GLYPH_RESOURCE)
       *slot = VramCache_FindFreeEntry();
     // 0xfffe and 254 are -2: the arrow sits on the interior's last tile, 4
@@ -238,7 +239,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     y++;
     pos = (win->y + y) * BG_SCREEN_WIDTH + (win->x + x);
     if (pos < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT)
-      ((struct WindowWork *)work)->tilemap[pos] = WINDOW_TILE(tile);
+      ((struct WindowState *)state)->tilemap[pos] = WINDOW_TILE(tile);
   }
 }
 
@@ -251,9 +252,9 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 
 /// The Japanese Window_PutGlyph, which also places the kana marks.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
-  u8 *work = gWindowWork[0];
+  u8 *state = gWindowState[0];
   /* FAKEMATCH(dead): two XORs with tile that cancel. */
-  u8 *base = (u8 *)((unsigned long)work ^ tile);
+  u8 *base = (u8 *)((unsigned long)state ^ tile);
   struct WindowSpriteCellView *out;
   s32 idx;
   u16 *slot;
@@ -275,11 +276,11 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     out = (struct WindowSpriteCellView *)WindowSprite_AcquireFree();
     if (out == NULL)
       return;
-    idx =
-        ((struct WindowSprite *)out - ((struct WindowWork *)base)->sprites) * 4;
+    idx = ((struct WindowSprite *)out - ((struct WindowState *)base)->sprites) *
+          4;
     out->active = WINDOW_SPRITE_MOTION_PAGE_ARROW;
     attr = &out->attr;
-    slot = &((struct WindowWork *)base)->glyphResource;
+    slot = &((struct WindowState *)base)->glyphResource;
     if (*slot == NO_GLYPH_RESOURCE)
       *slot = VramCache_FindFreeEntry();
     left = win->x;
@@ -312,7 +313,8 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       u32 line;
 
       line = (win->y + y) * BG_SCREEN_WIDTH;
-      switch (*(((struct WindowWork *)base)->tilemap + (line + (win->x + x)))) {
+      switch (
+          *(((struct WindowState *)base)->tilemap + (line + (win->x + x)))) {
       case WINDOW_TILE_BORDER_TOP:
         tile -= TEXT_MARK_VOICED - VOICED_MARK_OVER_BORDER_TILE;
         break;
@@ -326,7 +328,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     }
     pos = (win->y + y) * BG_SCREEN_WIDTH + (win->x + x);
     if (pos < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT)
-      ((struct WindowWork *)work)->tilemap[pos] = WINDOW_TILE(tile);
+      ((struct WindowState *)state)->tilemap[pos] = WINDOW_TILE(tile);
   }
 }
 
@@ -344,7 +346,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 /// the tilemap, is ignored.
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   s32 palette;
   s32 index;
 
@@ -379,14 +381,14 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
     index = (window->y + y) * BG_SCREEN_WIDTH + (window->x + x);
     if ((u32)index >= TILEMAP_ENTRIES)
       return;
-    work->tilemap[index] = palette | value;
+    state->tilemap[index] = palette | value;
     return;
   case TILEMAP_ENTRY_PLAIN:
   default:
     index = (window->y + y) * BG_SCREEN_WIDTH + (window->x + x);
     if ((u32)index >= TILEMAP_ENTRIES)
       return;
-    work->tilemap[index] = value;
+    state->tilemap[index] = value;
     return;
   }
 }
@@ -460,8 +462,8 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
 /// by its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at
 /// its depth slot (WindowSprite.depth).
 void WindowSprite_UpdateAll(void) {
-  struct WindowWork *work = WINDOW_WORK;
-  struct Window *window = work->windows;
+  struct WindowState *state = WINDOW_STATE;
+  struct Window *window = state->windows;
   s32 i;
   struct AffineTransform effect;
 
@@ -484,11 +486,11 @@ void WindowSprite_UpdateAll(void) {
       switch (windowSprite->active) {
       case WINDOW_SPRITE_MOTION_PAGE_ARROW:
         // VRAM_CACHE_ENTRY_COUNT means no entry was free for the arrow.
-        if (work->glyphResource != VRAM_CACHE_ENTRY_COUNT) {
+        if (state->glyphResource != VRAM_CACHE_ENTRY_COUNT) {
           const u8 *tiles =
               &gWindowSprite_PageArrowTiles[phase * PAGE_ARROW_FRAME_BYTES];
 
-          sprite->tile = VramCache_Load(work->glyphResource,
+          sprite->tile = VramCache_Load(state->glyphResource,
                                         PAGE_ARROW_FRAME_BYTES, tiles);
           windowSprite->index = sprite->tile;
           sprite->mode = OBJ_MODE_NORMAL;
@@ -608,7 +610,7 @@ void WindowSprite_UpdateAll(void) {
       }
       // Queue it unless it is hidden, or an arrow with no picture.
       if (windowSprite->active == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
-        if (work->glyphResource != VRAM_CACHE_ENTRY_COUNT)
+        if (state->glyphResource != VRAM_CACHE_ENTRY_COUNT)
           Oam_AddSpriteAtDepth(sprite, windowSprite->depth);
       } else if (windowSprite->active != WINDOW_SPRITE_MOTION_HIDDEN) {
         Oam_AddSpriteAtDepth(sprite, windowSprite->depth);

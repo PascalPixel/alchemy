@@ -7,8 +7,8 @@
 #define STARFIELD_FALL_FALL_FRAMES 192 ///< frames of the fall
 #define STARFIELD_FALL_BURST_FRAMES 54 ///< frames of the burst
 
-/// The particle streams' modes (BattleEffect_RunStarfieldFall).
-enum ParticleStreamsMode {
+/// The starfield fall's modes (BattleEffect_RunStarfieldFall).
+enum StarfieldFallMode {
   STARFIELD_FALL_METEOR,     ///< one spawned sprite falls
   STARFIELD_FALL_OUTER_SPACE ///< the user leaps, and two animated sprites
                              ///< fall in the lightning bolt's colours
@@ -21,8 +21,8 @@ enum ParticleStreamsMode {
 #define STARFIELD_FALL_FLAME_SIZE 32
 #define STARFIELD_FALL_LARGE_GLOW_SIZE 24
 #define STARFIELD_FALL_SMALL_GLOW_SIZE 8
-/// Where each picture begins in the particle streams' sprite sheet, in bytes.
-enum ParticleStreamsSheetPicture {
+/// Where each picture begins in the flame sprite sheet, in bytes.
+enum FlameSheetBPicture {
   /// The six 32x32 flames, in a row
   STARFIELD_FALL_FLAMES = 0,
   /// The brightest 24x24 glow
@@ -121,6 +121,11 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 /// An ember is drawn at size STARFIELD_FALL_EMBER_SIZE_MAX at
 /// MOTE_DEPTH_NEAR or nearer, one size smaller every MOTE_DEPTH_STEP farther.
 #define STARFIELD_FALL_EMBER_SIZE_MAX 9
+/// The fall's own VBlank tasks run first in the pass, ahead of the image copy:
+/// the starfield's scroll, then the backdrop's HBlank DMA, so that both are set
+/// before the frame's first line.
+#define STARFIELD_FALL_SCROLL_PRIORITY (TASK_PASS_VBLANK + 127)
+#define STARFIELD_FALL_BACKDROP_PRIORITY (TASK_PASS_VBLANK + 126)
 
 /// The mote pictures in the blast sprite sheet, after its seven blast pictures
 /// (BLAST_PICTURE_SIZES): two sets, MOTE_SET_BYTES apart.
@@ -137,7 +142,7 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
   void *colors = (void *)BG_PLTT;
 
   /// Starts a landing where a fireball reaches the ground; it is never drawn.
-  void ParticleStreams_SpawnLanding(s32 x, s32 y, s32 velocityX) {
+  void StarfieldFall_SpawnLanding(s32 x, s32 y, s32 velocityX) {
     s32 i;
 
     for (i = 0; i != STARFIELD_FALL_LANDINGS; i++) {
@@ -155,7 +160,7 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
   }
 
   /// Starts a flame; the fall starts its own inline.
-  UNUSED void ParticleStreams_SpawnFlame(s32 x, s32 y) {
+  UNUSED void StarfieldFall_SpawnFlame(s32 x, s32 y) {
     s32 i;
 
     for (i = 0; i != STARFIELD_FALL_FLAME_COUNT; i++) {
@@ -235,6 +240,9 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
                BGCNT_SCREEN_BASE(31);
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
+  // Pale colours at random for BG colours 128 to 190. Nothing shows them: the
+  // stars below are colours 64 to 127, which a recording shows in whatever
+  // those entries already hold, some of them the battle background's.
   for (i = 0; i != SHEET_PALETTE_COLORS - 1; i++) {
     s32 red = (Random16() & 15) + 16;
     s32 green = (Random16() & 15) + 16;
@@ -261,7 +269,7 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
   state->scrollInterval = 2;
   state->scrollStepX = direction * Q_8_8(0.5);
   state->scrollStepY = Q_8_8(1);
-  Task_Add(BattleEffect_AdvanceBg2OnInterval, TASK_PASS_VBLANK + 127);
+  Task_Add(BattleEffect_AdvanceBg2OnInterval, STARFIELD_FALL_SCROLL_PRIORITY);
   Task_Add(BattleEffect_TransferFullScreenImage, TASK_PASS_VBLANK);
   for (i = 0; i != ARRAY_COUNT(offsets); i++)
     offsets[i] = Random16() & (STARFIELD_FALL_RAGGED_EDGE - 1);
@@ -306,7 +314,8 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
                               COMPOSITE_LIGHTEN);
     draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
-    Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);
+    Task_Add(BattleEffect_ArmPaletteHBlankDma,
+             STARFIELD_FALL_BACKDROP_PRIORITY);
     EFFECT_FREE_PARTICLES(i, state->particles, ARRAY_COUNT(state->particles));
     view->busy = 1;
     state->frame = 0;
@@ -453,7 +462,7 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
                fireballY - STARFIELD_FALL_LARGE_GLOW_SIZE / 2,
                STARFIELD_FALL_LARGE_GLOW_SIZE, STARFIELD_FALL_LARGE_GLOW_SIZE);
         else if (fireballY <= 95)
-          ParticleStreams_SpawnLanding(
+          StarfieldFall_SpawnLanding(
               INTtoFIXED(gStarfieldFall_FireballPoints[i][0] + x),
               INTtoFIXED(fireballY), 1);
       }
@@ -682,3 +691,5 @@ void BattleEffect_RunStarfieldFall(struct BattleEffectParams *args, s32 mode) {
 #undef STARFIELD_FALL_FLASH_PICTURES
 #undef STARFIELD_FALL_MOTE_PICTURES
 #undef STARFIELD_FALL_EMBER_SIZE_MAX
+#undef STARFIELD_FALL_SCROLL_PRIORITY
+#undef STARFIELD_FALL_BACKDROP_PRIORITY

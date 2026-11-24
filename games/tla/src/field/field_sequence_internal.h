@@ -112,14 +112,6 @@ struct SceneEncounterRule {
   u8 secondZone; ///< MAP_CELL_SECOND_ZONE cells
 };
 
-/// A world map encounter rule, ended by kind -1.
-struct TerrainRule {
-  s16 kind;     ///< the terrain kind of the map block, 0 to 19
-  s16 behavior; ///< the terrain's behavior, or -1 for any
-  s16 flag;     ///< -1, or a flag the rule needs set
-  s16 zone;
-};
-
 /// A point that Vector_AddPolarOffset moves as three coordinates and the item
 /// display reads as a Vector3.
 union PolarOffsetPosition {
@@ -180,10 +172,6 @@ struct MapRegion {
 /// Each scene's encounters by scene, entrance and flag, ended by scene -1
 /// (encounter_rules.s).
 extern const struct SceneEncounterRule gScene_EncounterRules[];
-
-extern struct TerrainRule gWorldMap_EncounterRules[];
-
-extern struct TerrainRule gWorldMap_ShipEncounterRules[];
 
 extern const struct EncounterZone gEncounterZones[];
 

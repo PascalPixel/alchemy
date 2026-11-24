@@ -7,6 +7,7 @@
 #include "sounds.h"
 #include "game/character_ids.h"
 #include "field/encounter_zone.h"
+#include "field/world_map_encounter_rules.h"
 #include "gamepak/far_call/game.h"
 #include "field/field_sequence.h"
 #include "gamepak/far_call/field.h"
@@ -90,7 +91,7 @@ void Encounter_SelectMapZones(s32 useRules) {
 /// ship, the zones are gWorldMap_ShipEncounterRules'; a rule's flag must be set
 /// for it to apply.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
-  struct TerrainRule *rule = gWorldMap_EncounterRules;
+  const struct WorldMapEncounterRule *rule = gWorldMap_EncounterRules;
   s32 environment;
   u32 region;
   s32 zone;
@@ -103,10 +104,10 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
   environment = WorldMap_GetBattleEnvironmentFar(position, (s32 *)&region);
   region %= WORLD_MAP_ENCOUNTER_REGIONS;
   zone = 0;
-  for (; rule->kind != -1; rule++) {
-    if (rule->kind != region)
+  for (; rule->region != -1; rule++) {
+    if (rule->region != region)
       continue;
-    if (rule->behavior != -1 && rule->behavior != environment)
+    if (rule->environment != -1 && rule->environment != environment)
       continue;
     if (rule->flag != -1 && GameFlag_Get(rule->flag) == 0)
       continue;

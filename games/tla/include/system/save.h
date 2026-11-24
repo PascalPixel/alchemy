@@ -104,4 +104,27 @@ STATIC_ASSERT(sizeof(struct SaveSectorHeader) == 16);
 
 u32 Save_FindLatestSector(s32 partId);
 
+// The save in flash.
+s32 Save_CompareBytes(u8 *left, u8 *right, s32 count);
+s32 Save_ChecksumSector(void);
+s32 Save_ReadSector(s32 index);
+u32 Save_WriteSector(s32 sector);
+s32 Save_InvalidateSector(s32 index);
+u32 Save_SelectWriteSector(s32 partId);
+u32 Save_GetLatestCounter(s32 partId);
+void Save_SetProgressCallback(void (*progress)(s32 step));
+s32 Save_WritePart(s32 partId, void *source);
+s32 Save_InitializeState(void);
+s32 Save_LoadFileSummaries(void);
+void Save_ReleaseState(void);
+/// The current save file, or -1 for none (a new game).
+extern s16 gSaveSlot;
+/// 1 when a save file on the cartridge holds a cleared game, as the save screen
+/// finds on loading the summaries; a new game keeps it in
+/// gMainRoutineState.clearedFileAtStart.
+extern s16 gAnyFileCleared;
+/// The buffer a save file is built in and written from, in two halves; its
+/// summary's 16-byte header lies just before it.
+extern u8 gSaveBuffer[];
+
 #endif

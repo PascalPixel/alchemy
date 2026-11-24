@@ -27,6 +27,7 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
+#include "system/save.h"
 #include "types.h"
 #include "macros.h"
 #include "field/scene_tables.h"

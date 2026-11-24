@@ -209,4 +209,31 @@ extern struct MusicPlayerInfo gMPlayInfo_Jingle;
 
 void SoundFlag_Set(s32 sound);
 
+// The sound driver's state as the frame wait runs it.
+// XXX: why the frame wait reads the sound driver's state as bytes rather than
+// through struct SoundInfo, whose transferCountdown is volatile; whether the
+// driver's own struct should make that member volatile would settle the type.
+/// Where the sound driver finds its state (SOUND_INFO_PTR): a pointer to
+/// gSoundInfo, whose bytes the frame wait reads.
+extern u8 *gSoundInfoPointer;
+/// The byte `member` of the sound driver's state `info` (struct SoundInfo),
+/// read through gSoundInfoPointer's bytes without the struct's volatile.
+#define SOUND_INFO_BYTE(info, member)                                          \
+  ((info)[offsetof(struct SoundInfo, member)])
+/// SoundMain as the frame wait runs it: steps the music players and the CGB
+/// channels and starts the IWRAM mixer on this VBlank's PCM, returning 0; it
+/// returns 1 with nothing done when the stack is too deep or the driver busy.
+s32 SoundDriver_EnterVBlankUpdate(void);
+/// The resident mixer in IWRAM, which the frame wait runs after
+/// SoundDriver_EnterVBlankUpdate returns 0. It never reads its argument; the
+/// callers pass 8.
+void IwramSoundRenderVBlank(s32) __attribute__((long_call));
+/// The VBlank handler's sound step, as m4aSoundVSync: counts down the PCM
+/// buffer's VBlanks and, as it wraps, restarts the two sound DMAs, which then
+/// read from the buffer's start again.
+void SoundDriver_VSyncRefresh(void);
+/// The sound mixer's workspace at the top of IWRAM; the IWRAM heap ends where
+/// it starts (Heap_GetRemainingIwram).
+extern u8 IwramSoundMixWorkspace[];
+
 #endif

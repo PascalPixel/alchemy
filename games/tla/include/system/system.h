@@ -4,8 +4,7 @@
 /// @file
 /// The system bank's routines and globals, by the part each belongs to: the
 /// frame, random numbers, tasks, sequences and overlays, sprites, matrices,
-/// fades, resources, windows, the debug text, the sound driver's frame step,
-/// flash and the save, and the link cable.
+/// fades, resources, windows, the debug text and the link cable.
 
 #include "edition.h"
 #include "fixed_math.h"
@@ -213,85 +212,6 @@ extern u8 gNumberTextDecimalEnd[];
 /// The end of String_FormatHex's digits: DebugText_PrintHex prints the last
 /// places before it.
 extern u8 gNumberTextHexEnd[];
-
-// The sound driver's state as the frame wait runs it.
-// XXX: why the frame wait reads the sound driver's state as bytes rather than
-// through struct SoundInfo, whose transferCountdown is volatile; whether the
-// driver's own struct should make that member volatile would settle the type.
-/// Where the sound driver finds its state (SOUND_INFO_PTR): a pointer to
-/// gSoundInfo, whose bytes the frame wait reads.
-extern u8 *gSoundInfoPointer;
-/// The byte `member` of the sound driver's state `info` (struct SoundInfo),
-/// read through gSoundInfoPointer's bytes without the struct's volatile.
-#define SOUND_INFO_BYTE(info, member)                                          \
-  ((info)[offsetof(struct SoundInfo, member)])
-/// SoundMain as the frame wait runs it: steps the music players and the CGB
-/// channels and starts the IWRAM mixer on this VBlank's PCM, returning 0; it
-/// returns 1 with nothing done when the stack is too deep or the driver busy.
-s32 SoundDriver_EnterVBlankUpdate(void);
-/// The resident mixer in IWRAM, which the frame wait runs after
-/// SoundDriver_EnterVBlankUpdate returns 0. It never reads its argument; the
-/// callers pass 8.
-void IwramSoundRenderVBlank(s32) __attribute__((long_call));
-/// The VBlank handler's sound step, as m4aSoundVSync: counts down the PCM
-/// buffer's VBlanks and, as it wraps, restarts the two sound DMAs, which then
-/// read from the buffer's start again.
-void SoundDriver_VSyncRefresh(void);
-/// The sound mixer's workspace at the top of IWRAM; the IWRAM heap ends where
-/// it starts (Heap_GetRemainingIwram).
-extern u8 IwramSoundMixWorkspace[];
-
-// The flash library.
-struct FlashType;
-struct FlashSetupInfo;
-/// The Atmel chip's setup, one of the flash library's chips (gFlash_Chips).
-extern const struct FlashSetupInfo gFlash_ChipAtmel;
-/// The setup IdentifyFlash gives a chip whose id it does not know, the last of
-/// gFlash_Chips.
-extern const struct FlashSetupInfo gFlash_ChipDefault;
-#ifndef OWN_gFlash
-extern const struct FlashType *gFlash;
-#endif
-#ifndef OWN_gFlashSavedIme
-extern u16 gFlashSavedIme;
-#endif
-#ifndef OWN_gFlashTimeoutFlag
-extern u8 gFlashTimeoutFlag;
-#endif
-/// The hardware timer the flash library times its waits with
-/// (SAVE_FLASH_TIMER).
-extern u8 gFlashTimerNum;
-#ifndef OWN_CountRemainingErasedFlashBytes
-s32 CountRemainingErasedFlashBytes(u8 *ptr);
-#endif
-#ifndef OWN_StartFlashTimer
-void StartFlashTimer(u8 index);
-#endif
-/// The sector writer of the chip IdentifyFlash found.
-extern u16 (*gProgramFlashSector)(u16 sector, u8 *source);
-
-// The save in flash.
-s32 Save_CompareBytes(u8 *left, u8 *right, s32 count);
-s32 Save_ChecksumSector(void);
-s32 Save_ReadSector(s32 index);
-u32 Save_WriteSector(s32 sector);
-s32 Save_InvalidateSector(s32 index);
-u32 Save_SelectWriteSector(s32 partId);
-u32 Save_GetLatestCounter(s32 partId);
-void Save_SetProgressCallback(void (*progress)(s32 step));
-s32 Save_WritePart(s32 partId, void *source);
-s32 Save_InitializeState(void);
-s32 Save_LoadFileSummaries(void);
-void Save_ReleaseState(void);
-/// The current save file, or -1 for none (a new game).
-extern s16 gSaveSlot;
-/// 1 when a save file on the cartridge holds a cleared game, as the save screen
-/// finds on loading the summaries; a new game keeps it in
-/// gMainRoutineState.clearedFileAtStart.
-extern s16 gAnyFileCleared;
-/// The buffer a save file is built in and written from, in two halves; its
-/// summary's 16-byte header lies just before it.
-extern u8 gSaveBuffer[];
 
 // The link cable.
 void Serial_Initialize(void);

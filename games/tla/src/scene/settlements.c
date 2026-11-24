@@ -45,6 +45,7 @@
 #include "version.h"
 #include "system/io_write_queue.h"
 #include "system/irq_lock.h"
+#include "system/irq.h"
 #include "field/map_grid.h"
 #include "system/io_write.h"
 #include "system/field_effect.h"
@@ -251,7 +252,6 @@ void Smoke_Drift(struct Actor *actor);
 void Actor_Release(struct Actor *actor);
 void Scroll_HBlank(void);
 void Layer_TrackScroll(void);
-void Irq_SetHandler(s32 irq, s32 vcount, void (*handler)(void));
 void Event_End(void);
 void ItemDisplay_ShowItem(s32 item, s32 flags);
 
@@ -302,53 +302,6 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern s32 gSettlements_BobScript[];
 extern s32 gSettlements_CrateBobScript[];
-
-/// The apple's sprite as Kalt Island sets it up: the parts of struct
-/// FieldSprite it changes.
-struct OrbitSprite {
-  u8 beforeShape[5];
-  u8 affine : 2;
-  u8 blendMode : 2;
-  u8 mosaic : 1;
-  u8 fullColor : 1;
-  u8 shape : 2;
-  u8 beforePriority[3];
-  u8 tileHigh : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 beforeVramBlock[6];
-  u8 vramBlock;
-  u8 beforeState[10];
-  u8 state;
-};
-
-/// The apple as Kalt Island floats it: an actor whose fields hold the centre
-/// and angle of its sway, as The Broken Seal's OrbitingMapActor.
-struct OrbitObject {
-  u8 beforeX[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 beforePriorityFlags[15];
-  u8 priorityFlags;
-  u8 beforeOrbitAngle[12];
-  s32 orbitAngle;
-  u8 beforeOrbitCenter[4];
-  s32 orbitCenterX;
-  s32 orbitCenterY;
-  s32 orbitCenterZ;
-  u8 beforeSprite[12];
-  struct OrbitSprite *sprite;
-  u8 beforeMode;
-  u8 mode;
-  u8 state;
-  u8 beforeActive[5];
-  u8 active;
-  u8 beforeVisible[4];
-  u8 visible;
-  u8 beforeCallback[10];
-  u32 callback;
-};
 
 /// Three 16.16 fixed-point components.
 struct SettlementsVector {
@@ -626,18 +579,19 @@ void Settlements_PuffChimneySmoke(void) {
 
 /// The apple each frame: it sways up to two pixels either side of its spot and
 /// dips up to two pixels below it, at a random pace, as The Broken Seal's Nut
-/// floats.
-s32 Settlements_FloatApple(struct OrbitObject *apple) {
+/// floats. A frozen actor is never steered, so the apple keeps the sway's angle
+/// in its speedLimit and its spot in targetX and targetY.
+s32 Settlements_FloatApple(struct Actor *apple) {
   struct FieldSprite *sprite = (struct FieldSprite *)apple->sprite;
-  FIXED dip = Math_Sin(apple->orbitAngle) * 2;
+  FIXED dip = Math_Sin(apple->speedLimit) * 2;
 
   if (dip > 0)
     dip = -dip;
-  apple->x = apple->orbitCenterX + Trig_Cos(apple->orbitAngle) * 2;
-  apple->y = apple->orbitCenterY + dip;
-  sprite->rotation = Trig_Cos(apple->orbitAngle + DEGtoANG(180)) / 8;
+  apple->x.fixed = apple->targetX + Trig_Cos(apple->speedLimit) * 2;
+  apple->y.fixed = apple->targetY + dip;
+  sprite->rotation = Trig_Cos(apple->speedLimit + DEGtoANG(180)) / 8;
   // The pace: a sixty-fourth of a turn and two random steps under 1/128 each.
-  apple->orbitAngle += Random_Below(512) + Random_Below(512) + TRIG_TURN / 64;
+  apple->speedLimit += Random_Below(512) + Random_Below(512) + TRIG_TURN / 64;
   return 0;
 }
 
@@ -648,8 +602,8 @@ void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 /// Sets up Kalt Island: the see-through sprites, the chimney smoke, the rope
 /// if it is tied, and, until it is taken, the apple floating in the trees.
 void Settlements_SetUpKaltIsland(void) {
-  struct OrbitObject *actor;
-  struct OrbitSprite *sprite;
+  struct Actor *actor;
+  struct FieldSprite *sprite;
   IconTransfer *glyph;
 
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
@@ -666,29 +620,29 @@ void Settlements_SetUpKaltIsland(void) {
     Actor_SetPosition(ACTOR_APPLE, 0, 0);
     return;
   }
-  actor = (struct OrbitObject *)Actor_Get(ACTOR_APPLE);
-  sprite = actor->sprite;
+  actor = Actor_Get(ACTOR_APPLE);
+  sprite = (struct FieldSprite *)actor->sprite;
   sprite->priority = 1;
   sprite->fullColor = 0;
   sprite->palette = 0;
-  sprite->state = 0;
-  Actor_SetSpriteFlags((struct Actor *)actor, 0);
-  actor->active = 0;
-  actor->mode = 0;
+  sprite->countAndShadow[0] = 0;
+  Actor_SetSpriteFlags(actor, 0);
+  actor->retainSpriteCache = 0;
+  actor->motionFlags = 0;
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
-    actor->y += toFIXED(16);
+    actor->y.fixed += toFIXED(16);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  actor->visible = 1;
+  actor->frozen = 1;
   glyph = HeapSlot_Alloc(HEAP_SLOT_ICON_TRANSFER, sizeof(IconTransfer));
   Item_LoadIcon(ITEM_APPLE);
-  Vram_Load(sprite->vramBlock, ICON_TILE_BYTES, glyph->tiles);
+  Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_ICON_TRANSFER);
-  actor->orbitCenterX = actor->x;
-  actor->orbitAngle = 0;
-  actor->orbitCenterY = actor->y;
-  actor->active = 1;
-  actor->callback = (u32)Settlements_FloatApple;
-  actor->state = 0;
+  actor->targetX = actor->x.fixed;
+  actor->speedLimit = 0;
+  actor->targetY = actor->y.fixed;
+  actor->retainSpriteCache = 1;
+  actor->update = (ObjectUpdate)Settlements_FloatApple;
+  actor->arrivalAxis = 0;
 }
 
 extern s16 gSettlements_WallCrate[];
@@ -838,6 +792,8 @@ void Settlements_CycleWaterColors(void) {
   frame = &gSettlements_WaterColorFrame;
   if (*frame == -1) {
     u16 *colors = gSettlements_LoadedWaterColors;
+    /* FAKEMATCH(temporary): the copy routine held in a local for both
+       copies. */
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copy(colors, (void *)&BG_PLTT_COLOR(FALLS_PALETTE, 0),
@@ -902,7 +858,10 @@ void Layer_TrackScroll(void) {
       &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 y = FIXEDtoINT(layer->y);
 
-  gSettlements_WaterfallLine = 1448 - y;
+  // The third layer's picture starts 1024 pixels down the map; the line is
+  // the map's row 424, line 72 of the screen with the view at the foot of its
+  // box (render probe SwAttekaIslet --entrance 99).
+  gSettlements_WaterfallLine = 1024 + 424 - y;
   gSettlements_WaterfallScrollAbove = FIXEDtoINT(layer->x);
   gSettlements_WaterfallScrollBelow =
       (s16)FIXEDtoINT(layer->x) - (gFrameCount >> 2);

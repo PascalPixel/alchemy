@@ -77,13 +77,6 @@ enum {
 /// A condition that holds while flag is set.
 #define IF_FLAG_SET(flag) ((flag) | CONDITION_FLAG_SET)
 
-/// Set once the party has left Vale (WORLD_MAP_FROM_VALE_PLAZA): Vale's
-/// scenes then place their later actors and lines, the Sanctum takes
-/// another trigger table and Healer line, and the Sol Sanctum approach moves
-/// its sentry, changes cell behaviors and stops sending its way down to
-/// SceneId_ValeEruption.
-enum { FLAG_VALE_PARTY_LEFT = 0x815 };
-
 /// A scene's entrance: where and facing which way the party arrives,
 /// and the camera's bounds there (-1 for none).
 struct SceneEntrance {

@@ -307,6 +307,7 @@ static void Lunpa_FreezeHiddenPuddle(void) {
   struct Actor *pillar;
 
   pillar = Actor_Get(ACTOR_HIDDEN_PUDDLE);
+  // DEAD: the leader looked up and dropped; the ROM keeps the call.
   Actor_Get(ACTOR_PARTY_LEADER);
   Lunpa_ApplyFrozenPuddleCollision();
   if (pillar != NULL) {
@@ -355,8 +356,11 @@ static void Lunpa_RevealSecrets(void) {
       Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 16);
     }
     TreasureSpot_SetPosition(TREASURE_SPOT_PSYNERGY_STONE, -1, -1);
+    // The stone's cell takes the attributes kept for it at (28, 31).
     MapGrid_CopyCellAttributes(28, 31, 1, 1, 7, 16);
   }
+  // The puddle's cell on the middle layer (the map's columns from 32), and the
+  // cells round it, (13, 3) to (15, 5), take the copies kept for Reveal.
   MapGrid_CopyCells(47, 4, 1, 1, 46, 4);
   MapGrid_CopyCellAttributes(34, 37, 3, 3, 13, 3);
   Actor_SetPosition(ACTOR_HIDDEN_PUDDLE, 232, 72);
@@ -389,14 +393,20 @@ static void Lunpa_RevealSecrets(void) {
 /// cave mouth and the Psynergy Stone's spot are hidden again, and a frozen
 /// puddle thaws.
 static void Lunpa_HideSecrets(void) {
+  // DEAD: the leader looked up and dropped; the ROM keeps the call.
   Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetPosition(ACTOR_SWITCH_SPARKLE, 0, 0);
   Actor_SetPosition(ACTOR_HIDDEN_PUDDLE, 0, 0);
+  // The puddle's cell and the cells round it as they are without it, from the
+  // copies kept at (38, 38) and (37, 37), whose attributes (14, 2) takes too.
   MapGrid_CopyCells(38, 38, 1, 1, 46, 4);
   MapGrid_CopyCellAttributes(37, 37, 3, 3, 13, 3);
   MapGrid_CopyCellAttributes(37, 37, 1, 1, 14, 2);
+  // The stone's cell plain again, as the cell east of it.
   MapGrid_CopyCellAttributes(8, 16, 1, 1, 7, 16);
   TreasureSpot_SetPosition(TREASURE_SPOT_PSYNERGY_STONE, 0, 0);
+  // The cave mouth's lower cells, (1, 15) to (3, 16), shut again from the
+  // copy kept at (32, 42).
   MapGrid_CopyCells(32, 42, 3, 2, 1, 15);
   GameFlag_Clear(FLAG_LUNPA_PUDDLE_FROZEN);
   Actor_SetAnimation(ACTOR_HIDDEN_PUDDLE, ANIM_STAND);
@@ -422,6 +432,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   s32 sceneId = gMainRoutineState.next;
 
   if (sceneId == SCENE_LUNPA_FORTRESS_GATES) {
+    // DEAD: the flag read and dropped; the ROM keeps the call.
     GameFlag_Get(FLAG_DODONPA_LOCKED_UP);
     return gGateTriggers;
   }

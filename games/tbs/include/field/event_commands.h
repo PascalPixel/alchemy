@@ -151,7 +151,7 @@ struct Window;
 void Event_SetMessageId(s32 message);
 s32 Actor_GetSpriteById(s32 actorId);
 s32 Actor_FindBySprite(s32 sprite);
-struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused);
+struct Window *FieldMessage_ShowAtActor(s32 speaker, s32 unusedFlags);
 void Event_ShowMessageAndWait(s32 actorId, s32 flags);
 void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 frames);
 s32 Event_AskYesNoAndShowResponse(s32 actorId, s32 flags);

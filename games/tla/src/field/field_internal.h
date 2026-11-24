@@ -149,15 +149,6 @@ struct MapHeader {
   s32 script;
 };
 
-/// FieldState as the sand trail reads its priority
-/// (FieldState.sandTrailPriority).
-struct SandTrailState {
-  u8 unused[3402]; ///< no code names it
-  u16 trailPriority
-      : 8;            ///< read as the low byte of FieldState.sandTrailPriority
-  u16 unusedHigh : 8; ///< no code names it
-};
-
 /// A map layer's scroll position in whole 16-pixel cells.
 struct MapGridTilePosition {
   s32 x, y;
@@ -185,7 +176,8 @@ struct SpriteLayerView {
 };
 
 /// The actor as SC_SYNC clears it when it gives up waiting: its target, arrival
-/// axis and blocked count.
+/// axis and blocked count. Read through struct Actor,
+/// ActorScript_WaitForArrival compiles otherwise.
 struct WaitingActor {
   u8 unused[56]; ///< no code names it
   s32 targetX;

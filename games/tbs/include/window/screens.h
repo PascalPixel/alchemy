@@ -71,6 +71,20 @@ void FileList_PlacePartySprites(void);
 void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y);
 void FileList_HideDjinnSprites(void);
 void FileList_PlaceDjinnSprites(void);
+
+/// What the file list is choosing a file for, which decides the files the
+/// cursor may stop on.
+enum FileMenuMode {
+  FILE_LIST_SAVE,     ///< saving: any file, empty ones too
+  FILE_LIST_CONTINUE, ///< continuing: files not yet cleared
+  FILE_LIST_COPY,     ///< copying: any file with data
+  FILE_LIST_ERASE,    ///< erasing: any file with data
+  /// The title's Battle: files whose party has found a Djinni
+  /// (SaveFileSummary.djinnCount).
+  FILE_LIST_BATTLE,
+  FILE_LIST_CLEARED ///< the title's Send: cleared files only
+};
+
 void FileList_DrawDjinnCounts(struct Window *window,
                               struct SaveFileSummary *summary);
 void FileList_DrawSummary(struct Window *window,

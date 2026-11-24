@@ -571,7 +571,7 @@ menu_top:;
   if (result == SAVE_ACTION_CONTINUE) {
     struct MainRoutineState *state;
 
-    result = Save_ChooseAndLoadFile(1);
+    result = Save_ChooseAndLoadFile(FILE_LIST_CONTINUE);
     if (result == -1) {
       goto menu_top;
     }
@@ -634,7 +634,7 @@ menu_top:;
   // held the party's equipment gets it back, and its party is reset to Isaac,
   // Garet, Ivan and Mia, in order.
   if (result == SAVE_ACTION_BATTLE) {
-    result = Save_ChooseAndLoadFile(4);
+    result = Save_ChooseAndLoadFile(FILE_LIST_BATTLE);
     if (result == -1) {
       goto menu_top;
     }
@@ -663,7 +663,7 @@ menu_top:;
       goto menu_top;
     }
   link_load:;
-    result = Save_ChooseAndLoadFile(5);
+    result = Save_ChooseAndLoadFile(FILE_LIST_CLEARED);
     if (result == -1) {
       goto menu_top;
     }

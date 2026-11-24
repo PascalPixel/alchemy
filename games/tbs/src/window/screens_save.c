@@ -19,19 +19,6 @@
 /// No backup memory. "Unable to detect backup memory."
 #define SAVE_ERROR_NO_MEMORY -9
 
-/// What the file list is choosing a file for, which decides the files the
-/// cursor may stop on.
-enum FileMenuMode {
-  FILE_LIST_SAVE,     ///< saving: any file, empty ones too
-  FILE_LIST_CONTINUE, ///< continuing: files not yet cleared
-  FILE_LIST_COPY,     ///< copying: any file with data
-  FILE_LIST_ERASE,    ///< erasing: any file with data
-  /// The title's Battle: files whose party has found a Djinni
-  /// (SaveFileSummary.djinnCount).
-  FILE_LIST_BATTLE,
-  FILE_LIST_CLEARED ///< the title's Send: cleared files only
-};
-
 /// FileList_SelectFile's result when no file can be chosen in its mode.
 #define FILE_LIST_NO_FILE -2
 

@@ -50,7 +50,7 @@ void Actor_SetSpriteColorFar(struct Actor *actor, s32 color);
 void Actor_WatchAndStartScriptFar(u32 actorId, s32 targetId,
                                   const void *script);
 void Event_SetMessageIdFar(s32 message);
-struct Window *FieldMessage_ShowAtActorFar(s32 actorId, s32 unused);
+struct Window *FieldMessage_ShowAtActorFar(s32 speaker, s32 unusedFlags);
 void Event_ShowMessageAndWaitFar(s32 actorId, s32 flags);
 void Event_ShowMessageThenWaitFar(s32 actorId, s32 flags, s32 frames);
 s32 Event_AskYesNoAndShowResponseFar(s32 actorId, s32 flags);

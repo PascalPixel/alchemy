@@ -46,7 +46,7 @@ struct BattleBackgroundState {
   s32 mode;      ///< enum BattleBackgroundMode
   /// BATTLE_BACKGROUND_FIXED also sets BG1's scroll whatever the mode; the
   /// battle effects' canvas layers set it.
-  s32 secondMode;
+  s32 bg1ScrollMode;
   s32 busy; ///< while set, an effect owns BG1's scroll and the camera leaves it
   /// 0 lets the camera update set the background's range each frame.
   s32 keepRange;
@@ -77,8 +77,8 @@ STATIC_ASSERT(sizeof(struct BattlePresentationState) == 88);
 STATIC_ASSERT(offsetof(struct BattlePresentationState, actors) == 36);
 STATIC_ASSERT(offsetof(struct BattlePresentationState, params) == 54);
 
-/// BattleBackgroundState.mode and secondMode: how the battle background is
-/// shown.
+/// BattleBackgroundState.mode, how the battle background is shown, and its
+/// bg1ScrollMode.
 enum BattleBackgroundMode {
   /// Not loaded yet.
   BATTLE_BACKGROUND_NONE,

@@ -212,7 +212,7 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   if (scanlines == NULL)
     return;
   if ((background->mode == BATTLE_BACKGROUND_FIXED ||
-       background->secondMode == BATTLE_BACKGROUND_FIXED) &&
+       background->bg1ScrollMode == BATTLE_BACKGROUND_FIXED) &&
       background->busy == 0)
     gBgScroll[1].x = panX >> 8;
   if (background->mode != BATTLE_BACKGROUND_ZOOMED)

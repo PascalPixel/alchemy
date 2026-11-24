@@ -94,6 +94,10 @@ extern s32 gCrossboneIsleKeys_IconTimer;
 /// (an area flag, which other areas use for their own).
 #define FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED FLAG_AREA_TEMP_00
 
+/// How far, in pixels, the first statue shoves Isaac back, the same in every
+/// edition.
+#define FIRST_STATUE_SHOVE_PIXELS 24
+
 /// How far, in pixels, the first statue follows Isaac south as it shoves him
 /// back, and how far each of the others shoves him; the two swapped from
 /// patch 1.
@@ -248,6 +252,41 @@ enum CrossboneIsleBaneCellBehavior {
   CELL_BEHAVIOR_BANE_EAST_OF_FIRST_PILLAR = 70
 };
 
+/// Spare cells beside Bane's room, (57..64, 36..42), whose attributes the
+/// pillars' and the Demon Axe chest's moves copy into the room.
+enum CrossboneIsleBaneSpareCell {
+  /// The first pillar's top, level with the back ledge.
+  RAISED_PILLAR_TOP_COLUMN = 61,
+  RAISED_PILLAR_TOP_ROW = 36,
+  /// The low ledge's three cells round the first pillar's home, (37..39, 42),
+  /// as the map lays them.
+  LOW_LEDGE_COLUMN = 62,
+  LOW_LEDGE_ROW = 37,
+  /// The gap's cells with no pillar in them: its floor, and the west ladder's
+  /// foot, (42, 42).
+  EMPTY_GAP_COLUMN = 57,
+  EMPTY_LADDER_FOOT_COLUMN = 58,
+  EMPTY_GAP_ROW = 42,
+  /// The ladder's foot raised by the first pillar standing in it.
+  RAISED_LADDER_FOOT_COLUMN = 58,
+  RAISED_LADDER_FOOT_ROW = 41,
+  /// The Demon Axe chest's cell, searched as TREASURE_SPOT_DEMON_AXE.
+  DEMON_AXE_CHEST_COLUMN = 58,
+  DEMON_AXE_CHEST_ROW = 36
+};
+
+/// The doors' pictures, kept on map layer 1 (from the map's column 64): a blue
+/// door half open and open, and the red door half open and open, each one cell
+/// by three. The blue doors are drawn at (77 + 4n, 40), that layer's
+/// (13 + 4n, 40), over their cells, and the red door at (70, 49).
+enum CrossboneIsleKeysDoorPicture {
+  BLUE_DOOR_HALF_OPEN_COLUMN = 79,
+  BLUE_DOOR_OPEN_COLUMN = 80,
+  RED_DOOR_HALF_OPEN_COLUMN = 84,
+  RED_DOOR_OPEN_COLUMN = 85,
+  DOOR_PICTURE_ROW = 29
+};
+
 /// What CrossboneIsleKeys_OpenBlueDoor is given: the door's number in the low
 /// byte, and PASSAGE_PLAY_OPENING to play its opening.
 enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
@@ -294,7 +333,8 @@ static inline void CrossboneIsleKeys_RaiseEvent(s16 *raisedTrigger, s32 event) {
 /// can walk onto it from there.
 static inline void CrossboneIsleKeys_LiftFirstPillar(s32 column,
                                                      u8 motionFlags) {
-  MapGrid_CopyCellAttributes(61, 36, 1, 1, column, 42);
+  MapGrid_CopyCellAttributes(RAISED_PILLAR_TOP_COLUMN, RAISED_PILLAR_TOP_ROW, 1,
+                             1, column, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->motionFlags = motionFlags;
   Actor_Get(ACTOR_FIRST_PILLAR)->y.fixed = toFIXED(32);
 }
@@ -576,10 +616,12 @@ static void CrossboneIsleKeys_OpenBlueDoor(s32 passageInfo) {
     Sound_Play(SE_GATE_MOVE);
     MapGrid_SetShake(2, 2, 1);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-    MapGrid_CopyCells(79, 29, 1, 3, cellColumn, 40);
+    MapGrid_CopyCells(BLUE_DOOR_HALF_OPEN_COLUMN, DOOR_PICTURE_ROW, 1, 3,
+                      cellColumn, 40);
     wait(40);
   }
-  MapGrid_CopyCells(80, 29, 1, 3, cellColumn, 40);
+  MapGrid_CopyCells(BLUE_DOOR_OPEN_COLUMN, DOOR_PICTURE_ROW, 1, 3, cellColumn,
+                    40);
   MapGrid_CopyCellAttributes(attributeColumn, 40, 1, 1, attributeColumn, 41);
   MapGrid_CopyCellAttributes(attributeColumn, 40, 1, 1, attributeColumn, 42);
 }
@@ -591,10 +633,11 @@ static void CrossboneIsleKeys_OpenRedDoor(s32 passageInfo) {
     Sound_Play(SE_GATE_MOVE);
     MapGrid_SetShake(2, 2, 1);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-    MapGrid_CopyCells(84, 29, 1, 3, 70, 49);
+    MapGrid_CopyCells(RED_DOOR_HALF_OPEN_COLUMN, DOOR_PICTURE_ROW, 1, 3, 70,
+                      49);
     wait(60);
   }
-  MapGrid_CopyCells(85, 29, 1, 3, 70, 49);
+  MapGrid_CopyCells(RED_DOOR_OPEN_COLUMN, DOOR_PICTURE_ROW, 1, 3, 70, 49);
   MapGrid_CopyCellAttributes(6, 49, 1, 1, 6, 50);
   MapGrid_CopyCellAttributes(6, 49, 1, 1, 6, 51);
 }
@@ -803,7 +846,7 @@ static void CrossboneIsleKeys_FirstStatuePushesLeaderBack(void) {
                          leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_FIRST_STATUE);
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, FIRST_STATUE_SHOVE_PIXELS);
   Event_Wait(4);
   Sound_Play(SE_THUMP);
   Actor_SetDestinationOffset(ACTOR_FIRST_STATUE, 0, FIRST_STATUE_FOLLOW_PIXELS);
@@ -1071,6 +1114,7 @@ static void CrossboneIsleKeys_UseLadder(void) {
       {
         s32 destinationColumn = 45;
         s32 destinationRow = 43;
+        // The plain ledge beside it, (46, 43).
         MapGrid_CopyCellAttributes(46, 43, 1, 1, destinationColumn,
                                    destinationRow);
       }
@@ -1084,8 +1128,8 @@ static void CrossboneIsleKeys_UseLadder(void) {
       {
         s32 destinationColumn = 45;
         s32 destinationRow = 43;
-        MapGrid_CopyCellAttributes(58, 36, 1, 1, destinationColumn,
-                                   destinationRow);
+        MapGrid_CopyCellAttributes(DEMON_AXE_CHEST_COLUMN, DEMON_AXE_CHEST_ROW,
+                                   1, 1, destinationColumn, destinationRow);
       }
     }
     GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_JUMPED_EAST_FROM_LADDER);
@@ -1135,10 +1179,11 @@ static void CrossboneIsleKeys_JumpEastOrPushFirstPillar(void) {
 /// Lays the low ledge in the north-west as it is with the first pillar gone,
 /// before the pillar's own cell is laid where it stands.
 static void CrossboneIsleKeys_RestoreFirstPillarTerrain(void) {
-  MapGrid_CopyCellAttributes(57, 42, 1, 1, 40, 42);
-  MapGrid_CopyCellAttributes(57, 42, 1, 1, 41, 42);
-  MapGrid_CopyCellAttributes(58, 42, 1, 1, 42, 42);
-  MapGrid_CopyCellAttributes(62, 37, 3, 1, 37, 42);
+  MapGrid_CopyCellAttributes(EMPTY_GAP_COLUMN, EMPTY_GAP_ROW, 1, 1, 40, 42);
+  MapGrid_CopyCellAttributes(EMPTY_GAP_COLUMN, EMPTY_GAP_ROW, 1, 1, 41, 42);
+  MapGrid_CopyCellAttributes(EMPTY_LADDER_FOOT_COLUMN, EMPTY_GAP_ROW, 1, 1, 42,
+                             42);
+  MapGrid_CopyCellAttributes(LOW_LEDGE_COLUMN, LOW_LEDGE_ROW, 3, 1, 37, 42);
 
   Actor_Get(ACTOR_FIRST_PILLAR)->motionFlags = ACTOR_FOLLOWS_TERRAIN;
 }
@@ -1147,13 +1192,15 @@ static void CrossboneIsleKeys_RestoreFirstPillarTerrain(void) {
 /// ladder, cell (42, 42): its top raises the ladder's foot to the low
 /// ledge's height.
 static void CrossboneIsleKeys_RestoreEastUnderfootCell(void) {
-  MapGrid_CopyCellAttributes(58, 41, 1, 1, 42, 42);
+  MapGrid_CopyCellAttributes(RAISED_LADDER_FOOT_COLUMN, RAISED_LADDER_FOOT_ROW,
+                             1, 1, 42, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// The first pillar stands in the middle of the gap, cell (41, 42): its top
 /// is a square Isaac can hop across.
 static void CrossboneIsleKeys_RestoreMiddleUnderfootCell(void) {
+  // The hop square beside the gap, (44, 42).
   MapGrid_CopyCellAttributes(44, 42, 1, 1, 41, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
@@ -1161,6 +1208,7 @@ static void CrossboneIsleKeys_RestoreMiddleUnderfootCell(void) {
 /// The first pillar stands in the gap's west cell, cell (40, 42), its top
 /// level with the low ledge, which it lengthens by a cell.
 static void CrossboneIsleKeys_RestoreWestUnderfootCell(void) {
+  // The ledge's cell east of the pillar's home, (39, 42).
   MapGrid_CopyCellAttributes(39, 42, 1, 1, 40, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
@@ -1234,7 +1282,8 @@ static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
   Task_Remove(CrossboneIsleKeys_FollowSecondPillar);
   Actor_SetPosition(ACTOR_SECOND_PILLAR_CHEST, 0, 0);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_JUMPED_EAST_FROM_LADDER) != 0) {
-    MapGrid_CopyCellAttributes(58, 36, 1, 1, 45, 43);
+    MapGrid_CopyCellAttributes(DEMON_AXE_CHEST_COLUMN, DEMON_AXE_CHEST_ROW, 1,
+                               1, 45, 43);
   } else {
     MapGrid_CopyCellAttributes(46, 43, 1, 1, 45, 43);
   }

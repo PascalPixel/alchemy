@@ -3,6 +3,8 @@
 // Part of game.c.
 
 #include "game_internal.h"
+#include "window/message_speed.h"
+#include "window/window.h"
 
 /// EWRAM from gSceneLocalState on, as a new game clears it: the scene's state,
 /// the equipment put aside for the Colosso and the actors kept across a battle.
@@ -35,6 +37,16 @@ struct StatState {
   s32 unusedAfterItem;               ///< never written
 };
 
+/// A new game's settings: voice sounds "On" (MsgSpeechSetting + 1) and
+/// "Window brightness" one step brighter than the hue's own colour.
+#define NEW_GAME_SPEECH 1
+#define NEW_GAME_WINDOW_BRIGHTNESS (WINDOW_BRIGHTNESS_NEUTRAL + 1)
+
+/// The enemy unit whose record holds the link opponent's Djinn recovery
+/// table: the opponent's three party members take the three before it
+/// (BattleArena_ReceivePartyRecords), and the table fits in one unit's record.
+#define OPPONENT_RECOVERY_UNIT (FIRST_ENEMY_UNIT + 3)
+
 /// The distance between `a` and `b`, |a - b|.
 #define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
@@ -45,11 +57,13 @@ void Game_RestartQuest(void) {
   MainRoutine_RunFar(0);
 }
 
-/// Returns the party's Djinn recovery bank, the standby Djinn and their turns
-/// to recover, or for the enemy side the fourth enemy's unit read as one.
+/// Returns a side's Djinn recovery table, its standby Djinn and their turns to
+/// recover: the party's (DJINN_RECOVERY_PARTY), kept in gMainRoutineState, or
+/// the opponent's (DJINN_RECOVERY_OPPONENT), in OPPONENT_RECOVERY_UNIT's
+/// record.
 struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0)
-    return (struct DjinnRecoveryTable *)Unit_Get(FIRST_ENEMY_UNIT + 3);
+    return (struct DjinnRecoveryTable *)Unit_Get(OPPONENT_RECOVERY_UNIT);
   return (struct DjinnRecoveryTable *)&gMainRoutineState.holdings;
 }
 
@@ -522,11 +536,11 @@ void MainRoutineState_InitializeDefaults(void) {
   gMainRoutineState.leaderActorId = ISAAC;
   Party_AddMember(ISAAC);
   gMainRoutineState.holdings.coins = 0;
-  gMainRoutineState.messageSpeed = 1;
-  gMainRoutineState.speech = 1;
+  gMainRoutineState.messageSpeed = MESSAGE_SPEED_NORMAL;
+  gMainRoutineState.speech = NEW_GAME_SPEECH;
   gMainRoutineState.unusedAfterSpeech = 1;
   gMainRoutineState.windowHue = 0;
-  gMainRoutineState.windowBrightness = 8;
+  gMainRoutineState.windowBrightness = NEW_GAME_WINDOW_BRIGHTNESS;
   gMainRoutineState.buildStamp = 0;
   gMainRoutineState.startStamp = BuildStamp_GetTime();
   gPlayTimeFrames = 0;

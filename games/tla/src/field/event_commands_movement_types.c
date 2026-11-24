@@ -16,7 +16,7 @@ extern const u8 gActor_WaitScript[];
 
 /// The event command "actor set attached effect", by enum AttachedEffectFlag:
 /// removes the actor attached to an actor, attaches one
-/// (SPRITE_ATTACHED_EFFECT, animation 1) unless one already is, or shows a
+/// (SPRITE_RAY_ARC, animation 1) unless one already is, or shows a
 /// one-off one (animation 2) that ends by itself (gActor_WaitScript).
 void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -33,8 +33,8 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   if ((flags & 3) != 0) {
     if ((flags & 3) == ATTACHED_EFFECT_ONCE ||
         Actor_IsNotAttachedEffect(actor->watchedActor)) {
-      effect = Actor_CreateFar(SPRITE_ATTACHED_EFFECT, actor->x.fixed,
-                               actor->y.fixed, actor->z.fixed);
+      effect = Actor_CreateFar(SPRITE_RAY_ARC, actor->x.fixed, actor->y.fixed,
+                               actor->z.fixed);
     }
   } else {
     effect = actor->watchedActor;

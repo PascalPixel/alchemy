@@ -418,8 +418,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
               spiritDistance = x;
               if (spiritDistance < 0)
                 spiritDistance = -spiritDistance;
-              /* FAKEMATCH(dead): each arm stores its test in crossed, never
-               * read. */
+              // DEAD: each arm stores its sign test in crossed, which is never
+              // read; the ROM keeps the 0/1 value each store makes.
               if (targetDistance <= spiritDistance &&
                   ((x < 0 && (crossed = target->x < 0)) ||
                    (x >= 0 && (crossed = target->x >= 0)))) {

@@ -900,9 +900,8 @@ void AnkohlRuins_ScatterWeeds(s32 a, s32 id) {
 /// kind says; map layer 1, the sand, is scrolled by the level over its base.
 void AnkohlRuins_DrawSand(void) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
-  s32 *view = &map->viewX;
-  s32 viewX = view[0] & FIELD_PIXEL_MASK;
-  s32 viewZ = view[1] & FIELD_PIXEL_MASK;
+  s32 viewX = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+  s32 viewZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   struct AnkohlRuinsSpriteState *state = &gAnkohlRuins_Sand;
   // DEAD: viewY, subtracted from both y and z, cancels in screenY; the ROM
   // keeps its load and its store to the stack.

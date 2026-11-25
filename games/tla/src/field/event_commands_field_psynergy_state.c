@@ -62,8 +62,8 @@ void Camera_WorldToScreen(struct Vector3 *position) {
     position->y = 0;
   } else {
     struct MapState *map = heap->mapGrid;
-    s32 x = map->viewX & FIELD_PIXEL_MASK;
-    s32 z = map->viewZ & FIELD_PIXEL_MASK;
+    s32 x = map->view[0] & FIELD_PIXEL_MASK;
+    s32 z = map->view[1] & FIELD_PIXEL_MASK;
 
     // Relative to the view's whole-pixel corner; height lifts a point up
     // the screen.

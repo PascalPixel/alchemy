@@ -2442,8 +2442,8 @@ s32 Scene_PrepareMap(void) {
       state->pattern = state->order[0];
       Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, TRIAL_ROAD_RULES_COURSE);
     } else {
-      s32 *viewX = &map->viewX;
-      s32 *viewZ = &map->viewZ;
+      s32 *viewX = map->view;
+      s32 *viewZ = &map->view[1];
       struct MapLayer *layer;
       s32 *words;
       s32 row;
@@ -3237,7 +3237,6 @@ void TrialRoad_DrawFountains(void) {
   s32 viewY;
   FIXED rise;
   struct MapState *map;
-  s32 *view;
   struct Actor *actor;
   u32 *entry;
   u32 *cursor;
@@ -3254,9 +3253,8 @@ void TrialRoad_DrawFountains(void) {
   count = 0;
   rise = -toFIXED(2);
   map = Ram_HeapSlots->mapGrid;
-  view = &map->viewX;
-  viewX = view[0] & FIELD_PIXEL_MASK;
-  viewZ = view[1] & FIELD_PIXEL_MASK;
+  viewX = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+  viewZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   viewY = map->origin[1];
 
   for (i = 0; i < FOUNTAIN_COUNT; i++, fountain++) {

@@ -15,11 +15,6 @@
 /// when the actor does not exist.
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   struct Actor *actor = Actor_Lookup(actorId);
-#ifdef UBFIX
-  struct MapState *map;
-#else
-  s32 *camera; // the view's top left, x then z
-#endif
   s32 cameraX;
   s32 cameraZ;
   FIXED x;
@@ -27,16 +22,8 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 
   if (actor == 0)
     return -1;
-  // UB: camera[1] crosses the viewX scalar; UBFIX reads the named pair.
-#ifdef UBFIX
-  map = Ram_HeapSlots->mapGrid;
-  cameraX = map->viewX & FIELD_PIXEL_MASK;
-  cameraZ = map->viewZ & FIELD_PIXEL_MASK;
-#else
-  camera = &((struct MapState *)Ram_HeapSlots->mapGrid)->viewX;
-  cameraX = camera[0] & FIELD_PIXEL_MASK;
-  cameraZ = camera[1] & FIELD_PIXEL_MASK;
-#endif
+  cameraX = MapState_View(Ram_HeapSlots->mapGrid)[0] & FIELD_PIXEL_MASK;
+  cameraZ = MapState_View(Ram_HeapSlots->mapGrid)[1] & FIELD_PIXEL_MASK;
   x = actor->x.fixed - cameraX;
   z = actor->z.fixed - cameraZ - actor->y.fixed;
   *position++ = x / FIXED_ONE;

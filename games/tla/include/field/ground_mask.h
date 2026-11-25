@@ -24,13 +24,6 @@ struct FadeActor {
   u8 terrainId;
 };
 
-/// The map state (struct MapState) as the ground mask reads its view position:
-/// viewX and viewZ as halfwords, the second of each its whole pixels.
-struct FadeView {
-  u8 unused[228]; ///< MapState up to viewX
-  s16 camera[4];
-};
-
 /// The fade overlay's state (heap slot fadeOverlay): its two marks and the
 /// actor they follow.
 struct FadeOverlayState {

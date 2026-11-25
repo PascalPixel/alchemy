@@ -1475,18 +1475,8 @@ void AquaRock_ArriveFromPassage(void) {
 /// top; those in view are drawn.
 void AquaRock_DrawRisingBubbles(void) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
-#ifndef UBFIX
-  s32 *view = &map->viewX;
-#endif
-  // UB: viewZ is read as view[1], though it is a separate member, not a second
-  // element of viewX.
-#ifdef UBFIX
-  s32 viewX = map->viewX & FIELD_PIXEL_MASK;
-  s32 viewZ = map->viewZ & FIELD_PIXEL_MASK;
-#else
-  s32 viewX = view[0] & FIELD_PIXEL_MASK;
-  s32 viewZ = view[1] & FIELD_PIXEL_MASK;
-#endif
+  s32 viewX = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+  s32 viewZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   s32 lift = map->origin[1];
   struct AquaRockBubbles *state = &gAquaRock_Bubbles;
   u32 tile = gVramCacheEntries[state->vramEntry].offset >> 5;
@@ -1551,9 +1541,8 @@ void AquaRock_DrawRisingBubbles(void) {
 /// bottom; those in view are drawn.
 void AquaRock_DrawFallingBubbles(void) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
-  s32 *view = &map->viewX;
-  s32 viewX = view[0] & FIELD_PIXEL_MASK;
-  s32 viewZ = view[1] & FIELD_PIXEL_MASK;
+  s32 viewX = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+  s32 viewZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   s32 lift = map->origin[1];
   struct AquaRockBubbles *state = &gAquaRock_Bubbles;
   u32 tile = gVramCacheEntries[state->vramEntry].offset >> 5;

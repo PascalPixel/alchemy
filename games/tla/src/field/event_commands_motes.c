@@ -160,7 +160,7 @@ void FieldEffect_UpdateSparkles(void) {
   state = Ram_HeapSlots->weather;
   spawned = 0;
   map = Ram_HeapSlots->mapGrid;
-  camera = &map->viewX;
+  camera = map->view;
   spawnX = 0;
   spawnZ = 0;
   i = 0;

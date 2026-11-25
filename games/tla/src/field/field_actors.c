@@ -158,14 +158,13 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
 s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
                                       s32 *screenPosition) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
-  s32 *view = &map->viewX;
   s32 viewX;
   s32 viewZ;
   FIXED x;
   FIXED y;
 
-  viewX = view[0] & FIELD_PIXEL_MASK;
-  viewZ = view[1] & FIELD_PIXEL_MASK;
+  viewX = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+  viewZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   x = actor->x.fixed - viewX;
   y = actor->z.fixed - viewZ;
   // Across, from 32 pixels left of the screen to 32 past its 240; down,
@@ -688,7 +687,6 @@ void ActorSystem_PlaceSprites(void) {
   struct SpriteScale scale;
   s32 objectIndex;
   struct MapState *map;
-  s32 *view;
   s32 viewX;
   s32 viewZ;
   struct ActorSystemState *system;
@@ -716,11 +714,8 @@ void ActorSystem_PlaceSprites(void) {
   s8 *basePriority;
 
   map = Ram_HeapSlots->mapGrid;
-  /* FAKEMATCH(temporary): view, a pointer standing in for map->viewX's
-   * address, viewZ read as view[1]. */
-  view = &map->viewX;
-  viewX = view[0] & FIELD_PIXEL_MASK;
-  viewZ = view[1] & FIELD_PIXEL_MASK;
+  viewX = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+  viewZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   system = Ram_HeapSlots->actorSystem;
   originY = map->origin[1];
   Render_LoadDecoder();

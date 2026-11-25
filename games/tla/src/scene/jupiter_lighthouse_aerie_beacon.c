@@ -454,7 +454,7 @@ void JupiterLighthouse_PulseBeacon(void) {
   if (actor == NULL)
     return;
 #endif
-  if (FIXEDtoINT(map->viewZ) <= BEACON_ORB_VIEW_Z_MAX) {
+  if (FIXEDtoINT(map->view[1]) <= BEACON_ORB_VIEW_Z_MAX) {
     ((struct SpriteAnimation
           *)((struct FieldSprite *)Actor_Get(ACTOR_BEACON_ORB)->sprite)
          ->record)

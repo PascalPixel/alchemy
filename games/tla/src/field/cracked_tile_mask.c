@@ -37,7 +37,6 @@ void CrackedTile_Update(void) {
   struct CellTargetEntry *entry;
   struct Actor *leader;
   struct MapState *map;
-  s32 *view;
   s32 viewX, viewZ, viewY, tile;
   s32 screenX, height, z, screenY, depth;
 
@@ -57,9 +56,8 @@ void CrackedTile_Update(void) {
   if (table->shown == 0)
     return;
   map = Ram_HeapSlots->mapGrid;
-  view = &map->viewX;
-  viewX = view[0] & FIELD_PIXEL_MASK;
-  viewZ = view[1] & FIELD_PIXEL_MASK;
+  viewX = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+  viewZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   viewY = map->origin[1];
   tile = gVramCacheEntries[table->tile].offset >> 5;
   screenX = FIELD_CELL_ORIGIN(entry->x) - viewX;

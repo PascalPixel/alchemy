@@ -972,11 +972,8 @@ enum { ACTOR_VIAL_CHEST_PUDDLE_C = ACTOR_FIRST_PLACED + 7 };
 /// priority while it rests.
 void ApojiiIslands_DrawCellMarkers(void) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
-  /* FAKEMATCH(temporary): view, a pointer standing in for map->viewX's
-   * address; as map->viewX and map->viewZ by name. */
-  s32 *view = &map->viewX;
-  s32 viewX = view[0] & FIELD_PIXEL_MASK;
-  s32 viewZ = view[1] & FIELD_PIXEL_MASK;
+  s32 viewX = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+  s32 viewZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   // DEAD: viewY, subtracted from both height and z, cancels in dy; the ROM
   // keeps its load and its store to the stack.
   s32 viewY = map->origin[1];

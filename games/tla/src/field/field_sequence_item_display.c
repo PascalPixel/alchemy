@@ -326,10 +326,9 @@ void Reveal_EmitSparkles(struct Actor *actor) {
 /// map cell of a tile event, when that point is on screen.
 void FieldEffect_SpawnRevealMarkers(void) {
   s16 *entry = SceneItem_GetRows();
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
-  s32 *origin = &((struct MapState *)map)->viewX;
-  s32 originX = origin[0] & FIELD_PIXEL_MASK;
-  s32 originZ = origin[1] & FIELD_PIXEL_MASK;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  s32 originX = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+  s32 originZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   // A word of the map header, then the point SceneItem_FindPosition fills for
   // each row.
   struct {
@@ -347,9 +346,9 @@ void FieldEffect_SpawnRevealMarkers(void) {
   s32 dx;
   s32 dz;
 
-  // DEAD: the map header's second word is never read; the ROM keeps its load
+  // DEAD: the followed point's height is never read; the ROM keeps its load
   // and store.
-  found.headerWord = (*(s32 **)map)[1];
+  found.headerWord = map->origin[1];
   if (entry == NULL)
     return;
   for (i = 0; i < TREASURE_SPOT_MAX && (type = *entry++) != 0 &&

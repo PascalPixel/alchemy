@@ -3259,11 +3259,10 @@ enum { RAISED_BLOCK_DEPTH = 58 };
 /// panel turns them.
 void GabombaStatue_DrawRaisedBlocks(void) {
   s32 affine = 0;
-  s32 *scroll = &((struct MapState *)Ram_HeapSlots->mapGrid)->viewX;
   struct SceneState *state = &gSceneState;
   struct SpriteView *oam = state->oam;
-  s32 scrollX = scroll[0] & FIELD_PIXEL_MASK;
-  s32 scrollZ = scroll[1] & FIELD_PIXEL_MASK;
+  s32 scrollX = MapState_View(Ram_HeapSlots->mapGrid)[0] & FIELD_PIXEL_MASK;
+  s32 scrollZ = MapState_View(Ram_HeapSlots->mapGrid)[1] & FIELD_PIXEL_MASK;
   u16 tile = gVramCacheEntries[state->blockTileEntry].offset >> 5;
   struct AffineTransform effect;
   s32 id;

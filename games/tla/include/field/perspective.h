@@ -21,12 +21,11 @@ struct WorldMapView {
   u8 wideTiles;    ///< MapState's wideTiles, 0x80 at load
   /// As MapState: footprints, tileset animations and blend script.
   u8 animationsAndBlend[205];
-  FIXED viewX;             ///< the view's left, 16.16 fixed-point pixels
-  FIXED viewY;             ///< the view's top, 16.16 fixed-point pixels
-  FIXED scaleX;            ///< 32 in 16.16 at load
-  FIXED scaleY;            ///< 64 in 16.16 at load
-  FIXED limitX;            ///< 16352 in 16.16 at load
-  FIXED limitY;            ///< 16352 in 16.16 at load
+  FIXED view[2]; ///< the view's top left, x then y, 16.16 fixed-point pixels
+  FIXED scaleX;  ///< 32 in 16.16 at load
+  FIXED scaleY;  ///< 64 in 16.16 at load
+  FIXED limitX;  ///< 16352 in 16.16 at load
+  FIXED limitY;  ///< 16352 in 16.16 at load
   u8 unusedAfterLimitY[4]; ///< no code names it
   /// Set by WorldMap_StartStillImage while BG1 shows the drawn map; the
   /// tileset animations are then neither suspended nor resumed.
@@ -79,7 +78,7 @@ struct WorldMapView {
   s8 fixedEye;   ///< set: the frame update leaves the eye where it is
 };
 
-STATIC_ASSERT(offsetof(struct WorldMapView, viewX) == 228);
+STATIC_ASSERT(offsetof(struct WorldMapView, view) == 228);
 STATIC_ASSERT(offsetof(struct WorldMapView, animationActive) == 256);
 STATIC_ASSERT(offsetof(struct WorldMapView, windowTop) == 260);
 STATIC_ASSERT(offsetof(struct WorldMapView, tiles) == 276);

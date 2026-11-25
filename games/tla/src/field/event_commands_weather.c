@@ -29,9 +29,8 @@
 void GroundParticles_Update(void) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   struct WeatherState *state = Ram_HeapSlots->weather;
-  s32 *origin = &map->viewX;
-  s32 originX = origin[0];
-  s32 originZ = origin[1];
+  s32 originX = MapState_View(map)[0];
+  s32 originZ = MapState_View(map)[1];
   struct WeatherParticle *particle = state->particles;
   u32 i;
 
@@ -79,10 +78,9 @@ void GroundParticles_Update(void) {
 void Weather_UpdateRain(void) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   struct WeatherState *state = Ram_HeapSlots->weather;
-  s32 *origin = &map->viewX;
-  s32 originX = origin[0];
+  s32 originX = MapState_View(map)[0];
   struct WeatherParticle *particle = state->particles;
-  s32 originZ = origin[1];
+  s32 originZ = MapState_View(map)[1];
   u32 i;
 
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++) {

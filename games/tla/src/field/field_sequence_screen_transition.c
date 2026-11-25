@@ -268,10 +268,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER_INVERSE: {
     s32 ax;
 
-    s32 *view = &map->viewX;
-
-    ax = view[0] & FIELD_PIXEL_MASK;
-    cameraY = view[1] & FIELD_PIXEL_MASK;
+    ax = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+    cameraY = MapState_View(map)[1] & FIELD_PIXEL_MASK;
     // Centred on the leader's place on screen, 16 pixels above its feet.
     actor = Actor_Lookup(Party_GetLeaderActor());
     centerX = (actor->x.fixed - ax) / FIXED_ONE;
@@ -296,10 +294,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
   }
 
   case WINDOW_TRANSITION_RIPPLE: {
-    s32 *view = &map->viewX;
 
-    cameraX = view[0] & FIELD_PIXEL_MASK;
-    cameraY8 = view[1] & FIELD_PIXEL_MASK;
+    cameraX = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+    cameraY8 = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   }
     // Centred on state->centerX and centerY; each line's edges move out by
     // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
@@ -348,10 +345,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER: {
     s32 ax;
 
-    s32 *view = &map->viewX;
-
-    ax = view[0] & FIELD_PIXEL_MASK;
-    cameraY = view[1] & FIELD_PIXEL_MASK;
+    ax = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+    cameraY = MapState_View(map)[1] & FIELD_PIXEL_MASK;
     actor = Actor_Lookup(Party_GetLeaderActor());
     centerX = (actor->x.fixed - ax) / FIXED_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 16;
@@ -371,10 +366,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER_LOW: {
     s32 ax;
 
-    s32 *view = &map->viewX;
-
-    ax = view[0] & FIELD_PIXEL_MASK;
-    cameraY = view[1] & FIELD_PIXEL_MASK;
+    ax = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+    cameraY = MapState_View(map)[1] & FIELD_PIXEL_MASK;
     actor = Actor_Lookup(Party_GetLeaderActor());
     centerX = (actor->x.fixed - ax) / FIXED_ONE;
     // Centred 8 pixels above the leader's feet, not 16 as in

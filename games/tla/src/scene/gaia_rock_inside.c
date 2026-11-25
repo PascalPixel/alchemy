@@ -3074,9 +3074,9 @@ s32 Scene_PrepareMap(void) {
       layer->scaleX = FIXED_ONE;
       layer->scaleY = FIXED_ONE;
       layer->maskY = MAPGRID_ROW_MASK;
-      layer->x = Iwram_MulFX(((struct MapState *)map)->viewX, layer->scaleX) +
+      layer->x = Iwram_MulFX(((struct MapState *)map)->view[0], layer->scaleX) +
                  layer->offsetX;
-      layer->y = Iwram_MulFX(((struct MapState *)map)->viewZ, layer->scaleY) +
+      layer->y = Iwram_MulFX(((struct MapState *)map)->view[1], layer->scaleY) +
                  layer->offsetY;
       MapGrid_CenterOnFollowedPoint();
       System_Wait(1);

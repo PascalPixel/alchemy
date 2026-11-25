@@ -2011,8 +2011,8 @@ void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
   layer->scaleY = layer->scaleX = FIXED_ONE;
   layer->cells = (struct MapCell *)(gMapGridCellBuffer + index * 4);
   layer->terrainIds = gMapShapeGrid + index;
-  layer->x = Iwram_MulFX(map->viewX, FIXED_ONE) + layer->offsetX;
-  layer->y = Iwram_MulFX(map->viewZ, layer->scaleY) + layer->offsetY;
+  layer->x = Iwram_MulFX(map->view[0], FIXED_ONE) + layer->offsetX;
+  layer->y = Iwram_MulFX(map->view[1], layer->scaleY) + layer->offsetY;
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
 }

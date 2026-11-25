@@ -9,7 +9,6 @@ void Geyser_Draw(void) {
   u32 *oam = state->block;
   s32 count = 0;
   struct MapState *map = Ram_HeapSlots->mapGrid;
-  s32 *view = &map->viewX;
   s32 viewX, viewZ, originY;
   struct Actor *actor;
   s32 pieceY, x;
@@ -19,9 +18,9 @@ void Geyser_Draw(void) {
   s32 depth;
   u32 *p;
 
-  viewX = view[0];
+  viewX = MapState_View(map)[0];
   viewX &= FIELD_PIXEL_MASK;
-  viewZ = view[1] & FIELD_PIXEL_MASK;
+  viewZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   originY = map->origin[1];
   for (i = 0; i < GEYSER_ENTRIES; i++, entry++) {
     if (entry->id == 0 || entry->height == 0)

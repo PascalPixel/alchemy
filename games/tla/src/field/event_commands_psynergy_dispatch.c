@@ -338,10 +338,9 @@ s32 Actor_GetSpriteDepth(struct Actor *actor) {
     if (depth <= 0)
       depth = 1;
   } else {
-    struct DepthMap *map = (struct DepthMap *)Ram_HeapSlots->mapGrid;
-    struct DepthScroll *view = &map->view;
-    s32 bias = view->z & FIELD_PIXEL_MASK;
-    s32 base = map->origin->y;
+    struct MapState *map = Ram_HeapSlots->mapGrid;
+    s32 bias = MapState_View(map)[1] & FIELD_PIXEL_MASK;
+    s32 base = map->origin[1];
 
     depth = FIXEDtoINT(actor->y.fixed - base + actor->z.fixed - base - bias) +
             PLACEMENT_IMAGE_DEPTH;

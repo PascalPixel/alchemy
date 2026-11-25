@@ -114,8 +114,8 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   ScreenFade_FromBlack(0);
   perspective = HeapSlot_Alloc(HEAP_SLOT_MAP_GRID, sizeof(struct WorldMapView));
   Dma_Fill32Cell(fill, 0, perspective, sizeof(struct WorldMapView));
-  perspective->viewX = 0;
-  perspective->viewY = 0;
+  perspective->view[0] = 0;
+  perspective->view[1] = 0;
   perspective->scaleX = FIXED_ONE * 32;
   perspective->scaleY = FIXED_ONE * 64;
   perspective->limitX = toFIXED(16352);
@@ -572,24 +572,24 @@ void WorldMap_UpdateView(void) {
     tileRow = y / toFIXED(16);
     // On crossing a 16-pixel line, draws the column 16 on that side, or the
     // row 12 on when y grows and 18 back when it falls.
-    if ((perspective->viewX ^ x) & toFIXED(16)) {
-      if (perspective->viewX < x)
+    if ((perspective->view[0] ^ x) & toFIXED(16)) {
+      if (perspective->view[0] < x)
         WorldMap_DrawCellColumn(tileColumn + 16);
       else
         WorldMap_DrawCellColumn(tileColumn - 16);
     }
-    if ((perspective->viewY ^ y) & toFIXED(16)) {
-      if (perspective->viewY < y)
+    if ((perspective->view[1] ^ y) & toFIXED(16)) {
+      if (perspective->view[1] < y)
         WorldMap_DrawCellRow(tileRow + 12);
       else
         WorldMap_DrawCellRow(tileRow - 18);
     }
-    perspective->viewX = x;
-    perspective->viewY = y;
+    perspective->view[0] = x;
+    perspective->view[1] = y;
   }
-  cameraPosition[0] = perspective->viewX;
+  cameraPosition[0] = perspective->view[0];
   cameraPosition[1] = 0;
-  cameraPosition[2] = perspective->viewY;
+  cameraPosition[2] = perspective->view[1];
   if (perspective->stillImageShown != 0) {
     gBgScroll[1].x = shakeOffsetX / FIXED_ONE;
     gBgScroll[1].y = shakeOffsetY / FIXED_ONE;

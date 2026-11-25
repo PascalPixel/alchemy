@@ -314,27 +314,6 @@ struct TightropeState {
 
 #define TIGHTROPE_STATE ((struct TightropeState *)Ram_HeapSlots->tightrope)
 
-/// The point the map view follows (MapState.origin), as the depth sort reads
-/// it.
-struct DepthOrigin {
-  FIXED x; ///< 16.16 fixed-point pixels
-  FIXED y; ///< its height, 16.16 fixed-point pixels
-};
-
-/// The map view's place (MapState.viewX and viewZ), read as a pair.
-struct DepthScroll {
-  FIXED x; ///< 16.16 fixed-point pixels
-  FIXED z; ///< 16.16 fixed-point pixels
-};
-
-/// MapState as Actor_GetSpriteDepth reads it: its followed point and its
-/// view, through a pointer to the pair.
-struct DepthMap {
-  struct DepthOrigin *origin;
-  u8 unusedAfterOrigin[224]; ///< no code names it
-  struct DepthScroll view;
-};
-
 /// One rising particle: its sprite, world position, drift and frames left.
 struct RisingParticle {
   /// The sprite: set as three words by the start, drawn field by field.

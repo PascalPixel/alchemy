@@ -190,8 +190,7 @@ struct MapState {
   u8 groundEffects;
   struct MapAnimation anim[16];
   struct BlendScriptState blend;
-  s32 viewX;
-  s32 viewZ;
+  FIXED view[2]; ///< the view's top left, x then z, 16.16 fixed-point pixels
   s32 minX;
   s32 minZ;
   s32 maxX;
@@ -220,6 +219,10 @@ struct MapState {
   s16 zoomFrames;
   s16 zoomStep;
 };
+
+/// The map's view position (MapState.view): its left and its top, x then z,
+/// in 16.16 fixed-point pixels.
+static inline FIXED *MapState_View(struct MapState *map) { return map->view; }
 
 /// The bytes of MapState a field map uses: up to its third layer, the last the
 /// field scrolls.

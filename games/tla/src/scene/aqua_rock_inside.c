@@ -2235,11 +2235,8 @@ s32 Scene_PrepareMap(void) {
 /// Draws the scene's pillars: a top sprite for each active one and, when it
 /// stands above its base, a column sprite as tall as its height.
 void AquaRockInside_DrawPillars(void) {
-  /* FAKEMATCH(temporary): view, a pointer standing in for map->viewX's
-   * address; as map->viewX and map->viewZ by name. */
-  s32 *view = &((struct MapState *)Ram_HeapSlots->mapGrid)->viewX;
   struct PillarState *state = &gAquaRockInside_Pillars;
-  s32 viewX = view[0];
+  s32 viewX = MapState_View(Ram_HeapSlots->mapGrid)[0];
   struct PillarEntry *entry = state->entries;
   s32 viewZ;
   s32 originY;
@@ -2248,7 +2245,7 @@ void AquaRockInside_DrawPillars(void) {
   u32 tile;
 
   viewX &= FIELD_PIXEL_MASK;
-  viewZ = view[1] & FIELD_PIXEL_MASK;
+  viewZ = MapState_View(Ram_HeapSlots->mapGrid)[1] & FIELD_PIXEL_MASK;
   originY = ((struct MapState *)Ram_HeapSlots->mapGrid)->origin[1];
   tile = gVramCacheEntries[state->vramEntry].offset >> 5;
 
@@ -2458,9 +2455,8 @@ void AquaRockInside_SetPillarHeight(u32 index, s32 height) {
 /// Draws thirty-two sprites that each shake by a random few pixels a frame.
 void AquaRockInside_DrawSplashes(void) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
-  s32 *view = &map->viewX;
   struct BeamState *splashes = &gAquaRockInside_Splashes;
-  s32 viewX = view[0];
+  s32 viewX = MapState_View(map)[0];
   s32 viewZ;
   s32 originY;
   struct Splash *splash;
@@ -2469,7 +2465,7 @@ void AquaRockInside_DrawSplashes(void) {
   s32 priority = OBJ_PRIORITY(2);
 
   viewX &= FIELD_PIXEL_MASK;
-  viewZ = view[1] & FIELD_PIXEL_MASK;
+  viewZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   originY = map->origin[1];
   tile = gVramCacheEntries[splashes->vramEntry].offset >> 5;
   splash = splashes->splashes;

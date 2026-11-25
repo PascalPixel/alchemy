@@ -178,9 +178,8 @@ void FieldMotes_Update(void) {
     s32 y;
 
     if (--mote->timer != GROUND_PARTICLE_FREED) {
-      s32 *camera = &map->viewX;
-      s32 cameraX = camera[0];
-      s32 cameraZ = camera[1];
+      s32 cameraX = MapState_View(map)[0];
+      s32 cameraZ = MapState_View(map)[1];
       s16 age = mote->timer;
       u32 firstJitterDraw;
       u32 secondJitterDraw;

@@ -19,9 +19,8 @@
 /// at the height of that ground.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayState *state = Ram_HeapSlots->fadeOverlay;
-  s16 *camera = ((struct FadeView *)Ram_HeapSlots->mapGrid)->camera;
-  s32 cameraX = camera[1];
-  s32 cameraZ = camera[3];
+  s32 cameraX = (s16)FIXEDtoINT(MapState_View(Ram_HeapSlots->mapGrid)[0]);
+  s32 cameraZ = (s16)FIXEDtoINT(MapState_View(Ram_HeapSlots->mapGrid)[1]);
   struct AnimationSpritePart *mark = state->marks;
   struct FadeActor *actor = state->actor;
   FIXED x;
@@ -131,9 +130,8 @@ void FadeOverlay_Resume(void) { Task_Resume(FadeOverlay_DrawMarks); }
 void BlankOverlay_DrawMarks(void) {
   struct AnimationSpritePart *mark = Ram_HeapSlots->fadeOverlay;
   struct MapState *map = Ram_HeapSlots->mapGrid;
-  s16 *camera = (s16 *)&map->viewX;
-  s16 cameraX = camera[1];
-  s16 cameraZ = camera[3];
+  s16 cameraX = FIXEDtoINT(MapState_View(map)[0]);
+  s16 cameraZ = FIXEDtoINT(MapState_View(map)[1]);
   struct FadeActor *actor = ((struct FadeOverlayState *)mark)->actor;
   s32 x;
   s32 row;

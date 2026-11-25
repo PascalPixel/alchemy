@@ -448,8 +448,8 @@ void ViewMove_Start(s32 direction) {
   struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *center = field->camera;
   struct MapState *map = Ram_HeapSlots->mapGrid;
-  s32 viewX = FIXEDtoINT(map->viewX);
-  s32 viewZ = FIXEDtoINT(map->viewZ);
+  s32 viewX = FIXEDtoINT(map->view[0]);
+  s32 viewZ = FIXEDtoINT(map->view[1]);
   struct ViewMoveState *state = Ram_HeapSlots->battleEffect;
   struct MapBounds bounds;
   s32 minX;

@@ -13,17 +13,15 @@ void FlameThrowers_Puff(void) {
   struct FlameHitState *state;
   struct FlameThrower *entry;
   struct MapState *map;
-  s32 *view;
   s32 cameraX, cameraZ;
   s32 i;
 
   state = FLAME_THROWERS_STATE;
   map = Ram_HeapSlots->mapGrid;
   entry = state->entries;
-  view = &map->viewX;
-  cameraX = view[0];
+  cameraX = MapState_View(map)[0];
   cameraX &= FIELD_PIXEL_MASK;
-  cameraZ = view[1] & FIELD_PIXEL_MASK;
+  cameraZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   height = map->origin[1];
   field = Ram_HeapSlots->fieldState;
   if (state->blocked != 0 && state->wasBlocked == 0 && state->onBlocked != 0)

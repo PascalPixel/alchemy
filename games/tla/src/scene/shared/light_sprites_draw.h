@@ -8,12 +8,11 @@
 /// Draws a glow sprite over each listed actor.
 void LightSprites_Draw(void) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
-  s32 *view = &map->viewX;
   s32 viewX, viewZ, tile, viewY;
   struct LightOam *oam;
   s32 i;
-  viewX = view[0] & FIELD_PIXEL_MASK;
-  viewZ = view[1] & FIELD_PIXEL_MASK;
+  viewX = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+  viewZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gLightSpriteOams;

@@ -894,9 +894,8 @@ void MarsLighthouseEntrance_PushStatueIntoValkyrieFlames(s32 unused, s32 id) {
 /// Felix's cell, so that he sinks out of sight through the hole.
 void MarsLighthouseEntrance_DrawHoleMask(void) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
-  s32 *view = &map->viewX;
-  s32 x = view[0] & FIELD_PIXEL_MASK;
-  s32 cameraZ = view[1] & FIELD_PIXEL_MASK;
+  s32 x = MapState_View(map)[0] & FIELD_PIXEL_MASK;
+  s32 cameraZ = MapState_View(map)[1] & FIELD_PIXEL_MASK;
   s32 originY = map->origin[1];
   s32 tile =
       gVramCacheEntries[gMarsLighthouseEntrance_HoleMaskVram].offset >> 5;

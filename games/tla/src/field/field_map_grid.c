@@ -224,9 +224,9 @@ s32 MapGrid_LoadMap(s32 index) {
   map->minZ = toFIXED(sceneHeader->cameraBounds[1] * 8);
   map->maxX = toFIXED(sceneHeader->cameraBounds[2] * 8);
   map->maxZ = toFIXED(sceneHeader->cameraBounds[3] * 8);
-  viewX = &map->viewX;
+  viewX = &map->view[0];
   *viewX = 0;
-  viewY = &map->viewZ;
+  viewY = &map->view[1];
   *viewY = 0;
   map->enabled[0] = sceneHeader->priority[0];
   map->enabled[1] = sceneHeader->priority[1];
@@ -549,20 +549,20 @@ void MapGrid_UpdateLayerScroll(void) {
     map->shakeY = Iwram_MulFX(map->shakeY, map->shakeDecay);
   }
   {
-    s32 step = map->viewZ - baseY;
+    s32 step = map->view[1] - baseY;
 
     if (step > toFIXED(16)) {
-      baseY = map->viewZ - toFIXED(16);
-      step = map->viewZ - baseY;
+      baseY = map->view[1] - toFIXED(16);
+      step = map->view[1] - baseY;
     }
     if (step < -toFIXED(16))
-      baseY = map->viewZ + toFIXED(16);
+      baseY = map->view[1] + toFIXED(16);
   }
-  map->viewX = baseX;
-  map->viewZ = baseY;
+  map->view[0] = baseX;
+  map->view[1] = baseY;
   for (layerIndex = 0; layerIndex <= 2; layerIndex++, layer++) {
-    baseX = Iwram_MulFX(map->viewX, layer->scaleX);
-    baseY = Iwram_MulFX(map->viewZ, layer->scaleY);
+    baseX = Iwram_MulFX(map->view[0], layer->scaleX);
+    baseY = Iwram_MulFX(map->view[1], layer->scaleY);
     if (layer->speedX != 0) {
       layer->phaseX += layer->speedX;
       baseX += layer->phaseX;
@@ -633,16 +633,16 @@ void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
     y = map->minZ;
   if (y > map->maxZ - FIELD_VIEW_HEIGHT)
     y = map->maxZ - FIELD_VIEW_HEIGHT;
-  map->viewX = x;
-  map->viewZ = y;
+  map->view[0] = x;
+  map->view[1] = y;
   for (layerIndex = 0; layerIndex <= 2; layerIndex++) {
     if (map->enabled[layerIndex] != 0) {
       u32 maskX, maskY, originY;
       u32 sourceRow, sourceColumn, screenRowOffset, screenColumnOffset,
           cellTilesRow, cellTilesColumn;
 
-      x = Iwram_MulFX(map->viewX, layer->scaleX);
-      y = Iwram_MulFX(map->viewZ, layer->scaleY);
+      x = Iwram_MulFX(map->view[0], layer->scaleX);
+      y = Iwram_MulFX(map->view[1], layer->scaleY);
       if (layer->speedX) {
         layer->phaseX += layer->speedX;
         x += layer->phaseX;

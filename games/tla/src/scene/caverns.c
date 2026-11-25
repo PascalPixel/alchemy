@@ -314,14 +314,12 @@ void Caverns_DriftDust(union FieldObject *object) {
 /// of it while he stands south of it, and behind it otherwise.
 void Caverns_LayerLeaderByTopBlock(struct Actor *actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
-  FIXED leaderZ = leader->z.fixed;
-  FIXED z = actor->z.fixed;
-  u8 *flags = &leader->priorityFlags;
 
-  if (leaderZ > z) {
-    ActorFlags_Set(flags, ACTOR_PRIORITY_OVERHEAD);
+  if (leader->z.fixed > actor->z.fixed) {
+    leader->priorityFlags |= ACTOR_PRIORITY_OVERHEAD;
   } else {
-    *flags &= ~(ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_OVERHEAD);
+    leader->priorityFlags &=
+        ~(ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_OVERHEAD);
   }
 }
 

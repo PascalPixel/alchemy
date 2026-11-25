@@ -370,12 +370,6 @@ extern const s32 gActor_OffsetScript[];
 extern const u8 gActor_VariantScripts[];
 
 /// Sets bits in one of an actor's flag bytes.
-static inline void ActorFlags_Set(u8 *flags, s32 bits) {
-  /* FAKEMATCH(temporary): the bits held in a local; as *flags |= bits. */
-  s32 value = bits;
-
-  value |= *flags;
-  *flags = value;
-}
+static inline void ActorFlags_Set(u8 *flags, u8 bits) { *flags |= bits; }
 
 #endif

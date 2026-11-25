@@ -471,9 +471,6 @@ extern s32 gVenusMiniatureLighthouseScript[];
 
 extern s32 gVenusLeaderDazedScript[];
 
-/// Sets bits in a byte of flags.
-static inline void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
-
 /// Until the statue holds the floor switch down, stepping onto the barrier
 /// throws the leader back, dazed and flashing.
 void VenusLighthouse_RepelLeader(void) {
@@ -499,7 +496,7 @@ void VenusLighthouse_RepelLeader(void) {
   }
   Actor_WalkToAndWaitById(leader, actor->x.part[0].integer, z * 4);
   Event_Wait(1);
-  SetFlagBits(&Actor_GetById(leader)->steeringFlags, ACTOR_FACES_MOTION);
+  ActorFlags_Set(&Actor_GetById(leader)->steeringFlags, ACTOR_FACES_MOTION);
   Event_Wait(20);
   Actor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
   actor->update = VenusLighthouse_EmitRisingParticles;

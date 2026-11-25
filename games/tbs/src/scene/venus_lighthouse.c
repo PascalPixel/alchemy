@@ -447,11 +447,6 @@ enum VenusTrack {
 /// The tag VENUS_COLOR_MARK puts above the colour mode.
 enum { VENUS_COLOR_MARK_TAG = 0x212 };
 
-/// Sets bits in a byte of flags.
-static inline void VenusLighthouse_SetFlagBits(u8 *flags, u8 bits) {
-  *flags |= bits;
-}
-
 static UNUSED s32 MapGrid_FillCollisionRectangle(u32 layer, s32 x, s32 z,
                                                  u32 width, u32 height,
                                                  s32 value);
@@ -1221,9 +1216,8 @@ static void VenusLighthouse_ThrowBackFromLightning(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, leader->x.part[0].integer,
                       landingQuarterZ << 2);
   Event_Wait(1);
-  /* FAKEMATCH(wrapper): the flag set through a helper. */
-  VenusLighthouse_SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags,
-                              ACTOR_FACES_MOTION);
+  ActorFlags_Set(&Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags,
+                 ACTOR_FACES_MOTION);
   Event_Wait(20);
   leader->update =
       (void (*)(struct Actor *))VenusLighthouse_EmitRisingParticles;

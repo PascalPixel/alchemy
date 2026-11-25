@@ -251,4 +251,7 @@ STATIC_ASSERT(sizeof(struct ActorSnapshot) == 3712);
 /// change into and out of a battle.
 extern struct ActorSnapshot gActorSnapshot;
 
+/// Sets bits in one of an actor's flag bytes.
+static inline void ActorFlags_Set(u8 *flags, u8 bits) { *flags |= bits; }
+
 #endif

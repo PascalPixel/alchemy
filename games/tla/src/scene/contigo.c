@@ -1537,7 +1537,7 @@ void Contigo_OfferLuckyDice(void) {
 
   Event_Start();
   Event_EndLastingPsynergy(0);
-  if ((u32)gMainRoutineState.coins < price) {
+  if (gMainRoutineState.coins < price) {
     Event_SetMessageId((s32)MsgContigoHeyYaDontHaveEnough);
     // "Hey! Ya don't have enough coins! Ya gotta pay to play."
     FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_ATTENDANT, 0);
@@ -1582,7 +1582,7 @@ void Contigo_OfferSuperLuckyDice(void) {
 
   Event_Start();
   Event_EndLastingPsynergy(0);
-  if ((u32)gMainRoutineState.coins < price) {
+  if (gMainRoutineState.coins < price) {
     // Shown at the Lucky Dice attendant, who stands in the next tent: the box
     // opens at the top of the screen as his welcome does, a little further
     // right.

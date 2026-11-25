@@ -170,7 +170,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
       ItemMenu_DrawMessage(0, (s32)MsgPsynergyChooseOwner);
       chosen = PsynergyMenu_SelectPartySlot(0);
       /* FAKEMATCH(dead): the test written as an XOR. */
-      if (((u32)chosen ^ (u32)cancelled) == 0) {
+      if ((chosen ^ cancelled) == 0) {
         done = 1;
         useResult = cancelled;
       }

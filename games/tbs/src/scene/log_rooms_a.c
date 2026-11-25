@@ -3241,7 +3241,7 @@ static void LogRoomsA_UpdateCorneringChase(void) {
     dx = FIXEDtoINT(dx);
     dz = FIXEDtoINT(dz);
     if (state->blockedSteps > 0 && dx * dx + dz * dz <= 20 * 20 &&
-        (facingDifference = (u16)facing - angle) > -FACING_STEP &&
+        (facingDifference = facing - angle) > -FACING_STEP &&
         facingDifference < FACING_STEP) {
       // Pushed toward from close by, he takes the leader's way.
       /* FAKEMATCH(dead): a dead store. */

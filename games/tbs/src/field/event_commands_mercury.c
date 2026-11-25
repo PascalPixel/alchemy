@@ -20,7 +20,6 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   struct Actor **cursor;
   struct Actor **list;
   struct FieldParticle *effect;
-  s8 *slotState;
   s32 spriteId;
   s32 i;
   s32 sharedSlot;
@@ -125,8 +124,10 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
 
   // After 120 frames every droplet still in use takes its last fall.
   wait(120);
-  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, i, effectState, particles,
-                                   MERCURY_DROPLET_LAST_FALL);
+  for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
+    if (effectState->particles[i].active)
+      effectState->particles[i].state = MERCURY_DROPLET_LAST_FALL;
+  }
 
   // Restore the colours.
   wait(50);

@@ -2347,10 +2347,11 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   wait(50);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   wait(30);
-  {
-    u8 *stateCursor;
-    FIELD_PARTICLES_SET_ACTIVE_STATE(stateCursor, fragmentIndex, effectState,
-                                     particles, 2);
+  for (fragmentIndex = 0;
+       fragmentIndex < (s32)ARRAY_COUNT(effectState->particles);
+       fragmentIndex++) {
+    if (effectState->particles[fragmentIndex].active)
+      effectState->particles[fragmentIndex].state = 2;
   }
   MapGrid_WaitForShakeToSettle();
   Shop_RestoreFieldPalette();

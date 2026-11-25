@@ -20,7 +20,6 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   struct Actor *djinni;
   struct FieldEffectState *effectState;
   struct FieldParticle *effect;
-  s8 *slotState;
   s32 remaining;
   FIXED scale;
   struct Vector3 position;
@@ -81,8 +80,10 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
 
   // After 140 frames every particle still in use stops rising.
   wait(140);
-  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectState, particles,
-                                   VENUS_PARTICLE_LAST_RISE);
+  for (remaining = 0; remaining < PSYNERGY_EFFECT_SLOT_COUNT; remaining++) {
+    if (effectState->particles[remaining].active)
+      effectState->particles[remaining].state = VENUS_PARTICLE_LAST_RISE;
+  }
 
   // A shake of 1/65536 pixel: in effect the shake stops.
   wait(20);

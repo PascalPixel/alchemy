@@ -325,6 +325,7 @@ void FieldPsynergy_EndSand(void) {
   s32 frame;
   s32 i;
   s32 delay;
+  s32 mask;
 
   FieldPsynergy_MarkWorldMapTilesUsed();
   gMainRoutineState.sandActive = 0;
@@ -350,20 +351,15 @@ void FieldPsynergy_EndSand(void) {
    * owner->motionFlags's address. */
   motionFlags = &owner->motionFlags;
   *motionFlags = 0;
-  /* FAKEMATCH(dead): a once-only block placing mask's declaration before the
-   * two calls. */
-  {
-    s32 mask = OAM_BELOW_SHAPE_OR_SIZE;
-
-    Actor_SetPositionAndResetMotionFar(
-        owner, owner->x.fixed, owner->y.fixed + toFIXED(10), owner->z.fixed);
-    Actor_SetFirstSpriteAnimationFar(owner, gMainRoutineState.leaderActorId);
-    // The image's OAM shape and size: square, 32 by 32 pixels.
-    ((u8 *)owner->sprite)[5] &= mask;
-    mask &= ((u8 *)owner->sprite)[7];
-    mask |= OAM_SIZE_32X32_BYTE;
-    ((u8 *)owner->sprite)[7] = mask;
-  }
+  mask = OAM_BELOW_SHAPE_OR_SIZE;
+  Actor_SetPositionAndResetMotionFar(
+      owner, owner->x.fixed, owner->y.fixed + toFIXED(10), owner->z.fixed);
+  Actor_SetFirstSpriteAnimationFar(owner, gMainRoutineState.leaderActorId);
+  // The image's OAM shape and size: square, 32 by 32 pixels.
+  ((u8 *)owner->sprite)[5] &= mask;
+  mask &= ((u8 *)owner->sprite)[7];
+  mask |= OAM_SIZE_32X32_BYTE;
+  ((u8 *)owner->sprite)[7] = mask;
   if (field->mode == ACTOR_SYSTEM_WORLD_MAP)
     ((struct Sprite *)owner->sprite)->scale = FIXED_ONE * 3 / 4;
   owner->facing = DEGtoANG(90);
